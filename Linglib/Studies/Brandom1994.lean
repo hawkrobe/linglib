@@ -137,16 +137,10 @@ theorem entitlement_not_closed_under_committive :
 
 /-! ### Scorekeeping -/
 
-/-- The two roles a scorekeeping episode distinguishes. -/
-inductive Interlocutor where
-  | speaker
-  | hearer
-  deriving DecidableEq, Repr, Inhabited
-
 /-- A score: what each interlocutor attributes to each. `card k i` is `k`'s attribution to `i`, and
 two scorekeepers' attributions to the same interlocutor may differ. -/
 structure Score (W : Type*) where
-  card : Interlocutor → Interlocutor → NormativeStatus W
+  card : Discourse.Role → Discourse.Role → NormativeStatus W
 
 namespace Score
 variable {W : Type*}
@@ -155,15 +149,15 @@ variable {W : Type*}
 def empty : Score W := ⟨fun _ _ => NormativeStatus.empty⟩
 
 /-- Update one cell of the score. -/
-def update (s : Score W) (k i : Interlocutor) (f : NormativeStatus W → NormativeStatus W) :
+def update (s : Score W) (k i : Discourse.Role) (f : NormativeStatus W → NormativeStatus W) :
     Score W :=
   ⟨fun k' i' => if k' = k ∧ i' = i then f (s.card k i) else s.card k' i'⟩
 
-@[simp] theorem card_update_self (s : Score W) (k i : Interlocutor)
+@[simp] theorem card_update_self (s : Score W) (k i : Discourse.Role)
     (f : NormativeStatus W → NormativeStatus W) : (s.update k i f).card k i = f (s.card k i) := by
   simp [update]
 
-@[simp] theorem card_update_of_ne (s : Score W) {k i k' i' : Interlocutor}
+@[simp] theorem card_update_of_ne (s : Score W) {k i k' i' : Discourse.Role}
     (f : NormativeStatus W → NormativeStatus W) (h : ¬ (k' = k ∧ i' = i)) :
     (s.update k i f).card k' i' = s.card k' i' := by
   simp [update, h]
@@ -180,15 +174,15 @@ def assert (s : Score W) (p : W → Prop) : Score W :=
 deferring to the speaker's authority — the communicational function of assertion is to license
 others to re-assert. -/
 def defer (s : Score W) (p : W → Prop) : Score W :=
-  s.update .hearer .hearer (·.entitle p)
+  s.update .addressee .addressee (·.entitle p)
 
 /-- A challenge by the hearer: a demand for reasons, which withdraws the hearer's attribution of
 default entitlement while leaving the attributed commitment standing. -/
 def challenge (s : Score W) (p : Set W) : Score W :=
-  s.update .hearer .speaker (·.withdrawEntitlement p)
+  s.update .addressee .speaker (·.withdrawEntitlement p)
 
 /-- Asserting attributes commitment and, by default, entitlement — on every scorecard. -/
-theorem assert_attributes_default_entitlement (s : Score W) (p : Set W) (k : Interlocutor) :
+theorem assert_attributes_default_entitlement (s : Score W) (p : Set W) (k : Discourse.Role) :
     p ∈ ((assert s p).card k .speaker).commitments ∧
       p ∈ ((assert s p).card k .speaker).entitlements := by
   constructor <;> simp [assert, NormativeStatus.commit, NormativeStatus.entitle,
@@ -197,15 +191,15 @@ theorem assert_attributes_default_entitlement (s : Score W) (p : Set W) (k : Int
 /-- Deferral entitles the hearer to what the speaker asserted, without the hearer having grounds of
 their own. -/
 theorem deferral_entitles_hearer (s : Score W) (p : Set W) :
-    p ∈ ((defer (assert s p) p).card .hearer .hearer).entitlements := by
+    p ∈ ((defer (assert s p) p).card .addressee .addressee).entitlements := by
   simp [defer, NormativeStatus.entitle, Set.mem_insert_iff]
 
 /-- A challenged assertion is a commitment the hearer no longer grants entitlement to: the
 challenge takes back the default without taking back the commitment. This is the configuration
 that has no counterpart where a context set is all the score records. -/
 theorem challenge_leaves_commitment (s : Score W) (p : Set W) :
-    p ∈ ((challenge (assert s p) p).card .hearer .speaker).commitments ∧
-      p ∉ ((challenge (assert s p) p).card .hearer .speaker).entitlements := by
+    p ∈ ((challenge (assert s p) p).card .addressee .speaker).commitments ∧
+      p ∉ ((challenge (assert s p) p).card .addressee .speaker).entitlements := by
   refine ⟨by simp [challenge, assert, NormativeStatus.commit, NormativeStatus.entitle,
       NormativeStatus.withdrawEntitlement, Set.mem_insert_iff], ?_⟩
   simp [challenge, assert, NormativeStatus.commit, NormativeStatus.entitle,
@@ -215,7 +209,7 @@ theorem challenge_leaves_commitment (s : Score W) (p : Set W) :
 grants entitlement where the hearer's does not, so there is no single score the two share. -/
 theorem scorekeepers_can_disagree (s : Score W) (p : Set W) :
     p ∈ ((challenge (assert s p) p).card .speaker .speaker).entitlements ∧
-      p ∉ ((challenge (assert s p) p).card .hearer .speaker).entitlements := by
+      p ∉ ((challenge (assert s p) p).card .addressee .speaker).entitlements := by
   refine ⟨?_, (challenge_leaves_commitment s p).2⟩
   have hcell : (challenge (assert s p) p).card .speaker .speaker
       = (assert s p).card .speaker .speaker := by
@@ -229,7 +223,7 @@ theorem scorekeepers_can_disagree (s : Score W) (p : Set W) :
 Projecting a score this way is lossy: the disagreement of `scorekeepers_can_disagree` and the
 commitment/entitlement distinction are both invisible in the result. -/
 def contextSet (s : Score W) : Set W :=
-  ⋂₀ (s.card .speaker .speaker).commitments ∩ ⋂₀ (s.card .hearer .hearer).commitments
+  ⋂₀ (s.card .speaker .speaker).commitments ∩ ⋂₀ (s.card .addressee .addressee).commitments
 
 instance : HasCommonGround (Score W) W where
   commonGround s := Filter.principal (contextSet s)

@@ -39,8 +39,8 @@ fragments for *was*, *kogo*, *set*, *kaufen* and the Xhosa and Chichewa subject 
 that the two rejected alternatives fail as order theory, two atoms having no join in the
 flat order, so that unification of the two verbs' requirements fails, while their join in
 the set order is the union and the underspecified value is the universal set that
-overgenerates; that union on marker sets is the substrate's person resolution because
-profiles union, with the person hierarchy as the inclusion order of marker sets; and that
+overgenerates; that union on marker sets is the substrate's person resolution, the person of
+a participant set, with the person hierarchy as the inclusion order of marker sets; and that
 the gender generalizations follow from union, same-gender congruence from idempotence and
 the need for a third gender from incomparability, with Slovene's violation located in the
 conjunction's marker. Each construction is then checked against the paper's judgment.
@@ -50,9 +50,9 @@ conjunction's marker. Each construction is then checked against the paper's judg
 * The syncretism class is the maximal indeterminate value a form can bear; §4.5 leaves it to
   the speaker's lexicon whether a form bears it or the disjunction of its singletons, and
   the file analyses the grammars that accept the paper's examples.
-* The person of a marker set is total: the two markers give exactly the four values of the
-  quadripartition, so resolution is derived from the substrate's profile grounding rather
-  than checked by a table.
+* The person of a marker set is the substrate's `Person.ofParticipants`, the markers the two
+  discourse roles, so resolution as union is the substrate's `Person.ofParticipants_union`,
+  derived from profile grounding rather than checked by a table.
 * The collapsed English system is stated as the tripartition's coarsened resolution, the
   study's bridge to the substrate; the paper frames §6.2 as a choice between two marker
   assignments.
@@ -284,72 +284,34 @@ theorem right_node_raising :
 
 /-! ### Person resolution (§6) -/
 
-/-- The person markers, the paper's S and H ((77), §6.1). -/
-inductive Marker where
-  | speaker
-  | hearer
-  deriving DecidableEq, Repr, Fintype
-
-/-- A person value as a set of markers. -/
-abbrev PersonSet := Finset Marker
-
-/-- The person of a marker set, first exclusive with the speaker alone, first inclusive with
-    both, second with the hearer alone, third with neither ((87)). -/
-def person (s : PersonSet) : Person :=
-  if Marker.speaker ∈ s then (if Marker.hearer ∈ s then .firstInclusive else .firstExclusive)
-  else if Marker.hearer ∈ s then .second else .third
+/-- A person value as a set of markers, the paper's S and H the two discourse roles ((77),
+    §6.1). Its person ((87)) is the substrate's `Person.ofParticipants`, resolution as union
+    ((77)) is `Person.ofParticipants_union`, and the Fula table is its instance ((78), (88)). -/
+abbrev PersonSet := Finset Discourse.Role
 
 /-- Two markers give exactly the four persons of the quadripartition, so no language resolves
     more than four (§6.3). -/
-theorem person_injective : Function.Injective person := by decide
-
-/-- Two markers give four values. -/
-theorem card_personSet : Fintype.card PersonSet = 4 := by decide
-
-theorem person_ne_zero (s : PersonSet) : person s ≠ .zero := by
-  unfold person; split_ifs <;> simp
-
-/-- A marker set is a discourse-role profile, the speaker marker speaker inclusion and the hearer
-    marker addressee inclusion. -/
-theorem toProfile_person (s : PersonSet) :
-    (person s).toProfile =
-      some ⟨decide (Marker.speaker ∈ s), some (decide (Marker.hearer ∈ s))⟩ := by
-  unfold person; split_ifs with hS hH hH <;> simp [Person.toProfile, hS, hH]
-
-private theorem resolve_ne_zero {a b : Person} (ha : a ≠ .zero) (hb : b ≠ .zero) :
-    Person.resolve a b ≠ .zero := by
-  revert a b; decide
-
-/-- Resolution is union ((77)): the substrate resolves persons by the disjunction of their role
-    profiles, the referential reading the paper starts from and weakens in §6.2, and the profile
-    of a union of marker sets is that disjunction, so `Person.resolve` commutes with `∪`; the
-    Fula table is the instance ((78), (88)). -/
-theorem resolve_person (p q : PersonSet) :
-    Person.resolve (person p) (person q) = person (p ∪ q) := by
-  refine Person.toProfile_injOn _ _ (resolve_ne_zero (person_ne_zero p) (person_ne_zero q))
-    (person_ne_zero _) ?_
-  rw [Person.resolve_profile _ _ (person_ne_zero p) (person_ne_zero q), toProfile_person,
-    toProfile_person, toProfile_person]
-  by_cases hS : Marker.speaker ∈ p <;> by_cases hS' : Marker.speaker ∈ q <;>
-    by_cases hH : Marker.hearer ∈ p <;> by_cases hH' : Marker.hearer ∈ q <;>
-    simp [Person.Profile.or, hS, hS', hH, hH']
+theorem card_personSet : Fintype.card PersonSet = 4 := by
+  rw [Fintype.card_finset, Discourse.Role.card]; rfl
 
 /-- The Fula examples, *you and Bill* second, *Bill and George* third, *you and I* and *you and
     Bill and I* first inclusive, *Bill and I* and *Bill and us* first exclusive ((81)–(86)). -/
 theorem fula :
-    AcceptableIff Examples.ex_81 (person ({.hearer} ∪ ∅) = .second) ∧
-      AcceptableIff Examples.ex_82 (person (∅ ∪ ∅) = .third) ∧
-      AcceptableIff Examples.ex_83 (person ({.hearer} ∪ {.speaker}) = .firstInclusive) ∧
-      AcceptableIff Examples.ex_84 (person ({.hearer} ∪ ∅ ∪ {.speaker}) = .firstInclusive) ∧
-      AcceptableIff Examples.ex_85 (person (∅ ∪ {.speaker}) = .firstExclusive) ∧
-      AcceptableIff Examples.ex_86 (person (∅ ∪ {.speaker}) = .firstExclusive) := by
+    AcceptableIff Examples.ex_81 (Person.ofParticipants ({.addressee} ∪ ∅) = .second) ∧
+      AcceptableIff Examples.ex_82 (Person.ofParticipants (∅ ∪ ∅) = .third) ∧
+      AcceptableIff Examples.ex_83
+        (Person.ofParticipants ({.addressee} ∪ {.speaker}) = .firstInclusive) ∧
+      AcceptableIff Examples.ex_84
+        (Person.ofParticipants ({.addressee} ∪ ∅ ∪ {.speaker}) = .firstInclusive) ∧
+      AcceptableIff Examples.ex_85 (Person.ofParticipants (∅ ∪ {.speaker}) = .firstExclusive) ∧
+      AcceptableIff Examples.ex_86 (Person.ofParticipants (∅ ∪ {.speaker}) = .firstExclusive) := by
   decide
 
 /-- The encoding of languages without the inclusive/exclusive contrast, every first person the
     inclusive's set, the second the hearer, the third empty ((91)). -/
 def english : Person → PersonSet
-  | .first => {.speaker, .hearer}
-  | .second => {.hearer}
+  | .first => {.speaker, .addressee}
+  | .second => {.addressee}
   | _ => ∅
 
 /-- Union under this encoding is the tripartition's coarsened resolution ((92)). -/
@@ -372,17 +334,17 @@ theorem english_subset_iff_rank :
     minimal set above `{}` and `{H}` being `{H}`, so the second-plural verb's constraining
     equation holds and the first-plural one fails ((71), (76), (95)–(99)). -/
 theorem spanish_slovak :
-    AcceptableIff Examples.ex_71 (english .third ∪ english .first = {.speaker, .hearer}) ∧
-      AcceptableIff Examples.ex_76 (english .first ∪ english .second = {.speaker, .hearer}) ∧
-      AcceptableIff Examples.ex_95 (english .third ∪ english .second = {.hearer}) ∧
-      english .third ∪ english .second ≠ {.speaker, .hearer} := by
+    AcceptableIff Examples.ex_71 (english .third ∪ english .first = {.speaker, .addressee}) ∧
+      AcceptableIff Examples.ex_76 (english .first ∪ english .second = {.speaker, .addressee}) ∧
+      AcceptableIff Examples.ex_95 (english .third ∪ english .second = {.addressee}) ∧
+      english .third ∪ english .second ≠ {.speaker, .addressee} := by
   decide
 
 /-- Sag, Gazdar, Wasow and Weisler's marker sets, combined by intersection ((100)). -/
 def sag : Person → PersonSet
   | .first => ∅
   | .second => {.speaker}
-  | .third => {.speaker, .hearer}
+  | .third => {.speaker, .addressee}
   | _ => ∅
 
 /-- Their assignment is the De Morgan dual of (91), each set the complement of the union
@@ -396,7 +358,8 @@ theorem sag_eq_compl :
     against (88)). -/
 theorem sag_intersection :
     sag .first ∩ sag .second = sag .first ∩ sag .third ∧
-      person ({.speaker} ∪ {.hearer}) ≠ person ({.speaker} ∪ ∅) := by
+      Person.ofParticipants ({.speaker} ∪ {.addressee}) ≠
+        Person.ofParticipants ({.speaker} ∪ ∅) := by
   decide
 
 /-- Any union analysis has an intersection dual over complements, markers read as absences

@@ -1,5 +1,5 @@
 import Linglib.Discourse.Commitment.Preferential
-import Linglib.Discourse.Roles
+import Linglib.Discourse.Role
 import Linglib.Fragments.Marathi.Particles
 import Linglib.Data.Examples.Deo2025
 

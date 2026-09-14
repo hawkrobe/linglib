@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.FarkasBruce2010
 import Linglib.Discourse.Commitment.Table
-import Linglib.Discourse.Roles
+import Linglib.Discourse.Role
 
 /-!
 # Farkas and Bruce (2010): On Reacting to Assertions and Polar Questions

@@ -686,7 +686,6 @@ import Linglib.Discourse.Gameboard.Defs
 import Linglib.Discourse.QUD.AtIssueness
 import Linglib.Discourse.QUD.Basic
 import Linglib.Discourse.QUD.Issue
-import Linglib.Discourse.Roles
 import Linglib.Discourse.SpeechAct
 import Linglib.Fragments.ASL.Classifiers
 import Linglib.Fragments.ASL.Determiners

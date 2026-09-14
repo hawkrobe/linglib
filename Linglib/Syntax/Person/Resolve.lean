@@ -1,3 +1,5 @@
+import Mathlib.Data.Fintype.Powerset
+import Linglib.Discourse.Role
 import Linglib.Syntax.Person.Basic
 
 /-!
@@ -24,6 +26,12 @@ in a tripartition system, resolution is minimum of `hierarchyRank`
 `zero` (impersonal) does not participate in attested resolution; it is
 treated as an identity by convention (documented, not an empirical
 claim).
+
+A referent that includes a known set of discourse participants has a
+total profile, and the person it determines is `ofParticipants`; the
+union of two participant sets is the resolution of their persons
+(`ofParticipants_union`), [dalrymple-kaplan-2000]'s person resolution
+by marker-set union.
 -/
 
 namespace Person
@@ -55,6 +63,10 @@ theorem resolve_comm : ∀ a b, resolve a b = resolve b a := by decide
 
 theorem resolve_assoc :
     ∀ a b c, resolve (resolve a b) c = resolve a (resolve b c) := by
+  decide
+
+/-- Resolving two referential persons gives a referential person. -/
+theorem resolve_ne_zero : ∀ {a b : Person}, a ≠ .zero → b ≠ .zero → resolve a b ≠ .zero := by
   decide
 
 @[simp] theorem resolve_zero_left (p : Person) : resolve .zero p = p := by
@@ -118,6 +130,40 @@ theorem toProfile_injOn :
     ∀ p q : Person, p ≠ .zero → q ≠ .zero →
       p.toProfile = q.toProfile → p = q := by
   decide
+
+/-! ### The person of a participant set -/
+
+/-- The person of a referent that includes exactly the given discourse participants: first
+    inclusive with both, first exclusive with the speaker alone, second with the addressee
+    alone and third with neither, the quadripartition as the subsets of the participants
+    ([harbour-2016]; [dalrymple-kaplan-2000]'s person of a marker set). -/
+def ofParticipants (s : Finset Discourse.Role) : Person :=
+  if .speaker ∈ s then if .addressee ∈ s then .firstInclusive else .firstExclusive
+  else if .addressee ∈ s then .second else .third
+
+theorem ofParticipants_injective : Function.Injective ofParticipants := by decide
+
+theorem ofParticipants_ne_zero (s : Finset Discourse.Role) : ofParticipants s ≠ .zero := by
+  unfold ofParticipants; split_ifs <;> simp
+
+/-- The profile of the person of a participant set records which participants it includes. -/
+theorem toProfile_ofParticipants (s : Finset Discourse.Role) :
+    (ofParticipants s).toProfile =
+      some ⟨decide (.speaker ∈ s), some (decide (.addressee ∈ s))⟩ := by
+  unfold ofParticipants; split_ifs with hS hH hH <;> simp [toProfile, hS, hH]
+
+/-- Resolution is participant union ([dalrymple-kaplan-2000]): the person of the union of two
+    participant sets is the resolution of their persons, since profiles union pointwise. -/
+theorem ofParticipants_union (s t : Finset Discourse.Role) :
+    ofParticipants (s ∪ t) = resolve (ofParticipants s) (ofParticipants t) := by
+  refine (toProfile_injOn _ _
+    (resolve_ne_zero (ofParticipants_ne_zero s) (ofParticipants_ne_zero t))
+    (ofParticipants_ne_zero _) ?_).symm
+  rw [resolve_profile _ _ (ofParticipants_ne_zero s) (ofParticipants_ne_zero t),
+    toProfile_ofParticipants, toProfile_ofParticipants, toProfile_ofParticipants]
+  by_cases hS : .speaker ∈ s <;> by_cases hS' : .speaker ∈ t <;>
+    by_cases hH : .addressee ∈ s <;> by_cases hH' : .addressee ∈ t <;>
+    simp [Profile.or, hS, hS', hH, hH']
 
 /-! ### System-relative resolution -/
 

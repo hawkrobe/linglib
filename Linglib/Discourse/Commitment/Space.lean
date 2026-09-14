@@ -2,7 +2,7 @@ import Mathlib.Order.Interval.Set.Basic
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Semantics.Questions.Basic
 import Linglib.Discourse.QUD.Issue
-import Linglib.Discourse.Roles
+import Linglib.Discourse.Role
 
 /-!
 # Commitment spaces
