@@ -106,7 +106,7 @@ def agentStrategy (agents : List F) (P : F → Set W) : Strategy W :=
   .node (⨆ w, ofSet (strongAnswer (Set.range P) w)) (agents.map λ f => .leaf (ofSet (P f)).query)
 
 /-- The polar subquestions for all candidates jointly resolve the *wh*-question. -/
-theorem agentStrategy_isComplete [Finite W] {agents : List F} (hcov : ∀ f, f ∈ agents)
+theorem agentStrategy_isComplete {agents : List F} (hcov : ∀ f, f ∈ agents)
     (P : F → Set W) : (agentStrategy agents P).IsComplete := by
   refine .node (λ _ => ?_) (λ c hc => ?_)
   · have hmem : ∀ q, q ∈ ((agents.map λ f => RoseTree.leaf (ofSet (P f)).query).map RoseTree.value :
@@ -116,7 +116,7 @@ theorem agentStrategy_isComplete [Finite W] {agents : List F} (hcov : ∀ f, f �
         RoseTree.value_node]
       exact ⟨λ ⟨f, _, h⟩ => ⟨f, h⟩, λ ⟨f, h⟩ => ⟨f, hcov f, h⟩⟩
     rw [← iInf_query_ofSet_eq_iSup_ofSet_strongAnswer]
-    refine entails_of_le (le_antisymm ?_ ?_).le (Set.toFinite _)
+    refine (le_antisymm ?_ ?_).le
     · exact le_iInf λ f => Multiset.inf_le ((hmem _).mpr ⟨f, rfl⟩)
     · exact Multiset.le_inf.mpr λ q hq => by obtain ⟨f, rfl⟩ := (hmem q).mp hq; exact iInf_le _ f
   · obtain ⟨f, _, rfl⟩ := List.mem_map.mp hc
@@ -127,8 +127,8 @@ instances: the tree of the treaty passage. -/
 def scalarStrategy (p q : Set W) : Strategy W :=
   .node (ofSet (p ∪ q)).query [.leaf (ofSet p).query, .leaf (ofSet q).query]
 
-theorem scalarStrategy_isComplete [Finite W] (p q : Set W) : (scalarStrategy p q).IsComplete := by
-  refine .node_pair (entails_of_le (le_def.mpr λ σ hσ => ?_) (Set.toFinite _)) (.leaf _) (.leaf _)
+theorem scalarStrategy_isComplete (p q : Set W) : (scalarStrategy p q).IsComplete := by
+  refine .node_pair (le_def.mpr λ σ hσ => ?_) (.leaf _) (.leaf _)
   rw [RoseTree.leaf, RoseTree.leaf, RoseTree.value_node, RoseTree.value_node, inf_eq_conj] at hσ
   obtain ⟨h₁, h₂⟩ := hσ
   have h₁' : σ ∈ (ofSet p).query := h₁

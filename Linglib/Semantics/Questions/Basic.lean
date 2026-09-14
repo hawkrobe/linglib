@@ -513,6 +513,22 @@ theorem mem_himp {P Q : Question W} {s : Set W} :
   rw [mem_iff_ofSet_le, le_himp_iff, inf_eq_conj, le_def]
   exact ⟨fun h _r hrs hrP => h ⟨hrs, hrP⟩, fun h _r hr => h _r hr.1 hr.2⟩
 
+/-- `Q` relative to the context `C`: the question a state resolves by resolving `Q` once cut
+    down to `C`, the Heyting implication `ofSet C ⇨ Q`. Contextual entailment and resolution in
+    the sense of [roberts-2012] are entailment and resolution of the relativized question. -/
+def relativeTo (Q : Question W) (C : Set W) : Question W := ofSet C ⇨ Q
+
+@[simp] theorem mem_relativeTo {Q : Question W} {C s : Set W} :
+    s ∈ Q.relativeTo C ↔ C ∩ s ∈ Q := by
+  rw [relativeTo, mem_himp]
+  exact ⟨fun h => h _ Set.inter_subset_right (mem_ofSet.mpr Set.inter_subset_left),
+    fun h r hrs hrC => Q.downward_closed _ h r (Set.subset_inter (mem_ofSet.mp hrC) hrs)⟩
+
+@[simp] theorem relativeTo_univ (Q : Question W) : Q.relativeTo Set.univ = Q := by
+  ext; simp
+
+theorem le_relativeTo (Q : Question W) (C : Set W) : Q ≤ Q.relativeTo C := le_himp
+
 @[simp] theorem mem_sSup {S : Set (Question W)} {q : Set W} :
     q ∈ sSup S ↔ q = ∅ ∨ ∃ P ∈ S, q ∈ P := Iff.rfl
 

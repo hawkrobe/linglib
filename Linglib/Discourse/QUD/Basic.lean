@@ -26,6 +26,8 @@ corpus data.
 ## Main definitions
 
 * `Discourse.Strategy` — strategies of inquiry as `RoseTree (Question W)`
+* `Discourse.Strategy.WellFormed` — every question in a subtree is a
+  contextual subquestion of the subtree's root
 * `Discourse.Strategy.IsComplete` — at every branching node, the meet of
   the children's questions entails the parent's
 * `Question.IsRelevantTo` — some alternative of the move partially
@@ -50,7 +52,10 @@ Definition (12) gives `Strat(q)` derivatively — its substrategies are those
 for the questions accepted while `q` was the immediate QUD — with
 well-formedness left to "rational considerations", and the second
 component an unordered set. The ordered `RoseTree` follows
-[buring-2003]. `IsComplete` is the success criterion the D₀ discussion
+[buring-2003]. A strategy read off well-formed stacks has every question
+of a subtree a contextual subquestion of that subtree's root, and since
+the relation is not transitive `WellFormed` states this for every
+ancestor, not only the parent. `IsComplete` is the success criterion the D₀ discussion
 illustrates (complete answers to the subquestions jointly yield a
 complete answer to the parent), not a clause of (12); the converse
 direction (parent entails children-meet) is exactly what (13) rules out.
@@ -76,13 +81,38 @@ namespace Strategy
 
 variable {W : Type*}
 
+/-- A strategy is **well formed** in the context `C` when every question in a subtree is a
+contextual subquestion of that subtree's root ([roberts-2012] definition (12), the strategies
+read off the stacks of (10g)). -/
+inductive WellFormed (C : Set W) : Strategy W → Prop
+  | node {q : Question W} {cs : List (Strategy W)}
+      (sub : ∀ c ∈ cs, ∀ r ∈ c.values, Question.IsSubquestionOf C r q)
+      (children : ∀ c ∈ cs, WellFormed C c) : WellFormed C (.node q cs)
+
+theorem WellFormed.leaf (C : Set W) (q : Question W) : WellFormed C (.leaf q : Strategy W) :=
+  .node nofun nofun
+
+@[simp] theorem wellFormed_node_iff {C : Set W} {q : Question W} {cs : List (Strategy W)} :
+    WellFormed C (.node q cs) ↔
+      (∀ c ∈ cs, ∀ r ∈ c.values, Question.IsSubquestionOf C r q) ∧ ∀ c ∈ cs, WellFormed C c :=
+  ⟨fun | .node h₁ h₂ => ⟨h₁, h₂⟩, fun ⟨h₁, h₂⟩ => .node h₁ h₂⟩
+
+/-- Every question of a well-formed strategy is a contextual subquestion of its root. -/
+theorem WellFormed.isSubquestionOf_root {C : Set W} : ∀ {t : Strategy W}, WellFormed C t →
+    ∀ r ∈ t.values, Question.IsSubquestionOf C r t.value
+  | .node _ _, .node h _, r, hr => by
+    rw [RoseTree.values_node, List.mem_cons, List.mem_flatten] at hr
+    rcases hr with rfl | ⟨l, hl, hrl⟩
+    · exact .refl _ _
+    · obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hl
+      exact h c hc r hrl
+
 /-- A strategy is **complete** when at every branching node the meet of the
 children's questions entails the parent's question: jointly resolving the
 subquestions resolves the parent. Terminal nodes are trivially complete. -/
 inductive IsComplete : Strategy W → Prop
   | node {q : Question W} {cs : List (Strategy W)}
-      (complete : cs ≠ [] →
-        ((cs.map RoseTree.value : Multiset (Question W))).inf.Entails q)
+      (complete : cs ≠ [] → ((cs.map RoseTree.value : Multiset (Question W))).inf ≤ q)
       (children : ∀ c ∈ cs, IsComplete c) : IsComplete (.node q cs)
 
 theorem IsComplete.leaf (q : Question W) : IsComplete (.leaf q : Strategy W) :=
@@ -91,15 +121,13 @@ theorem IsComplete.leaf (q : Question W) : IsComplete (.leaf q : Strategy W) :=
 /-- Binary branching: a two-child node is complete when the meet of the
 children's questions entails the parent's and both children are complete. -/
 theorem IsComplete.node_pair {q : Question W} {s t : Strategy W}
-    (h : (s.value ⊓ t.value).Entails q)
-    (hs : s.IsComplete) (ht : t.IsComplete) :
+    (h : s.value ⊓ t.value ≤ q) (hs : s.IsComplete) (ht : t.IsComplete) :
     IsComplete (.node q [s, t]) :=
   .node (fun _ => by simpa using h) (by simp [hs, ht])
 
 @[simp] theorem isComplete_node_iff {q : Question W} {cs : List (Strategy W)} :
     IsComplete (.node q cs) ↔
-      (cs ≠ [] →
-        ((cs.map RoseTree.value : Multiset (Question W))).inf.Entails q) ∧
+      (cs ≠ [] → ((cs.map RoseTree.value : Multiset (Question W))).inf ≤ q) ∧
         ∀ c ∈ cs, IsComplete c :=
   ⟨fun | .node h₁ h₂ => ⟨h₁, h₂⟩, fun ⟨h₁, h₂⟩ => .node h₁ h₂⟩
 
