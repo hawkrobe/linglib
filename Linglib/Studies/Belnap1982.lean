@@ -49,15 +49,15 @@ variable {W : Type*}
 some alternative true at w — the Distributivity Principle (§2.4), "to
 know IQ is to know some answer to the question as to IQ", as a semantic
 rendering of *know* + indirect question. Dropping the truth conjunct
-gives the substrate's `Question.ResolvedBy`. -/
+gives resolution of the question, `σ ∈ Q`. -/
 def KnowsAnswer (σ : Set W) (Q : Question W) (w : W) : Prop :=
   ∃ p ∈ alt Q, w ∈ p ∧ σ ⊆ p
 
 /-- Knowing an answer resolves the question. -/
 theorem KnowsAnswer.resolves {σ : Set W} {Q : Question W} {w : W}
-    (h : KnowsAnswer σ Q w) : ResolvedBy Q σ :=
+    (h : KnowsAnswer σ Q w) : σ ∈ Q :=
   let ⟨p, hp, _, hσ⟩ := h
-  ⟨p, hp, hσ⟩
+  mem_of_exists_alt_subset ⟨p, hp, hσ⟩
 
 /-! ### The Unique Answer Fallacy (§2.2)
 

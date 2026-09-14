@@ -43,9 +43,9 @@ canonical one).
 * `Question.PartiallyAnsweredBy` (`Resolution.lean`) and
   `Discourse.Relevant` (`Discourse/QUD/Basic.lean`) — Roberts
   QUD-relevance over `Question W`. Specific notions, not a typeclass.
-* `Question.ResolvedBy` / `Question.CompletelyAnsweredBy` (`Resolution.lean`) over
-  `Set W → Question W`. Each is a candidate `Support` instance for the
-  inquisitive substrate.
+* `Question.CompletelyAnsweredBy` (`Resolution.lean`) over
+  `Set W → Question W`, the mention-all refinement of the inquisitive
+  substrate's own `Support` instance, membership.
 * `Studies/IppolitoKissWilliams2022.lean` — the evidential support of
   [ippolito-kiss-williams-2022], reused by [ippolito-kiss-williams-2025]:
   doxastic, and parameterised by a context's evidence relation, so it

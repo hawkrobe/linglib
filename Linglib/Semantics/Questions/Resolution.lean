@@ -2,75 +2,44 @@ import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Hamblin
 
 /-!
-# Resolution — answerhood predicates on `Question`
-[ciardelli-groenendijk-roelofsen-2018] [theiler-etal-2018] [roberts-2012] [groenendijk-stokhof-1984]
+# Answerhood predicates on questions
 
-Canonical Prop-valued answerhood predicates over the inquisitive
-substrate (`Question W`), all in the `Question` namespace with the question
-as subject, `Q.ResolvedBy σ`, so that dot notation reads in the right
-direction. One topical home for the "what does it mean for a state
-σ to answer a question Q?" question, with definitions chosen to match
-modern (CGR 2018) formal-semantics consensus rather than the historical
-Hamblin/Karttunen/G&S conventions.
+This file defines the answerhood predicates over the inquisitive substrate `Question W`, with
+the question as subject so that dot notation reads in the right direction. Resolution is
+membership, `σ ∈ Q`, the support relation of [ciardelli-groenendijk-roelofsen-2018]
+(`Question.Support`), which under finiteness is settling some alternative
+(`mem_iff_exists_alt_subset`), the mention-some reading of [groenendijk-stokhof-1984]. A state
+completely answers a question when it decides every alternative (`CompletelyAnsweredBy`), the
+mention-all reading, and partially answers it when it decides some alternative
+(`PartiallyAnsweredBy`), the non-contextual core of [roberts-2012]'s partial answer. The
+notions form the quantifier × polarity square of answerhood: resolution (∃, positive),
+`PartiallyAnsweredBy` (∃, either), `CompletelyAnsweredBy` (∀, either). A question is a
+contextual subquestion of another when its complete answers, cut to the context, partially
+answer it (`IsSubquestionOf`), and a move is relevant to a set of questions when some
+alternative of it partially answers one of them (`IsRelevantTo`).
 
-## The notions formalised
+## Implementation notes
 
-Given a state `σ : Set W` and a question `Q : Question W`:
+`CompletelyAnsweredBy` decides each alternative rather than entailing every one, which would
+collapse to `σ ⊆ ⋂ alt Q` and is incoherent for partition questions with disjoint
+alternatives; the decided form is [groenendijk-stokhof-1984]'s strong exhaustivity on
+partition questions, and `Exhaustivity.lean` builds the weak / intermediate / strong /
+relativized ladder on it ([heim-1994], [george-2011], [xiang-2022]). Mention-some answerhood
+is resolution itself: an added "and not all alternatives" conjunct would rule out
+singleton-world states as mention-some answers to *Where can I get coffee?*. `∅` vacuously
+answers everything, as in [roberts-2012].
 
-- **ResolvedBy**: `Q.ResolvedBy σ`, σ settles at least one alternative — `∃ p ∈ alt Q, σ ⊆ p`.
-  This is the standard inquisitive resolution relation
-  ([ciardelli-groenendijk-roelofsen-2018], [roelofsen-2013]). It is
-  the natural notion of "σ answers Q" — even a singleton state can resolve
-  a question by being contained in one of its alternatives.
+## References
 
-- **MentionSome**: synonym of `ResolvedBy` — the doctrinal "mention-some"
-  reading of [groenendijk-stokhof-1984] Ch. VI §5 is just resolution
-  by one alternative. Authors who add an extra "and not all alternatives"
-  conjunct (forbidding mention-some answers from also being maximally
-  informative) end up ruling out singleton-world states as mention-some
-  answers to *Where can I get coffee?* — which is empirically wrong.
-
-- **CompletelyAnsweredBy**: `Q.CompletelyAnsweredBy σ`, σ decides every alternative, the
-  mention-all reading — `∀ p ∈ alt Q, σ ⊆ p ∨ σ ⊆ pᶜ`.
-  Note this is **not** "σ ⊆ p for every p" (which collapses to
-  `σ ⊆ ⋂ alt Q` and is incoherent for partition questions whose
-  alternatives are disjoint). The "decides each alternative" form is
-  what aligns with [groenendijk-stokhof-1984]-style strong
-  exhaustivity on partition questions. See `Exhaustivity.lean` for the
-  weak / intermediate / strong / relativized exhaustivity ladder
-  ([heim-1994], [george-2011], [xiang-2022]).
-
-- **PartiallyAnsweredBy** ([roberts-2012] (3a), its non-contextual core —
-  the paper relativizes entailment to the common ground): σ settles at
-  least one alternative either positively (`σ ⊆ p`) or negatively
-  (`σ ⊆ pᶜ`); `∅` vacuously answers everything, as there. Bridged by
-  `ResolvedBy.partiallyAnsweredBy`.
-
-The four form the quantifier × polarity square of answerhood: `ResolvedBy`
-(∃, positive), `PartiallyAnsweredBy` (∃, either), `CompletelyAnsweredBy` (∀, either).
-
-## Why this file
-
-A previous draft (deleted `Core/Question/Answerhood.lean`, audited
-0.230.378) shipped `isMentionSomeAnswer` with the bad second conjunct
-and `isMentionAllAnswer` in the over-strong intersection form. Both
-have been corrected here. This file is the canonical home; the G&S
-mention-some data lives in `Data.Examples.GroenendijkStokhof1984`
-(consumed by `Studies/GroenendijkStokhof1984.lean`), and
-`Exhaustivity.lean` (Karttunen / Dayal / Xiang / Fox) specializes
-these substrate predicates rather than defining parallel ones.
+* [ciardelli-groenendijk-roelofsen-2018]
+* [groenendijk-stokhof-1984]
+* [roberts-2012]
+* [theiler-etal-2018]
 -/
 
 namespace Question
 
 variable {W : Type*}
-
-/-- `σ` resolves `Q` if it settles at least one alternative. The standard
-inquisitive resolution relation ([ciardelli-groenendijk-roelofsen-2018]);
-the [groenendijk-stokhof-1984] "mention-some" notion is this same
-predicate. -/
-def ResolvedBy (Q : Question W) (σ : Set W) : Prop :=
-  ∃ p ∈ alt Q, σ ⊆ p
 
 /-- `σ` partially answers `Q` if it settles some alternative positively
 (`σ ⊆ p`) or negatively (`σ ⊆ pᶜ`). -/
@@ -118,10 +87,19 @@ variable {σ : Set W} {Q : Question W}
 
 /-! ### Basic relationships -/
 
-/-- Resolving implies partially answering: the positive disjunct fires. -/
-theorem ResolvedBy.partiallyAnsweredBy (h : ResolvedBy Q σ) :
-    PartiallyAnsweredBy Q σ :=
+/-- A state under an alternative resolves the question, by downward closure. -/
+theorem mem_of_exists_alt_subset (h : ∃ p ∈ alt Q, σ ⊆ p) : σ ∈ Q :=
   let ⟨p, hp, hsub⟩ := h
+  Q.downward_closed p (alt_subset_props _ hp) σ hsub
+
+/-- Under finiteness, resolving a question is settling one of its alternatives. -/
+theorem mem_iff_exists_alt_subset (hFin : Q.props.Finite) : σ ∈ Q ↔ ∃ p ∈ alt Q, σ ⊆ p :=
+  ⟨exists_alt_above Q hFin, mem_of_exists_alt_subset⟩
+
+/-- Under finiteness, resolving implies partially answering: the positive disjunct fires. -/
+theorem partiallyAnsweredBy_of_mem (hFin : Q.props.Finite) (h : σ ∈ Q) :
+    PartiallyAnsweredBy Q σ :=
+  let ⟨p, hp, hsub⟩ := exists_alt_above Q hFin h
   ⟨p, hp, Or.inl hsub⟩
 
 /-- Every alternative partially answers its own question. -/
@@ -145,8 +123,8 @@ theorem CompletelyAnsweredBy.mono {P : Question W} (h : CompletelyAnsweredBy Q �
 /-- The set of complete answers to `Q` — [roberts-2012]'s `Ans(q)`: the
 states that decide every alternative. Her question entailment (8), after
 [groenendijk-stokhof-1984], is `completeAnswers P ⊆ completeAnswers Q`,
-diverging from the alt-witnessed `Entails` off partition-shaped
-alternatives (see the fidelity note in `Entailment.lean`). -/
+diverging from the lattice order off partition-shaped alternatives (see
+`Entailment.lean`). -/
 def completeAnswers (Q : Question W) : Set (Set W) := {σ | CompletelyAnsweredBy Q σ}
 
 @[simp] theorem mem_completeAnswers {Q : Question W} :
@@ -199,46 +177,11 @@ theorem completeAnswers_iSup_ofSet {ι : Type*} [Nonempty ι] {P : ι → Set W}
   simp [completelyAnsweredBy_iff_of_alt_eq_range (alt_iSup_ofSet hne hP),
     completelyAnsweredBy_ofSet_iff]
 
-/-! ### Bridge to `Question.Support`
-
-`ResolvedBy Q` σ (alt-witnessed) and `Support.supports σ Q := σ ∈ Q.props`
-(CGR support, downward-closed) are two views on the same intuitive
-notion. The CGR side is the foundational definition; `ResolvedBy` is the
-alt-witnessed corollary, equivalent under finiteness of `Q.props`. -/
-
-/-- An alt witness is a resolving proposition, so any state below it is
-one by downward closure. -/
-theorem ResolvedBy.supports (h : ResolvedBy Q σ) : Support.supports σ Q :=
-  let ⟨p, hp, hsub⟩ := h
-  Q.downward_closed p (alt_subset_props _ hp) σ hsub
-
-/-- Under finiteness of `Q.props`, CGR support yields an alt witness via
-`exists_alt_above`. -/
-theorem resolvedBy_of_supports (hFin : Q.props.Finite)
-    (h : Support.supports σ Q) : ResolvedBy Q σ :=
-  exists_alt_above Q hFin h
-
-/-- `ResolvedBy` and `Support.supports` coincide under finiteness. -/
-theorem resolvedBy_iff_supports (hFin : Q.props.Finite) :
-    ResolvedBy Q σ ↔ Support.supports σ Q :=
-  ⟨ResolvedBy.supports, resolvedBy_of_supports hFin⟩
-
 /-! ### Polar reduction
 
 Iff lemmas reducing the square on nontrivial `polar p` to plain `Set`
-inclusions — the joints consumer-side study files build on. -/
-
-theorem resolvedBy_polar_iff {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    ResolvedBy (polar p) σ ↔ σ ⊆ p ∨ σ ⊆ pᶜ := by
-  unfold ResolvedBy
-  constructor
-  · rintro ⟨q, hq, hsub⟩
-    rcases (mem_alt_polar_of_nontrivial hne hnu q).mp hq with rfl | rfl
-    · exact Or.inl hsub
-    · exact Or.inr hsub
-  · rintro (h | h)
-    · exact ⟨p, (mem_alt_polar_of_nontrivial hne hnu p).mpr (Or.inl rfl), h⟩
-    · exact ⟨pᶜ, (mem_alt_polar_of_nontrivial hne hnu pᶜ).mpr (Or.inr rfl), h⟩
+inclusions — the joints consumer-side study files build on; resolution
+itself reduces without nontriviality, `mem_polar`. -/
 
 theorem partiallyAnsweredBy_polar_iff {p : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
@@ -266,15 +209,8 @@ theorem completelyAnsweredBy_polar_iff {p : Set W}
 
 /-! ### Decidability for polar questions -/
 
-/-- `ResolvedBy (polar p) σ` is decidable when the two inclusions are. -/
-def decidableResolvedByPolar {p σ : Set W}
-    (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
-    [Decidable (σ ⊆ p)] [Decidable (σ ⊆ pᶜ)] :
-    Decidable (ResolvedBy (polar p) σ) :=
-  decidable_of_iff _ (resolvedBy_polar_iff hne hnu).symm
-
-/-- `CompletelyAnsweredBy (polar p) σ` is decidable under the same hypotheses:
-on polar questions it coincides with `ResolvedBy`. -/
+/-- `CompletelyAnsweredBy (polar p) σ` is decidable when the two inclusions are: on polar
+questions it coincides with resolution, `mem_polar`. -/
 def decidableCompletelyAnsweredByPolar {p σ : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
     [Decidable (σ ⊆ p)] [Decidable (σ ⊆ pᶜ)] :
