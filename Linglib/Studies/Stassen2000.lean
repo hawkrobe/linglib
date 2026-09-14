@@ -1,315 +1,108 @@
 import Linglib.Syntax.Coordination
-import Linglib.Fragments.Japanese.Determiners
-import Linglib.Fragments.Japanese.Coordination
 
 /-!
 # Stassen (2000): AND-languages and WITH-languages
-[stassen-2000] [haspelmath-2007] [dryer-haspelmath-2013]
 
-Linguistic Typology 4(1), 1-54.
+This file formalizes [stassen-2000]'s typological parameter for the encoding of noun phrase
+conjunction. A language encodes conjunction by a coordinate strategy, in which the conjuncts
+have equal structural rank, form a constituent, trigger plural agreement and are linked by a
+marker distinct from the comitative, or by a comitative strategy modelled on the comitative
+construction; the diagnostics of an encoding are `Encoding`, and an encoding is coordinate
+when it passes all of them (`Encoding.Coordinate`). An AND-language has a coordinate
+strategy alongside the comitative one and a WITH-language only the comitative one
+(`Language.IsAnd`, `Language.IsWith`, `isAnd_iff_not_isWith`); the marker diagnostic is what
+the survey of [wals-2013] records, whether 'and' is identical to 'with', from which
+the substrate reads the status (`Syntax.Coordination.ConjComitativeRelation.toAndWithStatus`).
+WITH-languages drift towards AND-status: the comitative marker grammaticalizes into a
+coordinator, so the drifted language is an AND-language whose new coordinator has a
+comitative source and, in the terms of [haspelmath-2007], one of the monosyndetic patterns
+(`drift`, `drift_isAnd`, `drift_pattern_monosyndetic`).
 
-## Core contribution
+## Implementation notes
 
-A binary typological parameter classifying languages by how they encode
-NP conjunction:
+The article is not accessible from this checkout, so the study keeps to the parameter, the
+diagnostics and the drift its abstract states. The areal correspondence the paper reports
+between the AND/WITH parameter and the casedness and tensedness parameters is not
+formalized: its cross-tabulations over the sample of 260 languages were not available to
+transcribe, and a statistical tendency is not a theorem of the parameter.
 
-- **AND-languages**: have a structurally distinct coordinate strategy
-  (balanced, symmetric, plural agreement) alongside a separate comitative
-  ("with") construction.
-- **WITH-languages**: use comitative encoding as the *only* strategy for
-  NP conjunction — the "and" marker is lexically identical to "with".
+## References
 
-## Key claims
-
-1. The AND/WITH parameter is diagnosed by lexical identity: if "and" = "with",
-   the language is WITH; if "and" ≠ "with", it is AND.
-
-2. WITH→AND drift: diachronically, WITH-languages tend to grammaticalize
-   toward AND-status (comitative markers become balanced coordinators).
-   The reverse drift (AND→WITH) does not occur.
-
-3. Correlational parameters: AND-status correlates with "casedness" (bound
-   case morphology) and "tensedness" (obligatory bound tense marking).
-   These are statistical tendencies, not absolute universals.
-
-## Integration
-
-The AND/WITH parameter is derived from WALS Ch 63 (`ConjComitativeRelation`)
-via `AndWithStatus.toAndWithStatus` in `Linglib/Typology/Coordination.lean`.
-This file adds:
-
-- The 15-language WALS coordination sample (CoordinationProfile).
-- Stassen's strategy feature diagnostics (coordinate vs comitative).
-- The WITH→AND drift linked to `DiachronicSource.comitative`.
-- Correlational parameter types (sorry-marked: statistical tendencies).
-- Cross-module bridge: Japanese MU = additive = universal quantifier.
-
-## 2026 consensus
-
-The AND/WITH distinction is well-established and encoded in WALS Ch 63A
-(authored by [haspelmath-2007], building on Stassen's framework).
-The diachronic WITH→AND drift is broadly accepted. The correlational
-parameters (casedness, tensedness) are recognised as tendencies but with
-many counterexamples.
+* [stassen-2000]
+* [haspelmath-2007]
+* [wals-2013]
 -/
 
 namespace Stassen2000
 
 open Syntax.Coordination
 
--- ============================================================================
--- §1. Conjunction Encoding Strategies
--- ============================================================================
-
-/-- [stassen-2000]'s two encoding strategies for NP conjunction.
-
-    **Coordinate**: balanced, symmetric structure where both conjuncts have
-    equal syntactic rank.
-    **Comitative**: asymmetric structure modeled on "A with B". -/
-inductive ConjunctionEncoding where
-  | coordinate
-  | comitative
-  deriving DecidableEq, BEq, Repr
-
-/-- Diagnostic features for distinguishing coordinate from comitative
-    encoding. Based on [stassen-2000]'s structural diagnostics. -/
-structure StrategyFeatures where
-  /-- Both conjuncts have equal syntactic rank. -/
+/-- The structural diagnostics of a strategy for noun phrase conjunction: the conjuncts have
+equal syntactic rank, form a constituent, trigger plural agreement, and are linked by a
+marker distinct from the comitative marker. -/
+structure Encoding where
   equalRank : Bool
-  /-- The conjoined phrase forms a syntactic constituent. -/
-  constituency : Bool
-  /-- The conjoined subject triggers plural agreement on the verb. -/
+  constituent : Bool
   pluralAgreement : Bool
-  /-- The coordination marker is a dedicated form, not identical to "with". -/
-  uniqueMarker : Bool
-  deriving DecidableEq, BEq, Repr
+  distinctMarker : Bool
+  deriving DecidableEq, Repr, Fintype
 
-def coordinateFeatures : StrategyFeatures :=
-  { equalRank := true, constituency := true
-  , pluralAgreement := true, uniqueMarker := true }
+/-- An encoding is a coordinate strategy when it passes every diagnostic; otherwise it is a
+comitative strategy. -/
+def Encoding.Coordinate (e : Encoding) : Prop :=
+  e.equalRank ∧ e.constituent ∧ e.pluralAgreement ∧ e.distinctMarker
 
-def comitativeFeatures : StrategyFeatures :=
-  { equalRank := false, constituency := false
-  , pluralAgreement := false, uniqueMarker := false }
+instance : DecidablePred Encoding.Coordinate := λ _ =>
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
 
-/-- A strategy counts as coordinate iff all four features are positive. -/
-def StrategyFeatures.isCoordinate (f : StrategyFeatures) : Bool :=
-  f.equalRank && f.constituency && f.pluralAgreement && f.uniqueMarker
+/-- A comitative strategy shares its marker with the comitative construction. -/
+theorem Encoding.not_coordinate_of_not_distinctMarker {e : Encoding}
+    (h : e.distinctMarker = false) : ¬ e.Coordinate := by
+  simp [Encoding.Coordinate, h]
 
-theorem coordinateFeatures_is_coordinate :
-    coordinateFeatures.isCoordinate = true := by native_decide
+/-- A language's strategies for noun phrase conjunction. -/
+structure Language where
+  encodings : List Encoding
 
-theorem comitativeFeatures_is_not_coordinate :
-    comitativeFeatures.isCoordinate = false := by native_decide
+/-- An AND-language has a coordinate strategy. -/
+def Language.IsAnd (l : Language) : Prop := ∃ e ∈ l.encodings, e.Coordinate
 
--- ============================================================================
--- §2. The 15-language WALS coordination sample
--- ============================================================================
+/-- A WITH-language has only comitative strategies. -/
+def Language.IsWith (l : Language) : Prop := ∀ e ∈ l.encodings, ¬ e.Coordinate
 
-def englishWALS : CoordinationProfile :=
-  { language := "English", iso := "eng", family := "Indo-European"
-  , conjQuant := some .similarWithoutInterrogative
-  , conjComitative := some .andDifferentFromWith
-  , nomVerbalConj := some .identity
-  , walsNotes := "'and' for both NP and VP coordination; " ++
-                 "'and' differs from comitative 'with'" }
+instance (l : Language) : Decidable l.IsAnd := inferInstanceAs (Decidable (∃ e ∈ _, _))
 
-def germanWALS : CoordinationProfile :=
-  { language := "German", iso := "deu", family := "Indo-European"
-  , nomVerbalConj := some .identity
-  , walsNotes := "'und' for both NP and VP; absent from F56A and F63A" }
+instance (l : Language) : Decidable l.IsWith := inferInstanceAs (Decidable (∀ e ∈ _, _))
 
-def frenchWALS : CoordinationProfile :=
-  { language := "French", iso := "fra", family := "Indo-European"
-  , conjQuant := some .different
-  , conjComitative := some .andDifferentFromWith
-  , nomVerbalConj := some .identity
-  , walsNotes := "'et' for both NP and VP; distinct from 'avec' and 'tout/chaque'" }
+/-- The parameter is binary. -/
+theorem isAnd_iff_not_isWith (l : Language) : l.IsAnd ↔ ¬ l.IsWith := by
+  simp [Language.IsAnd, Language.IsWith]
 
-def spanishWALS : CoordinationProfile :=
-  { language := "Spanish", iso := "spa", family := "Indo-European"
-  , conjComitative := some .andDifferentFromWith
-  , nomVerbalConj := some .identity
-  , walsNotes := "'y' for both NP and VP; distinct from 'con'; absent from F56A" }
+/-- A language is an AND-language when its 'and' differs from its 'with', by the marker
+diagnostic alone, if the other diagnostics are met. -/
+theorem isAnd_of_distinctMarker {l : Language} {e : Encoding} (he : e ∈ l.encodings)
+    (h1 : e.equalRank = true) (h2 : e.constituent = true) (h3 : e.pluralAgreement = true)
+    (h4 : e.distinctMarker = true) : l.IsAnd :=
+  ⟨e, he, h1, h2, h3, h4⟩
 
-def russianWALS : CoordinationProfile :=
-  { language := "Russian", iso := "rus", family := "Indo-European"
-  , conjComitative := some .andDifferentFromWith
-  , nomVerbalConj := some .identity
-  , walsNotes := "'i' for both NP and VP; distinct from 's'; absent from F56A" }
+/-! ### Drift -/
 
-def japaneseWALS : CoordinationProfile :=
-  { language := "Japanese", iso := "jpn", family := "Japonic"
-  , conjQuant := some .similarWithInterrogative
-  , conjComitative := some .andIdenticalToWith
-  , nomVerbalConj := some .differentiation
-  , walsNotes := "'mo' links conjunction, universal quantifier, interrogative; " ++
-                 "'to' serves as both and/with" }
+/-- The drift of a WITH-language towards AND-status: its comitative marker grammaticalizes
+into a coordinator, adding a coordinate strategy whose diachronic source is the comitative. -/
+def drift (l : Language) (e : Encoding) : Language := ⟨e :: l.encodings⟩
 
-def mandarinWALS : CoordinationProfile :=
-  { language := "Mandarin", iso := "cmn", family := "Sino-Tibetan"
-  , conjQuant := some .similarWithInterrogative
-  , conjComitative := some .andIdenticalToWith
-  , nomVerbalConj := some .differentiation
-  , walsNotes := "NP 'he/gen' doubles as comitative; VP uses different strategies" }
+/-- A drifted language is an AND-language once the new strategy passes the diagnostics. -/
+theorem drift_isAnd (l : Language) {e : Encoding} (h : e.Coordinate) : (drift l e).IsAnd :=
+  ⟨e, List.mem_cons_self, h⟩
 
-def koreanWALS : CoordinationProfile :=
-  { language := "Korean", iso := "kor", family := "Koreanic"
-  , conjComitative := some .andDifferentFromWith
-  , nomVerbalConj := some .differentiation
-  , walsNotes := "NP '-(i)rang, -(g)wa' differs from comitative; absent from F56A" }
+/-- Drift is one-directional: it never removes a coordinate strategy. -/
+theorem isAnd_drift_of_isAnd (l : Language) (e : Encoding) (h : l.IsAnd) : (drift l e).IsAnd :=
+  let ⟨e', he', hc⟩ := h; ⟨e', List.mem_cons_of_mem _ he', hc⟩
 
-def turkishWALS : CoordinationProfile :=
-  { language := "Turkish", iso := "tur", family := "Turkic"
-  , conjQuant := some .different
-  , conjComitative := some .andDifferentFromWith
-  , nomVerbalConj := some .identity
-  , walsNotes := "'ve' for both NP and VP; distinct from 'ile' and 'her'" }
-
-def finnishWALS : CoordinationProfile :=
-  { language := "Finnish", iso := "fin", family := "Uralic"
-  , conjQuant := some .similarWithInterrogative
-  , conjComitative := some .andDifferentFromWith
-  , nomVerbalConj := some .identity
-  , walsNotes := "'ja' for both NP and VP; comitative is case suffix" }
-
-def hungarianWALS : CoordinationProfile :=
-  { language := "Hungarian", iso := "hun", family := "Uralic"
-  , conjQuant := some .similarWithoutInterrogative
-  , conjComitative := some .andDifferentFromWith
-  , nomVerbalConj := some .identity
-  , walsNotes := "'és' for both NP and VP; distinct from comitative '-val/-vel'" }
-
-def hindiWALS : CoordinationProfile :=
-  { language := "Hindi", iso := "hin", family := "Indo-European"
-  , conjQuant := some .similarWithInterrogative
-  , conjComitative := some .andDifferentFromWith
-  , nomVerbalConj := some .identity
-  , walsNotes := "'aur' for both NP and VP; distinct from 'ke saath'" }
-
-def arabicWALS : CoordinationProfile :=
-  { language := "Arabic (Egyptian)", iso := "arz", family := "Afro-Asiatic"
-  , conjComitative := some .andDifferentFromWith
-  , nomVerbalConj := some .identity
-  , walsNotes := "'wa/wi' for both NP and VP; distinct from 'ma'a'; absent from F56A" }
-
-def swahiliWALS : CoordinationProfile :=
-  { language := "Swahili", iso := "swh", family := "Niger-Congo"
-  , conjComitative := some .andIdenticalToWith
-  , walsNotes := "'na' serves as both 'and' and 'with'; classic " ++
-                 "comitative=conjunction; absent from F56A and F64A" }
-
-def tagalogWALS : CoordinationProfile :=
-  { language := "Tagalog", iso := "tgl", family := "Austronesian"
-  , conjQuant := some .similarWithInterrogative
-  , conjComitative := some .andDifferentFromWith
-  , nomVerbalConj := some .identity
-  , walsNotes := "'at' for both NP and VP; distinct from comitative" }
-
-def allWALSProfiles : List CoordinationProfile :=
-  [ englishWALS, germanWALS, frenchWALS, spanishWALS, russianWALS
-  , japaneseWALS, mandarinWALS, koreanWALS, turkishWALS, finnishWALS
-  , hungarianWALS, hindiWALS, arabicWALS, swahiliWALS, tagalogWALS ]
-
-theorem wals_profile_count : allWALSProfiles.length = 15 := by native_decide
-
--- ============================================================================
--- §3. AND/WITH classification — sample-level facts
--- ============================================================================
-
-/-- Count of AND-languages in the sample. -/
-def andCount : Nat :=
-  (allWALSProfiles.filter (λ p => p.andWithStatus == some .andLang)).length
-
-/-- Count of WITH-languages in the sample. -/
-def withCount : Nat :=
-  (allWALSProfiles.filter (λ p => p.andWithStatus == some .withLang)).length
-
-theorem and_outnumbers_with_in_sample : andCount > withCount := by native_decide
-
-/-- Two WITH-languages in the sample (Japanese, Mandarin, Swahili — and = with). -/
-theorem with_languages_count : withCount = 3 := by native_decide
-
--- ============================================================================
--- §4. Diachronic Parameter: WITH → AND Drift
--- ============================================================================
-
-/-- [stassen-2000]: diachronic drift is unidirectional — WITH → AND.
-    Comitative markers grammaticalise into balanced coordinators over time;
-    the reverse does not occur. -/
-inductive DriftDirection where
-  | withToAnd  -- Comitative → coordinator (attested)
-  | andToWith  -- Coordinator → comitative (unattested)
-  deriving DecidableEq, BEq, Repr
-
-/-- The only attested drift direction is WITH → AND. -/
-def attestedDrift : DriftDirection := .withToAnd
-
-/-- [stassen-2000]'s WITH→AND drift corresponds to
-    [haspelmath-2007]'s comitative diachronic source. -/
-def DriftDirection.toDiachronicSource : DriftDirection → Option DiachronicSource
-  | .withToAnd => some .comitative
-  | .andToWith => none
-
-/-- The attested drift direction (WITH→AND) corresponds to comitative source. -/
-theorem attested_drift_is_comitative :
-    DriftDirection.withToAnd.toDiachronicSource = some .comitative := rfl
-
-/-- Comitative-sourced coordinators yield monosyndetic patterns:
-    WITH→AND drift → comitative source → monosyndetic pattern. -/
-theorem drift_yields_monosyndetic :
-    ∀ pos, ∀ p ∈ DiachronicSource.pattern .comitative pos, p.syndesis = .monosyndetic := by
-  intro pos; cases pos <;> decide
-
--- ============================================================================
--- §5. Correlational Parameters
--- ============================================================================
-
-/-- [stassen-2000]: "Casedness" — whether a language has bound case
-    morphology on core argument NPs. Correlates statistically with AND-status. -/
-inductive Casedness where
-  | cased
-  | uncased
-  deriving DecidableEq, BEq, Repr
-
-/-- [stassen-2000]: "Tensedness" — whether a language has obligatory
-    bound past/non-past marking on verbs. Correlates with AND-status. -/
-inductive Tensedness where
-  | tensed
-  | untensed
-  deriving DecidableEq, BEq, Repr
-
-/-- [stassen-2000]: among cased languages, AND-status is more frequent
-    than WITH-status; among uncased languages, the reverse holds.
-    Cross-multiplied existential. [requires the cross-tabulation from the paper] -/
-theorem casedness_skews_andWith :
-    ∃ (casedAND casedWITH uncasedAND uncasedWITH : Nat),
-      casedAND + casedWITH + uncasedAND + uncasedWITH = 260 ∧
-      casedAND * (uncasedAND + uncasedWITH) >
-        uncasedAND * (casedAND + casedWITH) := by
-  exact ⟨100, 30, 50, 80, by omega, by omega⟩
-
-/-- [stassen-2000]: among tensed languages, AND-status is more frequent
-    than WITH-status; among untensed languages, the reverse. -/
-theorem tensedness_skews_andWith :
-    ∃ (tensedAND tensedWITH untensedAND untensedWITH : Nat),
-      tensedAND + tensedWITH + untensedAND + untensedWITH = 260 ∧
-      tensedAND * (untensedAND + untensedWITH) >
-        untensedAND * (tensedAND + tensedWITH) := by
-  exact ⟨100, 30, 50, 80, by omega, by omega⟩
-
--- ============================================================================
--- §6. Cross-Module Bridges
--- ============================================================================
-
-/-- Japanese MU "mo" also serves as a quantifier particle — the Fragment
-    records this via `alsoQuantifier`, and the Determiners fragment
-    independently records "mo" as the particle in dare-mo (universal).
-    Triple identity: MU = additive = ∀. -/
-theorem japanese_mu_quantifier_bridge :
-    Japanese.Coordination.mo.alsoQuantifier = true ∧
-    Japanese.Coordination.mo.alsoAdditive = true ∧
-    Japanese.Determiners.dare_mo.particle = some "mo" := by
-  exact ⟨rfl, rfl, rfl⟩
+/-- A coordinator of comitative source has a monosyndetic pattern in either position, so the
+coordinator a WITH-language acquires by drift is monosyndetic. -/
+theorem drift_pattern_monosyndetic (pos : CoordinatorPosition) :
+    ∀ p ∈ DiachronicSource.pattern .comitative pos, p.syndesis = .monosyndetic := by
+  cases pos <;> decide
 
 end Stassen2000
