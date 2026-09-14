@@ -17,12 +17,10 @@ cannot both be false. Negation of one entails the other:
 be true but can both be false. Negation of one does NOT entail the other:
 *not large* ⊭ *small*. Extension gap between the two standards.
 
-Note: The type is named `NegationType` for backward compatibility with
-existing call sites; the linguistically accurate name is *antonymy
-type*. The file is named `Antonymy.lean` to signal the right concept.
+The relation between a positive form and its antonym is `AntonymRelation`.
 -/
 
-namespace Features
+namespace Degree
 
 /-- Antonymy type: contradictory (no gap) vs contrary (gap).
 
@@ -32,32 +30,32 @@ namespace Features
 
     Antonymy is genuinely binary (an antonym pair is *either* contradictory *or*
     contrary — never subcontrary or unconnected), so this stays a 2-case type;
-    `NegationType.toOpposition` embeds it as the `{contradictory, contrary}` slice
+    `AntonymRelation.toOpposition` embeds it as the `{contradictory, contrary}` slice
     of the substrate's `Aristotelian.OppositionRel`, and `Degree.Antonymy`'s
     `isContradictory_*Denot` ground the tag in the real opposition between the
     adjective denotations. -/
-inductive NegationType where
+inductive AntonymRelation where
   | contradictory
   | contrary
   deriving Repr, DecidableEq, Fintype
 
 /-- Embed the antonymy type into the substrate's opposition relation: an antonym
 pair occupies exactly the `contradictory` or `contrary` cell of `OppositionRel`. -/
-def NegationType.toOpposition : NegationType → Aristotelian.OppositionRel
+def AntonymRelation.toOpposition : AntonymRelation → Aristotelian.OppositionRel
   | .contradictory => .contradictory
   | .contrary      => .contrary
 
-instance : Coe NegationType Aristotelian.OppositionRel := ⟨NegationType.toOpposition⟩
+instance : Coe AntonymRelation Aristotelian.OppositionRel := ⟨AntonymRelation.toOpposition⟩
 
-theorem NegationType.toOpposition_injective :
-    Function.Injective NegationType.toOpposition := by
-  intro a b h; cases a <;> cases b <;> simp_all [NegationType.toOpposition]
+theorem AntonymRelation.toOpposition_injective :
+    Function.Injective AntonymRelation.toOpposition := by
+  intro a b h; cases a <;> cases b <;> simp_all [AntonymRelation.toOpposition]
 
 /-- The image of `toOpposition` is exactly the two antonym cells of `OppositionRel`. -/
-theorem NegationType.range_toOpposition (r : Aristotelian.OppositionRel) :
-    (∃ n : NegationType, n.toOpposition = r) ↔ r = .contradictory ∨ r = .contrary := by
+theorem AntonymRelation.range_toOpposition (r : Aristotelian.OppositionRel) :
+    (∃ n : AntonymRelation, n.toOpposition = r) ↔ r = .contradictory ∨ r = .contrary := by
   constructor
-  · rintro ⟨n, rfl⟩; cases n <;> simp [NegationType.toOpposition]
+  · rintro ⟨n, rfl⟩; cases n <;> simp [AntonymRelation.toOpposition]
   · rintro (rfl | rfl)
     exacts [⟨.contradictory, rfl⟩, ⟨.contrary, rfl⟩]
 
@@ -70,4 +68,4 @@ inductive Asymmetry where
   | symmetric     -- parallel behavior under polarity
   deriving Repr, DecidableEq, Fintype
 
-end Features
+end Degree

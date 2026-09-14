@@ -36,7 +36,7 @@ semantics, plus a single pragmatic constraint (ToD).
 ## Architecture
 
 This file connects three layers:
-- `Features.ContainmentPair`: the algebraic structure (specLevel ordering)
+- `Agreement.ContainmentPair`: the algebraic structure (specLevel ordering)
 - `Presupposition.PhiFeatures`: presuppositional
   denotations, semantic markedness, and presuppositional strength ordering
 - `Constraint`: constraint evaluation and factorial typology
@@ -55,7 +55,7 @@ This file connects three layers:
 
 namespace Wang2023
 
-open Features (ContainmentPair ContainmentPairLike)
+open Agreement (ContainmentPair ContainmentPairLike)
 open Constraints OptimalityTheory
 open Presupposition.PhiFeatures
 

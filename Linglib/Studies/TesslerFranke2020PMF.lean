@@ -30,7 +30,7 @@ namespace TesslerFranke2020.PMF
 
 open scoped ENNReal
 open Degree (Bounded Threshold deg thr)
-open Features (NegationType)
+open Degree (AntonymRelation)
 open Degree (positiveMeaning negativeMeaning)
 
 /-! ## §0. Domain types -/
@@ -51,8 +51,8 @@ inductive Utterance where
   deriving Repr, DecidableEq, Fintype
 
 /-- Lexicon for morphological negation "un-": contrary (polar opposite with
-gap) vs contradictory (complement). Aliased to `Features.NegationType`. -/
-abbrev NegLexicon := NegationType
+gap) vs contradictory (complement). Aliased to `Degree.AntonymRelation`. -/
+abbrev NegLexicon := AntonymRelation
 
 /-- Joint latent state: (θ₁, θ₂, L) — 4 × 4 × 2 = 32 latent states. -/
 @[reducible] def LatentState := HThreshold × HThreshold × NegLexicon

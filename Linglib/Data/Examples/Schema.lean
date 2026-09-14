@@ -54,8 +54,6 @@ grow optional fields without breaking existing rows.
 
 namespace Data.Examples
 
-export Features (Judgment)
-
 /-- Glottolog 5.0 language identifier (e.g. "stan1293" for Standard English).
     Type alias only; values are not validated against Glottolog at the type
     level. Matches the convention in `Data.PHOIBLE.Inventory.glottocode`

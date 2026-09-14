@@ -80,7 +80,7 @@ def dual : Boundedness → Boundedness
 
 A computable order carrier for each shape — only the `OrderTop`/`NoMaxOrder` mixin matters,
 not the carrier. The grounding is proved once here; per-dimension views transport it
-(`Features.ScalarDimension.degree`). -/
+(`Degree.ScalarDimension.degree`). -/
 
 /-- Degree carrier per boundedness shape: a greatest element exists exactly when the scale
 `HasMax`. -/

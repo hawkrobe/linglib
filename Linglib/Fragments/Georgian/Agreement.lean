@@ -41,7 +41,7 @@ is person-conditioned regardless of the case frame.
 
 namespace Georgian.Agreement
 
-open Features.Prominence
+open Reference.Prominence
 open _root_.Agreement
 
 -- ============================================================================

@@ -28,7 +28,7 @@ at `Studies/RappaportHovavLevin2024.lean`.
 -/
 
 namespace ArgumentStructure.EventStructure
-open Features
+
 open Aspect
 
 /-! ### Event structure templates -/

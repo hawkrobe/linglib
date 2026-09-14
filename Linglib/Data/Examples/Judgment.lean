@@ -2,7 +2,7 @@ import Mathlib.Order.Fin.Basic
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Features.Acceptability — Linguistic Acceptability Diacritics
+# Data.Examples.Acceptability — Linguistic Acceptability Diacritics
 
 Standard acceptability diacritics used in linguistic papers, encoded as
 a six-way taxonomy. These correspond to the conventional marks placed
@@ -29,7 +29,7 @@ factorial-design machinery over experimental ratings (difference-in-
 differences scores etc.), see `Linglib/Studies/SprouseEtAl2012.lean`.
 -/
 
-namespace Features
+namespace Data.Examples
 
 /-- Standard acceptability diacritics used in linguistic papers. -/
 inductive Acceptability where
@@ -72,4 +72,4 @@ def Judgment.rank : Judgment → Fin 5
 
 instance : LinearOrder Judgment := LinearOrder.lift' Judgment.rank (by decide)
 
-end Features
+end Data.Examples

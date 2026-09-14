@@ -28,7 +28,6 @@ The intersective/subsective/privative classification lives in
 
 namespace Degree
 
-open Features (NegationType ScalarDimension)
 
 /-! ## Standards and Interpretive Economy ([kennedy-2007])
 
@@ -193,11 +192,6 @@ abbrev notContraryNegMeaning (tp : ThresholdPair max) : Prop :=
   (tp.neg : Bounded max) ≤ d
 
 end TwoThreshold
-
-/-! ### Antonym relations -/
-
-/-- The relation between a positive form and its antonym. -/
-abbrev AntonymRelation := NegationType
 
 /-! ### Informational strength -/
 

@@ -184,7 +184,7 @@ def DeclQuestionType.questionClass : DeclQuestionType → DeclQuestionClass
   | .NRQ => .rejecting
 
 /-- What a declarative of this type denotes (positive = p, negative = not-p). -/
-def DeclQuestionType.declPolarity : DeclQuestionType → Features.Polarity
+def DeclQuestionType.declPolarity : DeclQuestionType → SentencePolarity
   | .PDQ => .positive
   | .NDQ => .negative
   | .PRQ => .positive
@@ -291,7 +291,7 @@ def rejectQBiasProfile (im : IllocutionaryModifier) : BiasProfile :=
     the speaker must not have already assumed the declarative's content.
 
     [seeliger-repp-2018]: "DQs pattern with each other" (p. 136). -/
-def dqBiasProfile (pol : Features.Polarity) : BiasProfile :=
+def dqBiasProfile (pol : SentencePolarity) : BiasProfile :=
   match pol with
   | .positive => { evidential := .plusPos, epistemic := .minusPos }
   | .negative => { evidential := .plusNeg, epistemic := .minusNeg }
@@ -602,7 +602,7 @@ theorem rq_vs_dq_romero_coverage :
 -- § 14. Left-peripheral layer assignments ([dayal-2025] cartography)
 -- ════════════════════════════════════════════════════════════════
 
-open Features (QParticleLayer)
+open Question (QParticleLayer)
 
 /-- Layer assignments for the question-inducing modal particles
     discussed by [seeliger-repp-2018], placed in the

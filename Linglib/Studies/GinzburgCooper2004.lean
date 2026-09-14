@@ -325,9 +325,9 @@ structure Row where
   antecedent : SubUtterance
   fragment : SubUtterance
   access : Access
-  clausal : Option Features.Judgment
-  constituent : Option Features.Judgment
-  judgment : Features.Judgment
+  clausal : Option Data.Examples.Judgment
+  constituent : Option Data.Examples.Judgment
+  judgment : Data.Examples.Judgment
   deriving DecidableEq
 
 def Row.ofExample (ex : LinguisticExample) : Option Row := do

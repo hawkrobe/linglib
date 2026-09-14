@@ -40,7 +40,7 @@ namespace Sauerland2003
 
 open Mereology (Atom AlgClosure cum_maximal_unique algClosure_cum not_atom_sup_of_ne)
 open Plurality.Algebra (D)
-open Features (ContainmentPair ContainmentPairLike)
+open Agreement (ContainmentPair ContainmentPairLike)
 open Presupposition
 open Constraints OptimalityTheory
 open Presupposition.PhiFeatures

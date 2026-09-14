@@ -205,7 +205,7 @@ def Diagnostic.labels : List (String × Diagnostic) :=
 structure Datum where
   strategy : Strategy
   diagnostic : Option Diagnostic
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
 
 /-- An example read into its datum. -/
 def datum (e : LinguisticExample) : Option Datum := do

@@ -42,7 +42,7 @@ unified `Denot E W` machinery rather than ad-hoc `E → Bool` predicates.
 - **`demonstrative` is a separate constructor** for *genuinely deictic*
   demonstratives (this/that; [moroney-2021] Shan *nâj*/*nân*): it carries
   **both** a discourse/pointing index *and* a deictic feature
-  (`Features.Deixis.Feature`), checked at a situation pronoun. This is **distinct**
+  (`Reference.Deixis`), checked at a situation pronoun. This is **distinct**
   from the [schwarz-2009] strong article (`anaphoric`): [patel-grosz-grosz-2017]
   analyze German *der* as the strong article (`anaphoric`), not as a deictic
   demonstrative — their footnote 1 doubts *der* is truly demonstrative at all.
@@ -52,7 +52,7 @@ unified `Denot E W` machinery rather than ad-hoc `E → Bool` predicates.
   and the possessor is an `e`-type expression that may itself be derived
   from a `Description` higher in the structure.
 
-- **Reuses `Features.Deixis.Feature`** for the deictic content, so
+- **Reuses `Reference.Deixis`** for the deictic content, so
   Shan/English/Latin/German fragments share the same enum.
 
 - **No semantic interpretation here.** This file only declares the type and
@@ -71,7 +71,7 @@ open Semantics.Composition
 
 /-- Principal flavors of nominal description — the *definiteness/reference*
     axis (bare/indefinite vs the definite subtypes), orthogonal to
-    `Features.BindingClass` (binding distribution) and to a pronoun's lexical
+    `Binding.BindingClass` (binding distribution) and to a pronoun's lexical
     kind. The type parameters `E`/`W` supply the entity domain and index set so
     all subexpressions live in the same `Denot E W` universe. -/
 inductive Description (E W : Type) where
@@ -98,7 +98,7 @@ inductive Description (E W : Type) where
       the [schwarz-2009] strong article `anaphoric` (PG&G's German *der*). -/
   | demonstrative
       (restrictor : DenotGS E W .et)
-      (deictic : Features.Deixis.Feature)
+      (deictic : Reference.Deixis)
       (situationIdx : Nat)
       (discourseIdx : Nat)
   /-- Definite description via a possession relation: ⟦the N of x⟧ where the

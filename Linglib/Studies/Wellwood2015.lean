@@ -58,7 +58,7 @@ than annotated.
 namespace Wellwood2015
 
 open ArgumentStructure (ThematicFrame)
-open Features
+
 open Aspect
 open Degree
 open Semantics.Kinds.MeaningPreservation (NumberFeature)

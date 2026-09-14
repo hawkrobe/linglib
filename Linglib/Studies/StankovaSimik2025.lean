@@ -29,7 +29,7 @@ open Czech.Particles (nahodou snad copak)
 open Czech.Determiners (zadny nejaky)
 open Czech.Negation
 open Question
-open Features (Judgment)
+open Data.Examples (Judgment)
 
 /-! ### The main experiment (§5)
 

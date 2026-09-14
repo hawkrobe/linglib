@@ -185,7 +185,7 @@ instance : Decidable s.IsGlide := by unfold IsGlide; infer_instance
 
 /-! ### Feature changes
 
-The segment-level operations are thin lifts of the shared `Features.Bundle`
+The segment-level operations are thin lifts of the shared `Bundle`
 algebra. Three-valued (`+ / − / ∅`) specification is standard in [keating-1988],
 [inkelas-orgun-1995], and [steriade-1995]; `fillFromContext` is default-fill,
 preserving existing values per [kiparsky-1982] [archangeli-1988], while
@@ -193,9 +193,9 @@ preserving existing values per [kiparsky-1982] [archangeli-1988], while
 example. -/
 
 /-- Set feature `f` to value `v`, overriding any existing specification (the
-    `Features.Bundle.set` slot operation). For default-fill semantics that only
+    `Bundle.set` slot operation). For default-fill semantics that only
     assign when `f` is currently unspecified, use `fillFromContext`. -/
-def setFeature (f : Feature) (v : Bool) : Segment := Features.Bundle.set f v s
+def setFeature (f : Feature) (v : Bool) : Segment := Bundle.set f v s
 
 /-- Categorical feature spreading from context: the target `s`, when unspecified
     for `f`, takes the `f`-value of `ctx`; already-specified targets and features
@@ -209,7 +209,7 @@ def setFeature (f : Feature) (v : Bool) : Segment := Features.Bundle.set f v s
     phonetics builds a continuous trajectory through it; gradient phonetic
     interpolation is out of scope at this categorical-featural substrate. -/
 def fillFromContext (f : Feature) (ctx : Segment) : Segment :=
-  Features.Bundle.merge s (Function.update (⊥ : Segment) f (ctx f))
+  Bundle.merge s (Function.update (⊥ : Segment) f (ctx f))
 
 end Segment
 

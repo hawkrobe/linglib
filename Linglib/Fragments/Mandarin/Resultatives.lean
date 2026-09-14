@@ -35,7 +35,7 @@ remain in `Causation.Resultatives`.
 namespace Mandarin.Resultatives
 
 open Causation.Resultatives (ResultativeRealization ResultOrientation)
-open Features.ChangeOfState (CoSType)
+open Aspect.ChangeOfState (CoSType)
 
 -- ════════════════════════════════════════════════════
 -- § 0. Phase complement morpheme enum

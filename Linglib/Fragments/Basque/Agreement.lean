@@ -27,7 +27,7 @@ person objects are not.
 
 namespace Basque.Agreement
 
-open Features.Prominence
+open Reference.Prominence
 open _root_.Agreement
 
 -- ============================================================================

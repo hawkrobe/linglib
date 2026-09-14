@@ -44,7 +44,7 @@ a row's overt suffixes.
 
 namespace GonzalezPootMcGinnis2006
 
-open DistributedMorphology Data.Examples Features
+open DistributedMorphology Data.Examples
 open Minimalist (FeatureVal)
 open scoped DistributedMorphology.VocabularyItem
 

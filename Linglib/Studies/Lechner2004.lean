@@ -32,7 +32,7 @@ the coordinate-structure argument for syntactic identification of the deletion s
 
 namespace Lechner2004
 
-open Features (Acceptability)
+open Data.Examples (Acceptability)
 
 /-- The two structural analyses of phrasal comparatives: under reduction, phrasal *than NP*
 derives from clausal *than [NP is Adj]* and the standard sits in a clause-internal position

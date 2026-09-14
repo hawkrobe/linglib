@@ -35,7 +35,7 @@ construction ([steedman-2000] ch. 2).
 
 ## Implementation notes
 
-The prosodic vocabulary comes from `Features.Prosody`'s autosegmental-metrical types.
+The prosodic vocabulary comes from `Prosody`'s autosegmental-metrical types.
 Relating these phrases to the phonology-side prosodic hierarchy
 (`Phonology/Prosody/Phrase`) is left to future study-level work.
 -/
@@ -43,7 +43,7 @@ Relating these phrases to the phonology-side prosodic hierarchy
 namespace CCG.Intonation
 
 open CCG
-open Features.Prosody
+open Prosody
 
 /-! ### The INFORMATION feature -/
 

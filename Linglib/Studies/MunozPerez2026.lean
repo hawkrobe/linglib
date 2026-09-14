@@ -23,7 +23,7 @@ star mapping to the unacceptable level.
 * [munoz-perez-2026]
 -/
 
-open Features (Acceptability)
+open Data.Examples (Acceptability)
 
 namespace MunozPerez2026
 
@@ -63,7 +63,7 @@ structure Judgment where
   pattern : CliticPattern
   /-- Person of the dative clitic. -/
   dativePerson : DativeCliticPerson
-  /-- Acceptability per `Features.Acceptability`. -/
+  /-- Acceptability per `Data.Examples.Acceptability`. -/
   acceptability : Acceptability
   deriving Repr, BEq
 

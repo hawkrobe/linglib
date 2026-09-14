@@ -52,7 +52,7 @@ in prose.
 namespace Pearson2015
 
 open Reference
-open Features.Logophoricity
+open Reference
 
 /-! ### Concept generators -/
 

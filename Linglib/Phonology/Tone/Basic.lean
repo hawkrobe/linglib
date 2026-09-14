@@ -19,7 +19,7 @@ shifts; the terracing reading of `[raised]` is `Tone.Register`.
 
 * `Subtonal`, `TRN` — the two feature dimensions and the root node; `TRN.bundleEquiv`
   identifies a root node with its feature bundle `Subtonal → Option Bool`
-  (`Features.Bundle`).
+  (`Bundle`).
 * `TRN.H`, `TRN.M`, `TRN.L`, `TRN.superHigh` — the four full specifications;
   `TRN.empty`, `TRN.downstep`, `TRN.upstep` — the register-only nodes.
 * `TRN.assimilate`, `TRN.merge`, `TRN.dock` — the feature operations, through the bundle.
@@ -98,21 +98,21 @@ def bundleEquiv : TRN ≃ (Subtonal → Option Bool) where
 its other feature untouched. Laal M-lowering ([lionnet-2022] §5.2) is `assimilate .raised`:
 a `[-raised]` value spreads onto M, `[-upper, +raised]`, giving L. -/
 def assimilate (f : Subtonal) (src tgt : TRN) : TRN :=
-  ofBundle (Features.Bundle.assimilate f src.toBundle tgt.toBundle)
+  ofBundle (Bundle.assimilate f src.toBundle tgt.toBundle)
 
 /-- **Merger** of two nodes ([lionnet-2022] ex. 53–54): each feature from the left node
-where it is specified, else from the right (`Features.Bundle.merge`) — the fusion of two
+where it is specified, else from the right (`Bundle.merge`) — the fusion of two
 associated tones ([goldsmith-1976]); the tier-level merger of a run of identical tones is
 `OCP.collapse`. -/
-def merge (t₁ t₂ : TRN) : TRN := ofBundle (Features.Bundle.merge t₁.toBundle t₂.toBundle)
+def merge (t₁ t₂ : TRN) : TRN := ofBundle (Bundle.merge t₁.toBundle t₂.toBundle)
 
 @[simp] theorem merge_self (t : TRN) : merge t t = t := by
-  simp only [merge, Features.Bundle.merge_self, ofBundle_toBundle]
+  simp only [merge, Bundle.merge_self, ofBundle_toBundle]
 
 /-- **Docking** of a floating feature ([lionnet-2022] §5.3): a free `[±f]` lands on a node,
 overwriting its value at `f`. -/
 def dock (f : Subtonal) (v : Bool) (t : TRN) : TRN :=
-  ofBundle (Features.Bundle.set f v t.toBundle)
+  ofBundle (Bundle.set f v t.toBundle)
 
 end TRN
 

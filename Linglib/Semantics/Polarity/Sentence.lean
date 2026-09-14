@@ -13,14 +13,11 @@ Note: This is distinct from other polarity-like distinctions in the library:
 - `Presupposition.Aboutness.EventSentence.polarity` — polarity of the event claim
 -/
 
-namespace Features
-
 /--
 Sentence polarity: whether a sentence is affirmative or negated.
 -/
-inductive Polarity where
+inductive SentencePolarity where
   | positive
   | negative
   deriving Repr, DecidableEq, Inhabited
 
-end Features

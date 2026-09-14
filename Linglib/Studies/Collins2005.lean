@@ -361,7 +361,7 @@ inductive Dependency
 reconstructed reflexive is `??` and the reconstructed bound variable `?`, as the paper grades
 them. -/
 def Dependency.predict (dep : Dependency) (d : Derivation) (x y : SyntacticObject) :
-    Features.Judgment :=
+    Data.Examples.Judgment :=
   match dep with
   | .reflexive =>
       if d.BindsAtSurface x y then .acceptable
@@ -396,7 +396,7 @@ def Licensing.ofRow (row : LinguisticExample) : Option Licensing := do
     ← row.parse? "antecedent" positions, ← row.parse? "dependent" positions⟩
 
 /-- The judgment the configuration predicts on the PartP-movement derivation. -/
-def Licensing.predict? (c : Licensing) : Option Features.Judgment := do
+def Licensing.predict? (c : Licensing) : Option Data.Examples.Judgment := do
   let x ← c.clause.at? c.antecedent
   let y ← c.clause.at? c.dependent
   return c.dependency.predict (c.clause.passive .partP c.evacuated) x y

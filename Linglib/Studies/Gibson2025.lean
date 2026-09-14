@@ -42,7 +42,7 @@ cost more only because they keep subjects before their verbs.
 
 namespace Gibson2025
 
-open DependencyGrammar Morphology Features
+open DependencyGrammar Morphology
 
 variable {n : ℕ}
 

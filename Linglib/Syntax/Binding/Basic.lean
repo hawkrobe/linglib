@@ -47,7 +47,7 @@ command relation; a study combines them.
 namespace Binding
 
 
-open Features (BindingClass CoreferenceStatus)
+open Binding (BindingClass CoreferenceStatus)
 
 /-- A binding position in a simple clause. The verb is not a binding position. -/
 inductive Pos where
@@ -80,9 +80,9 @@ def isNominalCat (cat : UD.UPOS) : Bool :=
     its own UD morphology (`Reflex`, `PronType`) and category — *no* lexicon and *no* surface-form
     lookup. Reflexive morphology → anaphor; reciprocal `PronType` → reciprocal anaphor; any other
     pronoun → pronominal; a proper/common-noun category → R-expression; a non-nominal → `none`.
-    This is the framework- *and* language-neutral default `Features.BindingSource Word`, replacing
+    This is the framework- *and* language-neutral default `Binding.BindingSource Word`, replacing
     per-language form-string classifiers ([chomsky-1981]'s A/B/C classes as morphology). -/
-def bindingClassOf : Features.BindingSource Word := fun w =>
+def bindingClassOf : Binding.BindingSource Word := fun w =>
   if w.features.reflex then some .reflexive
   else match w.features.pronType with
     | some .Rcp => some .reciprocal

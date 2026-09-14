@@ -43,7 +43,6 @@ namespace Moroney2021
 
 open Definiteness
 open Semantics.Kinds
-open Features.Deixis (Feature)
 open Mereology (CUM)
 
 /-! ### Type-shift selection -/
@@ -168,14 +167,14 @@ def bareDefinite {E : Type*} (domain : List E) (restrictor : E → Bool) : Optio
 unique referent, further required to satisfy the demonstrative's spatial content
 (`ιx[P(x) ∧ CLOSE.TO.SPEAKER(x)]`). -/
 def demDenotation {E : Type*} (domain : List E) (d : DemonstrativeDeterminer)
-    (restrictor : E → Bool) (spatialPred : Feature → E → Bool) : Option E :=
+    (restrictor : E → Bool) (spatialPred : Reference.Deixis → E → Bool) : Option E :=
   (bareDefinite domain restrictor).filter (spatialPred d.deictic)
 
 /-- The demonstrative refers exactly when the bare definite does and its referent has the
 demonstrative's spatial property, so *nâj/nân* are optional wherever the bare noun already
 provides the definite reading. -/
 theorem demDenotation_eq_some_iff {E : Type*} (domain : List E) (d : DemonstrativeDeterminer)
-    (restrictor : E → Bool) (spatialPred : Feature → E → Bool) (e : E) :
+    (restrictor : E → Bool) (spatialPred : Reference.Deixis → E → Bool) (e : E) :
     demDenotation domain d restrictor spatialPred = some e ↔
       bareDefinite domain restrictor = some e ∧ spatialPred d.deictic e = true :=
   Option.filter_eq_some_iff

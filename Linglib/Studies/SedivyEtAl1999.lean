@@ -127,10 +127,10 @@ instance : HasDisplayKind Cell where
 /-- The perceptual domain targeted by Exps 2 and 3 (scalar size adjectives:
     "tall", "short", "long"). Cross-study bridges use this to connect
     Sedivy's findings to the perceptual-domain typology in
-    `Features.PropertyDomain`. Exp 1's intersective adjectives (color,
+    `Degree.PropertyDomain`. Exp 1's intersective adjectives (color,
     material, shape) live in different domains and are not summarised
     here — see the docstring for the per-experiment breakdown. -/
-def adjDomain : Features.PropertyDomain := .size
+def adjDomain : Degree.PropertyDomain := .size
 
 /-- Scalar size adjectives are relative gradable adjectives, interpreted
     against a comparison class ([kennedy-2007], [kennedy-mcnally-2005]) —

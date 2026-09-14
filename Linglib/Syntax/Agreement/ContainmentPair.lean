@@ -72,7 +72,7 @@ available representation of Germanic third person in the tripartition
 containment skeleton that calculus refines and in part rejects.
 -/
 
-namespace Features
+namespace Agreement
 
 /-- A pair of bivalent features with a containment (dependency) relation:
     bearing the inner feature entails bearing the outer one. The carrier
@@ -284,4 +284,4 @@ theorem specLevel_strict_order {a b c : α}
 
 end ContainmentPairLike
 
-end Features
+end Agreement

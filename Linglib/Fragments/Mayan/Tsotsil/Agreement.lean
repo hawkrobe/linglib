@@ -108,7 +108,7 @@ namespace Extraction
 
 /-- No Agent Focus morphology is required for A-extraction, consistent
     with Tsotsil being LOW-ABS. -/
-def realize : ExtractionTarget → List (Features.Reflex Empty) :=
+def realize : ExtractionTarget → List (Reflex Empty) :=
   fun _ => []
 
 /-- WALS-style label: extraction is unmarked. -/

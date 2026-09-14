@@ -39,7 +39,7 @@ subject-extraction lexical rule and the initial symbol are not formalized.
 
 namespace SagWasowBender2003
 
-open HPSG.RSRL HPSG.Construction Data.Examples Features
+open HPSG.RSRL HPSG.Construction Data.Examples
 
 /-- The rows on a topic. -/
 def probing (t : String) : List LinguisticExample :=

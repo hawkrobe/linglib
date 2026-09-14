@@ -730,7 +730,7 @@ Condition, [selkirk-1984]; [steedman-2000] ch. 2). -/
 
 section Intonation
 
-open CCG.Intonation Features.Prosody
+open CCG.Intonation Prosody
 
 /-- Accents for "(ANNA married)(MANNY)": theme accent on "Anna", rheme accent on
 "Manny", "married" unaccented. -/
@@ -864,7 +864,7 @@ end TruthConditions
 
 section BPTerminal
 
-open Features.Prosody BeckmanPierrehumbert1986 CCG.Intonation
+open Prosody BeckmanPierrehumbert1986 CCG.Intonation
 
 /-- A CCG `Tune` from a [beckman-pierrehumbert-1986] intonation phrase: the
 tune's terminal contour is the IP's final phrase accent plus boundary tone

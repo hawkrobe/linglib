@@ -35,7 +35,7 @@ The bridge to Minimalist P-Prominence ([pancheva-zubizarreta-2018]) is
 in `PanchevaZubizarreta2018`.
 -/
 
-namespace Features.Logophoricity
+namespace Reference
 
 -- ============================================================================
 -- § 1: Logophoric Roles
@@ -174,4 +174,4 @@ theorem Logophoric.LicensedBy.mono {α : Type*} [Logophoric α] {a : α}
     Logophoric.LicensedBy a r' :=
   le_trans h hr
 
-end Features.Logophoricity
+end Reference

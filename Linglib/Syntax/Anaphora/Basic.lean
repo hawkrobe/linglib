@@ -22,7 +22,7 @@ models extraction and Landau's EIR test (`Syntax/Anaphora/Diagnostic.lean`).
 `.surface`.
 
 This is the **unbounded**-anaphora axis, orthogonal to (and a sibling of) the
-binding-theoretic Principle-A/B/C axis (`Features.BindingClass` / the `Bound`
+binding-theoretic Principle-A/B/C axis (`Binding.BindingClass` / the `Bound`
 capability): H&S explicitly set aside bounded anaphora (reflexivization) as a
 separate, always-syntactic process. A reflexive is a `Bound.IsAnaphor`; *do so*
 is an `Anaphor.Depth.deep`.

@@ -32,7 +32,7 @@ in `Determiners.lean`):
 
 namespace English.TemporalExpressions
 
-open Features
+
 open Aspect
 open Tense.TemporalAdverbials (AdverbialType)
 open Polarity

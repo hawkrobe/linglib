@@ -31,7 +31,7 @@ namespace English.Modifiers.Adjectives
 
 open Degree (AntonymRelation)
 open Degree (Boundedness)
-open Features (NegationType)
+open Degree (AntonymRelation)
 
 -- ============================================================================
 -- Adjective Modifier Entry Structure
@@ -53,11 +53,11 @@ structure AdjModifierEntry where
   /-- Scale boundedness (from [kennedy-2007]) -/
   scaleType : Boundedness := .open_
   /-- What dimension is being measured? -/
-  dimension : Features.ScalarDimension
+  dimension : Degree.ScalarDimension
   /-- Antonym form (if any) -/
   antonymForm : Option String := none
   /-- Antonym relation: contrary (gap) vs contradictory (no gap) -/
-  antonymRelation : Option NegationType := none
+  antonymRelation : Option AntonymRelation := none
   /-- Does this adjective select the lower endpoint of its scale?
       E.g., "short" selects the low end of height, "empty" selects the low end
       of fullness. This is scale-endpoint polarity, distinct from evaluative

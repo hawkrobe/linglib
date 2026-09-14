@@ -161,7 +161,7 @@ end Config
 
 structure Row where
   config : Config
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
   deriving DecidableEq
 
 def yesNoTable : List (String × Bool) := [("yes", true), ("no", false)]

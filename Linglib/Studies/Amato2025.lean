@@ -33,7 +33,7 @@ the Appendix's comparison with MME, Multitasking and ECoMPS.
 
 namespace Amato2025
 
-open Minimalist Features
+open Minimalist
 open Minimalist.FeatureBundle (ofGramFeatures)
 open ArgumentStructure.AuxiliarySelection
 

@@ -15,7 +15,7 @@ spatial expressions. [traugott-2010] is the consolidating statement of
 the program developed in [traugott-dasher-2002].
 
 The synchronic infrastructure (the `SubjectivityLevel` type and ordering)
-lives in `Features.Subjectivity`. This file formalizes the **diachronic
+lives in `Modality`. This file formalizes the **diachronic
 claims**: that the ordering reflects a historical trajectory, that each
 transition is unidirectional, and that specific semantic domains exhibit
 this pattern.
@@ -35,7 +35,7 @@ this pattern.
 
 namespace Traugott2010
 
-open Features.Subjectivity
+open Modality
 
 /-! ### The diachronic cline -/
 

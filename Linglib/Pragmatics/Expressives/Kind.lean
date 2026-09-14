@@ -3,22 +3,22 @@
 [potts-2007b] [kubota-2026]
 
 Theory-neutral per-entry tag for **use-conditional / secondary-meaning** lexemes — the
-expressive dimension of [potts-2007b]. Fragments attach an `Expressive` value to mark a
+expressive dimension of [potts-2007b]. Fragments attach a `Kind` value to mark a
 lexeme as expressive and record which construction class it belongs to; theories then assign
 it a denotation (`Pragmatics.Expressives.TwoDimProp`, an outlook-indexed meaning,
 use-conditional types, …) and are judged on whether they predict its diagnostic behavior.
 
-This is **object-level data** (like `Features.Person`): a tag, not
+This is **object-level data** (like `Person`): a tag, not
 a denotation. It is `Prop`-free and depends on no theory layer, so Fragments may import it
 without pulling in any account of conventional implicature. The diagnostic *fingerprint*
 (`Pragmatics.Expressives.SecondaryMeaningProperties`) and the denotations live one layer up.
 -/
 
-namespace Features
+namespace Pragmatics.Expressives
 
 /-- Construction class of a use-conditional / expressive lexeme ([potts-2007b],
 [kubota-2026]). The coarse, theory-neutral typology Fragments mark entries with. -/
-inductive Expressive where
+inductive Kind where
   /-- Epithets, slurs, and expressive adjectives — speaker-oriented affective content
       ("that bastard", "damn") ([potts-2007b]). -/
   | epithet
@@ -30,4 +30,4 @@ inductive Expressive where
   | outlookMarker
   deriving DecidableEq, Repr, Inhabited
 
-end Features
+end Pragmatics.Expressives

@@ -12,7 +12,7 @@ is a feature taxonomy with no semantic commitments — sibling of
 `Polarity`, `Mood`, `Evidentiality`.
 -/
 
-namespace Features
+namespace Question
 
 /-- Where in the left periphery a Q-particle resides. -/
 inductive QParticleLayer where
@@ -22,4 +22,4 @@ inductive QParticleLayer where
   | polP    -- Clause-internal polarity head (Turkish mI; [turk-hirsch-2026])
   deriving DecidableEq, Repr
 
-end Features
+end Question

@@ -253,7 +253,7 @@ structure Row where
   right : Category
   moved : Moved
   same : Bool
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
   deriving DecidableEq
 
 /-- A coordinand, and not the whole, is attracted: the Integrity Condition (50) forbids it. -/

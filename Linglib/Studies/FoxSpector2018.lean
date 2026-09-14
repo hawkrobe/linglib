@@ -269,7 +269,7 @@ structure Row where
   canonical : Bool
   distant : Bool
   de : ℕ
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
   deriving DecidableEq
 
 def yesNoTable : List (String × Bool) := [("yes", true), ("no", false)]

@@ -35,7 +35,7 @@ built from the prosodic fragment's word entries.
 
 namespace BeckmanPierrehumbert1986
 
-open Features.Prosody Tone
+open Prosody Tone
 
 /-! ### Accentual phrases and catathesis -/
 

@@ -50,7 +50,7 @@ component of transitive degree achievements (footnote 2) are not modelled.
 
 namespace HayKennedyLevin1999
 
-open Data.Examples Degree Features
+open Data.Examples Degree
 open English.Predicates.Verbal
 
 /-! ### The difference value (§2) -/

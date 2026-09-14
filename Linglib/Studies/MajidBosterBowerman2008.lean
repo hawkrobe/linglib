@@ -37,7 +37,7 @@ namespace MajidBosterBowerman2008
 open Verb
 open Semantics
 open ArgumentStructure
-open Features
+
 open Semantics.Root.Content
 open Semantics.Root.Content.InstrumentType Semantics.Root.Content.ObjectDimensionality
   Semantics.Root.Content.Robustness Semantics.Root.Content.ResultGeometry

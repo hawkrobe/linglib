@@ -26,25 +26,25 @@ Swedish also allows verb-echo answers alongside particles (mixed strategy).
 
 namespace Swedish.AnswerParticles
 
-open Features.Polarity
+open SentencePolarity
 open Polarity.Marking (Entry Strategy Env)
-open Features (AnsweringSystem AnswerStrategy PolarAnswerProfile)
+open Question (AnsweringSystem AnswerStrategy PolarAnswerProfile)
 
 /-- *ja* — standard affirmative. Assigns [+Pol]. Responds only to
     positive contexts: "Dricker han inte?" → *"Ja" is ungrammatical
     ([holmberg-2016], p165). Swedish uses *jo* instead. -/
-def ja : Features.AnswerParticle :=
+def ja : Question.AnswerParticle :=
   { form := "ja", assigns := .positive, respondsTo := [.positive] }
 
 /-- *nej* — standard negative. Assigns [-Pol]; responds to positive and
     negative contexts alike. -/
-def nej : Features.AnswerParticle :=
+def nej : Question.AnswerParticle :=
   { form := "nej", assigns := .negative, respondsTo := [.positive, .negative] }
 
 /-- *jo* — polarity-reversing affirmative: "Dricker han inte?" → "Jo" =
     "He does drink". Infelicitous responding to positive questions or
     out of the blue (no negative context to reverse). -/
-def jo : Features.AnswerParticle :=
+def jo : Question.AnswerParticle :=
   { form := "jo", assigns := .positive, respondsTo := [.negative] }
 
 /-- *jo* is a polarity-reversing particle — derived from its
@@ -61,8 +61,8 @@ theorem jo_ja_same_polarity : jo.assigns = ja.assigns := rfl
 /-- *ja* and *jo* partition the context polarities: *ja* is blocked
     where *jo* is required (negative contexts) and vice versa. -/
 theorem ja_jo_complementary :
-    Features.Polarity.negative ∉ ja.respondsTo ∧
-    Features.Polarity.positive ∉ jo.respondsTo := by decide
+    SentencePolarity.negative ∉ ja.respondsTo ∧
+    SentencePolarity.positive ∉ jo.respondsTo := by decide
 
 /-- *jo* — Swedish polarity-reversing affirmative particle.
     Assigns [+Pol] while contradicting a negative context.

@@ -31,7 +31,7 @@ the prominence principle of differential indexing in `Studies/Just2024.lean`.
 * [smith-stark-1974]
 -/
 
-namespace Features.Prominence
+namespace Reference.Prominence
 
 /-! ### The animacy scale -/
 
@@ -205,4 +205,4 @@ def definitenessAtLeast (cutoff : DefinitenessLevel) : MarkingPattern :=
 
 end MarkingPattern
 
-end Features.Prominence
+end Reference.Prominence

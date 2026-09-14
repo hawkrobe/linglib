@@ -53,7 +53,7 @@ for probes.
 
 namespace Minimalist
 
-open Features.Prominence
+open Reference.Prominence
 
 -- ============================================================================
 -- § 1: Phi-Features
@@ -208,7 +208,7 @@ def featuresMatch (f1 f2 : GramFeature) : Bool :=
 -- ============================================================================
 
 /-! A feature bundle is a **total assignment** from feature dimensions to
-three-state checking slots (`Features.FeatureSlot`): one slot per dimension,
+three-state checking slots (`Minimalist.FeatureSlot`): one slot per dimension,
 `absent` / `unvalued` (probe) / `valued v`. This replaces the earlier list
 representation (`List GramFeature`), which admitted junk — duplicate
 dimensions, conflicting values — and was not extensional, so it could not be
@@ -320,11 +320,11 @@ def FeatureVal.value : (fv : FeatureVal) → fv.dimension.ValueOf
 /-- A feature bundle as a total assignment: each dimension maps to a
 three-state checking slot. The canonical extensional carrier — replacing
 `List GramFeature` — that is `LawfulBundleLike`. -/
-abbrev FeatureBundle := (t : FeatureType) → Features.FeatureSlot t.ValueOf
+abbrev FeatureBundle := (t : FeatureType) → Minimalist.FeatureSlot t.ValueOf
 
 namespace FeatureBundle
 
-instance : BundleLike FeatureBundle FeatureType (λ t => Features.FeatureSlot t.ValueOf) :=
+instance : BundleLike FeatureBundle FeatureType (λ t => Minimalist.FeatureSlot t.ValueOf) :=
   ⟨λ b => b⟩
 
 instance : LawfulBundleLike FeatureBundle :=
@@ -354,7 +354,7 @@ def single (t : FeatureType) (v : t.ValueOf) : FeatureBundle :=
 instance : Inhabited FeatureBundle := ⟨⊥⟩
 
 instance : DecidableEq FeatureBundle :=
-  inferInstanceAs (DecidableEq ((t : FeatureType) → Features.FeatureSlot t.ValueOf))
+  inferInstanceAs (DecidableEq ((t : FeatureType) → Minimalist.FeatureSlot t.ValueOf))
 
 /-- Render a bundle by its specified (non-`absent`) dimensions. The function
 carrier has no structural `Repr`, so containing structures that `deriving Repr`
@@ -368,7 +368,7 @@ end FeatureBundle
 
 /-- The checking slot a single grammatical feature contributes at its own
 dimension: `valued v ↦ valued v.value`, `unvalued _ ↦ unvalued`. -/
-def GramFeature.toSlot : (gf : GramFeature) → Features.FeatureSlot gf.featureType.dimension.ValueOf
+def GramFeature.toSlot : (gf : GramFeature) → Minimalist.FeatureSlot gf.featureType.dimension.ValueOf
   | .valued v => .valued v.value
   | .unvalued _ => .unvalued
 

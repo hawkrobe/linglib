@@ -31,7 +31,7 @@ namespace ConstructionGrammar.Resultatives
 
 open ConstructionGrammar
 open ArgumentStructure
-open Features
+
 open Aspect
 
 /-! ## Core types -/

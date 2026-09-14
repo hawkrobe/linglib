@@ -28,7 +28,7 @@ treatment of inversion as a word-class subtype rather than a movement rule.
 namespace WordGrammar
 
 
-open Features
+
 open Clause (EmbeddingContext)
 open WordGrammar.Inheritance
 open DependencyGrammar (Dir Valency Graph SatisfiesValency)

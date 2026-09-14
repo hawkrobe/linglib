@@ -154,7 +154,7 @@ theorem adjective_verb_scales :
 
 /-- (1) and (6): a degree achievement takes *in X* exactly when its scale is closed above, and
 *for X* otherwise, its Vendler class being derived from the scale. -/
-theorem inX_iff_hasMax (d : Features.ScalarDimension) :
+theorem inX_iff_hasMax (d : Degree.ScalarDimension) :
     (inXPrediction d.defaultVendlerClass = .accept ↔ d.boundedness.HasMax) ∧
       (forXPrediction d.defaultVendlerClass = .accept ↔ ¬ d.boundedness.HasMax) := by
   cases d <;> decide

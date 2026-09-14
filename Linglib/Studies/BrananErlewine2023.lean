@@ -34,7 +34,7 @@ anti-pied-piping, stated over the host–focus containment relations of
 
 namespace BrananErlewine2023
 
-open Features
+open Reflex
 
 /-! ### The clause skeleton -/
 

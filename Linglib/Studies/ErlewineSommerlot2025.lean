@@ -343,7 +343,7 @@ def prefixTable : List (String × Prefix) :=
 structure Row where
   grammar : Grammar
   surface : Surface
-  judgment : Features.Judgment
+  judgment : Data.Examples.Judgment
 
 /-- A row from an example. -/
 def Row.ofExample (ex : LinguisticExample) : Option Row := do
