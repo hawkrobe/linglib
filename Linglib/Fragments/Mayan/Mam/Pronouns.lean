@@ -216,6 +216,6 @@ theorem reduction_iff_author (c : PronCell) :
     impoverishment. -/
 theorem reduced_residue (c : PronCell) (h : subjPoss c ≠ independent c) :
     subjPoss c = some iDisagr ∨ subjPoss c = none := by
-  cases c <;> simp_all [subjPoss, independent] <;> decide
+  cases c <;> simp_all [subjPoss, independent]
 
 end Mam
