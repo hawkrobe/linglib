@@ -44,8 +44,9 @@ inductive ProjectionMode where
   | content
   deriving DecidableEq, Repr
 
-/-- The chapter's three-way classification of conversational backgrounds (Table 18.3): factual backgrounds without an information source, the traditional circumstantial class,
-and factual and content backgrounds encoding one, the two epistemic subtypes. -/
+/-- The chapter's three-way classification of conversational backgrounds (Table 18.3): factual
+backgrounds without an information source, the traditional circumstantial class, and factual
+and content backgrounds encoding one, the two epistemic subtypes. -/
 inductive BackgroundClass where
   | factualCircumstantial
   | factualEvidential
