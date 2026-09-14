@@ -1,406 +1,225 @@
 import Linglib.Core.Order.Plausibility
-import Mathlib.Data.Finset.Lattice.Fold
+import Mathlib.Data.ENat.Lattice
 
 /-!
-# Ranking Functions and Iterated Belief Revision
+# Ranking functions
 
-[halpern-2003] [darwiche-pearl-1997] [spohn-1988]
+This file defines ranking functions, the ordinal conditional functions of [spohn-1988] with
+natural-number grades, and Spohn's conditionalization on them. A ranking function grades the
+disbelief in each world, some world having grade `0`; the rank of a proposition is the least
+rank of its worlds, `⊤` for the contradiction, so that of a proposition and its negation one
+has rank `0` and the rank of a disjunction is the smaller rank. Conditionalization on a
+proposition at a firmness keeps the ranking within the proposition and within its negation,
+each shifted to start at `0`, and lifts the negation by the firmness; revision conditionalizes
+at the firmness that just makes the proposition believed, the operator whose iterated-revision
+postulates `Logic/BeliefRevision/Iterated.lean` proves. A ranking function induces a
+plausibility order, hence a preferential consequence relation, and the order is connected, so
+the relation satisfies rational monotonicity ([halpern-2003]).
 
-Ranking functions (ordinal conditional functions, OCFs) provide a
-qualitative, ordinal approach to belief revision that serves as the
-quantitative semantics for System P + Rational Monotonicity.
+## Main definitions
 
-[spohn-1988] introduced ranking functions as ordinal-valued measures
-of disbelief. We restrict to ℕ-valued rankings, following the
-simplification noted in Note 16 of the paper. κ(w) = 0 means w is
-maximally plausible (believed possible), while higher ranks indicate
-greater implausibility. The normalization condition — some world has
-rank 0 — ensures the belief state is non-vacuous.
+* `RankingFunction W` — a grading of disbelief `W → ℕ` with a world of grade `0`.
+* `RankingFunction.rankSet` — the rank of a proposition, in `ℕ∞`.
+* `RankingFunction.aPart` — the A-part of a ranking, the ranking within `A` shifted to `0`.
+* `RankingFunction.conditionα` — A,α-conditionalization; `RankingFunction.revise` — revision
+  at the canonical firmness; `RankingFunction.lCondition` — the L-conditioning of
+  [goldszmidt-pearl-1996].
+* `RankingFunction.beliefSet` — the propositions true at every world of rank `0`.
+* `RankingFunction.toPlausibilityOrder`, `RankingFunction.toPreferential` — the induced
+  plausibility order and preferential consequence relation.
 
-## Key Results
+## Main results
 
-1. **Ranking → Plausibility**: Every ranking function induces a
-   plausibility ordering (§1), which in turn yields a preferential
-   consequence relation satisfying System P.
+* `RankingFunction.rankSet_eq_zero_or_compl`, `RankingFunction.rankSet_union` — of a
+  proposition and its negation one has rank `0`; the rank of a disjunction is the smaller rank.
+* `RankingFunction.revise_success` — the revised ranking believes the evidence.
+* `RankingFunction.ranking_connected`, `RankingFunction.ranking_rationalMonotonicity` — the
+  induced order is connected, so rational monotonicity holds.
 
-2. **Connectedness**: Because ℕ is totally ordered, the induced
-   plausibility ordering is connected (any two worlds are comparable),
-   so Rational Monotonicity holds.
+## References
 
-3. **A-part** (Def. 5): κ(w|A) = κ(w) - κ(A) extracts the relative
-   ranking within A-worlds, shifted so the best A-world has rank 0.
-
-4. **A,α-conditionalization** (Def. 6): The revision operation
-   parameterized by firmness α. Higher α = firmer belief in the
-   evidence.
-
-5. **Independence** (Def. 8): κ(B ∩ C) = κ(B) + κ(C) when B,C
-   are independent — the ordinal analogue of probabilistic independence.
-
-6. **Revision** (§2): Spohn revision with canonical firmness κ(¬φ) + 1
-   and the belief set of a ranking. Its iterated-revision postulates are
-   in `Logic/BeliefRevision/Iterated.lean`, where it is `BeliefRevision.spohn`.
-
-See `Spohn1988` for a verified
-concrete instance demonstrating evidence strength, commutativity
-(Theorem 4), and the connection to `NormalityOrder`.
-
-## Bridge to Probability ([spohn-1988] §7)
-
-Ranking conditioning is the ordinal analogue of Bayesian conditioning.
-The structural parallel (min/+ for ordinals mirrors product/sum for
-probabilities):
-
-| Probability (ℚ, ·, Σ)         | Ranking (ℕ, min, +)              |
-|-------------------------------|----------------------------------|
-| P(A) = Σ_{w∈A} P(w)          | κ(A) = min_{w∈A} κ(w)           |
-| P(A|B) = P(A∩B)/P(B)         | κ(w|A) = κ(w) - κ(A)            |
-| P(A∩B) = P(A)·P(B|A)         | κ(A∩B) = κ(A) + κ(B|A)          |
-| P(A∩B) = P(A)·P(B) (indep.)  | κ(A∩B) = κ(A) + κ(B) (indep.)   |
-
+* [spohn-1988]
+* [goldszmidt-pearl-1996]
+* [halpern-2003]
+* [darwiche-pearl-1997]
 -/
-
 
 open Core.Order (PlausibilityOrder PreferentialConsequence rationalMonotonicity)
 
--- ══════════════════════════════════════════════════════════════════════
--- § 1. Ranking Functions
--- ══════════════════════════════════════════════════════════════════════
-
-/-- A ranking function (ordinal conditional function) on worlds.
-
-    κ : W → ℕ assigns each world a degree of disbelief.
-    Normalization: some world has rank 0 (the agent considers at least
-    one world possible).
-
-    [spohn-1988], Definition 4 uses ordinals in the general case;
-    we restrict to ℕ following Note 16 of the paper. -/
+/-- A ranking function: a grading of disbelief in worlds with a world of grade `0`. -/
 structure RankingFunction (W : Type*) where
-  /-- The rank (degree of disbelief) of each world -/
+  /-- The grade of disbelief in each world. -/
   rank : W → ℕ
-  /-- At least one world has rank 0 -/
+  /-- Some world is not disbelieved. -/
   normalized : ∃ w, rank w = 0
 
 namespace RankingFunction
 
-variable {W : Type*}
+variable {W : Type*} (κ : RankingFunction W) {A B : Set W} {w : W}
 
-/-- The rank of a proposition: the minimum rank among worlds
-    satisfying it. Requires the proposition to be satisfiable.
+@[ext] theorem ext {κ κ' : RankingFunction W} (h : ∀ w, κ.rank w = κ'.rank w) : κ = κ' := by
+  cases κ; cases κ'; congr; exact funext h
 
-    κ(φ) = min { κ(w) | φ w } -/
-noncomputable def rankProp [Fintype W] (κ : RankingFunction W) (φ : W → Prop)
-    [DecidablePred φ] (hsat : ∃ w, φ w) : ℕ :=
-  Finset.inf' (Finset.univ.filter (fun w => φ w))
-    (by obtain ⟨w, hw⟩ := hsat
-        exact ⟨w, Finset.mem_filter.mpr ⟨Finset.mem_univ w, hw⟩⟩)
-    κ.rank
+/-! ### Ranks of propositions -/
 
-/-- The A-part of κ: the ranking restricted to A-worlds, shifted so
-    the most plausible A-world has rank 0.
+/-- The rank of a proposition: the least rank of its worlds, `⊤` for the contradiction. -/
+noncomputable def rankSet (A : Set W) : ℕ∞ := ⨅ w ∈ A, (κ.rank w : ℕ∞)
 
-    [spohn-1988], Definition 5: κ(w|A) = κ(w) - κ(A) for w ∈ A.
-    This is the primitive from which conditioning derives. -/
-noncomputable def aPart [Fintype W] (κ : RankingFunction W) (φ : W → Prop)
-    [DecidablePred φ] (hφ : ∃ w, φ w) (w : W) : ℕ :=
-  κ.rank w - κ.rankProp φ hφ
+theorem rankSet_le (hw : w ∈ A) : κ.rankSet A ≤ κ.rank w := iInf₂_le w hw
 
-/-- [spohn-1988], Theorem 2(a): For any proposition, either it
-    or its negation has rank 0 (or both).
+theorem le_rankSet_iff {n : ℕ∞} : n ≤ κ.rankSet A ↔ ∀ w ∈ A, n ≤ κ.rank w := le_iInf₂_iff
 
-    Normalization propagates from worlds to propositions: the rank-0
-    world satisfies either φ or ¬φ, making that side's rankProp = 0.
-    This is the ordinal analogue of P(A) + P(Ā) = 1. -/
-theorem rankProp_dichotomy [Fintype W] (κ : RankingFunction W)
-    (φ : W → Prop) [DecidablePred φ] [DecidablePred (fun w => ¬φ w)]
-    (hφ : ∃ w, φ w) (hNφ : ∃ w, ¬φ w) :
-    κ.rankProp φ hφ = 0 ∨ κ.rankProp (fun w => ¬φ w) hNφ = 0 := by
-  obtain ⟨w₀, hw₀⟩ := κ.normalized
-  by_cases hφw₀ : φ w₀
-  · left
-    have : κ.rankProp φ hφ ≤ 0 := by
-      unfold rankProp
-      exact (Finset.inf'_le κ.rank
-        (Finset.mem_filter.mpr ⟨Finset.mem_univ w₀, hφw₀⟩)).trans (le_of_eq hw₀)
-    omega
-  · right
-    have : κ.rankProp (fun w => ¬φ w) hNφ ≤ 0 := by
-      unfold rankProp
-      have hmem : w₀ ∈ Finset.univ.filter (fun w => ¬φ w) :=
-        Finset.mem_filter.mpr ⟨Finset.mem_univ w₀, hφw₀⟩
-      exact (Finset.inf'_le κ.rank hmem).trans (le_of_eq hw₀)
-    omega
+theorem rankSet_anti (h : A ⊆ B) : κ.rankSet B ≤ κ.rankSet A :=
+  κ.le_rankSet_iff.2 λ _ hw => κ.rankSet_le (h hw)
 
-/-- [spohn-1988], Theorem 2(b): The rank of a disjunction is
-    the minimum of the disjuncts' ranks.
+@[simp] theorem rankSet_empty : κ.rankSet ∅ = ⊤ := by simp [rankSet]
 
-    κ(A ∪ B) = min(κ(A), κ(B)) for any non-empty A, B. This is
-    because κ takes the minimum over worlds, and the minimum over a
-    union equals the min of the minima over each part.
+/-- The rank of a satisfiable proposition is attained. -/
+theorem exists_rank_eq_rankSet (hA : A.Nonempty) : ∃ w ∈ A, (κ.rank w : ℕ∞) = κ.rankSet A := by
+  have hmem := csInf_mem (hA.image λ w => (κ.rank w : ℕ∞))
+  rw [sInf_image] at hmem
+  exact hmem
 
-    This is the ordinal analogue of P(A ∪ B) = P(A) + P(B) for
-    disjoint events (and ≤ for overlapping ones). -/
-theorem rankProp_union [Fintype W] (κ : RankingFunction W)
-    (φ ψ : W → Prop) [DecidablePred φ] [DecidablePred ψ]
-    [DecidablePred (fun w => φ w ∨ ψ w)]
-    (hφ : ∃ w, φ w) (hψ : ∃ w, ψ w) :
-    κ.rankProp (fun w => φ w ∨ ψ w)
-      (by obtain ⟨w, hw⟩ := hφ; exact ⟨w, Or.inl hw⟩) =
-    min (κ.rankProp φ hφ) (κ.rankProp ψ hψ) := by
-  unfold rankProp
-  set Sφψ := Finset.univ.filter (fun w => φ w ∨ ψ w)
-  set Sφ := Finset.univ.filter (fun w => φ w)
-  set Sψ := Finset.univ.filter (fun w => ψ w)
-  -- Nonemptiness witnesses
-  have hSφ : (Sφ).Nonempty := by
-    obtain ⟨w, hw⟩ := hφ; exact ⟨w, Finset.mem_filter.mpr ⟨Finset.mem_univ w, hw⟩⟩
-  have hSψ : (Sψ).Nonempty := by
-    obtain ⟨w, hw⟩ := hψ; exact ⟨w, Finset.mem_filter.mpr ⟨Finset.mem_univ w, hw⟩⟩
-  have hSφψ : (Sφψ).Nonempty := by
-    obtain ⟨w, hw⟩ := hφ; exact ⟨w, Finset.mem_filter.mpr ⟨Finset.mem_univ w, Or.inl hw⟩⟩
-  apply Nat.le_antisymm
-  · -- inf'(φ ∨ ψ) ≤ min(inf'(φ), inf'(ψ))
-    -- The (φ ∨ ψ)-set is a superset of each part, so its inf' ≤ each part's inf'
-    rw [Nat.le_min]
-    constructor
-    · apply Finset.le_inf'
-      intro w hw
-      exact Finset.inf'_le κ.rank (show w ∈ Sφψ by
-        rw [Finset.mem_filter] at hw ⊢; exact ⟨hw.1, Or.inl hw.2⟩)
-    · apply Finset.le_inf'
-      intro w hw
-      exact Finset.inf'_le κ.rank (show w ∈ Sφψ by
-        rw [Finset.mem_filter] at hw ⊢; exact ⟨hw.1, Or.inr hw.2⟩)
-  · -- min(inf'(φ), inf'(ψ)) ≤ inf'(φ ∨ ψ)
-    apply Finset.le_inf'
-    intro w hw
-    rw [Finset.mem_filter] at hw
-    rcases hw.2 with hφw | hψw
-    · exact (Nat.min_le_left _ _).trans
-        (Finset.inf'_le κ.rank (show w ∈ Sφ by rw [Finset.mem_filter]; exact ⟨hw.1, hφw⟩))
-    · exact (Nat.min_le_right _ _).trans
-        (Finset.inf'_le κ.rank (show w ∈ Sψ by rw [Finset.mem_filter]; exact ⟨hw.1, hψw⟩))
+theorem rankSet_eq_top_iff : κ.rankSet A = ⊤ ↔ A = ∅ := by
+  refine ⟨λ h => by_contra λ hne => ?_, λ h => h ▸ κ.rankSet_empty⟩
+  obtain ⟨w, -, e⟩ := κ.exists_rank_eq_rankSet (Set.nonempty_iff_ne_empty.2 hne)
+  exact ENat.natCast_ne_top _ (e.trans h)
 
-/-- A ranking function induces a plausibility ordering:
-    w is at least as plausible as v iff κ(w) ≤ κ(v).
+theorem rankSet_ne_top (hA : A.Nonempty) : κ.rankSet A ≠ ⊤ :=
+  mt κ.rankSet_eq_top_iff.1 hA.ne_empty
 
-    Smoothness follows from the well-orderedness of ℕ:
-    every non-empty subset of ℕ has a minimum, so among the
-    φ-worlds with rank ≤ κ(w), we can find a minimal one. -/
-def toPlausibilityOrder (κ : RankingFunction W) : PlausibilityOrder W where
+/-- The rank of a disjunction is the smaller rank. -/
+theorem rankSet_union (A B : Set W) : κ.rankSet (A ∪ B) = min (κ.rankSet A) (κ.rankSet B) :=
+  iInf_union
+
+theorem rankSet_eq_zero_iff : κ.rankSet A = 0 ↔ ∃ w ∈ A, κ.rank w = 0 := by
+  constructor
+  · intro h
+    rcases A.eq_empty_or_nonempty with rfl | hA
+    · simp at h
+    · obtain ⟨w, hw, e⟩ := κ.exists_rank_eq_rankSet hA
+      exact ⟨w, hw, by exact_mod_cast e.trans h⟩
+  · rintro ⟨w, hw, h0⟩
+    exact le_antisymm ((κ.rankSet_le hw).trans (by simp [h0])) bot_le
+
+@[simp] theorem rankSet_univ : κ.rankSet Set.univ = 0 :=
+  κ.rankSet_eq_zero_iff.2 (let ⟨w, hw⟩ := κ.normalized; ⟨w, trivial, hw⟩)
+
+/-- Of a proposition and its negation, one has rank `0`. -/
+theorem rankSet_eq_zero_or_compl (A : Set W) : κ.rankSet A = 0 ∨ κ.rankSet Aᶜ = 0 := by
+  have h := κ.rankSet_univ
+  rw [← Set.union_compl_self A, rankSet_union] at h
+  exact (min_eq_iff.1 h).imp And.left And.left
+
+theorem toNat_rankSet_le (hw : w ∈ A) : (κ.rankSet A).toNat ≤ κ.rank w :=
+  ENat.toNat_le_of_le_natCast (κ.rankSet_le hw)
+
+/-! ### Conditionalization -/
+
+/-- The A-part `κ(w | A) = κ(w) − κ(A)`: the ranking within `A` shifted so that its best world
+has rank `0`. -/
+noncomputable def aPart (A : Set W) (w : W) : ℕ := κ.rank w - (κ.rankSet A).toNat
+
+theorem exists_aPart_eq_zero (hA : A.Nonempty) : ∃ w ∈ A, κ.aPart A w = 0 := by
+  obtain ⟨w, hw, e⟩ := κ.exists_rank_eq_rankSet hA
+  exact ⟨w, hw, by simp [aPart, ← e]⟩
+
+theorem aPart_le (A : Set W) (w : W) : κ.aPart A w ≤ κ.rank w := Nat.sub_le _ _
+
+open Classical in
+/-- A,α-conditionalization: the A-part of `κ` on `A` and the Aᶜ-part lifted by the firmness
+`α` on `Aᶜ`, so that `A` comes to be believed with firmness `α`. -/
+noncomputable def conditionα (A : Set W) (hA : A.Nonempty) (α : ℕ) : RankingFunction W where
+  rank w := if w ∈ A then κ.aPart A w else α + κ.aPart Aᶜ w
+  normalized := let ⟨w, hw, h0⟩ := κ.exists_aPart_eq_zero hA; ⟨w, by simp [hw, h0]⟩
+
+theorem conditionα_of_mem (hA : A.Nonempty) (α : ℕ) (hw : w ∈ A) :
+    (κ.conditionα A hA α).rank w = κ.aPart A w := by
+  simp [conditionα, hw]
+
+theorem conditionα_of_notMem (hA : A.Nonempty) (α : ℕ) (hw : w ∉ A) :
+    (κ.conditionα A hA α).rank w = α + κ.aPart Aᶜ w := by
+  simp [conditionα, hw]
+
+/-- The conditionalized ranking holds `A` possible. -/
+@[simp] theorem rankSet_conditionα (hA : A.Nonempty) (α : ℕ) :
+    (κ.conditionα A hA α).rankSet A = 0 := by
+  obtain ⟨w, hw, h0⟩ := κ.exists_aPart_eq_zero hA
+  exact (rankSet_eq_zero_iff _).2 ⟨w, hw, by rw [conditionα_of_mem _ _ _ hw, h0]⟩
+
+/-- The conditionalized ranking believes `A` with firmness `α`. -/
+theorem rankSet_conditionα_compl (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) (α : ℕ) :
+    (κ.conditionα A hA α).rankSet Aᶜ = α := by
+  obtain ⟨w, hw, h0⟩ := κ.exists_aPart_eq_zero hA'
+  refine le_antisymm (((κ.conditionα A hA α).rankSet_le hw).trans ?_) ?_
+  · rw [conditionα_of_notMem _ _ _ hw, h0, add_zero]
+  · exact (le_rankSet_iff _).2 λ v hv => by
+      rw [conditionα_of_notMem _ _ _ hv]
+      exact_mod_cast Nat.le_add_right _ _
+
+/-- Revision: conditionalization at the firmness `κ(Aᶜ) + 1`, just enough to make `A`
+believed; on a contingent proposition it is the operator `BeliefRevision.spohn` of
+[darwiche-pearl-1997] (`RankingFunction.revise_rank`). -/
+noncomputable def revise (A : Set W) (hA : A.Nonempty) : RankingFunction W :=
+  κ.conditionα A hA ((κ.rankSet Aᶜ).toNat + 1)
+
+/-- The belief set: the propositions true at every world of rank `0`. -/
+def beliefSet : Set (Set W) := {A | ∀ w, κ.rank w = 0 → w ∈ A}
+
+theorem mem_beliefSet : A ∈ κ.beliefSet ↔ ∀ w, κ.rank w = 0 → w ∈ A := Iff.rfl
+
+/-- The revised ranking believes the evidence, the AGM success postulate. -/
+theorem revise_success (hA : A.Nonempty) : A ∈ (κ.revise A hA).beliefSet := λ w hw => by
+  by_contra hnot
+  rw [revise, conditionα_of_notMem _ _ _ hnot] at hw
+  omega
+
+open Classical in
+/-- L-conditioning ([goldszmidt-pearl-1996]): lift the worlds outside `A` by `l`, at a ranking
+holding `A` possible. Unlike `conditionα`, it commutes. -/
+noncomputable def lCondition (A : Set W) (h0 : ∃ w ∈ A, κ.rank w = 0) (l : ℕ) :
+    RankingFunction W where
+  rank w := if w ∈ A then κ.rank w else κ.rank w + l
+  normalized := let ⟨w, hw, hr⟩ := h0; ⟨w, by simp [hw, hr]⟩
+
+/-! ### The induced plausibility order -/
+
+/-- The plausibility order of a ranking function: `w` is at least as plausible as `v` when its
+rank is at most that of `v`. Smoothness holds because `ℕ` is well-ordered. -/
+def toPlausibilityOrder : PlausibilityOrder W where
   toPreorder := Preorder.lift κ.rank
-  smooth := fun φ w hφw => by
+  smooth := λ φ w hφw => by
     classical
     show ∃ v, φ v ∧ κ.rank v ≤ κ.rank w ∧
       ∀ u, φ u → κ.rank u ≤ κ.rank v → κ.rank v ≤ κ.rank u
-    -- Among φ-worlds with rank ≤ κ(w), find one with minimal rank (via `Nat.find`).
-    let minRank := Nat.find (⟨κ.rank w, w, hφw, Nat.le_refl _, rfl⟩ :
-      ∃ n, ∃ v, φ v ∧ κ.rank v ≤ κ.rank w ∧ κ.rank v = n)
-    obtain ⟨v, hφv, hvw, hvrank⟩ := Nat.find_spec (⟨κ.rank w, w, hφw, Nat.le_refl _, rfl⟩ :
-      ∃ n, ∃ v, φ v ∧ κ.rank v ≤ κ.rank w ∧ κ.rank v = n)
-    refine ⟨v, hφv, hvw, ?_⟩
-    intro u hφu huv
-    -- huv : κ(u) ≤ κ(v), need: κ(v) ≤ κ(u)
-    -- If κ(u) < κ(v) = minRank, that contradicts minimality of minRank
+    have hex : ∃ n, ∃ v, φ v ∧ κ.rank v ≤ κ.rank w ∧ κ.rank v = n := ⟨_, w, hφw, le_rfl, rfl⟩
+    obtain ⟨v, hφv, hvw, hvrank⟩ := Nat.find_spec hex
+    refine ⟨v, hφv, hvw, λ u hφu huv => ?_⟩
     by_contra h
     push Not at h
-    -- h : κ(v) > κ(u), i.e., κ(u) < κ(v)
-    have hlt : κ.rank u < minRank := by omega
-    have huw : κ.rank u ≤ κ.rank w := Nat.le_trans (Nat.le_of_lt_succ (by omega)) hvw
-    exact Nat.find_min (⟨κ.rank w, w, hφw, Nat.le_refl _, rfl⟩ :
-      ∃ n, ∃ v, φ v ∧ κ.rank v ≤ κ.rank w ∧ κ.rank v = n) hlt ⟨u, hφu, huw, rfl⟩
+    exact Nat.find_min hex (hvrank ▸ h) ⟨u, hφu, huv.trans hvw, rfl⟩
 
-/-- The preferential consequence relation induced by a ranking function.
-    Composes `toPlausibilityOrder` with `PlausibilityOrder.toPreferential`. -/
-def toPreferential (κ : RankingFunction W) : PreferentialConsequence W :=
-  κ.toPlausibilityOrder.toPreferential
+/-- The preferential consequence relation of a ranking function. -/
+def toPreferential : PreferentialConsequence W := κ.toPlausibilityOrder.toPreferential
 
-/-- Ranking functions induce **connected** (total) plausibility orderings:
-    for any two worlds, one is at least as plausible as the other.
+/-- The plausibility order of a ranking function is connected: any two worlds are comparable,
+because `ℕ` is linearly ordered. -/
+theorem ranking_connected : Core.Order.Normality.connected κ.toPlausibilityOrder.toPreorder :=
+  λ w v => le_total (κ.rank w) (κ.rank v)
 
-    This follows from ℕ being linearly ordered. Connectedness is what
-    distinguishes ranked models from merely preferential models and
-    is what makes Rational Monotonicity hold. -/
-theorem ranking_connected (κ : RankingFunction W) :
-    Core.Order.Normality.connected κ.toPlausibilityOrder.toPreorder := by
-  intro w v
-  show κ.rank w ≤ κ.rank v ∨ κ.rank v ≤ κ.rank w
-  omega
-
--- ══════════════════════════════════════════════════════════════════════
--- § 1b. Conditioning Operations
--- ══════════════════════════════════════════════════════════════════════
-
-/-- A,α-conditionalization: revise κ by evidence φ with firmness α.
-
-    [spohn-1988], Definition 6: κ_{A,α}(w) = κ(w|A) for w ∈ A,
-    and α + κ(w|Ā) for w ∈ Ā. The parameter α controls how firmly
-    the evidence is believed:
-
-    - α = 0: neutral update (evidence doesn't change relative
-      plausibility of ¬φ-worlds vs φ-worlds)
-    - α > 0: φ-worlds become more plausible than ¬φ-worlds by
-      at least α ranks
-    - Large α: very firm belief in the evidence
-
-    [goldszmidt-pearl-1996] call this **J-conditioning** (after
-    Jeffrey); the operation is identical under the name change α = j.
-
-    Requires both φ and ¬φ to be satisfiable (matching Spohn's
-    requirement that A ∉ {∅, W}). -/
-noncomputable def conditionα [Fintype W] [DecidableEq W]
-    (κ : RankingFunction W) (φ : W → Prop) [DecidablePred φ]
-    (hφ : ∃ w, φ w) (hNφ : ∃ w, ¬φ w) (α : ℕ) : RankingFunction W :=
-  let _instNeg : DecidablePred (fun w => ¬φ w) := fun w => instDecidableNot
-  { rank := fun w =>
-      if φ w then κ.rank w - κ.rankProp φ hφ
-      else α + (κ.rank w - κ.rankProp (fun w => ¬φ w) hNφ)
-    normalized := by
-      classical
-      have hne : (Finset.univ.filter (fun w => φ w)).Nonempty := by
-        obtain ⟨w, hw⟩ := hφ
-        exact ⟨w, Finset.mem_filter.mpr ⟨Finset.mem_univ w, hw⟩⟩
-      obtain ⟨v, hv_mem, hv_min⟩ := Finset.exists_mem_eq_inf' hne κ.rank
-      have hφv : φ v := (Finset.mem_filter.mp hv_mem).2
-      refine ⟨v, ?_⟩
-      simp only [if_pos hφv]
-      show κ.rank v - κ.rankProp φ hφ = 0
-      unfold rankProp
-      rw [← hv_min]
-      exact Nat.sub_self _ }
-
-/-- Ranking functions satisfy Rational Monotonicity.
-
-    Because ℕ is totally ordered, the induced plausibility ordering is
-    **ranked** (any two worlds are comparable). For ranked models,
-    Rational Monotonicity holds: if φ |~ χ and ¬(φ |~ ¬ψ), then
-    (φ ∧ ψ) |~ χ.
-
-    Proof sketch: From ¬(φ |~ ¬ψ), there exists a minimal φ-world v
-    satisfying ψ. Since ℕ is total, every minimal (φ∧ψ)-world has
-    rank ≤ rank of any φ-world. So minimal (φ∧ψ)-worlds are among
-    the minimal φ-worlds, and since φ |~ χ, they satisfy χ. -/
-theorem ranking_rationalMonotonicity (κ : RankingFunction W) :
-    rationalMonotonicity κ.toPreferential := by
-  intro φ ψ χ hφχ hnotφψ
-  -- hφχ : all minimal-φ worlds satisfy χ
-  -- hnotφψ : NOT all minimal-φ worlds satisfy ¬ψ
-  -- Goal: all minimal-(φ∧ψ) worlds satisfy χ
-  intro w ⟨⟨hφw, hψw⟩, hmin_φψ⟩
-  -- w is a minimal (φ∧ψ)-world. Show w is also a minimal φ-world.
-  apply hφχ
-  constructor
-  · exact hφw
-  · -- w is minimal among φ-worlds: for any φ-world v with le v w, show le w v
-    intro v hφv hvw
-    -- hvw : κ.rank v ≤ κ.rank w. Need: κ.rank w ≤ κ.rank v.
-    -- Since ¬(φ |~ ¬ψ), there exists a minimal φ-world u that satisfies ψ.
-    obtain ⟨u, hu⟩ := Classical.not_forall.mp hnotφψ
-    obtain ⟨hu_min, hψu⟩ := Classical.not_imp.mp hu
-    have hψu : ψ u := Classical.not_not.mp hψu
-    obtain ⟨hφu, hminu⟩ := hu_min
-    -- u is φ-minimal; show rank u ≤ rank v using ℕ totality
-    have huv : κ.rank u ≤ κ.rank v := by
-      by_contra h
-      push Not at h
-      -- h : κ.rank v < κ.rank u, so κ.rank v ≤ κ.rank u
-      have hmv := hminu v hφv (show κ.rank v ≤ κ.rank u from Nat.le_of_lt h)
-      change κ.rank u ≤ κ.rank v at hmv
-      omega
-    -- huv : κ.rank u ≤ κ.rank v, so κ.rank u ≤ κ.rank w
-    have huw : κ.rank u ≤ κ.rank w := Nat.le_trans huv hvw
-    -- u is a (φ∧ψ)-world, and w is (φ∧ψ)-minimal, so rank w ≤ rank u
-    have hwu := hmin_φψ u ⟨hφu, hψu⟩ huw
-    -- rank w ≤ rank u ≤ rank v, so rank w ≤ rank v
-    show κ.rank w ≤ κ.rank v
-    exact Nat.le_trans hwu huv
-
--- ══════════════════════════════════════════════════════════════════════
--- § 2. Revision
--- ══════════════════════════════════════════════════════════════════════
-
-/-- The belief set of a ranking function: propositions true at all
-    rank-0 worlds. These are the agent's current beliefs. -/
-def beliefSet (κ : RankingFunction W) : Set (W → Prop) :=
-  { ψ | ∀ w, κ.rank w = 0 → ψ w }
-
-/-- Spohn revision: α-conditionalization with canonical firmness
-    α = κ(¬φ) + 1.
-
-    This is the standard belief-revision operator for ranking functions
-    ([spohn-1988]). The firmness is determined by the current
-    ranking, not a free parameter: the agent revises just firmly enough
-    to make φ believed (the success postulate). On a contingent φ it is
-    [darwiche-pearl-1997]'s operator `BeliefRevision.spohn`
-    (`RankingFunction.revise_rank`). -/
-noncomputable def revise [Fintype W] [DecidableEq W]
-    (κ : RankingFunction W) (φ : W → Prop) [DecidablePred φ]
-    (hφ : ∃ w, φ w) (hNφ : ∃ w, ¬φ w) : RankingFunction W :=
-  have : DecidablePred (fun w => ¬φ w) := fun w => instDecidableNot
-  κ.conditionα φ hφ hNφ (κ.rankProp (fun w => ¬φ w) hNφ + 1)
-
-/-- `rankProp` is ≤ any satisfying world's rank. -/
-theorem rankProp_le_rank [Fintype W]
-    (κ : RankingFunction W) (φ : W → Prop) [DecidablePred φ]
-    (hsat : ∃ w, φ w) (w : W) (hw : φ w) :
-    κ.rankProp φ hsat ≤ κ.rank w := by
-  unfold rankProp
-  exact Finset.inf'_le κ.rank (Finset.mem_filter.mpr ⟨Finset.mem_univ w, hw⟩)
-
--- ══════════════════════════════════════════════════════════════════════
--- § 3. Independence ([spohn-1988], Definition 8)
--- ══════════════════════════════════════════════════════════════════════
-
-/-- Two propositions are **independent** with respect to κ iff
-    κ(φ ∩ ψ) = κ(φ) + κ(ψ).
-
-    [spohn-1988], Definition 8 (simplified from σ-fields to
-    propositions). This is the ordinal analogue of probabilistic
-    independence P(A ∩ B) = P(A) · P(B): where probability uses
-    multiplication, ranking uses addition. -/
-def independent [Fintype W] (κ : RankingFunction W)
-    (φ ψ : W → Prop) [DecidablePred φ] [DecidablePred ψ]
-    [DecidablePred (fun w => φ w ∧ ψ w)]
-    (hφ : ∃ w, φ w) (hψ : ∃ w, ψ w)
-    (hφψ : ∃ w, φ w ∧ ψ w) : Prop :=
-  κ.rankProp (fun w => φ w ∧ ψ w) hφψ = κ.rankProp φ hφ + κ.rankProp ψ hψ
-
-/-- **L-conditioning**: shift-based belief revision.
-
-    [goldszmidt-pearl-1996], Eqs. 29–30: L-conditioning with l ≥ 0
-    keeps φ-worlds at their original rank and shifts ¬φ-worlds up by l.
-    Unlike J-conditioning (`conditionα`), L-conditioning is commutative:
-    κ_{A,l₁}_{B,l₂} = κ_{B,l₂}_{A,l₁}.
-
-    This is the κ(φ) = 0 specialization of the general L-conditioning
-    (G&P Eq. 32). The general form subtracts κ(φ) from all worlds first,
-    but the precondition `h0 : ∃ w, φ w ∧ κ.rank w = 0` guarantees
-    κ(φ) = 0, so the subtraction vanishes for φ-worlds. -/
-noncomputable def lCondition [Fintype W]
-    (κ : RankingFunction W) (φ : W → Prop) [DecidablePred φ]
-    (h0 : ∃ w, φ w ∧ κ.rank w = 0) (l : ℕ) : RankingFunction W where
-  rank w := if φ w then κ.rank w else κ.rank w + l
-  normalized := by
-    obtain ⟨w₀, hφ, hr⟩ := h0
-    exact ⟨w₀, show _ = 0 by rw [if_pos hφ]; exact hr⟩
-
-/-- **AGM success postulate** (K*2): after revision by φ, the evidence
-    φ is believed (all rank-0 worlds satisfy φ).
-
-    [goldszmidt-pearl-1996] §6: ranking revision satisfies the AGM
-    postulates. The proof is direct: ¬φ-worlds receive rank ≥ α =
-    κ(¬φ) + 1 ≥ 1, so they cannot be rank-0 in the revised ranking. -/
-theorem revise_success [Fintype W] [DecidableEq W]
-    (κ : RankingFunction W) (φ : W → Prop) [DecidablePred φ]
-    (hφ : ∃ w, φ w) (hNφ : ∃ w, ¬φ w) :
-    φ ∈ (κ.revise φ hφ hNφ).beliefSet := by
-  intro w hw
-  by_contra hNφw
-  have : (κ.revise φ hφ hNφ).rank w ≥ 1 := by
-    unfold revise conditionα; simp only [if_neg hNφw]
-    have := rankProp_le_rank κ (fun w => ¬φ w) hNφ w hNφw
-    omega
-  omega
+/-- Ranking functions satisfy rational monotonicity: the connected order makes every minimal
+`φ ∧ ψ`-world minimal among the `φ`-worlds once some minimal `φ`-world satisfies `ψ`. -/
+theorem ranking_rationalMonotonicity : rationalMonotonicity κ.toPreferential := by
+  intro φ ψ χ hφχ hnotφψ w ⟨⟨hφw, hψw⟩, hmin⟩
+  refine hφχ w ⟨hφw, λ v hφv hvw => ?_⟩
+  obtain ⟨u, hu⟩ := Classical.not_forall.mp hnotφψ
+  obtain ⟨⟨hφu, hminu⟩, hψu⟩ := Classical.not_imp.mp hu
+  have hψu : ψ u := Classical.not_not.mp hψu
+  have hvw' : κ.rank v ≤ κ.rank w := hvw
+  have huv : κ.rank u ≤ κ.rank v := by
+    by_contra h
+    exact h (hminu v hφv (Nat.le_of_lt (not_le.mp h)))
+  have hwu : κ.rank w ≤ κ.rank u := hmin u ⟨hφu, hψu⟩ (huv.trans hvw')
+  exact hwu.trans huv
 
 end RankingFunction
-
