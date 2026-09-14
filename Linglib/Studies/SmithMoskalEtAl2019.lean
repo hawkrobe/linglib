@@ -1,331 +1,214 @@
 import Linglib.Morphology.Paradigm.Degree
-import Linglib.Syntax.Case.Order
 import Linglib.Morphology.Exponence.Containment.Contiguity
-import Linglib.Morphology.Paradigm.DomainContiguity
+import Linglib.Data.Forms.SmithMoskalEtAl2019
 
 /-!
-# Smith, Moskal, Xu, Kang & Bobaljik (2019) — Case and Number Suppletion in Pronouns
-[smith-moskal-xu-kang-bobaljik-2019]
+# Smith, Moskal, Xu, Kang and Bobaljik (2019): Case and Number Suppletion in Pronouns
 
-[smith-moskal-xu-kang-bobaljik-2019] extend `[bobaljik-2012]`'s
-structural-containment account of *ABA in adjectival degree suppletion
-(`good–better–best` / `*good–better–goodest`) to two further empirical
-domains: pronominal case suppletion (using `[caha-2009]`'s case
-hierarchy as the structural backbone) and pronominal number suppletion
-(using `[harbour-2008]` / `[noyer-1992]` for the number-feature
-geometry).
+This file formalizes [smith-moskal-xu-kang-bobaljik-2019]'s extension of [bobaljik-2012]'s
+containment account of suppletion from adjectival degree to pronominal case, over the case
+hierarchy of [caha-2009], and to pronominal number, over a hierarchy in which the dual contains
+the plural (Greenberg's Universal 34, the paper's (26)). Each hierarchy is a three-grade
+containment structure, so Elsewhere insertion over it generates exactly the contiguous
+patterns and excludes *ABA (`generable_iff_contiguous`, `aba_not_generable`); the attested
+AAA, ABB and ABC patterns are read off the pronoun paradigms of `Data/Forms/SmithMoskalEtAl2019`
+(`paradigm`, `lezgian_aaa`, `icelandic_abb`, `russian_abb`, `awtuw_abb`), and the rules (15) for
+the Icelandic first person generate its ABB (`icelandic_abb_generated`).
 
-The cross-domain extension is not seamless: the paper identifies three
-points where the empirical generalizations require theoretical
-refinement of the Bobaljik 2012 framework:
+The domains diverge on AAB. Under the structural adjacency [bobaljik-2012] assumes for degree,
+terminal rules with adjacent contexts cannot distinguish the second and third grades, so AAB is
+unattested for degree (`realize_one_eq_two_of_terminal_adjacent`,
+`aab_not_generable_of_terminal_adjacent`); section 3.6 finds genuine AAB in pronominal case,
+the absolutive and ergative sharing a base yet remaining distinct where a syncretic
+{A=A}B pattern would not (`wardaman_aab`, `khinalugh_aab`, `genuine_aab`, `archi_syncretic`),
+and section 4.2 finds it in pronominal number (`yagua_aab`, `wambaya_aab`, `dehu_aab`). The
+paper's section 3.7 replaces adjacency by the accessibility domain of Moskal, the first
+category-defining node above the root and one node above that: the domain bounds which heads
+may condition root suppletion (`DomainLocal`), the plateau reappears for any vocabulary whose
+conditioning heads lie in a domain (`realize_const_of_terminal_domainLocal`), terminal
+adjacency is its smallest nontrivial instance (`domainLocal_of_terminal_adjacent`), and the
+rules (20) for Wardaman, local at the trivial domain of a pronoun, generate the attested AAB
+while containment and the Elsewhere condition still exclude ABA (`wardaman_aab_generated`,
+`wardaman_realize_contiguous`).
 
-1. **§3.6 — AAB attestation diverges across domains.** AAB patterns
-   (e.g., a paradigm where positive and comparative share a root and
-   the superlative is suppletive) are systematically *unattested* in
-   adjectival degree but *are attested* in pronominal case and
-   pronominal number. This is the divergence formalized below.
+## Implementation notes
 
-2. **§3.7 — accessibility-domain locality replaces structural/linear
-   adjacency.** Adjacency is too strict once AAB is admitted: Tamil
-   shows dative case suppletion across the plural morpheme, "neither
-   linearly nor structurally adjacent to the root". The paper adopts
-   [moskal-2015a-dissertation]'s accessibility domain (AD) — "the
-   first category-defining node above the root, and one node above
-   that" — a trigger-relative bound on what may condition root
-   suppletion, formalized below as `DomainLocal`.
+* A paradigm is three rows of the form table in the order of the hierarchy, its cells the base
+  letters the paper's pattern labels assign (`Base`); the case hierarchy is read as unmarked,
+  dependent and oblique, absolutive, ergative and dative in the ergative languages and
+  nominative, accusative and dative otherwise, and the number hierarchy as singular, plural
+  and dual.
+* The paper's counts stay in prose: for case, Table 9 records ABB in fifty-seven languages,
+  ABC in two, AAB in ten and a single doubtful ABA, the Archi second person plural; for
+  number, Table 32 records forty-eight ABB, nineteen ABC, three AAB and one doubtful ABA in
+  Yagua.
+* The rules (20) are stated for featural containment and are transposed to the three-cell
+  structural hierarchy of section 3.1; the exponent of the number-and-case portmanteau (20a)
+  and the affixes (20c) to (20e) fall outside the three cells.
 
-3. **§4.3.1–§4.3.3 — number representation and markedness ×
-   suppletion.** Cross-linguistic variation
-   in pronominal number suppletion correlates with independent
-   evidence for variation in the internal complexity / markedness of
-   the number head — connecting suppletion theory to the feature
-   recursion of [harbour-2014] (already substrate in this
-   codebase, see `Syntax/Minimalist/Phi/Recursion.lean`).
+## References
 
-This file formalizes (1) directly: the terminal-adjacent fragment of
-the realizational engine (`Morphology/Exponence/Containment/Contiguity.lean`,
-[bobaljik-2012]'s structural-adjacency locality) predicts AAB exclusion
-in *every* domain it applies to — `realize_const_of_terminal_adjacent`
-forces the two inner cells to share a root; the empirical data the
-paper reports falsifies that prediction in case and number. (2) is
-formalized in `§ 4`: `DomainLocal` beside `Adjacent` in the engine's
-condition menu, the domain-relativized plateau, and the generability
-converse — the Wardaman-shaped AAB realization is generated by an
-AD-local vocabulary. (3) remains a substrate-addition TODO.
+* [smith-moskal-xu-kang-bobaljik-2019]
+* [bobaljik-2012]
+* [caha-2009]
+* [moskal-2015a-dissertation]
+* [merlan-1994]
 
-## Scope of the formalization
+## TODO
 
-- Degree-side prediction: proven directly from substrate (`§ 1`).
-- Case AAB attestation: two genuine witnesses from §3.6 encoded and
-  shown not generable under structural adjacency (`§ 2`).
-- Number AAB attestation: the Yagua 2 witness from §4 Table 46, same
-  non-generability shape (`§ 3`).
-- Accessibility-domain locality (`§ 4`): `DomainLocal` (rule-level,
-  trigger-relative, per the paper's actual formulation), the
-  relativized plateau, and the AAB-generability converse; the
-  cell-level projection lives in `Morphology/Paradigm/DomainContiguity.lean`.
+Section 4.3's number containment hypothesis, [±augmented] containing [±singular] with the
+marked value of a feature visible to suppletion, is not formalized; the number hierarchy is the
+containment of section 4.1.
 -/
 
 namespace SmithMoskalEtAl2019
 
-open Morphology.Degree
-open Morphology (DomainPartition SameDomain IsContiguousWithin ViolatesABAWithin)
-open Morphology.Containment
+open Morphology Morphology.Degree Morphology.Containment
 
--- ============================================================================
--- § 1: Degree side — DM derivation excludes AAB unconditionally
--- ============================================================================
+/-! ### Paradigms from the form table -/
 
-/-! The structural-adjacency fragment of the realizational engine —
-terminal items (no portmanteaux) with adjacent conditioning, the
-locality [bobaljik-2012] assumes for degree — forces CMPR-cell =
-SPRL-cell for any generable root pattern
-(`Morphology.Containment.realize_const_of_terminal_adjacent`). This is
-strictly stronger than contiguity: it excludes both *ABA *and* *AAB.
+/-- The base class the paper's pattern label assigns a form. -/
+def baseOf (f : Data.Forms.Form) : ℕ :=
+  match f.column? "Base" with
+  | some "B" => 1
+  | some "C" => 2
+  | _ => 0
 
-The two theorems below state that content at two granularities: the
-general "no generable pattern has CMPR ≠ SPRL", and the specific
-corollary "the AAB shape is not generable." The paper's §3.7 move is
-precisely to *drop* these hypotheses for case and number — replacing
-structural adjacency with domain-based locality — which is why the
-axioms are à la carte Props rather than baked into the rule type. -/
+/-- Three cells in the order of the hierarchy as a paradigm of base classes. -/
+def paradigm (a b c : Data.Forms.Form) : Paradigm 3 ℕ := ![baseOf a, baseOf b, baseOf c]
 
-/-- Elsewhere insertion under [bobaljik-2012]'s structural adjacency
-    (terminal items, adjacent contexts) cannot generate a pattern whose
-    CMPR cell differs from its SPRL cell. -/
-theorem dm_excludes_cmpr_sprl_distinct {v : List (SpanRule 3 ℕ)}
-    (hT : Terminal v) (hAdj : Adjacent v) :
-    realize v 1 = realize v 2 :=
-  realize_const_of_terminal_adjacent hT hAdj
+/-- Wardaman third singular, absolutive, ergative and dative (Table 25, [merlan-1994]). -/
+def wardaman3sg : Paradigm 3 ℕ :=
+  paradigm Forms.wardaman_3sg_abs Forms.wardaman_3sg_erg Forms.wardaman_3sg_dat
 
-/-- Specific corollary: the AAB shape (POS = CMPR ≠ SPRL) cannot be
-    generated under structural adjacency. -/
-theorem dm_excludes_aab {v : List (SpanRule 3 ℕ)}
-    (hT : Terminal v) (hAdj : Adjacent v) {a b : ℕ} (hab : a ≠ b) :
-    realize v ≠ ![some a, some a, some b] := by
+/-- Khinalugh second singular (Table 24). -/
+def khinalugh2sg : Paradigm 3 ℕ :=
+  paradigm Forms.khinalugh_2sg_abs Forms.khinalugh_2sg_erg Forms.khinalugh_2sg_dat
+
+/-- Icelandic first singular, nominative, accusative and dative (Table 6). -/
+def icelandic1sg : Paradigm 3 ℕ :=
+  paradigm Forms.icelandic_1sg_nom Forms.icelandic_1sg_acc Forms.icelandic_1sg_dat
+
+/-- Russian first singular (Table 10). -/
+def russian1sg : Paradigm 3 ℕ :=
+  paradigm Forms.russian_1sg_nom Forms.russian_1sg_acc Forms.russian_1sg_dat
+
+/-- Lezgian first singular (Table 11). -/
+def lezgian1sg : Paradigm 3 ℕ :=
+  paradigm Forms.lezgian_1sg_abs Forms.lezgian_1sg_erg Forms.lezgian_1sg_dat
+
+/-- Awtuw first person, singular, plural and dual (Table 33). -/
+def awtuw1 : Paradigm 3 ℕ := paradigm Forms.awtuw_1_sg Forms.awtuw_1_pl Forms.awtuw_1_dl
+
+/-- Yagua second person (Table 46). -/
+def yagua2 : Paradigm 3 ℕ := paradigm Forms.yagua_2_sg Forms.yagua_2_pl Forms.yagua_2_dl
+
+/-- Wambaya first inclusive (Table 46). -/
+def wambaya1incl : Paradigm 3 ℕ :=
+  paradigm Forms.wambaya_1incl_sg Forms.wambaya_1incl_pl Forms.wambaya_1incl_dl
+
+/-- Dehu third masculine (Table 46). -/
+def dehu3m : Paradigm 3 ℕ := paradigm Forms.dehu_3m_sg Forms.dehu_3m_pl Forms.dehu_3m_dl
+
+/-! ### Containment excludes ABA, sections 3.3 and 4.2 -/
+
+/-- Over a three-grade containment hierarchy a pattern is generable by Elsewhere insertion
+exactly when it is contiguous, for case and for number alike. -/
+theorem generable_iff_contiguous (p : Paradigm 3 ℕ) : ElsewhereGenerable p ↔ IsContiguous p :=
+  (isContiguous_iff_generable p).symm
+
+/-- No ABA pattern is generable: the reading that excludes the apparent Archi second plural for
+case and the doubtful Yagua third person for number. -/
+theorem aba_not_generable : ¬ ElsewhereGenerable ![0, 1, 0] :=
+  mt (generable_iff_contiguous _).mp (by decide)
+
+/-- The attested patterns of the case hierarchy: Lezgian AAA, Icelandic and Russian ABB. -/
+theorem lezgian_aaa : degreeShape lezgian1sg = aaa := by decide
+
+theorem icelandic_abb : degreeShape icelandic1sg = abb := by decide
+
+theorem russian_abb : degreeShape russian1sg = abb := by decide
+
+/-- The attested ABB of the number hierarchy: Awtuw's plural and dual share a base. -/
+theorem awtuw_abb : degreeShape awtuw1 = abb := by decide
+
+/-- The rules (15) for the Icelandic first singular: an accusative-conditioned *m-* and an
+elsewhere *ég*; by containment the *m-* base spreads to the dative. -/
+def icelandicVocab : List (SpanRule 3 String) := [⟨"ég", 0, none⟩, ⟨"m", 0, some 1⟩]
+
+theorem icelandic_abb_generated : degreeShape (realize icelandicVocab) = abb := by decide
+
+/-! ### Structural adjacency and the absence of AAB for degree, section 2 -/
+
+/-- Under [bobaljik-2012]'s structural adjacency, terminal rules with adjacent contexts cannot
+distinguish the second grade from the third. -/
+theorem realize_one_eq_two_of_terminal_adjacent {v : List (SpanRule 3 ℕ)} (hT : Terminal v)
+    (hA : Adjacent v) : realize v 1 = realize v 2 :=
+  realize_const_of_terminal_adjacent hT hA
+
+/-- So no AAB pattern is generable under structural adjacency. -/
+theorem aab_not_generable_of_terminal_adjacent {v : List (SpanRule 3 ℕ)} (hT : Terminal v)
+    (hA : Adjacent v) {a b : ℕ} (hab : a ≠ b) : realize v ≠ ![some a, some a, some b] := by
   intro h
-  have h12 := dm_excludes_cmpr_sprl_distinct hT hAdj
+  have h12 := realize_one_eq_two_of_terminal_adjacent hT hA
   rw [h] at h12
   exact hab (by simpa using h12)
 
--- ============================================================================
--- § 2: Case side — §3.6 attested AAB witnesses
--- ============================================================================
+/-! ### AAB attested for case, section 3.6, and for number, section 4.2 -/
 
-/-! [smith-moskal-xu-kang-bobaljik-2019] §3.6 distinguishes two
-kinds of AAB pattern in pronominal case suppletion:
+/-- Wardaman and Khinalugh are AAB: contiguous, the third cell alone suppletive. -/
+theorem wardaman_aab : degreeShape wardaman3sg = aab := by decide
 
-- **Syncretic AAB** (Table 20: Aghul, Tsez, Hinuq, Archi 2SG): the
-  ABS and ERG forms are identical (case syncretism), so the pattern
-  is really `{A=A}B` — a 2-way contrast modeled by impoverishment
-  rather than genuine 3-cell suppletion. The paper rejects these as
-  evidence of true AAB.
+theorem khinalugh_aab : degreeShape khinalugh2sg = aab := by decide
 
-- **Genuine AAB** (Tables 24, 25): ABS and ERG share a root *but
-  remain morphologically distinct* (different suffix or stem-internal
-  variation), and DAT is suppletive. These are real AAB witnesses.
+/-- Genuine AAB against syncretism: the Wardaman and Khinalugh absolutive and ergative are
+distinct forms on one base, where the Archi second singular's are identical, the {A=A}B of
+Table 20 the paper sets aside as a two-way contrast. -/
+theorem genuine_aab :
+    Forms.wardaman_3sg_abs.form ≠ Forms.wardaman_3sg_erg.form ∧
+      Forms.khinalugh_2sg_abs.form ≠ Forms.khinalugh_2sg_erg.form := by
+  decide
 
-We encode two genuine AAB witnesses:
-- Wardaman 3SG (Table 25, [merlan-1994]): ABS=*narnaj*,
-  ERG=*narnaj-(j)i*, DAT=*gunga*. ABS and ERG share root *narnaj*
-  with ERG bearing an additional ergative suffix; DAT is suppletive.
-- Khinalugh 2SG (Table 24, Nakh-Daghestanian): ABS=*vɨ*, ERG=*va*,
-  DAT=*oX(ɨr)*. ABS and ERG share a v-initial root with vowel
-  alternation; DAT is suppletive.
+theorem archi_syncretic : Forms.archi_2sg_abs.form = Forms.archi_2sg_erg.form := by decide
 
-Projecting onto the 3-cell ABS/ERG/DAT hierarchy, both patterns have
-the shape `[0, 0, 1]` (positive and middle cells share root-class 0,
-suppletive third cell takes root-class 1). -/
+/-- The number witnesses of Table 46 are AAB. -/
+theorem yagua_aab : degreeShape yagua2 = aab := by decide
 
-/-- Wardaman 3SG: ABS=*narnaj*, ERG=*narnaj-(j)i*, DAT=*gunga*.
-    [smith-moskal-xu-kang-bobaljik-2019] Table 25 (data from
-    [merlan-1994]). -/
-def wardamanThirdSg : Morphology.Paradigm 3 ℕ := ![0, 0, 1]
+theorem wambaya_aab : degreeShape wambaya1incl = aab := by decide
 
-/-- Khinalugh 2SG: ABS=*vɨ*, ERG=*va*, DAT=*oX(ɨr)*.
-    [smith-moskal-xu-kang-bobaljik-2019] Table 24. -/
-def khinalughSecondSg : Morphology.Paradigm 3 ℕ := ![0, 0, 1]
+theorem dehu_aab : degreeShape dehu3m = aab := by decide
 
-/-- Both genuine-AAB witnesses are contiguous in the substrate sense
-    (no *ABA violation): cells at positions 0 and 2 do not share a
-    root they don't also share with position 1. -/
-theorem wardaman_3sg_contiguous :
-    Morphology.IsContiguous wardamanThirdSg := by decide
+/-- The attested AAB patterns are contiguous, so containment admits them, yet no terminal
+vocabulary under structural adjacency generates them: the adjacency condition is what the
+pronominal data refute. -/
+theorem aab_contiguous_not_adjacent_generable :
+    IsContiguous wardaman3sg ∧ IsContiguous yagua2 ∧
+      ∀ v : List (SpanRule 3 ℕ), Terminal v → Adjacent v →
+        realize v ≠ ![some 0, some 0, some 1] :=
+  ⟨by decide, by decide, λ _ hT hA => aab_not_generable_of_terminal_adjacent hT hA (by decide)⟩
 
-theorem khinalugh_2sg_contiguous :
-    Morphology.IsContiguous khinalughSecondSg := by decide
+/-! ### Accessibility domains, section 3.7
 
-/-- The defining AAB shape: cells 1 and 2 differ (suppletion in the
-    third position but not the second). This is the structural feature
-    that the terminal-adjacent engine excludes —
-    `realize_const_of_terminal_adjacent` forces the second and third
-    cells to coincide for any generable root pattern. -/
-theorem wardaman_3sg_is_aab :
-    wardamanThirdSg 1 ≠ wardamanThirdSg 2 := by decide
+Adjacency is too strict: Tamil supplets for the dative across the plural morpheme, so
+locality may have to appeal to domains rather than adjacency. The accessibility domain of
+[moskal-2015a-dissertation], the heads merged when the root's cycle is fixed, bounds which
+heads may condition root suppletion; a lexical noun or adjective has a category node that
+keeps case and the superlative outside the domain, a pronoun has none and every case head is
+visible. -/
 
-theorem khinalugh_2sg_is_aab :
-    khinalughSecondSg 1 ≠ khinalughSecondSg 2 := by decide
-
-/-- **§3.6 cross-domain divergence theorem.** The structural-adjacency
-    engine (`realize_const_of_terminal_adjacent`) predicts, for any
-    generable root pattern, that the second and third
-    cells coincide. Lifted to case (where the 3-cell projection is
-    UNMARKED–DEPENDENT–OBLIQUE, e.g. ABS–ERG–DAT in ergative
-    languages), this prediction would exclude AAB cells `[A, A, B]`
-    where the second cell equals the first but the third cell
-    differs.
-
-    [smith-moskal-xu-kang-bobaljik-2019] §3.6 establishes that
-    AAB is robustly attested in pronominal case suppletion (Table 9:
-    10 instances, including Wardaman 3SG and the Nakh-Daghestanian
-    2SG patterns). The existence of a contiguous AAB-shaped case
-    pattern witnesses the falsification of the lifted DM derivation:
-    no `realize_const_of_terminal_adjacent`-style plateau theorem can
-    hold for case morphology.
-
-    The paper's positive proposal (§3.7) is to weaken the locality
-    predicate from structural adjacency (Bobaljik 2012) /
-    linear adjacency (Embick 2010) to domain-based locality
-    ([moskal-2015]); see § 4 below. -/
-theorem case_aab_attested_falsifies_dm :
-    ∃ p : Morphology.Paradigm 3 ℕ,
-      Morphology.IsContiguous p ∧ p 1 ≠ p 2 :=
-  ⟨wardamanThirdSg, wardaman_3sg_contiguous, wardaman_3sg_is_aab⟩
-
-/-- The falsification run through the engine: no terminal vocabulary
-    under structural adjacency generates the Wardaman-shaped AAB
-    realization. Since Wardaman attests it, structural adjacency is the
-    hypothesis that must go — the paper's §3.7 conclusion. -/
-theorem wardaman_not_generable_under_adjacency :
-    ∀ v : List (SpanRule 3 ℕ), Terminal v → Adjacent v →
-      realize v ≠ ![some 0, some 0, some 1] :=
-  λ _ hT hA => dm_excludes_aab hT hA (by decide)
-
--- ============================================================================
--- § 3: Number side — §4 attested AAB witnesses (Table 46)
--- ============================================================================
-
-/-! [smith-moskal-xu-kang-bobaljik-2019] §4 surveys pronominal
-number suppletion and finds the same AAB-attestation profile that
-§3.6 reports for case: "we find extremely clear-cut examples of ABB,
-ABC and AAB patterns, alongside AAA. We do not find any unambiguously
-robust evidence of ABA patterns." Table 32 quantifies: 3 attested AAB
-number paradigms, marked "?" in the paper's prediction column (vs 48
-ABB, 19 ABC, numerous AAA, 1 dubious ABA from Yagua).
-
-§4 Table 46 lists the three concrete AAB number witnesses:
-
-- **Wambaya 1INCL** ([nordlinger-1998]):
-  SG=*ngawu(rniji)*, PL=*ngurruwani*, DL=*mrindiyani*
-- **Yagua 2** ([payne-payne-1990]):
-  SG=*jiy*, PL=*jiryéy*, DL=*sááda*
-- **Dehu 3M** (Smith 2011):
-  SG=*angeice*, PL=*angate*, DL=*nyido*
-
-We encode Yagua 2 — the cleanest morphological case: PL *jiryéy*
-transparently contains the SG root *jiy* plus a plural suffix *-éy*,
-while DL *sááda* is suppletive (no shared formative). This projects
-to `[0, 0, 1]` over the SG/PL/DL hierarchy: positions 0 (SG) and 1
-(PL) share root-class 0 (the *jiy* root); position 2 (DL) takes
-root-class 1 (the *sááda* root).
-
-The number paradigms are 3-cell over SG/PL/DL; the cell-ordering
-reflects the containment structure SG–PL–DL or SG–DL–PL depending on
-the language (the paper notes both orderings are attested, motivating
-the §4.3.1–§4.3.3 reanalysis of number representation — the Number
-containment hypothesis (32) plus markedness-relativized visibility —
-which connects to Harbour's [harbour-2014] feature recursion). For
-Yagua, the SG–PL–DL ordering matches the table caption directly. -/
-
-/-- Yagua 2nd person number paradigm: SG=*jiy*, PL=*jiryéy*,
-    DL=*sááda*. [smith-moskal-xu-kang-bobaljik-2019] Table 46
-    (data from [payne-payne-1990]). The PL is transparently
-    *jiy* + *-éy*; the DL is suppletive. Projects to `[0, 0, 1]`
-    over SG/PL/DL. -/
-def yaguaSecond : Morphology.Paradigm 3 ℕ := ![0, 0, 1]
-
-theorem yagua_2_contiguous :
-    Morphology.IsContiguous yaguaSecond := by decide
-
-theorem yagua_2_is_aab :
-    yaguaSecond 1 ≠ yaguaSecond 2 := by decide
-
-/-- §4 number-side analog of `case_aab_attested_falsifies_dm`. Same
-    structural divergence: AAB is attested in pronominal number
-    suppletion (3 instances per Table 32, with Wambaya / Yagua / Dehu
-    listed in Table 46), falsifying the DM derivation lifted to number.
-    The Yagua 2 witness is morphologically transparent — PL = SG +
-    suffix; DL is suppletive — exactly the AAB shape that
-    `realize_const_of_terminal_adjacent` would predict cannot arise. -/
-theorem number_aab_attested_falsifies_dm :
-    ∃ p : Morphology.Paradigm 3 ℕ,
-      Morphology.IsContiguous p ∧ p 1 ≠ p 2 :=
-  ⟨yaguaSecond, yagua_2_contiguous, yagua_2_is_aab⟩
-
-/-- Number-side analog: the Yagua-shaped AAB realization is not
-    generable under structural adjacency either. -/
-theorem yagua_not_generable_under_adjacency :
-    ∀ v : List (SpanRule 3 ℕ), Terminal v → Adjacent v →
-      realize v ≠ ![some 0, some 0, some 1] :=
-  λ _ hT hA => dm_excludes_aab hT hA (by decide)
-
--- ============================================================================
--- § 4: §3.7 — Accessibility-domain locality (rule level)
--- ============================================================================
-
-/-! [smith-moskal-xu-kang-bobaljik-2019] §3.7: adjacency (structural
-or linear) is too strict a condition on root suppletion — Tamil shows
-dative suppletion across the plural morpheme, so "adjacency cannot be
-a universal restrictor on allomorphy" — and "locality in morphology,
-like in syntax, may need to appeal to interveners and thus, perhaps
-domains, rather than (structural or linear) adjacency". The paper
-adopts (as "one approach which may draw the right cut … at least to a
-first approximation") [moskal-2015a-dissertation]'s **accessibility
-domain** (AD): the heads merged when the root's cycle is fixed — "the
-first category-defining node above the root, and one node above
-that". The AD is *trigger-relative*: a bound on which heads may
-condition root suppletion, not a partition of paradigm cells. Lexical
-nouns and adjectives have a category node, so case/superlative heads
-fall outside the AD; pronouns lack one ("there is no domain created
-low in the structure that contains just the pronominal base"), so all
-case heads are visible.
-
-`DomainLocal d` records the AD as the highest accessible head `d`,
-beside `Adjacent`/`Grounded` in the engine's à-la-carte condition
-menu. The paper's degree/pronoun split, as theorems:
-
-* adjectives/nouns: small AD — the no-AAB plateau reappears with no
-  adjacency stipulation (`realize_const_of_terminal_domainLocal`),
-  and terminal adjacency is the smallest nontrivial instance
-  (`domainLocal_of_terminal_adjacent`);
-* pronouns: trivial AD — the Wardaman-shaped AAB realization is
-  generated (`wardaman_aab_generated`), while ABA stays excluded by
-  containment + Elsewhere alone
-  (`Morphology.Containment.isContiguous_realize`): "Crucially
-  however, the logic of containment coupled with the Elsewhere
-  Condition continues to rule out ABA patterns." -/
-
-/-- Accessibility-domain locality ([moskal-2015a-dissertation], as
-    adopted in [smith-moskal-xu-kang-bobaljik-2019] §3.7): every
-    conditioning head lies within the root's accessibility domain
-    `[0, d]`. Trigger-relative — a bound on rules' conditioning
-    contexts, not a partition of cells; exponed spans are not
-    restricted, since the AD governs what may *condition* insertion,
-    not what is inserted. -/
-def DomainLocal {n : ℕ} {F : Type*} (d : Fin n)
-    (v : List (SpanRule n F)) : Prop :=
+/-- Every conditioning head lies within the accessibility domain `[0, d]`: a bound on the
+contexts of rules, not on the spans they expone. -/
+def DomainLocal {n : ℕ} {F : Type*} (d : Fin n) (v : List (SpanRule n F)) : Prop :=
   ∀ it ∈ v, ∀ c : Fin n, it.context = some c → c ≤ d
 
 instance {n : ℕ} {F : Type*} (d : Fin n) (v : List (SpanRule n F)) :
     Decidable (DomainLocal d v) := by
   unfold DomainLocal; infer_instance
 
-/-- Under AD locality, terminal rules have thresholds inside the
-    domain. -/
-theorem threshold_le_of_terminal_domainLocal {n : ℕ} {F : Type*}
-    {d : Fin n} {v : List (SpanRule n F)}
-    (hT : Terminal v) (hD : DomainLocal d v)
-    {it : SpanRule n F} (hit : it ∈ v) : it.threshold ≤ d := by
+/-- Terminal rules local to a domain have thresholds inside it. -/
+theorem threshold_le_of_terminal_domainLocal {n : ℕ} {F : Type*} {d : Fin n}
+    {v : List (SpanRule n F)} (hT : Terminal v) (hD : DomainLocal d v) {it : SpanRule n F}
+    (hit : it ∈ v) : it.threshold ≤ d := by
   have h0 := hT it hit
   unfold SpanRule.threshold
   cases hc : it.context with
@@ -336,212 +219,43 @@ theorem threshold_le_of_terminal_domainLocal {n : ℕ} {F : Type*}
     simp only [Option.getD_some]
     exact max_le (by rw [Fin.le_def]; omega) (hD it hit c hc)
 
-/-- **The domain-relativized plateau**: with terminal rules and
-    AD-local conditioning, realization is constant above the domain —
-    root suppletion cannot distinguish grades the domain cannot see.
-    At `d = CMPR` this rederives [bobaljik-2012]'s no-AAB plateau for
-    adjectives with no adjacency stipulation, which is the paper's
-    reconstruction of the degree facts. -/
-theorem realize_const_of_terminal_domainLocal {n : ℕ} {F : Type*}
-    {d : Fin n} {v : List (SpanRule n F)}
-    (hT : Terminal v) (hD : DomainLocal d v)
-    {g g' : Fin n} (hg : d ≤ g) (hg' : d ≤ g') :
-    realize v g = realize v g' :=
-  realize_const_of_cap
-    (λ _ hit => threshold_le_of_terminal_domainLocal hT hD hit) hg hg'
+/-- The plateau relative to a domain: with terminal rules whose contexts lie in the domain,
+realization is constant above it. At the comparative this is the no-AAB plateau of degree
+without an adjacency condition. -/
+theorem realize_const_of_terminal_domainLocal {n : ℕ} {F : Type*} {d : Fin n}
+    {v : List (SpanRule n F)} (hT : Terminal v) (hD : DomainLocal d v) {g g' : Fin n}
+    (hg : d ≤ g) (hg' : d ≤ g') : realize v g = realize v g' :=
+  realize_const_of_cap (λ _ hit => threshold_le_of_terminal_domainLocal hT hD hit) hg hg'
 
-/-- Terminal adjacency is AD locality at any domain containing the
-    first head: the [bobaljik-2012] regime is the smallest nontrivial
-    accessibility domain. -/
-theorem domainLocal_of_terminal_adjacent {n : ℕ} {F : Type*}
-    {d : Fin n} (hd : 1 ≤ (d : ℕ)) {v : List (SpanRule n F)}
-    (hT : Terminal v) (hA : Adjacent v) : DomainLocal d v := by
+/-- Terminal adjacency is locality at any domain containing the first head. -/
+theorem domainLocal_of_terminal_adjacent {n : ℕ} {F : Type*} {d : Fin n} (hd : 1 ≤ (d : ℕ))
+    {v : List (SpanRule n F)} (hT : Terminal v) (hA : Adjacent v) : DomainLocal d v := by
   intro it hit c hc
   have h1 := hA it hit c hc
   have h0 := hT it hit
   rw [Fin.le_def]; omega
 
-/-- Wardaman 3SG as a vocabulary, after the paper's rules (20b)/(20f)
-    (stated there for featural containment; transposed here to the
-    3-cell structural hierarchy of §3.1): elsewhere `narnaj`,
-    oblique-conditioned `gunga`. -/
-def wardamanVocab : List (SpanRule 3 String) :=
-  [⟨"narnaj", 0, none⟩, ⟨"gunga", 0, some 2⟩]
+/-- The rules (20b) and (20f) for the Wardaman third person: a dative-conditioned *gunga* and
+an elsewhere *narnaj*. -/
+def wardamanVocab : List (SpanRule 3 String) := [⟨"narnaj", 0, none⟩, ⟨"gunga", 0, some 2⟩]
 
-/-- **The generability converse**: the AD-local pronoun vocabulary
-    generates exactly the attested AAB shape (`degreeShape` is the
-    3-cell shape classifier, named for its degree origin). -/
+/-- The Wardaman vocabulary is antihomophonous and local at the trivial domain of a pronoun,
+and generates the attested AAB. -/
 theorem wardaman_aab_generated :
-    degreeShape (realize wardamanVocab) = aab := by decide
+    Antihomophonous wardamanVocab ∧ DomainLocal 2 wardamanVocab ∧
+      degreeShape (realize wardamanVocab) = aab := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
-/-- The vocabulary is antihomophonous and AD-local at the trivial
-    (pronoun) domain — no category node, all case heads visible. -/
-theorem wardaman_wellformed :
-    Antihomophonous wardamanVocab ∧ DomainLocal 2 wardamanVocab := by
+/-- The same vocabulary satisfies neither structural adjacency nor [bobaljik-2012]'s
+markedness condition (202): the attested pronominal AAB refutes both as conditions on
+suppletion in general. -/
+theorem wardaman_not_adjacent_not_grounded :
+    ¬ Adjacent wardamanVocab ∧ ¬ Grounded wardamanVocab := by
   refine ⟨?_, ?_⟩ <;> decide
 
-theorem wardaman_not_adjacent : ¬ Adjacent wardamanVocab := by decide
-
-/-- Formalization-surfaced: the attested pronominal AAB vocabulary
-    violates [bobaljik-2012]'s markedness condition (202) (`Grounded`)
-    just as it violates adjacency — under the threshold encoding, the
-    paper's data refutes *both* degree-side AAB-blockers as
-    category-general principles. The degree/pronoun split must come
-    from domain structure, not from the markedness condition alone. -/
-theorem wardaman_not_grounded : ¬ Grounded wardamanVocab := by decide
-
-/-- ABA remains excluded even at the trivial domain: containment +
-    Elsewhere (with antihomophony) suffices — the paper's closing
-    point of §3.7. -/
-theorem wardaman_realize_contiguous :
-    Morphology.IsContiguous (realize wardamanVocab) :=
+/-- ABA stays excluded at the trivial domain: containment with the Elsewhere condition
+suffices. -/
+theorem wardaman_realize_contiguous : IsContiguous (realize wardamanVocab) :=
   isContiguous_realize (by decide)
-
--- ============================================================================
--- § 5: Cell-level projection — case and number partitions
--- ============================================================================
-
-/-! The cell-level projection of the AD computation
-(`Morphology/Paradigm/DomainContiguity.lean`: `DomainPartition`, `SameDomain`,
-`IsContiguousWithin`), instantiated for the case and number domains
-the paper discusses:
-
-- **Case partition (`caseDomainPartition`)**: ABS and ERG in the
-  **non-oblique** domain; DAT in the **oblique** domain. The boundary
-  is the Unmarked-Dependent vs Oblique split of the paper's own
-  3-cell structure (§3.1: "[ [ [ UNMARKED ] DEPENDENT ] OBLIQUE ]",
-  fn. 20) — derived from `Case.IsOblique`, not stipulated on
-  indices.
-
-- **Number partition (`numberDomainPartition`)**: SG + PL in the
-  non-dual domain; DL in the dual domain, per [harbour-2014]'s
-  feature-recursion split. Unlike the case side, this boundary is
-  stated directly as a cell table; deriving it from a number-feature
-  substrate (the paper's §4.3.3 markedness-relativized containment)
-  is deferred. -/
-
-
-/-- The 3-cell ergative case paradigm SMSE 2019 analyses: position 0
-    is ABS, position 1 is ERG, position 2 is DAT. -/
-def caseAtPos : Fin 3 → Case := ![.abs, .erg, .dat]
-
-/-- Case partition: derived from `Case.IsOblique` via `caseAtPos` —
-    the Unmarked-Dependent vs Oblique boundary as a *consequence* of
-    the order substrate, not a stipulated threshold. -/
-def caseDomainPartition : DomainPartition 3 Bool := λ i =>
-  decide (Case.IsOblique (caseAtPos i))
-
-/-- Number partition: SG + PL non-dual (`false`), DL dual (`true`);
-    boundary per [harbour-2014]'s feature-recursion split, stated as
-    a cell table pending a number-feature derivation. -/
-def numberDomainPartition : DomainPartition 3 Bool := ![false, false, true]
-
-/-- Under the case partition, ERG and DAT lie in different domains —
-    the structural feature that admits Wardaman-type AAB. -/
-theorem case_partition_splits_erg_dat :
-    ¬ SameDomain caseDomainPartition 1 2 := by decide
-
-/-- Under the number partition, PL and DL lie in different domains. -/
-theorem number_partition_splits_pl_dl :
-    ¬ SameDomain numberDomainPartition 1 2 := by decide
-
-/-- The case AAB witness (Wardaman 3SG) is contiguous under the case
-    partition — trivially, since AAB is contiguous even in the
-    universal sense; the substantive generability claim is
-    `wardaman_aab_generated` above. -/
-theorem wardaman_3sg_within_case_domain :
-    IsContiguousWithin caseDomainPartition wardamanThirdSg := by decide
-
-/-- The number AAB witness (Yagua 2) is contiguous under the number
-    partition. -/
-theorem yagua_2_within_number_domain :
-    IsContiguousWithin numberDomainPartition yaguaSecond := by decide
-
--- ============================================================================
--- § 6: The positive result — markedness hierarchies as containment, *ABA
--- ============================================================================
-
-/-! The AAB divergence above is stated against the paper's core positive
-result (§2–§3.3, §4.1): the case and number markedness hierarchies are
-each a three-grade containment structure, and — exactly as for degree —
-Elsewhere insertion over such a hierarchy excludes *ABA. Both hierarchies
-are the same `Fin 3` containment substrate under different labelings of
-the grades:
-
-- **Case** ([caha-2009]): unmarked < dependent < oblique — nominative
-  (absolutive) < accusative (ergative) < a representative oblique
-  (dative). `caseAtPos` above fixes the ergative labeling.
-- **Number** ([harbour-2011]): SG < PL < DL, with the **dual most marked,
-  properly containing the plural**. This encodes Greenberg's Universal 34
-  (§4.1 (26)): no language has a dual unless it has a plural — the
-  structure that contains DL necessarily contains PL, so no vocabulary
-  can supplete for DL while reverting to the plural root's competitor at
-  PL (that would be *ABA). Harbour's [±augmented] subdivides the
-  non-singular, giving DL the marked value.
-
-Attested witnesses across both hierarchies, decide-checked as engine
-realizations and classified by `degreeShape`. -/
-
-/-- Lezgian 1SG *zun* (ABS) – *za* (ERG) – *zaz* (DAT): a constant
-    *z(a)*-base across the cases — AAA. [smith-moskal-xu-kang-bobaljik-2019]
-    Table 11 (data from [haspelmath-1993]). -/
-def lezgianFirstSg : Morphology.Paradigm 3 ℕ := ![0, 0, 0]
-
-/-- Russian 1SG *ja* (NOM) – *menja* (ACC) – *mn-* (oblique): the
-    inherited Indo-European ABB, a *j*-nominative against a shared
-    *m*-base in every non-nominative. [smith-moskal-xu-kang-bobaljik-2019]
-    Table 10; the paper's (15)-style rules are an elsewhere root plus an
-    accusative-conditioned suppletive root. -/
-def russianFirstSg : Morphology.Paradigm 3 ℕ := ![0, 1, 1]
-
-/-- Awtuw 1 *wan* (SG) – *nom* (PL) – *nan* (DL): a suppletive *n*-base
-    shared by plural and dual — ABB, dual suppletion accompanied by
-    plural suppletion. [smith-moskal-xu-kang-bobaljik-2019] Table 33. -/
-def awtuwFirst : Morphology.Paradigm 3 ℕ := ![0, 1, 1]
-
-theorem lezgian_1sg_shape : degreeShape lezgianFirstSg = aaa := by decide
-theorem russian_1sg_shape : degreeShape russianFirstSg = abb := by decide
-theorem awtuw_1_shape : degreeShape awtuwFirst = abb := by decide
-
-/-- The Russian ABB pattern generated by the paper's (15)-style
-    Elsewhere vocabulary: an elsewhere *ja* root and an
-    accusative-conditioned *m*-root that, by containment, spreads to the
-    dative. -/
-def russianVocab : List (SpanRule 3 String) :=
-  [⟨"ja", 0, none⟩, ⟨"m", 0, some 1⟩]
-
-theorem russian_abb_generated :
-    degreeShape (realize russianVocab) = abb := by decide
-
-/-- **CSG1 / *ABA for the case and number hierarchies**
-    ([smith-moskal-xu-kang-bobaljik-2019] §3.3, §4.2, extending
-    [bobaljik-2012]): the engine's contiguity theorem
-    (`Morphology.Containment.isContiguous_iff_generable`) makes a
-    three-grade pattern Elsewhere-generable iff it is contiguous, so each
-    attested witness is generable while the *ABA shape is not. -/
-def abaShape : Morphology.Paradigm 3 ℕ := ![0, 1, 0]
-
-theorem lezgian_generable : ElsewhereGenerable lezgianFirstSg :=
-  (isContiguous_iff_generable _).mp (by decide)
-
-theorem russian_generable : ElsewhereGenerable russianFirstSg :=
-  (isContiguous_iff_generable _).mp (by decide)
-
-theorem awtuw_generable : ElsewhereGenerable awtuwFirst :=
-  (isContiguous_iff_generable _).mp (by decide)
-
-/-- No *ABA pattern is generable over either hierarchy — the case reading
-    excludes the apparent Archi 2PL ABBA, the number reading the dubious
-    Yagua 3, both argued non-genuine in the paper. -/
-theorem aba_not_generable : ¬ ElsewhereGenerable abaShape :=
-  mt (isContiguous_iff_generable abaShape).mpr (by decide)
-
-/-! ## What's deferred
-
-The §4.3.3 markedness-relativized number containment ("if [α AUG] is
-the marked value … [α AUG] can serve as a context for suppletion"),
-which would derive `numberDomainPartition` from a number-feature
-substrate; and the graduation of `DomainLocal` to
-`Morphology/Containment/` once a second study consumes it. -/
 
 end SmithMoskalEtAl2019
