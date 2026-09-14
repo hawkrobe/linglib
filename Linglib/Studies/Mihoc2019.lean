@@ -306,8 +306,8 @@ instance (g : ℕ) (φ : Form) (maxD : ℕ) : Decidable (φ.exhSigma g maxD) :=
   inferInstanceAs (Decidable (φ.tc maxD ∧ ¬ (φ.strongerAlt g).tc maxD))
 
 /-- At granularity 1 on a bare numeral, her `O_σA` *is* the spine's
-`Numerals.exhNumeral` — and hence, via
-`Spector2013.exhNumeral_eq_innocent_exh`, Fox-2007 innocent exclusion.
+`Numerals.exhNumeral`, chain exhaustification over the numeral scale
+(`Numerals.exhNumeral_eq_exhChain`).
 `exhSigma` is its generalization to arbitrary granularity and to the
 upper-bounding scalemate direction. -/
 theorem exhSigma_bare_eq_exhNumeral (n maxD : ℕ) :
