@@ -1,76 +1,41 @@
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Polarity marking: strategy typology
+# Polarity-marking strategies
 
-(A separate system from the `Polarity.Item` licensing API — the two share
-only the `Polarity` namespace.)
-[turco-braun-dimroth-2014] [bluhdorn-lohnstein-2012] [sudhoff-2012]
-[hohle-1992] [holmberg-2016]
+This file defines the typology of devices by which a language marks a switch from negative to
+positive polarity. A `Polarity.Marking.Strategy` is the form class of a device: a
+sentence-internal affirmative particle, Verum focus on the finite verb, a polarity-reversing
+particle, another device, or no marking. A `Polarity.Marking.Env` is a position or discourse
+context in which a device is available, and a `Polarity.Marking.Entry` is a language's device
+with its form, its prosodic target, its environments and its strategy. Fragments for Dutch,
+German, English, Italian, Spanish, French and Swedish populate the schema.
 
-Per-language typological substrate for polarity-marking strategies
-(neg → affirm switches): the form-class taxonomy + per-marker
-environments + the cross-linguistic entry record. Fragment files for
-Dutch, German, English, Italian, Spanish, French, Swedish populate
-the schema; Studies files (TurcoBraunDimroth2014, GarassinoJacob2018,
-MaticNikolaeva2018) consume it for cross-linguistic predictions.
+## Implementation notes
 
-Moved from `Features/InformationStructure.lean` in the 0.230.493 cleanup
-(commit 3/3 of the InformationStructure dump-bag dissolution; cluster B
-of the multi-agent audit). The B-cluster's 12-file consumer base —
-7 Fragments + 4 Studies + 1 Theory — matches the per-language-typology
-shape of `Typology/Indefinite.lean`, `Features/Possession.lean`, etc.,
-not the feature-taxonomy shape `Features/` is for. Names tightened
-in the 0.230.496 follow-up (`PolarityMarkingStrategy/Env/Entry` →
-`Strategy/Env/Entry`) per mathlib idiom: short type name in deep
-namespace (`Polynomial.Monic` not `PolynomialMonic`).
+The schema records form-class properties in the tradition of [hohle-1992], [sudhoff-2012],
+[lohnstein-bluhdorn-2012] and [turco-braun-dimroth-2014], which pairs polarity contrast with
+specific lexical or prosodic devices; the polarity-reversing class follows [holmberg-2016].
+[matic-nikolaeva-2018] reject the form-class encoding in favour of a pragmatic salient
+polarity, and [garassino-jacob-2018] concur; the non-equivalence of the two is stated in
+`Studies/MaticNikolaeva2018.lean`. Syntactic position beyond sentence-internality is not
+encoded, so entries under one strategy may differ in it. This is a separate system from the
+`Polarity.Item` licensing API, sharing only the `Polarity` namespace.
 
-**Framework commitment** (from the original docstring; copied here as
-the substrate's load-bearing self-aware note):
+## References
 
-This taxonomy treats polarity-marking strategies as form-class properties
-(a particle either *is* or *is not* `polarityReversal`), aligned with the
-[bluhdorn-lohnstein-2012] / [sudhoff-2012] / [turco-braun-dimroth-2014]
-tradition that pairs polarity contrast with specific lexical or prosodic
-devices. See `Studies/TurcoBraunDimroth2014.lean` for
-the canonical consumer.
-
-**This framework is contested.** [matic-nikolaeva-2018] (in
-[dimroth-sudhoff-2018]) explicitly reject the form-class encoding,
-arguing that "polarity focus" is not a fixed form-meaning association
-but a pragmatic interpretation arising from context — they propose
-*salient polarity* as the correct construct.
-[garassino-jacob-2018] (same volume, fn 13) endorse the M&N view:
-"PF (or salient polarity as they prefer to name this specific type of
-emphasis) is not directly encoded by certain linguistic forms in a
-given language but can be pragmatically conveyed by different
-structures under appropriate (contextual) conditions." So the very
-chapter that anchors `Fragments/Italian/PolarityMarking.lean::siChe`
-disagrees with the encoding choice this enum makes.
-
-The non-equivalence between form-class encoding and M&N's pragmatic
-salient-polarity property is stated as a Lean theorem in
-`Studies/MaticNikolaeva2018.lean`. The substrate
-keeps the form-class enum because (a) it has 8 cross-language
-consumers via TBD2014, (b) M&N's framework is one alternative among
-several — alongside [hohle-1992]'s verum focus, VERUM as a truth
-predicate scoped by the syntax of the finite verb
-(`Studies/Hohle1992.lean`),
-[romero-han-2004]'s epistemic-CONJ FOR-SURE-CommonGround
-(`Studies/RomeroHan2004.lean`), and
-[gutzmann-2015]'s use-conditional sentence-mood operators
-(`Semantics/Mood/Gutzmann.lean` +
-`Studies/Gutzmann2015.lean`, where verum
-composes via DEONT/EPIS/HKNOW dimensions orthogonal to truth-
-conditional polarity). All three sibling frameworks are in tension
-with the form-class encoding for different reasons; the
-incompatibilities are recorded, not silently resolved.
+* [turco-braun-dimroth-2014]
+* [sudhoff-2012]
+* [lohnstein-bluhdorn-2012]
+* [hohle-1992]
+* [holmberg-2016]
+* [matic-nikolaeva-2018]
+* [garassino-jacob-2018]
 -/
 
 namespace Polarity.Marking
 
-/-- How a language marks polarity switches (neg → affirm). See module
-    docstring for the framework-commitment note. -/
+/-- How a language marks polarity switches (neg → affirm). -/
 inductive Strategy where
   /-- Sentence-internal affirmative particle (e.g., Dutch *wel*) -/
   | particle
@@ -111,15 +76,8 @@ inductive Env where
     `environments` field records the set of `Env`
     positions/contexts the marker is available in.
 
-    See module docstring for the framework-commitment note: this schema
-    records form-class properties in the Blühdorn/Sudhoff/TBD2014
-    tradition, an encoding contested by [matic-nikolaeva-2018]
-    (formalized in `Studies/MaticNikolaeva2018.lean`).
-    The schema is intentionally thin — syntactic position
-    (clause-initial construction vs. response particle vs.
-    sentence-medial discourse marker) is *not* encoded;
-    cross-linguistic entries grouped under the same `strategy`
-    constructor may differ on this dimension. -/
+    Syntactic position beyond sentence-internality is not encoded, so entries under the
+    same `strategy` may differ in it. -/
 structure Entry where
   /-- Descriptive label (e.g., "wel", "Verum focus", "doch (pre-utterance)") -/
   label : String
