@@ -22,8 +22,8 @@ the arguments' presuppositions are satisfied.
   classical soundness is the trivial-definedness case, and implies the
   Strawson form at any definedness.
 * `strawsonSoundFor_anti_of_isStrawsonDE` and the operator instances:
-  `onlyFull`, `sorryFull`, `superlativeAssert`, and `sinceFull`
-  realize the `.anti` row Strawson-ly while failing it classically.
+  `only`, `regret`, `superlative`, and `since` realize the `.anti` row
+  Strawson-ly while failing it classically.
 
 ## Implementation notes
 
@@ -40,6 +40,8 @@ here; its home is a bridge to `Semantics/Presupposition/`.
 -/
 
 namespace NaturalLogic
+
+open Presupposition
 
 /-- The lattice content of a relation, relativized to a region `D` (the
 worlds where the relevant presuppositions are satisfied). At `D = ⊤` this
@@ -116,58 +118,48 @@ theorem strawsonSoundFor_top_iff {σ : Signature} {f : α → β} :
 
 end StrawsonSoundFor
 
-/-! ### The Strawson-DE operator zoo, at signature level -/
+/-! ### The Strawson-DE operators, at signature level -/
 
 section SetInstances
 
-variable {W W' : Type*}
+variable {α W : Type*} [Lattice α] [BoundedOrder α]
 
-/-- [von-fintel-1999]'s Strawson-DE, at signature level: a Strawson-DE
-operator realizes the `.anti` row relative to its definedness. -/
-theorem strawsonSoundFor_anti_of_isStrawsonDE {f : Set W → Set W'}
-    {defined : Set W → W' → Prop} (h : IsStrawsonDE f defined) :
-    Signature.StrawsonSoundFor .anti f (fun p => {w | defined p w}) := by
+/-- [von-fintel-1999]'s Strawson-DE, at signature level: a Strawson-DE operator's total meaning
+realizes the `.anti` row relative to its presupposition. -/
+theorem strawsonSoundFor_anti_of_isStrawsonDE {f : α → PartialProp W} (h : IsStrawsonDE f) :
+    Signature.StrawsonSoundFor .anti (λ p => (f p).truthSet) (λ p => {w | (f p).presup w}) := by
   intro R x y hR
   cases R with
   | equiv => subst hR; rfl
-  | forward =>
-      rintro w ⟨hfy, hdx, _⟩
-      exact h x y hR w hdx hfy
-  | reverse =>
-      rintro w ⟨hfx, _, hdy⟩
-      exact h y x hR w hdy hfx
+  | forward => rintro w ⟨hfy, hdx, _⟩; exact ⟨hdx, h hR w hfy.1 hdx hfy.2⟩
+  | reverse => rintro w ⟨hfx, _, hdy⟩; exact ⟨hdy, h hR w hfx.1 hdy hfx.2⟩
   | negation | alternation | cover | independent => trivial
 
-/-- `only` realizes the `.anti` row Strawson-ly (definedness = its
-existence presupposition) while failing it classically
-(`onlyFull_not_de`). -/
-theorem onlyFull_strawsonSoundFor_anti (x : W → Prop) :
-    Signature.StrawsonSoundFor .anti (onlyFull x)
-      (fun scope => {_w | ∃ w', x w' ∧ scope w'}) :=
-  strawsonSoundFor_anti_of_isStrawsonDE (onlyFull_isStrawsonDE x)
+/-- *Only* realizes the `.anti` row Strawson-ly while failing it classically
+(`only_not_antitone`). -/
+theorem only_strawsonSoundFor_anti {ι : Type*} (x : ι) :
+    Signature.StrawsonSoundFor .anti (λ P : ι → Set W => (only x P).truthSet)
+      (λ P => {w | (only x P).presup w}) :=
+  strawsonSoundFor_anti_of_isStrawsonDE (only_isStrawsonDE x)
 
-/-- Adversatives (*sorry*, *regret*, *surprised*) realize the `.anti` row
-Strawson-ly (definedness = doxastic factivity) while failing it
-classically (`sorryFull_not_de`). -/
-theorem sorryFull_strawsonSoundFor_anti (dox bestOf : W → Set W) :
-    Signature.StrawsonSoundFor .anti (sorryFull dox bestOf)
-      (fun p => {w | ∀ w' ∈ dox w, p w'}) :=
-  strawsonSoundFor_anti_of_isStrawsonDE (sorryFull_isStrawsonDE dox bestOf)
+/-- Adversatives (*sorry*, *regret*, *surprised*) realize the `.anti` row Strawson-ly while
+failing it classically (`regret_not_antitone`). -/
+theorem regret_strawsonSoundFor_anti (dox best : W → Set W) :
+    Signature.StrawsonSoundFor .anti (λ p => (regret dox best p).truthSet)
+      (λ p => {w | (regret dox best p).presup w}) :=
+  strawsonSoundFor_anti_of_isStrawsonDE (regret_isStrawsonDE dox best)
 
-/-- Superlatives realize the `.anti` row Strawson-ly in their restriction
-(definedness = the designated-subject presupposition). -/
-theorem superlativeAssert_strawsonSoundFor_anti (a : W) :
-    Signature.StrawsonSoundFor .anti (superlativeAssert a)
-      (fun restriction => {w | superlativePresup a restriction w}) :=
-  strawsonSoundFor_anti_of_isStrawsonDE (superlative_isStrawsonDE a)
+/-- Superlatives realize the `.anti` row Strawson-ly in their restriction. -/
+theorem superlative_strawsonSoundFor_anti {ι D : Type*} [Preorder D] (μ : ι → D) (a : ι) :
+    Signature.StrawsonSoundFor .anti (λ Q : ι → Set W => (superlative μ Q a).truthSet)
+      (λ Q => {w | (superlative μ Q a).presup w}) :=
+  strawsonSoundFor_anti_of_isStrawsonDE (superlative_isStrawsonDE μ a)
 
-/-- Temporal *since* realizes the `.anti` row Strawson-ly (definedness =
-the past-event presupposition). -/
-theorem sinceFull_strawsonSoundFor_anti (pastEvent sinceWindow : W → Set W) :
-    Signature.StrawsonSoundFor .anti (sinceFull pastEvent sinceWindow)
-      (fun p => {w | ∃ w' ∈ pastEvent w, p w'}) :=
-  strawsonSoundFor_anti_of_isStrawsonDE
-    (sinceFull_isStrawsonDE pastEvent sinceWindow)
+/-- Temporal *since* realizes the `.anti` row Strawson-ly. -/
+theorem since_strawsonSoundFor_anti (past window : W → Set W) :
+    Signature.StrawsonSoundFor .anti (λ p => (since past window p).truthSet)
+      (λ p => {w | (since past window p).presup w}) :=
+  strawsonSoundFor_anti_of_isStrawsonDE (since_isStrawsonDE past window)
 
 end SetInstances
 

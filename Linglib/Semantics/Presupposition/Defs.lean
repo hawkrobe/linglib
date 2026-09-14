@@ -146,6 +146,11 @@ def holds (w : W) (p : PartialProp W) : Prop := p.presup w ∧ p.assertion w
     `updateFromSat PartialProp.defined p` gives the presupposition test CCP. -/
 def defined (w : W) (p : PartialProp W) : Prop := p.presup w
 
+/-- The worlds where `p` is defined and true. -/
+def truthSet (p : PartialProp W) : Set W := {w | p.holds w}
+
+@[simp] theorem mem_truthSet {p : PartialProp W} {w : W} : w ∈ p.truthSet ↔ p.holds w := Iff.rfl
+
 /-! ### Constants -/
 
 /-- Create a tautological presupposition. -/

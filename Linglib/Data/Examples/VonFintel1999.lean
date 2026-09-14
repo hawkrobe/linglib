@@ -27,7 +27,7 @@ def ex10 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "only John"), ("npi", "ever, any")]
-    comment := "The §2 licensing datum: 'only John' licenses NPIs in its immediate scope despite not being classically DE (ex. 11); formalized as ex11_only_not_DE / ex18_only_strawsonDE."
+    comment := "The §2 licensing datum: 'only John' licenses NPIs in its immediate scope despite not being classically DE (ex. 11); formalized as only_isStrawsonDE / only_not_antitone."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -45,7 +45,7 @@ def ex21 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "since"), ("npi", "any")]
-    comment := "'since' licenses NPIs in its complement while failing classical DE (ex. 20); formalized as ex22_since_strawsonDE."
+    comment := "'since' licenses NPIs in its complement while failing classical DE (ex. 20); formalized as since_isStrawsonDE / since_not_antitone."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -81,7 +81,7 @@ def ex28b : LinguisticExample :=
     alternatives := [("Sandy regrets that Robin bought any car.", .acceptable)]
     readings := []
     paperFeatures := [("licenser", "sorry/regret"), ("npi", "any")]
-    comment := "The explanandum for ex28b_sorry_strawsonDE: 'sorry' licenses NPIs despite the complement not being classically DE (ex. 30)."
+    comment := "The explanandum for regret_isStrawsonDE: 'sorry' licenses NPIs despite the complement not being classically DE (ex. 30, regret_not_antitone)."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -99,7 +99,7 @@ def glad_any : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "glad (non-licenser)"), ("npi", "any")]
-    comment := "The sorry/glad asymmetry datum behind ex50_gladKL_isUE / ex52_gladVF_isUE: 'glad' is UE in its complement, so NPIs are not licensed. Settle-for-less rescues are recorded in KadmonLandman1993 / Lahiri1998 (see bridge_lahiri_glad_settle_overgeneration)."
+    comment := "The sorry/glad asymmetry datum: 'glad' is UE in its complement on both of the paper's semantics (glad_monotone, gladBetter_monotone), so NPIs are not licensed. Settle-for-less rescues are recorded in KadmonLandman1993 and Lahiri1998."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -117,7 +117,7 @@ def ex70a : LinguisticExample :=
     alternatives := [("If he has ever told a lie, he must go to confession.", .acceptable), ("If you had left any later, you would have missed the plane.", .acceptable)]
     readings := []
     paperFeatures := [("licenser", "conditional antecedent"), ("npi", "any, ever")]
-    comment := "Ex. 70a-c bundled: conditional antecedents license NPIs; DE status depends on the conditional analysis (restrictor vs Stalnaker-Lewis) — formalized as ex72_conditional_antecedent_DE."
+    comment := "Ex. 70a-c bundled: conditional antecedents license NPIs; DE status depends on the conditional analysis (restrictor vs Stalnaker-Lewis) — idle ordering source: would_isStrawsonDE; genuine ordering source: not_antitone_conditionalNecessity."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -135,7 +135,7 @@ def ex75 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "superlative"), ("npi", "ever")]
-    comment := "Superlative licensing datum; the restriction position fails classical DE (ex. 76) but is Strawson-DE (ex. 77) — formalized as ex77_superlative_strawsonDE."
+    comment := "Superlative licensing datum; the restriction position fails classical DE (ex. 76) but is Strawson-DE (ex. 77) — formalized as superlative_isStrawsonDE."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 

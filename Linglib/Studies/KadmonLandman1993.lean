@@ -152,32 +152,28 @@ the narrow — strengthening holds. *Glad that A* entails *want A*, and wanting
 a set inhabited does not entail wanting each subset inhabited, so
 strengthening fails. K&L summarize: adversative predicates are DE on a
 constant perspective (and so guarantee strengthening), while predicates like
-*glad* are not DE. The constant "perspective" is the `bestOf` parameter; the
+*glad* are not DE. The constant "perspective" is the `best` parameter; the
 factive presupposition means the DE pattern is Strawson, not classical. -/
 
-/-- *Sorry* licenses NPIs: it is Strawson-DE — DE with the perspective
-(`bestOf`) held constant. Imported from
-`sorryFull_isStrawsonDE`; consumed by `VonFintel1999`'s
-cross-framework bridge. -/
-theorem sorry_licenses_any (dox bestOf : Fin 4 → Set (Fin 4)) :
-    IsStrawsonDE (sorryFull dox bestOf) (λ p w => ∀ w' ∈ dox w, p w') :=
-  sorryFull_isStrawsonDE dox bestOf
+/-- *Sorry* licenses NPIs: it is Strawson-DE, DE with the perspective (`best`) held
+constant. -/
+theorem sorry_licenses_any {W : Type*} (dox best : W → Set W) :
+    IsStrawsonDE (regret dox best) :=
+  regret_isStrawsonDE dox best
 
 /-- *Sorry* is not classically DE: the doxastic factivity presupposition
 blocks it. K&L adopt Ladusaw's convention that the DE pattern need only hold
 of the sentence minus its factive presupposition. -/
 theorem sorry_not_classically_de :
-    ¬Antitone
-      (sorryFull (λ (w : Fin 4) => ({w} : Set (Fin 4)))
-                 (λ (_ : Fin 4) => ({1} : Set (Fin 4)))) :=
-  sorryFull_not_de
+    ¬ Antitone λ p : Set Bool => (regret (λ w => {w}) (λ _ => {false}) p).truthSet :=
+  regret_not_antitone
 
 /-- *Glad* does not freely license NPIs: it is UE, so widening weakens.
 K&L: wanting a set to have members does not entail wanting each particular
 subset to have members. -/
-theorem glad_does_not_license (dox bestOf : Fin 4 → Set (Fin 4)) :
-    Monotone (gladFull dox bestOf) :=
-  gladFull_isUE dox bestOf
+theorem glad_does_not_license {W : Type*} (dox best : W → Set W) :
+    Monotone λ p => (glad dox best p).truthSet :=
+  glad_monotone dox best
 
 /-! ### Conditional antecedents
 
@@ -194,8 +190,8 @@ subscribes to any newspaper, he gets well informed" — widening *newspaper* to
 include unimportant newspapers strengthens the conditional. -/
 theorem conditional_satisfies_strengthening {W : Type*}
     (domain : W → Set W) (β : Set W) :
-    Antitone (λ α => condNecessity domain α β) :=
-  conditional_antecedent_antitone domain β
+    Antitone (Conditionals.strictImp domain · β) :=
+  λ _ _ h => Conditionals.strictImp_anti_left h
 
 /-- A conditional with an implicit restriction (K&L's (147)): true iff every
 relevant case satisfying the restriction and the antecedent satisfies the
