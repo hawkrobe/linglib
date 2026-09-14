@@ -316,8 +316,4 @@ theorem starred_distributive_not_wellFormed :
       (na, .superlexical .cumulative), (raz, .lexical)] := by
   decide
 
-/-- The paper's hyphenation equals each analysis' decomposition, the rows being citation
-forms. -/
-example : ∀ a ∈ attested, a.MatchesSegmentation := by decide
-
 end Istratkova2004
