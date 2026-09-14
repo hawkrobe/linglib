@@ -253,15 +253,15 @@ variable (domain : W → Set W)
 [kratzer-1986]): presupposes that the base admits `p` and asserts the strict conditional. -/
 def would (p q : Set W) : PartialProp W where
   presup w := (domain w ∩ p).Nonempty
-  assertion w := w ∈ Conditionals.strictImp domain p q
+  assertion w := w ∈ Conditional.strictImp domain p q
 
 theorem would_isStrawsonDE (q : Set W) : IsStrawsonDE (would domain · q) :=
-  .of_antitone λ _ _ h _ hw => Conditionals.strictImp_anti_left (access := domain) (q := q) h hw
+  .of_antitone λ _ _ h _ hw => Conditional.strictImp_anti_left (access := domain) (q := q) h hw
 
 theorem would_isStrawsonAA (q : Set W) : IsStrawsonAntiAdditive (would domain · q) :=
   .of_antiAdditive (λ _ _ h _ hw => hw.mono (Set.inter_subset_inter_right _ h))
     λ _ _ => funext λ _ => propext <| by
-      simp only [would, Pi.inf_apply, inf_Prop_eq, Set.sup_eq_union, Conditionals.mem_strictImp,
+      simp only [would, Pi.inf_apply, inf_Prop_eq, Set.sup_eq_union, Conditional.mem_strictImp,
         Set.inter_union_distrib_left, Set.union_subset_iff]
 
 /-- With its presupposition in, *would* is not classically downward entailing in its antecedent:

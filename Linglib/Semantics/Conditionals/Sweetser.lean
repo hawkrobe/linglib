@@ -17,7 +17,7 @@ presuppose or invite causal interpretations, connecting conditional
 semantics to the causal-model infrastructure in `Causation/`.
 -/
 
-namespace Conditionals
+namespace Conditional
 
 /-- [sweetser-1990]'s three domains of conditional meaning. -/
 inductive SweetserDomain where
@@ -65,4 +65,4 @@ theorem epistemic_not_causal :
 theorem speechAct_not_causal :
     SweetserDomain.speechAct.triggersCausalInference = false := rfl
 
-end Conditionals
+end Conditional

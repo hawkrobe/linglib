@@ -20,7 +20,7 @@ derive-don't-stipulate rule.
 Coverage is incremental (`contextWitness?` is `Option`-valued): the
 witnessed rows are those whose operators exist in the zoo — negation
 (complementation), the quantifier rows (`every_sem`/`no_sem`/`few_sem` sections,
-`atMost2_student`), conditional antecedents (`Conditionals.strictImp`), and the
+`atMost2_student`), conditional antecedents (`Conditional.strictImp`), and the
 four Strawson-only rows (`only`, `regret`, `superlative`, `since`). The `none`
 rows await operators (*without*, *deny*, *doubt*, *before*, *too…to*, the
 comparatives) or concern rows whose
@@ -280,13 +280,13 @@ def atMostWitness : ContextWitness .atMost where
 
 private theorem condAntecedent_soundFor :
     Signature.SoundFor .anti
-      (fun α : Set (Fin 4) => Conditionals.strictImp (fun _ : Fin 4 => Set.univ) α ∅) :=
-  soundFor_anti_iff.mpr fun _ _ h => Conditionals.strictImp_anti_left h
+      (fun α : Set (Fin 4) => Conditional.strictImp (fun _ : Fin 4 => Set.univ) α ∅) :=
+  soundFor_anti_iff.mpr fun _ _ h => Conditional.strictImp_anti_left h
 
 /-- Conditional antecedents: the antecedent position of the strict conditional is classically
 antitone with the modal base held constant. -/
 def conditionalAntecedentWitness : ContextWitness .conditionalAntecedent where
-  f := fun α : Set (Fin 4) => Conditionals.strictImp (fun _ : Fin 4 => Set.univ) α ∅
+  f := fun α : Set (Fin 4) => Conditional.strictImp (fun _ : Fin 4 => Set.univ) α ∅
   defined := fun _ => ⊤
   strawson := condAntecedent_soundFor.strawsonSoundFor _
   classical := soundFor_of_mem_some condAntecedent_soundFor

@@ -48,8 +48,8 @@ type rather than generated from syntactic substitution sources.
 
 namespace Santorio2018
 
-open Conditionals (SimilarityOrdering)
-open Conditionals.Counterfactual
+open Conditional (SimilarityOrdering)
+open Conditional.Counterfactual
 
 variable {W : Type*} [DecidableEq W] [Fintype W]
 

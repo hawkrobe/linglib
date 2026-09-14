@@ -22,15 +22,13 @@ desirability relation cannot make both `p` and `¬p` wanted (`Want.not_compl`).
 
 namespace Desire.Conditional
 
-open Conditionals (SimilarityOrdering)
-
 variable {W : Type*}
 
 /-- A similarity ordering on worlds with comparative desirability: `pref w x y` says that
 at evaluation world `w`, `x` is more desirable than `y`. -/
 structure Frame (W : Type*) where
   /-- The similarity ordering. -/
-  sim : SimilarityOrdering W
+  sim : Conditional.SimilarityOrdering W
   /-- Comparative desirability at each evaluation world. -/
   pref : W → W → W → Prop
 

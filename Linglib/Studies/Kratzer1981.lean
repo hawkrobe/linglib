@@ -24,7 +24,7 @@ the two possibilities (that they could go and could avoid going) hold, under the
 limit-free necessity and its dual possibility.
 
 The paper's section on conditionals treats an if-clause as restricting the modal base of the
-modal in its matrix clause, the substrate's `Conditionals.Restrictor.conditionalNecessity`,
+modal in its matrix clause, the substrate's `Conditional.Restrictor.conditionalNecessity`,
 and derives the kinds of conditional from the settings of the two backgrounds: material
 implication from a totally realistic base and an empty ordering source
 (`material_implication`), strict implication from an empty base and an empty ordering source
@@ -154,7 +154,7 @@ An if-clause restricts the modal base of the modal in its matrix clause, so `(if
 (necessarily β)` is the necessity of `β` at the base enlarged by `α`. The kinds of conditional
 differ in the settings of the two backgrounds. -/
 
-open Conditionals.Restrictor
+open Conditional.Restrictor
 
 /-- Material implication: a totally realistic modal base and an empty ordering source. -/
 theorem material_implication {W : Type*} {f : ModalBase W} (hf : isTotallyRealistic f)

@@ -49,7 +49,7 @@ of §5 and §6 are not restated.
 * [barwise-cooper-1981]
 -/
 
-open Conditionals Conditionals.Counterfactual
+open Conditional Conditional.Counterfactual
 
 namespace RamotowskaEtAl2025
 

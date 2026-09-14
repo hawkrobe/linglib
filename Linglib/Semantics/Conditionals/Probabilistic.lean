@@ -43,7 +43,7 @@ research question ([schulz-2011],
 [ciardelli-zhang-champollion-2018]).
 -/
 
-namespace Conditionals.Probabilistic
+namespace Conditional.Probabilistic
 
 open PMF
 open scoped ENNReal
@@ -61,4 +61,4 @@ theorem condIf_propositional (p : PMF W) (φ ψ : Set W) :
     condIf p φ (ψ.indicator (fun _ => 1)) = p.condProbSet φ ψ :=
   p.condExpect_indicator φ ψ
 
-end Conditionals.Probabilistic
+end Conditional.Probabilistic

@@ -53,8 +53,8 @@ affirming a *might*, and the Kennedy example are not formalized.
 
 namespace Stalnaker1981
 
-open Conditionals (SimilarityOrdering selectionConditional)
-open Conditionals.Counterfactual
+open Conditional (SimilarityOrdering selectionConditional)
+open Conditional.Counterfactual
 
 /-! ### Conditional excluded middle and distribution -/
 
@@ -98,7 +98,7 @@ end ConditionalLogic
 
 section Selection
 
-variable {W : Type*} (s : Conditionals.SelectionFunction W)
+variable {W : Type*} (s : Conditional.SelectionFunction W)
 
 /-- A determinate selection function validates conditional excluded middle. -/
 theorem selection_cem (A B : W → Prop) (w : W) :

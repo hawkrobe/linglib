@@ -6,7 +6,7 @@ import Linglib.Semantics.Conditionals.PremiseSemantic
 
 This file formalizes the paper's argument that counterfactual reasoning needs the lumping
 relation between propositions, on the situation-semantic premise semantics of
-`Conditionals.PremiseSemantic`. A proposition lumps another at a world when every part of
+`Conditional.PremiseSemantic`. A proposition lumps another at a world when every part of
 the world at which the first holds is one at which the second holds too. The analysis of §4.2
 adds true propositions to the antecedent of a counterfactual while preserving consistency;
 taken at face value it predicts (§4.3) that if Paula weren't buying a pound of apples, the
@@ -38,7 +38,7 @@ which quantifies over consistent premise sets with no lumping closure.
 
 namespace Kratzer1989
 
-open Conditionals.Counterfactual Conditionals.PremiseSemantic
+open Conditional.Counterfactual Conditional.PremiseSemantic
 
 /-- The situations: three worlds and two parts of the actual world. -/
 inductive Sit

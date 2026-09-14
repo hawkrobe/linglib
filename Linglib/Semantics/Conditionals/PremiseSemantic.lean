@@ -7,7 +7,7 @@ import Linglib.Semantics.Conditionals.Counterfactual.Lumping
 
 Truth conditions for "would"- and "might"-counterfactuals from
 [kratzer-2012] §5.4.4 ("The formal definitions", p. 132–133),
-built on top of the lumping API in `Conditionals.Counterfactual`.
+built on top of the lumping API in `Conditional.Counterfactual`.
 
 ## §5.4.4 in brief
 
@@ -73,9 +73,9 @@ three, the lumping CF does NOT use `SimilarityOrdering` /
   from minimal-change semantics) is documented separately.
 -/
 
-namespace Conditionals.PremiseSemantic
+namespace Conditional.PremiseSemantic
 
-open _root_.Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows
+open _root_.Conditional.Counterfactual (Lumps IsConsistent IsCompatible Follows
   isCompatible_iff_not_follows_compl)
 
 variable {S : Type*} [Preorder S]
@@ -165,4 +165,4 @@ theorem mightCF_iff_not_wouldCF_compl {Fw : Set (Set S)} {w : S}
   simp only [mightCF, wouldCF, isCompatible_iff_not_follows_compl, not_forall, not_exists,
     not_and, exists_prop]
 
-end Conditionals.PremiseSemantic
+end Conditional.PremiseSemantic

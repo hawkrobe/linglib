@@ -56,7 +56,7 @@ if-over-∃ reading, the asymmetry of the responses (33) (`forallOverIf_imp_ifOv
 
 namespace Sharvit2025
 
-open Presupposition PartialProp Conditionals
+open Presupposition PartialProp Conditional
 
 variable {W E : Type*}
 
