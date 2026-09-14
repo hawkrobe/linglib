@@ -1,39 +1,56 @@
-import Linglib.Semantics.Evidential.Source
 import Linglib.Semantics.Modality.Universals
-import Linglib.Semantics.Modality.EventRelativity
+import Linglib.Semantics.Evidential.Source
+import Linglib.Data.Examples.Matthewson2016
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Fragments.Statimcets.Modals
 import Linglib.Fragments.NezPerce.Modals
 import Linglib.Fragments.Niuean.Modals
+import Linglib.Studies.Condoravdi2002
 
 /-!
 # Matthewson (2016): Modality
 
-This file formalizes the cross-linguistic claims of the handbook survey [matthewson-2016]
-on modal flavour, modal force, and modal–temporal interaction in the framework of
-[kratzer-2012]. Modal backgrounds divide three ways, factual-circumstantial,
-factual-evidential, and content-evidential, refining the epistemic–circumstantial binary;
-Gitksan *ima('a)*, *gat*, and Nez Perce *o'qa* are modals without duals, specialized for
-neither necessity nor possibility; epistemic modals are more likely than circumstantial ones
-to lack duals, as Gitksan and Niuean show by encoding force only in the circumstantial
-domain; the Gitksan system lexicalizes all three background classes; and future temporal
-orientation requires overt prospective marking in Gitksan, mirroring the English requirement
-of *have* for past orientation.
+This file formalizes the typological claims of the handbook chapter [matthewson-2016]. On
+flavour, a conversational background projects in [kratzer-2012]'s factual or content mode and
+either encodes an information source or not, a three-way classification that St'át'imcets
+lexicalizes in full; the class of a modal is read off what it encodes, with the speaker's
+ability to disbelieve the prejacent as the diagnostic for content mode, and Gitksan keeps its
+epistemic and circumstantial modals apart. On force, Gitksan *ima('a)* and *gat* and Nez Perce
+*o'qa* are modals without duals, which their inventories confirm. On modal–temporal interaction,
+Gitksan marks future orientation with the prospective *dim* where English marks past
+orientation with the perfect, a mirror image derived from the Gitksan fragment and from
+[condoravdi-2002]. On typology, Gitksan and Niuean distinguish force among circumstantial
+modals and not among epistemic ones, and [vander-klok-2013b]'s refinement of [nauze-2008]'s
+universal, one axis of variation per modal domain, is strictly stronger than the universal and
+holds of the four inventories.
 
 ## Implementation notes
 
-The modal inventories are the Gitksan, St'át'imcets, Nez Perce, and Niuean fragments; the
-primary-source theorems for Gitksan are in `Studies/Matthewson2013.lean`.
+* The chapter's examples are rows. The deniability rows (25)–(28), the Nez Perce rows
+  (39)–(40) and the Gitksan orientation rows (60)–(63) are checked against the fragments.
+* Table 18.4's hypothetical root system has a teleological flavour, which the library folds
+  into circumstantial; bouletic stands in for it, which keeps the system ambiguous along both
+  axes.
+* The English column of Table 18.3 is not formalized, no fragment recording the source or
+  deniability of the English modals.
 
 ## References
 
 * [matthewson-2016]
 * [kratzer-2012]
+* [rullmann-matthewson-davis-2008]
+* [peterson-2010]
+* [deal-2011]
+* [nauze-2008]
+* [vander-klok-2013b]
+* [condoravdi-2002]
 -/
 
 namespace Matthewson2016
 
-open Modality (ForceFlavor ForceAnalysis ModalItem ForceFlavorIndependent SingleAxis)
+open Modality Data.Examples Evidential
+
+/-! ### Modal flavour: the three-way classification (Tables 18.2 and 18.3) -/
 
 /-- The mode in which a conversational background projects, [kratzer-2012]'s distinction
 between realistic backgrounds, whose accessible worlds hold counterparts of some actual
@@ -51,7 +68,7 @@ inductive BackgroundClass where
   | factualCircumstantial
   | factualEvidential
   | contentEvidential
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- The projection mode of a background class. -/
 def BackgroundClass.projectionMode : BackgroundClass → ProjectionMode
@@ -59,148 +76,79 @@ def BackgroundClass.projectionMode : BackgroundClass → ProjectionMode
   | .factualEvidential => .factual
   | .contentEvidential => .content
 
-/-- Only a content background lets the speaker disbelieve the prejacent. -/
-def BackgroundClass.AllowsSpeakerDisbelief (b : BackgroundClass) : Prop := b = .contentEvidential
-
-instance : DecidablePred BackgroundClass.AllowsSpeakerDisbelief :=
-  λ _ => inferInstanceAs (Decidable (_ = _))
-
-/-- The traditional epistemic or circumstantial flavor a class refines. -/
-def BackgroundClass.traditionalFlavor : BackgroundClass → Modality.ModalFlavor
+/-- The traditional epistemic or circumstantial flavour a class refines. -/
+def BackgroundClass.traditionalFlavor : BackgroundClass → ModalFlavor
   | .factualCircumstantial => .circumstantial
   | .factualEvidential => .epistemic
   | .contentEvidential => .epistemic
 
--- ============================================================================
--- §1. Three-way background classification (Table 18.2, Table 18.3)
--- ============================================================================
+/-- The class of a modal from what it encodes: no information source is factual-circumstantial,
+a source the speaker may disbelieve is content-evidential, and any other source
+factual-evidential. -/
+def classOf (source : Option CoarseSource) (deniable : Prop) [Decidable deniable] :
+    BackgroundClass :=
+  if source = none then .factualCircumstantial
+  else if deniable then .contentEvidential else .factualEvidential
 
-/-! The three-way classification refines the traditional binary.
-    All three classes are distinct. -/
+/-- The circumstantial–evidential division is whether an information source is encoded. -/
+theorem traditionalFlavor_classOf (source : Option CoarseSource) (deniable : Prop)
+    [Decidable deniable] :
+    (classOf source deniable).traditionalFlavor = .circumstantial ↔ source = none := by
+  unfold classOf; split_ifs <;> simp_all [BackgroundClass.traditionalFlavor]
 
-theorem three_classes_distinct :
-    BackgroundClass.factualCircumstantial ≠ .factualEvidential ∧
-    BackgroundClass.factualEvidential ≠ .contentEvidential ∧
-    BackgroundClass.factualCircumstantial ≠ .contentEvidential := by
-  exact ⟨by decide, by decide, by decide⟩
+/-- The factual–content division among evidentials is the deniability diagnostic. -/
+theorem projectionMode_classOf (source : Option CoarseSource) (deniable : Prop)
+    [Decidable deniable] :
+    (classOf source deniable).projectionMode = .content ↔ source ≠ none ∧ deniable := by
+  unfold classOf; split_ifs <;> simp_all [BackgroundClass.projectionMode]
 
-/-- Both epistemic subtypes (factual-evidential and content-evidential)
-    map to epistemic under the traditional classification. -/
-theorem both_epistemic_subtypes :
-    BackgroundClass.factualEvidential.traditionalFlavor = .epistemic ∧
-    BackgroundClass.contentEvidential.traditionalFlavor = .epistemic := by
-  exact ⟨rfl, rfl⟩
+section Statimcets
+open Statimcets.Modals
 
-/-- Only the content-evidential class allows speaker disbelief. This
-    is the diagnostic that separates the two epistemic subtypes:
-    St'át'imcets k'a (factual) vs lákw7a (content). -/
-theorem disbelief_distinguishes_epistemics :
-    ¬ BackgroundClass.factualEvidential.AllowsSpeakerDisbelief ∧
-    BackgroundClass.contentEvidential.AllowsSpeakerDisbelief := by
-  exact ⟨by decide, by decide⟩
+/-- The class of a St'át'imcets modal. -/
+def statimcetsClass (m : ModalItem) : BackgroundClass := classOf (source m) (Deniable m)
 
-/-- The traditional circumstantial class is uniformly factual (Table 18.2). -/
-theorem circumstantial_is_factual :
-    BackgroundClass.factualCircumstantial.projectionMode = .factual := rfl
-
--- ============================================================================
--- §2. Gitksan: lexicalizes all three background classes (Table 18.1)
--- ============================================================================
-
-section Gitksan
-open Gitksan.Modals
-
-/-- The chapter's classification of the Gitksan modals (Table 18.1): *ima('a)* is
-factual-evidential, *gat* content-evidential, and the rest factual-circumstantial. -/
-def gitksanBackground (m : ModalItem) : BackgroundClass :=
-  if m = imaa then .factualEvidential else if m = gat then .contentEvidential
-  else .factualCircumstantial
-
-/-- Gitksan ima('a) is factual-evidential: the speaker has inferential
-    evidence and cannot disbelieve the prejacent. -/
-theorem gitksan_imaa_factual_evidential :
-    gitksanBackground imaa = .factualEvidential := by decide
-
-/-- Gitksan gat is content-evidential: reportative evidence, the
-    speaker can disbelieve. -/
-theorem gitksan_gat_content_evidential :
-    gitksanBackground gat = .contentEvidential := by decide
-
-/-- Gitksan circumstantial modals are factual-circumstantial. -/
-theorem gitksan_circ_factual :
-    gitksanBackground daakhlxw = .factualCircumstantial ∧
-    gitksanBackground anookxw = .factualCircumstantial ∧
-    gitksanBackground sgi = .factualCircumstantial := by
+/-- Table 18.3's St'át'imcets row. -/
+theorem table18_3 :
+    statimcetsClass ka = .factualCircumstantial ∧
+      statimcetsClass kaCircumfix = .factualCircumstantial ∧
+      statimcetsClass kaInfer = .factualEvidential ∧ statimcetsClass ku7 = .factualEvidential ∧
+      statimcetsClass lakw7a = .contentEvidential := by
   decide
 
-/-- Coarse evidential source of a modal background class in Matthewson's
-    system: factual-evidential modals are inferential, content-evidential
-    modals reportative, and factual circumstantials encode no information
-    source. -/
-def backgroundCoarseSource :
-    BackgroundClass → Option Evidential.CoarseSource
-  | .factualEvidential => some .inference
-  | .contentEvidential => some .hearsay
-  | .factualCircumstantial => none
-
-/-- Gitksan ima('a) marks inferential evidence and gat reportative
-    evidence in the shared source taxonomy. -/
-theorem gitksan_sources :
-    backgroundCoarseSource (gitksanBackground imaa) = some .inference ∧
-    backgroundCoarseSource (gitksanBackground gat) = some .hearsay := by
+/-- St'át'imcets encodes the full three-way split. -/
+theorem statimcets_full_split :
+    ∀ c : BackgroundClass, ∃ m ∈ allExpressions, statimcetsClass m = c := by
   decide
 
-/-- All three background classes are represented in Gitksan. -/
-theorem gitksan_three_way_split :
-    (allExpressions.map gitksanBackground).any (· == .factualCircumstantial) &&
-    (allExpressions.map gitksanBackground).any (· == .factualEvidential) &&
-    (allExpressions.map gitksanBackground).any (· == .contentEvidential) = true := by
+/-- The modal a deniability row names. -/
+private def modalOf : String → Option ModalItem
+  | "k'a" => some kaInfer
+  | "lákw7a" => some lakw7a
+  | _ => none
+
+/-- (25)–(28): a modal survives *but it was the wind* exactly when it is deniable. -/
+theorem deniability_rows :
+    ∀ e ∈ Examples.all, e.feature? "test" = some "deniability" →
+      ∀ m ∈ (e.feature? "modal").bind modalOf, (e.judgment = .acceptable ↔ Deniable m) := by
   decide
 
-end Gitksan
+end Statimcets
 
--- ============================================================================
--- §3. Gitksan absolute epistemic/circumstantial split (§18.2.3)
--- ============================================================================
+/-! ### Gitksan: epistemic and circumstantial apart (Table 18.1) -/
 
-/-- The epistemic/circumstantial split is absolute: no modal crosses
-    the boundary. Epistemic modals are purely epistemic; circumstantial
-    modals have no epistemic readings. -/
+/-- No Gitksan modal crosses the epistemic–circumstantial boundary. -/
 theorem gitksan_absolute_split :
     (∀ e ∈ Gitksan.Modals.epistemicModals, ∀ ff ∈ e.meaning, ff.flavor = .epistemic) ∧
       ∀ e ∈ Gitksan.Modals.circumstantialModals, ∀ ff ∈ e.meaning, ff.flavor ≠ .epistemic := by
   decide
 
--- ============================================================================
--- §4. Modals without duals (§18.3.2)
--- ============================================================================
+/-! ### Modal force: modals without duals (§18.3.2)
 
-/-! Variable-force modals (Gitksan) and strengthened possibility modals
-    (Nez Perce) both lack duals but for different reasons. -/
-
-/-- Gitksan ima('a) and gat are both variable-force. -/
-theorem gitksan_variable_force :
-    Gitksan.Modals.forceAnalysis Gitksan.Modals.imaa = .variableForce ∧
-    Gitksan.Modals.forceAnalysis Gitksan.Modals.gat = .variableForce := by
-  constructor <;> rfl
-
-/-- Nez Perce o'qa is a strengthened possibility modal. -/
-theorem nez_perce_strengthened :
-    NezPerce.Modals.forceAnalysis NezPerce.Modals.oqa =
-      .strengthened .possibility := rfl
-
-/-- Despite lacking duals, both admit necessity and possibility readings. -/
-theorem both_forces_available :
-    ForceAnalysis.variableForce.AdmitsNecessity ∧
-    ForceAnalysis.variableForce.AdmitsPossibility ∧
-    (ForceAnalysis.strengthened .possibility).AdmitsNecessity ∧
-    (ForceAnalysis.strengthened .possibility).AdmitsPossibility := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
-
-/-! ### Force analysis consistency
-
-Each fragment's stipulated `ForceAnalysis` is checked against the forces its meaning attests:
-one force for a fixed or strengthened modal, both for a variable-force one. -/
+A modal without a dual comes in no necessity–possibility pair and is used in contexts
+supporting either claim: Gitksan *ima('a)* and *gat*, variable in force, and Nez Perce *o'qa*,
+a possibility modal read as necessity because no necessity modal competes with it
+([deal-2011]). -/
 
 /-- A force analysis is consistent with a meaning when the forces the meaning attests are the
 one the analysis fixes or strengthens, or two for a variable-force analysis. -/
@@ -211,11 +159,21 @@ def Consistent : ForceAnalysis → Finset ForceFlavor → Prop
 instance (a : ForceAnalysis) (m : Finset ForceFlavor) : Decidable (Consistent a m) := by
   cases a <;> unfold Consistent <;> infer_instance
 
+/-- The fragments' force analyses are consistent with their meanings. -/
+theorem force_consistent :
+    (∀ e ∈ Gitksan.Modals.allExpressions, Consistent (Gitksan.Modals.forceAnalysis e) e.meaning) ∧
+      (∀ e ∈ Statimcets.Modals.allExpressions,
+        Consistent (Statimcets.Modals.forceAnalysis e) e.meaning) ∧
+      (∀ e ∈ NezPerce.Modals.allExpressions,
+        Consistent (NezPerce.Modals.forceAnalysis e) e.meaning) ∧
+      ∀ e ∈ Niuean.Modals.allExpressions, Consistent (Niuean.Modals.forceAnalysis e) e.meaning := by
+  decide
+
 /-- A modal has a dual in an inventory when it is fixed for one force and another item of the
-inventory expresses the dual force over its flavors (§18.5). -/
+inventory expresses the dual force over its flavours. -/
 def HasDualIn (L : List ModalItem) (m : ModalItem) : Prop :=
   (m.meaning.image Prod.fst).card = 1 ∧
-    ∃ m' ∈ L, m'.meaning = m.meaning.image (Prod.map Modality.ModalForce.dual id)
+    ∃ m' ∈ L, m'.meaning = m.meaning.image (Prod.map ModalForce.dual id)
 
 instance (L : List ModalItem) (m : ModalItem) : Decidable (HasDualIn L m) :=
   inferInstanceAs (Decidable (_ ∧ ∃ _ ∈ _, _ = _))
@@ -234,160 +192,133 @@ theorem no_duals :
       ¬ HasDualIn Statimcets.Modals.allExpressions Statimcets.Modals.ka := by
   decide
 
-/-- Niuean encodes force in the circumstantial domain, where *maeke* and *lata* are duals, and
-not in the epistemic one, where *liga* covers both forces alone. -/
+/-- (37): ima('a) is read as possibility and as necessity alike. -/
+theorem imaa_rows :
+    ∀ e ∈ Examples.all, e.feature? "modal" = some "ima('a)" →
+      ∀ r ∈ e.readings, r.2 = .acceptable := by
+  decide
+
+/-- (39)–(40): o'qa is read as necessity outside a downward-entailing context and only as
+possibility inside one, the profile of a possibility modal without a necessity competitor. -/
+theorem oqa_rows :
+    ∀ e ∈ Examples.all, e.feature? "modal" = some "o'qa" →
+      ∀ r ∈ e.readings, r.1 = "necessity" →
+        (r.2 = .acceptable ↔ e.feature? "downwardEntailing" = some "false") := by
+  decide
+
+/-! ### Modal–temporal interaction (§18.4.3) -/
+
+/-- The orientation a row records. -/
+private def orientationOf : String → Option TemporalOrientation
+  | "past" => some .past
+  | "present" => some .present
+  | "future" => some .future
+  | _ => none
+
+/-- (60)–(63): under a fixed past perspective ima('a) takes every orientation, and is
+acceptable without the prospective *dim* exactly when not future-oriented, as the fragment's
+`requiresDim` records. -/
+theorem gitksan_orientation_rows :
+    ∀ e ∈ Examples.all, e.feature? "modal" = some "ima('a)" →
+      ∀ o ∈ (e.feature? "orientation").bind orientationOf,
+        (e.judgment = .acceptable ↔
+          e.feature? "prospective" = some "true" ∨
+            Gitksan.Modals.requiresDim Gitksan.Modals.imaa o = false) := by
+  decide
+
+/-- English marks past orientation, by the perfect under the modal among [condoravdi-2002]'s
+scopings, and Gitksan future orientation, by *dim*: the mirror image of §18.4.3. -/
+theorem marking_mirror :
+    (∀ s : Condoravdi2002.Scope, s.orientation = .past ↔ s = .modalPerf) ∧
+      ∀ o : TemporalOrientation,
+        Gitksan.Modals.requiresDim Gitksan.Modals.imaa o = true ↔ o = .future := by
+  decide
+
+/-! ### Typology (§18.5) -/
+
+/-- A modal is epistemic when every pair it expresses is. -/
+def Epistemic (m : ModalItem) : Prop := ∀ ff ∈ m.meaning, ff.flavor = .epistemic
+
+instance : DecidablePred Epistemic := λ _ => inferInstanceAs (Decidable (∀ _ ∈ _, _ = _))
+
+/-- A modal varies in force when it expresses two forces. -/
+def VariesForce (m : ModalItem) : Prop := 2 ≤ (m.meaning.image Prod.fst).card
+
+/-- A modal varies in flavour when it expresses two flavours. -/
+def VariesFlavor (m : ModalItem) : Prop := 2 ≤ (m.meaning.image Prod.snd).card
+
+instance : DecidablePred VariesForce := λ _ => inferInstanceAs (Decidable (_ ≤ _))
+
+instance : DecidablePred VariesFlavor := λ _ => inferInstanceAs (Decidable (_ ≤ _))
+
+/-- An inventory distinguishes force within a domain when two of its modals there express
+different sets of forces. -/
+def DistinguishesForce (L : List ModalItem) (D : ModalItem → Prop) [DecidablePred D] : Prop :=
+  ∃ m ∈ L, ∃ m' ∈ L, D m ∧ D m' ∧ m.meaning.image Prod.fst ≠ m'.meaning.image Prod.fst
+
+instance (L : List ModalItem) (D : ModalItem → Prop) [DecidablePred D] :
+    Decidable (DistinguishesForce L D) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, _ ∧ _ ∧ _ ≠ _))
+
+/-- The flavour–force correlation: Gitksan and Niuean distinguish force among their
+circumstantial modals and not among their epistemic ones. -/
+theorem force_only_circumstantial :
+    (¬ DistinguishesForce Gitksan.Modals.allExpressions Epistemic ∧
+        DistinguishesForce Gitksan.Modals.allExpressions (¬ Epistemic ·)) ∧
+      ¬ DistinguishesForce Niuean.Modals.allExpressions Epistemic ∧
+        DistinguishesForce Niuean.Modals.allExpressions (¬ Epistemic ·) := by
+  decide
+
+/-- Niuean's circumstantial *maeke* and *lata* are duals; its epistemic *liga* has none. -/
 theorem niuean_duals :
     HasDualIn Niuean.Modals.allExpressions Niuean.Modals.maeke ∧
       HasDualIn Niuean.Modals.allExpressions Niuean.Modals.lata ∧
       ¬ HasDualIn Niuean.Modals.allExpressions Niuean.Modals.liga := by
   decide
 
-/-- Gitksan ima('a) and gat are variable-force and attest both forces. -/
-theorem gitksan_force_consistent :
-    Consistent (Gitksan.Modals.forceAnalysis Gitksan.Modals.imaa) Gitksan.Modals.imaa.meaning ∧
-      Consistent (Gitksan.Modals.forceAnalysis Gitksan.Modals.gat) Gitksan.Modals.gat.meaning := by
+/-- [nauze-2008]'s universal holds of the four inventories: every modal varies on one axis. -/
+theorem nauze :
+    ∀ e ∈ Gitksan.Modals.allExpressions ++ Statimcets.Modals.allExpressions ++
+      NezPerce.Modals.allExpressions ++ Niuean.Modals.allExpressions, SingleAxis e.meaning := by
   decide
 
-/-- Nez Perce o'qa is strengthened possibility and attests only possibility. -/
-theorem nez_perce_oqa_force_consistent :
-    Consistent (NezPerce.Modals.forceAnalysis NezPerce.Modals.oqa) NezPerce.Modals.oqa.meaning := by
+/-- [vander-klok-2013b]'s refinement of the universal: within each domain, epistemic and
+non-epistemic, an inventory varies along one axis only. -/
+def VanderKlok (L : List ModalItem) : Prop :=
+  ¬ ((∃ m ∈ L, Epistemic m ∧ VariesForce m) ∧ ∃ m ∈ L, Epistemic m ∧ VariesFlavor m) ∧
+    ¬ ((∃ m ∈ L, ¬ Epistemic m ∧ VariesForce m) ∧ ∃ m ∈ L, ¬ Epistemic m ∧ VariesFlavor m)
+
+instance (L : List ModalItem) : Decidable (VanderKlok L) :=
+  inferInstanceAs (Decidable (¬ (_ ∧ _) ∧ ¬ (_ ∧ _)))
+
+/-- The refinement entails the universal: a modal varying on both axes varies on both within
+its own domain. -/
+theorem VanderKlok.singleAxis {L : List ModalItem} (h : VanderKlok L) {m : ModalItem}
+    (hm : m ∈ L) : SingleAxis m.meaning := by
+  by_contra hs
+  simp only [SingleAxis, not_or, not_le] at hs
+  by_cases he : Epistemic m
+  · exact h.1 ⟨⟨m, hm, he, hs.1⟩, ⟨m, hm, he, hs.2⟩⟩
+  · exact h.2 ⟨⟨m, hm, he, hs.1⟩, ⟨m, hm, he, hs.2⟩⟩
+
+/-- The four inventories satisfy the refinement. -/
+theorem inventories_vanderKlok :
+    VanderKlok Gitksan.Modals.allExpressions ∧ VanderKlok Statimcets.Modals.allExpressions ∧
+      VanderKlok NezPerce.Modals.allExpressions ∧ VanderKlok Niuean.Modals.allExpressions := by
   decide
 
-/-- St'át'imcets =ka and Niuean liga are variable-force. -/
-theorem statimcets_niuean_force_consistent :
-    Consistent (Statimcets.Modals.forceAnalysis Statimcets.Modals.ka) Statimcets.Modals.ka.meaning ∧
-      Consistent (Niuean.Modals.forceAnalysis Niuean.Modals.liga) Niuean.Modals.liga.meaning := by
+/-- Table 18.4's hypothetical root system: a deontic modal `x` of either force, a necessity
+modal `y` over two flavours, and possibility modals `w` and `z` for one flavour each. -/
+def table18_4 : List ModalItem :=
+  [⟨"x", {(.necessity, .deontic), (.possibility, .deontic)}, .neutral⟩,
+   ⟨"y", {(.necessity, .circumstantial), (.necessity, .bouletic)}, .neutral⟩,
+   ⟨"w", {(.possibility, .circumstantial)}, .neutral⟩,
+   ⟨"z", {(.possibility, .bouletic)}, .neutral⟩]
+
+/-- The system satisfies the universal and violates the refinement, `x` varying in force and
+`y` in flavour within the root domain, so the refinement is strictly stronger. -/
+theorem table18_4_singleAxis_not_vanderKlok :
+    (∀ m ∈ table18_4, SingleAxis m.meaning) ∧ ¬ VanderKlok table18_4 := by
   decide
-
--- ============================================================================
--- §5. Flavour–force correlation (§18.5)
--- ============================================================================
-
-/-! Cross-linguistic tendency: epistemic modals are more likely to lack
-    force duals than circumstantial modals. Both Gitksan and Niuean
-    instantiate this pattern. -/
-
-/-- Niuean: epistemic domain has one modal (both forces), circumstantial
-    has two (one per force). -/
-theorem niuean_force_asymmetry :
-    (Niuean.Modals.allExpressions.filter
-      (λ e => ∃ ff ∈ e.meaning, ff.flavor = .epistemic)).length = 1 ∧
-    (Niuean.Modals.allExpressions.filter
-      (λ e => ∃ ff ∈ e.meaning, ff.flavor = .circumstantial)).length = 2 := by
-  decide
-
-/-- All St'át'imcets, Nez Perce and Niuean modals satisfy IFF. -/
-theorem all_fragments_iff :
-    (∀ e ∈ Statimcets.Modals.allExpressions, ForceFlavorIndependent e.meaning) ∧
-      (∀ e ∈ NezPerce.Modals.allExpressions, ForceFlavorIndependent e.meaning) ∧
-      (∀ e ∈ Niuean.Modals.allExpressions, ForceFlavorIndependent e.meaning) := by
-  decide
-
--- ============================================================================
--- §6. Temporal orientation and prospective aspect (§18.4.3)
--- ============================================================================
-
-/-- In Gitksan, future temporal orientation of an epistemic modal
-    (`imaa`) requires prospective `dim`. The 2016 handbook chapter
-    presents this as the headline pattern; [matthewson-2013] shows
-    it is part of a flavor-keyed asymmetry (circumstantials require
-    `dim` for any orientation). -/
-theorem imaa_future_requires_dim :
-    Gitksan.Modals.requiresDim Gitksan.Modals.imaa
-      .future = true := rfl
-
-/-- For epistemics, past and present orientation do not require `dim`. -/
-theorem imaa_past_present_no_dim :
-    Gitksan.Modals.requiresDim Gitksan.Modals.imaa
-      .past = false ∧
-    Gitksan.Modals.requiresDim Gitksan.Modals.imaa
-      .present = false := ⟨rfl, rfl⟩
-
-/-- English–Gitksan mirror: English obligatorily marks past orientation
-    (via *have*), Gitksan obligatorily marks future orientation (via *dim*).
-    Both leave the remaining orientations unmarked.
-    [matthewson-2016] §18.4.3. -/
-structure TemporalMarkingMirror where
-  /-- Which orientation is obligatorily marked. -/
-  obligatoryMarking : Modality.TemporalOrientation
-  /-- Name of the marker. -/
-  marker : String
-
-def english : TemporalMarkingMirror := ⟨.past, "have"⟩
-def gitksan : TemporalMarkingMirror := ⟨.future, "dim"⟩
-
-/-- The marked orientations are opposite: English marks past, Gitksan future. -/
-theorem mirror_orientations :
-    english.obligatoryMarking ≠ gitksan.obligatoryMarking := by decide
-
--- ============================================================================
--- §7. Nauze's (2008) polyfunctionality universal
--- ============================================================================
-
-/-! [matthewson-2016] §18.5 discusses [nauze-2008]'s proposed
-    universal: "Modal elements can only have more than one meaning along
-    a unique axis of the semantic space: they either vary on the horizontal
-    axis [flavour] ... or they vary on the vertical axis [force] ... but
-    they cannot vary on both axes."
-
-    This is exactly SAV. We verify it holds for all four new fragments. -/
-
-/-- St'át'imcets =ka satisfies SAV (varies on force, fixed deontic). -/
-theorem statimcets_ka_sav : SingleAxis Statimcets.Modals.ka.meaning := by decide
-
-/-- Nez Perce o'qa satisfies SAV (singleton). -/
-theorem nez_perce_oqa_sav : SingleAxis NezPerce.Modals.oqa.meaning := by decide
-
-/-- Niuean: all modals satisfy SAV. -/
-theorem niuean_all_sav : ∀ e ∈ Niuean.Modals.allExpressions, SingleAxis e.meaning := by decide
-
--- ============================================================================
--- §8. Hacquard's content licensing derives the epistemic/circumstantial split
--- ============================================================================
-
-/-! [hacquard-2006] [hacquard-2010]
-
-Matthewson's three-way background classification (Table 18.3) refines the
-traditional epistemic/circumstantial binary. The *coarse* binary itself
-is derived, not stipulated: [hacquard-2006]'s content licensing
-predicts that only contentful events (speech acts, attitudes) can project
-epistemic modal bases. VP events lack content and can only project
-circumstantial bases. This predicts the absolute epistemic/circumstantial
-split attested in Gitksan (§18.2.3).
-
-The three-way refinement (factual-evidential vs content-evidential within
-epistemic) is a further subdivision of the epistemic class that content
-licensing does not address — it depends on the *type* of content (inferential
-vs reportative), not on whether content exists. -/
-
-open Modality (EventBinder)
-
-/-- Content licensing correctly predicts the coarse split.
-    Contentful events → epistemic available; contentless → not. -/
-theorem content_licensing_derives_coarse_split :
-    EventBinder.speechAct.canProjectEpistemic = true ∧
-    EventBinder.attitude.canProjectEpistemic = true ∧
-    EventBinder.vpEvent.canProjectEpistemic = false := ⟨rfl, rfl, rfl⟩
-
-/-- The three-way refinement is orthogonal to content licensing.
-    Both factual-evidential and content-evidential are epistemic subtypes
-    (both require content), distinguished by projection mode, not by
-    content availability. -/
-theorem three_way_orthogonal_to_content :
-    BackgroundClass.factualEvidential.traditionalFlavor = .epistemic ∧
-    BackgroundClass.contentEvidential.traditionalFlavor = .epistemic ∧
-    BackgroundClass.factualEvidential.projectionMode ≠
-      BackgroundClass.contentEvidential.projectionMode := by
-  exact ⟨rfl, rfl, by decide⟩
-
-/-- Gitksan's three-way split is consistent with content licensing.
-    Epistemic modals (ima('a), gat) are high (content available);
-    circumstantial modals (da'akhlxw, anookxw, sgi) are compatible
-    with both high and low positions (circumstantial always available). -/
-theorem gitksan_consistent_with_content_licensing :
-    -- Circumstantial is always available (even for VP events)
-    EventBinder.vpEvent.canProjectCircumstantial = true ∧
-    -- Epistemic requires content (speech act or attitude)
-    EventBinder.speechAct.canProjectEpistemic = true := ⟨rfl, rfl⟩
 
 end Matthewson2016
