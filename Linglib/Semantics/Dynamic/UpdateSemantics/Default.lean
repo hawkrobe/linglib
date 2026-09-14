@@ -2,58 +2,37 @@ import Linglib.Core.Order.Normality
 import Linglib.Semantics.Dynamic.Update
 
 /-!
-# Default Reasoning in Update Semantics
+# Defaults in update semantics
 
-[veltman-1996]
+This file defines the expectation states of [veltman-1996] and the updates with *normally φ*
+and *presumably φ*. An expectation state pairs a normality preorder on worlds, the
+expectation pattern, with the agent's information; asserting a fact eliminates worlds,
+promoting a proposition refines the pattern in its favour without eliminating anything, and
+*presumably φ* tests whether `φ` holds in the optimal worlds. Defaults are dynamic: a promoted
+expectation persists under further assertions and promotions, conflicting defaults leave the
+agent agnostic, and compatible ones reinforce each other. The base language of states,
+updates and tests is `Semantics/Dynamic/UpdateSemantics/Basic.lean`, and the normality preorder
+with its refinement is `Core.Order.Normality`; the restricted rules and expectation frames of
+the paper's section 4 live with the paper in `Studies/Veltman1996.lean`.
 
-[veltman-1996] extends update semantics with **expectation patterns** —
-normality orderings on worlds — and two new operators:
+## Main definitions
 
-- **Normally p**: refines the expectation pattern so p-worlds are preferred
-- **Presumably p**: a test that passes iff all optimal worlds satisfy p
+* `ExpState` — an expectation pattern with the agent's information, with `init`, `optimal`,
+  `assert` and `promote`.
+* The tests `presumablyTest` and `mightTest`.
 
-The key insight is that defaults are *dynamic*: "normally p" does not
-eliminate worlds (like assertion does) but changes the normality ordering.
-This means defaults persist under information growth — learning q does
-not undo the expectation that p is normal.
+## Main results
 
-## What's here (§3)
+* `normally_creates_respect`, `persistence_assert`, `persistence_normally` — a promotion
+  creates an expectation that later updates preserve.
+* `normally_presumably_succeeds` — *normally φ; presumably φ* passes.
+* `conflicting_defaults_iff_agree`, `compatible_defaults_optimal` — conflicting defaults
+  yield agnosticism, compatible ones reinforce.
+* `promote_respects_idempotent`, `promote_comm` — promotion is idempotent and commutative.
 
-This module formalizes Veltman's §3: expectation states, the operators
-"normally", "presumably", and "might", and the key results:
-- Defaults create expectations (`normally_creates_respect`)
-- Defaults persist under further updates (`persistence_assert`, `persistence_normally`)
-- "Normally p; presumably p" succeeds (`normally_presumably_succeeds`)
-- Conflicting defaults yield agnosticism (`conflicting_defaults_iff_agree`)
-- Compatible defaults reinforce (`compatible_defaults_optimal`)
-- Promotion is idempotent and commutative (`promote_respects_idempotent`, `promote_comm`)
+## References
 
-## What's not here (§5)
-
-§5 proves which inference patterns are valid for the default
-conditional (contraposition fails, cautious monotonicity holds, etc.).
-Key patterns are verified as regression tests in
-`Studies/Veltman1996.lean`.
-
-§4 (expectation frames, conditional defaults, specificity) is
-formalized in `Studies/Veltman1996.lean`.
-
-## Connection to existing infrastructure
-
-- **Basic.lean**: Veltman's base language (§2) — states, updates, tests,
-  might as consistency test — is formalized there. This module adds the
-  default layer (§3).
-
-- **BeliefRevision.lean**: `PreferentialConsequence` (System P) and
-  `PlausibilityOrder` formalize the *static* characterization of default
-  reasoning. Veltman's system is the *dynamic* realization: the default
-  consequence relation it induces validates System P.
-
-- **Core/Order/Normality.lean**: The normality ordering (mathlib
-  `Preorder W`) and the `refine` operation are defined there as shared
-  infrastructure. This module builds `ExpState` (expectation states) on
-  top of that.
-
+* [veltman-1996]
 -/
 
 namespace UpdateSemantics.Default
