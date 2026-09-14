@@ -369,16 +369,48 @@ resolves it, as already resolving one does, since it is one of the wh-question's
 disjuncts. -/
 private theorem wh_complete (u : Person) :
     Strategy.IsComplete (.node (wh u) [.leaf (polar u .bagels), .leaf (polar u .tofu)]) :=
-  .node_pair (entails_of_le' (inf_le_left.trans (le_iSup (polar u) .bagels))) (.leaf _) (.leaf _)
+  .node_pair (inf_le_left.trans (le_iSup (polar u) .bagels)) (.leaf _) (.leaf _)
 
 /-- The strategy is complete: joint resolutions of the wh-questions resolve the big
 question, whose disjuncts include those of each. -/
 theorem strat_complete : strat.IsComplete := by
   rw [strat_eq]
   exact .node_pair
-    (entails_of_le' (inf_le_left.trans (iSup_le λ f =>
-      le_iSup (λ uf : Person × Food => polar uf.1 uf.2) (.hilary, f))))
+    (inf_le_left.trans (iSup_le λ f =>
+      le_iSup (λ uf : Person × Food => polar uf.1 uf.2) (.hilary, f)))
     (wh_complete .hilary) (wh_complete .robin)
+
+private theorem values_whTree (u : Person) :
+    (RoseTree.node (wh u) [.leaf (polar u .bagels), .leaf (polar u .tofu)] : Strategy World).values
+      = [wh u, polar u .bagels, polar u .tofu] := by
+  simp [RoseTree.leaf]
+
+/-- A wh-question's substrategy is well formed in every context: each polar question is a
+subquestion of the wh-question by alternative inclusion. -/
+private theorem wh_wellFormed (C : Set World) (u : Person) :
+    Strategy.WellFormed C (.node (wh u) [.leaf (polar u .bagels), .leaf (polar u .tofu)]) := by
+  refine .node (λ c hc r hr => ?_) (λ c hc => ?_)
+  · simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
+    rcases hc with rfl | rfl <;>
+      simp only [RoseTree.leaf, RoseTree.values_node, List.map_nil, List.flatten_nil,
+        List.mem_cons, List.not_mem_nil, or_false] at hr <;>
+      subst hr <;> exact isSubquestionOf_of_alt_subset C (alt_polar_subset_wh _ _)
+  · simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
+    rcases hc with rfl | rfl <;> exact .leaf _ _
+
+/-- The strategy is well formed in every context: every question below the big question is
+its subquestion by alternative inclusion, and each wh-substrategy is well formed. -/
+theorem strat_wellFormed (C : Set World) : strat.WellFormed C := by
+  rw [strat_eq]
+  refine .node (λ c hc r hr => ?_) (λ c hc => ?_)
+  · simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
+    rcases hc with rfl | rfl <;> rw [values_whTree] at hr <;>
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hr <;>
+      rcases hr with rfl | rfl | rfl <;>
+      exact isSubquestionOf_of_alt_subset C
+        (by first | exact alt_wh_subset_q1 _ | exact alt_polar_subset_q1 _ _)
+  · simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
+    rcases hc with rfl | rfl <;> exact wh_wellFormed C _
 
 /-! ### Answerhood (3)
 

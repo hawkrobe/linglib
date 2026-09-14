@@ -93,6 +93,27 @@ theorem isSubquestionOf_of_alt_subset (C : Set W) {P Q : Question W} (h : alt P 
     IsSubquestionOf C P Q :=
   λ a ha => ⟨a, h ha, Or.inl Set.inter_subset_right⟩
 
+theorem IsSubquestionOf.refl (C : Set W) (P : Question W) : IsSubquestionOf C P P :=
+  isSubquestionOf_of_alt_subset C subset_rfl
+
+/-- Under finiteness, entailment gives subquestionhood in every context. -/
+theorem isSubquestionOf_of_le (C : Set W) {P Q : Question W} (hQ : Q.props.Finite)
+    (h : P ≤ Q) : IsSubquestionOf C P Q := λ _ ha =>
+  let ⟨q, hq, haq⟩ := exists_alt_above Q hQ (le_def.mp h (alt_subset_props P ha))
+  ⟨q, hq, Or.inl (Set.inter_subset_right.trans haq)⟩
+
+/-- Contextual partial answerhood is partial answerhood of the relativized alternatives. -/
+theorem partiallyAnsweredBy_inter_iff {Q : Question W} {C σ : Set W} :
+    PartiallyAnsweredBy Q (C ∩ σ) ↔
+      ∃ p ∈ alt Q, σ ∈ (ofSet p).relativeTo C ∨ σ ∈ (ofSet pᶜ).relativeTo C := by
+  simp only [PartiallyAnsweredBy, mem_relativeTo, mem_ofSet]
+
+/-- Subquestionhood in `C` is partial answerhood of the relativized alternatives. -/
+theorem isSubquestionOf_iff {C : Set W} {P Q : Question W} :
+    IsSubquestionOf C P Q ↔
+      ∀ a ∈ alt P, ∃ p ∈ alt Q, a ∈ (ofSet p).relativeTo C ∨ a ∈ (ofSet pᶜ).relativeTo C := by
+  simp only [IsSubquestionOf, partiallyAnsweredBy_inter_iff]
+
 variable {σ : Set W} {Q : Question W}
 
 /-! ### Basic relationships -/
