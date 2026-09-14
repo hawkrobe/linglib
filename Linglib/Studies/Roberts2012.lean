@@ -47,7 +47,7 @@ unanswerable, which the paper also retires, does not arise in the discourse.
 namespace Roberts2012
 
 open Question
-open Discourse (QUDStack Strategy)
+open Discourse
 
 -- `decide` on `Set`-subset goals over the finite world space.
 attribute [local instance] Set.decidableSubsetOfFintype
@@ -308,36 +308,30 @@ the answers so far entail its complete answer, so "What did Hilary eat?" leaves 
 once both its polar subquestions are answered. -/
 theorem qud_D₀ : ∀ k < 12, qud (D₀.take k) = table k := by decide
 
-/-- (10g.iii) obligations from alternative inclusion: when every alternative of the newer
-question is an alternative of an older one, each complete answer contextually partially
-answers the older question. -/
-private theorem pa_of_alt_subset (C : Set World) {P Q : Question World} (h : alt P ⊆ alt Q) :
-    ∀ a ∈ alt P, PartiallyAnsweredBy Q (C ∩ a) :=
-  λ a ha => ⟨a, h ha, Or.inl Set.inter_subset_right⟩
-
 private theorem wellFormed_wh (C : Set World) (u : Person) :
-    QUDStack.WellFormed C [wh u, q_1] :=
-  QUDStack.wellFormed_cons.mpr
-    ⟨List.forall_mem_singleton.mpr (pa_of_alt_subset C (alt_wh_subset_q1 u)),
-      QUDStack.wellFormed_singleton ..⟩
+    [wh u, q_1].Pairwise (IsSubquestionOf C) :=
+  List.pairwise_cons.mpr
+    ⟨List.forall_mem_singleton.mpr (isSubquestionOf_of_alt_subset C (alt_wh_subset_q1 u)),
+      List.pairwise_singleton ..⟩
 
 private theorem wellFormed_polar (C : Set World) (u : Person) (f : Food) :
-    QUDStack.WellFormed C [polar u f, wh u, q_1] :=
-  QUDStack.wellFormed_cons.mpr
+    [polar u f, wh u, q_1].Pairwise (IsSubquestionOf C) :=
+  List.pairwise_cons.mpr
     ⟨List.forall_mem_cons.mpr
-        ⟨pa_of_alt_subset C (alt_polar_subset_wh u f),
-          List.forall_mem_singleton.mpr (pa_of_alt_subset C (alt_polar_subset_q1 u f))⟩,
+        ⟨isSubquestionOf_of_alt_subset C (alt_polar_subset_wh u f),
+          List.forall_mem_singleton.mpr
+            (isSubquestionOf_of_alt_subset C (alt_polar_subset_q1 u f))⟩,
       wellFormed_wh C u⟩
 
-/-- Every stack of the discourse is well formed in its context set: each question's complete
-answers contextually partially answer every question below it. -/
+/-- Every stack of the discourse is well formed in its context set (10g.iii): each question
+is a contextual subquestion of every question below it. -/
 theorem qud_wellFormed (k : ℕ) (hk : k < 12) :
-    QUDStack.WellFormed (contextSet (D₀.take k) : Set World)
-      ((qud (D₀.take k)).map Qn.den) := by
+    ((qud (D₀.take k)).map Qn.den).Pairwise
+      (IsSubquestionOf (contextSet (D₀.take k) : Set World)) := by
   rw [qud_D₀ k hk]
   interval_cases k <;> first
-    | exact QUDStack.wellFormed_nil _
-    | exact QUDStack.wellFormed_singleton _ _
+    | exact List.Pairwise.nil
+    | exact List.pairwise_singleton _ _
     | exact wellFormed_wh _ _
     | exact wellFormed_polar _ _ _
 

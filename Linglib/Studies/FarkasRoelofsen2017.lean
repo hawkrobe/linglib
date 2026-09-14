@@ -1,6 +1,5 @@
 import Linglib.Data.Examples.FarkasRoelofsen2017
 import Linglib.Discourse.Commitment.Basic
-import Linglib.Discourse.QUD.Basic
 import Linglib.Semantics.Questions.Basic
 import Mathlib.Order.Interval.Set.Basic
 import Mathlib.Tactic.DeriveFintype
@@ -182,7 +181,7 @@ end CredenceLevel
 participants' commitments, and for each participant the possibilities she has signalled
 evidence for, each with a credence interval. -/
 structure Context (A W : Type*) where
-  table : Discourse.QUDStack W
+  table : List (Question W)
   commitments : State A W
   evidence : A → Set (Set W × Set CredenceLevel)
 

@@ -82,6 +82,17 @@ entailing it or ruling it out. -/
 def CompletelyAnsweredBy (Q : Question W) (σ : Set W) : Prop :=
   ∀ p ∈ alt Q, σ ⊆ p ∨ σ ⊆ pᶜ
 
+/-- `P` is a subquestion of `Q` relative to the context `C` ([roberts-2012]): every complete
+answer to `P` contextually partially answers `Q`. The entailment is contextual, not question
+entailment, so the relation is not transitive in general. -/
+def IsSubquestionOf (C : Set W) (P Q : Question W) : Prop :=
+  ∀ a ∈ alt P, PartiallyAnsweredBy Q (C ∩ a)
+
+/-- A question whose alternatives are among another's is its subquestion in every context. -/
+theorem isSubquestionOf_of_alt_subset (C : Set W) {P Q : Question W} (h : alt P ⊆ alt Q) :
+    IsSubquestionOf C P Q :=
+  λ a ha => ⟨a, h ha, Or.inl Set.inter_subset_right⟩
+
 variable {σ : Set W} {Q : Question W}
 
 /-! ### Basic relationships -/

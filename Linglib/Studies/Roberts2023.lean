@@ -158,7 +158,7 @@ end Semantics
 discussion, and each interlocutor's evident goals in priority order. -/
 structure Scoreboard (I W T : Type*) where
   cg : Set (Proposition W T)
-  qud : Discourse.QUDStack (Index W T)
+  qud : List (Question (Index W T))
   goals : I → List (Proposition W T)
 
 /-- The denotation of a root sentence: a proposition, a question, or a property indexed to

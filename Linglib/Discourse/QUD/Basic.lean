@@ -7,8 +7,10 @@ import Linglib.Semantics.Questions.Resolution
 # Questions under discussion: stack and strategy
 
 The inquiry coordinate of the conversational scoreboard, after
-[roberts-2012]: the stack of accepted-but-unanswered questions
-(`QUDStack`, definition (10g); the head is the immediate QUD),
+[roberts-2012]: the stack of accepted-but-unanswered questions, a
+`List (Question W)` with the immediate QUD at its head, well formed when
+each question is a contextual subquestion of every question below it
+(definition (10g), `List.Pairwise (Question.IsSubquestionOf C)`);
 strategies of inquiry as rose trees of questions (`Strategy`, (12);
 [buring-2003]'s d-trees are the explicit tree-shaped ancestor),
 hereditary strategy completeness (`IsComplete`), and relevance of a
@@ -23,9 +25,6 @@ corpus data.
 
 ## Main definitions
 
-* `Discourse.QUDStack` — the stack, as a `List (Question W)`
-* `Discourse.QUDStack.WellFormed` — the ordering constraint
-  (10g.iii), relative to a context set
 * `Discourse.Strategy` — strategies of inquiry as `RoseTree (Question W)`
 * `Discourse.Strategy.IsComplete` — at every branching node, the meet of
   the children's questions entails the parent's
@@ -35,12 +34,13 @@ corpus data.
 ## Fidelity notes
 
 Definition (10g) makes QUD a function from moves to ordered sets of
-accepted, unanswered questions; `QUDStack` models a single value of that
-function, and clause (iii) — each question's complete answers
+accepted, unanswered questions; a `List (Question W)` models a single value
+of that function, and clause (iii) — each question's complete answers
 contextually entail partial answers to every question below it — is
-`WellFormed`, relative to a context set because entailment in (9) is
-contextual throughout. The paper warns against strengthening (iii) to question
-entailment (the bridging-question discourse (13) violates it). Questions
+`List.Pairwise (Question.IsSubquestionOf C)`, relative to a context set
+because entailment in (9) is contextual throughout. The paper warns
+against strengthening (iii) to question entailment (the bridging-question
+discourse (13) violates it). Questions
 are retired when answered or determined practically unanswerable, and
 the paper licenses non-LIFO removal (answering a lower question discharges the
 higher questions in its strategy); `List.tail` is the unconditional LIFO
@@ -66,44 +66,6 @@ obligation.
 -/
 
 namespace Discourse
-
-/-- A QUD stack ([roberts-2012] definition (10g)): the accepted, unanswered
-questions, most recent first, so the head is the immediate QUD. Accepting a
-question is `List.cons`; retiring one from the top is `List.tail`. -/
-abbrev QUDStack (W : Type*) := List (Question W)
-
-namespace QUDStack
-
-variable {W : Type*}
-
-/-- The ordering constraint (10g.iii) on a QUD stack, relative to context
-set `C`: for `higher` accepted more recently than `lower`, every complete
-answer to `higher` contextually entails a partial answer to `lower`. -/
-def WellFormed (C : Set W) (s : QUDStack W) : Prop :=
-  s.Pairwise fun higher lower =>
-    ∀ a ∈ Question.alt higher, Question.PartiallyAnsweredBy lower (C ∩ a)
-
-@[simp] theorem wellFormed_nil (C : Set W) : WellFormed C ([] : QUDStack W) :=
-  List.Pairwise.nil
-
-@[simp] theorem wellFormed_singleton (C : Set W) (q : Question W) :
-    WellFormed C [q] :=
-  List.pairwise_singleton ..
-
-/-- Accepting `q` preserves well-formedness iff `q`'s complete answers
-contextually partially answer every question already on the stack. -/
-theorem wellFormed_cons {C : Set W} {q : Question W} {s : QUDStack W} :
-    WellFormed C (q :: s) ↔
-      (∀ lower ∈ s, ∀ a ∈ Question.alt q,
-        Question.PartiallyAnsweredBy lower (C ∩ a)) ∧ WellFormed C s :=
-  List.pairwise_cons
-
-/-- Retiring the immediate QUD preserves well-formedness. -/
-theorem WellFormed.tail {C : Set W} {s : QUDStack W} (h : WellFormed C s) :
-    WellFormed C s.tail :=
-  List.Pairwise.tail h
-
-end QUDStack
 
 /-- A strategy of inquiry as a rose tree of questions ([roberts-2012]
 definition (12), [buring-2003]'s d-trees): each node a question, its children
