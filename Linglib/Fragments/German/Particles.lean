@@ -42,8 +42,7 @@ def ja : Particle where
 /-- *denn* — interrogative-only particle, one lexeme under two analyses:
 [gutzmann-2015]'s question-prompting UCI (the interrogative counterpart
 of *ja*; typing in `Gutzmann2015`) and [theiler-2021]'s
-highlighting-sensitive flavoring particle (bias profile in
-`Theiler2021`). Licensed in polar and constituent questions, excluded
+highlighting-sensitive particle (felicity condition in `Theiler2021`). Licensed in polar and constituent questions, excluded
 from declaratives and imperatives. -/
 def denn : Particle where
   form := "denn"

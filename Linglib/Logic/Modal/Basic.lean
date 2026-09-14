@@ -144,6 +144,12 @@ class IsK45Frame : Prop extends IsTrans W R, IsEuclidean R
 /-- `R` is a **KTB frame** if it is reflexive and symmetric. -/
 class IsKTBFrame : Prop extends Std.Refl R, Std.Symm R
 
+/-- Over a KD45 frame the modalities collapse: `◇□p ↔ □p`. An agent introspective about her
+own beliefs considers it possible that she must do something exactly when she must. -/
+theorem diamond_box_iff [IsKD45Frame R] {p : W → Prop} {w : W} :
+    ◇[R] (□[R] p) w ↔ □[R] p w :=
+  ⟨box_of_diamond_box, diamond_box_of_box⟩
+
 /-! ### The Gallin hierarchy
 
 Operators `(W → Prop) → W → Prop` form a three-level hierarchy
