@@ -6,7 +6,7 @@ import Linglib.Fragments.Hausa.Coordination
 import Linglib.Fragments.Kannada.Coordination
 import Linglib.Fragments.Lango.Coordination
 import Linglib.Fragments.Latin.Coordination
-import Linglib.Fragments.Tibetan.Coordination
+import Linglib.Fragments.Tibetic.Classical.Coordination
 import Linglib.Fragments.Turkish.Coordination
 import Linglib.Fragments.Yoruba.Coordination
 
@@ -150,7 +150,7 @@ def attestations : List Attestation :=
       source := some .comitative },
     { language := "Lango", coordinator := Lango.Coordination.kede, pattern := .a_co_b,
       emphatic := some false, source := some .comitative },
-    { language := "Classical Tibetan", coordinator := Tibetan.Coordination.dang,
+    { language := "Classical Tibetan", coordinator := ClassicalTibetan.Coordination.dang,
       pattern := .a'co_b, emphatic := some false },
     { language := "Latin", coordinator := Latin.Coordination.que, pattern := .a_b'co,
       emphatic := some false },
