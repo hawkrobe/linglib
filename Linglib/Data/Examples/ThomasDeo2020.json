@@ -1,0 +1,383 @@
+[
+  {
+    "id": "thomasdeo2020_4",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(4), (15a)"},
+    "language": "stan1293",
+    "primaryText": "Miniature amaryllis are apt to be just as tall as hybrid amaryllis.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "equative"]
+    ],
+    "comment": "Approximative *just* with an equative: as tall at the highest level of precision; COCA.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_5",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(5), (21)"},
+    "language": "stan1293",
+    "primaryText": "Fafen, the daughter just older than Siri, had done the family duty and become a monk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "comparative"]
+    ],
+    "comment": "Approximative *just* with a comparative: slightly older; COCA.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_14a",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(14a)"},
+    "language": "stan1293",
+    "primaryText": "Relatively simple changes in lifestyle can have a big impact on your blood pressure, in many cases just as big as popping a pill.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "equative"]
+    ],
+    "comment": "The prejacent is stronger than what the context leads one to expect, which *just* tolerates.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_14b",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(14b)"},
+    "language": "stan1293",
+    "primaryText": "Relatively simple changes in lifestyle can have a big impact on your blood pressure, in many cases only as big as popping a pill.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "equative"]
+    ],
+    "comment": "*only* lowers a contextual expectation that the context makes strong.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_15b",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(15b)"},
+    "language": "stan1293",
+    "primaryText": "The stalks of miniature amaryllis are apt to be only as tall as those of hybrid amaryllis.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "equative"]
+    ],
+    "comment": "*only* conveys that the expectation is stronger than the facts, contrary to the context.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_16b",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(16b)"},
+    "language": "stan1293",
+    "primaryText": "The stalks of miniature amaryllis are apt to be just as tall as those of hybrid amaryllis, if not taller.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "equative"]
+    ],
+    "comment": "Approximative *just* with an equative enforces no upper bound: a taller continuation is consistent.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_17b",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(17b)"},
+    "language": "stan1293",
+    "primaryText": "Miniature amaryllis are apt to be just/only [as]F tall as hybrid amaryllis, if not taller.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "equative"]
+    ],
+    "comment": "Focus inside the scope of *just* gives the exclusive reading, which enforces an upper bound.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_19",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(19)"},
+    "language": "stan1293",
+    "primaryText": "Miniature amaryllis are as tall as hybrid amaryllis. More precisely, miniature amaryllis are on average half a centimeter shorter than hybrid amaryllis.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "equative"]
+    ],
+    "comment": "A bare equative tolerates later precisification: the two utterances are interpreted at different grains.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_20",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(20)"},
+    "language": "stan1293",
+    "primaryText": "Miniature amaryllis are just as tall as hybrid amaryllis. #More precisely, miniature amaryllis are on average half a centimeter shorter than hybrid amaryllis.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "equative"]
+    ],
+    "comment": "*just* already interprets the equative at the finest permissible grain, so precisification contradicts it.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_22",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(22)"},
+    "language": "stan1293",
+    "primaryText": "The camera was a plastic but weighty box just bigger than a card deck.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "comparative"]
+    ],
+    "comment": "Slightly bigger; COCA.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_23",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(23)"},
+    "language": "stan1293",
+    "primaryText": "At 11, Samantha is just over 5 feet tall and has wavy black hair.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "comparative"]
+    ],
+    "comment": "Slightly over; COCA.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_24a",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(24a)"},
+    "language": "stan1293",
+    "primaryText": "Fafen is just older than Siri, if not much older.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "comparative"]
+    ],
+    "comment": "The upper bound of approximative *just* with a comparative cannot be cancelled.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_25",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(25)"},
+    "language": "stan1293",
+    "primaryText": "Fafen, the daughter just/only older than [Siri]F, had done the family duty and become a monk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "comparative"]
+    ],
+    "comment": "Focus on the standard gives the exclusive reading: older than Siri but than no other salient person.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_28",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(28)"},
+    "language": "stan1293",
+    "primaryText": "Fafen is older than Siri. #More precisely, she's one day younger than Siri.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "comparative"]
+    ],
+    "comment": "Comparatives cannot be used loosely: the bare comparative excludes Fafen being younger by any amount.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_29b",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(29b)"},
+    "language": "stan1293",
+    "primaryText": "Roughly speaking, Fafen is older than Siri.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "comparative"]
+    ],
+    "comment": "A comparative cannot be introduced by *roughly speaking*.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_30",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(30)"},
+    "language": "stan1293",
+    "primaryText": "Fafen is older than Siri. Siri is as old as Fafen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "comparative"]
+    ],
+    "comment": "At one level of precision the comparative and the reversed equative cannot both be true: a difference below the grain makes the comparative false.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_31a",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(31a)"},
+    "language": "stan1293",
+    "primaryText": "It is not the case that Fafen is just older than Siri.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "not older than Siri at the finest grain", "judgment": "acceptable"},
+      {"name": "older than Siri at a coarser grain", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "comparative"]
+    ],
+    "comment": "Negation targets either component: the comparative fails at the finest grain, or it holds at some coarser grain, so Fafen is significantly older.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_33b",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(33b)"},
+    "language": "stan1293",
+    "primaryText": "Samantha is prohibited from driving because she is just over eleven years old.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "comparative"]
+    ],
+    "comment": "The reason clause targets the negative component: her age is close to eleven.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_35",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(35)"},
+    "language": "stan1293",
+    "primaryText": "A: Fafen is just taller than Siri. B: No she's not, she's much taller than Siri.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "comparative"]
+    ],
+    "comment": "An interlocutor can contradict the negative component without backtracking, so it is at issue.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_37",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(37)"},
+    "language": "stan1293",
+    "primaryText": "Fafen is just older than Siri.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "comparative"]
+    ],
+    "comment": "No inference about contextual expectations: neither that Fafen was expected to be much older nor younger.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "thomasdeo2020_38",
+    "source": {"bibkey": "thomas-deo-2020", "paperLabel": "(38)"},
+    "language": "stan1293",
+    "primaryText": "Miniature amaryllis are just as tall as hybrid amaryllis.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "CQ: Are miniature amaryllis really as tall as hybrid amaryllis?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "equative"]
+    ],
+    "comment": "Suggests that miniature amaryllis were expected to be shorter: *just* with an equative raises an expectation.",
+    "lgrConformance": ""
+  }
+]

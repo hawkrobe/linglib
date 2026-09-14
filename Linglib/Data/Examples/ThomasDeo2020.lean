@@ -1,0 +1,396 @@
+import Linglib.Data.Examples.Schema
+
+/-!
+# `ThomasDeo2020` — typed example data
+
+Auto-generated from `Linglib/Data/Examples/ThomasDeo2020.json` by
+`scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
+the generator. Consumers (the paper's study file, test-suite hubs) import
+this module; declarations live in `namespace ThomasDeo2020.Examples`.
+-/
+
+namespace ThomasDeo2020.Examples
+
+open Data.Examples
+
+def ex_4 : LinguisticExample :=
+  { id := "thomasdeo2020_4"
+    source := ⟨"thomas-deo-2020", "(4), (15a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Miniature amaryllis are apt to be just as tall as hybrid amaryllis."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "equative")]
+    comment := "Approximative *just* with an equative: as tall at the highest level of precision; COCA."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_5 : LinguisticExample :=
+  { id := "thomasdeo2020_5"
+    source := ⟨"thomas-deo-2020", "(5), (21)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Fafen, the daughter just older than Siri, had done the family duty and become a monk."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "comparative")]
+    comment := "Approximative *just* with a comparative: slightly older; COCA."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_14a : LinguisticExample :=
+  { id := "thomasdeo2020_14a"
+    source := ⟨"thomas-deo-2020", "(14a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Relatively simple changes in lifestyle can have a big impact on your blood pressure, in many cases just as big as popping a pill."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "equative")]
+    comment := "The prejacent is stronger than what the context leads one to expect, which *just* tolerates."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_14b : LinguisticExample :=
+  { id := "thomasdeo2020_14b"
+    source := ⟨"thomas-deo-2020", "(14b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Relatively simple changes in lifestyle can have a big impact on your blood pressure, in many cases only as big as popping a pill."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "equative")]
+    comment := "*only* lowers a contextual expectation that the context makes strong."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_15b : LinguisticExample :=
+  { id := "thomasdeo2020_15b"
+    source := ⟨"thomas-deo-2020", "(15b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The stalks of miniature amaryllis are apt to be only as tall as those of hybrid amaryllis."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "equative")]
+    comment := "*only* conveys that the expectation is stronger than the facts, contrary to the context."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_16b : LinguisticExample :=
+  { id := "thomasdeo2020_16b"
+    source := ⟨"thomas-deo-2020", "(16b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The stalks of miniature amaryllis are apt to be just as tall as those of hybrid amaryllis, if not taller."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "equative")]
+    comment := "Approximative *just* with an equative enforces no upper bound: a taller continuation is consistent."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_17b : LinguisticExample :=
+  { id := "thomasdeo2020_17b"
+    source := ⟨"thomas-deo-2020", "(17b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Miniature amaryllis are apt to be just/only [as]F tall as hybrid amaryllis, if not taller."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "equative")]
+    comment := "Focus inside the scope of *just* gives the exclusive reading, which enforces an upper bound."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_19 : LinguisticExample :=
+  { id := "thomasdeo2020_19"
+    source := ⟨"thomas-deo-2020", "(19)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Miniature amaryllis are as tall as hybrid amaryllis. More precisely, miniature amaryllis are on average half a centimeter shorter than hybrid amaryllis."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "equative")]
+    comment := "A bare equative tolerates later precisification: the two utterances are interpreted at different grains."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_20 : LinguisticExample :=
+  { id := "thomasdeo2020_20"
+    source := ⟨"thomas-deo-2020", "(20)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Miniature amaryllis are just as tall as hybrid amaryllis. #More precisely, miniature amaryllis are on average half a centimeter shorter than hybrid amaryllis."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "equative")]
+    comment := "*just* already interprets the equative at the finest permissible grain, so precisification contradicts it."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_22 : LinguisticExample :=
+  { id := "thomasdeo2020_22"
+    source := ⟨"thomas-deo-2020", "(22)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The camera was a plastic but weighty box just bigger than a card deck."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "comparative")]
+    comment := "Slightly bigger; COCA."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_23 : LinguisticExample :=
+  { id := "thomasdeo2020_23"
+    source := ⟨"thomas-deo-2020", "(23)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "At 11, Samantha is just over 5 feet tall and has wavy black hair."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "comparative")]
+    comment := "Slightly over; COCA."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_24a : LinguisticExample :=
+  { id := "thomasdeo2020_24a"
+    source := ⟨"thomas-deo-2020", "(24a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Fafen is just older than Siri, if not much older."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "comparative")]
+    comment := "The upper bound of approximative *just* with a comparative cannot be cancelled."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_25 : LinguisticExample :=
+  { id := "thomasdeo2020_25"
+    source := ⟨"thomas-deo-2020", "(25)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Fafen, the daughter just/only older than [Siri]F, had done the family duty and become a monk."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "comparative")]
+    comment := "Focus on the standard gives the exclusive reading: older than Siri but than no other salient person."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_28 : LinguisticExample :=
+  { id := "thomasdeo2020_28"
+    source := ⟨"thomas-deo-2020", "(28)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Fafen is older than Siri. #More precisely, she's one day younger than Siri."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "comparative")]
+    comment := "Comparatives cannot be used loosely: the bare comparative excludes Fafen being younger by any amount."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_29b : LinguisticExample :=
+  { id := "thomasdeo2020_29b"
+    source := ⟨"thomas-deo-2020", "(29b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Roughly speaking, Fafen is older than Siri."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "comparative")]
+    comment := "A comparative cannot be introduced by *roughly speaking*."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_30 : LinguisticExample :=
+  { id := "thomasdeo2020_30"
+    source := ⟨"thomas-deo-2020", "(30)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Fafen is older than Siri. Siri is as old as Fafen."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "comparative")]
+    comment := "At one level of precision the comparative and the reversed equative cannot both be true: a difference below the grain makes the comparative false."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_31a : LinguisticExample :=
+  { id := "thomasdeo2020_31a"
+    source := ⟨"thomas-deo-2020", "(31a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "It is not the case that Fafen is just older than Siri."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("not older than Siri at the finest grain", .acceptable), ("older than Siri at a coarser grain", .acceptable)]
+    paperFeatures := [("construction", "comparative")]
+    comment := "Negation targets either component: the comparative fails at the finest grain, or it holds at some coarser grain, so Fafen is significantly older."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_33b : LinguisticExample :=
+  { id := "thomasdeo2020_33b"
+    source := ⟨"thomas-deo-2020", "(33b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Samantha is prohibited from driving because she is just over eleven years old."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "comparative")]
+    comment := "The reason clause targets the negative component: her age is close to eleven."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_35 : LinguisticExample :=
+  { id := "thomasdeo2020_35"
+    source := ⟨"thomas-deo-2020", "(35)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "A: Fafen is just taller than Siri. B: No she's not, she's much taller than Siri."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "comparative")]
+    comment := "An interlocutor can contradict the negative component without backtracking, so it is at issue."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_37 : LinguisticExample :=
+  { id := "thomasdeo2020_37"
+    source := ⟨"thomas-deo-2020", "(37)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Fafen is just older than Siri."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "comparative")]
+    comment := "No inference about contextual expectations: neither that Fafen was expected to be much older nor younger."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_38 : LinguisticExample :=
+  { id := "thomasdeo2020_38"
+    source := ⟨"thomas-deo-2020", "(38)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Miniature amaryllis are just as tall as hybrid amaryllis."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := "CQ: Are miniature amaryllis really as tall as hybrid amaryllis?"
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "equative")]
+    comment := "Suggests that miniature amaryllis were expected to be shorter: *just* with an equative raises an expectation."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def all : List LinguisticExample := [ex_4, ex_5, ex_14a, ex_14b, ex_15b, ex_16b, ex_17b, ex_19, ex_20, ex_22, ex_23, ex_24a, ex_25, ex_28, ex_29b, ex_30, ex_31a, ex_33b, ex_35, ex_37, ex_38]
+
+end ThomasDeo2020.Examples

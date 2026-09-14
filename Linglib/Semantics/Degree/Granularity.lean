@@ -10,38 +10,23 @@ import Mathlib.Algebra.Order.Group.Defs
 import Linglib.Semantics.Questions.Partition.Basic
 
 /-!
-# Granularity-Sensitive Degree Semantics [thomas-deo-2020]
+# Scale granularity
 
-The underlying granularity apparatus — granularity functions partitioning a
-scale into equal-width intervals and the finer/coarser ordering — is
-[sauerland-stateva-2011]'s (their (15)–(16)), following [krifka-2007];
-[thomas-deo-2020]'s contributions are the granularity-*level* convenience
-g(d) = (d − ε, d + ε) (their (43)) and the semantics of approximative *just*
-(their (44)).
+This file defines the granularity apparatus of [sauerland-stateva-2011], following
+[krifka-2007]: a granularity function partitions a scale into cells of one width, the grain,
+and a finer granularity has narrower cells. A grain cell around a degree is the open interval
+of the grain's width centred on the degree, `mkGranInterval`, which contains the degree and
+shrinks as the grain gets finer. A context supplies a finite set of available grain widths, and
+scalar approximators select from it, *exactly* the finest and *approximately* the coarsest,
+`finestWidth` and `coarsestWidth`. On a discrete scale a grain width induces the partition by
+integer division, `granQUD`, which a dividing width refines, the bridge to the question
+widths of [deo-thomas-2025].
 
-## Overview
+## References
 
-A granularity level maps each degree d on a scale to an open interval
-g(d) = (d − ε, d + ε) of width 2ε (the "grain", eq. 43). Equatives
-compare μ_x against the interval's **infimum** (eq. 45); comparatives
-compare against the **supremum** (eq. 49). Both use strict >.
-
-Since the infimum and supremum move in **opposite directions** as ε
-varies, the entailment patterns reverse:
-- Finer grain (smaller ε) → larger infimum → **stronger** equative
-- Finer grain (smaller ε) → smaller supremum → **weaker** comparative
-
-This reversal explains why approximative *just* yields different readings:
-- *just as tall as* ≈ "exactly" (negative component vacuous)
-- *just taller than* ≈ "barely" (negative component substantive)
-
-## Structure
-
-- § 1: Granularity intervals (eq. 43), construction from ε (eqs. 40–42),
-  and degree morphology (eqs. 45, 49).
-- § 2: Entailment reversal — from interval endpoint monotonicity.
-- § 3: Approximative *just* (eq. 44) — vacuous vs substantive negative
-  component derived from the reversal.
+* [sauerland-stateva-2011]
+* [krifka-2007]
+* [deo-thomas-2025]
 -/
 
 namespace Degree.Granularity
@@ -139,103 +124,6 @@ theorem le_coarsestWidth {ε : D} (hε : ε ∈ 𝒢) : ε ≤ coarsestWidth �
 
 end GranSelection
 
-/-! ### Entailment Reversal -/
-
-/-! ### The central observation (§4.2)
-
-Equatives and comparatives use **opposite ends** of the same interval.
-Since `>` is anti-monotone in its right argument (lower threshold →
-easier to exceed), the entailment direction reverses:
-
-- **Equatives** use `lo = d_c − ε`, which **decreases** as ε grows.
-  Lower bar → weaker claim. So fine ⊢ coarse.
-- **Comparatives** use `hi = d_c + ε`, which **increases** as ε grows.
-  Higher bar → stronger claim. So coarse ⊢ fine.
-
-The proofs are one-liners: transitivity of `<` and `≤`. -/
-
-/-- Equatives: finer grain (larger lo) entails coarser grain (smaller lo).
-
-    The equative "as Adj as d_c" (eq. 45) at grain cell `gi`, for
-    upward-monotone G, reduces to `μ_x > gi.lo` (the cell's infimum).
-    If μ_x exceeds the fine-grain infimum, it a fortiori exceeds the
-    coarse-grain infimum (which is smaller). -/
-theorem eq_fine_entails_coarse (gi₁ gi₂ : GranInterval D)
-    (hlo : gi₂.lo ≤ gi₁.lo)
-    (μ_x : D) (h : μ_x > gi₁.lo) : μ_x > gi₂.lo :=
-  lt_of_le_of_lt hlo h
-
-/-- Comparatives: coarser grain (larger hi) entails finer grain (smaller hi).
-
-    The comparative "Adj-er than d_c" (eq. 49) at grain cell `gi`, for
-    upward-monotone G, reduces to `μ_x > gi.hi` (the cell's supremum).
-    If μ_x exceeds the coarse-grain supremum, it a fortiori exceeds the
-    fine-grain supremum (which is smaller). -/
-theorem comp_coarse_entails_fine (gi₁ gi₂ : GranInterval D)
-    (hhi : gi₁.hi ≤ gi₂.hi)
-    (μ_x : D) (h : μ_x > gi₂.hi) : μ_x > gi₁.hi :=
-  lt_of_le_of_lt hhi h
-
-/-! ### Approximative *just* (eq. 44) -/
-
-/-! ### Approximative *just*
-
-Paper eq. (44): ⟦just⟧ = λp λw. p^{g_finest}(w) ∧ ∀g ∈ 𝒢[p^g(w) → p^{g_finest} ≥_S p^g]
-
-Generic over any grain type G and degree type D. -/
-
-section JustTheory
-
-variable {G : Type*}
-
-/-- Propositional strength (paper's ≥_S, footnote 10):
-    p at g₁ is at least as strong as p at g₂ iff g₁-truth entails
-    g₂-truth for all degree values.
-
-    Paper: p^{g₁} ≥_S p^{g₂} ≡ ∀w[p^{g₁}(w) → p^{g₂}(w)]. -/
-def atLeastAsStrong (p : G → D → Prop) (g₁ g₂ : G) : Prop :=
-  ∀ μ_x, p g₁ μ_x → p g₂ μ_x
-
-/-- Approximative *just* (paper eq. 44).
-
-    Positive component: the prejacent holds at the finest grain.
-    Negative component: at every grain where the prejacent holds,
-    the finest-grain version is at least as strong.
-
-    The paper restricts quantification to a finite contextual set 𝒢.
-    We quantify over all G for simplicity; the structural results
-    (vacuous/substantive) hold either way. -/
-def approxJust (p : G → D → Prop) (finest : G) (μ_x : D) : Prop :=
-  p finest μ_x ∧ ∀ g : G, p g μ_x → atLeastAsStrong p finest g
-
-omit [LinearOrder D] in
-/-- Equative prediction: if the finest grain is the strongest for p,
-    then *just*'s negative component is vacuous — *just* adds nothing.
-    "Just as tall as" ≈ "exactly as tall as".
-
-    This holds for equatives because `eq_fine_entails_coarse` shows
-    the finest equative (largest lo) entails all coarser equatives. -/
-theorem just_vacuous_iff (p : G → D → Prop) (finest : G)
-    (h_strongest : ∀ g, atLeastAsStrong p finest g) (μ_x : D) :
-    approxJust p finest μ_x ↔ p finest μ_x := by
-  constructor
-  · exact fun ⟨h, _⟩ => h
-  · intro h; exact ⟨h, fun _ _ => h_strongest _⟩
-
-omit [LinearOrder D] in
-/-- Comparative prediction: if the finest grain is NOT the strongest
-    at some coarser grain g, then *just* rules out g.
-    "Just taller than d_c" entails "not taller at grain g".
-
-    This holds for comparatives because `comp_coarse_entails_fine`
-    shows the finest comparative (smallest hi) does NOT entail
-    coarser comparatives (larger hi). -/
-theorem just_rules_out (p : G → D → Prop) (finest g : G)
-    (h_not_strongest : ¬ atLeastAsStrong p finest g)
-    (μ_x : D) (hjust : approxJust p finest μ_x) : ¬ p g μ_x := by
-  intro hg; exact h_not_strongest (hjust.2 g hg)
-
-end JustTheory
 
 /-! ### Granularity–Question Bridge -/
 
