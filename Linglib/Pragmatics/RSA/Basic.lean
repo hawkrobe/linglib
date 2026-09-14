@@ -379,6 +379,14 @@ theorem speakerOfScore_apply_eq_of_add {w₁ w₂ : W} {k : ℝ} (h : ∀ u, sco
   Kernel.ofWeights_apply_eq_of_mul (mt EReal.exp_eq_zero_iff.mp (EReal.coe_ne_bot k))
     (mt EReal.exp_eq_top_iff.mp (EReal.coe_ne_top k)) λ u => by rw [h, EReal.exp_add]
 
+/-- Two scores differing by a real constant per state give the same speaker: a term of the
+utility that does not depend on the utterance cancels in the softmax. -/
+theorem speakerOfScore_eq_of_add {score' : W → U → EReal} {k : W → ℝ}
+    (h : ∀ w u, score' w u = score w u + k w) : speakerOfScore score' = speakerOfScore score :=
+  Kernel.ofWeights_eq_of_mul (λ w => mt EReal.exp_eq_zero_iff.mp (EReal.coe_ne_bot (k w)))
+    (λ w => mt EReal.exp_eq_top_iff.mp (EReal.coe_ne_top (k w))) λ w u => by
+      rw [h, EReal.exp_add]
+
 /-- Row preference of the score speaker is score comparison; the normalization cancels. -/
 theorem speakerOfScore_real_singleton_lt_iff {w : W} (htop : ∀ u, score w u ≠ ⊤)
     (h0 : ∃ u, score w u ≠ ⊥) {u u' : U} :

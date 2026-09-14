@@ -3,8 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.InformationTheory.KullbackLeibler.Basic
 import Linglib.Core.MeasureTheory.Measure.Decomposition.RadonNikodym
-import Mathlib.InformationTheory.KullbackLeibler.Basic
+import Linglib.Core.Probability.UniformOn
 import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
 
@@ -17,7 +18,7 @@ relative entropy `∑ a, μ {a} * log (μ {a} / ν {a})` ([cover-thomas-2006], c
 `[UPSTREAM]` candidate for `Mathlib/InformationTheory/KullbackLeibler/`.
 -/
 
-open MeasureTheory Real
+open MeasureTheory ProbabilityTheory Real
 open scoped ENNReal
 
 namespace InformationTheory
@@ -59,5 +60,22 @@ theorem toReal_klDiv_eq_sum_log_div [IsProbabilityMeasure μ] [IsProbabilityMeas
   simp_rw [smul_eq_mul, ENNReal.toReal_div, ← measureReal_def, key,
     Finset.sum_add_distrib, Finset.sum_sub_distrib, sum_measureReal_singleton,
     Finset.coe_univ, probReal_univ, sub_self, add_zero]
+
+/-- The divergence from the uniform measure on a nonempty finset to the uniform measure on a
+superset is the log of the ratio of their sizes. -/
+theorem klDiv_uniformOn_of_subset [DecidableEq α] {A B : Finset α} (hA : A.Nonempty)
+    (hAB : A ⊆ B) :
+    klDiv (uniformOn (A : Set α)) (uniformOn (B : Set α)) =
+      ENNReal.ofReal (log (B.card / A.card)) := by
+  have hac := uniformOn_absolutelyContinuous_of_subset B.finite_toSet (Finset.coe_subset.2 hAB)
+  have := isProbabilityMeasure_uniformOn A.finite_toSet (Finset.coe_nonempty.2 hA)
+  have := isProbabilityMeasure_uniformOn B.finite_toSet (Finset.coe_nonempty.2 (hA.mono hAB))
+  rw [klDiv_of_rnDeriv_ae_const hac (c := (B.card : ℝ≥0∞) / A.card), ENNReal.toReal_div,
+    ENNReal.toReal_natCast, ENNReal.toReal_natCast]
+  filter_upwards [(Measure.rnDeriv_eq_div_singleton hac).filter_mono hac.ae_le,
+    ae_cond_mem (A.finite_toSet.measurableSet)] with a ha hmem
+  rw [ha, uniformOn_finset_apply_singleton, uniformOn_finset_apply_singleton,
+    if_pos (Finset.mem_coe.1 hmem), if_pos (hAB (Finset.mem_coe.1 hmem)), div_eq_mul_inv,
+    inv_inv, mul_comm, ← div_eq_mul_inv]
 
 end InformationTheory

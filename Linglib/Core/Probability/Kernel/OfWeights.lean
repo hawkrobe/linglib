@@ -81,6 +81,13 @@ theorem ofWeights_apply_eq_of_mul {w : α → β → ℝ≥0∞} {a₁ a₂ : α
   Measure.ext_of_singleton λ b => by
     simp only [ofWeights_apply_singleton, h, ← Finset.sum_mul, ENNReal.mul_div_mul_right _ _ hc0 hc]
 
+/-- Two weight functions differing by a positive finite factor per row give the same kernel. -/
+theorem ofWeights_eq_of_mul {w w' : α → β → ℝ≥0∞} {c : α → ℝ≥0∞} (hc0 : ∀ a, c a ≠ 0)
+    (hc : ∀ a, c a ≠ ∞) (h : ∀ a b, w' a b = w a b * c a) : ofWeights w' = ofWeights w :=
+  Kernel.ext λ a => Measure.ext_of_singleton λ b => by
+    simp only [ofWeights_apply_singleton, h, ← Finset.sum_mul,
+      ENNReal.mul_div_mul_right _ _ (hc0 a) (hc a)]
+
 /-- In a row with exactly two nonzero weights, both finite, the real mass of one is its share
 of the two. -/
 theorem ofWeights_real_singleton_of_pair {w : α → β → ℝ≥0∞} (a : α) {b b' : β} (hbb' : b ≠ b')

@@ -55,4 +55,13 @@ theorem uniformOn_real_apply [Finite W] (s e : Set W) :
     ← Set.ncard_eq_toFinset_card, ← Set.ncard_eq_toFinset_card, ENNReal.toReal_mul,
     ENNReal.toReal_inv, ENNReal.toReal_natCast, ENNReal.toReal_natCast, inv_mul_eq_div]
 
+omit [Fintype W] in
+/-- The uniform measure on a subset of a finite set is absolutely continuous with respect to
+the uniform measure on the set. -/
+theorem uniformOn_absolutelyContinuous_of_subset {A B : Set W} (hB : B.Finite) (hAB : A ⊆ B) :
+    uniformOn A ≪ uniformOn B := λ s hs => by
+  rw [uniformOn_eq_zero_iff hB] at hs
+  rw [uniformOn_eq_zero_iff (hB.subset hAB)]
+  exact Set.eq_empty_of_subset_empty (hs ▸ Set.inter_subset_inter_left s hAB)
+
 end MeasureTheory
