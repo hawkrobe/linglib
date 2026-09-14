@@ -1,6 +1,5 @@
 import Linglib.Processing.Cost.Profile
 import Linglib.Processing.Expectation.Defs
-import Linglib.Processing.Memory.LossyContext
 
 /-!
 # Memory-Surprisal Trade-off Framework
@@ -84,13 +83,7 @@ structure MemoryEncoding (W : Type) (Mem : Type) where
   initial : Mem
 
 /-- Iterate a `MemoryEncoding` over an entire history to produce the
-final memory state. This is the *context-summary function* that, when
-paired with a predictor `Mem → PMF (Option W)`, induces a Dirac
-`MemoryProcess` (in `Processing.NoisyChannel`). Such a
-process is lossless for its own virtual LM
-(`MemoryProcess.expectedSurprisal_eq_virtualLM_surprisal`), so
-classical surprisal arises *exactly* when memory is encoded
-deterministically. -/
+final memory state: the deterministic context-summary function. -/
 def MemoryEncoding.summary {W Mem : Type} (me : MemoryEncoding W Mem)
     (history : List W) : Mem :=
   history.foldl me.encode me.initial
@@ -585,45 +578,5 @@ this resolution fixed. IAS extends this by also parametrizing over the
 prediction resolution (horizon and representational level). -/
 def memorySurprisalConfig : Processing.PredictiveUncertainty.SurprisalConfig :=
   Processing.PredictiveUncertainty.standardSurprisal
-
-/-! ### Bridge to NoisyChannel: deterministic encoders are Dirac MemoryProcesses
-
-The `MemoryEncoding` of [hahn-degen-futrell-2021] is a *deterministic*
-context-summary `(Mem × W) → Mem` (plus an initial state). Paired with a
-predictor `Mem → PMF (Option W)`, it induces a `MemoryProcess` (in
-`Processing.NoisyChannel`) whose encoder is a Dirac at the
-iterated memory state. The deterministic encoder is exactly the lossless
-special case that the [futrell-gibson-levy-2020] `MemoryProcess`
-substrate generalizes — making the connection true by construction. -/
-
-namespace MemoryEncoding
-
-/-- Pair a deterministic `MemoryEncoding` with a predictor to obtain a
-`MemoryProcess`. The encoder is the Dirac at the iterated context summary;
-the predictor is exposed unchanged. -/
-noncomputable def toMemoryProcess {W Mem : Type} (me : MemoryEncoding W Mem)
-    (predict : Mem → PMF (Option W)) :
-    Processing.NoisyChannel.MemoryProcess W Mem where
-  encode := fun c => PMF.pure (me.summary c)
-  predict := predict
-
-/-- The induced `MemoryProcess` is Dirac at `me.summary`, by construction. -/
-theorem toMemoryProcess_isDirac {W Mem : Type} (me : MemoryEncoding W Mem)
-    (predict : Mem → PMF (Option W)) :
-    (me.toMemoryProcess predict).IsDirac me.summary :=
-  fun _ => rfl
-
-/-- **Lossless reduction transported.** A `MemoryEncoding` paired with a
-predictor recovers classical surprisal under its induced language model
-(the [futrell-gibson-levy-2020] §3.5.1 reduction, applied here). -/
-theorem toMemoryProcess_expectedSurprisal_eq_virtualLM_surprisal
-    {W Mem : Type} (me : MemoryEncoding W Mem)
-    (predict : Mem → PMF (Option W)) (c : List W) (w : W) :
-    (me.toMemoryProcess predict).expectedSurprisal c w =
-      ((me.toMemoryProcess predict).virtualLM me.summary).surprisal c w :=
-  Processing.NoisyChannel.MemoryProcess.expectedSurprisal_eq_virtualLM_surprisal
-    (me.toMemoryProcess_isDirac predict) c w
-
-end MemoryEncoding
 
 end Processing.MemorySurprisal

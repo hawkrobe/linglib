@@ -1,98 +1,116 @@
-import Linglib.Processing.Memory.Channel
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+import Linglib.Core.InformationTheory.Surprisal
+import Mathlib.Probability.Distributions.Bernoulli
+import Mathlib.Probability.Kernel.Composition.MapComap
 
 /-!
-# Lossy-Context Surprisal: Bridge to Classical Surprisal
-[futrell-gibson-levy-2020]
+# Memory processes
 
-`MemoryProcess` (in `Basic.lean`) is the abstract type underlying the
-lossy-context surprisal model of [futrell-gibson-levy-2020]
-("Lossy-Context Surprisal: An Information-Theoretic Model of Memory
-Effects in Sentence Processing", Cog Sci 44, e12814).
+This file defines the memory process of [futrell-gibson-levy-2020]'s lossy-context surprisal. A
+memory process encodes a context as a distribution over memory representations and predicts the
+next word from the representation alone, so that the representation mediates all information
+flow from the context to the prediction. The difficulty of a word in a context is its expected
+surprisal over the representations the context can produce, and the average difficulty of the
+process under a language model and a context prior averages it over contexts and the words they
+predict.
 
-This file proves the paper's §3.5.1 reduction: when the memory encoder
-loses *no* information (a Dirac at some history-summarising function
-`f`), expected surprisal collapses to classical surprisal under the
-language model induced by `predict ∘ f`.
-
-In the paper's framing (§3.5.1), surprisal theory becomes a definitional
-special case of lossy-context surprisal: the encoder M giving a lossless
-representation of context (a Dirac at the true context, or any
-deterministic summary) recovers Shannon's `−log p(w | c)`.
+A process whose encoder is deterministic and whose predictor, read through the encoder, is a
+language model loses no information, and its difficulty is that model's surprisal: surprisal
+theory is the lossless special case.
 
 ## Main definitions
 
-- `MemoryProcess.IsLosslessFor` — the process exactly realises an LM
-- `LangModel.virtualLM` — the LM induced by composing `predict` with a
-  history-summarising function
+* `MemoryProcess`: an encoder `Kernel C R` and a predictor `Kernel R W`.
+* `MemoryProcess.expectedSurprisal`, `MemoryProcess.averageDifficulty`.
+* `MemoryProcess.IsLosslessFor`: the process realizes a language model through a deterministic
+  summary of the context.
 
-## Main theorem
+## Main results
 
-- `expectedSurprisal_eq_surprisal_of_lossless` — lossless `mp` of `lm`
-  yields `mp.expectedSurprisal = lm.surprisal`
+* `MemoryProcess.expectedSurprisal_of_dirac`, `MemoryProcess.expectedSurprisal_of_bernoulli`:
+  expected surprisal under a point-mass and under a two-point encoder.
+* `MemoryProcess.expectedSurprisal_eq_surprisal_of_lossless`.
+
+## References
+
+* [futrell-gibson-levy-2020]
 -/
 
-namespace Processing.NoisyChannel
+open MeasureTheory ProbabilityTheory InformationTheory
+open scoped ProbabilityTheory unitInterval
 
-open Processing.LanguageModel (LangModel)
+namespace Processing.LossyContext
+
+variable {C R W : Type*} [MeasurableSpace C] [MeasurableSpace R] [MeasurableSpace W]
+
+/-- A memory process: a lossy encoder from contexts to memory representations and a predictor
+from memory representations to next words. The representation mediates all information flow
+from the context to the prediction. -/
+structure MemoryProcess (C R W : Type*) [MeasurableSpace C] [MeasurableSpace R]
+    [MeasurableSpace W] where
+  /-- The distribution over memory representations a context produces. -/
+  encode : Kernel C R
+  /-- The next-word distribution a memory representation predicts. -/
+  predict : Kernel R W
 
 namespace MemoryProcess
 
-variable {Voc Mem : Type*}
+variable (mp : MemoryProcess C R W)
 
-/-- A memory process is *lossless for* a language model `lm` if some
-deterministic history-summary `f` makes the encoder a Dirac at `f c`
-and the predictor's distribution at `f c` equal to `lm.next c`.
+/-- The surprisal of the word `w` at the memory representation `r`. -/
+noncomputable def perStateSurprisal (r : R) (w : W) : ℝ := surprisal (mp.predict r) w
 
-([futrell-gibson-levy-2020] §3.5.1: this is the "perfect memory"
-regime in which lossy-context surprisal collapses to classical
-surprisal.) -/
-def IsLosslessFor (mp : MemoryProcess Voc Mem) (lm : LangModel Voc) : Prop :=
-  ∃ f : List Voc → Mem,
-    mp.IsDirac f ∧ ∀ c, mp.predict (f c) = lm.next c
+/-- The expected surprisal of `w` in the context `c`: the difficulty of `w` under the process. -/
+noncomputable def expectedSurprisal (c : C) (w : W) : ℝ :=
+  ∫ r, mp.perStateSurprisal r w ∂(mp.encode c)
 
-/-- **Lossless reduction (§3.5.1).** A memory process that is lossless
-for `lm` produces exactly the classical surprisal of `lm`. Lossy-context
-surprisal *generalises* surprisal — it does not replace it.
+/-- The average difficulty of the process under the language model `L` and the context prior
+`π`: expected surprisal averaged over contexts and the words they predict. -/
+noncomputable def averageDifficulty (L : Kernel C W) (π : Measure C) : ℝ :=
+  ∫ c, ∫ w, mp.expectedSurprisal c w ∂(L c) ∂π
 
-Reading: when no information is lost in encoding, the integral over
-memory states in `expectedSurprisal` (Eq. 3) degenerates to a single
-deterministic prediction, recovering Shannon's `-log p(w | c)`. -/
-theorem expectedSurprisal_eq_surprisal_of_lossless
-    {mp : MemoryProcess Voc Mem} {lm : LangModel Voc}
-    (h : mp.IsLosslessFor lm) (c : List Voc) (w : Voc) :
-    mp.expectedSurprisal c w = lm.surprisal c w := by
-  obtain ⟨f, hdir, hpred⟩ := h
-  rw [expectedSurprisal_of_dirac hdir]
-  unfold perStateSurprisal LangModel.surprisal LangModel.nextProb
-  rw [hpred c]
+/-- The process realizes the language model `L` through the summary `f`: the encoder is
+deterministic at `f`, and the predictor pulled back along `f` is `L`. -/
+def IsLosslessFor (L : Kernel C W) : Prop :=
+  ∃ (f : C → R) (hf : Measurable f), mp.encode = Kernel.deterministic f hf ∧
+    mp.predict.comap f hf = L
 
-/-- The "virtual" language model induced by a deterministic
-history-summary `f` and a memory predictor `predict`. -/
-def virtualLM (mp : MemoryProcess Voc Mem)
-    (f : List Voc → Mem) : LangModel Voc where
-  next := fun c => mp.predict (f c)
+variable {mp}
 
-/-- A memory process is lossless for its own virtual LM whenever the
-encoder is a Dirac at `f`. This is the "construction-side" complement
-of `expectedSurprisal_eq_surprisal_of_lossless`: any Dirac encoder
-*does* realise some LM, namely `virtualLM`. -/
-theorem isLosslessFor_virtualLM
-    (mp : MemoryProcess Voc Mem) {f : List Voc → Mem}
-    (h : mp.IsDirac f) :
-    mp.IsLosslessFor (mp.virtualLM f) :=
-  ⟨f, h, fun _ => rfl⟩
+/-- A deterministic encoder realizes the language model that reads the predictor through it. -/
+theorem isLosslessFor_comap {f : C → R} {hf : Measurable f}
+    (h : mp.encode = Kernel.deterministic f hf) : mp.IsLosslessFor (mp.predict.comap f hf) :=
+  ⟨f, hf, h, rfl⟩
 
-/-- **Lossless ⇒ classical surprisal of the virtual LM.** Any Dirac
-memory process realises classical surprisal under its induced
-language model. This is the reduction in its purely structural form,
-without an external `lm` parameter. -/
-theorem expectedSurprisal_eq_virtualLM_surprisal
-    {mp : MemoryProcess Voc Mem} {f : List Voc → Mem}
-    (h : mp.IsDirac f) (c : List Voc) (w : Voc) :
-    mp.expectedSurprisal c w = (mp.virtualLM f).surprisal c w :=
-  expectedSurprisal_eq_surprisal_of_lossless
-    (mp.isLosslessFor_virtualLM h) c w
+variable [MeasurableSingletonClass R] {c : C}
+
+theorem expectedSurprisal_of_dirac {r : R} (h : mp.encode c = Measure.dirac r) (w : W) :
+    mp.expectedSurprisal c w = mp.perStateSurprisal r w := by
+  rw [expectedSurprisal, h, integral_dirac]
+
+/-- Expected surprisal under a Bernoulli encoder, which produces `r₁` with probability `p` and
+`r₂` otherwise. -/
+theorem expectedSurprisal_of_bernoulli {r₁ r₂ : R} {p : I} (h : mp.encode c = Ber(r₁, r₂, p))
+    (w : W) : mp.expectedSurprisal c w
+      = p * mp.perStateSurprisal r₁ w + (1 - p) * mp.perStateSurprisal r₂ w := by
+  rw [expectedSurprisal, h, integral_bernoulliMeasure, smul_eq_mul, smul_eq_mul]
+
+theorem expectedSurprisal_of_deterministic {f : C → R} {hf : Measurable f}
+    (h : mp.encode = Kernel.deterministic f hf) (c : C) (w : W) :
+    mp.expectedSurprisal c w = mp.perStateSurprisal (f c) w :=
+  expectedSurprisal_of_dirac (h ▸ Kernel.deterministic_apply hf c) w
+
+/-- A lossless process has the surprisal of the language model it realizes: surprisal theory is
+the lossless special case of lossy-context surprisal. -/
+theorem expectedSurprisal_eq_surprisal_of_lossless {L : Kernel C W} (h : mp.IsLosslessFor L)
+    (c : C) (w : W) : mp.expectedSurprisal c w = surprisal (L c) w := by
+  obtain ⟨f, hf, he, hp⟩ := h
+  rw [expectedSurprisal_of_deterministic he, perStateSurprisal, ← hp, Kernel.comap_apply]
 
 end MemoryProcess
 
-end Processing.NoisyChannel
+end Processing.LossyContext

@@ -4,270 +4,232 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.InformationTheory.Entropy
-import Linglib.Core.Probability.ConditionalProbability
+import Linglib.Core.MeasureTheory.MeasurableSpace.Sum
 import Linglib.Processing.Memory.LossyContext
-import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
 /-!
 # Futrell, Gibson and Levy (2020): Lossy-Context Surprisal
 
-This file formalizes [futrell-gibson-levy-2020]'s unification of expectation-based and
-memory-based theories of processing difficulty. The difficulty of a word is its expected surprisal
-given a lossy memory representation of its context (the paper's Claims 1 to 4 and equation (3));
-`Processing.Memory.Channel` carries the architecture, a memory process with an encoder and a
-predictor, and `Processing.Memory.LossyContext` its lossless regime, in which surprisal theory is a
-special case (section 3.5.1). Here the paper's section 5 result, information locality, is proved
-in the single-dependency configuration, where its first-order approximation (equation (11),
-Supplementary Material C) holds exactly. Conditional surprisal is unconditional surprisal less
-pointwise mutual information (equation (10), `surprisal_eq_sub_pmi`), so under erasure noise
-(`erasure`), which keeps the context word with probability `1 - e`, expected surprisal is the
-unconditional surprisal less the surviving fraction of the pointwise mutual information
-(`expectedSurprisal_erasure`), the excess over plain surprisal is the erased fraction (equation
-(12)), and with progressive noise, a more distant word erased more often, difficulty grows with
-distance when the words are positively associated and shrinks when they are negatively associated
-(`locality`, `antilocality`; section 5.3.3). No erasure recovers surprisal and certain erasure
-recovers the prior (sections 3.5.1 and 3.4.2). Averaged over contexts, the difficulty of the
-Bayes-optimal comprehender of section 3.3 under lossy memory exceeds its difficulty under the true
-context by exactly the predictive information memory loses (section 3.4.1, Supplementary
-Material A; `bayesDifficulty_memJoint_sub_eq`), and the data processing inequality of section 3.2
-makes the loss nonnegative.
+This file formalizes [futrell-gibson-levy-2020]'s lossy-context surprisal, on which the
+difficulty of a word is its expected surprisal under a lossy memory representation of its
+context, carried by `Processing.LossyContext.MemoryProcess`. The comprehender of section 3.3
+predicts the next word from its memory representation by Bayesian inversion of the memory
+kernel (`bayes`), and averaged over contexts its difficulty is the conditional entropy of the
+word given the representation, which exceeds the difficulty of surprisal theory, the lossless
+comprehender who sees the context, by exactly the predictive information memory loses
+(`averageDifficulty_bayes_sub_lossless`); the data processing inequality makes the loss
+nonnegative.
+
+Information locality (section 5) is proved in the single-dependency configuration, where the
+paper's first-order approximation is exact: under erasure noise (`erasure`), which keeps the
+context word with probability `1 - e`, difficulty is the unigram surprisal less the surviving
+fraction of the pointwise mutual information, so with progressive noise, a more distant word
+erased more often, difficulty grows with distance when the words are positively associated and
+shrinks when they are negatively associated (`locality`, `antilocality`). No erasure is the
+lossless case and certain erasure recovers the unigram prior.
 
 ## Implementation notes
 
-* Pointwise mutual information is taken relative to the language model's own empty-context
-  prediction, and the erasure process reads an erased word as the empty context.
+* Pointwise mutual information is taken relative to the unigram distribution of the next word,
+  the language model averaged over the context prior, and the erasure process reads an erased
+  word as that prior.
 * Structural forgetting (section 4) is a parameter-space simulation over toy grammars, with
-  forgetting at low verb-final relative-clause rates as for English and none at the German rate;
-  it stays in prose.
-* The memory substrate is stated with mathlib's `PMF`; its move to the kernel face waits for the
-  last of its consumers.
+  forgetting at low verb-final relative-clause rates as for English and none at the German
+  rate; it stays in prose.
 
 ## References
 
 * [futrell-gibson-levy-2020]
 -/
 
+open MeasureTheory ProbabilityTheory InformationTheory Processing.LossyContext
+open scoped ProbabilityTheory unitInterval
+
 namespace FutrellGibsonLevy2020
 
-open Processing.LanguageModel Processing.NoisyChannel
-open scoped ENNReal NNReal
-
-variable {Voc : Type*} (L : LangModel Voc)
-
-/-- Pointwise mutual information of the next word `w` with the one-word
-    context `y` (§5.1.2), relative to the model's empty-context prior. -/
-noncomputable def pmi (y w : Voc) : ℝ :=
-  Real.log ((L.nextProb [y] w).toReal / (L.nextProb [] w).toReal)
-
-/-- Eq. (10): conditional surprisal decomposes as unconditional surprisal
-    minus pointwise mutual information. -/
-theorem surprisal_eq_sub_pmi {y w : Voc} (h0 : L.nextProb [] w ≠ 0)
-    (hy : L.nextProb [y] w ≠ 0) :
-    L.surprisal [y] w = L.surprisal [] w - pmi L y w := by
-  unfold LangModel.surprisal pmi
-  rw [Real.log_div
-    (ENNReal.toReal_ne_zero.mpr ⟨hy, PMF.apply_ne_top _ _⟩)
-    (ENNReal.toReal_ne_zero.mpr ⟨h0, PMF.apply_ne_top _ _⟩)]
-  ring
-
-/-- The erasure-noise memory process (§5.1.3): the memory retains the
-    context's head word with probability `1 − e` and erases it with
-    probability `e`; the predictor reads a retained word as a one-word
-    context and an erased one as the empty context. -/
-noncomputable def erasure [DecidableEq Voc] (e : ℝ≥0) (he : e ≤ 1) :
-    MemoryProcess Voc (Option Voc) where
-  encode
-    | [] => PMF.pure none
-    | y :: _ => PMF.ofFinset
-        (fun m => if m = none then (e : ℝ≥0∞) else
-          if m = some y then 1 - (e : ℝ≥0∞) else 0)
-        {none, some y}
-        (by rw [Finset.sum_insert (by simp), Finset.sum_singleton, if_pos rfl,
-            if_neg (by simp), if_pos rfl,
-            add_tsub_cancel_of_le (by exact_mod_cast he : (e : ℝ≥0∞) ≤ 1)])
-        (fun m hm => by
-          obtain ⟨h1, h2⟩ : m ≠ none ∧ m ≠ some y := by simpa using hm
-          rw [if_neg h1, if_neg h2])
-  predict m := L.next (m.elim [] fun y => [y])
-
-variable [DecidableEq Voc] {e e' : ℝ≥0} {y w : Voc}
-
-theorem erasure_encode_apply (he : e ≤ 1) (m : Option Voc) :
-    (erasure L e he).encode [y] m
-      = if m = none then (e : ℝ≥0∞) else
-          if m = some y then 1 - (e : ℝ≥0∞) else 0 := by
-  simp [erasure, PMF.ofFinset_apply]
-
-/-- The exact single-dependency form of eq. (11): under erasure noise, the
-    lossy-context difficulty is the unconditional surprisal minus the
-    surviving fraction of the pmi. -/
-theorem expectedSurprisal_erasure (he : e ≤ 1) (h0 : L.nextProb [] w ≠ 0)
-    (hy : L.nextProb [y] w ≠ 0) :
-    (erasure L e he).expectedSurprisal [y] w
-      = L.surprisal [] w - (1 - (e : ℝ)) * pmi L y w := by
-  classical
-  have hsum : (erasure L e he).expectedSurprisal [y] w
-      = (e : ℝ) * L.surprisal [] w + (1 - (e : ℝ)) * L.surprisal [y] w := by
-    unfold MemoryProcess.expectedSurprisal
-    rw [tsum_eq_sum (s := ({none, some y} : Finset (Option Voc)))
-      (fun m hm => ?_)]
-    · rw [Finset.sum_insert (by simp), Finset.sum_singleton,
-        erasure_encode_apply, erasure_encode_apply, if_pos rfl,
-        if_neg (by simp), if_pos rfl]
-      simp only [ENNReal.coe_toReal]
-      rw [ENNReal.toReal_sub_of_le (by exact_mod_cast he) ENNReal.one_ne_top,
-        ENNReal.toReal_one, ENNReal.coe_toReal]
-      rfl
-    · rw [erasure_encode_apply]
-      obtain ⟨h1, h2⟩ : m ≠ none ∧ m ≠ some y := by simpa using hm
-      rw [if_neg h1, if_neg h2]
-      simp
-  rw [hsum, surprisal_eq_sub_pmi L h0 hy]
-  ring
-
-/-- Eq. (12): the excess difficulty of erasure-noise processing over plain
-    surprisal is exactly the erased fraction of the pmi. -/
-theorem expectedSurprisal_erasure_sub_surprisal (he : e ≤ 1)
-    (h0 : L.nextProb [] w ≠ 0) (hy : L.nextProb [y] w ≠ 0) :
-    (erasure L e he).expectedSurprisal [y] w - L.surprisal [y] w
-      = (e : ℝ) * pmi L y w := by
-  rw [expectedSurprisal_erasure L he h0 hy, surprisal_eq_sub_pmi L h0 hy]
-  ring
-
-/-- Information locality (§5.1.4): under progressive noise — a more
-    distant context word has a larger erasure rate — difficulty increases
-    with distance whenever the words are positively associated. -/
-theorem locality (h : e ≤ e') (he' : e' ≤ 1) (hpmi : 0 ≤ pmi L y w)
-    (h0 : L.nextProb [] w ≠ 0) (hy : L.nextProb [y] w ≠ 0) :
-    (erasure L e (h.trans he')).expectedSurprisal [y] w
-      ≤ (erasure L e' he').expectedSurprisal [y] w := by
-  rw [expectedSurprisal_erasure L (h.trans he') h0 hy,
-    expectedSurprisal_erasure L he' h0 hy]
-  have : (e : ℝ) ≤ e' := by exact_mod_cast h
-  nlinarith
-
-/-- Anti-locality (sections 5.1.4 and 5.3.3): when the words are negatively
-    associated, losing the context word *lowers* difficulty, so difficulty
-    decreases with distance. -/
-theorem antilocality (h : e ≤ e') (he' : e' ≤ 1) (hpmi : pmi L y w ≤ 0)
-    (h0 : L.nextProb [] w ≠ 0) (hy : L.nextProb [y] w ≠ 0) :
-    (erasure L e' he').expectedSurprisal [y] w
-      ≤ (erasure L e (h.trans he')).expectedSurprisal [y] w := by
-  rw [expectedSurprisal_erasure L (h.trans he') h0 hy,
-    expectedSurprisal_erasure L he' h0 hy]
-  have : (e : ℝ) ≤ e' := by exact_mod_cast h
-  nlinarith
-
-/-- No erasure recovers plain surprisal (§3.5.1's special case, at the toy
-    configuration; the general statement is
-    `Processing.NoisyChannel.expectedSurprisal_eq_surprisal_of_lossless`). -/
-theorem erasure_zero (h0 : L.nextProb [] w ≠ 0) (hy : L.nextProb [y] w ≠ 0) :
-    (erasure L 0 zero_le_one).expectedSurprisal [y] w = L.surprisal [y] w := by
-  rw [expectedSurprisal_erasure L zero_le_one h0 hy, surprisal_eq_sub_pmi L h0 hy]
-  simp
-
-/-- Certain erasure recovers the prior (§3.4.2: "regression to prior
-    expectations"; the general statement is
-    `Processing.NoisyChannel.MemoryProcess.expectedSurprisal_of_constantEncoder`). -/
-theorem erasure_one (h0 : L.nextProb [] w ≠ 0) (hy : L.nextProb [y] w ≠ 0) :
-    (erasure L 1 le_rfl).expectedSurprisal [y] w = L.surprisal [] w := by
-  rw [expectedSurprisal_erasure L le_rfl h0 hy]
-  simp
+variable {W : Type*} [MeasurableSpace W]
 
 section AverageForm
 
-/-! ### The average form (§3.4.1, Supplementary Material A)
+/-! ### The Bayes-optimal comprehender and the average form -/
 
-Averaged over contexts, the difficulty of the Bayes-optimal comprehender
-(§3.3, eqs. (4)–(9)) under lossy memory exceeds its difficulty under
-veridical context by exactly the predictive information lost to memory. -/
+variable {C R : Type*} [MeasurableSpace C] [MeasurableSingletonClass C] [MeasurableSpace R]
+  [MeasurableSingletonClass R] [MeasurableSingletonClass W]
+  (L : Kernel C W) [IsMarkovKernel L] (π : Measure C) [IsProbabilityMeasure π]
+  (mem : Kernel C R) [IsMarkovKernel mem]
 
-open InformationTheory MeasureTheory ProbabilityTheory
-open scoped ProbabilityTheory
+/-- The joint law of the next word and its context under the language model `L` and the
+context prior `π`. -/
+noncomputable def joint : Measure (W × C) := (π ⊗ₘ L).map Prod.swap
 
-variable {W C M : Type*} [Fintype W] [Fintype C] [Fintype M]
-  [MeasurableSpace W] [MeasurableSpace C] [MeasurableSpace M]
-  [MeasurableSingletonClass W] [MeasurableSingletonClass C] [MeasurableSingletonClass M]
-  (J : Measure (W × C)) [IsProbabilityMeasure J] (mem : Kernel C M) [IsMarkovKernel mem]
+instance : IsProbabilityMeasure (joint L π) :=
+  Measure.isProbabilityMeasure_map measurable_swap.aemeasurable
 
-/-- The (word, memory) joint induced by passing the context coordinate through
-    the memory encoder (Claims 1 and 3). -/
-noncomputable def memJoint : Measure (W × M) := (Kernel.id ∥ₖ mem) ∘ₘ J
+/-- The joint law of the next word and the memory representation of its context. -/
+noncomputable def memJoint : Measure (W × R) := (Kernel.id ∥ₖ mem) ∘ₘ joint L π
 
-instance : IsProbabilityMeasure (memJoint J mem) :=
-  inferInstanceAs (IsProbabilityMeasure ((Kernel.id ∥ₖ mem) ∘ₘ J))
+instance : IsProbabilityMeasure (memJoint L π mem) :=
+  inferInstanceAs (IsProbabilityMeasure ((Kernel.id ∥ₖ mem) ∘ₘ joint L π))
 
-/-- §3.2's constraint on noise distributions, as the mutual-information form
-    of the data processing inequality: a memory representation generated from
-    the context (Claim 3) carries no more information about the next word than
-    the context itself, whatever the noise distribution. -/
-theorem mutualInfo_memJoint_le : Im[memJoint J mem] ≤ Im[J] :=
-  measureMutualInfo_parallelComp_id_comp_le J mem
+theorem joint_real_singleton (w : W) (c : C) :
+    (joint L π).real {(w, c)} = π.real {c} * (L c).real {w} := by
+  rw [joint, map_measureReal_apply measurable_swap (.singleton _),
+    show Prod.swap ⁻¹' {(w, c)} = {(c, w)} from by ext ⟨_, _⟩; simp [and_comm],
+    Measure.compProd_real_singleton]
 
-variable {α β : Type*} [Fintype α] [Fintype β] [MeasurableSpace α] [MeasurableSpace β]
-  [MeasurableSingletonClass α] [MeasurableSingletonClass β]
+variable [Fintype C] [Fintype W]
 
-/-- Expected difficulty of the Bayes-optimal comprehender (§3.3): the expected
-    surprisal of predicting the first coordinate from the second. -/
-noncomputable def bayesDifficulty (G : Measure (α × β)) : ℝ :=
-  ∑ x, G.real {x} * -Real.log ((G[|Prod.snd ⁻¹' {x.2}]).real (Prod.fst ⁻¹' {x.1}))
+theorem memJoint_real_singleton (w : W) (r : R) :
+    (memJoint L π mem).real {(w, r)} = ∑ c, π.real {c} * (L c).real {w} * (mem c).real {r} := by
+  simp_rw [memJoint, Measure.parallelComp_id_comp_real_singleton, joint_real_singleton]
 
-/-- The Bayes-optimal difficulty is the conditional entropy `H(W | ·)`:
-    expected surprisal read as the chain rule. -/
-theorem bayesDifficulty_eq (G : Measure (α × β)) [IsProbabilityMeasure G] :
-    bayesDifficulty G = H[Prod.fst | Prod.snd ; G] := by
-  have hfib (a : α) (b : β) :
-      Prod.snd ⁻¹' {b} ∩ Prod.fst ⁻¹' {a} = ({(a, b)} : Set (α × β)) := by
-    ext ⟨_, _⟩; simp [and_comm]
-  have hcond (a : α) (b : β) : (G[|Prod.snd ⁻¹' {b}]).real (Prod.fst ⁻¹' {a})
-      = G.real {(a, b)} / G.real (Prod.snd ⁻¹' {b}) := by
-    rw [measureReal_def, cond_real_apply G (measurable_snd (measurableSet_singleton b)), hfib]
-    rfl
-  have key (a : α) (b : β) :
-      G.real {(a, b)} * -Real.log ((G[|Prod.snd ⁻¹' {b}]).real (Prod.fst ⁻¹' {a}))
-        = G.real (Prod.snd ⁻¹' {b})
-          * Real.negMulLog ((G[|Prod.snd ⁻¹' {b}]).real (Prod.fst ⁻¹' {a})) := by
-    rw [hcond]
-    obtain hq | hq := eq_or_ne (G.real (Prod.snd ⁻¹' {b})) 0
-    · have : G.real {(a, b)} = 0 :=
-        measureReal_mono_null (hfib a b ▸ Set.inter_subset_left) hq (measure_ne_top _ _)
-      simp [this, hq]
-    · simp only [Real.negMulLog]
-      field_simp
-  rw [condEntropy_eq_sum _ measurable_snd, bayesDifficulty, Fintype.sum_prod_type]
-  simp_rw [key]
-  rw [Finset.sum_comm]
-  simp_rw [← Finset.mul_sum, entropy_eq_sum measurable_fst]
+theorem measureMutualInfo_memJoint_le [Fintype R] : Im[memJoint L π mem] ≤ Im[joint L π] :=
+  measureMutualInfo_parallelComp_id_comp_le _ mem
 
-private theorem condEntropy_fst_snd (G : Measure (α × β)) [IsProbabilityMeasure G] :
-    H[Prod.fst | Prod.snd ; G] = H[Prod.fst ; G] - Im[G] := by
-  have h := mutualInfo_eq_entropy_sub_condEntropy measurable_fst measurable_snd G
-  rw [mutualInfo_eq_measureMutualInfo measurable_fst measurable_snd,
-    show (fun p : α × β => (p.1, p.2)) = id from rfl, Measure.map_id] at h
-  linarith
+/-- The average difficulty of surprisal theory, a lossless comprehender who sees the context, is
+the conditional entropy of the next word given the context. -/
+theorem averageDifficulty_of_lossless {mp : MemoryProcess C R W} (h : mp.IsLosslessFor L) :
+    mp.averageDifficulty L π = H[Prod.fst | Prod.snd ; joint L π] := by
+  have hsnd (c : C) : (joint L π) (Prod.snd ⁻¹' {c}) = π {c} := by
+    rw [← Measure.snd_apply (.singleton c), joint, Measure.snd_map_swap, Measure.fst_compProd]
+  have hcond (c : C) (w : W) (hc : π.real {c} ≠ 0) :
+      ((joint L π)[|Prod.snd ⁻¹' {c}]).real (Prod.fst ⁻¹' {w}) = (L c).real {w} := by
+    rw [measureReal_def, cond_real_apply _ (measurable_snd (.singleton c)), Set.inter_comm,
+      ← Set.prod_eq, Set.singleton_prod_singleton, ← measureReal_def, joint_real_singleton, hsnd,
+      ← measureReal_def, mul_div_cancel_left₀ _ hc]
+  rw [condEntropy_eq_sum_negLog _ measurable_fst measurable_snd, MemoryProcess.averageDifficulty]
+  simp only [integral_fintype, Integrable.of_finite,
+    MemoryProcess.expectedSurprisal_eq_surprisal_of_lossless h, smul_eq_mul, ← Set.prod_eq,
+    Set.singleton_prod_singleton, joint_real_singleton, Finset.mul_sum]
+  conv_lhs => rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl λ w _ => Finset.sum_congr rfl λ c _ => ?_
+  obtain hc | hc := eq_or_ne (π.real {c}) 0
+  · simp [hc]
+  · rw [hcond c w hc, surprisal]
+    ring
 
-/-- The average form of information locality: the expected excess
-    difficulty of lossy-memory comprehension over veridical-context
-    comprehension is exactly the predictive information lost to memory. -/
-theorem bayesDifficulty_memJoint_sub_eq :
-    bayesDifficulty (memJoint J mem) - bayesDifficulty J = Im[J] - Im[memJoint J mem] := by
-  have : Nonempty C := J.nonempty_of_neZero.map Prod.snd
-  have hfst : H[Prod.fst ; memJoint J mem] = H[Prod.fst ; J] := by
-    show Hm[(memJoint J mem).fst] = Hm[J.fst]
-    rw [memJoint, Measure.fst_parallelComp_id_comp]
-  rw [bayesDifficulty_eq, bayesDifficulty_eq, condEntropy_fst_snd, condEntropy_fst_snd, hfst]
+variable [Fintype R]
+
+/-- The Bayes-optimal comprehender: the memory kernel with the posterior predictive of the next
+word given the representation. -/
+noncomputable def bayes : MemoryProcess C R W where
+  encode := mem
+  predict := Kernel.ofFunOfCountable λ r => ((memJoint L π mem)[|Prod.snd ⁻¹' {r}]).map Prod.fst
+
+/-- The average difficulty of the Bayes-optimal comprehender is the conditional entropy of the
+next word given the memory representation. -/
+theorem averageDifficulty_bayes :
+    (bayes L π mem).averageDifficulty L π = H[Prod.fst | Prod.snd ; memJoint L π mem] := by
+  rw [condEntropy_eq_sum_negLog _ measurable_fst measurable_snd, MemoryProcess.averageDifficulty]
+  simp only [integral_fintype, Integrable.of_finite, MemoryProcess.expectedSurprisal, bayes,
+    ← Set.prod_eq, Set.singleton_prod_singleton, memJoint_real_singleton, smul_eq_mul,
+    Finset.mul_sum, Finset.sum_mul]
+  conv_lhs => rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl λ w _ => ?_
+  conv_lhs => rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl λ r _ => Finset.sum_congr rfl λ c _ => ?_
+  simp only [MemoryProcess.perStateSurprisal, surprisal, Kernel.ofFunOfCountable,
+    Kernel.coe_mk, map_measureReal_apply measurable_fst (.singleton _)]
   ring
 
-/-- Lossy memory cannot make comprehension easier on average: the expected
-    Bayes-optimal difficulty under memory is at least that under veridical
-    context (the §3.4.1 deduction, with the gap given by
-    `bayesDifficulty_memJoint_sub_eq` and its sign by the data processing
-    inequality). -/
-theorem bayesDifficulty_le_memJoint : bayesDifficulty J ≤ bayesDifficulty (memJoint J mem) := by
-  have := bayesDifficulty_memJoint_sub_eq J mem
-  have := mutualInfo_memJoint_le J mem
+/-- The average form of information locality: the Bayes-optimal comprehender's average
+difficulty exceeds surprisal theory's by exactly the predictive information memory loses. -/
+theorem averageDifficulty_bayes_sub_lossless {mp : MemoryProcess C R W}
+    (h : mp.IsLosslessFor L) : (bayes L π mem).averageDifficulty L π - mp.averageDifficulty L π
+      = Im[joint L π] - Im[memJoint L π mem] := by
+  have : Nonempty C := π.nonempty_of_neZero
+  rw [averageDifficulty_bayes, averageDifficulty_of_lossless L π h, condEntropy_fst_snd,
+    condEntropy_fst_snd, memJoint, Measure.fst_parallelComp_id_comp]
+  ring
+
+/-- Lossy memory cannot make comprehension easier on average. -/
+theorem averageDifficulty_lossless_le_bayes {mp : MemoryProcess C R W} (h : mp.IsLosslessFor L) :
+    mp.averageDifficulty L π ≤ (bayes L π mem).averageDifficulty L π := by
+  have := averageDifficulty_bayes_sub_lossless L π mem h
+  have := measureMutualInfo_memJoint_le L π mem
   linarith
 
 end AverageForm
+
+section Erasure
+
+/-! ### Erasure noise and information locality -/
+
+variable (L : Kernel W W) (π : Measure W)
+
+/-- The pointwise mutual information of the next word `w` with the context word `y`, relative to
+the unigram distribution of the next word. -/
+noncomputable def pmi (y w : W) : ℝ := Real.log ((L y).real {w} / (L ∘ₘ π).real {w})
+
+/-- Conditional surprisal is unigram surprisal less pointwise mutual information. -/
+theorem surprisal_eq_sub_pmi {y w : W} (h0 : (L ∘ₘ π).real {w} ≠ 0) (hy : (L y).real {w} ≠ 0) :
+    surprisal (L y) w = surprisal (L ∘ₘ π) w - pmi L π y w := by
+  unfold surprisal pmi
+  rw [Real.log_div hy h0]
+  ring
+
+variable [MeasurableSingletonClass W] [Countable W]
+
+/-- The erasure-noise memory process: the context word is erased with probability `e`, and the
+predictor reads a retained word through the language model and an erased one as the unigram
+distribution. -/
+noncomputable def erasure (e : I) : MemoryProcess W (W ⊕ Unit) W where
+  encode := Kernel.ofFunOfCountable λ y => Ber(Sum.inr (), Sum.inl y, e)
+  predict := Kernel.ofFunOfCountable (Sum.elim (⇑L) λ _ => L ∘ₘ π)
+
+variable {e e' : I} {y w : W}
+
+/-- The exact single-dependency form of information locality: under erasure noise, difficulty
+is the unigram surprisal less the surviving fraction of the pointwise mutual information. -/
+theorem expectedSurprisal_erasure (h0 : (L ∘ₘ π).real {w} ≠ 0) (hy : (L y).real {w} ≠ 0) :
+    (erasure L π e).expectedSurprisal y w
+      = surprisal (L ∘ₘ π) w - (1 - (e : ℝ)) * pmi L π y w := by
+  rw [MemoryProcess.expectedSurprisal_of_bernoulli (mp := erasure L π e) (c := y) rfl]
+  show (e : ℝ) * surprisal (L ∘ₘ π) w + (1 - e) * surprisal (L y) w = _
+  rw [surprisal_eq_sub_pmi L π h0 hy]
+  ring
+
+/-- The excess difficulty of erasure-noise processing over plain surprisal is the erased
+fraction of the pointwise mutual information. -/
+theorem expectedSurprisal_erasure_sub_surprisal (h0 : (L ∘ₘ π).real {w} ≠ 0)
+    (hy : (L y).real {w} ≠ 0) :
+    (erasure L π e).expectedSurprisal y w - surprisal (L y) w = (e : ℝ) * pmi L π y w := by
+  rw [expectedSurprisal_erasure L π h0 hy, surprisal_eq_sub_pmi L π h0 hy]
+  ring
+
+/-- Information locality: under progressive noise, a more distant context word having a larger
+erasure rate, difficulty increases with distance when the words are positively associated. -/
+theorem locality (h : e ≤ e') (hpmi : 0 ≤ pmi L π y w) (h0 : (L ∘ₘ π).real {w} ≠ 0)
+    (hy : (L y).real {w} ≠ 0) :
+    (erasure L π e).expectedSurprisal y w ≤ (erasure L π e').expectedSurprisal y w := by
+  rw [expectedSurprisal_erasure L π h0 hy, expectedSurprisal_erasure L π h0 hy]
+  have : (e : ℝ) ≤ e' := h
+  nlinarith
+
+/-- Anti-locality: when the words are negatively associated, losing the context word lowers
+difficulty, so difficulty decreases with distance. -/
+theorem antilocality (h : e ≤ e') (hpmi : pmi L π y w ≤ 0) (h0 : (L ∘ₘ π).real {w} ≠ 0)
+    (hy : (L y).real {w} ≠ 0) :
+    (erasure L π e').expectedSurprisal y w ≤ (erasure L π e).expectedSurprisal y w := by
+  rw [expectedSurprisal_erasure L π h0 hy, expectedSurprisal_erasure L π h0 hy]
+  have : (e : ℝ) ≤ e' := h
+  nlinarith
+
+/-- No erasure is the lossless comprehender who sees the context word. -/
+theorem erasure_zero_isLosslessFor : (erasure L π 0).IsLosslessFor L :=
+  ⟨Sum.inl, measurable_inl,
+    Kernel.ext λ _ => (bernoulliMeasure_zero _ _).trans (Kernel.deterministic_apply _ _).symm,
+    Kernel.ext λ _ => rfl⟩
+
+/-- No erasure recovers surprisal. -/
+theorem erasure_zero : (erasure L π 0).expectedSurprisal y w = surprisal (L y) w :=
+  MemoryProcess.expectedSurprisal_eq_surprisal_of_lossless (erasure_zero_isLosslessFor L π) y w
+
+/-- Certain erasure recovers the unigram prior: regression to prior expectations. -/
+theorem erasure_one : (erasure L π 1).expectedSurprisal y w = surprisal (L ∘ₘ π) w :=
+  MemoryProcess.expectedSurprisal_of_dirac (mp := erasure L π 1) (c := y)
+    (bernoulliMeasure_one _ _) w
+
+end Erasure
 
 end FutrellGibsonLevy2020
