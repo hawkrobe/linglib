@@ -2,43 +2,49 @@ import Linglib.Semantics.Dynamic.UpdateSemantics.Default
 import Mathlib.Data.Fintype.Powerset
 
 /-!
-# Veltman (1996): defaults in update semantics
+# Veltman (1996): Defaults in Update Semantics
 
-[veltman-1996] treats *normally φ* as an update of an agent's expectations rather than a
-sentence about them: a state is a pair of an expectation pattern (a preorder on worlds) and
-the agent's knowledge of the facts, *normally φ* refines the pattern in favour of `φ`-worlds,
-and *presumably φ* tests whether `φ` holds in the optimal worlds of the state. That §3
-system is `Semantics/Dynamic/UpdateSemantics/Default.lean`; the first section checks its
-Examples 3.10 on the paper's four worlds, the rain-or-snow contrast that shows *normally
-(p ∨ q)* to be stronger than *normally p*, and `normally_not_normally_or`.
+This file formalizes [veltman-1996], which treats *normally φ* as an update of an agent's
+expectations rather than a sentence about them. A state pairs an expectation pattern, a
+preorder on worlds, with the agent's knowledge of the facts; *normally φ* refines the pattern
+in favour of the `φ`-worlds and *presumably φ* tests whether `φ` holds in the optimal worlds.
+That system, section 3, is the substrate `UpdateSemantics.Default`, and the first section here
+checks its Examples 3.10 on the paper's four worlds, together with the rain-or-snow contrast
+by which *normally (p ∨ q)* is stronger than *normally p*, `rain_or_snow` and
+`normally_not_normally_or`. Section 4 adds the restricted rules *if φ, then normally ψ*. An
+expectation frame assigns a pattern to every domain of worlds, Definition 4.2, `Frame`; a
+world is normal in a domain when it is top-ranked in every subdomain containing it,
+Definition 4.3, `Normal`; a frame is coherent when every nonempty domain has a normal world,
+`Coherent`; accepting a rule refines the pattern at the rule's domain and crashes when the
+result is incoherent, Definitions 4.5 and 4.6, `rule`; and a set of defaults applies within
+the agent's information when every domain extending it has a normal world complying with
+them, Definition 4.9, `Applies`. The optimal worlds comply with a maximal applicable set of
+defaults, Definition 4.13, `State.optimal`, computed over the accepted rules by Proposition
+4.14. Validity is the paper's validity₁, section 1.2: the minimal state updated with the
+premises in order accepts the conclusion, `Valid`. Proved in general are the refinement
+clause of Definition 4.5, `Frame.ofRules_cons_self` and `Frame.ofRules_cons_of_ne`,
+Proposition 4.7, coherent acceptance being applicability of the new rule within its own
+domain, `coherent_cons_iff`, Conditional Identity and Conjunction of Consequents, `rule_self`
+and `conjConsequents`, and the section 5 observation that Weakening the Consequent never
+crashes a state, `weakenConsequent_coherent`. Checked on the paper's eight worlds are
+Examples 4.8 and 4.11, the Nixon diamond, the student who is presumably an unemployed adult,
+Independence, defeasible Modus Tollens, Modus Ponens over Modus Tollens on a cyclic net, the
+failure of Hypothetical Syllogism, Contraposition and Strengthening the Antecedent beside
+their defeasible versions, and the near-validity of Strengthening with a Consequent and
+Disjunction of Antecedents.
 
-The heart of the paper (§4) adds *restricted* rules *if φ, then normally ψ* (`φ ⇝ ψ`): an
-**expectation frame** assigns a pattern to every domain `d` of worlds (Definition 4.2), a
-world is **normal** in `d` when it is top-ranked in every subdomain containing it
-(Definition 4.3), a frame is **coherent** when every nonempty domain has a normal world,
-accepting `φ ⇝ ψ` refines the pattern at `⟦φ⟧` and crashes when the result is incoherent
-(Definitions 4.5–4.6), and a set of defaults **applies within** `s` when every domain
-extending `s` has a normal world complying with them (Definition 4.9). The optimal worlds
-of a state comply with a maximal applicable set of defaults (Definition 4.13), which
-Proposition 4.14 lets one compute over the explicitly accepted rules. Since every frame an
-agent reaches from the minimal state is the refinement of the total frame by the rules it
-has accepted, a frame is presented here by its list of rules (`Frame.ofRules`): that makes
-coherence, normality, applicability and the optimal worlds decidable, so each verdict of
-the paper is checked by `decide` on Veltman's eight worlds over the atoms `p`, `q`, `r`.
-Validity is his validity₁ (§1.2): the minimal state updated with the premises in order
-accepts the conclusion (`Valid`).
+## Implementation notes
 
-Proved in general: Definition 4.5's refinement clause as theorems about the presentation
-(`ofRules_cons_self`, `ofRules_cons_of_ne`), Proposition 4.7 as the equivalence of
-coherent acceptance with the new rule's applicability within its own domain
-(`coherent_cons_iff`), Conditional Identity and Conjunction of Consequents (`rule_self`,
-`conjConsequents`), and the §5 observation that Weakening the Consequent never crashes a
-state (`weakenConsequent_coherent`). Checked on the model: Examples 4.8 and 4.11, the §5
-benchmarks (the Nixon diamond, the student–adult–employment argument, Independence), the
-validity of defeasible Modus Tollens and of Modus Ponens over Modus Tollens on a cyclic
-net, the failure of Hypothetical Syllogism, Contraposition and Strengthening the Antecedent
-together with their defeasible versions, and the near-validity of Strengthening with a
-Consequent and Disjunction of Antecedents.
+Every frame an agent reaches from the minimal state is the total frame refined by the rules
+it has accepted, so a frame is presented by its list of rules, `Frame.ofRules`, which makes
+coherence, normality, applicability and the optimal worlds decidable and lets each verdict be
+checked by `decide` over the atoms `p`, `q` and `r`. The comparison with the default logics of
+[asher-morreau-1991] in section 5 is discussed in the paper and not formalized.
+
+## References
+
+* [veltman-1996]
+* [asher-morreau-1991]
 -/
 
 namespace Veltman1996
