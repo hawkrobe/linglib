@@ -1,533 +1,232 @@
-import Linglib.Semantics.Causation.Resultatives
-import Linglib.Morphology.Word.Tree
-import Linglib.Studies.GoldbergJackendoff2004
+import Linglib.Data.Examples.Tay2024
 import Linglib.Fragments.Mandarin.Resultatives
+import Linglib.Morphology.Word.Tree
+import Mathlib.Order.Interval.Set.Basic
 
 /-!
 # Tay (2024): Resultative Expressions in Mandarin Chinese
-[tay-2024]
 
-UCL PhD dissertation on why Mandarin V-V resultatives are more flexible in
-argument realisation than English resultatives and Mandarin V-*de* resultatives.
+This file formalizes [tay-2024]'s account of why Mandarin V-V resultatives realize their
+arguments more freely than V-*de* resultatives and English resultatives. A V-V resultative is a
+synthetic compound built in morphology, V1-∅-V2, so its components are inaccessible to syntactic
+operations, chapter 2: a locative can modify V1 of a V-*de* resultative but not of the compound,
+(45)–(46), and *repeatedly* has only the whole-event reading on the compound, (41)–(44). The
+null affix ∅ introduces a macroevent containing a causing event described by V1 and a caused
+event described by V2, inherits every argument of V2, and existentially closes every argument
+of V1 (110), `nullAffix`; the variant ∅+C also introduces a causer, the crucial contributory
+factor of the macroevent (111), `nullAffixC`. The causer is an argument of the macroevent and not
+of V1's event, `nullAffixC_iff`, and V1's arguments are closed, `nullAffix_of`, so no syntactic
+requirement relates the arguments of the compound to those of V1: the external argument can be
+V1's agent (131)–(132) or its theme (133)–(134), the internal argument need not be V1's agent
+(202)–(206), and the sole argument of an unaccusative compound can be V1's agent (219), which is
+why Mandarin has subject-oriented resultatives without a reflexive.
 
-## Thesis's core proposal
+What does constrain the external argument is the Onset Condition (141): an event integrated
+into the macroevent of a simplex causative is the initial event of its causal chain. Since the
+causer is a participant in that initial event, and V1's event is integrated, the causer is a
+participant in V1's event, `Macroevent.participant_of_onset`: no pure causers, (146)–(149),
+while subject matters are participants, (150)–(151). The macroevent must contain the two
+subevents rather than identify or nest them: in *shè-sǐ* 'shoot dead' (107) the shooting and the
+dying overlap at the moment of contact only, so their traces are neither equal nor nested,
+`shooting_trieventive`. Chapter 8's typology varies three dimensions, whether the null head
+merges in morphology, whether the result X can be a verb, and whether a transitive resultative
+takes an intransitive X, `ResultativeType`, with Mandarin, English and Japanese as the settled
+cases.
 
-V-V compounds are morphological (built in word syntax, not phrasal syntax),
-so their components are **inaccessible to syntactic operations** — modification,
-questioning, A-not-A.  The null affix ∅ in V1-∅-V2 inherits all of V2's
-arguments but **none** of V1's.  This predicts:
-- **Syntactic opacity**: V-V components cannot be independently modified (§3)
-- **No DOR** in Mandarin: subject-oriented resultatives are productive (§2)
-- **The Onset Condition**: the CCF must participate in V1's event (§4)
+## Implementation notes
 
-## What we formalize
+Predicates take their arguments as tuples `Fin n → D`, so a family of null affixes indexed by
+the arities of V1 and V2 is one definition. The causal relation between the macroevent and its
+subevents and the participant relation are parameters; the thesis takes the former to be
+Lewis's counterfactual causation and leaves its precise characterization open. Temporal traces
+are rational intervals. The examples are rows of `Data.Examples.Tay2024`. The V-*de*
+construction's syntax (chapter 6), the change-of-location resultatives (chapter 4), the case
+against the No Argument Theory (chapter 5), and the one-causer-per-event condition are not
+formalized.
 
-1. **No DOR**: subject-oriented compounds (kū-lèi, chī-bǎo, hē-zuì) coexist
-   with object-oriented ones; cross-linguistic contrast with English data
-2. **V-V vs V-de opacity**: V-V blocks independent modification of V1/V2;
-   V-de allows it (thesis's central structural prediction)
-3. **Onset Condition**: the CCF must be a V1 participant (agent, subject matter,
-   or source); pure causers are ungrammatical — derived from data via
-   `CcfRole.isV1Participant`, not stipulated
-4. **V-V morphology**: `Word.Tree.compound` captures the binary V1-V2 structure
-5. **Causal dynamics**: direct CAUSE (single causal law, `completesForEffect`)
-6. **Phase complements**: grammaticalized V2 subset with fixed `CoSType`
-   (standard Mandarin grammar, supplementing the thesis's V-V analysis)
+## References
 
-## Architecture
-
-Connects:
-- `Causation.Resultatives`: causal dynamics, CC-selection,
-  tightness, cross-linguistic parameters (`ResultativeRealization`,
-  `ResultOrientation`, `PhaseComplement`)
-- `Morphology.Word.Tree`: `Word.Tree.compound` for V-V
-- `Mandarin.Resultatives`: compound and phase complement lexical entries
-- `GoldbergJackendoff2004`: English
-  data for cross-linguistic contrast
+* [tay-2024]
 -/
 
 namespace Tay2024
 
-open Reference
+open Causation.Resultatives Mandarin.Resultatives Morphology
 
-open Causation.Resultatives
-open Morphology
-open Aspect.ChangeOfState (CoSType priorStatePresup)
-open Mandarin.Resultatives
+/-! ### The null affix (chapter 2, section 3.3) -/
 
--- ════════════════════════════════════════════════════
--- § 1. Fragment Data — DOR Failure
--- ════════════════════════════════════════════════════
+section NullAffix
 
-/-! ## Direct Object Restriction does NOT hold for Mandarin
+variable {E D : Type*} {m n : ℕ}
 
-English resultatives enforce DOR: *"She ran tired"* is ungrammatical;
-only *"She ran herself ragged"* (fake reflexive) is acceptable.
+/-- The null affix (110): a macroevent `e` containing a causing event `e₁` described by V1, whose
+arguments are existentially closed, and a caused event `e₂` described by V2, whose arguments the
+compound inherits. -/
+def nullAffix (cause : E → E → E → Prop) (R2 : E → (Fin n → D) → Prop)
+    (R1 : E → (Fin m → D) → Prop) (e : E) (ys : Fin n → D) : Prop :=
+  ∃ e₁ e₂ xs, cause e e₁ e₂ ∧ R2 e₂ ys ∧ R1 e₁ xs
 
-Mandarin V-V compounds productively allow subject-oriented resultatives
-without reflexivization: kū-lèi "cry-tired", chī-bǎo "eat-full",
-pǎo-lèi "run-tired", hē-zuì "drink-drunk".
+/-- The null affix with a causer (111): the crucial contributory factor `c` of the macroevent. -/
+def nullAffixC (cause : E → E → E → Prop) (ccf : E → D → Prop) (R2 : E → (Fin n → D) → Prop)
+    (R1 : E → (Fin m → D) → Prop) (e : E) (c : D) (ys : Fin n → D) : Prop :=
+  ∃ e₁ e₂ xs, cause e e₁ e₂ ∧ ccf e c ∧ R2 e₂ ys ∧ R1 e₁ xs
 
-Compound data lives in `Mandarin.Resultatives`; theorems here
-derive from those Fragment entries. -/
+variable (cause : E → E → E → Prop) (ccf : E → D → Prop) (R2 : E → (Fin n → D) → Prop)
+  (R1 : E → (Fin m → D) → Prop) {e e₁ e₂ : E} {c : D} {ys : Fin n → D} {xs : Fin m → D}
 
-/-- Subject-oriented Mandarin resultatives exist in the Fragment data. -/
-theorem mandarin_has_subject_oriented :
-    (allCompounds.any (·.orientation == .subjectOriented)) = true := by
-  native_decide
+/-- The causer is an argument of the macroevent alone: it enters no relation with the arguments
+of V1. -/
+theorem nullAffixC_iff :
+    nullAffixC cause ccf R2 R1 e c ys ↔ ccf e c ∧ nullAffix cause R2 R1 e ys := by
+  simp only [nullAffixC, nullAffix]
+  constructor
+  · rintro ⟨e₁, e₂, xs, hc, hccf, h2, h1⟩
+    exact ⟨hccf, e₁, e₂, xs, hc, h2, h1⟩
+  · rintro ⟨hccf, e₁, e₂, xs, hc, h2, h1⟩
+    exact ⟨e₁, e₂, xs, hc, hccf, h2, h1⟩
 
-/-- Both orientations are attested. -/
-theorem mandarin_has_both_orientations :
-    (allCompounds.any (·.orientation == .objectOriented)) = true ∧
-    (allCompounds.any (·.orientation == .subjectOriented)) = true := by
-  constructor <;> native_decide
+/-- Any arguments of V1 witness the compound: nothing requires the compound's arguments to be
+interpreted as arguments of V1, and nothing forbids it. -/
+theorem nullAffix_of (hc : cause e e₁ e₂) (h2 : R2 e₂ ys) (h1 : R1 e₁ xs) :
+    nullAffix cause R2 R1 e ys :=
+  ⟨e₁, e₂, xs, hc, h2, h1⟩
 
-/-- Four of eight compounds are subject-oriented. -/
-theorem subject_oriented_count :
-    (allCompounds.filter (·.orientation == .subjectOriented)).length = 4 := by
-  native_decide
+/-- The external argument of a transitive compound may be any argument of V1 or none of them
+(131)–(134): the causer and the closed arguments of V1 are chosen independently. -/
+theorem nullAffixC_of (hc : cause e e₁ e₂) (hccf : ccf e c) (h2 : R2 e₂ ys) (h1 : R1 e₁ xs) :
+    nullAffixC cause ccf R2 R1 e c ys :=
+  ⟨e₁, e₂, xs, hc, hccf, h2, h1⟩
 
-/-- Contrast with English: the English subject-result pattern uses the
-    fake reflexive — grammatical with the reflexive pronoun, bad without
-    it or with a non-reflexive NP ([goldberg-jackendoff-2004] ex. 9a and
-    its starred alternatives). -/
-theorem english_subject_result_requires_reflexive :
-    GoldbergJackendoff2004.Examples.gj2004_9a.judgment = .acceptable ∧
-    ∀ a ∈ GoldbergJackendoff2004.Examples.gj2004_9a.alternatives, a.2 = .ungrammatical := by
+/-- The sole argument of an unaccusative compound may be the agent of V1 (219): a
+subject-oriented resultative needs no reflexive. -/
+theorem nullAffix_of_agent {R2 R1 : E → (Fin 1 → D) → Prop} {y : D} (hc : cause e e₁ e₂)
+    (h2 : R2 e₂ ![y]) (h1 : R1 e₁ ![y]) : nullAffix cause R2 R1 e ![y] :=
+  nullAffix_of cause R2 R1 hc h2 h1
+
+end NullAffix
+
+/-! ### The Onset Condition (chapter 3, section 2.2) -/
+
+section Onset
+
+variable {E D : Type*} (participant : E → D → Prop)
+
+/-- A change-of-state macroevent as a causal chain (136), in causal order, with its crucial
+contributory factor, the essential factor in bringing about the result, which is a participant
+in the initial event of the chain. -/
+structure Macroevent where
+  /-- The subevents of the causal chain, in causal order. -/
+  chain : List E
+  chain_ne : chain ≠ []
+  /-- The crucial contributory factor. -/
+  ccf : D
+  ccf_initial : participant (chain.head chain_ne) ccf
+
+variable {participant}
+
+namespace Macroevent
+
+/-- The Onset Condition (141): an event semantically integrated into the macroevent of a simplex
+causative is the initial event of its causal chain. -/
+def Onset (M : Macroevent participant) (e₁ : E) : Prop := e₁ = M.chain.head M.chain_ne
+
+/-- A pure causer of an event: a crucial contributory factor that is not a participant in it. -/
+def PureCauser (M : Macroevent participant) (e₁ : E) : Prop := ¬ participant e₁ M.ccf
+
+/-- No pure causers: the event of V1 being integrated, the causer is a participant in it. -/
+theorem participant_of_onset {M : Macroevent participant} {e₁ : E} (h : M.Onset e₁) :
+    participant e₁ M.ccf :=
+  h ▸ M.ccf_initial
+
+theorem not_pureCauser_of_onset {M : Macroevent participant} {e₁ : E} (h : M.Onset e₁) :
+    ¬ M.PureCauser e₁ :=
+  λ hp => hp (participant_of_onset h)
+
+end Macroevent
+
+end Onset
+
+/-! ### Trieventive structure (chapter 2, section 3.3) -/
+
+section Traces
+
+variable {E : Type*} (trace : E → Set ℚ)
+
+/-- The monoeventive analysis (104): V1 and V2 describe one event, so one temporal trace. -/
+def Monoeventive (e₁ e₂ : E) : Prop := trace e₁ = trace e₂
+
+/-- The bieventive analyses (105)–(106): one event is temporally contained in the other. -/
+def Bieventive (e₁ e₂ : E) : Prop := trace e₂ ⊆ trace e₁ ∨ trace e₁ ⊆ trace e₂
+
+/-- The events of *shè-sǐ* 'shoot dead' (107). -/
+inductive Ev
+  | shoot
+  | die
+
+/-- The traces of (108): the shooting ends as the bullet makes contact, when the dying begins. -/
+def shooting : Ev → Set ℚ
+  | .shoot => Set.Icc 0 1
+  | .die => Set.Icc 1 3
+
+/-- The shooting and the dying overlap at a single point: they are neither one event nor nested,
+so only the trieventive macroevent accounts for (107). -/
+theorem shooting_trieventive :
+    ¬ Monoeventive shooting .shoot .die ∧ ¬ Bieventive shooting .shoot .die ∧
+      (shooting .shoot ∩ shooting .die).Nonempty := by
+  refine ⟨λ h => ?_, λ h => ?_, ⟨1, by simp [shooting]⟩⟩
+  · have : (0 : ℚ) ∈ shooting .die := h ▸ (by simp [shooting])
+    norm_num [shooting] at this
+  · rcases h with h | h
+    · have := h (show (3 : ℚ) ∈ shooting .die by norm_num [shooting])
+      norm_num [shooting] at this
+    · have := h (show (0 : ℚ) ∈ shooting .shoot by norm_num [shooting])
+      norm_num [shooting] at this
+
+end Traces
+
+/-! ### The compound in morphology (chapter 2, section 2) -/
+
+/-- The null affix as a morph: a phonologically empty prefix on V2. -/
+def nullMorph : Morph := .pref ""
+
+/-- The word V1-∅-V2 (130): ∅ affixed to V2, the result compounded with V1. -/
+def vvTree (v1 v2 : Morph) : Word.Tree Morph :=
+  .compound (.root v1) (.prefixed nullMorph (.root v2))
+
+/-- The word-formation tree of a Fragment compound. -/
+def CompoundEntry.tree (c : CompoundEntry) : Word.Tree Morph := vvTree (.root c.v1) (.root c.v2)
+
+theorem toList_vvTree (v1 v2 : Morph) : (vvTree v1 v2).toList = [v1, nullMorph, v2] := rfl
+
+/-! ### Typology (chapter 8, section 2) -/
+
+/-- The three dimensions of variation among resultatives: whether the null head merges in
+morphology, whether the result X can be a verb, and, if so, whether a transitive resultative can
+take an intransitive change-of-state verb as X. -/
+structure ResultativeType where
+  compound : Bool
+  verbalX : Bool
+  intransitiveX : Bool
+  intransitiveX_le : intransitiveX → verbalX
+
+/-- Mandarin V-V resultatives: compounds, X a verb, an intransitive X in a transitive
+resultative (673). -/
+def mandarin : ResultativeType := ⟨true, true, true, λ h => h⟩
+
+/-- English resultatives: not compounds, X never a verb (669). -/
+def english : ResultativeType := ⟨false, false, false, λ h => h⟩
+
+/-- Japanese V-V resultatives: compounds with verbal X whose transitivity follows V2, so no
+intransitive X in a transitive resultative (674)–(675). -/
+def japanese : ResultativeType := ⟨true, true, false, λ h => nomatch h⟩
+
+/-- The realization parameter of the Fragment records the first dimension. -/
+def ResultativeType.realization (t : ResultativeType) : ResultativeRealization :=
+  if t.compound then .verbCompound else .syntacticAdjunct
+
+theorem mandarin_realization :
+    mandarin.realization = .verbCompound ∧ ∀ c ∈ allCompounds, c.realization = .verbCompound := by
+  refine ⟨rfl, ?_⟩
   decide
-
--- ════════════════════════════════════════════════════
--- § 2. V-V vs V-de: Syntactic Opacity
--- ════════════════════════════════════════════════════
-
-/-! ## V-V compounds are syntactically opaque; V-*de* is transparent
-
-[tay-2024]'s central structural prediction (Ch. 2 §2.1): because V-V
-compounds are built in morphology, their components are inaccessible to
-syntactic operations like independent modification.  V-*de* resultatives,
-built in syntax, allow V1 and V2 to be independently modified.
-
-Three kinds of independent modification tested:
-- **Locative**: V1 modified by *zài jiā lǐ* "at home"
-- **Manner**: V2 modified by *mímíhūhūde* "in a daze"
-- **Temporal**: V2 modified by *jīntiān* "today"
-
-Each test yields a minimal pair: V-*de* ✓, V-V ✗. -/
-
-/-- A syntactic opacity test datum. -/
-structure OpacityDatum where
-  sentence : String
-  construction : ResultativeRealization
-  modTarget : String      -- "V1" or "V2"
-  modifierType : String   -- "locative", "manner", "temporal"
-  grammatical : Bool
-  deriving Repr, BEq
-
-/-- V-*de*: V1 locatively modified — ✓.
-    "The baby cried at home until the neighbours woke up." -/
-def opacity_vde_v1_locative : OpacityDatum :=
-  { sentence := "Bǎobao zài jiā lǐ kū de [línjū xǐng-le]"
-  , construction := .deComplement, modTarget := "V1"
-  , modifierType := "locative", grammatical := true }
-
-/-- V-V: V1 locatively modified — ✗. -/
-def opacity_vv_v1_locative : OpacityDatum :=
-  { sentence := "*Bǎobao zài jiā lǐ kū-xǐng-le línjū"
-  , construction := .verbCompound, modTarget := "V1"
-  , modifierType := "locative", grammatical := false }
-
-/-- V-*de*: V2 manner-modified — ✓.
-    "The baby cried and Mother woke up in a daze." -/
-def opacity_vde_v2_manner : OpacityDatum :=
-  { sentence := "Bǎobao kū de [māma mímíhūhūde xǐng-le]"
-  , construction := .deComplement, modTarget := "V2"
-  , modifierType := "manner", grammatical := true }
-
-/-- V-V: V2 manner-modified — ✗. -/
-def opacity_vv_v2_manner : OpacityDatum :=
-  { sentence := "*Bǎobao kū-mímíhūhūde-xǐng-le māma"
-  , construction := .verbCompound, modTarget := "V2"
-  , modifierType := "manner", grammatical := false }
-
-/-- V-*de*: V2 temporally modified — ✓.
-    "Mother sang (last night) until her throat became hoarse today." -/
-def opacity_vde_v2_temporal : OpacityDatum :=
-  { sentence := "Māma chàng de [sǎngzi jīntiān yǎ-le]"
-  , construction := .deComplement, modTarget := "V2"
-  , modifierType := "temporal", grammatical := true }
-
-/-- V-V: V2 temporally modified — ✗. -/
-def opacity_vv_v2_temporal : OpacityDatum :=
-  { sentence := "*Māma chàng-jīntiān-yǎ-le sǎngzi"
-  , construction := .verbCompound, modTarget := "V2"
-  , modifierType := "temporal", grammatical := false }
-
-def allOpacityData : List OpacityDatum :=
-  [ opacity_vde_v1_locative, opacity_vv_v1_locative
-  , opacity_vde_v2_manner, opacity_vv_v2_manner
-  , opacity_vde_v2_temporal, opacity_vv_v2_temporal ]
-
-/-- V-*de* allows independent modification of components. -/
-theorem vde_allows_modification :
-    (allOpacityData.filter (·.construction == .deComplement)).all
-      (·.grammatical) = true := by native_decide
-
-/-- V-V blocks independent modification of components. -/
-theorem vv_blocks_modification :
-    (allOpacityData.filter (·.construction == .verbCompound)).all
-      (!·.grammatical) = true := by native_decide
-
-/-- Grammaticality of independent modification tracks construction type exactly:
-    V-*de* → grammatical, V-V → ungrammatical. -/
-theorem opacity_tracks_construction :
-    allOpacityData.all (λ d =>
-      d.grammatical == (d.construction == .deComplement)) = true := by
-  native_decide
-
--- ════════════════════════════════════════════════════
--- § 3. The Onset Condition
--- ════════════════════════════════════════════════════
-
-/-! ## The Onset Condition ([tay-2024], Ch. 3)
-
-The external argument (CCF) of a transitive V-V resultative must be
-interpreted as a **participant** in the event denoted by V1: an agent, a
-subject matter, or a source.  "Pure causers" — entities that plausibly
-cause V1's event but do not participate in it — are ungrammatical.
-
-Key data:
-- ✓ Zhāngsān dǎ-sǐ Lǐsì: Zhangsan = **agent** of hitting
-- ✓ Movie kū-hóng eyes: movie = **subject matter** of crying
-- ✓ Wine zuì-dǎo Zhangsan: wine = **source** of intoxication
-- ✗ Onions kū-hóng eyes: onions = **pure causer** (not participant of crying)
-- ✗ Boss zuì-dǎo subordinate: boss = **agentive causer** (not participant of
-  becoming drunk)
-
-The Onset Condition is **derived** from the data: grammaticality in every
-datum matches `CcfRole.isV1Participant`. -/
-
-/-- How the external argument (CCF) relates to V1's event. -/
-inductive CcfRole where
-  | agent           -- CCF performs V1 (Zhāngsān in dǎ-sǐ)
-  | subjectMatter   -- CCF is what V1 is about (movie for crying)
-  | source          -- CCF is non-agentive source of V1 (wine for drunk)
-  | pureCauser      -- CCF causes but doesn't participate (onions for cry)
-  deriving DecidableEq, Repr
-
-/-- A CCF is a participant of V1 iff it is an agent, subject matter,
-    or source — NOT a pure causer. -/
-def CcfRole.isV1Participant : CcfRole → Bool
-  | .agent => true
-  | .subjectMatter => true
-  | .source => true
-  | .pureCauser => false
-
-/-- An Onset Condition test datum. -/
-structure OnsetDatum where
-  sentence : String
-  v1v2 : String
-  ccfEntity : String
-  ccfRole : CcfRole
-  grammatical : Bool
-  deriving Repr, BEq
-
-/-- Zhāngsān dǎ-sǐ-le Lǐsì: Zhangsan = agent of hitting. ✓ -/
-def onset_agent : OnsetDatum :=
-  { sentence := "Zhāngsān dǎ-sǐ-le Lǐsì"
-  , v1v2 := "dǎ-sǐ", ccfEntity := "Zhāngsān"
-  , ccfRole := .agent, grammatical := true }
-
-/-- Movie kū-hóng eyes: movie = subject matter of crying. ✓ -/
-def onset_subj_matter_cry : OnsetDatum :=
-  { sentence := "Zhè bù diànyǐng kū-hóng-le wǒ de yǎnjīng"
-  , v1v2 := "kū-hóng", ccfEntity := "movie"
-  , ccfRole := .subjectMatter, grammatical := true }
-
-/-- Joke xiào-téng belly: joke = subject matter of laughing. ✓ -/
-def onset_subj_matter_laugh : OnsetDatum :=
-  { sentence := "Nèi ge xiàohuà xiào-téng-le Zhāngsān de dùzi"
-  , v1v2 := "xiào-téng", ccfEntity := "joke"
-  , ccfRole := .subjectMatter, grammatical := true }
-
-/-- Wine zuì-dǎo Zhangsan: wine = source of intoxication. ✓ -/
-def onset_source : OnsetDatum :=
-  { sentence := "Nèi bēi jiǔ zuì-dǎo-le Zhāngsān"
-  , v1v2 := "zuì-dǎo", ccfEntity := "wine"
-  , ccfRole := .source, grammatical := true }
-
-/-- *Onions kū-hóng eyes: onions = pure causer (not participant of crying). ✗ -/
-def onset_pure_causer_onions : OnsetDatum :=
-  { sentence := "*Zhè xiē yángcōng kū-hóng-le wǒ de yǎnjīng"
-  , v1v2 := "kū-hóng", ccfEntity := "onions"
-  , ccfRole := .pureCauser, grammatical := false }
-
-/-- *Laughing gas xiào-téng belly: laughing gas = pure causer. ✗ -/
-def onset_pure_causer_gas : OnsetDatum :=
-  { sentence := "*Xiàoqì xiào-téng-le wǒ de dùzi"
-  , v1v2 := "xiào-téng", ccfEntity := "laughing gas"
-  , ccfRole := .pureCauser, grammatical := false }
-
-/-- *Boss zuì-dǎo subordinate: boss = agentive causer
-    (causes intoxication but doesn't participate in becoming-drunk). ✗ -/
-def onset_agentive_causer : OnsetDatum :=
-  { sentence := "*Lǎobǎn zuì-dǎo-le xiàshǔ"
-  , v1v2 := "zuì-dǎo", ccfEntity := "boss"
-  , ccfRole := .pureCauser, grammatical := false }
-
-def allOnsetData : List OnsetDatum :=
-  [ onset_agent, onset_subj_matter_cry, onset_subj_matter_laugh
-  , onset_source, onset_pure_causer_onions, onset_pure_causer_gas
-  , onset_agentive_causer ]
-
-/-- The Onset Condition: grammaticality matches V1 participation in every datum.
-    Derived from the data, not stipulated. -/
-theorem onset_condition :
-    allOnsetData.all (λ d =>
-      d.grammatical == d.ccfRole.isV1Participant) = true := by
-  native_decide
-
-/-- All grammatical onset examples have a V1-participating CCF. -/
-theorem onset_grammatical_implies_participant :
-    (allOnsetData.filter (·.grammatical)).all
-      (·.ccfRole.isV1Participant) = true := by
-  native_decide
-
-/-- All V1-non-participants are ungrammatical. -/
-theorem onset_nonparticipant_implies_ungrammatical :
-    (allOnsetData.filter (!·.ccfRole.isV1Participant)).all
-      (!·.grammatical) = true := by
-  native_decide
-
--- ════════════════════════════════════════════════════
--- § 4. V-V Compound Morphology
--- ════════════════════════════════════════════════════
-
-/-! ## Morphological structure: V1-∅-V2
-
-[tay-2024] proposes that V-V compounds have the morphological structure
-V1-∅-V2: the null affix ∅ inherits all of V2's arguments but none of V1's.
-We capture the binary V1-V2 compound using `Word.Tree.compound` from
-`Morphology/Word/Tree.lean`.
-
-V-V resultatives are **synthetic** compounds: their components stand in a
-predictable CAUSE relation. This contrasts with root compounds like
-*cài-dāo* "vegetable-knife" (= "a knife for cutting vegetables") whose
-semantic relation is idiosyncratic and must be listed in the lexicon
-([tay-2024], Ch. 3 §3.1). -/
-
-/-- Morphological structure of dǎ-sǐ "hit-die". -/
-def dasi_morph : Word.Tree Morphology.Morph :=
-  .compound (.root (.root "da")) (.root (.root "si"))
-
-/-- Surface form is concatenation of V1 + V2. -/
-theorem dasi_surface :
-    String.join (dasi_morph.toList.map Morphology.Morph.form) = "dasi" := rfl
-
-/-- V-V compounds have exactly 2 morphs. -/
-theorem dasi_morph_count : dasi_morph.toList.length = 2 := rfl
-
-/-- Morphological structure of kū-lèi "cry-tired" (subject-oriented). -/
-def kulei_morph : Word.Tree Morphology.Morph :=
-  .compound (.root (.root "ku")) (.root (.root "lei"))
-
-theorem kulei_surface :
-    String.join (kulei_morph.toList.map Morphology.Morph.form) = "kulei" := rfl
-
--- ════════════════════════════════════════════════════
--- § 5. Causal Models (V2 BoolSEM)
--- ════════════════════════════════════════════════════
-
-/-! ## V-V compound causal models on BoolSEM
-
-Each V-V compound maps to a 2-vertex BoolSEM where V1 directly causes V2.
-Direct causation = single edge, no intermediate with an independent
-energy source. This is the same tightness constraint identified for
-English resultatives by [levin-2019] — formalized via the canonical
-`completesForEffect` predicate from `Causation.CCSelection`. -/
-
-open Causation Causation.Mechanism Causation.SEM
-open Causation.CCSelection (completesForEffect completesForEffect_of_developDetOn)
-
-namespace Dasi
-
-inductive V | hitting | death deriving DecidableEq, Fintype, Repr
-def varList : List V := [.hitting, .death]
-def graph : CausalGraph V := ⟨fun | .hitting => ∅ | .death => {.hitting}⟩
-
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (fun | .hitting => 0 | .death => 1)
-    (by intro u v h; revert h; cases u <;> cases v <;> decide)
-
-/-- dǎ-sǐ "hit-die": hitting → death. Direct causation. -/
-noncomputable def model : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .hitting => const (G := graph) false
-      | .death => deterministic (fun ρ => ρ ⟨.hitting, by simp [graph]⟩) }
-
-instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
-
-noncomputable instance : SEM.IsDeterministic model where
-  mech_det v := match v with
-    | .hitting => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .death => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-
-theorem sufficient :
-    BoolSEM.causallySufficient model Valuation.empty .hitting .death :=
-  SEM.developDet_hasValue_of_developDetOn_hasValue (vs := varList) (n := 1) (by decide)
-
-theorem tight :
-    completesForEffect model Valuation.empty .hitting true false .death true :=
-  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
-
-end Dasi
-
-namespace Kulei
-
-inductive V | crying | tired deriving DecidableEq, Fintype, Repr
-def varList : List V := [.crying, .tired]
-def graph : CausalGraph V := ⟨fun | .crying => ∅ | .tired => {.crying}⟩
-
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (fun | .crying => 0 | .tired => 1)
-    (by intro u v h; revert h; cases u <;> cases v <;> decide)
-
-/-- kū-lèi "cry-tired": crying → tired. Subject-oriented, direct. -/
-noncomputable def model : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .crying => const (G := graph) false
-      | .tired => deterministic (fun ρ => ρ ⟨.crying, by simp [graph]⟩) }
-
-instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
-
-noncomputable instance : SEM.IsDeterministic model where
-  mech_det v := match v with
-    | .crying => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .tired => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-
-theorem tight :
-    completesForEffect model Valuation.empty .crying true false .tired true :=
-  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
-
-end Kulei
-
-namespace Tuikai
-
-inductive V | pushing | openV deriving DecidableEq, Fintype, Repr
-def varList : List V := [.pushing, .openV]
-def graph : CausalGraph V := ⟨fun | .pushing => ∅ | .openV => {.pushing}⟩
-
-instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (fun | .pushing => 0 | .openV => 1)
-    (by intro u v h; revert h; cases u <;> cases v <;> decide)
-
-/-- tuī-kāi "push-open": pushing → open. Mandarin parallel to
-    English "push X open". -/
-noncomputable def model : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .pushing => const (G := graph) false
-      | .openV => deterministic (fun ρ => ρ ⟨.pushing, by simp [graph]⟩) }
-
-instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
-
-noncomputable instance : SEM.IsDeterministic model where
-  mech_det v := match v with
-    | .pushing => inferInstanceAs (Mechanism.IsDeterministic (const _))
-    | .openV => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
-
-theorem tight :
-    completesForEffect model Valuation.empty .pushing true false .openV true :=
-  completesForEffect_of_developDetOn varList 1 (by decide) (by decide)
-
-end Tuikai
-
--- ════════════════════════════════════════════════════
--- § 6. Phase Complement Theorems
--- ════════════════════════════════════════════════════
-
-/-! ## Phase complement CoS bridge
-
-Phase complement lexical entries live in `Mandarin.Resultatives`.
-Here we prove theorems connecting them to `CoSType` infrastructure. -/
-
-/-- Phase complements connect to all three CoS types. -/
-theorem phase_covers_all_cos :
-    (allPhaseComplements.any (·.phase.cosType == .inception)) = true ∧
-    (allPhaseComplements.any (·.phase.cosType == .cessation)) = true ∧
-    (allPhaseComplements.any (·.phase.cosType == .continuation)) = true := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
-
-/-- The CoS presupposition for inceptive phase complements (dǎo, hǎo, diào):
-    the result state was NOT holding before the event.
-    Connects to `priorStatePresup .inception P w = ¬ P w` from
-    `ChangeOfState.Theory`. -/
-theorem inceptive_phase_presup {W : Type*} (P : W → Prop) (w : W) :
-    priorStatePresup PhaseComplement.dao.cosType P w = ¬ P w := rfl
-
-/-- The CoS presupposition for the cessative phase complement (wán):
-    the activity WAS happening before the event. -/
-theorem cessative_phase_presup {W : Type*} (P : W → Prop) :
-    priorStatePresup PhaseComplement.wan.cosType P = P := rfl
-
-/-- The continuation phase complement (zhù) presupposes P and asserts P. -/
-theorem continuation_phase_presup {W : Type*} (P : W → Prop) :
-    priorStatePresup PhaseComplement.zhu.cosType P = P := rfl
-
--- ════════════════════════════════════════════════════
--- § 7. Realization and orientation parameters
--- ════════════════════════════════════════════════════
-
-/-! ## All Mandarin compounds use verb-compound realization -/
-
-theorem all_compounds_are_verb_compounds :
-    allCompounds.all (·.realization == .verbCompound) = true := by
-  native_decide
-
-/-! ## Constructional BECOME = inception
-
-V-V resultative compounds, like English resultatives, have constructional
-BECOME mapping to `CoSType.inception` (¬P → P). V2 denotes the result
-state that newly obtains as a consequence of V1. -/
-
-/-- V-V resultative BECOME = inception, same as English. -/
-theorem vv_compound_become :
-    resultStateMapsToCoS = .inception := rfl
-
--- ════════════════════════════════════════════════════
--- § 8. End-to-end summary
--- ════════════════════════════════════════════════════
-
-/-! ## End-to-end: the V-V compound resultative architecture
-
-1. V1 denotes causing event, V2 denotes result state
-2. Connected by direct CAUSE (single causal law, tight)
-3. Morphologically realized as `Word.Tree.compound` (V1-∅-V2)
-4. Subject-oriented resultatives are productive (no DOR)
-5. V-V is syntactically opaque; V-*de* is transparent
-6. Onset Condition: CCF must be a V1 participant (derived from data)
-7. Phase complements are a grammaticalized subset with fixed CoSType
-8. Constructional BECOME = inception (shared with English) -/
-
-theorem vv_compound_architecture :
-    -- Tight causation (direct, single edge)
-    completesForEffect Dasi.model Valuation.empty .hitting true false .death true ∧
-    -- Morphological compound
-    (dasi_morph matches Word.Tree.compound _ _) = true ∧
-    -- Subject-oriented resultatives exist (no DOR)
-    (allCompounds.any (·.orientation == .subjectOriented)) = true ∧
-    -- V-V is opaque, V-de is transparent
-    allOpacityData.all (λ d =>
-      d.grammatical == (d.construction == .deComplement)) = true ∧
-    -- Onset Condition: grammaticality = V1 participation
-    allOnsetData.all (λ d =>
-      d.grammatical == d.ccfRole.isV1Participant) = true ∧
-    -- Phase complements cover all CoS types
-    (allPhaseComplements.any (·.phase.cosType == .inception)) = true ∧
-    (allPhaseComplements.any (·.phase.cosType == .cessation)) = true ∧
-    -- Constructional BECOME = inception
-    resultStateMapsToCoS = .inception := by
-  refine ⟨Dasi.tight, by decide, ?_, ?_, ?_, ?_, ?_, rfl⟩ <;> native_decide
 
 end Tay2024
