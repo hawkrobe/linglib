@@ -76,6 +76,30 @@ theorem literalListener_apply_le_one (μ : Measure W) (m : U → W → ℝ≥0�
           mul_le_mul' le_rfl (measure_mono (Set.subset_univ s))
       _ ≤ 1 := ENNReal.inv_mul_le_one _
 
+/-- The literal listener depends on the meaning only up to a positive finite scalar, which the
+normalization absorbs. -/
+theorem literalListener_const_mul (μ : Measure W) (m : U → W → ℝ≥0∞) {c : ℝ≥0∞} (hc0 : c ≠ 0)
+    (hc : c ≠ ∞) : literalListener μ (λ u w => c * m u w) = literalListener μ m :=
+  Kernel.ext λ u => by
+    rw [literalListener_apply, literalListener_apply,
+      show μ.withDensity (λ w => c * m u w) = c • μ.withDensity (m u) from
+        withDensity_smul' c (m u) hc]
+    ext s hs
+    rw [cond_apply MeasurableSet.univ, cond_apply MeasurableSet.univ, Measure.smul_apply,
+      Measure.smul_apply, smul_eq_mul, smul_eq_mul, ENNReal.mul_inv (Or.inl hc0) (Or.inl hc),
+      mul_mul_mul_comm, ENNReal.inv_mul_cancel hc0 hc, one_mul]
+
+/-- Every finite measure on a countable discrete space is a literal listener at a prior of
+positive mass everywhere: the meaning is the measure's density against the prior. -/
+theorem literalListener_div [Countable W] [MeasurableSingletonClass W] (μ : Measure W)
+    [IsFiniteMeasure μ] (hμ : ∀ w, μ {w} ≠ 0) (ν : U → Measure W) (u : U) :
+    literalListener μ (λ u w => ν u {w} / μ {w}) u = (ν u)[|Set.univ] := by
+  rw [literalListener_apply]
+  congr 1
+  refine Measure.ext_of_singleton λ w => ?_
+  rw [withDensity_apply _ (.singleton w), lintegral_singleton,
+    ENNReal.div_mul_cancel (hμ w) (measure_ne_top μ _)]
+
 /-- On a Boolean meaning the literal listener conditions the prior on the extension. -/
 theorem literalListener_indicator [DiscreteMeasurableSpace W] (μ : Measure W)
     (sem : U → Set W) :
