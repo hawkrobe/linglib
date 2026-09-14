@@ -2464,7 +2464,6 @@ import Linglib.Studies.ScontrasPearl2021
 import Linglib.Studies.ScontrasTonhauser2025
 import Linglib.Studies.Scott2021
 import Linglib.Studies.Scott2023
-import Linglib.Studies.SedivyEtAl1999
 import Linglib.Studies.SeeligerRepp2018
 import Linglib.Studies.Sen2015
 import Linglib.Studies.Sharvit2003
