@@ -1,6 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Logic.Function.Basic
+import Linglib.Core.Relation.FactorsThroughOn
 import Linglib.Data.UD.Basic
 
 /-!
