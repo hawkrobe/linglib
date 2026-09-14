@@ -688,12 +688,6 @@ import Linglib.Discourse.QUD.Basic
 import Linglib.Discourse.QUD.Issue
 import Linglib.Discourse.Roles
 import Linglib.Discourse.SpeechAct
-import Linglib.Features.Antonymy
-import Linglib.Features.Empathy
-import Linglib.Features.Expressive
-import Linglib.Features.NegativeConcord
-import Linglib.Features.ScopeTypes
-import Linglib.Features.Valence
 import Linglib.Fragments.ASL.Classifiers
 import Linglib.Fragments.ASL.Determiners
 import Linglib.Fragments.Abkhaz.Evidentiality

@@ -2,7 +2,6 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Semantics.Reference.Logophoricity
-import Linglib.Features.Empathy
 import Linglib.Syntax.Person.Decomposition
 import Linglib.Fragments.Spanish.Clitics
 

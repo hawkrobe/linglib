@@ -1,5 +1,5 @@
 import Linglib.Syntax.Category.Particle.Basic
-import Linglib.Features.Expressive
+import Linglib.Pragmatics.Expressives.Kind
 
 /-!
 # Japanese Particles

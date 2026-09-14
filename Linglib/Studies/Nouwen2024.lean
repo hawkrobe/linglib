@@ -47,7 +47,7 @@ cores await the measure-face migration of the RSA substrate.
 
 namespace Nouwen2024.Intensifiers
 
-open Features (EvaluativeValence)
+open Degree (EvaluativeValence)
 
 /--
 Intensifier degree class (Figure 2).
@@ -556,7 +556,7 @@ abbrev Height := Degree.Bounded 6
 abbrev Threshold := Degree.Threshold 6
 
 open Degree (deg thr)
-open Features (EvaluativeValence)
+open Degree (EvaluativeValence)
 open Degree.Intensification (EvaluativeMeasure)
 open Degree (positiveMeaning)
 

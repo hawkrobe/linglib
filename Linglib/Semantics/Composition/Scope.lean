@@ -20,15 +20,71 @@ This module provides:
 
 import Linglib.Semantics.Composition.Ty
 import Linglib.Semantics.Quantification.Quantifier
-import Linglib.Features.ScopeTypes
 
 namespace Semantics.Scope
 
 open Semantics.Composition
-open ScopeTheory
 open Quantification
 
--- Scope Configurations
+/-! ### Scope readings -/
+
+/-- A scope reading: an ordering of scope-taking elements, widest first. -/
+structure ScopeReading where
+  /-- Identifiers for the scope-taking elements, in scope order. -/
+  ordering : List String
+  deriving DecidableEq, Repr, Inhabited
+
+/-- The surface scope reading: linear order is scope order. -/
+def ScopeReading.surface (elements : List String) : ScopeReading := ⟨elements⟩
+
+/-- The inverse scope reading. -/
+def ScopeReading.inverse (elements : List String) : ScopeReading := ⟨elements.reverse⟩
+
+/-- The nonempty set of scope readings a form makes available. -/
+structure AvailableScopes where
+  /-- The available readings. -/
+  readings : List ScopeReading
+  /-- At least one reading is available. -/
+  nonempty : readings ≠ [] := by simp
+  deriving Repr
+
+/-- A single available reading. -/
+def AvailableScopes.singleton (r : ScopeReading) : AvailableScopes := ⟨[r], by simp⟩
+
+/-- Exactly the surface and the inverse reading. -/
+def AvailableScopes.binary (surface inverse : ScopeReading) : AvailableScopes :=
+  ⟨[surface, inverse], by simp⟩
+
+/-- Whether a reading is available. -/
+def AvailableScopes.hasReading (a : AvailableScopes) (r : ScopeReading) : Prop :=
+  r ∈ a.readings
+
+instance (a : AvailableScopes) (r : ScopeReading) : Decidable (a.hasReading r) :=
+  inferInstanceAs (Decidable (_ ∈ _))
+
+/-- Whether more than one reading is available. -/
+def AvailableScopes.isAmbiguous (a : AvailableScopes) : Prop := a.readings.length > 1
+
+instance (a : AvailableScopes) : Decidable a.isAmbiguous :=
+  inferInstanceAs (Decidable (_ > _))
+
+/-- Binary scope availability: the surface reading only, the inverse only, or both. -/
+inductive BinaryScopeAvailability where
+  | surfaceOnly
+  | inverseOnly
+  | ambiguous
+  deriving DecidableEq, Repr, Inhabited
+
+/-- The available readings of a binary availability over two named scope-takers. -/
+def BinaryScopeAvailability.toAvailableScopes
+    (b : BinaryScopeAvailability) (s₁ s₂ : String) : AvailableScopes :=
+  match b with
+  | .surfaceOnly => AvailableScopes.singleton (ScopeReading.surface [s₁, s₂])
+  | .inverseOnly => AvailableScopes.singleton (ScopeReading.inverse [s₁, s₂])
+  | .ambiguous =>
+    AvailableScopes.binary (ScopeReading.surface [s₁, s₂]) (ScopeReading.inverse [s₁, s₂])
+
+/-! ### Scope configurations -/
 
 /-- General scope configuration for two operators -/
 inductive ScopeConfig where
@@ -47,7 +103,6 @@ def toQNScope : ScopeConfig → QNScope
   | .surface => .forallNeg
   | .inverse => .negForall
 
--- Connection to ScopeTheory Interface
 
 /-- Convert ScopeConfig to abstract ScopeReading for binary scope -/
 def ScopeConfig.toScopeReading (s : ScopeConfig) (op1 op2 : String) : ScopeReading :=

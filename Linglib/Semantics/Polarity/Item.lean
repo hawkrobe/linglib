@@ -22,7 +22,7 @@ with `licensor = some .weak`, a strict negative-concord item one with
 environment), a non-strict one `some .antiAdditive` (concord under a
 negative quantifier is anti-additive licensing at this grain — the same
 requirement as an English strong NPI; the concord phenomenology itself is
-`Features/NegativeConcord.lean` territory). The item↔context licensing
+`Studies/VanDerAuweraVanAlsenoy2016.lean` territory). The item↔context licensing
 relation `LicensingContext.licenses` lives in
 `Semantics/Polarity/Licensing.lean`.
 

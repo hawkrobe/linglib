@@ -33,7 +33,7 @@ for the RSA pragmatic model.
 
 namespace Degree.Intensification
 
-open Features (EvaluativeValence)
+open Degree (EvaluativeValence)
 
 -- Evaluative Measure Functions
 

@@ -7,7 +7,7 @@ import Linglib.Syntax.CCG.Grammar
 import Linglib.Syntax.CCG.Interface
 import Linglib.Syntax.CCG.Intonation
 import Linglib.Studies.BeckmanPierrehumbert1986
-import Linglib.Features.ScopeTypes
+import Linglib.Semantics.Composition.Scope
 
 /-!
 # Steedman 2000: The Syntactic Process
@@ -645,7 +645,7 @@ drops the book's features, e.g. the `VP₋SUB` restriction on `>B×`.) -/
 
 section Quantification
 
-open ScopeTheory Data.Examples
+open Semantics.Scope Data.Examples
 
 /-- Word order in a West Germanic verb cluster ([steedman-2000] §6.8). -/
 inductive VerbOrder where
