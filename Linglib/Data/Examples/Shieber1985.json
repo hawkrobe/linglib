@@ -1,0 +1,1408 @@
+[
+  {
+    "id": "shieber1985_ex1",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(1)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer em Hans es huus hälfed aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "hälfed",
+        "helped"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we helped Hans paint the house",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "DA"
+      ],
+      [
+        "verbs",
+        "HA"
+      ],
+      [
+        "order",
+        "crossSerial"
+      ]
+    ],
+    "comment": "The cross-serial dependencies: em Hans is the object of hälfed, es huus of aastriiche, and hälfed requires a dative object.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex2",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(2)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer de Hans es huus lönd aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "de",
+        "the.ACC"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "lönd",
+        "let"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we let Hans paint the house",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "AA"
+      ],
+      [
+        "verbs",
+        "LA"
+      ],
+      [
+        "order",
+        "crossSerial"
+      ]
+    ],
+    "comment": "lönd requires an accusative object.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex3",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(3)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer em Hans es huus lönd aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "lönd",
+        "let"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we let Hans paint the house",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "DA"
+      ],
+      [
+        "verbs",
+        "LA"
+      ],
+      [
+        "order",
+        "crossSerial"
+      ]
+    ],
+    "comment": "Informants uniformly reject the clause and identify the case marking on Hans as the culprit.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex4",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(4)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer de Hans em huus lönd aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "de",
+        "the.ACC"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "lönd",
+        "let"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we let Hans paint the house",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "AD"
+      ],
+      [
+        "verbs",
+        "LA"
+      ],
+      [
+        "order",
+        "crossSerial"
+      ]
+    ],
+    "comment": "aastriiche requires an accusative object.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex5",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(5)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer d'chind em Hans es huus lönd hälfe aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "d'chind",
+        "the.children.ACC"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "lönd",
+        "let"
+      ],
+      [
+        "hälfe",
+        "help"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we let the children help Hans paint the house",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "ADA"
+      ],
+      [
+        "verbs",
+        "LHA"
+      ],
+      [
+        "order",
+        "crossSerial"
+      ]
+    ],
+    "comment": "A triply embedded cross-serial clause, grammatical exactly when the case marking is correct.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex6",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(6)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer d'chind de Hans es huus lönd hälfe aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "d'chind",
+        "the.children.ACC"
+      ],
+      [
+        "de",
+        "the.ACC"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "lönd",
+        "let"
+      ],
+      [
+        "hälfe",
+        "help"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we let the children help Hans paint the house",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "AAA"
+      ],
+      [
+        "verbs",
+        "LHA"
+      ],
+      [
+        "order",
+        "crossSerial"
+      ]
+    ],
+    "comment": "The triply embedded clause with Hans in the accusative.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex7",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(7)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer em Hans es huus haend wele hälfe aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "haend",
+        "have"
+      ],
+      [
+        "wele",
+        "wanted"
+      ],
+      [
+        "hälfe",
+        "help"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we have wanted to help Hans paint the house",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "DA"
+      ],
+      [
+        "verbs",
+        "HA"
+      ],
+      [
+        "order",
+        "crossSerial"
+      ]
+    ],
+    "comment": "Raising verbs may intervene between the noun phrases and the verbs; an instance of Claims 1 and 2.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex8",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(8)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer d'chind em Hans es huus haend wele laa hälfe aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "d'chind",
+        "the.children.ACC"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "haend",
+        "have"
+      ],
+      [
+        "wele",
+        "wanted"
+      ],
+      [
+        "laa",
+        "let"
+      ],
+      [
+        "hälfe",
+        "help"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we have wanted to let the children help Hans paint the house",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "ADA"
+      ],
+      [
+        "verbs",
+        "LHA"
+      ],
+      [
+        "order",
+        "crossSerial"
+      ]
+    ],
+    "comment": "The schema of Claim 2 with one accusative pair and one dative pair; laa is the infinitive of lönd.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex9",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(9)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer em Hans hälfed es huus aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "hälfed",
+        "helped"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we helped Hans paint the house",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "DA"
+      ],
+      [
+        "verbs",
+        "HA"
+      ],
+      [
+        "order",
+        "other"
+      ]
+    ],
+    "comment": "Another constituent order the language allows (§4.2); the proof removes such orders by the regular filter.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex10",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(10)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer em Hans es huus aastriiche hälfed",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ],
+      [
+        "hälfed",
+        "helped"
+      ]
+    ],
+    "translation": "we helped Hans paint the house",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "DA"
+      ],
+      [
+        "verbs",
+        "AH"
+      ],
+      [
+        "order",
+        "other"
+      ]
+    ],
+    "comment": "The nested order of the verbs.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex11",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(11)"
+    },
+    "language": "swis1247",
+    "primaryText": "em Hans mer es huus hälfed aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "hälfed",
+        "helped"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we helped Hans paint the house",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "DA"
+      ],
+      [
+        "verbs",
+        "HA"
+      ],
+      [
+        "order",
+        "other"
+      ]
+    ],
+    "comment": "Accepted depending on dialect and context; the one clause in the paper on which the four informants did not agree.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex12",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(12)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer de Hans hälfed es huus aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "de",
+        "the.ACC"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "hälfed",
+        "helped"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we helped Hans paint the house",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "AA"
+      ],
+      [
+        "verbs",
+        "HA"
+      ],
+      [
+        "order",
+        "other"
+      ]
+    ],
+    "comment": "Unmet case requirements are ungrammatical whether the order is cross-serial or not (Claim 3).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex13",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(13)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer em Hans hälfed em huus aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "hälfed",
+        "helped"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we helped Hans paint the house",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "DD"
+      ],
+      [
+        "verbs",
+        "HA"
+      ],
+      [
+        "order",
+        "other"
+      ]
+    ],
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex14",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(14)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer em Hans lönd es huus aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "lönd",
+        "let"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we let Hans paint the house",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "DA"
+      ],
+      [
+        "verbs",
+        "LA"
+      ],
+      [
+        "order",
+        "other"
+      ]
+    ],
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex15",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(15)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer de Hans lönd em huus aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "de",
+        "the.ACC"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "lönd",
+        "let"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we let Hans paint the house",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "AD"
+      ],
+      [
+        "verbs",
+        "LA"
+      ],
+      [
+        "order",
+        "other"
+      ]
+    ],
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex16",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(16)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer de Hans es huus aastriiche hälfed",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "de",
+        "the.ACC"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ],
+      [
+        "hälfed",
+        "helped"
+      ]
+    ],
+    "translation": "we helped Hans paint the house",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "AA"
+      ],
+      [
+        "verbs",
+        "AH"
+      ],
+      [
+        "order",
+        "other"
+      ]
+    ],
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex17",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(17)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer em Hans em huus aastriiche hälfed",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ],
+      [
+        "hälfed",
+        "helped"
+      ]
+    ],
+    "translation": "we helped Hans paint the house",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "DD"
+      ],
+      [
+        "verbs",
+        "AH"
+      ],
+      [
+        "order",
+        "other"
+      ]
+    ],
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex18",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(18)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer em Hans es huus aastriiche lönd",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ],
+      [
+        "lönd",
+        "let"
+      ]
+    ],
+    "translation": "we let Hans paint the house",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "DA"
+      ],
+      [
+        "verbs",
+        "AL"
+      ],
+      [
+        "order",
+        "other"
+      ]
+    ],
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex19",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(19)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer de Hans em huus aastriiche lönd",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "de",
+        "the.ACC"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "em",
+        "the.DAT"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ],
+      [
+        "lönd",
+        "let"
+      ]
+    ],
+    "translation": "we let Hans paint the house",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "AD"
+      ],
+      [
+        "verbs",
+        "AL"
+      ],
+      [
+        "order",
+        "other"
+      ]
+    ],
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex20",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(20)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer de Hans haend wele hälfe es huus aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "de",
+        "the.ACC"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "haend",
+        "have"
+      ],
+      [
+        "wele",
+        "wanted"
+      ],
+      [
+        "hälfe",
+        "help"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we have wanted to help Hans paint the house",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "AA"
+      ],
+      [
+        "verbs",
+        "HA"
+      ],
+      [
+        "order",
+        "other"
+      ]
+    ],
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex21",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(21)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer d'chind lönd de Hans hälfe es huus aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "d'chind",
+        "the.children.ACC"
+      ],
+      [
+        "lönd",
+        "let"
+      ],
+      [
+        "de",
+        "the.ACC"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "hälfe",
+        "help"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we let the children help Hans paint the house",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "AAA"
+      ],
+      [
+        "verbs",
+        "LHA"
+      ],
+      [
+        "order",
+        "other"
+      ]
+    ],
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "shieber1985_ex22",
+    "source": {
+      "bibkey": "shieber-1985",
+      "paperLabel": "(22)"
+    },
+    "language": "swis1247",
+    "primaryText": "mer d'chind de Hans es huus lönd hälfe aastriiche",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "mer",
+        "we"
+      ],
+      [
+        "d'chind",
+        "the.children.ACC"
+      ],
+      [
+        "de",
+        "the.ACC"
+      ],
+      [
+        "Hans",
+        "Hans"
+      ],
+      [
+        "es",
+        "the.ACC"
+      ],
+      [
+        "huus",
+        "house"
+      ],
+      [
+        "lönd",
+        "let"
+      ],
+      [
+        "hälfe",
+        "help"
+      ],
+      [
+        "aastriiche",
+        "paint"
+      ]
+    ],
+    "translation": "we let the children help Hans paint the house",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "nps",
+        "AAA"
+      ],
+      [
+        "verbs",
+        "LHA"
+      ],
+      [
+        "order",
+        "crossSerial"
+      ]
+    ],
+    "comment": "The triply embedded clause (6) again, listed with the other unmet case requirements.",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
