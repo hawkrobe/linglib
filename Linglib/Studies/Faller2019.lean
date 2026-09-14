@@ -134,7 +134,7 @@ theorem assert_dc : φ ∈ (K.assert φ a).dc a := Table.mem_dc_assert _ _ _
 
 theorem assert_evid : φ ∈ (K.assert φ a).evid .adequate a := by simp [assert]
 
-theorem assert_stack : (K.assert φ a).stack = ⟨.declarative, {φ}⟩ :: K.stack := rfl
+theorem assert_stack : (K.assert φ a).stack = Question.ofSet φ :: K.stack := rfl
 
 theorem assert_cg : (K.assert φ a).cg = K.cg := rfl
 
@@ -172,7 +172,7 @@ theorem reportative_dc_animator (h : a ≠ p) : (K.reportative φ a p).dc a = K.
 theorem reportative_evid_adequate : (K.reportative φ a p).evid .adequate = K.evid .adequate :=
   K.addEvid_evid_of_ne_type φ a .reportative (e' := .adequate) (by decide)
 
-theorem reportative_stack : (K.reportative φ a p).stack = ⟨.declarative, {φ}⟩ :: K.stack := rfl
+theorem reportative_stack : (K.reportative φ a p).stack = Question.ofSet φ :: K.stack := rfl
 
 theorem not_dc_reportative_empty (h : a ≠ p) : φ ∉ ((empty : DS A W).reportative φ a p).dc a := by
   rw [reportative_dc_animator _ _ _ _ h]; simp [empty]
@@ -196,7 +196,7 @@ theorem denial_dc_animator (h : a ≠ p) : (K.denial φ a p).dc a = insert φᶜ
     Table.dc_assert, reportative_dc_animator _ _ _ _ h]
 
 theorem denial_stack :
-    (K.denial φ a p).stack = ⟨.declarative, {φᶜ}⟩ :: ⟨.declarative, {φ}⟩ :: K.stack := rfl
+    (K.denial φ a p).stack = Question.ofSet φᶜ :: Question.ofSet φ :: K.stack := rfl
 
 theorem denial_evid : φ ∈ (K.denial φ a p).evid .reportative a ∧
     φᶜ ∈ (K.denial φ a p).evid .bpg a := by

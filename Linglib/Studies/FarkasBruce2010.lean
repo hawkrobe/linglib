@@ -41,10 +41,10 @@ for the marked combination [reverse, +].
 
 ## Implementation notes
 
-* The Table records an item's sentential feature and denotation, not its syntactic object, so
-  a negative polar question has the same effect as its positive counterpart (15), and the
-  relative polarity of a response is computed from the sentences of the exchange rather than
-  read off the Table.
+* The Table records the issue a sentence raises, not its syntactic object, so a negative polar
+  question raises the same issue as its positive counterpart (15), `Question.polar_compl`, and
+  the relative polarity of a response is computed from the sentences of the exchange rather
+  than read off the Table.
 * `M'` is `Table.increaseCG`, which strips the shared proposition from the individual
   commitment lists as (17) prescribes; the projected set is derived from the Table rather than
   stored, as the paper notes it can be.
@@ -71,6 +71,12 @@ open Commitment Filter Data.Examples
 
 variable {W : Type*} (K : Table Discourse.Role W) (p : Set W)
 
+private theorem ne_empty_of_inf_ne_bot {f : Filter W} (h : f ⊓ 𝓟 p ≠ ⊥) : p ≠ ∅ :=
+  λ e => h (by simp [e])
+
+private theorem ne_univ_of_inf_compl_ne_bot {f : Filter W} (h : f ⊓ 𝓟 pᶜ ≠ ⊥) : p ≠ Set.univ :=
+  λ e => h (by simp [e])
+
 /-! ### Default assertions and default polar questions -/
 
 /-- Assertion proposes: the common ground is exactly as before (9). -/
@@ -84,23 +90,19 @@ theorem assert_not_narrowing :
   ⟨.empty, {true}, false, by simp [Table.contextSet, Table.assert, Table.push, Table.commit],
     Bool.false_ne_true⟩
 
-/-- Every projected common ground decides one of the propositions added. -/
-theorem exists_mem_of_mem_project {ps : Set (Filter W)} {P : Set (Set W)} {f : Filter W}
-    (h : f ∈ Table.project ps P) : ∃ q ∈ P, q ∈ f := by
-  obtain ⟨_, -, q, hq, rfl, -⟩ := h
-  exact ⟨q, hq, mem_inf_of_right (mem_principal_self q)⟩
-
 /-- The asserted proposition holds in every projected common ground. -/
 theorem mem_of_mem_projectedSet_assert (a : Discourse.Role) {f : Filter W}
     (h : f ∈ (K.assert a p).projectedSet) : p ∈ f := by
-  obtain ⟨q, hq, hf⟩ := exists_mem_of_mem_project h
-  exact Set.mem_singleton_iff.1 hq ▸ hf
+  obtain ⟨q, hq, hf⟩ := Table.exists_mem_of_mem_project _ h
+  exact Set.mem_singleton_iff.1 (Question.alt_ofSet p ▸ hq) ▸ hf
 
 /-- The sentence radical of a polar question is decided in every projected common ground. -/
 theorem mem_or_compl_mem_of_mem_projectedSet_polarQuestion {f : Filter W}
     (h : f ∈ (K.polarQuestion p).projectedSet) : p ∈ f ∨ pᶜ ∈ f := by
-  obtain ⟨q, hq, hf⟩ := exists_mem_of_mem_project h
-  rcases hq with rfl | rfl
+  obtain ⟨q, hq, hf⟩ := Table.exists_mem_of_mem_project _ h
+  rcases (Question.alt_polar_iff p q).1 hq with ⟨rfl | rfl, rfl⟩ | ⟨-, -, rfl | rfl⟩
+  · exact Or.inr (by simp)
+  · exact Or.inl hf
   · exact Or.inl hf
   · exact Or.inr hf
 
@@ -110,7 +112,8 @@ theorem projectedSet_assert (a : Discourse.Role) (hK : K.IsStable) (hp : K.cg �
     (K.assert a p).projectedSet = {K.cg ⊓ 𝓟 p} := by
   rw [Table.projectedSet_assert, Table.projectedSet_of_isStable _ hK]
   ext f
-  simp only [Table.project, Set.mem_singleton_iff, exists_eq_left, Set.mem_ofPred_eq]
+  simp only [Table.project, Question.alt_ofSet, Set.mem_singleton_iff, exists_eq_left,
+    Set.mem_ofPred_eq]
   exact ⟨λ h => h.1, λ h => ⟨h, h ▸ hp⟩⟩
 
 /-- (11): from a stable context a polar question projects both resolutions, an inquisitive
@@ -120,8 +123,9 @@ theorem projectedSet_polarQuestion (hK : K.IsStable) (hp : K.cg ⊓ 𝓟 p ≠ �
     (K.polarQuestion p).projectedSet = {K.cg ⊓ 𝓟 p, K.cg ⊓ 𝓟 pᶜ} := by
   rw [Table.projectedSet_polarQuestion, Table.projectedSet_of_isStable _ hK]
   ext f
-  simp only [Table.project, Set.mem_singleton_iff, exists_eq_left, Set.mem_ofPred_eq,
-    Set.mem_insert_iff]
+  simp only [Table.project, Question.alt_polar_of_nontrivial (ne_empty_of_inf_ne_bot p hp)
+    (ne_univ_of_inf_compl_ne_bot p hnp), Set.mem_singleton_iff, exists_eq_left,
+    Set.mem_ofPred_eq, Set.mem_insert_iff]
   constructor
   · rintro ⟨q, rfl | rfl, rfl, -⟩
     · exact Or.inl rfl
@@ -149,8 +153,8 @@ open scoped Classical in
 again. -/
 theorem isStable_increaseCG_assert (hK : K.IsStable) :
     (((K.assert .speaker p).confirm .addressee p).increaseCG p).IsStable := by
-  have hp : ∃ q ∈ ({p} : Set (Set W)), q ∈ K.cg ⊓ 𝓟 p :=
-    ⟨p, rfl, mem_inf_of_right (mem_principal_self p)⟩
+  have hp : ∃ q ∈ Question.alt (Question.ofSet p), q ∈ K.cg ⊓ 𝓟 p :=
+    ⟨p, by simp, mem_inf_of_right (mem_principal_self p)⟩
   simp only [Table.IsStable, Table.increaseCG, Table.confirm, Table.commit_stack,
     Table.assert_stack, Table.commit_cg, Table.assert_cg, show K.stack = [] from hK,
     List.dropWhile_cons, decide_eq_true hp, ite_true, List.dropWhile_nil]
@@ -190,16 +194,29 @@ theorem projectedSet_polarQuestion_assert (hK : K.IsStable) (b : Discourse.Role)
   rw [Table.projectedSet_assert, Table.projectedSet_polarQuestion,
     Table.projectedSet_of_isStable _ hK]
   ext f
-  simp only [Table.project, Set.mem_singleton_iff, exists_eq_left, Set.mem_ofPred_eq,
-    Set.mem_insert_iff]
+  simp only [Table.project, Question.alt_ofSet, Set.mem_singleton_iff, exists_eq_left,
+    Set.mem_ofPred_eq]
   constructor
   · rintro ⟨_, ⟨r, hr, rfl, -⟩, rfl, hf⟩
-    rcases hq with rfl | rfl <;> rcases hr with rfl | rfl <;>
-      first
-      | rw [inf_assoc, inf_idem]
-      | exact absurd (by simp [inf_assoc, inf_principal]) hf
+    rcases (Question.alt_polar_iff p r).1 hr with ⟨-, rfl⟩ | ⟨-, -, rfl | rfl⟩
+    · rw [principal_univ, inf_top_eq]
+    · rcases hq with rfl | rfl
+      · rw [inf_assoc, inf_idem]
+      · exact absurd (by simp [inf_assoc, inf_principal]) hf
+    · rcases hq with rfl | rfl
+      · exact absurd (by simp [inf_assoc, inf_principal]) hf
+      · rw [inf_assoc, inf_idem]
   · rintro rfl
-    exact ⟨K.cg ⊓ 𝓟 q, ⟨q, hq, rfl, hc⟩, by rw [inf_assoc, inf_idem], hc⟩
+    refine ⟨K.cg ⊓ 𝓟 q, ⟨q, ?_, rfl, hc⟩, by rw [inf_assoc, inf_idem], hc⟩
+    rcases hq with rfl | rfl
+    · by_cases hu : q = Set.univ
+      · exact (Question.alt_polar_iff _ _).2 (Or.inl ⟨Or.inr hu, hu⟩)
+      · exact (Question.alt_polar_iff _ _).2
+          (Or.inr ⟨ne_empty_of_inf_ne_bot q hc, hu, Or.inl rfl⟩)
+    · by_cases he : p = ∅
+      · exact (Question.alt_polar_iff _ _).2 (Or.inl ⟨Or.inl he, by simp [he]⟩)
+      · exact (Question.alt_polar_iff _ _).2
+          (Or.inr ⟨he, ne_univ_of_inf_compl_ne_bot p hc, Or.inr rfl⟩)
 
 /-- (27): a reverse answer is no crisis, since the question projected both resolutions. -/
 theorem not_inCrisis_polarQuestion_assert_compl (hK : K.IsStable) (b : Discourse.Role)
@@ -213,10 +230,13 @@ open scoped Classical in
 /-- (24) then (16): the questioner's confirmation of the answer settles the question. -/
 theorem isStable_increaseCG_polarQuestion (hK : K.IsStable) :
     ((((K.polarQuestion p).assert .addressee p).confirm .speaker p).increaseCG p).IsStable := by
-  have hp : ∃ q ∈ ({p} : Set (Set W)), q ∈ K.cg ⊓ 𝓟 p :=
-    ⟨p, rfl, mem_inf_of_right (mem_principal_self p)⟩
-  have hq : ∃ q ∈ ({p, pᶜ} : Set (Set W)), q ∈ K.cg ⊓ 𝓟 p :=
-    ⟨p, Or.inl rfl, mem_inf_of_right (mem_principal_self p)⟩
+  have hp : ∃ q ∈ Question.alt (Question.ofSet p), q ∈ K.cg ⊓ 𝓟 p :=
+    ⟨p, by simp, mem_inf_of_right (mem_principal_self p)⟩
+  have hq : ∃ q ∈ Question.alt (Question.polar p), q ∈ K.cg ⊓ 𝓟 p := by
+    by_cases h : p = ∅ ∨ p = Set.univ
+    · exact ⟨Set.univ, (Question.alt_polar_iff p _).2 (Or.inl ⟨h, rfl⟩), univ_mem⟩
+    · exact ⟨p, (Question.alt_polar_iff p p).2 (Or.inr ⟨(not_or.1 h).1, (not_or.1 h).2,
+        Or.inl rfl⟩), mem_inf_of_right (mem_principal_self p)⟩
   simp only [Table.IsStable, Table.increaseCG, Table.confirm, Table.commit_stack,
     Table.assert_stack, Table.polarQuestion_stack, Table.commit_cg, Table.assert_cg,
     Table.polarQuestion_cg, show K.stack = [] from hK, List.dropWhile_cons, decide_eq_true hp,
