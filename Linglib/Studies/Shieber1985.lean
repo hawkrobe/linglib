@@ -1,499 +1,308 @@
 import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
-import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 import Linglib.Core.Computability.NonContextFree.AmBnCmDn
-import Linglib.Core.Computability.NonContextFree.AnBnCn
-import Linglib.Syntax.Case.Basic
 import Linglib.Fragments.SwissGerman.Case
+import Linglib.Data.Examples.Shieber1985
 
 /-!
-# Shieber (1985) [shieber-1985]
+# Shieber (1985): Evidence Against the Context-Freeness of Natural Language
 
-Evidence against the Context-Freeness of Natural Language.
-*Linguistics and Philosophy*, 8(3), 333–343.
+This file formalizes the paper's proof that Swiss German is not weakly context-free. Two facts
+about the language carry the argument: verbs subcategorize for dative or accusative objects, and
+subordinate clauses allow the cross-serial order in which all the noun phrases precede all the
+verbs, the case requirements holding across the construction ((1)–(8)). The proof rests on four
+claims about the string set alone (§3): clauses with all verbs after all noun phrases exist
+(Claim 1), among them those with the noun phrases and the verbs each sorted by case (Claim 2),
+the dative and the accusative verbs are as many as the dative and the accusative noun phrases
+(Claim 3), and the verbs are unbounded in number (Claim 4). The homomorphism `f` sends
+*d'chind*, *em Hans*, *laa* and *hälfe* to `a`, `b`, `c`, `d` and the rest of a clause to fixed
+letters; intersecting the image with the regular language `w a* b* x c* d* y` leaves
+`w aᵐ bⁿ x cᵐ dⁿ y`, which is not context-free, and since context-free languages are closed
+under homomorphisms and under intersection with regular languages ([bar-hillel-perles-shamir-1961],
+[hopcroft-motwani-ullman-2000]), neither is Swiss German. Strong non-context-freeness follows as
+a corollary, and the argument, unlike the Dutch one of [bresnan-etal-1982] that
+[gazdar-pullum-1982] contested, mentions neither constituent structure nor meaning.
 
-## Core Argument
+`swissGermanLang` is any language over the paper's token classes meeting Claims 1 to 3,
+`tokenStringHom` the homomorphism with the boundary material erased, `caseSorted` the regular
+filter, and `stringMap_swissGerman_inter_caseSorted_eq_ambncmdn` the intersection equality that
+`swiss_german_not_contextFree` feeds to the closure theorems. Claim 3 is checked against all
+twenty-two clauses of the paper (`caseMatched_rows`): the starred ones are exactly those whose
+case requirements go unmet, whatever the order of their constituents (§4.2), and every
+case-matched clause in cross-serial order is in the language (`tokens_mem_swissGermanLang`).
 
-[shieber-1985] proves that Swiss German is not weakly context-free,
-using a purely string-based argument that makes no assumptions about
-constituent structure or semantics. The proof rests on four empirical
-claims about Swiss German subordinate clauses, plus the closure of
-context-free languages under string homomorphism and intersection with
-regular languages (proven in `Linglib.Core.Computability.ContextFreeGrammar.{Map, InterRegular}`
-following [bar-hillel-perles-shamir-1961] / [hopcroft-motwani-ullman-2000]
-Theorems 7.24, 7.27).
+## Implementation notes
 
-## The Four Claims
+* The letters follow the schema of Claim 2 and the definition of `f`, in which the accusative
+  *d'chind* and *laa* precede the dative *em Hans* and *hälfe*; the prose of Claim 2 puts the
+  datives first. The boundary strings `w`, `x`, `y` are erased rather than kept, the second image
+  of the paper's fifth note, so the witness is `aᵐ bⁿ cᵐ dⁿ` itself.
+* Verb cases are read off the Fragment's lexemes (`SwissGerman.Case.verbObjectCase`), *laa*
+  being the infinitive of *lönd*; the raising verbs *haend* and *wele* take no object and count as
+  boundary material.
 
-1. Swiss German subordinate clauses have structures where all Vs follow all NPs.
-2. Among such sentences, those with all DAT-NPs before all ACC-NPs, and all
-   DAT-Vs before all ACC-Vs, exist as a *regular-intersection-filterable*
-   subset. This is **not** a grammaticality condition on Swiss German itself
-   — SG freely allows interleaved NP orderings — but the case-sorted subset
-   is what Shieber's homomorphism + regular intersection isolates.
-3. The number of DAT-Vs equals the number of DAT-NPs (and similarly for ACC).
-4. An arbitrary number of Vs can occur (subject to performance).
+## References
 
-## What Is Formalized Here
-
-`swiss_german_not_contextFree` proves: **Swiss German subordinate clauses are
-not weakly context-free**. The language `swissGermanLang` allows any token
-sequence whose cross-serial core (after stripping `matrix` boundary tokens —
-matrix subjects, complementizers, auxiliaries, finite verbs of the embedding
-clause) has shape `nps ++ vs` with case counts matched. Matrix tokens may
-appear interleaved anywhere; Shieber's homomorphism erases them.
-
-The proof exercises both legs of the Bar-Hillel schema
-(`Language.not_isContextFree_via_witness` from `InterRegular.lean`):
-
-* **Homomorphism leg** (`tokenStringHom`): cross-serial NPs and Vs map to
-  singleton {a,b,c,d} letters; matrix tokens map to `[]` (Shieber's ε-erasure).
-* **Regular-intersection leg** (`caseSorted = a*b*c*d*`): selects only
-  case-sorted images, isolating the canonical cross-serial shape from any
-  source-string interleaving of cross-serial tokens.
-
-The witness language `stringMap h L ⊓ R = ambncmdn` — non-CF by
-`ambncmdn_not_contextFree` (two-parameter pumping). Per the Bar-Hillel
-schema, source SG is non-CF.
-
-Proof bottoms out at the two CFL closure theorems in
-`Linglib.Core.Computability.ContextFreeGrammar.{Map, InterRegular}`
-(homomorphism + intersection-with-regular, both proven; see those files for
-[bar-hillel-perles-shamir-1961] / [hopcroft-motwani-ullman-2000]
-construction details) and `ambncmdn_not_contextFree` (the two-parameter
-pumping result) in `Linglib.Core.Computability.NonContextFree`.
-
-A weaker pedagogical waypoint, `swiss_german_diagonal_not_contextFree`, uses
-only the simpler one-parameter `anbncndn` substrate; it covers just the
-diagonal (`m = n`) subset of SG clauses with no matrix material.
-
-## Remaining idealizations
-
-The `matrix` token is a single abstract constructor, not a richer model of
-SG matrix material's internal structure (specific lexical items, agreement,
-finite-verb fronting). For Shieber's purpose — showing non-CFness of the
-string set — this abstraction is faithful: he too treats matrix material as
-an erasable substring under the homomorphism. A richer model that ties
-matrix-token positions to specific SG fragment data would be a substantive
-extension; the current formalization captures Shieber's full argument
-without it.
-
-## Contrast with [bresnan-etal-1982]
-
-[bresnan-etal-1982]'s earlier argument for Dutch non-context-freeness
-relied on linguistic assumptions about constituent structure, which
-[gazdar-pullum-1982] contested. [shieber-1985]'s argument is
-purely formal — it rests entirely on the string set of Swiss German and
-the case-marking facts, making no claims about phrase structure.
-
-## Subsequent literature
-
-- [huybregts-1976] gave a contemporaneous Swiss German argument.
-- Joshi (1985) introduced TAG and the mild-CS hierarchy; Vijay-Shanker–Weir
-  (1994) established the equivalence of TAG/CCG/MCFG/MG within mild-CS.
-  The MCS classification of cross-serial dependencies is post-Shieber and not
-  attributable to him; he proved only *not weakly CF*.
-- Manaster-Ramer (1987) raised concerns about the universality of Shieber's
-  case-matching premise.
-- Stabler (1997) and Kobele (2006) provide MG analyses of the same data.
-
-The processing-side dissociation (cross-serial easier than nested despite
-greater formal complexity) is the subject of [bach-brown-marslen-wilson-1986],
-formalized in `BachBrownMarslenWilson1986` —
-not duplicated here.
+* [shieber-1985]
+* [bar-hillel-perles-shamir-1961]
+* [hopcroft-motwani-ullman-2000]
+* [bresnan-etal-1982]
+* [gazdar-pullum-1982]
 -/
 
 namespace Shieber1985
 
-open SwissGerman.Case (CrossSerialVerb verbObjectCase)
+open SwissGerman.Case Data.Examples
 
--- ============================================================================
--- §1: Swiss German Subordinate Clause Tokens
--- ============================================================================
+/-! ### Tokens, the homomorphism and the language -/
 
-/-- A Swiss German subordinate clause token, abstracting over specific lexical
-    items to their role in the cross-serial construction.
-
-    [shieber-1985]'s argument projects SG sentences to four case-marked
-    classes (DAT-NP / ACC-NP / DAT-V / ACC-V) plus boundary material. The
-    `matrix` constructor abstracts non-cross-serial tokens — matrix subjects,
-    complementizers, auxiliaries, finite verbs of the embedding clause, etc.
-    Shieber's homomorphism erases these to ε; our `tokenStringHom` does the
-    same by mapping `matrix` to `[]`. This is what makes the proof apply to
-    full Swiss German rather than just the NP*V* sub-shape — matrix tokens
-    can appear interleaved anywhere in a sentence, and the homomorphism
-    strips them, so the regex-filtered image picks up the cross-serial
-    core regardless of how it's wrapped in the source string. -/
-inductive Token where
-  /-- Dative NP (e.g., *em Hans*) -/
-  | datNP
-  /-- Accusative NP (e.g., *d'chind*, *de Hans*) -/
-  | accNP
-  /-- Dative-subcategorizing verb (e.g., *hälfe* "help") -/
-  | datV
-  /-- Accusative-subcategorizing verb (e.g., *lönd* "let", *aastriiche* "paint") -/
-  | accV
-  /-- Boundary material: matrix subject, complementizer, auxiliary, finite
-      verb of the embedding clause, etc. Erased by `tokenStringHom`
-      (Shieber's projection). -/
-  | matrix
+/-- A token of a subordinate clause, projected to the classes the argument uses: a noun phrase
+or a verb with its case, or boundary material such as the raising verbs. -/
+inductive Token
+  | accNP | datNP | accV | datV | boundary
   deriving DecidableEq, Repr
 
-/-- The case that a token bears or requires. Matrix tokens have no case;
-    the field is total at `.dat` as a default (never consulted on matrix
-    tokens in any consumer — case-matching predicates filter via `isNP` / `isV`
-    first). -/
-def Token.caseValue : Token → Case
-  | .datNP => .dat
-  | .accNP => .acc
-  | .datV  => .dat
-  | .accV  => .acc
-  | .matrix => .dat  -- arbitrary; matrix has no real case
+/-- The noun-phrase token of an object case. -/
+def Token.np (c : Case) : Option Token :=
+  if c = .acc then some .accNP else if c = .dat then some .datNP else none
 
-/-- Whether a token is a case-marked NP (vs a verb or matrix material). -/
+/-- The verb token of a Fragment lexeme, by the case it requires. -/
+def Token.v (v : CrossSerialVerb) : Token :=
+  if verbObjectCase v = .dat then .datV else .accV
+
 def Token.isNP : Token → Bool
-  | .datNP | .accNP => true
-  | .datV  | .accV  => false
-  | .matrix         => false
+  | .accNP | .datNP => true
+  | _ => false
 
-/-- Whether a token is a case-subcategorizing verb (vs an NP or matrix material). -/
 def Token.isV : Token → Bool
-  | .datNP | .accNP => false
-  | .datV  | .accV  => true
-  | .matrix         => false
+  | .accV | .datV => true
+  | _ => false
 
-/-- Whether a token is matrix (boundary) material (vs a cross-serial NP/V). -/
-def Token.isMatrix : Token → Bool
-  | .datNP  => false
-  | .accNP  => false
-  | .datV   => false
-  | .accV   => false
-  | .matrix => true
+def Token.isBoundary : Token → Bool
+  | .boundary => true
+  | _ => false
 
--- ============================================================================
--- §2: Case-Sorted Cross-Serial Clauses
--- ============================================================================
+/-- The homomorphism `f` with the boundary erased: *d'chind* to `a`, *em Hans* to `b`, *laa*
+to `c` and *hälfe* to `d`, lifted to strings by `List.flatMap`. -/
+def tokenStringHom : Token → List FourSymbol
+  | .accNP => [.a]
+  | .datNP => [.b]
+  | .accV => [.c]
+  | .datV => [.d]
+  | .boundary => []
 
-/-- The abstract shape of a *case-sorted* cross-serial clause: counts of
-    each (case × NP/V) combination, in the canonical order DAT-NPs, ACC-NPs,
-    DAT-Vs, ACC-Vs.
-
-    This is **not** a grammaticality condition on Swiss German — SG freely
-    allows interleaved NP orderings — but the case-sorted shape is what
-    Shieber's homomorphism + regular intersection isolates from the full
-    SG language. -/
-structure CrossSerialClause where
-  datNPs : Nat  -- number of dative NPs
-  accNPs : Nat  -- number of accusative NPs
-  datVs  : Nat  -- number of dative-subcategorizing verbs
-  accVs  : Nat  -- number of accusative-subcategorizing verbs
-  deriving DecidableEq, Repr
-
-/-- Claim 3: case matching — the number of dative verbs equals the number
-    of dative NPs, and similarly for accusative. -/
-def CrossSerialClause.caseMatches (c : CrossSerialClause) : Prop :=
-  c.datNPs = c.datVs ∧ c.accNPs = c.accVs
-
-/-- A case-sorted clause that satisfies case matching. Renamed from the
-    misleading `GrammaticalClause` — case matching is part of grammaticality,
-    but case-*sorting* is not (per Claim 2 framing above). -/
-structure CaseMatchedClause extends CrossSerialClause where
-  matching : toCrossSerialClause.caseMatches
-
-/-- Claim 4: any combination of dative and accusative verb counts can occur
-    (we can produce a `CaseMatchedClause` for any m, n). -/
-def arbitraryDepth (m n : Nat) : CaseMatchedClause :=
-  { datNPs := m
-  , accNPs := n
-  , datVs  := m
-  , accVs  := n
-  , matching := ⟨rfl, rfl⟩ }
-
--- ============================================================================
--- §3: The Homomorphism
--- ============================================================================
-
-/-- Shieber's homomorphism *f*: maps Swiss German cross-serial clause tokens
-    to the abstract alphabet {a, b, c, d}. Matrix tokens have no meaningful
-    image; the placeholder `.a` is never observed by any consumer (every use
-    site filters via `isMatrix` or constructs from non-matrix tokens). The
-    real homomorphism `tokenStringHom` ERASES matrix tokens to `[]`. -/
-def tokenToSymbol : Token → FourSymbol
-  | .datNP  => .a
-  | .accNP  => .b
-  | .datV   => .c
-  | .accV   => .d
-  | .matrix => .a  -- placeholder; never consumed
-
-/-- Shieber's homomorphism, lifted to lists. Cross-serial NPs and Vs map to
-    singleton {a,b,c,d} letters; matrix tokens are erased. This `[]`-valued
-    case is essential for full-SG fidelity: it lets the schema apply to
-    sentences with arbitrary boundary material wrapping the cross-serial
-    core. The function is no longer a letterwise (singleton-valued) map for that reason.
-    The string action is `List.flatMap tokenStringHom`, the free-monoid lift. -/
-def tokenStringHom : Token → List FourSymbol := fun
-  | .matrix => []
-  | t       => [tokenToSymbol t]
-
-/-- The token sequence corresponding to a case-matched clause: NPs first
-    (DAT then ACC), then Vs (DAT then ACC). -/
-def caseSortedTokens (c : CaseMatchedClause) : List Token :=
-  List.replicate c.datNPs .datNP ++ List.replicate c.accNPs .accNP ++
-  List.replicate c.datVs .datV ++ List.replicate c.accVs .accV
-
-/-- The string image of a case-matched clause's token sequence under
-    `tokenStringHom`: a string in {a,b,c,d}*. -/
-def clauseImage (c : CaseMatchedClause) : FourString :=
-  List.replicate c.datNPs .a ++ List.replicate c.accNPs .b ++
-  List.replicate c.datVs .c ++ List.replicate c.accVs .d
-
-/-- The image of a case-matched clause is `List.flatMap tokenStringHom` (the
-    free-monoid lift) on its case-sorted token sequence. -/
-theorem clauseImage_eq_apply (c : CaseMatchedClause) :
-    clauseImage c = List.flatMap tokenStringHom (caseSortedTokens c) := by
-  simp [clauseImage, caseSortedTokens, tokenStringHom, tokenToSymbol,
-        List.flatMap_append, List.flatMap_replicate]
-
-/-- A case-matched clause with m DAT-pairs and n ACC-pairs maps to
-    `aᵐ bⁿ cᵐ dⁿ`. -/
-theorem clauseImage_shape (m n : Nat) :
-    clauseImage (arbitraryDepth m n) =
-      List.replicate m .a ++ List.replicate n .b ++
-      List.replicate m .c ++ List.replicate n .d := rfl
-
--- ============================================================================
--- §4: The Diagonal Non-Context-Freeness Result
--- ============================================================================
-
-/-- Setting m = n in the clause image gives `aⁿbⁿcⁿdⁿ`. -/
-theorem diagonal_is_anbncndn (n : Nat) :
-    clauseImage (arbitraryDepth n n) = makeString_anbncndn n := rfl
-
-/-- The diagonal clause images are in {aⁿbⁿcⁿdⁿ}. -/
-theorem diagonal_in_language (n : Nat) :
-    clauseImage (arbitraryDepth n n) ∈ anbncndn := by
-  rw [diagonal_is_anbncndn]; exact makeString_in_language n
-
-/-- The diagonal subset of Swiss German cross-serial clauses (encoded as
-    token sequences): case-matched, case-sorted, with `m = n`. -/
-def swissGermanDiagonalLang : Language Token :=
-  { ts | ∃ n : Nat, ts = caseSortedTokens (arbitraryDepth n n) }
-
-/-- The homomorphic image of the diagonal SG language under `tokenStringHom`
-    is exactly `anbncndn`.
-
-    This is the load-bearing equality for Shieber's argument: it sits at the
-    interface between linguistic data (the diagonal SG clauses) and the
-    formal-language witness (`anbncndn`) whose non-CF status is established
-    in `Linglib.Core.Computability.NonContextFree`. -/
-theorem stringMap_diagonal_eq_anbncndn :
-    Language.stringMap tokenStringHom swissGermanDiagonalLang = anbncndn := by
-  ext w
-  constructor
-  · rintro ⟨v, ⟨n, hv⟩, hApply⟩
-    rw [← hApply, hv, ← clauseImage_eq_apply, diagonal_is_anbncndn]
-    exact makeString_in_language n
-  · intro hw
-    obtain ⟨n, rfl⟩ := (mem_anbncndn_iff w).mp hw
-    refine ⟨caseSortedTokens (arbitraryDepth n n), ⟨n, rfl⟩, ?_⟩
-    rw [← clauseImage_eq_apply, diagonal_is_anbncndn]
-
-/-- **Diagonal Swiss German is not context-free.** A formal corollary of
-    [shieber-1985]'s argument, using only the one-parameter substrate
-    `{aⁿbⁿcⁿdⁿ}`. The image of the diagonal SG language under `tokenStringHom`
-    equals `anbncndn` (not CF), so by closure under string homomorphism
-    (`Language.not_isContextFree_of_stringMap_not`), the source is not CF. -/
-theorem swiss_german_diagonal_not_contextFree :
-    ¬ swissGermanDiagonalLang.IsContextFree := by
-  apply Language.not_isContextFree_of_stringMap_not tokenStringHom
-  rw [stringMap_diagonal_eq_anbncndn]
-  exact anbncndn_not_contextFree
-
--- ============================================================================
--- §4: The full Swiss German language and Shieber's schema
--- ============================================================================
--- Shieber's actual paper structure projects FULL Swiss German sentences
--- (including matrix material like subjects, complementizers, auxiliaries)
--- to {a,b,c,d} via a homomorphism that erases boundary words to ε. The
--- regex filter then selects sentences whose stripped image is the canonical
--- case-sorted core. We mechanize this by:
---   * allowing `matrix` tokens interleaved anywhere in `swissGermanLang`,
---   * defining `tokenStringHom` to map matrix tokens to `[]`,
---   * proving the intersection of (image-of-SG) with `caseSorted` equals
---     `ambncmdn`, then applying `not_isContextFree_via_witness`.
--- This makes the headline theorem `swiss_german_not_contextFree` a faithful
--- statement about FULL Swiss German, not just its NP*V* sub-shape.
-
-/-- The Swiss German cross-serial language. A token list `ts` is in this
-    language iff:
-
-    * stripping matrix tokens leaves a list of form `nps ++ vs` (NPs precede
-      Vs in the cross-serial core), and
-    * the case counts match (#DAT-NP = #DAT-V, #ACC-NP = #ACC-V).
-
-    Matrix tokens (subjects, complementizers, auxiliaries) may appear anywhere
-    interleaved with cross-serial NPs/Vs — Shieber's homomorphism erases them.
-    The case-sorted canonical form `caseSortedTokens (arbitraryDepth m n)`
-    (no matrix tokens, NPs and Vs each in canonical case order) is properly
-    contained. -/
+/-- Any language over the tokens meeting Claims 1 to 3: with the boundary material erased, a
+clause is its noun phrases followed by its verbs, with as many dative and accusative verbs as
+dative and accusative noun phrases. -/
 def swissGermanLang : Language Token :=
   { ts | ∃ nps vs : List Token,
-      ts.filter (fun t => !t.isMatrix) = nps ++ vs ∧
-      (∀ t ∈ nps, t.isNP = true) ∧
-      (∀ t ∈ vs, t.isV = true) ∧
-      nps.countP (· == .datNP) = vs.countP (· == .datV) ∧
-      nps.countP (· == .accNP) = vs.countP (· == .accV) }
+      ts.filter (!·.isBoundary) = nps ++ vs ∧
+      (∀ t ∈ nps, t.isNP = true) ∧ (∀ t ∈ vs, t.isV = true) ∧
+      nps.count .datNP = vs.count .datV ∧ nps.count .accNP = vs.count .accV }
 
-/-- Every case-matched, case-sorted clause (no matrix material) is in the
-    (more general) free SG language. -/
-theorem caseSortedTokens_in_swissGermanLang (m n : Nat) :
-    caseSortedTokens (arbitraryDepth m n) ∈ swissGermanLang := by
-  refine ⟨List.replicate m .datNP ++ List.replicate n .accNP,
-          List.replicate m .datV ++ List.replicate n .accV, ?_, ?_, ?_, ?_, ?_⟩
-  · -- caseSortedTokens has no matrix tokens, so filter is identity.
-    show List.filter _ (caseSortedTokens (arbitraryDepth m n)) = _
-    simp [caseSortedTokens, arbitraryDepth, List.filter_append, Token.isMatrix, List.append_assoc]
+/-- The clause of the schema of Claim 2 with `m` accusative and `n` dative pairs. -/
+def canonical (m n : ℕ) : List Token :=
+  List.replicate m .accNP ++ List.replicate n .datNP ++
+    List.replicate m .accV ++ List.replicate n .datV
+
+theorem flatMap_canonical (m n : ℕ) :
+    (canonical m n).flatMap tokenStringHom = makeString_ambncmdn m n := by
+  simp [canonical, tokenStringHom, makeString_ambncmdn, List.flatMap_replicate]
+
+/-! ### The paper's clauses (1)–(22) -/
+
+/-- A clause of the paper's data: the cases of its noun phrases in order, its case-taking verbs
+as Fragment lexemes in order, and its judgment. -/
+structure Row where
+  nps : List Case
+  verbs : List CrossSerialVerb
+  acceptable : Bool
+  deriving DecidableEq, Repr
+
+/-- Read the noun-phrase cases off a feature string: `A` accusative, `D` dative. -/
+def parseCases (s : String) : List Case :=
+  s.toList.filterMap λ
+    | 'A' => some .acc
+    | 'D' => some .dat
+    | _ => none
+
+/-- Read the verbs off a feature string: `L` *lönd* or *laa*, `H` *hälfe*, `A` *aastriiche*. -/
+def parseVerbs (s : String) : List CrossSerialVerb :=
+  s.toList.filterMap λ
+    | 'L' => some .loend
+    | 'H' => some .haelfe
+    | 'A' => some .aastriiche
+    | _ => none
+
+def Row.ofExample (e : LinguisticExample) : Option Row := do
+  let n ← e.paperFeatures.lookup "nps"
+  let v ← e.paperFeatures.lookup "verbs"
+  pure ⟨parseCases n, parseVerbs v, match e.judgment with | .acceptable => true | _ => false⟩
+
+/-- The clauses (1)–(22). -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
+
+/-- Claim 3 on a clause: the dative and the accusative verbs are as many as the dative and the
+accusative noun phrases. -/
+def Row.CaseMatched (r : Row) : Prop :=
+  r.nps.count .dat = (r.verbs.map verbObjectCase).count .dat ∧
+    r.nps.count .acc = (r.verbs.map verbObjectCase).count .acc
+
+instance : DecidablePred Row.CaseMatched := λ _ => inferInstanceAs (Decidable (_ ∧ _))
+
+theorem rows_complete : ∀ e ∈ Examples.all, (Row.ofExample e).isSome = true := by decide
+
+/-- Claim 3 against the paper's data: a clause is grammatical exactly when its case requirements
+are met, whatever the order of its constituents (§4.2). -/
+theorem caseMatched_rows : ∀ r ∈ rows, r.acceptable = true ↔ r.CaseMatched := by decide
+
+/-- The token string of a clause in cross-serial order: its noun phrases, then its verbs. -/
+def Row.tokens (r : Row) : List Token := r.nps.filterMap Token.np ++ r.verbs.map Token.v
+
+private theorem count_np_filterMap (cs : List Case) :
+    (cs.filterMap Token.np).count .datNP = cs.count .dat ∧
+      (cs.filterMap Token.np).count .accNP = cs.count .acc := by
+  induction cs with
+  | nil => simp
+  | cons c cs ih => cases c <;> simp [Token.np] at ih ⊢ <;> omega
+
+private theorem count_v_map (vs : List CrossSerialVerb) :
+    (vs.map Token.v).count .datV = (vs.map verbObjectCase).count .dat ∧
+      (vs.map Token.v).count .accV = (vs.map verbObjectCase).count .acc := by
+  induction vs with
+  | nil => simp
+  | cons v vs ih => cases v <;> simp [Token.v, verbObjectCase, ih]
+
+/-- Every case-matched clause in cross-serial order is in the language. -/
+theorem tokens_mem_swissGermanLang (r : Row) (h : r.CaseMatched) :
+    r.tokens ∈ swissGermanLang := by
+  refine ⟨r.nps.filterMap Token.np, r.verbs.map Token.v, ?_, ?_, ?_, ?_, ?_⟩
+  · refine List.filter_eq_self.mpr λ t ht => ?_
+    rcases List.mem_append.mp ht with ht | ht
+    · obtain ⟨c, -, hc⟩ := List.mem_filterMap.mp ht
+      cases c <;> simp [Token.np] at hc <;> subst hc <;> decide
+    · obtain ⟨v, -, rfl⟩ := List.mem_map.mp ht
+      cases v <;> decide
   · intro t ht
-    rcases List.mem_append.mp ht with h | h
-    · obtain rfl := List.eq_of_mem_replicate h; rfl
-    · obtain rfl := List.eq_of_mem_replicate h; rfl
+    obtain ⟨c, -, hc⟩ := List.mem_filterMap.mp ht
+    cases c <;> simp [Token.np] at hc <;> subst hc <;> decide
   · intro t ht
-    rcases List.mem_append.mp ht with h | h
-    · obtain rfl := List.eq_of_mem_replicate h; rfl
-    · obtain rfl := List.eq_of_mem_replicate h; rfl
-  · simp [List.countP_append, List.countP_replicate]
-  · simp [List.countP_append, List.countP_replicate]
+    obtain ⟨v, -, rfl⟩ := List.mem_map.mp ht
+    cases v <;> decide
+  · rw [(count_np_filterMap r.nps).1, (count_v_map r.verbs).1]
+    exact h.1
+  · rw [(count_np_filterMap r.nps).2, (count_v_map r.verbs).2]
+    exact h.2
 
--- ----------------------------------------------------------------------------
--- The regular filter `caseSorted` on FourSymbol: a*b*c*d*.
--- ----------------------------------------------------------------------------
+/-- The schema clause is the cross-serial clause with `m` accusative and `n` dative pairs. -/
+theorem canonical_eq_tokens (m n : ℕ) :
+    canonical m n =
+      Row.tokens ⟨List.replicate m .acc ++ List.replicate n .dat,
+        List.replicate m .loend ++ List.replicate n .haelfe, true⟩ := by
+  simp [canonical, Row.tokens, Token.np, Token.v, verbObjectCase]
 
-/-- DFA states for the case-sorted shape `a*b*c*d*`. -/
-inductive CaseSortedState | sA | sB | sC | sD | sDead
+theorem canonical_mem_swissGermanLang (m n : ℕ) : canonical m n ∈ swissGermanLang := by
+  rw [canonical_eq_tokens]
+  refine tokens_mem_swissGermanLang _ ⟨?_, ?_⟩ <;>
+    simp [List.count_replicate, verbObjectCase]
+
+/-! ### The regular filter `a* b* c* d*` -/
+
+/-- The states of the automaton for `a* b* c* d*`. -/
+inductive CaseSortedState
+  | sA | sB | sC | sD | sDead
   deriving DecidableEq, Fintype, Repr
 
-/-- DFA recognizing `a*b*c*d*` over `FourSymbol`. -/
+/-- The automaton recognizing `a* b* c* d*`. -/
 def caseSortedDFA : DFA FourSymbol CaseSortedState where
   start := .sA
-  accept := { .sA, .sB, .sC, .sD }
+  accept := {.sA, .sB, .sC, .sD}
   step
-    | .sA, .a => .sA  | .sA, .b => .sB  | .sA, .c => .sC  | .sA, .d => .sD
+    | .sA, .a => .sA | .sA, .b => .sB | .sA, .c => .sC | .sA, .d => .sD
     | .sB, .a => .sDead | .sB, .b => .sB | .sB, .c => .sC | .sB, .d => .sD
     | .sC, .a => .sDead | .sC, .b => .sDead | .sC, .c => .sC | .sC, .d => .sD
     | .sD, .a => .sDead | .sD, .b => .sDead | .sD, .c => .sDead | .sD, .d => .sD
     | .sDead, _ => .sDead
 
-/-- The case-sorted shape language `a*b*c*d*` on `FourSymbol`. -/
+/-- The regular language `a* b* c* d*`, the image of the paper's filter with the boundary
+letters erased. -/
 def caseSorted : Language FourSymbol := caseSortedDFA.accepts
 
 theorem caseSorted_isRegular : caseSorted.IsRegular :=
   ⟨CaseSortedState, inferInstance, caseSortedDFA, rfl⟩
 
--- DFA evaluation step lemmas: each replicate kᵢ block stabilises in the
--- corresponding state once started or already past it.
-
-private lemma evalFrom_replicate_a (k : Nat) :
+private theorem evalFrom_replicate_a (k : ℕ) :
     caseSortedDFA.evalFrom .sA (List.replicate k .a) = .sA := by
   induction k with
   | zero => rfl
   | succ k ih => rw [List.replicate_succ, DFA.evalFrom_cons]; exact ih
 
-private lemma evalFrom_replicate_b (k : Nat) (s : CaseSortedState)
-    (h : s = .sA ∨ s = .sB) :
-    caseSortedDFA.evalFrom s (List.replicate k .b) =
-      (if k = 0 then s else .sB) := by
+private theorem evalFrom_replicate_b (k : ℕ) (s : CaseSortedState) (h : s = .sA ∨ s = .sB) :
+    caseSortedDFA.evalFrom s (List.replicate k .b) = if k = 0 then s else .sB := by
   induction k generalizing s with
   | zero => simp
   | succ k ih =>
     rw [List.replicate_succ, DFA.evalFrom_cons]
-    rcases h with rfl | rfl
-    · -- step sA b = sB
-      show caseSortedDFA.evalFrom .sB (List.replicate k .b) = _
-      rw [ih .sB (.inr rfl)]; cases k <;> simp
-    · -- step sB b = sB
-      show caseSortedDFA.evalFrom .sB (List.replicate k .b) = _
+    rcases h with rfl | rfl <;>
+    · show caseSortedDFA.evalFrom .sB (List.replicate k .b) = _
       rw [ih .sB (.inr rfl)]; cases k <;> simp
 
-private lemma evalFrom_replicate_c (k : Nat) (s : CaseSortedState)
+private theorem evalFrom_replicate_c (k : ℕ) (s : CaseSortedState)
     (h : s = .sA ∨ s = .sB ∨ s = .sC) :
-    caseSortedDFA.evalFrom s (List.replicate k .c) =
-      (if k = 0 then s else .sC) := by
+    caseSortedDFA.evalFrom s (List.replicate k .c) = if k = 0 then s else .sC := by
   induction k generalizing s with
   | zero => simp
   | succ k ih =>
     rw [List.replicate_succ, DFA.evalFrom_cons]
-    rcases h with rfl | rfl | rfl
-    all_goals (
-      show caseSortedDFA.evalFrom .sC (List.replicate k .c) = _
-      rw [ih .sC (.inr (.inr rfl))]; cases k <;> simp)
+    rcases h with rfl | rfl | rfl <;>
+    · show caseSortedDFA.evalFrom .sC (List.replicate k .c) = _
+      rw [ih .sC (.inr (.inr rfl))]; cases k <;> simp
 
-private lemma evalFrom_replicate_d (k : Nat) (s : CaseSortedState)
+private theorem evalFrom_replicate_d (k : ℕ) (s : CaseSortedState)
     (h : s = .sA ∨ s = .sB ∨ s = .sC ∨ s = .sD) :
-    caseSortedDFA.evalFrom s (List.replicate k .d) =
-      (if k = 0 then s else .sD) := by
+    caseSortedDFA.evalFrom s (List.replicate k .d) = if k = 0 then s else .sD := by
   induction k generalizing s with
   | zero => simp
   | succ k ih =>
     rw [List.replicate_succ, DFA.evalFrom_cons]
-    rcases h with rfl | rfl | rfl | rfl
-    all_goals (
-      show caseSortedDFA.evalFrom .sD (List.replicate k .d) = _
-      rw [ih .sD (.inr (.inr (.inr rfl)))]; cases k <;> simp)
+    rcases h with rfl | rfl | rfl | rfl <;>
+    · show caseSortedDFA.evalFrom .sD (List.replicate k .d) = _
+      rw [ih .sD (.inr (.inr (.inr rfl)))]; cases k <;> simp
 
-/-- Concrete witness: every `aᵐbⁿcᵐdⁿ` is case-sorted. -/
-theorem makeString_ambncmdn_in_caseSorted (m n : Nat) :
-    makeString_ambncmdn m n ∈ caseSorted := by
-  show caseSortedDFA.eval (makeString_ambncmdn m n) ∈ caseSortedDFA.accept
-  show caseSortedDFA.evalFrom .sA _ ∈ _
+/-- Every `aᵐ bⁿ cᵐ dⁿ` passes the filter. -/
+theorem makeString_ambncmdn_mem_caseSorted (m n : ℕ) : makeString_ambncmdn m n ∈ caseSorted := by
+  show caseSortedDFA.evalFrom .sA (makeString_ambncmdn m n) ∈ caseSortedDFA.accept
   simp only [makeString_ambncmdn, DFA.evalFrom_of_append, evalFrom_replicate_a]
   rw [evalFrom_replicate_b n .sA (.inl rfl)]
-  set s_after_b := if n = 0 then CaseSortedState.sA else .sB
-  have hs_after_b : s_after_b = .sA ∨ s_after_b = .sB := by
-    by_cases hn : n = 0 <;> simp [s_after_b, hn]
-  rw [evalFrom_replicate_c m s_after_b (hs_after_b.imp_right (.inl ·))]
-  set s_after_c := if m = 0 then s_after_b else .sC
-  have hs_after_c : s_after_c = .sA ∨ s_after_c = .sB ∨ s_after_c = .sC := by
+  set s₁ := if n = 0 then CaseSortedState.sA else .sB
+  have hs₁ : s₁ = .sA ∨ s₁ = .sB := by by_cases hn : n = 0 <;> simp [s₁, hn]
+  rw [evalFrom_replicate_c m s₁ (hs₁.imp_right (.inl ·))]
+  set s₂ := if m = 0 then s₁ else .sC
+  have hs₂ : s₂ = .sA ∨ s₂ = .sB ∨ s₂ = .sC := by
     by_cases hm : m = 0
-    · simp only [s_after_c, hm, if_true]
-      exact hs_after_b.imp_right .inl
-    · simp only [s_after_c, hm, if_false]
-      right; right; trivial
-  rw [evalFrom_replicate_d n s_after_c
-    (hs_after_c.imp_right (·.imp_right .inl))]
-  -- Final state ∈ accept (which is {.sA, .sB, .sC, .sD}).
-  rcases hs_after_c with hSA | hSB | hSC <;>
-    by_cases hn : n = 0 <;>
+    · simp only [s₂, hm, if_true]
+      exact hs₁.imp_right .inl
+    · simp [s₂, hm]
+  rw [evalFrom_replicate_d n s₂ (hs₂.imp_right (·.imp_right .inl))]
+  rcases hs₂ with h | h | h <;> by_cases hn : n = 0 <;>
     simp_all (config := { decide := true }) [caseSortedDFA]
 
--- ----------------------------------------------------------------------------
--- The intersection equality: stringMap free SG ⊓ caseSorted = ambncmdn.
--- This is the meat of Shieber's argument: the homomorphism collapses cases
--- to letter identity, the regular filter forces letter-sort to be canonical
--- (a*b*c*d*), and case-matching forces equal counts of a/c and b/d.
--- ----------------------------------------------------------------------------
-
--- Decomposition substrate: an accepted DFA trajectory partitions the input
--- as a sorted block sequence aᵖbᵠcʳdˢ.
-
-private lemma evalFrom_sDead (xs : List FourSymbol) :
+private theorem evalFrom_sDead (xs : List FourSymbol) :
     caseSortedDFA.evalFrom .sDead xs = .sDead := by
   induction xs with
   | nil => rfl
   | cons x xs ih =>
     rw [DFA.evalFrom_cons]
-    show caseSortedDFA.evalFrom .sDead xs = .sDead
     exact ih
 
-private lemma sDead_not_accept : .sDead ∉ caseSortedDFA.accept := by
-  intro h
-  -- caseSortedDFA.accept is {.sA, .sB, .sC, .sD} as a Set.
-  rcases h with h | h | h | h <;> exact CaseSortedState.noConfusion h
+private theorem sDead_notMem_accept : CaseSortedState.sDead ∉ caseSortedDFA.accept := by
+  rintro (h | h | h | h) <;> exact CaseSortedState.noConfusion h
 
-private lemma not_dead_of_accept {s : CaseSortedState} {xs : List FourSymbol}
+private theorem ne_sDead_of_mem_accept {s : CaseSortedState} {xs : List FourSymbol}
     (h : caseSortedDFA.evalFrom s xs ∈ caseSortedDFA.accept) :
-    caseSortedDFA.evalFrom s xs ≠ .sDead := by
-  intro h_eq; rw [h_eq] at h; exact sDead_not_accept h
+    caseSortedDFA.evalFrom s xs ≠ .sDead :=
+  λ h' => sDead_notMem_accept (h' ▸ h)
 
-private lemma sD_decomp (xs : List FourSymbol)
+private theorem sD_decomp (xs : List FourSymbol)
     (h : caseSortedDFA.evalFrom .sD xs ∈ caseSortedDFA.accept) :
     ∃ u, xs = List.replicate u .d := by
   induction xs with
@@ -501,24 +310,12 @@ private lemma sD_decomp (xs : List FourSymbol)
   | cons x xs ih =>
     rw [DFA.evalFrom_cons] at h
     cases x with
-    | a =>
-      have := not_dead_of_accept h
-      have heq : caseSortedDFA.evalFrom .sDead xs = .sDead := evalFrom_sDead xs
-      exact absurd heq this
-    | b =>
-      have := not_dead_of_accept h
-      have heq : caseSortedDFA.evalFrom .sDead xs = .sDead := evalFrom_sDead xs
-      exact absurd heq this
-    | c =>
-      have := not_dead_of_accept h
-      have heq : caseSortedDFA.evalFrom .sDead xs = .sDead := evalFrom_sDead xs
-      exact absurd heq this
     | d =>
-      have h' : caseSortedDFA.evalFrom .sD xs ∈ caseSortedDFA.accept := h
-      obtain ⟨u, rfl⟩ := ih h'
+      obtain ⟨u, rfl⟩ := ih h
       exact ⟨u + 1, by rw [List.replicate_succ]⟩
+    | _ => exact absurd (evalFrom_sDead xs) (ne_sDead_of_mem_accept h)
 
-private lemma sC_decomp (xs : List FourSymbol)
+private theorem sC_decomp (xs : List FourSymbol)
     (h : caseSortedDFA.evalFrom .sC xs ∈ caseSortedDFA.accept) :
     ∃ r u, xs = List.replicate r .c ++ List.replicate u .d := by
   induction xs with
@@ -526,24 +323,15 @@ private lemma sC_decomp (xs : List FourSymbol)
   | cons x xs ih =>
     rw [DFA.evalFrom_cons] at h
     cases x with
-    | a =>
-      have := not_dead_of_accept h
-      exact absurd (evalFrom_sDead xs) this
-    | b =>
-      have := not_dead_of_accept h
-      exact absurd (evalFrom_sDead xs) this
     | c =>
-      have h' : caseSortedDFA.evalFrom .sC xs ∈ caseSortedDFA.accept := h
-      obtain ⟨r, u, rfl⟩ := ih h'
-      refine ⟨r + 1, u, ?_⟩
-      rw [List.replicate_succ]; rfl
+      obtain ⟨r, u, rfl⟩ := ih h
+      exact ⟨r + 1, u, by rw [List.replicate_succ]; rfl⟩
     | d =>
-      have h' : caseSortedDFA.evalFrom .sD xs ∈ caseSortedDFA.accept := h
-      obtain ⟨u, rfl⟩ := sD_decomp xs h'
-      refine ⟨0, u + 1, ?_⟩
-      rw [List.replicate_succ]; rfl
+      obtain ⟨u, rfl⟩ := sD_decomp xs h
+      exact ⟨0, u + 1, by simp [List.replicate]⟩
+    | _ => exact absurd (evalFrom_sDead xs) (ne_sDead_of_mem_accept h)
 
-private lemma sB_decomp (xs : List FourSymbol)
+private theorem sB_decomp (xs : List FourSymbol)
     (h : caseSortedDFA.evalFrom .sB xs ∈ caseSortedDFA.accept) :
     ∃ q r u, xs = List.replicate q .b ++ List.replicate r .c ++ List.replicate u .d := by
   induction xs with
@@ -551,281 +339,109 @@ private lemma sB_decomp (xs : List FourSymbol)
   | cons x xs ih =>
     rw [DFA.evalFrom_cons] at h
     cases x with
-    | a =>
-      have := not_dead_of_accept h
-      exact absurd (evalFrom_sDead xs) this
     | b =>
-      have h' : caseSortedDFA.evalFrom .sB xs ∈ caseSortedDFA.accept := h
-      obtain ⟨q, r, u, rfl⟩ := ih h'
-      refine ⟨q + 1, r, u, ?_⟩
-      rw [List.replicate_succ]; rfl
+      obtain ⟨q, r, u, rfl⟩ := ih h
+      exact ⟨q + 1, r, u, by rw [List.replicate_succ]; rfl⟩
     | c =>
-      have h' : caseSortedDFA.evalFrom .sC xs ∈ caseSortedDFA.accept := h
-      obtain ⟨r, u, rfl⟩ := sC_decomp xs h'
-      refine ⟨0, r + 1, u, ?_⟩
-      simp [List.replicate]
+      obtain ⟨r, u, rfl⟩ := sC_decomp xs h
+      exact ⟨0, r + 1, u, by simp [List.replicate]⟩
     | d =>
-      have h' : caseSortedDFA.evalFrom .sD xs ∈ caseSortedDFA.accept := h
-      obtain ⟨u, rfl⟩ := sD_decomp xs h'
-      refine ⟨0, 0, u + 1, ?_⟩
-      simp [List.replicate]
+      obtain ⟨u, rfl⟩ := sD_decomp xs h
+      exact ⟨0, 0, u + 1, by simp [List.replicate]⟩
+    | a => exact absurd (evalFrom_sDead xs) (ne_sDead_of_mem_accept h)
 
-private lemma sA_decomp (xs : List FourSymbol)
-    (h : caseSortedDFA.evalFrom .sA xs ∈ caseSortedDFA.accept) :
+/-- A string the filter accepts is a block string `aᵖ bᵠ cʳ dᵘ`. -/
+theorem caseSorted_decomp (xs : List FourSymbol) (h : xs ∈ caseSorted) :
     ∃ p q r u, xs = List.replicate p .a ++ List.replicate q .b ++
-                    List.replicate r .c ++ List.replicate u .d := by
+      List.replicate r .c ++ List.replicate u .d := by
   induction xs with
   | nil => exact ⟨0, 0, 0, 0, rfl⟩
   | cons x xs ih =>
+    change caseSortedDFA.evalFrom .sA (x :: xs) ∈ caseSortedDFA.accept at h
     rw [DFA.evalFrom_cons] at h
     cases x with
     | a =>
-      have h' : caseSortedDFA.evalFrom .sA xs ∈ caseSortedDFA.accept := h
-      obtain ⟨p, q, r, u, rfl⟩ := ih h'
-      refine ⟨p + 1, q, r, u, ?_⟩
-      rw [List.replicate_succ]; rfl
+      obtain ⟨p, q, r, u, rfl⟩ := ih h
+      exact ⟨p + 1, q, r, u, by rw [List.replicate_succ]; rfl⟩
     | b =>
-      have h' : caseSortedDFA.evalFrom .sB xs ∈ caseSortedDFA.accept := h
-      obtain ⟨q, r, u, rfl⟩ := sB_decomp xs h'
-      refine ⟨0, q + 1, r, u, ?_⟩
-      simp [List.replicate]
+      obtain ⟨q, r, u, rfl⟩ := sB_decomp xs h
+      exact ⟨0, q + 1, r, u, by simp [List.replicate]⟩
     | c =>
-      have h' : caseSortedDFA.evalFrom .sC xs ∈ caseSortedDFA.accept := h
-      obtain ⟨r, u, rfl⟩ := sC_decomp xs h'
-      refine ⟨0, 0, r + 1, u, ?_⟩
-      simp [List.replicate]
+      obtain ⟨r, u, rfl⟩ := sC_decomp xs h
+      exact ⟨0, 0, r + 1, u, by simp [List.replicate]⟩
     | d =>
-      have h' : caseSortedDFA.evalFrom .sD xs ∈ caseSortedDFA.accept := h
-      obtain ⟨u, rfl⟩ := sD_decomp xs h'
-      refine ⟨0, 0, 0, u + 1, ?_⟩
-      simp [List.replicate]
+      obtain ⟨u, rfl⟩ := sD_decomp xs h
+      exact ⟨0, 0, 0, u + 1, by simp [List.replicate]⟩
 
-/-- Any case-sorted FourString decomposes uniquely into block-sorted
-    `aᵖ ++ bᵠ ++ cʳ ++ dˢ`. -/
-theorem caseSorted_decomp (xs : List FourSymbol) (h : xs ∈ caseSorted) :
-    ∃ p q r u, xs = List.replicate p .a ++ List.replicate q .b ++
-                    List.replicate r .c ++ List.replicate u .d :=
-  sA_decomp xs h
+/-! ### The intersection and the theorem -/
 
--- Token-image counting lemmas. `tokenStringHom` maps cross-serial NPs/Vs to
--- singleton {a,b,c,d} letters and matrix tokens to `[]`; counting on the
--- flattened image gives back the source token-equality count.
-
-private lemma count_a_image_eq_count_datNP (ts : List Token) :
-    (ts.flatMap tokenStringHom).countP (· == .a) = ts.countP (· == .datNP) := by
+private theorem count_image (ts : List Token) :
+    (ts.flatMap tokenStringHom).count .a = ts.count .accNP ∧
+      (ts.flatMap tokenStringHom).count .b = ts.count .datNP ∧
+      (ts.flatMap tokenStringHom).count .c = ts.count .accV ∧
+      (ts.flatMap tokenStringHom).count .d = ts.count .datV := by
   induction ts with
-  | nil => rfl
-  | cons t ts ih =>
-    cases t <;>
-      simp [List.flatMap_cons, ih, tokenStringHom, tokenToSymbol]
+  | nil => simp
+  | cons t ts ih => cases t <;> simp [List.flatMap_cons, tokenStringHom, ih]
 
-private lemma count_b_image_eq_count_accNP (ts : List Token) :
-    (ts.flatMap tokenStringHom).countP (· == .b) = ts.countP (· == .accNP) := by
+private theorem count_filter_notBoundary (ts : List Token) :
+    (ts.filter (!·.isBoundary)).count .accNP = ts.count .accNP ∧
+      (ts.filter (!·.isBoundary)).count .datNP = ts.count .datNP ∧
+      (ts.filter (!·.isBoundary)).count .accV = ts.count .accV ∧
+      (ts.filter (!·.isBoundary)).count .datV = ts.count .datV := by
   induction ts with
-  | nil => rfl
-  | cons t ts ih =>
-    cases t <;>
-      simp [List.flatMap_cons, ih, tokenStringHom, tokenToSymbol]
-
-private lemma count_c_image_eq_count_datV (ts : List Token) :
-    (ts.flatMap tokenStringHom).countP (· == .c) = ts.countP (· == .datV) := by
-  induction ts with
-  | nil => rfl
-  | cons t ts ih =>
-    cases t <;>
-      simp [List.flatMap_cons, ih, tokenStringHom, tokenToSymbol]
-
-private lemma count_d_image_eq_count_accV (ts : List Token) :
-    (ts.flatMap tokenStringHom).countP (· == .d) = ts.countP (· == .accV) := by
-  induction ts with
-  | nil => rfl
-  | cons t ts ih =>
-    cases t <;>
-      simp [List.flatMap_cons, ih, tokenStringHom, tokenToSymbol]
-
--- Filter-by-non-matrix preserves token-equality counts for cross-serial
--- tokens (matrix is the only token that gets filtered out, and matrix is
--- different from each cross-serial token).
-
-private lemma countP_filter_notMatrix_datNP (ts : List Token) :
-    (ts.filter (fun t => !t.isMatrix)).countP (· == .datNP) =
-      ts.countP (· == .datNP) := by
-  induction ts with
-  | nil => rfl
+  | nil => simp
   | cons t ts ih =>
     rw [List.filter_cons]
-    cases t <;> simp_all [Token.isMatrix]
+    cases t <;> simp [Token.isBoundary]
 
-private lemma countP_filter_notMatrix_accNP (ts : List Token) :
-    (ts.filter (fun t => !t.isMatrix)).countP (· == .accNP) =
-      ts.countP (· == .accNP) := by
-  induction ts with
-  | nil => rfl
-  | cons t ts ih =>
-    rw [List.filter_cons]
-    cases t <;> simp_all [Token.isMatrix]
+private theorem count_nps_vs {nps vs : List Token} (hn : ∀ t ∈ nps, t.isNP = true)
+    (hv : ∀ t ∈ vs, t.isV = true) :
+    vs.count .accNP = 0 ∧ vs.count .datNP = 0 ∧ nps.count .accV = 0 ∧ nps.count .datV = 0 := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> refine List.count_eq_zero.mpr λ h => ?_
+  · have := hv _ h; simp [Token.isV] at this
+  · have := hv _ h; simp [Token.isV] at this
+  · have := hn _ h; simp [Token.isNP] at this
+  · have := hn _ h; simp [Token.isNP] at this
 
-private lemma countP_filter_notMatrix_datV (ts : List Token) :
-    (ts.filter (fun t => !t.isMatrix)).countP (· == .datV) =
-      ts.countP (· == .datV) := by
-  induction ts with
-  | nil => rfl
-  | cons t ts ih =>
-    rw [List.filter_cons]
-    cases t <;> simp_all [Token.isMatrix]
-
-private lemma countP_filter_notMatrix_accV (ts : List Token) :
-    (ts.filter (fun t => !t.isMatrix)).countP (· == .accV) =
-      ts.countP (· == .accV) := by
-  induction ts with
-  | nil => rfl
-  | cons t ts ih =>
-    rw [List.filter_cons]
-    cases t <;> simp_all [Token.isMatrix]
-
--- countP_caseValue_* lemmas removed: the new `swissGermanLang` definition uses
--- direct token-equality counting (`· == .datNP` etc.) instead of going
--- through `caseValue`, so the bridge lemmas are no longer needed.
-
-/-- The Bar-Hillel-style intersection equality: full SG (with arbitrary matrix
-    material), projected to {a,b,c,d} and filtered to case-sorted shape,
-    equals exactly the non-CF language `aᵐbⁿcᵐdⁿ`. -/
+/-- The intersection equality: the image of the language under `f`, filtered to the case-sorted
+shape, is `aᵐ bⁿ cᵐ dⁿ`. The homomorphism collapses each case class to a letter, the filter
+forces the sorted order of Claim 2, and Claim 3 equates the exponents. -/
 theorem stringMap_swissGerman_inter_caseSorted_eq_ambncmdn :
     Language.stringMap tokenStringHom swissGermanLang ⊓ caseSorted = ambncmdn := by
   ext w
-  refine ⟨?_, ?_⟩
-  · -- Forward: SG image filtered to case-sorted shape ⊆ ambncmdn.
-    rintro ⟨⟨ts, hts_in, hApply⟩, hw_cs⟩
-    -- Decompose the case-sorted image into a^p b^q c^r d^s.
-    obtain ⟨p, q, r, s, hw_decomp⟩ := caseSorted_decomp w hw_cs
-    -- ts has cross-serial core (nps ++ vs after stripping matrix) with case-
-    -- matched counts on cross-serial tokens.
-    obtain ⟨nps, vs, hts_filter, h_nps, h_vs, h_dat, h_acc⟩ := hts_in
-    -- w = List.flatMap tokenStringHom ts = ts.flatMap tokenStringHom.
-    have hw_flatMap : w = ts.flatMap tokenStringHom := hApply.symm
-    -- Counts in w: p = #a, q = #b, r = #c, s = #d (from the decomposition).
-    have h_p : w.countP (· == .a) = p := by
-      rw [hw_decomp]; simp [List.countP_append, List.countP_replicate]
-    have h_q : w.countP (· == .b) = q := by
-      rw [hw_decomp]; simp [List.countP_append, List.countP_replicate]
-    have h_r : w.countP (· == .c) = r := by
-      rw [hw_decomp]; simp [List.countP_append, List.countP_replicate]
-    have h_s : w.countP (· == .d) = s := by
-      rw [hw_decomp]; simp [List.countP_append, List.countP_replicate]
-    -- Bridge image-counts to source token-counts (matrix tokens contribute 0).
-    have h_p_eq : p = ts.countP (· == .datNP) := by
-      rw [hw_flatMap, count_a_image_eq_count_datNP] at h_p; omega
-    have h_q_eq : q = ts.countP (· == .accNP) := by
-      rw [hw_flatMap, count_b_image_eq_count_accNP] at h_q; omega
-    have h_r_eq : r = ts.countP (· == .datV) := by
-      rw [hw_flatMap, count_c_image_eq_count_datV] at h_r; omega
-    have h_s_eq : s = ts.countP (· == .accV) := by
-      rw [hw_flatMap, count_d_image_eq_count_accV] at h_s; omega
-    -- Filter-then-decompose gives nps ++ vs structure on the cross-serial core.
-    -- Bridge ts-counts (full string) to filter-counts (cross-serial only) via
-    -- the no-op-on-NP/V filter, then split via append.
-    have h_p_nps : p = nps.countP (· == .datNP) := by
-      rw [h_p_eq, ← countP_filter_notMatrix_datNP, hts_filter, List.countP_append]
-      have hvs_zero : vs.countP (· == .datNP) = 0 := by
-        apply List.countP_eq_zero.mpr
-        intro t ht; have := h_vs t ht; cases t <;> simp_all [Token.isV]
-      omega
-    have h_r_vs : r = vs.countP (· == .datV) := by
-      rw [h_r_eq, ← countP_filter_notMatrix_datV, hts_filter, List.countP_append]
-      have hnps_zero : nps.countP (· == .datV) = 0 := by
-        apply List.countP_eq_zero.mpr
-        intro t ht; have := h_nps t ht; cases t <;> simp_all [Token.isNP]
-      omega
-    have h_q_nps : q = nps.countP (· == .accNP) := by
-      rw [h_q_eq, ← countP_filter_notMatrix_accNP, hts_filter, List.countP_append]
-      have hvs_zero : vs.countP (· == .accNP) = 0 := by
-        apply List.countP_eq_zero.mpr
-        intro t ht; have := h_vs t ht; cases t <;> simp_all [Token.isV]
-      omega
-    have h_s_vs : s = vs.countP (· == .accV) := by
-      rw [h_s_eq, ← countP_filter_notMatrix_accV, hts_filter, List.countP_append]
-      have hnps_zero : nps.countP (· == .accV) = 0 := by
-        apply List.countP_eq_zero.mpr
-        intro t ht; have := h_nps t ht; cases t <;> simp_all [Token.isNP]
-      omega
-    -- Case matching: #DAT-NP in nps = #DAT-V in vs ⇒ p = r; similarly q = s.
-    have h_pr : p = r := by rw [h_p_nps, h_r_vs]; exact h_dat
-    have h_qs : q = s := by rw [h_q_nps, h_s_vs]; exact h_acc
-    -- Now w = a^p b^q c^p d^q = makeString_ambncmdn p q ∈ ambncmdn.
-    refine (mem_ambncmdn_iff w).mpr ⟨p, q, ?_⟩
-    rw [hw_decomp, h_pr, h_qs]
+  constructor
+  · rintro ⟨⟨ts, ⟨nps, vs, hfilter, hn, hv, hdat, hacc⟩, rfl⟩, hw⟩
+    obtain ⟨p, q, r, u, hw'⟩ := caseSorted_decomp _ hw
+    obtain ⟨ha, hb, hc, hd⟩ := count_image ts
+    obtain ⟨fa, fb, fc, fd⟩ := count_filter_notBoundary ts
+    obtain ⟨z₁, z₂, z₃, z₄⟩ := count_nps_vs hn hv
+    rw [hfilter, List.count_append] at fa fb fc fd
+    have hp : p = ts.count .accNP := by
+      rw [← ha, hw']; simp [List.count_replicate]
+    have hq : q = ts.count .datNP := by
+      rw [← hb, hw']; simp [List.count_replicate]
+    have hr : r = ts.count .accV := by
+      rw [← hc, hw']; simp [List.count_replicate]
+    have hu : u = ts.count .datV := by
+      rw [← hd, hw']; simp [List.count_replicate]
+    refine (mem_ambncmdn_iff _).mpr ⟨p, q, ?_⟩
+    rw [hw']
+    have hpr : r = p := by omega
+    have hqu : u = q := by omega
+    rw [hpr, hqu]
     rfl
-  · -- Backward: every aᵐbⁿcᵐdⁿ is the image of canonical SG and is case-sorted.
-    intro hw
+  · intro hw
     obtain ⟨m, n, rfl⟩ := (mem_ambncmdn_iff w).mp hw
-    refine ⟨?_, makeString_ambncmdn_in_caseSorted m n⟩
-    refine ⟨caseSortedTokens (arbitraryDepth m n),
-            caseSortedTokens_in_swissGermanLang m n, ?_⟩
-    -- The canonical preimage has no matrix tokens, so flatMap = map.
-    show List.flatMap tokenStringHom _ = _
-    rw [← clauseImage_eq_apply, clauseImage_shape]
-    rfl
+    exact ⟨⟨canonical m n, canonical_mem_swissGermanLang m n, flatMap_canonical m n⟩,
+      makeString_ambncmdn_mem_caseSorted m n⟩
 
-/-- **[shieber-1985]'s main theorem.** Swiss German subordinate clauses
-    are not weakly context-free.
-
-    Proof structure (the actual Shieber schema, both legs exercised):
-    apply `Language.not_isContextFree_via_witness` with the `tokenStringHom`
-    homomorphism + `caseSorted` regular filter; the witness is that
-    `stringMap h L ⊓ R = ambncmdn`, which is non-CF by
-    `ambncmdn_not_contextFree` (two-parameter pumping). The R-leg matters:
-    `swissGermanLang` allows interleaved NP/V orderings, and the regular
-    filter forces the case-sorted canonical shape needed to land in ambncmdn. -/
-theorem swiss_german_not_contextFree :
-    ¬ swissGermanLang.IsContextFree := by
-  apply Language.not_isContextFree_via_witness tokenStringHom caseSorted
-    caseSorted_isRegular
+/-- Swiss German is not weakly context-free: the image of the language under `f`, intersected
+with the regular filter, is `aᵐ bⁿ cᵐ dⁿ`, so the closure of the context-free languages under
+homomorphisms and intersection with regular languages rules the source out. -/
+theorem swiss_german_not_contextFree : ¬ swissGermanLang.IsContextFree := by
+  apply Language.not_isContextFree_via_witness tokenStringHom caseSorted caseSorted_isRegular
   rw [stringMap_swissGerman_inter_caseSorted_eq_ambncmdn]
   exact ambncmdn_not_contextFree
-
--- (Shieber §3 also notes that strong context-freeness fails as a corollary —
--- any strongly-CF analysis induces a weakly-CF string set. Since the string
--- set isn't weakly CF, no strongly-CF analysis exists. We don't separately
--- formalize this as a theorem because we have no `IsStronglyContextFree`
--- predicate distinct from `IsContextFree`; the meta-theoretic implication
--- would just be a renamed alias of `swiss_german_not_contextFree`.)
-
--- ============================================================================
--- §5: Grounding in the Swiss German Fragment
--- ============================================================================
-
-/-- Verbs in the Swiss German fragment have case requirements that match
-    their Token-level classification (DAT-V or ACC-V). Collapsed from three
-    near-identical theorems into one decide-checked conjunction. -/
-theorem fragment_case_grounding :
-    verbObjectCase .haelfe = Token.caseValue .datV ∧
-    verbObjectCase .loend = Token.caseValue .accV ∧
-    verbObjectCase .aastriiche = Token.caseValue .accV := by decide
-
--- ============================================================================
--- §6: Examples from the Paper
--- ============================================================================
-
-/-- Example (1): *mer em Hans es huus hälfed aastriiche*
-    "we helped Hans paint the house"
-
-    em Hans (DAT) → hälfed (DAT-verb "helped");
-    es huus (ACC) → aastriiche (ACC-verb "paint"). -/
-def example1 : CaseMatchedClause := arbitraryDepth 1 1
-
-/-- Example (5): triply embedded cross-serial clause
-    *mer d'chind em Hans es huus lönd hälfe aastriiche*
-    "we let the children help Hans paint the house"
-
-    d'chind (ACC) → lönd (ACC-verb "let");
-    em Hans (DAT) → hälfe (DAT-verb "help");
-    es huus (ACC) → aastriiche (ACC-verb "paint").
-
-    With case sorting: 1 DAT-NP, 2 ACC-NPs, 1 DAT-V, 2 ACC-Vs. -/
-def example5 : CaseMatchedClause := arbitraryDepth 1 2
-
-/-- The homomorphic image of example (5) is `abbcdd = a¹b²c¹d²`. -/
-theorem example5_image :
-    clauseImage example5 = [.a, .b, .b, .c, .d, .d] := rfl
 
 end Shieber1985
