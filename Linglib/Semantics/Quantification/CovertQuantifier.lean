@@ -1,6 +1,6 @@
 import Linglib.Semantics.Quantification.Counting
 import Linglib.Semantics.Composition.Ty
-import Linglib.Semantics.Composition.LexEntry
+import Linglib.Semantics.Composition.Lexicon
 
 /-!
 # Covert Operators: Montague-Typed Constructors
@@ -8,7 +8,7 @@ import Linglib.Semantics.Composition.LexEntry
 [krifka-etal-1995] [carlson-1977] [guerrini-2026]
 
 Covert operators (Gen, DIST, Hab, DPP) are semantically contentful LF nodes
-with no overt realization. This module packages them as `LexEntry` values
+with no overt realization. This module packages them as `Denotation` values
 that compose via FA in `evalTree`.
 
 The *semantics* these wrap is the canonical generalized-quantifier substrate
@@ -39,7 +39,7 @@ namespace Quantification.CovertQuantifier
 
 section Compositional
 
-open Semantics.Montague (LexEntry Lexicon)
+open Semantics.Composition
 
 /-- Gen: `(e→t) → (e→t) → t`. Dyadic generic quantifier.
 
@@ -50,7 +50,7 @@ open Semantics.Montague (LexEntry Lexicon)
     instantiations. -/
 def gen (E W : Type)
     (generally : (E → Prop) → (E → Prop) → Prop)
-    : LexEntry E W :=
+    : Denotation E W :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, generally⟩
 
 open Classical in
@@ -60,7 +60,7 @@ open Classical in
     over the atom domain. Noncomputable only because the Montague denotations
     `restr`/`scope` are arbitrary `Prop`-predicates (decided classically). -/
 noncomputable def genThreshold (E W : Type) [DecidableEq E] (atoms : List E)
-    (num denom : Nat) : LexEntry E W :=
+    (num denom : Nat) : Denotation E W :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun restr scope =>
     Quantification.thresholdOn atoms.toFinset restr scope num denom⟩
 
@@ -70,7 +70,7 @@ noncomputable def genThreshold (E W : Type) [DecidableEq E] (atoms : List E)
     it returns `[x]`, for plural/kind entities their parts.
     Montague-typed counterpart of `Distributivity.distMaximal`. -/
 def dist (E W : Type) (atomsOf : E → List E)
-    : LexEntry E W :=
+    : Denotation E W :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t), fun P x => ∀ a ∈ atomsOf x, P a⟩
 
 /-- DPP: `(e→t) → (e→t) → t`. Derived Property Predication.
@@ -78,7 +78,7 @@ def dist (E W : Type) (atomsOf : E → List E)
     DPP(P)(Q) = ∃x[P(x) ∧ Q(x)]. An existential type-shift for
     kind-denoting NPs combining with stage-level predicates.
     [guerrini-2026] structure (105b). -/
-def dpp (E W : Type) (atoms : List E) : LexEntry E W :=
+def dpp (E W : Type) (atoms : List E) : Denotation E W :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun prop pred =>
     ∃ x ∈ atoms, prop x ∧ pred x⟩
 
@@ -97,7 +97,7 @@ def dpp (E W : Type) (atoms : List E) : LexEntry E W :=
     - Gen:  `(e→t) → (e→t) → t`  — FA with entity predicates
     - EXH:  `(s→t) → (s→t)`      — FA with propositions -/
 def exh (E W : Type) (exhOp : (W → Prop) → (W → Prop))
-    : LexEntry E W :=
+    : Denotation E W :=
   ⟨(.intens .t) ⇒ (.intens .t), exhOp⟩
 
 end Compositional

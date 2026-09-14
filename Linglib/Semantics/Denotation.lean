@@ -7,8 +7,9 @@ This file defines `Semantics.Denotes`, the class of objects that have a denotati
 bracket notation `⟦x⟧` for it ([heim-kratzer-1998]). A lexical item, a reading, or a whole
 sentence denotes in whatever domain its instance names, so the class gives the library one name
 for the map from a semantic object to its meaning, whether that map is compositional or
-stipulated per object. Objects that denote in the Montague type system also carry
-`Semantics.Denotes.Typed`, defined with the composition engine in `Composition/Tree.lean`.
+stipulated per object. An object that denotes in the Montague type system denotes in
+`Composition.Denotation E W M D`, a semantic type paired with a value in its domain, and is
+thereby a terminal for the composition engine.
 
 ## Implementation notes
 

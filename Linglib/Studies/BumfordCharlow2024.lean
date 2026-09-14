@@ -9,7 +9,7 @@ import Linglib.Semantics.Composition.Binding
 import Linglib.Semantics.Composition.Ty
 import Linglib.Semantics.Composition.Assignment
 import Linglib.Fragments.English.Toy
-import Linglib.Semantics.Composition.LexEntry
+import Linglib.Semantics.Composition.Lexicon
 
 /-!
 # Bumford and Charlow 2024: effect-driven interpretation

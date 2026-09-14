@@ -21,6 +21,7 @@ composition engine's runtime type dispatch.
 
 * `Ty`: semantic types.
 * `Denot E W ty`: the denotation domain of `ty`.
+* `Denotation E W M`: a semantic type with an `M`-computation in its domain.
 * `Denot.booleanAlgebra?`: the pointwise Boolean algebra of a conjoinable type, `none` on
   a type that does not end in `t`.
 
@@ -76,6 +77,12 @@ abbrev Denot (E W : Type) (ty : Ty) (D : Type := ℝ) : Type :=
   | .s => Empty
   | .fn a b => Denot E W a D → Denot E W b D
   | .intens a => W → Denot E W a D
+
+/-- A denotation in the Montague type system: a semantic type together with an `M`-computation
+in the domain of that type. `M := Id` is the pure [heim-kratzer-1998] carrier; effectful
+denotations supply `M`. -/
+abbrev Denotation (E W : Type) (M : Type → Type := Id) (D : Type := ℝ) : Type :=
+  (ty : Ty) × M (Denot E W ty D)
 
 /-- The pointwise Boolean algebra of a conjoinable type ([partee-rooth-1983]), computed by
 recursion on the type: `none` exactly when the type does not end in `t`. At a concrete

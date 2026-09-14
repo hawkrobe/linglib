@@ -345,8 +345,8 @@ private theorem predAbs_id_dist :
 /-- Congruence for truth-valued results: an `Iff` lifts through
 `some ⟨.t, ·⟩`. -/
 private theorem some_t_congr {p q : Denot E W .t} (h : p ↔ q) :
-    (some ⟨.t, p⟩ : Option (TypedDenot E W)) = some ⟨.t, q⟩ :=
-  congrArg (fun r => (some ⟨.t, r⟩ : Option (TypedDenot E W))) (propext h)
+    (some ⟨.t, p⟩ : Option (Denotation E W)) = some ⟨.t, q⟩ :=
+  congrArg (fun r => (some ⟨.t, r⟩ : Option (Denotation E W))) (propext h)
 
 /-- The `.bind` node at `Id`, given the body's interpretation at the outer
 assignment: it denotes an entity predicate agreeing pointwise with the body
@@ -386,7 +386,7 @@ theorem interp_compileTerm (g : Assignment m.E) :
       simp only [compileTerm, Option.map_eq_some_iff] at h
       obtain ⟨c, hc, rfl⟩ := h
       rw [interp_terminal, interpTerminal_lookup, m.lexiconFO_names fw nm w hc,
-        Option.map_some, m.termAt_const]
+        m.termAt_const]
   | .trace k _, τ, h => by
       simp only [compileTerm, Option.some.injEq] at h
       subst h
@@ -407,7 +407,7 @@ theorem interp_compilePred (hdj : nm.Disjoint) (g : Assignment m.E)
       rw [interp_node_binary, interp_compileTerm m fw nm w g hsubj, Option.bind_some,
         interp_terminal, interpTerminal_lookup,
         m.lexiconFO_preds₁ fw nm w hR (hdj.names_of_preds₁ v R hR),
-        Option.map_some, Option.bind_some, interpBinary_e_et]
+        Option.bind_some, interpBinary_e_et]
       exact some_t_congr (m.realizeAt_formula₁ w g R τ).symm
   | .node _ [.terminal _ v, obj], φ, h, c => by
       simp only [compilePred, Option.bind_eq_some_iff, Option.map_eq_some_iff] at h
@@ -416,7 +416,7 @@ theorem interp_compilePred (hdj : nm.Disjoint) (g : Assignment m.E)
         interp_node_binary, interp_terminal, interpTerminal_lookup,
         m.lexiconFO_preds₂ fw nm w hR (hdj.names_of_preds₂ v R hR)
           (hdj.preds₁_of_preds₂ v R hR),
-        Option.map_some, Option.bind_some,
+        Option.bind_some,
         interp_compileTerm m fw nm w g hobj, Option.bind_some,
         interpBinary_fa, Option.bind_some, interpBinary_e_et]
       exact some_t_congr (m.realizeAt_formula₂ w g R τ τₒ).symm
@@ -436,8 +436,8 @@ private theorem interp_quantClause {g : Assignment m.E} {q nw : String}
         (.node a [.node a₁ [.terminal a₂ q, .terminal a₃ nw], .bind k a₄ body])
       = some ⟨.t, Q N F⟩ := by
   rw [interp_node_binary, interp_node_binary, interp_terminal,
-    interpTerminal_lookup, hQ, Option.map_some, Option.bind_some,
-    interp_terminal, interpTerminal_lookup, hN, Option.map_some,
+    interpTerminal_lookup, hQ, Option.bind_some,
+    interp_terminal, interpTerminal_lookup, hN,
     Option.bind_some, interpBinary_fa, Option.bind_some, hbind,
     Option.bind_some, interpBinary_fa]
 
@@ -458,7 +458,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     have hfr₁ := hfr.at (s := fw.not_) (by simp)
     rw [interp_node_binary, interp_terminal, interpTerminal_lookup,
       m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2,
-      FOWords.lexicon_not m.E m.W hnd, Option.map_some, Option.bind_some,
+      FOWords.lexicon_not m.E m.W hnd, Option.bind_some,
       ih g hψ, Option.bind_some, interpBinary_fa]
     congr 1
   | case2 a a₁ s r hs =>
@@ -543,7 +543,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     rw [interp_node_binary, ihl g h₁, Option.bind_some, interp_node_binary,
       interp_terminal, interpTerminal_lookup,
       m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2,
-      FOWords.lexicon_and m.E m.W hnd, Option.map_some, Option.bind_some,
+      FOWords.lexicon_and m.E m.W hnd, Option.bind_some,
       iht g h₂, Option.bind_some, interpBinary_fa, Option.bind_some,
       interpBinary_t_tt]
     refine some_t_congr ?_
@@ -558,7 +558,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     rw [interp_node_binary, ihl g h₁, Option.bind_some, interp_node_binary,
       interp_terminal, interpTerminal_lookup,
       m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2,
-      FOWords.lexicon_or m.E m.W hnd, Option.map_some, Option.bind_some,
+      FOWords.lexicon_or m.E m.W hnd, Option.bind_some,
       iht g h₂, Option.bind_some, interpBinary_fa, Option.bind_some,
       interpBinary_t_tt]
     refine some_t_congr ?_
@@ -600,7 +600,7 @@ theorem holdsAt_iff_realize (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
   constructor
   · rintro ⟨p, hp, htrue⟩
     have := (interp_compileFO m fw nm w hnd hfr hdj t g h).symm.trans hp
-    simp only [Option.some.injEq, TypedDenot.mk.injEq, heq_eq_eq,
+    simp only [Option.some.injEq, Sigma.mk.injEq, heq_eq_eq,
       true_and] at this
     rw [this]
     exact htrue

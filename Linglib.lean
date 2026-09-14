@@ -1489,7 +1489,6 @@ import Linglib.Semantics.Composition.Assignment
 import Linglib.Semantics.Composition.Combinator
 import Linglib.Semantics.Composition.Cont
 import Linglib.Semantics.Composition.Coordination
-import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Composition.Model
 import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Composition.Scope

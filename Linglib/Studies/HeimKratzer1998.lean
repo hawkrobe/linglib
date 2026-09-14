@@ -3,7 +3,7 @@ import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Composition.Assignment
 import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.Reduction
-import Linglib.Semantics.Composition.LexEntry
+import Linglib.Semantics.Composition.Lexicon
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Quantification.Polyadic
 import Linglib.Data.Examples.HeimKratzer1998
