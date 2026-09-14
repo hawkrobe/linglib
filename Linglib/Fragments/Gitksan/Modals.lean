@@ -138,11 +138,11 @@ def circumstantialModals : List ModalItem := [daakhlxw, anookxw, sgi]
 
 /-- No epistemic modal has a circumstantial reading. -/
 theorem epistemic_no_circumstantial :
-    ∀ e ∈ epistemicModals, ∀ ff ∈ e.meaning, ff.2 = .epistemic := by decide
+    ∀ e ∈ epistemicModals, ∀ ff ∈ e.meaning, ff.flavor = .epistemic := by decide
 
 /-- No circumstantial modal has an epistemic reading. -/
 theorem circumstantial_no_epistemic :
-    ∀ e ∈ circumstantialModals, ∀ ff ∈ e.meaning, ff.2 ≠ .epistemic := by decide
+    ∀ e ∈ circumstantialModals, ∀ ff ∈ e.meaning, ff.flavor ≠ .epistemic := by decide
 
 /-! ## Prospective aspect marker `dim`
 
@@ -164,7 +164,7 @@ Gitksan epistemics only. Circumstantials uniformly demand the marker. -/
     the modal's flavor: circumstantials always require dim; epistemics
     only require dim when oriented to the future. -/
 def requiresDim (e : ModalItem) (orient : TemporalOrientation) : Bool :=
-  if ∀ ff ∈ e.meaning, ff.2 = .epistemic then
+  if ∀ ff ∈ e.meaning, ff.flavor = .epistemic then
     -- Epistemic modal: dim required iff future orientation.
     orient == .future
   else

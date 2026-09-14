@@ -73,7 +73,7 @@ of its primary meaning, **uninterpretable** — semantically vacuous and
 checked by a c-commanding interpretable operator. `none` for an auxiliary
 with no modality. -/
 def modalFeature (a : Auxiliary) : Option ModalFeature :=
-  a.modality.head?.map fun ff => ⟨ff.1, .uninterpretable⟩
+  a.modality.head?.map fun ff => ⟨ff.force, .uninterpretable⟩
 
 /-- The interpretability of the auxiliary's modal feature, if it has one. -/
 def interpretability (a : Auxiliary) : Option ModalInterpretability :=

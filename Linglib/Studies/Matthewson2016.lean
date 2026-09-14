@@ -125,8 +125,8 @@ end Gitksan
     the boundary. Epistemic modals are purely epistemic; circumstantial
     modals have no epistemic readings. -/
 theorem gitksan_absolute_split :
-    (∀ e ∈ Gitksan.Modals.epistemicModals, ∀ ff ∈ e.meaning, ff.2 = .epistemic) ∧
-      ∀ e ∈ Gitksan.Modals.circumstantialModals, ∀ ff ∈ e.meaning, ff.2 ≠ .epistemic := by
+    (∀ e ∈ Gitksan.Modals.epistemicModals, ∀ ff ∈ e.meaning, ff.flavor = .epistemic) ∧
+      ∀ e ∈ Gitksan.Modals.circumstantialModals, ∀ ff ∈ e.meaning, ff.flavor ≠ .epistemic := by
   decide
 
 -- ============================================================================
@@ -203,9 +203,9 @@ theorem statimcets_niuean_force_consistent :
 /-- Niuean: epistemic domain has one modal (both forces), circumstantial
     has two (one per force). -/
 theorem niuean_force_asymmetry :
-    (Niuean.Modals.allExpressions.filter (λ e => ∃ ff ∈ e.meaning, ff.2 = .epistemic)).length = 1 ∧
+    (Niuean.Modals.allExpressions.filter (λ e => ∃ ff ∈ e.meaning, ff.flavor = .epistemic)).length = 1 ∧
     (Niuean.Modals.allExpressions.filter
-      (λ e => ∃ ff ∈ e.meaning, ff.2 = .circumstantial)).length = 2 := by
+      (λ e => ∃ ff ∈ e.meaning, ff.flavor = .circumstantial)).length = 2 := by
   decide
 
 /-- All St'át'imcets, Nez Perce and Niuean modals satisfy IFF. -/

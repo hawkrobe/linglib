@@ -134,6 +134,12 @@ abbrev ForceFlavor := ModalForce × ModalFlavor
 
 theorem ForceFlavor.card : Fintype.card ForceFlavor = 12 := by decide
 
+/-- The force of a force-flavor pair. -/
+abbrev ForceFlavor.force : ForceFlavor → ModalForce := Prod.fst
+
+/-- The flavor of a force-flavor pair. -/
+abbrev ForceFlavor.flavor : ForceFlavor → ModalFlavor := Prod.snd
+
 -- ============================================================================
 -- §4. Modal Item
 -- ============================================================================
@@ -176,7 +182,8 @@ def ConcordType.fromModalForce : ModalForce → ConcordType
     necessity map to the same concord class (necessity-type). This is the
     structural precondition for modal concord. -/
 def ModalItem.SharesConcordForce (a b : ModalItem) : Prop :=
-  ∃ x ∈ a.meaning, ∃ y ∈ b.meaning, ConcordType.fromModalForce x.1 = ConcordType.fromModalForce y.1
+  ∃ x ∈ a.meaning, ∃ y ∈ b.meaning,
+    ConcordType.fromModalForce x.force = ConcordType.fromModalForce y.force
 
 instance : DecidableRel ModalItem.SharesConcordForce :=
   λ _ _ => inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, _ = _))

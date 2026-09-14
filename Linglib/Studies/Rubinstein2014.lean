@@ -169,7 +169,7 @@ theorem tax_shift :
 def WeakInFragment (modal : String) : Prop :=
   ∃ a ∈ [English.Auxiliaries.should, English.Auxiliaries.ought, English.Auxiliaries.must,
     English.Auxiliaries.haveTo, English.Auxiliaries.need],
-    a.form = modal ∧ ∃ m ∈ a.modality, m.1 = .weakNecessity
+    a.form = modal ∧ ∃ m ∈ a.modality, m.force = .weakNecessity
 
 instance : DecidablePred WeakInFragment := λ _ => by unfold WeakInFragment; infer_instance
 

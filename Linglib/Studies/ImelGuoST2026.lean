@@ -74,11 +74,11 @@ inductive Atom
 
 /-- The points at which an atom holds. -/
 def Atom.Holds : Atom → ForceFlavor → Prop
-  | .weak, p => p.1 = .possibility
-  | .strong, p => p.1 = .necessity
-  | .epistemic, p => p.2 = .epistemic
-  | .deontic, p => p.2 = .deontic
-  | .circumstantial, p => p.2 = .circumstantial
+  | .weak, p => p.force = .possibility
+  | .strong, p => p.force = .necessity
+  | .epistemic, p => p.flavor = .epistemic
+  | .deontic, p => p.flavor = .deontic
+  | .circumstantial, p => p.flavor = .circumstantial
 
 instance (a : Atom) (p : ForceFlavor) : Decidable (a.Holds p) := by
   cases a <;> exact inferInstanceAs (Decidable (_ = _))
@@ -129,8 +129,8 @@ theorem den_or (φ ψ : Formula) : (or φ ψ).den = φ.den ∪ ψ.den := filter_
 
 /-- A conjunction of a force atom and a flavor atom denoting one point of the space. -/
 def point (p : ForceFlavor) : Formula :=
-  and (atom (if p.1 = .necessity then .strong else .weak))
-    (atom (match p.2 with
+  and (atom (if p.force = .necessity then .strong else .weak))
+    (atom (match p.flavor with
       | .epistemic => .epistemic
       | .deontic => .deontic
       | .bouletic | .circumstantial => .circumstantial))
@@ -224,7 +224,7 @@ theorem totalComplexity_replicate (k : ℕ) (m : Meaning) :
 
 /-- Equation (3): half credit for each axis of the intended point guessed right. -/
 def utility (p q : ForceFlavor) : ℚ :=
-  (if p.1 = q.1 then 1 / 2 else 0) + (if p.2 = q.2 then 1 / 2 else 0)
+  (if p.force = q.force then 1 / 2 else 0) + (if p.flavor = q.flavor then 1 / 2 else 0)
 
 /-- A literal listener guesses uniformly among the points a modal expresses: the expected
 utility when the speaker intends `p`. -/
@@ -282,7 +282,7 @@ theorem informativeness_whole (need : ForceFlavor → ℚ) :
 /-- A listener hearing a product modal earns half the reciprocal of each axis size, so the
 utility of an IFF modal depends only on how many forces and how many flavors it leaves open. -/
 theorem listen_product {F : Finset ModalForce} {Φ : Finset ModalFlavor} {p : ForceFlavor}
-    (hF : p.1 ∈ F) (hΦ : p.2 ∈ Φ) :
+    (hF : p.force ∈ F) (hΦ : p.flavor ∈ Φ) :
     listen (F ×ˢ Φ) p = (1 / F.card + 1 / Φ.card) / 2 := by
   have hF0 : (F.card : ℚ) ≠ 0 := by exact_mod_cast (card_pos.2 ⟨_, hF⟩).ne'
   have hΦ0 : (Φ.card : ℚ) ≠ 0 := by exact_mod_cast (card_pos.2 ⟨_, hΦ⟩).ne'
