@@ -43,7 +43,7 @@ Values are classified along two orthogonal dimensions ([corbett-2000]):
 ## Implementation notes
 
 The [harbour-2014] feature decomposition and its lattice grounding live in
-`Features/Number/Decomposition.lean`; coordinate resolution in
+`Semantics/Plurality/NumberFeatures.lean`; coordinate resolution in
 `Syntax/Number/Resolve.lean`; the `HasNumber` capability mixin in
 `Syntax/Number/Capabilities.lean`.
 -/

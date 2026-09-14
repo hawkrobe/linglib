@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Logic.Natural.Basic
 import Linglib.Semantics.Polarity.Strength
-import Linglib.Features.LicensingContext
-import Linglib.Features.Indefinite
+import Linglib.Semantics.Polarity.LicensingContext
+import Linglib.Semantics.Quantification.Indefinite
 import Linglib.Semantics.Polarity.Item
 
 /-!
@@ -289,7 +289,7 @@ instance (c : LicensingContext) (e : Item) :
 
 /-! ### The Haspelmath map meets the licensing table
 
-`Polarity.LicensingContext.haspelmathFunction` (in `Features/Indefinite.lean`)
+`Polarity.LicensingContext.haspelmathFunction` (in `Semantics/Quantification/Indefinite.lean`)
 classifies each licensing environment by the [haspelmath-1997] map function it
 realizes. The theorems here ground the map's stipulated polarity-side
 classifiers (`HaspelmathFunction.isDE`/`isFC`) in `LicensingContext.properties`. -/

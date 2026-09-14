@@ -1,5 +1,5 @@
 import Linglib.Semantics.Definiteness.Defs
-import Linglib.Features.Deixis
+import Linglib.Semantics.Reference.Deixis
 import Linglib.Syntax.Number.Basic
 import Linglib.Morphology.Word.Basic
 

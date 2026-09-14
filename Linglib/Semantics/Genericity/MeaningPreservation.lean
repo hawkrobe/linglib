@@ -1,5 +1,5 @@
 import Linglib.Semantics.Genericity.NominalMappingParameter
-import Linglib.Features.MassCount
+import Linglib.Semantics.Plurality.MassCount
 /-
 # Kind Reference and Number Marking
 

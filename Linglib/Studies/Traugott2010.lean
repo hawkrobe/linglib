@@ -1,4 +1,4 @@
-import Linglib.Features.Subjectivity
+import Linglib.Semantics.Modality.Subjectivity
 
 /-!
 # Traugott (2010): Subjectification and Intersubjectification

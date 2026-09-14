@@ -1,5 +1,5 @@
-import Linglib.Features.Individuation
-import Linglib.Features.Prominence
+import Linglib.Semantics.Plurality.Individuation
+import Linglib.Semantics.Reference.Prominence
 import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!

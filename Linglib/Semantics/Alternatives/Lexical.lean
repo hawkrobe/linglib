@@ -11,7 +11,7 @@ stronger members entail weaker members. Scale ordering determines scalar implica
 
 -/
 
-import Linglib.Features.Polarity
+import Linglib.Semantics.Polarity.Sentence
 import Mathlib.Data.Rat.Defs
 
 namespace Alternatives

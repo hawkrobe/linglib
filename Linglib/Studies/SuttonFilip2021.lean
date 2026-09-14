@@ -1,6 +1,6 @@
 import Mathlib.Data.Fintype.Powerset
-import Linglib.Features.Individuation
-import Linglib.Features.MassCount
+import Linglib.Semantics.Plurality.Individuation
+import Linglib.Semantics.Plurality.MassCount
 import Linglib.Semantics.Mereology
 
 /-!
@@ -53,7 +53,7 @@ lacks one, counts everything — cf. `Grimm2018.yudjaClassify`).
   perspectival (`overlapPred_nullSchema`), and stable for prototypical
   objects (`nullSchema_eq_of_disjoint`).
 * `Categorization` (`[±O, ±S]`) and Table 9.1 (`table91`) over the
-  graduated individuation scale (`Features/Individuation.lean`), with the
+  graduated individuation scale (`Semantics/Plurality/Individuation.lean`), with the
   junction theorems: the count option *ascends* the scale
   (`count_option_monotone`) and the mass option *descends* it
   (`mass_option_antitone`). Ordering Table 9.1 by [grimm-2018]'s scale is
@@ -68,7 +68,7 @@ lacks one, counts everything — cf. `Grimm2018.yudjaClassify`).
 ## Connections
 
 * Second consumer of the individuation scale — the graduation that moved
-  `IndividuationType` to `Features/Individuation.lean` (with [grimm-2018]).
+  `IndividuationType` to `Semantics/Plurality/Individuation.lean` (with [grimm-2018]).
 * `MassCount` records the *outcome* of categorization
   (`Categorization.massCount`); the `[±O, ±S]` features are its analysis.
 * The cluster/MSSC content of granular `baspred` frames is [grimm-2012]'s

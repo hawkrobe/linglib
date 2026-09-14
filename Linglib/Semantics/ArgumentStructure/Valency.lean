@@ -1,4 +1,4 @@
-import Linglib.Features.Prominence
+import Linglib.Semantics.Reference.Prominence
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Tactic.DeriveFintype

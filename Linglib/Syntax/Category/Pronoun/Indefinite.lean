@@ -1,6 +1,6 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
-import Linglib.Features.Indefinite
+import Linglib.Semantics.Quantification.Indefinite
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Category.Pronoun.Capabilities
 
@@ -12,11 +12,11 @@ open Morphology (Word)
 
 The **pronoun** member of the cross-categorial indefinite series: `IndefinitePronoun` `extends`
 the general `Pronoun` (`Syntax/Category/Pronoun/Basic.lean`) and carries the [haspelmath-1997] series data
-(via `Features/Indefinite.lean`). A form like *someone* is one such object, instantiated in a
+(via `Semantics/Quantification/Indefinite.lean`). A form like *someone* is one such object, instantiated in a
 Fragment, that flows through the Pronoun API like any other pronoun.
 
 This is *one carrier* of the series, not its home: indefiniteness is word-class-neutral (the
-`Indefinite` capability and its feature taxonomy live in `Features/Indefinite.lean`). An indefinite
+`Indefinite` capability and its feature taxonomy live in `Semantics/Quantification/Indefinite.lean`). An indefinite
 determiner (*some* book) or pro-adverb (*somewhere*) would be a sibling carrier — a different
 word-class object supplying its own `instance : Indefinite That` — read by the same `[Indefinite α]`
 generic code. Cross-linguistic generalizations *over* indefinite pronouns (paradigm, WALS F46A

@@ -1,7 +1,7 @@
 import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Semantics.Dynamic.Update
 import Linglib.Logic.Assignment
-import Linglib.Features.MassCount
+import Linglib.Semantics.Plurality.MassCount
 
 /-!
 # Krifka (2026): Anaphora for Concepts, Kinds, and Parts in Dynamic Interpretation

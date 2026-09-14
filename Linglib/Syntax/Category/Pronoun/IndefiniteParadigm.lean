@@ -1,5 +1,5 @@
 import Linglib.Data.WALS.Features.F46A
-import Linglib.Features.Indefinite
+import Linglib.Semantics.Quantification.Indefinite
 import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!

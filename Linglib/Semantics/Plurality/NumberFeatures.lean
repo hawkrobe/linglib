@@ -1,6 +1,6 @@
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Syntax.Number.Basic
-import Linglib.Features.Number.Interp
+import Linglib.Semantics.Plurality.Number
 import Linglib.Syntax.Agreement.ContainmentPair
 
 /-!

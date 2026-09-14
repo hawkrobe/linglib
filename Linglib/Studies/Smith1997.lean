@@ -2,7 +2,7 @@ import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.Composition
 import Linglib.Data.WALS.Features.F65A
 import Linglib.Data.WALS.Features.F67A
-import Linglib.Features.MassCount
+import Linglib.Semantics.Plurality.MassCount
 
 /-!
 # The parameter of aspect

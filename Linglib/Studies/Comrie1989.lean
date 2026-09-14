@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Comrie1989
-import Linglib.Features.Prominence
+import Linglib.Semantics.Reference.Prominence
 import Linglib.Semantics.Causation.Morphological
 
 /-!

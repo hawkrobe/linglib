@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Boundedness
-import Linglib.Features.ScalarDimension
+import Linglib.Semantics.Degree.Scale
 import Linglib.Semantics.Aspect.Basic
 
 /-!

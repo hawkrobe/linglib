@@ -1,7 +1,7 @@
 import Linglib.Syntax.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Data.UD.Basic
-import Linglib.Features.Prominence
+import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Morphology.Morph

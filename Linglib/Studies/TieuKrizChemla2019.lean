@@ -1,4 +1,4 @@
-import Linglib.Features.Polarity
+import Linglib.Semantics.Polarity.Sentence
 import Linglib.Studies.Magri2014
 
 /-!

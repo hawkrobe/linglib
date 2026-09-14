@@ -5,7 +5,7 @@ import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.NormNum
 import Linglib.Syntax.Number.Resolve
-import Linglib.Features.Prominence
+import Linglib.Semantics.Reference.Prominence
 import Linglib.Fragments.Bayso.Number
 import Linglib.Fragments.Teop.Nouns
 import Linglib.Studies.Corbett1991

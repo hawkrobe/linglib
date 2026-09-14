@@ -36,7 +36,7 @@ exactly the axes it touches.
 ## Implementation notes
 
 Word-class-neutral capabilities live with their domains: `Indefinite` in
-`Features/Indefinite.lean`, `Bound` in `Features/CoreferenceStatus.lean`.
+`Semantics/Quantification/Indefinite.lean`, `Bound` in `Features/CoreferenceStatus.lean`.
 Three axes are fields, not classes: deficiency (`Pronoun.strength`, per-series
 [cardinaletti-starke-1999]), lexical kind (`Pronoun.pronType`, UD morphology),
 and register/referential person (`PersonalPronoun` fields, borne by one

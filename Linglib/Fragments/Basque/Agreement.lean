@@ -1,4 +1,4 @@
-import Linglib.Features.Prominence
+import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Agreement.Paradigm
 /-!

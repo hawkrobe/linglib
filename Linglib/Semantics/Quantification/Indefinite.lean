@@ -1,6 +1,6 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
-import Linglib.Features.LicensingContext
+import Linglib.Semantics.Polarity.LicensingContext
 
 /-!
 # Indefinite series — feature taxonomy and the word-class-neutral capability

@@ -1,4 +1,4 @@
-import Linglib.Features.Polarity
+import Linglib.Semantics.Polarity.Sentence
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.BooleanAlgebra.Set
 import Mathlib.Tactic.TypeStar

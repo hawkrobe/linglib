@@ -1,5 +1,5 @@
 import Linglib.Core.Data.Trivalent
-import Linglib.Features.Polarity
+import Linglib.Semantics.Polarity.Sentence
 import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.KrizChemla2015
 import Linglib.Data.Examples.AghaJeretic2022

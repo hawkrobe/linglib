@@ -2,7 +2,7 @@ import Linglib.Syntax.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Data.UD.Basic
 import Linglib.Syntax.Number.Capabilities
-import Linglib.Features.Prominence
+import Linglib.Semantics.Reference.Prominence
 import Linglib.Fragments.Mayan.Params
 import Linglib.Syntax.Extraction
 import Linglib.Syntax.Clause.ArgumentRole

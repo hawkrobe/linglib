@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.TieuEtAl2020
-import Linglib.Features.Polarity
+import Linglib.Semantics.Polarity.Sentence
 import Linglib.Semantics.Alternatives.Lexical
 
 /-!

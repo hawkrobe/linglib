@@ -1,4 +1,4 @@
-import Linglib.Features.QParticleLayer
+import Linglib.Semantics.Questions.QParticleLayer
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!

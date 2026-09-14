@@ -19,7 +19,7 @@ Both share scale type and antonym information, but serve different grammatical f
 -/
 
 import Linglib.Data.UD.Basic
-import Linglib.Features.PropertyDomain
+import Linglib.Semantics.Degree.PropertyDomain
 import Linglib.Morphology.Paradigm.Degree
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Morphology.Word.Basic

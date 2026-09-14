@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Params
-import Linglib.Features.Prominence
+import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Clause.ArgumentRole
 
 /-!

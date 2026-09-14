@@ -1,7 +1,7 @@
 import Linglib.Features.Basic
 import Linglib.Syntax.Case.Basic
 import Linglib.Data.UD.Basic
-import Linglib.Features.Prominence
+import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Number.Basic
 import Linglib.Features.Slot
 import Linglib.Syntax.Person.Basic

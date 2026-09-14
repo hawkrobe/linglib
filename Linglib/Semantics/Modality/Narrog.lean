@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modality.ModalTypes
-import Linglib.Features.Subjectivity
+import Linglib.Semantics.Modality.Subjectivity
 
 /-!
 # Narrog's Semantic Map of Modality and Mood

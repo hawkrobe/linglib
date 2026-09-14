@@ -3,8 +3,8 @@ import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Finset.NAry
 import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Syntax.Person.Decomposition
-import Linglib.Features.Person.Interp
-import Linglib.Features.Number.Decomposition
+import Linglib.Semantics.Reference.Person
+import Linglib.Semantics.Plurality.NumberFeatures
 import Linglib.Syntax.Minimalist.Phi.Recursion
 import Linglib.Syntax.Minimalist.Phi.Lattice
 import Linglib.Studies.Corbett2000
