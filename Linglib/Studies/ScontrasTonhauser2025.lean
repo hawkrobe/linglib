@@ -1,581 +1,408 @@
-import Linglib.Pragmatics.RSA.ScoreChain
-import Linglib.Pragmatics.RSA.LatentOperators
-import Linglib.Pragmatics.RSA.Operators
-import Linglib.Pragmatics.BToM
+import Linglib.Pragmatics.RSA.QUD
 import Linglib.Semantics.Attitudes.Factivity
-import Linglib.Studies.DegenTonhauser2021
-import Linglib.Semantics.Presupposition.Basic
+import Linglib.Core.Probability.Kernel.Posterior
 
 /-!
-# [scontras-tonhauser-2025]: projection without lexical presupposition
+# Scontras and Tonhauser (2025): Projection without Lexically-Specified Presupposition
 
-An RSA model of *know* under negation (SuB 29, pp. 1431–1448): the pragmatic
-listener jointly infers the world state and the speaker's private assumptions
-(eq. 7), the speaker scores QUD-projected informativity (eq. 6, α = 10, fn.
-12), and the literal listener answers the QUD within the assumption set
-(eq. 5). Projection of the complement C emerges with no lexically-specified
-constraint on the common ground. Domain: 6 utterances × 4 worlds (BEL × C) ×
-15 belief states × 2 QUDs; literal semantics from
-`Factivity` (know = `factivePos`, think =
-`nonFactivePos`).
+This file formalizes the paper's Rational Speech Act model of the projection of the complement
+of *know* from under negation, on the RSA kernel pipeline. A world settles whether Cole believes
+the complement and whether it is true; the six utterances of (3) have the literal meanings of
+(4), *know* factive and *think* not (`literal`, from `Factivity`); the two questions of the
+experiments, whether Cole believes the complement and whether it is true, partition the worlds
+(`project`); a literal listener interprets the utterance within the speaker's private
+assumptions, a set of worlds, and answers the question (5) (`L0`); the speaker best-responds at
+rationality `α`, paying a cost that doubles for the complex utterances (6) (`S1`); and the
+pragmatic listener, who hears the utterance and the question, inverts the speaker jointly over
+worlds and assumptions (7) (`L1`), the private-assumption model of
+[qing-goodman-lassiter-2016].
 
-## Main results
-
-* `bel_qud_marginal_eq_prior_high` / `_low`: under the BEL? QUD the world
-  C-marginal *equals the prior* for every utterance — S1 depends on the
-  world only through its BEL-cell, so projection is invisible there.
-* `prediction_2b`: higher prior ⇒ stronger projection (C? QUD), the effect
-  [degen-tonhauser-2021] documents across 20 predicates (Exp 1: β = 0.16,
-  p < .001).
-* `prediction_2c`: BEL? QUD ⇒ stronger projection than C? QUD (Exp 2:
-  β = 0.14, p < .001).
-* `c_qud_thinkNeg_higher`: under C?, negated *know* is evidence against C.
-* `model_predicts_effects`: the model directions match the regressions.
+The paper's empirical targets (2), which its two experiments establish, are that the complement
+projects more from under negated *know* than negated *think*, more when its prior probability is
+higher, and more when it is not at issue; Figure 7 reports the model's predictions at the
+parameters of [qing-goodman-lassiter-2016]. The prior effect is a theorem of the model: the
+world prior enters at the pragmatic listener alone, so the posterior probability of the
+complement rises with its prior probability under every utterance, question, rationality, cost
+and assumption prior (`L1_c_mono`). The utterance and question effects rest on the speaker.
+Negated *think* is semantically stronger than negated *know*
+(`sem_thinkNeg_ssubset_sem_knowNeg`), so a speaker without assumptions who addresses whether
+Cole believes the complement prefers it at a world where he does not
+(`S1_univ_bel_knowNeg_lt_thinkNeg`); a speaker who assumes the complement finds the two equally
+informative under either question (`S1_knowNeg_eq_thinkNeg`), negated *know* then answering the
+belief question fully (`L0_knowNeg_bel_eq_one`); and under the belief question the speaker's
+choice depends on the world only through Cole's belief (`S1_bel_congr`). The listener therefore
+reads negated *know* as a sign that the speaker assumed the complement, most under the belief
+question; the sizes of these effects (Figure 7a, c) are computations at the paper's parameters
+and are not restated.
 
 ## Implementation notes
 
-α = 10 is a natural power, so the chain is exact ℚ≥0: the speaker is
-`RSA.Score.s1` over the QUD-aggregated literal listener with degenerate
-cells falling back to `cPos` (one declaration covering both faces), the
-listener is `PMF.ofScores`, and every prediction is one kernel-verified
-event-mass comparison.
+* Equation (5) carries a world prior, but in the released model the literal listener draws
+  worlds uniformly within the assumption set and the world prior enters at (7) alone. The file
+  follows the released model, whose predictions Figure 7 reports; this is what makes the prior
+  effect a theorem. The listener's prior puts the actual world in the assumption set, as the
+  released model does.
+* The world prior is a parameter, in the theorems a product of a belief prior and a complement
+  prior; the paper's is such a product, the complement twice as likely as not or half as likely.
+  The prior over assumption sets is a parameter; the paper's is that of
+  [qing-goodman-lassiter-2016].
+* The cost factor is `κ` for a simple utterance and `κ ^ 2` for a complex one, `κ = exp (-α c)`
+  for the paper's cost `c` of a simple utterance.
+* The revised model of the paper's fourth section, which backs off toward the prior by the
+  divergence of the posterior from it, and the experiments' ratings are described but not
+  formalized.
 
-Utterance cost (§3.1: complex = 2 × simple) is omitted: `exp(−αC)` is
-transcendental, and the omission reverses prediction (2a)'s world-marginal
-direction (the paper derives know > think *with* cost, Figure 7a);
-predictions (2b) and (2c) are robust to it. Prior parameters follow §3.1:
-P(C) ∈ {2/3, 1/3}, P(BEL | C) = 1/2, uniform over the 15 assumption sets.
+## References
 
-## TODO
-
-Model the cost term (log-rational costs keep ℚ exactness) and derive
-prediction (2a)'s world-marginal direction. Prove the structural equivalence
-with [qing-goodman-lassiter-2016] (fn. 10: "private assumptions" vs "common
-ground" is interpretive, not computational) — see the matching TODO in
-`QingGoodmanLassiter2016.lean`.
+* [scontras-tonhauser-2025]
+* [qing-goodman-lassiter-2016]
+* [kao-etal-2014-hyperbole]
+* [degen-tonhauser-2021]
 -/
 
-open scoped ENNReal NNReal NNRat
+open MeasureTheory ProbabilityTheory RSA Factivity
+open scoped ENNReal
 
 namespace ScontrasTonhauser2025
 
-open BigOperators
-open Factivity
+/-- A world (4): whether Cole believes the complement and whether it is true. -/
+abbrev World := Bool × Bool
 
-/-! ### Worlds and utterances -/
+instance : HasBelief World := ⟨Prod.fst⟩
+instance : HasComplement World := ⟨Prod.snd⟩
 
-/-- World state: (BEL, C) where BEL = Cole believes C, C = complement is true.
-    Flat inductive for tactic enumerability. -/
-inductive WorldState where
-  | w11  -- (BEL=1, C=1): Cole believes C and C is true
-  | w10  -- (BEL=1, C=0): Cole believes C but C is false
-  | w01  -- (BEL=0, C=1): Cole doesn't believe but C is true
-  | w00  -- (BEL=0, C=0): Cole doesn't believe and C is false
-  deriving DecidableEq, Repr, Inhabited, Fintype
+instance : MeasurableSpace (Finset World) := ⊤
+instance : DiscreteMeasurableSpace (Finset World) := ⟨λ _ => trivial⟩
 
-def WorldState.bel : WorldState → Bool
-  | .w11 | .w10 => true
-  | .w01 | .w00 => false
+/-- The utterances of (3): *Cole knows that C*, *Cole doesn't know that C*, *Cole thinks that
+C*, *Cole doesn't think that C*, *C* and *not C*. -/
+inductive Utt
+  | knowPos | knowNeg | thinkPos | thinkNeg | cPos | cNeg
+  deriving DecidableEq, Fintype
 
-def WorldState.c : WorldState → Bool
-  | .w11 | .w01 => true
-  | .w10 | .w00 => false
+instance : MeasurableSpace Utt := ⊤
+instance : DiscreteMeasurableSpace Utt := ⟨λ _ => trivial⟩
 
-instance : HasComplement WorldState where c := WorldState.c
-instance : HasBelief WorldState where bel := WorldState.bel
+/-- A complex utterance embeds the complement under an attitude verb. -/
+def Utt.Complex (u : Utt) : Prop := u ≠ .cPos ∧ u ≠ .cNeg
 
-/-- Attitude verb utterances about Cole's mental state, plus bare
-    complement assertions. -/
-inductive Utterance where
-  | knowPos     -- "Cole knows that C"
-  | knowNeg     -- "Cole doesn't know that C"
-  | thinkPos    -- "Cole thinks that C"
-  | thinkNeg    -- "Cole doesn't think that C"
-  | cPos        -- "C"
-  | cNeg        -- "not C"
-  deriving DecidableEq, Repr, Inhabited
+instance : DecidablePred Utt.Complex := λ u => inferInstanceAs (Decidable (u ≠ .cPos ∧ u ≠ .cNeg))
 
-instance : Fintype Utterance where
-  elems := {.knowPos, .knowNeg, .thinkPos, .thinkNeg, .cPos, .cNeg}
-  complete := fun x => by cases x <;> simp
+/-! ### Semantics and questions -/
 
-/-! ### Literal truth conditions (from `Factivity`) -/
-
-/-- Literal truth conditions derived from factive/non-factive semantics.
-
-    "know" is factive: `factivePos` = BEL ∧ C
-    "think" is non-factive: `nonFactivePos` = BEL
-    "C" / "not C" are direct assertions about the complement. -/
-def literalMeaning : Utterance → WorldState → Bool
-  | .knowPos  => factivePos
-  | .knowNeg  => factiveNeg
+/-- The literal meanings (4): *know* is factive and *think* is not, and the simple utterances
+assert the complement or its negation. -/
+def literal : Utt → World → Bool
+  | .knowPos => factivePos
+  | .knowNeg => factiveNeg
   | .thinkPos => nonFactivePos
   | .thinkNeg => nonFactiveNeg
-  | .cPos     => HasComplement.c
-  | .cNeg     => fun w => !HasComplement.c w
-
-/-! ### Speaker belief states (the 15 non-empty subsets of W) -/
-
-/-- Speaker's private assumptions: all 15 non-empty subsets of W.
-    Section 3 follows [qing-goodman-lassiter-2016]: A ranges over all
-    non-empty subsets of the world space. -/
-inductive BeliefState where
-  -- Singletons (4)
-  | onlyW11 | onlyW10 | onlyW01 | onlyW00
-  -- Aligned pairs (4)
-  | belTrue | belFalse | cTrue | cFalse
-  -- Cross pairs (2)
-  | diagonal | antiDiagonal
-  -- Triples (4)
-  | notW11 | notW10 | notW01 | notW00
-  -- Full (1)
-  | all
-  deriving DecidableEq, Repr, Inhabited
-
-instance : Fintype BeliefState where
-  elems := {.onlyW11, .onlyW10, .onlyW01, .onlyW00,
-            .belTrue, .belFalse, .cTrue, .cFalse,
-            .diagonal, .antiDiagonal,
-            .notW11, .notW10, .notW01, .notW00,
-            .all}
-  complete := fun x => by cases x <;> simp
-
-/-- Membership in belief state. Boolean operations on `WorldState` fields
-    reduce cleanly under kernel evaluation. -/
-def speakerCredenceBool : BeliefState → WorldState → Bool
-  | .all, _ => true
-  | .onlyW11, w => w.bel && w.c
-  | .onlyW10, w => w.bel && !w.c
-  | .onlyW01, w => !w.bel && w.c
-  | .onlyW00, w => !w.bel && !w.c
-  | .belTrue, w => w.bel
-  | .belFalse, w => !w.bel
-  | .cTrue, w => w.c
-  | .cFalse, w => !w.c
-  | .diagonal, w => (w.bel && w.c) || (!w.bel && !w.c)
-  | .antiDiagonal, w => (!w.bel && w.c) || (w.bel && !w.c)
-  | .notW11, w => !(w.bel && w.c)
-  | .notW10, w => !(w.bel && !w.c)
-  | .notW01, w => !(!w.bel && w.c)
-  | .notW00, w => !(!w.bel && !w.c)
-
-/-- Whether C is true in all worlds of the belief state. -/
-def assumesC : BeliefState → Bool
-  | .onlyW11 | .onlyW01 | .cTrue => true
-  | _ => false
-
-/-! ### Priors -/
-
-/-- World prior parameterized by P(C).
-    P(BEL, C) = P(BEL | C) · P(C), with P(BEL | C) = 1/2. -/
-def worldPrior (pC : ℚ≥0) : WorldState → ℚ≥0
-  | .w11 | .w01 => pC / 2
-  | .w10 | .w00 => (1 - pC) / 2
-
-/-- World prior sums to 1 whenever P(C) is a probability. -/
-theorem worldPrior_sum {pC : ℚ≥0} (h1 : pC ≤ 1) :
-    worldPrior pC .w11 + worldPrior pC .w10 +
-    worldPrior pC .w01 + worldPrior pC .w00 = 1 := by
-  rw [← NNRat.coe_inj]
-  push_cast [worldPrior, NNRat.coe_sub h1]
-  ring
-
-/-! ### The score chain -/
-
-/-- Literal listener within the assumption set (eq. 5): prior conditioned
-on worlds where `u` is true, empty extensions normalizing to zero rows. -/
-def l0Score (pC : ℚ≥0) (bs : BeliefState) (u : Utterance) : WorldState → ℚ≥0 :=
-  PMF.normalizeScores fun w =>
-    if speakerCredenceBool bs w && literalMeaning u w then worldPrior pC w else 0
-
-/-- QUD aggregation of the literal listener (eq. 5). -/
-def qAgg (qud : QUD) (pC : ℚ≥0) (bs : BeliefState) (u : Utterance) :
-    WorldState → ℚ≥0
-  | .w11 => match qud with
-    | .bel => l0Score pC bs u .w11 + l0Score pC bs u .w10
-    | .c   => l0Score pC bs u .w11 + l0Score pC bs u .w01
-  | .w10 => match qud with
-    | .bel => l0Score pC bs u .w11 + l0Score pC bs u .w10
-    | .c   => l0Score pC bs u .w10 + l0Score pC bs u .w00
-  | .w01 => match qud with
-    | .bel => l0Score pC bs u .w01 + l0Score pC bs u .w00
-    | .c   => l0Score pC bs u .w11 + l0Score pC bs u .w01
-  | .w00 => match qud with
-    | .bel => l0Score pC bs u .w01 + l0Score pC bs u .w00
-    | .c   => l0Score pC bs u .w10 + l0Score pC bs u .w00
-
-/-- Speaker (eq. 6 at α = 10, zero cost): `RSA.Score.s1` over the
-QUD-aggregated literal listener; degenerate cells fall back to `cPos` —
-one declaration covering both faces. -/
-def s1Post (qud : QUD) (pC : ℚ≥0) (bs : BeliefState) :
-    WorldState → Utterance → ℚ≥0 :=
-  RSA.Score.s1 (fun u w => qAgg qud pC bs u w) 10 (fun _ => 1) (.pure .cPos)
-
-/-- Listener world score (eq. 7; uniform assumption prior). -/
-def worldScore (qud : QUD) (pC : ℚ≥0) (u : Utterance) (w : WorldState) : ℚ≥0 :=
-  worldPrior pC w * ∑ bs, s1Post qud pC bs w u
-
-/-- Pragmatic listener over worlds (eq. 7). -/
-noncomputable def l1World (qud : QUD) (pC : ℚ≥0) (u : Utterance) :
-    PMF WorldState :=
-  .ofScores .uniform (worldScore qud pC u)
-
-/-- The listener's C-marginal. -/
-noncomputable def l1CEvent (qud : QUD) (pC : ℚ≥0) (u : Utterance) : ℝ≥0∞ :=
-  ∑' w, if w.c then l1World qud pC u w else 0
-
-/-! ### Listener predictions -/
-
-/-- The C-marginals on the ℚ≥0 face. -/
-private def cMass (qud : QUD) (pC : ℚ≥0) (u : Utterance) : ℚ≥0 :=
-  PMF.eventMass (PMF.scoresWith .uniform (worldScore qud pC u)) (·.c)
-
-private theorem l1CEvent_eq (qud : QUD) (pC : ℚ≥0) (u : Utterance)
-    {q : ℚ≥0} (h : cMass qud pC u = q) :
-    l1CEvent qud pC u = ((q : ℝ≥0) : ℝ≥0∞) :=
-  PMF.ofScores_event_eq_ratCast _ _ _ h
-
-private theorem l1CEvent_lt (q₁ q₂ : QUD) (p₁ p₂ : ℚ≥0) (u₁ u₂ : Utterance)
-    (h : cMass q₁ p₁ u₁ < cMass q₂ p₂ u₂) :
-    l1CEvent q₁ p₁ u₁ < l1CEvent q₂ p₂ u₂ :=
-  PMF.ofScores_event_lt_cross _ _ _ _ h
-
-/-- Under the BEL? QUD the C-marginal equals the prior, for every utterance:
-S1 depends on the world only through its BEL-cell, so the C-dimension washes
-out of the world posterior. Projection is invisible at the world marginal. -/
-theorem bel_qud_marginal_eq_prior_high (u : Utterance) :
-    l1CEvent .bel (2/3) u = (((2/3 : ℚ≥0) : ℝ≥0) : ℝ≥0∞) :=
-  l1CEvent_eq _ _ _ ((by revert u; decide +kernel :
-    ∀ u, cMass .bel (2/3) u = 2/3) u)
-
-/-- The low-prior analogue of `bel_qud_marginal_eq_prior_high`. -/
-theorem bel_qud_marginal_eq_prior_low (u : Utterance) :
-    l1CEvent .bel (1/3) u = (((1/3 : ℚ≥0) : ℝ≥0) : ℝ≥0∞) :=
-  l1CEvent_eq _ _ _ ((by revert u; decide +kernel :
-    ∀ u, cMass .bel (1/3) u = 1/3) u)
-
-/-- Under the C? QUD, knowNeg is evidence against C — ¬(BEL∧C) is compatible
-with C-false worlds — so thinkNeg preserves P(C) better. -/
-theorem c_qud_thinkNeg_higher :
-    l1CEvent .c (2/3) .knowNeg < l1CEvent .c (2/3) .thinkNeg :=
-  l1CEvent_lt _ _ _ _ _ _ (by decide +kernel)
-
-/-! ### Prediction 2a: utterance effect (know > think)
-
-The paper derives 2a *with* utterance cost (Figure 7a); the cost-free model
-does not — under BEL? both marginals sit at the prior, and under C? the
-direction reverses (`c_qud_thinkNeg_higher`). Fn. 11's A-marginal measure
-(P(A ⊧ C | u)) may capture the effect without cost; see the module TODO. -/
-
-/-- Prediction 2b (prior effect): higher prior increases projection. -/
-theorem prediction_2b : l1CEvent .c (1/3) .knowNeg < l1CEvent .c (2/3) .knowNeg :=
-  l1CEvent_lt _ _ _ _ _ _ (by decide +kernel)
-
-/-- Prediction 2c (QUD effect): under BEL? the C-marginal stays at the prior
-(`bel_qud_marginal_eq_prior_high`), while under C? the literal semantics of
-"doesn't know C" lowers it. -/
-theorem prediction_2c : l1CEvent .c (2/3) .knowNeg < l1CEvent .bel (2/3) .knowNeg :=
-  l1CEvent_lt _ _ _ _ _ _ (by decide +kernel)
-
-/-! ### Structural properties -/
-
-/-- "know" entails C (from `factivePos_entails_c`). -/
-theorem know_entails_c : ∀ w, literalMeaning .knowPos w = true → w.c = true :=
-  factivePos_entails_c
-
-/-- "think" does NOT entail C. -/
-theorem think_not_entails_c :
-    ∃ w, literalMeaning .thinkPos w = true ∧ w.c = false :=
-  ⟨.w10, rfl, rfl⟩
-
-/-- "know" entails BEL (from `factivePos_entails_bel`). -/
-theorem know_entails_bel : ∀ w, literalMeaning .knowPos w = true → w.bel = true :=
-  factivePos_entails_bel
-
-/-- Know entails think (factivity is strictly stronger than belief). -/
-theorem know_entails_think : ∀ w,
-    literalMeaning .knowPos w = true → literalMeaning .thinkPos w = true :=
-  factive_entails_nonfactive
-
-/-- knowNeg (= ¬(BEL∧C)) is true at all worlds except w11. -/
-theorem knowNeg_semantics :
-    literalMeaning .knowNeg .w11 = false ∧
-    literalMeaning .knowNeg .w10 = true ∧
-    literalMeaning .knowNeg .w01 = true ∧
-    literalMeaning .knowNeg .w00 = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-- thinkNeg (= ¬BEL) is true only at worlds where Cole doesn't believe. -/
-theorem thinkNeg_semantics :
-    literalMeaning .thinkNeg .w11 = false ∧
-    literalMeaning .thinkNeg .w10 = false ∧
-    literalMeaning .thinkNeg .w01 = true ∧
-    literalMeaning .thinkNeg .w00 = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-- knowNeg is compatible with strictly more worlds than thinkNeg (3 vs 2),
-    making it the weaker (less informative) negation. -/
-theorem knowNeg_weaker_than_thinkNeg :
-    (Finset.univ.filter (fun w : WorldState => literalMeaning .knowNeg w)).card >
-    (Finset.univ.filter (fun w : WorldState => literalMeaning .thinkNeg w)).card := by
-  decide
-
-/-- The pattern-matched `assumesC` agrees with the generic
-    `assumesComplement` from `Factivity`. -/
-theorem assumesC_matches_generic : ∀ bs : BeliefState,
-    assumesC bs = assumesComplement (speakerCredenceBool bs)
-      [.w11, .w10, .w01, .w00] := by
-  intro bs; cases bs <;> decide
-
-/-- Exactly 3 of 15 belief states assume C: onlyW11, onlyW01, cTrue. -/
-theorem three_of_fifteen_assume_c :
-    (Finset.univ.filter (fun bs : BeliefState => assumesC bs)).card = 3 := by
-  decide
-
-/-! ### Experimental data -/
-
-/-- Effect size from a linear mixed-effects model. p values are upper bounds
-    (paper reports "< .001"). -/
-structure UtteranceEffect where
-  β : ℚ
-  se : ℚ
-  t : ℚ
-  p : ℚ
-  deriving Repr
-
-/-- Exp 1: Utterance effect (know > think). -/
-def exp1_utteranceEffect : UtteranceEffect :=
-  { β := 0.35, se := 0.03, t := 12.2, p := 0.001 }
-
-/-- Exp 1: Prior effect (higher > lower). -/
-def exp1_priorEffect : UtteranceEffect :=
-  { β := 0.16, se := 0.03, t := 5.5, p := 0.001 }
-
-/-- Exp 1: QUD effect (NOT significant — manipulation too weak). -/
-def exp1_qudEffect : UtteranceEffect :=
-  { β := 0.009, se := 0.03, t := 0.3, p := 0.75 }
-
-/-- Exp 2: Utterance effect (know > think). -/
-def exp2_utteranceEffect : UtteranceEffect :=
-  { β := 0.34, se := 0.04, t := 8.8, p := 0.001 }
-
-/-- Exp 2: QUD effect (significant with stronger manipulation). -/
-def exp2_qudEffect : UtteranceEffect :=
-  { β := 0.14, se := 0.04, t := 3.6, p := 0.001 }
-
-inductive Hypothesis where
-  | utterance  -- (2a) know > think
-  | prior      -- (2b) higher > lower prior
-  | qud        -- (2c) BEL? > C?
-  deriving DecidableEq, Repr
-
-/-- Which experiments support each hypothesis.
-    Exp 1: (2a) yes, (2b) yes, (2c) no (QUD not significant).
-    Exp 2: (2a) yes, (2b) not tested, (2c) yes. -/
-def supported : Hypothesis → Bool × Bool
-  | .utterance => (true, true)
-  | .prior     => (true, false)
-  | .qud       => (false, true)
-
-def directionCorrect : Hypothesis → Bool
-  | .utterance => exp1_utteranceEffect.β > 0
-  | .prior     => exp1_priorEffect.β > 0
-  | .qud       => exp2_qudEffect.β > 0
-
-/-! ### BToM bridge -/
-
-open Core in
-/-- Classification of BeliefState in BToM terms. -/
-def beliefStateCategory : LatentCategory := .mental
-
-open Core in
-/-- Classification of QUD in BToM terms. -/
-def qudCategory : LatentCategory := .shared
-
-/-- Characteristic function: does the speaker assume C? -/
-def assumesCIndicator : BeliefState → ℚ :=
-  fun bs => if assumesC bs then 1 else 0
-
-/-- Belief states that assume C have indicator 1. -/
-theorem assumesCIndicator_pos (bs : BeliefState) (h : assumesC bs = true) :
-    assumesCIndicator bs = 1 := by
-  simp [assumesCIndicator, h]
-
-/-- Belief states that don't assume C have indicator 0. -/
-theorem assumesCIndicator_neg (bs : BeliefState) (h : assumesC bs = false) :
-    assumesCIndicator bs = 0 := by
-  simp [assumesCIndicator, h]
-
-/-- The three C-entailing belief states have indicator 1;
-    the remaining twelve have indicator 0. -/
-theorem assumesCIndicator_classification :
-    assumesCIndicator .onlyW11 = 1 ∧
-    assumesCIndicator .onlyW01 = 1 ∧
-    assumesCIndicator .cTrue = 1 ∧
-    assumesCIndicator .onlyW10 = 0 ∧
-    assumesCIndicator .onlyW00 = 0 ∧
-    assumesCIndicator .belTrue = 0 ∧
-    assumesCIndicator .belFalse = 0 ∧
-    assumesCIndicator .cFalse = 0 ∧
-    assumesCIndicator .diagonal = 0 ∧
-    assumesCIndicator .antiDiagonal = 0 ∧
-    assumesCIndicator .notW11 = 0 ∧
-    assumesCIndicator .notW10 = 0 ∧
-    assumesCIndicator .notW01 = 0 ∧
-    assumesCIndicator .notW00 = 0 ∧
-    assumesCIndicator .all = 0 := by
-  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-! ### Model–data connection -/
-
-/-- Predictions (2b) and (2c) match experimental effect directions.
-    Prediction (2a) requires cost; see the commentary above. -/
-theorem model_predicts_effects :
-    (l1CEvent .c (2/3) .knowNeg > l1CEvent .c (1/3) .knowNeg) ∧
-    (l1CEvent .bel (2/3) .knowNeg > l1CEvent .c (2/3) .knowNeg) ∧
-    directionCorrect .prior = true ∧
-    directionCorrect .qud = true :=
-  ⟨prediction_2b, prediction_2c,
-   by simp only [directionCorrect, exp1_priorEffect, decide_eq_true_eq]; norm_num,
-   by simp only [directionCorrect, exp2_qudEffect, decide_eq_true_eq]; norm_num⟩
-
-/-! ### Connection to [degen-tonhauser-2021] -/
-
-/-- The prior effect found by S&T 2025 (β = 0.16 > 0) replicates the positive
-    prior effect of [degen-tonhauser-2021] (β = 0.14 categorical, β = 0.28
-    individual): higher prior probability of the complement content leads to
-    stronger projection. [degen-tonhauser-2021] makes this structural — Bayes'
-    rule makes the posterior credence increasing in the prior
-    (`DegenTonhauser2021.posterior_lt_posterior`) — and the RSA model's
-    `prediction_2b` provides the same explanation here. -/
-theorem prior_effect_consistent_with_dt2021 :
-    exp1_priorEffect.β > 0 := by norm_num [exp1_priorEffect]
-
-/-! ### Compositional filtering vs BToM -/
-
-/-! Compares the BToM model against compositional filtering ([heim-1983]):
-presuppositions project through connectives via local context computation;
-the filtering presupposition of "if A then B_p" is "A → p".
-
-The key empirical argument: the BToM model predicts that even non-factive
-"think" — which has NO presupposition to filter — exhibits projection
-effects, because L1 can still infer what the speaker takes for granted.
-Compositional filtering predicts a trivial presupposition for
-non-presuppositional items. -/
-
-section FilteringComparison
-
-open Presupposition
-
-variable {W : Type*}
-
-/-- The filtering prediction for "if A then know-C":
-    the presupposition of the consequent (= C) is filtered by the antecedent.
-    Result: conditional presupposes "A → C". -/
-def filteringPrediction_know (a c : W → Prop) : PartialProp W :=
-  PartialProp.impFilter (PartialProp.ofProp a) (PartialProp.condAssert c (fun _ => True))
-
-/-- The filtering prediction for "if A then think-C":
-    "think" has no presupposition, so filtering produces a trivial result. -/
-def filteringPrediction_think (a : W → Prop) : PartialProp W :=
-  PartialProp.impFilter (PartialProp.ofProp a) PartialProp.top
-
-/-- **Filtering predicts non-trivial presupposition for "know"**:
-    The presupposition of "if A then know-C" is ¬A ∨ C (= A → C),
-    which is NOT tautological. -/
-theorem filtering_know_nontrivial (a c : W → Prop)
-    (h : ∃ w, a w ∧ ¬c w) :
-    ∃ w, ¬(filteringPrediction_know a c).presup w := by
-  obtain ⟨w, ha, hc⟩ := h
-  refine ⟨w, ?_⟩
-  simp only [filteringPrediction_know, PartialProp.impFilter, PartialProp.ofProp,
-    PartialProp.condAssert, not_and]
-  intro _
-  exact fun h_imp => hc (h_imp ha)
-
-/-- **Filtering predicts TRIVIAL presupposition for "think"**:
-    The presupposition of "if A then think-C" is always true,
-    regardless of A, because "think" contributes no presupposition. -/
-theorem filtering_think_trivial (a : W → Prop) :
-    ∀ w, (filteringPrediction_think a).presup w := by
-  intro w
-  simp only [filteringPrediction_think, PartialProp.impFilter, PartialProp.ofProp, PartialProp.top]
-  exact ⟨trivial, fun _ => trivial⟩
-
-/--
-BToM predicts projection effects for ANY verb in conditional environments,
-because projection arises from pragmatic reasoning about the speaker's
-private assumptions, not from lexical presupposition.
-
-The key mechanism: when A and C are related (correlated in the prior),
-the listener infers that a speaker who utters "if A, X Vs C" likely takes
-C for granted — regardless of whether V is factive.
--/
-structure ProjectionPrediction where
-  /-- Whether projection is predicted for factive verbs in conditionals. -/
-  factive_projects : Bool
-  /-- Whether projection is predicted for non-factive verbs in conditionals. -/
-  nonFactive_projects : Bool
-  /-- Whether relatedness modulates projection strength. -/
-  relatedness_modulates : Bool
-
-/-- BToM predictions: both factive and non-factive show conditional
-    presupposition, modulated by relatedness. -/
-def btomPrediction : ProjectionPrediction where
-  factive_projects := true
-  nonFactive_projects := true
-  relatedness_modulates := true
-
-/-- Filtering predictions: only factive shows conditional presupposition,
-    with no role for relatedness (it's purely structural). -/
-def filteringPrediction : ProjectionPrediction where
-  factive_projects := true
-  nonFactive_projects := false    -- Think has no presupposition
-  relatedness_modulates := false  -- Filtering is structural, not probabilistic
-
-/--
-**Strict subsumption**: BToM predicts everything filtering predicts
-(factive conditional presupposition) plus more (non-factive conditional
-presupposition, relatedness modulation).
--/
-theorem btom_subsumes_filtering :
-    -- BToM agrees with filtering on factive projection
-    btomPrediction.factive_projects = filteringPrediction.factive_projects ∧
-    -- BToM predicts non-factive projection where filtering doesn't
-    btomPrediction.nonFactive_projects = true ∧
-    filteringPrediction.nonFactive_projects = false ∧
-    -- BToM predicts relatedness modulation where filtering doesn't
-    btomPrediction.relatedness_modulates = true ∧
-    filteringPrediction.relatedness_modulates = false :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-/--
-**The critical divergence**: For non-factive "think" in conditionals,
-filtering predicts trivial presupposition (no projection), while BToM
-predicts non-trivial projection modulated by relatedness.
-
-This is the [scontras-tonhauser-2025] argument: if projection were
-due to compositional filtering alone, non-presuppositional items like
-"think" should show no effect. But BToM predicts projection effects
-even for "think", because L1 infers the speaker's private assumptions
-regardless of the verb's factivity status.
--/
-theorem critical_divergence_at_nonfactive :
-    filteringPrediction.nonFactive_projects ≠ btomPrediction.nonFactive_projects := by
-  decide
-
-/--
-**Filtering is a special case**: When relatedness is maximal (A entails C),
-BToM's projection prediction converges to the filtering prediction.
-Filtering captures the structural component; BToM adds the probabilistic
-modulation.
--/
-theorem filtering_is_limiting_case (a c : W → Prop)
-    (h_entails : ∀ w, a w → c w) :
-    ∀ w, (filteringPrediction_know a c).presup w := by
-  intro w
-  exact ⟨trivial, fun ha => h_entails w ha⟩
-
-end FilteringComparison
+  | .cPos => HasComplement.c
+  | .cNeg => λ w => !HasComplement.c w
+
+/-- The extension of an utterance. -/
+def sem (u : Utt) : Finset World := Finset.univ.filter λ w => literal u w = true
+
+/-- Negated *think* is semantically stronger than negated *know*: it excludes the world in which
+Cole believes a false complement as well. -/
+theorem sem_thinkNeg_ssubset_sem_knowNeg : sem .thinkNeg ⊂ sem .knowNeg := by decide
+
+/-- The projections of the two questions: whether Cole believes the complement, and whether it
+is true. -/
+def project : QUD → World → Bool
+  | .bel, w => w.1
+  | .c, w => w.2
+
+/-- The cell of a world under a question. -/
+def cell (q : QUD) (w : World) : Finset World :=
+  Finset.univ.filter λ w' => project q w' = project q w
+
+theorem cell_preimage (q : QUD) (w : World) : project q ⁻¹' {project q w} = ↑(cell q w) := by
+  ext w'
+  simp [cell]
+
+/-! ### The literal listener within an assumption set (5) -/
+
+/-- The literal listener within an assumption set (5): uniform on the worlds of the set at which
+the utterance is true, projected onto the question's answers. -/
+noncomputable def L0 (A : Finset World) (q : QUD) : Kernel Utt World :=
+  projListener project
+    (literalListener (Measure.count.restrict ↑A) λ u => (↑(sem u) : Set World).indicator 1) q
+
+/-- The counts behind the literal listener: worlds of the assumption set at which the utterance
+is true and the question's answer is the world's, over those at which the utterance is true. -/
+def l0 (A : Finset World) (q : QUD) (u : Utt) (w : World) : ℕ × ℕ :=
+  (((A ∩ sem u).filter (· ∈ cell q w)).card, (A ∩ sem u).card)
+
+theorem L0_apply (A : Finset World) (q : QUD) (u : Utt) (w : World) :
+    L0 A q u {w} = ((l0 A q u w).1 : ℝ≥0∞) / (l0 A q u w).2 := by
+  have e1 : (↑(sem u) : Set World) ∩ ↑A = ↑(A ∩ sem u) := by ext; simp [and_comm]
+  have e2 : (↑(sem u) : Set World) ∩ ↑(cell q w) ∩ ↑A = ↑((A ∩ sem u).filter (· ∈ cell q w)) := by
+    ext; simp; tauto
+  rw [L0, projListener_apply_singleton, cell_preimage, literalListener_indicator,
+    Kernel.ofFunOfCountable_apply, cond_apply MeasurableSet.of_discrete,
+    Measure.restrict_apply MeasurableSet.of_discrete,
+    Measure.restrict_apply MeasurableSet.of_discrete, e1, e2, Measure.count_apply_finset,
+    Measure.count_apply_finset, l0, ENNReal.div_eq_inv_mul]
+
+theorem L0_le_one (A : Finset World) (q : QUD) (u : Utt) (w : World) : L0 A q u {w} ≤ 1 := by
+  rw [L0_apply]
+  exact ENNReal.div_le_of_le_mul (by rw [one_mul]; exact_mod_cast Finset.card_filter_le _ _)
+
+/-- A speaker who assumes the complement interprets negated *know* and negated *think* alike:
+within the assumption set, the belief is false under both. -/
+theorem L0_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : QUD) :
+    L0 A q .knowNeg = L0 A q .thinkNeg := by
+  have h : A ∩ sem .knowNeg = A ∩ sem .thinkNeg := by
+    ext w
+    obtain ⟨b, c⟩ := w
+    simp only [Finset.mem_inter, sem, Finset.mem_filter, Finset.mem_univ, true_and]
+    constructor <;> rintro ⟨hw, hl⟩ <;> refine ⟨hw, ?_⟩ <;>
+      have hc := (Finset.mem_filter.mp (hA hw)).2 <;>
+      revert hc hl <;> cases b <;> cases c <;> decide
+  exact Measure.ext_of_singleton λ w => by rw [L0_apply, L0_apply, l0, l0, h]
+
+/-- Under the belief question, a speaker who assumes the complement answers fully with negated
+*know* at a world in which Cole does not believe the complement. -/
+theorem L0_knowNeg_bel_eq_one {A : Finset World} (hA : A ⊆ sem .cPos) {w : World} (hw : w ∈ A)
+    (hb : w.1 = false) : L0 A .bel .knowNeg {w} = 1 := by
+  rw [L0_apply, l0, Finset.filter_true_of_mem]
+  · refine ENNReal.div_self ?_ (ENNReal.natCast_ne_top _)
+    refine Nat.cast_ne_zero.mpr (Finset.card_pos.mpr ⟨w, Finset.mem_inter.mpr ⟨hw, ?_⟩⟩).ne'
+    obtain ⟨b, c⟩ := w
+    have hc := (Finset.mem_filter.mp (hA hw)).2
+    simp only at hb
+    subst hb
+    revert hc
+    cases c <;> decide
+  · intro w' hw'
+    obtain ⟨hw'A, hl⟩ := Finset.mem_inter.mp hw'
+    have hc := (Finset.mem_filter.mp (hA hw'A)).2
+    obtain ⟨b, c⟩ := w'
+    obtain ⟨b₀, c₀⟩ := w
+    simp only at hb
+    subst hb
+    simp only [cell, project, Finset.mem_filter, Finset.mem_univ, true_and]
+    revert hc hl
+    cases b <;> cases c <;> decide
+
+/-- Without assumptions, negated *think* answers the belief question fully at a world in which
+Cole does not believe the complement. -/
+theorem L0_univ_bel_thinkNeg {w : World} (hb : w.1 = false) :
+    L0 Finset.univ .bel .thinkNeg {w} = 1 := by
+  obtain ⟨b, c⟩ := w
+  simp only at hb
+  subst hb
+  rw [L0_apply, show l0 Finset.univ .bel .thinkNeg (false, c) = (2, 2) from by cases c <;> decide]
+  exact ENNReal.div_self (by norm_num) (by norm_num)
+
+/-- Without assumptions, negated *know* leaves the belief question open at such a world: it is
+also true where Cole believes a false complement. -/
+theorem L0_univ_bel_knowNeg {w : World} (hb : w.1 = false) :
+    L0 Finset.univ .bel .knowNeg {w} = 2 / 3 := by
+  obtain ⟨b, c⟩ := w
+  simp only at hb
+  subst hb
+  rw [L0_apply, show l0 Finset.univ .bel .knowNeg (false, c) = (2, 3) from by cases c <;> decide]
+  norm_num
+
+/-! ### The speaker (6) -/
+
+/-- The cost factor of (6): `κ` for a simple utterance and `κ ^ 2` for a complex one, the
+complex utterances being twice as costly. -/
+noncomputable def cost (κ : ℝ≥0∞) (u : Utt) : ℝ≥0∞ := if u.Complex then κ ^ 2 else κ
+
+theorem cost_ne_zero {κ : ℝ≥0∞} (hκ : κ ≠ 0) (u : Utt) : cost κ u ≠ 0 := by
+  unfold cost
+  split_ifs <;> simp [hκ]
+
+theorem cost_ne_top {κ : ℝ≥0∞} (hκ : κ ≠ ∞) (u : Utt) : cost κ u ≠ ∞ := by
+  unfold cost
+  split_ifs <;> simp [hκ]
+
+/-- The speaker within an assumption set (6): the best response at rationality `α` to the literal
+listener projected by the question, with the cost factor. -/
+noncomputable def S1 (α : ℝ) (κ : ℝ≥0∞) (A : Finset World) (q : QUD) : Kernel World Utt :=
+  speaker α (cost κ) (L0 A q)
+
+variable (α : ℝ) (κ : ℝ≥0∞)
+
+/-- A speaker who assumes the complement produces negated *know* and negated *think* alike,
+under either question: they are equally informative and equally costly. -/
+theorem S1_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : QUD) (w : World) :
+    S1 α κ A q w {.knowNeg} = S1 α κ A q w {.thinkNeg} := by
+  rw [S1, speaker_apply_singleton, speaker_apply_singleton, L0_knowNeg_eq_thinkNeg hA]
+  rfl
+
+/-- Without assumptions, a speaker addressing the belief question at a world in which Cole does
+not believe the complement prefers negated *think* to negated *know*: the stronger utterance is
+the more informative. -/
+theorem S1_univ_bel_knowNeg_lt_thinkNeg (hα : 0 < α) (hκ0 : κ ≠ 0) (hκ : κ ≠ ∞) {w : World}
+    (hb : w.1 = false) :
+    (S1 α κ Finset.univ .bel w).real {.knowNeg} < (S1 α κ Finset.univ .bel w).real {.thinkNeg} := by
+  have hc : cost κ .thinkNeg = κ ^ 2 := if_pos (by decide)
+  have hc' : cost κ .knowNeg = κ ^ 2 := if_pos (by decide)
+  rw [S1, speaker_real_singleton_lt_iff hα.le (cost_ne_top hκ) (L0_le_one Finset.univ .bel · w)
+    ⟨.thinkNeg, by
+      rw [L0_univ_bel_thinkNeg hb, ENNReal.one_rpow, one_mul]
+      exact cost_ne_zero hκ0 _⟩,
+    hc, hc', L0_univ_bel_thinkNeg hb, L0_univ_bel_knowNeg hb, ENNReal.one_rpow]
+  refine ENNReal.mul_lt_mul_left (pow_ne_zero 2 hκ0) (ENNReal.pow_ne_top hκ) ?_
+  rw [← ENNReal.one_rpow α]
+  refine ENNReal.rpow_lt_rpow ?_ hα
+  rw [ENNReal.div_lt_iff (Or.inl three_ne_zero) (Or.inl (ENNReal.ofNat_ne_top)), one_mul]
+  norm_num
+
+/-- Under the belief question the speaker's choice depends on the world only through Cole's
+belief: the question's cells do. -/
+theorem S1_bel_congr (A : Finset World) {w w' : World} (h : w.1 = w'.1) :
+    S1 α κ A .bel w = S1 α κ A .bel w' := by
+  have hc : cell .bel w = cell .bel w' := by ext; simp [cell, project, h]
+  rw [S1, speaker]
+  exact Measure.ext_of_singleton λ u => by
+    simp only [Kernel.ofWeights_apply_singleton, L0_apply, l0, hc]
+
+/-! ### The pragmatic listener (7) -/
+
+/-- The listener's prior: a world with an assumption set containing it, weighted by the world
+prior and the assumption prior. -/
+noncomputable def pairPrior (μ : Measure World) (ν : Measure (Finset World)) :
+    Measure (World × Finset World) :=
+  (μ.prod ν).restrict {p | p.1 ∈ p.2}
+
+variable (μ : Measure World) (ν : Measure (Finset World))
+
+theorem pairPrior_singleton [SFinite ν] (w : World) (A : Finset World) :
+    pairPrior μ ν {(w, A)} = if w ∈ A then μ {w} * ν {A} else 0 := by
+  rw [pairPrior, Measure.restrict_apply (measurableSet_singleton _)]
+  split_ifs with h
+  · rw [Set.inter_eq_self_of_subset_left (s := ({(w, A)} : Set (World × Finset World)))
+        (Set.singleton_subset_iff.mpr h),
+      ← Set.singleton_prod_singleton, Measure.prod_prod]
+  · rw [(Set.singleton_inter_eq_empty (a := (w, A))
+        (s := {p : World × Finset World | p.1 ∈ p.2})).mpr h, measure_empty]
+
+instance [IsFiniteMeasure μ] [IsFiniteMeasure ν] : IsFiniteMeasure (pairPrior μ ν) :=
+  inferInstanceAs (IsFiniteMeasure ((μ.prod ν).restrict _))
+
+/-- The pragmatic listener (7): the family listener over assumption sets, hearing the utterance
+under a known question. -/
+noncomputable def L1 [IsFiniteMeasure μ] [IsFiniteMeasure ν] (q : QUD) :
+    Kernel Utt (World × Finset World) :=
+  familyListener (λ A => L0 A q) α (cost κ) (pairPrior μ ν)
+
+theorem pairPrior_real [IsFiniteMeasure μ] [IsFiniteMeasure ν] (w : World) (A : Finset World) :
+    (pairPrior μ ν).real {(w, A)} = if w ∈ A then μ.real {w} * ν.real {A} else 0 := by
+  rw [measureReal_def, pairPrior_singleton]
+  split_ifs <;> simp [measureReal_def, ENNReal.toReal_mul]
+
+/-! ### The prior effect (2b) -/
+
+/-- An utterance true at a world of positive prior lying in an assumption set of positive prior
+has a positive marginal. -/
+theorem comp_ne_zero [IsFiniteMeasure μ] [IsFiniteMeasure ν] (hα : 0 ≤ α) (hκ0 : κ ≠ 0)
+    (hκ : κ ≠ ∞) (q : QUD) {u : Utt} {w : World} {A : Finset World} (hw : w ∈ A)
+    (hu : w ∈ sem u) (hμ : μ {w} ≠ 0) (hν : ν {A} ≠ 0) :
+    (familySpeaker (λ A => L0 A q) α (cost κ) ∘ₘ pairPrior μ ν) {u} ≠ 0 := by
+  refine comp_familySpeaker_ne_zero (w := w) (l := A) ?_ ?_
+  · rw [pairPrior_singleton, if_pos hw]
+    exact mul_ne_zero hμ hν
+  · refine speaker_apply_singleton_ne_zero hα (cost_ne_zero hκ0) (cost_ne_top hκ)
+      (λ u' => L0_le_one A q u' w) ?_
+    rw [L0_apply, ne_eq, ENNReal.div_eq_zero_iff, not_or]
+    refine ⟨Nat.cast_ne_zero.mpr (Finset.card_pos.mpr ⟨w, Finset.mem_filter.mpr
+      ⟨Finset.mem_inter.mpr ⟨hw, hu⟩, ?_⟩⟩).ne', ENNReal.natCast_ne_top _⟩
+    simp [cell]
+
+/-! ### The prior effect (2b) -/
+
+section PriorEffect
+
+variable (β γ : Measure Bool) (q : QUD) (u : Utt)
+
+/-- The listener's evidence for a value of the complement: the speaker's production of the
+utterance at the worlds with that value, weighted by the belief prior and by the assumption
+prior over the assumption sets containing them. It does not depend on the complement prior. -/
+noncomputable def cWeight (c : Bool) : ℝ :=
+  ∑ b, ∑ A, if (b, c) ∈ A then β.real {b} * ν.real {A} * (S1 α κ A q (b, c)).real {u} else 0
+
+theorem cWeight_nonneg (c : Bool) : 0 ≤ cWeight α κ ν β q u c :=
+  Finset.sum_nonneg λ _ _ => Finset.sum_nonneg λ _ _ => by
+    split_ifs
+    · exact mul_nonneg (mul_nonneg measureReal_nonneg measureReal_nonneg) measureReal_nonneg
+    · exact le_rfl
+
+private theorem sum_pairs (f : World × Finset World → ℝ) :
+    ∑ p, f p = ∑ b, ∑ c, ∑ A, f ((b, c), A) := by
+  rw [Fintype.sum_prod_type, Fintype.sum_prod_type]
+
+private theorem sum_pairs_c (f : World × Finset World → ℝ) :
+    ∑ p ∈ Finset.univ.filter (λ p : World × Finset World => p.1.2 = true), f p
+      = ∑ b, ∑ A, f ((b, true), A) := by
+  rw [Finset.sum_filter, sum_pairs]
+  simp
+
+variable [IsProbabilityMeasure β] [IsProbabilityMeasure γ] [IsProbabilityMeasure ν]
+
+private theorem comp_real :
+    (familySpeaker (λ A => L0 A q) α (cost κ) ∘ₘ pairPrior (β.prod γ) ν).real {u}
+      = γ.real {true} * cWeight α κ ν β q u true + γ.real {false} * cWeight α κ ν β q u false := by
+  rw [Measure.comp_real_singleton, sum_pairs, Finset.sum_comm, Fintype.sum_bool]
+  simp only [pairPrior_real, Measure.prod_real_singleton, familySpeaker_apply, cWeight,
+    Finset.mul_sum, mul_ite, mul_zero, ite_mul, zero_mul]
+  refine congrArg₂ (· + ·) ?_ ?_ <;>
+    refine Finset.sum_congr rfl λ b _ => Finset.sum_congr rfl λ A _ => ?_ <;>
+    split_ifs <;> first | rfl | (simp only [S1]; ring)
+
+/-- The posterior probability of the complement (fn. 11): its prior probability times the
+evidence for it, over the evidence for either value. -/
+theorem L1_c_real (hu : (familySpeaker (λ A => L0 A q) α (cost κ) ∘ₘ pairPrior (β.prod γ) ν)
+    {u} ≠ 0) :
+    (L1 α κ (β.prod γ) ν q u).real {p | p.1.2 = true}
+      = γ.real {true} * cWeight α κ ν β q u true
+        / (γ.real {true} * cWeight α κ ν β q u true
+          + γ.real {false} * cWeight α κ ν β q u false) := by
+  have hE : ({p : World × Finset World | p.1.2 = true} : Set _)
+      = ↑(Finset.univ.filter λ p : World × Finset World => p.1.2 = true) := by ext; simp
+  rw [measureReal_def, L1, familyListener, hE, posterior_apply_finset _ _ hu, ENNReal.toReal_div,
+    ENNReal.toReal_sum (λ _ _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
+    ← measureReal_def, comp_real]
+  simp only [ENNReal.toReal_mul, ← measureReal_def]
+  rw [sum_pairs_c]
+  simp only [pairPrior_real, Measure.prod_real_singleton, familySpeaker_apply, cWeight,
+    Finset.mul_sum, mul_ite, mul_zero, ite_mul, zero_mul]
+  congr 1
+  refine Finset.sum_congr rfl λ b _ => Finset.sum_congr rfl λ A _ => ?_
+  split_ifs <;> first | rfl | (simp only [S1]; ring)
+
+private theorem real_false_eq (ρ : Measure Bool) [IsProbabilityMeasure ρ] :
+    ρ.real {false} = 1 - ρ.real {true} := by
+  have h := probReal_univ (μ := ρ)
+  rw [← Finset.coe_univ, ← sum_measureReal_singleton, Fintype.sum_bool] at h
+  linarith
+
+/-- The prior effect (2b): the posterior probability of the complement rises with its prior
+probability, under every utterance, question, rationality, cost and assumption prior, since the
+world prior enters the model at the pragmatic listener alone. -/
+theorem L1_c_mono (γ' : Measure Bool) [IsProbabilityMeasure γ']
+    (hu : (familySpeaker (λ A => L0 A q) α (cost κ) ∘ₘ pairPrior (β.prod γ) ν) {u} ≠ 0)
+    (hu' : (familySpeaker (λ A => L0 A q) α (cost κ) ∘ₘ pairPrior (β.prod γ') ν) {u} ≠ 0)
+    (h : γ.real {true} ≤ γ'.real {true}) :
+    (L1 α κ (β.prod γ) ν q u).real {p | p.1.2 = true}
+      ≤ (L1 α κ (β.prod γ') ν q u).real {p | p.1.2 = true} := by
+  have hd : 0 < γ.real {true} * cWeight α κ ν β q u true
+      + γ.real {false} * cWeight α κ ν β q u false := by
+    rw [← comp_real]
+    exact ENNReal.toReal_pos hu (measure_ne_top _ _)
+  have hd' : 0 < γ'.real {true} * cWeight α κ ν β q u true
+      + γ'.real {false} * cWeight α κ ν β q u false := by
+    rw [← comp_real]
+    exact ENNReal.toReal_pos hu' (measure_ne_top _ _)
+  rw [L1_c_real _ _ _ _ _ _ _ hu, L1_c_real _ _ _ _ _ _ _ hu', div_le_div_iff₀ hd hd']
+  rw [real_false_eq γ, real_false_eq γ'] at *
+  nlinarith [mul_nonneg (mul_nonneg (cWeight_nonneg α κ ν β q u true)
+    (cWeight_nonneg α κ ν β q u false)) (sub_nonneg.2 h)]
+
+end PriorEffect
 
 end ScontrasTonhauser2025

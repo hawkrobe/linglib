@@ -23,12 +23,11 @@ Factivity is veridicality of the positive form
 projection experiments (BEL? and C?), and `assumesComplement` renders
 "the speaker assumes C" as C holding throughout a belief state.
 
-The semantics is `Bool`-valued deliberately: these meanings feed the
-ℚ-valued RSA tables of [scontras-tonhauser-2025] (`Studies/
-ScontrasTonhauser2025.lean`) as literal-listener truth tables and are the
-two readings of [grove-white-2025]'s lexical entry for *know*
-(`Studies/GroveWhite2025.lean`); the Prop migration is coupled to the
-planned RSA measures migration.
+The semantics is `Bool`-valued: these meanings are the literal meanings
+of the RSA model of [scontras-tonhauser-2025]
+(`Studies/ScontrasTonhauser2025.lean`) and the two readings of
+[grove-white-2025]'s lexical entry for *know*
+(`Studies/GroveWhite2025.lean`).
 -/
 
 namespace Factivity
