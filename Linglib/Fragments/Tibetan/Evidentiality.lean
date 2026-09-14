@@ -3,18 +3,20 @@ import Linglib.Semantics.Evidential.Defs
 /-!
 # Tibetan (Lhasa) evidentiality
 
-Lhasa Tibetan marks information source in its final auxiliaries, fused with aspect, and
-Aikhenvald confines its evidentiality proper to the perfective. There *-song* marks an event
-the speaker perceived, *-bzhag* an event inferred from direct knowledge of its result, and
-*-pa red* one the speaker knows only by report, reasoning or general knowledge, which
-[delancey-2001] glosses indirect and [tournadre-2008] factual; Aikhenvald reads the system
-as firsthand ~ non-firsthand, [delancey-1986] having described *-song* against *-pa red*
-alone. A quotative *-za* may follow any of the three, shifting the information access to a
-quoted speaker, and the remaining perfective auxiliaries *-pa yin* and *-byung* track the
-speaker's volition and involvement rather than source. So does the copular opposition
-*yin* ~ *red* (equational) and *yod* ~ *'dug* (existential), described as conjunct ~ disjunct
-and later as egophoric, which Aikhenvald lists among the evidentiality strategies; neither is
-in the inventory.
+Lhasa (Standard) Tibetan marks evidentiality in its final auxiliaries, fused with aspect, and
+[tournadre-lapolla-2014] read the system as marking two things: the speaker's *access* to the
+information and its *source*. In the perfective, sensory *-song* marks an event the speaker
+perceived through any of the senses, *-bzhag* one inferred from direct knowledge of its
+result, and factual *-pa red* one known from reasoning or general knowledge, which
+[delancey-2001] glosses indirect; the hearsay suffix *-za* marks source alone and can follow
+any of them. The copulas and imperfective auxiliaries carry the same access contrast
+(*'dug* is the present counterpart of *-song*, *yod-red* of *-pa red*), so a term's form is
+given here in the perfective. Aikhenvald, following [delancey-1986]'s description of *-song*
+against *-pa red*, reads the perfective as a firsthand ~ non-firsthand system and confines
+evidentiality proper to it. The egophoric auxiliaries *-pa yin* and *-byung* and the copulas
+*yin* and *yod* mark the speaker's personal knowledge or intention, which is not one of the
+six parameters of information source; Aikhenvald lists the *yin* ~ *red*, *yod* ~ *'dug*
+opposition, described as conjunct ~ disjunct, among the evidentiality strategies.
 
 ## References
 
@@ -22,16 +24,19 @@ in the inventory.
 * [delancey-1986]
 * [delancey-2001]
 * [tournadre-2008]
+* [tournadre-lapolla-2014]
 -/
 
 namespace Tibetan.Evidentiality
 
 open Evidential
 
-/-- The perfective evidentials: sensory *-song*, inferential *-bzhag* and factual *-pa red*. -/
+/-- The perfective access markers, sensory *-song*, inferential *-bzhag* and factual
+*-pa red*, and the hearsay source marker *-za*. -/
 def evidentials : List Evidential :=
   [ { form := "-song", exponent := .tamFusion, covers := {.visual, .sensory} },
     { form := "-bzhag", exponent := .tamFusion, covers := {.inference} },
-    { form := "-pa red", exponent := .tamFusion, covers := {.assumption, .hearsay} } ]
+    { form := "-pa red", exponent := .tamFusion, covers := {.assumption} },
+    { form := "-za", exponent := .verbalAffix, covers := {.hearsay} } ]
 
 end Tibetan.Evidentiality
