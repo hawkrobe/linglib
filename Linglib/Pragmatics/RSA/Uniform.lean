@@ -59,6 +59,12 @@ theorem uniformListener_apply_singleton (c : C) (t : T) :
         simpa [Set.eq_empty_iff_forall_notMem] using ‹t ∉ sem c›,
       measure_empty, mul_zero]
 
+/-- The real share of a state under the uniform listener. -/
+theorem uniformListener_real_singleton (c : C) (t : T) :
+    (uniformListener sem c).real {t} = if t ∈ sem c then ((sem c).card : ℝ)⁻¹ else 0 := by
+  rw [measureReal_def, uniformListener_apply_singleton]
+  split <;> simp
+
 theorem uniformListener_apply_singleton_le_one (c : C) (t : T) :
     uniformListener sem c {t} ≤ 1 := by
   rw [uniformListener_apply_singleton]
