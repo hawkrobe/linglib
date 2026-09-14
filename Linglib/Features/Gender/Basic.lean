@@ -33,8 +33,8 @@ assignment systems of `Features/Gender/Assignment.lean`.
 * `Gender.Faithful.card_le_pow`: `f` forms on each of `t` targets support at most `f ^ t`
   controller genders.
 * `Gender.factorsThrough_of_faithful`: when a faithful carrier mediates agreement,
-  assignment factors through agreement behaviour, the Hockett–Corbett definition of gender
-  as a theorem rather than a stipulation.
+  assignment factors through agreement behaviour, genders as agreement classes by theorem
+  rather than by stipulation.
 
 ## Implementation notes
 
@@ -51,6 +51,7 @@ assignment systems of `Features/Gender/Assignment.lean`.
 ## References
 
 * [corbett-1991] — genders as agreement classes, crediting [hockett-1958]
+* [zaliznjak-1964] — agreement classes
 * [kramer-2015] — the two-class minimum
 * [corbett-fedden-2016] — canonical gender
 * [harbour-2014] — the universal calculi of number and person, which gender lacks
@@ -134,20 +135,20 @@ structure System (G : Type*) where
   label : G → Option Gender
   /-- The morphosyntactic default: the gender realized when there are no
       gender features to agree with. Per-system data, not derivable
-      ([kramer-2015]: feminine defaults are attested). -/
+      ([kramer-2015]: feminine defaults are attested). A language may use
+      distinct defaults in distinct contexts, clausal controllers against
+      indeclinable nouns for instance; the system records the normal case,
+      and a second default is study content. -/
   default : G
 
 /-! ### Agreement faithfulness
 
-[corbett-1991]'s definition operationalized. Agreement evidence for a carrier
-`G` is a behavior map `agr : G → T → F` — for each gender, the form each
-target shows. The carrier is *faithful* to the evidence when distinct genders
-are distinguished by some target; a carrier that is not faithful has posited
-a spurious distinction (two "genders" that agree alike everywhere are one
-gender). Target and form types are parameters: the substrate is neutral about
-what counts as a target (predicate, attributive, pronoun), which is where
-strict-Agree vs loose-covariation definitions of gender-hood differ
-([kramer-2015] §4.1.2). -/
+Agreement evidence for a carrier `G` is a behaviour map `agr : G → T → F`, the form each
+target shows for each gender. The carrier is faithful to the evidence when distinct genders
+are distinguished by some target; a carrier that is not faithful has posited a spurious
+distinction, since two genders that agree alike everywhere are one gender. The target and
+form types are parameters: the substrate is neutral about what counts as a target, which is
+where [kramer-2015]'s strict-Agree and loose-covariation definitions of gender differ. -/
 
 section Faithful
 
@@ -177,15 +178,18 @@ end Faithful
 An assignment gives every noun one controller gender, the Canonical Gender Principle of
 [corbett-fedden-2016]. When noun-level agreement is the per-gender behaviour of the assigned
 gender and the carrier is faithful, assignment factors through observable agreement
-behaviour: the Hockett–Corbett definition of gender as a theorem. -/
+behaviour: genders are agreement classes in [zaliznjak-1964]'s sense, the starting point of
+[corbett-1991]'s definition. Corbett's controller genders discount subgenders, inquorate
+genders and overdifferentiated targets on the way from agreement classes to genders, and
+those steps are not modelled here. -/
 
 section Assignment
 
 variable {N T F : Type*}
 
-/-- The Hockett–Corbett definition of gender, derived rather than stipulated: if noun-level
-agreement `nounAgr` is the per-gender behaviour `agr` of the assigned gender and the carrier
-is faithful, then gender assignment factors through observable agreement behaviour. -/
+/-- Genders as agreement classes, derived rather than stipulated: if noun-level agreement
+`nounAgr` is the per-gender behaviour `agr` of the assigned gender and the carrier is
+faithful, then gender assignment factors through observable agreement behaviour. -/
 theorem factorsThrough_of_faithful {assign : N → G} {nounAgr : N → T → F} {agr : G → T → F}
     (med : nounAgr = agr ∘ assign) (faith : Faithful agr) :
     Function.FactorsThrough assign nounAgr :=

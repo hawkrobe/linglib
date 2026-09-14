@@ -706,8 +706,6 @@ import Linglib.Features.Expressive
 import Linglib.Features.Gender.Basic
 import Linglib.Features.Gender.Capabilities
 import Linglib.Features.Gender.Decomposition
-import Linglib.Features.Gender.Interp
-import Linglib.Features.Gender.Resolve
 import Linglib.Features.Givenness
 import Linglib.Features.Grammaticalization
 import Linglib.Features.Indefinite

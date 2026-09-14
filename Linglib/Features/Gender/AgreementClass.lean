@@ -36,6 +36,17 @@ German, or neither determines the other, as in Romanian or Lak.
 * `Gender.parallel_iff_ker_eq`, `Gender.convergent_iff_ker_lt`: the map between two numbers'
   target genders is the order of their kernels.
 
+## Implementation notes
+
+* The index `T` of the agreement map is whatever the map is restricted to: a target
+  category, a morphosyntactic form, or a pair of the two, so that target genders can be
+  counted per target as well as per number across targets.
+* Subgenders, agreement classes differing on a minority of forms, inquorate genders, small
+  closed classes whose pattern mixes other genders, and overdifferentiated targets are the
+  steps from agreement classes to controller genders that remain to be defined; until then
+  the agreement classes of a fragment are its controller genders only when the fragment
+  records no such class.
+
 ## References
 
 * [corbett-1991] — chapter 6
@@ -69,7 +80,7 @@ theorem card_range_le_prod [Finite N] [Fintype T] (agr : N → T → F) :
     λ f g h => Subtype.ext (funext λ t => congrArg Subtype.val (congrFun h t))
 
 /-- When noun-level agreement is the per-gender behaviour of a faithful carrier, the
-agreement classes are the fibres of the assignment: the controller genders are the genders. -/
+agreement classes are the fibres of the assignment: the genders are the agreement classes. -/
 theorem agreementClasses_eq_ker_of_faithful {G : Type*} {assign : N → G}
     {nounAgr : N → T → F} {agr : G → T → F} (med : nounAgr = agr ∘ assign)
     (faith : Faithful agr) : agreementClasses nounAgr = Setoid.ker assign :=

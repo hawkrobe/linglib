@@ -13,7 +13,7 @@ back to the system's morphosyntactic default. The attested realization
 patterns — Set 1, Set 2, three-gender, animacy-based — differ only in
 their system, and PF is blind to interpretability. DM features are the
 non-hybrid fragment of `Gender.SplitFeature`, and the FEM slice of the
-head inventory is `KramerN`, whose three-gender bound is a theorem.
+head inventory is `KramerN`, whose three-gender bound for one dimension is a theorem.
 
 ## Main definitions
 
@@ -149,9 +149,9 @@ split-feature terms, the gap [smith-2015]'s architecture closes. -/
 theorem toSplitFeature_not_isHybrid (n : KramerN) : ¬ n.toSplitFeature.IsHybrid := by
   cases n <;> rintro ⟨u, i, hu, hi, hne⟩ <;> simp_all [toSplitFeature]
 
-/-- [kramer-2015]'s three-gender bound: an inventory of gender-relevant heads distinguishes at
-most three agreement classes, [+FEM], [−FEM] and bare, so more than three genders needs
-per-class identity features, a language-particular `Gender.System` carrier. -/
+/-- [kramer-2015]'s three-gender bound for a single binary dimension: an inventory of heads
+over [±FEM] distinguishes at most three agreement classes, [+FEM], [−FEM] and bare, so a
+system with more genders needs a further dimension or a language-particular carrier. -/
 theorem card_image_exponence_le_three (inv : Finset KramerN) :
     (inv.image exponence).card ≤ 3 :=
   le_trans (Finset.card_le_univ _) (by decide)

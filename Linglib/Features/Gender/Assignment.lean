@@ -38,9 +38,9 @@ functions to an optional gender, so their order of application is fixed by const
 
 ## References
 
-* [corbett-1991] — chapters 2 and 3
-* [kramer-2015] — the semantic core generalization
-* [dahl-2000] — animacy and the semantic core
+* [corbett-1991] — chapters 2 and 3: semantic and formal assignment, and the semantic core
+* [dahl-2000] — the animacy refinement of the semantic core
+* [kramer-2015] — the semantic core generalization restated
 -/
 
 namespace Gender

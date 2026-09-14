@@ -39,7 +39,7 @@ pair on the pattern of the person and number presentations.
 * [smith-2015] — the split-feature architecture
 * [smith-2021] — the mismatch typology
 * [kramer-2015] — interpretable and uninterpretable gender
-* [sauerland-2003] — the bivalent presentation
+* [sauerland-2003] — the markedness ordering the bivalent presentation reconstructs
 * [hammerly-2019]
 -/
 
@@ -108,23 +108,21 @@ end SplitFeature
 
 /-! ### The bivalent presentation: [±feminine, ±neuter]
 
-[sauerland-2003]'s decomposition of sex-based gender:
-**[±feminine]** (feminine and neuter are [+feminine]) and **[±neuter]**
-(only neuter is [+neuter]), with the containment [+neuter] → [+feminine]:
-neuter is the most specified gender (like singular for number, 1st for
-person) and masculine the least. The three well-formed combinations are the
-three genders of a sex-based system; the scheme parallels person
-[±author] ⊂ [±participant] and number [±atomic] ⊂ [±minimal] — all three are
-`ContainmentPairLike` presentations of the same skeleton
-(`Features/ContainmentPair.lean`). -/
+A reconstruction of [sauerland-2003]'s markedness ordering of sex-based gender, on which
+masculine is semantically vacuous, feminine presupposes non-masculinity and neuter
+presupposes genderlessness, as two binary features with the containment
+[+neuter] → [+feminine]: neuter is the most specified gender, as singular is for number and
+first person for person, and masculine the least. The paper itself states no features; the
+three well-formed combinations are the three genders of a sex-based system, and the scheme
+parallels person [±author] ⊂ [±participant] and number [±atomic] ⊂ [±minimal], all three
+`ContainmentPairLike` presentations of one skeleton (`Features/ContainmentPair.lean`). -/
 
-/-- Bivalent gender features: [±feminine, ±neuter] ([sauerland-2003]).
-
-    The three well-formed combinations yield the three sex-based genders:
-    neuter [+feminine, +neuter], feminine [+feminine, −neuter],
-    masculine [−feminine, −neuter]. -/
+/-- Bivalent gender features [±feminine, ±neuter], reconstructing [sauerland-2003]'s
+    markedness ordering. The three well-formed combinations yield the three sex-based
+    genders: neuter [+feminine, +neuter], feminine [+feminine, −neuter], masculine
+    [−feminine, −neuter]. -/
 structure Features where
-  /-- [+feminine]: referent triggers feminine (or neuter) agreement. -/
+  /-- [+feminine]: non-masculine, the value feminine and neuter share. -/
   isFeminine : Bool
   /-- [+neuter]: referent triggers neuter agreement. -/
   isNeuter : Bool
