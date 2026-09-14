@@ -1363,7 +1363,6 @@ import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Uniform
 import Linglib.Pragmatics.RSA.Profile
 import Linglib.Pragmatics.RSA.Canonical
-import Linglib.Pragmatics.RSA.CombinedUtility
 import Linglib.Pragmatics.RSA.Gibbs
 import Linglib.Pragmatics.RSA.Incremental
 import Linglib.Pragmatics.RSA.LatentOperators
@@ -2505,7 +2504,6 @@ import Linglib.Studies.Stump2012
 import Linglib.Studies.Stump2016
 import Linglib.Studies.Stump2020
 import Linglib.Studies.Sudo2016
-import Linglib.Studies.SumersEtAl2023
 import Linglib.Studies.SuttonFilip2021
 import Linglib.Studies.Svenonius2004
 import Linglib.Studies.TaraldsenEtAl2018

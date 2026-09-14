@@ -297,7 +297,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Core/Probability/Softmax.lean;Pragmatics/Bidirectional.lean;Pragmatics/RSA/Basic.lean;Pragmatics/RSA/Canonical.lean;Pragmatics/RSA/Gibbs.lean;Pragmatics/RSA/Operators.lean;Studies/Anderson2021.lean;Studies/BellerGerstenberg2025.lean;Studies/BergenGoodman2015.lean;Studies/ChampollionAlsopGrosu2019.lean;Studies/CremersWilcoxSpector2023.lean;Studies/DegenEtAl2020.lean;Studies/FrankGoodman2012.lean;Studies/FrankeBergen2020.lean;Studies/GoodmanStuhlmuller2013.lean;Studies/HardingGerstenbergIcard2025.lean;Studies/HeKaiserIskarous2025.lean;Studies/Kennedy2015.lean;Studies/Kennedy2015PMF.lean;Studies/QingFranke2015.lean;Studies/QingGoodmanLassiter2016.lean;Studies/SchlotterbeckWang2023.lean;Studies/SikosEtAl2021.lean;Studies/SpinosoDiPianoEtAl2025.lean;Studies/SumersEtAl2023.lean;Studies/TesslerGoodman2019.lean;Studies/Thomas2026.lean}
+  sources   = {Core/Probability/Softmax.lean;Pragmatics/Bidirectional.lean;Pragmatics/RSA/Basic.lean;Pragmatics/RSA/Canonical.lean;Pragmatics/RSA/Gibbs.lean;Pragmatics/RSA/Operators.lean;Studies/Anderson2021.lean;Studies/BellerGerstenberg2025.lean;Studies/BergenGoodman2015.lean;Studies/ChampollionAlsopGrosu2019.lean;Studies/CremersWilcoxSpector2023.lean;Studies/DegenEtAl2020.lean;Studies/FrankGoodman2012.lean;Studies/FrankeBergen2020.lean;Studies/GoodmanStuhlmuller2013.lean;Studies/HardingGerstenbergIcard2025.lean;Studies/HeKaiserIskarous2025.lean;Studies/Kennedy2015.lean;Studies/Kennedy2015PMF.lean;Studies/QingFranke2015.lean;Studies/QingGoodmanLassiter2016.lean;Studies/SchlotterbeckWang2023.lean;Studies/SikosEtAl2021.lean;Studies/SpinosoDiPianoEtAl2025.lean;Studies/SumersEtAl2024.lean;Studies/TesslerGoodman2019.lean;Studies/Thomas2026.lean}
 }
 @article{sikos-etal-2021,
   author    = {Sikos, Les and Venhuizen, Noortje J. and Drenhaus, Heiner and Crocker, Matthew W.},
@@ -453,7 +453,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Studies/QingFranke2015.lean;Studies/ScontrasPearl2021.lean}
+  sources   = {Pragmatics/RSA/Decision.lean;Studies/QingFranke2015.lean;Studies/ScontrasPearl2021.lean;Studies/SumersEtAl2024.lean}
 }
 @inproceedings{schlotterbeck-wang-2023,
   author    = {Schlotterbeck, Fabian and Wang, Hening},
@@ -964,7 +964,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Studies/HardingGerstenbergIcard2025.lean}
+  sources   = {Pragmatics/RSA/Decision.lean;Studies/HardingGerstenbergIcard2025.lean}
 }
 @article{hawkins-gweon-goodman-2021,
   author    = {Hawkins, Robert D. and Gweon, Hyowon and Goodman, Noah D.},
@@ -979,19 +979,45 @@
   role      = {formalized},
   sources   = {Data/Examples/HawkinsGweonGoodman2021.json;Studies/HawkinsGweonGoodman2021.lean}
 }
-@article{sumers-etal-2023,
+@incollection{benz-2006,
+  author    = {Benz, Anton},
+  year      = {2006},
+  title     = {Utility and Relevance of Answers},
+  booktitle = {Game Theory and Pragmatics},
+  editor    = {Benz, Anton and J{\"a}ger, Gerhard and van Rooij, Robert},
+  publisher = {Palgrave Macmillan},
+  pages     = {195--219},
+  doi       = {10.1057/9780230285897_7},
+  subfield  = {pragmatics},
+  role      = {cited},
+  sources   = {Studies/SumersEtAl2024.lean},
+}
+@article{van-der-henst-etal-2002,
+  author    = {van der Henst, Jean-Baptiste and Carles, Laure and Sperber, Dan},
+  year      = {2002},
+  title     = {Truthfulness and Relevance in Telling the Time},
+  journal   = {Mind \& Language},
+  volume    = {17},
+  number    = {5},
+  pages     = {457--466},
+  doi       = {10.1111/1468-0017.00207},
+  subfield  = {pragmatics},
+  role      = {cited},
+  sources   = {Studies/SumersEtAl2024.lean},
+}
+@article{sumers-etal-2024,
   author    = {Sumers, Theodore R. and Ho, Mark K. and Griffiths, Thomas L. and Hawkins, Robert D.},
   year      = {2024},
   title     = {Reconciling Truthfulness and Relevance as Epistemic and Decision-Theoretic Utility},
   journal   = {Psychological Review},
   volume    = {131},
   number    = {1},
-  pages     = {194},
+  pages     = {194--230},
   doi       = {10.1037/rev0000437},
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Pragmatics/RSA/CombinedUtility.lean;Studies/HardingGerstenbergIcard2025.lean;Studies/SumersEtAl2023.lean}
+  sources   = {Pragmatics/RSA/Decision.lean;Studies/HardingGerstenbergIcard2025.lean;Studies/SumersEtAl2024.lean}
 }
 @inproceedings{waldon-degen-2021,
   author    = {Waldon, Brandon and Degen, Judith},
@@ -1038,7 +1064,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Core/Probability/Softmax.lean;Pragmatics/SocialMeaning/Register.lean;Fragments/English/Scales.lean;Pragmatics/RSA/CombinedUtility.lean;Studies/YoonEtAl2020.lean}
+  sources   = {Core/Probability/Softmax.lean;Pragmatics/SocialMeaning/Register.lean;Fragments/English/Scales.lean;Studies/YoonEtAl2020.lean}
 }
 @article{scontras-pearl-2021,
   author    = {Scontras, Gregory and Pearl, Lisa S.},
@@ -1393,7 +1419,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Data/Examples/HawkinsEtAl2025.json;Pragmatics/RSA/Canonical.lean;Pragmatics/RSA/CombinedUtility.lean;Studies/HawkinsEtAl2025.lean;Studies/TsvilodubEtAl2026.lean}
+  sources   = {Data/Examples/HawkinsEtAl2025.json;Pragmatics/RSA/Canonical.lean;Studies/HawkinsEtAl2025.lean;Studies/TsvilodubEtAl2026.lean}
 }
 @inproceedings{he-kaiser-iskarous-2025,
   author    = {He, Muxuan and Kaiser, Elsi and Iskarous, Khalil},
@@ -9522,7 +9548,7 @@
   subfield  = {semantics/modality},
   role      = {cited},
   validated = {true},
-  sources   = {Pragmatics/GriceanMaxims.lean;Pragmatics/Implicature/Diagnostics.lean;Studies/AhnKocabDavidson2026.lean;Studies/DaleReiter1995.lean;Studies/EngelhardtEtAl2006.lean;Studies/ReesReksnesRohde2026.lean;Studies/RitchieSchiller2024.lean;Studies/Stalnaker1975.lean}
+  sources   = {Pragmatics/GriceanMaxims.lean;Pragmatics/Implicature/Diagnostics.lean;Studies/AhnKocabDavidson2026.lean;Studies/DaleReiter1995.lean;Studies/EngelhardtEtAl2006.lean;Studies/ReesReksnesRohde2026.lean;Studies/RitchieSchiller2024.lean;Studies/Stalnaker1975.lean;Studies/SumersEtAl2024.lean}
 }% REF: Grove, J. (2022). Presupposition projection as a scope phenomenon.
 @article{grove-2022,
   author    = {Grove, Julian},
@@ -11110,7 +11136,7 @@
   subfield  = {pragmatics/discourse},
   validated = {true},
   role      = {formalized},
-  sources   = {Discourse/QUD/AtIssueness.lean;Discourse/QUD/Basic.lean;Semantics/Mood/State.lean;Semantics/Questions/Entailment.lean;Semantics/Questions/Partition/QUD.lean;Semantics/Questions/Resolution.lean;Studies/GarassinoJacob2018.lean;Studies/IppolitoKissWilliams2022.lean;Studies/IppolitoKissWilliams2025.lean;Studies/LuPanDegen2025.lean;Studies/RitchieSchiller2024.lean;Studies/Roberts2012.lean;Studies/Roberts2023.lean;Studies/TonhauserBeaverDegen2018.lean;Studies/Umbach2004.lean}
+  sources   = {Discourse/QUD/AtIssueness.lean;Discourse/QUD/Basic.lean;Semantics/Mood/State.lean;Semantics/Questions/Entailment.lean;Semantics/Questions/Partition/QUD.lean;Semantics/Questions/Resolution.lean;Studies/GarassinoJacob2018.lean;Studies/IppolitoKissWilliams2022.lean;Studies/IppolitoKissWilliams2025.lean;Studies/LuPanDegen2025.lean;Studies/RitchieSchiller2024.lean;Studies/Roberts2012.lean;Studies/Roberts2023.lean;Studies/SumersEtAl2024.lean;Studies/TonhauserBeaverDegen2018.lean;Studies/Umbach2004.lean}
 }
 @inproceedings{portner-2004,
   author    = {Portner, Paul},
@@ -15237,7 +15263,7 @@
   subfield  = {semantics/questions},
   validated = {true},
   role      = {cited},
-  sources   = {Core/Probability/Decision/Basic.lean;Core/Probability/Decision/Blackwell.lean;Core/Probability/Decision/Duality.lean;Core/Probability/Decision/ExperimentDesign.lean;Pragmatics/DecisionTheoretic/PartitionAdjunction.lean;Studies/DongEtAl2026.lean;Studies/TsvilodubEtAl2026.lean;Studies/VanRooy2003.lean}
+  sources   = {Core/Probability/Decision/Basic.lean;Core/Probability/Decision/Blackwell.lean;Core/Probability/Decision/Duality.lean;Core/Probability/Decision/ExperimentDesign.lean;Pragmatics/DecisionTheoretic/PartitionAdjunction.lean;Pragmatics/RSA/Decision.lean;Studies/DongEtAl2026.lean;Studies/SumersEtAl2024.lean;Studies/TsvilodubEtAl2026.lean;Studies/VanRooy2003.lean}
 }
 @article{van-rooy-2003-npi,
   author    = {van Rooy, Robert},
