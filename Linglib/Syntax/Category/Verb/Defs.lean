@@ -86,7 +86,7 @@ def VoiceType.assignsTheta : VoiceType → Bool
   | .nonThematic | .expletive => false
 
 /--
-Presupposition trigger type ([tonhauser-beaver-roberts-simons-2013] classification).
+Presupposition trigger type, the hard/soft classification of [abusch-2010].
 
 - Hard triggers: Always project (too, again, also)
 - Soft triggers: Context-sensitive projection (stop, know)
