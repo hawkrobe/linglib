@@ -266,7 +266,7 @@ theorem valency_follows_default_except_wambaya :
 judgment satisfies the value the locus predicts. -/
 theorem siloni_discontinuity_prediction :
     ∀ p ∈ allRecipProfiles, ∀ f ∈ p.formation, ∀ d ∈ p.discontinuousAttested,
-      (Siloni2012.predictedProperties f).discontinuous = d := by
+      (Siloni2012.Property.discontinuous.Holds f ↔ d = true) := by
   decide
 
 /-! ### Semantic reciprocity types (§4) -/
