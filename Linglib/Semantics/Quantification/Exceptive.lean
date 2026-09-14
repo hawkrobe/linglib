@@ -1,31 +1,38 @@
 import Linglib.Semantics.Quantification.Counting
+import Mathlib.Order.Bounds.Basic
 
 /-!
-# Exceptive Quantifiers
-[peters-westerstahl-2006] [von-fintel-1993] [gajewski-2002]
+# Exceptive quantifiers
 
-Semantic operators for "but"-exceptive constructions:
+This file defines the semantics of exceptive constructions, *every student but John*, over
+generalized quantifiers. An exceptive subtracts an exception set `C` from the restrictor of a
+determiner. `ExcRestrictive Q A C B` is domain subtraction with restrictiveness, `Q (A \ C) B`
+and not `Q A B`, the semantics [von-fintel-1993] gives free exceptives, *except for John*.
+`ExcLeast Q A C B` is his semantics of the *but*-phrase: `C` is the least set whose subtraction
+makes the quantification true, so that the phrase names the set responsible for the falsehood
+of the quantification. `ExcW` and `ExcS` are the weak and strong exceptives of
+[peters-westerstahl-2006], which state the exception in terms of counterexamples to the
+generalization.
 
-  "every student but John passed" = every(student \ {John}, passed) ∧ ¬passed(John)
+## Main definitions
 
-Only universal quantifiers (positive or negative) license exceptives.
+* `ExcRestrictive`, `ExcLeast` — domain subtraction with restrictiveness, and with the least
+  exception.
+* `IsException`, `ExcW`, `ExcS` and their negative variants.
 
-## Von Fintel (1993) Operators
+## Main results
 
-- `ExcI`: the inclusive exceptive operator (every...but)
-- `ExcE`: the exclusive exceptive operator (no...but)
-- `ExceptiveCompatible`: which quantifiers license exceptives
+* `ExcLeast.unique`, `ExcLeast.sInf_eq` — the least exception is unique and is the intersection
+  of the sets whose subtraction verifies the quantification.
+* `ExcLeast.not_of_restrictorUpwardMono`, `ExcRestrictive.not_of_restrictorUpwardMono` — a
+  left-upward-monotone determiner admits only the empty exception, and no restrictive one.
+* `ExcRestrictive.mono` — under a left-downward-monotone determiner restrictiveness is preserved
+  by enlarging the exception, the inference the least exception blocks.
 
-## Peters & Westerståhl (2006) Operators
+## References
 
-- `IsException`: whether an element is an exception for a quantifier
-- `ExcW`: the weak exceptive operator ([peters-westerstahl-2006] Ch 8, (8.31))
-- `ExcS`: the strong exceptive operator ([peters-westerstahl-2006] Ch 8, (8.33))
-
-## Key Results
-
-Under CONSERV, only PositiveStrong/NegativeStrong quantifiers produce
-non-trivial exceptive readings — explaining the universal-only pattern.
+* [von-fintel-1993]
+* [peters-westerstahl-2006]
 -/
 
 namespace Quantification.Exceptive
@@ -34,38 +41,59 @@ open Quantification
 
 variable {α : Type*}
 
-/-! ### Von Fintel (1993) Exceptive Operators -/
+/-! ### Domain subtraction with restrictiveness and with the least exception -/
 
-/-- Inclusive exceptive ([von-fintel-1993]): Q(A \ E, B) ∧ ¬Q(A, B).
+/-- Domain subtraction with restrictiveness: the quantification holds with `C` subtracted from
+the restrictor and fails without, (17) of [von-fintel-1993] and the semantics of the free
+exceptive (38). -/
+def ExcRestrictive (Q : GQ α) (A C B : α → Prop) : Prop :=
+  Q (λ x => A x ∧ ¬ C x) B ∧ ¬ Q A B
 
-    "Every student but John passed" =
-      every(student \ {John}, passed) ∧ ¬every(student, passed)
-
-    The second conjunct asserts that the exception *matters*: without
-    removing E, the quantified claim would be false. -/
-def ExcI (Q : GQ α) (A E B : α → Prop) : Prop :=
-  Q (λ x => A x ∧ ¬ E x) B ∧ ¬ Q A B
-
-/-- Exclusive exceptive ([von-fintel-1993]): Q(A \ E, B) ∧ complement condition on E.
-
-    "No student but John passed" =
-      no(student \ {John}, passed) ∧ John passed
-
-    The complement condition requires that all excepted elements satisfy B. -/
-def ExcE (Q : GQ α) (A E B : α → Prop) : Prop :=
-  Q (λ x => A x ∧ ¬ E x) B ∧ (∀ x, E x → A x → B x)
-
-/-- The least-exception schema of [von-fintel-1993]: *D A but C P* holds when subtracting `C` from
-the restrictor makes the quantification true and `C` is the least set that does so. -/
+/-- The least-exception semantics of the *but*-phrase, (20) and (21) of [von-fintel-1993]: `C`
+is the least set whose subtraction from the restrictor makes the quantification true. -/
 def ExcLeast (Q : GQ α) (A C B : α → Prop) : Prop :=
-  Q (λ x => A x ∧ ¬ C x) B ∧ ∀ S : α → Prop, Q (λ x => A x ∧ ¬ S x) B → ∀ x, C x → S x
+  IsLeast {S | Q (λ x => A x ∧ ¬ S x) B} C
+
+variable {Q : GQ α} {A C B : α → Prop}
+
+namespace ExcRestrictive
+
+/-- A left-upward-monotone determiner falsifies every restrictive exceptive. -/
+theorem not_of_restrictorUpwardMono (hQ : RestrictorUpwardMono Q) : ¬ ExcRestrictive Q A C B :=
+  λ h => h.2 (hQ _ _ _ (λ _ ha => ha.1) h.1)
+
+/-- Under a left-downward-monotone determiner a restrictive exceptive survives enlarging the
+exception set. -/
+theorem mono (hQ : RestrictorDownwardMono Q) (h : ExcRestrictive Q A C B) {C' : α → Prop}
+    (hC : C ≤ C') : ExcRestrictive Q A C' B :=
+  ⟨hQ _ _ _ (λ _ ha => ⟨ha.1, λ hc => ha.2 (hC _ hc)⟩) h.1, h.2⟩
+
+end ExcRestrictive
+
+namespace ExcLeast
+
+/-- The exception set is unique. -/
+theorem unique (h : ExcLeast Q A C B) {C' : α → Prop} (h' : ExcLeast Q A C' B) : C = C' :=
+  IsLeast.unique h h'
+
+/-- The exception set is the intersection of the sets whose subtraction verifies the
+quantification. -/
+theorem sInf_eq (h : ExcLeast Q A C B) : sInf {S | Q (λ x => A x ∧ ¬ S x) B} = C :=
+  h.isGLB.sInf_eq
 
 /-- A left-upward-monotone determiner has no nonempty least exception: once the quantification
-holds with `C` subtracted it holds with nothing subtracted, so the least exception is empty
-([von-fintel-1993]; the argument [gajewski-2002] turns into an L-contradiction). -/
-theorem ExcLeast.not_of_restrictorUpwardMono {Q : GQ α} (hQ : RestrictorUpwardMono Q)
-    {A C B : α → Prop} (h : ExcLeast Q A C B) (x : α) : ¬ C x :=
-  λ hx => h.2 (λ _ => False) (hQ _ _ _ (λ _ ha => ⟨ha.1, id⟩) h.1) x hx
+holds with `C` subtracted it holds with nothing subtracted, so the least exception is empty. -/
+theorem not_of_restrictorUpwardMono (hQ : RestrictorUpwardMono Q) (h : ExcLeast Q A C B) (x : α) :
+    ¬ C x :=
+  λ hx => h.2 (hQ _ _ _ (λ _ ha => ⟨ha.1, id⟩) h.1) x hx
+
+/-- A nonempty least exception is restrictive: the uniqueness condition subsumes
+restrictiveness. -/
+theorem excRestrictive (h : ExcLeast Q A C B) {x : α} (hx : C x) : ExcRestrictive Q A C B :=
+  ⟨h.1, λ hQ => h.2 (show Q (λ x => A x ∧ ¬ False) B from
+    (congrArg (Q · B) (funext λ _ => propext (and_iff_left id))).mpr hQ) x hx⟩
+
+end ExcLeast
 
 /-! ### Peters & Westerståhl (2006) Exceptive Operators -/
 
@@ -140,67 +168,5 @@ def ExcSNeg (Q₁ : GQ α) (C A B : α → Prop) : Prop :=
   Q₁ (λ x => A x ∧ ¬ C x) B ∧
   (∃ x, A x ∧ C x) ∧
   (∀ x, A x → C x → IsExceptionNeg x A B)
-
-/-! ### Compatibility (von Fintel 1993) -/
-
-/-- A quantifier is exceptive-compatible iff there exist A, E, B such that
-    ExcI(Q, A, E, B). [von-fintel-1993]: only (variants of)
-    every and no are compatible. -/
-def ExceptiveCompatible (Q : GQ α) : Prop :=
-  ∃ (A E B : α → Prop), ExcI Q A E B
-
-/-- PositiveStrong quantifiers can yield non-trivial inclusive exceptives.
-
-    For "every": every(A\E, B) can be true (all non-excepted As are Bs)
-    while every(A, B) is false (the excepted elements fail B).
-    [von-fintel-1993], [peters-westerstahl-2006] Ch 8. -/
-theorem positiveStrong_exceptive
-    (Q : GQ α) (hCons : Conservative Q) (hPS : PositiveStrong Q)
-    (hNontriv : ∃ A B, ¬ Q A B) :
-    ExceptiveCompatible Q := by
-  obtain ⟨A, B, hFalse⟩ := hNontriv
-  -- Take E = A \ B (elements of A not in B)
-  -- Then A \ E = A ∩ B
-  refine ⟨A, (λ x => A x ∧ ¬ B x), B, ?_, hFalse⟩
-  -- Goal: Q (λ x => A x ∧ ¬ (A x ∧ ¬ B x)) B
-  have hSimpl : (λ x => A x ∧ ¬ (A x ∧ ¬ B x)) = (λ x => A x ∧ B x) := by
-    funext x
-    apply propext
-    constructor
-    · rintro ⟨hA, h⟩
-      refine ⟨hA, ?_⟩
-      by_contra hNB
-      exact h ⟨hA, hNB⟩
-    · rintro ⟨hA, hB⟩
-      refine ⟨hA, ?_⟩
-      rintro ⟨_, hNB⟩
-      exact hNB hB
-  rw [hSimpl]
-  -- Goal: Q (λ x => A x ∧ B x) B; use conservativity then PS
-  rw [hCons (λ x => A x ∧ B x) B]
-  have hSimpl2 : (λ x => (A x ∧ B x) ∧ B x) = (λ x => A x ∧ B x) := by
-    funext x; apply propext; tauto
-  rw [hSimpl2]
-  exact hPS _
-
-/-- Symmetric quantifiers are NOT exceptive-compatible (under CONSERV + PS).
-
-    Intuition: under CONSERV + SYMM, Q depends only on |A ∩ B|. Removing
-    elements from A while keeping them out of E cannot simultaneously
-    make Q(A\E, B) true and Q(A, B) false, because the intersection
-    |A∩B| ⊇ |(A\E)∩B| — removing elements from A can only shrink
-    the intersection, not enlarge it.
-    [von-fintel-1993], [peters-westerstahl-2006] Ch 8. -/
-theorem symmetric_not_exceptive (Q : GQ α)
-    (hCons : Conservative Q) (hSym : QSymmetric Q)
-    (hPS : PositiveStrong Q) :
-    ¬ExceptiveCompatible Q := by
-  rintro ⟨A, _E, B, _hQAEB, hQABf⟩
-  apply hQABf
-  have hInt := (conserv_symm_iff_int Q hCons).mp hSym
-  have h1 := hInt A B (λ x => A x ∧ B x) (λ x => A x ∧ B x)
-    (λ x => by tauto)
-  rw [h1]
-  exact hPS _
 
 end Quantification.Exceptive

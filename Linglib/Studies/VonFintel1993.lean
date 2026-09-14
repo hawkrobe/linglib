@@ -1,394 +1,186 @@
-import Linglib.Fragments.English.Determiners
+import Linglib.Semantics.Quantification.Exceptive
+import Linglib.Data.Examples.VonFintel1993
+import Mathlib.Tactic.FinCases
 
 /-!
-# But-Exceptives [von-fintel-1993]
+# von Fintel (1993): Exceptive Constructions
 
-Empirical patterns for "X but Y" exceptive constructions, anchored on
-[von-fintel-1993]'s observation that but-exceptives require
-universal quantifiers (positive or negative):
+This file formalizes [von-fintel-1993]'s compositional semantics of the English *but*-phrase and
+of the free exceptive *except for*. Domain subtraction alone, *students but John* as the students
+minus John (11), neither explains why *but* occurs only with the universal determiners *every*
+and *no* (10) nor blocks the inference from *every student but John* to *every student but John
+and Jill* that the left downward monotonicity of the universal determiners licenses (14).
+Adding restrictiveness, that the quantification fails without the subtraction (17), excludes the
+left-upward-monotone determiners but not *most*, and still licenses the inference. The
+*but*-phrase names the set of exceptions, the least set whose subtraction makes the
+quantification true (20), `Exceptive.ExcLeast`, in three equivalent formulations (21). With
+*every* the exception set is the restrictor minus the scope and with *no* their intersection
+(23), so *every student but John* says that John is the only student who did not attend; the
+exception set is unique, which blocks the inference (24) and the conjunction of two
+*but*-phrases (28); and the co-occurrence restriction is a grammaticization of the fact that the
+universal determiners alone guarantee a least exception set for every restrictor and scope
+(`GuaranteesException`), whereas *some* never has one and *most* has none in the five-student
+situation (25), though it has one in a two-student limiting case. Free exceptives carry
+subtraction with restrictiveness only (38), `Exceptive.ExcRestrictive`, which is why they occur
+with *most* (34c), and with a universal determiner the *but* reading is their pragmatic
+strengthening to the exception set that contains only exceptions.
 
-| Quantifier | Example | Grammatical |
-|------------|---------|-------------|
-| every | "everyone but John" | ✓ |
-| no | "no one but John" | ✓ |
-| some | "*someone but John" | ✗ |
-| many | "*many people but John" | ✗ |
-| few | "*few people but John" | ✗ |
+## Implementation notes
 
-The but-exceptive subtracts the exception from the quantifier's domain
-and asserts that without the exception, the claim would be false.
+The exception set, the restrictor and the scope are predicates on the domain, sets in the
+paper, and the least set is `IsLeast` in the pointwise order on predicates, so uniqueness and
+the intersection formulation are the mathlib lemmas on least elements. The equivalence of the
+second formulation of the uniqueness condition with the first holds for an exception set within
+the restrictor, which the paper takes for granted. The syntax of §1.8 and §2.4, the two
+curryings of the *but*-phrase and the Cooper variable free exceptives bind, and the rhetorical
+questions of §1.7 are not formalized.
 
-This file provides `predictExceptiveGrammaticality : QuantifierType → Bool`
-plus a Fragment-side bridge `qforceToExceptiveType` that maps Fragment
-QForce values to QuantifierType, with `fragment_exceptive_bridge` showing
-the prediction agrees with the Fragment classification.
+## References
 
-The semantic operators (`ExcI`, `ExcE`, `ExcW`, `ExcS`) live in
-`Semantics/Quantification/Exceptive.lean`. The connection
-between this file's Fragment-derived predictions and those operators
-is not yet wired up — TODO.
+* [von-fintel-1993]
+* [keenan-stavi-1986]
+* [hoeksema-1987]
 -/
 
 namespace VonFintel1993
 
+open Quantification Quantification.Exceptive
 
-/--
-Type of quantifier for exceptive compatibility.
--/
-inductive QuantifierType where
-  | universalPositive   -- every, all, each
-  | universalNegative   -- no, none
-  | existential         -- some, a, several
-  | proportional        -- most, many, few
-  | numeral             -- two, three, exactly five
-  deriving DecidableEq, Repr
+variable {α : Type*} {Q : GQ α} {A C B : α → Prop}
 
-/--
-But-exceptive example with grammaticality judgment.
--/
-structure ButExceptiveExample where
-  /-- The quantifier used -/
-  quantifier : String
-  /-- Type of quantifier -/
-  quantifierType : QuantifierType
-  /-- The sentence -/
-  sentence : String
-  /-- Is it grammatical? -/
-  grammatical : Bool
-  /-- Notes -/
-  notes : String
-  deriving Repr
+/-! ### The uniqueness condition (§1.5) -/
 
--- Universal positive quantifiers: grammatical
-def every_but_john : ButExceptiveExample :=
-  { quantifier := "every"
-  , quantifierType := .universalPositive
-  , sentence := "Every student but John passed"
-  , grammatical := true
-  , notes := "Universal positive: OK" }
+/-- The second formulation of (21): the subsets of the restrictor that verify the quantification
+are disjoint from the exception set. It is equivalent to the first for an exception set within
+the restrictor. -/
+theorem excLeast_iff_forall_disjoint (hCA : C ≤ A) :
+    ExcLeast Q A C B ↔
+      Q (λ x => A x ∧ ¬ C x) B ∧ ∀ D, D ≤ A → Q D B → ∀ x, C x → ¬ D x := by
+  constructor
+  · rintro ⟨h1, h2⟩
+    refine ⟨h1, λ D hDA hD x hx hDx => ?_⟩
+    have e : (λ x => A x ∧ ¬ (A x ∧ ¬ D x)) = D := funext λ x => propext
+      ⟨λ h => by_contra λ hD => h.2 ⟨h.1, hD⟩, λ hD => ⟨hDA x hD, λ h => h.2 hD⟩⟩
+    exact (h2 (show Q (λ x => A x ∧ ¬ (A x ∧ ¬ D x)) B by rw [e]; exact hD) x hx).2 hDx
+  · rintro ⟨h1, h2⟩
+    exact ⟨h1, λ S hS x hx => by_contra λ hSx =>
+      h2 (λ x => A x ∧ ¬ S x) (λ _ h => h.1) hS x hx ⟨hCA x hx, hSx⟩⟩
 
-def all_but_mary : ButExceptiveExample :=
-  { quantifier := "all"
-  , quantifierType := .universalPositive
-  , sentence := "All students but Mary attended"
-  , grammatical := true
-  , notes := "Universal positive: OK" }
+/-- (23) for *every*: the exception set is the restrictor minus the scope. -/
+theorem excLeast_every_iff : ExcLeast every_sem A C B ↔ ∀ x, C x ↔ A x ∧ ¬ B x := by
+  constructor
+  · rintro ⟨h1, h2⟩ x
+    have hS : every_sem (λ x => A x ∧ ¬ (A x ∧ ¬ B x)) B :=
+      λ _ ha => by_contra λ hB => ha.2 ⟨ha.1, hB⟩
+    exact ⟨λ hx => h2 hS x hx, λ hx => by_contra λ hC => hx.2 (h1 x ⟨hx.1, hC⟩)⟩
+  · intro hC
+    refine ⟨λ x hx => by_contra λ hB => hx.2 ((hC x).2 ⟨hx.1, hB⟩), λ S hS x hx => ?_⟩
+    exact by_contra λ hSx => ((hC x).1 hx).2 (hS x ⟨((hC x).1 hx).1, hSx⟩)
 
-def each_but_sue : ButExceptiveExample :=
-  { quantifier := "each"
-  , quantifierType := .universalPositive
-  , sentence := "Each student but Sue submitted the homework"
-  , grammatical := true
-  , notes := "Universal positive: OK" }
+/-- (23) for *no*: the exception set is the intersection of restrictor and scope. -/
+theorem excLeast_no_iff : ExcLeast no_sem A C B ↔ ∀ x, C x ↔ A x ∧ B x := by
+  constructor
+  · rintro ⟨h1, h2⟩ x
+    have hS : no_sem (λ x => A x ∧ ¬ (A x ∧ B x)) B := λ _ ha hB => ha.2 ⟨ha.1, hB⟩
+    exact ⟨λ hx => h2 hS x hx, λ hx => by_contra λ hC => h1 x ⟨hx.1, hC⟩ hx.2⟩
+  · intro hC
+    refine ⟨λ x hx hB => hx.2 ((hC x).2 ⟨hx.1, hB⟩), λ S hS x hx => ?_⟩
+    exact by_contra λ hSx => hS x ⟨((hC x).1 hx).1, hSx⟩ ((hC x).1 hx).2
 
--- Universal negative quantifiers: grammatical
-def no_one_but_john : ButExceptiveExample :=
-  { quantifier := "no one"
-  , quantifierType := .universalNegative
-  , sentence := "No one but John passed"
-  , grammatical := true
-  , notes := "Universal negative: OK" }
+/-- (9): *every student but John attended* says that John is the only student who did not
+attend. -/
+theorem excLeast_every_singleton (j : α) :
+    ExcLeast every_sem A (· = j) B ↔ ∀ x, x = j ↔ A x ∧ ¬ B x :=
+  excLeast_every_iff
 
-def none_but_mary : ButExceptiveExample :=
-  { quantifier := "none"
-  , quantifierType := .universalNegative
-  , sentence := "None of the students but Mary attended"
-  , grammatical := true
-  , notes := "Universal negative: OK" }
+/-! ### Consequences of uniqueness (§1.5, §1.7) -/
 
--- Existential quantifiers: ungrammatical
-def some_but_john : ButExceptiveExample :=
-  { quantifier := "some"
-  , quantifierType := .existential
-  , sentence := "*Some student but John passed"
-  , grammatical := false
-  , notes := "Existential: blocked (L-contradictory)" }
+/-- The inference from a *but*-phrase to one with a larger exception set (24) is blocked. -/
+theorem not_excLeast_of_lt (h : ExcLeast Q A C B) {C' : α → Prop} (hlt : C < C') :
+    ¬ ExcLeast Q A C' B :=
+  λ h' => hlt.ne (h.unique h')
 
-def a_but_mary : ButExceptiveExample :=
-  { quantifier := "a"
-  , quantifierType := .existential
-  , sentence := "*A student but Mary attended"
-  , grammatical := false
-  , notes := "Existential: blocked" }
+/-- Two *but*-phrases on one quantifier (28) name the same exception. -/
+theorem eq_of_excLeast_singleton {j m : α} (hj : ExcLeast Q A (· = j) B)
+    (hm : ExcLeast Q A (· = m) B) : j = m :=
+  cast (congrFun (hj.unique hm) j) rfl
 
-def several_but_sue : ButExceptiveExample :=
-  { quantifier := "several"
-  , quantifierType := .existential
-  , sentence := "*Several students but Sue passed"
-  , grammatical := false
-  , notes := "Existential (plural): blocked" }
+/-! ### The co-occurrence restrictions (§1.6) -/
 
--- Proportional quantifiers: ungrammatical
-def most_but_john : ButExceptiveExample :=
-  { quantifier := "most"
-  , quantifierType := .proportional
-  , sentence := "*Most students but John passed"
-  , grammatical := false
-  , notes := "Proportional: blocked" }
+/-- A determiner guarantees an exception set when every restrictor and scope have a least
+exception. -/
+def GuaranteesException (Q : GQ α) : Prop := ∀ A B : α → Prop, ∃ C, ExcLeast Q A C B
 
-def many_but_mary : ButExceptiveExample :=
-  { quantifier := "many"
-  , quantifierType := .proportional
-  , sentence := "*Many students but Mary attended"
-  , grammatical := false
-  , notes := "Proportional: blocked" }
+theorem guaranteesException_every : GuaranteesException (every_sem : GQ α) :=
+  λ A B => ⟨λ x => A x ∧ ¬ B x, excLeast_every_iff.2 λ _ => Iff.rfl⟩
 
-def few_but_sue : ButExceptiveExample :=
-  { quantifier := "few"
-  , quantifierType := .proportional
-  , sentence := "*Few students but Sue passed"
-  , grammatical := false
-  , notes := "Proportional: blocked" }
+theorem guaranteesException_no : GuaranteesException (no_sem : GQ α) :=
+  λ A B => ⟨λ x => A x ∧ B x, excLeast_no_iff.2 λ _ => Iff.rfl⟩
 
--- Numeral quantifiers: ungrammatical
-def two_but_john : ButExceptiveExample :=
-  { quantifier := "two"
-  , quantifierType := .numeral
-  , sentence := "*Two students but John passed"
-  , grammatical := false
-  , notes := "Numeral: blocked" }
+/-- *Some* guarantees no exception: when nothing in the restrictor is in the scope, no
+subtraction helps. -/
+theorem not_guaranteesException_some : ¬ GuaranteesException (some_sem : GQ α) := by
+  rintro h
+  obtain ⟨_, ⟨_, _, hx⟩, -⟩ := h (λ _ => True) (λ _ => False)
+  exact hx
 
-def exactly_five_but : ButExceptiveExample :=
-  { quantifier := "exactly five"
-  , quantifierType := .numeral
-  , sentence := "*Exactly five students but John passed"
-  , grammatical := false
-  , notes := "Numeral: blocked" }
+/-- The five students of (25): Tom, John and Harry did not attend, Bill and Mary did. -/
+abbrev attended : Fin 5 → Prop := (3 ≤ ·)
 
-/--
-All but-exceptive examples.
--/
-def butExceptiveExamples : List ButExceptiveExample :=
-  [ every_but_john, all_but_mary, each_but_sue
-  , no_one_but_john, none_but_mary
-  , some_but_john, a_but_mary, several_but_sue
-  , most_but_john, many_but_mary, few_but_sue
-  , two_but_john, exactly_five_but
-  ]
+/-- (25): *most students attended* is false, and no set of students is the least whose exclusion
+makes it true, since excluding any two of the three nonattenders does. -/
+theorem not_excLeast_most (C : Fin 5 → Prop) : ¬ ExcLeast most_sem (λ _ => True) C attended := by
+  rintro ⟨h1, h2⟩
+  have hTJ : most_sem (λ x : Fin 5 => True ∧ ¬ (x = 0 ∨ x = 1)) attended :=
+    (mostOn_univ _ _).1 (by decide)
+  have hTH : most_sem (λ x : Fin 5 => True ∧ ¬ (x = 0 ∨ x = 2)) attended :=
+    (mostOn_univ _ _).1 (by decide)
+  have hJH : most_sem (λ x : Fin 5 => True ∧ ¬ (x = 1 ∨ x = 2)) attended :=
+    (mostOn_univ _ _).1 (by decide)
+  have hC : ∀ x, ¬ C x := λ x hx => by
+    have := h2 hTJ x hx
+    have := h2 hTH x hx
+    have := h2 hJH x hx
+    omega
+  have e : (λ x : Fin 5 => True ∧ ¬ C x) = λ _ => True :=
+    funext λ x => propext ⟨λ _ => trivial, λ _ => ⟨trivial, hC x⟩⟩
+  have h1' : most_sem (λ x : Fin 5 => True ∧ ¬ C x) attended := h1
+  rw [e] at h1'
+  exact absurd ((mostOn_univ _ _).2 h1') (by decide)
 
--- Verify: universal quantifiers license exceptives
-#guard butExceptiveExamples.filter (λ ex =>
-  ex.quantifierType == .universalPositive || ex.quantifierType == .universalNegative)
-  |>.all (λ ex => ex.grammatical)
+theorem not_guaranteesException_most : ¬ GuaranteesException (most_sem : GQ (Fin 5)) :=
+  λ h => let ⟨C, hC⟩ := h (λ _ => True) attended; not_excLeast_most C hC
 
--- Verify: non-universal quantifiers block exceptives
-#guard butExceptiveExamples.filter (λ ex =>
-  ex.quantifierType != .universalPositive && ex.quantifierType != .universalNegative)
-  |>.all (λ ex => !ex.grammatical)
+/-- The limiting case: with two students, John and Harry, of whom only Harry attended, *most*
+has the unique exception John. -/
+theorem exists_excLeast_most_two :
+    ∃ C, ExcLeast most_sem (λ _ : Fin 2 => True) C (· = 1) := by
+  refine ⟨(· = 0), (mostOn_univ _ _).1 (by decide), λ S hS x hx => ?_⟩
+  subst hx
+  have hS' : most_sem (λ x : Fin 2 => True ∧ ¬ S x) (· = 1) := hS
+  by_contra h0
+  by_cases h1 : S 1
+  · have e : (λ x : Fin 2 => True ∧ ¬ S x) = (· = 0) :=
+      funext λ x => propext (by fin_cases x <;> simp [h0, h1])
+    rw [e] at hS'
+    exact absurd ((mostOn_univ _ _).2 hS') (by decide)
+  · have e : (λ x : Fin 2 => True ∧ ¬ S x) = λ _ => True :=
+      funext λ x => propext (by fin_cases x <;> simp [h0, h1])
+    rw [e] at hS'
+    exact absurd ((mostOn_univ _ _).2 hS') (by decide)
 
+/-! ### Free exceptives (§2) -/
 
-/--
-Predict grammaticality from quantifier type.
+/-- (34c): the free exceptive occurs with *most*; in situation (25) *except for Tom and John,
+most students attended* holds, where no *but*-phrase does. -/
+theorem excRestrictive_most :
+    ExcRestrictive most_sem (λ _ : Fin 5 => True) (λ x => x = 0 ∨ x = 1) attended :=
+  ⟨(mostOn_univ _ _).1 (by decide), λ h => absurd ((mostOn_univ _ _).2 h) (by decide)⟩
 
-The generalization: only universal quantifiers (positive or negative)
-license but-exceptives.
--/
-def predictExceptiveGrammaticality (qt : QuantifierType) : Bool :=
-  match qt with
-  | .universalPositive => true
-  | .universalNegative => true
-  | .existential => false
-  | .proportional => false
-  | .numeral => false
-
--- Verify predictions match data
-#guard butExceptiveExamples.all (λ ex =>
-  predictExceptiveGrammaticality ex.quantifierType == ex.grammatical)
-
-
-/-!
-## Exception Uniqueness
-[gajewski-2002]
-
-The but-exceptive typically requires that the exception be unique:
-
-✓ "Everyone but John passed" (one exception)
-? "Everyone but John and Mary passed" (multiple exceptions)
-
-The multiple-exception case is degraded or requires special interpretation.
--/
-
-/--
-Data on exception cardinality.
--/
-structure ExceptionCardinalityExample where
-  /-- The sentence -/
-  sentence : String
-  /-- Number of exceptions -/
-  numExceptions : Nat
-  /-- Acceptability (1-5 scale) -/
-  acceptability : Nat
-  /-- Notes -/
-  notes : String
-  deriving Repr
-
-def single_exception : ExceptionCardinalityExample :=
-  { sentence := "Everyone but John passed"
-  , numExceptions := 1
-  , acceptability := 5
-  , notes := "Single exception: fully acceptable" }
-
-def two_exceptions : ExceptionCardinalityExample :=
-  { sentence := "Everyone but John and Mary passed"
-  , numExceptions := 2
-  , acceptability := 3
-  , notes := "Two exceptions: degraded, requires list interpretation" }
-
-def three_exceptions : ExceptionCardinalityExample :=
-  { sentence := "Everyone but John, Mary, and Sue passed"
-  , numExceptions := 3
-  , acceptability := 2
-  , notes := "Three exceptions: further degraded" }
-
-/--
-All exception cardinality examples.
--/
-def exceptionCardinalityExamples : List ExceptionCardinalityExample :=
-  [single_exception, two_exceptions, three_exceptions]
-
-
-/--
-Cross-linguistic but-exceptive data.
--/
-structure CrossLinguisticExceptive where
-  /-- Language -/
-  language : String
-  /-- Exceptive morpheme -/
-  exceptiveMorpheme : String
-  /-- Example sentence -/
-  exampleSentence : String
-  /-- Gloss -/
-  gloss : String
-  /-- Same universal constraint? -/
-  universalConstraint : Bool
-  deriving Repr
-
-def english_but : CrossLinguisticExceptive :=
-  { language := "English"
-  , exceptiveMorpheme := "but"
-  , exampleSentence := "Everyone but John passed"
-  , gloss := "every-one but John passed"
-  , universalConstraint := true }
-
-def german_ausser : CrossLinguisticExceptive :=
-  { language := "German"
-  , exceptiveMorpheme := "außer"
-  , exampleSentence := "Jeder außer Hans hat bestanden"
-  , gloss := "everyone except Hans has passed"
-  , universalConstraint := true }
-
-def french_sauf : CrossLinguisticExceptive :=
-  { language := "French"
-  , exceptiveMorpheme := "sauf"
-  , exampleSentence := "Tout le monde sauf Jean a réussi"
-  , gloss := "everyone except Jean has succeeded"
-  , universalConstraint := true }
-
-def spanish_excepto : CrossLinguisticExceptive :=
-  { language := "Spanish"
-  , exceptiveMorpheme := "excepto"
-  , exampleSentence := "Todos excepto Juan aprobaron"
-  , gloss := "everyone except Juan passed"
-  , universalConstraint := true }
-
-/--
-All cross-linguistic examples.
--/
-def crossLinguisticExamples : List CrossLinguisticExceptive :=
-  [english_but, german_ausser, french_sauf, spanish_excepto]
-
--- Universal constraint appears cross-linguistically
-#guard crossLinguisticExamples.all (λ ex => ex.universalConstraint)
-
-
-/--
-Related exceptive-like constructions.
--/
-inductive ExceptiveConstruction where
-  | butExceptive       -- "everyone but John"
-  | exceptExceptive    -- "everyone except John"
-  | otherThan          -- "everyone other than John"
-  | besidesExceptive   -- "everyone besides John"
-  deriving DecidableEq, Repr
-
-/--
-Comparison of exceptive constructions.
--/
-structure ExceptiveConstructionExample where
-  /-- Construction type -/
-  construction : ExceptiveConstruction
-  /-- Example -/
-  exampleSentence : String
-  /-- Same universal constraint? -/
-  hasUniversalConstraint : Bool
-  /-- Additional notes -/
-  notes : String
-  deriving Repr
-
-def but_construction : ExceptiveConstructionExample :=
-  { construction := .butExceptive
-  , exampleSentence := "Everyone but John passed"
-  , hasUniversalConstraint := true
-  , notes := "Strict universal requirement" }
-
-def except_construction : ExceptiveConstructionExample :=
-  { construction := .exceptExceptive
-  , exampleSentence := "Everyone except John passed"
-  , hasUniversalConstraint := true
-  , notes := "Similar to 'but'" }
-
-def other_than_construction : ExceptiveConstructionExample :=
-  { construction := .otherThan
-  , exampleSentence := "Everyone other than John passed"
-  , hasUniversalConstraint := true
-  , notes := "Similar semantics" }
-
-def besides_construction : ExceptiveConstructionExample :=
-  { construction := .besidesExceptive
-  , exampleSentence := "Everyone besides John passed"
-  , hasUniversalConstraint := true
-  , notes := "American English variant" }
-
-/--
-All exceptive construction examples.
--/
-def exceptiveConstructionExamples : List ExceptiveConstructionExample :=
-  [but_construction, except_construction, other_than_construction, besides_construction]
-
--- ============================================================================
--- Bridge: Fragment QForce ↔ Exceptive Licensing
--- ============================================================================
-
-open English.Determiners (QForce QuantityWord)
-
-/-- Map Fragment QForce to Exceptive QuantifierType. -/
-def qforceToExceptiveType : QForce → Option QuantifierType
-  | .universal => some .universalPositive  -- every, all
-  | .negative => some .universalNegative   -- no, none
-  | .existential => some .existential      -- some
-  | .proportional => some .proportional    -- most, few
-  | .definite => none
-
-/-- Universal quantifiers in the Fragment license but-exceptives;
-    existential quantifiers don't. This connects Fragment metadata
-    to the empirical generalization in [von-fintel-1993].
-    "Every student but John" ✓ vs "*Some student but John" ✗. -/
-theorem fragment_exceptive_bridge :
-    QuantityWord.all.entry.qforce = .universal ∧
-    predictExceptiveGrammaticality .universalPositive = true ∧
-    QuantityWord.none_.entry.qforce = .negative ∧
-    predictExceptiveGrammaticality .universalNegative = true ∧
-    QuantityWord.some_.entry.qforce = .existential ∧
-    predictExceptiveGrammaticality .existential = false :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Only the two QForce.universal/.negative quantity words license exceptives;
-    the remaining four (existential, proportional) do not. -/
-theorem universal_qforce_partition :
-    ([QuantityWord.all, .none_].map (·.entry.qforce)).all
-      (λ q => q == .universal || q == .negative) = true ∧
-    ([QuantityWord.some_, .few, .half, .most].map (·.entry.qforce)).all
-      (λ q => q != .universal && q != .negative) = true := by
-  constructor <;> decide
+/-- With a universal determiner the *but* reading is the pragmatic strengthening of the free
+exceptive to an exception set that contains only exceptions (§2.3). -/
+theorem excLeast_every_of_excRestrictive (h : ExcRestrictive every_sem A C B)
+    (hmin : ∀ x, C x → A x ∧ ¬ B x) : ExcLeast every_sem A C B :=
+  excLeast_every_iff.2 λ x => ⟨hmin x, λ hx => by_contra λ hC => hx.2 (h.1 x ⟨hx.1, hC⟩)⟩
 
 end VonFintel1993
