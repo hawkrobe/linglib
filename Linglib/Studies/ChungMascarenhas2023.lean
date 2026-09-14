@@ -43,7 +43,7 @@ rationals, the text fixing no joint distribution.
 
 namespace ChungMascarenhas2023
 
-open PMF PMF.Confirmation Conditionals.Probabilistic
+open PMF PMF.Confirmation Conditional.Probabilistic
 open scoped ENNReal
 
 variable {W : Type*} [Fintype W] {ι : Type*} [Fintype ι]

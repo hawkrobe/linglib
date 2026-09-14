@@ -174,7 +174,7 @@ inductive XMarkingHost where
 
 /-- A language's X-marking exponent: citation form and (possibly complex — Greek:
 past + imperfective) components. `Option`-valued `xMarking` entries live in
-`Fragments/{Language}/Conditionals.lean`; total uniformity
+`Fragments/{Language}/Conditional.lean`; total uniformity
 ([von-fintel-iatridou-2023] p. 1471) bets every language has one. -/
 structure XMarkingExponent where
   form : String

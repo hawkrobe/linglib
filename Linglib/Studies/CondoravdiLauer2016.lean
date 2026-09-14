@@ -28,7 +28,7 @@ cases.
 The priority modal is evaluated with `PreferenceStructure.best`, the optimal worlds under the
 preorder the maximal preferences induce, [kratzer-1981]'s ordering-source construction over a
 set of propositions rather than a list; the covert modal is
-`Conditionals.Restrictor.conditionalNecessity`. The sufficient condition for (88) quantifies
+`Conditional.Restrictor.conditionalNecessity`. The sufficient condition for (88) quantifies
 over every antecedent world of the speaker's beliefs rather than the typical ones and assumes
 the effective preferences jointly realizable among the historical alternatives, which the paper
 leaves to a separate mechanism that ignores atypical continuations. The Hoboken scenario is a
@@ -70,7 +70,7 @@ double-modal readings of (81) to (83) is not modelled.
 
 namespace CondoravdiLauer2016
 
-open Desire.Preferential Modality.Kratzer Conditionals.Restrictor Data.Examples
+open Desire.Preferential Modality.Kratzer Conditional.Restrictor Data.Examples
 
 section General
 

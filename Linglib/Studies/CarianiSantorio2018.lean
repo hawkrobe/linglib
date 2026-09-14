@@ -52,9 +52,9 @@ that conditional probability values outnumber unconditional ones.
 
 namespace CarianiSantorio2018
 
-open _root_.Conditionals (SelectionFunction)
+open _root_.Conditional (SelectionFunction)
 open Modality.Selectional
-open Conditionals.WillConditional (willConditional universalWillConditional compositional_CEM)
+open Conditional.WillConditional (willConditional universalWillConditional compositional_CEM)
 open scoped ENNReal
 
 /-! ### The Sports Fan model -/
@@ -120,7 +120,7 @@ fn. 17); this witness satisfies them anyway, ordering the worlds `cw < cg < cn` 
 not itself among the candidates. -/
 theorem cynthiaSel_coherent : cynthiaSel.isCoherent := by
   intro w₀ w₁ w₂ w₃ h12 h23
-  unfold _root_.Conditionals.selectionPrefers cynthiaSel selFn at *
+  unfold _root_.Conditional.selectionPrefers cynthiaSel selFn at *
   revert h12 h23
   cases w₀ <;> cases w₁ <;> cases w₂ <;> cases w₃ <;>
     simp_all (config := { decide := true })
@@ -275,7 +275,7 @@ theorem universal_will_conditional_cem_fails :
     ¬ universalWillConditional wearsCap warriorsCap histAlt .cw ∧
     ¬ universalWillConditional wearsCap (fun w => ¬ warriorsCap w) histAlt .cw := by
   unfold universalWillConditional _root_.Modality.Selectional.universalWill
-    _root_.Conditionals.WillConditional.restrict
+    _root_.Conditional.WillConditional.restrict
   refine ⟨fun h => ?_, fun h => ?_⟩
   · have hcg : (W.cg) ∈ warriorsCap :=
       h .cg ⟨by simp [histAlt], show (W.cg) ∈ wearsCap by decide⟩

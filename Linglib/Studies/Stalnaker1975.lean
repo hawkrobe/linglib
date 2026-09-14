@@ -50,7 +50,7 @@ carries the paper's account of the mood distinction.
 
 namespace Stalnaker1975
 
-open Conditionals
+open Conditional
 
 /-! ### The indicative conditional in a context -/
 

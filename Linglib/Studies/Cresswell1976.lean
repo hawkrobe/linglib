@@ -271,7 +271,7 @@ theorem erThan_singleton_mk {E : Type*} (φ : E → E → Prop) (a b : E) :
 
 section Counterfactual
 
-variable {W D : Type*} [Preorder D] (s : Conditionals.SelectionFunction W) (height : W → D)
+variable {W D : Type*} [Preorder D] (s : Conditional.SelectionFunction W) (height : W → D)
   (smokes : Set W) (w : W)
 
 /-- *If Bill had been a smoker he would be shorter than he is*: his height at the nearest world

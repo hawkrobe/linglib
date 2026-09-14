@@ -190,8 +190,8 @@ subscribes to any newspaper, he gets well informed" — widening *newspaper* to
 include unimportant newspapers strengthens the conditional. -/
 theorem conditional_satisfies_strengthening {W : Type*}
     (domain : W → Set W) (β : Set W) :
-    Antitone (Conditionals.strictImp domain · β) :=
-  λ _ _ h => Conditionals.strictImp_anti_left h
+    Antitone (Conditional.strictImp domain · β) :=
+  λ _ _ h => Conditional.strictImp_anti_left h
 
 /-- A conditional with an implicit restriction (K&L's (147)): true iff every
 relevant case satisfying the restriction and the antecedent satisfies the

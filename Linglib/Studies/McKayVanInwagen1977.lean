@@ -15,7 +15,7 @@ simplification would yield the absurd counterfactual from the Allied disjunct.
 
 ## Implementation notes
 
-Both readings reduce to `Conditionals.Counterfactual.universalCounterfactual`, evaluated on
+Both readings reduce to `Conditional.Counterfactual.universalCounterfactual`, evaluated on
 the disjunction or conjoined over the disjuncts; worlds and predicates are propositions on
 enumerated world types.
 
@@ -27,8 +27,8 @@ enumerated world types.
 
 namespace McKayVanInwagen1977
 
-open Conditionals (SimilarityOrdering)
-open Conditionals.Counterfactual (universalCounterfactual)
+open Conditional (SimilarityOrdering)
+open Conditional.Counterfactual (universalCounterfactual)
 
 
 /-!

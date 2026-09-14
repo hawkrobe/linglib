@@ -91,7 +91,7 @@ theorem withoutSem_subset_compl {W : Type*} (q p : Set W) : withoutSem q p ⊆ p
   Set.inter_subset_right
 
 /-- *q unless p*: if not `p` then `q`, so `¬p` holds in the suppositive worlds, (13c). -/
-def unlessSem {W : Type*} (q p : Set W) : Set W := Conditionals.materialImp pᶜ q
+def unlessSem {W : Type*} (q p : Set W) : Set W := Conditional.materialImp pᶜ q
 
 theorem mem_of_mem_unlessSem {W : Type*} {q p : Set W} {w : W} (h : w ∈ unlessSem q p)
     (hp : w ∉ p) : w ∈ q :=

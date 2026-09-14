@@ -45,7 +45,7 @@ formal definitions in §5.4.4 — is out of scope here.
   worlds-only reading.
 -/
 
-namespace Conditionals.Counterfactual
+namespace Conditional.Counterfactual
 
 open Set
 
@@ -262,4 +262,4 @@ theorem Lumps.discrete_iff (p q : Set G) (w : G) :
 
 end DiscreteCorollary
 
-end Conditionals.Counterfactual
+end Conditional.Counterfactual

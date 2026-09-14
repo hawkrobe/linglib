@@ -42,7 +42,7 @@ restricts a definite description (`not_isStrawsonDE_theSuperlativeExceeds`).
 
 namespace VonFintel1999
 
-open NaturalLogic Presupposition Modality.Kratzer Conditionals
+open NaturalLogic Presupposition Modality.Kratzer Conditional
 
 variable {W ι : Type*}
 

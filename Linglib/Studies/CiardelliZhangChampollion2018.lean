@@ -35,8 +35,8 @@ paper reads off them and `deMorgan_antecedents_diverge` the divergence of the eq
 
 namespace CiardelliZhangChampollion2018
 
-open Conditionals (SimilarityOrdering)
-open Conditionals.Counterfactual
+open Conditional (SimilarityOrdering)
+open Conditional.Counterfactual
   (universalCounterfactual selectionalCounterfactual homogeneityCounterfactual
    PresupStatus PresupResult)
 

@@ -10,7 +10,7 @@ plural quantifies over atoms, conditional excluded middle is the
 homogeneity gap, and *necessarily* is the gap remover, as *all* is for
 plurals (`Homogeneity.Plural`). `bareConditional` computes the same
 three-valued truth value as `selectionalCounterfactual` in
-`Conditionals.Counterfactual` (see
+`Conditional.Counterfactual` (see
 `selectional_as_supervaluation`); the two differ only in input
 representation.
 

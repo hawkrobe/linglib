@@ -24,7 +24,7 @@ left-nested conditional, whereas *nara* and *wenn* can (`heads_bare_iff`); `mark
 
 ## Implementation notes
 
-Readings are the substrate's `Conditionals.Reading`, and the polarity diagnostic reads its
+Readings are the substrate's `Conditional.Reading`, and the polarity diagnostic reads its
 `Reading.AdmitsInAntecedent`, on which a premise antecedent hosts positive polarity items and
 licenses no negative ones. The paper's rows carry their features as strings, so `shape` and
 `markerOf` are adapters from `paperFeatures` into the typed model and the fragments' marker
@@ -39,7 +39,7 @@ entries.
 
 namespace Lassiter2025
 
-open Conditionals Data.Examples
+open Conditional Data.Examples
 
 /-- The content of an embedded conditional. -/
 inductive Content

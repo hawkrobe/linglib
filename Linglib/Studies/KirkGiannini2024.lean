@@ -162,8 +162,8 @@ diagonal ⦇'planet'⦈∗(s_x), so a [stalnaker-1968] selection function takes 
 the nearest world whose conventions for 'planet', as `s_x` would use it there, include
 Pluto. -/
 theorem selectionConditional_daggerMQ (h : FactorsThrough M.diag (M.mqAtIssue wc))
-    (s : Conditionals.SelectionFunction W) (q : Expr) (C : W → Prop) (w : W) :
-    Conditionals.selectionConditional s (daggerMQ M wc sx ux q).atIssue C w ↔
+    (s : Conditional.SelectionFunction W) (q : Expr) (C : W → Prop) (w : W) :
+    Conditional.selectionConditional s (daggerMQ M wc sx ux q).atIssue C w ↔
       C (s.sel w {v | M.quot q v sx v}) := by
   rw [daggerMQ_atIssue M wc sx ux h]; rfl
 
