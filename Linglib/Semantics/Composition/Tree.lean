@@ -317,12 +317,14 @@ omit [PredAbs M E W D] in
 /-- Forward FA reduces generally (abstract `σ τ`). Backward FA stays
 type-shape-specific, since forward fires first when the left daughter is itself a
 function. -/
-@[simp] theorem applyForward_fn {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D)) (x : M (Ty.Domain E W σ D)) :
+@[simp] theorem applyForward_fn {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
+    (x : M (Ty.Domain E W σ D)) :
     applyForward (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
   simp only [applyForward, ↓reduceDIte]
 
 omit [PredAbs M E W D] in
-@[simp] theorem tryFA_forward {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D)) (x : M (Ty.Domain E W σ D)) :
+@[simp] theorem tryFA_forward {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
+    (x : M (Ty.Domain E W σ D)) :
     tryFA (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
   simp only [tryFA, applyForward_fn]; rfl
 
