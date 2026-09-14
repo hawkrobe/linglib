@@ -9,7 +9,7 @@ classical (Weak Kleene) and filtering (middle Kleene) canon of
 `Presupposition.Basic`: Strong Kleene ([kleene-1952]), Belnap
 conditional assertion / flexible accommodation ([belnap-1970],
 [geurts-2005]), the symmetric K&P disjunction ([karttunen-peters-1979]),
-and the positive-antecedent rival ([sharvit-2025]).
+and the positive-antecedent rival discussed by [yagi-2025].
 
 ## Main declarations
 
@@ -22,7 +22,7 @@ and the positive-antecedent rival ([sharvit-2025]).
   binary `Prop` operator with an identity.
 * `orKPSymmetric` — symmetric two-dimensional K&P disjunction.
 * `orPositive` — positive-antecedent symmetric disjunction, a documented
-  rival ([sharvit-2025], [yagi-2025]).
+  rival ([yagi-2025]).
 * `liveness`, `genuineness` — [yagi-2025] disjunction-update conditions.
 * `all_or_agree_when_both_defined` / `all_and_agree_when_both_defined` —
   the families diverge only when presuppositions conflict.
@@ -49,10 +49,9 @@ variable {W : Type*}
     holds*, plus at least one disjunct defined. This is NOT Karttunen
     filtering (`orFilter`): it demands the second disjunct's
     presupposition exactly where the first is *true*, un-filtering
-    bathroom-sentence data. Retained as a documented rival:
-    [sharvit-2025] identifies it as the root cause of K/P-style failure
-    (`Studies/Sharvit2025.lean`), and [yagi-2025] §2.2 discusses the
-    `Π(φ) ∨ Π(ψ)` conjunct as a candidate fix (`Studies/Yagi2025.lean`). -/
+    bathroom-sentence data. Retained as a documented rival: [yagi-2025]
+    §2.2 discusses the `Π(φ) ∨ Π(ψ)` conjunct as a candidate fix
+    (`Studies/Yagi2025.lean`). -/
 def orPositive (p q : PartialProp W) : PartialProp W where
   presup := fun w =>
     (p.assertion w → q.presup w) ∧
