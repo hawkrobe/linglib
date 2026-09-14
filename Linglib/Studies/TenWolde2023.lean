@@ -16,7 +16,7 @@ uses and animate and abstract nouns skipping them (chapters 5 and 6),
 `inanimate_develop_pseudopartitive`, `animate_skip_pseudopartitive`, `snake_exception`; the
 entailment from the intensifier to the modifier reading and the independence of the evaluative
 binominal from both, `entailment_summary`; and the evaluative cline as subjectification in
-[traugott-2010]'s sense, `binominalSubjectificationSteps`, `binominal_steps_directed`.
+[traugott-2010]'s sense, `binominalHistory`, `binominal_unidirectional`.
 
 ## Implementation notes
 
@@ -226,45 +226,17 @@ theorem entailment_summary :
 [ten-wolde-2023] §4.5: the EBNP → EM → BI transitions are driven by
 subjectification ([traugott-2010]) — N₁ shifts from ascribing
 objective/physical properties to expressing the speaker's subjective
-evaluation. Steps use `Traugott2010.SubjectificationStep`. -/
+evaluation. -/
 
-open Traugott2010 (SubjectificationStep)
+/-- The levels of N₁'s coded meaning along N+PP → EBNP → EM → BI: the first step, from a
+referential property (*the beast of the field*) to an evaluative one (*that idiot of a
+doctor*), is the subjectification; the later ones, to pure speaker evaluation (*a hell of a
+game*) and to a degree intensifier (*a hell of a good time*), bleach within the subjective
+level. -/
+def binominalHistory : Traugott2010.History :=
+  [.nonSubjective, .subjective, .subjective, .subjective]
 
-/-- Subjectification steps in the binominal (N₁-of-N₂) domain. -/
-def binominalSubjectificationSteps : List SubjectificationStep :=
-  [ -- N+PP/HC → EBNP: the key subjectification step in the binominal domain.
-    -- N₁ shifts from denoting objective referential properties to expressing
-    -- the speaker's evaluative attitude.
-    { expression := "N₁ in of-binominals"
-      sourceMeaning := "N₁ denotes referential property (N+PP: the beast of the field)"
-      targetMeaning := "N₁ ascribes evaluative property (EBNP: that idiot of a doctor)"
-      sourceLevel := .nonSubjective
-      targetLevel := .subjective
-      directed := by decide }
-  , -- EBNP → EM: N₁ bleaches from full gradable predicate to pure
-    -- speaker evaluation. Subjectivity level maintained but semantics bleached.
-    { expression := "[N₁ of a] in of-binominals"
-      sourceMeaning := "N₁ ascribes evaluative property (EBNP: a beast of a man)"
-      targetMeaning := "N₁ expresses speaker's subjective evaluation (EM: a hell of a game)"
-      sourceLevel := .subjective
-      targetLevel := .subjective
-      directed := by decide }
-  , -- EM → BI: N₁ further bleaches to degree intensifier.
-    -- Subjectivity level maintained; the change is syntactic (shifts into AdjP).
-    { expression := "[N₁ of a] in of-binominals"
-      sourceMeaning := "N₁ as evaluative modifier (EM: a hell of a time)"
-      targetMeaning := "N₁ as degree intensifier (BI: a hell of a good time)"
-      sourceLevel := .subjective
-      targetLevel := .subjective
-      directed := by decide }
-  ]
-
-/-- The N+PP → EBNP step is a genuine subjectification (nonSubjective → subjective);
-    the later steps maintain subjectivity while bleaching semantics further. -/
-theorem binominal_steps_directed :
-    ∀ s ∈ binominalSubjectificationSteps, s.sourceLevel ≤ s.targetLevel :=
-  λ s hs => by
-    simp [binominalSubjectificationSteps] at hs
-    rcases hs with rfl | rfl | rfl <;> decide
+/-- The binominal cline follows [traugott-2010]'s cline. -/
+theorem binominal_unidirectional : Traugott2010.Unidirectional binominalHistory := by decide
 
 end TenWolde2023
