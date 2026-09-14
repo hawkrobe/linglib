@@ -1,474 +1,240 @@
-import Linglib.Semantics.Questions.Basic
 import Linglib.Core.Probability.Decision.Basic
-import Linglib.Semantics.Questions.Entailment
+import Linglib.Data.Examples.VanRooy2003
+import Mathlib.Order.Partition.Finpartition
+import Mathlib.Tactic.Linarith
 
 /-!
-# [van-rooy-2003]: Questioning to Resolve Decision Problems
-[groenendijk-stokhof-1984] [karttunen-1977] [ginzburg-1995] [merin-1999-relevance]
-[blackwell-1953]
+# van Rooy (2003): Questioning to Resolve Decision Problems
 
-Single-paper formalisation of [van-rooy-2003], "Questioning to
-Resolve Decision Problems", *Linguistics and Philosophy* 26.6:
-727–763. The paper grounds question semantics in Bayesian decision
-theory: questions are evaluated by how their answers affect the
-optimal action in the questioner's decision problem.
+This file formalizes [van-rooy-2003], which grounds the semantics and pragmatics of questions
+in the questioner's decision problem, a probability function, a utility function and a set of
+actions, the substrate's `Core.DecisionTheory.DecisionProblem`. Information `C` resolves the
+problem when after learning it some action weakly dominates the others,
+`DecisionProblem.IsResolved`; the actions themselves induce propositions, the worlds where an
+action is optimal, `optimalityRegion`, which cover the worlds, `iUnion_optimalityRegion`, and
+partition them when every world has a strictly best action, `pairwise_disjoint_optimalityRegion`;
+`C` resolves the problem exactly when it lies in one of them,
+`isResolved_iff_exists_subset_optimalityRegion`. The Italian newspaper, (12), where two actions
+are optimal in one world, is the case of overlapping regions, `newspaper_optimalityRegions`, in
+which a partial mention-some answer resolves the problem, `newspaper_station_resolves`. The
+expected utility value of a question, `EUV`, is the average utility value of its answers, the
+substrate's `DecisionProblem.questionUtility` over the parts of a `Finpartition`; it never
+exceeds the value of the finest question, what the world is like, `questionUtility_le_bot`, and
+a question is at least as good as another for every decision problem exactly when it refines it,
+the paper's special case of [blackwell-1953], `le_iff_forall_questionUtility_le`. Relative to a
+fixed decision problem questions are ordered by utility and then by coarseness, `Better`, which
+selects the domain of a wh-phrase, `whQuestion`: enlarging the domain refines the question,
+`whQuestion_anti`, so of two domains giving the same utility the smaller yields the better
+question, `better_whQuestion_of_subset`. Finally the mention-some and mention-all readings are
+derived from one rule: a question denotes the propositions that some group is among the optimal
+values of the predicate in a world, `questionR`, which is a partition when the optimal value is
+unique, `questionR_eq_range_fiber`, and gives the mention-some denotation of (20),
+`newspaper_questionR`, where the rule of footnote 28 over-generates, `newspaper_questionS`.
 
-## Substrate identification
+## Implementation notes
 
-The decision-theoretic machinery — `EU`, `UV`, `VSI`, `DecisionProblem`
-— is already in `Core/Probability/Decision/Basic.lean`. Van Rooy's
-notation maps to the substrate as:
+Questions are `Finpartition`s of the finite set of worlds, whose refinement order is the paper's
+entailment ⊑, and the Blackwell fact is stated over them, its converse by the paper's argument
+that two incomparable partitions are told apart by a two-world identification problem. The
+scalar questions of section 5.4 and the argumentative value of [merin-1999-relevance] are not
+formalized. The examples are the rows of `Data.Examples.VanRooy2003`.
 
-| [van-rooy-2003]                             | substrate                                  |
-|--------------------------------------------------|--------------------------------------------|
-| `EU(a) = ∑_w P(w) · U(a, w)` (p. 733)            | `Core.DecisionTheory.DecisionProblem.expectedUtility`      |
-| `UV(Choose now) = max_a EU(a)` (p. 734)          | `Core.DecisionTheory.DecisionProblem.value`              |
-| `EU(a, C) = ∑_w P_C(w) · U(a, w)` (p. 735)       | `Core.DecisionTheory.DecisionProblem.condExpectedUtility`        |
-| `UV(Learn C, choose later) = max_a EU(a, C)`     | `Core.DecisionTheory.DecisionProblem.condValue`   |
-| `UV(C) = UV(L C, c later) − UV(C now)` (p. 735)  | `Core.DecisionTheory.DecisionProblem.utilityValue`         |
-| `UV*(C) = VSI(C)` ≥ 0 (p. 735)                   | `Core.DecisionTheory.DecisionProblem.valueSampleInfo`      |
-| `EUV(Q) = ∑_q P(q) · UV(q)` (p. 742)             | `Core.DecisionTheory.DecisionProblem.questionUtility`      |
-| `Q ⊑ Q'`  (every Q-alt ⊆ some Q'-alt) (p. 741)   | `≤` on `Question W`                |
-| `C resolves DP` (p. 736)                         | `Core.DecisionTheory.DecisionProblem.IsResolved`           |
+## References
 
-## What this file proves
-
-* **§3.1 Action-induced partition `A*`** (p. 736-737):
-  `optimalityCell dp acts a` and `actionPartition`.
-* **§3.1 *C* resolves DP** (p. 736): the substrate's
-  `Core.DecisionTheory.DecisionProblem.IsResolved dp acts C` — some action weakly
-  dominates every other on every world in C.
-* **§3.1/§4.1 decision-relevance** (`IsDecisionRelevant`): the
-  qualitative, prior-free core of van Rooy's relevance — a question is
-  *completely irrelevant* exactly when `EUV(Q) = EVSI(Q) = 0`, i.e. no
-  answer changes the optimal action (p. 742). `alts_resolve_distinct`
-  recasts a witness in the substrate's `IsResolved` vocabulary.
-* **§4.1 Blackwell Fact** (p. 741, 743): "Q is more informative than Q'" is van
-  Rooy's `Q ⊑ Q'`. Van Rooy's §4.1 theorem (p. 743, "a special case of
-  [blackwell-1953]") is the quantitative *iff* `Q ⊑ Q' ↔ ∀ DP, EUV(Q) ≥ EUV(Q')`,
-  stated over partition cells as `blackwell_euv_fact`. Its `⟹` ("only if")
-  direction — a finer partition weakly dominates a coarser one for every decision
-  problem — is the data-processing inequality `blackwell_euv_fact_forward`
-  (deriving the substrate refinement map from `⊑` and applying
-  `Core.DecisionTheory.DecisionProblem.questionUtility_mono_of_refines`). The `⟸`
-  direction is proved by an elementary two-world / two-action witness (both
-  `[Nontrivial A]` and `hcoarse_cover` rule out the vacuous-dominance corner cases
-  documented at the theorem).
-  `decisionRelevance_preserved_under_cover` is a separate, qualitative
-  one-directional transfer (see its docstring).
-
-## What this file does NOT replicate
-
-* The *identification-question* discussion (§2 (1)–(8)) requires
-  named-individual / referential machinery beyond plain `Set W`;
-  deferred.
-* The *underspecified meaning* proposal (§5) requires a typed
-  ambiguity-resolution layer beyond `Question W`; deferred.
-* The Italian-newspaper mention-some example (§3.2 (12)) is the
-  natural target for the next refinement; it is
-  `gs1984_mentionsome_italian_newspaper` in
-  `Data.Examples.GroenendijkStokhof1984`.
-
-## Provenance
-
-The `IsDecisionRelevant` family and the decision-relevance
-preservation theorem were consolidated here from the former
-`Semantics/Questions/DecisionTheoretic.lean` (a single-paper
-formalisation that did not meet the theory-layer ≥2-Studies admission
-bar). The reusable substrate it relied on stays one layer down:
-question entailment `≤` in `Entailment.lean` (`CoversAltsOf` is local below), the
-`Core.DecisionTheory` value vocabulary in `DecisionTheory.lean`.
+* [van-rooy-2003]
+* [groenendijk-stokhof-1984]
+* [blackwell-1953]
+* [raiffa-schlaifer-1961]
+* [karttunen-1977]
+* [hamblin-1973b]
+* [merin-1999-relevance]
 -/
 
 namespace VanRooy2003
 
-open Core Core.DecisionTheory Core.DecisionTheory.DecisionProblem Question
+open Core.DecisionTheory Core.DecisionTheory.DecisionProblem
 
 variable {W A : Type*}
 
-/-! ### §3.1 Action-induced partition `A*` (p. 736-737)
+/-! ### Resolving a decision problem -/
 
-[van-rooy-2003] p. 736: "Notice that not only a question, but
-also the set of alternative actions, A, gives rise to a set of
-propositions. We can relate each action a ∈ A to the set of worlds
-in which there is no other action b in A that is strictly better.
-We will denote the proposition corresponding with a by a*". -/
+/-- The proposition an action induces: the worlds where no other action is strictly better. -/
+def optimalityRegion (dp : DecisionProblem ℚ W A) (acts : Set A) (a : A) : Set W :=
+  {w | ∀ b ∈ acts, dp.utility w b ≤ dp.utility w a}
 
-/-- The **optimality cell** of action `a`: the worlds where `a`
-    *strictly* dominates every other action in `acts`.
+/-- The propositions the actions induce. -/
+def optimalityRegions (dp : DecisionProblem ℚ W A) (acts : Set A) : Set (Set W) :=
+  optimalityRegion dp acts '' acts
 
-    [van-rooy-2003]'s `a*` (p. 736-737) is the weaker "no other action
-    is strictly better" region; this strict version is van Rooy's
-    *partition condition* (p. 737: "exactly one action a ∈ A such that
-    ∀b ∈ A−{a}: U(a,w) > U(b,w)"), which is what makes `actionPartition`
-    genuinely disjoint (`optimalityCell_pairwise_disjoint`). -/
-def optimalityCell (dp : DecisionProblem ℚ W A) (acts : Set A) (a : A) : Set W :=
-  {w | ∀ b ∈ acts, b ≠ a → dp.utility w a > dp.utility w b}
+/-- Information resolves the decision problem exactly when it lies within the optimality
+region of some action. -/
+theorem isResolved_iff_exists_subset_optimalityRegion (dp : DecisionProblem ℚ W A)
+    (acts : Set A) (C : Set W) :
+    IsResolved dp acts C ↔ ∃ a ∈ acts, C ⊆ optimalityRegion dp acts a := by
+  simp only [IsResolved, optimalityRegion, Set.subset_def, Set.mem_ofPred_eq]
+  exact ⟨λ ⟨a, ha, h⟩ => ⟨a, ha, λ w hw b hb => h b hb w hw⟩,
+    λ ⟨a, ha, h⟩ => ⟨a, ha, λ b hb w hw => h w hw b hb⟩⟩
 
-/-- The **action-induced partition** `A*`: the set of optimality
-    cells. [van-rooy-2003] p. 736-737. -/
-def actionPartition (dp : DecisionProblem ℚ W A) (acts : Set A) : Set (Set W) :=
-  optimalityCell dp acts '' acts
+/-- Over finitely many actions every world has an optimal one: the regions cover the worlds. -/
+theorem iUnion_optimalityRegion (dp : DecisionProblem ℚ W A) (acts : Finset A)
+    (hne : acts.Nonempty) : ⋃ a ∈ acts, optimalityRegion dp (acts : Set A) a = Set.univ := by
+  refine Set.eq_univ_of_forall λ w => ?_
+  obtain ⟨a, ha, hmax⟩ := acts.exists_max_image (dp.utility w) hne
+  exact Set.mem_iUnion₂.2 ⟨a, ha, λ b hb => hmax b hb⟩
 
-/-- The optimality cells are pairwise disjoint: each world lies in at
-    most one cell. (Page 737: "the set of propositions A* does in
-    general not partition the state space, but it does when for each
-    world `w` there is always exactly one action a ∈ A such that
-    ∀b ∈ A−{a} : U(a,w) > U(b,w)".) -/
-theorem optimalityCell_pairwise_disjoint
-    (dp : DecisionProblem ℚ W A) (acts : Set A)
-    {a a' : A} (haa' : a ≠ a')
-    (w : W) (hwa : w ∈ optimalityCell dp acts a) (hwa' : w ∈ optimalityCell dp acts a')
-    (ha_acts : a ∈ acts) (ha'_acts : a' ∈ acts) :
-    False := by
-  have h1 : dp.utility w a > dp.utility w a' := hwa a' ha'_acts (Ne.symm haa')
-  have h2 : dp.utility w a' > dp.utility w a := hwa' a ha_acts haa'
-  exact absurd h1 (not_lt_of_gt h2)
+/-- When every world has a strictly best action the regions are pairwise disjoint, and the
+actions induce a partition. -/
+theorem pairwise_disjoint_optimalityRegion (dp : DecisionProblem ℚ W A) (acts : Set A)
+    (hstrict : ∀ w, ∃ a ∈ acts, ∀ b ∈ acts, b ≠ a → dp.utility w b < dp.utility w a) :
+    (acts).PairwiseDisjoint (optimalityRegion dp acts) := by
+  intro a ha a' ha' hne
+  refine Set.disjoint_left.2 λ w hw hw' => ?_
+  obtain ⟨c, hc, hbest⟩ := hstrict w
+  by_cases hac : a = c
+  · subst hac
+    exact absurd (hw' a ha) (not_le.2 (hbest a' ha' (Ne.symm hne)))
+  · exact absurd (hw c hc) (not_le.2 (hbest a ha hac))
 
-/-! ### §3.1 *C* resolves DP (p. 736)
+/-! ### The Italian newspaper, (12) -/
 
-> "We should say that information `C` resolves a decision problem if
-> after learning `C`, one of the actions in `A` dominates all other
-> actions, i.e., if in each resulting world no action has a higher
-> utility than this one."
+/-- The worlds of (12): the newspaper is sold only at the station, only at the palace, or at
+both. -/
+inductive NewsW where
+  | station
+  | palace
+  | both
+  deriving DecidableEq, Repr, Fintype
 
-This is exactly `Core.DecisionTheory.DecisionProblem.IsResolved dp acts C`. We do not
-introduce a paper-vocabulary alias — consumers should use the
-substrate predicate directly. -/
+/-- The actions: walk to the station or to the palace. -/
+inductive Walk where
+  | station
+  | palace
+  deriving DecidableEq, Repr, Fintype
 
-/-! ### §3.1/§4.1 Decision-relevance
+/-- The newspaper problem: walking to a place is worth 1 where the newspaper is sold there. -/
+def newspaper : DecisionProblem ℚ NewsW Walk where
+  utility
+    | .station, .station | .both, .station | .palace, .palace | .both, .palace => 1
+    | .palace, .station | .station, .palace => 0
+  prior _ := 1/3
 
-A question is *completely irrelevant* exactly when `EUV(Q) = EVSI(Q) = 0`
-— when no answer would change the agent's decision (p. 742). The
-qualitative core below exhibits a witness pair of answers that *do*
-change it. -/
+/-- The actions induce the overlapping propositions {u, w} and {v, w}, not a partition. -/
+theorem newspaper_optimalityRegions :
+    optimalityRegion newspaper Set.univ .station = {.station, .both} ∧
+      optimalityRegion newspaper Set.univ .palace = {.palace, .both} := by
+  refine ⟨Set.ext λ w => ?_, Set.ext λ w => ?_⟩ <;> cases w <;>
+    simp only [optimalityRegion, Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff,
+      Set.mem_univ, true_implies] <;> decide
 
-/-- `Q` is **decision-relevant** to `dp` (relative to action set `acts`):
-    there exist two **nonempty** alternatives `p, p' ∈ alt Q` and two
-    actions `a, a'` such that `a` strictly dominates `a'` on every world
-    of `p` while `a'` strictly dominates `a` on every world of `p'`.
-    Learning *which* alternative obtains then shifts the optimal action.
+/-- The mention-some answer *at least at the station*, {u, w}, resolves the problem although
+it is only a partial answer to the partition question. -/
+theorem newspaper_station_resolves :
+    IsResolved newspaper Set.univ ({.station, .both} : Set NewsW) :=
+  ⟨.station, Set.mem_univ _, λ b _ w hw => by
+    rcases hw with rfl | rfl <;> cases b <;> decide⟩
 
-    This is the qualitative, prior-independent core of [van-rooy-2003]'s
-    relevance: a question is *completely irrelevant* exactly when
-    `EUV(Q) = EVSI(Q) = 0`, i.e. no answer changes the agent's decision
-    (p. 742); `IsDecisionRelevant` exhibits a witness pair of answers
-    that *do* change it. It is therefore a **sufficient condition** for
-    `EUV(Q) > 0` that holds for *any* prior assigning positive mass to
-    both cells, and is strictly stronger than van Rooy's prior-weighted
-    `EUV(Q) > 0` / `UV(C) > 0` relevance (pp. 735-736, 742).
+/-! ### The utility of questions -/
 
-    The nonemptiness clauses rule out the degenerate `Q = ⊥` case where
-    the dominance conditions hold vacuously over empty witnesses. -/
-def IsDecisionRelevant
-    (Q : Question W) (dp : DecisionProblem ℚ W A) (acts : Set A) : Prop :=
-  ∃ p ∈ alt Q, p.Nonempty ∧ ∃ p' ∈ alt Q, p'.Nonempty ∧
-    ∃ a ∈ acts, ∃ a' ∈ acts,
-      (∀ w ∈ p,  dp.utility w a  > dp.utility w a') ∧
-      (∀ w ∈ p', dp.utility w a' > dp.utility w a)
+section Utility
 
-/-- A `IsDecisionRelevant` witness exhibits two `Q`-alts whose two-action
-    restriction `{a, a'}` is `IsResolved` (p. 736) to *distinct* actions:
-    on `p`, action `a` resolves `(dp, {a, a'})`; on `p'`, `a'` does. So
-    decision-relevance is precisely "two `Q`-alts resolve to distinct
-    actions" in the substrate's `IsResolved` vocabulary. -/
-theorem IsDecisionRelevant.alts_resolve_distinct
-    {Q : Question W} {dp : DecisionProblem ℚ W A} {acts : Set A}
-    (h : IsDecisionRelevant Q dp acts) :
-    ∃ p ∈ alt Q, p.Nonempty ∧ ∃ p' ∈ alt Q, p'.Nonempty ∧
-      ∃ a ∈ acts, ∃ a' ∈ acts, a ≠ a' ∧
-        IsResolved dp {a, a'} p ∧ IsResolved dp {a, a'} p' := by
-  obtain ⟨p, hp, hpne, p', hp', hp'ne, a, ha, a', ha', hpa, hpa'⟩ := h
-  refine ⟨p, hp, hpne, p', hp', hp'ne, a, ha, a', ha', ?_, ?_, ?_⟩
-  · -- a ≠ a': follows from strict-domination on a nonempty p.
-    intro heq
-    obtain ⟨w, hw⟩ := hpne
-    have h1 : dp.utility w a > dp.utility w a' := hpa w hw
-    rw [heq] at h1
-    exact absurd h1 (lt_irrefl _)
-  · -- IsResolved dp {a, a'} p: action a weakly dominates a' on p
-    refine ⟨a, by simp, ?_⟩
-    intro b hb w hw
-    rcases hb with rfl | hb'
-    · exact le_refl _
-    · rw [Set.mem_singleton_iff] at hb'
-      subst hb'
-      exact le_of_lt (hpa w hw)
-  · -- IsResolved dp {a, a'} p': action a' weakly dominates a on p'
-    refine ⟨a', by simp, ?_⟩
-    intro b hb w hw
-    rcases hb with rfl | hb'
-    · exact le_of_lt (hpa' w hw)
-    · rw [Set.mem_singleton_iff] at hb'
-      subst hb'
-      exact le_refl _
+variable [Fintype W] [DecidableEq W]
 
-/-- A question with at most one alternative is not decision-relevant:
-    a single answer carries no decision value (`EVSI = 0`, p. 742). -/
-theorem not_isDecisionRelevant_of_subsingleton_alt
-    {Q : Question W} {dp : DecisionProblem ℚ W A} {acts : Set A}
-    (hSingle : ∀ p p', p ∈ alt Q → p' ∈ alt Q → p = p') :
-    ¬ IsDecisionRelevant Q dp acts := by
-  rintro ⟨p, hp, hpne, p', hp', _, a, _, a', _, hpa, hpa'⟩
-  rcases hSingle p p' hp hp' with rfl
-  obtain ⟨w, hw⟩ := hpne
-  exact absurd (hpa w hw) (not_lt_of_gt (hpa' w hw))
+/-- The expected utility value of a question, the average utility value of its answers. -/
+abbrev EUV (dp : DecisionProblem ℚ W A) (acts : Finset A)
+    (Q : Finpartition (Finset.univ : Finset W)) : ℚ :=
+  questionUtility dp acts Q.parts
 
-/-! ### §4.1 Question ordering (p. 741)
+/-- No question is worth more than the finest one, what the world is like, whose value is the
+expected value of perfect information of [raiffa-schlaifer-1961]. -/
+theorem questionUtility_le_bot (dp : DecisionProblem ℚ W A) (acts : Finset A)
+    (hprior : ∀ w, 0 ≤ dp.prior w) (Q : Finpartition (Finset.univ : Finset W)) :
+    EUV dp acts Q ≤ EUV dp acts ⊥ :=
+  questionUtility_anti_of_le dp acts bot_le hprior
 
-[van-rooy-2003] p. 741: "Q is a *better* question than Q' [...]
-In terms of [groenendijk-stokhof-1984] partition semantics this comes
-down to the natural requirement that for every element of Q there must
-be an element of Q' such that the former entails the latter, i.e.,
-`Q ⊑ Q'`:
-
-    Q ⊑ Q' iff ∀q ∈ Q : ∃q' ∈ Q' : q ⊆ q'."
-
-This is `Q ≤ Q'` on `Question W` under finiteness
-(`le_iff_forall_alt_exists_alt`); no paper-vocabulary alias is
-introduced. -/
-
-/-! ### §4.1 Decision-relevance preservation -/
-
-/-- Every nonempty alternative of `Q'` contains a nonempty alternative
-    of `Q`: the dual of question entailment, in the form the preservation
-    theorem below requires. The nonemptiness bars `⊥`-style vacuous
-    covering, matching `IsDecisionRelevant`'s substantive witnesses. -/
-def CoversAltsOf (Q Q' : Question W) : Prop :=
-  ∀ q ∈ alt Q', q.Nonempty → ∃ p ∈ alt Q, p.Nonempty ∧ p ⊆ q
-
-/-- **Qualitative monotonicity of decision-relevance** (substrate
-    corollary in the spirit of [van-rooy-2003]'s §4.1 relevance
-    ordering): when `Q` covers `Q'`'s alternatives (`CoversAltsOf`), a
-    decision-relevance witness for `Q'` lifts to one for `Q`.
-
-    This is **not** van Rooy's §4.1 Blackwell theorem itself. That
-    theorem (p. 743, "a special case of [blackwell-1953]") is the
-    quantitative *iff* `Q ≤ Q' ↔ ∀ dp, EUV(Q) ≥ EUV(Q')`
-    over the expected utility value `EUV` (= substrate `questionUtility`,
-    with `EUV = EVSI` available as `questionUtility_eq_expectedValueSampleInfo`). The result here is a
-    one-directional, prior-free Prop transfer over the *dual* condition
-    `CoversAltsOf`: on a general inquisitive (non-partition) `Question W`,
-    entailment (P-alts ⊆ Q-alts) does not transfer the qualitative
-    witness, but its dual does. On partition questions the two coincide,
-    recovering [van-rooy-2003]'s partition-based argument.
-
-    For the *quantitative* §4.1 Fact (p. 743), the EUV-monotonicity ("only if")
-    direction is now `Core.DecisionTheory.DecisionProblem.questionUtility_split_ge` (a finer
-    partition has `EUV ≥` the coarser one, for every decision problem). The
-    remaining gap to the full entailment-level *iff* is (i) a
-    `Question W → Finset (Finset W)` finite-alternatives partition-cell adapter, and
-    (ii) the [blackwell-1953] converse
-    `ProbabilityTheory.isGarblingOf_of_blackwellDominates`. -/
-theorem decisionRelevance_preserved_under_cover
-    {Q Q' : Question W} (hCover : CoversAltsOf Q Q')
-    {dp : DecisionProblem ℚ W A} {acts : Set A}
-    (hQ' : IsDecisionRelevant Q' dp acts) :
-    IsDecisionRelevant Q dp acts := by
-  obtain ⟨p, hp, hpne, p', hp', hp'ne, a, ha, a', ha', hpa, hpa'⟩ := hQ'
-  obtain ⟨pP, hpP, hpP_ne, hpP_sub⟩ := hCover p hp hpne
-  obtain ⟨p'P, hp'P, hp'P_ne, hp'P_sub⟩ := hCover p' hp' hp'ne
-  exact ⟨pP, hpP, hpP_ne, p'P, hp'P, hp'P_ne, a, ha, a', ha',
-         fun w hw => hpa w (hpP_sub hw),
-         fun w hw => hpa' w (hp'P_sub hw)⟩
-
-/-! ### §4.1 The Blackwell Fact (p. 743): partition-cell form
-
-[van-rooy-2003] p. 743 states that `Q ⊑ Q' ↔ ∀ DP, EUV(Q) ≥ EUV(Q')` is "a special case
-of [blackwell-1953]". We state it over [groenendijk-stokhof-1984] partition cells — the
-`Finset (Finset W)` that `Core.DecisionTheory.DecisionProblem.questionUtility` consumes. There, van Rooy's
-`Q ⊑ Q'` (p. 741: "∀ q ∈ Q : ∃ q' ∈ Q' : q ⊆ q'") is the cell-level refinement
-`∀ f ∈ fine, ∃ c ∈ coarse, f ⊆ c`, and the value side ranges over every decision problem
-with a proper prior.
-
-(The lift to the type-level `≤` on `Question W` is the remaining
-mechanical step: an `alt Q → Finset (Finset W)` adapter via `Set.Finite.toFinset`,
-discharging entailment against this cell refinement.) -/
-
-/-- **[van-rooy-2003] §4.1 Fact, the `⟹` ("only if") direction** (p. 743): a finer question
-is weakly better than a coarser one for *every* decision problem (the data-processing
-inequality). Van Rooy's refinement `fine ⊑ coarse` (each fine cell `⊆` some coarse cell,
-p. 741) plus the partition structure furnish the substrate refinement map — each fine cell's
-containing coarse cell — and `Core.DecisionTheory.DecisionProblem.questionUtility_mono_of_refines` concludes.
-
-`hfine_cover` and the disjointness hypotheses encode that `fine`, `coarse` are genuine
-[groenendijk-stokhof-1984] partitions of the world set. -/
-theorem blackwell_euv_fact_forward [Fintype W] [DecidableEq W] [DecidableEq A]
-    {fine coarse : Finset (Finset W)}
-    (hcoarse_disj : ∀ c₁ ∈ coarse, ∀ c₂ ∈ coarse, c₁ ≠ c₂ → Disjoint c₁ c₂)
-    (hfine_disj : ∀ f₁ ∈ fine, ∀ f₂ ∈ fine, f₁ ≠ f₂ → Disjoint f₁ f₂)
-    (hfine_cover : ∀ w : W, ∃ f ∈ fine, w ∈ f)
-    (href : ∀ f ∈ fine, ∃ c ∈ coarse, f ⊆ c)
-    (dp : DecisionProblem ℚ W A) (acts : Finset A) (hprior : ∀ w, 0 ≤ dp.prior w) :
-    questionUtility dp acts coarse ≤ questionUtility dp acts fine := by
-  classical
-  set g : Finset W → Finset W :=
-    fun f => if h : ∃ c ∈ coarse, f ⊆ c then h.choose else ∅ with hg_def
-  have hgspec : ∀ f ∈ fine, g f ∈ coarse ∧ f ⊆ g f := by
-    intro f hf
-    have h : ∃ c ∈ coarse, f ⊆ c := href f hf
-    have hgf : g f = h.choose := by rw [hg_def]; exact dif_pos h
-    rw [hgf]; exact h.choose_spec
-  refine questionUtility_mono_of_refines dp acts g
-    (fun f hf => (hgspec f hf).1) ?_ hfine_disj hprior
-  -- hcover: every coarse cell is the union of the fine cells mapping to it
-  intro c hc
-  refine le_antisymm ?_ ?_
-  · -- c ⊆ ⨆ fiber
-    intro w hw
-    obtain ⟨f, hf, hwf⟩ := hfine_cover w
-    have hwgf : w ∈ g f := (hgspec f hf).2 hwf
-    have hgfc : g f = c := by
-      by_contra hne
-      exact absurd hw (Finset.disjoint_left.mp
-        (hcoarse_disj (g f) (hgspec f hf).1 c hc hne) hwgf)
-    rw [Finset.mem_sup]
-    exact ⟨f, Finset.mem_filter.mpr ⟨hf, hgfc⟩, hwf⟩
-  · -- ⨆ fiber ⊆ c
-    refine Finset.sup_le (fun f hf => ?_)
-    rw [Finset.mem_filter] at hf
-    exact hf.2 ▸ (hgspec f hf.1).2
-
-/-- **[van-rooy-2003] §4.1 Fact** (p. 743), partition-cell form. For two
-[groenendijk-stokhof-1984] partitions `fine`, `coarse` of the worlds, van Rooy's refinement
-order `fine ⊑ coarse` (every fine cell is contained in some coarse cell, p. 741) is
-equivalent to: the finer question has expected utility value `≥` the coarser one for
-*every* decision problem (with a proper, nonnegative prior). Van Rooy calls this "a special
-case of [blackwell-1953]".
-
-The `⟹` direction is `blackwell_euv_fact_forward` (the data-processing inequality); the
-`⟸` direction (EUV-dominance across all decision problems forces refinement) is proved
-here by the elementary two-world / two-action witness: if some fine cell holds worlds
-`w`, `v` in distinct coarse cells, the identification DP (nonneg prior 1 on `w` and `v`,
-utility 1 for naming each world's coarse cell) values `coarse` strictly above `fine`.
-
-### Hypothesis corrections
-
-Two hypotheses beyond the forward direction's are required, each grounded in a concrete
-counterexample to the plain statement:
-
-* `[Nontrivial A]` (else `acts` is forced to `∅`, both `questionUtility` sides collapse to
-  `0`, and dominance holds vacuously — while refinement can fail).
-* `[Nonempty W]` and `hcoarse_cover` (a mirror of `hfine_cover`) — without either, taking
-  e.g. `W = {w}`, `fine = {{w}}`, `coarse = ∅` makes both `questionUtility` sides `0`
-  (empty coarse sum on one side, `utilityValue = condValue − value = 0` on the other)
-  while refinement `∃ c ∈ ∅, {w} ⊆ c` fails. Together they force `coarse` to be a full
-  partition of `W`, ruling out both the empty-`W` and the uncovering-`coarse` pathologies. -/
-theorem blackwell_euv_fact [Fintype W] [DecidableEq W] [DecidableEq A]
-    [Nontrivial A] [Nonempty W]
-    {fine coarse : Finset (Finset W)}
-    (hfine_disj : ∀ f₁ ∈ fine, ∀ f₂ ∈ fine, f₁ ≠ f₂ → Disjoint f₁ f₂)
-    (hcoarse_disj : ∀ c₁ ∈ coarse, ∀ c₂ ∈ coarse, c₁ ≠ c₂ → Disjoint c₁ c₂)
-    (hfine_cover : ∀ w : W, ∃ f ∈ fine, w ∈ f)
-    (hcoarse_cover : ∀ w : W, ∃ c ∈ coarse, w ∈ c) :
-    (∀ f ∈ fine, ∃ c ∈ coarse, f ⊆ c) ↔
-      (∀ (dp : DecisionProblem ℚ W A) (acts : Finset A), (∀ w, 0 ≤ dp.prior w) →
-        questionUtility dp acts coarse ≤ questionUtility dp acts fine) := by
-  refine ⟨fun href dp acts hprior =>
-    blackwell_euv_fact_forward hcoarse_disj hfine_disj hfine_cover href dp acts hprior, ?_⟩
-  -- Contrapose and extract an offending fine cell.
-  intro hdom
+/-- The special case of [blackwell-1953]'s theorem: a question refines another exactly when it
+is at least as useful for every decision problem with a non-negative prior. The converse holds
+because a part of the finer question meeting two parts of the coarser one is told apart by the
+problem of identifying which of two of its worlds obtains. -/
+theorem le_iff_forall_questionUtility_le [DecidableEq A] [Nontrivial A] [Nonempty W]
+    (P Q : Finpartition (Finset.univ : Finset W)) :
+    P ≤ Q ↔ ∀ (dp : DecisionProblem ℚ W A) (acts : Finset A), (∀ w, 0 ≤ dp.prior w) →
+      EUV dp acts Q ≤ EUV dp acts P := by
+  refine ⟨λ h dp acts hprior => questionUtility_anti_of_le dp acts h hprior, λ hdom => ?_⟩
   by_contra hnref
-  push Not at hnref
-  obtain ⟨f₀, hf₀_fine, hf₀_uncov⟩ := hnref
-  -- With [Nonempty W] + hcoarse_cover, coarse is nonempty (some c₀ contains
-  -- an arbitrary world), and hf₀_uncov applied to c₀ finds v ∈ f₀ \ c₀.
+  simp only [LE.le, not_forall, not_exists, not_and] at hnref
+  obtain ⟨f₀, hf₀, hf₀_uncov⟩ := hnref
   obtain ⟨w_wit⟩ := ‹Nonempty W›
-  obtain ⟨c₀, hc₀, _⟩ := hcoarse_cover w_wit
-  have h_ns_c₀ : ¬ f₀ ⊆ c₀ := hf₀_uncov c₀ hc₀
-  rw [Finset.not_subset] at h_ns_c₀
-  obtain ⟨v, hv_f₀, hv_nc₀⟩ := h_ns_c₀
-  obtain ⟨c_v, hc_v, hv_c_v⟩ := hcoarse_cover v
-  have hc_v_ne_c₀ : c_v ≠ c₀ := fun heq => hv_nc₀ (heq ▸ hv_c_v)
-  -- Now apply hf₀_uncov to c_v: get w ∈ f₀ \ c_v.
-  have h_ns_c_v : ¬ f₀ ⊆ c_v := hf₀_uncov c_v hc_v
-  rw [Finset.not_subset] at h_ns_c_v
-  obtain ⟨w, hw_f₀, hw_nc_v⟩ := h_ns_c_v
-  obtain ⟨c_w, hc_w, hw_c_w⟩ := hcoarse_cover w
-  have hc_w_ne_c_v : c_w ≠ c_v := fun heq => hw_nc_v (heq ▸ hw_c_w)
-  have hwv_ne : w ≠ v := fun heq => by
-    exact absurd (heq ▸ hv_c_v)
-      (Finset.disjoint_left.mp (hcoarse_disj c_w hc_w c_v hc_v hc_w_ne_c_v) hw_c_w)
-  -- Two distinct actions from `[Nontrivial A]`.
+  obtain ⟨c₀, hc₀, _⟩ := Q.exists_mem (Finset.mem_univ w_wit)
+  obtain ⟨v, hv_f₀, hv_nc₀⟩ := hf₀_uncov c₀ hc₀
+  obtain ⟨c_v, hc_v, hv_c_v⟩ := Q.exists_mem (Finset.mem_univ v)
+  obtain ⟨w, hw_f₀, hw_nc_v⟩ := hf₀_uncov c_v hc_v
+  obtain ⟨c_w, hc_w, hw_c_w⟩ := Q.exists_mem (Finset.mem_univ w)
+  have hc_w_ne_c_v : c_w ≠ c_v := λ heq => hw_nc_v (heq ▸ hw_c_w)
+  have hwv_ne : w ≠ v := λ heq =>
+    Finset.disjoint_left.1 (Q.disjoint hc_w hc_v hc_w_ne_c_v) hw_c_w (heq ▸ hv_c_v)
   obtain ⟨a₁, a₂, ha_ne⟩ := exists_pair_ne A
-  -- The identification decision problem: prior mass `1` on `w` and `v`; utility
-  -- `1` iff the action names the world's coarse cell (`a₁ ↦ c_w`, `a₂ ↦ c_v`).
   let dp : DecisionProblem ℚ W A :=
-    { prior := fun w' => if w' = w then 1 else if w' = v then 1 else 0
-      utility := fun w' a =>
-        if w' = w ∧ a = a₁ then 1
-        else if w' = v ∧ a = a₂ then 1
-        else 0 }
-  have hprior_nn : ∀ w' : W, 0 ≤ dp.prior w' := fun w' => by
+    { prior := λ w' => if w' = w then 1 else if w' = v then 1 else 0
+      utility := λ w' a => if w' = w ∧ a = a₁ then 1 else if w' = v ∧ a = a₂ then 1 else 0 }
+  have hprior_nn : ∀ w' : W, 0 ≤ dp.prior w' := λ w' => by
     show 0 ≤ if w' = w then (1 : ℚ) else if w' = v then 1 else 0
     split_ifs <;> norm_num
   have hyp := hdom dp {a₁, a₂} hprior_nn
-  -- Per-cell characterization: `∑_{w'∈S} prior · util aᵢ` is the indicator that
-  -- the corresponding world lies in `S`.
   have hsum_a₁ : ∀ S : Finset W,
       ∑ w' ∈ S, dp.prior w' * dp.utility w' a₁ = if w ∈ S then (1 : ℚ) else 0 := by
     intro S
     have hpt : ∀ w' : W, dp.prior w' * dp.utility w' a₁ = if w' = w then (1 : ℚ) else 0 := by
       intro w'
       show (if w' = w then (1 : ℚ) else if w' = v then 1 else 0) *
-             (if w' = w ∧ a₁ = a₁ then 1 else if w' = v ∧ a₁ = a₂ then 1 else 0)
-           = if w' = w then 1 else 0
+        (if w' = w ∧ a₁ = a₁ then 1 else if w' = v ∧ a₁ = a₂ then 1 else 0) =
+        if w' = w then 1 else 0
       by_cases hw : w' = w
       · subst hw; simp
       · by_cases hv : w' = v
         · subst hv; simp [hw, ha_ne]
         · simp [hw, hv]
-    calc ∑ w' ∈ S, dp.prior w' * dp.utility w' a₁
-        = ∑ w' ∈ S, if w' = w then (1 : ℚ) else 0 := Finset.sum_congr rfl (fun w' _ => hpt w')
-      _ = if w ∈ S then 1 else 0 := Finset.sum_ite_eq' S w (fun _ => (1 : ℚ))
+    rw [Finset.sum_congr rfl λ w' _ => hpt w', Finset.sum_ite_eq' S w λ _ => (1 : ℚ)]
   have hsum_a₂ : ∀ S : Finset W,
       ∑ w' ∈ S, dp.prior w' * dp.utility w' a₂ = if v ∈ S then (1 : ℚ) else 0 := by
     intro S
     have hpt : ∀ w' : W, dp.prior w' * dp.utility w' a₂ = if w' = v then (1 : ℚ) else 0 := by
       intro w'
       show (if w' = w then (1 : ℚ) else if w' = v then 1 else 0) *
-             (if w' = w ∧ a₂ = a₁ then 1 else if w' = v ∧ a₂ = a₂ then 1 else 0)
-           = if w' = v then 1 else 0
+        (if w' = w ∧ a₂ = a₁ then 1 else if w' = v ∧ a₂ = a₂ then 1 else 0) =
+        if w' = v then 1 else 0
       by_cases hw : w' = w
       · subst hw; simp [hwv_ne, ha_ne.symm]
       · by_cases hv : w' = v
         · subst hv; simp [hwv_ne.symm]
         · simp [hw, hv]
-    calc ∑ w' ∈ S, dp.prior w' * dp.utility w' a₂
-        = ∑ w' ∈ S, if w' = v then (1 : ℚ) else 0 := Finset.sum_congr rfl (fun w' _ => hpt w')
-      _ = if v ∈ S then 1 else 0 := Finset.sum_ite_eq' S v (fun _ => (1 : ℚ))
-  -- Local specialization of `cellProbability_mul_condValue_eq_uValue` (private
-  -- in `Core.Probability.Decision.Basic`, replicated here at `K := ℚ`).
+    rw [Finset.sum_congr rfl λ w' _ => hpt w', Finset.sum_ite_eq' S v λ _ => (1 : ℚ)]
   have hcpcv : ∀ (S : Finset W) (acts : Finset A) (hne : acts.Nonempty),
       dp.cellProbability S * dp.condValue acts S =
-        acts.sup' hne (fun a => ∑ w' ∈ S, dp.prior w' * dp.utility w' a) := by
+        acts.sup' hne λ a => ∑ w' ∈ S, dp.prior w' * dp.utility w' a := by
     intro S acts hne
     rw [condValue_of_nonempty hne]
-    have hpsum_nn : 0 ≤ dp.cellProbability S :=
-      Finset.sum_nonneg (fun w' _ => hprior_nn w')
+    have hpsum_nn : 0 ≤ dp.cellProbability S := Finset.sum_nonneg λ w' _ => hprior_nn w'
     by_cases hcp : dp.cellProbability S = 0
     · rw [hcp, zero_mul]
       have hprior_zero : ∀ w' ∈ S, dp.prior w' = 0 :=
-        (Finset.sum_eq_zero_iff_of_nonneg (fun w' _ => hprior_nn w')).mp hcp
+        (Finset.sum_eq_zero_iff_of_nonneg λ w' _ => hprior_nn w').1 hcp
       exact (Finset.sup'_eq_of_forall (s := acts) (H := hne) (a := (0 : ℚ))
-        (f := fun a => ∑ w' ∈ S, dp.prior w' * dp.utility w' a)
-        (fun a _ => Finset.sum_eq_zero
-          fun w' hw' => by rw [hprior_zero w' hw', zero_mul])).symm
+        (f := λ a => ∑ w' ∈ S, dp.prior w' * dp.utility w' a)
+        λ a _ => Finset.sum_eq_zero λ w' hw' => by rw [hprior_zero w' hw', zero_mul]).symm
     · have hS : S.sum dp.prior ≠ 0 := hcp
       rw [Finset.mul₀_sup' hpsum_nn _ acts hne]
-      refine Finset.sup'_congr hne rfl (fun a _ => ?_)
+      refine Finset.sup'_congr hne rfl λ a _ => ?_
       show S.sum dp.prior * dp.condExpectedUtility S a = ∑ w' ∈ S, dp.prior w' * dp.utility w' a
       rw [condExpectedUtility_of_ne_zero hS, Finset.mul_sum]
-      refine Finset.sum_congr rfl (fun w' _ => ?_)
+      refine Finset.sum_congr rfl λ w' _ => ?_
       rw [div_mul_eq_mul_div, ← mul_div_assoc, mul_div_cancel_left₀ _ hS]
-  -- For our action pair `{a₁, a₂}`, the `sup'` collapses to a `max` of indicators.
   have hcpcv_max : ∀ S : Finset W,
       dp.cellProbability S * dp.condValue {a₁, a₂} S =
         max (if w ∈ S then (1 : ℚ) else 0) (if v ∈ S then 1 else 0) := by
     intro S
     rw [hcpcv S {a₁, a₂} (Finset.insert_nonempty _ _)]
     refine le_antisymm ?_ ?_
-    · refine Finset.sup'_le _ _ fun a ha => ?_
+    · refine Finset.sup'_le _ _ λ a ha => ?_
       simp only [Finset.mem_insert, Finset.mem_singleton] at ha
       rcases ha with rfl | rfl
       · rw [hsum_a₁]; exact le_max_left _ _
@@ -476,149 +242,193 @@ theorem blackwell_euv_fact [Fintype W] [DecidableEq W] [DecidableEq A]
     · refine max_le ?_ ?_
       · rw [← hsum_a₁ S]
         exact Finset.le_sup' (s := ({a₁, a₂} : Finset A))
-          (f := fun a => ∑ w' ∈ S, dp.prior w' * dp.utility w' a) (by simp)
+          (f := λ a => ∑ w' ∈ S, dp.prior w' * dp.utility w' a) (by simp)
       · rw [← hsum_a₂ S]
         exact Finset.le_sup' (s := ({a₁, a₂} : Finset A))
-          (f := fun a => ∑ w' ∈ S, dp.prior w' * dp.utility w' a) (by simp)
-  -- Filter equality: cells intersecting `{w, v}` are exactly the identified
-  -- pair on each side.
-  have hcoarse_filter : coarse.filter (fun c => w ∈ c ∨ v ∈ c) = {c_w, c_v} := by
+          (f := λ a => ∑ w' ∈ S, dp.prior w' * dp.utility w' a) (by simp)
+  have hpart_w : ∀ {R : Finpartition (Finset.univ : Finset W)} {c : Finset W} (hc : c ∈ R.parts)
+      (hwc : w ∈ c), R.parts.filter (w ∈ ·) = {c} := by
+    intro R c hc hwc
+    ext c'
+    simp only [Finset.mem_filter, Finset.mem_singleton]
+    refine ⟨λ ⟨hc', hw'⟩ => ?_, λ heq => heq ▸ ⟨hc, hwc⟩⟩
+    by_contra hne
+    exact Finset.disjoint_left.1 (R.disjoint hc' hc hne) hw' hwc
+  have hpart_v : ∀ {R : Finpartition (Finset.univ : Finset W)} {c : Finset W} (hc : c ∈ R.parts)
+      (hvc : v ∈ c), R.parts.filter (v ∈ ·) = {c} := by
+    intro R c hc hvc
+    ext c'
+    simp only [Finset.mem_filter, Finset.mem_singleton]
+    refine ⟨λ ⟨hc', hv'⟩ => ?_, λ heq => heq ▸ ⟨hc, hvc⟩⟩
+    by_contra hne
+    exact Finset.disjoint_left.1 (R.disjoint hc' hc hne) hv' hvc
+  have hcoarse_filter : Q.parts.filter (λ c => w ∈ c ∨ v ∈ c) = {c_w, c_v} := by
     ext c
     simp only [Finset.mem_filter, Finset.mem_insert, Finset.mem_singleton]
-    refine ⟨fun ⟨hc, hor⟩ => ?_, ?_⟩
+    refine ⟨λ ⟨hc, hor⟩ => ?_, ?_⟩
     · rcases hor with hw | hv
-      · left
-        by_contra hne
-        exact absurd hw_c_w
-          (Finset.disjoint_left.mp (hcoarse_disj c hc c_w hc_w hne) hw)
-      · right
-        by_contra hne
-        exact absurd hv_c_v
-          (Finset.disjoint_left.mp (hcoarse_disj c hc c_v hc_v hne) hv)
+      · exact Or.inl (by_contra λ hne => Finset.disjoint_left.1 (Q.disjoint hc hc_w hne) hw hw_c_w)
+      · exact Or.inr (by_contra λ hne => Finset.disjoint_left.1 (Q.disjoint hc hc_v hne) hv hv_c_v)
     · rintro (rfl | rfl)
       · exact ⟨hc_w, Or.inl hw_c_w⟩
       · exact ⟨hc_v, Or.inr hv_c_v⟩
-  have hfine_filter : fine.filter (fun f => w ∈ f ∨ v ∈ f) = {f₀} := by
+  have hfine_filter : P.parts.filter (λ f => w ∈ f ∨ v ∈ f) = {f₀} := by
     ext f
     simp only [Finset.mem_filter, Finset.mem_singleton]
-    refine ⟨fun ⟨hf, hor⟩ => ?_, ?_⟩
-    · rcases hor with hw | hv
-      · by_contra hne
-        exact absurd hw_f₀
-          (Finset.disjoint_left.mp (hfine_disj f hf f₀ hf₀_fine hne) hw)
-      · by_contra hne
-        exact absurd hv_f₀
-          (Finset.disjoint_left.mp (hfine_disj f hf f₀ hf₀_fine hne) hv)
-    · rintro rfl; exact ⟨hf₀_fine, Or.inl hw_f₀⟩
-  -- Similar filter equalities for the individual indicators (needed for the
-  -- `∑ cellProb` computations that appear via `hqu_eq` below).
-  have hcoarse_w_filter : coarse.filter (fun c => w ∈ c) = {c_w} := by
-    ext c
-    simp only [Finset.mem_filter, Finset.mem_singleton]
-    refine ⟨fun ⟨hc, hw⟩ => ?_, fun heq => heq ▸ ⟨hc_w, hw_c_w⟩⟩
-    by_contra hne
-    exact absurd hw_c_w
-      (Finset.disjoint_left.mp (hcoarse_disj c hc c_w hc_w hne) hw)
-  have hcoarse_v_filter : coarse.filter (fun c => v ∈ c) = {c_v} := by
-    ext c
-    simp only [Finset.mem_filter, Finset.mem_singleton]
-    refine ⟨fun ⟨hc, hv⟩ => ?_, fun heq => heq ▸ ⟨hc_v, hv_c_v⟩⟩
-    by_contra hne
-    exact absurd hv_c_v
-      (Finset.disjoint_left.mp (hcoarse_disj c hc c_v hc_v hne) hv)
-  have hfine_w_filter : fine.filter (fun f => w ∈ f) = {f₀} := by
-    ext f
-    simp only [Finset.mem_filter, Finset.mem_singleton]
-    refine ⟨fun ⟨hf, hw⟩ => ?_, fun heq => heq ▸ ⟨hf₀_fine, hw_f₀⟩⟩
-    by_contra hne
-    exact absurd hw_f₀
-      (Finset.disjoint_left.mp (hfine_disj f hf f₀ hf₀_fine hne) hw)
-  have hfine_v_filter : fine.filter (fun f => v ∈ f) = {f₀} := by
-    ext f
-    simp only [Finset.mem_filter, Finset.mem_singleton]
-    refine ⟨fun ⟨hf, hv⟩ => ?_, fun heq => heq ▸ ⟨hf₀_fine, hv_f₀⟩⟩
-    by_contra hne
-    exact absurd hv_f₀
-      (Finset.disjoint_left.mp (hfine_disj f hf f₀ hf₀_fine hne) hv)
-  -- Cell probabilities on `{w, v}`-supported prior: each partition's cellProbs
-  -- sum to the total prior mass (2).
-  have hcp_eq : ∀ (S : Finset W),
-      dp.cellProbability S
-        = (if w ∈ S then (1 : ℚ) else 0) + (if v ∈ S then 1 else 0) := by
+    refine ⟨λ ⟨hf, hor⟩ => ?_, λ heq => heq ▸ ⟨hf₀, Or.inl hw_f₀⟩⟩
+    rcases hor with hw | hv
+    · exact by_contra λ hne => Finset.disjoint_left.1 (P.disjoint hf hf₀ hne) hw hw_f₀
+    · exact by_contra λ hne => Finset.disjoint_left.1 (P.disjoint hf hf₀ hne) hv hv_f₀
+  have hcp_eq : ∀ S : Finset W,
+      dp.cellProbability S = (if w ∈ S then (1 : ℚ) else 0) + (if v ∈ S then 1 else 0) := by
     intro S
-    show ∑ w' ∈ S, (if w' = w then (1 : ℚ) else if w' = v then 1 else 0)
-        = (if w ∈ S then 1 else 0) + (if v ∈ S then 1 else 0)
-    have hpt : ∀ w' : W,
-        (if w' = w then (1 : ℚ) else if w' = v then 1 else 0)
-          = (if w' = w then 1 else 0) + (if w' = v then 1 else 0) := by
+    show ∑ w' ∈ S, (if w' = w then (1 : ℚ) else if w' = v then 1 else 0) =
+      (if w ∈ S then 1 else 0) + (if v ∈ S then 1 else 0)
+    have hpt : ∀ w' : W, (if w' = w then (1 : ℚ) else if w' = v then 1 else 0) =
+        (if w' = w then 1 else 0) + (if w' = v then 1 else 0) := by
       intro w'
       by_cases hw : w' = w
       · subst hw; simp [hwv_ne]
       · by_cases hv : w' = v
         · subst hv; simp [hwv_ne.symm]
         · simp [hw, hv]
-    rw [Finset.sum_congr rfl (fun w' _ => hpt w'), Finset.sum_add_distrib,
-      Finset.sum_ite_eq' S w (fun _ => (1 : ℚ)),
-      Finset.sum_ite_eq' S v (fun _ => (1 : ℚ))]
-  -- Sum over coarse of the indicator `if w ∈ c then 1 else 0` = 1 (only c_w).
-  have hi_w_coarse : (∑ c ∈ coarse, if w ∈ c then (1 : ℚ) else 0) = 1 := by
-    rw [← Finset.sum_filter, hcoarse_w_filter, Finset.sum_singleton]
-  have hi_v_coarse : (∑ c ∈ coarse, if v ∈ c then (1 : ℚ) else 0) = 1 := by
-    rw [← Finset.sum_filter, hcoarse_v_filter, Finset.sum_singleton]
-  have hi_w_fine : (∑ f ∈ fine, if w ∈ f then (1 : ℚ) else 0) = 1 := by
-    rw [← Finset.sum_filter, hfine_w_filter, Finset.sum_singleton]
-  have hi_v_fine : (∑ f ∈ fine, if v ∈ f then (1 : ℚ) else 0) = 1 := by
-    rw [← Finset.sum_filter, hfine_v_filter, Finset.sum_singleton]
-  -- Sum of max over coarse = 2 (via c_w and c_v being distinct nonzero contributors).
+    rw [Finset.sum_congr rfl λ w' _ => hpt w', Finset.sum_add_distrib,
+      Finset.sum_ite_eq' S w λ _ => (1 : ℚ), Finset.sum_ite_eq' S v λ _ => (1 : ℚ)]
+  have hswap : ∀ c : Finset W, max (if w ∈ c then (1 : ℚ) else 0) (if v ∈ c then 1 else 0) =
+      if w ∈ c ∨ v ∈ c then (1 : ℚ) else 0 := by
+    intro c
+    by_cases hw : w ∈ c <;> by_cases hv : v ∈ c <;> simp [hw, hv]
   have hmax_coarse :
-      (∑ c ∈ coarse, max (if w ∈ c then (1 : ℚ) else 0) (if v ∈ c then 1 else 0)) = 2 := by
-    have hswap : ∀ c : Finset W,
-        max ((if w ∈ c then (1 : ℚ) else 0)) (if v ∈ c then 1 else 0)
-          = if w ∈ c ∨ v ∈ c then (1 : ℚ) else 0 := by
-      intro c
-      by_cases hw : w ∈ c <;> by_cases hv : v ∈ c <;> simp [hw, hv]
-    rw [Finset.sum_congr rfl (fun c _ => hswap c), ← Finset.sum_filter,
-      hcoarse_filter, Finset.sum_insert (by simp [hc_w_ne_c_v]),
-      Finset.sum_singleton]
+      (∑ c ∈ Q.parts, max (if w ∈ c then (1 : ℚ) else 0) (if v ∈ c then 1 else 0)) = 2 := by
+    rw [Finset.sum_congr rfl λ c _ => hswap c, ← Finset.sum_filter, hcoarse_filter,
+      Finset.sum_insert (by simp [hc_w_ne_c_v]), Finset.sum_singleton]
     norm_num
-  -- Sum of max over fine = 1 (only f₀ contributes).
   have hmax_fine :
-      (∑ f ∈ fine, max (if w ∈ f then (1 : ℚ) else 0) (if v ∈ f then 1 else 0)) = 1 := by
-    have hswap : ∀ f : Finset W,
-        max ((if w ∈ f then (1 : ℚ) else 0)) (if v ∈ f then 1 else 0)
-          = if w ∈ f ∨ v ∈ f then (1 : ℚ) else 0 := by
-      intro f
-      by_cases hw : w ∈ f <;> by_cases hv : v ∈ f <;> simp [hw, hv]
-    rw [Finset.sum_congr rfl (fun f _ => hswap f), ← Finset.sum_filter,
-      hfine_filter, Finset.sum_singleton]
-  -- Cellprob sums (2 on each side) via the same indicator trick.
-  have hcpP_coarse : ∑ c ∈ coarse, dp.cellProbability c = 2 := by
+      (∑ f ∈ P.parts, max (if w ∈ f then (1 : ℚ) else 0) (if v ∈ f then 1 else 0)) = 1 := by
+    rw [Finset.sum_congr rfl λ f _ => hswap f, ← Finset.sum_filter, hfine_filter,
+      Finset.sum_singleton]
+  have hcpP : ∀ (R : Finpartition (Finset.univ : Finset W)) {c d : Finset W} (hc : c ∈ R.parts)
+      (hwc : w ∈ c) (hd : d ∈ R.parts) (hvd : v ∈ d), ∑ c ∈ R.parts, dp.cellProbability c = 2 := by
+    intro R c d hc hwc hd hvd
     simp_rw [hcp_eq]
-    rw [Finset.sum_add_distrib, hi_w_coarse, hi_v_coarse]
+    rw [Finset.sum_add_distrib, ← Finset.sum_filter, ← Finset.sum_filter, hpart_w hc hwc,
+      hpart_v hd hvd, Finset.sum_singleton, Finset.sum_singleton]
     norm_num
-  have hcpP_fine : ∑ f ∈ fine, dp.cellProbability f = 2 := by
-    simp_rw [hcp_eq]
-    rw [Finset.sum_add_distrib, hi_w_fine, hi_v_fine]
-    norm_num
-  -- Unfolded `questionUtility`: `∑ cellProb · condValue − value · ∑ cellProb`.
-  have hqu_eq : ∀ (cells : Finset (Finset W)),
-      questionUtility dp {a₁, a₂} cells
-        = (∑ c ∈ cells, dp.cellProbability c * dp.condValue {a₁, a₂} c)
-          - dp.value {a₁, a₂} * (∑ c ∈ cells, dp.cellProbability c) := by
+  have hqu_eq : ∀ (cells : Finset (Finset W)), questionUtility dp {a₁, a₂} cells =
+      (∑ c ∈ cells, dp.cellProbability c * dp.condValue {a₁, a₂} c) -
+        dp.value {a₁, a₂} * (∑ c ∈ cells, dp.cellProbability c) := by
     intro cells
     unfold DecisionProblem.questionUtility DecisionProblem.utilityValue
     simp_rw [mul_sub]
     rw [Finset.sum_sub_distrib]
     congr 1
     rw [Finset.mul_sum]
-    exact Finset.sum_congr rfl (fun c _ => mul_comm _ _)
-  -- ∑ cellProb · condValue on each side = ∑ max = 2 (coarse) / 1 (fine).
-  have hX_coarse : ∑ c ∈ coarse, dp.cellProbability c * dp.condValue {a₁, a₂} c = 2 := by
+    exact Finset.sum_congr rfl λ c _ => mul_comm _ _
+  have hX_coarse : ∑ c ∈ Q.parts, dp.cellProbability c * dp.condValue {a₁, a₂} c = 2 := by
     simp_rw [hcpcv_max]; exact hmax_coarse
-  have hX_fine : ∑ f ∈ fine, dp.cellProbability f * dp.condValue {a₁, a₂} f = 1 := by
+  have hX_fine : ∑ f ∈ P.parts, dp.cellProbability f * dp.condValue {a₁, a₂} f = 1 := by
     simp_rw [hcpcv_max]; exact hmax_fine
-  -- Assemble: `qU coarse − qU fine = 1 > 0`, contradicting `hyp : qU coarse ≤ qU fine`.
-  rw [hqu_eq coarse, hqu_eq fine, hX_coarse, hX_fine, hcpP_coarse, hcpP_fine] at hyp
+  simp only [EUV] at hyp
+  rw [hqu_eq Q.parts, hqu_eq P.parts, hX_coarse, hX_fine, hcpP Q hc_w hw_c_w hc_v hv_c_v,
+    hcpP P hf₀ hw_f₀ hf₀ hv_f₀] at hyp
   linarith
+
+/-- Relative to a decision problem, a question is better than another when it is more useful,
+or as useful and less fine-grained: one should not ask for irrelevant information. -/
+def Better (dp : DecisionProblem ℚ W A) (acts : Finset A)
+    (Q Q' : Finpartition (Finset.univ : Finset W)) : Prop :=
+  EUV dp acts Q' < EUV dp acts Q ∨ (EUV dp acts Q = EUV dp acts Q' ∧ Q' ≤ Q)
+
+/-! ### The domain of a wh-phrase -/
+
+variable {D : Type*} [DecidableEq D]
+
+instance (f : W → Finset D) : DecidableRel (Setoid.ker f).r :=
+  λ a b => inferInstanceAs (Decidable (f a = f b))
+
+/-- The partition a wh-question induces over a domain: two worlds fall together when the
+predicate's extension agrees on the domain. -/
+def whQuestion (P : W → Finset D) (dom : Finset D) : Finpartition (Finset.univ : Finset W) :=
+  Finpartition.ofSetoid (Setoid.ker λ w => dom ∩ P w)
+
+/-- Enlarging the domain refines the question: more individuals, more specific answers. -/
+theorem whQuestion_anti (P : W → Finset D) {dom dom' : Finset D} (h : dom ⊆ dom') :
+    whQuestion P dom' ≤ whQuestion P dom := by
+  unfold whQuestion
+  intro b hb
+  obtain ⟨w, hw⟩ := Finpartition.nonempty_of_mem_parts _ hb
+  refine ⟨_, (Finpartition.part_mem _).2 (Finset.mem_univ w), λ v hv => ?_⟩
+  have hrel : dom' ∩ P w = dom' ∩ P v :=
+    Finpartition.mem_part_ofSetoid_iff_rel.1
+      ((Finpartition.mem_part_iff_exists _).2 ⟨b, hb, hv, hw⟩)
+  refine Finpartition.mem_part_ofSetoid_iff_rel.2 ?_
+  show dom ∩ P w = dom ∩ P v
+  have := hrel
+  ext d
+  simp only [Finset.mem_inter]
+  constructor
+  · rintro ⟨hd, hdw⟩
+    have : d ∈ dom' ∩ P v := this ▸ Finset.mem_inter.2 ⟨h hd, hdw⟩
+    exact ⟨hd, (Finset.mem_inter.1 this).2⟩
+  · rintro ⟨hd, hdv⟩
+    have : d ∈ dom' ∩ P w := this.symm ▸ Finset.mem_inter.2 ⟨h hd, hdv⟩
+    exact ⟨hd, (Finset.mem_inter.1 this).2⟩
+
+/-- Of two domains yielding equally useful questions, the smaller gives the better question:
+the domain selected by relevance contains only the individuals that could affect the
+decision. -/
+theorem better_whQuestion_of_subset (dp : DecisionProblem ℚ W A) (acts : Finset A)
+    (P : W → Finset D) {dom dom' : Finset D} (h : dom ⊆ dom')
+    (heq : EUV dp acts (whQuestion P dom) = EUV dp acts (whQuestion P dom')) :
+    Better dp acts (whQuestion P dom) (whQuestion P dom') :=
+  Or.inr ⟨heq, whQuestion_anti P h⟩
+
+end Utility
+
+/-! ### Mention-some and mention-all from one rule -/
+
+variable {G : Type*}
+
+/-- The paper's rule: the answers are the propositions that a group is among the optimal values
+of the predicate, one for each group optimal somewhere. -/
+def questionR (op : W → Set G) : Set (Set W) := {p | ∃ w, ∃ g ∈ op w, p = {v | g ∈ op v}}
+
+/-- The rule of footnote 28, which puts two worlds together whenever their optimal values
+overlap. -/
+def questionS (op : W → Set G) : Set (Set W) := {p | ∃ w, p = {v | (op w ∩ op v).Nonempty}}
+
+/-- When the optimal value is unique in every world the rule gives the partition by that value,
+the mention-all reading. -/
+theorem questionR_eq_range_fiber (f : W → G) :
+    questionR (λ w => {f w}) = {p | ∃ w, p = f ⁻¹' {f w}} := by
+  ext p
+  simp only [questionR, Set.mem_singleton_iff, exists_eq_left, Set.mem_ofPred_eq, Set.preimage,
+    eq_comm]
+
+/-- The newspaper worlds of (20) and the places optimal in each: the station in `u`, the palace
+in `v`, both in `w`. -/
+def newspaperOp : NewsW → Set Walk
+  | .station => {.station}
+  | .palace => {.palace}
+  | .both => Set.univ
+
+/-- The rule yields the mention-some denotation {{u, w}, {v, w}}. -/
+theorem newspaper_questionR :
+    questionR newspaperOp = {{.station, .both}, {.palace, .both}} := by
+  ext p
+  simp only [questionR, Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨w, g, hg, rfl⟩
+    cases g
+    · left; ext v; cases v <;> simp [newspaperOp]
+    · right; ext v; cases v <;> simp [newspaperOp]
+  · rintro (rfl | rfl)
+    · exact ⟨.station, .station, by simp [newspaperOp], by ext v; cases v <;> simp [newspaperOp]⟩
+    · exact ⟨.palace, .palace, by simp [newspaperOp], by ext v; cases v <;> simp [newspaperOp]⟩
+
+/-- The rule of footnote 28 adds the trivial answer {u, v, w}, which is why the paper rejects
+it. -/
+theorem newspaper_questionS : Set.univ ∈ questionS newspaperOp :=
+  ⟨.both, by ext v; cases v <;> simp [newspaperOp]; exact ⟨.station, trivial⟩⟩
 
 end VanRooy2003
