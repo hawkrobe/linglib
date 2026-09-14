@@ -1,0 +1,259 @@
+[
+  {
+    "id": "uegakisudo2019_6a",
+    "source": {"bibkey": "uegaki-sudo-2019", "paperLabel": "(6a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ben hopes/wishes that Becky is invited to the party.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "non-veridical preferential"],
+      ["complement", "declarative"]
+    ],
+    "comment": "Non-veridical preferentials take declarative complements.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "uegakisudo2019_6c",
+    "source": {"bibkey": "uegaki-sudo-2019", "paperLabel": "(6c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Dorothy is surprised/annoyed/glad/happy that Daniel will give a presentation.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "veridical preferential"],
+      ["complement", "declarative"]
+    ],
+    "comment": "Veridical preferentials take declarative complements.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "uegakisudo2019_7b",
+    "source": {"bibkey": "uegaki-sudo-2019", "paperLabel": "(7b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ben is happy/glad ?(about) which students are invited to the party.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "veridical preferential"],
+      ["complement", "wh-interrogative"]
+    ],
+    "comment": "Veridical preferentials are responsive; the preposition improves some cases, an issue taken up in section 5.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "uegakisudo2019_7c",
+    "source": {"bibkey": "uegaki-sudo-2019", "paperLabel": "(7c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Chris liked/hated which students were invited to the party.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "veridical preferential"],
+      ["complement", "wh-interrogative"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "uegakisudo2019_8a",
+    "source": {"bibkey": "uegaki-sudo-2019", "paperLabel": "(8a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ben hopes/wishes which students will be invited to the party.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "non-veridical preferential"],
+      ["complement", "wh-interrogative"]
+    ],
+    "comment": "The hope-wh puzzle: non-veridical preferentials are anti-rogative; the which-NP clause has no free-relative reading.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "uegakisudo2019_8b",
+    "source": {"bibkey": "uegaki-sudo-2019", "paperLabel": "(8b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Chris expects/fears how many students will be invited to the party.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "non-veridical preferential"],
+      ["complement", "wh-interrogative"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "uegakisudo2019_10b",
+    "source": {"bibkey": "uegaki-sudo-2019", "paperLabel": "(10b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ben is glad/happy (about) whether Becky is invited to the party.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "veridical preferential"],
+      ["complement", "whether-interrogative"]
+    ],
+    "comment": "Veridical preferentials reject whether-complements, a pattern the paper leaves to Romero's account.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "uegakisudo2019_40a",
+    "source": {"bibkey": "uegaki-sudo-2019", "paperLabel": "(40a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John is happy that ALICE jumped.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "John's preference for Alice's jumping is compared to alternatives false at the evaluation world", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate", "veridical preferential"],
+      ["focus", "subject"]
+    ],
+    "comment": "Veridicality does not restrict the comparison class.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "uegakisudo2019_40b",
+    "source": {"bibkey": "uegaki-sudo-2019", "paperLabel": "(40b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John hopes that ALICE jumped.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "John's preference for Alice's jumping is compared only to alternatives he considers possible", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["predicate", "non-veridical preferential"],
+      ["focus", "subject"]
+    ],
+    "comment": "The doxastic condition of emotive doxastics restricts the comparison class as a whole, (39).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "uegakisudo2019_41",
+    "source": {"bibkey": "uegaki-sudo-2019", "paperLabel": "(41)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John isn't happy about / doesn't like which student will sing.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "There is no particular student John wants to sing. John knows which student will sing.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "veridical preferential"],
+      ["complement", "wh-interrogative"],
+      ["evidence", "Threshold Significance"]
+    ],
+    "comment": "Without Threshold Significance the sentence would be true in the context; instead it presupposes a student John preferred to sing.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "uegakisudo2019_42",
+    "source": {"bibkey": "uegaki-sudo-2019", "paperLabel": "(42)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John is indifferent about which student will sing.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "There is no particular student John wants to sing.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "be indifferent"],
+      ["complement", "wh-interrogative"]
+    ],
+    "comment": "Be indifferent compares questions rather than propositions, so Threshold Significance holds of a question, compatibly with the context of (41).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "uegakisudo2019_43a",
+    "source": {"bibkey": "uegaki-sudo-2019", "paperLabel": "(43a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John is indifferent that Alice will sing.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["predicate", "be indifferent"],
+      ["complement", "declarative"]
+    ],
+    "comment": "Marginal at best with a declarative: be indifferent concerns questions.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
