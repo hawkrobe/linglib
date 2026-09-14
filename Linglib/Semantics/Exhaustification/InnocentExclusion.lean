@@ -361,6 +361,15 @@ theorem exhIE_empty : exhIE ∅ φ = φ :=
   Set.Subset.antisymm (exhIE_subset ∅ φ) λ _ hu =>
     (mem_exhIE_iff ∅ φ (Set.finite_empty)).2 ⟨hu, λ _ h => h.1.elim⟩
 
+/-- Against itself alone, exhaustification is vacuous. -/
+theorem exhIE_singleton_self : exhIE {φ} φ = φ := by
+  refine Set.Subset.antisymm (exhIE_subset _ _) λ w hw => ?_
+  rw [mem_exhIE_iff _ _ (Set.finite_singleton _)]
+  refine ⟨hw, λ a ha => ?_⟩
+  obtain rfl := Set.mem_singleton_iff.1 ha.1
+  exact absurd ha
+    (not_isInnocentlyExcludable_of_phi_subset (Set.finite_singleton _) ⟨w, hw⟩ subset_rfl)
+
 /-- Exhaustification is antitone in the innocently excludable alternatives: more of them, a
 stronger result. -/
 theorem exhIE_subset_exhIE {ALT' : Set (Set World)} (hfin : ALT.Finite) (hfin' : ALT'.Finite)

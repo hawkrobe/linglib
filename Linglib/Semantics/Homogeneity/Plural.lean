@@ -76,6 +76,12 @@ theorem allPlural_eq_true_iff (w : W) :
   generalize Trivalent.dist x (P · w) = t
   cases t <;> simp
 
+/-- An *all*-sentence is false iff some atom fails `P`. -/
+theorem allPlural_eq_false_iff (w : W) :
+    allPlural P x w = .false ↔ ¬ ∀ a ∈ x, P a w := by
+  rw [← allPlural_eq_true_iff P x w]
+  rcases isBivalent_allPlural P x w with h | h <;> simp [h]
+
 /-- `bivalentPred` of an *all*-sentence is true iff all atoms satisfy `P`. -/
 theorem bivalentPred_allPlural_iff (w : W) :
     bivalentPred (allPlural P x) w = true ↔ ∀ a ∈ x, P a w := by
