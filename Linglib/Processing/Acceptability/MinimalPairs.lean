@@ -1,4 +1,4 @@
-import Linglib.Features.Acceptability
+import Linglib.Data.Examples.Judgment
 import Linglib.Semantics.Mood.Defs
 import Linglib.Syntax.Clause.Basic
 import Linglib.Morphology.Word.Basic
@@ -25,7 +25,7 @@ Two parallel families:
   should remain free of theoretical commitments.
 
 Judgments use the five-level `Features.Judgment` scale
-(`Linglib/Features/Acceptability.lean`).
+(`Linglib/Data/Examples/Judgment.lean`).
 -/
 
 namespace Features.MinimalPairs

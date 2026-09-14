@@ -1,4 +1,4 @@
-import Linglib.Features.Givenness
+import Linglib.Discourse.Givenness
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -9,7 +9,7 @@ reproduced in [ariel-2001]'s overview (least accessible `fullNameMod` to most
 accessible `zero`), with `rank` (and the `LinearOrder` it induces) and the
 three form-function criteria (`informativity`, `rigidity`, `attenuation`).
 
-Sibling of `Features/Givenness.lean` (GHZ-6): this classifies *forms*,
+Sibling of `Discourse/Givenness.lean` (GHZ-6): this classifies *forms*,
 `GivennessStatus` classifies *entities*. Also here: `NextMentionBias`.
 -/
 

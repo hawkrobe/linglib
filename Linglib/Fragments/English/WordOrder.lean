@@ -1,10 +1,10 @@
-import Linglib.Features.WordOrder
+import Linglib.Syntax.WordOrder
 
 /-!
 # English word-order profile
 
 WALS-derived word-order profile for English (ISO `eng`). Pure pass-through
-of `WordOrderProfile.ofWALS "eng"` — see `Features/WordOrder.lean` for the
+of `WordOrderProfile.ofWALS "eng"` — see `Syntax/WordOrder.lean` for the
 underlying WALS Ch 81/82/83 lookup logic.
 -/
 

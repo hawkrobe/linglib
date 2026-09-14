@@ -5,7 +5,7 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.FunctionWords
-import Linglib.Features.MinimalPairs
+import Linglib.Processing.Acceptability.MinimalPairs
 
 open Morphology (Word)
 

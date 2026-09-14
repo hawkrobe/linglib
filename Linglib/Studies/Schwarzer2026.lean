@@ -1,4 +1,4 @@
-import Linglib.Features.WordOrder
+import Linglib.Syntax.WordOrder
 import Linglib.Studies.BrueningAlKhalaf2020
 import Linglib.Data.Examples.Schwarzer2026
 

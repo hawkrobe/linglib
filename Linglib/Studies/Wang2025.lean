@@ -3,7 +3,7 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Logic.Modal.Basic
 import Linglib.Discourse.CommonGround
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Features.Acceptability
+import Linglib.Data.Examples.Judgment
 import Linglib.Fragments.Mandarin.Particles
 import Linglib.Pragmatics.Expressives.Basic
 

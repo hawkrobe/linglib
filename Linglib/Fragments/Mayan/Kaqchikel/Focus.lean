@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-import Linglib.Features.Reflex
+import Linglib.Syntax.Reflex
 
 /-!
 # Kaqchikel Focus Fragment

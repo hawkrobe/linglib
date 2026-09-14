@@ -1,9 +1,9 @@
-import Linglib.Features.Basic
+import Linglib.Core.Order.Bundle
 import Linglib.Syntax.Case.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Number.Basic
-import Linglib.Features.Slot
+import Linglib.Syntax.Minimalist.FeatureSlot
 import Linglib.Syntax.Person.Basic
 
 /-!
@@ -212,12 +212,12 @@ three-state checking slots (`Features.FeatureSlot`): one slot per dimension,
 `absent` / `unvalued` (probe) / `valued v`. This replaces the earlier list
 representation (`List GramFeature`), which admitted junk — duplicate
 dimensions, conflicting values — and was not extensional, so it could not be
-a `LawfulBundleLike` (the `Features/Basic.lean` Todo).
+a `LawfulBundleLike` (the `Core/Order/Bundle.lean` Todo).
 
 This is the Agree-layer structure; per [marcolli-chomsky-berwick-2025] (book
 p. 13) the free-Merge core keeps `SO₀` features atomic, so the slot apparatus
 is decoupled from the `SyntacticObject` carrier and lives in
-`Features/Slot.lean`.
+`Syntax/Minimalist/FeatureSlot.lean`.
 
 `GramFeature` survives as a literal-builder DSL: `ofGramFeatures` folds a list
 of valued/unvalued features into the assignment, the list head winning on

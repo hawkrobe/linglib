@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Order.Nat
-import Linglib.Features.Basic
+import Linglib.Core.Order.Bundle
 
 /-!
 # Segmental representation: definitions

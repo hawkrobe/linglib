@@ -1,5 +1,5 @@
 import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Features.Acceptability
+import Linglib.Data.Examples.Judgment
 
 /-!
 # Lakoff (1970): Tense and Its Relation to Participants

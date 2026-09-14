@@ -1,4 +1,4 @@
-import Linglib.Features.Prosody
+import Linglib.Phonology.Prosody.Intonation
 
 /-!
 # Japanese Prosody Fragment

@@ -2,7 +2,7 @@ import Linglib.Fragments.Hausa.Focus
 import Linglib.Fragments.Hausa.TAM
 import Linglib.Core.Relation.FactorsThroughOn
 import Linglib.Semantics.Focus.Control
-import Linglib.Features.Reflex
+import Linglib.Syntax.Reflex
 import Linglib.Data.Examples.HartmannZimmermann2007
 
 /-!

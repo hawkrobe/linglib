@@ -1,5 +1,5 @@
 import Linglib.Syntax.CCG.Derivation
-import Linglib.Features.Prosody
+import Linglib.Phonology.Prosody.Intonation
 import Linglib.Core.Order.PartialUnify
 import Mathlib.Tactic.DeriveFintype
 

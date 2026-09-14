@@ -4,7 +4,7 @@ import Linglib.Syntax.Number.Capabilities
 import Linglib.Syntax.Person.Capabilities
 import Linglib.Syntax.Person.Decomposition
 import Linglib.Semantics.Modality.ModalTypes
-import Linglib.Features.Register
+import Linglib.Pragmatics.SocialMeaning.Register
 import Linglib.Morphology.Word.Basic
 
 open Morphology (Word)

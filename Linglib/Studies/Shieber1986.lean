@@ -1,7 +1,7 @@
 import Linglib.Core.Order.Flat
 import Linglib.Core.Order.PartialUnify
 import Linglib.Data.UD.Basic
-import Linglib.Features.Basic
+import Linglib.Core.Order.Bundle
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.Bounds.Basic
 

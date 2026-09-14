@@ -8,7 +8,7 @@ import Linglib.Core.Relation.FactorsThroughOn
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.Prosody.Phrase
 import Linglib.Semantics.Focus.Control
-import Linglib.Features.Reflex
+import Linglib.Syntax.Reflex
 import Linglib.Fragments.Tangale.TAM
 import Linglib.Fragments.Tangale.Phonology
 import Linglib.Data.Examples.HartmannZimmermann2004

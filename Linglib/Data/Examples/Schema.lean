@@ -1,5 +1,5 @@
 import Mathlib.Tactic.TypeStar
-import Linglib.Features.Acceptability
+import Linglib.Data.Examples.Judgment
 
 /-!
 # `LinguisticExample` schema

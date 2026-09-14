@@ -1,6 +1,6 @@
 import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Semantics.Mood.Defs
-import Linglib.Features.Acceptability
+import Linglib.Data.Examples.Judgment
 
 /-!
 # Napoli & Nespor (1976): Negatives in Comparatives

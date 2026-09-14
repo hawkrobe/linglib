@@ -9,7 +9,7 @@ import Linglib.Syntax.Case.Capabilities
 import Linglib.Syntax.Gender.Capabilities
 import Linglib.Syntax.Number.Capabilities
 import Linglib.Syntax.Person.Capabilities
-import Linglib.Features.CoreferenceStatus
+import Linglib.Syntax.Binding.CoreferenceStatus
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Morphology.Word.Agree
@@ -36,7 +36,7 @@ exactly the axes it touches.
 ## Implementation notes
 
 Word-class-neutral capabilities live with their domains: `Indefinite` in
-`Semantics/Quantification/Indefinite.lean`, `Bound` in `Features/CoreferenceStatus.lean`.
+`Semantics/Quantification/Indefinite.lean`, `Bound` in `Syntax/Binding/CoreferenceStatus.lean`.
 Three axes are fields, not classes: deficiency (`Pronoun.strength`, per-series
 [cardinaletti-starke-1999]), lexical kind (`Pronoun.pronType`, UD morphology),
 and register/referential person (`PersonalPronoun` fields, borne by one

@@ -1,4 +1,4 @@
-import Linglib.Features.Register
+import Linglib.Pragmatics.SocialMeaning.Register
 
 /-!
 # Modal Typological Types
