@@ -6,64 +6,57 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Lattice.Basic
 
 /-!
-# The algebraic structure of morphosyntax
+# Senturia and Marcolli (2025): The Algebraic Structure of Morphosyntax
 
-[senturia-marcolli-2025] models Distributed Morphology inside the Merge
-algebra of [marcolli-chomsky-berwick-2025]: morphological objects are
-built by the same free non-associative commutative magma as syntactic
-objects, differing only in labeling — an internal vertex carries the
-union of its children's feature bundles, so a bundle is derived from the
-tree rather than stipulated. On this carrier fusion is the magma
-operation itself, fission restricts the tree along a partition of its
-bundle, and impoverishment is a fission component: the paper reduces the
-four DM operations to fusion and fission.
+This file formalizes the Distributed Morphology operations of [senturia-marcolli-2025], which
+models morphology inside the Merge algebra of [marcolli-chomsky-berwick-2025]. A morphological
+object is built by the same free non-associative commutative magma as a syntactic object, with
+features in place of lexical items, and differs from it only in labeling: an internal vertex
+carries the union of its children's feature bundles (Definition 2.1), so a bundle is derived
+from the tree (`bundle`, `bundle_fuse`). A morphosyntactic tree inserts morphological objects
+at the leaves of a syntactic tree under the syntax-morphology feature correspondence
+(Definitions 2.4 and 3.4; `FeatureCorrespondence`, `Morphosyntactic`, `Matched`), and
+forgetting the inserted morphology is the morphism of algebras over the Merge operad of
+Definition 3.9 (`toSyntactic`).
 
-## Main definitions
+On this carrier the four operations reduce to two. Fusion is the magma product itself
+(Definition 5.2, `fuse`), which is why it is the one operation available inside syntax.
+Fission restricts the tree vertex-wise along a partition of its bundle with a copied residue
+(Definition 5.6, `restrict`) and duplicates exactly that residue (`msFeatures_fissionSite_copy`).
+Impoverishment keeps one fission output and obliteration empties an insertion (Propositions
+5.13 and 5.20), so both derive from fission (Proposition 5.21). Fission followed by fusion
+restores the bundle but not the tree (`bundle_fuse_restrict`, `fuse_restrict_ne`, the paper's
+Example 5.7). Closing the site relations under congruence gives the post-syntactic and
+Distributed Morphology semigroups of Definition 6.1 as rewrite relations (`PostSyntactic`,
+`Derivation`): along the first the total feature set is invariant while the boundary between
+syntax and morphology moves one leaf at a time (`PostSyntactic.toFinset_msFeatures_eq`,
+`Step.numLeaves_fuse`, `Step.numLeaves_fiss`); along the second the feature set can only
+shrink (`Derivation.toFinset_msFeatures_subset`).
 
-* `bundle` — the feature bundle of a morphological object, the set of
-  features at its leaves
-* `fuse`, `restrict` — fusion as magma grafting, and the vertex-wise
-  restriction producing the two fission outputs
-* `FeatureCorrespondence`, `Morphosyntactic`, `Matched` — the
-  syntax-morphology feature correspondence and morphosyntactic trees in
-  labeled form: each syntactic leaf carries its datum and its inserted
-  morphological object
-* `toSyntactic`, `msFeatures` — the forgetful projection to the
-  syntactic tree, and the total feature content of an assembly
+## Implementation notes
 
-## Main statements
-
-* `bundle_fuse` — the fused bundle is the union of the input bundles,
-  an instance of the labeling law: fusion needs nothing beyond the magma
-* `bundle_restrict` — a fission output's bundle is the input bundle
-  restricted to the kept features
-* `restrict_copies_shared` — features shared out to both sides of the
-  partition survive in both outputs
-* `bundle_fuse_restrict` — fission followed by fusion restores the
-  bundle, and `fuse_restrict_ne` — but not the tree
-* `msFeatures_fuse`, `msFeatures_fission_partition` — at the application
-  site, fusion and disjoint fission move the syntax-morphology boundary
-  (`toSyntactic` collapses or grows a cherry) while the total feature
-  content is invariant
-* `matched_fused_iff` — the fused site is matched exactly when the union
-  bundle matches the projecting datum
-* `PostSyntactic.toFinset_msFeatures_eq`,
-  `Derivation.toFinset_msFeatures_subset` — along the post-syntactic
-  semigroup the total feature set is invariant; the full Distributed
-  Morphology semigroup can only shrink it
+* Morphological objects are unordered trees over `F ⊕ Unit`, features at the leaves and bare
+  structural vertices elsewhere. `IsMorphological` does not constrain arity, so the theorems
+  cover the paper's binary objects and the non-branching extended objects of Definition 2.8
+  alike. Restriction keeps a structural vertex whose leaves all vanish as a childless vertex
+  where the quotient of Definition 5.6 removes it; both carry the empty bundle.
+* A morphosyntactic tree is kept in labeled form, each syntactic leaf carrying its datum and
+  the inserted object, `none` for the empty insertion of Remark 5.12; this carries the same
+  data as splicing the object below the leaf.
+* The operations are stated as transformations of morphosyntactic trees, the first of the
+  paper's two equivalent perspectives; the semigroups act on trees rather than on the assembly
+  operations of Definition 4.2.
 
 ## TODO
 
-The workspace Hopf algebra with obliteration via the coproduct, and the
-colored correspondence between the syntactic and morphosyntactic
-algebras over the Merge operad.
+The workspace Hopf algebra with obliteration via the coproduct, and the colored correspondence
+between the syntactic and morphosyntactic algebras over the Merge operad (Theorem 3.16).
 
 ## References
 
-* [I. Senturia and M. Marcolli, *The algebraic structure of
-  morphosyntax*][senturia-marcolli-2025]
-* [M. Marcolli, N. Chomsky and R. C. Berwick, *Mathematical structure of
-  syntactic Merge*][marcolli-chomsky-berwick-2025]
+* [senturia-marcolli-2025]
+* [marcolli-chomsky-berwick-2025]
+* [hewett-2023]
 -/
 
 namespace SenturiaMarcolli2025
@@ -83,9 +76,9 @@ vertex label is determined by the leaves below it; `bundle` is the
 root's. -/
 
 /-- Features occur only at leaves: internal vertices are structural.
-Restriction can leave childless or non-branching structural vertices, so
-arity is not constrained (the extended morphological objects of
-[senturia-marcolli-2025] Definition 2.8). -/
+Arity is not constrained, so the predicate covers the paper's binary
+objects and the non-branching extended objects of Definition 2.8 that
+restriction produces. -/
 inductive IsMorphological : RoseTree (F ⊕ Unit) → Prop
   | leaf (x : F ⊕ Unit) : IsMorphological (.node x [])
   | node {cs : List (RoseTree (F ⊕ Unit))} (hne : cs ≠ [])
@@ -160,7 +153,7 @@ noncomputable def fuse (S₁ S₂ : UnorderedTree (F ⊕ Unit)) : UnorderedTree 
 law itself, so fusion needs nothing beyond the magma. -/
 theorem bundle_fuse (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     bundle (fuse S₁ S₂) = bundle S₁ ∪ bundle S₂ := by
-  refine Quotient.inductionOn₂ S₁ S₂ fun p q => ?_
+  refine Quotient.inductionOn₂ S₁ S₂ λp q => ?_
   show bundle (UnorderedTree.node (.inr ()) {UnorderedTree.mk p, UnorderedTree.mk q}) = _
   rw [UnorderedTree.node_pair_mk]
   simp only [bundle_mk, leafFeatures_node_inr, List.map_cons, List.map_nil,
@@ -172,7 +165,7 @@ omit [DecidableEq F] in
 duplicated, or created. -/
 theorem features_fuse (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     features (fuse S₁ S₂) = features S₁ + features S₂ := by
-  refine Quotient.inductionOn₂ S₁ S₂ fun p q => ?_
+  refine Quotient.inductionOn₂ S₁ S₂ λp q => ?_
   show features (UnorderedTree.node (.inr ()) {UnorderedTree.mk p, UnorderedTree.mk q}) = _
   rw [UnorderedTree.node_pair_mk]
   simp only [features_mk, leafFeatures_node_inr, List.map_cons, List.map_nil,
@@ -183,8 +176,9 @@ theorem features_fuse (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
 
 Fission splits one bundle into two along a partition `B ∖ A = B₁ ⊔ B₂`,
 with the residue `A` copied into both outputs ([senturia-marcolli-2025]
-§5.2; Ṣanʕānī Arabic discontinuous agreement, where person and number of
-a single head surface as prefix and suffix). Each output is the input
+§5.2; the discontinuous agreement of Ṣanʕānī Arabic after [hewett-2023],
+where person and number of a single head surface as prefix and suffix).
+Each output is the input
 tree restricted vertex-wise to the kept features: leaves outside the
 kept set are deleted, structural vertices stay, and vanished subtrees
 may leave non-branching structural vertices behind — the extended
@@ -214,7 +208,7 @@ private theorem sum_leafFeatures_filterMap (C : Finset F)
   | nil => simp
   | cons c cs ihcs =>
     have hc := ih c (List.mem_cons_self ..)
-    have hrest := ihcs fun d hd => ih d (List.mem_cons_of_mem _ hd)
+    have hrest := ihcs λd hd => ih d (List.mem_cons_of_mem _ hd)
     cases hcc : RoseTree.filterMap (keep C) c with
     | none =>
       rw [hcc, Option.elim_none] at hc
@@ -436,7 +430,7 @@ theorem matched_insertion_iff (Γ : FeatureCorrespondence F Λ) (lex : Λ)
     (S : UnorderedTree (F ⊕ Unit)) :
     Matched Γ (insertion lex (some S)) ↔ Γ.matching (bundle S) lex := by
   constructor
-  · exact fun h => h lex S (by simp [insertion])
+  · exact λh => h lex S (by simp [insertion])
   · intro h lex' S' hmem
     simp only [insertion, UnorderedTree.leaves_leaf, Multiset.mem_singleton,
       Sum.inl.injEq, Prod.mk.injEq, Option.some.injEq] at hmem
@@ -455,10 +449,7 @@ records what happens to the feature content. -/
 
 private theorem leaves_node_pair_leaf {α : Type*} (a x y : α) :
     (UnorderedTree.node a {UnorderedTree.leaf x, UnorderedTree.leaf y}).leaves = {x, y} := by
-  rw [show (UnorderedTree.leaf x : UnorderedTree α) = UnorderedTree.mk (.node x []) from rfl,
-    show (UnorderedTree.leaf y : UnorderedTree α) = UnorderedTree.mk (.node y []) from rfl,
-    UnorderedTree.node_pair_mk, UnorderedTree.leaves_mk, leaves_node_cons]
-  simp
+  simp [UnorderedTree.leaves_node_cons]
 
 /-- The application site of fusion: a syntactic cherry with insertions
 at both leaves. -/
@@ -500,21 +491,9 @@ theorem toSyntactic_fusionSite (lex₁ lex₂ : Λ) (S₁ S₂ : UnorderedTree (
     toSyntactic (fusionSite lex₁ lex₂ S₁ S₂)
       = UnorderedTree.node (.inr ())
           {UnorderedTree.leaf (.inl lex₁), UnorderedTree.leaf (.inl lex₂)} := by
-  rw [fusionSite,
-    show (insertion lex₁ (some S₁) : Morphosyntactic F Λ)
-      = UnorderedTree.mk (.node (.inl (lex₁, some S₁)) []) from rfl,
-    show (insertion lex₂ (some S₂) : Morphosyntactic F Λ)
-      = UnorderedTree.mk (.node (.inl (lex₂, some S₂)) []) from rfl,
-    UnorderedTree.node_pair_mk, toSyntactic, UnorderedTree.map_mk,
-    show RoseTree.map (Sum.map Prod.fst id)
-        (.node (.inr ()) [.node (.inl (lex₁, some S₁)) [],
-          .node (.inl (lex₂, some S₂)) []])
-      = .node (.inr ()) [.node (.inl lex₁) [], .node (.inl lex₂) []] from rfl,
-    show (UnorderedTree.leaf (.inl lex₁) : UnorderedTree (Λ ⊕ Unit))
-      = UnorderedTree.mk (.node (.inl lex₁) []) from rfl,
-    show (UnorderedTree.leaf (.inl lex₂) : UnorderedTree (Λ ⊕ Unit))
-      = UnorderedTree.mk (.node (.inl lex₂) []) from rfl,
-    UnorderedTree.node_pair_mk]
+  simp only [fusionSite, toSyntactic, UnorderedTree.map_node, Multiset.insert_eq_cons,
+    Multiset.map_cons, Multiset.map_singleton, insertion, UnorderedTree.map_leaf, Sum.map_inl,
+    Sum.map_inr, id]
 
 /-- The necessary condition for fusion: the fused site is matched exactly
 when the union of the two bundles matches the projecting datum
@@ -546,13 +525,13 @@ theorem msFeatures_fission_partition (lex₁ lex₂ : Λ) {C₁ C₂ : Finset F}
     msFeatures (fissionSite lex₁ lex₂ C₁ C₂ (UnorderedTree.mk t))
       = features (UnorderedTree.mk t) := by
   rw [msFeatures_fissionSite _ _ _ _ ht, Multiset.filter_add_filter]
-  have h₁ : (features (UnorderedTree.mk t)).filter (fun f => f ∈ C₁ ∨ f ∈ C₂)
+  have h₁ : (features (UnorderedTree.mk t)).filter (λf => f ∈ C₁ ∨ f ∈ C₂)
       = features (UnorderedTree.mk t) :=
-    Multiset.filter_eq_self.mpr fun f hf => by
+    Multiset.filter_eq_self.mpr λf hf => by
       simpa [Finset.mem_union] using hcover f hf
-  have h₂ : (features (UnorderedTree.mk t)).filter (fun f => f ∈ C₁ ∧ f ∈ C₂)
+  have h₂ : (features (UnorderedTree.mk t)).filter (λf => f ∈ C₁ ∧ f ∈ C₂)
       = 0 :=
-    Multiset.filter_eq_nil.mpr fun f _ hf =>
+    Multiset.filter_eq_nil.mpr λf _ hf =>
       Finset.disjoint_left.mp hdisj hf.1 hf.2
   rw [h₁, h₂, add_zero]
 
@@ -647,22 +626,22 @@ theorem msFeatures_fissionSite_copy (lex₁ lex₂ : Λ) {A B₁ B₂ : Finset F
       = features (UnorderedTree.mk t)
         + (features (UnorderedTree.mk t)).filter (· ∈ A) := by
   rw [msFeatures_fissionSite _ _ _ _ ht]
-  refine Multiset.ext.mpr fun f => ?_
+  refine Multiset.ext.mpr λf => ?_
   have hcnt : f ∉ A → f ∉ B₁ → f ∉ B₂ →
       Multiset.count f (features (UnorderedTree.mk t)) = 0 := by
     intro nA nB₁ nB₂
-    refine Multiset.count_eq_zero.mpr fun hf => ?_
+    refine Multiset.count_eq_zero.mpr λhf => ?_
     rcases Finset.mem_union.mp (hcover f hf) with h | h
     · rcases Finset.mem_union.mp h with h | h
       exacts [nA h, nB₁ h]
     · exact nB₂ h
   simp only [Multiset.count_add, Multiset.count_filter, Finset.mem_union]
   by_cases hfA : f ∈ A
-  · have nB₁ : f ∉ B₁ := fun hf => Finset.disjoint_left.mp h₁ hfA hf
-    have nB₂ : f ∉ B₂ := fun hf => Finset.disjoint_left.mp h₂ hfA hf
+  · have nB₁ : f ∉ B₁ := λhf => Finset.disjoint_left.mp h₁ hfA hf
+    have nB₂ : f ∉ B₂ := λhf => Finset.disjoint_left.mp h₂ hfA hf
     simp [hfA, nB₁, nB₂]
   · by_cases hfB₁ : f ∈ B₁
-    · have nB₂ : f ∉ B₂ := fun hf => Finset.disjoint_left.mp h₁₂ hfB₁ hf
+    · have nB₂ : f ∉ B₂ := λhf => Finset.disjoint_left.mp h₁₂ hfB₁ hf
       simp [hfA, hfB₁, nB₂]
     · by_cases hfB₂ : f ∈ B₂
       · simp [hfA, hfB₁, hfB₂]
@@ -786,13 +765,13 @@ theorem Step.numLeaves_fiss {T T' : Morphosyntactic F Λ}
 /-- The post-syntactic semigroup: compositions of fusion and fission
 steps ([senturia-marcolli-2025] Definition 6.1). -/
 def PostSyntactic : Morphosyntactic F Λ → Morphosyntactic F Λ → Prop :=
-  Relation.ReflTransGen fun T T' => Step FuseAt T T' ∨ Step FissAt T T'
+  Relation.ReflTransGen λT T' => Step FuseAt T T' ∨ Step FissAt T T'
 
 /-- A derivation of the full Distributed Morphology semigroup:
 post-syntactic steps together with impoverishment and obliteration
 ([senturia-marcolli-2025] Definition 6.1). -/
 def Derivation : Morphosyntactic F Λ → Morphosyntactic F Λ → Prop :=
-  Relation.ReflTransGen fun T T' =>
+  Relation.ReflTransGen λT T' =>
     (Step FuseAt T T' ∨ Step FissAt T T') ∨
       (Step ImpovAt T T' ∨ Step OblitAt T T')
 
@@ -807,8 +786,8 @@ theorem PostSyntactic.toFinset_msFeatures_eq {T T' : Morphosyntactic F Λ}
   | refl => rfl
   | tail _ step ih =>
     rcases step with hf | hs
-    · rw [Step.msFeatures_eq (fun h => h.msFeatures_eq) hf, ih]
-    · rw [Step.toFinset_msFeatures_eq (fun h => h.toFinset_msFeatures_eq) hs, ih]
+    · rw [Step.msFeatures_eq (λh => h.msFeatures_eq) hf, ih]
+    · rw [Step.toFinset_msFeatures_eq (λh => h.toFinset_msFeatures_eq) hs, ih]
 
 /-- Along the full Distributed Morphology semigroup the feature set can
 only shrink: fusion and fission preserve it, impoverishment and
@@ -821,12 +800,12 @@ theorem Derivation.toFinset_msFeatures_subset {T T' : Morphosyntactic F Λ}
   | tail _ step ih =>
     refine Finset.Subset.trans ?_ ih
     rcases step with (hf | hs) | (hi | ho)
-    · rw [Step.msFeatures_eq (fun h => h.msFeatures_eq) hf]
-    · rw [Step.toFinset_msFeatures_eq (fun h => h.toFinset_msFeatures_eq) hs]
+    · rw [Step.msFeatures_eq (λh => h.msFeatures_eq) hf]
+    · rw [Step.toFinset_msFeatures_eq (λh => h.toFinset_msFeatures_eq) hs]
     · exact Multiset.toFinset_subset.mpr
-        (Multiset.subset_of_le (Step.msFeatures_le (fun h => h.msFeatures_le) hi))
+        (Multiset.subset_of_le (Step.msFeatures_le (λh => h.msFeatures_le) hi))
     · exact Multiset.toFinset_subset.mpr
-        (Multiset.subset_of_le (Step.msFeatures_le (fun h => h.msFeatures_le) ho))
+        (Multiset.subset_of_le (Step.msFeatures_le (λh => h.msFeatures_le) ho))
 
 /-! ### The economy of bivalent features
 
@@ -835,6 +814,8 @@ three valuations (+, −, unvalued), the bivalent inventory has `n + 3`
 generating objects against the `3 n` features a privative encoding
 needs, strictly fewer for more than one category. -/
 
+/-- The bivalent inventory is the smaller one as soon as there is more
+than one feature category. -/
 theorem bivalent_economy {n : ℕ} (h : 1 < n) : n + 3 < 3 * n := by omega
 
 end SenturiaMarcolli2025
