@@ -1,5 +1,5 @@
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Features.Givenness
+import Linglib.Discourse.Givenness
 import Linglib.Data.Examples.ArnoldEtAl2000
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination

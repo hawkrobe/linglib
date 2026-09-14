@@ -1,7 +1,7 @@
-import Linglib.Features.WordOrder
+import Linglib.Syntax.WordOrder
 import Linglib.Data.Examples.Westergaard2009
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Features.Givenness
+import Linglib.Discourse.Givenness
 import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.English.V2
 import Linglib.Fragments.English.WordOrder

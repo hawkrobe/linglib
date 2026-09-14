@@ -17,7 +17,7 @@ This file states Agree's structural conditions over `SyntacticObject`
 trees (c-command locality, horizons, phase-boundedness) and the valuation
 step over `FeatureBundle`s. Bundles live in a *feature assignment*
 `LIToken → FeatureBundle` rather than in the carrier — the free-Merge core
-keeps `SO₀` features atomic (`Features/Slot.lean`) — and a constituent
+keeps `SO₀` features atomic (`Syntax/Minimalist/FeatureSlot.lean`) — and a constituent
 exposes its projecting head's bundle through selection-driven labeling
 (`headBundle`). The feature *types* live in `Features.lean`; the search
 kernel and failure model ([preminger-2014] Ch. 5) in `Probe/Basic.lean`;
@@ -32,7 +32,7 @@ open SyntacticObject
 /-! ### Agree relations
 
 Feature bundles live in a *feature assignment* `LIToken → FeatureBundle`,
-not in the carrier (`Features/Slot.lean`). A constituent exposes its
+not in the carrier (`Syntax/Minimalist/FeatureSlot.lean`). A constituent exposes its
 projecting head's bundle through selection-driven labeling
 (`SyntacticObject.selHead`), so an Agree relation's feature conditions and
 its structural conditions are read off one tree and one assignment. -/

@@ -1,5 +1,5 @@
 import Mathlib.Data.Finset.Basic
-import Linglib.Features.Acceptability
+import Linglib.Data.Examples.Judgment
 import Linglib.Fragments.Japanese.Case
 import Linglib.Syntax.Case.Dependent
 import Linglib.Morphology.Grammaticalization.Case

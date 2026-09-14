@@ -1,5 +1,5 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Features.Acceptability
+import Linglib.Data.Examples.Judgment
 
 /-!
 # [van-tiel-geurts-2016] — Scalar Diversity

@@ -1,4 +1,4 @@
-import Linglib.Features.Prosody
+import Linglib.Phonology.Prosody.Intonation
 import Linglib.Phonology.Tone.Register
 import Linglib.Fragments.Japanese.Prosody
 import Linglib.Data.Examples.BeckmanPierrehumbert1986

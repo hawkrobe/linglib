@@ -1,7 +1,7 @@
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Order.Monotone.Defs
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Features.Givenness
+import Linglib.Discourse.Givenness
 import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Clause.ArgumentRole
 

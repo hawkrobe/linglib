@@ -1,4 +1,4 @@
-import Linglib.Features.Acceptability
+import Linglib.Data.Examples.Judgment
 
 /-!
 # Lechner (2004): Ellipsis in Comparatives

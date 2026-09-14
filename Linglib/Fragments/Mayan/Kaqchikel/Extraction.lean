@@ -1,4 +1,4 @@
-import Linglib.Features.Reflex
+import Linglib.Syntax.Reflex
 import Linglib.Syntax.Extraction
 
 /-!

@@ -1,4 +1,4 @@
-import Linglib.Features.WordOrder
+import Linglib.Syntax.WordOrder
 import Linglib.Syntax.Tree.Cat
 import Linglib.Fragments.English.WordOrder
 import Mathlib.Data.Finset.Basic

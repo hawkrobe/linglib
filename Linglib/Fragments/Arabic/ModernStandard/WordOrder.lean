@@ -1,4 +1,4 @@
-import Linglib.Features.WordOrder
+import Linglib.Syntax.WordOrder
 
 /-!
 # Arabic word-order profile

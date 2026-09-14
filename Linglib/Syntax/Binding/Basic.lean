@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.CoreferenceStatus
+import Linglib.Syntax.Binding.CoreferenceStatus
 import Linglib.Morphology.Word.Agree
 
 open Morphology (Word)

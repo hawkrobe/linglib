@@ -1,4 +1,4 @@
-import Linglib.Features.Acceptability
+import Linglib.Data.Examples.Judgment
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Predicates

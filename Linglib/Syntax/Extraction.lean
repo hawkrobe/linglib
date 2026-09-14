@@ -1,4 +1,4 @@
-import Linglib.Features.Reflex
+import Linglib.Syntax.Reflex
 import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!
@@ -118,7 +118,7 @@ redeclare root `Extraction` leaf names, so unqualified references keep
 resolving. -/
 
 /-- Does the language overtly mark extraction from a given target? The
-shared overtness predicate of `Features/Reflex.lean`. -/
+shared overtness predicate of `Syntax/Reflex.lean`. -/
 def Marked {C : Type*} (realize : ExtractionTarget → List (Features.Reflex C))
     (t : ExtractionTarget) : Prop :=
   Features.Reflex.Overt (realize t)

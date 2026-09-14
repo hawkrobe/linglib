@@ -1,4 +1,4 @@
-import Linglib.Features.WordOrder
+import Linglib.Syntax.WordOrder
 import Linglib.Studies.ZwickyPullum1983
 import Linglib.Fragments.Slavic.Russian.Agreement
 import Linglib.Data.Examples.AlexeyenkoZeijlstra2025

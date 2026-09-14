@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mayan.Tseltalan
 import Linglib.Phonology.Segmental.Defs
-import Linglib.Features.Reflex
+import Linglib.Syntax.Reflex
 import Linglib.Syntax.Extraction
 import Linglib.Syntax.Clause.ArgumentRole
 

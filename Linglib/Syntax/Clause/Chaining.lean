@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.WordOrder
+import Linglib.Syntax.WordOrder
 
 /-!
 # Clause chaining

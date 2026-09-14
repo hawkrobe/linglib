@@ -1,11 +1,11 @@
 import Mathlib.Order.Nat
 import Linglib.Data.UD.Basic
 import Linglib.Syntax.Case.Basic
-import Linglib.Features.Register
+import Linglib.Pragmatics.SocialMeaning.Register
 import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Gender.Basic
 import Linglib.Syntax.Person.Clusivity
-import Linglib.Features.CoreferenceStatus
+import Linglib.Syntax.Binding.CoreferenceStatus
 import Linglib.Syntax.Person.Decomposition
 import Linglib.Morphology.Word.Basic
 

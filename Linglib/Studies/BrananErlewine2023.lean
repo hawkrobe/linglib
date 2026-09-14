@@ -1,4 +1,4 @@
-import Linglib.Features.Reflex
+import Linglib.Syntax.Reflex
 
 /-!
 # Branan and Erlewine 2023: Anti-pied-piping

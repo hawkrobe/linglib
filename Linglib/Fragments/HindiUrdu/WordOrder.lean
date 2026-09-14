@@ -1,4 +1,4 @@
-import Linglib.Features.WordOrder
+import Linglib.Syntax.WordOrder
 
 /-!
 # Hindi/Urdu word-order profile

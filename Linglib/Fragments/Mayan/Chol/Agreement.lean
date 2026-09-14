@@ -1,6 +1,6 @@
 import Linglib.Syntax.Case.Basic
 import Linglib.Phonology.Segmental.Defs
-import Linglib.Features.Reflex
+import Linglib.Syntax.Reflex
 import Linglib.Syntax.Extraction
 import Linglib.Fragments.Mayan.Params
 import Linglib.Syntax.Clause.ArgumentRole
