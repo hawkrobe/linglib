@@ -1,25 +1,22 @@
 import Linglib.Semantics.Evidential.Defs
 
 /-!
-# Tibetan (Lhasa) Evidentiality
-[aikhenvald-2004]
+# Tibetan (Lhasa) evidentiality
 
-Two-choice direct vs indirect via copula/auxiliary contrast. *red*/*yod*
-(personal knowledge) vs *yin*/*'dug* (indirect or new information).
-Egophoric system. WALS Ch 77 has no entry; the fallback fires.
+Lhasa Tibetan marks information source in its copulas and auxiliaries rather than by dedicated
+affixes: *red* and *yod* (personal knowledge) contrast with *'dug* and *yin* (indirect or new
+information), within an egophoric system.
+
+## References
+
+* [aikhenvald-2004]
 -/
 
 namespace Tibetan.Evidentiality
 
-/-! ### Typed evidential inventory
-
-Lhasa Tibetan's 2-way direct/indirect contrast realized in the copula
-and auxiliary system: `red`/`yod` (direct, personal knowledge) vs
-`'dug`/`yin` (indirect, new information). Grammaticalized lexical
-opposition. -/
-
 open Evidential
 
+/-- The direct copulas *red* and *yod* and the indirect *'dug* and *yin*. -/
 def evidentials : List Evidential :=
   [ { form := "red", exponent := .lexicalFrame, covers := {.visual, .sensory} },
     { form := "yod", exponent := .lexicalFrame, covers := {.visual, .sensory} },

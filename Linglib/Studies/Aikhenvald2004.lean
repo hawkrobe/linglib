@@ -1,4 +1,5 @@
 import Mathlib.Data.Finset.Card
+import Mathlib.Data.Fintype.Inv
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Semantics.Evidential.Basic
 import Linglib.Fragments.Turkish.Evidentiality
@@ -13,32 +14,30 @@ import Linglib.Fragments.Japanese.Evidentiality
 import Linglib.Data.Examples.Aikhenvald2004
 
 /-!
-# Evidentiality systems by number of choices
+# Aikhenvald (2004): Evidentiality
 
-Aikhenvald classifies the world's grammatical evidentiality systems by how many information
-sources a speaker must choose among and how those sources are grouped: five kinds with two
-choices (A1–A5), five with three (B1–B5), three with four (C1–C3), and one with five (D1), each
-a grouping of six recurrent semantic parameters — visual, non-visual sensory, inference,
-assumption, hearsay and quotative — into the terms of a paradigm. Four of the kinds (A2, A3,
+This file formalizes the typology of grammatical evidentiality systems in chapter 2 of
+[aikhenvald-2004]. Systems are classified by how many information sources a speaker must
+choose among and how those sources are grouped: five kinds with two choices (A1–A5), five
+with three (B1–B5), three with four (C1–C3) and one with five (D1), each a grouping of the six
+semantic parameters of information source into the terms of a paradigm. Four kinds (A2, A3,
 A5, B5) are organized around an evidentiality-neutral "everything else" term; the rest oppose
 marked terms only. What counts as an evidential is a form whose main meaning is information
 source: the perfects of Georgian and the Iranian languages, the French conditional and the
 Japanese sentence-final devices are evidentiality strategies, not evidentials.
 
-Here a term is the shape of the parameters an evidential covers (`Term.ofCovers`: visual with
-or without the other senses, non-visual sensory, inference with or without assumption, and so
-on), each kind is the set of terms it distinguishes (`Kind.terms`, Table 2.1 together with the
-marked terms of the everything-else kinds), and the kind of a language is derived from its
-Fragment inventory (`kind`), whose well-formed terms partition the parameters it expresses
-(`sample_wellFormed`). The letters count choices (`choices_eq_card_terms`), no system
-expresses all six parameters (`card_terms_le_five`), D1 is the only five-choice kind
-(`eq_D1_of_choices`), and B1 is the grouping that matches Willett's tripartition
-(`B1_willett`). Turkish, Abkhaz and Bulgarian derive as A2 once their unmarked pasts are read
-as evidentiality-neutral rather than firsthand (`turkish`, `abkhaz`, `bulgarian`), Cuzco
-Quechua as B1, Tuyuca and Tariana as D1, while Kashaya's performative lies outside the six
-parameters so its paradigm fits no kind (`kashaya_unclassified`), and the strategy languages
-have nothing to classify (`kind_nil`). The book's own illustrations exhaust the terms of their
-systems (`tariana_illustration`, `wanka_illustration`, `turkish_illustration`).
+A term is the shape of an evidential's coverage (`Term.of`), read off the coarse predicates of
+the substrate: within one of Willett's domains a head term (visual evidence with or without
+the other senses, inference, hearsay) or a tail term (the other senses, assumption or
+quotation alone), across domains the non-firsthand term. A kind is the set of terms it
+distinguishes (`Kind.terms`, Table 2.1 together with the marked terms of the everything-else
+kinds), and the kind of a language is the one whose terms are exactly those of its Fragment
+inventory (`kind`). Disjoint evidentials realize distinct terms, so in a well-formed inventory
+the letter of the kind counts the evidentials, plus one for an everything-else term
+(`choices_eq_length`). Turkish, Abkhaz and Bulgarian derive as A2 once their unmarked pasts
+are read as evidentiality-neutral rather than firsthand, Cuzco Quechua as B1, Tuyuca and
+Tariana as D1, while Kashaya's performative lies outside the six parameters, so its paradigm
+fits no kind.
 
 ## References
 
@@ -59,18 +58,24 @@ inductive Term
   | visual | sensory | inferred | assumed | reported | quotative | nonfirsthand
   deriving DecidableEq, Repr
 
-/-- The term a coverage realizes: visual evidence with or without the other senses, non-visual
-sensory evidence, inference with or without assumption, assumption alone, hearsay with or
-without quotation, quotation alone, or inference and hearsay together without visual evidence
-(non-firsthand); any other coverage is no term of the typology. -/
-def Term.ofCovers (s : Finset Parameter) : Option Term :=
-  if .visual ∈ s ∧ s ⊆ {.visual, .sensory} then some .visual
-  else if s = {.sensory} then some .sensory
-  else if .inference ∈ s ∧ s ⊆ {.inference, .assumption} then some .inferred
-  else if s = {.assumption} then some .assumed
-  else if .hearsay ∈ s ∧ s ⊆ {.hearsay, .quotative} then some .reported
-  else if s = {.quotative} then some .quotative
-  else if .inference ∈ s ∧ .hearsay ∈ s ∧ .visual ∉ s then some .nonfirsthand
+/-- The parameter heading a term, covered by every evidential that realizes it. -/
+def Term.head : Term → Parameter
+  | .visual => .visual
+  | .sensory => .sensory
+  | .inferred | .nonfirsthand => .inference
+  | .assumed => .assumption
+  | .reported => .hearsay
+  | .quotative => .quotative
+
+/-- The term an evidential realizes. Within one of Willett's domains it is the head term when
+the coverage includes the domain's head parameter (visual evidence, inference, hearsay) and
+the tail term otherwise (the other senses, assumption, quotation alone); across domains it is
+the non-firsthand term; any other coverage realizes no term of the typology. -/
+def Term.of (e : Evidential) : Option Term :=
+  if e.IsDirect then some (if .visual ∈ e.covers then .visual else .sensory)
+  else if e.IsInferential then some (if .inference ∈ e.covers then .inferred else .assumed)
+  else if e.IsReportative then some (if .hearsay ∈ e.covers then .reported else .quotative)
+  else if e.IsNonfirsthand then some .nonfirsthand
   else none
 
 /-- Willett's domain of a term; a non-firsthand term spans two. -/
@@ -80,9 +85,49 @@ def Term.coarse : Term → Option CoarseSource
   | .reported | .quotative => some .hearsay
   | .nonfirsthand => none
 
+/-- The domain of an evidential's term is its coarse source. -/
+theorem Term.coarse_of (e : Evidential) : (Term.of e).bind Term.coarse = e.toCoarseSource := by
+  unfold Term.of Evidential.toCoarseSource
+  split_ifs <;> rfl
+
+private theorem mem_of_subset_pair {α : Type*} [DecidableEq α] {s : Finset α} {a b : α}
+    (hs : s.Nonempty) (h : s ⊆ {a, b}) (ha : a ∉ s) : b ∈ s := by
+  obtain ⟨p, hp⟩ := hs
+  rcases Finset.mem_insert.1 (h hp) with rfl | hb
+  · exact absurd hp ha
+  · exact Finset.mem_singleton.1 hb ▸ hp
+
+theorem Term.head_mem {e : Evidential} {t : Term} (h : Term.of e = some t) :
+    t.head ∈ e.covers := by
+  unfold Term.of at h
+  split_ifs at h with hd hv hi hia hr hh hn <;> cases h
+  · exact hv
+  · exact mem_of_subset_pair hd.1 hd.2 hv
+  · exact hia
+  · exact mem_of_subset_pair hi.1 hi.2 hia
+  · exact hh
+  · exact mem_of_subset_pair hr.1 hr.2 hh
+  · exact hn.1
+
+/-- Disjoint evidentials realize distinct terms. -/
+theorem Term.ne_of_disjoint {a b : Evidential} {t t' : Term} (hab : Disjoint a.covers b.covers)
+    (ha : Term.of a = some t) (hb : Term.of b = some t') : t ≠ t' := by
+  rintro rfl
+  exact Finset.disjoint_left.1 hab (head_mem ha) (head_mem hb)
+
 /-- The terms an inventory distinguishes, if each of its evidentials realizes one. -/
 def terms (es : List Evidential) : Option (Finset Term) :=
-  (es.mapM (Term.ofCovers ·.covers)).map List.toFinset
+  if ∀ e ∈ es, (Term.of e).isSome then some (es.filterMap Term.of).toFinset else none
+
+/-- In a well-formed inventory each evidential realizes its own term, so the inventory has as
+many evidentials as it distinguishes terms. -/
+theorem length_eq_card {es : List Evidential} {S : Finset Term} (h : WellFormed es)
+    (hS : terms es = some S) : es.length = S.card := by
+  unfold terms at hS
+  split_ifs at hS with hall
+  obtain rfl := Option.some.inj hS
+  rw [List.toFinset_card_of_nodup, List.filterMap_length_eq_length.2 hall]
+  exact List.pairwise_filterMap.2 (h.imp fun hab _ ha _ hb => Term.ne_of_disjoint hab ha hb)
 
 /-! ### The kinds of system -/
 
@@ -102,11 +147,9 @@ def choices : Kind → ℕ
   | .D1 => 5
 
 /-- The kinds organized around an evidentiality-neutral "everything else" term. -/
-def HasDefault : Kind → Prop
-  | .A2 | .A3 | .A5 | .B5 => True
-  | _ => False
+def HasDefault (k : Kind) : Prop := k ∈ ({.A2, .A3, .A5, .B5} : Finset Kind)
 
-instance : DecidablePred HasDefault := fun k => by cases k <;> unfold HasDefault <;> infer_instance
+instance : DecidablePred HasDefault := fun _ => inferInstanceAs (Decidable (_ ∈ _))
 
 /-- The terms a system of each kind distinguishes: the rows of Table 2.1 and the marked terms
 of the everything-else kinds. -/
@@ -145,27 +188,15 @@ theorem B1_willett :
     Kind.B1.terms.image Term.coarse = {some .direct, some .inference, some .hearsay} := by
   decide
 
-/-- Every kind, for classification by search. -/
-def all : List Kind := [.A1, .A2, .A3, .A4, .A5, .B1, .B2, .B3, .B4, .B5, .C1, .C2, .C3, .D1]
-
-theorem mem_all (k : Kind) : k ∈ all := by cases k <;> decide
-
 end Kind
 
 /-! ### Classifying an inventory -/
 
 /-- The kind of system an inventory instantiates: the kind distinguishing exactly its terms. -/
 def kind (es : List Evidential) : Option Kind :=
-  (terms es).bind fun S => Kind.all.find? (·.terms = S)
-
-theorem find?_terms_eq_some_iff (S : Finset Term) (k : Kind) :
-    Kind.all.find? (·.terms = S) = some k ↔ k.terms = S := by
-  refine ⟨fun h => by simpa using List.find?_some h, fun h => ?_⟩
-  have hs : (Kind.all.find? (fun x => decide (x.terms = S))).isSome :=
-    List.find?_isSome.2 ⟨k, Kind.mem_all k, decide_eq_true h⟩
-  obtain ⟨k', hk'⟩ := Option.isSome_iff_exists.1 hs
-  have hk : k'.terms = S := by simpa using List.find?_some hk'
-  rw [hk', Kind.terms_injective (hk.trans h.symm)]
+  (terms es).bind fun S =>
+    if h : S ∈ Set.range Kind.terms then some (Kind.terms_injective.invOfMemRange ⟨S, h⟩)
+    else none
 
 theorem kind_eq_some_iff (es : List Evidential) (k : Kind) :
     kind es = some k ↔ terms es = some k.terms := by
@@ -174,10 +205,25 @@ theorem kind_eq_some_iff (es : List Evidential) (k : Kind) :
   | none => simp
   | some S =>
     simp only [Option.bind_some, Option.some.injEq]
-    exact (find?_terms_eq_some_iff S k).trans eq_comm
+    split_ifs with h
+    · simp only [Option.some.injEq]
+      constructor <;> rintro rfl
+      exacts [(Kind.terms_injective.left_inv_of_invOfMemRange ⟨S, h⟩).symm,
+        Kind.terms_injective.right_inv_of_invOfMemRange k]
+    · exact ⟨nofun, fun hS => (h ⟨k, hS.symm⟩).elim⟩
+
+theorem kind_eq_none_iff (es : List Evidential) :
+    kind es = none ↔ ∀ k : Kind, terms es ≠ some k.terms := by
+  simp only [Option.eq_none_iff_forall_ne_some, ne_eq, kind_eq_some_iff]
+
+/-- The letter of a well-formed inventory's kind counts its evidentials, plus one for an
+everything-else term. -/
+theorem choices_eq_length {es : List Evidential} {k : Kind} (h : WellFormed es)
+    (hk : kind es = some k) : k.choices = es.length + if k.HasDefault then 1 else 0 := by
+  rw [k.choices_eq_card_terms, length_eq_card h ((kind_eq_some_iff es k).1 hk)]
 
 /-- An empty inventory — an evidentiality strategy, or none at all — is of no kind. -/
-theorem kind_nil : kind [] = none := by decide
+theorem kind_nil : kind [] = none := (kind_eq_none_iff _).2 fun k => by cases k <;> decide
 
 /-! ### The Fragment languages -/
 
@@ -188,21 +234,28 @@ theorem sample_wellFormed :
       Tuyuca.Evidentiality.evidentials, Tariana.Evidentiality.evidentials,
       Kashaya.Evidentiality.evidentials], Evidential.WellFormed es := by decide
 
-theorem turkish : kind Turkish.Evidentiality.evidentials = some .A2 := by decide
+theorem turkish : kind Turkish.Evidentiality.evidentials = some .A2 :=
+  (kind_eq_some_iff _ _).2 (by decide)
 
-theorem abkhaz : kind Abkhaz.Evidentiality.evidentials = some .A2 := by decide
+theorem abkhaz : kind Abkhaz.Evidentiality.evidentials = some .A2 :=
+  (kind_eq_some_iff _ _).2 (by decide)
 
-theorem bulgarian : kind Bulgarian.Evidentiality.evidentials = some .A2 := by decide
+theorem bulgarian : kind Bulgarian.Evidentiality.evidentials = some .A2 :=
+  (kind_eq_some_iff _ _).2 (by decide)
 
-theorem quechua : kind Quechua.Evidentiality.evidentials = some .B1 := by decide
+theorem quechua : kind Quechua.Evidentiality.evidentials = some .B1 :=
+  (kind_eq_some_iff _ _).2 (by decide)
 
-theorem tuyuca : kind Tuyuca.Evidentiality.evidentials = some .D1 := by decide
+theorem tuyuca : kind Tuyuca.Evidentiality.evidentials = some .D1 :=
+  (kind_eq_some_iff _ _).2 (by decide)
 
-theorem tariana : kind Tariana.Evidentiality.evidentials = some .D1 := by decide
+theorem tariana : kind Tariana.Evidentiality.evidentials = some .D1 :=
+  (kind_eq_some_iff _ _).2 (by decide)
 
 /-- Kashaya's performative covers none of the six parameters, so its paradigm — visual,
 auditory, inferential and reported terms besides — is beyond the fourteen kinds. -/
-theorem kashaya_unclassified : kind Kashaya.Evidentiality.evidentials = none := by decide
+theorem kashaya_unclassified : kind Kashaya.Evidentiality.evidentials = none :=
+  (kind_eq_none_iff _).2 fun k => by cases k <;> decide
 
 /-! ### The book's illustrations -/
 

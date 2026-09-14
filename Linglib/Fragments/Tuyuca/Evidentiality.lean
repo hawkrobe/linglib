@@ -1,30 +1,26 @@
 import Linglib.Semantics.Evidential.Defs
 
 /-!
-# Tuyuca Evidentiality
-[aikhenvald-2004] [barnes-1984] [de-haan-2013]
+# Tuyuca evidentiality
 
-Five-term system: visual, nonvisual, apparent (inferential), secondhand
-(reported), assumed. Obligatory verbal suffixes. [barnes-1984] is the
-classic description. Vaupés multilingual area.
+Tuyuca (East Tucanoan, Vaupés) has a five-choice system of Aikhenvald's type D1, the most
+frequently cited example of its kind: visual *-wi*, non-visual sensory *-ti*, apparent
+(inferred) *-yi*, secondhand (reported) *-yigi* and assumed *-hiyi*, obligatory verbal
+suffixes; [barnes-1984] is the classic description. WALS codes the language as having direct
+and indirect evidentials.
 
-WALS [de-haan-2013] F77A codes Tuyuca as `directAndIndirect`, lumping
-the 5-term system into the canonical 2-way bucket; [aikhenvald-2004]
-classes it as the five-choice type D1 (`Studies/Aikhenvald2004.lean`).
+## References
+
+* [aikhenvald-2004], §2.4
+* [barnes-1984]
+* [de-haan-2013]
 -/
 
 namespace Tuyuca.Evidentiality
 
-/-! ### Typed evidential inventory
-
-Tuyuca's 5-term D1 system per [aikhenvald-2004] Ch 2 §2.4 and
-[barnes-1984]. -/
-
 open Evidential
 
-/-- Tuyuca evidential inventory in the new typed form. Five entries:
-    two `Direct` (visual/non-visual sensory), two `Inferential`
-    (from-result/from-assumption), one `Reportative` (unidentified). -/
+/-- Visual *-wi*, non-visual *-ti*, apparent *-yi*, secondhand *-yigi* and assumed *-hiyi*. -/
 def evidentials : List Evidential :=
   [ { form := "-wi", exponent := .verbalAffix, covers := {.visual} },
     { form := "-ti", exponent := .verbalAffix, covers := {.sensory} },

@@ -1,21 +1,20 @@
 import Linglib.Semantics.Evidential.Defs
 
 /-!
-# English Evidentiality
-[de-haan-2013] [aikhenvald-2004]
+# English evidentiality
 
-WALS [de-haan-2013] F77A: `noGrammaticalEvidentials`. Evidential source
-is conveyed lexically by adverbs ("apparently", "reportedly") or hedging
-expressions, never by obligatory verbal morphology.
+English has no grammatical evidentials: information source is conveyed lexically, by adverbs
+(*apparently*, *reportedly*) and parenthetical hedges, never by obligatory morphology.
+
+## References
+
+* [aikhenvald-2004]
+* [de-haan-2013]
 -/
 
 namespace English.Evidentiality
 
-/-! ### Typed evidential inventory
-
-No grammatical evidentials per [aikhenvald-2004]; lexical
-strategies only. -/
-
+/-- No evidentials; lexical strategies only. -/
 def evidentials : List Evidential := []
 
 end English.Evidentiality

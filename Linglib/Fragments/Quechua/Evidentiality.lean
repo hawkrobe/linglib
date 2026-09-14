@@ -1,27 +1,22 @@
 import Linglib.Semantics.Evidential.Defs
 
 /-!
-# Quechua (Cuzco) Evidentiality
-[aikhenvald-2004]
+# Quechua (Cuzco) evidentiality
 
-Three-or-more system: direct *-mi*, reportative *-si*, conjectural *-chá*.
-Obligatory enclitics on finite clauses. Canonical Andean evidential system.
-WALS Ch 77 has no entry for Cuzco Quechua (`quz`); the fallback fires.
+Cuzco Quechua has a three-choice system of Aikhenvald's type B1, the canonical Andean system:
+direct *-mi*, reportative *-si* and conjectural *-chá*, second-position enclitics on finite
+clauses.
 
-The local `EvidentialSystem` enum extends WALS Ch 77's 3-way to a 4-way
-by adding `threeOrMore` precisely to capture this Andean pattern.
+## References
+
+* [aikhenvald-2004], §2.2
 -/
 
 namespace Quechua.Evidentiality
 
-/-! ### Typed evidential inventory
-
-Cuzco Quechua's canonical B1 Andean system: direct `-mi`, reportative
-`-si`, conjectural/inferential `-chá`. Obligatory second-position
-clitics on finite clauses. -/
-
 open Evidential
 
+/-- Direct *-mi*, reportative *-si* and conjectural *-chá*. -/
 def evidentials : List Evidential :=
   [ { form := "-mi", exponent := .clitic2P, covers := {.visual, .sensory} },
     { form := "-si", exponent := .clitic2P, covers := {.hearsay} },

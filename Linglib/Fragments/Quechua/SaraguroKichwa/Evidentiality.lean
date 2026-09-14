@@ -1,49 +1,25 @@
 import Linglib.Semantics.Evidential.Defs
 
 /-!
-# Saraguro Kichwa Evidentiality
-[aikhenvald-2004] [martinez-vera-2026]
+# Saraguro Kichwa evidentiality
 
-Saraguro Kichwa (ISO `qvj`) is a severely endangered Quechuan language
-spoken in the Saraguro region of Loja Province, Ecuador
-([martinez-vera-2026]).
+Saraguro Kichwa (Quechuan, Loja Province, Ecuador) has a three-way contrast in matrix
+declaratives: direct *-rka* and reportative *-shka*, both also past tenses, and inferential
+*-shi*. The discourse-sensitive enclitic *=mi*, whose analysis is contested across Quechuan
+varieties, is not an evidential of this variety; [martinez-vera-2026] analyzes it in
+`Studies/MartinezVera2026.lean`.
 
-The evidential paradigm has a 3-way distinction in matrix declaratives:
+## References
 
-* `-rka`  — direct (also past tense)
-* `-shka` — reportative (also past tense)
-* `-shi`  — inferential
-
-Plus the discourse-sensitive enclitic `=mi`, whose semantic analysis is
-contested across Quechuan varieties (Faller's direct-evidential analysis
-for Cuzco Quechua does NOT carry over to Saraguro per
-[martinez-vera-2026]). The Fragment records only the consensus
-typological metadata; the focus-marker-with-discourse-sensitivity
-analysis lives in `Studies/MartinezVera2026.lean`.
-
-WALS Ch 77 has no entry for `qvj`; the `threeOrMore` fallback fires.
-
-## Family-style organisation
-
-This file sits as `Fragments/Quechua/SaraguroKichwa/` mirroring the
-`Fragments/Slavic/{Bulgarian,Czech,Russian,...}/` precedent for
-intra-family disambiguation. The `Fragments/Quechua/` files at the same
-level are currently misnamed (some claim `quz` Cuzco, one claims `qvi`
-Imbabura) and are queued for a separate per-variety restructure; this
-file does not touch them.
+* [aikhenvald-2004]
+* [martinez-vera-2026]
 -/
 
 namespace Quechua.SaraguroKichwa.Evidentiality
 
-/-! ### Typed evidential inventory
-
-Saraguro Kichwa's 3-way matrix-declarative system per
-[martinez-vera-2026]: direct `-rka`, reportative `-shka`,
-inferential `-shi`. The focus-and-verum enclitic `=mi` is intentionally
-excluded (not analyzed as an evidential in this variety). -/
-
 open Evidential
 
+/-- Direct *-rka*, reportative *-shka* and inferential *-shi*. -/
 def evidentials : List Evidential :=
   [ { form := "-rka", exponent := .verbalAffix, covers := {.visual, .sensory} },
     { form := "-shka", exponent := .verbalAffix, covers := {.hearsay} },
