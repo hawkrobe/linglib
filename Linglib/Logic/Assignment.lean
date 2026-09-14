@@ -19,7 +19,7 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
 * `PartialAssign Var D`: partial assignments `Var → Option D`.
 * `PluralAssign Var D`: sets of partial assignments, with the
   [spector-2025] / [haug-dalrymple-2020] operators `restrict`,
-  `singularAt`, `singular`, `sumDref`.
+  `SingularAt`, `Singular`, `sumDref`.
 
 ## Implementation notes
 
@@ -31,7 +31,7 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
   fuses the `some` (cf. `Finsupp.update`), and its lemmas are one-step
   consequences of the `Function.update_*` laws. Definedness is
   `(g x).isSome` — there is no wrapper predicate. The Heim–Kratzer
-  notation `g[n ↦ x]` for total update is `Assignment`-scoped, declared below.lean`.
+  notation `g[n ↦ x]` for total update is `Assignment`-scoped, declared below.
 * Use these names only for the variable-binding role — the state that
   quantifiers `update` and free variables look up. A `ℕ → E` that is not
   variable-binding state (interpretation tables, lookup arrays) should
@@ -109,16 +109,50 @@ def restrict (G : PluralAssign Var D) (x : Var) (a : D) :
     PluralAssign Var D :=
   {g ∈ G | g x = some a}
 
+@[simp] theorem mem_restrict {G : PluralAssign Var D} {x : Var} {a : D}
+    {g : PartialAssign Var D} : g ∈ G.restrict x a ↔ g ∈ G ∧ g x = some a :=
+  Iff.rfl
+
 /-- `G` assigns `x` uniquely to `d`: some assignment maps `x` to `d`, and
     every assignment valuing `x` agrees ([spector-2025] §6.2). Assignments
     leaving `x` unvalued may coexist — only the valued rows must agree,
     which is the reading Spector's static reuse needs. -/
-def singularAt (G : PluralAssign Var D) (x : Var) (d : D) : Prop :=
+def SingularAt (G : PluralAssign Var D) (x : Var) (d : D) : Prop :=
   (∃ g ∈ G, g x = some d) ∧ ∀ g ∈ G, (g x).isSome → g x = some d
 
 /-- `G` assigns `x` uniquely to some value — [spector-2025]'s `atomic(x)`. -/
-def singular (G : PluralAssign Var D) (x : Var) : Prop :=
-  ∃ d, G.singularAt x d
+def Singular (G : PluralAssign Var D) (x : Var) : Prop :=
+  ∃ d, G.SingularAt x d
+
+theorem SingularAt.unique {G : PluralAssign Var D} {x : Var} {d d' : D}
+    (h : G.SingularAt x d) (h' : G.SingularAt x d') : d = d' := by
+  obtain ⟨⟨g, hg, hgd⟩, -⟩ := h
+  have := h'.2 g hg (by simp [hgd])
+  rw [hgd] at this
+  exact Option.some_inj.1 this
+
+theorem SingularAt.singular {G : PluralAssign Var D} {x : Var} {d : D}
+    (h : G.SingularAt x d) : G.Singular x :=
+  ⟨d, h⟩
+
+theorem SingularAt.eq_of_mem_restrict {G : PluralAssign Var D} {x : Var} {d a : D}
+    {g : PartialAssign Var D} (h : G.SingularAt x d) (hg : g ∈ G.restrict x a) : a = d :=
+  Option.some_inj.1 (hg.2.symm.trans (h.2 g hg.1 (by simp [hg.2])))
+
+@[simp] theorem singularAt_singleton {g : PartialAssign Var D} {x : Var} {d : D} :
+    ({g} : PluralAssign Var D).SingularAt x d ↔ g x = some d :=
+  ⟨λ h => by obtain ⟨⟨g', hg', hd⟩, -⟩ := h; exact (hg' : g' = g) ▸ hd,
+    λ h => ⟨⟨g, rfl, h⟩, λ g' (hg' : g' = g) _ => hg' ▸ h⟩⟩
+
+/-- A nonempty restriction of `G` to `x = a` assigns `x` uniquely to `a`. -/
+theorem singularAt_restrict {G : PluralAssign Var D} {x : Var} {a : D}
+    (h : (G.restrict x a).Nonempty) : (G.restrict x a).SingularAt x a :=
+  ⟨h.imp λ _ hg => ⟨hg, hg.2⟩, λ _ hg _ => hg.2⟩
+
+theorem singularAt_restrict_iff {G : PluralAssign Var D} {x : Var} {a d : D} :
+    (G.restrict x a).SingularAt x d ↔ (G.restrict x a).Nonempty ∧ d = a :=
+  ⟨λ h => ⟨h.1.imp λ _ hg => hg.1, h.unique (singularAt_restrict ⟨_, h.1.choose_spec.1⟩)⟩,
+    λ ⟨hne, hd⟩ => hd.symm ▸ singularAt_restrict hne⟩
 
 /-- The values `x` takes across `G` — [haug-dalrymple-2020]'s `∪u`
     operator. -/

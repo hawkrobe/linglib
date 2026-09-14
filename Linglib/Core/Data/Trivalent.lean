@@ -111,6 +111,10 @@ def neg : Trivalent → Trivalent
 
 @[simp] theorem neg_indet : neg .indet = .indet := rfl
 
+@[simp] theorem neg_true : neg .true = .false := rfl
+
+@[simp] theorem neg_false : neg .false = .true := rfl
+
 @[simp] theorem neg_eq_indet_iff {a : Trivalent} : neg a = .indet ↔ a = .indet := by
   cases a <;> decide
 
@@ -552,6 +556,16 @@ theorem meetMiddle_false_left (a : Trivalent) : meetMiddle .false a = .false := 
 
 /-- `false` is a left identity for Middle Kleene disjunction. -/
 theorem joinMiddle_false_left (a : Trivalent) : joinMiddle .false a = a := by cases a <;> rfl
+
+/-- `true` is a left zero for Middle Kleene disjunction. -/
+theorem joinMiddle_true_left (a : Trivalent) : joinMiddle .true a = .true := by cases a <;> rfl
+
+/-- `true` is a right identity for Middle Kleene conjunction. -/
+theorem meetMiddle_true_right (a : Trivalent) : meetMiddle a .true = a := by cases a <;> rfl
+
+theorem meetMiddle_eq_true_iff {a b : Trivalent} :
+    meetMiddle a b = .true ↔ a = .true ∧ b = .true := by
+  cases a <;> cases b <;> decide
 
 /-- Middle Kleene conjunction agrees with Bool on defined inputs. -/
 theorem meetMiddle_ofBool (a b : Bool) :
