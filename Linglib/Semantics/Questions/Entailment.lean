@@ -2,85 +2,57 @@ import Linglib.Semantics.Questions.Hamblin
 import Mathlib.Data.Fintype.Powerset
 
 /-!
-# Question entailment
-[groenendijk-stokhof-1984] [roberts-2012]
+# Question entailment through alternatives
 
-The entailment order on question contents: `P.Entails Q` iff every
-alternative of `P` entails some alternative of `Q` ([roberts-2012] (8),
-after [groenendijk-stokhof-1984]). The order coincides with the inquisitive lattice order under
-finiteness (`entails_iff_le`); the two diverge only where `alt` is
-empty.
+Question entailment is the lattice order on `Question W`: `P ≤ Q` when every state resolving
+`P` resolves `Q` ([ciardelli-groenendijk-roelofsen-2018]). This file characterises the order
+through alternatives, the maximal resolving states: under finiteness `P ≤ Q` iff every
+alternative of `P` lies under some alternative of `Q` (`le_iff_forall_alt_exists_alt`),
+[roberts-2012]'s statement (8) of [groenendijk-stokhof-1984]'s entailment, and on polar
+questions the order reduces to set inclusions (`polar_le_polar_iff`).
 
-## Fidelity notes
+## Implementation notes
 
-`Entails` matches [groenendijk-stokhof-1984] entailment only where
-alternatives are complete answers (partition and polar contents; not
-mention-some `which`) — [roberts-2012]'s own caveat. Polar-question
-goals reduce to `Set` inclusions via `entails_polar_polar_iff` and then
-`decide`, after activating `Set.decidableSubsetOfFintype`
-(`Core/Data/Fintype/Sets.lean`) as a local instance.
+The alternative characterisation matches [groenendijk-stokhof-1984] entailment only where
+alternatives are complete answers (partition and polar contents; not mention-some `which`),
+[roberts-2012]'s own caveat, and the finiteness hypotheses are what supply maximal extensions;
+without them a question may have no alternatives at all.
+
+## References
+
+* [ciardelli-groenendijk-roelofsen-2018]
+* [groenendijk-stokhof-1984]
+* [roberts-2012]
 -/
 
 namespace Question
 
-variable {W : Type*}
+variable {W : Type*} {P Q : Question W}
 
-/-- Every alternative of `P` entails some alternative of `Q`. -/
-def Entails (P Q : Question W) : Prop :=
-  ∀ p ∈ alt P, ∃ q ∈ alt Q, p ⊆ q
+/-- Every alternative of `P` lies under some alternative of `Q` when `P ≤ Q`; finiteness
+supplies the maximal extension. -/
+theorem forall_alt_exists_alt_of_le (h : P ≤ Q) (hQ : Q.props.Finite) :
+    ∀ p ∈ alt P, ∃ q ∈ alt Q, p ⊆ q :=
+  λ _ hp => exists_alt_above Q hQ ((le_def.mp h) (alt_subset_props P hp))
 
-variable {P Q R : Question W}
-
-/-! ### Reflexivity / transitivity -/
-
-theorem Entails.refl (P : Question W) : P.Entails P :=
-  fun p hp => ⟨p, hp, subset_rfl⟩
-
-theorem Entails.trans (hPQ : P.Entails Q) (hQR : Q.Entails R) :
-    P.Entails R := by
-  intro p hp
-  obtain ⟨q, hq, hpq⟩ := hPQ p hp
-  obtain ⟨r, hr, hqr⟩ := hQR q hq
-  exact ⟨r, hr, hpq.trans hqr⟩
-
-/-! ### Lattice ↔ entailment -/
-
-/-- Inquisitive entailment `P ≤ Q` implies `P.Entails Q`; finiteness
-supplies maximal extensions. -/
-theorem entails_of_le (h : P ≤ Q) (hQ : Q.props.Finite) : P.Entails Q := by
-  intro p hp
-  have hpP : p ∈ P.props := alt_subset_props P hp
-  have hpQ : p ∈ Q.props := (le_def.mp h) hpP
-  exact exists_alt_above Q hQ hpQ
-
-/-- Converse of `entails_of_le`, under finiteness of `P.props`. -/
-theorem le_of_entails (hP : P.props.Finite) (h : P.Entails Q) : P ≤ Q := by
+/-- `P ≤ Q` once every alternative of `P` lies under some alternative of `Q`; finiteness of
+`P` places every resolving state under an alternative. -/
+theorem le_of_forall_alt_exists_alt (hP : P.props.Finite)
+    (h : ∀ p ∈ alt P, ∃ q ∈ alt Q, p ⊆ q) : P ≤ Q := by
   rw [le_def]
   intro s hs
   obtain ⟨p, hp, hsp⟩ := exists_alt_above P hP hs
   obtain ⟨q, hq, hpq⟩ := h p hp
   exact Q.downward_closed q (alt_subset_props Q hq) s (hsp.trans hpq)
 
-/-- Question entailment coincides with the inquisitive lattice order
-under finiteness. -/
-theorem entails_iff_le (hP : P.props.Finite) (hQ : Q.props.Finite) :
-    P.Entails Q ↔ P ≤ Q :=
-  ⟨le_of_entails hP, (entails_of_le · hQ)⟩
+/-- Under finiteness, question entailment is the alternative-wise condition. -/
+theorem le_iff_forall_alt_exists_alt (hP : P.props.Finite) (hQ : Q.props.Finite) :
+    P ≤ Q ↔ ∀ p ∈ alt P, ∃ q ∈ alt Q, p ⊆ q :=
+  ⟨(forall_alt_exists_alt_of_le · hQ), le_of_forall_alt_exists_alt hP⟩
 
-/-- Variant of `entails_of_le` for finite world types. -/
-theorem entails_of_le' [Finite W] (h : P ≤ Q) : P.Entails Q :=
-  entails_of_le h Q.props.toFinite
-
-/-! ### Polar reduction -/
-
-theorem entails_polar_polar_iff {p q : Set W}
-    (hne_p : p ≠ ∅) (hnu_p : p ≠ Set.univ)
-    (hne_q : q ≠ ∅) (hnu_q : q ≠ Set.univ) :
-    (polar p).Entails (polar q) ↔
-      (p ⊆ q ∨ p ⊆ qᶜ) ∧ (pᶜ ⊆ q ∨ pᶜ ⊆ qᶜ) := by
-  simp only [Entails, alt_polar_of_nontrivial hne_p hnu_p,
-    alt_polar_of_nontrivial hne_q hnu_q, Set.mem_insert_iff,
-    Set.mem_singleton_iff, forall_eq_or_imp, forall_eq, exists_eq_or_imp,
-    exists_eq_left]
+/-- Entailment between polar questions is a pair of inclusion disjunctions. -/
+theorem polar_le_polar_iff (p q : Set W) :
+    polar p ≤ polar q ↔ (p ⊆ q ∨ p ⊆ qᶜ) ∧ (pᶜ ⊆ q ∨ pᶜ ⊆ qᶜ) := by
+  rw [polar_eq_sup p, sup_le_iff, ← mem_iff_ofSet_le, ← mem_iff_ofSet_le, mem_polar, mem_polar]
 
 end Question

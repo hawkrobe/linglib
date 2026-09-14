@@ -136,8 +136,8 @@ theorem not_presumes_of_open (hopen : ∃ w ∈ C, ¬ s.presupposition w) : ¬ P
 the alternatives of the question under discussion resolves that question, which a speaker
 still addressing it cannot do. -/
 theorem resolves_of_presumes {Q : Question W} (h : {w | s.presupposition w} ∈ alt Q)
-    (hp : Presumes C s) : ResolvedBy Q C :=
-  ⟨_, h, hp⟩
+    (hp : Presumes C s) : C ∈ Q :=
+  mem_of_exists_alt_subset ⟨_, h, hp⟩
 
 /-! ### Filtering -/
 

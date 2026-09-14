@@ -1,5 +1,4 @@
 import Linglib.Semantics.Questions.Hamblin
-import Linglib.Semantics.Questions.Entailment
 import Linglib.Semantics.Questions.Partition.Basic
 
 /-!
@@ -138,13 +137,6 @@ def fromSetoidEmbedding : Setoid W ↪o Question W :=
 theorem fromSetoid_mono {r₁ r₂ : Setoid W} (h : r₁ ≤ r₂) :
     fromSetoid r₁ ≤ fromSetoid r₂ :=
   (fromSetoid_le_iff r₁ r₂).mpr h
-
-/-- Under finiteness, question entailment between partition issues is
-the `Setoid` refinement order: the `Question`-level and `Setoid`-level
-encodings of refinement coincide. -/
-theorem fromSetoid_entails_iff [Finite W] (r₁ r₂ : Setoid W) :
-    (fromSetoid r₁).Entails (fromSetoid r₂) ↔ r₁ ≤ r₂ := by
-  rw [entails_iff_le (Set.toFinite _) (Set.toFinite _), fromSetoid_le_iff]
 
 /-! ### Polar questions and decided propositions -/
 
