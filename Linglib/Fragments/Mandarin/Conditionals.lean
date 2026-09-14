@@ -1,36 +1,21 @@
-import Linglib.Semantics.Conditionals.ConditionalType
-import Linglib.Semantics.Conditionals.Marker
+import Linglib.Semantics.Conditionals.Construal
 
 /-!
-# Mandarin Conditional Markers
-[mizuno-2024]
+# Mandarin conditional markers
 
-Conditional morphemes in Mandarin and their properties.
+The Mandarin conditional marker *ruguo* (如果), typed by `Conditionals.Marker`. It marks either
+construal; the O-marking and X-marking of a Mandarin conditional is carried by perfective *le*
+(了) in the consequent rather than by the marker ([mizuno-2024]).
 
-## Markers
+## References
 
-- **ruguo** (如果): General-purpose conditional marker. Can mark both HC
-  and PC. The O-marking/X-marking distinction in Mandarin conditionals is
-  not carried by the conditional marker itself but by the presence or
-  absence of perfective *le* (了) in the consequent ([mizuno-2024],
-  ex. 11–13).
+* [mizuno-2024]
 -/
 
 namespace Mandarin.Conditionals
 
-open _root_.Conditionals (ConditionalMarker ConditionalMarkerType)
-
-/-- Mandarin ruguo (如果): general-purpose conditional marker.
-
-    Can mark both hypothetical and premise conditionals. In
-    [mizuno-2024]'s Anderson conditional examples (ex. 13a), the
-    conditional marker is `ruguo` regardless of whether the consequent
-    is O-marked (no final *le*) or X-marked (with #*le*). -/
-def ruguo : ConditionalMarker where
-  language := "Mandarin"
-  marker := "ruguo (如果)"
-  gloss := "if"
-  markerType := .both
-  notes := "X/O marking carried by consequent le, not by conditional marker"
+/-- Mandarin *ruguo* (如果) marks either construal; in [mizuno-2024]'s Anderson conditionals
+(ex. 13a) it heads both the O-marked and the X-marked variant. -/
+def ruguo : Conditionals.Marker := ⟨"ruguo", {.hypothetical, .premise}⟩
 
 end Mandarin.Conditionals

@@ -15,8 +15,6 @@ Conditionals can express dependencies at three levels:
 [bar-asher-siegal-2026]: content-domain conditionals frequently
 presuppose or invite causal interpretations, connecting conditional
 semantics to the causal-model infrastructure in `Causation/`.
-
-Extracted from `Conditionals/ConditionalType.lean` (was lines 309–368).
 -/
 
 namespace Conditionals

@@ -1,61 +1,41 @@
-import Linglib.Semantics.Conditionals.ConditionalType
-import Linglib.Semantics.Conditionals.Marker
+import Linglib.Semantics.Conditionals.Construal
 import Linglib.Semantics.Modality.Exclusion
 
 /-!
-# Japanese Conditional Markers
-[lassiter-2025] [mizuno-2024]
+# Japanese conditional markers
 
-Conditional morphemes in Japanese and their HC/PC restrictions.
+The Japanese conditional markers *-ra* ~ *-tara*, *nara*, and *-(e)ba*, typed by
+`Conditionals.Marker`, and the language's X-marking exponent. *-ra* marks only hypothetical
+conditionals; *nara*, which doubles as a topic marker, marks either ([lassiter-2025]); *-(e)ba*
+marks either, its Anderson and counterfactual uses distinguished by the consequent's tense
+rather than by the marker ([mizuno-2024]).
 
-## Markers
+## References
 
-- **-ra / -tara**: HC-only. Cannot mark premise conditionals.
-- **nara**: Can mark both HC and PC. PC reading available when antecedent
-  echoes prior discourse ([lassiter-2025], ex. 16).
-- **-(e)ba**: Can mark both HC and PC — premise use in Anderson conditionals
-  ([mizuno-2024], ex. 4a), hypothetical use in FLVs ([mizuno-2024], ex. 9a).
+* [lassiter-2025]
+* [mizuno-2024]
+* [ogihara-2014]
+* [mizuno-kaufmann-2019]
 -/
 
 namespace Japanese.Conditionals
 
-open _root_.Conditionals (ConditionalMarker ConditionalMarkerType)
-open Modality.Exclusion (XMarkingExponent)
+/-- Japanese *-ra* ~ *-tara* marks only hypothetical conditionals: it is unacceptable once the
+antecedent has been asserted (17) and as the main marker of a bare left-nested conditional
+(19) ([lassiter-2025]). -/
+def ra : Conditionals.Marker := ⟨"-ra", {.hypothetical}⟩
 
-/-- Japanese -ra / -tara: HC-only conditional marker.
+/-- Japanese *nara* marks either construal: it takes the premise reading when the antecedent
+has been asserted (16) and heads a bare left-nested conditional (18) ([lassiter-2025]). -/
+def nara : Conditionals.Marker := ⟨"nara", {.hypothetical, .premise}⟩
 
-    Cannot mark premise conditionals. LNCs with -ra are degraded
-    ([lassiter-2025], ex. 19). -/
-def ra : ConditionalMarker where
-  language := "Japanese"
-  marker := "-ra/-tara"
-  gloss := "if (hypothetical)"
-  markerType := .hcOnly
-  notes := "Cannot mark premise conditionals"
-
-/-- Japanese nara: HC and PC conditional marker.
-
-    Can mark premise conditionals. LNCs with nara are acceptable
-    ([lassiter-2025], ex. 18). -/
-def nara : ConditionalMarker where
-  language := "Japanese"
-  marker := "nara"
-  gloss := "if/given that"
-  markerType := .both
-  notes := "Can mark premise conditionals (unlike -ra)"
-
-/-- Japanese -(e)ba ([mizuno-2024], fn 8): attaches to sentence radicals; premise
-    use in Andersons (ex. 4a), hypothetical in FLVs (ex. 9a). The Anderson vs
-    counterfactual contrast is carried by the consequent's tense, not the marker. -/
-def eba : ConditionalMarker where
-  language := "Japanese"
-  marker := "-(e)ba"
-  gloss := "if (conditional)"
-  markerType := .both
-  notes := "Anderson conditionals use this form (Mizuno 2024, ex. 4a)"
+/-- Japanese *-(e)ba* attaches to sentence radicals and marks either construal: premise use in
+Anderson conditionals ([mizuno-2024], ex. 4a), hypothetical use in future less vivid
+conditionals (ex. 9a). -/
+def eba : Conditionals.Marker := ⟨"-(e)ba", {.hypothetical, .premise}⟩
 
 /-- Japanese X-marking: Fake Past -ta ([ogihara-2014], [mizuno-kaufmann-2019];
     [mizuno-2024] ex. 3). -/
-def xMarking : Option XMarkingExponent := some ⟨"-ta", [.past]⟩
+def xMarking : Option Modality.Exclusion.XMarkingExponent := some ⟨"-ta", [.past]⟩
 
 end Japanese.Conditionals
