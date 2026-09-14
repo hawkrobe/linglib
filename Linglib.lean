@@ -2487,7 +2487,6 @@ import Linglib.Studies.Spector2007
 import Linglib.Studies.Spector2013
 import Linglib.Studies.Spector2016
 import Linglib.Studies.Spector2025
-import Linglib.Studies.SpinosoDiPiano2025PMF
 import Linglib.Studies.Spohn1988
 import Linglib.Studies.SprouseEtAl2012
 import Linglib.Studies.Stalnaker1975
