@@ -1,12 +1,12 @@
 import Linglib.Discourse.Commitment.Basic
-import Linglib.Discourse.QUD.Basic
 import Linglib.Discourse.QUD.Issue
+import Linglib.Semantics.Questions.Hamblin
 
 /-!
 # The Table
 
 The context structure of [farkas-bruce-2010]: the participants' discourse commitments, the
-common ground, and the Table, a stack of issues (`Discourse.QUDStack`). The issue a declarative
+common ground, and the Table, a stack of issues, most recent on top. The issue a declarative
 raises is its proposition as a question, `Question.ofSet p`, the issue a polar interrogative
 raises is `Question.polar p`, and an issue's complete answers are its alternatives
 (`Question.alt`), `{p}` and `{p, ¬p}` respectively. Every issue placed on the Table projects the
@@ -54,7 +54,7 @@ open Filter Question
 participants' discourse commitments, and the common ground. -/
 @[ext]
 structure Table (A W : Type*) where
-  stack : Discourse.QUDStack W
+  stack : List (Question W)
   commitments : State A W
   cg : Filter W
 
