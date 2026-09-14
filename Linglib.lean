@@ -1678,7 +1678,6 @@ import Linglib.Semantics.Presupposition.Context
 import Linglib.Semantics.Presupposition.Defs
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Semantics.Presupposition.PhiFeatures
-import Linglib.Semantics.Presupposition.ProjectiveContent
 import Linglib.Semantics.Presupposition.Quantified
 import Linglib.Semantics.Presupposition.TriggerTypology
 import Linglib.Semantics.Presupposition.Trivalent
