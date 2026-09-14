@@ -1498,11 +1498,9 @@ import Linglib.Semantics.Composition.Ty
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Composition.Writer
 import Linglib.Semantics.Conditionals.Basic
-import Linglib.Semantics.Conditionals.ConditionalType
 import Linglib.Semantics.Conditionals.Counterfactual
 import Linglib.Semantics.Conditionals.Counterfactual.Alternatives
 import Linglib.Semantics.Conditionals.Counterfactual.Lumping
-import Linglib.Semantics.Conditionals.Marker
 import Linglib.Semantics.Conditionals.PremiseSemantic
 import Linglib.Semantics.Conditionals.Probabilistic
 import Linglib.Semantics.Conditionals.Restrictor

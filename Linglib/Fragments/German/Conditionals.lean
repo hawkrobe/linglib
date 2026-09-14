@@ -1,43 +1,25 @@
-import Linglib.Semantics.Conditionals.ConditionalType
-import Linglib.Semantics.Conditionals.Marker
+import Linglib.Semantics.Conditionals.Construal
 
 /-!
-# German Conditional Markers
-[lassiter-2025]
+# German conditional markers
 
-Conditional connectives in German and their HC/PC restrictions.
+The German conditional markers *wenn* and *falls*, typed by `Conditionals.Marker`. *Wenn* marks
+either construal; *falls* marks only hypothetical conditionals ([lassiter-2025]).
 
-## Markers
+## References
 
-- **falls**: HC-only. Implies speaker uncertainty about the antecedent.
-- **wenn**: Can mark both HC and PC. Ambiguous between "if" and "when"
-  readings.
+* [lassiter-2025]
 -/
 
 namespace German.Conditionals
 
-open _root_.Conditionals (ConditionalMarker ConditionalMarkerType)
+/-- German *falls* 'in case' marks only hypothetical conditionals: it is unacceptable once the
+antecedent has been asserted (22) and as the main marker of a bare left-nested conditional
+(24) ([lassiter-2025]). -/
+def falls : Conditionals.Marker := ⟨"falls", {.hypothetical}⟩
 
-/-- German falls: HC-only conditional marker.
-
-    Implies speaker uncertainty; unacceptable in premise conditionals and as the
-    main marker of a left-nested conditional ([lassiter-2025], exx. 22, 24). -/
-def falls : ConditionalMarker where
-  language := "German"
-  marker := "falls"
-  gloss := "in case"
-  markerType := .hcOnly
-  notes := "Only hypothetical; implies speaker uncertainty"
-
-/-- German wenn: HC and PC conditional marker.
-
-    Can mark either hypothetical or premise conditionals.
-    LNCs with wenn are acceptable ([lassiter-2025], ex. 23). -/
-def wenn : ConditionalMarker where
-  language := "German"
-  marker := "wenn"
-  gloss := "if/when"
-  markerType := .both
-  notes := "Can mark either HC or PC"
+/-- German *wenn* 'if, when' marks either construal, and heads a bare left-nested conditional
+(23) ([lassiter-2025]). -/
+def wenn : Conditionals.Marker := ⟨"wenn", {.hypothetical, .premise}⟩
 
 end German.Conditionals
