@@ -1,10 +1,10 @@
-import Linglib.Semantics.Conditionals.Construal
+import Linglib.Semantics.Conditionals.Reading
 
 /-!
 # German conditional markers
 
 The German conditional markers *wenn* and *falls*, typed by `Conditionals.Marker`. *Wenn* marks
-either construal; *falls* marks only hypothetical conditionals ([lassiter-2025]).
+either reading; *falls* marks only hypothetical conditionals ([lassiter-2025]).
 
 ## References
 
@@ -18,7 +18,7 @@ antecedent has been asserted (22) and as the main marker of a bare left-nested c
 (24) ([lassiter-2025]). -/
 def falls : Conditionals.Marker := ⟨"falls", {.hypothetical}⟩
 
-/-- German *wenn* 'if, when' marks either construal, and heads a bare left-nested conditional
+/-- German *wenn* 'if, when' marks either reading, and heads a bare left-nested conditional
 (23) ([lassiter-2025]). -/
 def wenn : Conditionals.Marker := ⟨"wenn", {.hypothetical, .premise}⟩
 

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Conditionals.Construal
+import Linglib.Semantics.Conditionals.Reading
 import Linglib.Semantics.Modality.Exclusion
 
 /-!
@@ -15,7 +15,7 @@ X-marking exponent ([iatridou-2000], [von-fintel-iatridou-2023]).
 
 namespace English.Conditionals
 
-/-- English *if* marks either construal; context decides between the hypothetical and the
+/-- English *if* marks either reading; context decides between the hypothetical and the
 premise reading. -/
 def if_ : Conditionals.Marker := ⟨"if", {.hypothetical, .premise}⟩
 

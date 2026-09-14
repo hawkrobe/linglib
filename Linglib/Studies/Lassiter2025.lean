@@ -10,13 +10,13 @@ This file formalizes [lassiter-2025]'s account of left-nested conditionals, cond
 another conditional in their antecedent, such as [gibbard-1981]'s *If Kripke was there if
 Strawson was, then Anscomb was there*. A conditional is construed as hypothetical or as a
 premise conditional ([iatridou-1991]); a left-nested conditional whose embedded conditional
-is bare admits only the premise construal, while an embedded modal, adverb of quantification,
-or generic operator restores the hypothetical one (`construals`). A sentence is acceptable
-when some construal open to it meets what its context or diagnostic demands (`Acceptable`), so
-for a bare left-nested conditional every diagnostic reduces to the premise construal
-(`acceptable_bare_iff`). A premise construal needs a discourse antecedent, so bare left-nested
+is bare admits only the premise reading, while an embedded modal, adverb of quantification,
+or generic operator restores the hypothetical one (`readings`). A sentence is acceptable
+when some reading open to it meets what its context or diagnostic demands (`Acceptable`), so
+for a bare left-nested conditional every diagnostic reduces to the premise reading
+(`acceptable_bare_iff`). A premise reading needs a discourse antecedent, so bare left-nested
 conditionals are odd out of the blue and improve once the embedded conditional has been
-asserted; the premise construal admits positive but not negative polarity items in the embedded
+asserted; the premise reading admits positive but not negative polarity items in the embedded
 consequent and excludes *only*-inversion. Overt markers make the prediction visible: Japanese
 *-ra* and German *falls*, restricted to hypothetical conditionals, cannot head a bare
 left-nested conditional, whereas *nara* and *wenn* can (`heads_bare_iff`); `marker_rows` and
@@ -24,8 +24,8 @@ left-nested conditional, whereas *nara* and *wenn* can (`heads_bare_iff`); `mark
 
 ## Implementation notes
 
-Construals are the substrate's `Conditionals.Construal`, and the polarity diagnostic reads its
-`Construal.AdmitsInAntecedent`, on which a premise antecedent hosts positive polarity items and
+Readings are the substrate's `Conditionals.Reading`, and the polarity diagnostic reads its
+`Reading.AdmitsInAntecedent`, on which a premise antecedent hosts positive polarity items and
 licenses no negative ones. The paper's rows carry their features as strings, so `shape` and
 `markerOf` are adapters from `paperFeatures` into the typed model and the fragments' marker
 entries.
@@ -55,34 +55,34 @@ inductive Shape
   | nested (content : Content)
   deriving DecidableEq, Repr
 
-/-- The construals open to a conditional: a bare embedded conditional leaves only the
-premise construal. -/
-def construals : Shape → Finset Construal
+/-- The readings open to a conditional: a bare embedded conditional leaves only the
+premise reading. -/
+def readings : Shape → Finset Reading
   | .nested .bare => {.premise}
   | _ => {.hypothetical, .premise}
 
-/-- A conditional is acceptable under a demand on its construal iff some construal open to
+/-- A conditional is acceptable under a demand on its reading iff some reading open to
 it meets the demand. -/
-def Acceptable (s : Shape) (ok : Construal → Prop) : Prop := ∃ ct ∈ construals s, ok ct
+def Acceptable (s : Shape) (ok : Reading → Prop) : Prop := ∃ ct ∈ readings s, ok ct
 
-instance (s : Shape) (ok : Construal → Prop) [DecidablePred ok] :
+instance (s : Shape) (ok : Reading → Prop) [DecidablePred ok] :
     Decidable (Acceptable s ok) := by
   unfold Acceptable; infer_instance
 
-/-- A bare left-nested conditional meets a demand iff the premise construal does. -/
-theorem acceptable_bare_iff (ok : Construal → Prop) :
+/-- A bare left-nested conditional meets a demand iff the premise reading does. -/
+theorem acceptable_bare_iff (ok : Reading → Prop) :
     Acceptable (.nested .bare) ok ↔ ok .premise := by
-  simp [Acceptable, construals]
+  simp [Acceptable, readings]
 
 /-- What the discourse demands: an antecedent asserted in prior discourse takes the premise
-construal, an unanchored one the hypothetical construal. -/
-def anchoring (anchored : Prop) (ct : Construal) : Prop :=
+reading, an unanchored one the hypothetical reading. -/
+def anchoring (anchored : Prop) (ct : Reading) : Prop :=
   (anchored ∧ ct = .premise) ∨ (¬ anchored ∧ ct = .hypothetical)
 
 instance (anchored : Prop) [Decidable anchored] : DecidablePred (anchoring anchored) :=
   λ _ => inferInstanceAs (Decidable (_ ∨ _))
 
-/-- Gibbard's puzzle: a bare left-nested conditional has no construal out of the blue, none
+/-- Gibbard's puzzle: a bare left-nested conditional has no reading out of the blue, none
 under *only*-inversion, and none coordinated with a hypothetical antecedent. -/
 theorem bare_not_hypothetical : ¬ Acceptable (.nested .bare) (· = .hypothetical) := by
   simp [acceptable_bare_iff]
@@ -93,7 +93,7 @@ theorem bare_premise : Acceptable (.nested .bare) (· = .premise) :=
   (acceptable_bare_iff _).2 rfl
 
 /-- The exception: a modal, quantificational, or generic embedded conditional admits the
-hypothetical construal. -/
+hypothetical reading. -/
 theorem hypothetical_of_ne_bare (c : Content) (h : c ≠ .bare) :
     Acceptable (.nested c) (· = .hypothetical) := by
   cases c
@@ -116,7 +116,7 @@ theorem rather_not_any :
 
 /-- A marker heads a bare left-nested conditional iff it can mark a premise conditional. -/
 theorem heads_bare_iff (m : Marker) :
-    Acceptable (.nested .bare) (· ∈ m.construals) ↔ .premise ∈ m.construals :=
+    Acceptable (.nested .bare) (· ∈ m.readings) ↔ .premise ∈ m.readings :=
   acceptable_bare_iff _
 
 /-! ### The paper's examples -/
@@ -141,15 +141,15 @@ def markerOf (row : LinguisticExample) : Option Marker :=
   | some "falls" => some German.Conditionals.falls
   | _ => none
 
-/-- Every marker row is acceptable iff the fragment's marker can mark a construal open to the
+/-- Every marker row is acceptable iff the fragment's marker can mark a reading open to the
 row's shape: *nara* and *wenn* head the bare left-nested conditionals of (18) and (23), *-ra*
 and *falls* of (19) and (24) do not. -/
 theorem marker_rows :
     ∀ row ∈ Examples.all, ∀ m ∈ markerOf row,
-      (row.judgment = .acceptable ↔ Acceptable (shape row) (· ∈ m.construals)) := by
+      (row.judgment = .acceptable ↔ Acceptable (shape row) (· ∈ m.readings)) := by
   decide
 
-/-- Every discourse-anchoring row is acceptable iff its shape has the construal the context
+/-- Every discourse-anchoring row is acceptable iff its shape has the reading the context
 demands: Gibbard's (4) fails out of the blue, (11)–(13) succeed after the embedded
 conditional has been asserted. -/
 theorem anchoring_rows :
@@ -158,7 +158,7 @@ theorem anchoring_rows :
         Acceptable (shape row) (anchoring (row.feature? "has_context" = some "true"))) := by
   decide
 
-/-- Every content-exception row, (40)–(43), is acceptable on the hypothetical construal. -/
+/-- Every content-exception row, (40)–(43), is acceptable on the hypothetical reading. -/
 theorem exception_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "content_exception" →
       Acceptable (shape row) (· = .hypothetical) := by

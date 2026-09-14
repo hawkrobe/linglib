@@ -1,4 +1,4 @@
-import Linglib.Semantics.Conditionals.Construal
+import Linglib.Semantics.Conditionals.Reading
 import Linglib.Semantics.Modality.Exclusion
 
 /-!
@@ -25,11 +25,11 @@ antecedent has been asserted (17) and as the main marker of a bare left-nested c
 (19) ([lassiter-2025]). -/
 def ra : Conditionals.Marker := ⟨"-ra", {.hypothetical}⟩
 
-/-- Japanese *nara* marks either construal: it takes the premise reading when the antecedent
+/-- Japanese *nara* marks either reading: it takes the premise reading when the antecedent
 has been asserted (16) and heads a bare left-nested conditional (18) ([lassiter-2025]). -/
 def nara : Conditionals.Marker := ⟨"nara", {.hypothetical, .premise}⟩
 
-/-- Japanese *-(e)ba* attaches to sentence radicals and marks either construal: premise use in
+/-- Japanese *-(e)ba* attaches to sentence radicals and marks either reading: premise use in
 Anderson conditionals ([mizuno-2024], ex. 4a), hypothetical use in future less vivid
 conditionals (ex. 9a). -/
 def eba : Conditionals.Marker := ⟨"-(e)ba", {.hypothetical, .premise}⟩
