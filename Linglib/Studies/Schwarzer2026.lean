@@ -1,492 +1,87 @@
-import Linglib.Fragments.German.Predicates
-import Linglib.Fragments.German.Coordination
-import Linglib.Fragments.German.V2
-import Linglib.Fragments.German.WordOrder
 import Linglib.Features.WordOrder
-import Linglib.Syntax.Coordination
 import Linglib.Studies.BrueningAlKhalaf2020
-import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Data.Examples.Schwarzer2026
 
 /-!
-# [schwarzer-2026] — Selection-Violating Coordination in German
+# Schwarzer (2026): The law and order of selection-violating coordination
 
-Schwarzer, Luise. 2026. The law and order of selection-violating
-coordination: German DP-CP-coordination is not sensitive to linear
-or temporal order. *Glossa* 11(1). 1–19.
+This file formalizes the squib's test of the three analyses of selection-violating coordination,
+a clause coordinated with a noun phrase in a position where only the noun phrase is selected. The
+bottom-up analyses of [sag-etal-1985] and [munn-1993] give the coordination an asymmetric
+structure in which the first conjunct alone is prominent for the selector, so the selected noun
+phrase comes first whatever the position of the verb; the linear closeness analysis of
+[bruening-alkhalaf-2020] and [bruening-2025] derives left to right and lets the conjunct linearly
+adjacent to the selector satisfy selection; and the temporal closeness analysis of [kim-lu-2024]
+treats the mismatch as a grammaticality illusion in which the parser checks the conjunct closest in
+time to the selector, which yields the linear prediction again (`temporalOrder`). In German the two
+predictions come apart: complements precede the verb in an embedded finite clause and follow it in
+a root clause with verb-second (`embeddedPosition`, `rootPosition`), so the closeness accounts
+predict a clause-first order in the embedded case, where [bruening-alkhalaf-2020]'s
+`predictOrder` gives the two accounts opposite verdicts (`accounts_diverge_embedded`).
 
-## Main Question
+Experiment 1 confirms that German allows the construction with verbs that reject a bare
+*dass*-clause (`Data/Examples/Schwarzer2026`, (11) and (12)); Experiment 2's forced choice finds
+the noun phrase first in twenty-three of thirty choices in both positions. A noun-phrase-first
+preference in the embedded position refutes the closeness prediction (`closeness_refuted`), while
+the structural prediction is position-invariant (`structural_position_invariant`); the squib
+notes that the latter is thereby supported only indirectly.
 
-When a CP appears coordinated with a DP in a DP-selecting position
-(selection-violating coordination), which conjunct must be the DP?
-Three families of analyses make different predictions:
+## Implementation notes
 
-1. **Bottom-up** ([sag-etal-1985], [munn-1993]): asymmetric &P
-   structure; the structurally prominent (first) conjunct must be the
-   selected DP. Predicts DP-first universally.
+* The verb positions are read off the German verb-second profile, with the finite verb in the
+  clause-final position of an embedded clause and in second position of a root declarative.
+  The predicates of the experiments are recorded with their clausal frames in
+  `Fragments/German/Predicates`.
+* The experiments' scores are recorded in the example rows' comments; the mixed model and the
+  logistic regression are not formalized.
 
-2. **Linear closeness** ([bruening-alkhalaf-2020], [bruening-2025]):
-   left-to-right derivation; the linearly closest conjunct to the verb
-   must satisfy selection. Predicts the preferred order depends on
-   whether complements precede or follow the verb.
+## References
 
-3. **Temporal closeness** ([kim-lu-2024]): processing illusion;
-   the temporally closest conjunct to the verb has its features checked.
-   Makes the same predictions as linear closeness.
-
-## German as Test Case
-
-German is OV in embedded clauses: complements precede the selecting
-verb. The linear/temporal accounts predict that in OV order, the
-*rightmost* (verb-adjacent) conjunct should be the DP, i.e., CP-first
-order should be preferred. The bottom-up account predicts DP-first
-regardless.
-
-## Results
-
-Two experiments show German speakers uniformly prefer DP-first order
-(~77% in 2AFC) regardless of pre- or post-verbal position. This rules
-out linear/temporal closeness accounts and supports bottom-up analyses.
+* [schwarzer-2026]
+* [bruening-alkhalaf-2020]
+* [kim-lu-2024]
+* [sag-etal-1985]
 -/
 
 namespace Schwarzer2026
 
-open Features
-open German.Predicates
-open WordOrder
-open BrueningAlKhalaf2020
+open Features WordOrder BrueningAlKhalaf2020
 
--- ============================================================================
--- § 1: German Clause Type → Complement Position
--- ============================================================================
+/-- The position of a coordinated complement relative to the finite verb in a German root
+declarative: the verb in second position precedes its complements, the configuration of (17). -/
+abbrev rootPosition : VerbPosition := .postverbal
 
-/-!
-The paper's two experimental conditions correspond to different German
-clause types with different verb positions:
+/-- The position in an embedded finite clause: the verb is clause-final, so the coordination
+precedes it, the configuration of (16). -/
+abbrev embeddedPosition : VerbPosition := .preverbal
 
-- **Root declarative** (V2): the verb moves to C°, landing in second
-  position. Complements follow the verb → postverbal.
-  Paper examples (17a/b).
+/-- The temporal closeness analysis predicts the order the linear one does: in either position
+the conjunct closest in time to the selector is the linearly adjacent one, the first when the
+verb precedes and the last, whose features are still in memory, when it follows. -/
+abbrev temporalOrder : VerbPosition → ConjunctOrder := predictOrder .linear
 
-- **Embedded finite clause** (verb-final): only V-to-I movement, not
-  full V-to-C. Combined with SOV base order, the verb stays clause-final.
-  Complements precede the verb → preverbal.
-  Paper examples (16a/b).
-
-The competing analyses make different predictions for the preverbal
-(= OV) condition. All agree on the postverbal (= VO) condition.
--/
-
-open Minimalist (ForceHead)
-open Syntax.Coordination (CoordSymmetry)
-open German (german)
-
-/-- German has V2 in root declaratives: the finite verb moves to C°,
-    placing it in second position. Complements follow the verb. -/
-theorem german_root_v2 : ForceHead.Decl ∈ german := by decide
-
-/-- German has V-to-I movement in embedded finite clauses (not full
-    V-to-C). Combined with the independently motivated SOV base order,
-    this yields verb-final surface order in embedded clauses. -/
-theorem german_embedded_v_to_i : ForceHead.Fin ∈ german := by decide
-
-/-- In German root declaratives, V2 places the verb before its complements.
-    Coordination of complements is therefore postverbal.
-
-    This is the VO condition in [schwarzer-2026]'s Experiment 2,
-    corresponding to examples (17a/b) in the paper. -/
-def germanRootComplementPosition : VerbPosition := .postverbal
-
-/-- In German embedded finite clauses, the verb remains clause-final
-    (V-to-I in SOV base → verb at end of IP). Coordination of
-    complements is therefore preverbal.
-
-    This is the OV condition in [schwarzer-2026]'s Experiment 2,
-    corresponding to examples (16a/b) in the paper. -/
-def germanEmbeddedComplementPosition : VerbPosition := .preverbal
-
-/-- V2 root → postverbal complement position, grounded in V2Profile. -/
-theorem german_v2_grounds_postverbal :
-    ForceHead.Decl ∈ german ∧
-    germanRootComplementPosition = .postverbal := ⟨by decide, rfl⟩
-
-/-- Embedded V-to-I + SOV base → preverbal complement position,
-    grounded in V2Profile. -/
-theorem german_vfinal_grounds_preverbal :
-    ForceHead.Fin ∈ german ∧
-    germanEmbeddedComplementPosition = .preverbal := ⟨by decide, rfl⟩
-
--- ============================================================================
--- § 2: Selection Profile Classification
--- ============================================================================
-
-/-! Each experimental verb is classified as CP-selecting or non-CP-selecting
-    by deriving the classification from its frames in the German fragment
-    lexicon (`Verb.TakesClausal`). -/
-
--- Non-CP-selecting verbs: DP complement only
-
-/-- *beenden* "end" does not take a *dass*-clause complement. -/
-theorem beenden_nonselecting :
-    ¬ beenden.toVerb.TakesClausal := by decide
-
-/-- *streichen* "cancel" does not take a *dass*-clause complement. -/
-theorem streichen_nonselecting :
-    ¬ streichen.toVerb.TakesClausal := by decide
-
-/-- *übereilen* "rush" does not take a *dass*-clause complement. -/
-theorem uebereilen_nonselecting :
-    ¬ uebereilen.toVerb.TakesClausal := by decide
-
-/-- *entwickeln* "develop" does not take a *dass*-clause complement. -/
-theorem entwickeln_nonselecting :
-    ¬ entwickeln.toVerb.TakesClausal := by decide
-
--- CP-and-DP-selecting verbs
-
-/-- *veranlassen* "induce" takes both DP and *dass*-clause. -/
-theorem veranlassen_selecting :
-    veranlassen.toVerb.TakesClausal := by decide
-
-/-- *vergessen* "forget" takes both DP and *dass*-clause. -/
-theorem vergessen_selecting :
-    vergessen.toVerb.TakesClausal := by decide
-
-/-- *erwarten* "expect" takes both DP and *dass*-clause. -/
-theorem erwarten_selecting :
-    erwarten.toVerb.TakesClausal := by decide
-
-/-- *beschließen* "decide" takes both DP and *dass*-clause. -/
-theorem beschliessen_selecting :
-    beschliessen.toVerb.TakesClausal := by decide
-
--- ============================================================================
--- § 3: Competing Analyses & Structural Predictions
--- ============================================================================
-
-/-! `ConjunctOrder` and `predictOrder`
-    are defined in [bruening-alkhalaf-2020] and imported via `open`.
-    `VerbPosition` and `OVOrder.verbPosition` live in `WordOrder`
-    substrate. -/
-
-/-- **Temporal closeness prediction**: the conjunct parsed closest in
-    time to the verb has its features checked. Makes the same
-    predictions as linear closeness.
-
-    Analysis: [kim-lu-2024]. -/
-def temporalClosenessPrediction : VerbPosition → ConjunctOrder :=
-  predictOrder .linear
-
-/-- Under asymmetric coordination, the bottom-up prediction is
-    position-invariant: the structurally prominent conjunct is always
-    the first, so DP-first is predicted regardless of verb position. -/
-theorem asymmetric_implies_position_invariant (pos : VerbPosition) :
+/-- The bottom-up prediction does not depend on the verb's position: the selected noun phrase
+is first, (10b). -/
+theorem structural_position_invariant (pos : VerbPosition) :
     predictOrder .structural pos = .dpFirst := rfl
 
-/-- Linear closeness predictions *differ* by position — this is the
-    key empirical distinguisher. -/
-theorem linear_predictions_differ :
-    predictOrder .linear .preverbal ≠
-    predictOrder .linear .postverbal := by decide
+/-- The closeness accounts predict the clause first in the embedded position, (10a). -/
+theorem closeness_embedded : predictOrder .linear embeddedPosition = .cpFirst := rfl
 
-/-- Temporal closeness inherits linear closeness predictions exactly. -/
-theorem temporal_equals_linear (pos : VerbPosition) :
-    temporalClosenessPrediction pos = predictOrder .linear pos := rfl
+/-- The accounts diverge in the embedded position only, which is what makes German the test
+case: in the root position both predict the noun phrase first. -/
+theorem accounts_diverge_embedded :
+    predictOrder .structural embeddedPosition ≠ predictOrder .linear embeddedPosition ∧
+      predictOrder .structural rootPosition = predictOrder .linear rootPosition :=
+  ⟨by decide, (agree_iff_head_precedes rootPosition).2 rfl⟩
 
--- ============================================================================
--- § 4: Experiment 1 — Acceptability (Likert z-scores)
--- ============================================================================
-
-/-- Complement type in Experiment 1: DP-CP coordination vs bare *dass*-clause. -/
-inductive Exp1ComplementType where
-  | coord  -- DP-CP coordination
-  | dass   -- bare *dass*-clause
-  deriving DecidableEq, Repr, BEq
-
-/-- Descriptive statistics from Experiment 1.
-    Latin square design: SELECTION (yes/no) × COMPLEMENT (dass/coord).
-    50 participants on Prolific, 6 excluded; 44 per cell. -/
-structure Exp1Cell where
-  complement : Exp1ComplementType
-  selecting : Bool      -- verb selects CP?
-  nObs : Nat
-  meanZ : Int           -- z-score × 1000 (milli-z) to avoid rationals
-  medianZ : Int         -- z-score × 1000
-  deriving Repr
-
-def exp1_coord_nonsel : Exp1Cell :=
-  { complement := .coord, selecting := false, nObs := 44,
-    meanZ := -253, medianZ := -244 }
-
-def exp1_coord_sel : Exp1Cell :=
-  { complement := .coord, selecting := true, nObs := 44,
-    meanZ := 369, medianZ := 495 }
-
-def exp1_dass_nonsel : Exp1Cell :=
-  { complement := .dass, selecting := false, nObs := 44,
-    meanZ := -526, medianZ := -684 }
-
-def exp1_dass_sel : Exp1Cell :=
-  { complement := .dass, selecting := true, nObs := 44,
-    meanZ := 891, medianZ := 1080 }
-
-/-- Coordination is more acceptable than bare *dass*-clause in
-    non-selecting contexts (the coordination "rescue" effect). -/
-theorem coord_rescues_nonselected :
-    exp1_coord_nonsel.meanZ > exp1_dass_nonsel.meanZ := by native_decide
-
-/-- In selecting contexts, bare *dass*-clause is more acceptable than
-    coordination (no rescue needed). -/
-theorem dass_better_when_selected :
-    exp1_dass_sel.meanZ > exp1_coord_sel.meanZ := by native_decide
-
-/-- The interaction: the coordination benefit is larger in non-selecting
-    contexts than in selecting ones. Difference for coord vs dass:
-    non-selecting: -253 - (-526) = +273; selecting: 369 - 891 = -522. -/
-theorem interaction_larger_unselected :
-    (exp1_coord_nonsel.meanZ - exp1_dass_nonsel.meanZ) >
-    (exp1_coord_sel.meanZ - exp1_dass_sel.meanZ) := by native_decide
-
--- ============================================================================
--- § 5: Experiment 2 — Order Preference (2AFC)
--- ============================================================================
-
-/-- 2AFC experiment: participants chose between DP-first and CP-first
-    order. 30 participants (48 recruited, 1 non-German excluded,
-    17 excluded for selecting ungrammatical option ≥2× in control). -/
-structure Exp2Data where
-  position : VerbPosition
-  dpFirstCount : Nat
-  cpFirstCount : Nat
-  deriving Repr
-
-def exp2_preverbal : Exp2Data :=
-  { position := germanEmbeddedComplementPosition, dpFirstCount := 23, cpFirstCount := 7 }
-
-def exp2_postverbal : Exp2Data :=
-  { position := germanRootComplementPosition, dpFirstCount := 23, cpFirstCount := 7 }
-
-/-- Total responses per condition. -/
-def Exp2Data.total (d : Exp2Data) : Nat := d.dpFirstCount + d.cpFirstCount
-
-/-- The observed majority order in a 2AFC cell. -/
-def Exp2Data.majorityOrder (d : Exp2Data) : ConjunctOrder :=
-  if d.dpFirstCount > d.cpFirstCount then .dpFirst else .cpFirst
-
--- Key results
-
-/-- Position invariance: the counts are identical in pre- and post-verbal
-    position. This is the central empirical finding. -/
-theorem position_invariance_dp :
-    exp2_preverbal.dpFirstCount = exp2_postverbal.dpFirstCount := rfl
-
-theorem position_invariance_cp :
-    exp2_preverbal.cpFirstCount = exp2_postverbal.cpFirstCount := rfl
-
-/-- DP-first is the observed majority in both positions. -/
-theorem dp_majority_preverbal :
-    exp2_preverbal.majorityOrder = .dpFirst := rfl
-
-theorem dp_majority_postverbal :
-    exp2_postverbal.majorityOrder = .dpFirst := rfl
-
-/-- DP-first probability is 23/30 ≈ 0.767, well above chance (0.5).
-    Logistic regression: logit diff to control = +0.894,
-    SE = 0.327, z = 2.74, p < 0.0001. -/
-theorem dp_preference_above_chance :
-    exp2_preverbal.dpFirstCount * 2 > exp2_preverbal.total := by native_decide
-
-/-- DP-first accounts for more than 3/4 of responses. -/
-theorem dp_preference_supermajority :
-    exp2_preverbal.dpFirstCount * 4 ≥ exp2_preverbal.total * 3 := by native_decide
-
--- ============================================================================
--- § 6: Theory-Data Alignment
--- ============================================================================
-
-/-- Bottom-up predicts correctly in preverbal position. -/
-theorem bottomUp_correct_preverbal :
-    predictOrder .structural .preverbal = exp2_preverbal.majorityOrder := rfl
-
-/-- Bottom-up predicts correctly in postverbal position. -/
-theorem bottomUp_correct_postverbal :
-    predictOrder .structural .postverbal = exp2_postverbal.majorityOrder := rfl
-
-/-- Linear closeness predicts *incorrectly* in preverbal position:
-    it predicts CP-first, but DP-first is observed. -/
-theorem linear_wrong_preverbal :
-    predictOrder .linear .preverbal ≠ exp2_preverbal.majorityOrder := by
-  decide
-
-/-- Temporal closeness also wrong in preverbal position. -/
-theorem temporal_wrong_preverbal :
-    temporalClosenessPrediction .preverbal ≠ exp2_preverbal.majorityOrder := by
-  decide
-
-/-- All three accounts agree in postverbal position (all predict DP-first,
-    which is correct). The distinguishing power is preverbal only. -/
-theorem all_agree_postverbal :
-    predictOrder .structural .postverbal = predictOrder .linear .postverbal ∧
-    predictOrder .linear .postverbal = exp2_postverbal.majorityOrder :=
-  ⟨rfl, rfl⟩
-
-/-- The German 2AFC data falsifies linear percolation: structural
-    percolation (bottom-up) matches the observed majority in both
-    positions, while linear percolation fails in the preverbal
-    position that distinguishes them.
-
-    As [schwarzer-2026] notes (§4), the results are "not
-    straightforwardly an argument *for*" the bottom-up approach —
-    there could be an independent DP-first preference — but they are
-    decisive *against* linear/temporal closeness accounts. -/
-theorem percolation_adjudication :
-    predictOrder .structural .preverbal = exp2_preverbal.majorityOrder ∧
-    predictOrder .structural .postverbal = exp2_postverbal.majorityOrder ∧
-    predictOrder .linear .preverbal ≠ exp2_preverbal.majorityOrder :=
-  ⟨rfl, rfl, by decide⟩
-
-/-- Temporal closeness ([kim-lu-2024]) uses the same linear
-    percolation mechanism as B&AK, applied to parsing time rather
-    than surface string position. -/
-theorem temporal_is_linear_percolation (pos : VerbPosition) :
-    temporalClosenessPrediction pos = predictOrder .linear pos := rfl
-
--- ============================================================================
--- § 7: Asymmetric Structure Bridge
--- ============================================================================
-
-/-- Under asymmetric coordination structure, the bottom-up prediction
-    follows: the first conjunct is structurally prominent and must
-    satisfy selection. Under symmetric structure, no such prediction
-    is made (both conjuncts are equally prominent). -/
-def structurePrediction : CoordSymmetry → Option (VerbPosition → ConjunctOrder)
-  | .asymmetric => some (predictOrder .structural)
-  | .symmetric  => none
-
-/-- Asymmetric structure entails position-invariant DP-first prediction. -/
-theorem asymmetric_entails_dp_first (pos : VerbPosition) :
-    structurePrediction .asymmetric = some (predictOrder .structural) ∧
-    predictOrder .structural pos = .dpFirst :=
-  ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 8: Cross-Linguistic Generalization
--- ============================================================================
-
-/-- The bottom-up prediction is universal: for any language, regardless of
-    its OV/VO parameter, the predicted order is always DP-first. -/
-theorem bottomUp_universal (pos : VerbPosition) :
-    predictOrder .structural pos = .dpFirst := rfl
-
-/-- For OV languages, linear closeness makes the wrong prediction
-    (CP-first in preverbal position), while bottom-up is correct. -/
-theorem ov_distinguishes_accounts :
-    predictOrder .linear .preverbal = .cpFirst ∧
-    predictOrder .structural .preverbal = .dpFirst := ⟨rfl, rfl⟩
-
-/-- The German result generalizes: if an OV language shows DP-first
-    preference in preverbal position, linear/temporal closeness accounts
-    are ruled out for that language. -/
-theorem ov_dpfirst_rules_out_linear
-    (obs : ConjunctOrder) (h : obs = .dpFirst) :
-    predictOrder .linear .preverbal ≠ obs := by
-  subst h; decide
-
-/-- B&AK's English subject-position evidence (§3.1, examples (41a/b))
-    and Schwarzer's German preverbal data both test the preverbal
-    configuration. B&AK predict CP-first for both (correct for English
-    subjects per B&AK's judgments, but wrong for German complements).
-    German data directly contradicts the closeness prediction in the
-    preverbal environment where B&AK claim their strongest evidence. -/
-theorem german_contradicts_bak_subject_evidence :
-    predictOrder .linear .preverbal = .cpFirst ∧
-    exp2_preverbal.majorityOrder = .dpFirst := ⟨rfl, rfl⟩
-
--- ============================================================================
--- § 9: Selection Profile ↔ Experiment Condition Bridge
--- ============================================================================
-
-/-- The non-selecting verbs are exactly those used in the "not selected"
-    condition of Experiment 1: they take only DP complements, so a
-    *dass*-clause is unselected. -/
-def nonSelectingVerbs : List GermanVerbEntry :=
-  [beenden, streichen, uebereilen, entwickeln]
-
-/-- The CP-selecting verbs are exactly those used in the "selected"
-    condition of Experiment 1. -/
-def selectingVerbs : List GermanVerbEntry :=
-  [veranlassen, vergessen, erwarten, beschliessen]
-
-/-- No non-selecting verb takes a clausal complement. -/
-theorem nonSelecting_all_false : ∀ v ∈ nonSelectingVerbs, ¬ v.toVerb.TakesClausal := by
-  decide
-
-/-- Every selecting verb takes a clausal complement. -/
-theorem selecting_all_true : ∀ v ∈ selectingVerbs, v.toVerb.TakesClausal := by
-  decide
-
-/-- No verb is in both lists. -/
-theorem selecting_nonselecting_disjoint :
-    (nonSelectingVerbs.filter
-      (λ v => selectingVerbs.any (· == v))).length = 0 := by native_decide
-
--- ============================================================================
--- § 10: Typological Bridges
--- ============================================================================
-
-/-- German's WALS OV order is "no dominant" (V2 root vs SOV embedded),
-    but the experimental conditions derive their verb positions from
-    clause type: root V2 → postverbal, embedded verb-final → preverbal
-    (§ 1). -/
-theorem german_wals_vs_clausetype :
-    German.wordOrder.ovOrder = .noDominant ∧
-    germanRootComplementPosition = .postverbal ∧
-    germanEmbeddedComplementPosition = .preverbal :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- For any OV language in the typological sample, the OVOrder→VerbPosition
-    bridge yields preverbal position. -/
-theorem ov_languages_preverbal :
-    OVOrder.verbPosition .ov = some VerbPosition.preverbal := rfl
-
-/-- For any VO language in the typological sample, the OVOrder→VerbPosition
-    bridge yields postverbal position. -/
-theorem vo_languages_postverbal :
-    OVOrder.verbPosition .vo = some VerbPosition.postverbal := rfl
-
-/-- Linear closeness makes the wrong prediction for all OV languages:
-    deriving VerbPosition from OVOrder and then applying linear closeness
-    yields CP-first, which is refuted by German data. -/
-theorem linear_wrong_for_ov_languages :
-    (OVOrder.verbPosition .ov).map (predictOrder .linear) = some .cpFirst := rfl
-
-/-- Bottom-up makes the correct prediction for all OV languages. -/
-theorem bottomUp_correct_for_ov_languages :
-    (OVOrder.verbPosition .ov).map (predictOrder .structural) = some .dpFirst := rfl
-
--- ============================================================================
--- § 11: Fragment Membership & Coordination Particle
--- ============================================================================
-
-/-- All 8 experimental verbs are in the German fragment's allVerbs list. -/
-theorem experimental_verbs_in_allVerbs :
-    allVerbs.any (· == beenden) = true ∧
-    allVerbs.any (· == streichen) = true ∧
-    allVerbs.any (· == uebereilen) = true ∧
-    allVerbs.any (· == entwickeln) = true ∧
-    allVerbs.any (· == veranlassen) = true ∧
-    allVerbs.any (· == vergessen) = true ∧
-    allVerbs.any (· == erwarten) = true ∧
-    allVerbs.any (· == beschliessen) = true := by
-  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide,
-         by native_decide, by native_decide, by native_decide, by native_decide⟩
-
-/-- The coordination particle used in the experiments is German *und*,
-    which is the J particle in the Mitrović & Sauerland decomposition. -/
-theorem experimental_conjunction_is_j :
-    German.Coordination.und.role = .j := rfl
-
-/-- German uses J-only conjunction strategy (overt *und*, covert MU). -/
-theorem german_j_only :
-    German.Coordination.conjunctionStrategy = .jOnly := rfl
+/-- A preferred order in the embedded position that puts the noun phrase first refutes the
+linear and temporal closeness accounts, whatever the reason for the preference. -/
+theorem closeness_refuted {observed : VerbPosition → ConjunctOrder}
+    (h : observed embeddedPosition = .dpFirst) :
+    predictOrder .linear embeddedPosition ≠ observed embeddedPosition ∧
+      temporalOrder embeddedPosition ≠ observed embeddedPosition := by
+  rw [h]
+  exact ⟨by decide, by decide⟩
 
 end Schwarzer2026
