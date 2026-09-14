@@ -31,9 +31,7 @@ correlation with modifier-based totality (`total_not_disjunctive`,
 The rows carry the paper's tables: the percentages of dimensional uses in positive and
 negated contexts, the polarity means in hundredths, the normalized totality index and the
 inference-test standard type. The correlations the paper reports between polarity and
-normalized conjunctivity and between totality and conjunctivity are not formalized. The
-`MultidimAdj` record with a scale-structure field and its `hypothesis3Holds` test are kept for
-`Studies/Tham2025.lean`, which builds entries in it.
+normalized conjunctivity and between totality and conjunctivity are not formalized.
 
 ## References
 
@@ -123,24 +121,5 @@ theorem comparatives_inherit :
       (binding? y ≠ some .disjunctive → binding? x = binding? y) ∧
         (binding? y = some .disjunctive → binding? x = some .mixed) := by
   decide +kernel
-
-/-! ### The record used across papers -/
-
-/-- An adjective classified by evaluative polarity, scale structure and binding type. -/
-structure MultidimAdj where
-  form : String
-  isPositive : Bool
-  scaleType : Boundedness
-  binding : DimensionBindingType
-  deriving Repr, DecidableEq
-
-/-- The binding the standard-type hypothesis predicts from a scale structure's default
-standard. -/
-def predictedFromStandard (b : Boundedness) : DimensionBindingType :=
-  predictedBinding b.defaultStandard
-
-/-- Whether an adjective's binding is the one its scale structure predicts. -/
-def hypothesis3Holds (a : MultidimAdj) : Bool :=
-  a.binding == predictedFromStandard a.scaleType
 
 end Sassoon2013

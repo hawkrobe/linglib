@@ -26,12 +26,9 @@ Bedeutung 27*, pp. 674–692.
    in contrast to natural kinds which compose multiplicatively.
 
    This is the `weightedScore` substrate primitive in
-   `Semantics/Degree/Aggregation.lean`. Tham 2025 adds a
-   third aggregation mode (`spatialNormalizedScore`, with a host-extent
-   denominator) for physical disturbance predicates — see
-   `Studies/Tham2025.lean §15` for the
-   substrate-level contrast (Waldon's domain has no host-extent
-   denominator naturally; Tham's does).
+   `Semantics/Degree/Aggregation.lean`; the physical disturbance
+   predicates of [tham-2025] normalise the same weighted sum by the
+   host's spatial extent, a denominator the artifact-noun domain lacks.
 
 3. **Interpretive model** (§4.2, the paper's implemented version per its
    own simplifying assumptions): a literal Bayesian update over each
