@@ -2,53 +2,39 @@ import Linglib.Morphology.Paradigm.Function
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Stump 2016: paradigm-linkage deviations — deponency and morphomic tense
-[stump-2016]
+# Stump (2016): Inflectional Paradigms
 
-Two deviations from the canonical content-to-form isomorphism argued for in
-[stump-2016], run on the paradigm-linkage model of
-`Morphology/Paradigm/Linkage.lean`.
+This file formalizes two of the deviations from the canonical content-to-form isomorphism
+argued for in [stump-2016], on the paradigm-linkage model of the substrate's
+`Morphology.Linkage`. Latin deponent verbs inflect by means of the morphology that
+ordinarily expresses a verb's passive forms: the deponent *cōnārī* realizes its active
+content cells with the passive personal endings a regular verb like *parāre* uses only for
+its passive, and lacks passive-meaning forms. This is a property mapping that crosses the
+voice axis: the regular verb's linkage preserves the content cell's property set and is
+canonical (`parareLinkage_isCanonical`), while the deponent's replaces active with passive
+on every active cell (`conari_deviates_on_every_active_cell`,
+`conari_active_realized_by_passive_form`), so that the same active content cell has an
+active form correspondent for the one verb and a passive one for the other
+(`depon_vs_regular`).
 
-**Latin deponency** (Ch. 12): deponent verbs "inflect by means of the morphology
-that ordinarily serves to express a verb's passive forms" (§12.1). Deponent
-*cōnārī* 'try' realizes its active content cells —
-*cōnor, cōnāris, cōnātur, cōnāmur, cōnāminī, cōnantur* (imperfective present
-indicative, Table 12.2) — with the passive personal endings
-(-or, -ris, -tur, -mur, -minī, -ntur) that a regular verb like *parāre*
-'prepare' uses only for its passive (*paror, parāris, parātur, …*, Table 12.1);
-*cōnārī* lacks passive-meaning forms entirely. This is a property mapping that
-crosses the voice axis: a regular verb is subject to the canonical
-`pmc(σ) = σ ∪ {c}`, a deponent to `pm2c(σ:{active}) = σ[active/passive] ∪ {c}`
-(§12.1), replacing active with passive. Abstracting away the inflection-class
-index `c`, the deponent linkage flips voice while the regular verb's preserves
-it — *cōnārī*'s linkage deviates from `IsCanonical` on every active cell.
+The Kashmiri recent, indefinite and remote preterites of the intransitive conjugations II
+and III are realized through four morphomic properties, the past morphomes a to d, by
+property mappings that differ by one morphome (`pmII`, `pmIII`): the indefinite past of
+WUP and the recent past of WUPH share the past b form correspondent and inflect alike
+(`kashmiri_inflect_alike`), as do the remote past of WUP and the indefinite past of WUPH
+(`kashmiri_inflect_alike_pastC`). The form cells are realized by the PFM block cascade of
+`Morphology.Paradigm.Function`.
 
-**Kashmiri morphomic tense** (Ch. 8, pp. 217ff): the recent, indefinite, and
-remote preterites of intransitive Conjugations II and III are realized through
-four morphomic properties 'past a'–'past d' via a non-identity property mapping.
-`WUP` (Conj II) and `WUPH` (Conj III) inflect alike in the 'past b' cells —
-`wupyōs` (indefinite) and `wuphyōs` (recent) — because `pmII` and `pmIII` send
-different tenses to the same morphome. The composition exercises the PFM1 block
-cascade of `Morphology/Paradigm/Function.lean` as the form-cell realization, with
-`pm ≠ id`, so `Linkage.realize_eq_paradigmFunction` (which needs `pm = id`) does
-not apply. Forms are transcribed from Grierson's paradigms as displayed by
-[stump-2016]; block rules are read off the stem+suffix segmentation.
+## Implementation notes
 
-## Main declarations
+The Latin cells are abstracted to voice and agreement, with the inflection-class index and
+tense, aspect and mood held constant, and no realizations are attached to the Latin
+linkages. The Kashmiri forms and their stem-plus-suffix segmentation are the book's
+display of Grierson's paradigms, with the first person singular masculine exponents only.
 
-* `conariLinkage`, `parareLinkage` — the deponent and regular linkages
-* `parareLinkage_isCanonical` — the regular verb's voice-preserving linkage is
-  canonical
-* `conari_deviates_on_every_active_cell` — the deponent `pm` moves every active
-  content cell off its own property set
-* `conari_active_realized_by_passive_form` — every active content cell's form
-  correspondent is passive (the deponency claim)
-* `depon_vs_regular` — same active content cell: regular → active form,
-  deponent → passive form
-* `pmII`, `pmIII`, `linkII`, `linkIII` — the two Kashmiri conjugation linkages,
-  their tense-to-morphome property mappings differing by one morphome
-* `kashmiri_inflect_alike` — WUP's indefinite past and WUPH's recent past share
-  the 'past b' form correspondent, the morphomic content-to-form mismatch
+## References
+
+* [stump-2016]
 -/
 
 namespace Stump2016
@@ -92,14 +78,14 @@ inductive LatinStem where
 property mapping `pm2c` ([stump-2016] §12.1), which sends an active content cell
 to a passive form cell. -/
 def conariLinkage : Linkage LatinVerb LatinStem Cell where
-  stems := fun _ _ => {.cona}
-  pm := fun _ σ => { σ with voice := .passive }
+  stems := λ _ _ => {.cona}
+  pm := λ _ σ => { σ with voice := .passive }
 
 /-- The **regular linkage** of *parāre*: a single stem and the identity property
 mapping, canonical on the voice axis ([stump-2016] §7.1). -/
 def parareLinkage : Linkage LatinVerb LatinStem Cell where
-  stems := fun _ _ => {.para}
-  pm := fun _ σ => σ
+  stems := λ _ _ => {.para}
+  pm := λ _ σ => σ
 
 /-- *cōnārī*'s six active content cells ([stump-2016] Table 12.2). -/
 def conariContentCells : List Cell :=
@@ -109,7 +95,7 @@ def conariContentCells : List Cell :=
 /-- The regular verb's linkage is canonical: property-set preserving (`pm = id`)
 and stem invariant ([stump-2016] §7.1, characteristics (2a)–(2b)). -/
 theorem parareLinkage_isCanonical : parareLinkage.IsCanonical :=
-  Linkage.canonical_isCanonical (fun _ : LatinVerb => LatinStem.para)
+  Linkage.canonical_isCanonical (λ _ : LatinVerb => LatinStem.para)
 
 /-- The deponent property mapping flips voice on every active cell. -/
 theorem conari_pm_flips_voice (l : LatinVerb) (σ : Cell) :
@@ -202,13 +188,13 @@ def formBlock : Block KVerb String (Finset KFeat) :=
 /-- Realization of a form cell `⟨Z, τ⟩`: the PFM1 paradigm function on the stem
 `Z` at the morphomic property set `τ`. -/
 def realizeForm (z : String) (τ : Finset KFeat) : String :=
-  (paradigmFunction (fun _ => wup) (fun _ => z) [formBlock] (wup, τ)).1
+  (paradigmFunction (λ _ => wup) (λ _ => z) [formBlock] (wup, τ)).1
 
 /-- Conjugation II linkage: the single stem, mapped by `pmII`. -/
-def linkII : Linkage KVerb String (Finset KFeat) := ⟨fun l _ => {stemOf l}, fun _ => pmII⟩
+def linkII : Linkage KVerb String (Finset KFeat) := ⟨λ l _ => {stemOf l}, λ _ => pmII⟩
 
 /-- Conjugation III linkage: the single stem, mapped by `pmIII`. -/
-def linkIII : Linkage KVerb String (Finset KFeat) := ⟨fun l _ => {stemOf l}, fun _ => pmIII⟩
+def linkIII : Linkage KVerb String (Finset KFeat) := ⟨λ l _ => {stemOf l}, λ _ => pmIII⟩
 
 /-- WUP recent past ('past a'): `wupus`. -/
 example : linkII.realize realizeForm wup {recentPast, p1, sg, masc}
