@@ -5,33 +5,32 @@ import Linglib.Studies.Traugott2010
 
 /-!
 # ten Wolde (2023): The English Binominal Noun Phrase
-[ten-wolde-2023]
 
-End-to-end study file connecting the core taxonomy, semantic theory,
-and English fragment data to the empirical claims in [ten-wolde-2023].
+This file formalizes the empirical claims of [ten-wolde-2023] about English *of*-binominals over
+the six-way taxonomy and diagnostics of `Semantics/Quantification/BinominalDefs` and the
+English fragment: the diagnostic profiles that separate the evaluative binominal, the
+evaluative modifier and the binominal intensifier (Table 4.2), `ebnp_profile`, `em_profile`,
+`bi_profile`, `premod_distinguishes_evaluative_types`; the dependence of a noun's
+grammaticalization path on its semantic class, inanimate nouns developing pseudo-partitive
+uses and animate and abstract nouns skipping them (chapters 5 and 6),
+`inanimate_develop_pseudopartitive`, `animate_skip_pseudopartitive`, `snake_exception`; the
+entailment from the intensifier to the modifier reading and the independence of the evaluative
+binominal from both, `entailment_summary`; and the evaluative cline as subjectification in
+[traugott-2010]'s sense, `binominalSubjectificationSteps`, `binominal_steps_directed`.
 
-## Key claims formalized
+## Implementation notes
 
-1. **Six-way taxonomy** (Table 2.2): N+PP, head-classifier, pseudo-partitive,
-   evaluative BNP, evaluative modifier, binominal intensifier — each with
-   distinct diagnostic profiles.
+The book is not available to this formalization, so the section and table locators are the
+substrate's and unverified, and the diagnostic profiles are the substrate's tables restated.
 
-2. **Grammaticalization cline** (Ch. 5–6): N₁ nouns progress through the six
-   stages with increasing semantic bleaching, loss of nounhood features
-   (plural, number agreement), and reanalysis of [N₁ of a] as a constituent.
+## References
 
-3. **Three-way evaluative distinction** (Table 4.2, Ch. 4): EBNP, EM, and BI
-   are separate constructions with different semantic composition,
-   premodification patterns, and diagnostic properties.
-
-4. **Semantic class predicts path** (Ch. 5): inanimate N₁ nouns develop
-   pseudo-partitive readings; animate and abstract N₁ nouns generally
-   skip pseudo-partitive and enter evaluative uses directly.
+* [ten-wolde-2023]
+* [traugott-2010]
 -/
 
 namespace TenWolde2023
 
-open Quantification.Binominal
 open Quantification.Binominal
 open Degree (exampleIdiot)
 open English.Binominals
@@ -127,19 +126,19 @@ theorem inanimate_develop_pseudopartitive :
     nub.constructions.elem .pseudoPartitive = true ∧
     breeze.constructions.elem .pseudoPartitive = true ∧
     husk.constructions.elem .pseudoPartitive = true := by
-  constructor <;> (try constructor) <;> native_decide
+  constructor <;> (try constructor) <;> decide
 
 /-- Most animate entries skip pseudo-partitive (beast, whale). -/
 theorem animate_skip_pseudopartitive :
     beast.constructions.elem .pseudoPartitive = false ∧
     whale.constructions.elem .pseudoPartitive = false := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- Snake is the exception: an animate noun with pseudo-partitive. -/
 theorem snake_exception :
     snake.semanticClass = .animate ∧
     snake.constructions.elem .pseudoPartitive = true := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- The semantic class predicate agrees with the entry data for
     all inanimate nouns in the corpus. -/
@@ -170,7 +169,7 @@ theorem animate_main_path :
     beast.constructions.elem .evaluative = true ∧
     beast.constructions.elem .evaluativeModifier = true ∧
     beast.constructions.elem .binominalIntensifier = true := by
-  constructor <;> (try constructor) <;> native_decide
+  constructor <;> (try constructor) <;> decide
 
 /-- Abstract nouns also skip pseudo-partitive (except *hell* which
     participates in all six). *bitch* follows the main path. -/
@@ -179,7 +178,7 @@ theorem abstract_main_path :
     bitch.constructions.elem .pseudoPartitive = false ∧
     bitch.constructions.elem .evaluative = true ∧
     bitch.constructions.elem .evaluativeModifier = true := by
-  constructor <;> (try constructor) <;> native_decide
+  constructor <;> (try constructor) <;> decide
 
 /-- The semantic class predicate correctly predicts which nouns
     skip pseudo-partitive: animate and abstract predict no PP,
@@ -191,32 +190,6 @@ theorem semantic_class_predicts_path :
     cake.semanticClass.developsPseudoPartitive = true ∧
     nub.semanticClass.developsPseudoPartitive = true := by
   exact ⟨rfl, rfl, rfl, rfl, rfl⟩
-
--- ═══════════════════════════════════════════════════════════════
--- § 3: Grammaticalization Depth
--- ═══════════════════════════════════════════════════════════════
-
-/-! ### Ch. 5: *hell* is the most grammaticalized N₁ noun
-
-*hell* participates in all six constructions and has developed
-reduced forms (*helluva*, *hella*), indicating advanced
-grammaticalization. *whale* also has a reduced form (*whaleuva*)
-but participates in only five constructions. -/
-
-/-- *hell* is the only N₁ in the dataset that participates in all six types. -/
-theorem hell_maximally_grammaticalized :
-    hell.constructions.length = 6 ∧ hell.hasReducedForm = true := by
-  constructor <;> rfl
-
-/-- *whale* has a reduced form (*whaleuva*) but only five constructions. -/
-theorem whale_reduced_not_all_six :
-    whale.hasReducedForm = true ∧ whale.constructions.length = 5 := by
-  constructor <;> rfl
-
-/-- *hell* is the only entry in the dataset with all six constructions. -/
-theorem hell_uniquely_all_six :
-    ∀ e ∈ allN₁Entries, e.constructions.length = 6 → e.form = "hell" := by
-  native_decide
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 4: End-to-End Semantic Chain
@@ -242,7 +215,7 @@ theorem entailment_summary :
       doctorQuality (Degree.thr 3) isDoctor .sarah = false) := by
   constructor
   · exact bi_entails_em _ _ _ _ _ _
-  · constructor <;> native_decide
+  · constructor <;> decide +kernel
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 5: Binominal Subjectification
@@ -290,7 +263,7 @@ def binominalSubjectificationSteps : List SubjectificationStep :=
     the later steps maintain subjectivity while bleaching semantics further. -/
 theorem binominal_steps_directed :
     ∀ s ∈ binominalSubjectificationSteps, s.sourceLevel ≤ s.targetLevel :=
-  fun s hs => by
+  λ s hs => by
     simp [binominalSubjectificationSteps] at hs
     rcases hs with rfl | rfl | rfl <;> decide
 
