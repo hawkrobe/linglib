@@ -12,9 +12,9 @@ markers that lexicalize the distinction.
 
 A conditional is construed as *hypothetical* when its antecedent is supposed and left open, and
 as a *premise* conditional when the antecedent echoes prior discourse and is treated as
-established ([iatridou-1991], [haegeman-2003]). The readings share their truth conditions and
-differ in felicity: a premise antecedent can be paraphrased with *given that* or *since*, and
-must have been committed to or be common ground. They also differ in polarity: a hypothetical
+established ([iatridou-1991], [haegeman-2003]). This file states the readings' felicity and
+diagnostics, not their denotations: a premise antecedent can be paraphrased with *given that*
+or *since*, and must have been committed to or be common ground. They also differ in polarity: a hypothetical
 antecedent is the conditional-antecedent licensing context and admits the negative polarity
 items that context licenses, whereas a premise antecedent, presuppositional like *since*,
 licenses none and admits positive polarity items instead. Languages may lexicalize the split:
