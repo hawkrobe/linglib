@@ -1,5 +1,5 @@
 /-!
-# [solt-2018-multidim]: Multidimensionality, Subjectivity and Scales
+# Solt (2018): Multidimensionality, Subjectivity and Scales
 
 Stephanie Solt (2018). Multidimensionality, Subjectivity and Scales:
 Experimental Evidence. In *The Semantics of Gradability, Vagueness, and
@@ -47,9 +47,13 @@ Eval has neither), NOT with the standard objective/subjective binary.
 The middle class (AbsPart) is analytically interesting — these
 adjectives describe physical properties yet allow faultless
 disagreement about orderings. Tham 2025's *cracked* belongs here.
+
+## References
+
+* [solt-2018a]
 -/
 
-namespace Solt2018Multidim
+namespace Solt2018a
 
 /-- Solt 2018 (Springer multidim chapter, Fig. 1) five-class typology
     of gradable adjectives, ordered by ordering-subjectivity:
@@ -139,4 +143,4 @@ theorem cracked_shares_class_with_dirty :
     (representativeSample.find? (fun a => a.form == "dirty")).map
       ClassifiedAdj.cls = some crackedClass := rfl
 
-end Solt2018Multidim
+end Solt2018a

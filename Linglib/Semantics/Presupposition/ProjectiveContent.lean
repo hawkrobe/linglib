@@ -9,8 +9,8 @@ under a belief predicate, must the content be part of the attitude
 holder's beliefs?). The two binary diagnostics yield four classes A–D.
 
 Consumed as classification vocabulary by the projective-content study
-files ([tonhauser-beaver-roberts-simons-2013], [solstad-bott-2024],
-[roberts-simons-2024], and the Nez Perce study of attitude embedding).
+files ([tonhauser-beaver-roberts-simons-2013], [roberts-simons-2024], and
+the Nez Perce study of attitude embedding).
 
 ## Main declarations
 
@@ -20,7 +20,7 @@ files ([tonhauser-beaver-roberts-simons-2013], [solstad-bott-2024],
   the `classFromProperties` reconstruction
   (`class_properties_roundtrip`).
 * `ProjectiveTrigger` — the framework's per-trigger table, with
-  `toClass`. The `occasion_verb` case follows [solstad-bott-2024].
+  `toClass`.
 -/
 
 namespace Presupposition.ProjectiveContent
@@ -124,11 +124,6 @@ inductive ProjectiveTrigger where
   | only_prejacent
   /-- *almost*: polar content. -/
   | almost_polar
-  /-- Occasion verbs: prior occasioning eventuality
-      ([solstad-bott-2024]). *Punish* presupposes a prior offense;
-      *manage* presupposes a prior difficulty. SCF=no (can be
-      informative), OLE=yes (attributed to attitude holder). -/
-  | occasion_verb
   -- Class D triggers (SCF=yes, OLE=no)
   /-- *too*: salience of alternative. -/
   | too_salience
@@ -150,7 +145,6 @@ def ProjectiveTrigger.toClass : ProjectiveTrigger → ProjectiveClass
   | .know_complement => .classC
   | .only_prejacent => .classC
   | .almost_polar => .classC
-  | .occasion_verb => .classC
   | .too_salience => .classD
   | .demonstrative_indication => .classD
   | .focus_salience => .classD
