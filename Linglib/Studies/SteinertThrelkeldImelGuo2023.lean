@@ -95,8 +95,8 @@ are adjacent. -/
 abbrev rookGraph : SimpleGraph ForceFlavor := (⊤ : SimpleGraph ModalForce) □ ⊤
 
 /-- Two pairs of a meaning sharing a coordinate are joined in the rook's graph. -/
-theorem reachable_of_fst_eq_or_snd_eq {m : Finset ForceFlavor} {p q : ForceFlavor} (hp : p ∈ m) (hq : q ∈ m)
-    (h : p.1 = q.1 ∨ p.2 = q.2) :
+theorem reachable_of_fst_eq_or_snd_eq {m : Finset ForceFlavor} {p q : ForceFlavor} (hp : p ∈ m)
+    (hq : q ∈ m) (h : p.1 = q.1 ∨ p.2 = q.2) :
     (rookGraph.induce ↑m).Reachable ⟨p, hp⟩ ⟨q, hq⟩ := by
   by_cases hpq : p = q
   · subst hpq; rfl
