@@ -1,338 +1,146 @@
 import Linglib.Semantics.Iconicity
-import Linglib.Semantics.Reference.Kaplan
-import Linglib.Fragments.ASL.Classifiers
 import Linglib.Semantics.Reference.Context.Shifts
-import Mathlib.Data.Rat.Defs
+import Linglib.Data.Examples.SchlenkerEtAl2026
 
 /-!
-# Schlenker, Lamberton & Lamberton (2026)
-[schlenker-lamberton-lamberton-2026]
+# Schlenker, Lamberton & Lamberton (2026): Traveling Shots in Language
 
-Traveling Shots in Language: Towards an Analysis of Dynamic Viewpoints in ASL.
-To appear in *Linguistic Inquiry*.
+This file formalizes the paper's extension of Iconological Semantics to dynamic viewpoints. In
+[schlenker-lamberton-2024] a classifier predicate has an iconic component evaluated by projecting
+its argument onto signing space from the viewpoint a variable denotes, and a dynamic classifier,
+one that moves in signing space, is projected moment by moment along its movement (27). The
+paper's problem is relative motion: in ASL a classifier for a static object, a tree or a pole, can
+move past the signer to show the object passing a moving character, the traveling shot of film.
+With projection from static viewpoints a still object projects to a still classifier, so such
+readings are unavailable (`dynProj_static_eq`); once a viewpoint is a function from times and
+worlds to static viewpoints (29), the movement of the classifier is information about the movement
+of the viewpoint (`viewpoint_moves_of_dynProj`), the character's path in the elicited paradigms of
+`Data/Examples/SchlenkerEtAl2026`.
 
-## Core Contribution
+The paper leaves two analyses open. On Analysis I any viewpoint variable may denote a dynamic
+viewpoint. On Analysis II only the context-bound variable `π*`, which denotes the dynamic
+viewpoint of the context's agent (33), may, and Role Shift, analyzed as overt context shift (34),
+abstracts over the agent, time and world of the context (`roleShift`), so that a role-shifted
+classifier is projected from the character's moving viewpoint (`roleShift_dynProj_iff`). Under the
+restrictive theory that free variables are static, a traveling shot therefore needs Role Shift
+(`restrictive_dynProj_eq`), and under Role Shift the classifier's movement is the character's
+(`roleShift_viewpoint_moves`).
 
-Extends Iconological Semantics ([schlenker-lamberton-2024]) by showing that
-viewpoint variables may denote **dynamic** (traveling) viewpoints — functions from
-time-world pairs to static viewpoints — not just static observation points.
+## Implementation notes
 
-In ASL, a classifier denoting a static object (e.g., TREE-cl) can move in signing
-space to represent the object's apparent motion from a moving character's
-perspective. This is the linguistic analogue of a traveling camera shot in film.
+* The scaling of classifier time to evaluation time in (27) is an arbitrary clock from the
+  moments of the movement to times, and projection is any function from an object, a static
+  viewpoint, a time and a world to a position in signing space, so the geometry of projection is
+  not modeled. An object is still when its projection from any fixed viewpoint does not change
+  over time.
+* Role Shift (34) is composed from the substrate's attitude and temporal shifts of the context,
+  which the paper's context triple identifies with the agent, world and time coordinates.
+* The elicited paradigms are recorded as rows with the mean judgment on the seven-point scale;
+  the paper's inferences about the character's path from the side on which the classifier passes
+  are not modeled, since they require the geometry.
 
-## Two Analyses
+## References
 
-1. **Analysis I** (§7): All viewpoint variables can be dynamic. Relative motion
-   arises whenever a viewpoint variable takes a non-constant value.
-
-2. **Analysis II** (§8): Only viewpoints introduced by Role Shift (as overt
-   context shift) can be dynamic. Standard viewpoint variables denote static
-   viewpoints. Under Role Shift, a distinguished variable π* reads the
-   character's dynamic viewpoint from the shifted context.
-
-The paper leaves both options open, pending a consensus on the definition
-of Role Shift.
-
-## Data
-
-Paradigms were elicited from two Deaf native ASL signers. Acceptability
-is on a 7-point scale (7 = best, 1 = worst). Classifier direction
-(left vs. right) systematically determines the character's inferred path.
+* [schlenker-lamberton-lamberton-2026]
+* [schlenker-lamberton-2024]
+* [davidson-2015]
 -/
 
 namespace SchlenkerEtAl2026
 
-open Semantics.Iconic
-open Reference
-open ASL (SigningSpace)
+open Semantics.Iconic Reference
 
--- ════════════════════════════════════════════════════════════════
--- § Classifier Motion: empirical vocabulary
--- ════════════════════════════════════════════════════════════════
+variable {W E P T S ι : Type*}
 
-/-- Direction of a classifier's movement in signing space. -/
-inductive ClassifierDirection where
-  | passingLeft    -- classifier moves past the signer's head on the left
-  | passingRight   -- classifier moves past the signer's head on the right
-  | approaching    -- classifier moves toward the signer
-  | receding       -- classifier moves away from the signer
-  | stationary     -- classifier does not move
-  deriving DecidableEq, Repr
+/-! ### Projection from dynamic viewpoints (§7) -/
 
-/-- Whether classifier movement is dynamic (involves motion). -/
-def ClassifierDirection.isDynamic : ClassifierDirection → Bool
-  | .stationary => false
-  | _ => true
+/-- (29): projection from a viewpoint that may move. `proj d v t w` is the position in signing
+space to which the object `d` projects from the static viewpoint `v` at `t` in `w`; from a dynamic
+viewpoint, `d` projects at `t` in `w` from the viewpoint's value there. -/
+def projAt (proj : E → StaticViewpoint P → T → W → S) (d : E) (vp : DynamicViewpoint W T P)
+    (t : T) (w : W) : S :=
+  proj d (vp w t) t w
 
-/-- The type of motion interpretation triggered by a classifier. -/
-inductive MotionType where
-  | absolute  -- the object itself moves (standard interpretation)
-  | relative  -- the object appears to move from a moving viewpoint
-  deriving DecidableEq, Repr
+/-- (27), (32): an object projects to a dynamic classifier, a function `cl` from the moments of
+its movement to positions in signing space, when at each moment, sent to a time of evaluation by
+the classifier's clock, the object projects to the classifier's position there. -/
+def DynProj (proj : E → StaticViewpoint P → T → W → S) (d : E) (vp : DynamicViewpoint W T P)
+    (w : W) (clock : ι → T) (cl : ι → S) : Prop :=
+  ∀ i, projAt proj d vp (clock i) w = cl i
 
-/-- The traveling shot generalization: when a classifier denoting a
-    static object moves in signing space, the movement is interpreted
-    as relative motion from a moving viewpoint, not as absolute motion
-    of the object. -/
-structure TravelingShotEffect where
-  /-- The static object class -/
-  objectClass : String
-  /-- The classifier's direction in signing space -/
-  classifierDirection : ClassifierDirection
-  /-- The motion type is relative, not absolute -/
-  motionType : MotionType
-  /-- The classifier direction determines the character's inferred path -/
-  classifierDirection_isDynamic : classifierDirection.isDynamic = true
-  motionType_isRelative : motionType = .relative
+/-- An object is still in `w` when its projection from any fixed viewpoint does not change over
+time. -/
+def IsStill (proj : E → StaticViewpoint P → T → W → S) (d : E) (w : W) : Prop :=
+  ∀ (v : StaticViewpoint P) (t t' : T), proj d v t w = proj d v t' w
 
-/-- Role Shift status of a classifier construction. -/
-inductive RoleShiftStatus where
-  | strict     -- body rotation, eyegaze shift, agreement changes
-  | broad      -- signer's body represents another character (no rotation)
-  | absent     -- no Role Shift markers
-  deriving DecidableEq, Repr
+variable {proj : E → StaticViewpoint P → T → W → S} {d : E} {w : W} {clock : ι → T} {cl : ι → S}
 
--- ════════════════════════════════════════════════════════════════
--- § Analysis I: Dynamic Viewpoints (§7)
--- ════════════════════════════════════════════════════════════════
+/-- From a static viewpoint a still object projects to a classifier that does not move: the
+traveling shot is unavailable in [schlenker-lamberton-2024]. -/
+theorem dynProj_static_eq (hd : IsStill proj d w) {v : StaticViewpoint P}
+    (h : DynProj proj d (DynamicViewpoint.static v) w clock cl) (i j : ι) : cl i = cl j := by
+  rw [← h i, ← h j]
+  exact hd v _ _
 
-section AnalysisI
+/-- The traveling shot: when a still object projects to a classifier that moves, the viewpoint
+has moved between the two moments. -/
+theorem viewpoint_moves_of_dynProj (hd : IsStill proj d w) {vp : DynamicViewpoint W T P}
+    (h : DynProj proj d vp w clock cl) {i j : ι} (hij : cl i ≠ cl j) :
+    vp w (clock i) ≠ vp w (clock j) := λ heq =>
+  hij (by rw [← h i, ← h j, projAt, projAt, heq]; exact hd _ _ _)
 
-variable {W : Type*} {T : Type*} {P : Type*} {E : Type*}
+/-! ### Viewpoint variables and Role Shift (§8) -/
 
-/-- The static viewpoint analysis is a special case of the dynamic one.
-    When a viewpoint is constant, dynamic projection reduces to
-    time-invariant projection. The dynamic framework is a conservative
-    extension. -/
-theorem static_is_special_case
-    (projects : E → StaticViewpoint P → Bool)
-    (d : E) (sv : StaticViewpoint P) :
-    ∀ (w : W) (t₁ t₂ : T),
-    dynamicProjection projects d (DynamicViewpoint.static sv) w t₁ =
-    dynamicProjection projects d (DynamicViewpoint.static sv) w t₂ :=
-  fun _ _ _ => rfl
+/-- (33): a free viewpoint variable denotes its value under the assignment `s`; the context-bound
+variable `π*` denotes the dynamic viewpoint of the context's agent. -/
+def ViewpointVar.denote (s : ℕ → DynamicViewpoint W T P) (agentVP : E → DynamicViewpoint W T P)
+    (c : Context W E P T) : ViewpointVar → DynamicViewpoint W T P
+  | .free i => s i
+  | .contextBound => agentVP c.agent
 
-/-- The traveling shot condition: there exist two times at which the
-    object's projection differs, producing apparent motion. This is
-    only possible when the viewpoint is dynamic. -/
-def travelingShotCondition {W : Type*} {T : Type*} {P : Type*} {E : Type*}
-    (projects : E → StaticViewpoint P → Bool)
-    (d : E) (vp : DynamicViewpoint W T P) (w : W) : Prop :=
-  ∃ (t₁ t₂ : T),
-    dynamicProjection projects d vp w t₁ ≠ dynamicProjection projects d vp w t₂
+/-- The restrictive theory of §8: every free viewpoint variable denotes a static viewpoint. -/
+def Restrictive (s : ℕ → DynamicViewpoint W T P) : Prop := ∀ i, (s i).isStatic
 
-/-- A static viewpoint never produces a traveling shot: projection is
-    constant across time, so no apparent motion is possible. -/
-theorem no_travelingShot_static {W : Type*} (T : Type*) {P : Type*} {E : Type*}
-    (projects : E → StaticViewpoint P → Bool)
-    (d : E) (sv : StaticViewpoint P) (w : W) :
-    ¬ travelingShotCondition (T := T) projects d (DynamicViewpoint.static sv) w := by
-  intro h
-  obtain ⟨_, _, h'⟩ := h
-  exact absurd rfl h'
+/-- (34): Role Shift abstracts over the agent, time and world of the context, evaluating its
+clause at the shifted context and at that time and world. -/
+def roleShift (IP : Context W E P T → T → W → Prop) (c : Context W E P T) (x : E) (t : T)
+    (w : W) : Prop :=
+  IP (temporalShift t (attitudeShift x w c)) t w
 
-end AnalysisI
+/-- (31), (36): the iconic component of a dynamic classifier with viewpoint variable `π`: its
+argument projects to the classifier from the viewpoint `π` denotes, along the clock started at
+the time of evaluation. -/
+def classifierIcon (s : ℕ → DynamicViewpoint W T P) (agentVP : E → DynamicViewpoint W T P)
+    (π : ViewpointVar) (proj : E → StaticViewpoint P → T → W → S) (d : E) (clock : T → ι → T)
+    (cl : ι → S) (c : Context W E P T) (t : T) (w : W) : Prop :=
+  DynProj proj d (ViewpointVar.denote s agentVP c π) w (clock t) cl
 
--- ════════════════════════════════════════════════════════════════
--- § Analysis II: Role Shift Introduces Dynamic Viewpoints (§8)
--- ════════════════════════════════════════════════════════════════
+variable {s : ℕ → DynamicViewpoint W T P} {agentVP : E → DynamicViewpoint W T P}
+  {clock' : T → ι → T}
 
-section AnalysisII
+/-- (37c): under Role Shift a classifier with the context-bound variable is projected from the
+character's dynamic viewpoint at the shifted time and world. -/
+theorem roleShift_dynProj_iff (c : Context W E P T) (x : E) (t : T) (w : W) :
+    roleShift (classifierIcon s agentVP .contextBound proj d clock' cl) c x t w ↔
+      DynProj proj d (agentVP x) w (clock' t) cl := by
+  simp [roleShift, classifierIcon, ViewpointVar.denote]
 
-variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
+/-- Under the restrictive theory a classifier with a free viewpoint variable cannot show a
+still object moving: a traveling shot needs Role Shift. -/
+theorem restrictive_dynProj_eq (hs : Restrictive s) (hd : IsStill proj d w)
+    (c : Context W E P T) {i : ℕ}
+    (h : DynProj proj d (ViewpointVar.denote s agentVP c (.free i)) w clock cl) (j k : ι) :
+    cl j = cl k := by
+  rw [← h j, ← h k]
+  simp only [projAt, ViewpointVar.denote]
+  rw [hs i w w (clock j) (clock k)]
+  exact hd _ _ _
 
-/-- A viewpoint assignment: maps viewpoint variable indices to dynamic
-    viewpoints. The iconic analogue of an assignment function for
-    pronouns. -/
-def ViewpointAssignment (W : Type*) (T : Type*) (P : Type*) :=
-  Nat → DynamicViewpoint W T P
-
-/-- Resolve a viewpoint variable against a viewpoint assignment and
-    an agent. Free variables read from the assignment; the context-bound
-    variable π* reads the dynamic viewpoint associated with the agent.
-
-    Under Role Shift (which changes the context's agent to the character),
-    π* yields the character's dynamic viewpoint. -/
-def resolveViewpoint
-    (v : ViewpointVar)
-    (assign : ViewpointAssignment W T P)
-    (agentVP : E → DynamicViewpoint W T P)
-    (agent : E) : DynamicViewpoint W T P :=
-  match v with
-  | .free i => assign i
-  | .contextBound => agentVP agent
-
-/-- Role Shift as context shift. Structurally identical to
-    `attitudeShift` but labeled `.roleShift` — it changes the agent to
-    the character (and the world to a Role-Shift-accessible world).
-
-    The viewpoint consequence is indirect: since π* reads the agent's
-    viewpoint via `resolveViewpoint`, changing the agent changes what
-    π* denotes. -/
-def roleShiftCtx (character : E) (rsWorld : W) : Function.End (Context W E P T) :=
-  attitudeShift character rsWorld
-
-/-- Role Shift is a monster (non-identity context shift), connecting
-    to the Kaplan/Schlenker monster debate in `Reference/Kaplan.lean`:
-    `roleShiftCtx` acts on contexts as `attitudeShift` does. -/
-theorem roleShift_is_monster
-    (character : E) (rsWorld : W)
-    (c : Context W E P T)
-    (hAgent : c.agent ≠ character) :
-    IsMonster (roleShiftCtx (P := P) (T := T) character rsWorld) :=
-  isMonster_attitudeShift character rsWorld c hAgent
-
-/-- Under Role Shift, π* resolves to the character's viewpoint. -/
-theorem contextBound_under_roleShift
-    (assign : ViewpointAssignment W T P)
-    (agentVP : E → DynamicViewpoint W T P)
-    (character : E) :
-    resolveViewpoint .contextBound assign agentVP character =
-    agentVP character := rfl
-
-/-- Free viewpoint variables are unaffected by who the agent is —
-    they read from the assignment function regardless. -/
-theorem free_unaffected_by_agent
-    (assign : ViewpointAssignment W T P)
-    (agentVP : E → DynamicViewpoint W T P)
-    (agent₁ agent₂ : E) (i : Nat) :
-    resolveViewpoint (.free i) assign agentVP agent₁ =
-    resolveViewpoint (.free i) assign agentVP agent₂ := rfl
-
-/-- The restrictive theory: free viewpoint variables always denote
-    static viewpoints. Only context-bound π* (introduced by Role Shift)
-    can be dynamic. -/
-def RestrictiveTheory (assign : ViewpointAssignment W T P) : Prop :=
-  ∀ (i : Nat), (assign i).isStatic
-
-/-- Under the restrictive theory, traveling shots are impossible for
-    classifiers with free viewpoint variables. -/
-theorem restrictive_no_travelingShot
-    (assign : ViewpointAssignment W T P)
-    (agentVP : E → DynamicViewpoint W T P)
-    (hRestr : RestrictiveTheory assign)
-    (projects : E → StaticViewpoint P → Bool)
-    (d : E) (i : Nat) (agent : E) (w : W) :
-    ¬ travelingShotCondition (T := T) projects d
-      (resolveViewpoint (.free i) assign agentVP agent) w := by
-  intro ⟨t₁, t₂, h⟩
-  exact h (congrArg (projects d) (hRestr i w w t₁ t₂))
-
-end AnalysisII
-
--- ════════════════════════════════════════════════════════════════
--- § End-to-End: Role Shift → Dynamic Viewpoint → Traveling Shot
--- ════════════════════════════════════════════════════════════════
-
-section EndToEnd
-
-variable {W : Type*} {T : Type*}
-
-/-- The complete argumentation chain:
-
-    1. Role Shift changes the context's agent from signer to character
-    2. π* reads the agent's viewpoint, so it now reads the character's
-    3. The character's viewpoint is dynamic (they are moving)
-    4. Dynamic viewpoint + static object → traveling shot is possible
-    5. Static viewpoint would make traveling shot impossible
-
-    This theorem captures steps 2-5: given that the character's viewpoint
-    is genuinely dynamic (non-constant), the traveling shot condition is
-    satisfiable — there exist times where projection differs. -/
-theorem dynamicVP_enables_travelingShot
-    (projects : ASL.Entity → StaticViewpoint SigningSpace → Bool)
-    (d : ASL.Entity)
-    (charVP : DynamicViewpoint W T SigningSpace)
-    (w : W) (t₁ t₂ : T)
-    (hDynamic : dynamicProjection projects d charVP w t₁ ≠
-                dynamicProjection projects d charVP w t₂) :
-    travelingShotCondition projects d charVP w :=
-  ⟨t₁, t₂, hDynamic⟩
-
-end EndToEnd
-
--- ════════════════════════════════════════════════════════════════
--- § Empirical Paradigms
--- ════════════════════════════════════════════════════════════════
-
-/-- An acceptability judgment on a 7-point scale. -/
-structure Judgment where
-  score : ℚ
-  numSessions : Nat
-  deriving Repr
-
-/-- A paradigm condition: classifier direction + Role Shift status. -/
-structure Condition where
-  classifierDirection : ClassifierDirection
-  roleShiftStatus : RoleShiftStatus
-  judgment : Judgment
-  deriving Repr
-
-/-- Paradigm (7): POLE-cl moving past signer. Ann driving drunk,
-    nearly hits pole. Direction determines which side she nearly hits.
-    No strict Role Shift (no body rotation). -/
-def paradigm7 : List Condition :=
-  [ { classifierDirection := .passingRight,
-      roleShiftStatus := .broad,
-      judgment := ⟨7, 3⟩ },
-    { classifierDirection := .passingLeft,
-      roleShiftStatus := .broad,
-      judgment := ⟨7, 3⟩ } ]
-
-/-- Paradigm (13): TREE-cl moving past signer. Ann runs past a tree.
-    Direction determines which side the tree passes on.
-    No strict Role Shift. -/
-def paradigm13 : List Condition :=
-  [ { classifierDirection := .passingLeft,
-      roleShiftStatus := .broad,
-      judgment := ⟨7, 3⟩ },
-    { classifierDirection := .passingRight,
-      roleShiftStatus := .broad,
-      judgment := ⟨63/10, 3⟩ } ]
-
-/-- Paradigm (19): Role-shifted version of (7). Strict Role Shift
-    (body rotation). Same interpretive effect. -/
-def paradigm19 : List Condition :=
-  [ { classifierDirection := .passingRight,
-      roleShiftStatus := .strict,
-      judgment := ⟨7, 3⟩ },
-    { classifierDirection := .passingLeft,
-      roleShiftStatus := .strict,
-      judgment := ⟨7, 3⟩ } ]
-
-/-- Paradigm (7) instantiates the traveling shot: pole is static,
-    classifier moves, motion type is relative. -/
-def paradigm7_travelingShot : TravelingShotEffect where
-  objectClass := "pole"
-  classifierDirection := .passingRight
-  motionType := .relative
-  classifierDirection_isDynamic := rfl
-  motionType_isRelative := rfl
-
-/-- Paradigm (13) instantiates the traveling shot: tree is static,
-    classifier moves, motion type is relative. -/
-def paradigm13_travelingShot : TravelingShotEffect where
-  objectClass := "tree"
-  classifierDirection := .passingLeft
-  motionType := .relative
-  classifierDirection_isDynamic := rfl
-  motionType_isRelative := rfl
-
-/-- The traveling shot arises both with and without strict Role Shift. -/
-theorem travelingShot_with_and_without_RS :
-    (paradigm7.head?.map (·.roleShiftStatus)) = some .broad ∧
-    (paradigm19.head?.map (·.roleShiftStatus)) = some .strict :=
-  ⟨rfl, rfl⟩
-
-/-- The classifier used in paradigm (7) is POLE-cl from the ASL fragment. -/
-theorem paradigm7_uses_poleCl
-    (proj : ASL.Entity → StaticViewpoint SigningSpace → Bool) :
-    (ASL.poleCl proj).label = "POLE-cl" := rfl
-
-/-- The classifier used in paradigm (13) is TREE-cl from the ASL fragment. -/
-theorem paradigm13_uses_treeCl
-    (proj : ASL.Entity → StaticViewpoint SigningSpace → Bool) :
-    (ASL.treeCl proj).label = "TREE-cl" := rfl
+/-- Under Role Shift the movement of a classifier for a still object is the character's own
+movement between the two moments. -/
+theorem roleShift_viewpoint_moves (c : Context W E P T) (x : E) (t : T) (hd : IsStill proj d w)
+    (h : roleShift (classifierIcon s agentVP .contextBound proj d clock' cl) c x t w) {i j : ι}
+    (hij : cl i ≠ cl j) : agentVP x w (clock' t i) ≠ agentVP x w (clock' t j) :=
+  viewpoint_moves_of_dynProj hd ((roleShift_dynProj_iff c x t w).1 h) hij
 
 end SchlenkerEtAl2026
