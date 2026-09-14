@@ -121,6 +121,15 @@ theorem box_five [hE : IsEuclidean R] (h : ◇[R] p w) : □[R] (◇[R] p) w :=
   let ⟨u, hwu, hpu⟩ := h
   fun v hwv => ⟨u, hE.eucl w v u hwv hwu, hpu⟩
 
+/-- Over a Euclidean relation, `◇□p → □p`: what is possibly necessary is necessary. -/
+theorem box_of_diamond_box [hE : IsEuclidean R] (h : ◇[R] (□[R] p) w) : □[R] p w :=
+  let ⟨u, hwu, hpu⟩ := h
+  fun v hwv => hpu v (hE.eucl w u v hwu hwv)
+
+/-- Over a serial transitive relation, `□p → ◇□p`. -/
+theorem diamond_box_of_box [IsSerial R] [IsTrans W R] (h : □[R] p w) : ◇[R] (□[R] p) w :=
+  box_D (box_four h)
+
 /-! ### Frame definability
 
 Each axiom, read as an inequality between operators on `W → Prop`,
