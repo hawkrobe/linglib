@@ -7,7 +7,8 @@ import Linglib.Fragments.Somali.Gender
 import Linglib.Fragments.Latin.Gender
 import Linglib.Fragments.Chichewa.Gender
 import Linglib.Fragments.CoastalMarind.Gender
-import Linglib.Studies.Corbett1991
+import Linglib.Features.Gender.AgreementClass
+import Linglib.Syntax.Agreement.Resolution
 import Linglib.Data.Examples.Corbett1998
 
 /-!
@@ -42,10 +43,9 @@ rather than the resolved one. The chapter's examples are the rows of
   features, each of which it keeps fully distinct within the other; Somali's article is
   polar and its verbal prefix is not, the plural prefix coinciding with the masculine
   singular's instead.
-* Number-conditioned gender distinctions are the convergent maps of Corbett's typology of
-  gender, whose agreement classes, resolution rules and Latin carrier this file reuses;
-  Chichewa's coordination rules are its rules over fragment nouns, one per target form
-  before the semantic rule.
+* Number-conditioned gender distinctions are the substrate's convergent maps between the
+  target genders of two numbers; Chichewa's coordination rules are the substrate's ordered
+  resolution rules over fragment nouns, one per target form before the semantic rule.
 * The agreement slots of a target, their controllers and their bound of four are described
   in the rows and not modelled.
 
@@ -143,7 +143,7 @@ open _root_.Russian.Gender
 
 /-- Adjectives distinguish gender only in the singular, (1)–(4): a convergent system. -/
 theorem convergent :
-    Corbett1991.Convergent (Value.adjEnding · false) (Value.adjEnding · true) := by decide
+    Gender.Convergent (Value.adjEnding · false) (Value.adjEnding · true) := by decide
 
 /-- Greenberg's Universal 37 as its corollary. -/
 theorem card_adjEnding_pl_le :
@@ -219,7 +219,7 @@ theorem Polar.injective [Nontrivial N] (h : Polar f) (n : N) : Function.Injectiv
 /-- Polarity is syncretism across the numbers and none within them: in Corbett's typology, a
 parallel system. -/
 theorem Polar.parallel [Nontrivial N] (h : Polar f) (n n' : N) :
-    Corbett1991.Parallel (f · n) (f · n') :=
+    Gender.Parallel (f · n) (f · n') :=
   ⟨λ _ _ e => congrArg (f · n') (h.injective n e), λ _ _ e => congrArg (f · n) (h.injective n' e)⟩
 
 end Polar
@@ -245,12 +245,12 @@ theorem article_nin : nin.article true = nin.article false := rfl
 /-- In the typology of gender the article is a parallel system and the verb a convergent
 one. -/
 theorem parallel_article :
-    Corbett1991.Parallel (Value.article · false) (Value.article · true) :=
+    Gender.Parallel (Value.article · false) (Value.article · true) :=
   polar_article.parallel false true
 
 /-- The verbal prefix converges on one plural form. -/
 theorem convergent_verbPrefix :
-    Corbett1991.Convergent (Value.verbPrefix · false) (Value.verbPrefix · true) := by decide
+    Gender.Convergent (Value.verbPrefix · false) (Value.verbPrefix · true) := by decide
 
 end Somali
 
@@ -301,18 +301,19 @@ end Latin
 
 namespace Chichewa
 
-open _root_.Chichewa.Gender Corbett1991
+open _root_.Chichewa.Gender Agreement.ResolutionRule
 
 /-- Coordinated plural nouns that would take one target form take it. -/
-def sharedFormRules : List (Rule Chichewa.Gender.Noun SubjPrefix) :=
+def sharedFormRules : List (ResolutionRule Chichewa.Gender.Noun SubjPrefix) :=
   [⟨.all, (·.gender.plSubjPrefix = .a), .a⟩, ⟨.all, (·.gender.plSubjPrefix = .zi), .zi⟩]
 
 /-- The regular rule: humans take the plural of gender 1/2 and the rest the plural of 7/8. -/
-def semanticRules : List (Rule Chichewa.Gender.Noun SubjPrefix) :=
-  [⟨.all, (·.human = true), .a⟩, Rule.otherwise .zi]
+def semanticRules : List (ResolutionRule Chichewa.Gender.Noun SubjPrefix) :=
+  [⟨.all, (·.human = true), .a⟩, otherwise .zi]
 
 /-- The shared form is preferred; the regular rule applies where there is none. -/
-def rules : List (Rule Chichewa.Gender.Noun SubjPrefix) := sharedFormRules ++ semanticRules
+def rules : List (ResolutionRule Chichewa.Gender.Noun SubjPrefix) :=
+  sharedFormRules ++ semanticRules
 
 /-- Syncretism licenses agreement, (18) and (19): conjuncts sharing a form take it. -/
 theorem resolve_of_shared {cs : List Chichewa.Gender.Noun} (hne : cs ≠ []) {f : SubjPrefix}
@@ -332,7 +333,7 @@ theorem resolve_of_ne {cs : List Chichewa.Gender.Noun} (ha : ∃ c ∈ cs, c.gen
   obtain ⟨z, hz, hz'⟩ := hz
   have h₁ : ¬ ∀ c ∈ cs, c.gender.plSubjPrefix = .a := λ h => ha' (h a ha)
   have h₂ : ¬ ∀ c ∈ cs, c.gender.plSubjPrefix = .zi := λ h => hz' (h z hz)
-  simp [rules, sharedFormRules, resolve, Rule.Applies, h₁, h₂]
+  simp [rules, sharedFormRules, resolve, ResolutionRule.Applies, h₁, h₂]
 
 /-- The regular rule on its own: gender 1/2 for humans, 7/8 for the rest. -/
 theorem resolve_semanticRules (cs : List Chichewa.Gender.Noun) :
@@ -341,7 +342,7 @@ theorem resolve_semanticRules (cs : List Chichewa.Gender.Noun) :
   split_ifs with hh
   · exact resolve_cons_of_applies _ _ _ hh
   · rw [resolve_cons_of_not_applies]
-    · exact resolve_cons_of_applies _ _ _ (Rule.otherwise_applies _ _)
+    · exact resolve_cons_of_applies _ _ _ (otherwise_applies _ _)
     · exact hh
 
 /-- Corbett's *Gender* adds the cats and dogs, and the children and oranges, humans and not,
@@ -395,7 +396,7 @@ theorem chichewa_rows : ∀ row ∈ Examples.all, row.language = "nyan1308" →
     ∀ a ∈ row.parse? "conjunct1" (_root_.Chichewa.Gender.allNouns.map λ n => (n.form, n)),
     ∀ b ∈ row.parse? "conjunct2" (_root_.Chichewa.Gender.allNouns.map λ n => (n.form, n)),
     ∀ p ∈ row.parse? "prefix" [("a", _root_.Chichewa.Gender.SubjPrefix.a), ("zi", .zi)],
-      Corbett1991.resolve Chichewa.rules [a, b] = some p := by
+      Agreement.ResolutionRule.resolve Chichewa.rules [a, b] = some p := by
   decide +kernel
 
 end Corbett1998

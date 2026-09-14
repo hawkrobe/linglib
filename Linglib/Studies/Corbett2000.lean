@@ -628,14 +628,14 @@ theorem bayso_concord_not_injective :
 
 /-- British English *committee*: syntactic agreement only in attributive position, either
 agreement elsewhere, (19) to (22). -/
-def britishCommittee : Hybrid :=
+def britishCommittee : Hybrid Target :=
   ⟨"committee (British English)",
     λ | .attributive => some .syntacticOnly | .predicate | .relativePronoun => some .both
       | .personalPronoun => some .both | .verb => none⟩
 
 /-- American English *committee*: plural agreement rare in the predicate, admitted in the
 personal pronoun. -/
-def americanCommittee : Hybrid :=
+def americanCommittee : Hybrid Target :=
   ⟨"committee (American English)",
     λ | .attributive => some .syntacticOnly | .predicate => some .mostlySyntactic
       | .personalPronoun => some .both | _ => none⟩
@@ -652,9 +652,7 @@ def nixon : Target → Option ℚ
   | _ => none
 
 /-- The plural is likelier in the pronoun than in the predicate, as the hierarchy predicts. -/
-theorem nixon_increases :
-    ∀ t u : Target, t ≤ u → ∀ a ∈ nixon t, ∀ b ∈ nixon u, b ≤ a := by
-  decide +kernel
+theorem nixon_respectsHierarchy : RespectsHierarchy nixon := by decide +kernel
 
 /-- The varieties of English. -/
 inductive Variety where
@@ -690,10 +688,10 @@ namespace PredicateTarget
 
 /-- The position of a target in the Predicate Hierarchy. -/
 def rank : PredicateTarget → ℕ
-  | .verb => 0
-  | .participle => 1
-  | .adjective => 2
-  | .noun => 3
+  | .verb => 3
+  | .participle => 2
+  | .adjective => 1
+  | .noun => 0
 
 theorem rank_injective : Function.Injective rank := by decide
 
@@ -715,9 +713,9 @@ namespace Honorific
 def ofRow (language : String) (v p a n : Availability) : Honorific :=
   ⟨language, λ | .verb => v | .participle => p | .adjective => a | .noun => n⟩
 
-/-- The Predicate Hierarchy: rightwards, the likelihood of semantic agreement never
-decreases. -/
-abbrev Respects (h : Honorific) : Prop := Monotone h.profile
+/-- The Predicate Hierarchy: from the verb to the noun, the likelihood of semantic agreement
+never decreases. -/
+abbrev Respects (h : Honorific) : Prop := Antitone h.profile
 
 end Honorific
 
@@ -782,9 +780,7 @@ def russianConjoined : Target → Option ℚ
   | .verb => none
 
 /-- Resolved forms increase monotonically along the Agreement Hierarchy. -/
-theorem russianConjoined_increases :
-    ∀ t u : Target, t ≤ u → ∀ a ∈ russianConjoined t, ∀ b ∈ russianConjoined u, b ≤ a := by
-  decide
+theorem russianConjoined_respectsHierarchy : RespectsHierarchy russianConjoined := by decide
 
 /-- Table 6.13: the percentage of plural predicates with conjoined subjects, by the animacy
 of the conjuncts and their position relative to the predicate. -/
@@ -906,7 +902,7 @@ the book prints no starred form, so the rows are all acceptable. -/
 theorem macedonian_rows : ∀ row ∈ Examples.all, row.language = "mace1250" →
     ∀ t ∈ row.parse? "target" [("verb", PredicateTarget.verb), ("participle", .participle),
       ("adjective", .adjective), ("noun", .noun)],
-    ∀ k ∈ row.parse? "agreement" [("plural", AgreementKind.syntactic), ("singular", .semantic)],
+    ∀ k ∈ row.parse? "agreement" [("plural", Kind.syntactic), ("singular", .semantic)],
       (row.judgment = .acceptable ↔ (macedonian.profile t).Allows k) := by
   decide +kernel
 

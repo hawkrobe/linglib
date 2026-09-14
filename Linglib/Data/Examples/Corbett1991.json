@@ -2774,6 +2774,10 @@
     "readings": [],
     "paperFeatures": [
       [
+        "hybrid",
+        "rafiki"
+      ],
+      [
         "target",
         "attributivePossessive"
       ],
@@ -2814,6 +2818,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      [
+        "hybrid",
+        "rafiki"
+      ],
       [
         "target",
         "attributivePossessive"
@@ -3150,6 +3158,10 @@
     "readings": [],
     "paperFeatures": [
       [
+        "hybrid",
+        "ng'ombe"
+      ],
+      [
         "target",
         "predicate"
       ],
@@ -3177,6 +3189,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      [
+        "hybrid",
+        "ng'ombe"
+      ],
       [
         "target",
         "predicate"
@@ -3210,6 +3226,10 @@
     ],
     "readings": [],
     "paperFeatures": [
+      [
+        "hybrid",
+        "ng'ombe"
+      ],
       [
         "target",
         "attributive"
@@ -3286,7 +3306,16 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "1+2"
+      ],
+      [
+        "resolved",
+        "1"
+      ]
+    ],
     "comment": "Person resolution: first person takes precedence over second."
   },
   {
@@ -3305,7 +3334,16 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "3+1"
+      ],
+      [
+        "resolved",
+        "1"
+      ]
+    ],
     "comment": ""
   },
   {
@@ -3324,7 +3362,16 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "paperFeatures": [],
+    "paperFeatures": [
+      [
+        "conjuncts",
+        "3+2"
+      ],
+      [
+        "resolved",
+        "2"
+      ]
+    ],
     "comment": "No first person conjunct: the second person determines the form."
   },
   {
