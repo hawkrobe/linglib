@@ -163,7 +163,7 @@ inductive TemporalPerspective where
   | present
   /-- Evaluation at a prior time, as under a perfect. -/
   | past
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- The relation between the perspective time and the prejacent's instantiation time. -/
 inductive TemporalOrientation where
@@ -173,6 +173,6 @@ inductive TemporalOrientation where
   | present
   /-- The prejacent is instantiated at or after the perspective time. -/
   | future
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 end Modality

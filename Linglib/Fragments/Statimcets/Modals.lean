@@ -1,37 +1,33 @@
 import Linglib.Semantics.Modality.Basic
+import Linglib.Semantics.Evidential.Source
 
 /-!
 # St'át'imcets (Lillooet Salish) Modal Inventory
 
-[matthewson-2016] [rullmann-matthewson-davis-2008]
+[rullmann-matthewson-davis-2008] [matthewson-2016]
 
-St'át'imcets (ISO 639-3 `lil`, also known as Lillooet) modal system.
-The system demonstrates two key typological properties:
+St'át'imcets (ISO 639-3 `lil`, also known as Lillooet) modal system. The deontic enclitic
+*=ka* expresses permission or obligation and the circumfix *ka-...-a* ability
+([matthewson-2005]); the epistemic clitics are evidentials, *k'a* requiring indirect
+inferential evidence, *ku7* a report, and *lákw7a* sensory non-visual evidence, and only
+*lákw7a* is compatible with the speaker's disbelief of the prejacent ([matthewson-2016]
+§18.2.4, (25)–(28)). The modals are variable in force ([rullmann-matthewson-davis-2008]).
 
-1. **Single morpheme, multiple forces**: the enclitic *=ka* can express
-   either deontic permission or obligation depending on context
-   ([matthewson-2016] example 1).
-2. **Dedicated ability morpheme**: the circumfix *ka-...-a* is
-   restricted to ability/circumstantial possibility, contrasting with
-   the force-variable *=ka* ([matthewson-2005]).
-3. **Lexicalized epistemic/circumstantial split**: epistemic and
-   circumstantial modality are expressed by distinct morphological
-   strategies. Epistemic modals are typically second-position clitics
-   (*ima*, *gat*-type elements, shared with related Salish languages),
-   while circumstantial modals are predicative verbs or circumfixes.
-
-## St'át'imcets modal expressions (from [rullmann-matthewson-davis-2008])
-
-| Form       | Type        | Flavour        | Force            |
-|-----------|-------------|----------------|------------------|
-| =ka       | enclitic    | deontic        | poss + nec       |
-| ka-...-a  | circumfix   | circumstantial | possibility      |
+| Form       | Type        | Flavour        | Force            | Source              |
+|-----------|-------------|----------------|------------------|---------------------|
+| =ka       | enclitic    | deontic        | poss + nec       |                     |
+| ka-...-a  | circumfix   | circumstantial | possibility      |                     |
+| k'a       | clitic      | epistemic      | poss + nec       | inference           |
+| ku7       | clitic      | epistemic      | poss + nec       | report              |
+| lákw7a    | clitic      | epistemic      | poss + nec       | sensory, non-visual |
 -/
 
 namespace Statimcets.Modals
 
 open Modality (ForceFlavor ForceAnalysis ModalItem)
 
+private abbrev ne : ForceFlavor := (.necessity, .epistemic)
+private abbrev pe : ForceFlavor := (.possibility, .epistemic)
 private abbrev nd : ForceFlavor := (.necessity, .deontic)
 private abbrev pd : ForceFlavor := (.possibility, .deontic)
 private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
@@ -49,15 +45,39 @@ def ka : ModalItem := { form := "=ka", meaning := {pd, nd} }
     - *ka-xílh-ts-tal'í-ha* 'could do it the fastest' -/
 def kaCircumfix : ModalItem := { form := "ka-...-a", meaning := {pc} }
 
-def allExpressions : List ModalItem := [ka, kaCircumfix]
+/-- The inferential evidential *k'a*, a variable-force epistemic modal requiring indirect
+inferential evidence ([rullmann-matthewson-davis-2008]). -/
+def kaInfer : ModalItem := { form := "k'a", meaning := {pe, ne} }
+
+/-- The reportative evidential *ku7*, a variable-force epistemic modal requiring a report
+([rullmann-matthewson-davis-2008]). -/
+def ku7 : ModalItem := { form := "ku7", meaning := {pe, ne} }
+
+/-- The sensory non-visual evidential *lákw7a*, an epistemic modal requiring sensory
+non-visual evidence ([matthewson-2016] §18.2.4). -/
+-- UNVERIFIED: its force; both forces are recorded on the pattern of the other clitics.
+def lakw7a : ModalItem := { form := "lákw7a", meaning := {pe, ne} }
+
+def allExpressions : List ModalItem := [ka, kaCircumfix, kaInfer, ku7, lakw7a]
 
 /-! ## Force analysis -/
 
-/-- =ka is variable-force (single deontic flavour, both forces).
-    ka-...-a is fixed possibility. -/
+/-- =ka and the evidential clitics are variable-force; ka-...-a is fixed possibility. -/
 def forceAnalysis : ModalItem → ForceAnalysis
-  | ⟨"=ka", _, _⟩ => .variableForce
   | ⟨"ka-...-a", _, _⟩ => .fixed .possibility
-  | _ => .fixed .possibility
+  | _ => .variableForce
+
+/-! ## Information source and deniability -/
+
+/-- The information source an evidential modal requires; `none` for the non-evidentials. -/
+def source (m : ModalItem) : Option Evidential.CoarseSource :=
+  if m = kaInfer then some .inference else if m = ku7 then some .hearsay
+  else if m = lakw7a then some .direct else none
+
+/-- A modal is deniable when it is compatible with the speaker's disbelief of the prejacent,
+which holds of *lákw7a* alone ([matthewson-2016] (25)–(28)). -/
+def Deniable (m : ModalItem) : Prop := m = lakw7a
+
+instance : DecidablePred Deniable := λ _ => inferInstanceAs (Decidable (_ = _))
 
 end Statimcets.Modals
