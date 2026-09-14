@@ -1,517 +1,365 @@
-/-
-# Scalar Implicatures: Exhaustivity and Gricean Reasoning
-
-Formalization of [spector-2007] "Scalar implicatures: exhaustivity and Gricean reasoning"
-Proceedings of the ESSLLI 2003 Student Session (revised 2007).
-
-## Main Result
-
-For any positive proposition P, Max(P) = {Exhaust(P)}.
-
-This shows that exhaustive interpretation is derivable from Gricean maxims:
-- The speaker chose P over alternatives (Quantity)
-- The speaker believes P (Quality)
-- Assuming maximal informativeness → exhaustive reading
-
-## Key Concepts
-
-1. Valuations: Assignments of truth values to atoms (modeled as sets of true atoms)
-2. Propositions: Sets of valuations
-3. Favoring: P favors literal L iff flipping L can change P's truth value
-4. Positive propositions: Favor only positive literals (equivalent to negation-free)
-5. Exhaustification: Keep only minimal valuations
-6. Gricean reasoning: I(P) = states making P optimal; Max(P) = most informed such states
-
--/
-
-import Mathlib.Data.Finset.Basic
+import Linglib.Semantics.Questions.Partition.Basic
+import Mathlib.Data.Finset.Card
 import Mathlib.Data.Finset.Insert
-import Mathlib.Data.Finset.Powerset
-import Mathlib.Data.Set.Finite.Basic
+
+/-!
+# Spector (2007): Scalar Implicatures: Exhaustivity and Gricean Reasoning
+
+This file formalizes the Gricean derivation of exhaustivity of [spector-2007]. The
+neo-Gricean rules infer from an utterance that the speaker does not believe any stronger
+scalar alternative and then, assuming the speaker maximally informed, that the alternative is
+false; on multiple disjunctions the second step yields unwanted negations, which the
+alternative-expanding repair of [sauerland-2004] avoids only by an ad hoc scale. The paper
+replaces the two rules by one reasoning over the question under discussion, a partition
+([groenendijk-stokhof-1984]): the speaker's information state, relativized to the question,
+entails the answer and no stronger member of the alternative set, and the hearer assumes the
+state maximally informed among such states. `IsOptimal`, `optimalStates` and `maximalStates`
+state this over any partition question, and `Implicates` what every maximal state entails.
+
+For answers to a question about which atoms hold, states and answers are sets of valuations,
+the finest question applies, and the alternative set of a positive answer, one that favors no
+negative literal, is the set of positive answers. `isOptimal_iff` derives the paper's
+reduction of optimality to "the answer is the strongest positive proposition the state
+entails", `Pos i = P`, and `maximalStates_eq` its theorem: the unique maximal state is
+`Exhaust P`, the minimal valuations of `P`, so a positive answer implicates its
+exhaustification in the sense of Groenendijk and Stokhof. `no_unwanted_negation` checks the
+reasoning against the disjunction case: no optimal state for *A or B* decides *A*.
+
+## Implementation notes
+
+Information states are consistent, so the contradiction is not a state; without this the
+degenerate case of a single atom would admit the empty state as optimal. Positivity follows
+the paper's main text, favoring a positive literal and no negative one, which entails the
+appendix's clause that the proposition is neither the tautology nor the contradiction. The
+appendix's syntactic theorems, that a proposition favors a literal exactly when every
+formula expressing it mentions the literal and that positive propositions are those
+expressible without negation, are not formalized, nor are the alternative sets the paper
+proposes for negative and quasi-positive answers. The paper's third fact, that removing a
+minimal valuation from a positive proposition leaves it positive, is bypassed: the proof of
+the theorem here goes through the reduction directly.
+
+## References
+
+* [spector-2007]
+* [groenendijk-stokhof-1984]
+* [sauerland-2004]
+-/
 
 namespace Spector2007
 
+/-! ### The Gricean reasoning over a partition question -/
 
-/-
-"A valuation is uniquely defined by the values it assigns to the positive literals.
-Hereafter, we treat valuations as functions from atoms to {0, 1}."
+section Gricean
 
-For simplicity, we model valuations as Finsets of atoms (the atoms that are true).
-This matches Spector's later convention: "We now represent a valuation as the set
-of atoms it makes true."
--/
+variable {W : Type*} (Q : Setoid W)
 
-variable (Atom : Type*) [DecidableEq Atom]
+/-- An information state relativized to the question: the union of the cells it meets. -/
+def relativize (i : Set W) : Set W := {w | ∃ w' ∈ i, Q w' w}
 
-/--
-A valuation assigns truth values to atoms.
-We represent it as the set of atoms that are TRUE.
--/
-abbrev Valuation := Finset Atom
+theorem subset_relativize (i : Set W) : i ⊆ relativize Q i := λ w hw => ⟨w, hw, Q.refl' w⟩
 
-/--
-A proposition is a set of valuations (the valuations that make it true).
--/
-abbrev Proposition := Set (Valuation Atom)
+@[simp] theorem relativize_bot (i : Set W) : relativize ⊥ i = i := by
+  ext w; simp [relativize]
 
-/--
-A literal is either an atom (positive) or its negation (negative).
--/
-inductive Literal (Atom : Type*)
-  | pos : Atom → Literal Atom  -- [p]
-  | neg : Atom → Literal Atom  -- [¬p]
+/-- Strong relevance: the answer excludes a cell and does not cut across cells. -/
+def StronglyRelevant (α : Set W) : Prop :=
+  (∃ w, Q.cell w ∩ α = ∅) ∧ ∀ w, w ∈ α ↔ Q.cell w ⊆ α
+
+/-- The answer `α` is optimal in state `i` with respect to the alternative set `S`: the
+relativized state entails `α` and no member of `S` it entails is stronger. -/
+def IsOptimal (S : Set (Set W)) (α i : Set W) : Prop :=
+  relativize Q i ⊆ α ∧ ∀ α' ∈ S, relativize Q i ⊆ α' → ¬ α' ⊂ α
+
+/-- The consistent states in which `α` is optimal. -/
+def optimalStates (S : Set (Set W)) (α : Set W) : Set (Set W) :=
+  {i | i.Nonempty ∧ IsOptimal Q S α i}
+
+/-- The maximally informed optimal states: no other optimal state is relatively stronger. -/
+def maximalStates (S : Set (Set W)) (α : Set W) : Set (Set W) :=
+  {i | i ∈ optimalStates Q S α ∧ ∀ i' ∈ optimalStates Q S α, ¬ relativize Q i' ⊂ relativize Q i}
+
+/-- An answer implicates what every maximally informed optimal state entails. -/
+def Implicates (S : Set (Set W)) (α β : Set W) : Prop := ∀ i ∈ maximalStates Q S α, i ⊆ β
+
+theorem maximalStates_subset (S : Set (Set W)) (α : Set W) :
+    maximalStates Q S α ⊆ optimalStates Q S α :=
+  λ _ h => h.1
+
+end Gricean
+
+/-! ### Positive propositions -/
+
+/-- A valuation, the set of atoms it makes true. -/
+abbrev Valuation (Atom : Type*) := Finset Atom
+
+/-- A proposition, the set of valuations making it true. -/
+abbrev Proposition (Atom : Type*) := Set (Valuation Atom)
+
+/-- A literal: an atom or its negation. -/
+inductive Literal (Atom : Type*) where
+  | pos (a : Atom)
+  | neg (a : Atom)
   deriving DecidableEq, Repr
+
+variable {Atom : Type*}
 
 namespace Literal
 
-variable {α : Type*} [DecidableEq α]
-
 /-- The atom of a literal. -/
-def atom : Literal α → α
+def atom : Literal Atom → Atom
   | pos a => a
   | neg a => a
 
-/-- Whether a literal is positive. -/
-def isPositive : Literal α → Prop
-  | pos _ => True
-  | neg _ => False
-
-instance : DecidablePred (@isPositive α) := fun x => by
-  cases x <;> unfold isPositive <;> infer_instance
-
-/-- The negation of a literal. -/
-def negate : Literal α → Literal α
-  | pos a => neg a
-  | neg a => pos a
-
-/-- A valuation satisfies a literal. -/
-def satisfies (L : Literal α) (V : Finset α) : Bool :=
-  match L with
-  | pos a => a ∈ V
-  | neg a => a ∉ V
+/-- The literal holds in a valuation. -/
+def Holds : Literal Atom → Valuation Atom → Prop
+  | pos a, V => a ∈ V
+  | neg a, V => a ∉ V
 
 end Literal
 
+/-- Exhaustification: the minimal valuations of `P`. -/
+def Exhaust (P : Proposition Atom) : Proposition Atom := {V | V ∈ P ∧ ∀ V' ∈ P, ¬ V' ⊂ V}
 
-/-
-"Def 2 (favoring): Let F be a formula and L be a literal distinct from ⊥, ⊤.
-Then F favors L if there exists a valuation V such that V(F) = V(L) = 1 and
-such that V_{-L}(F) = 0"
+/-- The positive extension of `P`: all supersets of its valuations. -/
+def Pos (P : Proposition Atom) : Proposition Atom := {V | ∃ V' ∈ P, V' ⊆ V}
 
-P favors L iff there exists a valuation where both P and L are true,
-but flipping L makes P false.
--/
+theorem Exhaust_subset (P : Proposition Atom) : Exhaust P ⊆ P := λ _ hV => hV.1
 
-/--
-V_{-L}: The valuation identical to V except over the atom of L.
-If L = [p], then V_{-L} has p ∉ V_{-L} iff p ∈ V.
-If L = [¬p], then V_{-L} has p ∈ V_{-L} iff p ∉ V.
--/
-def flipLiteral (V : Valuation Atom) (L : Literal Atom) : Valuation Atom :=
-  let a := L.atom
-  if h : a ∈ V then V.erase a else V.cons a h
+theorem subset_Pos (P : Proposition Atom) : P ⊆ Pos P := λ V hV => ⟨V, hV, Finset.Subset.refl V⟩
 
-/--
-Definition 2 (Favoring): A proposition P favors a literal L if there exists
-a valuation V such that:
-1. V ∈ P (V makes P true)
-2. L.satisfies V = true (V makes L true)
-3. flipLiteral V L ∉ P (flipping L makes P false)
--/
-def favors (P : Proposition Atom) (L : Literal Atom) : Prop :=
-  ∃ V : Valuation Atom, V ∈ P ∧ L.satisfies V ∧ flipLiteral Atom V L ∉ P
+theorem Pos_mono {P P' : Proposition Atom} (h : P ⊆ P') : Pos P ⊆ Pos P' :=
+  λ _ ⟨V', hV', hle⟩ => ⟨V', h hV', hle⟩
 
-/--
-Definition 4 (Positive Proposition): A proposition is positive if it favors
-at least one positive literal and no negative literal.
-
-"A positive proposition is a proposition that favors no negative literal and
-is distinct from ⊥ and ⊤."
--/
-def isPositive (P : Proposition Atom) : Prop :=
-  (∃ a : Atom, favors Atom P (.pos a)) ∧ (∀ a : Atom, ¬favors Atom P (.neg a))
-
-/--
-A proposition is negative if it favors at least one negative literal and no
-positive literal.
--/
-def isNegative (P : Proposition Atom) : Prop :=
-  (∃ a : Atom, favors Atom P (.neg a)) ∧ (∀ a : Atom, ¬favors Atom P (.pos a))
-
-
-/-
-"Exhaustification:
-Let P be any non-negative proposition, then the function Exhaust is defined as:
-Exhaust(P) = {V | V ∈ P and there is no valuation V' in P such that V' ⊂ V}"
-
-This is the propositional counterpart of Groenendijk & Stokhof's exhaustivity
-operator - keep only the minimal valuations.
--/
-
-/--
-V' is a proper subset of V (as sets of true atoms).
--/
-def properSubset (V' V : Valuation Atom) : Prop :=
-  V' ⊂ V
-
-/--
-Definition 6 (Exhaustification): The set of minimal valuations in P.
-
-Exhaust(P) = {V ∈ P | ¬∃V' ∈ P, V' ⊂ V}
--/
-def Exhaust (P : Proposition Atom) : Proposition Atom :=
-  {V | V ∈ P ∧ ∀ V' ∈ P, ¬(V' ⊂ V)}
-
-/--
-Definition 5 (Positive Extension): The upward closure of P.
-
-Pos(P) = {V | ∃V' ∈ P, V' ⊆ V}
-
-"For any non-negative proposition P, there is a unique positive proposition Q
-such that P entails Q and Q entails all other positive propositions that P entails."
--/
-def Pos (P : Proposition Atom) : Proposition Atom :=
-  {V | ∃ V' ∈ P, V' ⊆ V}
-
--- Basic properties
-
-omit [DecidableEq Atom] in
-theorem Exhaust_subset (P : Proposition Atom) : Exhaust Atom P ⊆ P :=
-  λ _ hV => hV.1
-
-omit [DecidableEq Atom] in
-/--
-Helper lemma: Every element of P has a minimal element below it in P.
-Uses strong induction on Finset cardinality.
--/
-lemma exists_minimal (P : Set (Valuation Atom)) (s : Valuation Atom) (hs : s ∈ P) :
-    ∃ t ∈ P, t ⊆ s ∧ ∀ u ∈ P, ¬(u ⊂ t) := by
+/-- Every valuation of `P` lies above a minimal one. -/
+theorem exists_minimal (P : Proposition Atom) {s : Valuation Atom} (hs : s ∈ P) :
+    ∃ t ∈ P, t ⊆ s ∧ ∀ u ∈ P, ¬ u ⊂ t := by
   induction s using Finset.strongInductionOn with
   | _ s ih =>
-    by_cases hmin : ∀ u ∈ P, ¬(u ⊂ s)
+    by_cases hmin : ∀ u ∈ P, ¬ u ⊂ s
     · exact ⟨s, hs, Finset.Subset.refl s, hmin⟩
     · simp only [not_forall, not_not] at hmin
       obtain ⟨u, huP, husub⟩ := hmin
       obtain ⟨t, htP, htub, htmin⟩ := ih u husub huP
       exact ⟨t, htP, htub.trans husub.subset, htmin⟩
 
-/--
-Helper: If P is positive and W ∈ P and a ∉ W, then W ∪ {a} ∈ P.
-(Otherwise P would favor [¬a].)
--/
-lemma positive_upward_closed (P : Proposition Atom) (hpos : isPositive Atom P)
-    (W : Valuation Atom) (hWP : W ∈ P) (a : Atom) (ha_not_W : a ∉ W) :
-    W.cons a ha_not_W ∈ P := by
-  -- If W ∪ {a} ∉ P, then P favors [¬a], contradicting positivity
-  by_contra h_not_P
-  -- P favors [¬a]: W ∈ P, [¬a].satisfies W = true, flipLiteral W [¬a] ∉ P
-  have hfavors : favors Atom P (.neg a) := by
-    use W
-    refine ⟨hWP, ?_, ?_⟩
-    · -- [¬a].satisfies W = (a ∉ W) = true
-      simp [Literal.satisfies, ha_not_W]
-    · -- flipLiteral W [¬a] = W ∪ {a} ∉ P
-      simp only [flipLiteral, Literal.atom, dif_neg ha_not_W]
-      exact h_not_P
-  -- But hpos says P doesn't favor any negative literal
-  exact hpos.2 a hfavors
+theorem Exhaust_nonempty {P : Proposition Atom} (h : P.Nonempty) : (Exhaust P).Nonempty :=
+  let ⟨_, hV⟩ := h
+  let ⟨t, htP, _, hmin⟩ := exists_minimal P hV
+  ⟨t, htP, hmin⟩
 
--- Remove extra lemma marker if needed
+/-- The paper's second fact: exhaustification does not change the positive extension. -/
+theorem Pos_Exhaust (P : Proposition Atom) : Pos (Exhaust P) = Pos P := by
+  refine Set.Subset.antisymm (Pos_mono (Exhaust_subset P)) λ V ⟨V', hV', hle⟩ => ?_
+  obtain ⟨t, htP, hts, hmin⟩ := exists_minimal P hV'
+  exact ⟨t, ⟨htP, hmin⟩, hts.trans hle⟩
 
-/--
-Helper: Positive propositions are upward closed (if V' ⊆ V and V' ∈ P, then V ∈ P).
-Proved by strong induction on |V \ V'| (the "gap" between V' and V).
--/
-lemma positive_superset_mem (P : Proposition Atom) (hpos : isPositive Atom P)
-    (V' V : Valuation Atom) (hV'P : V' ∈ P) (hV'_sub : V' ⊆ V) : V ∈ P := by
-  -- Induction on the cardinality of V \ V'
+/-- Exhaustification entails every state in which the answer is optimal. -/
+theorem Exhaust_subset_of_Pos_eq {P i : Proposition Atom} (h : Pos i = P) : Exhaust P ⊆ i := by
+  rintro V ⟨hVP, hmin⟩
+  by_contra hVi
+  obtain ⟨V', hV'i, hle⟩ : V ∈ Pos i := h ▸ hVP
+  have hV'P : V' ∈ P := h ▸ subset_Pos i hV'i
+  exact hmin V' hV'P (Finset.ssubset_iff_subset_ne.2 ⟨hle, λ heq => hVi (heq ▸ hV'i)⟩)
+
+variable [DecidableEq Atom]
+
+/-- The valuation identical to `V` except on the atom of `L`. -/
+def flip (V : Valuation Atom) (L : Literal Atom) : Valuation Atom :=
+  if h : L.atom ∈ V then V.erase L.atom else V.cons L.atom h
+
+/-- `P` favors `L`: some valuation makes both true and flipping `L` makes `P` false. -/
+def Favors (P : Proposition Atom) (L : Literal Atom) : Prop :=
+  ∃ V ∈ P, L.Holds V ∧ flip V L ∉ P
+
+/-- A positive proposition favors a positive literal and no negative one. -/
+def IsPositive (P : Proposition Atom) : Prop :=
+  (∃ a, Favors P (.pos a)) ∧ ∀ a, ¬ Favors P (.neg a)
+
+/-- The positive propositions, the alternative set of a positive answer. -/
+def positives : Set (Proposition Atom) := {P | IsPositive P}
+
+/-- A positive proposition contains the valuations extending its valuations by one atom,
+since otherwise it would favor the negation of that atom. -/
+theorem IsPositive.cons_mem {P : Proposition Atom} (hP : IsPositive P) {V : Valuation Atom}
+    (hV : V ∈ P) {a : Atom} (ha : a ∉ V) : V.cons a ha ∈ P := by
+  by_contra h
+  refine hP.2 a ⟨V, hV, ha, ?_⟩
+  simpa [flip, Literal.atom, ha] using h
+
+/-- A positive proposition is closed upward. -/
+theorem IsPositive.mem_of_subset {P : Proposition Atom} (hP : IsPositive P)
+    {V' V : Valuation Atom} (hV' : V' ∈ P) (hle : V' ⊆ V) : V ∈ P := by
   generalize hn : V.card - V'.card = n
   induction n using Nat.strong_induction_on generalizing V' with
   | _ n ih =>
-    -- Either V' = V or V' ⊂ V
-    rcases eq_or_ssubset_of_subset hV'_sub with heq | hsub
-    · -- V' = V: trivial
-      rw [← heq]; exact hV'P
-    · -- V' ⊂ V: there exists a ∈ V \ V'
-      obtain ⟨a, ha_V, ha_not_V'⟩ := Finset.exists_of_ssubset hsub
-      -- V'.cons a ∈ P by upward closure
-      have hcons_P : V'.cons a ha_not_V' ∈ P := positive_upward_closed Atom P hpos V' hV'P a ha_not_V'
-      -- V'.cons a ⊆ V
-      have hcons_sub : V'.cons a ha_not_V' ⊆ V := by
-        intro x hx
-        simp only [Finset.mem_cons] at hx
-        cases hx with
-        | inl heq => rw [heq]; exact ha_V
-        | inr hxV' => exact hV'_sub hxV'
-      -- The gap shrinks: |V| - |V'.cons a| < |V| - |V'|
-      have hcard_V' : V'.card < V.card := Finset.card_lt_card hsub
-      have hcard_cons : (V'.cons a ha_not_V').card = V'.card + 1 := Finset.card_cons ha_not_V'
-      have hgap_lt : V.card - (V'.cons a ha_not_V').card < n := by omega
-      -- Apply IH with V'.cons a
-      exact ih (V.card - (V'.cons a ha_not_V').card) hgap_lt (V'.cons a ha_not_V') hcons_P hcons_sub rfl
+    rcases eq_or_ssubset_of_subset hle with rfl | hss
+    · exact hV'
+    · obtain ⟨a, haV, haV'⟩ := Finset.exists_of_ssubset hss
+      have hsub : V'.cons a haV' ⊆ V := λ x hx =>
+        (Finset.mem_cons.1 hx).elim (λ h => h ▸ haV) (λ h => hle h)
+      have hcard : V'.card < V.card := Finset.card_lt_card hss
+      exact ih _ (by rw [Finset.card_cons]; omega) (hP.cons_mem hV' haV') hsub rfl
 
-omit [DecidableEq Atom] in
-theorem P_subset_Pos (P : Proposition Atom) : P ⊆ Pos Atom P :=
-  λ V hV => ⟨V, hV, Finset.Subset.refl V⟩
+theorem IsPositive.nonempty {P : Proposition Atom} (hP : IsPositive P) : P.Nonempty :=
+  let ⟨_, V, hV, _⟩ := hP.1
+  ⟨V, hV⟩
 
-/--
-Fact 1: If P is positive, then Pos(P) = P.
+theorem IsPositive.ne_univ {P : Proposition Atom} (hP : IsPositive P) : P ≠ Set.univ := by
+  rintro rfl
+  obtain ⟨_, _, -, -, h⟩ := hP.1
+  exact h (Set.mem_univ _)
 
-"If P is positive, Pos(P) = P"
--/
-theorem Pos_of_positive (P : Proposition Atom) (hpos : isPositive Atom P) :
-    Pos Atom P = P := by
-  ext V
+/-- A nonempty, non-universal, upward-closed proposition is positive: it favors the atoms of
+its minimal valuations and no negative literal. -/
+theorem isPositive_of_upward {P : Proposition Atom} (hne : P.Nonempty) (hnu : P ≠ Set.univ)
+    (hup : ∀ V ∈ P, ∀ V', V ⊆ V' → V' ∈ P) : IsPositive P := by
+  refine ⟨?_, λ a ⟨V, hV, haV, hflip⟩ => ?_⟩
+  · obtain ⟨V₀, hV₀⟩ := hne
+    obtain ⟨V, hVP, -, hmin⟩ := exists_minimal P hV₀
+    have hVne : V.Nonempty := by
+      rw [Finset.nonempty_iff_ne_empty]
+      rintro rfl
+      exact hnu (Set.eq_univ_of_forall λ V' => hup ∅ hVP V' (Finset.empty_subset _))
+    obtain ⟨a, ha⟩ := hVne
+    refine ⟨a, V, hVP, ha, λ hmem => hmin _ ?_ (Finset.erase_ssubset ha)⟩
+    simpa [flip, Literal.atom, ha] using hmem
+  · have haV' : a ∉ V := haV
+    refine hflip ?_
+    simpa [flip, Literal.atom, haV'] using
+      hup V hV (V.cons a haV') λ x hx => Finset.mem_cons.2 (Or.inr hx)
+
+/-- The paper's first fact: a positive proposition is its own positive extension. -/
+theorem Pos_of_isPositive {P : Proposition Atom} (hP : IsPositive P) : Pos P = P :=
+  Set.Subset.antisymm (λ _ ⟨_, hV', hle⟩ => hP.mem_of_subset hV' hle) (subset_Pos P)
+
+/-- The positive extension of a consistent state that does not exclude nothing is positive:
+the strongest positive proposition the state entails. -/
+theorem Pos_isPositive {i : Proposition Atom} (hi : i.Nonempty) (hnu : Pos i ≠ Set.univ) :
+    IsPositive (Pos i) :=
+  isPositive_of_upward (hi.mono (subset_Pos i)) hnu
+    λ _ ⟨V', hV', hle⟩ _ hle' => ⟨V', hV', hle.trans hle'⟩
+
+/-! ### The reduction and the theorem -/
+
+/-- The paper's reduction: a positive answer is optimal in a consistent state exactly when it
+is the strongest positive proposition the state entails. -/
+theorem isOptimal_iff {P i : Proposition Atom} (hP : IsPositive P) (hi : i.Nonempty) :
+    IsOptimal ⊥ positives P i ↔ Pos i = P := by
+  simp only [IsOptimal, relativize_bot, positives, Set.mem_ofPred_eq]
   constructor
-  · -- Pos(P) ⊆ P for positive P
-    intro ⟨V', hV'P, hV'_sub⟩
-    -- Since P is positive, it's upward closed: V' ∈ P and V' ⊆ V implies V ∈ P
-    exact positive_superset_mem Atom P hpos V' V hV'P hV'_sub
-  · -- P ⊆ Pos(P)
-    intro hV
-    exact P_subset_Pos Atom P hV
+  · rintro ⟨hiP, hopt⟩
+    have hsub : Pos i ⊆ P := λ _ ⟨V', hV', hle⟩ => hP.mem_of_subset (hiP hV') hle
+    by_contra hne
+    have hnu : Pos i ≠ Set.univ := λ h => hP.ne_univ (Set.eq_univ_of_univ_subset (h ▸ hsub))
+    exact hopt (Pos i) (Pos_isPositive hi hnu) (subset_Pos i)
+      (Set.ssubset_iff_subset_ne.2 ⟨hsub, hne⟩)
+  · rintro rfl
+    exact ⟨subset_Pos i, λ α' hα' hiα' hss =>
+      hss.2 ((Pos_mono hiα').trans (Pos_of_isPositive hα').subset)⟩
 
-omit [DecidableEq Atom] in
-/--
-Fact 2: Pos(Exhaust(P)) = Pos(P).
+theorem optimalStates_eq {P : Proposition Atom} (hP : IsPositive P) :
+    optimalStates ⊥ positives P = {i | i.Nonempty ∧ Pos i = P} :=
+  Set.ext λ _ => and_congr_right (isOptimal_iff hP)
 
-"Pos(Exhaust(P)) = P" [when P is positive, this is Pos(P)]
--/
-theorem Pos_Exhaust_eq_Pos (P : Proposition Atom) :
-    Pos Atom (Exhaust Atom P) = Pos Atom P := by
-  ext V
-  constructor
-  · -- Pos(Exhaust(P)) ⊆ Pos(P)
-    intro ⟨V', hV'_exh, hV'_sub⟩
-    exact ⟨V', hV'_exh.1, hV'_sub⟩
-  · -- Pos(P) ⊆ Pos(Exhaust(P))
-    intro ⟨V', hV'P, hV'_sub⟩
-    -- V' ∈ P, so there's a minimal V'' ⊆ V' in Exhaust(P)
-    obtain ⟨V'', hV''P, hV''_sub_V', hV''_min⟩ := exists_minimal Atom P V' hV'P
-    -- V'' is in Exhaust(P) since it's minimal
-    have hV''_exh : V'' ∈ Exhaust Atom P := ⟨hV''P, hV''_min⟩
-    -- V'' ⊆ V' ⊆ V, so V ∈ Pos(Exhaust(P))
-    exact ⟨V'', hV''_exh, hV''_sub_V'.trans hV'_sub⟩
-
-
-/-
-"Def 3: I(S, α, Q) = {i | i/Q ⊆ α and ∀α' (α' ∈ S and i/Q ⊆ α') → ¬(α' ⊂ α)}"
-
-Information states where α is the optimal answer: no strictly better alternative
-is entailed by the speaker's beliefs.
-
-For simplicity, we work with the case where alternatives = all positive propositions.
--/
-
-/--
-An information state is itself a proposition (set of valuations the speaker
-considers possible).
--/
-abbrev InfoState := Proposition Atom
-
-/--
-Definition 3 (Optimal States): I(P) is the set of information states where
-P is the strongest positive proposition entailed.
-
-I(P) = {i | Pos(i) = P}
-
-An information state i makes P optimal iff P is the strongest positive proposition
-that i entails.
--/
-def I (P : Proposition Atom) : Set (InfoState Atom) :=
-  {i | Pos Atom i = P}
-
-/--
-Definition 4 (Maximal Optimal States): Max(P) is the set of maximal elements
-of I(P) - the most informed states that still make P optimal.
-
-"Max(S, α, Q) = {i | i ∈ I(S, α, Q) and ∀i' (i' ∈ I(S, α, Q)) → ¬(i'/Q ⊂ i/Q)}"
-
-In our setting: Max(P) = {i ∈ I(P) | ∀i' ∈ I(P), ¬(i' ⊂ i)}
--/
-def Max (P : Proposition Atom) : Set (InfoState Atom) :=
-  {i | i ∈ I Atom P ∧ ∀ i' ∈ I Atom P, ¬(i' ⊂ i)}
-
-
-/-
-"Theorem: if P is a positive proposition, then Max(P) = {Exhaust(P)}, and
-therefore P implicates Exhaust(P)."
-
-This is the main result: Gricean reasoning leads to exhaustive interpretation.
--/
-
-/--
-Exhaust(P) is in I(P) for positive P.
-
-Since Pos(Exhaust(P)) = Pos(P) = P (by Facts 1 and 2), Exhaust(P) is an
-information state that makes P optimal.
--/
-theorem Exhaust_mem_I (P : Proposition Atom) (hpos : isPositive Atom P) :
-    Exhaust Atom P ∈ I Atom P := by
-  simp only [I, Set.mem_ofPred_eq]
-  rw [Pos_Exhaust_eq_Pos, Pos_of_positive Atom P hpos]
-
-/--
-Exhaust(P) entails all members of I(P).
-
-"We want to show that Exhaust(P) entails all the other members of I(P)."
--/
-theorem Exhaust_entails_I (P : Proposition Atom) (_hpos : isPositive Atom P) :
-    ∀ i ∈ I Atom P, Exhaust Atom P ⊆ i := by
-  intro i hi V hV_exh
-  -- V is a minimal element of P
-  have hV_P : V ∈ P := hV_exh.1
-  have hV_min : ∀ V' ∈ P, ¬(V' ⊂ V) := hV_exh.2
-  -- Since i ∈ I(P), we have Pos(i) = P
-  have hi_pos : Pos Atom i = P := hi
-  -- Key fact: i ⊆ P (since for any V' ∈ i, V' ∈ Pos(i) = P by reflexivity)
-  have hi_sub_P : i ⊆ P := λ V' hV'i =>
-    hi_pos ▸ (P_subset_Pos Atom i hV'i)
-  -- We need to show V ∈ i. By contradiction, assume V ∉ i.
-  by_contra hV_not_i
-  -- Since V ∈ P = Pos(i), there exists V' ∈ i with V' ⊆ V
-  have hV_in_Pos_i : V ∈ Pos Atom i := hi_pos ▸ hV_P
-  obtain ⟨V', hV'i, hV'_sub⟩ := hV_in_Pos_i
-  -- Since V ∉ i and V' ∈ i with V' ⊆ V, we must have V' ≠ V
-  have hV'_ne : V' ≠ V := λ h => hV_not_i (h ▸ hV'i)
-  -- So V' ⊂ V (proper subset)
-  have hV'_ssub : V' ⊂ V := Finset.ssubset_iff_subset_ne.mpr ⟨hV'_sub, hV'_ne⟩
-  -- But V' ∈ i ⊆ P, so V' ∈ P with V' ⊂ V, contradicting V's minimality
-  exact hV_min V' (hi_sub_P hV'i) hV'_ssub
-
-/--
-[spector-2007]:
-
-For any positive proposition P, Max(P) = {Exhaust(P)}.
-
-"Theorem: if P is a positive proposition, then Max(P) = {Exhaust(P)}, and
-therefore P implicates Exhaust(P)."
-
-This derives exhaustive interpretation from Gricean reasoning:
-- The speaker uttered P (Quality: they believe P)
-- P was optimal among alternatives (Quantity: no better option)
-- Assuming maximal informativeness → the speaker's state is Exhaust(P)
-- Therefore P implicates Exhaust(P)
--/
-theorem main_theorem (P : Proposition Atom) (hpos : isPositive Atom P) :
-    Max Atom P = {Exhaust Atom P} := by
+/-- The theorem: for a positive answer the unique maximally informed optimal state is its
+exhaustification. -/
+theorem maximalStates_eq {P : Proposition Atom} (hP : IsPositive P) :
+    maximalStates ⊥ positives P = {Exhaust P} := by
+  have hI := optimalStates_eq hP
+  have hExh : Exhaust P ∈ optimalStates ⊥ positives P := by
+    rw [hI]
+    exact ⟨Exhaust_nonempty hP.nonempty, by rw [Pos_Exhaust, Pos_of_isPositive hP]⟩
+  have hent : ∀ i ∈ optimalStates ⊥ positives P, Exhaust P ⊆ i := λ i hi => by
+    rw [hI] at hi
+    exact Exhaust_subset_of_Pos_eq hi.2
   ext i
-  simp only [Max, Set.mem_ofPred_eq, Set.mem_singleton_iff]
+  simp only [maximalStates, Set.mem_ofPred_eq, Set.mem_singleton_iff, relativize_bot]
   constructor
-  · -- If i ∈ Max(P), then i = Exhaust(P)
-    intro ⟨hi_I, hi_max⟩
-    -- Exhaust(P) ⊆ i (by Exhaust_entails_I)
-    have h1 : Exhaust Atom P ⊆ i := Exhaust_entails_I Atom P hpos i hi_I
-    -- i ⊆ Exhaust(P) (by maximality)
-    -- If i ⊃ Exhaust(P), then there's V ∈ i \ Exhaust(P)
-    -- But Exhaust(P) ∈ I(P), so i can't be a proper superset
-    have h2 : i ⊆ Exhaust Atom P := by
-      by_contra h
-      obtain ⟨V, hVi, hV_not_exh⟩ := Set.not_subset.mp h
-      -- V ∈ i but V ∉ Exhaust(P)
-      -- Since Exhaust(P) ⊆ i (by h1) but V ∈ i \ Exhaust(P), we have Exhaust(P) ⊂ i
-      have hExh_ne : Exhaust Atom P ≠ i := λ heq => hV_not_exh (heq ▸ hVi)
-      have hExh_ssub : Exhaust Atom P ⊂ i := Set.ssubset_iff_subset_ne.mpr ⟨h1, hExh_ne⟩
-      -- This contradicts hi_max applied to Exhaust(P)
-      exact hi_max (Exhaust Atom P) (Exhaust_mem_I Atom P hpos) hExh_ssub
-    exact Set.Subset.antisymm h2 h1
-  · -- If i = Exhaust(P), then i ∈ Max(P)
-    intro heq
-    rw [heq]
-    constructor
-    · exact Exhaust_mem_I Atom P hpos
-    · intro i' hi' hsub
-      -- Need to show ¬(i' ⊂ Exhaust(P))
-      -- i' ∈ I(P) means Pos(i') = P
-      -- By Exhaust_entails_I: Exhaust(P) ⊆ i'
-      -- If i' ⊂ Exhaust(P), then ¬(Exhaust(P) ⊆ i') by definition of ⊂
-      -- Contradiction
-      have h := Exhaust_entails_I Atom P hpos i' hi'
-      exact hsub.2 h
+  · rintro ⟨hi, hmax⟩
+    by_contra hne
+    exact hmax _ hExh (Set.ssubset_iff_subset_ne.2 ⟨hent i hi, λ h => hne h.symm⟩)
+  · rintro rfl
+    exact ⟨hExh, λ i' hi' hss => hss.2 (hent i' hi')⟩
 
+/-- A positive answer implicates its exhaustification. -/
+theorem implicates_Exhaust {P : Proposition Atom} (hP : IsPositive P) :
+    Implicates ⊥ positives P (Exhaust P) := by
+  intro i hi
+  rw [maximalStates_eq hP, Set.mem_singleton_iff] at hi
+  exact hi.subset
 
-/-
-The main theorem shows that for positive propositions (like "A or B"), the
-Gricean reasoning leads to exhaustive interpretation.
+/-! ### Disjunction -/
 
-Example: "A or B" has the exhaustive reading "exactly one of A or B"
-because Max(A∨B) = {Exhaust(A∨B)} = {{A}, {B}}.
--/
+/-- The proposition that `a` holds. -/
+def atomProp (a : Atom) : Proposition Atom := {V | a ∈ V}
 
-/--
-Example: The proposition "A or B" (at least one of A, B is true).
--/
-def orProp (A B : Atom) : Proposition Atom :=
-  {V | A ∈ V ∨ B ∈ V}
+/-- *A or B*. -/
+def orProp (a b : Atom) : Proposition Atom := {V | a ∈ V ∨ b ∈ V}
 
-/--
-Example: The exhaustification of "A or B" is "exactly A or exactly B".
+/-- *Only A or only B*. -/
+def exclOr (a b : Atom) : Proposition Atom := {V | V = {a} ∨ V = {b}}
 
-This is the minimal exclusive disjunction (singletons only).
-The more general "A xor B" (A ∈ V ↔ B ∉ V) includes non-minimal sets like {A, C}.
--/
-def exclOrProp (A B : Atom) : Proposition Atom :=
-  {V | V = {A} ∨ V = {B}}
+theorem orProp_isPositive (a b : Atom) : IsPositive (orProp a b) := by
+  refine isPositive_of_upward ⟨{a}, Or.inl (Finset.mem_singleton_self a)⟩ ?_ ?_
+  · intro h
+    have : (∅ : Valuation Atom) ∈ orProp a b := by rw [h]; exact Set.mem_univ _
+    rcases this with h' | h' <;> exact Finset.notMem_empty _ h'
+  · rintro _ hV _ hle
+    rcases hV with h | h
+    exacts [Or.inl (hle h), Or.inr (hle h)]
 
-/--
-The exhaustification of "A or B" yields exclusive disjunction (minimal singletons).
--/
-theorem exhaust_or_eq_exclOr (A B : Atom) (_hne : A ≠ B) :
-    Exhaust Atom (orProp Atom A B) = exclOrProp Atom A B := by
+/-- The exhaustification of *A or B* is exclusive: only *A* or only *B*. -/
+theorem Exhaust_orProp (a b : Atom) : Exhaust (orProp a b) = exclOr a b := by
   ext V
-  simp only [Exhaust, orProp, exclOrProp, Set.mem_ofPred_eq]
+  simp only [Exhaust, orProp, exclOr, Set.mem_ofPred_eq]
   constructor
-  · -- Exhaust(A∨B) ⊆ {{A}, {B}}
-    intro ⟨hV_or, hV_min⟩
-    cases hV_or with
-    | inl hA =>
-      -- A ∈ V. We claim V = {A}.
-      left
-      ext x
-      simp only [Finset.mem_singleton]
-      constructor
-      · intro hx
-        by_contra hne_x
-        -- x ∈ V but x ≠ A. Then V.erase x ⊂ V and A ∈ V.erase x.
-        apply hV_min (V.erase x)
-        · left; exact Finset.mem_erase.mpr ⟨λ h => hne_x h.symm, hA⟩
-        · exact Finset.erase_ssubset hx
-      · intro hxa; rw [hxa]; exact hA
-    | inr hB =>
-      -- B ∈ V. We claim V = {B}.
-      right
-      ext x
-      simp only [Finset.mem_singleton]
-      constructor
-      · intro hx
-        by_contra hne_x
-        apply hV_min (V.erase x)
-        · right; exact Finset.mem_erase.mpr ⟨λ h => hne_x h.symm, hB⟩
-        · exact Finset.erase_ssubset hx
-      · intro hxb; rw [hxb]; exact hB
-  · -- {{A}, {B}} ⊆ Exhaust(A∨B)
-    intro hV
-    cases hV with
-    | inl heqA =>
-      rw [heqA]
-      constructor
-      · left; exact Finset.mem_singleton_self A
-      · intro V' hV' hsub
-        -- V' ⊂ {A} means V' = ∅
-        have : V' = ∅ := Finset.eq_empty_of_ssubset_singleton hsub
-        rw [this] at hV'
-        cases hV' with
-        | inl hA' => exact Finset.notMem_empty A hA'
-        | inr hB' => exact Finset.notMem_empty B hB'
-    | inr heqB =>
-      rw [heqB]
-      constructor
-      · right; exact Finset.mem_singleton_self B
-      · intro V' hV' hsub
-        have : V' = ∅ := Finset.eq_empty_of_ssubset_singleton hsub
-        rw [this] at hV'
-        cases hV' with
-        | inl hA' => exact Finset.notMem_empty A hA'
-        | inr hB' => exact Finset.notMem_empty B hB'
+  · rintro ⟨hV, hmin⟩
+    have single : ∀ c ∈ V, (∀ x ∈ V, x = c) → V = {c} := λ c hc h =>
+      Finset.eq_singleton_iff_unique_mem.2 ⟨hc, h⟩
+    rcases hV with ha | hb
+    · refine Or.inl (single a ha λ x hx => ?_)
+      by_contra hne
+      exact hmin (V.erase x) (Or.inl (Finset.mem_erase.2 ⟨λ h => hne h.symm, ha⟩))
+        (Finset.erase_ssubset hx)
+    · refine Or.inr (single b hb λ x hx => ?_)
+      by_contra hne
+      exact hmin (V.erase x) (Or.inr (Finset.mem_erase.2 ⟨λ h => hne h.symm, hb⟩))
+        (Finset.erase_ssubset hx)
+  · rintro (rfl | rfl)
+    · refine ⟨Or.inl (Finset.mem_singleton_self a), λ V' hV' hss => ?_⟩
+      rw [Finset.eq_empty_of_ssubset_singleton hss] at hV'
+      exact hV'.elim (Finset.notMem_empty a) (Finset.notMem_empty b)
+    · refine ⟨Or.inr (Finset.mem_singleton_self b), λ V' hV' hss => ?_⟩
+      rw [Finset.eq_empty_of_ssubset_singleton hss] at hV'
+      exact hV'.elim (Finset.notMem_empty a) (Finset.notMem_empty b)
+
+/-- *A or B* implicates *only A or only B*. -/
+theorem orProp_implicates_exclOr (a b : Atom) :
+    Implicates ⊥ positives (orProp a b) (exclOr a b) :=
+  Exhaust_orProp a b ▸ implicates_Exhaust (orProp_isPositive a b)
+
+/-- No unwanted negation: no state in which *A or B* is optimal decides *A*, since a state
+entailing *A* would have *A* as a better answer and one entailing *not A* would have *B*. -/
+theorem no_unwanted_negation {a b : Atom} (hab : a ≠ b) {i : Proposition Atom}
+    (hi : i ∈ optimalStates ⊥ positives (orProp a b)) :
+    ¬ i ⊆ atomProp a ∧ ¬ i ⊆ (atomProp a)ᶜ := by
+  rw [optimalStates_eq (orProp_isPositive a b)] at hi
+  obtain ⟨-, hPos⟩ := hi
+  have hb : ({b} : Valuation Atom) ∈ orProp a b := Or.inr (Finset.mem_singleton_self b)
+  have ha : ({a} : Valuation Atom) ∈ orProp a b := Or.inl (Finset.mem_singleton_self a)
+  constructor
+  · intro h
+    have hsub : Pos i ⊆ atomProp a := λ _ ⟨_, hV', hle⟩ => hle (h hV')
+    rw [hPos] at hsub
+    exact hab (Finset.mem_singleton.1 (hsub hb))
+  · intro h
+    have hsub : Pos i ⊆ atomProp b := by
+      rintro _ ⟨V', hV', hle⟩
+      have hV'or : V' ∈ orProp a b := hPos ▸ subset_Pos i hV'
+      rcases hV'or with ha' | hb'
+      · exact absurd ha' (h hV')
+      · exact hle hb'
+    rw [hPos] at hsub
+    exact hab (Finset.mem_singleton.1 (hsub ha)).symm
 
 end Spector2007
