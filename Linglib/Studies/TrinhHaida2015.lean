@@ -1,375 +1,292 @@
-import Mathlib.Tactic.DeriveFintype
+import Mathlib.Order.BooleanSubalgebra
 import Linglib.Semantics.Alternatives.Structural
-import Linglib.Semantics.Alternatives.Symmetric
-import Linglib.Semantics.Exhaustification.Finite
+import Linglib.Studies.FoxKatzir2011
+import Linglib.Data.Examples.TrinhHaida2015
 
 /-!
-# Trinh & Haida 2015: Constraining the Derivation of Alternatives
-[trinh-haida-2015]
+# Trinh and Haida (2015): Constraining the Derivation of Alternatives
 
-Trinh, T. & Haida, A. (2015). Constraining the derivation of alternatives.
-Natural Language Semantics, 23(4), 249–270.
+This file formalizes the Atomicity constraint of [trinh-haida-2015] and the argument from
+symmetry that motivates it. Exhaustification `EXH(A)(S)` negates the innocently excludable
+members of a domain `A` of alternatives, (1), the substrate's `exhIE`, and on [fox-katzir-2011]'s
+theory `A` is the set of relevant members of the formal alternatives `F(S)`, which, relevance
+being closed under negation and conjunction, amounts to the conditions (27): `A ⊆ F(S)`,
+`S ∈ A`, and no member of `F(S)` outside `A` lies in the Boolean closure of `A`, `IsDomain`.
+Two symmetric alternatives, partitioning the prejacent, are then kept or dropped together
+whenever both are formal alternatives, `IsDomain.mem_of_isSymmetric`, so a domain holding one
+without the other does not exist, `not_isDomain_pair_of_isSymmetric`, and no inference against
+either arises. The puzzle, (20) against (21), is that *Bill went for a run and didn't smoke;
+John only went for a run* does license the inference that John smoked, although *run and
+smoked* is a formal alternative symmetric to the contextual *run and didn't smoke*, while
+*Bill ate exactly three cookies; John only ate three* licenses no inference against *exactly
+three*. Atomicity, (32), resolves it: expressions in the substitution source are syntactically
+atomic, so once a contextual constituent has been substituted in, its parts cannot be
+replaced, (33), and *run and smoked* is not derivable, `Subst` and `atoms_mem_source`. With it
+gone, `{run, run ∧ ¬smoke}` satisfies (27) whenever running and smoking are independent among
+non-runners, `run_smoke_isDomain`, and exhaustification yields *run and smoked*,
+`exhIE_run_smoke`; with *four* derived by lexical replacement and equal to *three* without
+*exactly three*, `{three, exactly three}` fails (27), the symmetric case.
 
-## Core Contribution
+## Implementation notes
 
-The **Atomicity constraint** (def 32): expressions in the substitution
-source are syntactically atomic — their internal structure is inaccessible
-to structural operations. This refines [fox-katzir-2011] /
-[katzir-2007] to correctly distinguish:
+Sentences are propositions `Set W` and the Boolean closure is mathlib's
+`BooleanSubalgebra.closure`; membership in it respects any agreement between worlds on the
+generators, `mem_iff_of_mem_closure`, which is how (27c) is refuted or established. The
+derivation of alternatives is by substitution alone, as the paper takes [fox-katzir-2011]'s to
+be, of a same-category source expression for a non-atomic constituent, and every substituted
+expression enters marked atomic, so an alternative differs from the prejacent by whole source
+expressions only; the substitution source, the sets `F(S)` of (35) and (42), and the
+independence of the predicates are taken from the paper rather than computed from a lexicon.
+The constraints (60b) and (60c) for the switching problem, bottom-up and non-weakening
+replacement, and the indirect implicature of (54) are described by the rows. The examples are
+the rows of `Data.Examples.TrinhHaida2015`.
 
-- **Symmetry-breaking cases** (§3.2.2): "Bill ran and didn't smoke.
-  John ran." → John smoked. Atomicity blocks "ran ∧ smoked" from F(S),
-  so A = {run, run ∧ ¬smoke} satisfies Conditions on A (27), and
-  EXH derives ¬(run ∧ ¬smoke).
+## References
 
-- **Symmetry-preserving cases** (§3.2.3): "Bill ate exactly three.
-  John ate three." → ✗John ate exactly three. Atomicity is vacuous;
-  Conditions on A (27c) force "four" into A, creating symmetry.
-
-## Key Definitions
-
-- `inBooleanClosure`: p is determined by a set of propositions (27c)
-- `isValidDomain`: Conditions on A (27) for EXH domains
-- `ATree` / `ATStructOp`: parse trees with AT-marking; structural
-  operations that cannot enter AT-marked nodes
-- `structuralAlternativesAT`: F_AT(S) ⊆ F(S)
-
-## Relation to the `Excluder.preFilter` combinator
-
-Atomicity is a restriction on the formal-alternative source `F`, the
-[fox-katzir-2011] `F` (not `C`) side of the asymmetry.
-`Semantics/Exhaustification/Excluder.lean` packages F-side
-restrictions as the abstract combinator `Excluder.preFilter`, with the
-algebraic non-monotonicity theorem `preFilter_can_create_implicature`.
-The Trinh–Haida construction is a linguistically-motivated *two-layer*
-F-side restriction (Atomicity + Conditions on A), so it doesn't reduce
-to a single `preFilter` call: `innocent.exh` on full `F_AT(run)` remains
-vacuous; the strengthening to `ran ∧ smoked` requires the further
-domain-choice step `A = {ran, ranNotSmoked}`. The Symmetric/Atomic
-formalization here is therefore complementary to (not subsumed by) the
-abstract combinator: `Excluder.lean` proves the asymmetry exists in
-the algebra; this file shows the linguistic substance the asymmetry
-licenses.
+* [trinh-haida-2015]
+* [fox-katzir-2011]
+* [katzir-2007]
+* [fox-2007]
+* [rooth-1992]
+* [kroch-1972]
 -/
 
 namespace TrinhHaida2015
 
-open Syntax (Tree Cat)
-open Syntax.Cat
-open Alternatives
-open Exhaustification (innocent predToFinset altsFromPreds)
+open Alternatives Exhaustification Set
 
+variable {W : Type*}
 
--- ════════════════════════════════════════════════════════════════════
--- §1  Boolean Closure
--- ════════════════════════════════════════════════════════════════════
+/-! ### Conditions on the domain of exhaustification (27) -/
 
-/-- A proposition `p` is in the **Boolean closure** of `alts`:
-    `p` is determined by the truth values of elements of `alts`.
-    Whenever two worlds agree on all elements of `alts`, they agree
-    on `p`. Used in Condition (27c). -/
-def inBooleanClosure {W : Type} (domain : List W)
-    (alts : List (W → Bool)) (p : W → Bool) : Bool :=
-  domain.all fun w₁ => domain.all fun w₂ =>
-    !(alts.all fun a => a w₁ == a w₂) || (p w₁ == p w₂)
+/-- (27): `A` is a domain of EXH for the prejacent `S` with formal alternatives `F`: a subset of
+`F` containing `S` and every member of `F` in its Boolean closure. -/
+structure IsDomain (F : Set (Set W)) (S : Set W) (A : Set (Set W)) : Prop where
+  subset : A ⊆ F
+  self_mem : S ∈ A
+  closed : ∀ S' ∈ F, S' ∈ BooleanSubalgebra.closure A → S' ∈ A
 
+/-- A proposition in the Boolean closure of `A` separates no two worlds that agree on every
+member of `A`. -/
+theorem mem_iff_of_mem_closure {A : Set (Set W)} {p : Set W}
+    (hp : p ∈ BooleanSubalgebra.closure A) {w v : W} (h : ∀ a ∈ A, w ∈ a ↔ v ∈ a) :
+    w ∈ p ↔ v ∈ p := by
+  refine BooleanSubalgebra.closure_bot_sup_induction (p := λ x _ => (w ∈ x ↔ v ∈ x))
+    (λ x hx => h x hx) (by simp) (λ x _ y _ hx hy => ?_) (λ x _ hx => ?_) hp
+  · show w ∈ x ∪ y ↔ v ∈ x ∪ y
+    simp [hx, hy]
+  · show w ∈ xᶜ ↔ v ∈ xᶜ
+    simp [hx]
 
--- ════════════════════════════════════════════════════════════════════
--- §2  Conditions on A (def 27)
--- ════════════════════════════════════════════════════════════════════
+/-- Two worlds agreeing on `A` but not on `p` witness that `p` is outside the closure. -/
+theorem notMem_closure_of_separates {A : Set (Set W)} {p : Set W} {w v : W}
+    (h : ∀ a ∈ A, w ∈ a ↔ v ∈ a) (hw : w ∈ p) (hv : v ∉ p) :
+    p ∉ BooleanSubalgebra.closure A :=
+  λ hp => hv ((mem_iff_of_mem_closure hp h).1 hw)
 
-/-- Extensional equality on a finite domain. -/
-def propEqOn {W : Type} (domain : List W) (p q : W → Bool) : Bool :=
-  domain.all fun w => p w == q w
+variable {F A : Set (Set W)} {S S₁ S₂ : Set W}
 
-/-- Extensional membership via `propEqOn`. -/
-def propMemOn {W : Type} (domain : List W) (p : W → Bool)
-    (alts : List (W → Bool)) : Bool :=
-  alts.any fun a => propEqOn domain p a
+/-- The partner of a symmetric alternative in a domain is in the domain's Boolean closure, so
+the domain contains it too whenever it is a formal alternative. -/
+theorem IsDomain.mem_of_isSymmetric (hA : IsDomain F S A) (h : IsSymmetric S S₁ S₂)
+    (h₁ : S₁ ∈ A) (h₂ : S₂ ∈ F) : S₂ ∈ A :=
+  hA.closed S₂ h₂ (h.sdiff_eq ▸ BooleanSubalgebra.sdiff_mem
+    (BooleanSubalgebra.subset_closure hA.self_mem) (BooleanSubalgebra.subset_closure h₁))
 
-/-- **Conditions on A** (27): `A` is a valid domain of EXH for
-    prejacent `S` given formal alternatives `formalAlts` = F(S).
+/-- (43), (46), (49): the domain that would license an inference against one of two symmetric
+formal alternatives, the prejacent with that alternative alone, fails (27). -/
+theorem not_isDomain_pair_of_isSymmetric (h : IsSymmetric S S₁ S₂) (hne₁ : S₁.Nonempty)
+    (h₂ : S₂ ∈ F) : ¬ IsDomain F S {S, S₁} := by
+  intro hA
+  obtain ⟨a, ha⟩ := hne₁
+  rcases hA.mem_of_isSymmetric h (by simp) h₂ with rfl | rfl
+  · exact disjoint_left.1 h.disjoint ha (h.subset_left ha)
+  · exact disjoint_left.1 h.disjoint ha ha
 
-    (27a) A ⊆ F(S)
-    (27b) S ∈ A
-    (27c) No S' in F(S) \ A is in the Boolean closure of A -/
-def isValidDomain {W : Type} (domain : List W)
-    (formalAlts : List (W → Bool)) (prejacent : W → Bool)
-    (domainOfEXH : List (W → Bool)) : Bool :=
-  domainOfEXH.all (fun a => propMemOn domain a formalAlts) &&
-  propMemOn domain prejacent domainOfEXH &&
-  formalAlts.all fun s' =>
-    propMemOn domain s' domainOfEXH ||
-    !inBooleanClosure domain domainOfEXH s'
+/-- (36): the prejacent with one alternative is a domain once every other formal alternative
+lies outside their Boolean closure. -/
+theorem isDomain_pair (hS : S ∈ F) (h₁ : S₁ ∈ F)
+    (h : ∀ S' ∈ F, S' ∈ BooleanSubalgebra.closure {S, S₁} → S' = S ∨ S' = S₁) :
+    IsDomain F S {S, S₁} :=
+  ⟨by rintro _ (rfl | rfl) <;> assumption, by simp, λ S' hS' hc => by
+    rcases h S' hS' hc with rfl | rfl <;> simp⟩
 
+/-! ### Symmetry breaking under Atomicity: run and smoke (section 3.2.2) -/
 
--- ════════════════════════════════════════════════════════════════════
--- §3  ATree and ATStructOp (Atomicity Constraint, def 32)
--- ════════════════════════════════════════════════════════════════════
+variable {run smoke : Set W}
 
-/-- Parse tree with optional AT-marking. AT-marked nodes (`atNode`)
-    preserve content for semantic interpretation but are inaccessible
-    to structural operations — implementing the Atomicity constraint
-    (def 32): "Expressions in the substitution source are syntactically
-    atomic." -/
-inductive ATree (W : Type) where
-  | leaf (cat : Cat) (word : W)
-  | node (cat : Cat) (children : List (ATree W))
-  | atNode (cat : Cat) (content : Tree Cat W)
+/-- (35)–(36): with *run ∧ smoke* underivable, `{run, run ∧ ¬smoke}` is a domain for the
+formal alternatives `{run, smoke, ¬smoke, run ∧ ¬smoke}`, provided a non-runner smokes in some
+world and not in another, since then neither *smoke* nor *¬smoke* is in the closure. -/
+theorem run_smoke_isDomain {w v : W} (hw : w ∉ run ∧ w ∈ smoke)
+    (hv : v ∉ run ∧ v ∉ smoke) :
+    IsDomain {run, smoke, smokeᶜ, run ∩ smokeᶜ} run {run, run ∩ smokeᶜ} := by
+  have hagree : ∀ a ∈ ({run, run ∩ smokeᶜ} : Set (Set W)), w ∈ a ↔ v ∈ a := by
+    rintro _ (rfl | rfl) <;> simp [hw.1, hv.1]
+  refine isDomain_pair (by simp) (by simp) ?_
+  rintro _ (rfl | rfl | rfl | rfl) hc
+  · exact Or.inl rfl
+  · exact absurd hc (notMem_closure_of_separates hagree hw.2 hv.2)
+  · exact absurd hc (notMem_closure_of_separates (λ a ha => (hagree a ha).symm)
+      (mem_compl hv.2) (not_not.2 hw.2))
+  · exact Or.inr rfl
+
+/-- The inference of (34): exhaustifying *run* against *run ∧ ¬smoke* yields *run ∧ smoke*,
+given a world in which someone runs and smokes. -/
+theorem exhIE_run_smoke {u : W} (hu : u ∈ run ∧ u ∈ smoke) :
+    exhIE {run, run ∩ smokeᶜ} run = run ∩ smoke := by
+  rw [exhIE_pair_sdiff (φ := run) (d := run ∩ smokeᶜ) ⟨u, hu.1, λ h => h.2 hu.2⟩]
+  ext x
+  simp only [mem_sdiff, mem_inter_iff, mem_compl_iff]
+  tauto
+
+/-! ### Atomicity (32) -/
+
+section Atomicity
+
+open Syntax
+
+variable {C V : Type}
+
+/-- A tree in the derivation of alternatives: the prejacent's own constituents, and the
+expressions substituted in from the source, which are atomic, their internal structure
+inaccessible, (32). Binder bodies are opaque as well. -/
+inductive ATree (C V : Type) where
+  | terminal (c : C) (w : V)
+  | node (c : C) (children : List (ATree C V))
+  | trace (n : ℕ) (c : C)
+  | bind (n : ℕ) (c : C) (body : Tree C V)
+  | atomic (c : C) (content : Tree C V)
 
 namespace ATree
 
-variable {W : Type}
+/-- The category of the root. -/
+def cat : ATree C V → C
+  | .terminal c _ | .node c _ | .trace _ c | .bind _ c _ | .atomic c _ => c
 
-def cat : ATree W → Cat
-  | .leaf c _ | .node c _ | .atNode c _ => c
+/-- The prejacent enters the derivation with no atomic expression. -/
+def ofTree : Tree C V → ATree C V
+  | .terminal c w => .terminal c w
+  | .node c cs => .node c (ofTreeList cs)
+  | .trace n c => .trace n c
+  | .bind n c body => .bind n c body
+where
+  ofTreeList : List (Tree C V) → List (ATree C V)
+  | [] => []
+  | t :: ts => ofTree t :: ofTreeList ts
 
-/-- Expand to `Tree Cat` by unsealing AT-marked nodes. -/
-def expand : ATree W → Tree Cat W
-  | .leaf c w => .terminal c w
+/-- The sentence a derivation tree stands for. -/
+def expand : ATree C V → Tree C V
+  | .terminal c w => .terminal c w
   | .node c cs => .node c (expandList cs)
-  | .atNode _ content => content
+  | .trace n c => .trace n c
+  | .bind n c body => .bind n c body
+  | .atomic _ t => t
 where
-  expandList : List (ATree W) → List (Tree Cat W)
+  expandList : List (ATree C V) → List (Tree C V)
   | [] => []
-  | t :: ts => t.expand :: expandList ts
+  | t :: ts => expand t :: expandList ts
 
-/-- Lift a `Tree Cat` to `ATree` (no AT-marking).
-Traces and binders are wrapped as opaque AT-marked nodes, since
-they are LF-specific structure inaccessible to PF-level operations. -/
-def lift : Tree Cat W → ATree W
-  | .terminal c w => .leaf c w
-  | .node c cs => .node c (liftList cs)
-  | .trace n c => .atNode c (.trace n c)
-  | .bind n c body => .atNode c (.bind n c body)
+/-- The atomic expressions of a tree. -/
+def atoms : ATree C V → List (Tree C V)
+  | .node _ cs => atomsList cs
+  | .atomic _ t => [t]
+  | _ => []
 where
-  liftList : List (Tree Cat W) → List (ATree W)
+  atomsList : List (ATree C V) → List (Tree C V)
   | [] => []
-  | t :: ts => lift t :: liftList ts
+  | t :: ts => atoms t ++ atomsList ts
+
+/-- (60a): only a non-atomic expression is replaceable. -/
+def Replaceable : ATree C V → Prop
+  | .atomic _ _ => False
+  | _ => True
+
+mutual
+
+theorem atoms_ofTree : ∀ t : Tree C V, (ofTree t).atoms = []
+  | .terminal _ _ | .trace _ _ | .bind _ _ _ => rfl
+  | .node _ cs => atomsList_ofTreeList cs
+
+theorem atomsList_ofTreeList : ∀ cs : List (Tree C V), atoms.atomsList (ofTree.ofTreeList cs) = []
+  | [] => rfl
+  | t :: ts => by
+    rw [ofTree.ofTreeList, atoms.atomsList, atoms_ofTree t, atomsList_ofTreeList ts]
+    rfl
+
+end
+
+/-- Replacing one child adds only that child's atomic expressions. -/
+theorem mem_atomsList_set : ∀ (cs : List (ATree C V)) (i : Fin cs.length) (ψ : ATree C V)
+    {a : Tree C V}, a ∈ atoms.atomsList (cs.set i ψ) →
+      a ∈ ψ.atoms ∨ a ∈ atoms.atomsList cs
+  | _ :: _, ⟨0, _⟩, ψ, a, h => by
+    simp only [List.set_cons_zero, atoms.atomsList, List.mem_append] at h ⊢
+    tauto
+  | _ :: cs, ⟨i + 1, hi⟩, ψ, a, h => by
+    simp only [List.set_cons_succ, atoms.atomsList, List.mem_append] at h ⊢
+    rcases h with h | h
+    · exact Or.inr (Or.inl h)
+    · rcases mem_atomsList_set cs ⟨i, by simpa using hi⟩ ψ h with h' | h'
+      · exact Or.inl h'
+      · exact Or.inr (Or.inr h')
+
+/-- A child's atomic expressions are among the tree's. -/
+theorem mem_atomsList_of_getElem : ∀ (cs : List (ATree C V)) (i : Fin cs.length) {a : Tree C V},
+    a ∈ (cs[i]).atoms → a ∈ atoms.atomsList cs
+  | _ :: _, ⟨0, _⟩, a, h => by
+    simp only [Fin.getElem_fin, List.getElem_cons_zero] at h
+    simp only [atoms.atomsList, List.mem_append]
+    exact Or.inl h
+  | _ :: cs, ⟨i + 1, hi⟩, a, h => by
+    simp only [Fin.getElem_fin, List.getElem_cons_succ] at h
+    simp only [atoms.atomsList, List.mem_append]
+    exact Or.inr (mem_atomsList_of_getElem cs ⟨i, by simpa using hi⟩ h)
 
 end ATree
 
-/-- Structural operation respecting Atomicity. Like `StructOp` but
-    `inChild` can only descend into `.node`, NOT `.atNode`. AT-marked
-    material is opaque to further syntactic manipulation. -/
-inductive ATStructOp {W : Type} (source : List (ATree W)) :
-    ATree W → ATree W → Prop where
-  | subst {φ ψ : ATree W}
-    (h_cat : ψ.cat = φ.cat) (h_src : ψ ∈ source) :
-    ATStructOp source φ ψ
-  | delete {cat : Cat} {cs : List (ATree W)}
-    (i : Fin cs.length) :
-    ATStructOp source (.node cat cs) (.node cat (cs.eraseIdx i))
-  | contract {cat : Cat} {cs : List (ATree W)}
-    {child : ATree W}
-    (h_mem : child ∈ cs) (h_cat : child.cat = cat) :
-    ATStructOp source (.node cat cs) child
-  | inChild {cat : Cat} {cs : List (ATree W)}
-    (i : Fin cs.length) {ψ_child : ATree W}
-    (h_step : ATStructOp source (cs.get i) ψ_child) :
-    -- Only matches .node — NOT .atNode. This is the constraint.
-    ATStructOp source (.node cat cs) (.node cat (cs.set i ψ_child))
+/-- One substitution, (13a) under (32): a replaceable constituent is replaced by a
+same-category expression of the source, which enters as atomic. Substitution is the only
+operation, since [fox-katzir-2011]'s simplification is by substitution alone. -/
+inductive Subst (source : List (Tree C V)) : ATree C V → ATree C V → Prop where
+  | here {φ : ATree C V} {t : Tree C V} (hr : φ.Replaceable) (hcat : t.cat = φ.cat)
+      (ht : t ∈ source) : Subst source φ (.atomic t.cat t)
+  | inChild {c : C} {cs : List (ATree C V)} (i : Fin cs.length) {ψ : ATree C V}
+      (h : Subst source cs[i] ψ) : Subst source (.node c cs) (.node c (cs.set i ψ))
 
-/-- AT-constrained reachability (reflexive-transitive closure). -/
-def atReachable {W : Type} (source : List (ATree W))
-    (ψ φ : ATree W) : Prop :=
-  Relation.ReflTransGen (ATStructOp source) φ ψ
+/-- Derivability by successive substitution. -/
+def Derivable (source : List (Tree C V)) : ATree C V → ATree C V → Prop :=
+  Relation.ReflTransGen (Subst source)
 
-/-- The substitution source with Atomicity:
-    lexical items + subtrees of S are lifted (transparent);
-    contextual constituents are wrapped in `atNode` (opaque). -/
-def atomicSubstitutionSource {W : Type}
-    (lexicon : List (Tree Cat W))
-    (φ : Tree Cat W)
-    (context : List (Tree Cat W)) : List (ATree W) :=
-  (lexicon ++ φ.subtrees).map ATree.lift ++
-  context.map (fun t => .atNode t.cat t)
+/-- The formal alternatives of a prejacent under Atomicity: the sentences of the trees
+derivable from it. -/
+def formalAlternatives (source : List (Tree C V)) (φ : Tree C V) : Set (Tree C V) :=
+  {ψ | ∃ t, Derivable source (ATree.ofTree φ) t ∧ t.expand = ψ}
 
-/-- **F_AT(S)**: formal alternatives derivable under Atomicity.
-    S' ∈ F_AT(S) iff ∃ ATree `t` reachable from `lift(S)` via
-    AT-constrained operations with `t.expand = S'`. -/
-def structuralAlternativesAT {W : Type}
-    (lex : List (Tree Cat W))
-    (φ : Tree Cat W)
-    (context : List (Tree Cat W)) : Set (Tree Cat W) :=
-  {ψ | ∃ t, atReachable (atomicSubstitutionSource lex φ context)
-    t (ATree.lift φ) ∧ t.expand = ψ}
+/-- A substitution adds one atomic expression, from the source. -/
+theorem Subst.atoms_mem_source {source : List (Tree C V)} {φ ψ : ATree C V}
+    (h : Subst source φ ψ) (hφ : ∀ a ∈ φ.atoms, a ∈ source) :
+    ∀ a ∈ ψ.atoms, a ∈ source := by
+  induction h with
+  | here _ _ ht =>
+    intro a ha
+    simp only [ATree.atoms, List.mem_singleton] at ha
+    exact ha ▸ ht
+  | inChild i _ ih =>
+    intro a ha
+    rcases ATree.mem_atomsList_set _ i _ ha with h' | h'
+    · exact ih (λ b hb => hφ b (ATree.mem_atomsList_of_getElem _ i hb)) a h'
+    · exact hφ a h'
 
+/-- Every atomic expression of a derivable tree is a source expression: an alternative differs
+from the prejacent by whole source expressions, so the second step of (33), replacing inside
+one, is impossible. -/
+theorem atoms_mem_source {source : List (Tree C V)} {φ : Tree C V} {t : ATree C V}
+    (h : Derivable source (ATree.ofTree φ) t) : ∀ a ∈ t.atoms, a ∈ source := by
+  induction h with
+  | refl => simp [ATree.atoms_ofTree]
+  | tail _ hst ih => exact hst.atoms_mem_source ih
 
--- ════════════════════════════════════════════════════════════════════
--- §4  Symmetry Breaking: Run / Smoke (§3.2.2, ex. 20a, 34–36)
--- ════════════════════════════════════════════════════════════════════
-
-/-!
-## Symmetry Breaking
-
-(34) Bill went for a run and didn't smoke. John (only) went for a run.
-     Inference: ¬[John went for a run and didn't smoke] → John smoked.
-
-Atomicity blocks "ran ∧ smoked" from F(S) because deriving it requires
-modifying the interior of the AT-marked contextual constituent
-"ran ∧ ¬smoked" (removing the NegP). This leaves A = {run, run ∧ ¬smoke}
-as a valid domain satisfying (27c), and EXH(A)(run) = run ∧ smoke. -/
-
-section RunSmoke
-
-/-- Four activity worlds (run and smoke are independent). -/
-inductive AW where | rs | rns | s | ns
-  deriving DecidableEq, Repr, Fintype
-
-private def awDomain : List AW := [.rs, .rns, .s, .ns]
-
-private def ran : AW → Bool
-  | .rs | .rns => true | _ => false
-private def smoked : AW → Bool
-  | .rs | .s => true | _ => false
-private def didntSmoke : AW → Bool
-  | .rns | .ns => true | _ => false
-private def ranNotSmoked : AW → Bool
-  | .rns => true | _ => false
-
-/-- F_AT(S) = {run, smoke, ¬smoke, run ∧ ¬smoke}. -/
-private def fATrun : List (AW → Bool) :=
-  [ran, smoked, didntSmoke, ranNotSmoked]
-
-/-- A = {run, run ∧ ¬smoke} — the domain of EXH after Atomicity
-    excludes "run ∧ smoke" from F(S). -/
-private def domainA : List (AW → Bool) := [ran, ranNotSmoked]
-
-/-- A satisfies all three Conditions on A (27). Crucially, (27c)
-    holds: neither "smoke" nor "¬smoke" is in BC({run, run ∧ ¬smoke})
-    because the 4-world domain distinguishes them from all Boolean
-    combinations. -/
-theorem run_valid_domain :
-    isValidDomain awDomain fATrun ran domainA = true := by
-  native_decide
-
-/-- EXH(A)(run) = run ∧ smoke: the correct empirical inference.
-    exhIE negates "run ∧ ¬smoke" (the only non-weaker alternative
-    in A), deriving that John smoked. -/
-theorem run_exh_correct :
-    innocent.exh (altsFromPreds domainA) (predToFinset ran) =
-    predToFinset (fun w => ran w && smoked w) := by decide
-
-/-- Without Atomicity, F(S) would also contain "run ∧ smoke" = {rs}.
-    With this alternative, smoked and ranNotSmoked become symmetric
-    on the run-restricted domain, and exhIE over F(S) is vacuous. -/
-private def ranAndSmoked : AW → Bool
-  | .rs => true | _ => false
-
-set_option maxRecDepth 2048 in
-theorem without_atomicity_vacuous :
-    innocent.exh (altsFromPreds [ran, smoked, didntSmoke, ranNotSmoked, ranAndSmoked])
-      (predToFinset ran) = predToFinset ran := by decide
-
-end RunSmoke
-
-
--- ════════════════════════════════════════════════════════════════════
--- §5  Symmetry Preserving: Three Cookies (§3.2.3, ex. 21a, 41–43)
--- ════════════════════════════════════════════════════════════════════
-
-/-!
-## Symmetry Preserving
-
-(41) Bill ate exactly three cookies. John (only) ate three cookies.
-     *Inference: ¬[John ate exactly three cookies]
-
-Atomicity is vacuous here (alternatives are derived by simple lexical
-substitution). The non-attested inference is blocked by Conditions on
-A (27c): "four" ∈ BC({three, exactly_three}), so excluding "four"
-from A is impossible, but including it creates symmetry. -/
-
-section ThreeCookies
-
-/-- Three cookie worlds: ate exactly 3, 4, or 5. -/
-inductive CW where | w3 | w4 | w5
-  deriving DecidableEq, Repr, Fintype
-
-private def cwDomain : List CW := [.w3, .w4, .w5]
-
-/-- "three" = at least 3 (lower-bound reading). -/
-private def three : CW → Bool := fun _ => true
-/-- "exactly three" = exactly 3. -/
-private def exactlyThree : CW → Bool
-  | .w3 => true | _ => false
-/-- "four" = at least 4. -/
-private def four : CW → Bool
-  | .w4 | .w5 => true | .w3 => false
-
-private def fCookies : List (CW → Bool) := [three, exactlyThree, four]
-
-/-- "four" is in BC({three, exactly_three}): worlds agreeing on both
-    "three" (always true) and "exactly_three" always agree on "four",
-    because four ≡ three ∧ ¬exactly_three on this domain. -/
-theorem four_in_bc :
-    inBooleanClosure cwDomain [three, exactlyThree] four = true := by
-  native_decide
-
-/-- A = {three, exactly_three} violates (27c): "four" is excluded
-    from A but is in BC(A). -/
-theorem restricted_domain_invalid :
-    isValidDomain cwDomain fCookies three [three, exactlyThree]
-      = false := by
-  native_decide
-
-/-- A = F(S) = {three, exactly_three, four} satisfies (27). -/
-theorem full_domain_valid :
-    isValidDomain cwDomain fCookies three fCookies = true := by
-  native_decide
-
-/-- "exactly_three" and "four" are symmetric alternatives of "three":
-    they partition its denotation. -/
-theorem cookies_symmetric :
-    IsSymmetric (↑(predToFinset three) : Set CW) (↑(predToFinset exactlyThree) : Set CW)
-      (↑(predToFinset four) : Set CW) :=
-  (isSymmetric_coe _ _ _).2 (by decide)
-
-/-- With A = F(S) (the only valid domain), exhIE is vacuous:
-    the symmetric alternatives make exhaustification identity. -/
-theorem cookies_exh_vacuous :
-    innocent.exh (altsFromPreds fCookies) (predToFinset three) =
-    predToFinset three := by decide
-
-end ThreeCookies
-
-
--- ════════════════════════════════════════════════════════════════════
--- §6  Extended Constraints for the Switching Problem (§4.2, def 60)
--- ════════════════════════════════════════════════════════════════════
-
-/-!
-## Switching Problem Constraints
-
-For structures where a weak scalar item embeds a strong one
-(e.g., [some[all]]), Atomicity alone is insufficient. The paper
-adds three constraints on the derivation of formal alternatives:
-
-(60a) Only non-AT-marked expressions are replaceable.
-(60b) The most deeply embedded replaceable expression must be
-      replaced first (bottom-up).
-(60c) No replacement may yield a sentence logically weaker than
-      the prejacent.
-
-These constraints prevent "some" and "all" from switching places
-under negation while still allowing the correct indirect implicature
-derivation. (60a) is already captured by `ATStructOp` (no `inChild`
-into `atNode`). (60b) and (60c) are additional derivation-order and
-semantic monotonicity constraints: -/
-
-/-- (60b) Bottom-up ordering: the replacement position must be at
-    least as deeply embedded as any other replaceable position.
-    Modeled as a property of a derivation step at position `pos`
-    in a tree of depth `maxDepth`. -/
-def bottomUpOrdering (pos maxReplaceable : Nat) : Prop :=
-  pos ≥ maxReplaceable
-
-/-- (60c) Semantic monotonicity: the result of a replacement step
-    must not be logically weaker than the input (on the domain). -/
-def nonWeakeningStep {W : Type} (domain : List W)
-    (before after : W → Bool) : Bool :=
-  !(domain.any fun w => before w && !after w) ||
-  domain.any fun w => after w && !before w
-
+end Atomicity
 
 end TrinhHaida2015
