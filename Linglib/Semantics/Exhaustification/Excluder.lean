@@ -8,9 +8,10 @@ import Mathlib.Data.Fintype.Basic
 # Excluders
 
 Exhaustification theories agree that the operator asserts the prejacent and denies a
-selection of the alternatives, and disagree on the selection. An `Excluder` is such a
-selection over finite world types, `Excluder.exh` the resulting operator. `tolerant` denies
-every alternative not entailed by the prejacent, contradiction or not ([chierchia-2013]);
+selection of the alternatives, and disagree on the selection. `exh` denies every alternative
+the prejacent does not entail, [chierchia-2006]'s operator `O`. An `Excluder` is a selection
+over finite world types, `Excluder.exh` the resulting operator, and `tolerant` is `exh` there,
+contradiction or not ([chierchia-2013]);
 `Excluder.restrict` keeps only the relevant alternatives among those an excluder denies
 ([magri-2009]) and can only weaken the result, while `Excluder.preFilter` removes
 alternatives before the excluder sees them and can strengthen it — the asymmetry
@@ -19,6 +20,7 @@ The innocent excluder is `innocent` in `Finite`.
 
 ## References
 
+* [chierchia-2006]
 * [chierchia-2013]
 * [fox-2007]
 * [fox-katzir-2011]
@@ -27,7 +29,40 @@ The innocent excluder is `innocent` in `Finite`.
 
 namespace Exhaustification
 
-variable {W : Type*} [Fintype W] [DecidableEq W]
+variable {W : Type*}
+
+/-! ### Exhaustification -/
+
+section Exh
+
+variable {C : Set (Set W)} {p : Set W}
+
+/-- The prejacent `p` with every alternative it does not entail denied: a world of `p` at which
+every true alternative is a consequence of `p` ([chierchia-2006]'s `O`). -/
+def exh (C : Set (Set W)) (p : Set W) : Set W :=
+  {w | w ∈ p ∧ ∀ q ∈ C, w ∈ q → p ⊆ q}
+
+@[simp] theorem mem_exh {w : W} : w ∈ exh C p ↔ w ∈ p ∧ ∀ q ∈ C, w ∈ q → p ⊆ q := Iff.rfl
+
+theorem exh_subset (C : Set (Set W)) (p : Set W) : exh C p ⊆ p := λ _ h => h.1
+
+/-- Exhaustification is vacuous exactly when every alternative compatible with the prejacent is
+entailed by it. -/
+theorem exh_eq_self_iff : exh C p = p ↔ ∀ q ∈ C, (p ∩ q).Nonempty → p ⊆ q :=
+  ⟨λ h q hq ⟨w, hw, hwq⟩ => by rw [← h] at hw; exact hw.2 q hq hwq,
+    λ h => (exh_subset C p).antisymm λ w hw => ⟨hw, λ q hq hwq => h q hq ⟨w, hw, hwq⟩⟩⟩
+
+/-- Exhaustification cannot exhaustify away entailments. -/
+theorem exh_eq_self (h : ∀ q ∈ C, p ⊆ q) : exh C p = p :=
+  exh_eq_self_iff.2 λ q hq _ => h q hq
+
+/-- A true alternative the prejacent does not entail is excluded. -/
+theorem notMem_exh {w : W} {q : Set W} (hq : q ∈ C) (hw : w ∈ q) (h : ¬ p ⊆ q) : w ∉ exh C p :=
+  λ he => h (he.2 q hq hw)
+
+end Exh
+
+variable [Fintype W] [DecidableEq W]
 
 /-- The worlds satisfying a `Bool` predicate. -/
 def predToFinset (p : W → Bool) : Finset W :=

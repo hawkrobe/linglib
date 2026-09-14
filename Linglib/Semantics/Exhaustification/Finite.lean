@@ -49,6 +49,15 @@ theorem mem_inf_id_iff {s : Finset (Finset W)} {w : W} :
   exact Finset.singleton_subset_iff.mp
     (Finset.le_inf fun a ha => Finset.singleton_subset_iff.mpr (h a ha))
 
+/-- The tolerant excluder is `exh` over finite alternatives. -/
+theorem coe_tolerant_exh (ALT : Finset (Finset W)) (φ : Finset W) :
+    (↑(tolerant.exh ALT φ) : Set W) = exh (asSetOfSets ALT) ↑φ := by
+  ext w
+  simp only [Finset.mem_coe, mem_tolerant_exh_iff, mem_exh, mem_asSetOfSets,
+    forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, Finset.coe_subset]
+  exact and_congr_right λ _ => forall₂_congr λ _ _ =>
+    ⟨λ h hw => not_not.1 λ hs => h hs hw, λ h hs hw => hs (h hw)⟩
+
 variable (ALT : Finset (Finset W)) (φ : Finset W)
 
 /-! ### Compatible sets -/

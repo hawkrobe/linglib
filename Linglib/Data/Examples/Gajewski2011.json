@@ -1,9 +1,9 @@
 [
   {
-    "id": "gajewski2011_ex20a",
+    "id": "gajewski2011_ex14a",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(20a)"
+      "paperLabel": "(14a)"
     },
     "language": "stan1293",
     "primaryText": "No doctor has seen anyone.",
@@ -26,19 +26,15 @@
       [
         "npi",
         "anyone"
-      ],
-      [
-        "grammatical",
-        "yes"
       ]
     ],
     "comment": ""
   },
   {
-    "id": "gajewski2011_ex21a",
+    "id": "gajewski2011_ex15a",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(21a)"
+      "paperLabel": "(15a)"
     },
     "language": "stan1293",
     "primaryText": "No doctor has seen Mary in weeks.",
@@ -61,19 +57,15 @@
       [
         "npi",
         "in weeks"
-      ],
-      [
-        "grammatical",
-        "yes"
       ]
     ],
     "comment": "No sits at the end of its scale, so its enriched meaning is its plain, downward-entailing meaning."
   },
   {
-    "id": "gajewski2011_ex20b",
+    "id": "gajewski2011_ex14b",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(20b)"
+      "paperLabel": "(14b)"
     },
     "language": "stan1293",
     "primaryText": "At most five doctors have seen anyone.",
@@ -96,19 +88,15 @@
       [
         "npi",
         "anyone"
-      ],
-      [
-        "grammatical",
-        "yes"
       ]
     ],
     "comment": "Downward entailing but not anti-additive."
   },
   {
-    "id": "gajewski2011_ex21b",
+    "id": "gajewski2011_ex15b",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(21b)"
+      "paperLabel": "(15b)"
     },
     "language": "stan1293",
     "primaryText": "At most five doctors have seen Mary in weeks.",
@@ -131,10 +119,6 @@
       [
         "npi",
         "in weeks"
-      ],
-      [
-        "grammatical",
-        "no"
       ]
     ],
     "comment": "Excluding the stronger alternative at most four leaves exactly five, which is not downward entailing."
@@ -146,7 +130,7 @@
       "paperLabel": "(1f)"
     },
     "language": "stan1293",
-    "primaryText": "Some student ever said anything.",
+    "primaryText": "Some students ever said anything.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -166,19 +150,15 @@
       [
         "npi",
         "ever"
-      ],
-      [
-        "grammatical",
-        "no"
       ]
     ],
     "comment": "Upward entailing in its scope."
   },
   {
-    "id": "gajewski2011_ex2f",
+    "id": "gajewski2011_ex7f",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(2f)"
+      "paperLabel": "(7f)"
     },
     "language": "stan1293",
     "primaryText": "Some students left until their birthdays.",
@@ -201,19 +181,15 @@
       [
         "npi",
         "until"
-      ],
-      [
-        "grammatical",
-        "no"
       ]
     ],
     "comment": ""
   },
   {
-    "id": "gajewski2011_ex26a",
+    "id": "gajewski2011_ex39a",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(26a)"
+      "paperLabel": "(39a)"
     },
     "language": "stan1293",
     "primaryText": "Only John has ever seen anyone.",
@@ -236,19 +212,15 @@
       [
         "npi",
         "ever, anyone"
-      ],
-      [
-        "grammatical",
-        "yes"
       ]
     ],
     "comment": ""
   },
   {
-    "id": "gajewski2011_ex26b",
+    "id": "gajewski2011_ex39b",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(26b)"
+      "paperLabel": "(39b)"
     },
     "language": "stan1293",
     "primaryText": "Only John has seen Mary in weeks.",
@@ -271,19 +243,15 @@
       [
         "npi",
         "in weeks"
-      ],
-      [
-        "grammatical",
-        "no"
       ]
     ],
     "comment": "Only's presupposition that the focus satisfies the scope is upward entailing."
   },
   {
-    "id": "gajewski2011_ex26c",
+    "id": "gajewski2011_ex39c",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(26c)"
+      "paperLabel": "(39c)"
     },
     "language": "stan1293",
     "primaryText": "Only John likes pancakes, either.",
@@ -306,19 +274,15 @@
       [
         "npi",
         "either"
-      ],
-      [
-        "grammatical",
-        "no"
       ]
     ],
     "comment": "Only's presupposition that the focus satisfies the scope is upward entailing. The paper credits the example to Nathan (1999)."
   },
   {
-    "id": "gajewski2011_ex26d",
+    "id": "gajewski2011_ex39d",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(26d)"
+      "paperLabel": "(39d)"
     },
     "language": "stan1293",
     "primaryText": "Only John arrived until his birthday.",
@@ -341,19 +305,15 @@
       [
         "npi",
         "until"
-      ],
-      [
-        "grammatical",
-        "no"
       ]
     ],
     "comment": "Only's presupposition that the focus satisfies the scope is upward entailing."
   },
   {
-    "id": "gajewski2011_ex27a",
+    "id": "gajewski2011_ex40a",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(27a)"
+      "paperLabel": "(40a)"
     },
     "language": "stan1293",
     "primaryText": "If Bill has ever seen anyone, he is keeping it a secret.",
@@ -376,19 +336,15 @@
       [
         "npi",
         "ever, anyone"
-      ],
-      [
-        "grammatical",
-        "yes"
       ]
     ],
     "comment": ""
   },
   {
-    "id": "gajewski2011_ex27b",
+    "id": "gajewski2011_ex40b",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(27b)"
+      "paperLabel": "(40b)"
     },
     "language": "stan1293",
     "primaryText": "If Bill has seen Mary in weeks, he is keeping it a secret.",
@@ -411,19 +367,15 @@
       [
         "npi",
         "in weeks"
-      ],
-      [
-        "grammatical",
-        "no"
       ]
     ],
     "comment": "The conditional's presupposition that its antecedent is possible is upward entailing."
   },
   {
-    "id": "gajewski2011_ex27c",
+    "id": "gajewski2011_ex40c",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(27c)"
+      "paperLabel": "(40c)"
     },
     "language": "stan1293",
     "primaryText": "If Bill likes pancakes, either, he is keeping it a secret.",
@@ -446,19 +398,15 @@
       [
         "npi",
         "either"
-      ],
-      [
-        "grammatical",
-        "no"
       ]
     ],
     "comment": "The conditional's presupposition that its antecedent is possible is upward entailing."
   },
   {
-    "id": "gajewski2011_ex27d",
+    "id": "gajewski2011_ex40d",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(27d)"
+      "paperLabel": "(40d)"
     },
     "language": "stan1293",
     "primaryText": "If Bill arrived until Friday, he is keeping it a secret.",
@@ -481,19 +429,15 @@
       [
         "npi",
         "until"
-      ],
-      [
-        "grammatical",
-        "no"
       ]
     ],
     "comment": "The conditional's presupposition that its antecedent is possible is upward entailing."
   },
   {
-    "id": "gajewski2011_ex28a",
+    "id": "gajewski2011_ex41a",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(28a)"
+      "paperLabel": "(41a)"
     },
     "language": "stan1293",
     "primaryText": "Mary is sorry that she ever talked to anyone.",
@@ -516,19 +460,15 @@
       [
         "npi",
         "ever, anyone"
-      ],
-      [
-        "grammatical",
-        "yes"
       ]
     ],
     "comment": ""
   },
   {
-    "id": "gajewski2011_ex28b",
+    "id": "gajewski2011_ex41b",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(28b)"
+      "paperLabel": "(41b)"
     },
     "language": "stan1293",
     "primaryText": "Mary is sorry that she has talked to Bill in weeks.",
@@ -551,19 +491,15 @@
       [
         "npi",
         "in weeks"
-      ],
-      [
-        "grammatical",
-        "no"
       ]
     ],
     "comment": "The factive presupposition of sorry is upward entailing in the complement."
   },
   {
-    "id": "gajewski2011_ex28c",
+    "id": "gajewski2011_ex41c",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(28c)"
+      "paperLabel": "(41c)"
     },
     "language": "stan1293",
     "primaryText": "Mary is sorry that she likes pancakes, either.",
@@ -586,19 +522,15 @@
       [
         "npi",
         "either"
-      ],
-      [
-        "grammatical",
-        "no"
       ]
     ],
     "comment": "The factive presupposition of sorry is upward entailing in the complement."
   },
   {
-    "id": "gajewski2011_ex28d",
+    "id": "gajewski2011_ex41d",
     "source": {
       "bibkey": "gajewski-2011",
-      "paperLabel": "(28d)"
+      "paperLabel": "(41d)"
     },
     "language": "stan1293",
     "primaryText": "Mary is sorry that she arrived until Friday.",
@@ -621,10 +553,6 @@
       [
         "npi",
         "until"
-      ],
-      [
-        "grammatical",
-        "no"
       ]
     ],
     "comment": "The factive presupposition of sorry is upward entailing in the complement."

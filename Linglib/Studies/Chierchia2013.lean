@@ -1,6 +1,7 @@
 import Linglib.Logic.Natural.Soundness
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Semantics.Exhaustification.Antiexhaustive
+import Linglib.Semantics.Exhaustification.Excluder
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Data.Examples.Chierchia2013
@@ -104,18 +105,6 @@ section Exhaustification
 
 variable {W E : Type*} (D : List E) (P : E → Set W)
 
-/-- The exhaustification operator, the covert counterpart of *only*: the prejacent, with every
-alternative it does not entail negated. -/
-def exh (C : Set (Set W)) (p : Set W) : Set W :=
-  {w | w ∈ p ∧ ∀ q ∈ C, ¬ p ⊆ q → w ∉ q}
-
-theorem exh_subset (C : Set (Set W)) (p : Set W) : exh C p ⊆ p := λ _ h => h.1
-
-/-- Exhaustification cannot exhaustify away entailments: it is vacuous when the prejacent
-entails every alternative. -/
-theorem exh_eq_self {C : Set (Set W)} {p : Set W} (h : ∀ q ∈ C, p ⊆ q) : exh C p = p :=
-  (exh_subset C p).antisymm λ _ hw => ⟨hw, λ q hq hnq => absurd (h q hq) hnq⟩
-
 /-- Under an antitone context the existential entails each of its subdomain alternatives, so
 *any* in a downward-entailing position is exhaustified vacuously: a plain existential. -/
 theorem exh_antitone_eq {C : Set W → Set W} (hC : Antitone C) :
@@ -127,12 +116,10 @@ alternatives negates every singleton alternative and is a contradiction: the sou
 deviance of *any* in a positive episodic sentence. -/
 theorem exh_dMinAlts_eq_empty (h : ∀ a ∈ D, ¬ existsIn D P ⊆ P a) :
     exh (dMinAlts D P) (existsIn D P) = ∅ := by
-  refine Set.eq_empty_of_forall_notMem λ w ⟨⟨a, ha, hPa⟩, hall⟩ => ?_
-  refine hall (existsIn [a] P)
+  refine Set.eq_empty_of_forall_notMem λ w ⟨⟨a, ha, hPa⟩, hall⟩ => h a ha λ v hv => ?_
+  obtain ⟨x, hx, hPx⟩ := hall (existsIn [a] P)
     ⟨[a], by simpa using ha, ⟨a, List.mem_singleton_self a, w, hPa⟩, rfl⟩
-    (λ hsub => h a ha λ v hv => ?_)
-    ⟨a, List.mem_singleton_self a, hPa⟩
-  obtain ⟨x, hx, hPx⟩ := hsub hv
+    ⟨a, List.mem_singleton_self a, hPa⟩ hv
   obtain rfl := List.mem_singleton.1 hx
   exact hPx
 
