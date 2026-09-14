@@ -2614,7 +2614,6 @@ import Linglib.Syntax.Anaphora.Basic
 import Linglib.Syntax.Anaphora.Diagnostic
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
-import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Syntax.CCG.Cat
 import Linglib.Syntax.CCG.Derivation
 import Linglib.Syntax.CCG.Grammar
