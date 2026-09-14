@@ -1,5 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
 import Linglib.Discourse.Commitment.Table
+import Linglib.Semantics.Mood.Defs
 import Linglib.Data.Examples.Rudin2025b
 
 /-!
@@ -148,7 +149,7 @@ rising declarative only places its proposition on the Table, and an interrogativ
 polar question. -/
 def Sentence.update : Sentence W → Table Discourse.Role W → Table Discourse.Role W
   | ⟨.declarative, p, false⟩, K => K.assert .speaker p
-  | ⟨.declarative, p, true⟩, K => K.push ⟨.declarative, {p}⟩
+  | ⟨.declarative, p, true⟩, K => K.push (Question.ofSet p)
   | ⟨.interrogative, p, _⟩, K => K.polarQuestion p
   | _, K => K
 
@@ -161,13 +162,13 @@ def Performance.update : Performance W → Table Discourse.Role W → Table Disc
 its speaker to any alternative of that issue. -/
 def Performance.Asking (u : Performance W) : Prop :=
   ∀ K : Table Discourse.Role W, ∃ i, (u.update K).stack = i :: K.stack ∧
-    ∀ q ∈ i.denotation, q ∈ (u.update K).dc .speaker → q ∈ K.dc .speaker
+    ∀ q ∈ Question.alt i, q ∈ (u.update K).dc .speaker → q ∈ K.dc .speaker
 
 /-- A performance is an assertion when in every context it raises an issue with a single
 alternative and commits its speaker to it. -/
 def Performance.Assertion (u : Performance W) : Prop :=
-  ∀ K : Table Discourse.Role W, ∃ i q, (u.update K).stack = i :: K.stack ∧
-    i.denotation = {q} ∧ q ∈ (u.update K).dc .speaker
+  ∀ K : Table Discourse.Role W, ∃ q, (u.update K).stack = Question.ofSet q :: K.stack ∧
+    q ∈ (u.update K).dc .speaker
 
 /-- A performance that leaves the Table as it is raises no issue. -/
 private theorem not_asking_of_stack {u : Performance W}
@@ -176,7 +177,8 @@ private theorem not_asking_of_stack {u : Performance W}
 
 private theorem not_assertion_of_stack {u : Performance W}
     (h : ∀ K : Table Discourse.Role W, (u.update K).stack = K.stack) : ¬ u.Assertion :=
-  λ ha => let ⟨i, _, hi, _⟩ := ha Table.empty; List.cons_ne_nil i [] ((h _).symm.trans hi).symm
+  λ ha => let ⟨q, hi, _⟩ := ha Table.empty
+    List.cons_ne_nil (Question.ofSet q) [] ((h _).symm.trans hi).symm
 
 /-- A performance is an asking exactly when it utters a rising declarative or an
 interrogative. -/
@@ -190,12 +192,12 @@ theorem Performance.asking_iff : ∀ u : Performance W, u.Asking ↔ u.material.
       subst hi
       have h₁ : p ∈ (Table.empty.assert Discourse.Role.speaker p).dc .speaker :=
         Table.mem_dc_assert _ _ _
-      simpa using hq p rfl h₁)
+      simpa using hq p (by simp) h₁)
       (by simp [Material.Resp])
   | ⟨.utterance ⟨.declarative, p, true⟩, _⟩ =>
-    iff_of_true (λ _ => ⟨⟨.declarative, {p}⟩, rfl, λ _ _ hq => hq⟩) (Or.inl ⟨rfl, rfl⟩)
+    iff_of_true (λ _ => ⟨Question.ofSet p, rfl, λ _ _ hq => hq⟩) (Or.inl ⟨rfl, rfl⟩)
   | ⟨.utterance ⟨.interrogative, p, _⟩, _⟩ =>
-    iff_of_true (λ _ => ⟨⟨.interrogative, {p, pᶜ}⟩, rfl, λ _ _ hq => hq⟩) (Or.inr rfl)
+    iff_of_true (λ _ => ⟨Question.polar p, rfl, λ _ _ hq => hq⟩) (Or.inr rfl)
   | ⟨.utterance ⟨.imperative, _, _⟩, _⟩ | ⟨.utterance ⟨.promissive, _, _⟩, _⟩
   | ⟨.utterance ⟨.exclamative, _, _⟩, _⟩ =>
     iff_of_false (not_asking_of_stack λ _ => rfl) (by simp [Material.Resp])
@@ -204,15 +206,15 @@ theorem Performance.asking_iff : ∀ u : Performance W, u.Asking ↔ u.material.
 theorem Performance.assertion_iff : ∀ u : Performance W, u.Assertion ↔ u.material.Assertive
   | ⟨.none, _⟩ | ⟨.inarticulate, _⟩ => iff_of_false (not_assertion_of_stack λ _ => rfl) id
   | ⟨.utterance ⟨.declarative, p, false⟩, _⟩ =>
-    iff_of_true (λ K => ⟨⟨.declarative, {p}⟩, p, rfl, rfl, Table.mem_dc_assert K .speaker p⟩)
+    iff_of_true (λ K => ⟨p, rfl, Table.mem_dc_assert K .speaker p⟩)
       ⟨rfl, rfl⟩
   | ⟨.utterance ⟨.declarative, _, true⟩, _⟩ =>
     iff_of_false (λ h => by
-      obtain ⟨_, _, _, _, hq⟩ := h Table.empty
+      obtain ⟨_, _, hq⟩ := h Table.empty
       simp [Performance.update, Sentence.update] at hq) (by simp [Material.Assertive])
   | ⟨.utterance ⟨.interrogative, _, _⟩, _⟩ =>
     iff_of_false (λ h => by
-      obtain ⟨_, _, _, _, hq⟩ := h Table.empty
+      obtain ⟨_, _, hq⟩ := h Table.empty
       simp [Performance.update, Sentence.update] at hq) (by simp [Material.Assertive])
   | ⟨.utterance ⟨.imperative, _, _⟩, _⟩ | ⟨.utterance ⟨.promissive, _, _⟩, _⟩
   | ⟨.utterance ⟨.exclamative, _, _⟩, _⟩ =>

@@ -1,5 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Linglib.Discourse.Commitment.Table
+import Linglib.Discourse.Role
 import Linglib.Logic.Natural.Basic
 import Linglib.Semantics.Conditionals.Basic
 
