@@ -1,851 +1,352 @@
-import Linglib.Syntax.Case.Dependent
-import Linglib.Syntax.Case.Alignment
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Minimalist.Agree.Basic
-import Linglib.Syntax.Minimalist.Probe.Basic
-import Linglib.Syntax.Minimalist.Probe.Satisfaction
-import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.FeatureBundle
-import Linglib.Morphology.DistributedMorphology.Impoverishment
 import Linglib.Fragments.Mayan.Mam.Agreement
-import Linglib.Fragments.Mayan.Params
+import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+import Linglib.Morphology.DistributedMorphology.Impoverishment
+import Linglib.Syntax.Minimalist.Probe.Basic
+import Linglib.Data.Examples.Scott2023
 
 /-!
-# [scott-2023] — Pronouns and Agreement in San Juan Atitán Mam
+# Scott (2023): Pronouns and Agreement in San Juan Atitán Mam
 
-[scott-2023] [woolford-1997] [marantz-1991] [baker-2015] [chomsky-2000]
-[deal-2024] [elkins-torrence-brown-2026] [preminger-2014] [england-2017]
+This file formalizes the dissertation's account of agreement and pronoun form in San Juan
+Atitán Mam. Agreement is copying under the interaction and satisfaction theory of Agree (54): a
+probe copies the features of its interaction condition from the first goal that satisfies it. The
+probe on Infl (73) interacts with author and number and is satisfied by φ or by transitive Voice
+(`inflProbe`), so in a transitive clause it halts at transitive Voice before reaching either
+argument and copies nothing (`inflProbe_transitive`), while in an intransitive clause it reaches
+the subject (`inflProbe_intransitive`); the agreeing-object grammar of standard Mam differs in the
+one disjunct (`standardInflProbe_transitive`). Which head agrees with which argument is read off
+the probes (`agreedBy`).
 
-Single study file for [scott-2023] (UC Berkeley dissertation), in three
-sections.
+Vocabulary Insertion realizes the copied features by the Extended Subset Principle (53) over the
+Vocabulary of Tables 4.7, 4.8 and 4.10 and of (59), (65) and (66) (`vocabulary`), which derives
+the Fragment's Set A and Set B paradigms (`setA_realize`, `setB_realize`) and the default Set B
+of a transitive clause, where Infl carries no φ (`setB_transitive`). A pronoun hosts every item
+its features license, so first-person pronouns are bimorphemic (§4.4.1, `insertAll`). A probe
+that copies a goal's features flags the goal with its category (§4.4.3.2, `Feat.flag`), and the
+impoverishment rule (84) deletes number from a flagged first-person pronoun (`rule84`), bleeding
+the bases *qin* and *qo*: the reduced subject and possessor series and the full independent series
+of Table 4.25 are both derived from one Vocabulary (`form_flagged`, `form_unflagged`), and the
+optional rule (93) reduces second-person plural in Set A contexts alone (`form_rule93`). The
+dissertation's judgments (`Data/Examples/Scott2023`) instantiate the derivation
+(`pronoun_rows`).
 
-## Voice-based case
+## Implementation notes
 
-Scott treats case as assigned directly by functional heads keyed to argument
-position, building on [woolford-1997]'s claim that ergative is
-lexical/inherent Case assigned with θ-role rather than configurationally
-derived. Each case has a dedicated assigner:
+* Features are Harbour's bivalent person and number features (Table 4.4) with the head a Set A
+  or Set B terminal sits on and the flag a copying probe leaves; the Fragment's `Mam.ScottFeatures`
+  supplies the cells. Contextual specifications of Vocabulary Items are features of the same
+  terminal, so the Extended Subset Principle is the substrate's `subsetPrinciple` over sites.
+* Multiple insertion (§4.4.1) is read with the Extended Subset Principle: every applicable item
+  is inserted unless a more specific applicable item realizes what it realizes, which is what
+  keeps the generic plural *qa* out of the second-person plural *q=i*.
+* The object is licensed by Voice under pure satisfaction (§4.4.4.1), a probe that copies
+  nothing and so flags nothing; only the φ-copying probes are modeled, so the object is unflagged.
+* Search domains are the clause spines of (56), (60) and (64): in a transitive clause Infl
+  encounters transitive Voice first, then the object, which has moved above the subject (§3.4.1).
+* The default Set A of super-extended ergative clauses (§2.6.3, §3.4.3.3) is data here; the
+  dissertation leaves its derivation open.
 
-- **Voice → ERG** (inherent, to the agent in Spec,VoiceP)
-- **Voice → ACC** (structural, to the patient — low-abs syntax, §3.4)
-- **Infl → ABS** (structural, to the intransitive subject)
+## References
 
-This produces a tripartite underlying system (ERG ≠ ACC ≠ ABS) visible
-through the Mam agreement patterns. The Mam data discriminate between three
-theories of case assignment: Agree-based ([chomsky-2000], [chomsky-2001]:
-ACC requires a phase head), dependent case ([marantz-1991], [baker-2015]:
-Voice flavor is irrelevant), and Voice-based (this analysis: the Voice head
-selects ERG vs. ACC by θ-role; neither phase-hood nor NP configuration does
-the work). The theorems stage the contrast. See `Studies/Woolford1997.lean`
-for the predecessor analysis.
-
-## Agree-conditioned pronoun spellout
-
-Connects Agree (feature valuation) and probe restriction to the distribution
-of overt vs. reduced pronouns. In a transitive clause: Voice probes the
-agent (Set A spellout, inherent ERG); Infl's probe has a disjunctive
-satisfaction condition [SAT: φ or Voice_TR] and **stops** at transitive
-Voice, so no φ reaches Infl and the Set B slot falls to the Elsewhere form
-"tz'=". Agreed-with arguments (A, S) undergo pronoun reduction — agreement
-redundantly expresses their φ-features, triggering deletion of the
-pronominal base (ch. 4) — while the unagreed patient must be a full overt
-pronoun. The same "tz'=" thus arises by two paths: real agreement with a
-3SG S (no more specific entry matches) vs. probe failure in transitives.
-
-## Super-extended ergativity
-
-Theory-neutral data on split ergativity. Matrix clauses are tripartite
-(A: Set A; S: Set B; P: default Set B). In certain dependent clauses
-(purpose *tu'n*, reason, *taj* 'when'), alignment shifts to what
-[england-2017] calls **super-extended ergativity**: Set A extends to ALL
-arguments — the system becomes neutral. The trigger is clause type, not
-aspect or person. Only default 2/3SG Set A (t-) is allowed for objects
-in SEE clauses ([scott-2023], §2.6.3, ex. 196). Mam's SEE split is not a
-binary ergative/accusative toggle, so `Syntax.Case.SplitErgativity` does
-not fit; the custom `MamAlignment` struct captures the
-tripartite-to-neutral contrast directly.
+* [scott-2023]
+* [deal-2024]
+* [harbour-2016]
+* [noyer-1992]
 -/
+
+open Mam DistributedMorphology Minimalist Morphology Data.Examples
 
 namespace Scott2023
 
-/-! ### Voice-based case -/
-
-section VoiceCase
-
-open Minimalist Minimalist.Voice
-open Case
-
--- ============================================================================
--- § 1: Voice Assigns Case by Argument Position
--- ============================================================================
-
-/-- Scott 2023's central case-theoretic claim: Voice (and Infl) assign
-    case directly based on argument position. A → ERG, P → ACC,
-    S → ABS — three distinct cases from three different heads, with
-    the assignment fixed by θ-position rather than by Agree or by NP
-    configuration. -/
-theorem voice_assigns_case_by_position :
-    (Mayan.caseMam .Perf) .A = .erg ∧
-    (Mayan.caseMam .Perf) .P = .acc ∧
-    (Mayan.caseMam .Perf) .S = .abs := ⟨rfl, rfl, rfl⟩
-
-/-- The three argument positions receive three distinct cases — a
-    tripartite underlying system (ERG ≠ ACC ≠ ABS) at the case-assignment
-    layer, prior to any morphological syncretism. Inherits from
-    `Alignment.tripartite_distinguishes_all` via the substrate connection. -/
-theorem voice_based_tripartite :
-    (Mayan.caseMam .Perf) .A ≠
-      (Mayan.caseMam .Perf) .P ∧
-    (Mayan.caseMam .Perf) .A ≠
-      (Mayan.caseMam .Perf) .S ∧
-    (Mayan.caseMam .Perf) .P ≠
-      (Mayan.caseMam .Perf) .S :=
-  Alignment.tripartite_distinguishes_all
-
--- ============================================================================
--- § 2: Contrast with Agree-Based Case
--- ============================================================================
-
-/-! Agree-based case ties ACC to a *phase head* (v*). Voice flavors that
-    are not phase heads (anticausative, passive) cannot assign ACC under
-    this view, predicting a gap for unaccusative patients. Scott 2023's
-    Voice-based assignment makes no such phase-head requirement. -/
-
-/-- Under Agree, anticausative Voice is not a phase head, so it cannot
-    serve as an ACC assigner. -/
-theorem agree_anticausative_not_phase :
-    ¬ anticausative.IsPhasal := by decide
-
-/-- Under Agree, agentive Voice (v*) is a phase head and can assign ACC. -/
-theorem agree_voice_is_phase_head :
-    agentive.IsPhasal := by decide
-
--- ============================================================================
--- § 3: Contrast with Dependent Case
--- ============================================================================
-
-/-! Dependent case is *Voice-blind* — the algorithm sees only NP
-    configuration (higher vs. lower) and lexical case, not θ-role or
-    Voice flavor. Two caseless NPs in a domain produce ACC on the lower
-    one regardless of whether the higher NP is an agent or a derived
-    subject. Scott's Voice-based assignment, by contrast, would only
-    assign ACC under transitive Voice with an agent. -/
-
-/-- Dependent case yields ACC for the lower of two caseless NPs whether
-    or not the higher NP carries an agent θ-role. The algorithm never
-    inspects Voice flavor. -/
-theorem dependent_case_ignores_voice :
-    let transitive : List NP :=
-      [ { label := "agent", lexicalCase := none },
-        { label := "theme", lexicalCase := none } ]
-    let unaccusative : List NP :=
-      [ { label := "experiencer", lexicalCase := none },
-        { label := "theme", lexicalCase := none } ]
-    getCaseOf "theme" (assignCases .accusative transitive) =
-      getCaseOf "theme" (assignCases .accusative unaccusative) := by
-  decide
-
-/-- Dependent case in tripartite mode produces a parallel ERG/ACC split
-    from the same configuration — but assigns it on positional grounds
-    (higher NP gets ERG, lower NP gets ACC), not on θ-role grounds.
-    Voice-based case derives the same surface pattern via a different
-    mechanism, with the assigners keyed to θ-role rather than to NP
-    configuration. -/
-theorem dependent_case_tripartite :
-    let nps : List NP :=
-      [ { label := "higher", lexicalCase := none },
-        { label := "lower", lexicalCase := none } ]
-    getCaseOf "higher" (assignCases .tripartite nps) = some .erg ∧
-    getCaseOf "lower" (assignCases .tripartite nps) = some .acc := by
-  decide
-
-end VoiceCase
-
-/-! ### Agree-conditioned pronoun spellout -/
-
-section AgreeSpellout
-
-open Minimalist Mam
-open Agreement
-open DistributedMorphology (VocabularyItem)
-open scoped DistributedMorphology
-
--- ============================================================================
--- § 0: Minimalism-Specific Vocabulary (Set A / Set B as VI entries)
--- ============================================================================
-
-/-! These Vocabulary Insertion entries encode the Fragment's theory-neutral
-    marker tables as Minimalism feature bundles, enabling the Agree → Spellout
-    pipeline. The Fragment (`Agreement.lean`) stores the markers as simple
-    person × number → string tables; here they are Vocabulary Items over
-    `GramFeature`s for use with `spellout`. -/
-
-/-- Set A (ERG) vocabulary entries: φ-features on Voice (.v)
-    yield the morphological exponent ([scott-2023] Table 2.8).
-    All six cells have specific entries. -/
-def setAVocab : List (VocabularyItem GramFeature String) :=
-  vocabularyOfCells Agreement.Cell.pnCells Agreement.Cell.toPhiFeatures
-    (fun c => (((setAExponent .consonant).realize c).map toString).getD "")
-
-/-- Set B (ABS) vocabulary entries: φ-features on Infl (.T)
-    yield the morphological exponent ([scott-2023] Table 3.5).
-    Per Scott's DM analysis, only 1SG/1PL/2PL/3PL have specific
-    entries; 2SG and 3SG fall through to the Elsewhere entry
-    (no features, tz'=) which surfaces when no specific entry
-    matches — also catching the blocked-Infl-probe case in transitives. -/
-def setBVocab : List (VocabularyItem GramFeature String) :=
-  vocabularyOfCells setBSpecificCells Agreement.Cell.toPhiFeatures
-    (fun c => ((setBExponent.realize c).map toString).getD "") ++
-    [[] ⟷ toString defaultSetB]
-
-/-- Which Minimalist head φ-Agrees with each argument position.
-    Ditransitive R/T default to none (not modeled). -/
-def agreeProbe : ArgumentRole → Option Cat
-  | .A => some .v   -- Voice probes, A in Spec,VoiceP
-  | .P => none      -- Infl probe blocked by Voice_TR
-  | .S => some .T   -- Infl probes, S in its domain
-  | .R | .T => none
-
--- ============================================================================
--- § 1: Probe Feature Bundles
--- ============================================================================
-
-/-- Voice's probe features: [uPerson, uNumber].
-    Placeholder values (.third, .Sing) are irrelevant — `sameType` matching
-    ensures any Person/Number goal is found regardless. -/
-def voiceProbe : FeatureBundle :=
-  .ofGramFeatures [.unvalued (.phi (.person .third)), .unvalued (.phi (.number .singular))]
-
-/-- Infl's probe features: [uPerson, uNumber].
-    In intransitives, these are valued by S. In transitives, the probe
-    is blocked by Voice_TR before reaching any DP. -/
-def inflProbe : FeatureBundle :=
-  .ofGramFeatures [.unvalued (.phi (.person .third)), .unvalued (.phi (.number .singular))]
-
--- ============================================================================
--- § 2: Goal Feature Bundles (3SG test case)
--- ============================================================================
-
-/-- A 3SG DP's features: [Person:3, Number:sg]. -/
-def dp3sg : FeatureBundle :=
-  .ofGramFeatures [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]
-
--- ============================================================================
--- § 3: Agree Valuation — Voice agrees with agent
--- ============================================================================
-
-/-- Voice's [uPerson] is valued as [Person:3] from a 3SG agent. -/
-theorem voice_agrees_person :
-    applyAgree voiceProbe dp3sg .person =
-    some (.ofGramFeatures
-      [.valued (.phi (.person .third)), .unvalued (.phi (.number .singular))]) := by
-  decide
-
-/-- After person agreement, Voice's [uNumber] is valued as [Number:sg].
-    This is the second step of φ-Agree: person first, then number. -/
-theorem voice_agrees_number :
-    let afterPerson : FeatureBundle := .ofGramFeatures
-      [.valued (.phi (.person .third)), .unvalued (.phi (.number .singular))]
-    applyAgree afterPerson dp3sg .number =
-    some (.ofGramFeatures
-      [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]) := by
-  decide
-
-/-- Full φ-valuation of Voice by a 3SG agent: both person and number valued. -/
-def voiceFullyAgreed : FeatureBundle :=
-  .ofGramFeatures [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]
-
-/-- The two-step Agree pipeline produces a fully valued bundle. -/
-theorem voice_agree_pipeline :
-    (applyAgree voiceProbe dp3sg .person).bind
-      (λ fb => applyAgree fb dp3sg .number) =
-    some voiceFullyAgreed := by
-  decide
-
--- ============================================================================
--- § 4: Set A Spellout — Voice → agreement morphology
--- ============================================================================
-
-/-- Set A spellout: Voice's valued [Person:3, Number:sg] yields "t-" (A2/3SG). -/
-theorem setA_spellout_3sg :
-    spellout setAVocab voiceFullyAgreed = some "t-" := by
-  decide
-
-/-- Set A spellout for 1SG: Voice with [Person:1, Number:sg] yields the
-    A1SG marker (pre-consonantal citation form `n-`; the pre-vocalic
-    variant `w-` lives in the fragment's `.vowel` table). -/
-theorem setA_spellout_1sg :
-    let v1sg : FeatureBundle := .ofGramFeatures
-      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
-    spellout setAVocab v1sg = some "n-" := by
-  decide
-
--- ============================================================================
--- § 5: Set B — Two Paths to "tz'="
--- ============================================================================
-
-/-- **Intransitive path**: Infl Agrees with a 3SG intransitive S, copies
-    [Person:3, Number:sg]. No Set B entry is specified for these features
-    (1SG=chin, 1PL=qo, 2/3PL=chi — none match 3SG), so the Elsewhere
-    entry is selected: "tz'=". -/
-theorem setB_intransitive_3sg :
-    let inflAgreed : FeatureBundle := .ofGramFeatures
-      [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]
-    spellout setBVocab inflAgreed = some "tz'=" := by
-  decide
-
-/-- **Transitive path**: Infl's probe is blocked by Voice_TR → no
-    φ-features are copied → the Infl node has an empty feature bundle.
-    The Elsewhere entry matches (empty features are a subset of anything)
-    and "tz'=" is selected.
-
-    This is the DEFAULT Set B — it appears in transitives regardless of
-    the object's person/number features. -/
-theorem setB_transitive_default :
-    let inflBlocked : FeatureBundle := ⊥
-    spellout setBVocab inflBlocked = some "tz'=" := by
-  decide
-
-/-- The two paths produce the same exponent — the surface form is
-    identical even though the underlying mechanism differs (real agreement
-    vs. probe failure). -/
-theorem setB_same_surface :
-    let inflAgreed3sg : FeatureBundle := .ofGramFeatures
-      [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]
-    let inflBlocked : FeatureBundle := ⊥
-    spellout setBVocab inflAgreed3sg =
-    spellout setBVocab inflBlocked := by
-  decide
-
-/-- Set B spellout for 1SG intransitive: Infl copies [Person:1, Number:sg]
-    from S, yielding "chin" — NOT the Elsewhere form. This is real
-    agreement, producing a distinct exponent. -/
-theorem setB_intransitive_1sg :
-    let t1sg : FeatureBundle := .ofGramFeatures
-      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
-    spellout setBVocab t1sg = some "chin" := by
-  decide
-
-/-- In a transitive with a 1SG object, the default "tz'=" still appears —
-    NOT "chin". This is because Infl's probe was blocked by Voice_TR,
-    so the object's 1SG features are never copied to Infl. -/
-theorem setB_transitive_ignores_object :
-    -- Even though the object is 1SG, Infl shows default "tz'=", not "chin"
-    let inflBlocked : FeatureBundle := ⊥
-    spellout setBVocab inflBlocked = some "tz'=" ∧
-    -- Compare: a 1SG intransitive S would trigger "chin"
-    let inflAgreed1sg : FeatureBundle := .ofGramFeatures
-      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
-    spellout setBVocab inflAgreed1sg = some "chin" := by
-  exact ⟨by decide, by decide⟩
-
--- ============================================================================
--- § 6: Probe Restriction — Why objects lack φ-agreement
--- ============================================================================
-
-/-- Infl's probe has a disjunctive satisfaction condition [SAT: φ or
-    Voice_TR]. In transitives, the probe encounters transitive Voice and
-    stops before reaching any DP. This is modeled by the fact that the
-    Infl node ends up with an empty feature bundle (no φ-features copied).
-
-    In intransitives, Voice is not transitive → the probe continues →
-    finds S → copies φ.
-
-    This mechanism replaces the older
-    "closest-goal intervention" account: it is NOT that the agent
-    intervenes between Infl and the object, but that the probe is
-    halted by head-encounter satisfaction at transitive Voice
-    ([deal-2024]-style [SAT: φ or Voice_TR]; see the derived probe
-    table below for the search-level statement). -/
-theorem probe_restriction_yields_default :
-    -- Transitive: probe blocked → empty → Elsewhere
-    spellout setBVocab (⊥ : FeatureBundle) = some "tz'=" ∧
-    -- Intransitive 1SG: probe succeeds → "chin" (not default)
-    spellout setBVocab
-      (.ofGramFeatures
-        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]) = some "chin" := by
-  exact ⟨by decide, by decide⟩
-
--- ============================================================================
--- § 7: Intransitive Pipeline — Infl Agrees with S
--- ============================================================================
-
-/-- In an intransitive clause, Infl probes for φ and Agrees with S.
-    This is REAL agreement — the probe copies S's φ-features.
-    The resulting valued features spell out as Set B. -/
-theorem intransitive_pipeline_1sg :
-    -- Infl Agrees with 1SG S
-    (applyAgree inflProbe
-      (.ofGramFeatures
-        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
-      .person).bind
-      (λ fb => applyAgree fb
-        (.ofGramFeatures
-          [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
-        .number) =
-    some (.ofGramFeatures
-      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]) ∧
-    -- Spells out as "chin" (not default "tz'=")
-    spellout setBVocab
-      (.ofGramFeatures
-        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]) = some "chin" := by
-  exact ⟨by decide, by decide⟩
-
--- ============================================================================
--- § 8: Transitive Pipeline — Voice Agrees, Infl Blocked
--- ============================================================================
-
-/-- The complete prediction for a 3SG transitive clause:
-
-    1. Voice Agrees with agent → [Person:3, Number:sg] on Voice
-    2. [Person:3, Number:sg] on Voice spells out as Set A "t-"
-    3. Infl's probe is blocked by Voice_TR → empty bundle on Infl
-    4. Empty Infl spells out as Elsewhere Set B "tz'="
-    5. Patient is not φ-Agreed-with → overt pronoun required -/
-theorem full_pipeline_3sg_transitive :
-    -- Step 1-2: Voice Agrees and spells out as Set A
-    (applyAgree voiceProbe dp3sg .person).bind
-      (λ fb => applyAgree fb dp3sg .number) = some voiceFullyAgreed ∧
-    spellout setAVocab voiceFullyAgreed = some "t-" ∧
-    -- Step 3-4: Infl probe blocked → default Set B
-    spellout setBVocab (⊥ : FeatureBundle) = some "tz'=" ∧
-    -- Step 5: patient is not eligible for reduction → overt pronoun
-    ¬ CanBeReduced .P := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · decide
-  · decide
-  · decide
-  · decide
-
-/-- The pipeline generalizes: for every argument position, reduction
-    eligibility ≡ φ-agreement (definitionally — `CanBeReduced := IsPhiAgreed`). -/
-theorem all_positions_match (pos : ArgumentRole) :
-    CanBeReduced pos ↔ IsPhiAgreed pos :=
-  Iff.rfl
-
--- ============================================================================
--- § 10: The Tripartite Agreement Pattern
--- ============================================================================
-
-/-- The three argument positions each have distinct agreement marking
-    patterns, yielding morphological tripartite alignment (Scott p. 113):
-
-    - Agent (ERG): Set A agreement from Voice
-    - Intransitive S (ABS): Set B agreement from Infl
-    - Patient (ACC): default Set B (Infl probe blocked)
-
-    These three cases each have distinct underlying syntactic case values,
-    assigned by different heads (Voice for ERG/ACC, Infl for ABS). -/
-theorem agreement_is_tripartite :
-    -- Agreed-with positions: A (ERG, by Voice) and S (ABS, by Infl)
-    IsPhiAgreed .A ∧
-    (Mayan.caseMam .Perf) .A = .erg ∧
-    IsPhiAgreed .S ∧
-    (Mayan.caseMam .Perf) .S = .abs ∧
-    -- Not agreed-with: P (ACC, from Voice but no φ-Agree)
-    ¬ IsPhiAgreed .P ∧
-    (Mayan.caseMam .Perf) .P = .acc :=
-  ⟨trivial, rfl, trivial, rfl, by decide, rfl⟩
-
-/-- Agreement probes are on different heads: Voice for Set A, Infl for
-    Set B. The patient's lack of agreement is NOT because both heads
-    target the agent — it's because Infl's probe is blocked by VoiceP. -/
-theorem different_probe_heads :
-    agreeProbe .A = some .v ∧
-    agreeProbe .S = some .T ∧
-    agreeProbe .P = none := ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 11: Connecting to Obligatory Operations ([preminger-2014], Ch. 5)
--- ============================================================================
-
-/-- The transitive Set B default is an instance of Preminger's probe failure:
-    Infl's φ-probe searches an empty domain (blocked by Voice_TR) and finds no
-    DP with matching φ-features, so its outcome is `unvalued` ([preminger-2014]
-    Ch. 5). Under the obligatory-operations model this does not crash; the
-    unvalued (empty) bundle spells out as the Elsewhere entry — the Set B "tz'="
-    observed in Mam transitives. -/
-theorem transitive_is_probe_failure :
-    (phiProbe .person).outcome [⊥] = .unvalued := by
-  decide
-
-/-- The intransitive case is real agreement: Infl's φ-probe finds S, so its
-    outcome is `valued`. -/
-theorem intransitive_is_real_agreement :
-    (phiProbe .person).outcome
-      [.ofGramFeatures
-        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]]
-      = .valued := by
-  decide
-
--- ============================================================================
--- § 12: Deriving Probe Blocking from SatisfactionCond ([deal-2024])
--- ============================================================================
-
-/-! The Fragment file (`Agreement.lean`) stipulates `isPhiAgreed := false` for
-    patients. Here we DERIVE that result from the `SatisfactionCond` machinery
-    in `Agree.lean`: Infl's disjunctive probe [SAT: φ or Voice_TR] encounters
-    transitive Voice and stops without copying features.
-
-    This closes the gap between stipulation and derivation: the patient's
-    lack of φ-agreement is not an axiom but a consequence of probe
-    satisfaction theory. -/
-
-/-- In a transitive clause, `mamInflSatisfaction` is satisfied by Voice_TR
-    (head encounter .v) and copies no features — matching the Fragment's
-    `¬ IsPhiAgreed .P`. -/
-theorem satisfaction_derives_patient_no_agree :
-    mamInflSatisfaction.isSatisfied ⊥ (some .v) = true ∧
-    mamInflSatisfaction.copiedFeatures ⊥ (some .v) = false ∧
-    ¬ IsPhiAgreed .P :=
-  ⟨by decide, by decide, by decide⟩
-
-/-- In an intransitive clause, `mamInflSatisfaction` is satisfied by
-    φ-features and DOES copy them — matching `IsPhiAgreed .S`. -/
-theorem satisfaction_derives_intranS_agree :
-    let dp1sg : FeatureBundle := .ofGramFeatures
-      [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]
-    mamInflSatisfaction.isSatisfied dp1sg none = true ∧
-    mamInflSatisfaction.copiedFeatures dp1sg none = true ∧
-    IsPhiAgreed .S :=
-  ⟨by decide, by decide, trivial⟩
-
-/-- The satisfaction condition's `copiedFeatures` Bool aligns with
-    the Fragment's `IsPhiAgreed` Prop for both Infl-probed positions:
-    - patient (transitive): copiedFeatures = false ↔ ¬ IsPhiAgreed .P
-    - intranS (intransitive): copiedFeatures = true ↔ IsPhiAgreed .S -/
-theorem satisfaction_matches_fragment :
-    (mamInflSatisfaction.copiedFeatures ⊥ (some .v) = true ↔
-      IsPhiAgreed .P) ∧
-    (mamInflSatisfaction.copiedFeatures
-      (.ofGramFeatures
-        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])
-      none = true ↔
-      IsPhiAgreed .S) := by
-  refine ⟨?_, ?_⟩
-  · constructor <;> intro h <;> first | (decide) | trivial
-  · exact ⟨fun _ => trivial, fun _ => by decide⟩
-
-/-! ### Deriving the probe table from relativized search (`Probe/Basic.lean`)
-
-The `agreeProbe` table stipulates which head agrees with which
-position. Here it is DERIVED: each probe runs `Probe.search` over the
-goal sequence of its clause, relativized to its satisfaction
-condition. `.P => none` falls out of Voice_TR halting Infl's search
-before any DP (`infl_truncated_at_voiceTR`) plus Voice's own search
-stopping at the closer agent (`voice_finds_A`). The stipulation moves
-from the conclusion (the table) to independently motivated premises:
-`mamInflSatisfaction` (`Agree.lean`) and the clause spine's encounter
-order (Infl > Voice_TR > A > P). The goal lists are stipulated
-linearizations per clause type, not computed from a `SyntacticObject`
-— the tree-geometric derivation exists in `Agree.lean` but is
-`decide`-bound; this level matches `Probing.lean`'s altitude. -/
-
-/-- An element a probe encounters while walking its search domain:
-    the argument position it realizes (`none` for non-DP heads like
-    Voice_TR), its feature bundle, and its head category (`none` for
-    DP goals). The `(FeatureBundle, Option Cat)` pair is exactly the
-    argument signature of `SatisfactionCond.isSatisfied`. -/
+/-! ### Features and Vocabulary -/
+
+/-- The loci of agreement: Infl, the Set B locus, and v/n, Voice or Poss, the Set A locus
+(Tables 4.7, 4.8). -/
+inductive Locus
+  | infl | vn
+  deriving DecidableEq, Repr
+
+/-- A feature of a terminal: Harbour's bivalent person and number features (Table 4.4), the
+locus a Set A or Set B terminal sits on, and the flag a probe leaves on a goal whose features it
+has copied (§4.4.3.2, Table 4.26). -/
+inductive Feat
+  | author (b : Bool)
+  | participant (b : Bool)
+  | singular (b : Bool)
+  | head (l : Locus)
+  | flag (l : Locus)
+  deriving DecidableEq, Repr
+
+/-- The features of a pronoun in a paradigm cell (Table 4.4). -/
+def cellFeats (c : PronCell) : List Feat :=
+  [.author c.features.author, .participant c.features.participant, .singular c.features.singular]
+
+/-- A Vocabulary Item as the dissertation writes them: the features it realizes, its contextual
+specification, and its exponent. -/
+structure Item where
+  realized : List Feat
+  context : List Feat := []
+  exponent : Morph
+  deriving DecidableEq, Repr
+
+/-- Everything an item requires of its terminal. -/
+def Item.site (i : Item) : List Feat := i.realized ++ i.context
+
+/-- The item for the substrate's Subset Principle: its site and exponent. -/
+def Item.toVI (i : Item) : VocabularyItem Feat Morph := ⟨↑i.site, i.exponent⟩
+
+/-- The Vocabulary: Set A (Table 4.7), Set B with its context-free first-person plural and its
+Elsewhere item (Table 4.8), the pronominal base *qin* (Table 4.10), the plurals *q* and *qa*
+((65), (66)), and the disagreement enclitic at its two disagreeing values (59), listed last as
+the items are linearized in Vocabulary order. -/
+def vocabulary : List Item :=
+  [ ⟨[.author true, .singular true], [.head .vn], .pref "n"⟩,
+    ⟨[.author false, .singular true], [.head .vn], .pref "t"⟩,
+    ⟨[.author true, .singular false], [.head .vn], .pref "q"⟩,
+    ⟨[.author false, .singular false], [.head .vn], .pref "ky"⟩,
+    ⟨[.author true, .singular true], [.head .infl], .free "chin"⟩,
+    ⟨[], [.head .infl], .procl "tz'"⟩,
+    ⟨[.author true, .singular false], [], .free "qo"⟩,
+    ⟨[.author false, .singular false], [.head .infl], .free "chi"⟩,
+    ⟨[.author true, .singular true], [], .free "qin"⟩,
+    ⟨[.singular false], [.author false, .participant true], .free "q"⟩,
+    ⟨[.singular false], [], .free "qa"⟩,
+    ⟨[.author true, .participant false], [], .encl "i"⟩,
+    ⟨[.author false, .participant true], [], .encl "i"⟩ ]
+
+/-- Single insertion at an agreement terminal: the Extended Subset Principle (53), the most
+specific applicable item. -/
+def insert1 (t : List Feat) : Option Morph := subsetPrinciple (vocabulary.map Item.toVI) t
+
+/-- Multiple insertion at a pronoun (§4.4.1): every applicable item, unless a more specific
+applicable item realizes what it realizes. -/
+def insertAll (t : List Feat) : List Morph :=
+  let app := vocabulary.filter λ i => i.site.all (· ∈ t)
+  (app.filter λ i => !app.any λ j =>
+      j != i && i.realized.all (· ∈ j.realized) && i.site.all (· ∈ j.site)).map Item.exponent
+
+/-! ### Agreement (§3.4.2, §4.4.2) -/
+
+/-- What a probe meets on its search: an argument bearing φ, or the transitive Voice head. -/
 structure Encounter where
-  pos : Option ArgumentRole
-  feats : FeatureBundle
-  cat : Option Cat
+  role : Option ArgumentRole
+  phi : Bool
+  voiceTR : Bool
+  deriving DecidableEq, Repr
 
-/-- The probe a `SatisfactionCond` denotes over `Encounter`s: the
-    substrate's generic `SatisfactionCond.toProbe`
-    (`Probe/Satisfaction.lean`) instantiated at the `Encounter`
-    projections — visibility = halting ([deal-2024] interaction),
-    activity = feature copying (satisfaction). -/
-def satProbe (cond : SatisfactionCond) : Probe Encounter :=
-  cond.toProbe Encounter.feats Encounter.cat
+/-- The transitive Voice head. -/
+def voiceTR : Encounter := ⟨none, false, true⟩
 
-/-- The argument position a probe φ-agrees with: `(satProbe cond).agree`
-    — the probe agrees with the found element only if satisfaction
-    copied features (feature match, not head encounter). -/
-def agreesWith (cond : SatisfactionCond) (goals : List Encounter) :
-    Option ArgumentRole :=
-  ((satProbe cond).agree goals).bind (·.pos)
+/-- An argument bearing φ. -/
+def dp (r : ArgumentRole) : Encounter := ⟨some r, true, false⟩
 
-/-- Transitive Voice as an encounter: a head of category `.v`, no
-    φ-features visible to the probe. -/
-def voiceTR : Encounter := ⟨none, ⊥, some .v⟩
+/-- The probe on Infl (73): it interacts with φ and is satisfied by φ or by transitive Voice, so
+either halts it, and it agrees with a goal only if the goal bears φ. -/
+def inflProbe : Probe Encounter := { vis := λ e => e.phi || e.voiceTR, act := λ e => e.phi }
 
-/-- A DP goal realizing position `p` with φ-bundle `φ`. -/
-def dpGoal (p : ArgumentRole) (φ : FeatureBundle) : Encounter := ⟨some p, φ, none⟩
+/-- The probe on Infl of the agreeing-object grammar (56), satisfied by φ alone. -/
+def standardInflProbe : Probe Encounter := Probe.ofVis (·.phi)
 
-/-- Voice's probe: standard φ feature-match (no head-encounter disjunct). -/
-def voiceSat : SatisfactionCond := .featureMatch .person
+/-- The probe on Voice or Poss, satisfied by the φ of its specifier. -/
+def vnProbe : Probe Encounter := Probe.ofVis (·.phi)
 
-/-- A probe over an empty search space agrees with nothing. -/
-theorem agreesWith_nil (cond : SatisfactionCond) :
-    agreesWith cond [] = none := rfl
-
-/-- Voice's goal sequence in the clause containing position `p`:
-    Voice probes only in transitives; the agent is closest. -/
-def voiceGoals (φA φP : FeatureBundle) : ArgumentRole → List Encounter
-  | .A | .P => [dpGoal .A φA, dpGoal .P φP]
-  | _ => []
-
-/-- Infl's goal sequence in the clause containing position `p`. In a
-    transitive clause Infl c-commands VoiceP, so the FIRST element its
-    downward search encounters is the Voice_TR head, before either DP.
-    In an intransitive there is no transitive Voice; the search reaches
-    S directly. -/
-def inflGoals (φA φP φS : FeatureBundle) : ArgumentRole → List Encounter
-  | .A | .P => [voiceTR, dpGoal .A φA, dpGoal .P φP]
-  | .S => [dpGoal .S φS]
+/-- Infl's search domain in the clause of an argument (60), (64): transitive Voice, then the
+object, which has moved above the subject, then the subject; or the intransitive subject. -/
+def inflDomain : ArgumentRole → List Encounter
+  | .A | .P => [voiceTR, dp .P, dp .A]
+  | .S => [dp .S]
   | .R | .T => []
 
-/-- **The key derivation**: Infl's search over ANY transitive goal
-    sequence (Voice_TR first) yields no agreement target — by `rfl`,
-    for arbitrary material below Voice. The search halts at Voice_TR
-    (head encounter satisfies), no features are copied, so no DP is
-    agreed with. -/
-theorem infl_truncated_at_voiceTR (rest : List Encounter) :
-    agreesWith mamInflSatisfaction (voiceTR :: rest) = none := rfl
+/-- Voice's or Poss's search domain: its specifier, the transitive subject. -/
+def vnDomain : ArgumentRole → List Encounter
+  | .A => [dp .A]
+  | _ => []
 
-/-- In an intransitive, Infl's search finds S and copies its features,
-    provided S bears person. -/
-theorem infl_finds_S (φS : FeatureBundle)
-    (hS : φS.hasValuedFeature .person = true) :
-    agreesWith mamInflSatisfaction [dpGoal .S φS] = some .S := by
-  simp [agreesWith, satProbe, SatisfactionCond.toProbe, Probe.agree, Probe.search,
-    Option.filter_some, dpGoal, mamInflSatisfaction_isSatisfied,
-    mamInflSatisfaction_copiedFeatures, hS]
+/-- In a transitive clause Infl's probe halts at transitive Voice and agrees with nothing,
+whatever lies below (60), (61). -/
+theorem inflProbe_transitive (rest : List Encounter) :
+    inflProbe.agree (voiceTR :: rest) = none := rfl
 
-/-- Voice's search finds the agent (closest goal), provided A bears
-    person. -/
-theorem voice_finds_A (φA φP : FeatureBundle)
-    (hA : φA.hasValuedFeature .person = true) :
-    agreesWith voiceSat [dpGoal .A φA, dpGoal .P φP] = some .A := by
-  simp [agreesWith, satProbe, SatisfactionCond.toProbe, Probe.agree, Probe.search,
-    Option.filter_some, dpGoal, voiceSat, SatisfactionCond.isSatisfied,
-    SatisfactionCond.copiedFeatures, hA]
+/-- In an intransitive clause Infl's probe agrees with the subject (64). -/
+theorem inflProbe_intransitive : inflProbe.agree [dp .S] = some (dp .S) := rfl
 
-/-- DERIVED probe table: which head φ-agrees with position `p`,
-    computed by running each probe's `Probe.search` over the goal
-    sequence of the clause containing `p`. -/
-def derivedAgreeProbe (φA φP φS : FeatureBundle) (p : ArgumentRole) :
-    Option Cat :=
-  if agreesWith voiceSat (voiceGoals φA φP p) = some p then some .v
-  else if agreesWith mamInflSatisfaction (inflGoals φA φP φS p) = some p
-    then some .T
+/-- Under the agreeing-object grammar Infl's probe passes transitive Voice and agrees with the
+object (56), (57). -/
+theorem standardInflProbe_transitive (rest : List Encounter) :
+    standardInflProbe.agree (voiceTR :: dp .P :: rest) = some (dp .P) := rfl
+
+/-- The locus of the probe that copies an argument's features: Infl for the intransitive
+subject, Voice or Poss for the transitive subject, none for the object. -/
+def agreedBy (r : ArgumentRole) : Option Locus :=
+  if (inflProbe.agree (inflDomain r)).bind (·.role) = some r then some .infl
+  else if (vnProbe.agree (vnDomain r)).bind (·.role) = some r then some .vn
   else none
 
-/-- The stipulated table coincides with the derivation, for any clause
-    whose A and S bear person features. -/
-theorem agreeProbe_eq_derived (φA φP φS : FeatureBundle)
-    (hA : φA.hasValuedFeature .person = true)
-    (hS : φS.hasValuedFeature .person = true) :
-    ∀ p, agreeProbe p = derivedAgreeProbe φA φP φS p := by
-  intro p
-  cases p with
-  | A => simp [agreeProbe, derivedAgreeProbe, voiceGoals,
-      voice_finds_A φA φP hA]
-  | P => simp [agreeProbe, derivedAgreeProbe, voiceGoals, inflGoals,
-      voice_finds_A φA φP hA, infl_truncated_at_voiceTR]
-  | S => simp [agreeProbe, derivedAgreeProbe, voiceGoals, inflGoals,
-      infl_finds_S φS hS, agreesWith_nil]
-  | R => rfl
-  | T => rfl
+theorem agreedBy_S : agreedBy .S = some .infl := rfl
+theorem agreedBy_A : agreedBy .A = some .vn := rfl
+theorem agreedBy_P : agreedBy .P = none := rfl
 
-/-- Concrete instantiation (3SG transitive + 3SG intransitive),
-    kernel-checked end to end. -/
-theorem agreeProbe_eq_derived_3sg :
-    ∀ p, agreeProbe p = derivedAgreeProbe dp3sg dp3sg dp3sg p := by
-  intro p; cases p <;> rfl
+/-- The features a probe copies (73a): author and number. -/
+def copied (c : PronCell) : List Feat := [.author c.features.author, .singular c.features.singular]
 
-/-- φ-valuation outcome of a probe with a satisfaction condition:
-    valued iff the search found a goal AND satisfaction copied
-    features. NOTE: this is NOT `(satProbe cond).outcome` — a
-    head-encounter halt satisfies the search but leaves the probe
-    φ-unvalued. -/
-def valuationOutcome (cond : SatisfactionCond) (goals : List Encounter) :
-    Probe.Outcome :=
-  if (agreesWith cond goals).isSome then .valued else .unvalued
+/-- The Set B terminal on Infl in the clause of an argument in a cell: the copied features if
+Infl agreed with the argument, at the Infl locus. -/
+def inflTerminal (r : ArgumentRole) (c : PronCell) : List Feat :=
+  (if agreedBy r = some .infl then copied c else []) ++ [.head .infl]
 
-/-- Transitive Infl: search halts at Voice_TR, probe stays unvalued,
-    and converges with Elsewhere morphology — the §11 facts, now
-    derived from the goal sequence rather than from a stipulated
-    empty bundle. -/
-theorem transitive_unvalued_elsewhere (rest : List Encounter) :
-    valuationOutcome mamInflSatisfaction (voiceTR :: rest) = .unvalued := rfl
+/-- The Set A terminal on Voice or Poss agreeing with a cell. -/
+def vnTerminal (c : PronCell) : List Feat := copied c ++ [.head .vn]
 
-/-- Contrast: `Probe.outcome` relativized to the satisfaction condition
-    reports `.valued` in the transitive — the search DID find a halting
-    element. The valuation/satisfaction distinction is exactly
-    [deal-2024]'s interaction-vs-satisfaction split. -/
-theorem searchOutcome_valued_but_unvalued (rest : List Encounter) :
-    (satProbe mamInflSatisfaction).outcome (voiceTR :: rest) = .valued ∧
-    valuationOutcome mamInflSatisfaction (voiceTR :: rest) = .unvalued :=
-  ⟨rfl, rfl⟩
+/-- The Fragment's Set B paradigm (Table 4.6) is the Vocabulary's spell-out of what Infl copies
+from an intransitive subject; 2SG and 3SG fall to the Elsewhere item. -/
+theorem setB_realize (c : PronCell) :
+    setBExponent.realize (.pn c.person c.number) = (insert1 (inflTerminal .S c)).map ([·]) := by
+  cases c <;> decide
 
--- ============================================================================
--- § 14: Impoverishment — Connecting to DM ([scott-2023], §4.4.3)
--- ============================================================================
+/-- Default Set B (61): with no features copied, the Elsewhere item *tz'=* is inserted, whatever
+the object's cell. -/
+theorem setB_transitive (c : PronCell) : insert1 (inflTerminal .P c) = some (.procl "tz'") := by
+  cases c <;> decide
 
-/-! Scott's impoverishment rule (ex. 84/94):
+/-- The Fragment's Set A paradigm (Table 4.5, pre-consonantal) is the Vocabulary's spell-out of
+what Voice or Poss copies. -/
+theorem setA_realize (c : PronCell) :
+    (setAExponent .consonant).realize (.pn c.person c.number)
+      = (insert1 (vnTerminal c)).map ([·]) := by
+  cases c <;> decide
 
-    `[+/−singular] → ∅ / [+author]^F`
-
-    Deletes [±singular] from first person pronouns that have been
-    agreed with (marked by the F diacritic). This bleeds insertion of
-    the pronominal base morphemes *qin* ([+author,+singular]) and *qo*
-    ([+author,−singular]), yielding reduced pronouns.
-
-    We model this using `DistributedMorphology.ImpoverishmentRule`.
-    The condition checks for [+author] (= first person in our feature
-    system), and the target is [±singular] (= number). -/
-
-/-- The Mam first-person impoverishment rule: delete [±singular]
-    (number) when the bundle contains [+author] (first person) features
-    that have been agreed with.
-
-    Built via the `paradigmatic` smart constructor — the F-diacritic
-    condition only inspects the focus bundle (the agreed-with pronoun's
-    own features), so the rule is paradigmatic by construction. -/
-def mamImpoverishmentRule :
-    DistributedMorphology.ImpoverishmentRule
-      Minimalist.FeatureBundle Minimalist.FeatureVal :=
-  DistributedMorphology.ImpoverishmentRule.paradigmatic
-    -- Check for [+author] (= valued first person): the F diacritic
-    -- condition is modeled by this rule only being applied in
-    -- agreed-with contexts (subj/poss position, not objects).
-    (λ fb => (Minimalist.FeatureBundle.toGramFeatures fb).any (λ f => match f with
-      | .valued (.phi (.person .first)) => true
-      | _ => false))
-    (.phi (.number .singular))
-
-/-- Mam's rule is paradigmatic — discharged by the smart constructor. -/
-theorem mamImpoverishment_paradigmatic :
-    DistributedMorphology.ImpoverishmentRule.Paradigmatic mamImpoverishmentRule :=
-  DistributedMorphology.ImpoverishmentRule.paradigmatic_isParadigmatic _ _
-
-/-- The impoverishment rule fires for 1st person bundles. -/
-theorem impoverishment_fires_1sg :
-    mamImpoverishmentRule.condition
-      (DistributedMorphology.Neighborhood.ofBundle
-        (.ofGramFeatures
-          [.valued (.phi (.person .first)), .valued (.phi (.number .singular))])) := by
+/-- The competition of *chin* and *qin* (Table 4.10): both realize first-person singular; the
+Infl-specified item wins on Infl and only the context-free base is available off it. -/
+theorem chin_beats_qin :
+    insert1 (copied .firstSg ++ [.head .infl]) = some (.free "chin") ∧
+      insert1 (copied .firstSg) = some (.free "qin") := by
   decide
 
-/-- The impoverishment rule does NOT fire for 3rd person bundles. -/
-theorem impoverishment_blocked_3sg :
-    ¬ mamImpoverishmentRule.condition
-        (DistributedMorphology.Neighborhood.ofBundle
-          (.ofGramFeatures
-            [.valued (.phi (.person .third)), .valued (.phi (.number .singular))])) := by
-  decide
+/-! ### Pronoun form (§4.4) -/
 
-/-- After impoverishment, the number feature is deleted from 1st
-    person bundles, bleeding insertion of the base morpheme *qin*. -/
-theorem impoverishment_deletes_number :
-    mamImpoverishmentRule.applyToBundle
-      (.ofGramFeatures
-        [.valued (.phi (.person .first)), .valued (.phi (.number .singular))]) =
-    .ofGramFeatures [.valued (.phi (.person .first))] := by
-  decide
-
-/-- Without impoverishment (3rd person), the number feature survives. -/
-theorem no_impoverishment_preserves :
-    mamImpoverishmentRule.applyToBundle
-      (.ofGramFeatures
-        [.valued (.phi (.person .third)), .valued (.phi (.number .singular))]) =
-    .ofGramFeatures
-      [.valued (.phi (.person .third)), .valued (.phi (.number .singular))] := by
-  decide
-
-end AgreeSpellout
-
-/-! ### Super-extended ergativity -/
-
-section SuperExtendedErgativity
-
-open Mayan (MarkerSet)
-
--- ============================================================================
--- § 1: Clause-Type-Conditioned Alignment
--- ============================================================================
-
-/-- The Mam alignment in a given clause type. -/
-structure MamAlignment where
-  /-- Marker set for S (intransitive subject) -/
-  sMarker : MarkerSet
-  /-- Marker set for A (transitive agent) -/
-  aMarker : MarkerSet
-  /-- Marker set for O (transitive patient) -/
-  oMarker : MarkerSet
+/-- The dimension an impoverishment rule deletes. -/
+inductive Dim
+  | author | participant | singular
   deriving DecidableEq, Repr
 
-/-- Matrix clause alignment: tripartite.
-    S = Set B (ABS), A = Set A (ERG), O = default Set B (no agreement). -/
-def matrixAlignment : MamAlignment :=
-  { sMarker := .setB, aMarker := .setA, oMarker := .setB }
+/-- Delete a dimension from a terminal. -/
+def delete (t : List Feat) (d : Dim) : List Feat :=
+  t.filter λ f => match f, d with
+    | .author _, .author | .participant _, .participant | .singular _, .singular => false
+    | _, _ => true
 
-/-- Super-extended ergative alignment: neutral (all Set A). -/
-def seeAlignment : MamAlignment :=
-  { sMarker := .setA, aMarker := .setA, oMarker := .setA }
+/-- Whether a terminal carries the flag of some probe. -/
+def flagged (t : List Feat) : Bool := t.any λ f => match f with | .flag _ => true | _ => false
 
--- ============================================================================
--- § 2: Verification
--- ============================================================================
+/-- The impoverishment rule (84): number is deleted from a first-person pronoun a probe has
+flagged. -/
+def rule84 : ImpoverishmentRule (List Feat) Dim :=
+  .paradigmatic (λ t => (Feat.author true ∈ t) && flagged t) .singular
 
-/-- Matrix alignment is tripartite: S, A, O each have distinct marking
-    patterns (S ≠ A by marker set; S ≡ O by marker set but S has real
-    agreement while O has default — the tripartite distinction is
-    agreement-based, not marker-set-based). -/
-theorem matrix_s_ne_a : matrixAlignment.sMarker ≠ matrixAlignment.aMarker := by
+/-- The optional rule (93): number is deleted from a second-person pronoun flagged by Voice or
+Poss. -/
+def rule93 : ImpoverishmentRule (List Feat) Dim :=
+  .paradigmatic (λ t => (Feat.participant true ∈ t) && (Feat.flag .vn ∈ t)) .singular
+
+theorem rule84_paradigmatic : rule84.Paradigmatic :=
+  ImpoverishmentRule.paradigmatic_isParadigmatic _ _
+
+/-- A pronoun terminal in a cell, flagged by the probe that copied its features, if any. -/
+def pronounTerminal (l : Option Locus) (c : PronCell) : List Feat :=
+  cellFeats c ++ (l.map λ l => [Feat.flag l]).getD []
+
+/-- The form of a pronoun in a cell under a grammar with impoverishment rules `rules`, flagged
+by `l`: the rules apply and every licensed item is inserted. -/
+def formWith (rules : List (ImpoverishmentRule (List Feat) Dim)) (l : Option Locus) (c : PronCell) :
+    List Morph :=
+  insertAll (runChain (ImpoverishmentRule.apply delete) rules ↑(pronounTerminal l c))
+
+/-- The form of a pronoun under the grammar of (84). -/
+def form (l : Option Locus) (c : PronCell) : List Morph := formWith [rule84] l c
+
+/-- The morphemes of the Fragment's pronoun entries (Table 4.9): *qin=i*, *qo'=y*, *qo*, *=i*,
+*q=i*, *qa*, and the null third-person singular. -/
+def morphemes : Option PersonalPronoun → List Morph
+  | some p =>
+    if p = qini then [.free "qin", .encl "i"]
+    else if p = qoy then [.free "qo", .encl "i"]
+    else if p = qo then [.free "qo"]
+    else if p = iDisagr then [.encl "i"]
+    else if p = qi then [.free "q", .encl "i"]
+    else if p = qa then [.free "qa"]
+    else []
+  | none => []
+
+/-- The independent series (Table 4.25): an unflagged pronoun, an object or the subject of a
+non-verbal predicate, hosts every item its features license. -/
+theorem form_unflagged (c : PronCell) : form none c = morphemes (independent c) := by
+  cases c <;> decide
+
+/-- The subject and possessor series (Table 4.25): a pronoun flagged by either locus loses its
+number if first person, so the bases *qin* and *qo* are bled and the enclitic remains. -/
+theorem form_flagged (l : Locus) (c : PronCell) : form (some l) c = morphemes (subjPoss c) := by
+  cases l <;> cases c <;> decide
+
+/-- With the optional rule (93), second-person plural reduces to the enclitic in a Set A context
+but not in a Set B context ((89)–(91)). -/
+theorem form_rule93 :
+    formWith [rule84, rule93] (some .vn) .secondPl = [.encl "i"] ∧
+      formWith [rule84, rule93] (some .infl) .secondPl = morphemes (subjPoss .secondPl) := by
   decide
 
-/-- SEE alignment is neutral: all arguments get the same marker set. -/
-theorem see_is_neutral :
-    seeAlignment.sMarker = seeAlignment.aMarker ∧
-    seeAlignment.aMarker = seeAlignment.oMarker := ⟨rfl, rfl⟩
+/-- The form of an argument in a cell: flagged by the probe that agreed with it. -/
+def formAt (r : ArgumentRole) (c : PronCell) : List Morph := form (agreedBy r) c
 
-/-- The split: matrix and SEE differ in S marking and O marking. -/
-theorem split_ergativity :
-    matrixAlignment.sMarker ≠ seeAlignment.sMarker ∧
-    matrixAlignment.oMarker ≠ seeAlignment.oMarker ∧
-    matrixAlignment.aMarker = seeAlignment.aMarker := by
-  exact ⟨by decide, by decide, rfl⟩
+/-- The nominative alignment of reduction ((3), (8)): subjects take the reduced series and the
+object the independent series. -/
+theorem formAt_eq (c : PronCell) :
+    formAt .S c = morphemes (subjPoss c) ∧ formAt .A c = morphemes (subjPoss c) ∧
+      formAt .P c = morphemes (independent c) :=
+  ⟨form_flagged .infl c, form_flagged .vn c, form_unflagged c⟩
 
-/-- A is invariant across the split: Set A in both matrix and SEE. -/
-theorem a_invariant :
-    matrixAlignment.aMarker = seeAlignment.aMarker := rfl
+/-! ### The judgments -/
 
--- ============================================================================
--- § 3: Subordinators That Trigger SEE
--- ============================================================================
+/-- A pronoun's spelling: its morphemes with clitic boundaries. -/
+def spell (ms : List Morph) : String :=
+  String.join (ms.map λ m => match m.kind with
+    | .bound .after .clitic => "=" ++ m.form
+    | _ => m.form)
 
-/-- Subordinators that trigger super-extended ergativity in SJA Mam. -/
-inductive SEETrigger where
-  | tun      -- *tu'n*: purpose/reason clauses
-  | taj      -- *taj*: 'when' (past)
-  | aj       -- *aj*: 'when' (future)
-  | chix     -- *ch'ix*: 'almost'
-  | nim      -- *ni'm*: 'right now'
-  | nanx     -- *na'nx*: 'not yet'
+/-- A judgment of the pool: the position's flag, the cell, the pronoun, whether the optional
+rule (93) is in force, and the judgment. -/
+structure Row where
+  flag : Option Locus
+  cell : PronCell
+  pronoun : String
+  optional : Bool
+  accepted : Bool
   deriving DecidableEq, Repr
 
-/-- All SEE triggers yield the same neutral alignment. -/
-def seeTriggerAlignment (_ : SEETrigger) : MamAlignment := seeAlignment
+def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  let fs := ex.paperFeatures
+  let flag ← match fs.lookup "position" with
+    | some "S" => some (some Locus.infl)
+    | some "A" | some "possessor" => some (some Locus.vn)
+    | some "object" | some "unagreed" => some none
+    | _ => none
+  let cell ← match fs.lookup "cell" with
+    | some "1sg" => some PronCell.firstSg | some "1plExcl" => some PronCell.firstPlExcl
+    | some "1plIncl" => some PronCell.firstPlIncl | some "2sg" => some PronCell.secondSg
+    | some "2pl" => some PronCell.secondPl | some "3sg" => some PronCell.thirdSg
+    | some "3pl" => some PronCell.thirdPl | _ => none
+  let pronoun ← fs.lookup "morphemes"
+  pure ⟨flag, cell, pronoun, fs.lookup "optionalReduction" = some "yes",
+    ex.judgment = .acceptable⟩
 
--- ============================================================================
--- § 4: Object Agreement Restriction in SEE
--- ============================================================================
+/-- The pronoun judgments of §4.4. -/
+def rows : List Row := Examples.all.filterMap Row.ofExample
 
-/-- In SEE clauses, object Set A markers are restricted to the default
-    2/3SG form (t-). Agreeing Set A markers for the object are
-    ungrammatical. This parallels the default Set B (tz'=) pattern for
-    objects in matrix clauses. -/
-def objectSetAIsDefault : Bool := true
-
-/-- The parallel: in BOTH matrix and SEE, the object slot shows default
-    (non-agreeing) morphology. The default marker just changes:
-    - Matrix: default Set B (tz'=)
-    - SEE: default Set A (t-) -/
-theorem object_default_parallel :
-    objectSetAIsDefault = true := rfl
-
-end SuperExtendedErgativity
+/-- A pronoun is accepted exactly when it is the derived form, under (84) or, where the row
+invokes it, the optional (93). -/
+theorem pronoun_rows :
+    ∀ r ∈ rows, (r.accepted = true ↔
+      spell (form r.flag r.cell) = r.pronoun ∨
+        (r.optional = true ∧ spell (formWith [rule84, rule93] r.flag r.cell) = r.pronoun)) := by
+  decide
 
 end Scott2023
