@@ -9,7 +9,7 @@ import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 # Steinert-Threlkeld, Imel and Guo (2023): A semantic universal for modality
 
 This file formalizes the Independence of Force and Flavor universal of
-[steinert-threlkeld-imel-guo-2023], the substrate's `Modality.Meaning.ForceFlavorIndependent`,
+[steinert-threlkeld-imel-guo-2023], the substrate's `Modality.ForceFlavorIndependent`,
 against the Single Axis of Variability universal of [nauze-2008] it replaces. The Washo verb
 *-eʔ* of [bochnak-2015a] varies on both axes yet is a product, the hypothetical *mighst* is
 neither, and the singleton meanings of Paciran Javanese ([vander-klok-2013a]) satisfy the
@@ -43,49 +43,49 @@ teleological; the library folds teleological into circumstantial.
 
 namespace SteinertThrelkeldImelGuo2023
 
-open Modality Modality.Meaning SimpleGraph
+open Modality SimpleGraph
 
 /-- Washo *-eʔ* varies on both axes, against Nauze's universal, and is the product of two forces
 and two flavors. -/
 theorem washo_modalEq :
-    ¬ Washo.Modals.modalEq.meaning.SingleAxis ∧
-      Washo.Modals.modalEq.meaning.ForceFlavorIndependent := by
+    ¬ SingleAxis Washo.Modals.modalEq.meaning ∧
+      ForceFlavorIndependent Washo.Modals.modalEq.meaning := by
   decide
 
 /-- Koryak *ivək* ([mocnik-abramovitz-2019]) satisfies the universal; with its doxastic and
 assertive flavors both epistemic in the fragment's space it varies on a single axis too. -/
 theorem koryak_modalIvek :
-    Koryak.Modals.modalIvek.meaning.ForceFlavorIndependent ∧
-      Koryak.Modals.modalIvek.meaning.SingleAxis := by
+    ForceFlavorIndependent Koryak.Modals.modalIvek.meaning ∧
+      SingleAxis Koryak.Modals.modalIvek.meaning := by
   decide
 
 /-- Paciran Javanese *mesthi*, *oleh* and *iso* express one pair each. -/
 theorem javanese_singletons :
-    Javanese.Modals.mesthi.meaning.ForceFlavorIndependent ∧
-      Javanese.Modals.oleh.meaning.ForceFlavorIndependent ∧
-      Javanese.Modals.iso.meaning.ForceFlavorIndependent :=
+    ForceFlavorIndependent Javanese.Modals.mesthi.meaning ∧
+      ForceFlavorIndependent Javanese.Modals.oleh.meaning ∧
+      ForceFlavorIndependent Javanese.Modals.iso.meaning :=
   ⟨.singleton _, .singleton _, .singleton _⟩
 
 /-- The hypothetical *mighst*: epistemic possibility and deontic necessity only, which the
 universal rules out; it is the third modal of Table 1. -/
-def mighst : Meaning := {(.possibility, .epistemic), (.necessity, .deontic)}
+def mighst : Finset ForceFlavor := {(.possibility, .epistemic), (.necessity, .deontic)}
 
-theorem not_forceFlavorIndependent_mighst : ¬ mighst.ForceFlavorIndependent := by decide
+theorem not_forceFlavorIndependent_mighst : ¬ ForceFlavorIndependent mighst := by decide
 
 /-! ### Table 1 and the two readings of path-connectedness -/
 
 /-- The first modal of Table 1: both forces with the epistemic and teleological flavors. -/
-def table1a : Meaning :=
+def table1a : Finset ForceFlavor :=
   {(.possibility, .epistemic), (.possibility, .circumstantial),
    (.necessity, .epistemic), (.necessity, .circumstantial)}
 
 /-- The second modal of Table 1: weak deontic and teleological, strong epistemic and deontic. -/
-def table1b : Meaning :=
+def table1b : Finset ForceFlavor :=
   {(.possibility, .deontic), (.possibility, .circumstantial),
    (.necessity, .epistemic), (.necessity, .deontic)}
 
 theorem table1a_forceFlavorIndependent :
-    table1a.ForceFlavorIndependent ∧ ¬ table1a.SingleAxis := by
+    ForceFlavorIndependent table1a ∧ ¬ SingleAxis table1a := by
   decide
 
 /-- The rook's graph on the force-flavor grid: pairs differing in exactly one coordinate are
@@ -93,7 +93,7 @@ adjacent. -/
 abbrev rookGraph : SimpleGraph ForceFlavor := (⊤ : SimpleGraph ModalForce) □ ⊤
 
 /-- Two pairs of a meaning sharing a coordinate are joined in the rook's graph. -/
-theorem reachable_of_fst_eq_or_snd_eq {m : Meaning} {p q : ForceFlavor} (hp : p ∈ m) (hq : q ∈ m)
+theorem reachable_of_fst_eq_or_snd_eq {m : Finset ForceFlavor} {p q : ForceFlavor} (hp : p ∈ m) (hq : q ∈ m)
     (h : p.1 = q.1 ∨ p.2 = q.2) :
     (rookGraph.induce ↑m).Reachable ⟨p, hp⟩ ⟨q, hq⟩ := by
   by_cases hpq : p = q
@@ -106,7 +106,7 @@ theorem reachable_of_fst_eq_or_snd_eq {m : Meaning} {p q : ForceFlavor} (hp : p 
 
 /-- The "or" formulation implies the footnote's: a path-connected meaning induces a connected
 subgraph of the rook's graph, any two pairs being joined through a corner. -/
-theorem PathConnected.connected {m : Meaning} (h : m.PathConnected) (hm : m.Nonempty) :
+theorem PathConnected.connected {m : Finset ForceFlavor} (h : PathConnected m) (hm : m.Nonempty) :
     (rookGraph.induce ↑m).Connected := by
   have := (Finset.coe_nonempty.2 hm).to_subtype
   refine ⟨λ ⟨p, hp⟩ ⟨q, hq⟩ => ?_⟩
@@ -119,13 +119,13 @@ theorem PathConnected.connected {m : Meaning} (h : m.PathConnected) (hm : m.None
 /-- The second modal of Table 1 fails independence and the "or" formulation of
 path-connectedness, yet is connected in the rook's graph. -/
 theorem table1b_connected_not_pathConnected :
-    ¬ table1b.ForceFlavorIndependent ∧ ¬ table1b.PathConnected ∧
+    ¬ ForceFlavorIndependent table1b ∧ ¬ PathConnected table1b ∧
       (rookGraph.induce ↑table1b).Connected := by
   decide +kernel
 
 /-- *mighst*, the third modal, is disconnected on either reading. -/
 theorem mighst_not_connected :
-    ¬ mighst.PathConnected ∧ ¬ (rookGraph.induce ↑mighst).Connected := by
+    ¬ PathConnected mighst ∧ ¬ (rookGraph.induce ↑mighst).Connected := by
   decide +kernel
 
 end SteinertThrelkeldImelGuo2023

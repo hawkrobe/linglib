@@ -33,7 +33,7 @@ primary-source theorems for Gitksan are in `Studies/Matthewson2013.lean`.
 
 namespace Matthewson2016
 
-open Modality (ForceFlavor ForceAnalysis BackgroundClass ProjectionMode Meaning)
+open Modality (ForceFlavor ForceAnalysis BackgroundClass ProjectionMode ForceFlavorIndependent SingleAxis)
 
 -- ============================================================================
 -- §1. Three-way background classification (Table 18.2, Table 18.3)
@@ -168,11 +168,11 @@ one force for a fixed or strengthened modal, both for a variable-force one. -/
 
 /-- A force analysis is consistent with a meaning when the forces the meaning attests are the
 one the analysis fixes or strengthens, or two for a variable-force analysis. -/
-def Consistent : ForceAnalysis → Meaning → Prop
+def Consistent : ForceAnalysis → Finset ForceFlavor → Prop
   | .fixed fo, m | .strengthened fo, m => m.image Prod.fst = {fo}
   | .variableForce, m => 2 ≤ (m.image Prod.fst).card
 
-instance (a : ForceAnalysis) (m : Meaning) : Decidable (Consistent a m) := by
+instance (a : ForceAnalysis) (m : Finset ForceFlavor) : Decidable (Consistent a m) := by
   cases a <;> unfold Consistent <;> infer_instance
 
 /-- Gitksan ima('a) and gat: variable force, both forces attested. -/
@@ -210,9 +210,9 @@ theorem niuean_force_asymmetry :
 
 /-- All St'át'imcets, Nez Perce and Niuean modals satisfy IFF. -/
 theorem all_fragments_iff :
-    (∀ e ∈ Statimcets.Modals.allExpressions, e.meaning.ForceFlavorIndependent) ∧
-      (∀ e ∈ NezPerce.Modals.allExpressions, e.meaning.ForceFlavorIndependent) ∧
-      (∀ e ∈ Niuean.Modals.allExpressions, e.meaning.ForceFlavorIndependent) := by
+    (∀ e ∈ Statimcets.Modals.allExpressions, ForceFlavorIndependent e.meaning) ∧
+      (∀ e ∈ NezPerce.Modals.allExpressions, ForceFlavorIndependent e.meaning) ∧
+      (∀ e ∈ Niuean.Modals.allExpressions, ForceFlavorIndependent e.meaning) := by
   decide
 
 -- ============================================================================
@@ -265,13 +265,13 @@ theorem mirror_orientations :
     This is exactly SAV. We verify it holds for all four new fragments. -/
 
 /-- St'át'imcets =ka satisfies SAV (varies on force, fixed deontic). -/
-theorem statimcets_ka_sav : Statimcets.Modals.ka.meaning.SingleAxis := by decide
+theorem statimcets_ka_sav : SingleAxis Statimcets.Modals.ka.meaning := by decide
 
 /-- Nez Perce o'qa satisfies SAV (singleton). -/
-theorem nez_perce_oqa_sav : NezPerce.Modals.oqa.meaning.SingleAxis := by decide
+theorem nez_perce_oqa_sav : SingleAxis NezPerce.Modals.oqa.meaning := by decide
 
 /-- Niuean: all modals satisfy SAV. -/
-theorem niuean_all_sav : ∀ e ∈ Niuean.Modals.allExpressions, e.meaning.SingleAxis := by decide
+theorem niuean_all_sav : ∀ e ∈ Niuean.Modals.allExpressions, SingleAxis e.meaning := by decide
 
 -- ============================================================================
 -- §8. Hacquard's content licensing derives the epistemic/circumstantial split

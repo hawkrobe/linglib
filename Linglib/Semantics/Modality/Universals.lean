@@ -4,7 +4,7 @@ import Linglib.Semantics.Modality.ModalTypes
 # Semantic universals for modal meanings
 
 This file defines the two proposed universals on modal meanings, sets of force-flavor pairs, as
-predicates on `Modality.Meaning`, and the weaker property proposed as a fallback. A meaning has
+predicates on a `Finset ForceFlavor`, and the weaker property proposed as a fallback. A meaning has
 independent force and flavor when it is the product of its forces and its flavors
 ([steinert-threlkeld-imel-guo-2023]), it varies on a single axis when its pairs all share a
 force or all share a flavor ([nauze-2008]), and it is path-connected when any two of its pairs
@@ -17,20 +17,20 @@ over flavors, or a variable-force modal of one flavor, varies on a single axis b
 
 ## Main definitions
 
-* `Modality.Meaning.ForceFlavorIndependent`: the meaning is the product of its projections.
-* `Modality.Meaning.SingleAxis`: at most one force or at most one flavor.
-* `Modality.Meaning.PathConnected`: closure under recombining two pairs in at least one order.
+* `Modality.ForceFlavorIndependent`: the meaning is the product of its projections.
+* `Modality.SingleAxis`: at most one force or at most one flavor.
+* `Modality.PathConnected`: closure under recombining two pairs in at least one order.
 
 ## Main results
 
-* `Modality.Meaning.forceFlavorIndependent_iff`: the universal as stated, closure under
+* `Modality.forceFlavorIndependent_iff`: the universal as stated, closure under
   recombining the force of one pair with the flavor of another.
-* `Modality.Meaning.forceFlavorIndependent_iff_pair_product_subset`: independence is convexity
+* `Modality.forceFlavorIndependent_iff_pair_product_subset`: independence is convexity
   for the grid betweenness of [chemla-buccola-dautriche-2019].
-* `Modality.Meaning.SingleAxis.forceFlavorIndependent`,
-  `Modality.Meaning.ForceFlavorIndependent.pathConnected`: the three properties in order of
+* `Modality.SingleAxis.forceFlavorIndependent`,
+  `Modality.ForceFlavorIndependent.pathConnected`: the three properties in order of
   strength.
-* `Modality.Meaning.forceFlavorIndependent_product`: a product meaning satisfies the universal.
+* `Modality.forceFlavorIndependent_product`: a product meaning satisfies the universal.
 
 ## References
 
@@ -40,9 +40,9 @@ over flavors, or a variable-force modal of one flavor, varies on a single axis b
 * [chemla-buccola-dautriche-2019]
 -/
 
-namespace Modality.Meaning
+namespace Modality
 
-variable (m : Meaning)
+variable (m : Finset ForceFlavor)
 
 /-- Independence of force and flavor: a meaning is the product of its forces and its flavors, so
 with `(fo₁, fl₁)` and `(fo₂, fl₂)` it expresses `(fo₁, fl₂)`. -/
@@ -55,18 +55,18 @@ def SingleAxis : Prop := (m.image Prod.fst).card ≤ 1 ∨ (m.image Prod.snd).ca
 `(fo₂, fl₁)`, the Ferrers property of a relation. -/
 def PathConnected : Prop := ∀ x ∈ m, ∀ y ∈ m, (x.1, y.2) ∈ m ∨ (y.1, x.2) ∈ m
 
-instance : Decidable m.ForceFlavorIndependent := inferInstanceAs (Decidable (_ = _))
+instance : Decidable (ForceFlavorIndependent m) := inferInstanceAs (Decidable (_ = _))
 
-instance : Decidable m.SingleAxis := inferInstanceAs (Decidable (_ ∨ _))
+instance : Decidable (SingleAxis m) := inferInstanceAs (Decidable (_ ∨ _))
 
-instance : Decidable m.PathConnected :=
+instance : Decidable (PathConnected m) :=
   inferInstanceAs (Decidable (∀ x ∈ m, ∀ y ∈ m, (x.1, y.2) ∈ m ∨ (y.1, x.2) ∈ m))
 
 variable {m}
 
 /-- The universal as stated: two pairs recombine into a third. -/
 theorem forceFlavorIndependent_iff :
-    m.ForceFlavorIndependent ↔ ∀ x ∈ m, ∀ y ∈ m, (x.1, y.2) ∈ m := by
+    ForceFlavorIndependent m ↔ ∀ x ∈ m, ∀ y ∈ m, (x.1, y.2) ∈ m := by
   refine ⟨λ h x hx y hy => ?_, λ h => Finset.subset_product.antisymm λ ⟨a, b⟩ hz => ?_⟩
   · rw [ForceFlavorIndependent] at h
     rw [h]
@@ -81,7 +81,7 @@ alias ⟨ForceFlavorIndependent.mk_mem, ForceFlavorIndependent.of_mk_mem⟩ :=
 /-- Independence is convexity for the grid betweenness on the force-flavor space: a meaning
 contains every pair between two of its pairs, the rectangle they span. -/
 theorem forceFlavorIndependent_iff_pair_product_subset :
-    m.ForceFlavorIndependent ↔ ∀ x ∈ m, ∀ y ∈ m,
+    ForceFlavorIndependent m ↔ ∀ x ∈ m, ∀ y ∈ m,
       ({x.1, y.1} : Finset ModalForce) ×ˢ ({x.2, y.2} : Finset ModalFlavor) ⊆ m := by
   rw [forceFlavorIndependent_iff]
   refine ⟨λ h x hx y hy ⟨a, b⟩ hz => ?_,
@@ -90,7 +90,7 @@ theorem forceFlavorIndependent_iff_pair_product_subset :
   obtain ⟨rfl | rfl, rfl | rfl⟩ := hz
   exacts [hx, h x hx y hy, h y hy x hx, hy]
 
-theorem SingleAxis.forceFlavorIndependent (h : m.SingleAxis) : m.ForceFlavorIndependent := by
+theorem SingleAxis.forceFlavorIndependent (h : SingleAxis m) : ForceFlavorIndependent m := by
   refine .of_mk_mem λ x hx y hy => ?_
   rcases h with h | h
   · rw [Finset.card_le_one.1 h _ (Finset.mem_image_of_mem _ hx) _ (Finset.mem_image_of_mem _ hy)]
@@ -98,7 +98,7 @@ theorem SingleAxis.forceFlavorIndependent (h : m.SingleAxis) : m.ForceFlavorInde
   · rw [← Finset.card_le_one.1 h _ (Finset.mem_image_of_mem _ hx) _ (Finset.mem_image_of_mem _ hy)]
     exact hx
 
-theorem ForceFlavorIndependent.pathConnected (h : m.ForceFlavorIndependent) : m.PathConnected :=
+theorem ForceFlavorIndependent.pathConnected (h : ForceFlavorIndependent m) : PathConnected m :=
   λ x hx y hy => Or.inl (h.mk_mem x hx y hy)
 
 theorem ForceFlavorIndependent.singleton (x : ForceFlavor) : ForceFlavorIndependent {x} := by
@@ -122,4 +122,4 @@ theorem singleAxis_singleton_product (fo : ModalForce) : SingleAxis ({fo} ×ˢ �
 theorem singleAxis_product_singleton (fl : ModalFlavor) : SingleAxis (F ×ˢ {fl}) :=
   Or.inr ((Finset.card_le_card Finset.subset_product_image_snd).trans_eq (Finset.card_singleton fl))
 
-end Modality.Meaning
+end Modality

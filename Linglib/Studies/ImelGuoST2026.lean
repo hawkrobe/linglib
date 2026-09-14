@@ -21,7 +21,7 @@ communicative need distribution, Equations (2) and (3) (`informativeness`), with
 utility of guessing one axis right. Languages are compared by Pareto dominance on complexity
 and communicative cost (`Dominates`), and naturalness is the fraction of a vocabulary satisfying
 the Independence of Force and Flavor universal of [steinert-threlkeld-imel-guo-2023], the
-substrate's `Modality.Meaning.ForceFlavorIndependent`.
+substrate's `Modality.ForceFlavorIndependent`.
 
 The paper's three results, that every Pareto-optimal system consists of IFF modals, that
 naturalness correlates with optimality, and that the attested inventories are more optimal than
@@ -50,13 +50,16 @@ only on its two axis sizes, and synonyms of a modal are dominated by the modal a
 
 namespace ImelGuoST2026
 
-open Modality Modality.Meaning Finset
+open Modality Finset
 
 /-- The meaning space of the experiment: weak and strong force by epistemic, deontic and
 circumstantial flavor. -/
 def Space : Finset ForceFlavor :=
   {⟨.possibility, .epistemic⟩, ⟨.possibility, .deontic⟩, ⟨.possibility, .circumstantial⟩,
    ⟨.necessity, .epistemic⟩, ⟨.necessity, .deontic⟩, ⟨.necessity, .circumstantial⟩}
+
+/-- A modal meaning: the force-flavor pairs a modal can express. -/
+abbrev Meaning := Finset ForceFlavor
 
 /-! ### The Language of Thought and complexity -/
 
@@ -328,13 +331,13 @@ theorem dominates_replicate (need : ForceFlavor → ℚ) {m : Meaning} (hm : m �
 
 /-- Naturalness: the fraction of an inventory satisfying the IFF universal. -/
 def naturalness (L : List ModalItem) : ℚ :=
-  (L.countP (·.meaning.ForceFlavorIndependent) : ℚ) / L.length
+  (L.countP (ForceFlavorIndependent ·.meaning) : ℚ) / L.length
 
 /-- Washo *-eʔ* varies on both axes, against the Single Axis of Variability universal of
 [nauze-2008], and satisfies IFF, its meaning being the full grid of two forces and two flavors. -/
 theorem washo_not_singleAxis_forceFlavorIndependent :
-    ¬ Washo.Modals.modalEq.meaning.SingleAxis ∧
-      Washo.Modals.modalEq.meaning.ForceFlavorIndependent := by
+    ¬ SingleAxis Washo.Modals.modalEq.meaning ∧
+      ForceFlavorIndependent Washo.Modals.modalEq.meaning := by
   decide
 
 /-- The meaning the universal rules out: epistemic necessity with circumstantial possibility. -/

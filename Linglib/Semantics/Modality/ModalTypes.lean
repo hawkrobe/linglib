@@ -7,7 +7,7 @@ import Mathlib.Tactic.DeriveFintype
 # Modal Typological Types
 
 Theory-neutral vocabulary for cross-linguistic modal typology: `ModalForce`,
-`ModalFlavor`, `ForceFlavor`, `Meaning`, `ModalItem`, `ConcordType`,
+`ModalFlavor`, `ForceFlavor`, `ModalItem`, `ConcordType`,
 and the modal-temporal axes `TemporalPerspective` / `TemporalOrientation`.
 
 These types classify modal meanings along two independent dimensions — force
@@ -21,8 +21,8 @@ force-flavor pairs) but conceptually independent.
 
 ## What belongs here vs. `Intensional`
 
-- **Here** (`Modality`): `ModalForce`, `ModalFlavor`, `ForceFlavor`, `Meaning`,
-  `ModalItem`, `ConcordType` — linguistic classification of modal meanings.
+- **Here** (`Modality`): `ModalForce`, `ModalFlavor`, `ForceFlavor`, `ModalItem`,
+  `ConcordType` — linguistic classification of modal meanings.
 - **There** (`Intensional`): accessibility relations, `kripkeEval`, frame conditions
   (`IsReflexive`, `IsSerial`, `IsTransitive`, `IsSymmetric`, `IsEuclidean`),
   correspondence theorems,
@@ -134,9 +134,6 @@ abbrev ForceFlavor := ModalForce × ModalFlavor
 
 theorem ForceFlavor.card : Fintype.card ForceFlavor = 12 := by decide
 
-/-- The meaning of a modal: the force-flavor pairs it can express. -/
-abbrev Meaning := Finset ForceFlavor
-
 -- ============================================================================
 -- §4. Modal Item
 -- ============================================================================
@@ -145,7 +142,8 @@ abbrev Meaning := Finset ForceFlavor
 `Auxiliary.toModalItem` and `ModalAdvEntry.toModalItem` project onto. -/
 structure ModalItem where
   form : String
-  meaning : Meaning
+  /-- The force-flavor pairs the item can express. -/
+  meaning : Finset ForceFlavor
   register : SocialMeaning.Register.Level := .neutral
   deriving DecidableEq
 
@@ -349,7 +347,7 @@ theorem content_epistemic_allows_disbelief :
 -- ============================================================================
 
 /-- How a modal's quantificational force is determined.
-    Distinguishes three mechanisms that the `Meaning` encoding conflates:
+    Distinguishes three mechanisms that the `Finset ForceFlavor` encoding conflates:
 
     - **fixed**: The modal lexically specifies a single force value.
       English *must* (necessity), *can* (possibility).
