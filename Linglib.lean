@@ -2523,7 +2523,6 @@ import Linglib.Studies.TsiliaZhao2026
 import Linglib.Studies.TsvilodubEtAl2026
 import Linglib.Studies.TurcoBraunDimroth2014
 import Linglib.Studies.TurkHirsch2026
-import Linglib.Studies.Uchihara2021
 import Linglib.Studies.UegakiSudo2019
 import Linglib.Studies.Umbach2004
 import Linglib.Studies.VanDerAuweraVanAlsenoy2016

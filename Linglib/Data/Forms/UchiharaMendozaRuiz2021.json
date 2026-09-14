@@ -1,0 +1,155 @@
+{
+  "FormTable": [
+    {
+      "ID": "uchiharamendozaruiz2021_ja3a3",
+      "Language_ID": "alco1235",
+      "Parameter_ID": "white",
+      "Form": "ja3a3",
+      "Segments": ["j", "a3", "a3"],
+      "Comment": "monosyllabic stem lengthened to a bimoraic foot; the input /ja/ is monomoraic",
+      "Source": ["uchihara-mendozaruiz-2021[(15)]"]
+    },
+    {
+      "ID": "uchiharamendozaruiz2021_ki3ti4",
+      "Language_ID": "alco1235",
+      "Parameter_ID": "animal",
+      "Form": "ki3ti4",
+      "Segments": ["k", "i3", "t", "i4"],
+      "Comment": "disyllabic stem, no lengthening: a bimoraic foot already",
+      "Source": ["uchihara-mendozaruiz-2021[(16)]"]
+    },
+    {
+      "ID": "uchiharamendozaruiz2021_ti1kwi14i2",
+      "Language_ID": "alco1235",
+      "Parameter_ID": "water",
+      "Form": "ti1kwi14i2",
+      "Segments": ["t", "i1", "kw", "i14", "i2"],
+      "Comment": "lexical accent on the final mora lengthens the final syllable; the initial syllable is unfooted",
+      "Source": ["uchihara-mendozaruiz-2021[(17)]"]
+    },
+    {
+      "ID": "uchiharamendozaruiz2021_ma4ka2",
+      "Language_ID": "alco1235",
+      "Parameter_ID": "hammock",
+      "Form": "ma4ka2",
+      "Segments": ["m", "a4", "k", "a2"],
+      "Comment": "Spanish hamaca truncated to the bimoraic foot; the tonic syllables coincide",
+      "Source": ["uchihara-mendozaruiz-2021[(42a)]"]
+    },
+    {
+      "ID": "uchiharamendozaruiz2021_skwe4la2",
+      "Language_ID": "alco1235",
+      "Parameter_ID": "school",
+      "Form": "skwe4la2",
+      "Segments": ["s", "kw", "e4", "l", "a2"],
+      "Comment": "Spanish escuela truncated to the bimoraic foot",
+      "Source": ["uchihara-mendozaruiz-2021[(42d)]"]
+    },
+    {
+      "ID": "uchiharamendozaruiz2021_pe3lo3",
+      "Language_ID": "alco1235",
+      "Parameter_ID": "buzzard",
+      "Form": "pe3lo3",
+      "Segments": ["p", "e3", "l", "o3"],
+      "Comment": "Spanish zopilote truncated to the bimoraic foot although the tonic syllables differ: maximality, not foot alignment",
+      "Source": ["uchihara-mendozaruiz-2021[(43a)]"]
+    },
+    {
+      "ID": "uchiharamendozaruiz2021_po3li3si4a2",
+      "Language_ID": "alco1235",
+      "Parameter_ID": "police",
+      "Form": "po3li3si4a2",
+      "Segments": ["p", "o3", "l", "i3", "s", "i4", "a2"],
+      "Comment": "a more recent loan from Spanish policía, not truncated: two unfooted syllables before the foot",
+      "Source": ["uchihara-mendozaruiz-2021[(44a)]"]
+    },
+    {
+      "ID": "uchiharamendozaruiz2021_nu3mi3",
+      "Language_ID": "alco1235",
+      "Parameter_ID": "hug",
+      "Form": "nu3mi3",
+      "Segments": ["n", "u3", "m", "i3"],
+      "Comment": "the stem, tone 3 initial",
+      "Source": ["uchihara-mendozaruiz-2021[(64)]"]
+    },
+    {
+      "ID": "uchiharamendozaruiz2021_nu2mi3",
+      "Language_ID": "alco1235",
+      "Parameter_ID": "hugged",
+      "Form": "nu2mi3",
+      "Segments": ["n", "u2", "m", "i3"],
+      "Comment": "perfective realized by tone alone, tone 1 of the prefix coalescing with stem tone 3 into tone 2, rather than by the prefix ni1- that would leave a mora unfooted",
+      "Source": ["uchihara-mendozaruiz-2021[(64)]"]
+    },
+    {
+      "ID": "uchiharamendozaruiz2021_ni1shi14ko3",
+      "Language_ID": "alco1235",
+      "Parameter_ID": "sold",
+      "Form": "ni1shi14ko3",
+      "Segments": ["n", "i1", "sh", "i14", "k", "o3"],
+      "Comment": "the segmental perfective prefix with a tone 14 stem; the prefix mora is unfooted, PARSE(µ) being dominated by REALIZE-MORPHEME",
+      "Source": ["uchihara-mendozaruiz-2021[(5)]"]
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "white",
+      "Name": "white",
+      "Description": ""
+    },
+    {
+      "ID": "animal",
+      "Name": "animal",
+      "Description": ""
+    },
+    {
+      "ID": "water",
+      "Name": "water",
+      "Description": ""
+    },
+    {
+      "ID": "hammock",
+      "Name": "hammock",
+      "Description": "loan from Spanish hamaca"
+    },
+    {
+      "ID": "school",
+      "Name": "school",
+      "Description": "loan from Spanish escuela"
+    },
+    {
+      "ID": "buzzard",
+      "Name": "buzzard",
+      "Description": "loan from Spanish zopilote"
+    },
+    {
+      "ID": "police",
+      "Name": "police",
+      "Description": "loan from Spanish policía"
+    },
+    {
+      "ID": "hug",
+      "Name": "hug",
+      "Description": "verb stem"
+    },
+    {
+      "ID": "hugged",
+      "Name": "hugged",
+      "Description": "perfective"
+    },
+    {
+      "ID": "sold",
+      "Name": "sold",
+      "Description": "perfective"
+    }
+  ],
+  "FormRelationTable": [
+    {
+      "ID": "uchiharamendozaruiz2021_nu3mi3_nu2mi3",
+      "Form_ID": "uchiharamendozaruiz2021_nu3mi3",
+      "Target_ID": "uchiharamendozaruiz2021_nu2mi3",
+      "Relation": "perfective",
+      "Source": ["uchihara-mendozaruiz-2021[(64)]"]
+    }
+  ]
+}
