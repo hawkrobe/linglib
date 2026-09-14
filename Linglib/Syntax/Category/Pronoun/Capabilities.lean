@@ -4,11 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Data.UD.Basic
-import Linglib.Features.Phi
+import Linglib.Syntax.Agreement.Phi
 import Linglib.Features.Case.Capabilities
-import Linglib.Syntax.Phi.Gender.Capabilities
-import Linglib.Features.Number.Capabilities
-import Linglib.Features.Person.Capabilities
+import Linglib.Syntax.Gender.Capabilities
+import Linglib.Syntax.Number.Capabilities
+import Linglib.Syntax.Person.Capabilities
 import Linglib.Features.CoreferenceStatus
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Category.Pronoun.Basic
@@ -25,7 +25,7 @@ exactly the axes it touches.
 
 * `Proform` — a pro-form takes its antecedents from a fixed form-class, its
   domain ([bloomfield-1933]); `Proform.CandidateAntecedent` is derived — domain
-  membership plus φ-agreement (`HasPhi.Agree`, from `Features/Phi.lean`).
+  membership plus φ-agreement (`HasPhi.Agree`, from `Syntax/Agreement/Phi.lean`).
 * `Bound`, `HasNumber`, `HasPerson`, `HasCase`, `HasGender` instances for the
   pronoun carriers.
 * `bindingClassOf_toWord`, `numberOf_toWord`, `personOf_toWord`, `caseOf_toWord`,

@@ -1,5 +1,5 @@
 import Linglib.Syntax.Agreement.PersonCaseConstraint
-import Linglib.Features.Person.Resolve
+import Linglib.Syntax.Person.Resolve
 import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Spanish.Pronouns
 import Linglib.Fragments.German.Pronouns

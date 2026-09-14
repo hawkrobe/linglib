@@ -11,7 +11,7 @@ import Linglib.Data.WALS.Features.F136A
 import Linglib.Data.WALS.Features.F136B
 import Linglib.Data.WALS.Features.F137A
 import Linglib.Data.WALS.Features.F137B
-import Linglib.Features.Person.Clusivity
+import Linglib.Syntax.Person.Clusivity
 
 /-!
 # Pronoun — typological survey (WALS)

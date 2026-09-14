@@ -1,8 +1,8 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.Person.Basic
+import Linglib.Syntax.Person.Basic
 import Linglib.Features.Prominence
-import Linglib.Features.ContainmentPair
-import Linglib.Features.Number.Basic
+import Linglib.Syntax.Agreement.ContainmentPair
+import Linglib.Syntax.Number.Basic
 
 /-!
 # Person
@@ -29,7 +29,7 @@ as the cooccurrence filter inherited from `Features.ContainmentPair` — the
 descriptive convention of the feature-geometric tradition. [harbour-2016]
 ch. 9 rejects the filter: in his calculus `+author(−participant(π))` is the
 quadripartition *exclusive*, not ill-formed — see
-`Features/ContainmentPair.lean` and `Studies/Harbour2016.lean`.
+`Syntax/Agreement/ContainmentPair.lean` and `Studies/Harbour2016.lean`.
 
 This decomposition is shared across theoretical frameworks:
 - Minimalism: [preminger-2014], [bejar-rezac-2009]
@@ -41,7 +41,7 @@ The Minimalist-specific extension [±proximate]
 `Syntax/Minimalist/Phi/Geometry.lean`.
 
 The canonical analytical inventory (root `Person`) lives in
-`Features/Person/Basic.lean`; this file is its feature decomposition
+`Syntax/Person/Basic.lean`; this file is its feature decomposition
 and referential-category layer.
 
 **§ 5–9: Person Categories** ([cysouw-2003]). The 8 referential person

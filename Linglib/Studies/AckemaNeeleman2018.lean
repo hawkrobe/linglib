@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Phi.PersonSpace
 import Linglib.Morphology.Exponence.Select
-import Linglib.Features.Person.Decomposition
+import Linglib.Syntax.Person.Decomposition
 import Linglib.Data.Examples.AckemaNeeleman2018
 
 /-!

@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Syntax.Phi.Gender.Basic
+import Linglib.Syntax.Gender.Basic
 import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Features.MassCount
 import Linglib.Morphology.Word.Basic

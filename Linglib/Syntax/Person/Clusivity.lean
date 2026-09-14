@@ -1,5 +1,5 @@
 import Linglib.Core.Data.Setoid.Basic
-import Linglib.Features.Person.Decomposition
+import Linglib.Syntax.Person.Decomposition
 
 /-!
 # Clusivity: marking types of the first person complex

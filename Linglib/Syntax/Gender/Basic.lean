@@ -17,7 +17,7 @@ common, animate and inanimate, that a system's genders may partially bear. The c
 controller genders is a type parameter, as the index type of a basis is, and the number of
 genders is its cardinality; a carrier is faithful to agreement evidence when distinct
 genders are distinguished by some target. The rules assigning nouns to genders are the
-assignment systems of `Syntax/Phi/Gender/Assignment.lean`.
+assignment systems of `Syntax/Gender/Assignment.lean`.
 
 ## Main definitions
 

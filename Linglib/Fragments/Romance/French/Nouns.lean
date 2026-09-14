@@ -1,7 +1,7 @@
-import Linglib.Syntax.Phi.Gender.Basic
+import Linglib.Syntax.Gender.Basic
 import Linglib.Syntax.Category.Classifier.Basic
 import Linglib.Data.UD.Basic
-import Linglib.Features.Number.Capabilities
+import Linglib.Syntax.Number.Capabilities
 import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-! # French Noun Lexicon Fragment

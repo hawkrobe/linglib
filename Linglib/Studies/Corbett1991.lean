@@ -2,10 +2,10 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Agreement.Hierarchy
 import Linglib.Syntax.Agreement.Resolution
-import Linglib.Syntax.Phi.Gender.AgreementClass
-import Linglib.Syntax.Phi.Gender.Assignment
-import Linglib.Features.Number.Resolve
-import Linglib.Features.Person.Resolve
+import Linglib.Syntax.Agreement.Classes
+import Linglib.Syntax.Gender.Assignment
+import Linglib.Syntax.Number.Resolve
+import Linglib.Syntax.Person.Resolve
 import Linglib.Fragments.Tamil.Gender
 import Linglib.Fragments.Swahili.Nouns
 import Linglib.Fragments.Afar.Gender

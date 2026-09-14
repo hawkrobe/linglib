@@ -1,7 +1,7 @@
 import Linglib.Features.Prominence
 import Linglib.Data.UD.Basic
-import Linglib.Syntax.Phi.Gender.Basic
-import Linglib.Features.Person.Basic
+import Linglib.Syntax.Gender.Basic
+import Linglib.Syntax.Person.Basic
 
 /-!
 # Dargwa (Tanti) Agreement [sumbatova-2021]

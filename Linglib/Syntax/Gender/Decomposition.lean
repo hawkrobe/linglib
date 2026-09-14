@@ -1,6 +1,6 @@
 import Mathlib.Data.Fintype.Card
-import Linglib.Features.ContainmentPair
-import Linglib.Syntax.Phi.Gender.Basic
+import Linglib.Syntax.Agreement.ContainmentPair
+import Linglib.Syntax.Gender.Basic
 
 /-!
 # Feature decompositions of gender
@@ -115,7 +115,7 @@ presupposes genderlessness, as two binary features with the containment
 first person for person, and masculine the least. The paper itself states no features; the
 three well-formed combinations are the three genders of a sex-based system, and the scheme
 parallels person [±author] ⊂ [±participant] and number [±atomic] ⊂ [±minimal], all three
-`ContainmentPairLike` presentations of one skeleton (`Features/ContainmentPair.lean`). -/
+`ContainmentPairLike` presentations of one skeleton (`Syntax/Agreement/ContainmentPair.lean`). -/
 
 /-- Bivalent gender features [±feminine, ±neuter], reconstructing [sauerland-2003]'s
     markedness ordering. The three well-formed combinations yield the three sex-based

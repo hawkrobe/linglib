@@ -1,12 +1,12 @@
 import Linglib.Features.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Data.UD.Basic
-import Linglib.Features.Number.Capabilities
+import Linglib.Syntax.Number.Capabilities
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 import Linglib.Syntax.Extraction
 import Linglib.Syntax.Clause.ArgumentRole
-import Linglib.Features.Person.Basic
+import Linglib.Syntax.Person.Basic
 
 /-!
 # K'iche' Agreement Fragment

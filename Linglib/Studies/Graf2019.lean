@@ -1,7 +1,7 @@
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.Paradigm.Degree
-import Linglib.Features.Person.Basic
+import Linglib.Syntax.Person.Basic
 import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Mathlib.Tactic.TFAE
 

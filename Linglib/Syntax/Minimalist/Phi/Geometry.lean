@@ -1,4 +1,4 @@
-import Linglib.Features.Person.Decomposition
+import Linglib.Syntax.Person.Decomposition
 
 /-!
 # Person Feature Geometry [harley-ritter-2002] [bejar-rezac-2003]

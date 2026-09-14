@@ -20,11 +20,11 @@ clusivity, so `toUD` collapses the quadripartition cells to `.first`
 (`ud_conflates_clusivity`); the analytical values are not recoverable
 from UD alone.
 
-This mirrors the `Number` API (`Features/Number/Basic.lean`): canonical
+This mirrors the `Number` API (`Syntax/Number/Basic.lean`): canonical
 analytical inventory at root namespace, UD demoted to realization,
-capability mixin (`Features/Person/Capabilities.lean`), unified
-resolution (`Features/Person/Resolve.lean`), feature decomposition and
-the Cysouw categories (`Features/Person/Decomposition.lean`).
+capability mixin (`Syntax/Person/Capabilities.lean`), unified
+resolution (`Syntax/Person/Resolve.lean`), feature decomposition and
+the Cysouw categories (`Syntax/Person/Decomposition.lean`).
 
 `Person.prominence` is the graded prominence scale over this
 inventory, consumed by person-hierarchy and scenario-split accounts.

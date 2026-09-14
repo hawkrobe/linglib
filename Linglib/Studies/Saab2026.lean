@@ -1,5 +1,5 @@
 import Linglib.Fragments.Spanish.Binominals
-import Linglib.Features.Number.Basic
+import Linglib.Syntax.Number.Basic
 import Linglib.Data.Examples.Saab2026
 import Mathlib.Tactic.DeriveFintype
 

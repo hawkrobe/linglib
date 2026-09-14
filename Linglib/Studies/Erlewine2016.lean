@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Erlewine2016
-import Linglib.Features.Person.Basic
+import Linglib.Syntax.Person.Basic
 import Linglib.Fragments.Mayan.Params
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Mathlib.Order.Interval.Finset.Nat

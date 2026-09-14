@@ -41,7 +41,7 @@ Recursion on **non-singular** (the [−atomic] region, before the base
 The implicational universals (trial → dual → plural → singular, etc.) are
 not stipulated — they are a theorem of the feature geometry. The generated
 values form a **lower set** in the markedness partial order on `Number`
-(`Number.instPartialOrder`, `Features/Number/Basic.lean`): if a marked value
+(`Number.instPartialOrder`, `Syntax/Number/Basic.lean`): if a marked value
 is generated, all less-marked values it presupposes are also generated (§ 8).
 
 This is a lattice-theoretic property: the partial order on values is

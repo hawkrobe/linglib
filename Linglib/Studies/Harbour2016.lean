@@ -2,7 +2,7 @@ import Mathlib.Data.Finset.Card
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Finset.NAry
 import Mathlib.Data.Finset.Lattice.Fold
-import Linglib.Features.Person.Decomposition
+import Linglib.Syntax.Person.Decomposition
 import Linglib.Features.Person.Interp
 import Linglib.Features.Number.Decomposition
 import Linglib.Syntax.Minimalist.Phi.Recursion
@@ -150,7 +150,7 @@ theorem quad_card : (cellsOf quadRaws).card = 4 := by decide
     referent lattice, the four quadripartition cells are exactly the
     regions `Person.interp` assigns to the four quadripartition values
     (speaker `0`, addressee `1`). The generative system and the
-    analytical inventory (`Features/Person/Basic.lean`) agree cell by
+    analytical inventory (`Syntax/Person/Basic.lean`) agree cell by
     cell. -/
 theorem quad_cells_are_interp_regions :
     ∀ s ∈ ℒπ,
@@ -318,7 +318,7 @@ theorem tamil_clusivity_collapsed_by_toFeatures :
       = naangaL.toPronoun.category.map Category.toFeatures := by decide
 
 /-- The exclusive's sign is the [+author, −participant] combination the containment filter of
-`Features/ContainmentPair.lean` rejects, the author as a non-participant, which the free
+`Syntax/Agreement/ContainmentPair.lean` rejects, the author as a non-participant, which the free
 combinatorics of chapter 9 generate and the calculus fills
 (`Examples.exclusive_includes_speaker`). -/
 theorem exclusive_sign_filtered :

@@ -6,7 +6,7 @@ import Linglib.Fragments.Mayan.Params
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Syntax.Extraction
 import Linglib.Syntax.Clause.ArgumentRole
-import Linglib.Features.Person.Basic
+import Linglib.Syntax.Person.Basic
 
 /-!
 # Mam Agreement Fragment

@@ -1,8 +1,8 @@
 import Linglib.Semantics.Possession.Defs
 import Linglib.Data.UD.Basic
-import Linglib.Features.Number.Capabilities
-import Linglib.Features.Person.Capabilities
-import Linglib.Syntax.Phi.Gender.Basic
+import Linglib.Syntax.Number.Capabilities
+import Linglib.Syntax.Person.Capabilities
+import Linglib.Syntax.Gender.Basic
 
 /-!
 # Jarawara possessed nouns

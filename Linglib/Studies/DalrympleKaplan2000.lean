@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.DalrympleKaplan2000
-import Linglib.Features.Person.Resolve
+import Linglib.Syntax.Person.Resolve
 import Linglib.Fragments.Chichewa.Gender
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.German.Pronouns

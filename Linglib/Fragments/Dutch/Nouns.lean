@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.Number.Capabilities
+import Linglib.Syntax.Number.Capabilities
 import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!

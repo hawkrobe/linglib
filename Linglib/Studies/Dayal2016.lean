@@ -1,7 +1,7 @@
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Order.Atoms
 import Linglib.Data.Examples.Dayal2016
-import Linglib.Features.Number.Basic
+import Linglib.Syntax.Number.Basic
 import Linglib.Logic.Modal.Defs
 import Linglib.Semantics.Questions.Exhaustivity
 

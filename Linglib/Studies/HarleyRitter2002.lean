@@ -1,4 +1,4 @@
-import Linglib.Features.Phi.Geometry
+import Linglib.Syntax.Agreement.Geometry
 import Linglib.Data.Examples.HarleyRitter2002
 
 /-!

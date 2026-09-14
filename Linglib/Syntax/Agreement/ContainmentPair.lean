@@ -110,7 +110,7 @@ def valuation (p : ContainmentPair) : Bool → Bool
 
 /-- Well-formedness is the positively valued features forming a lower set of
     the dependency chain — the general shape of a feature geometry
-    (`Features/Phi/Geometry.lean`). -/
+    (`Syntax/Agreement/Geometry.lean`). -/
 theorem wellFormed_iff_isLowerSet (p : ContainmentPair) :
     p.WellFormed ↔ IsLowerSet {b | p.valuation b = true} := by
   obtain ⟨o, i⟩ := p

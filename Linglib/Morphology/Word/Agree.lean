@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Features.Phi
+import Linglib.Syntax.Agreement.Phi
 import Linglib.Morphology.Word.Basic
 
 /-!

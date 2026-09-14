@@ -1,5 +1,5 @@
-import Linglib.Features.Number.Basic
-import Linglib.Features.Person.Basic
+import Linglib.Syntax.Number.Basic
+import Linglib.Syntax.Person.Basic
 
 /-!
 # German verb paradigms

@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Order.Flat
-import Linglib.Features.Agreement
-import Linglib.Features.Number.Basic
+import Linglib.Syntax.Agreement.Compat
+import Linglib.Syntax.Number.Basic
 
 /-!
 # The number-bearing capability
