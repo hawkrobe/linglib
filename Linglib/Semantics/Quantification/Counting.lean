@@ -881,6 +881,18 @@ theorem count_eq_decidable (P : α → Prop) (inst' : DecidablePred P)
     @count α _ P inst' = count P := by
   unfold count countOn; congr 1; apply Finset.filter_congr_decidable
 
+/-- *At most n* at any decidability instance, so that concrete cases evaluate by `decide`. -/
+theorem at_most_n_sem_iff {n : Nat} {R S : α → Prop} [DecidablePred fun x => R x ∧ S x] :
+    at_most_n_sem n R S ↔ count (fun x => R x ∧ S x) ≤ n := by
+  unfold at_most_n_sem; rw [count_eq_decidable]
+
+/-- *Few* at any decidability instance, so that concrete cases evaluate by `decide`. -/
+theorem few_sem_iff {R S : α → Prop} [DecidablePred fun x => R x ∧ S x]
+    [DecidablePred fun x => R x ∧ ¬ S x] :
+    few_sem R S ↔ count (fun x => R x ∧ S x) < count (fun x => R x ∧ ¬ S x) := by
+  unfold few_sem
+  rw [count_eq_decidable (fun x => R x ∧ S x), count_eq_decidable (fun x => R x ∧ ¬ S x)]
+
 /-- `most` is proportional, not intersective: it fails `Existential`. Witness over
     `Fin 3`: `R = ⊤`, `S = {0}` gives `|R∩S| = 1`, `|R∖S| = 2`, so `most R S` is
     false (`1 > 2` fails) while `most (R∩S) ⊤` is true (`|R∩S| = 1 > 0`). -/
