@@ -38,14 +38,13 @@ open Modality (ForceFlavor ForceAnalysis ModalItem ForceFlavorIndependent Single
 /-- The mode in which a conversational background projects, [kratzer-2012]'s distinction
 between realistic backgrounds, whose accessible worlds hold counterparts of some actual
 evidence, and informational ones, whose accessible worlds are compatible with the content of
-some source of information; the chapter's factual and content modes (UNVERIFIED Table 18.2). -/
+some source of information; the chapter's factual and content modes (Table 18.2). -/
 inductive ProjectionMode where
   | factual
   | content
   deriving DecidableEq, Repr
 
-/-- The chapter's three-way classification of conversational backgrounds (UNVERIFIED Table
-18.3): factual backgrounds without an information source, the traditional circumstantial class,
+/-- The chapter's three-way classification of conversational backgrounds (Table 18.3): factual backgrounds without an information source, the traditional circumstantial class,
 and factual and content backgrounds encoding one, the two epistemic subtypes. -/
 inductive BackgroundClass where
   | factualCircumstantial
@@ -110,7 +109,7 @@ theorem circumstantial_is_factual :
 section Gitksan
 open Gitksan.Modals
 
-/-- The chapter's classification of the Gitksan modals (UNVERIFIED Table 18.1): *ima('a)* is
+/-- The chapter's classification of the Gitksan modals (Table 18.1): *ima('a)* is
 factual-evidential, *gat* content-evidential, and the rest factual-circumstantial. -/
 def gitksanBackground (m : ModalItem) : BackgroundClass :=
   if m = imaa then .factualEvidential else if m = gat then .contentEvidential
@@ -212,7 +211,7 @@ instance (a : ForceAnalysis) (m : Finset ForceFlavor) : Decidable (Consistent a 
   cases a <;> unfold Consistent <;> infer_instance
 
 /-- A modal has a dual in an inventory when it is fixed for one force and another item of the
-inventory expresses the dual force over its flavors (UNVERIFIED §18.3.2). -/
+inventory expresses the dual force over its flavors (§18.5). -/
 def HasDualIn (L : List ModalItem) (m : ModalItem) : Prop :=
   (m.meaning.image Prod.fst).card = 1 ∧
     ∃ m' ∈ L, m'.meaning = m.meaning.image (Prod.map Modality.ModalForce.dual id)
