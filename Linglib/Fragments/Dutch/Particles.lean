@@ -1,39 +1,31 @@
 import Linglib.Semantics.Polarity.Marking
 
 /-!
-# Dutch Polarity Particles
-[turco-braun-dimroth-2014]
+# Dutch polarity particles
 
-Lexical entries for Dutch sentence-internal polarity particles.
+Dutch marks a switch from negative to positive polarity with the sentence-internal affirmative
+particle *wel*, accented in that use, the counterpart of the negation *niet*, [sudhoff-2012],
+[hogeweg-2009]. In the production study of [turco-braun-dimroth-2014] it is the dominant
+strategy in polarity contrast and in polarity correction, where German uses Verum focus.
 
-Dutch marks polarity switches (negation → affirmation) primarily via the
-affirmative particle *wel*, which appears sentence-internally and carries
-a pitch accent. This contrasts with German, which uses Verum focus on the
-finite verb.
+## References
 
+* [turco-braun-dimroth-2014]
+* [sudhoff-2012]
+* [hogeweg-2009]
 -/
 
 namespace Dutch.Particles
 
-open Polarity.Marking (Entry Strategy Env)
+open Polarity.Marking
 
-/-- *wel* — Dutch affirmative polarity particle.
-    Sentence-internal, accented, available in both contrast and correction.
-    [turco-braun-dimroth-2014]: dominant strategy in Dutch for neg→affirm switches. -/
+/-- *wel*, the affirmative polarity particle: sentence-internal, accented, available in contrast
+and in correction. -/
 abbrev wel : Entry where
   label := "wel"
   form := some "wel"
   prosodicTarget := some "particle"
   environments := {.sentenceInternal, .contrast, .correction}
   strategy := .particle
-
-def allPolarityMarkings : List Entry := [wel]
-
--- Per-entry verification theorems
-theorem wel_form : wel.form = some "wel" := rfl
-theorem wel_sentenceInternal : Env.sentenceInternal ∈ wel.environments := by decide
-theorem wel_contrastOk : Env.contrast ∈ wel.environments := by decide
-theorem wel_correctionOk : Env.correction ∈ wel.environments := by decide
-theorem wel_strategy : wel.strategy = .particle := rfl
 
 end Dutch.Particles

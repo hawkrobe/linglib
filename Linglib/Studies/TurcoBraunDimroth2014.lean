@@ -1,538 +1,174 @@
-import Linglib.Discourse.Coherence
 import Linglib.Semantics.Polarity.Marking
-import Mathlib.Tactic.NormNum
+import Linglib.Semantics.Polarity.Sentence
 import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.German.PolarityMarking
-import Linglib.Fragments.Romance.French.PolarityMarking
-import Linglib.Fragments.Swedish.AnswerParticles
-import Linglib.Fragments.English.PolarityMarking
-import Linglib.Fragments.Spanish.PolarityMarking
-import Linglib.Fragments.Italian.PolarityMarking
-import Linglib.Semantics.Polarity.Sentence
+import Linglib.Data.Examples.TurcoBraunDimroth2014
 
 /-!
-# [turco-braun-dimroth-2014] — Polarity Marking in Dutch and German
-[turco-braun-dimroth-2014]
+# Turco, Braun and Dimroth (2014): When Contrasting Polarity, the Dutch Use Particles, Germans Intonation
 
-Cross-linguistic production study comparing how Dutch and German speakers
-mark polarity switches (negation → affirmation) in two discourse contexts:
-polarity contrast (different topic situations) and polarity correction
-(same topic situation, mutually exclusive claims).
+This file formalizes [turco-braun-dimroth-2014], a production study of how Dutch and German
+mark a switch from a negative to a positive polarity in two discourse contexts. A polarity
+contrast, (1), asserts the positive claim of a different topic situation, in the sense of
+[klein-2008], than the negative claim, so the two claims are compatible; a polarity correction,
+(2), asserts it of the same topic situation, so the two claims exclude each other, the contrast
+and correction of [umbach-2004]: `Sentence`, `Switch`, `IsContrast`, `IsCorrection`,
+`Switch.disjoint_iff`, `IsCorrection.disjoint`, `exists_isContrast_not_disjoint`. In both
+contexts German speakers produced Verum focus, a high-falling pitch accent on the finite verb,
+[hohle-1992], and never a sentence-internal affirmative particle, whereas Dutch speakers mostly
+produced the accented affirmative particle *wel*, the entries `German.PolarityMarking.verumFocus`
+and `Dutch.Particles.wel`. The paper's theoretical claim is that the two devices, though
+functionally equivalent, operate on different levels: a sentence contains a polarity operator
+and, above it, an assertion operator carried by the finite verb; *wel* is the overt affirmative
+value of the polarity operator, the counterpart of *niet*, [sudhoff-2012], whereas Verum focus
+highlights the assertion operator, `PolarityOperator`, `Sentence.verumFocus`, `Level`,
+`strategyLevel`. Truth conditions do not depend on Verum focus or on whether affirmation is
+overt, `denotation_verumFocus` and `denotation_affirmation`, the functional equivalence; Verum
+focus but not *wel* can occur in a negated sentence, `exists_verumFocus_negative` and
+`pol_of_affirmation`, which is why the assertion operator takes effect above polarity, as in
+[bluhdorn-2012].
 
-## Key Findings
+## Implementation notes
 
-1. **Dutch** uses the affirmative particle *wel* as its dominant strategy
-   (~88% in contrast, ~63% in correction).
-2. **German** uses Verum focus (pitch accent on finite verb) as its dominant
-   strategy (~82% in contrast, ~78% in correction).
-3. German has **zero** sentence-internal polarity particles.
-4. Correction contexts elicit more prosodic prominence than contrast contexts
-   in both languages.
-5. Dutch *wel* accent type varies by context: downstepped fall (!H*L L%) in
-   contrast, plain fall (H*L L%) in correction.
+The polarity operator is a single slot of the sentence, so a sentence with the affirmative
+particle is positive by construction and *Het kind heeft wel niet gehuild* is not a `Sentence`.
+The production results are not formalized. Dutch speakers used *wel* in most utterances of both
+contexts, fewer in correction, an effect the paper leaves unexplained, and Verum focus never in
+contrast and rarely in correction; German speakers used Verum focus in more than two thirds of
+the utterances of both contexts, never a sentence-internal particle, and *doch* as a separate
+utterance before a Verum focus utterance in correction only, the entry
+`German.PolarityMarking.dochPreUtterance`. *Wel* was mostly accented, as a downstepped fall in
+contrast and as a fall in correction, and the pitch range of German Verum focus was larger in
+correction than in contrast; the paper attributes the greater prominence of correction either to
+the strength of undoing a denial, [hogeweg-2009], or to the absence of a contrastive topic accent
+before the comment. The examples are the rows of `Data.Examples.TurcoBraunDimroth2014`.
 
-## Theoretical contribution
+## References
 
-[turco-braun-dimroth-2014] (p. 104, following Blühdorn 2012)
-argue that VF and *wel* operate at different semantic levels: VF targets
-the *assertion operator* (the element carrying the assertive relation
-between topic and comment), while *wel* targets the *polarity operator*
-([±Pol]). Both achieve polarity contrast/correction pragmatically, but
-they are structurally distinct; the two-level theory is formalised in
-the polarity-marking-levels section below.
-
-## Data Sources
-
-- Fig. 2: Dutch production strategy distribution
-- Fig. 3: Dutch *wel* accent rate by context
-- Fig. 5: Dutch *wel* accent type by context
-- Fig. 6: German production strategy distribution
-- p. 102: German VF pitch range statistics
-
-Note: Production percentages are approximate (read from bar charts).
+* [turco-braun-dimroth-2014]
+* [umbach-2004]
+* [klein-2008]
+* [hohle-1992]
+* [sudhoff-2012]
+* [bluhdorn-2012]
+* [hogeweg-2009]
+* [dimroth-etal-2010]
 -/
 
 namespace TurcoBraunDimroth2014
 
-open Polarity.Marking (Strategy Entry Env)
-open Discourse.Coherence (CoherenceRelation)
-open Dutch.Particles (wel)
-open German.PolarityMarking (verumFocus dochPreUtterance)
-open French.PolarityMarking (si)
-open Swedish.AnswerParticles (joMarking)
-open English.PolarityMarking (emphaticDo)
-open Spanish.PolarityMarking (siQue)
-open Italian.PolarityMarking (siChe)
+open Polarity.Marking
 
-/-! ## Polarity-marking levels (p. 104, following Blühdorn 2012)
+/-! ### The polarity operator and the assertion operator -/
 
-Particles target the polarity operator directly; Verum focus targets
-the assertion operator that wraps it — predicting opposite
-co-occurrence patterns with sentential negation. -/
+/-- The value of a sentence's polarity operator: negation, an overt affirmative particle such
+as Dutch *wel*, or the unmarked default affirmation. -/
+inductive PolarityOperator where
+  | negation
+  | affirmation
+  | unmarked
+  deriving DecidableEq, Repr
 
-/-- The semantic level at which a polarity-marking device operates:
-`polarity` (affirmative particles like Dutch *wel* set `[+Pol]`) vs
-`assertion` (German Verum focus highlights the assertion operator,
-[hohle-1992]). -/
-inductive PolarityMarkingLevel where
+/-- The polarity a polarity operator expresses. -/
+def PolarityOperator.value : PolarityOperator → SentencePolarity
+  | .negation => .negative
+  | .affirmation | .unmarked => .positive
+
+/-- A sentence predicates a descriptive property, given per topic situation as the set of worlds
+where it holds there, of a topic situation, through a polarity operator and, above it, the
+assertion operator carried by the finite verb, which Verum focus accents. -/
+structure Sentence (S W : Type*) where
+  property : S → Set W
+  situation : S
+  polarityOp : PolarityOperator
+  verumFocus : Bool
+
+variable {S W : Type*}
+
+namespace Sentence
+
+/-- The polarity of a sentence, the value of its polarity operator. -/
+def pol (s : Sentence S W) : SentencePolarity := s.polarityOp.value
+
+/-- The proposition a sentence asserts. -/
+def denotation (s : Sentence S W) : Set W :=
+  match s.pol with
+  | .positive => s.property s.situation
+  | .negative => (s.property s.situation)ᶜ
+
+/-- Accenting the assertion operator leaves the truth conditions unchanged. -/
+theorem denotation_verumFocus (s : Sentence S W) (b : Bool) :
+    { s with verumFocus := b }.denotation = s.denotation := rfl
+
+/-- An overt affirmative particle leaves the truth conditions of the unmarked affirmative
+sentence unchanged: *wel* and Verum focus are functionally equivalent on a positive sentence. -/
+theorem denotation_affirmation (s : Sentence S W) :
+    { s with polarityOp := .affirmation }.denotation =
+      { s with polarityOp := .unmarked }.denotation := rfl
+
+/-- A sentence with an affirmative particle is positive: the particle is the polarity
+operator, so it cannot occur in a negated sentence. -/
+theorem pol_of_affirmation {s : Sentence S W} (h : s.polarityOp = .affirmation) :
+    s.pol = .positive := by
+  simp only [pol, h, PolarityOperator.value]
+
+/-- Verum focus can occur in a negated sentence, *Das Kind HAT nicht geweint*. -/
+theorem exists_verumFocus_negative [Nonempty S] :
+    ∃ s : Sentence S W, s.verumFocus = true ∧ s.pol = .negative :=
+  ⟨⟨λ _ => ∅, Classical.arbitrary S, .negation, true⟩, rfl, rfl⟩
+
+end Sentence
+
+/-- The two levels of meaning at which a polarity-marking device operates. -/
+inductive Level where
   | polarity
   | assertion
   deriving DecidableEq, Repr
 
-/-- The semantic level of each polarity-marking strategy; `none` for
-strategies without a clear level assignment. -/
-def strategyLevel : Strategy → Option PolarityMarkingLevel
-  | .particle        => some .polarity
-  | .verumFocus      => some .assertion
-  | .polarityReversal => some .polarity
-  | .other           => none
-  | .unmarked        => none
-
-variable {W : Type*}
-
-/-- A sentence decomposed into its polarity-relevant layers: a
-polarity-neutral radical, the polarity value `[±Pol]`, and the overtly
-marked level, if any (`Option` — assertion-level and polarity-level
-marking are mutually exclusive by construction). -/
-structure SentenceStructure (W : Type*) where
-  /-- Polarity-neutral propositional content -/
-  radical : W → Bool
-  /-- The polarity value [±Pol] -/
-  pol : SentencePolarity
-  /-- Which structural level is overtly marked, if any -/
-  marking : Option PolarityMarkingLevel := none
-
-/-- Apply polarity to the radical: polarity is the innermost operator. -/
-def SentenceStructure.eval (s : SentenceStructure W) : W → Bool :=
-  match s.pol with
-  | .positive => s.radical
-  | .negative => λ w => !s.radical w
-
-/-- Assertion-level marking (VF) is compatible with either polarity;
-polarity-level marking (particles) requires `[+Pol]` — the particle IS
-the polarity operator. -/
-def PolarityMarkingLevel.compatibleWith : PolarityMarkingLevel → SentencePolarity → Bool
-  | .assertion, _         => true
-  | .polarity,  .positive => true
-  | .polarity,  .negative => false
-
-/-- Unmarked sentences are always well-formed; marked sentences need a
-level compatible with their polarity value. -/
-def SentenceStructure.wellFormed (s : SentenceStructure W) : Bool :=
-  match s.marking with
-  | none       => true
-  | some level => level.compatibleWith s.pol
-
-/-- VF on a negative sentence is well-formed: *Das Kind HAT nicht
-geweint* — emphatic denial (Gussenhoven 1983). -/
-theorem vf_negative_wellformed (radical : W → Bool) :
-    (SentenceStructure.mk radical .negative (some .assertion)).wellFormed = true := rfl
-
-theorem vf_positive_wellformed (radical : W → Bool) :
-    (SentenceStructure.mk radical .positive (some .assertion)).wellFormed = true := rfl
-
-/-- Polarity particles require `[+Pol]`: **Het kind heeft wel niet
-gehuild* is contradictory. -/
-theorem particle_negative_illformed (radical : W → Bool) :
-    (SentenceStructure.mk radical .negative (some .polarity)).wellFormed = false := rfl
-
-theorem particle_positive_wellformed (radical : W → Bool) :
-    (SentenceStructure.mk radical .positive (some .polarity)).wellFormed = true := rfl
-
-/-- The two levels differ exactly on negation compatibility. -/
-theorem levels_differ_on_negation :
-    PolarityMarkingLevel.polarity.compatibleWith .negative ≠
-    PolarityMarkingLevel.assertion.compatibleWith .negative := by decide
-
-/-- Both strategies yield the same truth conditions on a positive
-proposition — the paper's "functional equivalence" of *wel* and VF. -/
-theorem functional_equivalence_positive (radical : W → Bool) :
-    let vf  : SentenceStructure W := ⟨radical, .positive, some .assertion⟩
-    let prt : SentenceStructure W := ⟨radical, .positive, some .polarity⟩
-    vf.eval = prt.eval := rfl
-
-/-! ## Types -/
-
-/-- Languages compared in the study. -/
-inductive Language where
-  | dutch
-  | german
-  deriving DecidableEq, Repr
-
-/-- A production-strategy distribution datum (percentages as rationals).
-    The distribution is keyed by `Strategy`, so adding a
-    strategy constructor forces updating every datum. -/
-structure ProductionDatum where
-  language : Language
-  context : CoherenceRelation
-  /-- Percentage of trials per strategy (approximate, from bar charts) -/
-  pctByStrategy : Strategy → Rat
-
-/-- A prosodic prominence datum (pitch range in semitones). -/
-structure ProminenceDatum where
-  context : CoherenceRelation
-  /-- Pitch range in semitones -/
-  pitchRangeST : Rat
-  /-- Regression coefficient (contrast relative to correction baseline) -/
-  beta : Rat
-  /-- Standard error -/
-  se : Rat
-  /-- p-value (encoded as rational for decidable comparison) -/
-  pValue : Rat
-  deriving Repr, BEq
-
-/-- An accent-rate datum for Dutch *wel* (Fig. 3). -/
-structure AccentRateDatum where
-  context : CoherenceRelation
-  /-- Percentage of *wel* tokens that were accented -/
-  pctAccented : Rat
-  deriving Repr, BEq
-
-/-- Accent type distribution on Dutch *wel* (Fig. 5).
-    ToDI annotation: !H*L L% (downstepped fall) vs H*L L% (fall). -/
-structure AccentTypeDatum where
-  context : CoherenceRelation
-  /-- Percentage realized as downstepped fall (!H*L L%) -/
-  pctDownsteppedFall : Rat
-  /-- Percentage realized as plain fall (H*L L%) -/
-  pctFall : Rat
-  /-- Percentage other realizations -/
-  pctOther : Rat
-  deriving Repr, BEq
-
-/-! ## Production Strategy Data (Fig. 2: Dutch, Fig. 6: German) -/
-
-/-- Dutch contrast: ~88% particle, 0% VF, ~5% other, ~7% unmarked -/
-def dutchContrast : ProductionDatum where
-  language := .dutch
-  context := .contrast
-  pctByStrategy
-    | .particle => 88
-    | .verumFocus => 0
-    | .polarityReversal => 0
-    | .other => 5
-    | .unmarked => 7
-
-/-- Dutch correction: ~63% particle, ~5% VF, ~7% other, ~25% unmarked -/
-def dutchCorrection : ProductionDatum where
-  language := .dutch
-  context := .correction
-  pctByStrategy
-    | .particle => 63
-    | .verumFocus => 5
-    | .polarityReversal => 0
-    | .other => 7
-    | .unmarked => 25
-
-/-- German contrast: 0% particle, ~82% VF, 0% other, ~18% unmarked.
-    "Others" in the paper's coding = doch pre-utterance + VF combinations;
-    these occur only in correction (p. 102). -/
-def germanContrast : ProductionDatum where
-  language := .german
-  context := .contrast
-  pctByStrategy
-    | .particle => 0
-    | .verumFocus => 82
-    | .polarityReversal => 0
-    | .other => 0
-    | .unmarked => 18
-
-/-- German correction: 0% particle, ~78% VF, ~8% other, ~14% unmarked.
-    The ~8% "other" = doch pre-utterance followed by VF (p. 102):
-    "always followed by a Verum focus utterance." -/
-def germanCorrection : ProductionDatum where
-  language := .german
-  context := .correction
-  pctByStrategy
-    | .particle => 0
-    | .verumFocus => 78
-    | .polarityReversal => 0
-    | .other => 8
-    | .unmarked => 14
-
-def allProductionData : List ProductionDatum :=
-  [dutchContrast, dutchCorrection, germanContrast, germanCorrection]
-
-/-! ## Dutch *wel* Accent Data (Fig. 3) -/
-
-/-- *Wel* is accented ~93% of the time in contrast contexts. -/
-def welAccentContrast : AccentRateDatum where
-  context := .contrast
-  pctAccented := 93
-
-/-- *Wel* is accented ~97% of the time in correction contexts. -/
-def welAccentCorrection : AccentRateDatum where
-  context := .correction
-  pctAccented := 97
-
-/-! ## Dutch *wel* Accent Type Data (Fig. 5)
-
-ToDI annotation (Gussenhoven 2005): in contrast, *wel* is mostly
-realized as a downstepped fall (!H*L L%); in correction, as a plain
-fall (H*L L%). The plain fall is more prominent. -/
-
-/-- Contrast: ~60% downstepped fall, ~30% fall, ~10% other -/
-def welTypeContrast : AccentTypeDatum where
-  context := .contrast
-  pctDownsteppedFall := 60
-  pctFall := 30
-  pctOther := 10
-
-/-- Correction: ~30% downstepped fall, ~60% fall, ~10% other -/
-def welTypeCorrection : AccentTypeDatum where
-  context := .correction
-  pctDownsteppedFall := 30
-  pctFall := 60
-  pctOther := 10
-
-/-! ## Prosodic Prominence Data (p. 102) -/
-
-/-- German VF pitch range in contrast: 3.1 semitones.
-    β = −1.85 (contrast is 1.85 ST *below* correction baseline),
-    SE = 0.39, p < .0001.
-    The regression coefficient is for the contrast condition relative
-    to the correction baseline (correction is the reference level). -/
-def germanVFContrast : ProminenceDatum where
-  context := .contrast
-  pitchRangeST := 31 / 10
-  beta := -185 / 100
-  se := 39 / 100
-  pValue := 1 / 10000
-
-/-- German VF pitch range in correction: 5.3 semitones.
-    This is the reference level (baseline) in the regression model. -/
-def germanVFCorrection : ProminenceDatum where
-  context := .correction
-  pitchRangeST := 53 / 10
-  beta := 0
-  se := 0
-  pValue := 1
-
-/-! ## Verification Theorems — Dominant Strategies -/
-
-/-- Dutch dominant strategy is particles in contrast. -/
-theorem dutch_contrast_particle_dominant :
-    ∀ s, s ≠ Strategy.particle →
-      dutchContrast.pctByStrategy .particle > dutchContrast.pctByStrategy s := by
-  intro s hs; cases s <;> simp_all <;> decide
-
-/-- Dutch dominant strategy is particles in correction. -/
-theorem dutch_correction_particle_dominant :
-    ∀ s, s ≠ Strategy.particle →
-      dutchCorrection.pctByStrategy .particle > dutchCorrection.pctByStrategy s := by
-  intro s hs; cases s <;> simp_all <;> decide
-
-/-- German dominant strategy is Verum focus in contrast. -/
-theorem german_contrast_vf_dominant :
-    ∀ s, s ≠ Strategy.verumFocus →
-      germanContrast.pctByStrategy .verumFocus > germanContrast.pctByStrategy s := by
-  intro s hs; cases s <;> simp_all <;> decide
-
-/-- German dominant strategy is Verum focus in correction. -/
-theorem german_correction_vf_dominant :
-    ∀ s, s ≠ Strategy.verumFocus →
-      germanCorrection.pctByStrategy .verumFocus > germanCorrection.pctByStrategy s := by
-  intro s hs; cases s <;> simp_all <;> decide
-
-/-! ## Verification Theorems — German Zero Particles -/
-
-/-- German has zero sentence-internal particles in contrast. -/
-theorem german_contrast_no_particles :
-    germanContrast.pctByStrategy .particle = 0 := rfl
-
-/-- German has zero sentence-internal particles in correction. -/
-theorem german_correction_no_particles :
-    germanCorrection.pctByStrategy .particle = 0 := rfl
-
-/-! ## Verification Theorems — Dutch VF Asymmetry -/
-
-/-- Dutch speakers never use VF in polarity contrast (0%). -/
-theorem dutch_contrast_no_vf :
-    dutchContrast.pctByStrategy .verumFocus = 0 := rfl
-
-/-- Dutch speakers occasionally use VF in polarity correction (~5%),
-    but never in contrast — an asymmetry the paper notes (p. 102) but
-    does not explain. -/
-theorem dutch_vf_correction_only :
-    dutchContrast.pctByStrategy .verumFocus = 0 ∧
-    dutchCorrection.pctByStrategy .verumFocus > 0 :=
-  ⟨rfl, by decide⟩
-
-/-! ## Verification Theorems — German doch Correction-Only
-
-The "others" category in German is exclusively doch+VF combinations
-(p. 102). These appear only in correction, consistent with
-`Env.contrast ∉ dochPreUtterance.environments` in the
-Fragment. -/
-
-/-- German "others" (doch+VF) appears only in correction, never contrast. -/
-theorem german_doch_vf_correction_only :
-    germanContrast.pctByStrategy .other = 0 ∧
-    germanCorrection.pctByStrategy .other > 0 :=
-  ⟨rfl, by decide⟩
-
-/-- The production data matches the Fragment: doch is correction-only. -/
-theorem german_doch_production_matches_fragment :
-    Env.contrast ∉ dochPreUtterance.environments ∧
-    germanContrast.pctByStrategy .other = 0 :=
-  ⟨by decide, rfl⟩
-
-/-! ## Verification Theorems — Dutch *wel* Accent -/
-
-/-- *Wel* is accented in >90% of tokens in both contexts. -/
-theorem wel_mostly_accented :
-    welAccentContrast.pctAccented > 90 ∧ welAccentCorrection.pctAccented > 90 := by
-  exact ⟨by decide, by decide⟩
-
-/-- Accent type shifts between contexts: correction favors plain fall
-    (H*L) over downstepped fall (!H*L). The plain fall is more prominent,
-    consistent with the cross-linguistic pattern that correction elicits
-    more prosodic prominence. -/
-theorem correction_favors_fall :
-    welTypeCorrection.pctFall > welTypeCorrection.pctDownsteppedFall ∧
-    welTypeContrast.pctDownsteppedFall > welTypeContrast.pctFall := by
-  exact ⟨by decide, by decide⟩
-
-/-! ## Verification Theorems — Prosodic Prominence -/
-
-/-- Correction elicits more prosodic prominence than contrast on German VF. -/
-theorem correction_more_prominent :
-    germanVFCorrection.pitchRangeST > germanVFContrast.pitchRangeST := by norm_num [germanVFCorrection, germanVFContrast]
-
-/-- The correction–contrast difference is significant (p < .05). -/
-theorem correction_prominence_significant :
-    germanVFContrast.pValue < (5 : Rat) / 100 := by norm_num [germanVFContrast]
-
-/-! ## Bridge Theorems — Fragment Connections -/
-
-/-- Neither Dutch *wel* nor German VF maps to `.unmarked`:
-    both languages have overt polarity-marking strategies. -/
-theorem dominant_strategies_both_marked :
-    wel.strategy ≠ Strategy.unmarked ∧
-    verumFocus.strategy ≠ Strategy.unmarked :=
-  ⟨by decide, by decide⟩
-
-/-- Dutch *wel* and German VF instantiate different strategy types. -/
-theorem strategies_differ :
-    wel.strategy ≠ verumFocus.strategy := by decide
-
-/-- Dutch *wel* is sentence-internal; German *doch* is not.
-    This captures the key typological contrast: Dutch has a sentence-internal
-    particle for polarity switches, German does not. -/
-theorem dutch_particle_internal_german_doch_not :
-    Env.sentenceInternal ∈ wel.environments ∧
-    Env.sentenceInternal ∉ dochPreUtterance.environments :=
-  ⟨by decide, by decide⟩
-
-/-- Both Dutch *wel* and German VF are available in both contexts. -/
-theorem both_strategies_context_general :
-    (Env.contrast ∈ wel.environments ∧
-     Env.correction ∈ wel.environments) ∧
-    (Env.contrast ∈ verumFocus.environments ∧
-     Env.correction ∈ verumFocus.environments) :=
-  ⟨⟨by decide, by decide⟩, ⟨by decide, by decide⟩⟩
-
-/-! ## Bridge Theorems — Polarity-Marking Levels
-
-Blühdorn (2012): Dutch *wel* targets [±Pol] (polarity level);
-German VF targets the assertion operator (assertion level). This
-explains why VF can co-occur with negation (emphatic denial) while
-*wel* cannot. -/
-
-/-- Dutch *wel* targets the polarity level. -/
-theorem wel_targets_polarity :
-    strategyLevel wel.strategy = some .polarity := rfl
-
-/-- German VF targets the assertion level. -/
-theorem vf_targets_assertion :
-    strategyLevel verumFocus.strategy = some .assertion := rfl
-
-/-- The two dominant strategies operate at different semantic levels.
-    This is the paper's key theoretical claim (p. 104). -/
-theorem strategies_target_different_levels :
-    strategyLevel wel.strategy ≠ strategyLevel verumFocus.strategy := by decide
-
-/-! ## Cross-Linguistic Extension
-
-[turco-braun-dimroth-2014] compare Dutch and German; the analysis
-naturally extends to other Western European languages with comparable
-polarity-marking inventories: English (emphatic *do*),
-French (*si*), Swedish (*jo*), Spanish (*sí (que)*),
-Italian (*sì che*). See also [holmberg-2016],
-[batllori-hernanz-2013], [wilder-2013],
-[garassino-jacob-2018].
-
-We aggregate the seven-language sample and verify the strategy–level,
-correction-only, context-general, and sentence-internality
-generalizations as quantified statements over the inventory rather
-than as individual per-entry `rfl`s. -/
-
-/-- All polarity-marking entries across the seven-language sample. -/
-def allEntries : List Entry :=
-  [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking, siQue, siChe]
-
-/-- **Generalization 1 — Strategy/level mapping.** Every particle and
-    polarity-reversal entry targets the polarity level; every Verum-focus
-    entry targets the assertion level. -/
-theorem strategy_level_partition :
-    ∀ e ∈ allEntries,
-      (e.strategy = .particle ∨ e.strategy = .polarityReversal →
-        strategyLevel e.strategy = some .polarity) ∧
-      (e.strategy = .verumFocus →
-        strategyLevel e.strategy = some .assertion) := by
-  intro e he
-  simp [allEntries] at he
-  rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    refine ⟨?_, ?_⟩ <;> intro h <;>
-    simp_all [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking,
-              siQue, siChe, strategyLevel]
-
-/-- **Generalization 2 — Reversal particles license correction.**
-    Every polarity-reversal entry has `.correction` present in
-    `environments`. The earlier "correction-only" version of this
-    generalization (also asserting `.contrast ∉ e.environments`) was
-    falsified by Italian *sì che* and Spanish *sí que* per
-    [garassino-jacob-2018] ex. 17 + [batllori-hernanz-2013]
-    ex. 4-5 (both license non-contradictory contrast contexts). The
-    surviving cross-linguistic generalization is the correction
-    direction only. -/
-theorem all_reversal_license_correction :
-    ∀ e ∈ allEntries, e.strategy = .polarityReversal →
-      Env.correction ∈ e.environments := by
-  intro e he hs
-  simp [allEntries] at he
-  rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp_all [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking,
-              siQue, siChe] <;> decide
-
-/-- **Generalization 3 — Non-reversal strategies are context-general.**
-    Every particle or Verum-focus entry has both `.contrast` and
-    `.correction` present in `environments`. -/
-theorem all_nonreversal_context_general :
-    ∀ e ∈ allEntries,
-      e.strategy = .particle ∨ e.strategy = .verumFocus →
-      Env.contrast ∈ e.environments ∧
-      Env.correction ∈ e.environments := by
-  intro e he hs
-  simp [allEntries] at he
-  rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp_all [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking,
-              siQue, siChe] <;> decide
-
-/-- **Generalization 4 — Sentence-internality splits by strategy type.**
-    Polarity-reversal entries are not sentence-internal; particles and
-    Verum-focus entries are. -/
-theorem sentence_internality_by_strategy :
-    ∀ e ∈ allEntries,
-      (e.strategy = .polarityReversal →
-        Env.sentenceInternal ∉ e.environments) ∧
-      (e.strategy = .particle ∨ e.strategy = .verumFocus →
-        Env.sentenceInternal ∈ e.environments) := by
-  intro e he
-  simp [allEntries] at he
-  rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    refine ⟨?_, ?_⟩ <;> intro h <;>
-    simp_all [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking,
-              siQue, siChe]
+/-- The level of a marking strategy: affirmative and polarity-reversing particles are values of
+the polarity operator, Verum focus highlights the assertion operator. -/
+def strategyLevel : Strategy → Option Level
+  | .particle | .polarityReversal => some .polarity
+  | .verumFocus => some .assertion
+  | .other | .unmarked => none
+
+/-- Dutch *wel* and German Verum focus operate at different levels. -/
+theorem strategyLevel_wel_ne_verumFocus :
+    strategyLevel Dutch.Particles.wel.strategy ≠
+      strategyLevel German.PolarityMarking.verumFocus.strategy := by
+  decide
+
+/-! ### Polarity contrast and polarity correction -/
+
+/-- A polarity switch from `a` to `b`: a negative claim followed by a positive claim of the same
+descriptive property. -/
+def Switch (a b : Sentence S W) : Prop :=
+  a.property = b.property ∧ a.pol = .negative ∧ b.pol = .positive
+
+/-- A polarity contrast: a switch between claims about different topic situations. -/
+def IsContrast (a b : Sentence S W) : Prop := Switch a b ∧ a.situation ≠ b.situation
+
+/-- A polarity correction: a switch between claims about the same topic situation. -/
+def IsCorrection (a b : Sentence S W) : Prop := Switch a b ∧ a.situation = b.situation
+
+/-- The claims of a switch exclude each other exactly when the property's holding of the second
+topic situation entails its holding of the first. -/
+theorem Switch.disjoint_iff {a b : Sentence S W} (h : Switch a b) :
+    Disjoint a.denotation b.denotation ↔ b.property b.situation ⊆ a.property a.situation := by
+  obtain ⟨hP, ha, hb⟩ := h
+  simp only [Sentence.denotation, ha, hb, hP, Set.disjoint_compl_left_iff_subset]
+
+/-- The claims of a correction exclude each other. -/
+theorem IsCorrection.disjoint {a b : Sentence S W} (h : IsCorrection a b) :
+    Disjoint a.denotation b.denotation :=
+  h.1.disjoint_iff.2 (by rw [h.1.1, h.2])
+
+/-- The claims of a contrast need not exclude each other: any two topic situations carry a
+contrast whose claims are jointly true. -/
+theorem exists_isContrast_not_disjoint [Nonempty W] {s₁ s₂ : S} (h : s₁ ≠ s₂) :
+    ∃ a b : Sentence S W, IsContrast a b ∧ ¬ Disjoint a.denotation b.denotation := by
+  refine ⟨⟨λ s => {_w | s = s₂}, s₁, .negation, false⟩,
+    ⟨λ s => {_w | s = s₂}, s₂, .unmarked, false⟩, ⟨⟨rfl, rfl, rfl⟩, h⟩, ?_⟩
+  exact Set.not_disjoint_iff.2 ⟨Classical.arbitrary W, h, rfl⟩
 
 end TurcoBraunDimroth2014
