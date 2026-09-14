@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # Niuean Modal Inventory
@@ -52,39 +52,38 @@ in the root/circumstantial domain.
 
 namespace Niuean.Modals
 
-open Modality (ForceFlavor ForceAnalysis)
-open Modality.Typology (ModalExpression satisfiesIFF satisfiesSAV)
+open Modality (ForceFlavor ForceAnalysis ModalItem)
 
-private abbrev ne := ForceFlavor.mk .necessity .epistemic
-private abbrev pe := ForceFlavor.mk .possibility .epistemic
-private abbrev nc := ForceFlavor.mk .necessity .circumstantial
-private abbrev pc := ForceFlavor.mk .possibility .circumstantial
+private abbrev ne : ForceFlavor := (.necessity, .epistemic)
+private abbrev pe : ForceFlavor := (.possibility, .epistemic)
+private abbrev nc : ForceFlavor := (.necessity, .circumstantial)
+private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
 /-! ## Modal expressions -/
 
 /-- General-purpose epistemic modal: usable in both possibility and
     necessity contexts. [matthewson-et-al-2012].
     Translatable as 'might', 'probably', 'must' depending on context. -/
-def liga : ModalExpression := ⟨"liga", [pe, ne]⟩
+def liga : ModalItem := { form := "liga", meaning := {pe, ne} }
 
 /-- Circumstantial possibility modal ('able to', 'can').
     [seiter-1980] p. 140. -/
-def maeke : ModalExpression := ⟨"maeke", [pc]⟩
+def maeke : ModalItem := { form := "maeke", meaning := {pc} }
 
 /-- Circumstantial necessity modal ('should', 'must').
     [seiter-1980] p. 133. -/
-def lata : ModalExpression := ⟨"lata", [nc]⟩
+def lata : ModalItem := { form := "lata", meaning := {nc} }
 
-def allExpressions : List ModalExpression := [liga, maeke, lata]
+def allExpressions : List ModalItem := [liga, maeke, lata]
 
 /-! ## Force analysis -/
 
 /-- Force analysis for each Niuean modal.
     liga is variable-force; maeke and lata are fixed. -/
-def forceAnalysis : ModalExpression → ForceAnalysis
-  | ⟨"liga", _⟩ => .variableForce
-  | ⟨"maeke", _⟩ => .fixed .possibility
-  | ⟨"lata", _⟩ => .fixed .necessity
+def forceAnalysis : ModalItem → ForceAnalysis
+  | ⟨"liga", _, _⟩ => .variableForce
+  | ⟨"maeke", _, _⟩ => .fixed .possibility
+  | ⟨"lata", _, _⟩ => .fixed .necessity
   | _ => .fixed .possibility
 
 /-! ## Background classification -/
@@ -93,8 +92,8 @@ open Modality (BackgroundClass) in
 /-- Background class for each Niuean modal.
     liga is epistemic (factual-evidential); maeke and lata are
     circumstantial (factual-circumstantial). -/
-def backgroundClass : ModalExpression → BackgroundClass
-  | ⟨"liga", _⟩ => .factualEvidential
+def backgroundClass : ModalItem → BackgroundClass
+  | ⟨"liga", _, _⟩ => .factualEvidential
   | _ => .factualCircumstantial
 
 /-! ## Dual structure
@@ -110,41 +109,5 @@ theorem maeke_has_dual : (forceAnalysis maeke).HasDual := trivial
 
 /-- lata has a dual (maeke). -/
 theorem lata_has_dual : (forceAnalysis lata).HasDual := trivial
-
-/-! ## Typological properties -/
-
-/-- liga satisfies IFF (variable force, single flavour). -/
-theorem liga_satisfies_iff : satisfiesIFF liga.meaning = true := by decide
-
-/-- liga satisfies SAV (varies on force axis only). -/
-theorem liga_satisfies_sav : satisfiesSAV liga.meaning = true := by decide
-
-/-- All Niuean modals satisfy IFF. -/
-theorem all_satisfy_iff :
-    allExpressions.all (fun e => satisfiesIFF e.meaning) = true := by decide
-
-/-- All Niuean modals satisfy SAV. -/
-theorem all_satisfy_sav :
-    allExpressions.all (fun e => satisfiesSAV e.meaning) = true := by decide
-
-/-! ## Flavour–force correlation
-
-Epistemic domain: no force distinction (liga covers both).
-Circumstantial domain: force distinction encoded (maeke vs lata).
-This is exactly Nauze's (2008) polyfunctionality pattern applied to
-the force dimension: liga varies along the force axis within the
-epistemic flavour, while circumstantial modals are fixed on force. -/
-
-/-- The epistemic domain has a single modal covering both forces. -/
-theorem epistemic_single_modal :
-    (allExpressions.filter (fun e =>
-      e.meaning.any (fun ff => ff.flavor == .epistemic))).length = 1 := by
-  decide
-
-/-- The circumstantial domain has separate possibility and necessity modals. -/
-theorem circumstantial_has_duals :
-    (allExpressions.filter (fun e =>
-      e.meaning.any (fun ff => ff.flavor == .circumstantial))).length = 2 := by
-  decide
 
 end Niuean.Modals

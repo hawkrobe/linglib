@@ -1,5 +1,4 @@
 import Linglib.Semantics.Modality.ModalTypes
-import Linglib.Semantics.Modality.Typology
 
 /-!
 # Gitksan Modal Inventory
@@ -39,16 +38,15 @@ but only weakly.
 
 namespace Gitksan.Modals
 
-open Modality (ForceFlavor ForceAnalysis BackgroundClass TemporalOrientation)
-open Modality.Typology (ModalExpression)
+open Modality (ForceFlavor ForceAnalysis BackgroundClass TemporalOrientation ModalItem)
 
-private abbrev ne := ForceFlavor.mk .necessity .epistemic
-private abbrev pe := ForceFlavor.mk .possibility .epistemic
-private abbrev wnd := ForceFlavor.mk .weakNecessity .deontic
-private abbrev wnc := ForceFlavor.mk .weakNecessity .circumstantial
-private abbrev pd := ForceFlavor.mk .possibility .deontic
-private abbrev pc := ForceFlavor.mk .possibility .circumstantial
-private abbrev pb := ForceFlavor.mk .possibility .bouletic
+private abbrev ne : ForceFlavor := (.necessity, .epistemic)
+private abbrev pe : ForceFlavor := (.possibility, .epistemic)
+private abbrev wnd : ForceFlavor := (.weakNecessity, .deontic)
+private abbrev wnc : ForceFlavor := (.weakNecessity, .circumstantial)
+private abbrev pd : ForceFlavor := (.possibility, .deontic)
+private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
+private abbrev pb : ForceFlavor := (.possibility, .bouletic)
 
 /-! ## Modal expressions -/
 
@@ -56,14 +54,14 @@ private abbrev pb := ForceFlavor.mk .possibility .bouletic
     [peterson-2010]: analysed as a possibility modal strengthened via
     ordering source, compatible with both necessity and possibility contexts.
     [matthewson-2016] §18.3.2: not specialized for a particular force. -/
-def imaa : ModalExpression := ⟨"ima('a)", [pe, ne]⟩
+def imaa : ModalItem := { form := "ima('a)", meaning := {pe, ne} }
 
 /-- Variable-force reportative epistemic modal.
     Distinguished from ima('a) by information source: gat requires
     reportative evidence. Under [kratzer-2012]'s reclassification,
     gat is **content-evidential** (the speaker can disbelieve the report),
     while ima('a) is **factual-evidential**. -/
-def gat : ModalExpression := ⟨"gat", [pe, ne]⟩
+def gat : ModalItem := { form := "gat", meaning := {pe, ne} }
 
 /-- General circumstantial possibility: pure circumstantial, ability,
     bouletic, teleological, and (in competition with `anookxw`) deontic
@@ -73,13 +71,13 @@ def gat : ModalExpression := ⟨"gat", [pe, ne]⟩
     inventory), and deontic permission ('My mother told me I could play').
     Listed flavors: circumstantial (covering pure circumstantial, ability,
     teleological), deontic (permission overlap with anookxw), bouletic. -/
-def daakhlxw : ModalExpression := ⟨"da'akhlxw", [pc, pd, pb]⟩
+def daakhlxw : ModalItem := { form := "da'akhlxw", meaning := {pc, pd, pb} }
 
 /-- Specialized deontic possibility ('allowed to'). [matthewson-2013]
     §4.2: anook competes with da'akhlxw in permission contexts but is
     strictly deontic — infelicitous in pure circumstantial situations
     (ex. 79). -/
-def anookxw : ModalExpression := ⟨"anook(xw)", [pd]⟩
+def anookxw : ModalItem := { form := "anook(xw)", meaning := {pd} }
 
 /-- Circumstantial **weak** necessity. [matthewson-2013] §4.3 (and
     Figure 1: column header is "(WEAK) NECESSITY"): sgi expresses
@@ -94,9 +92,9 @@ def anookxw : ModalExpression := ⟨"anook(xw)", [pd]⟩
     non-empty priority ordering source) rather than a strict
     weak-necessity restriction. The Fig. 1 parenthesization of
     "(WEAK)" reflects this uncertainty. -/
-def sgi : ModalExpression := ⟨"sgi", [wnd, wnc]⟩
+def sgi : ModalItem := { form := "sgi", meaning := {wnd, wnc} }
 
-def allExpressions : List ModalExpression :=
+def allExpressions : List ModalItem :=
   [imaa, gat, daakhlxw, anookxw, sgi]
 
 /-! ## Force analysis
@@ -106,12 +104,12 @@ specify necessity or possibility, but are compatible with both.
 The circumstantial modals have fixed force. -/
 
 /-- Force analysis for each Gitksan modal. -/
-def forceAnalysis : ModalExpression → ForceAnalysis
-  | ⟨"ima('a)", _⟩ => .variableForce
-  | ⟨"gat", _⟩ => .variableForce
-  | ⟨"da'akhlxw", _⟩ => .fixed .possibility
-  | ⟨"anook(xw)", _⟩ => .fixed .possibility
-  | ⟨"sgi", _⟩ => .fixed .weakNecessity
+def forceAnalysis : ModalItem → ForceAnalysis
+  | ⟨"ima('a)", _, _⟩ => .variableForce
+  | ⟨"gat", _, _⟩ => .variableForce
+  | ⟨"da'akhlxw", _, _⟩ => .fixed .possibility
+  | ⟨"anook(xw)", _, _⟩ => .fixed .possibility
+  | ⟨"sgi", _, _⟩ => .fixed .weakNecessity
   | _ => .fixed .possibility
 
 /-! ## Three-way background classification ([matthewson-2016] Table 18.3)
@@ -121,9 +119,9 @@ Gitksan lexicalizes all three background classes:
 - **factual-evidential**: ima('a) (inferential, speaker cannot disbelieve)
 - **content-evidential**: gat (reportative, speaker can disbelieve) -/
 
-def backgroundClass : ModalExpression → BackgroundClass
-  | ⟨"ima('a)", _⟩ => .factualEvidential
-  | ⟨"gat", _⟩ => .contentEvidential
+def backgroundClass : ModalItem → BackgroundClass
+  | ⟨"ima('a)", _, _⟩ => .factualEvidential
+  | ⟨"gat", _, _⟩ => .contentEvidential
   | _ => .factualCircumstantial
 
 /-! ## Absolute epistemic/circumstantial split
@@ -133,20 +131,18 @@ epistemic modals cannot be used circumstantially and vice versa.
 [matthewson-2016] §18.2.3, example 20. -/
 
 /-- Epistemic modals. -/
-def epistemicModals : List ModalExpression := [imaa, gat]
+def epistemicModals : List ModalItem := [imaa, gat]
 
 /-- Circumstantial modals. -/
-def circumstantialModals : List ModalExpression := [daakhlxw, anookxw, sgi]
+def circumstantialModals : List ModalItem := [daakhlxw, anookxw, sgi]
 
 /-- No epistemic modal has a circumstantial reading. -/
 theorem epistemic_no_circumstantial :
-    epistemicModals.all (fun e =>
-      e.meaning.all (fun ff => ff.flavor == .epistemic)) = true := by decide
+    ∀ e ∈ epistemicModals, ∀ ff ∈ e.meaning, ff.flavor = .epistemic := by decide
 
 /-- No circumstantial modal has an epistemic reading. -/
 theorem circumstantial_no_epistemic :
-    circumstantialModals.all (fun e =>
-      e.meaning.all (fun ff => ff.flavor != .epistemic)) = true := by decide
+    ∀ e ∈ circumstantialModals, ∀ ff ∈ e.meaning, ff.flavor ≠ .epistemic := by decide
 
 /-! ## Prospective aspect marker `dim`
 
@@ -167,8 +163,8 @@ Gitksan epistemics only. Circumstantials uniformly demand the marker. -/
     the temporal orientation of its prejacent. The asymmetry follows
     the modal's flavor: circumstantials always require dim; epistemics
     only require dim when oriented to the future. -/
-def requiresDim (e : ModalExpression) (orient : TemporalOrientation) : Bool :=
-  if e.meaning.all (fun ff => ff.flavor == .epistemic) then
+def requiresDim (e : ModalItem) (orient : TemporalOrientation) : Bool :=
+  if ∀ ff ∈ e.meaning, ff.flavor = .epistemic then
     -- Epistemic modal: dim required iff future orientation.
     orient == .future
   else
@@ -181,35 +177,33 @@ def requiresDim (e : ModalExpression) (orient : TemporalOrientation) : Bool :=
 epistemic modals are felicitous without `dim` for past/present
 orientations and require `dim` for future. -/
 
-@[simp] theorem requiresDim_imaa_past    : requiresDim imaa .past    = false := rfl
-@[simp] theorem requiresDim_imaa_present : requiresDim imaa .present = false := rfl
-@[simp] theorem requiresDim_imaa_future  : requiresDim imaa .future  = true  := rfl
+@[simp] theorem requiresDim_imaa_past    : requiresDim imaa .past    = false := by decide
+@[simp] theorem requiresDim_imaa_present : requiresDim imaa .present = false := by decide
+@[simp] theorem requiresDim_imaa_future  : requiresDim imaa .future  = true  := by decide
 
-@[simp] theorem requiresDim_gat_past    : requiresDim gat .past    = false := rfl
-@[simp] theorem requiresDim_gat_present : requiresDim gat .present = false := rfl
-@[simp] theorem requiresDim_gat_future  : requiresDim gat .future  = true  := rfl
+@[simp] theorem requiresDim_gat_past    : requiresDim gat .past    = false := by decide
+@[simp] theorem requiresDim_gat_present : requiresDim gat .present = false := by decide
+@[simp] theorem requiresDim_gat_future  : requiresDim gat .future  = true  := by decide
 
 @[simp] theorem requiresDim_daakhlxw (o : TemporalOrientation) :
-    requiresDim daakhlxw o = true := by cases o <;> rfl
+    requiresDim daakhlxw o = true := by cases o <;> decide
 
 @[simp] theorem requiresDim_anookxw (o : TemporalOrientation) :
-    requiresDim anookxw o = true := by cases o <;> rfl
+    requiresDim anookxw o = true := by cases o <;> decide
 
 @[simp] theorem requiresDim_sgi (o : TemporalOrientation) :
-    requiresDim sgi o = true := by cases o <;> rfl
+    requiresDim sgi o = true := by cases o <;> decide
 
 /-- Circumstantial modals require `dim` for any orientation
     (§4.1 ex. 51–58, §4.2 ex. 73–78, §4.3 ex. 82–88). -/
 theorem requiresDim_circumstantial :
-    circumstantialModals.all (fun e =>
-      [TemporalOrientation.past, .present, .future].all (fun o =>
-        requiresDim e o)) = true := by decide
+    ∀ e ∈ circumstantialModals, ∀ o ∈ [TemporalOrientation.past, .present, .future],
+      requiresDim e o = true := by decide
 
 /-- Epistemic modals do not uniformly require `dim`: at least one
     epistemic / past-or-present pair is felicitous without it. -/
 theorem epistemics_nonuniform_dim :
-    epistemicModals.any (fun e =>
-      [TemporalOrientation.past, .present].any (fun o =>
-        !requiresDim e o)) = true := by decide
+    ∃ e ∈ epistemicModals, ∃ o ∈ [TemporalOrientation.past, .present],
+      requiresDim e o = false := by decide
 
 end Gitksan.Modals

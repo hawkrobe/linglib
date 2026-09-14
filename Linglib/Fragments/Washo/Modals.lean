@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # Washo Modal Inventory
@@ -16,20 +16,19 @@ Cartesian product {necessity, possibility} × {epistemic, deontic}.
 
 namespace Washo.Modals
 
-open Modality (ForceFlavor)
-open Modality.Typology (ModalExpression)
+open Modality (ForceFlavor ModalItem)
 
-private abbrev ne := ForceFlavor.mk .necessity .epistemic
-private abbrev nd := ForceFlavor.mk .necessity .deontic
-private abbrev pe := ForceFlavor.mk .possibility .epistemic
-private abbrev pd := ForceFlavor.mk .possibility .deontic
+private abbrev ne : ForceFlavor := (.necessity, .epistemic)
+private abbrev nd : ForceFlavor := (.necessity, .deontic)
+private abbrev pe : ForceFlavor := (.possibility, .epistemic)
+private abbrev pd : ForceFlavor := (.possibility, .deontic)
 
 /-- *-eʔ* — variable-force, variable-flavor modal verb.
     Expresses epistemic and deontic modality with both weak and strong force.
     Counterexample to SAV: varies on both axes. Satisfies IFF: the meaning
     is {necessity, possibility} × {epistemic, deontic}. -/
-def modalEq : ModalExpression := { form := "-eʔ", meaning := [ne, nd, pe, pd] }
+def modalEq : ModalItem := { form := "-eʔ", meaning := {ne, nd, pe, pd} }
 
-def allExpressions : List ModalExpression := [modalEq]
+def allExpressions : List ModalItem := [modalEq]
 
 end Washo.Modals

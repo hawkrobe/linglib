@@ -66,7 +66,7 @@ def person (a : Auxiliary) : Option UD.Person := a.features.person
 def number (a : Auxiliary) : Option UD.Number := a.features.number
 
 /-- The modal item an auxiliary contributes: form, meanings, register. -/
-def toModalItem (a : Auxiliary) : ModalItem := ⟨a.form, a.modality, a.register⟩
+def toModalItem (a : Auxiliary) : ModalItem := ⟨a.form, a.modality.toFinset, a.register⟩
 
 /-- The modal feature a modal auxiliary carries ([zeijlstra-2007]): the force
 of its primary meaning, **uninterpretable** — semantically vacuous and

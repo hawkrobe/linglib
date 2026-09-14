@@ -16,43 +16,38 @@ namespace Portuguese.Modals
 
 open Modality
 
-private def cp (fos : List ModalForce) (fls : List ModalFlavor) : List ForceFlavor :=
-  ForceFlavor.cartesianProduct fos fls
-
-private def allFlavors : List ModalFlavor := ModalFlavor.all
-
 /-! ### Present tense -/
 
 /-- *pode* 'can/may' — possibility modal, all flavors. -/
 def poder : ModalItem where
   form := "pode"
-  meaning := cp [.possibility] allFlavors
+  meaning := {.possibility} ×ˢ Finset.univ
 
 /-- *deve* 'ought/should' — weak necessity modal, all flavors. -/
 def dever : ModalItem where
   form := "deve"
-  meaning := cp [.weakNecessity] allFlavors
+  meaning := {.weakNecessity} ×ˢ Finset.univ
 
 /-- *tem que* 'must/have to' — strong necessity modal, all flavors. -/
 def terQue : ModalItem where
   form := "tem que"
-  meaning := cp [.necessity] allFlavors
+  meaning := {.necessity} ×ˢ Finset.univ
 
 /-! ### Past imperfect -/
 
 /-- *podia* 'could/might', past imperfect — possibility, all flavors. -/
 def podia : ModalItem where
   form := "podia"
-  meaning := cp [.possibility] allFlavors
+  meaning := {.possibility} ×ˢ Finset.univ
 
 /-- *devia* 'ought', past imperfect — weak necessity, all flavors. -/
 def devia : ModalItem where
   form := "devia"
-  meaning := cp [.weakNecessity] allFlavors
+  meaning := {.weakNecessity} ×ˢ Finset.univ
 
 /-- *tinha que* 'had to', past imperfect — strong necessity, all flavors. -/
 def tinhaQue : ModalItem where
   form := "tinha que"
-  meaning := cp [.necessity] allFlavors
+  meaning := {.necessity} ×ˢ Finset.univ
 
 end Portuguese.Modals

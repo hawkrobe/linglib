@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # Koryak Modal Inventory
@@ -23,18 +23,17 @@ distinction requires a finer-grained flavor type than `ModalFlavor`.
 
 namespace Koryak.Modals
 
-open Modality (ForceFlavor)
-open Modality.Typology (ModalExpression)
+open Modality (ForceFlavor ModalItem)
 
-private abbrev ne := ForceFlavor.mk .necessity .epistemic
-private abbrev pe := ForceFlavor.mk .possibility .epistemic
+private abbrev ne : ForceFlavor := (.necessity, .epistemic)
+private abbrev pe : ForceFlavor := (.possibility, .epistemic)
 
 /-- *ivək* — variable-force attitude verb.
     Doxastic: 'believe' (necessity) / 'allow for the possibility that' (possibility).
     Assertive: 'say/assert' (necessity) / assertive possibility.
     Both doxastic and assertive map to epistemic in the 3×3 space. -/
-def modalIvek : ModalExpression := { form := "ivək", meaning := [ne, pe] }
+def modalIvek : ModalItem := { form := "ivək", meaning := {ne, pe} }
 
-def allExpressions : List ModalExpression := [modalIvek]
+def allExpressions : List ModalItem := [modalIvek]
 
 end Koryak.Modals

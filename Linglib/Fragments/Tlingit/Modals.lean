@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # Tlingit Modal Inventory
@@ -9,20 +9,19 @@ Modal expressions from Tlingit (Athabaskan-Eyak-Tlingit), based on
 
 namespace Tlingit.Modals
 
-open Modality (ForceFlavor)
-open Modality.Typology (ModalExpression)
+open Modality (ForceFlavor ModalItem)
 
-private abbrev pe := ForceFlavor.mk .possibility .epistemic
-private abbrev nc := ForceFlavor.mk .necessity .circumstantial
-private abbrev pc := ForceFlavor.mk .possibility .circumstantial
+private abbrev pe : ForceFlavor := (.possibility, .epistemic)
+private abbrev nc : ForceFlavor := (.necessity, .circumstantial)
+private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
-def gwal : ModalExpression := ⟨"gwal", [pe]⟩
-def giwe : ModalExpression := ⟨"giwe", [pe]⟩
-def shákdé : ModalExpression := ⟨"shákdé", [pe]⟩
-def futureMode : ModalExpression := ⟨"future mode", [nc]⟩
-def potentialMode : ModalExpression := ⟨"potential mode", [pc]⟩
+def gwal : ModalItem := { form := "gwal", meaning := {pe} }
+def giwe : ModalItem := { form := "giwe", meaning := {pe} }
+def shákdé : ModalItem := { form := "shákdé", meaning := {pe} }
+def futureMode : ModalItem := { form := "future mode", meaning := {nc} }
+def potentialMode : ModalItem := { form := "potential mode", meaning := {pc} }
 
-def allExpressions : List ModalExpression :=
+def allExpressions : List ModalItem :=
   [gwal, giwe, shákdé, futureMode, potentialMode]
 
 end Tlingit.Modals

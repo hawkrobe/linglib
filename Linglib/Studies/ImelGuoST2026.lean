@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.Universals
 import Linglib.Fragments.Washo.Modals
 import Linglib.Fragments.Koryak.Modals
 import Linglib.Fragments.Greek.StandardModern.Modals
@@ -21,7 +21,7 @@ communicative need distribution, Equations (2) and (3) (`informativeness`), with
 utility of guessing one axis right. Languages are compared by Pareto dominance on complexity
 and communicative cost (`Dominates`), and naturalness is the fraction of a vocabulary satisfying
 the Independence of Force and Flavor universal of [steinert-threlkeld-imel-guo-2023], the
-substrate's `Modality.Typology.satisfiesIFF`.
+substrate's `Modality.ForceFlavorIndependent`.
 
 The paper's three results, that every Pareto-optimal system consists of IFF modals, that
 naturalness correlates with optimality, and that the attested inventories are more optimal than
@@ -50,7 +50,7 @@ only on its two axis sizes, and synonyms of a modal are dominated by the modal a
 
 namespace ImelGuoST2026
 
-open Modality Modality.Typology Finset
+open Modality Finset
 
 /-- The meaning space of the experiment: weak and strong force by epistemic, deontic and
 circumstantial flavor. -/
@@ -60,9 +60,6 @@ def Space : Finset ForceFlavor :=
 
 /-- A modal meaning: the force-flavor pairs a modal can express. -/
 abbrev Meaning := Finset ForceFlavor
-
-/-- The meaning of a fragment entry within the space. -/
-def meaningOf (e : ModalExpression) : Meaning := e.meaning.toFinset ∩ Space
 
 /-! ### The Language of Thought and complexity -/
 
@@ -282,21 +279,14 @@ theorem informativeness_whole (need : ForceFlavor → ℚ) :
     rw [h, mul_comm]
   revert hp; rcases p with ⟨f, fl⟩; cases f <;> cases fl <;> decide +kernel
 
-/-- The grid of a set of forces and a set of flavors, the meaning of a modal satisfying the
-universal in its alternative formulation. -/
-def grid (F : Finset ModalForce) (Φ : Finset ModalFlavor) : Meaning :=
-  (F ×ˢ Φ).image λ x => ⟨x.1, x.2⟩
-
-/-- A listener hearing a grid modal earns half the reciprocal of each axis size: the utility of
-an IFF modal depends only on how many forces and how many flavors it leaves open. -/
-theorem listen_grid {F : Finset ModalForce} {Φ : Finset ModalFlavor} {p : ForceFlavor}
+/-- A listener hearing a product modal earns half the reciprocal of each axis size, so the
+utility of an IFF modal depends only on how many forces and how many flavors it leaves open. -/
+theorem listen_product {F : Finset ModalForce} {Φ : Finset ModalFlavor} {p : ForceFlavor}
     (hF : p.force ∈ F) (hΦ : p.flavor ∈ Φ) :
-    listen (grid F Φ) p = (1 / F.card + 1 / Φ.card) / 2 := by
-  have hinj : Function.Injective (λ x : ModalForce × ModalFlavor => (⟨x.1, x.2⟩ : ForceFlavor)) :=
-    λ x y h => Prod.ext (congrArg ForceFlavor.force h) (congrArg ForceFlavor.flavor h)
+    listen (F ×ˢ Φ) p = (1 / F.card + 1 / Φ.card) / 2 := by
   have hF0 : (F.card : ℚ) ≠ 0 := by exact_mod_cast (card_pos.2 ⟨_, hF⟩).ne'
   have hΦ0 : (Φ.card : ℚ) ≠ 0 := by exact_mod_cast (card_pos.2 ⟨_, hΦ⟩).ne'
-  rw [listen, grid, card_image_of_injective _ hinj, sum_image (λ x _ y _ h => hinj h), card_product]
+  rw [listen, card_product]
   simp only [utility, sum_add_distrib, sum_product, sum_ite_eq, if_pos hF, if_pos hΦ,
     sum_const, nsmul_eq_mul, sum_comm (s := F) (t := Φ)]
   push_cast
@@ -340,27 +330,27 @@ theorem dominates_replicate (need : ForceFlavor → ℚ) {m : Meaning} (hm : m �
 /-! ### The universals and naturalness -/
 
 /-- Naturalness: the fraction of an inventory satisfying the IFF universal. -/
-def naturalness (inv : ModalInventory) : ℚ := inv.iffCount / inv.size
+def naturalness (L : List ModalItem) : ℚ :=
+  (L.countP (ForceFlavorIndependent ·.meaning) : ℚ) / L.length
 
 /-- Washo *-eʔ* varies on both axes, against the Single Axis of Variability universal of
 [nauze-2008], and satisfies IFF, its meaning being the full grid of two forces and two flavors. -/
-theorem washo_not_sav_iff :
-    satisfiesSAV Washo.Modals.modalEq.meaning = false ∧
-      satisfiesIFF Washo.Modals.modalEq.meaning = true := by
+theorem washo_not_singleAxis_forceFlavorIndependent :
+    ¬ SingleAxis Washo.Modals.modalEq.meaning ∧
+      ForceFlavorIndependent Washo.Modals.modalEq.meaning := by
   decide
 
 /-- The meaning the universal rules out: epistemic necessity with circumstantial possibility. -/
-theorem not_iff_diagonal :
-    satisfiesIFF [⟨.necessity, .epistemic⟩, ⟨.possibility, .circumstantial⟩] = false := by
+theorem not_forceFlavorIndependent_diagonal :
+    ¬ ForceFlavorIndependent {(.necessity, .epistemic), (.possibility, .circumstantial)} := by
   decide
 
 /-- Naturalness is graded: Modern Greek, one of the sampled languages, has one IFF modal in
 three, where the Washo and Koryak inventories are fully natural. -/
 theorem naturalness_greek_washo_koryak :
-    naturalness ⟨"Modern Greek", "Indo-European", "", Greek.StandardModern.Modals.allExpressions⟩
-        = 1 / 3 ∧
-      naturalness ⟨"Washo", "isolate", "", Washo.Modals.allExpressions⟩ = 1 ∧
-      naturalness ⟨"Koryak", "Chukotko-Kamchatkan", "", Koryak.Modals.allExpressions⟩ = 1 := by
+    naturalness Greek.StandardModern.Modals.allExpressions = 1 / 3 ∧
+      naturalness Washo.Modals.allExpressions = 1 ∧
+      naturalness Koryak.Modals.allExpressions = 1 := by
   decide +kernel
 
 end ImelGuoST2026

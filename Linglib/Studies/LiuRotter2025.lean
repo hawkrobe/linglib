@@ -98,11 +98,11 @@ theorem warmth_ne_spread : warmthEffect ≠ spreadEffect :=
 
 /-- *must* and *certainly*, the necessity stimulus, share necessity-type force. -/
 theorem must_certainly_share :
-    must.toModalItem.sharesConcordForce certainly.toModalItem = true := by decide
+    must.toModalItem.SharesConcordForce certainly.toModalItem := by decide
 
 /-- *may* and *possibly*, the possibility stimulus, share possibility force. -/
 theorem may_possibly_share :
-    may.toModalItem.sharesConcordForce possibly.toModalItem = true := by decide
+    may.toModalItem.SharesConcordForce possibly.toModalItem := by decide
 
 /-- The agreement account's vacuous element: the auxiliaries are uninterpretable in the
 fragment, so under that account they contribute no operator. -/

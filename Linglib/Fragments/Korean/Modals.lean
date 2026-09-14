@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # Korean Modal Inventory
@@ -9,28 +9,27 @@ Modal expressions from Korean (Koreanic), based on
 
 namespace Korean.Modals
 
-open Modality (ForceFlavor)
-open Modality.Typology (ModalExpression)
+open Modality (ForceFlavor ModalItem)
 
-private abbrev ne := ForceFlavor.mk .necessity .epistemic
-private abbrev pe := ForceFlavor.mk .possibility .epistemic
-private abbrev nd := ForceFlavor.mk .necessity .deontic
-private abbrev nc := ForceFlavor.mk .necessity .circumstantial
-private abbrev pd := ForceFlavor.mk .possibility .deontic
-private abbrev pc := ForceFlavor.mk .possibility .circumstantial
+private abbrev ne : ForceFlavor := (.necessity, .epistemic)
+private abbrev pe : ForceFlavor := (.possibility, .epistemic)
+private abbrev nd : ForceFlavor := (.necessity, .deontic)
+private abbrev nc : ForceFlavor := (.necessity, .circumstantial)
+private abbrev pd : ForceFlavor := (.possibility, .deontic)
+private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
-def napo : ModalExpression := ⟨"-napo-", [ne]⟩
-def keyss : ModalExpression := ⟨"-keyss-", [ne]⟩
-def yaHa : ModalExpression := ⟨"-ya + ha-", [nd, nc]⟩
-def ke : ModalExpression := ⟨"ke-", [ne]⟩
-def they : ModalExpression := ⟨"they-", [ne]⟩
-def yaKeyss : ModalExpression := ⟨"-ya + keyss-", [nd]⟩
-def kesiCoh : ModalExpression := ⟨"kes.i-coh-", [nc]⟩
-def ciMolun : ModalExpression := ⟨"ci(-to) molun-", [pe]⟩
-def swuIss : ModalExpression := ⟨"swu(-to) iss-", [pe, pc]⟩
-def toToy : ModalExpression := ⟨"-to + toy-", [pd, pc]⟩
+def napo : ModalItem := { form := "-napo-", meaning := {ne} }
+def keyss : ModalItem := { form := "-keyss-", meaning := {ne} }
+def yaHa : ModalItem := { form := "-ya + ha-", meaning := {nd, nc} }
+def ke : ModalItem := { form := "ke-", meaning := {ne} }
+def they : ModalItem := { form := "they-", meaning := {ne} }
+def yaKeyss : ModalItem := { form := "-ya + keyss-", meaning := {nd} }
+def kesiCoh : ModalItem := { form := "kes.i-coh-", meaning := {nc} }
+def ciMolun : ModalItem := { form := "ci(-to) molun-", meaning := {pe} }
+def swuIss : ModalItem := { form := "swu(-to) iss-", meaning := {pe, pc} }
+def toToy : ModalItem := { form := "-to + toy-", meaning := {pd, pc} }
 
-def allExpressions : List ModalExpression :=
+def allExpressions : List ModalItem :=
   [napo, keyss, yaHa, ke, they, yaKeyss, kesiCoh, ciMolun, swuIss, toToy]
 
 end Korean.Modals

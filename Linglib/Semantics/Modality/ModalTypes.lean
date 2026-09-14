@@ -1,10 +1,13 @@
 import Linglib.Pragmatics.SocialMeaning.Register
+import Mathlib.Data.Finset.Prod
+import Mathlib.Data.Fintype.Prod
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Modal Typological Types
 
 Theory-neutral vocabulary for cross-linguistic modal typology: `ModalForce`,
-`ModalFlavor`, `ForceFlavor`, `ModalItem`, `ConcordType`, `ModalDecomposition`,
+`ModalFlavor`, `ForceFlavor`, `ModalItem`, `ConcordType`,
 and the modal-temporal axes `TemporalPerspective` / `TemporalOrientation`.
 
 These types classify modal meanings along two independent dimensions — force
@@ -18,9 +21,8 @@ force-flavor pairs) but conceptually independent.
 
 ## What belongs here vs. `Intensional`
 
-- **Here** (`Modality`): `ModalForce`, `ModalFlavor`, `ForceFlavor`,
-  `ModalItem`, `ConcordType`, `ModalDecomposition` — linguistic classification
-  of modal meanings.
+- **Here** (`Modality`): `ModalForce`, `ModalFlavor`, `ForceFlavor`, `ModalItem`,
+  `ConcordType` — linguistic classification of modal meanings.
 - **There** (`Intensional`): accessibility relations, `kripkeEval`, frame conditions
   (`IsReflexive`, `IsSerial`, `IsTransitive`, `IsSymmetric`, `IsEuclidean`),
   correspondence theorems,
@@ -50,7 +52,7 @@ inductive ModalForce where
   | necessity
   | weakNecessity
   | possibility
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 instance : LawfulBEq ModalForce where
   eq_of_beq {a b} h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
@@ -73,9 +75,6 @@ def ModalForce.dual : ModalForce → ModalForce
 
 @[simp] theorem ModalForce.dual_dual_necessity : ModalForce.necessity.dual.dual = .necessity := rfl
 @[simp] theorem ModalForce.dual_dual_possibility : ModalForce.possibility.dual.dual = .possibility := rfl
-
-/-- All modal forces. -/
-def ModalForce.all : List ModalForce := [.necessity, .weakNecessity, .possibility]
 
 /-- Strength ordering on modal force: □ ≥ □w ≥ ◇.
     `f₁.atLeastAsStrong f₂` iff an f₁-claim is at least as strong as an f₂-claim.
@@ -114,7 +113,7 @@ inductive ModalFlavor where
   | deontic         -- Norms/rules
   | bouletic        -- Desires/wishes
   | circumstantial  -- Facts/abilities (subsumes teleological)
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 instance : LawfulBEq ModalFlavor where
   eq_of_beq {a b} h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
@@ -123,62 +122,36 @@ instance : LawfulBEq ModalFlavor where
 instance : ToString ModalFlavor where
   toString | .epistemic => "e" | .deontic => "d" | .bouletic => "b" | .circumstantial => "c"
 
-/-- All modal flavors. -/
-def ModalFlavor.all : List ModalFlavor := [.epistemic, .deontic, .bouletic, .circumstantial]
-
 -- ============================================================================
 -- §3. Force-Flavor Pairs
 -- ============================================================================
 
-/-- A force-flavor pair: one point in the modal semantic space P.
-    |P| = |Force| × |Flavor| = 3 × 4 = 12.
+/-- A force-flavor pair, one point of the modal semantic space, following [kratzer-1981] and
+[imel-guo-steinert-threlkeld-2026]. Their database uses two forces and three flavors; weak
+necessity ([agha-jeretic-2026]) and bouletic flavor ([kratzer-1981]) extend the space to twelve
+points. -/
+abbrev ForceFlavor := ModalForce × ModalFlavor
 
-    Imel, Guo, & [imel-guo-steinert-threlkeld-2026]: modal meanings are subsets of P.
-    Their original database uses a 2×3 space (necessity/possibility × 3 flavors);
-    we extend to 3×4 by adding weak necessity as a distinct force value
-    (following [agha-jeretic-2026]) and bouletic as a distinct flavor
-    (following [kratzer-1981]). -/
-structure ForceFlavor where
-  force : ModalForce
-  flavor : ModalFlavor
-  deriving DecidableEq, Repr, Inhabited
+theorem ForceFlavor.card : Fintype.card ForceFlavor = 12 := by decide
 
-instance : LawfulBEq ForceFlavor where
-  eq_of_beq {a b} h := by
-    cases a with | mk f1 fl1 => cases b with | mk f2 fl2 =>
-    cases f1 <;> cases f2 <;> cases fl1 <;> cases fl2 <;>
-      first | rfl | exact absurd h (by decide)
-  rfl {a} := by cases a with | mk f fl => cases f <;> cases fl <;> decide
+/-- The force of a force-flavor pair. -/
+abbrev ForceFlavor.force : ForceFlavor → ModalForce := Prod.fst
 
-instance : ToString ForceFlavor where
-  toString ff := s!"({ff.force},{ff.flavor})"
-
-/-- All twelve points in the modal semantic space (`|ModalForce| × |ModalFlavor| = 3 × 4`). -/
-def ForceFlavor.universe : List ForceFlavor :=
-  ModalForce.all.flatMap fun fo => ModalFlavor.all.map fun fl => ⟨fo, fl⟩
-
-theorem ForceFlavor.universe_length : ForceFlavor.universe.length = 12 := by decide
-
-/-- The Cartesian product of forces and flavors. Infrastructure for constructing
-    modal meanings; no theoretical commitment (just list operations). -/
-def ForceFlavor.cartesianProduct (fos : List ModalForce) (fls : List ModalFlavor) :
-    List ForceFlavor :=
-  fos.flatMap fun fo => fls.map fun fl => ⟨fo, fl⟩
+/-- The flavor of a force-flavor pair. -/
+abbrev ForceFlavor.flavor : ForceFlavor → ModalFlavor := Prod.snd
 
 -- ============================================================================
 -- §4. Modal Item
 -- ============================================================================
 
-/-- A modal item: the shared core of any expression carrying modal meaning.
-
-    Unifies `Auxiliary.{form, modality, register}`,
-    `ModalAdvEntry.{form, modalMeaning, register}`, and
-    `ModalExpression.{form, meaning}` under a common type. -/
+/-- A modal item is the shared core of any expression carrying modal meaning, which
+`Auxiliary.toModalItem` and `ModalAdvEntry.toModalItem` project onto. -/
 structure ModalItem where
   form : String
-  meaning : List ForceFlavor
+  /-- The force-flavor pairs the item can express. -/
+  meaning : Finset ForceFlavor
   register : SocialMeaning.Register.Level := .neutral
-  deriving Repr, BEq
+  deriving DecidableEq
 
 /-- Two modal items are register variants if they differ in register. -/
 def ModalItem.areRegisterVariants (a b : ModalItem) : Prop :=
@@ -208,9 +181,12 @@ def ConcordType.fromModalForce : ModalForce → ConcordType
 /-- Two modal items share concord-compatible force: both necessity and weak
     necessity map to the same concord class (necessity-type). This is the
     structural precondition for modal concord. -/
-def ModalItem.sharesConcordForce (a b : ModalItem) : Bool :=
-  a.meaning.any fun ff1 => b.meaning.any fun ff2 =>
-    ConcordType.fromModalForce ff1.force == ConcordType.fromModalForce ff2.force
+def ModalItem.SharesConcordForce (a b : ModalItem) : Prop :=
+  ∃ x ∈ a.meaning, ∃ y ∈ b.meaning,
+    ConcordType.fromModalForce x.force = ConcordType.fromModalForce y.force
+
+instance : DecidableRel ModalItem.SharesConcordForce :=
+  λ _ _ => inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, _ = _))
 
 -- ============================================================================
 -- §6. Modal Features (Zeijlstra 2007)
@@ -273,51 +249,7 @@ theorem ModalFeature.checks_negated_iff {checker checked : ModalFeature}
   cases checker.force <;> cases checked.force <;> decide
 
 -- ============================================================================
--- §7. Modal Decomposability
--- ============================================================================
-
-/-- Whether a modal meaning decomposes into independent force and flavor
-    dimensions or is a unitary, non-decomposable operator.
-
-    [werner-2006], [condoravdi-2002]: some modals resist the standard
-    force × flavor decomposition. "Will" and other temporal-modal elements
-    do not factor cleanly into a modal force and a conversational background
-    flavor. -/
-inductive ModalDecomposition where
-  | decomposable  -- ⟦m⟧ = fo(m) × fl(m)
-  | unitary       -- ⟦m⟧ ≠ fo(m) × fl(m)
-  deriving DecidableEq, Repr
-
-/-- Classify a modal item by whether its meaning set equals the Cartesian
-    product of its force and flavor projections. A modal is decomposable
-    iff every combination of its attested forces and flavors is also
-    attested — the two dimensions are independent. -/
-def ModalItem.decomposition (m : ModalItem) : ModalDecomposition :=
-  let forces := (m.meaning.map (·.force)).eraseDups
-  let flavors := (m.meaning.map (·.flavor)).eraseDups
-  if (ForceFlavor.cartesianProduct forces flavors).all (m.meaning.contains ·) then
-    .decomposable
-  else
-    .unitary
-
-/-- A modal item is unitary (non-decomposable into force × flavor). -/
-def ModalItem.isUnitary (m : ModalItem) : Bool :=
-  m.decomposition == .unitary
-
-/-- Singleton meanings are trivially decomposable: a modal with exactly
-    one force-flavor pair always satisfies IFF. -/
-theorem singleton_decomposable (ff : ForceFlavor) :
-    (({ form := "m", meaning := [ff] } : ModalItem)).isUnitary = false := by
-  cases ff with | mk f fl => cases f <;> cases fl <;> decide
-
-/-- A non-IFF meaning is unitary: necessity-epistemic + possibility-deontic
-    without the cross-product pairs. -/
-theorem cross_cutting_is_unitary :
-    (({ form := "m", meaning := [⟨.necessity, .epistemic⟩, ⟨.possibility, .deontic⟩] } : ModalItem)).isUnitary = true := by
-  decide
-
--- ============================================================================
--- §8. Projection Modes (Kratzer 2012)
+-- §7. Projection Modes (Kratzer 2012)
 -- ============================================================================
 
 /-- Mode of projecting conversational backgrounds.
@@ -418,11 +350,11 @@ theorem content_epistemic_allows_disbelief :
     BackgroundClass.contentEvidential.AllowsSpeakerDisbelief := by decide
 
 -- ============================================================================
--- §9. Force Analysis (how modal force arises)
+-- §8. Force Analysis (how modal force arises)
 -- ============================================================================
 
 /-- How a modal's quantificational force is determined.
-    Distinguishes three mechanisms that the `List ForceFlavor` encoding conflates:
+    Distinguishes three mechanisms that the `Finset ForceFlavor` encoding conflates:
 
     - **fixed**: The modal lexically specifies a single force value.
       English *must* (necessity), *can* (possibility).

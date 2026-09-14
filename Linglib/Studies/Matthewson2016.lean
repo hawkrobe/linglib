@@ -1,5 +1,5 @@
 import Linglib.Semantics.Evidential.Source
-import Linglib.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.Universals
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Fragments.Statimcets.Modals
@@ -33,8 +33,7 @@ primary-source theorems for Gitksan are in `Studies/Matthewson2013.lean`.
 
 namespace Matthewson2016
 
-open Modality (ForceFlavor ForceAnalysis BackgroundClass ProjectionMode)
-open Modality.Typology (satisfiesIFF satisfiesSAV)
+open Modality (ForceFlavor ForceAnalysis BackgroundClass ProjectionMode ForceFlavorIndependent SingleAxis)
 
 -- ============================================================================
 -- §1. Three-way background classification (Table 18.2, Table 18.3)
@@ -126,11 +125,9 @@ end Gitksan
     the boundary. Epistemic modals are purely epistemic; circumstantial
     modals have no epistemic readings. -/
 theorem gitksan_absolute_split :
-    Gitksan.Modals.epistemicModals.all (λ e =>
-      e.meaning.all (λ ff => ff.flavor == .epistemic)) = true ∧
-    Gitksan.Modals.circumstantialModals.all (λ e =>
-      e.meaning.all (λ ff => ff.flavor != .epistemic)) = true := by
-  constructor <;> decide
+    (∀ e ∈ Gitksan.Modals.epistemicModals, ∀ ff ∈ e.meaning, ff.flavor = .epistemic) ∧
+      ∀ e ∈ Gitksan.Modals.circumstantialModals, ∀ ff ∈ e.meaning, ff.flavor ≠ .epistemic := by
+  decide
 
 -- ============================================================================
 -- §4. Modals without duals (§18.3.2)
@@ -166,40 +163,34 @@ theorem both_forces_available :
 
 /-! ### Force analysis consistency
 
-Each fragment's stipulated `ForceAnalysis` is verified against the
-observable `ForcePattern` derived from the meaning. The stipulation
-adds explanatory content (variable-force vs strengthened), but it
-must be consistent with the structural facts. -/
+Each fragment's stipulated `ForceAnalysis` is checked against the forces its meaning attests:
+one force for a fixed or strengthened modal, both for a variable-force one. -/
 
-open Modality.Typology (inferForcePattern)
-private abbrev consistent := Modality.Typology.ForceAnalysis.isConsistentWith
+/-- A force analysis is consistent with a meaning when the forces the meaning attests are the
+one the analysis fixes or strengthens, or two for a variable-force analysis. -/
+def Consistent : ForceAnalysis → Finset ForceFlavor → Prop
+  | .fixed fo, m | .strengthened fo, m => m.image Prod.fst = {fo}
+  | .variableForce, m => 2 ≤ (m.image Prod.fst).card
 
-/-- Gitksan ima('a): variable-force analysis is consistent with
-    multiForce pattern (both possibility and necessity in meaning). -/
-theorem gitksan_imaa_force_consistent :
-    consistent (Gitksan.Modals.forceAnalysis Gitksan.Modals.imaa)
-      (inferForcePattern Gitksan.Modals.imaa.meaning) = true := by decide
+instance (a : ForceAnalysis) (m : Finset ForceFlavor) : Decidable (Consistent a m) := by
+  cases a <;> unfold Consistent <;> infer_instance
 
-/-- Gitksan gat: variable-force analysis is consistent. -/
-theorem gitksan_gat_force_consistent :
-    consistent (Gitksan.Modals.forceAnalysis Gitksan.Modals.gat)
-      (inferForcePattern Gitksan.Modals.gat.meaning) = true := by decide
+/-- Gitksan ima('a) and gat are variable-force and attest both forces. -/
+theorem gitksan_force_consistent :
+    Consistent (Gitksan.Modals.forceAnalysis Gitksan.Modals.imaa) Gitksan.Modals.imaa.meaning ∧
+      Consistent (Gitksan.Modals.forceAnalysis Gitksan.Modals.gat) Gitksan.Modals.gat.meaning := by
+  decide
 
-/-- Nez Perce o'qa: strengthened possibility is consistent with
-    singleForce pattern (only possibility in meaning set). -/
+/-- Nez Perce o'qa is strengthened possibility and attests only possibility. -/
 theorem nez_perce_oqa_force_consistent :
-    consistent (NezPerce.Modals.forceAnalysis NezPerce.Modals.oqa)
-      (inferForcePattern NezPerce.Modals.oqa.meaning) = true := by decide
+    Consistent (NezPerce.Modals.forceAnalysis NezPerce.Modals.oqa) NezPerce.Modals.oqa.meaning := by
+  decide
 
-/-- St'át'imcets =ka: variable-force analysis is consistent. -/
-theorem statimcets_ka_force_consistent :
-    consistent (Statimcets.Modals.forceAnalysis Statimcets.Modals.ka)
-      (inferForcePattern Statimcets.Modals.ka.meaning) = true := by decide
-
-/-- Niuean liga: variable-force analysis is consistent. -/
-theorem niuean_liga_force_consistent :
-    consistent (Niuean.Modals.forceAnalysis Niuean.Modals.liga)
-      (inferForcePattern Niuean.Modals.liga.meaning) = true := by decide
+/-- St'át'imcets =ka and Niuean liga are variable-force. -/
+theorem statimcets_niuean_force_consistent :
+    Consistent (Statimcets.Modals.forceAnalysis Statimcets.Modals.ka) Statimcets.Modals.ka.meaning ∧
+      Consistent (Niuean.Modals.forceAnalysis Niuean.Modals.liga) Niuean.Modals.liga.meaning := by
+  decide
 
 -- ============================================================================
 -- §5. Flavour–force correlation (§18.5)
@@ -212,19 +203,17 @@ theorem niuean_liga_force_consistent :
 /-- Niuean: epistemic domain has one modal (both forces), circumstantial
     has two (one per force). -/
 theorem niuean_force_asymmetry :
-    (Niuean.Modals.allExpressions.filter (λ e =>
-      e.meaning.any (λ ff => ff.flavor == .epistemic))).length = 1 ∧
-    (Niuean.Modals.allExpressions.filter (λ e =>
-      e.meaning.any (λ ff => ff.flavor == .circumstantial))).length = 2 := by
-  constructor <;> decide
+    (Niuean.Modals.allExpressions.filter (λ e => ∃ ff ∈ e.meaning, ff.flavor = .epistemic)).length = 1 ∧
+    (Niuean.Modals.allExpressions.filter
+      (λ e => ∃ ff ∈ e.meaning, ff.flavor = .circumstantial)).length = 2 := by
+  decide
 
-/-- All St'át'imcets and Niuean modals satisfy IFF. -/
+/-- All St'át'imcets, Nez Perce and Niuean modals satisfy IFF. -/
 theorem all_fragments_iff :
-    Statimcets.Modals.allExpressions.all
-      (λ e => satisfiesIFF e.meaning) = true ∧
-    Niuean.Modals.allExpressions.all
-      (λ e => satisfiesIFF e.meaning) = true := by
-  constructor <;> decide
+    (∀ e ∈ Statimcets.Modals.allExpressions, ForceFlavorIndependent e.meaning) ∧
+      (∀ e ∈ NezPerce.Modals.allExpressions, ForceFlavorIndependent e.meaning) ∧
+      (∀ e ∈ Niuean.Modals.allExpressions, ForceFlavorIndependent e.meaning) := by
+  decide
 
 -- ============================================================================
 -- §6. Temporal orientation and prospective aspect (§18.4.3)
@@ -276,17 +265,13 @@ theorem mirror_orientations :
     This is exactly SAV. We verify it holds for all four new fragments. -/
 
 /-- St'át'imcets =ka satisfies SAV (varies on force, fixed deontic). -/
-theorem statimcets_ka_sav :
-    satisfiesSAV Statimcets.Modals.ka.meaning = true := by decide
+theorem statimcets_ka_sav : SingleAxis Statimcets.Modals.ka.meaning := by decide
 
 /-- Nez Perce o'qa satisfies SAV (singleton). -/
-theorem nez_perce_oqa_sav :
-    satisfiesSAV NezPerce.Modals.oqa.meaning = true := by decide
+theorem nez_perce_oqa_sav : SingleAxis NezPerce.Modals.oqa.meaning := by decide
 
 /-- Niuean: all modals satisfy SAV. -/
-theorem niuean_all_sav :
-    Niuean.Modals.allExpressions.all
-      (λ e => satisfiesSAV e.meaning) = true := by decide
+theorem niuean_all_sav : ∀ e ∈ Niuean.Modals.allExpressions, SingleAxis e.meaning := by decide
 
 -- ============================================================================
 -- §8. Hacquard's content licensing derives the epistemic/circumstantial split
@@ -336,42 +321,5 @@ theorem gitksan_consistent_with_content_licensing :
     EventBinder.vpEvent.canProjectCircumstantial = true ∧
     -- Epistemic requires content (speech act or attitude)
     EventBinder.speechAct.canProjectEpistemic = true := ⟨rfl, rfl⟩
-
--- ============================================================================
--- §9. Modal inventories as ModalInventory entries
--- ============================================================================
-
-/-! These inventories can be compared against the Imel, Guo &
-    [imel-guo-steinert-threlkeld-2026] typological database but are kept
-    here because their data source is [matthewson-2016], not the
-    Imel et al. database. -/
-
-open Modality.Typology (ModalInventory)
-
-def statimcetsInventory : ModalInventory where
-  language := "St'át'imcets"
-  family := "Salish"
-  source := "Rullmann, Matthewson & Davis (2008)"
-  expressions := Statimcets.Modals.allExpressions
-
-def nezPerceInventory : ModalInventory where
-  language := "Nez Perce"
-  family := "Sahaptian"
-  source := "Deal (2011)"
-  expressions := NezPerce.Modals.allExpressions
-
-def niueanInventory : ModalInventory where
-  language := "Niuean"
-  family := "Polynesian"
-  source := "Matthewson et al. (2012), Seiter (1980)"
-  expressions := Niuean.Modals.allExpressions
-
-/-- All three Matthewson 2016 inventories satisfy IFF. -/
-theorem all_inventories_iff :
-    statimcetsInventory.allIFF = true ∧
-    nezPerceInventory.allIFF = true ∧
-    niueanInventory.allIFF = true := by
-  constructor; decide
-  constructor <;> decide
 
 end Matthewson2016
