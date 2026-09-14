@@ -1,411 +1,354 @@
+import Linglib.Semantics.Reference.Context.Basic
 import Linglib.Semantics.Tense.Embedding
-import Linglib.Semantics.Tense.DeRe
-import Linglib.Semantics.Reference.Context.Tower
-import Linglib.Semantics.Reference.Context.Shifts
+import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
-# Schlenker (2004b): Sequence phenomena and double access readings generalized
-[schlenker-2004b] [schlenker-2003] [kaplan-1989] [von-stechow-2009]
+# Schlenker (2004b): Sequence Phenomena and Double Access Readings Generalized
 
-Context-tower formalization of embedded tense in the
-[schlenker-2004b] chapter (*The Syntax of Time*, Lecarme &
-Guéron eds., MIT Press) — the tense-specific application of the
-monster-context framework introduced in [schlenker-2003]'s *A Plea
-for Monsters*. The core insight: embedded tense is modeled as a
-`temporalShift` on a `ContextTower`, and the embedded clause's
-perspective time is read from the shifted (innermost) context.
-Indexical-rigid expressions read from `.origin` ([kaplan-1989]'s
-thesis); shifted expressions read from `.local`.
+This file formalizes the chapter's two remarks. The first is that sequence of tense is one
+instance of an agreement mechanism shared by person, tense and mood. An attitude verb quantifies
+over the contexts compatible with the attitude, an embedded argument read de se is a coordinate
+of the bound context variable, and the features it is pronounced with are copied from the
+arguments of the embedding verb by the formation rule (22) (`Features.ofArgs`) without being
+interpreted. The fragment of Appendix A is given as terms carrying features (`Term`,
+`TimeTerm`), formulas with the attitude construction (`Formula`), and their value and
+definedness at an assignment and an utterance context. A de se report then has the truth
+conditions of (13b) and inherits no presupposition from its embedded features, whereas
+interpreting a person, tense or mood feature on a coordinate makes its presupposition project
+universally over the attitude's contexts, which the examples (16), (19) and (21) refute
+(`past_coord_weird`, `ind_coord_not_weird_iff`). Features are transmitted unchanged down a chain
+of attitudes, also through a future auxiliary, which (22) keeps out of agreement
+(`Features.ofArgs_coord_fut`), as the example (24) of [kamp-rohrer-1983] requires.
 
-[klecha-2016] cites the [schlenker-2004b] chapter
-(not the 2003 *L&P* paper) as the variant of this analysis that "does
-not depend on morphosyntactic labels" (PDF p. 33).
+The second remark generalizes the upper limit constraint of [abusch-1997] from tense to mood.
+After the de re transformation a tense or mood denotes a description of times or worlds relative
+to the local context, and the coordinate of that context is an upper limit for it: a time
+description may not lie entirely after the context's time, and a world description must contain
+its world, one constraint for both (`ULC`). Double access for tense follows as in Abusch, and the
+same argument yields its modal counterpart, the reading on which the agent's thought is about the
+actual world as well as the world of the thought act (`doubleAccess_of_ulc`,
+`worldDoubleAccess_of_ulc`), both instances of `Tense.DoubleAccess`.
 
-## Historical / Narrative Present
+## Implementation notes
 
-Schlenker's CT/CU split is also the semantic-theory anchor for the
-**Historical Present** construction (the narrative use of present-
-tense morphology to describe past events: "Napoleon enters the
-room"; the WWII Vercors example below). The Context of Thought is
-shifted into the past so present-tense forms locate the event at the
-narrative now; adverbials anchored to the Context of Utterance
-("fifty eight years ago to this day") produce the characteristic
-"I was there" effect. Sociolinguistic / discourse-analytic accounts
-of HP — [wolfson-1979], [schiffrin-1981] — describe when
-speakers shift into Conversational Historical Present in oral
-narrative and what discourse functions the shift serves; Schlenker's
-2004 contribution is the formal-semantic mechanism that makes the
-form-meaning mismatch derivable.
+* Failure of denotation is a definedness predicate beside a total value rather than a partial
+  denotation, and the diacritic of a context variable is read off the enclosing attitude's
+  arguments by (22) rather than stored on its coordinates, so the feature a term is pronounced
+  with is the feature appearing in it. Disjunction is omitted. Vividness of descriptions is left
+  to the hypotheses of the double access theorems.
+* The chapter states the upper limit constraint for present and past time terms and indicative
+  world terms only; the constraint here is on descriptions, and which terms it applies to is
+  left to its application.
 
-The general-indexicals content of [schlenker-2003] lives at
-`Studies/Schlenker2003.lean`.
+## References
 
-## Derivation Chain
-
-```
-Reference/Context/Tower.lean (ContextTower, push, innermost, origin)
-    ↓
-Reference/Context/Shifts.lean (temporalShift: changes time, preserves agent/world)
-    ↓
-This file: tower operations produce the Reichenbach frames of the SOT diagnostics
-(matrixSaid, embeddedSickSimultaneous, etc.)
-```
-
-## Key Results
-
-1. **Root clause = root tower**: `contextAt 0 = origin`, so P = S (speech time)
-2. **SOT embedding = temporal shift**: `temporalShift(matrixEventTime)` produces
-   the embedded perspective time P' = E_matrix
-3. **Double access = origin reading**: present-under-past reads time from `.origin`
-   (speech time), not `.local` (matrix event time) — Kaplan's thesis
-4. **Tower depth = embedding depth**: one attitude verb = depth 1; nested
-   attitudes = depth 2+
-
+* [schlenker-2004b]
+* [abusch-1997]
+* [heim-1994]
+* [kamp-rohrer-1983]
 -/
-
-open Tense
 
 namespace Schlenker2004b
 
-open Reference
+open Reference Tense
 
--- ============================================================================
--- § Tower-Based Tense Model
--- ============================================================================
+variable {W E P T : Type*}
 
-/-- A minimal tense context: world, agent, position, and time (as ℤ). -/
-abbrev TenseCtx := Context Unit Unit Unit ℤ
+/-! ### The fragment (Appendix A) -/
 
-/-- The speech-act context: time = 0 (speech time). -/
-def speechCtx : TenseCtx :=
-  { world := (), agent := (), addressee := (), time := 0, position := () }
+/-- The person features. -/
+inductive PersonFeature
+  | he
+  | she
+  deriving DecidableEq
 
--- ============================================================================
--- § Root Clause = Root Tower
--- ============================================================================
+/-- The tense features. -/
+inductive TenseFeature
+  | pres
+  | past
+  deriving DecidableEq
 
-/-- A root clause is a tower with no shifts: depth 0. -/
-def rootTower : ContextTower TenseCtx := ContextTower.root speechCtx
+/-- The mood features. -/
+inductive MoodFeature
+  | ind
+  | subj
+  deriving DecidableEq
 
-/-- In a root tower, the innermost context IS the origin.
-    Therefore P = S (perspective time = speech time), which is the
-    defining property of root clauses in the Reichenbach framework. -/
-theorem root_perspective_eq_speech :
-    rootTower.innermost.time = rootTower.origin.time := rfl
+/-- The feature triple a complementizer carries, each coordinate possibly absent. -/
+structure Features where
+  person : Option PersonFeature
+  tense : Option TenseFeature
+  mood : Option MoodFeature
+  deriving DecidableEq
 
-/-- Root tower has depth 0. -/
-theorem root_depth_zero : rootTower.depth = 0 := rfl
-/-! ### Reichenbach frames for the SOT diagnostics
+/-- A term of one of the fragment's sorts: a bare variable, the corresponding coordinate of the
+context variable `c_i`, or a term carrying a feature. -/
+inductive Term (φ : Type)
+  | var (k : ℕ)
+  | coord (i : ℕ)
+  | feat (f : φ) (t : Term φ)
 
-*John said Mary was sick* (simultaneous and shifted), *John said Mary is sick* (double access),
-built with the substrate's embedded-frame operators. -/
+/-- A time term: a term, or a future built on a time term with a variable of its own. -/
+inductive TimeTerm
+  | base (t : Term TenseFeature)
+  | fut (k : ℕ) (t : TimeTerm)
 
-/-- Matrix frame for *John said*: speech time `0`, saying at `-2`. -/
-def matrixSaid : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -2
-  eventTime := -2
+/-- The feature appearing in a term, which is also the feature it is pronounced with; the
+diacritic of a context variable is supplied by the environment `env` (Appendix A, Note A). -/
+def Term.feature {φ : Type} (proj : Features → Option φ) (env : ℕ → Features) :
+    Term φ → Option φ
+  | .var _ => none
+  | .coord i => proj (env i)
+  | .feat f _ => some f
 
-/-- *Mary was sick*, simultaneous: embedded reference time at the saying. -/
-def embeddedSickSimultaneous : ReichenbachFrame ℤ := simultaneousFrame matrixSaid (-2)
+/-- The tense feature appearing in a time term; a future auxiliary contributes none. -/
+def TimeTerm.feature (env : ℕ → Features) : TimeTerm → Option TenseFeature
+  | .base t => t.feature Features.tense env
+  | .fut _ t => t.feature env
 
-/-- *Mary was sick*, shifted: embedded reference time before the saying. -/
-def embeddedSickShifted : ReichenbachFrame ℤ := embeddedFrame matrixSaid (-5) (-5)
+/-- (22): the diacritic of the complementizer of an attitude verb with arguments `i`, `t` and
+`w`, the person, tense and mood features appearing in them. -/
+def Features.ofArgs (env : ℕ → Features) (i : Term PersonFeature) (t : TimeTerm)
+    (w : Term MoodFeature) : Features :=
+  ⟨i.feature Features.person env, t.feature env, w.feature Features.mood env⟩
 
-/-- *Mary is sick*, double access: embedded reference at the saying, event at speech time. -/
-def embeddedSickPresent : ReichenbachFrame ℤ := embeddedFrame matrixSaid (-2) 0
+/-- An attitude verb whose arguments are the coordinates of the context variable `c_k` passes
+that variable's diacritic on unchanged. -/
+theorem Features.ofArgs_coord (env : ℕ → Features) (k : ℕ) :
+    Features.ofArgs env (.coord k) (.base (.coord k)) (.coord k) = env k := rfl
 
--- ============================================================================
--- § SOT Embedding = Temporal Shift
--- ============================================================================
+/-- (24): the diacritic passes through a future auxiliary on the time argument, so *would*,
+the future of a past coordinate, transmits past. -/
+theorem Features.ofArgs_coord_fut (env : ℕ → Features) (k j : ℕ) :
+    Features.ofArgs env (.coord k) (.fut j (.base (.coord k))) (.coord k) = env k := rfl
 
-/-- "John said..." pushes a temporal shift: the matrix event time (-2)
-    becomes the embedded clause's perspective time.
+/-- A model of the fragment: the genders behind *he* and *she*, the simple predicates, and
+the contexts compatible with each attitude verb at an individual, time and world, when there
+is such an attitude. -/
+structure Model (W E P T : Type*) where
+  /-- Being male at a time in a world. -/
+  male : E → T → W → Prop
+  /-- Being female at a time in a world. -/
+  female : E → T → W → Prop
+  /-- The simple predicates, indexed. -/
+  pred : ℕ → E → T → W → Prop
+  /-- The contexts compatible with attitude verb `V` held by an individual at a time in a
+  world, if there is such an attitude. -/
+  att : ℕ → E → T → W → Option (Set (Context W E P T))
 
-    This models [von-stechow-2009]: the attitude verb transmits its event
-    time to the embedded clause. -/
-def sotTower : ContextTower TenseCtx :=
-  rootTower.push (temporalShift (-2))
+/-- An assignment of values to the individual, time, world and context variables. -/
+structure Assignment (W E P T : Type*) where
+  /-- Values of the individual variables. -/
+  ind : ℕ → E
+  /-- Values of the time variables. -/
+  time : ℕ → T
+  /-- Values of the world variables. -/
+  world : ℕ → W
+  /-- Values of the context variables. -/
+  ctx : ℕ → Context W E P T
 
-/-- After the temporal shift, the embedded perspective time is the matrix
-    event time (-2), not the speech time (0). This is the SOT mechanism:
-    embedded tense is evaluated relative to the matrix event time. -/
-theorem sot_perspective_shifted :
-    sotTower.innermost.time = -2 := rfl
+/-- The assignment with the context variable `k` set to `c`. -/
+def Assignment.updateCtx (s : Assignment W E P T) (k : ℕ) (c : Context W E P T) :
+    Assignment W E P T :=
+  { s with ctx := Function.update s.ctx k c }
 
-/-- The temporal shift doesn't change the origin — speech time is still 0.
-    This is Kaplan's thesis: the speech-act context is invariant under
-    embedding. -/
-theorem sot_origin_preserved :
-    sotTower.origin.time = 0 := rfl
+variable (M : Model W E P T) (c₀ : Context W E P T) (s : Assignment W E P T)
 
-/-- SOT tower has depth 1 (one embedding). -/
-theorem sot_depth_one : sotTower.depth = 1 := rfl
+/-- The presupposition of a person feature at the utterance context `c₀`. -/
+def PersonFeature.Presup : PersonFeature → E → Prop
+  | .he, x => M.male x c₀.time c₀.world
+  | .she, x => M.female x c₀.time c₀.world
 
-/-- The embedded perspective time (-2) equals the matrix event time in
-    `matrixSaid`. This is the end-to-end bridge: tower operation →
-    Reichenbach frame. -/
-theorem sot_perspective_matches_matrix_event :
-    sotTower.innermost.time = matrixSaid.eventTime := rfl
+/-- The presupposition of a tense feature at the utterance context `c₀`. -/
+def TenseFeature.Presup [Preorder T] : TenseFeature → T → Prop
+  | .pres, t => t = c₀.time
+  | .past, t => t < c₀.time
 
-/-- The simultaneous reading: embedded R' = embedded P = matrix E = -2.
-    This matches `embeddedSickSimultaneous.perspectiveTime`. -/
-theorem simultaneous_perspective_match :
-    sotTower.innermost.time = embeddedSickSimultaneous.perspectiveTime := rfl
+/-- The presupposition of a mood feature at the utterance context `c₀`; the subjunctive
+carries none. -/
+def MoodFeature.Presup : MoodFeature → W → Prop
+  | .ind, w => w = c₀.world
+  | .subj, _ => True
 
--- ============================================================================
--- § Double Access = Origin Reading
--- ============================================================================
+/-- The value of a term: a variable's value, the coordinate of the context variable's value, or
+the value of the term a feature is attached to. -/
+def Term.value {φ : Type} {α : Type*} (val : ℕ → α) (coordOf : Context W E P T → α) :
+    Term φ → α
+  | .var k => val k
+  | .coord i => coordOf (s.ctx i)
+  | .feat _ t => Term.value val coordOf t
 
-/-- "John said Mary IS sick" (present-under-past): the present tense in the
-    embedded clause reads from the ORIGIN (speech time), not from the shifted
-    context. This is the double-access reading: the embedded present anchors
-    to speech time despite being under a past matrix verb.
+/-- A term is weird when a feature on it has its presupposition violated by the value of the
+term it is attached to. -/
+def Term.Weird {φ : Type} {α : Type*} (val : ℕ → α) (coordOf : Context W E P T → α)
+    (presup : φ → α → Prop) : Term φ → Prop
+  | .var _ => False
+  | .coord _ => False
+  | .feat f t => Term.Weird val coordOf presup t ∨ ¬ presup f (t.value s val coordOf)
 
-    Tower model: the embedded present uses `DepthSpec.origin` for its
-    temporal coordinate, reading time = 0 from the origin. -/
-def presentAccess : AccessPattern TenseCtx ℤ :=
-  { depth := .origin, project := Context.time }
+/-- The value of a time term; a future denotes its own variable. -/
+def TimeTerm.value : TimeTerm → T
+  | .base t => t.value s s.time Context.time
+  | .fut k _ => s.time k
 
-/-- Present-under-past reads speech time (0), not matrix event time (-2). -/
-theorem double_access_reads_speech_time :
-    presentAccess.resolve sotTower = 0 := rfl
+/-- A future is weird unless its variable is after the term it is built on. -/
+def TimeTerm.Weird [Preorder T] : TimeTerm → Prop
+  | .base t => t.Weird s s.time Context.time (TenseFeature.Presup c₀)
+  | .fut k t => TimeTerm.Weird t ∨ ¬ t.value s < s.time k
 
-/-- The embedded present's time (0) matches the speech time in
-    `embeddedSickPresent`. End-to-end: tower origin access → Reichenbach
-    frame perspective time. -/
-theorem double_access_matches_data :
-    presentAccess.resolve sotTower = embeddedSickPresent.speechTime := rfl
+/-- Weirdness of the three arguments of a predicate or attitude verb. -/
+def ArgsWeird [Preorder T] (i : Term PersonFeature) (t : TimeTerm) (w : Term MoodFeature) :
+    Prop :=
+  i.Weird s s.ind Context.agent (PersonFeature.Presup M c₀) ∨ t.Weird c₀ s ∨
+    w.Weird s s.world Context.world (MoodFeature.Presup c₀)
 
--- ============================================================================
--- § Shifted Reading = Local Reading
--- ============================================================================
+/-- The formulas: atomic predications, negation, conjunction, and the attitude construction
+`i V-t-w that_{c_k} φ`, whose complementizer binds the context variable `k`. -/
+inductive Formula
+  | atom (P : ℕ) (i : Term PersonFeature) (t : TimeTerm) (w : Term MoodFeature)
+  | neg (φ : Formula)
+  | conj (φ ψ : Formula)
+  | att (V : ℕ) (i : Term PersonFeature) (t : TimeTerm) (w : Term MoodFeature) (k : ℕ)
+      (φ : Formula)
 
-/-- The shifted reading ("Mary WAS sick before John said so") reads from
-    the LOCAL (innermost) context. The embedded past tense evaluates its
-    reference time relative to the shifted perspective time. -/
-def shiftedAccess : AccessPattern TenseCtx ℤ :=
-  { depth := .local, project := Context.time }
+/-- The individual, time and world arguments of a predicate or attitude verb. -/
+def args (i : Term PersonFeature) (t : TimeTerm) (w : Term MoodFeature) : E × T × W :=
+  (i.value s s.ind Context.agent, t.value s, w.value s s.world Context.world)
 
-/-- Shifted reading reads matrix event time (-2) from the innermost context. -/
-theorem shifted_reads_matrix_time :
-    shiftedAccess.resolve sotTower = -2 := rfl
+/-- The contexts compatible with the attitude `V` at the arguments, if there is one. -/
+def attAt (V : ℕ) (i : Term PersonFeature) (t : TimeTerm) (w : Term MoodFeature) :
+    Option (Set (Context W E P T)) :=
+  M.att V (i.value s s.ind Context.agent) (t.value s) (w.value s s.world Context.world)
 
-/-- The shifted reading's perspective time matches the embedded frame. -/
-theorem shifted_matches_data :
-    shiftedAccess.resolve sotTower = embeddedSickShifted.perspectiveTime := rfl
+/-- Presupposition failure of a formula: an argument is weird, or some context compatible with
+the attitude makes the complement weird. -/
+def Formula.Weird [Preorder T] : Assignment W E P T → Formula → Prop
+  | s, .atom _ i t w => ArgsWeird M c₀ s i t w
+  | s, .neg φ => Formula.Weird s φ
+  | s, .conj φ ψ => Formula.Weird s φ ∨ Formula.Weird s ψ
+  | s, .att V i t w k φ => ArgsWeird M c₀ s i t w ∨
+      ∃ A ∈ attAt M s V i t w, ∃ c ∈ A, Formula.Weird (s.updateCtx k c) φ
 
--- ============================================================================
--- § Kaplan's Thesis: Origin Stability
--- ============================================================================
+/-- Truth of a formula: an attitude report holds when there is such an attitude and its
+complement holds at every compatible context. -/
+def Formula.Holds : Assignment W E P T → Formula → Prop
+  | s, .atom P i t w => M.pred P (i.value s s.ind Context.agent) (t.value s)
+      (w.value s s.world Context.world)
+  | s, .neg φ => ¬ Formula.Holds s φ
+  | s, .conj φ ψ => Formula.Holds s φ ∧ Formula.Holds s ψ
+  | s, .att V i t w k φ => ∃ A ∈ attAt M s V i t w, ∀ c ∈ A, Formula.Holds (s.updateCtx k c) φ
 
-/-- Kaplan's thesis formalized: an origin-accessing expression yields the
-    same value regardless of how many shifts are pushed. The speech time
-    is invariant under SOT embedding. -/
-theorem kaplan_thesis_for_tense :
-    presentAccess.resolve sotTower = presentAccess.resolve rootTower := by
-  exact presentAccess.origin_stable rfl rootTower (temporalShift (-2))
+/-! ### De se readings and agreement (§1) -/
 
--- ============================================================================
--- § Nested Embedding = Multiple Shifts
--- ============================================================================
+variable (V Pr : ℕ) (i : Term PersonFeature) (t : TimeTerm) (w : Term MoodFeature) (k : ℕ)
 
-/-- "John said that Mary believed that Bill was sick" — double embedding.
-    Two temporal shifts: first to John's saying time (-2), then to Mary's
-    believing time (-4). -/
-def nestedTower : ContextTower TenseCtx :=
-  sotTower.push (temporalShift (-4))
+/-- (13b), (23b): the report whose embedded arguments are all read de se, the coordinates of
+the bound context variable, pronounced with the features of the diacritic. -/
+def deSe : Formula := .att V i t w k (.atom Pr (.coord k) (.base (.coord k)) (.coord k))
 
-/-- Double embedding has depth 2. -/
-theorem nested_depth_two : nestedTower.depth = 2 := rfl
+/-- (13b): a de se report holds iff there is such an attitude and at every compatible context
+its agent satisfies the predicate at its time in its world. -/
+theorem deSe_holds_iff :
+    (deSe V Pr i t w k).Holds M s ↔
+      ∃ A ∈ attAt M s V i t w, ∀ c ∈ A, M.pred Pr c.agent c.time c.world := by
+  simp [deSe, Formula.Holds, Term.value, TimeTerm.value, Assignment.updateCtx]
 
-/-- The innermost context in a doubly-embedded clause reads the most deeply
-    shifted time (-4). -/
-theorem nested_innermost :
-    nestedTower.innermost.time = -4 := rfl
+/-- The embedded features of a de se report, being uninterpreted, add no presupposition: the
+report is weird only through its matrix arguments. -/
+theorem deSe_weird_iff [Preorder T] :
+    (deSe V Pr i t w k).Weird M c₀ s ↔ ArgsWeird M c₀ s i t w := by
+  simp [deSe, Formula.Weird, ArgsWeird, Term.Weird, TimeTerm.Weird]
 
-/-- Even under double embedding, the origin (speech time) is preserved. -/
-theorem nested_origin_preserved :
-    nestedTower.origin.time = 0 := rfl
+/-- (17b), (18): interpreting the past feature on the de se time coordinate presupposes, at
+every context compatible with the attitude, that its time precedes the utterance time. -/
+theorem past_coord_weird_iff [Preorder T] :
+    (Formula.att V i t w k (.atom Pr (.coord k) (.base (.feat .past (.coord k)))
+        (.coord k))).Weird M c₀ s ↔
+      ArgsWeird M c₀ s i t w ∨ ∃ A ∈ attAt M s V i t w, ∃ c ∈ A, ¬ c.time < c₀.time := by
+  simp [Formula.Weird, ArgsWeird, Term.Weird, TimeTerm.Weird, Term.value, TenseFeature.Presup,
+    Assignment.updateCtx]
 
-/-- Double access still works at depth 2: present-under-past-under-past
-    reads from the origin. -/
-theorem nested_double_access :
-    presentAccess.resolve nestedTower = 0 := by
-  exact presentAccess.origin_stable rfl sotTower (temporalShift (-4))
+/-- (19): when the attitude holder takes the time of her thought to be after the utterance
+time, an interpreted embedded past is weird, although the sentence is fine. -/
+theorem past_coord_weird [Preorder T]
+    (h : ∃ A ∈ attAt M s V i t w, A.Nonempty ∧ ∀ c ∈ A, c₀.time < c.time) :
+    (Formula.att V i t w k (.atom Pr (.coord k) (.base (.feat .past (.coord k)))
+      (.coord k))).Weird M c₀ s := by
+  obtain ⟨A, hA, ⟨c, hc⟩, hlt⟩ := h
+  exact (past_coord_weird_iff M c₀ s V Pr i t w k).2 (Or.inr ⟨A, hA, c, hc, (hlt c hc).not_gt⟩)
 
--- ============================================================================
--- § F3. Phase F bridge: Schlenker (origin reading) ↔ Abusch (double access)
--- ============================================================================
+/-- (16): interpreting a masculine feature on the de se subject presupposes that the agent of
+every compatible context is male, which the report of a hope to become a woman refutes. -/
+theorem he_coord_weird [Preorder T]
+    (hex : ∀ x, M.female x c₀.time c₀.world → ¬ M.male x c₀.time c₀.world)
+    (h : ∃ A ∈ attAt M s V i t w, A.Nonempty ∧ ∀ c ∈ A, M.female c.agent c₀.time c₀.world) :
+    (Formula.att V i t w k (.atom Pr (.feat .he (.coord k)) (.base (.coord k))
+      (.coord k))).Weird M c₀ s := by
+  obtain ⟨A, hA, ⟨c, hc⟩, hf⟩ := h
+  refine Or.inr ⟨A, hA, c, hc, Or.inl (Or.inr ?_)⟩
+  simpa [Term.value, PersonFeature.Presup, Assignment.updateCtx] using hex _ (hf c hc)
 
--- ============================================================================
--- § Substrate Bridge: Schlenker tower-shifts ↔ Abusch `TimeConcept`s
--- ============================================================================
+/-- (21): interpreting the indicative on the de se world coordinate presupposes that the world
+of every compatible context is the actual world, that is, that the agent is omniscient. -/
+theorem ind_coord_not_weird_iff [Preorder T] (hargs : ¬ ArgsWeird M c₀ s i t w) :
+    ¬ (Formula.att V i t w k (.atom Pr (.coord k) (.base (.coord k))
+        (.feat .ind (.coord k)))).Weird M c₀ s ↔
+      ∀ A ∈ attAt M s V i t w, ∀ c ∈ A, c.world = c₀.world := by
+  simp only [ArgsWeird, not_or] at hargs
+  obtain ⟨h₁, h₂, h₃⟩ := hargs
+  simp [Formula.Weird, ArgsWeird, Term.Weird, TimeTerm.Weird, Term.value, MoodFeature.Presup,
+    Assignment.updateCtx, h₁, h₂, h₃]
 
-/-! Substrate-level bridge from [schlenker-2004b]'s tower-shift
-    framework to the `TimeConcept` substrate
-    (`Semantics/Tense/DeRe.lean`). Both formalisms resolve
-    against the same `Context` substrate (= `TenseCtx`); the
-    substrate's `IsRigid` predicate distinguishes
-    Kaplan-stable readings (Schlenker's `presentAccess`, origin depth)
-    from shifted readings (`shiftedAccess`, local depth).
+/-! ### The generalized upper limit constraint (§2) -/
 
-    [schlenker-2004b] (§0, p. 5) explicitly positions the
-    SOT chapter as "developing a somewhat generalized version of the
-    theory of Abusch 1997, and especially of her Upper Limit
-    Constraint." This bridge makes that relationship substrate-level
-    structural: both frameworks discriminate Kaplan-stable from
-    shifted via `IsRigid`, and `IsRigid.map` lifts
-    the discrimination uniformly across `Res` types — so the
-    parallel with [anand-nevins-2004]'s Kaplan-compliant vs
-    shifted indexicals at `Res = Agent` is
-    substrate-level visible.
+section ULC
 
-    **Caveat on the underlying formalization**: the tower-depth
-    framework above is a substantial simplification of
-    [schlenker-2004b]'s actual SOT mechanism. Per §1.3
-    (def. 22), Schlenker's mechanism uses *morphological-agreement
-    rules* whose features can be semantically invisible — the
-    embedded tense's `<he, past, ind>` triple is transmitted
-    morphologically without semantic interpretation in many cases,
-    leaving the truth-conditions to come from the embedded context's
-    coordinates. The substrate-level discrimination formalized here
-    corresponds to the *idealized* case where access depth determines
-    the reading directly, suppressing the morphological-agreement
-    layer. The DAR analysis Schlenker develops in §2.2 ("Extending
-    Abusch's Account: the Generalized Upper Limit Constraint", p. 22+)
-    further builds on presupposition-failure conditions in attitude
-    contexts (Schlenker eqs. 38, 40) generalizing Abusch's ULC to
-    mood; that's also out of scope for the current substrate bridge. -/
+variable {C α : Type*}
 
-open Tense.DeRe (TimeConcept TemporalDeReReading)
+/-- (38), (40): the coordinate `κ c` of the local context `c` is an upper limit for the
+description `d` in its scope, which may not lie entirely beyond it. For times, beyond is
+strictly after; for worlds, distinct. -/
+def ULC (beyond : α → α → Prop) (κ : C → α) (d : C → Set α) (c : C) : Prop :=
+  ¬ ∀ x ∈ d c, beyond (κ c) x
 
-/-- [schlenker-2004b]'s **`presentAccess` (origin reading)
-    as a rigid `TimeConcept`**: the Kaplan-stable origin reading IS
-    the constant intension at speech time. Both formalisms encode
-    Kaplan's thesis at the substrate level — Schlenker via tower
-    `.origin` access, the time-concept substrate via a constant intension. -/
-def schlenkerPresent : TimeConcept Unit Unit Unit ℤ :=
-  fun _ => 0
+/-- (38): a time description satisfies the constraint iff it reaches the local time. -/
+theorem ulc_time_iff [LinearOrder T] (d : Context W E P T → Set T) (c : Context W E P T) :
+    ULC (· < ·) Context.time d c ↔ ∃ t ∈ d c, t ≤ c.time := by
+  simp [ULC, not_lt]
 
-/-- [schlenker-2004b]'s **`shiftedAccess` (local reading)
-    as a non-rigid `TimeConcept`**: the local-context reading IS the
-    time-projection function `(·.time)` — non-rigid because it varies
-    with whatever context is plugged in. Substrate-level analog of
-    [anand-nevins-2004]'s shifted first person `(·.agent)`, transposed
-    from `Res = Agent` to `Res = ℤ`. -/
-def schlenkerShifted : TimeConcept Unit Unit Unit ℤ :=
-  fun c => c.time
+/-- (40): a world description satisfies the constraint iff it contains the local world. -/
+theorem ulc_world_iff (e : Context W E P T → Set W) (c : Context W E P T) :
+    ULC (· ≠ ·) Context.world e c ↔ c.world ∈ e c := by
+  simp [ULC]
 
-/-- **Bridge**: `presentAccess.resolve sotTower` IS `schlenkerPresent`
-    evaluated at any context. The rigid-concept value is constant —
-    both Schlenker's tower `.origin` mechanism and Abusch's
-    the constant intension predict the same value (= speech time). -/
-theorem presentAccess_eq_schlenkerPresent (c : TenseCtx) :
-    presentAccess.resolve sotTower = schlenkerPresent c := rfl
+/-- On a description denoting a single time the constraint is the upper limit constraint on
+reference times of `Semantics/Tense/Embedding`. -/
+theorem ulc_singleton_iff [LinearOrder T] (r : T) (c : Context W E P T) :
+    ULC (· < ·) Context.time (λ _ => {r}) c ↔ upperLimitConstraint r c.time := by
+  simp [ULC, not_lt, upperLimitConstraint]
 
-/-- **Bridge**: `shiftedAccess.resolve sotTower` IS `schlenkerShifted`
-    evaluated at the innermost (locally-shifted) context. Both
-    Schlenker's tower `.local` mechanism and the substrate's
-    `(·.time)` projection predict the same value (= matrix event time). -/
-theorem shiftedAccess_eq_schlenkerShifted :
-    shiftedAccess.resolve sotTower = schlenkerShifted sotTower.innermost := rfl
+/-- (39): a present tense under a past attitude denotes the utterance time (i'), the
+description contains it at the actual context of the thought (ii'), and the constraint holds
+at every compatible context (iii'); when the agent is not mistaken about the time, so that the
+actual context is compatible with the thought, the description is about both the time of the
+thought and the utterance time. -/
+theorem doubleAccess_of_ulc [LinearOrder T] {A : Set (Context W E P T)} {c : Context W E P T}
+    (hc : c ∈ A) (d : Context W E P T → Set T) (hd : (d c).OrdConnected) (hle : c.time ≤ c₀.time)
+    (hii : c₀.time ∈ d c) (hiii : ∀ c' ∈ A, ULC (· < ·) Context.time d c') :
+    DoubleAccess (d c) c.time c₀.time := by
+  obtain ⟨t, ht, htc⟩ := (ulc_time_iff d c).1 (hiii c hc)
+  exact ⟨hd.out ht hii ⟨htc, hle⟩, hii⟩
 
-/-- **`schlenkerPresent` is rigid** (Kaplan-stable). Substrate-level
-    witness for the SOT chapter's origin-access mechanism. -/
-theorem schlenkerPresent_isRigid : Reference.IsRigid schlenkerPresent :=
-  Reference.isRigid_const _
+/-- (41): the modal counterpart. An indicative under a subjunctive attitude denotes the actual
+world (i'), the description contains it at the actual context of the thought (ii'), and the
+constraint holds at every compatible context (iii'); when the actual context is compatible with
+the thought, the description is about both the world of the thought and the actual world. -/
+theorem worldDoubleAccess_of_ulc {A : Set (Context W E P T)} {c : Context W E P T} (hc : c ∈ A)
+    (e : Context W E P T → Set W) (hii : c₀.world ∈ e c)
+    (hiii : ∀ c' ∈ A, ULC (· ≠ ·) Context.world e c') :
+    DoubleAccess (e c) c.world c₀.world :=
+  ⟨(ulc_world_iff e c).1 (hiii c hc), hii⟩
 
-/-- **`schlenkerShifted` is non-rigid** (the SOT chapter's shifted
-    reading varies with context). Discriminating witness: contexts
-    with different `.time` fields (speech time 0 vs matrix event
-    time −2). -/
-theorem schlenkerShifted_not_isRigid : ¬ Reference.IsRigid schlenkerShifted := by
-  intro h
-  have hContradiction : (0 : ℤ) = -2 :=
-    h speechCtx { speechCtx with time := -2 }
-  exact absurd hContradiction (by decide)
-
--- ============================================================================
--- § Cross-Framework Agreement (Schlenker ↔ Abusch on simultaneous SOT)
--- ============================================================================
-
-/-- **Cross-framework value-coincidence on the simultaneous SOT value**:
-    [schlenker-2004b]'s `shiftedAccess.resolve sotTower` and
-    [abusch-1997]'s bound tense (`TensePronoun.bound_resolve_eq_binder`,
-    applied with `matrixSaid` as the matrix frame) yield the SAME
-    value (= `matrixSaid.eventTime = -2`).
-
-    *Caveat*: This is a **value-coincidence**, not a mechanism
-    agreement. Both sides equal `matrixSaid.eventTime` by construction
-    (Schlenker's `.local` reading IS the matrix event time; Abusch's
-    bound-tense IS bound to it). The theorem documents that the two
-    frameworks predict the same surface value at the simultaneous SOT
-    case — but they do so via *genuinely different* mechanisms
-    (Schlenker via context-shift on the tower, Abusch via
-    variable-binding on the temporal assignment), and a deeper bridge
-    theorem comparing the *paths* through each mechanism would be
-    substantively different from this output-coincidence theorem.
-
-    Per [schlenker-2004b] §0 p. 5, the value-coincidence on
-    basic SOT cases is by design: Schlenker explicitly proposes
-    "a somewhat generalized version of the theory of Abusch 1997".
-    Genuine divergence between the two would show up in cases (DAR,
-    modals, multiple embedding) where Schlenker's morphological-
-    agreement apparatus and Abusch's res-movement make different
-    predictions — not yet substrate-formalized. -/
-theorem schlenker_abusch_agree_on_simultaneous_value
-    (tp : TensePronoun)
-    (g : TemporalAssignment ℤ) :
-    shiftedAccess.resolve sotTower =
-    tp.resolve (Tense.updateTemporal g tp.varIndex matrixSaid.eventTime) := by
-  show matrixSaid.eventTime = _
-  exact (tp.bound_resolve_eq_binder g matrixSaid.eventTime).symm
-
--- ============================================================================
--- § Architectural Alignment (Schlenker ↔ Abusch ↔ Anand-Nevins)
--- ============================================================================
-
-/-- **Architectural alignment via `IsRigid` functoriality**:
-    the substrate's `IsRigid` predicate distinguishes
-    Kaplan-stable from shifted readings uniformly across all three
-    frameworks at the substrate level. The same closure lemmas
-    (`IsRigid.map`, `IsRigid.precomp`, `IsRigid.of_map_injective`
-    from `Semantics/Reference/Rigidity.lean`) apply uniformly:
-
-    | Framework                  | Kaplan-stable      | Shifted          |
-    |----------------------------|--------------------|------------------|
-    | [schlenker-2004b]  | `schlenkerPresent` | `schlenkerShifted` |
-    | [abusch-1997]         | rigid `TimeConcept`| bound `TimeConcept`|
-    | [anand-nevins-2004]   | rigid `I` (Agent)  | shifted `I` (Agent) |
-
-    All three rows discriminate via `IsRigid`. By
-    `IsRigid.map`, rigidity transfers across `Res` types
-    via any function — so the cross-`Res`-type parallel between
-    Schlenker's tower analysis (Res = ℤ), Abusch's res-movement
-    (Res = ℤ), and Anand-Nevins's operator-shift (Res = Agent) is
-    *structurally one phenomenon* (Kaplan-stable-vs-shifted)
-    realized at different `Res` types via different syntactic
-    mechanisms.
-
-    The witness here bundles `schlenkerPresent_isRigid` and
-    `schlenkerShifted_not_isRigid`; the SAME `IsRigid`
-    predicate proves both at `Res = ℤ`, parallel to [anand-nevins-2004]'s Kaplan-compliant
-    and shifted first person at `Res = Agent`. -/
-theorem schlenker_substrate_aligned_with_isRigid :
-    Reference.IsRigid schlenkerPresent ∧
-    ¬ Reference.IsRigid schlenkerShifted :=
-  ⟨schlenkerPresent_isRigid, schlenkerShifted_not_isRigid⟩
-
-/-- **`Intension` functoriality applied to Schlenker**: rigidity of
-    `schlenkerPresent` transfers across `Res` types via any
-    function `g : ℤ → α`, by `IsRigid.map`. So
-    Schlenker's Kaplan-stability is preserved by the substrate's
-    functoriality just as [anand-nevins-2004]'s Kaplan-compliant `I` is —
-    both are instances of the same architectural pattern. -/
-theorem schlenkerPresent_lifts_rigidly {α : Type*} (g : ℤ → α) :
-    Reference.IsRigid (fun c : TenseCtx => g (schlenkerPresent c)) :=
-  schlenkerPresent_isRigid.map g
+end ULC
 
 end Schlenker2004b
