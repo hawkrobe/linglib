@@ -2,7 +2,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Agreement.Hierarchy
 import Linglib.Syntax.Agreement.Resolution
-import Linglib.Features.Gender.TargetGender
+import Linglib.Features.Gender.AgreementClass
 import Linglib.Features.Number.Resolve
 import Linglib.Features.Person.Resolve
 import Linglib.Fragments.Tamil.Gender
