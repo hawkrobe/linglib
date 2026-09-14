@@ -85,13 +85,13 @@ theorem backward_type_raise_type (x t : Cat Atom) :
 category — well-typed by construction. Raised and coordinating entries carry their
 semantic action here (`T`, generalized conjunction), per the morpholexical treatment
 of [steedman-2019]. -/
-def SemLexicon (E W : Type) := String → (c : Cat Atom) → Option (Denot E W (catToTy c))
+def SemLexicon (E W : Type) := String → (c : Cat Atom) → Option (Ty.Domain E W (catToTy c))
 
 /-- The semantic action of a rule — the "rule-to-rule relation" of [steedman-2019]:
 application applies, every composition rule is a `B`-combinator composition of the
 daughters\' meanings (second-order rules compose under one argument). -/
 def Rule.sem {E W : Type} : {l r c : Cat Atom} → Rule Atom l r c →
-    Denot E W (catToTy l) → Denot E W (catToTy r) → Denot E W (catToTy c)
+    Ty.Domain E W (catToTy l) → Ty.Domain E W (catToTy r) → Ty.Domain E W (catToTy c)
   | _, _, _, .fapp, f, a => f a
   | _, _, _, .bapp, a, f => f a
   | _, _, _, .fcomp _, f, g => B f g
@@ -108,7 +108,7 @@ node acts by its `Rule.sem`. The category bookkeeping is carried by `Derivation`
 index, so no run-time category checks (and no casts) are needed; the result is `none`
 only when a word is missing from the lexicon. -/
 def Derivation.interp {E W : Type} (lex : SemLexicon E W) :
-    {c : Cat Atom} → Derivation Atom c → Option (Denot E W (catToTy c))
+    {c : Cat Atom} → Derivation Atom c → Option (Ty.Domain E W (catToTy c))
   | _, .lex f c => lex f c
   | _, .node ru d₁ d₂ => do some (ru.sem (← d₁.interp lex) (← d₂.interp lex))
 

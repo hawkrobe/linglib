@@ -41,7 +41,7 @@ Omitted: the string-level operations (gender, verb forms), tense (S17), and post
 
 namespace Montague1973
 
-open Semantics.Composition (Ty Denot)
+open Semantics.Composition
 open Reference (IsRigid isRigid_const)
 open Quantification (every_sem some_sem)
 open Quantification.Polyadic (iterate surfaceScope inverseScope)
@@ -124,16 +124,16 @@ structure Interp where
   mary : E
   bill : E
   ninety : E
-  man : W → Denot E W Cat.CN.ty
-  woman : W → Denot E W Cat.CN.ty
-  unicorn : W → Denot E W Cat.CN.ty
-  price : W → Denot E W Cat.CN.ty
-  temperature : W → Denot E W Cat.CN.ty
-  walk : W → Denot E W Cat.IV.ty
-  rise : W → Denot E W Cat.IV.ty
-  love : W → Denot E W Cat.TV.ty
-  find : W → Denot E W Cat.TV.ty
-  seek : W → Denot E W Cat.TV.ty
+  man : W → Ty.Domain E W Cat.CN.ty
+  woman : W → Ty.Domain E W Cat.CN.ty
+  unicorn : W → Ty.Domain E W Cat.CN.ty
+  price : W → Ty.Domain E W Cat.CN.ty
+  temperature : W → Ty.Domain E W Cat.CN.ty
+  walk : W → Ty.Domain E W Cat.IV.ty
+  rise : W → Ty.Domain E W Cat.IV.ty
+  love : W → Ty.Domain E W Cat.TV.ty
+  find : W → Ty.Domain E W Cat.TV.ty
+  seek : W → Ty.Domain E W Cat.TV.ty
 
 variable {E W}
 
@@ -143,7 +143,7 @@ its category. Names translate to `P̂ P{^j}`, `heₙ` to `P̂ P{xₙ}`, *be* to
 `Q̂ x̂ Q{ŷ [ˇx = ˇy]}`, the determiners by T2, the functional-application rules by
 `α'(^β')`, and quantifying-in by `α'(x̂ₙ φ')`. -/
 def translate (M : Interp E W) :
-    {A : Cat} → Analysis A → Assignment (W → E) → W → Denot E W A.ty
+    {A : Cat} → Analysis A → Assignment (W → E) → W → Ty.Domain E W A.ty
   | _, .basic .john, _, i => λ P => P i λ _ => M.john
   | _, .basic .mary, _, i => λ P => P i λ _ => M.mary
   | _, .basic .bill, _, i => λ P => P i λ _ => M.bill
@@ -172,11 +172,11 @@ def translate (M : Interp E W) :
 
 /-- `δ*` for a common noun or intransitive verb, `û δ(^u)`: the individuals whose rigid
 concept is in `δ`'s extension. -/
-def star₁ (δ : Denot E W Cat.CN.ty) : E → Prop := λ u => δ λ _ => u
+def star₁ (δ : Ty.Domain E W Cat.CN.ty) : E → Prop := λ u => δ λ _ => u
 
 /-- `δ*` for a transitive verb, `v̂ û δ(^u, ^v*)`, object-first: `star₂ δ v u` says `u`
 bears `δ` to `v`. -/
-def star₂ (δ : Denot E W Cat.TV.ty) : E → E → Prop :=
+def star₂ (δ : Ty.Domain E W Cat.TV.ty) : E → E → Prop :=
   λ v u => δ (λ j P => P j λ _ => v) λ _ => u
 
 /-- The postulates the examples rest on ((1)–(4) of the paper): names are rigid (built into
@@ -191,7 +191,7 @@ structure Interp.LogicallyPossible (M : Interp E W) : Prop where
   find_ext : ∃ S : W → E → E → Prop, ∀ i Q x, M.find i Q x ↔ Q i λ j y => S j (x j) (y j)
 
 /-- A common noun holding only of rigid concepts is definable from its `*`-counterpart. -/
-theorem star₁_iff {δ : Denot E W Cat.CN.ty} (hδ : ∀ x, δ x → IsRigid x) (x : W → E) (i : W) :
+theorem star₁_iff {δ : Ty.Domain E W Cat.CN.ty} (hδ : ∀ x, δ x → IsRigid x) (x : W → E) (i : W) :
     δ x ↔ IsRigid x ∧ star₁ δ (x i) :=
   ⟨λ hx => ⟨hδ x hx, (congrArg δ ((hδ x hx).eq_const i)).mp hx⟩,
     λ ⟨hr, hx⟩ => (congrArg δ (hr.eq_const i)).mpr hx⟩
@@ -213,14 +213,14 @@ theorem unicorn_iff (i : W) (x : W → E) :
 
 /-- A transitive verb satisfying postulate (4) is definable from its `*`-counterpart:
 `δ(x, Q) ↔ Q{ŷ δ*(ˇx, ˇy)}`. -/
-theorem love_iff (i : W) (Q : W → Denot E W Cat.T.ty) (x : W → E) :
+theorem love_iff (i : W) (Q : W → Ty.Domain E W Cat.T.ty) (x : W → E) :
     M.love i Q x ↔ Q i λ j y => star₂ (M.love j) (y j) (x j) := by
   obtain ⟨S, hS⟩ := h.love_ext
   have : ∀ j v u, star₂ (M.love j) v u ↔ S j u v := λ j v u => hS j _ _
   simp only [hS]
   exact iff_of_eq (congrArg (Q i) (funext λ j => funext λ y => propext (this j _ _).symm))
 
-theorem find_iff (i : W) (Q : W → Denot E W Cat.T.ty) (x : W → E) :
+theorem find_iff (i : W) (Q : W → Ty.Domain E W Cat.T.ty) (x : W → E) :
     M.find i Q x ↔ Q i λ j y => star₂ (M.find j) (y j) (x j) := by
   obtain ⟨S, hS⟩ := h.find_ext
   have : ∀ j v u, star₂ (M.find j) v u ↔ S j u v := λ j v u => hS j _ _

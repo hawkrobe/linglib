@@ -20,11 +20,11 @@ description that the syntax–semantics interface needs to distinguish:
 
 The whole type is parameterized by entity and index types `E`/`W`, so all
 restrictors, situation pronouns, and possessor expressions are typed via the
-unified `Denot E W` machinery rather than ad-hoc `E → Bool` predicates.
+unified `Ty.Domain E W` machinery rather than ad-hoc `E → Bool` predicates.
 
 ## Design notes
 
-- **Restrictors are `DenotGS E W .et`.** Both entity assignments and situation
+- **Restrictors are `Ty.DomainGS E W .et`.** Both entity assignments and situation
   assignments are first-class. This is the [hanink-2021] position: a noun's
   resource situation is a *bound variable* in the structure, not a free
   contextual parameter.
@@ -73,31 +73,31 @@ open Semantics.Composition
     axis (bare/indefinite vs the definite subtypes), orthogonal to
     `Binding.BindingClass` (binding distribution) and to a pronoun's lexical
     kind. The type parameters `E`/`W` supply the entity domain and index set so
-    all subexpressions live in the same `Denot E W` universe. -/
+    all subexpressions live in the same `Ty.Domain E W` universe. -/
 inductive Description (E W : Type) where
   /-- Bare noun (no overt determiner). The actual reading — kind, indefinite,
       unique, or anaphoric — is selected by the language's covert type-shift
       hierarchy ([chierchia-1998], [dayal-2004]). -/
-  | bare (restrictor : DenotGS E W .et)
+  | bare (restrictor : Ty.DomainGS E W .et)
   /-- Overt-article indefinite (∃): a *marked* indefinite (English *a*).
       Introduces a new discourse referent and presupposes nothing about prior
       discourse ([heim-1982]/Kamp novelty). Article-less languages express
       indefinite readings through `bare` (the type-shift hierarchy selects ∃),
       not this constructor. -/
-  | indefinite (restrictor : DenotGS E W .et)
+  | indefinite (restrictor : Ty.DomainGS E W .et)
   /-- Coppock–Beaver weak/uniqueness definite (Sharvy/Križ maximal). The
       restrictor is evaluated at the resource situation pointed to by the
       `situationIdx`-th situation pronoun (Hanink 2021 binding). -/
-  | unique (restrictor : DenotGS E W .et) (situationIdx : Nat)
+  | unique (restrictor : Ty.DomainGS E W .et) (situationIdx : Nat)
   /-- Schwarz strong-article / Hanink-indexed anaphoric definite. The
       `discourseIdx`-th entity-assignment slot is the antecedent. -/
-  | anaphoric (restrictor : DenotGS E W .et) (discourseIdx : Nat)
+  | anaphoric (restrictor : Ty.DomainGS E W .et) (discourseIdx : Nat)
   /-- Demonstrative (genuinely deictic this/that). Carries a deictic feature
       ([moroney-2021] Shan *nâj*/*nân*) and a discourse/pointing index; the
       restrictor is checked at the resource situation `situationIdx`. Distinct from
       the [schwarz-2009] strong article `anaphoric` (PG&G's German *der*). -/
   | demonstrative
-      (restrictor : DenotGS E W .et)
+      (restrictor : Ty.DomainGS E W .et)
       (deictic : Reference.Deixis)
       (situationIdx : Nat)
       (discourseIdx : Nat)
@@ -105,9 +105,9 @@ inductive Description (E W : Type) where
       restrictor and `relation` jointly pin down a unique satisfier related to
       `possessor`. -/
   | possessive
-      (restrictor : DenotGS E W .et)
-      (possessor : DenotGS E W .e)
-      (relation : DenotGS E W .eet)
+      (restrictor : Ty.DomainGS E W .et)
+      (possessor : Ty.DomainGS E W .e)
+      (relation : Ty.DomainGS E W .eet)
 
 -- ════════════════════════════════════════════════════════════════
 -- § The Frame-free kind and the strength section
@@ -139,7 +139,7 @@ def kind : Description E W → DescriptionKind
     it fills the situation-pronoun slot, which `interpret` discards
     (`interpret_unique_index_irrelevant`). -/
 def ofPresupType (p : DefPresupType)
-    (restrictor : DenotGS E W .et) (idx : Nat) : Description E W :=
+    (restrictor : Ty.DomainGS E W .et) (idx : Nat) : Description E W :=
   match p with
   | .uniqueness  => .unique restrictor idx
   | .familiarity => .anaphoric restrictor idx
@@ -148,7 +148,7 @@ def ofPresupType (p : DefPresupType)
     (`DefPresupType.toKind`) — the Frame-aware and Frame-free realization maps
     agree. -/
 theorem kind_ofPresupType
-    (p : DefPresupType) (R : DenotGS E W .et) (idx : Nat) :
+    (p : DefPresupType) (R : Ty.DomainGS E W .et) (idx : Nat) :
     (ofPresupType p R idx).kind = p.toKind := by
   cases p <;> rfl
 

@@ -99,12 +99,12 @@ variable {E W : Type} {σ τ : Ty}
 
 /-- H&K's interpretation function `⟦α β⟧ = λg. ⟦α⟧ g (⟦β⟧ g)` is
 definitionally `applyG`: ⊛ *is* `⟦·⟧` restricted to binary branching. -/
-theorem hk_decomposition (f : DenotG E W (σ ⇒ τ)) (x : DenotG E W σ) :
+theorem hk_decomposition (f : Ty.DomainG E W (σ ⇒ τ)) (x : Ty.DomainG E W σ) :
     applyG f x = fun g => f g (x g) := rfl
 
 /-- Non-pronominal entries in H&K are trivially assignment-dependent:
 `⟦John⟧ := λg. j`. This is exactly ρ(j). -/
-theorem hk_lexical_lift (d : Denot E W σ) :
+theorem hk_lexical_lift (d : Ty.Domain E W σ) :
     constDenot d = fun (_ : Assignment E) => d := rfl
 
 end HKDecomposition
@@ -129,7 +129,7 @@ theorem lambda_pronoun (n : Nat) (g : Assignment E) (x : E) :
 /-- Λᵢ applied to `ρ(left) ⊛ proₙ` yields `ρ(left)`:
 `Λₙ(ρ(left) ⊛ proₙ) = λg λx. left(x) = ρ(left)`. -/
 theorem lambda_rho_ap_pronoun (n : Nat)
-    (left : Denot E W (.e ⇒ .t))
+    (left : Ty.Domain E W (.e ⇒ .t))
     (g : Assignment E) (x : E) :
     lambdaAbsG n (applyG (constDenot left) (interpPronoun n)) g x =
     left x := by
@@ -255,7 +255,7 @@ section Paycheck
 variable {E W : Type}
 
 /-- The intension `⟦his₀ mom⟧ = ρ(mom) ⊛ pro₀ = λg. mom(g₀)`. -/
-def momIntension (mom : E → E) (n : Nat) : DenotG E W .e :=
+def momIntension (mom : E → E) (n : Nat) : Ty.DomainG E W .e :=
   fun g => mom (g n)
 
 /-- `momIntension` is compositionally derived: `ρ(mom) ⊛ proₙ`. -/
@@ -266,7 +266,7 @@ theorem momIntension_eq_rho_ap_pro (mom : E → E) (n : Nat) :
 /-- Paycheck truth conditions: `likes(mom(g n), bill)`. -/
 theorem paycheck_truth_conditions
     (mom : E → E)
-    (likes : Denot E W (.e ⇒ .e ⇒ .t))
+    (likes : Ty.Domain E W (.e ⇒ .e ⇒ .t))
     (bill : E) (n : Nat) (g : Assignment E) :
     applyG (applyG (constDenot likes) (momIntension mom n))
            (constDenot bill) g =
@@ -275,7 +275,7 @@ theorem paycheck_truth_conditions
 /-- When `g(n) = bill`, the paycheck pronoun denotes Bill's mom. -/
 theorem paycheck_reading
     (mom : E → E)
-    (likes : Denot E W (.e ⇒ .e ⇒ .t))
+    (likes : Ty.Domain E W (.e ⇒ .e ⇒ .t))
     (bill : E) (n : Nat) (g : Assignment E) (h : g n = bill) :
     applyG (applyG (constDenot likes) (momIntension mom n))
            (constDenot bill) g =
@@ -300,7 +300,7 @@ variable {E W : Type}
 /-- The reconstructed VP predicate: `λx. likes(mom(x), x)`. -/
 theorem reconstruction_predicate
     (mom : E → E)
-    (likes : Denot E W (.e ⇒ .e ⇒ .t))
+    (likes : Ty.Domain E W (.e ⇒ .e ⇒ .t))
     (n : Nat) (g : Assignment E) (x : E) :
     lambdaAbsG n
       (applyG (applyG (constDenot likes) (momIntension mom n))
@@ -313,7 +313,7 @@ theorem reconstruction_predicate
 /-- The reconstruction predicate is assignment-independent. -/
 theorem reconstruction_independent
     (mom : E → E)
-    (likes : Denot E W (.e ⇒ .e ⇒ .t))
+    (likes : Ty.Domain E W (.e ⇒ .e ⇒ .t))
     (n : Nat) (g₁ g₂ : Assignment E) :
     lambdaAbsG n
       (applyG (applyG (constDenot likes) (momIntension mom n))

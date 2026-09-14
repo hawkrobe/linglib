@@ -7,15 +7,16 @@ This file defines `Semantics.Denotes`, the class of objects that have a denotati
 bracket notation `⟦x⟧` for it ([heim-kratzer-1998]). A lexical item, a reading, or a whole
 sentence denotes in whatever domain its instance names, so the class gives the library one name
 for the map from a semantic object to its meaning, whether that map is compositional or
-stipulated per object. Objects that denote in the Montague type system also carry
-`Semantics.Denotes.Typed`, defined with the composition engine in `Composition/Tree.lean`.
+stipulated per object. An object that denotes in the Montague type system denotes in
+`Composition.Denotation E W M D`, a semantic type paired with a value in its domain, and is
+thereby a terminal for the composition engine.
 
 ## Implementation notes
 
 The class has one field, like `FunLike`: the parameters an interpretation is relativized to,
 the model, context, index and assignment of [montague-1973] and [kaplan-1989], are not slots of
 the class but Reader arguments of the domain `D`, in that order, so a Kaplanian expression
-denotes a `Reference.Character`, an assignment-sensitive one a `Composition.DenotG`, and an
+denotes a `Reference.Character`, an assignment-sensitive one a `Composition.Ty.DomainG`, and an
 intension a `W → _`. Instance resolution requires every type parameter of `D` to be fixed by
 `α`; an object interpreted relative to data its type does not mention, a tree relative to a
 lexicon, keeps an explicit interpretation function (`Composition.Tree.interp`, mathlib's

@@ -172,7 +172,7 @@ section TypeDriven
 
 open Semantics.Composition.Tree
 open Semantics.Montague (Lexicon)
-open Semantics.Composition (Ty Denot)
+open Semantics.Composition
 open Syntax (Tree)
 
 variable {Ent α : Type}

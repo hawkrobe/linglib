@@ -65,17 +65,17 @@ variable {E W : Type}
 /-! ### The two meanings of the index, (80) -/
 
 /-- (80a), (14): the index as a variable, the property of being its value. -/
-def idxVar (n : ℕ) : DenotG E W .et := λ g x => x = g n
+def idxVar (n : ℕ) : Ty.DomainG E W .et := λ g x => x = g n
 
 /-- (80b): the index as a binder, taking the open proposition of its complement to the property
 of the values of the variable that verify it: the substrate's abstraction over `n`, achieved
 without movement. -/
-abbrev idxBind (n : ℕ) (φ : DenotG E W .t) : DenotG E W .et := lambdaAbsG n φ
+abbrev idxBind (n : ℕ) (φ : Ty.DomainG E W .t) : Ty.DomainG E W .et := lambdaAbsG n φ
 
 /-- (15), (35b), (97), and (106): a familiar DP, D's ι over the restriction modified by the index
 as a variable, is the substrate's anaphoric description: the antecedent, if it satisfies the
 restriction. -/
-theorem interpret_anaphoric_eq_russellIota (R : DenotGS E W .et) (d : ℕ) (g : Assignment E)
+theorem interpret_anaphoric_eq_russellIota (R : Ty.DomainGS E W .et) (d : ℕ) (g : Assignment E)
     (gs : SitAssignment W) :
     interpret (.anaphoric R d) g gs = russellIota (λ x => R g gs x ∧ idxVar d g x) := by
   rw [interpret_anaphoric]
@@ -87,7 +87,7 @@ theorem interpret_anaphoric_eq_russellIota (R : DenotGS E W .et) (d : ℕ) (g : 
 
 /-- (34b), (34c): the demonstrative D heads *hádi* and *wídi* add a deictic presupposition and
 otherwise contribute ι, so a demonstrative refers as the anaphoric DP does. -/
-theorem interpret_demonstrative_eq_russellIota (R : DenotGS E W .et)
+theorem interpret_demonstrative_eq_russellIota (R : Ty.DomainGS E W .et)
     (deictic : Reference.Deixis) (sIdx d : ℕ) (g : Assignment E) (gs : SitAssignment W) :
     interpret (.demonstrative R deictic sIdx d) g gs =
       russellIota (λ x => R g gs x ∧ idxVar d g x) :=
@@ -99,32 +99,32 @@ theorem interpret_demonstrative_eq_russellIota (R : DenotGS E W .et)
 /-- (69), (70): the embedded clause of an internally headed relative, an open proposition whose
 semantic head is the restricted variable `n`: the restriction `P` holds of its value, and the
 clause `ψ` says the rest of it. -/
-def openClause (n : ℕ) (P : E → Prop) (ψ : DenotG E W .t) : DenotG E W .t :=
+def openClause (n : ℕ) (P : E → Prop) (ψ : Ty.DomainG E W .t) : Ty.DomainG E W .t :=
   λ g => P (g n) ∧ ψ g
 
 /-- (71) is (59): the index binding the restricted variable in situ yields the property an
 externally headed relative builds by abstracting over the trace and intersecting with the
 head noun. -/
-theorem idxBind_openClause (n : ℕ) (P : E → Prop) (ψ : DenotG E W .t) (g : Assignment E) :
+theorem idxBind_openClause (n : ℕ) (P : E → Prop) (ψ : Ty.DomainG E W .t) (g : Assignment E) :
     idxBind n (openClause n P ψ) g = λ x => P x ∧ lambdaAbsG n ψ g x := by
   funext x
   simp only [idxBind, lambdaAbsG, openClause, Function.update_self]
 
 /-- (72) is (60): the silent D over the bound clause refers to what the definite over the
 externally headed relative refers to, the same meaning by different steps. -/
-theorem russellIota_idxBind (n : ℕ) (P : E → Prop) (ψ : DenotG E W .t) (g : Assignment E) :
+theorem russellIota_idxBind (n : ℕ) (P : E → Prop) (ψ : Ty.DomainG E W .t) (g : Assignment E) :
     russellIota (idxBind n (openClause n P ψ) g) =
       russellIota (λ x => P x ∧ lambdaAbsG n ψ g x) := by
   rw [idxBind_openClause]
 
 /-- The index has a free occurrence in `φ`: some value of the variable changes its truth. -/
-def BindsIn (n : ℕ) (φ : DenotG E W .t) : Prop := ∃ g x, ¬ (φ (g[n ↦ x]) ↔ φ g)
+def BindsIn (n : ℕ) (φ : Ty.DomainG E W .t) : Prop := ∃ g x, ¬ (φ (g[n ↦ x]) ↔ φ g)
 
 /-- (86), the Prohibition against Vacuous Binding: without a free occurrence of the index the
 binder meaning is constant and binds nothing, so only the variable meaning survives, which is
 why a perception nominalization (106), a property of events with no open variable, is a
 familiar DP. -/
-theorem idxBind_eq_const_of_not_bindsIn {n : ℕ} {φ : DenotG E W .t} (h : ¬ BindsIn n φ)
+theorem idxBind_eq_const_of_not_bindsIn {n : ℕ} {φ : Ty.DomainG E W .t} (h : ¬ BindsIn n φ)
     (g : Assignment E) : idxBind n φ g = λ _ => φ g := by
   funext x
   simp only [BindsIn, not_exists, not_not] at h

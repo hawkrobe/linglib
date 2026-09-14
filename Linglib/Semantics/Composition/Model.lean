@@ -65,30 +65,30 @@ variable {L : Language.{u, v}}
 
 /-- A unary content predicate's denotation, *sourced from the model*: world-relativized,
 bottoming out in `Structure.RelMap`. Type `e ⇒ ⟨s,t⟩` — an intensional one-place predicate. -/
-def Model.pred₁ (m : Model L) (R : L.Relations 1) : Denot m.E m.W (.e ⇒ .intens .t) :=
+def Model.pred₁ (m : Model L) (R : L.Relations 1) : Ty.Domain m.E m.W (.e ⇒ .intens .t) :=
   fun x w => (m.interp w).RelMap R (fun _ => x)
 
 /-- A binary content predicate's denotation, sourced from the model (`e ⇒ e ⇒ ⟨s,t⟩`,
 object-first then subject, matching the `eet` convention). -/
 def Model.pred₂ (m : Model L) (R : L.Relations 2) :
-    Denot m.E m.W (.e ⇒ .e ⇒ .intens .t) :=
+    Ty.Domain m.E m.W (.e ⇒ .e ⇒ .intens .t) :=
   fun y x w => (m.interp w).RelMap R (fun i => if i = 0 then x else y)
 
 /-- A constant's (proper name's) interpretation at world `w` (the world-indexed
 `Structure.constantMap`). -/
-def Model.const (m : Model L) (c : L.Constants) (w : m.W) : Denot m.E m.W .e :=
+def Model.const (m : Model L) (c : L.Constants) (w : m.W) : Ty.Domain m.E m.W .e :=
   (m.interp w).funMap c default
 
 /-- A unary predicate's extensional denotation at world `w` (`e ⇒ t`): the extension
 of `Model.pred₁`. -/
 def Model.pred₁ext (m : Model L) (R : L.Relations 1) (w : m.W) :
-    Denot m.E m.W (.e ⇒ .t) :=
+    Ty.Domain m.E m.W (.e ⇒ .t) :=
   fun x => (m.interp w).RelMap R (fun _ => x)
 
 /-- A binary predicate's extensional denotation at world `w` (`e ⇒ e ⇒ t`, object-first):
 the extension of `Model.pred₂`. -/
 def Model.pred₂ext (m : Model L) (R : L.Relations 2) (w : m.W) :
-    Denot m.E m.W (.e ⇒ .e ⇒ .t) :=
+    Ty.Domain m.E m.W (.e ⇒ .e ⇒ .t) :=
   fun y x => (m.interp w).RelMap R (fun i => if i = 0 then x else y)
 
 @[simp] theorem Model.pred₁_apply (m : Model L) (R : L.Relations 1) (x : m.E) (w : m.W) :

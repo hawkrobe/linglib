@@ -77,7 +77,7 @@ theorem isIntersective.isSubsective {m : Modifier α}
   exact inf_le_right
 
 /-- The intersective modifier built from `q`: meet the modificand with `q`.
-    At `α → Prop` this is pointwise conjunction; at conjoinable `Denot`
+    At `α → Prop` this is pointwise conjunction; at conjoinable `Ty.Domain`
     domains it is Partee-Rooth generalized conjunction with the head. The
     well-behaved special case (restrictive relative clauses, intersective
     adjectives, manner adverbs). -/

@@ -53,17 +53,17 @@ abstracted clause property (the restrictive case; see the implementation note).
 That the RC is an intersective modifier is true by construction.
 -/
 def denote {E W : Type} (n : ℕ)
-    (headNoun : DenotG E W (.e ⇒ .t))
-    (relClauseBody : DenotG E W .t)
-    : DenotG E W (.e ⇒ .t) :=
+    (headNoun : Ty.DomainG E W (.e ⇒ .t))
+    (relClauseBody : Ty.DomainG E W .t)
+    : Ty.DomainG E W (.e ⇒ .t) :=
   fun g => intersective (lambdaAbsG n relClauseBody g) (headNoun g)
 
 /-- Head and relative clause modify symmetrically: the head noun and the
     gap-abstracted clause intersect in either order (intersective modification is
     commutative). -/
 theorem denote_comm {E W : Type} (n : ℕ)
-    (headNoun : DenotG E W (.e ⇒ .t))
-    (relClauseBody : DenotG E W .t)
+    (headNoun : Ty.DomainG E W (.e ⇒ .t))
+    (relClauseBody : Ty.DomainG E W .t)
     (g : Assignment E)
     : denote n headNoun relClauseBody g =
       intersective (headNoun g) (lambdaAbsG n relClauseBody g) := by

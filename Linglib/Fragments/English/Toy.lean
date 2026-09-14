@@ -235,20 +235,20 @@ namespace ToyLexicon
 /-! Denotations read off the model. Each is definitionally the corresponding
 fact predicate over `ToyEntity`, so `rfl`/`trivial` proofs over them reduce. -/
 
-def john_sem : Denot ToyEntity Unit .e := toyModel.const johnConst ()
-def mary_sem : Denot ToyEntity Unit .e := toyModel.const maryConst ()
+def john_sem : Ty.Domain ToyEntity Unit .e := toyModel.const johnConst ()
+def mary_sem : Ty.Domain ToyEntity Unit .e := toyModel.const maryConst ()
 
-def sleeps_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext sleepRel ()
-def laughs_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext laughRel ()
-def student_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext studentRel ()
-def person_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext personRel ()
-def thing_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext thingRel ()
-def pizza_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext pizzaRel ()
-def book_sem : Denot ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext bookRel ()
+def sleeps_sem : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext sleepRel ()
+def laughs_sem : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext laughRel ()
+def student_sem : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext studentRel ()
+def person_sem : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext personRel ()
+def thing_sem : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext thingRel ()
+def pizza_sem : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext pizzaRel ()
+def book_sem : Ty.Domain ToyEntity Unit (.e ⇒ .t) := toyModel.pred₁ext bookRel ()
 
-def sees_sem : Denot ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext seeRel ()
-def eats_sem : Denot ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext eatRel ()
-def reads_sem : Denot ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext readRel ()
+def sees_sem : Ty.Domain ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext seeRel ()
+def eats_sem : Ty.Domain ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext eatRel ()
+def reads_sem : Ty.Domain ToyEntity Unit (.e ⇒ .e ⇒ .t) := toyModel.pred₂ext readRel ()
 
 instance : DecidablePred student_sem := fun x =>
   match x with

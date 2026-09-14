@@ -1,8 +1,7 @@
 import Linglib.Syntax.Tree.Basic
 import Linglib.Semantics.Composition.Ty
 import Linglib.Semantics.Composition.Assignment
-import Linglib.Semantics.Composition.LexEntry
-import Linglib.Semantics.Denotation
+import Linglib.Semantics.Composition.Lexicon
 import Linglib.Semantics.Modification.Basic
 
 /-!
@@ -11,9 +10,9 @@ import Linglib.Semantics.Modification.Basic
 [heim-kratzer-1998]'s type-driven interpretation (Ch. 3-5;
 [von-fintel-heim-2011], Ch. 1), parameterized over an effect functor `M`
 in the style of [bumford-charlow-2024]: a node's denotation is an
-`M`-computation `M (Denot E W ty)` (`TypedDenot`), and each composition
+`M`-computation `M (Ty.Domain E W ty)` (`Denotation`), and each composition
 principle lifts through `M`'s `Applicative` structure. The pure
-Heim & Kratzer engine is the `M = Id` instance (`TypedDenot`, `interp`
+Heim & Kratzer engine is the `M = Id` instance (`Denotation`, `interp`
 at a pure `Lexicon`) — true by construction, not by a bridge theorem.
 
 Composition principles:
@@ -34,7 +33,7 @@ Two effect-discipline choices, both visible rather than stipulated:
   reordering the evaluation (QR, or `bind`-order permutation — see
   `Composition/Cont.lean` and `Studies/BumfordCharlow2024.lean`).
 * **PA is a capability, not a given** (`PredAbs`): it needs an
-  entity-distributor `(E → M (Denot ty)) → M (E → Denot ty)`,
+  entity-distributor `(E → M (Ty.Domain ty)) → M (E → Ty.Domain ty)`,
   which `Id` has and scope-type effects lack. See the `PredAbs` docstring.
 -/
 
@@ -45,48 +44,6 @@ open scoped Assignment
 open Semantics.Montague (Lexicon)
 
 /-! ### Composition primitives -/
-
-/-- A typed denotation: a linguistic type together with an `M`-computation
-over its denotation domain. The default `M := Id` recovers the
-[heim-kratzer-1998] carrier; effectful values supply `M` explicitly. -/
-structure TypedDenot (E W : Type) (M : Type → Type := Id) (D : Type := ℝ) where
-  ty : Ty
-  val : M (Denot E W ty D)
-
-end Semantics.Composition.Tree
-
-namespace Semantics
-
-open Composition Composition.Tree Montague
-
-/-- Objects that denote in the Montague type system: a semantic type and an `M`-computation
-in the domain of that type. Every such object is a `TypedDenot`, hence a terminal for the
-composition engine. -/
-class Denotes.Typed (α : Type*) (E W : outParam Type) (M : outParam (Type → Type))
-    (D : outParam Type) where
-  /-- The object's semantic type. -/
-  ty : α → Ty
-  /-- The object's denotation in the domain of its type. -/
-  denote : (x : α) → M (Denot E W (ty x) D)
-
-instance {α : Type*} {E W : Type} {M : Type → Type} {D : Type} [Denotes.Typed α E W M D] :
-    Denotes α (TypedDenot E W M D) :=
-  ⟨λ x => ⟨Denotes.Typed.ty x, Denotes.Typed.denote x⟩⟩
-
-instance {E W : Type} {M : Type → Type} {D : Type} :
-    Denotes.Typed (LexEntry E W M D) E W M D :=
-  ⟨LexEntry.ty, LexEntry.denot⟩
-
-@[simp] theorem denote_lexEntry {E W : Type} {M : Type → Type} {D : Type}
-    (e : LexEntry E W M D) : ⟦e⟧ = (⟨e.ty, e.denot⟩ : TypedDenot E W M D) := rfl
-
-end Semantics
-
-namespace Semantics.Composition.Tree
-
-open Semantics.Composition
-open scoped Assignment
-open Semantics.Montague (Lexicon)
 
 /-- Capability for Predicate Abstraction under effect `M`: an
 **entity-distributor** commuting `M` over entity-indexed families.
@@ -99,7 +56,7 @@ or the W ⊣ R adjunction instead (`Studies/BumfordCharlow2024.lean`). Making
 the distributor optional turns the QR/PA-vs-effect-sequencing rivalry
 into a fact checked by instance resolution. -/
 class PredAbs (M : Type → Type) (E W : Type) (D : Type := ℝ) where
-  dist? : Option (∀ ty : Ty, (E → M (Denot E W ty D)) → M (E → Denot E W ty D))
+  dist? : Option (∀ ty : Ty, (E → M (Ty.Domain E W ty D)) → M (E → Ty.Domain E W ty D))
 
 instance (E W D : Type) : PredAbs Id E W D := ⟨some λ _ f => f⟩
 
@@ -110,27 +67,27 @@ def canApply (funTy argTy : Ty) : Option Ty :=
 
 /-- TN: lexical lookup. -/
 def interpTerminal (E W : Type) {M : Type → Type} {D : Type} (lex : Lexicon E W M D)
-    (word : String) : Option (TypedDenot E W M D) :=
-  (lex word).map λ entry => ⟨entry.ty, entry.denot⟩
+    (word : String) : Option (Denotation E W M D) :=
+  lex word
 
 /-- NN: identity. -/
 def interpNonBranching {E W D : Type} {M : Type → Type}
-    (daughter : TypedDenot E W M D) : TypedDenot E W M D :=
+    (daughter : Denotation E W M D) : Denotation E W M D :=
   daughter
 
 /-- FA: `⟦β⟧(⟦γ⟧)` -/
 def interpFA {E W D : Type} {σ τ : Ty}
-    (f : Denot E W (σ ⇒ τ) D) (x : Denot E W σ D) : Denot E W τ D :=
+    (f : Ty.Domain E W (σ ⇒ τ) D) (x : Ty.Domain E W σ D) : Ty.Domain E W τ D :=
   f x
 
 /-- Forward FA: the function is the left daughter `df`, the argument `da`. -/
 def applyForward {E W D : Type} {M : Type → Type} [Applicative M]
-    (df da : TypedDenot E W M D) : Option (TypedDenot E W M D) :=
-  match hf : df.ty with
+    (df da : Denotation E W M D) : Option (Denotation E W M D) :=
+  match hf : df.1 with
   | .fn σ τ =>
-    if ha : σ = da.ty then
-      let f : M (Denot E W (σ ⇒ τ) D) := hf ▸ df.val
-      let a : M (Denot E W σ D) := ha ▸ da.val
+    if ha : σ = da.1 then
+      let f : M (Ty.Domain E W (σ ⇒ τ) D) := hf ▸ df.2
+      let a : M (Ty.Domain E W σ D) := ha ▸ da.2
       some ⟨τ, f <*> a⟩
     else none
   | _ => none
@@ -138,12 +95,12 @@ def applyForward {E W D : Type} {M : Type → Type} [Applicative M]
 /-- Backward FA: the function is the right daughter `df`, the argument `da`. The
 left daughter `da` sequences first, hence the `(λ x g => g x)` combinator. -/
 def applyBackward {E W D : Type} {M : Type → Type} [Applicative M]
-    (da df : TypedDenot E W M D) : Option (TypedDenot E W M D) :=
-  match hf : df.ty with
+    (da df : Denotation E W M D) : Option (Denotation E W M D) :=
+  match hf : df.1 with
   | .fn σ τ =>
-    if ha : σ = da.ty then
-      let f : M (Denot E W (σ ⇒ τ) D) := hf ▸ df.val
-      let a : M (Denot E W σ D) := ha ▸ da.val
+    if ha : σ = da.1 then
+      let f : M (Ty.Domain E W (σ ⇒ τ) D) := hf ▸ df.2
+      let a : M (Ty.Domain E W σ D) := ha ▸ da.2
       some ⟨τ, (λ x g => g x) <$> a <*> f⟩
     else none
   | _ => none
@@ -152,7 +109,7 @@ def applyBackward {E W D : Type} {M : Type → Type} [Applicative M]
 effects fire first regardless of which daughter is the function): function on the
 left (`applyForward`), else on the right (`applyBackward`). -/
 def tryFA {E W D : Type} {M : Type → Type} [Applicative M]
-    (d1 d2 : TypedDenot E W M D) : Option (TypedDenot E W M D) :=
+    (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
   applyForward d1 d2 <|> applyBackward d1 d2
 
 /-- IFA: Intensional Functional Application ([von-fintel-heim-2011] Step 10).
@@ -164,39 +121,39 @@ def tryFA {E W D : Type} {M : Type → Type} [Applicative M]
 
     Tries both orders (β,γ) and (γ,β); effects sequence in linear order. -/
 def tryIFA {E W D : Type} {M : Type → Type} [Applicative M]
-    (d1 d2 : TypedDenot E W M D) : Option (TypedDenot E W M D) :=
-  match hf : d1.ty with
+    (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
+  match hf : d1.1 with
   | .fn (.intens σ) τ =>
-    if ha : σ = d2.ty then
-      let f : M (Denot E W (.fn (.intens σ) τ) D) := hf ▸ d1.val
-      let a : M (Denot E W σ D) := ha ▸ d2.val
+    if ha : σ = d2.1 then
+      let f : M (Ty.Domain E W (.fn (.intens σ) τ) D) := hf ▸ d1.2
+      let a : M (Ty.Domain E W σ D) := ha ▸ d2.2
       some ⟨τ, (λ fv av => fv (fun _ => av)) <$> f <*> a⟩
     else
-      match hf' : d2.ty with
+      match hf' : d2.1 with
       | .fn (.intens σ') τ' =>
-        if ha' : σ' = d1.ty then
-          let f : M (Denot E W (.fn (.intens σ') τ') D) := hf' ▸ d2.val
-          let a : M (Denot E W σ' D) := ha' ▸ d1.val
+        if ha' : σ' = d1.1 then
+          let f : M (Ty.Domain E W (.fn (.intens σ') τ') D) := hf' ▸ d2.2
+          let a : M (Ty.Domain E W σ' D) := ha' ▸ d1.2
           some ⟨τ', (λ av fv => fv (fun _ => av)) <$> a <*> f⟩
         else none
       | _ => none
   | _ =>
-    match hf : d2.ty with
+    match hf : d2.1 with
     | .fn (.intens σ) τ =>
-      if ha : σ = d1.ty then
-        let f : M (Denot E W (.fn (.intens σ) τ) D) := hf ▸ d2.val
-        let a : M (Denot E W σ D) := ha ▸ d1.val
+      if ha : σ = d1.1 then
+        let f : M (Ty.Domain E W (.fn (.intens σ) τ) D) := hf ▸ d2.2
+        let a : M (Ty.Domain E W σ D) := ha ▸ d1.2
         some ⟨τ, (λ av fv => fv (fun _ => av)) <$> a <*> f⟩
       else none
     | _ => none
 
 /-- PM: combine two `⟨e,t⟩` predicates. -/
 def tryPM {E W D : Type} {M : Type → Type} [Applicative M]
-    (d1 d2 : TypedDenot E W M D) : Option (TypedDenot E W M D) :=
-  match h1 : d1.ty, h2 : d2.ty with
+    (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
+  match h1 : d1.1, h2 : d2.1 with
   | .fn .e .t, .fn .e .t =>
-    let p1 : M (Denot E W (.e ⇒ .t) D) := h1 ▸ d1.val
-    let p2 : M (Denot E W (.e ⇒ .t) D) := h2 ▸ d2.val
+    let p1 : M (Ty.Domain E W (.e ⇒ .t) D) := h1 ▸ d1.2
+    let p2 : M (Ty.Domain E W (.e ⇒ .t) D) := h2 ▸ d2.2
     some ⟨.fn .e .t, Modifier.intersective <$> p1 <*> p2⟩
   | _, _ => none
 
@@ -205,21 +162,21 @@ combines with an eventuality predicate `⟨e,t⟩`, conjoining the predicate
 onto the head's event argument — `λx.λe. f(x)(e) ∧ g(e)`. Tried in both
 orders; effects sequence in linear order. -/
 def tryEI {E W D : Type} {M : Type → Type} [Applicative M]
-    (d1 d2 : TypedDenot E W M D) : Option (TypedDenot E W M D) :=
-  match h1 : d1.ty, h2 : d2.ty with
+    (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
+  match h1 : d1.1, h2 : d2.1 with
   | .fn .e (.fn .e .t), .fn .e .t =>
-    let f : M (Denot E W (.e ⇒ .e ⇒ .t) D) := h1 ▸ d1.val
-    let p : M (Denot E W (.e ⇒ .t) D) := h2 ▸ d2.val
+    let f : M (Ty.Domain E W (.e ⇒ .e ⇒ .t) D) := h1 ▸ d1.2
+    let p : M (Ty.Domain E W (.e ⇒ .t) D) := h2 ▸ d2.2
     some ⟨.e ⇒ .e ⇒ .t, (λ fv pv => λ x e => fv x e ∧ pv e) <$> f <*> p⟩
   | .fn .e .t, .fn .e (.fn .e .t) =>
-    let p : M (Denot E W (.e ⇒ .t) D) := h1 ▸ d1.val
-    let f : M (Denot E W (.e ⇒ .e ⇒ .t) D) := h2 ▸ d2.val
+    let p : M (Ty.Domain E W (.e ⇒ .t) D) := h1 ▸ d1.2
+    let f : M (Ty.Domain E W (.e ⇒ .e ⇒ .t) D) := h2 ▸ d2.2
     some ⟨.e ⇒ .e ⇒ .t, (λ pv fv => λ x e => fv x e ∧ pv e) <$> p <*> f⟩
   | _, _ => none
 
 /-- Binary node: try FA, then IFA, then PM, then EI. -/
 def interpBinary {E W D : Type} {M : Type → Type} [Applicative M]
-    (d1 d2 : TypedDenot E W M D) : Option (TypedDenot E W M D) :=
+    (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
   tryFA d1 d2 <|> tryIFA d1 d2 <|> tryPM d1 d2 <|> tryEI d1 d2
 
 /-! ### Tree interpretation -/
@@ -254,7 +211,7 @@ for `Tree Cat String` (UD-grounded), `Tree Unit String` (category-free),
 or any other category system. -/
 def interp (E W : Type) {M : Type → Type} [Applicative M] {D : Type} [PredAbs M E W D]
     (lex : Lexicon E W M D) (g : Assignment E)
-    : Tree C String → Option (TypedDenot E W M D)
+    : Tree C String → Option (Denotation E W M D)
   | .terminal _ w => interpTerminal E W lex w
   | .node _ (t :: []) => (interp E W lex g t).map interpNonBranching
   | .node _ (t1 :: t2 :: []) => do
@@ -274,7 +231,7 @@ def interp (E W : Type) {M : Type → Type} [Applicative M] {D : Type} [PredAbs 
 /-- Extract truth value from (pure) tree interpretation. Effectful roots
 discharge through per-effect handlers instead (`handleScope` and kin in
 `Studies/BumfordCharlow2024.lean`). -/
-def evalTree {E W D : Type} [∀ (p : Denot E W .t D), Decidable p]
+def evalTree {E W D : Type} [∀ (p : Ty.Domain E W .t D), Decidable p]
     (lex : Lexicon E W Id D) (g : Assignment E) (t : Tree C String)
     : Option Bool :=
   match interp E W lex g t with
@@ -287,7 +244,7 @@ def evalTree {E W D : Type} [∀ (p : Denot E W .t D), Decidable p]
     rather than a bare truth value — e.g., trees containing EXH
     or other propositional operators. Evaluate the result at a
     specific world to get a truth value. -/
-def evalTreeProp {E W D : Type} [∀ (p : Denot E W .t D), Decidable p]
+def evalTreeProp {E W D : Type} [∀ (p : Ty.Domain E W .t D), Decidable p]
     (lex : Lexicon E W Id D) (g : Assignment E) (t : Tree C String)
     : Option (W → Bool) :=
   match interp E W lex g t with
@@ -309,23 +266,23 @@ section Properties
 
 variable {M : Type → Type}
 
-theorem interpNonBranching_id {E W D : Type} (d : TypedDenot E W M D) :
+theorem interpNonBranching_id {E W D : Type} (d : Denotation E W M D) :
     interpNonBranching d = d := rfl
 
 theorem interpFA_type {E W D : Type} {σ τ : Ty}
-    (f : Denot E W (σ ⇒ τ) D) (x : Denot E W σ D)
-    : (interpFA f x : Denot E W τ D) = f x := rfl
+    (f : Ty.Domain E W (σ ⇒ τ) D) (x : Ty.Domain E W σ D)
+    : (interpFA f x : Ty.Domain E W τ D) = f x := rfl
 
-theorem tryPM_preserves_type {E W D : Type} [Applicative M] (d1 d2 : TypedDenot E W M D)
-    (h1 : d1.ty = .fn .e .t) (h2 : d2.ty = .fn .e .t)
-    : ∃ d, tryPM d1 d2 = some d ∧ d.ty = .fn .e .t := by
+theorem tryPM_preserves_type {E W D : Type} [Applicative M] (d1 d2 : Denotation E W M D)
+    (h1 : d1.1 = .fn .e .t) (h2 : d2.1 = .fn .e .t)
+    : ∃ d, tryPM d1 d2 = some d ∧ d.1 = .fn .e .t := by
   cases d1 with | mk ty1 val1 =>
   cases d2 with | mk ty2 val2 =>
   simp only at h1 h2
   subst h1 h2
   exact ⟨_, rfl, rfl⟩
 
-theorem interpBinary_eq {E W D : Type} [Applicative M] (d1 d2 : TypedDenot E W M D) :
+theorem interpBinary_eq {E W D : Type} [Applicative M] (d1 d2 : Denotation E W M D) :
     interpBinary d1 d2 =
     (tryFA d1 d2 <|> tryIFA d1 d2 <|> tryPM d1 d2 <|> tryEI d1 d2) := rfl
 
@@ -354,19 +311,21 @@ variable {C : Type} {E W D : Type} {M : Type → Type} [Applicative M] [PredAbs 
 
 omit [Applicative M] [PredAbs M E W D] in
 @[simp] theorem interpTerminal_lookup (lex : Lexicon E W M D) (w : String) :
-    interpTerminal E W lex w = (lex w).map fun e => ⟨e.ty, e.denot⟩ := rfl
+    interpTerminal E W lex w = lex w := rfl
 
 omit [PredAbs M E W D] in
 /-- Forward FA reduces generally (abstract `σ τ`). Backward FA stays
 type-shape-specific, since forward fires first when the left daughter is itself a
 function. -/
-@[simp] theorem applyForward_fn {σ τ : Ty} (f : M (Denot E W (σ ⇒ τ) D)) (x : M (Denot E W σ D)) :
-    applyForward (⟨σ ⇒ τ, f⟩ : TypedDenot E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
+@[simp] theorem applyForward_fn {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
+    (x : M (Ty.Domain E W σ D)) :
+    applyForward (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
   simp only [applyForward, ↓reduceDIte]
 
 omit [PredAbs M E W D] in
-@[simp] theorem tryFA_forward {σ τ : Ty} (f : M (Denot E W (σ ⇒ τ) D)) (x : M (Denot E W σ D)) :
-    tryFA (⟨σ ⇒ τ, f⟩ : TypedDenot E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
+@[simp] theorem tryFA_forward {σ τ : Ty} (f : M (Ty.Domain E W (σ ⇒ τ) D))
+    (x : M (Ty.Domain E W σ D)) :
+    tryFA (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
   simp only [tryFA, applyForward_fn]; rfl
 
 end Reduction

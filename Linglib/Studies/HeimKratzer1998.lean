@@ -3,7 +3,7 @@ import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Composition.Assignment
 import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.Reduction
-import Linglib.Semantics.Composition.LexEntry
+import Linglib.Semantics.Composition.Lexicon
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Quantification.Polyadic
 import Linglib.Data.Examples.HeimKratzer1998
@@ -55,8 +55,8 @@ open Semantics.Montague.ToyLexicon (student_sem person_sem)
 
 def quantLex : Lexicon ToyEntity Unit := λ word =>
   match word with
-  | "every" => some ⟨Ty.det, (every_sem : Denot ToyEntity Unit Ty.det)⟩
-  | "some" => some ⟨Ty.det, (some_sem : Denot ToyEntity Unit Ty.det)⟩
+  | "every" => some ⟨Ty.det, (every_sem : Ty.Domain ToyEntity Unit Ty.det)⟩
+  | "some" => some ⟨Ty.det, (some_sem : Ty.Domain ToyEntity Unit Ty.det)⟩
   | "student" => some ⟨.e ⇒ .t, student_sem⟩
   | "person" => some ⟨.e ⇒ .t, person_sem⟩
   | "sleeps" => some ⟨.e ⇒ .t, ToyLexicon.sleeps_sem⟩

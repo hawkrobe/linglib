@@ -47,7 +47,7 @@ rests on Vietnamese rather than Ch'ol or Shan data and is not formalized.
 
 namespace LittleMoroneyRoyer2022
 
-open Semantics.Composition (Ty Denot)
+open Semantics.Composition
 open Semantics.Classifier (clfForNum clfForNoun)
 open Semantics.Composition.Tree (interp)
 open Semantics.Montague (Lexicon)

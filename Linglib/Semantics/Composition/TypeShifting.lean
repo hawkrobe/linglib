@@ -76,7 +76,7 @@ end TotalShifts
 section Uniqueness
 
 -- Boolean structure on the `Prop`/`Pi` denotation types is supplied directly by
--- mathlib (no `Ty`/`Denot` reflection, no bridge instances).
+-- mathlib (no `Ty`/`Ty.Domain` reflection, no bridge instances).
 
 /-- Evaluate `Finset.inf` of function-valued functions at a point. -/
 private lemma finset_inf_fun_eval {ι α : Type*}

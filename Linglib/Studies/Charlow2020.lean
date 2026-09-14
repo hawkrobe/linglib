@@ -209,7 +209,7 @@ section LiftDecomposition
 
 open Quantification (individual A)
 open Semantics.Composition.TypeShifting (ident A_ident_eq_individual)
-open Semantics.Composition (Denot Ty)
+open Semantics.Composition (Ty.Domain Ty)
 
 variable {E W : Type}
 
@@ -221,7 +221,7 @@ this reduces to `P j = individual j P`. This is exactly
 set-monad context. -/
 theorem lift_eq_A_eta (domain : List E) (j : E)
     (hj : j ∈ domain) (_hnd : domain.Nodup) :
-    ∀ P : Denot E W Ty.et, A domain (ident j) P = individual j P := by
+    ∀ P : Ty.Domain E W Ty.et, A domain (ident j) P = individual j P := by
   intro P; exact congrFun (A_ident_eq_individual domain j hj) P
 
 end LiftDecomposition
