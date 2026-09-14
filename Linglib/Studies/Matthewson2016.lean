@@ -6,6 +6,7 @@ import Linglib.Fragments.Statimcets.Modals
 import Linglib.Fragments.NezPerce.Modals
 import Linglib.Fragments.Niuean.Modals
 import Linglib.Studies.Condoravdi2002
+import Linglib.Studies.Matthewson2013
 
 /-!
 # Matthewson (2016): Modality
@@ -150,23 +151,15 @@ supporting either claim: Gitksan *ima('a)* and *gat*, variable in force, and Nez
 a possibility modal read as necessity because no necessity modal competes with it
 ([deal-2011]). -/
 
-/-- A force analysis is consistent with a meaning when the forces the meaning attests are the
-one the analysis fixes or strengthens, or two for a variable-force analysis. -/
-def Consistent : ForceAnalysis → Finset ForceFlavor → Prop
-  | .fixed fo, m | .strengthened fo, m => m.image Prod.fst = {fo}
-  | .variableForce, m => 2 ≤ (m.image Prod.fst).card
-
-instance (a : ForceAnalysis) (m : Finset ForceFlavor) : Decidable (Consistent a m) := by
-  cases a <;> unfold Consistent <;> infer_instance
-
 /-- The fragments' force analyses are consistent with their meanings. -/
 theorem force_consistent :
-    (∀ e ∈ Gitksan.Modals.allExpressions, Consistent (Gitksan.Modals.forceAnalysis e) e.meaning) ∧
+    (∀ e ∈ Gitksan.Modals.allExpressions,
+        (Matthewson2013.forceAnalysis e).Consistent e.meaning) ∧
       (∀ e ∈ Statimcets.Modals.allExpressions,
-        Consistent (Statimcets.Modals.forceAnalysis e) e.meaning) ∧
+        (Statimcets.Modals.forceAnalysis e).Consistent e.meaning) ∧
       (∀ e ∈ NezPerce.Modals.allExpressions,
-        Consistent (NezPerce.Modals.forceAnalysis e) e.meaning) ∧
-      ∀ e ∈ Niuean.Modals.allExpressions, Consistent (Niuean.Modals.forceAnalysis e) e.meaning := by
+        (NezPerce.Modals.forceAnalysis e).Consistent e.meaning) ∧
+      ∀ e ∈ Niuean.Modals.allExpressions, (Niuean.Modals.forceAnalysis e).Consistent e.meaning := by
   decide
 
 /-- A modal has a dual in an inventory when it is fixed for one force and another item of the
@@ -180,8 +173,8 @@ instance (L : List ModalItem) (m : ModalItem) : Decidable (HasDualIn L m) :=
 
 /-- A variable-force modal, attesting two forces, has no dual. -/
 theorem not_hasDualIn_of_variableForce {L : List ModalItem} {m : ModalItem}
-    (h : Consistent .variableForce m.meaning) : ¬ HasDualIn L m :=
-  λ h' => by simp only [Consistent] at h; have := h'.1; omega
+    (h : ForceAnalysis.Consistent .variableForce m.meaning) : ¬ HasDualIn L m :=
+  λ h' => by simp only [ForceAnalysis.Consistent] at h; have := h'.1; omega
 
 /-- Gitksan ima('a) and gat, Nez Perce o'qa and St'át'imcets =ka have no duals in their
 inventories. -/
@@ -216,14 +209,14 @@ private def orientationOf : String → Option TemporalOrientation
   | _ => none
 
 /-- (60)–(63): under a fixed past perspective ima('a) takes every orientation, and is
-acceptable without the prospective *dim* exactly when not future-oriented, as the fragment's
-`requiresDim` records. -/
+acceptable without the prospective *dim* exactly when not future-oriented, as
+[matthewson-2013]'s `RequiresDim` records. -/
 theorem gitksan_orientation_rows :
     ∀ e ∈ Examples.all, e.feature? "modal" = some "ima('a)" →
       ∀ o ∈ (e.feature? "orientation").bind orientationOf,
         (e.judgment = .acceptable ↔
           e.feature? "prospective" = some "true" ∨
-            Gitksan.Modals.requiresDim Gitksan.Modals.imaa o = false) := by
+            ¬ Matthewson2013.RequiresDim Gitksan.Modals.imaa o) := by
   decide
 
 /-- English marks past orientation, by the perfect under the modal among [condoravdi-2002]'s
@@ -231,25 +224,10 @@ scopings, and Gitksan future orientation, by *dim*: the mirror image of §18.4.3
 theorem marking_mirror :
     (∀ s : Condoravdi2002.Scope, s.orientation = .past ↔ s = .modalPerf) ∧
       ∀ o : TemporalOrientation,
-        Gitksan.Modals.requiresDim Gitksan.Modals.imaa o = true ↔ o = .future := by
+        Matthewson2013.RequiresDim Gitksan.Modals.imaa o ↔ o = .future := by
   decide
 
 /-! ### Typology (§18.5) -/
-
-/-- A modal is epistemic when every pair it expresses is. -/
-def Epistemic (m : ModalItem) : Prop := ∀ ff ∈ m.meaning, ff.flavor = .epistemic
-
-instance : DecidablePred Epistemic := λ _ => inferInstanceAs (Decidable (∀ _ ∈ _, _ = _))
-
-/-- A modal varies in force when it expresses two forces. -/
-def VariesForce (m : ModalItem) : Prop := 2 ≤ (m.meaning.image Prod.fst).card
-
-/-- A modal varies in flavour when it expresses two flavours. -/
-def VariesFlavor (m : ModalItem) : Prop := 2 ≤ (m.meaning.image Prod.snd).card
-
-instance : DecidablePred VariesForce := λ _ => inferInstanceAs (Decidable (_ ≤ _))
-
-instance : DecidablePred VariesFlavor := λ _ => inferInstanceAs (Decidable (_ ≤ _))
 
 /-- An inventory distinguishes force within a domain when two of its modals there express
 different sets of forces. -/
@@ -263,10 +241,10 @@ instance (L : List ModalItem) (D : ModalItem → Prop) [DecidablePred D] :
 /-- The flavour–force correlation: Gitksan and Niuean distinguish force among their
 circumstantial modals and not among their epistemic ones. -/
 theorem force_only_circumstantial :
-    (¬ DistinguishesForce Gitksan.Modals.allExpressions Epistemic ∧
-        DistinguishesForce Gitksan.Modals.allExpressions (¬ Epistemic ·)) ∧
-      ¬ DistinguishesForce Niuean.Modals.allExpressions Epistemic ∧
-        DistinguishesForce Niuean.Modals.allExpressions (¬ Epistemic ·) := by
+    (¬ DistinguishesForce Gitksan.Modals.allExpressions ModalItem.Epistemic ∧
+        DistinguishesForce Gitksan.Modals.allExpressions (¬ ·.Epistemic)) ∧
+      ¬ DistinguishesForce Niuean.Modals.allExpressions ModalItem.Epistemic ∧
+        DistinguishesForce Niuean.Modals.allExpressions (¬ ·.Epistemic) := by
   decide
 
 /-- Niuean's circumstantial *maeke* and *lata* are duals; its epistemic *liga* has none. -/
@@ -285,8 +263,8 @@ theorem nauze :
 /-- [vander-klok-2013b]'s refinement of the universal: within each domain, epistemic and
 non-epistemic, an inventory varies along one axis only. -/
 def VanderKlok (L : List ModalItem) : Prop :=
-  ¬ ((∃ m ∈ L, Epistemic m ∧ VariesForce m) ∧ ∃ m ∈ L, Epistemic m ∧ VariesFlavor m) ∧
-    ¬ ((∃ m ∈ L, ¬ Epistemic m ∧ VariesForce m) ∧ ∃ m ∈ L, ¬ Epistemic m ∧ VariesFlavor m)
+  ¬ ((∃ m ∈ L, m.Epistemic ∧ m.VariesForce) ∧ ∃ m ∈ L, m.Epistemic ∧ m.VariesFlavor) ∧
+    ¬ ((∃ m ∈ L, ¬ m.Epistemic ∧ m.VariesForce) ∧ ∃ m ∈ L, ¬ m.Epistemic ∧ m.VariesFlavor)
 
 instance (L : List ModalItem) : Decidable (VanderKlok L) :=
   inferInstanceAs (Decidable (¬ (_ ∧ _) ∧ ¬ (_ ∧ _)))
@@ -297,7 +275,7 @@ theorem VanderKlok.singleAxis {L : List ModalItem} (h : VanderKlok L) {m : Modal
     (hm : m ∈ L) : SingleAxis m.meaning := by
   by_contra hs
   simp only [SingleAxis, not_or, not_le] at hs
-  by_cases he : Epistemic m
+  by_cases he : m.Epistemic
   · exact h.1 ⟨⟨m, hm, he, hs.1⟩, ⟨m, hm, he, hs.2⟩⟩
   · exact h.2 ⟨⟨m, hm, he, hs.1⟩, ⟨m, hm, he, hs.2⟩⟩
 

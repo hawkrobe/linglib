@@ -19,8 +19,9 @@ modal claim in time.
 * `Modality.ModalForce`, with the strength order `possibility < weakNecessity < necessity`,
   the classical dual `ModalForce.dual`, and the concord class `ModalForce.IsUniversal`.
 * `Modality.ModalFlavor` and the pair type `Modality.ForceFlavor`.
-* `Modality.ModalItem`.
-* `Modality.ForceAnalysis`: fixed, variable or strengthened force.
+* `Modality.ModalItem`, with its domain and variation predicates.
+* `Modality.ForceAnalysis`: fixed, variable or strengthened force, and its consistency with
+  a meaning.
 * `Modality.TemporalPerspective`, `Modality.TemporalOrientation`.
 
 ## References
@@ -120,6 +121,31 @@ structure ModalItem where
   register : SocialMeaning.Register.Level := .neutral
   deriving DecidableEq
 
+namespace ModalItem
+
+/-- A modal item is epistemic when every pair it expresses is. -/
+def Epistemic (m : ModalItem) : Prop := ∀ ff ∈ m.meaning, ff.flavor = .epistemic
+
+/-- A modal item is circumstantial, in the broad sense covering the priority flavours, when no
+pair it expresses is epistemic. -/
+def Circumstantial (m : ModalItem) : Prop := ∀ ff ∈ m.meaning, ff.flavor ≠ .epistemic
+
+/-- A modal item varies in force when it expresses two forces. -/
+def VariesForce (m : ModalItem) : Prop := 2 ≤ (m.meaning.image Prod.fst).card
+
+/-- A modal item varies in flavour when it expresses two flavours. -/
+def VariesFlavor (m : ModalItem) : Prop := 2 ≤ (m.meaning.image Prod.snd).card
+
+instance : DecidablePred Epistemic := λ _ => inferInstanceAs (Decidable (∀ _ ∈ _, _ = _))
+
+instance : DecidablePred Circumstantial := λ _ => inferInstanceAs (Decidable (∀ _ ∈ _, _ ≠ _))
+
+instance : DecidablePred VariesForce := λ _ => inferInstanceAs (Decidable (_ ≤ _))
+
+instance : DecidablePred VariesFlavor := λ _ => inferInstanceAs (Decidable (_ ≤ _))
+
+end ModalItem
+
 /-! ### Force analysis
 
 Three mechanisms give a modal its force, which a set of force-flavor pairs conflates: a fixed
@@ -149,6 +175,15 @@ def ForceAnalysis.AdmitsPossibility (a : ForceAnalysis) : Prop :=
 
 instance : DecidablePred ForceAnalysis.AdmitsPossibility :=
   λ _ => inferInstanceAs (Decidable (_ ∨ _))
+
+/-- A force analysis is consistent with a meaning when the forces the meaning attests are the
+one the analysis fixes or strengthens, or two for a variable-force analysis. -/
+def ForceAnalysis.Consistent : ForceAnalysis → Finset ForceFlavor → Prop
+  | .fixed fo, m | .strengthened fo, m => m.image Prod.fst = {fo}
+  | .variableForce, m => 2 ≤ (m.image Prod.fst).card
+
+instance (a : ForceAnalysis) (m : Finset ForceFlavor) : Decidable (a.Consistent m) := by
+  cases a <;> unfold ForceAnalysis.Consistent <;> infer_instance
 
 /-! ### Modal-temporal axes
 
