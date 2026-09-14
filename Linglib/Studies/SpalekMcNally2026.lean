@@ -1,140 +1,147 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Spanish.Predicates
-import Linglib.Semantics.Aspect.Basic
-import Linglib.Semantics.Attitudes.Basic
-import Linglib.Semantics.Causation.VerbClass
-import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Semantics.ArgumentStructure.MeaningComponents
 
 /-!
-# [spalek-mcnally-2026]: The Anatomy of a Verb
+# Spalek & McNally (2026): The Anatomy of a Verb
 
-Empirical data and bridge theorems for the contrastive study of English
-*tear* and Spanish *rasgar*. These putative translation equivalents share
-event structure (both Levin 45.1 Break Verbs, binary-scale result verbs
-with causative alternation) but differ in root content — specifically in
-patient restrictions, separation geometry, and agent control.
+This file formalizes the contrastive analysis of English *tear* and Spanish *rasgar* of
+[spalek-mcnally-2026]. The two verbs are counterparts in comparative lexical databases and
+share an event structure: both are simple result verbs of the break class ([levin-1993])
+describing a minimal, binary-scale change, the partly uncontrolled loss of integrity of a
+whole, with a causative alternation and no agentive intransitive use. They differ in root
+content, the fine within-class half of a root's meaning beside its templatic kinds
+([beavers-koontz-garboden-2020]): *rasgar* requires a flimsy or insubstantial patient and
+implies a linear, gash-like separation without much force, where *tear* takes patients of
+any robustness, implies separation in contrary directions, often with force, and is
+compatible with careful action. Figurative extensions follow the root content, the case
+complementary to the event-structural contrasts of [mcnally-spalek-2022]: *rasgar* disturbs
+fragile states, silence and darkness, and describes linear movement through an
+insubstantial medium; *tear* rends with force and describes fast motion along a path. In the
+bidirectional parallel corpus the verbs are asymmetric translation equivalents: *rasgar* is
+one of the rarer renderings of *tear*, whose most frequent counterpart is *arrancar*, while
+*tear* is the usual rendering of *rasgar*.
 
-## Key findings
+The root contents are the fragment entries' `Verb.rootContent`, regions of the substrate's
+`Root.Content` space. A `Situation` is a point of that space, a described event's value on
+every dimension, and `Admits` says a root's regions contain it; `overlaps_iff_exists_admits`
+identifies the substrate's `Overlaps` with the existence of a situation both roots admit,
+the zone in which the verbs are intertranslatable. The paper's contrasts are situations one
+root admits and the other rejects: the chunk of bread (14), the engraved cement (16b), the
+carefully torn foil (17), the rooster and the silence (18), and the ball tearing through the
+rough (23); the soft contact lenses (16a) are admitted by both.
 
-1. **Shared event structure**: Both are simple result verbs with
-   causative alternation (§3.1). Binary-scale change: *almost* modification
-   entails no change has yet occurred.
+## Implementation notes
 
-2. **Different root content** (§3.2):
-   - *rasgar* requires flimsy/insubstantial patients; *tear* is unrestricted
-   - *tear* implies contrary-direction separation with force; *rasgar* implies
-     linear/gash-like separation
-   - *tear* is compatible with careful action; *rasgar* is not
+The translation counts of the paper's Tables 1 and 2 are reported in prose. Each contrast
+situation is fixed on the dimension the paper names for it and agrees with the contact
+lenses elsewhere, inside both roots' regions, so that each verdict turns on the named
+dimension alone: robustness for the bread, result geometry for the cement, agent control
+for the foil, robustness and force for the silence, force for the rough.
 
-3. **Figurative extensions differ predictably** (§3.3): root content predicts
-   which figurative uses each verb supports.
+## References
 
-4. **Translation equivalence is partial** (§4.2): in P-ACTRES parallel corpus,
-   *tear* translates to many Spanish verbs; *rasgar* predominantly translates
-   to *tear* only in specific contexts (Tables 1–2).
-
+* [spalek-mcnally-2026]
+* [mcnally-spalek-2022]
+* [beavers-koontz-garboden-2020]
+* [levin-1993]
 -/
 
 namespace SpalekMcNally2026
 
-open ArgumentStructure
-open English.Predicates.Verbal
-open Spanish.Predicates
+open Semantics.Root Semantics.Root.Content English.Predicates.Verbal Spanish.Predicates
 
--- ════════════════════════════════════════════════════
--- § 1. Shared Event Structure (§3.1)
--- ════════════════════════════════════════════════════
+/-! ### Situations and admission -/
 
-/-- Both *tear* and *rasgar* are Levin 45.1 Break Verbs. -/
-theorem shared_levin_class :
-    tear_.levinClass = rasgar.levinClass := rfl
+/-- A described situation: a value on every dimension of root content. -/
+structure Situation where
+  force : ForceLevel
+  direction : ForceDirection
+  instrument : InstrumentType
+  agentControl : AgentControl
+  resultGeometry : ResultGeometry
+  patientRobustness : Robustness
+  patientDimensionality : ObjectDimensionality
+  deriving DecidableEq, Repr
 
-/-- Both use the `make` causative builder (sufficiency semantics). -/
-theorem shared_causative_builder :
-    tear_.causative = rasgar.causative := rfl
+/-- A root's content admits a situation when its region on every dimension contains the
+situation's value. -/
+def Admits (c : Content) (s : Situation) : Prop :=
+  s.force ∈ c.force ∧ s.direction ∈ c.direction ∧ s.instrument ∈ c.instrument ∧
+    s.agentControl ∈ c.agentControl ∧ s.resultGeometry ∈ c.resultGeometry ∧
+    s.patientRobustness ∈ c.patientRobustness ∧
+    s.patientDimensionality ∈ c.patientDimensionality
 
-/-- Both are causative verbs (derived from causative). -/
-theorem both_causative :
-    tear_.causative = some .make ∧
-    rasgar.causative = some .make := ⟨rfl, rfl⟩
+instance (c : Content) (s : Situation) : Decidable (Admits c s) := by
+  unfold Admits; infer_instance
 
--- ════════════════════════════════════════════════════
--- § 2. Different Root Content (§3.2)
--- ════════════════════════════════════════════════════
+/-- Two roots overlap exactly when some situation is admitted by both: the overlap of the
+regions is the zone of intertranslatability. -/
+theorem overlaps_iff_exists_admits (p q : Content) :
+    p.Overlaps q ↔ ∃ s, Admits p s ∧ Admits q s := by
+  simp only [Content.Overlaps, Admits, Finset.not_disjoint_iff]
+  constructor
+  · rintro ⟨⟨a, ha, ha'⟩, ⟨b, hb, hb'⟩, ⟨c, hc, hc'⟩, ⟨d, hd, hd'⟩, ⟨e, he, he'⟩, ⟨f, hf, hf'⟩,
+      ⟨g, hg, hg'⟩⟩
+    exact ⟨⟨a, b, c, d, e, f, g⟩, ⟨ha, hb, hc, hd, he, hf, hg⟩, ⟨ha', hb', hc', hd', he', hf', hg'⟩⟩
+  · rintro ⟨s, ⟨ha, hb, hc, hd, he, hf, hg⟩, ⟨ha', hb', hc', hd', he', hf', hg'⟩⟩
+    exact ⟨⟨_, ha, ha'⟩, ⟨_, hb, hb'⟩, ⟨_, hc, hc'⟩, ⟨_, hd, hd'⟩, ⟨_, he, he'⟩, ⟨_, hf, hf'⟩,
+      ⟨_, hg, hg'⟩⟩
 
-/-- *tear* accepts robust patients; *rasgar* does not.
-    [spalek-mcnally-2026] ex. (14): "she tore a chunk off her slice of bread" ✓
-    vs. "??rasgó un trozo de pan" (§3.2). -/
-theorem patient_restriction_differs :
-    tear_.rootContent ≠ rasgar.rootContent := by
+/-! ### The paper's situations -/
+
+/-- Tearing soft contact lenses with one's nails (16a): a flimsy patient separated by a
+moderate, linear force. -/
+def lenses : Situation :=
+  ⟨.moderate, .unidirectional, .hands, .neutral, .separation, .flimsy, .twoD⟩
+
+/-- Tearing a chunk off a slice of bread (14): a robust patient. -/
+def bread : Situation := { lenses with patientRobustness := .robust }
+
+/-- An awl engraving cement (16b): a gash on a surface, with no separation in contrary
+directions. -/
+def cement : Situation := { lenses with resultGeometry := .surfaceBreach }
+
+/-- Children carefully tearing tin foil (17): controlled action. -/
+def foil : Situation := { lenses with agentControl := .compatible }
+
+/-- A rooster tearing the silence of the dawn (18): a fragile state, disturbed by the least
+force. -/
+def silence : Situation := { lenses with force := .low, patientRobustness := .insubstantial }
+
+/-- A ball tearing through the rough (23): movement with considerable energy. -/
+def rough : Situation := { lenses with force := .high }
+
+/-- The contact lenses lie in both roots' regions. -/
+theorem lenses_admitted : Admits tear_.rootContent lenses ∧ Admits rasgar.rootContent lenses := by
   decide
 
-/-- *tear* implies bidirectional (contrary-direction) force;
-    *rasgar* implies unidirectional (linear/gash-like) force. -/
-theorem force_direction_differs :
-    tear_.rootContent.direction ≠
-    rasgar.rootContent.direction := by
+/-- The two roots overlap: the contact lenses witness the zone where the verbs translate each
+other. -/
+theorem roots_overlap : tear_.rootContent.Overlaps rasgar.rootContent :=
+  (overlaps_iff_exists_admits _ _).2 ⟨lenses, lenses_admitted⟩
+
+/-- The bread: *tear* takes a robust patient, *rasgar* does not. -/
+theorem bread_contrast : Admits tear_.rootContent bread ∧ ¬ Admits rasgar.rootContent bread := by
   decide
 
-/-- *tear* is compatible with controlled action; *rasgar* is not.
-    [spalek-mcnally-2026] ex. (17): "carefully tore the tin foil" ✓
-    vs. "??rasgaron con cuidado el papel de aluminio" (§3.2). -/
-theorem agent_control_differs :
-    tear_.rootContent.agentControl ≠
-    rasgar.rootContent.agentControl := by
+/-- The cement: a gash without contrary separation is a *rasgar* result, not a *tear*. -/
+theorem cement_contrast :
+    ¬ Admits tear_.rootContent cement ∧ Admits rasgar.rootContent cement := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 3. Root Overlap (Translation Equivalence Zone)
--- ════════════════════════════════════════════════════
-
-/-- The roots of *tear* and *rasgar* overlap: there exists a region of the
-    conceptual space (flimsy patients, moderate force, separation result)
-    where both verbs are applicable. This overlap zone is where they
-    function as translation equivalents (§4.2, Table 1). -/
-theorem roots_overlap :
-    tear_.rootContent.Overlaps rasgar.rootContent := by
+/-- The foil: careful action is compatible with *tear* and not with *rasgar*. -/
+theorem foil_contrast : Admits tear_.rootContent foil ∧ ¬ Admits rasgar.rootContent foil := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 4. Translation Data (§4.2, Tables 1–2)
--- ════════════════════════════════════════════════════
+/-- The silence: a fragile state disturbed without force is torn by *rasgar*, while *tear*
+wants force and contrary motion. -/
+theorem silence_contrast :
+    ¬ Admits tear_.rootContent silence ∧ Admits rasgar.rootContent silence := by
+  decide
 
-/-- Translation of transitive *tear* in P-ACTRES 2.0 (Table 1).
-    66 instances total; *rasgar* accounts for only 8 (12.1%). -/
-structure TranslationDatum where
-  targetVerb : String
-  instances : Nat
-  deriving Repr, Inhabited
-
-/-- Table 1: Translation of transitive *tear* into Spanish. -/
-def tearToSpanish : List TranslationDatum :=
-  [ ⟨"arrancar", 12⟩,    -- "pull out" — most frequent
-    ⟨"desgarrar", 8⟩,     -- "rip"
-    ⟨"rasgar", 8⟩,        -- "tear (gash)"
-    ⟨"romper", 4⟩,        -- "break"
-    ⟨"partir", 4⟩,        -- "divide"
-    ⟨"quitar", 3⟩ ]       -- "remove"
-    -- + 27 other verbs with 1–2 instances each
-
-/-- Table 2: Translation of transitive *rasgar* into English. -/
-def rasgarToEnglish : List TranslationDatum :=
-  [ ⟨"tear", 4⟩,
-    ⟨"rend", 1⟩,
-    ⟨"rip", 1⟩ ]
-
-/-- *rasgar* is not the preferred translation of *tear*.
-    Only 8 of 66 instances (12.1%). -/
-theorem rasgar_not_preferred_for_tear :
-    (tearToSpanish.filter (·.targetVerb == "rasgar")).head!.instances <
-    (tearToSpanish.filter (·.targetVerb == "arrancar")).head!.instances := by
-  native_decide
-
-/-- *tear* IS the preferred translation of *rasgar* (4 of 6 instances). -/
-theorem tear_preferred_for_rasgar :
-    (rasgarToEnglish.filter (·.targetVerb == "tear")).head!.instances >
-    (rasgarToEnglish.filter (·.targetVerb == "rend")).head!.instances := by
-  native_decide
+/-- The rough: energetic motion is a *tear* extension and not a *rasgar* one, whose flimsy
+patients call for no such force. -/
+theorem rough_contrast : Admits tear_.rootContent rough ∧ ¬ Admits rasgar.rootContent rough := by
+  decide
 
 end SpalekMcNally2026

@@ -4,7 +4,7 @@ import Linglib.Semantics.Degree.Discrete
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Studies.Sassoon2013
-import Linglib.Studies.Solt2018Multidim
+import Linglib.Studies.Solt2018a
 import Linglib.Studies.BeaversKoontzGarboden2020
 import Linglib.Semantics.Degree.Boundedness
 import Linglib.Semantics.Degree.Adjective
@@ -587,7 +587,7 @@ theorem crack_refutes_strict_hkl_matrix :
 /-! **Honesty caveat.** Tham herself does not engage [sassoon-2013]'s
     binding-type typology directly. She cites Sassoon for the *fact* of
     multidimensionality and *respect*-PP diagnostics (Tham pp. 13, 24),
-    and adopts Solt's representation ([solt-2018-multidim]) rather than
+    and adopts Solt's representation ([solt-2018a]) rather than
     Sassoon's. The argument below is the formaliser's reconstruction of
     what Tham's data WOULD force on Sassoon's apparatus — a
     cross-paper engagement constructed in linglib, not drawn out by Tham.
@@ -894,7 +894,7 @@ theorem tham_spatial_normalization_distinguishes_what_waldon_does_not :
 -- § 16. Cross-paper engagement: Solt 2018 SuB reciprocal bridge
 -- ════════════════════════════════════════════════════
 
-/-! Solt 2018 SuB (`Studies/Solt2018Proportional.lean`)
+/-! Solt 2018 SuB (`Studies/Solt2018b.lean`)
     and Tham 2025 are the substrate's two consumers. Solt's
     `proportionalMeasure μ tot y` (her eq. 21) is
     `spatialNormalizedScore [1] [μ] (fun _ => μ tot) y` — the
@@ -955,12 +955,12 @@ theorem cracked_ie_max_vs_tham_lower_bound :
 -- § 18. Cross-paper engagement: Solt 2018 multidim typology
 -- ════════════════════════════════════════════════════
 
-/-! [solt-2018-multidim] (the Springer multidim chapter, distinct from the
+/-! [solt-2018a] (the Springer multidim chapter, distinct from the
     SuB proportional-comparatives paper engaged in §16) presents an
     experimental five-class subjectivity typology
     (RelNum/AbsTot/AbsPart/RelNo/Eval, Fig. 1, pp. 5–6). The class
     is encoded as a substrate-adjacent enum at
-    `Studies/Solt2018Multidim.lean`.
+    `Studies/Solt2018a.lean`.
 
     *cracked* belongs to the AbsPart class — partially-closed scale,
     physical-property domain, intermediate ordering subjectivity
@@ -969,9 +969,9 @@ theorem cracked_ie_max_vs_tham_lower_bound :
 
 /-- *cracked* belongs to Solt's AbsPart class, alongside
     *clean*/*dirty*/*wet*/*dry*. The class membership is consumed
-    from `Solt2018Multidim.crackedClass`. -/
+    from `Solt2018a.crackedClass`. -/
 theorem cracked_is_solt_AbsPart :
-    Solt2018Multidim.crackedClass = Solt2018Multidim.SubjectivityClass.absPart :=
-  Solt2018Multidim.cracked_is_AbsPart
+    Solt2018a.crackedClass = Solt2018a.SubjectivityClass.absPart :=
+  Solt2018a.cracked_is_AbsPart
 
 end Tham2025

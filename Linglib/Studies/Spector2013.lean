@@ -1,490 +1,287 @@
 import Linglib.Semantics.Quantification.Numerals.Basic
-import Linglib.Semantics.Exhaustification.Finite
+import Mathlib.Order.Interval.Set.Defs
 
 /-!
-# Spector 2013: Bare Numerals and Scalar Implicatures
-[spector-2013] [horn-1972] [kennedy-2015] [chierchia-fox-spector-2012] [fox-2007] [carston-1988] [breheny-2008]
+# Spector (2013): Bare Numerals and Scalar Implicatures
 
-Bare numerals and scalar implicatures. Language and Linguistics Compass
-7(5): 273–294.
+This file formalizes the comparison of accounts of bare numerals in [spector-2013]. On the
+neo-Gricean account ([horn-1972]) a numeral means *at least n* and the *exactly* reading is
+a scalar implicature; on the underspecification account ([carston-1988]) context selects
+among *at least*, *exactly* and *at most*; on the exactly-only account ([breheny-2008]) the
+numeral means *exactly n* and the other readings are contextual by-products; on the
+ambiguity account, lexical in [geurts-2006] and through a covert exhaustivity operator in
+[chierchia-fox-spector-2012], the numeral has both an *at least* and an *exactly* reading.
+The paper's three generalizations are that *at least* readings are available in every
+embedded environment, *exactly* readings in every environment, and *at most* readings only
+in downward-entailing ones. The readings are the substrate's `atLeastMeaning`, `bareMeaning`
+and `atMostMeaning`; the exhaustivity operator `exh` asserts its prejacent and denies every
+stronger numeral alternative, and on the numeral itself it is the exact reading
+(`exh_iff_bare`, the substrate's `exhNumeral`).
 
-## Core Contribution
+The theorems are symbolic in the numeral. Under a necessity modal the neo-Gricean wide-scope
+implicature is weaker than the exact reading (`necessity_implicature_of_exact`,
+`necessity_implicature_ne_exact`); under negation the account predicts an indirect
+implicature, *exactly n − 1*, that is not perceived (`indirect_implicature`), and cannot
+reach the *at most* reading of the tax-exemption conditional, since a strengthening must
+entail the literal meaning (`atMost_reading_not_entails_literal`). The lexical *at most*
+entry under a possibility modal is satisfied by any small accessible value
+(`poss_atMost_of_le`), while the neo-Gricean derivation gives the intended bound
+(`poss_implicature_iff`). The exactly-only account reaches the *at most* and *at least*
+readings of the conditionals through law-like background knowledge (`exact_extends_downward`,
+`exact_extends_upward`) but cannot weaken the exact reading in upward-entailing contexts,
+where the *in fact, five* continuation is consistent only with *at least*, nor in degree
+uses like the voting age, where the exact reading under necessity is false and the
+exhaustified *at least* reading says the minimum (`not_nec_exact_Ici`, `nec_Ici_exh_iff`).
+The ambiguity account derives the third generalization: unembedded, *at most* does not
+entail *exactly*, so no background can strengthen the exact reading to it
+(`atMost_not_entails_exact`), while under negation it does (`not_atMost_imp_not_exact`).
+The exhaustivity operator scoping below or above a possibility modal yields three readings
+of which a lexical ambiguity provides two (`wide_scope_ne_narrow`, `narrow_ne_base`), and
+the intermediate embedded implicature of the professor example is the parse between the
+contradictory *at least* parse and the vacuous *exactly* parse (`intermediate_parse_iff`).
 
-[spector-2013] evaluates four approaches to bare numeral interpretation:
+## Implementation notes
 
-1. **Neo-Gricean** ([horn-1972]): basic = ≥n, exact via scalar implicature
-2. **Underspecification** ([carston-1988]): context selects ≥n, =n, or ≤n
-3. **Exactly-only** ([breheny-2008]): basic = =n, other readings via context
-4. **Ambiguity via EXH** ([chierchia-fox-spector-2012]): numerals have an
-   "at least" base meaning; a covert exhaustivity operator EXH generates the
-   "exactly" reading; both are grammatically available
+Modal environments are quantification over a set of accessible values, the counts or
+degrees compatible with the requirement or permission. `exh` denies every stronger
+alternative; for the antitone families of numeral readings this is the denial of the next
+numeral alone (`exh_iff_succ`), which is how the paper computes it. Prosodic marking, the
+metalinguistic use of negation, and the acquisition and processing evidence the paper
+reviews are not formalized.
 
-The paper argues that approach 4 is necessary and sufficient to capture three
-generalizations about numeral interpretation (§5, (41a–c)):
+## References
 
-- (a) "At least" readings available in all embedded environments
-- (b) "Exactly" readings available in all syntactic environments
-- (c) "At most" readings arise only in DE environments
-
-## Formalization
-
-- §1: The four approaches as an enum
-- §2: The three generalizations as a checkable predicate
-- §3: **EXH bridge** — proves `exhNumeral` agrees with the general `Excluder.exh`
-  from [fox-2007]'s innocent exclusion on numeral alternative sets
-- §4: Neo-Gricean failure in DE contexts + discourse coherence against exactly-only
-- §5: Against underspecification (no genuine "at most" readings)
-- §6: Ambiguity via EXH captures all three generalizations
-- §7: Intermediate embedded implicatures distinguish EXH-ambiguity
-  from lexical ambiguity
-
-## Integration
-
-- **EXH bridge** (§3) connects `Semantics/Lexical/Numeral/Semantics.lean`'s
-  `exhNumeral` to the `Exhaustification.innocent` excluder
-- `ExhaustivityLimit.lean` proves RSA at α→∞ = EXH for ⟨some, all⟩
-- [spector-2007] proves Max(P) = {Exhaust(P)} (Gricean ↔ exhaustive)
+* [spector-2013]
+* [horn-1972]
+* [carston-1988]
+* [breheny-2008]
+* [geurts-2006]
+* [chierchia-fox-spector-2012]
 -/
 
 namespace Spector2013
 
-open Numerals
-open Exhaustification (innocent predToFinset altsFromPreds)
-
--- ============================================================================
--- § 0. Local Embedding Helpers
--- ============================================================================
-
-/-! Inlined embedding combinators specialised to LowerBound (`atLeastMeaning`)
-and Exact (`bareMeaning`) numeral semantics. These replace the polymorphic
-versions previously housed in `Semantics/Numerals/Embedding.lean`,
-which has been dissolved as part of the `NumeralTheory` cleanup. -/
-
-@[reducible] def notLB (w : BareNumeral) (n : Nat) : Prop :=
-  ¬ atLeastMeaning w.toNat n
-
-@[reducible] def notEx (w : BareNumeral) (n : Nat) : Prop :=
-  ¬ bareMeaning w.toNat n
-
-@[reducible] def possLB (w : BareNumeral) (acc : List Nat) : Prop :=
-  ∃ n ∈ acc, atLeastMeaning w.toNat n
-
-@[reducible] def possEx (w : BareNumeral) (acc : List Nat) : Prop :=
-  ∃ n ∈ acc, bareMeaning w.toNat n
-
-@[reducible] def necLB (w : BareNumeral) (acc : List Nat) : Prop :=
-  ∀ n ∈ acc, atLeastMeaning w.toNat n
-
-@[reducible] def necEx (w : BareNumeral) (acc : List Nat) : Prop :=
-  ∀ n ∈ acc, bareMeaning w.toNat n
-
-/-- Lower-bound exhaustification: `≥w(n) ∧ ¬≥(succ w)(n)`. -/
-def exhLB (w : BareNumeral) (n : Nat) : Prop :=
-  atLeastMeaning w.toNat n ∧ (match w.succ with
-    | some w' => ¬ atLeastMeaning w'.toNat n
-    | none => True)
-
-instance (w : BareNumeral) (n : Nat) : Decidable (exhLB w n) := by
-  unfold exhLB
-  generalize w.succ = succ
-  cases succ <;> infer_instance
-
-/-- Narrow-scope LB EXH under modal possibility: `◇(EXH(≥w))`. -/
-def exhUnderPossLB (w : BareNumeral) (acc : List Nat) : Prop :=
-  ∃ n ∈ acc, exhLB w n
-
-instance (w : BareNumeral) (acc : List Nat) : Decidable (exhUnderPossLB w acc) := by
-  unfold exhUnderPossLB; infer_instance
-
-/-- Wide-scope LB EXH over modal possibility: `EXH(◇(≥w))` —
-    `◇(≥w) ∧ ¬◇(≥succ w)`. -/
-def exhOverPossLB (w : BareNumeral) (acc : List Nat) : Prop :=
-  possLB w acc ∧ (match w.succ with
-    | some w' => ¬ possLB w' acc
-    | none => True)
-
-instance (w : BareNumeral) (acc : List Nat) : Decidable (exhOverPossLB w acc) := by
-  unfold exhOverPossLB
-  generalize w.succ = succ
-  cases succ <;> infer_instance
-
--- ============================================================================
--- § 1. The Four Approaches
--- ============================================================================
-
-/-- The four theoretical approaches to bare numeral interpretation
-    evaluated in [spector-2013] §1. -/
-inductive Approach where
-  /-- Neo-Gricean ([horn-1972]): basic = ≥n, exact via scalar implicature -/
-  | neoGricean
-  /-- Underspecification ([carston-1988]): context selects ≥n, =n, or ≤n -/
-  | underspecification
-  /-- Exactly-only ([breheny-2008]): basic = =n, other readings via context -/
-  | exactlyOnly
-  /-- Ambiguity via EXH ([chierchia-fox-spector-2012]): base = ≥n,
-      exact via covert exhaustivity operator; both readings available -/
-  | ambiguityEXH
-  deriving DecidableEq, Repr
-
-/-- Does the approach derive the exact reading via EXH / implicature? -/
-def Approach.derivesExactViaEXH : Approach → Bool
-  | .neoGricean => true
-  | .underspecification => false
-  | .exactlyOnly => false
-  | .ambiguityEXH => true
-
-/-- Does the approach claim "at most" is a genuine bare-numeral reading? -/
-def Approach.claimsAtMost : Approach → Bool
-  | .underspecification => true
-  | _ => false
-
--- ============================================================================
--- § 2. The Three Generalizations (41a–c)
--- ============================================================================
-
-/-- [spector-2013]'s three generalizations about numeral interpretation
-    (41a–c). An adequate theory must satisfy all three. -/
-structure ThreeGeneralizations where
-  /-- (41a) "At least" readings available in all embedded environments. -/
-  atLeastAvailable : Bool
-  /-- (41b) "Exactly" readings available in all syntactic environments. -/
-  exactlyAvailable : Bool
-  /-- (41c) "At most" readings available only in DE environments. -/
-  atMostOnlyInDE : Bool
-  deriving DecidableEq, Repr
-
-def ThreeGeneralizations.allSatisfied (g : ThreeGeneralizations) : Bool :=
-  g.atLeastAvailable && g.exactlyAvailable && g.atMostOnlyInDE
-
-/-- Neo-Gricean fails (41b): SIs are blocked/degraded in DE contexts,
-    yet "exactly" readings persist there. -/
-def neoGriceanPredictions : ThreeGeneralizations where
-  atLeastAvailable := true
-  exactlyAvailable := false
-  atMostOnlyInDE := true
-
-/-- Underspecification fails (41c): predicts "at most" should be freely
-    available in all contexts, but it isn't (§3, example (30b)). -/
-def underspecPredictions : ThreeGeneralizations where
-  atLeastAvailable := true
-  exactlyAvailable := true
-  atMostOnlyInDE := false
-
-/-- Exactly-only fails (41a): needs ad hoc mechanisms (implicit restriction,
-    weakening) to derive "at least" readings (§4.2, examples (36)–(37)). -/
-def exactlyOnlyPredictions : ThreeGeneralizations where
-  atLeastAvailable := false
-  exactlyAvailable := true
-  atMostOnlyInDE := true
-
-/-- Ambiguity via EXH satisfies all three: base = ≥n (always available),
-    EXH derives =n (freely insertable), "at most" = =n + background. -/
-def ambiguityEXHPredictions : ThreeGeneralizations where
-  atLeastAvailable := true
-  exactlyAvailable := true
-  atMostOnlyInDE := true
-
-/-- Only the ambiguity-via-EXH account satisfies all three generalizations. -/
-theorem only_ambiguity_satisfies_all :
-    ambiguityEXHPredictions.allSatisfied = true ∧
-    neoGriceanPredictions.allSatisfied = false ∧
-    underspecPredictions.allSatisfied = false ∧
-    exactlyOnlyPredictions.allSatisfied = false := by decide
-
--- ============================================================================
--- § 3. EXH Bridge: exhNumeral ↔ innocent.exh
--- ============================================================================
-
-/-! ### Bridging numeral exhaustification to general innocent exclusion
-
-The numeral-specific `exhNumeral` (in `Semantics.lean`) hard-codes the scalar
-alternatives {≥k} and checks only the immediate successor. The general
-`Excluder.exh` from [fox-2007] operates on arbitrary alternative sets
-via innocent exclusion.
-
-We prove these agree on the standard numeral domain `Fin 4`. This bridges
-two previously disconnected parts of the library and validates that numerals
-receive standard exhaustification — they are not a special case. -/
-
-/-- Standard four-world numeral domain. World `i : Fin 4` represents
-    "exactly `i` objects". -/
-abbrev NumW : Type := Fin 4
-
-/-- Prejacent for bare numeral m under LB: ≥m as a `Bool` predicate on `NumW`. -/
-def lbMeaning (m : Nat) : NumW → Bool := fun w => decide (atLeastMeaning m w.val)
-
-/-- Numeral alternatives for bare numeral m under LB: {≥0, ≥1, ..., ≥(m+1)}.
-    Includes the prejacent and both weaker and stronger alternatives, as
-    a `Finset` of world supports. -/
-def lbAltsF (m : Nat) : Finset (Finset NumW) :=
-  altsFromPreds <| (List.range (m + 2)).map fun k => fun w : NumW =>
-    decide (atLeastMeaning k w.val)
-
-/-- Support of the prejacent ≥m. -/
-def lbMeaningF (m : Nat) : Finset NumW := predToFinset (lbMeaning m)
-
-set_option maxRecDepth 2000 in
-/-- Innocent exclusion negates exactly the immediate successor `≥(m+1)`
-    for each numeral. Equivalently: the exhaustified meaning is the
-    singleton `{m}`. -/
-theorem innocent_exh_lb_eq :
-    innocent.exh (lbAltsF 1) (lbMeaningF 1) = {⟨1, by decide⟩} ∧
-    innocent.exh (lbAltsF 2) (lbMeaningF 2) = {⟨2, by decide⟩} ∧
-    innocent.exh (lbAltsF 3) (lbMeaningF 3) = {⟨3, by decide⟩} := by decide
-
-set_option maxRecDepth 2000 in
-/-- **EXH bridge**: The numeral-specific `exhNumeral` agrees with the
-    general `innocent.exh` on the four-world domain for all three bare numerals.
-
-    This proves numerals get standard [fox-2007] exhaustification —
-    they are not a special case requiring a bespoke operator. -/
-theorem exhNumeral_eq_innocent_exh :
-    (∀ w : NumW, exhNumeral 1 w.val ↔ w ∈ innocent.exh (lbAltsF 1) (lbMeaningF 1)) ∧
-    (∀ w : NumW, exhNumeral 2 w.val ↔ w ∈ innocent.exh (lbAltsF 2) (lbMeaningF 2)) ∧
-    (∀ w : NumW, exhNumeral 3 w.val ↔ w ∈ innocent.exh (lbAltsF 3) (lbMeaningF 3)) := by
-  decide
-
-set_option maxRecDepth 2000 in
-/-- The EXH bridge also holds for the local `exhLB` helper, which is
-    definitionally equivalent to the inlined LB exhaustification. -/
-theorem exhLB_eq_innocent_exh :
-    (∀ w : NumW, exhLB .one w.val ↔ w ∈ innocent.exh (lbAltsF 1) (lbMeaningF 1)) ∧
-    (∀ w : NumW, exhLB .two w.val ↔ w ∈ innocent.exh (lbAltsF 2) (lbMeaningF 2)) ∧
-    (∀ w : NumW, exhLB .three w.val ↔ w ∈ innocent.exh (lbAltsF 3) (lbMeaningF 3)) := by
-  decide
-
--- ============================================================================
--- § 4. Neo-Gricean Failure in DE Contexts
--- ============================================================================
-
-/-! ### The conditional/tax problem ([spector-2013] §2.2.2)
-
-"If you have three children, you do not qualify for tax exemptions."
-
-Under neo-Gricean (base = ≥3), pragmatic strengthening can only *narrow*
-the literal meaning from ≥3 to =3. But the attested reading is "if 3 or
-fewer" (≤3), which is *broader* than ≥3 along a different dimension.
-The neo-Gricean approach has no mechanism to derive this. -/
-
-/-- EXH narrows ≥3 to =3. Neither ≥3 nor =3 entails ≤3.
-    The "at most" reading requires background knowledge about monotonicity
-    of the relevant scale (tax exemptions decrease with more children),
-    not pragmatic strengthening. -/
-theorem exh_cannot_derive_atMost :
-    -- EXH(≥3) = =3: narrowing, not broadening
-    (exhNumeral 3 3 ∧ ¬ exhNumeral 3 4) ∧
-    -- Neither ≥3 nor =3 includes world 2 (fewer than 3)
-    (¬ atLeastMeaning 3 2 ∧ ¬ bareMeaning 3 2) ∧
-    -- Only ≤3 gets world 2
-    atMostMeaning 3 2 := by decide
-
-/-- The indirect scalar implicature problem ([spector-2013] §2.2.2).
-    "Peter didn't solve three problems" — the neo-Gricean approach predicts
-    an indirect SI: "Peter solved exactly two." But this is not perceived.
-    Demonstrated on the small domain {0,1,2,3} with numeral "three". -/
-theorem indirect_si_overgeneration :
-    -- Under LB: ¬(≥3) at world 2 = true (fewer than 3)
-    notLB .three 2 ∧
-    -- The scalar alternative "Peter didn't solve two problems" (= ¬(≥2))
-    -- is strictly stronger than "didn't solve three" (= ¬(≥3))
-    -- Negating this stronger alternative yields: solved ≥2
-    -- Combined: ≥2 ∧ ¬(≥3) = exactly 2 — a spurious prediction
-    (atLeastMeaning 2 2 ∧ ¬ atLeastMeaning 3 2) := by
-  decide
-
-/-- Discourse coherence against exactly-only ([spector-2013] §4.2).
-    "I have four chairs. In fact, I have five."
-
-    Under LB (≥4): the second sentence is consistent — 5 ≥ 4, so the
-    speaker's first claim wasn't false. "In fact" cancels the implicature.
-
-    Under exactly-only (=4): the second sentence contradicts the first —
-    5 ≠ 4. The discourse should be infelicitous, but it isn't. -/
-theorem discourse_coherence_against_exact :
-    -- LB: "four" is true at world 5 (5 ≥ 4), so "in fact, five" is coherent
-    atLeastMeaning 4 5 ∧
-    -- Exact: "four" is false at world 5 (5 ≠ 4), so "in fact, five" contradicts
-    ¬ bareMeaning 4 5 ∧
-    -- LB: "five" is also true at world 5 — both claims hold simultaneously
-    atLeastMeaning 5 5 := by decide
-
--- ============================================================================
--- § 5. Against Underspecification
--- ============================================================================
-
-/-! ### No genuine "at most" readings ([spector-2013] §3)
-
-The decisive argument: if bare numerals could mean ≤n, then "One must be
-(at most) 40 to be eligible for the Fields medal" should be true. But
-it's necessarily false — there IS no maximum age for Fields eligibility;
-the constraint is a minimum (≤40 at time of award). The underspecification
-view wrongly predicts ≤40 is available. -/
-
-/-- The ≤n reading gives wrong truth conditions for minimum-threshold
-    predicates. ≤40 makes ages 35, 30, ... eligible (wrong for Fields),
-    while ≥40 correctly captures "at least 40" for voting thresholds. -/
-theorem atMost_wrong_for_threshold :
-    -- ≤40: age 35 counts as eligible (wrong for Fields)
-    atMostMeaning 40 35 ∧
-    -- ≥40: age 35 does NOT count (correct for voting threshold)
-    ¬ atLeastMeaning 40 35 ∧
-    -- The asymmetry: ≥18 for voting works, ≤40 for Fields doesn't
-    atLeastMeaning 18 19 ∧
-    ¬ atMostMeaning 40 45 := by decide
-
--- ============================================================================
--- § 6. Ambiguity via EXH Captures All Three Generalizations
--- ============================================================================
-
-/-- (41a) "At least" = base meaning, always present.
-    The base ≥n is true at n and above, and survives under all operators. -/
-theorem gen41a_atLeast :
-    atLeastMeaning 3 3 ∧
-    atLeastMeaning 3 4 ∧
-    -- Survives under necessity: □(≥3) at [3,4] = true
-    necLB .three [3, 4] := by decide
-
-/-- (41b) "Exactly" = EXH(base), available wherever EXH can scope.
-    [spector-2013] suggests that numerals may intrinsically activate
-    their alternatives (§6.2), which would explain why EXH doesn't require
-    prosodic marking for numerals (unlike "or" in DE contexts). -/
-theorem gen41b_exactly :
-    -- EXH produces exact reading
-    exhNumeral 3 3 ∧ ¬ exhNumeral 3 4 ∧
-    -- EXH available under negation: NOT[EXH(≥3)] = NOT[=3]
-    ¬ exhNumeral 3 4 ∧
-    -- EXH available under modals
-    exhLB .three 3 ∧
-    ¬ exhLB .three 4 := by decide
-
-/-- (41c) "At most" = =n + monotone background knowledge, only in DE.
-    Under negation (DE): ¬(=3) is non-directional ({0,1,2,4,5,...}).
-    Background monotonicity (e.g., tax exemptions decrease with children)
-    restricts this to ≤3. In UE contexts, no such restriction applies,
-    so the "at most" reading is unavailable. -/
-theorem gen41c_atMost :
-    -- ¬(=3) at world 2 (below): true
-    notEx .three 2 ∧
-    -- ¬(=3) at world 4 (above): also true — non-directional
-    notEx .three 4 ∧
-    -- Monotone background restricts to ≤3: world 2 passes, world 4 doesn't
-    (notEx .three 2 ∧ atMostMeaning 3 2) ∧
-    ¬ (notEx .three 4 ∧ atMostMeaning 3 4) := by
-  decide
-
--- ============================================================================
--- § 7. Intermediate Embedded Implicatures
--- ============================================================================
-
-/-! ### EXH-ambiguity predicts more readings than lexical ambiguity
-
-([spector-2013] §6.2, examples (52)–(53))
-
-Under lexical ambiguity, a numeral IS either ≥n or =n — no scope flexibility.
-Under EXH-ambiguity, EXH is an operator that can scope at different positions.
-For ◇(numeral), this yields three readings:
-
-1. ◇(≥n): use base meaning — "possible to do at-least-n"
-2. ◇(EXH(≥n)) = ◇(=n): EXH scopes under modal — "possible to do exactly n"
-3. EXH(◇(≥n)) = ◇(≥n) ∧ ¬◇(≥n+1): EXH scopes over modal — "possible ≥n
-   but NOT possible ≥n+1"
-
-Lexical ambiguity only produces readings 1 and 2. Reading 3 — the
-wide-scope EXH — is unique to the EXH-ambiguity account. -/
-
-/-- Three distinct readings for ◇(numeral) under EXH-ambiguity.
-    With accessible worlds [2, 3]:
-    - ◇(≥2) = true (both worlds satisfy ≥2)
-    - ◇(EXH(≥2)) = ◇(=2) = true (world 2 satisfies =2)
-    - EXH(◇(≥2)) = ◇(≥2) ∧ ¬◇(≥3) = false (world 3 makes ◇(≥3) true) -/
-theorem three_readings :
-    -- Reading 1: ◇(≥2)
-    possLB .two [2, 3] ∧
-    -- Reading 2: ◇(EXH(≥2)) = ◇(=2) — EXH under modal
-    exhUnderPossLB .two [2, 3] ∧
-    -- Reading 3: EXH(◇(≥2)) — EXH over modal (unique to EXH-ambiguity)
-    ¬ exhOverPossLB .two [2, 3] := by decide
-
-/-- Lexical ambiguity can only produce readings 1 and 2.
-    Reading 3 distinguishes the two accounts. Under lexical ambiguity,
-    ◇(=2) ≠ EXH(◇(≥2)) — the wide-scope EXH reading is not derivable
-    from either lexical entry alone. -/
-theorem wide_scope_exh_not_lexical :
-    -- ◇(=2) at [2, 3] = true (lexical =n reading)
-    possEx .two [2, 3] ∧
-    -- EXH(◇(≥2)) at [2, 3] = false (EXH over modal)
-    ¬ exhOverPossLB .two [2, 3] ∧
-    -- These differ: lexical =n ≠ wide-scope EXH
-    ¬ (possEx .two [2, 3] ↔
-        exhOverPossLB .two [2, 3]) := by decide
-
-/-- The intermediate reading (§6.2, example (53)):
-    □(EXH(≥n)) — "required to do exactly n."
-
-    "Whenever the professor demanded [EXH(solve ≥3 problems)]"
-    = "whenever demanded exactly 3 (not 4)"
-
-    At accessible worlds [3, 4]:
-    - □(≥3) = true — "required to solve at least 3" (too weak)
-    - □(=3) = false — "required exactly 3 in every world" (4 ≠ 3)
-    - □(EXH(≥3)) = false — "in every demand-world, exactly 3" (4 fails EXH)
-
-    At accessible worlds [3]:
-    - all three agree: true -/
-theorem intermediate_embedded :
-    -- At [3, 4]: base and intermediate diverge from lexical =n
-    necLB .three [3, 4] ∧
-    ¬ necEx .three [3, 4] ∧
-    ¬ (∀ n ∈ [3, 4], exhLB .three n) ∧
-    -- At [3]: all readings converge
-    necLB .three [3] ∧
-    necEx .three [3] ∧
-    (∀ n ∈ [3], exhLB .three n) := by decide
-
--- ============================================================================
--- § 8. Summary
--- ============================================================================
-
-/-! ### Integration with the rest of linglib
-
-The results here connect to three independent lines of evidence in the library:
-
-1. **EXH bridge** (§3): `exhNumeral` = `innocent.exh` on the four-world numeral
-   domain. This closes the gap between `Semantics/Lexical/Numeral/Semantics.lean`
-   and `Semantics/Exhaustification/Finite.lean` — numerals get standard
-   [fox-2007] exhaustification.
-
-2. **RSA=EXH limit** (`ExhaustivityLimit.lean`): `l1_weak_weakOnly_tendsto_one`
-   proves RSA L1 at α→∞ recovers Fox's EXH for ⟨some, all⟩. Combined with the
-   EXH bridge here, this means RSA at α→∞ on numerals should also recover
-   `exhNumeral` — the three formalisms (EXH, `exhNumeral`, RSA-limit) converge.
-
-3. **Gricean foundation** ([spector-2007]): `max_eq_exhaust` proves
-   Max(P) = {Exhaust(P)} — Gricean reasoning derives exhaustive interpretation.
-   [spector-2013]'s EXH operator is the grammaticalized version of the
-   same operation.
--/
-
-set_option maxRecDepth 2000 in
-/-- [spector-2013]: the ambiguity-via-EXH account uniquely captures all
-    three generalizations, and the EXH bridge validates that numeral
-    exhaustification is an instance of general innocent exclusion. -/
-theorem spector2013_summary :
-    -- Only ambiguity-via-EXH satisfies all three generalizations
-    ambiguityEXHPredictions.allSatisfied = true ∧
-    neoGriceanPredictions.allSatisfied = false ∧
-    underspecPredictions.allSatisfied = false ∧
-    exactlyOnlyPredictions.allSatisfied = false ∧
-    -- EXH bridge: numeral EXH = general EXH (for all three numerals)
-    (∀ w : NumW, exhNumeral 1 w.val ↔ w ∈ innocent.exh (lbAltsF 1) (lbMeaningF 1)) ∧
-    (∀ w : NumW, exhNumeral 2 w.val ↔ w ∈ innocent.exh (lbAltsF 2) (lbMeaningF 2)) ∧
-    (∀ w : NumW, exhNumeral 3 w.val ↔ w ∈ innocent.exh (lbAltsF 3) (lbMeaningF 3)) ∧
-    -- EXH derives exact from at-least
-    (exhNumeral 3 3 ∧ ¬ exhNumeral 3 4) ∧
-    -- Discourse coherence refutes exactly-only
-    (atLeastMeaning 4 5 ∧ ¬ bareMeaning 4 5) ∧
-    -- Three readings for ◇(numeral) — the third is unique to EXH-ambiguity
-    ¬ (exhOverPossLB .two [2, 3] ↔
-        possEx .two [2, 3]) := by decide
+open Numerals Set
+
+/-! ### Environments and exhaustification -/
+
+/-- Necessity over the accessible values `A`. -/
+def nec (A : Set ℕ) (φ : ℕ → Prop) : Prop := ∀ k ∈ A, φ k
+
+/-- Possibility over the accessible values `A`. -/
+def poss (A : Set ℕ) (φ : ℕ → Prop) : Prop := ∃ k ∈ A, φ k
+
+/-- The exhaustivity operator on a family of sentences indexed by the numeral: the prejacent
+holds and no stronger numeral alternative does. -/
+def exh (φ : ℕ → Prop) (m : ℕ) : Prop := φ m ∧ ∀ m' > m, ¬ φ m'
+
+/-- For an antitone family exhaustification denies the next numeral alone. -/
+theorem exh_iff_succ {φ : ℕ → Prop} (hφ : Antitone φ) (m : ℕ) :
+    exh φ m ↔ φ m ∧ ¬ φ (m + 1) := by
+  constructor
+  · rintro ⟨h, h'⟩
+    exact ⟨h, h' _ (Nat.lt_succ_self m)⟩
+  · rintro ⟨h, h'⟩
+    exact ⟨h, λ _ hm' hφ' => h' (hφ (Nat.succ_le_of_lt hm') hφ')⟩
+
+theorem antitone_atLeast (k : ℕ) : Antitone (λ m => atLeastMeaning m k) :=
+  λ _ _ h hk => by simp only [atLeastMeaning_def] at *; omega
+
+theorem antitone_nec (A : Set ℕ) : Antitone (λ m => nec A (atLeastMeaning m)) :=
+  λ _ _ h hb k hk => antitone_atLeast k h (hb k hk)
+
+theorem antitone_poss (A : Set ℕ) : Antitone (λ m => poss A (atLeastMeaning m)) :=
+  λ _ _ h ⟨k, hk, hkb⟩ => ⟨k, hk, antitone_atLeast k h hkb⟩
+
+/-- On the numeral itself the operator is the substrate's `exhNumeral`. -/
+theorem exhNumeral_iff_exh (m k : ℕ) : exhNumeral m k ↔ exh (λ m => atLeastMeaning m k) m := by
+  rw [exh_iff_succ (antitone_atLeast k)]
+  exact Iff.rfl
+
+/-- Exhaustifying the *at least* reading is the *exactly* reading, the second
+generalization's source. -/
+theorem exh_iff_bare (m k : ℕ) : exh (λ m => atLeastMeaning m k) m ↔ bareMeaning m k :=
+  (exhNumeral_iff_exh m k).symm.trans (exhNumeral_iff_bare m k)
+
+theorem exact_imp_atLeast {m k : ℕ} (h : bareMeaning m k) : atLeastMeaning m k := by
+  simp only [bareMeaning_def, atLeastMeaning_def] at *; omega
+
+/-! ### The neo-Gricean account -/
+
+/-- Under a necessity modal the exact reading entails the wide-scope implicature: required to
+solve exactly three entails required to solve at least three and not required to solve at
+least four. -/
+theorem necessity_implicature_of_exact {A : Set ℕ} (hA : A.Nonempty) {m : ℕ}
+    (h : nec A (bareMeaning m)) : exh (λ m => nec A (atLeastMeaning m)) m := by
+  rw [exh_iff_succ (antitone_nec A)]
+  refine ⟨λ k hk => exact_imp_atLeast (h k hk), λ hall => ?_⟩
+  obtain ⟨k, hk⟩ := hA
+  have h1 := h k hk
+  have h2 := hall k hk
+  simp only [bareMeaning_def, atLeastMeaning_def] at h1 h2
+  omega
+
+/-- The converse fails: the requirement may be met by three or four, so the numeral loses
+its exact reading under the modal while the implicature is still triggered. -/
+theorem necessity_implicature_ne_exact (m : ℕ) :
+    ∃ A : Set ℕ, exh (λ m => nec A (atLeastMeaning m)) m ∧ ¬ nec A (bareMeaning m) := by
+  refine ⟨{m, m + 1}, ?_, λ hall => ?_⟩
+  · rw [exh_iff_succ (antitone_nec _)]
+    refine ⟨λ k hk => ?_, λ hall => ?_⟩
+    · rcases hk with rfl | rfl <;> simp
+    · have := hall m (Or.inl rfl)
+      simp at this
+  · have := hall (m + 1) (Or.inr rfl)
+    simp at this
+
+/-- Under negation the scale reverses: the alternative with the next numeral is weaker. -/
+theorem neg_reversal (m k : ℕ) : ¬ atLeastMeaning m k → ¬ atLeastMeaning (m + 1) k :=
+  λ h h' => h (antitone_atLeast k (Nat.le_succ m) h')
+
+/-- The indirect implicature the account predicts for *Peter didn't solve n + 1 problems*:
+denying the stronger alternative *didn't solve n* yields *exactly n*, which is not
+perceived. -/
+theorem indirect_implicature (m k : ℕ) :
+    (¬ atLeastMeaning (m + 1) k ∧ ¬ ¬ atLeastMeaning m k) ↔ bareMeaning m k := by
+  simp only [atLeastMeaning_def, bareMeaning_def, not_not]
+  constructor <;> intro h <;> omega
+
+/-- A pragmatic strengthening entails the literal meaning, so the *at most* reading of *if
+you have three children, you do not qualify* is out of the account's reach: it does not
+entail the *at least* reading's consequence that more than three disqualify. -/
+theorem atMost_reading_not_entails_literal (m : ℕ) :
+    ∃ B : ℕ → Prop, (∀ k, atMostMeaning m k → ¬ B k) ∧ ¬ ∀ k, moreThanMeaning m k → ¬ B k :=
+  ⟨(m < ·), λ k hk hB => by simp only [atMostMeaning_def] at hk; omega,
+    λ h => h (m + 1) (Nat.lt_succ_self m) (Nat.lt_succ_self m)⟩
+
+/-! ### The underspecification account -/
+
+/-- The lexical *at most* entry under a possibility modal is satisfied by any accessible
+value at or below the numeral: *Sue can have 2000 calories* would be true as soon as she can
+have one. -/
+theorem poss_atMost_of_le {A : Set ℕ} {k m : ℕ} (hk : k ∈ A) (h : k ≤ m) :
+    poss A (atMostMeaning m) :=
+  ⟨k, hk, h⟩
+
+/-- The intended reading is the neo-Gricean one: the *at least* reading under the
+possibility modal, exhaustified, says that no accessible value exceeds the numeral. -/
+theorem poss_implicature_iff (A : Set ℕ) (m : ℕ) :
+    exh (λ m => poss A (atLeastMeaning m)) m ↔
+      poss A (atLeastMeaning m) ∧ nec A (atMostMeaning m) := by
+  rw [exh_iff_succ (antitone_poss A)]
+  simp only [poss, nec, atLeastMeaning_def, atMostMeaning_def, not_exists, not_and, ge_iff_le]
+  constructor <;> rintro ⟨h1, h2⟩ <;> exact ⟨h1, λ k hk => by have := h2 k hk; omega⟩
+
+/-! ### The exactly-only account -/
+
+/-- With a law-like background that is monotone in the count, the exact reading of the
+antecedent extends downward: if exactly three children disqualify, so do fewer. -/
+theorem exact_extends_downward {B : ℕ → Prop} (hB : ∀ k k', k ≤ k' → B k → B k') {m : ℕ}
+    (h : ¬ B m) : ∀ k, atMostMeaning m k → ¬ B k :=
+  λ k hk hBk => h (hB k m hk hBk)
+
+/-- And upward: if exactly three children qualify, so do more. -/
+theorem exact_extends_upward {B : ℕ → Prop} (hB : ∀ k k', k ≤ k' → B k → B k') {m : ℕ}
+    (h : B m) : ∀ k, atLeastMeaning m k → B k :=
+  λ k hk => hB m k hk h
+
+/-- In an upward-entailing context no background can weaken the exact reading, which
+entails the *at least* reading: *I have four chairs; in fact, I have five* is consistent
+only with the latter, the substrate's `atLeast_strictly_weaker_than_bare`. -/
+theorem atLeast_of_exact_background {B : ℕ → Prop} {m k : ℕ} (h : bareMeaning m k) (_ : B k) :
+    atLeastMeaning m k :=
+  exact_imp_atLeast h
+
+/-- In a degree use the exact reading under necessity is false whenever more than the
+numeral is admitted: *one has to be exactly 18* is not what the voting rule says. -/
+theorem not_nec_exact_Ici (m : ℕ) : ¬ nec (Ici m) (bareMeaning m) := λ h => by
+  have := h (m + 1) (Nat.le_succ m)
+  simp at this
+
+theorem nec_Ici_atLeast (m : ℕ) : nec (Ici m) (atLeastMeaning m) := λ _ hk => hk
+
+/-- The exhaustified *at least* reading under necessity says that the numeral is the
+minimum required. -/
+theorem nec_Ici_exh_iff (n m : ℕ) : exh (λ m => nec (Ici n) (atLeastMeaning m)) m ↔ n = m := by
+  rw [exh_iff_succ (antitone_nec _)]
+  simp only [nec, mem_Ici, atLeastMeaning_def, ge_iff_le]
+  constructor
+  · rintro ⟨h1, h2⟩
+    have := h1 n le_rfl
+    by_contra hne
+    exact h2 λ k hk => by omega
+  · rintro rfl
+    exact ⟨λ _ hk => hk, λ h => by have := h n le_rfl; omega⟩
+
+/-! ### The ambiguity account and the third generalization -/
+
+/-- Unembedded, the *at most* reading does not entail the exact reading, so no background
+knowledge can produce it by strengthening. -/
+theorem atMost_not_entails_exact {m : ℕ} (hm : 0 < m) :
+    ¬ ∀ k, atMostMeaning m k → bareMeaning m k := λ h => by
+  have := h 0 (Nat.zero_le m)
+  simp only [bareMeaning_def] at this
+  omega
+
+/-- Under negation it does: *nobody read four or fewer* entails *nobody read exactly four*,
+which is why the *at most* reading surfaces only in downward-entailing environments. -/
+theorem not_atMost_imp_not_exact {m k : ℕ} (h : ¬ atMostMeaning m k) : ¬ bareMeaning m k :=
+  λ h' => h (by simp only [atMostMeaning_def, bareMeaning_def] at *; omega)
+
+/-! ### Exhaustivity operators and embedded implicatures -/
+
+theorem poss_exact_imp_poss_atLeast {A : Set ℕ} {m : ℕ} (h : poss A (bareMeaning m)) :
+    poss A (atLeastMeaning m) :=
+  let ⟨k, hk, h⟩ := h
+  ⟨k, hk, exact_imp_atLeast h⟩
+
+/-- The operator above the modal, *possible at least n and not possible at least n + 1*,
+differs from the operator below it, *possible exactly n*: the former fails, the latter
+holds, when both `n` and `n + 1` are possible. -/
+theorem wide_scope_ne_narrow (m : ℕ) :
+    ∃ A : Set ℕ, poss A (bareMeaning m) ∧ ¬ exh (λ m => poss A (atLeastMeaning m)) m := by
+  refine ⟨{m, m + 1}, ⟨m, Or.inl rfl, rfl⟩, ?_⟩
+  rw [exh_iff_succ (antitone_poss _)]
+  rintro ⟨-, h⟩
+  exact h ⟨m + 1, Or.inr rfl, (atLeastMeaning_def _ _).2 le_rfl⟩
+
+/-- And the operator below the modal differs from its absence: when only `n + 1` is
+possible, *possible at least n* holds and *possible exactly n* does not. -/
+theorem narrow_ne_base (m : ℕ) :
+    ∃ A : Set ℕ, poss A (atLeastMeaning m) ∧ ¬ poss A (bareMeaning m) := by
+  refine ⟨{m + 1}, ⟨m + 1, rfl, Nat.le_succ m⟩, ?_⟩
+  rintro ⟨k, hk, h⟩
+  rw [mem_singleton_iff] at hk
+  subst hk
+  simp at h
+
+section Intermediate
+
+variable {S : Type*} (n : S → ℕ) (managed : S → Prop) (m : ℕ)
+
+/-- The professor sentence on the *at least* parse contradicts its continuation *but not when
+she asked us to solve more*: the situations demanding more are situations demanding at least
+the numeral. -/
+theorem atLeast_parse_contradiction
+    (h : ∀ s, nec (Ici (n s)) (atLeastMeaning m) → managed s) :
+    ¬ ∃ s, m < n s ∧ ¬ managed s := by
+  rintro ⟨s, hs, hm⟩
+  exact hm (h s λ k hk => by simp only [mem_Ici] at hk; simp only [atLeastMeaning_def]; omega)
+
+/-- The *exactly* parse is vacuous when more than the demanded number may always be
+solved. -/
+theorem exact_parse_vacuous (s : S) : ¬ nec (Ici (n s)) (bareMeaning m) := λ h => by
+  have := h (n s + m + 1) (by simp only [mem_Ici]; omega)
+  simp only [bareMeaning_def] at this
+  omega
+
+/-- The intermediate embedded implicature, the operator between *whenever* and *demanded*,
+restricts the quantification to the situations whose minimum is the numeral. -/
+theorem intermediate_parse_iff :
+    (∀ s, exh (λ m => nec (Ici (n s)) (atLeastMeaning m)) m → managed s) ↔
+      ∀ s, n s = m → managed s := by
+  simp only [nec_Ici_exh_iff]
+
+end Intermediate
 
 end Spector2013
