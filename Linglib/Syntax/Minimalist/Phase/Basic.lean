@@ -15,7 +15,7 @@ Formalization of derivational phases following [chomsky-2000], [abels-2012], and
 primitives (`SyntacticObject.isPhaseHeadOf`, `SyntacticObject.phase`/`phaseInterior`/`phaseEdge`,
 `SyntacticObject.Impenetrable`, `SyntacticObject.isPhaseHead`) into the study-facing `Phase` record
 + the
-PIC-strength / Transfer / feature-inheritance / DP-deactivation layer that the
+PIC-strength / Transfer / feature-inheritance layer that the
 paper-anchored study files consume.
 
 ## Key Ideas
@@ -283,56 +283,5 @@ structure FeatureInheritance where
     inaccessible; movement must reach the edge before the phase completes. -/
 def isPhaseBounded (mover : SyntacticObject) (phases : List Phase) : Prop :=
   ¬ ∃ ph ∈ phases, ph.Impenetrable mover
-
--- ============================================================================
--- Part 8: N/D-Incorporation and Phase Deactivation
--- ============================================================================
-
-/-! ### N/D-Incorporation ([davies-dubinsky-2003], [shen-huang-2026])
-
-[davies-dubinsky-2003] propose verbs of creation (VOCs) trigger LF noun incorporation
-— the object DP's head noun incorporates into the verb, neutralizing the DP's
-phasehood so extraction becomes possible. [shen-huang-2026] adapt this: it is the
-*determiner* that undergoes covert head movement (following [boskovic-2015] on phase
-collapse), neutralizing the PIC and explaining why VOCs ameliorate (but do not
-eliminate — the Specificity Condition still applies) definite island effects. -/
-
-/-- Whether a DP's phase status has been deactivated by incorporation.
-
-    When `incorporated = true`, the D head has been absorbed into the verb via head
-    movement, so the DP is no longer a phase boundary. Models the [davies-dubinsky-2003]
-    / [shen-huang-2026] VOC neutralization of the PIC for definite DPs. `wasPhase` is
-    stored explicitly so a derivation can record a phasehood decision diverging from the
-    bare categorial test `isPhaseHeadOf .D dHead`. -/
-structure DPPhaseStatus where
-  /-- The D head (before incorporation). -/
-  dHead : SyntacticObject
-  /-- Whether D was originally a phase head (set explicitly per derivation). -/
-  wasPhase : Bool
-  /-- Whether incorporation has applied. -/
-  incorporated : Bool
-
-/-- A DP is an active phase barrier iff it was originally a phase AND has not been
-    deactivated by incorporation. -/
-def DPPhaseStatus.isActivePhase (s : DPPhaseStatus) : Bool :=
-  s.wasPhase && !s.incorporated
-
-/-- Incorporation deactivates phasehood: a D-phase that undergoes incorporation is no
-    longer an active phase barrier. -/
-theorem incorporation_deactivates (s : DPPhaseStatus)
-    (h_phase : s.wasPhase = true) (h_inc : s.incorporated = true) :
-    s.isActivePhase = false := by
-  simp only [DPPhaseStatus.isActivePhase, h_phase, h_inc, Bool.not_true, Bool.and_false]
-
-/-- Without incorporation, a D-phase remains active. -/
-theorem no_incorporation_preserves (s : DPPhaseStatus)
-    (h_phase : s.wasPhase = true) (h_no_inc : s.incorporated = false) :
-    s.isActivePhase = true := by
-  simp only [DPPhaseStatus.isActivePhase, h_phase, h_no_inc, Bool.not_false, Bool.and_true]
-
-/-- Non-phases are never active barriers, regardless of incorporation. -/
-theorem non_phase_never_active (s : DPPhaseStatus) (h : s.wasPhase = false) :
-    s.isActivePhase = false := by
-  simp only [DPPhaseStatus.isActivePhase, h, Bool.false_and]
 
 end Minimalist
