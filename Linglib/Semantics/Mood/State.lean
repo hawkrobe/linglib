@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.Setoid.Basic
+import Linglib.Discourse.QUD.Issue
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Dynamic.UpdateSemantics.Necessity
 import Linglib.Semantics.Modality.Kratzer.Operators
+import Linglib.Semantics.Questions.Partition.Inquisitive
 
 /-!
 # The mood state
@@ -33,6 +35,8 @@ acceptance facts are one-line `inf`-facts.
 * `boxAns` — the third modal: settled by the question.
 * `polarSetoid` — the partition a single proposition contributes.
 * `stateAt` — the state a Kratzer pair induces at a world.
+* The `HasAssertion` and `Discourse.HasIssue` instances — the context
+  set as common ground and the inquiry partition as the current issue.
 
 ## Main statements
 
@@ -121,6 +125,17 @@ def inquire (c : State W) (q : Setoid W) : State W :=
 /-- The `?`-update is meet in the `Setoid` lattice. -/
 @[simp] theorem inquire_inquiry_eq_inf (c : State W) (q : Setoid W) :
     (c.inquire q).inquiry = c.inquiry ⊓ q := rfl
+
+/-! ### Discourse-state projections -/
+
+/-- The inquiry partition, read as an issue. -/
+instance : Discourse.HasIssue (State W) W := ⟨λ c => Question.fromSetoid c.inquiry⟩
+
+@[simp] theorem toIssue_eq (c : State W) :
+    Discourse.HasIssue.toIssue c = Question.fromSetoid c.inquiry := rfl
+
+@[simp] theorem toIssue_inquire (c : State W) (q : Setoid W) :
+    Discourse.HasIssue.toIssue (c.inquire q) = Question.fromSetoid (c.inquiry ⊓ q) := rfl
 
 /-! ### The third modal: `boxAns` (informational answerhood) -/
 
@@ -236,6 +251,29 @@ def promote (c : State W) (p : W → Prop) : State W :=
 /-- `assert` and `promote` commute. -/
 @[simp] theorem assert_promote_comm (c : State W) (p q : W → Prop) :
     (c.assert p).promote q = (c.promote q).assert p := rfl
+
+/-- The context set is the common ground, and `assert` is Stalnakerian on it. -/
+instance : HasAssertion (State W) W where
+  commonGround c := Filter.principal c.info
+  initial := ofExpState .init
+  assert c φ := c.assert (· ∈ φ)
+  commonGround_initial := Filter.principal_univ
+  commonGround_assert c φ :=
+    show Filter.principal {w ∈ c.info | w ∈ φ} = Filter.principal c.info ⊓ Filter.principal φ by
+      rw [Set.sep_mem_eq, Filter.inf_principal]
+
+@[simp] theorem commonGround_eq (c : State W) :
+    HasCommonGround.commonGround c = Filter.principal c.info := rfl
+
+@[simp] theorem contextSet_eq (c : State W) : HasCommonGround.contextSet c = c.info := by
+  simp [HasCommonGround.contextSet]
+
+@[simp] theorem toIssue_assert (c : State W) (p : W → Prop) :
+    Discourse.HasIssue.toIssue (c.assert p) = Discourse.HasIssue.toIssue c := rfl
+
+@[simp] theorem commonGround_inquire (c : State W) (q : Setoid W) :
+    HasCommonGround.commonGround (c.inquire q) = HasCommonGround.commonGround c := by
+  simp
 
 /-- `assert` and `inquire` commute. -/
 @[simp] theorem assert_inquire_comm (c : State W) (p : W → Prop) (s : Setoid W) :

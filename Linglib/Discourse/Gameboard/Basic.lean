@@ -1,4 +1,5 @@
 import Linglib.Discourse.Gameboard.Defs
+import Linglib.Discourse.QUD.Issue
 import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Semantics.Questions.Support
 
@@ -150,6 +151,28 @@ instance {W Participant QContent : Type*} {Cont : Type} :
 theorem tis_commonGround_eq_dgb {W Participant QContent : Type*} {Cont : Type}
     (tis : TIS Participant (Set W) QContent Cont) :
     commonGround tis = commonGround tis.dgb := rfl
+
+/-- The current issue of a gameboard with question contents is the head of its QUD, the
+    trivial issue when the QUD is empty (QUD-maximality, [ginzburg-2012] §6.3). -/
+instance {W Participant Fact : Type*} {Cont : Type} :
+    Discourse.HasIssue (DGB Participant Fact (Question W) Cont) W where
+  toIssue dgb := (dgb.qud.head?.map InfoStruc.q).getD ⊤
+
+/-- A TIS inherits the DGB's current issue. -/
+instance {W Participant Fact : Type*} {Cont : Type} :
+    Discourse.HasIssue (TIS Participant Fact (Question W) Cont) W where
+  toIssue tis := Discourse.HasIssue.toIssue tis.dgb
+
+@[simp] theorem toIssue_pushQud {W Participant Fact : Type*} {Cont : Type}
+    (dgb : DGB Participant Fact (Question W) Cont) (q : Question W) :
+    Discourse.HasIssue.toIssue (dgb.pushQud q) = q := rfl
+
+@[simp] theorem toIssue_addFact {W Participant Fact : Type*} {Cont : Type}
+    (dgb : DGB Participant Fact (Question W) Cont) (p : Fact) :
+    Discourse.HasIssue.toIssue (dgb.addFact p) = Discourse.HasIssue.toIssue dgb := rfl
+
+@[simp] theorem toIssue_initial {W Participant Fact : Type*} {Cont : Type} :
+    Discourse.HasIssue.toIssue (DGB.initial : DGB Participant Fact (Question W) Cont) = ⊤ := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 4. QUD Downdate Properties + Non-Resolve-Cond
