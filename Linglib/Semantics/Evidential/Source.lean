@@ -1,28 +1,34 @@
 import Mathlib.Tactic.TypeStar
 
 /-!
-# Evidential — coarse source and perspective
-[willett-1988] [aikhenvald-2004] [cumming-2026] [von-fintel-gillies-2010]
+# Coarse evidential source and perspective
 
-Framework-agnostic evidentiality vocabulary: [willett-1988]'s coarse
-three-way source taxonomy, the temporal-orientation classification of
-evidence acquisition, and the typeclasses `HasCoarseSource` and
-`HasEvidentialPerspective` that let downstream types (semantic constraint
-enums, paradigm rows, modal evidence types) project into the taxonomies
-uniformly.
+This file defines the framework-neutral vocabulary of evidentiality: Willett's three-way
+classification of information source into direct, hearsay and inference, the temporal
+perspective of evidence acquisition relative to the described event, and the classes
+`HasCoarseSource` and `HasEvidentialPerspective` through which paradigm rows, constraint
+enums and modal evidence types project into these taxonomies. In the canonical case the
+evidence is causally downstream of the event — the event causes the perception, the report or
+the observable result — so a coarse source determines a nonfuture perspective; assumptions
+and predictive evidentials fall outside the pattern, which the `prospective` perspective and
+the `Option` codomain of the projections accommodate. Aikhenvald's finer six-way carving of
+information source lives in `Semantics/Evidential/Defs.lean`.
 
-In the typologically canonical case, an evidential source — direct
-observation, report, or inference from results — is **causally downstream**
-of the described event: the event causes the perceptual state, the report,
-or the observable effects. Assumption-based inferentials and predictive
-evidentials fall outside this pattern; the `prospective` perspective and the
-`Option` codomain of the projection accommodate them.
+## Main definitions
 
-This module supplies the shared vocabulary consumed by both
-[cumming-2026]'s tense evidentiality (T ≤ A = downstream evidence) and
-[von-fintel-gillies-2010]'s epistemic evidentiality (direct vs indirect).
-[aikhenvald-2004]'s finer six-way parameter carving lives with the
-evidential lexical API in the sibling `Defs`/`Basic` files.
+* `Evidential.CoarseSource` — Willett's tripartition; `CoarseSource.IsIndirect`.
+* `Evidential.EvidentialPerspective` — retrospective, contemporaneous or prospective evidence.
+* `Evidential.HasCoarseSource`, `Evidential.HasEvidentialPerspective` — the projections; a
+  source-declaring type inherits its perspective through the canonical mapping.
+* `Evidential.IsNonfuture` — evidence acquired no earlier than the event.
+
+## References
+
+* [willett-1988]
+* [aikhenvald-2004]
+* [cumming-2026]
+* [von-fintel-gillies-2010]
+* [izvorski-1997]
 -/
 
 namespace Evidential

@@ -1,22 +1,22 @@
 import Linglib.Semantics.Evidential.Defs
 
 /-!
-# Aymara Evidentiality
-[aikhenvald-2004]
+# Aymara evidentiality
 
-Three-or-more system: direct, reportative, non-personal/inferential. Andean
-areal feature shared with Quechua. WALS Ch 77 has no entry; fallback fires.
+Aymara (Jaqi) has a three-choice system of Aikhenvald's type B1, an areal feature shared with
+Quechua: personal knowledge, acquired visually, hearsay (knowledge through language) and
+non-personal knowledge (inferred).
+
+## References
+
+* [aikhenvald-2004], §2.2
 -/
 
 namespace Aymara.Evidentiality
 
-/-! ### Typed evidential inventory
-
-Aymara's 3-way Andean system: direct `-wa`, reportative `-sa`,
-inferential `-pacha`. Obligatory verbal affixes. -/
-
 open Evidential
 
+/-- Personal knowledge *-wa*, hearsay *-sa* and non-personal knowledge *-pacha*. -/
 def evidentials : List Evidential :=
   [ { form := "-wa", exponent := .verbalAffix, covers := {.visual, .sensory} },
     { form := "-sa", exponent := .verbalAffix, covers := {.hearsay} },

@@ -1,25 +1,24 @@
 import Linglib.Semantics.Evidential.Defs
 
 /-!
-# Tariana Evidentiality
-[aikhenvald-2004] [de-haan-2013]
+# Tariana evidentiality
 
-Five-term system in the Vaupés multilingual area: visual, nonvisual,
-inferred, assumed, reported. WALS [de-haan-2013] F77A codes Tariana as
-`directAndIndirect`; [aikhenvald-2004] classes it as the five-choice type
-D1 (`Studies/Aikhenvald2004.lean`).
+Tariana (Arawak, Vaupés) has a five-choice system of Aikhenvald's type D1, fused with tense:
+in the recent past, visual *-ka*, non-visual sensory *-mha*, inferred *-nihka*, assumed
+*-sika* and reported *-pidaka*. WALS codes the language as having direct and indirect
+evidentials.
+
+## References
+
+* [aikhenvald-2004], §2.4
+* [de-haan-2013]
 -/
 
 namespace Tariana.Evidentiality
 
-/-! ### Typed evidential inventory
-
-Tariana's classic D1 5-term Vaupés system per [aikhenvald-2004]:
-visual, non-visual sensory, inferred (from result), assumed (from
-reasoning), reported. -/
-
 open Evidential
 
+/-- The recent-past forms: visual, non-visual, inferred, assumed and reported. -/
 def evidentials : List Evidential :=
   [ { form := "-ka", exponent := .verbalAffix, covers := {.visual} },
     { form := "-mha", exponent := .verbalAffix, covers := {.sensory} },

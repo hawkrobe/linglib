@@ -76,10 +76,8 @@ theorem isNonfuture (e : Evidential) : IsNonfuture e := by
 /-- The paradigm of a well-formed inventory: its terms partition the parameters it expresses. -/
 def finpartition (es : List Evidential) (h : WellFormed es) : Finpartition (expressed es) :=
   Finpartition.ofErase (es.map covers).toFinset
-    (Finset.supIndep_iff_pairwiseDisjoint.2 fun x hx y hy hxy => by
-      obtain ⟨a, ha, rfl⟩ := List.mem_map.1 (List.mem_toFinset.1 hx)
-      obtain ⟨b, hb, rfl⟩ := List.mem_map.1 (List.mem_toFinset.1 hy)
-      exact h a ha b hb (fun hab => hxy (hab ▸ rfl)))
+    (Finset.supIndep_iff_pairwiseDisjoint.2 fun _ hx _ hy hxy =>
+      (h.map covers fun _ _ => id).forall (List.mem_toFinset.1 hx) (List.mem_toFinset.1 hy) hxy)
     rfl
 
 end Evidential

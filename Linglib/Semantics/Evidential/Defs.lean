@@ -10,8 +10,8 @@ recurrent semantic parameters — visual, non-visual sensory, inference, assumpt
 quotative — and an evidential covers a set of them: a firsthand term covers visual and sensory
 evidence together, a non-firsthand term covers inference, assumption and hearsay, a visual
 term covers visual evidence alone. A language's inventory is a `List Evidential` declared in
-its Fragment; it is well formed when no parameter is covered twice, so that the terms
-partition the parameters the language expresses (`Semantics/Evidential/Basic.lean`).
+its Fragment; it is well formed when its terms are pairwise disjoint, so that they partition
+the parameters the language expresses (`Semantics/Evidential/Basic.lean`).
 
 ## Main definitions
 
@@ -104,11 +104,11 @@ instance : DecidablePred IsNonfirsthand := fun _ => inferInstanceAs (Decidable (
 /-- The parameters an inventory expresses. -/
 def expressed (es : List Evidential) : Finset Parameter := (es.map covers).toFinset.sup id
 
-/-- An inventory is well formed when distinct terms cover disjoint parameters. -/
-def WellFormed (es : List Evidential) : Prop :=
-  ∀ a ∈ es, ∀ b ∈ es, a ≠ b → Disjoint a.covers b.covers
+/-- An inventory is well formed when its terms are pairwise disjoint: no parameter is covered
+twice, and two entries with the same nonempty coverage count as one term covered twice. -/
+def WellFormed (es : List Evidential) : Prop := es.Pairwise fun a b => Disjoint a.covers b.covers
 
 instance : DecidablePred WellFormed := fun es =>
-  inferInstanceAs (Decidable (∀ a ∈ es, ∀ b ∈ es, a ≠ b → Disjoint a.covers b.covers))
+  inferInstanceAs (Decidable (es.Pairwise fun a b => Disjoint a.covers b.covers))
 
 end Evidential

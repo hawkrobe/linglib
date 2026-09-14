@@ -1,20 +1,20 @@
 import Linglib.Semantics.Evidential.Defs
 
 /-!
-# Mandarin Chinese Evidentiality
-[de-haan-2013] [aikhenvald-2004]
+# Mandarin Chinese evidentiality
 
-WALS [de-haan-2013] F77A: `noGrammaticalEvidentials`. Lexical
-strategies: *tinshuo* (听说), *juede* (觉得), sentence-final *ba* (吧).
+Mandarin Chinese has no grammatical evidentials: information source is conveyed lexically, by
+*tīngshuō* 听说 'hear say', *juéde* 觉得 'feel' and the sentence-final particle *ba* 吧.
+
+## References
+
+* [aikhenvald-2004]
+* [de-haan-2013]
 -/
 
 namespace Mandarin.Evidentiality
 
-/-! ### Typed evidential inventory
-
-No grammatical evidentials per [aikhenvald-2004]; lexical
-strategies only. -/
-
+/-- No evidentials; lexical strategies only. -/
 def evidentials : List Evidential := []
 
 end Mandarin.Evidentiality
