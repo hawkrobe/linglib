@@ -28,7 +28,7 @@ Arrow condition but ordinal invariance, failing even ratio-scale invariance; the
 rule ([tsui-weymark-1997]) is ratio-scale invariant on non-negative profiles.
 
 *Scores* for the positive form: a weighted sum of dimensional measures ([waldon-etal-2023]),
-its normalisation by the host's spatial extent ([tham-2025], [solt-2018-proportional]), and
+its normalisation by the host's spatial extent ([tham-2025], [solt-2018b]), and
 the multiplicative composition of [sassoon-fadlon-2017].
 
 ## Implementation notes
@@ -54,7 +54,7 @@ the multiplicative composition of [sassoon-fadlon-2017].
 * [G. W. Sassoon and J. Fadlon, *The role of dimensions in classification under predicates
   predicts their status in degree constructions* (2017)][sassoon-fadlon-2017]
 * [A. K. Sen, *Collective choice and social welfare* (1970)][sen-1970]
-* [S. Solt, *Proportional comparatives and relative scales* (2018)][solt-2018-proportional]
+* [solt-2018b]
 * [S. W. Tham, *Multidimensionality and the scalar components of physical disturbance
   predicates* (2025)][tham-2025]
 * [K.-Y. Tsui and J. A. Weymark, *Social welfare orderings for ratio-scale measurable
@@ -783,7 +783,7 @@ theorem spatialNormalizedScore_le_one
 
 /-- A nonnegative weighted score over a nonnegative extent normalises to a nonnegative score;
 with `spatialNormalizedScore_le_one` it lies in `[0, 1]`, the fraction of the totality of
-[tham-2025] and [solt-2018-proportional]. -/
+[tham-2025] and [solt-2018b]. -/
 theorem spatialNormalizedScore_nonneg
     (weights : List K) (measures : List (α → K))
     (spatial : α → K) (x : α)
