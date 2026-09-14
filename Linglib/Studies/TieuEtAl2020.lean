@@ -1,284 +1,177 @@
+import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Core.Data.Trivalent
 import Linglib.Data.Examples.TieuEtAl2020
-import Linglib.Semantics.Polarity.Sentence
-import Linglib.Semantics.Alternatives.Lexical
 
 /-!
-# Tieu, Bill, Romoli & Crain (2020) [tieu-etal-2020]
+# Tieu, Bill, Romoli and Crain (2020): Testing Theories of Plural Meanings
 
-Testing theories of plural meanings. *Cognition* 205, 104307.
+This file formalizes the three theories of the multiplicity inference of the English plural
+that [tieu-etal-2020] test experimentally, and the predictions on which they diverge. *Emily
+fed giraffes* conveys that she fed more than one, (1), while *Emily didn't feed giraffes*
+conveys that she fed none, (2), and the inference likewise disappears in conditional
+antecedents and questions, (3)–(4). The ambiguity approach of [farkas-de-swart-2010] gives the
+plural a weak reading, one or more, and a strong reading, more than one, and selects the
+stronger by the Strongest Meaning Hypothesis, (5)–(7). The implicature approach of
+[spector-2007] and [zweig-2009] gives the plural the weak meaning and derives the multiplicity
+inference by exhaustification against the singular alternative, (13)–(15), which is entailed
+rather than excludable under negation, (16)–(17). The homogeneity approach of [kriz-2015],
+extended to bare plurals, makes the plural predicate undefined of a single giraffe, so the
+sentence is true of more than one, false of none and undefined otherwise, (20)–(24). All
+three predict the monotonicity pattern, `readings_positive` and `readings_negative`. They
+diverge in a context where Emily fed exactly one giraffe, (27): the implicature approach makes
+the positive sentence literally true with a false implicature and the negative one false,
+while the ambiguity approach makes both false and the homogeneity approach both undefined,
+`singular_context`. The implicature approach alone derives the multiplicity inference by the
+mechanism of the *not all* inference of *some*, (29), the same exhaustifier against a stronger
+alternative, `exhIE_some`, whence its uniformity prediction, (28), that children compute fewer
+of both.
 
-Three experiments comparing adults' and children's interpretations of
-bare plurals in upward- and downward-entailing environments. The results
-support an implicature approach to multiplicity inferences: children
-compute fewer multiplicity inferences than adults, in parallel with their
-behavior on standard scalar implicatures, and the two inference types
-are correlated within children.
+## Implementation notes
 
-## Core Argument
+The worlds are the number of giraffes fed, so the readings are sets of natural numbers and
+negation is complementation. The implicature approach is the innocent-exclusion exhaustifier
+of `Semantics.Exhaustification.InnocentExclusion` with the singular alternative; the paper's
+versions differ in how they derive that alternative, footnote 4, and agree on the result. The
+Strongest Meaning Hypothesis is the entailment-least reading, which is unique. Homogeneity is
+a trivalent predicate whose negation is `Trivalent.neg`. The experiments are not formalized:
+in Experiment 1, a truth-value judgment task, adults rejected positive plural sentences after a
+story with one animal fed far more often than four- and five-year-olds did, and accepted the
+negative ones only moderately; in Experiment 2 children computed fewer multiplicity inferences
+and fewer *not all* implicatures than adults, and the two rates were correlated within
+children; in Experiment 3, a ternary judgment task, adults gave the positive plural in a
+singular context an intermediate reward and the negative plural the minimal one. The examples
+are the rows of `Data.Examples.TieuEtAl2020`.
 
-The paper adjudicates between three theories of why "Emily fed giraffes"
-means "more than one":
+## References
 
-1. **Ambiguity** ([farkas-de-swart-2010]): plural is polysemous
-   (inclusive/exclusive), Strongest Meaning Hypothesis selects the
-   stronger reading.
-2. **Implicature** ([sauerland-2003], [spector-2007], [zweig-2009]):
-   plural literally means "one or more," the "more than one" inference
-   is a scalar implicature with the singular as alternative.
-3. **Homogeneity** ([kriz-2015]): multiplicity arises from homogeneity
-   presupposition.
-
-Key discriminating prediction (Uniformity Prediction): if multiplicity
-inferences are scalar implicatures, children should compute fewer of both,
-and rates should be correlated.
-
-## Main declarations
-
-* `PluralTheory` — the paper's three-way theory taxonomy, with
-  `usesSIMechanism` as the discriminating mechanistic property.
-* `stimulus?` — row lookup over the generated `Examples.all` pool
-  (`Data/Examples/TieuEtAl2020.json`).
-* `implicature_uniquely_supported` — only the implicature theory derives
-  multiplicity via the SI mechanism.
-* `multiplicity_parallels_si_de_blocking` — the multiplicity pattern
-  matches the DE blocking of classical scalar implicatures.
+* [tieu-etal-2020]
+* [farkas-de-swart-2010]
+* [spector-2007]
+* [zweig-2009]
+* [kriz-2015]
+* [fox-2007]
 -/
 
 namespace TieuEtAl2020
 
-open Alternatives.Number (NumberExpr numberScale)
-open Data.Examples (LinguisticExample)
+open Exhaustification
 
+/-! ### Plural meanings over the number of giraffes fed -/
 
--- ### Competing theories
+/-- (5a): the weak reading, one or more. -/
+def weak : Set ℕ := {n | 1 ≤ n}
 
-/-- The paper's three-way taxonomy of theories of the multiplicity
-    inference: ambiguity ([farkas-de-swart-2010]), implicature
-    ([sauerland-2003], [spector-2007], [zweig-2009]), homogeneity
-    ([kriz-2015]). -/
-inductive PluralTheory where
-  /-- Plural is ambiguous; Strongest Meaning Hypothesis resolves. -/
-  | ambiguity
-  /-- Plural literally means "one or more"; multiplicity is implicature. -/
-  | implicature
-  /-- Plural interpretation via homogeneity presupposition. -/
-  | homogeneity
-  deriving DecidableEq, Repr, Inhabited
+/-- (5b): the strong reading, more than one, the multiplicity inference. -/
+def strong : Set ℕ := {n | 2 ≤ n}
 
-/-- Does the theory analyze multiplicity as arising via the same mechanism
-    as scalar implicatures? The paper's discriminating predictions —
-    acquisition delay, within-child SI correlation, polarity asymmetry,
-    singular-context truth-value asymmetry — all transfer from known SI
-    properties via this property. -/
-def PluralTheory.usesSIMechanism : PluralTheory → Bool
-  | .implicature => true
-  | _ => false
+/-- (14): the singular alternative, exactly one. -/
+def singular : Set ℕ := {1}
 
-/-- The implicature theory is uniquely identified by the SI mechanism,
-    hence by any of the predictions that transfer through it. -/
-theorem implicature_uniquely_supported :
-    ∀ t : PluralTheory, t.usesSIMechanism = true → t = .implicature := by
-  intro t h
-  cases t <;> simp_all [PluralTheory.usesSIMechanism]
+/-! ### The implicature approach (section 1.2.2) -/
 
+/-- (13)–(15): exhaustifying the weak plural against its singular alternative yields the
+multiplicity inference. -/
+theorem exhIE_weak : exhIE {weak, singular} weak = strong := by
+  rw [exhIE_pair_sdiff (φ := weak) (d := singular) ⟨2, by simp [weak, singular]⟩]
+  ext n
+  simp only [weak, singular, strong, Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_singleton_iff]
+  omega
 
--- ### Stimuli
+/-- (16)–(17): under negation the singular alternative is entailed by the negated plural, so
+nothing is excluded and the sentence conveys that no giraffe was fed. -/
+theorem exhIE_compl_weak : exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ := by
+  ext n
+  rw [mem_exhIE_iff _ _ (Set.toFinite _)]
+  refine ⟨And.left, λ h => ⟨h, λ a ha => ?_⟩⟩
+  have hsub : weakᶜ ⊆ a := by
+    rcases Set.mem_insert_iff.1 ha.1 with rfl | h
+    · exact subset_rfl
+    · rw [Set.mem_singleton_iff] at h
+      subst h
+      intro m hm
+      simp only [weak, singular, Set.mem_compl_iff, Set.mem_ofPred_eq, not_le,
+        Set.mem_singleton_iff] at hm ⊢
+      omega
+  exact absurd ha (not_isInnocentlyExcludable_of_phi_subset (Set.toFinite _)
+    ⟨0, by show (0 : ℕ) ∈ weakᶜ; simp [weak]⟩ hsub)
 
-/-- Look up a stimulus row in the paper's example pool by `id`. -/
-def stimulus? (id : String) : Option LinguisticExample :=
-  Examples.all.find? (·.id == id)
+/-- (29): the *not all* implicature of *some of the k giraffes* is the same exhaustifier
+against the stronger alternative *all*, the mechanism the uniformity prediction (28)
+rests on. -/
+theorem exhIE_some {k : ℕ} (hk : 2 ≤ k) :
+    exhIE {{n | 1 ≤ n}, {k}} {n | 1 ≤ n} = {n | 1 ≤ n ∧ n ≠ k} := by
+  rw [exhIE_pair_sdiff (φ := {n | 1 ≤ n}) (d := {k}) ⟨1, by simp; omega⟩]
+  ext n
+  simp
 
-/-- Core multiplicity datum, positive form: "Emily fed giraffes". -/
-abbrev fedGiraffesPos : Option LinguisticExample :=
-  stimulus? "tieuetal2020_fed_giraffes_pos"
+/-! ### The ambiguity approach (section 1.2.1) -/
 
-/-- Core multiplicity datum, negative form: "Emily didn't feed giraffes". -/
-abbrev fedGiraffesNeg : Option LinguisticExample :=
-  stimulus? "tieuetal2020_fed_giraffes_neg"
+/-- The Strongest Meaning Hypothesis, (7): among the readings of a plural sentence, prefer the
+one entailing all the others. -/
+def IsPreferred (R : Set (Set ℕ)) (r : Set ℕ) : Prop := r ∈ R ∧ ∀ r' ∈ R, r ⊆ r'
 
-/-- Experiment 1, upward-entailing TVJ trial: "Emily fed pigs" after a
-    story in which she fed exactly one pig (rejection indicates
-    computing multiplicity). -/
-abbrev exp1_positive : Option LinguisticExample :=
-  stimulus? "tieuetal2020_exp1_positive"
+theorem IsPreferred.unique {R : Set (Set ℕ)} {r r' : Set ℕ} (h : IsPreferred R r)
+    (h' : IsPreferred R r') : r = r' :=
+  (h.2 r' h'.1).antisymm (h'.2 r h.1)
 
-/-- Experiment 1, downward-entailing TVJ trial: "Emily didn't feed
-    giraffes" after she fed exactly one (acceptance indicates a local
-    multiplicity reading under negation). -/
-abbrev exp1_negative : Option LinguisticExample :=
-  stimulus? "tieuetal2020_exp1_negative"
+/-- In a positive sentence the strong reading is preferred, (5). -/
+theorem isPreferred_strong : IsPreferred {weak, strong} strong :=
+  ⟨by simp, by
+    rintro r (rfl | rfl)
+    · intro n hn
+      simp only [weak, strong, Set.mem_ofPred_eq] at hn ⊢
+      omega
+    · exact subset_rfl⟩
 
-/-- Experiment 3, positive plural in a singular context: "Koala bought
-    pears" when Koala bought exactly one pear. -/
-abbrev exp3_positive_plural : Option LinguisticExample :=
-  stimulus? "tieuetal2020_exp3_positive_plural"
+/-- Under negation the negated weak reading is preferred, (6). -/
+theorem isPreferred_compl_weak : IsPreferred {weakᶜ, strongᶜ} weakᶜ :=
+  ⟨by simp, by
+    rintro r (rfl | rfl)
+    · exact subset_rfl
+    · intro n hn
+      simp only [weak, strong, Set.mem_compl_iff, Set.mem_ofPred_eq, not_le] at hn ⊢
+      omega⟩
 
-/-- Experiment 3, negative plural in a singular context: "Koala didn't
-    buy pears" when Koala bought exactly one pear. -/
-abbrev exp3_negative_plural : Option LinguisticExample :=
-  stimulus? "tieuetal2020_exp3_negative_plural"
+/-! ### The homogeneity approach (section 1.2.3) -/
 
-/-- The core monotonicity pattern: the multiplicity reading is available
-    in the positive datum but unavailable under negation. -/
-theorem consistent_with_monotonicity_data :
-    fedGiraffesPos.bind (·.readings.lookup "multiplicity (>1)") =
-      some .acceptable ∧
-    fedGiraffesNeg.bind (·.readings.lookup "multiplicity (>1)") =
-      some .unacceptable := by
-  decide
+/-- (20)–(22): the plural sentence is true of a plurality of giraffes, false of none and
+undefined otherwise. -/
+def homogeneous (n : ℕ) : Trivalent :=
+  if 2 ≤ n then .true else if n = 0 then .false else .indet
 
-/-- Experiment 1 reading availability: the multiplicity reading is fully
-    available in the UE trial; the local multiplicity reading under
-    negation is only marginal (adults' negative-condition rate was
-    moderate). -/
-theorem exp1_multiplicity_reading_contrast :
-    exp1_positive.bind (·.readings.lookup "multiplicity (>1)") =
-      some .acceptable ∧
-    exp1_negative.bind
-      (·.readings.lookup "multiplicity (>1) local under negation") =
-      some .marginal := by
-  decide
+theorem homogeneous_eq_true_iff {n : ℕ} : homogeneous n = .true ↔ 2 ≤ n := by
+  rcases n with _ | _ | n <;> simp [homogeneous]
 
+/-- (23)–(24): negation leaves undefinedness untouched, so the negated sentence is true of no
+giraffe fed. -/
+theorem neg_homogeneous_eq_true_iff {n : ℕ} : (homogeneous n).neg = .true ↔ n = 0 := by
+  rcases n with _ | _ | n <;> simp [homogeneous]
 
--- ### Experimental results
+/-! ### Predictions (section 1.3) -/
 
-/-- Inference rate for a group in a condition. -/
-structure InferenceRate where
-  /-- Which group -/
-  group : String
-  /-- Inference type -/
-  inferenceType : String
-  /-- Polarity of context -/
-  polarity : SentencePolarity
-  /-- Rate of inference-consistent responses (qualitative) -/
-  rate : String
-  deriving Repr
+/-- All three approaches derive the multiplicity inference of a positive plural sentence. -/
+theorem readings_positive :
+    exhIE {weak, singular} weak = strong ∧ IsPreferred {weak, strong} strong ∧
+      {n | homogeneous n = .true} = strong :=
+  ⟨exhIE_weak, isPreferred_strong, Set.ext λ _ => homogeneous_eq_true_iff⟩
 
-/-- Experiment 1 key results (qualitative — no exact numbers cited). -/
-def exp1Results : List InferenceRate :=
-  [ { group := "Adults", inferenceType := "multiplicity"
-    , polarity := .positive, rate := "high" }
-  , { group := "Adults", inferenceType := "multiplicity"
-    , polarity := .negative, rate := "moderate" }
-  , { group := "Children", inferenceType := "multiplicity"
-    , polarity := .positive, rate := "low" }
-  , { group := "Children", inferenceType := "multiplicity"
-    , polarity := .negative, rate := "low" }
-  ]
+/-- All three approaches make a negated plural sentence convey that none was fed. -/
+theorem readings_negative :
+    exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ ∧ IsPreferred {weakᶜ, strongᶜ} weakᶜ ∧
+      {n | (homogeneous n).neg = .true} = weakᶜ := by
+  refine ⟨exhIE_compl_weak, isPreferred_compl_weak, Set.ext λ n => ?_⟩
+  rw [Set.mem_ofPred_eq, neg_homogeneous_eq_true_iff]
+  simp [weak]
 
-/-- Experiment 2 key results (qualitative). -/
-def exp2Results : List InferenceRate :=
-  [ { group := "Adults", inferenceType := "multiplicity"
-    , polarity := .positive, rate := "high" }
-  , { group := "Children", inferenceType := "multiplicity"
-    , polarity := .positive, rate := "low" }
-  , { group := "Adults", inferenceType := "scalar (some)"
-    , polarity := .positive, rate := "high" }
-  , { group := "Children", inferenceType := "scalar (some)"
-    , polarity := .positive, rate := "low" }
-  ]
-
-
--- ### Uniformity Prediction
-
-/--
-The Uniformity Prediction: if multiplicity inferences are scalar
-implicatures, then the between-group pattern (children < adults)
-should be the same for both inference types.
-
-The paper confirms this prediction and additionally finds that
-children's rates on the two types are significantly correlated.
--/
-structure UniformityResult where
-  /-- Do children compute fewer multiplicity inferences than adults? -/
-  childrenFewerMultiplicity : Bool
-  /-- Do children compute fewer scalar implicatures than adults? -/
-  childrenFewerSI : Bool
-  /-- Are the two rates correlated within children? -/
-  correlatedInChildren : Bool
-  deriving Repr
-
-def uniformityConfirmed : UniformityResult :=
-  { childrenFewerMultiplicity := true
-  , childrenFewerSI := true
-  , correlatedInChildren := true
-  }
-
-/-- All three components of the Uniformity Prediction are confirmed. -/
-theorem uniformity_all_confirmed :
-    uniformityConfirmed.childrenFewerMultiplicity = true ∧
-    uniformityConfirmed.childrenFewerSI = true ∧
-    uniformityConfirmed.correlatedInChildren = true :=
-  ⟨rfl, rfl, rfl⟩
-
-
--- ### Connection to Horn scale infrastructure
-
-/-- The singular/plural scale predicts multiplicity as a scalar implicature:
-    using the plural (weaker) implicates the negation of the singular (stronger). -/
-theorem plural_has_singular_alternative :
-    Alternatives.strongerAlternatives numberScale .plural = [.singular] := by
-  decide
-
-/-- In DE contexts, the scale reverses (weaker alternatives are relevant),
-    so the multiplicity inference does not arise. -/
-theorem de_context_no_multiplicity :
-    Alternatives.scalarAlternativesInContext numberScale .plural .downward = [] := by
-  decide
-
-/-- In UE contexts, the singular is the relevant alternative,
-    producing the multiplicity inference. -/
-theorem ue_context_multiplicity :
-    Alternatives.scalarAlternativesInContext numberScale .plural .upward = [.singular] := by
-  decide
-
-
--- ### Experiment 3: singular contexts (adults-only, ternary judgment)
-
-/-!
-Experiment 3 uses a ternary judgment task (small/medium/large strawberry
-for false/neither/true) with adults on Amazon Mechanical Turk.
-
-In singular contexts (exactly one object acted upon), only the SI
-mechanism predicts a positive/negative truth-value asymmetry: "Koala
-bought pears" is literally true with a false implicature (misleading),
-while "Koala didn't buy pears" is literally false. On lexical or
-presuppositional accounts both have the same status. Together with
-`implicature_uniquely_supported`, the observed asymmetry singles out
-`PluralTheory.implicature`.
--/
-
-/-- Adults assign different reward status to positive vs negative plurals
-    in singular contexts: intermediate reward for the (literally true but
-    misleading) positive, minimal for the (literally false) negative. -/
-theorem exp3_confirms_asymmetry :
-    exp3_positive_plural.bind (·.paperFeatures.lookup "preferred_reward") =
-      some "intermediate" ∧
-    exp3_negative_plural.bind (·.paperFeatures.lookup "preferred_reward") =
-      some "minimal" := by
-  decide
-
-
--- ### Multiplicity parallels scalar implicatures
-
-/-- The multiplicity inference exhibits DE blocking: available in the
-    positive fed-giraffes row, unavailable under negation — the same
-    UE-arises / DE-blocked pattern as the classical *some*/*all* scalar
-    implicature ([horn-1972]). -/
-theorem multiplicity_parallels_si_de_blocking :
-    fedGiraffesPos.bind (·.readings.lookup "multiplicity (>1)") =
-      some .acceptable ∧
-    fedGiraffesNeg.bind (·.readings.lookup "multiplicity (>1)") =
-      some .unacceptable :=
-  ⟨by decide, by decide⟩
-
-/-- Both the number scale and the quantifier scale predict the same
-    pattern: stronger alternatives in UE, none/weaker in DE. -/
-theorem scales_predict_same_pattern :
-    (Alternatives.scalarAlternativesInContext numberScale .plural .upward).length > 0 ∧
-    (Alternatives.scalarAlternativesInContext numberScale .plural .downward).length = 0 ∧
-    (Alternatives.scalarAlternativesInContext
-      Alternatives.Quantifiers.quantScale .some_ .upward).length > 0 := by
-  decide
+/-- (27), the singular context: the implicature approach makes the positive sentence literally
+true but its enriched meaning false and the negative sentence false, an asymmetry; the
+ambiguity approach makes both false and the homogeneity approach both undefined. -/
+theorem singular_context :
+    (1 ∈ weak ∧ 1 ∉ exhIE {weak, singular} weak ∧
+        1 ∉ exhIE {weakᶜ, singularᶜ} weakᶜ) ∧
+      (1 ∉ strong ∧ 1 ∉ weakᶜ) ∧
+      (homogeneous 1 = .indet ∧ (homogeneous 1).neg = .indet) := by
+  rw [exhIE_weak, exhIE_compl_weak]
+  simp [weak, strong, homogeneous]
 
 end TieuEtAl2020
