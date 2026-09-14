@@ -10,8 +10,7 @@ import Linglib.Semantics.Causation.ProductionDependence
 Theory-side connection between the resultative construction and the
 causative semantics infrastructure. Per-scenario `BoolSEM` witnesses
 (HammerFlat, IndependentSourceBreaksNecessity, etc.) live with the paper
-that uses them — see `Levin2026`
-and `Studies.Tay2024`. Per-datum [goldberg-jackendoff-2004] verifications
+that uses them — see `Levin2026`. Per-datum [goldberg-jackendoff-2004] verifications
 live in `GoldbergJackendoff2004`.
 
 Sections:

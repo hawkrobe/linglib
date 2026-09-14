@@ -42,9 +42,7 @@ open Aspect.ChangeOfState (CoSType)
 -- ════════════════════════════════════════════════════
 
 /-- Mandarin phase complements: a closed class of grammaticalized V2
-    morphemes that fix the change-of-state semantics of the result.
-    [tay-2024] discusses these as a typologically distinctive
-    Mandarin device. -/
+    morphemes that fix the change-of-state semantics of the result. -/
 inductive PhaseComplement where
   | dao
   | wan
