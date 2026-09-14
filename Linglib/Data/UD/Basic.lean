@@ -144,7 +144,7 @@ inductive Gender where
     Battle-tested annotation tagset shared across all UD treebanks. The 28
     constructors below cover the standard UD values. This is the
     *realization* vocabulary; the canonical analytical inventory is the
-    root-namespace `Case` (`Features/Case/Basic.lean`), reachable by
+    root-namespace `Case` (`Syntax/Case/Basic.lean`), reachable by
     `Case.toUD`/`Case.fromUD`. -/
 inductive Case where
   | Nom    -- nominative: subject

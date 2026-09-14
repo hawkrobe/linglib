@@ -1,4 +1,4 @@
-import Linglib.Features.Case.Source
+import Linglib.Syntax.Case.Source
 import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Case.Licensing
 

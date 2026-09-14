@@ -1,5 +1,5 @@
 import Mathlib.Order.UpperLower.Basic
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Syntax.Case.Order
 import Linglib.Fragments.Dargwa.Case

@@ -1,7 +1,7 @@
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Fragments.Mayan.Params
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Case.Alignment
 /-!
 # Yukatek Maya Verb Classes and Status System

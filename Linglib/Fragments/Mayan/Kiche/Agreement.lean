@@ -1,4 +1,4 @@
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Data.UD.Basic
 import Linglib.Syntax.Number.Capabilities

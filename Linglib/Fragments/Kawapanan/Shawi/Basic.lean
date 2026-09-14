@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Number.Basic
 import Linglib.Syntax.Person.Basic
 

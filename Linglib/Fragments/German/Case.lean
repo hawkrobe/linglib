@@ -1,4 +1,4 @@
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 
 /-!
 # German Case Inventory [blake-1994]

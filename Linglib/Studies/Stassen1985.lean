@@ -1,7 +1,7 @@
 import Linglib.Syntax.Comparative
 import Linglib.Fragments.Korean.MedialVerbs
 import Linglib.Fragments.Turkish.MedialVerbs
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Fragments.Japanese.Comparison
 import Linglib.Fragments.Korean.Comparison
 import Linglib.Fragments.Turkish.Comparison

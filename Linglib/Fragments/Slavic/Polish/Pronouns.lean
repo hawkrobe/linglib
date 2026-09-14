@@ -1,4 +1,4 @@
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 
 /-!
 # Polish interrogative pronouns

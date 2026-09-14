@@ -1,5 +1,5 @@
-import Linglib.Features.Case.Basic
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
+import Linglib.Syntax.Case.Basic
 /-!
 # Japanese Case Inventory [blake-1994] [tsujimura-2014] [sadakane-koizumi-1995] [kuroda-1972] [kuno-1987]
 

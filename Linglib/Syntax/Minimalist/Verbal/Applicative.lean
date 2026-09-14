@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Features.Case.Capabilities
+import Linglib.Syntax.Case.Capabilities
 import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic

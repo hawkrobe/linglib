@@ -16,7 +16,7 @@ VI + Elsewhere ordering — [bobaljik-2012]) and Nanosyntax (phrasal
 spellout + Superset Principle — [caha-2009]). This file commits to
 neither; per-paper analyses live in `Studies/`. Case-hierarchy
 adjacency and inventory relations live with the Blake-rank API in
-`Features/Case/Basic.lean`.
+`Syntax/Case/Basic.lean`.
 -/
 
 namespace Morphology.Case.Allomorphy

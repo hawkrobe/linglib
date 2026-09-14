@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.ParticipantType
 import Mathlib.Order.Interval.Set.OrdConnected
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 
 /-!
 # Case as a connected region of the agentivity lattice [grimm-2011]

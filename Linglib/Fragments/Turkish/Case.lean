@@ -1,5 +1,5 @@
-import Linglib.Features.Case.Basic
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
+import Linglib.Syntax.Case.Basic
 /-!
 # Turkish Case Inventory [blake-1994]
 [goksel-kerslake-2005]

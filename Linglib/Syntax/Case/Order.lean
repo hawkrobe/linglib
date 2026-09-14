@@ -1,7 +1,7 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Order.Interval.Finset.Fin
 import Linglib.Core.Order.PartialRank
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 /-!
 # Containment orders on Case
 [caha-2009] [pantcheva-2011] [mcfadden-2018]
@@ -353,7 +353,7 @@ def toCase : Region → PathDir → Option Case
     cases). **Conflation caveat**: `all`/`abl` double as the *general*
     allative/ablative (Latin-type, region-neutral); the spatial
     decomposition reads them as exterior-goal/source, the use the
-    analytical split `Features/Case/Basic.lean` anticipates separating.
+    analytical split `Syntax/Case/Basic.lean` anticipates separating.
     `loc` is the genuinely region-neutral general locative (`none`). -/
 def regionOf : Case → Option Region
   | .ine | .ela | .ill => some .interior

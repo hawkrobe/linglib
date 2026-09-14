@@ -1,4 +1,4 @@
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Case.Alignment
 /-!
 # Dargwa (Tanti) Case Inventory [sumbatova-2021]

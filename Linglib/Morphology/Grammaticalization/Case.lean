@@ -1,6 +1,6 @@
 import Mathlib.Order.Nat
 import Mathlib.Logic.Relation
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Core.Relation.ReflTransGen
 /-!
 # Case Grammaticalization
@@ -62,7 +62,7 @@ theorem caseGramCline_ordered :
 
 These live under `namespace Features` so they project onto the `Case`
 type via dot-notation (mirroring `Case.hierarchyRank` in
-`Features/Case/Basic.lean`). -/
+`Syntax/Case/Basic.lean`). -/
 
 namespace Features
 

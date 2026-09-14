@@ -1,5 +1,5 @@
 import Linglib.Features.Prominence
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Agreement.Paradigm
 /-!
 # Basque Agreement Fragment [just-2024]
