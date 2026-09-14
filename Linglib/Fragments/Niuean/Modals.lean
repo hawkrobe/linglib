@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.Basic
 
 /-!
 # Niuean Modal Inventory
@@ -85,29 +85,5 @@ def forceAnalysis : ModalItem → ForceAnalysis
   | ⟨"maeke", _, _⟩ => .fixed .possibility
   | ⟨"lata", _, _⟩ => .fixed .necessity
   | _ => .fixed .possibility
-
-/-! ## Background classification -/
-
-open Modality (BackgroundClass) in
-/-- Background class for each Niuean modal.
-    liga is epistemic (factual-evidential); maeke and lata are
-    circumstantial (factual-circumstantial). -/
-def backgroundClass : ModalItem → BackgroundClass
-  | ⟨"liga", _, _⟩ => .factualEvidential
-  | _ => .factualCircumstantial
-
-/-! ## Dual structure
-
-The circumstantial domain has a dual pair (maeke/lata), but the
-epistemic domain does not — liga covers both forces. -/
-
-/-- liga lacks a dual: no contrasting epistemic necessity or possibility modal. -/
-theorem liga_no_dual : ¬ (forceAnalysis liga).HasDual := fun h => h.elim
-
-/-- maeke has a dual (lata). -/
-theorem maeke_has_dual : (forceAnalysis maeke).HasDual := trivial
-
-/-- lata has a dual (maeke). -/
-theorem lata_has_dual : (forceAnalysis lata).HasDual := trivial
 
 end Niuean.Modals

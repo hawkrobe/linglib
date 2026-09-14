@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.Basic
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Data.Examples.LiuRotter2025
 import Mathlib.Data.Sign.Defs
@@ -25,9 +25,8 @@ single-modal cell means carry exactly these signs (`commitment_matches_spread`,
 The effect of concord is a `SignType`; the regression estimates are not formal commitments.
 The cell means of the paper's Table 1 are rows of `Data/Examples/LiuRotter2025.json`, stored
 as hundredths of the 1–7 scale and read structurally, so the observed signs are decided in
-the kernel. The concord precondition, that the doubled elements share force, and the
-auxiliaries' uninterpretability under the agreement account are read off the English
-auxiliary fragment.
+the kernel. The concord precondition, that the doubled elements share a concord class, is read
+off the English auxiliary fragment.
 
 ## References
 
@@ -96,19 +95,21 @@ theorem warmth_ne_spread : warmthEffect ≠ spreadEffect :=
 
 /-! ### The concord precondition in the fragment -/
 
+/-- Two modal items share a concord class when a meaning of each has forces of one class,
+both universal or both existential. -/
+def SharesConcordForce (a b : ModalItem) : Prop :=
+  ∃ x ∈ a.meaning, ∃ y ∈ b.meaning, (x.force.IsUniversal ↔ y.force.IsUniversal)
+
+instance : DecidableRel SharesConcordForce :=
+  λ _ _ => inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, (_ ↔ _)))
+
 /-- *must* and *certainly*, the necessity stimulus, share necessity-type force. -/
 theorem must_certainly_share :
-    must.toModalItem.SharesConcordForce certainly.toModalItem := by decide
+    SharesConcordForce must.toModalItem certainly.toModalItem := by decide
 
 /-- *may* and *possibly*, the possibility stimulus, share possibility force. -/
 theorem may_possibly_share :
-    may.toModalItem.SharesConcordForce possibly.toModalItem := by decide
-
-/-- The agreement account's vacuous element: the auxiliaries are uninterpretable in the
-fragment, so under that account they contribute no operator. -/
-theorem stimulus_auxiliaries_uninterpretable :
-    must.interpretability = some .uninterpretable ∧
-    may.interpretability = some .uninterpretable := by decide
+    SharesConcordForce may.toModalItem possibly.toModalItem := by decide
 
 /-! ### Predicting against the data
 

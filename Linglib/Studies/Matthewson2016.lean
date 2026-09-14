@@ -33,7 +33,43 @@ primary-source theorems for Gitksan are in `Studies/Matthewson2013.lean`.
 
 namespace Matthewson2016
 
-open Modality (ForceFlavor ForceAnalysis BackgroundClass ProjectionMode ForceFlavorIndependent SingleAxis)
+open Modality (ForceFlavor ForceAnalysis ModalItem ForceFlavorIndependent SingleAxis)
+
+/-- The mode in which a conversational background projects, [kratzer-2012]'s distinction
+between realistic backgrounds, whose accessible worlds hold counterparts of some actual
+evidence, and informational ones, whose accessible worlds are compatible with the content of
+some source of information; the chapter's factual and content modes (UNVERIFIED Table 18.2). -/
+inductive ProjectionMode where
+  | factual
+  | content
+  deriving DecidableEq, Repr
+
+/-- The chapter's three-way classification of conversational backgrounds (UNVERIFIED Table
+18.3): factual backgrounds without an information source, the traditional circumstantial class,
+and factual and content backgrounds encoding one, the two epistemic subtypes. -/
+inductive BackgroundClass where
+  | factualCircumstantial
+  | factualEvidential
+  | contentEvidential
+  deriving DecidableEq, Repr
+
+/-- The projection mode of a background class. -/
+def BackgroundClass.projectionMode : BackgroundClass → ProjectionMode
+  | .factualCircumstantial => .factual
+  | .factualEvidential => .factual
+  | .contentEvidential => .content
+
+/-- Only a content background lets the speaker disbelieve the prejacent. -/
+def BackgroundClass.AllowsSpeakerDisbelief (b : BackgroundClass) : Prop := b = .contentEvidential
+
+instance : DecidablePred BackgroundClass.AllowsSpeakerDisbelief :=
+  λ _ => inferInstanceAs (Decidable (_ = _))
+
+/-- The traditional epistemic or circumstantial flavor a class refines. -/
+def BackgroundClass.traditionalFlavor : BackgroundClass → Modality.ModalFlavor
+  | .factualCircumstantial => .circumstantial
+  | .factualEvidential => .epistemic
+  | .contentEvidential => .epistemic
 
 -- ============================================================================
 -- §1. Three-way background classification (Table 18.2, Table 18.3)
@@ -74,22 +110,28 @@ theorem circumstantial_is_factual :
 section Gitksan
 open Gitksan.Modals
 
+/-- The chapter's classification of the Gitksan modals (UNVERIFIED Table 18.1): *ima('a)* is
+factual-evidential, *gat* content-evidential, and the rest factual-circumstantial. -/
+def gitksanBackground (m : ModalItem) : BackgroundClass :=
+  if m = imaa then .factualEvidential else if m = gat then .contentEvidential
+  else .factualCircumstantial
+
 /-- Gitksan ima('a) is factual-evidential: the speaker has inferential
     evidence and cannot disbelieve the prejacent. -/
 theorem gitksan_imaa_factual_evidential :
-    backgroundClass imaa = .factualEvidential := rfl
+    gitksanBackground imaa = .factualEvidential := by decide
 
 /-- Gitksan gat is content-evidential: reportative evidence, the
     speaker can disbelieve. -/
 theorem gitksan_gat_content_evidential :
-    backgroundClass gat = .contentEvidential := rfl
+    gitksanBackground gat = .contentEvidential := by decide
 
 /-- Gitksan circumstantial modals are factual-circumstantial. -/
 theorem gitksan_circ_factual :
-    backgroundClass daakhlxw = .factualCircumstantial ∧
-    backgroundClass anookxw = .factualCircumstantial ∧
-    backgroundClass sgi = .factualCircumstantial :=
-  ⟨rfl, rfl, rfl⟩
+    gitksanBackground daakhlxw = .factualCircumstantial ∧
+    gitksanBackground anookxw = .factualCircumstantial ∧
+    gitksanBackground sgi = .factualCircumstantial := by
+  decide
 
 /-- Coarse evidential source of a modal background class in Matthewson's
     system: factual-evidential modals are inferential, content-evidential
@@ -104,15 +146,15 @@ def backgroundCoarseSource :
 /-- Gitksan ima('a) marks inferential evidence and gat reportative
     evidence in the shared source taxonomy. -/
 theorem gitksan_sources :
-    backgroundCoarseSource (backgroundClass imaa) = some .inference ∧
-    backgroundCoarseSource (backgroundClass gat) = some .hearsay :=
-  ⟨rfl, rfl⟩
+    backgroundCoarseSource (gitksanBackground imaa) = some .inference ∧
+    backgroundCoarseSource (gitksanBackground gat) = some .hearsay := by
+  decide
 
 /-- All three background classes are represented in Gitksan. -/
 theorem gitksan_three_way_split :
-    (allExpressions.map backgroundClass).any (· == .factualCircumstantial) &&
-    (allExpressions.map backgroundClass).any (· == .factualEvidential) &&
-    (allExpressions.map backgroundClass).any (· == .contentEvidential) = true := by
+    (allExpressions.map gitksanBackground).any (· == .factualCircumstantial) &&
+    (allExpressions.map gitksanBackground).any (· == .factualEvidential) &&
+    (allExpressions.map gitksanBackground).any (· == .contentEvidential) = true := by
   decide
 
 end Gitksan
@@ -147,12 +189,6 @@ theorem nez_perce_strengthened :
     NezPerce.Modals.forceAnalysis NezPerce.Modals.oqa =
       .strengthened .possibility := rfl
 
-/-- Both analyses agree: the modals lack duals. -/
-theorem no_duals :
-    ¬ ForceAnalysis.variableForce.HasDual ∧
-    ¬ (ForceAnalysis.strengthened .possibility).HasDual := by
-  refine ⟨?_, ?_⟩ <;> intro h <;> exact h.elim
-
 /-- Despite lacking duals, both admit necessity and possibility readings. -/
 theorem both_forces_available :
     ForceAnalysis.variableForce.AdmitsNecessity ∧
@@ -174,6 +210,37 @@ def Consistent : ForceAnalysis → Finset ForceFlavor → Prop
 
 instance (a : ForceAnalysis) (m : Finset ForceFlavor) : Decidable (Consistent a m) := by
   cases a <;> unfold Consistent <;> infer_instance
+
+/-- A modal has a dual in an inventory when it is fixed for one force and another item of the
+inventory expresses the dual force over its flavors (UNVERIFIED §18.3.2). -/
+def HasDualIn (L : List ModalItem) (m : ModalItem) : Prop :=
+  (m.meaning.image Prod.fst).card = 1 ∧
+    ∃ m' ∈ L, m'.meaning = m.meaning.image (Prod.map Modality.ModalForce.dual id)
+
+instance (L : List ModalItem) (m : ModalItem) : Decidable (HasDualIn L m) :=
+  inferInstanceAs (Decidable (_ ∧ ∃ _ ∈ _, _ = _))
+
+/-- A variable-force modal, attesting two forces, has no dual. -/
+theorem not_hasDualIn_of_variableForce {L : List ModalItem} {m : ModalItem}
+    (h : Consistent .variableForce m.meaning) : ¬ HasDualIn L m :=
+  λ h' => by simp only [Consistent] at h; have := h'.1; omega
+
+/-- Gitksan ima('a) and gat, Nez Perce o'qa and St'át'imcets =ka have no duals in their
+inventories. -/
+theorem no_duals :
+    ¬ HasDualIn Gitksan.Modals.allExpressions Gitksan.Modals.imaa ∧
+      ¬ HasDualIn Gitksan.Modals.allExpressions Gitksan.Modals.gat ∧
+      ¬ HasDualIn NezPerce.Modals.allExpressions NezPerce.Modals.oqa ∧
+      ¬ HasDualIn Statimcets.Modals.allExpressions Statimcets.Modals.ka := by
+  decide
+
+/-- Niuean encodes force in the circumstantial domain, where *maeke* and *lata* are duals, and
+not in the epistemic one, where *liga* covers both forces alone. -/
+theorem niuean_duals :
+    HasDualIn Niuean.Modals.allExpressions Niuean.Modals.maeke ∧
+      HasDualIn Niuean.Modals.allExpressions Niuean.Modals.lata ∧
+      ¬ HasDualIn Niuean.Modals.allExpressions Niuean.Modals.liga := by
+  decide
 
 /-- Gitksan ima('a) and gat are variable-force and attest both forces. -/
 theorem gitksan_force_consistent :
@@ -203,7 +270,8 @@ theorem statimcets_niuean_force_consistent :
 /-- Niuean: epistemic domain has one modal (both forces), circumstantial
     has two (one per force). -/
 theorem niuean_force_asymmetry :
-    (Niuean.Modals.allExpressions.filter (λ e => ∃ ff ∈ e.meaning, ff.flavor = .epistemic)).length = 1 ∧
+    (Niuean.Modals.allExpressions.filter
+      (λ e => ∃ ff ∈ e.meaning, ff.flavor = .epistemic)).length = 1 ∧
     (Niuean.Modals.allExpressions.filter
       (λ e => ∃ ff ∈ e.meaning, ff.flavor = .circumstantial)).length = 2 := by
   decide

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Reference.Rigidity
-import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.Basic
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Data.Examples.Kubota2026

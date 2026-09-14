@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.Basic
 
 /-!
 # Gitksan Modal Inventory
@@ -38,7 +38,7 @@ but only weakly.
 
 namespace Gitksan.Modals
 
-open Modality (ForceFlavor ForceAnalysis BackgroundClass TemporalOrientation ModalItem)
+open Modality (ForceFlavor ForceAnalysis TemporalOrientation ModalItem)
 
 private abbrev ne : ForceFlavor := (.necessity, .epistemic)
 private abbrev pe : ForceFlavor := (.possibility, .epistemic)
@@ -111,18 +111,6 @@ def forceAnalysis : ModalItem → ForceAnalysis
   | ⟨"anook(xw)", _, _⟩ => .fixed .possibility
   | ⟨"sgi", _, _⟩ => .fixed .weakNecessity
   | _ => .fixed .possibility
-
-/-! ## Three-way background classification ([matthewson-2016] Table 18.3)
-
-Gitksan lexicalizes all three background classes:
-- **factual-circumstantial**: da'akhlxw, anookxw, sgi
-- **factual-evidential**: ima('a) (inferential, speaker cannot disbelieve)
-- **content-evidential**: gat (reportative, speaker can disbelieve) -/
-
-def backgroundClass : ModalItem → BackgroundClass
-  | ⟨"ima('a)", _, _⟩ => .factualEvidential
-  | ⟨"gat", _, _⟩ => .contentEvidential
-  | _ => .factualCircumstantial
 
 /-! ## Absolute epistemic/circumstantial split
 

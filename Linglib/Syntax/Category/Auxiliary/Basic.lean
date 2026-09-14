@@ -4,12 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Morphology.Word.Basic
-import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.Basic
 import Linglib.Syntax.Number.Capabilities
 import Linglib.Syntax.Person.Capabilities
 
 open Morphology (Word)
-open Modality (ForceFlavor ModalItem ModalFeature ModalInterpretability)
+open Modality (ForceFlavor ModalItem)
 open SocialMeaning.Register (Level)
 
 /-!
@@ -29,8 +29,7 @@ Per-language fragments supply the entries.
 
 * `Auxiliary` — the lexical object.
 * `Auxiliary.toWord` — the `AUX` word it spells out.
-* `Auxiliary.toModalItem`, `Auxiliary.modalFeature` — its modality as
-  a `ModalItem`, and as the uninterpretable modal feature of [zeijlstra-2007].
+* `Auxiliary.toModalItem` — its modality as a `ModalItem`.
 
 ## References
 
@@ -67,17 +66,6 @@ def number (a : Auxiliary) : Option UD.Number := a.features.number
 
 /-- The modal item an auxiliary contributes: form, meanings, register. -/
 def toModalItem (a : Auxiliary) : ModalItem := ⟨a.form, a.modality.toFinset, a.register⟩
-
-/-- The modal feature a modal auxiliary carries ([zeijlstra-2007]): the force
-of its primary meaning, **uninterpretable** — semantically vacuous and
-checked by a c-commanding interpretable operator. `none` for an auxiliary
-with no modality. -/
-def modalFeature (a : Auxiliary) : Option ModalFeature :=
-  a.modality.head?.map fun ff => ⟨ff.force, .uninterpretable⟩
-
-/-- The interpretability of the auxiliary's modal feature, if it has one. -/
-def interpretability (a : Auxiliary) : Option ModalInterpretability :=
-  a.modalFeature.map (·.interp)
 
 instance : HasNumber Auxiliary := ⟨fun a => a.features.number.bind Number.fromUD⟩
 

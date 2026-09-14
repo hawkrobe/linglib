@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Lattice
-import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.Basic
 import Linglib.Data.Examples.Geurts2005
 
 /-!

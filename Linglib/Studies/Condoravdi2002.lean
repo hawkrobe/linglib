@@ -2,7 +2,7 @@ import Mathlib.Tactic.DeriveFintype
 import Linglib.Data.Examples.Condoravdi2002
 import Linglib.Semantics.Aspect.Instantiation
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.Basic
 
 /-!
 # Condoravdi 2002: Temporal Interpretation of Modals

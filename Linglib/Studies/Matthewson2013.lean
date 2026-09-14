@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.Basic
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Fragments.NezPerce.Modals
 import Linglib.Studies.Condoravdi2002
