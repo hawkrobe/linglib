@@ -390,8 +390,7 @@ theorem sda_without_equal_realism :
 -- SECTION 10: Parallel with Plural Definite Acquisition
 -- ============================================================
 
-open TieuKrizChemla2019
-  (DefinitePluralReading DevelopmentalStage)
+open TieuKrizChemla2019 (Reading)
 
 /-- The developmental trajectory for DACs parallels the trajectory for
     plural definites ([tieu-kriz-chemla-2019]):
@@ -405,14 +404,14 @@ open TieuKrizChemla2019
     Both phenomena show the same developmental pattern: younger children
     start existential (accepting when ANY element satisfies) and shift
     to universal/homogeneous (requiring ALL elements to satisfy). -/
-def pluralToDACParallel : DefinitePluralReading → Option DACReading
+def pluralToDACParallel : Reading → Option DACReading
   | .existential => some .dcr  -- existential ↔ disjunctive conditional
   | .homogeneous => some .sda  -- homogeneous ↔ simplification
-  | .universal   => none       -- no direct DAC analogue
+  | _            => none       -- the universal readings have no DAC analogue
 
 /-- The developmental parallel: both trajectories go from existential-like
     to universal-like readings. -/
-def dacDevelopmentalStage : DACReading → Option DevelopmentalStage
+def dacDevelopmentalStage : DACReading → Option Reading
   | .dcr => some .existential  -- DCR = existential resolution of homogeneity
   | .sda => some .homogeneous  -- SDA = universal resolution (the gap)
   | .ar  => none               -- AR has no plural parallel

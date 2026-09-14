@@ -1,510 +1,262 @@
+import Mathlib.Tactic.DeriveFintype
+import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Homogeneity.Plural
 import Linglib.Semantics.Polarity.Sentence
-import Linglib.Studies.Magri2014
+import Linglib.Data.Examples.TieuKrizChemla2019
 
 /-!
-# Tieu, Križ & Chemla (2019): Children's Acquisition of Homogeneity
-[tieu-kriz-chemla-2019]
+# Tieu, Križ and Chemla (2019): Children's Acquisition of Homogeneity in Plural Definite Descriptions
 
-Children's acquisition of homogeneity in plural definite descriptions.
-*Frontiers in Psychology* 10, 2329.
+This file formalizes the readings of the plural definite that [tieu-kriz-chemla-2019] tests
+on four- and five-year-old French-speaking children, and the prediction of the implicature
+account of homogeneity, [magri-2014], that the study falsifies. *The trucks are blue* and
+*The trucks are not blue*, (1)–(2), are neither true nor false when some but not all of the
+trucks are blue, a GAP context, whereas the universal (3)–(4) has a complementary negation.
+A child might read the definite homogeneously, existentially as (6), or universally as (7),
+and the three readings predict distinct pairs of responses to the positive and the negative
+sentence in a GAP context, Figure 2, `Reading.value` and `value_of_isGap`. On the
+implicature account, (10)–(11), the definite has the existential meaning and reaches the
+universal one by exhaustifying twice, the outer exhaustification negating the *not all*
+implicature of *some*, so that implicature is a sub-computation of homogeneity: a child who
+accepts *some* where all objects have the property should accept the positive definite in a
+GAP context, and one who rejects the first should reject the second,
+`implicature_gap_iff_si`. Experiment 2's ternary judgments separate the homogeneous reading,
+undefined in a GAP context, from a universal reading outscoping negation, false there,
+which the binary judgments of Experiment 1 conflate, `gapPattern_injective` and
+`binary_collapse`.
 
-## Core Contribution
+## Implementation notes
 
-Two experiments testing French-speaking children (ages 4--6) on their
-interpretations of plural definite descriptions in GAP contexts (where
-some but not all individuals satisfy the predicate), alongside scalar
-implicature controls. The experiments test predictions of the scalar
-implicature account of homogeneity ([magri-2014]).
+A world is the set of objects with the property and the definite's plurality a finite set
+of atoms, so the homogeneous reading is the substrate's `Homogeneity.barePlural`, the
+universal readings `Homogeneity.allPlural` at either scope relative to negation, and the
+scope-ambiguous universal of Experiment 2 supervaluates over the two scopes with the
+`Trivalent.dist` that supervaluates the bare plural over its atoms. A ternary reward is the
+trivalent value itself, Table 8's coding, and a binary judgment accepts exactly the true
+sentences. The implicature account is computed with the substrate's innocent exclusion on
+these worlds, and a participant computes the implicature exactly when *all* is among their
+alternatives to *some*, the paper's assumption that the same alternatives drive both
+inferences. Partial-truth responding, Table 8's PT column, is a response strategy rather than
+a reading, and the paper finds no evidence for it. The experiments are reported in prose. In
+Experiment 1, a binary truth-value judgment task, sixteen of 24 children showed the
+homogeneous pattern and eight the existential one, no child the universal one; six of the
+homogeneous children, and five of 22 adults, accepted *some* where all objects had the
+property, the HOM/−SI group the account excludes, and the group survives a Bayesian group
+assignment and leave-one-out cross-validation. Experiment 2, a ternary reward task after
+[katsos-bishop-2011], replicated the group with five of 22 children and two of 25 adults.
+Since nearly all children with the implicature read the definite homogeneously while the
+converse fails, the paper concludes that homogeneity is acquired before, and independently
+of, the scalar implicature, resolving the conflict between the non-maximal interpretations
+of [karmiloff-smith-1979] and [caponigro-etal-2012] and the maximal ones of earlier
+act-out tasks: young children's definite is existential and scopes under negation. The
+examples are the rows of `Data.Examples.TieuKrizChemla2019`.
 
-## Three Interpretive Patterns
+## TODO
 
-Children presented with "The trucks are blue" / "The trucks aren't blue"
-in a GAP context (2 of 4 trucks blue) could respond in three ways:
+The printed Table 8 assigns the scope-ambiguous and wide-scope universal groups GAP
+responses that contradict the definitions beside it, which are followed here.
 
-1. **Homogeneous** (adult-like): reject both positive and negative
-2. **Existential**: accept positive ("some are blue"), reject negative
-3. **Universal**: reject positive, accept negative ("not all are blue")
+## References
 
-## Key Finding
-
-Three groups of children emerge:
-
-- **EXI/−SI**: Existential interpretation, no scalar implicatures (the
-  literal existential meaning predicted by [magri-2014])
-- **HOM/+SI**: Homogeneous with implicatures (adult-like, consistent
-  with [magri-2014])
-- **HOM/−SI**: Homogeneous WITHOUT scalar implicatures (problematic
-  for [magri-2014])
-
-The existence of the HOM/−SI group contradicts [magri-2014]'s
-prediction that homogeneity requires the *not-all* scalar implicature
-as a subcomputation. The data suggest that homogeneity and scalar
-implicatures are independent, with homogeneity acquired earlier.
-
-## Connection to Linglib
-
-- Imports `Magri2014.lean` to test the double-strengthening prediction
-  (end-to-end: inner EXH → double-EXH → ALL → falsified by HOM/−SI data)
+* [tieu-kriz-chemla-2019]
+* [magri-2014]
+* [kriz-2015]
+* [kriz-chemla-2015]
+* [spector-2013]
+* [fox-2007]
+* [katsos-bishop-2011]
+* [karmiloff-smith-1979]
+* [caponigro-etal-2012]
 -/
 
 namespace TieuKrizChemla2019
 
+open Exhaustification Homogeneity
 
+variable {Atom : Type*} (x : Finset Atom)
 
--- ============================================================
--- SECTION 1: Interpretive Patterns
--- ============================================================
+/-- A GAP context: some but not all objects of the plurality have the property, Figure 1. -/
+def IsGap (w : Finset Atom) : Prop := (∃ a ∈ x, a ∈ w) ∧ ∃ a ∈ x, a ∉ w
 
-/--
-The three possible interpretations a speaker can assign to a plural
-definite description like "the trucks."
--/
-inductive DefinitePluralReading where
-  /-- THE ≈ SOME: existential interpretation -/
+/-! ### Readings of the plural definite (section 1) -/
+
+section Readings
+
+variable [DecidableEq Atom]
+
+/-- The scope of a universal reading of the definite relative to negation. -/
+inductive Scope where
+  | low
+  | wide
+  deriving DecidableEq, Fintype
+
+/-- The negated sentence under a universal reading of the definite at a scope: *not all* or
+*none*. -/
+def universalNeg : Scope → Trivalent.Prop3 (Finset Atom)
+  | .low => λ w => (allPlural (λ a w => a ∈ w) x w).neg
+  | .wide => allPlural (λ a w => a ∉ w) x
+
+/-- The readings a participant may assign to the plural definite: the three of Figure 2 and
+the two further universal readings of Experiment 2, Table 8. -/
+inductive Reading where
+  /-- THE as SOME, (6), scoping under negation. -/
   | existential
-  /-- THE shows a truth-value gap: homogeneous interpretation -/
+  /-- THE with a truth-value gap, (1)–(2). -/
   | homogeneous
-  /-- THE ≈ ALL: universal interpretation -/
+  /-- THE as ALL, (7), scoping under negation. -/
   | universal
-  deriving Repr, DecidableEq, Inhabited
-
-/--
-What each interpretive pattern predicts for positive and negative
-definite descriptions in a GAP context (some but not all satisfy).
--/
-structure GapPrediction where
-  reading : DefinitePluralReading
-  /-- Accept "The Xs are P" when only some Xs are P? -/
-  acceptPositiveGap : Bool
-  /-- Accept "The Xs aren't P" when only some Xs are P? -/
-  acceptNegativeGap : Bool
-  deriving Repr, DecidableEq
-
-/-- Existential: accept positive (some are P), reject negative. -/
-def existentialGap : GapPrediction :=
-  ⟨.existential, true, false⟩
-
-/-- Homogeneous: reject both positive and negative (the gap). This is the
-    adult pattern documented for plural definites in GAP scenarios, where
-    both the positive and the negative sentence are judged neither true
-    nor false ([kriz-2015], [kriz-chemla-2015]). -/
-def homogeneousGap : GapPrediction :=
-  ⟨.homogeneous, false, false⟩
-
-/-- Universal: reject positive (not all are P), accept negative. -/
-def universalGap : GapPrediction :=
-  ⟨.universal, false, true⟩
-
-def allGapPredictions : List GapPrediction :=
-  [existentialGap, homogeneousGap, universalGap]
-
-/-- The three patterns are mutually exclusive: no two agree on both responses. -/
-theorem patterns_distinct_responses :
-    existentialGap.acceptPositiveGap ≠ homogeneousGap.acceptPositiveGap ∧
-    homogeneousGap.acceptNegativeGap ≠ universalGap.acceptNegativeGap := by
-  exact ⟨by decide, by decide⟩
-
-
--- ============================================================
--- SECTION 2: Participant Groups (Reading × Implicature Status)
--- ============================================================
-
-/--
-A participant group defined by their definite plural interpretation
-and whether they compute scalar implicatures.
--/
-structure ParticipantGroup where
-  /-- How they interpret the definite plural -/
-  reading : DefinitePluralReading
-  /-- Whether they compute the "not-all" scalar implicature -/
-  computesImplicatures : Bool
-  deriving Repr, DecidableEq
-
-/-- The six logically possible groups. -/
-def allGroups : List ParticipantGroup :=
-  [ ⟨.existential, false⟩, ⟨.existential, true⟩
-  , ⟨.homogeneous, false⟩, ⟨.homogeneous, true⟩
-  , ⟨.universal, false⟩, ⟨.universal, true⟩ ]
-
-/-- Shorthand for the key groups. -/
-def exiMinusSI : ParticipantGroup := ⟨.existential, false⟩
-def exiPlusSI  : ParticipantGroup := ⟨.existential, true⟩
-def homMinusSI : ParticipantGroup := ⟨.homogeneous, false⟩
-def homPlusSI  : ParticipantGroup := ⟨.homogeneous, true⟩
-def uniMinusSI : ParticipantGroup := ⟨.universal, false⟩
-def uniPlusSI  : ParticipantGroup := ⟨.universal, true⟩
-
-
--- ============================================================
--- SECTION 3: Magri's Acquisition Predictions
--- ============================================================
-
-/--
-The scalar implicature account of homogeneity ([magri-2014])
-makes specific predictions about the developmental trajectory.
-
-Since homogeneity is derived via double exhaustification, and the
-inner EXH computes the "not-all" scalar implicature, two predictions
-follow:
-
-1. **SI-prerequisite**: Children who cannot compute the "not-all"
-   implicature cannot derive homogeneous readings. Therefore the
-   HOM/−SI group should not exist.
-
-2. **SI-not-rarer**: The "not-all" implicature is a subcomputation
-   of the homogeneity implicature. So homogeneous readings should
-   not be *more* frequent than scalar implicatures.
--/
-structure ImplicatureAccountPrediction where
-  /-- SI is a prerequisite for homogeneity -/
-  siPrerequisite : Bool
-  /-- Therefore HOM/−SI should not exist -/
-  homWithoutSIPossible : Bool
-  /-- SI should not be rarer than homogeneity -/
-  siNotRarerThanHom : Bool
-  deriving Repr, DecidableEq
-
-def magriPrediction : ImplicatureAccountPrediction :=
-  { siPrerequisite := true
-  , homWithoutSIPossible := false
-  , siNotRarerThanHom := true }
-
-
--- ============================================================
--- SECTION 4: Experiment 1 — Binary TVJT
--- ============================================================
-
-/--
-Experiment 1: Truth Value Judgment Task with binary (yes/no) responses.
-
-Participants: 24 French-speaking children (ages 4;04–5;03, M = 4;09)
-and 22 adults. Children tested at preschools in Paris.
-
-Materials: 6 homogeneity targets (3 positive + 3 negative THE-sentences
-in GAP contexts), 8 definite description controls, 6 universal
-quantification controls, 4 scalar implicature targets.
--/
-structure Exp1GroupCounts where
-  /-- Group label -/
-  group : String
-  /-- Number of adults in this group -/
-  adults : Nat
-  /-- Number of children in this group -/
-  children : Nat
-  deriving Repr
-
-/-- Experiment 1, Table 1: Distribution of participants by homogeneity
-    pattern and implicature status.
-
-    Categories defined by majority response (≥2/3 trials). -/
-def exp1_table1 : List Exp1GroupCounts :=
-  [ ⟨"HOM/−SI", 5, 6⟩
-  , ⟨"HOM/+SI", 10, 10⟩
-  , ⟨"EXI/−SI", 0, 7⟩
-  , ⟨"EXI/+SI", 0, 1⟩
-  , ⟨"UNI/−SI", 5, 0⟩
-  , ⟨"UNI/+SI", 1, 0⟩ ]
-
-/-- Experiment 1, Table 3: Bayesian model group assignments for children.
-
-    The model confirmed the descriptive categorization: children were
-    unambiguously assigned to groups with posterior probability > 0.92. -/
-structure Exp1BayesianGroups where
-  /-- HOM/−SI children -/
-  homMinusSI : Nat
-  /-- HOM/+SI children -/
-  homPlusSI : Nat
-  /-- EXI/−SI children -/
-  exiMinusSI : Nat
-  /-- EXI/+SI children -/
-  exiPlusSI : Nat
-  deriving Repr
-
-def exp1Children : Exp1BayesianGroups :=
-  { homMinusSI := 6
-  , homPlusSI := 10
-  , exiMinusSI := 7
-  , exiPlusSI := 1 }
-
-/-- Total children in Experiment 1. -/
-theorem exp1_total_children :
-    exp1Children.homMinusSI + exp1Children.homPlusSI +
-    exp1Children.exiMinusSI + exp1Children.exiPlusSI = 24 := by
-  native_decide
-
-
--- ============================================================
--- SECTION 5: Experiment 2 — Ternary Judgment
--- ============================================================
-
-/--
-Experiment 2: Ternary reward task (minimal / intermediate / maximal).
-
-The ternary paradigm distinguishes truly homogeneous readings from
-wide-scope universals: a homogeneous reading yields intermediate
-rewards for both positive and negative GAP sentences, while a
-wide-scope universal yields minimal for both.
-
-Participants: 24 French-speaking children (ages 4;07–6;04, M = 5;03)
-and 25 adults. Additional controls for incomplete description,
-partial truth, and scope ambiguity effects.
-
-Categorization criteria (ternary):
-- EXISTENTIAL: maximal for ≥2/3 positive GAP, minimal for ≥2/3 negative GAP
-- HOMOGENEOUS: ≤ intermediate for ≥2/3 positive AND ≥2/3 negative GAP
-- UNIVERSAL: minimal for ≥2/3 positive GAP, maximal for ≥2/3 negative GAP
--/
-structure Exp2GroupCounts where
-  /-- Group label -/
-  group : String
-  /-- Number of adults -/
-  adults : Nat
-  /-- Number of children -/
-  children : Nat
-  deriving Repr
-
-/-- Experiment 2, Table 6: Distribution of participants by homogeneity
-    pattern and implicature status. -/
-def exp2_table6 : List Exp2GroupCounts :=
-  [ ⟨"HOM/−SI", 2, 5⟩
-  , ⟨"HOM/+SI", 21, 7⟩
-  , ⟨"EXI/−SI", 0, 10⟩
-  , ⟨"EXI/+SI", 0, 0⟩
-  , ⟨"UNI/−SI", 2, 0⟩
-  , ⟨"UNI/+SI", 0, 0⟩ ]
-
-/-- Experiment 2, Table 7: After conservative exclusions (eliminating
-    participants with potential biases for incomplete description,
-    partial truth, or scope ambiguity). -/
-def exp2_table7 : List Exp2GroupCounts :=
-  [ ⟨"HOM/−SI", 2, 2⟩
-  , ⟨"HOM/+SI", 18, 2⟩
-  , ⟨"EXI/−SI", 0, 5⟩
-  , ⟨"EXI/+SI", 0, 0⟩
-  , ⟨"UNI/−SI", 1, 0⟩
-  , ⟨"UNI/+SI", 0, 0⟩ ]
-
-
--- ============================================================
--- SECTION 6: Key Findings
--- ============================================================
-
-/--
-The central empirical finding, replicated across both experiments:
-three distinct groups of children.
--/
-structure ThreeGroupFinding where
-  /-- EXI/−SI: existential, no implicatures (literal meaning) -/
-  existentialNoSI : Nat
-  /-- HOM/+SI: homogeneous with implicatures (adult-like) -/
-  homogeneousPlusSI : Nat
-  /-- HOM/−SI: homogeneous WITHOUT implicatures (problematic for Magri) -/
-  homogeneousNoSI : Nat
-  deriving Repr
-
-def exp1Finding : ThreeGroupFinding :=
-  { existentialNoSI := 7
-  , homogeneousPlusSI := 10
-  , homogeneousNoSI := 6 }
-
-def exp2Finding : ThreeGroupFinding :=
-  { existentialNoSI := 10
-  , homogeneousPlusSI := 7
-  , homogeneousNoSI := 5 }
-
-/-- Cross-consistency: ThreeGroupFinding (Section 6) matches
-    BayesianGroups (Table 3). Changing either without updating the
-    other will break this theorem. -/
-theorem exp1_findings_consistent :
-    exp1Finding.homogeneousNoSI = exp1Children.homMinusSI ∧
-    exp1Finding.homogeneousPlusSI = exp1Children.homPlusSI ∧
-    exp1Finding.existentialNoSI = exp1Children.exiMinusSI := by
-  exact ⟨rfl, rfl, rfl⟩
-
-/-- Total categorized children in Experiment 2
-    (2 children gave inconsistent responses and are excluded). -/
-theorem exp2_total_categorized :
-    exp2Finding.existentialNoSI + exp2Finding.homogeneousPlusSI +
-    exp2Finding.homogeneousNoSI = 22 := by native_decide
-
-/-- The HOM/−SI group exists in BOTH experiments. -/
-theorem hom_without_si_exists_exp1 :
-    exp1Finding.homogeneousNoSI > 0 := by native_decide
-
-theorem hom_without_si_exists_exp2 :
-    exp2Finding.homogeneousNoSI > 0 := by native_decide
-
-/-- The HOM/−SI group is non-trivial (not a single outlier).
-    Table 4 confirms this: removing HOM/−SI from the Bayesian model
-    degrades fit by Δ_elpd = 50.79 (se = 9.87), over 5 SEs. -/
-theorem hom_without_si_nontrivial :
-    exp1Finding.homogeneousNoSI ≥ 5 ∧
-    exp2Finding.homogeneousNoSI ≥ 5 := by native_decide
-
-/-- The three key groups (EXI/−SI, HOM/+SI, HOM/−SI) account for 23 of 24
-    children in Exp 1 (the remaining child was EXI/+SI). No child
-    showed the UNIVERSAL pattern in either experiment, ruling out
-    children simply assigning universal meaning to the definite plural. -/
-theorem three_groups_cover_exp1 :
-    exp1Finding.existentialNoSI + exp1Finding.homogeneousPlusSI +
-    exp1Finding.homogeneousNoSI = 23 := by native_decide
-
-
--- ============================================================
--- SECTION 7: Testing Magri's Predictions
--- ============================================================
-
-/--
-Magri's prediction: homogeneity requires the "not-all" scalar
-implicature as a subcomputation. Therefore the HOM/−SI group
-should not exist.
-
-The data falsify this: HOM/−SI children exist in both experiments.
--/
-theorem magri_prediction_falsified :
-    magriPrediction.homWithoutSIPossible = false ∧
-    exp1Finding.homogeneousNoSI > 0 ∧
-    exp2Finding.homogeneousNoSI > 0 := by
-  exact ⟨rfl, by native_decide, by native_decide⟩
-
-/--
-The second prediction — that SI should not be rarer than homogeneity —
-is also challenged. Among children, homogeneous readings are more
-prevalent than implicature computation:
-- Exp 1: 16 homogeneous vs 11 +SI
-- Exp 2: 12 homogeneous vs 7 +SI
-
-The implication between SI and homogeneity is unidirectional in
-development: implicatures imply homogeneity, but not vice versa.
--/
-structure ImplicatureHomogeneityRates where
-  /-- Total children with homogeneous readings -/
-  totalHomogeneous : Nat
-  /-- Total children computing implicatures -/
-  totalPlusSI : Nat
-  deriving Repr
-
-def exp1Rates : ImplicatureHomogeneityRates :=
-  { totalHomogeneous := 16  -- HOM/−SI (6) + HOM/+SI (10)
-  , totalPlusSI := 11 }    -- HOM/+SI (10) + EXI/+SI (1)
-
-def exp2Rates : ImplicatureHomogeneityRates :=
-  { totalHomogeneous := 12  -- HOM/−SI (5) + HOM/+SI (7)
-  , totalPlusSI := 7 }     -- HOM/+SI (7) + EXI/+SI (0)
-
-/-- In both experiments, homogeneous readings outnumber implicatures. -/
-theorem homogeneity_more_prevalent :
-    exp1Rates.totalHomogeneous > exp1Rates.totalPlusSI ∧
-    exp2Rates.totalHomogeneous > exp2Rates.totalPlusSI := by native_decide
-
-/-- The implication is unidirectional: all +SI children are homogeneous
-    (with one exception in Exp 1), but not all homogeneous children
-    compute SI. -/
-theorem unidirectional_implication :
-    -- Exp 1: 10 of 11 +SI children are HOM
-    exp1Children.homPlusSI = 10 ∧ exp1Children.exiPlusSI = 1 ∧
-    -- Exp 2: all +SI children are HOM (7 of 7)
-    exp2Finding.homogeneousPlusSI = 7 := by
-  exact ⟨rfl, rfl, rfl⟩
-
-
--- ============================================================
--- SECTION 8: End-to-End Argument Against Magri2014
--- ============================================================
-
-open Magri2014 (Role exh doubleExh someMeaning
-  allMeaning exh_some exh_the double_strengthening_yields_universal)
-
-/--
-End-to-end argumentation chain connecting [magri-2014]'s theory
-(formalized in `Magri2014.lean`) to the empirical data in this file.
-
-**The derivation** (examples 10-11 in the paper):
-
-  EXH(SOME)           = SOME ∧ ¬ALL                    -- inner EXH: the "not-all" SI
-  EXH(THE)             = THE = SOME                     -- inner EXH: vacuous (no excludable mates)
-  EXH(EXH(THE))         = SOME ∧ ¬(SOME ∧ ¬ALL) = ALL  -- outer EXH: negates the SI
-
-**The prediction**: Since `EXH(SOME) = SOME ∧ ¬ALL` is a subcomputation
-of `EXH(EXH(THE)) = ALL`, a child who cannot compute the "not-all" SI
-cannot derive the universal reading. Without the SI to negate, double
-exhaustification is vacuous: `EXH(EXH(THE)) = EXH(THE) = SOME`.
-Such children should show the *existential* pattern, not the *homogeneous* pattern.
-
-**The falsification**: HOM/−SI children exist in both experiments — they
-show homogeneity without computing the SI. This requires an alternative
-source of homogeneity independent of scalar implicatures.
-
-This theorem imports three results from `Magri2014.lean` (the inner EXH
-identity, the vacuousness of single EXH for THE, and the main double-
-strengthening theorem) and combines them with the empirical data.
--/
-theorem magri_derivation_requires_si :
-    -- (1) Inner EXH of SOME yields the standard "not-all" SI
-    (∀ s, exh .weak s = (someMeaning s && !allMeaning s)) ∧
-    -- (2) Inner EXH of THE is vacuous: THE stays SOME
-    (∀ s, exh .mystery s = someMeaning s) ∧
-    -- (3) Double-EXH uses the SI to derive ALL (the main theorem)
-    (∀ s, s.total ≥ 1 → doubleExh .mystery s = allMeaning s) ∧
-    -- (4) But HOM/−SI children show homogeneity WITHOUT the SI
-    exp1Finding.homogeneousNoSI > 0 ∧
-    exp2Finding.homogeneousNoSI > 0 := by
-  exact ⟨exh_some, exh_the, double_strengthening_yields_universal,
-         by native_decide, by native_decide⟩
-
-
--- ============================================================
--- SECTION 9: Developmental Trajectory
--- ============================================================
-
-/--
-The paper proposes the following developmental trajectory:
-
-Stage 1: Children start with the literal existential meaning of the
-  definite plural (EXI pattern). This is compatible with [magri-2014]'s
-  assumption that the plain meaning of THE is existential.
-
-Stage 2: Children acquire homogeneous readings, possibly through a
-  mechanism independent of scalar implicatures.
-
-Stage 3: Children acquire scalar implicatures. Those who arrived at
-  homogeneity through implicatures now have both; those who arrived
-  through another mechanism also have both.
-
-The key insight: stages 2 and 3 are INDEPENDENT. Homogeneity does not
-require scalar implicatures as a developmental prerequisite.
--/
-inductive DevelopmentalStage where
-  | existential   -- literal existential meaning
-  | homogeneous   -- homogeneous reading (mechanism-independent)
-  | adult         -- homogeneous + scalar implicatures
-  deriving Repr, DecidableEq
-
-/-- The developmental ordering: existential precedes homogeneous
-    precedes full adult competence. -/
-def stageOrder : DevelopmentalStage → Nat
-  | .existential => 0
-  | .homogeneous => 1
-  | .adult       => 2
-
-/-- The three attested child groups map to developmental stages.
-    Returns `none` for groups not attested in children (UNI/±SI,
-    EXI/+SI with only 1 child). -/
-def groupToStage : ParticipantGroup → Option DevelopmentalStage
-  | ⟨.existential, false⟩ => some .existential
-  | ⟨.homogeneous, false⟩ => some .homogeneous
-  | ⟨.homogeneous, true⟩  => some .adult
-  | _                      => none
-
-/-- The three attested groups map to the three developmental stages,
-    and the stages form a monotonically increasing sequence. -/
-theorem attested_groups_ordered :
-    groupToStage exiMinusSI = some .existential ∧
-    groupToStage homMinusSI = some .homogeneous ∧
-    groupToStage homPlusSI  = some .adult ∧
-    stageOrder .existential ≤ stageOrder .homogeneous ∧
-    stageOrder .homogeneous ≤ stageOrder .adult := by
-  exact ⟨rfl, rfl, rfl, by native_decide, by native_decide⟩
-
+  /-- THE as ALL, scoping over negation. -/
+  | wideScopeUniversal
+  /-- THE as ALL, ambiguous in scope relative to negation. -/
+  | scopeAmbiguous
+  deriving Repr, DecidableEq, Fintype
+
+/-- The value of the definite sentence at a polarity under a reading. Negation is Kleene
+negation except where the universal outscopes it; the scope-ambiguous reading supervaluates
+over the two scopes. -/
+def Reading.value : Reading → SentencePolarity → Trivalent.Prop3 (Finset Atom)
+  | .existential, .positive => λ w => .ofProp (∃ a ∈ x, a ∈ w)
+  | .existential, .negative => λ w => (Trivalent.ofProp (∃ a ∈ x, a ∈ w)).neg
+  | .homogeneous, .positive => barePlural (λ a w => a ∈ w) x
+  | .homogeneous, .negative => λ w => (barePlural (λ a w => a ∈ w) x w).neg
+  | .universal, .positive | .wideScopeUniversal, .positive | .scopeAmbiguous, .positive =>
+      allPlural (λ a w => a ∈ w) x
+  | .universal, .negative => universalNeg x .low
+  | .wideScopeUniversal, .negative => universalNeg x .wide
+  | .scopeAmbiguous, .negative => λ w => Trivalent.dist Finset.univ (universalNeg x · w = .true)
+
+/-- The values of the positive and the negative sentence in a GAP context under each reading,
+Figure 2 and Table 8. -/
+def Reading.gapPattern : Reading → Trivalent × Trivalent
+  | .existential => (.true, .false)
+  | .homogeneous => (.indet, .indet)
+  | .universal => (.false, .true)
+  | .wideScopeUniversal => (.false, .false)
+  | .scopeAmbiguous => (.false, .indet)
+
+/-- The binary judgments of a reading's GAP pattern: each sentence is accepted iff true. -/
+def Reading.binaryPattern (r : Reading) : Bool × Bool :=
+  (r.gapPattern.1 = .true, r.gapPattern.2 = .true)
+
+variable {x}
+
+/-- In a GAP context every reading takes the values of Figure 2 and Table 8. -/
+theorem value_of_isGap {w : Finset Atom} (hw : IsGap x w) (r : Reading) :
+    (r.value x .positive w, r.value x .negative w) = r.gapPattern := by
+  have hall : allPlural (λ a w => a ∈ w) x w = .false :=
+    (allPlural_eq_false_iff _ _ _).2 λ h => hw.2.elim λ a ha => ha.2 (h a ha.1)
+  have hnone : allPlural (λ a w => a ∉ w) x w = .false :=
+    (allPlural_eq_false_iff _ _ _).2 λ h => hw.1.elim λ a ha => h a ha.1 ha.2
+  have hbare : barePlural (λ a w => a ∈ w) x w = .indet :=
+    (Trivalent.dist_eq_indet_iff _ _).2 ⟨hw.1, hw.2⟩
+  have hamb : Trivalent.dist Finset.univ (universalNeg x · w = .true) = .indet :=
+    (Trivalent.dist_eq_indet_iff _ _).2
+      ⟨⟨.low, Finset.mem_univ _, by simp [universalNeg, hall]⟩,
+        ⟨.wide, Finset.mem_univ _, by simp [universalNeg, hnone]⟩⟩
+  cases r
+  · simp [Reading.value, Reading.gapPattern, hw.1]
+  · simp [Reading.value, Reading.gapPattern, hbare]
+  · simp [Reading.value, Reading.gapPattern, universalNeg, hall]
+  · simp [Reading.value, Reading.gapPattern, universalNeg, hall, hnone]
+  · simp only [Reading.value, Reading.gapPattern, hall, hamb]
+
+/-- Ternary judgments separate all five readings in a GAP context, Experiment 2's design. -/
+theorem gapPattern_injective : Function.Injective Reading.gapPattern := by decide
+
+/-- The three readings of Figure 2 predict pairwise distinct binary responses in a GAP
+context, so Experiment 1 identifies them. -/
+theorem binaryPattern_figure2 :
+    ∀ r ∈ [Reading.existential, .homogeneous, .universal],
+      ∀ r' ∈ [Reading.existential, .homogeneous, .universal],
+        r.binaryPattern = r'.binaryPattern → r = r' := by decide
+
+/-- Binary judgments conflate the homogeneous reading with the universal readings that
+outscope negation, all three rejecting both sentences in a GAP context: Experiment 1 cannot
+tell a truly homogeneous child from a wide-scope universal one. -/
+theorem binary_collapse :
+    Reading.homogeneous.binaryPattern = Reading.wideScopeUniversal.binaryPattern ∧
+      Reading.homogeneous.binaryPattern = Reading.scopeAmbiguous.binaryPattern := by decide
+
+end Readings
+
+/-! ### The implicature account (section 2) -/
+
+section Implicature
+
+/-- The literal existential meaning of the definite and of *some*: some object of the
+plurality has the property. -/
+def someMeaning : Set (Finset Atom) := {w | ∃ a ∈ x, a ∈ w}
+
+/-- *All*: every object of the plurality has the property. -/
+def allMeaning : Set (Finset Atom) := {w | x ⊆ w}
+
+/-- A participant's alternatives to *some*: *all* is among them exactly when the participant
+computes the *not all* implicature. -/
+def alts : Bool → Set (Set (Finset Atom))
+  | true => {someMeaning x, allMeaning x}
+  | false => {someMeaning x}
+
+/-- (11): the strengthened definite of the implicature account, [magri-2014]'s double
+exhaustification. The definite's only Horn-mate is the equivalent *some*, so the inner
+exhaustification leaves its existential meaning; the outer exhaustifies that against the
+exhaustified *some*, (10). -/
+def strengthened (si : Bool) : Set (Finset Atom) :=
+  exhIE {someMeaning x, exhIE (alts x si) (someMeaning x)} (someMeaning x)
+
+variable {x}
+
+private theorem allMeaning_subset_someMeaning (hx : x.Nonempty) :
+    allMeaning x ⊆ someMeaning x :=
+  λ _ hw => hx.elim λ a ha => ⟨a, ha, hw ha⟩
+
+/-- (10): with *all* among its alternatives, *some* is exhaustified to *some but not all*. -/
+theorem exhIE_someMeaning {w : Finset Atom} (hw : IsGap x w) :
+    exhIE {someMeaning x, allMeaning x} (someMeaning x) = someMeaning x \ allMeaning x :=
+  exhIE_pair_sdiff (φ := someMeaning x) (d := allMeaning x)
+    ⟨w, hw.1, λ h => hw.2.elim λ _ ha => ha.2 (h ha.1)⟩
+
+/-- (11): with the implicature, the strengthened definite is universal. -/
+theorem strengthened_true (hx : x.Nonempty) {w : Finset Atom} (hw : IsGap x w) :
+    strengthened x true = allMeaning x := by
+  rw [strengthened, alts, exhIE_someMeaning hw,
+    exhIE_pair_sdiff (φ := someMeaning x) (d := someMeaning x \ allMeaning x)
+      ⟨x, hx.elim λ a ha => ⟨a, ha, ha⟩,
+        λ h => h.2 (show x ⊆ x from Finset.Subset.refl x)⟩,
+    Set.sdiff_sdiff_right_self]
+  exact Set.inter_eq_right.2 (allMeaning_subset_someMeaning hx)
+
+/-- Without the implicature both exhaustifications are vacuous and the definite keeps its
+existential meaning. -/
+theorem strengthened_false : strengthened x false = someMeaning x := by
+  rw [strengthened, alts, exhIE_singleton_self, Set.pair_eq_singleton, exhIE_singleton_self]
+
+/-- The *not all* implicature is a sub-computation of the homogeneity implicature: a
+participant accepts the positive definite in a GAP context `w` exactly when they accept
+*some* in a context `w'` where every object has the property. The HOM/−SI participants of
+both experiments, who reject the first and accept the second, contradict the account. -/
+theorem implicature_gap_iff_si (hx : x.Nonempty) {w w' : Finset Atom} (hw : IsGap x w)
+    (hw' : x ⊆ w') (si : Bool) :
+    w ∈ strengthened x si ↔ w' ∈ exhIE (alts x si) (someMeaning x) := by
+  cases si
+  · rw [strengthened_false, alts, exhIE_singleton_self]
+    exact iff_of_true hw.1 (hx.elim λ a ha => ⟨a, ha, hw' ha⟩)
+  · rw [strengthened_true hx hw, alts, exhIE_someMeaning hw]
+    exact iff_of_false (λ h => hw.2.elim λ _ ha => ha.2 (h ha.1)) λ h => h.2 hw'
+
+/-- Negation is downward-entailing, so the account leaves the negated definite its
+existential meaning, false in a GAP context whatever the participant's implicatures: the
+universal pattern of Figure 2 is never predicted, and the account's two profiles are the
+existential pattern without the implicature and the homogeneous pattern with it. -/
+theorem implicature_binaryPattern (hx : x.Nonempty) {w : Finset Atom} (hw : IsGap x w) :
+    (w ∈ strengthened x false ↔ Reading.existential.binaryPattern.1 = true) ∧
+      (w ∈ (someMeaning x)ᶜ ↔ Reading.existential.binaryPattern.2 = true) ∧
+      (w ∈ strengthened x true ↔ Reading.homogeneous.binaryPattern.1 = true) ∧
+      (w ∈ (someMeaning x)ᶜ ↔ Reading.homogeneous.binaryPattern.2 = true) := by
+  rw [strengthened_false, strengthened_true hx hw]
+  exact ⟨iff_of_true hw.1 rfl, iff_of_false (λ h => h hw.1) (by decide),
+    iff_of_false (λ h => hw.2.elim λ _ ha => ha.2 (h ha.1)) (by decide),
+    iff_of_false (λ h => h hw.1) (by decide)⟩
+
+end Implicature
 
 end TieuKrizChemla2019
