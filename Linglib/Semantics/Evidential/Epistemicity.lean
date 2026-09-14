@@ -92,7 +92,7 @@ theorem ego_default_direct : strongAssertion.source = .direct := rfl
 
 /-- In allocutive contexts, evidential source is typically irrelevant --
     the addressee's authority overrides source distinctions.
-    (Tibetan -payin ego vs -pa'dug non-ego; Akhvakh -eri ego vs -ari non-ego) -/
+    (Tibetan *-pa yin* egophoric vs *-song* and *-pa red*; Akhvakh -eri ego vs -ari non-ego) -/
 def allocutiveProfile (s : CoarseSource) : EpistemicProfile :=
   { source := s, authority := .allocutive }
 
