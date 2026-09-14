@@ -2479,8 +2479,6 @@ import Linglib.Studies.SmithMoskalEtAl2019
 import Linglib.Studies.Snyder2026
 import Linglib.Studies.SolstadBott2022
 import Linglib.Studies.SolstadBott2024
-import Linglib.Studies.Solt2018Multidim
-import Linglib.Studies.Solt2018Proportional
 import Linglib.Studies.SoltWaldon2019
 import Linglib.Studies.Song1996
 import Linglib.Studies.Sorace2000
