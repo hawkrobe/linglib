@@ -1,179 +1,175 @@
-import Mathlib.Data.Rat.Defs
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.NormNum
-import Linglib.Processing.Acceptability.MinimalPairs
+import Mathlib.Algebra.Order.Field.Basic
+import Mathlib.Order.Monotone.Basic
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
-# Sprouse, Wagers & Phillips (2012) — Factorial Acceptability Designs
+# Sprouse, Wagers and Phillips (2012): A Test of the Relation Between Working-Memory Capacity and Syntactic Island Effects
 
-[sprouse-et-al-2012], with the magnitude-estimation groundwork of
-[sprouse-2007].
+This file formalizes the logic of [sprouse-et-al-2012]'s test of the resource-limitation
+theory of island effects. An island effect is defined factorially, over the four sentences
+that cross the presence of an island structure with the position of the gap: it is the
+superadditive interaction, the drop in acceptability from combining a long-distance
+dependency with an island structure exceeding the sum of the drops for each alone, and it is
+measured by the differences-in-differences score (`dd`, `superadditive_iff_dd_pos`). The
+simplest reductionist theory, on which a dependency cost and a structure cost add, predicts
+additivity and so no island effect (`dd_linear`). The resource-limitation theory of
+[kluender-kutas-1993] adds an overload penalty when the two processes, deployed
+simultaneously, exceed a limited capacity, so its interaction is the penalty
+(`dd_resourceLimitation`), decreasing in capacity and vanishing once capacity suffices
+(`dd_resourceLimitation_antitone`, `dd_resourceLimitation_eq_zero`); a grammatical theory
+penalizes the island-violating sentence alone, so its interaction is the constraint's penalty
+whatever the capacity (`dd_grammatical`). The two theories part on whether the interaction
+covaries with working-memory capacity across speakers, the prediction the paper tests.
 
-Contract types for the **factorial acceptability-judgment** experimental
-paradigm: formal/experimental-syntax studies that elicit sentence
-acceptability ratings across a factorial design to test categorical
-predictions of grammatical theory. The paradigm is theory-agnostic:
-it specifies *what kind of input the experiment provides* and *what
-shape of output a theory must produce*; bridge theorems in downstream
-`Studies/` files translate theory-native predictions into these types.
+## Implementation notes
 
-## Main declarations
+Ratings are values in an ordered field, one per cell of the design, as for a speaker's mean
+ratings; the score of the paper's (8) is the interaction contrast, and the linking hypothesis
+that costs lower acceptability is the sign convention of the models. The overload penalty is
+any function of capacity, with the theory's assumptions, that it is nonnegative, decreasing
+in capacity, and zero when capacity covers both costs, as hypotheses. The two experiments,
+over three hundred speakers on four island types, with seven-point and magnitude-estimation
+ratings and serial-recall and n-back measures of capacity, found no relation between
+capacity and the interaction and no structure cost for complex NP and subject islands; the
+results and their resampling analyses are not formalized.
 
-* `FactorialCondition`: a typed cell in a 2-factor factorial design,
-  generic over the factor types.
-* `DDResult`: a difference-in-differences score (the Maxwell & Delaney
-  2003 computation [sprouse-et-al-2012] use as the standard test of
-  island effects), stored as ℚ for exact arithmetic.
-* `AccountPredictions`: an n-cell prediction tuple from a theoretical
-  account, with a decidable `Matches` comparator.
-* `SentencePair.toFactorial`: the pre-experimental minimal-pair datum
-  (`Linglib/Processing/Acceptability/MinimalPairs.lean`) as the degenerate 1×2 case of
-  a factorial design.
+## References
 
-## Out of scope
-
-- Statistical-model specifications (LME formulae, contrast coding,
-  random-effect structures) — analysis-pipeline detail
-- Stimulus norming details (filler ratings, balancing constraints) —
-  study-internal methodology
-- Participant-population metadata (L1, age, dialect) — study metadata
-- Raw rating scales / z-score transformations — measurement detail
+* [sprouse-et-al-2012]
+* [kluender-kutas-1993]
+* [hofmeister-sag-2010]
+* [sprouse-2007]
 -/
 
 namespace SprouseEtAl2012
 
-open Data.Examples Processing.MinimalPairs
-open Processing.MinimalPairs
+/-- The structure factor: whether the sentence contains an island structure. -/
+inductive Structure
+  | nonisland | island
+  deriving DecidableEq, Repr
 
-/-! ### Factorial conditions -/
+/-- The gap-position factor: whether the dependency ends in the matrix clause or in the
+embedded clause. -/
+inductive GapPosition
+  | matrix | embedded
+  deriving DecidableEq, Repr
 
-/-- A typed cell in a 2-factor factorial design ([sprouse-2007]: §2;
-    [sprouse-et-al-2012]: §2.1).
+/-- The ratings of a 2 × 2 factorial design (the paper's (5)): one rating per structure and gap
+position. -/
+abbrev Ratings (α : Type*) := Structure → GapPosition → α
 
-    Generic over the two factor types so that the same machinery
-    accepts any 2×2/2×3/3×3 design. The `sentence` field carries the
-    actual stimulus (verbatim from the paper); `label` is the
-    experiment's printed condition name. -/
-structure FactorialCondition (F1 F2 : Type) where
-  /-- Condition label as printed in the paper (e.g. "WhHell-Situ"). -/
-  label : String
-  /-- Level of the first factor. -/
-  level1 : F1
-  /-- Level of the second factor. -/
-  level2 : F2
-  /-- Verbatim stimulus sentence. -/
-  sentence : String
-  deriving Repr
+variable {α : Type*} [Field α] [LinearOrder α] [IsStrictOrderedRing α]
 
-/-! ### Difference-in-differences scores -/
+/-- The dependency-length effect: the drop from a matrix to an embedded gap in nonisland
+structures. -/
+def lengthEffect (r : Ratings α) : α := r .nonisland .matrix - r .nonisland .embedded
 
-/-- A difference-in-differences (DD) score from a 2×2 factorial design,
-    using the Maxwell & Delaney (2003) computation: DD = D2 − D1, where
-    D1 and D2 are the two main-factor differences. A positive DD reflects
-    a **superadditive interaction** — a penalty above and beyond the sum
-    of the two main effects. [sprouse-et-al-2012]'s standard test of
-    island effects in experimental syntax.
+/-- The island-structure effect: the drop from a nonisland to an island structure with a
+matrix gap. -/
+def structureEffect (r : Ratings α) : α := r .nonisland .matrix - r .island .matrix
 
-    Stored as ℚ rather than `Float` to respect linglib's exact-arithmetic
-    discipline. The `interactionSignificant` flag records the linear
-    mixed-effects model's interaction-term p-value (typically p < 0.05). -/
-structure DDResult where
-  /-- Description of the two-factor contrast (e.g.
-      "in-situ vs full movement"). -/
-  comparison : String
-  /-- DD score. Positive → superadditive interaction; ≈ 0 → additive. -/
-  dd : ℚ
-  /-- Did the LME model's interaction term reach significance? -/
-  interactionSignificant : Bool
-  deriving Repr
+/-- The differences-in-differences score (the paper's (8)): the island-structure drop with an
+embedded gap less the island-structure drop with a matrix gap. -/
+def dd (r : Ratings α) : α :=
+  (r .nonisland .embedded - r .island .embedded) - (r .nonisland .matrix - r .island .matrix)
 
-namespace DDResult
+/-- Additivity: the drop for the island-violating sentence is the sum of the two effects. -/
+def Additive (r : Ratings α) : Prop :=
+  lengthEffect r + structureEffect r = r .nonisland .matrix - r .island .embedded
 
-/-- A DD score is *superadditive* if positive — extra penalty beyond
-    main effects. -/
-def Superadditive (r : DDResult) : Prop := r.dd > 0
+/-- Superadditivity, the island effect: the drop for the island-violating sentence exceeds the
+sum of the two effects. -/
+def Superadditive (r : Ratings α) : Prop :=
+  lengthEffect r + structureEffect r < r .nonisland .matrix - r .island .embedded
 
-/-- A DD score is *additive* if ≈ 0 — no interaction beyond main effects. -/
-def Additive (r : DDResult) : Prop := r.dd = 0
+theorem additive_iff_dd_eq_zero (r : Ratings α) : Additive r ↔ dd r = 0 := by
+  unfold Additive lengthEffect structureEffect dd
+  constructor <;> intro h <;> linarith
 
-instance (r : DDResult) : Decidable r.Superadditive := by
-  unfold Superadditive; infer_instance
+/-- The score is positive exactly on a superadditive interaction. -/
+theorem superadditive_iff_dd_pos (r : Ratings α) : Superadditive r ↔ 0 < dd r := by
+  unfold Superadditive lengthEffect structureEffect dd
+  constructor <;> intro h <;> linarith
 
-instance (r : DDResult) : Decidable r.Additive := by
-  unfold Additive; infer_instance
+/-! ### The theories -/
 
-end DDResult
+/-- The simplest reductionist theory (the paper's (4)): a baseline lowered by the cost of a
+long-distance dependency and the cost of an island structure, each charged wherever
+present. -/
+def linear (base c₁ c₂ : α) : Ratings α := λ s g =>
+  base - (if g = .embedded then c₁ else 0) - (if s = .island then c₂ else 0)
 
-/-! ### Account predictions -/
+/-- The resource-limitation theory (the paper's (6)): the linear costs, and an overload
+penalty depending on capacity in the sentence deploying both processes at once. -/
+def resourceLimitation (base c₁ c₂ : α) (overload : α → α) (capacity : α) : Ratings α :=
+  λ s g => linear base c₁ c₂ s g -
+    (if s = .island ∧ g = .embedded then overload capacity else 0)
 
-/-- A theoretical account's predicted acceptability pattern across `n`
-    cells of a factorial design. Each cell is `True` (predicted acceptable)
-    or `False` (predicted unacceptable).
+/-- A grammatical theory: the linear costs, and a constraint penalty on the island-violating
+sentence alone. -/
+def grammatical (base c₁ c₂ penalty : α) : Ratings α :=
+  λ s g => linear base c₁ c₂ s g - (if s = .island ∧ g = .embedded then penalty else 0)
 
-    Used to compare a theory's predictions against the empirical pattern
-    via `Matches`. -/
-structure AccountPredictions (n : Nat) where
-  /-- Per-cell predicted acceptability. -/
-  cell : Fin n → Prop
-  /-- Each cell is decidable (so pattern comparison is decidable). -/
-  decCell : ∀ i, Decidable (cell i)
+omit [LinearOrder α] [IsStrictOrderedRing α] in
+theorem lengthEffect_linear (base c₁ c₂ : α) : lengthEffect (linear base c₁ c₂) = c₁ := by
+  simp [lengthEffect, linear]
 
-namespace AccountPredictions
+omit [LinearOrder α] [IsStrictOrderedRing α] in
+theorem structureEffect_linear (base c₁ c₂ : α) :
+    structureEffect (linear base c₁ c₂) = c₂ := by
+  simp [structureEffect, linear]
 
-/-- Two prediction tuples match iff they predict the same pattern in
-    every cell. -/
-def Matches {n : Nat} (a b : AccountPredictions n) : Prop :=
-  ∀ i : Fin n, a.cell i ↔ b.cell i
+omit [LinearOrder α] [IsStrictOrderedRing α] in
+/-- The simplest reductionist theory predicts additivity: no island effect. -/
+theorem dd_linear (base c₁ c₂ : α) : dd (linear base c₁ c₂) = 0 := by
+  simp [dd, linear]
 
-instance {n : Nat} (a b : AccountPredictions n) : Decidable (Matches a b) :=
-  have : ∀ i : Fin n, Decidable (a.cell i ↔ b.cell i) := fun i =>
-    have : Decidable (a.cell i) := a.decCell i
-    have : Decidable (b.cell i) := b.decCell i
-    inferInstance
-  Fintype.decidableForallFintype
+theorem additive_linear (base c₁ c₂ : α) : Additive (linear base c₁ c₂) :=
+  (additive_iff_dd_eq_zero _).2 (dd_linear base c₁ c₂)
 
-/-- Build a 4-cell `AccountPredictions` from four explicit Props (the
-    standard 2×2 case). Convenience for the most common factorial. -/
-def of2x2 (p₀₀ p₀₁ p₁₀ p₁₁ : Prop)
-    [Decidable p₀₀] [Decidable p₀₁] [Decidable p₁₀] [Decidable p₁₁] :
-    AccountPredictions 4 where
-  cell := fun i => match i with
-    | ⟨0, _⟩ => p₀₀
-    | ⟨1, _⟩ => p₀₁
-    | ⟨2, _⟩ => p₁₀
-    | ⟨3, _⟩ => p₁₁
-  decCell := fun i => match i with
-    | ⟨0, _⟩ => inferInstance
-    | ⟨1, _⟩ => inferInstance
-    | ⟨2, _⟩ => inferInstance
-    | ⟨3, _⟩ => inferInstance
+omit [LinearOrder α] [IsStrictOrderedRing α] in
+/-- The interaction under the resource-limitation theory is the overload penalty at the
+speaker's capacity. -/
+theorem dd_resourceLimitation (base c₁ c₂ : α) (overload : α → α) (capacity : α) :
+    dd (resourceLimitation base c₁ c₂ overload capacity) = overload capacity := by
+  simp [dd, resourceLimitation, linear]
+  ring
 
-/-- Build a 3-cell `AccountPredictions` (e.g., a 1×3 strategy contrast). -/
-def of3 (p₀ p₁ p₂ : Prop)
-    [Decidable p₀] [Decidable p₁] [Decidable p₂] :
-    AccountPredictions 3 where
-  cell := fun i => match i with
-    | ⟨0, _⟩ => p₀
-    | ⟨1, _⟩ => p₁
-    | ⟨2, _⟩ => p₂
-  decCell := fun i => match i with
-    | ⟨0, _⟩ => inferInstance
-    | ⟨1, _⟩ => inferInstance
-    | ⟨2, _⟩ => inferInstance
+/-- The resource-limitation theory predicts the observed superadditivity exactly where the
+penalty is positive. -/
+theorem superadditive_resourceLimitation_iff (base c₁ c₂ : α) (overload : α → α)
+    (capacity : α) :
+    Superadditive (resourceLimitation base c₁ c₂ overload capacity) ↔ 0 < overload capacity := by
+  rw [superadditive_iff_dd_pos, dd_resourceLimitation]
 
-end AccountPredictions
+/-- Limited capacity: with a penalty decreasing in capacity, the island effect decreases as
+capacity grows, the prediction of the paper's Figure 2a. -/
+theorem dd_resourceLimitation_antitone (base c₁ c₂ : α) {overload : α → α}
+    (h : Antitone overload) :
+    Antitone λ capacity => dd (resourceLimitation base c₁ c₂ overload capacity) := by
+  simpa only [dd_resourceLimitation] using h
 
-/-! ### Relation to introspective minimal pairs -/
+/-- Overload: a speaker whose capacity covers both costs shows no island effect. -/
+theorem dd_resourceLimitation_eq_zero (base c₁ c₂ : α) {overload : α → α}
+    (h : ∀ capacity, c₁ + c₂ ≤ capacity → overload capacity = 0) {capacity : α}
+    (hc : c₁ + c₂ ≤ capacity) : dd (resourceLimitation base c₁ c₂ overload capacity) = 0 := by
+  rw [dd_resourceLimitation, h capacity hc]
 
-/-- A `SentencePair` is structurally a 1×2 factorial design: one
-    `Unit`-valued first factor, a `Bool`-valued grammaticality factor,
-    one cell per Bool value. This makes the relationship between the
-    minimal-pair tradition and the factorial discipline explicit:
-    `SentencePair` is the degenerate case of `FactorialCondition Unit
-    Bool` lifted to a pair of cells. -/
-def SentencePair.toFactorial (sp : SentencePair) :
-    FactorialCondition Unit Bool × FactorialCondition Unit Bool :=
-  (⟨sp.description, (), true,  sp.grammatical⟩,
-   ⟨sp.description, (), false, sp.ungrammatical⟩)
+omit [LinearOrder α] [IsStrictOrderedRing α] in
+/-- The interaction under a grammatical theory is the constraint's penalty, the same at every
+capacity, the prediction of the paper's Figure 2b. -/
+theorem dd_grammatical (base c₁ c₂ penalty : α) :
+    dd (grammatical base c₁ c₂ penalty) = penalty := by
+  simp [dd, grammatical, linear]
+  ring
+
+omit [LinearOrder α] [IsStrictOrderedRing α] in
+/-- Both theories reproduce the observed pattern: the resource-limitation theory at a capacity
+the two costs exceed matches a grammatical theory whose penalty is the overload. -/
+theorem resourceLimitation_eq_grammatical (base c₁ c₂ : α) (overload : α → α) (capacity : α) :
+    resourceLimitation base c₁ c₂ overload capacity =
+      grammatical base c₁ c₂ (overload capacity) :=
+  rfl
 
 end SprouseEtAl2012
