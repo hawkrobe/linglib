@@ -1,414 +1,295 @@
 import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Logic.Natural.Basic
+import Mathlib.Order.WithBot
 
 /-!
-# Spector (2016): Worked examples of exhaustivity operators
+# Spector (2016): Comparing Exhaustivity Operators
 
-[spector-2016] "Comparing Exhaustivity Operators." *Semantics and
-Pragmatics* 9(11): 1–33.
+This file formalizes the worked cases of [spector-2016], which compares the exhaustivity
+operator based on minimal worlds, `exhMW`, with the operator of [fox-2007] based on innocent
+exclusion, `exhIE`. The paper's general results live in the substrate: the minimal-world
+operator entails the innocent-exclusion operator, an alternative is innocently excludable
+exactly when the minimal worlds falsify it, closing the alternatives under conjunction makes
+the two operators coincide (`exhMW_eq_exhIE_of_closedUnderInter`), and closing them under
+disjunction changes neither (`exhIE_disjClosure_eq`). Here are the illustrations and the
+practical consequences. With a single alternative the operators agree (`elementary`). For a
+disjunction with only its disjuncts as alternatives, the minimal-world operator returns the
+exclusive reading while innocent exclusion is vacuous (`exhMW_or`, `exhIE_or`); adding the
+conjunction as an alternative leaves the order on worlds, and so the minimal worlds,
+unchanged (`leALT_or_and_iff`) and makes innocent exclusion exclusive too (`exhIE_or_and`).
+The paper's shortcut for computing innocent exclusion over a large alternative set, running
+the minimal-world operator over the elementary propositions instead, is illustrated on
+*either Mary came, or both Peter and Sue did* (`exhMW_or_and_three`). Finally, a vacuous
+minimal-world operator makes innocent exclusion vacuous (`exhIE_eq_of_exhMW_eq`), which
+settles the infinite case of *there are at least n stars* against the alternatives *exactly
+m* and *at least m* for every `m` ([schwarz-2013]): every world with at least `n` stars, or
+infinitely many, is minimal (`exhMW_stars`, `exhIE_stars`).
 
-Concrete derivations of `exhMW`, `exhIE`, and their coincidence (Theorem 9)
-on the two classic Horn scales:
+## Implementation notes
 
-1. **some/all** scale: "Some students passed" → "Not all students passed"
-2. **or/and** scale: "John sang or danced" → exclusive reading
+The third operator the paper compares, which denies every non-entailed alternative, and the
+theorem that innocent exclusion over the alternatives of [sauerland-2004] equals the
+minimal-world operator over the elementary sentences are not formalized; the shortcut is
+shown by computing the minimal worlds directly. Independence of the disjuncts is the
+existence of a world verifying one disjunct alone, assumed only where a case needs it. The
+alternative sets of the illustrations are the paper's, without the prejacent, which the
+substrate's compatible sets carry separately.
 
-The abstract Spector framework lives in
-`Semantics/Exhaustification/InnocentExclusion.lean`. This file holds the
-empirical exemplars — small finite worlds, scale-specific alternative
-sets, and the per-scale `exhMW ≡ exhIE` corollaries — kept out of the
-theory file in line with the project's theory/Studies split.
+## References
 
-It also collects the [chierchia-2013] Maximize Strength worked
-examples (matrix-clause SI computed, DE-context SI suppressed) as a small
-table of `MaximizeStrengthExample` records.
-
-## Results
-
-- `exhMW_some_at_w1`, `exhMW_some_not_w3` — exhMW(some) excludes "all"
-- `exhMW_or_at_wSang`, `exhMW_or_not_wBoth` — exhMW(or) excludes "both"
-- `someAll_exhMW_iff_exhIE`, `orAnd_exhMW_iff_exhIE` — Theorem 9 instances
-- `maximizeStrengthExamples` — Maximize Strength contexts table
+* [spector-2016]
+* [fox-2007]
+* [sauerland-2004]
+* [schwarz-2013]
 -/
 
 namespace Spector2016
 
-open Exhaustification
-open NaturalLogic (ContextPolarity)
+open Exhaustification Set
 
--- ----------------------------------------------------------------------------
--- 1: SOME/ALL SCALE
--- ----------------------------------------------------------------------------
+variable {World : Type*}
 
-/-!
-### "Some students passed"
+/-! ### The elementary case -/
 
-- φ = "some students passed" (literal meaning: at least one)
-- ALT = {some, all}
-- Expected: exhMW(some) = "some but not all"
-
-World model: `Fin 4` represents how many students passed (0–3 of 3).
--/
-
-/-- Worlds for some/all example: number of students who passed (0 to 3). -/
-abbrev SomeAllWorld := Fin 4
-
-/-- "Some students passed" (at least one). -/
-def someStudents : Set SomeAllWorld := λ w => w.val ≥ 1
-
-/-- "All students passed" (all three). -/
-def allStudents : Set SomeAllWorld := λ w => w.val = 3
-
-/-- Alternative set: {some, all}. -/
-def someAllALT : Set (Set SomeAllWorld) := {someStudents, allStudents}
-
-/-- World where exactly 1 student passed. -/
-def w1 : SomeAllWorld := ⟨1, by omega⟩
-
-/-- World where all 3 students passed. -/
-def w3 : SomeAllWorld := ⟨3, by omega⟩
-
-theorem w1_satisfies_some : someStudents w1 := by
-  simp only [someStudents, w1]
-  decide
-
-theorem w1_not_all : ¬(allStudents w1) := by
-  simp only [allStudents, w1]
-  decide
-
-theorem w3_satisfies_both : someStudents w3 ∧ allStudents w3 := by
-  simp only [someStudents, allStudents, w3]
-  constructor <;> decide
-
-theorem w1_leALT_w3 : w1 ≤[someAllALT] w3 := by
-  intro a ha hau
-  simp only [someAllALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-  rcases ha with rfl | rfl
-  · simp only [someStudents]
-    decide
-  · simp only [allStudents, w1] at hau
-    exact absurd hau (by decide)
-
-theorem w3_not_leALT_w1 : ¬(w3 ≤[someAllALT] w1) := by
-  intro h
-  have hall_w1 := h allStudents (Or.inr rfl) (by simp only [allStudents, w3])
-  simp only [allStudents, w1] at hall_w1
-  exact absurd hall_w1 (by decide)
-
-theorem w1_ltALT_w3 : w1 <[someAllALT] w3 :=
-  ⟨w1_leALT_w3, w3_not_leALT_w1⟩
-
-theorem w1_minimal_some : IsMinimal someAllALT someStudents w1 := by
+/-- With one alternative some prejacent world falsifies, the minimal worlds are the
+prejacent worlds falsifying it. -/
+theorem exhMW_pair {φ ψ : Set World} (hne : (φ \ ψ).Nonempty) : exhMW {φ, ψ} φ = φ \ ψ := by
+  obtain ⟨w, hwφ, hwψ⟩ := hne
+  ext u
   constructor
-  · exact w1_satisfies_some
-  · intro ⟨v, hv_some, hv_lt_w1⟩
-    obtain ⟨_, hw1_not_le⟩ := hv_lt_w1
-    apply hw1_not_le
-    intro a ha haw1
-    simp only [someAllALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+  · rintro ⟨hu, hmin⟩
+    refine ⟨hu, λ hψu => hmin ⟨w, hwφ, λ a ha haw => ?_, λ h => hwψ (h ψ (Or.inr rfl) hψu)⟩⟩
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
     rcases ha with rfl | rfl
-    · exact hv_some
-    · simp only [allStudents, w1] at haw1
-      exact absurd haw1 (by decide)
+    · exact hu
+    · exact absurd haw hwψ
+  · rintro ⟨hu, hψu⟩
+    refine ⟨hu, ?_⟩
+    rintro ⟨v, hv, -, hnle⟩
+    refine hnle λ a ha hau => ?_
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+    rcases ha with rfl | rfl
+    · exact hv
+    · exact absurd hau hψu
 
-theorem w3_not_minimal_some : ¬IsMinimal someAllALT someStudents w3 := by
-  intro ⟨_, hmin⟩
-  apply hmin
-  exact ⟨w1, w1_satisfies_some, w1_ltALT_w3⟩
+/-- The elementary case: both operators deny the single alternative. -/
+theorem elementary {φ ψ : Set World} (hne : (φ \ ψ).Nonempty) :
+    exhMW {φ, ψ} φ = φ \ ψ ∧ exhIE {φ, ψ} φ = φ \ ψ :=
+  ⟨exhMW_pair hne, exhIE_pair_sdiff φ hne⟩
 
-/-- exhMW(some) holds at w=1 — the scalar implicature "some but not all". -/
-theorem exhMW_some_at_w1 : exhMW someAllALT someStudents w1 :=
-  w1_minimal_some
+/-! ### Disjunction with and without a conjunctive alternative -/
 
-/-- exhMW(some) excludes the "all" world. -/
-theorem exhMW_some_not_w3 : ¬exhMW someAllALT someStudents w3 := by
-  intro ⟨_, hmin⟩
-  apply hmin
-  exact ⟨w1, w1_satisfies_some, w1_ltALT_w3⟩
+variable {A B : Set World}
 
--- ----------------------------------------------------------------------------
--- 2: OR/AND SCALE (EXCLUSIVE DISJUNCTION)
--- ----------------------------------------------------------------------------
-
-/-!
-### "John sang or danced"
-
-- World = four possibilities: neither, only sang, only danced, both
-- φ = "sang or danced" (inclusive)
-- ALT = {or, and}
-- Expected: exhMW(or) = "or but not both" (exclusive reading)
--/
-
-/-- Four worlds for or/and example. -/
-inductive OrAndWorld where
-  | neither
-  | onlySang
-  | onlyDanced
-  | both
-  deriving DecidableEq, Repr
-
-def sang : Set OrAndWorld
-  | .neither => False
-  | .onlySang => True
-  | .onlyDanced => False
-  | .both => True
-
-def danced : Set OrAndWorld
-  | .neither => False
-  | .onlySang => False
-  | .onlyDanced => True
-  | .both => True
-
-def sangOrDanced : Set OrAndWorld := λ w => sang w ∨ danced w
-
-def sangAndDanced : Set OrAndWorld := λ w => sang w ∧ danced w
-
-def orAndALT : Set (Set OrAndWorld) := {sangOrDanced, sangAndDanced}
-
-def wSang : OrAndWorld := .onlySang
-
-def wBoth : OrAndWorld := .both
-
-theorem wSang_satisfies_or : sangOrDanced wSang := by
-  simp only [sangOrDanced, sang, danced, wSang]
-  left; trivial
-
-theorem wSang_not_and : ¬(sangAndDanced wSang) := by
-  simp only [sangAndDanced, sang, danced, wSang]
-  intro ⟨_, h⟩; exact h
-
-theorem wBoth_satisfies_both : sangOrDanced wBoth ∧ sangAndDanced wBoth := by
-  simp only [sangOrDanced, sangAndDanced, sang, danced, wBoth]
-  exact ⟨Or.inl trivial, ⟨trivial, trivial⟩⟩
-
-theorem wSang_leALT_wBoth : wSang ≤[orAndALT] wBoth := by
-  intro a ha hau
-  simp only [orAndALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-  rcases ha with rfl | rfl
-  · exact wBoth_satisfies_both.1
-  · exact absurd hau wSang_not_and
-
-theorem wBoth_not_leALT_wSang : ¬(wBoth ≤[orAndALT] wSang) := by
-  intro h
-  have := h sangAndDanced (Or.inr rfl) wBoth_satisfies_both.2
-  exact wSang_not_and this
-
-theorem wSang_ltALT_wBoth : wSang <[orAndALT] wBoth :=
-  ⟨wSang_leALT_wBoth, wBoth_not_leALT_wSang⟩
-
-theorem wSang_minimal : IsMinimal orAndALT sangOrDanced wSang := by
+/-- Against the disjuncts alone, the minimal worlds of a disjunction are those verifying
+exactly one disjunct: the exclusive reading. -/
+theorem exhMW_or (hA : (A \ B).Nonempty) : exhMW {A, B} (A ∪ B) = (A \ B) ∪ (B \ A) := by
+  obtain ⟨w, hwA, hwB⟩ := hA
+  ext u
   constructor
-  · exact wSang_satisfies_or
-  · intro ⟨v, hv_or, hv_lt⟩
-    obtain ⟨_, hwSang_not_le⟩ := hv_lt
-    apply hwSang_not_le
-    intro a ha ha_wSang
-    simp only [orAndALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+  · rintro ⟨hu, hmin⟩
+    by_cases hAu : u ∈ A
+    · refine Or.inl ⟨hAu, λ hBu => hmin ⟨w, Or.inl hwA, λ a ha haw => ?_, λ h => ?_⟩⟩
+      · simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+        rcases ha with rfl | rfl
+        · exact hAu
+        · exact absurd haw hwB
+      · exact hwB (h B (Or.inr rfl) hBu)
+    · rcases hu with hAu' | hBu
+      · exact absurd hAu' hAu
+      · exact Or.inr ⟨hBu, hAu⟩
+  · rintro (⟨hAu, hBu⟩ | ⟨hBu, hAu⟩)
+    · refine ⟨Or.inl hAu, ?_⟩
+      rintro ⟨v, hv, hle, hnle⟩
+      have hAv : v ∈ A := by
+        rcases hv with hAv | hBv
+        · exact hAv
+        · exact absurd (hle B (Or.inr rfl) hBv) hBu
+      refine hnle λ a ha hau => ?_
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+      rcases ha with rfl | rfl
+      · exact hAv
+      · exact absurd hau hBu
+    · refine ⟨Or.inr hBu, ?_⟩
+      rintro ⟨v, hv, hle, hnle⟩
+      have hBv : v ∈ B := by
+        rcases hv with hAv | hBv
+        · exact absurd (hle A (Or.inl rfl) hAv) hAu
+        · exact hBv
+      refine hnle λ a ha hau => ?_
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+      rcases ha with rfl | rfl
+      · exact absurd hau hAu
+      · exact hBv
+
+/-- Against the disjuncts alone, innocent exclusion is vacuous: each disjunct is verified by
+some minimal world, so neither is innocently excludable. -/
+theorem exhIE_or (hA : (A \ B).Nonempty) (hB : (B \ A).Nonempty) :
+    exhIE {A, B} (A ∪ B) = A ∪ B := by
+  rw [exhIE_eq_phi_and_exhMW_negated {A, B} (A ∪ B) (Set.toFinite _), exhMW_or hA]
+  obtain ⟨w, hwA, hwB⟩ := hA
+  obtain ⟨w', hw'B, hw'A⟩ := hB
+  ext u
+  refine ⟨λ h => h.1, λ hu => ⟨hu, λ a ha hsub => ?_⟩⟩
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+  rcases ha with rfl | rfl
+  · exact absurd hwA (hsub (Or.inl ⟨hwA, hwB⟩))
+  · exact absurd hw'B (hsub (Or.inr ⟨hw'B, hw'A⟩))
+
+/-- Minimal worlds depend only on the preorder the alternatives induce. -/
+theorem exhMW_congr {ALT ALT' : Set (Set World)} (φ : Set World)
+    (h : ∀ u v, (u ≤[ALT] v) ↔ (u ≤[ALT'] v)) : exhMW ALT φ = exhMW ALT' φ := by
+  ext u
+  show (φ u ∧ ¬ ∃ v, φ v ∧ v <[ALT] u) ↔ (φ u ∧ ¬ ∃ v, φ v ∧ v <[ALT'] u)
+  simp only [ltALT, h]
+
+/-- Adding the conjunction as an alternative leaves the order on worlds unchanged: it holds
+exactly where both disjuncts do. -/
+theorem leALT_or_and_iff (u v : World) : (u ≤[{A, B, A ∩ B}] v) ↔ (u ≤[{A, B}] v) := by
+  constructor
+  · intro h a ha
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
     rcases ha with rfl | rfl
-    · exact hv_or
-    · exact absurd ha_wSang wSang_not_and
+    · exact h _ (Or.inl rfl)
+    · exact h _ (Or.inr (Or.inl rfl))
+  · intro h a ha
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+    rcases ha with rfl | rfl | rfl
+    · exact h _ (Or.inl rfl)
+    · exact h _ (Or.inr rfl)
+    · exact λ ⟨hAu, hBu⟩ => ⟨h _ (Or.inl rfl) hAu, h _ (Or.inr rfl) hBu⟩
 
-/-- exhMW(or) at wSang: exclusive reading. -/
-theorem exhMW_or_at_wSang : exhMW orAndALT sangOrDanced wSang :=
-  wSang_minimal
+/-- With the conjunction among the alternatives the minimal worlds are as before. -/
+theorem exhMW_or_and (hA : (A \ B).Nonempty) :
+    exhMW {A, B, A ∩ B} (A ∪ B) = (A \ B) ∪ (B \ A) :=
+  (exhMW_congr (A ∪ B) (leALT_or_and_iff (A := A) (B := B))).trans (exhMW_or hA)
 
-/-- exhMW(or) excludes the "both" world. -/
-theorem exhMW_or_not_wBoth : ¬exhMW orAndALT sangOrDanced wBoth := by
-  intro ⟨_, hmin⟩
-  apply hmin
-  exact ⟨wSang, wSang_satisfies_or, wSang_ltALT_wBoth⟩
+/-- With the conjunction among the alternatives innocent exclusion denies it, and the two
+operators agree on the exclusive reading. -/
+theorem exhIE_or_and (hA : (A \ B).Nonempty) (hB : (B \ A).Nonempty) :
+    exhIE {A, B, A ∩ B} (A ∪ B) = (A \ B) ∪ (B \ A) := by
+  rw [exhIE_eq_phi_and_exhMW_negated {A, B, A ∩ B} (A ∪ B) (Set.toFinite _), exhMW_or_and hA]
+  obtain ⟨w, hwA, hwB⟩ := hA
+  obtain ⟨w', hw'B, hw'A⟩ := hB
+  ext u
+  constructor
+  · rintro ⟨hu, h⟩
+    have hnot : u ∉ A ∩ B := h (A ∩ B) (Or.inr (Or.inr rfl)) λ x hx ⟨hxA, hxB⟩ => by
+      rcases hx with ⟨-, hx⟩ | ⟨-, hx⟩
+      · exact hx hxB
+      · exact hx hxA
+    rcases hu with hAu | hBu
+    · exact Or.inl ⟨hAu, λ hBu => hnot ⟨hAu, hBu⟩⟩
+    · exact Or.inr ⟨hBu, λ hAu => hnot ⟨hAu, hBu⟩⟩
+  · intro hu
+    refine ⟨?_, λ a ha hsub => ?_⟩
+    · rcases hu with ⟨hAu, -⟩ | ⟨hBu, -⟩
+      · exact Or.inl hAu
+      · exact Or.inr hBu
+    · simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+      rcases ha with rfl | rfl | rfl
+      · exact absurd hwA (hsub (Or.inl ⟨hwA, hwB⟩))
+      · exact absurd hw'B (hsub (Or.inr ⟨hw'B, hw'A⟩))
+      · rintro ⟨hAu, hBu⟩
+        rcases hu with ⟨-, h⟩ | ⟨-, h⟩
+        · exact h hBu
+        · exact h hAu
 
--- ----------------------------------------------------------------------------
--- 3: APPLYING THEOREM 9 (exhMW ≡ exhIE) ON HORN SCALES
--- ----------------------------------------------------------------------------
+/-! ### The shortcut -/
 
-/-!
-For a two-element Horn scale {weak, strong} where strong ⊆ weak,
-exhMW ≡ exhIE without invoking the full closure-under-conjunction
-hypothesis: at any exhIE world, the stronger alternative is false,
-which makes the world minimal.
--/
+variable {m p s : Set World}
 
-theorem allStudents_entails_someStudents : allStudents ⊆ someStudents := by
-  intro w h
-  show w.val ≥ 1
-  change w.val = 3 at h
-  omega
+/-- *Either Mary came, or both Peter and Sue did*: over the elementary alternatives the
+minimal worlds are those where only Mary came and those where Peter and Sue came without
+Mary, which by the paper's results is what innocent exclusion returns over the full
+alternative set. -/
+theorem exhMW_or_and_three (hm : ∃ w, w ∈ m ∧ w ∉ p ∧ w ∉ s) :
+    exhMW {m, p, s} (m ∪ (p ∩ s)) = (m \ (p ∪ s)) ∪ ((p ∩ s) \ m) := by
+  obtain ⟨w, hwm, hwp, hws⟩ := hm
+  ext u
+  constructor
+  · rintro ⟨hu, hmin⟩
+    by_cases hmu : u ∈ m
+    · refine Or.inl ⟨hmu, λ hpsu => hmin ⟨w, Or.inl hwm, λ a ha haw => ?_, λ h => ?_⟩⟩
+      · simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+        rcases ha with rfl | rfl | rfl
+        · exact hmu
+        · exact absurd haw hwp
+        · exact absurd haw hws
+      · rcases hpsu with hpu | hsu
+        · exact hwp (h p (Or.inr (Or.inl rfl)) hpu)
+        · exact hws (h s (Or.inr (Or.inr rfl)) hsu)
+    · rcases hu with hmu' | hpsu
+      · exact absurd hmu' hmu
+      · exact Or.inr ⟨hpsu, hmu⟩
+  · rintro (⟨hmu, hpsu⟩ | ⟨⟨hpu, hsu⟩, hmu⟩)
+    · refine ⟨Or.inl hmu, ?_⟩
+      rintro ⟨v, hv, hle, hnle⟩
+      have hmv : v ∈ m := by
+        rcases hv with hmv | ⟨hpv, -⟩
+        · exact hmv
+        · exact (hpsu (Or.inl (hle p (Or.inr (Or.inl rfl)) hpv))).elim
+      refine hnle λ a ha hau => ?_
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+      rcases ha with rfl | rfl | rfl
+      · exact hmv
+      · exact (hpsu (Or.inl hau)).elim
+      · exact (hpsu (Or.inr hau)).elim
+    · refine ⟨Or.inr ⟨hpu, hsu⟩, ?_⟩
+      rintro ⟨v, hv, hle, hnle⟩
+      have hpsv : v ∈ p ∧ v ∈ s := by
+        rcases hv with hmv | hpsv
+        · exact absurd (hle m (Or.inl rfl) hmv) hmu
+        · exact hpsv
+      refine hnle λ a ha hau => ?_
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+      rcases ha with rfl | rfl | rfl
+      · exact absurd hau hmu
+      · exact hpsv.1
+      · exact hpsv.2
 
-/-- Per-scale Theorem 9 instance: some/all. -/
-theorem someAll_exhMW_iff_exhIE :
-    exhMW someAllALT someStudents = exhIE someAllALT someStudents := by
-  apply Set.Subset.antisymm
-  · exact exhMW_subset_exhIE someAllALT someStudents
-  · intro w hie
-    constructor
-    · have hsome_in_IE : someStudents ∈ IE someAllALT someStudents := by
-        intro E hE_mc
-        exact hE_mc.1.1
-      exact hie someStudents hsome_in_IE
-    · intro ⟨v, hv_some, hv_lt_w⟩
-      obtain ⟨_, hw_not_le_v⟩ := hv_lt_w
-      simp only [leALT] at hw_not_le_v
-      push Not at hw_not_le_v
-      obtain ⟨a, ha_ALT, ha_w, hna_v⟩ := hw_not_le_v
-      simp only [someAllALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha_ALT
-      rcases ha_ALT with rfl | rfl
-      · exact hna_v hv_some
-      · have hneg_all_in_IE : (allStudentsᶜ) ∈ IE someAllALT someStudents := by
-          intro E hE_mc
-          by_contra h_not_in
-          let E' := E ∪ {allStudentsᶜ}
-          have hcompat : IsCompatible someAllALT someStudents E' := by
-            obtain ⟨⟨hphi, hform, hcons⟩, _⟩ := hE_mc
-            refine ⟨Or.inl hphi, ?_, ?_⟩
-            · intro ψ hψ
-              rcases hψ with hψ_E | hψ_new
-              · exact hform ψ hψ_E
-              · simp only [Set.mem_singleton_iff] at hψ_new
-                exact Or.inr ⟨allStudents, Or.inr rfl, hψ_new⟩
-            · use w1
-              intro ψ hψ
-              rcases hψ with hψ_E | hψ_new
-              · rcases hform ψ hψ_E with rfl | ⟨a, ha, rfl⟩
-                · exact w1_satisfies_some
-                · simp only [someAllALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-                  rcases ha with rfl | rfl
-                  · exfalso
-                    obtain ⟨u, hu⟩ := hcons
-                    exact hu (someStudentsᶜ) hψ_E (hu someStudents hphi)
-                  · exact w1_not_all
-              · simp only [Set.mem_singleton_iff] at hψ_new
-                rw [hψ_new]
-                exact w1_not_all
-          have hsubset : E ⊆ E' := Set.subset_union_left
-          have hE'_not_sub_E : ¬(E' ⊆ E) := by
-            intro hle
-            apply h_not_in
-            exact hle (Set.mem_union_right E (Set.mem_singleton _))
-          exact hE'_not_sub_E (hE_mc.2 E' hcompat hsubset)
-        have hna_w : ¬(allStudents w) := hie (allStudentsᶜ) hneg_all_in_IE
-        exact hna_w ha_w
+/-! ### Infinitely many alternatives -/
 
-theorem sangAndDanced_entails_sangOrDanced : sangAndDanced ⊆ sangOrDanced := by
-  intro w h
-  change sang w ∧ danced w at h
-  exact Or.inl h.1
+/-- A vacuous minimal-world operator makes innocent exclusion vacuous. -/
+theorem exhIE_eq_of_exhMW_eq {ALT : Set (Set World)} {φ : Set World}
+    (h : exhMW ALT φ = φ) : exhIE ALT φ = φ :=
+  Set.Subset.antisymm (exhIE_subset ALT φ)
+    λ u hu => exhMW_subset_exhIE ALT φ (by rw [h]; exact hu)
 
-/-- Per-scale Theorem 9 instance: or/and. -/
-theorem orAnd_exhMW_iff_exhIE :
-    exhMW orAndALT sangOrDanced = exhIE orAndALT sangOrDanced := by
-  apply Set.Subset.antisymm
-  · exact exhMW_subset_exhIE orAndALT sangOrDanced
-  · intro w hie
-    constructor
-    · have hor_in_IE : sangOrDanced ∈ IE orAndALT sangOrDanced := λ E hE => hE.1.1
-      exact hie sangOrDanced hor_in_IE
-    · intro ⟨v, hv_or, hv_lt_w⟩
-      obtain ⟨_, hw_not_le_v⟩ := hv_lt_w
-      simp only [leALT] at hw_not_le_v
-      push Not at hw_not_le_v
-      obtain ⟨a, ha_ALT, ha_w, hna_v⟩ := hw_not_le_v
-      simp only [orAndALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha_ALT
-      rcases ha_ALT with rfl | rfl
-      · exact hna_v hv_or
-      · have hneg_and_in_IE : (sangAndDancedᶜ) ∈ IE orAndALT sangOrDanced := by
-          intro E hE_mc
-          by_contra h_not_in
-          let E' := E ∪ {sangAndDancedᶜ}
-          have hcompat : IsCompatible orAndALT sangOrDanced E' := by
-            obtain ⟨⟨hphi, hform, hcons⟩, _⟩ := hE_mc
-            refine ⟨Or.inl hphi, ?_, ?_⟩
-            · intro ψ hψ
-              rcases hψ with hψ_E | hψ_new
-              · exact hform ψ hψ_E
-              · simp only [Set.mem_singleton_iff] at hψ_new
-                exact Or.inr ⟨sangAndDanced, Or.inr rfl, hψ_new⟩
-            · use wSang
-              intro ψ hψ
-              rcases hψ with hψ_E | hψ_new
-              · rcases hform ψ hψ_E with rfl | ⟨a, ha, rfl⟩
-                · exact wSang_satisfies_or
-                · simp only [orAndALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-                  rcases ha with rfl | rfl
-                  · exfalso
-                    obtain ⟨u, hu⟩ := hcons
-                    exact hu (sangOrDancedᶜ) hψ_E (hu sangOrDanced hphi)
-                  · exact wSang_not_and
-              · simp only [Set.mem_singleton_iff] at hψ_new
-                rw [hψ_new]
-                exact wSang_not_and
-          have hsubset : E ⊆ E' := Set.subset_union_left
-          have hE'_not_sub_E : ¬(E' ⊆ E) := by
-            intro hle
-            apply h_not_in
-            exact hle (Set.mem_union_right E (Set.mem_singleton _))
-          exact hE'_not_sub_E (hE_mc.2 E' hcompat hsubset)
-        have hna_w : ¬(sangAndDanced w) := hie (sangAndDancedᶜ) hneg_and_in_IE
-        exact hna_w ha_w
+/-- Worlds with a number of stars, or infinitely many. -/
+abbrev Stars := WithTop ℕ
 
-theorem exhIE_some_at_w1 : exhIE someAllALT someStudents w1 :=
-  someAll_exhMW_iff_exhIE.subset exhMW_some_at_w1
+/-- *There are exactly n stars*. -/
+def exactly (n : ℕ) : Set Stars := {w | w = n}
 
-theorem exhIE_some_not_w3 : ¬exhIE someAllALT someStudents w3 := by
-  intro h
-  exact exhMW_some_not_w3 (someAll_exhMW_iff_exhIE.symm.subset h)
+/-- *There are at least n stars*. -/
+def atLeast (n : ℕ) : Set Stars := {w | (n : Stars) ≤ w}
 
-theorem exhIE_or_at_wSang : exhIE orAndALT sangOrDanced wSang :=
-  orAnd_exhMW_iff_exhIE.subset exhMW_or_at_wSang
+/-- The alternatives of *at least n*: every *exactly m* and every *at least m*. -/
+def starsALT : Set (Set Stars) := range exactly ∪ range atLeast
 
-theorem exhIE_or_not_wBoth : ¬exhIE orAndALT sangOrDanced wBoth := by
-  intro h
-  exact exhMW_or_not_wBoth (orAnd_exhMW_iff_exhIE.symm.subset h)
+/-- No world verifies strictly fewer of these alternatives than another: *exactly n* holds
+only at the `n`-star world, and every *at least m* holds only at the world with infinitely
+many stars. -/
+theorem eq_of_leALT_stars {u v : Stars} (h : u ≤[starsALT] v) : u = v := by
+  induction u using WithTop.recTopCoe with
+  | top =>
+    induction v using WithTop.recTopCoe with
+    | top => rfl
+    | coe k =>
+      have := h (atLeast (k + 1)) (Or.inr ⟨k + 1, rfl⟩) le_top
+      exact absurd (WithTop.coe_le_coe.1 this) (by omega)
+  | coe n => exact (h (exactly n) (Or.inl ⟨n, rfl⟩) rfl).symm
 
--- ----------------------------------------------------------------------------
--- 4: MAXIMIZE STRENGTH EXAMPLES ([chierchia-2013])
--- ----------------------------------------------------------------------------
+/-- Every world verifying *at least n* is minimal, so the operator is vacuous. -/
+theorem exhMW_stars (n : ℕ) : exhMW starsALT (atLeast n) = atLeast n := by
+  refine Set.Subset.antisymm (exhMW_subset _ _) λ u hu => ⟨hu, ?_⟩
+  rintro ⟨v, -, hle, hnle⟩
+  have := eq_of_leALT_stars hle
+  subst this
+  exact hnle (leALT_refl _ _)
 
-/-!
-A small descriptive table of contexts illustrating [chierchia-2013]'s
-Maximize Strength predictions. The principle itself (`maximizeStrength`,
-`exh_in_ue_strengthens`, etc.) lives in `Operators.lean`.
-
-| Context | Polarity | SI computed? |
-|---------|----------|--------------|
-| Matrix clause | UE | yes |
-| Negation scope | DE | no |
-| Conditional antecedent | DE | no |
-| Universal restrictor | DE | no |
--/
-
-structure MaximizeStrengthExample where
-  description : String
-  contextType : ContextPolarity
-  siComputed : Bool
-  explanation : String
-  deriving Repr
-
-def ms_matrix_clause : MaximizeStrengthExample :=
-  { description := "John saw some students"
-  , contextType := .upward
-  , siComputed := true
-  , explanation := "UE context: SI strengthens assertion" }
-
-def ms_negation : MaximizeStrengthExample :=
-  { description := "John didn't see some students"
-  , contextType := .downward
-  , siComputed := false
-  , explanation := "DE context: SI would weaken to 'saw none or not all'" }
-
-def ms_antecedent : MaximizeStrengthExample :=
-  { description := "If John saw some students, he's happy"
-  , contextType := .downward
-  , siComputed := false
-  , explanation := "Conditional antecedent is DE: SI would weaken" }
-
-def ms_universal_restrictor : MaximizeStrengthExample :=
-  { description := "Everyone who saw some students is happy"
-  , contextType := .downward
-  , siComputed := false
-  , explanation := "Universal restrictor is DE: SI would weaken" }
-
-def maximizeStrengthExamples : List MaximizeStrengthExample :=
-  [ms_matrix_clause, ms_negation, ms_antecedent, ms_universal_restrictor]
+/-- And so is innocent exclusion, without computing a maximal compatible set. -/
+theorem exhIE_stars (n : ℕ) : exhIE starsALT (atLeast n) = atLeast n :=
+  exhIE_eq_of_exhMW_eq (exhMW_stars n)
 
 end Spector2016
