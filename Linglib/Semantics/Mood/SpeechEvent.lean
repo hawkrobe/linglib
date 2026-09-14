@@ -35,8 +35,8 @@ the targeted component.
 ## Implementation notes
 
 [speas-tenny-2003] grammaticalize exactly four speech acts
-(declarative, interrogative, imperative, quotative). `SpeechEvent`
-uses the library-wide five-way `Illocutionary` — no quotative;
+(declarative, interrogative, imperative, subjunctive). `SpeechEvent`
+uses the library-wide five-way `Illocutionary` — no subjunctive;
 promissive and exclamative are conjectural linglib extensions — and
 Hacquard gives content clauses only for declaratives and imperatives,
 so the inquisitive route induces the initial state. Binding height
