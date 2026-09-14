@@ -2,6 +2,7 @@ import Linglib.Syntax.Tree.Basic
 import Linglib.Semantics.Composition.Ty
 import Linglib.Semantics.Composition.Assignment
 import Linglib.Semantics.Composition.LexEntry
+import Linglib.Semantics.Denotation
 import Linglib.Semantics.Modification.Basic
 
 /-!
@@ -51,6 +52,41 @@ over its denotation domain. The default `M := Id` recovers the
 structure TypedDenot (E W : Type) (M : Type → Type := Id) (D : Type := ℝ) where
   ty : Ty
   val : M (Denot E W ty D)
+
+end Semantics.Composition.Tree
+
+namespace Semantics
+
+open Composition Composition.Tree Montague
+
+/-- Objects that denote in the Montague type system: a semantic type and an `M`-computation
+in the domain of that type. Every such object is a `TypedDenot`, hence a terminal for the
+composition engine. -/
+class Denotes.Typed (α : Type*) (E W : outParam Type) (M : outParam (Type → Type))
+    (D : outParam Type) where
+  /-- The object's semantic type. -/
+  ty : α → Ty
+  /-- The object's denotation in the domain of its type. -/
+  denote : (x : α) → M (Denot E W (ty x) D)
+
+instance {α : Type*} {E W : Type} {M : Type → Type} {D : Type} [Denotes.Typed α E W M D] :
+    Denotes α (TypedDenot E W M D) :=
+  ⟨λ x => ⟨Denotes.Typed.ty x, Denotes.Typed.denote x⟩⟩
+
+instance {E W : Type} {M : Type → Type} {D : Type} :
+    Denotes.Typed (LexEntry E W M D) E W M D :=
+  ⟨LexEntry.ty, LexEntry.denot⟩
+
+@[simp] theorem denote_lexEntry {E W : Type} {M : Type → Type} {D : Type}
+    (e : LexEntry E W M D) : ⟦e⟧ = (⟨e.ty, e.denot⟩ : TypedDenot E W M D) := rfl
+
+end Semantics
+
+namespace Semantics.Composition.Tree
+
+open Semantics.Composition
+open scoped Assignment
+open Semantics.Montague (Lexicon)
 
 /-- Capability for Predicate Abstraction under effect `M`: an
 **entity-distributor** commuting `M` over entity-indexed families.

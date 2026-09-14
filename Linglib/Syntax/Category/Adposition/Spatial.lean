@@ -1,5 +1,6 @@
 import Linglib.Syntax.Category.Adposition.Basic
 import Linglib.Syntax.Case.Order
+import Linglib.Semantics.Denotation
 
 /-!
 # Spatial adpositions: the cartographic refinement
@@ -69,6 +70,8 @@ structure SpatialReading where
     same direction share one meaning, two exponences. -/
 def SpatialReading.denote (r : SpatialReading) : Case.PathProfile :=
   r.direction.denote
+
+instance : Semantics.Denotes SpatialReading Case.PathProfile := ⟨SpatialReading.denote⟩
 
 /-! ### Smoke tests — the differentia and the reuse -/
 

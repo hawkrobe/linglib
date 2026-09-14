@@ -2,6 +2,7 @@ import Linglib.Semantics.Definiteness.Interpret
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Possession.Basic
+import Linglib.Semantics.Denotation
 
 /-!
 # The denotation of a determiner
@@ -73,6 +74,10 @@ noncomputable def Description.denote (k : Description E W) :
     Nominal (Assignment E × SitAssignment W) PUnit E where
   presup := fun _ _ => True
   selector := fun gp _ => interpret k gp.1 gp.2
+
+noncomputable instance :
+    Semantics.Denotes (Description E W) (Nominal (Assignment E × SitAssignment W) PUnit E) :=
+  ⟨Description.denote⟩
 
 /-- The by-construction identity: a description's selector *is* `interpret`. -/
 @[simp]

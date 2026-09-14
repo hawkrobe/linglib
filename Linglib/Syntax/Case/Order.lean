@@ -2,6 +2,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Order.Interval.Finset.Fin
 import Linglib.Core.Order.PartialRank
 import Linglib.Syntax.Case.Basic
+import Linglib.Semantics.Denotation
 /-!
 # Containment orders on Case
 [caha-2009] [pantcheva-2011] [mcfadden-2018]
@@ -291,6 +292,8 @@ def PathDir.denote : PathDir → PathProfile
   | .goal   => ⟨false, false, true⟩      -- −−+ : transition INTO (ex. 5)
   | .source => ⟨true, false, false⟩      -- +−− : reversal of Goal (§5.4)
   | .route  => ⟨false, true, false⟩      -- −+− : through the region (ex. 10)
+
+instance : Semantics.Denotes PathDir PathProfile := ⟨PathDir.denote⟩
 
 /-- **Source is the reversal of Goal** ([pantcheva-2011] §5.4): the Source
     head reverses the Goal path. This *grounds* the `*A&¬A` syncretism
