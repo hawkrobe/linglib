@@ -344,7 +344,16 @@ def preceder : FrenchVerbEntry where
   objectEntailments := some minimalParticipantProfile
   vendlerClass := some .state
 
--- abandonner — 'abandon'. Telic: par; atelic: par/de.
+/-- Neglecting subject: V+S+IE (3 P-Ag). Used for the atelic, stative reading of
+*abandonner* and *délaisser* ('neglect'): the subject brings about no change. -/
+def neglectSubjectProfile : EntailmentProfile where
+  volition := true; sentience := true; causation := false
+  movement := false; independentExistence := true
+  changeOfState := false; incrementalTheme := false
+  causallyAffected := false; stationary := false
+  dependentExistence := false
+
+-- abandonner — 'abandon' (telic reading): par.
 def abandonner : FrenchVerbEntry where
   form := "abandonner"; form3sg := "abandonne"; formPasse := "abandonna"
   formPartPasse := "abandonné"; formPartPres := "abandonnant"
@@ -353,7 +362,17 @@ def abandonner : FrenchVerbEntry where
   objectEntailments := some protoTransObjectProfile
   vendlerClass := some .accomplishment
 
--- délaisser — 'abandon, neglect'. Similar to abandonner.
+-- abandonner — 'neglect' (atelic, stative reading): par/de ([authier-revuz-1972]).
+def abandonnerStat : FrenchVerbEntry where
+  form := "abandonner"; form3sg := "abandonne"; formPasse := "abandonna"
+  formPartPasse := "abandonné"; formPartPres := "abandonnant"
+  frames := [Frame.np]
+  senseTag := .stative
+  subjectEntailments := some neglectSubjectProfile
+  objectEntailments := some minimalParticipantProfile
+  vendlerClass := some .state
+
+-- délaisser — 'abandon' (telic reading): par.
 def delaisser : FrenchVerbEntry where
   form := "délaisser"; form3sg := "délaisse"; formPasse := "délaissa"
   formPartPasse := "délaissé"; formPartPres := "délaissant"
@@ -362,6 +381,16 @@ def delaisser : FrenchVerbEntry where
   objectEntailments := some protoTransObjectProfile
   vendlerClass := some .accomplishment
 
+-- délaisser — 'neglect' (atelic, stative reading): par/de.
+def delaisserStat : FrenchVerbEntry where
+  form := "délaisser"; form3sg := "délaisse"; formPasse := "délaissa"
+  formPartPasse := "délaissé"; formPartPres := "délaissant"
+  frames := [Frame.np]
+  senseTag := .stative
+  subjectEntailments := some neglectSubjectProfile
+  objectEntailments := some minimalParticipantProfile
+  vendlerClass := some .state
+
 def allVerbs : List FrenchVerbEntry :=
   [faire, laisser,
    brunir, noircir, palir, rajeunir, rougir,
@@ -369,7 +398,7 @@ def allVerbs : List FrenchVerbEntry :=
    laver, ecrire, construire, tuer,
    aimer, adorer, respecter, accompagner,
    suivreDyn, suivreStat, preceder,
-   abandonner, delaisser]
+   abandonner, abandonnerStat, delaisser, delaisserStat]
 
 def lookup (form : String) : Option FrenchVerbEntry :=
   allVerbs.find? (·.form == form)
