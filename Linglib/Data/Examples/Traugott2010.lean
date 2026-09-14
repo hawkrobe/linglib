@@ -1,0 +1,324 @@
+import Linglib.Data.Examples.Schema
+
+/-!
+# `Traugott2010` — typed example data
+
+Auto-generated from `Linglib/Data/Examples/Traugott2010.json` by
+`scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
+the generator. Consumers (the paper's study file, test-suite hubs) import
+this module; declarations live in `namespace Traugott2010.Examples`.
+-/
+
+namespace Traugott2010.Examples
+
+open Data.Examples
+
+def ex_5a : LinguisticExample :=
+  { id := "traugott2010_5a"
+    source := ⟨"traugott-2010", "(5a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "I am going to visit the prisoner. Fare you well."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "I am going to visit the prisoner. Fare you well."
+    context := "1604, Shakespeare, Measure for Measure III.iii."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "be going to"), ("stage", "motion with intent"), ("level", "nonSubjective"), ("century", "16")]
+    comment := "Subjectification of *be going to*: motion with intent to act, before the intentional non-motion (5b) and raising (5c) uses."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_5b : LinguisticExample :=
+  { id := "traugott2010_5b"
+    source := ⟨"traugott-2010", "(5b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "I ha' forgot what I was going to say to you."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "I have forgotten what I was going to say to you."
+    context := "1663, Cowley, Cutter of Coleman Street V.ii."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "be going to"), ("stage", "intention without motion"), ("level", "nonSubjective"), ("century", "17")]
+    comment := ""
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_5c : LinguisticExample :=
+  { id := "traugott2010_5c"
+    source := ⟨"traugott-2010", "(5c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "I am afraid there is going to be such a calm among us, that we must be forced to invent some mock Quarrels."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "I am afraid there is going to be such a calm among us, that we must be forced to invent some mock Quarrels."
+    context := "1725, Odingsells, The Bath Unmask'd V.iii."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "be going to"), ("stage", "raising"), ("level", "subjective"), ("century", "18")]
+    comment := "The raising construction expresses the speaker's assessment of the future: the subjectified polysemy."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_6 : LinguisticExample :=
+  { id := "traugott2010_6"
+    source := ⟨"traugott-2010", "(6)"⟩
+    reportedIn := none
+    language := "nucl1643"
+    primaryText := "saburahu"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "wait (for an occasion or order) in a specific location"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := [("Old Japanese: wait in a specific location (non-honorific)", .acceptable), ("Late Old Japanese: humble subject be in the vicinity of respected referent (referent honorific, subjectified)", .acceptable), ("Early Middle Japanese -saburau/-soorau: be-polite (addressee honorific, intersubjectified)", .acceptable)]
+    paperFeatures := [("item", "saburahu"), ("stage", "non-honorific > referent honorific > addressee honorific"), ("level", "nonSubjective > subjective > intersubjective")]
+    comment := "The coded intersubjective addressee honorific arises from the subjectified referent honorific, from Traugott and Dasher (2002)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_12a : LinguisticExample :=
+  { id := "traugott2010_12a"
+    source := ⟨"traugott-2010", "(12a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "In þe assaut some … breke a pece of þe wal"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "In the assault some … broke a piece of the wall"
+    context := "c1325, Gloucester Chronicle A 11590."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "a piece of"), ("stage", "I Partitive"), ("level", "nonSubjective")]
+    comment := "Stage I: a partitive with a concrete complement."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_13a : LinguisticExample :=
+  { id := "traugott2010_13a"
+    source := ⟨"traugott-2010", "(13a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Dorus, whilom king of Grece ... hadde of infortune a piece"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Dorus, once king of Greece … had of misfortune a piece"
+    context := "a1393, Gower, Confessio Amantis V. 1338; note the preposed *of infortune*."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "a piece of"), ("stage", "II Extended Partitive"), ("level", "nonSubjective")]
+    comment := "Stage II: the complement generalized to abstract nouns, host-class expansion, with the invited inference of a small amount."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_14a : LinguisticExample :=
+  { id := "traugott2010_14a"
+    source := ⟨"traugott-2010", "(14a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "If I had not beene a peece of a Logician before I came to him."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "If I had not been a piece of a logician before I came to him."
+    context := "1586, Sidney, Apologie for Poetrie."
+    judgment := .acceptable
+    alternatives := []
+    readings := [("partitive: a small part or exemplar of a logician", .acceptable), ("degree modifier: somewhat of a logician", .acceptable)]
+    paperFeatures := [("item", "a piece of"), ("stage", "III Degree Modifier"), ("level", "subjective")]
+    comment := "Stage III: the bridging context in which a degree modifier reading arose, the only context where it developed robustly for *a piece of*."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_16a : LinguisticExample :=
+  { id := "traugott2010_16a"
+    source := ⟨"traugott-2010", "(16a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "In to the pyne of helle .. for the bytt of an Appel"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Into the suffering of Hell … for the biting of an apple"
+    context := "c1400, Ancrene Riwle 22/25."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "a bit of"), ("stage", "0 Pre-Partitive"), ("level", "nonSubjective")]
+    comment := "Stage 0: the nominalized *biting*, before the metonymic transfer to the piece bitten out."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_17 : LinguisticExample :=
+  { id := "traugott2010_17"
+    source := ⟨"traugott-2010", "(17)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "He badd tatt gho shollde himm ec / An bite brædess brinngenn"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "He commanded that she should him also a bite/bit of bread bring"
+    context := "c1200, Ormulum 8640; still with the genitive."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "a bit of"), ("stage", "I Partitive"), ("level", "nonSubjective")]
+    comment := "Stage I: morsel, unit bitten out."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_18a : LinguisticExample :=
+  { id := "traugott2010_18a"
+    source := ⟨"traugott-2010", "(18a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The fragments, scraps, the bits, and greazie reliques of her ore-eaten faith"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "The fragments, scraps, the bits, and greasy relics of her over-eaten faith"
+    context := "1606, Shakespeare, Troilus and Cressida V.ii.159; a metaphorical context."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "a bit of"), ("stage", "II Extended Partitive"), ("level", "nonSubjective")]
+    comment := "Stage II: generalized to non-food and abstract complements, host-class expansion, with the implicature that the unit is small or inadequate."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_19a : LinguisticExample :=
+  { id := "traugott2010_19a"
+    source := ⟨"traugott-2010", "(19a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Your beauty is a little bit of a jilt"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Your beauty is a little bit of a jilt"
+    context := "1771, Foote, Maid of Bath."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "a bit of"), ("stage", "III Degree Modifier"), ("level", "subjective"), ("pragmatic", "intersubjective hedge")]
+    comment := "Stage III: the downtoner *somewhat*, the subjectification; with a negatively evaluated head it is used intersubjectively as a hedge, a pragmatic intersubjectification that is not coded."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_20 : LinguisticExample :=
+  { id := "traugott2010_20"
+    source := ⟨"traugott-2010", "(20)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "I would not be a bit wiser, a bit richer, a bit taller, a bit shorter, than I am at this Instant"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "I would not be a bit wiser, a bit richer, a bit taller, a bit shorter, than I am at this instant"
+    context := "1723, Steele, The Conscious Lovers III.i."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "a bit of"), ("stage", "IV Adverb Degree Modifier"), ("level", "subjective")]
+    comment := "Stage IV: syntactic expansion to pre-adjectival position."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_21b : LinguisticExample :=
+  { id := "traugott2010_21b"
+    source := ⟨"traugott-2010", "(21b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "A. Hear me. B. Not a bit"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "A. Hear me. B. Not a bit"
+    context := "1739, Baker, The Cit Turn'd Gentleman."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "a bit of"), ("stage", "V Adjunct"), ("level", "subjective"), ("polarity", "negative")]
+    comment := "Stage V: a free adjunct in responses, usually in a negative context, where the understating *a bit* is emphatic."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_22 : LinguisticExample :=
+  { id := "traugott2010_22"
+    source := ⟨"traugott-2010", "(22)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Your friend is a bit of a beauty."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Your friend is a bit of a beauty."
+    context := ""
+    judgment := .questionable
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "a bit of"), ("stage", "III Degree Modifier"), ("head", "positively evaluated")]
+    comment := "As a downtoner, *a bit of* is unlikely with a positively evaluated head except in special circumstances such as irony."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_23 : LinguisticExample :=
+  { id := "traugott2010_23"
+    source := ⟨"traugott-2010", "(23)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "With strengthe of his blast / The white [dragon] brent than rede, / That of him nas founden a schrede / Bot dust"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "With the strength of his blast, the white dragon burned the red, so that of him not a shred was found, only dust"
+    context := "c1300, Arthour and Merlin 1540; note the preposing."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "a shred of"), ("stage", "I Partitive"), ("level", "nonSubjective")]
+    comment := "Stage I: a fragment cut or broken off, generalized in Middle English to bodies."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_24b : LinguisticExample :=
+  { id := "traugott2010_24b"
+    source := ⟨"traugott-2010", "(24b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "A despis'd Shred of mankind"
+    discourseSegments := []
+    glossedTokens := []
+    translation := "A despised shred of mankind"
+    context := "1645, G. Daniel, Poems."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "a shred of"), ("stage", "II Extended Partitive"), ("level", "nonSubjective")]
+    comment := "Stage II: generalized to language, mankind and nature, still partitive, with the focus evaluated as small or inadequate."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_25a : LinguisticExample :=
+  { id := "traugott2010_25a"
+    source := ⟨"traugott-2010", "(25a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Loto has not a shred of beauty."
+    discourseSegments := []
+    glossedTokens := []
+    translation := "Loto has not a shred of beauty."
+    context := "1867, Ouida, Under Two Flags."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "a shred of"), ("stage", "III Degree Modifier"), ("level", "subjective"), ("polarity", "negative")]
+    comment := "Stage III: a quantifier over an abstract, positively evaluated mass noun, by the twentieth century largely restricted to negative polarity syntax; no intersubjectification, since it is not used as a hedge."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def all : List LinguisticExample := [ex_5a, ex_5b, ex_5c, ex_6, ex_12a, ex_13a, ex_14a, ex_16a, ex_17, ex_18a, ex_19a, ex_20, ex_21b, ex_22, ex_23, ex_24b, ex_25a]
+
+end Traugott2010.Examples
