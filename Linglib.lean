@@ -2508,7 +2508,6 @@ import Linglib.Studies.Svenonius2004
 import Linglib.Studies.TaraldsenEtAl2018
 import Linglib.Studies.Tay2024
 import Linglib.Studies.TenWolde2023
-import Linglib.Studies.TesslerFranke2020PMF
 import Linglib.Studies.TesslerGoodman2019
 import Linglib.Studies.TesslerGoodman2022
 import Linglib.Studies.TesslerTenenbaumGoodman2022
