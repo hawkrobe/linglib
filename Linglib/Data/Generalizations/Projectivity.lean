@@ -17,7 +17,7 @@ not-at-issueness across triggers) predates any one formal account and spans
 ([tonhauser-beaver-degen-2018]: 9 + 12 English expressions;
 [solstad-bott-2024]: occasion + psychological verbs in German), with ≥ 2 rival
 accounts run against the pool in their study files (`gppProjection` and
-`pottsProjection` in `Studies/TonhauserBeaverDegen2018`).
+`ceilingProjection` in `Studies/TonhauserBeaverDegen2018`).
 
 ## Main declarations
 

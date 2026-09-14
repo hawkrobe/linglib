@@ -12,7 +12,6 @@ generality — generalizing `unitInterval.symm` beyond `ℝ` is its stated TODO.
 Linglib uses `Set.Icc (0 : ℚ) 1` as the home of gradient linguistic degrees
 (at-issueness, projectivity, prior credence): mathlib's `unitInterval` is
 real-valued and topological, while linguistic degrees are exact rationals.
-The domain-facing names live with their owners (`Discourse.AtIssueness`).
 -/
 
 namespace Set.Icc
