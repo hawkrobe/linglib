@@ -131,13 +131,13 @@ structure ScopeDerivation (E W : Type) (τ : Ty) where
   /-- Surface form (string representation) -/
   surface : String
   /-- Semantic value as function of scope config -/
-  meaningAt : ScopeConfig → Denot E W τ
+  meaningAt : ScopeConfig → Ty.Domain E W τ
   /-- Available scope readings -/
   availableScopes : List ScopeConfig := [.surface, .inverse]
 
 /-- Get all meanings for a scope derivation -/
 def ScopeDerivation.allMeanings {E W : Type} {τ : Ty}
-    (d : ScopeDerivation E W τ) : List (ScopeConfig × Denot E W τ) :=
+    (d : ScopeDerivation E W τ) : List (ScopeConfig × Ty.Domain E W τ) :=
   d.availableScopes.map λ s => (s, d.meaningAt s)
 
 -- Scoped Form (for HasAvailableScopes interface)
@@ -175,7 +175,7 @@ def allScopeConfigs : List ScopeConfig := [.surface, .inverse]
 def allQNScopes : List QNScope := [.forallNeg, .negForall]
 
 /-- Check if scope config yields true under given semantics -/
-def scopeYieldsTrue {E W : Type} [∀ (p : Denot E W .t), Decidable p]
+def scopeYieldsTrue {E W : Type} [∀ (p : Ty.Domain E W .t), Decidable p]
     (d : ScopeDerivation E W .t) (s : ScopeConfig) : Bool :=
   decide (d.meaningAt s)
 

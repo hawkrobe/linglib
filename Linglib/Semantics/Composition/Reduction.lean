@@ -326,17 +326,17 @@ section EngineHelpers
 variable {E W : Type}
 
 /-- Forward FA at `Id`, with the applicative collapsed. -/
-private theorem interpBinary_fa {σ τ : Ty} (f : Denot E W (σ ⇒ τ)) (x : Denot E W σ) :
+private theorem interpBinary_fa {σ τ : Ty} (f : Ty.Domain E W (σ ⇒ τ)) (x : Ty.Domain E W σ) :
     interpBinary (M := Id) ⟨σ ⇒ τ, f⟩ ⟨σ, x⟩ = some ⟨τ, f x⟩ := by
   rw [interpBinary_eq, tryFA_forward]
   rfl
 
 /-- Backward FA at `Id`: entity subject, unary predicate. -/
-private theorem interpBinary_e_et (x : Denot E W .e) (P : Denot E W (.e ⇒ .t)) :
+private theorem interpBinary_e_et (x : Ty.Domain E W .e) (P : Ty.Domain E W (.e ⇒ .t)) :
     interpBinary (M := Id) ⟨.e, x⟩ ⟨.e ⇒ .t, P⟩ = some ⟨.t, P x⟩ := rfl
 
 /-- Backward FA at `Id`: sentence subject, sentential operator. -/
-private theorem interpBinary_t_tt (p : Denot E W .t) (F : Denot E W (.t ⇒ .t)) :
+private theorem interpBinary_t_tt (p : Ty.Domain E W .t) (F : Ty.Domain E W (.t ⇒ .t)) :
     interpBinary (M := Id) ⟨.t, p⟩ ⟨.t ⇒ .t, F⟩ = some ⟨.t, F p⟩ := rfl
 
 private theorem predAbs_id_dist :
@@ -344,7 +344,7 @@ private theorem predAbs_id_dist :
 
 /-- Congruence for truth-valued results: an `Iff` lifts through
 `some ⟨.t, ·⟩`. -/
-private theorem some_t_congr {p q : Denot E W .t} (h : p ↔ q) :
+private theorem some_t_congr {p q : Ty.Domain E W .t} (h : p ↔ q) :
     (some ⟨.t, p⟩ : Option (Denotation E W)) = some ⟨.t, q⟩ :=
   congrArg (fun r => (some ⟨.t, r⟩ : Option (Denotation E W))) (propext h)
 
@@ -352,11 +352,11 @@ private theorem some_t_congr {p q : Denot E W .t} (h : p ↔ q) :
 assignment: it denotes an entity predicate agreeing pointwise with the body
 at updated assignments. -/
 private theorem interp_bind_exists (lex : Lexicon E W) (g : Assignment E)
-    (k : ℕ) (c : Unit) (body : Tree Unit String) {p : Denot E W .t}
+    (k : ℕ) (c : Unit) (body : Tree Unit String) {p : Ty.Domain E W .t}
     (hbody : Tree.interp E W lex g body = some ⟨.t, p⟩) :
-    ∃ F : Denot E W (.e ⇒ .t),
+    ∃ F : Ty.Domain E W (.e ⇒ .t),
       Tree.interp E W lex g (.bind k c body) = some ⟨.fn .e .t, F⟩ ∧
-      ∀ (x : E) (px : Denot E W .t),
+      ∀ (x : E) (px : Ty.Domain E W .t),
         Tree.interp E W lex (Function.update g k x) body = some ⟨.t, px⟩ →
         F x = px := by
   refine ⟨?_, ?_, ?_⟩
@@ -425,8 +425,8 @@ theorem interp_compilePred (hdj : nm.Disjoint) (g : Assignment m.E)
 lexicon lookups of the quantifier and restrictor words and the `.bind`
 node's interpretation. -/
 private theorem interp_quantClause {g : Assignment m.E} {q nw : String}
-    {Q : Denot m.E m.W ((.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t)}
-    {N F : Denot m.E m.W (.e ⇒ .t)} {k : ℕ} {body : Tree Unit String}
+    {Q : Ty.Domain m.E m.W ((.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t)}
+    {N F : Ty.Domain m.E m.W (.e ⇒ .t)} {k : ℕ} {body : Tree Unit String}
     {a a₁ a₂ a₃ a₄ : Unit}
     (hQ : m.lexiconFO fw nm w q = some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, Q⟩)
     (hN : m.lexiconFO fw nm w nw = some ⟨.e ⇒ .t, N⟩)

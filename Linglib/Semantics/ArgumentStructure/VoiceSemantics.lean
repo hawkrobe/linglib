@@ -67,11 +67,11 @@ open scoped Assignment
 
     In a type-driven system, "doing nothing" is itself a semantic
     contribution — it commits to projecting ALL arguments as DPs. -/
-def activeSem {E W : Type} {τ : Ty} (vp : Denot E W (.e ⇒ τ))
-    : Denot E W (.e ⇒ τ) := vp
+def activeSem {E W : Type} {τ : Ty} (vp : Ty.Domain E W (.e ⇒ τ))
+    : Ty.Domain E W (.e ⇒ τ) := vp
 
 theorem activeSem_id {E W : Type} {τ : Ty}
-    (vp : Denot E W (.e ⇒ τ)) : activeSem vp = vp := rfl
+    (vp : Ty.Domain E W (.e ⇒ τ)) : activeSem vp = vp := rfl
 
 -- ============================================================================
 -- § 2: Argument Suppression (ber-)
@@ -84,7 +84,7 @@ theorem activeSem_id {E W : Type} {τ : Ty}
     This is ⟦ber-⟧ evaluated at a particular assignment where the open
     variable has value `z`. -/
 def suppressArg {E W : Type} {τ : Ty}
-    (z : E) (vp : Denot E W (.e ⇒ τ)) : Denot E W τ :=
+    (z : E) (vp : Ty.Domain E W (.e ⇒ τ)) : Ty.Domain E W τ :=
   vp z
 
 /-- Assignment-relative argument suppression: the suppressed argument is
@@ -102,12 +102,12 @@ def suppressArg {E W : Type} {τ : Ty}
     - `τ = .e ⇒ .t` : VP was `e ⇒ e ⇒ t` (post-incorporation) → patient
       suppressed, agent remains as surface subject -/
 def berSemG {E W : Type} {τ : Ty} (n : ℕ)
-    (vp : DenotG E W (.e ⇒ τ)) : DenotG E W τ :=
+    (vp : Ty.DomainG E W (.e ⇒ τ)) : Ty.DomainG E W τ :=
   fun g => vp g (g n)
 
 /-- `berSemG` at a specific assignment is just `suppressArg` with `g(n)`. -/
 theorem berSemG_eq_suppressArg {E W : Type} {τ : Ty} (n : ℕ)
-    (vp : DenotG E W (.e ⇒ τ)) (g : Assignment E) :
+    (vp : Ty.DomainG E W (.e ⇒ τ)) (g : Assignment E) :
     berSemG n vp g = suppressArg (g n) (vp g) := rfl
 
 /-- [beavers-zubair-2013]'s sortally-restricted causer suppression
@@ -137,7 +137,7 @@ theorem berSemG_eq_suppressArg {E W : Type} {τ : Ty} (n : ℕ)
 def causerSuppress {E W : Type} {τ : Ty}
     (s : Causation.CauserSort)
     (_h : s.admitsIndividual)
-    (z : E) (vp : Denot E W (.e ⇒ τ)) : Denot E W τ :=
+    (z : E) (vp : Ty.Domain E W (.e ⇒ τ)) : Ty.Domain E W τ :=
   suppressArg z vp
 
 /-- The sortally-restricted operator factors through unrestricted
@@ -146,7 +146,7 @@ def causerSuppress {E W : Type} {τ : Ty}
 theorem causerSuppress_eq_suppressArg {E W : Type} {τ : Ty}
     (s : Causation.CauserSort)
     (h : s.admitsIndividual)
-    (z : E) (vp : Denot E W (.e ⇒ τ)) :
+    (z : E) (vp : Ty.Domain E W (.e ⇒ τ)) :
     causerSuppress s h z vp = suppressArg z vp := rfl
 
 -- ============================================================================
@@ -165,7 +165,7 @@ theorem causerSuppress_eq_suppressArg {E W : Type} {τ : Ty}
     passives license *oleh* 'by' phrases (the existential can be made
     explicit) while ber- middles do not (the variable is unbound). -/
 def diSemProp {E W : Type} (n : ℕ)
-    (vp : DenotG E W (.e ⇒ .e ⇒ .t))
+    (vp : Ty.DomainG E W (.e ⇒ .e ⇒ .t))
     : Assignment E → E → Prop :=
   fun g patient => ∃ x : E, vp (g[n ↦ x]) x patient
 
@@ -188,9 +188,9 @@ def diSemProp {E W : Type} (n : ℕ)
     remaining argument (subject), making the patient the surface subject.
     Same ber-, different VP shape, different surface structure. -/
 def incorporate {E W : Type}
-    (verb : Denot E W (.e ⇒ .e ⇒ .t))
-    (np : Denot E W (.e ⇒ .t))
-    : Denot E W (.e ⇒ .e ⇒ .t) :=
+    (verb : Ty.Domain E W (.e ⇒ .e ⇒ .t))
+    (np : Ty.Domain E W (.e ⇒ .t))
+    : Ty.Domain E W (.e ⇒ .e ⇒ .t) :=
   fun obj subj => verb obj subj ∧ np obj
 
 -- ============================================================================
@@ -199,8 +199,8 @@ def incorporate {E W : Type}
 
 /-- Active voice preserves argument count: the output type matches the input. -/
 theorem active_preserves_type {E W : Type} {τ : Ty}
-    (vp : Denot E W (.e ⇒ τ)) :
-    (activeSem vp : Denot E W (.e ⇒ τ)) = vp := rfl
+    (vp : Ty.Domain E W (.e ⇒ τ)) :
+    (activeSem vp : Ty.Domain E W (.e ⇒ τ)) = vp := rfl
 
 /-- Suppression after FA: when the VP has had its object saturated
     (type `e ⇒ t`), suppression yields a proposition (type `t`).
@@ -209,7 +209,7 @@ theorem active_preserves_type {E W : Type} {τ : Ty}
     after FA. The patient (the FA-applied argument) becomes the surface
     subject. This is the dispositional/passive middle. -/
 theorem suppression_after_FA {E W : Type}
-    (verb : Denot E W (.e ⇒ .e ⇒ .t))
+    (verb : Ty.Domain E W (.e ⇒ .e ⇒ .t))
     (patient : E) (z : E) :
     suppressArg z (verb patient) = verb patient z := rfl
 
@@ -220,8 +220,8 @@ theorem suppression_after_FA {E W : Type}
     (second position) remains as the surface subject. This is the
     incorporation middle. -/
 theorem suppression_after_incorporation {E W : Type}
-    (verb : Denot E W (.e ⇒ .e ⇒ .t))
-    (np : Denot E W (.e ⇒ .t))
+    (verb : Ty.Domain E W (.e ⇒ .e ⇒ .t))
+    (np : Ty.Domain E W (.e ⇒ .t))
     (z : E) (agent : E) :
     suppressArg z (incorporate verb np) agent =
     (verb z agent ∧ np z) := rfl
@@ -234,8 +234,8 @@ theorem suppression_after_incorporation {E W : Type}
     This is the formal content of [beavers-udayana-2022]'s claim
     that ber- is ONE operation producing FOUR surface types. -/
 theorem same_operation_different_types {E W : Type}
-    (verb : Denot E W (.e ⇒ .e ⇒ .t))
-    (np : Denot E W (.e ⇒ .t))
+    (verb : Ty.Domain E W (.e ⇒ .e ⇒ .t))
+    (np : Ty.Domain E W (.e ⇒ .t))
     (patient z : E) :
     -- Dispositional: suppress agent after FA with patient
     suppressArg z (verb patient) = verb patient z ∧
@@ -247,9 +247,9 @@ theorem same_operation_different_types {E W : Type}
 /-- Incorporation preserves both arguments: the incorporated VP still
     has type `e ⇒ e ⇒ t`, unlike FA which reduces to `e ⇒ t`. -/
 theorem incorporate_preserves_arity {E W : Type}
-    (verb : Denot E W (.e ⇒ .e ⇒ .t))
-    (np : Denot E W (.e ⇒ .t)) :
-    (incorporate verb np : Denot E W (.e ⇒ .e ⇒ .t)) =
+    (verb : Ty.Domain E W (.e ⇒ .e ⇒ .t))
+    (np : Ty.Domain E W (.e ⇒ .t)) :
+    (incorporate verb np : Ty.Domain E W (.e ⇒ .e ⇒ .t)) =
     fun obj subj => verb obj subj ∧ np obj := rfl
 
 /-- Assignment-relative suppression: berSemG does not fix how the open
@@ -257,7 +257,7 @@ theorem incorporate_preserves_arity {E W : Type}
     values for g(n). The root class determines the DEFAULT assignment
     (coreferent or disjoint), but the operation itself is agnostic. -/
 theorem berSemG_assignment_agnostic {E W : Type} {τ : Ty} (n : ℕ)
-    (vp : DenotG E W (.e ⇒ τ))
+    (vp : Ty.DomainG E W (.e ⇒ τ))
     (g₁ g₂ : Assignment E) (h : g₁ n = g₂ n)
     (hvp : vp g₁ = vp g₂) :
     berSemG n vp g₁ = berSemG n vp g₂ := by

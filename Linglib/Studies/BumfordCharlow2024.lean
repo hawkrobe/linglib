@@ -592,7 +592,7 @@ remains here is the bridge to movement-and-abstraction trees. -/
     not in what they *compute*. -/
 theorem qr_cont_structural_agreement {E W : Type}
     (q : Cont Prop E)
-    (body : DenotG E W .t) (n : Nat) (g : Assignment E) :
+    (body : Ty.DomainG E W .t) (n : Nat) (g : Assignment E) :
     q (lambdaAbsG n body g) =
     ContT.eval (q >>= λ x => pure (body (g[n ↦ x]))) := rfl
 

@@ -78,8 +78,8 @@ inductive Reading where
     reflexive resolution binds it to the patient, existential resolution closes it.
     The verb is causer-first (`vp x y`: causer `x`, patient `y`). -/
 def Reading.resolve {E W : Type} {s : CauserSort} (r : Reading)
-    (h : s.admitsIndividual) (vp : Denot E W (.e ⇒ .e ⇒ .t)) :
-    Denot E W (.e ⇒ .t) :=
+    (h : s.admitsIndividual) (vp : Ty.Domain E W (.e ⇒ .e ⇒ .t)) :
+    Ty.Domain E W (.e ⇒ .t) :=
   match r with
   | .reflexive   => fun y => causerSuppress s h y vp y
   | .existential => fun y => ∃ x, causerSuppress s h x vp y
@@ -96,14 +96,14 @@ def caseOfReading : Reading → Case
     true in agentive contexts ((51), §5.3), so the ban on volitive inchoatives must be
     formal rather than truth-conditional. -/
 theorem causative_entails_existential {E W : Type} {s : CauserSort}
-    (h : s.admitsIndividual) (vp : Denot E W (.e ⇒ .e ⇒ .t)) (x y : E)
+    (h : s.admitsIndividual) (vp : Ty.Domain E W (.e ⇒ .e ⇒ .t)) (x y : E)
     (hxy : vp x y) : Reading.existential.resolve h vp y :=
   ⟨x, hxy⟩
 
 /-- The reflexive resolution entails the existential one: (78a) supplies the patient
     itself as witness for (78b). -/
 theorem reflexive_entails_existential {E W : Type} {s : CauserSort}
-    (h : s.admitsIndividual) (vp : Denot E W (.e ⇒ .e ⇒ .t)) (y : E)
+    (h : s.admitsIndividual) (vp : Ty.Domain E W (.e ⇒ .e ⇒ .t)) (y : E)
     (hy : Reading.reflexive.resolve h vp y) : Reading.existential.resolve h vp y :=
   ⟨y, hy⟩
 
@@ -150,7 +150,7 @@ theorem volitive_admitted :
 
 /-- The operator instantiates for *kadann*: the `decide`-discharged obligation is the
     predictive engine at work. -/
-example {E W : Type} (z : E) (vp : Denot E W (.e ⇒ .t)) : Denot E W .t :=
+example {E W : Type} (z : E) (vp : Ty.Domain E W (.e ⇒ .t)) : Ty.Domain E W .t :=
   causerSuppress kadann.causerSort (by decide) z vp
 
 end BeaversZubair2013

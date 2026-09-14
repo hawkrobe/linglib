@@ -12,7 +12,7 @@ through the Coordinator API.
 
 `tryCoord` is an *engine* mode (the `tryX` convention), not part of the `Coordinator`
 API surface: it dispatches on the sisters' type at runtime through
-`Denot.booleanAlgebra?` and applies `Coordinator.op` in the algebra found.
+`Ty.Domain.booleanAlgebra?` and applies `Coordinator.op` in the algebra found.
 -/
 
 namespace Semantics.Composition.Tree
@@ -26,7 +26,7 @@ open Semantics.Composition
 def tryCoord {E W : Type} {M : Type → Type} [Applicative M] (role : Coordinator.Role)
     (d1 d2 : Denotation E W M) : Option (Denotation E W M) :=
   if h : d1.1 = d2.1 then
-    (Denot.booleanAlgebra? E W d1.1).map fun (i : BooleanAlgebra (Denot E W d1.1)) =>
+    (Ty.Domain.booleanAlgebra? E W d1.1).map fun (i : BooleanAlgebra (Ty.Domain E W d1.1)) =>
       ⟨d1.1, (letI := i; Coordinator.op role) <$> d1.2 <*> (h ▸ d2.2)⟩
   else none
 

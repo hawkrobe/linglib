@@ -8,14 +8,14 @@ Denotations of expressions with free variables, relative to an assignment `g : �
 entities to indices ([heim-kratzer-1998]): a pronoun with index `n` denotes `g n`, a binder
 at `n` abstracts over the value of `n` by updating `g`, and composition threads the assignment
 through — the Reader applicative of [charlow-2018], whose laws hold definitionally. Situation
-pronouns are the same construction at an assignment of indices, and `DenotGS` carries both.
+pronouns are the same construction at an assignment of indices, and `Ty.DomainGS` carries both.
 
 ## Main definitions
 
-* `DenotG E W ty`: denotations relative to an entity assignment; `constDenot`, `applyG`,
+* `Ty.DomainG E W ty`: denotations relative to an entity assignment; `constDenot`, `applyG`,
   `lambdaAbsG`, `interpPronoun`, `denotGJoin`.
-* `DenotGS E W ty`: denotations relative to an entity and a situation assignment;
-  `interpSitPronoun`, `DenotGS.const`.
+* `Ty.DomainGS E W ty`: denotations relative to an entity and a situation assignment;
+  `interpSitPronoun`, `Ty.DomainGS.const`.
 
 ## References
 
@@ -28,27 +28,27 @@ namespace Semantics.Composition
 open scoped Assignment
 
 /-- A denotation relative to an entity assignment. -/
-abbrev DenotG (E W : Type) (ty : Ty) := Assignment E → Denot E W ty
+abbrev Ty.DomainG (E W : Type) (ty : Ty) := Assignment E → Ty.Domain E W ty
 
 /-- Pronoun/variable denotation: ⟦xₙ⟧^g = g(n). -/
-def interpPronoun {E W : Type} (n : ℕ) : DenotG E W .e :=
+def interpPronoun {E W : Type} (n : ℕ) : Ty.DomainG E W .e :=
   λ g => g n
 
 /-- Lift constant denotation to assignment-relative form. -/
-def constDenot {E W : Type} {ty : Ty} (d : Denot E W ty) : DenotG E W ty :=
+def constDenot {E W : Type} {ty : Ty} (d : Ty.Domain E W ty) : Ty.DomainG E W ty :=
   λ _ => d
 
 /-- Function application with assignments. -/
 def applyG {E W : Type} {σ τ : Ty}
-    (f : DenotG E W (σ ⇒ τ)) (x : DenotG E W σ) : DenotG E W τ :=
+    (f : Ty.DomainG E W (σ ⇒ τ)) (x : Ty.DomainG E W σ) : Ty.DomainG E W τ :=
   λ g => f g (x g)
 
 /-- Lambda abstraction with variable binding. -/
-def lambdaAbsG {E W : Type} {τ : Ty} (n : ℕ) (body : DenotG E W τ)
-    : DenotG E W (.e ⇒ τ) :=
+def lambdaAbsG {E W : Type} {τ : Ty} (n : ℕ) (body : Ty.DomainG E W τ)
+    : Ty.DomainG E W (.e ⇒ τ) :=
   λ g => λ x => body (g[n ↦ x])
 
-theorem lambdaAbsG_apply {E W : Type} {τ : Ty} (n : ℕ) (body : DenotG E W τ)
+theorem lambdaAbsG_apply {E W : Type} {τ : Ty} (n : ℕ) (body : Ty.DomainG E W τ)
     (arg : E) (g : Assignment E)
     : (lambdaAbsG n body g) arg = body (g[n ↦ arg]) := rfl
 
@@ -64,22 +64,22 @@ section ApplicativeFunctor
 variable {E W : Type} {σ τ υ : Ty}
 
 /-- **Homomorphism**: `ρ f ⊛ ρ x = ρ (f x)`. -/
-theorem constDenot_applyG (f : Denot E W (σ ⇒ τ)) (x : Denot E W σ) :
+theorem constDenot_applyG (f : Ty.Domain E W (σ ⇒ τ)) (x : Ty.Domain E W σ) :
     applyG (constDenot f) (constDenot x) = constDenot (f x) := rfl
 
 /-- **Identity**: `ρ id ⊛ v = v`. -/
-theorem applyG_constDenot_id (v : DenotG E W σ) :
+theorem applyG_constDenot_id (v : Ty.DomainG E W σ) :
     applyG (constDenot id) v = v := rfl
 
 /-- **Interchange**: `u ⊛ ρ y = ρ (· y) ⊛ u`. -/
 theorem applyG_constDenot_interchange
-    (u : DenotG E W (σ ⇒ τ)) (y : Denot E W σ) :
+    (u : Ty.DomainG E W (σ ⇒ τ)) (y : Ty.Domain E W σ) :
     applyG u (constDenot y) =
     applyG (constDenot (ty := (σ ⇒ τ) ⇒ τ) (fun f => f y)) u := rfl
 
 /-- **Composition**: `ρ comp ⊛ u ⊛ v ⊛ w = u ⊛ (v ⊛ w)`. -/
 theorem applyG_composition
-    (u : DenotG E W (τ ⇒ υ)) (v : DenotG E W (σ ⇒ τ)) (w : DenotG E W σ) :
+    (u : Ty.DomainG E W (τ ⇒ υ)) (v : Ty.DomainG E W (σ ⇒ τ)) (w : Ty.DomainG E W σ) :
     applyG (applyG (applyG (constDenot
       (ty := (τ ⇒ υ) ⇒ (σ ⇒ τ) ⇒ σ ⇒ υ)
       (fun f g x => f (g x))) u) v) w =
@@ -144,11 +144,11 @@ def interpSitPronoun {W : Type} (n : Nat) : SitAssignment W → W :=
 /-- A denotation relative to an entity assignment and a situation assignment, for
 expressions containing both entity and situation pronouns (definites, attitude reports,
 world-variable binding). -/
-abbrev DenotGS (E W : Type) (ty : Ty) :=
-  Assignment E → SitAssignment W → Denot E W ty
+abbrev Ty.DomainGS (E W : Type) (ty : Ty) :=
+  Assignment E → SitAssignment W → Ty.Domain E W ty
 
 /-- A constant denotation as a bi-assignment-relative one. -/
-def DenotGS.const {E W : Type} {ty : Ty} (d : Denot E W ty) : DenotGS E W ty :=
+def Ty.DomainGS.const {E W : Type} {ty : Ty} (d : Ty.Domain E W ty) : Ty.DomainGS E W ty :=
   fun _ _ => d
 
 end Semantics.Composition

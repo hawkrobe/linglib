@@ -32,7 +32,7 @@ namespace Degree
     contrary — never subcontrary or unconnected), so this stays a 2-case type;
     `AntonymRelation.toOpposition` embeds it as the `{contradictory, contrary}` slice
     of the substrate's `Aristotelian.OppositionRel`, and `Degree.Antonymy`'s
-    `isContradictory_*Denot` ground the tag in the real opposition between the
+    `isContradictory_*Ty.Domain` ground the tag in the real opposition between the
     adjective denotations. -/
 inductive AntonymRelation where
   | contradictory

@@ -9,7 +9,7 @@ A coordinator (*and* / *or* / *but* / *nor*) is **one** thing: a lexical marking
 `Coordinator` API — it needs only `Mathlib.Order.BooleanAlgebra`, so Fragments import it
 directly to type their lexical coordinators (the `Syntax/Category/Verb/Defs.lean` precedent: a
 word-class lexical-entry type at `Semantics/{class}/Defs`). The composition engine's
-runtime form, dispatching on the sisters' type through `Denot.booleanAlgebra?`, is
+runtime form, dispatching on the sisters' type through `Ty.Domain.booleanAlgebra?`, is
 `tryCoord` in `Semantics/Composition/Coordination.lean`.
 
 `op` is the *at-issue* truth-conditional operation: the role selects the Boolean method

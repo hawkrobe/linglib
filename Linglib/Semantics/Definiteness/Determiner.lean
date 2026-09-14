@@ -107,7 +107,7 @@ index `d`, and the intrinsic presupposition is the deictic presupposition
 imposed on the indexed referent `g d` — parallel to `PersonalPronoun.denote`,
 with deixis in place of φ-features. -/
 noncomputable def _root_.DemonstrativeDeterminer.denote (dem : DemonstrativeDeterminer)
-    (R : DenotGS E W .et) (sIdx d : Nat)
+    (R : Ty.DomainGS E W .et) (sIdx d : Nat)
     (proximal medial distal : E → Prop) :
     Nominal (Assignment E × SitAssignment W) PUnit E where
   presup := fun gp _ => dem.deixisPresup proximal medial distal (gp.1 d)
@@ -119,7 +119,7 @@ is exactly the bare anaphoric description's selector. The API-level form of
 `interpret_demonstrative_eq_anaphoric` — the deictic content lives entirely
 in the `presup` component. -/
 theorem DemonstrativeDeterminer.denote_selector_eq_anaphoric
-    (dem : DemonstrativeDeterminer) (R : DenotGS E W .et) (sIdx d : Nat)
+    (dem : DemonstrativeDeterminer) (R : Ty.DomainGS E W .et) (sIdx d : Nat)
     (proximal medial distal : E → Prop) :
     (dem.denote R sIdx d proximal medial distal).selector
       = (Description.anaphoric R d).denote.selector := by
@@ -130,7 +130,7 @@ theorem DemonstrativeDeterminer.denote_selector_eq_anaphoric
 selector — *this* and *that* pick the same referent and differ only in what
 they presuppose about it. -/
 theorem DemonstrativeDeterminer.denote_selector_congr
-    (dem₁ dem₂ : DemonstrativeDeterminer) (R : DenotGS E W .et) (sIdx d : Nat)
+    (dem₁ dem₂ : DemonstrativeDeterminer) (R : Ty.DomainGS E W .et) (sIdx d : Nat)
     (proximal medial distal : E → Prop) :
     (dem₁.denote R sIdx d proximal medial distal).selector
       = (dem₂.denote R sIdx d proximal medial distal).selector := by
@@ -144,7 +144,7 @@ admissible [schwarz-2009] strengths (`Article.presupTypes`) under
 `Description.ofPresupType`. A syncretic article (English *the*) denotes both
 the weak and the strong description, not a single one. -/
 def _root_.Article.toDescriptions (a : Article)
-    (R : DenotGS E W .et) (idx : Nat) : List (Description E W) :=
+    (R : Ty.DomainGS E W .et) (idx : Nat) : List (Description E W) :=
   a.presupTypes.map (Description.ofPresupType · R idx)
 
 /-- An article realizes the kind of each of its own possible descriptions:
@@ -152,7 +152,7 @@ the denotation pipeline (`ofPresupType`) and the inventory pipeline
 (`Determiner.Inventory.Realizes`) coincide through `kind_ofPresupType` and
 `realizes_toKind`. -/
 theorem _root_.Article.realizes_of_mem_toDescriptions (a : Article)
-    (R : DenotGS E W .et) (idx : Nat) (k : Description E W)
+    (R : Ty.DomainGS E W .et) (idx : Nat) (k : Description E W)
     (hk : k ∈ a.toDescriptions R idx) :
     Determiner.Inventory.Realizes [.article a] k.kind := by
   obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hk
@@ -164,14 +164,14 @@ descriptions (`Article.toDescriptions`). A syncretic article (English *the*)
 denotes both the weak and the strong description; a German weak or strong
 article denotes exactly one. -/
 noncomputable def _root_.Article.denotations (a : Article)
-    (R : DenotGS E W .et) (idx : Nat) :
+    (R : Ty.DomainGS E W .et) (idx : Nat) :
     List (Nominal (Assignment E × SitAssignment W) PUnit E) :=
   (a.toDescriptions R idx).map Description.denote
 
 /-- Every denotation of an article arises from a description whose kind the
 article realizes — the denotational pipeline and the inventory pipeline agree. -/
 theorem Article.denotations_realized (a : Article)
-    (R : DenotGS E W .et) (idx : Nat)
+    (R : Ty.DomainGS E W .et) (idx : Nat)
     (nd : Nominal (Assignment E × SitAssignment W) PUnit E)
     (h : nd ∈ a.denotations R idx) :
     ∃ k : Description E W,
@@ -193,7 +193,7 @@ The narrowing-aware GQ form for quantificational possessors ("every student's
 cat") is `Possession.PossNP` — `(individual a)` of
 `PossNP` reduces here when the possessor is an entity. -/
 noncomputable def _root_.Possessive.denote (_p : Possessive)
-    (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet) :
+    (R : Ty.DomainGS E W .et) (possessor : Ty.DomainGS E W .e) (rel : Ty.DomainGS E W .eet) :
     Nominal (Assignment E × SitAssignment W) PUnit E :=
   (Description.possessive R possessor rel).denote
 
@@ -202,7 +202,7 @@ selector — the determiner picks the unique possessee related to the
 possessor by construction. -/
 @[simp]
 theorem Possessive.denote_selector (p : Possessive)
-    (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet)
+    (R : Ty.DomainGS E W .et) (possessor : Ty.DomainGS E W .e) (rel : Ty.DomainGS E W .eet)
     (g : Assignment E) (gs : SitAssignment W) (w : PUnit) :
     (p.denote R possessor rel).selector (g, gs) w =
       interpret (.possessive R possessor rel) g gs := rfl
@@ -211,7 +211,7 @@ theorem Possessive.denote_selector (p : Possessive)
 denotational pipeline and the inventory pipeline agree, parallel to
 `Article.denotations_realized`. -/
 theorem Possessive.denote_realized (p : Possessive)
-    (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet) :
+    (R : Ty.DomainGS E W .et) (possessor : Ty.DomainGS E W .e) (rel : Ty.DomainGS E W .eet) :
     Determiner.Inventory.Realizes [.possessive p] (Description.possessive R possessor rel).kind :=
   ⟨.possessive p, List.mem_singleton_self _, trivial⟩
 
@@ -225,7 +225,7 @@ Russellian uniqueness condition. -/
 
 section DescriptionUnification
 
-variable (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet)
+variable (R : Ty.DomainGS E W .et) (possessor : Ty.DomainGS E W .e) (rel : Ty.DomainGS E W .eet)
   (g : Assignment E) (gs : SitAssignment W)
 
 /-- The possessive determiner's restrictor *is* Barker's `π` of the noun predicate `R`
