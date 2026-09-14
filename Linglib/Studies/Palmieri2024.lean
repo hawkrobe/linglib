@@ -101,7 +101,7 @@ theorem table21 :
 *abbracciare* 'hug' (40), though the language-level parameter classifies it as syntax-set. -/
 theorem romance_not_monolithic :
     VerbClass.reciprocalTransitive.ReciprocityByItself ∧
-      Siloni2012.italian.formation = Formation.syntactic :=
+      Siloni2012.Language.italian.formation = Formation.syntactic :=
   ⟨by decide, rfl⟩
 
 /-- The witness grounded in the Italian Fragment: *abbracciare* carries a lexical reciprocal
