@@ -6,66 +6,36 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.Bounds.Basic
 
 /-!
-# Shieber, subsumption and unification on the UD feature bundle (1986)
+# Shieber (1986): An Introduction to Unification-Based Approaches to Grammar
 
-The information ordering of unification-based grammar (Shieber §3.2), on
-`UD.MorphFeatures` — the depth-1, reentrancy-free fragment of Shieber's feature
-structures. Every feature here is atomic-valued, so paths are single features, the
-reentrancy clause of subsumption is vacuous, and the definition (§3.2.2: `D ⊑ D′` iff
-`D(l) ⊑ D′(l)` for all `l ∈ dom(D)`; "an atomic feature structure neither subsumes nor
-is subsumed by a different atomic feature structure"; "variables subsume all other
-feature structures") reduces to the product of flat orders. Subsumption is registered
-as `≤` (Shieber's `⊑`); the all-`none` bundle — Shieber's variable `[ ]` — is `⊥`.
-
-Unification (§3.2.3) is "the most general feature structure `D` such that `D′ ⊑ D` and
-`D′′ ⊑ D`", failing on conflict: `MorphFeatures.unify` returns `some` exactly on
-`Compatible` (= bounded above) inputs, and its result is the least upper bound
-(`unify_isLUB`). The example laws of §3.2.3 are theorems: unification is idempotent
-(`unify_self`), commutative (`unify_comm`), and variables are identity elements
-(`bot_unify`).
-
-## Theory-neutrality boundary
-
-Three strata with different statuses: the *record* is annotation consensus
-(`Data/UD/Basic.lean`); the *order* `≤` is shared substrate every framework consumes
-its own way (DM's matching clause, underspecification, syncretism down-sets); the
-*operations* `⊔`/`⊓` are commitments of the unification tradition — Shieber
-§3.1 states unification-as-sole-combinator as a design constraint, and rival
-frameworks combine differently (DM matches and competes; Minimalist Agree values
-asymmetrically). This file is *not* that tradition's headquarters: unification-based
-grammar (PATR, HPSG, LFG — reentrant feature structures, phrasal combination) is a
-syntax family whose substrate belongs in `Syntax/` when consuming studies demand it.
-What lives here is only the tradition's morphological-bundle fragment — the algebra
-of one token's Feats column — which it shares with rivals: at the level of claims
-about morphological feature combination this file is a sibling of
-`DistributedMorphology/` and
-`Nanosyntax/`, not a foundation beneath them.
+This file formalizes the information ordering of §3.2 on `UD.MorphFeatures`, the depth-1,
+reentrancy-free fragment of the book's feature structures. Every feature there is atomic-valued,
+so paths are single features and the reentrancy clause of subsumption is vacuous, and the
+definition of §3.2.2, `D ⊑ D′` iff `D(l) ⊑ D′(l)` for every `l` in the domain of `D`, an atomic
+feature structure neither subsuming nor subsumed by a different one and variables subsuming
+everything, reduces to the product of flat orders (`Subsumes`, `subsumes_iff_val_le`).
+Subsumption is registered as `≤`, and the empty bundle, the book's variable `[ ]`, is `⊥`.
+Unification (§3.2.3) is the most general feature structure `D` with `D′ ⊑ D` and `D″ ⊑ D`,
+failing on conflict: `MorphFeatures.unify` returns `some` exactly on `Compatible` inputs,
+boundedness above (`compatible_iff_bddAbove`), and its value is the least upper bound
+(`unify_isLUB`, `unify_eq_some_iff_isLUB`). The example laws of §3.2.3 follow: unification adds
+information (`le_merge_left`), is idempotent (`unify_self`), and has the variable as its identity
+(`bot_unify`, `unify_bot`); it is also commutative (`unify_comm`), associative with failure
+propagating (`unify_assoc`) and monotone (`unify_mono`). Generalization, the most specific
+bundle subsumed by both inputs, is total and makes the bundles a meet-semilattice with `⊥`.
 
 ## Implementation notes
 
-Morphology owns the bundle algebra: `MorphFeatures` is the token's morphology (UD's
-Feats column), and unification at the ms-word level is the morphology/syntax interface
-operation. The *matching clause* of DM's Subset Principle (an exponent is insertable
-iff `exponent.features ≤ morpheme.features`) *could* consume `≤` directly, but the
-existing `Morphology/DistributedMorphology/VocabularyInsertion.lean` matches by
-`List`-subset on `[BEq F]`
-rather than `MorphFeatures.≤`. The competition
-clause — most-specified-wins — is separate `argmax` machinery already implemented in
-that same file. (Nanosyntax's Superset Principle is *not* a consumer: it matches by
-containment of syntactic trees, see `Nanosyntax/TreeSpellout.lean`'s `NanoTree.contains`,
-not by an order on flat bundles.) Lives apart from `Data/UD/Basic.lean` so the
-(heavily imported) standard mirror stays mathlib-free — this file is the one that
-pays for `Mathlib.Order` — and it is the canonical home for order instances on
-`UD.MorphFeatures`.
-
-The non-distributivity of the subsumption lattice is a documented
-obstruction (`Flat.unify_distinct_eq_none`): any ≥3-value slot
-(here, `Case`) makes the per-slot lattice the diamond Mₙ, modular but
-*not* distributive (Carpenter, p. 15, eq. (4) -- UNVERIFIED, notes this
-explicitly: "our partial orders are *not* required to be distributive
-(and in fact, are not even required to be modular)"). This matters for
-generalization-then-unification reorderings in paradigm-induction
-learners.
+* `MorphFeatures` is `LawfulBundleLike` over the fourteen UD feature slots (`MorphFeatureType`,
+  `val`), with the reflexive flag normalized to a privative `Flat Unit`; the order laws come
+  from the pullback along `val`, and the unification laws from `Core/Order/PartialUnify`.
+* The book prescribes unification as the sole information-combining operation of its
+  formalisms (§3.1); what lives here is the morphological-bundle fragment of that algebra, the
+  algebra of one token's features, which rival frameworks combine differently. Phrasal
+  combination and reentrant feature structures are not formalized.
+* The subsumption lattice is not distributive: a slot with three or more values is the
+  diamond, modular but not distributive (`Flat.unify_distinct_eq_none`), as [carpenter-1992]
+  notes of feature-structure orders in general.
 
 ## TODO
 
@@ -73,9 +43,8 @@ learners.
 
 ## References
 
-* [S. M. Shieber, *An Introduction to Unification-Based Approaches to Grammar*
-  (1986)][shieber-1986]
-* [B. Carpenter, *The Logic of Typed Feature Structures* (1992)][carpenter-1992]
+* [shieber-1986]
+* [carpenter-1992]
 -/
 
 /-! ### The flat order on one feature slot
@@ -182,7 +151,7 @@ def val (f : MorphFeatures) :
   | .polarity => f.polarity
 
 instance : BundleLike MorphFeatures MorphFeatureType
-    (fun t => Flat (MorphFeatureType.Val t)) where
+    (λt => Flat (MorphFeatureType.Val t)) where
   val := MorphFeatures.val
 
 private theorem reflex_eq_of_val_reflex_eq {b1 b2 : Bool}
@@ -283,7 +252,7 @@ theorem le_merge_left (f g : MorphFeatures) : f ≤ f.merge g := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
     first
       | exact Flat.le_or_left _ _
-      | exact fun hr => by simp [merge, hr]
+      | exact λhr => by simp [merge, hr]
 
 private theorem le_or_of_clause {α : Type _} [BEq α] [LawfulBEq α] {a b : Flat α}
     (hcl : (a.isNone || b.isNone || a == b) = true) : b ≤ a.or b := by
@@ -306,7 +275,7 @@ theorem le_merge_right {f g : MorphFeatures} (h : f.compatible g = true) :
   exact ⟨le_or_of_clause h1, le_or_of_clause h2,
          le_or_of_clause h3, le_or_of_clause h4,
          le_or_of_clause h5, le_or_of_clause h6,
-         fun hr => by simp [merge, hr],
+         λhr => by simp [merge, hr],
          le_or_of_clause h7, le_or_of_clause h8,
          le_or_of_clause h9, le_or_of_clause h10,
          le_or_of_clause h11, le_or_of_clause h12,
@@ -358,7 +327,7 @@ theorem compatible_iff_bddAbove (f g : MorphFeatures) :
     f.compatible g = true ↔ Compatible f g := by
   constructor
   · intro h
-    refine ⟨f.merge g, fun x hx => ?_⟩
+    refine ⟨f.merge g, λx hx => ?_⟩
     rcases hx with rfl | hx
     · exact le_merge_left _ g
     · rw [Set.mem_singleton_iff.mp hx]
@@ -430,22 +399,22 @@ instance : SemilatticeInf MorphFeatures :=
   { (inferInstance : PartialOrder MorphFeatures),
     (inferInstance : Min MorphFeatures) with
     inf := min
-    inf_le_left := fun f g => show Subsumes (min f g) f from
+    inf_le_left := λf g => show Subsumes (min f g) f from
       ⟨inf_le_left, inf_le_left, inf_le_left, inf_le_left, inf_le_left, inf_le_left,
-       fun hr => band_true_left hr,
+       λhr => band_true_left hr,
        inf_le_left, inf_le_left, inf_le_left, inf_le_left, inf_le_left, inf_le_left,
        inf_le_left⟩
-    inf_le_right := fun f g => show Subsumes (min f g) g from
+    inf_le_right := λf g => show Subsumes (min f g) g from
       ⟨inf_le_right, inf_le_right, inf_le_right, inf_le_right, inf_le_right, inf_le_right,
-       fun hr => band_true_right hr,
+       λhr => band_true_right hr,
        inf_le_right, inf_le_right, inf_le_right, inf_le_right, inf_le_right, inf_le_right,
        inf_le_right⟩
-    le_inf := fun c f g hcf hcg => by
+    le_inf := λc f g hcf hcg => by
       obtain ⟨a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14⟩ := hcf
       obtain ⟨b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14⟩ := hcg
       exact ⟨le_inf a1 b1, le_inf a2 b2, le_inf a3 b3,
              le_inf a4 b4, le_inf a5 b5, le_inf a6 b6,
-             fun hr => band_true_intro (a7 hr) (b7 hr),
+             λhr => band_true_intro (a7 hr) (b7 hr),
              le_inf a8 b8, le_inf a9 b9, le_inf a10 b10,
              le_inf a11 b11, le_inf a12 b12, le_inf a13 b13,
              le_inf a14 b14⟩ }
