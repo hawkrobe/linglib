@@ -1,202 +1,102 @@
-import Linglib.Processing.Expectation.LanguageModel
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+import Linglib.Core.InformationTheory.Surprisal
 import Linglib.Processing.Expectation.Defs
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.MeasureTheory.Integral.Bochner.Set
+import Mathlib.Probability.Kernel.Defs
 
 /-!
-# Incremental Alternative Sampling: Real-Valued Foundation
-[giulianelli-etal-2026] [giulianelli-opedal-cotterell-2024]
+# Generalised surprisal
 
-The probabilistic backbone underneath `Config.lean`'s enum-level
-configuration. The `LangModel` primitive lives in
-`Processing/Expectation/LanguageModel.lean`; this file builds on it
-to define the `genSurprisal` family of [giulianelli-etal-2026]'s
-Eq. 3 — real-valued functions of an LM, context, and target — and shows
-that classical surprisal is recovered as the special case
-(warp = −log, score = indicator).
-
-This file is what makes `Config.lean`'s enum tags (`WarpingFn`,
-`ScoringFn`) denote actual mathematical objects rather than just labels:
-`WarpingFn.denote` ports each tag to its real function, and
-`standardSurprisal_denotes_surprisal` is the (non-trivial) reduction
-theorem that the enum config "standard surprisal" really computes the
-classical −log p(w | c).
+This file defines the generalised surprisal of [giulianelli-opedal-cotterell-2024] and
+[giulianelli-etal-2026]. The processing cost of a unit `w` in a context `c` is a warping of the
+expected score of `w` against alternatives sampled from a language model, a Markov kernel from
+contexts to alternatives. Standard surprisal is the member with the negative logarithm and the
+indicator score [levy-2008], and information value the member with the identity warping and a
+distance score. The configuration tags of `Processing.Expectation.Defs` denote members of the
+family.
 
 ## Main definitions
 
-- `genSurprisal`: γ(w; c) = warp( E_{a ~ p(·|c)} [score(a, w, c)] )
-- `indicatorScore`: g(a, w, c) = 𝟙[a = some w]
-- `WarpingFn.denote`: the bridge from enum tags to real functions
-- `informationValue1`: horizon-1 IAS, expected distance to target
+* `genSurprisal`, `informationValue1`, `indicatorScore`.
+* `WarpingFn.denote`, `ScoringFn.denote`, `SurprisalConfig.applyTo`.
 
-## Main theorem
+## Main results
 
-- `standardSurprisal_denotes_surprisal`: when the (warp, score)
-  arguments are the denotations of `standardSurprisal`'s warping and
-  scoring tags, `genSurprisal` collapses to `LangModel.surprisal`. This
-  is the formal content of the surprisal-as-prefix-expectation identity
-  (Eqs. 2a–2d of [giulianelli-etal-2026]).
+* `standardSurprisal_denotes_surprisal`: the standard configuration denotes surprisal.
+* `informationValue_applyTo_eq_informationValue1`: the information-value configurations denote
+  information value.
+
+## References
+
+* [giulianelli-opedal-cotterell-2024]
+* [giulianelli-etal-2026]
+* [levy-2008]
 -/
 
 namespace Processing.PredictiveUncertainty
 
-open Finset BigOperators Real
-open Processing.LanguageModel (LangModel)
+open InformationTheory MeasureTheory ProbabilityTheory
 
--- ============================================================================
--- §1: Generalised Surprisal (Eq. 3)
--- ============================================================================
+variable {C A W : Type*} [MeasurableSpace C] [MeasurableSpace A]
 
-/-- Generalised surprisal ([giulianelli-etal-2026] Eq. 3):
+/-- Generalised surprisal: a warping of the expected score of the unit `w` against alternatives
+sampled from the model `L` in the context `c`. -/
+noncomputable def genSurprisal (L : Kernel C A) (warp : ℝ → ℝ) (score : A → W → C → ℝ) (c : C)
+    (w : W) : ℝ :=
+  warp (∫ a, score a w c ∂(L c))
 
-  γ(w; c) = warp( E_{a ~ p(·|c)} [score(a, w, c)] )
+/-- Information value: the expected distance from the alternatives to the unit. -/
+noncomputable def informationValue1 (L : Kernel C A) (d : A → W → ℝ) (c : C) (w : W) : ℝ :=
+  ∫ a, d a w ∂(L c)
 
-`warp` is the f, `score` is the g, and the sampler is the LM's own
-next-symbol distribution. Specialising (warp, score) recovers existing
-processing measures. -/
-noncomputable def genSurprisal {Voc : Type*} [Fintype Voc]
-    (lm : LangModel Voc)
-    (warp : ℝ → ℝ)
-    (score : Option Voc → Voc → List Voc → ℝ)
-    (c : List Voc) (w : Voc) : ℝ :=
-  warp (∑ o : Option Voc, ((lm.next c) o).toReal * score o w c)
+theorem informationValue1_eq_genSurprisal (L : Kernel C A) (d : A → W → ℝ) (c : C) (w : W) :
+    informationValue1 L d c w = genSurprisal L id (λ a w _ => d a w) c w := rfl
 
-/-- The indicator scoring function: 1 iff the alternative matches the target. -/
-noncomputable def indicatorScore {Voc : Type*} [DecidableEq Voc]
-    (o : Option Voc) (w : Voc) (_ : List Voc) : ℝ :=
-  if o = some w then 1 else 0
+/-- The indicator score: one when the alternative is the unit. -/
+noncomputable def indicatorScore (a w : W) (_ : C) : ℝ := ({w} : Set W).indicator 1 a
 
--- ============================================================================
--- §2: Bridge from Enum Tags to Real Functions
--- ============================================================================
-
-/-- Denotation of a `WarpingFn` enum tag as a real function `ℝ → ℝ`.
-This is the bridge that turns the symbolic enum in `Config.lean` into
-actual mathematical content. -/
-noncomputable def WarpingFn.denote : WarpingFn → (ℝ → ℝ)
-  | .negLog   => fun x => -Real.log x
+/-- The real function a warping tag denotes. -/
+noncomputable def WarpingFn.denote : WarpingFn → ℝ → ℝ
+  | .negLog => λ x => -Real.log x
   | .identity => id
 
-/-- Denotation of a `ScoringFn` enum tag as a scoring function. The
-`.indicator` case is fully concrete (= `indicatorScore`); the `.distance`
-and `.similarity` cases are parametric in the user-supplied distance and
-similarity functions, since the paper's framework abstracts over these. -/
-noncomputable def ScoringFn.denote
-    {Voc : Type*} [DecidableEq Voc]
-    (dist sim : Option Voc → Voc → List Voc → ℝ) :
-    ScoringFn → (Option Voc → Voc → List Voc → ℝ)
-  | .indicator  => indicatorScore
-  | .distance   => dist
+/-- The scoring function a scoring tag denotes, given the distance and the similarity the
+framework abstracts over. -/
+noncomputable def ScoringFn.denote (dist sim : W → W → C → ℝ) : ScoringFn → W → W → C → ℝ
+  | .indicator => indicatorScore
+  | .distance => dist
   | .similarity => sim
 
-/-- Denotation of a complete `SurprisalConfig` against a language model:
-applies `cfg.warp.denote` and `cfg.scoring.denote` through `genSurprisal`.
-The `horizon` and `level` fields are recorded labels and currently
-ignored at the denotation layer (the `informationValue1` reduction below
-is the only horizon-aware case formalised so far). -/
-noncomputable def SurprisalConfig.applyTo
-    {Voc : Type*} [Fintype Voc] [DecidableEq Voc]
-    (cfg : SurprisalConfig)
-    (lm : LangModel Voc)
-    (dist sim : Option Voc → Voc → List Voc → ℝ)
-    (c : List Voc) (w : Voc) : ℝ :=
-  genSurprisal lm cfg.warp.denote (cfg.scoring.denote dist sim) c w
+/-- A configuration applied to a model. The horizon and the level are labels here: the horizon
+enters through the model, which samples alternatives of that length. -/
+noncomputable def SurprisalConfig.applyTo [MeasurableSpace W] (cfg : SurprisalConfig)
+    (L : Kernel C W) (dist sim : W → W → C → ℝ) (c : C) (w : W) : ℝ :=
+  genSurprisal L cfg.warp.denote (cfg.scoring.denote dist sim) c w
 
--- ============================================================================
--- §3: Standard Surprisal as Special Case
--- ============================================================================
+variable [MeasurableSpace W] (L : Kernel C W) (c : C) (w : W)
 
-/-- **Standard surprisal is the special case** of `genSurprisal` with
-`warp = −log` and `score = indicator`. Choosing these (warp, score)
-collapses Eq. 3 to γ(w; c) = −log p(w | c) — i.e., classical surprisal
-[levy-2008].
+/-- The information-value configurations denote information value, with the distance read in
+the context. -/
+theorem informationValue_applyTo_eq_informationValue1 (dist sim : W → W → C → ℝ)
+    (h : ForecastHorizon) (l : RepLevel) :
+    (informationValue h l).applyTo L dist sim c w
+      = informationValue1 L (λ a w' => dist a w' c) c w := rfl
 
-This is the non-trivial reduction theorem: it shows that the enum-level
-claim `standardSurprisal = (negLog, indicator, 1, predictive)` in
-`Config.lean` actually denotes the classical surprisal function on
-language models, rather than being a definitional rfl. -/
-theorem standardSurprisal_denotes_surprisal
-    {Voc : Type*} [Fintype Voc] [DecidableEq Voc]
-    (lm : LangModel Voc) (c : List Voc) (w : Voc) :
-    genSurprisal lm
-        standardSurprisal.warp.denote
-        indicatorScore c w =
-      lm.surprisal c w := by
-  unfold genSurprisal LangModel.surprisal LangModel.nextProb
-  show standardSurprisal.warp.denote _ = _
-  unfold standardSurprisal WarpingFn.denote
-  have key : ∀ o : Option Voc,
-      ((lm.next c) o).toReal * indicatorScore o w c =
-        if o = some w then ((lm.next c) (some w)).toReal else 0 := by
-    intro o
-    unfold indicatorScore
-    split_ifs with h
-    · rw [h]; ring
-    · ring
-  simp_rw [key, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+variable [MeasurableSingletonClass W]
 
-/-- **Full enum-config reduction**: applying the entire `standardSurprisal`
-configuration (not just its warping field) to any LM yields classical
-surprisal, regardless of which `dist` and `sim` parameters one chooses.
-This is the symmetric counterpart to `standardSurprisal_denotes_surprisal`
-— it shows that the *whole* enum tag tuple in `Config.lean` denotes
-correctly, since `.indicator` ignores its `dist`/`sim` arguments. -/
-theorem standardSurprisal_applyTo_eq_surprisal
-    {Voc : Type*} [Fintype Voc] [DecidableEq Voc]
-    (lm : LangModel Voc)
-    (dist sim : Option Voc → Voc → List Voc → ℝ)
-    (c : List Voc) (w : Voc) :
-    standardSurprisal.applyTo lm dist sim c w = lm.surprisal c w := by
-  unfold SurprisalConfig.applyTo standardSurprisal ScoringFn.denote
-  exact standardSurprisal_denotes_surprisal lm c w
-
--- ============================================================================
--- §4: Information Value at Horizon 1
--- ============================================================================
-
-/-- **Incremental information value at horizon 1**: the expected distance
-between sampled next-symbols and the actual outcome.
-
-This is the single-step specialisation of the IAS measure
-([giulianelli-etal-2026]'s V_{r,d,1}, Eq. 6). The full IAS
-generalises to horizon h ≥ 1 by sampling h-grams; we keep the h = 1
-case here as the load-bearing definition (it is what is needed to
-recover surprisal as a special instance via choice of distance d).
-
-The relationship to `genSurprisal` is purely structural: information
-value is `genSurprisal` with `warp = id` and `score` = a distance. -/
-noncomputable def informationValue1
-    {Voc : Type*} [Fintype Voc]
-    (lm : LangModel Voc) (d : Option Voc → Voc → ℝ)
-    (c : List Voc) (w : Voc) : ℝ :=
-  ∑ o : Option Voc, ((lm.next c) o).toReal * d o w
-
-/-- Information value at horizon 1 is `genSurprisal` with the identity
-warping. The sampler is the LM, the scoring function is the distance,
-and there is no warping — exactly the (identity, distance, 1, l)
-instantiation of [giulianelli-etal-2026]'s family. -/
-theorem informationValue1_eq_genSurprisal
-    {Voc : Type*} [Fintype Voc]
-    (lm : LangModel Voc) (d : Option Voc → Voc → ℝ)
-    (c : List Voc) (w : Voc) :
-    informationValue1 lm d c w =
-      genSurprisal lm id (fun o w' _ => d o w') c w := rfl
-
-/-- **Full enum-config reduction for IAS** (horizon-agnostic): the entire
-`informationValue h l` configuration, applied to `(lm, dist, sim)`, equals
-`informationValue1 lm dist'` where `dist' o w := dist o w c`. The horizon
-`h` and level `l` are recorded labels at this denotation layer; horizon
-sensitivity enters only when one moves from `informationValue1` to a
-horizon-h sum over h-grams. -/
-theorem informationValue_applyTo_eq_informationValue1
-    {Voc : Type*} [Fintype Voc] [DecidableEq Voc]
-    (lm : LangModel Voc)
-    (dist sim : Option Voc → Voc → List Voc → ℝ)
-    (h : Nat) (l : RepLevel)
-    (c : List Voc) (w : Voc) :
-    (informationValue h l).applyTo lm dist sim c w =
-      informationValue1 lm (fun o w' => dist o w' c) c w := by
-  unfold SurprisalConfig.applyTo informationValue
-        WarpingFn.denote ScoringFn.denote genSurprisal informationValue1
+/-- The standard configuration denotes surprisal. -/
+theorem standardSurprisal_denotes_surprisal :
+    genSurprisal L standardSurprisal.warp.denote indicatorScore c w = surprisal (L c) w := by
+  show -Real.log (∫ a, ({w} : Set W).indicator 1 a ∂(L c)) = _
+  rw [integral_indicator_one (measurableSet_singleton w)]
   rfl
+
+theorem standardSurprisal_applyTo_eq_surprisal (dist sim : W → W → C → ℝ) :
+    standardSurprisal.applyTo L dist sim c w = surprisal (L c) w :=
+  standardSurprisal_denotes_surprisal L c w
 
 end Processing.PredictiveUncertainty

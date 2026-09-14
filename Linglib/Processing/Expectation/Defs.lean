@@ -1,44 +1,23 @@
 /-!
-# Generalised Surprisal Configuration
-[giulianelli-etal-2026]
+# Generalised surprisal configurations
 
-Enum-level configuration for the generalised surprisal family. The
-real-valued semantics of these enum tags lives in `IAS.lean`; this file
-just enumerates the parameter axes.
+This file enumerates the parameters of the generalised surprisal family of
+[giulianelli-etal-2026]: a warping function from expected scores to processing measures, a
+scoring function of an alternative against the unit, a forecast horizon, and a representational
+level. Standard surprisal [levy-2008] is the configuration with the negative logarithm, the
+indicator, horizon one and the predictive level; information value is the family with the
+identity, a distance, and a horizon and level. The tags denote real functions in
+`Processing.Expectation.InformationValue`.
 
-A generalised surprisal model has four parameters:
+## References
 
-1. A **warping function** f mapping expected scores to processing measures
-2. A **scoring function** g measuring how well alternatives match the target
-3. A **forecast horizon** h: how many future symbols are considered
-4. A **representational level**: the abstraction at which alternatives are compared
-
-Standard surprisal is the special case (negLog, indicator, 1, predictive).
-Incremental information value is the family (identity, distance, h, l).
-
-## Scope note
-
-Per linglib's processing-library scope (CLAUDE.md): this file formalizes
-the *parameter space* of a processing-theory family. It does not
-formalize psycholinguistic measurement instruments (N400, P600, RT,
-cloze, etc.) or empirical-fit tables — those are out of scope. Per-paper
-empirical findings about which (h, l) configuration best predicts which
-measure live in study-file docstring prose with citations, not as Lean
-theorems.
-
-## Main definitions
-
-- `SurprisalConfig`: Complete generalised surprisal parameter tuple
-- `standardSurprisal`: The configuration corresponding to [levy-2008]
-- `informationValue`: The IAS configuration at a given (horizon, level)
-- `ias_recovers_surprisal`: Standard surprisal is a special case of IAS
+* [giulianelli-etal-2026]
+* [levy-2008]
+* [smith-levy-2013]
+* [meister-giulianelli-pimentel-2024]
 -/
 
 namespace Processing.PredictiveUncertainty
-
--- ============================================================================
--- §1: Warping and Scoring Functions
--- ============================================================================
 
 /-- Warping functions mapping expected scores to processing measures.
 γ(w;c) = f(E[g(a,w,c)]). -/
@@ -61,10 +40,6 @@ inductive ScoringFn where
   | similarity
   deriving DecidableEq, Repr
 
--- ============================================================================
--- §2: Temporal and Representational Resolution
--- ============================================================================
-
 /-- Forecast horizon: how many future symbols each alternative spans.
 h = 1 is standard surprisal's implicit horizon (next word only). -/
 abbrev ForecastHorizon := Nat
@@ -86,10 +61,6 @@ inductive RepLevel where
   /-- Predictive distribution over next symbols -/
   | predictive
   deriving DecidableEq, Repr
-
--- ============================================================================
--- §3: Surprisal Configurations
--- ============================================================================
 
 /-- A generalised surprisal model: the complete parameter set for
 a specific processing measure. -/
@@ -115,10 +86,6 @@ def informationValue (h : ForecastHorizon) (l : RepLevel) : SurprisalConfig wher
   scoring := .distance
   horizon := h
   level   := l
-
--- ============================================================================
--- §4: Key Relationships
--- ============================================================================
 
 /-- Standard surprisal is IAS at horizon 1 with predictive-level representation
 and negLog/indicator replacing identity/distance. Subsumption by construction. -/

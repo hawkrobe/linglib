@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.InformationTheory.KullbackLeibler.Cond
-import Linglib.Processing.Expectation.LanguageModel
+import Linglib.Core.InformationTheory.Surprisal
 import Linglib.Processing.Expectation.PrefixProbability
 
 /-!
@@ -19,8 +19,8 @@ the paper's central result is that the difficulty so defined is exactly the word
 (`klDiv_posterior_eq_surprisal`), [hale-2001]'s measure, for any generative process over
 structures. Surprisal is therefore a causal bottleneck: processes agreeing on conditional
 word probabilities incur identical difficulty whatever their structures (`bottleneck`), and
-the difficulty may be read through any language model matching those probabilities
-(`klDiv_posterior_eq_lm_surprisal`).
+the difficulty may be read through any next-word distribution matching those probabilities
+(`klDiv_posterior_eq_surprisal_of_apply_eq`).
 
 ## Implementation notes
 
@@ -40,7 +40,7 @@ while the word is processed.
 namespace Levy2008
 
 open InformationTheory MeasureTheory ProbabilityTheory
-open Processing.LanguageModel Processing.Expectation
+open Processing.Expectation
 open scoped ENNReal ProbabilityTheory
 
 variable {T W : Type*} [MeasurableSpace T] [DiscreteMeasurableSpace T]
@@ -88,13 +88,12 @@ theorem klDiv_posterior_eq_surprisal (h : prefixMass P str (ws ++ [w]) ≠ 0) :
   exact ENNReal.div_ne_zero.mpr ⟨h, ne_top_of_le_ne_top ENNReal.one_ne_top
     ((prefixMass_anti P str (List.nil_prefix)).trans_eq (prefixMass_nil P str))⟩
 
-/-- The update difficulty read through any language model that matches the
-    process's conditional word probabilities is that model's surprisal. -/
-theorem klDiv_posterior_eq_lm_surprisal (lm : LangModel W)
-    (hlm : lm.nextProb ws w = nextProb P str ws w) (h : prefixMass P str (ws ++ [w]) ≠ 0) :
-    klDiv (posterior P str (ws ++ [w])) (posterior P str ws)
-      = ENNReal.ofReal (lm.surprisal ws w) := by
-  rw [klDiv_posterior_eq_surprisal P str ws w h, LangModel.surprisal, hlm]
+/-- The update difficulty read through any next-word distribution that matches
+    the process's conditional word probability is that distribution's surprisal. -/
+theorem klDiv_posterior_eq_surprisal_of_apply_eq [MeasurableSpace W] (μ : Measure W)
+    (hμ : μ {w} = nextProb P str ws w) (h : prefixMass P str (ws ++ [w]) ≠ 0) :
+    klDiv (posterior P str (ws ++ [w])) (posterior P str ws) = ENNReal.ofReal (surprisal μ w) := by
+  rw [klDiv_posterior_eq_surprisal P str ws w h, surprisal, measureReal_def, hμ]
 
 /-- The causal bottleneck (§2.3, Fig. 1b): two generative processes assigning
     the same conditional word probability incur the same update difficulty,

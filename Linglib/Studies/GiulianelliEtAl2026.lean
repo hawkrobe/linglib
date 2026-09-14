@@ -1,28 +1,33 @@
-import Mathlib.Data.Fintype.Vector
-import Mathlib.Probability.ProbabilityMassFunction.Constructions
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+import Linglib.Core.Probability.Kernel.IonescuTulcea.PartialTraj
 import Linglib.Processing.Expectation.InformationValue
 
 /-!
 # Giulianelli, Wallbridge, Cotterell and Fernández (2026): Incremental Alternative Sampling as a Lens into the Temporal and Representational Resolution of Linguistic Prediction
 
-This file formalizes the incremental alternative sampling (IAS) family of [giulianelli-etal-2026]:
-a comprehender samples continuations of the context from a language model over a forecast horizon
-of `h` symbols (`gram`), and the generalised surprisal of the next unit is a warping of the expected
-score of the target against those alternatives (`genSurprisalH`, the horizon-`h` form of
-[giulianelli-opedal-cotterell-2024]'s definition in `Processing/Expectation/InformationValue.lean`).
-Standard surprisal is the member with the negative logarithm and the prefix indicator at every
-horizon, because the alternatives' first symbol is distributed as the model's next symbol
-(`map_head_gram`, `sum_prefixIndicator`, `genSurprisalH_indicator`); it thus evaluates alternatives
-by lexical identity alone, and the discrete distance shows what this conflates, since information
-value with it is the probability of error (`informationValue1_discrete`). Incremental information
-value replaces the indicator by a representational distance between each alternative and the
-observed unit followed by the alternatives sampled after it, the double expectation of the paper's
-definition (`iiv`), whose horizon-one case is the information value of the substrate (`iiv_zero`).
+This file formalizes the incremental alternative sampling (IAS) family of [giulianelli-etal-2026].
+A language model is the family of next-unit kernels of an autoregressive process, and a
+comprehender samples continuations of the context over a forecast horizon of `h` units, the
+partial trajectory of the process (`Kernel.partialTraj`); the generalised surprisal of the next
+unit is the substrate's `genSurprisal` at that kernel. Standard surprisal is the member with the
+negative logarithm and the prefix indicator at every horizon, because the alternatives' first
+unit is distributed as the model's next unit (`genSurprisal_prefixIndicator`); it thus evaluates
+alternatives by lexical identity alone, and the discrete distance shows what this conflates,
+since information value with it is the probability of error (`informationValue1_discrete`).
+Incremental information value replaces the indicator by a representational distance between each
+alternative and the observed unit followed by the alternatives sampled after it, the double
+expectation of the paper's definition (`iiv`), whose horizon-one case is the information value of
+the substrate (`iiv_zero`).
 
 ## Implementation notes
 
-* Alternatives are `h`-grams of `Option Voc`, `none` standing for end of string and padding the
-  continuation after it, so that expectations are finite sums over a `Fintype`.
+* Contexts are trajectories `Π i : Iic n, X i` of the process and alternatives are trajectories
+  to time `n + h`, which carry the context as their prefix; a fixed alphabet is the constant
+  family, and an end-of-string unit belongs to it, absorbing if the model makes it so.
 * The alternative-set reformulation with mean, minimum and maximum summary statistics, and its
   reduction to the single-alternative definition under the mean, are not formalized; nor are the
   representation functions, which the paper takes from a Transformer's layers and which enter
@@ -39,153 +44,78 @@ definition (`iiv`), whose horizon-one case is the information value of the subst
 * [levy-2008]
 -/
 
+open Finset InformationTheory MeasureTheory ProbabilityTheory Processing.PredictiveUncertainty
+
 namespace GiulianelliEtAl2026
 
-open Processing.PredictiveUncertainty Processing.LanguageModel Finset
+variable {X : ℕ → Type*} [∀ n, MeasurableSpace (X n)] [∀ n, MeasurableSingletonClass (X n)]
+  (κ : (n : ℕ) → Kernel (Π i : Iic n, X i) (X (n + 1))) [∀ n, IsMarkovKernel (κ n)] {n h : ℕ}
 
-variable {Voc : Type*}
+/-- The context `x` followed by the unit `w`. -/
+def snoc (x : Π i : Iic n, X i) (w : X (n + 1)) : Π i : Iic (n + 1), X i :=
+  IicProdIoc n (n + 1) (x, MeasurableEquiv.piSingleton n w)
 
-/-! ### Sampling alternatives over a forecast horizon -/
+/-! ### Standard surprisal at every horizon -/
 
-/-- The alternatives of horizon `h`: `h` symbols sampled autoregressively from the model, `none`
-for end of string and padding the continuation after it. -/
-noncomputable def gram (lm : LangModel Voc) : List Voc → (h : ℕ) → PMF (List.Vector (Option Voc) h)
-  | _, 0 => PMF.pure List.Vector.nil
-  | c, h + 1 => (lm.next c).bind λ
-    | none => PMF.pure (List.Vector.replicate (h + 1) none)
-    | some w => (gram lm (c ++ [w]) h).map (List.Vector.cons (some w))
+/-- The prefix indicator: one when the alternative's first unit is `w`. -/
+noncomputable def prefixIndicator (w : X (n + 1)) (a : Π i : Iic (n + h + 1), X i) : ℝ :=
+  ({w} : Set (X (n + 1))).indicator 1 (a ⟨n + 1, mem_Iic.2 (by omega)⟩)
 
-/-- The first symbol of an alternative is distributed as the model's next symbol. -/
-theorem map_head_gram (lm : LangModel Voc) (c : List Voc) (h : ℕ) :
-    (gram lm c (h + 1)).map List.Vector.head = lm.next c := by
-  simp only [gram, PMF.map_bind]
-  conv_rhs => rw [← PMF.bind_pure (lm.next c)]
-  congr 1
-  funext o
-  cases o with
-  | none => simp [PMF.pure_map, List.Vector.replicate_succ]
-  | some w =>
-    rw [PMF.map_comp]
-    have hc : (List.Vector.head ∘ List.Vector.cons (some w) :
-        List.Vector (Option Voc) h → Option Voc) = Function.const _ (some w) :=
-      funext λ v => List.Vector.head_cons _ v
-    rw [hc, PMF.map_const]
-
-/-- Alternatives of horizon one are the model's next symbols. -/
-theorem gram_one (lm : LangModel Voc) (c : List Voc) :
-    gram lm c 1 = (lm.next c).map (λ o => List.Vector.cons o List.Vector.nil) := by
-  rw [gram, ← PMF.bind_pure_comp]
-  congr 1
-  funext o
-  cases o with
-  | none => rfl
-  | some w => simp [gram, PMF.pure_map]
-
-variable [Fintype Voc] [DecidableEq Voc]
-
-/-- Generalised surprisal at horizon `h`: a warping of the expected score of the target against
-the sampled alternatives. -/
-noncomputable def genSurprisalH (lm : LangModel Voc) (h : ℕ) (warp : ℝ → ℝ)
-    (score : List.Vector (Option Voc) h → Voc → List Voc → ℝ) (c : List Voc) (w : Voc) : ℝ :=
-  warp (∑ a, (gram lm c h a).toReal * score a w c)
-
-/-- The prefix indicator of surprisal's scoring function: `1` when the alternative starts with the
-target. -/
-def prefixIndicator {h : ℕ} (w : Voc) (a : List.Vector (Option Voc) (h + 1)) : ℝ :=
-  if a.head = some w then 1 else 0
-
-/-- The expected prefix indicator is the next-symbol probability, at every horizon. -/
-theorem sum_prefixIndicator (lm : LangModel Voc) (c : List Voc) (h : ℕ) (w : Voc) :
-    ∑ a, (gram lm c (h + 1) a).toReal * prefixIndicator w a = (lm.nextProb c w).toReal := by
-  have key : ∀ a : List.Vector (Option Voc) (h + 1),
-      (gram lm c (h + 1) a).toReal * prefixIndicator w a =
-        (if some w = a.head then gram lm c (h + 1) a else 0).toReal := by
-    intro a
-    unfold prefixIndicator
-    by_cases ha : a.head = some w
-    · simp [ha]
-    · simp [ha, Ne.symm ha]
-  simp_rw [key]
-  rw [← ENNReal.toReal_sum (λ a _ => by split_ifs <;> simp [PMF.apply_ne_top])]
-  congr 1
-  rw [LangModel.nextProb, ← map_head_gram lm c h, PMF.map_apply, tsum_fintype]
-  exact Finset.sum_congr rfl λ a _ => by congr
+/-- The expected prefix indicator is the next-unit probability, at every horizon. -/
+theorem integral_prefixIndicator (x : Π i : Iic n, X i) (w : X (n + 1)) :
+    ∫ a, prefixIndicator w a ∂(Kernel.partialTraj κ n (n + h + 1) x) = (κ n x).real {w} := by
+  have hm : Measurable fun a : Π i : Iic (n + h + 1), X i => a ⟨n + 1, mem_Iic.2 (by omega)⟩ :=
+    measurable_pi_apply _
+  simp only [prefixIndicator]
+  rw [← integral_map hm.aemeasurable
+      (stronglyMeasurable_one.indicator (measurableSet_singleton w)).aestronglyMeasurable,
+    ← Kernel.map_apply _ hm, Kernel.map_partialTraj_eval_succ (by omega),
+    integral_indicator_one (measurableSet_singleton w)]
 
 /-- Standard surprisal is the generalised surprisal with the negative logarithm and the prefix
 indicator, at every horizon. -/
-theorem genSurprisalH_indicator (lm : LangModel Voc) (c : List Voc) (h : ℕ) (w : Voc) :
-    genSurprisalH lm (h + 1) (λ x => -Real.log x) (λ a w _ => prefixIndicator w a) c w =
-      lm.surprisal c w := by
-  unfold genSurprisalH LangModel.surprisal
-  rw [sum_prefixIndicator]
+theorem genSurprisal_prefixIndicator (x : Π i : Iic n, X i) (w : X (n + 1)) :
+    genSurprisal (Kernel.partialTraj κ n (n + h + 1)) (λ r => -Real.log r)
+      (λ a w _ => prefixIndicator w a) x w = surprisal (κ n x) w := by
+  simp only [genSurprisal]
+  rw [integral_prefixIndicator]
+  rfl
 
 /-! ### What the indicator conflates -/
 
-/-- The discrete distance on next symbols: an alternative is accurate only when identical to the
-target. -/
-def discrete (o : Option Voc) (w : Voc) : ℝ := if o = some w then 0 else 1
+/-- The discrete distance on units: an alternative is accurate only when identical to the
+unit. -/
+noncomputable def discrete (a w : X (n + 1)) : ℝ := 1 - ({w} : Set (X (n + 1))).indicator 1 a
 
 /-- Information value with the discrete distance is the probability of error, `1 − p(w | c)`: the
-alternatives' similarity to the target counts for nothing, as under surprisal. -/
-theorem informationValue1_discrete (lm : LangModel Voc) (c : List Voc) (w : Voc) :
-    informationValue1 lm discrete c w = 1 - (lm.nextProb c w).toReal := by
-  unfold informationValue1 discrete
-  have h1 : ∑ o : Option Voc, ((lm.next c) o).toReal = 1 := by
-    have h := (lm.next c).tsum_coe
-    rw [tsum_fintype] at h
-    rw [← ENNReal.toReal_sum (λ _ _ => PMF.apply_ne_top _ _), h, ENNReal.toReal_one]
-  have h2 : ∀ o : Option Voc, ((lm.next c) o).toReal * (if o = some w then 0 else 1) =
-      ((lm.next c) o).toReal - (if o = some w then ((lm.next c) o).toReal else 0) := by
-    intro o
-    split_ifs <;> ring
-  simp_rw [h2, Finset.sum_sub_distrib, h1, Finset.sum_ite_eq', Finset.mem_univ, if_true]
-  rfl
+alternatives' similarity to the unit counts for nothing, as under surprisal. -/
+theorem informationValue1_discrete (x : Π i : Iic n, X i) (w : X (n + 1)) :
+    informationValue1 (κ n) discrete x w = 1 - (κ n x).real {w} := by
+  simp only [informationValue1, discrete]
+  rw [integral_sub (integrable_const _)
+      ((integrable_const 1).indicator (measurableSet_singleton w)),
+    integral_const, integral_indicator_one (measurableSet_singleton w)]
+  simp
 
 /-! ### Incremental information value -/
 
 /-- Incremental information value at horizon `h + 1`: the expected representational distance
-between an alternative sampled before the target and the target followed by an alternative
-sampled after it, the paper's double expectation. -/
-noncomputable def iiv (lm : LangModel Voc) (h : ℕ)
-    (d : List.Vector (Option Voc) (h + 1) → List.Vector (Option Voc) (h + 1) → ℝ)
-    (c : List Voc) (w : Voc) : ℝ :=
-  ∑ a, (gram lm c (h + 1) a).toReal *
-    ∑ a', (gram lm (c ++ [w]) h a').toReal * d a (List.Vector.cons (some w) a')
-
-/-- Next symbols and alternatives of horizon one correspond. -/
-def singletonEquiv : Option Voc ≃ List.Vector (Option Voc) 1 where
-  toFun o := List.Vector.cons o List.Vector.nil
-  invFun a := a.head
-  left_inv o := List.Vector.head_cons o List.Vector.nil
-  right_inv a := by
-    symm
-    rw [List.Vector.eq_cons_iff]
-    exact ⟨rfl, List.Vector.singleton_tail a⟩
+between an alternative sampled before the unit and the unit followed by the alternatives sampled
+after it, the paper's double expectation. -/
+noncomputable def iiv (d : (Π i : Iic (n + h + 1), X i) → (Π i : Iic (n + h + 1), X i) → ℝ)
+    (x : Π i : Iic n, X i) (w : X (n + 1)) : ℝ :=
+  ∫ a, ∫ a', d a a' ∂(Kernel.partialTraj κ (n + 1) (n + h + 1) (snoc x w))
+    ∂(Kernel.partialTraj κ n (n + h + 1) x)
 
 /-- At horizon one, incremental information value is the information value of the substrate,
-with the distance read on the single symbols. -/
-theorem iiv_zero (lm : LangModel Voc)
-    (d : List.Vector (Option Voc) 1 → List.Vector (Option Voc) 1 → ℝ) (c : List Voc) (w : Voc) :
-    iiv lm 0 d c w =
-      informationValue1 lm (λ o w' => d (singletonEquiv o) (singletonEquiv (some w'))) c w := by
-  unfold iiv informationValue1
-  show ∑ a : List.Vector (Option Voc) 1, (gram lm c 1 a).toReal *
-      ∑ a' : List.Vector (Option Voc) 0, (gram lm (c ++ [w]) 0 a').toReal *
-        d a (List.Vector.cons (some w) a') = _
-  have inner : ∀ a : List.Vector (Option Voc) 1,
-      ∑ a' : List.Vector (Option Voc) 0, (gram lm (c ++ [w]) 0 a').toReal *
-        d a (List.Vector.cons (some w) a') = d a (singletonEquiv (some w)) := by
-    intro a
-    rw [Fintype.sum_eq_single List.Vector.nil (λ a' ha' => absurd (Subsingleton.elim a' _) ha')]
-    show ((PMF.pure List.Vector.nil : PMF (List.Vector (Option Voc) 0)) List.Vector.nil).toReal *
-      _ = _
-    rw [PMF.pure_apply_self, ENNReal.toReal_one, one_mul]
-    rfl
-  simp_rw [inner, gram_one]
-  rw [← singletonEquiv.sum_comp]
-  refine Finset.sum_congr rfl λ o _ => ?_
-  congr 2
-  rw [PMF.map_apply, tsum_fintype]
-  simp [singletonEquiv, List.Vector.eq_cons_iff, List.Vector.head_cons, Finset.sum_ite_eq]
+with the distance read on the extended contexts. -/
+theorem iiv_zero [∀ n, Countable (X n)]
+    (d : (Π i : Iic (n + 1), X i) → (Π i : Iic (n + 1), X i) → ℝ) (x : Π i : Iic n, X i)
+    (w : X (n + 1)) :
+    iiv κ (h := 0) d x w = informationValue1 (κ n) (λ a w' => d (snoc x a) (snoc x w')) x w := by
+  simp only [iiv, informationValue1, Nat.add_zero, Kernel.partialTraj_self, Kernel.id_apply,
+    integral_dirac, Kernel.partialTraj_succ_self_apply]
+  rw [integral_map (by fun_prop) (measurable_of_countable _).aestronglyMeasurable]
+  rfl
 
 end GiulianelliEtAl2026
