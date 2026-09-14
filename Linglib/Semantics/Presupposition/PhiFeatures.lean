@@ -1,6 +1,6 @@
 import Linglib.Semantics.Mereology
 import Linglib.Syntax.Agreement.ContainmentPair
-import Linglib.Features.Number.Decomposition
+import Linglib.Semantics.Plurality.NumberFeatures
 import Linglib.Syntax.Person.Decomposition
 import Linglib.Syntax.Gender.Decomposition
 import Linglib.Semantics.Presupposition.Basic

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Case.Basic
-import Linglib.Features.Prominence
+import Linglib.Semantics.Reference.Prominence
 import Mathlib.Data.Fintype.Prod
 import Linglib.Syntax.Clause.ArgumentRole
 

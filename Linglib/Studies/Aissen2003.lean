@@ -1,4 +1,4 @@
-import Linglib.Features.Prominence
+import Linglib.Semantics.Reference.Prominence
 import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.OptimalityTheory.Tableau
 

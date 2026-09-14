@@ -1,4 +1,4 @@
-import Linglib.Features.PropertyDomain
+import Linglib.Semantics.Degree.PropertyDomain
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Fintype.Sum

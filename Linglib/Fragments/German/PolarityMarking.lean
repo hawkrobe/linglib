@@ -1,5 +1,5 @@
 import Linglib.Semantics.Polarity.Marking
-import Linglib.Features.AnsweringSystem
+import Linglib.Semantics.Questions.Answering
 
 /-!
 # German Polarity-Marking Strategies

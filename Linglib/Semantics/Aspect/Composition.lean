@@ -1,6 +1,6 @@
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Data.UD.Basic
-import Linglib.Features.MassCount
+import Linglib.Semantics.Plurality.MassCount
 
 /-!
 # VP-Level Situation Type Composition

@@ -1,5 +1,5 @@
 import Linglib.Syntax.Number.Basic
-import Linglib.Features.Number.Decomposition
+import Linglib.Semantics.Plurality.NumberFeatures
 
 /-!
 # Number resolution

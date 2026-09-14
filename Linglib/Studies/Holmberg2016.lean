@@ -1,4 +1,4 @@
-import Linglib.Features.AnsweringSystem
+import Linglib.Semantics.Questions.Answering
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Fragments.Swedish.AnswerParticles
 import Linglib.Fragments.German.PolarityMarking

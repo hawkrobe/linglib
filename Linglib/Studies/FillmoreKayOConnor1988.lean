@@ -4,7 +4,7 @@ import Mathlib.Order.Max
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.ConstructionGrammar.Idiom
-import Linglib.Features.Polarity
+import Linglib.Semantics.Polarity.Sentence
 import Linglib.Data.Examples.FillmoreKayOConnor1988
 
 /-!

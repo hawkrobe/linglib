@@ -1,6 +1,6 @@
-import Linglib.Features.Polarity
+import Linglib.Semantics.Polarity.Sentence
 import Linglib.Semantics.Polarity.Marking
-import Linglib.Features.AnsweringSystem
+import Linglib.Semantics.Questions.Answering
 
 /-!
 # Swedish Answer Particles

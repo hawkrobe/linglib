@@ -2,7 +2,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Sigma
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Features.PropertyDomain
+import Linglib.Semantics.Degree.PropertyDomain
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Processing.VisualWorld
 

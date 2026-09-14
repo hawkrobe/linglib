@@ -1,5 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Features.Polarity
+import Linglib.Semantics.Polarity.Sentence
 import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Semantics.Exhaustification.Finite
 

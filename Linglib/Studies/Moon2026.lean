@@ -1,4 +1,4 @@
-import Linglib.Features.Number.Interp
+import Linglib.Semantics.Plurality.Number
 import Linglib.Semantics.Aspect.Cumulativity
 import Mathlib.Topology.Connected.Basic
 import Mathlib.Tactic.FinCases

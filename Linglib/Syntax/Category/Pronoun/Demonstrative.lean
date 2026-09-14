@@ -1,4 +1,4 @@
-import Linglib.Features.Deixis
+import Linglib.Semantics.Reference.Deixis
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Category.Pronoun.Capabilities
 

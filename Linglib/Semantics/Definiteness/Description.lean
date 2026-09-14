@@ -1,5 +1,5 @@
 import Linglib.Semantics.Composition.Assignment
-import Linglib.Features.Deixis
+import Linglib.Semantics.Reference.Deixis
 import Linglib.Semantics.Definiteness.Defs
 
 /-!

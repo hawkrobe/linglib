@@ -1,6 +1,6 @@
 import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Evidential.Source
-import Linglib.Features.Mirativity
+import Linglib.Semantics.Evidential.Mirativity
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Mood.Defs
 

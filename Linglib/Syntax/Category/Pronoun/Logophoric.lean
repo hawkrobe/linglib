@@ -1,4 +1,4 @@
-import Linglib.Features.Logophoricity
+import Linglib.Semantics.Reference.Logophoricity
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Category.Pronoun.Capabilities
 
@@ -11,12 +11,12 @@ open Morphology (Word)
 
 The **pronoun** member of the cross-categorial logophoric series: `LogophoricPronoun` `extends`
 the general `Pronoun` (`Syntax/Category/Pronoun/Basic.lean`) with its [sells-1987] orientation — the minimum
-perspectival role (`pivot`/`self`/`source`, `Features/Logophoricity.lean`) an antecedent must fill
+perspectival role (`pivot`/`self`/`source`, `Semantics/Reference/Logophoricity.lean`) an antecedent must fill
 to license it. Ewe *yè* is one such object: a logophoric pronoun licensed only by a `self` (an
 attitude holder); long-distance *zibun* is another, licensed by any `pivot`.
 
 This is *one carrier* of the series, not its home: logophoricity is word-class-neutral (the
-`Logophoric` capability and the `LogophoricRole` taxonomy live in `Features/Logophoricity.lean`).
+`Logophoric` capability and the `LogophoricRole` taxonomy live in `Semantics/Reference/Logophoricity.lean`).
 Verbal logophoric marking (Gokana) or a logophoric long-distance reflexive would be sibling
 carriers — a different word-class object supplying its own `instance : Logophoric That` — read by the
 same `[Logophoric α]` generic code.

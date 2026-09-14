@@ -1,5 +1,5 @@
 import Linglib.Semantics.Events.Phase
-import Linglib.Features.Polarity
+import Linglib.Semantics.Polarity.Sentence
 
 /-!
 # The aboutness account of projection

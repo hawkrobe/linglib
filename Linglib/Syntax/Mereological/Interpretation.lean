@@ -1,5 +1,5 @@
 import Linglib.Syntax.Mereological.Basic
-import Linglib.Features.Number.Interp
+import Linglib.Semantics.Plurality.Number
 
 /-!
 # Mereological Syntax → Semantics Bridge

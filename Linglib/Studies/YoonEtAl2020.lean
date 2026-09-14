@@ -1,6 +1,6 @@
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Core.Probability.UniformOn
-import Linglib.Features.Subjectivity
+import Linglib.Semantics.Modality.Subjectivity
 
 /-!
 # [yoon-etal-2020] — Polite speech emerges from competing social goals

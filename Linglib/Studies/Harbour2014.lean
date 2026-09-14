@@ -1,7 +1,7 @@
 import Mathlib.Order.Interval.Set.OrdConnected
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Fintype.Powerset
-import Linglib.Features.Number.Decomposition
+import Linglib.Semantics.Plurality.NumberFeatures
 import Linglib.Syntax.Minimalist.Phi.Recursion
 
 /-!
@@ -9,7 +9,7 @@ import Linglib.Syntax.Minimalist.Phi.Recursion
 
 This file formalizes [harbour-2014]'s account of the approximative numbers, paucal and greater
 plural, by a feature [±additive] of additive closure, over the library's [±atomic, ±minimal]
-decomposition and its activation and recursion parameters (`Features/Number/Decomposition.lean`,
+decomposition and its activation and recursion parameters (`Semantics/Plurality/NumberFeatures.lean`,
 `Syntax/Minimalist/Phi/Recursion.lean`). The convexity condition (32) asks basic meanings to be
 convex regions of the number lattice, and its definition of convexity (33) is `Set.OrdConnected`,
 `ordConnected_iff_convexity_def`; on the first-person lattice the [+additive] region is not

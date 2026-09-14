@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Boundedness
-import Linglib.Features.ScalarDimension
+import Linglib.Semantics.Degree.Scale
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
 import Linglib.Semantics.Degree.Discrete

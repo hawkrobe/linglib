@@ -1,6 +1,6 @@
 import Linglib.Data.UD.Basic
 import Linglib.Syntax.Person.Basic
-import Linglib.Features.Prominence
+import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Agreement.ContainmentPair
 import Linglib.Syntax.Number.Basic
 

@@ -27,7 +27,7 @@ languages are the rows of `Data/Examples/Haspelmath1997.json`.
 ## Implementation notes
 
 The map is `HaspelmathFunction.adjacent` and connectedness `HaspelmathFunction.isContiguous`,
-both in `Features/Indefinite.lean`; the book's numbering of the functions is
+both in `Semantics/Quantification/Indefinite.lean`; the book's numbering of the functions is
 `HaspelmathFunction.number`, so Table 4.1 is entered in the book's digit notation. Each paradigm
 follows the figure and text of its Appendix A section rather than Table 4.1 where the two
 differ: Hungarian *akár-* is 4589 in the table but excluded from questions and admitted under

@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.Prominence
+import Linglib.Semantics.Reference.Prominence
 import Linglib.Morphology.Word.Basic
 import Linglib.Syntax.Number.Capabilities
 import Linglib.Syntax.Person.Capabilities
