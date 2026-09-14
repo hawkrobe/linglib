@@ -2,7 +2,7 @@ import Linglib.Discourse.Centering.Transition
 import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Data.Examples.GroszJoshiWeinstein1995
-import Linglib.Studies.Sidner1983
+import Linglib.Studies.Sidner1979
 
 /-!
 # Grosz, Joshi, and Weinstein (1995): Centering
@@ -19,14 +19,18 @@ grammatical role from the hamster variants (7) to (10), which Rule 1 separates i
 acceptable and the degraded (`rule1_separates_variants`), and from the subject preference of
 (11) and (12) and the toy contrast of (13) and (14); section 7 applies the rules to the
 violation in (15) and its repair by the shift in (16), the full noun phrase center of (17),
-and the transitions annotated on (20); and section 9 compares centering with [sidner-1983] on
+and the transitions annotated on (20); and section 9 compares centering with [sidner-1979] on
 Sidner's example (34), where the centering account makes Jeff the center that the pronoun of
-(34c) continues while Sidner's actor focus makes Carl its leading candidate
-(`sidner_disagrees`).
+(34c) continues (`d34_jeff_cb`). The section says that Sidner's actor focus, Carl after (34b),
+makes Carl the leading candidate for that pronoun; Sidner's rule for a pronoun in agent
+position gives precedence to a discourse focus established before the actor focus, and on it
+the pronoun co-specifies Jeff, as in her own analysis of the discourse
+(`d34_sidner_foci`, `d34_sidner_cospecify`).
 
 ## Implementation notes
 
-Entities are an inductive for the paper's discourses and `Sidner1983.D34.Entity` for Sidner's;
+Entities are an inductive for the paper's discourses and `Sidner1979.Entity` for Sidner's, whose
+discourse D9 the paper's (34) abbreviates;
 a realization is by name or by pronoun, and grammatical roles are subject, object, and other,
 ranked in that order, with embedded subjects counting as other. Under the definitions the
 backward-looking center of (2) stays John throughout, so the paper's informal flipping of
@@ -39,7 +43,7 @@ read through the substrate's sum of transition ranks; its restriction to pairs o
 ## References
 
 * [grosz-joshi-weinstein-1995]
-* [sidner-1983]
+* [sidner-1979]
 * [brennan-friedman-pollard-1987]
 * [gordon-grosz-gilliom-1993]
 
@@ -301,7 +305,7 @@ exams, but I think he went to the Cape with Linda.* -/
 namespace D34
 
 /-- Sidner's utterances over her entities. -/
-abbrev SUtt := Utterance Sidner1983.D34.Entity GrammaticalRole
+abbrev SUtt := Utterance Sidner1979.Entity GrammaticalRole
 
 /-- (34a) I haven't seen Jeff for several days. -/
 def a : SUtt := ⟨[pron .speaker .subject, name .jeff .object]⟩
@@ -330,8 +334,18 @@ theorem d34_two_pronouns : cb D34.b D34.c' = some .carl ∧
     PronominalizationConstraint D34.b D34.c' := by
   decide
 
-/-- The disagreement: Sidner's actor focus after (34b) makes Carl the leading candidate for
-the pronoun of (34c), while the centering account makes Jeff the center it continues. -/
-theorem sidner_disagrees : Sidner1983.D34.sidnerPredictedHe ≠ cb D34.a D34.b := by decide
+/-- After (34b), Sidner's discourse focus is Jeff and her actor focus is Carl, as the section
+says; the paper's (34a) and (34b) are the first two sentences of her D9. -/
+theorem d34_sidner_foci : Sidner1979.D9.afterB.discourse = some ⟨.jeff, 1⟩ ∧
+    Sidner1979.D9.afterB.actor = some ⟨.carl, 2⟩ := by
+  decide
+
+/-- The section takes the actor focus to be preferred for the pronoun of (34c); on Sidner's rule
+for a pronoun in agent position the discourse focus, established in (34a) before the actor
+focus, takes precedence, and the pronoun co-specifies Jeff, the center of the centering
+account. -/
+theorem d34_sidner_cospecify :
+    Sidner1979.D9.afterB.cospecify .agent (· ∈ [.jeff, .carl]) = cb D34.a D34.b := by
+  decide
 
 end GroszJoshiWeinstein1995

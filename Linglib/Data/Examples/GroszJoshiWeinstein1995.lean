@@ -493,9 +493,9 @@ def ex_34 : LinguisticExample :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("he in (c) = Jeff", .acceptable), ("he in (c) = Carl", .marginal)]
+    readings := [("he in (c) = Jeff", .acceptable)]
     paperFeatures := [("section", "9"), ("phenomenon", "sidnerComparison")]
-    comment := "Sidner's actor focus makes Carl the leading candidate for 'he' in (c); on the centering account Jeff is the Cb at (b)."
+    comment := "Section 9 says Sidner's actor focus makes Carl the leading candidate for 'he' in (c); Sidner's own analysis of this discourse (her D9) has every 'he' co-specify Jeff, the discourse focus established before the actor focus. On the centering account Jeff is the Cb at (b)."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 

@@ -2471,7 +2471,6 @@ import Linglib.Studies.Sharvit2025
 import Linglib.Studies.ShenHuang2026
 import Linglib.Studies.Shieber1985
 import Linglib.Studies.Shieber1986
-import Linglib.Studies.Sidner1983
 import Linglib.Studies.SikosEtAl2021
 import Linglib.Studies.Siloni2012
 import Linglib.Studies.Simik2024

@@ -1,0 +1,358 @@
+[
+  {
+    "id": "sidner1979_22",
+    "source": {
+      "bibkey": "sidner-1979",
+      "paperLabel": "(22)"
+    },
+    "language": "stan1293",
+    "primaryText": "I took my sister to the zoo today.",
+    "discourseSegments": [
+      "I took my sister to the zoo today."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "expectedFocus"
+      ],
+      [
+        "form",
+        "plain"
+      ],
+      [
+        "expectedFocus",
+        "my sister"
+      ]
+    ],
+    "comment": "Not an is-a or there-insertion sentence: the default expected focus list runs my sister (theme), the zoo, today, I (agent), the verb phrase, and the expected focus is its first member."
+  },
+  {
+    "id": "sidner1979_23",
+    "source": {
+      "bibkey": "sidner-1979",
+      "paperLabel": "(23)"
+    },
+    "language": "stan1293",
+    "primaryText": "There once was an old man who lived in the woods.",
+    "discourseSegments": [
+      "There once was an old man who lived in the woods."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "expectedFocus"
+      ],
+      [
+        "form",
+        "thereInsertion"
+      ],
+      [
+        "expectedFocus",
+        "an old man"
+      ]
+    ],
+    "comment": "A there-insertion sentence: the expected focus is its subject."
+  },
+  {
+    "id": "sidner1979_24",
+    "source": {
+      "bibkey": "sidner-1979",
+      "paperLabel": "(24)"
+    },
+    "language": "stan1293",
+    "primaryText": "Linda talked with her dog all day long.",
+    "discourseSegments": [
+      "Linda talked with her dog all day long."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "expectedFocus"
+      ],
+      [
+        "form",
+        "plain"
+      ],
+      [
+        "expectedFocus",
+        "her dog"
+      ]
+    ],
+    "comment": "No theme is present, what is talked about not being given: the default expected focus list runs her dog, all day long, Linda (agent), the verb phrase."
+  },
+  {
+    "id": "sidner1979_d2",
+    "source": {
+      "bibkey": "sidner-1979",
+      "paperLabel": "D2 (chapter 4)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary is giving a surprise party at Hilda's house. It's at 340 Cherry St.",
+    "discourseSegments": [
+      "Mary is giving a surprise party at Hilda's house.",
+      "It's at 340 Cherry St."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "it = Hilda's house",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "recencyRule"
+      ]
+    ],
+    "comment": "The pronoun in subject position co-specifies Hilda's house, the last constituent of the previous sentence, by the recency rule rather than the expected focus."
+  },
+  {
+    "id": "sidner1979_d7",
+    "source": {
+      "bibkey": "sidner-1979",
+      "paperLabel": "D7 (chapter 4)"
+    },
+    "language": "stan1293",
+    "primaryText": "I lost a necklace at the office yesterday. I inherited it from my grandmother, and it meant a lot to me.",
+    "discourseSegments": [
+      "I lost a necklace at the office yesterday.",
+      "I inherited it from my grandmother,",
+      "and it meant a lot to me."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "it = the necklace",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "nonAgentPronoun"
+      ]
+    ],
+    "comment": "The pronoun outside agent position co-specifies the discourse focus, the necklace; the alternate potential focus, the office, is never considered."
+  },
+  {
+    "id": "sidner1979_d8",
+    "source": {
+      "bibkey": "sidner-1979",
+      "paperLabel": "D8 (chapter 4)"
+    },
+    "language": "stan1293",
+    "primaryText": "Yesterday Max went to Bloomingdales with Ned and Winston on a shopping trip. While he was there, he bought some sneakers for his mother.",
+    "discourseSegments": [
+      "Yesterday Max went to Bloomingdales with Ned and Winston on a shopping trip.",
+      "While he was there, he bought some sneakers for his mother."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "he = Max",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "agentPronoun"
+      ]
+    ],
+    "comment": "The pronoun in agent position co-specifies the actor focus, Max: the discourse focus, Bloomingdales, was established in the same sentence and takes no precedence, and the two potential actors Ned and Winston raise no actor ambiguity."
+  },
+  {
+    "id": "sidner1979_d9",
+    "source": {
+      "bibkey": "sidner-1979",
+      "paperLabel": "D9 (chapter 4)"
+    },
+    "language": "stan1293",
+    "primaryText": "I haven't seen Jeff for several days. Carl thinks he's studying for his exams. Oscar says he is sick, but I think he went to the Cape with Linda.",
+    "discourseSegments": [
+      "I haven't seen Jeff for several days.",
+      "Carl thinks he's studying for his exams.",
+      "Oscar says he is sick,",
+      "but I think he went to the Cape with Linda."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "he = Jeff throughout",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "animateDiscourseFocusRule"
+      ]
+    ],
+    "comment": "The discourse focus is Jeff while the actor focus moves from the speaker to Carl to Oscar; every he co-specifies Jeff, the discourse focus having been established before any other phrase satisfying person, number and gender. Reported as (34) in Grosz, Joshi and Weinstein (1995)."
+  },
+  {
+    "id": "sidner1979_d14a",
+    "source": {
+      "bibkey": "sidner-1979",
+      "paperLabel": "D14 (chapter 4), 2a"
+    },
+    "language": "stan1293",
+    "primaryText": "I took my dog to the vet yesterday. He bit him in the hand.",
+    "discourseSegments": [
+      "I took my dog to the vet yesterday.",
+      "He bit him in the hand."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "he = my dog, him = the vet",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "actorAndDiscourseFocus"
+      ]
+    ],
+    "comment": "The actor focus, the speaker, fails the syntactic filters for he, so the first potential actor, my dog, is its co-specification; the discourse focus, my dog, is rejected for him by inference, dogs having no hands, so the first potential discourse focus, the vet, is its co-specification. The discourse focus moves to the vet and my dog is stacked; the actor focus moves to my dog and the speaker is stacked."
+  },
+  {
+    "id": "sidner1979_d14b",
+    "source": {
+      "bibkey": "sidner-1979",
+      "paperLabel": "D14 (chapter 4), 2b"
+    },
+    "language": "stan1293",
+    "primaryText": "I took my dog to the vet yesterday. He injected him with a new medicine.",
+    "discourseSegments": [
+      "I took my dog to the vet yesterday.",
+      "He injected him with a new medicine."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "he = the vet, him = my dog",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "actorAndDiscourseFocus"
+      ]
+    ],
+    "comment": "The discourse focus, my dog, is retained as the co-specification of him, a dog being injectable; for he the actor focus and the first potential actor are rejected, dogs giving no injections, and the vet is its co-specification and the new actor focus."
+  },
+  {
+    "id": "sidner1979_d25",
+    "source": {
+      "bibkey": "sidner-1979",
+      "paperLabel": "D25 (chapter 2)"
+    },
+    "language": "stan1293",
+    "primaryText": "Last week there were some nice strawberries in the refrigerator. They came from our food co-op and were unusually fresh.",
+    "discourseSegments": [
+      "Last week there were some nice strawberries in the refrigerator.",
+      "They came from our food co-op and were unusually fresh."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "they = the strawberries",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "focusConfirmation"
+      ]
+    ],
+    "comment": "A there-insertion sentence whose subject, some strawberries, is the expected focus; the pronoun of the second sentence co-specifies it and the focus is retained at step 4 of the focusing algorithm."
+  },
+  {
+    "id": "sidner1979_d35",
+    "source": {
+      "bibkey": "sidner-1979",
+      "paperLabel": "D35 (chapter 2)"
+    },
+    "language": "stan1293",
+    "primaryText": "Alfred and Zohar liked to play baseball. They played it everyday after school before dinner. After their game, Alfred and Zohar had ice cream cones. They tasted really good. Alfred always had the vanilla super scooper, while Zohar tried the flavor of the day cone. After the cones had been eaten, the boys went home to study.",
+    "discourseSegments": [
+      "Alfred and Zohar liked to play baseball.",
+      "They played it everyday after school before dinner.",
+      "After their game, Alfred and Zohar had ice cream cones.",
+      "They tasted really good.",
+      "Alfred always had the vanilla super scooper,",
+      "while Zohar tried the flavor of the day cone.",
+      "After the cones had been eaten,",
+      "the boys went home to study."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "they in the fourth sentence = the ice cream cones",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "phenomenon",
+        "focusMovement"
+      ]
+    ],
+    "comment": "The expected focus is baseball, the theme of the verb complement, confirmed by it in the second sentence while they in agent position is not consulted; the fourth sentence's they co-specifies the alternate ice cream cones and the focus moves there, baseball being stacked."
+  }
+]
