@@ -1,4 +1,4 @@
-import Linglib.Features.Person.Resolve
+import Linglib.Syntax.Person.Resolve
 
 /-!
 # Person — referent semantics for the values
@@ -63,7 +63,7 @@ theorem interp_isSome_iff (i u : D) (p : Person) :
 /-- **Resolution is referent union**: the regions are closed under
     coordination — a `p`-referent united with a `q`-referent is a
     `resolve p q`-referent. The resolution table of
-    `Features/Person/Resolve.lean` is the shadow of this closure. -/
+    `Syntax/Person/Resolve.lean` is the shadow of this closure. -/
 theorem interp_resolve (i u : D) :
     ∀ p q : Person, p ≠ .zero → q ≠ .zero →
     ∀ s t : Finset D,
@@ -73,7 +73,7 @@ theorem interp_resolve (i u : D) :
   cases p <;> cases q <;>
     simp_all [region, interp, resolve, Finset.mem_union] <;> tauto
 
-/-- The profile of `Features/Person/Resolve.lean` is the (i, u)-shadow of
+/-- The profile of `Syntax/Person/Resolve.lean` is the (i, u)-shadow of
     the region: `speaker` records whether the region forces `i ∈ s`, and
     a determinate `addressee` slot records the forced `u`-status. -/
 theorem toProfile_speaker (i u : D) :

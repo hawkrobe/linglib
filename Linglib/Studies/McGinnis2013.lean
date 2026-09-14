@@ -1,4 +1,4 @@
-import Linglib.Features.Phi.Geometry
+import Linglib.Syntax.Agreement.Geometry
 import Linglib.Morphology.DistributedMorphology.Fission
 import Linglib.Data.Examples.McGinnis2013
 import Mathlib.Data.Prod.Lex

@@ -5,7 +5,7 @@ import Mathlib.Data.Finset.NAry
 import Mathlib.Data.Finset.Prod
 import Mathlib.Data.Finset.Erase
 import Mathlib.Data.Fintype.Basic
-import Linglib.Features.Person.Decomposition
+import Linglib.Syntax.Person.Decomposition
 import Linglib.Syntax.Minimalist.Phi.Lattice
 
 /-!

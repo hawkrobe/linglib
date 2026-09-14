@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Features.Case.Basic
-import Linglib.Features.Number.Basic
-import Linglib.Features.Person.Basic
+import Linglib.Syntax.Number.Basic
+import Linglib.Syntax.Person.Basic
 
 /-!
 # Shawi

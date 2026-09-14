@@ -1,4 +1,4 @@
-import Linglib.Syntax.Phi.Gender.Decomposition
+import Linglib.Syntax.Gender.Decomposition
 import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
 
 /-!
@@ -381,7 +381,7 @@ def GenderFeature.licensingType : GenderFeature → LicensingType
 /-! ### The split-feature reading
 
 DM's gender features are the non-hybrid fragment of the split-feature
-architecture of `Syntax/Phi/Gender/Decomposition.lean`: interpretable gender
+architecture of `Syntax/Gender/Decomposition.lean`: interpretable gender
 values both halves of a `Gender.SplitFeature`, uninterpretable gender only
 the morphological one. The FEM slice of the head inventory is
 [kramer-2015]'s calculus `KramerN`. -/
@@ -475,7 +475,7 @@ theorem uninterpretable_gender_unvalued (gf : GenderFeature) (h : gf.interp = .u
 
 The bridge from features on n to a language's genders is Vocabulary
 Insertion into that language's own `Gender.System` — the carrier
-discipline of `Syntax/Phi/Gender/Basic.lean`. One map covers the attested
+discipline of `Syntax/Gender/Basic.lean`. One map covers the attested
 patterns of [kramer-2015] Chs 5–7, which differ only in their system:
 the valued feature is realized by `value`, and a bare n falls back to
 the system's morphosyntactic default. -/

@@ -1,6 +1,6 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Prod
-import Linglib.Features.Person.Basic
+import Linglib.Syntax.Person.Basic
 
 /-!
 # The Person Case Constraint

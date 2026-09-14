@@ -77,7 +77,7 @@ lacks one, counts everything — cf. `Grimm2018.yudjaClassify`).
 * Their counting condition (cardinality only over disjoint bases, their
   (A1), after [landman-2011]'s overlap thesis) is the semantic ground for why
   countability classes, not `Number` values, carry the count/mass
-  distinction (`Features/Number/Basic.lean`).
+  distinction (`Syntax/Number/Basic.lean`).
 -/
 
 namespace SuttonFilip2021

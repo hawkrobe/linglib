@@ -1,5 +1,5 @@
 import Linglib.Core.Relation.FactorsThroughOn
-import Linglib.Syntax.Phi.Gender.Basic
+import Linglib.Syntax.Gender.Basic
 
 /-!
 # Gender assignment systems

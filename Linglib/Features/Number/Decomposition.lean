@@ -1,7 +1,7 @@
 import Mathlib.Data.Fintype.Powerset
-import Linglib.Features.Number.Basic
+import Linglib.Syntax.Number.Basic
 import Linglib.Features.Number.Interp
-import Linglib.Features.ContainmentPair
+import Linglib.Syntax.Agreement.ContainmentPair
 
 /-!
 # The feature decomposition of number

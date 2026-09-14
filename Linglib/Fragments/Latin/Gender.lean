@@ -1,5 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Phi.Gender.Basic
+import Linglib.Syntax.Gender.Basic
 
 /-!
 # Latin noun gender

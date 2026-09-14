@@ -7,7 +7,7 @@ import Linglib.Fragments.Somali.Gender
 import Linglib.Fragments.Latin.Gender
 import Linglib.Fragments.Chichewa.Gender
 import Linglib.Fragments.CoastalMarind.Gender
-import Linglib.Syntax.Phi.Gender.AgreementClass
+import Linglib.Syntax.Agreement.Classes
 import Linglib.Syntax.Agreement.Resolution
 import Linglib.Data.Examples.Corbett1998
 

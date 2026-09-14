@@ -1,6 +1,6 @@
 import Linglib.Morphology.DistributedMorphology.Fission
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Features.Person.Decomposition
+import Linglib.Syntax.Person.Decomposition
 import Linglib.Data.Examples.GonzalezPootMcGinnis2006
 
 /-!

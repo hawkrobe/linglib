@@ -5,9 +5,9 @@ Authors: Robert Hawkins
 -/
 import Linglib.Data.UD.Basic
 import Linglib.Features.Case.Capabilities
-import Linglib.Syntax.Phi.Gender.Capabilities
-import Linglib.Features.Number.Capabilities
-import Linglib.Features.Person.Capabilities
+import Linglib.Syntax.Gender.Capabilities
+import Linglib.Syntax.Number.Capabilities
+import Linglib.Syntax.Person.Capabilities
 
 /-!
 # Word tokens

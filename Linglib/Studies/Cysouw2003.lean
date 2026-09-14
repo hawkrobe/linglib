@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.Cysouw2003
-import Linglib.Features.Number.Basic
-import Linglib.Features.Person.Clusivity
+import Linglib.Syntax.Number.Basic
+import Linglib.Syntax.Person.Clusivity
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.Tagalog.Pronouns
 import Linglib.Morphology.Paradigm.Morphome

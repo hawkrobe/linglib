@@ -4,7 +4,7 @@ import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.NormNum
-import Linglib.Features.Number.Resolve
+import Linglib.Syntax.Number.Resolve
 import Linglib.Features.Prominence
 import Linglib.Fragments.Bayso.Number
 import Linglib.Fragments.Teop.Nouns

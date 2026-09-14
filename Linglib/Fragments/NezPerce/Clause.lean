@@ -1,6 +1,6 @@
 import Linglib.Syntax.Clause.Complementation
 import Linglib.Data.UD.Basic
-import Linglib.Features.Number.Capabilities
+import Linglib.Syntax.Number.Capabilities
 
 /-!
 # Nez Perce Clausal Embedding Inventory

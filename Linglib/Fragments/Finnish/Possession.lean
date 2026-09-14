@@ -1,4 +1,4 @@
-import Linglib.Features.Number.Basic
+import Linglib.Syntax.Number.Basic
 
 /-!
 # Finnish Possessive Constructions

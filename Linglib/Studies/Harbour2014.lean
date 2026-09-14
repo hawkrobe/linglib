@@ -30,7 +30,7 @@ both to the class the article *a* realizes and to the class the pronoun *raateu*
 
 The first-person lattice is modeled on a four-element carrier, the speaker and three others,
 with the conventional cut at triads. The critique of privative geometries (section 6) is the
-argument behind the containment filter of `Features/ContainmentPair.lean`, which Harbour
+argument behind the containment filter of `Syntax/Agreement/ContainmentPair.lean`, which Harbour
 rejects. Table 1 (p. 186), Table 3 (p. 214), Table 4 (p. 216), (27), (32), (33), and Figure 8
 were verified against the publication.
 

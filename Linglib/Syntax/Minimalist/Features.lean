@@ -2,9 +2,9 @@ import Linglib.Features.Basic
 import Linglib.Features.Case.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Features.Prominence
-import Linglib.Features.Number.Basic
+import Linglib.Syntax.Number.Basic
 import Linglib.Features.Slot
-import Linglib.Features.Person.Basic
+import Linglib.Syntax.Person.Basic
 
 /-!
 # Feature Infrastructure for Minimalist Agree

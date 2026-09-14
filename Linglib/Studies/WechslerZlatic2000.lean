@@ -2,9 +2,9 @@ import Mathlib.Data.Finset.Card
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Order.Defs.Unbundled
 import Linglib.Features.Case.Capabilities
-import Linglib.Syntax.Phi.Gender.Capabilities
-import Linglib.Features.Number.Capabilities
-import Linglib.Features.Person.Capabilities
+import Linglib.Syntax.Gender.Capabilities
+import Linglib.Syntax.Number.Capabilities
+import Linglib.Syntax.Person.Capabilities
 import Linglib.Morphology.Word.Basic
 import Linglib.Syntax.Agreement.Target
 import Linglib.Syntax.Binding.Basic

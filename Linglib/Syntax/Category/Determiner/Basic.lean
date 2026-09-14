@@ -1,6 +1,6 @@
 import Linglib.Semantics.Definiteness.Defs
 import Linglib.Features.Deixis
-import Linglib.Features.Number.Basic
+import Linglib.Syntax.Number.Basic
 import Linglib.Morphology.Word.Basic
 
 /-!

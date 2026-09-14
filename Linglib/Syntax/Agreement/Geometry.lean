@@ -1,6 +1,6 @@
 import Linglib.Core.Order.UpperLower.Finset
-import Linglib.Features.Person.Basic
-import Linglib.Features.Number.Basic
+import Linglib.Syntax.Person.Basic
+import Linglib.Syntax.Number.Basic
 import Mathlib.Logic.Relation
 import Mathlib.Order.Interval.Finset.Defs
 import Mathlib.Tactic.DeriveFintype

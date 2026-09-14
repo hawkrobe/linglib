@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Morphology.Root.Certificates
-import Linglib.Features.Number.Basic
+import Linglib.Syntax.Number.Basic
 import Linglib.Syntax.Clause.Arguments
 import Linglib.Studies.Marantz1991
 

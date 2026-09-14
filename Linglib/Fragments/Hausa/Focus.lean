@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Fragments.Hausa.TAM
 import Linglib.Fragments.Hausa.Tone
-import Linglib.Syntax.Phi.Gender.Basic
+import Linglib.Syntax.Gender.Basic
 
 /-!
 # Hausa focus and the stabilizer nē/cē

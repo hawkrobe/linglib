@@ -1,4 +1,4 @@
-import Linglib.Syntax.Phi.Gender.Basic
+import Linglib.Syntax.Gender.Basic
 
 /-!
 # German Derivational Gender: *-schaft* and related suffixes

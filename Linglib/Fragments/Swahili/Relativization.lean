@@ -1,4 +1,4 @@
-import Linglib.Features.Number.Basic
+import Linglib.Syntax.Number.Basic
 import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Fragments.Swahili.Basic
 

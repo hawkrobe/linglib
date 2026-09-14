@@ -2,7 +2,7 @@ import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Set.Finite.Range
 import Mathlib.SetTheory.Cardinal.Finite
 import Linglib.Core.Relation.FactorsThroughOn
-import Linglib.Syntax.Phi.Gender.Basic
+import Linglib.Syntax.Gender.Basic
 
 /-!
 # Agreement classes and target genders

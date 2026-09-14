@@ -1,4 +1,4 @@
-import Linglib.Features.Person.Basic
+import Linglib.Syntax.Person.Basic
 
 /-!
 # Person — resolution

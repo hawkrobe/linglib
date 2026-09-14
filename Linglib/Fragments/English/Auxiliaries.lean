@@ -1,8 +1,8 @@
 import Linglib.Data.UD.Basic
 import Linglib.Syntax.Category.Auxiliary.Basic
-import Linglib.Features.Number.Capabilities
-import Linglib.Features.Person.Capabilities
-import Linglib.Features.Person.Decomposition
+import Linglib.Syntax.Number.Capabilities
+import Linglib.Syntax.Person.Capabilities
+import Linglib.Syntax.Person.Decomposition
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Features.Register
 import Linglib.Morphology.Word.Basic

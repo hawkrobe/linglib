@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Morphology.Word.Basic
 import Linglib.Semantics.Modality.ModalTypes
-import Linglib.Features.Number.Capabilities
-import Linglib.Features.Person.Capabilities
+import Linglib.Syntax.Number.Capabilities
+import Linglib.Syntax.Person.Capabilities
 
 open Morphology (Word)
 open Modality (ForceFlavor ModalItem ModalFeature ModalInterpretability)

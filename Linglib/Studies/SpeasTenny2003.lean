@@ -13,7 +13,7 @@ import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Evidential.Epistemicity
 import Linglib.Semantics.Evidential.Source
 import Linglib.Fragments.English.Pronouns
-import Linglib.Features.Person.Basic
+import Linglib.Syntax.Person.Basic
 
 /-!
 # Configurational Point-of-View Roles

@@ -689,7 +689,6 @@ import Linglib.Discourse.QUD.Issue
 import Linglib.Discourse.Roles
 import Linglib.Discourse.SpeechAct
 import Linglib.Features.Acceptability
-import Linglib.Features.Agreement
 import Linglib.Features.AnsweringSystem
 import Linglib.Features.Antonymy
 import Linglib.Features.Basic
@@ -697,8 +696,6 @@ import Linglib.Features.Case.Basic
 import Linglib.Features.Case.Capabilities
 import Linglib.Features.Case.Grammaticalization
 import Linglib.Features.Case.Source
-import Linglib.Features.Person.Clusivity
-import Linglib.Features.ContainmentPair
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Deixis
 import Linglib.Features.Empathy
@@ -713,18 +710,9 @@ import Linglib.Features.MassCount
 import Linglib.Features.MinimalPairs
 import Linglib.Features.Mirativity
 import Linglib.Features.NegativeConcord
-import Linglib.Features.Number.Basic
-import Linglib.Features.Number.Capabilities
 import Linglib.Features.Number.Decomposition
 import Linglib.Features.Number.Interp
-import Linglib.Features.Number.Resolve
-import Linglib.Features.Person.Basic
-import Linglib.Features.Person.Capabilities
-import Linglib.Features.Person.Decomposition
-import Linglib.Features.Phi
-import Linglib.Features.Phi.Geometry
 import Linglib.Features.Person.Interp
-import Linglib.Features.Person.Resolve
 import Linglib.Features.Polarity
 import Linglib.Features.Prominence
 import Linglib.Features.PropertyDomain
