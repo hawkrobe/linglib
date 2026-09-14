@@ -1,48 +1,71 @@
+import Mathlib.Combinatorics.Enumerative.Schroder
+import Mathlib.Data.List.Permutation
+import Mathlib.Tactic.NormNum
+import Linglib.Core.Data.Nat.ToString
 import Linglib.Syntax.CCG.Grammar
+import Linglib.Studies.Cinque2005
 
 /-!
-# Stanojević & Steedman 2021: Formal Basis of a Language Universal
+# Stanojević and Steedman (2021): Formal Basis of a Language Universal
 
-Formalisation of the central result of [stanojevic-steedman-2021]: over a *natural
-order of dominance* — a chain of first-order categories `X₁|X₂, X₂|X₃, …, Xₙ|Xₙ₊₁`,
-each realizable with either slash direction — CCG derives *all and only* the
-separable permutations of the canonical linearization. The two excluded
-four-element patterns, 2413 and 3142, are exactly the noun-phrase and verb-cluster
-orders unattested in the typological record ([stanojevic-steedman-2021] §1, after
-Cinque 2005), so the combinatorics of CCG is proposed as the formal basis of the
-universal.
+This file formalizes [stanojevic-steedman-2021]'s proof of the universal [steedman-2020]
+proposes: over a natural order of dominance, a chain of first-order categories
+`X₁|X₂, X₂|X₃, …, Xₙ|Xₙ₊₁` each realizable with either slash direction, combinatory categorial
+grammar derives all and only the separable permutations of the canonical linearization. The
+chain is the multimodal grammar `nodGrammar` over the lexicon giving word `i` both `Xᵢ/Xᵢ₊₁`
+and `Xᵢ\Xᵢ₊₁`, and the separable permutations of a span are `SepPerm`, the separating-tree
+characterization of [bose-buss-lubiw-1998]: a singleton, or two contiguous parts of the span
+concatenated in canonical or inverted order. Completeness (`derives_of_sepPerm`) is the
+paper's three lemmas in one induction, canonical splits combining by forward and inverted
+splits by backward composition; soundness (`sepPerm_of_derives`) is the rule induction, in
+which application and second-order composition never fire over a first-order chain; the
+universal is `derives_fwd_iff` with its mirror `derives_bwd_iff`.
 
-The dominance chain is realized as a `Grammar.multimodal` lexicon over atoms `ℕ`
-(word `i` carries both `Xᵢ/Xᵢ₊₁` and `Xᵢ\Xᵢ₊₁`; the paper's order-free `|` is this
-two-entry realization), and separable permutations are defined by the separating-tree
-characterization of Bose, Buss & Lubiw (the paper's (17)) as an inductive predicate:
-a singleton, or a split into contiguous parts in original (`pos`) or inverted
-(`neg`) order.
-
-## Main statements
-
-- `derives_of_sepPerm` — completeness (the paper's Lemma 1–Lemma 3 / Theorem 2):
-  every separable permutation of a span is derivable, at both slashings of the
-  span category.
-- `sepPerm_of_derives` — soundness (Theorem 1): everything derivable over the NOD
-  grammar is a span category over a separable permutation. Application and
-  second-order composition provably never fire over a first-order chain.
-- `derives_iff_sepPerm` — the universal: derivability at a span category is
-  separability.
+The enumeration `sepPerms` lists the separable permutations of a span by their separating
+trees and makes `SepPerm` decidable. Over four elements it has the third large Schröder number
+of members, twenty-two of the twenty-four orders (`card_sepPerms_four`); the two orders it
+excludes, 2413 and 3142, are the noun-phrase and verb-cluster orders unattested in the surveys
+of [cinque-2005], [nchare-2012] and [abels-2016], and the grammar does not derive them
+(`not_derives_2413`, `not_derives_3142`). Every order of demonstrative, numeral, adjective
+and noun that [cinque-2005] attests is separable, and the non-separable orders are exactly
+the paper's (g) and (j) (`cinque_attested_separable`, `cinque_not_sepPerm_iff`). The chance
+that a theory excluding two of the twenty-four orders survives twenty-one attested ones
+sampled uniformly is the paper's one in a hundred (`chanceUnfalsified_two_of_twentyfour`).
 
 ## Implementation notes
 
-The Schröder-number count (Theorem 3) and the 22-of-24 four-element instance with
-its typological grounding are not yet formalised; they need a decidability
-instance for `SepPerm`.
+The paper's Theorem 3, that the separable permutations of `n` elements number the
+`(n - 1)`th large Schröder number of [shapiro-stephens-1991], is stated at `n = 4` against
+mathlib's `Nat.largeSchroder`; the general count goes through the normal-form separating trees
+of the paper's fourth section and is not formalized. The pattern-avoidance characterization of
+[west-1996] and the extension to second-order categories and type-raising are not
+formalized. The dominance relation is the first-order case of [koller-kuhlmann-2009]'s
+dependency structures for CCG. Tokens are decimal numerals, so `Nat.repr_injective` recovers
+a permutation from a derived string.
+
+## References
+
+* [stanojevic-steedman-2021]
+* [steedman-2020]
+* [bose-buss-lubiw-1998]
+* [shapiro-stephens-1991]
+* [west-1996]
+* [koller-kuhlmann-2009]
+* [cinque-2005]
+* [nchare-2012]
+* [abels-2016]
 -/
 
 namespace StanojevicSteedman2021
 
 open CCG
 
+/-! ### The natural order of dominance -/
+
 /-- The word token of position `i` in the dominance chain. -/
 def tok (i : ℕ) : String := toString i
+
+theorem tok_injective : Function.Injective tok := Nat.repr_injective
 
 /-- The forward realization of chain position `i`: `Xᵢ/Xᵢ₊₁`. -/
 def fwd (i : ℕ) : Cat ℕ := .rslash (.atom i) .dot (.atom (i + 1))
@@ -50,13 +73,13 @@ def fwd (i : ℕ) : Cat ℕ := .rslash (.atom i) .dot (.atom (i + 1))
 /-- The backward realization of chain position `i`: `Xᵢ\Xᵢ₊₁`. -/
 def bwd (i : ℕ) : Cat ℕ := .lslash (.atom i) .dot (.atom (i + 1))
 
-/-- The natural-order-of-dominance lexicon over `n` words: each position carries both
-slash realizations of its chain category — the paper's order-free `|`. -/
+/-- The natural-order-of-dominance lexicon over `n` words: each position carries both slash
+realizations of its chain category, the paper's order-free `|`. -/
 def nodLexicon (n : ℕ) : List (String × Cat ℕ) :=
-  (List.range n).flatMap fun i => [(tok (i + 1), fwd (i + 1)), (tok (i + 1), bwd (i + 1))]
+  (List.range n).flatMap λ i => [(tok (i + 1), fwd (i + 1)), (tok (i + 1), bwd (i + 1))]
 
-/-- The NOD grammar: the multimodal (universal-rule) grammar over the chain lexicon.
-The start atom plays no role in the span-level claims. -/
+/-- The NOD grammar: the multimodal grammar over the chain lexicon. The start atom plays no
+role in the span-level claims. -/
 def nodGrammar (n : ℕ) : Grammar ℕ := .multimodal (nodLexicon n) 1
 
 theorem mem_nodLexicon {n m : ℕ} (h1 : 1 ≤ m) (hn : m ≤ n) :
@@ -66,10 +89,10 @@ theorem mem_nodLexicon {n m : ℕ} (h1 : 1 ≤ m) (hn : m ≤ n) :
     refine List.mem_flatMap.mpr ⟨m - 1, this, ?_⟩] <;>
     simp [show m - 1 + 1 = m from by omega]
 
-/-- Separable permutations of the span `i…j`, by the separating-tree
-characterization ([stanojevic-steedman-2021] (17)): a singleton, or a split of the
-span into two contiguous parts, concatenated in original (`pos`) or inverted
-(`neg`) order. -/
+/-! ### Separable permutations -/
+
+/-- The separable permutations of the span `i…j`, by separating trees: a singleton, or two
+contiguous parts of the span concatenated in canonical (`pos`) or inverted (`neg`) order. -/
 inductive SepPerm : ℕ → ℕ → List ℕ → Prop where
   /-- A single word is a separable permutation of its own span. -/
   | single (i : ℕ) : SepPerm i i [i]
@@ -86,13 +109,97 @@ theorem SepPerm.le {i j : ℕ} {l : List ℕ} (h : SepPerm i j l) : i ≤ j := b
   | pos _ _ ih1 ih2 => omega
   | neg _ _ ih1 ih2 => omega
 
+theorem SepPerm.eq_single {i : ℕ} {l : List ℕ} (h : SepPerm i i l) : l = [i] := by
+  cases h with
+  | single => rfl
+  | pos hu hv => have := hu.le; have := hv.le; omega
+  | neg hu hv => have := hu.le; have := hv.le; omega
+
+/-- A separable permutation of `i…j` is a permutation of the canonical linearization: the
+leaves of a separating tree are determined by its shape and labels. -/
+theorem SepPerm.perm {i j : ℕ} {l : List ℕ} (h : SepPerm i j l) :
+    l.Perm (List.range' i (j + 1 - i)) := by
+  induction h with
+  | single i => simp
+  | @pos i j k u v hu hv ihu ihv =>
+    have h1 : i + (j + 1 - i) = j + 1 := by have := hu.le; omega
+    have h2 : j + 1 - i + (k + 1 - (j + 1)) = k + 1 - i := by have := hu.le; have := hv.le; omega
+    exact (ihu.append ihv).trans (List.Perm.of_eq (by rw [← h2, ← List.range'_append_1, h1]))
+  | @neg i j k u v hu hv ihu ihv =>
+    have h1 : i + (j + 1 - i) = j + 1 := by have := hu.le; omega
+    have h2 : j + 1 - i + (k + 1 - (j + 1)) = k + 1 - i := by have := hu.le; have := hv.le; omega
+    exact List.perm_append_comm.trans
+      ((ihu.append ihv).trans (List.Perm.of_eq (by rw [← h2, ← List.range'_append_1, h1])))
+
+/-- The separable permutations of `i…j` listed by their separating trees, with `fuel` bounding
+the span length. -/
+def sepPermsAux : ℕ → ℕ → ℕ → Finset (List ℕ)
+  | 0, _, _ => ∅
+  | fuel + 1, i, j =>
+    if j < i then ∅ else if i = j then {[i]} else
+      (Finset.Ico i j).biUnion λ k =>
+        (sepPermsAux fuel i k ×ˢ sepPermsAux fuel (k + 1) j).image (λ p => p.1 ++ p.2) ∪
+        (sepPermsAux fuel i k ×ˢ sepPermsAux fuel (k + 1) j).image (λ p => p.2 ++ p.1)
+
+/-- The separable permutations of the span `i…j`. -/
+def sepPerms (i j : ℕ) : Finset (List ℕ) := sepPermsAux (j + 1 - i) i j
+
+theorem mem_sepPermsAux {fuel i j : ℕ} (hf : j + 1 - i ≤ fuel) {l : List ℕ} :
+    l ∈ sepPermsAux fuel i j ↔ SepPerm i j l := by
+  induction fuel generalizing i j l with
+  | zero =>
+    simp only [sepPermsAux, Finset.notMem_empty, false_iff]
+    intro h; have := h.le; omega
+  | succ fuel ih =>
+    simp only [sepPermsAux]
+    split_ifs with hlt heq
+    · simp only [Finset.notMem_empty, false_iff]
+      intro h; have := h.le; omega
+    · subst heq
+      simp only [Finset.mem_singleton]
+      exact ⟨λ h => h ▸ .single _, SepPerm.eq_single⟩
+    · simp only [Finset.mem_biUnion, Finset.mem_Ico, Finset.mem_union, Finset.mem_image,
+        Finset.mem_product, Prod.exists]
+      constructor
+      · rintro ⟨k, ⟨hik, hkj⟩, ⟨u, v, ⟨hu, hv⟩, rfl⟩ | ⟨u, v, ⟨hu, hv⟩, rfl⟩⟩
+        · exact .pos ((ih (by omega)).mp hu) ((ih (by omega)).mp hv)
+        · exact .neg ((ih (by omega)).mp hu) ((ih (by omega)).mp hv)
+      · intro h
+        cases h with
+        | single => exact absurd rfl heq
+        | @pos _ k _ u v hu hv =>
+          have := hu.le; have := hv.le
+          exact ⟨k, ⟨by omega, by omega⟩,
+            Or.inl ⟨u, v, ⟨(ih (by omega)).mpr hu, (ih (by omega)).mpr hv⟩, rfl⟩⟩
+        | @neg _ k _ u v hu hv =>
+          have := hu.le; have := hv.le
+          exact ⟨k, ⟨by omega, by omega⟩,
+            Or.inr ⟨u, v, ⟨(ih (by omega)).mpr hu, (ih (by omega)).mpr hv⟩, rfl⟩⟩
+
+theorem mem_sepPerms {i j : ℕ} {l : List ℕ} : l ∈ sepPerms i j ↔ SepPerm i j l :=
+  mem_sepPermsAux le_rfl
+
+instance (i j : ℕ) (l : List ℕ) : Decidable (SepPerm i j l) :=
+  decidable_of_iff _ mem_sepPerms
+
+/-- Theorem 3 at four elements: the separable permutations of `1…4` number the third large
+Schröder number, twenty-two of the twenty-four orders. -/
+theorem card_sepPerms_four : (sepPerms 1 4).card = Nat.largeSchroder 3 := by
+  rw [show Nat.largeSchroder 3 = 22 by
+    simp [Nat.largeSchroder_succ, ← Finset.Iio_add_one_eq_Iic, Nat.Iio_eq_range,
+      Finset.sum_range_succ]]
+  decide
+
+theorem not_sepPerm_2413 : ¬ SepPerm 1 4 [2, 4, 1, 3] := by decide
+
+theorem not_sepPerm_3142 : ¬ SepPerm 1 4 [3, 1, 4, 2] := by decide
+
 /-! ### Completeness
 
-Every separable permutation of the span `i…j` is derivable at both slashings of the
-span category `Xᵢ|Xⱼ₊₁` — the paper's Lemmas 1–3 in one induction: `pos` splits
-combine by (possibly crossing) forward composition, `neg` splits by backward
-composition, and the strengthened both-slashes hypothesis feeds the harmonic and
-crossing cases alike. -/
+Every separable permutation of the span `i…j` is derivable at both slashings of the span
+category `Xᵢ|Xⱼ₊₁`, the paper's three lemmas in one induction: canonical splits combine by
+(possibly crossing) forward composition, inverted splits by backward composition, and the
+strengthened both-slashes hypothesis feeds the harmonic and crossing cases alike. -/
 
 theorem derives_of_sepPerm {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ n)
     (h : SepPerm i j l) :
@@ -115,13 +222,12 @@ theorem derives_of_sepPerm {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j �
     · exact .bc 1 hvf hub (Or.inl rfl) (by simp [Cat.generalizedBackwardComp])
     · exact .bc 1 hvb hub (Or.inl rfl) (by simp [Cat.generalizedBackwardComp])
 
-
 /-! ### Soundness
 
-The rule induction: everything derivable over the NOD grammar is a span category
-`Xᵢ|Xⱼ₊₁` over a separable permutation of `i…j`. All derivable categories are
-first-order, so application (which would need an atomic secondary) and second-order
-composition (which would need a second-order secondary) provably never fire. -/
+Everything derivable over the NOD grammar is a span category `Xᵢ|Xⱼ₊₁` over a separable
+permutation of `i…j`. All derivable categories are first-order, so application, which needs
+an atomic secondary, and second-order composition, which needs a second-order secondary,
+never fire. -/
 
 theorem sepPerm_of_derives {n : ℕ} {c : Cat ℕ} {w : List String}
     (h : (nodGrammar n).Derives c w) :
@@ -183,8 +289,8 @@ theorem sepPerm_of_derives {n : ℕ} {c : Cat ℕ} {w : List String}
 
 /-! ### The universal -/
 
-/-- **CCG derives exactly the separable permutations** ([stanojevic-steedman-2021],
-Theorems 1 and 2), at the forward slashing of the span category. -/
+/-- CCG derives exactly the separable permutations, the paper's Theorems 1 and 2, at the
+forward slashing of the span category. -/
 theorem derives_fwd_iff {n i j : ℕ} {w : List String} (h1 : 1 ≤ i) (hn : j ≤ n) :
     (nodGrammar n).Derives (.rslash (.atom i) .dot (.atom (j + 1))) w ↔
       ∃ l, SepPerm i j l ∧ w = l.map tok := by
@@ -219,5 +325,69 @@ theorem derives_bwd_iff {n i j : ℕ} {w : List String} (h1 : 1 ≤ i) (hn : j �
       exact ⟨l, hsep, rfl⟩
   · rintro ⟨l, hsep, rfl⟩
     exact (derives_of_sepPerm h1 hn hsep).2
+
+/-- The NOD grammar over `n` words derives only permutations of the canonical linearization. -/
+theorem perm_of_derives {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ n)
+    (h : (nodGrammar n).Derives (.rslash (.atom i) .dot (.atom (j + 1))) (l.map tok)) :
+    l.Perm (List.range' i (j + 1 - i)) := by
+  obtain ⟨l', hsep, hl⟩ := (derives_fwd_iff h1 hn).mp h
+  exact (List.map_injective_iff.mpr tok_injective hl) ▸ hsep.perm
+
+/-- The four-word chain does not derive the order 2413, the paper's (g). -/
+theorem not_derives_2413 :
+    ¬ (nodGrammar 4).Derives (.rslash (.atom 1) .dot (.atom 5)) ([2, 4, 1, 3].map tok) := by
+  rw [derives_fwd_iff le_rfl le_rfl]
+  rintro ⟨l, hsep, hl⟩
+  exact not_sepPerm_2413 ((List.map_injective_iff.mpr tok_injective hl) ▸ hsep)
+
+/-- The four-word chain does not derive the order 3142, the paper's (j). -/
+theorem not_derives_3142 :
+    ¬ (nodGrammar 4).Derives (.rslash (.atom 1) .dot (.atom 5)) ([3, 1, 4, 2].map tok) := by
+  rw [derives_fwd_iff le_rfl le_rfl]
+  rintro ⟨l, hsep, hl⟩
+  exact not_sepPerm_3142 ((List.map_injective_iff.mpr tok_injective hl) ▸ hsep)
+
+/-! ### The typological record -/
+
+/-- The position of a nominal category in the natural order of dominance, the paper's (1):
+demonstrative, numeral, adjective, noun. -/
+def nominalRank : Minimalist.Cat → ℕ
+  | .Dem => 1
+  | .Num => 2
+  | .A => 3
+  | .N => 4
+  | _ => 0
+
+/-- Every order of demonstrative, numeral, adjective and noun that [cinque-2005] attests is a
+separable permutation of the natural order of dominance. -/
+theorem cinque_attested_separable :
+    ∀ r ∈ Cinque2005.table, r.Attested → SepPerm 1 4 (r.order.map nominalRank) := by
+  decide
+
+/-- Among the twenty-four nominal orders, the non-separable ones are exactly the paper's (g)
+and (j), unattested in every survey. -/
+theorem cinque_not_sepPerm_iff :
+    ∀ r ∈ Cinque2005.table, ¬ SepPerm 1 4 (r.order.map nominalRank) ↔
+      r.order = [.Num, .N, .Dem, .A] ∨ r.order = [.A, .Dem, .N, .Num] := by
+  decide
+
+/-- The chance that a theory excluding `e` of `N` equiprobable orders is not falsified by `a`
+attested orders sampled without replacement: the sets of `a` orders consistent with the theory
+over all sets of `a` orders. -/
+def chanceUnfalsified (N e a : ℕ) : ℚ := ((N - e).choose a : ℚ) / N.choose a
+
+/-- Excluding two of the twenty-four orders and surviving twenty-one attested ones has a
+chance of about one in a hundred, the paper's (19). -/
+theorem chanceUnfalsified_two_of_twentyfour : chanceUnfalsified 24 2 21 = 11 / 1012 := by
+  rw [chanceUnfalsified, show 24 - 2 = 22 from rfl, show Nat.choose 22 21 = 22 by decide,
+    show Nat.choose 24 21 = 2024 by decide]
+  norm_num
+
+/-- With the twenty-second order accepted as attested the chance drops to one in 276, the
+paper's (20). -/
+theorem chanceUnfalsified_two_of_twentyfour' : chanceUnfalsified 24 2 22 = 1 / 276 := by
+  rw [chanceUnfalsified, show 24 - 2 = 22 from rfl, show Nat.choose 22 22 = 1 by decide,
+    show Nat.choose 24 22 = 276 by decide]
+  norm_num
 
 end StanojevicSteedman2021
