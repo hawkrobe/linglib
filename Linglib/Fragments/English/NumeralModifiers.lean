@@ -20,7 +20,7 @@ from "up to" (positive), predicting divergent framing effects.
 
 import Linglib.Data.UD.Basic
 import Linglib.Semantics.Degree.PropertyDomain
-import Linglib.Features.Valence
+import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Quantification.Numerals.Basic
 import Mathlib.Data.Rat.Defs
 
@@ -58,7 +58,6 @@ inductive PragmaticFunction where
   | boundSignal     -- Signals bound on the distribution (at least, at most, etc.)
   deriving Repr, DecidableEq
 
-open Features (EvaluativeValence)
 
 /-- Lexical entry for a numeral modifier. -/
 structure NumeralModifierEntry where
@@ -81,7 +80,7 @@ structure NumeralModifierEntry where
   /-- Modifier class (for bound-setting modifiers) -/
   modClass : Option ModifierClass := none
   /-- Evaluative valence ([blok-2015] / [claus-walch-2024]) -/
-  evaluativeValence : EvaluativeValence := .neutral
+  evaluativeValence : Degree.EvaluativeValence := .neutral
   /-- Does this modifier generate ignorance implicatures? -/
   generatesIgnorance : Bool := false
   /-- Notes -/

@@ -1,7 +1,6 @@
 import Linglib.Semantics.Degree.Boundedness
 import Linglib.Semantics.Degree.Scale
-import Linglib.Features.Antonymy
-import Linglib.Features.Valence
+import Linglib.Semantics.Degree.AntonymyType
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Syntax.Category.Adjective.Basic
 
@@ -222,6 +221,18 @@ inductive InformationalStrength where
   | strong  -- gigantic, tiny, pristine, filthy
   deriving Repr, DecidableEq
 
+/-! ### Evaluative valence -/
+
+/-- The evaluative valence of a gradable predicate: whether it denotes a good, a bad, or an
+evaluatively neutral property ([nouwen-2024]), distinct from scalar polarity. Negative
+valence yields high-degree intensifiers and positive valence medium-degree ones, the
+Goldilocks effect. -/
+inductive EvaluativeValence where
+  | positive
+  | negative
+  | neutral
+  deriving Repr, DecidableEq
+
 /-! ### The gradable adjective -/
 
 /-- Spatial configuration type for adjectives in resultative constructions
@@ -254,7 +265,7 @@ structure GradableAdjective extends Adjective where
       Determines intensifier degree class ([nouwen-2024]):
       negative-evaluative bases yield H-degree intensifiers,
       positive-evaluative bases yield M-degree intensifiers. -/
-  evaluativeValence : Option Features.EvaluativeValence := none
+  evaluativeValence : Option EvaluativeValence := none
   deriving Repr
 
 namespace GradableAdjective
