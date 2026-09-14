@@ -1,314 +1,206 @@
 import Linglib.Semantics.Degree.Measure.Dimensioned
-import Linglib.Fragments.English.MeasurePhrases
+import Linglib.Data.Examples.Scontras2014
+import Mathlib.Order.Antichain
+import Mathlib.Data.Set.Card
 
 /-!
-# [scontras-2014] — The Semantics of Measurement
-[chierchia-1998] [krifka-1989] [scontras-2014] [zabbal-2005]
+# Scontras (2014): The Semantics of Measurement
 
-Empirical observations and bridge theorems for Scontras's quantizing noun
-typology (Ch. 3).
+This file formalizes the dissertation's third chapter, on quantizing nouns, the words that
+package a substance for counting or measuring. Diagnostics adapted from Rothstein separate three
+readings of *n Q of S* and three classes of noun (`Data/Examples/Scontras2014`): a container noun
+like *glass* is a plain predicate whose container reading arises from intersective modification
+by the preposition *of*, contributing the filled-with relation ((38), `containerReading`); a
+measure term like *liter* is a relation between a numeral and the instances of the substance that
+measure it ((41), `measureReading`); an atomizer like *grain* partitions the substance into
+countable units ((77), `atomizingReading`). The readings differ in what they refer to (Table 3.1):
+a container reading refers to containers, the quantizing noun's own denotation, while measure
+and atomizing readings refer to the substance (`containerReading_subset`,
+`measureReading_subset`, `atomizingReading_subset`); the measure reading is moreover
+quantity-uniform under the term's measure (`measureReading_isQuantityUniform`). Each of the
+first two classes has uses as the other, the container noun by a shift on the model of the
+measure suffix *-ful* ((47), `shiftCM`) and the measure term by lexical reinterpretation as the
+class of containers of a unit quantity ((52), `shiftMC`); atomizers, being neither predicates of
+containers nor measures, have no measure use.
 
-## Key Empirical Claim
+Countable units are the maximally self-connected instances of a kind in a mereotopology,
+parthood with a connectedness relation obeying the bridging axioms of [grimm-2012] ((69)–(75),
+`Mereotopology`, `MSC`), and a partition returns such units ((76), `IsMSCPartition`); no-overlap
+alone ((66), `IsNonOverlapping`) does not stop the water in a glass from counting as two. Either
+way the members of a partition form an antichain, so each of them measures one relative atom
+under the relative-atom measure of (68) (`pAtomMeasure_eq_one`), which is what lets cardinal
+numerals count them.
 
-The three classes of quantizing nouns differ systematically in whether they
-license a MEASURE reading (Scontras Ch. 3, Table 3.5 p. 89). The MEASURE
-reading is the one in which a quantizing noun functions as a unit-name for
-the substance, rather than denoting the substance's containers or atoms.
+## Implementation notes
 
-- **Measure terms** (kilo, liter): ALWAYS license MEASURE.
-  "Three kilos of rice" is necessarily a 3-kilo quantity of rice.
+* Kinds are represented by their instantiation predicates, the `∪k` of the chapter, and an
+  atomizer's selectional presupposition ((79), (87)) by an added conjunct rather than a domain
+  condition.
+* The chapter's argument that the container-to-measure shift cannot be compositional, since a
+  continuous measure cannot be built from a predicate, is respected by taking (47), which counts
+  filled containers, as the shift; the measure-term-to-container shift is stated as (52) with
+  the remark that world knowledge narrows its output.
+* The number-marking system of the second chapter, the substrate's `applyNumeral` and
+  `IsQuantityUniform`, is consumed rather than restated.
 
-- **Container nouns** (glass, box): AMBIGUOUS.
-  - CONTAINER reading (default): "three glasses of water in the cupboard" —
-    three individual glass-objects.
-  - MEASURE reading (forced by recipe context, etc.): "add three glasses of
-    water" — a quantity of water equal to three glass-volumes.
+## References
 
-- **Atomizers** (grain, piece): NEVER license MEASURE.
-  Atomizers' semantics is inherently relational and partitioning
-  (Scontras eqs. (77), (87), pp. 89-90): they take a substance noun
-  and impose a partition into self-connected atoms via π. They are
-  then *counted* by CARD over the partition (Scontras p. 100).
-  The atoms-after-partition predicate IS quantity-uniform under μ_CARD —
-  atomizers fail MEASURE-licensing because their semantics is relational
-  / partitioning rather than measure-naming, not because the resulting
-  predicate is non-uniform under every conceivable μ.
-
-## Diagnostics for the MEASURE/CONTAINER ambiguity
-
-Container nouns can be disambiguated:
-
-- **Locative "in X"**: "three glasses of water in the pitcher" → CONTAINER
-- **Recipe context**: "three glasses of water in the recipe" → MEASURE
-- **Demonstratives**: "those three glasses" → CONTAINER (individuated)
-
-## Architecture
-
-This file encodes empirical observations and proves that
-the Fragment entries (class assignments) correctly predict the Theory's
-MEASURE-reading licensing.
-
-Dependency chain:
-  Theory (`licensesMeasureReading`) → Fragment (`QuantizingNoun.nounClass`)
-    → Studies (this file)
-
+* [scontras-2014]
+* [chierchia-1998]
+* [rothstein-2009]
+* [grimm-2012]
 -/
 
 namespace Scontras2014
 
 open Degree
-  (QuantizingNounClass ContainerReading licensesMeasureReading)
-open English.MeasurePhrases
 
--- ============================================================================
--- § 1. Empirical Observations: MEASURE Licensing
--- ============================================================================
+variable {E : Type*} {D : Type}
 
-/-- An observed MEASURE-licensing judgment for a quantizing noun in a
-specific context. -/
-structure MeasureObservation where
-  /-- The quantizing noun being tested. -/
-  noun : QuantizingNoun
-  /-- The mass noun complement (e.g., "rice", "water"). -/
-  complement : String
-  /-- Which reading is active (for container nouns). -/
-  reading : Option ContainerReading
-  /-- The test sentence. -/
-  sentence : String
-  /-- Observed: does the phrase license a MEASURE-quantity reading? -/
-  licensesMeasure : Bool
-  deriving Repr, BEq
+/-! ### The three readings (§3.2, §3.3) -/
 
--- Measure terms: always MEASURE
+/-- (38b): the preposition *of* of a container reading, the property of being filled with an
+instance of the substance `k`. -/
+def ofFilled (filledWith : E → E → Prop) (k : E → Prop) (x : E) : Prop :=
+  ∃ y, k y ∧ filledWith y x
 
-/-- "Three kilos of rice" — a measure of rice. -/
-def obs_kilo_rice : MeasureObservation where
-  noun := kilo
-  complement := "rice"
-  reading := none
-  sentence := "Three kilos of rice (a 3-kilo quantity)"
-  licensesMeasure := true
+/-- (38d): the container reading of a container noun `P` with substance `k`: a `P` filled with
+the substance, by intersective modification. -/
+def containerReading (P : E → Prop) (filledWith : E → E → Prop) (k : E → Prop) (x : E) : Prop :=
+  P x ∧ ofFilled filledWith k x
 
-def obs_liter_water : MeasureObservation where
-  noun := liter
-  complement := "water"
-  reading := none
-  sentence := "Three liters of water (a 3-liter quantity)"
-  licensesMeasure := true
+/-- (41), (42): the measure reading of a measure term with measure `μ`, numeral `n` and
+substance `k`: the instances of the substance that measure `n`. -/
+def measureReading [Preorder D] (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) (x : E) :
+    Prop :=
+  k x ∧ μ.applyNumeral n x
 
--- Container nouns, CONTAINER reading: NOT MEASURE
+/-- (77): the atomizing reading of an atomizer with partitioning function `π` and substance
+`k`. -/
+def atomizingReading (π : (E → Prop) → E → Prop) (k : E → Prop) (x : E) : Prop := π k x
 
-/-- "Three glasses of water in the cupboard" — three individual glass-objects.
-The CONTAINER reading is forced by the locative; MEASURE is unavailable. -/
-def obs_glass_water_container : MeasureObservation where
-  noun := glass
-  complement := "water"
-  reading := some .container
-  sentence := "Three glasses of water in the cupboard (CONTAINER, not MEASURE)"
-  licensesMeasure := false
+/-- (79), (87): an atomizer's selectional restriction, as the properties its units must have. -/
+def atomizerReading (props : E → Prop) (π : (E → Prop) → E → Prop) (k : E → Prop) (x : E) :
+    Prop :=
+  props x ∧ atomizingReading π k x
 
-def obs_box_books_container : MeasureObservation where
-  noun := box
-  complement := "books"
-  reading := some .container
-  sentence := "Three boxes of books on the shelf (CONTAINER, not MEASURE)"
-  licensesMeasure := false
+/-- Table 3.1: a container reading refers to members of the quantizing noun's denotation. -/
+theorem containerReading_subset (P : E → Prop) (filledWith : E → E → Prop) (k : E → Prop) :
+    ∀ x, containerReading P filledWith k x → P x := λ _ h => h.1
 
--- Container nouns, MEASURE reading: IS MEASURE
+/-- Table 3.1: a measure reading refers to instances of the substance. -/
+theorem measureReading_subset [Preorder D] (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) :
+    ∀ x, measureReading μ k n x → k x := λ _ h => h.1
 
-/-- "Add three glasses of water" — a 3-glass-volume quantity of water.
-The MEASURE reading is forced by the recipe context. -/
-def obs_glass_water_measure : MeasureObservation where
-  noun := glass
-  complement := "water"
-  reading := some .measure
-  sentence := "Add three glasses of water to the recipe (MEASURE)"
-  licensesMeasure := true
+/-- The measure reading with numeral `n` is quantity-uniform under the term's measure, the
+condition (44) that number marking checks. -/
+theorem measureReading_isQuantityUniform [Preorder D] (μ : DimensionedMeasure E D) (k : E → Prop)
+    (n : D) : IsQuantityUniform (measureReading μ k n) μ :=
+  λ _ _ hx hy => hx.2.trans hy.2.symm
 
-def obs_cup_flour_measure : MeasureObservation where
-  noun := cup
-  complement := "flour"
-  reading := some .measure
-  sentence := "Three cups of flour, doubled to six (MEASURE)"
-  licensesMeasure := true
+/-! ### Derived uses (§3.2.3) -/
 
--- Atomizers: NOT MEASURE (counted by CARD instead)
+/-- (47): the container-to-measure shift, on the model of *-ful*: the substance measured by the
+number of containers it fills. -/
+def shiftCM (P : E → Prop) (filledWith : E → E → Prop) (card : E → ℕ) (k : E → Prop) (n : ℕ)
+    (x : E) : Prop :=
+  k x ∧ ∃ y, P y ∧ filledWith x y ∧ card y = n
 
-/-- "Three grains of rice" — three rice-grain individuals.
-Atomizers' semantics is inherently relational and partitioning
-(Scontras eqs. (77), (87), pp. 89-90): grain takes the substance noun rice
-and imposes a partition into self-connected rice-atoms via π. The atoms
-are then counted by CARD (Scontras p. 100). MEASURE-reading fails because
-the semantics is partitioning rather than measure-naming. -/
-def obs_grain_rice : MeasureObservation where
-  noun := grain
-  complement := "rice"
-  reading := none
-  sentence := "Three grains of rice (counted via CARD over π(rice); atomizers are relational/partitioning, not measure-naming)"
-  licensesMeasure := false
+/-- A shifted container noun yields a measure reading: it refers to the substance. -/
+theorem shiftCM_subset (P : E → Prop) (filledWith : E → E → Prop) (card : E → ℕ) (k : E → Prop)
+    (n : ℕ) : ∀ x, shiftCM P filledWith card k n x → k x := λ _ h => h.1
 
-def obs_drop_water : MeasureObservation where
-  noun := drop
-  complement := "water"
-  reading := none
-  sentence := "Three drops of water (counted via CARD over π(water); atomizers are relational/partitioning, not measure-naming)"
-  licensesMeasure := false
+/-- (52): the measure-term-to-container shift: the objects filled with a unit quantity of some
+substance, which lexical reinterpretation narrows to a salient class of containers. -/
+def shiftMC [Preorder D] [One D] (μ : DimensionedMeasure E D) (filledWith : E → E → Prop)
+    (x : E) : Prop :=
+  ∃ (k : E → Prop) (y : E), measureReading μ k 1 y ∧ filledWith y x
 
-def obs_piece_cake : MeasureObservation where
-  noun := piece
-  complement := "cake"
-  reading := none
-  sentence := "Three pieces of cake (counted via CARD over π(cake); atomizers are relational/partitioning, not measure-naming)"
-  licensesMeasure := false
+/-- A shifted measure term with an *of*-phrase yields a container reading. -/
+theorem containerReading_shiftMC [Preorder D] [One D] (μ : DimensionedMeasure E D)
+    (filledWith : E → E → Prop) (k : E → Prop) (x : E) :
+    containerReading (shiftMC μ filledWith) filledWith k x ↔
+      shiftMC μ filledWith x ∧ ∃ y, k y ∧ filledWith y x :=
+  Iff.rfl
 
-def allObservations : List MeasureObservation :=
-  [ obs_kilo_rice, obs_liter_water
-  , obs_glass_water_container, obs_box_books_container
-  , obs_glass_water_measure, obs_cup_flour_measure
-  , obs_grain_rice, obs_drop_water, obs_piece_cake ]
+/-! ### Partitions and relative atoms (§3.3.1) -/
 
--- ============================================================================
--- § 2. Bridge Theorems: Fragment Class Predicts Observed MEASURE Licensing
--- ============================================================================
+section Mereotopology
 
-/-! ### The central bridge
+variable [PartialOrder E]
 
-The Fragment assigns each noun a `nounClass` (from the Theory's
-`QuantizingNounClass`). The Theory defines `licensesMeasureReading` mapping
-class + reading to a MEASURE-licensing prediction (Scontras Table 3.5 p. 89).
-We prove that this prediction matches the empirical observation for EVERY
-example in our data.
+/-- (71): two individuals overlap when they share a part. -/
+def Overlap (x y : E) : Prop := ∃ z, z ≤ x ∧ z ≤ y
 
-This is the payoff of the Theories → Fragments → Studies architecture: if
-someone changes a noun's class assignment in the Fragment, or changes the
-`licensesMeasureReading` function in the Theory, the bridge theorems break. -/
+/-- (72), (73): a mereotopology on the parthood order: a reflexive symmetric connectedness
+relation, entailed by parthood (integrity) and by overlap (unity), and monotone along
+parthood. -/
+structure Mereotopology (E : Type*) [PartialOrder E] where
+  /-- Connectedness. -/
+  C : E → E → Prop
+  refl : ∀ x, C x x
+  symm : ∀ x y, C x y → C y x
+  integrity : ∀ x y, x ≤ y → C x y
+  unity : ∀ x y, Overlap x y → C x y
+  mono : ∀ x y z, x ≤ y → C x z → C z y
 
-/-- The Theory's MEASURE-licensing prediction matches the empirical
-observation for every example in our data set. -/
-theorem theory_predicts_observations :
-    ∀ obs ∈ allObservations,
-      licensesMeasureReading obs.noun.nounClass obs.reading ↔ obs.licensesMeasure = true := by
-  simp [allObservations]; decide
+variable (M : Mereotopology E)
 
-/-- For measure term observations: the Theory predicts MEASURE = true. -/
-theorem measureTerm_observations_licenseMeasure :
-    ∀ obs ∈ allObservations, obs.noun.nounClass = .measureTerm →
-      obs.licensesMeasure = true := by
-  simp [allObservations]; decide
+/-- (74): an individual is self-connected when any two individuals that between them overlap
+exactly what it overlaps are connected. -/
+def SelfConnected (x : E) : Prop :=
+  ∀ y z, (∀ v, Overlap v x ↔ Overlap v y ∨ Overlap v z) → M.C y z
 
-/-- For atomizer observations: the Theory predicts MEASURE = false
-(atomizers are counted by CARD, not measured). -/
-theorem atomizer_observations_no_MEASURE :
-    ∀ obs ∈ allObservations, obs.noun.nounClass = .atomizer →
-      obs.licensesMeasure = false := by
-  simp [allObservations]; decide
+/-- (75): a maximally self-connected instance of the kind `k`: self-connected and a proper part
+of no self-connected instance. -/
+def MSC (k : E → Prop) (x : E) : Prop :=
+  SelfConnected M x ∧ k x ∧ ¬ ∃ y, x < y ∧ SelfConnected M y ∧ k y
 
-/-- For container noun observations: MEASURE-licensing depends on the reading.
-CONTAINER → not MEASURE; MEASURE → MEASURE. -/
-theorem container_MEASURE_depends_on_reading :
-    ∀ obs ∈ allObservations, obs.noun.nounClass = .containerNoun →
-      (obs.licensesMeasure = true ↔ obs.reading = some .measure) := by
-  simp [allObservations]; decide
+/-- (76): a partition of the kind `k` returns maximally self-connected instances of it. -/
+def IsMSCPartition (k : E → Prop) (Q : E → Prop) : Prop := ∀ y, Q y → k y ∧ MSC M k y
 
--- ============================================================================
--- § 3. Bridge: Fragment Entry Class = Observation Class
--- ============================================================================
+/-- (66): a set of individuals no two of which overlap. -/
+def IsNonOverlapping (Q : E → Prop) : Prop := ∀ x y, Q x → Q y → x ≠ y → ¬ Overlap x y
 
-/-! ### Fragment consistency
+/-- (68): the relative-atom measure of `Q`: the number of `Q`-atoms, members of `Q` with no
+member of `Q` as a proper part, that are parts of `y`. -/
+noncomputable def pAtomMeasure (Q : E → Prop) (y : E) : ℕ :=
+  {x | Q x ∧ x ≤ y ∧ ¬ ∃ z, Q z ∧ z < x}.ncard
 
-We also verify that the Fragment entries used in our observations have
-the same class assignment as the observations themselves. This catches
-the case where someone defines `glass.nounClass :=.atomizer` in the
-Fragment but uses `.containerNoun` in the observation. -/
+/-- The members of a maximally self-connected partition form an antichain: one cannot be a
+proper part of another. -/
+theorem isAntichain_of_isMSCPartition {k Q : E → Prop} (h : IsMSCPartition M k Q) :
+    IsAntichain (· ≤ ·) {x | Q x} := λ x hx y hy hxy hle =>
+  (h x hx).2.2.2 ⟨y, lt_of_le_of_ne hle hxy, (h y hy).2.1, (h y hy).1⟩
 
-/-- The Fragment's `glass` entry matches the observation's class. -/
-theorem glass_class_consistent :
-    glass.nounClass = obs_glass_water_container.noun.nounClass ∧
-    glass.nounClass = obs_glass_water_measure.noun.nounClass := ⟨rfl, rfl⟩
+/-- The members of a non-overlapping partition form an antichain. -/
+theorem isAntichain_of_isNonOverlapping {Q : E → Prop} (h : IsNonOverlapping Q) :
+    IsAntichain (· ≤ ·) {x | Q x} := λ x hx y hy hxy hle =>
+  h x y hx hy hxy ⟨x, le_rfl, hle⟩
 
-/-- The Fragment's `grain` entry matches the observation's class. -/
-theorem grain_class_consistent :
-    grain.nounClass = obs_grain_rice.noun.nounClass := rfl
+/-- In an antichain every member is its only atom below itself. -/
+theorem atoms_eq_singleton {Q : E → Prop} (h : IsAntichain (· ≤ ·) {x | Q x}) {y : E}
+    (hy : Q y) : {x | Q x ∧ x ≤ y ∧ ¬ ∃ z, Q z ∧ z < x} = {y} := by
+  ext x
+  simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨hx, hxy, -⟩
+    by_contra hne
+    exact h hx hy hne hxy
+  · rintro rfl
+    exact ⟨hy, le_rfl, λ ⟨z, hz, hzy⟩ => h hz hy hzy.ne hzy.le⟩
 
-/-- The Fragment's `drop` entry matches the observation's class. -/
-theorem drop_class_consistent :
-    drop.nounClass = obs_drop_water.noun.nounClass := rfl
+/-- Each member of a partition measures one relative atom, so cardinal numerals count them. -/
+theorem pAtomMeasure_eq_one {Q : E → Prop} (h : IsAntichain (· ≤ ·) {x | Q x}) {y : E}
+    (hy : Q y) : pAtomMeasure Q y = 1 := by
+  rw [pAtomMeasure, atoms_eq_singleton h hy, Set.ncard_singleton]
 
--- ============================================================================
--- § 4. Disambiguation Context Predictions
--- ============================================================================
+/-- (77) with (76): the atomizing reading refers to maximally self-connected instances of the
+substance, hence to the substance. -/
+theorem atomizingReading_subset {π : (E → Prop) → E → Prop} {k : E → Prop}
+    (hπ : IsMSCPartition M k (π k)) : ∀ x, atomizingReading π k x → k x :=
+  λ _ hx => (hπ _ hx).1
 
-/-- Disambiguation contexts for container nouns (Scontras Ch. 3 §3.2.1).
-
-A sentence context can force one reading of an ambiguous container noun:
-- Locative PPs ("in the cupboard") → CONTAINER (the physical objects are located)
-- Recipe/instruction context → MEASURE (amount of substance)
-- Demonstratives ("those three glasses") → CONTAINER (individuated)
-- Generic quantity context ("add three glasses") → MEASURE -/
-structure DisambiguationContext where
-  /-- The noun being disambiguated. -/
-  noun : QuantizingNoun
-  /-- Context type. -/
-  contextType : String
-  /-- Example sentence. -/
-  sentence : String
-  /-- Which reading the context forces. -/
-  forcedReading : ContainerReading
-  deriving Repr, BEq
-
-def disamb_glass_locative : DisambiguationContext where
-  noun := glass
-  contextType := "locative PP"
-  sentence := "Three glasses of water are in the cupboard"
-  forcedReading := .container
-
-def disamb_glass_recipe : DisambiguationContext where
-  noun := glass
-  contextType := "recipe/instruction"
-  sentence := "Add three glasses of water to the mixture"
-  forcedReading := .measure
-
-def disamb_box_demonstrative : DisambiguationContext where
-  noun := box
-  contextType := "demonstrative"
-  sentence := "Those three boxes of books are heavy"
-  forcedReading := .container
-
-def disamb_cup_recipe : DisambiguationContext where
-  noun := cup
-  contextType := "recipe/instruction"
-  sentence := "Use three cups of flour for the dough"
-  forcedReading := .measure
-
-def allDisambiguations : List DisambiguationContext :=
-  [disamb_glass_locative, disamb_glass_recipe,
-   disamb_box_demonstrative, disamb_cup_recipe]
-
-/-- All disambiguation contexts involve container nouns (not measure terms
-or atomizers — only container nouns are ambiguous). -/
-theorem disambiguations_only_containers :
-    ∀ d ∈ allDisambiguations, d.noun.nounClass = .containerNoun := by
-  simp [allDisambiguations]; decide
-
-/-- Locative/demonstrative contexts force CONTAINER; recipe contexts force MEASURE. -/
-theorem locative_forces_container :
-    disamb_glass_locative.forcedReading = .container ∧
-    disamb_box_demonstrative.forcedReading = .container := ⟨rfl, rfl⟩
-
-theorem recipe_forces_measure :
-    disamb_glass_recipe.forcedReading = .measure ∧
-    disamb_cup_recipe.forcedReading = .measure := ⟨rfl, rfl⟩
-
-/-- Combining disambiguation with the licensing prediction:
-recipe contexts yield MEASURE, locative contexts yield non-MEASURE. -/
-theorem recipe_context_yields_MEASURE :
-    ∀ d ∈ allDisambiguations, d.forcedReading = .measure →
-      licensesMeasureReading d.noun.nounClass (some d.forcedReading) := by
-  simp [allDisambiguations]; decide
-
-theorem locative_context_yields_no_MEASURE :
-    ∀ d ∈ allDisambiguations, d.forcedReading = .container →
-      ¬ licensesMeasureReading d.noun.nounClass (some d.forcedReading) := by
-  simp [allDisambiguations]; decide
+end Mereotopology
 
 end Scontras2014
