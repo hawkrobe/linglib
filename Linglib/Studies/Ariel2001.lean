@@ -1,4 +1,5 @@
-import Linglib.Discourse.Accessibility
+import Linglib.Semantics.Reference.Accessibility
+import Linglib.Semantics.Reference.Givenness
 import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Data.Examples.Ariel2001
 
@@ -36,91 +37,33 @@ does not predict the repeated-name penalty.
 
 namespace Ariel2001
 
-open Discourse Data.Examples
+open Reference Data.Examples
 
 /-! ### Form-function criteria (§1.1) -/
 
-/-- The head of a form class on the scale. -/
-inductive Head
-  | name
-  | description
-  | demonstrative
-  | pronoun
-  | inflection
-  | zero
-  deriving DecidableEq, Repr
-
-/-- Demonstrative deixis. -/
-inductive Deixis
-  | distal
-  | proximate
-  deriving DecidableEq, Repr
-
-/-- The head named by a scale label. -/
-def head : AccessibilityLevel → Head
-  | .fullNameMod | .fullName | .lastName | .firstName => .name
-  | .longDefDescription | .shortDefDescription => .description
-  | .distalDemMod | .proxDemMod | .distalDemNP | .proxDemNP | .distalDem | .proxDem =>
-    .demonstrative
-  | .stressedPronGesture | .stressedPron | .unstressedPron | .cliticizedPron => .pronoun
-  | .verbalAgreement => .inflection
-  | .zero => .zero
-
-/-- A modifier, or the long form of a description. -/
-def modified : AccessibilityLevel → Bool
-  | .fullNameMod | .longDefDescription | .distalDemMod | .proxDemMod => true
-  | _ => false
-
-/-- Lexical content beyond the head: a noun or a name. -/
-def lexical : AccessibilityLevel → Bool
-  | .fullNameMod | .fullName | .lastName | .firstName | .longDefDescription
-  | .shortDefDescription | .distalDemMod | .proxDemMod | .distalDemNP | .proxDemNP => true
-  | _ => false
-
-/-- A full rather than partial name. -/
-def full : AccessibilityLevel → Bool
-  | .fullNameMod | .fullName => true
-  | _ => false
-
-/-- The deixis of a demonstrative form. -/
-def deixis : AccessibilityLevel → Option Deixis
-  | .distalDemMod | .distalDemNP | .distalDem => some .distal
-  | .proxDemMod | .proxDemNP | .proxDem => some .proximate
-  | _ => none
-
-/-- A stressed pronoun. -/
-def stressed : AccessibilityLevel → Bool
-  | .stressedPronGesture | .stressedPron => true
-  | _ => false
-
-/-- A bound pronominal: cliticized, or verbal agreement. -/
-def bound : AccessibilityLevel → Bool
-  | .cliticizedPron | .verbalAgreement => true
-  | _ => false
-
 /-- Informativity: a modifier lowers the accessibility a form codes. -/
 theorem informativity_modifier :
-    ∀ a b : AccessibilityLevel, head a = head b → deixis a = deixis b →
-      modified a → ¬ modified b → a < b := by
+    ∀ a b : AccessibilityLevel, a.head = b.head → a.deixis = b.deixis →
+      a.modified → ¬ b.modified → a < b := by
   decide
 
 /-- Informativity: a demonstrative with a noun codes lower accessibility than a bare one. -/
 theorem informativity_lexical :
-    ∀ a b : AccessibilityLevel, head a = head b → deixis a = deixis b →
-      ¬ modified a → ¬ modified b → lexical a → ¬ lexical b → a < b := by
+    ∀ a b : AccessibilityLevel, a.head = b.head → a.deixis = b.deixis →
+      ¬ a.modified → ¬ b.modified → a.lexical → ¬ b.lexical → a < b := by
   decide
 
 /-- Informativity: a full name codes lower accessibility than a partial one. -/
 theorem informativity_partial_name :
-    ∀ a b : AccessibilityLevel, head a = .name → head b = .name →
-      ¬ modified a → ¬ modified b → full a → ¬ full b → a < b := by
+    ∀ a b : AccessibilityLevel, a.head = .name → b.head = .name →
+      ¬ a.modified → ¬ b.modified → a.full → ¬ b.full → a < b := by
   decide
 
 /-- Rigidity: a full name codes lower accessibility than the description of the same
 length. -/
 theorem rigidity_full_name :
-    ∀ a b : AccessibilityLevel, head a = .name → full a → head b = .description →
-      modified a = modified b → a < b := by
+    ∀ a b : AccessibilityLevel, a.head = .name → a.full → b.head = .description →
+      a.modified = b.modified → a < b := by
   decide
 
 /-- The criteria overlap only partially: a partial name is rigid, yet codes higher
@@ -131,25 +74,25 @@ theorem rigidity_not_sufficient :
 
 /-- Attenuation: a stressed pronoun codes lower accessibility than an unstressed one. -/
 theorem attenuation_stress :
-    ∀ a b : AccessibilityLevel, head a = .pronoun → head b = .pronoun →
-      stressed a → ¬ stressed b → a < b := by
+    ∀ a b : AccessibilityLevel, a.head = .pronoun → b.head = .pronoun →
+      a.stressed → ¬ b.stressed → a < b := by
   decide
 
 /-- Attenuation: a free pronoun codes lower accessibility than a cliticized one, a pronoun
 than verbal agreement, and agreement than zero. -/
 theorem attenuation_reduction :
     ∀ a b : AccessibilityLevel,
-      (head a = .pronoun ∧ head b = .pronoun ∧ ¬ stressed a ∧ ¬ bound a ∧ bound b) ∨
-        (head a = .pronoun ∧ head b = .inflection) ∨ (head a = .inflection ∧ head b = .zero) →
+      (a.head = .pronoun ∧ b.head = .pronoun ∧ ¬ a.stressed ∧ ¬ a.bound ∧ b.bound) ∨
+        (a.head = .pronoun ∧ b.head = .inflection) ∨ (a.head = .inflection ∧ b.head = .zero) →
       a < b := by
   decide
 
 /-- The proximate demonstrative codes higher accessibility than the distal one of the same
 shape (§5.1 records Kirsner's Dutch data against this). -/
 theorem deixis_proximate :
-    ∀ a b : AccessibilityLevel, head a = .demonstrative → head b = .demonstrative →
-      modified a = modified b → lexical a = lexical b →
-      deixis a = some .distal → deixis b = some .proximate → a < b := by
+    ∀ a b : AccessibilityLevel, a.head = .demonstrative → b.head = .demonstrative →
+      a.modified = b.modified → a.lexical = b.lexical →
+      a.deixis = some .distal → b.deixis = some .proximate → a < b := by
   decide
 
 /-! ### Accessibility as a complex concept (§1.2) -/
@@ -286,7 +229,7 @@ theorem in_focus_collapse :
         AccessibilityLevel.rank).Nodup := by
   decide
 
-open Centering in
+open Discourse.Centering in
 /-- Centering's pronoun rule says nothing when no pronoun is used, so an entity coded by a
 repeated name violates nothing: the repeated-name penalty is not its prediction. -/
 theorem pronominalization_vacuous {E R U : Type*} [CfRankerOf E R] [Realizes U E]

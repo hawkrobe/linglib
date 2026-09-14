@@ -1,7 +1,7 @@
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Order.Monotone.Defs
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Discourse.Givenness
+import Linglib.Semantics.Reference.Givenness
 import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Clause.ArgumentRole
 
@@ -46,7 +46,7 @@ anti-efficient language of §11.3 that the universals exclude.
 
 namespace Haspelmath2021
 
-open Discourse (BinaryGivenness)
+open Reference (BinaryGivenness)
 open Reference.Prominence (AnimacyLevel)
 
 /-! ### Referential prominence scales (8)

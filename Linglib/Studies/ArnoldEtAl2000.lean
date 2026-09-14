@@ -1,5 +1,5 @@
 import Linglib.Phonology.Constraints.Defs
-import Linglib.Discourse.Givenness
+import Linglib.Semantics.Reference.Givenness
 import Linglib.Data.Examples.ArnoldEtAl2000
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
@@ -45,7 +45,7 @@ size in the data and is not represented.
 
 namespace ArnoldEtAl2000
 
-open Constraints Discourse Data.Examples
+open Constraints Reference Data.Examples
 
 /-! ### Phrases, orderings, and candidates -/
 

@@ -1,7 +1,7 @@
 import Linglib.Syntax.WordOrder
 import Linglib.Data.Examples.Westergaard2009
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Discourse.Givenness
+import Linglib.Semantics.Reference.Givenness
 import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.English.V2
 import Linglib.Fragments.English.WordOrder
@@ -73,7 +73,7 @@ NOT [laka-1990]'s ΣP
 namespace Westergaard2009
 
 open Minimalist (ForceHead V2Profile WhElementStatus WhBlocksMovementTo)
-open Discourse (BinaryGivenness)
+open Reference (BinaryGivenness)
 
 -- Fragment data (theory-neutral)
 open Norwegian (stdNorwegian nordmoreNorwegian)
