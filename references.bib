@@ -5686,7 +5686,7 @@
   subfield  = {semantics/compositional},
   role      = {formalized},
   validated = {true},
-  sources   = {Data/Examples/KadmonLandman1993.json;Features/LicensingContext.lean;Logic/Natural/Strawson/Basic.lean;Semantics/Polarity/Licensing.lean;Studies/Chierchia2006.lean;Studies/KadmonLandman1993.lean;Studies/Lahiri1998.lean;Studies/VonFintel1999.lean}
+  sources   = {Data/Examples/KadmonLandman1993.json;Features/LicensingContext.lean;Logic/Natural/Strawson/Basic.lean;Semantics/Polarity/Licensing.lean;Studies/Chierchia2006.lean;Studies/KadmonLandman1993.lean;Studies/Lahiri1998.lean;Studies/Schwab2022.lean;Studies/VonFintel1999.lean}
 }% REF: Kamp, H. & Reyle, U. (1993). From Discourse to Logic.
 @book{kamp-reyle-1993,
   author    = {Kamp, Hans and Reyle, Uwe},
@@ -8336,66 +8336,33 @@
   validated = {true},
   sources   = {Studies/LeBruynDeSwart2022.lean}
 }% REF: Schwab, J. (2022). Lexical variation in NPI illusions. Journal of Memory and Language, 124, 104317.
+@incollection{muller-phillips-2020,
+  author    = {Muller, Hanna and Phillips, Colin},
+  year      = {2020},
+  title     = {Negative polarity illusions},
+  booktitle = {The Oxford Handbook of Negation},
+  editor    = {D{\'e}prez, Viviane and Espinal, M. Teresa},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  subfield  = {processing/polarity},
+  role      = {cited},
+  validated = {false},
+  sources   = {Studies/Schwab2022.lean}
+}
 @article{schwab-2022,
   author    = {Schwab, Juliane},
   year      = {2022},
-  title     = {Lexical variation in NPI illusions},
-  journal   = {Journal of Memory and Language},
-  volume    = {124},
-  pages     = {104317},
+  title     = {Lexical variation in {NPI} illusions -- {NPI} illusions as a scalar phenomenon},
+  journal   = {Glossa Psycholinguistics},
+  volume    = {1},
   number    = {1},
-  subfield  = {semantics/compositional},
-  role      = {cited},
-  doi       = {10.5070/g6011106},
-  validated = {true},
-  sources   = {Studies/Schwab2022.lean}
-}% REF: Augurzky et al. (2023). Putting plural definites into context. SuB 27.
-@inproceedings{augurzky-etal-2023,
-  author    = {Augurzky, Petra and Bonnet, Marion and Breheny, Richard and Cremers, Alexandre and Ebert, Cornelia and Mayr, Clemens and Romoli, Jacopo and Steinbach, Markus and Sudo, Yasutada},
-  year      = {2023},
-  title     = {Putting plural definites into context},
-  booktitle = {Proceedings of Sinn und Bedeutung 27},
-  pages     = {19--32},
-  doi       = {10.18148/sub/2023.v27.1050},
-  subfield  = {semantics/compositional},
+  pages     = {1--28},
+  note      = {Article 21},
+  doi       = {10.5070/G6011106},
+  subfield  = {semantics/polarity},
   role      = {formalized},
   validated = {true},
-  sources   = {Studies/AugurzkyEtAl2023.lean;Studies/KrizChemla2015.lean}
-}% REF: McRae, K., Cree, G. S., Seidenberg, M. S. & McNorgan, C. (2005). Semantic feature production norms for a large set of living and nonliving things. Behavior Research Methods 37: 547-559.
-@article{mcrae-etal-2005,
-  author    = {McRae, Ken and Cree, George S. and Seidenberg, Mark S. and McNorgan, Chris},
-  year      = {2005},
-  title     = {Semantic feature production norms for a large set of living and nonliving things},
-  journal   = {Behavior Research Methods},
-  doi       = {10.3758/BF03192726},
-  volume    = {37},
-  pages     = {547--559},
-  subfield  = {semantics/compositional},
-  role      = {cited},
-  validated = {true}
-}% REF: Herbelot, A. & Vecchi, E. M. (2016). Many speakers, many worlds: interannotator variations in the quantification of feature norms. Linguistic Issues in Language Technology 13: 37-57.
-@article{herbelot-vecchi-2016,
-  author    = {Herbelot, Aurélie and Vecchi, Eva Maria},
-  year      = {2016},
-  title     = {Many speakers, many worlds: interannotator variations in the quantification of feature norms},
-  journal   = {Linguistic Issues in Language Technology},
-  volume    = {13},
-  pages     = {37--57},
-  subfield  = {semantics/compositional},
-  role      = {cited},
-  validated = {true}
-}% REF: Erk, K. & Herbelot, A. (2024). How to Marry a Star: Probabilistic Constraints for Meaning in Context. Journal of Semanti
-@article{erk-2022,
-  author    = {Erk, Katrin},
-  year      = {2022},
-  title     = {The Probabilistic Turn in Semantics and Pragmatics},
-  journal   = {Annual Review of Linguistics},
-  doi       = {10.1146/annurev-linguistics-031120-015515},
-  volume    = {8},
-  pages     = {101--121},
-  subfield  = {semantics/lexical},
-  role      = {cited},
-  sources   = {Pragmatics/RSA/Incremental.lean}
+  sources   = {Studies/Schwab2022.lean;Data/Examples/Schwab2022.json}
 }
 @article{erk-herbelot-2024,
   author    = {Erk, Katrin and Herbelot, Aurélie},
@@ -12430,7 +12397,7 @@
   subfield  = {semantics/tense},
   validated = {true},
   role      = {cited},
-  sources   = {Studies/AlstottAravind2026.lean;Studies/Rett2020a.lean}
+  sources   = {Studies/AlstottAravind2026.lean;Studies/Rett2020a.lean;Studies/Schwab2022.lean}
 }
 @article{cumming-2026,
   author    = {Cumming, Samuel},
@@ -25469,7 +25436,7 @@
   doi       = {10.1162/ling.2006.37.4.535},
   subfield  = {semantics},
   role      = {formalized},
-  sources   = {Data/Examples/Chierchia2006.json;Features/Indefinite.lean;Fragments/English/PolarityItems.lean;Fragments/German/PolarityItems.lean;Fragments/Italian/PolarityItems.lean;Semantics/Exhaustification/Antiexhaustive.lean;Semantics/Polarity/Item.lean;Studies/AlonsoOvalleMenendezBenito2010.lean;Studies/Chierchia2006.lean}
+  sources   = {Data/Examples/Chierchia2006.json;Features/Indefinite.lean;Fragments/English/PolarityItems.lean;Fragments/German/PolarityItems.lean;Fragments/Italian/PolarityItems.lean;Semantics/Exhaustification/Antiexhaustive.lean;Semantics/Polarity/Item.lean;Studies/AlonsoOvalleMenendezBenito2010.lean;Studies/Chierchia2006.lean;Studies/Schwab2022.lean}
 }
 @article{fiske-cuddy-glick-xu-2002,
   author    = {Fiske, Susan T. and Cuddy, Amy J. C. and Glick, Peter and Xu, Jun},
@@ -25532,7 +25499,7 @@
   doi       = {10.1007/bf00632710},
   subfield  = {semantics},
   role      = {cited},
-  sources   = {Fragments/English/PolarityItems.lean;Semantics/Polarity/Item.lean;Studies/Israel2001.lean}
+  sources   = {Fragments/English/PolarityItems.lean;Semantics/Polarity/Item.lean;Studies/Israel2001.lean;Studies/Schwab2022.lean}
 }
 @article{aarts-1989,
   author    = {Aarts, Bas},
