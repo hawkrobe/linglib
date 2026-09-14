@@ -1720,7 +1720,6 @@ import Linglib.Semantics.Questions.Exhaustivity
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Semantics.Questions.Highlighting
 import Linglib.Semantics.Questions.Partition.Basic
-import Linglib.Semantics.Questions.Probabilistic
 import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Questions.Singleton
 import Linglib.Semantics.Questions.Support

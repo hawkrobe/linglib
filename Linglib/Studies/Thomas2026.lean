@@ -1,261 +1,199 @@
-import Linglib.Semantics.Questions.Probabilistic
+import Linglib.Semantics.Questions.Hamblin
 import Linglib.Data.Examples.Thomas2026
-import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Probability.ConditionalProbability
 
 /-!
-# Thomas (2026): A probabilistic, question-based approach to additivity
-[thomas-2026] [ciardelli-groenendijk-roelofsen-2018] [frank-goodman-2012]
+# Thomas (2026): A Probabilistic, Question-Based Approach to Additivity
 
-Formalisation of [thomas-2026], which unifies the canonical additive use of
-*too* with a previously unstudied "argument-building" use by stating felicity
-in terms of Bayesian inquisitive answerhood. The substrate primitives
-(`Answers`, `IsResolutionEvidencedBy`, `evidencesResolutionMore`,
-`IsRelevantToUnder`) live in `Semantics/Questions/Probabilistic.lean`; this file
-encodes the felicity conditions of [thomas-2026] Def 64 and their abstract
-consequences.
+This file formalizes [thomas-2026]'s felicity conditions for additive *too*, which unify its
+canonical use, a second answer to a salient question, (2), with the argument-building use in
+which the antecedent and the prejacent together argue for a conclusion, (1) and (18). The
+account is stated in an inquisitive question semantics with a listener's probability measure
+over worlds. A proposition is relevant to a question if it shifts the probability of one of the
+question's alternatives, (61); it answers the question if it raises the probability of some
+resolution, a nonempty set of alternatives, by a factor exceeding that of every resolution not
+entailed by it, (62); and one proposition evidences a resolution more strongly than another if
+it gives it the higher conditional probability, (63). *Too* requires an antecedent proposition
+and a question relevant to the discourse such that the antecedent answers the question, the
+conjunction of antecedent and prejacent answers it and evidences its resolution more strongly
+than the antecedent alone, and the prejacent neither entails that resolution nor could be
+weakened without weakening the evidence, (64).
 
-## Main definitions
-
-* `IsTooFelicitous` — conditions (a)-(c) of [thomas-2026] Def 64: the antecedent
-  and the conjunction each answer a relevant question, the conjunction answers
-  it more strongly, and the prejacent is neither redundant nor replaceable by a
-  weaker proposition.
-* `IsTooLicensedByDQ` — the full Def 64: `IsTooFelicitous` plus the requirement
-  that the relevant question be relevant to a discourse question.
-* `IsTooInfelicitous` — *too* is predicted infelicitous when no relevant
-  question licenses it.
-
-## Main statements
-
-* `IsTooFelicitous.antecedent_probOfSet_pos`,
-  `IsTooFelicitous.conjunction_probOfSet_pos` — felicity forces positive prior
-  mass on the antecedent and on the conjunction.
-* `IsTooFelicitous.exists_strict_improvement` — the conjunction is strictly
-  better Bayesian evidence for its resolution than the antecedent alone.
-* `Witness.answers_discriminates` — a concrete Fin-3 model in which `Answers`
-  holds of informative evidence and fails of the trivial `univ`, exercising the
-  `raises_prob` and `dominates` fields of the answerhood structure.
-* `too_acceptable_iff_def64_satisfied` — over the paper's examples
-  (`Data/Examples/Thomas2026.json`), a *too* row is acceptable iff the paper's
-  Def 64 diagnosis is "satisfied"; the equation is uniform across the standard
-  and argument-building uses, which is the paper's unification thesis.
+The definitions are `Relevant`, `IsResolutionOf`, `Answers`, `EvidencesMore` and
+`TooFelicitous`. Answering needs a positive prior on the evidence, `IsResolutionOf.ne_zero`,
+and trivial evidence answers nothing, `not_answers_univ`; the resolutions a proposition
+evidences are nested, `IsResolutionOf.subset_or_subset`, and a singleton resolution makes the
+proposition relevant to the question, `IsResolutionOf.relevant`. The paper's arguments for
+its examples reduce to three patterns: an antecedent entailing a resolution gives it
+probability one, `cond_eq_one_of_subset`, so a conjunction entailing what the antecedent
+leaves uncertain evidences it more strongly, `evidencesMore_of_subset`, as in (68); a
+prejacent that leaves every resolution's conditional probability unchanged fails the
+conjunction condition, `not_tooFelicitous_of_cond_eq`, as in (25) and (72); a prejacent
+entailing the evidenced resolution fails the first prejacent condition,
+`not_tooFelicitous_of_subset`, as in (11) and (29); and evidence raising every candidate
+resolution by the same factor answers no question, `not_answers_of_impact_eq`, as in (71).
 
 ## Implementation notes
 
-The relevant question RQ need not be a Current Question; [thomas-2026] §5.4.3
-requires only that it be relevant to some discourse question, which
-`IsTooLicensedByDQ` captures via `IsRelevantToUnder`. The two prejacent conditions
-rule out the [beaver-clark-2008] ecstatic case (the prejacent already entails
-the answer) and the "some-instrument vs cello" case (a weaker prejacent would
-do); see the per-field docstrings of `IsTooFelicitous`.
+The listener's belief state is a probability measure, and conditioning is mathlib's
+`ProbabilityTheory.cond`, so the paper's statements hold at every prior. The resolution
+evidenced by a proposition, which the paper calls unique, is only unique up to nesting: the
+dominance clause of (62) waives resolutions containing the candidate, so the felicity
+condition quantifies existentially over the resolution that the conjunction evidences and
+the prejacent conditions constrain. Bayesian belief revision through a speaker model, (57)–(59),
+is not formalized: the antecedent is the proposition the listener learns. The examples are the
+rows of `Data.Examples.Thomas2026`, with the paper's diagnosis of each *too* recorded as a
+feature.
+
+## References
+
+* [thomas-2026]
+* [beaver-clark-2008]
+* [buring-2003]
+* [kripke-2009]
+* [roberts-1996]
+* [rullmann-2003]
 -/
 
 namespace Thomas2026
 
-open Question
-
-variable {W : Type*} {μ : PMF W}
-  {prejacent antecedent : Set W} {rq : Question W}
-
-/-! ### TOO felicity -/
-
-/-- Conditions (a)-(c) of [thomas-2026] Def 64. The full Def 64 additionally
-    requires the relevant question to be relevant to a discourse question; that
-    is `IsTooLicensedByDQ`. -/
-structure IsTooFelicitous (prejacent antecedent : Set W) (rq : Question W)
-    (μ : PMF W) : Prop where
-  /-- Def 64a: the antecedent answers the relevant question. -/
-  antecedent_answers : Answers antecedent rq μ
-  /-- Def 64b (first half): the conjunction answers the relevant question. -/
-  conjunction_answers : Answers (antecedent ∩ prejacent) rq μ
-  /-- Def 64b (second half): the conjunction evidences its resolution more
-      strongly than the antecedent alone does. -/
-  conjunction_stronger : ∃ 𝒜,
-    IsResolutionEvidencedBy rq 𝒜 (antecedent ∩ prejacent) μ ∧
-    evidencesResolutionMore μ 𝒜 (antecedent ∩ prejacent) antecedent
-  /-- Def 64c.i: the prejacent does not by itself entail the resolution the
-      conjunction evidences (rules out the [beaver-clark-2008] ecstatic case
-      "Sam is happy. #He's ecstatic, too"). -/
-  prejacent_not_entails : ∀ 𝒜,
-    IsResolutionEvidencedBy rq 𝒜 (antecedent ∩ prejacent) μ →
-    ¬ prejacent ⊆ ⋂₀ 𝒜
-  /-- Def 64c.ii: no proper weakening `S ⊋ prejacent` licenses the same
-      resolution as well as the prejacent does (rules out the
-      "some-instrument vs cello" case). -/
-  prejacent_minimal : ∀ S : Set W, prejacent ⊆ S → S ≠ prejacent →
-    ∀ 𝒜, IsResolutionEvidencedBy rq 𝒜 (antecedent ∩ prejacent) μ →
-      evidencesResolutionMore μ 𝒜 (antecedent ∩ prejacent) (antecedent ∩ S)
-
-/-! ### Abstract consequences -/
-
-/-- TOO felicity entails that the antecedent puts positive prior mass: a direct
-    corollary of `Answers.probOfSet_pos` applied to the antecedent condition. -/
-theorem IsTooFelicitous.antecedent_probOfSet_pos
-    (h : IsTooFelicitous prejacent antecedent rq μ) :
-    μ.probOfSet antecedent > 0 :=
-  h.antecedent_answers.probOfSet_pos
-
-/-- TOO felicity entails that the conjunction puts positive prior mass — same
-    corollary applied to the conjunction condition. -/
-theorem IsTooFelicitous.conjunction_probOfSet_pos
-    (h : IsTooFelicitous prejacent antecedent rq μ) :
-    μ.probOfSet (antecedent ∩ prejacent) > 0 :=
-  h.conjunction_answers.probOfSet_pos
-
-/-- TOO felicity entails that the conjunction is genuinely stronger evidence
-    than the antecedent alone (the [thomas-2026] §4.4 intuition that *too* marks
-    a strict improvement). The witness `𝒜` from `conjunction_stronger` exhibits
-    this; the inequality is `evidencesResolutionMore` unfolded. -/
-theorem IsTooFelicitous.exists_strict_improvement
-    (h : IsTooFelicitous prejacent antecedent rq μ) :
-    ∃ 𝒜, IsResolutionEvidencedBy rq 𝒜 (antecedent ∩ prejacent) μ ∧
-      μ.condProbSet (antecedent ∩ prejacent) (⋂₀ 𝒜) >
-      μ.condProbSet antecedent (⋂₀ 𝒜) :=
-  h.conjunction_stronger
-
-/-! ### RQ relevance to a discourse question -/
-
-/-- The full [thomas-2026] Def 64: `IsTooFelicitous` together with the
-    requirement that `rq` be relevant to some discourse question `dq`. The RQ
-    need not be a Current Question — §5.4.3 requires only relevance to a DQ. -/
-def IsTooLicensedByDQ (prejacent antecedent : Set W)
-    (rq dq : Question W) (μ : PMF W) : Prop :=
-  IsTooFelicitous prejacent antecedent rq μ ∧ IsRelevantToUnder rq dq μ
-
-/-! ### Predicted infelicity -/
-
-/-- *Too* is predicted infelicitous for a given (prejacent, antecedent) when no
-    relevant question satisfies the felicity conditions ([thomas-2026] §5.5). -/
-def IsTooInfelicitous (prejacent antecedent : Set W) (μ : PMF W) : Prop :=
-  ∀ rq : Question W, ¬ IsTooFelicitous prejacent antecedent rq μ
-
-/-! ### Data conformance
-
-Each row of `Data/Examples/Thomas2026.json` records the paper's Def 64
-diagnosis as a `def64_status` feature: `satisfied`, or the condition the paper
-identifies as failing (`antecedent_violation` for (3), `conjunction_violation`
-for (72)/(19c), `prejacent_violation_i` for (11), `prejacent_violation_ii` for
-(30)). The *either* row carries no diagnosis — fn. 9 leaves *either* to future
-work — so the transfer equation is stated for *too* rows only. -/
-
-/-- **Transfer equation**: a *too* row is acceptable iff the paper exhibits an
-    (ANT, RQ) pair satisfying all of Def 64. Uniform across the standard and
-    argument-building rows — [thomas-2026]'s unification thesis. -/
-theorem too_acceptable_iff_def64_satisfied :
-    ∀ row ∈ Examples.all, row.feature? "particle" = some "too" →
-      (row.judgment = .acceptable ↔
-        row.feature? "def64_status" = some "satisfied") := by
-  decide
-
-end Thomas2026
-
-/-! ### Worked witness
-
-A concrete model showing the answerhood structure underlying TOO felicity is
-satisfiable and discriminating. Over `W = Fin 3` with the uniform prior, the
-evidence `R = {1}` answers the two-alternative question `Q` (alternatives
-`A = {0,1}` and `B = {2}`) via the singleton resolution `{A}`, while the trivial
-evidence `Set.univ` answers nothing. This instantiates the `raises_prob` and
-`dominates` fields that the abstract `IsTooFelicitous` structure never forces a
-caller to exhibit. -/
-
-namespace Thomas2026.Witness
-
-open Question
+open MeasureTheory ProbabilityTheory Question
 open scoped ENNReal
 
-abbrev W := Fin 3
-abbrev A : Set W := {0, 1}
-abbrev B : Set W := {2}
-abbrev R : Set W := {1}
+variable {W : Type*} [MeasurableSpace W] (μ : Measure W)
 
-/-- The uniform prior on `Fin 3`. -/
-noncomputable def μ : PMF W := PMF.ofFintype (fun _ => (3 : ℝ≥0∞)⁻¹) (by
-  simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
-    Nat.cast_ofNat]
-  exact ENNReal.mul_inv_cancel (by norm_num) (by norm_num))
+/-! ### Relevance and answerhood (section 5.1.3) -/
 
-/-- The relevant question: `Avery invited Bailey?` against `Avery invited
-    Cameron?` — two incomparable alternatives `A` and `B`. -/
-def Q : Question W := Question.ofSet A ⊔ Question.ofSet B
+/-- Relevance (61a): a question is relevant to a question if some alternative of the first
+shifts the probability of some alternative of the second. -/
+def Relevant (R S : Question W) : Prop :=
+  ∃ A ∈ alt R, ∃ A' ∈ alt S, μ[A' | A] ≠ μ A'
 
-theorem hAnotB : ¬ A ⊆ B := by
-  intro h; have : (0 : W) ∈ B := h (by simp); simp at this
+/-- The impact of a proposition on a proposition: the factor by which learning the first
+raises the probability of the second. -/
+noncomputable def impact (R A : Set W) : ℝ≥0∞ := μ[A | R] / μ A
 
-theorem hBnotA : ¬ B ⊆ A := by
-  intro h; have : (2 : W) ∈ A := h (by simp); simp at this
+/-- Answerhood (62): a nonempty set of alternatives is the resolution of a question evidenced
+by a proposition when the proposition raises the probability of its conjunction and impacts
+it more than the conjunction of any set of alternatives not entailed by it. -/
+structure IsResolutionOf (Q : Question W) (𝒜 : Set (Set W)) (R : Set W) : Prop where
+  subset_alt : 𝒜 ⊆ alt Q
+  nonempty : 𝒜.Nonempty
+  raises : μ (⋂₀ 𝒜) < μ[⋂₀ 𝒜 | R]
+  dominates : ∀ 𝒜' ⊆ alt Q, 𝒜'.Nonempty → ¬ ⋂₀ 𝒜 ⊆ ⋂₀ 𝒜' →
+    impact μ R (⋂₀ 𝒜') < impact μ R (⋂₀ 𝒜)
 
-theorem hRA : R ⊆ A := by intro x hx; fin_cases x <;> simp_all
+/-- A proposition answers a question when it evidences some resolution of it. -/
+def Answers (R : Set W) (Q : Question W) : Prop := ∃ 𝒜, IsResolutionOf μ Q 𝒜 R
 
-theorem hRcapB : R ∩ B = ∅ := by ext x; fin_cases x <;> simp_all
+/-- (63): a proposition evidences a resolution more strongly than another proposition. -/
+def EvidencesMore (A R R' : Set W) : Prop := μ[A | R'] < μ[A | R]
 
-theorem A_mem_altQ : A ∈ alt Q := by
-  apply Question.mem_alt_sup_of_alt_left
-  · rw [Question.alt_ofSet]; exact Set.mem_singleton_iff.mpr rfl
-  · intro r hr hAr; exact absurd (hAr.trans hr) hAnotB
+/-! ### The felicity conditions of *too* (section 5.2) -/
 
-theorem B_mem_altQ : B ∈ alt Q := by
-  apply Question.mem_alt_sup_of_alt_right
-  · rw [Question.alt_ofSet]; exact Set.mem_singleton_iff.mpr rfl
-  · intro r hr hBr; exact absurd (hBr.trans hr) hBnotA
+/-- (64a)–(64c): the antecedent answers the question; the conjunction of antecedent and
+prejacent answers it and evidences its resolution more strongly than the antecedent; the
+prejacent does not entail that resolution, and any weaker prejacent would evidence it less
+strongly. -/
+def TooFelicitous (π ant : Set W) (rq : Question W) : Prop :=
+  Answers μ ant rq ∧ ∃ 𝒜, IsResolutionOf μ rq 𝒜 (ant ∩ π) ∧
+    EvidencesMore μ (⋂₀ 𝒜) (ant ∩ π) ant ∧ ¬ π ⊆ ⋂₀ 𝒜 ∧
+    ∀ S, π ⊂ S → EvidencesMore μ (⋂₀ 𝒜) (ant ∩ π) (ant ∩ S)
 
-theorem altQ_subset : alt Q ⊆ {A, B} := by
-  intro q hq
-  have h := Question.alt_sup_subset_union (Question.ofSet A)
-    (Question.ofSet B) hq
-  rw [Question.alt_ofSet, Question.alt_ofSet, Set.singleton_union] at h
+/-- (64): *too* is licensed by an antecedent and a question relevant to a question in the
+discourse tree. -/
+def Too (π ant : Set W) (rq dq : Question W) : Prop :=
+  TooFelicitous μ π ant rq ∧ Relevant μ rq dq
+
+variable {μ} {Q rq : Question W} {𝒜 : Set (Set W)} {A R R' π ant : Set W}
+
+/-! ### Consequences -/
+
+/-- Evidence for a resolution has positive prior probability. -/
+theorem IsResolutionOf.ne_zero (h : IsResolutionOf μ Q 𝒜 R) : μ R ≠ 0 := by
+  intro h0
+  have := h.raises
+  rw [cond_eq_zero_of_meas_eq_zero h0] at this
+  simp at this
+
+theorem Answers.ne_zero (h : Answers μ R Q) : μ R ≠ 0 :=
+  let ⟨_, h⟩ := h
+  h.ne_zero
+
+/-- Two resolutions evidenced by the same proposition are nested: the dominance clause
+waives only resolutions containing the candidate. -/
+theorem IsResolutionOf.subset_or_subset {𝒜' : Set (Set W)} (h : IsResolutionOf μ Q 𝒜 R)
+    (h' : IsResolutionOf μ Q 𝒜' R) : ⋂₀ 𝒜 ⊆ ⋂₀ 𝒜' ∨ ⋂₀ 𝒜' ⊆ ⋂₀ 𝒜 := by
+  by_contra hcon
+  rw [not_or] at hcon
+  exact lt_asymm (h.dominates 𝒜' h'.subset_alt h'.nonempty hcon.1)
+    (h'.dominates 𝒜 h.subset_alt h.nonempty hcon.2)
+
+/-- An answer through a single alternative is relevant to the question (section 5.1.3). -/
+theorem IsResolutionOf.relevant (h : IsResolutionOf μ Q {A} R) : Relevant μ (ofSet R) Q := by
+  refine ⟨R, by simp, A, h.subset_alt rfl, ?_⟩
+  have := h.raises
+  rw [Set.sInter_singleton] at this
+  exact this.ne'
+
+/-- A prejacent that leaves the conditional probability of every resolution unchanged fails
+the conjunction condition: *dogs are mammals*, (72), and *I had pancakes for breakfast*, (25). -/
+theorem not_tooFelicitous_of_cond_eq
+    (h : ∀ 𝒜 ⊆ alt rq, μ[⋂₀ 𝒜 | ant ∩ π] = μ[⋂₀ 𝒜 | ant]) : ¬ TooFelicitous μ π ant rq := by
+  rintro ⟨-, 𝒜, hres, hmore, -, -⟩
+  rw [EvidencesMore, h 𝒜 hres.subset_alt] at hmore
+  exact lt_irrefl _ hmore
+
+/-- A prejacent entailing every resolution the conjunction evidences fails the first prejacent
+condition: *he's ecstatic*, (11), and *he stole the cookies*, (29b). -/
+theorem not_tooFelicitous_of_subset (h : ∀ 𝒜, IsResolutionOf μ rq 𝒜 (ant ∩ π) → π ⊆ ⋂₀ 𝒜) :
+    ¬ TooFelicitous μ π ant rq := by
+  rintro ⟨-, 𝒜, hres, -, hnot, -⟩
+  exact hnot (h 𝒜 hres)
+
+/-- Evidence raising every candidate resolution by the same factor answers no question whose
+candidates are not all nested: *she invited Bailey* and the mention-two question, (71). -/
+theorem not_answers_of_impact_eq {c : ℝ≥0∞}
+    (hc : ∀ 𝒜 ⊆ alt Q, 𝒜.Nonempty → impact μ R (⋂₀ 𝒜) = c)
+    (hcomp : ∀ 𝒜 ⊆ alt Q, 𝒜.Nonempty → ∃ 𝒜' ⊆ alt Q, 𝒜'.Nonempty ∧ ¬ ⋂₀ 𝒜 ⊆ ⋂₀ 𝒜') :
+    ¬ Answers μ R Q := by
+  rintro ⟨𝒜, h⟩
+  obtain ⟨𝒜', hsub, hne, hnot⟩ := hcomp 𝒜 h.subset_alt h.nonempty
+  have := h.dominates 𝒜' hsub hne hnot
+  rw [hc 𝒜 h.subset_alt h.nonempty, hc 𝒜' hsub hne] at this
+  exact lt_irrefl _ this
+
+/-- The conjunction of a felicitous *too* answers the question and has positive prior
+probability. -/
+theorem TooFelicitous.answers_inter (h : TooFelicitous μ π ant rq) :
+    Answers μ (ant ∩ π) rq ∧ μ (ant ∩ π) ≠ 0 :=
+  let ⟨_, 𝒜, hres, _⟩ := h
+  ⟨⟨𝒜, hres⟩, hres.ne_zero⟩
+
+variable [IsProbabilityMeasure μ]
+
+theorem cond_univ_apply : μ[A | Set.univ] = μ A := by
+  rw [cond_apply MeasurableSet.univ, measure_univ, inv_one, one_mul, Set.univ_inter]
+
+/-- Trivial evidence raises nothing and so answers no question. -/
+theorem not_answers_univ : ¬ Answers μ Set.univ Q := by
+  rintro ⟨𝒜, h⟩
+  have := h.raises
+  rw [cond_univ_apply] at this
+  exact lt_irrefl _ this
+
+variable [DiscreteMeasurableSpace W]
+
+/-- A proposition entailing another gives it probability one. -/
+theorem cond_eq_one_of_subset (h : R ⊆ A) (h0 : μ R ≠ 0) : μ[A | R] = 1 := by
+  rw [cond_apply .of_discrete, Set.inter_eq_left.2 h,
+    ENNReal.inv_mul_cancel h0 (measure_ne_top _ _)]
+
+/-- A conjunction entailing a resolution that the antecedent leaves uncertain evidences it
+more strongly, the conjunction condition in (68). -/
+theorem evidencesMore_of_subset (hR : R ⊆ A) (h0 : μ R ≠ 0) (h : μ[A | R'] < 1) :
+    EvidencesMore μ A R R' := by
+  rw [EvidencesMore, cond_eq_one_of_subset hR h0]
   exact h
 
-theorem altQ_eq : alt Q = {A, B} := by
-  apply Set.Subset.antisymm altQ_subset
-  intro q hq
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
-  rcases hq with rfl | rfl
-  · exact A_mem_altQ
-  · exact B_mem_altQ
-
-theorem mu_apply (i : W) : μ i = (3 : ℝ≥0∞)⁻¹ := by simp [μ, PMF.ofFintype_apply]
-
-theorem probOfSet_R_pos : μ.probOfSet R > 0 := by
-  rw [PMF.probOfSet_apply, Fin.sum_univ_three, mu_apply, mu_apply, mu_apply]
-  have h0 : ¬ (0 : W) ∈ R := by simp [R]
-  have h1 : (1 : W) ∈ R := by simp [R]
-  have h2 : ¬ (2 : W) ∈ R := by simp [R]
-  rw [if_neg h0, if_pos h1, if_neg h2]
-  simp only [zero_add, add_zero]
-  exact ENNReal.inv_pos.mpr (by simp)
-
-theorem probOfSet_A_lt_one : μ.probOfSet A < 1 := by
-  have hsum := PMF.probOfSet_compl_add μ A
-  have hAc_pos : μ.probOfSet Aᶜ > 0 := by
-    rw [PMF.probOfSet_apply, Fin.sum_univ_three, mu_apply, mu_apply, mu_apply]
-    have h0 : ¬ (0 : W) ∈ Aᶜ := by simp [A]
-    have h1 : ¬ (1 : W) ∈ Aᶜ := by simp [A]
-    have h2 : (2 : W) ∈ Aᶜ := by simp [A]
-    rw [if_neg h0, if_neg h1, if_pos h2]
-    simp only [zero_add, add_zero]
-    exact ENNReal.inv_pos.mpr (by simp)
-  calc μ.probOfSet A < μ.probOfSet A + μ.probOfSet Aᶜ :=
-        ENNReal.lt_add_right (PMF.probOfSet_ne_top μ A) hAc_pos.ne'
-    _ = 1 := hsum
-
-theorem hsel : ∀ A' ∈ alt Q, A' ≠ A → R ∩ A' = ∅ := by
-  intro A' hA' hne
-  rw [altQ_eq] at hA'
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hA'
-  rcases hA' with rfl | rfl
-  · exact absurd rfl hne
-  · exact hRcapB
-
-/-- **Positive witness**: `R` answers `Q`, via the singleton resolution `{A}`. -/
-theorem answers_R : Answers R Q μ :=
-  ⟨{A}, isResolutionEvidencedBy_singleton A_mem_altQ hsel hRA probOfSet_R_pos
-    probOfSet_A_lt_one⟩
-
-/-- **Discriminating contrast**: `Answers` distinguishes the informative
-    evidence `R` from the uninformative `Set.univ`. -/
-theorem answers_discriminates :
-    Answers R Q μ ∧ ¬ Answers (Set.univ : Set W) Q μ :=
-  ⟨answers_R, not_answers_univ⟩
-
-end Thomas2026.Witness
+end Thomas2026
