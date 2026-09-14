@@ -1,6 +1,6 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.Case.Basic
-import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Phi.Gender.Basic
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Category.Pronoun.Capabilities
 import Linglib.Syntax.Category.Pronoun.Demonstrative

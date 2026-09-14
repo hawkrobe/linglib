@@ -1,4 +1,4 @@
-import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Phi.Gender.Basic
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Quantification.Lexicon
 

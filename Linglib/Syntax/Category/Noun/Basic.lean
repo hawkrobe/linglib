@@ -1,4 +1,4 @@
-import Linglib.Features.Gender.Capabilities
+import Linglib.Syntax.Phi.Gender.Capabilities
 
 /-!
 # Noun

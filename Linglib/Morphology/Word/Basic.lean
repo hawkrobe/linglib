@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Data.UD.Basic
 import Linglib.Features.Case.Capabilities
-import Linglib.Features.Gender.Capabilities
+import Linglib.Syntax.Phi.Gender.Capabilities
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person.Capabilities
 

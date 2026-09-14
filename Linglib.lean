@@ -703,9 +703,6 @@ import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Deixis
 import Linglib.Features.Empathy
 import Linglib.Features.Expressive
-import Linglib.Features.Gender.Basic
-import Linglib.Features.Gender.Capabilities
-import Linglib.Features.Gender.Decomposition
 import Linglib.Features.Givenness
 import Linglib.Features.Grammaticalization
 import Linglib.Features.Indefinite

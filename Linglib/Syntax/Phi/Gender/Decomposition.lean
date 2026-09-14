@@ -1,6 +1,6 @@
 import Mathlib.Data.Fintype.Card
 import Linglib.Features.ContainmentPair
-import Linglib.Features.Gender.Basic
+import Linglib.Syntax.Phi.Gender.Basic
 
 /-!
 # Feature decompositions of gender
