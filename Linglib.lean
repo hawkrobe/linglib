@@ -1160,8 +1160,6 @@ import Linglib.Fragments.Telugu.Case
 import Linglib.Fragments.Teop.Nouns
 import Linglib.Fragments.Thai.Comparison
 import Linglib.Fragments.Thai.Determiners
-import Linglib.Fragments.Tibetan.Coordination
-import Linglib.Fragments.Tibetan.Evidentiality
 import Linglib.Fragments.Tigre.Phonology
 import Linglib.Fragments.Tigrinya.Complementizers
 import Linglib.Fragments.Tigrinya.Negation
