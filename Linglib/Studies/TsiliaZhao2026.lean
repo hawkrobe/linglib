@@ -1,230 +1,102 @@
 import Linglib.Semantics.Tense.Perspective
-import Linglib.Semantics.Reference.Context.Basic
-import Linglib.Studies.Zhao2025
+import Linglib.Data.Examples.TsiliaZhao2026
 
 /-!
-# Tsilia & Zhao 2026: Tense and perspective
+# Tsilia and Zhao (2026): Tense and Perspective: A Solution to the ⌈then⌉-Present Puzzle
 
-[tsilia-zhao-2026] solve the ⌈then⌉-present puzzle: temporal ⌈then⌉ is
-incompatible with the present tense across languages, even where the present
-*shifts* (denoting the attitude 'now' rather than utterance time) — yet
-compatible in the very same language (Modern Greek) with *deleted* (SOT)
-tense, distinguishing the shifted present from deleted tense for the first
-time. Tenses and ⌈then⌉ are interpreted relative to a temporal perspective π;
-the operator OP_π rebinds π clause-wide, so a shifted PRES and a clausemate
-⌈then⌉ read the SAME π and their overlap/disjointness presuppositions clash —
-a shift-together effect in the temporal domain, after the indexical-shift
-monsters of [anand-nevins-2004] and [deal-2020]
-(`shifted_present_blocks_then`). Deleted tense has no perspectival
-presupposition, so ⌈then⌉ stays satisfiable
-(`Tense.Perspective.thenPresup_satisfiable`). The [sharvit-2003] simultaneous
-reading is the case where the shifted PRES presupposition holds trivially
-(`Tense.simultaneousFrame_isPresent`).
+This file formalizes the solution of [tsilia-zhao-2026] to the ⌈then⌉-present puzzle, (12):
+the temporal adverb ⌈then⌉ cannot restrict a present-tensed verb phrase, whether the present
+is shifted or not. In Greek, Hebrew, Russian and Japanese a present under a past attitude
+verb shifts to the attitude's time, (8), yet ⌈then⌉ is still excluded, (9)–(11), although it
+restricts an embedded past with the same simultaneous reference, (38)–(39), and a deleted,
+sequence-of-tense past, (48)–(49). Tenses and ⌈then⌉ are temporal pronouns with
+presuppositions relative to a perspective parameter `π`, (69)–(71): PRES overlap, PAST
+precedence, ⌈then⌉ disjointness, the substrate's `Tense.Perspective`. Tense shift is the
+rebinding of `π`, by the propositional operator OP_π of (73), to an evaluation index that an
+attitude verb or WOLL binds, so a clausemate PRES and ⌈then⌉ shift together and read the same
+`π`; since ⌈then⌉ restricts the reference of the tense it modifies, (76), their
+presuppositions clash whatever `π` is, `not_presThen`, the derivations (77), (79), (81) and
+(82). A pronominal anchor would let the two anchor separately, (36), which is coherent,
+`exists_split_anchor`, hence the parameter. ⌈then⌉ restricts a PAST to its own reference,
+`pastThen_self`, and a deleted tense, carrying no presupposition, (86)–(87), is compatible
+with ⌈then⌉ when no operator shifts the perspective onto its reference, (89),
+`deletedThen_of_not_overlaps` and `not_deletedThen_of_subset`.
 
-## Cross-linguistic data
+## Implementation notes
 
-The ⌈then⌉ inventory is `Zhao2025.thenAdverbs` (Greek *tóte*, Hebrew *az*,
-Russian *togda*, Japanese *tōji*, English *then*). The tense-shift
-typology (`TenseShiftProfile`): present-under-past shifts in attitude
-reports in Greek, Hebrew and Russian, also in relative clauses in Japanese,
-and never in English; present-under-future shifts everywhere, because
-will = WOLL + PRES and WOLL is intensional, providing the OP_π site even in
-relative clauses. The English present under future is *deleted* by SOT
-(c-commanded by WOLL's PRES), not shifted — which is why English ⌈then⌉
-tolerates present-under-future.
+Times are sets of points of a linear order, and clause meanings are their presuppositions
+as functions of the perspective; the assertion, the assignment and the evaluation index are
+suppressed, so OP_π is instantiation of the perspective, and the intensional binding that
+licenses a shift, absent in relative clauses under past except in Japanese, is described by
+the rows. The typology of Tables 1 and 2 is the rows: under past the present shifts in
+attitude reports in Greek, Hebrew, Russian and Japanese, in relative clauses only in
+Japanese, and never in English, whose present under past indicates the utterance time; under
+future it shifts everywhere, WOLL binding the index, and only English admits ⌈then⌉ there,
+its present being deleted under WOLL's PRES rather than shifted, a difference among
+sequence-of-tense languages the paper leaves open, (94)–(97). Japanese *tōji* is
+past-oriented, (32). The perspective is not the context's time, since Greek shifts the
+present but never *tora* 'now', (99). The examples are the rows of
+`Data.Examples.TsiliaZhao2026`.
+
+## References
+
+* [tsilia-zhao-2026]
+* [zhao-2025]
+* [ogihara-sharvit-2012]
+* [anand-nevins-2004]
+* [deal-2020]
+* [abusch-1988]
+* [heim-1992]
 -/
 
 namespace TsiliaZhao2026
 
-open Tense Tense.Perspective
-open Reference
+open Tense.Perspective
 
-/-! ### Shift together -/
+variable {T : Type*}
 
-/-- A shifted present blocks ⌈then⌉: OP_π rebinds π for the whole frame, so
-    the shifted PRES (R = π') and a clausemate ⌈then⌉ (reference disjoint
-    from π') read the same π' — no reference satisfies both the "during
-    then" containment and disjointness. *Nate said Erica is angry (*then)*. -/
-theorem shifted_present_blocks_then {T : Type*} [LinearOrder T]
-    (f : ReichenbachFrame T) (attitudeTime : T)
-    (hPres : (opPi f attitudeTime).isPresent) :
-    ¬∃ thenRef, (opPi f attitudeTime).referenceTime = thenRef ∧
-      thenPresup thenRef (opPi f attitudeTime).perspectiveTime :=
-  λ ⟨_, hDuring, hThen⟩ => then_present_clash _ hPres hDuring hThen
+/-! ### The clash and the shift-together effect (section 5) -/
 
-/-! ### Tense-shift typology -/
+/-- (77): the presuppositions of a present-tensed clause restricted by ⌈then⌉, as a function
+of the perspective: the reference `r` of PRES overlaps `π`, ⌈then⌉'s reference `th` contains
+it, and `th` is disjoint from `π`. -/
+def presThen (r th π : Set T) : Prop := presPresup π r ∧ r ⊆ th ∧ thenPresup π th
 
-/-- A language's tense-shift profile: whether a simultaneous reading of an
-    embedded present is available in each of the four
-    past/future × attitude/relative configurations, and whether the
-    language's SOT rule can delete a present. -/
-structure TenseShiftProfile where
-  /-- Language name -/
-  language : String
-  /-- Present-under-past, attitude report complement -/
-  pastAttitude : Bool
-  /-- Present-under-past, relative clause -/
-  pastRelative : Bool
-  /-- Present-under-future, attitude report complement -/
-  futAttitude : Bool
-  /-- Present-under-future, relative clause -/
-  futRelative : Bool
-  /-- Does the language have SOT deletion that can apply to the present?
-      English: yes (present under future is deleted, not shifted).
-      Modern Greek: no (the "Interpret the Present" constraint blocks
-      deletion). -/
-  sotDeletesPresent : Bool
-  /-- Is ⌈then⌉ restricted to past-oriented contexts?
-      Japanese *tōji* cannot co-occur with future matrix tense. -/
-  thenPastOnly : Bool := false
-  deriving Repr, DecidableEq
+/-- OP_π rebinds the perspective of PRES and ⌈then⌉ at once, so the clause is contradictory
+whatever the perspective: the root case (75), the shifted case (78) and the future cases
+(81)–(82) alike. -/
+theorem not_presThen (r th π : Set T) : ¬ presThen r th π :=
+  λ ⟨hp, hd, ht⟩ => then_present_clash hp hd ht
 
-/-- Modern Greek: shifts in attitude reports (past & future) and relative
-    clauses under future, but NOT in relative clauses under past. -/
-def greekProfile : TenseShiftProfile where
-  language := "Modern Greek"
-  pastAttitude := true
-  pastRelative := false
-  futAttitude := true
-  futRelative := true
-  sotDeletesPresent := false
+/-- (36): with pronominal anchors, PRES and ⌈then⌉ could be anchored to different times and
+the clause would be coherent, which is why the anchor is a parameter. -/
+theorem exists_split_anchor {π₁ π₂ : Set T} (h : ¬ Overlaps π₁ π₂)
+    (hne : π₁.Nonempty) :
+    ∃ r th : Set T, presPresup π₁ r ∧ r ⊆ th ∧ thenPresup π₂ th :=
+  ⟨π₁, π₁, by simpa [presPresup, Overlaps] using hne, subset_rfl, h⟩
 
-/-- Modern Hebrew: same pattern as Greek for shift; no SOT deletion of
-    present. -/
-def hebrewProfile : TenseShiftProfile where
-  language := "Modern Hebrew"
-  pastAttitude := true
-  pastRelative := false
-  futAttitude := true
-  futRelative := true
-  sotDeletesPresent := false
+/-! ### Past and deleted tense (sections 3 and 6) -/
 
-/-- Russian: same pattern as Greek/Hebrew for shift. -/
-def russianProfile : TenseShiftProfile where
-  language := "Russian"
-  pastAttitude := true
-  pastRelative := false
-  futAttitude := true
-  futRelative := true
-  sotDeletesPresent := false
+/-- The presuppositions of a past-tensed clause restricted by ⌈then⌉. -/
+def pastThen [LT T] (r th π : Set T) : Prop := pastPresup π r ∧ r ⊆ th ∧ thenPresup π th
 
-/-- Japanese: uniquely shifts in relative clauses under past too (tenses are
-    intensional). *tōji* is restricted to past-oriented contexts. -/
-def japaneseProfile : TenseShiftProfile where
-  language := "Japanese"
-  pastAttitude := true
-  pastRelative := true
-  futAttitude := true
-  futRelative := true
-  sotDeletesPresent := false
-  thenPastOnly := true
+/-- (38), (39), (44): a PAST admits ⌈then⌉ at its own reference. -/
+theorem pastThen_self [Preorder T] {r π : Set T} (h : pastPresup π r) : pastThen r r π :=
+  ⟨h, subset_rfl, thenPresup_of_pastPresup h⟩
 
-/-- English: no shift under past; simultaneous reading under future comes
-    from SOT deletion (will = WOLL + PRES, embedded PRES deleted by SOT). -/
-def englishProfile : TenseShiftProfile where
-  language := "English"
-  pastAttitude := false
-  pastRelative := false
-  futAttitude := true
-  futRelative := true
-  sotDeletesPresent := true
+/-- (89): a deleted tense carries no presupposition, so only ⌈then⌉'s remains. -/
+def deletedThen (r th π : Set T) : Prop := r ⊆ th ∧ thenPresup π th
 
-/-- The surveyed languages' tense-shift profiles. -/
-def allProfiles : List TenseShiftProfile :=
-  [greekProfile, hebrewProfile, russianProfile, japaneseProfile, englishProfile]
+/-- (89a): with no OP_π the perspective stays the utterance time, from which the reported
+meeting is disjoint, and ⌈then⌉ restricts the deleted past. -/
+theorem deletedThen_of_not_overlaps {r π : Set T} (h : ¬ Overlaps r π) : deletedThen r r π :=
+  ⟨subset_rfl, h⟩
 
-/-- No language allows shift in relative clauses under past unless it also
-    allows shift in attitude reports under past. -/
-theorem relative_shift_implies_attitude_shift :
-    ∀ p ∈ allProfiles, p.pastRelative = true → p.pastAttitude = true := by
-  intro p hp hRel
-  simp only [allProfiles, List.mem_cons, List.mem_nil_iff, or_false] at hp
-  rcases hp with rfl | rfl | rfl | rfl | rfl <;>
-    simp_all [greekProfile, hebrewProfile, russianProfile, japaneseProfile,
-      englishProfile]
-
-/-- Under future, all surveyed languages shift, in attitude reports and
-    relative clauses alike — WOLL is universally intensional. -/
-theorem universal_shift_under_future :
-    ∀ p ∈ allProfiles, p.futAttitude = true ∧ p.futRelative = true := by
-  intro p hp
-  simp only [allProfiles, List.mem_cons, List.mem_nil_iff, or_false] at hp
-  rcases hp with rfl | rfl | rfl | rfl | rfl <;> exact ⟨rfl, rfl⟩
-
-/-- English is the only surveyed language whose SOT deletes the present. -/
-theorem sot_deletes_present_unique :
-    ∀ p ∈ allProfiles, p.sotDeletesPresent = true → p = englishProfile := by
-  intro p hp hSOT
-  simp only [allProfiles, List.mem_cons, List.mem_nil_iff, or_false] at hp
-  rcases hp with rfl | rfl | rfl | rfl | rfl <;>
-    simp_all [greekProfile, hebrewProfile, russianProfile, japaneseProfile,
-      englishProfile]
-
-/-- Japanese is the only surveyed language that shifts the present in a
-    relative clause under past. -/
-theorem past_relative_shift_unique :
-    ∀ p ∈ allProfiles, p.pastRelative = true → p = japaneseProfile := by
-  intro p hp hRel
-  simp only [allProfiles, List.mem_cons, List.mem_nil_iff, or_false] at hp
-  rcases hp with rfl | rfl | rfl | rfl | rfl <;>
-    simp_all [greekProfile, hebrewProfile, russianProfile, japaneseProfile,
-      englishProfile]
-
-/-! ### Perspective is not context -/
-
-/-- The interpretation parameter tuple ⟨c, π⟩ from ⟦·⟧^{c,π,g}. Context c
-    (for indexicals, [anand-nevins-2004]) and perspective π (for tense) are
-    independent parameters: `shiftPerspective` preserves `context`, and
-    `shiftContext` preserves `perspective`. This is the paper's argument that
-    the perspective can be identified with neither the context nor the
-    evaluation index: tense shift is possible without indexical shift
-    (Modern Greek shifts the present but never τώρα 'now'), and neither
-    shift is obligatory. -/
-structure InterpParams (W E P T : Type*) where
-  /-- Context parameter c = ⟨c_s, c_a, c_t, c_w⟩ — for indexicals
-      (I, now, here) -/
-  context : Context W E P T
-  /-- Temporal perspective π — for tense (PRES, PAST, ⌈then⌉).
-      Defaults to c_t in root clauses; shifted by OP_π under attitude
-      verbs. -/
-  perspective : T
-
-variable {W E P T : Type*}
-
-/-- OP_π on the interpretation parameter tuple: shift π, preserve c. -/
-def InterpParams.shiftPerspective (ip : InterpParams W E P T) (newPi : T) :
-    InterpParams W E P T :=
-  { ip with perspective := newPi }
-
-/-- OP_c on the interpretation parameter tuple: shift c, preserve π. -/
-def InterpParams.shiftContext (ip : InterpParams W E P T)
-    (newC : Context W E P T) : InterpParams W E P T :=
-  { ip with context := newC }
-
-/-- OP_π preserves the context parameter (including c_t): tense shift does
-    not entail indexical shift. -/
-theorem InterpParams.shiftPerspective_preserves_context
-    (ip : InterpParams W E P T) (newPi : T) :
-    (ip.shiftPerspective newPi).context = ip.context := rfl
-
-/-- OP_c preserves the temporal perspective: indexical shift does not entail
-    tense shift. -/
-theorem InterpParams.shiftContext_preserves_perspective
-    (ip : InterpParams W E P T) (newC : Context W E P T) :
-    (ip.shiftContext newC).perspective = ip.perspective := rfl
-
-/-- In root clauses, π defaults to c_t: the Truth Convention evaluates
-    ⟦φ⟧ relative to c and π = c_t. -/
-def InterpParams.rootDefault (c : Context W E P T) : InterpParams W E P T where
-  context := c
-  perspective := c.time
-
-/-- After OP_π, c_t is unchanged — π and c_t can diverge. -/
-theorem InterpParams.perspective_context_diverge
-    (ip : InterpParams W E P T) (newPi : T)
-    (hDistinct : newPi ≠ ip.context.time) :
-    (ip.shiftPerspective newPi).perspective ≠
-      (ip.shiftPerspective newPi).context.time :=
-  hDistinct
+/-- (89b): with OP_π shifting the perspective onto the time of the reported speech, within
+which the meeting time lies, ⌈then⌉ can no longer restrict it. -/
+theorem not_deletedThen_of_subset {r th π : Set T} (hr : r ⊆ π) (hne : r.Nonempty) :
+    ¬ deletedThen r th π :=
+  λ ⟨hd, ht⟩ =>
+    ht ((show Overlaps r π from ⟨hne.some, hne.some_mem, hr hne.some_mem⟩).mono_left hd)
 
 end TsiliaZhao2026

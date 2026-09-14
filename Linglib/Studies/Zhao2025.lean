@@ -46,12 +46,10 @@ denotation discipline; follow-up).
 Temporal ⌈then⌉ is cross-linguistically incompatible with the present tense:
 ⌈then⌉ presupposes a reference disjoint from the temporal perspective π
 (`Tense.Perspective.thenPresup`), PRES presupposes overlap with π
-(`ReichenbachFrame.isPresent` in the point approximation), and the temporal
-assertion ("during then") forces the PRES reference inside the ⌈then⌉
-reference — so no reference satisfies both (`then_present_root_clash`).
-Deleted (SOT) tense escapes: it contributes no perspectival presupposition,
-and ⌈then⌉'s own presupposition is satisfiable on any nontrivial timeline
-(`Tense.Perspective.thenPresup_satisfiable`).
+(`Tense.Perspective.presPresup`), and the temporal assertion ("during then")
+puts the PRES reference inside the ⌈then⌉ reference — so no reference
+satisfies both (`then_present_root_clash`). Deleted (SOT) tense escapes: it
+contributes no perspectival presupposition.
 
 The attested ⌈then⌉ adverbs (`thenAdverbs`, from the Fragment lexicons):
 English *then*, Japanese 当時 *tōji*, Greek τότε *tóte*, Russian тогда
@@ -91,15 +89,11 @@ def thenAdverbs : List ThenAdverb :=
   , Russian.TemporalDeictic.togda
   , Hebrew.TemporalDeictic.az ]
 
-/-- Root clause ("Mary is feeling sick (*then)"): π = S, so a present-tensed
-    clause admits no ⌈then⌉ restriction — no reference satisfies both the
-    "during then" containment and ⌈then⌉'s disjointness from π. -/
-theorem then_present_root_clash {T : Type*} [LinearOrder T]
-    (f : ReichenbachFrame T)
-    (hSimple : f.isSimpleCase) (hPres : f.isPresent) :
-    ¬∃ thenRef, f.referenceTime = thenRef ∧ thenPresup thenRef f.speechTime :=
-  λ ⟨_, hDuring, hThen⟩ =>
-    then_present_clash f hPres hDuring
-      ((show f.perspectiveTime = f.speechTime from hSimple).symm ▸ hThen)
+/-- Root clause ("Mary is feeling sick (*then)"): π is the utterance time, so a
+    present-tensed clause admits no ⌈then⌉ restriction — no ⌈then⌉ reference
+    contains the present's reference and is disjoint from π. -/
+theorem then_present_root_clash {T : Type*} {utterance r th : Set T}
+    (hPres : presPresup utterance r) (hDuring : r ⊆ th) : ¬ thenPresup utterance th :=
+  λ hThen => then_present_clash hPres hDuring hThen
 
 end Zhao2025
