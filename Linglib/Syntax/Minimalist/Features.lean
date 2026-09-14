@@ -1,5 +1,5 @@
 import Linglib.Features.Basic
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Features.Prominence
 import Linglib.Syntax.Number.Basic

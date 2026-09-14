@@ -1,7 +1,7 @@
 import Linglib.Data.WALS.Features.F112A
 import Linglib.Data.WALS.Features.F114A
 import Linglib.Syntax.Category.Auxiliary.Constructions
-import Linglib.Features.Grammaticalization
+import Linglib.Morphology.Grammaticalization.Verbal
 import Linglib.Morphology.Morph
 import Linglib.Semantics.Polarity.ExpletiveNegation
 

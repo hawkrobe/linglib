@@ -2,7 +2,7 @@ import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
 import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 import Linglib.Core.Computability.NonContextFree.AnBnCn
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Fragments.SwissGerman.Case
 
 /-!

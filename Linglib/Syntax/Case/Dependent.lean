@@ -1,5 +1,5 @@
-import Linglib.Features.Case.Basic
-import Linglib.Features.Case.Source
+import Linglib.Syntax.Case.Basic
+import Linglib.Syntax.Case.Source
 import Linglib.Syntax.Case.Alignment
 
 /-!

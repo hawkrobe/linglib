@@ -1,4 +1,4 @@
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Case.Order
 /-!
 # Hungarian Case Inventory [kenesei-vago-fenyvesi-1998] [rounds-2001] [caha-2008]

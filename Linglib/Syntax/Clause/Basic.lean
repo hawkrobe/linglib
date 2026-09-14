@@ -1,4 +1,4 @@
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Mathlib.Order.Basic
 import Mathlib.Tactic.DeriveFintype
 

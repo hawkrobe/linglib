@@ -692,16 +692,11 @@ import Linglib.Features.Acceptability
 import Linglib.Features.AnsweringSystem
 import Linglib.Features.Antonymy
 import Linglib.Features.Basic
-import Linglib.Features.Case.Basic
-import Linglib.Features.Case.Capabilities
-import Linglib.Features.Case.Grammaticalization
-import Linglib.Features.Case.Source
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Deixis
 import Linglib.Features.Empathy
 import Linglib.Features.Expressive
 import Linglib.Features.Givenness
-import Linglib.Features.Grammaticalization
 import Linglib.Features.Indefinite
 import Linglib.Features.Individuation
 import Linglib.Features.LicensingContext

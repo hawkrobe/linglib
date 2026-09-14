@@ -1,6 +1,6 @@
 import Mathlib.Order.Nat
 import Linglib.Data.UD.Basic
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Features.Register
 import Linglib.Features.Prominence
 import Linglib.Syntax.Gender.Basic

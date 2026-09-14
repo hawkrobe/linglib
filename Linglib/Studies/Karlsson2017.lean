@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Karlsson2017
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Semantics.Aspect.Basic
 
 /-!

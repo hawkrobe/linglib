@@ -1,6 +1,6 @@
 import Linglib.Semantics.Causation.CauserSort
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Fragments.Sinhala.Verbs
 
 /-!

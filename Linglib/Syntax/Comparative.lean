@@ -1,5 +1,5 @@
 import Linglib.Data.WALS.Features.F121A
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 
 /-!
 # Comparison: comparative-construction typology

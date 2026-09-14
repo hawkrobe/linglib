@@ -1,4 +1,4 @@
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Case.Order
 import Linglib.Morphology.Paradigm.Case
 import Linglib.Phonology.OptimalityTheory.Tableau

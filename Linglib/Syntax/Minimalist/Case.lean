@@ -1,4 +1,4 @@
-import Linglib.Features.Case.Capabilities
+import Linglib.Syntax.Case.Capabilities
 import Linglib.Syntax.Minimalist.Features
 
 /-!

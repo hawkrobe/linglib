@@ -1,6 +1,6 @@
-import Linglib.Features.Case.Basic
-import Linglib.Features.Case.Basic
-import Linglib.Features.Case.Grammaticalization
+import Linglib.Syntax.Case.Basic
+import Linglib.Syntax.Case.Basic
+import Linglib.Morphology.Grammaticalization.Case
 
 /-!
 # Latin Case Inventory [blake-1994]

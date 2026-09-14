@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Order.Flat
 import Linglib.Syntax.Agreement.Compat
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 
 /-!
 # The case-bearing capability

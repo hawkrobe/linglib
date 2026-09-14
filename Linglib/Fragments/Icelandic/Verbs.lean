@@ -1,4 +1,4 @@
-import Linglib.Features.Case.Source
+import Linglib.Syntax.Case.Source
 import Linglib.Fragments.Icelandic.Case
 
 /-!

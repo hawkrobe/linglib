@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Heine1997
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Basic
 import Linglib.Semantics.Possession.Defs
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Order.SymmDiff

@@ -1,5 +1,5 @@
-import Linglib.Features.Case.Basic
-import Linglib.Features.Case.Grammaticalization
+import Linglib.Syntax.Case.Basic
+import Linglib.Morphology.Grammaticalization.Case
 import Linglib.Syntax.Case.Order
 
 /-!
