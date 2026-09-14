@@ -1,539 +1,229 @@
-import Linglib.Discourse.Coherence
+import Linglib.Semantics.Questions.Hamblin
 import Linglib.Semantics.Questions.Resolution
-import Linglib.Semantics.Questions.Partition.Inquisitive
-import Linglib.Semantics.Focus.Interpretation
-import Linglib.Pragmatics.DecisionTheoretic.But
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Data.Examples.Umbach2004
 
 /-!
-# [umbach-2004] — On the Notion of Contrast [umbach-2004]
+# Umbach (2004): On the Notion of Contrast in Information Structure and Discourse Structure
 
-Umbach, Carla (2004). On the Notion of Contrast in Information Structure
-and Discourse Structure. *Journal of Semantics* 21(2): 155–175.
+This file formalizes [umbach-2004]'s decomposition of contrast. The alternatives a focus evokes
+must be comparable, similar and dissimilar at once: following [lang-1984]'s conditions on
+coordination, no alternative subsumes another, `SemanticallyIndependent`, and a common
+integrator subsumes them all, `CommonIntegrator`, together `WellFormedAlts`, which rules out
+*drink* beside *martini*, (9a) and (10a), `not_wellFormedAlts_of_subset`, and keeps the singular
+individuals out of the alternatives of a focused coordination, Krifka's problem. This is the
+contrast of any focus, in the sense of [rooth-1992]. A contrastive focus in the sense of
+[chafe-1976] and [kiss-1998] adds exclusion, of which there are two varieties with different
+presuppositions, (14): a contrastive focus presupposes that some alternative satisfies the
+predicate and asserts that it is the focused one, excluding the others *instead of* it,
+`instead`, whereas an *only*-phrase presupposes the focused alternative and excludes the others
+*in addition to* it, `inAddition`, [horn-1969]. The two convey the same total content,
+`instead_content_eq_inAddition_content`, and differ in what they presuppose,
+`presupposition_inAddition_eq_assertion_instead`. In discourse, *but* is focus-sensitive, (16), and
+answers a conjunctive question by confirming one part and denying the other, (17), the
+confirm+deny condition, `ConfirmDeny`: such an answer resolves the conjunctive question,
+`mem_polar_inf_polar_of_confirmDeny`, and its content is that of the corresponding
+*only*-phrase, (19) and (20), `confirmDeny_content_eq_inAddition`. CONTRAST and CORRECTION,
+(24) and (25), differ as the two exclusions do: the contrastive *but* excludes the second
+alternative in addition to the first, `contrastBut`, the corrective *but*, German *sondern*,
+excludes the first alternative instead of the second, `correctionBut`, with the same assertion
+and different licensing contexts, `contrastBut_content_eq_correctionBut_content`,
+`presupposition_contrastBut`, `presupposition_correctionBut`.
 
-## Core thesis
+## Implementation notes
 
-Contrast is **similarity plus dissimilarity**. This single notion unifies
-three levels at which "contrast" appears:
+Alternatives are propositions, sets of worlds, and a predicate over a set of alternatives is a
+function to propositions; the presupposition of a contrastive focus is taken in the strengthened
+form of footnote 8, that exactly one alternative satisfies the predicate. The implicit question
+of a *but*-sentence is the meet of the polar questions of its conjuncts, following
+[roberts-1998]'s implicit questions. The double-contrast cases (22) and the *it*-cleft data are
+recorded as rows only. The examples are the rows of `Data.Examples.Umbach2004`.
 
-1. **Focus alternatives** (§2.2): all focus evokes alternatives that are
-   similar (common integrator) and dissimilar (semantically independent).
-   This is contrast in the broadest sense — a prerequisite for any
-   coordination by *and* or *but*.
+## TODO
 
-2. **Contrastive focus** (§2.3): adds *exclusion* on top of
-   similarity+dissimilarity. Exhaustive interpretation entails that no
-   other alternative satisfies the predicate.
+Footnote 12 observes that the contrastive counterfactual (24c), read as a no-yes sequence,
+presupposes the second conjunct and prefers the yes-no reading; `presupposition_contrastBut`
+follows the main text.
 
-3. **Discourse relations** (§3): CONTRAST and CORRECTION both require
-   similarity+dissimilarity but differ in *exclusion type*:
-   - CONTRAST: excludes *additional* alternatives (confirm+deny)
-   - CORRECTION: excludes *by substitution* (German *sondern*)
+## References
 
-## Key contributions formalized
-
-- Alternative set well-formedness: `semanticallyIndependent`,
-  `commonIntegrator`, `wellFormedAlts` (defined in Core, exercised here)
-- Confirm+deny condition on "but" (§3.1)
-- Exclusion variety taxonomy connecting *only*-phrases ↔ CONTRAST
-  and contrastive focus ↔ CORRECTION (§2.3, §3.2)
-- Bridge: comparison with [merin-1999-relevance] DTS account of "but"
-
-## Connection to existing formalization
-
-- Focus alternatives & FIP: `Focus.Interpretation` ([rooth-1992])
-- QUD / implicit questions: `Question`, `Question.isPartialAnswer` ([roberts-2012])
-- DTS "but": `DTS.But` ([merin-1999-relevance])
-- Coherence relations: `Discourse.Coherence` ([kehler-2002])
+* [umbach-2004]
+* [lang-1984]
+* [rooth-1992]
+* [chafe-1976]
+* [kiss-1998]
+* [horn-1969]
+* [roberts-1998]
 -/
 
 namespace Umbach2004
 
-open Discourse.Coherence
-
-/-! ### Alternative-set well-formedness (§2.2) -/
-
-/-- Two propositions are semantically independent iff neither entails
-the other (§2.2): required for alternatives in focus, coordination, and
-discourse relations. Violation explains the oddness of
-*#John had a drink and Mary had a martini*. -/
-def semanticallyIndependent {W : Type*} (a b : Set W) : Prop :=
-  ¬ a ⊆ b ∧ ¬ b ⊆ a
-
-/-- A common integrator subsumes all alternatives (§2.2, following
-[lang-1984]): coordinated elements and focus alternatives share a
-common superordinate concept — in "beer and martini", "drink". -/
-def commonIntegrator {W : Type*} (alts : List (Set W)) (integ : Set W) : Prop :=
-  ∀ a ∈ alts, a ⊆ integ
-
-/-- A well-formed alternative set is similar (common integrator) and
-dissimilar (pairwise independent) (§2.2). -/
-def wellFormedAlts {W : Type*} (alts : List (Set W)) (integ : Set W) : Prop :=
-  commonIntegrator alts integ ∧
-  ∀ a ∈ alts, ∀ b ∈ alts, a ≠ b → semanticallyIndependent a b
-
--- ═══════════════════════════════════════════════════════════════════════
--- §1  World Model
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! A 6-world model sufficient for all examples.
-
-Worlds encode who went where (Berlin/Paris/London examples from §3.2)
-and what John had to drink (beer/martini examples from §2.2). -/
-
-inductive W where
-  | jBerlin      -- John went to Berlin (only)
-  | jParis       -- John went to Paris (only)
-  | jBoth        -- John went to Berlin and Paris
-  | jBeer        -- John had a beer
-  | jMartini     -- John had a martini
-  | jBeerMartini -- John had a beer and a martini
-  deriving DecidableEq, Repr, Inhabited
-
--- ═══════════════════════════════════════════════════════════════════════
--- §2  Propositions
--- ═══════════════════════════════════════════════════════════════════════
-
-def wentBerlin : Set W := {.jBerlin, .jBoth}
-
-def wentParis : Set W := {.jParis, .jBoth}
-
-def hadBeer : Set W := {.jBeer, .jBeerMartini}
-
-def hadMartini : Set W := {.jMartini, .jBeerMartini}
-
-/-- "had a drink" — subsumes both beer and martini. -/
-def hadDrink : Set W := {.jBeer, .jMartini, .jBeerMartini}
-
-/-- "went somewhere" — common integrator for Berlin/Paris. -/
-def wentSomewhere : Set W := {.jBerlin, .jParis, .jBoth}
-
--- ═══════════════════════════════════════════════════════════════════════
--- §3  Alternative Set Well-Formedness ([umbach-2004] §2.2)
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! The core formal claim: alternatives must be pairwise semantically
-independent (dissimilar) and share a common integrator (similar).
-This explains coordination acceptability judgments. -/
-
--- ─────────────────────────────────────────────────────────────────────
--- §3a  Well-formed: {beer, martini} under "drink"
--- ─────────────────────────────────────────────────────────────────────
-
-/-- Beer and martini are semantically independent: neither entails
-    the other. Having a beer does not entail having a martini
-    (witness: `W.jBeer`), and vice versa (witness: `W.jMartini`). -/
-theorem beer_martini_independent :
-    semanticallyIndependent hadBeer hadMartini := by
-  refine ⟨?_, ?_⟩
-  · intro h
-    have : W.jBeer ∈ hadMartini := h (Or.inl rfl)
-    simp [hadMartini] at this
-  · intro h
-    have : W.jMartini ∈ hadBeer := h (Or.inl rfl)
-    simp [hadBeer] at this
-
-/-- "drink" is a common integrator for {beer, martini}: every world
-    where beer or martini is true is also a world where drink is true. -/
-theorem drink_integrates_beer_martini :
-    commonIntegrator [hadBeer, hadMartini] hadDrink := by
-  intro a ha w hw
-  simp [List.mem_cons] at ha
-  rcases ha with rfl | rfl <;> · simp [hadBeer, hadMartini, hadDrink] at hw ⊢; tauto
-
-/-- {beer, martini} is a well-formed alternative set under "drink". -/
-theorem beer_martini_wellformed :
-    wellFormedAlts [hadBeer, hadMartini] hadDrink := by
-  refine ⟨drink_integrates_beer_martini, ?_⟩
-  intro a ha b hb hne
-  simp [List.mem_cons] at ha hb
-  rcases ha with rfl | rfl <;> rcases hb with rfl | rfl
-  · exact absurd rfl hne
-  · exact beer_martini_independent
-  · exact ⟨beer_martini_independent.2, beer_martini_independent.1⟩
-  · exact absurd rfl hne
-
--- ─────────────────────────────────────────────────────────────────────
--- §3b  Ill-formed: {drink, martini} — subsumption violates independence
--- ─────────────────────────────────────────────────────────────────────
-
-/-- "drink" subsumes "martini": hadMartini ⊆ hadDrink.
-    This violates semantic independence, explaining why
-    *#John had a drink and Mary had a martini* is odd
-    ([umbach-2004] §2.2, ex. 9a). -/
-theorem drink_subsumes_martini : hadMartini ⊆ hadDrink := by
-  intro w hw
-  simp [hadMartini] at hw
-  rcases hw with rfl | rfl <;> simp [hadDrink]
-
-theorem drink_martini_not_independent :
-    ¬ semanticallyIndependent hadDrink hadMartini := by
-  intro ⟨_, h2⟩; exact h2 drink_subsumes_martini
-
-/-- {drink, martini} is NOT a well-formed alternative set
-    (under any integrator). -/
-theorem drink_martini_not_wellformed (integ : Set W) :
-    ¬ wellFormedAlts [hadDrink, hadMartini] integ := by
-  intro ⟨_, hInd⟩
-  have hne : hadDrink ≠ hadMartini := by
-    intro h
-    have : W.jBeer ∈ hadMartini := h ▸ (show W.jBeer ∈ hadDrink by simp [hadDrink])
-    simp [hadMartini] at this
-  have h1 : hadDrink ∈ [hadDrink, hadMartini] := by simp
-  have h2 : hadMartini ∈ [hadDrink, hadMartini] := by simp
-  exact drink_martini_not_independent (hInd hadDrink h1 hadMartini h2 hne)
-
--- ─────────────────────────────────────────────────────────────────────
--- §3c  Well-formed: {Berlin, Paris} under "somewhere"
--- ─────────────────────────────────────────────────────────────────────
-
-theorem berlin_paris_independent :
-    semanticallyIndependent wentBerlin wentParis := by
-  refine ⟨?_, ?_⟩
-  · intro h
-    have : W.jBerlin ∈ wentParis := h (Or.inl rfl)
-    simp [wentParis] at this
-  · intro h
-    have : W.jParis ∈ wentBerlin := h (Or.inl rfl)
-    simp [wentBerlin] at this
-
-theorem somewhere_integrates :
-    commonIntegrator [wentBerlin, wentParis] wentSomewhere := by
-  intro a ha w hw
-  simp [List.mem_cons] at ha
-  rcases ha with rfl | rfl <;> · simp [wentBerlin, wentParis, wentSomewhere] at hw ⊢; tauto
-
--- ═══════════════════════════════════════════════════════════════════════
--- §3d  Connection to [rooth-1992] Focus Interpretation Principle
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! [umbach-2004] §2.1 builds directly on [rooth-1992]'s alternative
-semantics: all focus evokes alternatives, and Umbach's similarity+dissimilarity
-refines what counts as a well-formed alternative set.
-
-The FIP (Γ ⊆ ⟦α⟧f) constrains the contrast set Γ to be a subset of
-focus alternatives. Umbach adds that alternatives within Γ must be
-pairwise semantically independent (dissimilarity) and share a common
-integrator (similarity). This is strictly more constraining than FIP alone. -/
-
-/-- Well-formed alternatives satisfy Rooth's FIP: if the focus value
-    admits each alternative as a focus alternative, the well-formedness
-    constraints layer on top of FIP without contradicting it.
-
-    Concretely: if ⟦α⟧f includes all members of the alternative set
-    (Γ ⊆ ⟦α⟧f), and the alternatives are well-formed in Umbach's sense,
-    then FIP is satisfied. Umbach's conditions refine, not replace, Rooth. -/
-theorem wellformed_implies_fip_compatible {W : Type}
-    (alts : List (Set W)) (integ : Set W)
-    (focusValue : Focus.Interpretation.PropFocusValue W)
-    (_hwf : wellFormedAlts alts integ)
-    (gamma : Set (Set W))
-    (hgamma : ∀ a ∈ alts, a ∈ gamma)
-    (hfip : Focus.Interpretation.fip gamma focusValue) :
-    ∀ a ∈ alts, a ∈ focusValue :=
-  fun a ha => hfip (hgamma a ha)
-
--- ═══════════════════════════════════════════════════════════════════════
--- §4  Exclusion Varieties ([umbach-2004] §2.3)
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! [umbach-2004] §2.3 distinguishes two varieties of
-exclusion that cross-cut information structure and discourse structure:
-*only*-phrases exclude *additional* alternatives (mapping to the
-CONTRAST discourse relation), while contrastive focus excludes *by
-substitution* (mapping to the CORRECTION discourse relation). The
-two-cell IS taxonomy is recoverable from `Discourse.Coherence.CoherenceRelation`'s
-`.contrast` and `.correction` cases — Umbach's own decomposition makes
-the IS-side enum redundant once the discourse-side cases exist. The
-prior `ExclusionVariety` substrate enum was deleted in the
-0.230.488 cleanup. -/
-
--- ═══════════════════════════════════════════════════════════════════════
--- §5  Confirm+Deny Condition on "but" ([umbach-2004] §3.1)
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! [umbach-2004] §3.1: a *but*-sentence responds to an implicit
-question with "yes...but no...". One conjunct confirms a sub-question,
-the other denies its counterpart. This is the *confirm+deny* condition.
-
-Example (§3.1, ex. 17e): "John cleaned up his room, but he didn't
-wash the dishes" — confirms "Did John clean his room?" (yes) and
-denies "Did he wash the dishes?" (no).
-
-The confirm+deny condition distinguishes *but* from *and*: both
-require similarity+dissimilarity in their conjuncts, but only *but*
-requires one conjunct to confirm and one to deny. -/
-
-/-- The confirm+deny condition on a *but*-sentence.
-    Given two sub-questions q₁, q₂ (derived from focus in the conjuncts),
-    the first conjunct confirms q₁ and the second denies q₂. -/
-def confirmDeny {W : Type} (q₁ q₂ c₁ c₂ : Set W) : Prop :=
-  -- c₁ confirms q₁: c₁ entails q₁
-  c₁ ⊆ q₁ ∧
-  -- c₂ denies q₂: c₂ entails ¬q₂
-  c₂ ⊆ q₂ᶜ
-
-/-- A 4-world model for the confirm+deny examples. -/
-inductive CDWorld where
-  | roomOnly     -- John cleaned the room but not the dishes
-  | dishesOnly   -- John washed the dishes but not the room
-  | both         -- John did both
-  | neither      -- John did neither
-  deriving DecidableEq, Repr
-
-def cleanedRoom : Set CDWorld := {.roomOnly, .both}
-
-def washedDishes : Set CDWorld := {.dishesOnly, .both}
-
-def didntWashDishes : Set CDWorld := {.roomOnly, .neither}
-
-/-- "John cleaned up his room, but he didn't wash the dishes"
-    (§3.1, ex. 17e) satisfies confirm+deny: the first conjunct
-    confirms the room question, the second denies the dishes question. -/
-theorem ex17e_confirm_deny :
-    confirmDeny cleanedRoom washedDishes cleanedRoom didntWashDishes := by
-  refine ⟨subset_rfl, ?_⟩
-  intro w hw
-  simp [didntWashDishes] at hw
-  rcases hw with rfl | rfl <;> simp [washedDishes]
-
-/-- Semantic independence of the sub-questions: cleaning the room
-    does not entail washing the dishes, and vice versa. -/
-theorem room_dishes_independent :
-    semanticallyIndependent cleanedRoom washedDishes := by
-  refine ⟨?_, ?_⟩
-  · intro h
-    have : CDWorld.roomOnly ∈ washedDishes := h (Or.inl rfl)
-    simp [washedDishes] at this
-  · intro h
-    have : CDWorld.dishesOnly ∈ cleanedRoom := h (Or.inl rfl)
-    simp [cleanedRoom] at this
-
--- ─────────────────────────────────────────────────────────────────────
--- §5b  QUD formulation of confirm+deny
--- ─────────────────────────────────────────────────────────────────────
-
-/-! [umbach-2004] §3.1 formulates confirm+deny in terms of implicit
-questions (QUDs): "A but B" responds to an implicit conjunctive question
-"Did X do A, and did X do B?" where one sub-answer confirms and the other
-denies. This connects to `Question.fromSetoid` ([roberts-2012]):
-the implicit conjunctive question is the partition by joint
-(room, dishes) values, and confirm+deny picks one cell. -/
-
-/-- Equivalence: two worlds agree on both `cleanedRoom` and `washedDishes`.
-    The four cells of this partition are the four combinations of yes/no
-    answers to the conjunctive question. -/
-def roomDishesEquiv : Setoid CDWorld :=
-  Setoid.ker (fun w => (w ∈ cleanedRoom, w ∈ washedDishes))
-
-/-- The implicit conjunctive question behind a *but*-sentence:
-    "Did John clean his room? And did he wash the dishes?"
-    Built as the inquisitive content of the (room, dishes) partition. -/
-def roomDishesQUD : Question CDWorld :=
-  Question.fromSetoid roomDishesEquiv
-
-/-- The implicit question behind CONTRAST is genuinely inquisitive:
-    it has multiple alternatives (all four combinations are nontrivial). -/
-theorem roomDishes_inquisitive : roomDishesQUD.isInquisitive :=
-  Question.isInquisitive_fromSetoid_of_two_classes roomDishesEquiv
-    .roomOnly .dishesOnly (fun h => by
-      -- h : (roomOnly ∈ cleanedRoom, roomOnly ∈ washedDishes)
-      --   = (dishesOnly ∈ cleanedRoom, dishesOnly ∈ washedDishes)
-      have hpair := Prod.mk.injEq .. |>.mp h
-      have hclean : (CDWorld.roomOnly ∈ cleanedRoom)
-                  = (CDWorld.dishesOnly ∈ cleanedRoom) := hpair.1
-      have hLHS : CDWorld.roomOnly ∈ cleanedRoom := Or.inl rfl
-      have hRHS : CDWorld.dishesOnly ∉ cleanedRoom := by simp [cleanedRoom]
-      exact hRHS (hclean ▸ hLHS))
-
-/-- The "room yes, dishes no" cell — the equivalence class of `.roomOnly`
-    under `roomDishesEquiv`. -/
-def roomYesDishesNo : Set CDWorld := {x | roomDishesEquiv x .roomOnly}
-
-/-- The "room yes, dishes no" alternative partially answers the QUD:
-    the confirm+deny pattern corresponds to one cell of the implicit
-    conjunctive question. -/
-theorem confirm_deny_is_partial_answer :
-    Question.PartiallyAnsweredBy roomDishesQUD roomYesDishesNo :=
-  ⟨roomYesDishesNo,
-   Question.mem_alt_fromSetoid_of_mem_classes roomDishesEquiv
-     (Setoid.mem_classes roomDishesEquiv .roomOnly),
-   Or.inl subset_rfl⟩
-
--- ─────────────────────────────────────────────────────────────────────
--- §5c  Simple vs double contrast ([umbach-2004] §3.1)
--- ─────────────────────────────────────────────────────────────────────
-
-/-! [umbach-2004] §3.1 distinguishes two kinds of CONTRAST:
-
-- **Single contrast** ("but"): one conjunct confirms, one denies.
-  "John cleaned his room, but he didn't wash the dishes."
-
-- **Double contrast** ("although"/"while"): both conjuncts deny parts
-  of a conjunctive expectation.
-  "Although John cleaned his room, he didn't wash the dishes."
-
-In double contrast, both conjuncts bear contrastive focus and neither
-is presented as a simple confirmation. -/
-
-/-- Single contrast: confirm+deny — one conjunct confirms, one denies.
-    "John cleaned his room, but he didn't wash the dishes."
-    Lexicalized by English "but", German *aber*. -/
-abbrev singleContrast {W : Type} (q₁ q₂ c₁ c₂ : Set W) : Prop :=
-  confirmDeny q₁ q₂ c₁ c₂
-
-/-- Contrast multiplicity: single vs double.
-    [umbach-2004] §3.1: single contrast ("but") has one contrastive
-    focus (confirm+deny); double contrast ("although"/"while") has two
-    contrastive foci (both conjuncts bear contrastive marking).
-
-    The distinction is prosodic/information-structural: "although" marks
-    both conjuncts as contrastive, while "but" marks only the second. -/
-inductive ContrastMultiplicity where
-  /-- One contrastive focus: "A, but B" (confirm+deny, asymmetric). -/
-  | single
-  /-- Two contrastive foci: "Although A, B" (deny+deny, symmetric). -/
-  | double
-  deriving DecidableEq, Repr
-
--- ═══════════════════════════════════════════════════════════════════════
--- §6  CONTRAST vs CORRECTION ([umbach-2004] §3.2)
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! The discourse relations CONTRAST and CORRECTION both require
-similarity+dissimilarity but differ in exclusion type and in the
-implicit question they respond to.
-
-- CONTRAST (§3.2, ex. 24a): "John didn't go to Berlin but he went to
-  Paris." Implicit Q: "Did John go to Berlin, and also to Paris?"
-  Counterfactual: either both or only Paris.
-
-- CORRECTION (§3.2, ex. 25a): "John didn't go to Berlin but to Paris."
-  Implicit Q: "Did John go to Berlin?" Counterfactual: Berlin *instead
-  of* Paris.
-
-German lexicalizes: *aber* (contrast) vs *sondern* (correction). -/
-
-/-- CONTRAST responds to a conjunctive implicit question:
-    "Did X do A, and did X also do B?" Answer: "yes A, but no B."
-    Both alternatives could in principle be true. -/
-def contrastImplicitQ {W : Type} (q₁ q₂ : Set W) : Set W :=
-  q₁ ∩ q₂
-
-/-- CORRECTION responds to a simple question about the denied item:
-    "Did X do A?" Answer: "No A, but B instead."
-    The alternatives are mutually exclusive. -/
-def correctionImplicitQ {W : Type} (q₁ : Set W) : Set W :=
-  q₁
-
-/-- In the contrastive case (ex. 24a), the counterfactual allows
-    both alternatives to be true. -/
-theorem contrast_allows_both :
-    W.jBoth ∈ contrastImplicitQ wentBerlin wentParis := by
-  refine ⟨?_, ?_⟩ <;> simp [wentBerlin, wentParis]
-
-/-- In the corrective case (ex. 25a), the assertion is that Berlin
-    is false and Paris holds *instead*. -/
-theorem correction_excludes_first :
-    W.jParis ∉ wentBerlin ∧ W.jParis ∈ wentParis := by
-  refine ⟨?_, ?_⟩
-  · simp [wentBerlin]
-  · simp [wentParis]
-
--- ═══════════════════════════════════════════════════════════════════════
--- §7  Bridge: Umbach vs Merin ([merin-1999-relevance])
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! Two accounts of "but" are now formalized in linglib:
-
-1. **[merin-1999-relevance]** (in `DTS.But`): "A but B" is felicitous
-   iff A is positively relevant and B is negatively relevant to an issue H,
-   with B "winning" (A∧B negatively relevant). This yields unexpectedness
-   as the core meaning: P(B|A) < P(B).
-
-2. **[umbach-2004]** (this file): "A but B" requires
-   similarity+dissimilarity in the focused alternatives of the conjuncts,
-   plus the confirm+deny condition: one conjunct confirms and one denies
-   a sub-question. This yields exclusion of an alternative.
-
-### Key difference
-
-Merin: "but" signals that A *raises expectations* that B *defeats*.
-The mechanism is **probabilistic relevance** — no reference to alternatives
-or focus.
-
-Umbach: "but" is **focus-sensitive** — the contrast is determined by the
-focused elements in the conjuncts. The mechanism is **alternative-based
-exclusion** — the hearer must reconstruct what is being excluded, and the
-exclusion type determines whether the relation is CONTRAST (additional:
-"in addition to") or CORRECTION (substitution: "instead of").
-
-### Where they agree
-
-Both predict that "A but B" requires A and B to be in some sense
-*opposed*. Merin captures this as opposite relevance signs; Umbach
-captures it as the deny component of confirm+deny.
-
-### Where they diverge
-
-Merin's account does not predict the focus-sensitivity of "but":
-if the issue H is held constant, the relevance of A and B depends
-only on their truth-conditional content, not on what is focused.
-Umbach's account directly predicts that shifting focus in the second
-conjunct changes the contrast (§3.1, ex. 16a vs 16b).
-
-[merin-1999-relevance] Theorem 8 (CIP + contrariness → unexpectedness) is in
-`DTS.But.cip_contrariness_implies_unexpectedness`.
--/
-
-/-- Both accounts treat "but" as semantically distinct from "and".
-    The Fragment entries distinguish them morphologically; the theory
-    layer explains why. -/
-theorem and_but_distinct :
-    English.FunctionWords.and_.form ≠
-    English.FunctionWords.but.form := by decide
-
-/-- Both accounts agree that CONTRAST and CORRECTION are distinct.
-    Merin distinguishes them by relevance sign (contrariness vs
-    non-contrariness of issues); Umbach distinguishes them by
-    exclusion type. -/
-theorem contrast_correction_structurally_distinct :
-    CoherenceRelation.contrast ≠ CoherenceRelation.correction := by decide
-
--- ═══════════════════════════════════════════════════════════════════════
--- §8  Summary Taxonomy
--- ═══════════════════════════════════════════════════════════════════════
-
-/-! [umbach-2004]'s concluding decomposition: the notion of
-contrast decomposes into three nested layers, each adding a requirement:
-
-```
-similarity + dissimilarity       → all focus / all coordination
-  + exclusion (in addition to)   → only-phrases / CONTRAST
-  + exclusion (instead of)       → contrastive focus / CORRECTION
-```
-
-The taxonomy is represented in linglib's type system:
-- `semanticallyIndependent` + `commonIntegrator` = similarity+dissimilarity
-- `CoherenceRelation.contrast` = only-phrases / CONTRAST (additional)
-- `CoherenceRelation.correction` = contrastive focus / CORRECTION (substitution)
-
-Both polarity-switch contexts and exclusion varieties are populated
-directly with `Discourse.Coherence.CoherenceRelation`'s `.contrast`
-and `.correction` cases — the prior IS-vocabulary parallel enums
-(`PolaritySwitchContext`, `ExclusionVariety`) were deleted in the
-0.230.488 cleanup as duplicates of the discourse-side primitive. -/
-
-/-- The two non-vacuous levels of contrast correspond to progressively
-    more constrained discourse configurations:
-    1. CONTRAST: exclusion of additional alternatives (*only*)
-    2. CORRECTION: exclusion by substitution (contrastive focus) -/
-theorem contrast_levels :
-    -- Both are resemblance relations
-    CoherenceRelation.contrast.toClass = .resemblance ∧
-    CoherenceRelation.correction.toClass = .resemblance ∧
-    -- but distinct
-    CoherenceRelation.contrast ≠ CoherenceRelation.correction :=
-  ⟨rfl, rfl, by decide⟩
+open Question
+
+variable {W α : Type*}
+
+/-! ### Similarity plus dissimilarity -/
+
+/-- Two alternatives are semantically independent when neither subsumes the other. -/
+def SemanticallyIndependent (a b : Set W) : Prop := ¬ a ⊆ b ∧ ¬ b ⊆ a
+
+/-- A common integrator subsumes every alternative. -/
+def CommonIntegrator (alts : Set (Set W)) (integ : Set W) : Prop := ∀ a ∈ alts, a ⊆ integ
+
+/-- A well-formed alternative set is similar, under a common integrator, and dissimilar,
+pairwise semantically independent. -/
+def WellFormedAlts (alts : Set (Set W)) (integ : Set W) : Prop :=
+  CommonIntegrator alts integ ∧ alts.Pairwise SemanticallyIndependent
+
+/-- An alternative subsuming another is not independent of it. -/
+theorem not_semanticallyIndependent_of_subset {a b : Set W} (h : a ⊆ b) :
+    ¬ SemanticallyIndependent a b :=
+  λ hi => hi.1 h
+
+/-- (9a), (10a): an alternative set containing an alternative and one it subsumes is not
+well-formed under any integrator. -/
+theorem not_wellFormedAlts_of_subset {alts : Set (Set W)} {a b : Set W} (ha : a ∈ alts)
+    (hb : b ∈ alts) (hne : a ≠ b) (h : a ⊆ b) (integ : Set W) : ¬ WellFormedAlts alts integ :=
+  λ hw => not_semanticallyIndependent_of_subset h (hw.2 ha hb hne)
+
+/-- (9b): two disjoint non-empty alternatives under their union are well-formed. -/
+theorem wellFormedAlts_pair_of_disjoint {a b : Set W} (ha : a.Nonempty) (hb : b.Nonempty)
+    (hab : Disjoint a b) : WellFormedAlts {a, b} (a ∪ b) := by
+  refine ⟨λ c hc => ?_, ?_⟩
+  · rcases hc with rfl | rfl
+    · exact Set.subset_union_left
+    · exact Set.subset_union_right
+  · have hind : SemanticallyIndependent a b :=
+      ⟨λ h => ha.ne_empty (hab.eq_bot_of_le h), λ h => hb.ne_empty (hab.symm.eq_bot_of_le h)⟩
+    exact Set.pairwise_pair.2 λ _ => ⟨hind, ⟨hind.2, hind.1⟩⟩
+
+/-! ### Two varieties of exclusion -/
+
+/-- A presupposition with an assertion. -/
+structure Exclusion (W : Type*) where
+  presupposition : Set W
+  assertion : Set W
+
+/-- The total content of an exclusion. -/
+def Exclusion.content (e : Exclusion W) : Set W := e.presupposition ∩ e.assertion
+
+variable (P : α → Set W) (A : Set α) (a : α)
+
+/-- The alternatives other than the focused one satisfy the predicate nowhere. -/
+def noOther : Set W := ⋂ x ∈ A \ {a}, (P x)ᶜ
+
+/-- (14a): a contrastive focus presupposes that exactly one alternative satisfies the predicate
+and asserts that it is the focused one, excluding the others instead of it. -/
+def instead : Exclusion W where
+  presupposition := ⋃ x ∈ A, P x ∩ noOther P A x
+  assertion := P a
+
+/-- (14b): an *only*-phrase presupposes the focused alternative and asserts that no other
+alternative satisfies the predicate, excluding the others in addition to it. -/
+def inAddition : Exclusion W where
+  presupposition := P a
+  assertion := noOther P A a
+
+variable {P A a}
+
+/-- The two exclusions convey the same content: the focused alternative and no other. -/
+theorem instead_content_eq_inAddition_content (ha : a ∈ A) :
+    (instead P A a).content = (inAddition P A a).content := by
+  ext w
+  simp only [Exclusion.content, instead, inAddition, Set.mem_inter_iff, Set.mem_iUnion,
+    exists_prop]
+  constructor
+  · rintro ⟨⟨x, hx, hwx, hno⟩, hwa⟩
+    by_cases hxa : x = a
+    · subst hxa
+      exact ⟨hwa, hno⟩
+    · exact absurd hwa (by
+        simp only [noOther, Set.mem_iInter, Set.mem_compl_iff] at hno
+        exact hno a ⟨ha, λ h => hxa (Set.mem_singleton_iff.1 h).symm⟩)
+  · rintro ⟨hwa, hno⟩
+    exact ⟨⟨a, ha, hwa, hno⟩, hwa⟩
+
+/-- The *only*-phrase presupposes what the contrastive focus asserts, that the focused
+alternative satisfies the predicate. -/
+theorem presupposition_inAddition_eq_assertion_instead :
+    (inAddition P A a).presupposition = (instead P A a).assertion := rfl
+
+/-! ### The discourse relation CONTRAST -/
+
+/-- (17): the confirm+deny condition on a *but*-sentence answering the conjunctive question of
+`q₁` and `q₂`: the first conjunct confirms `q₁` and the second denies `q₂`. -/
+def ConfirmDeny (q₁ q₂ c₁ c₂ : Set W) : Prop := c₁ ⊆ q₁ ∧ c₂ ⊆ q₂ᶜ
+
+/-- (17b–d): confirming or denying both parts violates the condition whenever the parts hold
+somewhere; a *but*-sentence is no answer to a question it confirms twice. -/
+theorem not_confirmDeny_of_confirm_confirm {q₁ q₂ c₁ c₂ : Set W} (h₂ : c₂ ⊆ q₂)
+    (hne : c₂.Nonempty) : ¬ ConfirmDeny q₁ q₂ c₁ c₂ :=
+  λ h => hne.ne_empty (Set.subset_empty_iff.1 λ _ hw => (h.2 hw) (h₂ hw))
+
+/-- A confirm+deny answer resolves the implicit conjunctive question, the meet of the two polar
+questions, (18). -/
+theorem mem_polar_inf_polar_of_confirmDeny {q₁ q₂ c₁ c₂ : Set W} (h : ConfirmDeny q₁ q₂ c₁ c₂) :
+    c₁ ∩ c₂ ∈ polar q₁ ⊓ polar q₂ := by
+  rw [mem_inf, mem_polar, mem_polar]
+  exact ⟨Or.inl (Set.inter_subset_left.trans h.1), Or.inr (Set.inter_subset_right.trans h.2)⟩
+
+/-- (19), (20): the content of a confirm+deny *but*-sentence is the content of the *only*-phrase
+over the two alternatives, *John cleaned the ROOM but not the DISHES* and *John only cleaned the
+ROOM*. -/
+theorem confirmDeny_content_eq_inAddition {a b : α} (hab : a ≠ b) :
+    P a ∩ (P b)ᶜ = (inAddition P {a, b} a).content := by
+  ext w
+  simp only [Exclusion.content, inAddition, noOther, Set.mem_inter_iff, Set.mem_iInter,
+    Set.mem_compl_iff, Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨hwa, hwb⟩
+    refine ⟨hwa, λ x ⟨hx, hxa⟩ => ?_⟩
+    rcases hx with hx | rfl
+    · exact absurd hx hxa
+    · exact hwb
+  · rintro ⟨hwa, hno⟩
+    exact ⟨hwa, hno b ⟨Or.inr rfl, hab.symm⟩⟩
+
+/-! ### CONTRAST and CORRECTION -/
+
+/-- (24a): the contrastive *but*, *John didn't go to Berlin but he went to Paris*, confirms the
+second alternative and excludes the first in addition to it. -/
+def contrastBut (P : α → Set W) (a b : α) : Exclusion W := inAddition P {a, b} a
+
+/-- (25a): the corrective *but*, German *sondern*, *John didn't go to Berlin but to Paris*,
+excludes the first alternative instead of the second. -/
+def correctionBut (P : α → Set W) (a b : α) : Exclusion W := instead P {a, b} a
+
+/-- Contrast and correction convey the same assertion, that John did not go to Berlin and did go
+to Paris. -/
+theorem contrastBut_content_eq_correctionBut_content {a b : α} :
+    (contrastBut P a b).content = (correctionBut P a b).content :=
+  (instead_content_eq_inAddition_content (Set.mem_insert a {b})).symm
+
+/-- (24c): the contexts licensing a contrast are those where the confirmed alternative holds,
+whether or not the denied one does too. -/
+theorem presupposition_contrastBut (a b : α) : (contrastBut P a b).presupposition = P a := rfl
+
+/-- (25c): the contexts licensing a correction are those where exactly one of the two
+alternatives holds, the denied one instead of the confirmed one or the other way around. -/
+theorem presupposition_correctionBut {a b : α} (hab : a ≠ b) :
+    (correctionBut P a b).presupposition = symmDiff (P a) (P b) := by
+  ext w
+  simp only [correctionBut, instead, noOther, Set.mem_iUnion, Set.mem_inter_iff, Set.mem_iInter,
+    Set.mem_compl_iff, Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff, exists_prop,
+    Set.mem_symmDiff]
+  constructor
+  · rintro ⟨x, hx, hwx, hno⟩
+    rcases hx with rfl | rfl
+    · exact Or.inl ⟨hwx, hno b ⟨Or.inr rfl, hab.symm⟩⟩
+    · exact Or.inr ⟨hwx, hno a ⟨Or.inl rfl, hab⟩⟩
+  · rintro (⟨hwa, hwb⟩ | ⟨hwb, hwa⟩)
+    · refine ⟨a, Or.inl rfl, hwa, λ x ⟨hx, hxa⟩ => ?_⟩
+      rcases hx with hx | rfl
+      · exact absurd hx hxa
+      · exact hwb
+    · refine ⟨b, Or.inr rfl, hwb, λ x ⟨hx, hxb⟩ => ?_⟩
+      rcases hx with rfl | hx
+      · exact hwa
+      · exact absurd hx hxb
 
 end Umbach2004
