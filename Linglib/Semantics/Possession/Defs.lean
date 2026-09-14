@@ -26,17 +26,19 @@ looked up in `Data/WALS/Features/`, never restated as substrate.
 
 namespace Possession
 
-/-- Four-way lexical taxonomy of possession relations from [vikner-jensen-2002] §3.1.2 (their
-Table 1), reproduced in [barker-2011]. The separate "pragmatic" interpretation is not lexical and
-is not one of these. -/
+/-- The four lexical interpretations of the genitive relation of [vikner-jensen-2002] (§3.1.2 and
+Table 1), reproduced in [barker-2011]. A pragmatic interpretation, one needing a supporting
+context, is not lexical and is not one of these. -/
 inductive RelationType where
-  /-- Inherent relation: lexically argument-structural (the teacher's class). -/
+  /-- Inherent relation: the relation the relational head noun itself expresses (the girl's
+  sister). -/
   | inherent
   /-- Part-whole relation (the girl's nose, the car's wheel). -/
   | partWhole
   /-- Agentive relation (the girl's poem = the poem the girl wrote). -/
   | agentive
-  /-- Control relation: ownership or legal control (the girl's car). -/
+  /-- Control relation: an animate possessor has the item at its disposal (the girl's car);
+  ownership is one way of controlling among borrowing, hiring or holding. -/
   | control
   deriving DecidableEq, Repr
 

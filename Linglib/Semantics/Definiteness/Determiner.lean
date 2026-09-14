@@ -42,7 +42,7 @@ deictic feature projects: deixis filters the referent but never selects it
 * `Possessive.denote` — the possessive determiner's `Nominal`
   (previously deferred): a definite description selecting the unique satisfier
   of the possessee restrictor that stands in the possession relation to the
-  possessor; the GQ-form possessive (`PossW`, narrowing-aware) lives in
+  possessor; the GQ-form possessive (`PossNP`, narrowing-aware) lives in
   `Semantics/Possession/Quantifier.lean`.
 * `interpret_possessive_eq_pi`, `Possessive.denote_isSome_iff_existsUnique` — the
   determiner denotation *is* the `Possession` description: Barker's `π` applied to the
@@ -185,8 +185,8 @@ vacuous; the definite's only presupposition is definedness, exposed as the
 selector returning `some`.
 
 The narrowing-aware GQ form for quantificational possessors ("every student's
-cat") is `Possession.PossW` — `(individual a)` of
-`PossW` reduces here when the possessor is an entity. -/
+cat") is `Possession.PossNP` — `(individual a)` of
+`PossNP` reduces here when the possessor is an entity. -/
 noncomputable def _root_.Possessive.denote (_p : Possessive)
     (R : DenotGS E W .et) (possessor : DenotGS E W .e) (rel : DenotGS E W .eet) :
     Nominal (Assignment E × SitAssignment W) PUnit E :=

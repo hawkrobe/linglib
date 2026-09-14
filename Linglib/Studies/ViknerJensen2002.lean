@@ -1,127 +1,255 @@
-import Linglib.Semantics.Possession.Basic
+import Linglib.Semantics.Possession.Quantifier
+import Linglib.Studies.Pustejovsky1995
+import Linglib.Data.Examples.ViknerJensen2002
 
 /-!
-# Vikner & Jensen 2002: A semantic analysis of the English genitive
+# Vikner & Jensen (2002): A Semantic Analysis of the English Genitive
 
-[vikner-jensen-2002]'s uniform argument-only analysis of the English prenominal
-genitive: the genitive always combines with a *relational* noun — a
-non-relational head is coerced via Barker's `π`, the relation type supplied by
-the noun's qualia (`availableRelations`, §3.1.2). The genitive clitic itself
-(`clitic`, (16)) embeds a narrow-scope definite: the worked examples
-prove `∃!` uniqueness of the possessee.
+This file formalizes [vikner-jensen-2002], on which the prenominal genitive has one syntactic
+type: the genitive phrase *a girl's* takes a relational noun and returns a generalized
+quantifier, and a sortal head noun such as *car* is coerced into a relation by a
+meaning-shifting operator that reads the relation off the qualia structure of its lexical
+entry, after [pustejovsky-1995]. The genitive clitic (16) carries an implicit definite that
+scopes under the possessor quantifier, so that *each girl's teacher* says that each girl has
+exactly one teacher; a definite article composed outside the possessor would take wide scope,
+and the two scopings part exactly when the possessor is quantified. The clitic is
+[peters-westerstahl-2006]'s possessive quantifier over a whole possessor NP with the Russellian
+definite as its possessee quantifier, the possessee class folded into the relation by the
+coercion (`clitic`).
+
+The operators Co, Ag and Te (23), (30), (47) are one shift over the constitutive, agentive and
+telic qualia, [barker-2011]'s relationalizer applied to the quale's relation (`Sense.shift`),
+and Ctr and Prag (33), (36) are the same relationalizer over the control and the contextual
+relation. The lexical interpretations of a genitive, `Possession.RelationType`, are the
+relational nouns the rules (55e), (55f) build from a sense (`Sense.genitive`); a selectional
+restriction on a relation, such as animacy of a controller, empties a reading rather than
+blocking it. *Favourite* (43) maps a relation to the relation of being preferred among the
+relata (`favourite`), keeps the head's relation, is unique under an asymmetric preference, and
+on a sortal noun reaches only the telic quale, so that *Mary's movie* has two lexical
+interpretations where *Mary's favourite movie* has one and *Anne's favourite sky* has none.
+
+## Implementation notes
+
+Qualia are stored with the related entity first, `q y x` reading *x has y as its whole, agent
+or user*, the passive orientation of footnote 17, so that every shift is the relationalizer;
+nothing here turns on the orientation. Selectional restrictions are meaning postulates on the
+relations, as the paper leaves them out of its derivations. A noun with both a relational and a
+sortal use, *teacher*, is two senses. Postnominal and predicative genitives, the sort
+hierarchy, and the `HeadPred` revision of the shifts for N-bars with complements (53) are not
+formalized.
+
+## References
+
+* [vikner-jensen-2002]
+* [pustejovsky-1995]
+* [barker-1995], [barker-2011]
+* [partee-1997]
+* [peters-westerstahl-2006]
 -/
 
 namespace ViknerJensen2002
 
-open Possession
+open Possession Quantification
 
-/-! ### Qualia structure (Pustejovsky, as used by Vikner & Jensen) -/
-
-/-- The relation-bearing lexical structure of a head noun. Telic and formal
-qualia license no genitive relation type and are omitted. -/
-structure NounQualia where
-  /-- Inherently relational (e.g. *sister*, *teacher*) — bears its own relatum. -/
-  isRelational : Prop
-  /-- Bears a constitutive quale (*nose*: part-of a body). -/
-  hasConstitutive : Prop
-  /-- Bears an agentive quale (*poem*: composed by someone). -/
-  hasAgentive : Prop
-
-/-! ### Deriving the relation type from qualia -/
-
-/-- The genitive relation types a head noun licenses: inherent iff it is
-relational, part-whole iff it bears a constitutive quale, agentive iff it bears
-an agentive quale, and control unconditionally. Possessor-side selectional
-restrictions are left out, as in the paper's own derivations. -/
-def availableRelations (q : NounQualia) : Set RelationType :=
-  {r | r = .inherent ∧ q.isRelational ∨ r = .partWhole ∧ q.hasConstitutive ∨
-    r = .agentive ∧ q.hasAgentive ∨ r = .control}
-
-/-- Control is available whatever the noun's qualia. -/
-theorem control_always (q : NounQualia) :
-    RelationType.control ∈ availableRelations q :=
-  .inr <| .inr <| .inr rfl
-
-/-! ### Lexical entries -/
-
-/-- *sister* — inherently relational. -/
-def sister : NounQualia := ⟨True, False, False⟩
-/-- *nose* — constitutive quale (part-of a body). -/
-def nose : NounQualia := ⟨False, True, False⟩
-/-- *poem* — agentive quale (composed). -/
-def poem : NounQualia := ⟨False, False, True⟩
-/-- *picture* — relational (*picture of*) and agentive (*picture made by*). -/
-def picture : NounQualia := ⟨True, False, True⟩
-
-/-- *the girl's sister*: inherent relation, plus the ever-present control. -/
-theorem sister_inherent :
-    availableRelations sister = {.inherent, .control} := by
-  ext r; simp [availableRelations, sister]
-
-/-- *the girl's nose*: part-whole, via the constitutive quale (no inherent or
-agentive reading). -/
-theorem nose_partWhole :
-    availableRelations nose = {.partWhole, .control} := by
-  ext r; simp [availableRelations, nose]
-
-/-- *the girl's poem*: agentive, via the agentive quale. -/
-theorem poem_agentive :
-    availableRelations poem = {.agentive, .control} := by
-  ext r; simp [availableRelations, poem]
-
-/-- *the girl's picture* is three ways ambiguous: inherent (*picture of the
-girl*), agentive (*picture the girl made*), and control (*picture at her
-disposal*) — but not part-whole. -/
-theorem picture_three_ways :
-    availableRelations picture = {.inherent, .agentive, .control} := by
-  ext r; simp [availableRelations, picture]
+variable {E S : Type*}
 
 /-! ### The genitive clitic -/
 
-/-- The genitive clitic: from the possessor quantifier and the genitive
-relation to the head NP's quantifier, with an implicit definite — the unique
-relatum — scoping under the possessor quantifier. -/
-def clitic {E : Type*} (Q : Quantification.Quantifier E) (R : E → E → Prop) :
-    Quantification.Quantifier E :=
-  fun P => Q fun u => ∃ x, (∀ y, R u y ↔ y = x) ∧ P x
+/-- The genitive clitic (16) applied to a possessor NP and a relational noun, at a situation: the
+possessive quantifier over the whole NP with the Russellian definite as possessee quantifier,
+the possessee class already inside the relation. -/
+def clitic (Q : Quantifier E) (R : E → E → S → Prop) (s : S) : Quantifier E :=
+  PossNP Q the_sem (λ u x => R u x s) (λ _ => True)
 
-/-! ### The denotation: possessor + narrow-scope definite
+/-- The clitic is the paper's (16): the possessor quantifier over the property of having a unique
+relatum that is `P`, the definite scoping under the possessor. -/
+theorem clitic_apply (Q : Quantifier E) (R : E → E → S → Prop) (s : S) (P : E → Prop) :
+    clitic Q R s P ↔ Q (λ u => ∃ x, (∀ y, R u y s ↔ y = x) ∧ P x) := by
+  simp only [clitic, PossNP, dom, the_sem, true_and]
+  refine iff_of_eq (congrArg Q (funext λ a => propext (and_iff_right_of_imp ?_)))
+  rintro ⟨x, hx, -⟩
+  exact ⟨x, (hx x).2 rfl⟩
 
-Model over `Fin 4` (girl `0`, her teacher `1`, her car `2`, an unrelated `3`),
-single situation. The genitive picks the unique entity standing in the resolved
-relation to the possessor. -/
+/-- Over a coerced sortal noun the clitic is the possessive quantifier with the sortal as the
+possessee class and the free relation as the possession relation. -/
+theorem clitic_pi (Q : Quantifier E) (W : E → S → Prop) (R : E → E → S → Prop) (s : S) :
+    clitic Q (π W R) s = PossNP Q the_sem (λ u x => R u x s) (λ x => W x s) := by
+  funext P
+  simp only [clitic, PossNP, dom, the_sem, π, true_and]
 
-/-- The (inherent) teacher relation: `0`'s teacher is `1`. -/
-def teacherRel : Fin 4 → Fin 4 → Unit → Prop := fun x y _ => x = 0 ∧ y = 1
+/-- The implicit definite: an individual's genitive entails a unique relatum. -/
+theorem existsUnique_of_clitic_individual {a : E} {R : E → E → S → Prop} {s : S}
+    {P : E → Prop} (h : clitic (individual a) R s P) : ∃! y, R a y s := by
+  obtain ⟨x, hx, -⟩ := (clitic_apply _ _ _ _).1 h
+  exact ⟨x, (hx x).2 rfl, λ y hy => (hx y).1 hy⟩
 
-/-- *the girl's teacher* (inherent): the relational noun's own relation applied
-to the possessor has a unique satisfier. -/
-theorem girlsTeacher_unique (s : Unit) : ∃! y, teacherRel 0 y s :=
-  ⟨1, ⟨rfl, rfl⟩, fun _ hy => hy.2⟩
+/-- A relation the possessor bears to nothing, as when a selectional restriction of the relation
+excludes it, gives an empty genitive: *the car's cake* on the control reading. -/
+theorem not_clitic_individual {a : E} {R : E → E → S → Prop} {s : S} (h : ∀ x, ¬ R a x s)
+    (P : E → Prop) : ¬ clitic (individual a) R s P := by
+  rw [clitic_apply]
+  rintro ⟨x, hx, -⟩
+  exact h x ((hx x).2 rfl)
 
-/-- *a girl* as an indefinite possessor quantifier. -/
-def aGirl : Quantification.Quantifier (Fin 4) := fun P => ∃ z, z = 0 ∧ P z
+/-! ### The scope of the definite (§3.2.2) -/
 
-/-- *a girl's teacher* holds of `P` iff some girl has a unique teacher who is
-`P` — in this model, iff `P 1`. -/
-theorem aGirlsTeacher (P : Fin 4 → Prop) :
-    clitic aGirl (fun u y => teacherRel u y ()) P ↔ P 1 := by
-  simp only [clitic, aGirl, teacherRel]
-  constructor
-  · rintro ⟨z, rfl, x, hx, hP⟩
-    rwa [← (hx 1).mp ⟨rfl, rfl⟩] at hP
-  · exact fun hP => ⟨0, rfl, 1, fun y => by simp, hP⟩
+/-- The Montagovian definite (13) composed outside the genitive phrase: the definite takes wide
+scope over the possessor quantifier. -/
+def wideDefinite (Q : Quantifier E) (R : E → E → S → Prop) (s : S) : Quantifier E :=
+  the_sem (λ y => Q (λ u => R u y s))
 
-/-- The control relation: the girl `0` controls the car `2`. -/
-def controlRel : Fin 4 → Fin 4 → Unit → Prop := fun x y _ => x = 0 ∧ y = 2
+/-- For an individual possessor the two scopings agree. -/
+theorem clitic_individual (a : E) (R : E → E → S → Prop) (s : S) :
+    clitic (individual a) R s = wideDefinite (individual a) R s := by
+  funext P
+  exact propext ((clitic_apply _ _ _ _).trans Iff.rfl)
 
-/-- *car* as a sortal noun predicate. -/
-def carPred : Fin 4 → Unit → Prop := fun y _ => y = 2
+/-- For a quantified possessor they part: with two girls with different teachers, *each girl's
+teacher* is true on the clitic and false on the wide definite, (11b). -/
+theorem exists_clitic_ne_wideDefinite :
+    ∃ (Q : Quantifier (Fin 4)) (R : Fin 4 → Fin 4 → Unit → Prop) (P : Fin 4 → Prop),
+      clitic Q R () P ∧ ¬ wideDefinite Q R () P :=
+  ⟨every_sem (· < 2), λ u y _ => u = 0 ∧ y = 2 ∨ u = 1 ∧ y = 3, λ _ => True,
+    by rw [clitic_apply]; unfold every_sem; decide,
+    by simp only [wideDefinite, the_sem, every_sem]; decide⟩
 
-/-- *the girl's car* (coerced, control): the sortal noun is `π`-shifted with
-the control relation, then takes the possessor as its argument exactly like a
-relational noun. The result again carries the definite's unique witness. -/
-theorem girlsCar_unique (s : Unit) : ∃! y, π carPred controlRel 0 y s :=
-  ⟨2, ⟨rfl, rfl, rfl⟩, fun _ hy => hy.1⟩
+/-! ### Senses and meaning shifts (§3.2.1, §3.2.3) -/
+
+/-- The argument structure of a sense (9): a sortal predicate, or a relation with the relatum
+first, `sister' y x` reading *x is a sister of y*. -/
+inductive ArgStructure (E S : Type*)
+  | sortal (W : E → S → Prop)
+  | relational (R : E → E → S → Prop)
+
+/-- A word sense: its argument structure and its qualia, each a relation with the related entity
+first, the whole of the constitutive quale (22), the agent of the agentive quale and the user of
+the telic quale (9). -/
+structure Sense (E S : Type*) where
+  arg : ArgStructure E S
+  quale : Pustejovsky1995.QualeRole → Option (E → E → S → Prop)
+
+namespace Sense
+
+variable (σ : Sense E S)
+
+/-- The sortal predicate of a sortal sense. -/
+def sortal : Option (E → S → Prop) :=
+  match σ.arg with
+  | .sortal W => some W
+  | .relational _ => none
+
+/-- The inherent relation of a relational sense. -/
+def inherent : Option (E → E → S → Prop) :=
+  match σ.arg with
+  | .sortal _ => none
+  | .relational R => some R
+
+/-- The meaning shift over a quale: the relationalizer opens a slot on the sortal predicate with
+the quale's relation. Co (23), Ag (30) and Te (47) are the shifts over the constitutive, agentive
+and telic qualia. -/
+def shift (r : Pustejovsky1995.QualeRole) : Option (E → E → S → Prop) :=
+  σ.sortal.bind λ W => (σ.quale r).map (π W)
+
+/-- The shift over a relation not from the entry: Ctr (33) over the control relation, Prag (36)
+over contextual relatedness. -/
+def shiftWith (R : E → E → S → Prop) : Option (E → E → S → Prop) :=
+  σ.sortal.map (π · R)
+
+/-- The relational noun a genitive phrase takes from a sense for each relation type, the rules
+(55e) and (55f) with the control relation `ctrl`; the pragmatic reading `shiftWith relatedTo` is
+available besides. -/
+def genitive (ctrl : E → E → S → Prop) : RelationType → Option (E → E → S → Prop)
+  | .inherent => σ.inherent
+  | .partWhole => σ.shift .constitutive
+  | .agentive => σ.shift .agentive
+  | .control => σ.shiftWith ctrl
+
+/-- The lexical interpretations of a genitive over the sense (Table 2). -/
+def lexical (ctrl : E → E → S → Prop) : Set RelationType :=
+  {t | σ.genitive ctrl t ≠ none}
+
+end Sense
+
+/-- Column 2 of Table 2 as a consequence: the controller must be animate, so an inanimate
+possessor's control reading is empty, *the car's cake*. -/
+theorem not_clitic_control {ctrl : E → E → S → Prop} {animate : E → S → Prop}
+    (hctrl : ∀ y x s, ctrl y x s → animate y s) {a : E} {s : S} (ha : ¬ animate a s)
+    (W : E → S → Prop) (P : E → Prop) : ¬ clitic (individual a) (π W ctrl) s P :=
+  not_clitic_individual (λ _ h => ha (hctrl _ _ _ h.2)) P
+
+/-! ### *Favourite* (§4) -/
+
+/-- *Favourite* (43) over a relation: `x` is the relatum `y` prefers among all its relata, where
+`prefer T T' y s` reads *y prefers the state of affairs `T'` to `T`*. -/
+def favourite (prefer : (S → Prop) → (S → Prop) → E → S → Prop) (R : E → E → S → Prop) :
+    E → E → S → Prop :=
+  λ y x s => R y x s ∧ ∀ z, R y z s ∧ z ≠ x → prefer (R y z) (R y x) y s
+
+variable {prefer : (S → Prop) → (S → Prop) → E → S → Prop}
+
+/-- A favourite relatum is a relatum: *Anne's favourite sister* is a sister of Anne's. -/
+theorem favourite_rel {R : E → E → S → Prop} {y x : E} {s : S} (h : favourite prefer R y x s) :
+    R y x s :=
+  h.1
+
+/-- Under an asymmetric preference the favourite is unique (footnote 21). -/
+theorem favourite_subsingleton {R : E → E → S → Prop} {y : E} {s : S}
+    (h : ∀ T T', prefer T T' y s → ¬ prefer T' T y s) :
+    {x | favourite prefer R y x s}.Subsingleton :=
+  λ x hx x' hx' => by_contra λ hne => h _ _ (hx.2 x' ⟨hx'.1, Ne.symm hne⟩) (hx'.2 x ⟨hx.1, hne⟩)
+
+/-- The relational noun *favourite* builds from a sense, (55d) with (55e) and (55f): the inherent
+relation of a relational sense, the telic shift of a sortal one. -/
+def Sense.favourite (σ : Sense E S) (prefer : (S → Prop) → (S → Prop) → E → S → Prop) :
+    Option (E → E → S → Prop) :=
+  (σ.inherent <|> σ.shift .telic).map (ViknerJensen2002.favourite prefer)
+
+/-! ### Predictions (§3.3, §4) -/
+
+section Predictions
+
+variable (ctrl : E → E → S → Prop)
+
+/-- *sister*: relational (9). -/
+def sister (sister' : E → E → S → Prop) : Sense E S := ⟨.relational sister', λ _ => none⟩
+
+/-- *movie*, like *poem* and *car* in (9): a sortal artifact with an agentive and a telic quale. -/
+def movie (movie' : E → S → Prop) (make watch : E → E → S → Prop) : Sense E S :=
+  ⟨.sortal movie', λ r => match r with
+    | .agentive => some make
+    | .telic => some watch
+    | _ => none⟩
+
+/-- *sky*: sortal with no telic quale (§4). -/
+def sky (sky' : E → S → Prop) : Sense E S := ⟨.sortal sky', λ _ => none⟩
+
+variable (sister' : E → E → S → Prop) (movie' sky' : E → S → Prop) (make watch : E → E → S → Prop)
+
+/-- *Anne's sister* and *Anne's favourite sister* express the same relation. -/
+theorem sister_genitive_inherent : (sister sister').genitive ctrl .inherent = some sister' := rfl
+
+theorem sister_favourite :
+    (sister sister').favourite prefer = some (favourite prefer sister') := rfl
+
+/-- *Mary's movie* has two lexical interpretations, the movie Mary made and the movie Mary
+controls. -/
+theorem movie_lexical : (movie movie' make watch).lexical ctrl = {.agentive, .control} := by
+  ext t
+  cases t <;> simp [Sense.lexical, Sense.genitive, Sense.shift, Sense.shiftWith, Sense.sortal,
+    Sense.inherent, movie]
+
+/-- *Mary's favourite movie* has one, the movie Mary prefers to watch, different from both. -/
+theorem movie_favourite :
+    (movie movie' make watch).favourite prefer = some (favourite prefer (π movie' watch)) := rfl
+
+/-- *Anne's favourite sky* has no lexical interpretation, only pragmatic ones, since *sky* has no
+telic quale. -/
+theorem sky_favourite : (sky sky').favourite prefer = none := rfl
+
+/-- The pragmatic reading of *Anne's favourite sky* is available all the same. -/
+theorem sky_pragmatic (relatedTo : E → E → S → Prop) :
+    (sky sky').shiftWith relatedTo = some (π sky' relatedTo) := rfl
+
+end Predictions
 
 end ViknerJensen2002

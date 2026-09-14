@@ -9,7 +9,7 @@ A possessive description ([barker-1995]) is a possessor, a possession relation, 
 restrictor; its possessee predicate `π restrictor relation possessor` is derived, never stored, so
 a description cannot pair a predicate with an unrelated relation. The determiner that denotes
 through descriptions is `Possessive.denote` (`Semantics/Definiteness/Determiner.lean`);
-the quantification over the possessed objects (`Poss`, `PossW`, `Description.toGQ`) is
+the quantification over the possessed objects (`Poss`, `PossNP`, `Description.toGQ`) is
 `Semantics/Possession/Quantifier.lean`. Whether a possessive is definite is not settled here: the
 determinate reading is one mode of quantification among those the quantifier layer parameterises
 ([peters-westerstahl-2006] §7.8.2, [coppock-beaver-2015] §4).
