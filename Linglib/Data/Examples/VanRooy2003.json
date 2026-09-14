@@ -1,0 +1,280 @@
+[
+  {
+    "id": "vanrooy2003_3",
+    "source": {"bibkey": "van-rooy-2003", "paperLabel": "(3)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Who is Muhammed Ali?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "referential: that man over there", "judgment": "acceptable"},
+      {"name": "descriptive: the greatest boxer ever", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "identification question"]
+    ],
+    "comment": "Which method of identification resolves the question depends on the decision problem.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vanrooy2003_12",
+    "source": {"bibkey": "van-rooy-2003", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Where can I buy an Italian newspaper?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The questioner wants a newspaper and can walk to the station or to the palace; in one world both sell it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "mention-some: at least at the station", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "mention-some"],
+      ["regions", "{u,w},{v,w}"]
+    ],
+    "comment": "The partial answer resolves the decision problem: the actions induce overlapping propositions, not a partition.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vanrooy2003_14",
+    "source": {"bibkey": "van-rooy-2003", "paperLabel": "(14)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Who, for example, came to the party?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "explicitly non-exhaustive"]
+    ],
+    "comment": "Completely answered without the exhaustive list: the meaning of a question need not be a partition.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vanrooy2003_15",
+    "source": {"bibkey": "van-rooy-2003", "paperLabel": "(15)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John knows where he can buy an Italian newspaper.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "embedded mention-some"]
+    ],
+    "comment": "True when John knows one relevant place: resolvedness is context-dependent within the semantics.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vanrooy2003_16",
+    "source": {"bibkey": "van-rooy-2003", "paperLabel": "(16)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Who will come to the concert?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "contextual domain"]
+    ],
+    "comment": "Neither a full enumeration nor mention-some: the domain is the people the questioner cares about.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vanrooy2003_17",
+    "source": {"bibkey": "van-rooy-2003", "paperLabel": "(17)"},
+    "reportedIn": {"bibkey": "karttunen-1977", "paperLabel": ""},
+    "language": "stan1293",
+    "primaryText": "Who dates Mary?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "contextual domain"]
+    ],
+    "comment": "Karttunen's argument against partitions dissolves once the domain is contextually limited.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vanrooy2003_18b",
+    "source": {"bibkey": "van-rooy-2003", "paperLabel": "(18b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How many meters can you jump?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "degree question"],
+      ["optimal value", "maximal"]
+    ],
+    "comment": "The maximal value is the most informative true answer.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vanrooy2003_19",
+    "source": {"bibkey": "van-rooy-2003", "paperLabel": "(19)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "In how many seconds can you run the 100 meters?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "degree question"],
+      ["optimal value", "minimal"]
+    ],
+    "comment": "The minimal value is the most informative true answer.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vanrooy2003_21",
+    "source": {"bibkey": "van-rooy-2003", "paperLabel": "(21)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Where do you live?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "complete address, to send a letter", "judgment": "acceptable"},
+      {"name": "the city, to decide on a visit", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "granularity"]
+    ],
+    "comment": "The level of granularity of the resolving answer depends on the decision problem.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vanrooy2003_22",
+    "source": {"bibkey": "van-rooy-2003", "paperLabel": "(22)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Who killed spiderman?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Either John or Bill did it, and the killer wears a blue or a green mask; who wears which is unknown.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "by name: {{u,v},{w,x}}", "judgment": "acceptable"},
+      {"name": "by mask: {{u,w},{v,x}}", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "conceptual cover"]
+    ],
+    "comment": "The partition depends on which concepts resolve the decision problem, without fixing a conceptual cover in advance.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vanrooy2003_23",
+    "source": {"bibkey": "van-rooy-2003", "paperLabel": "(23)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Who is who?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The spiderman scenario of (22).",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "conceptual cover"]
+    ],
+    "comment": "The identity is informative only across incompatible concepts, giving the four-cell partition.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vanrooy2003_24",
+    "source": {"bibkey": "van-rooy-2003", "paperLabel": "(24)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How many meters can't you jump?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "degree question"],
+      ["optimal value", "undefined"]
+    ],
+    "comment": "Odd at first: with jumping high preferred there is no best number of meters one cannot jump; reversing the preferences yields the first such number.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vanrooy2003_25",
+    "source": {"bibkey": "van-rooy-2003", "paperLabel": "(25)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How tall can a polar bear be?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Asked by an artist making a life-size sculpture of a polar bear.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "mention-some", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "degree question"],
+      ["reading", "mention-some"]
+    ],
+    "comment": "A degree question with a mention-some reading.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
