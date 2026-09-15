@@ -50,7 +50,7 @@ open English.Predicates.Verbal (push pull kick)
 open English.Predicates.Adjectival (open_ closed_ shut free_ loose flat
   AdjectivalPredicateEntry)
 open Causation.Resultatives (resultativeCausativeBuilder)
-open Aspect.ChangeOfState (CoSType)
+open Aspect (CoSType)
 open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction
   Construction)
 

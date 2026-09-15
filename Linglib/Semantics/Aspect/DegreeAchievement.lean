@@ -21,7 +21,7 @@ open, mΔ is unbounded → atelic (activity).
 This module derives `VendlerClass` from `Boundedness`.
 -/
 
-namespace Aspect.DegreeAchievement
+namespace Aspect
 
 open Degree (Boundedness)
 
@@ -103,4 +103,4 @@ theorem telicity_vendler_agree (s : DegreeAchievementScale) :
   cases s.dimension.boundedness <;> simp [VendlerClass.telicity]
 
 
-end Aspect.DegreeAchievement
+end Aspect

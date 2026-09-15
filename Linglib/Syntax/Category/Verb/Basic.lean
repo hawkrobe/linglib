@@ -13,11 +13,11 @@ open Aspect
 open Presupposition
 
 open ArgumentStructure
-open Aspect.ChangeOfState
+open Aspect
 open NaturalLogic (Signature)
 open Causation.Psych (CausalSource)
 open ArgumentStructure (EntailmentProfile)
-open Aspect.DegreeAchievement (DegreeAchievementScale)
+open Aspect (DegreeAchievementScale)
 open Aspect (VerbIncClass)
 open ArgumentStructure
 

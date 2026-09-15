@@ -25,7 +25,7 @@ survivor (§5.1.1, Table 1).
 Numerals live in an ordered additive monoid `α` valued by an interval content on closed
 intervals of a linearly ordered time `T`; maximal informativity is [fox-hackl-2006]'s
 `Alternatives.IsMaxInf`, and the subinterval property is the closed one of
-`Aspect.SubintervalProperty`, the paper's (111).
+`Aspect/SubintervalProperty.lean`, the paper's (111).
 
 ## References
 
@@ -34,7 +34,7 @@ intervals of a linearly ordered time `T`; maximal informativity is [fox-hackl-20
 
 namespace Rouillard2026
 
-open Alternatives Aspect.SubintervalProperty Core.Order NonemptyInterval Set
+open Alternatives Aspect Core.Order NonemptyInterval Set
 
 variable {W T α : Type*} [LinearOrder T] [AddCommMonoid α] [LinearOrder α]
   [IsOrderedCancelAddMonoid α]

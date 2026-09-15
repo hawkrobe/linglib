@@ -1,4 +1,4 @@
-import Linglib.Semantics.Mereology.Relation
+import Linglib.Semantics.Aspect.Cumulativity
 import Mathlib.Order.WellFounded
 
 /-!
@@ -28,12 +28,14 @@ require atomic rather than quantized verbal predicates.
 The paper's relations are stated with the library's object-first thematic relations, so its
 uniqueness of objects is `UP`, uniqueness of events `GUE`, mapping to objects `MO`, mapping
 to events `ME`, and summativity `SUM`; cumulative and quantized reference are
-`Mereology.CUM` and `Mereology.QUA`. Theorem (T 3) needs a nonempty predicate, since the
-empty predicate is both quantized and strictly cumulative. The proof of (T 13) establishes
-that every verbal event has a part outside the predicate; its conclusion that the event
-therefore contains an atom holds when the part order on events is well founded, in which case
-every predicate has atomic reference, which `atm_of_wellFoundedLT` records. The sections on
-negation (§6) and quantification (§7) are prose.
+`Mereology.CUM` and `Mereology.QUA`, and the verbal predicate (12) is the verb conjoined with
+`Aspect.VP`, so (T 7) is closure of an intersection under sums and (T 11) descends from
+`Aspect.vp_qua` once non-iteration is seen to give mapping to subobjects. Theorem (T 3) needs a
+nonempty predicate, since the empty predicate is both quantized and strictly cumulative. The proof
+of (T 13) establishes that every verbal event has a part outside the predicate; its conclusion
+that the event therefore contains an atom holds when the part order on events is well founded, in
+which case every predicate has atomic reference, which `atm_of_wellFoundedLT` records. The
+sections on negation (§6) and quantification (§7) are prose.
 
 ## References
 
@@ -44,7 +46,7 @@ negation (§6) and quantification (§7) are prose.
 
 namespace Krifka1989
 
-open Mereology
+open Mereology Aspect
 
 /-! ### Reference types (§2) -/
 
@@ -138,9 +140,10 @@ section Transfer
 
 variable {O E : Type*} [SemilatticeSup O] [SemilatticeSup E]
 
-/-- The verbal predicate (12): a verb, a nominal predicate, and a thematic relation. -/
+/-- The verbal predicate (12): a verb conjoined with the verb phrase of a thematic relation and
+a nominal predicate. -/
 def ofTheta (α : E → Prop) (δ : O → Prop) (θ : O → E → Prop) : E → Prop :=
-  λ e => α e ∧ ∃ x, δ x ∧ θ x e
+  λ e => α e ∧ VP θ δ e
 
 /-- (D 34): iterativity, some part of the object being subjected to two parts of the
 event. -/
@@ -155,7 +158,7 @@ variable {α : E → Prop} {δ : O → Prop} {θ : O → E → Prop}
 /-- (T 7): a cumulative verb, a cumulative nominal predicate, and a summative relation
 give a cumulative verbal predicate. -/
 theorem cum_ofTheta (hα : CUM α) (hδ : CUM δ) (hθ : SUM θ) : CUM (ofTheta α δ θ) :=
-  λ _ ⟨ha, x, hx, hθx⟩ _ ⟨ha', x', hx', hθx'⟩ => ⟨hα ha ha', x ⊔ x', hδ hx hx', hθ hθx hθx'⟩
+  hα.inter (vp_cum hθ hδ)
 
 /-- (T 8): a singular nominal predicate, a summative relation, and a strictly cumulative
 verbal predicate force an iterative event, since two distinct events with the one object
@@ -186,17 +189,18 @@ theorem not_scum_of_not_iter (hδ : SNG δ) (hθ : SUM θ) (hne : ∃ e, ofTheta
 theorem not_iter_of_gue (h : GUE θ) (e : E) (x : O) : ¬ ITER θ e x :=
   λ ⟨_, _, _, _, _, _, hne, _, h', h''⟩ => hne (h h' h'')
 
+/-- Without iteration, mapping to objects maps proper subevents to proper parts of the object:
+the whole object, subjected to a proper subevent, would be subjected to two parts of the
+event. -/
+theorem mso_of_not_iter (hm : MO θ) (hi : ∀ e x, ¬ ITER θ e x) : MSO θ := λ _ _ hxe _ hlt =>
+  let ⟨y, hy, hθ⟩ := hm hxe hlt.le
+  ⟨y, lt_of_le_of_ne hy λ h => hi _ _ ⟨hxe, _, _, y, hlt.le, le_rfl, hlt.ne, hy, hθ, h ▸ hxe⟩, hθ⟩
+
 /-- (T 11): a quantized nominal predicate transfers quantization to the verbal predicate when
 the relation has uniqueness of objects, mapping to objects, and no iteration. -/
 theorem qua_ofTheta (hδ : QUA δ) (hu : UP θ) (hm : MO θ) (hi : ∀ e x, ¬ ITER θ e x) :
     QUA (ofTheta α δ θ) :=
-  qua_of_forall λ e₁ e₂ ⟨_, x₁, hx₁, hθ₁⟩ hlt ⟨_, x₂, hx₂, hθ₂⟩ => by
-    obtain ⟨x₃, hx₃, hθ₃⟩ := hm hθ₁ hlt.le
-    have h32 : x₃ = x₂ := hu hθ₃ hθ₂
-    subst h32
-    have hne : x₁ ≠ x₃ := λ h =>
-      hi e₁ x₁ ⟨hθ₁, e₁, e₂, x₁, le_rfl, hlt.le, hlt.ne', le_rfl, hθ₁, h ▸ hθ₃⟩
-    exact hδ hx₂ hx₁ hne.symm hx₃
+  (vp_qua hu (mso_of_not_iter hm hi) hδ).subset λ _ h => h.2
 
 /-- (T 12): the special case of uniqueness of events, as for effected and consumed
 objects. -/

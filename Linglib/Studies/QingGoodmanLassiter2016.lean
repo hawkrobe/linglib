@@ -74,7 +74,7 @@ inductive Positive
   | smokes | smoked | always | stopped | started | never
   deriving DecidableEq, Fintype, Repr, Inhabited
 
-open Aspect.ChangeOfState in
+open Aspect in
 /-- The denotation of a positive utterance, the change-of-state verbs evaluated at the world's
 two times. -/
 def Positive.ext : Positive → Set World

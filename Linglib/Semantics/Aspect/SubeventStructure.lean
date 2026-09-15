@@ -43,7 +43,7 @@ consumable by IMPF/PRFV/PERF. Key results:
 
 -/
 
-namespace Aspect.SubeventStructure
+namespace Aspect
 
 
 /-! ### Subevent Phases -/
@@ -478,4 +478,4 @@ theorem hasConsState_of_consState (n : Nucleus T)
 
 end Nucleus
 
-end Aspect.SubeventStructure
+end Aspect

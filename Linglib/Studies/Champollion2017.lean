@@ -41,7 +41,7 @@ subinterval-reference test, not a class label.
 
 namespace Verb
 
-open Aspect.Stratified
+open _root_.Aspect
 
 /-! ### Verb distributivity
 
@@ -65,7 +65,7 @@ namespace Champollion2017
 
 open English.Predicates.Verbal
 open _root_.Mereology
-open Aspect.Stratified
+open Aspect
 
 /-! ### §2.7.2 algebraic substrate -/
 
