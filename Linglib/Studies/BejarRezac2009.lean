@@ -56,11 +56,23 @@ def toLevel (c : Cell) : Person :=
 /-- The three core person values the paper's paradigms range over. -/
 def corePersons : List Person := [.first, .second, .third]
 
+/-- The flat system of Swahili and Abkhaz ((7)), the probe `[u-3]` with no person-hierarchy
+sensitivity. -/
+def swahili : AgreementSystem := ⟨.standard, flatProbe⟩
+
+/-- The partial system of Basque and Georgian ((8)), the probe `[u-3-2]` under the standard
+geometry. -/
+def basque : AgreementSystem := ⟨.standard, partialProbe⟩
+
+/-- The full system of Nishnaabemwin and Mohawk ((9)), the probe `[u-3-1-2]` under the addressee
+geometry, second person the most specified. -/
+def nishnaabemwin : AgreementSystem := ⟨.addressee, fullProbeAddr⟩
+
 /-! ### Basque: ergative displacement ((2)) -/
 
-/-- The (2) paradigm: the core slot tracks the IA in (2a–c) and displaces
-to the EA only when the 3rd-person IA leaves the [u2] residue (2d) — no
-ranking of person values covers both (2a) 1>2 = 2 and (2c) 2>1 = 1. -/
+/-- In the paradigm (2) the core slot tracks the IA in (2a–c) and displaces to the EA only when
+the 3rd-person IA leaves the [u2] residue (2d); no ranking of person values covers both (2a)
+1>2 = 2 and (2c) 2>1 = 1. -/
 theorem basque_displacement_paradigm :
     basque.value .first .second = .second ∧   -- (2a) 1>2 = 2
     basque.value .third .first = .first ∧     -- (2b) 3>1 = 1
@@ -68,18 +80,17 @@ theorem basque_displacement_paradigm :
     basque.value .first .third = .first := by -- (2d) 1>3 = 1
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
-/-- Basque's direct contexts (22b): exactly a SAP EA over a 3rd-person IA
-— the only cells where the [u-3-2] probe keeps a residue the EA can
-check. -/
+/-- Basque's direct contexts (22b) are exactly a SAP EA over a 3rd-person IA, the only cells
+where the [u-3-2] probe keeps a residue the EA can check. -/
 theorem basque_direct_contexts :
     ∀ ea ∈ corePersons, ∀ ia ∈ corePersons,
       (isDirectContext .standard partialProbe ea ia = true ↔
         (ea = .first ∨ ea = .second) ∧ ia = .third) := by decide
 
-/-- Differential object indexing: the Fragment's `pIsIndexed` (SAP objects
-indexed, textbook Basque) holds of a φ-cell iff cyclic Agree puts *every*
-EA→IA combination with that object into an inverse context — a SAP IA
-fully checks [u-3-2], leaving no residue for any EA. -/
+/-- Differential object indexing. The Fragment's `pIsIndexed`, SAP objects indexed as in
+textbook Basque, holds of a φ-cell iff cyclic Agree puts every EA→IA combination with that
+object into an inverse context, since a SAP IA fully checks [u-3-2] and leaves no residue for
+any EA. -/
 theorem basque_indexed_iff_always_inverse : ∀ c ∈ Cell.pnCells,
     (Basque.Agreement.pIsIndexed c = true ↔
       ∀ ea : Person, basque.isInverse ea (toLevel c) = true) := by decide
@@ -95,17 +106,16 @@ theorem georgian_indexed_iff_always_inverse : ∀ c ∈ Cell.pnCells,
         isInverseContext .standard partialProbe ea (toLevel c) = true) := by
   decide
 
-/-- 1sg *m-* is first-cycle morphology (18a): whenever the IA is 1st
-person the probe is fully valued on cycle I, whatever the EA. -/
+/-- 1sg *m-* is first-cycle morphology (18a), since whenever the IA is 1st person the probe is
+fully valued on cycle I, whatever the EA. -/
 theorem georgian_m_is_cycle_I :
     Georgian.Agreement.objectAgr.realize (.pn .first .Sing) = some "m-" ∧
     ∀ ea ∈ corePersons,
       hasSecondCycleEffect .standard partialProbe ea .first = false := by
   refine ⟨rfl, ?_⟩; decide
 
-/-- 1sg *v-* is second-cycle morphology (18b): with a 3rd-person IA the
-[u2] residue is valued by the SAP EA on cycle II — the same person value,
-spelled by the cycle that valued it. -/
+/-- 1sg *v-* is second-cycle morphology (18b), since with a 3rd-person IA the [u2] residue is
+valued by the SAP EA on cycle II, the same person value spelled by the cycle that valued it. -/
 theorem georgian_v_is_cycle_II :
     hasSecondCycleEffect .standard partialProbe .first .third = true ∧
     hasSecondCycleEffect .standard partialProbe .second .third = true := by
@@ -113,10 +123,9 @@ theorem georgian_v_is_cycle_II :
 
 /-! ### Nishnaabemwin: the fully articulated probe ((17), Tables 4–5) -/
 
-/-- The (17) core-slot paradigm under the [u-3-1-2] probe (2nd person most
-specified, addressee geometry): the 2nd-person IA wins in (17a), the
-2nd-person EA checks the [u2] residue over a 1st-person IA in (17b), and
-3rd-person EAs never displace ((17c–d)). -/
+/-- The core-slot paradigm (17) under the [u-3-1-2] probe of the addressee geometry, second
+person the most specified. The 2nd-person IA wins in (17a), the 2nd-person EA checks the [u2]
+residue over a 1st-person IA in (17b), and 3rd-person EAs never displace ((17c–d)). -/
 theorem nishnaabemwin_controllers :
     nishnaabemwin.value .first .second = .second ∧   -- (17a) 1>2 = 2
     nishnaabemwin.value .second .first = .second ∧   -- (17b) 2>1 = 2
@@ -133,9 +142,8 @@ theorem nishnaabemwin_direct_contexts :
         (ea = .second ∧ ia ≠ .second) ∨ (ea = .first ∧ ia = .third)) := by
   decide
 
-/-- A flat-probe language has no direct contexts at all (22a): any IA
-fully checks [u-3], so subject and object agreement never interact
-((10), Swahili). -/
+/-- A flat-probe language has no direct contexts at all (22a), since any IA fully checks [u-3],
+so subject and object agreement never interact ((10), Swahili). -/
 theorem swahili_all_inverse :
     ∀ ea ∈ corePersons, ∀ ia ∈ corePersons,
       swahili.isInverse ea ia = true := by decide
@@ -155,15 +163,15 @@ def attestedCells : List (Person × Person) :=
   [(.first, .second), (.first, .third), (.second, .first), (.second, .third),
    (.third, .first), (.third, .second), (.third, .third)]
 
-/-- Mohawk's added-probe cells (Table 7): the extra agreement slot appears
-in 2>1, 3>1, 3>2, and 3>3. -/
+/-- Mohawk's added-probe cells (Table 7), where the extra agreement slot appears, 2>1, 3>1, 3>2
+and 3>3. -/
 def mohawkAddedProbe : Person × Person → Bool
   | (.second, .first) | (.third, .first)
   | (.third, .second) | (.third, .third) => true
   | _ => false
 
-/-- Kashmiri's R-Case cells (Table 11): the IA bears the dative-shaped
-structural Case in 2>1, 3>1, 3>2, and 3>3, and only there. -/
+/-- Kashmiri's R-Case cells (Table 11), where the IA bears the dative-shaped structural Case,
+2>1, 3>1, 3>2 and 3>3, and only there. -/
 def kashmiriRCase : Person × Person → Bool
   | (.second, .first) | (.third, .first)
   | (.third, .second) | (.third, .third) => true
@@ -175,16 +183,15 @@ two spell-outs. -/
 theorem repairs_identically_distributed :
     ∀ c ∈ attestedCells, mohawkAddedProbe c = kashmiriRCase c := by decide
 
-/-- The repair cells are exactly the inverse contexts of the [u-3-2-1]
-standard-geometry system: repair appears where the EA fails to Agree with
-the core probe. -/
+/-- The repair cells are exactly the inverse contexts of the [u-3-2-1] standard-geometry system,
+so repair appears where the EA fails to Agree with the core probe. -/
 theorem repair_iff_inverse :
     ∀ c ∈ attestedCells,
       kashmiriRCase c = isInverseContext .standard fullProbeStd c.1 c.2 := by
   decide
 
-/-- The repair cells are exactly those where the EA is not person-licensed
-by the core probe — the PLC connection (13): repair is EA licensing. -/
+/-- The repair cells are exactly those where the EA is not person-licensed by the core probe,
+the PLC connection (13), so repair is EA licensing. -/
 theorem repair_marks_unlicensed_ea :
     ∀ c ∈ attestedCells,
       (kashmiriRCase c = true ↔
