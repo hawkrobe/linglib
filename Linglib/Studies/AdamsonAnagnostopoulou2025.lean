@@ -4,6 +4,7 @@ import Linglib.Fragments.Greek.StandardModern.Gender
 import Linglib.Fragments.Icelandic.Gender
 import Linglib.Fragments.Slavic.Serbian.Gender
 import Linglib.Data.Examples.AdamsonAnagnostopoulou2025
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Gender features and coordination resolution
@@ -60,7 +61,7 @@ inductive Node where
   | indiv
   | grp
   | anim
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- The nodes in a fixed order, the listing a feature set takes to the list-based vocabulary
 sites. -/
@@ -78,7 +79,7 @@ inductive Referent where
 gender and a grammatical gender contributes as uninterpretable gender, the features a plural
 coordination adds, and a vocabulary. -/
 structure System where
-  geometry : Geometry Node
+  geometry : Minimalist.Geometry Node
   iNode : Referent → Node
   uNode : Gender → Bool → Node
   plural : Finset Node := ∅
@@ -136,7 +137,9 @@ def system : System where
         | .fem => {.fem, .masc, .cls}
         | .masc => {.masc, .cls}
         | .cls => {.cls}
-        | _ => ∅ }
+        | n => {n}
+      self_mem_above := by decide
+      above_subset_above := by decide }
   iNode
     | .man => .masc
     | .woman => .fem
@@ -259,7 +262,9 @@ def system : System where
         | .fem => {.fem, .cls}
         | .masc => {.masc, .cls}
         | .cls => {.cls}
-        | _ => ∅ }
+        | n => {n}
+      self_mem_above := by decide
+      above_subset_above := by decide }
   iNode
     | .man => .masc
     | .woman => .fem
@@ -308,7 +313,9 @@ def system : System where
         | .masc => {.masc, .indiv, .cls}
         | .grp => {.grp, .indiv, .cls}
         | .indiv => {.indiv, .cls}
-        | .cls => {.cls} }
+        | .cls => {.cls}
+      self_mem_above := by decide
+      above_subset_above := by decide }
   iNode
     | .man => .anim
     | .woman => .fem
