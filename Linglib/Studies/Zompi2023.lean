@@ -3,50 +3,55 @@ import Linglib.Core.Optimization.Evaluation
 import Mathlib.Data.Finset.Powerset
 
 /-!
-# Zompì 2023: *ABA in multidimensional paradigms, Max/Dep Eval
-[zompi-2023]
+# Zompì (2023): *ABA in Multidimensional Paradigms
 
-Exponent selection as ranked violable faithfulness: per-dimension `Max` and
-`Dep` constraints ([wolf-2008], after [mccarthy-prince-1995]) under
-strict-domination Eval ([prince-smolensky-1993]). An exponent may be both
-underspecified and overspecified for its context, each departure penalized
-but neither fatal — the midpoint between DM's Underspecification and
-nanosyntax's Overspecification ([starke-2009]).
+This file formalizes the Max/Dep account of exponent selection in [zompi-2023]. An exponent's
+context specification may be both underspecified and overspecified for the cell it realizes;
+each departure is penalized by a violable faithfulness constraint, `Max` for expected features
+the specification lacks and `Dep` for spurious features it adds ([wolf-2008], after
+[mccarthy-prince-1995]), relativized to the paradigm's dimensions, and the winner is selected
+by strict-domination evaluation ([prince-smolensky-1993]). Cells are the cumulative case and
+number decompositions of `ChristopoulosZompi2023`, with candidates carried by the same rule
+type as that study's Subset Principle, so that only the competition changes.
 
-Contexts are the cumulative case × number decompositions (the dissertation's
-(163)): NOM ∅ ⊂ ACC {κ_dep} ⊂ DAT {κ_dep, κ_dat} on one dimension
-([smith-moskal-xu-kang-bobaljik-2019], [caha-2009]), SG ∅ ⊂ PL {#pl} on the
-other — realized here over `ChristopoulosZompi2023.K`, with specs carried by
-the same rule type the Subset-Principle study runs on. What changes is only
-the competition.
+Evaluation is lexicographic minimization of the ranked violation vector (`mem_eval_iff`), the
+engine of `OptimalityTheory.Tableau` (`mem_eval_iff_lexMins`). On it, the two minimally
+compliant patterns of the case-number paradigm are derived from opposite rankings of the same
+two candidate specifications, East Frisian with ABA down the nominative column and Malayalam
+with ABA down the plural row (`eastFrisian_pattern`, `malayalam_pattern`); the checkerboard
+pattern, in which one exponent takes the nominative singular and the accusative plural but
+neither of the other two cells, is excluded over every ranking and every two-candidate
+vocabulary (`checkerboard_excluded`); unidimensional *ABA down the singular case column survives
+the move to violable constraints (`unidimensional_ABA_excluded`), and only because
+specifications respect the feature entailments
+(`illformed_spec_breaks_unidimensional_ABA`); and with `Dep` outranking `Max` the system is the
+Subset Principle with feature counting ([wolf-2008], [halle-1997]) whenever some candidate is
+subset-applicable (`depTop_eq_subsetPrinciple`).
 
-Main results:
+## Implementation notes
 
-* `mem_eval_iff` / `mem_eval_iff_lexMins` — the strict-domination Eval cut
-  cascade is exactly lexicographic minimization: an Eval survivor is a
-  `LexMinProblem.lexMins` optimum (the shared core `OptimalityTheory.Tableau`
-  aliases), so this Max/Dep competition and phonological OT are one engine.
-* `eastFrisian_pattern` / `malayalam_pattern` — the two minimally compliant
-  Russian-doll patterns of §4.1.3: East Frisian 3M (*h-äi, z-äi; h-um, h-ör*)
-  puts ABA on ⟨NOM.SG, NOM.PL, ACC.PL⟩ with AAA on ⟨NOM.SG, ACC.SG, ACC.PL⟩;
-  Malayalam 1EX (*ñān, ñaŋŋaḷ; enne, ñaŋŋaḷe*) the reverse — same two
-  candidate specifications, opposite rankings of the Dep pair and of the Max
-  pair.
-* `checkerboard_excluded` — the system's novel exclusion: over every ranking
-  of the four relativized constraints and every two-candidate vocabulary on
-  the paradigm's feature space, a candidate winning NOM.SG and ACC.PL also
-  wins ACC.SG or NOM.PL (kernel-checked exhaustively);
-  `checkerboard_excluded_general` states the vocabulary-general claim (the
-  dissertation's W/T/L leftmost-column argument), left as a `sorry` TODO.
-* `unidimensional_ABA_excluded` — *ABA down the singular case column survives
-  the move to violable constraints, over every ranking (§4.1.4).
-* `depTop_eq_subsetPrinciple` — [wolf-2008]'s mimicry, connecting the two
-  engines: with global `Dep` outranking global `Max`, whenever some candidate
-  is subset-applicable, unique Max/Dep winners are exactly the
-  Subset-Principle-with-feature-counting winners of
-  `ChristopoulosZompi2023.pattern` ([halle-1997]'s counting formulation). The
-  dual corner (`Max ≫ Dep`) is nanosyntax's least-specified
-  non-underspecified choice.
+* Rankings of the four dimension-relativized constraints are enumerated rather than generated
+  by `List.permutations`, which does not reduce in the kernel.
+* The exhaustive theorems range over two-candidate vocabularies on the paradigm's feature
+  space; the dissertation's argument is vocabulary-general.
+
+## TODO
+
+* The vocabulary-general checkerboard exclusion, by the dissertation's argument that each
+  dimension-relativized constraint's verdict at a cell transfers to the cell sharing that
+  dimension, so that the leftmost decisive column at the nominative singular or the accusative
+  plural decides one of the other two cells.
+
+## References
+
+* [zompi-2023]
+* [wolf-2008]
+* [mccarthy-prince-1995]
+* [prince-smolensky-1993]
+* [halle-1997]
+* [starke-2009]
+* [smith-moskal-xu-kang-bobaljik-2019]
+* [caha-2009]
 -/
 
 namespace Zompi2023
@@ -91,8 +96,8 @@ inductive Con | maxD (d : Dim) | depD (d : Dim) | maxG | depG
 `Dep`-type stars for spurious features the spec adds, counted on one
 dimension or globally. -/
 def viol : Con → ZCell → Cand F → ℕ
-  | .maxD d, c, r => ((zdecomp c \ r.feats).filter (fun k => dimOf k = d)).card
-  | .depD d, c, r => ((r.feats \ zdecomp c).filter (fun k => dimOf k = d)).card
+  | .maxD d, c, r => ((zdecomp c \ r.feats).filter (λ k => dimOf k = d)).card
+  | .depD d, c, r => ((r.feats \ zdecomp c).filter (λ k => dimOf k = d)).card
   | .maxG, c, r => (zdecomp c \ r.feats).card
   | .depG, c, r => (r.feats \ zdecomp c).card
 
@@ -100,7 +105,7 @@ def viol : Con → ZCell → Cand F → ℕ
 def cut (c : ZCell) (cands : List (Cand F)) (C : Con) : List (Cand F) :=
   match (cands.map (viol C c)).min? with
   | none => cands
-  | some m => cands.filter (fun r => viol C c r = m)
+  | some m => cands.filter (λ r => viol C c r = m)
 
 /-- Strict-domination Eval: successive cuts down the ranking, top constraint
 first. -/
@@ -135,7 +140,7 @@ open Core.Optimization.Evaluation LexMinProblem
 /-- The candidate's violation vector at a cell, ordered by the ranking — the
 `List ℕ` reading of the OT `ViolationProfile`. -/
 def rankedViols (rk : List Con) (c : ZCell) (r : Cand F) : List ℕ :=
-  rk.map (fun C => viol C c r)
+  rk.map (λ C => viol C c r)
 
 @[simp] theorem rankedViols_nil (c : ZCell) (r : Cand F) : rankedViols [] c r = [] :=
   rfl
@@ -159,7 +164,7 @@ theorem mem_cut_iff {C : Con} {c : ZCell} {v : List (Cand F)} {r : Cand F} :
     simp only [decide_eq_true_eq]
     constructor
     · rintro ⟨hrv, hrm⟩
-      exact ⟨hrv, fun s hs => hrm ▸ hmin _ (List.mem_map_of_mem hs)⟩
+      exact ⟨hrv, λ s hs => hrm ▸ hmin _ (List.mem_map_of_mem hs)⟩
     · rintro ⟨hrv, hle⟩
       exact ⟨hrv, le_antisymm ((hle _ hs₀v).trans_eq hs₀)
         (hmin _ (List.mem_map_of_mem hrv))⟩
@@ -176,19 +181,19 @@ theorem mem_eval_iff {rk : List Con} {v : List (Cand F)} {c : ZCell} {r : Cand F
     constructor
     · rintro ⟨hrcut, htail⟩
       obtain ⟨hrv, hrmin⟩ := mem_cut_iff.mp hrcut
-      refine ⟨hrv, fun s hs => ?_⟩
+      refine ⟨hrv, λ s hs => ?_⟩
       rw [rankedViols_cons, rankedViols_cons, lexLE_cons_cons_iff]
       rcases lt_or_eq_of_le (hrmin s hs) with hlt | heq
       · exact Or.inl hlt
-      · exact Or.inr ⟨heq, htail s (mem_cut_iff.mpr ⟨hs, fun t ht => heq ▸ hrmin t ht⟩)⟩
+      · exact Or.inr ⟨heq, htail s (mem_cut_iff.mpr ⟨hs, λ t ht => heq ▸ hrmin t ht⟩)⟩
     · rintro ⟨hrv, hcons⟩
-      have hrmin : ∀ s ∈ v, viol C c r ≤ viol C c s := fun s hs => by
+      have hrmin : ∀ s ∈ v, viol C c r ≤ viol C c s := λ s hs => by
         have := hcons s hs
         rw [rankedViols_cons, rankedViols_cons, lexLE_cons_cons_iff] at this
         rcases this with hlt | ⟨heq, _⟩
         · exact le_of_lt hlt
         · exact le_of_eq heq
-      refine ⟨mem_cut_iff.mpr ⟨hrv, hrmin⟩, fun s hs => ?_⟩
+      refine ⟨mem_cut_iff.mpr ⟨hrv, hrmin⟩, λ s hs => ?_⟩
       obtain ⟨hsv, hsmin⟩ := mem_cut_iff.mp hs
       have := hcons s hsv
       rw [rankedViols_cons, rankedViols_cons, lexLE_cons_cons_iff] at this
@@ -197,14 +202,14 @@ theorem mem_eval_iff {rk : List Con} {v : List (Cand F)} {c : ZCell} {r : Cand F
       · exact htail
 
 private theorem map_eq_ofFn_get {α β : Type*} (l : List α) (f : α → β) :
-    l.map f = List.ofFn (fun i : Fin l.length => f (l.get i)) := by
+    l.map f = List.ofFn (λ i : Fin l.length => f (l.get i)) := by
   apply List.ext_getElem <;> simp
 
 /-- The ranked violation vector is the fixed-length OT profile spelled out as a
 list. -/
 theorem rankedViols_eq_ofFn (rk : List Con) (c : ZCell) (r : Cand F) :
-    rankedViols rk c r = List.ofFn (fun i : Fin rk.length => viol (rk.get i) c r) :=
-  map_eq_ofFn_get rk (fun C => viol C c r)
+    rankedViols rk c r = List.ofFn (λ i : Fin rk.length => viol (rk.get i) c r) :=
+  map_eq_ofFn_get rk (λ C => viol C c r)
 
 /-- The Eval competition as a `LexMinProblem` — the engine `OptimalityTheory.Tableau`
 aliases: candidate set `v`, profile the ranked violation vector (rank position `i`
@@ -213,7 +218,7 @@ phonological OT tableau with morphological Max/Dep constraints. -/
 def zTableau [DecidableEq F] (rk : List Con) (v : List (Cand F)) (c : ZCell)
     (hv : v ≠ []) : LexMinProblem (Cand F) rk.length where
   candidates := v.toFinset
-  profile := lexFinNatOf (fun i => viol (rk.get i) c)
+  profile := lexFinNatOf (λ i => viol (rk.get i) c)
   nonempty := let ⟨x, hx⟩ := List.exists_mem_of_ne_nil v hv; ⟨x, List.mem_toFinset.mpr hx⟩
 
 /-- **Eval and OT are one engine.** An Eval survivor is exactly a lex-minimizer
@@ -225,7 +230,7 @@ theorem mem_eval_iff_lexMins [DecidableEq F] {rk : List Con} {v : List (Cand F)}
     r ∈ eval rk v c ↔ r ∈ (zTableau rk v c hv).lexMins := by
   rw [mem_eval_iff, LexMinProblem.mem_lexMins_iff]
   simp only [LexMinProblem.IsLexMin]
-  refine and_congr List.mem_toFinset.symm (forall_congr' fun s => ?_)
+  refine and_congr List.mem_toFinset.symm (forall_congr' λ s => ?_)
   refine imp_congr List.mem_toFinset.symm ?_
   rw [rankedViols_eq_ofFn, rankedViols_eq_ofFn, lexLE_ofFn]
   rfl
@@ -306,31 +311,6 @@ theorem checkerboard_excluded :
       Wins rk [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩] ⟨.acc, .sg⟩ ⟨fa, Ex.A⟩ ∨
         Wins rk [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩] ⟨.nom, .pl⟩ ⟨fa, Ex.A⟩ := by
   decide
-
-/-- The vocabulary-general checkerboard exclusion, for any candidate list and
-any ranking of the four relativized constraints.
-
-TODO: the shared-core `mem_eval_iff` reduces `Wins` to strict lexicographic
-domination of the ranked violation vector (`eval rk v c = [a]` iff `a`'s vector
-lex-dominates every rival's, strictly since a tying rival would also survive).
-On that footing the dissertation's argument ((170) and §4.1.4's continuation)
-runs: (i) dimension-relativized counts factor through the dimension slice of the
-context (`viol (maxD d)`/`viol (depD d)` at `⟨κ,ν⟩` depend only on the `d`-part
-of `zdecomp`), so each constraint's field-level W/T/L verdict at NOM.SG and
-ACC.PL transfers to the cell sharing its dimension; (ii) `Wins` at a cell is
-equivalent to the leftmost non-tie column of the ranking (over the *original*
-field, cascade-eliminations included) being a strict win; (iii) a three-way case
-analysis on the relative rank of the leftmost strict-win columns at NOM.SG and
-ACC.PL then forces a strict win at ACC.SG or NOM.PL. Step (ii) — the
-column-scan characterization of the filter cascade — is the load-bearing lemma
-still to be formalized. -/
-theorem checkerboard_excluded_general {rk : List Con} {v : List (Cand F)}
-    {a : Cand F}
-    (hperm : rk.Perm [Con.maxD .kase, Con.maxD .num, Con.depD .kase,
-      Con.depD .num])
-    (hns : Wins rk v ⟨.nom, .sg⟩ a) (hap : Wins rk v ⟨.acc, .pl⟩ a) :
-    Wins rk v ⟨.acc, .sg⟩ a ∨ Wins rk v ⟨.nom, .pl⟩ a := by
-  sorry
 
 /-- Unidimensional *ABA survives the move to violable constraints (§4.1.4):
 down the singular case column, no ranking and no two-candidate vocabulary of
