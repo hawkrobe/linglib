@@ -1,0 +1,234 @@
+[
+  {
+    "id": "yan2023_1",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (1b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Nicholas wants a free trip on the Concorde.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Nicholas wants a free trip on the Concorde.",
+    "context": "Nicholas is not willing to pay the 3,000 dollars he believes a trip would cost.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "Asher"],
+      ["role", "premise"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_2",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (1c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Nicholas wants a trip on the Concorde.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Nicholas wants a trip on the Concorde.",
+    "context": "As in (1b).",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "Asher"],
+      ["role", "monotonic conclusion"]
+    ],
+    "comment": "False in the scenario although a free trip is a trip.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_3",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (2b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I want to teach on Tuesdays next semester.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I want to teach on Tuesdays next semester.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "Heim"],
+      ["role", "premise"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_4",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (2c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I want to teach next semester.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I want to teach next semester.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "Heim"],
+      ["role", "monotonic conclusion"]
+    ],
+    "comment": "Utterable in a situation where the speaker does not want to teach at all.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_5",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (3a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John wants to send the letter.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John wants to send the letter.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "Ross"],
+      ["role", "premise"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_6",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (3b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John wants to send the letter or burn it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John wants to send the letter or burn it.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "Ross"],
+      ["role", "monotonic conclusion"]
+    ],
+    "comment": "Suggests that John is okay with burning the letter.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_7",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (23)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John wants to buy a Ferrari or a Porsche.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John wants to buy a Ferrari or a Porsche.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "John is ok with a Ferrari and he is ok with a Porsche", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["inference", "box free choice"]
+    ],
+    "comment": "The distributive inference does not rely on John not wanting a Ferrari and not wanting a Porsche.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_8",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (26c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is ok for John to send the letter.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is ok for John to send the letter.",
+    "context": "John wants to send the letter.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "Ross"],
+      ["formula", "◇SEND a"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_9",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (26d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is ok for John to burn the letter.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is ok for John to burn the letter.",
+    "context": "John wants to send the letter.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "Ross"],
+      ["formula", "◇BURN a"]
+    ],
+    "comment": "Licensed only by the enriched disjunctive want, which the premise does not support.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_10",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (27c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is ok for Nicholas to have a free trip.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is ok for Nicholas to have a free trip.",
+    "context": "Nicholas wants a free trip on the Concorde.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "Asher"],
+      ["formula", "◇∃x FREE x"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_11",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (27d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is ok for Nicholas to have a non-free trip.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is ok for Nicholas to have a non-free trip.",
+    "context": "Nicholas wants a free trip on the Concorde.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "Asher"],
+      ["formula", "◇∃x ¬FREE x"]
+    ],
+    "comment": "Licensed only by the enriched reinterpretation of TRIP, which the premise does not justify.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
