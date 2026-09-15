@@ -1,737 +1,334 @@
-import Linglib.Pragmatics.RSA.LatentOperators
-import Linglib.Pragmatics.RSA.Operators
-import Mathlib.Analysis.Complex.ExponentialBounds
-import Linglib.Core.Probability.Scores
-import Linglib.Pragmatics.RSA.Atoms
+import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Incremental
+import Linglib.Data.Examples.WaldonDegen2021
 
 /-!
-# [waldon-degen-2021] — Continuous-Incremental RSA (CI-RSA)
-[cohn-gordon-goodman-potts-2019] [degen-etal-2020]
+# Waldon & Degen (2021): Modeling Cross-Linguistic Production of Referring Expressions
 
-Waldon, B. & Degen, J. (2021). Modeling cross-linguistic production of
-referring expressions. *Proceedings of the Society for Computation in
-Linguistics (SCiL)* 4, 206–215.
+This file formalizes [waldon-degen-2021]'s continuous-incremental Rational Speech Act model
+(CI-RSA) of redundant modification. The model joins the word-by-word production of
+[cohn-gordon-goodman-potts-2019] with the noisy adjective semantics of [degen-etal-2020]: a
+word is true of a referent with its semantic value and false with the complement, an utterance's
+value is the product over its words, and the literal listener interprets a prefix by the
+average value of its grammatical completions among the utterances true of some referent in the
+scene (`prefixMeaning`). The incremental speaker is the softmax of the listener's mass on the
+referent against the word's cost, so a trajectory's probability is the product of its steps
+(`stepSpeaker`, `trajectory`). Where the standard, continuous and incremental models predict
+symmetric or language-blind rates, the paper reports that CI-RSA predicts the English color/size
+asymmetry, less redundant color in a postnominal Spanish, and its reversal there.
 
-## The Model
+The paper's Figure 3 locates the difference at the node where the redundant adjective is
+chosen after the informative one: in English, after *small* in the size-sufficient scene, the
+speaker chooses between the redundant *blue* and the noun; in postnominal Spanish, after
+*pin blue* in the color-sufficient scene, between the redundant *small* and stopping. The
+literal listener's odds at the two nodes are `v_color (2 − v_size) / (v_color v_size + 1 −
+v_size)` and its mirror image, so for every rationality and adjective cost the two steps are
+equally likely under the incremental model's Boolean semantics and the English redundant color
+step is the likelier exactly when color is the more reliable adjective
+(`english_color_step_gt_spanish_size_step`).
 
-CI-RSA synthesizes two RSA extensions:
-1. **Incremental RSA** ([cohn-gordon-goodman-potts-2019]): Word-by-word production
-   via the chain rule S1(u|r) = ∏ₖ S1(wₖ | [w₁,...,wₖ₋₁], r)
-2. **Continuous semantics** ([degen-etal-2020]): Noisy adjective reliability
-   L^C(r, i) = v^i if i true of r, else 1 - v^i
+## Implementation notes
 
-The incremental meaning function averages continuous semantics over
-grammatical completions of the current prefix:
+Referents are pairs of a size and a color, scenes are finsets of them, and the two languages
+are the utterance lists of Figure 1 closed by a stop token. Semantic values, the rationality and
+the per-adjective cost factor are free real parameters with the bounds the paper's values
+satisfy, in place of the simulated `v_size = 0.8`, `v_color = 0.95`, `α = 7` and cost `0.1`;
+the whole-trajectory and cross-scene comparisons of Figures 2 and 4 are reported from the
+paper's simulations and not proved. The paper's Spanish examples are the rows of
+`Data.Examples.WaldonDegen2021`.
 
-  X^C(c, i, r) = Σ_{u ⊒ c+i} ⟦u⟧^C(r) / |{u : u ⊒ c+i}|
+## References
 
-The utterance set is scene-filtered: only utterances Boolean-true of at
-least one scene member are included (Figure 1).
-
-## Formalization
-
-This builds on the incremental word-by-word chain (following
-[cohn-gordon-goodman-potts-2019]), adding:
-- Continuous (ℚ-valued) meaning instead of Boolean extension-counting
-- `rpow`-based s1Score with α = 7
-- Scene-parameterized configs for cross-condition comparisons
-
-The three predictions are trajectory probability comparisons across
-different (language × scene) configurations of the same chain.
-
-## Predictions
-
-| # | Prediction | Status |
-|---|-----------|--------|
-| 1 | English color/size asymmetry: SS > CS | `prediction1_english_asymmetry` |
-| 2 | Cross-linguistic: English SS > Spanish SS | `prediction2_cross_linguistic` |
-| 3 | Spanish flip: CS > SS for redundant size | `prediction3_spanish_flip` |
-| 4 | Overall: English total > Spanish total | `prediction4_overall_redundancy` |
-
-## Connections
-
-- **Incremental RSA**: Extends [cohn-gordon-goodman-potts-2019] with
-  continuous semantics and cross-linguistic word order variation.
-- **Graded composition**: `uttContinuousQ` is defined via
-  `RSA.prodMeaning`, sharing the multiplicative
-  composition with [schlotterbeck-wang-2023] by construction.
+* [waldon-degen-2021]
+* [cohn-gordon-goodman-potts-2019]
+* [degen-etal-2020]
+* [frank-goodman-2012]
 -/
+
+open MeasureTheory ProbabilityTheory RSA
+open scoped ENNReal
 
 namespace WaldonDegen2021
 
-open RSA
+/-! ### Words, referents and semantics -/
 
-/-! ### Domain Types -/
-
-/-- Words available to the incremental speaker: two color adjectives,
-    two size adjectives, a noun ("pin"), and an explicit stop token.
-    The stop token models the speaker's choice to end the utterance;
-    without it, postnominal word orders lack a way to represent the
-    stopping decision after the noun (cf. English where "pin" naturally
-    terminates utterances). -/
-inductive Word where
+/-- The words of the reference game, with an explicit stop token closing an utterance. -/
+inductive Word
   | blue | red | big | small | pin | stop
-  deriving DecidableEq, Fintype, Repr
+  deriving DecidableEq, Fintype
 
-instance : Nonempty Word := ⟨.pin⟩
+instance : MeasurableSpace Word := ⊤
+instance : DiscreteMeasurableSpace Word := ⟨λ _ => trivial⟩
 
-/-- Referents in the 2×2 reference game: big/small × blue/red. -/
-inductive Referent where
-  | bigBlue | bigRed | smallBlue | smallRed
-  deriving DecidableEq, Fintype, Repr
+/-- A referent is big or small and blue or red. -/
+abbrev Referent := Bool × Bool
 
-/-! ### Boolean Semantics -/
+/-- The target of every prediction, the small blue pin. -/
+abbrev smallBlue : Referent := (false, true)
 
-/-- Whether a word is veridically true of a referent. -/
-def wordApplies : Word → Referent → Bool
-  | .blue,  .bigBlue | .blue,  .smallBlue => true
-  | .red,   .bigRed  | .red,   .smallRed  => true
-  | .big,   .bigBlue | .big,   .bigRed    => true
-  | .small, .smallBlue | .small, .smallRed => true
-  | .pin,   _          => true
-  | .stop,  _          => true
-  | _,      _          => false
+/-- Boolean truth of a word of a referent. -/
+def applies : Word → Referent → Bool
+  | .blue, r => r.2
+  | .red, r => !r.2
+  | .big, r => r.1
+  | .small, r => !r.1
+  | .pin, _ => true
+  | .stop, _ => true
 
-/-! ### Continuous Semantics -/
+/-- The continuous lexicon of [degen-etal-2020]: a color word is worth `vc` where true and
+`1 − vc` where false, a size word likewise with `vs`, and the noun and the stop token are worth
+one. -/
+def lexicon (vc vs : ℝ) : Word → Referent → ℝ
+  | .blue, r => if r.2 then vc else 1 - vc
+  | .red, r => if r.2 then 1 - vc else vc
+  | .big, r => if r.1 then vs else 1 - vs
+  | .small, r => if r.1 then 1 - vs else vs
+  | .pin, _ => 1
+  | .stop, _ => 1
 
-/-- Semantic reliability values v^i. Color adjectives are more reliable
-    than size adjectives: v^color = 19/20 (0.95), v^size = 4/5 (0.8). -/
-def semanticValueQ : Word → ℚ
-  | .blue | .red   => 19/20
-  | .big  | .small => 4/5
-  | .pin | .stop   => 1
+variable {vc vs : ℝ}
 
-/-- Continuous lexical interpretation L^C(r, i).
-    Returns v^i if true, (1 - v^i) if false. -/
-def lexContinuousQ (r : Referent) (w : Word) : ℚ :=
-  if wordApplies w r then semanticValueQ w else 1 - semanticValueQ w
+theorem lexicon_nonneg (hc : vc ≤ 1) (hc0 : 0 ≤ vc) (hs : vs ≤ 1) (hs0 : 0 ≤ vs) (w : Word)
+    (r : Referent) : 0 ≤ lexicon vc vs w r := by
+  cases w <;> simp only [lexicon] <;> first | (split_ifs <;> linarith) | norm_num
 
-/-- Continuous utterance meaning ⟦u⟧^C(r) = ∏_{w ∈ u} L^C(r, w), the
-    `prodMeaning` of the continuous lexicon. -/
-def uttContinuousQ (r : Referent) (u : List Word) : ℚ :=
-  prodMeaning (fun w r' => lexContinuousQ r' w) u r
+/-! ### Languages and scenes (Figure 1) -/
 
-private theorem lexContinuousQ_nonneg (r : Referent) (w : Word) :
-    0 ≤ lexContinuousQ r w := by
-  cases w <;> cases r <;>
-    (unfold lexContinuousQ; simp only [wordApplies, semanticValueQ];
-     split_ifs <;> norm_num)
-
-private theorem uttContinuousQ_nonneg (r : Referent) (u : List Word) :
-    0 ≤ uttContinuousQ r u :=
-  prodMeaning_nonneg (fun w r' => lexContinuousQ_nonneg r' w) u r
-
-/-! ### Utterances (Scene-Filtered) -/
-
-/-- Boolean utterance truth: conjunction of word applicability. -/
-def uttBoolTrue (u : List Word) (r : Referent) : Bool :=
-  u.all (fun w => wordApplies w r)
-
-/-- All grammatical English (prenominal) utterances, each terminated
-    by `.stop`. In English the noun always comes last before stop,
-    so "pin" naturally precedes the stopping decision. -/
-def allUttsEng : List (List Word) :=
-  [[.blue, .pin, .stop], [.red, .pin, .stop],
-   [.big, .pin, .stop], [.small, .pin, .stop],
+/-- English: prenominal size then color, the noun, the stop. -/
+def english : List (List Word) :=
+  [[.blue, .pin, .stop], [.red, .pin, .stop], [.big, .pin, .stop], [.small, .pin, .stop],
    [.small, .blue, .pin, .stop], [.small, .red, .pin, .stop],
    [.big, .blue, .pin, .stop], [.big, .red, .pin, .stop]]
 
-/-- All grammatical Spanish (postnominal) utterances, each terminated
-    by `.stop`. The stop token is critical here: after `[pin, blue]`,
-    the S1 chooses between `.stop` (2-word non-redundant) and `.small`
-    (continuing to the 3-word redundant utterance). Without `.stop`,
-    the model forces continuation whenever valid extensions exist. -/
-def allUttsSpn : List (List Word) :=
-  [[.pin, .blue, .stop], [.pin, .red, .stop],
-   [.pin, .big, .stop], [.pin, .small, .stop],
+/-- Postnominal Spanish: the noun, color then size, the stop. -/
+def spanish : List (List Word) :=
+  [[.pin, .blue, .stop], [.pin, .red, .stop], [.pin, .big, .stop], [.pin, .small, .stop],
    [.pin, .blue, .small, .stop], [.pin, .red, .small, .stop],
    [.pin, .blue, .big, .stop], [.pin, .red, .big, .stop]]
 
-/-- Scene-filtered utterances: only those Boolean-true of at least one
-    scene member (Figure 1). This yields 7 utterances per scene. -/
-def sceneFilter (utts : List (List Word)) (scene : Referent → Bool) :
+/-- The size-sufficient scene: the target is the only small pin. -/
+def ss : Finset Referent := {(true, true), (true, false), (false, true)}
+
+/-- The color-sufficient scene: the target is the only blue pin. -/
+def cs : Finset Referent := {(false, false), (true, false), (false, true)}
+
+/-- The utterances of a language true of some referent of the scene. -/
+def inScene (L : List (List Word)) (scene : Finset Referent) : List (List Word) :=
+  L.filter λ u => decide (∃ r ∈ scene, ∀ w ∈ u, applies w r)
+
+/-- The grammatical completions of a prefix. -/
+def continuations (L : List (List Word)) (scene : Finset Referent) (pfx : List Word) :
     List (List Word) :=
-  utts.filter fun u =>
-    [Referent.bigBlue, .bigRed, .smallBlue, .smallRed].any fun r =>
-      scene r && uttBoolTrue u r
+  (inScene L scene).filter (pfx.isPrefixOf ·)
 
-/-! ### Production Cost -/
+/-! ### The literal listener and the incremental speaker -/
 
-/-- Per-word production cost (Section 4): each adjective incurs cost 0.1.
-    Pin and stop have zero cost (noun and utterance boundary). -/
-def wordCostQ : Word → ℚ
-  | .pin | .stop => 0
-  | _ => 1/10
+/-- The continuous prefix meaning: the average utterance value over the completions. -/
+noncomputable def prefixMeaning (vc vs : ℝ) (L : List (List Word)) (scene : Finset Referent)
+    (pfx : List Word) (r : Referent) : ℝ :=
+  ((continuations L scene pfx).map (prodMeaning (lexicon vc vs) · r)).sum /
+    (continuations L scene pfx).length
 
-/-! ### Extension-Based Continuous Meaning -/
+theorem prefixMeaning_nonneg (hc : vc ≤ 1) (hc0 : 0 ≤ vc) (hs : vs ≤ 1) (hs0 : 0 ≤ vs)
+    (L : List (List Word)) (scene : Finset Referent) (pfx : List Word) (r : Referent) :
+    0 ≤ prefixMeaning vc vs L scene pfx r :=
+  div_nonneg (List.sum_nonneg λ x hx => by
+      obtain ⟨u, -, rfl⟩ := List.mem_map.1 hx
+      exact prodMeaning_nonneg (λ w r => lexicon_nonneg hc hc0 hs hs0 w r) u r)
+    (Nat.cast_nonneg _)
 
-/-- Incremental continuous meaning: average continuous semantics over
-    all grammatical completions of prefix.
+/-- A prefix with no completion has meaning zero. -/
+theorem prefixMeaning_eq_zero {L : List (List Word)} {scene : Finset Referent}
+    {pfx : List Word} (h : continuations L scene pfx = []) (r : Referent) :
+    prefixMeaning vc vs L scene pfx r = 0 := by
+  simp [prefixMeaning, h]
 
-    X^C(c, i, r) = Σ_{u ⊒ c+i} ⟦u⟧^C(r) / |{u : u ⊒ c+i}| -/
-def continuousMeaningQ (utts : List (List Word)) (scene : Referent → Bool)
-    (pfx : List Word) (r : Referent) : ℚ :=
-  let exts := (sceneFilter utts scene).filter (pfx.isPrefixOf)
-  if exts.isEmpty then 0
-  else (exts.map (uttContinuousQ r)).sum / exts.length
+/-- The listener's weight on a referent: the prefix meaning within the scene. -/
+noncomputable def listenerWeight (vc vs : ℝ) (L : List (List Word)) (scene : Finset Referent)
+    (pfx : List Word) (r : Referent) : ℝ≥0∞ :=
+  if r ∈ scene then ENNReal.ofReal (prefixMeaning vc vs L scene pfx r) else 0
 
-private theorem continuousMeaningQ_nonneg (utts : List (List Word))
-    (scene : Referent → Bool) (pfx : List Word) (r : Referent) :
-    0 ≤ continuousMeaningQ utts scene pfx r := by
-  unfold continuousMeaningQ
-  simp only
-  split
-  · exact le_refl _
-  · exact div_nonneg
-      (List.sum_nonneg fun x hx => by
-        obtain ⟨u, -, rfl⟩ := List.mem_map.1 hx
-        exact uttContinuousQ_nonneg r u)
-      (Nat.cast_nonneg _)
+/-- The literal listener at a context: given the next word, a distribution over the scene's
+referents proportional to the prefix meaning. -/
+noncomputable def listener (vc vs : ℝ) (L : List (List Word)) (scene : Finset Referent)
+    (ctx : List Word) : Kernel Word Referent :=
+  Kernel.ofWeights λ w r => listenerWeight vc vs L scene (ctx ++ [w]) r
 
-/-! ### Scenes -/
+/-- The incremental speaker at a context: the RSA speaker of rationality `α` against the cost
+factors, over the literal listener at that context. -/
+noncomputable def stepSpeaker (α : ℝ) (cost : Word → ℝ≥0∞) (vc vs : ℝ) (L : List (List Word))
+    (scene : Finset Referent) (ctx : List Word) : Kernel Referent Word :=
+  speaker α cost (listener vc vs L scene ctx)
 
-/-- Size-sufficient scene: {big_blue, big_red, small_blue}.
-    Target small_blue is uniquely identified by size alone. -/
-def ssScene : Referent → Bool
-  | .bigBlue | .bigRed | .smallBlue => true
-  | _ => false
+/-- The probability of an utterance is the product of its steps, the chain rule. -/
+noncomputable def trajectory (α : ℝ) (cost : Word → ℝ≥0∞) (vc vs : ℝ) (L : List (List Word))
+    (scene : Finset Referent) (r : Referent) (u : List Word) : ℝ :=
+  ((List.range u.length).map λ k =>
+    (stepSpeaker α cost vc vs L scene (u.take k) r).real {u.getD k .stop}).prod
 
-/-- Color-sufficient scene: {small_red, big_red, small_blue}.
-    Target small_blue is uniquely identified by color alone. -/
-def csScene : Referent → Bool
-  | .smallRed | .bigRed | .smallBlue => true
-  | _ => false
+/-! ### The listener at the redundancy nodes -/
 
-/-! ### Exact-ℚ face and the cost atom -/
-
-/-! With α = 7 the informativity factor `L0^α` is exact ℚ; the only
-transcendental ingredient is the per-adjective cost factor
-`cAtom = RSA.expAtom (7/10)`, bounded two-sidedly via the substrate
-certificates and kernel arithmetic on `e`-bounds. Every prediction
-trajectory reduces to `K · cAtom / (A + B · cAtom)` with kernel-certified
-rational constants, so the comparisons are linear (the sum comparison
-quadratic) in the atom. -/
-
-section QFace
-
-/-- L0 policy value: scene-gated continuous meaning normalized over
-referents (all rational). -/
-def l0Q (utts : List (List Word)) (scene : Referent → Bool)
-    (ctx : List Word) (u : Word) (r : Referent) : ℚ :=
-  (if scene r then continuousMeaningQ utts scene (ctx ++ [u]) r else 0) /
-    ∑ r', (if scene r' then continuousMeaningQ utts scene (ctx ++ [u]) r' else 0)
-
-/-- Informativity factor of the S1 score (α = 7). -/
-def s1BaseQ (utts : List (List Word)) (scene : Referent → Bool)
-    (tgt : Referent) (ctx : List Word) (u : Word) : ℚ :=
-  l0Q utts scene ctx u tgt ^ 7
-
-/-- Cost exponent: one `cAtom` factor per adjective (C = 1/10, α = 7). -/
-def costExp : Word → ℕ
-  | .pin | .stop => 0
-  | _ => 1
-
-private theorem l0Q_nonneg (utts : List (List Word)) (scene : Referent → Bool)
-    (ctx : List Word) (u : Word) (r : Referent) : 0 ≤ l0Q utts scene ctx u r := by
-  apply div_nonneg
-  · split
-    · exact continuousMeaningQ_nonneg _ _ _ _
-    · exact le_refl 0
-  · exact Finset.sum_nonneg fun r' _ => by
-      split
-      · exact continuousMeaningQ_nonneg _ _ _ _
-      · exact le_refl 0
-
-private theorem s1BaseQ_nonneg (utts : List (List Word)) (scene : Referent → Bool)
-    (tgt : Referent) (ctx : List Word) (u : Word) :
-    0 ≤ s1BaseQ utts scene tgt ctx u :=
-  pow_nonneg (l0Q_nonneg utts scene ctx u tgt) 7
-
-end QFace
-
-section CostAtom
-
-/-- The per-adjective cost factor `exp(−α·C) = exp(−7/10)`. -/
-noncomputable def cAtom : ℝ := RSA.expAtom (7/10)
-
-theorem cAtom_pos : 0 < cAtom := RSA.expAtom_pos _
-
-private theorem e7_bounds :
-    (1096.633 : ℝ) < Real.exp 7 ∧ Real.exp 7 < 1096.634 := by
-  have h : Real.exp 7 = Real.exp 1 ^ (7:ℕ) := by
-    rw [← Real.exp_nat_mul]; norm_num
-  constructor
-  · calc (1096.633 : ℝ) < 2.7182818283 ^ (7:ℕ) := by norm_num
-      _ < Real.exp 1 ^ (7:ℕ) :=
-        pow_lt_pow_left₀ Real.exp_one_gt_d9 (by norm_num) (by norm_num)
-      _ = Real.exp 7 := h.symm
-  · calc Real.exp 7 = Real.exp 1 ^ (7:ℕ) := h
-      _ < 2.7182818286 ^ (7:ℕ) :=
-        pow_lt_pow_left₀ Real.exp_one_lt_d9 (Real.exp_pos 1).le (by norm_num)
-      _ < 1096.634 := by norm_num
-
-/-- Kernel-certified atom bounds via `RSA.lt_expAtom`/`expAtom_lt` at
-n = 10: `(4965/10000)¹⁰·e⁷ < 1 < (4967/10000)¹⁰·e⁷`. -/
-theorem cAtom_bounds : (4965/10000 : ℝ) < cAtom ∧ cAtom < 4967/10000 := by
-  have h7 : ((10:ℕ) : ℝ) * (7/10) = 7 := by norm_num
-  exact ⟨RSA.lt_expAtom (n := 10) (by norm_num) (by norm_num)
-      (by rw [h7]; nlinarith [e7_bounds.2]),
-    RSA.expAtom_lt (n := 10) (by norm_num) (by norm_num)
-      (by rw [h7]; nlinarith [e7_bounds.1])⟩
-
-end CostAtom
-
-section SpeakerFace
-
-open scoped ENNReal
-
-/-- Incremental CI-RSA speaker at context `ctx` (S1 ∝ L0⁷·exp(−7·C)),
-dite-total. -/
-noncomputable def s1PMF (utts : List (List Word)) (scene : Referent → Bool)
-    (tgt : Referent) (ctx : List Word) : PMF Word :=
-  PMF.normalizeOrUniform fun u =>
-    ENNReal.ofReal ((s1BaseQ utts scene tgt ctx u : ℝ) * cAtom ^ costExp u)
-
-private theorem sumWordsE (f : Word → ℝ≥0∞) :
-    ∑ u, f u = f .blue + f .red + f .big + f .small + f .pin + f .stop := by
-  rw [show (Finset.univ : Finset Word)
-      = {.blue, .red, .big, .small, .pin, .stop} from rfl,
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_insert (by decide), Finset.sum_singleton]
+private theorem sum_referent (f : Referent → ℝ) :
+    ∑ r, f r = f (false, false) + f (false, true) + f (true, false) + f (true, true) := by
+  simp only [Fintype.sum_prod_type, Fintype.sum_bool]
   ring
 
-/-- Generic step-value lemma: with kernel-certified numerator and
-κ-partitioned normalizer constants, the speaker's step probability is
-`N·cAtomᵏ / (A + B·cAtom)`. -/
-private theorem s1PMF_step (utts : List (List Word)) (scene : Referent → Bool)
-    (tgt : Referent) (ctx : List Word) (step : Word) {N A B : ℚ}
-    (hN : s1BaseQ utts scene tgt ctx step = N)
-    (hA : s1BaseQ utts scene tgt ctx .pin + s1BaseQ utts scene tgt ctx .stop = A)
-    (hB : s1BaseQ utts scene tgt ctx .blue + s1BaseQ utts scene tgt ctx .red +
-      s1BaseQ utts scene tgt ctx .big + s1BaseQ utts scene tgt ctx .small = B)
-    (hApos : 0 ≤ A) (hBpos : 0 ≤ B) (hABpos : 0 < A + B) :
-    s1PMF utts scene tgt ctx step
-      = ENNReal.ofReal ((N : ℝ) * cAtom ^ costExp step /
-          ((A : ℝ) + (B : ℝ) * cAtom)) := by
-  have hc := cAtom_pos
-  have hc1 : cAtom < 1 := by have := cAtom_bounds.2; linarith
-  have hden : (0:ℝ) < (A : ℝ) + (B : ℝ) * cAtom := by
-    rcases eq_or_lt_of_le hApos with hA0 | hA0
-    · have hB0 : (0:ℚ) < B := by rw [← hA0] at hABpos; simpa using hABpos
-      have : (0:ℝ) < (B : ℝ) * cAtom := mul_pos (by exact_mod_cast hB0) hc
-      rw [← hA0]; push_cast; linarith
-    · have : (0:ℝ) ≤ (B : ℝ) * cAtom :=
-        mul_nonneg (by exact_mod_cast hBpos) hc.le
-      have : (0:ℝ) < (A : ℝ) := by exact_mod_cast hA0
-      linarith [mul_nonneg (show (0:ℝ) ≤ (B:ℝ) from by exact_mod_cast hBpos) hc.le]
-  have hnn : ∀ u, 0 ≤ (s1BaseQ utts scene tgt ctx u : ℝ) * cAtom ^ costExp u :=
-    fun u => mul_nonneg (by exact_mod_cast s1BaseQ_nonneg utts scene tgt ctx u)
-      (pow_nonneg hc.le _)
-  have hZ : (∑' u, ENNReal.ofReal ((s1BaseQ utts scene tgt ctx u : ℝ) *
-      cAtom ^ costExp u)) = ENNReal.ofReal ((A : ℝ) + (B : ℝ) * cAtom) := by
-    rw [tsum_fintype, sumWordsE]
-    rw [← ENNReal.ofReal_add (hnn _) (hnn _), ← ENNReal.ofReal_add
-        (add_nonneg (hnn _) (hnn _)) (hnn _),
-      ← ENNReal.ofReal_add (add_nonneg (add_nonneg (hnn _) (hnn _)) (hnn _)) (hnn _),
-      ← ENNReal.ofReal_add
-        (add_nonneg (add_nonneg (add_nonneg (hnn _) (hnn _)) (hnn _)) (hnn _)) (hnn _),
-      ← ENNReal.ofReal_add
-        (add_nonneg (add_nonneg (add_nonneg (add_nonneg (hnn _) (hnn _)) (hnn _))
-          (hnn _)) (hnn _)) (hnn _)]
-    congr 1
-    have hb : ((s1BaseQ utts scene tgt ctx .blue : ℝ) + s1BaseQ utts scene tgt ctx .red +
-        s1BaseQ utts scene tgt ctx .big + s1BaseQ utts scene tgt ctx .small) = (B : ℝ) := by
-      exact_mod_cast congrArg (fun q : ℚ => (q : ℝ)) hB
-    have ha : ((s1BaseQ utts scene tgt ctx .pin : ℝ) + s1BaseQ utts scene tgt ctx .stop)
-        = (A : ℝ) := by
-      exact_mod_cast congrArg (fun q : ℚ => (q : ℝ)) hA
-    simp only [costExp, pow_one, pow_zero, mul_one]
-    linear_combination cAtom * hb + ha
-  rw [s1PMF, PMF.normalizeOrUniform_apply
-      (by rw [hZ, ENNReal.ofReal_ne_zero_iff]; exact hden)
-      (by rw [hZ]; exact ENNReal.ofReal_ne_top), hZ, hN,
-    ← ENNReal.ofReal_inv_of_pos hden,
-    ← ENNReal.ofReal_mul (mul_nonneg (by exact_mod_cast
-      (hN ▸ s1BaseQ_nonneg utts scene tgt ctx step)) (pow_nonneg hc.le _))]
-  rw [div_eq_mul_inv]
+section Nodes
 
+variable (hc : vc < 1) (hc0 : 0 < vc) (hs : vs < 1) (hs0 : 0 < vs)
+include hc hc0 hs hs0
 
-end SpeakerFace
+/-- The listener's real mass on a referent, as a ratio of prefix meanings over the scene. -/
+private theorem listener_real (L : List (List Word)) (scene : Finset Referent) (ctx : List Word)
+    (w : Word) (r : Referent) :
+    (listener vc vs L scene ctx w).real {r} =
+      (if r ∈ scene then prefixMeaning vc vs L scene (ctx ++ [w]) r else 0) /
+        ∑ r', if r' ∈ scene then prefixMeaning vc vs L scene (ctx ++ [w]) r' else 0 := by
+  have hnn := prefixMeaning_nonneg hc.le hc0.le hs.le hs0.le L scene (ctx ++ [w])
+  simp only [listener]
+  rw [Kernel.ofWeights_real_singleton _ _ (λ _ => by simp only [listenerWeight]; split_ifs <;> simp)]
+  congr 1
+  · simp only [listenerWeight]; split_ifs <;> simp [ENNReal.toReal_ofReal (hnn _)]
+  · exact Finset.sum_congr rfl λ r' _ => by
+      simp only [listenerWeight]; split_ifs <;> simp [ENNReal.toReal_ofReal (hnn _)]
 
-/-! ### Scene-Filter Cardinality -/
+/-- After *small* in the size-sufficient scene, the listener's mass on the target under the
+redundant *blue*. -/
+theorem listener_ss_small_blue :
+    (listener vc vs english ss [.small] .blue).real {smallBlue} =
+      vs * vc / (vs * vc + (1 - vs)) := by
+  rw [listener_real hc hc0 hs hs0, sum_referent]
+  have h : continuations english ss [.small, .blue] = [[.small, .blue, .pin, .stop]] := by
+    decide
+  simp only [List.cons_append, List.nil_append, prefixMeaning, h]
+  simp [lexicon, ss, smallBlue]
+  congr 1
+  ring
 
-theorem ss_eng_has_7_utts : (sceneFilter allUttsEng ssScene).length = 7 := by decide
-theorem cs_eng_has_7_utts : (sceneFilter allUttsEng csScene).length = 7 := by decide
-theorem ss_spn_has_7_utts : (sceneFilter allUttsSpn ssScene).length = 7 := by decide
-theorem cs_spn_has_7_utts : (sceneFilter allUttsSpn csScene).length = 7 := by decide
+/-- After *small* in the size-sufficient scene, the listener's mass on the target under the
+noun. -/
+theorem listener_ss_small_pin :
+    (listener vc vs english ss [.small] .pin).real {smallBlue} = vs / (2 - vs) := by
+  rw [listener_real hc hc0 hs hs0, sum_referent]
+  have h : continuations english ss [.small, .pin] = [[.small, .pin, .stop]] := by decide
+  simp only [List.cons_append, List.nil_append, prefixMeaning, h]
+  simp [lexicon, ss, smallBlue]
+  congr 1
+  ring
 
-/-! ### Predictions -/
+/-- After *pin blue* in the color-sufficient scene, the Spanish listener's mass on the target
+under the redundant *small*. -/
+theorem listener_cs_pin_blue_small :
+    (listener vc vs spanish cs [.pin, .blue] .small).real {smallBlue} =
+      vc * vs / (vc * vs + (1 - vc)) := by
+  rw [listener_real hc hc0 hs hs0, sum_referent]
+  have h : continuations spanish cs [.pin, .blue, .small] = [[.pin, .blue, .small, .stop]] := by
+    decide
+  simp only [List.cons_append, List.nil_append, prefixMeaning, h]
+  simp [lexicon, cs, smallBlue]
+  congr 1
+  ring
 
-section Predictions
+/-- After *pin blue* in the color-sufficient scene, the Spanish listener's mass on the target
+under stopping. -/
+theorem listener_cs_pin_blue_stop :
+    (listener vc vs spanish cs [.pin, .blue] .stop).real {smallBlue} = vc / (2 - vc) := by
+  rw [listener_real hc hc0 hs hs0, sum_referent]
+  have h : continuations spanish cs [.pin, .blue, .stop] = [[.pin, .blue, .stop]] := by decide
+  simp only [List.cons_append, List.nil_append, prefixMeaning, h]
+  simp [lexicon, cs, smallBlue]
+  congr 1
+  ring
 
-open scoped ENNReal
+end Nodes
 
-private theorem ofReal_mul4 {a b c d : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b)
-    (hc : 0 ≤ c) (_hd : 0 ≤ d) :
-    ENNReal.ofReal a * ENNReal.ofReal b * ENNReal.ofReal c * ENNReal.ofReal d
-      = ENNReal.ofReal (a * b * c * d) := by
-  rw [← ENNReal.ofReal_mul ha, ← ENNReal.ofReal_mul (mul_nonneg ha hb),
-    ← ENNReal.ofReal_mul (mul_nonneg (mul_nonneg ha hb) hc)]
+/-! ### The incremental speaker at the redundancy nodes -/
 
-private theorem stepNN {N A B : ℝ} (hN : 0 ≤ N) (hA : 0 ≤ A) (hB : 0 ≤ B)
-    (k : ℕ) : 0 ≤ N * cAtom ^ k / (A + B * cAtom) :=
-  div_nonneg (mul_nonneg hN (pow_nonneg cAtom_pos.le k))
-    (add_nonneg hA (mul_nonneg hB cAtom_pos.le))
+section Speaker
 
-private theorem cpow_bounds :
-    (4965/10000 : ℝ)^2 < cAtom^2 ∧ cAtom^2 < (4967/10000 : ℝ)^2 ∧
-    (4965/10000 : ℝ)^3 < cAtom^3 ∧ cAtom^3 < (4967/10000 : ℝ)^3 := by
-  obtain ⟨h1, h2⟩ := cAtom_bounds
-  have hc := cAtom_pos
-  refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    first
-      | exact pow_lt_pow_left₀ h1 (by norm_num) (by norm_num)
-      | exact pow_lt_pow_left₀ h2 hc.le (by norm_num)
+variable {α : ℝ} {cost : Word → ℝ≥0∞} {L : List (List Word)} {scene : Finset Referent}
+  {ctx : List Word}
 
-/-- **Prediction 1** (English color/size asymmetry): redundant color in the
-size-sufficient scene beats redundant size in the color-sufficient scene,
-because v^color > v^size makes color words more informative. -/
-theorem prediction1_english_asymmetry :
-    s1PMF allUttsEng csScene .smallBlue [] .small *
-      s1PMF allUttsEng csScene .smallBlue [.small] .blue *
-      s1PMF allUttsEng csScene .smallBlue [.small, .blue] .pin *
-      s1PMF allUttsEng csScene .smallBlue [.small, .blue, .pin] .stop <
-    s1PMF allUttsEng ssScene .smallBlue [] .small *
-      s1PMF allUttsEng ssScene .smallBlue [.small] .blue *
-      s1PMF allUttsEng ssScene .smallBlue [.small, .blue] .pin *
-      s1PMF allUttsEng ssScene .smallBlue [.small, .blue, .pin] .stop := by
-  have hc := cAtom_pos
-  obtain ⟨hb1, hb2⟩ := cAtom_bounds
-  obtain ⟨hp2l, hp2u, hp3l, hp3u⟩ := cpow_bounds
-  rw [s1PMF_step allUttsEng csScene .smallBlue [] .small
-      (N := 16384/4782969) (A := 0)
-        (B := 86342264515924592972880295/172780993362485219401138176) (by decide +kernel)
-          (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng csScene .smallBlue [.small] .blue
-      (N := 14645194571776/22876792454961) (A := 16384/4782969)
-        (B := 285393411026834849792/445803966501334805331) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng csScene .smallBlue [.small, .blue] .pin
-      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng csScene .smallBlue [.small, .blue, .pin] .stop
-      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng ssScene .smallBlue [] .small
-      (N := 62748517/612220032) (A := 0)
-        (B := 1149559329210952155893/10545714926909498254464) (by decide +kernel)
-          (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng ssScene .smallBlue [.small] .blue
-      (N := 893871739/4586471424) (A := 128/2187)
-        (B := 893871739/4586471424) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng ssScene .smallBlue [.small, .blue] .pin
-      (N := 893871739/4586471424) (A := 893871739/4586471424)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng ssScene .smallBlue [.small, .blue, .pin] .stop
-      (N := 893871739/4586471424) (A := 893871739/4586471424)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
-      (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
-        (by norm_num) (by norm_num) (by norm_num) _),
-    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
-      (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
-        (by norm_num) (by norm_num) (by norm_num) _)]
-  refine (ENNReal.ofReal_lt_ofReal_iff ?_).mpr ?_
-  · positivity
-  · rw [div_mul_div_comm, div_mul_div_comm, div_mul_div_comm,
-      div_mul_div_comm, div_mul_div_comm, div_mul_div_comm,
-      div_lt_div_iff₀ (by positivity) (by positivity)]
-    simp only [costExp, pow_one, pow_zero, mul_one]
-    ring_nf
-    nlinarith [hb1, hb2, hc, hp2l, hp2u, hp3l, hp3u]
+/-- A next word with no completion receives no listener mass. -/
+theorem listener_apply_eq_zero {w : Word} (h : continuations L scene (ctx ++ [w]) = [])
+    (r : Referent) : listener vc vs L scene ctx w {r} = 0 :=
+  Kernel.ofWeights_apply_singleton_eq_zero (by simp [listenerWeight, prefixMeaning_eq_zero h])
 
-/-- **Prediction 2** (cross-linguistic): English prenominal order produces
-more redundant color than Spanish postnominal order. -/
-theorem prediction2_cross_linguistic :
-    s1PMF allUttsSpn ssScene .smallBlue [] .pin *
-      s1PMF allUttsSpn ssScene .smallBlue [.pin] .blue *
-      s1PMF allUttsSpn ssScene .smallBlue [.pin, .blue] .small *
-      s1PMF allUttsSpn ssScene .smallBlue [.pin, .blue, .small] .stop <
-    s1PMF allUttsEng ssScene .smallBlue [] .small *
-      s1PMF allUttsEng ssScene .smallBlue [.small] .blue *
-      s1PMF allUttsEng ssScene .smallBlue [.small, .blue] .pin *
-      s1PMF allUttsEng ssScene .smallBlue [.small, .blue, .pin] .stop := by
-  have hc := cAtom_pos
-  obtain ⟨hb1, hb2⟩ := cAtom_bounds
-  obtain ⟨hp2l, hp2u, hp3l, hp3u⟩ := cpow_bounds
-  rw [s1PMF_step allUttsSpn ssScene .smallBlue [] .pin
-      (N := 12151280273024/24160660561265139) (A := 12151280273024/24160660561265139)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn ssScene .smallBlue [.pin] .blue
-      (N := 893871739/137231006679) (A := 0)
-        (B := 537060784578032731240015/8257201619310755345796003) (by decide +kernel)
-          (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn ssScene .smallBlue [.pin, .blue] .small
-      (N := 893871739/4586471424) (A := 893871739/137231006679)
-        (B := 38097296322228514331/195468270849383989248) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn ssScene .smallBlue [.pin, .blue, .small] .stop
-      (N := 893871739/4586471424) (A := 893871739/4586471424)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng ssScene .smallBlue [] .small
-      (N := 62748517/612220032) (A := 0)
-        (B := 1149559329210952155893/10545714926909498254464) (by decide +kernel)
-          (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng ssScene .smallBlue [.small] .blue
-      (N := 893871739/4586471424) (A := 128/2187)
-        (B := 893871739/4586471424) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng ssScene .smallBlue [.small, .blue] .pin
-      (N := 893871739/4586471424) (A := 893871739/4586471424)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng ssScene .smallBlue [.small, .blue, .pin] .stop
-      (N := 893871739/4586471424) (A := 893871739/4586471424)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
-      (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
-        (by norm_num) (by norm_num) (by norm_num) _),
-    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
-      (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
-        (by norm_num) (by norm_num) (by norm_num) _)]
-  refine (ENNReal.ofReal_lt_ofReal_iff ?_).mpr ?_
-  · positivity
-  · rw [div_mul_div_comm, div_mul_div_comm, div_mul_div_comm,
-      div_mul_div_comm, div_mul_div_comm, div_mul_div_comm,
-      div_lt_div_iff₀ (by positivity) (by positivity)]
-    simp only [costExp, pow_one, pow_zero, mul_one]
-    ring_nf
-    nlinarith [hb1, hb2, hc, hp2l, hp2u, hp3l, hp3u]
+theorem listener_apply_le_one (w : Word) (r : Referent) : listener vc vs L scene ctx w {r} ≤ 1 :=
+  (measure_mono (Set.subset_univ _)).trans (Kernel.ofWeights_apply_univ_le_one _ _)
 
-/-- **Prediction 3** (novel, Spanish flip): postnominally, redundant size in
-CS exceeds redundant color in SS — the early noun anchors the extension sets
-differently. -/
-theorem prediction3_spanish_flip :
-    s1PMF allUttsSpn ssScene .smallBlue [] .pin *
-      s1PMF allUttsSpn ssScene .smallBlue [.pin] .blue *
-      s1PMF allUttsSpn ssScene .smallBlue [.pin, .blue] .small *
-      s1PMF allUttsSpn ssScene .smallBlue [.pin, .blue, .small] .stop <
-    s1PMF allUttsSpn csScene .smallBlue [] .pin *
-      s1PMF allUttsSpn csScene .smallBlue [.pin] .blue *
-      s1PMF allUttsSpn csScene .smallBlue [.pin, .blue] .small *
-      s1PMF allUttsSpn csScene .smallBlue [.pin, .blue, .small] .stop := by
-  have hc := cAtom_pos
-  obtain ⟨hb1, hb2⟩ := cAtom_bounds
-  obtain ⟨hp2l, hp2u, hp3l, hp3u⟩ := cpow_bounds
-  rw [s1PMF_step allUttsSpn ssScene .smallBlue [] .pin
-      (N := 12151280273024/24160660561265139) (A := 12151280273024/24160660561265139)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn ssScene .smallBlue [.pin] .blue
-      (N := 893871739/137231006679) (A := 0)
-        (B := 537060784578032731240015/8257201619310755345796003) (by decide +kernel)
-          (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn ssScene .smallBlue [.pin, .blue] .small
-      (N := 893871739/4586471424) (A := 893871739/137231006679)
-        (B := 38097296322228514331/195468270849383989248) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn ssScene .smallBlue [.pin, .blue, .small] .stop
-      (N := 893871739/4586471424) (A := 893871739/4586471424)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn csScene .smallBlue [] .pin
-      (N := 138338874920368361/395848262635768037376)
-        (A := 138338874920368361/395848262635768037376)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn csScene .smallBlue [.pin] .blue
-      (N := 1954897493193/3521614606208) (A := 0)
-        (B := 295168158416140658615676439/528460903635888342130944192) (by decide +kernel)
-          (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn csScene .smallBlue [.pin, .blue] .small
-      (N := 14645194571776/22876792454961) (A := 893871739/1801088541)
-        (B := 14645194571776/22876792454961) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn csScene .smallBlue [.pin, .blue, .small] .stop
-      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
-      (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
-        (by norm_num) (by norm_num) (by norm_num) _),
-    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
-      (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
-        (by norm_num) (by norm_num) (by norm_num) _)]
-  refine (ENNReal.ofReal_lt_ofReal_iff ?_).mpr ?_
-  · positivity
-  · rw [div_mul_div_comm, div_mul_div_comm, div_mul_div_comm,
-      div_mul_div_comm, div_mul_div_comm, div_mul_div_comm,
-      div_lt_div_iff₀ (by positivity) (by positivity)]
-    simp only [costExp, pow_one, pow_zero, mul_one]
-    ring_nf
-    nlinarith [hb1, hb2, hc, hp2l, hp2u, hp3l, hp3u]
+/-- At a node with two applicable words the speaker's share of one is its weight against the
+other's, the weight being the listener's mass raised to the rationality times the cost factor. -/
+theorem stepSpeaker_real_pair (hα : 0 < α) (hcost : ∀ w, cost w ≠ ∞) {u u' : Word}
+    (huu' : u ≠ u') (hsupp : ∀ w, w ≠ u → w ≠ u' → continuations L scene (ctx ++ [w]) = [])
+    (r : Referent) :
+    (stepSpeaker α cost vc vs L scene ctx r).real {u} =
+      (listener vc vs L scene ctx u).real {r} ^ α * (cost u).toReal /
+        ((listener vc vs L scene ctx u).real {r} ^ α * (cost u).toReal +
+          (listener vc vs L scene ctx u').real {r} ^ α * (cost u').toReal) := by
+  rw [stepSpeaker, speaker, Kernel.ofWeights_real_singleton_of_pair r huu'
+      (λ w => ENNReal.mul_ne_top (weight_rpow_ne_top hα.le (listener_apply_le_one _ _)) (hcost w))
+      (λ w hw => by
+        by_contra hne
+        push Not at hne
+        exact hw (by rw [listener_apply_eq_zero (hsupp w hne.1 hne.2), ENNReal.zero_rpow_of_pos hα,
+          zero_mul]))]
+  simp only [ENNReal.toReal_mul, ENNReal.toReal_rpow, measureReal_def]
 
-end Predictions
+/-- The paper's Figure 3 nodes: with a common cost for the two adjectives, none for the noun
+and the stop, the English redundant color step after *small* in the size-sufficient scene is
+likelier than the Spanish redundant size step after *pin blue* in the color-sufficient scene
+exactly when color is the more reliable adjective, at every rationality. -/
+theorem english_color_step_gt_spanish_size_step (hα : 0 < α) (hcost : ∀ w, cost w ≠ ∞)
+    (hadj : cost .small = cost .blue) (hblue : cost .blue ≠ 0) (hpin : cost .pin = 1)
+    (hstop : cost .stop = 1) (hc : vc < 1) (hc0 : 0 < vc) (hs : vs < 1) (hs0 : 0 < vs)
+    (h : vs < vc) :
+    (stepSpeaker α cost vc vs spanish cs [.pin, .blue] smallBlue).real {.small} <
+      (stepSpeaker α cost vc vs english ss [.small] smallBlue).real {.blue} := by
+  rw [stepSpeaker_real_pair hα hcost (u := .small) (u' := .stop) (by decide)
+      (λ w h1 h2 => by cases w <;> first | decide | exact absurd rfl h1 | exact absurd rfl h2),
+    stepSpeaker_real_pair hα hcost (u := .blue) (u' := .pin) (by decide)
+      (λ w h1 h2 => by cases w <;> first | decide | exact absurd rfl h1 | exact absurd rfl h2),
+    listener_cs_pin_blue_small hc hc0 hs hs0, listener_cs_pin_blue_stop hc hc0 hs hs0,
+    listener_ss_small_blue hc hc0 hs hs0, listener_ss_small_pin hc hc0 hs hs0, hadj, hpin, hstop,
+    ENNReal.toReal_one, mul_one]
+  have hcpos : 0 < (cost .blue).toReal := ENNReal.toReal_pos hblue (hcost _)
+  have hD : 0 < vs * vc + (1 - vs) := by nlinarith
+  have hD' : 0 < vc * vs + (1 - vc) := by nlinarith
+  have hA : 0 < vs * vc / (vs * vc + (1 - vs)) := div_pos (by positivity) hD
+  have hA' : 0 < vc * vs / (vc * vs + (1 - vc)) := div_pos (by positivity) hD'
+  have hB : 0 < vs / (2 - vs) := div_pos hs0 (by linarith)
+  have hB' : 0 < vc / (2 - vc) := div_pos hc0 (by linarith)
+  have hkey : vc * vs / (vc * vs + (1 - vc)) * (vs / (2 - vs)) <
+      vs * vc / (vs * vc + (1 - vs)) * (vc / (2 - vc)) := by
+    rw [div_mul_div_comm, div_mul_div_comm,
+      div_lt_div_iff₀ (mul_pos hD' (by linarith)) (mul_pos hD (by linarith))]
+    have e : vs * vc * vc * ((vc * vs + (1 - vc)) * (2 - vs)) -
+        vc * vs * vs * ((vs * vc + (1 - vs)) * (2 - vc)) =
+        vc * vs * ((vc - vs) * (2 * (1 - vc) * (1 - vs) + vc * vs)) := by ring
+    nlinarith [mul_pos (mul_pos hc0 hs0) (mul_pos (sub_pos.2 h)
+      (by nlinarith : 0 < 2 * (1 - vc) * (1 - vs) + vc * vs))]
+  have hpow := Real.rpow_lt_rpow (by positivity) hkey hα
+  rw [Real.mul_rpow hA'.le hB.le, Real.mul_rpow hA.le hB'.le] at hpow
+  rw [div_lt_div_iff₀ (by positivity) (by positivity)]
+  nlinarith [mul_lt_mul_of_pos_left hpow hcpos, Real.rpow_pos_of_pos hA α,
+    Real.rpow_pos_of_pos hA' α, Real.rpow_pos_of_pos hB α, Real.rpow_pos_of_pos hB' α]
 
-/-! ### Semantic Properties -/
+/-- With equally reliable adjectives, the Boolean case of the incremental model, the two steps
+are equally likely: the symmetry the paper's Figure 3 reports for I-RSA. -/
+theorem english_color_step_eq_spanish_size_step (hα : 0 < α) (hcost : ∀ w, cost w ≠ ∞)
+    (hadj : cost .small = cost .blue) (hpin : cost .pin = 1) (hstop : cost .stop = 1)
+    (hc : vc < 1) (hc0 : 0 < vc) (hs : vs < 1) (hs0 : 0 < vs) (h : vs = vc) :
+    (stepSpeaker α cost vc vs spanish cs [.pin, .blue] smallBlue).real {.small} =
+      (stepSpeaker α cost vc vs english ss [.small] smallBlue).real {.blue} := by
+  rw [stepSpeaker_real_pair hα hcost (u := .small) (u' := .stop) (by decide)
+      (λ w h1 h2 => by cases w <;> first | decide | exact absurd rfl h1 | exact absurd rfl h2),
+    stepSpeaker_real_pair hα hcost (u := .blue) (u' := .pin) (by decide)
+      (λ w h1 h2 => by cases w <;> first | decide | exact absurd rfl h1 | exact absurd rfl h2),
+    listener_cs_pin_blue_small hc hc0 hs hs0, listener_cs_pin_blue_stop hc hc0 hs hs0,
+    listener_ss_small_blue hc hc0 hs hs0, listener_ss_small_pin hc hc0 hs hs0, hadj, hpin, hstop,
+    h, mul_comm vc vc]
 
-/-- Color adjectives have higher reliability than size adjectives.
-    This asymmetry drives the redundant modification predictions. -/
-theorem color_more_reliable_than_size :
-    semanticValueQ .blue > semanticValueQ .big ∧
-    semanticValueQ .red > semanticValueQ .small := by
-  constructor <;> norm_num [semanticValueQ]
-
-/-- All semantic values are positive (required for valid probability). -/
-theorem semantic_values_positive :
-    ∀ w : Word, semanticValueQ w > 0 := by
-  intro w; cases w <;> norm_num [semanticValueQ]
-
-/-! ### Prediction 4: Overall Cross-Linguistic Redundancy -/
-
-/-- Extended atom-power bounds for the sum comparison. -/
-private theorem cpow_bounds' :
-    ∀ k ∈ ({2, 3, 4, 5, 6} : Finset ℕ),
-      (4965/10000 : ℝ)^k < cAtom^k ∧ cAtom^k < (4967/10000 : ℝ)^k := by
-  intro k hk
-  obtain ⟨h1, h2⟩ := cAtom_bounds
-  exact ⟨pow_lt_pow_left₀ h1 (by norm_num) (by fin_cases hk <;> norm_num),
-    pow_lt_pow_left₀ h2 cAtom_pos.le (by fin_cases hk <;> norm_num)⟩
-
-set_option maxHeartbeats 1600000 in
-/-- **Prediction 4** (overall cross-linguistic redundancy): summed across
-scenes, English redundant modification exceeds Spanish. -/
-theorem prediction4_overall_redundancy :
-    s1PMF allUttsSpn ssScene .smallBlue [] .pin *
-        s1PMF allUttsSpn ssScene .smallBlue [.pin] .blue *
-        s1PMF allUttsSpn ssScene .smallBlue [.pin, .blue] .small *
-        s1PMF allUttsSpn ssScene .smallBlue [.pin, .blue, .small] .stop +
-      (s1PMF allUttsSpn csScene .smallBlue [] .pin *
-        s1PMF allUttsSpn csScene .smallBlue [.pin] .blue *
-        s1PMF allUttsSpn csScene .smallBlue [.pin, .blue] .small *
-        s1PMF allUttsSpn csScene .smallBlue [.pin, .blue, .small] .stop) <
-    s1PMF allUttsEng ssScene .smallBlue [] .small *
-        s1PMF allUttsEng ssScene .smallBlue [.small] .blue *
-        s1PMF allUttsEng ssScene .smallBlue [.small, .blue] .pin *
-        s1PMF allUttsEng ssScene .smallBlue [.small, .blue, .pin] .stop +
-      (s1PMF allUttsEng csScene .smallBlue [] .small *
-        s1PMF allUttsEng csScene .smallBlue [.small] .blue *
-        s1PMF allUttsEng csScene .smallBlue [.small, .blue] .pin *
-        s1PMF allUttsEng csScene .smallBlue [.small, .blue, .pin] .stop) := by
-  have hc := cAtom_pos
-  obtain ⟨hb1, hb2⟩ := cAtom_bounds
-  have h2 := cpow_bounds' 2 (by norm_num)
-  have h3 := cpow_bounds' 3 (by norm_num)
-  have h4 := cpow_bounds' 4 (by norm_num)
-  have h5 := cpow_bounds' 5 (by norm_num)
-  have h6 := cpow_bounds' 6 (by norm_num)
-  rw [s1PMF_step allUttsSpn ssScene .smallBlue [] .pin
-      (N := 12151280273024/24160660561265139) (A := 12151280273024/24160660561265139)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn ssScene .smallBlue [.pin] .blue
-      (N := 893871739/137231006679) (A := 0)
-        (B := 537060784578032731240015/8257201619310755345796003) (by decide +kernel)
-          (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn ssScene .smallBlue [.pin, .blue] .small
-      (N := 893871739/4586471424) (A := 893871739/137231006679)
-        (B := 38097296322228514331/195468270849383989248) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn ssScene .smallBlue [.pin, .blue, .small] .stop
-      (N := 893871739/4586471424) (A := 893871739/4586471424)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn csScene .smallBlue [] .pin
-      (N := 138338874920368361/395848262635768037376)
-        (A := 138338874920368361/395848262635768037376)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn csScene .smallBlue [.pin] .blue
-      (N := 1954897493193/3521614606208) (A := 0)
-        (B := 295168158416140658615676439/528460903635888342130944192) (by decide +kernel)
-          (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn csScene .smallBlue [.pin, .blue] .small
-      (N := 14645194571776/22876792454961) (A := 893871739/1801088541)
-        (B := 14645194571776/22876792454961) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsSpn csScene .smallBlue [.pin, .blue, .small] .stop
-      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng ssScene .smallBlue [] .small
-      (N := 62748517/612220032) (A := 0)
-        (B := 1149559329210952155893/10545714926909498254464) (by decide +kernel)
-          (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng ssScene .smallBlue [.small] .blue
-      (N := 893871739/4586471424) (A := 128/2187)
-        (B := 893871739/4586471424) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng ssScene .smallBlue [.small, .blue] .pin
-      (N := 893871739/4586471424) (A := 893871739/4586471424)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng ssScene .smallBlue [.small, .blue, .pin] .stop
-      (N := 893871739/4586471424) (A := 893871739/4586471424)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng csScene .smallBlue [] .small
-      (N := 16384/4782969) (A := 0)
-        (B := 86342264515924592972880295/172780993362485219401138176) (by decide +kernel)
-          (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng csScene .smallBlue [.small] .blue
-      (N := 14645194571776/22876792454961) (A := 16384/4782969)
-        (B := 285393411026834849792/445803966501334805331) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng csScene .smallBlue [.small, .blue] .pin
-      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    s1PMF_step allUttsEng csScene .smallBlue [.small, .blue, .pin] .stop
-      (N := 14645194571776/22876792454961) (A := 14645194571776/22876792454961)
-        (B := 0) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel) (by norm_num) (by norm_num) (by norm_num),
-    ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
-      (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
-        (by norm_num) (by norm_num) (by norm_num) _), ofReal_mul4 (stepNN (by norm_num)
-        (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
-        (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num)
-        (by norm_num) _), ofReal_mul4 (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN
-        (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num)
-        (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _), ofReal_mul4 (stepNN
-        (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num) (by norm_num)
-        (by norm_num) _) (stepNN (by norm_num) (by norm_num) (by norm_num) _) (stepNN (by norm_num)
-        (by norm_num) (by norm_num) _),
-    ← ENNReal.ofReal_add (by positivity) (by positivity),
-    ← ENNReal.ofReal_add (by positivity) (by positivity)]
-  refine (ENNReal.ofReal_lt_ofReal_iff (by positivity)).mpr ?_
-  rw [div_mul_div_comm, div_mul_div_comm, div_mul_div_comm, div_mul_div_comm,
-    div_mul_div_comm, div_mul_div_comm, div_mul_div_comm, div_mul_div_comm,
-    div_mul_div_comm, div_mul_div_comm, div_mul_div_comm, div_mul_div_comm,
-    div_add_div _ _ (by positivity) (by positivity),
-    div_add_div _ _ (by positivity) (by positivity),
-    div_lt_div_iff₀ (by positivity) (by positivity)]
-  simp only [costExp, pow_one, pow_zero, mul_one]
-  ring_nf
-  nlinarith [hb1, hb2, hc, h2.1, h2.2, h3.1, h3.2, h4.1, h4.2, h5.1, h5.2, h6.1, h6.2]
+end Speaker
 
 end WaldonDegen2021
