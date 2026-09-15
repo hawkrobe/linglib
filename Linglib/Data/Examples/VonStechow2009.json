@@ -1,0 +1,586 @@
+[
+  {
+    "id": "vonstechow2009_21a",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(21a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John called.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "there is a time before the speech time at which John calls", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["tense", "past"],
+      ["lf", "[P N] λ1 John called t1"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_27",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(27)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John had called.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "a past time before a past time", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["tense", "pluperfect"],
+      ["auxiliary", "had"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_30",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(30)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John will call.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["tense", "future"],
+      ["auxiliary", "will"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_37",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(37)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary called on my birthday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["adverbial", "frame"],
+      ["composition", "predicate modification"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_42",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(42)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John has called yesterday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "present perfect puzzle"],
+      ["auxiliary", "extended now"]
+    ],
+    "comment": "An interval containing the speech time cannot be on yesterday.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_43",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(43)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary had left at six.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "reference-time modification: the leaving is before six", "judgment": "acceptable"},
+      {"name": "event-time modification: the leaving is at six", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["adverbial", "at"],
+      ["scope", "perfect auxiliary"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_44",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(44)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John worked on every Sunday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "quantifier under the Past: a past time on every Sunday", "judgment": "unacceptable"},
+      {"name": "quantifier over the Past: every Sunday contains a past time", "judgment": "unacceptable"},
+      {"name": "every past Sunday contains a working time", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["adverbial", "quantified"],
+      ["restriction", "domain variable"]
+    ],
+    "comment": "Ogihara's problem; the determiner carries a domain restriction to the past.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_46",
+    "source": {"bibkey": "partee-1973", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-stechow-2009", "paperLabel": "(46)"},
+    "language": "stan1293",
+    "primaryText": "I didn't turn off the stove.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "some past time at which I do not turn off the stove", "judgment": "unacceptable"},
+      {"name": "no past time at which I turn off the stove", "judgment": "unacceptable"},
+      {"name": "no time in the contextually given past interval at which I turn off the stove", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["tense", "referential vs indefinite"],
+      ["scope", "negation"]
+    ],
+    "comment": "The first reading is trivial and the second too strong; the restricted indefinite Past gives the third.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_55",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(55)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John will have left at six.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "the leaving is after the speech time", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["tense", "future perfect"],
+      ["restriction", "superordinate tense"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_58",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(58)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It didn't rain today.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "no past time in today at which it rains", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["scope", "negation over tense"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_60",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(60)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John polished every boot.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "for every boot a past polishing time", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["scope", "quantifier over tense"]
+    ],
+    "comment": "Cresswell's observation; the boots need different past intervals.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_62",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-stechow-2009", "paperLabel": "(62)"},
+    "language": "stan1293",
+    "primaryText": "Mary will buy a fish that is alive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous: alive at the buying time", "judgment": "acceptable"},
+      {"name": "deictic: alive at the speech time", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["clause", "relative"],
+      ["tense", "present under future"]
+    ],
+    "comment": "The present form under will cannot be the deictic Present on the simultaneous reading.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_63",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-stechow-2009", "paperLabel": "(63)"},
+    "language": "stan1293",
+    "primaryText": "Mary will buy a fish that has been alive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "shifted: alive before the buying time", "judgment": "acceptable"},
+      {"name": "deictic perfect: alive before the speech time", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["clause", "relative"],
+      ["tense", "perfect under future"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_64",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-stechow-2009", "paperLabel": "(64)"},
+    "language": "stan1293",
+    "primaryText": "Mary will buy a fish that was alive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "deictic: alive before the speech time", "judgment": "acceptable"},
+      {"name": "shifted: alive before the buying time", "judgment": "questionable"}
+    ],
+    "paperFeatures": [
+      ["clause", "relative"],
+      ["tense", "past under future"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_68",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(68)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary talked to a boy who is crying.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "deictic", "judgment": "acceptable"},
+      {"name": "simultaneous", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["clause", "relative"],
+      ["feature", "uN"]
+    ],
+    "comment": "Binding the pronoun to the matrix Past would transmit a past feature clashing with is.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_69",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(69)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary talked to a boy who was crying.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "simultaneous", "judgment": "acceptable"},
+      {"name": "backward shifted", "judgment": "acceptable"},
+      {"name": "independent, forward shifted", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["clause", "relative"],
+      ["tense", "past under past"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_70",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-stechow-2009", "paperLabel": "(70)"},
+    "language": "stan1293",
+    "primaryText": "Hillary married a man who became the president.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "forward shifted", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["clause", "relative"],
+      ["tense", "past under past"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_71",
+    "source": {"bibkey": "ogihara-1989", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-stechow-2009", "paperLabel": "(71)"},
+    "language": "stan1293",
+    "primaryText": "John thought that he would buy a fish that was still alive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "the fish is alive at the future buying time", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["clause", "relative under attitude"],
+      ["tense", "bound"]
+    ],
+    "comment": "The relative-clause event is not before the speech time, so a referential analysis is impossible.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_76",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(76)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John believed it was raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "a belief John would word as it is raining", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["clause", "attitude complement"],
+      ["tense", "subjective now"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_77",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(77)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "At 5 o'clock Mary thought it was 6 o'clock.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "anaphoric: Mary believes that 5 o'clock is 6 o'clock", "judgment": "unacceptable"},
+      {"name": "Mary locates her time at 6 o'clock", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["clause", "attitude complement"],
+      ["complement", "property of times"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_80",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(80)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary thought Bill left.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "shifted: the leaving before Mary's subjective now", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["clause", "attitude complement"],
+      ["tense", "past over PRO"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_84a",
+    "source": {"bibkey": "stump-1985", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-stechow-2009", "paperLabel": "(84a)"},
+    "language": "stan1293",
+    "primaryText": "John will enter the room before Mary leaves.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "John will enter the room after Mary has left.", "judgment": "acceptable"},
+      {"form": "John will enter the room after Mary leaves.", "judgment": "acceptable"}
+    ],
+    "readings": [
+      {"name": "before the earliest future time at which Mary leaves", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["clause", "before/after"],
+      ["tense", "present under future"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_84d",
+    "source": {"bibkey": "stump-1985", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-stechow-2009", "paperLabel": "(84d)"},
+    "language": "stan1293",
+    "primaryText": "John will enter the room after Mary will leave.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "John will enter the room before Mary will leave.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["clause", "before/after"],
+      ["tense", "future under future"]
+    ],
+    "comment": "The earliest future time at which Mary will leave is right after the speech time.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_85",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(85)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary left before John arrived.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Mary left after John arrived.", "judgment": "acceptable"}
+    ],
+    "readings": [
+      {"name": "before the earliest past time at which John arrives", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["clause", "before/after"],
+      ["tense", "past under past"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonstechow2009_86",
+    "source": {"bibkey": "von-stechow-2009", "paperLabel": "(86)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary arrived after six.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Mary arrived before six.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["preposition", "temporal"],
+      ["meaning", "precedence"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
