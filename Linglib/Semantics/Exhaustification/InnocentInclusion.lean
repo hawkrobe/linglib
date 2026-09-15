@@ -64,6 +64,14 @@ def exhIEII : Set World := λ w =>
   (∀ q, IsInnocentlyExcludable ALT φ q → ¬q w) ∧
   (∀ r, IsInnocentlyIncludable ALT φ r → r w)
 
+/-- The operator is innocent exclusion together with every innocently includable
+alternative. -/
+theorem exhIEII_eq_exhIE_inter (hfin : ALT.Finite) :
+    exhIEII ALT φ = exhIE ALT φ ∩ ⋂₀ II ALT φ := by
+  ext w
+  rw [Set.mem_inter_iff, mem_exhIE_iff ALT φ hfin, Set.mem_sInter, and_assoc]
+  exact Iff.rfl
+
 /-- The non-IE alternatives: members of `ALT` not innocently excludable.
     [bar-lev-fox-2020] (the `C \ IE(p,C)` of paper eq. 20). -/
 def nonExcludable : Set (Set World) :=
