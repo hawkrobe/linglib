@@ -1,370 +1,102 @@
 import Linglib.Semantics.Plurality.MassCount
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Order.UpperLower.Basic
-import Linglib.Data.UD.Basic
-import Linglib.Semantics.Mereology
-import Linglib.Semantics.Reference.Rigidity
-import Linglib.Morphology.Word.Basic
 import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
-# Kinds and the Nominal Mapping Parameter
+# The Nominal Mapping Parameter
 
-This file formalizes the kind-level semantics of [chierchia-1998]: kinds as individual
-concepts over [link-1983]'s semilattice, the operators ∩ and ∪ between properties and kinds,
-Derived Kind Predication, and the Nominal Mapping Parameter, which sets whether a language's
-nouns denote kinds, predicates, or either. The parameter and the language's determiners then
-decide which bare nominals can be arguments: a covert type shift is blocked when a determiner
-lexicalizes it (the Blocking Principle), and kind formation is defined only for mass nouns and
-plurals, so a language with articles admits bare plurals and bare mass nouns but no bare
-singular count nouns.
-
-Individuals are non-empty sets of atoms, so `⊆` and `∪` give Link's complete atomic join
-semilattice from mathlib's `Set` instances; a kind is an individual concept, a function from
-worlds to individuals.
+This file defines the Nominal Mapping Parameter of [chierchia-1998], which sets what a
+language's nouns can denote: kinds, so that they are arguments ([+arg]), or properties, so that
+they are predicates ([+pred]), or either. A setting is the set of denotation types nouns take.
+The setting and the language's determiners then decide which bare nominals can be arguments. A
+covert type shift is blocked when a determiner lexicalizes it, the Blocking Principle, and kind
+formation ∩ is defined only for mass nouns and plurals, so a [+arg, +pred] language with
+articles admits bare plurals and bare mass nouns but no bare singular count nouns, while a
+[+arg, −pred] language admits every bare nominal and a [−arg, +pred] language none.
 
 ## Main definitions
 
-* `Kind`, `down`, `up` — kinds as individual concepts, with ∩ from properties to kinds and ∪
-  back
-* `IsMass`, `pluralClosure` — the mass condition and Link's plural closure
-* `NominalMapping` — the Nominal Mapping Parameter, with `CanDenoteKind` and
-  `CanDenoteProperty`
-* `Shift`, `Determiner.Inventory.Blocks` — the covert type shifts and the Blocking Principle
+* `NominalMapping` — a setting of the parameter, with the three attested settings `argOnly`,
+  `argAndPred` and `predOnly`, and `CanDenoteKind` and `CanDenoteProperty`
+* `CovertShift`, `Determiner.Inventory.Blocks` — the covert type shifts and the Blocking
+  Principle
 * `DownDefined`, `NominalMapping.LicensesBare` — where ∩ is defined, and which bare nominals a
   language admits as arguments
 
 ## Main results
 
-* `up_down_id`, `down_up_id` — ∪ and ∩ are inverse on mass properties and on kinds
-* `chierchia_position_invariant` — Derived Kind Predication is local, so scopeless
-* `licensesBare_iff_downDefined` — with ι and ∃ blocked, a [+arg, +pred] language admits
-  exactly the bare nominals ∩ is defined for
-* `exists_licensesBare_iff` — a language admits some bare argument iff it is [+arg]
+* `NominalMapping.licensesBare_iff_downDefined` — with ι and ∃ blocked, a [+arg, +pred]
+  language admits exactly the bare nominals ∩ is defined for
+* `NominalMapping.exists_licensesBare_iff` — a language admits some bare argument iff it is
+  [+arg]
 
 ## References
 
 * [chierchia-1998]
-* [link-1983]
 * [dayal-2004]
-* [krifka-2003]
 * [moroney-2021]
-* [guerrini-2026]
-* [krifka-2026]
 -/
 
-open Morphology (Word)
+namespace Genericity
 
-namespace Semantics.Kinds.NMP
-
-/-! ### Domain Structure (Link's Semilattice) -/
-
-/-- An individual is a non-empty set of atoms. Atoms are singletons `{a}`,
-    pluralities are larger sets. The part-of relation (⊆) and join (∪)
-    are inherited from Mathlib's `Set` instances, giving us Link's
-    complete atomic join semilattice. -/
-abbrev Individual (Atom : Type*) := Set Atom
-
-/-- Construct a singular individual from an atom. -/
-def Individual.atom {Atom : Type*} (a : Atom) : Individual Atom := {a}
-
-/-! ### Kinds as Individual Concepts -/
-
-variable (World Atom : Type*)
-
-/-- A property (intension): function from worlds to sets of individuals. -/
-abbrev Property := World → Set (Individual Atom)
-
-/-- An individual concept: function from worlds to individuals. -/
-abbrev IndividualConcept := World → Individual Atom
-
-/--
-Kinds are a special subset of individual concepts.
-
-A kind is an individual concept that maps each world to the totality
-of instances (a set of atoms) and represents a "natural" class with
-regular behavior.
-
-Not every individual concept is a kind. Only those corresponding to
-natural properties qualify.
--/
-structure Kind where
-  /-- The underlying individual concept -/
-  concept : IndividualConcept World Atom
-
-/-! ### The Down Operator: ∩ (Property → Kind) -/
-
-/--
-The "down" operator ∩ (cap): nominalize a property to a kind.
-
-∩P = λs. ιPₛ
-
-That is, at each world s, take the largest individual in the extension of P.
-For plural/mass properties, this is the fusion of all instances.
-
-Note: ∩ is only semantically defined for plural/mass nouns (see
-`DownDefined`). This function computes the nominalization for any
-property; the partiality constraint is enforced externally.
--/
-def down (P : Property World Atom) : Kind World Atom :=
-  { concept := λ w => { a : Atom | Individual.atom a ∈ P w } }
-
-/-! ### The Up Operator: ∪ (Kind → Property) -/
-
-/--
-The "up" operator ∪ (cup): predicativize a kind to a property.
-
-∪k = λx[x ⊆ kₛ]
-
-The extension is the ideal generated by the kind's instances:
-all individuals that are "part of" the totality of instances.
-
-Property: ∪ applied to a kind yields a MASS denotation.
-This is because the extension includes both atoms and pluralities.
--/
-def up (k : Kind World Atom) : Property World Atom :=
-  λ w => { x | x ⊆ k.concept w }
-
-/-! ### Mass Noun Condition -/
-
-/--
-A property is mass iff its extension at every world is determined by
-atomic content: `x ∈ P w ↔ ∀ a ∈ x, {a} ∈ P w` ([chierchia-1998] §2.2).
-
-This implies both cumulative reference (CUM) and divisive reference (DIV):
-mass extensions are closed under union and subset.
--/
-def IsMass (P : Property World Atom) : Prop :=
-  ∀ w (x : Individual Atom), x ∈ P w ↔ ∀ a ∈ x, Individual.atom a ∈ P w
-
-/-! ### Bridge Theorems to Semantics/Mereology -/
-
-section MereologyBridge
-
-variable {World Atom : Type*}
-
-/-- Mass properties have divisive reference: if `x ∈ P w` and `y ⊆ x`,
-    then `y ∈ P w`. Every part of a mass-noun instance is also an instance. -/
-theorem isMass_div (P : Property World Atom) (hMass : IsMass World Atom P) (w : World) :
-    Mereology.DIV (P w) :=
-  fun x y hyx hx => (hMass w y).mpr fun a ha => (hMass w x).mp hx a (hyx ha)
-
-/-- Mass properties have cumulative reference: if `x ∈ P w` and `y ∈ P w`,
-    then `x ∪ y ∈ P w`. Combining mass-noun instances yields an instance. -/
-theorem isMass_cum (P : Property World Atom) (hMass : IsMass World Atom P) (w : World) :
-    Mereology.CUM (P w) :=
-  fun x hx y hy => (hMass w (x ⊔ y)).mpr fun a ha =>
-    Or.elim ha (fun h => (hMass w x).mp hx a h) (fun h => (hMass w y).mp hy a h)
-
-end MereologyBridge
-
-/-! ### Plural Closure (Link's *P via Semantics/Mereology.AlgClosure) -/
-
-/--
-Plural closure of a property: close extensions under join (⊔) at each world.
-
-This is [link-1983]'s *P operator, Krifka's ⊔ superscript: the smallest
-superset of P(w) closed under set union. Singular count nouns like *spider*
-are not cumulative, so `pluralClosure(⟦spider⟧)` adds pluralities — the
-denotation of the bare plural *spiders*.
-
-Mass nouns like *mold* are already cumulative, so plural closure is a
-no-op: `pluralClosure(⟦mold⟧) = ⟦mold⟧` (see `pluralClosure_mass`).
--/
-def pluralClosure (P : Property World Atom) : Property World Atom :=
-  λ w => Mereology.AlgClosure (P w)
-
-section PluralClosure
-
-variable {World Atom : Type*}
-
-/-- Plural closure is idempotent for mass nouns: ⊔P = P when P is cumulative, whence the
-    absorption rule ⊔⊔S = ⊔S ([krifka-2026]). -/
-theorem pluralClosure_mass (P : Property World Atom)
-    (hMass : IsMass World Atom P) :
-    pluralClosure World Atom P = P := by
-  funext w; ext x
-  exact Mereology.algClosure_of_cum (isMass_cum P hMass w)
-
-/-- A property is contained in its plural closure. -/
-theorem subset_pluralClosure (P : Property World Atom) (w : World) :
-    P w ⊆ pluralClosure World Atom P w :=
-  fun _ h => Mereology.AlgClosure.base h
-
-/-- Plural closure is always cumulative. -/
-theorem pluralClosure_cum (P : Property World Atom) (w : World) :
-    Mereology.CUM (pluralClosure World Atom P w) :=
-  Mereology.algClosure_cum
-
-end PluralClosure
-
-/-! ### Round-Trip Theorems -/
-
-/--
-Key theorem: ∪(∩P) = P for mass properties.
-
-Going down and then up returns the original property (for suitable P).
-The mass-noun condition `IsMass` ensures that the extension at each world
-is determined by its atomic content, which is exactly what `down` extracts
-and `up` reconstructs.
--/
-theorem up_down_id (P : Property World Atom) (hMass : IsMass World Atom P) :
-    up World Atom (down World Atom P) = P := by
-  funext w; ext x
-  simp only [up, down, Set.mem_ofPred_eq]
-  constructor
-  · intro h; exact (hMass w x).mpr fun a ha => h ha
-  · intro h a ha; exact (hMass w x).mp h a ha
-
-/--
-Key theorem: ∩(∪k) = k for any kind k.
-
-Going up and then down returns the original kind.
--/
-theorem down_up_id (k : Kind World Atom) :
-    down World Atom (up World Atom k) = k := by
-  simp only [down, up, Set.mem_ofPred_eq, Individual.atom,
-             Set.singleton_subset_iff, Set.ofPred_mem_eq]
-
-/-! ### Derived Kind Predication (DKP) -/
-
-/--
-Derived Kind Predication: coerce object-level predicates to accept kinds.
-
-When an object-level predicate P applies to a kind k, introduce
-existential quantification over instances:
-
-  P(k) = ∃x[∪k(x) ∧ P(x)]
-
-This is a type-coercion triggered by sort mismatch.
-
-Example: "Lions are roaring in the zoo"
-- "lions" denotes a kind
-- "roaring in the zoo" is an object-level predicate
-- DKP yields: ∃x[lion(x) ∧ roaring-in-the-zoo(x)]
--/
-def DKP (P : Individual Atom → Bool) (k : Kind World Atom) (w : World) : Prop :=
-  ∃ x, x ∈ up World Atom k w ∧ P x = true
-
-/--
-DKP as a type-shifting operation on predicates.
-
-Takes an object-level predicate and returns a kind-level predicate.
--/
-def liftToKind (P : Individual Atom → Bool) : Kind World Atom → World → Prop :=
-  λ k w => DKP World Atom P k w
-
-/-! ### Derived Property Predication (DPP) -/
-
-/--
-Derived Property Predication: coerce a property to yield an existential.
-
-When a property P (rather than a kind) composes with a predicate Q,
-introduce low-scoped existential quantification:
-
-  DPP(Q)(P) = ∃x[P(x) ∧ Q(x)]
-
-This is the mirror image of DKP. Where DKP applies to kinds (via ∪),
-DPP applies to properties directly. [moroney-2021] (85): DPP
-applies when bare nouns (base type ⟨s,⟨e,t⟩⟩) compose with a verb
-at vP, yielding obligatory low scope w.r.t. negation. [guerrini-2026]
-§5.3: the existential reading of bare plurals in episodic sentences
-arises from property-level LFs via DPP, not from kind-level DKP.
-
-Example: "Bears are destroying my garden" (existential reading)
-- "bears" denotes a property (λx.bear(x))
-- "destroying my garden" is a predicate
-- DPP yields: ∃x[bear(x) ∧ destroying-my-garden(x)]
-
-DPP applies locally (like DKP), so it yields obligatory low scope.
--/
-def DPP (property : Individual Atom → Bool) (predicate : Individual Atom → Bool) : Prop :=
-  ∃ x, property x = true ∧ predicate x = true
-
-/-! ### The Nominal Mapping Parameter -/
-
-/--
-The Nominal Mapping Parameter.
-
-Languages vary in what they let their NPs denote:
-- [+arg]: NPs can be argumental (type e, denoting kinds)
-- [+pred]: NPs can be predicative (type ⟨e,t⟩)
-
-The combination determines the language's nominal system.
--/
-inductive NominalMapping where
-  /-- [+arg, -pred]: All nouns are kinds (Chinese-like)
-      - All nouns are mass-like
-      - No plural morphology
-      - Generalized classifier system
-      - Bare arguments everywhere -/
-  | argOnly
-  /-- [+arg, +pred]: Nouns can be kinds or predicates (Germanic-like)
-      - Mass/count distinction
-      - Bare plurals and mass nouns as arguments
-      - Singular count nouns require D -/
-  | argAndPred
-  /-- [-arg, +pred]: All nouns are predicates (Romance-like)
-      - Mass/count distinction
-      - Bare arguments restricted (need licensing)
-      - D must be projected for argumenthood -/
-  | predOnly
-  deriving DecidableEq, Repr
-
-/-- Whether a nominal can denote a kind, given the language's mapping parameter
-    and whether an overt determiner (D) is present.
-
-    - [+arg] languages: nouns can denote kinds without D (covert ∩ available)
-    - [-arg, +pred] languages: D is required to map predicates to arguments;
-      without D, nouns remain predicates (properties) -/
-def CanDenoteKind (mapping : NominalMapping) (hasD : Prop) [Decidable hasD] : Prop :=
-  match mapping with
-  | .argOnly    => True   -- all nouns are kinds; ∩ is trivially available
-  | .argAndPred => True   -- covert ∩ available (for plurals/mass; see `DownDefined`)
-  | .predOnly   => hasD   -- needs overt D to become argumental
-
-instance (m : NominalMapping) (h : Prop) [Decidable h] : Decidable (CanDenoteKind m h) := by
-  cases m <;> unfold CanDenoteKind <;> infer_instance
-
-/-- Whether a nominal can denote a property, given the mapping parameter. -/
-def CanDenoteProperty (mapping : NominalMapping) : Prop :=
-  match mapping with
-  | .argOnly    => False  -- nouns are kinds, not predicates
-  | .argAndPred => True   -- nouns can be predicates
-  | .predOnly   => True   -- nouns are predicates by default
-
-instance : DecidablePred CanDenoteProperty := fun m => by
-  cases m <;> unfold CanDenoteProperty <;> infer_instance
-
-/-- Denotation type for bare nominal expressions: kind (type e individual
-    concept) vs property (type ⟨e,t⟩). The two values name the targets of
-    `CanDenoteKind` and `CanDenoteProperty`. -/
+/-- What a noun denotes: a kind, of type e, or a property, of type ⟨e,t⟩. -/
 inductive NominalDenotation where
   | kind
   | property
-  deriving Repr, DecidableEq
+  deriving DecidableEq, Repr, Fintype
 
-/-! ### Mass and count -/
+/-- A setting of the Nominal Mapping Parameter: the denotation types a language's nouns can
+take. The language is [+arg] when `.kind` is in the setting and [+pred] when `.property` is; the
+empty setting, [−arg, −pred], leaves nouns nothing to denote and is excluded by the paper. -/
+def NominalMapping := Finset NominalDenotation
 
-/--
-Pluralization / mass extension: the set of non-empty sub-individuals.
+namespace NominalMapping
 
-For count nouns, `PL(F) = { s | s.Nonempty ∧ s ⊆ F }` — the set of
-pluralities whose atomic parts are all in the original extension.
+instance : Membership NominalDenotation NominalMapping :=
+  inferInstanceAs (Membership NominalDenotation (Finset NominalDenotation))
 
-Mass nouns come out of the lexicon "already pluralized": a mass noun like
-"furniture" is true of individual pieces AND pluralities of pieces, without
-distinction. Its extension has the same form: `{ s | s.Nonempty ∧ s ⊆ atoms }`.
--/
-def pluralize {Atom : Type*} (F : Set Atom) : Set (Individual Atom) :=
-  { s | s.Nonempty ∧ s ⊆ F }
+instance : DecidableEq NominalMapping := inferInstanceAs (DecidableEq (Finset NominalDenotation))
+
+instance (d : NominalDenotation) (m : NominalMapping) : Decidable (d ∈ m) :=
+  Finset.decidableMem d m
+
+/-- [+arg, −pred]: nouns denote kinds (Mandarin, Japanese). -/
+def argOnly : NominalMapping := ({.kind} : Finset NominalDenotation)
+
+/-- [+arg, +pred]: nouns denote kinds or properties (English, Germanic). -/
+def argAndPred : NominalMapping := ({.kind, .property} : Finset NominalDenotation)
+
+/-- [−arg, +pred]: nouns denote properties (Romance, Greek). -/
+def predOnly : NominalMapping := ({.property} : Finset NominalDenotation)
+
+@[simp] theorem mem_argOnly {d : NominalDenotation} : d ∈ argOnly ↔ d = .kind := by
+  cases d <;> decide
+
+@[simp] theorem mem_argAndPred {d : NominalDenotation} : d ∈ argAndPred := by cases d <;> decide
+
+@[simp] theorem mem_predOnly {d : NominalDenotation} : d ∈ predOnly ↔ d = .property := by
+  cases d <;> decide
+
+/-- A nominal can denote a kind outright in a [+arg] language, and otherwise under an overt
+determiner. -/
+def CanDenoteKind (m : NominalMapping) (hasD : Prop) : Prop := .kind ∈ m ∨ hasD
+
+instance (m : NominalMapping) (hasD : Prop) [Decidable hasD] :
+    Decidable (m.CanDenoteKind hasD) := by
+  unfold CanDenoteKind; infer_instance
+
+/-- A nominal can denote a property in a [+pred] language. -/
+def CanDenoteProperty (m : NominalMapping) : Prop := .property ∈ m
+
+instance (m : NominalMapping) : Decidable m.CanDenoteProperty := by
+  unfold CanDenoteProperty; infer_instance
+
+end NominalMapping
 
 /-! ### Covert type shifts -/
 
 /-- The covert type shifts: kind formation ∩, the definite ι and the existential ∃ of
 [chierchia-1998], and the anaphoric definite ι^x of [dayal-2004] and [moroney-2021]. -/
-inductive Shift where
+inductive CovertShift where
   | down
   | iota
   | iotaAnaphoric
@@ -378,87 +110,18 @@ def DownDefined (nt : MassCount) (num : Number) : Prop := nt = .mass ∨ num = .
 instance (nt : MassCount) (num : Number) : Decidable (DownDefined nt num) := by
   unfold DownDefined; infer_instance
 
-/-! ### Scopelessness (Theoretical Basis) -/
-
-/-! Bare plurals are scopeless because DKP introduces a *local* existential: the
-existential closure sits inside negation and cannot scope out. This locality is the
-theorem `chierchia_position_invariant` below — Chierchia's derivation is the same
-whether or not the bare plural has scrambled. See
-`Data/Examples/LeBruynDeSwart2022.json` for empirical scope data. -/
-
-/-! ### DKP scope derivation (Chierchia side of the scrambling comparison)
-[krifka-2003] [chierchia-1998]
-
-Chierchia's Derived Kind Predication introduces the existential *locally* — where the
-kind meets the predicate — so negation always scopes outside it. Modelled with plain
-`Prop` existential closure (`existsClose`) over the kind's instances. The position-sensitive
-∃-shift that `Studies/LeBruynDeSwart2022.lean` reads into [krifka-2003] reuses the same
-`existsClose`, so the two accounts share one closure and differ only in where negation
-sits; they are compared there on the Dutch scrambling data.
-
-`existsClose` is Partee's `A` (existential closure) in plain extensional form. The same
-operator dressed in the DWP/Gallin deep embedding is `Quantification.A`, needed there
-for type-shift metatheory but not for this scope contrast. -/
-
-section DKPDerivation
-
-variable {Entity : Type*}
-
-/-- Existential closure of a property `P` against a predicate `Q` over a finite domain:
-`∃ x ∈ dom, P x ∧ Q x`. Partee's `A` type shift in plain extensional form; `reducible`
-so concrete instances are `Decidable`. -/
-@[reducible] def existsClose (dom : List Entity) (P Q : Entity → Prop) : Prop :=
-  ∃ x ∈ dom, P x ∧ Q x
-
-/-- Chierchia's DKP, unscrambled `[niet [BP V]]`: `¬ ∃ x ∈ kind, P x ∧ Q x`. The
-existential is introduced locally, so negation scopes outside it (narrow scope). -/
-def chierchiaDerivUnscrambled (kind : List Entity) (P Q : Entity → Prop) : Prop :=
-  ¬ existsClose kind P Q
-
-/-- Chierchia's DKP, scrambled `[BP [niet V]]`: identical to the unscrambled derivation.
-DKP locality means surface position cannot move the existential. -/
-def chierchiaDerivScrambled (kind : List Entity) (P Q : Entity → Prop) : Prop :=
-  ¬ existsClose kind P Q
-
-/-- **DKP is local**: the scrambled and unscrambled derivations coincide, so Chierchia
-predicts obligatory narrow scope regardless of surface position. This is the content the
-former `dkpIsLocal : Bool := true` stipulated — now a theorem about the derivations. -/
-theorem chierchia_position_invariant (kind : List Entity) (P Q : Entity → Prop) :
-    chierchiaDerivScrambled kind P Q = chierchiaDerivUnscrambled kind P Q :=
-  rfl
-
-end DKPDerivation
-
-/-!
-## Related Theory
-
-- `Studies/Krifka2003.lean` - Alternative: Bare NPs as properties
-- `Semantics/Lexical/Noun/Kind/MeaningPreservation.lean` - Meaning Preservation, singular kinds
-- `Semantics/Genericity/Basic.lean` - GEN operator for generic readings
-
-## Empirical Data
-
-For empirical patterns (scope judgments, predicate class effects), see
-`Data/Examples/LeBruynDeSwart2022.json` and
-`Data/Examples/CohenErteschikShir2002.json`.
-
-For kind formation by salient equivalence relations (the Mendia 2020
-framework that subsumes Carlson's Disjointness Condition), see
-`Semantics/Genericity/Subkinds.lean`.
--/
-
-end Semantics.Kinds.NMP
+end Genericity
 
 /-! ### The Blocking Principle -/
 
 namespace Determiner.Inventory
 
-open Semantics.Kinds.NMP (Shift)
+open Genericity (CovertShift)
 
 /-- The Blocking Principle of [chierchia-1998]: a covert shift is blocked when a determiner of
 the inventory lexicalizes it. A definite article is ι and an indefinite article ∃; a determiner
 that obligatorily expones anaphoric definiteness is ι^x ([moroney-2021]); no determiner is ∩. -/
-def Blocks (ds : Inventory) : Shift → Prop
+def Blocks (ds : Inventory) : CovertShift → Prop
   | .down => False
   | .iota => ∃ e ∈ ds, e.IsDefiniteArticle
   | .iotaAnaphoric => ds.MarksPresup .familiarity
@@ -481,46 +144,38 @@ theorem blocks_iotaAnaphoric_iff (ds : Inventory) :
 
 end Determiner.Inventory
 
-namespace Semantics.Kinds.NMP
+namespace Genericity.NominalMapping
 
 /-! ### Bare arguments -/
 
-/-- A language with the mapping `m` and the determiners `ds` admits a bare nominal of
-countability `nt` and number `num` as an argument: outright when [+arg, −pred], its nouns being
-kinds; by an unblocked covert shift when [+arg, +pred], ∩ where it is defined, else ι or ∃;
-never when [−arg, +pred], its nouns needing D. -/
-def NominalMapping.LicensesBare (m : NominalMapping) (ds : Determiner.Inventory)
-    (nt : MassCount) (num : Number) : Prop :=
-  match m with
-  | .argOnly => True
-  | .argAndPred => DownDefined nt num ∨ ¬ ds.Blocks .iota ∨ ¬ ds.Blocks .exists
-  | .predOnly => False
+/-- A language with the setting `m` and the determiners `ds` admits a bare nominal of
+countability `nt` and number `num` as an argument: it must be [+arg], and if also [+pred], so
+that count nouns are predicates, the nominal needs ∩ to be defined for it or ι or ∃ unblocked. -/
+def LicensesBare (m : NominalMapping) (ds : Determiner.Inventory) (nt : MassCount)
+    (num : Number) : Prop :=
+  .kind ∈ m ∧ (.property ∉ m ∨ DownDefined nt num ∨ ¬ ds.Blocks .iota ∨ ¬ ds.Blocks .exists)
 
 instance (m : NominalMapping) (ds : Determiner.Inventory) (nt : MassCount) (num : Number) :
     Decidable (m.LicensesBare ds nt num) := by
-  cases m <;> unfold NominalMapping.LicensesBare <;> infer_instance
+  unfold LicensesBare; infer_instance
 
 variable {ds : Determiner.Inventory} {nt : MassCount} {num : Number}
 
 /-- With ι and ∃ blocked, a [+arg, +pred] language admits exactly the bare nominals ∩ is
 defined for: plurals and mass nouns, not singular count nouns. -/
 theorem licensesBare_iff_downDefined (hι : ds.Blocks .iota) (hex : ds.Blocks .exists) :
-    NominalMapping.argAndPred.LicensesBare ds nt num ↔ DownDefined nt num := by
-  simp [NominalMapping.LicensesBare, hι, hex]
+    argAndPred.LicensesBare ds nt num ↔ DownDefined nt num := by
+  simp [LicensesBare, hι, hex]
 
 /-- A [+arg, +pred] language admits bare singular count nouns iff it lacks a definite or an
 indefinite article. -/
 theorem licensesBare_singular_iff :
-    NominalMapping.argAndPred.LicensesBare ds .count .singular ↔
-      ¬ ds.Blocks .iota ∨ ¬ ds.Blocks .exists := by
-  simp [NominalMapping.LicensesBare, DownDefined]
+    argAndPred.LicensesBare ds .count .singular ↔ ¬ ds.Blocks .iota ∨ ¬ ds.Blocks .exists := by
+  simp [LicensesBare, DownDefined]
 
 /-- A language admits some bare argument iff it is [+arg]. -/
 theorem exists_licensesBare_iff (m : NominalMapping) :
-    (∃ nt num, m.LicensesBare ds nt num) ↔ m ≠ .predOnly := by
-  cases m with
-  | argOnly => exact iff_of_true ⟨.mass, .singular, trivial⟩ (by decide)
-  | argAndPred => exact iff_of_true ⟨.mass, .singular, .inl (.inl rfl)⟩ (by decide)
-  | predOnly => simp [NominalMapping.LicensesBare]
+    (∃ nt num, m.LicensesBare ds nt num) ↔ .kind ∈ m :=
+  ⟨λ ⟨_, _, h, _⟩ => h, λ h => ⟨.mass, .singular, h, .inr (.inl (.inl rfl))⟩⟩
 
-end Semantics.Kinds.NMP
+end Genericity.NominalMapping

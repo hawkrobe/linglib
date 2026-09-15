@@ -50,16 +50,15 @@ classifier accounts dispute it there rather than in the Fragments.
 namespace Chierchia1998
 
 open Classifier
-open Semantics.Kinds.NMP (NominalMapping DownDefined)
+open Genericity
 
 /-- Map NominalMapping to the expected classifier type.
     [+arg, -pred] languages have numeral classifiers.
     [-arg, +pred] languages have noun class/gender.
     [+arg, +pred] languages (English/Germanic) lack a productive system. -/
-def nominalMappingToClassifierType : NominalMapping → Option Kind
-  | .argOnly => some .numeralClassifier   -- Mandarin, Japanese
-  | .predOnly => some .nounClass          -- French, Italian
-  | .argAndPred => none                   -- English: no productive system
+def nominalMappingToClassifierType (m : NominalMapping) : Option Kind :=
+  if .kind ∈ m then if .property ∈ m then none else some .numeralClassifier
+  else some .nounClass
 
 /-- At each sampled language the recorded categorization system is the one its nominal mapping
 predicts: numeral classifiers for Mandarin and Japanese, noun class for French and Italian. -/
@@ -100,8 +99,8 @@ theorem argOnly_blocks_nothing :
 /-- Mandarin and Japanese admit every bare nominal as an argument. -/
 theorem argOnly_licensesBare (nt : MassCount) (num : Number) :
     Mandarin.Nouns.nominalMapping.LicensesBare Mandarin.Determiners.inventory nt num ∧
-      Japanese.Nouns.nominalMapping.LicensesBare Japanese.Determiners.inventory nt num :=
-  ⟨trivial, trivial⟩
+      Japanese.Nouns.nominalMapping.LicensesBare Japanese.Determiners.inventory nt num := by
+  simp [NominalMapping.LicensesBare, Mandarin.Nouns.nominalMapping, Japanese.Nouns.nominalMapping]
 
 /-- The [−arg, +pred] languages of the sample have a definite article, so block ι. -/
 theorem predOnly_blocks_iota :
@@ -111,8 +110,8 @@ theorem predOnly_blocks_iota :
 /-- French and Italian admit no bare nominal as an argument: their nouns need D. -/
 theorem predOnly_not_licensesBare (nt : MassCount) (num : Number) :
     ¬ French.Nouns.nominalMapping.LicensesBare French.Determiners.inventory nt num ∧
-      ¬ Italian.Nouns.nominalMapping.LicensesBare Italian.Determiners.inventory nt num :=
-  ⟨nofun, nofun⟩
+      ¬ Italian.Nouns.nominalMapping.LicensesBare Italian.Determiners.inventory nt num := by
+  simp [NominalMapping.LicensesBare, French.Nouns.nominalMapping, Italian.Nouns.nominalMapping]
 
 /-- English, [+arg, +pred] with *the* and *a* blocking ι and ∃, admits exactly the bare nominals
 kind formation is defined for: bare plurals and bare mass nouns, not bare singular count
@@ -120,6 +119,6 @@ nouns. -/
 theorem english_licensesBare_iff (nt : MassCount) (num : Number) :
     English.Nouns.nominalMapping.LicensesBare English.Determiners.inventory nt num ↔
       DownDefined nt num :=
-  Semantics.Kinds.NMP.licensesBare_iff_downDefined (by decide) (by decide)
+  NominalMapping.licensesBare_iff_downDefined (by decide) (by decide)
 
 end Chierchia1998

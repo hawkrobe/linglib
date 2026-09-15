@@ -55,7 +55,7 @@ Solt's other 2018 paper, the multidimensionality chapter [solt-2018a], is formal
 
 namespace Solt2018b
 
-open Degree Degree.Aggregation Semantics.Kinds.SortedOntology
+open Degree Degree.Aggregation Genericity.SortedOntology
 
 variable {α : Type*} (μ : α → ℚ)
 

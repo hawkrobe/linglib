@@ -30,7 +30,7 @@ and bare mass nouns are arguments and a bare singular count noun is not
 
 namespace English.Nouns
 
-open Semantics.Kinds.NMP (NominalMapping)
+open Genericity
 open Morphology (Word)
 
 /-- An English noun: the root entry with the mass/count feature, whether it is a proper name,

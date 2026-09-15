@@ -1,4 +1,5 @@
 import Linglib.Semantics.Reference.Prominence
+import Linglib.Syntax.Category.Noun.Basic
 import Linglib.Fragments.Shona.Basic
 
 /-!
@@ -15,48 +16,48 @@ diminutives *ka-sikana* 'small girl', *ka-mba* 'small house' are entered as noun
 
 namespace Shona
 
-/-- A noun: its singular class and the animacy of what it denotes. -/
-structure NounEntry where
-  form : String
-  gloss : String
+/-- A noun: the root entry with its singular class and the animacy of what it denotes. -/
+structure Noun extends _root_.Noun where
+  /-- The singular class. -/
   cls : NounClass
+  /-- The animacy of what the noun denotes. -/
   animacy : Reference.Prominence.AnimacyLevel
   deriving DecidableEq, Repr
 
 namespace Nouns
 
-def murume : NounEntry := ⟨"murume", "man", .cl1, .human⟩
-def mukadzi : NounEntry := ⟨"mukadzi", "woman", .cl1, .human⟩
-def musikana : NounEntry := ⟨"musikana", "girl", .cl1, .human⟩
-def munwe : NounEntry := ⟨"munwe", "finger", .cl3, .inanimate⟩
-def muromo : NounEntry := ⟨"muromo", "mouth", .cl3, .inanimate⟩
-def dombo : NounEntry := ⟨"dombo", "stone", .cl5, .inanimate⟩
-def zai : NounEntry := ⟨"zai", "egg", .cl5, .inanimate⟩
-def benzi : NounEntry := ⟨"benzi", "fool", .cl5, .human⟩
-def dinga : NounEntry := ⟨"dinga", "dimwit", .cl5, .human⟩
-def chingwa : NounEntry := ⟨"chingwa", "bread", .cl7, .inanimate⟩
-def chibage : NounEntry := ⟨"chibage", "maize", .cl7, .inanimate⟩
-def chidhakwa : NounEntry := ⟨"chidhakwa", "drunkard", .cl7, .human⟩
-def chikomana : NounEntry := ⟨"chikomana", "small boy", .cl7, .human⟩
-def nherera : NounEntry := ⟨"nherera", "orphan", .cl9, .human⟩
-def nyanzvi : NounEntry := ⟨"nyanzvi", "expert", .cl9, .human⟩
-def imbwa : NounEntry := ⟨"imbwa", "dog", .cl9, .animate⟩
-def mhou : NounEntry := ⟨"mhou", "cow", .cl9, .animate⟩
-def mhuno : NounEntry := ⟨"mhuno", "nose", .cl9, .inanimate⟩
-def nzeve : NounEntry := ⟨"nzeve", "ear", .cl9, .inanimate⟩
-def mbiya : NounEntry := ⟨"mbiya", "bowl", .cl9, .inanimate⟩
-def sando : NounEntry := ⟨"sando", "hammer", .cl9, .inanimate⟩
-def nyota : NounEntry := ⟨"nyota", "thirst", .cl9, .inanimate⟩
-def nzara : NounEntry := ⟨"nzara", "hunger", .cl9, .inanimate⟩
-def rukova : NounEntry := ⟨"rukova", "stream", .cl11, .inanimate⟩
-def uta : NounEntry := ⟨"uta", "bow", .cl14, .inanimate⟩
-def utanho : NounEntry := ⟨"utanho", "ladder", .cl14, .inanimate⟩
-def kasikana : NounEntry := ⟨"kasikana", "small girl", .cl12, .human⟩
-def kakomana : NounEntry := ⟨"kakomana", "small boy", .cl12, .human⟩
-def kamba : NounEntry := ⟨"kamba", "small house", .cl12, .inanimate⟩
-def kamotokari : NounEntry := ⟨"kamotokari", "small car", .cl12, .inanimate⟩
+def murume : Noun := ⟨⟨"murume", "man"⟩, .cl1, .human⟩
+def mukadzi : Noun := ⟨⟨"mukadzi", "woman"⟩, .cl1, .human⟩
+def musikana : Noun := ⟨⟨"musikana", "girl"⟩, .cl1, .human⟩
+def munwe : Noun := ⟨⟨"munwe", "finger"⟩, .cl3, .inanimate⟩
+def muromo : Noun := ⟨⟨"muromo", "mouth"⟩, .cl3, .inanimate⟩
+def dombo : Noun := ⟨⟨"dombo", "stone"⟩, .cl5, .inanimate⟩
+def zai : Noun := ⟨⟨"zai", "egg"⟩, .cl5, .inanimate⟩
+def benzi : Noun := ⟨⟨"benzi", "fool"⟩, .cl5, .human⟩
+def dinga : Noun := ⟨⟨"dinga", "dimwit"⟩, .cl5, .human⟩
+def chingwa : Noun := ⟨⟨"chingwa", "bread"⟩, .cl7, .inanimate⟩
+def chibage : Noun := ⟨⟨"chibage", "maize"⟩, .cl7, .inanimate⟩
+def chidhakwa : Noun := ⟨⟨"chidhakwa", "drunkard"⟩, .cl7, .human⟩
+def chikomana : Noun := ⟨⟨"chikomana", "small boy"⟩, .cl7, .human⟩
+def nherera : Noun := ⟨⟨"nherera", "orphan"⟩, .cl9, .human⟩
+def nyanzvi : Noun := ⟨⟨"nyanzvi", "expert"⟩, .cl9, .human⟩
+def imbwa : Noun := ⟨⟨"imbwa", "dog"⟩, .cl9, .animate⟩
+def mhou : Noun := ⟨⟨"mhou", "cow"⟩, .cl9, .animate⟩
+def mhuno : Noun := ⟨⟨"mhuno", "nose"⟩, .cl9, .inanimate⟩
+def nzeve : Noun := ⟨⟨"nzeve", "ear"⟩, .cl9, .inanimate⟩
+def mbiya : Noun := ⟨⟨"mbiya", "bowl"⟩, .cl9, .inanimate⟩
+def sando : Noun := ⟨⟨"sando", "hammer"⟩, .cl9, .inanimate⟩
+def nyota : Noun := ⟨⟨"nyota", "thirst"⟩, .cl9, .inanimate⟩
+def nzara : Noun := ⟨⟨"nzara", "hunger"⟩, .cl9, .inanimate⟩
+def rukova : Noun := ⟨⟨"rukova", "stream"⟩, .cl11, .inanimate⟩
+def uta : Noun := ⟨⟨"uta", "bow"⟩, .cl14, .inanimate⟩
+def utanho : Noun := ⟨⟨"utanho", "ladder"⟩, .cl14, .inanimate⟩
+def kasikana : Noun := ⟨⟨"kasikana", "small girl"⟩, .cl12, .human⟩
+def kakomana : Noun := ⟨⟨"kakomana", "small boy"⟩, .cl12, .human⟩
+def kamba : Noun := ⟨⟨"kamba", "small house"⟩, .cl12, .inanimate⟩
+def kamotokari : Noun := ⟨⟨"kamotokari", "small car"⟩, .cl12, .inanimate⟩
 
-def all : List NounEntry :=
+def all : List Noun :=
   [murume, mukadzi, musikana, munwe, muromo, dombo, zai, benzi, dinga, chingwa, chibage,
     chidhakwa, chikomana, nherera, nyanzvi, imbwa, mhou, mhuno, nzeve, mbiya, sando, nyota,
     nzara, rukova, uta, utanho, kasikana, kakomana, kamba, kamotokari]

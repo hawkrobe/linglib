@@ -303,14 +303,14 @@ def prefixGender (n : Nominal) : Xhosa.Gender := (n.secondary.getD n.core).gende
 /-- A nominal from a Xhosa noun (28): the core from the entity denoted, and a secondary n
 bearing the prefix class's features when that class is a core class other than the core's;
 undefined for the classes whose features the paper leaves open. -/
-def ofEntry (e : Xhosa.NounEntry) : Option Nominal :=
+def ofEntry (e : Xhosa.Noun) : Option Nominal :=
   (Xhosa.Gender.ofSingular e.cls).bind λ g =>
     let core := Core.ofAnimacyLevel e.animacy
     if g = core.gender then some ⟨core, none⟩
     else (Core.ofGender g).map λ s => ⟨core, some s⟩
 
 /-- The prefix class of a nominal is the noun's class. -/
-theorem ofSingular_prefixGender {e : Xhosa.NounEntry} {n : Nominal} (h : ofEntry e = some n) :
+theorem ofSingular_prefixGender {e : Xhosa.Noun} {n : Nominal} (h : ofEntry e = some n) :
     Xhosa.Gender.ofSingular e.cls = some n.prefixGender := by
   unfold ofEntry at h
   rcases hg : Xhosa.Gender.ofSingular e.cls with _ | g

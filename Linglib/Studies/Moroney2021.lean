@@ -42,7 +42,7 @@ and refers to it if it is close (`demDenotation`, her (147)–(148)).
 namespace Moroney2021
 
 open Definiteness
-open Semantics.Kinds
+open Genericity
 open Mereology (CUM)
 
 /-! ### Type-shift selection -/

@@ -34,7 +34,7 @@ strengthening is vacuous.
 
 namespace German.BarePluralWordOrder
 
-open Semantics.Kinds.SortedOntology (PredicateLevel)
+open Genericity.SortedOntology
 
 /-- Position of the bare plural subject relative to *ja doch*. -/
 inductive BPSPosition where

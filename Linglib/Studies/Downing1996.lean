@@ -304,7 +304,7 @@ theorem reading_classPlural_iff (h : NPHead) :
 /-- Against the hypothesis that classifiers and plural morphemes are in complementary
 distribution: the lexicon pairs a plural form and a classifier with one noun, as in (2b). -/
 theorem plural_and_classifier :
-    ∃ n : Japanese.Nouns.NounEntry, n.pluralForm.isSome ∧ n.classifier.isSome :=
+    ∃ n : Japanese.Nouns.Noun, n.plural.isSome ∧ n.classifier.isSome :=
   ⟨Japanese.Nouns.hito, rfl, rfl⟩
 
 /-- The devices by which a mention of a group of referents marks their number. -/

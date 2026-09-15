@@ -1,221 +1,81 @@
-import Linglib.Syntax.Gender.Basic
-import Linglib.Data.UD.Basic
-import Linglib.Syntax.Number.Capabilities
+import Linglib.Syntax.Category.Noun.Basic
+import Linglib.Semantics.Plurality.MassCount
 import Linglib.Semantics.Genericity.NominalMappingParameter
 
-/-! # Italian Noun Lexicon Fragment
+/-!
+# Italian nouns
 
-Italian NP structure with gender. Bare arguments restricted
-([chierchia-1998] [-arg, +pred]). Italian is the star witness for
-Chierchia's `predOnly` parameter: nouns denote predicates and require
-a determiner to be argumental.
+The Italian noun as a lexical entry: the root `GenderedNoun` over the masculine and feminine
+genders, with the mass/count feature, whether it is a proper name, and its plural. Italian is
+[−arg, +pred] ([chierchia-1998]): nouns are predicates and need a determiner
+(`Italian.Determiners.inventory`) to be arguments, so no bare nominal is one; the definite
+plural denotes a kind and the bare plural, where licensed, a property
+(`Studies/Guerrini2026.lean`). The plurals in *-a* that change gender are
+`Italian.NumberGender`.
 
-## Determiner System
-[chierchia-1998]
+## References
 
-Italian has a richer article paradigm than French, with allomorphy
-conditioned by gender, number, and phonological context:
-
-- Definite: il/lo/la (sg), i/gli/le (pl)
-- Indefinite: un/uno/una (sg only)
-- Partitive: del/dello/della (sg mass), dei/degli/delle (pl)
-
-The partitive articles (di + definite article) serve as the obligatory
-indefinite plural — Italian has no bare plural arguments.
+* [chierchia-1998]
 -/
-
 
 namespace Italian.Nouns
 
-open Semantics.Kinds.NMP (NominalMapping)
+open Genericity
 
--- ============================================================================
--- § 2: Noun Entry
--- ============================================================================
-
-/-- A lexical entry for an Italian noun. -/
-structure NounEntry where
-  /-- Singular form -/
-  formSg : String
-  /-- Plural form -/
-  formPl : Option String := none
-  /-- Grammatical gender -/
-  gender : Gender
-  /-- Is this a count noun? -/
-  countable : Bool := true
-  /-- Is this a proper name? -/
+/-- An Italian noun: the root gendered entry with the mass/count feature, whether it is a
+proper name, and its plural. -/
+structure Noun extends GenderedNoun Gender where
+  /-- The mass/count feature. -/
+  countable : MassCount := .count
+  /-- Whether the entry is a proper name. -/
   proper : Bool := false
-  deriving Repr, BEq
+  /-- The plural. -/
+  plural : Option String := none
+  deriving DecidableEq, Repr
 
--- ============================================================================
--- § 3: Chierchia Parameters
--- ============================================================================
+instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
+
+/-! ### Count nouns -/
+
+def libro : Noun := { form := "libro", gloss := "book", gender := .masculine, plural := "libri" }
+def ragazzo : Noun :=
+  { form := "ragazzo", gloss := "boy", gender := .masculine, isNaturalGender := true,
+    plural := "ragazzi" }
+def uomo : Noun :=
+  { form := "uomo", gloss := "man", gender := .masculine, isNaturalGender := true,
+    plural := "uomini" }
+def gatto : Noun := { form := "gatto", gloss := "cat", gender := .masculine, plural := "gatti" }
+def cane : Noun := { form := "cane", gloss := "dog", gender := .masculine, plural := "cani" }
+def tavolo : Noun :=
+  { form := "tavolo", gloss := "table", gender := .masculine, plural := "tavoli" }
+def ragazza : Noun :=
+  { form := "ragazza", gloss := "girl", gender := .feminine, isNaturalGender := true,
+    plural := "ragazze" }
+def donna : Noun :=
+  { form := "donna", gloss := "woman", gender := .feminine, isNaturalGender := true,
+    plural := "donne" }
+def casa : Noun := { form := "casa", gloss := "house", gender := .feminine, plural := "case" }
+
+/-! ### Mass nouns -/
+
+def acqua : Noun := { form := "acqua", gloss := "water", gender := .feminine, countable := .mass }
+def vino : Noun := { form := "vino", gloss := "wine", gender := .masculine, countable := .mass }
+def pane : Noun := { form := "pane", gloss := "bread", gender := .masculine, countable := .mass }
+def latte : Noun := { form := "latte", gloss := "milk", gender := .masculine, countable := .mass }
+
+/-! ### Proper names -/
+
+/-- A personal name, its gender following the referent's sex. -/
+private def name (form : String) (gender : Gender) : Noun :=
+  { form, gloss := form, gender, isNaturalGender := true, proper := true }
+
+def paolo : Noun := name "Paolo" .masculine
+def maria : Noun := name "Maria" .feminine
+
+/-! ### The Nominal Mapping Parameter -/
 
 /-- Italian is [−arg, +pred]: nouns are predicates and need D to be arguments
 ([chierchia-1998]); its articles are `Italian.Determiners.inventory`. -/
 def nominalMapping : NominalMapping := .predOnly
-
--- ============================================================================
--- § 4: Determiners
--- ============================================================================
-
-/-- Italian determiners (articles). -/
-inductive Determiner where
-  -- Definite
-  | il | lo | la          -- Singular definite
-  | i | gli | le          -- Plural definite
-  -- Indefinite
-  | un | uno | una        -- Singular indefinite
-  -- Partitive (di + definite article)
-  | del | dello | della   -- Singular partitive (mass)
-  | dei | degli | delle   -- Plural partitive
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- § 5: NP Structure
--- ============================================================================
-
-/-- Italian NP structure. Italian NPs require determiners in argument positions. -/
-structure NP where
-  /-- The underlying noun -/
-  noun : NounEntry
-  /-- Grammatical number. -/
-  number : UD.Number
-  /-- Is this a bare NP (no determiner)? -/
-  isBare : Bool
-  /-- The determiner (if not bare) -/
-  determiner : Option Determiner := none
-  deriving Repr, BEq
-
-/-- An NP bears the number of its `number` slot (`HasNumber`). -/
-instance : HasNumber NP := ⟨fun np => Number.fromUD np.number⟩
-
--- ============================================================================
--- § 6: NP Constructors
--- ============================================================================
-
-/-- Create a definite NP (il/lo/la/i/gli/le).
-    Uses `il` for masculine singular and `la` for feminine singular
-    (the lo/gli allomorphs are phonologically conditioned and not
-    modeled here). -/
-def defNP (n : NounEntry) (num : UD.Number := .Sing) : NP :=
-  let det := match num, n.gender with
-    | .Sing, .feminine => Determiner.la
-    | .Sing, _ => Determiner.il        -- masculine is default
-    | .Plur, .feminine => Determiner.le
-    | _, _ => Determiner.i
-  { noun := n, number := num, isBare := false, determiner := some det }
-
-/-- Create an indefinite singular NP (un/una). -/
-def indefNP (n : NounEntry) : NP :=
-  let det := match n.gender with
-    | .feminine => Determiner.una
-    | _ => Determiner.un  -- masculine is default
-  { noun := n, number := .Sing, isBare := false, determiner := some det }
-
-/-- Create a partitive NP (del/della for mass, dei/delle for plural). -/
-def partNP (n : NounEntry) (num : UD.Number := .Sing) : NP :=
-  let det := match num, n.gender with
-    | .Sing, .feminine => Determiner.della
-    | .Sing, _ => Determiner.del        -- masculine is default
-    | .Plur, .feminine => Determiner.delle
-    | _, _ => Determiner.dei
-  { noun := n, number := num, isBare := false, determiner := some det }
-
-/-- Create a bare NP (restricted in Italian). -/
-def bareNP (n : NounEntry) (num : UD.Number := .Sing) : NP :=
-  { noun := n, number := num, isBare := true }
-
--- ============================================================================
--- § 7: Lexical Entries
--- ============================================================================
-
--- Count nouns (masculine)
-def libro : NounEntry := { formSg := "libro", formPl := some "libri", gender := .masculine }
-def ragazzo : NounEntry := { formSg := "ragazzo", formPl := some "ragazzi", gender := .masculine }
-def uomo : NounEntry := { formSg := "uomo", formPl := some "uomini", gender := .masculine }
-def gatto : NounEntry := { formSg := "gatto", formPl := some "gatti", gender := .masculine }
-def cane : NounEntry := { formSg := "cane", formPl := some "cani", gender := .masculine }
-def tavolo : NounEntry := { formSg := "tavolo", formPl := some "tavoli", gender := .masculine }
-
--- Count nouns (feminine)
-def ragazza : NounEntry := { formSg := "ragazza", formPl := some "ragazze", gender := .feminine }
-def donna : NounEntry := { formSg := "donna", formPl := some "donne", gender := .feminine }
-def casa : NounEntry := { formSg := "casa", formPl := some "case", gender := .feminine }
-
--- Mass nouns
-def acqua : NounEntry := { formSg := "acqua", formPl := none, gender := .feminine, countable := false }
-def vino : NounEntry := { formSg := "vino", formPl := none, gender := .masculine, countable := false }
-def pane : NounEntry := { formSg := "pane", formPl := none, gender := .masculine, countable := false }
-def latte : NounEntry := { formSg := "latte", formPl := none, gender := .masculine, countable := false }
-
--- Proper names
-def paolo : NounEntry := { formSg := "Paolo", formPl := none, gender := .masculine, proper := true }
-def maria : NounEntry := { formSg := "Maria", formPl := none, gender := .feminine, proper := true }
-
--- ============================================================================
--- § 8: Lexicon Access
--- ============================================================================
-
-def allNouns : List NounEntry := [
-  libro, ragazzo, uomo, gatto, cane, tavolo,
-  ragazza, donna, casa,
-  acqua, vino, pane, latte,
-  paolo, maria
-]
-
-def lookup (form : String) : Option NounEntry :=
-  allNouns.find? λ n => n.formSg == form || n.formPl == some form
-
--- ============================================================================
--- § 9: Bare Argument Licensing
--- ============================================================================
-
--- ============================================================================
--- § 9a: Nominal Denotation — Kind vs Property ([guerrini-2026])
--- ============================================================================
-
-open Semantics.Kinds.NMP (CanDenoteKind CanDenoteProperty)
-
-/-- Italian definite plurals denote kinds: derived from `predOnly` + overt D.
-    Because Italian is [-arg, +pred], D is required for argumenthood.
-    With D present, the noun maps to a kind via ∩. -/
-theorem definitePluralDenotesKind :
-    CanDenoteKind nominalMapping True := trivial
-
-/-- Italian bare plurals cannot denote kinds: derived from `predOnly` + no D.
-    Without D, Italian nouns remain predicates. No covert ∩ is available. -/
-theorem barePluralCannotDenoteKind :
-    ¬ CanDenoteKind nominalMapping False := id
-
-/-- Italian bare plurals denote properties: derived from `predOnly`.
-    All [+pred] languages allow property denotation for nouns. -/
-theorem barePluralDenotesProperty :
-    CanDenoteProperty nominalMapping := trivial
-
--- ============================================================================
--- § 10: NP Examples
--- ============================================================================
-
-/-- "il libro" (the book) -/
-def ilLibro : NP := defNP libro
-
-/-- "la ragazza" (the girl) -/
-def laRagazza : NP := defNP ragazza
-
-/-- "un gatto" (a cat) -/
-def unGatto : NP := indefNP gatto
-
-/-- "del vino" (some wine, partitive) -/
-def delVino : NP := partNP vino
-
-/-- "dei libri" (some books, partitive plural) -/
-def deiLibri : NP := partNP libro .Plur
-
-example : ilLibro.isBare = false := rfl
-example : ilLibro.determiner = some .il := rfl
-example : laRagazza.determiner = some .la := rfl
-example : delVino.determiner = some .del := rfl
-example : deiLibri.determiner = some .dei := rfl
 
 end Italian.Nouns

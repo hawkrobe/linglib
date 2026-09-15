@@ -1,4 +1,4 @@
-import Linglib.Semantics.Genericity.NominalMappingParameter
+import Linglib.Semantics.Genericity.Kind
 import Linglib.Semantics.Dynamic.Update
 import Linglib.Logic.Assignment
 import Linglib.Semantics.Plurality.MassCount
@@ -44,7 +44,7 @@ dog* is run on a two-entity model (`doesntOwnADog`).
 
 namespace Krifka2026
 
-open Semantics.Kinds.NMP (Individual Property IsMass pluralClosure pluralClosure_mass)
+open Genericity
 open Mereology (AlgClosure)
 open DynamicSemantics (Update Condition)
 open DynamicSemantics.Update (test neg)
@@ -62,7 +62,7 @@ def it (P : Property World Atom) : World → Individual Atom → Prop := Down P
 
 /-- *they* (17b): the kind of the plural closure of a concept. -/
 def they (P : Property World Atom) : World → Individual Atom → Prop :=
-  Down (pluralClosure World Atom P)
+  Down P.pluralClosure
 
 /-- The kind pronoun the count feature selects. -/
 def pronoun : MassCount → Property World Atom → World → Individual Atom → Prop
@@ -71,9 +71,9 @@ def pronoun : MassCount → Property World Atom → World → Individual Atom �
 
 /-- Absorption: on a cumulative concept the closure changes nothing, so *they* and *it* would
 denote the same kind ((16), (18d)); only the feature keeps *it* off a count concept. -/
-theorem they_eq_it_of_isMass {P : Property World Atom} (h : IsMass World Atom P) :
+theorem they_eq_it_of_isMass {P : Property World Atom} (h : P.IsMass) :
     they P = it P := by
-  unfold they it; rw [pluralClosure_mass P h]
+  unfold they it; rw [Property.pluralClosure_of_isMass h]
 
 /-- Two spiders, as a property of individuals over two atoms. -/
 def spider : Property Unit Bool := λ _ => {{true}, {false}}
