@@ -1,53 +1,42 @@
 import Linglib.Semantics.Events.SpatialTrace
 
 /-!
-# [zwarts-2005] *Prepositional Aspect and the Algebra of Paths*
+# Zwarts (2005): Prepositional Aspect and the Algebra of Paths
 
-Directional-PP denotations are sets of paths; what distinguishes telic PPs
-(*to the house*) from atelic PPs (*towards the house*) is closure under the
-**partial** concatenation operation: atelic PPs are cumulative, telic PPs are
-not (21). The paper's Appendix A path algebra — `Spatial.Path` with
-`Path.IsConcat` (67) and the subpath order (68) — lives in
-`Semantics/Events/Path.lean`; this file formalizes the aspectual system
-built on it.
+This file formalizes the aspectual system of [zwarts-2005]. Directional prepositional phrases
+denote sets of paths, and what separates a telic phrase like *to the house* from an atelic one
+like *towards the house* is closure under the partial concatenation of paths: an atelic phrase
+is cumulative, (17b) with the existence clause of the paper's footnote, and a telic phrase is
+bounded, that is, not cumulative, (21). The path algebra of Appendix A, with concatenation (67)
+and the subpath order (68), is `Semantics/Events/Path`; here `Cumulative` and `Bounded` are
+stated over any ternary concatenation relation, since the paper pairs the path algebra with an
+event algebra of the same shape and transfers closure from the one to the other. The weak goal
+denotation (30c) is cumulative, so the strict single-phase denotation is needed
+(`weakTo_cumulative`, `toPP_bounded`), and source phrases are bounded like goal phrases, (12a)
+(`fromPP_bounded`); the comparative *towards* (45) and *away from* (48) are closed under
+concatenation (`towardsPP_cumulative`); bounded phrases are not quantized, (23)–(24)
+(`toPP_not_quantized`), and the round-and-round loops are telic in [krifka-1998]'s sense yet
+cumulative (`loops_telicK`, `loops_cumulative`), so neither quantization nor that telicity
+characterizes boundedness (§3.1); the plural closure (58) is cumulative (`star_cumulative`);
+and a trace homomorphism transfers closure from the phrase to the verb phrase (25), so that
+*walk to the house* is bounded because no two *to the house* paths concatenate
+(`vpp_toPP_bounded`, §3.2).
 
-## Main definitions
+## Implementation notes
 
-* `Cumulative` (17b, with the existence clause of fn. 7), `Bounded` (21) —
-  stated over any ternary concatenation relation, since Appendix A pairs the
-  path algebra with an event algebra of the same shape.
-* `weakTo` (30c), `toPP`/`fromPP` (endpoint content of the strict (36)),
-  `towardsPP` (45), `awayFromPP` (48), `loops`, `Star` (58).
-* `IsTraceHom`, `vpp` (25) — §3.2 aspect transfer from PP to VP.
-
-## Main statements
-
-* `weakTo_cumulative` vs `toPP_bounded` — the §4.1.1 argument: the weak
-  goal-PP denotation is cumulative (wrong aspect), the strict one bounded.
-* `fromPP_bounded` — source PPs are bounded like goal PPs: no aspectual
-  source/goal asymmetry (12a), grounding the telic marking of
-  source-directionality PPs (`Spatial.Path.Directionality`).
-* `towardsPP_concat_closed`, `awayFromPP_concat_closed`,
-  `towardsPP_cumulative` — the comparative definitions (45)/(48) are
-  cumulative, grounding `.unbounded ↦ .atelic`.
-* `toPP_not_quantized` — bounded PPs are **not** quantized (23)–(24):
-  a *to x* path has proper *to x* subpaths, so `Mereology.QUA` fails.
-* `quantized_telicK`, `loops_telicK`, `loops_cumulative` — quantization
-  implies Krifka-telicity (22b), but the round-and-round loop set is
-  (22b)-telic yet cumulative, so neither Krifka notion characterizes
-  boundedness (§3.1).
-* `star_cumulative` — the plural closure (58) is cumulative.
-* `vpp_concat_closed`, `vpp_bounded_of_no_pairs`, `toPP_no_pairs` — §3.2:
-  a trace homomorphism transfers PP closure to VP closure, and *walk to the
-  house* is bounded because no two *to the house* traces concatenate.
+* The strict goal and source denotations enter through their endpoint content only.
+* The paper's trace function respects Rothstein's partial event concatenation, not the
+  unrestricted mereological sum of `Spatial.Trace`.
 
 ## TODO
 
-* The full single-phase strict definitions (35)–(36), (39)–(40) and the
-  minimality/grinder operators (63)–(64).
-* Reconciling `Spatial.Trace`'s sum-homomorphism law with this study's trace
-  homomorphism: Zwarts (§3.2) follows Rothstein in using partial event
-  concatenation, not the unrestricted mereological sum.
+* The full single-phase definitions (35), (36), (39) and (40), and the minimality and grinder
+  operators (63) and (64).
+
+## References
+
+* [zwarts-2005]
+* [krifka-1998]
 -/
 
 namespace Zwarts2005
@@ -78,7 +67,7 @@ def Bounded (C : α → α → α → Prop) (X : Set α) : Prop :=
 /-- A set with no concatenable pairs at all is bounded. -/
 theorem bounded_of_no_pairs {C : α → α → α → Prop} {X : Set α}
     (h : ¬ ∃ p ∈ X, ∃ q ∈ X, ∃ r, C p q r) : Bounded C X :=
-  fun hc => h hc.1
+  λ hc => h hc.1
 
 /-! ### Quantization and Krifka-telicity are the wrong notions (§3.1)
 
@@ -107,7 +96,7 @@ def loops (A : Loc) : Set (Path Loc) :=
 
 /-- Loop sets are Krifka-telic: all members share both endpoints. -/
 theorem loops_telicK (A : Loc) : TelicK (loops (Loc := Loc) A) :=
-  fun _ hp _ hq _ => ⟨hp.1.trans hq.1.symm, hp.2.1.trans hq.2.1.symm⟩
+  λ _ hp _ hq _ => ⟨hp.1.trans hq.1.symm, hp.2.1.trans hq.2.1.symm⟩
 
 /-- Loop sets are cumulative — so Krifka-telicity (22b) does not
     characterize boundedness (§3.1: *round and round the block* is telic in
@@ -132,7 +121,7 @@ def weakTo (x : Loc) : Set (Path Loc) := {p | p.goal = x}
     definitions (34)–(35). -/
 theorem weakTo_cumulative (x : Loc) : Cumulative Path.IsConcat (weakTo x) :=
   ⟨⟨_, Path.goal_const x, _, Path.goal_const x, _, Path.isConcat_const x⟩,
-    fun _ _ _ hq _ hr => hr.goal_eq.trans hq⟩
+    λ _ _ _ hq _ hr => hr.goal_eq.trans hq⟩
 
 /-- The endpoint content of the strict goal PP (36): the path ends at the
     reference object and does not start there. -/
@@ -234,7 +223,7 @@ theorem star_cumulative {X : Set (Path Loc)}
     Cumulative Path.IsConcat {p | Star X p} := by
   obtain ⟨p, hp, q, hq, r, hr⟩ := h
   exact ⟨⟨p, .base hp, q, .base hq, r, hr⟩,
-    fun _ hp' _ hq' _ hr' => .concat hp' hq' hr'⟩
+    λ _ hp' _ hq' _ hr' => .concat hp' hq' hr'⟩
 
 /-! ### Aspect transfer to the VP (§3.2) -/
 
@@ -262,7 +251,7 @@ theorem vpp_concat_closed (hhom : IsTraceHom C tr) {V : Set E}
     (hV : ∀ e ∈ V, ∀ e' ∈ V, ∀ f, C e e' f → f ∈ V)
     (hX : ∀ p ∈ X, ∀ q ∈ X, ∀ r, Path.IsConcat p q r → r ∈ X) :
     ∀ e ∈ vpp tr V X, ∀ e' ∈ vpp tr V X, ∀ f, C e e' f → f ∈ vpp tr V X :=
-  fun e he e' he' f hf =>
+  λ e he e' he' f hf =>
     ⟨hV e he.1 e' he'.1 f hf, hX _ he.2 _ he'.2 _ (hhom e e' f hf)⟩
 
 /-- §3.2 transfer, negative half: if no two PP paths concatenate, no two VP
@@ -272,7 +261,7 @@ theorem vpp_bounded_of_no_pairs (hhom : IsTraceHom C tr) {V : Set E}
     {X : Set (Path Loc)}
     (hX : ¬ ∃ p ∈ X, ∃ q ∈ X, ∃ r, Path.IsConcat p q r) :
     Bounded C (vpp tr V X) :=
-  bounded_of_no_pairs fun ⟨e, he, e', he', f, hf⟩ =>
+  bounded_of_no_pairs λ ⟨e, he, e', he', f, hf⟩ =>
     hX ⟨tr e, he.2, tr e', he'.2, tr f, hhom e e' f hf⟩
 
 /-- *Walk to the house* is bounded (26), (§3.2): instantiates the negative
