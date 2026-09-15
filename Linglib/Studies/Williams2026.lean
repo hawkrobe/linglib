@@ -1,4 +1,5 @@
 import Linglib.Syntax.Category.Verb.Basic
+import Linglib.Studies.White2014
 
 /-!
 # Williams 2026: The Presuppositions of *forget*
@@ -44,8 +45,7 @@ The English Fragment splits *forget* into two `VerbEntry` records:
 (factive/rogative, finite). Williams argues these are *one* lexical item
 with uniform factivity and a frame-driven presupposition split (the
 pre-existence analysis is formalized below). The Fragment split is a
-practical separation of entailment patterns; `White2014.lean` makes the
-consistency claim formal.
+practical separation of entailment patterns.
 
 -/
 
@@ -189,19 +189,11 @@ theorem preExistence_matches_data :
 of *forget*. Williams' gerund datum refutes it: non-finite, yet
 non-modal. -/
 
-/-- The MCA's structural prediction ([white-2014], as reconstructed in
-    Williams §3.1.1): modal insertion in every non-finite complement. -/
-def MCAPredictsModal (ct : ComplementType) : Prop :=
-  ct.isFinite = false
-
-instance : DecidablePred MCAPredictsModal := fun _ =>
-  inferInstanceAs (Decidable (_ = _))
-
 /-- The paper's central empirical argument: on the gerund frame the MCA
     predicts a modal presupposition, pre-existence does not, and the
     datum is non-modal. -/
 theorem mca_overpredicts_gerund :
-    MCAPredictsModal .gerund ∧ ¬ NeedsModalInsertion .gerund ∧
+    White2014.Modalized .gerund ∧ ¬ NeedsModalInsertion .gerund ∧
     forget_gerund.content = .nonModal := by decide
 
 /-- Williams' modal-presupposition split tracks Karttunen's
