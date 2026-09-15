@@ -21,7 +21,7 @@ membership, which makes it decidable. Sisterhood and c-command are relative to a
 * `Minimalist.SyntacticObject.immediatelyContains`, `contains`, `isTermOf`, `containsOrEq`
 * `Minimalist.SyntacticObject.subtrees`, `Acc`
 * `Minimalist.SyntacticObject.areSistersIn`, `cCommandsIn`, `asymCCommandsIn`,
-  `immediatelyCCommandsIn`
+  `immediatelyCCommandsIn`, `domainIn`
 
 ## Main results
 
@@ -158,7 +158,7 @@ theorem subtrees_card (s : SyntacticObject) : (s.subtrees).card = UnorderedTree.
 
 /-! ### Accessible terms -/
 
-/-- The accessible terms: the subterms at non-root vertices, `subtrees − {s}`. -/
+/-- The accessible terms, the subterms at non-root vertices `subtrees − {s}`. -/
 def Acc (s : SyntacticObject) : Multiset SyntacticObject := s.subtrees - {s}
 
 /-- `#Acc s = #V s − 1`. -/
@@ -178,7 +178,7 @@ theorem Acc_card (s : SyntacticObject) : (s.Acc).card = UnorderedTree.numNodes s
 
 /-! ### Containment -/
 
-/-- Containment: the transitive closure of immediate containment. -/
+/-- Containment is the transitive closure of immediate containment. -/
 inductive contains : SyntacticObject → SyntacticObject → Prop
   | imm : ∀ x y, immediatelyContains x y → contains x y
   | trans : ∀ x y z, immediatelyContains x z → contains z y → contains x y
@@ -287,7 +287,7 @@ theorem contains_iff_mem_subtrees_and_ne {x y : SyntacticObject} :
 instance (x y : SyntacticObject) : Decidable (contains x y) :=
   decidable_of_iff _ contains_iff_mem_subtrees_and_ne.symm
 
-/-- `x` is a term of `y`: `x = y` or `y` contains `x`. -/
+/-- `x` is a term of `y` when `x = y` or `y` contains `x`. -/
 def isTermOf (x y : SyntacticObject) : Prop := x = y ∨ contains y x
 
 instance (x y : SyntacticObject) : Decidable (isTermOf x y) :=
@@ -312,14 +312,15 @@ theorem containsOrEq_trans {x y z : SyntacticObject}
 
 /-! ### C-command -/
 
-/-- `x` and `y` are sisters in `root`: distinct daughters of some subterm of `root`. -/
+/-- `x` and `y` are sisters in `root` when they are distinct daughters of some subterm of
+`root`. -/
 def areSistersIn (root x y : SyntacticObject) : Prop :=
   ∃ z ∈ root.subtrees, immediatelyContains z x ∧ immediatelyContains z y ∧ x ≠ y
 
 instance (root x y : SyntacticObject) : Decidable (areSistersIn root x y) :=
   Multiset.decidableExistsMultiset
 
-/-- `x` c-commands `y` in `root`: a sister of `x` contains or equals `y`. -/
+/-- `x` c-commands `y` in `root` when a sister of `x` contains or equals `y`. -/
 def cCommandsIn (root x y : SyntacticObject) : Prop :=
   ∃ z ∈ root.subtrees, areSistersIn root x z ∧ containsOrEq z y
 
@@ -333,6 +334,14 @@ theorem mem_subtrees_of_cCommandsIn {root x y : SyntacticObject} (h : cCommandsI
   · exact hz
   · exact subtrees_subset_of_mem hz (mem_subtrees_of_contains hzy)
 
+/-- The c-command domain of `x` in `root`, the search space of a probe sitting at `x`. -/
+def domainIn (root x : SyntacticObject) : Multiset SyntacticObject :=
+  root.subtrees.filter (cCommandsIn root x)
+
+@[simp] theorem mem_domainIn {root x y : SyntacticObject} :
+    y ∈ domainIn root x ↔ cCommandsIn root x y :=
+  Multiset.mem_filter.trans (and_iff_right_of_imp mem_subtrees_of_cCommandsIn)
+
 /-- `x` c-commands `y` in `root` and `y` does not c-command `x`. -/
 def asymCCommandsIn (root x y : SyntacticObject) : Prop :=
   cCommandsIn root x y ∧ ¬ cCommandsIn root y x
@@ -340,8 +349,8 @@ def asymCCommandsIn (root x y : SyntacticObject) : Prop :=
 instance (root x y : SyntacticObject) : Decidable (asymCCommandsIn root x y) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- `x` immediately c-commands `y` in `root`: `x` c-commands `y` with no third object c-commanded
-    by `x` and c-commanding `y`. -/
+/-- `x` immediately c-commands `y` in `root` when `x` c-commands `y` with no third object
+c-commanded by `x` and c-commanding `y`. -/
 def immediatelyCCommandsIn (root x y : SyntacticObject) : Prop :=
   cCommandsIn root x y ∧ ¬ ∃ z, z ≠ x ∧ z ≠ y ∧ cCommandsIn root x z ∧ cCommandsIn root z y
 

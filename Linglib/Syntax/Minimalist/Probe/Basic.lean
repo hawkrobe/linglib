@@ -53,8 +53,8 @@ namespace Minimalist
 
 variable {α : Type*}
 
-/-- A probe over goals of type `α`: relativized search (`vis`) with an
-    activity gate (`act`). -/
+/-- A probe over goals of type `α` is a relativized search (`vis`) with an activity gate
+(`act`). -/
 structure Probe (α : Type*) where
   /-- A visible goal halts the search ([deal-2024] interaction). -/
   vis : α → Bool
@@ -78,24 +78,22 @@ namespace Probe
 /-- A probe with a visibility condition and no activity restriction. -/
 def ofVis (vis : α → Bool) : Probe α := { vis := vis }
 
-/-- The indiscriminate probe: sees every goal, so bare minimality
-    delivers the closest one ([halpert-2012]'s L⁰). -/
+/-- The indiscriminate probe sees every goal, so bare minimality delivers the closest one
+([halpert-2012]'s L⁰). -/
 def indiscriminate : Probe α := ofVis fun _ => true
 
-/-- A probe with no visibility condition, gated only by activity: it finds the closest
-goal and Agrees with it iff that goal is active — the Active Goal Hypothesis of
-[chomsky-2000]. -/
+/-- A probe with no visibility condition, gated only by activity. It finds the closest goal and
+Agrees with it iff that goal is active, the Active Goal Hypothesis of [chomsky-2000]. -/
 def ofAct (act : α → Bool) : Probe α := { vis := fun _ => true, act := act }
 
 /-! ### Search -/
 
-/-- The goal a probe finds in an ordered goal sequence: the first
-    goal visible to it, skipping invisible ones. -/
+/-- The goal a probe finds in an ordered goal sequence, the first goal visible to it. -/
 def search (p : Probe α) (goals : List α) : Option α :=
   goals.find? p.vis
 
-/-- Search then Agree: the found goal, if it passes the activity
-    condition. A visible inactive goal absorbs the probe. -/
+/-- The found goal, if it passes the activity condition. A visible inactive goal absorbs the
+probe. -/
 def agree (p : Probe α) (goals : List α) : Option α :=
   (p.search goals).filter p.act
 
@@ -153,7 +151,7 @@ theorem ofAct_agree_eq_some_iff {act : α → Bool} {a : α} :
     (ofAct act).agree goals = some a ↔ goals.head? = some a ∧ act a := by
   rw [agree_eq_some_iff, ofAct_search]; rfl
 
-/-- An inactive closest goal absorbs the probe: match without Agree. -/
+/-- An inactive closest goal absorbs the probe, a match without Agree. -/
 theorem agree_eq_none_of_inactive {a : α}
     (h : p.search goals = some a) (ha : p.act a = false) :
     p.agree goals = none := by
@@ -161,7 +159,7 @@ theorem agree_eq_none_of_inactive {a : α}
 
 @[simp] theorem search_nil : p.search [] = none := rfl
 
-/-- Satisfaction refines interaction: what the probe Agrees with, it found. -/
+/-- Satisfaction refines interaction, so what the probe Agrees with, it found. -/
 theorem agree_le_search {a : α} (h : p.agree goals = some a) :
     p.search goals = some a :=
   (agree_eq_some_iff.mp h).1
@@ -179,17 +177,30 @@ theorem agree_eq_none_iff :
     p.agree goals = none ↔ ¬ ∃ a, p.search goals = some a ∧ p.act a := by
   simp only [← Option.not_isSome_iff_eq_none, Option.isSome_iff_exists, agree_eq_some_iff]
 
-/-- Locality as list search: the probe finds `a` iff `a` is visible and
-    every earlier goal is invisible (no intervener). -/
+/-- Locality as list search. The probe finds `a` iff `a` is visible and every earlier goal is
+invisible, so that nothing intervenes. -/
 theorem search_eq_some_iff_closest {a : α} :
     p.search goals = some a ↔
       p.vis a ∧ ∃ l₁ l₂, goals = l₁ ++ a :: l₂ ∧ ∀ b ∈ l₁, !p.vis b :=
   List.find?_eq_some_iff_append
 
+/-- Over a goal sequence in which no later goal precedes an earlier one, the found goal is
+minimal among the visible goals. -/
+theorem not_rel_of_search_eq_some {r : α → α → Prop} {a : α}
+    (hord : goals.Pairwise λ x y => ¬ r y x) (h : p.search goals = some a) :
+    ∀ b ∈ goals, p.vis b → b ≠ a → ¬ r b a := by
+  obtain ⟨-, l₁, l₂, rfl, hl₁⟩ := search_eq_some_iff_closest.mp h
+  intro b hb hvb hne hba
+  rcases List.mem_append.mp hb with hb | hb
+  · exact absurd hvb (by simpa using hl₁ b hb)
+  · rcases List.mem_cons.mp hb with rfl | hb
+    · exact hne rfl
+    · exact (List.pairwise_cons.mp (List.pairwise_append.mp hord).2.1).1 b hb hba
+
 /-! ### Outcomes ([preminger-2014] Ch. 5) -/
 
-/-- The outcome of an obligatory probing operation over a goal
-    sequence: `valued` iff the search finds a goal. -/
+/-- The outcome of an obligatory probing operation over a goal sequence, `valued` iff the search
+finds a goal. -/
 def outcome (p : Probe α) (goals : List α) : Probe.Outcome :=
   if (p.search goals).isSome then .valued else .unvalued
 
@@ -220,10 +231,9 @@ theorem outcome_eq_unvalued_iff :
   rw [outcome_eq_unvalued_iff_eq_none]
   exact search_eq_none_iff
 
-/-- Widening visibility can only keep a probe valued: if `p` is valued
-    and `q` sees everything `p` sees (among `goals`), so is `q`. The
-    substrate home of [deal-2024]-style narrowing (`Deal2024`'s
-    `probe_vis_antitone` is the contrapositive on a probe family). -/
+/-- Widening visibility can only keep a probe valued. If `p` is valued and `q` sees everything `p`
+sees among `goals`, so is `q`. This is the substrate home of [deal-2024]-style narrowing, whose
+`Deal2024.probe_vis_antitone` is the contrapositive on a probe family. -/
 theorem outcome_valued_mono {q : Probe α}
     (h : ∀ a ∈ goals, p.vis a → q.vis a) :
     p.outcome goals = .valued → q.outcome goals = .valued := by
@@ -233,9 +243,8 @@ theorem outcome_valued_mono {q : Probe α}
 
 /-! ### Licensing -/
 
-/-- A goal is licensed by a probe iff the probe's single search
-    reaches it ([bejar-rezac-2003]: licensing is an Agree relation
-    with the probe). -/
+/-- A goal is licensed by a probe iff the probe's single search reaches it, since for
+[bejar-rezac-2003] licensing is an Agree relation with the probe. -/
 def Licensed (p : Probe α) (goals : List α) (a : α) : Prop :=
   p.search goals = some a
 
@@ -248,8 +257,8 @@ theorem Licensed.unique {a b : α}
     (ha : p.Licensed goals a) (hb : p.Licensed goals b) : a = b :=
   Option.some.inj (ha.symm.trans hb)
 
-/-- Licensing is being the closest visible goal: no matching goal
-    intervenes (`search_eq_some_iff_closest` in the licensing API). -/
+/-- Licensing is being the closest visible goal, with no matching goal intervening. This is
+`search_eq_some_iff_closest` in the licensing API. -/
 theorem licensed_iff_closest {a : α} :
     p.Licensed goals a ↔
       p.vis a ∧ ∃ l₁ l₂, goals = l₁ ++ a :: l₂ ∧ ∀ b ∈ l₁, !p.vis b :=
@@ -314,10 +323,9 @@ theorem allLicensed_iff_subsingleton {vis : α → Bool} {goals : List α} :
   exact ⟨fun h a ha b hb => h a ha.1 b hb.1 ha.2 hb.2,
          fun h a ha b hb hva hvb => h ⟨ha, hva⟩ ⟨hb, hvb⟩⟩
 
-/-- Licensing by the indiscriminate probe pins every needy goal to
-    the head of the sequence — the highest-element condition
-    ([halpert-2012]: an augmentless nominal must be the highest
-    nominal in its vP). -/
+/-- Licensing by the indiscriminate probe pins every needy goal to the head of the sequence, the
+highest-element condition of [halpert-2012], where an augmentless nominal must be the highest
+nominal in its vP. -/
 theorem indiscriminate_allLicensed_iff {needs : α → Bool} {goals : List α} :
     (indiscriminate : Probe α).AllLicensed needs goals ↔
       ∀ a ∈ goals, needs a = true → goals.head? = some a :=
@@ -326,12 +334,10 @@ theorem indiscriminate_allLicensed_iff {needs : α → Bool} {goals : List α} :
 
 /-! ### Cascades -/
 
-/-- The goal an ordered sequence of probes delivers: the first
-    probe's finding, else the next's, and so on — `Probe.search` at
-    the goal level composed with `List.findSome?` at the probe level.
-    This is also the single-slot morphological competition: the first
-    probe with output wins the slot ([preminger-2014] §4.4: π⁰'s
-    clitic beats #⁰'s exponent beats nothing). -/
+/-- The goal an ordered sequence of probes delivers, the first probe's finding, else the next's,
+and so on. This is `Probe.search` at the goal level composed with `List.findSome?` at the probe
+level, and also the single-slot morphological competition in which the first probe with output
+wins the slot, as in [preminger-2014] where π⁰'s clitic beats #⁰'s exponent beats nothing. -/
 def cascade (ps : List (Probe α)) (goals : List α) : Option α :=
   ps.findSome? (·.search goals)
 
