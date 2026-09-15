@@ -1,471 +1,302 @@
 import Linglib.Morphology.DistributedMorphology.Allosemy
+import Linglib.Morphology.DistributedMorphology.Locality
 import Linglib.Fragments.Icelandic.Nominalizations
-import Linglib.Fragments.Icelandic.Predicates
-import Linglib.Studies.Wood2015
-import Linglib.Studies.Panagiotidis2015
-import Linglib.Studies.McNallyDeSwart2011
+import Linglib.Data.Examples.Wood2023
 
 /-!
-# [wood-2023] — Icelandic Nominalizations and Allosemy
-[wood-2023] [wood-2015] [wood-marantz-2017]
+# Wood (2023): Icelandic Nominalizations and Allosemy
 
-*Icelandic Nominalizations and Allosemy*. Oxford University Press.
-DOI: 10.1093/oso/9780198865155.001.0001
+This file formalizes [wood-2023]'s account of Icelandic deverbal nominalizations as complex
+heads: a root categorized by v and then by n, with no verb phrase and no Voice, whose
+ambiguity between complex event, simple event, and referring readings is allosemy of v and n
+(`Derivation`). A complex event nominal has eventive v and zero n, so the noun inherits the
+verb's meaning; the simple readings have zero v and a contentful n. Borer's Generalization,
+that a complex event reading entails a morphologically related verb with that meaning, follows
+from two facts: only v introduces the event variable, and n is not in the root's domain, so it
+cannot condition root suppletion past v (`borers_generalization`). The nominal's external
+argument is introduced by i*, the head that is Voice in the verbal domain, interpreted as an
+agent in the context of an eventive nP and as a possessor otherwise (`IStar.alloseme`).
 
-## Overview
+Special meaning is subject to phase locality: a dependency may cross at most one categorizer
+(`Local`). A preposition heading the PP complement of a nominal is separated from the root by
+v and n, so a preposition that conditions the root's meaning must adjoin to the complex n head
+as a prefix, while one with its own meaning heads a PP, and one that does both is doubled
+(`nominal_complement_not_local`). The same bound lets n condition an idiosyncratic root meaning
+across v (`nominal_n_local`) and forbids it in *-væðing* nominals, where *-væða* is a compound
+head attaching to a categorized word, so that two categorizers separate the root from the
+outer n (`vaeda_n_not_local`). The prefixes *marg-* and *endur-* are event modifiers: *marg-*
+adjoins to v, *endur-* to v or to n, and each needs an event variable at its host, which
+licenses *marg-* exactly on nominals whose v is eventive and *endur-* also on simple event and
+result nominals but not on simple entities (`Licensed`).
 
-[wood-2023] argues that Icelandic deverbal nominalizations are
-built on the structure [nP n [vP v √ROOT]] (a complex head, NOT a
-phrasal VoiceP), and that the ambiguity between CEN, SEN, and RN
-readings arises from **allosemy of v and n** — one syntactic terminal
-with multiple context-dependent meanings:
+## Implementation notes
 
-- **CEN** (Complex Event Nominal): v = eventive, n = Ø (identity).
-  The noun inherits the verb's meaning, including event variable
-  and argument structure (Ch. 5, (5.14)).
-- **SEN** (Simple Event Nominal): v = Ø, n = SEN alloseme.
-  Event reading without full argument structure (Ch. 5, (5.6)).
-- **Result/Product Nominal**: v = eventive, n = result alloseme.
-  Entity whose existence results from the event (Ch. 6, (6.30)).
-- **Simple State**: v = Ø, n = state alloseme. State reading
-  (e.g. *aðdáun* 'admiration' as lasting state) (Ch. 1, (1.18)).
-- **Simple Entity**: v = Ø, n = entity alloseme. Entity reading with
-  no event connection (e.g. *þvottur* 'laundry') (Ch. 5, (5.13)).
+Wood's bound for allosemy, one intervening categorizer, is one phase looser than
+`Spine.RootLocal`, the bound the book keeps for root suppletion; the study states the strict
+one through the substrate. A preposition adjoined to a complex head has no spine position,
+since a head does not c-command its own adjunct, so the heads between a preposition and the
+root are read off its attachment. The event-modifier account licenses *marg-* on a result
+nominal built on eventive v, a case the book does not test.
 
-## Key Claims Formalized
+## References
 
-1. **No Voice in nominalizations** (Ch. 3, Ch. 5): The external argument
-   is introduced by a Poss head (= i* from [wood-marantz-2017]),
-   NOT by Voice. Voice diagnostics in nominalizations really test for
-   agentive semantics, which Poss can also provide.
-
-2. **Borer's Generalization** (Ch. 5 §5.1.5): CEN reading entails the
-   existence of a morphologically related verb with the same meaning.
-   This follows from the architecture: CEN requires v, and n cannot
-   trigger root suppletion past v.
-
-3. **P-prefixing patterns** (Ch. 4): Three patterns of preposition-verb
-   interaction in nominalizations, depending on whether P conditions
-   root meaning.
-
-4. **marg- and endur- diagnostics** (Ch. 6): Iterative marg- 'many-' is
-   only compatible with CEN; repetitive endur- 're-' is compatible
-   with CEN, SEN, and result/product RN, but not simple entity RN.
-
-5. **-vaeða verbs always compositional** (Ch. 6 §6.5): Because -vaeða
-   is a compound (√VAEÐA adjoins to v), the root cannot interact
-   idiosyncratically with n past v. Therefore -vaeðing nominals
-   never have idiosyncratic RN readings.
+* [wood-2023]
+* [embick-2010]
+* [marantz-2013]
+* [wood-marantz-2017]
+* [myler-2016]
 -/
 
 namespace Wood2023
 
-open DistributedMorphology.Allosemy
-open Icelandic.Nominalizations
-open Icelandic.Predicates
-open Wood2015 (opnastInfo)
+open DistributedMorphology DistributedMorphology.Allosemy Icelandic.Nominalizations
 
--- ============================================================================
--- § 1: Reading Derivation from Allosemes (Ch. 5)
--- ============================================================================
+/-! ### The complex head and its readings -/
 
-/-- Wood's reading derivation: v and n alloseme combinations.
-
-    [wood-2023] Ch. 5 (5.4a–e):
-    - v eventive + n zero → CEN (noun = verb meaning)
-    - v zero + n simpleEvent → SEN (event-entity reading)
-    - v zero + n entity → simple entity (entity reading)
-    - v eventive + n result → result/product (entity from event) -/
-theorem wood_cen_derivation :
-    readingFromAllosemes .eventive .zero = some .complexEvent := rfl
-
-theorem wood_sen_derivation :
-    readingFromAllosemes .zero .simpleEvent = some .simpleEvent := rfl
-
-theorem wood_simpleEntity_derivation :
-    readingFromAllosemes .zero .entity = some .simpleEntity := rfl
-
-theorem wood_result_derivation :
-    readingFromAllosemes .eventive .result = some .result := rfl
-
-theorem wood_state_derivation :
-    readingFromAllosemes .zero .state = some .simpleState := rfl
-
-/-- CEN and SEN differ in which head contributes eventive meaning:
-    CEN = v eventive (event from verb), SEN = v zero (event from n). -/
-theorem cen_sen_v_difference :
-    (readingFromAllosemes .eventive .zero).isSome = true ∧
-    (readingFromAllosemes .zero .simpleEvent).isSome = true ∧
-    Verbalizer.Alloseme.eventive ≠ Verbalizer.Alloseme.zero := by decide
-
-/-- The five reading types from [wood-2023] Ch. 1 (1.18) are
-    pairwise distinct. -/
-theorem five_readings_distinct :
-    NominalizationReading.complexEvent ≠ .simpleEvent ∧
-    NominalizationReading.complexEvent ≠ .result ∧
-    NominalizationReading.complexEvent ≠ .simpleState ∧
-    NominalizationReading.complexEvent ≠ .simpleEntity ∧
-    NominalizationReading.simpleEvent ≠ .result ∧
-    NominalizationReading.simpleEvent ≠ .simpleState ∧
-    NominalizationReading.simpleEvent ≠ .simpleEntity ∧
-    NominalizationReading.result ≠ .simpleState ∧
-    NominalizationReading.result ≠ .simpleEntity ∧
-    NominalizationReading.simpleState ≠ .simpleEntity := by decide
-
--- ============================================================================
--- § 2: No Voice in Nominalizations (Ch. 3, Ch. 5)
--- ============================================================================
-
-/-- Whether a nominalization has Voice (it doesn't, per [wood-2023]).
-
-    [wood-2023] Ch. 5 §5.1.3: "I will assume, as discussed in
-    Chapter 3, that there is in fact no Voice head in the structure."
-    The external argument is introduced by Poss (= i*), not Voice. -/
-def nomHasVoice : Bool := false
-
-/-- Poss head semantics: parallel to Voice but for nominals.
-    [wood-2023] Ch. 5 (5.22):
-    ⟦Poss⟧ ↔ λxλe. agent(x)(e) / __ agentive nP
-
-    [wood-marantz-2017]: Voice and Poss are the same head i*,
-    appearing in different categories (vP vs nP). -/
-inductive PossReading where
-  | agent       -- agent interpretation (agentive event nominal)
-  | possessor   -- general possessive interpretation
-  | experiencer -- experiencer (with experiencer verbs)
+/-- A head of the complex head: a categorizer with its alloseme. -/
+inductive Head where
+  | v (a : Verbalizer.Alloseme)
+  | n (a : Nominalizer.Alloseme)
   deriving DecidableEq, Repr
 
-/-- Poss gets agent reading only with agentive (CEN) nP.
-    [wood-2023] Ch. 5 (5.24): "i* ↔ λxλe. agent(x)(e) /
-    __ (agentive event)" -/
-def possReading (nPisCEN : Bool) : PossReading :=
-  if nPisCEN then .agent else .possessor
+/-- Every head of the complex head is a categorizer, hence a phase head. -/
+def Head.Cyclic : Head → Prop := λ _ => True
 
-theorem agent_only_with_cen : possReading true = .agent := rfl
-theorem possessor_without_cen : possReading false = .possessor := rfl
+instance : DecidablePred Head.Cyclic := λ _ => inferInstanceAs (Decidable True)
 
--- ============================================================================
--- § 3: P-Prefixing Patterns (Ch. 4)
--- ============================================================================
+/-- A choice of allosemes for the v and n of a nominalization. -/
+structure Derivation where
+  v : Verbalizer.Alloseme
+  n : Nominalizer.Alloseme
+  deriving DecidableEq, Fintype
 
-/-- Three patterns of preposition-verb interaction in nominalizations.
+namespace Derivation
 
-    [wood-2023] Ch. 4:
-    - **Pattern 1**: P conditions root meaning, must be prefixed, can
-      also appear as complement PP (*ráða um* → *umráðun á*)
-    - **Pattern 2**: P conditions root meaning, must be prefixed,
-      cannot be doubled (*gera við* → *viðgerð á*, not **viðgerð við*)
-    - **Pattern 3**: P does NOT condition root meaning, is not
-      prefixed (*hugsa um* → *hugsun um*, not *umhugsun*) -/
-inductive PPrefixPattern where
-  | pConditionsDoubles   -- Pattern 1: P conditions meaning, can double
-  | pConditionsNoDouble  -- Pattern 2: P conditions meaning, no doubling
-  | pDoesNotCondition    -- Pattern 3: P doesn't condition root meaning
+/-- The reading the allosemes yield. -/
+def reading (d : Derivation) : Option NominalizationReading := readingFromAllosemes d.v d.n
+
+/-- The heads of the nominalization, innermost first. -/
+def heads (d : Derivation) : List Head := [.v d.v, .n d.n]
+
+/-- The complex event derivation: eventive v, zero n. -/
+def cen : Derivation := ⟨.eventive, .zero⟩
+
+/-- The simple event derivation: zero v, the simple event alloseme of n. -/
+def sen : Derivation := ⟨.zero, .simpleEvent⟩
+
+/-- The simple entity derivation: zero v, the entity alloseme of n. -/
+def simpleEntity : Derivation := ⟨.zero, .entity⟩
+
+/-- The result derivation: eventive v, the result alloseme of n. -/
+def result : Derivation := ⟨.eventive, .result⟩
+
+theorem reading_cen : cen.reading = some .complexEvent := rfl
+
+theorem reading_sen : sen.reading = some .simpleEvent := rfl
+
+theorem reading_simpleEntity : simpleEntity.reading = some .simpleEntity := rfl
+
+theorem reading_result : result.reading = some .result := rfl
+
+/-- The nP denotes an event when v is eventive and n passes its meaning up unchanged. -/
+def Eventive (d : Derivation) : Prop := d.v = .eventive ∧ d.n = .zero
+
+instance : DecidablePred Eventive := λ _ => inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The complex event reading is exactly the eventive nP. -/
+theorem eventive_iff (d : Derivation) : d.Eventive ↔ d.reading = some .complexEvent := by
+  revert d; decide
+
+end Derivation
+
+/-- Every reading the fragment lists is derived by some choice of allosemes. -/
+theorem fragment_readings_derivable :
+    ∀ nm ∈ allNoms, ∀ rd ∈ nm.availableReadings,
+      ∃ d : Derivation, d.reading = some rd := by
+  decide
+
+/-- The reading is not a function of the suffix: the same suffix yields different readings. -/
+theorem readings_not_by_suffix :
+    opnun.suffix = notkun.suffix ∧ opnun.availableReadings ≠ notkun.availableReadings := by
+  decide
+
+/-! ### Spines -/
+
+/-- The verb: the root categorized by eventive v. -/
+def verb (r : Root) : Spine Head := ⟨r, [.v .eventive]⟩
+
+/-- The nominalization: the root categorized by v and then by n. -/
+def nominal (r : Root) (d : Derivation) : Spine Head := ⟨r, d.heads⟩
+
+/-- A *-væða* verb: the root categorized by n, compounded with the v of *-væða*. -/
+def vaedaVerb (r : Root) (a : Nominalizer.Alloseme) : Spine Head := ⟨r, [.n a, .v .eventive]⟩
+
+/-- A *-væðing* nominal: the *-væða* verb categorized by n. -/
+def vaedaNominal (r : Root) (a c : Nominalizer.Alloseme) : Spine Head :=
+  ⟨r, (vaedaVerb r a).heads ++ [.n c]⟩
+
+/-! ### Borer's Generalization -/
+
+/-- The n of a nominalization is not in the root's domain: category change closes it. -/
+theorem nominal_n_not_rootLocal (r : Root) (d : Derivation) :
+    ¬ (nominal r d).RootLocal Head.Cyclic ⟨1, Nat.one_lt_two⟩ :=
+  Spine.not_rootLocal_of_cyclic_of_cyclic (j := ⟨0, Nat.two_pos⟩)
+    (Fin.mk_lt_mk.2 Nat.zero_lt_one) trivial trivial
+
+/-- Borer's Generalization: a complex event nominal contains the eventive v of the verb, and
+its n cannot condition suppletion of the root, so the nominal is built on a verb with the
+same root exponent and the same meaning. -/
+theorem borers_generalization (r : Root) {d : Derivation}
+    (h : d.reading = some .complexEvent) :
+    d.v = .eventive ∧ ¬ (nominal r d).RootLocal Head.Cyclic ⟨1, Nat.one_lt_two⟩ :=
+  ⟨((Derivation.eventive_iff d).2 h).1, nominal_n_not_rootLocal r d⟩
+
+/-! ### The external argument -/
+
+/-- The contentful allosemes of i*, the external-argument head that is Voice in the verbal
+domain and Poss in the nominal domain. -/
+inductive IStar.Contentful where
+  | agent
+  | possessor
+  deriving DecidableEq, Repr, Fintype
+
+/-- The allosemes of i*. -/
+abbrev IStar.Alloseme := Allosemy.Alloseme IStar.Contentful
+
+namespace IStar.Alloseme
+
+@[match_pattern] def agent : IStar.Alloseme := Allosemy.Alloseme.of .agent
+
+@[match_pattern] def possessor : IStar.Alloseme := Allosemy.Alloseme.of .possessor
+
+end IStar.Alloseme
+
+/-- i* is an agent in the context of an eventive complement and a possessor elsewhere. -/
+def IStar.vocabulary : List (VocabularyItem Feature IStar.Alloseme) :=
+  [⟨complement [.eventive], .agent⟩, [] ⟷ .possessor]
+
+/-- The alloseme of i* selected by its complement's features. -/
+def IStar.alloseme (fs : List Feature) : IStar.Alloseme :=
+  (subsetPrinciple IStar.vocabulary (complement fs)).getD .possessor
+
+/-- The features an nP presents to i*: its category, and eventivity when it denotes an
+event. -/
+def Derivation.features (d : Derivation) : List Feature :=
+  if d.Eventive then [.cat .n, .eventive] else [.cat .n]
+
+/-- The possessor of a nominal is its agent exactly on the complex event reading. -/
+theorem iStar_agent_iff (d : Derivation) :
+    IStar.alloseme d.features = .agent ↔ d.reading = some .complexEvent := by
+  rw [← Derivation.eventive_iff]
+  by_cases h : d.Eventive
+  · rw [Derivation.features, if_pos h]; exact iff_of_true (by decide) h
+  · rw [Derivation.features, if_neg h]; exact iff_of_false (by decide) h
+
+/-! ### Phase locality of special meaning -/
+
+/-- Wood's phase locality: a dependency conditioning special meaning may cross at most one
+categorizer. -/
+def Local (between : List Head) : Prop := between.length ≤ 1
+
+/-- Where a preposition attaches to a complex head: adjoined to it, or heading its
+complement PP. -/
+inductive Attachment where
+  | adjunct
+  | complement
   deriving DecidableEq, Repr
 
-/-- Pattern assignment for fragment nominalizations. -/
-def PPrefixPattern.ofNom (n : IcelandicNom) : Option PPrefixPattern :=
-  if !n.hasPPrefix then some .pDoesNotCondition
-  else match n.nomForm with
-  | "viðgerð"  => some .pConditionsNoDouble
-  | "umönnun"  => some .pConditionsNoDouble
-  | "aðdáun"   => some .pConditionsNoDouble
-  | _          => none
+/-- The heads between a preposition and the root: every head of the complex head when the
+preposition heads its complement, all but the outermost when it adjoins to the complex head,
+since a head does not c-command its own adjunct. -/
+def interveners (s : Spine Head) : Attachment → List Head
+  | .complement => s.heads
+  | .adjunct => s.heads.dropLast
 
-/-- P-prefixed nominalizations use pattern 2 (no doubling). -/
-theorem vidgerd_pattern2 :
-    PPrefixPattern.ofNom vidgerd = some .pConditionsNoDouble := rfl
+/-- Adjunction is at least as local as complementation. -/
+theorem Local.adjunct_of_complement {s : Spine Head}
+    (h : Local (interveners s .complement)) : Local (interveners s .adjunct) := by
+  simp only [Local, interveners, List.length_dropLast] at h ⊢; omega
 
-theorem umonnun_pattern2 :
-    PPrefixPattern.ofNom umonnun = some .pConditionsNoDouble := rfl
+/-- A preposition may condition the root of a verb whether adjoined or in its complement. -/
+theorem verb_local (r : Root) (a : Attachment) : Local (interveners (verb r) a) := by
+  cases a <;> simp [Local, interveners, verb]
 
--- ============================================================================
--- § 4: marg- and endur- as Reading Diagnostics (Ch. 6)
--- ============================================================================
+/-- A preposition heading the complement of a nominal cannot condition its root: v and n
+intervene. A preposition that conditions the root's meaning must therefore be prefixed. -/
+theorem nominal_complement_not_local (r : Root) (d : Derivation) :
+    ¬ Local (interveners (nominal r d) .complement) := by
+  simp [Local, interveners, nominal, Derivation.heads]
 
-/-- Verbal prefixes that diagnose nominalization readings.
+/-- A preposition adjoined to the complex n head may condition the root: only v intervenes. -/
+theorem nominal_adjunct_local (r : Root) (d : Derivation) :
+    Local (interveners (nominal r d) .adjunct) := by
+  simp [Local, interveners, nominal, Derivation.heads]
 
-    [wood-2023] Ch. 6 §6.4:
-    - *marg-* 'many-' adds iterativity to the event. Only compatible
-      with CEN, because only CEN has an event variable at the v level.
-    - *endur-* 're-' adds presupposition of prior eventuality. Compatible
-      with CEN, SEN, and result/product RN (all have event variables),
-      but NOT with simple entity RN or simple state (no event variable).
-      Per (6.46)–(6.53): *endurprentun* 'reprint' (result RN) is OK,
-      but *endur-þvottur* 'laundry' (simple entity) is not. -/
-inductive VerbalPrefix where
-  | marg    -- 'many-': iterative, CEN only
-  | endur   -- 're-': repetitive, CEN + SEN + result RN
+/-- The n of a nominalization may condition an idiosyncratic meaning of the root across v. -/
+theorem nominal_n_local (r : Root) (d : Derivation) : Local ((nominal r d).heads.take 1) := by
+  simp [Local, nominal, Derivation.heads]
+
+/-- The outer n of a *-væðing* nominal cannot condition the root: the inner n and v intervene,
+so the nominal has no idiosyncratic referring reading. -/
+theorem vaeda_n_not_local (r : Root) (a c : Nominalizer.Alloseme) :
+    ¬ Local ((vaedaNominal r a c).heads.take 2) := by
+  simp [Local, vaedaNominal, vaedaVerb]
+
+/-- A PP complement of a *-væða* verb cannot condition its root: its interpretation is
+compositional. -/
+theorem vaeda_complement_not_local (r : Root) (a : Nominalizer.Alloseme) :
+    ¬ Local (interveners (vaedaVerb r a) .complement) := by
+  simp [Local, interveners, vaedaVerb]
+
+/-! ### The prefixes *marg-* and *endur-* -/
+
+/-- The event-modifying prefixes: iterative *marg-* 'many' and *endur-* 're-'. -/
+inductive Prefix where
+  | marg
+  | endur
   deriving DecidableEq, Repr
 
-/-- Whether a prefix is compatible with a reading.
+/-- The heads a prefix adjoins to at the complex head: *marg-* to v, *endur-* to v or n. -/
+def Prefix.AdjoinsTo : Prefix → Head → Prop
+  | .marg, .v _ => True
+  | .marg, .n _ => False
+  | .endur, _ => True
 
-    Key distinction: *endur-* is compatible with result/product nominals
-    (where v is eventive and the entity is computed from the event) but
-    NOT with simple entity nominals (where v is zero, no event variable).
-    [wood-2023] Ch. 6 (6.46)–(6.53). -/
-def prefixCompatible : VerbalPrefix → NominalizationReading → Bool
-  | .marg,  .complexEvent => true
-  | .marg,  _             => false
-  | .endur, .complexEvent => true
-  | .endur, .simpleEvent  => true
-  | .endur, .result       => true   -- result/product: event variable present
-  | .endur, _             => false  -- simpleEntity, simpleState, content: no event
+/-- Whether a head's alloseme carries an event variable: eventive v, and the simple event and
+result allosemes of n. -/
+def Head.HasEvent : Head → Prop
+  | .v a => a = .eventive
+  | .n a => a = .simpleEvent ∨ a = .result
 
-/-- *marg-* only compatible with CEN ([wood-2023] Ch. 6 (6.38)). -/
-theorem marg_cen_only :
-    prefixCompatible .marg .complexEvent = true ∧
-    prefixCompatible .marg .simpleEvent = false ∧
-    prefixCompatible .marg .simpleEntity = false := ⟨rfl, rfl, rfl⟩
+/-- A prefix is licensed on a nominalization when some head it adjoins to there carries an
+event variable. -/
+def Licensed (p : Prefix) (d : Derivation) : Prop :=
+  ∃ h ∈ d.heads, p.AdjoinsTo h ∧ h.HasEvent
 
-/-- *endur-* compatible with CEN, SEN, and result/product RN, but not
-    simple entity RN ([wood-2023] Ch. 6 (6.46)–(6.53)). -/
-theorem endur_pattern :
-    prefixCompatible .endur .complexEvent = true ∧
-    prefixCompatible .endur .simpleEvent = true ∧
-    prefixCompatible .endur .result = true ∧
-    prefixCompatible .endur .simpleEntity = false ∧
-    prefixCompatible .endur .simpleState = false := ⟨rfl, rfl, rfl, rfl, rfl⟩
+/-- *marg-* is licensed exactly when v is eventive. -/
+theorem licensed_marg_iff (d : Derivation) : Licensed .marg d ↔ d.v = .eventive := by
+  simp [Licensed, Derivation.heads, Prefix.AdjoinsTo, Head.HasEvent]
 
-/-- *marg-* is strictly more restrictive than *endur-*. -/
-theorem marg_stricter_than_endur (r : NominalizationReading) :
-    prefixCompatible .marg r = true → prefixCompatible .endur r = true := by
-  cases r <;> simp [prefixCompatible]
+/-- *endur-* is licensed exactly when v or n carries an event variable. -/
+theorem licensed_endur_iff (d : Derivation) :
+    Licensed .endur d ↔ d.v = .eventive ∨ d.n = .simpleEvent ∨ d.n = .result := by
+  simp [Licensed, Derivation.heads, Prefix.AdjoinsTo, Head.HasEvent]
 
--- ============================================================================
--- § 5: Borer's Generalization (Ch. 5 §5.1.5)
--- ============================================================================
+/-- *marg-* is stricter than *endur-*. -/
+theorem Licensed.endur {d : Derivation} (h : Licensed .marg d) : Licensed .endur d :=
+  (licensed_endur_iff d).2 (Or.inl ((licensed_marg_iff d).1 h))
 
-/-- Borer's Generalization: CEN reading entails the existence of a
-    morphologically related verb with the same meaning.
+/-- *marg-* on *þvottur*: in on the complex event reading, out on the simple event and entity
+readings. -/
+theorem marg_pvottur :
+    Licensed .marg .cen ∧ ¬ Licensed .marg .sen ∧ ¬ Licensed .marg .simpleEntity := by
+  simp only [licensed_marg_iff]; decide
 
-    [wood-2023] Ch. 5 §5.1.5: This follows from two assumptions:
-    (a) verbs are semantically special (they introduce event variables),
-    (b) n cannot trigger root suppletion past v. -/
-def borersGeneralization (nom : IcelandicNom) : Prop :=
-  nom.availableReadings.contains .complexEvent → nom.baseVerb ≠ ""
-
-/-- All CEN-capable nominals in the fragment have base verbs
-    (Borer's Generalization holds). -/
-theorem borers_generalization_holds :
-    (allNoms.filter (fun n => n.availableReadings.contains .complexEvent)).all
-      (fun n => n.baseVerb != "") = true := by decide
-
--- ============================================================================
--- § 6: -vaeða Compositionality (Ch. 6 §6.5)
--- ============================================================================
-
-/-- -vaeða verbs are compounds: √VAEÐA adjoins directly to v.
-    Because √VAEÐA is meaningless (like English do-support √DO),
-    the root it compounds with must be categorized (n) first.
-
-    [wood-2023] Ch. 6 (6.60):
-    [v [n ... √ROOT n] [v √VAEÐA v]]
-
-    This structure entails:
-    - Root cannot idiosyncratically select complement PPs
-    - -vaeðing nominals never have idiosyncratic RN readings
-    - PP complements of -vaeða verbs are always compositional
-    - -vaeða verbs cannot select ApplP -/
-structure VaedaProperties where
-  /-- Root can condition idiosyncratic complement PP? -/
-  idiosyncraticPP : Bool
-  /-- Nominalization can have idiosyncratic RN reading? -/
-  idiosyncraticRN : Bool
-  /-- Verb can select ApplP? -/
-  selectsApplP : Bool
-  /-- Meaning of nominalization always compositional? -/
-  alwaysCompositional : Bool
-  deriving Repr, BEq
-
-/-- -vaeða verbs have maximally restricted properties. -/
-def vaedaProps : VaedaProperties :=
-  { idiosyncraticPP := false
-    idiosyncraticRN := false
-    selectsApplP := false
-    alwaysCompositional := true }
-
-/-- All -vaeða restrictions hold simultaneously. -/
-theorem vaeda_all_restrictions :
-    vaedaProps.idiosyncraticPP = false ∧
-    vaedaProps.idiosyncraticRN = false ∧
-    vaedaProps.selectsApplP = false ∧
-    vaedaProps.alwaysCompositional = true := ⟨rfl, rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 7: Bridge Theorems — Wood 2023 ↔ Wood 2015
--- ============================================================================
-
-/-- *opnun* 'opening' connects to *opnast* 'open-ST' (anticausative).
-    The nominalization is built on the same root as the -st verb;
-    the -st voice morphology does not appear in the nominal
-    (nominalizations lack Voice). The Wood-2015 construction for *opnast*
-    is sourced from `opnastInfo` in the Wood2015 study file (the
-    Fragment carries only consensus lexical data). -/
-theorem opnun_connects_to_st_verb :
-    opnun.stVerb = some opnast ∧
-    opnastInfo.construction = Wood2015.Construction.anticausative := ⟨rfl, rfl⟩
-
-/-- Anticausative -st verbs can be nominalized: the nominalization
-    lacks Voice (hence no -st), but retains the root's meaning.
-    [wood-2023] Ch. 3: -st and nominalization both require
-    non-agentive contexts, but the nominal achieves this by lacking
-    Voice entirely rather than having non-agentive Voice. -/
-theorem st_verb_nominalization_drops_voice :
-    opnun.stVerb.isSome = true ∧
-    nomHasVoice = false := ⟨rfl, rfl⟩
-
-/-- The Voice flavor of the -st verb is irrelevant for the nominal:
-    nominalizations derive readings from v/n allosemy, not from Voice.
-    The voice flavor is read from `Wood2015.opnastInfo`. -/
-theorem voice_irrelevant_for_nom_reading :
-    opnastInfo.construction.voiceFlavor = .nonThematic ∧
-    opnun.availableReadings.contains .complexEvent = true ∧
-    opnun.availableReadings.contains .simpleEntity = true := by decide
-
--- ============================================================================
--- § 8: Suffix Uniformity ([wood-2023] Ch. 2–3)
--- ============================================================================
-
-/-- All nominalizing suffixes spell out the same head n.
-    Different suffixes do NOT indicate different functional heads —
-    this is allomorphy of n, not different morphemes.
-    [wood-2023] Ch. 2 (2.1), Ch. 3. -/
-theorem suffix_count : (List.length [NomSuffix.un, .ing, .sla, .stur, .adur]) = 5 := rfl
-
-/-- The same suffix (-un) can yield different readings:
-    *opnun* has CEN + simple entity, *notkun* has CEN only.
-    The reading is determined by allosemy, not by the suffix. -/
-theorem same_suffix_different_readings :
-    opnun.suffix = notkun.suffix ∧
-    opnun.availableReadings ≠ notkun.availableReadings := by
-  constructor
-  · rfl
-  · decide
-
-/-- Different suffixes can yield the same reading type:
-    *opnun* (-un) and *þvottur* (-stur) both have CEN readings.
-    The reading comes from v/n allosemy, not from the suffix. -/
-theorem different_suffix_same_reading :
-    opnun.suffix ≠ pvottur.suffix ∧
-    opnun.availableReadings.contains .complexEvent = true ∧
-    pvottur.availableReadings.contains .complexEvent = true := by decide
-
--- ════════════════════════════════════════════════════════════════
--- § 7: Cross-framework divergence with Panagiotidis 2015 + McNally-deSwart 2011
--- ════════════════════════════════════════════════════════════════
-
-/-! ## Wood vs Panagiotidis on the n head
-
-[wood-2023] Ch. 1 §1.2.3 + Ch. 5: nominalisations are systematically
-ambiguous (CEN/SEN/RN/SimpleState/SimpleEntity). All readings stem from
-ONE structure; the *interpretive* variation comes from `n` (and `v`)
-having multiple **allosemes** — `n` can be `zero / sortal / relational /
-alienator / content / simpleEvent / result / state / entity` (9 cases per
-`Morphology/DistributedMorphology/Allosemy.lean`).
-
-[panagiotidis-2015] treats `n` as a uniform categoriser bearing the
-interpretable feature [N]. There is no alloseme machinery in
-Panagiotidis: interpretation of an `n`-headed projection follows from
-[N] (sortal perspective) plus what the complement contributes. Per p. 95,
-"categorizers are not functional" and per Ch. 4 "categorial features [N]
-and [V] are LF-interpretable" — features, not allosemes, do the
-interpretive work.
-
-The two frameworks are **incommensurable on `n`'s interpretive
-contribution**: Wood says context-determined alloseme choice; Panagiotidis
-says uniform [N] feature. Applied to [mcnally-deswart-2011]'s
-`InflectedAnalysis` rivals (which all involve some `n` head), they
-diverge on what additional commitment is required.
-
-This is the cross-framework divergence between the two accounts of the
-*n* head on [mcnally-deswart-2011]'s Dutch data — addressed here. -/
-
-namespace MdSPanaDivergence
-
-open McNallyDeSwart2011
-open DistributedMorphology.Allosemy
-
-/-- Wood's framework requires every `n`-headed nominalisation to commit
-    to an `Nominalizer.Alloseme` (one of the 9 cases). Panagiotidis's framework
-    requires no such commitment — `n` is uniformly [N].
-
-    For the [mcnally-deswart-2011] `hetAsCap` analysis (where M&deS
-    posit a *trope* interpretation, an entity correlate of a property
-    uniquely instantiated in one bearer per [moltmann-2004]), Wood's
-    framework would need to specify which alloseme `het` selects. None
-    of the 9 Nominalizer.Alloseme cases is "trope":
-
-    * `relational, sortal, alienator, content` — semantically wrong type
-      (relational arguments / kind sortation / possessor closure /
-      CP-complement-selection)
-    * `zero` — identity function, would inherit the AP's adjectival
-      meaning verbatim, missing the trope-reification
-    * `simpleEvent, result, state` — event-nominalisation allosemes,
-      conceptually for V→N transitions
-    * `entity` — closest fit, but M&deS distinguish tropes from
-      ordinary entities (§3.4 + cite of [moltmann-2004] ontology)
-
-    So Wood's framework would require **extending Nominalizer.Alloseme** to model
-    M&deS's trope analysis. Panagiotidis's framework would not. -/
-def woodAllosemeForRival : InflectedAnalysis → Option Nominalizer.Alloseme
-  | .nominalisation => some .entity   -- closest fit; not exact
-  | .ellipsis       => none           -- no n at surface; elided
-  | .hetAsCap       => none           -- no Nominalizer.Alloseme is "trope"; gap
-
-instance : DecidableEq (Option Nominalizer.Alloseme) := inferInstance
-
-/-- The Panagiotidis-side prediction: for any rival, what does
-    Panagiotidis say `n` does interpretively? Answer (from
-    `referential_predicative_asymmetry`): bears [N], makes the
-    projection referential. No alloseme choice required. -/
-def panagiotidisRequiresAllosemeChoice : InflectedAnalysis → Bool
-  | _ => false
-
-/-- The Wood-side requirement: each rival must specify an alloseme,
-    *or* the framework must be extended to cover it. -/
-def woodRequiresAllosemeChoice : InflectedAnalysis → Bool
-  | _ => true
-
-/-- **The substantive divergence.** Wood's framework requires an
-    alloseme commitment for every rival; Panagiotidis's framework
-    requires none. The two frameworks make incommensurable demands on
-    a theory of `het rode van X` (and of nominalisations in general). -/
-theorem wood_panagiotidis_alloseme_divergence (a : InflectedAnalysis) :
-    woodRequiresAllosemeChoice a ≠ panagiotidisRequiresAllosemeChoice a := by
-  cases a <;> decide
-
-/-- **The substantive gap on `hetAsCap`.** Wood's Nominalizer.Alloseme inventory
-    has no case obviously fitting M&deS's trope analysis. Wood's
-    framework would need extension; Panagiotidis's framework would not.
-    Concrete: `woodAllosemeForRival .hetAsCap = none`, recording the
-    gap. -/
-theorem wood_no_trope_alloseme_for_hetAsCap :
-    woodAllosemeForRival .hetAsCap = none := rfl
-
-/-- The 9 NAllosemes are exactly: relational, sortal, alienator, content,
-    zero, simpleEvent, result, state, entity. None of these is "trope".
-    The bridge documents this as a substantive limitation of Wood's
-    inventory when applied to M&deS's adjectival nominalisation data. -/
-theorem nAlloseme_cases_count : Nominalizer.vocabulary.length = 9 := rfl
-
-/-! ## Three-way framework dialogue
-
-The Subkinds substrate now anchors a three-way cross-framework
-dialogue on Dutch nominalisation morphology:
-
-* `McNallyDeSwart2011`: provides the data (`het rode van X`, modifier
-  distribution) and the trope analysis (Moltmann 2004).
-* `Panagiotidis2015`: the categorizer theory on which every *n* head
-  bears the same interpretable [N] feature.
-* `Wood2023`: requires alloseme commitment per rival; identifies a
-  framework gap (no "trope" Nominalizer.Alloseme), making the divergence with
-  Panagiotidis (uniform [N], no allosemes) substantive.
-
-Each framework's distinctive theoretical primitives generate distinct
-empirical commitments on the same Dutch data — exactly the kind of
-cross-framework incompatibility linglib is designed to surface. -/
-
-end MdSPanaDivergence
+/-- *endur-* on *þvottur* and *prentun*: in on the complex event, simple event, and result
+readings, out on the entity reading. -/
+theorem endur_pvottur_prentun :
+    Licensed .endur .cen ∧ Licensed .endur .sen ∧ Licensed .endur .result ∧
+      ¬ Licensed .endur .simpleEntity := by
+  simp only [licensed_endur_iff]; decide
 
 end Wood2023
