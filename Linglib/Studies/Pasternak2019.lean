@@ -1,5 +1,5 @@
 import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.ArgumentStructure.Thematic.Defs
+import Linglib.Semantics.ArgumentStructure.ThematicRole
 import Linglib.Semantics.Mereology
 
 /-!

@@ -2,7 +2,7 @@ import Linglib.Semantics.Degree.Measure.Basic
 import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Mereology
-import Linglib.Semantics.ArgumentStructure.Thematic.Defs
+import Linglib.Semantics.ArgumentStructure.ThematicRole
 import Linglib.Data.Examples.Wellwood2015
 import Linglib.Studies.Bresnan1973
 
