@@ -3,6 +3,7 @@ import Linglib.Syntax.Person.Basic
 import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Agreement.ContainmentPair
 import Linglib.Syntax.Number.Basic
+import Mathlib.Data.Finset.Basic
 
 /-!
 # Person
@@ -290,27 +291,31 @@ theorem ud_conflates_incl_excl :
     Category.toUDPersonNumber .augIncl =
     Category.toUDPersonNumber .excl := rfl
 
-/-- The [cysouw-2003] category a (person, number) coordinate pair
-    realizes, over the canonical inventories. Clusivity rides on the
-    person value; the minimal/augmented coordinates give the
-    minimal/augmented inclusives directly (Tagalog *kata* =
-    `(firstInclusive, minimal)` ↦ `minIncl`); the Maori-type dual
-    alignment maps there too; plain `first` non-singulars are a syncretism
-    (`none`). -/
-def Category.ofPersonNumber : Person → Number → Option Category
-  | .first, .singular | .firstInclusive, .singular
-  | .firstExclusive, .singular => some .s1
-  | .second, .singular => some .s2
-  | .third, .singular => some .s3
-  | .firstInclusive, .minimal | .firstInclusive, .dual => some .minIncl
-  | .firstInclusive, .augmented | .firstInclusive, .plural
-  | .firstInclusive, .general => some .augIncl
-  | .firstExclusive, .dual | .firstExclusive, .plural
-  | .firstExclusive, .general | .firstExclusive, .augmented => some .excl
-  | .second, .dual | .second, .plural | .second, .general =>
-      some .secondGrp
-  | .third, .dual | .third, .plural | .third, .general => some .thirdGrp
-  | _, _ => none
+/-- The [cysouw-2003] categories a (person, number) coordinate pair can realize. Clusivity
+    rides on the person value and the minimal/augmented coordinates give the minimal/augmented
+    inclusives directly (Tagalog *kata* = `(firstInclusive, minimal)` ↦ `{minIncl}`). A
+    clusivity-unmarked non-singular first person is the syncretism `{minIncl, augIncl, excl}`
+    (English *we*), general number is noncommittal between the singular and the group category
+    (`(second, general)` ↦ `{s2, secondGrp}`), and a singular bearing clusivity or the
+    impersonal person realizes nothing. -/
+def Category.ofPersonNumber : Person → Number → Finset Category
+  | .first, .singular | .first, .minimal => {.s1}
+  | .first, .dual => {.minIncl, .excl}
+  | .first, .general => {.s1, .minIncl, .augIncl, .excl}
+  | .first, _ => {.minIncl, .augIncl, .excl}
+  | .firstInclusive, .singular => ∅
+  | .firstInclusive, .minimal | .firstInclusive, .dual => {.minIncl}
+  | .firstInclusive, .general => {.minIncl, .augIncl}
+  | .firstInclusive, _ => {.augIncl}
+  | .firstExclusive, .singular => ∅
+  | .firstExclusive, _ => {.excl}
+  | .second, .singular | .second, .minimal => {.s2}
+  | .second, .general => {.s2, .secondGrp}
+  | .second, _ => {.secondGrp}
+  | .third, .singular | .third, .minimal => {.s3}
+  | .third, .general => {.s3, .thirdGrp}
+  | .third, _ => {.thirdGrp}
+  | .zero, _ => ∅
 
 /-- The person coordinate of each referential category — the projection
     the canonical inventory recovers losslessly where UD cannot:
@@ -339,19 +344,67 @@ theorem person_includesSpeaker_iff (c : Category) :
 theorem person_separates_clusivity :
     Category.augIncl.person ≠ Category.excl.person := by decide
 
-/-- `ofPersonNumber` inverts the person projection: every category is
-    recovered from its coordinates at some number value. -/
+/-- `ofPersonNumber` inverts the person projection: every category is recovered from its
+    coordinates at some number value. -/
 theorem ofPersonNumber_person (c : Category) :
-    ∃ n, Category.ofPersonNumber c.person n = some c := by
+    ∃ n, Category.ofPersonNumber c.person n = {c} := by
   cases c
   · exact ⟨.singular, rfl⟩
   · exact ⟨.singular, rfl⟩
   · exact ⟨.singular, rfl⟩
   · exact ⟨.minimal, rfl⟩
   · exact ⟨.augmented, rfl⟩
-  · exact ⟨.general, rfl⟩
-  · exact ⟨.general, rfl⟩
-  · exact ⟨.general, rfl⟩
+  · exact ⟨.plural, rfl⟩
+  · exact ⟨.plural, rfl⟩
+  · exact ⟨.plural, rfl⟩
+
+/-! ### The person and number of a set of categories
+
+A form that can denote several categories (the polite German *Sie*, addressee or addressees;
+English *we*, any group containing the speaker) has a person and a number only up to the
+values neutral between them: the clusivity-unmarked `first` and the noncommittal `general`. -/
+
+namespace Category
+
+/-- The person shared by a set of referential categories: the common value of `person` where
+    there is one, `first` for categories differing only in clusivity, `none` for the empty set
+    and for categories disagreeing on the speech-act roles they include. -/
+def sharedPerson (s : Finset Category) : Option Person :=
+  if s = ∅ then none
+  else if ∀ c ∈ s, c.IncludesSpeaker then
+    if ∀ c ∈ s, c.person = .firstInclusive then some .firstInclusive
+    else if ∀ c ∈ s, c.person = .firstExclusive then some .firstExclusive
+    else some .first
+  else if ∀ c ∈ s, c.IncludesAddressee then some .second
+  else if ∀ c ∈ s, ¬ c.IncludesSpeaker ∧ ¬ c.IncludesAddressee then some .third
+  else none
+
+/-- The number shared by a set of referential categories: singular or plural when the
+    categories agree, `general` when they mix individuals and groups, `none` for the empty
+    set. Cysouw's categories do not separate dual from plural, so the projection is at that
+    granularity. -/
+def sharedNumber (s : Finset Category) : Option Number :=
+  if s = ∅ then none
+  else if ∀ c ∈ s, c.IsSingular then some .singular
+  else if ∀ c ∈ s, c.IsGroup then some .plural
+  else some .general
+
+/-- A single category shares its own person. -/
+theorem sharedPerson_singleton (c : Category) : sharedPerson {c} = some c.person := by
+  cases c <;> decide
+
+/-- The categories a coordinate pair realizes share that person, wherever there are any. -/
+theorem sharedPerson_ofPersonNumber (p : Person) (n : Number)
+    (h : (ofPersonNumber p n).Nonempty) : sharedPerson (ofPersonNumber p n) = some p := by
+  revert h; revert p n; decide
+
+/-- The categories a coordinate pair realizes share the general number only at general
+    number. -/
+theorem sharedNumber_ofPersonNumber_eq_general (p : Person) (n : Number)
+    (h : sharedNumber (ofPersonNumber p n) = some .general) : n = .general := by
+  revert h; revert p n; decide
+
+end Category
 
 -- ============================================================================
 -- § 8: Category ↔ Features Bridge

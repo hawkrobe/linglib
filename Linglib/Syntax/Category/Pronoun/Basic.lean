@@ -8,6 +8,7 @@ import Linglib.Syntax.Person.Clusivity
 import Linglib.Syntax.Binding.CoreferenceStatus
 import Linglib.Syntax.Person.Decomposition
 import Linglib.Morphology.Word.Basic
+import Mathlib.Data.Option.NAry
 
 open Morphology (Word)
 
@@ -29,8 +30,9 @@ in as fields of the general `Pronoun`.
 * `Pronoun` — the general pronoun object: surface form + agreement φ-features,
   everything true of *all* pronouns. Specializations `extends` it (mathlib-style:
   the general concept gets the plain name).
-* `PersonalPronoun` — personal/referential pronoun: `extends Pronoun` with the
-  register and referential-person features specific to deictic pronouns.
+* `PersonalPronoun` — personal/referential pronoun: `extends Pronoun` with the register and
+  the referential categories specific to deictic pronouns; `referentialPerson` and
+  `referentialNumber` are projections of the latter.
 * `Pronoun.Strength` — [cardinaletti-starke-1999] strong/weak/clitic
   deficiency scale, a `LinearOrder` (`clitic < weak < strong`), carried
   per-series by `Pronoun.strength`. Orthogonal to
@@ -150,9 +152,15 @@ structure Pronoun where
   strength : Option Pronoun.Strength := none
   deriving Repr, BEq, DecidableEq
 
+/-- The [cysouw-2003] categories a pronoun's agreement person and number realize, the neutral
+    typological view of its person-reference, *derived* (not stored): empty when either is
+    unspecified, several for a syncretism such as clusivity-unmarked English *we*. -/
+def Pronoun.categories (p : Pronoun) : Finset Person.Category :=
+  (Option.map₂ Person.Category.ofPersonNumber p.person p.number).getD ∅
+
 /-- Cross-linguistic *personal/referential* pronoun: the general `Pronoun` object
-(form + φ-features) plus the register and referential-person features specific to
-deictic pronouns. Covers personal pronouns across all Fragment languages;
+(form + φ-features) plus the register and the referential categories specific to deictic
+pronouns. Covers personal pronouns across all Fragment languages;
 any language-specific refinements remain in their respective Fragment files. -/
 structure PersonalPronoun extends Pronoun where
   /-- Personal pronouns are Principle-B pronominals: the *type* fixes the binding class
@@ -164,26 +172,42 @@ structure PersonalPronoun extends Pronoun where
       `.informal`/`.formal`; ternary honorific systems (Hindi, Magahi,
       Maithili, Korean) use all three levels. -/
   register : SocialMeaning.Register.Level := .informal
-  /-- Referential person — who the pronoun refers to in terms of discourse
-      role — when it diverges from formal/agreement person. For polite
-      pronouns (Italian LEI, Spanish USTED, German SIE), the formal `person`
-      field is 3rd (governing agreement, clitic allomorphy, reflexive binding),
-      while `referentialPerson` is 2nd (governing the PCC, Fancy Constraint,
-      resolved agreement). For ordinary pronouns, leave as `none` —
-      referential person coincides with formal person.
-      [adamson-zompi-2025] -/
-  referentialPerson : Option Person := none
-  deriving Repr, BEq, DecidableEq
+  /-- The referential categories the pronoun can denote, by default those its agreement
+      person and number realize. A polite pronoun overrides the default: the formal `person`
+      and `number` govern agreement, clitic allomorphy and reflexive binding, while the
+      referential categories govern the PCC, the Fancy Constraint and resolved agreement
+      ([adamson-zompi-2025]); Italian LEI denotes `{s2}` and German *Sie*, addressee or
+      addressees, `{s2, secondGrp}`. -/
+  referential : Finset Person.Category :=
+    (Option.map₂ Person.Category.ofPersonNumber person number).getD ∅
+  deriving BEq, DecidableEq
 
 namespace PersonalPronoun
 
-/-- The person a pronoun contributes to interpretation: `referentialPerson` where it is set,
-    otherwise the agreement `person`. -/
-def interpretablePerson (p : PersonalPronoun) : Option Person := p.referentialPerson.or p.person
+variable {p : PersonalPronoun}
 
-@[simp] theorem interpretablePerson_of_referentialPerson_none {p : PersonalPronoun}
-    (h : p.referentialPerson = none) : p.interpretablePerson = p.person := by
-  simp [interpretablePerson, h]
+/-- The person a pronoun contributes to interpretation: the person its referential categories
+    share. -/
+def referentialPerson (p : PersonalPronoun) : Option Person :=
+  Person.Category.sharedPerson p.referential
+
+/-- The number a pronoun contributes to interpretation: the number its referential categories
+    share, `general` for a number-neutral form such as polite *Sie*. -/
+def referentialNumber (p : PersonalPronoun) : Option Number :=
+  Person.Category.sharedNumber p.referential
+
+/-- An ordinary pronoun denotes exactly the categories its agreement features realize. -/
+def IsOrdinary (p : PersonalPronoun) : Prop := p.referential = p.toPronoun.categories
+
+instance : Decidable p.IsOrdinary := by unfold IsOrdinary; infer_instance
+
+/-- An ordinary pronoun's referential person is its agreement person. -/
+theorem referentialPerson_eq_person (h : p.IsOrdinary) (hne : p.referential.Nonempty) :
+    p.referentialPerson = p.person := by
+  unfold referentialPerson
+  rw [h, Pronoun.categories] at hne ⊢
+  rcases hp : p.person with _ | per <;> rcases hn : p.number with _ | num <;>
+    simp_all [Person.Category.sharedPerson_ofPersonNumber]
 
 end PersonalPronoun
 
@@ -209,18 +233,7 @@ def toWord (p : Pronoun) : Word :=
                   pronType := if p.bindingClass == some .reciprocal then some .Rcp
                               else p.pronType } }
 
-/-! ### Derived person category and well-formedness ([cysouw-2003]) -/
-
-/-- The [cysouw-2003] `Category` this pronoun's person + number realizes,
-    when fully specified — the neutral typological view of its
-    person-reference, *derived* (not stored). `none` when person/number is
-    underspecified, or for a clusivity-unmarked first-person plural (plain
-    `first`, a syncretism over `.minIncl`/`.augIncl`/`.excl`, e.g. English
-    *we*). -/
-def category (p : Pronoun) : Option Person.Category :=
-  match p.person, p.number with
-  | some per, some num => Person.Category.ofPersonNumber per num
-  | _, _ => none
+/-! ### Well-formedness ([cysouw-2003]) -/
 
 /-- Well-formedness of a pronoun's φ-features: clusivity is borne only by a
     first-person non-singular (dual/plural) form — the inclusive/exclusive split

@@ -74,7 +74,7 @@ def clusivity : Person.Clusivity := .minimalAugmented
     (p. 88): each cell is a `PersonalPronoun` carrying person, number, and
     clusivity, in three case series — *ang* (NOM), *ng* (GEN), *sa* (DAT). The
     [cysouw-2003] `category` is *derived* from those features
-    (`Pronoun.category`), not stored. The minimal-augmented split is the dual
+    (`Pronoun.categories`), not stored. The minimal-augmented split is the dual
     inclusive *kata* (1+2) vs the plural inclusive *tayo* (1+2+others), with the
     exclusive *kami* (1+others). The *kitá* form [himmelmann-2005-tagalog]
     Table 12.2 lists alongside *katá* is a separate 1sg.GEN+2sg.NOM portmanteau
@@ -129,7 +129,7 @@ def angSeries : List PersonalPronoun := [ako, ikaw, siya, kata, tayo, kami, kayo
     categories — *derived* from each form's person + number + clusivity, not
     stored as a tag. -/
 theorem angSeries_categories_match :
-    angSeries.map (·.category) = Category.all.map some := by decide
+    angSeries.map (·.categories) = Category.all.map (λ c => {c}) := by decide
 
 /-- Tagalog marks inclusive/exclusive in the first-person plural: *tayo* is
     inclusive, *kami* exclusive — read off the object's `clusivity` field. -/
@@ -147,7 +147,7 @@ theorem minimal_augmented :
     (dual inclusive) form iff the language commits to the minimal-augmented
     clusivity system. -/
 theorem clusivity_consistent :
-    (∃ p ∈ pronouns, p.category = some .minIncl) ↔ clusivity.toPattern.SplitInclusive := by
+    (∃ p ∈ pronouns, p.categories = {.minIncl}) ↔ clusivity.toPattern.SplitInclusive := by
   decide
 
 /-- Every Tagalog pronoun is well-formed: clusivity is borne only by the
