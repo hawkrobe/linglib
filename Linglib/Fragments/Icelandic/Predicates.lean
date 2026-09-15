@@ -140,9 +140,7 @@ def kyssast : IcelandicStVerb :=
     hasActiveVariant := true }
 
 /-- All *-st*-marked verb entries (excludes *-na*-marked verbs like
-    *brotna*). The Wood2015 study file projects analytical data
-    (stType, marking, root structure) over the same ten verbs in the
-    same order. -/
+    *brotna*). -/
 def allStVerbs : List IcelandicStVerb :=
   [opnast, splundrast, seljast, lesast, setjast, klaedast,
    nalgast, minnast, leidast, kyssast]
