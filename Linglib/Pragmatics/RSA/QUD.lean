@@ -76,6 +76,25 @@ theorem projListener_apply_singleton_of_injective (h : Function.Injective (proje
     projListener project L g u {w} = L u {w} := by
   rw [projListener_apply_singleton, ← Set.image_singleton, h.preimage_image]
 
+/-- Within a context set, the projected literal listener of a Boolean meaning on a weight prior
+is the weight of the context-set worlds that make the utterance true and share the meaning's
+cell, over the weight of those that make it true. -/
+theorem projListener_literalListener_restrict_apply_singleton [DiscreteMeasurableSpace W]
+    [DecidableEq X] (P : W → ℕ) (C : Finset W) (sem : U → Set W)
+    [∀ u, DecidablePred (· ∈ sem u)] :
+    projListener project
+        (literalListener ((priorOfWeights P).restrict ↑C) λ u => (sem u).indicator 1) g u {w}
+      = (∑ v ∈ (C.filter (· ∈ sem u)).filter (λ v => project g v = project g w), (P v : ℝ≥0∞))
+          / ∑ v ∈ C.filter (· ∈ sem u), (P v : ℝ≥0∞) := by
+  have e1 : sem u ∩ ↑C = ↑(C.filter (· ∈ sem u)) := by ext; simp [and_comm]
+  have e2 : sem u ∩ project g ⁻¹' {project g w} ∩ ↑C
+      = ↑((C.filter (· ∈ sem u)).filter λ v => project g v = project g w) := by
+    ext; simp; tauto
+  rw [projListener_apply_singleton, literalListener_indicator, Kernel.ofFunOfCountable_apply,
+    cond_apply .of_discrete, Measure.restrict_apply .of_discrete,
+    Measure.restrict_apply .of_discrete, e1, e2, priorOfWeights_apply_finset,
+    priorOfWeights_apply_finset, ENNReal.div_eq_inv_mul]
+
 end ProjListener
 
 end RSA
