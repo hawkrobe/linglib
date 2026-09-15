@@ -53,7 +53,7 @@ namespace Embedding
 `c` (Def. 1.4.4(ii)); a sub-DRS is entered by existentially (re)assigning along
 its extension relation and verifying each of its conditions. -/
 def VerifiesCondition : Embedding V M → Condition L V → Prop
-  | f, .rel R args => Structure.RelMap R (fun i => f (args i))
+  | f, .rel R args => Structure.RelMap R (f ∘ args)
   | f, .eq a b => f a = f b
   | f, .neg K => ¬ ∃ g, K.Extends f g ∧ ∀ c ∈ K.conditions, g.VerifiesCondition c
   | f, .imp a c =>
@@ -86,7 +86,7 @@ theorem verifies_iff {K : DRS L V} :
   simp only [verifies_iff, DRS.conditions_merge, List.forall_mem_append]
 
 @[simp] theorem verifies_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
-    f.VerifiesCondition (.rel R args) ↔ Structure.RelMap R (fun i => f (args i)) := by
+    f.VerifiesCondition (.rel R args) ↔ Structure.RelMap R (f ∘ args) := by
   simp only [VerifiesCondition]
 
 @[simp] theorem verifies_eq (a b : V) :
@@ -145,8 +145,8 @@ private theorem exists_extends_verifies_map_aux (e : V ≃ W) (K : DRS L V) (f :
 theorem verifies_map_condition (e : V ≃ W) (f : Embedding W M) (c : Condition L V) :
     f.VerifiesCondition (c.map e) ↔ VerifiesCondition (f ∘ e) c := by
   induction c generalizing f with
-  | rel R args => simp [Condition.map, Function.comp]
-  | eq a b => simp [Condition.map, Function.comp]
+  | rel R args => simp [Condition.map, Function.comp_assoc]
+  | eq a b => simp [Condition.map]
   | neg K ih =>
     simp only [Condition.map, verifies_neg]
     exact not_congr (exists_extends_verifies_map_aux e K f ih)
@@ -213,8 +213,7 @@ theorem verifiesCondition_congr (c : Condition L V) {f₁ f₂ : Embedding V M}
   induction c generalizing f₁ f₂ with
   | rel R args =>
     simp only [verifies_rel]
-    rw [show (fun i => f₁ (args i)) = fun i => f₂ (args i) from
-      funext fun i => h (by simp)]
+    rw [show f₁ ∘ args = f₂ ∘ args from funext fun i => h (by simp)]
   | eq a b =>
     simp only [verifies_eq]
     rw [h (show a ∈ ↑(Condition.varFinset (.eq a b : Condition L V)) by simp),

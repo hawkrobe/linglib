@@ -42,7 +42,7 @@ namespace Condition
 
 /-- Rename discourse referents along `f` throughout a condition. -/
 def map [DecidableEq W] (f : V → W) : Condition L V → Condition L W
-  | .rel R args => .rel R (fun i => f (args i))
+  | .rel R args => .rel R (f ∘ args)
   | .eq a b => .eq (f a) (f b)
   | .neg K => .neg (K.map f (map f))
   | .imp a c => .imp (a.map f (map f)) (c.map f (map f))
@@ -61,7 +61,7 @@ def map [DecidableEq W] (f : V → W) : Condition L V → Condition L W
 theorem map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W)
     (c : Condition L V) : map g (map f c) = map (g ∘ f) c := by
   induction c with
-  | rel R args => simp [map]
+  | rel R args => simp [map, Function.comp_assoc]
   | eq u v => simp [map]
   | neg K ih => simp [map, Box.map_map_of_forall f g ih]
   | imp a c iha ihc => simp [map, Box.map_map_of_forall f g iha, Box.map_map_of_forall f g ihc]

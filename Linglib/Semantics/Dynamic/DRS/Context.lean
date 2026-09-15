@@ -119,7 +119,7 @@ referent type. -/
 theorem toCondition_map [DecidableEq V] (f : c ⟶ c') (g : V → V)
     (hg : ∀ t : c.vars, g t = (f.map t : V)) (l : Literal c) :
     (l.map f).toCondition = l.toCondition.map g := by
-  cases hp : l.pos <;> simp [toCondition, map, Condition.map, Box.map, hg, hp]
+  cases hp : l.pos <;> simp [toCondition, map, Condition.map, Box.map, hg, hp, Function.comp_def]
 
 end Literal
 

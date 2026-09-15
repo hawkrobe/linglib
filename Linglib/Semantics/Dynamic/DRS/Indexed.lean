@@ -57,7 +57,7 @@ def DRS.toRelAt (X : Finset V) : DRS L V → (V → M) → (V → M) → Prop
 /-- A condition holds at a base under an assignment; sub-DRSs are entered as
 context extensions of the current base. -/
 def Condition.holdsAt (X : Finset V) : Condition L V → (V → M) → Prop
-  | .rel R args => fun g => Structure.RelMap R (fun i => g (args i))
+  | .rel R args => fun g => Structure.RelMap R (g ∘ args)
   | .eq u v => fun g => g u = g v
   | .neg K => fun g => ¬ ∃ g', DRS.toRelAt X K g g'
   | .imp a c => fun g => ∀ g', DRS.toRelAt X a g g' →
@@ -79,8 +79,7 @@ end
 
 @[simp] theorem Condition.holdsAt_rel (X : Finset V) {n : ℕ} (R : L.Relations n)
     (args : Fin n → V) (g : V → M) :
-    (Condition.rel R args).holdsAt X g ↔
-      Structure.RelMap R (fun i => g (args i)) := Iff.rfl
+    (Condition.rel R args).holdsAt X g ↔ Structure.RelMap R (g ∘ args) := Iff.rfl
 
 @[simp] theorem Condition.holdsAt_eq (X : Finset V) (u v : V) (g : V → M) :
     (Condition.eq u v : Condition L V).holdsAt X g ↔ g u = g v := Iff.rfl
@@ -127,10 +126,8 @@ theorem Condition.holdsAt_congr {X : Finset V} (c : Condition L V)
   match c with
   | .rel R args =>
     simp only [Condition.holdsAt_rel]
-    have : (fun i => g (args i)) = fun i => g' (args i) := by
-      funext i
-      exact hgg' (Finset.mem_coe.mpr (hfv (by simp)))
-    rw [this]
+    rw [show g ∘ args = g' ∘ args from
+      funext fun i => hgg' (Finset.mem_coe.mpr (hfv (by simp)))]
   | .eq u v =>
     simp only [Condition.holdsAt_eq]
     rw [hgg' (Finset.mem_coe.mpr (hfv (by simp [Condition.freeVarFinset_eq]))),

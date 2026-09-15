@@ -47,7 +47,7 @@ noncomputable def closeForall [DecidableEq V] (U : Finset V) (φ : L.Formula V) 
 existentially closed over the conjunction of its translated conditions; the
 antecedent of a `⇒` is universally closed instead (§1.5). -/
 noncomputable def Condition.toFormula [DecidableEq V] : Condition L V → L.Formula V
-  | .rel R args => Relations.formula R (fun i => Term.var (args i))
+  | .rel R args => Relations.formula R (Term.var ∘ args)
   | .eq a b => Term.equal (Term.var a) (Term.var b)
   | .neg K =>
       (closeExists K.referents ((K.conditions.map Condition.toFormula).foldr (· ⊓ ·) ⊤)).not
@@ -190,7 +190,7 @@ theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : Emb
   induction c generalizing v with
   | rel R args =>
     simp [Condition.toFormula, Relations.formula, Formula.Realize,
-      BoundedFormula.realize_rel, Term.realize_var]
+      BoundedFormula.realize_rel, Term.realize_var, Function.comp_def]
   | eq a b => simp [Condition.toFormula, Formula.realize_equal]
   | neg K ih =>
     rw [Condition.toFormula_neg, Formula.realize_not, DRS.realize_toFormula_of_forall ih,

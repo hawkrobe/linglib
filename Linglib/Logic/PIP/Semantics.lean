@@ -129,8 +129,8 @@ theorem Term.mem_realize_sigma (x : V) (φ : Formula V L P) (a : α) :
 
 @[simp] theorem Formula.realize_atom {n : ℕ} (r : P n) (w : Term V L P)
     (ts : Fin n → Term V L P) :
-    Formula.Realize M g (.atom r w ts) ↔
-      M.I r (Term.realize M g w) fun i => Term.realize M g (ts i) := Iff.rfl
+    Formula.Realize M g (.atom r w ts) ↔ M.I r (Term.realize M g w) (Term.realize M g ∘ ts) :=
+  Iff.rfl
 
 @[simp] theorem Formula.realize_eq (s t : Term V L P) :
     Formula.Realize M g (.eq s t) ↔ Term.realize M g s = Term.realize M g t := Iff.rfl
