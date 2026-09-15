@@ -19,7 +19,7 @@ accusative is. Adamson and Zompì give polite pronouns two person values, an uni
 read by agreement and an interpretable one read at LF, and argue that the person-case constraint
 reads the interpretable one. The file states a person restriction over a person valuation of
 pronoun entries (`Licit`); the agreement valuation `Morphosyntactic` and the LF valuation
-`Syntacticosemantic` read the fragments' `person` and `interpretablePerson`. The two coincide on
+`Syntacticosemantic` read the fragments' `person` and `referentialPerson`. The two coincide on
 ordinary pronouns (`morphosyntactic_iff_of_ordinary`), and every agreement-keyed restriction
 treats LEI as *lei* while every interpretation-keyed one treats it as *tu*
 (`morphosyntactic_lei_formal`, `syntacticosemantic_lei_formal`). On the Weak and Strong
@@ -78,17 +78,19 @@ instance (R : Person → Person → Prop) [DecidableRel R]
 /-- The morphosyntactic prediction: `R` reads agreement person. -/
 abbrev Morphosyntactic (R : Person → Person → Prop) := Licit R (·.person)
 
-/-- The syntacticosemantic prediction: `R` reads interpretable person. -/
+/-- The syntacticosemantic prediction: `R` reads referential person. -/
 abbrev Syntacticosemantic (R : Person → Person → Prop) :=
-  Licit R PersonalPronoun.interpretablePerson
+  Licit R PersonalPronoun.referentialPerson
 
 variable {R : Person → Person → Prop} {dat acc : PersonalPronoun}
 
-/-- The two predictions coincide on pronouns whose referential person is not set. -/
-theorem morphosyntactic_iff_of_ordinary (hd : dat.referentialPerson = none)
-    (ha : acc.referentialPerson = none) :
+/-- The two predictions coincide on ordinary pronouns, those denoting exactly the categories
+their agreement features realize. -/
+theorem morphosyntactic_iff_of_ordinary (hd : dat.IsOrdinary) (hd' : dat.referential.Nonempty)
+    (ha : acc.IsOrdinary) (ha' : acc.referential.Nonempty) :
     Morphosyntactic R dat acc ↔ Syntacticosemantic R dat acc := by
-  simp [Licit, hd, ha]
+  simp [Licit, PersonalPronoun.referentialPerson_eq_person hd hd',
+    PersonalPronoun.referentialPerson_eq_person ha ha']
 
 /-- Every restriction reading agreement person treats LEI as *lei*. -/
 theorem morphosyntactic_lei_formal :
@@ -150,7 +152,7 @@ theorem fancy_constraint :
 /-- Coordinated with a third person, LEI resolves to second person on its interpretable value and
 to third on its agreement value. -/
 theorem resolved_person :
-    lei_formal.interpretablePerson.map (Person.resolve · .third) = some .second ∧
+    lei_formal.referentialPerson.map (Person.resolve · .third) = some .second ∧
       lei_formal.person.map (Person.resolve · .third) = some .third :=
   ⟨rfl, rfl⟩
 

@@ -9,9 +9,10 @@ pronouns *wer* 'who' and *was* 'what', which also head free relatives.
 
 The second person distinguishes a familiar register, *du* and *ihr*, from a polite one with
 the single form *Sie*. *Sie* takes the third person plural series for agreement and reflexive
-binding (*sich*, not *dich* or *euch*) while referring to the addressee, so its `person` is third
-and its `referentialPerson` second. *wer* declines for the four German cases; *was* has one form
-for the nominative and the accusative and no dative.
+binding (*sich*, not *dich* or *euch*) while denoting the addressee alone or with others, so its
+`person` is third and its `referential` categories are those of *du* and *ihr* together. *wer*
+declines for the four German cases; *was* has one form for the nominative and the accusative and
+no dative.
 
 ## Main definitions
 
@@ -20,8 +21,9 @@ for the nominative and the accusative and no dative.
 
 ## Main results
 
-* `German.Pronouns.addressee_register`, `German.Pronouns.addressee_formal` — the addressee
-  pronouns come in two registers, with a single number-neutral polite form
+* `German.Pronouns.addressee_register`, `German.Pronouns.addressee_formal`,
+  `German.Pronouns.sie_formal_referential` — the addressee pronouns come in two registers,
+  and the single polite form denotes what the two familiar forms denote together
 * `German.Pronouns.wer_isSome_iff`, `German.Pronouns.was_isSome_iff` — the paradigms are
   defined on the German case inventory, *was* lacking the dative
 
@@ -43,11 +45,11 @@ def ich : PersonalPronoun := { form := "ich", person := some .first, number := s
 def du : PersonalPronoun := { form := "du", person := some .second, number := some .singular }
 
 /-- The polite second person *Sie*, for one or several addressees. Its agreement person and
-number are those of the third person plural, its referential person is second
+number are those of the third person plural; it denotes the addressee alone or with others
 ([adamson-zompi-2025]). -/
 def sie_formal : PersonalPronoun :=
   { form := "Sie", person := some .third, number := some .plural, register := .formal,
-    referentialPerson := some .second }
+    referential := {.s2, .secondGrp} }
 
 /-- The third person singular masculine *er*. -/
 def er : PersonalPronoun :=
@@ -75,15 +77,19 @@ def pronouns : Finset PersonalPronoun := {ich, du, sie_formal, er, sie_sg, es, w
 
 /-- The pronouns referring to the addressee come in a familiar and a polite register. -/
 theorem addressee_register :
-    (pronouns.filter (·.interpretablePerson = some .second)).image (·.register) =
+    (pronouns.filter (·.referentialPerson = some .second)).image (·.register) =
       {.informal, .formal} := by
   decide
 
-/-- *Sie* is the only polite addressee pronoun: one form serves both numbers, where the familiar
-register distinguishes *du* from *ihr*. -/
+/-- *Sie* is the only polite addressee pronoun. -/
 theorem addressee_formal :
-    pronouns.filter (λ p => p.interpretablePerson = some .second ∧ p.register = .formal) =
+    pronouns.filter (λ p => p.referentialPerson = some .second ∧ p.register = .formal) =
       {sie_formal} := by
+  decide
+
+/-- The polite form denotes exactly what the two familiar forms denote between them: *Sie* is
+number-neutral where the familiar register distinguishes *du* from *ihr*. -/
+theorem sie_formal_referential : sie_formal.referential = du.referential ∪ ihr.referential := by
   decide
 
 /-! ### Interrogative pronouns

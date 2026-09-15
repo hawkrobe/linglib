@@ -560,7 +560,7 @@ theorem english_not_respectsHorizontalHierarchy :
 
 /-- The Tagalog *ang* series by referential category. -/
 def tagalogAng (c : Category) : Option String :=
-  (Tagalog.angSeries.find? λ e => decide (e.category = some c)).map (·.form)
+  (Tagalog.angSeries.find? λ e => decide (e.categories = {c})).map (·.form)
 
 /-- The Tagalog *ang* series is a Maranao-type paradigm (§4.5.2). -/
 theorem tagalog_maranao : syncretism tagalogAng = Kind.maranao.pattern := by decide +kernel
