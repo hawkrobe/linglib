@@ -25,7 +25,7 @@ namespace English.Predicates.Verbal
 -- live at the root namespace (`Syntax/Category/Verb/Defs`), so they need no re-export.
 
 open ArgumentStructure
-open Aspect.DegreeAchievement (DegreeAchievementScale)
+open Aspect (DegreeAchievementScale)
 open Degree (Boundedness)
 open Aspect (VerbIncClass)
 open ArgumentStructure

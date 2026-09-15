@@ -47,7 +47,7 @@ activity be presupposed and the change of state asserted, the source of the Wh-p
 
 namespace Kiparsky2002
 
-open Aspect.SubeventStructure NonemptyInterval
+open Aspect NonemptyInterval
 
 variable {T : Type*} [LinearOrder T]
 

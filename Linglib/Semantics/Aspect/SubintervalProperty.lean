@@ -34,7 +34,7 @@ analysis — consumed by `Studies/Rouillard2026.lean`,
 `Semantics/Tense/RunTimes.lean`.
 -/
 
-namespace Aspect.SubintervalProperty
+namespace Aspect
 
 open _root_.Aspect
 
@@ -284,4 +284,4 @@ theorem csub_necessary_for_impf_prfv :
     -- Mutual containment → equality (antisymmetry of the containment order)
     exact ⟨e₂, le_antisymm hSub₂ hSubRev, hPe₂⟩
 
-end Aspect.SubintervalProperty
+end Aspect

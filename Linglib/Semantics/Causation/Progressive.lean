@@ -271,7 +271,7 @@ structure CausallyGroundedEvent (V : Type*) [Fintype V] [DecidableEq V]
   /-- IsDeterministic instance for proc.M (carried explicitly). -/
   detInst : SEM.IsDeterministic process.M
   /-- The temporal phases: activity and result with ordering -/
-  phases : Aspect.SubeventStructure.SubeventPhases T
+  phases : Aspect.SubeventPhases T
   /-- The causal trajectory is viable: initiator is type-level sufficient. -/
   causallyViable : @CausalProcess.typeLevelHolds V _ _ process dagInst detInst
 
