@@ -5,7 +5,8 @@ import Linglib.Semantics.Alternatives.Source
 
 An expression is blocked when one of its alternatives is strictly stronger along a dimension
 of content. This file defines that relation, `Blocked`, for any alternative source `S → Set S`
-and any content function `S → Set W`, together with the source combinator `sameAssertion`,
+and any content function `S → Set W`, over the alternative sources of
+`Semantics/Alternatives/`, together with the source combinator `sameAssertion`,
 which keeps the alternatives with the same at-issue content. The neo-Gricean conversational
 principle is `Blocked` along at-issue content over the weakly assertable alternatives
 ([katzir-2007]), Maximize Presupposition is `Blocked` along presuppositional content over
@@ -14,13 +15,13 @@ principle is `Blocked` along at-issue content over the weakly assertable alterna
 
 ## Main definitions
 
-* `Alternatives.Blocked` — some alternative is strictly stronger along the content dimension.
-* `Alternatives.sameAssertion` — the alternatives with the same at-issue content.
+* `NeoGricean.Blocked` — some alternative is strictly stronger along the content dimension.
+* `NeoGricean.sameAssertion` — the alternatives with the same at-issue content.
 
 ## Main results
 
-* `Alternatives.Blocked.mono` — blocking is monotone in the source.
-* `Alternatives.not_blocked_of_forall_subset` — an expression at least as strong as each of
+* `NeoGricean.Blocked.mono` — blocking is monotone in the source.
+* `NeoGricean.not_blocked_of_forall_subset` — an expression at least as strong as each of
   its alternatives is not blocked.
 
 ## References
@@ -31,7 +32,7 @@ principle is `Blocked` along at-issue content over the weakly assertable alterna
 * [lo-guercio-2025]
 -/
 
-namespace Alternatives
+namespace NeoGricean
 
 variable {S W : Type*} {alts alts' : S → Set S} {content assertion : S → Set W} {φ φ' : S}
 
@@ -62,4 +63,4 @@ theorem sameAssertion_le (assertion : S → Set W) (alts : S → Set S) :
     sameAssertion assertion alts ≤ alts :=
   λ _ _ h => h.1
 
-end Alternatives
+end NeoGricean
