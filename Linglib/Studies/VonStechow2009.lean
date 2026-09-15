@@ -1,356 +1,268 @@
-import Linglib.Semantics.Tense.Embedding
-import Linglib.Semantics.Tense.Pronoun
-import Linglib.Semantics.Reference.Context.Tower
-import Linglib.Semantics.Reference.Context.Shifts
-import Linglib.Semantics.Attitudes.Doxastic
+import Linglib.Semantics.Tense.Defs
+import Linglib.Data.Examples.VonStechow2009
+import Mathlib.Order.Bounds.Basic
 
 /-!
-# von Stechow 2009: tenses in compositional semantics
+# von Stechow (2009): Tenses in Compositional Semantics
 
-[von-stechow-2009]'s theory: tense features are checked against a
-local evaluation time that shifts under attitude embedding. The key
-mechanism is **feature checking**: tense morphology bears a feature
-([PAST], [PRES]) that must be checked against the local temporal
-anchor.
+This file formalizes [von-stechow-2009]'s compositional fragment for English tense. The
+semantic tenses are the deictic Present, the speech time, and an indefinite relative Past that
+shifts the local evaluation time backwards (22), with the auxiliaries *have* and *will* the
+past and its mirror image (26), (29) and *be* a transmitter (24); tensed verbs are tenseless
+and their morphology is licensed by the feature a semantic tense transmits to the variable it
+binds (33). Frame adverbials combine by predicate modification and interact scopally with the
+perfect auxiliary (43), and a quantified adverbial must be restricted to the past (44), (45).
+Against [partee-1973]'s referential Past (47) with a perfective operator (50), the indefinite
+Past with a contextual domain restriction (53) gives the same truth conditions for the stove
+sentence (54) and, unlike the referential one, lets negation and quantifiers scope over tense
+(58), (61); the restriction also keeps the event of a future perfect after the speech time
+(57). In relative clauses the tense is an obligatorily bound temporal pronoun, whence the
+simultaneous and the deictic readings of a present under *will* (66), (67). Under attitudes
+the anaphoric analysis makes Mary at five believe that five is six (77), so, after
+[lewis-1979-attitudes], the complement is a property of times and belief quantifies over
+world–time pairs (78), of which Hintikka's propositional belief is the time-independent case
+(74). Before- and after-clauses take the earliest time of the clause (91) after
+[beaver-condoravdi-2003], from which [anscombe-1964]'s asymmetric universal *before* and
+existential *after* follow.
 
-## Core Mechanisms
+## Implementation notes
 
-1. **Feature checking** = membership of the time comparison in a
-   tense cell (`Semantics/Tense/Defs.lean`). The "checking"
-   terminology is von Stechow's; the underlying predicate is the
-   framework-neutral `compare refTime evalTime ∈ feature`.
-2. **Perspective shift** = `embeddedFrame` (substrate primitive in
-   `Semantics/Tense/Embedding.lean`). The attitude verb sets the
-   embedded eval time = matrix E. von Stechow calls this "perspective
-   shift"; the operation is the framework-neutral `embeddedFrame
-   matrixFrame embeddedR embeddedE`.
-3. **SOT as feature checking**: simultaneous reading = [PRES] checked
-   against matrix E (no deletion, no ambiguity).
+Times form a linear order, the interval structure entering only through a parameter for the
+subinterval relation where the perfective and *on* need it. Feature transmission and the
+tense-deletion rule of [ogihara-1989] are described, not formalized; the extended-now perfect,
+the progressive and the type-driven syntax of PRO movement are not formalized. The paper's
+examples are the rows of `Data.Examples.VonStechow2009`.
 
-The paper's second contribution is the situation-indexed attitude
-semantics it synthesizes from [lewis-1979-attitudes],
-[heim-kratzer-1998], and [ogihara-1989]: *believe*'s complement type
-shifts from propositions to situation-dependent propositions
-(predicates over `Index`), and the doxastic alternatives become world–time pairs.
-`sitBoxAt` is the universal modal over situations, with Hintikka
-world-only semantics the time-invariant special case
-(`sitBoxAt_lift_eq_BoxAt`); genuinely temporal accessibility
-constraints (`temporallyBound`, `futureOriented`) are what tie
-embedded tense to the matrix event time in sequence of tense.
+## References
 
-## Advantages Over Abusch
-
-- Handles relative clause tense: feature checking works in relative
-  clauses where the perspective time is the modified NP's temporal
-  coordinate, not the matrix event time.
-- Cleaner compositional architecture: no res movement needed.
-
+* [von-stechow-2009]
+* [partee-1973]
+* [lewis-1979-attitudes]
+* [ogihara-1989]
+* [beaver-condoravdi-2003]
+* [anscombe-1964]
 -/
-
-open Tense
 
 namespace VonStechow2009
 
-open Tense
+variable {T : Type*} {s t : T} {P Q : T → Prop}
 
--- ════════════════════════════════════════════════════════════════
--- § Derivation Theorems
--- ════════════════════════════════════════════════════════════════
+/-! ### Tenses and auxiliaries (§5) -/
 
-/-- [von-stechow-2009] derives the shifted reading: [PAST] feature
-    checked against matrix E. The embedded reference time is before
-    the matrix event time. -/
-theorem vonStechow_derives_shifted {T : Type*} [LinearOrder T]
-    (matrixFrame : ReichenbachFrame T) (embeddedR embeddedE : T)
-    (hPast : compare embeddedR matrixFrame.eventTime ∈ Tense.past) :
-    (embeddedFrame matrixFrame embeddedR embeddedE).isPast := by
-  simp only [embeddedFrame, ReichenbachFrame.isPast]
-  exact hPast
+section Tenses
 
-/-- [von-stechow-2009] derives the simultaneous reading: [PRES]
-    feature checked against matrix E. The embedded reference time
-    equals the matrix event time — no deletion rule needed. -/
-theorem vonStechow_derives_simultaneous {T : Type*} [LinearOrder T]
-    (matrixFrame : ReichenbachFrame T) (embeddedE : T) :
-    (embeddedFrame matrixFrame matrixFrame.eventTime embeddedE).isPresent := by
-  simp only [embeddedFrame, ReichenbachFrame.isPresent]
+variable [LinearOrder T]
 
-/-- [von-stechow-2009] derives double-access: [PRES] feature under
-    past attitude verb. The present tense is checked against matrix E,
-    but its indexical nature also requires truth at speech time. -/
-theorem vonStechow_derives_double_access {T : Type*}
-    (matrixFrame : ReichenbachFrame T)
-    (p : T → Prop)
-    (h_matrix : p matrixFrame.eventTime)
-    (h_speech : p matrixFrame.speechTime) :
-    p matrixFrame.eventTime ∧ p matrixFrame.speechTime :=
-  ⟨h_matrix, h_speech⟩
+/-- The semantic Past (22b) and the auxiliary *have* (26): some time before the local
+evaluation time satisfies the predicate. -/
+def past (t : T) (P : T → Prop) : Prop := ∃ t', t' < t ∧ P t'
 
-/-- [von-stechow-2009] derives relative clause tense: the
-    perspective time in a relative clause is the modified NP's
-    temporal coordinate, not necessarily the matrix event time.
-    Feature checking works uniformly regardless of the source of the
-    eval time.
+/-- The auxiliary *will* (29), the mirror image of *have*. -/
+def future (t : T) (P : T → Prop) : Prop := ∃ t', t < t' ∧ P t'
 
-    This is where von Stechow has an advantage over [abusch-1997]:
-    feature checking does not require attitude semantics or res
-    movement — any eval time source works. -/
-theorem vonStechow_derives_relative_clause {T : Type*} [LinearOrder T]
-    (rcPerspective : T) (rcRefTime : T)
-    (hPast : compare rcRefTime rcPerspective ∈ Tense.past) :
-    rcRefTime < rcPerspective :=
-  (Tense.compare_mem_past _ _).mp hPast
+/-- The temporal auxiliary *be* (24) passes the evaluation time on. -/
+def be (t : T) (P : T → Prop) : Prop := P t
 
--- ════════════════════════════════════════════════════════════════
--- § Bridge to TensePronoun
--- ════════════════════════════════════════════════════════════════
+/-- The Past is the past cell of `Tense` quantified existentially. -/
+theorem past_iff_cell : past t P ↔ ∃ t', compare t' t ∈ Tense.past ∧ P t' := by
+  simp only [past, Tense.compare_mem_past]
 
-/-- [von-stechow-2009]'s feature checking is
-    `TensePronoun.fullPresupposition` when the eval time resolves to
-    the same value. -/
-theorem feature_checking_is_fullPresupposition {T : Type*} [LinearOrder T]
-    (tp : TensePronoun) (g : TemporalAssignment T) :
-    compare (tp.resolve g) (tp.evalTime g) ∈ tp.constraint ↔
-    tp.fullPresupposition g :=
+/-- The pluperfect (27), *John had called*: a past time before a past time. -/
+theorem pluperfect_iff : past s (λ t₁ => past t₁ P) ↔ ∃ t₁, t₁ < s ∧ ∃ t₂, t₂ < t₁ ∧ P t₂ :=
   Iff.rfl
 
-/-! ### Situation-indexed attitudes
+end Tenses
 
-The complement type of *believe* shifts from `W → Prop` to
-predicates over `Index W T`, and doxastic alternatives become world–time pairs:
-⟦x believes p⟧(w,t) = ∀(w',t') ∈ Dox_x(w,t). p(w',t'). -/
+/-! ### Temporal adverbials (§7) -/
 
-open Reference
-open Doxastic (Veridicality DoxasticPredicate BoxAt VeridicalityHolds)
+/-- (43): *Mary had left at six* is ambiguous between modification of the past reference time
+and of the event time; with the leaving at five and six a past time, the first reading holds
+and the second fails. -/
+theorem exists_referenceTime_ne_eventTime :
+    ∃ (s six : ℕ) (leave : ℕ → Prop),
+      past s (λ t => t = six ∧ past t leave) ∧
+        ¬ past s (λ t => past t (λ t' => t' = six ∧ leave t')) :=
+  ⟨10, 6, (· = 5), ⟨6, by omega, rfl, 5, by omega, rfl⟩, by
+    rintro ⟨t, -, t', -, rfl, h⟩
+    exact absurd h (by decide)⟩
 
-variable {W T E : Type*}
+section Quantified
 
-/-- Universal modal over situations: `p` holds at every accessible
-    world–time pair. -/
-def sitBoxAt (R : E → Index W T → Index W T → Prop)
-    (agent : E) (s : Index W T)
-    (situations : List (Index W T)) (p : (Index W T → Prop)) : Prop :=
-  ∀ s' ∈ situations, R agent s s' → p s'
+variable [LinearOrder T] (onDay : T → T → Prop) (sunday work : T → Prop)
 
-instance (R : E → Index W T → Index W T → Prop)
-    [∀ a s s', Decidable (R a s s')] (agent : E) (s : Index W T)
-    (situations : List (Index W T)) (p : (Index W T → Prop))
-    [DecidablePred p] : Decidable (sitBoxAt R agent s situations p) :=
-  inferInstanceAs (Decidable (∀ s' ∈ situations, _))
+/-- Reading (44a), the adverbial quantifier under the Past, entails a past time on every Sunday. -/
+theorem exists_on_of_quantifier_narrow (h : past s (λ t => ∀ t', sunday t' → onDay t t' ∧ work t)) :
+    ∃ t, ∀ t', sunday t' → onDay t t' :=
+  match h with | ⟨t, _, h⟩ => ⟨t, λ t' ht' => (h t' ht').1⟩
 
-/-- A world-proposition as a situation-proposition ignoring the
-    temporal coordinate. -/
-def liftProp (p : W → Prop) : (Index W T → Prop) :=
-  fun s => p s.world
+/-- Reading (44b), the quantifier over the Past, entails that every Sunday contains a time
+before the speech time. -/
+theorem forall_exists_of_quantifier_wide
+    (h : ∀ t', sunday t' → past s (λ t => onDay t t' ∧ work t)) :
+    ∀ t', sunday t' → ∃ t, t < s ∧ onDay t t' :=
+  λ t' ht' => match h t' ht' with | ⟨t, hts, h⟩ => ⟨t, hts, h.1⟩
 
-/-- A world-accessibility relation as a situation-accessibility
-    relation ignoring temporal coordinates — classic Hintikka
-    behavior, where doxastic alternatives differ only in world. -/
-def liftAccess (R : E → W → W → Prop) :
-    E → Index W T → Index W T → Prop :=
-  fun agent s₁ s₂ => R agent s₁.world s₂.world
+/-- (45): the wanted reading restricts the Sundays to the past; it follows from (44b) but not
+conversely, a future Sunday being a counterexample. -/
+theorem restricted_of_quantifier_wide (h : ∀ t', sunday t' → past s (λ t => onDay t t' ∧ work t)) :
+    ∀ t', sunday t' ∧ t' < s → past s (λ t => onDay t t' ∧ work t) :=
+  λ t' ht' => h t' ht'.1
 
-/-- Hintikka semantics is the time-invariant special case: on lifted
-    relations and propositions, the situation modal is `BoxAt` over
-    the world projections. -/
-theorem sitBoxAt_lift_eq_BoxAt (R : E → W → W → Prop) (agent : E)
-    (s : Index W T) (sits : List (Index W T))
-    (p : W → Prop) :
-    sitBoxAt (liftAccess R) agent s sits (liftProp p) ↔
-    BoxAt R agent s.world (sits.map (·.world)) p := by
-  simp only [sitBoxAt, BoxAt, liftAccess, liftProp, List.mem_map]
-  constructor
-  · intro h w' ⟨s', hs', heq⟩ hR
-    exact heq ▸ h s' hs' (heq ▸ hR)
-  · intro h s' hs' hR
-    exact h s'.world ⟨s', hs', rfl⟩ hR
+theorem exists_restricted_not_quantifier_wide :
+    ∃ (s : ℕ) (onDay : ℕ → ℕ → Prop) (sunday work : ℕ → Prop),
+      (∀ t', sunday t' ∧ t' < s → past s (λ t => onDay t t' ∧ work t)) ∧
+        ¬ ∀ t', sunday t' → past s (λ t => onDay t t' ∧ work t) :=
+  ⟨1, Eq, (· = 2), λ _ => True, λ t' ht' => absurd ht' (by omega),
+    λ h => match h 2 rfl with | ⟨_, ht, _, _⟩ => by omega⟩
 
-/-- The veridicality check at a situation: veridical predicates
-    require the complement at the evaluation situation. -/
-def sitVeridicalityHolds (v : Veridicality) (p : (Index W T → Prop))
-    (s : Index W T) : Prop :=
-  match v with
-  | .veridical => p s
-  | .nonVeridical => True
+end Quantified
 
-instance (v : Veridicality) (p : (Index W T → Prop)) [DecidablePred p]
-    (s : Index W T) :
-    Decidable (sitVeridicalityHolds v p s) := by
-  cases v <;> simp [sitVeridicalityHolds] <;> infer_instance
+/-! ### Referential and indefinite Past (§§8–9) -/
 
-/-- Lifted veridicality is world-level veridicality. -/
-theorem sitVeridicalityHolds_lift (v : Veridicality) (p : W → Prop)
-    (s : Index W T) :
-    sitVeridicalityHolds v (liftProp p) s ↔ VeridicalityHolds v p s.world := by
-  cases v <;> simp [sitVeridicalityHolds, VeridicalityHolds, liftProp]
+section Partee
 
-/-- A doxastic predicate with situation-indexed accessibility:
-    `Dox_y(w,t)` is a set of world–time pairs. -/
-structure SitDoxasticPredicate (W T E : Type*) where
-  /-- Situation-indexed accessibility relation. -/
-  access : E → Index W T → Index W T → Prop
-  /-- Veridicality (veridical or not). -/
-  veridicality : Veridicality
+variable [LinearOrder T] (sub : T → T → Prop) (C : T → Prop)
 
-/-- ⟦x V that p⟧(s): the veridicality check at `s` plus the universal
-    modal over accessible situations. -/
-def SitDoxasticPredicate.HoldsAt (V : SitDoxasticPredicate W T E)
-    (agent : E) (p : (Index W T → Prop)) (s : Index W T)
-    (situations : List (Index W T)) : Prop :=
-  sitVeridicalityHolds V.veridicality p s ∧ sitBoxAt V.access agent s situations p
+/-- The referential Past (47): the argument time is presupposed to precede the speech time. -/
+def refPast (s t : T) : Prop := t < s
 
-/-- Veridical situation-indexed predicates entail their complement at
-    the evaluation situation. -/
-theorem sit_veridical_entails_complement (V : SitDoxasticPredicate W T E)
-    (hV : V.veridicality = .veridical) (agent : E) (p : (Index W T → Prop))
-    (s : Index W T) (sits : List (Index W T))
-    (holds : V.HoldsAt agent p s sits) : p s := by
-  unfold SitDoxasticPredicate.HoldsAt at holds
-  rw [hV] at holds
-  exact holds.1
+/-- The Perfective (50): the event time is a subinterval of the reference time. -/
+def pf (t : T) (P : T → Prop) : Prop := ∃ t', sub t' t ∧ P t'
 
-/-- A world-level `DoxasticPredicate` as a situation-indexed one, with
-    time-invariant accessibility. -/
-def liftDoxastic (V : DoxasticPredicate W E) (T : Type*) :
-    SitDoxasticPredicate W T E where
-  access := liftAccess V.access
-  veridicality := V.veridicality
+/-- The contextually restricted Past (53). -/
+def pastC (t : T) (P : T → Prop) : Prop := ∃ t', C t' ∧ t' < t ∧ P t'
 
-/-- The lifted predicate has exactly the world-level semantics — any
-    `DoxasticPredicate` analysis replays unchanged in the
-    situation-indexed framework. -/
-theorem liftDoxastic_holdsAt_iff (V : DoxasticPredicate W E) (agent : E)
-    (p : W → Prop) (s : Index W T)
-    (sits : List (Index W T)) :
-    (liftDoxastic V T).HoldsAt agent (liftProp p) s sits ↔
-    V.HoldsAt agent p s.world (sits.map (·.world)) := by
-  simp only [SitDoxasticPredicate.HoldsAt, DoxasticPredicate.HoldsAt,
-    liftDoxastic, sitVeridicalityHolds_lift, sitBoxAt_lift_eq_BoxAt]
+/-- Without a restriction the restricted Past is the Past. -/
+theorem pastC_true : pastC (λ _ => True) t P ↔ past t P := by
+  simp only [pastC, past, true_and]
 
-/-! ### Temporal accessibility constraints
+/-- (52) and (54): negation over the referential Past with the Perfective, and negation over
+the Past restricted to the subintervals of the time the speaker has in mind, are the same
+truth condition once the subintervals of a past time are past. -/
+theorem not_pastC_sub_iff_not_pf {t₅ : T} (hsub : ∀ t', sub t' t₅ → t' < s) :
+    ¬ pastC (sub · t₅) s P ↔ ¬ pf sub t₅ P := by
+  simp only [pastC, pf, not_exists, not_and]
+  exact ⟨λ h t' ht' => h t' ht' (hsub t' ht'), λ h t' ht' _ => h t' ht'⟩
 
-What makes the situation indexing do work beyond the lift: relations
-that genuinely constrain the temporal coordinate, tying the embedded
-clause's temporal interpretation to the matrix event time. -/
+/-- (56), (57): with the content of the superordinate future added to its restriction, the
+event of a future perfect lies after the speech time. -/
+theorem lt_of_future_pastC {atSix : T → Prop}
+    (h : future s (λ t => atSix t ∧ pastC (s < ·) t P)) : ∃ t', s < t' ∧ P t' :=
+  match h with | ⟨_, _, _, t', hs, _, hP⟩ => ⟨t', hs, hP⟩
 
-/-- Accessible situations share the evaluation time — the
-    simultaneous reading in sequence of tense. -/
-def temporallyBound (R : E → W → W → Prop) :
-    E → Index W T → Index W T → Prop :=
-  fun agent s₁ s₂ => R agent s₁.world s₂.world ∧ s₂.time = s₁.time
+end Partee
 
-instance [DecidableEq T] (R : E → W → W → Prop)
-    [∀ a w w', Decidable (R a w w')] :
-    ∀ a s₁ s₂, Decidable (temporallyBound (T := T) R a s₁ s₂) := by
-  intro a s₁ s₂; unfold temporallyBound; infer_instance
+/-! ### Scope interactions (§10) -/
 
-/-- Accessible situations are at or after the evaluation time —
-    forward-looking attitudes like *expect* and *intend*. -/
-def futureOriented [LE T] (R : E → W → W → Prop) :
-    E → Index W T → Index W T → Prop :=
-  fun agent s₁ s₂ => R agent s₁.world s₂.world ∧ s₁.time ≤ s₂.time
+section Scope
 
-instance [LE T] [DecidableRel (α := T) (· ≤ ·)]
-    (R : E → W → W → Prop) [∀ a w w', Decidable (R a w w')] :
-    ∀ a s₁ s₂, Decidable (futureOriented (T := T) R a s₁ s₂) := by
-  intro a s₁ s₂; unfold futureOriented; infer_instance
+variable [LinearOrder T] {X : Type*} (boot : X → Prop) (polish : X → T → Prop)
 
-/-! ### Temporal tower bridge ([abusch-1997] ↔ `ContextTower`)
+/-- (61): a quantifier over the Past follows from the Past over the quantifier. -/
+theorem forall_past_of_past_forall (h : past s (λ t => ∀ x, boot x → polish x t)) :
+    ∀ x, boot x → past s (polish x) :=
+  λ x hx => match h with | ⟨t, hts, h⟩ => ⟨t, hts, h x hx⟩
 
-[abusch-1997]'s De Bruijn temporal indexing is tower-style depth access:
-`TensePronoun.evalTimeIndex` is a depth-relative index into the tower —
-when the temporal assignment encodes tower time coordinates
-(`g k = (tower.contextAt k).time`), `interpTense` agrees with
-`AccessPattern.resolve` — and the perspective shift of this paper is
-pushing a `temporalShift` onto the tower. -/
+/-- The converse fails: the boots are polished at different past times. -/
+theorem exists_forall_past_not_past_forall :
+    ∃ (s : ℕ) (boot : Bool → Prop) (polish : Bool → ℕ → Prop),
+      (∀ x, boot x → past s (polish x)) ∧ ¬ past s (λ t => ∀ x, boot x → polish x t) :=
+  ⟨5, λ _ => True, λ b t => t = if b then 1 else 2,
+    λ b _ => ⟨if b then 1 else 2, by cases b <;> decide, rfl⟩,
+    λ ⟨t, _, h⟩ => by have := h true trivial; have := h false trivial; simp_all⟩
 
-section TemporalBridge
+end Scope
 
-open Reference
+/-! ### Tense in relative clauses (§11.1) -/
 
-variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
+section Relative
 
-/-- Convert a `TensePronoun`'s eval-time index to an `AccessPattern` that reads
-    the time coordinate at the corresponding tower depth: `evalTimeIndex = 0`
-    is the origin (speech-act context time), `evalTimeIndex = k` the k-th
-    embedding's time. Abusch's variable indices ARE tower depth indices for
-    the temporal coordinate. -/
-def tensePronounAccessPattern (tp : TensePronoun) :
-    AccessPattern (Context W E P T) T where
-  depth := .relative tp.evalTimeIndex
-  project := Context.time
+variable [LinearOrder T] {X : Type*} (fish : X → Prop) (alive : X → T → Prop) (buy : X → T → Prop)
 
-/-- A temporal assignment that faithfully represents a tower: `g k` returns
-    the time coordinate at tower depth `k`. -/
-def towerFaithful (g : TemporalAssignment T) (t : ContextTower (Context W E P T)) : Prop :=
-  ∀ (k : ℕ), g k = (t.contextAt k).time
+/-- (66), the simultaneous reading of (62): the fish is alive at the buying time, the
+relative-clause pronoun bound by *will*. -/
+def simultaneous (s : T) : Prop := future s (λ t => ∃ x, fish x ∧ alive x t ∧ buy x t)
 
-/-- When the temporal assignment encodes tower time coordinates,
-    `interpTense` at the eval-time index agrees with resolving
-    the `tensePronounAccessPattern` against the tower. -/
-theorem tense_tower_bridge
-    (tp : TensePronoun) (g : TemporalAssignment T)
-    (t : ContextTower (Context W E P T))
-    (hFaithful : towerFaithful (W := W) (E := E) (P := P) g t) :
-    tp.evalTime g = (tensePronounAccessPattern (W := W) (E := E) (P := P) tp).resolve t := by
-  simp only [TensePronoun.evalTime, interpTense,
-             tensePronounAccessPattern, AccessPattern.resolve,
-             DepthSpec.relative_resolve]
-  exact hFaithful tp.evalTimeIndex
+/-- (67), the deictic reading: the pronoun bound by the matrix Present. -/
+def deictic (s : T) : Prop := future s (λ t => ∃ x, fish x ∧ alive x s ∧ buy x t)
 
-/-- In a root tower (no shifts), `evalTimeIndex = 0` accesses the origin
-    time — root-clause temporal evaluation is origin access, Kaplan's
-    thesis for time. -/
-theorem tense_root_bridge
-    (tp : TensePronoun) (c : Context W E P T)
-    (hEval : tp.evalTimeIndex = 0)
-    (g : TemporalAssignment T)
-    (hFaithful : towerFaithful (W := W) (E := E) (P := P) g (ContextTower.root c)) :
-    tp.evalTime g = c.time := by
-  have h1 := hFaithful 0
-  simp only [ContextTower.root_contextAt] at h1
-  simp only [TensePronoun.evalTime, interpTense, hEval]
-  exact h1
+/-- The two readings are independent. -/
+theorem simultaneous_deictic_independent :
+    ∃ (s : ℕ) (fish : Unit → Prop) (alive buy : Unit → ℕ → Prop),
+      simultaneous fish alive buy s ∧ ¬ deictic fish alive buy s :=
+  ⟨0, λ _ => True, λ _ t => t = 1, λ _ t => t = 1, ⟨1, by omega, (), trivial, rfl, rfl⟩,
+    λ ⟨_, _, _, _, h, _⟩ => by simp at h⟩
 
-/-- The access pattern for a root-clause tense pronoun (evalTimeIndex = 0)
-    resolves to depth 0, the origin. -/
-theorem tensePronounAccessPattern_root_resolves
-    (tp : TensePronoun) (hEval : tp.evalTimeIndex = 0)
-    (c : Context W E P T) :
-    (tensePronounAccessPattern (W := W) (E := E) (P := P) tp).resolve
-      (ContextTower.root c) = c.time := by
-  simp only [tensePronounAccessPattern, AccessPattern.resolve, hEval,
-             DepthSpec.relative_resolve, ContextTower.root_contextAt]
+end Relative
 
-/-- [von-stechow-2009]'s perspective shift — the attitude verb transmits
-    its event time to the embedded clause — as pushing a `temporalShift`
-    onto the tower: the updated assignment at the tower depth yields the
-    new time. -/
-theorem von_stechow_tower
-    (g : TemporalAssignment T) (t : ContextTower (Context W E P T))
-    (newTime : T) :
-    updateTemporal g t.depth newTime t.depth = newTime :=
-  Function.update_self t.depth newTime g
+/-! ### Tense under attitudes (§11.2) -/
 
-/-- Under faithful encoding, layers below the push point are preserved. -/
-theorem von_stechow_tower_preserves
-    (g : TemporalAssignment T) (t : ContextTower (Context W E P T))
-    (newTime : T)
-    (hFaithful : towerFaithful g t)
-    (k : ℕ) (hk : k < t.depth) :
-    updateTemporal g t.depth newTime k = (t.contextAt k).time := by
-  simp only [updateTemporal]
-  rw [Function.update_of_ne (Nat.ne_of_lt hk)]
-  exact hFaithful k
+section Attitudes
 
-/-- Pushing a temporal shift assigns `newTime` to the new depth in
-    the extended tower, mirroring `von_stechow_tower` on the assignment side. -/
-theorem von_stechow_tower_innermost
-    (t : ContextTower (Context W E P T)) (newTime : T) :
-    (t.push (temporalShift newTime)).innermost.time = newTime := by
-  rw [ContextTower.push_innermost]
-  rfl
+variable {W : Type*}
 
-end TemporalBridge
+/-- Hintikka's belief (74): the complement is a proposition, true throughout the doxastic
+alternatives. -/
+def believeH (dox : W → T → Set W) (p : W → Prop) (w : W) (t : T) : Prop :=
+  ∀ w' ∈ dox w t, p w'
+
+/-- (77): on the anaphoric analysis the complement of *at five Mary thought it was six* is
+the proposition that the matrix time is six, which the matrix time makes empty. -/
+theorem anaphoric_content_empty {five six t₁ : T} (h₁ : t₁ = five) (hne : five ≠ six) :
+    ∀ w : W, ¬ (λ _ : W => t₁ = six) w :=
+  λ _ h => hne (h₁ ▸ h)
+
+/-- Lewis's belief (78): the complement is a property of times, and the doxastic alternatives
+are world–time pairs. -/
+def believeL (dox : W → T → Set (W × T)) (P : W → T → Prop) (w : W) (t : T) : Prop :=
+  ∀ p ∈ dox w t, P p.1 p.2
+
+/-- (79): Mary locates herself at six, whatever the actual time. -/
+theorem believeL_time {dox : W → T → Set (W × T)} {w : W} {t six : T} :
+    believeL dox (λ _ t' => t' = six) w t ↔ ∀ p ∈ dox w t, p.2 = six :=
+  Iff.rfl
+
+/-- A time-independent complement is Hintikka's belief over the world projection of the
+alternatives (74). -/
+theorem believeL_const_iff {dox : W → T → Set (W × T)} {p : W → Prop} {w : W} {t : T} :
+    believeL dox (λ w' _ => p w') w t ↔ believeH (λ w t => Prod.fst '' dox w t) p w t := by
+  simp only [believeL, believeH, Set.forall_mem_image]
+
+end Attitudes
+
+section Complement
+
+variable {W : Type*} [LinearOrder T]
+
+/-- The complement tenses of (81): the tenseless PRO, or a Past over it, the shifted reading
+(80). -/
+inductive ComplementTense
+  | pro
+  | pastPro
+
+/-- The property of times a complement denotes. -/
+def ComplementTense.denote (Q : W → T → Prop) : ComplementTense → W → T → Prop
+  | .pro => Q
+  | .pastPro => λ w t => past t (Q w)
+
+end Complement
+
+/-! ### Before- and after-clauses (§11.3) -/
+
+section Before
+
+variable [LinearOrder T] {S : Set T} {m : T}
+
+/-- *Before* the earliest time of the clause (91) is *before* every time of it, Anscombe's
+universal *before*. -/
+theorem lt_isLeast_iff (hm : IsLeast S m) : t < m ↔ ∀ t' ∈ S, t < t' :=
+  ⟨λ h _ ht' => h.trans_le (hm.2 ht'), λ h => h m hm.1⟩
+
+/-- *After* the earliest time is *after* some time of the clause, Anscombe's existential
+*after*. -/
+theorem isLeast_lt_iff (hm : IsLeast S m) : m < t ↔ ∃ t' ∈ S, t' < t :=
+  ⟨λ h => ⟨m, hm.1, h⟩, λ ⟨_, ht', h⟩ => (hm.2 ht').trans_lt h⟩
+
+end Before
 
 end VonStechow2009
