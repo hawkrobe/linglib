@@ -1,32 +1,54 @@
-import Linglib.Phonology.Subregular.BMRS
-import Linglib.Core.Order.IterateFixedPoint
+import Mathlib.Order.FixedPoints
 import Mathlib.Tactic.IntervalCases
+import Linglib.Phonology.Subregular.BMRS
 
 /-!
-# Yolyan & Comer 2026: Phonological Processes as Modal Transductions
+# Yolyan and Comer (2026): Phonological Processes as Modal Transductions
 
-[yolyan-comer-2026]: total BMRS — the Boolean monadic recursive schemes of
-[bhaskar-jardine-chandlee-oakden-2020], rendered by `Subregular.BMRS` — is
-expressively equivalent to the modal μ-calculus on words (Thm. 2), giving an
-alternative proof that order-preserving BMRS captures the rational functions. `Formula`/`System` render the paper's §4 vectorial presentation of
-[kozen-1983]'s μ-calculus over word models — a finite system of equations `Xⱼ = θⱼ`
-read as the least fixed point of the induced monotone operator (Knaster–Tarski), which
-by Bekić's theorem is equivalent to nested `μ`-binders but spares the binder
-bookkeeping. This file formalizes the constructive core: the translation `tr`
-(Def. 6) from vectorial modal formulas to BMRS expressions and its compositionality
-(`eval_tr`, Remark 7) — `tr φ` evaluates to the truth value of `φ` wherever rule-head
-calls agree with the recursion variables. Thm. 8 discharges that hypothesis for
-*directed* systems by SCC induction (TODO: the directedness machinery); Thm. 2's
-converse containment runs through MSO (out of scope until an MSO substrate exists).
+This file formalizes [yolyan-comer-2026]'s translation of the modal μ-calculus on words into
+the Boolean monadic recursive schemes of [bhaskar-jardine-chandlee-oakden-2020]
+(`Subregular.BMRS`). The paper's main result (Thm. 2) is that total BMRS programs and the
+μ-calculus of [kozen-1983] express the same unary properties of words, which gives an
+alternative proof that order-preserving BMRS interpretations capture the rational functions.
+`Formula` and `System` are the vectorial presentation of §4: a finite system of equations
+`Xⱼ = θⱼ` whose semantics is the least fixed point of the induced monotone operator on
+valuations. The translation `tr` (Def. 6) sends a right-hand side to a BMRS expression whose
+rule heads are the recursion variables, and `eval_tr` is its compositionality (Remark 7):
+wherever the rule-head calls agree with the recursion variables, `tr φ` evaluates to the truth
+value of `φ`.
 
-The paper's two worked examples ground both formalisms: vowel nasalization ((2)–(4),
-non-recursive) and progressive nasal spreading in Warao ((5)–(7), [osborn-1966]). The
-modal form `N′ = μX.(N ∨ (¬T ∧ ♦X))` recurses under the *backward* modality `♦` =
-`bdia` — a target inherits nasality from its predecessor. Both compute the Fig. 4/5
-columns on /naote/ → [nãõte], and the BMRS and modal results agree
-(`warao_agreement`); `warao_tr_agreement` runs Remark 7 end-to-end on the translated
-program, with the rule-head hypothesis discharged by direct computation — the concrete
-shape of Thm. 8's induction.
+The paper's two worked examples run through both formalisms. Vowel nasalization, (2)–(4), is
+non-recursive: `nasalization` is the program (3) and `nasalizationChi` the modal form (4), and
+both mark the vowel of /bæn/ before the nasal (Fig. 3). Progressive nasal spreading in Warao,
+(5)–(7), after [osborn-1966], recurses under the backward modality: `warao` is the program (6),
+`waraoChi` the modal form (7), and the two agree on the Fig. 4 and Fig. 5 columns of /naote/
+(`warao_agreement`). `warao_tr_agreement` runs Remark 7 on the translated Warao program, with
+the rule-head hypothesis discharged by computation.
+
+## Implementation notes
+
+* Formulas are the negation-free fragment `μMLf+` of Thm. 8, extended with negated label atoms
+  (`nlabel`); negation stays off the recursion variables, so monotonicity of the system operator
+  is structural, while the Warao formula `N′ = μX.(N ∨ (¬T ∧ ♦X))` is expressible. Negated
+  atoms translate as an if–then–else, the evident extension of the paper's clauses.
+* Label atoms test the current symbol against a `Finset` class, since the paper's feature
+  predicates N, V and T overlap (a nasalized vowel satisfies both V and N).
+* The vectorial semantics is the least fixed point of the system operator by Knaster–Tarski,
+  which by Bekić's theorem agrees with nested `μ`-binders.
+
+## TODO
+
+* Thm. 8, the translation of directed systems (Def. 3) by induction on the strongly connected
+  components of the dependency graph, which discharges the hypothesis of `eval_tr`.
+* The converse containment of Thm. 2 runs through monadic second-order logic and needs an MSO
+  substrate.
+
+## References
+
+* [yolyan-comer-2026]
+* [bhaskar-jardine-chandlee-oakden-2020]
+* [kozen-1983]
+* [osborn-1966]
 -/
 
 namespace YolyanComer2026
@@ -35,19 +57,13 @@ open Subregular Subregular.BMRS
 
 variable {α : Type*} {n : ℕ}
 
-/-! ### The vectorial modal μ-calculus on words (§4)
+/-! ### The vectorial modal μ-calculus on words (§4) -/
 
-Formulas are the negation-free fragment `μML꜀₊` — the ambient of Thm. 8 — extended with
-negated *label* atoms (`nlabel`), which keeps negation off recursion variables (so
-monotonicity is structural) while covering processes like Warao nasal spreading
-`N′ = μX.(N ∨ (¬T ∧ ♦X))`. -/
-
-/-- Quantifier-free modal formulas over labels `α` and `n` recursion variables:
-negation-free apart from **class atoms** (`nlabel`), so recursion variables occur only
-positively. `label`/`nlabel` test the current position's symbol against a `Finset` class
-(featural predicates like V or N are single atoms; a symbol test is the singleton case).
-`initial`/`final` are the edge tests (the literature's `min`/`max`); `dia` (`◇`) reads
-the successor position, `bdia` (`♦`) the predecessor. -/
+/-- Quantifier-free modal formulas over labels `α` and `n` recursion variables, negation-free
+apart from the class atoms `nlabel`, so that recursion variables occur only positively.
+`label` and `nlabel` test the current position's symbol against a `Finset` class; `initial` and
+`final` are the edge tests `min` and `max`; `dia` (`◇`) reads the successor position and
+`bdia` (`♦`) the predecessor. -/
 inductive Formula (α : Type*) (n : ℕ) where
   | tru
   | fls
@@ -170,7 +186,7 @@ namespace System
 
 variable (χ : System α n) (w : List α)
 
-/-- The monotone operator a system induces on valuations (the paper's `F_w^χ`). -/
+/-- The monotone operator a system induces on valuations. -/
 def op : (Fin n → Set ℕ) →o (Fin n → Set ℕ) where
   toFun U X := {i | (χ.eqs X).Realize w U i}
   monotone' _ _ hUV _ _ h := h.mono hUV
@@ -178,7 +194,7 @@ def op : (Fin n → Set ℕ) →o (Fin n → Set ℕ) where
 @[simp] theorem mem_op {U : Fin n → Set ℕ} {X : Fin n} {i : ℕ} :
     i ∈ χ.op w U X ↔ (χ.eqs X).Realize w U i := .rfl
 
-/-- The least-fixed-point valuation (Knaster–Tarski). -/
+/-- The least-fixed-point valuation. -/
 noncomputable def sem : Fin n → Set ℕ := OrderHom.lfp (χ.op w)
 
 /-- `sem` is a fixed point of the system operator. -/
@@ -188,12 +204,6 @@ theorem op_sem : χ.op w (χ.sem w) = χ.sem w := (χ.op w).map_lfp
 theorem sem_le {U : Fin n → Set ℕ} (hU : χ.op w U ≤ U) : χ.sem w ≤ U :=
   (χ.op w).lfp_le hU
 
-/-- **Iteration certificate**: an iterate of `⊥` fixed by the operator is `sem`. The
-computable route to the least fixed point — no continuity needed. -/
-theorem sem_eq_iterate {k : ℕ} (h : χ.op w ((χ.op w)^[k] ⊥) = (χ.op w)^[k] ⊥) :
-    χ.sem w = (χ.op w)^[k] ⊥ :=
-  OrderHom.lfp_eq_iterate_bot _ h
-
 /-- `w, i ⊨ χ`: the designated variable holds at `i` in the least fixed point. -/
 def Sat (i : ℕ) : Prop := i ∈ χ.sem w χ.out
 
@@ -202,11 +212,7 @@ end System
 /-- The single BMRS index variable. -/
 private abbrev x : Term := .var
 
-/-! ### Segments and feature classes
-
-The examples' segments, with the paper's overlapping feature predicates N, V, T as
-class tests (a nasalized vowel satisfies both V and N — a partition alphabet cannot
-represent the nasalization output, which is why `label` atoms are class tests). -/
+/-! ### Segments and feature classes -/
 
 /-- Segments occurring in the paper's examples. -/
 inductive Seg
@@ -240,17 +246,16 @@ def nasalization : Program Seg NasHead
   | .V' => .label vow x
   | .N' => .ite (.label vow x) (.label nas x.succ) (.label nas x)
 
-/-- Fig. 3: on /bæn/ the output columns are V′ = ⊥⊤⊥ and N′ = ⊥⊤⊤ — [bæ̃n], the æ
-nasalized by the following n. -/
+/-- Fig. 3: on /bæn/ the output columns are V′ = ⊥⊤⊥ and N′ = ⊥⊤⊤, [bæ̃n], the æ nasalized
+by the following n. -/
 theorem nasalization_columns :
-    ((List.range 3).map fun i => evalFuel nasalization baen 8 i (.call .V' x)) =
+    ((List.range 3).map λ i => evalFuel nasalization baen 8 i (.call .V' x)) =
         [some false, some true, some false] ∧
-      ((List.range 3).map fun i => evalFuel nasalization baen 8 i (.call .N' x)) =
+      ((List.range 3).map λ i => evalFuel nasalization baen 8 i (.call .N' x)) =
         [some false, some true, some true] := by
   decide
 
-/-- (4): the modal form `N′ = (V ∧ ◇N) ∨ N` — non-recursive, so no fixed point is
-involved. -/
+/-- (4): the modal form `N′ = (V ∧ ◇N) ∨ N`, non-recursive. -/
 def nasalizationChi : System Seg 1 where
   eqs _ := ((Formula.label vow).and (.dia (.label nas))).or (.label nas)
   out := 0
@@ -276,16 +281,16 @@ inductive WHead
   deriving DecidableEq
 
 /-- (6): `N′(x) = if N(x) then ⊤ else if T(x) then ⊥ else if min(x) then ⊥ else
-N′(p(x))` — recursive through the predecessor: spreading is progressive. -/
+N′(p(x))`, recursive through the predecessor. -/
 def warao : Program Seg WHead
   | .N' => .ite (.label nas x) .tru
       (.ite (.label stop x) .fls
         (.ite (.initial x) .fls (.call .N' x.pred)))
 
-/-- Fig. 4: on /naote/ the output column is N′ = ⊤⊤⊤⊥⊥ — [nãõte], spreading blocked by
+/-- Fig. 4: on /naote/ the output column is N′ = ⊤⊤⊤⊥⊥, [nãõte], with spreading blocked by
 the t. -/
 theorem warao_column :
-    ((List.range 5).map fun i => evalFuel warao naote 32 i (.call .N' x)) =
+    ((List.range 5).map λ i => evalFuel warao naote 32 i (.call .N' x)) =
       [some true, some true, some true, some false, some false] := by
   decide
 
@@ -295,7 +300,7 @@ def waraoChi : System Seg 1 where
   out := 0
 
 /-- The least fixed point on /naote/: nasality holds exactly at positions 0, 1, 2. -/
-abbrev waraoU : Fin 1 → Set ℕ := fun _ => {i | i < 3}
+abbrev waraoU : Fin 1 → Set ℕ := λ _ => {i | i < 3}
 
 /-- `waraoU` is a prefixed point of the system operator. -/
 theorem warao_op_le : waraoChi.op naote waraoU ≤ waraoU := by
@@ -323,7 +328,7 @@ theorem warao_op_le : waraoChi.op naote waraoU ≤ waraoU := by
 step of the spread). -/
 theorem warao_le_sem : waraoU ≤ waraoChi.sem naote := by
   have hmem : ∀ i, waraoChi.sem naote 0 i =
-      (waraoChi.eqs 0).Realize naote (waraoChi.sem naote) i := fun i =>
+      (waraoChi.eqs 0).Realize naote (waraoChi.sem naote) i := λ i =>
     congrFun (congrFun (waraoChi.op_sem naote).symm 0) i
   have h0 : 0 ∈ waraoChi.sem naote 0 := by
     show waraoChi.sem naote 0 0
@@ -352,8 +357,8 @@ theorem warao_sat {i : ℕ} : waraoChi.Sat naote i ↔ i < 3 := by
   rw [System.Sat, warao_sem]
   exact Iff.rfl
 
-/-- **Fig. 4/5 agreement**: the BMRS program (6) and the modal formula (7) compute the
-same nasality column on /naote/. -/
+/-- The BMRS program (6) and the modal formula (7) compute the same nasality column on
+/naote/, Fig. 4 and Fig. 5. -/
 theorem warao_agreement (i : ℕ) (hi : i < 5) :
     evalFuel warao naote 32 i (.call .N' x) = some true ↔ waraoChi.Sat naote i := by
   rw [warao_sat]
@@ -361,10 +366,8 @@ theorem warao_agreement (i : ℕ) (hi : i < 5) :
 
 /-! ### The translation (Def. 6) and its compositionality (Remark 7) -/
 
-/-- Def. 6: translate a vectorial modal formula into a BMRS expression whose rule heads
-are the recursion variables. Modalities substitute a moved term into the translated
-body; class-negated atoms translate by (3.8)-negation (the evident extension of the
-paper's clauses, which cover positive atoms). -/
+/-- Def. 6: translate a vectorial modal formula into a BMRS expression whose rule heads are
+the recursion variables. Modalities substitute a moved term into the translated body. -/
 def tr : Formula α n → Expr α (Fin n)
   | .tru => .tru
   | .fls => .fls
@@ -379,11 +382,10 @@ def tr : Formula α n → Expr α (Fin n)
   | .bdia φ => .ite (.initial x) .fls ((tr φ).subst x.pred)
 
 /-- The translated program of a system: one rule per recursion variable. -/
-def System.trProgram (χ : System α n) : Program α (Fin n) := fun X => tr (χ.eqs X)
+def System.trProgram (χ : System α n) : Program α (Fin n) := λ X => tr (χ.eqs X)
 
-/-- **Remark 7** (compositionality of the translation): wherever rule-head calls agree
-with the recursion variables, `tr φ` evaluates to the truth value of `φ`. Thm. 8's
-SCC induction discharges the hypothesis for directed systems. -/
+/-- Remark 7, compositionality of the translation: wherever rule-head calls agree with the
+recursion variables, `tr φ` evaluates to the truth value of `φ`. -/
 theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : List α}
     {U : Fin n → Set ℕ} [∀ X, DecidablePred (· ∈ U X)]
     (hcall : ∀ X, ∀ j < w.length, Eval P w j (.call X x) (decide (j ∈ U X)))
@@ -421,17 +423,17 @@ theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : List α}
       exact .label_true (Term.eval_var hi) ha has
     · rw [decide_eq_false (h ∘ Formula.realize_label.mp)]
       have hw : w[i]? = some (w[i]'hi) := List.getElem?_eq_getElem hi
-      exact .label_false (Term.eval_var hi) hw fun has => h ⟨_, has, hw⟩
+      exact .label_false (Term.eval_var hi) hw λ has => h ⟨_, has, hw⟩
   | nlabel s =>
     intro i hi
     by_cases h : ∃ a ∈ s, w[i]? = some a
     · obtain ⟨a, has, ha⟩ := h
-      rw [decide_eq_false fun hall => hall a has ha]
+      rw [decide_eq_false λ hall => hall a has ha]
       exact .ite_true (.label_true (Term.eval_var hi) ha has) .fls
     · rw [decide_eq_true (p := (Formula.nlabel s).Realize w U i)
-        fun a has ha => h ⟨a, has, ha⟩]
+        λ a has ha => h ⟨a, has, ha⟩]
       have hw : w[i]? = some (w[i]'hi) := List.getElem?_eq_getElem hi
-      exact .ite_false (.label_false (Term.eval_var hi) hw fun has => h ⟨_, has, hw⟩) .tru
+      exact .ite_false (.label_false (Term.eval_var hi) hw λ has => h ⟨_, has, hw⟩) .tru
   | var X =>
     intro i hi
     have h := hcall X i hi
@@ -443,7 +445,7 @@ theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : List α}
     · rw [show decide ((φ.and ψ).Realize w U i) = decide (ψ.Realize w U i) from
         decide_eq_decide.mpr (by simp [h])]
       exact .ite_true (decide_eq_true h ▸ ihφ hi) (ihψ hi)
-    · rw [decide_eq_false fun hc => h hc.1]
+    · rw [decide_eq_false λ hc => h hc.1]
       exact .ite_false (decide_eq_false h ▸ ihφ hi) .fls
   | or φ ψ ihφ ihψ =>
     intro i hi
@@ -482,13 +484,13 @@ theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : List α}
       exact .ite_false (.initial_false (Term.eval_var hi) (by omega))
         (Eval.subst (by rw [Term.eval_pred_var hi]; simp [pred?, hj]) (ih hj))
 
-/-- Remark 7 run end-to-end on Warao: the translated program agrees with the modal
-semantics on /naote/ (`waraoU = waraoChi.sem naote` by `warao_sem`), the rule-head
-hypothesis discharged by direct computation — the concrete shape of Thm. 8. -/
+/-- Remark 7 on Warao: the translated program agrees with the modal semantics on /naote/
+(`waraoU` is `waraoChi.sem naote` by `warao_sem`), the rule-head hypothesis discharged by
+computation. -/
 theorem warao_tr_agreement (i : ℕ) (hi : i < 5) :
     Eval waraoChi.trProgram naote i (tr (waraoChi.eqs 0))
       (decide ((waraoChi.eqs 0).Realize naote waraoU i)) := by
-  refine eval_tr (fun X j hj => ?_) _ hi
+  refine eval_tr (λ X j hj => ?_) _ hi
   obtain rfl : X = 0 := Subsingleton.elim X 0
   refine evalFuel_sound (n := 32) ?_
   have hj5 : j < 5 := by simpa [naote] using hj
