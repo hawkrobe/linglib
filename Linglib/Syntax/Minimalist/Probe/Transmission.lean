@@ -14,8 +14,8 @@ active goal `g`, it updates the state via `xmit g`; otherwise it leaves the stat
 unchanged — **Agree fails gracefully**, no crash ([preminger-2014]).
 
 The *direction* of transmission is the choice of `xmit`/state, not a separate
-axis: goal→probe copy (φ-valuation; `Agree.applyAgree` is recognized as this
-instance in `Agree.lean`), probe→goal assignment (dependent case), or sharing.
+axis: goal→probe copy (φ-valuation, `FeatureBundle.applyAgree` in `Agree/Basic.lean`),
+probe→goal assignment (dependent case), or sharing.
 Multiple-goal assignment (a clause's worth of case) is a *fold* of `transmit`s —
 the composition axis (`cascade`/ordered stack), not a single transmit.
 -/

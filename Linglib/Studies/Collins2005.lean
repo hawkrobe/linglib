@@ -124,9 +124,6 @@ private def infl₀ : LIToken := ⟨.simple .T [], 9⟩
 /-- The auxiliary *have* of the active perfect (26). -/
 private def has₀ : LIToken := ⟨.simple .V [] (phonForm := "has"), 10⟩
 
-/-- A leaf is a DP. -/
-def hasD (s : SyntacticObject) : Bool := s.getLIToken.any (·.item.outerCat == .D)
-
 namespace Clause
 
 /-- A clause from its words. -/
@@ -191,7 +188,7 @@ def active : Derivation := (p.vP false).append [.em .left has₀, .em .left infl
 D-goals, so its raising violates neither the Minimal Link Condition nor Relativized
 Minimality (§5). -/
 def Converges (a : Analysis) (evacuate : Bool) : Prop :=
-  ∃ q ∈ (p.preRaising a evacuate).externalize?, isClosestGoalIn q infl₀ p.patient hasD
+  ∃ q ∈ (p.preRaising a evacuate).externalize?, isClosestGoalIn q infl₀ p.patient (isLeafOf .D)
 
 instance (a : Analysis) (evacuate : Bool) : Decidable (p.Converges a evacuate) := by
   unfold Converges; infer_instance

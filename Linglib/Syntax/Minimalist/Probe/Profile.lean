@@ -42,7 +42,7 @@ This file imports `ExtendedProjection/Basic.lean` (for `fValue`, `Cat`,
 vacuity and BIM theorems). It is the *horizon* probe specification of
 the canonical `Probe` core (`Probe/Basic.lean`): `Probe.Profile.toProbe`
 denotes a profile as a `Probe α` (visibility = clause transparency).
-The tree-based Agree operation lives in `Agree.lean`; the Deal/Keine
+The tree-native locality predicates live in `Agree/Basic.lean`; the Deal/Keine
 satisfaction-condition spec in `Probe/Satisfaction.lean`.
 -/
 

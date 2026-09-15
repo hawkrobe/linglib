@@ -73,8 +73,8 @@ def agree (act : H → FeatureType → Bool) (s : State H) (α : H) (t : Feature
     State H :=
   match s α t, s g t with
   | .unvalued, .valued v =>
-    if act g t then Function.update s α (Function.update (s α) t (.valued v)) else s
-  | .valued v, .unvalued => Function.update s g (Function.update (s g) t (.valued v))
+    if act g t then Function.update s α ((s α).valueAt t v) else s
+  | .valued v, .unvalued => Function.update s g ((s g).valueAt t v)
   | _, _ => s
 
 /-- Discharge the probes on `α` in their extrinsic order over `dom` (Definition (1)):

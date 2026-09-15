@@ -1,188 +1,148 @@
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Syntax.Minimalist.Phase.Basic
-import Linglib.Syntax.Minimalist.Probe.Transmission
+import Linglib.Syntax.Minimalist.Probe.Basic
+import Linglib.Syntax.Minimalist.SyntacticObject.Build
+import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
 
 /-!
-# Agree (Minimalist Feature Checking)
+# Agree: closest goals, horizons, and valuation
 
-Formalization of Agree following [chomsky-2000] and [adger-2003].
+This file defines the structural conditions of Agree over syntactic objects and its valuation
+step over feature bundles. A goal is a *closest goal* for a probe when it lies in the probe's
+c-command domain, satisfies the probe's relativization, and no other such node asymmetrically
+c-commands it: the Minimal Link Condition of [chomsky-1995], with mutually c-commanding
+candidates equidistant. A target is *behind a horizon* for a probe when a leaf of the horizon
+category lies in the probe's domain and c-commands the target, so the probe's search terminates
+before reaching it ([keine-2019]). Valuation copies a goal's value into an unvalued probe slot
+and is inflationary in the subsumption order on bundles: Agree only adds information.
 
-Agree is the mechanism by which features are checked/valued:
-1. A **probe** (head with unvalued feature) searches its c-command domain
-2. It finds the closest **goal** (element with matching valued feature)
-3. The probe's feature is valued by copying from the goal
-4. Both features are then checked (and may delete at PF/LF)
+The closest-goal predicate is the tree-native form of the list search `Probe.search`: when a
+goal sequence enumerates the probe's domain with no later goal asymmetrically c-commanding an
+earlier one, the goal the search finds is a closest goal (`isClosestGoalIn_of_search`).
 
-This file states Agree's structural conditions over `SyntacticObject`
-trees (c-command locality, horizons, phase-boundedness) and the valuation
-step over `FeatureBundle`s. Bundles live in a *feature assignment*
-`LIToken → FeatureBundle` rather than in the carrier — the free-Merge core
-keeps `SO₀` features atomic (`Syntax/Minimalist/FeatureSlot.lean`) — and a constituent
-exposes its projecting head's bundle through selection-driven labeling
-(`headBundle`). The feature *types* live in `Features.lean`; the search
-kernel and failure model ([preminger-2014] Ch. 5) in `Probe/Basic.lean`;
-richer satisfaction conditions ([deal-2024], [keine-2019]) in
-`Probe/Satisfaction.lean`; the Case Filter in `Syntax/Minimalist/Case.lean`.
+## Main definitions
+
+* `Minimalist.SyntacticObject.isClosestGoalIn`, `Minimalist.SyntacticObject.behindHorizonIn`
+* `Minimalist.FeatureBundle.valueAt`, `Minimalist.FeatureBundle.applyAgree`
+
+## References
+
+* [chomsky-1995], [chomsky-2000]
+* [keine-2019]
+* [aissen-polian-2025]
 -/
 
 namespace Minimalist
 
-open SyntacticObject
+namespace SyntacticObject
 
-/-! ### Agree relations
+variable {root probe goal : SyntacticObject} {pred : SyntacticObject → Prop}
 
-Feature bundles live in a *feature assignment* `LIToken → FeatureBundle`,
-not in the carrier (`Syntax/Minimalist/FeatureSlot.lean`). A constituent exposes its
-projecting head's bundle through selection-driven labeling
-(`SyntacticObject.selHead`), so an Agree relation's feature conditions and
-its structural conditions are read off one tree and one assignment. -/
+/-! ### Closest goals -/
 
-/-- The feature bundle `s` exposes to Agree under the assignment `feats`:
-    its projecting head's bundle. An unlabelable constituent exposes no
-    features (`⊥`), so it can neither probe nor serve as a goal. -/
-def headBundle (feats : LIToken → FeatureBundle) (s : SyntacticObject) : FeatureBundle :=
-  (s.selHead.map feats).getD ⊥
+/-- `goal` is a closest `pred`-goal for `probe` in `root`: `probe` c-commands `goal`, `goal`
+satisfies `pred`, and no `pred`-node in `probe`'s c-command domain asymmetrically c-commands
+`goal`. Mutually c-commanding candidates are equidistant and do not block each other. -/
+def isClosestGoalIn (root probe goal : SyntacticObject) (pred : SyntacticObject → Prop) : Prop :=
+  cCommandsIn root probe goal ∧ pred goal ∧
+    ∀ x ∈ root.subtrees, pred x → cCommandsIn root probe x → ¬ asymCCommandsIn root x goal
 
-@[simp] theorem headBundle_leaf (feats : LIToken → FeatureBundle) (tok : LIToken) :
-    headBundle feats (SyntacticObject.leaf tok) = feats tok := rfl
+instance [DecidablePred pred] (root probe goal : SyntacticObject) :
+    Decidable (isClosestGoalIn root probe goal pred) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ x ∈ root.subtrees, _))
 
-/-- Valid Agree under a feature assignment: `probe` c-commands `goal` in
-    `root`, the probe's head bears an unvalued `t`-slot, and the goal's head
-    bears a valued one. -/
-def validAgree (feats : LIToken → FeatureBundle) (root probe goal : SyntacticObject)
-    (t : FeatureType) : Prop :=
-  cCommandsIn root probe goal ∧
-  (headBundle feats probe).hasUnvaluedFeature t = true ∧
-  (headBundle feats goal).hasValuedFeature t = true
+/-- The goal a list search finds over the probe's domain is a closest goal, provided the
+sequence enumerates the domain and no later goal asymmetrically c-commands an earlier one: the
+tree-native predicate agrees with the list engine `Probe.search`. -/
+theorem isClosestGoalIn_of_search [DecidablePred pred] {dom : List SyntacticObject}
+    (hdom : ∀ x ∈ root.subtrees, cCommandsIn root probe x → x ∈ dom)
+    (hcc : ∀ x ∈ dom, cCommandsIn root probe x)
+    (hord : dom.Pairwise λ x y => ¬ asymCCommandsIn root y x)
+    (h : (Probe.ofVis λ x => decide (pred x)).search dom = some goal) :
+    isClosestGoalIn root probe goal pred := by
+  obtain ⟨hvis, l₁, l₂, rfl, hl₁⟩ := Probe.search_eq_some_iff_closest.mp h
+  refine ⟨hcc goal (by simp), of_decide_eq_true hvis, λ x hx hpx hcx hasym => ?_⟩
+  rcases List.mem_append.mp (hdom x hx hcx) with hx₁ | hx₂
+  · exact absurd hpx (by simpa [Probe.ofVis] using hl₁ x hx₁)
+  · rcases List.mem_cons.mp hx₂ with rfl | hx₂
+    · exact hasym.2 hasym.1
+    · exact (List.pairwise_cons.mp (List.pairwise_append.mp hord).2.1).1 x hx₂ hasym
 
-instance (feats : LIToken → FeatureBundle) (root probe goal : SyntacticObject)
-    (t : FeatureType) : Decidable (validAgree feats root probe goal t) := by
-  unfold validAgree; infer_instance
+/-! ### Horizons -/
 
-/-- Nothing Agrees with itself: one slot cannot be both unvalued and valued.
-    Irreflexivity is a fact about the assignment being a single source of
-    feature truth, not about c-command (a multiply-occurring subterm can
-    c-command itself). -/
-theorem validAgree_irrefl (feats : LIToken → FeatureBundle) (root s : SyntacticObject)
-    (t : FeatureType) : ¬ validAgree feats root s s t := by
-  rintro ⟨-, hu, hv⟩
-  cases h : headBundle feats s t <;>
-    simp [FeatureBundle.hasUnvaluedFeature, FeatureBundle.hasValuedFeature,
-      Minimalist.FeatureSlot.isUnvalued, Minimalist.FeatureSlot.isValued, h] at hu hv
+/-- `target` is behind a horizon of category `c` for `probe` in `root`: a `c` leaf in `probe`'s
+c-command domain c-commands `target`, so `probe`'s search terminates before reaching it
+([keine-2019]). With N a horizon for the wh-probe on C, the D head of `[DP D [PossP Psr N]]`
+stays visible while the possessor, c-commanded by N, does not ([aissen-polian-2025]). -/
+def behindHorizonIn (root probe target : SyntacticObject) (c : Cat) : Prop :=
+  ∃ n ∈ root.subtrees, isLeafOf c n ∧ cCommandsIn root probe n ∧ cCommandsIn root n target
 
-/-! ### Locality: closest goal
-
-"Closest matching goal, no intervener" is canonically the list engine
-`Probe.search` (`Probe/Basic.lean`, `search_eq_some_iff_closest`, with `pred`
-playing `Probe.vis`). `SyntacticObject` is a commutative magma with no
-canonical c-command linearization, so the tree↔list bridge is not
-definitional; `isClosestGoalIn` is the decidable tree-native presentation. -/
-
-/-- `goal` is a closest `pred`-goal for `probe` in `root`: `pred`-matching and
-    c-commanded by `probe`, with no `pred`-matching node c-commanded by `probe`
-    c-commanding `goal`. -/
-def isClosestGoalIn (root probe goal : SyntacticObject)
-    (pred : SyntacticObject → Bool) : Prop :=
-  cCommandsIn root probe goal ∧ pred goal = true ∧
-    ¬∃ x ∈ root.subtrees,
-      x ≠ goal ∧ pred x = true ∧ cCommandsIn root probe x ∧ cCommandsIn root x goal
-
-instance (root probe goal : SyntacticObject) (pred : SyntacticObject → Bool) :
-    Decidable (isClosestGoalIn root probe goal pred) := by
-  unfold isClosestGoalIn
-  have : Decidable (∃ x ∈ root.subtrees,
-      x ≠ goal ∧ pred x = true ∧ cCommandsIn root probe x ∧ cCommandsIn root x goal) :=
-    Multiset.decidableExistsMultiset
-  infer_instance
-
-/-! ### Horizons ([keine-2019]) -/
-
-/-- Per-vertex horizon predicate: leaf with category = horizonCat. -/
-private def isHorizonLeafFor (horizonCat : Cat) (n : SyntacticObject) : Prop :=
-  match getLIToken n with
-  | some tok => tok.item.outerCat = horizonCat
-  | none => False
-
-instance (horizonCat : Cat) (n : SyntacticObject) :
-    Decidable (isHorizonLeafFor horizonCat n) := by
-  unfold isHorizonLeafFor
-  cases getLIToken n <;> infer_instance
-
-/-- `target` is behind a horizon of category `horizonCat` for `probe` in
-    `root`: some `horizonCat` leaf sits in `probe`'s search domain and
-    c-commands `target`, rendering it invisible ([keine-2019]).
-
-    Example: N° is a horizon for wh-probes ([aissen-polian-2025]). In
-    `[DP D° [PossP Psr N°]]`, N° c-commands Psr, so wh-probes on C° cannot
-    reach Psr; D° is not c-commanded by N°, so the whole DP stays visible
-    for pied-piping.
-
-    The canonical list-native horizon specification is `Probe.Profile`
-    (`Probe/Profile.lean`); this is the tree-native presentation. -/
-def behindHorizonIn (root probe target : SyntacticObject)
-    (horizonCat : Cat) : Prop :=
-  ∃ n ∈ root.subtrees,
-    isHorizonLeafFor horizonCat n ∧ cCommandsIn root n target ∧ cCommandsIn root probe n
-
-instance (root probe target : SyntacticObject) (horizonCat : Cat) :
-    Decidable (behindHorizonIn root probe target horizonCat) :=
+instance (root probe target : SyntacticObject) (c : Cat) :
+    Decidable (behindHorizonIn root probe target c) :=
   Multiset.decidableExistsMultiset
 
-/-! ### Feature valuation -/
+/-! ### Witnesses -/
 
-/-- Apply Agree: value the probe's feature from the goal. If the goal has a
-    valued feature at dimension `t` and the probe's `t`-slot is unvalued, the
-    probe's slot is set to that value; `none` when the goal has nothing to
-    transmit. -/
-def applyAgree (probeFeats goalFeats : FeatureBundle) (t : FeatureType) :
-    Option FeatureBundle :=
-  match goalFeats.getValuedFeature t with
-  | none => none
-  | some v =>
-    some <| if (probeFeats t).isUnvalued
-            then Function.update probeFeats t (.valued v)
-            else probeFeats
+private def T₀ : PlanarSyntacticObject := .leaf ⟨.simple .T [], 1⟩
+private def V₀ : PlanarSyntacticObject := .leaf ⟨.simple .V [], 2⟩
+private def N₀ : PlanarSyntacticObject := .leaf ⟨.simple .N [], 3⟩
+private def D₁ : PlanarSyntacticObject := .leaf ⟨.simple .D [], 4⟩
+private def D₂ : PlanarSyntacticObject := .leaf ⟨.simple .D [], 5⟩
 
-/-! ### Phase-bounded Agree -/
+/-- `[T [D₁ [V [N D₂]]]]`. -/
+private def twoD : PlanarSyntacticObject := {T₀, {D₁, {V₀, {N₀, D₂}}}}
 
-/-- Agree bounded by the Phase Impenetrability Condition: valid Agree whose
-    goal every phase admits extraction from (`Phase.admitsExtraction`). Under
-    `strong`/`weak` this blocks goals frozen in a phase interior; under
-    `linearizationBound` ([sande-clem-dabkowski-2026]) the phasehood layer is
-    transparent and locality falls to Cyclic Linearization. -/
-def validAgreeWithPIC (strength : PICStrength) (phases : List Phase)
-    (feats : LIToken → FeatureBundle) (root probe goal : SyntacticObject)
-    (t : FeatureType) : Prop :=
-  validAgree feats root probe goal t ∧ ∀ ph ∈ phases, admitsExtraction strength ph goal
+/-- `[T [D₁ D₂]]`. -/
+private def sisters : PlanarSyntacticObject := {T₀, {D₁, D₂}}
 
-instance (strength : PICStrength) (phases : List Phase)
-    (feats : LIToken → FeatureBundle) (root probe goal : SyntacticObject)
-    (t : FeatureType) :
-    Decidable (validAgreeWithPIC strength phases feats root probe goal t) := by
-  unfold validAgreeWithPIC; infer_instance
+/-- The higher D is the closest D-goal and shields the lower one. -/
+example : isClosestGoalIn twoD T₀ D₁ (isLeafOf .D) ∧
+    ¬ isClosestGoalIn twoD T₀ D₂ (isLeafOf .D) := by decide
 
-/-! ### `applyAgree` as a `Probe` transmission -/
+/-- Sisters are equidistant: both are closest goals. -/
+example : isClosestGoalIn sisters T₀ D₁ (isLeafOf .D) ∧
+    isClosestGoalIn sisters T₀ D₂ (isLeafOf .D) := by decide
 
-/-- The φ-probe: relativized search ([bejar-rezac-2003]/[preminger-2014]) for a
-    goal bearing a valued feature at dimension `t`. -/
-def phiProbe (t : FeatureType) : Probe FeatureBundle :=
-  Probe.ofVis (fun gf => (gf.getValuedFeature t).isSome)
+/-- The lower D lies behind the N horizon; the higher one does not. -/
+example : behindHorizonIn twoD T₀ D₂ .N ∧ ¬ behindHorizonIn twoD T₀ D₁ .N := by decide
 
-/-- **`applyAgree` is the φ goal→probe transmission.** A φ-Agree is
-    `Probe.transmit` of the φ-probe with the valuation `applyAgree`: search the
-    goal sequence for a `t`-bearing goal, then value the probe's features
-    from it. This recognizes the standalone `applyAgree` as the transmission
-    step of the unified Agree operation (`Probe/Transmission.lean`), rather than
-    a parallel mechanism. (The probe→goal direction — dependent case — and a
-    full clause's worth of valuations are *folds* of `transmit`s: the
-    composition axis, not a single transmit.) -/
-theorem applyAgree_is_phi_transmit (probeFeats : FeatureBundle) (t : FeatureType)
-    {goals : List FeatureBundle} {gf : FeatureBundle}
-    (h : (phiProbe t).search goals = some gf) :
-    (phiProbe t).transmit (fun g pf => (applyAgree pf g t).getD pf)
-        probeFeats goals
-      = (applyAgree probeFeats gf t).getD probeFeats := by
-  unfold phiProbe at h ⊢
-  exact Probe.transmit_ofVis_eq_of_search h
+end SyntacticObject
+
+namespace FeatureBundle
+
+variable (probe goal : FeatureBundle) (t : FeatureType)
+
+/-! ### Valuation -/
+
+/-- Value dimension `t` of `b` with `v` when its slot is unvalued; a valued or absent slot is
+left as it is. -/
+def valueAt (b : FeatureBundle) (t : FeatureType) (v : t.ValueOf) : FeatureBundle :=
+  Function.update b t ((b t).valueWith v)
+
+@[simp] theorem valueAt_apply_self (b : FeatureBundle) (v : t.ValueOf) :
+    b.valueAt t v t = (b t).valueWith v := by
+  simp [valueAt]
+
+/-- Valuation is inflationary in the subsumption order: Agree only adds information. -/
+theorem le_valueAt (b : FeatureBundle) (v : t.ValueOf) : b ≤ b.valueAt t v :=
+  le_update_self_iff.mpr (FeatureSlot.le_valueWith v _)
+
+/-- Apply Agree at dimension `t`: the probe's bundle valued from the goal's value at `t`, or
+`none` when the goal has no value to transmit. -/
+def applyAgree : Option FeatureBundle :=
+  (goal.getValuedFeature t).map (probe.valueAt t)
+
+@[simp] theorem applyAgree_bot : probe.applyAgree ⊥ t = none := rfl
+
+theorem applyAgree_eq_none_iff : probe.applyAgree goal t = none ↔ ¬ goal.hasValuedFeature t := by
+  cases h : goal t <;> simp [applyAgree, getValuedFeature, hasValuedFeature, FeatureSlot.value?,
+    FeatureSlot.isValued, h]
+
+/-- A probe valued by Agree only gains information. -/
+theorem le_of_applyAgree_eq_some {probe' : FeatureBundle}
+    (h : probe.applyAgree goal t = some probe') : probe ≤ probe' := by
+  obtain ⟨v, -, rfl⟩ := Option.map_eq_some_iff.mp h
+  exact le_valueAt t probe v
+
+end FeatureBundle
 
 end Minimalist

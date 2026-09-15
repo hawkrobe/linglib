@@ -16,7 +16,7 @@ search.
 
 This models a probe's *search* (locality, intervention, satisfaction);
 feature *transmission* — what a successful Agree copies/shares/values — is
-a separate concern (`Agree.applyAgree`). This is the general core: the
+a separate concern (`FeatureBundle.applyAgree`). This is the general core: the
 φ-specialization is in `Probe/Phi.lean`, the satisfaction spec in
 `Probe/Satisfaction.lean`, Keine's horizon spec in `Probe/Profile.lean`.
 
@@ -39,7 +39,7 @@ a separate concern (`Agree.applyAgree`). This is the general core: the
   Agree copies/shares/values. A `Probe.agreeWith : Probe α → (α → V) →
   List α → Σ` (Σ = `Option V` / `List V` for [hiraiwa-2001] Multiple
   Agree / a shared-occurrence type for Frampton-Gutmann feature-sharing)
-  would fold `applyAgree`, Multiple Agree, Agree-Link/Copy
+  would fold `FeatureBundle.applyAgree`, Multiple Agree, Agree-Link/Copy
   ([arregi-nevins-2012]), and case-by-Agree into one extension.
 - **Upward Agree.** Search is downward (c-command, `search_eq_some_iff_closest`);
   add a direction parameter for Bjorkman & Zeijlstra (2019)-style upward Agree.

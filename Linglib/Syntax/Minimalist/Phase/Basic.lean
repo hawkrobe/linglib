@@ -81,9 +81,8 @@ commonly-checked phase categories, call `isPhaseHeadOf` directly:
       SCD 2026 argue this regime for Guébie discontinuous harmony. (Distinct from
       [halpert-2019]'s φ-relativized "Raising, unphased".)
 
-    The mode is **load-bearing**: it dispatches `admitsExtraction` and Agree's
-    `validAgreeWithPIC`. Modular variants ([d-alessandro-scheer-2015]) are not yet
-    operationalized. -/
+    The mode is **load-bearing**: it dispatches `admitsExtraction`. Modular variants
+    ([d-alessandro-scheer-2015]) are not yet operationalized. -/
 inductive PICStrength where
   | strong              -- PIC₁: complement frozen immediately
   | weak                -- PIC₂: complement accessible until next phase
