@@ -141,7 +141,7 @@ variable {σ : Type*} [DecidableEq σ]
 /-- A probe segment as a relativized probe over position-indexed goals: it sees the goals
 whose geometry bears it. -/
 def segmentProbe (geo : Goal → List σ) (s : σ) : Probe (Goal × ℕ) :=
-  .ofVis λ t => decide (s ∈ geo t.1)
+  .relativized λ t => decide (s ∈ geo t.1)
 
 /-- Agree (14) for one probe segment: the closest accessible goal whose geometry bears it. -/
 def segmentAgree (geo : Goal → List σ) (s : σ) (goals : List Goal) : Option (Goal × ℕ) :=
@@ -176,7 +176,7 @@ theorem segmentAgree_pair {hi lo : Goal} :
     segmentAgree geo s [hi, lo] =
       if s ∈ geo hi then some (hi, 0) else if s ∈ geo lo then some (lo, 1) else none := by
   by_cases h₁ : s ∈ geo hi <;> by_cases h₂ : s ∈ geo lo <;>
-    simp [segmentAgree, segmentProbe, Probe.search, Probe.ofVis, h₁, h₂]
+    simp [segmentAgree, segmentProbe, Probe.search, Probe.relativized, h₁, h₂]
 
 theorem segmentAgree_pair_eq_higher_iff {hi lo : Goal} :
     segmentAgree geo s [hi, lo] = some (hi, 0) ↔ s ∈ geo hi := by
@@ -407,7 +407,7 @@ theorem no_number_case_constraint {P : Probe.Articulation} (hpi : Segment.pi ∈
   · simp [afterDoubling]
   · have hg : (g, 0) ∈ agreed Goal.personSegments P (g :: rest) :=
       mem_agreed.2 ⟨List.mem_cons_self, .pi, hpi, by
-        simp [segmentAgree, segmentProbe, Probe.search, Probe.ofVis, pi_mem_personSegments]⟩
+        simp [segmentAgree, segmentProbe, Probe.search, Probe.relativized, pi_mem_personSegments]⟩
     simp only [afterDoubling, List.zipIdx_cons, List.filter_cons, hg, not_true_eq_false,
       decide_false, Bool.false_eq_true, ↓reduceIte, List.length_map]
     exact (List.length_filter_le _ _).trans (by simpa using h)

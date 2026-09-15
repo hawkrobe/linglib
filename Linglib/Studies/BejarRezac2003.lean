@@ -15,7 +15,7 @@ dative–nominative construction whose dative cannot satisfy the EPP, raising th
 over the dative so that the projection of T probes again.
 
 Goals are `Minimalist.PhiGoal`s — a Case-licensing state with a φ-cell — and the person
-probe is `Probe.ofAct`, the probe gated only by the Active Goal Hypothesis.
+probe is `Probe.ofInt`, the probe gated only by the Active Goal Hypothesis.
 
 ## Main definitions
 
@@ -60,18 +60,18 @@ def dat (c : Cell) : PhiGoal := .valued .dat c
 
 /-- The person probe of a Case-licensing head: every nominal bears a person value (8), and
 a nominal whose Case is already valued is inactive (§2, §4). -/
-def pi : Probe PhiGoal := .ofAct (·.isActive)
+def pi : Probe PhiGoal := .ofInt (·.isActive)
 
 /-- The person probe Agrees with the closest nominal, and only if that nominal is active
 ((9), (10)). -/
 theorem pi_agree_eq_some_iff {goals : List PhiGoal} {g : PhiGoal} :
     pi.agree goals = some g ↔ goals.head? = some g ∧ g.isActive = true :=
-  Probe.ofAct_agree_eq_some_iff
+  Probe.ofInt_agree_eq_some_iff
 
 /-- An inactive closest nominal absorbs the probe: match without Agree (9). -/
 theorem pi_agree_absorbed (d g : PhiGoal) (hd : d.isActive = false) :
     pi.agree [d, g] = none :=
-  Probe.agree_eq_none_of_inactive rfl hd
+  Probe.agree_eq_none_of_not_int rfl hd
 
 /-- The Person Licensing Condition over the person-Agree cycles of a derivation: every
 participant among `args` has its Case valued by a functional category of its own or Agrees

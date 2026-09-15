@@ -142,13 +142,13 @@ def dp (r : ArgumentRole) : Encounter := ⟨some r, true, false⟩
 
 /-- The probe on Infl (73): it interacts with φ and is satisfied by φ or by transitive Voice, so
 either halts it, and it agrees with a goal only if the goal bears φ. -/
-def inflProbe : Probe Encounter := { vis := λ e => e.phi || e.voiceTR, act := λ e => e.phi }
+def inflProbe : Probe Encounter := { int := λ e => e.phi, sat := λ e => e.phi || e.voiceTR }
 
 /-- The probe on Infl of the agreeing-object grammar (56), satisfied by φ alone. -/
-def standardInflProbe : Probe Encounter := Probe.ofVis (·.phi)
+def standardInflProbe : Probe Encounter := Probe.relativized (·.phi)
 
 /-- The probe on Voice or Poss, satisfied by the φ of its specifier. -/
-def vnProbe : Probe Encounter := Probe.ofVis (·.phi)
+def vnProbe : Probe Encounter := Probe.relativized (·.phi)
 
 /-- Infl's search domain in the clause of an argument (60), (64): transitive Voice, then the
 object, which has moved above the subject, then the subject; or the intransitive subject. -/

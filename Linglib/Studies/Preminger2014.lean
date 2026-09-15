@@ -98,7 +98,7 @@ theorem afTarget_eq (s o : Cell) :
     rcases Bool.eq_false_or_eq_true s.isPlural with h3 | h3 <;>
     rcases Bool.eq_false_or_eq_true o.isPlural with h4 | h4 <;>
     simp [afTarget, piProbe, numProbe, Probe.Target.toProbe, Cell.visibleTo, probeVisible,
-      Cell.IsParticipant, Probe.cascade, Probe.search, Probe.ofVis,
+      Cell.IsParticipant, Probe.cascade, Probe.search, Probe.relativized,
       List.find?_cons, h1, h2, h3, h4]
 
 /-- The rank of a cell on the hierarchy (23): [participant] above [plural] above the rest, the

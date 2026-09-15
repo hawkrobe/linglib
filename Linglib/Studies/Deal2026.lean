@@ -36,7 +36,7 @@ which has no Fragment.
   φ-features, probing from the subject downward until [addr] satisfies it; needs
   value-sensitive satisfaction and ordered-goal probing.
 * §6: relative embeddings block indexical shift and take matrix-matching tense as temporal de
-  re, while simplex embeddings allow shift and relative tense; rests on [deal-2025]'s
+  re, while simplex embeddings allow shift and relative tense; rests on [deal-2025b]'s
   clause-type semantics.
 
 ## References
@@ -52,7 +52,7 @@ which has no Fragment.
 * [hanink-bochnak-2017]
 * [hankamer-mikkelsen-2021]
 * [chomsky-1970]
-* [deal-2025]
+* [deal-2025b]
 * [deal-2015a-nels]
 -/
 

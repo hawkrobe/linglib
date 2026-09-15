@@ -342,7 +342,7 @@ end Nominal
 def flat : Probe Core := Probe.indiscriminate
 
 /-- (29b): the ɸ probe relativized to [+Animate]. -/
-def animateProbe : Probe Core := Probe.ofVis (·.1.isAnimate)
+def animateProbe : Probe Core := Probe.relativized (·.1.isAnimate)
 
 /-- The gender a probe agrees in: the allomorph of the n it finds. -/
 def agreement (p : Probe Core) (n : Nominal) : Option Xhosa.Gender :=
@@ -358,8 +358,8 @@ theorem animateProbe_search {n : Nominal} (hc : n.core.1.isAnimate = true)
     (hs : ∀ s ∈ n.secondary, s.1.isAnimate = false) :
     animateProbe.search n.heads = some n.core := by
   rcases n with ⟨c, _ | s⟩ <;> simp only at hc hs
-  · simp [animateProbe, Probe.search, Nominal.heads, Probe.ofVis, hc]
-  · simp [animateProbe, Probe.search, Nominal.heads, Probe.ofVis, hc, hs s rfl]
+  · simp [animateProbe, Probe.search, Nominal.heads, Probe.relativized, hc]
+  · simp [animateProbe, Probe.search, Nominal.heads, Probe.relativized, hc, hs s rfl]
 
 /-- Animacy override ((11), (13)): the relativized probe agrees with the core class. -/
 theorem agreement_animateProbe {n : Nominal} (hc : n.core.1.isAnimate = true)
@@ -372,7 +372,7 @@ aligned noun iff its core is animate, so an inanimate object leaves it unvalued 
 marker surfaces. -/
 theorem animateProbe_outcome (c : Core) :
     animateProbe.outcome (Nominal.mk c none).heads = .valued ↔ c.1.isAnimate = true := by
-  simp [Probe.outcome_eq_valued_iff, Nominal.heads, animateProbe, Probe.ofVis]
+  simp [Probe.outcome_eq_valued_iff, Nominal.heads, animateProbe, Probe.relativized]
 
 /-- (28) through (29): *isikhohleli* agrees in class 7 with a flat probe and in class 1 with the
 relativized one. -/
