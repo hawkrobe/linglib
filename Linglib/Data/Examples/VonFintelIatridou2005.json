@@ -1,7 +1,7 @@
 [
   {
     "id": "vFI2005_1_harlem",
-    "source": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "(1)"},
+    "source": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(1)"},
     "language": "stan1293",
     "primaryText": "If you want to go to Harlem, you have to take the A train.",
     "discourseSegments": [],
@@ -19,7 +19,7 @@
   {
     "id": "vFI2005_2_sugarWaiter",
     "source": {"bibkey": "hare-1971", "paperLabel": "p. 45"},
-    "reportedIn": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "(2)"},
+    "reportedIn": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(2)"},
     "language": "stan1293",
     "primaryText": "If you want sugar in your soup, you should ask the waiter.",
     "discourseSegments": [],
@@ -38,7 +38,7 @@
   {
     "id": "vFI2005_3_sugarDiabetes",
     "source": {"bibkey": "hare-1971", "paperLabel": "p. 45"},
-    "reportedIn": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "(3)"},
+    "reportedIn": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(3)"},
     "language": "stan1293",
     "primaryText": "If you want sugar in your soup, you should get tested for diabetes.",
     "discourseSegments": [],
@@ -56,7 +56,7 @@
   },
   {
     "id": "vFI2005_4_harlemPurpose",
-    "source": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "(4)"},
+    "source": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(4)"},
     "language": "stan1293",
     "primaryText": "To go to Harlem, you have to take the A train.",
     "discourseSegments": [],
@@ -74,7 +74,7 @@
   },
   {
     "id": "vFI2005_11_hoboken",
-    "source": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "(11) / p. 5"},
+    "source": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(11)"},
     "language": "stan1293",
     "primaryText": "If you want to go to Harlem, you have to take the A train.",
     "discourseSegments": [],
@@ -91,7 +91,7 @@
   },
   {
     "id": "vFI2005_13_hobokenSaebo",
-    "source": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "(13)"},
+    "source": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(13)"},
     "language": "stan1293",
     "primaryText": "If you want to go to Harlem, you should take the A train.",
     "discourseSegments": [],
@@ -109,7 +109,7 @@
   {
     "id": "vFI2005_22_mayorPub",
     "source": {"bibkey": "kratzer-1991", "paperLabel": "mayor scenario"},
-    "reportedIn": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "(21)/(22)"},
+    "reportedIn": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(22)"},
     "language": "stan1293",
     "primaryText": "If you want to become mayor, you have to go to the pub regularly.",
     "discourseSegments": [],
@@ -127,7 +127,7 @@
   {
     "id": "vFI2005_p12_vanNistelrooy",
     "source": {"bibkey": "huitink-2008", "paperLabel": "van Nistelrooy scenario"},
-    "reportedIn": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "p. 12"},
+    "reportedIn": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "§5"},
     "language": "stan1293",
     "primaryText": "If you want to go to Harlem, you have to take the A train.",
     "discourseSegments": [],
@@ -145,7 +145,7 @@
   {
     "id": "vFI2005_36_pedroMartinez",
     "source": {"bibkey": "nissenbaum-2005", "paperLabel": "Pedro Martinez"},
-    "reportedIn": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "(36)"},
+    "reportedIn": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(36)"},
     "language": "stan1293",
     "primaryText": "To go to Harlem, you ought to kiss Pedro Martinez.",
     "discourseSegments": [],
@@ -163,7 +163,7 @@
   {
     "id": "vFI2005_34c_harlemBreathe",
     "source": {"bibkey": "vonstechow-krasikova-penka-2005", "paperLabel": "breathe example"},
-    "reportedIn": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "(34c)"},
+    "reportedIn": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(34d)"},
     "language": "stan1293",
     "primaryText": "In order to go to Harlem, you have to breathe.",
     "discourseSegments": [],
@@ -181,7 +181,7 @@
   },
   {
     "id": "vFI2005_35_harlemBreatheOught",
-    "source": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "(35)"},
+    "source": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(35)"},
     "language": "stan1293",
     "primaryText": "To go to Harlem, you ought to breathe.",
     "discourseSegments": [],
@@ -200,7 +200,7 @@
   {
     "id": "vFI2005_23_slomanOughtNot",
     "source": {"bibkey": "sloman-1970", "paperLabel": "ought vs better"},
-    "reportedIn": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "(23)"},
+    "reportedIn": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(23)"},
     "language": "stan1293",
     "primaryText": "You ought to take the train, but you don't have to.",
     "discourseSegments": [],
@@ -218,7 +218,7 @@
   {
     "id": "vFI2005_p13_londonByNoon",
     "source": {"bibkey": "sloman-1970", "paperLabel": "p. 391"},
-    "reportedIn": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "p. 13"},
+    "reportedIn": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "§6.1"},
     "language": "stan1293",
     "primaryText": "If you want to get to London by noon, then you ought to go by train.",
     "discourseSegments": [],
@@ -238,7 +238,7 @@
   {
     "id": "vFI2005_29_vladivostokHave",
     "source": {"bibkey": "vonstechow-krasikova-penka-2005", "paperLabel": "Vladivostok"},
-    "reportedIn": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "(29)"},
+    "reportedIn": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(29)"},
     "language": "stan1293",
     "primaryText": "To go to Vladivostok, you have to take the Chinese train.",
     "discourseSegments": [],
@@ -257,7 +257,7 @@
   },
   {
     "id": "vFI2005_30_vladivostokOught",
-    "source": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "(30)"},
+    "source": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(30)"},
     "language": "stan1293",
     "primaryText": "To go to Vladivostok, you ought to take the Chinese train.",
     "discourseSegments": [],
@@ -275,7 +275,7 @@
   },
   {
     "id": "vFI2005_28_burdicks",
-    "source": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "(28)"},
+    "source": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(28)"},
     "language": "stan1293",
     "primaryText": "A: I'm going to Harvard Square tomorrow. B: You have to have some hot chocolate at Burdick's.",
     "discourseSegments": [
@@ -297,7 +297,7 @@
   },
   {
     "id": "vFI2005_20_weinerJoe",
-    "source": {"bibkey": "vonfintel-iatridou-2005", "paperLabel": "(20) (scenario by Weiner)"},
+    "source": {"bibkey": "von-fintel-iatridou-2005", "paperLabel": "(20) (scenario by Weiner)"},
     "language": "stan1293",
     "primaryText": "If Joe wants to go to Harlem, he must take the A train.",
     "discourseSegments": [],

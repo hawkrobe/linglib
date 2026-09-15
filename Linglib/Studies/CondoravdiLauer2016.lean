@@ -8,7 +8,7 @@ import Mathlib.Tactic.FinCases
 
 [condoravdi-lauer-2016] argue that *If you want to go to Harlem, you have to take the A train* is
 a regular hypothetical indicative conditional: the problem [saebo-2001] found, that the antecedent
-goal must enter the ordering of the modal, and the one [vonfintel-iatridou-2005] and
+goal must enter the ordering of the modal, and the one [von-fintel-iatridou-2005] and
 [vonstechow-krasikova-penka-2006] added, that conflicting actual goals must not, are both resolved
 by the lexical meanings involved once *want* reports an action-relevant preference. On that
 reading *want* says its complement is a maximal element of the agent's effective preference
@@ -55,7 +55,7 @@ double-modal readings of (81) to (83) is not modelled.
   (2011)][condoravdi-lauer-2011]
 * [K. J. Sæbø, *Necessary conditions in a natural language* (2001)][saebo-2001]
 * [K. von Fintel and S. Iatridou, *What to do if you want to go to Harlem: Anankastic
-  conditionals and related matters* (2005)][vonfintel-iatridou-2005]
+  conditionals and related matters* (2005)][von-fintel-iatridou-2005]
 * [A. von Stechow, S. Krasikova and D. Penka, *Anankastic conditionals again*
   (2006)][vonstechow-krasikova-penka-2006]
 * [J. Huitink, *Modals, conditionals and compositionality* (2008)][huitink-2008]
@@ -148,7 +148,7 @@ theorem threeWay_pairwise_not_consistent :
 
 /-! ### Previous approaches -/
 
-/-- [vonfintel-iatridou-2005]'s designated goal, §3.2.2: a primary ordering source with the
+/-- [von-fintel-iatridou-2005]'s designated goal, §6.2: a primary ordering source with the
 single proposition `p` has the effect of adding `p` to the modal base, as long as the two are
 compatible, so the analysis amounts to adding the internal antecedent to the modal base; the
 effective-preference source of (88) instead varies from world to world, footnote 46. -/
