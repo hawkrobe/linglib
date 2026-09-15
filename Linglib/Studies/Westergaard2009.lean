@@ -1,613 +1,195 @@
-import Linglib.Syntax.WordOrder
-import Linglib.Data.Examples.Westergaard2009
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Semantics.Reference.Givenness
 import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.English.V2
-import Linglib.Fragments.English.WordOrder
 import Linglib.Fragments.German.V2
-import Linglib.Fragments.German.WordOrder
 import Linglib.Fragments.Danish.V2
+import Linglib.Data.Examples.Westergaard2009
 
 /-!
-# Westergaard (2009): Micro-Cues, Information Structure, and Economy
-[westergaard-2009]
+# Westergaard (2009): The Acquisition of Word Order: Micro-Cues, Information Structure, and Economy
 
-Marit Westergaard. *The Acquisition of Word Order: Micro-Cues, Information
-Structure, and Economy.* Linguistik Aktuell/Linguistics Today 145.
-John Benjamins, 2009.
+This file formalizes the syntactic model of [westergaard-2009]. Verb second is not one
+parameter but a setting per clause-type head of a split ForceP: a language's grammar is the
+set of heads the finite verb moves to (`Minimalist.V2Profile`), and Table 3.1's six Germanic
+varieties are the profiles of the fragments (`table_3_1`). What children acquire are
+micro-cues, pieces of I-language structure stating, for one head, what its specifier holds and
+whether the verb fills it (`MicroCue`); a grammar expresses a cue when its setting for that
+head is the cue's, so that Table 3.2's cues separate the five grammars (`table_3_2`). In the
+Tromsø dialect the monosyllabic *wh*-words *ka*, *kem* and *kor* are heads and sit in Int°
+themselves, which blocks verb movement there (`TromsøWh.status`); the V2 that still occurs is
+verb movement to a lower Top° whose [−foc] feature a given subject checks from the specifier
+and a focused subject leaves for the verb (`order`), so that these questions are V2 exactly
+when the subject is new (`isV2_order_iff`).
 
-## Core Claim
+## Implementation notes
 
-V2 is not a single parameter. It decomposes into **micro-parameters**:
-one per clause-type head in a split-CP (ForceP) domain. Each
-micro-parameter is independently settable to + (verb movement to that
-head) or − (no verb movement). Different Germanic languages and dialects
-are characterized by different profiles of + and − across these heads.
+The cues of §4 are recorded as data; the two structures of §3.3 are linearized as
+*wh*–subject–verb or *wh*–verb–subject by which element checks Top°. The cue for English
+inflectional elements, *som*-insertion, focus-sensitive adverbs, *kanskje*, and the
+acquisition chapters are not formalized.
 
-The book distinguishes two levels:
-- **Micro-parameters** (Table 3.1): settings in the adult grammar
-- **Micro-cues** (Ch. 3 §4, Ch. 10 §3): observable input patterns that
-  trigger each parameter setting in acquisition
+## References
 
-## Formalization
-
-1. **`ForceHead`**: the seven clause-type heads (theory layer)
-2. **`V2Profile`**: `Profile ForceHead` (theory layer; set of active
-   heads)
-3. **Language profiles**: per-language Fragment files write set literals
-4. **`MicroCue`**: syntactic templates from Ch. 3 §4
-5. **Bridge theorems** to SAI data, V2 data, and GermanicV2
-6. **Information Structure**: [±FOC] conditioning of "optional" V2
-
-## Adjacent literature
-
-- [holmberg-2015] (HSK 42 handbook entry on Verb second) is the
-  standard recent survey of V2 covering the same Pol°/Int°/Decl° split
-  Westergaard formalizes.
-- [wiklund-bentzen-hroarsdottir-hrafnbjargarson-2009] elaborates
-  embedded-V2 micro-variation across Scandinavian *that*-clauses,
-  conditioning embedded V2 on matrix predicate class — a dimension
-  Table 3.1 collapses.
-
-## The Split-ForceP Model
-
-[westergaard-2009] splits [rizzi-1997]'s ForceP into
-clause-type-specific projections. All seven heads are in the CP domain
-(above FinP). Crucially, the distinctions among Decl°, Int°, Pol°, Excl°,
-Imp° are **finer** than [rizzi-1997]'s inventory — they are all
-"flavors of Force" that the existing `Cat` enum does not distinguish.
-
-Fin° and Wh° do correspond to existing `Cat` heads (`.Fin` and `.C`
-respectively), but the five Force-level heads (Decl°, Int°, Pol°, Excl°,
-Imp°) are all at the Force level. Note: [westergaard-2009]'s Pol°
-is a CP-domain head for yes/no-questions (the verb-fronting target;
-y/n questions surface as V1, with Spec-PolP either empty or hosting
-a covert Q-operator depending on analysis — [roberts-1993],
-Rizzi 1996 posit a Q-operator satisfying a wh-criterion; the V1
-surface order is what `.Pol` records, theory-neutrally).
-NOT [laka-1990]'s ΣP
-(which is `Cat.Pol` in linglib at F-value 2).
+* [westergaard-2009]
+* [rizzi-1997]
 -/
 
 namespace Westergaard2009
 
-open Minimalist (ForceHead V2Profile WhElementStatus WhBlocksMovementTo)
-open Reference (BinaryGivenness)
+open Minimalist
+open Norwegian English German Danish
 
--- Fragment data (theory-neutral)
-open Norwegian (stdNorwegian nordmoreNorwegian)
-open English (stdEnglish belfastEnglish)
-open German (german)
-open Danish (danish)
+/-! ### Micro-parameters (Table 3.1) -/
 
--- ============================================================================
--- § 0  V2 Types
--- ============================================================================
-
-/-! Shared types for describing V2 word order variation. -/
-
-/-- Clause types relevant to V2 variation. -/
-inductive V2ClauseType where
-  | declarative
-  | whQuestion
-  | yesNoQuestion
-  | exclamative
-  | imperative
-  | embeddedDecl
-  | embeddedQuestion
-  deriving DecidableEq, Repr
-
-/-- V2 status of a clause type in a given language/dialect. -/
-inductive V2Status where
-  /-- V2 is obligatory -/
-  | obligatory
-  /-- V2 is impossible (verb stays low or appears finally) -/
-  | impossible
-  /-- V2 alternates with non-V2, conditioned by other factors -/
-  | optional
-  deriving DecidableEq, Repr
-
-/-- A single V2 observation: what happens in a given clause type. -/
-structure V2Datum where
-  sentence : String
-  language : String
-  clauseType : V2ClauseType
-  v2Status : V2Status
-  description : String := ""
-  citation : String := ""
-  deriving Repr
-
--- ============================================================================
--- § 1  Table 3.1 Verification
--- ============================================================================
-
-/-! [westergaard-2009]'s Table 3.1 enumerates V2 micro-parameter
-    settings for six Germanic varieties (Standard Norwegian, Standard
-    English, Nordmøre Norwegian, Belfast English, German, Danish).
-    Each row is a `V2Profile` set literal in the corresponding Fragment
-    file; the theorem below pins down all six rows simultaneously, so
-    flipping a single field in a Fragment breaks one conjunct.
-    -- UNVERIFIED: page reference for Table 3.1 (cited as p. 41 in earlier
-    -- drafts of this file) has not been independently checked against
-    -- the published Benjamins edition. -/
-theorem table_3_1_complete :
-    stdNorwegian       = ({.Decl, .Int, .Pol}       : V2Profile) ∧
-    stdEnglish         = ({.Int, .Pol}              : V2Profile) ∧
-    nordmoreNorwegian  = ({.Decl, .Pol}             : V2Profile) ∧
-    belfastEnglish     = ({.Int, .Pol, .Imp, .Wh}   : V2Profile) ∧
-    german             = ({.Decl, .Int, .Pol, .Fin} : V2Profile) ∧
-    danish             = ({.Decl, .Int, .Pol, .Excl} : V2Profile) :=
+/-- Table 3.1: the profiles of the six varieties. -/
+theorem table_3_1 :
+    stdNorwegian = ({.Decl, .Int, .Pol} : V2Profile) ∧
+      stdEnglish = ({.Int, .Pol} : V2Profile) ∧
+      nordmoreNorwegian = ({.Decl, .Pol} : V2Profile) ∧
+      belfastEnglish = ({.Int, .Pol, .Imp, .Wh} : V2Profile) ∧
+      german = ({.Decl, .Int, .Pol, .Fin} : V2Profile) ∧
+      danish = ({.Decl, .Int, .Pol, .Excl} : V2Profile) :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
--- ============================================================================
--- § 2  Micro-Cues (Ch. 3 §4, Ch. 10 §3)
--- ============================================================================
+/-- Nordmøre Norwegian is the mirror image of Standard English on Decl° and Int°. -/
+theorem nordmore_english_mirror :
+    .Decl ∈ nordmoreNorwegian ∧ .Int ∉ nordmoreNorwegian ∧ .Decl ∉ stdEnglish ∧
+      .Int ∈ stdEnglish := by
+  decide
 
-/-! Ch. 3 §4 introduces the *cues* — the syntactic templates in the
-    input that trigger each micro-parameter. A micro-cue is a piece of
-    I-language structure that children produce on exposure to the
-    relevant input. Ch. 10 §3 (34)–(37) gives the final formulations.
+/-- Only German has verb movement to Fin°; every variety has it to Pol°. -/
+theorem fin_german_pol_all :
+    .Fin ∈ german ∧ .Fin ∉ stdNorwegian ∧ .Fin ∉ stdEnglish ∧
+      .Fin ∉ nordmoreNorwegian ∧ .Fin ∉ belfastEnglish ∧ .Fin ∉ danish ∧
+      .Pol ∈ stdNorwegian ∧ .Pol ∈ stdEnglish ∧ .Pol ∈ nordmoreNorwegian ∧
+      .Pol ∈ belfastEnglish ∧ .Pol ∈ german ∧ .Pol ∈ danish := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
-    The distinction from Table 3.1: micro-parameters are the *grammar's*
-    settings; micro-cues are the *observable evidence* in the input
-    that leads children to set each parameter.
+/-! ### Micro-cues (§4) -/
 
-    Final micro-cue formulations (Ch. 10 (34)–(37)):
-    - (34) DeclP[XP Decl°[+V] ...] — V2 in declaratives
-    - (35) IntP[wh Int°[+V] ...] — V2 in wh-questions (wh-phrase in SpecIntP)
-    - (36) IntP[wh[Int°] ...] — non-V2 in wh-questions (wh-head *in* Int°)
-    - (37) TopP[DP[−FOC] Top° IntP[wh[Int°] ...]] — given subject → non-V2
+/-- What the specifier of the cue's head holds: nothing, a non-subject phrase, or a
+*wh*-element. -/
+inductive Filler
+  | none | xp | wh
+  deriving DecidableEq, Repr
 
-    NOTE: (36) and (37) are the two key innovations. (36) captures the
-    wh-head/phrase distinction: monosyllabic wh-words are heads that
-    occupy Int° directly, blocking verb movement. (37) captures the
-    TopP/[±FOC] mechanism: given subjects ([−FOC]) move to SpecTopP,
-    which is the structural basis for the information-structure
-    conditioning of V2 in § 10 below. -/
-
-/-- A micro-cue: a syntactic template that serves as evidence for
-    a particular micro-parameter setting in acquisition. -/
+/-- A micro-cue: for one head, what its specifier holds and whether the finite verb fills it. -/
 structure MicroCue where
-  /-- Which head this cue is evidence for -/
   target : ForceHead
-  /-- The syntactic template (schematic notation) -/
-  template : String
-  /-- Description of the cue -/
-  description : String := ""
-  deriving Repr
-
-/-- Cue for V2 in wh-questions. -/
-def cueIntV2 : MicroCue :=
-  { target := .Int
-    template := "IntP[wh Int°V]"
-    description := "Wh-element in SpecIntP, finite verb raised to Int°" }
-
-/-- Cue for V2 in declaratives. -/
-def cueDeclV2 : MicroCue :=
-  { target := .Decl
-    template := "DeclP[XP Decl°V]"
-    description := "Non-subject XP in SpecDeclP, finite verb raised to Decl°" }
-
-/-- Cue for V2 in exclamatives. -/
-def cueExclV2 : MicroCue :=
-  { target := .Excl
-    template := "ExclP[wh Excl°V]"
-    description := "Wh-exclamative with finite verb raised to Excl°" }
-
-/-- Cue for V2 in embedded questions. -/
-def cueWhV2 : MicroCue :=
-  { target := .Wh
-    template := "WhP[wh Wh°V]"
-    description := "Embedded question with finite verb raised to Wh°" }
-
-/-- Cue for non-V2 in exclamatives. -/
-def cueExclNonV2 : MicroCue :=
-  { target := .Excl
-    template := "ExclP[wh ... VP[V]]"
-    description := "Exclamative with verb remaining in VP (no verb movement to Excl°)" }
-
-/-- Cue for non-V2 in embedded questions. -/
-def cueWhNonV2 : MicroCue :=
-  { target := .Wh
-    template := "WhP[wh ... VP[V]]"
-    description := "Embedded question with verb remaining in VP" }
-
-/-- Cue for V2 in yes/no-questions. -/
-def cuePolV2 : MicroCue :=
-  { target := .Pol
-    template := "PolP[Pol°V ...]"
-    description := "Finite verb raised to Pol° in yes/no-questions" }
-
-/-- Cue for V2 in imperatives. -/
-def cueImpV2 : MicroCue :=
-  { target := .Imp
-    template := "ImpP[Imp°V ...]"
-    description := "Finite verb raised to Imp° in imperatives" }
-
-/-- Cue for wh-head-in-Int° (non-V2 in wh-questions).
-    Ch. 10 (36): IntP[wh[Int°] ...] — the monosyllabic wh-word
-    occupies Int° itself, blocking verb movement to that position. -/
-def cueWhHeadInInt : MicroCue :=
-  { target := .Int
-    template := "IntP[wh[Int°] ...]"
-    description := "Wh-head occupies Int°, blocking verb movement (Ch. 10 (36))" }
-
-/-- Cue for given-subject-blocking-V2 in Tromsø monosyllabic
-    *wh*-questions. Ch. 10 (37): TopP[DP[−FOC] Top° IntP[wh[Int°] ...]] —
-    the [−FOC] subject moves to SpecTopP, leaving Int° empty (verb
-    stays low → non-V2). The TopP/[±FOC] mechanism is what derives the
-    information-structure conditioning of "optional" V2 in § 10. -/
-def cueGivenSubjectNonV2 : MicroCue :=
-  { target := .Int
-    template := "TopP[DP[−FOC] Top° IntP[wh[Int°] ...]]"
-    description := "Given subject ([−FOC]) in SpecTopP → non-V2 (Ch. 10 (37))" }
-
-/-- A cue is *expressed* in a language iff its target head is in the
-    language's `V2Profile`. Children exposed to an expressed cue will
-    set the corresponding parameter to +. -/
-def CueExpressed (lang : V2Profile) (c : MicroCue) : Prop := c.target ∈ lang
-
-instance (lang : V2Profile) [DecidablePred (· ∈ lang)] (c : MicroCue) :
-    Decidable (CueExpressed lang c) := by
-  unfold CueExpressed; infer_instance
-
--- ============================================================================
--- § 3  V2 Data from the Book
--- ============================================================================
-
-/-! V2 observations from across the book, organized by language. -/
-
--- Norwegian V2 Variation (Tromsø dialect, Ch. 2 Table 2.3)
-
-/-- Non-subject-initial declaratives: V2 obligatory. -/
-def no_decl_nonsubj : V2Datum :=
-  { sentence := "Av og til snakker vi tysk"
-    language := "Norwegian (Tromsø)"
-    clauseType := .declarative
-    v2Status := .obligatory
-    description := "Non-subject-initial declarative: V2 obligatory"
-    citation := "Ch. 2 Table 2.3" }
-
-/-- Yes/no-questions: V2 obligatory. -/
-def no_yesno : V2Datum :=
-  { sentence := "Snakker dere norsk?"
-    language := "Norwegian (Tromsø)"
-    clauseType := .yesNoQuestion
-    v2Status := .obligatory
-    description := "Yes/no-question: V2 obligatory"
-    citation := "Ch. 1 (3)" }
-
-/-- Wh-questions with long (polysyllabic) wh-phrases: V2 obligatory. -/
-def no_wh_long : V2Datum :=
-  { sentence := "Korfor gikk ho?"
-    language := "Norwegian (Tromsø)"
-    clauseType := .whQuestion
-    v2Status := .obligatory
-    description := "Wh-question with disyllabic korfor 'why': V2 obligatory"
-    citation := "Ch. 2 (40)" }
-
-/-- Wh-questions with short (monosyllabic) wh-words: V2 optional,
-    conditioned by information structure. -/
-def no_wh_short : V2Datum :=
-  { sentence := "Ka legen sa? / Ka sa legen?"
-    language := "Norwegian (Tromsø)"
-    clauseType := .whQuestion
-    v2Status := .optional
-    description := "Wh-question with monosyllabic ka 'what': V2/non-V2 depends on subject givenness"
-    citation := "Ch. 2 (43)–(45)" }
-
-/-- Exclamatives: non-V2 obligatory. -/
-def no_excl : V2Datum :=
-  { sentence := "Kor rart han snakke!"
-    language := "Norwegian (Tromsø)"
-    clauseType := .exclamative
-    v2Status := .impossible
-    description := "Exclamative: non-V2 obligatory"
-    citation := "Ch. 1 (5)" }
-
-/-- Embedded declaratives: non-V2 (mostly). -/
-def no_emb_decl : V2Datum :=
-  { sentence := "Han sa (at) han ikke kommer"
-    language := "Norwegian (Tromsø)"
-    clauseType := .embeddedDecl
-    v2Status := .impossible
-    description := "Embedded declarative: non-V2 (verb below negation)"
-    citation := "Ch. 2 (36)" }
-
--- Cross-Germanic Contrasts
-
-/-- Standard English: no V2 in declaratives (SVO base order). -/
-def en_decl : V2Datum :=
-  { sentence := "The children have seen this film"
-    language := "English"
-    clauseType := .declarative
-    v2Status := .impossible
-    description := "English declarative: no V2 (SVO base order)"
-    citation := "Ch. 3 Table 3.1" }
-
-/-- Standard English: V2 in wh-questions (via SAI). -/
-def en_wh : V2Datum :=
-  { sentence := "What will you wear tonight?"
-    language := "English"
-    clauseType := .whQuestion
-    v2Status := .obligatory
-    description := "English wh-question: V2 (subject-auxiliary inversion)"
-    citation := "Ch. 3 Table 3.1" }
-
-/-- Belfast English: V2 in embedded questions too. -/
-def belfast_emb_q : V2Datum :=
-  { sentence := "I wonder could he come"
-    language := "English (Belfast)"
-    clauseType := .embeddedQuestion
-    v2Status := .obligatory
-    description := "Belfast English: V2 in embedded questions"
-    citation := "Ch. 3 Table 3.1; [henry-1995]" }
-
-/-- Danish: V2 in exclamatives (unlike Norwegian and English). -/
-def da_excl : V2Datum :=
-  { sentence := "Hvor er han sød!"
-    language := "Danish"
-    clauseType := .exclamative
-    v2Status := .obligatory
-    description := "Danish exclamative: V2 (unlike Norwegian/English)"
-    citation := "Ch. 2 (19)" }
-
-/-- German root declaratives: V2 obligatory. -/
-def de_decl : V2Datum :=
-  { sentence := "Diesen Film haben die Kinder gesehen"
-    language := "German"
-    clauseType := .declarative
-    v2Status := .obligatory
-    description := "German root declarative: V2"
-    citation := "[vikner-1995]" }
-
-/-- German embedded clauses with complementizer: verb-final (no V2).
-    [westergaard-2009]'s analysis: the verb raises to Fin° (hence
-    +Fin° in Table 3.1) but not to C, surfacing clause-finally because
-    Westergaard tacitly assumes a head-final FinP for German embedded
-    clauses (Vikner-style V-to-I where the I-position itself is final).
-    [haider-2010] derives the same surface order without V-to-Fin,
-    leaving the verb in its base position, and for
-    [harizanov-gribanova-2019] T and V unify by postsyntactic
-    amalgamation rather than syntactic movement (see
-    `HarizanovGribanova2019.lean`). The codebase records the
-    Westergaard +Fin° side. -/
-def de_emb : V2Datum :=
-  { sentence := "... dass die Kinder diesen Film gesehen haben"
-    language := "German"
-    clauseType := .embeddedDecl
-    v2Status := .impossible
-    description := "German embedded clause with dass: surface verb-final (V-to-Fin into head-final FinP per Westergaard; alternative analyses leave V in V)"
-    citation := "[vikner-1995]; cf. [harizanov-gribanova-2019]" }
-
--- ============================================================================
--- § 4  Cross-Language Comparison Theorems
--- ============================================================================
-
-/-- Nordmøre Norwegian is the mirror image of English on Decl° vs. Int°. -/
-theorem nordmore_en_mirror_decl_int :
-    .Decl ∈ nordmoreNorwegian ∧ .Int ∉ nordmoreNorwegian ∧
-    .Decl ∉ stdEnglish        ∧ .Int ∈ stdEnglish := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
-
-/-- All six languages in [westergaard-2009] Table 3.1 agree on
-    +Pol° (verb-fronting / V1 in yes/no-questions). NOT a Germanic
-    universal beyond this sample: Yiddish embedded y/n questions with
-    *tsi* and certain colloquial registers complicate the picture, and
-    on some analyses Pol° is epiphenomenal on Int° rather than an
-    independent micro-parameter. -/
-theorem pol_universal :
-    .Pol ∈ stdNorwegian ∧ .Pol ∈ stdEnglish ∧ .Pol ∈ nordmoreNorwegian ∧
-    .Pol ∈ belfastEnglish ∧ .Pol ∈ german ∧ .Pol ∈ danish := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
-
-/-- German is the only Table 3.1 language with +Fin° (V-to-I in
-    embedded clauses). -/
-theorem fin_only_german :
-    .Fin ∈ german ∧
-    .Fin ∉ stdNorwegian ∧ .Fin ∉ stdEnglish ∧ .Fin ∉ nordmoreNorwegian ∧
-    .Fin ∉ belfastEnglish ∧ .Fin ∉ danish := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
-
--- ============================================================================
--- § 5  Wh Head/Phrase Distinction
--- ============================================================================
-
-/-! Ch. 7 argues that monosyllabic wh-words are syntactic heads (X°)
-    while polysyllabic wh-constituents are phrases (XP). When a wh-head
-    occupies Int°, it blocks verb movement, making non-V2 possible.
-    When a wh-phrase is in SpecIntP, Int° is free for the verb → V2
-    obligatory.
-
-    Tromsø Norwegian wh-words:
-    - Monosyllabic (heads): *ka* 'what' (1σ), *kem* 'who' (1σ),
-      *kor* 'where' (1σ)
-    - Polysyllabic (phrases): *korfor* 'why' (2σ), *korsen* 'how' (2σ),
-      *katti* 'when' (2σ) -/
-
-/-- Tromsø wh-word data: (form, gloss, syllable count). -/
-def tromsøWhWords : List (String × String × Nat) :=
-  [("ka", "what", 1), ("kem", "who", 1), ("kor", "where", 1),
-   ("korfor", "why", 2), ("korsen", "how", 2), ("katti", "when", 2)]
-
-/-- All monosyllabic Tromsø wh-words classify as heads. -/
-theorem tromsø_mono_are_heads :
-    ∀ w ∈ tromsøWhWords, w.2.2 ≤ 1 →
-      WhElementStatus.fromSyllableCount w.2.2 = .head := by decide
-
-/-- All polysyllabic Tromsø wh-words classify as phrases. -/
-theorem tromsø_poly_are_phrases :
-    ∀ w ∈ tromsøWhWords, 1 < w.2.2 →
-      WhElementStatus.fromSyllableCount w.2.2 = .phrase := by decide
-
-/-- Wh-heads block verb movement to the wh-question heads (`.Int`
-    matrix, `.Wh` embedded) only; phrase wh-words never block. -/
-theorem wh_blocking :
-    WhBlocksMovementTo .head .Int ∧ WhBlocksMovementTo .head .Wh ∧
-    ¬ WhBlocksMovementTo .head .Decl ∧ ¬ WhBlocksMovementTo .phrase .Int := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
-
--- ============================================================================
--- § 6  Bridge to SAI Data
--- ============================================================================
-
-/-! English SAI (rows from `Data/Examples/Westergaard2009.json`) is the
-    surface reflex of +Int° and +Pol° in the English V2 profile;
-    Belfast English embedded inversion and imperative V2 (Henry 1997,
-    reported as Westergaard's (23)–(24)) reflect +Wh° and +Imp°. -/
-
-/-- The row's `inverted` feature records V/Aux-before-subject order. -/
-def rowInverted (row : Data.Examples.LinguisticExample) : Bool :=
-  row.paperFeatures.contains ("inverted", "true")
-
-/-- English matrix wh-questions invert (Westergaard (20)) and the
-    profile contains Int°. -/
-theorem english_wh_sai_consistent :
-    rowInverted Examples.ex20 = true ∧
-    Examples.ex20.judgment = .acceptable ∧
-    ForceHead.Int ∈ stdEnglish := by
-  refine ⟨rfl, rfl, ?_⟩; decide
-
-/-- English matrix yes/no-questions invert (Westergaard (21)) and the
-    profile contains Pol°. -/
-theorem english_yn_sai_consistent :
-    rowInverted Examples.ex21 = true ∧
-    Examples.ex21.judgment = .acceptable ∧
-    ForceHead.Pol ∈ stdEnglish := by
-  refine ⟨rfl, rfl, ?_⟩; decide
-
-/-- English declaratives lack V2: Decl° is not in the profile. -/
-theorem english_decl_no_v2_consistent :
-    ForceHead.Decl ∉ stdEnglish := by decide
-
-/-- Belfast English embedded inversion (Henry 1997: 275, Westergaard's
-    (23)) is consistent with +Wh°. -/
-theorem belfast_embedded_inv_consistent :
-    rowInverted Examples.ex23 = true ∧
-    Examples.ex23.judgment = .acceptable ∧
-    ForceHead.Wh ∈ belfastEnglish := by
-  refine ⟨rfl, rfl, ?_⟩; decide
-
-/-- Belfast English imperative V2 (Henry 1997: 274, Westergaard's (24))
-    is consistent with +Imp°. -/
-theorem belfast_imperative_v2_consistent :
-    rowInverted Examples.ex24 = true ∧
-    Examples.ex24.judgment = .acceptable ∧
-    ForceHead.Imp ∈ belfastEnglish := by
-  refine ⟨rfl, rfl, ?_⟩; decide
-
--- ============================================================================
--- § 7  Bridge to V2 Data
--- ============================================================================
-
-/-- Norwegian yes/no-questions are obligatorily V2, consistent with +Pol°. -/
-theorem no_yesno_consistent :
-    no_yesno.v2Status = .obligatory ∧ ForceHead.Pol ∈ stdNorwegian := by
-  refine ⟨rfl, ?_⟩; decide
-
-/-- Norwegian exclamatives are non-V2, consistent with −Excl°. -/
-theorem no_excl_consistent :
-    no_excl.v2Status = .impossible ∧ ForceHead.Excl ∉ stdNorwegian := by
-  refine ⟨rfl, ?_⟩; decide
-
-/-- Danish exclamatives are V2, consistent with +Excl°. -/
-theorem da_excl_consistent :
-    da_excl.v2Status = .obligatory ∧ ForceHead.Excl ∈ danish := by
-  refine ⟨rfl, ?_⟩; decide
-
-/-- German embedded clauses are verb-final (no V2), even though German
-    has +Fin° (V-to-I). V2 = verb-to-C requires +Decl°/+Int° etc.;
-    verb-final is consistent with −Wh° (no V-to-C in embedded contexts). -/
-theorem de_emb_no_v2 :
-    de_emb.v2Status = .impossible ∧ ForceHead.Wh ∉ german := by
-  refine ⟨rfl, ?_⟩; decide
-
--- ============================================================================
--- § 8  Bridge to GermanicV2.lean
--- ============================================================================
-
-/-! `GermanicV2.lean` proves that German V2 involves head-to-head movement
-    of V to C, skipping T (HMC violation). This is the structural
-    realization of +Decl° in the V2 profile: verb movement targets the
-    Decl° head in the CP domain. -/
-
-/-- German +Decl° is consistent with the V-to-C movement formalized in
-    `GermanicV2.lean`. -/
-theorem german_decl_v2_bridge :
-    ForceHead.Decl ∈ german := by decide
-
--- ============================================================================
--- § 9  Bridge to Typology
--- ============================================================================
-
-/-! WALS classifies German as having "no dominant order" (`Typology.lean`).
-    Westergaard's micro-parameters explain *why*: German has +Decl° (V2 in
-    root declaratives) but also +Fin° (V-to-I in embedded clauses,
-    yielding verb-final surface order due to SOV base). This split makes
-    the "basic" order indeterminate — SVO on the surface in root
-    clauses, SOV underlyingly and in embedded clauses. -/
-
-open WordOrder in
-/-- German's "no dominant order" classification in WALS is consistent
-    with a profile that has BOTH +Decl° (V2 in roots → surface SVO) AND
-    +Fin° (V-to-I in embedded → surface SOV). -/
-theorem german_noDominant_explained :
-    German.wordOrder.basicOrder = .noDominant ∧
-    ForceHead.Decl ∈ german ∧
-    ForceHead.Fin  ∈ german := by
-  refine ⟨rfl, ?_, ?_⟩ <;> decide
-
-open WordOrder in
-/-- English is classified as SVO in WALS. Consistent with −Decl°
-    (no verb movement in declaratives → surface SVO with SVO base)
-    and −Fin° (no V-to-I in embedded → embedded order also SVO). -/
-theorem english_svo_explained :
-    English.wordOrder.basicOrder = .svo ∧
-    ForceHead.Decl ∉ stdEnglish ∧
-    ForceHead.Fin  ∉ stdEnglish := by
-  refine ⟨rfl, ?_, ?_⟩ <;> decide
-
--- ============================================================================
--- § 10  Information Structure and "Optional" V2
--- ============================================================================
-
-/-! In Tromsø *wh*-questions with monosyllabic *wh*-words, V2 vs. non-V2
-    correlates with the discourse status of the subject:
-
-    - **[−FOC] / given subject** (pronoun) → non-V2 preferred.
-      Subject moves to SpecTopP; verb stays low.
-    - **[+FOC] / new subject** (full DP) → V2 preferred.
-      Subject stays in SpecIP; verb moves to Top° to check [−FOC].
-
-    The book *derives* this from TopP structure (pp. 46–47): given
-    subjects carry [−FOC], which triggers movement to SpecTopP, leaving
-    Int° empty (verb stays low). New subjects lack [−FOC], so they stay
-    in SpecIP and the verb moves to Top°/Int° → V2. The [±FOC] feature
-    already exists in `Features.lean` (`foc : Bool → FeatureVal`) but
-    is not yet connected to an Agree-based derivation.
-
-    TODO: Replace this stipulative pattern match with a derivation from
-    [±FOC] feature checking on subjects + TopP Agree/movement. The
-    current version captures the correct *empirical mapping* but does
-    not explain *why* the mapping holds — the TopP mechanism does. -/
-
-/-- Preferred V2 status given subject givenness in Tromsø
-    monosyllabic *wh*-questions.
-
-    STIPULATIVE: pattern-matches on givenness directly. The book
-    derives this from [±FOC]/TopP (see § 10 docstring). Focus
-    marking belongs to a separate axis
-    (`Focus.Mark`); a focus-driven V2
-    extension would parameterize over `Mark` separately. -/
-def tromsøWhV2Preference : BinaryGivenness → V2Status
-  | .given => .impossible  -- given/pronominal subject → non-V2 preferred
-  | .new   => .obligatory  -- new/full-DP subject → V2 preferred
-
-/-- Given subjects predict non-V2 in Tromsø short *wh*-questions. -/
-theorem given_predicts_nonV2 : tromsøWhV2Preference .given = .impossible := rfl
-
-/-- New subjects predict V2 in Tromsø short *wh*-questions. -/
-theorem new_predicts_V2 : tromsøWhV2Preference .new = .obligatory := rfl
+  spec : Filler
+  verbInHead : Bool
+  deriving DecidableEq, Repr
+
+/-- (45): V2 in *wh*-questions. -/
+def cueIntV2 : MicroCue := ⟨.Int, .wh, true⟩
+
+/-- (46): V2 in declaratives. -/
+def cueDeclV2 : MicroCue := ⟨.Decl, .xp, true⟩
+
+/-- (49): V2 in yes/no-questions. -/
+def cuePolV2 : MicroCue := ⟨.Pol, .none, true⟩
+
+/-- (52): V2 in exclamatives. -/
+def cueExclV2 : MicroCue := ⟨.Excl, .wh, true⟩
+
+/-- (53): V2 in embedded questions. -/
+def cueWhV2 : MicroCue := ⟨.Wh, .wh, true⟩
+
+/-- (54): V2 in imperatives. -/
+def cueImpV2 : MicroCue := ⟨.Imp, .none, true⟩
+
+/-- (57): verb movement to a head below the CP domain in embedded declaratives. -/
+def cueFinV2 : MicroCue := ⟨.Fin, .xp, true⟩
+
+/-- (58)–(60): non-V2 in exclamatives, embedded questions and embedded declaratives. -/
+def cueExclNonV2 : MicroCue := ⟨.Excl, .wh, false⟩
+
+def cueWhNonV2 : MicroCue := ⟨.Wh, .wh, false⟩
+
+def cueFinNonV2 : MicroCue := ⟨.Fin, .xp, false⟩
+
+/-- A grammar expresses a cue when its setting for the cue's head is the cue's. -/
+def Expresses (lang : V2Profile) (c : MicroCue) : Prop := c.target ∈ lang ↔ c.verbInHead = true
+
+/-- A cue and the cue for its absence are never both expressed. -/
+theorem not_expresses_both (lang : V2Profile) {c c' : MicroCue} (ht : c.target = c'.target)
+    (hv : c.verbInHead ≠ c'.verbInHead) : ¬ (Expresses lang c ∧ Expresses lang c') :=
+  λ ⟨h, h'⟩ => hv (by
+    unfold Expresses at h h'
+    rw [ht] at h
+    cases hc : c.verbInHead <;> cases hc' : c'.verbInHead <;> simp_all)
+
+/-- Table 3.2: four cues separate the five grammars. -/
+theorem table_3_2 :
+    (Expresses stdNorwegian cueIntV2 ∧ Expresses stdNorwegian cueDeclV2 ∧
+        ¬ Expresses stdNorwegian cueExclV2 ∧ ¬ Expresses stdNorwegian cueWhV2) ∧
+      (Expresses stdEnglish cueIntV2 ∧ ¬ Expresses stdEnglish cueDeclV2 ∧
+        ¬ Expresses stdEnglish cueExclV2 ∧ ¬ Expresses stdEnglish cueWhV2) ∧
+      (¬ Expresses nordmoreNorwegian cueIntV2 ∧ Expresses nordmoreNorwegian cueDeclV2 ∧
+        ¬ Expresses nordmoreNorwegian cueExclV2 ∧ ¬ Expresses nordmoreNorwegian cueWhV2) ∧
+      (Expresses belfastEnglish cueIntV2 ∧ ¬ Expresses belfastEnglish cueDeclV2 ∧
+        ¬ Expresses belfastEnglish cueExclV2 ∧ Expresses belfastEnglish cueWhV2) ∧
+      (Expresses danish cueIntV2 ∧ Expresses danish cueDeclV2 ∧
+        Expresses danish cueExclV2 ∧ ¬ Expresses danish cueWhV2) := by
+  simp [Expresses, cueIntV2, cueDeclV2, cueExclV2, cueWhV2]
+
+/-- The Norwegian children hear the cues for non-V2 in exclamatives, embedded questions and
+embedded declaratives. -/
+theorem stdNorwegian_nonV2_cues :
+    Expresses stdNorwegian cueExclNonV2 ∧ Expresses stdNorwegian cueWhNonV2 ∧
+      Expresses stdNorwegian cueFinNonV2 := by
+  simp [Expresses, cueExclNonV2, cueWhNonV2, cueFinNonV2]
+
+/-! ### *Wh*-heads and information structure (§3.2, §3.3) -/
+
+/-- The *wh*-elements of the Tromsø dialect. -/
+inductive TromsøWh
+  | ka | kem | kor | korfor | korsen | katti
+  deriving DecidableEq, Repr, Fintype
+
+/-- Their syllable counts. -/
+def TromsøWh.syllables : TromsøWh → ℕ
+  | .ka | .kem | .kor => 1
+  | .korfor | .korsen | .katti => 2
+
+/-- A monosyllabic *wh*-word is a head, a longer one a phrase. -/
+def TromsøWh.status (w : TromsøWh) : WhElementStatus :=
+  WhElementStatus.fromSyllableCount w.syllables
+
+/-- *ka*, *kem* and *kor* are heads and block verb movement to Int°; the others are phrases
+and block nothing. -/
+theorem tromsøWh_blocking :
+    ∀ w : TromsøWh, WhBlocksMovementTo w.status .Int ↔ w.syllables = 1 := by
+  decide
+
+/-- Which element checks the [−foc] feature of Top° in a monosyllabic *wh*-question: a
+[−foc] subject from the specifier (32), otherwise the finite verb in the head (31). -/
+inductive Checker
+  | subject | verb
+  deriving DecidableEq, Repr
+
+/-- The checker, by whether the subject is focused. -/
+def checker (subjectFoc : Bool) : Checker := if subjectFoc then .verb else .subject
+
+/-- The words whose order the two structures fix. -/
+inductive Word
+  | wh | subject | verb
+  deriving DecidableEq, Repr
+
+/-- The surface order: the *wh*-head in Int°, then the specifier and head of TopP, then the
+rest of the clause. -/
+def order (subjectFoc : Bool) : List Word :=
+  match checker subjectFoc with
+  | .subject => [.wh, .subject, .verb]
+  | .verb => [.wh, .verb, .subject]
+
+/-- Verb second: the finite verb is the second word. -/
+def IsV2 (l : List Word) : Prop := l[1]? = some .verb
+
+instance (l : List Word) : Decidable (IsV2 l) := inferInstanceAs (Decidable (_ = _))
+
+/-- A monosyllabic *wh*-question is V2 exactly when its subject is new information. -/
+theorem isV2_order_iff (subjectFoc : Bool) : IsV2 (order subjectFoc) ↔ subjectFoc = true := by
+  cases subjectFoc <;> decide
 
 end Westergaard2009
