@@ -15,7 +15,7 @@ open Data.Examples
 
 def cant_possible : LinguisticExample :=
   { id := "vonfintelgillies2021_cant_possible"
-    source := ⟨"von-fintel-gillies-2021", "UNVERIFIED (5), (22)"⟩
+    source := ⟨"von-fintel-gillies-2021", "(22a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Suppose it's possible the keys are in the drawer but they can't be."
@@ -33,7 +33,7 @@ def cant_possible : LinguisticExample :=
 
 def phil_dinner : LinguisticExample :=
   { id := "vonfintelgillies2021_phil_dinner"
-    source := ⟨"von-fintel-gillies-2021", "UNVERIFIED (24)"⟩
+    source := ⟨"von-fintel-gillies-2021", "(24b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Dinner must be ready."
@@ -51,7 +51,7 @@ def phil_dinner : LinguisticExample :=
 
 def meryl_dinner : LinguisticExample :=
   { id := "vonfintelgillies2021_meryl_dinner"
-    source := ⟨"von-fintel-gillies-2021", "UNVERIFIED (25)"⟩
+    source := ⟨"von-fintel-gillies-2021", "(25b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Dinner must be ready."

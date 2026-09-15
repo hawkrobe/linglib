@@ -15,7 +15,7 @@ open Data.Examples
 
 def keys_drawer : LinguisticExample :=
   { id := "vonfintelgillies2010_keys_drawer"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (2)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(2b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "They must be in the kitchen drawer."
@@ -33,7 +33,7 @@ def keys_drawer : LinguisticExample :=
 
 def john_left : LinguisticExample :=
   { id := "vonfintelgillies2010_john_left"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (3)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(3b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "John must have left."
@@ -51,7 +51,7 @@ def john_left : LinguisticExample :=
 
 def john_home : LinguisticExample :=
   { id := "vonfintelgillies2010_john_home"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (4)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(4a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "John must be at home."
@@ -69,8 +69,8 @@ def john_home : LinguisticExample :=
 
 def mount_toby : LinguisticExample :=
   { id := "vonfintelgillies2010_mount_toby"
-    source := ⟨"kratzer-1991", "UNVERIFIED p. 645"⟩
-    reportedIn := some ⟨"von-fintel-gillies-2010", "UNVERIFIED (5)"⟩
+    source := ⟨"kratzer-1991", ""⟩
+    reportedIn := some ⟨"von-fintel-gillies-2010", "(5b)"⟩
     language := "stan1293"
     primaryText := "She must have climbed Mount Toby."
     discourseSegments := []
@@ -87,7 +87,7 @@ def mount_toby : LinguisticExample :=
 
 def billy_sees_rain : LinguisticExample :=
   { id := "vonfintelgillies2010_billy_sees_rain"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (6)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(6b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "It must be raining."
@@ -105,7 +105,7 @@ def billy_sees_rain : LinguisticExample :=
 
 def billy_wet_gear : LinguisticExample :=
   { id := "vonfintelgillies2010_billy_wet_gear"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (7)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(7b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "It must be raining."
@@ -123,7 +123,7 @@ def billy_wet_gear : LinguisticExample :=
 
 def chris_ball : LinguisticExample :=
   { id := "vonfintelgillies2010_chris_ball"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (12)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(12)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "So, it must be in C."
@@ -141,7 +141,7 @@ def chris_ball : LinguisticExample :=
 
 def cant_mastermind : LinguisticExample :=
   { id := "vonfintelgillies2010_cant_mastermind"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (21)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(21b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "There can't be two reds."
@@ -159,7 +159,7 @@ def cant_mastermind : LinguisticExample :=
 
 def cant_sunshine : LinguisticExample :=
   { id := "vonfintelgillies2010_cant_sunshine"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (23)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(23b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "It can't be raining."
@@ -177,7 +177,7 @@ def cant_sunshine : LinguisticExample :=
 
 def cant_sun_gear : LinguisticExample :=
   { id := "vonfintelgillies2010_cant_sun_gear"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (24)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(24b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "It can't be raining."
@@ -195,7 +195,7 @@ def cant_sun_gear : LinguisticExample :=
 
 def must_be_hungry : LinguisticExample :=
   { id := "vonfintelgillies2010_must_be_hungry"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (26)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(26)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "I must be hungry."
@@ -213,7 +213,7 @@ def must_be_hungry : LinguisticExample :=
 
 def modus_ponens : LinguisticExample :=
   { id := "vonfintelgillies2010_modus_ponens"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (14)-(15)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(14)-(15)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If Carl is at the party, then Lenny must be at the party. Carl is at the party. So: Lenny is at the party."
@@ -231,7 +231,7 @@ def modus_ponens : LinguisticExample :=
 
 def must_perhaps : LinguisticExample :=
   { id := "vonfintelgillies2010_must_perhaps"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (16)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(16)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "It must be raining but perhaps it isn't raining."
@@ -249,7 +249,7 @@ def must_perhaps : LinguisticExample :=
 
 def might_retraction : LinguisticExample :=
   { id := "vonfintelgillies2010_might_retraction"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (17)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(17)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Alex: It might be raining. Billy: (opens curtains) No it isn't. You were wrong. Alex: I was not! Look, I didn't say it WAS raining. I only said it might be raining. Stop picking on me!"
@@ -267,7 +267,7 @@ def might_retraction : LinguisticExample :=
 
 def must_no_retraction : LinguisticExample :=
   { id := "vonfintelgillies2010_must_no_retraction"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (19)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(19)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Alex: It must be raining. Billy: (opens curtains) No it isn't. You were wrong. Alex: I was not! Look, I didn't say it WAS raining. I only said it must be raining. Stop picking on me!"
@@ -285,7 +285,7 @@ def must_no_retraction : LinguisticExample :=
 
 def hedging : LinguisticExample :=
   { id := "vonfintelgillies2010_hedging"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (20)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(20c)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "It is probably raining."
@@ -303,7 +303,7 @@ def hedging : LinguisticExample :=
 
 def hey_wait_a_minute : LinguisticExample :=
   { id := "vonfintelgillies2010_hey_wait_a_minute"
-    source := ⟨"von-fintel-gillies-2010", "UNVERIFIED (22)"⟩
+    source := ⟨"von-fintel-gillies-2010", "(22)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Alex: It must be raining. Billy: Hey! Wait a minute. Whaddya mean, must? Aren't you looking outside?"
