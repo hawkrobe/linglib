@@ -1,7 +1,7 @@
 [
   {
     "id": "wood2015_1",
-    "source": {"bibkey": "wood-2015", "paperLabel": "(75a)"},
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 2 (1a)"},
     "reportedIn": null,
     "language": "icel1247",
     "primaryText": "Jóna og Siggi kysstust eftir ballið.",
@@ -16,15 +16,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "reciprocal"]
+      ["use", "reciprocal"]
     ],
-    "comment": "A reciprocal use of -st. Numbering follows the 2012 dissertation the book revises.",
+    "comment": "",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
   {
     "id": "wood2015_2",
-    "source": {"bibkey": "wood-2015", "paperLabel": "(75b)"},
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 2 (1b)"},
     "reportedIn": null,
     "language": "icel1247",
     "primaryText": "Jón dulbjóst sem prestur.",
@@ -38,15 +38,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "reflexive"]
+      ["use", "reflexive"]
     ],
-    "comment": "A reflexive use of -st. Numbering follows the 2012 dissertation the book revises.",
+    "comment": "",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
   {
     "id": "wood2015_3",
-    "source": {"bibkey": "wood-2015", "paperLabel": "(75c)"},
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 2 (1c)"},
     "reportedIn": null,
     "language": "icel1247",
     "primaryText": "Glugginn opnaðist af sjálfu sér.",
@@ -61,39 +61,129 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "anticausative"]
+      ["use", "anticausative"]
     ],
-    "comment": "An anticausative use of -st. Numbering follows the 2012 dissertation the book revises.",
+    "comment": "",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
   {
     "id": "wood2015_4",
-    "source": {"bibkey": "wood-2015", "paperLabel": "(112a)"},
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 2 (1d)"},
     "reportedIn": null,
     "language": "icel1247",
-    "primaryText": "klæðast",
+    "primaryText": "Rafmagnsbílar seljast vel hér.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["klæðast", "dress-ST"]
+      ["Rafmagnsbílar", "electric.cars.NOM"], ["seljast", "sell-ST"], ["vel", "well"],
+      ["hér", "here"]
     ],
-    "translation": "dress oneself",
+    "translation": "Electric cars sell well here.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "klæða", "judgment": "acceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "figure reflexive"]
+      ["use", "generic middle"]
     ],
-    "comment": "The alternation between klæða 'dress' and klæðast, analysed as a figure reflexive with -st in SpecpP. Numbering follows the 2012 dissertation the book revises.",
+    "comment": "",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
   {
     "id": "wood2015_5",
-    "source": {"bibkey": "wood-2015", "paperLabel": "(182)"},
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 3 (16a)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Fólk dýp-ka-ði skurðinn.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Fólk", "people.NOM"], ["dýp-ka-ði", "deep-KA-PST"], ["skurðinn", "ditch.the.ACC"]
+    ],
+    "translation": "People deepened the ditch.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exponent", "-ka"],
+      ["voice", "Voice{D}"]
+    ],
+    "comment": "-ka spells out v in the context of listed roots and is indifferent to Voice.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_6",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 3 (16b)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Skurðurinn dýp-ka-ði.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Skurðurinn", "ditch.the.NOM"], ["dýp-ka-ði", "deep-KA-PST"]
+    ],
+    "translation": "The ditch deepened.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exponent", "-ka"],
+      ["voice", "Voice{}"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_7",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 3 (20a)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Jón hita-ði vatnið.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jón", "John.NOM"], ["hita-ði", "heat-3SG.PST"], ["vatnið", "water.the.ACC"]
+    ],
+    "translation": "John heated the water.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["voice", "Voice{D}"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_8",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 3 (20b)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Vatnið hit-na-ði.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Vatnið", "water.the.NOM"], ["hit-na-ði", "heat-NA-3SG.PST"]
+    ],
+    "translation": "The water heated.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["exponent", "-na"],
+      ["voice", "Voice{}"]
+    ],
+    "comment": "-na spells out specifierless Voice in the context of listed roots, adjacent to the root because v is zero.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_9",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 3 (52)"},
     "reportedIn": null,
     "language": "icel1247",
     "primaryText": "Dyrnar opnuðust.",
@@ -107,16 +197,241 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "anticausative"],
-      ["verb", "opnast"]
+      ["use", "anticausative"],
+      ["site", "SpecVoiceP"]
     ],
-    "comment": "The -st anticausative of opna 'open'. Numbering follows the 2012 dissertation the book revises.",
+    "comment": "",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
   {
-    "id": "wood2015_6",
-    "source": {"bibkey": "wood-2015", "paperLabel": "(383a)"},
+    "id": "wood2015_10",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 3 (70)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Rúðan splundraðist.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Rúðan", "window.the.NOM"], ["splundraðist", "shattered-ST"]
+    ],
+    "translation": "The window shattered.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["use", "anticausative"],
+      ["site", "SpecVoiceP"]
+    ],
+    "comment": "The root is incompatible with specifierless Voice, so the anticausative needs Voice{D} with -st in its specifier.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_11",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 3 (72a)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Konan myrti manninn.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Konan", "woman.the.NOM"], ["myrti", "murdered"], ["manninn", "man.the.ACC"]
+    ],
+    "translation": "The woman murdered the man.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["voice", "agentive"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_12",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 3 (72b)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Hraunstraumurinn myrti manninn.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hraunstraumurinn", "lava.stream.the.NOM"], ["myrti", "murdered"],
+      ["manninn", "man.the.ACC"]
+    ],
+    "translation": "The lava stream murdered the man.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["voice", "agentive"]
+    ],
+    "comment": "Generable only with a sentient lava stream: murdering events force the agentive alloseme of Voice.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_13",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 3 (72c)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Maðurinn myrtist.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Maðurinn", "man.the.NOM"], ["myrtist", "murdered-ST"]
+    ],
+    "translation": "The man got murdered.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["use", "anticausative"]
+    ],
+    "comment": "Not generable: Voice must be agentive, and -st cannot saturate the agent role.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_14",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 5 (47a)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Bjartur gaf sjálfum sér bókina í jólagjöf.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bjartur", "Bjartur.NOM"], ["gaf", "gave"], ["sjálfum", "self"], ["sér", "REFL.DAT"],
+      ["bókina", "book.the.ACC"], ["í", "in"], ["jólagjöf", "christmas.gift"]
+    ],
+    "translation": "Bjartur gave himself the book as a Christmas present.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "SpecApplP"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_15",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 5 (47b)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Bjartur gafst bókina í jólagjöf.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bjartur", "Bjartur.NOM"], ["gafst", "gave-ST"], ["bókina", "book.the.ACC"], ["í", "in"],
+      ["jólagjöf", "christmas.gift"]
+    ],
+    "translation": "Bjartur gave himself the book as a Christmas present.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "SpecApplP"]
+    ],
+    "comment": "-st cannot merge in SpecApplP, which demands dative.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_16",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 5 (52a)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Fólk leyfði þeim alla hluti.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Fólk", "people.NOM"], ["leyfði", "allowed"], ["þeim", "them.DAT"], ["alla", "all"],
+      ["hluti", "things.ACC"]
+    ],
+    "translation": "People allowed them all things.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["dative", "Appl"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_17",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 5 (52b)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Þeim leyfðust allir hlutir.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Þeim", "them.DAT"], ["leyfðust", "allowed-ST"], ["allir", "all"], ["hlutir", "things.NOM"]
+    ],
+    "translation": "They were allowed all things.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["dative", "Appl"]
+    ],
+    "comment": "The Appl dative is retained under -st.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_18",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 5 (53a)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Ásta splundraði rúðunni.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ásta", "Ásta.NOM"], ["splundraði", "shattered"], ["rúðunni", "window.the.DAT"]
+    ],
+    "translation": "Ásta shattered the window.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["dative", "direct object"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_19",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 5 (53b)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Rúðan splundraðist.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Rúðan", "window.the.NOM"], ["splundraðist", "shattered-ST"]
+    ],
+    "translation": "The window shattered.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["dative", "direct object"]
+    ],
+    "comment": "The direct object dative, dependent on Voice, is lost under -st.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_20",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 5 (92a)"},
     "reportedIn": null,
     "language": "icel1247",
     "primaryText": "Henni leiddist Ólafur.",
@@ -130,16 +445,16 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "subject experiencer"],
-      ["subject", "dative"]
+      ["use", "subject experiencer"],
+      ["site", "SpecVoiceP"]
     ],
-    "comment": "A dative-subject psych verb with -st. Numbering follows the 2012 dissertation the book revises.",
+    "comment": "-st in SpecVoiceP with the dative introduced in SpecApplP.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
   {
-    "id": "wood2015_7",
-    "source": {"bibkey": "wood-2015", "paperLabel": "(426a)"},
+    "id": "wood2015_21",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 6 (55a)"},
     "reportedIn": null,
     "language": "icel1247",
     "primaryText": "Jóna og Siggi kysstust.",
@@ -150,15 +465,59 @@
     "translation": "Jóna and Siggi kissed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Jóna kysstist við Sigga.", "judgment": "ungrammatical"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "reciprocal"],
-      ["verb", "kyssast"]
+      ["use", "reciprocal"],
+      ["type", "2"]
     ],
-    "comment": "The reciprocal -st verb needs a plural subject; the discontinuous variant is out. Numbering follows the 2012 dissertation the book revises.",
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_22",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 6 (55b)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Jóna kysstist við Sigga.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jóna", "Jóna"], ["kysstist", "kissed-ST"], ["við", "with"], ["Sigga", "Siggi"]
+    ],
+    "translation": "Jóna kissed with Siggi.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["use", "reciprocal"],
+      ["type", "2"]
+    ],
+    "comment": "A Type 2 reciprocal takes no við phrase and no singular subject.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wood2015_23",
+    "source": {"bibkey": "wood-2015", "paperLabel": "Ch. 6 (76b)"},
+    "reportedIn": null,
+    "language": "icel1247",
+    "primaryText": "Keisarinn klæddist nýjum fötum.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Keisarinn", "emperor.the.NOM"], ["klæddist", "dressed-ST"], ["nýjum", "new"],
+      ["fötum", "clothes.DAT"]
+    ],
+    "translation": "The emperor dressed himself in new clothes.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["use", "reflexive"]
+    ],
+    "comment": "",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   }

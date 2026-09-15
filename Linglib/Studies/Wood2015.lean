@@ -1,185 +1,270 @@
-import Linglib.Syntax.Minimalist.Verbal.Voice
+import Linglib.Morphology.DistributedMorphology.Locality
 import Linglib.Syntax.Minimalist.Verbal.Applicative
-import Linglib.Fragments.Icelandic.Predicates
 import Linglib.Data.Examples.Wood2015
 
 /-!
 # Wood (2015): Icelandic Morphosyntax and Argument Structure
 
-This file formalizes [wood-2015]'s thesis that the Icelandic clitic *-st* is not an exponent of
-a Voice head. It is a defective person clitic, a featural subset of the reflexive pronoun, that
-merges in a specifier position and cliticizes to the verb. Its uses (anticausative, generic
-middle, figure reflexive, reflexive, subject experiencer, reciprocal, inherent) arise from where
-it merges (`Site`), not from *-st* spelling out different Voice flavors; the genuine Voice and v
-exponents are *-na*, the elsewhere *-Ø*, and *-ka* (`AnticausativeMarking.exponentOf`). Two
-consequences are derived from the merge site and the host clause's Voice flavor. An agentive
-Voice already fills SpecVoiceP with its agent, so under agentive Voice *-st* merges lower, in
-SpecpP (`agentive_st_merges_low`); and since *-st* co-occurs both with a θ-assigning Voice
-(figure reflexives) and with a non-thematic one (anticausatives), no single Voice head has its
-profile (`st_not_single_voice_exponent`). Because Appl assigns dative and *-st* is caseless,
-*-st* cannot occupy SpecApplP (`st_blocked_from_specApplP`).
+This file formalizes [wood-2015]'s account of the Icelandic clitic *-st*. It is not an exponent
+of Voice: it originates in an argument position, a specifier that it fills while contributing
+nothing to the semantics, and cliticizes to the verb. It may merge in a specifier that imposes
+no case requirement, so in SpecVoiceP and SpecpP but not in SpecApplP, which demands dative,
+nor in a direct object position (`Position.AdmitsSt`). A θ-role introduced by a head is
+saturated by a DP in its specifier or passed up to the next argument-introducing head; with
+*-st* in its specifier a head passes its role up, and since Voice is the highest such head, a
+Voice with *-st* in its specifier must be expletive (`expletive_of_st`), and an agentive vP
+like *murder* has no *-st* anticausative (`no_st_of_agentive`). An anticausative arises in two
+ways, specifierless Voice or Voice with a D feature checked by *-st* (`anticausative_iff`); with
+agentive Voice, *-st* can only sit lower, in SpecpP, where p's figure role passes up to the
+DP in SpecVoiceP, the figure reflexive (`st_specP_of_agentive`).
+
+The morphology follows from locality: *-ka* spells out v in the context of listed roots and
+*-na* spells out specifierless Voice in the context of listed roots, which requires Voice to
+be adjacent to the root at spell-out, so v must be zero (`na_only_if_v_zero`). Hence *-na* and
+*-ka* never co-occur, *-na* never co-occurs with *-st*, whose Voice carries a D feature, and
+*-ka* is compatible with both (`na_ka_exclusive`, `na_st_exclusive`, `voiceExponent_ka`).
 
 ## Implementation notes
 
-The per-verb projections pair Fragment entries with the book's construction classification,
-which is paper-specific apparatus and so lives here.
-
-## TODO
-
-The book's chapter and section locators are unverified; the examples follow the numbering of
-the 2012 dissertation the book revises.
+The word is a `Spine` over the heads v and Voice with v the only cyclic head, and the
+allomorphy domain is the substrate's `SeesRoot`, adjacency across phonologically null heads.
+The lists of roots for *-ka* and *-na* are parameters, and the interpretation of Voice as
+agentive or expletive is taken as a property of the vP. The reciprocal, denominal, modal
+passive and *láta* constructions of the book's sixth chapter are recorded in the examples.
 
 ## References
 
 * [wood-2015]
-* [alexiadou-schaefer-2015]
-* [kratzer-1996]
+* [embick-2010]
+* [schaefer-2008]
 * [wood-marantz-2017]
 -/
 
 namespace Wood2015
 
-open Minimalist Minimalist.Voice Icelandic.Predicates
+open DistributedMorphology Minimalist
 
-/-! ### The *-st* clitic and its merge site -/
+/-! ### Where *-st* merges -/
 
-/-- Where the *-st* clitic merges: it occupies a specifier and checks its head's [D] feature. -/
-inductive Site where
-  /-- SpecVoiceP of Voice{D}: anticausatives and dative-subject experiencers. -/
-  | specVoiceD
-  /-- SpecpP of the figure/ground head p{D}: figure reflexives, including covert ones like
-  *klæðast*. -/
-  | specLittleP
-  /-- A lower vP-internal specifier: reciprocals and the reflexive/middle residue. -/
-  | specLow
+/-- The argument positions of the verb phrase. -/
+inductive Position where
+  | specVoice
+  | specP
+  | specAppl
+  | directObject
   deriving DecidableEq, Repr
 
-/-- The descriptive classification of *-st* constructions. -/
-inductive Construction where
-  | anticausative
-  | middle
-  | figureReflexive
-  | reflexive
-  | inherent
-  | subjectExp
-  | reciprocal
-  deriving DecidableEq, Repr
+/-- The specifier positions of the argument-introducing heads. -/
+def Position.IsSpecifier : Position → Prop
+  | .specVoice | .specP | .specAppl => True
+  | .directObject => False
 
-/-- The specifier *-st* occupies in each construction. -/
-def Construction.site : Construction → Site
-  | .anticausative | .subjectExp => .specVoiceD
-  | .figureReflexive | .reflexive => .specLittleP
-  | .middle | .reciprocal | .inherent => .specLow
+/-- Whether a position lets a caseless element merge in it: Appl demands dative of its
+specifier, Voice and p demand nothing. -/
+def Position.AdmitsCaseless : Position → Prop
+  | .specAppl => applLowRecipient.SpecCanBearCase (none : Option Case)
+  | _ => True
 
-/-- The Voice flavor of the host clause in each construction, the flavor *-st* co-occurs with
-rather than one it realizes: anticausative and subject-experiencer clauses have non-thematic
-Voice, figure reflexives and reciprocals are agentive, the generic middle is expletive. -/
-def Construction.voiceFlavor : Construction → Flavor
-  | .anticausative | .subjectExp | .inherent => .nonThematic
-  | .middle => .expletive
-  | .figureReflexive | .reflexive | .reciprocal => .agentive
+/-- *-st* merges in a specifier position with no case requirement. -/
+def Position.AdmitsSt (p : Position) : Prop := p.IsSpecifier ∧ p.AdmitsCaseless
 
-/-! ### The anticausative exponent inventory -/
+instance : DecidablePred Position.IsSpecifier := λ p => by
+  cases p <;> unfold Position.IsSpecifier <;> infer_instance
 
-/-- How an anticausative alternation is morphologically marked. -/
-inductive AnticausativeMarking where
+instance : DecidablePred Position.AdmitsCaseless := λ p => by
+  cases p <;> unfold Position.AdmitsCaseless <;> infer_instance
+
+instance : DecidablePred Position.AdmitsSt := λ _ => inferInstanceAs (Decidable (_ ∧ _))
+
+/-- *-st* merges in SpecVoiceP and SpecpP, not in SpecApplP nor as a direct object. -/
+theorem admitsSt_iff (p : Position) : p.AdmitsSt ↔ p = .specVoice ∨ p = .specP := by
+  cases p <;> decide
+
+/-! ### Voice and its specifier -/
+
+/-- What occupies the specifier of Voice: a DP, the clitic *-st*, or nothing, for the
+specifierless Voice. -/
+inductive Occupant where
+  | dp
   | st
-  | na
-  | unmarked
-  | ka
+  | none
   deriving DecidableEq, Repr
 
-/-- The head a marker spells out, if any: *-st* spells out no head, *-na* spells out
-specifierless Voice{∅}, *-Ø* is the elsewhere Voice exponent, and *-ka* spells out v. -/
-def AnticausativeMarking.exponentOf : AnticausativeMarking → Option ProjectionLocus
-  | .st => none
-  | .na => some .voiceBare
-  | .unmarked => some .voiceDOrBare
-  | .ka => some .vHead
+/-- A VoiceP: whether the vP is agentive, in which case Voice introduces the agent role, and
+what occupies its specifier. -/
+structure VoiceP where
+  agentive : Bool
+  spec : Occupant
+  deriving DecidableEq, Repr
 
-/-- A marker is a head exponent when it spells out a Voice or v head. -/
-def AnticausativeMarking.IsHeadExponent (m : AnticausativeMarking) : Prop :=
-  m.exponentOf.isSome = true
+/-- A role introduced by the highest argument-introducing head must be saturated by a DP in
+its specifier: the agent role of an agentive Voice has nowhere to be passed up to. -/
+def VoiceP.Interpretable (V : VoiceP) : Prop := V.agentive = true → V.spec = .dp
 
-instance : DecidablePred AnticausativeMarking.IsHeadExponent :=
-  λ _ => inferInstanceAs (Decidable (_ = true))
+instance : DecidablePred VoiceP.Interpretable := λ _ => inferInstanceAs (Decidable (_ → _))
 
-/-! ### Per-verb projections -/
+/-- Voice is expletive when it introduces no role. -/
+def VoiceP.Expletive (V : VoiceP) : Prop := V.agentive = false
 
-/-- A Fragment entry together with the book's classification of its *-st* form. -/
-structure Projection where
-  verb : IcelandicStVerb
-  construction : Construction
-  marking : AnticausativeMarking := .st
-  deriving Repr, DecidableEq
+instance : DecidablePred VoiceP.Expletive := λ _ => inferInstanceAs (Decidable (_ = _))
 
-/-- *opna* ~ *opnast* 'open', an anticausative. -/
-def opnastInfo : Projection := { verb := opnast, construction := .anticausative }
+/-- With *-st* in its specifier, Voice must be expletive. -/
+theorem expletive_of_st {V : VoiceP} (h : V.Interpretable) (hs : V.spec = .st) :
+    V.Expletive := by
+  cases V; simp_all [VoiceP.Interpretable, VoiceP.Expletive]
 
-/-- *splundra* ~ *splundrast* 'shatter', an anticausative. -/
-def splundrastInfo : Projection := { verb := splundrast, construction := .anticausative }
+/-- Specifierless Voice is expletive. -/
+theorem expletive_of_none {V : VoiceP} (h : V.Interpretable) (hs : V.spec = .none) :
+    V.Expletive := by
+  cases V; simp_all [VoiceP.Interpretable, VoiceP.Expletive]
 
-/-- *brjóta* ~ *brotna* 'break', an anticausative marked with *-na*. -/
-def brotnaInfo : Projection :=
-  { verb := brotna, construction := .anticausative, marking := .na }
+/-- An agentive vP, like *murder*, has no *-st* anticausative. -/
+theorem no_st_of_agentive {V : VoiceP} (h : V.Interpretable) (ha : V.agentive = true) :
+    V.spec ≠ .st := by
+  rw [h ha]; decide
 
-/-- *selja* ~ *seljast* 'sell', a generic middle. -/
-def seljastInfo : Projection := { verb := seljast, construction := .middle }
+/-- An anticausative projects no DP external argument. -/
+def VoiceP.Anticausative (V : VoiceP) : Prop := V.spec ≠ .dp
 
-/-- *lesa* ~ *lesast* 'read', a modal passive, a generic-middle variant. -/
-def lesastInfo : Projection := { verb := lesast, construction := .middle }
+/-- The two ways of forming an anticausative: specifierless Voice, or Voice whose D feature
+is checked by *-st*. -/
+theorem anticausative_iff (V : VoiceP) :
+    V.Anticausative ↔ V.spec = .none ∨ V.spec = .st := by
+  cases V with
+  | mk a s => cases s <;> simp [VoiceP.Anticausative]
 
-/-- *setja* ~ *setjast* 'sit down', a figure reflexive. -/
-def setjastInfo : Projection := { verb := setjast, construction := .figureReflexive }
+/-- Either way, Voice is expletive: the VoiceP denotes what the vP denotes. -/
+theorem expletive_of_anticausative {V : VoiceP} (h : V.Interpretable) (ha : V.Anticausative) :
+    V.Expletive := by
+  cases V with
+  | mk a s => cases a <;> cases s <;> simp_all [VoiceP.Interpretable, VoiceP.Expletive,
+      VoiceP.Anticausative]
 
-/-- *klæða* ~ *klæðast* 'dress', a covert figure reflexive. -/
-def klaedastInfo : Projection := { verb := klaedast, construction := .figureReflexive }
+/-- A clause where *-st* merges: its VoiceP and the position *-st* occupies. -/
+structure StClause where
+  voice : VoiceP
+  site : Position
+  siteAdmits : site.AdmitsSt
+  /-- *-st* is in SpecVoiceP exactly when it is Voice's specifier. -/
+  site_voice : site = .specVoice ↔ voice.spec = .st
 
-/-- *nálgast* 'approach', an inherent *-st* verb. -/
-def nalgastInfo : Projection := { verb := nalgast, construction := .inherent }
+/-- Under agentive Voice, *-st* merges in SpecpP: the figure reflexive. -/
+theorem st_specP_of_agentive (C : StClause) (h : C.voice.Interpretable)
+    (ha : C.voice.agentive = true) : C.site = .specP := by
+  rcases (admitsSt_iff C.site).mp C.siteAdmits with hv | hp
+  · exact absurd (C.site_voice.mp hv) (no_st_of_agentive h ha)
+  · exact hp
 
-/-- *minnast* 'remember', an inherent *-st* verb. -/
-def minnastInfo : Projection := { verb := minnast, construction := .inherent }
+/-! ### The exponents of v and Voice -/
 
-/-- *leiðast* 'be bored', a dative-subject experiencer. -/
-def leidastInfo : Projection := { verb := leidast, construction := .subjectExp }
+/-- The heads of the verb above the root: v, with or without the *-ka* exponent, and Voice,
+with or without a D feature. -/
+inductive Head where
+  | v (ka : Bool)
+  | voice (hasD : Bool)
+  deriving DecidableEq, Repr
 
-/-- *kyssa* ~ *kyssast* 'kiss', a reciprocal. -/
-def kyssastInfo : Projection := { verb := kyssast, construction := .reciprocal }
+/-- v is the categorizer, hence cyclic; Voice is not. -/
+def Head.Cyclic : Head → Prop
+  | .v _ => True
+  | .voice _ => False
 
-/-! ### *-st* is a specifier occupant, not a Voice exponent -/
+/-- A head is phonologically null when it has no overt exponent: v without *-ka*. Voice's
+own exponent is what is being determined, so it counts as overt. -/
+def Head.Null : Head → Prop
+  | .v ka => ka = false
+  | .voice _ => False
 
-/-- *-st* spells out no Voice or v head. -/
-theorem st_not_head_exponent : ¬ AnticausativeMarking.st.IsHeadExponent := by decide
+instance : DecidablePred Head.Cyclic := λ h => by
+  cases h <;> unfold Head.Cyclic <;> infer_instance
 
-/-- *-na* and *-ka* spell out different heads, so they never co-occur. -/
-theorem na_ka_distinct_loci :
-    AnticausativeMarking.na.exponentOf ≠ AnticausativeMarking.ka.exponentOf := by decide
+instance : DecidablePred Head.Null := λ h => by cases h <;> unfold Head.Null <;> infer_instance
 
-/-- On the same alternation class, *brotna* takes a head exponent while *opnast* takes *-st*,
-which spells out no head. -/
-theorem brotna_na_vs_opnast_st :
-    brotnaInfo.marking.IsHeadExponent ∧ ¬ opnastInfo.marking.IsHeadExponent := by decide
+/-- The verb: a root, v, and Voice. -/
+def verb (r : Root) (ka hasD : Bool) : Spine Head := ⟨r, [.v ka, .voice hasD]⟩
 
-/-! ### Merge site, not Voice flavor, distinguishes the constructions -/
+/-- Voice's position in the verb. -/
+def voiceIdx (r : Root) (ka hasD : Bool) : Fin (verb r ka hasD).heads.length :=
+  ⟨1, by simp [verb]⟩
 
-/-- Under agentive Voice, whose agent fills SpecVoiceP, *-st* merges lower than SpecVoiceP. -/
-theorem agentive_st_merges_low (t : Construction) :
-    t.voiceFlavor = .agentive → t.site ≠ .specVoiceD := by
-  cases t <;> decide
+/-- Voice is in the root's cycle: v is the only cyclic head. -/
+theorem rootLocal_voice (r : Root) (ka hasD : Bool) :
+    (verb r ka hasD).RootLocal Head.Cyclic (voiceIdx r ka hasD) := by
+  unfold Spine.RootLocal Spine.cycle
+  have key : ∀ x : Fin (verb r ka hasD).heads.length,
+      x ≤ voiceIdx r ka hasD ∧ Head.Cyclic (verb r ka hasD).heads[x] → (x : ℕ) = 0 := by
+    rintro ⟨_ | _ | x, hx⟩ ⟨-, h₂⟩
+    · rfl
+    · simp [verb, Head.Cyclic] at h₂
+    · simp [verb] at hx; omega
+  refine Finset.card_le_one.mpr λ a ha b hb => Fin.ext ?_
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha hb
+  rw [key a ha, key b hb]
 
-/-- *-st* co-occurs both with a θ-assigning Voice and with a non-thematic one, so it is not the
-exponent of a single Voice head. -/
-theorem st_not_single_voice_exponent :
-    ∃ t t' : Construction, t.voiceFlavor.thetaRole.isSome ∧ t'.voiceFlavor.thetaRole = none :=
-  ⟨.figureReflexive, .anticausative, rfl, rfl⟩
+/-- Voice sees the root exactly when v is phonologically zero. -/
+theorem seesRoot_voice_iff (r : Root) (ka hasD : Bool) :
+    (verb r ka hasD).SeesRoot Head.Cyclic Head.Null (voiceIdx r ka hasD) ↔ ka = false := by
+  constructor
+  · exact λ h => h.2 ⟨0, by simp [verb]⟩ (by simp [voiceIdx, Fin.lt_def])
+  · rintro rfl
+    refine ⟨rootLocal_voice r false hasD, λ k hk => ?_⟩
+    obtain ⟨_ | k, hk'⟩ := k
+    · exact rfl
+    · exact absurd (show k + 1 < 1 from hk) (by omega)
 
-/-! ### Applicatives -/
+/-- v is spelled out *-ka* in the context of the listed roots. -/
+def Ka (kaRoots : Set Root) (r : Root) : Prop := r ∈ kaRoots
 
-/-- Appl assigns dative and *-st* is caseless, so *-st* cannot occupy SpecApplP, whereas a
-case-bearing DP can. -/
-theorem st_blocked_from_specApplP :
-    ¬ applLowRecipient.SpecCanBearCase (none : Option Case) ∧
-    applLowRecipient.SpecCanBearCase (some Case.dat) := by decide
+/-- Specifierless Voice is spelled out *-na* in the context of the listed roots, which it must
+see at spell-out; everywhere else Voice is the elsewhere zero. -/
+def Na (naRoots : Set Root) (r : Root) (ka hasD : Bool) : Prop :=
+  hasD = false ∧ r ∈ naRoots ∧
+    (verb r ka hasD).SeesRoot Head.Cyclic Head.Null (voiceIdx r ka hasD)
+
+instance (naRoots : Set Root) [DecidablePred (· ∈ naRoots)] (r : Root) (ka hasD : Bool) :
+    Decidable (Na naRoots r ka hasD) := inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+variable {naRoots : Set Root}
+
+/-- *-na* requires v to be zero: an overt v breaks Voice's adjacency to the root. -/
+theorem na_only_if_v_zero {r : Root} {ka hasD : Bool} (h : Na naRoots r ka hasD) :
+    ka = false :=
+  (seesRoot_voice_iff r ka hasD).mp h.2.2
+
+/-- *-na* and *-ka* never co-occur. -/
+theorem na_ka_exclusive {r : Root} {hasD : Bool} : ¬ Na naRoots r true hasD :=
+  λ h => Bool.noConfusion (na_only_if_v_zero h)
+
+/-- *-na* never marks an *-st* verb: *-st* checks the D feature of Voice, and *-na* spells out
+Voice without one. -/
+theorem na_st_exclusive {r : Root} {ka : Bool} : ¬ Na naRoots r ka true :=
+  λ h => Bool.noConfusion h.1
+
+/-- A listed root with zero v and specifierless Voice takes *-na*. -/
+theorem na_of_listed {r : Root} (h : r ∈ naRoots) : Na naRoots r false false :=
+  ⟨rfl, h, (seesRoot_voice_iff r false false).mpr rfl⟩
+
+/-- The exponent of Voice. -/
+inductive VoiceExponent where
+  | na
+  | zero
+  deriving DecidableEq, Repr
+
+variable (naRoots) [DecidablePred (· ∈ naRoots)]
+
+/-- Voice is spelled out *-na* where the rule applies and by the elsewhere zero otherwise. -/
+def voiceExponent (r : Root) (ka hasD : Bool) : VoiceExponent :=
+  if Na naRoots r ka hasD then .na else .zero
+
+/-- A *-ka* verb has zero Voice whether or not Voice carries a D feature: *-ka* is compatible
+with specifierless Voice and with *-st*. -/
+theorem voiceExponent_ka (r : Root) (hasD : Bool) :
+    voiceExponent naRoots r true hasD = .zero := by
+  simp [voiceExponent, na_ka_exclusive]
+
+/-- An *-st* verb has zero Voice whether or not v is *-ka*. -/
+theorem voiceExponent_st (r : Root) (ka : Bool) :
+    voiceExponent naRoots r ka true = .zero := by
+  simp [voiceExponent, na_st_exclusive]
 
 end Wood2015
