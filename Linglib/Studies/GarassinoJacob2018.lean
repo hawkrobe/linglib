@@ -1,6 +1,5 @@
 import Linglib.Discourse.QUD.Basic
 import Linglib.Semantics.Questions.Exhaustivity
-import Linglib.Semantics.Focus.Interpretation
 import Linglib.Fragments.Italian.PolarityMarking
 import Linglib.Fragments.Spanish.PolarityMarking
 import Linglib.Fragments.Romance.French.PolarityMarking
@@ -13,7 +12,7 @@ This file formalizes [garassino-jacob-2018]'s account of clitic left dislocation
 ~ *sí que* constructions as realizations of polarity focus. Polarity focus is focus whose
 background is the whole proposition and whose alternatives are the proposition and its negation,
 so a polarity-focus utterance is a congruent answer to a polar question under discussion
-(`polarFocus_qaCongruent`). The chapter's corpus passages are read as discourse trees in the
+(`polarFocus_eq_alt_query`). The chapter's corpus passages are read as discourse trees in the
 manner of [buring-2003] and [roberts-2012]: a *wh*-question such as *who has been sitting back?*
 is pursued through the polar question for each candidate, each answered with a polarity-focus
 utterance, and a polar question about a hyperonymous proposition through the polar questions of
@@ -62,7 +61,7 @@ variable {W F : Type*}
 /-! ### Polarity focus as a polar question under discussion -/
 
 /-- The focus value of a polarity-focus utterance: the proposition and its negation. -/
-def polarFocus (p : Set W) : Focus.Interpretation.PropFocusValue W := {p, pᶜ}
+def polarFocus (p : Set W) : Set (Set W) := {p, pᶜ}
 
 /-- The polar question of a proposition is the join of the proposition and its negation. -/
 theorem query_ofSet_eq_iSup (p : Set W) :
@@ -94,8 +93,8 @@ theorem alt_query_ofSet {p : Set W} (hp : p.Nonempty) (hpc : pᶜ.Nonempty) :
     Set.mem_singleton_iff, eq_comm, or_comm]
 
 /-- A polarity-focus utterance is a congruent answer to the polar question of its proposition. -/
-theorem polarFocus_qaCongruent {p : Set W} (hp : p.Nonempty) (hpc : pᶜ.Nonempty) :
-    Focus.Interpretation.qaCongruent (polarFocus p) (alt (ofSet p).query) :=
+theorem polarFocus_eq_alt_query {p : Set W} (hp : p.Nonempty) (hpc : pᶜ.Nonempty) :
+    polarFocus p = alt (ofSet p).query :=
   (alt_query_ofSet hp hpc).symm
 
 /-! ### Discourse strategies of polar subquestions -/

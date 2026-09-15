@@ -33,7 +33,7 @@ targets they can realize.
 
 `licensedFocusValue` is the pipeline connector: the composable targets
 minus the banned ones. At propositional type its values are
-`PropFocusValue`s, the focus values [rooth-1992]'s squiggle consumes —
+families of propositions, the focus values [rooth-1992]'s squiggle consumes —
 the metrical structure derives the focus value that F-marking
 stipulates (`Antecedent.Admits.of_licensed`).
 -/
@@ -114,7 +114,7 @@ theorem strongAllowed_eq_weakBanned (dm : WithAlternatives (α → β))
 
 /-- The focal targets a metrical configuration licenses: everything
 the daughters compose to, minus the banned targets. At `β := Set W`
-this is a `PropFocusValue W` — the focus value the prosody derives. -/
+this is the focus value the prosody derives. -/
 def licensedFocusValue (dw : WithAlternatives (α → β)) (ds : WithAlternatives α) :
     Set β :=
   dw.alternatives.seq ds.alternatives \ weakBanned dw ds
@@ -131,7 +131,7 @@ theorem disjoint_licensedFocusValue_weakBanned
 
 /-- Prosodic restriction only strengthens admission: an antecedent the
 licensed focus value admits is admitted by the unrestricted Hamblin
-composition — [rooth-1992]'s fip against the prosodically derived
+composition — [rooth-1992]'s focus interpretation principle against the prosodically derived
 focus value. -/
 theorem Antecedent.Admits.of_licensed {a : Antecedent W}
     {dw : WithAlternatives (α → Set W)} {ds : WithAlternatives α}

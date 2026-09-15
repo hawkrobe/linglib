@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Alternatives.Basic
-import Linglib.Semantics.Focus.Interpretation
 import Linglib.Semantics.Questions.Hamblin
 
 /-!
@@ -15,8 +14,8 @@ what the preceding discourse supplies — a question, a prior assertion
 to correct, explicitly offered alternatives, or a parallel focus
 ([uhmann-1991]'s focus-control taxonomy, adopted by
 [hartmann-zimmermann-2007] §1.2). `Use` classifies the shapes;
-felicity (`Antecedent.Admits`) is `fip` on the antecedent's contrast
-set, uniformly across uses — and `use_not_factorsThrough_contrastSet`
+felicity (`Antecedent.Admits`) is containment of the antecedent's
+contrast set in the focus value, uniformly across uses — and `use_not_factorsThrough_contrastSet`
 shows the four-way split is invisible to the semantics.
 
 `SquiggleSet`/`SquiggleInd` state the full presuppositions of
@@ -29,7 +28,7 @@ shape through the appropriate case.
 
 ## Implementation notes
 
-Payloads are flat Hamblin sets (`PropFocusValue`), keeping antecedents
+Payloads are flat Hamblin sets, `Set (Set W)`, keeping antecedents
 over finite models `decide`-friendly; the inquisitive layer plugs in
 via `Antecedent.ofQuestion` and `Question.alt`, with
 `alt_which_singleton` identifying the two Hamblin constructions. The
@@ -39,8 +38,6 @@ move) is deferred.
 -/
 
 namespace Focus
-
-open Focus.Interpretation (fip PropFocusValue qaCongruentWeak)
 
 variable {W : Type*}
 
@@ -58,19 +55,19 @@ squiggle's antecedent — a contrast set for [rooth-1992]'s set case, or
 a single contrasting ordinary value for the individual case. -/
 inductive Antecedent (W : Type*) where
   /-- A question with (flat Hamblin) denotation `q`. -/
-  | question (q : PropFocusValue W)
+  | question (q : Set (Set W))
   /-- A prior assertion `p`, corrected among alternatives `alts`. -/
-  | assertion (p : Set W) (alts : PropFocusValue W)
+  | assertion (p : Set W) (alts : Set (Set W))
   /-- Explicitly offered alternatives ('coffee or tea?'). -/
-  | offer (alts : PropFocusValue W)
+  | offer (alts : Set (Set W))
   /-- A parallel focus with focus value `alts`. -/
-  | parallel (alts : PropFocusValue W)
+  | parallel (alts : Set (Set W))
   /-- A contrasting phrase's ordinary value ([rooth-1992]'s individual
   case; the "contrasting phrases" rule). -/
   | phrase (γ : Set W)
 
 /-- The contrast set Γ an antecedent supplies to the squiggle. -/
-def Antecedent.contrastSet : Antecedent W → PropFocusValue W
+def Antecedent.contrastSet : Antecedent W → Set (Set W)
   | .question q        => q
   | .assertion _ alts  => alts
   | .offer alts        => alts
@@ -85,22 +82,22 @@ def Antecedent.use : Antecedent W → Use
   | .parallel _     => .contrastive
   | .phrase _       => .contrastive
 
-@[simp] theorem contrastSet_question (q : PropFocusValue W) :
+@[simp] theorem contrastSet_question (q : Set (Set W)) :
     (Antecedent.question q).contrastSet = q := rfl
-@[simp] theorem contrastSet_assertion (p : Set W) (alts : PropFocusValue W) :
+@[simp] theorem contrastSet_assertion (p : Set W) (alts : Set (Set W)) :
     (Antecedent.assertion p alts).contrastSet = alts := rfl
-@[simp] theorem contrastSet_offer (alts : PropFocusValue W) :
+@[simp] theorem contrastSet_offer (alts : Set (Set W)) :
     (Antecedent.offer alts).contrastSet = alts := rfl
-@[simp] theorem contrastSet_parallel (alts : PropFocusValue W) :
+@[simp] theorem contrastSet_parallel (alts : Set (Set W)) :
     (Antecedent.parallel alts).contrastSet = alts := rfl
 
-@[simp] theorem use_question (q : PropFocusValue W) :
+@[simp] theorem use_question (q : Set (Set W)) :
     (Antecedent.question q).use = .newInfo := rfl
-@[simp] theorem use_assertion (p : Set W) (alts : PropFocusValue W) :
+@[simp] theorem use_assertion (p : Set W) (alts : Set (Set W)) :
     (Antecedent.assertion p alts).use = .corrective := rfl
-@[simp] theorem use_offer (alts : PropFocusValue W) :
+@[simp] theorem use_offer (alts : Set (Set W)) :
     (Antecedent.offer alts).use = .selective := rfl
-@[simp] theorem use_parallel (alts : PropFocusValue W) :
+@[simp] theorem use_parallel (alts : Set (Set W)) :
     (Antecedent.parallel alts).use = .contrastive := rfl
 @[simp] theorem contrastSet_phrase (γ : Set W) :
     (Antecedent.phrase γ).contrastSet = {γ} := rfl
@@ -124,21 +121,17 @@ def Use.model (o a : Set W) : Use → Antecedent W
 theorem use_surjective : Function.Surjective (Antecedent.use (W := W)) :=
   fun u => ⟨Use.model ∅ ∅ u, use_model ∅ ∅ u⟩
 
-/-- Roothian felicity of a focus value against an antecedent: `fip` on
-the antecedent's contrast set. -/
-def Antecedent.Admits (c : Antecedent W) (fv : PropFocusValue W) : Prop :=
-  fip c.contrastSet fv
-
-/-- The question case is the substrate's Q-A congruence. -/
-theorem question_admits_iff (q fv : PropFocusValue W) :
-    (Antecedent.question q).Admits fv ↔ qaCongruentWeak fv q := Iff.rfl
+/-- An antecedent admits a focus value when its contrast set lies inside the focus value,
+[rooth-1992]'s focus interpretation principle. -/
+def Antecedent.Admits (c : Antecedent W) (fv : Set (Set W)) : Prop :=
+  c.contrastSet ⊆ fv
 
 /-- `Admits` is monotone in the focus value. -/
-theorem Antecedent.Admits.mono {c : Antecedent W} {fv fv' : PropFocusValue W}
+theorem Antecedent.Admits.mono {c : Antecedent W} {fv fv' : Set (Set W)}
     (hc : c.Admits fv) (h : fv ⊆ fv') : c.Admits fv' := hc.trans h
 
 /-- An intersection of focus values is admitted iff both are. -/
-theorem admits_inter_iff {c : Antecedent W} {fv fv' : PropFocusValue W} :
+theorem admits_inter_iff {c : Antecedent W} {fv fv' : Set (Set W)} :
     c.Admits (fv ∩ fv') ↔ c.Admits fv ∧ c.Admits fv' :=
   Set.subset_inter_iff
 
@@ -167,7 +160,7 @@ def SquiggleInd (o : α) (fv : Set α) (γ : α) : Prop :=
   γ ∈ fv ∧ γ ≠ o
 
 /-- The first set-case clause alone: the antecedent is a subset of the
-focus value (at the propositional level, exactly `fip`). -/
+focus value (at the propositional level, the focus interpretation principle). -/
 theorem SquiggleSet.subset {o : α} {fv Γ : Set α} (h : SquiggleSet o fv Γ) :
     Γ ⊆ fv := h.1
 
@@ -201,7 +194,7 @@ meaning `(o, fv)`: the set case for question / offer / parallel
 antecedents, the individual case for contrasting phrases — and for
 assertion antecedents additionally the correction clause: the resolved
 ordinary value replaces (differs from) the prior assertion. -/
-def Antecedent.Resolves : Antecedent W → Set W → PropFocusValue W → Prop
+def Antecedent.Resolves : Antecedent W → Set W → Set (Set W) → Prop
   | .phrase γ, o, fv         => SquiggleInd o fv γ
   | .assertion p alts, o, fv => SquiggleSet o fv alts ∧ o ≠ p
   | c, o, fv                 => SquiggleSet o fv c.contrastSet
@@ -210,7 +203,7 @@ def Antecedent.Resolves : Antecedent W → Set W → PropFocusValue W → Prop
 clause, and a resolved contrasting phrase is a member of the focus
 value. -/
 theorem Antecedent.Resolves.admits {c : Antecedent W} {o : Set W}
-    {fv : PropFocusValue W} (h : c.Resolves o fv) : c.Admits fv := by
+    {fv : Set (Set W)} (h : c.Resolves o fv) : c.Admits fv := by
   cases c with
   | phrase γ => exact Set.singleton_subset_iff.mpr h.1
   | question q => exact h.1
@@ -221,10 +214,10 @@ theorem Antecedent.Resolves.admits {c : Antecedent W} {o : Set W}
 
 /-- Felicity factors through the contrast set: the semantics sees Γ,
 never the use label. -/
-theorem admits_factorsThrough_contrastSet (fv : PropFocusValue W) :
+theorem admits_factorsThrough_contrastSet (fv : Set (Set W)) :
     Function.FactorsThrough (Antecedent.Admits · fv)
       (Antecedent.contrastSet (W := W)) :=
-  fun _ _ h => congrArg (fip · fv) h
+  fun _ _ h => congrArg (· ⊆ fv) h
 
 /-- Distinct uses can supply one and the same Γ (a question and an
 explicit offer, say), so the four-way split is invisible to the
@@ -237,7 +230,7 @@ theorem use_not_factorsThrough_contrastSet :
 /-! ### Hamblin antecedents -/
 
 /-- The flat Hamblin set of complete answers over a domain. -/
-def hamblin (D : Type*) : PropFocusValue D := Set.range fun d => ({d} : Set D)
+def hamblin (D : Type*) : Set (Set D) := Set.range fun d => ({d} : Set D)
 
 /-- The wh-question antecedent over a whole domain. -/
 def whAntecedent (D : Type*) : Antecedent D := .question (hamblin D)
@@ -312,19 +305,19 @@ focused transitive verb, which contains the trivial relation, makes
 /-- The strong-theory *only* assertion, transposed to the propositional
 level: every true member of the resolved contrast set is the prejacent.
 The prejacent presupposition is carried separately. -/
-def onlyVia (C : PropFocusValue W) (prejacent : Set W) : Set W :=
+def onlyVia (C : Set (Set W)) (prejacent : Set W) : Set W :=
   {w | ∀ q ∈ C, w ∈ q → q = prejacent}
 
-@[simp] theorem mem_onlyVia {C : PropFocusValue W} {p : Set W} {w : W} :
+@[simp] theorem mem_onlyVia {C : Set (Set W)} {p : Set W} {w : W} :
     w ∈ onlyVia C p ↔ ∀ q ∈ C, w ∈ q → q = p := Iff.rfl
 
 /-- A true alternative distinct from the prejacent refutes *only*. -/
-theorem not_mem_onlyVia {C : PropFocusValue W} {p q : Set W} {w : W}
+theorem not_mem_onlyVia {C : Set (Set W)} {p q : Set W} {w : W}
     (hq : q ∈ C) (hw : w ∈ q) (hne : q ≠ p) : w ∉ onlyVia C p :=
   fun h => hne (h q hq hw)
 
 /-- Membership in *only* from refuting every distinct alternative. -/
-theorem mem_onlyVia_of_forall_not_mem {C : PropFocusValue W} {p : Set W}
+theorem mem_onlyVia_of_forall_not_mem {C : Set (Set W)} {p : Set W}
     {w : W} (h : ∀ q ∈ C, q ≠ p → w ∉ q) : w ∈ onlyVia C p :=
   fun q hq hwq => not_not.mp fun hne => h q hq hne hwq
 
@@ -386,21 +379,21 @@ theorem Irredundant.onlyVia_injOn {ι : Type*} {f : ι → Set W}
 /-- Narrowing the domain weakens *only* — the pragmatic domain
 restriction that repairs the over-generation of a fixed full-focus
 domain. -/
-theorem onlyVia_antitone {C C' : PropFocusValue W} (h : C ⊆ C')
+theorem onlyVia_antitone {C C' : Set (Set W)} (h : C ⊆ C')
     (p : Set W) : onlyVia C' p ⊆ onlyVia C p :=
   fun _ hw q hq => hw q (h hq)
 
 /-- A contrast set containing the trivial proposition makes *only*
 unsatisfiable for any other prejacent: the over-generation of fixing the
 domain to the full focus value of a focused transitive verb. -/
-theorem onlyVia_eq_empty_of_univ_mem {C : PropFocusValue W} {p : Set W}
+theorem onlyVia_eq_empty_of_univ_mem {C : Set (Set W)} {p : Set W}
     (hC : Set.univ ∈ C) (hp : p ≠ Set.univ) : onlyVia C p = ∅ :=
   Set.eq_empty_iff_forall_notMem.2 fun w hw => hp (hw _ hC (Set.mem_univ w)).symm
 
 /-- Against a squiggle-resolved contrast set, *only* genuinely
 excludes: the contrast clause supplies a distinct alternative that the
 assertion rules out wherever it holds. -/
-theorem onlyVia_excludes_of_squiggleSet {o : Set W} {fv C : PropFocusValue W}
+theorem onlyVia_excludes_of_squiggleSet {o : Set W} {fv C : Set (Set W)}
     (h : SquiggleSet o fv C) :
     ∃ q ∈ C, q ≠ o ∧ ∀ w ∈ onlyVia C o, w ∉ q :=
   let ⟨_, _, q, hq, hne⟩ := h

@@ -132,7 +132,7 @@ across the four uses: exhaustification consumes the resolved contrast
 set and prejacent, never the strategy — the §3.2 point that
 exhaustive readings are available in both positions. -/
 theorem exhAnswer_eq (u : Use) : exhAnswer u = {Alt.ans} := by
-  have key : onlyVia ({{Alt.ans}, {Alt.alt}} : Focus.Interpretation.PropFocusValue Alt)
+  have key : onlyVia ({{Alt.ans}, {Alt.alt}} : Set (Set Alt))
       {Alt.ans} = {Alt.ans} := by
     ext w
     constructor

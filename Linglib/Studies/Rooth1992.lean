@@ -43,7 +43,7 @@ correlate finds an antecedent for ~ under exactly one focus placement (`ellipsis
 
 namespace Rooth1992
 
-open Data.Examples Focus Focus.Interpretation WithAlternatives
+open Data.Examples Focus WithAlternatives
 
 /-! ### Focus semantic values (2) -/
 
@@ -224,7 +224,7 @@ theorem pass_union [DecidableEq E] (g g' : Finset E) : pass (g ∪ g') = pass g 
 /-- (16): the scale of acing and passing lies inside the focus semantic value of
 *I [passed]F*, and asserting the weaker member implicates the negation of the stronger. -/
 theorem verbFocus_scale :
-    fip {ace m, pass {m}} ((λ V : Finset E → Set (Grades E) => V {m}) <$>
+    {ace m, pass {m}} ⊆ ((λ V : Finset E → Set (Grades E) => V {m}) <$>
       focused pass).alternatives ∧
     NeoGricean.IsSecondaryImplicature (pass {m}) {ace m} (ace m) := by
   refine ⟨?_, NeoGricean.isSecondaryImplicature_of_ssubset (ace_ssubset_pass m)⟩
@@ -236,8 +236,8 @@ theorem verbFocus_scale :
 /-- (21): the scale of group propositions of the form 'x passed' lies inside the focus semantic
 value of *[I]F passed*. -/
 theorem subjectFocus_scale :
-    fip (Set.range pass) ((pass (E := E)) <$> focused {m}).alternatives := by
-  rw [alternatives_map_focused]; exact subset_rfl
+    Set.range pass ⊆ ((pass (E := E)) <$> focused {m}).alternatives := by
+  rw [alternatives_map_focused]
 
 /-- The acing scale does not lie inside the focus semantic value of *[I]F passed*: no group's
 passing is Mats's acing, which is why (17) suggests nothing about acing. -/
@@ -269,7 +269,7 @@ variable {E : Type} (P : Set E) (m b : E)
 def cut (x y : E) : Set (Set (E × E)) := atom (x, y)
 
 /-- (25a): *Who cut Bill down to size?* over the persons `P`. -/
-def whoCut (b : E) : PropFocusValue (Set (E × E)) := (λ x => cut x b) '' P
+def whoCut (b : E) : Set (Set (Set (E × E))) := (λ x => cut x b) '' P
 
 /-- The focus semantic value of *[Mary]F cut Bill down to size*: the propositions of the form
 'x cut Bill down to size', over every individual. -/
@@ -325,7 +325,7 @@ inductive FocusSite where
   deriving DecidableEq, Repr
 
 /-- The focus semantic value of the main clause under each placement of focus. -/
-def mainClause : FocusSite → PropFocusValue (Set (E × E))
+def mainClause : FocusSite → Set (Set (Set (E × E)))
   | .onObject => ((λ y => beats she y) <$> focused me).alternatives
   | .onSubject => ((λ x => beats x me) <$> focused she).alternatives
 
@@ -365,7 +365,7 @@ inductive OnlyFocus where
   deriving DecidableEq, Repr
 
 /-- The domain of *only* a focus position constrains, over the introduction scenario. -/
-def OnlyFocus.domain : OnlyFocus → PropFocusValue (Set (Person × Person × Person))
+def OnlyFocus.domain : OnlyFocus → Set (Set (Set (Person × Person × Person)))
   | .bill => Set.range λ y => intro Person.mary y .sue
   | .sue => Set.range λ z => intro Person.mary .bill z
 
@@ -396,7 +396,7 @@ inductive Q where
   deriving DecidableEq, Repr
 
 /-- The denotation of a question, over all persons. -/
-def Q.den : Q → PropFocusValue (Set (Person × Person))
+def Q.den : Q → Set (Set (Set (Person × Person)))
   | .whoCutBill => whoCut Set.univ .bill
   | .whoDidMaryCut => (λ y => cut Person.mary y) '' Set.univ
 
@@ -407,7 +407,7 @@ inductive AnswerFocus where
   deriving DecidableEq, Repr
 
 /-- The focus semantic value of an answer. -/
-def AnswerFocus.value : AnswerFocus → PropFocusValue (Set (Person × Person))
+def AnswerFocus.value : AnswerFocus → Set (Set (Set (Person × Person)))
   | .mary => Set.range λ x => cut x Person.bill
   | .bill => Set.range λ y => cut Person.mary y
 
