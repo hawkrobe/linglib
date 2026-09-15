@@ -8,7 +8,7 @@ predicates rather than of events: a predicate is telic when no event it applies 
 proper part it also applies to that starts or ends at a different time. Telicity is then
 derived rather than stipulated. For verbs of consumption and creation it follows from the
 mereological transfer between object and event that the thematic relation performs, the
-strictly incremental relations of `Aspect.Incremental`; for movement verbs it follows from
+strictly incremental relations of `Aspect.SINC`; for movement verbs it follows from
 the conditions the paper adds to the part relation: expansion, adjacency, source and goal.
 
 Quantized predicates are telic (`isTelic_of_qua`) but not conversely, and cumulative
@@ -43,7 +43,7 @@ paper are checked against the adjacency condition on a finite model (`Movement`)
 
 namespace Krifka1998
 
-open Mereology ArgumentStructure Aspect.Incremental Aspect.Cumulativity
+open Mereology Aspect
 
 variable {α β : Type*}
 
@@ -109,32 +109,32 @@ section Eat
 consumes. -/
 def eat (x e : Finset (Fin 3)) : Prop := x = e
 
-private theorem eat_sinc : SINC eat where
-  mso _ _ _ h hlt := ⟨_, h ▸ hlt, rfl⟩
-  uo _ _ _ h hle := ⟨_, h ▸ hle, rfl, λ _ _ hz => hz⟩
-  mse _ _ _ h hlt := ⟨_, h ▸ hlt, rfl⟩
-  ue _ _ _ h hle := ⟨_, h ▸ hle, rfl, λ _ _ hz => hz.symm⟩
+/-- The object relation of *eat* is strictly incremental and summative, with unique
+participants. -/
+theorem eat_sinc : SINC eat where
+  ue _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, λ _ hz => hz.2.symm⟩
+  uo _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, λ _ hz => hz.2⟩
   extended := ⟨{0, 1}, {0}, {0, 1}, {0}, by decide, by decide, rfl, rfl⟩
 
-instance : IsSincVerb eat :=
-  IsSincVerb.mk' eat_sinc (λ _ _ _ hx hy => hx.trans hy.symm)
-    (λ _ _ _ _ hx hy => show _ ⊔ _ = _ ⊔ _ by rw [hx, hy])
+theorem eat_sum : SUM eat := λ _ _ hx _ _ hy => congr_arg₂ (· ⊔ ·) hx hy
 
-/-- *eat apples* is cumulative: the bare plural is cumulative and *eat* is cumulative. -/
+theorem eat_up : UP eat := λ _ _ _ hx hy => hx.trans hy.symm
+
+/-- *eat apples* is cumulative: the bare plural is cumulative and *eat* is summative. -/
 theorem eat_apples_cum : CUM (VP eat Finset.Nonempty) :=
-  cum_propagation λ _ hx _ _ => hx.mono Finset.subset_union_left
+  vp_cum eat_sum λ _ hx _ _ => hx.mono Finset.subset_union_left
 
 /-- *eat two apples* is quantized: a measure phrase is quantized and *eat* is strictly
 incremental. -/
 theorem eat_two_apples_qua : QUA (VP eat (Finset.card · = 2)) :=
-  qua_propagation (extMeasure_qua 2)
+  vp_qua eat_up eat_sinc.mso (extMeasure_qua 2)
 
 end Eat
 
 /-- *eat it*: with a particular object, a strictly incremental verb phrase is quantized. -/
-theorem qua_vp_eq [SemilatticeSup α] [SemilatticeSup β] {θ : α → β → Prop} [IsSincVerb θ]
-    (y : α) : QUA (VP θ (· = y)) :=
-  qua_propagation (singleton_qua y)
+theorem qua_vp_eq [SemilatticeSup α] [SemilatticeSup β] {θ : α → β → Prop} (h : SINC θ)
+    (hU : UP θ) (y : α) : QUA (VP θ (· = y)) :=
+  vp_qua hU h.mso (singleton_qua y)
 
 /-! ### Telicity by expansion -/
 
@@ -156,7 +156,7 @@ of each other. -/
 theorem isInitialPart_of_seinc (hx : θ x e) (hx' : θ x e') (hle : e' ≤ e) :
     IsInitialPart precedes e' e :=
   ⟨hle, λ ⟨e'', h'', hp⟩ =>
-    let ⟨y, hy, hθ⟩ := h.2 x e e'' hx h''
+    let ⟨y, hy, hθ⟩ := h.2 hx h''
     h.1 y x e'' e' hθ hx' hp ⟨y, h₀ y e'' hθ, le_rfl, hy⟩⟩
 
 /-- Under a strictly expansive incremental relation, an object's events are final parts of
@@ -164,7 +164,7 @@ each other. -/
 theorem isFinalPart_of_seinc (hx : θ x e) (hx' : θ x e') (hle : e' ≤ e) :
     IsFinalPart precedes e' e :=
   ⟨hle, λ ⟨e'', h'', hp⟩ =>
-    let ⟨y, hy, hθ⟩ := h.2 x e e'' hx h''
+    let ⟨y, hy, hθ⟩ := h.2 hx h''
     h.1 x y e' e'' hx' hθ hp ⟨y, h₀ y e'' hθ, hy, le_rfl⟩⟩
 
 /-- The events of a fixed object under a strictly expansive incremental relation form a
@@ -177,8 +177,8 @@ expansive incremental relation with unique participants. -/
 theorem isTelic_vp_of_seinc (hUP : UP θ) {OBJ : α → Prop} (hOBJ : QUA OBJ) :
     IsTelic precedes (VP θ OBJ) := by
   rintro e e' ⟨x, hOx, hx⟩ ⟨x', hOx', hx'⟩ hle
-  obtain ⟨x'', hx''le, hx''⟩ := h.2 x e e' hx hle
-  obtain rfl := hUP x' x'' e' hx' hx''
+  obtain ⟨x'', hx''le, hx''⟩ := h.2 hx hle
+  obtain rfl := hUP hx' hx''
   obtain rfl : x' = x := by_contra λ hne => hOBJ hOx' hOx hne hx''le
   exact ⟨isInitialPart_of_seinc h h₀ hx hx' hle, isFinalPart_of_seinc h h₀ hx hx' hle⟩
 
@@ -200,10 +200,16 @@ def ADJ : Prop :=
 /-- A strict movement relation: adjacency, mapping to objects, and paths as objects. -/
 def SMR : Prop := ADJ adjα adjβ θ ∧ MO θ ∧ ∀ x e, θ x e → isPath x
 
-/-- A movement relation: the closure of a strict movement relation under sums of
+/-- The closure of a relation under sums of temporally ordered events. -/
+inductive PrecedenceClosure (θ' : α → β → Prop) : α → β → Prop where
+  | base {x : α} {e : β} : θ' x e → PrecedenceClosure θ' x e
+  | sum {x₁ x₂ : α} {e₁ e₂ : β} : PrecedenceClosure θ' x₁ e₁ → PrecedenceClosure θ' x₂ e₂ →
+      precedes e₁ e₂ → PrecedenceClosure θ' (x₁ ⊔ x₂) (e₁ ⊔ e₂)
+
+/-- A movement relation (71): the closure of a strict movement relation under sums of
 temporally ordered events. -/
 def MR : Prop :=
-  ∃ θ', SMR adjα adjβ isPath θ' ∧ ∀ x e, θ x e ↔ Aspect.PrecedenceClosure precedes θ' x e
+  ∃ θ', SMR adjα adjβ isPath θ' ∧ ∀ x e, θ x e ↔ PrecedenceClosure precedes θ' x e
 
 /-- The subpaths of a movement adjacent to `y` are the paths of its initial parts. -/
 def Source (y x : α) (e : β) : Prop :=
@@ -220,7 +226,10 @@ relation. -/
 theorem mr_of_smr (h : SMR adjα adjβ isPath θ)
     (hClosed : ∀ x₁ x₂ e₁ e₂, θ x₁ e₁ → θ x₂ e₂ → precedes e₁ e₂ → θ (x₁ ⊔ x₂) (e₁ ⊔ e₂)) :
     MR adjα adjβ precedes isPath θ :=
-  ⟨θ, h, λ _ _ => ⟨.base, Aspect.PrecedenceClosure.closure_subset (λ _ _ => id) hClosed⟩⟩
+  ⟨θ, h, λ _ _ => ⟨.base, λ hcl => by
+    induction hcl with
+    | base h => exact h
+    | sum _ _ hp ih₁ ih₂ => exact hClosed _ _ _ _ ih₁ ih₂ hp⟩⟩
 
 /-- *walk from the university to the capitol* is telic: a movement with a specified source
 and goal, under mapping to objects and uniqueness of participants. -/
@@ -229,8 +238,8 @@ theorem isTelic_sourceGoal (hax : NoPartPrecedes precedes) (hMO : MO θ) (hUP : 
     IsTelic precedes
       (λ e => ∃ x, θ x e ∧ Source adjα precedes θ u x e ∧ Goal adjα precedes θ v x e) := by
   rintro e e' ⟨x, hx, hS, hG⟩ ⟨x', hx', hS', hG'⟩ hle
-  obtain ⟨x'', hx''le, hx''⟩ := hMO x e e' hx hle
-  obtain rfl := hUP x' x'' e' hx' hx''
+  obtain ⟨x'', hx''le, hx''⟩ := hMO hx hle
+  obtain rfl := hUP hx' hx''
   exact ⟨(hS x' e' hx' hx''le hle).1 ((hS' x' e' hx' le_rfl le_rfl).2 (isInitialPart_self hax e')),
     (hG x' e' hx' hx''le hle).1 ((hG' x' e' hx' le_rfl le_rfl).2 (isFinalPart_self hax e'))⟩
 
