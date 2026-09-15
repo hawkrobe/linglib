@@ -5,8 +5,8 @@ import Linglib.Semantics.Genericity.NominalMappingParameter
 /-!
 # Mandarin nouns
 
-The Mandarin noun as a lexical entry: the root `Noun` with its pinyin, the classifier it counts
-with, and whether it is a proper name. Mandarin is [+arg, −pred] ([chierchia-1998]): nouns
+The Mandarin noun as a lexical entry: the root `Noun` with its pinyin and the classifier it
+counts with; a name is the root `ProperName` with its pinyin. Mandarin is [+arg, −pred] ([chierchia-1998]): nouns
 denote kinds, there is no number morphology and no article, so no covert shift is blocked and
 every bare noun is an argument; counting goes through a classifier
 (`Mandarin.Classifiers`).
@@ -21,15 +21,13 @@ namespace Mandarin.Nouns
 open Mandarin.Classifiers
 open Genericity
 
-/-- A Mandarin noun: the root entry with its pinyin, the classifier it counts with, if any, and
-whether it is a proper name. -/
+/-- A Mandarin noun: the root entry with its pinyin and the classifier it counts with, if
+any. -/
 structure Noun extends _root_.Noun where
   /-- The pinyin. -/
   pinyin : String
   /-- The classifier the noun counts with; none for a mass noun. -/
   classifier : Option Classifier := some ge
-  /-- Whether the entry is a proper name. -/
-  proper : Bool := false
   deriving DecidableEq, Repr
 
 /-! ### Common nouns -/
@@ -65,13 +63,18 @@ def laoban : Noun := { form := "老板", gloss := "boss", pinyin := "lǎobǎn", 
 
 /-! ### Proper names -/
 
-/-- A personal name. -/
-private def name (form pinyin : String) : Noun :=
-  { form, gloss := pinyin, pinyin, classifier := none, proper := true }
+/-- A Mandarin name: the root name with its pinyin. -/
+structure ProperName extends _root_.ProperName where
+  /-- The pinyin. -/
+  pinyin : String
+  deriving DecidableEq, Repr
 
-def zhangsan : Noun := name "张三" "Zhāng Sān"
-def lisi : Noun := name "李四" "Lǐ Sì"
-def xiaoming : Noun := name "小明" "Xiǎo Míng"
+/-- A personal name glossed by its pinyin. -/
+private def name (form pinyin : String) : ProperName := { form, gloss := pinyin, pinyin }
+
+def zhangsan : ProperName := name "张三" "Zhāng Sān"
+def lisi : ProperName := name "李四" "Lǐ Sì"
+def xiaoming : ProperName := name "小明" "Xiǎo Míng"
 
 /-! ### The Nominal Mapping Parameter -/
 

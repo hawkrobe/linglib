@@ -7,7 +7,7 @@ import Linglib.Semantics.Genericity.NominalMappingParameter
 # French nouns
 
 The French noun as a lexical entry: the root `GenderedNoun` over the masculine and feminine
-genders, with the mass/count feature, whether it is a proper name, and its plural. French is
+genders, with the mass/count feature and its plural; names are the root `ProperName`. French is
 [−arg, +pred] ([chierchia-1998]): nouns are predicates and need a determiner
 (`French.Determiners.inventory`) to be arguments, so no bare nominal is one. The typological
 parameters of the gender system as a classifier device follow the entries.
@@ -21,13 +21,10 @@ namespace French.Nouns
 
 open Genericity
 
-/-- A French noun: the root gendered entry with the mass/count feature, whether it is a proper
-name, and its plural. -/
+/-- A French noun: the root gendered entry with the mass/count feature and its plural. -/
 structure Noun extends GenderedNoun Gender where
   /-- The mass/count feature. -/
   countable : MassCount := .count
-  /-- Whether the entry is a proper name. -/
-  proper : Bool := false
   /-- The plural. -/
   plural : Option String := none
   deriving DecidableEq, Repr
@@ -73,13 +70,13 @@ def lait : Noun := { form := "lait", gloss := "milk", gender := .masculine, coun
 
 /-! ### Proper names -/
 
-/-- A personal name, its gender following the referent's sex. -/
-private def name (form : String) (gender : Gender) : Noun :=
-  { form, gloss := form, gender, isNaturalGender := true, proper := true }
+/-- A personal name with its natural gender. -/
+private def name (form : String) (gender : Gender) : ProperName :=
+  { form, gloss := form, gender := some gender }
 
-def jean : Noun := name "Jean" .masculine
-def marie : Noun := name "Marie" .feminine
-def pierre : Noun := name "Pierre" .masculine
+def jean : ProperName := name "Jean" .masculine
+def marie : ProperName := name "Marie" .feminine
+def pierre : ProperName := name "Pierre" .masculine
 
 /-! ### The Nominal Mapping Parameter -/
 

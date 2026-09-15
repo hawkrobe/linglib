@@ -39,20 +39,19 @@ def verbToSelStack (v : VerbEntry) : SelStack :=
 def verbToSO (v : VerbEntry) (id : Nat) : SyntacticObject :=
   mkLeafPhon .V (verbToSelStack v) v.form3sg id
 
-/-- A noun entry as a leaf: proper names project as `.D`, common nouns as bare `.N`. -/
-def nounToSO (n : English.Nouns.Noun) (id : Nat) : SyntacticObject :=
-  if n.proper then mkLeafPhon .D [] n.form id else mkLeafPhon .N [] n.form id
+/-- A proper name as a leaf, projecting as `.D`. -/
+def nameToSO (n : ProperName) (id : Nat) : SyntacticObject := mkLeafPhon .D [] n.form id
 
 /-- "John sees Mary" as a Minimalist Merge derivation: *see*'s complement
     is *Mary* (`em .right`), then *John* is added as specifier (`em .left`). -/
 def john_sees_mary : Derivation :=
   { initial := verbToSO English.Predicates.Verbal.see 31
-    steps   := [.em .right (nounToSO English.Nouns.mary 11),
-                .em .left (nounToSO English.Nouns.john 10)] }
+    steps   := [.em .right (nameToSO English.Nouns.mary 11),
+                .em .left (nameToSO English.Nouns.john 10)] }
 
 /-- The phonological yield of `john_sees_mary` is the SVO string
     "John sees Mary": the Minimalist derivation (built by `em .right` then
-    `em .left` over `verbToSO`/`nounToSO`) linearizes subject-verb-object via the
+    `em .left` over `verbToSO`/`nameToSO`) linearizes subject-verb-object via the
     derivation-grounded computable externalization (`SyntacticObject.Derivation.surfacePhon`). -/
 theorem models_svo_word_order :
     String.intercalate " " john_sees_mary.surfacePhon = "John sees Mary" := by decide

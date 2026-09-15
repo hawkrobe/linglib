@@ -6,8 +6,8 @@ import Linglib.Semantics.Genericity.NominalMappingParameter
 # Dutch nouns
 
 The Dutch noun as a lexical entry: the root `GenderedNoun` over the common and neuter genders
-that *de* and *het* mark, with the mass/count feature, whether it is a proper name, and its
-plural and diminutive where the entry records them. Dutch is [+arg, +pred] like the other
+that *de* and *het* mark, with the mass/count feature and its plural and diminutive where the
+entry records them; names are the root `ProperName`. Dutch is [+arg, +pred] like the other
 Germanic languages ([chierchia-1998]): with *de*, *het* and *een* blocking the covert ι and ∃,
 bare plurals and bare mass nouns are arguments and bare singular count nouns are not. The
 entries are the nouns of [le-bruyn-de-swart-2022]'s scrambling data.
@@ -22,13 +22,11 @@ namespace Dutch.Nouns
 
 open Genericity
 
-/-- A Dutch noun: the root gendered entry with the mass/count feature, whether it is a proper
-name, and its plural and diminutive where recorded. -/
+/-- A Dutch noun: the root gendered entry with the mass/count feature and its plural and
+diminutive where recorded. -/
 structure Noun extends GenderedNoun Gender where
   /-- The mass/count feature. -/
   countable : MassCount := .count
-  /-- Whether the entry is a proper name. -/
-  proper : Bool := false
   /-- The plural. -/
   plural : Option String := none
   /-- The diminutive. -/
@@ -63,14 +61,14 @@ def meel : Noun := { form := "meel", gloss := "flour", gender := .neuter, counta
 
 /-! ### Proper names -/
 
-/-- A personal name: common gender, following the referent's sex. -/
-private def name (form : String) : Noun :=
-  { form, gloss := form, gender := .common, isNaturalGender := true, proper := true }
+/-- A personal name with its natural gender. -/
+private def name (form : String) (gender : Gender) : ProperName :=
+  { form, gloss := form, gender := some gender }
 
-def helen : Noun := name "Helen"
-def jan : Noun := name "Jan"
-def piet : Noun := name "Piet"
-def marie : Noun := name "Marie"
+def helen : ProperName := name "Helen" .feminine
+def jan : ProperName := name "Jan" .masculine
+def piet : ProperName := name "Piet" .masculine
+def marie : ProperName := name "Marie" .feminine
 
 /-! ### The Nominal Mapping Parameter -/
 

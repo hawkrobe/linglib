@@ -7,11 +7,11 @@ import Linglib.Fragments.English.Inflection
 /-!
 # English nouns
 
-The English noun as a lexical entry: the root `Noun` with the mass/count feature, whether it is
-a proper name, its lexical gender where it has one, and its plural where that is not the regular
-*-s* one, which `Inflection.lean`'s `suffixS` supplies. English nouns have no grammatical
-gender; the label recorded for *man*, *woman* and the names is the natural gender their pronouns
-agree with. English sets [chierchia-1998]'s Nominal Mapping Parameter to [+arg, +pred], so
+The English noun as a lexical entry: the root `Noun` with the mass/count feature, its lexical
+gender where it has one, and its plural where that is not the regular *-s* one, which
+`Inflection.lean`'s `suffixS` supplies; names are the root `ProperName`. English nouns have
+no grammatical gender; the label recorded for *man*, *woman* and the names is the natural
+gender their pronouns agree with. English sets [chierchia-1998]'s Nominal Mapping Parameter to [+arg, +pred], so
 nouns denote kinds or predicates: with *the* and *a* blocking the covert ι and ∃, bare plurals
 and bare mass nouns are arguments and a bare singular count noun is not
 (`Studies/Chierchia1998.lean`).
@@ -33,13 +33,11 @@ namespace English.Nouns
 open Genericity
 open Morphology (Word)
 
-/-- An English noun: the root entry with the mass/count feature, whether it is a proper name,
-its lexical gender where it has one, and its plural where that is not the regular *-s* one. -/
+/-- An English noun: the root entry with the mass/count feature, its lexical gender where it
+has one, and its plural where that is not the regular *-s* one. -/
 structure Noun extends _root_.Noun where
   /-- The mass/count feature ([krifka-2026]). -/
   countable : MassCount := .count
-  /-- Whether the entry is a proper name. -/
-  proper : Bool := false
   /-- The natural gender the noun's pronouns agree with, where it has one. -/
   gender : Option Gender := none
   /-- The plural, where it is not the regular *-s* one. -/
@@ -54,27 +52,18 @@ def Noun.common (form : String) : Noun := { form, gloss := form }
 /-- A mass noun. -/
 def Noun.mass (form : String) : Noun := { form, gloss := form, countable := .mass }
 
-/-- A proper name. -/
-def Noun.name (form : String) (gender : Option Gender := none) : Noun :=
-  { form, gloss := form, proper := true, gender }
-
-/-- The form at a number: the citation form in the singular; in the plural, for a common count
-noun, the irregular plural where there is one and else the regular *-s* one. -/
+/-- The form at a number: the citation form in the singular; in the plural, for a count noun,
+the irregular plural where there is one and else the regular *-s* one. -/
 def Noun.realize (n : Noun) : Number → Option String
   | .singular => some n.form
   | .plural =>
-    if n.countable = .mass ∨ n.proper then none
-    else some (n.irregularPlural.getD (suffixS n.form))
+    if n.countable = .mass then none else some (n.irregularPlural.getD (suffixS n.form))
   | _ => none
 
-/-- The singular as a word token: a `PROPN` in the third person for a name, else a `NOUN`, with
-the gender where the entry has one. -/
+/-- The singular as a word token: a `NOUN` with the gender where the entry has one. -/
 def Noun.toWordSg (n : Noun) : Word :=
-  { form := n.form
-    cat := if n.proper then .PROPN else .NOUN
-    features := { number := some .Sing
-                  person := if n.proper then some .third else none
-                  gender := n.gender.bind Gender.toUD } }
+  { form := n.form, cat := .NOUN
+    features := { number := some .Sing, gender := n.gender.bind Gender.toUD } }
 
 /-- The entry as a word token at a number, where it has a form there. -/
 def Noun.toWord (n : Noun) (num : Number) : Option Word :=
@@ -131,13 +120,17 @@ def tea : Noun := .mass "tea"
 
 /-! ### Proper names -/
 
-def john : Noun := .name "John" (some .masculine)
-def mary : Noun := .name "Mary" (some .feminine)
-def bill : Noun := .name "Bill" (some .masculine)
-def sue : Noun := .name "Sue" (some .feminine)
-def fred : Noun := .name "Fred" (some .masculine)
-def sam : Noun := .name "Sam"
-def pat : Noun := .name "Pat"
+/-- A name glossed by itself. -/
+private def name (form : String) (gender : Flat Gender := ⊥) : ProperName :=
+  { form, gloss := form, gender }
+
+def john : ProperName := name "John" (some .masculine)
+def mary : ProperName := name "Mary" (some .feminine)
+def bill : ProperName := name "Bill" (some .masculine)
+def sue : ProperName := name "Sue" (some .feminine)
+def fred : ProperName := name "Fred" (some .masculine)
+def sam : ProperName := name "Sam"
+def pat : ProperName := name "Pat"
 
 /-! ### The Nominal Mapping Parameter -/
 

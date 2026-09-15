@@ -57,10 +57,10 @@ open Processing.MinimalPairs
 open Minimalist SyntacticObject
 open Binding (SimpleClause Pos CommandRelation)
 
-private abbrev john := English.Nouns.john.toWordSg
-private abbrev mary := English.Nouns.mary.toWordSg
-private abbrev sam := English.Nouns.sam.toWordSg
-private abbrev pat := English.Nouns.pat.toWordSg
+private abbrev john := English.Nouns.john.toWord
+private abbrev mary := English.Nouns.mary.toWord
+private abbrev sam := English.Nouns.sam.toWord
+private abbrev pat := English.Nouns.pat.toWord
 private abbrev he := English.Pronouns.he.toWord
 private abbrev him := English.Pronouns.him.toWord
 private abbrev her := English.Pronouns.her.toWord

@@ -6,8 +6,8 @@ import Linglib.Semantics.Genericity.NominalMappingParameter
 # Japanese nouns
 
 The Japanese noun as a lexical entry: the root `Noun` with its romanization, the classifier it
-counts with, whether it is a proper name, and the optional plural in *-tachi* where the entry
-records one. Japanese is [+arg, −pred] ([chierchia-1998]): nouns denote kinds, and with no
+counts with, and the optional plural in *-tachi* where the entry records one; a name is the root
+`ProperName` with its romanization. Japanese is [+arg, −pred] ([chierchia-1998]): nouns denote kinds, and with no
 articles no covert shift is blocked, so every bare noun is an argument. The classifiers are
 `Japanese.Classifier`.
 
@@ -23,14 +23,12 @@ open Japanese (Classifier)
 open Genericity
 
 /-- A Japanese noun: the root entry with its romanization, the classifier it counts with, if any,
-whether it is a proper name, and its optional plural. -/
+and its optional plural. -/
 structure Noun extends _root_.Noun where
   /-- The romanization. -/
   romaji : String
   /-- The classifier the noun counts with; none for a mass noun. -/
   classifier : Option Classifier := some .tsu
-  /-- Whether the entry is a proper name. -/
-  proper : Bool := false
   /-- The optional plural in *-tachi*. -/
   plural : Option String := none
   deriving DecidableEq, Repr
@@ -62,14 +60,20 @@ def tomodachi : Noun :=
 
 /-! ### Proper names -/
 
-/-- A personal name. -/
-private def name (form romaji : String) : Noun :=
-  { form, gloss := romaji, romaji, classifier := none, proper := true }
+/-- A Japanese name: the root name with its romanization. -/
+structure ProperName extends _root_.ProperName where
+  /-- The romanization. -/
+  romaji : String
+  deriving DecidableEq, Repr
 
-def taro : Noun := name "太郎" "Tarō"
-def hanako : Noun := name "花子" "Hanako"
-def yamada : Noun := name "山田" "Yamada"
-def tanaka : Noun := name "田中" "Tanaka"
+/-- A personal name glossed by its romanization. -/
+private def name (form romaji : String) (gender : Flat Gender := ⊥) : ProperName :=
+  { form, gloss := romaji, romaji, gender }
+
+def taro : ProperName := name "太郎" "Tarō" (some .masculine)
+def hanako : ProperName := name "花子" "Hanako" (some .feminine)
+def yamada : ProperName := name "山田" "Yamada"
+def tanaka : ProperName := name "田中" "Tanaka"
 
 /-! ### The Nominal Mapping Parameter -/
 
