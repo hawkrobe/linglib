@@ -1,0 +1,302 @@
+[
+  {
+    "id": "waldonetal2023_1",
+    "source": {"bibkey": "hart-1958", "paperLabel": ""},
+    "reportedIn": {"bibkey": "waldon-etal-2023", "paperLabel": "(1)"},
+    "language": "stan1293",
+    "primaryText": "A legal rule forbids you to take a vehicle into the public park.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "Hart's vehicle rule"]
+    ],
+    "comment": "Hart's no-vehicles-in-the-park rule; whether a bicycle, roller skates or a toy car count as vehicles is what the rule leaves open.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "waldonetal2023_rule",
+    "source": {"bibkey": "waldon-etal-2023", "paperLabel": "§3.1"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No electronic devices are allowed in the theater.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["rule", "prohibition"],
+      ["artifactNoun", "electronic device"]
+    ],
+    "comment": "The rule of Figure 1, read in the goal-neutral condition and with the goals of limiting light, limiting noise and preventing recordings.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "waldonetal2023_4a",
+    "source": {"bibkey": "sassoon-fadlon-2017", "paperLabel": ""},
+    "reportedIn": {"bibkey": "waldon-etal-2023", "paperLabel": "(4a)"},
+    "language": "stan1293",
+    "primaryText": "This tree is a pine in some respects.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "This tree is a pine in most respects.", "judgment": "unacceptable"},
+      {"form": "This tree is a pine in every respect.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "dimensional"],
+      ["nounType", "natural kind"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "waldonetal2023_4b",
+    "source": {"bibkey": "sassoon-fadlon-2017", "paperLabel": ""},
+    "reportedIn": {"bibkey": "waldon-etal-2023", "paperLabel": "(4b)"},
+    "language": "stan1293",
+    "primaryText": "This place is a church in some respects.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "dimensional"],
+      ["nounType", "artifact"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "waldonetal2023_4c",
+    "source": {"bibkey": "sassoon-fadlon-2017", "paperLabel": ""},
+    "reportedIn": {"bibkey": "waldon-etal-2023", "paperLabel": "(4c)"},
+    "language": "stan1293",
+    "primaryText": "This place is safe in some respects.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "dimensional"],
+      ["nounType", "multidimensional adjective"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "waldonetal2023_5a",
+    "source": {"bibkey": "sassoon-fadlon-2017", "paperLabel": ""},
+    "reportedIn": {"bibkey": "waldon-etal-2023", "paperLabel": "(5a)"},
+    "language": "stan1293",
+    "primaryText": "This tree is more a pine than that one.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "This tree is more a pine than an oak.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "degree"],
+      ["nounType", "natural kind"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "waldonetal2023_5b",
+    "source": {"bibkey": "sassoon-fadlon-2017", "paperLabel": ""},
+    "reportedIn": {"bibkey": "waldon-etal-2023", "paperLabel": "(5b)"},
+    "language": "stan1293",
+    "primaryText": "This place is more a church than that one.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [
+      {"form": "This place is more a church than an art gallery.", "judgment": "questionable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "degree"],
+      ["nounType", "artifact"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "waldonetal2023_5c",
+    "source": {"bibkey": "sassoon-fadlon-2017", "paperLabel": ""},
+    "reportedIn": {"bibkey": "waldon-etal-2023", "paperLabel": "(5c)"},
+    "language": "stan1293",
+    "primaryText": "This place is more safe than that one.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "degree"],
+      ["nounType", "multidimensional adjective"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "waldonetal2023_7",
+    "source": {"bibkey": "waldon-etal-2023", "paperLabel": "(7)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "This tree is taller than that one.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "This tree is taller than it is wide.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "degree"],
+      ["nounType", "single-dimensional adjective"]
+    ],
+    "comment": "Not context sensitive: the comparative orders two degrees.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "waldonetal2023_10a",
+    "source": {"bibkey": "waldon-etal-2023", "paperLabel": "(10a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every vehicle is prohibited from the park.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "quantificational"],
+      ["parameters", "F, W, s"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "waldonetal2023_11a",
+    "source": {"bibkey": "waldon-etal-2023", "paperLabel": "(11a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "This object is more of a vehicle than that one.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "degree"],
+      ["parameters", "F, W project"]
+    ],
+    "comment": "Context sensitivity persists in the artifact noun comparative.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "waldonetal2023_16a",
+    "source": {"bibkey": "waldon-etal-2023", "paperLabel": "(16a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No electronic devices are allowed in the theater. By the way: for our purposes, a flashlight counts as an electronic device.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "meta-linguistic negotiation"]
+    ],
+    "comment": "What counts as a member of the category is up for negotiation, as a threshold is for a gradable adjective.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "waldonetal2023_16b",
+    "source": {"bibkey": "waldon-etal-2023", "paperLabel": "(16b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Get me a long ladder. By the way: for our purposes, 20 feet counts as long for a ladder.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "meta-linguistic negotiation"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "waldonetal2023_16c",
+    "source": {"bibkey": "waldon-etal-2023", "paperLabel": "(16c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Put all the bottles of Heineken in the fridge. By the way: for our purposes, nothing that my neighbors bought for their party counts as a bottle of Heineken.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "meta-linguistic negotiation"],
+      ["analysis", "domain restriction"]
+    ],
+    "comment": "Domain restriction to the salient bottles is available, but what counts as a bottle of Heineken is not negotiated.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]

@@ -802,6 +802,34 @@ theorem spatialNormalizedScore_nonneg
 def multiplicativeScore (measures : List (α → K)) (x : α) : K :=
   measures.foldl (λ acc f => acc * f x) 1
 
+/-- The weighted score is the sum of the weighted measurements. -/
+theorem weightedScore_eq_sum (weights : List K) (measures : List (α → K)) (x : α) :
+    weightedScore weights measures x = ((weights.zip measures).map λ p => p.1 * p.2 x).sum := by
+  rw [weightedScore, List.sum_eq_foldl, ← List.foldl_map]
+
+/-- The multiplicative score is the product of the measurements. -/
+theorem multiplicativeScore_eq_prod (measures : List (α → K)) (x : α) :
+    multiplicativeScore measures x = (measures.map (· x)).prod := by
+  rw [multiplicativeScore, List.prod_eq_foldl, ← List.foldl_map]
+
+/-- A natural kind fails on any single dimension: one zero measurement zeroes the product. -/
+theorem multiplicativeScore_eq_zero {measures : List (α → K)} {x : α} {f : α → K}
+    (hf : f ∈ measures) (h : f x = 0) : multiplicativeScore measures x = 0 := by
+  rw [multiplicativeScore_eq_prod]
+  exact List.prod_eq_zero (List.mem_map.2 ⟨f, hf, h⟩)
+
+/-- An artifact compensates: with positive weights and nonnegative measurements, one positive
+measurement makes the weighted score positive. -/
+theorem weightedScore_pos {weights : List K} {measures : List (α → K)} {x : α}
+    (hw : ∀ w ∈ weights, 0 < w) (hm : ∀ f ∈ measures, 0 ≤ f x)
+    (h : ∃ p ∈ weights.zip measures, 0 < p.2 x) : 0 < weightedScore weights measures x := by
+  rw [weightedScore_eq_sum]
+  obtain ⟨p, hp, hpx⟩ := h
+  refine (mul_pos (hw _ (List.of_mem_zip hp).1) hpx).trans_le
+    (List.single_le_sum (λ y hy => ?_) _ (List.mem_map.2 ⟨p, hp, rfl⟩))
+  obtain ⟨q, hq, rfl⟩ := List.mem_map.1 hy
+  exact mul_nonneg (hw _ (List.of_mem_zip hq).1).le (hm _ (List.of_mem_zip hq).2)
+
 end Scores
 
 end Degree.Aggregation

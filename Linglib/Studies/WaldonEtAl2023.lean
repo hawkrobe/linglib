@@ -1,419 +1,173 @@
 import Linglib.Semantics.Degree.Aggregation
-import Linglib.Core.Probability.Posterior
+import Linglib.Data.Examples.WaldonEtAl2023
 import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.DeriveFintype
-import Mathlib.Data.Fintype.Prod
 
 /-!
-# [waldon-etal-2023]
+# Waldon, Condoravdi, Levin & Degen (2023): On the Context Dependence of Artifact Noun Interpretation
 
-Waldon, B., Condoravdi, C., Levin, B., & Degen, J. (2023). On the context
-dependence of artifact noun interpretation. In *Proceedings of Sinn und
-Bedeutung 27*, pp. 674–692.
+This file formalizes [waldon-etal-2023]'s account of how a policy goal shapes the boundary of an
+artifact noun category, *no electronic devices are allowed in the theater* read with the goal of
+limiting light or of limiting noise. Following [sassoon-fadlon-2017], an artifact noun denotes
+an additive, weighted, multi-dimensional measure (2), whereas a natural kind composes its
+dimensions multiplicatively (3), so that one failed dimension excludes an entity from the kind
+but not from the artifact category. The proposal (8) makes the dimensions and their weights
+contextual: an explicit goal weights the context-independent category measure by `γ` and the
+goal-relevant feature by `1 − γ` (13), and with no goal stated the goal weight is split by the
+goals' plausibility (14) (`Norming`, `measure`). The interpreter's posterior that an object is
+prohibited (12), under the paper's simplifying assumptions of a uniform threshold on `[0, 1]`
+and an even prior, is the measure itself (`prohibitionPosterior_eq`). The Goal Insensitive
+hypothesis is `γ = 1`, under which no condition moves any object; under Goal Sensitivity an
+object's prohibition orders across explicit goals by its goal-relevant features, and one goal
+raises an object above the neutral baseline while lowering another, which no single shift of
+the standard of comparison can do (`not_threshold_shift`). The experiment's Bayesian data
+analysis estimates `γ` at about 0.76, with 1 outside the credible interval.
 
-## Key Claims
+## Implementation notes
 
-1. **Goal Sensitivity**: policy goals systematically modulate artifact noun
-   category boundaries. A flashlight is more likely to count as an
-   "electronic device" when the goal is limiting distracting light than
-   when it's limiting noise.
+Objects and goals are types, and the category, feature and plausibility measures of the
+norming studies are the fields of `Norming`, bounded as the slider scales are, in place of
+values retyped from the paper; every prediction is stated over them and over `γ`. The
+posterior is the Bayes ratio with the threshold marginalized by Lebesgue measure on `[0, m]`.
+The paper's examples are the rows of `Data.Examples.WaldonEtAl2023`.
 
-2. **Multi-dimensional degree semantics for artifact nouns** (eq. 8):
-   ⟦vehicle⟧ = λx. Σ_{f ∈ **F**(vehicle)} f(x) · **W**(vehicle, f)
-   where **F** returns context-relevant measure functions and **W** weights
-   them. Artifact nouns compose additively ([sassoon-fadlon-2017]),
-   in contrast to natural kinds which compose multiplicatively.
+## References
 
-   This is the `weightedScore` substrate primitive in
-   `Semantics/Degree/Aggregation.lean`; the physical disturbance
-   predicates of [tham-2025] normalise the same weighted sum by the
-   host's spatial extent, a denominator the artifact-noun domain lacks.
-
-3. **Interpretive model** (§4.2, the paper's implemented version per its
-   own simplifying assumptions): a literal Bayesian update over each
-   object's prohibition status. The threshold `s` is uniform on [0, 1]
-   and marginalised analytically; `F`/`W` are fixed per condition; the
-   prohibition prior is 1/2. The marginal posterior that `o` is
-   prohibited then *equals the goal-weighted measure* `m(o)`
-   (`prohibitionPosterior_eq_measure`), so every behavioural prediction
-   reduces to a measure comparison.
-
-4. **Goal Sensitive vs. Goal Insensitive** (§4.3): the single free
-   parameter γ weights the context-independent `cat` dimension against
-   the goal-relevant dimensions. γ = 1 is the Goal Insensitive null —
-   provably condition-independent (`goal_insensitive_at_one`) — while
-   every qualitative prediction below holds for *all* γ < 1; the BDA
-   maximum-likelihood estimate is γ = 0.758 (95% CrI [0.756, 0.758]).
-
-## Model
-
-    m_g(o)  = γ·cat(o) + (1−γ)·f_g(o)                      (eq. 13)
-    m_B(o)  = γ·cat(o) + (1−γ)·Σ_g p(g)·f_g(o)             (eq. 14)
-    P(o prohibited | rule) = m(o)                           (eq. 12, fn. 20-21)
-
-where `cat` is the category-membership measure, `f_g` the goal-relevant
-feature measures, and `p` the goal-plausibility function. Both measure
-forms are `weightedScore` instances ([sassoon-fadlon-2017] additive
-aggregation).
+* [waldon-etal-2023]
+* [sassoon-fadlon-2017]
+* [kennedy-2007]
+* [lassiter-goodman-2017]
 -/
+
+open Degree.Aggregation MeasureTheory
+open scoped ENNReal
 
 namespace WaldonEtAl2023
 
-open Degree.Aggregation
+variable {O G : Type*} [Fintype G]
 
--- ════════════════════════════════════════════════════
--- § 1. Domain Types
--- ════════════════════════════════════════════════════
+/-! ### The norming data and the contextual measure -/
 
-/-- Objects in the "No electronic devices" scenario (Fig. 1). -/
-inductive Object where
-  | candle      -- clear non-member
-  | flashlight  -- edge case
-  | boombox     -- clear member
-  | tablet      -- clear member
-  deriving Repr, DecidableEq, Fintype
+/-- The measures the norming studies supply (§3.1): the category-membership measure `cat`, the
+goal-relevant feature measures, on the unit interval, and the plausibility of the goals, a
+distribution. -/
+structure Norming (O G : Type*) [Fintype G] where
+  cat : O → ℝ
+  feature : G → O → ℝ
+  plausibility : G → ℝ
+  cat_mem : ∀ o, cat o ∈ Set.Icc 0 1
+  feature_mem : ∀ g o, feature g o ∈ Set.Icc 0 1
+  plausibility_nonneg : ∀ g, 0 ≤ plausibility g
+  plausibility_sum : ∑ g, plausibility g = 1
 
-/-- The signaler's policy goals (Appendix A). -/
-inductive Goal where
-  | limitLight         -- "emit light that could distract..."
-  | limitNoise         -- "create noise that could distract..."
-  | preventRecordings  -- "record performances and distribute..."
-  deriving Repr, DecidableEq, Fintype
+/-- An experimental condition: no goal stated, or an explicit policy goal. -/
+inductive Condition (G : Type*)
+  | neutral
+  | explicit (g : G)
 
-/-- Experimental conditions (determines latentPrior over Goals). -/
-inductive GoalCondition where
-  | neutral            -- no goal stated; prior spread across goals
-  | limitLight         -- goal = limitLight; prior concentrated
-  | limitNoise
-  | preventRecordings
-  deriving Repr, DecidableEq, Fintype
+variable (N : Norming O G) (γ : ℝ)
 
--- ════════════════════════════════════════════════════
--- § 2. Feature Scores (Schematic)
--- ════════════════════════════════════════════════════
+/-- The goal-weighted measure of the artifact noun, (13) under an explicit goal and (14) with
+the goal weight split by plausibility: a `weightedScore` over the category and the goal
+dimensions. -/
+noncomputable def measure : Condition G → O → ℝ
+  | .explicit g => weightedScore [γ, 1 - γ] [N.cat, N.feature g]
+  | .neutral => λ o => γ * N.cat o + (1 - γ) * ∑ g, N.plausibility g * N.feature g o
 
-/-! **These values are schematic approximations, not from the paper's
-    actual norming data.** The paper parameterizes the feature measures
-    `f_g(o)`, the category measure `cat(o)`, and the goal plausibilities
-    `p(g)` via separate norming studies (feature attribution, category
-    membership, and goal plausibility, §3.1). The actual values are
-    available at the OSF links cited in the paper. The values below
-    capture the qualitative pattern described in the paper (flashlights
-    emit light but not noise; boomboxes emit noise but not light; etc.);
-    the prediction theorems in §5 are additionally γ-generic, so no
-    fitted parameter value is assumed. -/
+theorem measure_explicit (g : G) (o : O) :
+    measure N γ (.explicit g) o = γ * N.cat o + (1 - γ) * N.feature g o := by
+  simp [measure, weightedScore]
 
-/-- Goal-relevant feature measures — the components of the paper's eq. (8),
-parameterised in the paper by the feature-attribution norming study. -/
-def emitLight : Object → ℚ
-  | .candle => 7/10 | .flashlight => 9/10 | .boombox => 1/10 | .tablet => 6/10
+/-- The plausibility-weighted feature lies on the unit interval. -/
+theorem mix_mem_Icc (o : O) : ∑ g, N.plausibility g * N.feature g o ∈ Set.Icc 0 1 :=
+  ⟨Finset.sum_nonneg λ g _ => mul_nonneg (N.plausibility_nonneg g) (N.feature_mem g o).1,
+    (Finset.sum_le_sum λ g _ => mul_le_of_le_one_right (N.plausibility_nonneg g)
+      (N.feature_mem g o).2).trans_eq N.plausibility_sum⟩
 
-def emitNoise : Object → ℚ
-  | .candle => 1/20 | .flashlight => 1/20 | .boombox => 9/10 | .tablet => 3/10
+/-- For `γ` on the unit interval the measure lies on the unit interval, as the threshold reads
+it. -/
+theorem measure_mem_Icc (hγ0 : 0 ≤ γ) (hγ1 : γ ≤ 1) (c : Condition G) (o : O) :
+    measure N γ c o ∈ Set.Icc 0 1 := by
+  have hc := N.cat_mem o
+  rcases c with _ | g
+  · have hm := mix_mem_Icc N o
+    simp only [measure, Set.mem_Icc] at *
+    constructor <;> nlinarith
+  · have hf := N.feature_mem g o
+    rw [measure_explicit]
+    simp only [Set.mem_Icc] at *
+    constructor <;> nlinarith
 
-def canRecord : Object → ℚ
-  | .candle => 1/20 | .flashlight => 1/20 | .boombox => 1/20 | .tablet => 9/10
+/-! ### The interpretive model (12) -/
 
-/-- The feature measure a policy goal makes relevant (eq. 13). -/
-def goalFeature : Goal → Object → ℚ
-  | .limitLight => emitLight
-  | .limitNoise => emitNoise
-  | .preventRecordings => canRecord
+/-- The probability that a measure meets a standard uniform on the unit interval: the Lebesgue
+mass of `[0, m]`. -/
+noncomputable def meetsProb (m : ℝ) : ℝ≥0∞ := volume (Set.Icc (0 : ℝ) m)
 
-/-- `cat`: the context-independent category-membership measure (the paper's
-`cat^{elec.device}`, from the category-membership norming study). -/
-def cat : Object → ℚ
-  | .candle     => 1/20   -- clearly not electronic
-  | .flashlight => 1/2    -- edge case (~0.5 norming)
-  | .boombox    => 19/20  -- clearly electronic
-  | .tablet     => 19/20  -- clearly electronic
+theorem meetsProb_eq (m : ℝ) : meetsProb m = ENNReal.ofReal m := by
+  rw [meetsProb, Real.volume_Icc, sub_zero]
 
-theorem cat_pos : ∀ o : Object, 0 < cat o := by
-  intro o; cases o <;> norm_num [cat]
+/-- The posterior that an object of measure `m` is prohibited: the Bayes ratio of (12) with an
+even prior and the threshold marginalized. -/
+noncomputable def prohibitionPosterior (m : ℝ) : ℝ≥0∞ :=
+  2⁻¹ * meetsProb m / (2⁻¹ * meetsProb m + 2⁻¹ * (1 - meetsProb m))
 
-/-- Goal-plausibility function `p` for the goal-neutral condition (eq. 14,
-fn. 22: values from the goal-plausibility norming, summing to 1 over the
-three goals; uniform here, schematically). -/
-def plausibility : Goal → ℚ := fun _ => 1/3
+/-- The posterior is the measure. -/
+theorem prohibitionPosterior_eq {m : ℝ} (hm1 : m ≤ 1) :
+    prohibitionPosterior m = ENNReal.ofReal m := by
+  have h1 : meetsProb m ≤ 1 := by
+    rw [meetsProb_eq, ← ENNReal.ofReal_one]
+    exact ENNReal.ofReal_le_ofReal hm1
+  rw [prohibitionPosterior, ← mul_add, add_tsub_cancel_of_le h1, mul_one, meetsProb_eq,
+    ENNReal.mul_div_right_comm, ENNReal.div_self (by norm_num) (by norm_num), one_mul]
 
--- ════════════════════════════════════════════════════
--- § 3. The Goal-Weighted Measure (eqs. 8, 13, 14)
--- ════════════════════════════════════════════════════
+/-- Every prediction is a comparison of measures. -/
+theorem prohibitionPosterior_lt_iff {m m' : ℝ} (hm0 : 0 ≤ m) (hm1 : m ≤ 1) (hm0' : 0 ≤ m')
+    (hm1' : m' ≤ 1) : prohibitionPosterior m < prohibitionPosterior m' ↔ m < m' := by
+  rw [prohibitionPosterior_eq hm1, prohibitionPosterior_eq hm1',
+    ENNReal.ofReal_lt_ofReal_iff_of_nonneg hm0]
 
-/-- The context-sensitive measure `⟦electronic device⟧^{F,W}` under each
-experimental condition (eqs. 13–14): a `weightedScore` over the `cat`
-dimension (weight γ) and the goal-relevant dimensions (weight 1−γ,
-plausibility-split in the goal-neutral condition). -/
-def deviceMeasure (γ : ℚ) : GoalCondition → Object → ℚ
-  | .neutral => weightedScore
-      (γ :: [Goal.limitLight, .limitNoise, .preventRecordings].map
-        fun g => (1 - γ) * plausibility g)
-      (cat :: [Goal.limitLight, .limitNoise, .preventRecordings].map goalFeature)
-  | .limitLight        => weightedScore [γ, 1 - γ] [cat, emitLight]
-  | .limitNoise        => weightedScore [γ, 1 - γ] [cat, emitNoise]
-  | .preventRecordings => weightedScore [γ, 1 - γ] [cat, canRecord]
+/-! ### Goal sensitivity (§4.3) -/
 
-/-- Closed form for the explicit-goal conditions (eq. 13). -/
-theorem deviceMeasure_limitLight (γ : ℚ) (o : Object) :
-    deviceMeasure γ .limitLight o = γ * cat o + (1 - γ) * emitLight o := by
-  simp [deviceMeasure, weightedScore]
+/-- The Goal Insensitive hypothesis, `γ = 1`: no condition moves any object. -/
+theorem measure_one (c c' : Condition G) (o : O) : measure N 1 c o = measure N 1 c' o := by
+  rcases c with _ | g <;> rcases c' with _ | g' <;> simp [measure, weightedScore]
 
-theorem deviceMeasure_limitNoise (γ : ℚ) (o : Object) :
-    deviceMeasure γ .limitNoise o = γ * cat o + (1 - γ) * emitNoise o := by
-  simp [deviceMeasure, weightedScore]
+/-- Under Goal Sensitivity, an object's measure across explicit goals orders by its
+goal-relevant features. -/
+theorem measure_explicit_lt (hγ : γ < 1) {g g' : G} {o : O}
+    (h : N.feature g o < N.feature g' o) :
+    measure N γ (.explicit g) o < measure N γ (.explicit g') o := by
+  rw [measure_explicit, measure_explicit]
+  nlinarith
 
-theorem deviceMeasure_preventRecordings (γ : ℚ) (o : Object) :
-    deviceMeasure γ .preventRecordings o = γ * cat o + (1 - γ) * canRecord o := by
-  simp [deviceMeasure, weightedScore]
-
-/-- Closed form for the goal-neutral condition (eq. 14): the goal weight is
-split by plausibility. -/
-theorem deviceMeasure_neutral (γ : ℚ) (o : Object) :
-    deviceMeasure γ .neutral o
-      = γ * cat o + (1 - γ) * (plausibility .limitLight * emitLight o
-          + plausibility .limitNoise * emitNoise o
-          + plausibility .preventRecordings * canRecord o) := by
-  simp [deviceMeasure, weightedScore, goalFeature]
+/-- An explicit goal moves an object away from the neutral baseline by the goal weight times
+the excess of the goal's feature over the plausibility-weighted mix. -/
+theorem measure_explicit_sub_neutral (g : G) (o : O) :
+    measure N γ (.explicit g) o - measure N γ .neutral o =
+      (1 - γ) * (N.feature g o - ∑ g', N.plausibility g' * N.feature g' o) := by
+  rw [measure_explicit]
+  simp only [measure]
   ring
 
-/-- The measure stays in [0, 1] for γ ∈ [0, 1] — the domain on which the
-threshold semantics reads it as a probability. -/
-theorem deviceMeasure_mem_Icc {γ : ℚ} (h0 : 0 ≤ γ) (h1 : γ ≤ 1)
-    (c : GoalCondition) (o : Object) :
-    deviceMeasure γ c o ∈ Set.Icc (0 : ℚ) 1 := by
-  constructor <;>
-    (cases c <;> cases o <;>
-      simp [deviceMeasure, weightedScore, goalFeature, cat, emitLight, emitNoise,
-        canRecord, plausibility] <;>
-      nlinarith)
+/-- Bidirectionality: under Goal Sensitivity one goal raises an object whose feature exceeds
+the mix and lowers one whose feature falls short of it, the flashlight and the boombox under
+the goal of limiting light. -/
+theorem measure_bidirectional (hγ : γ < 1) {g : G} {o o' : O}
+    (ho : ∑ g', N.plausibility g' * N.feature g' o < N.feature g o)
+    (ho' : N.feature g o' < ∑ g', N.plausibility g' * N.feature g' o') :
+    measure N γ .neutral o < measure N γ (.explicit g) o ∧
+      measure N γ (.explicit g) o' < measure N γ .neutral o' := by
+  constructor
+  · have := measure_explicit_sub_neutral N γ g o
+    nlinarith
+  · have := measure_explicit_sub_neutral N γ g o'
+    nlinarith
 
--- ════════════════════════════════════════════════════
--- § 4. The Interpretive Model (eq. 12)
--- ════════════════════════════════════════════════════
-
-open scoped ENNReal
-
-/-- Probability that an object meets the standard: the threshold `s` is
-uniform on [0, 1] (fn. 20), so `P(pos^s(o) = 1) = P(s ≤ m(o))` is the
-Lebesgue mass of `[0, m]`. -/
-noncomputable def posProb (m : ℚ) : ℝ≥0∞ :=
-  MeasureTheory.volume (Set.Icc (0 : ℝ) (m : ℝ))
-
-theorem posProb_eq (m : ℚ) : posProb m = ENNReal.ofReal (m : ℝ) := by
-  rw [posProb, Real.volume_Icc, sub_zero]
-
-/-- Eq. (12) under the paper's implementation assumptions (fn. 21): the joint
-posterior weight of a prohibition status is the threshold-marginalised
-standard-meeting indicator times the uniform prohibition prior. -/
-noncomputable def ruleUpdateWeight (m : ℚ) : Bool → ℝ≥0∞
-  | true  => 2⁻¹ * posProb m
-  | false => 2⁻¹ * (1 - posProb m)
-
-private theorem ruleUpdateWeight_tsum_ne_zero (m : ℚ) :
-    (∑' b, ruleUpdateWeight m b) ≠ 0 := by
-  rw [tsum_bool]
-  intro h
-  obtain ⟨hf, ht⟩ := add_eq_zero.mp h
-  rcases mul_eq_zero.mp hf with h2 | h2
-  · exact (ENNReal.inv_ne_zero.mpr (by norm_num)) h2
-  · rcases mul_eq_zero.mp ht with h3 | h3
-    · exact (ENNReal.inv_ne_zero.mpr (by norm_num)) h3
-    · rw [h3, tsub_zero] at h2
-      exact one_ne_zero h2
-
-private theorem ruleUpdateWeight_tsum_ne_top (m : ℚ) :
-    (∑' b, ruleUpdateWeight m b) ≠ ⊤ := by
-  rw [tsum_bool]
-  refine ENNReal.add_ne_top.mpr ⟨?_, ?_⟩
-  · exact ENNReal.mul_ne_top (by norm_num)
-      (ne_top_of_le_ne_top ENNReal.one_ne_top tsub_le_self)
-  · exact ENNReal.mul_ne_top (by norm_num)
-      (by rw [posProb_eq]; exact ENNReal.ofReal_ne_top)
-
-/-- The listener's posterior over an object's prohibition status after
-observing the rule (eq. 12, marginalised over the uniform threshold). -/
-noncomputable def prohibitionPMF (m : ℚ) : PMF Bool :=
-  PMF.normalize (ruleUpdateWeight m)
-    (ruleUpdateWeight_tsum_ne_zero m) (ruleUpdateWeight_tsum_ne_top m)
-
-/-- Marginal posterior probability that `o` is prohibited in condition `c`
-(the `L^γ(o prohibited | rule)` of eq. 15c). -/
-noncomputable def prohibitionPosterior (γ : ℚ) (c : GoalCondition) (o : Object) : ℝ≥0∞ :=
-  prohibitionPMF (deviceMeasure γ c o) true
-
-/-- **The posterior is the measure** (fns. 20–21): with the threshold uniform
-on [0, 1] and a 1/2 prohibition prior, the marginal posterior probability of
-prohibition collapses to the goal-weighted measure itself. Every behavioural
-prediction below is therefore a measure comparison. -/
-theorem prohibitionPMF_eq_measure {m : ℚ} (h0 : 0 ≤ m) (h1 : m ≤ 1) :
-    prohibitionPMF m true = ENNReal.ofReal (m : ℝ) := by
-  have hsum : (∑' b, ruleUpdateWeight m b) = 2⁻¹ := by
-    rw [tsum_bool, ruleUpdateWeight, ruleUpdateWeight, posProb_eq,
-      ← ENNReal.ofReal_one, ← ENNReal.ofReal_sub _ (by exact_mod_cast h0),
-      ← mul_add,
-      ← ENNReal.ofReal_add (by norm_num; exact_mod_cast h1) (by exact_mod_cast h0)]
-    norm_num
-  rw [prohibitionPMF, PMF.normalize_apply, hsum, ruleUpdateWeight, posProb_eq,
-    inv_inv, mul_right_comm, ENNReal.inv_mul_cancel (by norm_num) (by norm_num),
-    one_mul]
-
-theorem prohibitionPosterior_eq_measure {γ : ℚ} (h0 : 0 ≤ γ) (h1 : γ ≤ 1)
-    (c : GoalCondition) (o : Object) :
-    prohibitionPosterior γ c o = ENNReal.ofReal (deviceMeasure γ c o : ℝ) :=
-  prohibitionPMF_eq_measure (deviceMeasure_mem_Icc h0 h1 c o).1
-    (deviceMeasure_mem_Icc h0 h1 c o).2
-
--- ════════════════════════════════════════════════════
--- § 5. Prediction Theorems (γ-generic)
--- ════════════════════════════════════════════════════
-
-/-! Every prediction holds for **all** γ ∈ [0, 1) — the entire Goal
-Sensitive regime — via `prohibitionPosterior_eq_measure` plus rational
-arithmetic on the measures. The proofs need no fitted parameter value. -/
-
-private theorem posterior_lt_posterior {γ : ℚ} (h0 : 0 ≤ γ) (h1 : γ < 1)
-    {c c' : GoalCondition} {o o' : Object}
-    (key : deviceMeasure γ c o < deviceMeasure γ c' o') :
-    prohibitionPosterior γ c o < prohibitionPosterior γ c' o' := by
-  rw [prohibitionPosterior_eq_measure h0 h1.le,
-    prohibitionPosterior_eq_measure h0 h1.le, ENNReal.ofReal_lt_ofReal_iff]
-  · exact_mod_cast key
-  · exact_mod_cast lt_of_le_of_lt (deviceMeasure_mem_Icc h0 h1.le c o).1 key
-
-section Predictions
-
-variable {γ : ℚ}
-
-/-- Under limitLight, the flashlight (edge case) is more likely prohibited
-    than the candle (clear non-member): both `cat` and `emit-light` favour it. -/
-theorem limitLight_flashlight_gt_candle (h0 : 0 ≤ γ) (h1 : γ < 1) :
-    prohibitionPosterior γ .limitLight .flashlight >
-    prohibitionPosterior γ .limitLight .candle :=
-  posterior_lt_posterior h0 h1 (by
-    rw [deviceMeasure_limitLight, deviceMeasure_limitLight]
-    simp only [cat, emitLight]
-    linarith)
-
-/-- Under limitNoise, the boombox is the primary target. -/
-theorem limitNoise_boombox_gt_flashlight (h0 : 0 ≤ γ) (h1 : γ < 1) :
-    prohibitionPosterior γ .limitNoise .boombox >
-    prohibitionPosterior γ .limitNoise .flashlight :=
-  posterior_lt_posterior h0 h1 (by
-    rw [deviceMeasure_limitNoise, deviceMeasure_limitNoise]
-    simp only [cat, emitNoise]
-    linarith)
-
-/-- Under limitLight, the tablet (clear member + emits light) outranks the
-    boombox (clear member, no light): the `cat` dimension ties, so the goal
-    dimension decides — strict only in the Goal Sensitive regime γ < 1. -/
-theorem limitLight_tablet_gt_boombox (h0 : 0 ≤ γ) (h1 : γ < 1) :
-    prohibitionPosterior γ .limitLight .tablet >
-    prohibitionPosterior γ .limitLight .boombox :=
-  posterior_lt_posterior h0 h1 (by
-    rw [deviceMeasure_limitLight, deviceMeasure_limitLight]
-    simp only [cat, emitLight]
-    linarith)
-
-/-- **Goal sensitivity for flashlights** (the paper's key result, Fig. 1):
-    the flashlight is more likely prohibited under limitLight than limitNoise
-    — the measure difference is `(1−γ)·(emitLight − emitNoise)(flashlight)`,
-    positive exactly when γ < 1. -/
-theorem goal_sensitivity_flashlight (h0 : 0 ≤ γ) (h1 : γ < 1) :
-    prohibitionPosterior γ .limitLight .flashlight >
-    prohibitionPosterior γ .limitNoise .flashlight :=
-  posterior_lt_posterior h0 h1 (by
-    rw [deviceMeasure_limitLight, deviceMeasure_limitNoise]
-    simp only [cat, emitLight, emitNoise]
-    linarith)
-
-/-- **Goal sensitivity for boomboxes** (reverse pattern, Fig. 1). -/
-theorem goal_sensitivity_boombox (h0 : 0 ≤ γ) (h1 : γ < 1) :
-    prohibitionPosterior γ .limitNoise .boombox >
-    prohibitionPosterior γ .limitLight .boombox :=
-  posterior_lt_posterior h0 h1 (by
-    rw [deviceMeasure_limitLight, deviceMeasure_limitNoise]
-    simp only [cat, emitLight, emitNoise]
-    linarith)
-
-/-- **Goal sensitivity for tablets** under preventRecordings vs limitNoise. -/
-theorem goal_sensitivity_tablet (h0 : 0 ≤ γ) (h1 : γ < 1) :
-    prohibitionPosterior γ .preventRecordings .tablet >
-    prohibitionPosterior γ .limitNoise .tablet :=
-  posterior_lt_posterior h0 h1 (by
-    rw [deviceMeasure_preventRecordings, deviceMeasure_limitNoise]
-    simp only [cat, emitNoise, canRecord]
-    linarith)
-
-/-- **No single threshold shift explains the goal effect** (the paper's
-    argument against a purely context-shifted standard, pp. 681–682): relative
-    to the goal-neutral baseline, the limitLight goal *raises* the flashlight
-    and simultaneously *lowers* the boombox. A shifted threshold θ_B moves all
-    objects the same direction; goal-sensitive dimension weights do not. -/
-theorem light_goal_bidirectional (h0 : 0 ≤ γ) (h1 : γ < 1) :
-    prohibitionPosterior γ .limitLight .flashlight >
-      prohibitionPosterior γ .neutral .flashlight ∧
-    prohibitionPosterior γ .limitLight .boombox <
-      prohibitionPosterior γ .neutral .boombox :=
-  ⟨posterior_lt_posterior h0 h1 (by
-      rw [deviceMeasure_limitLight, deviceMeasure_neutral]
-      simp only [cat, emitLight, emitNoise, canRecord, plausibility]
-      linarith),
-   posterior_lt_posterior h0 h1 (by
-      rw [deviceMeasure_limitLight, deviceMeasure_neutral]
-      simp only [cat, emitLight, emitNoise, canRecord, plausibility]
-      linarith)⟩
-
-end Predictions
-
-/-- **The Goal Insensitive null** (γ = 1): the measure ignores the goal
-dimensions entirely, so no condition manipulation can move any object's
-posterior. The experiment's Bayesian model comparison rejects this value
-(γ̂ = 0.758, 95% CrI [0.756, 0.758], §4.3). -/
-theorem goal_insensitive_at_one (c c' : GoalCondition) (o : Object) :
-    deviceMeasure 1 c o = deviceMeasure 1 c' o := by
-  cases c <;> cases c' <;>
-    simp [deviceMeasure, weightedScore, goalFeature]
-
-/-- The BDA maximum-likelihood estimate of γ (§4.3). Strictly inside the Goal
-Sensitive regime, so every prediction theorem above applies to it. -/
-def fittedGamma : ℚ := 758/1000
-
-theorem fittedGamma_goal_sensitive : 0 ≤ fittedGamma ∧ fittedGamma < 1 := by
-  constructor <;> norm_num [fittedGamma]
-
-/-- The flashlight's goal-relevant feature is much stronger under limitLight
-    than limitNoise — the driver of `goal_sensitivity_flashlight`. -/
-theorem flashlight_light_gt_noise :
-    emitLight .flashlight > emitNoise .flashlight := by
-  norm_num [emitLight, emitNoise]
-
-/-- The boombox's pattern reverses — the driver of `goal_sensitivity_boombox`. -/
-theorem boombox_noise_gt_light :
-    emitNoise .boombox > emitLight .boombox := by
-  norm_num [emitLight, emitNoise]
-
--- ════════════════════════════════════════════════════
--- § 6. Additive vs. Multiplicative Composition
--- ════════════════════════════════════════════════════
-
-/-! [sassoon-fadlon-2017] contrast artifact nouns (additive: Σ)
-    with natural kinds (multiplicative: Π). Under multiplicative
-    composition, a zero on ANY dimension kills membership. Under
-    additive, other dimensions compensate. -/
-
-/-- All feature measures as a list (for aggregation functions). -/
-def allFeatures : List (Object → ℚ) := [emitLight, emitNoise, canRecord]
-
-/-- Under multiplicative composition, the flashlight gets ZERO because
-    emitNoise(flashlight) = canRecord(flashlight) = 1/20 ≈ 0. The
-    product is negligibly small. -/
-theorem flashlight_multiplicative_negligible :
-    multiplicativeScore allFeatures .flashlight < 1/100 := by native_decide
-
-/-- Under additive composition, the flashlight gets a positive score
-    despite near-zero on noise/recording — emitLight compensates. -/
-theorem flashlight_additive_positive :
-    weightedScore [1, 1, 1] allFeatures .flashlight > 1/2 := by native_decide
+/-- No single shift of the standard of comparison is bidirectional: with one measure and two
+thresholds, an object included under the second but not the first and another included under
+the first but not the second cannot both exist. -/
+theorem not_threshold_shift (m : O → ℝ) (θ θ' : ℝ) (o o' : O) :
+    ¬ ((m o < θ ∧ θ' ≤ m o) ∧ (θ ≤ m o' ∧ m o' < θ')) :=
+  λ ⟨⟨h1, h2⟩, h3, h4⟩ => by linarith
 
 end WaldonEtAl2023
