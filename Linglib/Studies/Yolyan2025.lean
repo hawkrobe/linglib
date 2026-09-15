@@ -1,50 +1,60 @@
 import Linglib.Phonology.Subregular.Dependence
 import Linglib.Phonology.Subregular.BMRS
-import Linglib.Phonology.Tone.Plateauing
+import Linglib.Phonology.Tone.Surfacing
 import Linglib.Studies.McCollumEtAl2020
 
 /-!
-# Yolyan 2025: Weak Determinism as Simultaneous Application
+# Yolyan (2025): A Logical Characterization of Weak Determinism as Simultaneous Application
 
-[yolyan-2025]: weakly deterministic functions are those expressible as the
-*simultaneous application* `P^L ⊙ P^R` of a backward and a forward BMRS program
-(Def. 5.1) — a definition inside the program formalism, which for the first time makes
-*non*-membership provable. The ambient formalism is the Boolean monadic recursive
-schemes of [bhaskar-jardine-chandlee-oakden-2020] (`Subregular.BMRS`), whose
-one-sided fragments `BMRSᵖ`/`BMRSˢ` characterize the left- and right-subsequential
-functions; [bhaskar-chandlee-jardine-2023] extends the characterization and
-[chandlee-jardine-2021] applies it to phonological modelling.
-`IsBmrsWeaklyDeterministic` renders Def. 5.1 via the value-level ⊙ below:
-`SimulModels` asks each output symbol to be the ⊙-combination of the two programs'
-output predicates against the input (Defs. 4.1/4.3), sparing the combined-head-space
-construction.
+This file formalizes [yolyan-2025]'s definition of the weakly deterministic string functions
+as the simultaneous application `P^L ⊙ P^R` of a backward and a forward Boolean monadic
+recursive scheme (Def. 5.1), in the BMRS formalism of [bhaskar-jardine-chandlee-oakden-2020]
+(`Subregular.BMRS`), whose one-sided fragments characterize the left- and right-subsequential
+functions. The operator ⊙ (Def. 4.1) acts per position on the input value and the two
+programs' output values, so that a change survives iff either program makes it (Prop. 4.2);
+`SimulModels` lifts it to programs (Def. 4.3) for the length-preserving maps of §5, and
+`IsBmrsWeaklyDeterministic` is Def. 5.1.
 
-The engine is `not_isBmrsWeaklyDeterministic_of_requiresBothSides`: the paper's §5.3
-template (Thms. 5.2–5.5), consuming the same `Subregular.RequiresBothSides` witness
-that excludes the *bimachine* rendering of weak determinism
-(`RequiresBothSides.not_isNonInteractingBimachineComputable`). Whether the two
-definitions coincide is the paper's own open question (§6.1, on the μ-conserving
-proposal of [meinhardt-mai-bakovic-mccollum-2024]); feeding both exclusions one witness
-object states it structurally without resolving it. The proof here streamlines the paper's:
-on either perturbation the input value is unchanged, so ⊙ collapses to conjunction and
-*both* one-sided outputs are forced true; each transports to the base word by one-sided
-locality (`Eval.congr_eqOn_Iic`/`congr_eqOn_Ici`), and recombining forces the base
-unchanged — no case-split through Prop. 4.2 needed. Only the `d = 0` instance of the
-witness is used: one-sidedness is global, not window-bounded.
+The negative results of §5.3 share one argument. On a far-left and on a far-right
+perturbation of a witness word the target is unchanged, so ⊙ is conjunction there and both
+one-sided outputs are forced true; each transports to the base word by one-sided locality, and
+recombining forces the base target unchanged.
+`not_isBmrsWeaklyDeterministic_of_requiresBothSides` proves this once from the substrate's
+`RequiresBothSides` witness, and Sour Grapes harmony (Thm. 5.2, the conjecture of
+[heinz-lai-2013]), Copperbelt Bemba high-tone spreading (Prop. 5.4) and Tutrugbu ATR harmony
+(Prop. 5.5, through `McCollumEtAl2020`) are its instances. On the positive side, with no
+underlying stress the input predicate is constantly false and ⊙ collapses to disjunction,
+(5.15), which recovers [koser-jardine-2020]'s program for leftmost-heavy-otherwise-leftmost
+stress in Lushootseed as the simultaneous application of its two one-sided halves (§5.2). The
+conjunctive dual ⊘ of §6.3 (Def. 6.5) expresses Sour Grapes exactly (`sourGrapes_conjunctive`).
 
-Instances: Sour Grapes harmony (Thm. 5.2 — the first proof of the [heinz-lai-2013]
-conjecture under the paper's Def. 5.1; under the original definition the conjecture is
-false, [lamont-ohara-smith-2019] Thm. 3.1 — via [padgett-1995]/[wilson-2003]'s
-pathology), and — through the shared
-witnesses already in the library — Tutrugbu ATR harmony (Prop. 5.5,
-[mccollum-bakovic-mai-meinhardt-2020]), Luganda unbounded tonal plateauing
-([jardine-2016a]), and Copperbelt Bemba high-tone spreading (Prop. 5.4), the latter
-formalized here as a second `Tone.Surfacing` instance. The positive
-side: with no underlying stress the input predicate is constantly `⊥` and ⊙ collapses
-to disjunction — (5.15), recovering [koser-jardine-2020]'s LHOL program as the
-simultaneous application of its two one-sided halves. §6.3's conjunctive dual ⊘ is
-exact on Sour Grapes: `sourGrapes_conjunctive` shows the map *is* the ⊘ of its
-one-sided licensing conditions.
+## Implementation notes
+
+* ⊙ and ⊘ are stated on values (`combine`, `combineC`), where the algebra of Prop. 4.4 is a
+  finite computation; the program-level operators lift them pointwise. Copy sets are omitted,
+  as none of the §5 maps needs them.
+* The head types of the two programs are unconstrained, which only strengthens the negative
+  results. The exclusion uses the `d = 0` instance of the witness, since one-sidedness is global
+  rather than window-bounded.
+* Bemba spreading is a `Tone.Surfacing` instance built from the paper's characterization: a
+  high spreads to the word end when no high follows it, and onto the next two tone-bearing
+  units when one does. Unlike plateauing, the surface set is not convex and the map is neither
+  monotone nor idempotent.
+
+## TODO
+
+* Thm. 5.3 (Yidiny liquid dissimilation) awaits a map for that pattern.
+
+## References
+
+* [yolyan-2025]
+* [bhaskar-jardine-chandlee-oakden-2020]
+* [heinz-lai-2013]
+* [koser-jardine-2020]
+* [mccollum-bakovic-mai-meinhardt-2020]
+* [jardine-2016a]
+* [padgett-1995]
+* [wilson-2003]
 -/
 
 namespace Yolyan2025
@@ -58,44 +68,42 @@ variable {α : Type*} [DecidableEq α]
 
 /-! ### Simultaneous application, at the value level
 
-[yolyan-2025] Def. 4.1 (⊙) and Def. 6.5 (⊘) act per input position on the input value
-and the two programs' output values; the program-level operators lift these pointwise.
-Stating the algebra (Prop. 4.4) on values keeps it a finite `Bool` computation and
-spares the combined-head-space transport. -/
+Def. 4.1 (⊙) and Def. 6.5 (⊘) act per input position on the input value and the two
+programs' output values; the program-level operators lift these pointwise. -/
 
-/-- Simultaneous application ⊙ on values (Def. 4.1): a change survives iff either
-program makes it. -/
+/-- Simultaneous application ⊙ on values (Def. 4.1): a change survives iff either program
+makes it. -/
 def combine (pin a b : Bool) : Bool := if pin then a && b else a || b
 
-/-- Conjunctive simultaneous application ⊘ on values (Def. 6.5): a change survives iff
-both programs make it. -/
+/-- Conjunctive simultaneous application ⊘ on values (Def. 6.5): a change survives iff both
+programs make it. -/
 def combineC (pin a b : Bool) : Bool := if pin then a || b else a && b
 
 /-- On a true input, ⊙ is conjunction. -/
 @[simp] theorem combine_true (a b : Bool) : combine true a b = (a && b) := rfl
 
-/-- On a false input, ⊙ is disjunction — the collapse behind (5.15): with no underlying
-stress the ⊙ of the two stress programs is their disjunction. -/
+/-- On a false input, ⊙ is disjunction, the collapse behind (5.15). -/
 @[simp] theorem combine_false (a b : Bool) : combine false a b = (a || b) := rfl
 
 /-- On a true input, ⊘ is disjunction. -/
 @[simp] theorem combineC_true (a b : Bool) : combineC true a b = (a || b) := rfl
 
-/-- On a false input, ⊘ is conjunction — the conjunctive licensing of §6.3. -/
+/-- On a false input, ⊘ is conjunction. -/
 @[simp] theorem combineC_false (a b : Bool) : combineC false a b = (a && b) := rfl
 
-/-- A ⊙-value differs from the input iff one of the components does (Prop. 4.2): the
-changes of the simultaneous application are the union of the changes. -/
+/-- A ⊙-value differs from the input iff one of the components does (Prop. 4.2). -/
 theorem combine_ne_iff (pin a b : Bool) :
     combine pin a b ≠ pin ↔ a ≠ pin ∨ b ≠ pin := by decide +revert
 
+/-- Prop. 4.4 (i). -/
 theorem combine_comm (pin a b : Bool) : combine pin a b = combine pin b a := by
   decide +revert
 
+/-- Prop. 4.4 (ii). -/
 theorem combine_assoc (pin a b c : Bool) :
     combine pin (combine pin a b) c = combine pin a (combine pin b c) := by decide +revert
 
-/-- The input itself is a ⊙-identity (Prop. 4.4(iii)). -/
+/-- The input itself is a ⊙-identity (Prop. 4.4 (iii)). -/
 theorem combine_id (pin a : Bool) : combine pin a pin = a := by decide +revert
 
 /-- ⊘ is the De Morgan dual of ⊙: negate the two output values, not the input. -/
@@ -111,37 +119,34 @@ theorem combineC_assoc (pin a b c : Bool) :
 
 /-! ### Weak determinism as simultaneous application (Defs. 4.1, 4.3, 5.1) -/
 
-/-- The value of the ⊙-combined output predicate for `σ` at `i` ([yolyan-2025]
-Def. 4.1): the two programs' output values combined against the input value. -/
+/-- The value of the ⊙-combined output predicate for `σ` at `i` (Def. 4.1): the two
+programs' output values combined against the input value. -/
 def SimulEval {L R : Type} (PL : Program α L) (PR : Program α R) (hL : L) (hR : R)
     (w : List α) (i : ℕ) (σ : α) (b : Bool) : Prop :=
   ∃ bL bR, Eval PL w i (.call hL x) bL ∧ Eval PR w i (.call hR x) bR ∧
     b = combine (decide (w[i]? = some σ)) bL bR
 
-/-- The simultaneous application `P^L ⊙ P^R` models `f` (Def. 4.3, restricted to the
-length-preserving maps of §5): each output symbol is the one whose ⊙-combined output
-predicate holds. -/
+/-- The simultaneous application `P^L ⊙ P^R` models `f` (Def. 4.3, for the length-preserving
+maps of §5): each output symbol is the one whose ⊙-combined output predicate holds. -/
 def SimulModels {L R : Type} (PL : Program α L) (PR : Program α R)
     (outL : α → L) (outR : α → R) (f : List α → List α) : Prop :=
   ∀ w : List α, (f w).length = w.length ∧
     ∀ i < w.length, ∀ σ : α,
       ((f w)[i]? = some σ ↔ SimulEval PL PR (outL σ) (outR σ) w i σ true)
 
-/-- **Def. 5.1**: `f` is weakly deterministic when it is the simultaneous application
-of a backward (`BMRSᵖ`) and a forward (`BMRSˢ`) program. Head types are unconstrained
-(the paper's are finite), which only strengthens the negative results below. -/
+/-- Def. 5.1: `f` is weakly deterministic when it is the simultaneous application of a backward
+(`BMRSᵖ`) and a forward (`BMRSˢ`) program. -/
 def IsBmrsWeaklyDeterministic (f : List α → List α) : Prop :=
   ∃ (L R : Type) (PL : Program α L) (PR : Program α R) (outL : α → L) (outR : α → R),
     PL.Backward ∧ PR.Forward ∧ SimulModels PL PR outL outR f
 
-/-! ### The exclusion template (§5.3) -/
+/-! ### The exclusion argument of §5.3 -/
 
-/-- **The §5.3 template, proven once**: a map that requires both sides is not weakly
-deterministic. On the far-left perturbation the target is unchanged, so ⊙ is
-conjunction and both one-sided outputs are true; the forward one transports to the
-base by locality. Symmetrically the far-right perturbation delivers the backward one.
-Recombining in the base forces the target unchanged — contradiction. Thms. 5.2, 5.3
-and Props. 5.4, 5.5 are instances. -/
+/-- A map that requires both sides is not weakly deterministic. On the far-left perturbation
+the target is unchanged, so ⊙ is conjunction and both one-sided outputs are true; the forward
+one transports to the base by locality. Symmetrically the far-right perturbation delivers the
+backward one. Recombining in the base forces the target unchanged. Thm. 5.2 and Props. 5.4
+and 5.5 are instances. -/
 theorem not_isBmrsWeaklyDeterministic_of_requiresBothSides {f : List α → List α}
     (hf : RequiresBothSides f) : ¬ IsBmrsWeaklyDeterministic f := by
   rintro ⟨L, R, PL, PR, outL, outR, hPL, hPR, hm⟩
@@ -178,23 +183,22 @@ theorem not_isBmrsWeaklyDeterministic_of_requiresBothSides {f : List α → List
 
 /-! ### Sour Grapes harmony is not weakly deterministic (Thm. 5.2)
 
-The pathology of [padgett-1995]/[wilson-2003]: `−` becomes `+` iff a `+` lies anywhere
-to its left and no blocker `⊟` anywhere to its right — spreading happens only when it
-can reach the end of the word. -/
+The pathology of [padgett-1995] and [wilson-2003], Example 2.10: `−` becomes `+` iff a `+`
+lies anywhere to its left and no blocker `⊟` anywhere to its right, so spreading happens only
+when it can reach the end of the word. -/
 
 /-- The schematic Sour Grapes alphabet: trigger `+`, target `−`, blocker `⊟`. -/
 inductive SG
   | plus | minus | blk
   deriving DecidableEq, Repr
 
-/-- Sour Grapes harmony, by the paper's own characterization: a `−` surfaces `+` iff a
-trigger precedes it and no blocker follows it. -/
+/-- Sour Grapes harmony: a `−` surfaces `+` iff a trigger precedes it and no blocker follows
+it. -/
 def sourGrapes (w : List SG) : List SG :=
-  w.mapIdx fun i σ =>
+  w.mapIdx λ i σ =>
     if σ = .minus ∧ .plus ∈ w.take i ∧ .blk ∉ w.drop i then .plus else σ
 
-/-- The middle of the flank witness spreads iff the head triggers and the tail is
-clear. -/
+/-- The middle of the flank witness spreads iff the head triggers and the tail is clear. -/
 private theorem sourGrapes_flankWord_mid {u v : SG} {d : ℕ} :
     (sourGrapes (flankWord u .minus v (2 * d + 1)))[d + 1]? =
       some (if u = .plus ∧ v ≠ .blk then .plus else .minus) := by
@@ -203,68 +207,48 @@ private theorem sourGrapes_flankWord_mid {u v : SG} {d : ℕ} :
   by_cases h : u = .plus ∧ v ≠ .blk
   · rw [if_pos h, if_pos ⟨rfl,
       (mem_take_flankWord_iff (by decide) (by omega)).mpr h.1,
-      fun hb => h.2 ((mem_drop_flankWord_iff (by decide) (by omega)).mp hb)⟩]
-  · rw [if_neg h, if_neg fun ⟨_, ht, hd⟩ =>
+      λ hb => h.2 ((mem_drop_flankWord_iff (by decide) (by omega)).mp hb)⟩]
+  · rw [if_neg h, if_neg λ ⟨_, ht, hd⟩ =>
       h ⟨(mem_take_flankWord_iff (by decide) (by omega)).mp ht,
-        fun hv => hd ((mem_drop_flankWord_iff (by decide) (by omega)).mpr hv)⟩]
+        λ hv => hd ((mem_drop_flankWord_iff (by decide) (by omega)).mpr hv)⟩]
 
-/-- Sour Grapes requires both sides: the middle of `+ −…− −` spreads, but neither the
-triggerless `− −…− −` (far-left perturbation) nor the blocked `+ −…− ⊟` (far-right)
-changes it. -/
+/-- Sour Grapes requires both sides, the maps (a)–(c) of the proof of Thm. 5.2: the middle of
+`+ −…− −` spreads, but neither the triggerless `− −…− −` nor the blocked `+ −…− ⊟` changes
+it. -/
 theorem sourGrapes_requiresBothSides : RequiresBothSides sourGrapes :=
   RequiresBothSides.of_flanks (fill := SG.minus) (xOn := SG.plus)
-    (yOn := SG.minus) (xOff := SG.minus) (yOff := SG.blk) (n := fun d => 2 * d + 1)
-    (t := fun d => d + 1) (fun d => by omega) (fun d => by omega)
-    (fun d => by rw [sourGrapes_flankWord_mid]; simp)
-    (fun d => by rw [sourGrapes_flankWord_mid]; simp)
-    (fun d => by rw [sourGrapes_flankWord_mid]; simp)
+    (yOn := SG.minus) (xOff := SG.minus) (yOff := SG.blk) (n := λ d => 2 * d + 1)
+    (t := λ d => d + 1) (λ d => by omega) (λ d => by omega)
+    (λ d => by rw [sourGrapes_flankWord_mid]; simp)
+    (λ d => by rw [sourGrapes_flankWord_mid]; simp)
+    (λ d => by rw [sourGrapes_flankWord_mid]; simp)
 
-/-- **Thm. 5.2** — the first proof of the [heinz-lai-2013] conjecture, under the
-paper's Def. 5.1 (under the original definition it is false,
-[lamont-ohara-smith-2019] Thm. 3.1). -/
+/-- Thm. 5.2: Sour Grapes harmony is not weakly deterministic, the conjecture of
+[heinz-lai-2013] under Def. 5.1. Under the original definition the map is expressible as a
+composition of contradirectional subsequential functions, [lamont-ohara-smith-2019]. -/
 theorem sourGrapes_not_bmrsWeaklyDeterministic :
     ¬ IsBmrsWeaklyDeterministic sourGrapes :=
   not_isBmrsWeaklyDeterministic_of_requiresBothSides sourGrapes_requiresBothSides
 
-/-- The same witness excludes the *bimachine* rendering of weak determinism — the two
-exclusions consume one object, which is the sharpest formal statement available of the
-paper's §6.1 open question (are the two definitions equivalent?). -/
-theorem sourGrapes_not_bimachineWeaklyDeterministic :
-    ¬ IsNonInteractingBimachineComputable sourGrapes :=
-  sourGrapes_requiresBothSides.not_isNonInteractingBimachineComputable
-
-/-! ### The library's unbounded-circumambient maps, through the same template -/
-
-/-- **Prop. 5.5** (Tutrugbu ATR harmony is not weakly deterministic), riding the
-witness already formalized for the bimachine side in `Studies/McCollumEtAl2020`. -/
+/-- Prop. 5.5: Tutrugbu ATR harmony (Example 2.12) is not weakly deterministic, from the
+witness of `McCollumEtAl2020`. -/
 theorem tutrugbu_not_bmrsWeaklyDeterministic :
     ¬ IsBmrsWeaklyDeterministic McCollumEtAl2020.tutrugbuATR :=
   not_isBmrsWeaklyDeterministic_of_requiresBothSides
     McCollumEtAl2020.tutrugbu_requiresBothSides
 
-/-- Luganda unbounded tonal plateauing is not weakly deterministic: [jardine-2016a]'s
-flagship pattern (the class of the paper's Prop. 5.4 Bemba case), through
-`Phonology/Tone/Plateauing`'s witness. -/
-theorem utp_not_bmrsWeaklyDeterministic :
-    ¬ IsBmrsWeaklyDeterministic Tone.utp.map :=
-  not_isBmrsWeaklyDeterministic_of_requiresBothSides
-    Tone.utp.requiresBothSides
-
 /-! ### Bemba high-tone spreading is not weakly deterministic (Prop. 5.4)
 
-Copperbelt Bemba ([jardine-2016a]; the paper's bounded/unbounded spreading data): a high
-tone spreads to the end of the word when no high follows it, and only onto the next two
-TBUs when one does. A second `Tone.Surfacing` instance — and a cautionary one: unlike
-plateauing, the surface set is not convex and the map is neither monotone nor
-idempotent, so only the shared surfacing API transfers. -/
+Copperbelt Bemba, Example 2.11, after [jardine-2016a]: a high tone spreads to the end of the
+word when no high follows it, and only onto the next two tone-bearing units when one does. -/
 
 /-- The Bemba tonal alphabet. -/
 inductive BTone
   | H | L
   deriving DecidableEq, Repr
 
-/-- Position `i` surfaces H: an underlying H, within the two-TBU bounded spread of a
-preceding H, or at-or-after the last H (unbounded spread to the word end). -/
+/-- Position `i` surfaces H: an underlying H, within the two-TBU bounded spread of a preceding
+H, or at or after the last H (unbounded spread to the word end). -/
 def bembaSurfaces (w : List BTone) (i : ℕ) : Prop :=
   i < w.length ∧ (w[i]? = some .H
     ∨ (∃ j < i, w[j]? = some .H ∧ i ≤ j + 2)
@@ -284,18 +268,26 @@ def bemba : Tone.Surfacing BTone where
   surfaces_of_hi h := ⟨(List.getElem?_eq_some_iff.mp h).1, .inl h⟩
   decSurfaces _ _ := inferInstance
 
-/-- In the lone-trigger flank word, the middle surfaces: the initial H is the last H,
-so the unbounded spread reaches it. -/
+/-- Example 2.11 (a), the skeleton of *bá-ká-fík-á*: with no following high, the initial high
+spreads to the end of the word. -/
+theorem bemba_map_HLLL : bemba.map [.H, .L, .L, .L] = [.H, .H, .H, .H] := by decide
+
+/-- Example 2.11 (b), the skeleton of *bá-ká-pát-à kó*: a following high bounds the spread to
+the next two tone-bearing units. -/
+theorem bemba_map_HLLLH : bemba.map [.H, .L, .L, .L, .H] = [.H, .H, .H, .L, .H] := by decide
+
+/-- In the lone-trigger flank word, the middle surfaces: the initial H is the last H, so the
+unbounded spread reaches it. -/
 private theorem bembaSurfaces_flankWord_HL {d : ℕ} :
     bembaSurfaces (flankWord .H .L .L (2 * d + 4)) (d + 3) := by
   refine ⟨by rw [length_flankWord]; omega,
-    .inr (.inr ⟨0, by omega, getElem?_flankWord_zero, fun k hk hkH => ?_⟩)⟩
+    .inr (.inr ⟨0, by omega, getElem?_flankWord_zero, λ k hk hkH => ?_⟩)⟩
   rw [length_flankWord] at hk
   rw [getElem?_flankWord] at hkH
   split_ifs at hkH <;> first | omega | exact BTone.noConfusion (Option.some.inj hkH)
 
-/-- With a second H at the end, the middle does not surface: the bounded spread stops
-two TBUs in, and the unbounded spread now belongs to the final H. -/
+/-- With a second H at the end, the middle does not surface: the bounded spread stops two
+TBUs in, and the unbounded spread now belongs to the final H. -/
 private theorem not_bembaSurfaces_flankWord_HH {d : ℕ} :
     ¬ bembaSurfaces (flankWord .H .L .H (2 * d + 4)) (d + 3) := by
   rintro ⟨-, h | ⟨j, hj, hjH, hspread⟩ | ⟨j, hj, hjH, hlast⟩⟩
@@ -312,59 +304,53 @@ private theorem not_bembaSurfaces_flankWord_HH {d : ℕ} :
 /-- With no trigger at all, the middle does not surface. -/
 private theorem not_bembaSurfaces_flankWord_LL {d : ℕ} :
     ¬ bembaSurfaces (flankWord .L .L .L (2 * d + 4)) (d + 3) := by
-  have hnoH : ∀ k, (flankWord BTone.L .L .L (2 * d + 4))[k]? ≠ some BTone.H := fun k => by
+  have hnoH : ∀ k, (flankWord BTone.L .L .L (2 * d + 4))[k]? ≠ some BTone.H := λ k => by
     rw [getElem?_flankWord]
-    split_ifs <;> first | exact fun h => BTone.noConfusion (Option.some.inj h) | simp
+    split_ifs <;> first | exact λ h => BTone.noConfusion (Option.some.inj h) | simp
   rintro ⟨-, h | ⟨j, -, hjH, -⟩ | ⟨j, -, hjH, -⟩⟩
   exacts [hnoH _ h, hnoH _ hjH, hnoH _ hjH]
 
-/-- Bemba spreading requires both sides: the middle of `H L…L L` spreads (unbounded, no
-blocker), but neither the triggerless far-left flip nor the far-right H (which bounds
-the spread to two TBUs) changes it — `Tone.Surfacing`'s flank template, from the three
-surfacing facts alone. -/
+/-- Bemba spreading requires both sides, the maps (a)–(c) of the proof of Prop. 5.4: the
+middle of `H L…L L` spreads, but neither the triggerless far-left flip nor the far-right H,
+which bounds the spread to two TBUs, changes it. -/
 theorem bemba_requiresBothSides : RequiresBothSides bemba.map :=
-  bemba.requiresBothSides_of_flanks (n := fun d => 2 * d + 4) (t := fun d => d + 3)
-    (fun d => by omega) (fun d => by omega) (fun d => bembaSurfaces_flankWord_HL)
-    (fun d => not_bembaSurfaces_flankWord_LL) (fun d => not_bembaSurfaces_flankWord_HH)
+  bemba.requiresBothSides_of_flanks (n := λ d => 2 * d + 4) (t := λ d => d + 3)
+    (λ d => by omega) (λ d => by omega) (λ d => bembaSurfaces_flankWord_HL)
+    (λ d => not_bembaSurfaces_flankWord_LL) (λ d => not_bembaSurfaces_flankWord_HH)
 
-/-- **Prop. 5.4**: Bemba high-tone spreading is not weakly deterministic. -/
+/-- Prop. 5.4: Bemba high-tone spreading is not weakly deterministic. -/
 theorem bemba_not_bmrsWeaklyDeterministic : ¬ IsBmrsWeaklyDeterministic bemba.map :=
   not_isBmrsWeaklyDeterministic_of_requiresBothSides bemba_requiresBothSides
 
-/-- The bimachine twin, off the same witness. -/
-theorem bemba_not_bimachineWeaklyDeterministic :
-    ¬ IsNonInteractingBimachineComputable bemba.map :=
-  bemba_requiresBothSides.not_isNonInteractingBimachineComputable
+/-! ### LHOL stress as a simultaneous application (§5.2)
 
-/-! ### The positive side: LHOL stress as a simultaneous application (§5.2)
-
-Leftmost-heavy-otherwise-leftmost stress ([koser-jardine-2020]; Lushootseed): stress
-the leftmost heavy syllable, else the leftmost syllable. The backward program finds a
-heavy with no heavy to its left; the forward program stresses an initial light with no
-heavy to its right. No syllable is underlyingly stressed, so the input predicate is
-constantly `⊥` and ⊙ collapses to disjunction — (5.15), the Koser–Jardine program. -/
+Leftmost-heavy-otherwise-leftmost stress in Lushootseed, Example 2.9: stress the leftmost
+heavy syllable, else the leftmost syllable. The backward program stresses a heavy with no
+heavy to its left; the forward program stresses an initial light with no heavy to its right.
+No syllable is underlyingly stressed, so the input predicate is constantly false and ⊙
+collapses to the disjunction (5.15) of the two programs, the program of [koser-jardine-2020]. -/
 
 /-- Syllable weight. -/
 inductive Syll
   | H | L
   deriving DecidableEq, Repr
 
-/-- Heads of the backward stress program: `noHL` = no heavy anywhere left (5.8). -/
+/-- Heads of the backward stress program: `noHL` is (5.8), no heavy anywhere to the left. -/
 inductive LHead
   | noHL | stressL
   deriving DecidableEq
 
-/-- Heads of the forward stress program: `noHR` = no heavy anywhere right (5.9). -/
+/-- Heads of the forward stress program: `noHR` is (5.9), no heavy anywhere to the right. -/
 inductive RHead
   | noHR | stressR
   deriving DecidableEq
 
-/-- (5.8), (5.12): stress a heavy with no heavy to its left. -/
+/-- (5.8) and (5.12): stress a heavy with no heavy to its left. -/
 def lholL : Program Syll LHead
   | .noHL => .ite (.initial x) .tru (.ite (.label {.H} x.pred) .fls (.call .noHL x.pred))
   | .stressL => (Expr.label {.H} x).and (.call .noHL x)
 
-/-- (5.9), (5.11): stress an initial light with no heavy to its right. -/
+/-- (5.9) and (5.11): stress an initial light with no heavy to its right. -/
 def lholR : Program Syll RHead
   | .noHR => .ite (.final x) .tru (.ite (.label {.H} x.succ) .fls (.call .noHR x.succ))
   | .stressR => (Expr.label {.L} x).and ((Expr.initial x).and (.call .noHR x))
@@ -377,32 +363,37 @@ theorem lholR_forward : lholR.Forward := by
   intro f
   cases f <;> decide
 
-/-- With no underlying stress, ⊙ is the disjunction of the two programs — (5.15). On
-LHLLH the backward program stresses the leftmost heavy alone. -/
-theorem lhol_LHLLH :
-    (List.range 5).map (fun i =>
-      (evalFuel lholL [Syll.L, .H, .L, .L, .H] 32 i (.call .stressL x)).bind fun bL =>
-      (evalFuel lholR [Syll.L, .H, .L, .L, .H] 32 i (.call .stressR x)).map fun bR =>
-        combine false bL bR) =
-    [some false, some true, some false, some false, some false] := by
+/-- The stress pattern the ⊙ of the two programs assigns to a word, position by position:
+with no underlying stress this is the disjunction (5.15). -/
+def lholStress (w : List Syll) : List (Option Bool) :=
+  (List.range w.length).map λ i =>
+    (evalFuel lholL w 32 i (.call .stressL x)).bind λ bL =>
+      (evalFuel lholR w 32 i (.call .stressR x)).map λ bR => combine false bL bR
+
+/-- Example 2.9 (a), *LH́LHL*: the backward program alone stresses the leftmost heavy. -/
+theorem lholStress_LHLHL :
+    lholStress [.L, .H, .L, .H, .L] =
+      [some false, some true, some false, some false, some false] := by
   decide
 
-/-- On all-light LLLL the forward program stresses the initial syllable alone. -/
-theorem lhol_LLLL :
-    (List.range 4).map (fun i =>
-      (evalFuel lholL [Syll.L, .L, .L, .L] 32 i (.call .stressL x)).bind fun bL =>
-      (evalFuel lholR [Syll.L, .L, .L, .L] 32 i (.call .stressR x)).map fun bR =>
-        combine false bL bR) =
-    [some true, some false, some false, some false] := by
+/-- Example 2.9 (a), *H́HHHH*: an initial heavy is stressed by the backward program alone. -/
+theorem lholStress_HHHHH :
+    lholStress [.H, .H, .H, .H, .H] =
+      [some true, some false, some false, some false, some false] := by
   decide
 
-/-! ### §6.3: Sour Grapes is *conjunctively* simultaneous -/
+/-- Example 2.9 (b), *ĹLLLL*: with no heavy the forward program alone stresses the initial
+syllable. -/
+theorem lholStress_LLLLL :
+    lholStress [.L, .L, .L, .L, .L] =
+      [some true, some false, some false, some false, some false] := by
+  decide
 
-/-- Sour Grapes **is** the conjunctive simultaneous application ⊘ (Def. 6.5) of its
-two one-sided licensing conditions: at a target, spreading happens iff the backward
-condition (a trigger left) and the forward condition (no blocker right) *both* fire.
-The disjunctive ⊙ cannot express this (Thm. 5.2); ⊘ does so exactly — the paper's
-§6.3 route toward characterizing unbounded circumambience. -/
+/-! ### Sour Grapes as a conjunctive simultaneous application (§6.3) -/
+
+/-- Sour Grapes is the conjunctive simultaneous application ⊘ (Def. 6.5) of its two one-sided
+licensing conditions, (6.6) and (6.7): at a target, spreading happens iff a trigger lies to the
+left and no blocker lies to the right. -/
 theorem sourGrapes_conjunctive {w : List SG} {i : ℕ} (hm : w[i]? = some .minus) :
     (sourGrapes w)[i]? = some (if combineC false
       (decide (.plus ∈ w.take i)) (decide (.blk ∉ w.drop i)) then .plus else .minus) := by
