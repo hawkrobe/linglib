@@ -351,7 +351,7 @@ theorem unify_isLUB {f g u : MorphFeatures} (h : f.unify g = some u) :
     IsLUB {f, g} u := by
   unfold unify at h
   by_cases hc : f.compatible g = true
-  · simp only [hc, if_true, Option.some.injEq] at h
+  · simp only [hc, ite_true, Option.some.injEq] at h
     subst h
     constructor
     · intro x hx

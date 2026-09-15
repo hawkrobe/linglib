@@ -182,10 +182,10 @@ private theorem selectional_eq_true_iff
   constructor
   · intro heq
     by_contra h_neg
-    rw [if_neg h_neg] at heq
+    rw [ite_eq_right h_neg] at heq
     split_ifs at heq
   · intro h
-    rw [if_pos h]
+    rw [ite_eq_left h]
 
 private theorem homogeneity_eq_true_iff
     (sim : SimilarityOrdering World) (A B : World → Prop)
@@ -197,10 +197,10 @@ private theorem homogeneity_eq_true_iff
   constructor
   · intro heq
     by_contra h_neg
-    rw [if_neg h_neg] at heq
+    rw [ite_eq_right h_neg] at heq
     split_ifs at heq <;> injection heq with h1 h2 <;> cases h2
   · intro h
-    rw [if_pos h]
+    rw [ite_eq_left h]
 
 /-- The selectional counterfactual's true verdict is the same quantifier. -/
 theorem selectional_minimal_change_forces_notBothUp_off

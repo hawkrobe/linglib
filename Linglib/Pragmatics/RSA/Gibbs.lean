@@ -138,9 +138,9 @@ theorem speaker_countRestrict_singleton [Fintype U] [DecidableEq U] [MeasurableS
     rw [Measure.real, Measure.restrict_apply (measurableSet_singleton x)]
     by_cases hx : x ∈ A
     · rw [Set.inter_eq_left.mpr (Set.singleton_subset_iff.mpr (Finset.mem_coe.mpr hx)),
-        Measure.count_singleton, if_pos hx, ENNReal.toReal_one]
+        Measure.count_singleton, ite_eq_left hx, ENNReal.toReal_one]
     · rw [Set.singleton_inter_eq_empty.mpr (by simpa using hx), measure_empty,
-        if_neg hx, ENNReal.toReal_zero]
+        ite_eq_right hx, ENNReal.toReal_zero]
   have hZ : ∫ x, Real.exp (score x) ∂(Measure.count.restrict (↑A : Set U))
       = ∑ x ∈ A, Real.exp (score x) := by
     rw [integral_fintype Integrable.of_finite]
@@ -307,7 +307,7 @@ theorem speakerAlpha_countRestrict_tendsto_one_of_isMax [Fintype U] [DecidableEq
       refine tendsto_finsetSum _ fun x hx => ?_
       by_cases hxa : x = a
       · subst hxa; simp only [sub_self, mul_zero, Real.exp_zero]; exact tendsto_const_nhds
-      · simp only [if_neg hxa]
+      · simp only [ite_eq_right hxa]
         have hc : score x - score a < 0 := by have := hmax x hx hxa; linarith
         exact Real.tendsto_exp_atBot.comp ((tendsto_mul_const_atBot_of_neg hc).mpr tendsto_id)
     simpa using hg.inv₀ one_ne_zero

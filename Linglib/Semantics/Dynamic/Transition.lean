@@ -224,20 +224,20 @@ def WritesAt (Y : Set V) (R : W → (V → M) → (V → M) → Prop) : Prop :=
 extension of the assignments. -/
 def ofTotal (h : X ⊆ Y) (R : W → (V → M) → (V → M) → Prop) :
     Transition W M X Y where
-  rel w e e' := ∃ f g : V → M, X.restrict f = e ∧
-    Y.restrict g = e' ∧ R w f g
+  rel w e e' := ∃ f g : V → M, X.domRestrict f = e ∧
+    Y.domRestrict g = e' ∧ R w f g
   grow := h
 
 /-- Under the support hypotheses, the typing is faithful: related
 assignments are exactly the restrictions of related assignments. -/
 theorem ofTotal_rel_restrict {h : X ⊆ Y} (hR : ReadsAt X R)
     (hW : WritesAt Y R) {w : W} {f g : V → M} :
-    (ofTotal h R).rel w (X.restrict f)
-      (Y.restrict g) ↔ R w f g := by
+    (ofTotal h R).rel w (X.domRestrict f)
+      (Y.domRestrict g) ↔ R w f g := by
   constructor
   · rintro ⟨f', g', hf', hg', hR'⟩
-    rw [hR (Set.restrict_eq_restrict_iff.mp hf'),
-      hW (Set.restrict_eq_restrict_iff.mp hg')] at hR'
+    rw [hR (Set.domRestrict_eq_domRestrict_iff.mp hf'),
+      hW (Set.domRestrict_eq_domRestrict_iff.mp hg')] at hR'
     exact hR'
   · intro hfg
     exact ⟨f, g, rfl, rfl, hfg⟩
@@ -252,9 +252,9 @@ theorem ofTotal_comp {h₁ : X ⊆ Y} {h₂ : Y ⊆ Z} (hS : ReadsAt Y S) :
   · rintro ⟨e', ⟨f, g₁, hf, hg₁, hR⟩, f₂, g, hf₂, hg, hS'⟩
     refine ⟨f, g, hf, hg, g₁, hR, ?_⟩
     rw [← hf₂] at hg₁
-    exact (hS (Set.restrict_eq_restrict_iff.mp hg₁)).mpr hS'
+    exact (hS (Set.domRestrict_eq_domRestrict_iff.mp hg₁)).mpr hS'
   · rintro ⟨f, g, hf, hg, k, hR, hS'⟩
-    exact ⟨Y.restrict k, ⟨f, k, hf, rfl, hR⟩,
+    exact ⟨Y.domRestrict k, ⟨f, k, hf, rfl, hR⟩,
       ⟨k, g, rfl, hg, hS'⟩⟩
 
 end OfTotal

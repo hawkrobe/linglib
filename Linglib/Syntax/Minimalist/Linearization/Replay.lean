@@ -137,7 +137,7 @@ private theorem replaceWhereP_mk (target : SyntacticObject) {rep : RoseTree Vert
   | case2 b hp =>
     refine ⟨?_, ht⟩
     rw [show UnorderedTree.mk (RoseTree.node b []) = UnorderedTree.leaf b from rfl,
-      UnorderedTree.replace_leaf, if_neg]
+      UnorderedTree.replace_leaf, ite_eq_right]
     rw [show UnorderedTree.leaf b = UnorderedTree.mk (RoseTree.node b []) from rfl]
     exact not_projEqP hp
   | case3 _ _ _ hp =>
@@ -156,7 +156,7 @@ private theorem replaceWhereP_mk (target : SyntacticObject) {rep : RoseTree Vert
     have hne : UnorderedTree.node (Sum.inr none) {UnorderedTree.mk l, UnorderedTree.mk r}
       ≠ target.val := by
       rw [← merge_mk_raw]; exact not_projEqP hp
-    rw [merge_mk_raw, ihle, ihre, merge_mk_raw, UnorderedTree.replace_node_pair, if_neg hne]
+    rw [merge_mk_raw, ihle, ihre, merge_mk_raw, UnorderedTree.replace_node_pair, ite_eq_right hne]
   | case5 _ cs hnil hpair _ =>
     rcases wellFormed_length ht with hlen | hlen
     · exact absurd (List.length_eq_zero_iff.mp hlen) hnil
@@ -290,14 +290,14 @@ private theorem toPlanarLeaf?_toSyntacticObject {s : SyntacticObject} {ip : Plan
     obtain rfl : ip = PlanarSyntacticObject.leaf tok := by simpa using h.symm
     rfl
   | trace =>
-    rw [toPlanarLeaf?, getLIToken_trace, if_pos rfl] at h
+    rw [toPlanarLeaf?, getLIToken_trace, ite_eq_left rfl] at h
     obtain rfl : ip = PlanarSyntacticObject.trace := by simpa using h.symm
     rfl
   | traceOf tok =>
-    rw [toPlanarLeaf?, getLIToken_traceOf, if_neg (traceOf_ne_trace tok)] at h
+    rw [toPlanarLeaf?, getLIToken_traceOf, ite_eq_right (traceOf_ne_trace tok)] at h
     exact absurd h (by simp)
   | merge l r _ _ =>
-    rw [toPlanarLeaf?, getLIToken_merge, if_neg (merge_ne_trace l r)] at h
+    rw [toPlanarLeaf?, getLIToken_merge, ite_eq_right (merge_ne_trace l r)] at h
     exact absurd h (by simp)
 
 /-- A successful replay step forgets to `Step.apply`. -/

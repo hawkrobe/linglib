@@ -105,7 +105,7 @@ theorem maxNonOverlap_of_cum_maximal {α : Type*} [SemilatticeSup α]
     {P : α → Prop} (hCum : CUM P)
     {x : α} (hMax : Maximal P x) :
     maxNonOverlap P x :=
-  ⟨hMax.1, λ y hy _hov => le_trans le_sup_right (hMax.2 (hCum hMax.1 hy) le_sup_left)⟩
+  ⟨hMax.1, λ _ hy _ => le_trans le_sup_right (hMax.2 (hCum hMax.1 hy) le_sup_left)⟩
 
 /-! ### The Distributivity-Number Generalization (DNG) -/
 

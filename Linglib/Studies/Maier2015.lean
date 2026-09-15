@@ -131,7 +131,7 @@ private theorem accScopeL_compartments (s : Finset ℕ) {cs : List Compartment}
     · refine ⟨s ∪ c.drefs.toFinset, ?_, Finset.subset_union_left⟩
       simp [Compartment.box, Condition.accScope_neg, DRS.accScope, h]
     · have hnone : Condition.accScope s c.box y = none := by
-        rw [Compartment.box, Condition.accScope_neg, DRS.accScope, if_neg (by simpa using h),
+        rw [Compartment.box, Condition.accScope_neg, DRS.accScope, ite_eq_right (by simpa using h),
           ← List.append_nil c.conds]
         exact accScopeL_atomic_append (hcs c (List.mem_cons_self ..)) [] y
       rw [hnone]
@@ -156,7 +156,7 @@ theorem accessible_belief_of_compartment (K : MentalState)
   obtain ⟨acc, hacc, hsub⟩ :=
     accScopeL_compartments (∅ ∪ K.beliefDrefs.toFinset) hcs hyc
   have h : DRS.accScope ∅ K.flatten y = some acc := by
-    rw [DRS.accScope, MentalState.flatten, if_neg (by simpa using hy)]
+    rw [DRS.accScope, MentalState.flatten, ite_eq_right (by simpa using hy)]
     exact (accScopeL_atomic_append hb _ y).trans hacc
   simp only [DRS.Accessible, DRS.accessibleFrom, h, Option.getD_some]
   exact hsub (by simp [hx])

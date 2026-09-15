@@ -113,7 +113,7 @@ private theorem mgRev_comm (r₁ r₂ : List ContextElem) : mgRev r₁ r₂ = mg
       cases a <;> cases b <;> simp only [mgRev]
       split
       · subst_vars; simp [ih]
-      · rename_i h; rw [if_neg (Ne.symm h), inf_comm]
+      · rename_i h; rw [ite_eq_right (Ne.symm h), inf_comm]
 
 /-- Minimal generalization is symmetric. -/
 theorem mg_comm : mg c₁ c₂ = mg c₂ c₁ := by simp [mg, mgRev_comm]

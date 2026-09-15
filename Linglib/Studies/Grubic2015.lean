@@ -7,7 +7,7 @@ import Linglib.Semantics.Exhaustification.Excluder
 import Linglib.Semantics.Focus.Control
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Data.Examples.Grubic2015
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
 # Grubic (2015): Focus and Alternative Sensitivity in Ngamo

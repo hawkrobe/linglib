@@ -121,7 +121,7 @@ longer, and strictly shorter when the long argument is longer. -/
 theorem preferred_le (h : HeadPosition) (r : Role) {ℓ s : ℕ} (hs : s ≤ ℓ) (o : Order) :
     lengthOf h r ℓ s (preferred h r) ≤ lengthOf h r ℓ s o := by
   unfold lengthOf
-  rw [if_neg (adjacent_preferred h r)]
+  rw [ite_eq_right (adjacent_preferred h r)]
   split
   · exact dependencyLength_le hs
   · exact le_rfl
@@ -129,7 +129,7 @@ theorem preferred_le (h : HeadPosition) (r : Role) {ℓ s : ℕ} (hs : s ≤ ℓ
 theorem preferred_lt (h : HeadPosition) (r : Role) {ℓ s : ℕ} (hs : s < ℓ) {o : Order}
     (ho : o ≠ preferred h r) : lengthOf h r ℓ s (preferred h r) < lengthOf h r ℓ s o := by
   unfold lengthOf
-  rw [if_neg (adjacent_preferred h r)]
+  rw [ite_eq_right (adjacent_preferred h r)]
   split
   · exact dependencyLength_lt hs
   · exact absurd (by cases h <;> cases r <;> cases o <;> simp_all [adjacent, preferred]) ho

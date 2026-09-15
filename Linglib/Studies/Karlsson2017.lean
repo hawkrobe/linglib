@@ -101,7 +101,7 @@ theorem case_eq_part_of_negated {o : Object} (h : o.negated) : o.case = .part :=
 /-- A personal pronoun is a total object in the accusative alone. -/
 theorem case_of_personalPronoun {o : Object} (h : o.nominal = .personalPronoun)
     (hp : ¬ o.IsPartitive) : o.case = .acc := by
-  rw [case, if_neg hp, totalCase, h]
+  rw [case, ite_eq_right hp, totalCase, h]
 
 end Object
 

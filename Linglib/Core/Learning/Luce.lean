@@ -169,7 +169,7 @@ theorem BetaModel.update_sum_one [DecidableEq A] (bm : BetaModel A) (P : A → �
   rw [Finset.sum_add_distrib]
   rw [← Finset.mul_sum, h_sum]
   rw [Finset.sum_ite_eq' Finset.univ chosen (λ _ => bm.beta)]
-  simp only [h_chosen, if_true]
+  simp only [h_chosen, ite_true]
   ring
 
 /-! ### Iterated linear learning -/

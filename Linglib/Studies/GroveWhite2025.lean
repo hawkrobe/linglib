@@ -126,8 +126,8 @@ theorem resolvedFactivity_eq : resolvedFactivity τ ν = toNNReal τ • dirac 1
 instance [IsProbabilityMeasure ν] : IsProbabilityMeasure (resolvedFactivity τ ν) :=
   ⟨by simp [resolvedFactivity_eq]⟩
 
-instance [IsProbabilityMeasure ν] : IsProbabilityMeasure (unresolvedFactivity τ ν) :=
-  isProbabilityMeasure_map (measurable_disj τ).aemeasurable
+instance [IsProbabilityMeasure ν] : IsProbabilityMeasure (unresolvedFactivity τ ν) := by
+  unfold unresolvedFactivity; infer_instance
 
 /-- At `τ = 0` each completion is the norming model it completes; at `τ = 1` every model
 answers `1`. -/

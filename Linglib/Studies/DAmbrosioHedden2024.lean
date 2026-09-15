@@ -295,7 +295,7 @@ theorem not_strongPareto_sassoon_disjunctive [Nontrivial ι] [Nontrivial O] [Non
   classical
   let v : Profile ι O K := λ z l => if z = y ∧ l ≠ i then k' else k
   have hle : v x ≤ v y := λ l => by
-    simp only [v, hxy, false_and, if_false]
+    simp only [v, hxy, false_and, ite_false]
     split_ifs <;> simp [hk.le]
   have hlt : ∃ l, v x l < v y l := ⟨j, by simp [v, hxy, hij.symm, hk]⟩
   have hxy' : sassoon θ .disjunctive v x y := ⟨i, by simp [v, hxy]⟩

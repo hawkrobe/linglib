@@ -629,10 +629,10 @@ private theorem dirac_real_singleton (a q : QUD) :
     (Measure.dirac a).real {q} = if q = a then 1 else 0 := by
   rcases eq_or_ne q a with rfl | h
   · rw [measureReal_def, Measure.dirac_apply_of_mem (Set.mem_singleton q), ENNReal.toReal_one,
-      if_pos rfl]
+      ite_eq_left rfl]
   · rw [measureReal_def, Measure.dirac_apply' _ (measurableSet_singleton q),
       Set.indicator_of_notMem (Set.notMem_singleton_iff.mpr (Ne.symm h)), ENNReal.toReal_zero,
-      if_neg h]
+      ite_eq_right h]
 
 variable (ρ : Measure Scope) [IsProbabilityMeasure ρ]
 
@@ -642,7 +642,7 @@ theorem production_all (hn : 0 < n) (w : World n) :
     production every n α (ρ.prod (Measure.dirac .all)) w = share every n α (.surface, .all) w := by
   rw [production, Fintype.sum_prod_type]
   simp only [Measure.prod_real_singleton, dirac_real_singleton, mul_ite, mul_one, mul_zero,
-    ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have hscope : ∀ f : Scope → ℝ, ∑ i, f i = f .surface + f .inverse := λ f =>
     Fintype.sum_eq_add Scope.surface Scope.inverse (by decide) (λ i h => by cases i <;> simp at h)
   have hsum := sum_real_singleton_eq_one ρ

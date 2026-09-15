@@ -140,7 +140,7 @@ variable {m}
 the extension's size, the quantity the speaker's weight raises to the rationality. -/
 theorem L0_apply_singleton_of_quality {a : Access} {k : Obs} {u : U} (hq : Quality m a k u)
     {s : WorldState} (hs : obsCompatible a k s) : L0 m u {s} = ((ext m u).card : ℝ≥0∞)⁻¹ := by
-  rw [L0, RSA.uniformListener_apply_singleton, if_pos]
+  rw [L0, RSA.uniformListener_apply_singleton, ite_eq_left]
   exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hq s hs⟩
 
 theorem speaker_apply_singleton (α : ℝ) (a : Access) (s : WorldState) (u : U) :

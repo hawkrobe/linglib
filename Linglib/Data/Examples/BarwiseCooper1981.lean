@@ -337,7 +337,7 @@ def ex_37a : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def ex_37_a : LinguisticExample :=
+def ex_37'a : LinguisticExample :=
   { id := "barwisecooper1981_37'a"
     source := ⟨"barwise-cooper-1981", "(37'a)"⟩
     reportedIn := none
@@ -355,7 +355,7 @@ def ex_37_a : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def ex_37__a : LinguisticExample :=
+def ex_37''a : LinguisticExample :=
   { id := "barwisecooper1981_37''a"
     source := ⟨"barwise-cooper-1981", "(37''a)"⟩
     reportedIn := none
@@ -445,7 +445,7 @@ def ex_4_10_33a : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def ex_4_10_33a_ : LinguisticExample :=
+def ex_4_10_33a' : LinguisticExample :=
   { id := "barwisecooper1981_4.10-33a'"
     source := ⟨"barwise-cooper-1981", "§4.10 (33a')"⟩
     reportedIn := none
@@ -877,6 +877,6 @@ def ex_47 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def all : List LinguisticExample := [ex_6a, ex_6b, ex_6c, ex_6d, ex_21, ex_22, ex_23, ex_24a, ex_24c, ex_30, ex_31, ex_32, ex_33, ex_34, ex_35a, ex_35b, ex_36b, ex_37a, ex_37_a, ex_37__a, ex_4_10_32a, ex_4_10_32b, ex_4_10_32c, ex_4_10_33a, ex_4_10_33a_, ex_4_10_35a, ex_4_10_36a, ex_4_10_37a, ex_4_10_37b, ex_40a, ex_40b, ex_40c, ex_40d, ex_40e, ex_41a, ex_41b, ex_41c, ex_41d, ex_41e, ex_41f, ex_41g, ex_42, ex_43, ex_44a, ex_44b, ex_44c, ex_46, ex_47]
+def all : List LinguisticExample := [ex_6a, ex_6b, ex_6c, ex_6d, ex_21, ex_22, ex_23, ex_24a, ex_24c, ex_30, ex_31, ex_32, ex_33, ex_34, ex_35a, ex_35b, ex_36b, ex_37a, ex_37'a, ex_37''a, ex_4_10_32a, ex_4_10_32b, ex_4_10_32c, ex_4_10_33a, ex_4_10_33a', ex_4_10_35a, ex_4_10_36a, ex_4_10_37a, ex_4_10_37b, ex_40a, ex_40b, ex_40c, ex_40d, ex_40e, ex_41a, ex_41b, ex_41c, ex_41d, ex_41e, ex_41f, ex_41g, ex_42, ex_43, ex_44a, ex_44b, ex_44c, ex_46, ex_47]
 
 end BarwiseCooper1981.Examples

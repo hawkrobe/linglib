@@ -467,7 +467,7 @@ theorem eval_tr [DecidableEq α] {P : Program α (Fin n)} {w : List α}
       rw [show decide (φ.dia.Realize w U i) = decide (φ.Realize w U (i + 1)) from
         decide_eq_decide.mpr (by simp [succ?_eq_some_iff, hsucc])]
       exact .ite_false (.final_false (Term.eval_var hi) (by omega))
-        (Eval.subst (by rw [Term.eval_succ_var, succ?, if_pos hsucc]) (ih hsucc))
+        (Eval.subst (by rw [Term.eval_succ_var, succ?, ite_eq_left hsucc]) (ih hsucc))
   | bdia φ ih =>
     intro i hi
     by_cases h : i = 0

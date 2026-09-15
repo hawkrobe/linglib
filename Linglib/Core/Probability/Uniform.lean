@@ -45,9 +45,9 @@ theorem uniform_eq_indicator :
     (s.uniform : α → K) = (s : Set α).indicator λ _ => (s.card : K)⁻¹ := by
   funext a; simp [uniform_apply, Set.indicator_apply]
 
-@[simp] theorem uniform_of_mem (h : a ∈ s) : s.uniform a = (s.card : K)⁻¹ := if_pos h
+@[simp] theorem uniform_of_mem (h : a ∈ s) : s.uniform a = (s.card : K)⁻¹ := ite_eq_left h
 
-@[simp] theorem uniform_of_notMem (h : a ∉ s) : s.uniform a = (0 : K) := if_neg h
+@[simp] theorem uniform_of_notMem (h : a ∉ s) : s.uniform a = (0 : K) := ite_eq_right h
 
 variable [CharZero K]
 

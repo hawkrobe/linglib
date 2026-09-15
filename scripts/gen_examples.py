@@ -92,7 +92,7 @@ def lean_identifier(example_id: str, author_year_lower: str) -> str:
         local = example_id[len(prefix):]
     else:
         local = example_id
-    local = "".join(c if c.isalnum() or c == "_" else "_" for c in local)
+    local = "".join(c if c.isalnum() or c in "_'" else "_" for c in local)
     if not local or not local[0].isalpha():
         local = "ex_" + local
     return local

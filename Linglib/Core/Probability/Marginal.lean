@@ -60,7 +60,7 @@ theorem fst_apply [DecidableEq α] (joint : PMF (α × β)) (a : α) :
   · intro b _ hb
     apply Finset.sum_eq_zero
     intro c _
-    rw [if_neg]
+    rw [ite_eq_right]
     exact fun h => hb h.symm
   · intro h
     exact absurd (Finset.mem_univ a) h
@@ -79,7 +79,7 @@ theorem snd_apply [DecidableEq β] (joint : PMF (α × β)) (b : β) :
   · intro a _ ha
     apply Finset.sum_eq_zero
     intro c _
-    rw [if_neg]
+    rw [ite_eq_right]
     exact fun h => ha h.symm
   · intro h
     exact absurd (Finset.mem_univ b) h
@@ -130,9 +130,9 @@ theorem tsum_indicator_fiber_snd [DecidableEq β] (G : PMF (α × β)) (b : β) 
   refine tsum_congr fun x => ?_
   by_cases hx : x.2 = b
   · rw [Set.indicator_of_mem (show x ∈ {x : α × β | x.2 = b} from hx),
-      if_pos hx.symm]
+      ite_eq_left hx.symm]
   · rw [Set.indicator_of_notMem (show x ∉ {x : α × β | x.2 = b} from hx),
-      if_neg fun hb => hx hb.symm]
+      ite_eq_right fun hb => hx hb.symm]
 
 omit [Fintype α] [Fintype β] in
 /-- A positive second marginal is witnessed on its fiber. -/
@@ -157,16 +157,16 @@ omit [Fintype α] [Fintype β] in
 theorem cond_apply [DecidableEq β] (G : PMF (α × β)) {b : β} (h : G.snd b ≠ 0)
     (a : α) : G.cond b a = G (a, b) / G.snd b := by
   classical
-  rw [cond, dif_pos h, PMF.map_apply,
+  rw [cond, dite_eq_left h, PMF.map_apply,
     tsum_eq_single (a, b) fun x hx => ?_]
-  · rw [if_pos rfl, PMF.filter_apply, Set.indicator_apply,
-      if_pos (show (a, b) ∈ {x : α × β | x.2 = b} from rfl),
+  · rw [ite_eq_left rfl, PMF.filter_apply, Set.indicator_apply,
+      ite_eq_left (show (a, b) ∈ {x : α × β | x.2 = b} from rfl),
       tsum_indicator_fiber_snd, div_eq_mul_inv]
   · by_cases hx1 : a = x.1
-    · rw [if_pos hx1, PMF.filter_apply, Set.indicator_apply,
-        if_neg (show x ∉ {x : α × β | x.2 = b} from
+    · rw [ite_eq_left hx1, PMF.filter_apply, Set.indicator_apply,
+        ite_eq_right (show x ∉ {x : α × β | x.2 = b} from
           fun hx2 => hx (Prod.ext hx1.symm hx2)), zero_mul]
-    · exact if_neg hx1
+    · exact ite_eq_right hx1
 
 omit [Fintype α] [Fintype β] in
 /-- **Disintegration identity**: marginal times conditional is the joint. -/
@@ -183,7 +183,7 @@ theorem toMeasure_cond [DecidableEq β] [MeasurableSpace α] [MeasurableSpace β
     [MeasurableSingletonClass β] (G : PMF (α × β)) {b : β} (h : G.snd b ≠ 0) :
     (G.cond b).toMeasure
       = (ProbabilityTheory.cond G.toMeasure (Prod.snd ⁻¹' {b})).map Prod.fst := by
-  rw [cond, dif_pos h]
+  rw [cond, dite_eq_left h]
   refine MeasureTheory.Measure.ext fun s hs => ?_
   rw [PMF.toMeasure_map_apply Prod.fst _ s measurable_fst hs,
     PMF.toMeasure_filter _ (show MeasurableSet {x : α × β | x.2 = b} from
@@ -252,9 +252,9 @@ omit [Fintype α] [Fintype β] in
   simp only [product, PMF.bind_apply, PMF.map_apply]
   rw [tsum_eq_single a fun a' ha' => mul_eq_zero_of_right _
       ((tsum_congr fun b' =>
-        if_neg fun h => ha' (Prod.mk.inj h).1.symm).trans tsum_zero)]
+        ite_eq_right fun h => ha' (Prod.mk.inj h).1.symm).trans tsum_zero)]
   exact congrArg (P a * ·) ((tsum_eq_single b fun b' hb' =>
-    if_neg fun h => hb' (Prod.mk.inj h).2.symm).trans (if_pos rfl))
+    ite_eq_right fun h => hb' (Prod.mk.inj h).2.symm).trans (ite_eq_left rfl))
 
 omit [Fintype α] [Fintype β] in
 @[simp] theorem product_toRealFn (P : PMF α) (Q : PMF β) (a : α) (b : β) :

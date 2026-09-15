@@ -1335,7 +1335,7 @@ private theorem forestPairSum_assignment_rewrite (F : List (RoseTree α)) :
     refine Multiset.bind_congr fun b _ => ?_
     cases b with
     | true =>
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       rw [show (Multiset.ofList ((listChoices [true, false] rest.length).map (true :: ·)) :
                 Multiset (List Bool)) =
               (Multiset.ofList (listChoices [true, false] rest.length)).map (true :: ·)
@@ -1346,7 +1346,7 @@ private theorem forestPairSum_assignment_rewrite (F : List (RoseTree α)) :
       rw [List.append_assoc, List.singleton_append]
       rfl
     | false =>
-      rw [if_neg (by decide : (false : Bool) ≠ true)]
+      rw [ite_eq_right (by decide : (false : Bool) ≠ true)]
       rw [show (Multiset.ofList ((listChoices [true, false] rest.length).map (false :: ·)) :
                 Multiset (List Bool)) =
               (Multiset.ofList (listChoices [true, false] rest.length)).map (false :: ·)
@@ -1398,12 +1398,12 @@ private theorem forestPairSum_nil_F_eq_zero
       (Multiset.bind_zero _)
     intro b _
     cases b
-    · rw [if_neg (by decide : (false : Bool) ≠ true)]
+    · rw [ite_eq_right (by decide : (false : Bool) ≠ true)]
       refine ih pre_T (pre_F ++ [x]) ?_
       right
       intro h_eq
       cases pre_F <;> simp at h_eq
-    · rw [if_pos rfl]
+    · rw [ite_eq_left rfl]
       refine ih (pre_T ++ [x]) pre_F ?_
       left
       intro h_eq
@@ -1424,9 +1424,9 @@ private theorem forestPairSum_eq_insertionForest (F : List (RoseTree α))
         (Multiset.bind_zero _)
       intro b _
       cases b
-      · rw [if_neg (by decide : (false : Bool) ≠ true)]
+      · rw [ite_eq_right (by decide : (false : Bool) ≠ true)]
         exact forestPairSum_nil_F_eq_zero [] [T_g] Ts_inner (Or.inr (by simp))
-      · rw [if_pos rfl]
+      · rw [ite_eq_left rfl]
         exact forestPairSum_nil_F_eq_zero [T_g] [] Ts_inner (Or.inl (by simp))
   | cons T F_tail =>
     cases Ts with
@@ -1510,9 +1510,9 @@ private theorem forestPairSum_pre_perm_mk
         Multiset.map_bind, Multiset.map_bind]
     refine Multiset.bind_congr fun b _ => ?_
     cases b
-    · rw [if_neg (by decide : (false : Bool) ≠ true), if_neg (by decide : (false : Bool) ≠ true)]
+    · rw [ite_eq_right (by decide : (false : Bool) ≠ true), ite_eq_right (by decide : (false : Bool) ≠ true)]
       exact ih hT (hF.append_right [x])
-    · rw [if_pos rfl, if_pos rfl]
+    · rw [ite_eq_left rfl, ite_eq_left rfl]
       exact ih (hT.append_right [x]) hF
 
 /-- Two-step unfolding: `forestPairSum F pre_T pre_F (x :: y :: rest)`
@@ -1614,10 +1614,10 @@ private theorem forestPairSum_perm_remaining_mk
         Multiset.map_bind, Multiset.map_bind]
     refine Multiset.bind_congr fun b _ => ?_
     cases b
-    · rw [if_neg (by decide : (false : Bool) ≠ true),
-          if_neg (by decide : (false : Bool) ≠ true)]
+    · rw [ite_eq_right (by decide : (false : Bool) ≠ true),
+          ite_eq_right (by decide : (false : Bool) ≠ true)]
       exact ih pre_T (pre_F ++ [x])
-    · rw [if_pos rfl, if_pos rfl]
+    · rw [ite_eq_left rfl, ite_eq_left rfl]
       exact ih (pre_T ++ [x]) pre_F
   | @swap a b l => exact forestPairSum_swap_mk T F_tail ih_F pre_T pre_F b a l
   | @trans Ts₁ Ts₂ Ts₃ _ _ ih₁ ih₂ => exact (ih₁ pre_T pre_F).trans (ih₂ pre_T pre_F)
@@ -1691,7 +1691,7 @@ private theorem forestPairSum_singleton_host_pre_F_nonempty (T : RoseTree α) (a
     rw [forestPairSum_cons_remaining]
     rw [show (Multiset.ofList [true, false] : Multiset Bool) = (true ::ₘ false ::ₘ 0) from rfl]
     rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
-    rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]
+    rw [ite_eq_left rfl, ite_eq_right (by decide : (false : Bool) ≠ true)]
     rw [ih (pre ++ [g]) pre_F_rest]
     rw [show (a :: pre_F_rest) ++ [g] = a :: (pre_F_rest ++ [g]) from rfl]
     rw [ih pre (pre_F_rest ++ [g])]
@@ -1720,7 +1720,7 @@ private theorem forestPairSum_singleton_host_no_pre_F (T : RoseTree α) :
     rw [forestPairSum_cons_remaining]
     rw [show (Multiset.ofList [true, false] : Multiset Bool) = (true ::ₘ false ::ₘ 0) from rfl]
     rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
-    rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]
+    rw [ite_eq_left rfl, ite_eq_right (by decide : (false : Bool) ≠ true)]
     rw [ih (pre ++ [g])]
     rw [show ([] : List (RoseTree α)) ++ [g] = [g] from rfl]
     rw [forestPairSum_singleton_host_pre_F_nonempty T g pre [] rest]

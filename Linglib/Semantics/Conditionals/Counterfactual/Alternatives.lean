@@ -54,8 +54,8 @@ theorem distributive_iff_homogeneity_eq_true :
     Distributive sim S C w ↔ homogeneity sim S C w = .true := by
   unfold homogeneity Trivalent.distList
   by_cases h : ∀ A ∈ S, universalCounterfactual sim (· ∈ A) C w
-  · rw [if_pos h]; exact ⟨fun _ => rfl, fun _ => h⟩
-  · rw [if_neg h]
+  · rw [ite_eq_left h]; exact ⟨fun _ => rfl, fun _ => h⟩
+  · rw [ite_eq_right h]
     refine ⟨fun h' => (h h').elim, fun h' => ?_⟩
     split_ifs at h'
 

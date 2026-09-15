@@ -1,7 +1,7 @@
 import Linglib.Core.Order.Tree
 import Mathlib.Order.GaloisConnection.Basic
 import Mathlib.Order.CompleteLattice.Basic
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
 # Command Relations on Abstract Trees

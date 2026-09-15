@@ -453,7 +453,7 @@ theorem jog_denote_eq_manner {Entity State T : Type*} [LinearOrder T]
     (M : Verb.CosModel Entity State T) (y x : Entity) :
     M.denote jogV y x = M.manner jogV := by
   unfold Verb.CosModel.denote
-  rw [if_neg (by decide), if_neg (by decide)]
+  rw [ite_eq_right (by decide), ite_eq_right (by decide)]
 
 /-! ### The same contrast at the template level ([rappaport-hovav-levin-1998])
 

@@ -83,17 +83,17 @@ lemma getElem?_boundary (j : ℕ) :
       else none := by
   unfold boundary
   rcases lt_or_ge j (k - 1) with h1 | h1
-  · rw [if_pos h1, List.getElem?_append_left (by simp; omega),
-      List.getElem?_append_left (by simpa using h1), List.getElem?_replicate, if_pos h1]
+  · rw [ite_eq_left h1, List.getElem?_append_left (by simp; omega),
+      List.getElem?_append_left (by simpa using h1), List.getElem?_replicate, ite_eq_left h1]
   rcases lt_or_ge j (k - 1 + w.length) with h2 | h2
-  · rw [if_neg (by omega), if_pos h2, List.getElem?_append_left (by simp; omega),
+  · rw [ite_eq_right (by omega), ite_eq_left h2, List.getElem?_append_left (by simp; omega),
       List.getElem?_append_right (by simpa using h1), List.getElem?_map,
       List.length_replicate]
   rcases lt_or_ge j (w.length + 2 * (k - 1)) with h3 | h3
-  · rw [if_neg (by omega), if_neg (by omega), if_pos h3,
+  · rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left h3,
       List.getElem?_append_right (by simp; omega), List.getElem?_replicate,
-      if_pos (by simp; omega)]
-  · rw [if_neg (by omega), if_neg (by omega), if_neg (by omega),
+      ite_eq_left (by simp; omega)]
+  · rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega),
       List.getElem?_eq_none (by simp; omega)]
 
 /-- A letter entry sits in the letter region. -/

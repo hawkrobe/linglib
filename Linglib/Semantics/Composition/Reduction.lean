@@ -265,46 +265,46 @@ theorem Model.termAt_var (k : ℕ) : m.termAt w (Term.var k) g = g k := rfl
 
 theorem Model.termAt_const (c : L.Constants) :
     m.termAt w (Constants.term c) g = m.const c w := by
-  letI := m.interp w
+  let := m.interp w
   exact Term.realize_constants
 
 theorem Model.realizeAt_not (φ : L.Formula ℕ) :
     m.realizeAt w φ.not g ↔ ¬ m.realizeAt w φ g := by
-  letI := m.interp w
+  let := m.interp w
   exact Formula.realize_not
 
 theorem Model.realizeAt_inf (φ ψ : L.Formula ℕ) :
     m.realizeAt w (φ ⊓ ψ) g ↔ m.realizeAt w φ g ∧ m.realizeAt w ψ g := by
-  letI := m.interp w
+  let := m.interp w
   exact Formula.realize_inf
 
 theorem Model.realizeAt_sup (φ ψ : L.Formula ℕ) :
     m.realizeAt w (φ ⊔ ψ) g ↔ m.realizeAt w φ g ∨ m.realizeAt w ψ g := by
-  letI := m.interp w
+  let := m.interp w
   exact Formula.realize_sup
 
 theorem Model.realizeAt_imp (φ ψ : L.Formula ℕ) :
     m.realizeAt w (φ.imp ψ) g ↔ (m.realizeAt w φ g → m.realizeAt w ψ g) := by
-  letI := m.interp w
+  let := m.interp w
   exact Formula.realize_imp
 
 theorem Model.realizeAt_all₁ (k : ℕ) (φ : L.Formula ℕ) :
     m.realizeAt w (all₁ k φ) g ↔
       ∀ x : m.E, m.realizeAt w φ (Function.update g k x) := by
-  letI := m.interp w
+  let := m.interp w
   exact FirstOrder.Language.Formula.realize_all₁
 
 theorem Model.realizeAt_ex₁ (k : ℕ) (φ : L.Formula ℕ) :
     m.realizeAt w (ex₁ k φ) g ↔
       ∃ x : m.E, m.realizeAt w φ (Function.update g k x) := by
-  letI := m.interp w
+  let := m.interp w
   exact FirstOrder.Language.Formula.realize_ex₁
 
 /-- Atomic agreement, unary: realization of `R(τ)` is the model-sourced
 extensional predicate at the term's value. -/
 theorem Model.realizeAt_formula₁ (R : L.Relations 1) (τ : L.Term ℕ) :
     m.realizeAt w (R.formula₁ τ) g ↔ m.pred₁ext R w (m.termAt w τ g) := by
-  letI := m.interp w
+  let := m.interp w
   rw [Model.realizeAt, Formula.realize_rel₁]
   exact iff_of_eq (congrArg _ (funext fun i => by fin_cases i; rfl))
 
@@ -313,7 +313,7 @@ object-first relation at the terms' values (subject first in the vector). -/
 theorem Model.realizeAt_formula₂ (R : L.Relations 2) (τ₁ τ₂ : L.Term ℕ) :
     m.realizeAt w (R.formula₂ τ₁ τ₂) g ↔
       m.pred₂ext R w (m.termAt w τ₂ g) (m.termAt w τ₁ g) := by
-  letI := m.interp w
+  let := m.interp w
   rw [Model.realizeAt, Formula.realize_rel₂]
   exact iff_of_eq (congrArg _ (funext fun i => by fin_cases i <;> rfl))
 
@@ -464,7 +464,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
   | case2 a a₁ s r hs =>
     -- name-subject predication
     intro φ g h
-    simp only [compileFO, if_neg hs, Option.bind_eq_some_iff] at h
+    simp only [compileFO, ite_eq_right hs, Option.bind_eq_some_iff] at h
     obtain ⟨c, hc, hpred⟩ := h
     exact interp_compilePred m fw nm w hdj g
       (by simp [compileTerm, hc]) hpred a
@@ -490,7 +490,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
       rw [m.realizeAt_formula₁, m.termAt_var, Function.update_self]
     have hN := m.lexiconFO_preds₁ fw nm w hR (hdj.names_of_preds₁ _ _ hR)
     by_cases hq1 : q = fw.every
-    · rw [if_pos hq1] at hq
+    · rw [ite_eq_left hq1] at hq
       cases hq
       subst hq1
       have hfr₁ := hfr.at (s := fw.every) (by simp)
@@ -502,9 +502,9 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
       simp only [Quantification.every_sem, m.realizeAt_imp]
       exact forall_congr' fun x =>
         imp_congr (hrestr x).symm (by rw [hquant x])
-    · rw [if_neg hq1] at hq
+    · rw [ite_eq_right hq1] at hq
       by_cases hq2 : q = fw.some_
-      · rw [if_pos hq2] at hq
+      · rw [ite_eq_left hq2] at hq
         cases hq
         subst hq2
         have hfr₁ := hfr.at (s := fw.some_) (by simp)
@@ -516,9 +516,9 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
         simp only [Quantification.some_sem, m.realizeAt_inf]
         exact exists_congr fun x =>
           and_congr (hrestr x).symm (by rw [hquant x])
-      · rw [if_neg hq2] at hq
+      · rw [ite_eq_right hq2] at hq
         by_cases hq3 : q = fw.no
-        · rw [if_pos hq3] at hq
+        · rw [ite_eq_left hq3] at hq
           cases hq
           subst hq3
           have hfr₁ := hfr.at (s := fw.no) (by simp)
@@ -531,7 +531,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
             m.realizeAt_not]
           exact forall_congr' fun x =>
             imp_congr (hrestr x).symm (by rw [hquant x])
-        · rw [if_neg hq3] at hq
+        · rw [ite_eq_right hq3] at hq
           simp at hq
   | case5 a l a₁ a₂ t₂ hl₁ hl₂ ihl iht =>
     -- coordination [l [and t₂]]
@@ -551,7 +551,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
   | case6 a l a₁ a₂ t₂ hl₁ hl₂ hne ihl iht =>
     -- coordination [l [or t₂]]
     intro φ g h
-    simp only [compileFO, if_neg hne, ↓reduceIte, Option.bind_eq_some_iff,
+    simp only [compileFO, ite_eq_right hne, ↓reduceIte, Option.bind_eq_some_iff,
       Option.map_eq_some_iff] at h
     obtain ⟨φ₁, h₁, φ₂, h₂, rfl⟩ := h
     have hfr₁ := hfr.at (s := fw.or_) (by simp)
@@ -565,7 +565,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     rw [m.realizeAt_sup w g]
   | case7 a l a₁ a₂ s t₂ hl₁ hl₂ hs₁ hs₂ =>
     intro φ g h
-    simp only [compileFO, if_neg hs₁, if_neg hs₂] at h
+    simp only [compileFO, ite_eq_right hs₁, ite_eq_right hs₂] at h
     simp at h
   | case8 t hex₁ hex₂ hex₃ hex₄ =>
     intro φ g h
@@ -674,9 +674,9 @@ theorem models_imp_iff_entails (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
   · intro hmod m hne w g
     rw [holdsAt_iff_realize m fw nm w hnd hfr hdj h₁ g,
       holdsAt_iff_realize m fw nm w hnd hfr hdj h₂ g]
-    letI := m.interp w
-    haveI : m.E ⊨ (∅ : L₀.Theory) := inferInstance
-    haveI : Nonempty m.E := hne
+    let := m.interp w
+    have : m.E ⊨ (∅ : L₀.Theory) := inferInstance
+    have : Nonempty m.E := hne
     have h := hmod ⟨m.E⟩ g default
     exact BoundedFormula.realize_imp.mp h
   · intro hent M v xs
@@ -717,9 +717,9 @@ theorem holdsAt_compactness (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
       classical
       choose f hf using fun (x : T₀) => hT₀ x.2
       obtain ⟨m, hne, w, g, hs⟩ := hfin (Finset.univ.image f)
-      letI := m.interp w
-      haveI : Nonempty m.E := hne
-      haveI : m.E ⊨ (T₀ : L₀.Theory) := by
+      let := m.interp w
+      have : Nonempty m.E := hne
+      have : m.E ⊨ (T₀ : L₀.Theory) := by
         refine ⟨fun ψ hψ => ?_⟩
         obtain ⟨x, rfl⟩ : ∃ x : T₀, (φs (f x)).toSentence (hcl (f x)) = ψ :=
           ⟨⟨ψ, hψ⟩, hf ⟨ψ, hψ⟩⟩
@@ -729,8 +729,8 @@ theorem holdsAt_compactness (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
         exact hold
       exact Theory.Model.isSatisfiable m.E
     obtain ⟨N⟩ := hsat
-    letI := N.struc
-    haveI := N.nonempty'
+    let := N.struc
+    have := N.nonempty'
     refine ⟨Model.ofStructure N N.struc, N.nonempty', (),
       fun _ => Classical.arbitrary N, fun i => ?_⟩
     rw [holdsAt_iff_realize (Model.ofStructure N N.struc) fw nm ()

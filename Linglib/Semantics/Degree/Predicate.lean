@@ -1,6 +1,7 @@
 import Mathlib.Order.Basic
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Max
+import Mathlib.Logic.Function.Const
 import Mathlib.Tactic.NormNum
 import Linglib.Semantics.Degree.Boundedness
 import Linglib.Semantics.Degree.Comparison
@@ -11,8 +12,8 @@ import Linglib.Semantics.Degree.Comparison
 
 Predicate transformers over a measure function `μ : W → α`:
 
-- `IsConstant` (information collapse; monotonicity is mathlib's
-  `Monotone`/`Antitone` under the pointwise order on `W → Prop`)
+- `bimonotone_constant` (information collapse as mathlib's `Function.IsConst`; monotonicity
+  is `Monotone`/`Antitone` under the pointwise order on `W → Prop`)
 - `typeLower` (Partee 1987 existential lowering)
 - monotonicity / anti-Horn-scale lemmas about the `Degree.Comparison.over`
   degree predicates (general)
@@ -38,26 +39,10 @@ variable {α : Type*} [LinearOrder α]
 -- `Monotone` under the pointwise order on `W → Prop` (`p ≤ q ↔ p → q`);
 -- downward monotone (atelic E-TIA) is `Antitone`. No local aliases.
 
-/-- A family is **constant**: every value yields the same proposition.
-    This is information collapse — no value is more informative than another.
-    Occurs when a family is both upward and downward monotone. -/
-def IsConstant {W : Type*} (P : α → W → Prop) : Prop :=
-  ∀ (x y : α) (w : W), P x w ↔ P y w
-
-/-- If P is both upward and downward monotone, it is constant. -/
 theorem bimonotone_constant {W : Type*} (P : α → W → Prop)
-    (hUp : Monotone P) (hDown : Antitone P) :
-    IsConstant P := by
-  intro x y w
-  constructor
-  · intro hx
-    rcases le_total x y with h | h
-    · exact hUp h w hx
-    · exact hDown h w hx
-  · intro hy
-    rcases le_total y x with h | h
-    · exact hUp h w hy
-    · exact hDown h w hy
+    (hUp : Monotone P) (hDown : Antitone P) : Function.IsConst P := λ x y =>
+  (le_total x y).elim (λ h => le_antisymm (hUp h) (hDown h))
+    (λ h => le_antisymm (hDown h) (hUp h))
 
 /-! ### Maximal informativity is downstream -/
 

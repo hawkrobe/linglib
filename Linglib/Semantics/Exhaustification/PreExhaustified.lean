@@ -3,8 +3,8 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Logic.Basic
-import Mathlib.Logic.ExistsUnique
+import Mathlib.Basic.Logic.Basic
+import Mathlib.Basic.ExistsUnique
 import Mathlib.Data.Fintype.Basic
 
 /-!

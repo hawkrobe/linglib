@@ -1,7 +1,7 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Logic.Relation
-import Mathlib.Data.Rel
+import Mathlib.Basic.Rel
 import Linglib.Semantics.Mereology
 
 /-!

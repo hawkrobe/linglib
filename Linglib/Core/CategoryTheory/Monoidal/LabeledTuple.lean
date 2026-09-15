@@ -5,8 +5,10 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Algebra.Group.Defs
 import Mathlib.CategoryTheory.Monoidal.OfHasFiniteProducts
-import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts
+import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts.ProdComparison
 import Mathlib.CategoryTheory.Limits.Shapes.Terminal
+import Mathlib.Data.List.OfFn
+import Mathlib.Data.Fintype.Basic
 import Linglib.Core.Data.Fin.Tuple.Basic
 
 /-!

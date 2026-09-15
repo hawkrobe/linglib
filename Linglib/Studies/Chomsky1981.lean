@@ -167,8 +167,8 @@ instance (c : SimpleClause) (i j : Pos) : Decidable (sameDomain c i j) :=
 instance : CommandRelation where
   commands := commands
   sameDomain := sameDomain
-  commandsDec := fun c i j => inferInstance
-  sameDomainDec := fun c i j => inferInstance
+  commandsDec := fun _ _ _ => inferInstance
+  sameDomainDec := fun _ _ _ => inferInstance
 
 /-- Reflexives require local c-commanding antecedent. -/
 def reflexiveCoreferenceData : PhenomenonData := {

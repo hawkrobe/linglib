@@ -271,7 +271,7 @@ noncomputable def normalCDFOrderIso : ℝ ≃o Set.Ioo (0 : ℝ) 1 where
   toFun x := ⟨normalCDF x, normalCDF_mem_Ioo x⟩
   invFun p := probit p.1
   left_inv x := probit_normalCDF x
-  right_inv := fun ⟨p, hp⟩ => Subtype.ext (probit_spec hp.1 hp.2)
+  right_inv := fun ⟨_, hp⟩ => Subtype.ext (probit_spec hp.1 hp.2)
   map_rel_iff' := normalCDF_strictMono.le_iff_le
 
 end Core

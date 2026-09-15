@@ -459,7 +459,7 @@ theorem empty_supports (sat : S → φ → Prop) (ψ : φ) :
 theorem content_mono (sat : S → φ → Prop) (ψ₁ ψ₂ : φ)
     (h : ∀ p, sat p ψ₁ → sat p ψ₂) :
     contentOf sat ψ₁ ⊆ contentOf sat ψ₂ :=
-  Set.setOf_subset_setOf.mpr h
+  Set.ofPred_subset_ofPred.mpr h
 
 /-- Filtering a set by a predicate is monotone. -/
 theorem sep_monotone (pred : S → Prop) :

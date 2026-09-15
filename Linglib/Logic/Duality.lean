@@ -280,9 +280,9 @@ theorem dist_eq_true_iff {α : Type*} (s : Finset α) (P : α → Prop) [Decidab
     dist s P = .true ↔ ∀ a ∈ s, P a := by
   unfold dist
   by_cases h : ∀ a ∈ s, P a
-  · rw [if_pos h]; exact ⟨fun _ => h, fun _ => rfl⟩
+  · rw [ite_eq_left h]; exact ⟨fun _ => h, fun _ => rfl⟩
   · refine ⟨fun habs => ?_, fun habs => absurd habs h⟩
-    rw [if_neg h] at habs
+    rw [ite_eq_right h] at habs
     split_ifs at habs
 
 /-- `dist s P = .false` iff `s` is nonempty and no element satisfies `P`. -/
@@ -290,19 +290,19 @@ theorem dist_eq_false_iff {α : Type*} (s : Finset α) (P : α → Prop) [Decida
     dist s P = .false ↔ s.Nonempty ∧ ∀ a ∈ s, ¬ P a := by
   unfold dist
   by_cases h1 : ∀ a ∈ s, P a
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     refine ⟨fun habs => ?_, ?_⟩
     · cases habs
     · rintro ⟨⟨a, ha⟩, hno⟩; exact (hno a ha (h1 a ha)).elim
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     by_cases h2 : ∃ a ∈ s, P a
-    · rw [if_pos h2]
+    · rw [ite_eq_left h2]
       refine ⟨fun habs => ?_, ?_⟩
       · cases habs
       · rintro ⟨_, hno⟩
         obtain ⟨a, ha, hPa⟩ := h2
         exact (hno a ha hPa).elim
-    · rw [if_neg h2]
+    · rw [ite_eq_right h2]
       refine ⟨fun _ => ?_, fun _ => rfl⟩
       refine ⟨?_, ?_⟩
       · -- s.Nonempty
@@ -320,18 +320,18 @@ theorem dist_eq_indet_iff {α : Type*} (s : Finset α) (P : α → Prop) [Decida
     dist s P = .indet ↔ (∃ a ∈ s, P a) ∧ (∃ a ∈ s, ¬ P a) := by
   unfold dist
   by_cases h1 : ∀ a ∈ s, P a
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     refine ⟨fun habs => ?_, ?_⟩
     · cases habs
     · rintro ⟨_, ⟨a, ha, hnP⟩⟩; exact (hnP (h1 a ha)).elim
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     by_cases h2 : ∃ a ∈ s, P a
-    · rw [if_pos h2]
+    · rw [ite_eq_left h2]
       refine ⟨fun _ => ?_, fun _ => rfl⟩
       refine ⟨h2, ?_⟩
       push Not at h1
       exact h1
-    · rw [if_neg h2]
+    · rw [ite_eq_right h2]
       refine ⟨fun habs => ?_, ?_⟩
       · cases habs
       · rintro ⟨⟨a, ha, hPa⟩, _⟩

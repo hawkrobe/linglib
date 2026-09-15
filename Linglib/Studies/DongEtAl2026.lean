@@ -171,7 +171,7 @@ theorem voi_reliability {r : ℝ} (h₀ : 1 / 2 ≤ r) (h₁ : r ≤ 1) :
       λ θ => if y = θ then r else 1 - r := λ y => by
     funext θ
     simp only [ObservationModel.posterior]
-    rw [hm, if_neg (by norm_num)]
+    rw [hm, ite_eq_right (by norm_num)]
     simp only [question, uniform]
     split_ifs <;> ring
   have hr : 1 - r ≤ r := by linarith

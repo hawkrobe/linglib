@@ -1,6 +1,6 @@
 import Linglib.Core.Computability.ContextFreeGrammar.Tree
 import Linglib.Core.Computability.ContextFreeGrammar.Weighted
-import Mathlib.Data.ENNReal.Inv
+import Mathlib.Basic.ENNReal.Inv
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 
@@ -120,7 +120,7 @@ theorem derivProb_eq_prod_pow_ruleCount {t : RoseTree (Symbol T G.NT)} (ht : t.V
   | terminal a => simp [RoseTree.leaf, derivProb_node, RoseTree.ruleCount_node_terminal]
   | nonterminal A cs hrule hcs ih =>
     simp only [derivProb_node, RoseTree.ruleCount_node_nonterminal, pow_add,
-      Finset.prod_mul_distrib, pow_ite, pow_one, pow_zero, Finset.prod_ite_eq', if_pos hrule,
+      Finset.prod_mul_distrib, pow_ite, pow_one, pow_zero, Finset.prod_ite_eq', ite_eq_left hrule,
       symbolWeight_nonterminal]
     congr 1
     clear hrule hcs
@@ -149,7 +149,7 @@ theorem corpusProb_eq_prod_pow_count (D : Multiset (RoseTree (Symbol T G.NT)))
 noncomputable def uniform : PCFG G where
   weight r := if r ∈ G.rules then ((G.rules.filter (·.input = r.input)).card : ℝ≥0∞)⁻¹ else 0
   weight_nonneg _ := zero_le
-  weight_eq_zero_of_not_mem _ hr := if_neg hr
+  weight_eq_zero_of_not_mem _ hr := ite_eq_right hr
   sum_weight a ha := by
     obtain ⟨r₀, hr₀, hra⟩ := Finset.mem_image.mp ha
     have hcard :
@@ -157,7 +157,7 @@ noncomputable def uniform : PCFG G where
       exact_mod_cast (Finset.card_pos.mpr ⟨r₀, Finset.mem_filter.mpr ⟨hr₀, hra⟩⟩).ne'
     rw [Finset.sum_congr rfl
         (g := λ _ => ((G.rules.filter λ r : ContextFreeRule T G.NT => r.input = a).card : ℝ≥0∞)⁻¹)
-        λ r hr => by rw [if_pos (Finset.mem_filter.mp hr).1, (Finset.mem_filter.mp hr).2],
+        λ r hr => by rw [ite_eq_left (Finset.mem_filter.mp hr).1, (Finset.mem_filter.mp hr).2],
       Finset.sum_const, nsmul_eq_mul, ENNReal.mul_inv_cancel hcard (ENNReal.natCast_ne_top _)]
 
 noncomputable instance : Inhabited (PCFG G) := ⟨uniform⟩

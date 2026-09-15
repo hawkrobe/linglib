@@ -166,9 +166,9 @@ theorem collapse_isISL [DecidableEq α] :
       show a :: ((if [a] = [b] then [] else [b]) ++ r.applyAux [b] l) = _
       by_cases hab : a = b
       · subst hab
-        rw [if_pos rfl, List.nil_append, if_neg (by simp : ¬ (a ≠ a))]
+        rw [ite_eq_left rfl, List.nil_append, ite_eq_right (by simp : ¬ (a ≠ a))]
         exact ih a
-      · rw [if_neg (by simpa using hab), if_pos (by simpa using hab)]
+      · rw [ite_eq_right (by simpa using hab), ite_eq_left (by simpa using hab)]
         rw [List.cons_append, List.nil_append]
         exact congrArg (a :: ·) (ih b)
   cases xs with
@@ -180,7 +180,7 @@ theorem collapse_isISL [DecidableEq α] :
       simp [List.rtake]
     rw [hwin]
     show ((if ([] : List α) = [x] then [] else [x]) ++ r.applyAux [x] rest) = _
-    rw [if_neg (by simp), List.cons_append, List.nil_append]
+    rw [ite_eq_right (by simp), List.cons_append, List.nil_append]
     rw [OCP.collapse_eq_destutter, List.destutter_cons']
     exact key x rest
 

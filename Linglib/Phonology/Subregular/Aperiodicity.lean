@@ -622,7 +622,7 @@ theorem IsStrictlyLocal.isStarFree {L : Language α} {k : ℕ} (h : L.IsStrictly
       and_imp]
     by_cases hg : ([] : Augmented α) ∈ G
     · simpa [hg] using fun f _ (hf : f = []) => hf ▸ hg
-    · simp only [hg, if_false, Set.mem_empty_iff_false, iff_false, not_forall]
+    · simp only [hg, ite_false, Set.mem_empty_iff_false, iff_false, not_forall]
       exact ⟨[], List.nil_infix, rfl, hg⟩
   · exact StrictlyLocalGrammar.isStarFree_of_language_succ G n L hG
 
@@ -640,9 +640,9 @@ theorem IsStrictlyPiecewise.isStarFree {L : Language α} {k : ℕ} (h : L.IsStri
       (if ([] : List α) ∈ G then Set.univ else ∅) (fun w => ?_)
     rw [← hG, StrictlyPiecewiseGrammar.mem_language]
     by_cases hg : ([] : List α) ∈ G
-    · simp only [hg, if_pos, Set.mem_univ, iff_true]
+    · simp only [hg, ite_eq_left, Set.mem_univ, iff_true]
       exact fun s (hs : s.length ≤ 0) _ => List.length_eq_zero_iff.mp (Nat.le_zero.mp hs) ▸ hg
-    · simp only [hg, if_neg, not_false_iff, Set.mem_empty_iff_false, iff_false, not_forall]
+    · simp only [hg, ite_eq_right, not_false_iff, Set.mem_empty_iff_false, iff_false, not_forall]
       exact ⟨[], le_rfl, List.nil_sublist _, hg⟩
   · exact StrictlyPiecewiseGrammar.isStarFree_of_language_succ G n L hG
 

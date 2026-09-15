@@ -56,8 +56,6 @@ theorem listProd_cons (μ : Measure α) (μs : List (Measure α)) :
   rw [listProd_nil, dirac_apply' _ .of_discrete]
   simp
 
-variable [Countable α] [MeasurableSingletonClass α]
-
 theorem isProbabilityMeasure_listProd {μs : List (Measure α)}
     (h : ∀ μ ∈ μs, IsProbabilityMeasure μ) : IsProbabilityMeasure (listProd μs) := by
   induction μs with
@@ -66,7 +64,9 @@ theorem isProbabilityMeasure_listProd {μs : List (Measure α)}
     have := ih fun ν hν => h ν (List.mem_cons_of_mem _ hν)
     have := h μ (List.mem_cons_self ..)
     rw [listProd_cons]
-    exact isProbabilityMeasure_map Measurable.of_discrete.aemeasurable
+    infer_instance
+
+variable [Countable α] [MeasurableSingletonClass α]
 
 theorem listProd_univ_le_one {μs : List (Measure α)} (h : ∀ μ ∈ μs, μ Set.univ ≤ 1) :
     listProd μs Set.univ ≤ 1 := by

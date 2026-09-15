@@ -239,7 +239,6 @@ theorem tableau7 :
       activation, novel, freeN2, w78, Constraint.binary]
   · norm_num [harmonyScore, weightedViolations, Fin.sum_univ_three, con, scaledWeights, idNasal,
       activation, novel, freeN2, w78, Constraint.binary]
-    decide
   · rw [pNasal_novel]; norm_num [w78]
 
 /-- Tableau (8): existing compounds with N2 activation 0.5 and compound activations 0.7 and 0.3.

@@ -112,7 +112,7 @@ theorem CancellationOrder.trans {A B C : Set W} (hAB : G.ge A B) (hBC : G.ge B C
 theorem CancellationOrder.mono {A B : Set W} (hAB : A ⊆ B) : G.ge B A := by
   refine G.fc [(B \ A, ∅)] A B (fun s => ?_) (fun p hp => ?_)
   · simp only [seqCount, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
-      Set.mem_empty_iff_false, if_false, Set.mem_sdiff]
+      Set.mem_empty_iff_false, ite_false, Set.mem_sdiff]
     by_cases hsA : s ∈ A
     · simp [hsA, hAB hsA]
     · by_cases hsB : s ∈ B <;> simp [hsA, hsB]
@@ -162,7 +162,7 @@ private lemma mu_listSum (L : List (Set W)) :
       simp [seqCount]
     rw [hsc]; push_cast
     by_cases hs : s ∈ E
-    · simp only [hs, if_true]; rw [mul_add, mul_one]
+    · simp only [hs, ite_true]; rw [mul_add, mul_one]
     · simp [hs]
 
 private lemma mu_listSum_eq_of_balanced {L₁ L₂ : List (Set W)} (h : BalancedSeqs L₁ L₂) :

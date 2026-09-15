@@ -83,13 +83,13 @@ theorem spreadRTL_cons (ih sp : Bool) (v : Seg) (rest : List Seg) :
 /-- Once spreading has stopped, the scan leaves the list unchanged. -/
 theorem spreadRTL_stopped (ih : Bool) : ∀ L, spreadRTL ih false L = L
   | [] => rfl
-  | v :: rest => by rw [spreadRTL_cons, if_neg (by decide), spreadRTL_stopped ih rest]
+  | v :: rest => by rw [spreadRTL_cons, ite_eq_right (by decide), spreadRTL_stopped ih rest]
 
 /-- With an initial [−high] vowel (`ih = false`), nothing blocks: every prefix raises. -/
 theorem spreadRTL_false_true : ∀ L, spreadRTL false true L = L.map raisePfx
   | [] => rfl
   | v :: rest => by
-      rw [spreadRTL_cons, if_pos rfl]
+      rw [spreadRTL_cons, ite_eq_left rfl]
       have ih := spreadRTL_false_true rest
       cases h : v.isHiPfx <;> simp [ih]
 
@@ -99,8 +99,8 @@ theorem spreadRTL_replicate_vHi (ih : Bool) (rest : List Seg) :
        = List.replicate n .vHiA ++ spreadRTL ih true rest
   | 0 => by simp
   | n + 1 => by
-      rw [List.replicate_succ, List.cons_append, spreadRTL_cons, if_pos rfl,
-          if_pos (by decide : (Seg.vHi).isHiPfx = true),
+      rw [List.replicate_succ, List.cons_append, spreadRTL_cons, ite_eq_left rfl,
+          ite_eq_left (by decide : (Seg.vHi).isHiPfx = true),
           spreadRTL_replicate_vHi ih rest n, List.replicate_succ, List.cons_append]
       rfl
 
@@ -199,7 +199,7 @@ theorem tutrugbuATR_baseL (d : ℕ) :
   have hSpread : spreadRTL true true ((pre .vHi d).reverse) =
       List.replicate d .vHiA ++ .vLo :: List.replicate (d + 1) .vHi := by
     rw [hRev, spreadRTL_replicate_vHi, spreadRTL_cons]
-    simp only [Seg.isHiPfx, if_true, if_false, Bool.false_eq_true, spreadRTL_stopped]
+    simp only [Seg.isHiPfx, ite_true, ite_false, Bool.false_eq_true, spreadRTL_stopped]
   -- Reduce tutrugbuATR to the spread expression
   rw [show tutrugbuATR (baseL d) =
       (spreadRTL true true (pre .vHi d).reverse).reverse ++ [.rP] from by

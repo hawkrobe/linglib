@@ -105,6 +105,6 @@ theorem replace_self (t r : UnorderedTree α) : replace t r t = r := by
   refine Quotient.inductionOn t fun p => ?_
   obtain ⟨a, cs⟩ := p
   show unorderedReplace (mk (RoseTree.node a cs)) r (RoseTree.node a cs) = r
-  simp only [unorderedReplace, if_pos]
+  simp only [unorderedReplace, ite_eq_left]
 
 end UnorderedTree

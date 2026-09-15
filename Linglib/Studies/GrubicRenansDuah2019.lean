@@ -7,7 +7,7 @@ import Linglib.Semantics.Exhaustification.Excluder
 import Linglib.Semantics.Focus.Control
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Data.Examples.GrubicRenansDuah2019
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
 # Grubic, Renans, and Duah (2019): Focus, Exhaustivity and Existence in Akan, Ga and Ngamo

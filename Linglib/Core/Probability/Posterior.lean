@@ -199,9 +199,9 @@ theorem normalize_eq_pure_of_singleton_support {α : Type*} (f : α → ℝ≥0�
   intro y
   rw [PMF.pure_apply, PMF.normalize_apply, h_sum]
   by_cases h : y = x
-  · rw [h, if_pos rfl]
+  · rw [h, ite_eq_left rfl]
     exact ENNReal.mul_inv_cancel hfx_ne_zero hfx_ne_top
-  · rw [if_neg h, h_unique y h, zero_mul]
+  · rw [ite_eq_right h, h_unique y h, zero_mul]
 
 /-- **Inequality decomposition for `PMF.normalize`**: comparing two normalised
 values reduces to comparing the raw scores — the shared `(∑' x, f x)⁻¹` factor
@@ -378,7 +378,7 @@ theorem inv_succ_lt_normalize_apply_of_sum_lt_mul {α : Type*} [Fintype α] [Dec
 
 /-- **`bindOnSupport` collapses to a 2-element sum** when the prior PMF's
 support is contained in `{a₁, a₂}`. Each retained term `p a_i * f a_i h b`
-uses the corresponding non-zero `a_i ∈ p.support` witness via `dif_neg`.
+uses the corresponding non-zero `a_i ∈ p.support` witness via `dite_eq_right`.
 
 Useful for sparse `PMF.bindOnSupport` patterns (e.g., observation kernels
 with 1-2 reachable obs per condition). Generalises trivially to k-element
@@ -396,10 +396,10 @@ theorem bindOnSupport_apply_two_support
   rw [tsum_eq_sum (s := ({a₁, a₂} : Finset α)) (fun a ha => by
     have ha' : a ≠ a₁ ∧ a ≠ a₂ := by
       constructor <;> (intro heq; apply ha; subst heq; simp)
-    rw [dif_pos (h_supp a ha'.1 ha'.2), mul_zero])]
+    rw [dite_eq_left (h_supp a ha'.1 ha'.2), mul_zero])]
   rw [show ({a₁, a₂} : Finset α) = insert a₁ {a₂} from rfl,
       Finset.sum_insert (by simp [h_distinct]), Finset.sum_singleton]
-  rw [dif_neg h₁, dif_neg h₂]
+  rw [dite_eq_right h₁, dite_eq_right h₂]
 
 -- Reweight: PMF × non-negative weight → PMF (the algebraic primitive
 -- behind both Bayesian posterior and Product of Experts)
@@ -843,9 +843,9 @@ theorem posterior_eq_pure_of_singleton_score_support {α β : Type*}
   rw [PMF.pure_apply]
   by_cases h : a = a_unique
   · subst h
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     exact posterior_eq_one_of_singleton_score_support κ μ b h_marg a h_unique
-  · rw [if_neg h, posterior_apply]
+  · rw [ite_eq_right h, posterior_apply]
     rcases h_unique a h with hμ | hκ
     · simp [hμ]
     · simp [hκ]

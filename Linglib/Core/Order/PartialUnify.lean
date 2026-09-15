@@ -183,14 +183,14 @@ instance : PartialUnify ((t : F) → S t) where
   isLUB_of_unify_eq_some := by
     intro f g u hu
     by_cases h : ∀ t, (unify (f t) (g t)).isSome
-    · rw [dif_pos h, Option.some_inj] at hu
+    · rw [dite_eq_left h, Option.some_inj] at hu
       rw [isLUB_pi]
       intro t
       rw [Set.image_pair]
       have : unify (f t) (g t) = some (u t) := by
         rw [← hu]; exact (Option.some_get (h t)).symm
       exact isLUB_of_unify_eq_some this
-    · rw [dif_neg h] at hu
+    · rw [dite_eq_right h] at hu
       exact absurd hu (by simp)
   isSome_unify_of_bddAbove := by
     intro f g hbdd
@@ -199,7 +199,7 @@ instance : PartialUnify ((t : F) → S t) where
     have hgw : g ≤ w := hw (Set.mem_insert_of_mem _ rfl)
     have h : ∀ t, (unify (f t) (g t)).isSome := λ t =>
       isSome_unify_of_bddAbove ⟨w t, mem_upperBounds_pair.mpr ⟨hfw t, hgw t⟩⟩
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     rfl
 
 end Pi

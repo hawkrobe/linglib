@@ -1,6 +1,6 @@
-import Mathlib.Logic.Basic
-import Mathlib.Logic.ExistsUnique
-import Mathlib.Logic.Nontrivial.Basic
+import Mathlib.Basic.Logic.Basic
+import Mathlib.Basic.ExistsUnique
+import Mathlib.Basic.Nontrivial.Basic
 
 /-!
 # Exclusive satisfaction of a predicate
@@ -60,7 +60,7 @@ theorem exclusive_false_of_universal {a b : D} (hab : a ≠ b) (P : D → Prop)
     ∀ d, ¬(P d ∧ ∀ e, e ≠ d → ¬P e) := by
   intro d hand
   obtain ⟨_, hexcl⟩ := hand
-  haveI : Nontrivial D := ⟨⟨a, b, hab⟩⟩
+  have : Nontrivial D := ⟨⟨a, b, hab⟩⟩
   obtain ⟨e, hne⟩ := exists_ne d
   exact hexcl e hne (hAll e)
 

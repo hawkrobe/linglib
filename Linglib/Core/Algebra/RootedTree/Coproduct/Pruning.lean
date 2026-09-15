@@ -224,7 +224,7 @@ the `Bialgebra` instance follow below. -/
 
 The factor-wise commutation `(counit ⊗ id) ∘ (id ⊗ B+_a) = (id ⊗ B+_a) ∘ (counit ⊗ id)`
 (where the right `id` is on different domains: `H` on the left, `R` on the right).
-Pure `TensorProduct.induction_on` calculation; both sides reduce to
+Pure `TensorProduct.inductionOn` calculation; both sides reduce to
 `counit x ⊗ B+_a y` on simple tensors. Used in the tree-level counit law. -/
 
 private theorem counit_rTensor_lTensor_bPlus_apply (a : α)
@@ -235,8 +235,7 @@ private theorem counit_rTensor_lTensor_bPlus_apply (a : α)
     (LinearMap.lTensor R (bPlusLin (R := R) a))
       ((Algebra.TensorProduct.map (counit (R := R))
         (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))) z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => rw [map_zero, map_zero, map_zero]
+  induction z using TensorProduct.inductionOn with
   | tmul x y =>
     rw [LinearMap.lTensor_tmul, Algebra.TensorProduct.map_tmul,
         Algebra.TensorProduct.map_tmul, AlgHom.id_apply, AlgHom.id_apply,
@@ -395,8 +394,7 @@ private theorem comulTreeN_counit_lTensor (T : UnorderedTree α) :
           (comulForestN (Multiset.ofList (children.map UnorderedTree.mk)))) = 0 from by
     generalize comulForestN (R := R)
       (Multiset.ofList (children.map UnorderedTree.mk)) = z
-    induction z using TensorProduct.induction_on with
-    | zero => rw [map_zero, map_zero]
+    induction z using TensorProduct.inductionOn with
     | tmul x y =>
       rw [LinearMap.lTensor_tmul, Algebra.TensorProduct.map_tmul,
           AlgHom.id_apply, counit_bPlusLin, TensorProduct.tmul_zero]
@@ -547,7 +545,7 @@ calculations. Sketch (Sweedler-style, with `Δ x = Σᵢ aᵢ ⊗ bᵢ`):
 
 A clean Lean implementation would extract a `LinearMap`-level helper
 `assoc_lTensor_bPlus_eq : assoc ∘ (Δ ⊗ id) ∘ (id ⊗ B+_a) = (id ⊗ id ⊗ B+_a) ∘ assoc ∘ (Δ ⊗ id)`
-(provable by `TensorProduct.induction_on`), then close by `congrArg ((id ⊗ id ⊗ B+_a))` on `hx`. -/
+(provable by `TensorProduct.inductionOn`), then close by `congrArg ((id ⊗ id ⊗ B+_a))` on `hx`. -/
 /-! ### Helper commutations for the bPlus closure proof
 
 Three commutation/identity lemmas for the substantive Foissy bit:
@@ -568,8 +566,7 @@ private theorem comulAlgHomN_lTensor_bPlus_commute (a : α)
     (LinearMap.lTensor _ (bPlusLin (R := R) a))
       ((Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
         (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))) z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => rw [map_zero, map_zero, map_zero]
+  induction z using TensorProduct.inductionOn with
   | tmul x y =>
     rw [LinearMap.lTensor_tmul, Algebra.TensorProduct.map_tmul,
         Algebra.TensorProduct.map_tmul, AlgHom.id_apply, AlgHom.id_apply,
@@ -585,12 +582,10 @@ private theorem assoc_lTensor_bPlus_commute (a : α)
     (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlusLin (R := R) a)))
       ((Algebra.TensorProduct.assoc R R R (ConnesKreimer R (UnorderedTree α))
         (ConnesKreimer R (UnorderedTree α)) (ConnesKreimer R (UnorderedTree α))) z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
+  induction z using TensorProduct.inductionOn with
   | tmul w c =>
     -- w : H ⊗ H, c : H. Need to induct on w to expose the (a ⊗ b) ⊗ c form.
-    induction w using TensorProduct.induction_on with
-    | zero => simp
+    induction w using TensorProduct.inductionOn with
     | tmul x y =>
       rw [LinearMap.lTensor_tmul, Algebra.TensorProduct.assoc_tmul,
           Algebra.TensorProduct.assoc_tmul, LinearMap.lTensor_tmul,
@@ -614,8 +609,7 @@ private theorem lTensor_id_Δ_bPlus_eq (a : α)
     (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlusLin (R := R) a)))
       ((Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
         (comulAlgHomN (R := R) (α := α))) z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
+  induction z using TensorProduct.inductionOn with
   | tmul x y =>
     -- LHS: (map id Δ)((lTensor B+a)(x ⊗ y)) = (map id Δ)(x ⊗ B+a y) = x ⊗ Δ(B+a y)
     --    = x ⊗ ((B+a y) ⊗ 1 + (lTensor B+a)(Δ y)) = x ⊗ ((B+a y) ⊗ 1) + x ⊗ (lTensor B+a)(Δ y)

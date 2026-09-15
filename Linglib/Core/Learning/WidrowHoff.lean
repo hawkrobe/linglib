@@ -155,7 +155,7 @@ theorem whUpdate_single_eq_rescorlaWagner_update
              LinearMap.smulRight_apply, Fintype.linearCombination_apply,
              Pi.add_apply, Pi.smul_apply, smul_eq_mul, Pi.sub_apply,
              Pi.single_apply, mul_ite, ite_mul, mul_one, mul_zero, one_mul,
-             zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true, hsal,
+             zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, hsal,
              hsum]
   rw [hind]
   split_ifs with h <;> ring

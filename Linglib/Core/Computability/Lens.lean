@@ -62,7 +62,7 @@ variable {ι : Type u} {V : Type v}
 def proj [DecidableEq ι] (i : ι) : Lens (ι → Option V) V where
   read s := s i
   write v s := Function.update s i (some v)
-  read_write v s := Function.update_self ..
+  read_write _ _ := Function.update_self ..
 
 @[simp] theorem proj_read [DecidableEq ι] (i : ι) (s : ι → Option V) :
     (proj i).read s = s i := rfl

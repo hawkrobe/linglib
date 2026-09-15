@@ -132,6 +132,7 @@ theorem fill_univ_le_one (hκ : ∀ i, κ i Set.univ ≤ 1) (s : PartialTree ι)
         obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hμ
         exact ih c hc
 
+omit [Countable ι] in
 theorem isProbabilityMeasure_fill [IsMarkovKernel κ] (s : PartialTree ι) :
     IsProbabilityMeasure (fill κ s) := by
   induction s using RoseTree.rec' with
@@ -143,7 +144,7 @@ theorem isProbabilityMeasure_fill [IsMarkovKernel κ] (s : PartialTree ι) :
         obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hμ
         exact ih c hc
       rw [fill_inr, fillList_apply]
-      exact Measure.isProbabilityMeasure_map Measurable.of_discrete.aemeasurable
+      infer_instance
 
 instance [IsMarkovKernel κ] : IsMarkovKernel (fill κ) := ⟨isProbabilityMeasure_fill⟩
 
@@ -205,6 +206,7 @@ theorem generation_inr (i : ι) (cs : List (PartialTree ι)) :
 
 variable [Countable ι]
 
+omit [Countable ι] in
 theorem isProbabilityMeasure_generation [IsMarkovKernel ξ] (s : PartialTree ι) :
     IsProbabilityMeasure (generation ξ s) := by
   induction s using RoseTree.rec' with
@@ -212,13 +214,13 @@ theorem isProbabilityMeasure_generation [IsMarkovKernel ξ] (s : PartialTree ι)
     cases s with
     | inl i =>
       rw [generation_inl]
-      exact Measure.isProbabilityMeasure_map Measurable.of_discrete.aemeasurable
+      infer_instance
     | inr i =>
       have := Measure.isProbabilityMeasure_listProd fun μ hμ => by
         obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hμ
         exact ih c hc
       rw [generation_inr, generationList_apply]
-      exact Measure.isProbabilityMeasure_map Measurable.of_discrete.aemeasurable
+      infer_instance
 
 instance [IsMarkovKernel ξ] : IsMarkovKernel (generation ξ) := ⟨isProbabilityMeasure_generation ξ⟩
 

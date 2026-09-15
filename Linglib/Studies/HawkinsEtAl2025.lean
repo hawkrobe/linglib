@@ -213,7 +213,7 @@ theorem Model.posterior_lt_iff_card (h : ∀ w q, 0 < m.admissibleCard w q) (d :
     simp only [RationalAction.policy, hne, ↓reduceIte]
     rw [Model.R0_totalScore]
     change (if m.Admissible w q r then (1 : ℝ) else 0) / _ = _
-    rw [if_pos hw]
+    rw [ite_eq_left hw]
   simp only [ObservationModel.posterior, hm, ↓reduceIte, hlik w₁ h₁, hlik w₂ h₂, ← hp]
   rw [div_lt_div_iff_of_pos_right hmpos]
   constructor

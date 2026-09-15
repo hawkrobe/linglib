@@ -245,7 +245,7 @@ theorem Graph.gapDegreeAt_eq_zero_iff {v : Fin n} :
 theorem Graph.isProjective_iff_gapDegree_eq_zero :
     g.IsProjective ↔ g.gapDegree = 0 := by
   rw [Graph.gapDegree, ← Nat.bot_eq_zero, Finset.sup_eq_bot_iff]
-  simp [Graph.IsProjective, Nat.bot_eq_zero, Graph.gapDegreeAt_eq_zero_iff]
+  simp [Graph.IsProjective, Graph.gapDegreeAt_eq_zero_iff]
 
 /-! ### The hierarchy on trees -/
 

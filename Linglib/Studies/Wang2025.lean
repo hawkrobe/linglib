@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mandarin.Particles
 import Mathlib.Data.Finset.Powerset
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
 import Mathlib.Data.Fintype.Prod
 
 /-!

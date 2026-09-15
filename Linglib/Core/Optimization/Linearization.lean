@@ -63,9 +63,9 @@ theorem exists_pos_weight_sum_mul_lt (h : ∃ i, f i < g i) :
       ∑ j, (if j = i then (∑ k, f k) + 1 else 1) * v j
         = ((∑ k, f k) + 1) * v i + ∑ j ∈ Finset.univ.erase i, v j := by
     intro v
-    rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i), if_pos rfl]
+    rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i), ite_eq_left rfl]
     exact congrArg _ (Finset.sum_congr rfl fun j hj => by
-      rw [if_neg (Finset.ne_of_mem_erase hj), one_mul])
+      rw [ite_eq_right (Finset.ne_of_mem_erase hj), one_mul])
   rw [hsplit f, hsplit g]
   calc ((∑ k, f k) + 1) * f i + ∑ j ∈ Finset.univ.erase i, f j
       ≤ ((∑ k, f k) + 1) * f i + ∑ k, f k :=

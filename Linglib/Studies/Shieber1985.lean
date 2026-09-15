@@ -279,7 +279,7 @@ theorem makeString_ambncmdn_mem_caseSorted (m n : ℕ) : makeString_ambncmdn m n
   set s₂ := if m = 0 then s₁ else .sC
   have hs₂ : s₂ = .sA ∨ s₂ = .sB ∨ s₂ = .sC := by
     by_cases hm : m = 0
-    · simp only [s₂, hm, if_true]
+    · simp only [s₂, hm, ite_true]
       exact hs₁.imp_right .inl
     · simp [s₂, hm]
   rw [evalFrom_replicate_d n s₂ (hs₂.imp_right (·.imp_right .inl))]

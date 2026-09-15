@@ -8,6 +8,7 @@ import Mathlib.Data.Nat.Dist
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Data.Set.Card
 import Mathlib.Order.Interval.Finset.Fin
+import Mathlib.Order.Interval.Set.Card
 
 /-!
 # Dependency length
@@ -130,8 +131,8 @@ theorem Graph.ncard_dominated_le_dist (g : Graph n) {v w : Fin n} (hv : v ∉ g.
     (h : ∀ x ∈ g.dominated w, x ∈ Set.uIcc v w) : (g.dominated w).ncard ≤ Nat.dist v w := by
   have hsub : g.dominated w ⊆ Set.uIcc v w \ {v} := Set.subset_sdiff_singleton h hv
   refine (Set.ncard_le_ncard hsub).trans (le_of_eq ?_)
-  rw [Set.ncard_sdiff_singleton_of_mem Set.left_mem_uIcc, ← Finset.coe_uIcc, Set.ncard_coe_finset,
-    Fin.card_uIcc, Nat.add_sub_cancel]
+  rw [Set.ncard_sdiff_singleton_of_mem Set.left_mem_uIcc, Set.ncard_uIcc, Fin.card_uIcc,
+    Nat.add_sub_cancel]
   simp only [Nat.dist]
   omega
 

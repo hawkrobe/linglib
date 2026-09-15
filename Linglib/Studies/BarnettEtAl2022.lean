@@ -215,13 +215,13 @@ theorem sum_sortedFrom (lo : Fin 9) (f : Sticks n → ℚ) :
     ∑ x, (if SortedFrom lo x then f x else 0) = sortedSum n lo f := by
   induction n generalizing lo with
   | zero =>
-    rw [Fintype.sum_unique, if_pos ⟨λ i => i.elim0, λ i => i.elim0⟩]
+    rw [Fintype.sum_unique, ite_eq_left ⟨λ i => i.elim0, λ i => i.elim0⟩]
     exact congrArg f (Subsingleton.elim _ _)
   | succ n ih =>
     rw [sum_sticks_succ, sortedSum, sum_filter]
     refine sum_congr rfl λ a _ => ?_
     by_cases h : lo ≤ a
-    · simp only [sortedFrom_cons, h, true_and, if_true]
+    · simp only [sortedFrom_cons, h, true_and, ite_true]
       exact ih a _
     · simp [sortedFrom_cons, h]
 

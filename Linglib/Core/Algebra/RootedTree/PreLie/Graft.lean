@@ -326,13 +326,13 @@ theorem descentToChild_cons_consPath (i j : ℕ) (rest_p : Path)
     (T : RoseTree α) (rest : List (Path × RoseTree α)) :
     descentToChild i ((i :: rest_p, T) :: rest) =
       (rest_p, T) :: descentToChild i rest := by
-  rw [descentToChild_cons_consPath, if_pos rfl]
+  rw [descentToChild_cons_consPath, ite_eq_left rfl]
 
 theorem descentToChild_cons_consPath_ne (i j : ℕ) (rest_p : Path)
     (T : RoseTree α) (rest : List (Path × RoseTree α)) (h : i ≠ j) :
     descentToChild i ((j :: rest_p, T) :: rest) =
       descentToChild i rest := by
-  rw [descentToChild_cons_consPath, if_neg h]
+  rw [descentToChild_cons_consPath, ite_eq_right h]
 
 /-- Number of pairs whose path is `[]` — the root-prepend count at the
     current level. Determines the `+N` shift of every original-T child index. -/
@@ -585,9 +585,9 @@ theorem preserveMulti_cons (pairs : List (Path × RoseTree α)) (i : ℕ) (rest 
         ((i + rootPrependCount pairs) :: ·) := by
   unfold preserveMulti
   by_cases h : (i :: rest) ∈ pairSources pairs
-  · rw [if_pos h, if_pos ((descent_pairSources_iff i rest pairs).mpr h)]
+  · rw [ite_eq_left h, ite_eq_left ((descent_pairSources_iff i rest pairs).mpr h)]
     rfl
-  · rw [if_neg h, if_neg (fun hmem => h ((descent_pairSources_iff i rest pairs).mp hmem))]
+  · rw [ite_eq_right h, ite_eq_right (fun hmem => h ((descent_pairSources_iff i rest pairs).mp hmem))]
     rw [transport_cons_path]
     rfl
 
@@ -836,13 +836,13 @@ private def descentCount (i : ℕ) (pairs : List (Path × RoseTree α)) : ℕ :=
     (rest : List (Path × RoseTree α)) :
     descentCount i (([], T) :: rest) = descentCount i rest := by
   unfold descentCount
-  simp [List.filter_cons]
+  simp
 
 @[simp] private theorem descentCount_cons_consPath_eq (i : ℕ) (rest_p : Path)
     (T : RoseTree α) (rest : List (Path × RoseTree α)) :
     descentCount i ((i :: rest_p, T) :: rest) = descentCount i rest + 1 := by
   unfold descentCount
-  simp [List.filter_cons]
+  simp
 
 private theorem descentCount_cons_consPath_ne (i j : ℕ) (rest_p : Path)
     (T : RoseTree α) (rest : List (Path × RoseTree α)) (h : i ≠ j) :
@@ -894,8 +894,8 @@ private theorem descentCount_append (i : ℕ) :
     unfold descentCount
     rw [List.cons_append, List.filter_cons, List.filter_cons]
     by_cases h : x.fst.head? = some i
-    · simp [h, descentCount_append i xs' ys, descentCount, Nat.add_right_comm]
-    · simp [h, descentCount_append i xs' ys, descentCount]
+    · simp [h, Nat.add_right_comm]
+    · simp [h]
 
 /-- The descent-corresponding index. Given `pairs[k].fst.head? = some i`,
     `descentIdxOf i pairs k` is the position of `k` among the descent-i pairs
@@ -1287,7 +1287,7 @@ private theorem root_bind_eq : ∀ (pairs : List (Path × RoseTree α)) (offset 
                     ((offset + posInGroup (([], T) :: pairs') 0) :: ·)
                 else 0) =
               ((vertices T : List Path) : Multiset Path).map (offset :: ·) from by
-        rw [if_pos rfl,
+        rw [ite_eq_left rfl,
             show posInGroup (([], T) :: pairs') (0 : Fin _) = 0
               from posInGroup_cons_zero ([] : Path) T pairs']
         simp only [Nat.add_zero]]
@@ -1330,7 +1330,7 @@ private theorem root_bind_eq : ∀ (pairs : List (Path × RoseTree α)) (offset 
     · -- Sub-case B: head is a child pair. Head contributes 0.
       have hp_fst_ne : (p, T).fst ≠ [] := hp
       rw [show (if ((p, T) : Path × RoseTree α).fst = [] then _
-                else (0 : Multiset Path)) = 0 from if_neg hp_fst_ne, Multiset.zero_add]
+                else (0 : Multiset Path)) = 0 from ite_eq_right hp_fst_ne, Multiset.zero_add]
       -- For tail: posInGroup new ⟨k'+1, _⟩ for root k' = posInGroup pairs' ⟨k', _⟩
       -- (since p ≠ [] doesn't match []).
       -- p has the form (i :: rest_p), so we need posInGroup_cons_succ_child applied.
@@ -1357,7 +1357,7 @@ private theorem root_bind_eq : ∀ (pairs : List (Path × RoseTree α)) (offset 
               -- (i :: rest_p) ≠ [] = pairs'[k'].fst, so the if returns 0.
               have hne : (i :: rest_p : Path) ≠ pairs'[k'.val].fst := by
                 rw [hk']; exact List.cons_ne_nil _ _
-              rw [if_neg hne]
+              rw [ite_eq_right hne]
               show (offset + (posInGroup pairs' k' + 0)) :: q =
                    (offset + posInGroup pairs' k') :: q
               have : offset + (posInGroup pairs' k' + 0) =
@@ -1426,7 +1426,7 @@ private theorem bind_descent_eq_aux (i : ℕ) :
                             = some i) := by
         show ¬ (([] : Path).head? = some i)
         intro h; cases h
-      rw [dif_neg h_head_neg, Multiset.zero_add]
+      rw [dite_eq_right h_head_neg, Multiset.zero_add]
       have step : (fun (k' : Fin pairs'.length) =>
           if h : (([], T) :: pairs')[(Fin.succ k').val].fst.head? = some i then
             F ⟨descentIdxOf i (([], T) :: pairs') (Fin.succ k'),
@@ -1446,15 +1446,15 @@ private theorem bind_descent_eq_aux (i : ℕ) :
           rw [descentIdxOf_cons_succ i ([], T) pairs' k']
           show descentIdxOf i pairs' k' +
                  (if (([] : Path).head?) = some i then 1 else 0) = _
-          rw [if_neg (fun h => by cases h), Nat.add_zero]
+          rw [ite_eq_right (fun h => by cases h), Nat.add_zero]
         by_cases hh : pairs'[k'.val].fst.head? = some i
         · have hh' : (([], T) :: pairs')[(Fin.succ k').val].fst.head? = some i := by
             rw [h_eq_idx]; exact hh
-          rw [dif_pos hh, dif_pos hh']
+          rw [dite_eq_left hh, dite_eq_left hh']
           exact congr_arg F (Fin.eq_of_val_eq h_eq_descent)
         · have hh' : ¬ ((([], T) :: pairs')[(Fin.succ k').val].fst.head? = some i) := by
             rw [h_eq_idx]; exact hh
-          rw [dif_neg hh, dif_neg hh']
+          rw [dite_eq_right hh, dite_eq_right hh']
       rw [step]
       exact bind_descent_eq_aux i pairs' n h_n_pairs' F
     | cons j rest_p =>
@@ -1471,7 +1471,7 @@ private theorem bind_descent_eq_aux (i : ℕ) :
         -- Head term k=0: dite condition is some i = some i (true).
         have h_head_pos : ((i :: rest_p, T) :: pairs')[(0 : Fin _).val].fst.head? = some i :=
           rfl
-        rw [dif_pos h_head_pos]
+        rw [dite_eq_left h_head_pos]
         -- Rewrite the tail to use F' via descentIdxOf_cons_succ_consPath_eq.
         have step : (fun (k' : Fin pairs'.length) =>
             if h : ((i :: rest_p, T) :: pairs')[(Fin.succ k').val].fst.head? = some i then
@@ -1494,11 +1494,11 @@ private theorem bind_descent_eq_aux (i : ℕ) :
             rw [descentIdxOf_cons_succ i (i :: rest_p, T) pairs' k']
             show descentIdxOf i pairs' k' +
                    (if some i = some i then 1 else 0) = _
-            rw [if_pos rfl]
+            rw [ite_eq_left rfl]
           by_cases hh : pairs'[k'.val].fst.head? = some i
           · have hh' : ((i :: rest_p, T) :: pairs')[(Fin.succ k').val].fst.head? = some i := by
               rw [h_eq_idx]; exact hh
-            rw [dif_pos hh, dif_pos hh']
+            rw [dite_eq_left hh, dite_eq_left hh']
             show F ⟨descentIdxOf i ((i :: rest_p, T) :: pairs') (Fin.succ k'), _⟩ =
                  F ⟨descentIdxOf i pairs' k' + 1, _⟩
             congr 1
@@ -1506,7 +1506,7 @@ private theorem bind_descent_eq_aux (i : ℕ) :
           · have hh' :
                 ¬ (((i :: rest_p, T) :: pairs')[(Fin.succ k').val].fst.head? = some i) := by
               rw [h_eq_idx]; exact hh
-            rw [dif_neg hh, dif_neg hh']
+            rw [dite_eq_right hh, dite_eq_right hh']
         rw [step]
         -- LHS now: F ⟨descentIdxOf ... ⟨0, _⟩, _⟩ + bind ... (using F').
         -- Apply IH to bring tail to bind_{k' : Fin n'} F'.
@@ -1533,7 +1533,7 @@ private theorem bind_descent_eq_aux (i : ℕ) :
           show ¬ ((j :: rest_p : Path).head? = some i)
           show ¬ (some j = some i)
           intro heq; injection heq with heq'; exact hij heq'.symm
-        rw [dif_neg h_head_neg, Multiset.zero_add]
+        rw [dite_eq_right h_head_neg, Multiset.zero_add]
         have step : (fun (k' : Fin pairs'.length) =>
             if h : ((j :: rest_p, T) :: pairs')[(Fin.succ k').val].fst.head? = some i then
               F ⟨descentIdxOf i ((j :: rest_p, T) :: pairs') (Fin.succ k'),
@@ -1555,17 +1555,17 @@ private theorem bind_descent_eq_aux (i : ℕ) :
             rw [descentIdxOf_cons_succ i (j :: rest_p, T) pairs' k']
             show descentIdxOf i pairs' k' +
                    (if some j = some i then 1 else 0) = _
-            rw [if_neg (fun h => hij (Option.some.inj h).symm), Nat.add_zero]
+            rw [ite_eq_right (fun h => hij (Option.some.inj h).symm), Nat.add_zero]
           by_cases hh : pairs'[k'.val].fst.head? = some i
           · have hh' : ((j :: rest_p, T) :: pairs')[(Fin.succ k').val].fst.head? = some i := by
               rw [h_eq_idx]; exact hh
-            rw [dif_pos hh, dif_pos hh']
+            rw [dite_eq_left hh, dite_eq_left hh']
             congr 1
             exact Fin.eq_of_val_eq h_eq_descent
           · have hh' :
                 ¬ (((j :: rest_p, T) :: pairs')[(Fin.succ k').val].fst.head? = some i) := by
               rw [h_eq_idx]; exact hh
-            rw [dif_neg hh, dif_neg hh']
+            rw [dite_eq_right hh, dite_eq_right hh']
         rw [step]
         exact bind_descent_eq_aux i pairs' n h_n_pairs' F
 
@@ -1600,18 +1600,18 @@ private theorem bind_finRange_singleton_eq {β : Type*} :
     | zero =>
       have h_head_pos : (0 : ℕ) = (0 : Fin (n' + 1)).val := by
         simp only [Fin.val_zero]
-      rw [if_pos h_head_pos]
+      rw [ite_eq_left h_head_pos]
       have step : (fun (k' : Fin n') =>
           if (0 : ℕ) = (Fin.succ k').val then g else (0 : Multiset β)) =
           (fun (_ : Fin n') => (0 : Multiset β)) := by
         funext k'
         show (if 0 = k'.val + 1 then g else 0) = 0
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
       rw [step, Multiset.bind_zero, Multiset.add_zero]
     | succ j' =>
       have h_zero_neg : ¬ (j' + 1 = (0 : Fin (n' + 1)).val) := by
         simp only [Fin.val_zero]; omega
-      rw [if_neg h_zero_neg, Multiset.zero_add]
+      rw [ite_eq_right h_zero_neg, Multiset.zero_add]
       have step : (fun (k' : Fin n') =>
           if j' + 1 = (Fin.succ k').val then g else (0 : Multiset β)) =
           (fun (k' : Fin n') =>
@@ -1619,8 +1619,8 @@ private theorem bind_finRange_singleton_eq {β : Type*} :
         funext k'
         show (if j' + 1 = k'.val + 1 then g else 0) = (if j' = k'.val then g else 0)
         by_cases hk : j' = k'.val
-        · rw [if_pos (by omega : j' + 1 = k'.val + 1), if_pos hk]
-        · rw [if_neg (by omega : ¬ (j' + 1 = k'.val + 1)), if_neg hk]
+        · rw [ite_eq_left (by omega : j' + 1 = k'.val + 1), ite_eq_left hk]
+        · rw [ite_eq_right (by omega : ¬ (j' + 1 = k'.val + 1)), ite_eq_right hk]
       rw [step]
       have hj' : j' < n' := by
         have := hj
@@ -1677,8 +1677,8 @@ theorem stripLiftMultiAux_eq_some_iff
       show (if h = posIG then some q' else none) = some q ↔
            (h :: q' : Path) = posIG :: q
       by_cases hh : h = posIG
-      · rw [if_pos hh, hh]; simp
-      · rw [if_neg hh]; simp [hh]
+      · rw [ite_eq_left hh, hh]; simp
+      · rw [ite_eq_right hh]; simp [hh]
   | cons i rest ih =>
     rw [transport_cons_path]
     cases p with
@@ -1690,11 +1690,11 @@ theorem stripLiftMultiAux_eq_some_iff
         (h :: q' : Path) = (i + rootPrependCount outer) ::
           (transport (descentToChild i outer) rest ++ (posIG :: q))
       by_cases hh : h = i + rootPrependCount outer
-      · rw [if_pos hh, ih (descentToChild i outer) q']
+      · rw [ite_eq_left hh, ih (descentToChild i outer) q']
         constructor
         · intro hq'; rw [hq', hh]
         · intro hcons; injection hcons
-      · rw [if_neg hh]
+      · rw [ite_eq_right hh]
         constructor
         · intro hf; exact absurd hf (by simp)
         · intro hcons; injection hcons with hhd _; exact (hh hhd).elim
@@ -1752,7 +1752,7 @@ theorem untransport_eq_some_iff
               ((h - rootPrependCount outer) :: ·)
           else none) = some v ↔ (h :: q : Path) = transport outer v
     by_cases h_ge : h ≥ rootPrependCount outer
-    · rw [if_pos h_ge, Option.map_eq_some_iff]
+    · rw [ite_eq_left h_ge, Option.map_eq_some_iff]
       constructor
       · rintro ⟨a, hut, ha⟩
         subst ha
@@ -1771,7 +1771,7 @@ theorem untransport_eq_some_iff
             rw [← h_i]; exact htail
           · have h_i : h - rootPrependCount outer = i := by omega
             rw [h_i]
-    · rw [if_neg h_ge]
+    · rw [ite_eq_right h_ge]
       cases v with
       | nil => rw [transport_nil_path]; simp
       | cons i rest =>
@@ -1980,7 +1980,7 @@ theorem vertices_multiGraft_decomp :
         -- [] ∈ sources → sourceSelf cons gets [], mapped via transport pairs [] = []
         have hpm : preserveMulti pairs ([] : Path) = none := by
           unfold preserveMulti; simp [h]
-        rw [hpm, if_pos h]
+        rw [hpm, ite_eq_left h]
         simp only [Option.map_none, Option.getD_none, Multiset.zero_add,
                    Multiset.map_add, Multiset.map_singleton,
                    show transport pairs ([] : Path) = [] from rfl]
@@ -1989,9 +1989,9 @@ theorem vertices_multiGraft_decomp :
         -- [] ∉ sources → sourceSelf unaffected
         have hpm : preserveMulti pairs ([] : Path) = some [] := by
           unfold preserveMulti
-          rw [if_neg h]
+          rw [ite_eq_right h]
           rfl
-        rw [hpm, if_neg h]
+        rw [hpm, ite_eq_right h]
         simp only [Option.map_some, Option.getD_some]
         abel
     -- Now use step9 to align preserved + sourceSelf parts of LHS and RHS.
@@ -2042,7 +2042,7 @@ theorem vertices_multiGraft_decomp :
         -- A.4. Per-k: simplify pos branch.
         refine Multiset.bind_congr fun k _ => ?_
         by_cases h : pairs[k.val].fst.head? = some i.val
-        · rw [dif_pos h, if_pos h]
+        · rw [dite_eq_left h, ite_eq_left h]
           -- Extract pairs[k.val].fst = i.val :: rest.
           obtain ⟨rest, h_eq⟩ : ∃ rest, pairs[k.val].fst = i.val :: rest := by
             generalize hp : pairs[k.val].fst = p at h ⊢
@@ -2079,7 +2079,7 @@ theorem vertices_multiGraft_decomp :
           -- Combine via Multiset.map_congr.
           refine Multiset.map_congr ?_ (fun q _ => h_fun q)
           rw [h_snd]
-        · rw [dif_neg h, if_neg h]
+        · rw [dite_eq_right h, ite_eq_right h]
       -- Apply Step A.
       simp_rw [h_per_i]
       -- Step B: swap binds via Multiset.bind_bind.
@@ -2094,18 +2094,18 @@ theorem vertices_multiGraft_decomp :
             rw [← root_bind_eq pairs 0]
             refine Multiset.bind_congr fun k _ => ?_
             by_cases h : pairs[k.val].fst = []
-            · rw [if_pos h, if_pos h]
+            · rw [ite_eq_left h, ite_eq_left h]
               refine Multiset.map_congr rfl fun q _ => ?_
               rw [Nat.zero_add]
               exact (liftMulti_at_root pairs k h q).symm
-            · rw [if_neg h, if_neg h]]
+            · rw [ite_eq_right h, ite_eq_right h]]
       -- Step D: combine via Multiset.bind_add^-1.
       rw [← Multiset.bind_add]
       -- Step E: per-k decomposition.
       refine Multiset.bind_congr fun k _ => ?_
       by_cases h_root : pairs[k.val].fst = []
       · -- Root k: first term = fk(k); inner bind = 0.
-        rw [if_pos h_root]
+        rw [ite_eq_left h_root]
         have h_zero : ((↑(List.finRange cs.length) : Multiset (Fin cs.length)).bind fun i =>
             if pairs[k.val].fst.head? = some i.val then
               Multiset.map (liftMulti pairs k) (↑(vertices pairs[k.val].snd) : Multiset Path)
@@ -2116,14 +2116,14 @@ theorem vertices_multiGraft_decomp :
               else (0 : Multiset Path)) = (fun _ => 0) := by
             funext i
             rw [h_root]
-            rw [if_neg (fun h => by cases h)]
+            rw [ite_eq_right (fun h => by cases h)]
           rw [step, Multiset.bind_zero]
         rw [h_zero, Multiset.add_zero]
         -- Bridge `pairs[k.val]` (Nat-indexed; from h_per_i / bind_descent_eq_aux body)
         -- to `pairs[k]` (Fin-indexed; from the original step 8 statement).
         simp only [Fin.getElem_fin]
       · -- Child k: first term = 0; inner bind picks out unique i.
-        rw [if_neg h_root, Multiset.zero_add]
+        rw [ite_eq_right h_root, Multiset.zero_add]
         obtain ⟨j, rest, h_eq⟩ : ∃ j rest, pairs[k.val].fst = j :: rest := by
           cases h_path : pairs[k.val].fst with
           | nil => exact absurd h_path h_root
@@ -2145,8 +2145,8 @@ theorem vertices_multiGraft_decomp :
           rw [h_eq]
           show (if some j = some i.val then _ else _) = (if j = i.val then _ else _)
           by_cases hi : j = i.val
-          · rw [if_pos (by rw [hi]), if_pos hi]
-          · rw [if_neg (by intro heq; injection heq with heq'; exact hi heq'), if_neg hi]
+          · rw [ite_eq_left (by rw [hi]), ite_eq_left hi]
+          · rw [ite_eq_right (by intro heq; injection heq with heq'; exact hi heq'), ite_eq_right hi]
         rw [step]
         exact bind_finRange_singleton_eq cs.length
           (Multiset.map (liftMulti pairs k) (↑(vertices pairs[k.val].snd) : Multiset Path))
@@ -2227,7 +2227,7 @@ theorem transport_singleton_of_ne : ∀ (e : Path) (T₂ : RoseTree α) (f : Pat
           descentToChild_cons_consPath_eq i rest_e T₂ [],
           descentToChild_nil,
           transport_singleton_of_ne rest_e T₂ rest_f hrest_ne,
-          preserveOf_cons_cons, if_pos rfl]
+          preserveOf_cons_cons, ite_eq_left rfl]
     · show (j + rootPrependCount [(i :: rest_e, T₂)]) ::
            transport (descentToChild j [(i :: rest_e, T₂)]) rest_f =
            preserveOf (i :: rest_e) (j :: rest_f)
@@ -2235,7 +2235,7 @@ theorem transport_singleton_of_ne : ∀ (e : Path) (T₂ : RoseTree α) (f : Pat
           descentToChild_cons_consPath_ne j i rest_e T₂ [] (Ne.symm hij),
           descentToChild_nil,
           transport_empty_pairs,
-          preserveOf_cons_cons, if_neg hij]
+          preserveOf_cons_cons, ite_eq_right hij]
 
 /-- `preserveMulti [(e, T₂)] = preserve? e`. Combines
     `transport_singleton_of_ne` (off-diagonal) with `preserve?_self`
@@ -2247,8 +2247,8 @@ theorem preserveMulti_singleton (e : Path) (T₂ : RoseTree α) (f : Path) :
   rw [show pairSources [(e, T₂)] = [e] from rfl]
   by_cases h : f = e
   · subst h
-    rw [if_pos (List.mem_singleton.mpr rfl), preserve?_self]
-  · rw [if_neg (fun hmem => h (List.mem_singleton.mp hmem)),
+    rw [ite_eq_left (List.mem_singleton.mpr rfl), preserve?_self]
+  · rw [ite_eq_right (fun hmem => h (List.mem_singleton.mp hmem)),
         preserve?_of_ne e f h, transport_singleton_of_ne e T₂ f h]
 
 /-- `liftMulti [(e, T₂)] ⟨0, _⟩ q = lift e q`. The single pair's
@@ -2493,7 +2493,7 @@ private theorem rootPrepends_at_posInGroup_eq_snd
             rest[k_pred].snd := by rw [h_idx_eq]
         rw [h_snd_eq, h_fin_eq]
         have h_pos := posInGroup_cons_succ_child p_h p_rest p_snd rest ⟨k_pred, hk_lt'⟩
-        rw [h_rest_fst, if_neg (by exact List.cons_ne_nil _ _), Nat.add_zero] at h_pos
+        rw [h_rest_fst, ite_eq_right (by exact List.cons_ne_nil _ _), Nat.add_zero] at h_pos
         rw [h_pos]
         exact ih_applied
 
@@ -2567,7 +2567,7 @@ private theorem filterMap_rootPrepend_set_root
             Fin.succ ⟨k_pred, hk_lt'⟩ := rfl
         rw [h_fin_eq]
         have h_pos := posInGroup_cons_succ_child p_h p_rest p_snd rest ⟨k_pred, hk_lt'⟩
-        rw [h_rest_fst, if_neg (by exact List.cons_ne_nil _ _), Nat.add_zero] at h_pos
+        rw [h_rest_fst, ite_eq_right (by exact List.cons_ne_nil _ _), Nat.add_zero] at h_pos
         rw [h_pos]
         show (((p_h :: p_rest, p_snd) :: rest.set k_pred (([] : Path), newSnd) :
               List (Path × RoseTree α)).filterMap rootPrependFilter) =
@@ -2743,13 +2743,13 @@ private theorem descentToChild_set_same_head_eq (j : ℕ) (pairs : List (Path ×
                 (rest.set k_pred (j :: rest_path, X)),
               descentToChild_cons_consPath_eq j p_rest p_snd rest, ih_applied]
           rw [show ((j :: p_rest, p_snd) : Path × RoseTree α).fst.head? = some j from rfl,
-              if_pos rfl]
+              ite_eq_left rfl]
           exact List.set_cons_succ.symm
         · rw [descentToChild_cons_consPath_ne j p_h p_rest p_snd
                 (rest.set k_pred (j :: rest_path, X)) hjh,
               descentToChild_cons_consPath_ne j p_h p_rest p_snd rest hjh, ih_applied]
           rw [show ((p_h :: p_rest, p_snd) : Path × RoseTree α).fst.head? = some p_h from rfl]
-          rw [if_neg (by intro heq; injection heq with h1; exact hjh h1.symm)]
+          rw [ite_eq_right (by intro heq; injection heq with h1; exact hjh h1.symm)]
           simp
 
 /-- Setting `pairs[k]` to a pair with first index `j` leaves `descentToChild j' pairs`
@@ -2818,9 +2818,9 @@ private theorem multiGraftChildren_set_same_head (cs : List (RoseTree α))
     rw [List.getElem?_set]
     by_cases h_ij : j = i
     · subst h_ij
-      rw [if_pos rfl, if_pos (by rw [multiGraftChildren_length]; exact h_i_lt),
+      rw [ite_eq_left rfl, ite_eq_left (by rw [multiGraftChildren_length]; exact h_i_lt),
           descentToChild_set_same_head_eq j pairs k rest_path h X]
-    · rw [if_neg h_ij,
+    · rw [ite_eq_right h_ij,
           multiGraftChildren_getElem? cs pairs i h_i_lt,
           descentToChild_set_same_head_ne j i h_ij pairs k rest_path h X]
   · push Not at h_i_lt
@@ -3129,10 +3129,10 @@ theorem multiGraft_cons_pair :
                   List.getElem?_set]
               by_cases h_ij : j = i
               · subst h_ij
-                rw [if_pos rfl,
-                    if_pos (by rw [hC_def, multiGraftChildren_length]; exact h_i_lt)]
+                rw [ite_eq_left rfl,
+                    ite_eq_left (by rw [hC_def, multiGraftChildren_length]; exact h_i_lt)]
                 rw [descentToChild_cons_consPath_eq]
-              · rw [if_neg h_ij, hC_def,
+              · rw [ite_eq_right h_ij, hC_def,
                     multiGraftChildren_getElem? cs pairs i h_i_lt,
                     descentToChild_cons_consPath_ne i j rest c pairs (Ne.symm h_ij)]
             · push Not at h_i_lt
@@ -3342,7 +3342,7 @@ private theorem posInGroup_of_rootPrependPairIdx :
         rw [List.getElem_cons_succ]
         exact h_fst'
       · rw [posInGroup_cons_succ_child j rp T rest k']
-        rw [if_neg (by
+        rw [ite_eq_right (by
           intro heq
           rw [h_fst'] at heq
           exact List.cons_ne_nil _ _ heq)]
@@ -3427,14 +3427,14 @@ Properties used in the descent case of `absorbInnerPair_eq_insertAt`. -/
     show (walkAndReplace j ((p, T) :: rest) modified k').length = rest.length + 1
     unfold walkAndReplace
     by_cases h_p : p.head? = some j
-    · rw [if_pos h_p]
+    · rw [ite_eq_left h_p]
       cases h_inner : modified[k']? with
       | none =>
         rw [List.length_cons, walkAndReplace_length j rest modified (k' + 1)]
       | some pair =>
         obtain ⟨q, T'⟩ := pair
         rw [List.length_cons, walkAndReplace_length j rest modified (k' + 1)]
-    · rw [if_neg h_p, List.length_cons, walkAndReplace_length j rest modified k']
+    · rw [ite_eq_right h_p, List.length_cons, walkAndReplace_length j rest modified k']
 
 /-! ### §11.1.7: `absorbInnerPair` equation lemmas + length dichotomy
 
@@ -3448,7 +3448,7 @@ private theorem absorbInnerPair_lifted_at_root_eq (outer : List (Path × RoseTre
        | some k => outer.set k.val (outer[k.val].fst, insertAt rest c outer[k.val].snd)
        | none => outer) := by
   conv_lhs => unfold absorbInnerPair
-  simp only [if_pos h_lt]
+  simp only [ite_eq_left h_lt]
 
 private theorem absorbInnerPair_descent_eq (outer : List (Path × RoseTree α))
     (i : ℕ) (rest : Path) (c : RoseTree α) (h_ge : ¬ i < rootPrependCount outer) :
@@ -3457,7 +3457,7 @@ private theorem absorbInnerPair_descent_eq (outer : List (Path × RoseTree α))
                       (absorbInnerPair (descentToChild (i - rootPrependCount outer) outer) rest c)
                       (i - rootPrependCount outer) outer := by
   conv_lhs => unfold absorbInnerPair
-  simp only [if_neg h_ge]
+  simp only [ite_eq_right h_ge]
 
 private theorem liftBackToOuter_length (descented modified : List (Path × RoseTree α))
     (j : ℕ) (outer : List (Path × RoseTree α)) :
@@ -3465,7 +3465,7 @@ private theorem liftBackToOuter_length (descented modified : List (Path × RoseT
     (if modified.length = descented.length + 1 then outer.length + 1 else outer.length) := by
   unfold liftBackToOuter
   by_cases h_len : modified.length = descented.length + 1
-  · rw [if_pos h_len, if_pos h_len]
+  · rw [ite_eq_left h_len, ite_eq_left h_len]
     cases h_modified : modified with
     | nil =>
       exfalso
@@ -3474,7 +3474,7 @@ private theorem liftBackToOuter_length (descented modified : List (Path × RoseT
     | cons head_pair tail =>
       obtain ⟨q, T⟩ := head_pair
       rfl
-  · rw [if_neg h_len, if_neg h_len]
+  · rw [ite_eq_right h_len, ite_eq_right h_len]
     exact walkAndReplace_length j outer modified 0
 
 private theorem absorbInnerPair_nil_eq (X : List (Path × RoseTree α)) (c : RoseTree α) :
@@ -3505,9 +3505,9 @@ private theorem absorbInnerPair_length_dichotomy :
       rw [liftBackToOuter_length]
       rcases ih with h_eq | h_eq_succ
       · left
-        rw [if_neg (by rw [h_eq]; omega)]
+        rw [ite_eq_right (by rw [h_eq]; omega)]
       · right
-        rw [if_pos h_eq_succ]
+        rw [ite_eq_left h_eq_succ]
 termination_by _ p _ => p
 
 /-! ### §11.1.8: `walkAndReplace` and `liftBackToOuter` correctness lemmas -/
@@ -3539,7 +3539,7 @@ private theorem walkAndReplace_descentToChild_self_aux (j : ℕ) :
     unfold walkAndReplace
     by_cases h_p : p.head? = some j
     · -- if branch: p.head? = some j, so p has form j :: p_tail
-      rw [if_pos h_p]
+      rw [ite_eq_left h_p]
       have h_p_form : ∃ p_tail, p = j :: p_tail := by
         cases p with
         | nil => exact absurd h_p (by simp)
@@ -3573,7 +3573,7 @@ private theorem walkAndReplace_descentToChild_self_aux (j : ℕ) :
         rw [List.drop_eq_getElem_cons h_modified_pos]
         rw [h_get]
     · -- else branch: ¬ p.head? = some j
-      rw [if_neg h_p]
+      rw [ite_eq_right h_p]
       have h_dC_drop : descentToChild j (((p, T) :: walkAndReplace j rest modified k') :
                         List (Path × RoseTree α)) =
                        descentToChild j (walkAndReplace j rest modified k') := by
@@ -3618,7 +3618,7 @@ private theorem walkAndReplace_descentToChild_other (i j : ℕ) (h_ij : i ≠ j)
     unfold walkAndReplace
     by_cases h_p : p.head? = some j
     · -- p has form j :: p_tail
-      rw [if_pos h_p]
+      rw [ite_eq_left h_p]
       have h_p_form : ∃ p_tail, p = j :: p_tail := by
         cases p with
         | nil => exact absurd h_p (by simp)
@@ -3644,7 +3644,7 @@ private theorem walkAndReplace_descentToChild_other (i j : ℕ) (h_ij : i ≠ j)
             descentToChild_cons_consPath_ne i j p_tail T rest h_ij]
         exact walkAndReplace_descentToChild_other i j h_ij rest modified (k' + 1)
     · -- p.head? ≠ some j
-      rw [if_neg h_p]
+      rw [ite_eq_right h_p]
       cases p with
       | nil =>
         rw [descentToChild_cons_nilPath, descentToChild_cons_nilPath]
@@ -3674,7 +3674,7 @@ private theorem walkAndReplace_filterMap_rootPrepend (j : ℕ) :
          (((p, T) :: rest) : List (Path × RoseTree α)).filterMap rootPrependFilter
     unfold walkAndReplace
     by_cases h_p : p.head? = some j
-    · rw [if_pos h_p]
+    · rw [ite_eq_left h_p]
       have h_p_form : ∃ p_tail, p = j :: p_tail := by
         cases p with
         | nil => exact absurd h_p (by simp)
@@ -3699,7 +3699,7 @@ private theorem walkAndReplace_filterMap_rootPrepend (j : ℕ) :
         show ((walkAndReplace j rest modified (k' + 1)).filterMap rootPrependFilter) =
              (rest.filterMap rootPrependFilter)
         exact walkAndReplace_filterMap_rootPrepend j rest modified (k' + 1)
-    · rw [if_neg h_p]
+    · rw [ite_eq_right h_p]
       cases p with
       | nil =>
         show ((((([], T) :: walkAndReplace j rest modified k') :
@@ -3725,7 +3725,7 @@ private theorem liftBackToOuter_filterMap_rootPrepend
     outer.filterMap rootPrependFilter := by
   unfold liftBackToOuter
   by_cases h_len : modified.length = descented.length + 1
-  · rw [if_pos h_len]
+  · rw [ite_eq_left h_len]
     cases h_modified : modified with
     | nil => rfl
     | cons head_pair tail =>
@@ -3733,7 +3733,7 @@ private theorem liftBackToOuter_filterMap_rootPrepend
       show ((((j :: q, T) :: outer) : List (Path × RoseTree α)).filterMap rootPrependFilter) =
            outer.filterMap rootPrependFilter
       rfl
-  · rw [if_neg h_len]
+  · rw [ite_eq_right h_len]
     exact walkAndReplace_filterMap_rootPrepend j outer modified 0
 
 private theorem liftBackToOuter_descentToChild_other (i : ℕ)
@@ -3743,7 +3743,7 @@ private theorem liftBackToOuter_descentToChild_other (i : ℕ)
     descentToChild i outer := by
   unfold liftBackToOuter
   by_cases h_len : modified.length = descented.length + 1
-  · rw [if_pos h_len]
+  · rw [ite_eq_left h_len]
     cases h_modified : modified with
     | nil => rfl
     | cons head_pair tail =>
@@ -3751,7 +3751,7 @@ private theorem liftBackToOuter_descentToChild_other (i : ℕ)
       show descentToChild i ((((j :: q, T) :: outer) : List (Path × RoseTree α))) =
            descentToChild i outer
       rw [descentToChild_cons_consPath_ne i j q T outer h_ij]
-  · rw [if_neg h_len]
+  · rw [ite_eq_right h_len]
     exact walkAndReplace_descentToChild_other i j h_ij outer modified 0
 
 /-- `absorbInnerPair_prepend_structure`: when length increases by 1 (PREPEND case),
@@ -3777,11 +3777,11 @@ private theorem absorbInnerPair_prepend_structure :
       · -- Inner SET → outer SET → length contradiction
         exfalso
         rw [liftBackToOuter_length] at h
-        rw [if_neg (by rw [h_set]; omega)] at h
+        rw [ite_eq_right (by rw [h_set]; omega)] at h
         omega
       · -- Inner PREPEND → outer PREPEND
         unfold liftBackToOuter
-        rw [if_pos h_prepend]
+        rw [ite_eq_left h_prepend]
         cases h_modified : absorbInnerPair (descentToChild (i - rootPrependCount X) X) rest c with
         | nil =>
           exfalso
@@ -3804,7 +3804,7 @@ private theorem liftBackToOuter_descentToChild_self
   unfold liftBackToOuter
   by_cases h_len : modified.length = descented.length + 1
   · -- PREPEND case
-    rw [if_pos h_len]
+    rw [ite_eq_left h_len]
     obtain ⟨q, T, h_modif⟩ := h_modified_prepend h_len
     rw [h_modif]
     show descentToChild j ((((j :: q, T) :: outer) : List (Path × RoseTree α))) =
@@ -3812,7 +3812,7 @@ private theorem liftBackToOuter_descentToChild_self
     rw [descentToChild_cons_consPath_eq j q T outer]
     rw [h_descented_eq]
   · -- SET case
-    rw [if_neg h_len]
+    rw [ite_eq_right h_len]
     rcases h_modified_struct with h_succ | h_eq
     · exact absurd h_succ h_len
     · rw [h_descented_eq] at h_eq
@@ -3887,7 +3887,7 @@ private theorem absorbInnerPair_lifted_at_root (outer : List (Path × RoseTree �
     absorbInnerPair outer (i :: rest) c =
       outer.set k.val (outer[k.val].fst, insertAt rest c outer[k.val].snd) := by
   unfold absorbInnerPair
-  simp only [if_pos h_lt, h_idx]
+  simp only [ite_eq_left h_lt, h_idx]
 
 /-- The singleton case of `multiGraft_compose`. Stated unconditionally
     (no validity hypothesis); the empty-path case holds without validity, the
@@ -3948,7 +3948,7 @@ theorem absorbInnerPair_eq_insertAt :
               rw [List.getElem?_set]
               by_cases h_jeq : j = idx
               · subst h_jeq
-                rw [if_pos rfl, if_pos (by rw [h_ch_len]; exact h_idx_lt)]
+                rw [ite_eq_left rfl, ite_eq_left (by rw [h_ch_len]; exact h_idx_lt)]
                 have h_dC_self :
                     descentToChild j lifted = modified := by
                   rw [hlifted_def]
@@ -3956,7 +3956,7 @@ theorem absorbInnerPair_eq_insertAt :
                     (Or.symm (absorbInnerPair_length_dichotomy descented rest c))
                     (fun h_len => absorbInnerPair_prepend_structure descented rest c h_len)
                 rw [h_dC_self]
-              · rw [if_neg h_jeq, multiGraftChildren_getElem? cs outer idx h_idx_lt]
+              · rw [ite_eq_right h_jeq, multiGraftChildren_getElem? cs outer idx h_idx_lt]
                 congr 2
                 rw [hlifted_def]
                 exact liftBackToOuter_descentToChild_other idx descented modified j outer

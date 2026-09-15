@@ -104,7 +104,7 @@ theorem hyper_zero (s : State) : hyper 0 s 0 ≠ 0 := by
 
 theorem obs_full (s : State) (o : Obs) : obs 10 s {o} = if s = o then 1 else 0 := by
   simp only [obs_apply_singleton, hyper_full, Nat.cast_ite, Nat.cast_one, Nat.cast_zero,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true, div_one]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true, div_one]
 
 section Belief
 
@@ -131,7 +131,7 @@ theorem belief_apply_singleton_ne_zero {a : Access} {o : Obs} {s : State} (hP : 
 theorem belief_full {o : Obs} (hP : P {o} ≠ 0) : belief P 10 o = Measure.dirac o := by
   have hcomp : (obs 10 ∘ₘ P) {o} = P {o} := by
     rw [Measure.comp_apply_singleton]
-    simp only [obs_full, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [obs_full, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   refine Measure.ext_of_singleton λ s => ?_
   rw [belief_apply_singleton P (by rw [hcomp]; exact hP), hcomp, obs_full, Measure.dirac_apply,
     Set.indicator_apply, Pi.one_apply]
@@ -359,7 +359,7 @@ theorem joint_apply_singleton (x : State × (Obs × Access)) :
     joint P A {x} = P {x.1} * A {x.2.2} * obs x.2.2 x.1 {x.2.1} := by
   simp only [joint, Measure.coe_finsetSum, Finset.sum_apply, Measure.coe_smul, Pi.smul_apply,
     smul_eq_mul, Measure.dirac_apply, Set.indicator_apply, Set.mem_singleton_iff, Pi.one_apply,
-    mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 variable [IsFiniteMeasure P] [IsFiniteMeasure A]
 

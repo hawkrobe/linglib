@@ -1,7 +1,7 @@
 import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Mathlib.GroupTheory.Perm.Basic
-import Mathlib.Data.Sign.Basic
+import Mathlib.Basic.Sign.Basic
 import Mathlib.Data.Fintype.Perm
 
 /-!

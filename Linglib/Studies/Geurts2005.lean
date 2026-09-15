@@ -1,4 +1,4 @@
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
 import Linglib.Semantics.Modality.Basic
 import Linglib.Data.Examples.Geurts2005
 
@@ -207,7 +207,7 @@ theorem exclusive_of_disjoint {A B B' : Set W} (hA : A ⊆ C)
     (hdis : Disjoint (A ∩ B) (C ∩ (B ∩ B'))) :
     C ⊆ B ∧ (C ∩ B').Nonempty ∧ (C \ B').Nonempty := by
   simp only [Disjunction.Holds, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp,
-    forall_eq, Disjunct.Holds, if_true] at h
+    forall_eq, Disjunct.Holds, ite_true] at h
   obtain ⟨⟨a, haA, haB⟩, ⟨b, hbC, -, hbB'⟩⟩ := h
   refine ⟨λ w hw => ?_, ⟨b, hbC, hbB'⟩, ⟨a, hA haA, λ haB' => ?_⟩⟩
   · have h := hex hw

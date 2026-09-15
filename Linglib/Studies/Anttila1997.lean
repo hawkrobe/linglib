@@ -122,13 +122,13 @@ instance : DecidableRel Universal := fun a b => by
 
 theorem alignedAbove_trans {p : Bool} {s₁ s₂ s₃ : Sonority} (h : alignedAbove p s₁ s₂)
     (h' : alignedAbove p s₂ s₃) : alignedAbove p s₁ s₃ := by
-  cases p <;> simp only [alignedAbove, Bool.false_eq_true, if_false, if_true] at *
+  cases p <;> simp only [alignedAbove, Bool.false_eq_true, ite_false, ite_true] at *
   · exact h'.trans h
   · exact h.trans h'
 
 theorem alignedAbove_asymm {p : Bool} {s s' : Sonority} (h : alignedAbove p s s')
     (h' : alignedAbove p s' s) : False := by
-  cases p <;> simp only [alignedAbove, Bool.false_eq_true, if_false, if_true] at * <;>
+  cases p <;> simp only [alignedAbove, Bool.false_eq_true, ite_false, ite_true] at * <;>
     exact lt_asymm h h'
 
 theorem Universal.trans {a b c : Constraint} (hab : Universal a b) (hbc : Universal b c) :

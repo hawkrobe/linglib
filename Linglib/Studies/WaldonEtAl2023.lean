@@ -121,8 +121,7 @@ theorem prohibitionPosterior_eq {m : ℝ} (hm1 : m ≤ 1) :
     ENNReal.mul_div_right_comm, ENNReal.div_self (by norm_num) (by norm_num), one_mul]
 
 /-- Every prediction is a comparison of measures. -/
-theorem prohibitionPosterior_lt_iff {m m' : ℝ} (hm0 : 0 ≤ m) (hm1 : m ≤ 1) (hm0' : 0 ≤ m')
-    (hm1' : m' ≤ 1) : prohibitionPosterior m < prohibitionPosterior m' ↔ m < m' := by
+theorem prohibitionPosterior_lt_iff {m m' : ℝ} (hm0 : 0 ≤ m) (hm1 : m ≤ 1) (hm1' : m' ≤ 1) : prohibitionPosterior m < prohibitionPosterior m' ↔ m < m' := by
   rw [prohibitionPosterior_eq hm1, prohibitionPosterior_eq hm1',
     ENNReal.ofReal_lt_ofReal_iff_of_nonneg hm0]
 

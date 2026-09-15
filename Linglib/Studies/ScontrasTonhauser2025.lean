@@ -240,8 +240,8 @@ the more informative. -/
 theorem S1_univ_bel_knowNeg_lt_thinkNeg (hα : 0 < α) (hκ0 : κ ≠ 0) (hκ : κ ≠ ∞) {w : World}
     (hb : w.1 = false) :
     (S1 α κ Finset.univ .bel w).real {.knowNeg} < (S1 α κ Finset.univ .bel w).real {.thinkNeg} := by
-  have hc : cost κ .thinkNeg = κ ^ 2 := if_pos (by decide)
-  have hc' : cost κ .knowNeg = κ ^ 2 := if_pos (by decide)
+  have hc : cost κ .thinkNeg = κ ^ 2 := ite_eq_left (by decide)
+  have hc' : cost κ .knowNeg = κ ^ 2 := ite_eq_left (by decide)
   rw [S1, speaker_real_singleton_lt_iff hα.le (cost_ne_top hκ) (L0_le_one Finset.univ .bel · w)
     ⟨.thinkNeg, by
       rw [L0_univ_bel_thinkNeg hb, ENNReal.one_rpow, one_mul]
@@ -305,7 +305,7 @@ theorem comp_ne_zero [IsFiniteMeasure μ] [IsFiniteMeasure ν] (hα : 0 ≤ α) 
     (hu : w ∈ sem u) (hμ : μ {w} ≠ 0) (hν : ν {A} ≠ 0) :
     (familySpeaker (λ A => L0 A q) α (cost κ) ∘ₘ pairPrior μ ν) {u} ≠ 0 := by
   refine comp_familySpeaker_ne_zero (w := w) (l := A) ?_ ?_
-  · rw [pairPrior_singleton, if_pos hw]
+  · rw [pairPrior_singleton, ite_eq_left hw]
     exact mul_ne_zero hμ hν
   · refine speaker_apply_singleton_ne_zero hα (cost_ne_zero hκ0) (cost_ne_top hκ)
       (λ u' => L0_le_one A q u' w) ?_

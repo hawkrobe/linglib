@@ -69,7 +69,7 @@ theorem factorsThroughOn_iff_exists_eqOn [Nonempty γ] {g : α → γ} {f : α �
     refine ⟨fun b => if hb : ∃ a ∈ s, f a = b then g hb.choose
       else Classical.arbitrary γ, fun a ha => ?_⟩
     have hb : ∃ a' ∈ s, f a' = f a := ⟨a, ha, rfl⟩
-    simp only [Function.comp_apply, dif_pos hb]
+    simp only [Function.comp_apply, dite_eq_left hb]
     exact (hf hb.choose_spec.1 ha hb.choose_spec.2).symm
   · rintro ⟨h, hh⟩ a b ha hb hab
     rw [hh ha, hh hb, Function.comp_apply, Function.comp_apply, hab]

@@ -108,10 +108,10 @@ def anticipatory (w : List Sibilant) : List Sibilant := w.map (harmonize (trigge
 
 theorem harmonize_of_not_onTier {t : Option Sibilant} {s : Sibilant} (h : ¬ s.onTier) :
     harmonize t s = s :=
-  if_neg h
+  ite_eq_right h
 
 theorem harmonize_some_of_onTier {t s : Sibilant} (h : s.onTier) : harmonize (some t) s = t :=
-  if_pos h
+  ite_eq_left h
 
 theorem trigger_onTier {w : List Sibilant} {t : Sibilant} (h : trigger w = some t) :
     t.onTier := by
@@ -273,7 +273,7 @@ theorem applyOnTierAux_eq (t : Option Sibilant) (ht : ∀ s ∈ t, s.onTier) (xs
   | nil => rfl
   | cons x xs ih =>
     by_cases hx : x.onTier
-    · rw [OSLRule.applyOnTierAux, if_pos ((pattern_onTier_iff x).mpr hx)]
+    · rw [OSLRule.applyOnTierAux, ite_eq_left ((pattern_onTier_iff x).mpr hx)]
       have hfirst : first (x :: xs) = some x := by
         simp [first, sibilants, tierProject_eq_filter, List.filter_cons_of_pos, hx]
       cases t with
@@ -290,7 +290,7 @@ theorem applyOnTierAux_eq (t : Option Sibilant) (ht : ∀ s ∈ t, s.onTier) (xs
           List.singleton_append, List.length_cons, List.length_nil, Nat.reduceAdd,
           Nat.reduceSub, List.drop_succ_cons, List.drop_zero, this]
         simp [Option.or, harmonize_some_of_onTier hx]
-    · rw [OSLRule.applyOnTierAux, if_neg ((pattern_onTier_iff x).not.mpr hx), ih t ht]
+    · rw [OSLRule.applyOnTierAux, ite_eq_right ((pattern_onTier_iff x).not.mpr hx), ih t ht]
       simp [first, sibilants, tierProject_eq_filter, List.filter_cons_of_neg, hx,
         harmonize_of_not_onTier hx]
 

@@ -181,11 +181,11 @@ theorem mergePost_basis_tensor (lbl : α) (S S' : UnorderedTree α)
       TensorProduct.map_tmul, LinearMap.id_apply, gammaMatch_apply_singleton]
   by_cases hF : F = ({S, S'} : Forest (UnorderedTree α))
   · subst hF
-    rw [if_pos rfl, TensorProduct.map_tmul, LinearMap.id_apply,
-        graftBinaryAt_apply_singleton, if_pos rfl, if_pos rfl]
+    rw [ite_eq_left rfl, TensorProduct.map_tmul, LinearMap.id_apply,
+        graftBinaryAt_apply_singleton, ite_eq_left rfl, ite_eq_left rfl]
     show Algebra.TensorProduct.lmul' (S := ConnesKreimer R (UnorderedTree α)) R _ = _
     exact Algebra.TensorProduct.lmul'_apply_tmul _ _
-  · rw [if_neg hF, TensorProduct.zero_tmul, if_neg hF]
+  · rw [ite_eq_right hF, TensorProduct.zero_tmul, ite_eq_right hF]
     simp only [map_zero]
 
 omit [DecidableEq (UnorderedTree α)] in
@@ -218,7 +218,7 @@ theorem gammaMatch_mul_eq_zero_of_not_le (S S' : UnorderedTree α)
       fun heq => hF (heq ▸ Multiset.le_add_right F G)
     rw [of'_mul_single, gammaMatch]
     simp only [ConnesKreimer.linearLift_single]
-    rw [if_neg hne, smul_zero]
+    rw [ite_eq_right hne, smul_zero]
 
 /-- **Disjoint-singleton vanishing of γ_{S,S'}** (corollary): if `T ≠ S` and
     `T ≠ S'`, then `γ_{S,S'}(of' {T} * a) = 0`. -/
@@ -250,8 +250,7 @@ theorem mergePost_left_mul_eq_zero_of_not_le (lbl : α) (S S' : UnorderedTree α
     (hF : ¬ F ≤ ({S, S'} : Forest (UnorderedTree α)))
     (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     mergePost (R := R) (α := α) lbl S S' ((of' (R := R) F ⊗ₜ[R] b) * z) = 0 := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
+  induction z using TensorProduct.inductionOn with
   | tmul a b' =>
     rw [Algebra.TensorProduct.tmul_mul_tmul]
     unfold mergePost deltaMatch
@@ -278,8 +277,7 @@ theorem mergePost_right_one_tmul (lbl : α) (S S' : UnorderedTree α)
     mergePost (R := R) (α := α) lbl S S'
         (z * ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ[R] y))
       = mergePost (R := R) (α := α) lbl S S' z * y := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
+  induction z using TensorProduct.inductionOn with
   | tmul a b =>
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one]
     unfold mergePost deltaMatch
@@ -376,10 +374,10 @@ theorem mergePostUnit_basis_tensor (β : UnorderedTree α)
       gammaMatchSingle_apply_singleton]
   by_cases hF : F = ({β} : Forest (UnorderedTree α))
   · subst hF
-    rw [if_pos rfl, if_pos rfl]
+    rw [ite_eq_left rfl, ite_eq_left rfl]
     show Algebra.TensorProduct.lmul' (S := ConnesKreimer R (UnorderedTree α)) R _ = _
     exact Algebra.TensorProduct.lmul'_apply_tmul _ _
-  · rw [if_neg hF, TensorProduct.zero_tmul, if_neg hF]
+  · rw [ite_eq_right hF, TensorProduct.zero_tmul, ite_eq_right hF]
     show Algebra.TensorProduct.lmul' (S := ConnesKreimer R (UnorderedTree α)) R 0 = 0
     exact map_zero _
 
@@ -396,7 +394,7 @@ theorem mergeOpUnit_one (β : UnorderedTree α) :
         (of' (R := R) (0 : Forest (UnorderedTree α))
           ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α))) = 0
   rw [mergePostUnit_basis_tensor]
-  rw [if_neg (by
+  rw [ite_eq_right (by
     intro h
     have : (0 : Forest (UnorderedTree α)).card = ({β} : Forest (UnorderedTree α)).card := by
       rw [h]

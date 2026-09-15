@@ -124,9 +124,9 @@ theorem head?_scansion_singleton (m : List F)
     rw [List.pairwise_cons] at hsorted
     simp only [scansion, scansion.go, discharge_singleton]
     by_cases h : i.site ⊆ ({ env with focus := m } : Neighborhood (List F))
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       simp only [List.head?_cons, winner?, selectBy, applicable, List.filter_cons,
-        decide_eq_true (show Applies i _ from h), if_true]
+        decide_eq_true (show Applies i _ from h), ite_true]
       rw [List.argmax_cons]
       rcases hc : List.argmax VocabularyItem.specificity
         (rest.filter fun r =>
@@ -135,7 +135,7 @@ theorem head?_scansion_singleton (m : List F)
       · have hle : c.specificity ≤ i.specificity :=
           hsorted.1 c (List.mem_of_mem_filter (List.argmax_mem hc))
         simp [not_lt.mpr hle]
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       have := ih hsorted.2
       simpa [scansion, winner?, selectBy, applicable, List.filter_cons,
         decide_eq_false (show ¬ Applies i _ from h)] using this

@@ -167,7 +167,7 @@ theorem dualPredOnLattice_iff (domain : D → Prop) [DecidablePred domain] (P : 
   refine and_congr_right fun _ => ?_
   constructor
   · intro h
-    rw [if_neg fun ha => h.1.2 ha.2, if_pos h]
+    rw [ite_eq_right fun ha => h.1.2 ha.2, ite_eq_left h]
   · intro h
     by_contra hd
     split_ifs at h with ha <;> exact absurd h (by decide)

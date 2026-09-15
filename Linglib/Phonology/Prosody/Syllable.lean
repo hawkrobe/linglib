@@ -244,7 +244,7 @@ abbrev Tree.ph (cs : List Tree) : Tree := .node .ph cs
 /-- **Leaf/branch induction on a prosodic tree.** A σ-leaf is a base case; every other node — a
     foot, word, phrase, or degenerate/ill-formed node — is a branch, carrying the induction
     hypothesis over its children and the fact that it is *not* a σ-leaf. This is what lets proofs
-    reduce the σ-leaf `if` the reader equations carry (via `if_pos ⟨ha, rfl⟩` / `if_neg hne`)
+    reduce the σ-leaf `if` the reader equations carry (via `ite_eq_left ⟨ha, rfl⟩` / `ite_eq_right hne`)
     instead of `split`ting it. -/
 @[elab_as_elim]
 theorem Tree.recLeafBranch {motive : Tree → Prop}

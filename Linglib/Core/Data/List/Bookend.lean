@@ -72,7 +72,7 @@ theorem not_sublist_replicate_append_replicate {pat l : List α} {a b : α}
     by_contra h_ne
     apply h_last
     have h_eq := congrArg getLast? hs_eq
-    rwa [getLast?_append, getLast?_replicate, if_neg h_ne, Option.some_or] at h_eq
+    rwa [getLast?_append, getLast?_replicate, ite_eq_right h_ne, Option.some_or] at h_eq
   rw [hj0, replicate_zero, append_nil] at hs_eq
   rw [← hs_eq] at hs₁_sub
   obtain ⟨t₁, t₂, ht_eq, ht₁_sub, ht₂_sub⟩ := sublist_append_iff.mp hs₁_sub
@@ -81,7 +81,7 @@ theorem not_sublist_replicate_append_replicate {pat l : List α} {a b : α}
     by_contra h_ne
     apply h_head
     have h_eq := congrArg head? ht_eq
-    rwa [head?_append, head?_replicate, if_neg h_ne, Option.some_or] at h_eq
+    rwa [head?_append, head?_replicate, ite_eq_right h_ne, Option.some_or] at h_eq
   rw [hi0, replicate_zero, nil_append] at ht_eq
   rw [← ht_eq] at ht₂_sub
   exact h_mid ht₂_sub

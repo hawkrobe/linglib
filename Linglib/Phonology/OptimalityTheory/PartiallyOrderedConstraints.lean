@@ -457,8 +457,8 @@ theorem winProb_toRel :
     consistentTotalOrders_toRel,
     Finset.card_singleton, Nat.cast_one, div_one, Finset.filter_singleton]
   by_cases h : PicksAt cands vp σ i o
-  · simp [if_pos h]
-  · simp [if_neg h]
+  · simp [ite_eq_left h]
+  · simp [ite_eq_right h]
 
 /-- Under the discrete grammar, `winProb` is the fraction of all `n!`
     rankings picking o. -/

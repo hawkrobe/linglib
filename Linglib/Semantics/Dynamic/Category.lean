@@ -150,11 +150,11 @@ theorem possibilities_glue
     congrFun (congrArg Prod.snd hab) ⟨v, hX, hY⟩
   refine ⟨(a.1, fun v => if h : v.1 ∈ X then a.2 ⟨v.1, h⟩
       else b.2 ⟨v.1, v.2.resolve_left h⟩),
-    ⟨Prod.ext rfl (funext fun v => dif_pos v.2),
+    ⟨Prod.ext rfl (funext fun v => dite_eq_left v.2),
       Prod.ext hw (funext fun v => ?_)⟩, fun c' hc' => ?_⟩
   · by_cases h : v.1 ∈ X
-    · exact (dif_pos h).trans (hagree v.1 h v.2)
-    · exact dif_neg h
+    · exact (dite_eq_left h).trans (hagree v.1 h v.2)
+    · exact dite_eq_right h
   · obtain ⟨rfl, rfl⟩ := hc'
     exact Prod.ext rfl (funext fun v => by by_cases h : v.1 ∈ X <;> simp [h])
 
@@ -194,13 +194,13 @@ objects this is `Possibility.domainEquiv`; arrows become descents, by
 `Possibility.le_iff_eq_restrict`. -/
 def elementsToPoints :
     (possibilities W M V).Elements ⥤ (Possibility W V (Part M))ᵒᵖ where
-  obj x := op ((Possibility.domainEquiv x.1.unop).symm x.2).1
+  obj x := op ((Possibility.domainEquiv x.obj.unop).symm x.val).1
   map {x y} f := (homOfLE (show
-      ((Possibility.domainEquiv y.1.unop).symm y.2).1 ≤
-        ((Possibility.domainEquiv x.1.unop).symm x.2).1 by
-    have hb : y.1.unop ≤ x.1.unop := leOfHom f.1.unop
-    have hmap : (possibilities W M V).map f.1 x.2 = y.2 := f.2
-    rw [Subsingleton.elim f.1 (homOfLE hb).op, possibilities_map_apply]
+      ((Possibility.domainEquiv y.obj.unop).symm y.val).1 ≤
+        ((Possibility.domainEquiv x.obj.unop).symm x.val).1 by
+    have hb : y.obj.unop ≤ x.obj.unop := leOfHom f.hom.unop
+    have hmap : (possibilities W M V).map f.hom x.val = y.val := f.map_val
+    rw [Subsingleton.elim f.hom (homOfLE hb).op, possibilities_map_apply]
       at hmap
     rw [← hmap, ← Possibility.restrict_domainEquiv_symm hb]
     exact Possibility.restrict_le)).op
@@ -208,25 +208,25 @@ def elementsToPoints :
   map_comp _ _ := Subsingleton.elim _ _
 
 instance : (elementsToPoints (W := W) (M := M) (V := V)).Faithful where
-  map_injective _ := Subtype.ext (Subsingleton.elim _ _)
+  map_injective _ := Functor.Elements.hom_ext (Subsingleton.elim _ _)
 
 instance : (elementsToPoints (W := W) (M := M) (V := V)).Full where
   map_surjective {x y} f := by
-    have hd : ((Possibility.domainEquiv y.1.unop).symm y.2).1 ≤
-        ((Possibility.domainEquiv x.1.unop).symm x.2).1 := leOfHom f.unop
-    have hb : y.1.unop ≤ x.1.unop := by
+    have hd : ((Possibility.domainEquiv y.obj.unop).symm y.val).1 ≤
+        ((Possibility.domainEquiv x.obj.unop).symm x.val).1 := leOfHom f.unop
+    have hb : y.obj.unop ≤ x.obj.unop := by
       have hsub := Possibility.domain_mono hd
-      rwa [((Possibility.domainEquiv y.1.unop).symm y.2).2,
-        ((Possibility.domainEquiv x.1.unop).symm x.2).2] at hsub
+      rwa [((Possibility.domainEquiv y.obj.unop).symm y.val).2,
+        ((Possibility.domainEquiv x.obj.unop).symm x.val).2] at hsub
     refine ⟨⟨(homOfLE hb).op, ?_⟩, Subsingleton.elim _ _⟩
-    refine (Possibility.domainEquiv y.1.unop).symm.injective (Subtype.ext ?_)
+    refine (Possibility.domainEquiv y.obj.unop).symm.injective (Subtype.ext ?_)
     rw [possibilities_map_apply, ← Possibility.restrict_domainEquiv_symm hb]
     exact ((Possibility.le_iff_eq_restrict
-      ((Possibility.domainEquiv y.1.unop).symm y.2).2).mp hd).symm
+      ((Possibility.domainEquiv y.obj.unop).symm y.val).2).mp hd).symm
 
 instance : (elementsToPoints (W := W) (M := M) (V := V)).EssSurj where
   mem_essImage y :=
-    ⟨⟨op y.unop.domain, Possibility.domainEquiv _ ⟨y.unop, rfl⟩⟩,
+    ⟨(possibilities W M V).elementsMk (op y.unop.domain) (Possibility.domainEquiv _ ⟨y.unop, rfl⟩),
       ⟨eqToIso (by
         apply Opposite.unop_injective
         have hval := congrArg Subtype.val

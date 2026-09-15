@@ -62,8 +62,8 @@ variable {C R : Type*} [MeasurableSpace C] [MeasurableSingletonClass C] [Measura
 context prior `π`. -/
 noncomputable def joint : Measure (W × C) := (π ⊗ₘ L).map Prod.swap
 
-instance : IsProbabilityMeasure (joint L π) :=
-  Measure.isProbabilityMeasure_map measurable_swap.aemeasurable
+instance : IsProbabilityMeasure (joint L π) := by
+  unfold joint; infer_instance
 
 /-- The joint law of the next word and the memory representation of its context. -/
 noncomputable def memJoint : Measure (W × R) := (Kernel.id ∥ₖ mem) ∘ₘ joint L π

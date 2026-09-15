@@ -190,7 +190,7 @@ theorem belnapLift_eq_classical (f : Prop → Prop → Prop) (unit : Prop)
     (p q : PartialProp W) (w : W)
     (hp : p.presup w) (hq : q.presup w) :
     (belnapLift f unit p q).assertion w = f (p.assertion w) (q.assertion w) := by
-  simp only [belnapLift, if_pos hp, if_pos hq]
+  simp only [belnapLift, ite_eq_left hp, ite_eq_left hq]
 
 /-- When only the left operand is defined and `unit` is a right identity,
     belnapLift returns the left operand's value: the right operand is
@@ -199,7 +199,7 @@ theorem belnapLift_right_undefined (f : Prop → Prop → Prop) (unit : Prop)
     (hunit : ∀ b, f b unit = b) (p q : PartialProp W) (w : W)
     (hp : p.presup w) (hq : ¬q.presup w) :
     (belnapLift f unit p q).assertion w = p.assertion w := by
-  simp only [belnapLift, if_pos hp, if_neg hq, hunit]
+  simp only [belnapLift, ite_eq_left hp, ite_eq_right hq, hunit]
 
 /-- When only the right operand is defined and `unit` is a left identity,
     belnapLift returns the right operand's value. -/
@@ -207,7 +207,7 @@ theorem belnapLift_left_undefined (f : Prop → Prop → Prop) (unit : Prop)
     (hunit : ∀ b, f unit b = b) (p q : PartialProp W) (w : W)
     (hp : ¬p.presup w) (hq : q.presup w) :
     (belnapLift f unit p q).assertion w = q.assertion w := by
-  simp only [belnapLift, if_neg hp, if_pos hq, hunit]
+  simp only [belnapLift, ite_eq_right hp, ite_eq_left hq, hunit]
 
 /-- belnapLift is commutative when `f` is commutative. -/
 theorem belnapLift_comm (f : Prop → Prop → Prop)

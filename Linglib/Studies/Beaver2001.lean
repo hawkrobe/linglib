@@ -174,7 +174,7 @@ theorem eval_must (φ : Formula W) : (must φ).eval = (not (might (not φ))).eva
     refine ⟨_, mem_eval_might.2 ⟨σ \ υ, mem_eval_not.2 ⟨υ, hυ, rfl⟩, rfl⟩, ?_⟩
     by_cases h : υ = σ
     · subst h; simp
-    · rw [if_neg h, if_pos (Set.sdiff_nonempty.2 fun hσ => h ((eval_eliminative φ hυ).antisymm hσ)),
+    · rw [ite_eq_right h, ite_eq_left (Set.sdiff_nonempty.2 fun hσ => h ((eval_eliminative φ hυ).antisymm hσ)),
         Set.sdiff_self]
   · rintro ⟨_, hτ', rfl⟩
     obtain ⟨_, hυ', rfl⟩ := mem_eval_might.1 hτ'
@@ -182,7 +182,7 @@ theorem eval_must (φ : Formula W) : (must φ).eval = (not (might (not φ))).eva
     refine ⟨υ, hυ, ?_⟩
     by_cases h : υ = σ
     · subst h; simp
-    · rw [if_neg h, if_pos (Set.sdiff_nonempty.2 fun hσ => h ((eval_eliminative φ hυ).antisymm hσ)),
+    · rw [ite_eq_right h, ite_eq_left (Set.sdiff_nonempty.2 fun hσ => h ((eval_eliminative φ hυ).antisymm hσ)),
         Set.sdiff_self]
 
 /-! ### Projection (Facts 8.1–8.3, 8.8) -/
@@ -263,10 +263,10 @@ theorem satisfies_might_iff (hσ : σ.Nonempty) : Satisfies σ (might φ) ↔ Co
     obtain ⟨υ, hυ, hif⟩ := mem_eval_might.1 hs
     refine ⟨υ, hυ, ?_⟩
     by_contra hne
-    rw [if_neg hne] at hif
+    rw [ite_eq_right hne] at hif
     exact hσ.ne_empty hif.symm
   · rintro ⟨υ, hυ, hne⟩
-    exact mem_eval_might.2 ⟨υ, hυ, if_pos hne⟩
+    exact mem_eval_might.2 ⟨υ, hυ, ite_eq_left hne⟩
 
 /-- A state admitting `φ` satisfies it iff it is inconsistent with `not φ` (Lemma 8.6). -/
 theorem satisfies_iff_not_consistentWith_not (h : φ.eval.admits σ) :
@@ -291,9 +291,9 @@ theorem satisfies_must_iff (hσ : σ.Nonempty) : Satisfies σ (must φ) ↔ Sati
     obtain ⟨υ, hυ, hif⟩ := mem_eval_must.1 hs
     by_cases h : υ = σ
     · exact h ▸ hυ
-    · rw [if_neg h] at hif
+    · rw [ite_eq_right h] at hif
       exact absurd hif.symm hσ.ne_empty
-  · exact fun hs => mem_eval_must.2 ⟨σ, hs, if_pos rfl⟩
+  · exact fun hs => mem_eval_must.2 ⟨σ, hs, ite_eq_left rfl⟩
 
 /-! ### The trivalent connection (Ch. 10) -/
 

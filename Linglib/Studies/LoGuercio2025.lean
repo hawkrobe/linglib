@@ -129,7 +129,7 @@ theorem no_wideDP_outOfBlue {ψ : Tree Cat EWord}
     (h : ψ ∈ structuralAlternatives epithetLex johnArrived) : ∀ t ∈ ψ.subtrees, ¬ WideDP t :=
   subtree_preservation _ WideDP (forall_mem_substitutionSource.2 ⟨by decide, by decide⟩)
     (λ _ cs i h ⟨h1, h2⟩ => h ⟨h1, by
-      simp only [daughters, List.length_eraseIdx, i.2, if_true] at h2 ⊢; omega⟩)
+      simp only [daughters, List.length_eraseIdx, i.2, ite_true] at h2 ⊢; omega⟩)
     (λ _ cs _ _ h ⟨h1, h2⟩ => h ⟨h1, by simpa [daughters, List.length_set] using h2⟩)
     (λ _ _ _ _ _ ⟨_, h2⟩ => by simp [daughters] at h2) (by decide) h
 

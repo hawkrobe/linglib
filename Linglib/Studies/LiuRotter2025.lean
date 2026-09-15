@@ -1,7 +1,7 @@
 import Linglib.Semantics.Modality.Basic
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Data.Examples.LiuRotter2025
-import Mathlib.Data.Sign.Defs
+import Mathlib.Basic.Sign.Defs
 
 /-!
 # Liu and Rotter (2025): Linguistic and Social Meaning Match

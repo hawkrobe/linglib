@@ -12,7 +12,7 @@ harmonic inequality under a ranking is the lexicographic order of the ranking's 
 the profiles, `HarmonicLT`. The minimum under harmonic inequality and merge make the
 violation semiring `V`, a tropical semiring over profiles with an infinitely bad profile as
 the additive identity, whose commutative semiring structure is inherited from mathlib's
-`Tropical`. The semiring is idempotent and monotone, `le_mul`: merging can only make a
+`MinTropical`. The semiring is idempotent and monotone, `le_mul`: merging can only make a
 profile worse, which is the principle behind shortest-path optimization that every piece of
 an optimal mapping is itself optimal, `Optimal.left_of_add`. Merge commutes with every
 ranking's reading, `smul_add`, so the merged violations of a constraint set are one object
@@ -40,7 +40,7 @@ of the H-Opt algorithm are not formalized.
 
 namespace Riggle2009b
 
-open Constraints OptimalityTheory Tropical Pointwise
+open Constraints OptimalityTheory MinTropical Pointwise
 
 variable {n : ℕ}
 
@@ -87,7 +87,7 @@ theorem Optimal.right_of_add {r : Ranking n} {S T : Set (ViolationProfile n)}
 /-- The violation semiring (Example 2): profiles under the identity ranking together with
 the infinitely bad profile `⊤`; tropical addition is the minimum under harmonic inequality,
 tropical multiplication is merge, and the commutative semiring structure is mathlib's. -/
-abbrev V (n : ℕ) := Tropical (WithTop (ViolationProfile n))
+abbrev V (n : ℕ) := MinTropical (WithTop (ViolationProfile n))
 
 /-- Monotonicity (section 2): merging can only make a profile worse, so the semiring is
 monotone in the sense that makes shortest-path optimization sound. -/
@@ -121,7 +121,7 @@ def weightMap (w : Fin n → ℝ) : ViolationProfile n →+ ℝ where
 preserving tropical multiplication and the identities; whether it also preserves the minimum
 is the question of Harmonic Grammar's agreement with Optimality Theory, which the paper
 does not raise. -/
-def tropWeight (w : Fin n → ℝ) : V n →* Tropical (WithTop ℝ) where
+def tropWeight (w : Fin n → ℝ) : V n →* MinTropical (WithTop ℝ) where
   toFun a := trop ((untrop a).map (weightMap w))
   map_one' := by simp
   map_mul' a b := by simp [untrop_mul, WithTop.map_add]

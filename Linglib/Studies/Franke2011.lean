@@ -840,8 +840,8 @@ theorem receiverResponse_uniform (hprior : ∀ t, 0 < G.prior t)
     receiverResponse G (λ t => (S t).uniform) m = (receiverStep G S m).uniform := by
   rw [receiverResponse_eq_uniform, receiverStep]
   by_cases hemp : Finset.univ.filter (λ t => m ∈ S t) = ∅
-  · rw [if_pos ((isSurprise_uniform_iff S m).mpr hemp), if_pos hemp]
-  · rw [if_neg (mt (isSurprise_uniform_iff S m).mp hemp), if_neg hemp,
+  · rw [ite_eq_left ((isSurprise_uniform_iff S m).mpr hemp), ite_eq_left hemp]
+  · rw [ite_eq_right (mt (isSurprise_uniform_iff S m).mp hemp), ite_eq_right hemp,
       argmax_prior_mul_uniform G hprior hflat hemp]
 
 /-- Theorem 1: with flat priors the heavy receiver levels are the unbiased
@@ -925,8 +925,8 @@ theorem receiverResponse_uniform_nearFlat (hprior : ∀ t, 0 < G.prior t) (hnf :
     receiverResponse G (λ t => (S t).uniform) m = (receiverStepPrior G S m).uniform := by
   rw [receiverResponse_eq_uniform, receiverStepPrior, receiverStep]
   by_cases hemp : Finset.univ.filter (λ t => m ∈ S t) = ∅
-  · rw [if_pos ((isSurprise_uniform_iff S m).mpr hemp), if_pos hemp]
-  · rw [if_neg (mt (isSurprise_uniform_iff S m).mp hemp), if_neg hemp, if_neg hemp,
+  · rw [ite_eq_left ((isSurprise_uniform_iff S m).mpr hemp), ite_eq_left hemp]
+  · rw [ite_eq_right (mt (isSurprise_uniform_iff S m).mp hemp), ite_eq_right hemp, ite_eq_right hemp,
       argmax_prior_mul_uniform_nearFlat G hprior hnf hemp]
 
 /-! ### Lemma 3 and Theorem 3: convergence (Appendix B.4)
@@ -982,7 +982,7 @@ theorem receiver_inner_le (S : T → M → ℚ) (H : M → T → ℚ) (m : M)
   · obtain ⟨t₁, _⟩ := not_forall.mp hs
     obtain ⟨t₀, ht₀⟩ :=
       Finset.argmax_nonempty ⟨t₁, Finset.mem_univ t₁⟩ (f := λ t => G.prior t * S t m)
-    rw [receiverResponse, if_neg hs]
+    rw [receiverResponse, ite_eq_right hs]
     simp_rw [mul_comm (G.prior _ * S _ m)]
     rw [Finset.sum_uniform_argmax_mul _ ht₀]
     exact Finset.sum_mul_le_of_support _ _ hH hHSum (λ t ht => absurd (Finset.mem_univ t) ht) hw ht₀
@@ -1227,9 +1227,9 @@ theorem receiver1_subset_exhMW (m : M) (t : T) (ht : t ∈ receiverStep G G.true
   rw [mem_receiverStep] at ht
   have hne : Finset.univ.filter (λ t => m ∈ G.trueMessages t) ≠ ∅ := by
     rintro h
-    simp only [h, if_true] at ht
+    simp only [h, ite_true] at ht
     exact Finset.eq_empty_iff_forall_notMem.mp h t (by simpa using ht)
-  rw [if_neg hne] at ht
+  rw [ite_eq_right hne] at ht
   refine ⟨G.mem_trueMessages.mp ht.1, λ ⟨t', ht', hlt⟩ => ?_⟩
   exact absurd (Finset.card_lt_card (trueMessages_ssubset_of_ltALT G hlt))
     (not_lt.mpr (ht.2 t' (G.mem_trueMessages.mpr ht')))

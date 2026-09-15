@@ -271,7 +271,7 @@ theorem approximate_prefers_round {p : Price} (hp : ¬ p.IsRound) (h₁ : μ (se
   rw [S1, familySpeaker_apply, speaker_real_singleton_lt_iff zero_le_one (cost_ne_top c) hle
     ⟨p, by rw [projListener_approximate μ h₁ rfl]; simp [cost_ne_zero]⟩,
     projListener_approximate μ h₁ rfl, projListener_approximate μ h₂ (Price.round_round p),
-    ENNReal.one_rpow, one_mul, one_mul, cost, cost, if_neg hp, if_pos (Price.isRound_round p),
+    ENNReal.one_rpow, one_mul, one_mul, cost, cost, ite_eq_right hp, ite_eq_left (Price.isRound_round p),
     ENNReal.ofReal_lt_ofReal_iff (Real.exp_pos _), Real.exp_lt_exp, neg_lt_neg_iff]
 
 end Halo

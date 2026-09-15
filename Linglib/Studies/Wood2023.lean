@@ -189,8 +189,8 @@ theorem iStar_agent_iff (d : Derivation) :
     IStar.alloseme d.features = .agent ↔ d.reading = some .complexEvent := by
   rw [← Derivation.eventive_iff]
   by_cases h : d.Eventive
-  · rw [Derivation.features, if_pos h]; exact iff_of_true (by decide) h
-  · rw [Derivation.features, if_neg h]; exact iff_of_false (by decide) h
+  · rw [Derivation.features, ite_eq_left h]; exact iff_of_true (by decide) h
+  · rw [Derivation.features, ite_eq_right h]; exact iff_of_false (by decide) h
 
 /-! ### Phase locality of special meaning -/
 

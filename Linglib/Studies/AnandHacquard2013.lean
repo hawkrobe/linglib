@@ -1,7 +1,7 @@
 import Linglib.Semantics.Presupposition.Defs
 import Linglib.Data.Examples.AnandHacquard2013
 import Mathlib.Data.Set.Basic
-import Mathlib.Logic.Nontrivial.Defs
+import Mathlib.Basic.Nontrivial.Defs
 import Mathlib.Tactic.DeriveFintype
 
 /-!

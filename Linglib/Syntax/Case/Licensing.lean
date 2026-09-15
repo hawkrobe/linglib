@@ -396,7 +396,7 @@ theorem no_dom_without_secondaries (cl : ClauseLicensers) (nps : List LicensedNP
   | some c => simp
   | none =>
     by_cases hneed : np.needsLicensing
-    · simp only [hneed, if_pos]
+    · simp only [hneed, ite_eq_left]
       rcases hfind : List.find? (·.label == np.label)
         (licenseActive cl.primary cl.secondaries
           (nps.filter LicensedNP.isActive)) with _ | q

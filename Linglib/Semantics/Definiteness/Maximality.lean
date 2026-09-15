@@ -114,10 +114,10 @@ theorem russellIota_witness_satisfies
   classical
   unfold russellIota at h
   by_cases hexu : ∃! x, P x
-  · rw [dif_pos hexu] at h
+  · rw [dite_eq_left hexu] at h
     have heq : hexu.choose = e := Option.some_inj.mp h
     rw [← heq]; exact hexu.choose_spec.1
-  · rw [dif_neg hexu] at h; cases h
+  · rw [dite_eq_right hexu] at h; cases h
 
 /-- Two witnesses returned by `russellIota` (over the same predicate) must
     coincide. By Uniqueness. -/
@@ -139,7 +139,7 @@ theorem russellIota_eq_some_iff {E : Type*} (P : E → Prop) (e : E) :
       fun x hx => hu.unique hx (russellIota_witness_satisfies P e h)⟩
   · have hu : ∃! x, P x := ⟨e, he, huniq⟩
     unfold russellIota
-    rw [dif_pos hu]
+    rw [dite_eq_left hu]
     exact congrArg some (huniq _ hu.choose_spec.1)
 
 /-- Computable list-based Russellian iota: returns the unique witness when
@@ -207,10 +207,10 @@ theorem sharvyMax_witness_isMaximal
   classical
   unfold sharvyMax at h
   by_cases hex : ∃ e, IsMaximal P e
-  · rw [dif_pos hex] at h
+  · rw [dite_eq_left hex] at h
     have heq : hex.choose = e := Option.some_inj.mp h
     rw [← heq]; exact hex.choose_spec
-  · rw [dif_neg hex] at h; cases h
+  · rw [dite_eq_right hex] at h; cases h
 
 /-- The witness returned by `sharvyMax` satisfies `P`. -/
 theorem sharvyMax_witness_satisfies

@@ -2,7 +2,7 @@ import Linglib.Semantics.Attitudes.Desire.Conditional
 import Linglib.Semantics.Dynamic.Partial
 import Linglib.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Logic.Modal.Epistemic
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
 # Heim (1992): Presupposition Projection and the Semantics of Attitude Verbs

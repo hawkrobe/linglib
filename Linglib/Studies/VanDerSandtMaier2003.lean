@@ -1,6 +1,6 @@
 import Linglib.Semantics.Presupposition.ContentLayer
 import Linglib.Data.Examples.VanDerSandtMaier2003
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
 import Mathlib.Order.Disjoint
 
 /-!

@@ -1,4 +1,4 @@
-import Mathlib.Data.NNReal.Basic
+import Mathlib.Basic.NNReal.Basic
 import Mathlib.Data.Set.Card
 import Mathlib.Probability.Distributions.Uniform
 import Linglib.Core.Probability.Constructions
@@ -222,7 +222,7 @@ theorem probSufficiency_empty_eq_one_of_make
     BoolSEM.probSufficiency M Valuation.empty c e = 1 := by
   rw [probSufficiency_empty_eq_deterministicSuf]
   unfold deterministicSuf
-  exact if_pos (causallySufficient_of_causallyEntails h.2)
+  exact ite_eq_left (causallySufficient_of_causallyEntails h.2)
 
 end
 

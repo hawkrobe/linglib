@@ -247,7 +247,7 @@ theorem bare_notMem_optimal_of_roundness_lt {n m : ℕ} (hmn : roundness m < rou
     | 0 =>
       show (Situation.exact n).info (bare n) ≤ (Situation.exact n).info (bare m)
       simp only [Situation.info, bare, reduceCtorEq, false_or, true_and, hne, ne_eq,
-        not_true_eq_false, not_false_eq_true, if_true, if_false]
+        not_true_eq_false, not_false_eq_true, ite_true, ite_false]
       split_ifs <;> omega
     | 1 => show 4 - roundness n ≤ 4 - roundness m; omega
     | 2 => exact le_rfl
@@ -407,7 +407,7 @@ theorem moreThan_notMem_optimal {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = so
       rcases hq : ctx.primedNumeral with _ | p
       · exact le_rfl
       · have hnp : n ≠ p := λ e => hp (e ▸ hq)
-        simp only [moreThan, hnp, if_false]
+        simp only [moreThan, hnp, ite_false]
         split_ifs <;> omega
     | 5 => exact le_rfl
   · show info ctx (moreThan m) < info ctx (moreThan n)
@@ -434,7 +434,7 @@ theorem moreThan_optimal_iff_of_primed {ctx : Context} {L n m : ℕ} (hlo : ctx.
     show 4 - roundness m < 4 - roundness n ↔ _; have := roundness_le_four m; omega
   have h4 : con ctx 4 (moreThan n) < con ctx 4 (moreThan m) := by
     show npri ctx (moreThan n) < npri ctx (moreThan m)
-    simp only [npri, moreThan, hp, if_neg hnm.ne']; exact Nat.zero_lt_one
+    simp only [npri, moreThan, hp, ite_eq_right hnm.ne']; exact Nat.zero_lt_one
   have hne : moreThan n ≠ moreThan m := by simp [moreThan, hnm.ne]
   refine (Tableau.optimal_eq_singleton_iff_pair (by simp) hne).trans ?_
   rw [Tableau.ofPerm_profile_lt_iff_exists_dominates]

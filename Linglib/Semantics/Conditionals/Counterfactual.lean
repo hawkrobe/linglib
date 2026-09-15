@@ -173,18 +173,18 @@ theorem selectionalCounterfactual_eq_dist {W : Type*} [DecidableEq W] [Fintype W
   unfold selectionalCounterfactual Trivalent.dist
   set s := sim.closestWorlds w (Finset.univ.filter A)
   by_cases h_all : ∀ w' ∈ s, B w'
-  · rw [if_pos h_all, if_pos h_all]
-  · rw [if_neg h_all, if_neg h_all]
+  · rw [ite_eq_left h_all, ite_eq_left h_all]
+  · rw [ite_eq_right h_all, ite_eq_right h_all]
     by_cases h_some : ∃ w' ∈ s, B w'
-    · rw [if_pos h_some]
+    · rw [ite_eq_left h_some]
       have hnaf : ¬ ∀ w' ∈ s, ¬ B w' := by
         obtain ⟨w', hw', hB⟩ := h_some
         intro hf; exact hf w' hw' hB
-      rw [if_neg hnaf]
-    · rw [if_neg h_some]
+      rw [ite_eq_right hnaf]
+    · rw [ite_eq_right h_some]
       have haf : ∀ w' ∈ s, ¬ B w' := by
         intro w' hw' hB; exact h_some ⟨w', hw', hB⟩
-      rw [if_pos haf]
+      rw [ite_eq_left haf]
 
 /--
 Conditional Excluded Middle (CEM) holds for selectional semantics.
@@ -335,11 +335,11 @@ theorem selectional_as_supervaluation {W : Type*} [DecidableEq W] [Fintype W]
     superTrue B ⟨sim.closestWorlds w (Finset.univ.filter A), hne⟩ := by
   unfold selectionalCounterfactual superTrue
   by_cases hT : ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), B w'
-  · rw [if_pos hT, if_pos hT]
-  · rw [if_neg hT, if_neg hT]
+  · rw [ite_eq_left hT, ite_eq_left hT]
+  · rw [ite_eq_right hT, ite_eq_right hT]
     by_cases hF : ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), ¬ B w'
-    · rw [if_pos hF, if_pos hF]
-    · rw [if_neg hF, if_neg hF]
+    · rw [ite_eq_left hF, ite_eq_left hF]
+    · rw [ite_eq_right hF, ite_eq_right hF]
 
 -- ════════════════════════════════════════════════════
 -- Might Counterfactuals: Lewis vs Stalnaker
@@ -510,11 +510,11 @@ theorem distribution_selectional {W : Type*} [DecidableEq W] [Fintype W]
       rcases hbc with hb | hc
       · left; unfold selectionalCounterfactual
         rw [← hcl, hw']
-        simp only [Finset.mem_singleton, forall_eq, hb, ite_true, if_pos]
+        simp only [Finset.mem_singleton, forall_eq, hb, ite_eq_left]
       · right; unfold selectionalCounterfactual
         rw [← hcl, hw']
-        simp only [Finset.mem_singleton, forall_eq, hc, ite_true, if_pos]
-  · exfalso; simp only [if_neg hall] at h; split_ifs at h
+        simp only [Finset.mem_singleton, forall_eq, hc, ite_eq_left]
+  · exfalso; simp only [ite_eq_right hall] at h; split_ifs at h
 
 /-- **Distribution fails for universal semantics.**
 
@@ -594,14 +594,14 @@ theorem stalnaker_eq_selectional_singleton {W : Type*} [DecidableEq W] [Fintype 
   · -- Both sides equal .true
     have h1 : (∀ w' ∈ ({s.sel w {w' | A w'}} : Finset W), B w') := by
       intro w' hw'; rw [Finset.mem_singleton] at hw'; rw [hw']; exact hB
-    rw [if_pos h1]
+    rw [ite_eq_left h1]
     simp only [hB, decide_true, Trivalent.ofBool]
   · -- Both sides equal .false
     have h1 : ¬ (∀ w' ∈ ({s.sel w {w' | A w'}} : Finset W), B w') := by
       intro h; exact hB (h _ (Finset.mem_singleton.mpr rfl))
     have h2 : (∀ w' ∈ ({s.sel w {w' | A w'}} : Finset W), ¬ B w') := by
       intro w' hw'; rw [Finset.mem_singleton] at hw'; rw [hw']; exact hB
-    rw [if_neg h1, if_pos h2]
+    rw [ite_eq_right h1, ite_eq_left h2]
     simp only [hB, decide_false, Trivalent.ofBool]
 
 /-! ## Bridge: Stalnaker counterfactual = will-conditional over the universe
@@ -684,8 +684,8 @@ theorem selectional_eq_wouldConditional_singleton_universe
   rw [stalnaker_eq_selectional_singleton s sim A B w h_singleton]
   rw [← stalnakerCounterfactual_eq_wouldConditional_universe s A B w]
   by_cases h : stalnakerCounterfactual s A B w
-  · simp [decide_eq_true h, Trivalent.ofBool, h]
-  · simp [decide_eq_false h, Trivalent.ofBool, h]
+  · simp [Trivalent.ofBool, h]
+  · simp [Trivalent.ofBool, h]
 
 /-- A Stalnakerian selection function on `Fin 3` that prefers `1`
     whenever Centering does not force the centre. Used to witness the
@@ -749,7 +749,7 @@ theorem stalnaker_lewis_would_diverge :
       decide
     have hsel : divergeSel.sel 0 {w : Fin 3 | w = 1 ∨ w = 2} = 1 := by
       unfold divergeSel
-      simp [Conditional.SelectionFunction.sel, h0, h1]
+      simp [h0, h1]
     show (fun w : Fin 3 => w = 1) (divergeSel.sel 0 _)
     rw [hsel]
   · -- Universal closestWorlds = {1, 2}; the universal fails at w=2.

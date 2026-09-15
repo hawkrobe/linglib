@@ -328,7 +328,7 @@ theorem seqSpeaker_real_lt_of_card_lt [DecidableEq U] [DecidableEq R] (hβ : 0 <
   have : Nonempty R := ⟨r⟩
   have hl0 : ∀ us, r ∈ extSeq (λ u _ => ext u) us →
       l0 (uniformOn Set.univ) (sharp λ u _ => ext u) us {r} ≠ 0 := λ us hus => by
-    rw [l0_indicator, uniformOn_finset_apply_singleton, if_pos hus]
+    rw [l0_indicator, uniformOn_finset_apply_singleton, ite_eq_left hus]
     exact ENNReal.inv_ne_zero.2 (ENNReal.natCast_ne_top _)
   have hu : ∀ us, r ∈ extSeq (λ u _ => ext u) us →
       utility (uniformOn Set.univ) (sharp λ u _ => ext u) β cost us r ≠ 0 := λ us hus =>

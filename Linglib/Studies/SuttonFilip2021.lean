@@ -186,7 +186,7 @@ def containerExtn (R P : Entry α) (contain : α → α → Prop) : Set α :=
 /-- The precondition (45) of the container classifier: the argument's extension is
 cumulative, which every sum-closed extension is. -/
 theorem cum_extn_of_sumClosed {E : Entry α} (h : E.sumClosed = true) : CUM (· ∈ E.extn) := by
-  simp only [Entry.extn, h, if_true]
+  simp only [Entry.extn, h, ite_true]
   exact algClosure_cum
 
 /-- A singular count extension with two distinct units is not cumulative: the sum of two units
@@ -194,7 +194,7 @@ is not a unit, so *#a bowl of an apple*. -/
 theorem not_cum_extn_of_singular {E : Entry α} (hs : E.sumClosed = false) (hc : E.IsCount)
     {u v : α} (hu : u ∈ E.cbase) (hv : v ∈ E.cbase) (hne : u ≠ v) (hu0 : ¬ IsBot u)
     (hv0 : ¬ IsBot v) : ¬ CUM (· ∈ E.extn) := by
-  simp only [Entry.extn, hs, Bool.false_eq_true, if_false]
+  simp only [Entry.extn, hs, Bool.false_eq_true, ite_false]
   intro hcum
   have hsum : u ⊔ v ∈ E.cbase := hcum hu hv
   by_cases huv : u ⊔ v = u
@@ -219,7 +219,7 @@ theorem rice_mass {units : Set α} {u v : α} (hu : u ∈ units) (hv : v ∈ uni
     (hu0 : ¬ IsBot u) (hv0 : ¬ IsBot v) (E : Entry α) (hF : E.frame = Frame.ofUnits units)
     (hO : E.objectFn = false) (hS : E.perspective = none) : ¬ E.IsCount := by
   rw [Entry.isCount_iff_of_null hS]
-  simp only [Entry.base, hO, Bool.false_eq_true, if_false, hF]
+  simp only [Entry.base, hO, Bool.false_eq_true, ite_false, hF]
   exact λ h => h (overlapPred_extn_ofUnits hu hv hne hu0 hv0)
 
 /-- The `[+O,+S]` entry over a frame of disjoint units, *lentil* (36)–(37): the perspective

@@ -380,7 +380,7 @@ theorem overt_voice_paradox (d : Derivation) (hv : d.voiceExp.isSome = true)
   refine not_consistent_of_pair (p := d.voicePSpellout) (q := d.cpSpellout) (a := .voice)
     (b := .dp .agent) List.mem_cons_self (by simp) ?_ ?_
   · unfold Derivation.voicePSpellout
-    rw [if_pos hv, if_pos hi]
+    rw [ite_eq_left hv, ite_eq_left hi]
     exact (((List.sublist_append_right _ [Term.voice]).append_right [Term.dp .agent]).trans
       (List.sublist_append_left _ [Term.verb])).trans (List.sublist_append_left _ _)
   · unfold Derivation.cpSpellout
@@ -399,7 +399,7 @@ theorem bare_passive_agent_paradox (d : Derivation) (ha : d.agentProjected = tru
   refine not_consistent_of_pair (p := d.voicePSpellout) (q := d.cpSpellout) (a := .dp .theme)
     (b := .dp .agent) List.mem_cons_self (by simp) ?_ ?_
   · unfold Derivation.voicePSpellout
-    rw [if_pos hi, if_pos hsp, hsp]
+    rw [ite_eq_left hi, ite_eq_left hsp, hsp]
     exact ((((List.sublist_append_right _ [Term.dp .theme]).trans
       (List.sublist_append_left _ _)).append_right [Term.dp .agent]).trans
       (List.sublist_append_left _ [Term.verb])).trans (List.sublist_append_left _ _)

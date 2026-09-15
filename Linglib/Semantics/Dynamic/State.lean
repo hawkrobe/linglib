@@ -350,7 +350,7 @@ theorem restrict_restrict :
 def uniformEquiv (X : Set V) :
     {I : State W V M // UniformAt X I} ≃ Set (W × (X → M)) :=
   (Equiv.Set.powerset {p : Possibility W V (Part M) | p.domain = X}).trans
-    (Equiv.Set.congr (Possibility.domainEquiv X))
+    (Equiv.setCongr (Possibility.domainEquiv X))
 
 @[simp] theorem mem_uniformEquiv {I : {I : State W V M // UniformAt X I}}
     {e : W × (X → M)} :

@@ -146,7 +146,7 @@ the same mass on any two true utterances. -/
 theorem speaker_zero_eq_of_mem (c : ℝ) (hu : w ∈ sem u) (hu' : w ∈ sem u') :
     speaker βS 0 (λ _ => c) sem π R w {u} = speaker βS 0 (λ _ => c) sem π R w {u'} := by
   simp only [speaker, speakerOfScore_apply_singleton, combinedUtility_zero, truthfulness, hu, hu',
-    if_true]
+    ite_true]
 
 /-- The purely relevant speaker prefers the utterance that earns the listener more, true or
 not. -/
@@ -210,7 +210,7 @@ theorem actionUtility_cellReward (hw : w ∈ c) :
     policy_real_of_pair L (cellReward r s c) (a := 0) (a' := 1) (by decide)
       (λ a => by fin_cases a <;> simp), h0, h1]
   simp only [cellReward, hw, Fin.isValue, Fin.one_eq_zero_iff, OfNat.ofNat_ne_one, iff_false,
-    not_true_eq_false, if_true, if_false]
+    not_true_eq_false, ite_true, ite_false]
   ring_nf
 
 /-- Theorem 2: the cell decision problem ranks utterances as the question's epistemic utility
@@ -265,7 +265,7 @@ theorem sum_ite_div_sum_ite (p : V → Prop) [DecidablePred p] (hp : ∃ x, p x)
     intro g
     rw [prod_univ_sum, Fintype.piFinset_univ]
     refine sum_congr rfl λ w _ => ?_
-    rw [prod_mul_distrib, prod_ite_eq', prod_ite_eq', if_pos (mem_univ _), if_pos (mem_univ _),
+    rw [prod_mul_distrib, prod_ite_eq', prod_ite_eq', ite_eq_left (mem_univ _), ite_eq_left (mem_univ _),
       boole_mul]
   have key₁ : (∑ w : K → V, if p (w f) then (1 : ℝ) else 0) =
       ∏ i, ∑ x, (if i = f then (if p x then 1 else 0) else 1) * (if i = k then (1 : ℝ) else 1) :=
@@ -290,7 +290,7 @@ theorem sum_ite_div_sum_ite (p : V → Prop) [DecidablePred p] (hp : ∃ x, p x)
       · by_cases hik : i = k
         · subst hik; simp [hif]
         · simp [hif, hik, hV]]
-  rw [prod_ite_eq', if_pos (mem_univ _)]
+  rw [prod_ite_eq', ite_eq_left (mem_univ _)]
 
 variable [DecidableEq V]
 
@@ -438,7 +438,7 @@ theorem actionUtility_spots (v : Value) :
   obtain ⟨h0, h1, h2⟩ := reward_world
   simp only [actionUtility, policy_real_singleton, expectedReward_spots, Real.softmax_def,
     Fin.sum_univ_three, h0, h1, h2]
-  simp only [Fin.isValue, if_true, Fin.one_eq_zero_iff, OfNat.ofNat_ne_one, if_false,
+  simp only [Fin.isValue, ite_true, Fin.one_eq_zero_iff, OfNat.ofNat_ne_one, ite_false,
     Fin.reduceEq, mul_zero, Real.exp_zero]
   have := Real.exp_pos (β * val v)
   field_simp
@@ -489,7 +489,7 @@ theorem prefers_truth_iff (hβS : 0 < βS) (lam c : ℝ) :
         < 2 * (1 - lam) := by
   rw [speaker_real_lt_iff _ _ _ _ _ hβS]
   simp only [combinedUtility, truthfulness, sem, mem_filter, mem_univ, true_and, world,
-    Fin.reduceEq, if_true, if_false]
+    Fin.reduceEq, ite_true, ite_false]
   constructor <;> intro h <;> linarith
 
 /-- In the context of three spotted mushrooms naming any value of spots is irrelevant: it
@@ -518,7 +518,7 @@ theorem green_relevant_allSpotted (hβ : 0 < β) :
   obtain ⟨h0, h1, h2⟩ := hR
   simp only [actionUtility, policy_real_singleton, expectedReward_prior, hE, mul_zero,
     Fin.sum_univ_three, h0, h1, h2, Real.softmax_def]
-  simp only [Fin.isValue, if_true, Fin.one_eq_zero_iff, OfNat.ofNat_ne_one, if_false,
+  simp only [Fin.isValue, ite_true, Fin.one_eq_zero_iff, OfNat.ofNat_ne_one, ite_false,
     Fin.reduceEq, mul_zero, Real.exp_zero]
   have he : 1 < Real.exp (β * 2) := Real.one_lt_exp_iff.2 (by positivity)
   have := Real.exp_pos (β * 2)

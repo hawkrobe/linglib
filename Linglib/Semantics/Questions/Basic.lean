@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Basic
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
 import Mathlib.Order.Antichain
 import Mathlib.Data.SetLike.Basic
 import Mathlib.Order.BoundedOrder.Basic

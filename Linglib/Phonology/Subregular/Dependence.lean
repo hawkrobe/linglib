@@ -312,10 +312,10 @@ def unite (cL cR a : α) : α := if cL = a then cR else cL
   grind [unite]
 
 /-- With the left proposal inert, the union is whatever the right one proposes. -/
-@[simp] theorem unite_left_self (cR a : α) : unite a cR a = cR := if_pos rfl
+@[simp] theorem unite_left_self (cR a : α) : unite a cR a = cR := ite_eq_left rfl
 
 /-- A firing left proposal wins. -/
-theorem unite_of_left_ne {cL a : α} (h : cL ≠ a) (cR : α) : unite cL cR a = cL := if_neg h
+theorem unite_of_left_ne {cL a : α} (h : cL ≠ a) (cR : α) : unite cL cR a = cL := ite_eq_right h
 
 /-- The union is order-independent exactly when the proposals agree wherever both
 fire. -/

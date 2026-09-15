@@ -142,9 +142,9 @@ theorem L0_apply [DiscreteMeasurableSpace W] :
   by_cases h : w ∈ sem u
   · rw [Set.inter_eq_self_of_subset_left (Set.singleton_subset_iff.mpr h),
       projListener_literalListener_restrict_apply_singleton]
-    simp only [l0, if_pos h, Nat.cast_sum]
+    simp only [l0, ite_eq_left h, Nat.cast_sum]
   · rw [Set.singleton_inter_eq_empty.mpr h, measure_empty]
-    simp [l0, if_neg h]
+    simp [l0, ite_eq_right h]
 
 theorem L0_le_one [DiscreteMeasurableSpace W] : L0 P cell sem C q u {w} ≤ 1 := by
   rw [L0_apply]
@@ -164,7 +164,7 @@ theorem speaker_apply_singleton_ne_zero [DiscreteMeasurableSpace W] {α : ℝ} (
     (L0_le_one P cell sem C q · w) (by
       rw [L0_apply, ne_eq, ENNReal.div_eq_zero_iff, not_or]
       refine ⟨?_, ENNReal.natCast_ne_top _⟩
-      simp only [l0, if_pos h, Nat.cast_eq_zero]
+      simp only [l0, ite_eq_left h, Nat.cast_eq_zero]
       exact Finset.sum_eq_zero_iff.not.mpr λ hz =>
         hP (hz w (Finset.mem_filter.mpr ⟨Finset.mem_filter.mpr ⟨hC, h⟩, rfl⟩)))
 
@@ -538,7 +538,7 @@ private theorem comp_ne_zero (q : QUD) {α : ℝ} (hα : 0 < α) :
     (familySpeaker (λ C => L0 uniform QUD.cell Utterance.sem C q) α (λ _ => 1)
       ∘ₘ pairPrior uniform) {.notGC} ≠ 0 :=
   comp_familySpeaker_ne_zero (w := .nonUS) (l := {.nonUS})
-    (by rw [pairPrior_singleton, if_pos (by decide)]; simp [uniform])
+    (by rw [pairPrior_singleton, ite_eq_left (by decide)]; simp [uniform])
     (speaker_apply_singleton_ne_zero hα (by decide) (by decide) one_ne_zero)
 
 private theorem half_rpow_lt_one {α : ℝ} (hα : 0 < α) : (1 / 2 : ℝ) ^ α < 1 :=
@@ -552,7 +552,7 @@ theorem needVisa_nonUS_lt {α : ℝ} (hα : 0 < α) :
     (gcListener .needVisa α .notGC).real ↑(worldEvent World.usCitizen)
       < (gcListener .needVisa α .notGC).real ↑(worldEvent World.nonUS) := by
   rw [gcListener, listener_worldEvent_lt_iff _ _ _ _ (comp_ne_zero _ hα), sum_ctx, sum_ctx]
-  simp (config := { decide := true }) only [pairPrior_uniform_real, if_true, if_false]
+  simp (config := { decide := true }) only [pairPrior_uniform_real, ite_true, ite_false]
   rw [card_two (by decide), card_two (by decide), card_two (by decide), card_three]
   norm_num
   rw [share_N1 hα, share_N2 hα, share_N3 hα, share_N4 hα, share_U1 hα, share_U2 hα,
@@ -577,7 +577,7 @@ theorem freeDrink_nonUS_lt {α : ℝ} (hα : 0 < α) :
     (gcListener .freeDrink α .notGC).real ↑(worldEvent World.usCitizen)
       < (gcListener .freeDrink α .notGC).real ↑(worldEvent World.nonUS) := by
   rw [gcListener, listener_worldEvent_lt_iff _ _ _ _ (comp_ne_zero _ hα), sum_ctx, sum_ctx]
-  simp (config := { decide := true }) only [pairPrior_uniform_real, if_true, if_false]
+  simp (config := { decide := true }) only [pairPrior_uniform_real, ite_true, ite_false]
   rw [card_two (by decide), card_two (by decide), card_two (by decide), card_three]
   norm_num
   rw [share_N1 hα, share_N2' hα, share_N3 hα, share_N4' hα, share_U1 hα, share_U2' hα,

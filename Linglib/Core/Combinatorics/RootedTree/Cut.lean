@@ -1496,13 +1496,13 @@ private lemma filter_product_split {α₁ β₁ : Type*}
   intro a _
   rw [Multiset.filter_map]
   by_cases h : p a
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     apply congrArg
     apply Multiset.filter_congr
     intro b _
     show (p a ∧ q b) ↔ q b
     simp [h]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     apply Multiset.eq_zero_of_forall_notMem
     intro pr hpr
     rw [Multiset.mem_map] at hpr
@@ -1546,7 +1546,7 @@ theorem cutListSummandsG_filter_empty
         ({((0 : Multiset (RoseTree α)), cs)} : Multiset _)
   | [] => by
     rw [cutListSummandsG_nil, Multiset.filter_singleton]
-    rw [if_pos (show (0 : Multiset (RoseTree α)).card = 0 from Multiset.card_zero)]
+    rw [ite_eq_left (show (0 : Multiset (RoseTree α)).card = 0 from Multiset.card_zero)]
   | t :: ts => by
     rw [cutListSummandsG_cons, Multiset.filter_map]
     -- Convert composed predicate to a conjunction form using card_add.
@@ -1605,7 +1605,7 @@ theorem augActionG_filter_empty
     | some r =>
       rw [augActionG_eq_some extract t r h_ext, Multiset.filter_cons]
       -- filter cons: if pred (({t}, r)) then {({t},r)} else 0, plus filter of the tail
-      rw [if_neg (by
+      rw [ite_eq_right (by
         show ¬ ({t} : Multiset (RoseTree α)).card = 0
         rw [Multiset.card_singleton]
         decide)]

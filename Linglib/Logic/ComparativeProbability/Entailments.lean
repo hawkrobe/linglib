@@ -513,9 +513,9 @@ private theorem matchingLift_complement_reversal {W : Type*} [Finite W]
       g b' = f^[k] b' ∧ f^[k] b' ∉ A ∧ ∀ m, m < k → f^[m] b' ∈ A := by
     intro b' hb'
     by_cases hbA : b' ∈ A
-    · exact ⟨ei b' hbA hb', by simp [g, dif_pos hbA, dif_neg hb'],
+    · exact ⟨ei b' hbA hb', by simp [g, dite_eq_left hbA, dite_eq_right hb'],
         ei_spec b' hbA hb', ei_min b' hbA hb'⟩
-    · exact ⟨0, by simp [g, dif_neg hbA], hbA, fun _ hm => absurd hm (by omega)⟩
+    · exact ⟨0, by simp [g, dite_eq_right hbA], hbA, fun _ hm => absurd hm (by omega)⟩
   refine ⟨g, fun b' hb' => ?_, fun b₁ b₂ hb1 hb2 heq => ?_⟩
   · obtain ⟨k, hgk, hnotA, hkA⟩ := g_iter b' hb'
     exact ⟨hgk ▸ hnotA, hgk ▸ matchingLift_chain_dominance hRefl hfge hTrans k hkA⟩

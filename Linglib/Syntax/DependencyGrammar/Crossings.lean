@@ -163,10 +163,10 @@ private theorem mul_sum_crossingsUnder :
         if distinct4 x then n ! else 0 := by
     intro x _
     by_cases hd : distinct4 x
-    · rw [if_pos hd]
+    · rw [ite_eq_left hd]
       obtain ⟨d1, d2, d3, d4, d5, d6⟩ := hd
       exact card_alternate d1 d2 d3 d4 d5 d6
-    · rw [if_neg hd, card_alternate_eq_zero hd, Nat.mul_zero]
+    · rw [ite_eq_right hd, card_alternate_eq_zero hd, Nat.mul_zero]
   rw [Finset.sum_congr rfl hcongr, ← Finset.sum_filter, Finset.filter_filter,
     Finset.sum_const, smul_eq_mul, Nat.mul_comm]
 

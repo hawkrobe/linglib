@@ -101,7 +101,7 @@ theorem weightedSample_uniformOn [Fintype W] [MeasurableSingletonClass W] (w w' 
 /-- A threshold above one drops every world: the speaker passes (Figure 13). -/
 theorem thresholdedSample_eq_zero (bel : Measure W) [IsProbabilityMeasure bel] {θ : ℝ}
     (hθ : 1 < θ) (w : W) : thresholdedSample bel θ w = 0 :=
-  if_neg (not_le.mpr (lt_of_le_of_lt measureReal_le_one hθ))
+  ite_eq_right (not_le.mpr (lt_of_le_of_lt measureReal_le_one hθ))
 
 /-- Beliefs already in the common ground contribute nothing (Figure 14). -/
 theorem differenceSample_self (cg : Measure W) (w : W) : differenceSample cg cg w = 0 := by
@@ -278,7 +278,7 @@ theorem s1_turn1_informativity :
   show (uniformSpeaker sem 1 .nancy).real {.studyHumanity} =
     (uniformSpeaker sem 1 .nancy).real {.likeOutdoors}
   rw [uniformSpeaker_real_singleton sem one_pos, uniformSpeaker_real_singleton sem one_pos,
-    if_pos (by decide), if_pos (by decide),
+    ite_eq_left (by decide), ite_eq_left (by decide),
     show (sem .studyHumanity).card = (sem .likeOutdoors).card by decide]
 
 /-- Every world has the same profile at the first turn: two true specific utterances of

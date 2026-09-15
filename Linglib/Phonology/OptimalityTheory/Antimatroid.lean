@@ -347,28 +347,28 @@ theorem MChain.union_closed {n : Nat} (E : Finset (ERC n))
   have hff_inj : Function.Injective ff := by
     intro a b hab; simp only [ff, Fin.mk.injEq] at hab
     by_cases h1a : inS a <;> by_cases h1b : inS b
-    · simp only [f, if_pos h1a, if_pos h1b] at hab
+    · simp only [f, ite_eq_left h1a, ite_eq_left h1b] at hab
       exact Equiv.injective r₁.symm (Fin.ext hab)
-    · exfalso; simp only [f, if_pos h1a, if_neg h1b] at hab
+    · exfalso; simp only [f, ite_eq_left h1a, ite_eq_right h1b] at hab
       split_ifs at hab with h2b
       · omega
       · have := countBelow_lt_card r₁ sR b ((in_sR b).mpr ⟨h1b, h2b⟩); omega
-    · exfalso; simp only [f, if_neg h1a, if_pos h1b] at hab
+    · exfalso; simp only [f, ite_eq_right h1a, ite_eq_left h1b] at hab
       split_ifs at hab with h2a
       · omega
       · have := countBelow_lt_card r₁ sR a ((in_sR a).mpr ⟨h1a, h2a⟩); omega
-    · simp only [f, if_neg h1a, if_neg h1b] at hab
+    · simp only [f, ite_eq_right h1a, ite_eq_right h1b] at hab
       by_cases h2a : inT a <;> by_cases h2b : inT b
-      · simp only [if_pos h2a, if_pos h2b] at hab
+      · simp only [ite_eq_left h2a, ite_eq_left h2b] at hab
         exact countBelow_injOn r₂ sTmS a b
           ((in_sTmS a).mpr ⟨h2a, h1a⟩) ((in_sTmS b).mpr ⟨h2b, h1b⟩) (by omega)
-      · exfalso; simp only [if_pos h2a, if_neg h2b] at hab
+      · exfalso; simp only [ite_eq_left h2a, ite_eq_right h2b] at hab
         have := countBelow_lt_card r₂ sTmS a ((in_sTmS a).mpr ⟨h2a, h1a⟩)
         have := countBelow_lt_card r₁ sR b ((in_sR b).mpr ⟨h1b, h2b⟩); omega
-      · exfalso; simp only [if_neg h2a, if_pos h2b] at hab
+      · exfalso; simp only [ite_eq_right h2a, ite_eq_left h2b] at hab
         have := countBelow_lt_card r₁ sR a ((in_sR a).mpr ⟨h1a, h2a⟩)
         have := countBelow_lt_card r₂ sTmS b ((in_sTmS b).mpr ⟨h2b, h1b⟩); omega
-      · simp only [if_neg h2a, if_neg h2b] at hab
+      · simp only [ite_eq_right h2a, ite_eq_right h2b] at hab
         exact countBelow_injOn r₁ sR a b
           ((in_sR a).mpr ⟨h1a, h2a⟩) ((in_sR b).mpr ⟨h1b, h2b⟩) (by omega)
   -- Bijective, build r₃
@@ -406,7 +406,7 @@ theorem MChain.union_closed {n : Nat} (E : Finset (ERC n))
         have := maximalChain_dominance r₁ k₁ w l hw_dom
           (show l ∈ maximalChain r₁ k₁ by simp [maximalChain]; exact h1)
         simp [maximalChain] at this; exact this
-      exact ⟨w, hw_W, (hdom w l).mpr (by simp only [f, if_pos hw_S, if_pos h1]; exact hw_dom)⟩
+      exact ⟨w, hw_W, (hdom w l).mpr (by simp only [f, ite_eq_left hw_S, ite_eq_left h1]; exact hw_dom)⟩
     · by_cases h2 : inT l
       · -- l ∈ T\S: use r₂
         obtain ⟨w, hw_W, hw_dom⟩ := (ERC.satisfiedBy_iff_dominance r₂ α).mp (hr₂ α hα) l hl_L
@@ -415,22 +415,22 @@ theorem MChain.union_closed {n : Nat} (E : Finset (ERC n))
             (show l ∈ maximalChain r₂ k₂ by simp [maximalChain]; exact h2)
           simp [maximalChain] at this; exact this
         refine ⟨w, hw_W, (hdom w l).mpr ?_⟩
-        simp only [f, if_neg h1, if_pos h2]
+        simp only [f, ite_eq_right h1, ite_eq_left h2]
         by_cases hw1 : inS w
-        · simp only [if_pos hw1]; omega
-        · simp only [if_neg hw1, if_pos hw_T]
+        · simp only [ite_eq_left hw1]; omega
+        · simp only [ite_eq_right hw1, ite_eq_left hw_T]
           have := countBelow_strict_mono r₂ sTmS w l
             ((in_sTmS w).mpr ⟨hw_T, hw1⟩) ((in_sTmS l).mpr ⟨h2, h1⟩) hw_dom; omega
       · -- l ∈ rest: use r₁
         obtain ⟨w, hw_W, hw_dom⟩ := (ERC.satisfiedBy_iff_dominance r₁ α).mp (hr₁ α hα) l hl_L
         refine ⟨w, hw_W, (hdom w l).mpr ?_⟩
-        simp only [f, if_neg h1, if_neg h2]
+        simp only [f, ite_eq_right h1, ite_eq_right h2]
         by_cases hw1 : inS w
-        · simp only [if_pos hw1]; omega
+        · simp only [ite_eq_left hw1]; omega
         · by_cases hw2 : inT w
-          · simp only [if_neg hw1, if_pos hw2]
+          · simp only [ite_eq_right hw1, ite_eq_left hw2]
             have := countBelow_lt_card r₂ sTmS w ((in_sTmS w).mpr ⟨hw2, hw1⟩); omega
-          · simp only [if_neg hw1, if_neg hw2]
+          · simp only [ite_eq_right hw1, ite_eq_right hw2]
             have := countBelow_strict_mono r₁ sR w l
               ((in_sR w).mpr ⟨hw1, hw2⟩) ((in_sR l).mpr ⟨h1, h2⟩) hw_dom; omega
   exact ⟨r₃, hsat, k₃, hprefix⟩
@@ -546,13 +546,13 @@ theorem feasible_iff_feasiblePrefix_of_simple {n : Nat} {E : Finset (ERC n)}
   have hff_inj : Function.Injective ff := by
     intro a b hab; simp only [ff, Fin.mk.injEq] at hab
     by_cases ha : a ∈ S <;> by_cases hb : b ∈ S
-    · simp only [f, if_pos ha, if_pos hb] at hab
+    · simp only [f, ite_eq_left ha, ite_eq_left hb] at hab
       exact countBelow_injOn r₀ S a b ha hb hab
-    · exfalso; simp only [f, if_pos ha, if_neg hb] at hab
+    · exfalso; simp only [f, ite_eq_left ha, ite_eq_right hb] at hab
       have := countBelow_lt_card r₀ S a ha; omega
-    · exfalso; simp only [f, if_neg ha, if_pos hb] at hab
+    · exfalso; simp only [f, ite_eq_right ha, ite_eq_left hb] at hab
       have := countBelow_lt_card r₀ S b hb; omega
-    · simp only [f, if_neg ha, if_neg hb] at hab
+    · simp only [f, ite_eq_right ha, ite_eq_right hb] at hab
       exact countBelow_injOn r₀ Sᶜ a b
         (Finset.mem_compl.mpr ha) (Finset.mem_compl.mpr hb) (by omega)
   have hff_bij := Finite.injective_iff_bijective.mp hff_inj
@@ -577,12 +577,12 @@ theorem feasible_iff_feasiblePrefix_of_simple {n : Nat} {E : Finset (ERC n)}
     by_cases hlS : l ∈ S
     · obtain ⟨w', hw'W, hw'S⟩ := hfeas α hα ⟨l, hl_L, hlS⟩
       obtain rfl : w = w' := (hwα_uniq w hwW).trans (hwα_uniq w' hw'W).symm
-      rw [if_pos hw'S, if_pos hlS]
+      rw [ite_eq_left hw'S, ite_eq_left hlS]
       exact countBelow_strict_mono r₀ S w l hw'S hlS hdom₀
     · by_cases hwS : w ∈ S
-      · rw [if_pos hwS, if_neg hlS]
+      · rw [ite_eq_left hwS, ite_eq_right hlS]
         have := countBelow_lt_card r₀ S w hwS; omega
-      · rw [if_neg hwS, if_neg hlS]
+      · rw [ite_eq_right hwS, ite_eq_right hlS]
         have := countBelow_strict_mono r₀ Sᶜ w l
           (Finset.mem_compl.mpr hwS) (Finset.mem_compl.mpr hlS) hdom₀
         omega

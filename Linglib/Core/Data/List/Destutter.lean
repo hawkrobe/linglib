@@ -177,7 +177,7 @@ private theorem destutter'_tail_length_clean {z : α} {m : List α} (h2 : m.IsCh
     have hbm : m.destutter' (· ≠ ·) b = b :: m := destutter'_of_isChain_cons _ _ h2
     by_cases hzb : z ≠ b
     · rw [destutter'_cons_pos (h := hzb), hbm]
-      simp only [tail_cons, length_cons, head?_cons, Option.some.injEq, if_neg hzb, Nat.sub_zero]
+      simp only [tail_cons, length_cons, head?_cons, Option.some.injEq, ite_eq_right hzb, Nat.sub_zero]
     · obtain rfl : z = b := not_not.mp hzb
       rw [destutter'_cons_neg (h := by simp), hbm]; simp
 

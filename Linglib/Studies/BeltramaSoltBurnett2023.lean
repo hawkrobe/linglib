@@ -4,7 +4,7 @@ import Linglib.Semantics.Quantification.Numerals.Precision
 import Linglib.Pragmatics.SocialMeaning.Dimension
 import Linglib.Pragmatics.SocialMeaning.Persona
 import Linglib.Fragments.English.NumeralModifiers
-import Mathlib.Data.Sign.Defs
+import Mathlib.Basic.Sign.Defs
 import Mathlib.Tactic.NormNum
 
 /-!

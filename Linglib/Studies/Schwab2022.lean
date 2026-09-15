@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.Schwab2022
 import Mathlib.Order.SetNotation
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
 # Schwab (2022): Lexical variation in NPI illusions

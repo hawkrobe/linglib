@@ -200,12 +200,12 @@ private theorem util_ungated {α c : ℝ} {s : HeartState} {φ : Phi} {u : Utter
       = ((α * ((Phi.val φ : ℝ) * Real.log (l0 u s : ℝ)
           + (1 - (Phi.val φ : ℝ)) * (ev u : ℝ) - cost c u) : ℝ) : EReal) := by
   unfold util
-  rw [if_neg h]
+  rw [ite_eq_right h]
 
 private theorem util_gated {α c : ℝ} {s : HeartState} {φ : Phi} {u : Utterance}
     (h0 : meaning u s = 0) (hφ : φ ≠ .p0) : util α c (s, φ) u = ⊥ := by
   unfold util
-  rw [if_pos ⟨h0, hφ⟩]
+  rw [ite_eq_left ⟨h0, hφ⟩]
 
 theorem util_ne_top (α c : ℝ) (p : HeartState × Phi) (u : Utterance) : util α c p u ≠ ⊤ := by
   unfold util
@@ -265,7 +265,7 @@ theorem social_prefers_indirect_iff {α : ℝ} (hα : 0 < α) (c : ℝ) (s : Hea
         < (speaker α c (s, .p0)).real {(.terrible, true)} ↔
       c - 1 < (ev (.terrible, true) : ℝ) - ev (.terrible, false) := by
   rw [social_lt_iff hα]
-  simp only [cost, Bool.false_eq_true, if_true, if_false]
+  simp only [cost, Bool.false_eq_true, ite_true, ite_false]
   constructor <;> intro h <;> linarith
 
 /-- The pure-social speaker prefers "amazing" to "not amazing": the direct form is both kinder
@@ -274,7 +274,7 @@ theorem social_prefers_positive {α c : ℝ} (hα : 0 < α) (hc : 1 ≤ c) (s : 
     (speaker α c (s, .p0)).real {(.amazing, true)}
       < (speaker α c (s, .p0)).real {(.amazing, false)} := by
   rw [social_lt_iff hα, ev_amazing, ev_notAmazing]
-  simp only [cost, Bool.false_eq_true, if_true, if_false]
+  simp only [cost, Bool.false_eq_true, ite_true, ite_false]
   norm_num
   linarith
 
@@ -292,7 +292,7 @@ theorem informative_prefers_direct {α c : ℝ} (hα : 0 < α) (hc : 1 ≤ c) :
     apply Real.log_lt_log
     · norm_num [l0, semMass, sum_hearts, meaning, acceptance]
     · norm_num [l0, semMass, sum_hearts, meaning, acceptance]
-  simp only [Phi.val, cost, Bool.false_eq_true, if_true, if_false]
+  simp only [Phi.val, cost, Bool.false_eq_true, ite_true, ite_false]
   norm_num
   linarith
 

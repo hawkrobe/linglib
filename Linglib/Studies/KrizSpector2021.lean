@@ -254,13 +254,13 @@ theorem value_reading_star {x : Finset Atom} (hx : x.Nonempty) (Q : Atom → W �
   unfold value
   rcases h : Trivalent.dist x (Q · w) with _ | _ | _
   · rw [Trivalent.dist_eq_true_iff] at h
-    exact if_pos (ht.2 h)
+    exact ite_eq_left (ht.2 h)
   · rw [Trivalent.dist_eq_false_iff] at h
     obtain ⟨a, ha⟩ := hx
-    rw [if_neg λ h' => h.2 a ha (ht.1 h' a ha), if_pos (hf.2 h.2)]
+    rw [ite_eq_right λ h' => h.2 a ha (ht.1 h' a ha), ite_eq_left (hf.2 h.2)]
   · rw [Trivalent.dist_eq_indet_iff] at h
     obtain ⟨⟨a, ha, hQ⟩, b, hb, hQ'⟩ := h
-    rw [if_neg λ h' => hQ' (ht.1 h' b hb), if_neg λ h' => hf.1 h' a ha hQ]
+    rw [ite_eq_right λ h' => hQ' (ht.1 h' b hb), ite_eq_right λ h' => hf.1 h' a ha hQ]
 
 /-! ### Non-monotonic contexts (§3.1)
 
@@ -636,7 +636,7 @@ theorem HParam.Admissible.univAt {H : HParam Atom} (hH : H.Admissible) (i : ℕ)
 omit [DecidableEq Atom] in
 theorem HParam.equivExcept_univAt (H : HParam Atom) {I : Finset ℕ} {i : ℕ} (hi : i ∈ I) :
     H.EquivExcept I (H.univAt i) :=
-  λ k hk x => by simp only [HParam.univAt, if_neg (λ h : k = i => hk (h ▸ hi))]
+  λ k hk x => by simp only [HParam.univAt, ite_eq_right (λ h : k = i => hk (h ▸ hi))]
 
 /-- A one-place predicate with argument index `i`, the paper's (53a). -/
 def pred (H : HParam Atom) (i : ℕ) (P : Finset Atom → W → Prop) (x : Finset Atom) (w : W) :
@@ -688,7 +688,7 @@ theorem all_not_pred {x : Finset Atom} (hx : x.Nonempty) (P : Finset Atom → W 
       · rcases hky with ⟨rfl, rfl⟩
         exact parts_mem_Cand hx
       · exact hH k y
-    · exact λ k hk y => (if_neg (λ h : k = i ∧ y = x => hk (h.1 ▸ hi)) :
+    · exact λ k hk y => (ite_eq_right (λ h : k = i ∧ y = x => hk (h.1 ▸ hi)) :
         (if k = i ∧ y = x then parts x else H k y) = H k y).symm
     · simpa [pred] using hz
   · rintro h H' hH' _ ⟨z, hz, hP⟩
@@ -917,13 +917,13 @@ theorem valueUp_eq_generalisedTruthValue {x : Finset Atom} (hx : x.Nonempty)
     valueUp x P w = generalisedTruthValue (P · w) Finset.univ x := by
   unfold valueUp generalisedTruthValue
   by_cases hP : P x w
-  · rw [if_pos ((trueOnAllUp_iff x P w).2 hP), if_pos hP]
-  · rw [if_neg (λ h => hP ((trueOnAllUp_iff x P w).1 h)), if_neg hP]
+  · rw [ite_eq_left ((trueOnAllUp_iff x P w).2 hP), ite_eq_left hP]
+  · rw [ite_eq_right (λ h => hP ((trueOnAllUp_iff x P w).1 h)), ite_eq_right hP]
     by_cases hn : ∀ z, overlaps x z → ¬ P z w
-    · rw [if_pos ((falseOnAllUp_iff hx P w).2 hn), if_neg]
+    · rw [ite_eq_left ((falseOnAllUp_iff hx P w).2 hn), ite_eq_right]
       rintro ⟨b, -, hb, hPb⟩
       exact hn b hb hPb
-    · rw [if_neg (λ h => hn ((falseOnAllUp_iff hx P w).1 h)), if_pos]
+    · rw [ite_eq_right (λ h => hn ((falseOnAllUp_iff hx P w).1 h)), ite_eq_left]
       push Not at hn
       obtain ⟨b, hb, hPb⟩ := hn
       exact ⟨b, Finset.mem_univ _, hb, hPb⟩

@@ -176,8 +176,8 @@ example : gradedMeaning Scenario.s3.aspects (1 / 5) .madeNoDifference = 1 / 5 :=
 "enabled", the two enabling scenarios are equally likely. -/
 theorem literal_enabled :
     uniformListener sem .enabled {.s1} = 2⁻¹ ∧ uniformListener sem .enabled {.s3} = 0 := by
-  rw [uniformListener_apply_singleton, uniformListener_apply_singleton, if_pos (by decide),
-    if_neg (by decide), show (sem .enabled).card = 2 from by decide]
+  rw [uniformListener_apply_singleton, uniformListener_apply_singleton, ite_eq_left (by decide),
+    ite_eq_right (by decide), show (sem .enabled).card = 2 from by decide]
   norm_num
 
 /-- The first-level speaker at Michottean launching (Table 1d): "caused" 6/11, "enabled"
@@ -190,7 +190,7 @@ theorem speaker_s1 :
     (t := .s1) (by decide +kernel) c
   simp only [Nat.cast_one] at h
   rw [h, h, h, show (profile sem .s1).divPowSum 6 1 = 11 from by decide +kernel,
-    if_pos (by decide), if_pos (by decide), if_pos (by decide),
+    ite_eq_left (by decide), ite_eq_left (by decide), ite_eq_left (by decide),
     show (sem .caused).card = 1 from by decide, show (sem .enabled).card = 2 from by decide,
     show (sem .affected).card = 3 from by decide]
   norm_num
@@ -205,7 +205,7 @@ theorem speaker_s2 :
     (t := .s2) (by decide +kernel) c
   simp only [Nat.cast_one] at h
   rw [h, h, h, show (profile sem .s2).divPowSum 6 1 = 5 from by decide +kernel,
-    if_pos (by decide), if_pos (by decide), if_neg (by decide),
+    ite_eq_left (by decide), ite_eq_left (by decide), ite_eq_right (by decide),
     show (sem .enabled).card = 2 from by decide, show (sem .affected).card = 3 from by decide]
   norm_num
 
@@ -338,7 +338,7 @@ theorem launch_ofModel :
     CausalWorld.ofModel launch Valuation.empty Valuation.empty .cause .effect =
       Scenario.s1.aspects := by
   have hW : whetherCause launch Valuation.empty .cause false .effect true = 1 := by
-    rw [whetherCause_eq_indicator_of_deterministic, if_neg]
+    rw [whetherCause_eq_indicator_of_deterministic, ite_eq_right]
     rw [developDet_hasValue_iff]
     intro h
     have hfalse := developDetVtx_eq_of_developDetVtx?_eq_some (M := launch)

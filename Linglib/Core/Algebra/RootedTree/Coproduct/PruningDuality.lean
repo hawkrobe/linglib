@@ -51,7 +51,7 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-- `B⁺_a` on the second tensor factor dualizes to `B⁻_a` on the second
     pairing slot: `pairing₂ (u ⊗ v) ((id ⊗ B⁺_a) V) =
-    pairing₂ (u ⊗ B⁻_a v) V`. `TensorProduct.induction_on` +
+    pairing₂ (u ⊗ B⁻_a v) V`. `TensorProduct.inductionOn` +
     `bMinusLin_pairing_adjoint`. -/
 private lemma pairing₂_lTensor_bPlusLin (a : α)
     (u v : ConnesKreimer R (UnorderedTree α))
@@ -59,8 +59,7 @@ private lemma pairing₂_lTensor_bPlusLin (a : α)
     pairing₂ (R := R) (u ⊗ₜ[R] v)
         ((LinearMap.lTensor _ (bPlusLin (R := R) a)) V) =
       pairing₂ (R := R) (u ⊗ₜ[R] (bMinusLin (R := R) a v)) V := by
-  induction V using TensorProduct.induction_on with
-  | zero => simp
+  induction V using TensorProduct.inductionOn with
   | tmul p q =>
     rw [LinearMap.lTensor_tmul, pairing₂_tmul_tmul, pairing₂_tmul_tmul,
         ← bMinusLin_pairing_adjoint]
@@ -81,25 +80,13 @@ private lemma pairing₂_of'_of'_mul (A B : Forest (UnorderedTree α))
             (ConnesKreimer.of' pq.2.1 ⊗ₜ[R] ConnesKreimer.of' pq.1.1) U *
         pairing₂ (R := R)
             (ConnesKreimer.of' pq.2.2 ⊗ₜ[R] ConnesKreimer.of' pq.1.2) V)).sum := by
-  induction U using TensorProduct.induction_on with
-  | zero =>
-    rw [zero_mul, map_zero]
-    symm
-    refine Multiset.sum_eq_zero fun r hr => ?_
-    obtain ⟨pq, _, rfl⟩ := Multiset.mem_map.mp hr
-    rw [map_zero, zero_mul]
+  induction U using TensorProduct.inductionOn with
   | add U₁ U₂ ih₁ ih₂ =>
     rw [add_mul, map_add, ih₁, ih₂, ← Multiset.sum_map_add]
     refine congrArg Multiset.sum (Multiset.map_congr rfl fun pq _ => ?_)
     rw [map_add, add_mul]
   | tmul u₁ u₂ =>
-    induction V using TensorProduct.induction_on with
-    | zero =>
-      rw [mul_zero, map_zero]
-      symm
-      refine Multiset.sum_eq_zero fun r hr => ?_
-      obtain ⟨pq, _, rfl⟩ := Multiset.mem_map.mp hr
-      rw [map_zero, mul_zero]
+    induction V using TensorProduct.inductionOn with
     | add V₁ V₂ ih₁ ih₂ =>
       rw [mul_add, map_add, ih₁, ih₂, ← Multiset.sum_map_add]
       refine congrArg Multiset.sum (Multiset.map_congr rfl fun pq _ => ?_)
@@ -305,8 +292,7 @@ private lemma pairing₃_assoc_rTensor_comul_rho
         ((TensorProduct.assoc R _ _ _)
           ((comulAlgHomN (R := R)).toLinearMap.rTensor _ V)) =
       pairing₂ (R := R) (product y x ⊗ₜ[R] z') V := by
-  induction V using TensorProduct.induction_on with
-  | zero => simp
+  induction V using TensorProduct.inductionOn with
   | tmul a b =>
     rw [LinearMap.rTensor_tmul, AlgHom.toLinearMap_apply, pairing₃_assoc_tmul,
         ← pairing_gl_eq_pairing_coproduct_Rho y x a, pairing₂_tmul_tmul]
@@ -321,8 +307,7 @@ private lemma pairing₃_lTensor_comul_rho
     pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
         ((comulAlgHomN (R := R)).toLinearMap.lTensor _ W) =
       pairing₂ (R := R) (x ⊗ₜ[R] product z' y) W := by
-  induction W using TensorProduct.induction_on with
-  | zero => simp
+  induction W using TensorProduct.inductionOn with
   | tmul a b =>
     rw [LinearMap.lTensor_tmul, AlgHom.toLinearMap_apply, pairing₃_tmul_apply,
         ← pairing_gl_eq_pairing_coproduct_Rho z' y b, pairing₂_tmul_tmul]

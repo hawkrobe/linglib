@@ -89,7 +89,7 @@ theorem sat_box_imp_N {a : OForm Atom} {t : T} {w : World} :
 
 theorem sat_N_imp_self {a : OForm Atom} {t : T} {w : World} :
     F.sat V (.N a) t w → F.sat V a t w := by
-  haveI : Std.Refl (F.sim t) := ⟨(F.sim_equiv t).refl⟩
+  have : Std.Refl (F.sim t) := ⟨(F.sim_equiv t).refl⟩
   exact fun h => box_T h
 
 theorem sat_box_imp_self {a : OForm Atom} {t : T} {w : World} :
@@ -98,7 +98,7 @@ theorem sat_box_imp_self {a : OForm Atom} {t : T} {w : World} :
 
 theorem sat_N_imp_N_N {a : OForm Atom} {t : T} {w : World} :
     F.sat V (.N a) t w → F.sat V (.N (.N a)) t w := by
-  haveI : IsTrans World (F.sim t) := ⟨fun _ _ _ => (F.sim_equiv t).trans⟩
+  have : IsTrans World (F.sim t) := ⟨fun _ _ _ => (F.sim_equiv t).trans⟩
   exact fun h => box_four h
 
 theorem sat_box_imp_box_box {a : OForm Atom} {t : T} {w : World} :

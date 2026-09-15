@@ -42,7 +42,7 @@ private theorem Transduction.emitAt_local [DecidableEq α] {r : ℕ} {T : Transd
     have hlen : (input.take (p + 1)).length = p + 1 := by rw [List.length_take]; omega
     rw [show (input.take (p + 1)).rtake (r + 1)
           = (input.take (p + 1)).drop ((input.take (p + 1)).length - (r + 1)) from rfl,
-        List.getElem?_drop, hlen, List.getElem?_take, if_pos (by omega)]
+        List.getElem?_drop, hlen, List.getElem?_take, ite_eq_left (by omega)]
     congr 1
     omega
   · intro j hj; omega

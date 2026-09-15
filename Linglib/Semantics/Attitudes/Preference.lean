@@ -1,6 +1,6 @@
 import Mathlib.Order.Defs.Unbundled
 import Mathlib.Order.Preorder.Chain
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
 import Mathlib.Data.Rat.Defs
 import Linglib.Semantics.Attitudes.Basic
 import Linglib.Semantics.Attitudes.Distributivity

@@ -206,7 +206,6 @@ theorem surfacesWith_plateauAR (w : List TBU) (j : ℕ) :
   obtain ⟨n, hn⟩ := Nat.exists_eq_succ_of_ne_zero
     (List.count_pos_iff.mpr (List.take_subset _ _ hA)).ne'
   simp [plateauAR, hn]
-  rfl
 
 /-! ### The plateauing process -/
 

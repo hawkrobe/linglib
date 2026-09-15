@@ -277,7 +277,7 @@ theorem mutualInfo_def (X : Ω → S) (Y : Ω → T) (μ : Measure Ω) :
 /-- The mutual information of two random variables is that of their joint law. -/
 theorem mutualInfo_eq_measureMutualInfo (hX : Measurable X) (hY : Measurable Y)
     (μ : Measure Ω) : I[X : Y ; μ] = Im[μ.map fun ω => (X ω, Y ω)] := by
-  rw [mutualInfo, measureMutualInfo, Measure.fst_map_prodMk hY, Measure.snd_map_prodMk hX]
+  rw [mutualInfo, measureMutualInfo, Measure.fst_map_prodMk hX hY, Measure.snd_map_prodMk hX hY]
   rfl
 
 variable [Fintype S] [Fintype T] [MeasurableSingletonClass S] [MeasurableSingletonClass T]
@@ -303,7 +303,7 @@ theorem chain_rule (hX : Measurable X) (hY : Measurable Y) :
   have hsum (y : T) :
       ∑ x, μ.real ((fun ω => (X ω, Y ω)) ⁻¹' {(x, y)}) = μ.real (Y ⁻¹' {y}) := by
     simp_rw [← map_measureReal_apply (hX.prodMk hY) (.singleton _),
-      ← Measure.snd_real_singleton_eq_sum, Measure.snd_map_prodMk hX,
+      ← Measure.snd_real_singleton_eq_sum, Measure.snd_map_prodMk hX hY,
       map_measureReal_apply hY (.singleton _)]
   have key (y : T) : μ.real (Y ⁻¹' {y}) * H[X ; μ[|Y ⁻¹' {y}]]
       = ∑ x, negMulLog (μ.real ((fun ω => (X ω, Y ω)) ⁻¹' {(x, y)}))

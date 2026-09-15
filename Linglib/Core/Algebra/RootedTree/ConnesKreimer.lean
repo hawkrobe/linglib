@@ -539,7 +539,7 @@ def counit : ConnesKreimer R T →ₐ[R] R :=
 
 @[simp] theorem counit_ofTree (t : T) :
     (counit : ConnesKreimer R T →ₐ[R] R) (ofTree t) = 0 := by
-  rw [← of'_singleton, counit_of', Multiset.card_singleton, if_neg one_ne_zero]
+  rw [← of'_singleton, counit_of', Multiset.card_singleton, ite_eq_right one_ne_zero]
 
 end ConnesKreimer
 

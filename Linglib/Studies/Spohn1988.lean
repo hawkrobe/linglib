@@ -111,34 +111,34 @@ theorem conditionα_comm (hAB : κ.rankSet (A ∩ B) = 0) (hAB' : κ.rankSet (A 
   have h1 : ∀ w, (κ.conditionα A hA α).rank w = if w ∈ A then κ.rank w else α + κ.rank w :=
     λ w => by
       by_cases hw : w ∈ A
-      · rw [conditionα_of_mem _ _ _ hw, aPart, toNat_rankSet_eq_zero _ hA0, if_pos hw]; rfl
-      · rw [conditionα_of_notMem _ _ _ hw, aPart, toNat_rankSet_eq_zero _ hA'0, if_neg hw]; rfl
+      · rw [conditionα_of_mem _ _ _ hw, aPart, toNat_rankSet_eq_zero _ hA0, ite_eq_left hw]; rfl
+      · rw [conditionα_of_notMem _ _ _ hw, aPart, toNat_rankSet_eq_zero _ hA'0, ite_eq_right hw]; rfl
   have h2 : ∀ w, (κ.conditionα B hB β).rank w = if w ∈ B then κ.rank w else β + κ.rank w :=
     λ w => by
       by_cases hw : w ∈ B
-      · rw [conditionα_of_mem _ _ _ hw, aPart, toNat_rankSet_eq_zero _ hB0, if_pos hw]; rfl
-      · rw [conditionα_of_notMem _ _ _ hw, aPart, toNat_rankSet_eq_zero _ hB'0, if_neg hw]; rfl
+      · rw [conditionα_of_mem _ _ _ hw, aPart, toNat_rankSet_eq_zero _ hB0, ite_eq_left hw]; rfl
+      · rw [conditionα_of_notMem _ _ _ hw, aPart, toNat_rankSet_eq_zero _ hB'0, ite_eq_right hw]; rfl
   have h1B : (κ.conditionα A hA α).rankSet B = 0 :=
-    (rankSet_eq_zero_iff _).2 ⟨u, huB, by rw [h1, if_pos huA, hu]⟩
+    (rankSet_eq_zero_iff _).2 ⟨u, huB, by rw [h1, ite_eq_left huA, hu]⟩
   have h1B' : (κ.conditionα A hA α).rankSet Bᶜ = 0 :=
-    (rankSet_eq_zero_iff _).2 ⟨u', hu'B, by rw [h1, if_pos hu'A, hu']⟩
+    (rankSet_eq_zero_iff _).2 ⟨u', hu'B, by rw [h1, ite_eq_left hu'A, hu']⟩
   have h2A : (κ.conditionα B hB β).rankSet A = 0 :=
-    (rankSet_eq_zero_iff _).2 ⟨u, huA, by rw [h2, if_pos huB, hu]⟩
+    (rankSet_eq_zero_iff _).2 ⟨u, huA, by rw [h2, ite_eq_left huB, hu]⟩
   have h2A' : (κ.conditionα B hB β).rankSet Aᶜ = 0 :=
-    (rankSet_eq_zero_iff _).2 ⟨u'', hu''A, by rw [h2, if_pos hu''B, hu'']⟩
+    (rankSet_eq_zero_iff _).2 ⟨u'', hu''A, by rw [h2, ite_eq_left hu''B, hu'']⟩
   have L : ∀ w, ((κ.conditionα A hA α).conditionα B hB β).rank w =
       (if w ∈ B then 0 else β) + (if w ∈ A then 0 else α) + κ.rank w := λ w => by
     by_cases hwB : w ∈ B
-    · rw [conditionα_of_mem _ _ _ hwB, aPart, h1 w, toNat_rankSet_eq_zero _ h1B, if_pos hwB]
+    · rw [conditionα_of_mem _ _ _ hwB, aPart, h1 w, toNat_rankSet_eq_zero _ h1B, ite_eq_left hwB]
       split_ifs <;> omega
-    · rw [conditionα_of_notMem _ _ _ hwB, aPart, h1 w, toNat_rankSet_eq_zero _ h1B', if_neg hwB]
+    · rw [conditionα_of_notMem _ _ _ hwB, aPart, h1 w, toNat_rankSet_eq_zero _ h1B', ite_eq_right hwB]
       split_ifs <;> omega
   have R : ∀ w, ((κ.conditionα B hB β).conditionα A hA α).rank w =
       (if w ∈ A then 0 else α) + (if w ∈ B then 0 else β) + κ.rank w := λ w => by
     by_cases hwA : w ∈ A
-    · rw [conditionα_of_mem _ _ _ hwA, aPart, h2 w, toNat_rankSet_eq_zero _ h2A, if_pos hwA]
+    · rw [conditionα_of_mem _ _ _ hwA, aPart, h2 w, toNat_rankSet_eq_zero _ h2A, ite_eq_left hwA]
       split_ifs <;> omega
-    · rw [conditionα_of_notMem _ _ _ hwA, aPart, h2 w, toNat_rankSet_eq_zero _ h2A', if_neg hwA]
+    · rw [conditionα_of_notMem _ _ _ hwA, aPart, h2 w, toNat_rankSet_eq_zero _ h2A', ite_eq_right hwA]
       split_ifs <;> omega
   ext w
   rw [L, R]
@@ -396,7 +396,7 @@ theorem independent_iff_condition :
     have hC := h l (ℭ.cell v) (ℭ.decides_cell v) (cell_nonempty ℭ v)
     rw [← hn] at hC
     have hgt : ∀ x ∈ ℭ.cell v, ¬ 𝔅 x w → n + 1 ≤ (condition κ 𝔅 l).rank x := λ x _ hx => by
-      rw [condition_rank, hl, if_neg hx]
+      rw [condition_rank, hl, ite_eq_right hx]
       exact Nat.le_add_right _ _
     have hne : (𝔅.cell w ∩ ℭ.cell v).Nonempty := by
       by_contra hempty
@@ -419,7 +419,7 @@ theorem independent_iff_condition :
     have hrelx : 𝔅 x w := 𝔅.mem_cell.1 hxb
     have hle : n ≤ k - n₀ := by
       have := (condition κ 𝔅 l).rankSet_le hxc
-      rw [hC, condition_rank, hl, if_pos hrelx, zero_add, aPart, cell_eq_of_rel hrelx, ← hn₀,
+      rw [hC, condition_rank, hl, ite_eq_left hrelx, zero_add, aPart, cell_eq_of_rel hrelx, ← hn₀,
         ENat.toNat_natCast, hx] at this
       exact_mod_cast this
     obtain ⟨y, hyc, ey⟩ := (condition κ 𝔅 l).exists_rank_eq_rankSet (cell_nonempty ℭ v)
@@ -430,7 +430,7 @@ theorem independent_iff_condition :
         have := κ.rankSet_le (show y ∈ 𝔅.cell w ∩ ℭ.cell v from ⟨hyw, hyc⟩)
         rw [← hk] at this
         exact_mod_cast this
-      rw [condition_rank, hl, if_pos hyw, zero_add, aPart, cell_eq_of_rel hyw, ← hn₀,
+      rw [condition_rank, hl, ite_eq_left hyw, zero_add, aPart, cell_eq_of_rel hyw, ← hn₀,
         ENat.toNat_natCast] at hy
       omega
     · have := hgt y hyc hyw

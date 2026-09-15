@@ -119,7 +119,7 @@ theorem contractUnary_eq_self_iff {t : RoseTree α} :
     rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩
     · rfl
     · simp at h
-    · rw [numUnary_node, if_neg (by simp only [List.length_cons]; omega), Nat.zero_add] at h
+    · rw [numUnary_node, ite_eq_right (by simp only [List.length_cons]; omega), Nat.zero_add] at h
       rw [contractUnary_node_cons₂, List.map_congr_left fun x hx =>
           ih x hx (eq_zero_of_sum_eq_zero h _ (List.mem_map_of_mem hx)), List.map_id']
 

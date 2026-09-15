@@ -223,7 +223,7 @@ theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
       have hagree : ∀ p, a.mentions p → ∀ tt ww, V p tt ww ↔ V' p tt ww := by
         intro p hp tt ww
         have hpq : p ≠ q := fun e => hq (e ▸ hp)
-        simp only [V', if_neg hpq]
+        simp only [V', ite_eq_right hpq]
       exact (sat_iff_of_agree F V V' a hagree t w).mpr ((sat_imp F V' _ _ t w).1 (ih V' t w) hbox)
 
 end Temporal

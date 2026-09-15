@@ -102,13 +102,13 @@ private lemma null_from_pair (sys : QualitativeProbability (Set (Fin 4)))
   have hAD : A ⊆ D := by
     intro a ha; by_contra haD
     have := hle a
-    simp only [cmpVec, if_pos ha, if_neg (Finset.disjoint_left.mp hABd ha), if_neg haD,
+    simp only [cmpVec, ite_eq_left ha, ite_eq_right (Finset.disjoint_left.mp hABd ha), ite_eq_right haD,
       sub_zero] at this
     split_ifs at this <;> omega
   have hCB : C ⊆ B := by
     intro c hc; by_contra hcB
     have := hle c
-    simp only [cmpVec, if_pos hc, if_neg (Finset.disjoint_left.mp hCDd hc), if_neg hcB,
+    simp only [cmpVec, ite_eq_left hc, ite_eq_right (Finset.disjoint_left.mp hCDd hc), ite_eq_right hcB,
       sub_zero] at this
     split_ifs at this <;> omega
   -- ge C A, ge C B
@@ -208,8 +208,8 @@ private lemma v1_tailored
   by_cases hemp : ∃ c ∈ L, c.1 = ∅ ∧ c.2.Nonempty
   · obtain ⟨c, hcL, hc1, k, hk⟩ := hemp
     refine Or.inl ⟨c, hcL, c, hcL, fun i => ?_, k, ?_⟩
-    · simp only [cmpVec, hc1, if_neg (Finset.notMem_empty i)]; split_ifs <;> omega
-    · simp only [cmpVec, hc1, if_neg (Finset.notMem_empty k), if_pos hk]; omega
+    · simp only [cmpVec, hc1, ite_eq_right (Finset.notMem_empty i)]; split_ifs <;> omega
+    · simp only [cmpVec, hc1, ite_eq_right (Finset.notMem_empty k), ite_eq_left hk]; omega
   -- Step B: the right disjunct as an escape hatch
   by_cases hrd : ∃ c ∈ L, Disjoint vneg c.1 ∧ Disjoint vpos c.2
   · exact Or.inr hrd
@@ -241,12 +241,12 @@ private lemma v1_tailored
     rcases hc with rfl | hc
     · obtain ⟨k, hk⟩ := hne
       refine ⟨k, ?_⟩
-      rw [toQVec_apply, if_pos hk, if_neg (Finset.disjoint_right.mp hvpvn hk)]; norm_num
+      rw [toQVec_apply, ite_eq_left hk, ite_eq_right (Finset.disjoint_right.mp hvpvn hk)]; norm_num
     · have hcL : c ∈ L := List.mem_of_mem_filter hc
       have hc1 : c.1 ≠ ∅ := by simpa using List.of_mem_filter hc
       obtain ⟨k, hk⟩ := Finset.nonempty_iff_ne_empty.mpr hc1
       refine ⟨k, ?_⟩
-      rw [toQVec_apply, if_pos hk, if_neg (Finset.disjoint_left.mp (hdisj c hcL) hk)]; norm_num
+      rw [toQVec_apply, ite_eq_left hk, ite_eq_right (Finset.disjoint_left.mp (hdisj c hcL) hk)]; norm_num
   have hSne : S.Nonempty := by
     refine ⟨toQVec (vneg, vpos), ?_⟩
     rw [hS, List.mem_toFinset, hl]
@@ -723,7 +723,7 @@ private def embedComparison (wc : WComparison 3) : WComparison 4 where
 private lemma comparisonVec_map_last (A B : Finset (Fin 3)) :
     comparisonVec 4 (A.map Fin.castSuccEmb) (B.map Fin.castSuccEmb) (Fin.last 3) = 0 := by
   unfold comparisonVec
-  rw [if_neg (last_notMem_map A), if_neg (last_notMem_map B), sub_zero]
+  rw [ite_eq_right (last_notMem_map A), ite_eq_right (last_notMem_map B), sub_zero]
 
 private lemma comparisonVec_map_castSucc (A B : Finset (Fin 3)) (i : Fin 3) :
     comparisonVec 4 (A.map Fin.castSuccEmb) (B.map Fin.castSuccEmb) i.castSucc =

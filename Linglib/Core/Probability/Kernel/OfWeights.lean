@@ -200,11 +200,11 @@ theorem ofWeights_uniformOn_mul_uniformOn [DecidableEq β] (A B : α → Finset 
         (Nat.cast_ne_zero.mpr (Finset.card_pos.mpr ⟨b, this.2⟩).ne')
     have hK' : ((A a).card : ℝ≥0∞) * (B a).card ≠ ⊤ :=
       ENNReal.mul_ne_top (ENNReal.natCast_ne_top _) (ENNReal.natCast_ne_top _)
-    rw [if_pos hb, Finset.inter_singleton_of_mem hb, Finset.card_singleton, Nat.cast_one,
+    rw [ite_eq_left hb, Finset.inter_singleton_of_mem hb, Finset.card_singleton, Nat.cast_one,
       ENNReal.div_eq_inv_mul, ENNReal.mul_inv (Or.inr (ENNReal.inv_ne_top.mpr hK))
         (Or.inl (ENNReal.natCast_ne_top _)), inv_inv, mul_assoc,
       ENNReal.mul_inv_cancel hK hK', mul_one, one_div]
-  · rw [if_neg hb, Finset.inter_singleton_of_notMem hb, Finset.card_empty, Nat.cast_zero,
+  · rw [ite_eq_right hb, Finset.inter_singleton_of_notMem hb, Finset.card_empty, Nat.cast_zero,
       ENNReal.zero_div, ENNReal.zero_div]
 
 end ProbabilityTheory.Kernel

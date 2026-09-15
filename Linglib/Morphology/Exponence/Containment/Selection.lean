@@ -53,7 +53,7 @@ private theorem argmax_eq_find {α β : Type*} [LinearOrder β] [DecidableEq β]
       | some c =>
         have hc : f c ≤ m := hub c (List.mem_cons_of_mem _ (List.argmax_mem hxs))
         have hcx : f c ≤ f x := by rw [hx]; exact hc
-        simp only [if_neg (not_lt.mpr hcx)]
+        simp only [ite_eq_right (not_lt.mpr hcx)]
     · have hbeq : (f x == m) = false := by simpa using hx
       simp only [hbeq]
       have hmxs : m ∈ xs.map f := by
@@ -69,7 +69,7 @@ private theorem argmax_eq_find {α β : Type*} [LinearOrder β] [DecidableEq β]
         rw [hxs] at IH
         have hcm : f c = m := by simpa using List.find?_some IH.symm
         have hxc : f x < f c := by rw [hcm]; exact lt_of_le_of_ne hxm hx
-        simp only [if_pos hxc, IH]
+        simp only [ite_eq_left hxc, IH]
 
 /-- `find?` ignores a filter that keeps every match. -/
 private theorem find?_filter_of_imp {α : Type*} {p q : α → Bool}
@@ -79,8 +79,8 @@ private theorem find?_filter_of_imp {α : Type*} {p q : α → Bool}
   | x :: xs => by
     rw [List.filter_cons]
     by_cases hp : p x = true
-    · rw [if_pos hp, List.find?_cons, List.find?_cons, find?_filter_of_imp h xs]
-    · rw [if_neg hp, find?_filter_of_imp h xs, List.find?_cons]
+    · rw [ite_eq_left hp, List.find?_cons, List.find?_cons, find?_filter_of_imp h xs]
+    · rw [ite_eq_right hp, find?_filter_of_imp h xs, List.find?_cons]
       have hq : q x = false := by
         by_contra hqx; exact hp (h x (by simpa using hqx))
       simp [hq]

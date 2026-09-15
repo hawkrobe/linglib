@@ -62,7 +62,7 @@ def so (φ : Set W) (A : Set (Set W)) : Set W := {w | w ∈ φ ∧ ∀ ψ ∈ A,
 /-- Against the two-membered scale of *some* and *all*, the operator returns *some but not all*. -/
 theorem so_pair {φ ψ : Set W} (h : ψ ⊂ φ) : so φ {φ, ψ} = φ \ ψ := by
   ext w
-  simp only [so, Set.mem_ofPred_eq, Set.mem_diff, Set.mem_insert_iff, Set.mem_singleton_iff,
+  simp only [so, Set.mem_ofPred_eq, Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp, forall_eq]
   exact ⟨λ ⟨hw, _, hψ⟩ => ⟨hw, hψ h⟩,
     λ ⟨hw, hψ⟩ => ⟨hw, λ hφ => absurd hφ (lt_irrefl φ), λ _ => hψ⟩⟩

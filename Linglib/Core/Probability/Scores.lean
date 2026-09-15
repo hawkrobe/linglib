@@ -61,7 +61,7 @@ variable [Nonempty σ] in
 theorem normalizeOrUniform_apply {f : σ → ℝ≥0∞} (h0 : (∑' x, f x) ≠ 0)
     (hT : (∑' x, f x) ≠ ∞) (x : σ) :
     normalizeOrUniform f x = f x * (∑' x', f x')⁻¹ := by
-  rw [normalizeOrUniform, dif_pos ⟨h0, hT⟩, PMF.normalize_apply]
+  rw [normalizeOrUniform, dite_eq_left ⟨h0, hT⟩, PMF.normalize_apply]
 
 variable [Nonempty σ] in
 /-- Comparison of `normalizeOrUniform` values built from nonnegative real
@@ -181,7 +181,7 @@ theorem scoresWith_sum_eq_one (fb : Fallback σ) (f : σ → ℚ≥0) :
 
 theorem scoresWith_of_pos (fb : Fallback σ) {f : σ → ℚ≥0}
     (h : 0 < ∑ y, f y) (x : σ) : scoresWith fb f x = f x / ∑ y, f y := by
-  rw [scoresWith, if_pos h, normalizeScores]
+  rw [scoresWith, ite_eq_left h, normalizeScores]
 
 /-- The PMF induced by a score vector and a fallback: pointwise the
 coercion of `scoresWith`, so the ℚ≥0 face and the PMF face agree

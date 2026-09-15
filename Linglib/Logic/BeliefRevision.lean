@@ -114,12 +114,12 @@ private lemma filter_sublist_of_imp {α : Type*} (l : List α)
     simp only [List.filter_cons]
     by_cases hpa : p a
     · have hqa : q a := h a List.mem_cons_self hpa
-      rw [if_pos (by simpa using hpa), if_pos (by simpa using hqa)]
+      rw [ite_eq_left (by simpa using hpa), ite_eq_left (by simpa using hqa)]
       exact ih'.cons_cons a
-    · rw [if_neg (by simpa using hpa)]
+    · rw [ite_eq_right (by simpa using hpa)]
       by_cases hqa : q a
-      · rw [if_pos (by simpa using hqa)]; exact ih'.cons a
-      · rw [if_neg (by simpa using hqa)]; exact ih'
+      · rw [ite_eq_left (by simpa using hqa)]; exact ih'.cons a
+      · rw [ite_eq_right (by simpa using hqa)]; exact ih'
 
 private lemma sublist_length_lt_of_mem {α : Type*} {l₁ l₂ : List α}
     (hsub : l₁.Sublist l₂) {x : α} (hx : x ∈ l₂) (hnx : x ∉ l₁) :
@@ -407,12 +407,12 @@ noncomputable def rankingToAGM {W : Type*} (κ : RankingFunction W) : AGMRevisio
   revise := rankingReviseSet κ
   success φ hφ := by
     unfold rankingReviseSet
-    rw [dif_pos (show φ.Nonempty from hφ)]
+    rw [dite_eq_left (show φ.Nonempty from hφ)]
     exact κ.revise_success hφ
   inclusion φ ψ hrev w hbeliefs hφw := by
     have hw0 : κ.rank w = 0 := hbeliefs {v | κ.rank v = 0} λ _ hv => hv
     unfold rankingReviseSet at hrev
-    rw [dif_pos ⟨w, hφw⟩] at hrev
+    rw [dite_eq_left ⟨w, hφw⟩] at hrev
     refine hrev w ?_
     rw [RankingFunction.revise, κ.conditionα_of_mem _ _ hφw, RankingFunction.aPart, hw0]
     exact Nat.zero_sub _
@@ -421,7 +421,7 @@ noncomputable def rankingToAGM {W : Type*} (κ : RankingFunction W) : AGMRevisio
       by_contra hall
       exact hneg λ w hw hφw => hall ⟨w, hw, hφw⟩
     unfold rankingReviseSet
-    rw [dif_pos ⟨w₀, hφw₀⟩]
+    rw [dite_eq_left ⟨w₀, hφw₀⟩]
     intro w hw
     have hφw : φ w := κ.revise_success ⟨w₀, hφw₀⟩ w hw
     have hw0 : κ.rank w = 0 := by
@@ -431,7 +431,7 @@ noncomputable def rankingToAGM {W : Type*} (κ : RankingFunction W) : AGMRevisio
     exact hent w (λ χ hχ => hχ w hw0) hφw
   consistency φ hφ := by
     unfold rankingReviseSet
-    rw [dif_pos (show φ.Nonempty from hφ)]
+    rw [dite_eq_left (show φ.Nonempty from hφ)]
     obtain ⟨w, hw⟩ := (κ.revise φ hφ).normalized
     exact ⟨w, λ ψ hψ => hψ w hw⟩
 

@@ -599,8 +599,7 @@ theorem irrefl_almostConn_scopeDown (q : GQ α)
     (hAC : AlmostConnected q) : ScopeDownwardMono q := by
   have hRefl : PositiveStrong (outerNeg q) := fun R => hIrrefl R
   have hTrans : QTransitive (outerNeg q) := by
-    intro A B C hNAB hNBC
-    intro hQAC
+    intro A B C hNAB hNBC hQAC
     rcases hAC A C B hQAC with h | h
     · exact hNAB h
     · exact hNBC h
@@ -616,8 +615,7 @@ theorem irrefl_almostConn_restrictorUp (q : GQ α)
     (hAC : AlmostConnected q) : RestrictorUpwardMono q := by
   have hRefl : PositiveStrong (outerNeg q) := fun R => hIrrefl R
   have hTrans : QTransitive (outerNeg q) := by
-    intro A B C hNAB hNBC
-    intro hQAC
+    intro A B C hNAB hNBC hQAC
     rcases hAC A C B hQAC with h | h
     · exact hNAB h
     · exact hNBC h
@@ -670,14 +668,14 @@ private lemma swapDiff_zone_AB [Fintype α] [DecidableEq α]
     {e : {x // A x ∧ ¬ B x} ≃ {x // B x ∧ ¬ A x}}
     {x : α} (h : A x ∧ ¬ B x) :
     swapDiff A B e x = (e ⟨x, h⟩).val := by
-  simp only [swapDiff, dif_pos h]
+  simp only [swapDiff, dite_eq_left h]
 
 private lemma swapDiff_zone_BA [Fintype α] [DecidableEq α]
     {A B : α → Prop} [DecidablePred A] [DecidablePred B]
     {e : {x // A x ∧ ¬ B x} ≃ {x // B x ∧ ¬ A x}}
     {x : α} (h : B x ∧ ¬ A x) :
     swapDiff A B e x = (e.symm ⟨x, h⟩).val := by
-  unfold swapDiff; rw [dif_neg (fun hp => h.2 hp.1), dif_pos h]
+  unfold swapDiff; rw [dite_eq_right (fun hp => h.2 hp.1), dite_eq_left h]
 
 private lemma swapDiff_zone_fix [Fintype α] [DecidableEq α]
     {A B : α → Prop} [DecidablePred A] [DecidablePred B]
@@ -685,7 +683,7 @@ private lemma swapDiff_zone_fix [Fintype α] [DecidableEq α]
     {x : α} (h1 : ¬ (A x ∧ ¬ B x))
     (h2 : ¬ (B x ∧ ¬ A x)) :
     swapDiff A B e x = x := by
-  simp only [swapDiff, dif_neg h1, dif_neg h2]
+  simp only [swapDiff, dite_eq_right h1, dite_eq_right h2]
 
 private theorem swapDiff_involutive [Fintype α] [DecidableEq α]
     (A B : α → Prop) [DecidablePred A] [DecidablePred B]

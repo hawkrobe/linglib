@@ -237,7 +237,7 @@ variable {sys val}
 /-- Non-target segments are unchanged by harmonization. -/
 theorem harmonizeOne_nontarget {s : α} (h : ¬ sys.isTarget s) :
     harmonizeOne sys val s = s :=
-  if_neg h
+  ite_eq_right h
 
 /-- Spreading through an empty suffix returns an empty list. -/
 theorem spreadSuffix_nil : spreadSuffix sys val [] = [] := rfl

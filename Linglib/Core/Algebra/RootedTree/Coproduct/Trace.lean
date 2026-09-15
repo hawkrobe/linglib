@@ -536,9 +536,9 @@ private lemma sum_map_ite_zero {ι M : Type*} [AddCommMonoid M]
   | cons a s ih =>
     rw [Multiset.map_cons, Multiset.sum_cons, ih]
     by_cases hpa : p a
-    · rw [if_pos hpa, Multiset.filter_cons_of_pos _ hpa,
+    · rw [ite_eq_left hpa, Multiset.filter_cons_of_pos _ hpa,
           Multiset.map_cons, Multiset.sum_cons]
-    · rw [if_neg hpa, Multiset.filter_cons_of_neg _ hpa, zero_add]
+    · rw [ite_eq_right hpa, Multiset.filter_cons_of_neg _ hpa, zero_add]
 
 /-! ### Counit laws + Bialgebra instance
 
@@ -636,8 +636,8 @@ private theorem counit_rTensor_comulCTreeN (τ : UnorderedTree (α' ⊕ β') →
               else 0) from by
     funext p
     by_cases hp : p.1.card = 0
-    · rw [if_pos hp, if_pos hp]
-    · rw [if_neg hp, if_neg hp, TensorProduct.zero_tmul]]
+    · rw [ite_eq_left hp, ite_eq_left hp]
+    · rw [ite_eq_right hp, ite_eq_right hp, TensorProduct.zero_tmul]]
   -- Extract the filter via sum_map_ite_zero.
   rw [sum_map_ite_zero]
   -- Filter equals {(0, T)} by cutSummandsCN_filter_empty.

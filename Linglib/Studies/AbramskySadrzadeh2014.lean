@@ -420,7 +420,7 @@ theorem coveringDistribution_apply (c : Antecedent × Antecedent) :
 theorem gluingDistribution_apply (c : Antecedent × Antecedent) :
     gluingDistribution.1 (ripeGluing c) = (ripeFrequency c.1 + cheekyFrequency c.2 : ℚ) / 48 := by
   rw [← coveringDistribution_apply]
-  exact Finsupp.mapDomain_apply ripeGluing_injective _ _
+  exact Finsupp.mapDomain_apply_of_injective ripeGluing_injective _ _
 
 /-- *Ripe bananas, cheeky monkeys* (`t₂`) is the most likely resolution, with probability `1/2`. -/
 theorem gluingDistribution_ripe :

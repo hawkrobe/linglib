@@ -417,7 +417,7 @@ theorem rule_self {φ : Finset W} (hφ : φ.Nonempty) : Valid [] (rule φ φ) :=
     ⟨w, Finset.mem_filter.2 ⟨hw, (normal_ofRules_iff ..).2 ⟨hw, fun r hr => by
       rcases List.mem_singleton.1 hr with rfl; exact fun _ hw _ _ _ => hw⟩⟩⟩
   have h : rule φ φ ⟨[], Finset.univ⟩ = ⟨[⟨φ, φ⟩], Finset.univ⟩ := by
-    rw [rule, if_pos ⟨by rwa [Finset.inter_self], hco, hφ.elim fun w _ => ⟨w, Finset.mem_univ w⟩⟩]
+    rw [rule, ite_eq_left ⟨by rwa [Finset.inter_self], hco, hφ.elim fun w _ => ⟨w, Finset.mem_univ w⟩⟩]
   show State.Accepts ⟨[], Finset.univ⟩ (rule φ φ)
   rw [State.Accepts, h]
   refine ⟨rfl, funext fun d => Preorder.ext fun w v => ⟨fun _ c hc => by simp at hc, ?_⟩⟩

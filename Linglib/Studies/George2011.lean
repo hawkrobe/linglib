@@ -280,7 +280,7 @@ def maggie : Set Admissions := {w | ∀ x, w x = .admitted ↔ x = 0 ∨ x = 1}
 /-- Maggie's state is the strongly exhaustive answer that Riley and Adam were the admitted
 applicants. -/
 theorem maggie_eq : {w | admittedApplicant w = λ x => x = 0 ∨ x = 1} = maggie :=
-  Set.ext λ w => ⟨λ hw x => have hx := iff_of_eq (congrFun hw x)
+  Set.ext λ _ => ⟨λ hw x => have hx := iff_of_eq (congrFun hw x)
       ⟨λ h => hx.mp ⟨λ hn => Status.noConfusion (h.symm.trans hn), h⟩, λ h => (hx.mpr h).2⟩,
     λ hw => funext λ x => propext ⟨λ h => (hw x).mp h.2,
       λ h => ⟨λ hn => Status.noConfusion (((hw x).mpr h).symm.trans hn), (hw x).mpr h⟩⟩⟩

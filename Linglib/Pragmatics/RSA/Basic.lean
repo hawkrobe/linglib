@@ -142,8 +142,8 @@ theorem literalListener_map_fst {V : Type*} [MeasurableSpace V] (μ : Measure (W
   have huniv : (μ.withDensity λ p => m u p.1) Set.univ =
       (μ.map Prod.fst).withDensity (m u) Set.univ := by
     rw [← key, Measure.map_apply measurable_fst MeasurableSet.univ, Set.preimage_univ]
-  simp only [literalListener_apply, ProbabilityTheory.cond, Measure.restrict_univ, Measure.map_smul,
-    key, huniv]
+  simp only [literalListener_apply, ProbabilityTheory.cond, Measure.restrict_univ,
+    Measure.map_smul _ measurable_fst.aemeasurable, key, huniv]
 
 theorem literalListener_indicator_apply_singleton [DiscreteMeasurableSpace W] (μ : Measure W)
     (sem : U → Set W) {u : U} {w : W} (h : w ∈ sem u) :
@@ -601,7 +601,7 @@ theorem jointListener_snd_real_lt_iff [Fintype W] {o : O}
       = (∑ w, μ {w} * speaker α cost L w {u}) / ((speaker α cost L ∘ₘ μ).map obs) {o} :=
     fun u hu => by
       rw [Measure.snd_apply_singleton]
-      simp_rw [jointListener_apply_singleton α cost L μ obs ho, if_pos hu, div_eq_mul_inv,
+      simp_rw [jointListener_apply_singleton α cost L μ obs ho, ite_eq_left hu, div_eq_mul_inv,
         ← Finset.sum_mul]
   have hne : ∀ u : U, (∑ w, μ {w} * speaker α cost L w {u}) ≠ ∞ := fun u =>
     ENNReal.sum_ne_top.mpr fun w _ =>

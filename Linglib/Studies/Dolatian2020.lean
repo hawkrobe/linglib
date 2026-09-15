@@ -237,7 +237,7 @@ theorem cophonology_western_word (h : s.stratum = .word) :
 dialect, (78). -/
 theorem cophonology_word_of_not_misaligned (d : Dialect) (h : s.stratum = .word)
     (hm : ¬ Misaligned base s.segs) : cophonology d base s = wordLevel := by
-  simp only [cophonology, h, if_neg hm]
+  simp only [cophonology, h, ite_eq_right hm]
 
 /-- The dialects differ only where a misaligned Prosodic Stem triggers its cophonology under
 inflection, (76). -/
@@ -248,7 +248,7 @@ theorem cophonology_dialect_eq (h : s.stratum = .stem ∨ ¬ Misaligned base s.s
   · rw [h]
   · cases s.stratum
     · rfl
-    · rw [if_neg h, if_neg h]
+    · rw [ite_eq_right h, ite_eq_right h]
 
 /-- Diphthong reduction is stem-level only, (76): no inflection triggers it. -/
 theorem cophonology_word_ddr (d : Dialect) (h : s.stratum = .word) :

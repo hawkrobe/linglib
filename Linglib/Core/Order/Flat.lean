@@ -410,7 +410,7 @@ instance [DecidableEq α] : PartialUnify (Flat α) where
       obtain rfl : u = ↑a := coe_le_iff.mp hxu
       obtain rfl : a = b := coe_inj.mp (coe_le_iff.mp hyu)
       show (Flat.unify (↑a : Flat α) ↑a).isSome
-      rw [unify_coe_coe, if_pos rfl]
+      rw [unify_coe_coe, ite_eq_left rfl]
       rfl
 
 /-- Two slots are compatible exactly when their committed values coincide;
@@ -426,9 +426,9 @@ theorem compat_iff [DecidableEq α] :
     rw [unify_coe_coe]
     by_cases hab : a = b
     · subst hab
-      exact iff_of_true (by rw [if_pos rfl]; rfl)
+      exact iff_of_true (by rw [ite_eq_left rfl]; rfl)
         (fun a' ha' b' hb' => (coe_inj.mp ha').symm.trans (coe_inj.mp hb'))
-    · rw [if_neg hab]
+    · rw [ite_eq_right hab]
       exact iff_of_false nofun (fun h => hab (h a rfl b rfl))
 
 /-- On compatible slots, unification is the priority union: agreeing
@@ -442,7 +442,7 @@ theorem unify_eq_some_or_of_compat [DecidableEq α] {x y : Flat α}
   | (a : α), (b : α) =>
     obtain rfl : a = b := compat_iff.mp h a rfl b rfl
     show Flat.unify (↑a : Flat α) ↑a = _
-    rw [unify_coe_coe, if_pos rfl]
+    rw [unify_coe_coe, ite_eq_left rfl]
     rfl
 
 /-! ### Non-distributivity
@@ -457,6 +457,6 @@ atoms have no upper bound, so the join the law would require is undefined. -/
 theorem unify_distinct_eq_none [DecidableEq α] (h : a ≠ b) :
     Flat.unify (↑a : Flat α) ↑b = Option.none := by
   rw [unify_coe_coe]
-  exact if_neg h
+  exact ite_eq_right h
 
 end Flat
