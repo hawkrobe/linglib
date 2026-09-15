@@ -91,7 +91,7 @@ theorem pex_negative_fc {T B : Set W} (h₁ : ∃ w ∈ poss R Tᶜ, w ∉ poss 
     (h₂ : ∃ w ∈ poss R Bᶜ, w ∉ poss R Tᶜ)
     (h : ∃ w ∈ poss R Tᶜ ∩ poss R Bᶜ, w ∉ poss R (Tᶜ ∩ Bᶜ)) (hw : (pexFC R Tᶜ Bᶜ).holds w) :
     w ∉ nec R T ∧ w ∉ nec R B := by
-  simpa only [poss_compl, Set.mem_compl_iff] using pex_fc h₁ h₂ h hw
+  simpa only [← compl_nec, Set.mem_compl_iff] using pex_fc h₁ h₂ h hw
 
 end FreeChoice
 

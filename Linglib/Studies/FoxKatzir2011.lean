@@ -2,7 +2,7 @@ import Linglib.Semantics.Alternatives.Symmetric
 import Linglib.Studies.Katzir2007
 import Linglib.Semantics.Exhaustification.Excluder
 import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Logic.Modal.Defs
+import Linglib.Logic.Modal.Basic
 import Linglib.Data.Examples.FoxKatzir2011
 
 /-!
@@ -197,9 +197,6 @@ end Symmetry
 section Universal
 
 variable {R : W → W → Prop} {S S₁ S₂ : Set W}
-
-/-- Necessity as a proposition: the worlds all of whose accessible worlds satisfy `p`. -/
-def nec (R : W → W → Prop) (p : Set W) : Set W := {x | □[R] (· ∈ p) x}
 
 /-- Under a universal operator the alternatives are no longer symmetric whenever some world's
 accessible worlds fall on both sides. -/
