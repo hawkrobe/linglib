@@ -11,7 +11,7 @@ predicative distributivity, atelicity and pseudopartitive measurement under one 
 stratified reference: a predicate applies to an event exactly when that event divides
 exhaustively into parts the predicate also applies to, along some dimension. The dimension is what
 varies — thematic roles for distributivity, runtime for the *for*-adverbial, measure for the
-pseudopartitive — and the substrate carries the property once (`Stratified.Reference`).
+pseudopartitive — and the substrate carries the property once (`Aspect.StratifiedReference`).
 
 Two things are done here against that substrate. Lexical cumulativity, which the book assumes
 throughout, entails Krifka's `CUM`; and atelicity in the runtime dimension is the existence of a
@@ -116,7 +116,7 @@ theorem subintervalReference_iff_cover {T : Type*} [LinearOrder T]
     SubintervalReference P e ↔
       ∃ (parts : Finset (Event T)) (hne : parts.Nonempty),
         (∀ p ∈ parts, P p ∧ p.runtime < e.runtime) ∧ parts.sup' hne id = e := by
-  unfold SubintervalReference Reference SubintervalGranularity
+  unfold SubintervalReference StratifiedReference SubintervalGranularity
   exact algClosure_iff_exists_sup' _ _
 
 end Champollion2017
