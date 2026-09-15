@@ -1,192 +1,168 @@
-import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Semantics.Tense.Pronoun
-import Linglib.Semantics.Tense.Embedding
-import Linglib.Syntax.Minimalist.Features
+import Linglib.Syntax.Minimalist.Agree.Basic
+import Linglib.Syntax.Minimalist.Phase.Domain
 
 /-!
-# [zeijlstra-2012]: sequence of tense as upward Agree
+# Zeijlstra (2012): There Is Only One Way to Agree
 
-[zeijlstra-2012] analyzes Sequence of Tense (SOT) as syntactic concord,
-structurally parallel to Negative Concord. Subordinate past morphemes carry
-uninterpretable `[uPAST]`; they Agree *upward* with a c-commanding interpretable
-`[iPAST]`. The subordinate past morphology is semantically vacuous — it is Agree
-spell-out, not semantic past. The account builds on [chomsky-2000]'s Agree,
-reversing its c-command direction.
-
-## Main declarations
-
-* `TenseHead` — a tense head carrying a `Finset Ordering` comparison cell and an `Interpretability`.
-* `TenseHead.IsSemanticallyActive` — only interpretable heads contribute to LF.
-* `UpwardAgree` — the reverse-Agree configuration: the goal c-commands the probe.
-* `SOTAgreeConfig` — one interpretable `[iPAST]` over a list of `[uPAST]` heads.
-* `TenseHead.toGramFeature` — maps a tense head into the Minimalist `GramFeature`
-  infrastructure (interpretable ↦ valued, uninterpretable ↦ unvalued).
+This file formalizes [zeijlstra-2012]'s proposal that Agree applies upward only: an element
+carrying an uninterpretable feature is checked by the closest c-commanding element carrying the
+matching interpretable feature (`isUpwardGoalIn`), reversing the direction of
+[chomsky-2000]'s Agree, and several such elements may be checked by one goal at once
+(`MultipleAgree`). The evidence is the concord phenomena, Negative Concord and Sequence of
+Tense, whose configurations place one interpretable feature above one or more uninterpretable
+ones. In Sequence of Tense, an abstract past operator carries `[iPAST]` and every finite past
+morpheme, the matrix verb included, carries a vacuous `[uPAST]`; the matrix and the subordinate
+verb of *John said Mary was ill* both Agree upward with the operator (`sot_multipleAgree`),
+which no downward-probing Agree could establish (`sot_not_downward`). Agree across a phase
+boundary requires the phase edge to participate: the corollary of phase theory that
+distinguishes the two phenomena, since the embedding complementizer carries an uninterpretable
+tense feature but no uninterpretable negative feature, so Sequence of Tense crosses the
+clause boundary (`sot_licit`) while Negative Concord does not (`nc_across_cp_illicit`,
+`nc_clausemate_licit`).
 
 ## Implementation notes
 
-* **The interpretable past is an abstract operator, not the matrix verb.** In
-  [zeijlstra-2012] (§5.3) the `[iPAST]` sits on an abstract operator
-  (Op_PAST, after von Stechow); *all* finite verbal morphology, the matrix verb
-  included, is `[uPAST]`. `SOTAgreeConfig` simplifies by treating `matrixT` as
-  the `[iPAST]` bearer and abstracting the matrix verb's own `[uPAST]`.
-* **SOT crosses CP.** [zeijlstra-2012] (§5.3) holds SOT to be *not*
-  clause-bounded — unlike Negative Concord it crosses a CP, because the
-  embedding C itself carries `[uT]` and so participates in the phase edge.
-* **Embedded `[uPAST]` is modeled as pure simultaneity.** `zeijlstra_derives_simultaneous`
-  yields `simultaneousFrame` (R' = P' = matrix E). [zeijlstra-2012] fn. 9
-  treats embedded `[uPAST]` as a relative non-future ("no later than") licensing
-  *both* the simultaneous and a back-shifted reading (not forward); that
-  refinement is not formalized here.
-* `zeijlstra_derives_shifted` derives the back-shifted reading from an
-  *independent* embedded `[iPAST]` — one source of back-shift, distinct from the
-  fn. 9 `[uPAST]`-as-non-future route.
-* Zeijlstra's parameter — whether embedded `T` may carry `[uPAST]` — is the
-  substrate `SOTParameter`; SOT languages (`relative`) license the
-  simultaneous reading (`Tense.availableReadings`).
+* Feature bearers are given by predicates on the leaves of a syntactic object, as the paper
+  annotates its bracketings; the lexical items themselves carry only categories and selection.
+* The phase-edge condition is stated for a phase head leaf through the substrate's phase
+  domains: when the probe lies in the phase interior and the goal outside the phase, some
+  element of the phase edge must carry the uninterpretable feature.
+* The semantics of the subordinate past morpheme as a relative non-future, which the paper
+  leaves to later work, is not formalized.
 
-## Todo
+## References
 
-* Temporal de re, counterfactual tense, and relative-clause tense are not addressed.
+* [zeijlstra-2012]
+* [chomsky-2000]
+* [chomsky-2001]
 -/
-
-open Tense
 
 namespace Zeijlstra2012
 
-open Tense
-open Minimalist (FeatureVal GramFeature Interpretability)
+open Minimalist Minimalist.SyntacticObject
 
-/-! ### Tense feature interpretability -/
-
-/-- A tense head: a `Finset Ordering` comparison cell together with an `Interpretability`
-    status. Following [zeijlstra-2012], `[iPAST]` (`.interpretable`)
-    contributes past semantics; `[uPAST]` (`.uninterpretable`) is checked by
-    Agree and is semantically vacuous. -/
-structure TenseHead where
-  /-- The tense value (past/present/future) as a `Finset Ordering` comparison cell. -/
-  tense : Finset Ordering
-  /-- Whether this tense feature is interpretable or uninterpretable. -/
-  status : Interpretability
-  deriving DecidableEq
-
-/-- A tense head is semantically active iff its feature is interpretable. -/
-def TenseHead.IsSemanticallyActive (th : TenseHead) : Prop :=
-  th.status = .interpretable
-
-instance (th : TenseHead) : Decidable th.IsSemanticallyActive :=
-  inferInstanceAs (Decidable (th.status = .interpretable))
+variable {root probe goal : SyntacticObject} {pred : SyntacticObject → Prop}
 
 /-! ### Upward Agree -/
 
-/-- Zeijlstra's upward Agree: the goal c-commands the probe, reversing standard
-    [chomsky-2000] Agree. The uninterpretable `[uF]` probe sits low and is
-    valued by a c-commanding interpretable `[iF]` goal. -/
-structure UpwardAgree where
-  /-- The embedded `T` with `[uT]` (probe). -/
-  probe : TenseHead
-  /-- The matrix `T` with `[iT]` (goal). -/
-  goal : TenseHead
-  /-- The probe carries an uninterpretable feature. -/
-  probe_uninterpretable : probe.status = .uninterpretable
-  /-- The goal carries an interpretable feature. -/
-  goal_interpretable : goal.status = .interpretable
-  /-- The tense values match. -/
-  tense_match : probe.tense = goal.tense
+/-- Upward Agree: `goal`, carrying the interpretable feature marked by `pred`, c-commands the
+uninterpretable `probe` and is the closest such element, no other `pred`-node c-commanding the
+probe being asymmetrically c-commanded by it. -/
+def isUpwardGoalIn (root probe goal : SyntacticObject) (pred : SyntacticObject → Prop) : Prop :=
+  cCommandsIn root goal probe ∧ pred goal ∧
+    ∀ x ∈ root.subtrees, cCommandsIn root x probe → pred x → ¬ asymCCommandsIn root goal x
 
-/-- Upward Agree makes the probe semantically vacuous: its feature is
-    uninterpretable, so it does not contribute to LF. -/
-theorem upwardAgree_probe_vacuous (ua : UpwardAgree) :
-    ¬ ua.probe.IsSemanticallyActive := by
-  simp [TenseHead.IsSemanticallyActive, ua.probe_uninterpretable]
+instance [DecidablePred pred] (root probe goal : SyntacticObject) :
+    Decidable (isUpwardGoalIn root probe goal pred) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ x ∈ root.subtrees, _))
 
-/-- The goal's tense is semantically active. -/
-theorem upwardAgree_goal_active (ua : UpwardAgree) :
-    ua.goal.IsSemanticallyActive :=
-  ua.goal_interpretable
+/-- Multiple Agree: every probe in the list is checked by the same goal. -/
+def MultipleAgree (root goal : SyntacticObject) (probes : List SyntacticObject)
+    (pred : SyntacticObject → Prop) : Prop :=
+  ∀ p ∈ probes, isUpwardGoalIn root p goal pred
 
-/-! ### SOT Agree configuration -/
+instance [DecidablePred pred] (root goal : SyntacticObject) (probes : List SyntacticObject) :
+    Decidable (MultipleAgree root goal probes pred) :=
+  inferInstanceAs (Decidable (∀ p ∈ probes, _))
 
-/-- An SOT configuration: one interpretable `[iPAST]` head over a list of
-    uninterpretable `[uPAST]` heads ([zeijlstra-2012], ex. 22–23) — the
-    `[iF] > [uF] (> [uF])` upward-Agree schema. See the module notes: the
-    interpretable head is really an abstract operator, and matrix verbal
-    morphology is itself `[uPAST]`. -/
-structure SOTAgreeConfig where
-  /-- Matrix head bearing `[iPAST]`. -/
-  matrixT : TenseHead
-  /-- Embedded heads bearing `[uPAST]`. -/
-  embeddedTs : List TenseHead
-  /-- The matrix head is interpretable. -/
-  matrix_is_interpretable : matrixT.status = .interpretable
-  /-- All embedded heads are uninterpretable. -/
-  embedded_all_uninterpretable : ∀ t ∈ embeddedTs, t.status = .uninterpretable
+/-- The phase-edge condition on Agree across a phase: with `ℓ` a phase head, a probe in the
+phase interior may Agree with a goal outside the phase only if an element of the phase edge
+carries the uninterpretable feature `uF` too. -/
+def EdgeParticipates (root probe goal : SyntacticObject) (uF : SyntacticObject → Prop)
+    (ℓ : LIToken) : Prop :=
+  probe ∈ root.phaseInterior ℓ → goal ∉ root.phase ℓ → ∃ e ∈ root.phaseEdge ℓ, uF e
 
-/-- In an SOT configuration only the matrix head contributes past semantics;
-    all embedded past morphology is vacuous concord. -/
-theorem sotConfig_only_matrix_active (cfg : SOTAgreeConfig) :
-    cfg.matrixT.IsSemanticallyActive ∧
-    ∀ t ∈ cfg.embeddedTs, ¬ t.IsSemanticallyActive := by
-  refine ⟨cfg.matrix_is_interpretable, fun t ht => ?_⟩
-  simp [TenseHead.IsSemanticallyActive, cfg.embedded_all_uninterpretable t ht]
+instance {uF : SyntacticObject → Prop} [DecidablePred uF] (root probe goal : SyntacticObject)
+    (ℓ : LIToken) : Decidable (EdgeParticipates root probe goal uF ℓ) :=
+  have : Decidable (∃ e ∈ root.phaseEdge ℓ, uF e) := Multiset.decidableExistsMultiset
+  inferInstanceAs (Decidable (_ → _ → _))
 
-/-! ### Derivation theorems -/
+/-! ### Sequence of Tense -/
 
-/-- The simultaneous reading: embedded `[uPAST]` is vacuous, so the embedded
-    clause has no independent past — it is interpreted at the matrix event
-    time, giving `simultaneousFrame` (R' = P' = matrix E). See the module notes
-    on the fn. 9 non-future refinement. -/
-theorem zeijlstra_derives_simultaneous {T : Type*}
-    (matrixFrame : ReichenbachFrame T) (embeddedE : T)
-    (embeddedT : TenseHead)
-    (h_u : embeddedT.status = .uninterpretable) :
-    ¬ embeddedT.IsSemanticallyActive ∧
-    (simultaneousFrame matrixFrame embeddedE).isPresent := by
-  refine ⟨?_, ?_⟩
-  · simp [TenseHead.IsSemanticallyActive, h_u]
-  · rfl
+/-- The abstract past operator carrying `[iPAST]`. -/
+private def opPast : PlanarSyntacticObject := .leaf ⟨.simple .T [.V] "Op[PAST]", 1⟩
+private def john : PlanarSyntacticObject := .leaf ⟨.simple .D [] "John", 2⟩
+/-- The matrix verb, with its own vacuous `[uPAST]`. -/
+private def said : PlanarSyntacticObject := .leaf ⟨.simple .V [.C] "said", 3⟩
+/-- The embedding complementizer, carrying `[uT]`. -/
+private def thatC : PlanarSyntacticObject := .leaf ⟨.simple .C [.V] "that", 4⟩
+private def mary : PlanarSyntacticObject := .leaf ⟨.simple .D [] "Mary", 5⟩
+/-- The subordinate verb, with `[uPAST]`. -/
+private def was : PlanarSyntacticObject := .leaf ⟨.simple .V [.A] "was", 6⟩
+private def ill : PlanarSyntacticObject := .leaf ⟨.simple .A [] "ill", 7⟩
 
-/-- The back-shifted reading: when embedded `T` bears an independent `[iPAST]`
-    (no Agree), it contributes genuine past semantics: the embedded frame
-    is past (R' < P'). -/
-theorem zeijlstra_derives_shifted {T : Type*} [LinearOrder T]
-    (matrixFrame : ReichenbachFrame T)
-    (embeddedR embeddedE : T)
-    (embeddedT : TenseHead)
-    (h_i : embeddedT.status = .interpretable)
-    (h_shifted : embeddedR < matrixFrame.eventTime) :
-    embeddedT.IsSemanticallyActive ∧
-    (embeddedFrame matrixFrame embeddedR embeddedE).isPast := by
-  refine ⟨h_i, ?_⟩
-  simp only [embeddedFrame, ReichenbachFrame.isPast_def]
-  exact h_shifted
+/-- *John said Mary was ill*, with the past operator above both verbs. -/
+private def sot : PlanarSyntacticObject :=
+  {john, {opPast, {said, {thatC, {mary, {was, ill}}}}}}
 
-/-- Upward Agree fixes the directionality: the goal `[iPAST]` is active and the
-    probe `[uPAST]` is vacuous. -/
-theorem zeijlstra_upward_direction (ua : UpwardAgree) :
-    ua.goal.IsSemanticallyActive ∧ ¬ ua.probe.IsSemanticallyActive :=
-  ⟨upwardAgree_goal_active ua, upwardAgree_probe_vacuous ua⟩
+/-- The bearers of `[iPAST]`. -/
+private def iPast (s : SyntacticObject) : Prop := s = opPast
 
-/-! ### Mapping to the Minimalist Agree features -/
+private instance : DecidablePred iPast := λ s => inferInstanceAs (Decidable (s = _))
 
-/-- Map a `TenseHead` into the Minimalist `GramFeature` infrastructure:
-    interpretable ↦ valued, uninterpretable ↦ unvalued. In the SOT domain the
-    ±interpretable and ±valued axes coincide ([chomsky-1995]); they are
-    orthogonal in general (see `Minimalist.Features`). -/
-def TenseHead.toGramFeature (th : TenseHead) : GramFeature :=
-  match th.status with
-  | .interpretable => .valued (.tense true)
-  | .uninterpretable => .unvalued (.tense true)
+/-- The bearers of `[uPAST]` or `[uT]`: both finite verbs and the complementizer. -/
+private def uPast (s : SyntacticObject) : Prop := s = said ∨ s = was ∨ s = thatC
 
-/-- Interpretable tense heads map to valued features. -/
-theorem zeijlstra_bridge_interpretable (th : TenseHead)
-    (h : th.status = .interpretable) :
-    th.toGramFeature = .valued (.tense true) := by
-  simp [TenseHead.toGramFeature, h]
+private instance : DecidablePred uPast := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
-/-- Uninterpretable tense heads map to unvalued features. -/
-theorem zeijlstra_bridge_uninterpretable (th : TenseHead)
-    (h : th.status = .uninterpretable) :
-    th.toGramFeature = .unvalued (.tense true) := by
-  simp [TenseHead.toGramFeature, h]
+/-- Both past morphemes Agree upward with the single past operator. -/
+theorem sot_multipleAgree : MultipleAgree sot opPast [said, was] iPast := by decide
+
+/-- Neither verb c-commands the operator, so no downward-probing Agree relates them. -/
+theorem sot_not_downward : ¬ cCommandsIn sot said opPast ∧ ¬ cCommandsIn sot was opPast := by
+  decide
+
+/-- Sequence of Tense crosses the clause boundary: the subordinate verb sits in the interior of
+the phase headed by the complementizer, which itself carries an uninterpretable tense feature
+and so lies in the participating edge. -/
+theorem sot_licit :
+    EdgeParticipates sot was opPast uPast ⟨.simple .C [.V] "that", 4⟩ := by decide
+
+/-! ### Negative Concord -/
+
+private def gianni : PlanarSyntacticObject := .leaf ⟨.simple .D [] "Gianni", 11⟩
+/-- The negative marker carrying `[iNEG]`. -/
+private def non : PlanarSyntacticObject := .leaf ⟨.simple .Neg [.T] "non", 12⟩
+private def ha : PlanarSyntacticObject := .leaf ⟨.simple .T [.V] "ha", 13⟩
+private def detto : PlanarSyntacticObject := .leaf ⟨.simple .V [.D] "detto", 14⟩
+private def dettoC : PlanarSyntacticObject := .leaf ⟨.simple .V [.C] "detto", 15⟩
+private def niente : PlanarSyntacticObject := .leaf ⟨.simple .D [.P] "niente", 16⟩
+private def a : PlanarSyntacticObject := .leaf ⟨.simple .P [.D] "a", 17⟩
+private def nessuno : PlanarSyntacticObject := .leaf ⟨.simple .D [] "nessuno", 18⟩
+/-- The embedding complementizer, without any negative feature. -/
+private def che : PlanarSyntacticObject := .leaf ⟨.simple .C [.T] "che", 19⟩
+private def ha₂ : PlanarSyntacticObject := .leaf ⟨.simple .T [.V] "ha", 20⟩
+private def telefonato : PlanarSyntacticObject := .leaf ⟨.simple .V [.P] "telefonato", 21⟩
+
+/-- *Gianni non ha detto niente a nessuno*: two n-words under one negative marker. -/
+private def ncClausemate : PlanarSyntacticObject :=
+  {gianni, {non, {ha, {detto, {niente, {a, nessuno}}}}}}
+
+/-- *Gianni non ha detto che ha telefonato a nessuno*: the n-word inside an embedded clause. -/
+private def ncAcrossCP : PlanarSyntacticObject :=
+  {gianni, {non, {ha, {dettoC, {che, {ha₂, {telefonato, {a, nessuno}}}}}}}}
+
+/-- The bearers of `[iNEG]`. -/
+private def iNeg (s : SyntacticObject) : Prop := s = non
+
+private instance : DecidablePred iNeg := λ s => inferInstanceAs (Decidable (s = _))
+
+/-- The bearers of `[uNEG]`, the n-words. -/
+private def uNeg (s : SyntacticObject) : Prop := s = niente ∨ s = nessuno
+
+private instance : DecidablePred uNeg := λ _ => inferInstanceAs (Decidable (_ ∨ _))
+
+/-- Both n-words Agree upward with the negative marker. -/
+theorem nc_clausemate_multipleAgree : MultipleAgree ncClausemate non [niente, nessuno] iNeg := by
+  decide
+
+/-- Within the clause no phase intervenes, so the concord relation is licit. -/
+theorem nc_clausemate_licit :
+    EdgeParticipates ncClausemate nessuno non uNeg ⟨.simple .C [.T] "che", 19⟩ := by decide
+
+/-- Across the embedded clause the complementizer carries no negative feature, so the phase
+edge does not participate and the concord relation is blocked. -/
+theorem nc_across_cp_illicit :
+    ¬ EdgeParticipates ncAcrossCP nessuno non uNeg ⟨.simple .C [.T] "che", 19⟩ := by decide
 
 end Zeijlstra2012
