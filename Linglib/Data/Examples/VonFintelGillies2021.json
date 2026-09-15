@@ -1,7 +1,7 @@
 [
   {
     "id": "vonfintelgillies2021_cant_possible",
-    "source": {"bibkey": "von-fintel-gillies-2021", "paperLabel": "UNVERIFIED (5), (22)"},
+    "source": {"bibkey": "von-fintel-gillies-2021", "paperLabel": "(22a)"},
     "language": "stan1293",
     "primaryText": "Suppose it's possible the keys are in the drawer but they can't be.",
     "glossedTokens": [],
@@ -17,14 +17,16 @@
   },
   {
     "id": "vonfintelgillies2021_phil_dinner",
-    "source": {"bibkey": "von-fintel-gillies-2021", "paperLabel": "UNVERIFIED (24)"},
+    "source": {"bibkey": "von-fintel-gillies-2021", "paperLabel": "(24b)"},
     "language": "stan1293",
     "primaryText": "Dinner must be ready.",
     "glossedTokens": [],
     "translation": "Dinner must be ready.",
     "context": "Phil has cooked the dinner, checking all the food himself, and knows it is ready.",
     "judgment": "unacceptable",
-    "alternatives": [{"form": "Dinner is ready.", "judgment": "acceptable"}],
+    "alternatives": [
+      {"form": "Dinner is ready.", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],
@@ -35,14 +37,16 @@
   },
   {
     "id": "vonfintelgillies2021_meryl_dinner",
-    "source": {"bibkey": "von-fintel-gillies-2021", "paperLabel": "UNVERIFIED (25)"},
+    "source": {"bibkey": "von-fintel-gillies-2021", "paperLabel": "(25b)"},
     "language": "stan1293",
     "primaryText": "Dinner must be ready.",
     "glossedTokens": [],
     "translation": "Dinner must be ready.",
     "context": "Meryl followed the recipe's instructions but has not checked everything herself and wonders whether anything more was planned.",
     "judgment": "acceptable",
-    "alternatives": [{"form": "Dinner is ready.", "judgment": "acceptable"}],
+    "alternatives": [
+      {"form": "Dinner is ready.", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],

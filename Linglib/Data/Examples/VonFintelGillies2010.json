@@ -1,14 +1,16 @@
 [
   {
     "id": "vonfintelgillies2010_keys_drawer",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (2)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(2b)"},
     "language": "stan1293",
     "primaryText": "They must be in the kitchen drawer.",
     "glossedTokens": [],
     "translation": "They must be in the kitchen drawer.",
     "context": "Answer to: Where are the keys? The speaker infers the location rather than seeing it.",
     "judgment": "acceptable",
-    "alternatives": [{"form": "They are in the kitchen drawer.", "judgment": "acceptable"}],
+    "alternatives": [
+      {"form": "They are in the kitchen drawer.", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],
@@ -19,14 +21,16 @@
   },
   {
     "id": "vonfintelgillies2010_john_left",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (3)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(3b)"},
     "language": "stan1293",
     "primaryText": "John must have left.",
     "glossedTokens": [],
     "translation": "John must have left.",
     "context": "General epistemic context; the speaker infers John's departure.",
     "judgment": "acceptable",
-    "alternatives": [{"form": "John left.", "judgment": "acceptable"}],
+    "alternatives": [
+      {"form": "John left.", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],
@@ -37,14 +41,16 @@
   },
   {
     "id": "vonfintelgillies2010_john_home",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (4)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(4a)"},
     "language": "stan1293",
     "primaryText": "John must be at home.",
     "glossedTokens": [],
     "translation": "John must be at home.",
     "context": "General epistemic context; the speaker infers John's whereabouts.",
     "judgment": "acceptable",
-    "alternatives": [{"form": "John is at home.", "judgment": "acceptable"}],
+    "alternatives": [
+      {"form": "John is at home.", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],
@@ -55,15 +61,17 @@
   },
   {
     "id": "vonfintelgillies2010_mount_toby",
-    "source": {"bibkey": "kratzer-1991", "paperLabel": "UNVERIFIED p. 645"},
-    "reportedIn": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (5)"},
+    "source": {"bibkey": "kratzer-1991", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(5b)"},
     "language": "stan1293",
     "primaryText": "She must have climbed Mount Toby.",
     "glossedTokens": [],
     "translation": "She must have climbed Mount Toby.",
     "context": "General epistemic context; the speaker infers the climb.",
     "judgment": "acceptable",
-    "alternatives": [{"form": "She climbed Mount Toby.", "judgment": "acceptable"}],
+    "alternatives": [
+      {"form": "She climbed Mount Toby.", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],
@@ -74,14 +82,16 @@
   },
   {
     "id": "vonfintelgillies2010_billy_sees_rain",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (6)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(6b)"},
     "language": "stan1293",
     "primaryText": "It must be raining.",
     "glossedTokens": [],
     "translation": "It must be raining.",
     "context": "Billy sees the pouring rain through the window.",
     "judgment": "unacceptable",
-    "alternatives": [{"form": "It's raining.", "judgment": "acceptable"}],
+    "alternatives": [
+      {"form": "It's raining.", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],
@@ -92,14 +102,16 @@
   },
   {
     "id": "vonfintelgillies2010_billy_wet_gear",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (7)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(7b)"},
     "language": "stan1293",
     "primaryText": "It must be raining.",
     "glossedTokens": [],
     "translation": "It must be raining.",
     "context": "Billy sees people coming in with wet umbrellas, slickers, and galoshes, and knows for sure that rain is the only possible cause.",
     "judgment": "acceptable",
-    "alternatives": [{"form": "It's raining.", "judgment": "acceptable"}],
+    "alternatives": [
+      {"form": "It's raining.", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],
@@ -110,14 +122,16 @@
   },
   {
     "id": "vonfintelgillies2010_chris_ball",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (12)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(12)"},
     "language": "stan1293",
     "primaryText": "So, it must be in C.",
     "glossedTokens": [],
     "translation": "So, it must be in C.",
     "context": "Chris knows the ball is in Box A, B, or C; it is not in A; it is not in B.",
     "judgment": "acceptable",
-    "alternatives": [{"form": "It is in C.", "judgment": "acceptable"}],
+    "alternatives": [
+      {"form": "It is in C.", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],
@@ -128,14 +142,16 @@
   },
   {
     "id": "vonfintelgillies2010_cant_mastermind",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (21)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(21b)"},
     "language": "stan1293",
     "primaryText": "There can't be two reds.",
     "glossedTokens": [],
     "translation": "There can't be two reds.",
     "context": "Mastermind game: the conclusion is inferred from the clues, not directly observed.",
     "judgment": "acceptable",
-    "alternatives": [{"form": "There aren't two reds.", "judgment": "acceptable"}],
+    "alternatives": [
+      {"form": "There aren't two reds.", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "cant"],
@@ -146,14 +162,16 @@
   },
   {
     "id": "vonfintelgillies2010_cant_sunshine",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (23)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(23b)"},
     "language": "stan1293",
     "primaryText": "It can't be raining.",
     "glossedTokens": [],
     "translation": "It can't be raining.",
     "context": "Billy sees brilliant sunshine.",
     "judgment": "unacceptable",
-    "alternatives": [{"form": "It's not raining.", "judgment": "acceptable"}],
+    "alternatives": [
+      {"form": "It's not raining.", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "cant"],
@@ -164,14 +182,16 @@
   },
   {
     "id": "vonfintelgillies2010_cant_sun_gear",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (24)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(24b)"},
     "language": "stan1293",
     "primaryText": "It can't be raining.",
     "glossedTokens": [],
     "translation": "It can't be raining.",
     "context": "Billy sees people coming in with sun gear and knows sunshine is the only possible explanation.",
     "judgment": "acceptable",
-    "alternatives": [{"form": "It's not raining.", "judgment": "acceptable"}],
+    "alternatives": [
+      {"form": "It's not raining.", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "cant"],
@@ -182,14 +202,16 @@
   },
   {
     "id": "vonfintelgillies2010_must_be_hungry",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (26)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(26)"},
     "language": "stan1293",
     "primaryText": "I must be hungry.",
     "glossedTokens": [],
     "translation": "I must be hungry.",
     "context": "Speaker reflecting on their own internal state.",
     "judgment": "acceptable",
-    "alternatives": [{"form": "I am hungry.", "judgment": "acceptable"}],
+    "alternatives": [
+      {"form": "I am hungry.", "judgment": "acceptable"}
+    ],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],
@@ -200,7 +222,7 @@
   },
   {
     "id": "vonfintelgillies2010_modus_ponens",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (14)-(15)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(14)-(15)"},
     "language": "stan1293",
     "primaryText": "If Carl is at the party, then Lenny must be at the party. Carl is at the party. So: Lenny is at the party.",
     "discourseSegments": [
@@ -220,14 +242,16 @@
   },
   {
     "id": "vonfintelgillies2010_must_perhaps",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (16)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(16)"},
     "language": "stan1293",
     "primaryText": "It must be raining but perhaps it isn't raining.",
     "glossedTokens": [],
     "translation": "It must be raining but perhaps it isn't raining.",
     "context": "Flat-footed conjunction of must phi with perhaps not-phi.",
     "judgment": "unacceptable",
-    "alternatives": [{"form": "Perhaps it isn't raining but it must be.", "judgment": "unacceptable"}],
+    "alternatives": [
+      {"form": "Perhaps it isn't raining but it must be.", "judgment": "unacceptable"}
+    ],
     "paperFeatures": [
       ["kind", "inference"],
       ["pattern", "epistemic_contradiction"]
@@ -236,7 +260,7 @@
   },
   {
     "id": "vonfintelgillies2010_might_retraction",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (17)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(17)"},
     "language": "stan1293",
     "primaryText": "Alex: It might be raining. Billy: (opens curtains) No it isn't. You were wrong. Alex: I was not! Look, I didn't say it WAS raining. I only said it might be raining. Stop picking on me!",
     "discourseSegments": [
@@ -257,7 +281,7 @@
   },
   {
     "id": "vonfintelgillies2010_must_no_retraction",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (19)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(19)"},
     "language": "stan1293",
     "primaryText": "Alex: It must be raining. Billy: (opens curtains) No it isn't. You were wrong. Alex: I was not! Look, I didn't say it WAS raining. I only said it must be raining. Stop picking on me!",
     "discourseSegments": [
@@ -278,7 +302,7 @@
   },
   {
     "id": "vonfintelgillies2010_hedging",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (20)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(20c)"},
     "language": "stan1293",
     "primaryText": "It is probably raining.",
     "glossedTokens": [],
@@ -293,7 +317,7 @@
   },
   {
     "id": "vonfintelgillies2010_hey_wait_a_minute",
-    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "UNVERIFIED (22)"},
+    "source": {"bibkey": "von-fintel-gillies-2010", "paperLabel": "(22)"},
     "language": "stan1293",
     "primaryText": "Alex: It must be raining. Billy: Hey! Wait a minute. Whaddya mean, must? Aren't you looking outside?",
     "discourseSegments": [

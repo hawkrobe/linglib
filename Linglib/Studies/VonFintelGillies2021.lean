@@ -3,45 +3,30 @@ import Linglib.Data.Examples.VonFintelGillies2021
 
 /-!
 # von Fintel & Gillies (2021): Still Going Strong
-[von-fintel-gillies-2021]
 
-Follow-up to [von-fintel-gillies-2010]: the indirectness signal of *must*
-is anti-knowledge, not anti-perception — direct-enough *knowledge* blocks
-*must* even without perceptual evidence (Phil/Meryl dinner pair) — and
-*can't φ* is incompatible with *it's possible that φ* (Observation 5).
+This file formalizes [von-fintel-gillies-2021]'s return to the strong *must* of
+[von-fintel-gillies-2010]. Two observations about epistemic *can't* pose a dilemma for the
+Mantra: *can't* patterns with *must* in its evidential distribution (Observation 4), and
+*can't φ* is incompatible with *it's possible that φ* (Observation 5), so *can't* can be the
+negation neither of a strong nor of a weak existential modal. Kernel semantics resolves the
+dilemma: *can't φ* is *must* of the negation, so its evidential signal is that of *must*, and
+its assertion, that the modal base excludes `φ`, contradicts *might φ* and under a realistic
+base entails the negation of the prejacent, the thesis S2. On the worked kernel of the earlier
+paper *can't not-blue* is defined, true, and excludes *might not-blue* at once, the joint
+profile the Mantra cannot assign (`cant_dilemma_resolved`), and direct information that settles
+the prejacent gives *can't* presupposition failure as it does *must*. The anti-knowledge
+examples of §4.2, Phil who checked dinner himself against Meryl who followed instructions (24)
+and (25), are the rows of `Data.Examples.VonFintelGillies2021`.
 
-## Main declarations
+## References
 
-- `evidential_restriction_extends`: the 2010 felicity ↔ indirectness
-  biconditional holds on the anti-knowledge rows
-- `cant_might_exclusion`: when can't φ holds, might φ is false
-  (Observation 5)
-- `cant_dilemma_resolved`: a single kernel simultaneously exhibits
-  evidentiality, strength, and might-exclusion — the assignment of force
-  to *can't* the Mantra cannot deliver
+* [von-fintel-gillies-2021]
+* [von-fintel-gillies-2010]
 -/
 
 namespace VonFintelGillies2021
 
-open Data.Examples
-open VonFintelGillies2010 (evidenceOf EvidenceType)
-
-/-- Rows whose primary text is the modalized member of a bare/modal
-    minimal pair. -/
-def mustPairs : List LinguisticExample :=
-  Examples.all.filter (·.feature? "kind" == some "must_pair")
-
-/-- The evidential restriction extends to rows where "direct" is
-    direct-enough knowledge rather than perception: Phil, who checked
-    everything himself, cannot say *Dinner must be ready* (ex. 24); Meryl,
-    whose information is indirect, can (ex. 25). -/
-theorem evidential_restriction_extends :
-    ∀ row ∈ mustPairs,
-      row.judgment = .acceptable ↔
-        (evidenceOf row).map EvidenceType.toCoarseSource ≠ some .direct := by
-  decide
-
-/-! ### The can't dilemma ([von-fintel-gillies-2021] §4, Observations 4–5)
+/-! ### The can't dilemma (§4.1, Observations 4 and 5)
 
 The Mantra faces a dilemma: no assignment of force to *can't* simultaneously
 explains its evidential distribution (Observation 4: *can't* patterns like
@@ -50,15 +35,12 @@ Kernel semantics resolves this: *can't φ* = *must*(¬φ) by definition
 (`kernelCant`), so Observation 4's evidential parallelism holds by
 construction, while the strong assertion B_K ⊆ ⟦¬φ⟧ delivers Observation 5. -/
 
-open Modality
-open Modality.Kratzer
-open VonFintelGillies2010 (World mastermindK redOrBlue notRed blue red notBlue
-  mastermind_base)
+open Modality Modality.Kratzer VonFintelGillies2010
 
 variable {W : Type*} (k : Kernel W) (φ : W → Prop) (w : W)
 
 /-- When can't `φ` holds (`B_K ⊆ ⟦¬φ⟧`), might `φ` is false
-([von-fintel-gillies-2021] Observation 5). -/
+(Observation 5). -/
 theorem cant_might_exclusion (hCant : (kernelCant k φ).assertion w) :
     ¬(kernelMight k φ).assertion w := by
   intro hc
@@ -66,7 +48,7 @@ theorem cant_might_exclusion (hCant : (kernelCant k φ).assertion w) :
   exact hCant hw' hφ
 
 /-- When `B_K` is realistic and can't `φ` holds, `¬φ` holds
-([von-fintel-gillies-2021] via S2). -/
+(S2). -/
 theorem cant_entails_negation (hReal : w ∈ k.base)
     (hTrue : (kernelCant k φ).assertion w) :
     ¬ φ w :=
