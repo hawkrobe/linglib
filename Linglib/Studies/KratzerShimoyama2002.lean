@@ -1,5 +1,6 @@
 import Mathlib.Data.Set.Functor
 import Mathlib.Data.Set.Lattice.Bounded
+import Linglib.Logic.Modal.Defs
 import Linglib.Fragments.Japanese.Determiners
 import Linglib.Fragments.German.ModalIndefinites
 import Linglib.Fragments.Latvian.IndeterminatePronouns
@@ -44,6 +45,8 @@ follow the 2002 manuscript, whose numbering the published chapter keeps.
 -/
 
 namespace KratzerShimoyama2002
+
+open ModalLogic
 
 /-! ### Hamblin composition (§2, §3) -/
 
@@ -149,27 +152,23 @@ theorem irgend_ein (man : E → Prop) : irgend (ein man) = {x | man x} := by
 theorem subset_irgend (den : Set E → Set E) (D : Set E) : den D ⊆ irgend den :=
   Set.subset_iUnion den D
 
-/-- *kann* over propositional alternatives: some alternative holds at some accessible
-world. -/
+/-- *kann* over propositional alternatives: the possibility that some alternative holds. -/
 def kann (R : W → W → Prop) (A : Set (W → Prop)) : Set (W → Prop) :=
-  {λ w => ∃ w', R w w' ∧ ∃ p ∈ A, p w'}
+  {◇[R] λ w => ∃ p ∈ A, p w}
 
-/-- *muss* over propositional alternatives: at every accessible world some alternative
-holds. -/
+/-- *muss* over propositional alternatives: the necessity that some alternative holds. -/
 def muss (R : W → W → Prop) (A : Set (W → Prop)) : Set (W → Prop) :=
-  {λ w => ∀ w', R w w' → ∃ p ∈ A, p w'}
+  {□[R] λ w => ∃ p ∈ A, p w}
 
-/-- The distribution requirement: every alternative holds at some accessible world. -/
+/-- The distribution requirement: every alternative is possible. -/
 def distribution (R : W → W → Prop) (A : Set (W → Prop)) (w : W) : Prop :=
-  ∀ p ∈ A, ∃ w', R w w' ∧ p w'
+  ∀ p ∈ A, ◇[R] p w
 
 /-- On a single alternative the modals are the Kripke modals. -/
-theorem kann_singleton (R : W → W → Prop) (p : W → Prop) :
-    kann R {p} = {λ w => ∃ w', R w w' ∧ p w'} := by
+theorem kann_singleton (R : W → W → Prop) (p : W → Prop) : kann R {p} = {◇[R] p} := by
   simp [kann]
 
-theorem muss_singleton (R : W → W → Prop) (p : W → Prop) :
-    muss R {p} = {λ w => ∀ w', R w w' → p w'} := by
+theorem muss_singleton (R : W → W → Prop) (p : W → Prop) : muss R {p} = {□[R] p} := by
   simp [muss]
 
 /-- The distribution requirement is not entailed by *muss* (§6): with two alternatives
@@ -203,43 +202,37 @@ section FreeChoice
 
 variable {W : Type*} (R : W → W → Prop) (A B : W → Prop) (w : W)
 
-/-- Possibility at `w`. -/
-def poss (p : W → Prop) : Prop := ∃ w', R w w' ∧ p w'
-
-/-- Necessity at `w`. -/
-def nec (p : W → Prop) : Prop := ∀ w', R w w' → p w'
-
 /-- *Kann* over the two alternatives is the possibility of their disjunction. -/
-theorem kann_pair : (∀ q ∈ kann R {A, B}, q w) ↔ poss R w (λ w => A w ∨ B w) := by
-  simp [kann, poss, exists_or, and_or_left]
+theorem kann_pair : (∀ q ∈ kann R {A, B}, q w) ↔ ◇[R] (λ w => A w ∨ B w) w := by
+  simp [kann, diamond, exists_or, and_or_left]
 
 /-- *Muss* over the two alternatives is the necessity of their disjunction. -/
-theorem muss_pair : (∀ q ∈ muss R {A, B}, q w) ↔ nec R w (λ w => A w ∨ B w) := by
-  simp [muss, nec]
+theorem muss_pair : (∀ q ∈ muss R {A, B}, q w) ↔ □[R] (λ w => A w ∨ B w) w := by
+  simp [muss, box]
 
 /-- (16): the truth-conditional content with the implicature yields free choice. -/
-theorem total_kann (hT : poss R w (λ w => A w ∨ B w)) (hI : poss R w A ↔ poss R w B) :
-    poss R w A ∧ poss R w B := by
+theorem total_kann (hT : ◇[R] (λ w => A w ∨ B w) w) (hI : ◇[R] A w ↔ ◇[R] B w) :
+    ◇[R] A w ∧ ◇[R] B w := by
   obtain ⟨w', hw', h⟩ := hT
   rcases h with h | h
   · exact ⟨⟨w', hw', h⟩, hI.mp ⟨w', hw', h⟩⟩
   · exact ⟨hI.mpr ⟨w', hw', h⟩, ⟨w', hw', h⟩⟩
 
 /-- (17): the total meaning implies both possibilities once some world is accessible. -/
-theorem total_muss (hT : nec R w (λ w => A w ∨ B w)) (hI : nec R w A ↔ nec R w B)
-    (hser : ∃ w', R w w') : poss R w A ∧ poss R w B := by
+theorem total_muss (hT : □[R] (λ w => A w ∨ B w) w) (hI : □[R] A w ↔ □[R] B w)
+    (hser : ∃ w', R w w') : ◇[R] A w ∧ ◇[R] B w := by
   obtain ⟨w₀, hw₀⟩ := hser
-  by_cases hA : nec R w A
+  by_cases hA : □[R] A w
   · exact ⟨⟨w₀, hw₀, hA w₀ hw₀⟩, ⟨w₀, hw₀, hI.mp hA w₀ hw₀⟩⟩
-  · have hB : ¬ nec R w B := λ h => hA (hI.mpr h)
-    simp only [nec, not_forall] at hA hB
+  · have hB : ¬ □[R] B w := λ h => hA (hI.mpr h)
+    simp only [box, not_forall] at hA hB
     obtain ⟨wa, hwa, ha⟩ := hA
     obtain ⟨wb, hwb, hb⟩ := hB
     exact ⟨⟨wb, hwb, (hT wb hwb).resolve_right hb⟩, ⟨wa, hwa, (hT wa hwa).resolve_left ha⟩⟩
 
 /-- (18): under negated possibility every reason for widening is already entailed, so no
 strengthening is available. -/
-theorem total_neg_kann (hT : ¬ poss R w (λ w => A w ∨ B w)) : ¬ poss R w A ∧ ¬ poss R w B :=
+theorem total_neg_kann (hT : ¬ ◇[R] (λ w => A w ∨ B w) w) : ¬ ◇[R] A w ∧ ¬ ◇[R] B w :=
   ⟨λ ⟨w', hw', h⟩ => hT ⟨w', hw', Or.inl h⟩, λ ⟨w', hw', h⟩ => hT ⟨w', hw', Or.inr h⟩⟩
 
 end FreeChoice

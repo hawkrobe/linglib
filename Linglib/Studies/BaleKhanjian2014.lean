@@ -56,7 +56,7 @@ definite singular.
 
 namespace BaleKhanjian2014
 
-open Data.Examples Syntax Alternatives.Structural
+open Data.Examples Syntax Alternatives
 
 /-! ### Denotations -/
 
@@ -217,9 +217,9 @@ def numeralPl : Tree Cat String :=
 
 /-- The lexicon the substitutions draw on: the two number heads, the two definite allomorphs,
     the two verb forms, and the noun. -/
-def lexicon : List (Tree Cat String) :=
-  [.terminal .Num "-∅", .terminal .Num "-ner", .terminal .Det "-n", .terminal .Det "-ə",
-   .terminal .V "vaze-ts", .terminal .V "vaze-ts-in", .terminal .N "dəgha"]
+def lexicon : Finset (Tree Cat String) :=
+  {.terminal .Num "-∅", .terminal .Num "-ner", .terminal .Det "-n", .terminal .Det "-ə",
+   .terminal .V "vaze-ts", .terminal .V "vaze-ts-in", .terminal .N "dəgha"}
 
 /-- The plural indefinite is no structural alternative to the singular indefinite: it has a
     determiner phrase, and neither the singular indefinite nor the lexicon has one, so no chain
@@ -227,11 +227,11 @@ def lexicon : List (Tree Cat String) :=
 theorem pluralIndef_not_alternative :
     pluralIndef ∉ structuralAlternatives lexicon singularIndef := λ h =>
   category_preservation (substitutionSource lexicon singularIndef) .DP singularIndef pluralIndef
-    (by decide) (by decide) h (by decide)
+    (forall_mem_substitutionSource.2 ⟨by decide, by decide⟩) (by decide) h (by decide)
 
 /-- The plural definite is a structural alternative to the singular definite, and conversely:
     they differ by three same-category substitutions. -/
-theorem pluralDef_alternative : equalComplexity lexicon singularDef pluralDef := by
+theorem pluralDef_alternative : equalComplexity (↑lexicon) singularDef pluralDef := by
   let step₁ : Tree Cat String :=
     .node .S [
       .node .DP [.node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"],

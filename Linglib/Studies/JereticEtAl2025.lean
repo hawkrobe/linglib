@@ -1,6 +1,5 @@
 import Linglib.Data.Examples.JereticEtAl2025
 import Linglib.Syntax.Tree.Cat
-import Linglib.Semantics.Alternatives.Source
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Semantics.Alternatives.Structural
 import Linglib.Fragments.Romance.French.Determiners
@@ -232,7 +231,7 @@ one NP over two terminals, so every step is a `decide` or one Katzir substitutio
 section WorkedExample
 
 open Syntax
-open Alternatives Alternatives.Structural
+open Alternatives
 
 /-- Two evaluation contexts: a domain of two cups and a domain of three; the dual
 presupposition is satisfied only in the first. -/
@@ -255,7 +254,7 @@ def lesDeuxLex : Tree Cat String := .terminal .Det "les_deux"
 def verresLex : Tree Cat String := .terminal .N "verres"
 
 /-- The lexicon of the worked example. -/
-def frenchLex : List (Tree Cat String) := [tousLex, tousDualLex, lesDeuxLex, verresLex]
+def frenchLex : Finset (Tree Cat String) := {tousLex, tousDualLex, lesDeuxLex, verresLex}
 
 /-- *tous V*, the surface universal. -/
 def tousVerres : Tree Cat String := .node .NP [tousLex, verresLex]
@@ -333,16 +332,14 @@ def assertionFn : Tree Cat String → WorldEx → Prop := λ _ _ => True
 /-- The indirect-alternative source (43): Katzir alternatives filtered by pronounceability and
 meaning-equivalence to a silent witness, complexity measured by `Tree.size`. -/
 def frenchIndirectSrc : Tree Cat String → Set (Tree Cat String) :=
-  indirectFrom (katzirSource frenchLex) frenchPron meaning Tree.size
+  indirectFrom (structuralAlternatives frenchLex) frenchPron meaning Tree.size
 
 /-- *tous_DUAL V* is a Katzir alternative of *tous V*, by substituting the dual determiner. -/
-theorem tousDual_katzir_alt : tousDualVerres ∈ katzirSource frenchLex tousVerres := by
+theorem tousDual_katzir_alt : tousDualVerres ∈ structuralAlternatives frenchLex tousVerres := by
   apply Relation.ReflTransGen.single
   refine StructOp.inChild (cs := [tousLex, verresLex]) ⟨0, by decide⟩
     (StructOp.subst (φ := tousLex) (ψ := tousDualLex) rfl ?_)
-  show tousDualLex ∈ frenchLex ++ tousVerres.subtrees
-  refine List.mem_append_left _ (List.mem_cons_of_mem _ ?_)
-  exact List.mem_cons_self
+  exact Set.mem_union_left _ (by simp [frenchLex])
 
 /-- *les deux V* is in the indirect-alternative source of *tous V*, witnessed by the silent
 *tous_DUAL V* (43). -/

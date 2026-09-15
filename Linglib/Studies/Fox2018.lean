@@ -139,16 +139,12 @@ theorem nonVacuity_exhCell_iff :
 
 /-- A singular which-question: over pairwise incomparable atoms, Dayal's presupposition is that
 exactly one is true. -/
-theorem isExhaustivelyResolvable_range_iff {ι : Type*} {a : ι → Set W}
+theorem isExhaustivelyResolvable_range_iff_existsUnique {ι : Type*} {a : ι → Set W}
     (ha : ∀ i j, a i ⊆ a j → i = j) (w : W) :
     IsExhaustivelyResolvable (range a) w ↔ ∃! i, w ∈ a i := by
-  constructor
-  · rintro ⟨_, ⟨⟨i, rfl⟩, hwi⟩, hmin⟩
-    exact ⟨i, hwi, λ j hwj => (ha _ _ (hmin ⟨⟨j, rfl⟩, hwj⟩)).symm⟩
-  · rintro ⟨i, hwi, huniq⟩
-    refine ⟨a i, ⟨⟨i, rfl⟩, hwi⟩, ?_⟩
-    rintro _ ⟨⟨j, rfl⟩, hwj⟩
-    rw [huniq j hwj]
+  rw [isExhaustivelyResolvable_range_iff]
+  exact exists_congr λ i => and_congr_right λ _ =>
+    ⟨λ h j hj => (ha _ _ (h j hj)).symm, λ h j hj => by rw [h j hj]⟩
 
 /-- A plural which-question: closed under conjunction, the set is resolvable wherever some
 member is true. -/

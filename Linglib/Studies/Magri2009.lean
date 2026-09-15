@@ -1,6 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Semantics.Exhaustification.Finite
-import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Semantics.Genericity.SortedOntology
 import Linglib.Data.Examples.CohenErteschikShir2002
 import Linglib.Fragments.German.BarePluralWordOrder

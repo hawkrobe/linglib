@@ -2,7 +2,7 @@ import Linglib.Semantics.Alternatives.Symmetric
 import Linglib.Studies.Katzir2007
 import Linglib.Semantics.Exhaustification.Excluder
 import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Logic.Modal.Defs
+import Linglib.Logic.Modal.Basic
 import Linglib.Data.Examples.FoxKatzir2011
 
 /-!
@@ -53,13 +53,13 @@ variable {W : Type*}
 
 section Formal
 
-open Syntax Alternatives.Structural
+open Syntax Alternatives
 
-variable {C V : Type} (lex : List (Tree C V)) (φ : Tree C V) (salient : List (Tree C V))
+variable {C V : Type} (lex : Finset (Tree C V)) (φ : Tree C V) (salient : Finset (Tree C V))
 
 /-- The substitution source in a context: the lexicon, the sub-constituents of the sentence,
 and the salient constituents of the context. -/
-def contextualSource : List (Tree C V) := lex ++ φ.subtrees ++ salient
+def contextualSource : Set (Tree C V) := ↑lex ∪ {t | t ∈ φ.subtrees} ∪ ↑salient
 
 /-- The formal alternatives in a context: whatever is at most as complex as the sentence over
 the contextual substitution source. -/
@@ -67,9 +67,8 @@ def formalAlternatives : Set (Tree C V) :=
   {ψ | atMostAsComplex (contextualSource lex φ salient) ψ φ}
 
 /-- Without salient constituents the alternatives are [katzir-2007]'s. -/
-theorem formalAlternatives_nil : formalAlternatives lex φ [] = structuralAlternatives lex φ := by
-  rw [formalAlternatives, contextualSource, List.append_nil]
-  rfl
+theorem formalAlternatives_empty : formalAlternatives lex φ ∅ = structuralAlternatives lex φ := by
+  simp [formalAlternatives, structuralAlternatives, contextualSource, substitutionSource]
 
 /-- A salient constituent of the sentence's category is a formal alternative. -/
 theorem mem_formalAlternatives_of_salient {ψ : Tree C V} (hψ : ψ ∈ salient)
@@ -80,8 +79,8 @@ theorem mem_formalAlternatives_of_salient {ψ : Tree C V} (hψ : ψ ∈ salient)
 formal alternative once it is salient. -/
 theorem someButNotAll_mem_formalAlternatives :
     Katzir2007.someButNotAllSentence ∈ formalAlternatives Katzir2007.lexicon
-      Katzir2007.someSentence [Katzir2007.someButNotAllSentence] :=
-  mem_formalAlternatives_of_salient _ _ _ (List.mem_singleton_self _) rfl
+      Katzir2007.someSentence {Katzir2007.someButNotAllSentence} :=
+  mem_formalAlternatives_of_salient _ _ _ (Finset.mem_singleton_self _) rfl
 
 end Formal
 
@@ -198,9 +197,6 @@ end Symmetry
 section Universal
 
 variable {R : W → W → Prop} {S S₁ S₂ : Set W}
-
-/-- Necessity as a proposition: the worlds all of whose accessible worlds satisfy `p`. -/
-def nec (R : W → W → Prop) (p : Set W) : Set W := {x | □[R] (· ∈ p) x}
 
 /-- Under a universal operator the alternatives are no longer symmetric whenever some world's
 accessible worlds fall on both sides. -/
