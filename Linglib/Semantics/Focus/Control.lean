@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Alternatives.Basic
-import Linglib.Semantics.Questions.Hamblin
 
 /-!
 # Focus antecedents
@@ -28,13 +27,9 @@ shape through the appropriate case.
 
 ## Implementation notes
 
-Payloads are flat Hamblin sets, `Set (Set W)`, keeping antecedents
-over finite models `decide`-friendly; the inquisitive layer plugs in
-via `Antecedent.ofQuestion` and `Question.alt`, with
-`alt_which_singleton` identifying the two Hamblin constructions. The
-`assertion` payload is a raw prior proposition; the
-`HasAssertion` hookup (a correction/denial
-move) is deferred.
+Payloads are flat Hamblin sets, `Set (Set W)`, keeping antecedents over finite models
+`decide`-friendly; a `Question` supplies one through `Question.alt`. The `assertion` payload
+is a raw prior proposition; the `HasAssertion` hookup (a correction/denial move) is deferred.
 -/
 
 namespace Focus
@@ -227,24 +222,6 @@ theorem use_not_factorsThrough_contrastSet :
         Antecedent.contrastSet :=
   fun h => absurd (h (a := .question ∅) (b := .offer ∅) rfl) (by simp)
 
-/-! ### Hamblin antecedents -/
-
-/-- The flat Hamblin set of complete answers over a domain. -/
-def hamblin (D : Type*) : Set (Set D) := Set.range fun d => ({d} : Set D)
-
-/-- The wh-question antecedent over a whole domain. -/
-def whAntecedent (D : Type*) : Antecedent D := .question (hamblin D)
-
-theorem whAntecedent_admits (D : Type*) :
-    (whAntecedent D).Admits (hamblin D) := subset_rfl
-
-/-- A wh-antecedent over a domain with two distinct elements fully
-resolves against the Hamblin focus value of any complete answer. -/
-theorem whAntecedent_resolves {D : Type*} (d d' : D) (hne : d' ≠ d) :
-    (whAntecedent D).Resolves {d} (hamblin D) :=
-  ⟨subset_rfl, ⟨d, rfl⟩, ⟨{d'}, ⟨d', rfl⟩,
-    fun h => hne (Set.singleton_eq_singleton_iff.mp h)⟩⟩
-
 /-! ### Composed answers over a pair
 
 The minimal contentful scenario: a two-point answer domain
@@ -291,137 +268,5 @@ theorem use_model_resolves {W : Type*} {d d' : W} (hne : d' ≠ d) (u : Use) :
   | corrective  => exact ⟨hSq, by rw [pairAnswer_ordinary]; exact hne'.symm⟩
   | selective   => exact hSq
   | contrastive => exact hSq
-
-/-! ### Strong-theory *only*
-
-[rooth-1992]'s official semantics: *only* quantifies over the resolved
-contrast variable `C`; the focus constraint `C ⊆ ⟦·⟧f` is supplied
-separately by the squiggle, "leaving room for a pragmatic process of
-constructing a domain of quantification". The operator has no lexical
-access to focus values, and fixing `C` to the full focus value of a
-focused transitive verb, which contains the trivial relation, makes
-*only* unsatisfiable (`onlyVia_eq_empty_of_univ_mem`). -/
-
-/-- The strong-theory *only* assertion, transposed to the propositional
-level: every true member of the resolved contrast set is the prejacent.
-The prejacent presupposition is carried separately. -/
-def onlyVia (C : Set (Set W)) (prejacent : Set W) : Set W :=
-  {w | ∀ q ∈ C, w ∈ q → q = prejacent}
-
-@[simp] theorem mem_onlyVia {C : Set (Set W)} {p : Set W} {w : W} :
-    w ∈ onlyVia C p ↔ ∀ q ∈ C, w ∈ q → q = p := Iff.rfl
-
-/-- A true alternative distinct from the prejacent refutes *only*. -/
-theorem not_mem_onlyVia {C : Set (Set W)} {p q : Set W} {w : W}
-    (hq : q ∈ C) (hw : w ∈ q) (hne : q ≠ p) : w ∉ onlyVia C p :=
-  fun h => hne (h q hq hw)
-
-/-- Membership in *only* from refuting every distinct alternative. -/
-theorem mem_onlyVia_of_forall_not_mem {C : Set (Set W)} {p : Set W}
-    {w : W} (h : ∀ q ∈ C, q ≠ p → w ∉ q) : w ∈ onlyVia C p :=
-  fun q hq hwq => not_not.mp fun hne => h q hq hne hwq
-
-/-- An **irredundant** family of alternatives: each member can hold
-while every other member fails — equivalently, no member is covered by
-the union of the rest (each alternative has a private world). Strictly
-weaker than the mutual exclusivity of partition semantics
-(`irredundant_of_pairwise_disjoint`) and than Boolean independence of
-the family. `[UPSTREAM]` candidate as the non-coveredness
-companion of `iSupIndep` (`¬ t i ≤ ⨆ j ≠ i, t j`): mathlib has the
-disjointness form and, at the module instance, the characterization
-`linearIndependent_iff_notMem_span`, but no lattice-level name — and
-`SupIrred` (join-irreducibility of an element) is a false friend. -/
-def Irredundant {ι : Type*} (f : ι → Set W) : Prop :=
-  ∀ i, ∃ w ∈ f i, ∀ j, j ≠ i → w ∉ f j
-
-/-- Pairwise-disjoint nonempty alternatives — the mutual-exclusivity
-assumption of partition semantics — are irredundant. -/
-theorem irredundant_of_pairwise_disjoint {ι : Type*} {f : ι → Set W}
-    (hd : Pairwise fun i j => Disjoint (f i) (f j))
-    (hne : ∀ i, (f i).Nonempty) :
-    Irredundant f := fun i =>
-  let ⟨w, hw⟩ := hne i
-  ⟨w, hw, fun _ hj hwj => Set.disjoint_left.mp (hd hj) hwj hw⟩
-
-/-- Over a separated family, resolving *only* to contrast sets that
-differ beyond the prejacent yields distinct readings: the alternative
-present in one resolution and absent from the other separates them. -/
-theorem Irredundant.onlyVia_ne {ι : Type*} {f : ι → Set W}
-    (hf : Irredundant f) {i₀ j : ι} {s₁ s₂ : Finset ι}
-    (hj₂ : j ∈ s₂) (hj₁ : j ∉ s₁) (hji : j ≠ i₀) :
-    onlyVia (f '' ↑s₁) (f i₀) ≠ onlyVia (f '' ↑s₂) (f i₀) := by
-  obtain ⟨w, hwj, hother⟩ := hf j
-  refine ne_of_mem_of_not_mem'
-    (mem_onlyVia_of_forall_not_mem ?_)
-    (not_mem_onlyVia ⟨j, hj₂, rfl⟩ hwj
-      (ne_of_mem_of_not_mem' hwj (hother i₀ (Ne.symm hji))))
-  rintro q ⟨k, hk, rfl⟩ _
-  exact hother k fun h => hj₁ (h ▸ hk)
-
-/-- Over a separated family, *only* is injective in the resolved
-contrast set, on resolutions containing the prejacent. -/
-theorem Irredundant.onlyVia_injOn {ι : Type*} {f : ι → Set W}
-    (hf : Irredundant f) (i₀ : ι) :
-    Set.InjOn (fun s : Finset ι => onlyVia (f '' ↑s) (f i₀))
-      {s | i₀ ∈ s} := by
-  intro s₁ h₁ s₂ h₂ heq
-  by_contra hne
-  obtain ⟨j, hj⟩ : ∃ j, ¬ (j ∈ s₁ ↔ j ∈ s₂) := by
-    simpa [Finset.ext_iff] using hne
-  by_cases hmem : j ∈ s₁
-  · have h₂j : j ∉ s₂ := fun h => hj ⟨fun _ => h, fun _ => hmem⟩
-    exact hf.onlyVia_ne hmem h₂j (fun h => h₂j (h ▸ h₂)) heq.symm
-  · have h₂j : j ∈ s₂ := by
-      by_contra h2
-      exact hj ⟨fun h => absurd h hmem, fun h => absurd h h2⟩
-    exact hf.onlyVia_ne h₂j hmem (fun h => hmem (h ▸ h₁)) heq
-
-/-- Narrowing the domain weakens *only* — the pragmatic domain
-restriction that repairs the over-generation of a fixed full-focus
-domain. -/
-theorem onlyVia_antitone {C C' : Set (Set W)} (h : C ⊆ C')
-    (p : Set W) : onlyVia C' p ⊆ onlyVia C p :=
-  fun _ hw q hq => hw q (h hq)
-
-/-- A contrast set containing the trivial proposition makes *only*
-unsatisfiable for any other prejacent: the over-generation of fixing the
-domain to the full focus value of a focused transitive verb. -/
-theorem onlyVia_eq_empty_of_univ_mem {C : Set (Set W)} {p : Set W}
-    (hC : Set.univ ∈ C) (hp : p ≠ Set.univ) : onlyVia C p = ∅ :=
-  Set.eq_empty_iff_forall_notMem.2 fun w hw => hp (hw _ hC (Set.mem_univ w)).symm
-
-/-- Against a squiggle-resolved contrast set, *only* genuinely
-excludes: the contrast clause supplies a distinct alternative that the
-assertion rules out wherever it holds. -/
-theorem onlyVia_excludes_of_squiggleSet {o : Set W} {fv C : Set (Set W)}
-    (h : SquiggleSet o fv C) :
-    ∃ q ∈ C, q ≠ o ∧ ∀ w ∈ onlyVia C o, w ∉ q :=
-  let ⟨_, _, q, hq, hne⟩ := h
-  ⟨q, hq, hne, fun _ hw hwq => hne (hw q hq hwq)⟩
-
-/-- A `Question` supplies its maximal alternatives as a question
-antecedent — the bridge from the inquisitive layer. -/
-def Antecedent.ofQuestion (q : Question W) : Antecedent W :=
-  .question (Question.alt q)
-
-/-- The maximal alternatives of the inquisitive wh-question over the
-singleton predicates are exactly the flat Hamblin set. -/
-theorem alt_which_singleton (D : Type*) [Nonempty D] :
-    Question.alt (Question.which (Set.univ : Set D) fun d => ({d} : Set D)) =
-      hamblin D := by
-  have hA : IsAntichain (· ⊆ ·) ((fun d => ({d} : Set D)) '' Set.univ) := by
-    rintro p ⟨a, -, rfl⟩ q ⟨b, -, rfl⟩ hne hsub
-    exact hne (by rw [Set.singleton_subset_singleton.mp hsub])
-  rw [Question.alt_which_of_antichain Set.univ_nonempty
-      (fun d _ => Set.singleton_nonempty d) hA, Set.image_univ]
-  rfl
-
-/-- The inquisitive wh-question and the flat Hamblin antecedent
-coincide. -/
-theorem ofQuestion_which_eq_whAntecedent (D : Type*) [Nonempty D] :
-    Antecedent.ofQuestion
-        (Question.which (Set.univ : Set D) fun d => ({d} : Set D)) =
-      whAntecedent D :=
-  congrArg Antecedent.question (alt_which_singleton D)
 
 end Focus

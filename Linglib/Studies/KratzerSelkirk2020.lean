@@ -24,9 +24,10 @@ so the paper's footnote on Hausa rereads the in situ and ex situ answers of
 
 ## Implementation notes
 
-The paper's Givenness is the substrate's `WithAlternatives.Given`, and its *only* is the
-library's `Focus.onlyVia` at the salient contrast set, so the paper's indirect association
-through two occurrences of the contextual variable is a fact about the substrate. The
+The paper's Givenness is the substrate's `WithAlternatives.Given`, and its *only* (56) is
+`Exhaustification.excludes` at the salient contrast set the squiggle also carries (55b), so
+the paper's indirect association through two occurrences of the contextual variable is a fact
+about the substrate and is not restated. The
 squiggle operator is bundled with proofs of the first two contrast conditions of (49); the
 third, which prevents overfocusing by comparing [FoC]/[G]-variants, is not formalized. The
 prosodic spell-out of the features in English (§6–§7) is prose.
@@ -103,13 +104,6 @@ what (58) requires of a Given constituent containing a focus: the engine of the
 second-occurrence-focus analysis of (59). -/
 theorem ContrastOperator.result_given {α : Type*} (op : ContrastOperator α) :
     op.result.Given op.meaning.ordinary := rfl
-
-/-- The semantics of *only* (56) over the salient contrast set, the library's `onlyVia`:
-association with the focus is indirect, through the contrast set the squiggle operator
-also carries (55b). -/
-def onlySemantics {W : Type*} (contrastSet : List (W → Prop)) (prejacent : W → Prop) :
-    Set W :=
-  Focus.onlyVia {q | q ∈ contrastSet} prejacent
 
 /-! ### A-Givenness (§3) -/
 

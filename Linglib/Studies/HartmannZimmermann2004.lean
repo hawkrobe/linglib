@@ -7,6 +7,7 @@ import Mathlib.Tactic.FinCases
 import Linglib.Core.Relation.FactorsThroughOn
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.Prosody.Phrase
+import Linglib.Semantics.Exhaustification.Excluder
 import Linglib.Semantics.Focus.Control
 import Linglib.Syntax.Reflex
 import Linglib.Fragments.Tangale.TAM
@@ -57,7 +58,7 @@ example numbers and sections were checked against the journal version of the pap
 
 namespace HartmannZimmermann2004
 
-open Focus Reflex
+open Exhaustification Focus Reflex
 open Constraints (Constraint)
 open OptimalityTheory (Tableau)
 
@@ -197,7 +198,7 @@ theorem prosodic_reflex_audible :
 *núm* 'only' is syntactically fixed to DP expressions, yet associates
 with object, VP, or verb focus — identical structure and identical
 pitch across (36a–c). Three contrast-set resolutions of one string,
-through the strong-theory `onlyVia`. -/
+through the exclusion `Exhaustification.excludes`. -/
 
 /-- Worlds tracking what the speaker did with the book and the rest. -/
 structure NumWorld where
@@ -237,28 +238,28 @@ def extAlts : Focused → Finset (Fin 3)
   | .vp     => {0, 1, 2}
   | _       => {0, 2}
 
-/-- The (36) readings: strong-theory *only* over the resolved contrast
-set, with 'bought the book' as prejacent. -/
+/-- The (36) readings: the exclusion asserted by *only* over the resolved
+contrast set, with 'bought the book' as prejacent. -/
 def numReading (x : Focused) : Set NumWorld :=
-  onlyVia (alt '' ↑(extAlts x)) (alt 0)
+  excludes (alt '' ↑(extAlts x)) (alt 0)
 
 /-- One surface string, three semantically distinct readings: over a
 irredundant alternative family, *only* is injective in its
-resolution (`Irredundant.onlyVia_injOn`), and the three extents
+resolution (`Irredundant.excludes_injOn`), and the three extents
 resolve to three different contrast sets. -/
 theorem num_readings_injOn : Set.InjOn numReading {.verb, .vp, .object} :=
-  (alt_irredundant.onlyVia_injOn 0).comp
+  (alt_irredundant.excludes_injOn 0).comp
     (by rintro a (rfl | rfl | rfl) b (rfl | rfl | rfl) h <;>
       first | rfl | exact absurd h (by decide))
     (by rintro a (rfl | rfl | rfl) <;> decide)
 
 /-- The VP association is the strongest reading: 'I did nothing else'
 entails both 'I bought nothing else' and 'I did nothing else to the
-book' — `onlyVia_antitone` over the contrast-set inclusions. -/
+book' — `excludes_antitone` over the contrast-set inclusions. -/
 theorem vp_reading_strongest :
     numReading .vp ⊆ numReading .object ∧ numReading .vp ⊆ numReading .verb :=
-  ⟨onlyVia_antitone (Set.image_mono (Finset.coe_subset.mpr (by decide))) _,
-   onlyVia_antitone (Set.image_mono (Finset.coe_subset.mpr (by decide))) _⟩
+  ⟨excludes_antitone (Set.image_mono (Finset.coe_subset.mpr (by decide))) _,
+   excludes_antitone (Set.image_mono (Finset.coe_subset.mpr (by decide))) _⟩
 
 /-! ## Data linkage
 

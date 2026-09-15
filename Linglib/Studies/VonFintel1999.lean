@@ -1,5 +1,5 @@
 import Linglib.Logic.Natural.Strawson.Basic
-import Linglib.Semantics.Focus.Control
+import Linglib.Semantics.Exhaustification.Excluder
 import Linglib.Semantics.Conditionals.Restrictor
 import Linglib.Data.Examples.VonFintel1999
 
@@ -129,32 +129,31 @@ end Attitudes
 
 section Only
 
-open Focus
+open Exhaustification
 
-/-- Focus *only* over a name is propositional *only* over the alternatives the name generates
-([rooth-1992]'s `onlyVia`, §3.4): the assertion of `only` coincides with it when distinct
-individuals generate distinct propositions. -/
-theorem only_assertion_eq_onlyVia (P : ι → Set W) (x : ι) (hP : Function.Injective P) :
-    {w | (only x P).assertion w} = onlyVia (Set.range P) (P x) := by
+/-- Focus *only* over a name is the exclusion over the alternatives the name generates
+(`Exhaustification.excludes`, §3.4) when the prejacent entails no other alternative. -/
+theorem only_assertion_eq_excludes (P : ι → Set W) (x : ι) (hP : ∀ y, P x ⊆ P y → y = x) :
+    {w | (only x P).assertion w} = excludes (Set.range P) (P x) := by
   ext w
-  simp only [only, Set.mem_ofPred_eq, mem_onlyVia]
+  simp only [only, Set.mem_ofPred_eq, mem_excludes]
   constructor
   · rintro h q ⟨y, rfl⟩ hw
     by_cases hyx : y = x
-    · exact hyx ▸ rfl
+    · exact hyx ▸ subset_rfl
     · exact absurd hw (h y hyx)
   · intro h y hyx hw
-    exact hyx (hP (h (P y) ⟨y, rfl⟩ hw))
+    exact hyx (hP y (h (P y) ⟨y, rfl⟩ hw))
 
-/-- Without injectivity the two come apart: individuals generating one proposition are one
-alternative for `onlyVia` but several for `only`. -/
-theorem only_assertion_ne_onlyVia :
+/-- Without that condition the two come apart: individuals generating one proposition are one
+alternative, entailed by the prejacent, for the exclusion but several for `only`. -/
+theorem only_assertion_ne_excludes :
     {w | (only true λ _ : Bool => (Set.univ : Set Unit)).assertion w} ≠
-      onlyVia (Set.range λ _ : Bool => (Set.univ : Set Unit)) Set.univ := by
+      excludes (Set.range λ _ : Bool => (Set.univ : Set Unit)) Set.univ := by
   intro h
   have h0 : () ∈ {w | (only true λ _ : Bool => (Set.univ : Set Unit)).assertion w} := by
     rw [h]
-    exact λ q hq _ => by obtain ⟨y, rfl⟩ := hq; rfl
+    exact λ q hq _ => by obtain ⟨y, rfl⟩ := hq; exact subset_rfl
   exact h0 false Bool.false_ne_true (Set.mem_univ ())
 
 end Only

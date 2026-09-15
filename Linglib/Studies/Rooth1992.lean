@@ -1,6 +1,7 @@
 import Linglib.Data.Examples.Rooth1992
 import Linglib.Pragmatics.NeoGricean.Basic
 import Linglib.Semantics.Focus.Control
+import Linglib.Semantics.Exhaustification.Excluder
 
 /-!
 # Rooth (1992): A theory of focus interpretation
@@ -8,22 +9,22 @@ import Linglib.Semantics.Focus.Control
 This file formalizes [rooth-1992]'s unification of the effects of intonational focus. Alternative
 semantics gives a phrase a focus semantic value beside its ordinary one, the set of substitution
 instances at the focused position, computed here by mapping a predicate over an F-marked
-constituent whose alternatives are the whole domain (`focused`). The four effects the paper
-surveys, association with *only*, contrasting phrases, scalar implicature, and question-answer
-congruence, each require some semantic or pragmatic object to be a subset or an element of a
-focus semantic value, and the focus interpretation principle keeps only that requirement: the
-operator ~ presupposes `Focus.SquiggleSet` or `Focus.SquiggleInd` of a free variable whose
-antecedent is a `Focus.Antecedent`. In the introduction scenario *only* quantifies over a
-domain constrained by focus, `Focus.onlyVia`, which gives (3a) and (3b) their truth values; a
+constituent whose alternatives are the whole domain (`WithAlternatives.focused`). The four effects
+the paper surveys, association with *only*, contrasting phrases, scalar implicature, and
+question-answer congruence, each require some semantic or pragmatic object to be a subset or an
+element of a focus semantic value, and the focus interpretation principle keeps only that
+requirement: the operator ~ presupposes `Focus.SquiggleSet` or `Focus.SquiggleInd` of a free
+variable whose antecedent is a `Focus.Antecedent`. In the introduction scenario *only* quantifies
+over a domain constrained by focus, `only`, which gives (3a) and (3b) their truth values; a
 focused transitive verb shows why the domain is constrained rather than fixed, since its full
 focus semantic value contains the trivial relation and fixing the domain to it makes *only*
-unsatisfiable. A scale of alternative assertions lies inside the focus semantic value, so focus
-on the verb licenses the acing scale that focus on the subject does not, and the group scale
-under subject focus yields the roommate implicature through the neo-Gricean substrate. A
-question denotation lies inside the answer's focus semantic value, admitting the subject-focused
-answer to the subject question and rejecting the object-focused one. In bare remnant ellipsis
-focus filters a compositional ambiguity instead of restricting a parameter: each choice of
-correlate finds an antecedent for ~ under exactly one focus placement (`ellipsis_filter`).
+unsatisfiable. A scale of alternative assertions lies inside the focus semantic value, so focus on
+the verb licenses the acing scale that focus on the subject does not, and the group scale under
+subject focus yields the roommate implicature through the neo-Gricean substrate. A question
+denotation lies inside the answer's focus semantic value, admitting the subject-focused answer to
+the subject question and rejecting the object-focused one. In bare remnant ellipsis focus filters
+a compositional ambiguity instead of restricting a parameter: each choice of correlate finds an
+antecedent for ~ under exactly one focus placement (`ellipsis_filter`).
 
 ## Implementation notes
 
@@ -43,7 +44,7 @@ correlate finds an antecedent for ~ under exactly one focus placement (`ellipsis
 
 namespace Rooth1992
 
-open Data.Examples Focus WithAlternatives
+open Data.Examples Exhaustification Focus WithAlternatives
 
 /-! ### Focus semantic values (2) -/
 
@@ -53,22 +54,26 @@ universe u
 
 variable {α β : Type u}
 
-/-- An F-marked constituent: its ordinary value with every object of its type as an
-alternative. -/
-def focused (x : α) : WithAlternatives α := ⟨x, Set.univ⟩
+/-- *Only* over a domain `C` of propositions asserts that every true member of the domain is
+the prejacent. -/
+def only {W : Type*} (C : Set (Set W)) (p : Set W) : Set W := {w | ∀ q ∈ C, w ∈ q → q = p}
 
-@[simp] theorem ordinary_focused (x : α) : (focused x).ordinary = x := rfl
+/-- A true member of the domain distinct from the prejacent refutes *only*. -/
+theorem notMem_only {W : Type*} {C : Set (Set W)} {p q : Set W} {w : W} (hq : q ∈ C)
+    (hw : w ∈ q) (hne : q ≠ p) : w ∉ only C p :=
+  λ h => hne (h q hq hw)
 
-/-- The focus semantic value of a phrase with one F-marked constituent is the set of
-substitution instances at that position. -/
-theorem alternatives_map_focused (f : α → β) (x : α) :
-    (f <$> focused x).alternatives = Set.range f := by
-  ext b; simp [focused]
+/-- Where the prejacent entails no other member of the domain, the paper's *only* is the
+exclusion `Exhaustification.excludes`. -/
+theorem only_eq_excludes {W : Type*} {C : Set (Set W)} {p : Set W}
+    (h : ∀ q ∈ C, p ⊆ q → q = p) : only C p = excludes C p :=
+  Set.ext λ _ => (mem_excludes_iff_forall_eq h).symm
 
-/-- An F-marked constituent is well formed: the ordinary value is among the alternatives, and
-so is the ordinary value of any phrase built on it. -/
-theorem wellFormed_map_focused (f : α → β) (x : α) : (f <$> focused x).WellFormed :=
-  WellFormed.map (Set.mem_univ x)
+/-- A domain containing the trivial proposition makes *only* unsatisfiable for any other
+prejacent. -/
+theorem only_eq_empty_of_univ_mem {W : Type*} {C : Set (Set W)} {p : Set W}
+    (hC : Set.univ ∈ C) (hp : p ≠ Set.univ) : only C p = ∅ :=
+  Set.eq_empty_iff_forall_notMem.2 λ w hw => hp (hw _ hC (Set.mem_univ w)).symm
 
 end Values
 
@@ -97,7 +102,9 @@ end Atoms
 
 *Only* quantifies over a domain `C` of properties: if Mary has a property in `C`, it is the one
 the VP expresses ((4b), (30b)). Focus constrains `C` to lie inside the focus semantic value of
-the VP ((9c)); the substrate's `onlyVia` is the assertion at the propositional level. -/
+the VP ((9c)); `only` is the assertion at the propositional level, and coincides with the
+substrate's `Exhaustification.excludes` where the prejacent entails no other member of the
+domain (`only_eq_excludes`). -/
 
 section Only
 
@@ -119,14 +126,14 @@ theorem vp_objectFocus :
 /-- (3a) is false in the scenario: 'Mary introduced Tom to Sue' is a true member of the domain
 distinct from the prejacent. -/
 theorem three_a (hbt : b ≠ t) :
-    scenario m b t s ∉ onlyVia (Set.range λ y => intro m y s) (intro m b s) :=
-  not_mem_onlyVia (q := intro m t s) ⟨t, rfl⟩ (by simp [scenario, intro])
+    scenario m b t s ∉ only (Set.range λ y => intro m y s) (intro m b s) :=
+  notMem_only (q := intro m t s) ⟨t, rfl⟩ (by simp [scenario, intro])
     λ h => hbt (Prod.mk.inj (Prod.mk.inj (atom_injective h)).2).1.symm
 
 /-- (3b) is true in the scenario: the only true proposition of the form 'Mary introduced Bill
 to z' is the prejacent. -/
 theorem three_b (hbt : b ≠ t) :
-    scenario m b t s ∈ onlyVia (Set.range λ z => intro m b z) (intro m b s) := by
+    scenario m b t s ∈ only (Set.range λ z => intro m b z) (intro m b s) := by
   rintro q ⟨z, rfl⟩ hw
   simp only [scenario, intro, mem_atom, Set.mem_insert_iff, Set.mem_singleton_iff,
     Prod.mk.injEq] at hw
@@ -153,14 +160,14 @@ theorem univ_mem_vp_verbFocus :
 /-- (7) with the domain fixed to the full focus semantic value, as in [rooth-1985], is
 unsatisfiable. -/
 theorem recognitions_fixed :
-    onlyVia ((λ R : E → E → Set (Set (Verb × E × E)) => R m c) <$>
+    only ((λ R : E → E → Set (Set (Verb × E × E)) => R m c) <$>
       focused (rel .read)).alternatives (rel .read m c) = ∅ :=
-  onlyVia_eq_empty_of_univ_mem (univ_mem_vp_verbFocus m c) (atom_ne_univ _)
+  only_eq_empty_of_univ_mem (univ_mem_vp_verbFocus m c) (atom_ne_univ _)
 
 /-- (37c): with the domain constrained to reading and understanding, (7) is true where Mary
 read without understanding. -/
 theorem recognitions_constrained :
-    {(Verb.read, m, c)} ∈ onlyVia {rel .read m c, rel .understand m c} (rel .read m c) := by
+    {(Verb.read, m, c)} ∈ only {rel .read m c, rel .understand m c} (rel .read m c) := by
   rintro q (rfl | rfl) hw
   · rfl
   · simp [rel] at hw
@@ -381,7 +388,7 @@ def onlyData : List (OnlyFocus × Bool) := Examples.all.filterMap onlyRow
 /-- (3a) and (3b): a row is true in the introduction scenario iff *only* over the domain its
 focus constrains holds there. -/
 theorem only_rows : ∀ d ∈ onlyData, (d.2 = true ↔
-    scenario Person.mary .bill .tom .sue ∈ onlyVia d.1.domain (intro Person.mary .bill .sue)) := by
+    scenario Person.mary .bill .tom .sue ∈ only d.1.domain (intro Person.mary .bill .sue)) := by
   intro d hd
   rw [show onlyData = [(.bill, false), (.sue, true)] by decide] at hd
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hd

@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Semantics.Exhaustification.Excluder
 import Linglib.Semantics.Focus.Control
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Data.Examples.Grubic2015
@@ -45,7 +46,7 @@ not theorems.
 
 namespace Grubic2015
 
-open Pragmatics.Expressives Focus
+open Exhaustification Pragmatics.Expressives Focus
 
 variable {W T : Type*} (S : Set W → Set W → Prop) (C : Set (Set W)) (p : Set W)
 
@@ -57,6 +58,10 @@ def atLeast : Set W := {w | ∃ q ∈ C, w ∈ q ∧ S q p}
 
 /-- (2ii): no true alternative is stronger than the prejacent, the assertion of *yak('i)*. -/
 def atMost : Set W := {w | ∀ q ∈ C, w ∈ q → S p q}
+
+/-- On the entailment scale the assertion of *yak('i)* is the exclusion
+`Exhaustification.excludes`. -/
+theorem atMost_subset_eq : atMost (· ⊆ ·) C p = excludes C p := rfl
 
 /-- *yak('i)* 'only', the propositional entry (2). -/
 def yak : TwoDimProp W := .withCI (· ∈ atMost S C p) (· ∈ atLeast S C p)
@@ -77,24 +82,22 @@ theorem prejacent_projects {w : W} (h : (yak (· ⊆ ·) C p).neg.ci w) : w ∈ 
 def conjunctions (atoms : Set (Set W)) : Set (Set W) :=
   {q | ∃ A ⊆ atoms, A.Nonempty ∧ q = ⋂₀ A}
 
-/-- (166) and (25): over the conjunctions of independent atomic answers, the total content of
-*yak('i)* on the entailment scale is the prejacent with no other atom true, the exclusive
-inference in the form of the library's `Focus.onlyVia`. -/
-theorem total_yak {atoms : Set (Set W)} (hp : p ∈ atoms) (hind : ∀ q ∈ atoms, p ⊆ q → q = p) :
-    total (yak (· ⊆ ·) (conjunctions atoms) p) = p ∩ onlyVia atoms p := by
+/-- (166) and (25): over the conjunctions of atomic answers, the total content of *yak('i)* on
+the entailment scale is the prejacent with no other atom true, the exhaustification
+`Exhaustification.exh` over the atoms. -/
+theorem total_yak {atoms : Set (Set W)} (hp : p ∈ atoms) :
+    total (yak (· ⊆ ·) (conjunctions atoms) p) = exh atoms p := by
   ext w
   constructor
   · rintro ⟨hmost, _, ⟨A, hA, -, rfl⟩, hw, hq⟩
-    refine ⟨hq hw, λ r hr hwr => hind r hr λ x hx => ?_⟩
+    refine ⟨hq hw, λ r hr hwr x hx => ?_⟩
     exact (hmost (p ∩ r) ⟨{p, r}, by simp [Set.insert_subset_iff, hp, hr], by simp, by simp⟩
       ⟨hq hw, hwr⟩ hx).2
   · rintro ⟨hw, honly⟩
     refine ⟨?_, p, ⟨{p}, by simpa, Set.singleton_nonempty p, (Set.sInter_singleton p).symm⟩, hw,
       subset_rfl⟩
     rintro q ⟨A, hA, -, rfl⟩ hwq x hx
-    refine Set.mem_sInter.mpr λ a ha => ?_
-    rw [honly a (hA ha) (Set.mem_sInter.mp hwq a ha)]
-    exact hx
+    exact Set.mem_sInter.mpr λ a ha => honly a (hA ha) (Set.mem_sInter.mp hwq a ha) hx
 
 /-! ### The additive *ke('e)*, section 7.3 -/
 

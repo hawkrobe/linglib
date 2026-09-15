@@ -1,6 +1,7 @@
 import Linglib.Fragments.Hausa.Focus
 import Linglib.Fragments.Hausa.TAM
 import Linglib.Core.Relation.FactorsThroughOn
+import Linglib.Semantics.Exhaustification.Excluder
 import Linglib.Semantics.Focus.Control
 import Linglib.Syntax.Reflex
 import Linglib.Data.Examples.HartmannZimmermann2007
@@ -55,7 +56,7 @@ prepublication manuscript of the chapter.
 namespace HartmannZimmermann2007
 
 open Hausa
-open Focus Reflex
+open Exhaustification Focus Reflex
 
 /-! ## What is focused (§2.2.2) -/
 
@@ -122,17 +123,17 @@ particles (*kawài* 'only'; *nee/cee* per the paper's fn. 3) over the
 resolved contrast set, in either strategy — (32a/b) attest in-situ and
 ex-situ *only BOOKS* alike. -/
 
-/-- The exhaustified answer: strong-theory *only* over the scenario's
-resolved contrast set. -/
+/-- The exhaustified answer: the exclusion asserted by *only* over the
+scenario's resolved contrast set. -/
 private def exhAnswer (u : Use) : Set Alt :=
-  onlyVia (ctx u).contrastSet answer.ordinary
+  excludes (ctx u).contrastSet answer.ordinary
 
 /-- The exhaustified answer computes to the bare true answer, uniformly
 across the four uses: exhaustification consumes the resolved contrast
 set and prejacent, never the strategy — the §3.2 point that
 exhaustive readings are available in both positions. -/
 theorem exhAnswer_eq (u : Use) : exhAnswer u = {Alt.ans} := by
-  have key : onlyVia ({{Alt.ans}, {Alt.alt}} : Set (Set Alt))
+  have key : excludes ({{Alt.ans}, {Alt.alt}} : Set (Set Alt))
       {Alt.ans} = {Alt.ans} := by
     ext w
     constructor
@@ -140,13 +141,11 @@ theorem exhAnswer_eq (u : Use) : exhAnswer u = {Alt.ans} := by
       have halt := hw {Alt.alt} (Or.inr rfl)
       cases w with
       | ans => rfl
-      | alt =>
-        exact absurd (halt rfl)
-          (by simp [Set.singleton_eq_singleton_iff])
+      | alt => exact absurd (halt rfl rfl) (by simp)
     · rintro rfl
       intro q hq hwq
       rcases hq with rfl | rfl
-      · rfl
+      · exact subset_rfl
       · exact absurd hwq (by simp)
   cases u <;> exact key
 
