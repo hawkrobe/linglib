@@ -3,207 +3,138 @@ import Linglib.Fragments.English.Auxiliaries
 import Linglib.Logic.Modal.Basic
 import Mathlib.Data.Fin.Basic
 
--- ============================================================================
--- §0: Six-Criteria Diagnostic Substrate
---     (was Morphology/Core/CliticVsAffix.lean, relocated 0.230.455 —
---     ZP 1983 is the originating paper, anchor lives here)
--- ============================================================================
+/-!
+# Zwicky and Pullum (1983): Cliticization vs. Inflection: English n't
 
-/-! Six criteria for distinguishing clitics from inflectional affixes,
-formalized as a diagnostic profile. The classification (clitic vs. affix)
-is *derived* from the profile, not stipulated. ZP's surprising result:
-English *-n't* scores affix-like on all six.
+This file formalizes [zwicky-pullum-1983]'s six criteria for telling clitics from
+inflectional affixes and their application to the English contracted negator *-n't*. Clitics
+show a low degree of selection with respect to their hosts, no arbitrary gaps, no
+morphophonological or semantic idiosyncrasies, are not affected by syntactic rules, and can
+attach to material already containing clitics; affixes show the opposite on each count
+(criteria A–F). A morpheme's profile on the six criteria (`CliticAffixProfile`) determines its
+status (`CliticAffixProfile.classify`): the English contracted auxiliaries *'s*, *'ve* and *'d*
+are clitic-like on every criterion and classify as simple clitics, the affixes *-ed*, *-s* and
+*-est* are affix-like on every criterion, and *-n't*, taken almost without exception to be a
+clitic, is affix-like on every criterion and classifies as an inflectional affix (`nt_is_affix`).
+Two of the criteria are checked against the fragment of English auxiliaries: the paradigm gaps
+*mayn't* and *amn't* of criterion B (`may_gap`, `am_gap`) and the irregular forms *won't*,
+*can't*, *shan't*, *don't* and *mustn't* of criterion C (`irregularNegatives`). The semantic
+idiosyncrasy of criterion D, that *can't* means `NOT(CAN(P))` while *mustn't* means
+`MUST(NOT(P))`, is recorded as opposite scope patterns (`scope_idiosyncrasy`), and the two
+scopings are separated on a Kripke model (`neg_over_poss_ne_poss_over_neg`,
+`neg_over_nec_ne_nec_over_neg`).
 
-| Criterion | Clitic-like | Affix-like |
-|-----------|-------------|------------|
-| A. Selection | low (any category) | high (specific stems) |
-| B. Paradigm gaps | none | present |
-| C. Morphophonological idiosyncrasies | none | present |
-| D. Semantic idiosyncrasies | none | present |
-| E. Syntactic rules affect combination | no | yes |
-| F. Attaches to cliticized material | yes | no | -/
+## Implementation notes
+
+* The classification takes the paper's two unanimous poles as decisive: six affix-like answers
+  make an inflectional affix, six clitic-like answers a simple clitic. The paper defines special
+  clitics distributionally, not as an intermediate score; the middle branch is a default.
+* The criteria of a profile are Boolean data read off the paper's discussion; only the two
+  fragment-checked criteria are derived.
+
+## References
+
+* [zwicky-pullum-1983]
+-/
 
 namespace Morphology.Diagnostics
 
-/-- How restrictive a morpheme is about what it can attach to.
+/-! ### The six criteria -/
 
-[zwicky-pullum-1983] criterion A: clitics exhibit low selection
-(attach to virtually any word), while affixes exhibit high selection
-(attach only to specific stems or categories). -/
-inductive SelectionDegree where
-  /-- Attaches to words of virtually any category (prepositions, verbs,
-      adjectives, adverbs). Characteristic of simple clitics. -/
+/-- The degree of selection of a bound morpheme with respect to its hosts, criterion A. -/
+inductive SelectionDegree
+  /-- Words of virtually any category, as for the contracted auxiliaries. -/
   | low
-  /-- Attaches to words of a single major category (e.g., past tense
-      *-ed* to verbs, plural *-s* to nouns). Characteristic of
-      inflectional affixes. -/
+  /-- Words of one major category, as for the past tense *-ed*. -/
   | singleCategory
-  /-- Attaches only to a closed list of stems (e.g., *-n't* only to
-      finite auxiliaries). Maximally selective. -/
+  /-- A closed list of stems, as for *-n't* on the finite auxiliaries. -/
   | closedClass
   deriving DecidableEq, Repr
 
 /-- Affixes are more selective than clitics. -/
-def SelectionDegree.IsHighSelection (s : SelectionDegree) : Prop :=
-  s ≠ .low
+def SelectionDegree.IsHighSelection (s : SelectionDegree) : Prop := s ≠ .low
 
-instance : DecidablePred SelectionDegree.IsHighSelection := fun s => by
-  unfold SelectionDegree.IsHighSelection; exact inferInstance
+instance : DecidablePred SelectionDegree.IsHighSelection := λ s =>
+  inferInstanceAs (Decidable (s ≠ .low))
 
-/-- Morphological status of a linguistic form: the free-word / clitic /
-affix cline. The clitic–affix boundary is the central question of
-[zwicky-pullum-1983]; the criteria A–F serve to locate a given morpheme
-on this scale, and `CliticAffixProfile.classify` derives the
-classification from a criteria profile. -/
-inductive MorphStatus where
-  /-- Syntactically independent word. -/
+/-- The status of a bound form on the word, clitic, affix cline. -/
+inductive MorphStatus
+  /-- A syntactically independent word. -/
   | freeWord
-  /-- Simple clitic: an optional variant of a full form, occurring in
-      the same sentence positions as that full form — English contracted
-      auxiliaries *'s*, *'ve*, *'d*. ([bickel-nichols-2007] later
-      redefine the class by low selectivity plus phonological dependence,
-      dropping the full-form requirement; on that rival definition,
-      full-form-less items [zwicky-pullum-1983] class as special clitics
-      count as simple.) -/
+  /-- A simple clitic, an optional variant of a full form in the full form's positions. -/
   | simpleClitic
-  /-- Special clitic: either no corresponding free word exists (Latin
-      *-que*, English possessive *'s*), or the distribution differs from
-      the free word's (Romance pronominal clitics). -/
+  /-- A special clitic, without a corresponding full form or with a distribution of its own. -/
   | specialClitic
-  /-- Inflectional affix: paradigmatic, category-preserving, highly
-      selective, with possible gaps and idiosyncrasies.
-      English *-ed*, *-s*, *-est*, *-n't*. -/
+  /-- An inflectional affix. -/
   | inflAffix
-  /-- Derivational affix: potentially category-changing, often
-      productive but may show lexical restrictions.
-      English *-ness*, *un-*, *-ize*. -/
+  /-- A derivational affix. -/
   | derivAffix
   deriving DecidableEq, Repr
 
-/-- Is this an affix (inflectional or derivational)? -/
-def MorphStatus.IsAffix (s : MorphStatus) : Prop :=
-  s = .inflAffix ∨ s = .derivAffix
+/-- An inflectional or derivational affix. -/
+def MorphStatus.IsAffix (s : MorphStatus) : Prop := s = .inflAffix ∨ s = .derivAffix
 
-instance : DecidablePred MorphStatus.IsAffix :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred MorphStatus.IsAffix := λ _ => inferInstanceAs (Decidable (_ ∨ _))
 
-/-- Is this a clitic (simple or special)? -/
-def MorphStatus.IsClitic (s : MorphStatus) : Prop :=
-  s = .simpleClitic ∨ s = .specialClitic
+/-- A simple or special clitic. -/
+def MorphStatus.IsClitic (s : MorphStatus) : Prop := s = .simpleClitic ∨ s = .specialClitic
 
-instance : DecidablePred MorphStatus.IsClitic :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred MorphStatus.IsClitic := λ _ => inferInstanceAs (Decidable (_ ∨ _))
 
+/-- A morpheme's answers to the six criteria. -/
 structure CliticAffixProfile where
-  morpheme : String
+  /-- Criterion A. -/
   selection : SelectionDegree
+  /-- Criterion B: arbitrary gaps in the set of combinations. -/
   hasArbitraryGaps : Bool
+  /-- Criterion C: morphophonological idiosyncrasies of the combinations. -/
   hasMorphophonIdiosyncrasies : Bool
+  /-- Criterion D: semantic idiosyncrasies of the combinations. -/
   hasSemanticIdiosyncrasies : Bool
+  /-- Criterion E: syntactic rules affect the combinations. -/
   syntacticRulesApply : Bool
+  /-- Criterion F: the morpheme attaches to material already containing clitics. -/
   attachesToCliticizedMaterial : Bool
-  deriving Repr, BEq
+  deriving DecidableEq, Repr
 
-def CliticAffixProfile.affixLikeSelection (p : CliticAffixProfile) : Bool :=
-  decide p.selection.IsHighSelection
+namespace CliticAffixProfile
 
-def CliticAffixProfile.affixScore (p : CliticAffixProfile) : Nat :=
-  let scores : List Bool := [
-    p.affixLikeSelection,
-    p.hasArbitraryGaps,
-    p.hasMorphophonIdiosyncrasies,
-    p.hasSemanticIdiosyncrasies,
-    p.syntacticRulesApply,
-    !p.attachesToCliticizedMaterial
-  ]
-  scores.filter id |>.length
+variable (p : CliticAffixProfile)
 
-def CliticAffixProfile.cliticScore (p : CliticAffixProfile) : Nat :=
-  6 - p.affixScore
+/-- The number of criteria on which the profile is affix-like. -/
+def affixScore : ℕ :=
+  [decide p.selection.IsHighSelection, p.hasArbitraryGaps, p.hasMorphophonIdiosyncrasies,
+    p.hasSemanticIdiosyncrasies, p.syntacticRulesApply,
+    !p.attachesToCliticizedMaterial].count true
 
-/-- Classification from a criteria profile. The two unanimous poles are
-the paper's: all six affix-like is an inflectional affix, all six
-clitic-like a simple clitic. The middle branch is a conservative default
-beyond the paper — [zwicky-pullum-1983] define special clitics
-distributionally (§5), not as an intermediate criteria score. -/
-def CliticAffixProfile.classify (p : CliticAffixProfile) : MorphStatus :=
-  if p.affixScore == 6 then .inflAffix
-  else if p.cliticScore == 6 then .simpleClitic
+/-- The number of criteria on which the profile is clitic-like. -/
+def cliticScore : ℕ := 6 - p.affixScore
+
+/-- The status a profile determines: affix-like on every criterion is an inflectional affix,
+clitic-like on every criterion a simple clitic. -/
+def classify : MorphStatus :=
+  if p.affixScore = 6 then .inflAffix
+  else if p.cliticScore = 6 then .simpleClitic
   else .specialClitic
 
-def CliticAffixProfile.isUnambiguousAffix (p : CliticAffixProfile) : Bool :=
-  p.affixScore == 6
+theorem classify_of_affixScore_eq_six (h : p.affixScore = 6) : p.classify = .inflAffix := by
+  simp [classify, h]
 
-def CliticAffixProfile.isUnambiguousClitic (p : CliticAffixProfile) : Bool :=
-  p.cliticScore == 6
+theorem classify_of_affixScore_eq_zero (h : p.affixScore = 0) : p.classify = .simpleClitic := by
+  simp [classify, h, cliticScore]
 
-theorem classify_all_affix (p : CliticAffixProfile)
-    (h : p.affixScore = 6) :
-    p.classify = .inflAffix := by
-  simp [CliticAffixProfile.classify, h]
-
-theorem classify_all_clitic (p : CliticAffixProfile)
-    (h : p.affixScore = 0) :
-    p.classify = .simpleClitic := by
-  simp [CliticAffixProfile.classify, h, CliticAffixProfile.cliticScore]
-
-theorem classify_total (p : CliticAffixProfile) :
-    p.classify = .inflAffix ∨ p.classify = .simpleClitic
-    ∨ p.classify = .specialClitic := by
-  unfold CliticAffixProfile.classify
-  split
-  · left; rfl
-  · split
-    · right; left; rfl
-    · right; right; rfl
+end CliticAffixProfile
 
 end Morphology.Diagnostics
-
-/-!
-# [zwicky-pullum-1983]: Cliticization vs. Inflection
-[zwicky-pullum-1983]
-
-Empirical data and classification theorems for the argument that
-English contracted negator *-n't* is an inflectional affix, not a
-simple clitic.
-
-## Core argument
-
-Six diagnostics (A–F) separate clitics from inflectional affixes.
-English simple clitics (*'s*, *'ve*, *'d*) score clitic-like on all six.
-English inflectional affixes (*-ed*, *-s*, *-est*) score affix-like on all six.
-The contracted negator *-n't* scores **affix-like on all six** — a surprising
-result given the near-universal prior assumption that it is a clitic.
-
-## Semantic scope bridge (criterion D)
-
-The scope irregularity of negation with modals provides a bridge to
-`Modality`: *can't* means NOT(CAN(P)) but *mustn't*
-means MUST(NOT(P)). This non-compositional scope behavior is characteristic
-of inflectional affixes, not clitics.
-
--/
 
 namespace ZwickyPullum1983
 
 open Morphology.Diagnostics
 
--- ============================================================================
--- §1: Diagnostic Profiles
--- ============================================================================
+/-! ### The profiles -/
 
-/-! ### Simple clitics: *'s* (has/is), *'ve*, *'d*
-
-Z&P §2 (criteria A–D) and §3 (criteria E–F):
-- A. Low selection: attach to prepositions, verbs, adjectives, adverbs
-- B. No arbitrary gaps: combine with any phonologically suitable host
-- C. No morphophonological idiosyncrasies: regular reduction
-- D. No semantic idiosyncrasies: meaning identical to full form
-- E. No syntactic rules affect the combination (no SAI on clitic groups)
-- F. Can attach to material already containing clitics (*I'd've*) -/
-
+/-- The contracted auxiliary *'s*: clitic-like on every criterion. -/
 def cliticS : CliticAffixProfile where
-  morpheme := "'s (has/is)"
   selection := .low
   hasArbitraryGaps := false
   hasMorphophonIdiosyncrasies := false
@@ -211,38 +142,14 @@ def cliticS : CliticAffixProfile where
   syntacticRulesApply := false
   attachesToCliticizedMaterial := true
 
-def cliticVe : CliticAffixProfile where
-  morpheme := "'ve (have)"
-  selection := .low
-  hasArbitraryGaps := false
-  hasMorphophonIdiosyncrasies := false
-  hasSemanticIdiosyncrasies := false
-  syntacticRulesApply := false
-  attachesToCliticizedMaterial := true
+/-- The contracted auxiliary *'ve*. -/
+def cliticVe : CliticAffixProfile := cliticS
 
-def cliticD : CliticAffixProfile where
-  morpheme := "'d (had/would)"
-  selection := .low
-  hasArbitraryGaps := false
-  hasMorphophonIdiosyncrasies := false
-  hasSemanticIdiosyncrasies := false
-  syntacticRulesApply := false
-  attachesToCliticizedMaterial := true
+/-- The contracted auxiliary *'d*. -/
+def cliticD : CliticAffixProfile := cliticS
 
-/-! ### Inflectional affixes: *-ed* (past), *-s* (plural), *-est* (superlative)
-
-Z&P §2 (criteria A–D) and §3 (criteria E–F):
-- A. High selection: each attaches to a single major category
-- B. Arbitrary gaps: *strided, *goed
-- C. Morphophonological idiosyncrasies: *slept*, *went*, *best*
-- D. Semantic idiosyncrasies: *last* (superlative of *late*, but not
-     "most recent" — rather "final")
-- E. Syntactic rules affect affixed words (inflected nouns, verbs,
-     adjectives are regular syntactic units)
-- F. Cannot attach to cliticized material -/
-
+/-- The past tense *-ed*: affix-like on every criterion. -/
 def affixEd : CliticAffixProfile where
-  morpheme := "-ed (past tense)"
   selection := .singleCategory
   hasArbitraryGaps := true
   hasMorphophonIdiosyncrasies := true
@@ -250,40 +157,16 @@ def affixEd : CliticAffixProfile where
   syntacticRulesApply := true
   attachesToCliticizedMaterial := false
 
-def affixPluralS : CliticAffixProfile where
-  morpheme := "-s (noun plural)"
-  selection := .singleCategory
-  hasArbitraryGaps := true      -- *oxes, *sheeps
-  hasMorphophonIdiosyncrasies := true  -- oxen, dice, feet
-  hasSemanticIdiosyncrasies := true     -- "last words" is idiomatic
-  syntacticRulesApply := true
-  attachesToCliticizedMaterial := false
+/-- The plural *-s*. -/
+def affixPluralS : CliticAffixProfile := affixEd
 
-def affixEst : CliticAffixProfile where
-  morpheme := "-est (superlative)"
-  selection := .singleCategory
-  hasArbitraryGaps := true      -- *beautifulest
-  hasMorphophonIdiosyncrasies := true  -- best, worst
-  hasSemanticIdiosyncrasies := true     -- last, most
-  syntacticRulesApply := true
-  attachesToCliticizedMaterial := false
+/-- The superlative *-est*. -/
+def affixEst : CliticAffixProfile := affixEd
 
-/-! ### The contracted negator *-n't*
-
-Z&P §4 (the core of the paper):
-- A. High selection (closedClass): attaches only to finite auxiliaries
-     (not to main verbs, prepositions, adjectives, adverbs)
-- B. Arbitrary gaps: *mayn't, *amn't (Table 1)
-- C. Morphophonological idiosyncrasies: *won't* [wont] ← *will*,
-     *can't* [kænt] ← *can*, *don't* [dont] ← *do*, *shan't* ← *shall*
-- D. Semantic idiosyncrasies: *mustn't* = MUST(NOT(P)), not NOT(MUST(P));
-     *can't* = NOT(CAN(P)), not CAN(NOT(P)). Scope of negation varies.
-- E. SAI applies to *-n't* forms: *Isn't he?*, *Can't you?*, *Haven't
-     they?*. Contracted negator moves with auxiliary under T-to-C.
-- F. Cannot attach to cliticized material: **I'd'ven't* (cf. *I'd've*) -/
-
+/-- The contracted negator *-n't*: selective for the finite auxiliaries, with the gaps
+*mayn't* and *amn't*, the irregular *won't* and *can't*, the scope idiosyncrasy of *mustn't*
+against *can't*, subject to inversion, and unable to attach to *I'd*. -/
 def negNt : CliticAffixProfile where
-  morpheme := "-n't (contracted negator)"
   selection := .closedClass
   hasArbitraryGaps := true
   hasMorphophonIdiosyncrasies := true
@@ -291,230 +174,102 @@ def negNt : CliticAffixProfile where
   syntacticRulesApply := true
   attachesToCliticizedMaterial := false
 
--- ============================================================================
--- §2: Classification Theorems
--- ============================================================================
+theorem cliticS_is_clitic : cliticS.classify = .simpleClitic := by decide
 
-/-! The simple clitics classify as `simpleClitic`. -/
+theorem affixEd_is_affix : affixEd.classify = .inflAffix := by decide
 
-theorem cliticS_is_clitic : cliticS.classify = .simpleClitic := by native_decide
-theorem cliticVe_is_clitic : cliticVe.classify = .simpleClitic := by native_decide
-theorem cliticD_is_clitic : cliticD.classify = .simpleClitic := by native_decide
+/-- *-n't* is an inflectional affix, not a clitic. -/
+theorem nt_is_affix : negNt.classify = .inflAffix := by decide
 
-/-! The inflectional affixes classify as `inflAffix`. -/
+/-- *-n't* is affix-like on all six criteria. -/
+theorem nt_affixScore : negNt.affixScore = 6 := by decide
 
-theorem affixEd_is_affix : affixEd.classify = .inflAffix := by native_decide
-theorem affixPluralS_is_affix : affixPluralS.classify = .inflAffix := by native_decide
-theorem affixEst_is_affix : affixEst.classify = .inflAffix := by native_decide
+/-! ### Criteria B and C on the fragment -/
 
-/-! **The main result**: *-n't* classifies as `inflAffix`, not `simpleClitic`. -/
+open English.Auxiliaries
 
-theorem nt_is_affix : negNt.classify = .inflAffix := by native_decide
-
-/-! *-n't* scores 6/6 affix-like — unambiguous. -/
-
-theorem nt_unambiguous : negNt.isUnambiguousAffix = true := by native_decide
-
-/-! The simple clitics score 0/6 affix-like — unambiguous. -/
-
-theorem clitics_unambiguous :
-    cliticS.isUnambiguousClitic = true ∧
-    cliticVe.isUnambiguousClitic = true ∧
-    cliticD.isUnambiguousClitic = true := by
-  constructor <;> [native_decide; constructor <;> native_decide]
-
-/-! ### Paradigm gaps (criterion B)
-
-*mayn't* and *amn't* have no entry among the fragment's contracted
-negatives. -/
-
-open English.Auxiliaries in
+/-- *mayn't* is a paradigm gap. -/
 theorem may_gap : negative may = none := by decide
 
-open English.Auxiliaries in
+/-- *amn't* is a paradigm gap. -/
 theorem am_gap : negative am = none := by decide
 
-/-! ### Morphophonological irregularity (criterion C) -/
-
-open English.Auxiliaries in
-/-- The contracted negatives whose form is not what suffixing *-n't* to the
-auxiliary would give: *won't*, *can't*, *shan't*, *don't* ([doʊnt], regular
-only in spelling), and *mustn't* with its [t]-deletion. -/
+/-- The contracted negatives whose form is not the auxiliary with *-n't* suffixed: *won't*,
+*can't*, *shan't*, *don't* and *mustn't*. -/
 def irregularNegatives : List Auxiliary := [wont, cant, shant, dont, mustnt]
 
-open English.Auxiliaries in
-/-- Every irregular form is one of the fragment's contracted negatives. -/
 theorem irregular_are_negatives : ∀ a ∈ irregularNegatives, a ∈ negatives := by decide
 
-open English.Auxiliaries in
-/-- The regular *-n't* forms are contracted negatives that are not
-irregular. -/
-theorem regular_negatives :
-    ∀ a ∈ [couldnt, wouldnt, shouldnt], a ∈ negatives ∧ a ∉ irregularNegatives := by
-  decide
-
--- ============================================================================
--- §5: Semantic Scope Bridge (Criterion D)
--- ============================================================================
-
-/-! ### Scope of negation with contracted modals
-
-Z&P observe that *can't* and *mustn't* show opposite scope relations:
-
-- *You can't go home* = NOT(CAN(P)): negation scopes over possibility
-- *You mustn't go home* = MUST(NOT(P)): necessity scopes over negation
-
-This is an irregularity in the connection between the contracted form
-and its uncontracted paraphrase. For *can*, *You cannot go home* = *You
-can not go home* = NOT(CAN(P)). But for *must*, *You must not go home* is
-ambiguous — it can mean MUST(NOT(P)) (the reading that *mustn't*
-unambiguously selects).
-
-This scope irregularity is predicted by the inflectional-affix analysis:
-if *-n't* is an affix, it forms a lexical unit with the auxiliary, and
-lexical items can have idiosyncratic scope properties. If *-n't* were
-a clitic (a reduced form of *not*), its scope should always match *not*.
-
-We formalize this using `box`/`diamond` from
-`Intensional`: a Kripke countermodel exhibits
-an accessibility relation under which the two scope readings diverge. -/
-
-section ScopeBridge
+/-! ### Criterion D: the scope of the contracted negator -/
 
 open Modality (ModalForce)
 open ModalLogic (box diamond)
 
-abbrev World := Fin 4
-
-/-- Scope of negation relative to a modal operator. -/
-inductive NegModalScope where
-  /-- Negation scopes over the modal: NOT(MODAL(P)).
-      *You can't go* = it's not the case that you can go. -/
+/-- The scope of negation relative to the modal in a contracted negative. -/
+inductive NegModalScope
+  /-- `NOT(MODAL(P))`, as in *you can't go*. -/
   | negOverModal
-  /-- Modal scopes over negation: MODAL(NOT(P)).
-      *You mustn't go* = you must not go. -/
+  /-- `MODAL(NOT(P))`, as in *you mustn't go*. -/
   | modalOverNeg
   deriving DecidableEq, Repr
 
-/-- The scope pattern for a contracted negative auxiliary.
-
-*can't*: NOT(CAN(P)) — `negOverModal` with possibility
-*mustn't*: MUST(NOT(P)) — `modalOverNeg` with necessity
-
-That these differ is the semantic idiosyncrasy. If *-n't* were simply
-a reduced form of *not*, both should have the same scope relation. -/
+/-- The modal force and the scope reading a contracted negative selects. -/
 structure ContractedNegScope where
-  /-- The base auxiliary form. -/
-  auxiliary : String
-  /-- The modal force of the auxiliary. -/
   force : ModalForce
-  /-- Which scope reading the contracted form selects. -/
   scope : NegModalScope
-  deriving Repr, BEq
+  deriving DecidableEq, Repr
 
-/-- *can't* selects NOT(CAN(P)): negation over possibility. -/
-def cantScope : ContractedNegScope where
-  auxiliary := "can"
-  force := .possibility
-  scope := .negOverModal
+/-- *can't* denies the possibility. -/
+def cantScope : ContractedNegScope := ⟨.possibility, .negOverModal⟩
 
-/-- *mustn't* selects MUST(NOT(P)): necessity over negation. -/
-def mustntScope : ContractedNegScope where
-  auxiliary := "must"
-  force := .necessity
-  scope := .modalOverNeg
+/-- *mustn't* requires the negation. -/
+def mustntScope : ContractedNegScope := ⟨.necessity, .modalOverNeg⟩
 
-/-- The scope patterns differ — this is the semantic idiosyncrasy. -/
-theorem scope_idiosyncrasy : cantScope.scope ≠ mustntScope.scope := by
-  decide
+/-- The two contracted forms select opposite scopes, the irregularity in the connection between
+the contracted and the uncontracted form. -/
+theorem scope_idiosyncrasy : cantScope.scope ≠ mustntScope.scope := by decide
 
-/-- Kripke accessibility with non-trivial structure: w0 sees {w1, w2};
-every other world sees only itself.
-
-This suffices to separate ¬◇P from ◇¬P and ¬□P from □¬P at w0:
-when P holds at w1 and fails at w2, both accessible worlds disagree,
-so ◇P and ◇¬P are both true while ¬◇P is false. -/
-private def kripkeR : World → World → Prop := fun w v =>
+/-- A four-world frame on which the actual world sees two worlds and every other world only
+itself. -/
+private def kripkeR : Fin 4 → Fin 4 → Prop := λ w v =>
   match w with
-  | 0 => v = (1 : World) ∨ v = (2 : World)
-  | 1 => v = (1 : World)
-  | 2 => v = (2 : World)
-  | 3 => v = (3 : World)
+  | 0 => v = 1 ∨ v = 2
+  | 1 => v = 1
+  | 2 => v = 2
+  | 3 => v = 3
 
-private instance : DecidableRel kripkeR := fun w v => by
+private instance : DecidableRel kripkeR := λ w v => by
   unfold kripkeR
   match w with
-  | 0 => infer_instance
-  | 1 => infer_instance
-  | 2 => infer_instance
-  | 3 => infer_instance
+  | 0 | 1 | 2 | 3 => infer_instance
 
-/-- Witness proposition: true at w0/w1, false at w2/w3. -/
-private def witnessP : World → Prop := fun w =>
-  match w with | 0 | 1 => True | 2 | 3 => False
+/-- A proposition true at the first two worlds and false at the others. -/
+private def witnessP : Fin 4 → Prop := λ w =>
+  match w with
+  | 0 | 1 => True
+  | 2 | 3 => False
 
-private instance : DecidablePred witnessP := fun w => by
+private instance : DecidablePred witnessP := λ w => by
   unfold witnessP
   match w with
-  | 0 => infer_instance
-  | 1 => infer_instance
-  | 2 => infer_instance
-  | 3 => infer_instance
+  | 0 | 1 | 2 | 3 => infer_instance
 
-/-- NOT(CAN(P)) and CAN(NOT(P)) are not equivalent in general.
-
-There exists a Kripke accessibility relation where ¬◇P ≠ ◇¬P: when w0
-accesses worlds where P differs, ◇P and ◇¬P are both true, so
-¬◇P = false but ◇¬P = true. -/
+/-- `NOT(CAN(P))` and `CAN(NOT(P))` come apart: on the frame, both `P` and `¬P` are possible at
+the actual world. -/
 theorem neg_over_poss_ne_poss_over_neg :
-    ∃ (R : World → World → Prop),
-    ¬(∀ (p : World → Prop) (w : World),
-      ¬ diamond R p w ↔ diamond R (fun w' => ¬ p w') w) := by
-  refine ⟨kripkeR, ?_⟩
-  intro h
-  have := h witnessP (0 : World)
+    ∃ R : Fin 4 → Fin 4 → Prop,
+      ¬ ∀ (p : Fin 4 → Prop) (w : Fin 4), ¬ diamond R p w ↔ diamond R (λ w' => ¬ p w') w := by
+  refine ⟨kripkeR, λ h => ?_⟩
+  have := h witnessP 0
   simp [diamond, kripkeR, witnessP] at this
 
-/-- NOT(MUST(P)) and MUST(NOT(P)) are not equivalent in general.
-
-There exists a Kripke accessibility relation where ¬□P ≠ □¬P: failing
-to be necessary (¬□P = true when P fails at w2) is weaker than being
-necessarily false (□¬P = false when P holds at w1). -/
+/-- `NOT(MUST(P))` and `MUST(NOT(P))` come apart: on the frame, `P` is not necessary at the
+actual world, yet not necessarily false either. -/
 theorem neg_over_nec_ne_nec_over_neg :
-    ∃ (R : World → World → Prop),
-    ¬(∀ (p : World → Prop) (w : World),
-      ¬ box R p w ↔ box R (fun w' => ¬ p w') w) := by
-  refine ⟨kripkeR, ?_⟩
-  intro h
-  have := h witnessP (0 : World)
+    ∃ R : Fin 4 → Fin 4 → Prop,
+      ¬ ∀ (p : Fin 4 → Prop) (w : Fin 4), ¬ box R p w ↔ box R (λ w' => ¬ p w') w := by
+  refine ⟨kripkeR, λ h => ?_⟩
+  have := h witnessP 0
   simp [box, kripkeR, witnessP] at this
-
-end ScopeBridge
-
--- ============================================================================
--- §6: Selection Restriction Verification (Criterion A)
--- ============================================================================
-
-/-! *-n't* attaches only to finite auxiliaries. Verify that the host set
-matches the auxiliary inventory from `Fragments/English/FunctionWords`. -/
-
-open English.Auxiliaries in
-/-- The number of auxiliaries with contracted negative forms
-    (= the productive range of *-n't*). -/
-def ntHostCount : Nat := contractions.length
-
-open English.Auxiliaries in
-/-- The number of paradigm gaps (auxiliaries without *-n't*). -/
-def ntGapCount : Nat :=
-  allAuxiliaries.filter (λ a => (negative a).isNone) |>.length
-
-open English.Auxiliaries in
-/-- Most auxiliaries have a contracted negative form, but there are gaps. -/
-theorem nt_has_gaps : ntGapCount > 0 := by decide
-
-open English.Auxiliaries in
-/-- At least five auxiliaries show phonological irregularity in their
-contracted negative form (Z&P criterion C). -/
-theorem nt_has_irregulars : irregularNegatives.length ≥ 5 := by decide
 
 end ZwickyPullum1983
