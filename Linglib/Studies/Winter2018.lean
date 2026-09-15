@@ -1,97 +1,93 @@
 import Linglib.Semantics.Plurality.Reciprocal
+import Linglib.Data.Examples.Winter2018
 
 /-!
-# Winter (2018): Symmetric Predicates and Reciprocal Alternations
+# Winter (2018): Symmetric Predicates and the Semantics of Reciprocal Alternations
 
-[winter-2018]
+This file formalizes [winter-2018]'s account of reciprocal alternations, which pair a
+unary collective predicate with a binary one. An alternation is plain when the collective
+holds of a sum of two entities exactly if the binary predicate holds between them in both
+directions (7) (`PlainReciprocity`), and the Reciprocity-Symmetry Generalization says that
+an alternation is plain if and only if the binary predicate is truth-conditionally symmetric
+(18) (`RSG`). The generalization is not a matter of logic, since a one-way binary predicate
+paired with an empty collective is vacuously plain
+(`exists_plainReciprocity_not_tcSymmetric`); it follows from taking the collective meaning
+as basic and the binary predicate as its symmetric image (22), which is symmetric and plain
+by the commutativity of sum formation (`rsg_symmetricImage`). Non-symmetric predicates like
+*hug* show weaker patterns (`Pr1`, `Pr2`, `Pr4`), of which only the disjunctive entailment
+from the collective to one direction of the binary predicate is shared by all alternations
+(`Pr5`); plain reciprocity is exactly the conjunction of the first two
+(`plainReciprocity_iff_pr1_pr2`). The event-based rule of [dimitriadis-2008] (42), which
+derives the collective from two specifying sub-events, leaves the two unidirectional hugs of
+(38) without a common event (`exists_dimitriadis_not_pr1`). The paper's own account of the
+non-plain cases is preferential: the typicality of an event as a collective one grows with the
+number of directed pairs the binary predicate relates in it (58) (`typ`), so that more
+directed relations only raise it (`typ_mono`), a positive threshold yields the disjunctive
+entailment (`Pr5_of_preferential`), and the threshold of two yields plain reciprocity on a
+pair (`two_le_typ_pair_iff`).
 
-Semantics & Pragmatics 11(1): 1–52.
+## Implementation notes
 
-Reciprocal alternations pair a unary-collective predicate P (*Sue and Dan
-dated*) with a binary predicate R (*Sue dated Dan*). Winter's
-**Reciprocity-Symmetry Generalization** (RSG, def. 18): the alternation is
-*plain* — P(x+y) ⇔ R(x,y) ∧ R(y,x) (def. 7) — iff R is truth-conditionally
-symmetric. The RSG is not a logical necessity (an artificial ★Xhug refutes
-it, fn. 12); Winter derives it lexically: symmetric predicates take the
-collective meaning as *basic* and obtain the binary form as its symmetric
-image R := λx λy. P(x+y) (def. 22). This reverses the derivation direction
-of [dimitriadis-2008] and [siloni-2012], which map binary meanings to
-reciprocal ones (fn. 14) — a genuine divergence from
-`Studies/Siloni2012.lean`, where lexical reciprocal verbs are derived from
-transitive alternates by bundling.
+Sums of two distinct entities are pair finsets, and the typicality of (58) is the count of
+directed pairs rather than a value proportional to it. Table 3's per-verb patterns are
+judgments about lexical items and are recorded in the paper's examples rather than as a
+table; the counting of events and the comparison with [siloni-2012]'s derivation of
+reciprocals from transitives are not formalized.
 
-Non-symmetric reciprocals (*hug*, *fight*, *collide*) satisfy no plain
-equivalence; §3.3 charts their logical patterns (Pr₁–Pr₅, Table 3), of
-which only the weak disjunctive Pr₅ — P(x+y) ⇒ R(x,y) ∨ R(y,x) — is shared
-by all reciprocal alternations. Their full semantics is preferential
-(typicality-based, §3.5, supported by experimental judgment data on Dutch
-contact and communication verbs), beyond the event-free logical core
-formalized here.
+## References
 
-Sums of two distinct atoms are encoded as pair `Finset`s `{x, y}`,
-matching the `(R, X)` signature of `Reciprocal`.
-
-## Main declarations
-
-* `PlainReciprocity` (def. 7), `TCSymmetric`, `symmetricImage` (def. 22)
-* `symmetricImage_tcSymmetric`, `plainReciprocity_symmetricImage` —
-  the symmetric image is symmetric and plain: principle P1, which
-  derives the RSG for collective-basic predicates
-* `plainReciprocity_iff_pr1_pr2` — plain reciprocity decomposes exactly
-  into Pr₁ ∧ Pr₂
-* `exists_plainReciprocity_not_tcSymmetric` — plainR alone does not
-  force symmetry (fn. 12's ★Xhug): the RSG is a lexicon fact, not logic
-* `AlternationProfile` + `table3` — Table 3's per-verb Pr-patterns, with
-  the Pr₅ universal and the Pr₄ ⇒ Pr₁ consistency check
+* [winter-2018]
+* [dimitriadis-2008]
+* [siloni-2012]
 -/
 
 namespace Winter2018
 
 variable {A : Type*} [DecidableEq A]
 
-/-- Def. (7), plain reciprocity: for distinct atoms, the collective holds
-    of the pair-sum iff the binary holds in both directions
-    ("A and B dated" ⇔ "A dated B and B dated A"). -/
+/-! ### Plain reciprocity and symmetry -/
+
+/-- Plain reciprocity (7): for distinct entities, the collective holds of their sum exactly
+if the binary predicate holds between them in both directions. -/
 def PlainReciprocity (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
   ∀ x y : A, x ≠ y → (P {x, y} ↔ R x y ∧ R y x)
 
-/-- Truth-conditional symmetry of a binary predicate (§2.2; Strawson
-    effects like *sister*'s gender presupposition are factored out). -/
+/-- Truth-conditional symmetry of a binary predicate. -/
 def TCSymmetric (R : A → A → Prop) : Prop := ∀ x y, R x y ↔ R y x
 
-/-- Def. (22), the symmetric image of a collective predicate:
-    `R x y` iff `P` holds of the pair-sum (*similar to* from
-    collective *similar*). -/
-def symmetricImage (P : Finset A → Prop) : A → A → Prop :=
-  fun x y => P {x, y}
+/-- The Reciprocity-Symmetry Generalization (18) for one alternation: it is plain exactly if
+its binary predicate is symmetric. -/
+def RSG (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
+  PlainReciprocity P R ↔ TCSymmetric R
 
-/-- The symmetric image is truth-conditionally symmetric — by
-    commutativity of sum formation (Winter's point (i) on def. 7). -/
-theorem symmetricImage_tcSymmetric (P : Finset A → Prop) :
-    TCSymmetric (symmetricImage P) := by
+/-- The symmetric image of a collective predicate (22): the binary predicate holding of two
+entities when the collective holds of their sum. -/
+def symmetricImage (P : Finset A → Prop) : A → A → Prop := λ x y => P {x, y}
+
+/-- The symmetric image is symmetric, by the commutativity of sum formation. -/
+theorem symmetricImage_tcSymmetric (P : Finset A → Prop) : TCSymmetric (symmetricImage P) := by
   intro x y
   simp [symmetricImage, Finset.pair_comm]
 
-/-- Principle P1: the symmetric image stands in plain reciprocity with
-    its source collective. With `symmetricImage_tcSymmetric` this
-    derives the RSG for predicates whose binary form is the symmetric
-    image of a basic collective meaning. -/
+/-- The symmetric image is in plain reciprocity with its collective. -/
 theorem plainReciprocity_symmetricImage (P : Finset A → Prop) :
     PlainReciprocity P (symmetricImage P) := by
   intro x y _
   constructor
-  · exact fun h => ⟨h, by simpa [symmetricImage, Finset.pair_comm] using h⟩
-  · exact fun h => h.1
+  · exact λ h => ⟨h, by simpa [symmetricImage, Finset.pair_comm] using h⟩
+  · exact λ h => h.1
 
-/-- The RSG is not logically forced: a plain alternation with a
-    non-symmetric binary predicate exists (fn. 12's ★Xhug — a one-way
-    *hug* paired with the everywhere-false collective is vacuously
-    plain). The RSG is thus a generalization about natural-language
-    lexicons, not a consequence of the notion of reciprocity. -/
+/-- A collective predicate with its symmetric image satisfies the generalization: this is
+how the paper derives it for plain reciprocals. -/
+theorem rsg_symmetricImage (P : Finset A → Prop) : RSG P (symmetricImage P) :=
+  iff_of_true (plainReciprocity_symmetricImage P) (symmetricImage_tcSymmetric P)
+
+/-- The generalization is not logically forced: a one-way binary predicate paired with the
+empty collective is vacuously plain. -/
 theorem exists_plainReciprocity_not_tcSymmetric :
     ∃ (R : Bool → Bool → Prop) (P : Finset Bool → Prop),
       PlainReciprocity P R ∧ ¬ TCSymmetric R := by
-  refine ⟨fun x y => x = true ∧ y = false, fun _ => False, ?_, ?_⟩
+  refine ⟨λ x y => x = true ∧ y = false, λ _ => False, ?_, ?_⟩
   · intro x y hxy
     constructor
     · exact False.elim
@@ -101,105 +97,114 @@ theorem exists_plainReciprocity_not_tcSymmetric :
     have := (h true false).mp ⟨rfl, rfl⟩
     exact Bool.noConfusion this.1
 
-/-! ### The Pr-patterns of non-plain alternations (§3.3) -/
+/-! ### The patterns of non-plain alternations (§3.3) -/
 
-/-- (Pr₁): bidirectional `R` yields the collective. Fails for *hug*
-    (separate unidirectional hugs do not make a mutual hug). -/
+/-- (Pr₁): the binary predicate in both directions yields the collective. -/
 def Pr1 (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
   ∀ x y : A, x ≠ y → R x y → R y x → P {x, y}
 
-/-- (Pr₂): the collective yields `R` — in both directions, by sum
-    commutativity (`Pr2.both`). Holds for *be in love* and Hebrew
-    *makir*; experimental judgments refute it for *hug*-type verbs. -/
+/-- (Pr₂): the collective yields the binary predicate. -/
 def Pr2 (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
   ∀ x y : A, x ≠ y → P {x, y} → R x y
 
-/-- (Pr₄): one-directional `R` already yields the collective
-    (*break up*, *divorce*). -/
+/-- (Pr₄): one direction of the binary predicate yields the collective, as with *break up*
+(46). -/
 def Pr4 (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
   ∀ x y : A, x ≠ y → R x y → P {x, y}
 
-/-- (Pr₅): the collective yields `R` in at least one direction — the
-    weak disjunctive pattern shared by ALL reciprocal alternations,
-    plain and non-plain alike. -/
+/-- (Pr₅): the collective yields the binary predicate in at least one direction, the pattern
+every reciprocal alternation shares. -/
 def Pr5 (P : Finset A → Prop) (R : A → A → Prop) : Prop :=
-  ∀ x y : A, x ≠ y → P {x, y} → (R x y ∨ R y x)
+  ∀ x y : A, x ≠ y → P {x, y} → R x y ∨ R y x
 
-/-- Pr₂ delivers both directions, since `{x, y} = {y, x}`. -/
-theorem Pr2.both {P : Finset A → Prop} {R : A → A → Prop}
-    (h : Pr2 P R) {x y : A} (hxy : x ≠ y) (hP : P {x, y}) :
-    R x y ∧ R y x :=
+variable {P : Finset A → Prop} {R : A → A → Prop}
+
+/-- (Pr₂) delivers both directions, since the sum is commutative. -/
+theorem Pr2.both (h : Pr2 P R) {x y : A} (hxy : x ≠ y) (hP : P {x, y}) : R x y ∧ R y x :=
   ⟨h x y hxy hP, h y x hxy.symm (Finset.pair_comm x y ▸ hP)⟩
 
-/-- Pr₄ is logically stronger than Pr₁ (§3.3). -/
-theorem Pr4.pr1 {P : Finset A → Prop} {R : A → A → Prop}
-    (h : Pr4 P R) : Pr1 P R :=
-  fun x y hxy hR _ => h x y hxy hR
+/-- (Pr₄) is stronger than (Pr₁). -/
+theorem Pr4.pr1 (h : Pr4 P R) : Pr1 P R := λ x y hxy hR _ => h x y hxy hR
 
-/-- Pr₂ is logically stronger than Pr₅. -/
-theorem Pr2.pr5 {P : Finset A → Prop} {R : A → A → Prop}
-    (h : Pr2 P R) : Pr5 P R :=
-  fun x y hxy hP => Or.inl (h x y hxy hP)
+/-- (Pr₂) is stronger than (Pr₅). -/
+theorem Pr2.pr5 (h : Pr2 P R) : Pr5 P R := λ x y hxy hP => Or.inl (h x y hxy hP)
 
-/-- Plain reciprocity entails the weak universal Pr₅. -/
-theorem PlainReciprocity.pr5 {P : Finset A → Prop} {R : A → A → Prop}
-    (h : PlainReciprocity P R) : Pr5 P R :=
-  fun x y hxy hP => Or.inl ((h x y hxy).mp hP).1
+theorem PlainReciprocity.pr5 (h : PlainReciprocity P R) : Pr5 P R :=
+  λ x y hxy hP => Or.inl ((h x y hxy).mp hP).1
 
-/-- Plain reciprocity decomposes exactly into Pr₁ together with Pr₂. -/
-theorem plainReciprocity_iff_pr1_pr2
-    {P : Finset A → Prop} {R : A → A → Prop} :
-    PlainReciprocity P R ↔ (Pr1 P R ∧ Pr2 P R) := by
+/-- Plain reciprocity is (Pr₁) together with (Pr₂). -/
+theorem plainReciprocity_iff_pr1_pr2 : PlainReciprocity P R ↔ Pr1 P R ∧ Pr2 P R := by
   constructor
-  · exact fun h => ⟨fun x y hxy hR hR' => (h x y hxy).mpr ⟨hR, hR'⟩,
-      fun x y hxy hP => ((h x y hxy).mp hP).1⟩
+  · exact λ h => ⟨λ x y hxy hR hR' => (h x y hxy).mpr ⟨hR, hR'⟩,
+      λ x y hxy hP => ((h x y hxy).mp hP).1⟩
   · rintro ⟨h1, h2⟩ x y hxy
-    exact ⟨fun hP => h2.both hxy hP, fun h => h1 x y hxy h.1 h.2⟩
+    exact ⟨λ hP => h2.both hxy hP, λ h => h1 x y hxy h.1 h.2⟩
 
-/-! ### Table 3: logical patterns per verb -/
+/-! ### Events: Dimitriadis's rule and preferential reciprocity -/
 
-/-- A row of Winter's Table 3: which Pr-patterns a non-plain reciprocal
-    alternation exhibits (`none` where the paper leaves the cell
-    undetermined). Pr₃ — bidirectional `R` *plus simultaneity* yields
-    the collective — is event-level and recorded as data only. -/
-structure AlternationProfile where
-  predicate : String
-  pr1 : Option Bool
-  pr2 : Option Bool
-  pr3 : Bool
-  pr4 : Bool
-  pr5 : Bool
-  deriving DecidableEq, Repr
+section Events
 
-def hug : AlternationProfile :=
-  ⟨"hug", some false, some false, true, false, true⟩
-def kiss : AlternationProfile :=
-  ⟨"kiss", some false, none, true, false, true⟩
-def fight : AlternationProfile :=
-  ⟨"fight", some false, some false, true, false, true⟩
-def breakUp : AlternationProfile :=
-  ⟨"break up", some true, some false, true, true, true⟩
-def divorce : AlternationProfile :=
-  ⟨"divorce", some true, some false, true, true, true⟩
-def collide : AlternationProfile :=
-  ⟨"collide", none, some false, true, false, true⟩
-def inLove : AlternationProfile :=
-  ⟨"be/fall in love", some false, some true, false, false, true⟩
-def talk : AlternationProfile :=
-  ⟨"talk", some false, some false, false, false, true⟩
-def makir : AlternationProfile :=
-  ⟨"makir (Hebrew 'know')", some false, some true, false, false, true⟩
+variable {E : Type*}
 
-def table3 : List AlternationProfile :=
-  [hug, kiss, fight, breakUp, divorce, collide, inLove, talk, makir]
+/-- [dimitriadis-2008]'s rule (42): a collective event of two entities is one specified by
+a sub-event of the binary predicate in each direction. -/
+def Dimitriadis (spec : E → E → Prop) (R : E → A → A → Prop)
+    (P : E → Finset A → Prop) : Prop :=
+  ∀ e (x y : A), x ≠ y →
+    (P e {x, y} ↔ ∃ e₁ e₂, spec e₁ e ∧ spec e₂ e ∧ R e₁ x y ∧ R e₂ y x)
 
-/-- §3.3's universal: every alternation in Table 3 satisfies the weak
-    disjunctive Pr₅. -/
-theorem table3_pr5 : table3.all (·.pr5) := by decide
+/-- The rule does not make (38) entail (37): with a domain of events not closed under a
+common specified event, the two unidirectional hugs belong to no collective hug. -/
+theorem exists_dimitriadis_not_pr1 :
+    ∃ (spec : Bool → Bool → Prop) (R : Bool → Bool → Bool → Prop)
+      (P : Bool → Finset Bool → Prop),
+      Dimitriadis spec R P ∧ (∃ e₁ e₂, R e₁ true false ∧ R e₂ false true) ∧
+        ∀ e, ¬ P e {true, false} := by
+  refine ⟨(· = ·),
+    λ e x y => (e = true ∧ x = true ∧ y = false) ∨ (e = false ∧ x = false ∧ y = true),
+    λ _ _ => False, ?_, ⟨true, false, by decide, by decide⟩, λ _ h => h⟩
+  intro e x y hxy
+  refine iff_of_false id ?_
+  rintro ⟨e₁, e₂, rfl, rfl, h₁, h₂⟩
+  rcases h₁ with ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ <;> simp at h₂
 
-/-- Data-logic consistency: rows claiming Pr₄ also claim Pr₁, as
-    `Pr4.pr1` requires (*break up*, *divorce*). -/
-theorem table3_pr4_consistent :
-    table3.all (fun r => !r.pr4 || r.pr1 == some true) := by decide
+variable (R : E → A → A → Prop) [∀ e, DecidableRel (R e)]
+
+/-- The typicality of an event as a collective event of a group (58): the number of ordered
+pairs of distinct members the binary predicate relates in it. -/
+def typ (e : E) (s : Finset A) : ℕ := ((s ×ˢ s).filter λ p => p.1 ≠ p.2 ∧ R e p.1 p.2).card
+
+/-- (57): an event with more directed relations is at least as typical. -/
+theorem typ_mono {R' : E → A → A → Prop} [∀ e, DecidableRel (R' e)] {e : E}
+    (h : ∀ x y, R e x y → R' e x y) (s : Finset A) : typ R e s ≤ typ R' e s :=
+  Finset.card_le_card λ p hp => by
+    simp only [Finset.mem_filter] at hp ⊢
+    exact ⟨hp.1, hp.2.1, h _ _ hp.2.2⟩
+
+/-- On a pair the typicality counts the two directions. -/
+theorem typ_pair {x y : A} (hxy : x ≠ y) (e : E) :
+    typ R e {x, y} = (if R e x y then 1 else 0) + if R e y x then 1 else 0 := by
+  unfold typ
+  rw [Finset.card_eq_sum_ones, Finset.sum_filter, Finset.sum_product]
+  simp [hxy, hxy.symm]
+
+/-- A preferential reciprocal with a positive threshold satisfies (Pr₅): the collective
+needs some directed relation. -/
+theorem Pr5_of_preferential {θ : ℕ} (hθ : 0 < θ) (e : E) :
+    Pr5 (λ s => θ ≤ typ R e s) (R e) := by
+  intro x y hxy h
+  rw [typ_pair R hxy] at h
+  by_contra hn
+  push Not at hn
+  simp [hn.1, hn.2] at h
+  omega
+
+/-- The threshold of two is plain reciprocity on a pair: both directions are required. -/
+theorem two_le_typ_pair_iff {x y : A} (hxy : x ≠ y) (e : E) :
+    2 ≤ typ R e {x, y} ↔ R e x y ∧ R e y x := by
+  rw [typ_pair R hxy]
+  split_ifs <;> simp_all
+
+end Events
 
 end Winter2018
