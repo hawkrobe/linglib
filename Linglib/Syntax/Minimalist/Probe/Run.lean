@@ -22,8 +22,12 @@ valuation, is the list of interacting goals together with the satisfier.
 
 ## Main definitions
 
-* `Minimalist.Probe.Result`, `Minimalist.Probe.run`, `Minimalist.Probe.inspected`
-* `Minimalist.Probe.Spec`, `Minimalist.Probe.Spec.toProbe`, `Minimalist.Probe.Spec.run`
+* `Minimalist.Probe.run`: the Agree operation, a fold over the goal sequence returning a
+  `Minimalist.Probe.Result`, the state, the flagged goals and the satisfier.
+* `Minimalist.Probe.inspected`: the goals up to and including the first satisfier.
+* `Minimalist.Probe.Spec`: an interaction and a satisfaction feature set, denoting a probe over
+  goals exposing feature sets by `Minimalist.Probe.Spec.toProbe` and run by
+  `Minimalist.Probe.Spec.run`.
 
 ## Main results
 

@@ -19,10 +19,16 @@ denote a `Probe` by a `toProbe` map rather than re-implementing search.
 
 ## Main definitions
 
-* `Minimalist.Probe`, `Minimalist.Probe.relativized`, `Minimalist.Probe.ofInt`,
-  `Minimalist.Probe.insatiable`, `Minimalist.Probe.indiscriminate`
-* `Minimalist.Probe.search`, `Minimalist.Probe.agree`, `Minimalist.Probe.outcome`
-* `Minimalist.Probe.Licensed`, `Minimalist.Probe.AllLicensed`, `Minimalist.Probe.cascade`
+* `Minimalist.Probe`: an interaction predicate and a satisfaction predicate on goals.
+* `Minimalist.Probe.relativized`, `Minimalist.Probe.ofInt`, `Minimalist.Probe.insatiable`,
+  `Minimalist.Probe.indiscriminate`: the probes `[INT:F, SAT:F]`, `[INT:F, SAT:⊤]`,
+  `[INT:F, SAT:⊥]` and `[INT:⊤, SAT:⊤]`.
+* `Minimalist.Probe.search`, `Minimalist.Probe.agree`: the first satisfying goal, and that goal
+  when it interacts.
+* `Minimalist.Probe.outcome`: `valued` iff the search finds a goal.
+* `Minimalist.Probe.Licensed`, `Minimalist.Probe.AllLicensed`: a goal the search reaches, and
+  every needy goal being reached.
+* `Minimalist.Probe.cascade`: the first finding of an ordered sequence of probes.
 
 ## Main results
 
