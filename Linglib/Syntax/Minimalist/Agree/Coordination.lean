@@ -12,8 +12,9 @@ to the coordination and converts them by intersection, so that the coordination 
 the features every conjunct has. Uninterpretable sets are not intersected but realized set by
 set, and their realization converges only when every set receives the same exponent; at
 Transfer the redundancy rule sends a nominal's interpretable features to PF when it has no
-uninterpretable ones. The features a nominal contributes are the closure of a node in a feature
-geometry (`Minimalist.Geometry`), and a geometry satisfying mismatch resolution needs no default.
+uninterpretable ones. The features a nominal contributes are the entailments of a node of a
+feature geometry (`Minimalist.Geometry`), and a geometry satisfying mismatch resolution needs no
+default.
 
 ## Main definitions
 
