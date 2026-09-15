@@ -53,7 +53,7 @@ under enrichment (`asher_concl_enriched`, `asher_blocked`).
 
 namespace Yan2023
 
-open QBSML
+open FirstOrder QBSML
 open BSML (QVar)
 
 variable {W Var Domain Const Pred : Type*}
@@ -133,8 +133,8 @@ private theorem eval_within_disj_without (P Q : Pred) (x : Var) (b : Bool)
       rw [← hsplit] at hi
       exact (Finset.mem_union.mp hi).elim (hQ₁ i) (hQ₂ i)
     · intro hQ
-      refine ⟨s.filter (λ i => ∀ d, i.assign x = some d → M.relInterp₁ P i.world d),
-        s.filter (λ i => ¬ ∀ d, i.assign x = some d → M.relInterp₁ P i.world d),
+      refine ⟨s.filter (λ i => ∀ d, i.assign x = some d → M.relInterp₁ (predSymb P) i.world d),
+        s.filter (λ i => ¬ ∀ d, i.assign x = some d → M.relInterp₁ (predSymb P) i.world d),
         Finset.filter_union_filter_not_eq _ s, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
       · intro i hi
         obtain ⟨his, hcond⟩ := Finset.mem_filter.mp hi
@@ -174,8 +174,10 @@ private theorem eval_predc_disj (P Q : Pred) (c : Const) (b : Bool)
       rw [← hsplit] at hi
       exact (Finset.mem_union.mp hi).elim (hQ₁ i) (hQ₂ i)
     · intro hQ
-      refine ⟨s.filter (λ i => M.relInterp₁ P i.world (M.constInterp c i.world)),
-        s.filter (λ i => ¬ M.relInterp₁ P i.world (M.constInterp c i.world)),
+      refine ⟨s.filter (λ i => M.relInterp₁ (predSymb P) i.world
+          (M.constInterp ((Language.monadic Pred).con c) i.world)),
+        s.filter (λ i => ¬ M.relInterp₁ (predSymb P) i.world
+          (M.constInterp ((Language.monadic Pred).con c) i.world)),
         Finset.filter_union_filter_not_eq _ s, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
       · exact λ i hi => (Finset.mem_filter.mp hi).2
       · exact λ i hi => hQ i (Finset.mem_of_mem_filter i hi)
@@ -260,7 +262,8 @@ theorem fc_of_reinterpret {sub : Pred → Pred → Prop} [DecidableRel sub] {P Q
 indices sees some world, all of them verifying the atom. -/
 theorem support_enrich_nec_predc {A : Pred} {c : Const} (hs : s.Nonempty)
     (hacc : ∀ i ∈ s, (M.access i.world).Nonempty)
-    (hA : ∀ i ∈ s, ∀ w ∈ M.access i.world, M.relInterp₁ A w (M.constInterp c w)) :
+    (hA : ∀ i ∈ s, ∀ w ∈ M.access i.world,
+      M.relInterp₁ (predSymb A) w (M.constInterp ((Language.monadic Pred).con c) w)) :
     support M (Formula.enrich (Formula.nec (.predc A c))) s := by
   rw [support_enrich_nec_iff]
   refine ⟨λ i hi => ⟨λ j hj => hA i hi j.world (State.mem_modalLift.mp hj).1, ?_⟩, hs⟩
@@ -270,7 +273,8 @@ theorem support_enrich_nec_predc {A : Pred} {c : Const} (hs : s.Nonempty)
 /-- The enriched disjunctive want `[□(A c ∨ B c)]⁺` is unsupported at a nonempty state none
 of whose accessible worlds verifies `B c`. -/
 theorem not_support_enrich_nec_disj {A B : Pred} {c : Const} (hs : s.Nonempty)
-    (hB : ∀ i ∈ s, ∀ w ∈ M.access i.world, ¬ M.relInterp₁ B w (M.constInterp c w)) :
+    (hB : ∀ i ∈ s, ∀ w ∈ M.access i.world,
+      ¬ M.relInterp₁ (predSymb B) w (M.constInterp ((Language.monadic Pred).con c) w)) :
     ¬ support M (Formula.enrich (Formula.nec (.disj (.predc A c) (.predc B c)))) s := by
   intro h
   obtain ⟨i, hi⟩ := hs
@@ -281,7 +285,8 @@ theorem not_support_enrich_nec_disj {A B : Pred} {c : Const} (hs : s.Nonempty)
 indices sees some world, all of them holding an individual that is `P` and `Q`. -/
 theorem support_enrich_nec_exi_within {P Q : Pred} {x : Var} (hs : s.Nonempty)
     (hacc : ∀ i ∈ s, (M.access i.world).Nonempty)
-    (hPQ : ∀ i ∈ s, ∀ w ∈ M.access i.world, ∃ d, M.relInterp₁ P w d ∧ M.relInterp₁ Q w d) :
+    (hPQ : ∀ i ∈ s, ∀ w ∈ M.access i.world,
+      ∃ d, M.relInterp₁ (predSymb P) w d ∧ M.relInterp₁ (predSymb Q) w d) :
     support M (Formula.enrich (Formula.nec (.exi x (within P Q x)))) s := by
   classical
   rw [support_enrich_nec_iff]
@@ -290,7 +295,8 @@ theorem support_enrich_nec_exi_within {P Q : Pred} {x : Var} (hs : s.Nonempty)
   have hL : (State.modalLift (M.access i.world) i.assign).Nonempty :=
     ⟨(w₀, i.assign), State.mem_modalLift.mpr ⟨hw₀, rfl⟩⟩
   set hf : Index W Var Domain → Finset Domain :=
-    λ j => Finset.univ.filter (λ d => M.relInterp₁ P j.world d ∧ M.relInterp₁ Q j.world d)
+    λ j => Finset.univ.filter
+      (λ d => M.relInterp₁ (predSymb P) j.world d ∧ M.relInterp₁ (predSymb Q) j.world d)
   have hfne : ∀ j ∈ State.modalLift (M.access i.world) i.assign, (hf j).Nonempty := by
     intro j hj
     obtain ⟨d, hd⟩ := hPQ i hi j.world (State.mem_modalLift.mp hj).1
@@ -321,7 +327,8 @@ accessible worlds have every `Q` within `P`: by free choice it would need an acc
 outside `P`. -/
 theorem not_support_enrich_reinterpret {sub : Pred → Pred → Prop} [DecidableRel sub]
     {P Q : Pred} {x : Var} (hsub : sub P Q) (hs : s.Nonempty)
-    (hPQ : ∀ i ∈ s, ∀ w ∈ M.access i.world, ∀ d, M.relInterp₁ Q w d → M.relInterp₁ P w d) :
+    (hPQ : ∀ i ∈ s, ∀ w ∈ M.access i.world,
+      ∀ d, M.relInterp₁ (predSymb Q) w d → M.relInterp₁ (predSymb P) w d) :
     ¬ support M (Formula.enrich (reinterpret sub P (Formula.nec (.exi x (.pred Q x))))) s := by
   intro h
   obtain ⟨i, hi⟩ := hs
@@ -391,8 +398,8 @@ sub-predicate's denotation is a proper subset globally. -/
 
 /-- `P` is a sub-predicate of `Q` in `M`: its denotation is a proper subset of `Q`'s. -/
 def IsSubPred (M : Model W Domain Const Pred) (P Q : Pred) : Prop :=
-  (∀ w d, M.relInterp₁ P w d → M.relInterp₁ Q w d) ∧
-    ∃ w d, M.relInterp₁ Q w d ∧ ¬ M.relInterp₁ P w d
+  (∀ w d, M.relInterp₁ (predSymb P) w d → M.relInterp₁ (predSymb Q) w d) ∧
+    ∃ w d, M.relInterp₁ (predSymb Q) w d ∧ ¬ M.relInterp₁ (predSymb P) w d
 
 /-- The two-world desire model for the wanted predicate `Q`: only the desire world `true` is
 accessible; every predicate holds there and only `Q` at `false`. -/
