@@ -1,295 +1,282 @@
+import Mathlib.Algebra.BigOperators.Field
+import Linglib.Pragmatics.InformationTheory.Channel
 import Linglib.Pragmatics.Efficiency
-import Linglib.Data.WALS.Features.F132A
-import Linglib.Data.WALS.Features.F133A
-import Linglib.Data.WALS.Features.F134A
-import Linglib.Data.WALS.Features.F135A
 
 /-!
-# Zaslavsky, Kemp, Regier & Tishby (2018): efficient compression in color naming
-[zaslavsky-kemp-regier-tishby-2018] [berlin-kay-1969] [wals-2013]
+# Zaslavsky, Kemp, Regier and Tishby (2018): Efficient Compression in Color Naming
 
-[zaslavsky-kemp-regier-tishby-2018] argue that color-naming systems
-efficiently compress meanings into words by optimizing the Information
-Bottleneck (IB) trade-off between lexicon **complexity** (the information rate
-`I(M;W)`) and **accuracy** (`I(W;U)`). Cross-language variation is captured by a
-single trade-off parameter β, and the Berlin & Kay evolutionary sequence
-([berlin-kay-1969]: dark/light, then red, then green/yellow, then blue, …)
-falls out as motion *up the complexity axis* — successive systems carve color
-space more finely, paying complexity for accuracy.
+This file formalizes the communication model of [zaslavsky-kemp-regier-tishby-2018], in which
+a color naming system is an encoder that compresses meanings, distributions over the colors of
+the environment, into words, and languages are hypothesized to trade off the complexity of the
+lexicon against the accuracy of communication as the Information Bottleneck principle of
+[tishby-pereira-bialek-1999] prescribes. A `Model` bundles the meanings, the cognitive source
+over them, and the encoder. The listener is an optimal Bayesian decoder, interpreting a word as
+the posterior mixture of meanings (`decoder`). Complexity is the information the words carry
+about the meanings (`complexity`), accuracy the information they carry about the environment
+(`accuracy`), and the expected Kullback–Leibler distortion between the speaker's meaning and
+the listener's interpretation is the information about the environment that the lexicon loses
+(`distortion_eq`), so that minimizing distortion is maximizing accuracy. The Information
+Bottleneck objective `F_β = I(M;W) − β I(W;U)` (`objective`) is, up to a constant, the
+β-scalarized cost of `Pragmatics.Efficiency` on the pair of distortion and complexity
+(`objective_eq_weightedCost`), and a language's deviation from optimality at `β` is the
+substrate's `efficiencyLossAt` (`deviation_eq_efficiencyLossAt`). The optimal encoders satisfy
+the self-consistent Boltzmann form in which a word's probability decays exponentially in its
+divergence from the meaning (`IsIBOptimum`).
 
-This file formalizes the per-language WALS color profiles (the eight
-WALS-sourced `ColorProfile`s below, derived via `ColorProfile.fromWALS`) observable
-through the efficient-communication framework in `Pragmatics.Efficiency`
-(`CostPair`, `weightedCost = cost₂ + β·cost₁`, `efficiencyLossAt`).
+## Implementation notes
 
-## What is derived vs. cited
+* Every distribution in a model is strictly positive, which keeps the logarithms of the
+  information quantities finite; the empirical encoders of the World Color Survey are not in
+  the library.
+* The information quantities are the channel mutual informations of
+  `Pragmatics.InformationTheory`; the paper's forms with the word marginal in the denominator
+  are recovered by Bayes' rule (`complexity_eq`).
+* The efficiency loss `ε_l` divides the minimal deviation by the fitted `β_l`; the fit itself
+  is a numerical optimization outside the formalization.
 
-* **Derived** (from the WALS-sourced color profiles): the Berlin-Kay
-  *complexity coordinate* of each sampled language — the number of basic color
-  categories (WALS Ch 133). The IB complexity `I(M;W)` of a deterministic
-  K-word system is bounded by `log K`, so the category count is a monotone
-  *handle* on the complexity axis (not `I(M;W)` itself).
-* **Bridge** (via `Pragmatics.Efficiency`): the β-scalarized IB objective
-  `weightedCost` is monotone in this complexity coordinate, so the Berlin-Kay
-  category ordering is exactly an ordering on the IB complexity axis.
-* **Cited stimulus** (from the paper, not formalized): real languages are
-  *near*-optimal — they lie close to the IB curve with small efficiency loss
-  `ε_l`, at a fitted `β_l ≳ 1` (e.g. English `β_l ≈ 1.085`, Fig. 4). The
-  formal anchor here is only the idealized optimum (zero loss at coincidence);
-  the empirical near-optimality is the paper's measured result.
+## References
 
-## Main results
-
-* `bk_complexity_strictMono`: the category-count handle is strictly monotone in
-  the WALS Ch 133 ordering (the Berlin-Kay sequence).
-* `weightedCost_mono_in_complexity`: more categories ⇒ higher β-scalarized IB
-  complexity cost, for every β ≥ 0 — the structural bridge.
-* `sample_all_warm_and_cool_split`: every sampled language distinguishes both
-  red/yellow and green/blue (all are high-complexity, late-sequence systems).
+* [zaslavsky-kemp-regier-tishby-2018]
+* [tishby-pereira-bialek-1999]
+* [shannon-1948]
 -/
 
 namespace ZaslavskyKempRegierTishby2018
 
-open Pragmatics.Efficiency
-/-! ### WALS Ch 132: Number of non-derived basic color categories -/
+open Pragmatics.InformationTheory Pragmatics.Efficiency Finset Real
 
-/-- Number of non-derived basic color categories (WALS Ch 132,
-    [kay-maffi-2013]). Ranges from 3 to 6 along the Berlin & Kay
-    sequence; transitional half-values represent languages with one
-    composite category undergoing splitting. -/
-inductive NonDerivedColorCount where
-  | three
-  | threeHalf
-  | four
-  | fourHalf
-  | five
-  | fiveHalf
-  | six
-  deriving DecidableEq, Repr
+variable {U M W : Type} [Fintype U] [Fintype M] [Fintype W]
 
-/-! ### WALS Ch 133: Total number of basic color categories -/
+/-- The color communication model: meanings are distributions over the environment `U`,
+generated by a cognitive source over `M`, and compressed into words `W` by an encoder. All
+three distributions are strictly positive. -/
+structure Model (U M W : Type) [Fintype U] [Fintype M] [Fintype W] where
+  /-- Each meaning `m` is a distribution `m(u)` over the environment. -/
+  meanings : CommChannel M U
+  /-- The cognitive source `p(m)`. -/
+  source : M → ℝ
+  /-- The naming policy `q(w | m)`. -/
+  encoder : CommChannel M W
+  meanings_pos : ∀ m u, 0 < meanings.encode m u
+  source_pos : ∀ m, 0 < source m
+  source_sum : ∑ m, source m = 1
+  encoder_pos : ∀ m w, 0 < encoder.encode m w
 
-/-- Total number of basic color categories including derived ones
-    (WALS Ch 133, [kay-maffi-2013a]). Ranges from 3–4 (minimal systems)
-    to the top bucket, WALS's "more than 10" — canonically 11 basic terms,
-    the Berlin & Kay Stage-VII maximum (e.g., English, Russian). -/
-inductive BasicColorCount where
-  | v3to4
-  | v4to5
-  | v6to6h
-  | v7to7h
-  | v8to8h
-  | v9to10
-  | v11
-  deriving DecidableEq, Repr
+namespace Model
 
-/-! ### WALS Ch 134: Green and blue -/
+variable (𝓜 : Model U M W)
 
-/-- How a language treats the green-blue region of color space
-    (WALS Ch 134, [kay-maffi-2013b]). The classic *grue* / green-blue
-    composite distinction, with several other composite patterns
-    (with black, with yellow). -/
-inductive GreenBlueRelation where
-  /-- Separate terms for green and blue. -/
-  | distinct
-  /-- A single *grue* term covering both green and blue. -/
-  | merged
-  /-- A single term covering black, green, and blue. -/
-  | blackGreenBlue
-  /-- Black/blue merged, green separate. -/
-  | blackBlueVsGreen
-  /-- Yellow, green, blue all merged. -/
-  | yellowGreenBlue
-  /-- Yellow/green merged, blue separate. -/
-  | yellowGreenVsBlue
-  /-- No green or blue term at all. -/
-  | noTerm
-  deriving DecidableEq, Repr
+/-- A source that sums to one has a meaning. -/
+theorem nonempty (𝓜 : Model U M W) : Nonempty M := by
+  by_contra h
+  rw [not_nonempty_iff] at h
+  have := 𝓜.source_sum
+  simp at this
 
-/-! ### WALS Ch 135: Red and yellow -/
+/-! ### The Bayesian listener -/
 
-/-- How a language treats the red-yellow region of color space
-    (WALS Ch 135, [kay-maffi-2013c]). -/
-inductive RedYellowRelation where
-  /-- Separate terms for red and yellow. -/
-  | distinct
-  /-- A single term covering both red and yellow. -/
-  | merged
-  /-- Yellow/green/blue merged, vs red. -/
-  | yellowGreenBlueVsRed
-  /-- Yellow/green merged, vs red. -/
-  | yellowGreenVsRed
-  /-- No red or yellow term at all. -/
-  | noTerm
-  deriving DecidableEq, Repr
+/-- The word marginal `q(w)`. -/
+noncomputable def wordMarginal (w : W) : ℝ := marginalWord 𝓜.encoder 𝓜.source w
 
-/-! ### Per-language profile -/
+theorem wordMarginal_pos (w : W) : 0 < 𝓜.wordMarginal w :=
+  let ⟨m⟩ := 𝓜.nonempty
+  marginalWord_pos_of _ _ (λ m => (𝓜.source_pos m).le) (𝓜.source_pos m) (𝓜.encoder_pos _ w)
 
-/-- A language's color-naming profile across [wals-2013] Chs 132–135.
-    Coverage is sparse (~120 languages); fields are optional. -/
-structure ColorProfile where
-  language : String
-  iso : String := ""
-  family : String := ""
-  /-- Ch 132: non-derived basic color categories. -/
-  nonDerived : Option NonDerivedColorCount := none
-  /-- Ch 133: total basic color categories. -/
-  basic : Option BasicColorCount := none
-  /-- Ch 134: green-blue relation. -/
-  greenBlue : Option GreenBlueRelation := none
-  /-- Ch 135: red-yellow relation. -/
-  redYellow : Option RedYellowRelation := none
-  deriving Repr
+/-- The environment marginal `p(u)`. -/
+noncomputable def envMarginal (u : U) : ℝ := marginalWord 𝓜.meanings 𝓜.source u
 
-/-! ### WALS converters -/
+theorem envMarginal_pos (u : U) : 0 < 𝓜.envMarginal u :=
+  let ⟨m⟩ := 𝓜.nonempty
+  marginalWord_pos_of _ _ (λ m => (𝓜.source_pos m).le) (𝓜.source_pos m) (𝓜.meanings_pos _ u)
 
-/-- Convert WALS 132A non-derived-color-count values into the substrate enum. -/
-def fromWALS132A : Data.WALS.F132A.NumberOfNonDerivedBasicColourCategories → NonDerivedColorCount
-  | .v3  => .three
-  | .v35 => .threeHalf
-  | .v4  => .four
-  | .v45 => .fourHalf
-  | .v5  => .five
-  | .v55 => .fiveHalf
-  | .v6  => .six
+/-- The joint probability of a word and a state of the environment. -/
+noncomputable def joint (w : W) (u : U) : ℝ :=
+  ∑ m, 𝓜.source m * 𝓜.encoder.encode m w * 𝓜.meanings.encode m u
 
-/-- Convert WALS 133A basic-color-count values into the substrate enum. -/
-def fromWALS133A : Data.WALS.F133A.NumberOfBasicColourCategories → BasicColorCount
-  | .v34   => .v3to4
-  | .v4555 => .v4to5
-  | .v665  => .v6to6h
-  | .v775  => .v7to7h
-  | .v885  => .v8to8h
-  | .v910  => .v9to10
-  | .v11   => .v11
+theorem joint_pos (w : W) (u : U) : 0 < 𝓜.joint w u :=
+  have := 𝓜.nonempty
+  sum_pos (λ m _ => mul_pos (mul_pos (𝓜.source_pos m) (𝓜.encoder_pos m w))
+    (𝓜.meanings_pos m u)) univ_nonempty
 
-/-- Convert WALS 134A green-blue values into the substrate enum. -/
-def fromWALS134A : Data.WALS.F134A.GreenAndBlue → GreenBlueRelation
-  | .greenVsBlue       => .distinct
-  | .greenBlue         => .merged
-  | .blackGreenBlue    => .blackGreenBlue
-  | .blackBlueVsGreen  => .blackBlueVsGreen
-  | .yellowGreenBlue   => .yellowGreenBlue
-  | .yellowGreenVsBlue => .yellowGreenVsBlue
-  | .none              => .noTerm
+theorem sum_joint_env (w : W) : ∑ u, 𝓜.joint w u = 𝓜.wordMarginal w := by
+  unfold joint wordMarginal marginalWord
+  rw [sum_comm]
+  simp_rw [← mul_sum, 𝓜.meanings.encode_sum_one, mul_one]
 
-/-- Convert WALS 135A red-yellow values into the substrate enum. -/
-def fromWALS135A : Data.WALS.F135A.RedAndYellow → RedYellowRelation
-  | .redVsYellow          => .distinct
-  | .redYellow            => .merged
-  | .yellowGreenBlueVsRed => .yellowGreenBlueVsRed
-  | .yellowGreenVsRed     => .yellowGreenVsRed
-  | .none                 => .noTerm
+theorem sum_joint_word (u : U) : ∑ w, 𝓜.joint w u = 𝓜.envMarginal u := by
+  unfold joint envMarginal marginalWord
+  rw [sum_comm]
+  refine sum_congr rfl λ m _ => ?_
+  have : ∀ w, 𝓜.source m * 𝓜.encoder.encode m w * 𝓜.meanings.encode m u
+      = 𝓜.source m * 𝓜.meanings.encode m u * 𝓜.encoder.encode m w := λ w => by ring
+  simp_rw [this, ← mul_sum, 𝓜.encoder.encode_sum_one, mul_one]
 
-/-- Build a `ColorProfile` from the WALS Chs 132–135 rows for an ISO 639-3
-    code, mapping each chapter's datapoint through its converter; a field for
-    which WALS has no row is `none`. Makes the per-language Fragment profiles
-    true-by-construction from the auto-generated WALS tables rather than
-    hand-transcribed literals. -/
-def ColorProfile.fromWALS (language iso family : String) : ColorProfile :=
-  { language := language
-  , iso := iso
-  , family := family
-  , nonDerived := (Data.WALS.F132A.lookupISO iso).map (λ d => fromWALS132A d.value)
-  , basic := (Data.WALS.F133A.lookupISO iso).map (λ d => fromWALS133A d.value)
-  , greenBlue := (Data.WALS.F134A.lookupISO iso).map (λ d => fromWALS134A d.value)
-  , redYellow := (Data.WALS.F135A.lookupISO iso).map (λ d => fromWALS135A d.value) }
+/-- The listener's interpretation of `w`, the posterior mixture of meanings `m̂_w(u)`. -/
+noncomputable def interpretation (w : W) (u : U) : ℝ := 𝓜.joint w u / 𝓜.wordMarginal w
 
-/-! ### The eight WALS-sourced sample profiles -/
+theorem interpretation_pos (w : W) (u : U) : 0 < 𝓜.interpretation w u :=
+  div_pos (𝓜.joint_pos w u) (𝓜.wordMarginal_pos w)
 
-def english : ColorProfile := ColorProfile.fromWALS "English" "eng" "Indo-European"
-def french : ColorProfile := ColorProfile.fromWALS "French" "fra" "Indo-European"
-def german : ColorProfile := ColorProfile.fromWALS "German" "deu" "Indo-European"
-def japanese : ColorProfile := ColorProfile.fromWALS "Japanese" "jpn" "Japonic"
-def korean : ColorProfile := ColorProfile.fromWALS "Korean" "kor" "Koreanic"
-def mandarin : ColorProfile := ColorProfile.fromWALS "Mandarin Chinese" "cmn" "Sino-Tibetan"
-def russian : ColorProfile := ColorProfile.fromWALS "Russian" "rus" "Indo-European"
-def spanish : ColorProfile := ColorProfile.fromWALS "Spanish" "spa" "Indo-European"
+theorem wordMarginal_mul_interpretation (w : W) (u : U) :
+    𝓜.wordMarginal w * 𝓜.interpretation w u = 𝓜.joint w u :=
+  mul_div_cancel₀ _ (𝓜.wordMarginal_pos w).ne'
 
+/-- The optimal Bayesian listener as a channel from words to the environment. -/
+noncomputable def decoder : CommChannel W U where
+  encode := 𝓜.interpretation
+  encode_nonneg w u := (𝓜.interpretation_pos w u).le
+  encode_sum_one w := by
+    unfold interpretation
+    rw [← sum_div, sum_joint_env, div_self (𝓜.wordMarginal_pos w).ne']
 
-/-! ### The Berlin-Kay complexity coordinate -/
+theorem marginalWord_decoder (u : U) :
+    marginalWord 𝓜.decoder 𝓜.wordMarginal u = 𝓜.envMarginal u := by
+  unfold marginalWord
+  simp_rw [decoder, wordMarginal_mul_interpretation, sum_joint_word]
 
-/-- A representative basic-category count for each WALS Ch 133 bucket (its lower
-    bound). Only the *ordering* matters: this is a monotone handle on the IB
-    complexity axis `I(M;W) ≤ log K`, where `K` is the number of color words. -/
-def basicCount : BasicColorCount → ℕ
-  | .v3to4  => 3
-  | .v4to5  => 4
-  | .v6to6h => 6
-  | .v7to7h => 7
-  | .v8to8h => 8
-  | .v9to10 => 9
-  | .v11    => 11
+/-! ### Complexity, accuracy and distortion -/
 
-/-- IB complexity handle for a color profile: its basic-category count
-    (`0` when WALS records no Ch 133 datum). -/
-def ibComplexity (p : ColorProfile) : ℕ := (p.basic.map basicCount).getD 0
+/-- The complexity of the lexicon, `I_q(M;W)`. -/
+noncomputable def complexity : ℝ := mutualInfo 𝓜.encoder 𝓜.source
 
-/-- The category-count handle is strictly monotone along the WALS Ch 133
-    ordering — i.e. along the Berlin & Kay evolutionary sequence
-    ([berlin-kay-1969]). -/
-theorem bk_complexity_strictMono :
-    basicCount .v3to4 < basicCount .v4to5 ∧
-    basicCount .v4to5 < basicCount .v6to6h ∧
-    basicCount .v6to6h < basicCount .v7to7h ∧
-    basicCount .v7to7h < basicCount .v8to8h ∧
-    basicCount .v8to8h < basicCount .v9to10 ∧
-    basicCount .v9to10 < basicCount .v11 := by decide
+/-- The accuracy of the lexicon, `I_q(W;U)`. -/
+noncomputable def accuracy : ℝ := mutualInfo 𝓜.decoder 𝓜.wordMarginal
 
-/-! ### Bridge to the Information-Bottleneck objective -/
+/-- The information the meanings carry about the environment, `I(M;U)`, independent of the
+encoder. -/
+noncomputable def sourceInfo : ℝ := mutualInfo 𝓜.meanings 𝓜.source
 
-/-- A color system as a `Pragmatics.Efficiency.CostPair`: `cost₁` is the IB
-    complexity handle (category count), `cost₂` is the system's accuracy/
-    distortion component, left abstract (WALS does not record it per language). -/
-def ibCost (p : ColorProfile) (acc : ℝ) : CostPair :=
-  { cost₁ := (ibComplexity p : ℝ), cost₂ := acc }
+/-- The Kullback–Leibler divergence between two positive distributions on `U`. -/
+noncomputable def kl (a b : U → ℝ) : ℝ := ∑ u, a u * log (a u / b u)
 
-/-- **Structural bridge.** Under the β-scalarized IB objective `weightedCost`,
-    a system with more basic categories has at least as high a complexity cost,
-    for every β ≥ 0 and any fixed accuracy. The Berlin-Kay category ordering is
-    therefore an ordering on the IB complexity axis the paper plots. -/
-theorem weightedCost_mono_in_complexity
-    {p q : ColorProfile} (acc β : ℝ) (hβ : 0 ≤ β)
-    (h : ibComplexity p ≤ ibComplexity q) :
-    weightedCost (ibCost p acc) β ≤ weightedCost (ibCost q acc) β := by
-  have hc : (ibComplexity p : ℝ) ≤ (ibComplexity q : ℝ) := by exact_mod_cast h
-  have := mul_le_mul_of_nonneg_left hc hβ
-  simp only [weightedCost, ibCost]
-  linarith
+/-- The expected distortion between the speaker's meaning and the listener's
+interpretation. -/
+noncomputable def distortion : ℝ :=
+  ∑ m, ∑ w, 𝓜.source m * 𝓜.encoder.encode m w * kl (𝓜.meanings.encode m) (𝓜.interpretation w)
 
-/-- The idealized anchor of the paper's near-optimality finding: a color system
-    that coincides with the IB-optimal system at its fitted β has zero
-    efficiency loss. Real languages are *near*-optimal (small nonzero `ε_l`),
-    which is the paper's measured result rather than a theorem here. -/
-theorem optimal_system_zero_loss (c : CostPair) (β : ℝ) :
-    efficiencyLossAt c c β = 0 := efficiencyLossAt_self c β
+/-- Complexity in the paper's form, with the word marginal in the denominator. -/
+theorem complexity_eq :
+    𝓜.complexity = ∑ m, ∑ w, 𝓜.source m * 𝓜.encoder.encode m w
+      * log (𝓜.encoder.encode m w / 𝓜.wordMarginal w) := by
+  unfold complexity mutualInfo
+  refine sum_congr rfl λ m _ => sum_congr rfl λ w _ => ?_
+  congr 2
+  unfold posterior
+  rw [div_div, mul_comm (marginalWord _ _ w), ← div_div, mul_div_assoc,
+    div_self (𝓜.source_pos m).ne', mul_one]
+  rfl
 
-/-! ### The Fragment sample -/
+private theorem sourceInfo_eq :
+    𝓜.sourceInfo = ∑ m, ∑ u, 𝓜.source m * 𝓜.meanings.encode m u
+      * (log (𝓜.meanings.encode m u) - log (𝓜.envMarginal u)) := by
+  unfold sourceInfo mutualInfo
+  refine sum_congr rfl λ m _ => sum_congr rfl λ u _ => ?_
+  congr 1
+  rw [← log_div (𝓜.meanings_pos m u).ne' (𝓜.envMarginal_pos u).ne']
+  congr 1
+  unfold posterior envMarginal
+  rw [div_div, mul_comm (marginalWord _ _ u), ← div_div, mul_div_assoc,
+    div_self (𝓜.source_pos m).ne', mul_one]
 
-/-- The eight WALS-sourced color profiles formalized as Fragments. All are
-    industrialized-language systems near the top of the Berlin & Kay sequence. -/
-def sample : List ColorProfile :=
-  [english, french, german, japanese, korean, mandarin, spanish, russian]
+private theorem accuracy_eq :
+    𝓜.accuracy = ∑ w, ∑ u, 𝓜.joint w u
+      * (log (𝓜.interpretation w u) - log (𝓜.envMarginal u)) := by
+  unfold accuracy mutualInfo
+  refine sum_congr rfl λ w _ => sum_congr rfl λ u _ => ?_
+  rw [← wordMarginal_mul_interpretation]
+  congr 1
+  rw [← log_div (𝓜.interpretation_pos w u).ne' (𝓜.envMarginal_pos u).ne']
+  congr 1
+  unfold posterior
+  rw [marginalWord_decoder]
+  show 𝓜.interpretation w u * 𝓜.wordMarginal w / 𝓜.envMarginal u / 𝓜.wordMarginal w = _
+  rw [div_div, mul_comm (𝓜.envMarginal u), ← div_div, mul_div_assoc,
+    div_self (𝓜.wordMarginal_pos w).ne', mul_one]
 
-/-- Every sampled language draws both the warm (red/yellow) and cool
-    (green/blue) boundaries — all are high-complexity, late-sequence systems,
-    consistent with their high category counts and fitted `β_l > 1`. -/
-theorem sample_all_warm_and_cool_split :
-    ∀ p ∈ sample, p.redYellow = some .distinct ∧ p.greenBlue = some .distinct := by
-  decide
+/-- The expected distortion is the information about the environment that the lexicon loses:
+`E_q[D[M ‖ M̂]] = I(M;U) − I_q(W;U)`. -/
+theorem distortion_eq : 𝓜.distortion = 𝓜.sourceInfo - 𝓜.accuracy := by
+  have hlog : ∀ m w u, log (𝓜.meanings.encode m u / 𝓜.interpretation w u)
+      = log (𝓜.meanings.encode m u) - log (𝓜.interpretation w u) :=
+    λ m w u => log_div (𝓜.meanings_pos m u).ne' (𝓜.interpretation_pos w u).ne'
+  -- the three quantities, expanded
+  have hA : 𝓜.sourceInfo = (∑ m, ∑ u, 𝓜.source m * 𝓜.meanings.encode m u
+      * log (𝓜.meanings.encode m u)) - ∑ u, 𝓜.envMarginal u * log (𝓜.envMarginal u) := by
+    rw [sourceInfo_eq]
+    simp_rw [mul_sub, sum_sub_distrib]
+    congr 1
+    rw [sum_comm]
+    simp_rw [← sum_mul]
+    rfl
+  have hB : 𝓜.accuracy = (∑ w, ∑ u, 𝓜.joint w u * log (𝓜.interpretation w u))
+      - ∑ u, 𝓜.envMarginal u * log (𝓜.envMarginal u) := by
+    rw [accuracy_eq]
+    simp_rw [mul_sub, sum_sub_distrib]
+    congr 1
+    rw [sum_comm]
+    simp_rw [← sum_mul, sum_joint_word]
+  have hD : 𝓜.distortion = (∑ m, ∑ u, 𝓜.source m * 𝓜.meanings.encode m u
+      * log (𝓜.meanings.encode m u)) - ∑ w, ∑ u, 𝓜.joint w u * log (𝓜.interpretation w u) := by
+    unfold distortion kl
+    simp_rw [hlog, mul_sub, sum_sub_distrib, mul_sub, sum_sub_distrib]
+    congr 1
+    · refine sum_congr rfl λ m _ => ?_
+      have : ∀ w, 𝓜.source m * 𝓜.encoder.encode m w
+            * ∑ u, 𝓜.meanings.encode m u * log (𝓜.meanings.encode m u)
+          = 𝓜.encoder.encode m w
+            * (𝓜.source m * ∑ u, 𝓜.meanings.encode m u * log (𝓜.meanings.encode m u)) :=
+        λ w => by ring
+      simp_rw [this, ← sum_mul, 𝓜.encoder.encode_sum_one, one_mul, mul_sum]
+      exact sum_congr rfl λ u _ => by ring
+    · rw [sum_comm]
+      refine sum_congr rfl λ w _ => ?_
+      simp_rw [mul_sum]
+      rw [sum_comm]
+      refine sum_congr rfl λ u _ => ?_
+      unfold joint
+      rw [sum_mul]
+      exact sum_congr rfl λ m _ => by ring
+  rw [hA, hB, hD]
+  ring
 
-/-- Concrete complexity contrast: English (11 basic terms) sits higher on the IB
-    complexity axis than Mandarin (8–8.5), as the Berlin-Kay sequence predicts. -/
-theorem english_more_complex_than_mandarin :
-    ibComplexity mandarin < ibComplexity english := by
-  decide
+/-! ### The Information Bottleneck objective -/
 
-/-- The contrast lifts to the IB objective: for every β ≥ 0 (and any fixed
-    accuracy), English's β-scalarized complexity cost is at least Mandarin's. -/
-theorem english_weightedCost_ge_mandarin (acc β : ℝ) (hβ : 0 ≤ β) :
-    weightedCost (ibCost mandarin acc) β ≤
-    weightedCost (ibCost english acc) β :=
-  weightedCost_mono_in_complexity acc β hβ
-    (le_of_lt english_more_complex_than_mandarin)
+/-- The Information Bottleneck objective `F_β = I_q(M;W) − β I_q(W;U)`. -/
+noncomputable def objective (β : ℝ) : ℝ := 𝓜.complexity - β * 𝓜.accuracy
+
+/-- The distortion–complexity cost pair of the lexicon. -/
+noncomputable def costPair : CostPair := ⟨𝓜.distortion, 𝓜.complexity⟩
+
+/-- Up to the encoder-independent constant `β I(M;U)`, the objective is the β-scalarized cost
+of distortion and complexity. -/
+theorem objective_eq_weightedCost (β : ℝ) :
+    𝓜.objective β = weightedCost 𝓜.costPair β - β * 𝓜.sourceInfo := by
+  unfold objective weightedCost costPair
+  rw [distortion_eq]
+  ring
+
+/-- The deviation `ΔF_β` of the lexicon from a reference encoder at `β`. -/
+noncomputable def deviation (𝓜' : Model U M W) (β : ℝ) : ℝ := 𝓜.objective β - 𝓜'.objective β
+
+/-- For two lexicons over the same meanings and source, the deviation is the substrate's
+efficiency loss at `β`. -/
+theorem deviation_eq_efficiencyLossAt (𝓜' : Model U M W) (h : 𝓜'.sourceInfo = 𝓜.sourceInfo)
+    (β : ℝ) : 𝓜.deviation 𝓜' β = efficiencyLossAt 𝓜.costPair 𝓜'.costPair β := by
+  unfold deviation efficiencyLossAt
+  rw [objective_eq_weightedCost, objective_eq_weightedCost, h]
+  ring
+
+/-- The efficiency loss `ε_l = ΔF_{β_l} / β_l` at the fitted trade-off. -/
+noncomputable def efficiencyLoss (𝓜' : Model U M W) (β : ℝ) : ℝ := 𝓜.deviation 𝓜' β / β
+
+/-- The self-consistent form of the Information Bottleneck optima: each word's probability
+decays exponentially, at rate `β`, in the divergence between the meaning and the word's
+interpretation. -/
+def IsIBOptimum (β : ℝ) : Prop :=
+  ∀ m w, 𝓜.encoder.encode m w =
+    𝓜.wordMarginal w * exp (-β * kl (𝓜.meanings.encode m) (𝓜.interpretation w))
+      / ∑ w', 𝓜.wordMarginal w' * exp (-β * kl (𝓜.meanings.encode m) (𝓜.interpretation w'))
+
+end Model
 
 end ZaslavskyKempRegierTishby2018
