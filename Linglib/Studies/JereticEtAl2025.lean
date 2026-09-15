@@ -22,7 +22,7 @@ meaning at no greater node count, and that expression, an indirect alternative i
 the substrate's `Alternatives.indirectFrom`, licenses the Maximize Presupposition competition
 the silent parse cannot enter on its own. The worked example runs this on (25): the dual parse
 is blocked, pronounceability is thereby derived rather than stipulated, and *tous* violates
-Maximize Presupposition through *les deux* (`tous_violatesMP_via_indirect`).
+Maximize Presupposition through *les deux* (`tous_blocked_via_indirect`).
 
 Across languages and quantifier slots a plain quantifier is predicted anti-dual exactly when a
 dual competitor exists, a lexical dual item or a pronounceable dual expression at most as
@@ -332,7 +332,7 @@ def assertionFn : Tree Cat String → WorldEx → Prop := λ _ _ => True
 
 /-- The indirect-alternative source (43): Katzir alternatives filtered by pronounceability and
 meaning-equivalence to a silent witness, complexity measured by `Tree.size`. -/
-def frenchIndirectSrc : Source (Tree Cat String) :=
+def frenchIndirectSrc : Tree Cat String → Set (Tree Cat String) :=
   indirectFrom (katzirSource frenchLex) frenchPron meaning Tree.size
 
 /-- *tous_DUAL V* is a Katzir alternative of *tous V*, by substituting the dual determiner. -/
@@ -352,16 +352,15 @@ theorem lesDeux_indirectAlt_tous : lesDeuxVerres ∈ frenchIndirectSrc tousVerre
 
 /-- *tous V* violates Maximize Presupposition through the indirect alternative *les deux V*,
 licensed by the silent witness: the paper's derivation of the anti-duality of *tous*. -/
-theorem tous_violatesMP_via_indirect :
-    violatesMP frenchIndirectSrc presupFn assertionFn tousVerres (λ _ => True) := by
-  refine ⟨lesDeuxVerres, lesDeux_indirectAlt_tous, ?_, ?_, ?_, trivial⟩
-  · intro _; exact Iff.rfl
+theorem tous_blocked_via_indirect :
+    Alternatives.Blocked (sameAssertion assertionFn frenchIndirectSrc) presupFn tousVerres := by
+  refine ⟨lesDeuxVerres, ⟨lesDeux_indirectAlt_tous, rfl⟩,
+    LE.le.ssubset_of_not_superset ?_ (Set.not_subset.2 ⟨WorldEx.w3, ?_, ?_⟩)⟩
   · intro w _
     show meaning tousVerres w = true
     cases w <;> rfl
-  · refine ⟨WorldEx.w3, ?_, ?_⟩
-    · show meaning tousVerres .w3 = true; rfl
-    · show ¬ (meaning lesDeuxVerres .w3 = true); decide
+  · show meaning tousVerres .w3 = true; rfl
+  · show ¬ (meaning lesDeuxVerres .w3 = true); decide
 
 end WorkedExample
 
