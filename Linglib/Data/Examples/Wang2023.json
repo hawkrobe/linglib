@@ -1,0 +1,509 @@
+[
+  {
+    "id": "wang2023_1",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "As tu le livre?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["As", "have.PRES.2SG"], ["tu", "2SG"], ["le", "the"], ["livre", "book"]
+    ],
+    "translation": "Do you have the book?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["address", "familiar"],
+      ["number", "singular"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_2",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Avez vous le livre?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Avez", "have.PRES.2PL"], ["vous", "2PL"], ["le", "the"], ["livre", "book"]
+    ],
+    "translation": "Do you (HON) have the book?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "As vous le livre?", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["address", "polite"],
+      ["number", "plural"],
+      ["mismatch", "referentially singular"]
+    ],
+    "comment": "Honorific vous triggers plural agreement for a singular addressee.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_3a",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(3a)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Alessandro, sei contento?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Alessandro", "A"], ["sei", "2SG.COP"], ["contento", "happy.MASC"]
+    ],
+    "translation": "Alessandro, are you happy?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Alessandro, è contento?", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["address", "familiar"],
+      ["person", "second"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_3b",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(3b)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Signor Alessandro, è contento?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Signor", "sir"], ["Alessandro", "A"], ["è", "3SG.COP"], ["contento", "happy.MASC"]
+    ],
+    "translation": "Sir Alessandro, are you (HON) happy?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Signor Alessandro, sei contento?", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["address", "polite"],
+      ["person", "third"],
+      ["mismatch", "second-person addressee"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_4a",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(4a)"},
+    "reportedIn": null,
+    "language": "ainu1240",
+    "primaryText": "Ecioka rupne nispa-eci ne ruwe",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ecioka", "2PL"], ["rupne", "be.grown.up"], ["nispa-eci", "man-2PL"], ["ne", "COP"],
+      ["ruwe", "ASSERT"]
+    ],
+    "translation": "You (all) are grown men",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["address", "familiar"],
+      ["definiteness", "definite pronoun"]
+    ],
+    "comment": "Refsing 1986: 94, 222, adapted.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_4b",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(4b)"},
+    "reportedIn": null,
+    "language": "ainu1240",
+    "primaryText": "An nu no.oka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["An", "INDEF"], ["nu", "ask"], ["no.oka", "IMPF"]
+    ],
+    "translation": "As you (HON) are asking",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["address", "polite"],
+      ["definiteness", "indefinite pronoun"],
+      ["mismatch", "definite addressee"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_29",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(29)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "As tu le livre?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: Do you all (HON) have the book?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["unattested", "honorific singular"]
+    ],
+    "comment": "A hypothetical French recruiting the singular for honorification is unattested, (28a).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_30a",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(30a)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Signor Alessandro, sono contento?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: Sir Alessandro, are you (HON) happy?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["unattested", "honorific first person"]
+    ],
+    "comment": "(28b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_30b",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(30b)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Sei Signor Alessandro contento?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: Is Sir Alessandro (HON) happy?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["unattested", "honorific second person"]
+    ],
+    "comment": "(28b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_31",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(31)"},
+    "reportedIn": null,
+    "language": "ainu1240",
+    "primaryText": "Eani nu no.oka",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Intended: As someone (HON) are asking",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["unattested", "honorific definite"]
+    ],
+    "comment": "(28c).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_48a",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(48a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How many hamsters do I own? Just one hamster, I think.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "semantic markedness"],
+      ["number", "plural inclusive"]
+    ],
+    "comment": "A singular answer to a plural question: the plural is number-neutral.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_49",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(49)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every girl owns hamsters.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "each girl owns exactly one hamster", "judgment": "acceptable"},
+      {"name": "mixed: some girls own one, others several", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "quantification"],
+      ["number", "plural inclusive"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_50",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(50)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every one of us has to call his/her mother.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Every one of us has to call my mother.", "judgment": "ungrammatical"},
+      {"form": "Every one of us has to call your mother.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "quantification"],
+      ["person", "third unmarked"]
+    ],
+    "comment": "Sauerland 2008b: 72, adapted; a mixed-person group binds only a third-person pronoun.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_53a",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(53a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I've picked up the new hamster from the store.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["definiteness", "definite"],
+      ["presupposition", "familiarity"]
+    ],
+    "comment": "Felicitous only with a salient or previously mentioned hamster.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_53b",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(53b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I've picked up a new hamster from the store.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["definiteness", "indefinite"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_60",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(60)"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "Avez vous le livre?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Do you all (HON) have the book?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["address", "polite"],
+      ["number", "plural"],
+      ["case", "ceiling"]
+    ],
+    "comment": "No mismatch with a plural addressee, yet the honorific inference remains.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_72",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(72)"},
+    "reportedIn": null,
+    "language": "motl1237",
+    "primaryText": "Ēt! Yohē! Amyo van tō me!",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ēt", "EXCLAM"], ["Yohē", "DU.VOC"], ["Amyo", "2DU.IMP"], ["van", "AORIST.go"],
+      ["tō", "POL.IMP"], ["me", "hither"]
+    ],
+    "translation": "Hey, you (HON)! Come here for a second.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["address", "polite"],
+      ["number", "dual"],
+      ["system", "honorific dual only"]
+    ],
+    "comment": "François 2005: 121.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_74b",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(74b)"},
+    "reportedIn": null,
+    "language": "khar1287",
+    "primaryText": "iñ-aʔ tay konon tin bhaya-ñ-kiyar ayiʔj-kiyar.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["iñ-aʔ", "1SG-GEN"], ["tay", "ABL"], ["konon", "small"], ["tin", "three"],
+      ["bhaya-ñ-kiyar", "brother-1.POSS-3DU"], ["ayiʔj-kiyar", "COP.PRES-3DU"]
+    ],
+    "translation": "I have three younger brothers (HON).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reference", "polite"],
+      ["number", "dual for three referents"],
+      ["system", "honorific dual only"]
+    ],
+    "comment": "Peterson 2011: 169–170, adapted; the weak taboo outranking MP! lets the dual honorify three.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_75a",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(75a)"},
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "Ali se boste Vi usedli?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ali", "Q"], ["se", "REFLX"], ["boste", "AUX.FUT.2PL"], ["Vi", "2PL"],
+      ["usedli", "sit-PART-PL.MASC"]
+    ],
+    "translation": "Would you (HON) like to sit down?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["address", "polite"],
+      ["number", "plural"],
+      ["system", "honorific plural only"]
+    ],
+    "comment": "Corbett 2000: 226.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_75b",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(75b)"},
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "Ali se bosta Vidva usedla?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ali", "Q"], ["se", "REFLX"], ["bosta", "AUX.FUT.2DU"], ["Vidva", "2DU"],
+      ["usedla", "sit-PART-DU.MASC"]
+    ],
+    "translation": "Would you like to sit down?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["address", "plain dual"],
+      ["number", "dual"]
+    ],
+    "comment": "The dual has no honorific effect.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_78a",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(78a)"},
+    "reportedIn": null,
+    "language": "mele1250",
+    "primaryText": "korua/koteu ku-roro.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["korua/koteu", "2DU/2PL"], ["ku-roro", "PF-go.NSG"]
+    ],
+    "translation": "You (HON) have gone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["address", "polite"],
+      ["number", "dual or plural"],
+      ["system", "non-escalating"]
+    ],
+    "comment": "Own fieldwork; dual and plural indicate equal respect.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wang2023_81",
+    "source": {"bibkey": "wang-r-2023", "paperLabel": "(81)"},
+    "reportedIn": null,
+    "language": "slov1268",
+    "primaryText": "Vsak študent je prinesel s seboj svoji knjigi.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Vsak", "every"], ["študent", "student"], ["je", "be.SG"], ["prinesel", "brought.MASC"],
+      ["s", "with"], ["seboj", "self"], ["svoji", "his-DU"], ["knjigi", "book-DU"]
+    ],
+    "translation": "Every student brought his books.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "quantification"],
+      ["number", "dual intermediate"]
+    ],
+    "comment": "Sauerland 2008b: compatible with some students having one book and others exactly two.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
