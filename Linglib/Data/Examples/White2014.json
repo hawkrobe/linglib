@@ -1,10 +1,10 @@
 [
   {
     "id": "white2014_1",
-    "source": {"bibkey": "white-2014", "paperLabel": "poster (1)"},
+    "source": {"bibkey": "white-2014", "paperLabel": "(1a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John remembered that he took the trash out.",
+    "primaryText": "Bo remembered that he took the trash out.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -14,18 +14,18 @@
     "readings": [],
     "paperFeatures": [
       ["complement", "finite"],
-      ["inference", "presupposes John took the trash out"]
+      ["inference", "presupposes (2)"]
     ],
-    "comment": "Factive with a finite complement; the same holds of didn't forget.",
+    "comment": "Factive with a finite complement: (2) survives negation, questioning and conditional antecedents (3).",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
   {
     "id": "white2014_2",
-    "source": {"bibkey": "white-2014", "paperLabel": "poster (2a)"},
+    "source": {"bibkey": "white-2014", "paperLabel": "(1b)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John remembered to take the trash out.",
+    "primaryText": "Bo remembered to take the trash out.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -35,18 +35,60 @@
     "readings": [],
     "paperFeatures": [
       ["complement", "infinitive"],
-      ["inference", "entails John took the trash out"]
+      ["inference", "entails (2)"]
     ],
-    "comment": "Implicative with a nonfinite complement: the positive actuality entailment.",
+    "comment": "Implicative with a control infinitive: (2) is entailed but not presupposed (4).",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
   {
     "id": "white2014_3",
-    "source": {"bibkey": "white-2014", "paperLabel": "poster (2b)"},
+    "source": {"bibkey": "white-2014", "paperLabel": "(2)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John forgot to take the trash out.",
+    "primaryText": "Bo took out the trash.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["role", "the embedded content"]
+    ],
+    "comment": "Implied by both sentences of (1), as a presupposition of (1a) and an entailment of (1b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "white2014_4",
+    "source": {"bibkey": "white-2014", "paperLabel": "(3a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Bo didn't remember that he took the trash out.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "finite"],
+      ["test", "negation"],
+      ["inference", "still implies (2)"]
+    ],
+    "comment": "The embedded content of the finite complement is inert under negation.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "white2014_5",
+    "source": {"bibkey": "white-2014", "paperLabel": "(4a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Bo didn't remember to take the trash out.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -56,59 +98,61 @@
     "readings": [],
     "paperFeatures": [
       ["complement", "infinitive"],
-      ["inference", "entails John didn't take the trash out"]
+      ["test", "negation"],
+      ["inference", "implies the negation of (2)"]
     ],
-    "comment": "The negative actuality entailment; the same holds of didn't remember.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
-  },
-  {
-    "id": "white2014_4",
-    "source": {"bibkey": "white-2014", "paperLabel": "poster (3a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "John remembered that he was supposed to take the trash out.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["complement", "finite with overt modal"],
-      ["inference", "presupposes John was supposed to take the trash out"]
-    ],
-    "comment": "The overt modal in the finite complement gives the modalized presupposition of (2).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
-  },
-  {
-    "id": "white2014_5",
-    "source": {"bibkey": "white-2014", "paperLabel": "poster (5)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "John had to stay home from work during the government shutdown.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["inference", "strongly implicates John stayed home"]
-    ],
-    "comment": "An actuality entailment of a root modal under perfective aspect.",
+    "comment": "Negation interacts with the embedded content: the negative implicative entailment.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
   {
     "id": "white2014_6",
-    "source": {"bibkey": "white-2014", "paperLabel": "poster (6)"},
+    "source": {"bibkey": "white-2014", "paperLabel": "(5)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John remembered that he was supposed to take the trash out.",
+    "primaryText": "Bo hoped to take out the trash.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "hope"],
+      ["complement", "infinitive"]
+    ],
+    "comment": "A nonfactive verb with a control infinitive: factivity and implicativity are distributionally independent of finiteness.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "white2014_7",
+    "source": {"bibkey": "white-2014", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It turned out that Bo took out the trash.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "turn out"],
+      ["complement", "finite"]
+    ],
+    "comment": "An implicative verb with a finite complement.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "white2014_8",
+    "source": {"bibkey": "white-2014", "paperLabel": "(7a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Bo remembered that he had to take the trash out.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -118,81 +162,18 @@
     "readings": [],
     "paperFeatures": [
       ["complement", "finite with overt modal"],
-      ["inference", "does not entail John took the trash out"]
+      ["inference", "presupposes (7b)"]
     ],
-    "comment": "No actuality entailment: the finite complement binds its own event.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
-  },
-  {
-    "id": "white2014_7",
-    "source": {"bibkey": "white-2014", "paperLabel": "poster (15a)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Mary asked John to fill the bird feeder. He did so, and the next week, she asked again. John remembered to fill the feeder again.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["test", "again"],
-      ["reading", "restructured"]
-    ],
-    "comment": "Again over a filling event that occurred: evidence that remember restructures.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
-  },
-  {
-    "id": "white2014_8",
-    "source": {"bibkey": "white-2014", "paperLabel": "poster (15b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "Mary asked John to fill the bird feeder. He remembered that he was supposed to, but didn't. The next week, she asked again and John again remembered to fill the feeder.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["test", "again"],
-      ["reading", "restructured"]
-    ],
-    "comment": "Again cannot pick up a remembering whose filling event did not occur.",
+    "comment": "Presupposes that Bo had to take the trash out, as (1b) does: the presuppositional modality of the infinitive is that of an overt modal.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
   {
     "id": "white2014_9",
-    "source": {"bibkey": "white-2014", "paperLabel": "poster (16a)"},
+    "source": {"bibkey": "white-2014", "paperLabel": "(8a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "A different student remembered to read every paper.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["test", "inverse scope"],
-      ["scope", "every over a"]
-    ],
-    "comment": "Inverse scope of every out of the nonfinite complement is available.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
-  },
-  {
-    "id": "white2014_10",
-    "source": {"bibkey": "white-2014", "paperLabel": "poster (16b)"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "A different person remembered that he read every paper.",
+    "primaryText": "Bo remembered to clean the kitchen, even though he wasn't allowed to.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -201,19 +182,40 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["test", "inverse scope"],
-      ["scope", "every over a"]
+      ["complement", "infinitive"],
+      ["test", "denial of obligation"]
     ],
-    "comment": "No inverse scope out of the finite complement.",
+    "comment": "The presuppositional modality cannot be denied with the infinitive.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "white2014_10",
+    "source": {"bibkey": "white-2014", "paperLabel": "(8b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Bo remembered that he cleaned the kitchen, even though he wasn't allowed to.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "finite"],
+      ["test", "denial of obligation"]
+    ],
+    "comment": "No presuppositional modality with the finite complement, so it is not encoded in the verb.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
   {
     "id": "white2014_11",
-    "source": {"bibkey": "white-2014", "paperLabel": "poster (17a)"},
+    "source": {"bibkey": "white-2014", "paperLabel": "(9a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John remembered to read every paper Bill did.",
+    "primaryText": "Bo remembered to go to the store and that Jo asked him to grab cereal.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -222,19 +224,18 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["test", "antecedent-contained deletion"],
-      ["ellipsis", "matrix or embedded"]
+      ["test", "coordination"]
     ],
-    "comment": "Antecedent-contained deletion can target the matrix with the nonfinite complement.",
+    "comment": "Remember distributes over a control complement and a that-clause, against an ambiguity between two verbs.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   },
   {
     "id": "white2014_12",
-    "source": {"bibkey": "white-2014", "paperLabel": "poster (17b)"},
+    "source": {"bibkey": "white-2014", "paperLabel": "(9b)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John remembered that he read every paper Bill did.",
+    "primaryText": "Bo remembered to wash the dishes and Jo, that the dog needed a walk.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -243,10 +244,202 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["test", "antecedent-contained deletion"],
-      ["ellipsis", "embedded only"]
+      ["test", "gapping"]
     ],
-    "comment": "With the finite complement the deletion can target only the embedded clause.",
+    "comment": "Gapping across the two complement types.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "white2014_13",
+    "source": {"bibkey": "white-2014", "paperLabel": "(10a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Bo wasn't supposed to go to the store.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "In the context of (9a).",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "detachability"]
+    ],
+    "comment": "The modalized presupposition is not detachable from the first conjunct of (9a).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "white2014_14",
+    "source": {"bibkey": "white-2014", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Bo remembered to fill the bird feeder.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "infinitive"],
+      ["test", "again"]
+    ],
+    "comment": "The sentence whose restructuring the again test probes.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "white2014_15",
+    "source": {"bibkey": "white-2014", "paperLabel": "(13a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Bo again remembered that he had to fill the feeder.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Jo told Bo to fill the bird feeder. He remembered this but didn't fill it. The next week, she asked again.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "finite"],
+      ["test", "again"],
+      ["previous", "remembering only"]
+    ],
+    "comment": "Matrix again is felicitous without a previous filling: it modifies only the remembering.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "white2014_16",
+    "source": {"bibkey": "white-2014", "paperLabel": "(13b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Bo again remembered that he had to fill the feeder.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Jo told Bo to fill the bird feeder. He forgot this, but noticed it was empty and filled it anyway. She told him to again the next week.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "finite"],
+      ["test", "again"],
+      ["previous", "filling only"]
+    ],
+    "comment": "Infelicitous without a previous remembering.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "white2014_17",
+    "source": {"bibkey": "white-2014", "paperLabel": "(14a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Bo again remembered to fill the feeder.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Jo told Bo to fill the bird feeder. He remembered that he had to, but didn't. The next week, she asked again.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "infinitive"],
+      ["test", "again"],
+      ["previous", "remembering only"]
+    ],
+    "comment": "Infelicitous without a previous filling: the embedded event is accessible from the matrix.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "white2014_18",
+    "source": {"bibkey": "white-2014", "paperLabel": "(14b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Bo again remembered to fill the feeder.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Jo told Bo to fill the bird feeder. He forgot this, but noticed it was empty and filled it anyway. She told him to again the next week.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "infinitive"],
+      ["test", "again"],
+      ["previous", "filling only"]
+    ],
+    "comment": "Infelicitous without a previous remembering too: again modifies the compound event.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "white2014_19",
+    "source": {"bibkey": "white-2014", "paperLabel": "(15)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Bo again hoped to get a ticket.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Bo hoped to get a ticket to Jo's show. He couldn't, but when Jo came again...",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "hope"],
+      ["test", "again"],
+      ["previous", "hoping only"]
+    ],
+    "comment": "Hope to patterns with remember that: no semantic restructuring.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "white2014_20",
+    "source": {"bibkey": "white-2014", "paperLabel": "(18)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Bo remembered that he had to take out the trash, but he didn't end up doing it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["complement", "finite with overt modal"],
+      ["inference", "no actuality entailment"]
+    ],
+    "comment": "A modalized presupposition alone does not yield an actuality entailment.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "white2014_21",
+    "source": {"bibkey": "white-2014", "paperLabel": "(33)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Jo hoped to get coal in her stocking and that it would be inky black.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "hope"],
+      ["test", "coordination"]
+    ],
+    "comment": "Hope also coordinates a control complement with a that-clause.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
   }
