@@ -3,7 +3,10 @@ import Linglib.Syntax.Person.Basic
 import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Agreement.ContainmentPair
 import Linglib.Syntax.Number.Basic
+import Linglib.Syntax.Person.Resolve
 import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Fintype.Powerset
+import Mathlib.Data.Fintype.Prod
 
 /-!
 # Person
@@ -46,9 +49,13 @@ The canonical analytical inventory (root `Person`) lives in
 and referential-category layer.
 
 **§ 5–9: Person Categories** ([cysouw-2003]). The 8 referential person
-categories from Cysouw's paradigmatic framework. Three singular categories
-(individual speech act roles) and five group categories (attested
-combinations of participants).
+categories from Cysouw's paradigmatic framework, each a configuration of
+the speech-act participants it contains (`Category.participants`) and of
+the others it contains (`Category.otherCount`); the singular/group split,
+speaker and addressee inclusion, the person projection and the feature
+decomposition are all read off that configuration, and
+`Category.toConfig_bijective` shows the eight are exactly the well-formed
+configurations.
 
 The paradigmatic structure of a person paradigm — the syncretism pattern over
 these eight cells — is the subject of `Studies/Cysouw2003.lean`.
@@ -169,14 +176,14 @@ theorem no_fourth_person :
   fun a b c d ha hb hc hd =>
     ContainmentPairLike.no_four_way a b c d ha hb hc hd
 
--- ============================================================================
--- § 6: Person Categories (Cysouw)
--- ============================================================================
+/-! ### Person categories ([cysouw-2003]) -/
 
-/-- The 8 referential person categories ([cysouw-2003] ch. 3: the three
-singular participants plus the five attested of the seven logical groups
-of Table 3.1 — 1+1 (mass speaking) and 2+2 (present-audience-only) are
-dismissed as not grammaticalized, his §3.4). -/
+/-- The eight referential person categories ([cysouw-2003] ch. 3). A category is a
+configuration of the speech-act participants a referent contains and of the others it
+contains, none, one or several: the three singular participants and the five attested of the
+seven logical groups of Table 3.1. The two dismissed groups, 1+1 (mass speaking) and 2+2 (an
+audience with no one else, §3.4), are the configurations `Category.WellFormed` excludes, and
+`Category.toConfig_bijective` shows the constructors are exactly the well-formed ones. -/
 inductive Category where
   /-- The speaker alone, Cysouw's 1. -/
   | speaker
@@ -198,108 +205,98 @@ inductive Category where
 
 namespace Category
 
+variable {c : Category}
+
+/-- The speech-act participants a category contains. -/
+def participants : Category → Finset Discourse.Role
+  | speaker | speakerOthers => {.speaker}
+  | addressee | addresseeOthers => {.addressee}
+  | speakerAddressee | speakerAddresseeOthers => {.speaker, .addressee}
+  | other | others => ∅
+
+/-- The others a category contains: none, one, or several, several counting as two. -/
+def otherCount : Category → Fin 3
+  | speaker | addressee | speakerAddressee => 0
+  | other | speakerOthers | addresseeOthers | speakerAddresseeOthers => 1
+  | others => 2
+
+/-- A configuration of participants and others is a category iff it is nonempty and has
+    several others only on their own. The speaker and the addressee are unique individuals,
+    so a group of speakers or of addressees does not arise, and a participant with one other
+    or with several forms one group ([cysouw-2003] §3.4). -/
+def WellFormed (x : Finset Discourse.Role × Fin 3) : Prop :=
+  (x.1.Nonempty ∨ x.2 ≠ 0) ∧ (x.2 = 2 → x.1 = ∅)
+
+instance : DecidablePred WellFormed := λ _ => by unfold WellFormed; infer_instance
+
+/-- The configuration of a category. -/
+def toConfig (c : Category) : {x // WellFormed x} :=
+  ⟨(c.participants, c.otherCount), by cases c <;> decide +kernel⟩
+
+/-- The categories are exactly the well-formed configurations. -/
+theorem toConfig_bijective : Function.Bijective toConfig := ⟨by decide +kernel, by decide +kernel⟩
+
 /-- All 8 categories in canonical order (singular, then group). -/
 def all : List Category :=
   [.speaker, .addressee, .other, .speakerAddressee, .speakerAddresseeOthers, .speakerOthers,
     .addresseeOthers, .others]
 
-theorem all_length : all.length = 8 := by decide
+/-- The members of a category, several others counting as two. -/
+def card (c : Category) : ℕ := c.participants.card + c.otherCount
 
-/-- Is this a singular (individual) category? -/
-def IsSingular (c : Category) : Prop :=
-  c = .speaker ∨ c = .addressee ∨ c = .other
+/-- A singular category has one member. -/
+def IsSingular (c : Category) : Prop := c.card = 1
 
-instance : DecidablePred IsSingular := fun _ => inferInstanceAs (Decidable (_ ∨ _))
-
-/-- Is this a group (non-singular) category? -/
-def IsGroup (c : Category) : Prop :=
-  c = .speakerAddressee ∨ c = .speakerAddresseeOthers ∨ c = .speakerOthers ∨
-    c = .addresseeOthers ∨ c = .others
-
-instance : DecidablePred IsGroup := fun _ => inferInstanceAs (Decidable (_ ∨ _))
-
-/-- Is this part of the first person complex (contains speaker as part of a group)? -/
-def IsFirstPersonComplex (c : Category) : Prop :=
-  c = .speakerAddressee ∨ c = .speakerAddresseeOthers ∨ c = .speakerOthers
-
-instance : DecidablePred IsFirstPersonComplex :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _))
-
-/-- Is this an inclusive category (contains both speaker and addressee)? -/
-def IsInclusive (c : Category) : Prop :=
-  c = .speakerAddressee ∨ c = .speakerAddresseeOthers
-
-instance : DecidablePred IsInclusive :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _))
-
-theorem IsInclusive.isFirstPersonComplex {c : Category} (h : c.IsInclusive) :
-    c.IsFirstPersonComplex :=
-  h.imp_right .inl
+/-- A group category has several members. -/
+def IsGroup (c : Category) : Prop := 2 ≤ c.card
 
 /-- Does this category include the speaker? -/
-def IncludesSpeaker (c : Category) : Prop :=
-  c = .speaker ∨ c = .speakerAddressee ∨ c = .speakerAddresseeOthers ∨ c = .speakerOthers
-
-instance : DecidablePred IncludesSpeaker :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _))
-
-theorem IsFirstPersonComplex.includesSpeaker {c : Category} (h : c.IsFirstPersonComplex) :
-    c.IncludesSpeaker :=
-  .inr h
-
-theorem IsInclusive.includesSpeaker {c : Category} (h : c.IsInclusive) : c.IncludesSpeaker :=
-  h.isFirstPersonComplex.includesSpeaker
+def IncludesSpeaker (c : Category) : Prop := .speaker ∈ c.participants
 
 /-- Does this category include the addressee? -/
-def IncludesAddressee (c : Category) : Prop :=
-  c = .addressee ∨ c = .speakerAddressee ∨ c = .speakerAddresseeOthers ∨ c = .addresseeOthers
+def IncludesAddressee (c : Category) : Prop := .addressee ∈ c.participants
 
-instance : DecidablePred IncludesAddressee :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _))
+/-- The first person complex: the groups including the speaker. -/
+def IsFirstPersonComplex (c : Category) : Prop := c.IncludesSpeaker ∧ c.IsGroup
 
-end Category
+/-- An inclusive category includes both the speaker and the addressee. -/
+def IsInclusive (c : Category) : Prop := c.IncludesSpeaker ∧ c.IncludesAddressee
 
--- ============================================================================
--- § 7: Category UD Bridges
--- ============================================================================
+instance : DecidablePred IsSingular := λ _ => by unfold IsSingular; infer_instance
+instance : DecidablePred IsGroup := λ _ => by unfold IsGroup; infer_instance
+instance : DecidablePred IncludesSpeaker := λ _ => by unfold IncludesSpeaker; infer_instance
+instance : DecidablePred IncludesAddressee := λ _ => by unfold IncludesAddressee; infer_instance
+instance : DecidablePred IsFirstPersonComplex := λ _ => by
+  unfold IsFirstPersonComplex; infer_instance
+instance : DecidablePred IsInclusive := λ _ => by unfold IsInclusive; infer_instance
 
-/-- Map singular Category to UD.Person. -/
-def Category.toUDPerson : Category → Option UD.Person
-  | .speaker => some .first
-  | .addressee => some .second
-  | .other => some .third
-  | _   => none
+/-- A category is a group iff it is not singular. -/
+theorem isGroup_iff_not_isSingular : c.IsGroup ↔ ¬ c.IsSingular := by
+  revert c; decide +kernel
 
-/-- Map UD.Person to singular Category. -/
-def Category.fromUDPerson : UD.Person → Option Category
-  | .first  => some .speaker
-  | .second => some .addressee
-  | .third  => some .other
-  | .zero   => none
+theorem IsInclusive.isFirstPersonComplex (h : c.IsInclusive) : c.IsFirstPersonComplex := by
+  revert h; revert c; decide +kernel
 
-/-- Round-trip: UD.Person → Category → UD.Person is identity. -/
-theorem ud_person_roundtrip :
-    (Category.fromUDPerson .first).bind Category.toUDPerson = some .first ∧
-    (Category.fromUDPerson .second).bind Category.toUDPerson = some .second ∧
-    (Category.fromUDPerson .third).bind Category.toUDPerson = some .third :=
-  ⟨rfl, rfl, rfl⟩
+theorem IsFirstPersonComplex.includesSpeaker (h : c.IsFirstPersonComplex) :
+    c.IncludesSpeaker :=
+  h.1
 
-/-- Map Category to traditional person × number pair. -/
-def Category.toUDPersonNumber :
-    Category → Option (UD.Person × UD.Number)
-  | .speaker => some (.first, .Sing)
-  | .addressee => some (.second, .Sing)
-  | .other => some (.third, .Sing)
-  | .speakerAddressee => some (.first, .Dual)
-  | .speakerAddresseeOthers => some (.first, .Plur)
-  | .speakerOthers => some (.first, .Plur)
-  | .addresseeOthers => some (.second, .Plur)
-  | .others => some (.third, .Plur)
+theorem IsInclusive.includesSpeaker (h : c.IsInclusive) : c.IncludesSpeaker := h.1
 
-/-- UD conflates inclusive and exclusive under first person plural. -/
-theorem ud_conflates_incl_excl :
-    Category.toUDPersonNumber .speakerAddresseeOthers =
-    Category.toUDPersonNumber .speakerOthers := rfl
+/-- The person of a category is the person of its participants, clusivity being a property
+    of groups. -/
+def person (c : Category) : Person :=
+  if c.IsGroup then Person.ofParticipants c.participants
+  else (Person.ofParticipants c.participants).coarsen
+
+/-- The person projection tracks speaker inclusion. -/
+theorem person_includesSpeaker_iff (c : Category) :
+    c.person.IncludesSpeaker ↔ c.IncludesSpeaker := by
+  cases c <;> decide +kernel
+
+/-- Unlike UD realization, the person projection separates inclusive from exclusive. -/
+theorem person_separates_clusivity :
+    Category.speakerAddresseeOthers.person ≠ Category.speakerOthers.person := by decide +kernel
 
 /-- The [cysouw-2003] categories a (person, number) coordinate pair can realize. Clusivity
     rides on the person value and the minimal/augmented coordinates give the minimal/augmented
@@ -309,7 +306,7 @@ theorem ud_conflates_incl_excl :
     noncommittal between the singular and the group category (`(second, general)` ↦
     `{addressee, addresseeOthers}`), and a singular bearing clusivity or the impersonal person
     realizes nothing. -/
-def Category.ofPersonNumber : Person → Number → Finset Category
+def ofPersonNumber : Person → Number → Finset Category
   | .first, .singular | .first, .minimal => {.speaker}
   | .first, .dual => {.speakerAddressee, .speakerOthers}
   | .first, .general => {.speaker, .speakerAddressee, .speakerAddresseeOthers, .speakerOthers}
@@ -328,38 +325,10 @@ def Category.ofPersonNumber : Person → Number → Finset Category
   | .third, _ => {.others}
   | .zero, _ => ∅
 
-/-- The person coordinate of each referential category — the projection
-    the canonical inventory recovers losslessly where UD cannot:
-    `speakerAddressee` and `speakerAddresseeOthers` ↦ `firstInclusive`, `speakerOthers` ↦
-    `firstExclusive`.
-    (The number coordinate is `toUDPersonNumber`'s second component; the
-    full `Category ≃ compatible (Person × Number)` junction is the
-    planned phase-2 theorem.) -/
-def Category.person : Category → Person
-  | .speaker        => .first
-  | .addressee        => .second
-  | .other        => .third
-  | .speakerAddressee   => .firstInclusive
-  | .speakerAddresseeOthers   => .firstInclusive
-  | .speakerOthers      => .firstExclusive
-  | .addresseeOthers => .second
-  | .others  => .third
-
-/-- The person projection tracks speaker inclusion. -/
-theorem person_includesSpeaker_iff (c : Category) :
-    c.person.IncludesSpeaker ↔ c.IncludesSpeaker := by
-  cases c <;> simp [Category.person, Person.IncludesSpeaker,
-    Category.IncludesSpeaker]
-
-/-- Unlike UD realization, the person projection separates inclusive
-    from exclusive. -/
-theorem person_separates_clusivity :
-    Category.speakerAddresseeOthers.person ≠ Category.speakerOthers.person := by decide
-
 /-- `ofPersonNumber` inverts the person projection: every category is recovered from its
     coordinates at some number value. -/
 theorem ofPersonNumber_person (c : Category) :
-    ∃ n, Category.ofPersonNumber c.person n = {c} := by
+    ∃ n, ofPersonNumber c.person n = {c} := by
   cases c
   · exact ⟨.singular, rfl⟩
   · exact ⟨.singular, rfl⟩
@@ -375,8 +344,6 @@ theorem ofPersonNumber_person (c : Category) :
 A form that can denote several categories (the polite German *Sie*, addressee or addressees;
 English *we*, any group containing the speaker) has a person and a number only up to the
 values neutral between them: the clusivity-unmarked `first` and the noncommittal `general`. -/
-
-namespace Category
 
 /-- The person shared by a set of referential categories: the common value of `person` where
     there is one, `first` for categories differing only in clusivity, `none` for the empty set
@@ -416,99 +383,28 @@ theorem sharedNumber_ofPersonNumber_eq_general (p : Person) (n : Number)
     (h : sharedNumber (ofPersonNumber p n) = some .general) : n = .general := by
   revert h; revert p n; decide
 
+/-! ### The feature decomposition of a category -/
+
+/-- The framework-neutral Cysouw/Siewierska `[±participant, ±author]` features of a category:
+    whether it contains a speech-act participant and whether it contains the speaker. The
+    features underdetermine the first person complex, whose three categories all map to
+    `⟨true, true⟩`; the theory-laden Harbour-*sign* decomposition that distinguishes the
+    exclusive (`+author −participant`) lives in `Studies.Harbour2016.signOf`. -/
+def toFeatures (c : Category) : Features :=
+  ⟨decide c.participants.Nonempty, decide c.IncludesSpeaker⟩
+
+@[simp] theorem toFeatures_hasAuthor : c.toFeatures.hasAuthor = true ↔ c.IncludesSpeaker := by
+  simp [toFeatures]
+
+@[simp] theorem toFeatures_hasParticipant :
+    c.toFeatures.hasParticipant = true ↔ c.IncludesSpeaker ∨ c.IncludesAddressee := by
+  cases c <;> decide +kernel
+
+/-- Every category yields well-formed features. -/
+theorem toFeatures_wellFormed (c : Category) : c.toFeatures.WellFormed := by
+  cases c <;> decide +kernel
+
 end Category
-
--- ============================================================================
--- § 8: Category ↔ Features Bridge
--- ============================================================================
-
-/-- Decompose any Category into binary person features (the framework-neutral
-    Cysouw/Siewierska `[±participant, ±author]` decomposition).
-
-    - `hasAuthor` = `includesSpeaker`: the referent contains the speaker.
-    - `hasParticipant` = `includesSpeaker ∨ includesAddressee`: the referent
-      contains at least one speech-act participant.
-
-    Features underdetermine group categories: `speakerOthers`, `speakerAddressee`, and
-    `speakerAddresseeOthers` all map to `⟨true, true⟩` — a genuine property of the descriptive
-    two-feature system
-    (the `Category` enum carries the clusivity distinction the features cannot). The
-    theory-laden Harbour-*sign* decomposition that *does* distinguish the exclusive
-    (`+author −participant`) lives in the theory layer
-    (as `Studies.Harbour2016.signOf`, over `Syntax.Minimalist.Phi.Lattice` operators), not here. -/
-def Category.toFeatures : Category → Features
-  | .speaker        => ⟨true, true⟩
-  | .addressee        => ⟨true, false⟩
-  | .other        => ⟨false, false⟩
-  | .speakerAddressee   => ⟨true, true⟩
-  | .speakerAddresseeOthers   => ⟨true, true⟩
-  | .speakerOthers      => ⟨true, true⟩
-  | .addresseeOthers => ⟨true, false⟩
-  | .others  => ⟨false, false⟩
-
-/-- `hasAuthor` ↔ `IncludesSpeaker` for all categories. -/
-theorem toFeatures_author_iff_speaker (p : Category) :
-    p.toFeatures.hasAuthor = true ↔ p.IncludesSpeaker := by
-  cases p <;> simp [Category.toFeatures, Category.IncludesSpeaker]
-
-/-- `hasParticipant` ↔ `IncludesSpeaker ∨ IncludesAddressee` for all categories. -/
-theorem toFeatures_participant_iff_sap (p : Category) :
-    p.toFeatures.hasParticipant = true ↔ p.IncludesSpeaker ∨ p.IncludesAddressee := by
-  cases p <;> simp [Category.toFeatures, Category.IncludesSpeaker, Category.IncludesAddressee]
-
-/-- All 8 categories yield well-formed features. -/
-theorem Category.toFeatures_wellFormed (p : Category) :
-    p.toFeatures.WellFormed := by cases p <;> decide
-
--- ============================================================================
--- § 9: Category ↔ Person Bridge
--- ============================================================================
-
-/-- The singular Category of a tripartition person value. -/
-def Category.ofSingularPerson : Person → Option Category
-  | .first  => some .speaker
-  | .second => some .addressee
-  | .third  => some .other
-  | _ => none
-
-/-- Round-trip: singular categories are recovered from their person
-    projection. -/
-theorem singular_category_roundtrip (c : Category) (h : c.IsSingular) :
-    Category.ofSingularPerson c.person = some c := by
-  rcases h with rfl | rfl | rfl <;> rfl
-
-/-- includesSpeaker on Category = hasParticipant ∧ hasAuthor on
-    Person for singular categories: speaker (s1) = [+participant,
-    +author], addressee (s2) = [+participant, −author], other (s3) =
-    [−participant, −author]. This unifies the Category decomposition
-    in `Spanish/PersonFeatures.lean` with `Phi.Geometry.decomposePerson`. -/
-theorem includesSpeaker_iff_author :
-    Category.speaker.IncludesSpeaker ∧
-    ¬ Category.addressee.IncludesSpeaker ∧
-    ¬ Category.other.IncludesSpeaker := by decide
-
-theorem includesAddressee_iff_participant_not_author :
-    ¬ Category.speaker.IncludesAddressee ∧
-    Category.addressee.IncludesAddressee ∧
-    ¬ Category.other.IncludesAddressee := by decide
-
-/-- SAP (speech-act participant) = `IncludesSpeaker ∨ IncludesAddressee`
-    for singular categories. This matches `Person.isSAP`. -/
-theorem singular_sap_match :
-    (Category.speaker.IncludesSpeaker ∨ Category.speaker.IncludesAddressee) ∧
-    (Category.addressee.IncludesSpeaker ∨ Category.addressee.IncludesAddressee) ∧
-    ¬ (Category.other.IncludesSpeaker ∨ Category.other.IncludesAddressee) := by decide
-
--- ============================================================================
--- § 10: Category Consistency
--- ============================================================================
-
-/-- Singular categories: `Category.toFeatures` agrees with the person
-    decomposition through the person projection. -/
-theorem singular_features_match :
-    ∀ c : Category, c.IsSingular →
-      some c.toFeatures = c.person.toFeatures := by
-  rintro c (rfl | rfl | rfl) <;> rfl
 
 -- ============================================================================
 -- § 11: Epistemic Authority ([bickel-nichols-2007])
