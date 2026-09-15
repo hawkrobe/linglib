@@ -23,6 +23,9 @@ product parameter space, to comparisons of prior-weighted likelihood sums.
   raises the expectation of a statistic that monovaries with the observation's likelihood.
 * `ProbabilityTheory.posterior_fst_real_lt_iff`, `posterior_snd_real_lt_iff` — marginal
   comparison over a product parameter space.
+* `ProbabilityTheory.posterior_uniformOn_univ_apply_singleton`,
+  `posterior_uniformOn_univ_real_finset` — Bayes against the uniform prior, the prior
+  cancelling.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -383,6 +386,21 @@ theorem posterior_uniformOn_univ_apply_singleton {x : 𝓧} (hx : ∑ w, κ w {x
     rw [comp_uniformOn_univ_apply_singleton]; exact mul_ne_zero hc hx
   rw [posterior_apply_singleton _ _ hsum, uniformOn_univ_apply_singleton,
     comp_uniformOn_univ_apply_singleton, ENNReal.mul_div_mul_left _ _ hc hct]
+
+/-- Bayes against the uniform prior at a finite event: the likelihoods over the event,
+normalized over the states. -/
+theorem posterior_uniformOn_univ_apply_finset {x : 𝓧} (hx : ∑ w, κ w {x} ≠ 0) (E : Finset W) :
+    (κ†(uniformOn (Set.univ : Set W))) x ↑E = (∑ w ∈ E, κ w {x}) / ∑ w, κ w {x} := by
+  rw [← sum_measure_singleton]
+  simp_rw [posterior_uniformOn_univ_apply_singleton κ hx, div_eq_mul_inv]
+  rw [Finset.sum_mul]
+
+/-- Bayes against the uniform prior at a finite event, on reals. -/
+theorem posterior_uniformOn_univ_real_finset {x : 𝓧} (hx : ∑ w, κ w {x} ≠ 0) (E : Finset W) :
+    ((κ†(uniformOn (Set.univ : Set W))) x).real ↑E =
+      (∑ w ∈ E, (κ w {x}).toReal) / ∑ w, (κ w {x}).toReal := by
+  rw [measureReal_def, posterior_uniformOn_univ_apply_finset κ hx, ENNReal.toReal_div,
+    ENNReal.toReal_sum λ w _ => measure_ne_top _ _, ENNReal.toReal_sum λ w _ => measure_ne_top _ _]
 
 end UniformPrior
 
