@@ -92,8 +92,8 @@ def Tree.den : Tree Cat Word → Set W → Set W
 
 /-- (44): the lexicon of propositional operators, Σ and NEG of category Pol and the deontic modal
 of its own category. -/
-def lexicon : List (Tree Cat Word) :=
-  [.terminal .pol .sigma, .terminal .pol .neg, .terminal .modal .deontic]
+def lexicon : Finset (Tree Cat Word) :=
+  {.terminal .pol .sigma, .terminal .pol .neg, .terminal .modal .deontic}
 
 /-- The focused polarity head Σ_F. -/
 def sigma : Tree Cat Word := .terminal .pol .sigma
@@ -167,21 +167,21 @@ theorem exists_context_inter_eq (p : Set W) (H : Set (Set W)) :
 
 /-- (42), the Category Match Constraint: the alternatives of a focused constituent are its
 same-category replacements from the lexicon. -/
-def categoryMatch {C V : Type} (lex : List (Tree C V)) (φ : Tree C V) : Set (Tree C V) :=
+def categoryMatch {C V : Type} (lex : Finset (Tree C V)) (φ : Tree C V) : Set (Tree C V) :=
   {ψ | ψ ∈ lex ∧ ψ.cat = φ.cat}
 
 /-- A category-match replacement is one substitution step of [katzir-2007]'s structural
 operations; no complexity bound is involved. -/
-theorem structOp_of_mem_categoryMatch {C V : Type} {lex : List (Tree C V)} {φ ψ : Tree C V}
-    (h : ψ ∈ categoryMatch lex φ) : StructOp lex φ ψ :=
-  .subst h.2 h.1
+theorem structOp_of_mem_categoryMatch {C V : Type} {lex : Finset (Tree C V)} {φ ψ : Tree C V}
+    (h : ψ ∈ categoryMatch lex φ) : StructOp (↑lex) φ ψ :=
+  .subst h.2 (Finset.mem_coe.2 h.1)
 
 /-- (45): the category-match alternatives of Σ_F are Σ and NEG. -/
 theorem categoryMatch_sigma :
     categoryMatch lexicon sigma = {.terminal .pol .sigma, .terminal .pol .neg} := by
   ext ψ
-  simp only [categoryMatch, lexicon, sigma, Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil,
-    or_false, Set.mem_insert_iff, Set.mem_singleton_iff]
+  simp only [categoryMatch, lexicon, sigma, Set.mem_ofPred_eq, Finset.mem_insert,
+    Finset.mem_singleton, Set.mem_insert_iff, Set.mem_singleton_iff]
   constructor
   · rintro ⟨rfl | rfl | rfl, hc⟩
     · exact Or.inl rfl

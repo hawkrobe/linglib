@@ -68,11 +68,11 @@ instance : LawfulBEq EWord where
 open EWord
 
 /-- The lexical items: terminals only. -/
-def epithetLex : List (Tree Cat EWord) :=
-  [.terminal .N .john, .terminal .N .pedro,
+def epithetLex : Finset (Tree Cat EWord) :=
+  {.terminal .N .john, .terminal .N .pedro,
    .terminal .V .arrived, .terminal .Adv .first,
    .terminal .Conj .andThen,
-   .terminal .Det .that_, .terminal .N .bastard]
+   .terminal .Det .that_, .terminal .N .bastard}
 
 /-- The predicate *arrived first*. -/
 def arrivedFirst : Tree Cat EWord := .node .VP [.terminal .V .arrived, .terminal .Adv .first]
@@ -94,8 +94,8 @@ def bastardPedroArrived : Tree Cat EWord := .node .S [bastardPedroDP, arrivedFir
 
 /-- The substitution source after the mention: the lexical items and the contextually
 relevant epithet phrase ([fox-katzir-2011]). -/
-def priorContextLex : List (Tree Cat EWord) :=
-  epithetLex ++ [bastardPedroDP]
+def priorContextLex : Finset (Tree Cat EWord) :=
+  insert bastardPedroDP epithetLex
 
 /-- The daughters of a tree. -/
 def daughters : Tree Cat EWord → List (Tree Cat EWord)
@@ -128,7 +128,7 @@ phrase with two or more daughters: no source item has one, the sentence has none
 operations cannot widen a phrase. -/
 theorem no_wideDP_outOfBlue {ψ : Tree Cat EWord}
     (h : ψ ∈ structuralAlternatives epithetLex johnArrived) : ∀ t ∈ ψ.subtrees, ¬ WideDP t :=
-  subtree_preservation _ WideDP (by decide)
+  subtree_preservation _ WideDP (forall_mem_substitutionSource.2 ⟨by decide, by decide⟩)
     (λ _ cs i h ⟨h1, h2⟩ => h ⟨h1, by
       simp only [daughters, List.length_eraseIdx, i.2, if_true] at h2 ⊢; omega⟩)
     (λ _ cs _ _ h ⟨h1, h2⟩ => h ⟨h1, by simpa [daughters, List.length_set] using h2⟩)
@@ -148,13 +148,13 @@ theorem epithet_alternative_priorMention :
       bastardPedroArrived :=
     StructOp.inChild (cs := [Tree.node Cat.DP [Tree.terminal Cat.N john], arrivedFirst])
       ⟨0, by decide⟩
-      (StructOp.subst rfl (List.mem_append_left _ (by simp [priorContextLex])))
+      (StructOp.subst rfl (Set.mem_union_left _ (by simp [priorContextLex])))
   have step2 : StructOp (substitutionSource priorContextLex johnArrived) bastardPedroArrived
       bastardJohnArrived :=
     StructOp.inChild (cs := [bastardPedroDP, arrivedFirst]) ⟨0, by decide⟩
       (StructOp.inChild (cs := [Tree.terminal Cat.Det that_, Tree.terminal Cat.N bastard,
           Tree.terminal Cat.N pedro]) ⟨2, by decide⟩
-        (StructOp.subst rfl (List.mem_append_left _ (by simp [priorContextLex, epithetLex]))))
+        (StructOp.subst rfl (Set.mem_union_left _ (by simp [priorContextLex, epithetLex]))))
   exact Relation.ReflTransGen.head step1 (Relation.ReflTransGen.single step2)
 
 /-! ### Conventionally implicated content as felicity sets -/
@@ -179,14 +179,16 @@ theorem epithet_ciStronger_than_bare :
 
 /-- Out of the blue the bare sentence does not violate the principle: every formal
 alternative is free of the epithet construction, so none has stronger content. -/
-theorem outOfBlue_no_ACI : ¬ Blocked (katzirSource epithetLex) expressiveCI johnArrived := by
+theorem outOfBlue_no_ACI :
+    ¬ Blocked (structuralAlternatives epithetLex) expressiveCI johnArrived := by
   rintro ⟨φ', hφ', hss⟩
   obtain ⟨w, -, h_alt⟩ := Set.not_subset.1 hss.2
   exact h_alt λ ⟨s, hs, hse⟩ => absurd (WideDP.of_isEpithet hse) (no_wideDP_outOfBlue hφ' s hs)
 
 /-- After the mention the bare sentence violates the principle: the epithet sentence is a
 formal alternative with stronger content. -/
-theorem priorMention_yes_ACI : Blocked (katzirSource priorContextLex) expressiveCI johnArrived :=
+theorem priorMention_yes_ACI :
+    Blocked (structuralAlternatives priorContextLex) expressiveCI johnArrived :=
   ⟨bastardJohnArrived, epithet_alternative_priorMention, epithet_ciStronger_than_bare⟩
 
 end LoGuercio2025

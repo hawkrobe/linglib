@@ -1395,6 +1395,7 @@ import Linglib.Processing.VisualWorld
 import Linglib.Semantics.Alternatives.Basic
 import Linglib.Semantics.Alternatives.Extremum
 import Linglib.Semantics.Alternatives.Source
+import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Semantics.Alternatives.Structural
 import Linglib.Semantics.Alternatives.Symmetric
 import Linglib.Semantics.ArgumentStructure.Affectedness
