@@ -327,6 +327,16 @@ def cCommandsIn (root x y : SyntacticObject) : Prop :=
 instance (root x y : SyntacticObject) : Decidable (cCommandsIn root x y) :=
   Multiset.decidableExistsMultiset
 
+theorem areSistersIn.symm {root x y : SyntacticObject} (h : areSistersIn root x y) :
+    areSistersIn root y x :=
+  let ⟨z, hz, hx, hy, hne⟩ := h; ⟨z, hz, hy, hx, hne.symm⟩
+
+/-- Sisters c-command each other. -/
+theorem cCommandsIn_of_areSistersIn {root x y : SyntacticObject} (h : areSistersIn root x y) :
+    cCommandsIn root x y :=
+  let ⟨_, hz, _, hy, _⟩ := h
+  ⟨y, subtrees_subset_of_mem hz (mem_subtrees_of_immediatelyContains hy), h, Or.inl rfl⟩
+
 /-- A c-commanded object is a subterm of the root. -/
 theorem mem_subtrees_of_cCommandsIn {root x y : SyntacticObject} (h : cCommandsIn root x y) :
     y ∈ root.subtrees := by
@@ -348,6 +358,12 @@ def asymCCommandsIn (root x y : SyntacticObject) : Prop :=
 
 instance (root x y : SyntacticObject) : Decidable (asymCCommandsIn root x y) :=
   inferInstanceAs (Decidable (_ ∧ _))
+
+/-- Sisters never asymmetrically c-command each other. -/
+theorem not_asymCCommandsIn_of_areSistersIn {root x y : SyntacticObject}
+    (h : areSistersIn root x y) : ¬ asymCCommandsIn root x y :=
+  λ h' => h'.2 (cCommandsIn_of_areSistersIn h.symm)
+
 
 /-- `x` immediately c-commands `y` in `root` when `x` c-commands `y` with no third object
 c-commanded by `x` and c-commanding `y`. -/

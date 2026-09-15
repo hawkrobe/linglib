@@ -25,9 +25,8 @@ The ±Interpretable distinction is orthogonal to valued/unvalued:
 - **–Interpretable**: must be checked and deleted before LF.
   Case features, φ-features of T/v, strong [nominal-] features.
 
-Interpretability is determined by the combination of feature type and
-host category: person on N is +Interpretable, person on T is
-–Interpretable. `isInterpretableOn` encodes this mapping.
+Interpretability is determined by the combination of feature type and host category, so that
+person on N is +Interpretable and person on T is –Interpretable.
 
 ## Design Decision: `Person` replaces `Nat`
 
@@ -461,8 +460,8 @@ inductive Interpretability where
 
     Some features are always interpretable (categorial, honorific,
     factive) or always uninterpretable (Case, EPP, ellipsis).
-    For features whose interpretability depends on host category
-    (phi, wh, tense), see `isInterpretableOn` in `Checking.lean`. -/
+    Features whose interpretability depends on the host category (φ, wh, tense)
+    have none. -/
 def FeatureVal.inherentInterpretability : FeatureVal → Option Interpretability
   | .catN _ | .catV _ => some .interpretable
   | .case _ => some .uninterpretable

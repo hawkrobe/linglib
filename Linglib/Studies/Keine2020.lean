@@ -25,11 +25,9 @@ the Ban on Improper Movement (Section 6.2) with the smuggling and remnant-moveme
 ## Implementation notes
 
 Labels are the projected heads of the substrate's `ClauseSpine`s, with the Tsez TopP and ForceP
-defined here; the probes are the substrate's `LanguageProbeConfig.hindi` and
-`LanguageProbeConfig.english`, `english_extr` and `lubukusuAProbe` where the book's settings are
-recorded there, and are defined here for German, Itelmen and Tsez, whose heads (269) and (271)
-leave open. Chapters 4 and 5, on CP and vP phases, are not formalized beyond the opacity facts the
-tables record.
+defined here, and so are the probes of (219), (241), (300) and (367); the Itelmen and Tsez
+probes are parameterized by their head, which (269) and (271) leave open. Chapters 4 and 5, on
+CP and vP phases, are not formalized beyond the opacity facts the tables record.
 
 ## References
 
@@ -55,6 +53,39 @@ theorem sizes_le :
     ClauseSpine.vP ≤ .tP ∧ ClauseSpine.tP ≤ .cP ∧ ClauseSpine.tP ≤ .nmlzP ∧
       ClauseSpine.cP ≤ .forceP := by
   decide
+
+/-- A language's probe settings for the four operations of the transparency tables. -/
+structure LanguageProbeConfig where
+  /-- The φ-agreement probe. -/
+  phi : Probe.Profile
+  /-- The A-movement probe. -/
+  aMove : Probe.Profile
+  /-- The wh-licensing probe. -/
+  wh : Probe.Profile
+  /-- The Ā-movement or topicalization probe. -/
+  ābar : Probe.Profile
+  deriving Repr
+
+/-- The Hindi probes of (219): A-movement and φ-agreement on T⁰ with horizon T, wh-licensing
+on C⁰ with horizon C, Ā-movement on C⁰ with horizon Nmlz. -/
+def LanguageProbeConfig.hindi : LanguageProbeConfig :=
+  { phi := ⟨.T, some .T⟩, aMove := ⟨.T, some .T⟩, wh := ⟨.C, some .C⟩, ābar := ⟨.C, some .Nmlz⟩ }
+
+/-- The English probes of (241), the A-probe on T⁰ with horizon C and the wh-probe on C⁰ without
+horizon, Ā-movement being wh-movement. The book lists no separate φ-probe, taken here to share
+the A-probe's settings. -/
+def LanguageProbeConfig.english : LanguageProbeConfig :=
+  { phi := ⟨.T, some .C⟩, aMove := ⟨.T, some .C⟩, wh := ⟨.C, none⟩, ābar := ⟨.C, none⟩ }
+
+/-- The English extraposition probe of (241), on T⁰ with horizon T. -/
+def englishExtr : Probe.Profile := ⟨.T, some .T⟩
+
+/-- The Lubukusu A-probe of (300), without horizon, so that it hyperraises out of finite
+clauses. -/
+def lubukusuAProbe : Probe.Profile := ⟨.T, none⟩
+
+/-- The default horizon of a probe on `X⁰` is `X` itself ((307)). -/
+def defaultHorizon (probeHead : Cat) : Probe.Profile := ⟨probeHead, some probeHead⟩
 
 /-! ### Hindi (Chapters 2 and 3) -/
 
@@ -83,9 +114,9 @@ theorem nmlzP_cP_incomparable :
         LanguageProbeConfig.hindi.ābar].map (row hindiSizes)).Nodup := by
   decide
 
-/-- (231): the A- and φ-probes coincide, so a clause that A-extraction has entered is transparent
-to agreement, which is then obligatory; the Ā-probe's horizon differs, and a finite clause shows
-it. -/
+/-- The A- and φ-probes coincide, so a clause that A-extraction has entered is transparent to
+agreement, which is then obligatory, while the Ā-probe's horizon differs, and a finite clause
+shows it (231). -/
 theorem a_movement_agreement_generalization :
     LanguageProbeConfig.hindi.aMove = LanguageProbeConfig.hindi.phi ∧
       LanguageProbeConfig.hindi.ābar.transparentToLabel ClauseSpine.cP.projectedHeads = true ∧
@@ -103,7 +134,7 @@ larger than vP. -/
 theorem english_table :
     row englishSizes LanguageProbeConfig.english.aMove = [true, true, false] ∧
       row englishSizes LanguageProbeConfig.english.wh = [true, true, true] ∧
-      row englishSizes english_extr = [true, false, false] := by
+      row englishSizes englishExtr = [true, false, false] := by
   decide
 
 /-- The German probes of (367): scrambling on T⁰ with horizon T, relativization on C⁰ with
@@ -185,17 +216,17 @@ theorem hlt_horizon_to_location :
 theorem attested_nonvacuous :
     ∀ p ∈ [LanguageProbeConfig.hindi.aMove, LanguageProbeConfig.hindi.phi,
       LanguageProbeConfig.hindi.wh, LanguageProbeConfig.hindi.ābar,
-      LanguageProbeConfig.english.aMove, LanguageProbeConfig.english.wh, english_extr,
+      LanguageProbeConfig.english.aMove, LanguageProbeConfig.english.wh, englishExtr,
       germanScr, germanRel, germanWh, germanTop], p.isVacuous = false := by
   decide
 
 /-- (307): the default horizon of a probe on X⁰ is X, the strictest choice that is not vacuous;
 the Hindi probes on T⁰, English extraposition and German scrambling take it. -/
 theorem default_horizon_strictest :
-    (∀ X ∈ [Cat.T, .C, .Force], (Probe.Profile.defaultHorizon X).isVacuous = false) ∧
-      LanguageProbeConfig.hindi.phi = Probe.Profile.defaultHorizon .T ∧
-      english_extr = Probe.Profile.defaultHorizon .T ∧
-      germanScr = Probe.Profile.defaultHorizon .T :=
+    (∀ X ∈ [Cat.T, .C, .Force], (defaultHorizon X).isVacuous = false) ∧
+      LanguageProbeConfig.hindi.phi = defaultHorizon .T ∧
+      englishExtr = defaultHorizon .T ∧
+      germanScr = defaultHorizon .T :=
   ⟨by decide, rfl, rfl, rfl⟩
 
 /-! ### Variation and improper movement (Sections 3.6, 3.4.3, 6.2) -/

@@ -240,7 +240,7 @@ theorem generalization_I_cantonese :
     boundaries.
 
     On the substrate: this is an instance of upward entailment of opacity
-    (`Probe.lean` `upward_entailment_label`). Stated here without invoking
+    (`Probe.Profile.transparentToLabel_eq_false_of_subset`). Stated here without invoking
     bilateral labeling — see §5 above. The content is that for any matrix
     *again*-bearing AspO probe, the *complement clause's size* determines
     transparency: vP transparent, TP / CP opaque. -/

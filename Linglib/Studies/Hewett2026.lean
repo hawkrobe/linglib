@@ -1,5 +1,6 @@
 import Linglib.Data.Examples.Hewett2026
-import Linglib.Syntax.Minimalist.Agree.Checking
+import Linglib.Syntax.Minimalist.Defs
+import Linglib.Syntax.Minimalist.Features
 import Mathlib.Logic.Function.Basic
 import Mathlib.Tactic.DeriveFintype
 
@@ -17,7 +18,7 @@ roots of (13), the Syrian root of (14) and the Hebrew roots of (17) and (18) ref
 (`krh_not_categoryDetermined`), the category-dependent roots of (5) and (6) refute
 determination by the root alone, and the roots of (1), (2) and (11) are invariant. Joint
 selection (23) indexes a selectional feature by an ordered tuple of category features that
-c-commanding heads strip in order, `Minimalist.ActivationIndex`; `selected` runs the
+c-commanding heads strip in order, `ActivationIndex`; `selected` runs the
 derivations (24) and (25), and the lexical entries read off the data select exactly the
 attested preposition once the categorizing head and then the template have activated them
 (`selected_eq`).
@@ -51,7 +52,7 @@ open Minimalist
 
 /-! ### Roots, templates and prepositions -/
 
-/-- The verbal templates of the data: the Arabic Forms I, II, VII and V and the Hebrew
+/-- The verbal templates of the data, the Arabic Forms I, II, VII and V and the Hebrew
 *pi'el*, *pu'al*, *hif'il* and *huf'al*. -/
 inductive Template where
   | XaYaZ
@@ -155,8 +156,8 @@ def rows (r : Root) : List Datum := data.filter (·.root = r)
 
 /-! ### What determines the preposition -/
 
-/-- The preposition is a function of the coordinate `π` on the rows: `Datum.prep` factors
-through `π` there (`Function.FactorsThrough` restricted to the list). -/
+/-- The preposition is a function of the coordinate `π` on the rows, that is, `Datum.prep`
+factors through `π` there, `Function.FactorsThrough` restricted to the list. -/
 def Determines {K : Type*} (π : Datum → K) (rows : List Datum) : Prop :=
   ∀ d ∈ rows, ∀ d' ∈ rows, π d = π d' → d.prep = d'.prep
 
@@ -170,15 +171,15 @@ theorem Determines.of_factorsThrough {K K' : Type*} {π : Datum → K} {π' : Da
     Determines π' rows :=
   λ d hd d' hd' he => hπ d hd d' hd' (h he)
 
-/-- Selection by the root (12a): the root determines the preposition. -/
+/-- Selection by the root (12a), where the root determines the preposition. -/
 abbrev RootDetermined (rows : List Datum) : Prop := Determines Datum.root rows
 
-/-- Selection by the categorizing head (12b): the root and its category determine the
+/-- Selection by the categorizing head (12b), where the root and its category determine the
 preposition, the prediction root-based selection makes as well. -/
 abbrev CategoryDetermined (rows : List Datum) : Prop :=
   Determines (λ d => (d.root, d.cat)) rows
 
-/-- Joint selection: the root, its category and the template determine the preposition. -/
+/-- Joint selection, where the root, its category and the template determine the preposition. -/
 abbrev TemplateDetermined (rows : List Datum) : Prop :=
   Determines (λ d => (d.root, d.cat, d.template)) rows
 
@@ -196,7 +197,7 @@ theorem apologi_rootDetermined : RootDetermined (rows .apologi) := by decide
 /-- √fxr selects *b-* in every category (2). -/
 theorem fxr_rootDetermined : RootDetermined (rows .fxr) := by decide
 
-/-- √xwf selects *min* in both templates (11): template-independent l-selection. -/
+/-- √xwf selects *min* in both templates (11), a template-independent l-selection. -/
 theorem xwf_rootDetermined : RootDetermined (rows .xwf) := by decide
 
 /-- √prd selects *on*, *in* and *of* by category (5), so the root alone does not determine
@@ -210,8 +211,8 @@ theorem brk_not_rootDetermined : ¬ RootDetermined (rows .brk) := by decide
 
 theorem brk_categoryDetermined : CategoryDetermined (rows .brk) := by decide
 
-/-- √krh takes a bare object in XaYaZ and *fi* in XaYYaZ (13a): the root and its category do
-not determine the preposition, so selection at or below the categorizer is too early. -/
+/-- √krh takes a bare object in XaYaZ and *fi* in XaYYaZ (13a), so the root and its category do
+not determine the preposition and selection at or below the categorizer is too early. -/
 theorem krh_not_categoryDetermined : ¬ CategoryDetermined (rows .krh) := by decide
 
 /-- √dwr selects *b-* in XaYaZ and *ʕala* in XaYYaZ (13b). -/
@@ -227,7 +228,7 @@ theorem tpl_not_categoryDetermined : ¬ CategoryDetermined (rows .tpl) := by dec
 theorem shps_not_categoryDetermined : ¬ CategoryDetermined (rows .shps) := by decide
 
 /-- The root, its category and the template together determine the preposition throughout
-the data: the fixing point of l-selection. -/
+the data, which is the fixing point of l-selection. -/
 theorem data_templateDetermined : TemplateDetermined data := by decide
 
 /-- The data are not determined below the template. -/
@@ -235,21 +236,45 @@ theorem data_not_categoryDetermined : ¬ CategoryDetermined data := by decide
 
 /-! ### Joint selection via Activate (23) -/
 
-/-- An activation key: a category feature, stripped by the categorizing head, or a template,
+/-- An activation key is a category feature, stripped by the categorizing head, or a template,
 stripped by the template-defining head. -/
 abbrev Key := Cat ⊕ Template
 
-/-- A selectional feature `[SEL: p^C]` (23): the preposition it selects, visible to selection
+/-- An ordered tuple of activation keys ((23), after [merchant-2015]). Each c-commanding head
+bearing the leftmost key strips it, and the feature is active once the tuple is exhausted, a
+derivational time bomb in the sense of [preminger-2014]. -/
+structure ActivationIndex where
+  /-- The keys remaining to be stripped. -/
+  remaining : List Key
+  deriving DecidableEq
+
+namespace ActivationIndex
+
+/-- The tuple after a head bearing `key`, which strips the leftmost key when it matches and
+leaves the tuple as it is otherwise. -/
+def activate (idx : ActivationIndex) (key : Key) : ActivationIndex :=
+  match idx.remaining with
+  | k :: rest => if k = key then ⟨rest⟩ else idx
+  | [] => idx
+
+/-- The tuple is exhausted and the feature it indexes is active. -/
+def IsActive (idx : ActivationIndex) : Prop := idx.remaining = []
+
+instance : DecidablePred IsActive := λ idx => inferInstanceAs (Decidable (idx.remaining = []))
+
+end ActivationIndex
+
+/-- A selectional feature `[SEL: p^C]` (23), the preposition it selects, visible to selection
 only once its activation tuple `C` is exhausted. -/
 structure SelectionalFeature where
   /-- The selected preposition. -/
   prep : Prep
   /-- The ordered activation tuple. -/
-  activation : ActivationIndex Key
+  activation : ActivationIndex
 
 namespace SelectionalFeature
 
-/-- The feature `[SEL: p⟨V, t⟩]`: dormant until the categorizing head and then the template
+/-- The feature `[SEL: p⟨V, t⟩]`, dormant until the categorizing head and then the template
 `t` have activated it. -/
 def dormant (p : Prep) (t : Template) : SelectionalFeature := ⟨p, ⟨[.inl .V, .inr t]⟩⟩
 
@@ -257,60 +282,65 @@ def dormant (p : Prep) (t : Template) : SelectionalFeature := ⟨p, ⟨[.inl .V,
 def activate (f : SelectionalFeature) (k : Key) : SelectionalFeature :=
   { f with activation := f.activation.activate k }
 
-/-- Whether the feature is active. -/
-def status (f : SelectionalFeature) : FeatureStatus := f.activation.toStatus
+/-- The feature is active once its tuple is exhausted. -/
+def IsActive (f : SelectionalFeature) : Prop := f.activation.IsActive
+
+instance : DecidablePred IsActive := λ f => inferInstanceAs (Decidable f.activation.IsActive)
 
 variable (p : Prep) (t : Template)
 
-/-- A dormant feature is inactive: a derivational time bomb ([preminger-2014]). -/
-theorem dormant_status : (dormant p t).status = .inactive := rfl
+/-- A dormant feature is inactive, a derivational time bomb ([preminger-2014]). -/
+theorem not_isActive_dormant : ¬ (dormant p t).IsActive := by
+  revert p t; decide
 
 /-- The categorizing head alone leaves the template key. -/
-theorem activate_V_status : ((dormant p t).activate (.inl .V)).status = .inactive := rfl
+theorem not_isActive_activate_V : ¬ ((dormant p t).activate (.inl .V)).IsActive := by
+  revert p t; decide
 
-/-- The template before the categorizing head strips nothing: only the leftmost key can be
-matched. -/
+/-- The template before the categorizing head strips nothing, since only the leftmost key can
+be matched. -/
 theorem activate_template_first :
     ((dormant p t).activate (.inr t)).activation.remaining = [.inl .V, .inr t] := by
   revert p t; decide
 
 /-- The categorizing head and then the matching template activate the feature. -/
-theorem activate_V_template_status :
-    (((dormant p t).activate (.inl .V)).activate (.inr t)).status = .active := by
+theorem isActive_activate_V_template :
+    (((dormant p t).activate (.inl .V)).activate (.inr t)).IsActive := by
   revert p t; decide
 
-/-- Another template leaves the feature inactive: the features of one root for different
+/-- Another template leaves the feature inactive, so the features of one root for different
 templates are mutually exclusive. -/
-theorem activate_V_other_status {t' : Template} (h : t' ≠ t) :
-    (((dormant p t).activate (.inl .V)).activate (.inr t')).status = .inactive := by
+theorem not_isActive_activate_V_other {t' : Template} (h : t' ≠ t) :
+    ¬ (((dormant p t).activate (.inl .V)).activate (.inr t')).IsActive := by
   revert p t t'; decide
 
 end SelectionalFeature
 
-/-- The lexical entry of a root (§4): one dormant feature per attested template in which it
+/-- The lexical entry of a root (§4), one dormant feature per attested template in which it
 selects a preposition, `[SEL: {b⟨V, XaYaZ⟩, ʕala⟨V, XaYYaZ⟩}]` for √dwr. -/
 def entry (r : Root) : List SelectionalFeature :=
   (rows r).filterMap λ d => d.template.bind λ t => d.prep.map λ p => .dormant p t
 
-/-- The derivations (24) and (25): the categorizing head activates the root's features and
-the template-defining head follows. -/
+/-- The derivations (24) and (25), in which the categorizing head activates the root's features
+and the template-defining head follows. -/
 def derive (r : Root) (t : Template) : List SelectionalFeature :=
   (entry r).map λ f => (f.activate (.inl .V)).activate (.inr t)
 
 /-- The prepositions the active features select after the derivation. -/
 def selected (r : Root) (t : Template) : List Prep :=
-  (derive r t).filterMap λ f => if f.status = .active then some f.prep else none
+  (derive r t).filterMap λ f => if f.IsActive then some f.prep else none
 
-/-- (24): in XaYaZ the root √dwr's feature for *b-* is activated and the one for *ʕala* is
-not. -/
+/-- In XaYaZ the root √dwr's feature for *b-* is activated and the one for *ʕala* is not
+(24). -/
 theorem dwr_XaYaZ : selected .dwr .XaYaZ = [.b] := by decide
 
-/-- (25): in XaYYaZ it is the feature for *ʕala* that is activated. -/
+/-- In XaYYaZ it is the feature for *ʕala* that is activated (25). -/
 theorem dwr_XaYYaZ : selected .dwr .XaYYaZ = [.Eala] := by decide
 
-/-- Joint selection reproduces the data: in every attested root–template pairing the active
+/-- Joint selection reproduces the data. In every attested root–template pairing the active
 features select exactly the attested preposition, and none where none is selected. -/
-theorem selected_eq : ∀ d ∈ data, ∀ t, d.template = some t → selected d.root t = d.prep.toList := by
+theorem selected_eq :
+    ∀ d ∈ data, ∀ t, d.template = some t → selected d.root t = d.prep.toList := by
   decide
 
 end Hewett2026
