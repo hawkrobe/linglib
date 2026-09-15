@@ -1,4 +1,3 @@
-import Linglib.Semantics.Focus.Interpretation
 import Mathlib.Data.Set.Lattice
 import Linglib.Data.Examples.Ahn2015
 
@@ -40,7 +39,7 @@ negative host whose antecedent is not positive, and *too* fails only for want of
 
 namespace Ahn2015
 
-open Data.Examples Focus.Interpretation
+open Data.Examples
 
 variable {World : Type*} (q p : Set World)
 
@@ -48,7 +47,7 @@ variable {World : Type*} (q p : Set World)
 
 /-- The presupposition shared by *too* and *either*: the anaphor is a focus alternative of the
 host distinct from it. -/
-def Antecedent (C : PropFocusValue World) : Prop := q ∈ C ∧ q ≠ p
+def Antecedent (C : Set (Set World)) : Prop := q ∈ C ∧ q ≠ p
 
 /-- `too q p = q ⊓ p`: the additive meaning is asserted as a conjunction with the anaphor. -/
 abbrev too : Set World := q ⊓ p
