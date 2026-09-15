@@ -1,0 +1,842 @@
+[
+  {
+    "id": "wechslerzlatic2000_1",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Ova stara knjiga stalno pada. Molim vas, podignite je.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ova", "this-NOM.F.SG"], ["stara", "old-NOM.F.SG"], ["knjiga", "book(F)-NOM.SG"],
+      ["stalno", "always"], ["pada", "fall-3SG"], ["Molim", "please"], ["vas", "you"],
+      ["podignite", "pick.2PL"], ["je", "it.F.SG"]
+    ],
+    "translation": "This old book keeps falling. Please pick it up.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["concord", "determiner adjective"],
+      ["index", "verb pronoun"]
+    ],
+    "comment": "The determiner and adjective show concord with the noun; the finite verb and the pronoun show index agreement.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_2",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(11a)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Ovo malo devojče je ušlo. Ono je htelo da telefonira.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ovo", "this.NT.SG"], ["malo", "little.NT.SG"], ["devojče", "girl.(NT).SG"],
+      ["je", "AUX.3SG"], ["ušlo", "entered.NT.SG"], ["Ono", "it.NT.SG"], ["je", "AUX.SG"],
+      ["htelo", "wanted.NT.SG"], ["da", "that"], ["telefonira", "telephone.3SG"]
+    ],
+    "translation": "This little girl came in. She wanted to use the telephone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "neuter singular"],
+      ["agreement", "index"]
+    ],
+    "comment": "The neuter singular pronoun agrees with the diminutive's neuter index.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_3",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(11b)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Ovo malo devojče je ušlo. Ona je htela da telefonira.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ovo", "this.NT.SG"], ["malo", "little.NT.SG"], ["devojče", "girl.(NT).SG"],
+      ["je", "AUX.3SG"], ["ušlo", "entered.NT.SG"], ["Ona", "she.F.SG"], ["je", "AUX.SG"],
+      ["htela", "wanted.F.SG"], ["da", "that"], ["telefonira", "telephone.3SG"]
+    ],
+    "translation": "This little girl came in. She wanted to use the telephone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pronoun", "feminine singular"],
+      ["agreement", "pragmatic"]
+    ],
+    "comment": "The feminine pronoun is pragmatic agreement with the female referent.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_4",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "ova stara knjiga",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ova", "this-NOM.F.SG"], ["stara", "old-NOM.F.SG"], ["knjiga", "book(F)-NOM.SG"]
+    ],
+    "translation": "this old book",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["agreement", "concord"]
+    ],
+    "comment": "Determiner and adjective agree with the head noun in gender, number and case.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_5",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(13)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Ova stara knjiga je pala.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ova", "this-F.SG"], ["stara", "old-F.SG"], ["knjiga", "book(F)-NOM.SG"], ["je", "AUX.3SG"],
+      ["pala", "fall-PPRT-F.SG"]
+    ],
+    "translation": "This old book fell.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["target", "participle"]
+    ],
+    "comment": "The participle agrees in gender and number only, so concord and index agreement cannot be told apart.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_6",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(19a)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Taj stari sudija je dobro sudio. On ...",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taj", "that.M"], ["stari", "old.M"], ["sudija", "judge"], ["je", "AUX"], ["dobro", "well"],
+      ["sudio", "judged.M"], ["On", "3M.SG"]
+    ],
+    "translation": "That old (male) judge judged well. He ...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "sudija"],
+      ["sex", "male"],
+      ["gender", "masculine"]
+    ],
+    "comment": "Applied to a male the class II noun triggers masculine concord and index.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_7",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(19b)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Ta stara sudija je dobro sudila. Ona ...",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ta", "that.F"], ["stara", "old.F"], ["sudija", "judge"], ["je", "AUX"], ["dobro", "well"],
+      ["sudila", "judged.F"], ["Ona", "3F.SG"]
+    ],
+    "translation": "That old (female) judge judged well. She ...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "sudija"],
+      ["sex", "female"],
+      ["gender", "feminine"]
+    ],
+    "comment": "Applied to a female the same noun triggers feminine concord and index.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_8",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(21a)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "taj kit",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["taj", "that.M"], ["kit", "whale"]
+    ],
+    "translation": "that (male or female) whale",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "kit"],
+      ["sex", "unspecified"]
+    ],
+    "comment": "A masculine noun with no sex specification.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_9",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(21b)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Kit je podojio svoje mladunce.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kit", "whale"], ["je", "AUX.SG"], ["podojio", "nursed.3.M.SG"], ["svoje", "self"],
+      ["mladunce", "offspring"]
+    ],
+    "translation": "The whale nursed her young.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "kit"],
+      ["gender", "masculine"]
+    ],
+    "comment": "Masculine agreement regardless of the whale's sex.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_10",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(23a)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Ova telad je pasla.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ova", "this.F.SG"], ["telad", "calves"], ["je", "AUX.3SG"], ["pasla", "grazed.F.SG"]
+    ],
+    "translation": "These calves were grazing.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ova telad su pasla.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "telad"],
+      ["predicate", "nondistributive"]
+    ],
+    "comment": "Collectives in -ad allow singular or plural agreement with a nondistributive predicate.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_11",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(23b)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Ova telad imaju po dva roga.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ova", "this.NT.PL"], ["telad", "calves"], ["imaju", "have.PL"], ["po", "each"],
+      ["dva", "two"], ["roga", "horns"]
+    ],
+    "translation": "These calves have two horns each.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ova telad ima po dva roga.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "telad"],
+      ["predicate", "distributive"]
+    ],
+    "comment": "A distributive predicate requires plural agreement.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_12",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(28)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Vratio mi je ovaj ludi Steva violinu koju sam mu pozajmio.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Vratio", "returned.1SG"], ["mi", "me"], ["je", "AUX.3SG"], ["ovaj", "this.NOM.M.SG"],
+      ["ludi", "crazy.NOM.M.SG"], ["Steva", "Steve.NOM"], ["violinu", "violin-ACC"],
+      ["koju", "which"], ["sam", "AUX.1SG"], ["mu", "3DAT.M.SG"], ["pozajmio", "loaned"]
+    ],
+    "translation": "This crazy Steve returned to me the violin which I loaned him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "Steva"],
+      ["declension", "II"],
+      ["gender", "masculine"]
+    ],
+    "comment": "A male name in -a declines in class II with masculine concord and index.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_13",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(30a)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Ta mušterija je došla.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ta", "that.F"], ["mušterija", "customer"], ["je", "AUX"], ["došla", "came.F"]
+    ],
+    "translation": "That (male or female) customer came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "mušterija"],
+      ["sex", "unspecified"]
+    ],
+    "comment": "With feminine forms the noun is unmarked for sex.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_14",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(30b)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Taj mušterija je došao.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Taj", "that.M"], ["mušterija", "customer"], ["je", "AUX"], ["došao", "came.M"]
+    ],
+    "translation": "That (male) customer came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "mušterija"],
+      ["sex", "male"]
+    ],
+    "comment": "With masculine forms the noun is interpreted as male.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_15",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(33)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Te sudije su došle.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Te", "those.F.PL"], ["sudije", "judge(F).PL"], ["su", "AUX.3PL"], ["došle", "came.F.PL"]
+    ],
+    "translation": "Those (male and/or female) judges came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "sudije"],
+      ["number", "plural"]
+    ],
+    "comment": "The plural loses the disjunctive sex specification and is feminine throughout.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_16",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(34)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Ove naočare su nove. One ...",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ove", "this.PL"], ["naočare", "glasses"], ["su", "be.3PL"], ["nove", "new.PL"],
+      ["One", "3PL"]
+    ],
+    "translation": "These glasses are new. They ...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "naočare"],
+      ["type", "plurale tantum"]
+    ],
+    "comment": "Plural declension, concord and index with a nonaggregate referent.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_17",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(36)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Sreo sam braću. Ona su došla.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sreo", "met.1SG"], ["sam", "AUX"], ["braću", "brothers.ACC"], ["Ona", "they.N.PL"],
+      ["su", "AUX.3.PL"], ["došla", "came.N.PL"]
+    ],
+    "translation": "I met the brothers. They came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Sreo sam braću. Oni su došli.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "braća"],
+      ["pronoun", "neuter plural"]
+    ],
+    "comment": "A male-only noun with a neuter plural index; the masculine plural pronoun is pragmatic agreement.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_18",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(37)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "ovu dobru braću",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ovu", "this-ACC.F.SG"], ["dobru", "good-ACC.F.SG"], ["braću", "brothers-ACC"]
+    ],
+    "translation": "these good brothers",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "braća"],
+      ["concord", "feminine singular"]
+    ],
+    "comment": "Feminine singular concord on the modifiers.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_19",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(38)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "ovom dobrom braćom",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ovom", "this-INS.F.SG"], ["dobrom", "good-INS.F.SG"], ["braćom", "brothers-INS"]
+    ],
+    "translation": "with these good brothers",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "braća"],
+      ["concord", "feminine singular"]
+    ],
+    "comment": "Feminine singular concord in the instrumental.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_20",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(40)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Sreo sam gospodu. Oni su bili jako ljubazni.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sreo", "met.1SG"], ["sam", "AUX"], ["gospodu", "gentlemen.ACC"], ["Oni", "they.M.PL"],
+      ["su", "AUX.PL"], ["bili", "were.M.PL"], ["jako", "very"], ["ljubazni", "kind.M.PL"]
+    ],
+    "translation": "I met the gentlemen. They were very kind.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Sreo sam gospodu. Ona su bila jako ljubazna.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "gospoda"],
+      ["pronoun", "masculine plural"]
+    ],
+    "comment": "Unlike braća, the male-only collective takes a masculine rather than neuter pronoun.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_21",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(41)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Posmatrali smo ovu dobru decu. Ona su spavala.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Posmatrali", "watched.1.PL"], ["smo", "AUX"], ["ovu", "this.F.SG"], ["dobru", "good.F.SG"],
+      ["decu", "children.F.SG"], ["Ona", "they.N.PL"], ["su", "AUX.3PL"],
+      ["spavala", "slept.NT.PL"]
+    ],
+    "translation": "We watched those good children. They slept.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "deca"],
+      ["concord", "feminine singular"],
+      ["index", "neuter plural"]
+    ],
+    "comment": "Mixed agreement: feminine singular on the modifiers, neuter plural on the pronoun.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_22",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(42)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Deca su spavala. Mi smo ih videli.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Deca", "children"], ["su", "AUX.3PL"], ["spavala", "slept.NT.PL"], ["Mi", "we"],
+      ["smo", "AUX.PL"], ["ih", "them.ACC.PL"], ["videli", "saw"]
+    ],
+    "translation": "The children slept. We saw them.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "deca"],
+      ["index", "neuter plural"]
+    ],
+    "comment": "Plural finite auxiliary and plural pronoun.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_23",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(43)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Ta dobra deca su došla.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ta", "that.F.SG"], ["dobra", "good.F.SG"], ["deca", "children(F.SG)"], ["su", "AUX.3PL"],
+      ["došla", "come-PPRT.N.PL"]
+    ],
+    "translation": "Those good children came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "deca"],
+      ["target", "participle"]
+    ],
+    "comment": "The nominative participle in -a is ambiguous between feminine singular and neuter plural.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_24",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(44)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Ta dobra deca dolaze.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ta", "that.F.SG"], ["dobra", "good.F.SG"], ["deca", "children(F.SG)"],
+      ["dolaze", "come.3.PL"]
+    ],
+    "translation": "Those good children came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "deca"],
+      ["target", "finite verb"]
+    ],
+    "comment": "The finite verb shows plural index agreement.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_25",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(50)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Ja smatram decu gladnom.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ja", "I"], ["smatram", "consider"], ["decu", "children.ACC"],
+      ["gladnom", "hungry.INST.FEM.SG"]
+    ],
+    "translation": "I consider the children hungry.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ja smatram decu gladnim.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "deca"],
+      ["target", "secondary predicate"]
+    ],
+    "comment": "In the instrumental the secondary predicate is unambiguously feminine singular, so it shows concord.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_26",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(51)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Jelena i deca su došli.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jelena", "Yelena"], ["i", "and"], ["deca", "children"], ["su", "AUX.3.PL"],
+      ["došli", "came.M.PL"]
+    ],
+    "translation": "Yelena and the children came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Jelena i deca su došle.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "deca"],
+      ["target", "coordination"]
+    ],
+    "comment": "Coordination with a feminine singular noun resolves to masculine, as if deca were neuter plural.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_27",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(52)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Jelena i deca su gladni.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jelena", "Yelena"], ["i", "and"], ["deca", "children"], ["su", "AUX.3.PL"],
+      ["gladni", "hungry.M.PL"]
+    ],
+    "translation": "Yelena and the children are hungry.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Jelena i deca su gladne.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "deca"],
+      ["target", "coordination"]
+    ],
+    "comment": "Same resolution on a predicate adjective.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_28",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(53)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Ta deca i ta čudovišta su se lepo igrala.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ta", "that"], ["deca", "children"], ["i", "and"], ["ta", "those"],
+      ["čudovišta", "monsters"], ["su", "AUX"], ["se", "REFL"], ["lepo", "well"],
+      ["igrala", "played.N.PL"]
+    ],
+    "translation": "Those children and those monsters played well.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ta deca i ta čudovišta su se lepo igrali.", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "deca"],
+      ["target", "coordination"]
+    ],
+    "comment": "Coordination with a neuter plural noun resolves to neuter plural.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_29",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(54)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "deca koja su tada bila",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["deca", "children"], ["koja", "who.N.PL"], ["su", "AUX.PL"], ["tada", "then"],
+      ["bila", "were"]
+    ],
+    "translation": "the children who were",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "deca koja je tada bila", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "deca"],
+      ["relative", "nominative"]
+    ],
+    "comment": "The nominative relative pronoun triggers plural within its clause.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_30",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(55)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "deca koju sam video",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["deca", "children"], ["koju", "who.ACC.F.SG"], ["sam", "AUX.1.SG"], ["video", "saw"]
+    ],
+    "translation": "the children whom I saw",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "deca"],
+      ["relative", "accusative"]
+    ],
+    "comment": "The accusative relative pronoun is feminine singular.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_31",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(56)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "deca koje se svi plaše",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["deca", "children"], ["koje", "who.GEN.F.SG"], ["se", "REFL"], ["svi", "all"],
+      ["plaše", "fear"]
+    ],
+    "translation": "children whom everyone fears",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "deca kojih se svi plaše", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "deca"],
+      ["relative", "genitive"]
+    ],
+    "comment": "Genitive relatives take the feminine singular or the gender-unmarked plural form.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_32",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(59)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "moja deca, što ih nije briga nizašta",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["moja", "my"], ["deca", "children"], ["što", "that"], ["ih", "3.ACC.PL"],
+      ["nije", "NEG.AUX"], ["briga", "care"], ["nizašta", "nothing"]
+    ],
+    "translation": "my children, whom nothing worries",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "moja deca, što je nije briga nizašta", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "deca"],
+      ["relative", "što"]
+    ],
+    "comment": "The resumptive pronoun of a što-relative is an ordinary pronoun and shows index agreement.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_33",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(61b)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "moja deca, što ih se svi plaše",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["moja", "my"], ["deca", "children"], ["što", "that"], ["ih", "3.GEN.PL"], ["se", "REFL"],
+      ["svi", "all"], ["plaše", "fear"]
+    ],
+    "translation": "my children, whom everyone fears",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "moja deca, što je se svi plaše", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "deca"],
+      ["relative", "što"]
+    ],
+    "comment": "The singular resumptive of the što-relative is ungrammatical.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wechslerzlatic2000_34",
+    "source": {"bibkey": "wechsler-zlatic-2000", "paperLabel": "(64)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "Su Majestad suprema está contento. Él ...",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Su", "his"], ["Majestad", "majesty"], ["suprema", "supreme.F"], ["está", "is"],
+      ["contento", "happy.M"], ["Él", "he"]
+    ],
+    "translation": "His supreme majesty is happy. He ...",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["noun", "Majestad"],
+      ["concord", "feminine"],
+      ["index", "masculine"]
+    ],
+    "comment": "A Spanish title with feminine concord and masculine index, adapted from Corbett.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
