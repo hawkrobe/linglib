@@ -3,170 +3,111 @@ import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
-import Linglib.Semantics.Genericity.MeaningPreservation
-import Linglib.Semantics.Aspect.Basic
-import Linglib.Semantics.Degree.Boundedness
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Data.Examples.Wellwood2015
 import Linglib.Studies.Bresnan1973
 
 /-!
-# [wellwood-2015]: On the Semantics of Comparison Across Categories
+# Wellwood (2015): On the Semantics of Comparison Across Categories
 
-Nominal ("more coffee"), verbal ("ran more"), and adjectival ("hotter")
-comparatives share one DegP pipeline: covert `much` denotes an
-assignment-supplied monotonic measure function (eqs. 7/28) and `-er`
-compares strictly against the maximal than-clause degree (eq. 38;
-[von-stechow-1984], [rullmann-1995]), yielding the same truth condition
-in all three domains (eqs. 42/48/65). Felicity with `much` tracks
-mereological status; dimension availability tracks the measured domain,
-not lexical category (§3.4).
-
-## Main declarations
-
-* `comparativeTruth` / `equativeTruth`: the shared truth conditions for
-  `-er` and `as` (eq. 27), instances of `Degree.maxComparative` /
-  `Degree.maxEquative`.
-* `matrix_derivation_denotes` / `than_derivation_denotes`: the
-  derivations run type-driven through the [heim-kratzer-1998] engine —
-  one lexicon (`-er`, `much`, `ABS`, a role head) and one tree derive
-  every domain's matrix and than-clause by FA/PM/EI/closure, and
-  `derivation_eq_comparativeTruth` assembles them into eqs. 42/48/65.
-* `nominalComparative`, `verbalComparative`, `adjectivalComparative`:
-  the three domain instantiations (role × extraction).
-* `coffee_much_matches` … `wooden_much_matches`: the §§2–3 felicity
-  judgments predicted per-lexeme from fragment entries and substrate
-  status maps; `qua_measures_vacuously_admissible` gives the
-  mereological reason (antichains trivialize monotone measurement).
-* `model_restricted_iff` / `dimension_tracks_domain` /
-  `dimension_not_category`: §3.4 as order theory — exactly the state
-  domain's model is `DimensionallyRestricted`, matching the intensive
-  dimensions of exs. 82–89, while the category-based rival is refuted.
-* `very_tracks_much_deletion`: the §6.3 `very` asymmetry derived from
-  [bresnan-1973] Much Deletion.
+This file formalizes [wellwood-2015]'s hypothesis that nominal, verbal and adjectival
+comparatives contain one degree-introducing morpheme, *much*, which denotes an
+assignment-supplied measure function (7), while *-er* and *as* compare the measure of what
+the base predicate applies to with the maximal degree of the than-clause ((27), (38);
+[von-stechow-1984], [rullmann-1995]). The three domains then share one truth condition
+(`comparativeTruth`), and the paper's step-by-step derivations of the nominal, verbal and
+adjectival cases are one tree interpreted by the [heim-kratzer-1998] engine at three
+lexical cells (`matrix_derivation_denotes`), differing only in the thematic role and in what
+is measured: coffee, running events, or heat states (`nominalComparative`,
+`verbalComparative`, `adjectivalComparative`). What *much* measures must be non-trivially
+ordered by part-whole structure and measured monotonically (26): a quantized domain, that of
+a singular count noun, a telic verb phrase or a non-gradable adjective, has no proper parts,
+so every measure preserves its order vacuously and none separates anything, whereas a
+cumulative domain with two satisfiers has a proper part
+(`nontriviallyStructured_of_cum`). Which dimensions a comparative allows follows from what is
+measured rather than from the category of the measuring word: a linearly ordered state
+domain fixes the comparative ordering for every admissible measure, and a domain with
+incomparable parts, like coffee by weight and volume, does not (`model_restricted_iff`).
+The obligatory *much* of *very* with nouns and verbs and its absence with adjectives is
+[bresnan-1973]'s Much Deletion (`very_much_deletion`).
 
 ## Implementation notes
 
-Monotonicity of `A(μ)` is a felicity condition on the assignment, not
-part of the denotation. Example sentences and judgments are generated
-from `Data/Examples/Wellwood2015.json`; theorems consume them directly,
-with lexical categories derived from `Fragments/English` entries rather
-than annotated.
+Degrees are rationals and eventualities the `Event` type of the thematic substrate; the
+engine's sorted domain is the sum of individuals and eventualities, and existential closure
+is a lexical item. The order models of the measured domains are the reals for states and the
+componentwise-ordered plane for entities and events. The bare-adjective, measure-phrase and
+scalar-change discussions of the paper's objections section are not formalized.
+
+## References
+
+* [wellwood-2015]
+* [bresnan-1973]
+* [heim-kratzer-1998]
+* [kratzer-1996]
+* [rullmann-1995]
+* [schwarzschild-2006]
+* [von-stechow-1984]
 -/
 
 namespace Wellwood2015
 
 open ArgumentStructure (ThematicFrame)
-
-open Aspect
 open Degree
-open Semantics.Kinds.MeaningPreservation (NumberFeature)
 
-/-! ### The measured domain (§3.4) -/
+/-! ### The truth conditions -/
 
-/-- What a comparative measures — the ontological domain whose
-    mereological structure determines the available dimensions.
-    The key §3.4 insight: dimension type (intensive vs extensive)
-    tracks the measured domain, not lexical category. -/
-inductive MeasuredDomain where
-  | entity  -- physical objects (coffee, plastic, glass)
-  | event   -- events/processes (driving, singing)
-  | state   -- states (heat, hardness, speed, loudness)
-  deriving DecidableEq, Repr
+/-- The comparative (42), (48), (65): some eventuality bearing the role to `a` satisfies `P`
+and measures strictly above the maximal than-clause degree of `b`. -/
+def comparativeTruth {Ent α Measured : Type*} (role : Ent → α → Prop) (P : α → Prop)
+    (extract : α → Measured) (μ : Measured → ℚ) (a b : Ent) : Prop :=
+  maxComparative (λ e => role a e ∧ P e) (λ e => role b e ∧ P e) (λ e => μ (extract e))
 
-/-- Parse a `measuredDomain` paper-feature of a generated example. -/
-def measuredDomainOfFeature : String → Option MeasuredDomain
-  | "entity" => some .entity
-  | "event"  => some .event
-  | "state"  => some .state
-  | _        => none
+/-- The equative (27ii): the same with a weak comparison. -/
+def equativeTruth {Ent α Measured : Type*} (role : Ent → α → Prop) (P : α → Prop)
+    (extract : α → Measured) (μ : Measured → ℚ) (a b : Ent) : Prop :=
+  maxEquative (λ e => role a e ∧ P e) (λ e => role b e ∧ P e) (λ e => μ (extract e))
 
-/-! ### The comparative truth condition (§§2.1–3.2) -/
-
-/-- The truth condition shared by eqs. 42/48/65: some role-`a`
-    eventuality satisfies `P` and measures strictly above the maximal
-    than-clause degree. The domains differ only in role (Agent/Holder)
-    and extraction (`themeOf`/`id`). -/
-def comparativeTruth {Ent α Measured : Type*}
-    (role : Ent → α → Prop) (P : α → Prop)
-    (extract : α → Measured) (μ : Measured → ℚ)
-    (a b : Ent) : Prop :=
-  maxComparative (fun e => role a e ∧ P e) (fun e => role b e ∧ P e)
-    (fun e => μ (extract e))
-
-/-- The equative truth condition (eq. 27.ii): `as much` compares weakly —
-    some role-`a` eventuality satisfies `P` and measures at least the
-    maximal as-clause degree. The same pipeline as `comparativeTruth`
-    with `⪰` for `≻` ([bresnan-1973]'s `as` filling the same Det slot). -/
-def equativeTruth {Ent α Measured : Type*}
-    (role : Ent → α → Prop) (P : α → Prop)
-    (extract : α → Measured) (μ : Measured → ℚ)
-    (a b : Ent) : Prop :=
-  maxEquative (fun e => role a e ∧ P e) (fun e => role b e ∧ P e)
-    (fun e => μ (extract e))
-
-/-- `-er` is strictly stronger than `as` (eq. 27.i ⇒ 27.ii). -/
 theorem comparativeTruth_entails_equativeTruth {Ent α Measured : Type*}
-    (role : Ent → α → Prop) (P : α → Prop)
-    (extract : α → Measured) (μ : Measured → ℚ) (a b : Ent) :
+    (role : Ent → α → Prop) (P : α → Prop) (extract : α → Measured)
+    (μ : Measured → ℚ) (a b : Ent) :
     comparativeTruth role P extract μ a b → equativeTruth role P extract μ a b :=
   maxComparative_entails_maxEquative _ _ _
 
-/-! ### The compositional derivation (§§2.1–3.2)
-
-The paper's derivation steps as combinators, proven to compose to
-`comparativeTruth`. -/
+/-! ### The derivation -/
 
 section Derivation
+
 variable {Ent α : Type*}
 
-/-- ⟦much_μ⟧^A = A(μ) composed with ⟦-er⟧: a strict degree threshold
-    (37.i/45.i). -/
-def matrixDegP (μ : α → ℚ) (δ : ℚ) (e : α) : Prop := μ e > δ
+/-- The degree phrase with *-er* (37i): a strict threshold on the measure. -/
+def matrixDegP (μ : α → ℚ) (δ : ℚ) (e : α) : Prop := δ < μ e
 
-/-- ABS (38.ii): the weak degree threshold of the than-clause. -/
-def absDegP (μ : α → ℚ) (d : ℚ) (e : α) : Prop := μ e ≥ d
+/-- The degree phrase with *abs* (38ii): a weak threshold. -/
+def absDegP (μ : α → ℚ) (d : ℚ) (e : α) : Prop := d ≤ μ e
 
-/-- Predicate Modification: intersective conjunction (37.iii/45.iii). -/
-def predMod (P Q : α → Prop) (e : α) : Prop := P e ∧ Q e
+/-- The than-clause (40), (41): the degrees some eventuality of `b`'s reaches. -/
+def thanClause (role : Ent → α → Prop) (P : α → Prop) (μ : α → ℚ) (b : Ent) :
+    Set ℚ :=
+  {d | ∃ e, role b e ∧ P e ∧ absDegP μ d e}
 
-/-- The than-clause (39–41/47): degree abstraction over the ∃-closed
-    ABS-composed clause. -/
-def thanClause (role : Ent → α → Prop) (P : α → Prop) (μ : α → ℚ)
-    (b : Ent) : Set ℚ :=
-  {d | ∃ e, role b e ∧ predMod P (absDegP μ d) e}
+/-- The matrix clause (37viii): existential closure over the role, the predicate and the
+degree phrase at the standard `δ`. -/
+def matrixClause (role : Ent → α → Prop) (P : α → Prop) (μ : α → ℚ) (a : Ent)
+    (δ : ℚ) : Prop :=
+  ∃ e, role a e ∧ P e ∧ matrixDegP μ δ e
 
-/-- The matrix clause (37.viii/45.vi): ∃-closure over the PM of the base
-    predicate with the DegP at standard δ. -/
-def matrixClause (role : Ent → α → Prop) (P : α → Prop) (μ : α → ℚ)
-    (a : Ent) (δ : ℚ) : Prop :=
-  ∃ e, role a e ∧ predMod P (matrixDegP μ δ) e
-
-/-- The derivation composes: max-selecting the than-clause standard for
-    the matrix clause is `comparativeTruth` (eqs. 42/48/65). -/
-theorem derivation_eq_comparativeTruth {Measured : Type*}
-    (role : Ent → α → Prop) (P : α → Prop)
-    (extract : α → Measured) (μ : Measured → ℚ) (a b : Ent) :
-    (∃ δ, IsGreatest (thanClause role P (fun e => μ (extract e)) b) δ ∧
-        matrixClause role P (fun e => μ (extract e)) a δ) ↔
+/-- Filling the standard with the maximal than-clause degree is the comparative. -/
+theorem derivation_eq_comparativeTruth {Measured : Type*} (role : Ent → α → Prop)
+    (P : α → Prop) (extract : α → Measured) (μ : Measured → ℚ) (a b : Ent) :
+    (∃ δ, IsGreatest (thanClause role P (λ e => μ (extract e)) b) δ ∧
+        matrixClause role P (λ e => μ (extract e)) a δ) ↔
       comparativeTruth role P extract μ a b := by
-  simp only [comparativeTruth, maxComparative, Degree.thanDegrees, thanClause,
-    matrixClause, predMod, matrixDegP, absDegP, ge_iff_le, gt_iff_lt, and_assoc]
+  simp only [comparativeTruth, maxComparative, Degree.thanDegrees, thanClause, matrixClause,
+    matrixDegP, absDegP, and_assoc]
 
 end Derivation
 
-/-! ### The derivations, type-driven
-
-The step-licensed derivations (37.i–viii, 45.i–vi, 61) run through the
-shared [heim-kratzer-1998] engine (`Semantics/Composition/Tree.lean`):
-one lexicon — `-er`, `much` (eqs. 7/28), `ABS` (38.ii), the standard δ,
-a base predicate, and a [kratzer-1996] role head — and one tree shape,
-composed by FA, PM, EI, FA, and existential closure. Degree abstraction
-for the than-clause (39–41) is the meta-language λ over the same tree
-with `ABS` in place of `-er`. The cross-categorial thesis is the
-parametricity: nominal, verbal, and adjectival matrices are the SAME
-tree at different (role, predicate, measure) cells. -/
+/-! ### The derivation, type-driven -/
 
 section TypeDriven
 
@@ -177,36 +118,35 @@ open Syntax (Tree)
 
 variable {Ent α : Type}
 
-/-- The sorted composition domain: individuals ⊕ eventualities. -/
+/-- The sorted domain: individuals and eventualities. -/
 abbrev Dom (Ent α : Type) : Type := Ent ⊕ α
 
-/-- Wellwood's lexicon over the engine: `much` is the assignment-supplied
-    measure (eqs. 7/28), `-er` the strict and `ABS` (38.ii) the weak
-    degree head, `role` a [kratzer-1996] role head composing by EI. -/
+/-- The lexicon: *much* is the measure (7), *-er* and *abs* the strict and weak degree heads
+((27i), (38ii)), the role head composes by event identification ([kratzer-1996]), and
+existential closure is an item. -/
 def lexicon {D : Type} [LinearOrder D] [Zero D] (role : Ent → α → Prop) (P : α → Prop)
-    (μ0 : α → D) (subj : Ent) (δ : D) : Lexicon (Dom Ent α) Unit Id D := fun w =>
+    (μ0 : α → D) (subj : Ent) (δ : D) : Lexicon (Dom Ent α) Unit Id D := λ w =>
   match w with
-  | "much" => some ⟨.e ⇒ .d, show Dom Ent α → D from fun x => match x with
+  | "much" => some ⟨.e ⇒ .d, show Dom Ent α → D from λ x => match x with
       | .inr e => μ0 e
       | .inl _ => 0⟩
   | "er" => some ⟨(.e ⇒ .d) ⇒ .d ⇒ .e ⇒ .t,
-      show (Dom Ent α → D) → D → Dom Ent α → Prop from fun m d x => m x > d⟩
-  | "ABS" => some ⟨(.e ⇒ .d) ⇒ .d ⇒ .e ⇒ .t,
-      show (Dom Ent α → D) → D → Dom Ent α → Prop from fun m d x => m x ≥ d⟩
+      show (Dom Ent α → D) → D → Dom Ent α → Prop from λ m d x => d < m x⟩
+  | "abs" => some ⟨(.e ⇒ .d) ⇒ .d ⇒ .e ⇒ .t,
+      show (Dom Ent α → D) → D → Dom Ent α → Prop from λ m d x => d ≤ m x⟩
   | "δ" => some ⟨.d, show D from δ⟩
-  | "pred" => some ⟨.e ⇒ .t, fun x => match x with
+  | "pred" => some ⟨.e ⇒ .t, λ x => match x with
       | .inr e => P e
       | .inl _ => False⟩
-  | "role" => some ⟨.e ⇒ .e ⇒ .t, fun x ev => match x, ev with
+  | "role" => some ⟨.e ⇒ .e ⇒ .t, λ x ev => match x, ev with
       | .inl i, .inr e => role i e
       | _, _ => False⟩
   | "subj" => some ⟨.e, .inl subj⟩
-  | "EC" => some ⟨(.e ⇒ .t) ⇒ .t, fun p => ∃ e : α, p (.inr e)⟩
+  | "EC" => some ⟨(.e ⇒ .t) ⇒ .t, λ p => ∃ e : α, p (.inr e)⟩
   | _ => none
 
-/-- The shared matrix tree (37.i–viii / 45.i–vi):
-    `[EC [subj [role [pred [[er much] δ]]]]]` — Deg′ = FA(-er, much),
-    DegP = FA(Deg′, δ), VP = PM, vP = EI, S = FA, then closure. -/
+/-- The matrix tree (36), (44), (60): the degree phrase modifies the base predicate, the role
+head adds the subject, and the event variable is closed. -/
 def matrixTree : Tree Unit String :=
   .node () [.terminal () "EC",
     .node () [.terminal () "subj",
@@ -215,247 +155,137 @@ def matrixTree : Tree Unit String :=
           .node () [.node () [.terminal () "er", .terminal () "much"],
             .terminal () "δ"]]]]]
 
-/-- The than-clause body (39–41/47): the same tree with `ABS` (38.ii)
-    for `-er`. -/
+/-- The than-clause body (39), (46), (62): the same tree with *abs* for *-er*. -/
 def thanTree : Tree Unit String :=
   .node () [.terminal () "EC",
     .node () [.terminal () "subj",
       .node () [.terminal () "role",
         .node () [.terminal () "pred",
-          .node () [.node () [.terminal () "ABS", .terminal () "much"],
+          .node () [.node () [.terminal () "abs", .terminal () "much"],
             .terminal () "δ"]]]]]
 
-/-- The engine derives the matrix clause: type-driven interpretation of
-    `matrixTree` succeeds and denotes `matrixClause` (45.vi / 37.viii). -/
-theorem matrix_derivation_denotes (role : Ent → α → Prop) (P : α → Prop)
-    (μ0 : α → ℚ) (a : Ent) (δ : ℚ) (g : Assignment (Dom Ent α)) :
+/-- The engine derives the matrix clause (37), (45), (61). -/
+theorem matrix_derivation_denotes (role : Ent → α → Prop) (P : α → Prop) (μ0 : α → ℚ)
+    (a : Ent) (δ : ℚ) (g : Assignment (Dom Ent α)) :
     interp (Dom Ent α) Unit (lexicon role P μ0 a δ) g matrixTree =
       some ⟨.t, pure (matrixClause role P μ0 a δ)⟩ :=
   rfl
 
-/-- The engine derives the than-clause degree set pointwise: at each
-    degree `d`, `thanTree` denotes membership of `d` in `thanClause`
-    (39–41/47); degree abstraction is the meta-language λ over `d`. -/
-theorem than_derivation_denotes (role : Ent → α → Prop) (P : α → Prop)
-    (μ0 : α → ℚ) (b : Ent) (d : ℚ) (g : Assignment (Dom Ent α)) :
+/-- The engine derives the than-clause pointwise in the degree; abstraction over it (40),
+(47), (63) is the metalanguage's. -/
+theorem than_derivation_denotes (role : Ent → α → Prop) (P : α → Prop) (μ0 : α → ℚ)
+    (b : Ent) (d : ℚ) (g : Assignment (Dom Ent α)) :
     interp (Dom Ent α) Unit (lexicon role P μ0 b d) g thanTree =
       some ⟨.t, pure (d ∈ thanClause role P μ0 b)⟩ :=
   rfl
 
 end TypeDriven
 
-/-! ### Three domain instantiations -/
+/-! ### The three domains -/
 
 section Domains
+
 variable {Entity T : Type*} [LinearOrder T]
 
-/-- Nominal comparative (§2.1, eq. 42): Agent role, entities measured via
-    `themeOf`. -/
-def nominalComparative (frame : ThematicFrame Entity T)
-    (P : Event T → Prop) (themeOf : Event T → Entity)
-    (μ : Entity → ℚ) (a b : Entity) : Prop :=
+/-- The nominal comparative (42): the agent's event, measuring its theme. -/
+def nominalComparative (frame : ThematicFrame Entity T) (P : Event T → Prop)
+    (themeOf : Event T → Entity) (μ : Entity → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.agent P themeOf μ a b
 
-/-- Verbal comparative (§2.2, eq. 48): Agent role, events measured directly. -/
-def verbalComparative (frame : ThematicFrame Entity T)
-    (P : Event T → Prop) (μ : Event T → ℚ) (a b : Entity) : Prop :=
+/-- The verbal comparative (48): the agent's event, measured itself. -/
+def verbalComparative (frame : ThematicFrame Entity T) (P : Event T → Prop)
+    (μ : Event T → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.agent P id μ a b
 
-/-- Adjectival comparative (§3.2, eq. 65): Holder role, states measured
-    directly. -/
-def adjectivalComparative (frame : ThematicFrame Entity T)
-    (P : Event T → Prop) (μ : Event T → ℚ) (a b : Entity) : Prop :=
+/-- The adjectival comparative (65): the holder's state, measured itself. -/
+def adjectivalComparative (frame : ThematicFrame Entity T) (P : Event T → Prop)
+    (μ : Event T → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.holder P id μ a b
 
 end Domains
 
-/-! ### Mereological status (§§2–3)
+/-! ### What *much* measures (26) -/
 
-The paper's two-way cross-categorial classification and its bridges to
-the feature substrate. Interpretive notes: the paper does not label GA
-state domains "cumulative" in Krifka's technical sense — it argues they
-"form mereologies" (ordered domains with proper parts); we classify them
-`.cumulative` because the structural consequence (monotonic
-measurability) is the same. -/
+section Structure
 
-/-- Cross-categorial mereological classification (§§2–3): `cumulative`
-    domains have proper-part structure enabling monotonic measurement by
-    `much` (mass nouns, atelic VPs, GA state domains); `quantized`
-    domains lack it (count nouns, telic VPs, non-GA states). -/
-inductive MereologicalStatus where
-  | cumulative
-  | quantized
+open Mereology
+
+variable {α : Type*}
+
+/-- A domain is non-trivially structured when some satisfier is a proper part of another. -/
+def NontriviallyStructured [PartialOrder α] (P : α → Prop) : Prop :=
+  ∃ x y, P x ∧ P y ∧ x < y
+
+/-- A quantized domain, that of a singular count noun, a telic verb phrase or a non-gradable
+adjective, is not. -/
+theorem not_nontriviallyStructured_of_qua [PartialOrder α] {P : α → Prop} (hQ : QUA P) :
+    ¬ NontriviallyStructured P :=
+  λ ⟨_, _, hx, hy, hlt⟩ => hQ hx hy hlt.ne hlt.le
+
+/-- A cumulative domain with two satisfiers is: their sum has one of them as a proper part. -/
+theorem nontriviallyStructured_of_cum [SemilatticeSup α] {P : α → Prop} (hC : CUM P) {x y : α}
+    (hx : P x) (hy : P y) (hne : x ≠ y) : NontriviallyStructured P := by
+  by_cases h : x < x ⊔ y
+  · exact ⟨x, x ⊔ y, hx, hC hx hy, h⟩
+  · have hle : y ≤ x := sup_eq_left.mp (le_sup_left.eq_of_not_lt h).symm
+    exact ⟨y, x, hy, hx, lt_of_le_of_ne hle hne.symm⟩
+
+/-- On a quantized domain every measure is monotonic vacuously. -/
+theorem strictMonoOn_of_qua [PartialOrder α] {P : α → Prop} (hQ : QUA P) (μ : α → ℚ) :
+    StrictMonoOn μ {x | P x} :=
+  λ _ hx _ hy hlt => absurd hlt.le (hQ hx hy hlt.ne)
+
+/-- On a non-trivially structured domain a monotonic measure separates some pair: the
+preservation of structure is non-trivial. -/
+theorem exists_lt_of_strictMonoOn [PartialOrder α] {P : α → Prop}
+    (hP : NontriviallyStructured P) {μ : α → ℚ} (hμ : StrictMonoOn μ {x | P x}) :
+    ∃ x y, P x ∧ P y ∧ μ x < μ y :=
+  let ⟨x, y, hx, hy, hlt⟩ := hP
+  ⟨x, y, hx, hy, hμ hx hy hlt⟩
+
+end Structure
+
+/-! ### Dimension tracks the measured domain (§3.4) -/
+
+/-- What a comparative measures: entities, events, or states. -/
+inductive MeasuredDomain
+  | entity | event | state
   deriving DecidableEq, Repr
 
-/-- Telicity determines status: atelic VPs are CUM, telic VPs QUA. -/
-def telicityToStatus : Telicity → MereologicalStatus
-  | .atelic => .cumulative
-  | .telic  => .quantized
-
-/-- Number determines status: mass CUM; count (sg/pl/neutral) QUA at the
-    lexical level (plural CUM-at-plurality measures only NUMBER). -/
-def numberToStatus : NumberFeature → MereologicalStatus
-  | .mass    => .cumulative
-  | .sg      => .quantized
-  | .pl      => .quantized
-  | .neutral => .quantized
-
-/-- GA state domains form mereologies (see the section note). -/
-def gradableToStatus : MereologicalStatus := .cumulative
-
-/-- Non-GA states are atomic and unordered — QUA as the closest label. -/
-def nonGradableToStatus : MereologicalStatus := .quantized
-
-/-- Telicization (§5) shifts status from cumulative to quantized. -/
-theorem telicize_shifts_status (p : AspectualProfile) (h : p.telicity = .atelic) :
-    telicityToStatus p.telicity = .cumulative ∧
-    telicityToStatus p.telicize.telicity = .quantized :=
-  ⟨by rw [h]; rfl, rfl⟩
-
-/-! ### Felicity from the lexicon (§§2–3)
-
-Each felicity observation predicted from shared substrate: fragment
-entries where the lexicon has them (`coffee`, `idea`, `run`, `hot`),
-the paper's feature assignment otherwise. -/
-
-/-- `much` is predicted felicitous exactly with cumulative status. -/
-def predictsFelicitous (s : MereologicalStatus) : Prop := s = .cumulative
-
-instance : DecidablePred predictsFelicitous :=
-  fun s => inferInstanceAs (Decidable (s = .cumulative))
-
-/-- The lexical-level number feature of a fragment noun entry. -/
-def nounNumber (e : English.Nouns.NounEntry) : NumberFeature :=
-  match e.countable with
-  | .mass  => .mass
-  | .count => .sg
-
-/-- "Al bought more coffee than Bill did" (§2.1): the fragment's mass
-    entry gives cumulative status, predicting the recorded judgment. -/
-theorem coffee_much_matches :
-    predictsFelicitous (numberToStatus (nounNumber English.Nouns.coffee)) ↔
-      Examples.felicity_mass.judgment = .acceptable := by decide
-
-/-- "?Al has more idea than Bill does" (§2.1): count entry ⇒ quantized ⇒
-    anomalous. -/
-theorem idea_much_matches :
-    predictsFelicitous (numberToStatus (nounNumber English.Nouns.idea)) ↔
-      Examples.felicity_count.judgment = .acceptable := by decide
-
-/-- "Al ran more than Bill did" (§2.2): `run` is an activity in the
-    fragment; atelic status predicts the recorded judgment. -/
-theorem run_much_matches :
-    English.Predicates.Verbal.run.vendlerClass = some .activity ∧
-    (predictsFelicitous (telicityToStatus .atelic) ↔
-      Examples.felicity_atelic.judgment = .acceptable) :=
-  ⟨rfl, by decide⟩
-
-/-- "?Al graduated high school more than Bill did" (§2.2): telic ⇒
-    quantized ⇒ anomalous. -/
-theorem telic_much_matches :
-    predictsFelicitous (telicityToStatus .telic) ↔
-      Examples.felicity_telic.judgment = .acceptable := by decide
-
-/-- "Al's coffee is hotter than Bill's" (§3.1): GA state domains form
-    mereologies (`English.Predicates.Adjectival.hot` carries a scalar
-    dimension). -/
-theorem hot_much_matches :
-    predictsFelicitous gradableToStatus ↔
-      Examples.felicity_ga.judgment = .acceptable := by decide
-
-/-- "?This piece of wood is more wooden than that one" (ex. 53a):
-    non-GA states are atomic and unordered ⇒ anomalous. -/
-theorem wooden_much_matches :
-    predictsFelicitous nonGradableToStatus ↔
-      Examples.felicity_nonga.judgment = .acceptable := by decide
-
-/-- Why quantized reference blocks `much`: a quantized extension is an
-    antichain, so every measure is vacuously admissible on it — monotone
-    measurement cannot discriminate, leaving only counting (`many`). -/
-theorem qua_measures_vacuously_admissible {α : Type*} [PartialOrder α]
-    {P : α → Prop} (hQ : Mereology.QUA P) (μ : α → ℚ) :
-    StrictMonoOn μ {x | P x} :=
-  fun _ hx _ hy hlt => absurd hlt.le (hQ hx hy hlt.ne)
-
-/-! ### Dimensional restriction (§3.4) -/
-
-/-- Order model of a measured domain: states are linearly ordered;
-    entity and event domains have incomparable parts (weight × volume,
-    distance × duration). -/
+/-- The order model of a measured domain: states are linearly ordered, entities and events
+have incomparable parts, like coffee by weight and by volume. -/
 abbrev MeasuredDomain.Model : MeasuredDomain → Type
-  | .state  => ℝ
+  | .state => ℝ
   | .entity => ℝ × ℝ
-  | .event  => ℝ × ℝ
+  | .event => ℝ × ℝ
 
 instance : (m : MeasuredDomain) → Preorder m.Model
-  | .state  => inferInstanceAs (Preorder ℝ)
+  | .state => inferInstanceAs (Preorder ℝ)
   | .entity => inferInstanceAs (Preorder (ℝ × ℝ))
-  | .event  => inferInstanceAs (Preorder (ℝ × ℝ))
+  | .event => inferInstanceAs (Preorder (ℝ × ℝ))
 
-/-- §3.4 as order theory: exactly the state domain is dimensionally
-    restricted. -/
-theorem model_restricted_iff : ∀ m : MeasuredDomain,
-    DimensionallyRestricted m.Model ↔ m = .state
-  | .state  => iff_of_true (linearOrder_dimensionallyRestricted (α := ℝ)) rfl
+/-- Exactly the state domain fixes the comparative ordering for every admissible measure:
+*hotter* and *more heat* measure intensively because they measure states, *fuller* and *more
+coffee* extensively because they measure entities (82)–(85). -/
+theorem model_restricted_iff :
+    ∀ m : MeasuredDomain, DimensionallyRestricted m.Model ↔ m = .state
+  | .state => iff_of_true (linearOrder_dimensionallyRestricted (α := ℝ)) rfl
   | .entity => iff_of_false prod_not_dimensionallyRestricted (by decide)
-  | .event  => iff_of_false prod_not_dimensionallyRestricted (by decide)
+  | .event => iff_of_false prod_not_dimensionallyRestricted (by decide)
 
-/-- §3.4 verified over the example annotations (exs. 82–89): the
-    measured domain's order model is dimensionally restricted iff the
-    observed dimension is intensive. -/
-theorem dimension_tracks_domain :
-    ∀ e ∈ Examples.all, ∀ m : MeasuredDomain,
-      (e.feature? "measuredDomain").bind measuredDomainOfFeature = some m →
-        (DimensionallyRestricted m.Model ↔
-          e.feature? "intensive" = some "true") := by
-  intro e he m hm
-  rw [model_restricted_iff]
-  revert e he m hm
-  decide
+/-! ### Much Deletion (§3.3, §6.3) -/
 
-example : Examples.dim_84a_fuller.feature? "measuredDomain" = some "entity" := rfl
-
-/-- The lexicalist rival §3.4 argues against — dimension fixed by
-    category — fails on the reversal data (`fuller`, ex. 84a; `more
-    heat`, ex. 85a). -/
-theorem dimension_not_category :
-    ¬ ∀ e ∈ Examples.all, e.feature? "dataset" = some "dimension" →
-      (e.feature? "category" = some "gradableAdj" ↔
-        e.feature? "intensive" = some "true") := by
-  decide
-
-/-! ### Grammar shifts measurement (§5) -/
-
-/-- Ex. (105): telicization (the directional PP) shifts cumulative to
-    quantized. -/
-theorem run_shift_via_telicize :
-    let p : AspectualProfile := activityProfile
-    telicityToStatus p.telicity = .cumulative ∧
-    telicityToStatus p.telicize.telicity = .quantized :=
-  telicize_shifts_status _ rfl
-
-/-! ### Bresnan's decomposition (§3.3) -/
-
-/-- [bresnan-1973]'s QP `-er` + `much`, underlying `more` in all domains;
-    adjectives differ only by Much Deletion (Wellwood's (74)). -/
+/-- [bresnan-1973]'s *-er* with *much*, the source of *more* in every domain. -/
 def crossCategorialQP : Bresnan1973.QP := ⟨{ clitic := some .er }, .much⟩
 
-/-- The surface form "more" derives from Bresnan's suppletion. -/
-theorem crossCategorial_more_from_suppletion :
-    crossCategorialQP.suppletion = some .more := rfl
+theorem crossCategorialQP_suppletion : crossCategorialQP.suppletion = some .more := rfl
 
-/-! ### `very` distribution (§6.3) -/
-
-/-- The §6.3 `very` asymmetry (exs. 117–118) follows from Much
-    Deletion: `much` deletes exactly before adjectives, so only GAs host
-    covert `much`, and `very` requires overt `much` everywhere else. -/
-theorem very_tracks_much_deletion :
-    ∀ e ∈ Examples.all, e.feature? "dataset" = some "very" →
-      (e.feature? "requiresOvertMuch" = some "true" ↔
-        ¬ Bresnan1973.MuchDeletes ⟨{}, .much⟩
-          (if e.feature? "category" = some "gradableAdj" then .adjective else .noun)) := by
+/-- *very* needs *much* before a noun or a verb phrase and forbids it before an adjective
+(117), (118): *much* deletes exactly before the adjective of its phrase (74). -/
+theorem very_much_deletion :
+    Bresnan1973.MuchDeletes ⟨{}, .much⟩ .adjective ∧
+      ¬ Bresnan1973.MuchDeletes ⟨{}, .much⟩ .noun ∧
+      ¬ Bresnan1973.MuchDeletes ⟨{}, .much⟩ .phrase := by
   decide
-
-example : Examples.very_ga.feature? "dataset" = some "very" := rfl
 
 end Wellwood2015
