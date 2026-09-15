@@ -1,0 +1,464 @@
+[
+  {
+    "id": "yalcin2007_1",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is raining and I do not know that it is raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is raining and I do not know that it is raining.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "Moore-paradoxical"],
+      ["embedding", "none"]
+    ],
+    "comment": "Unassertable, but coherent under embedding.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_2",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is not raining and for all I know, it is raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is not raining and for all I know, it is raining.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "Moore-paradoxical"],
+      ["embedding", "none"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_3",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(7)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Suppose it is raining and it might not be raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Suppose it is raining and it might not be raining.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "epistemic contradiction"],
+      ["embedding", "suppose"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_4",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(8)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Suppose it is not raining and it might be raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Suppose it is not raining and it might be raining.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "epistemic contradiction"],
+      ["embedding", "suppose"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_5",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(9)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Suppose it is raining and possibly it is not raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Suppose it is raining and possibly it is not raining.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "epistemic contradiction"],
+      ["embedding", "suppose"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_6",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(11)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If it is raining and it might not be raining, then …",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If it is raining and it might not be raining, then …",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "epistemic contradiction"],
+      ["embedding", "conditional antecedent"]
+    ],
+    "comment": "Unintelligible whatever the consequent.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_7",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(13)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If it is raining and it might not be raining, then (still) it is raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If it is raining and it might not be raining, then (still) it is raining.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "epistemic contradiction"],
+      ["embedding", "conditional antecedent"]
+    ],
+    "comment": "Unintelligible rather than trivially true.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_8",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(14)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Suppose it is raining and I do not know that it is raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Suppose it is raining and I do not know that it is raining.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "Moore-paradoxical"],
+      ["embedding", "suppose"]
+    ],
+    "comment": "A coherent request.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_9",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(15)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Suppose it is not raining and for all I know, it is raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Suppose it is not raining and for all I know, it is raining.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "Moore-paradoxical"],
+      ["embedding", "suppose"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_10",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(16)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If it is raining and I do not know it, then there is something I do not know.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If it is raining and I do not know it, then there is something I do not know.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "Moore-paradoxical"],
+      ["embedding", "conditional antecedent"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_11",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(17)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If it is not raining but for all I know, it is, then there is something I do not know.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If it is not raining but for all I know, it is, then there is something I do not know.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "Moore-paradoxical"],
+      ["embedding", "conditional antecedent"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_12",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(18)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If it is not raining and it might be raining, then for all I know, it is raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If it is not raining and it might be raining, then for all I know, it is raining.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "epistemic contradiction"],
+      ["embedding", "conditional antecedent"]
+    ],
+    "comment": "A relational semantics on which might entails for-all-I-know predicts this true.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_13",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(19)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Vann believes that Bob might be in his office.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Vann believes that Bob might be in his office.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "the modal quantifies over Vann's belief worlds", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["embedding", "believe"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_14",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(20)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Fido thinks there might be an intruder downstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Fido thinks there might be an intruder downstairs.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["embedding", "think"]
+    ],
+    "comment": "True without second-order beliefs on Fido's part.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_15",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(21)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Cheerios may reduce the risk of heart disease.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Cheerios may reduce the risk of heart disease.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reading", "expert information"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_16",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(23)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I do not know whether the late Antarctic spring might be caused by ozone depletion.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I do not know whether the late Antarctic spring might be caused by ozone depletion.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reading", "target information state"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_17",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(24)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Suppose it is not raining and it must be raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Suppose it is not raining and it must be raining.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "epistemic contradiction"],
+      ["modal", "must"],
+      ["embedding", "suppose"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_18",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(25)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Suppose it is not raining and it is likely that it is raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Suppose it is not raining and it is likely that it is raining.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "epistemic contradiction"],
+      ["modal", "probability"],
+      ["embedding", "suppose"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_19",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(26)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Suppose it is raining and it probably is not raining.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Suppose it is raining and it probably is not raining.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "epistemic contradiction"],
+      ["modal", "probability"],
+      ["embedding", "suppose"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_20",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(27)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If it is not raining and it is probably raining, then …",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If it is not raining and it is probably raining, then …",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["type", "epistemic contradiction"],
+      ["modal", "probability"],
+      ["embedding", "conditional antecedent"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_21",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(C1)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If the butler did not do it, the gardener did.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If the butler did not do it, the gardener did.",
+    "context": "Either the butler or the gardener did it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["consequent", "plain"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yalcin2007_22",
+    "source": {"bibkey": "yalcin-2007", "paperLabel": "(C2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If the butler did not do it, the gardener must have.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If the butler did not do it, the gardener must have.",
+    "context": "Either the butler or the gardener did it.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["consequent", "must"]
+    ],
+    "comment": "Sounds equivalent to (C1).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
