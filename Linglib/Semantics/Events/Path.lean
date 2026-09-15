@@ -1,4 +1,3 @@
-import Linglib.Semantics.Degree.Boundedness
 import Mathlib.Data.List.Infix
 
 /-!

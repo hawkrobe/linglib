@@ -100,6 +100,17 @@ theorem equative_antonymy (μ : Entity → α) (a b : Entity) :
     equativeSem μ a b .positive ↔ equativeSem μ b a .negative :=
   Iff.rfl
 
+/-- The negative comparative is the positive one on the order dual: antonyms impose inverse
+orderings on shared degrees ([kennedy-2007] fn. 29). -/
+theorem comparativeSem_negative_iff_toDual (μ : Entity → α) (a b : Entity) :
+    comparativeSem μ a b .negative ↔ comparativeSem (OrderDual.toDual ∘ μ) a b .positive :=
+  Iff.rfl
+
+/-- The negative equative is the positive one on the order dual. -/
+theorem equativeSem_negative_iff_toDual (μ : Entity → α) (a b : Entity) :
+    equativeSem μ a b .negative ↔ equativeSem (OrderDual.toDual ∘ μ) a b .positive :=
+  Iff.rfl
+
 end Direct
 
 /-! ### Boundary dependence -/

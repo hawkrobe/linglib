@@ -279,7 +279,7 @@ theorem defaultTelicity_iff (s : Aspect.DegreeAchievementScale) (i top : ℚ)
   have key : s.defaultTelicity = .telic ↔ s.scaleBoundedness.HasMax := by
     rw [Aspect.DegreeAchievementScale.defaultTelicity,
       ScalarDimension.defaultTelicity_telic_iff_hasGreatest]
-    exact Boundedness.hasGreatest_degreeShape_iff _
+    exact Boundedness.exists_isTop_degreeShape _
   rw [key]
   by_cases hmax : s.scaleBoundedness.HasMax
   · rw [ite_eq_left hmax]

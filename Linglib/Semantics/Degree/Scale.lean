@@ -119,7 +119,7 @@ instance instLinearOrderDimensionDegree (d : ScalarDimension) : LinearOrder d.de
     canonical scale `HasMax` — grounded for all dimensions in one application. -/
 theorem ScalarDimension.hasGreatest_degree_iff (d : ScalarDimension) :
     (∃ m : d.degree, IsTop m) ↔ d.boundedness.HasMax :=
-  Boundedness.hasGreatest_degreeShape_iff d.boundedness
+  Boundedness.exists_isTop_degreeShape d.boundedness
 
 /-! ### Derived aspectual views (verb side) -/
 
