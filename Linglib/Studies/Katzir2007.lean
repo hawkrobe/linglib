@@ -1,5 +1,5 @@
 import Linglib.Semantics.Alternatives.Structural
-import Linglib.Pragmatics.Competition
+import Linglib.Semantics.Alternatives.Competition
 
 /-!
 # Katzir (2007): Structurally-Defined Alternatives
@@ -10,7 +10,7 @@ are the trees obtainable from it by deletion, contraction, and substitution of c
 same-category items of the substitution source, the lexicon together with the sentence's own
 subtrees (its definitions (19) to (21) and (41), the substrate `Alternatives.Structural`).
 The conversational principle (21) then forbids asserting a sentence when a structural
-alternative is strictly stronger and weakly assertable, the substrate's `Competition.Blocked`
+alternative is strictly stronger and weakly assertable, the substrate's `Alternatives.Blocked`
 over the weakly assertable structural alternatives.
 
 The examples are the paper's Section 4 and 5 sentences over a small lexicon. For (25),
@@ -39,7 +39,7 @@ and the symmetric alternative places the conjunction of quantifiers at the deter
 * [sauerland-2004], [kroch-1972]
 -/
 
-open Syntax Alternatives Alternatives.Structural Competition
+open Syntax Alternatives Alternatives.Structural
 
 namespace Katzir2007
 

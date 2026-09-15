@@ -2,7 +2,7 @@ import Linglib.Syntax.Agreement.ContainmentPair
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Semantics.Presupposition.PhiFeatures
-import Linglib.Pragmatics.Competition
+import Linglib.Semantics.Alternatives.Competition
 
 /-!
 # Maximize Presupposition
@@ -10,7 +10,7 @@ import Linglib.Pragmatics.Competition
 This file defines Maximize Presupposition ([heim-1991]) in its two formulations. As
 competition, `Blocked`: an expression is blocked when an alternative with the same assertion
 carries a strictly stronger presupposition, the anti-presupposition of [percus-2006] and
-[sauerland-2008], stated over any alternative source by `Competition.Blocked` and so shared
+[sauerland-2008], stated over any alternative source by `Alternatives.Blocked` and so shared
 by the pragmatic reading, which derives it from Gricean reasoning ([schlenker-2012]), and the
 grammatical, locally applied one ([singh-2011]). As a violable constraint, `mpConstraintOf`:
 over candidates carrying a presuppositional strength, violations count the distance from the
@@ -51,7 +51,7 @@ open Presupposition.PhiFeatures
 /-- `φ` is blocked under Maximize Presupposition when an alternative with the same assertion
 carries a strictly stronger presupposition. -/
 def Blocked {S W : Type*} (alts : S → Set S) (presup assertion : S → Set W) (φ : S) : Prop :=
-  Competition.Blocked (Competition.sameAssertion assertion alts) presup φ
+  Alternatives.Blocked (Alternatives.sameAssertion assertion alts) presup φ
 
 -- ============================================================================
 -- §1  Abstract MP and Markedness Constraints
