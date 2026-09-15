@@ -231,7 +231,7 @@ one NP over two terminals, so every step is a `decide` or one Katzir substitutio
 section WorkedExample
 
 open Syntax
-open Alternatives Alternatives.Structural
+open Alternatives
 
 /-- Two evaluation contexts: a domain of two cups and a domain of three; the dual
 presupposition is satisfied only in the first. -/

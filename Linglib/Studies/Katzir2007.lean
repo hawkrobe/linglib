@@ -8,7 +8,7 @@ This file formalizes the worked examples of [katzir-2007], which replaces the Ho
 neo-Gricean pragmatics by alternatives defined on parse trees: the alternatives of a sentence
 are the trees obtainable from it by deletion, contraction, and substitution of constituents by
 same-category items of the substitution source, the lexicon together with the sentence's own
-subtrees (its definitions (19) to (21) and (41), the substrate `Alternatives.Structural`).
+subtrees (its definitions (19) to (21) and (41), the substrate `Alternatives`).
 The conversational principle (21) then forbids asserting a sentence when a structural
 alternative is strictly stronger and weakly assertable, the substrate's `Alternatives.Blocked`
 over the weakly assertable structural alternatives.
@@ -39,7 +39,7 @@ and the symmetric alternative places the conjunction of quantifiers at the deter
 * [sauerland-2004], [kroch-1972]
 -/
 
-open Syntax Alternatives Alternatives.Structural
+open Syntax Alternatives
 
 namespace Katzir2007
 

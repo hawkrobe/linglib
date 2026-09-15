@@ -2,6 +2,7 @@ import Mathlib.Logic.Relation
 import Mathlib.Order.Antisymmetrization
 import Mathlib.Data.Finset.Basic
 import Linglib.Syntax.Tree.Cat
+import Linglib.Semantics.Alternatives.Basic
 
 /-!
 # Structural alternatives
@@ -22,7 +23,10 @@ No operation introduces a category absent from the tree and the source
 property the operations cannot create (`subtree_preservation`); and substituting one lexical
 item for another of the same category throughout a tree, a Horn-scale alternative, is a chain
 of substitutions (`horn_alternatives_are_structural`), so scalar alternatives are a special
-case.
+case. More generally the Hamblin composition engine of `Alternatives/Basic`, applied to a tree
+whose terminals evoke their same-category lexical items, generates exactly the substitution
+fragment: its alternatives are structural (`hamblin_alternatives_subset`), while deletion and
+contraction, which act on the whole tree, lie outside any pointwise composition.
 
 ## Main definitions
 
@@ -30,6 +34,7 @@ case.
 * `StructOp`, `atMostAsComplex`, `equalComplexity` — one operation, its reflexive-transitive
   closure as a preorder, and the equal-complexity equivalence.
 * `structuralAlternatives` — the trees at most as complex as the host over its source.
+* `hamblin` — the Hamblin composition of a tree over a lexicon, a `WithAlternatives` value.
 * `indirectFrom` — the indirect-alternative combinator on sources.
 
 ## Main results
@@ -38,6 +43,8 @@ case.
   subtree property absent from the host and the source.
 * `horn_alternatives_are_structural` — leaf substitution of a same-category lexical item is a
   structural alternative.
+* `hamblin_alternatives_subset` — the alternatives composed by the Hamblin engine over the
+  lexicon are structural alternatives.
 
 ## Implementation notes
 
@@ -52,7 +59,7 @@ the operations into the body of a binder, which the paper's trees lack.
 * [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
 -/
 
-namespace Alternatives.Structural
+namespace Alternatives
 
 open Syntax Tree
 
@@ -269,19 +276,18 @@ private theorem leafSubstList_eq_map [BEq C] [BEq W]
     simp only [Tree.leafSubst.leafSubstList, List.map_cons]
     exact congrArg _ ih
 
-/-- Process children one at a time: .node cat cs →* .node cat (cs.map f). -/
-private theorem mapChildren_reachable {source : Set (Tree C W)}
-    {cat : C} {cs : List (Tree C W)} {f : Tree C W → Tree C W}
+/-- Children reachable one by one make the node reachable: with `cs'` pointwise reachable from
+`cs`, `node cat cs` reaches `node cat cs'` by operations inside successive children. -/
+private theorem pointwise_reachable {source : Set (Tree C W)} {cat : C}
+    {cs cs' : List (Tree C W)} (hlen : cs'.length = cs.length)
     (hf : ∀ (i : Nat) (hi : i < cs.length),
-      Relation.ReflTransGen (StructOp source) cs[i] (f cs[i])) :
-    Relation.ReflTransGen (StructOp source)
-      (.node cat cs) (.node cat (cs.map f)) := by
+      Relation.ReflTransGen (StructOp source) cs[i] (cs'[i]'(hlen ▸ hi))) :
+    Relation.ReflTransGen (StructOp source) (.node cat cs) (.node cat cs') := by
   suffices h : ∀ k (hk : k ≤ cs.length),
     Relation.ReflTransGen (StructOp source)
-      (.node cat cs)
-      (.node cat (List.take k (cs.map f) ++ List.drop k cs)) by
+      (.node cat cs) (.node cat (List.take k cs' ++ List.drop k cs)) by
     have h' := h cs.length le_rfl
-    rw [List.take_of_length_le (by simp), List.drop_length, List.append_nil] at h'
+    rw [List.take_of_length_le (by omega), List.drop_length, List.append_nil] at h'
     exact h'
   intro k
   induction k with
@@ -290,36 +296,40 @@ private theorem mapChildren_reachable {source : Set (Tree C W)}
     intro hk
     have hk' : k < cs.length := by omega
     apply Relation.ReflTransGen.trans (ih (by omega))
-    have hmid_len : (List.take k (cs.map f) ++ List.drop k cs).length = cs.length := by
-      simp [List.length_take, List.length_drop, List.length_map]; omega
-    have htk_len : (List.take k (cs.map f)).length = k := by
-      simp [List.length_take, List.length_map]; omega
-    have hmid_k : (List.take k (cs.map f) ++ List.drop k cs)[k]'(by omega) = cs[k] := by
+    have htk_len : (List.take k cs').length = k := by simp [List.length_take]; omega
+    have hmid_k : (List.take k cs' ++ List.drop k cs)[k]'(by simp [List.length_take]; omega)
+        = cs[k] := by
       rw [List.getElem_append_right (by omega)]
       simp [htk_len, List.getElem_drop]
-    suffices heq : List.take (k + 1) (cs.map f) ++ List.drop (k + 1) cs =
-        (List.take k (cs.map f) ++ List.drop k cs).set k (f cs[k]) by
+    suffices heq : List.take (k + 1) cs' ++ List.drop (k + 1) cs =
+        (List.take k cs' ++ List.drop k cs).set k (cs'[k]'(by omega)) by
       rw [heq]
-      apply lift_at_position _ k (by omega) (f cs[k])
+      apply lift_at_position _ k (by simp [List.length_take]; omega)
       rw [hmid_k]; exact hf k hk'
-    have htk1_len : (List.take (k + 1) (cs.map f)).length = k + 1 := by
-      simp [List.length_take, List.length_map]; omega
+    have htk1_len : (List.take (k + 1) cs').length = k + 1 := by simp [List.length_take]; omega
     apply List.ext_getElem
-    · simp [List.length_set, List.length_take, List.length_drop, List.length_map]; omega
+    · simp [List.length_set, List.length_take, List.length_drop]; omega
     · intro i hi1 hi2
       by_cases hik : i = k
       · subst hik
         rw [List.getElem_set_self, List.getElem_append_left (by omega)]
-        simp [List.getElem_take, List.getElem_map]
+        simp [List.getElem_take]
       · rw [List.getElem_set_ne (Ne.symm hik)]
         by_cases hilt : i < k
-        · rw [List.getElem_append_left (by omega),
-              List.getElem_append_left (by omega)]
-          simp [List.getElem_take, List.getElem_map]
-        · rw [List.getElem_append_right (by omega),
-              List.getElem_append_right (by omega)]
+        · rw [List.getElem_append_left (by omega), List.getElem_append_left (by omega)]
+          simp [List.getElem_take]
+        · rw [List.getElem_append_right (by omega), List.getElem_append_right (by omega)]
           simp [htk1_len, htk_len, List.getElem_drop]
           congr 1; omega
+
+/-- Process children one at a time: .node cat cs →* .node cat (cs.map f). -/
+private theorem mapChildren_reachable {source : Set (Tree C W)}
+    {cat : C} {cs : List (Tree C W)} {f : Tree C W → Tree C W}
+    (hf : ∀ (i : Nat) (hi : i < cs.length),
+      Relation.ReflTransGen (StructOp source) cs[i] (f cs[i])) :
+    Relation.ReflTransGen (StructOp source)
+      (.node cat cs) (.node cat (cs.map f)) :=
+  pointwise_reachable (by simp) λ i hi => by rw [List.getElem_map]; exact hf i hi
 
 /-- Leaf substitution is reachable via structural operations for any
 source containing `.terminal c β`. -/
@@ -370,6 +380,97 @@ theorem horn_alternatives_are_structural [BEq C] [LawfulBEq C] [BEq W] (lex : Fi
     φ.leafSubst α β c ∈ structuralAlternatives lex φ :=
   leafSubst_reachable α β c (Set.mem_union_left _ (Finset.mem_coe.2 h_β)) φ
 
+/-! ### Hamblin composition generates the substitution fragment
+
+The composition engine of `Alternatives/Basic` computes alternatives pointwise from the parts:
+`hamblin lex φ` gives each terminal the same-category items of the lexicon as alternatives and
+composes the constructors through the applicative. Every alternative it evokes is a chain of
+substitutions at the leaves, hence a structural alternative (`hamblin_alternatives_subset`);
+deletion and contraction lie outside the compositional fragment, so the converse fails. -/
+
+/-- The Hamblin composition of a tree over a lexicon: a terminal evokes itself and the
+same-category items of the lexicon, and the constructors compose pointwise. -/
+def hamblin (lex : Finset (Tree C W)) : Tree C W → WithAlternatives (Tree C W)
+  | t@(.terminal c _) => ⟨t, insert t {s | s ∈ lex ∧ s.cat = c}⟩
+  | .node c cs => Tree.node c <$> hamblinList lex cs
+  | t@(.trace _ _) => pure t
+  | .bind n c body => Tree.bind n c <$> hamblin lex body
+where
+  /-- The pointwise composition of a list of children. -/
+  hamblinList (lex : Finset (Tree C W)) : List (Tree C W) → WithAlternatives (List (Tree C W))
+  | [] => pure []
+  | t :: ts => (· :: ·) <$> hamblin lex t <*> hamblinList lex ts
+
+/-- The ordinary value of the composition is the tree itself. -/
+theorem hamblin_ordinary (lex : Finset (Tree C W)) (φ : Tree C W) :
+    (hamblin lex φ).ordinary = φ := by
+  refine Tree.rec (motive_1 := λ φ => (hamblin lex φ).ordinary = φ)
+    (motive_2 := λ cs => (hamblin.hamblinList lex cs).ordinary = cs) ?_ ?_ ?_ ?_ ?_ ?_ φ
+  · intro c w; rfl
+  · intro c cs ih; simp only [hamblin, WithAlternatives.ordinary_map, ih]
+  · intro n c; rfl
+  · intro n c body ih; simp only [hamblin, WithAlternatives.ordinary_map, ih]
+  · rfl
+  · intro t ts iht ihts
+    simp only [hamblin.hamblinList, WithAlternatives.ordinary_seq, WithAlternatives.ordinary_map,
+      iht, ihts]
+
+/-- The composition is well formed: the tree is among its own alternatives. -/
+theorem hamblin_wellFormed (lex : Finset (Tree C W)) (φ : Tree C W) :
+    (hamblin lex φ).WellFormed := by
+  refine Tree.rec (motive_1 := λ φ => (hamblin lex φ).WellFormed)
+    (motive_2 := λ cs => (hamblin.hamblinList lex cs).WellFormed) ?_ ?_ ?_ ?_ ?_ ?_ φ
+  · intro c w; exact Set.mem_insert _ _
+  · intro c cs ih; exact ih.map
+  · intro n c; exact WithAlternatives.WellFormed.unfeatured _
+  · intro n c body ih; exact ih.map
+  · exact WithAlternatives.WellFormed.unfeatured _
+  · intro t ts iht ihts
+    exact WithAlternatives.mem_alternatives_seq.2
+      ⟨_, WithAlternatives.mem_alternatives_map.2 ⟨_, iht, rfl⟩, _, ihts, rfl⟩
+
+/-- Over any source containing the lexicon, every alternative the composition evokes is
+reachable from the tree by structural operations. -/
+theorem reachable_of_mem_hamblin {source : Set (Tree C W)} (lex : Finset (Tree C W))
+    (hlex : ↑lex ⊆ source) (φ : Tree C W) :
+    ∀ ψ ∈ (hamblin lex φ).alternatives, Relation.ReflTransGen (StructOp source) φ ψ := by
+  refine Tree.rec
+    (motive_1 := λ φ => ∀ ψ ∈ (hamblin lex φ).alternatives,
+      Relation.ReflTransGen (StructOp source) φ ψ)
+    (motive_2 := λ cs => ∀ cs' ∈ (hamblin.hamblinList lex cs).alternatives,
+      List.Forall₂ (Relation.ReflTransGen (StructOp source)) cs cs') ?_ ?_ ?_ ?_ ?_ ?_ φ
+  · intro c w ψ hψ
+    rcases hψ with rfl | ⟨hlex', hcat⟩
+    · exact Relation.ReflTransGen.refl
+    · exact Relation.ReflTransGen.single (StructOp.subst hcat (hlex (Finset.mem_coe.2 hlex')))
+  · intro c cs ih ψ hψ
+    obtain ⟨cs', hcs', rfl⟩ := WithAlternatives.mem_alternatives_map.1 hψ
+    have h := ih cs' hcs'
+    exact pointwise_reachable h.length_eq.symm λ i hi => h.get hi (h.length_eq ▸ hi)
+  · intro n c ψ hψ
+    have h : ψ ∈ ({Tree.trace n c} : Set (Tree C W)) := by
+      simpa [hamblin, WithAlternatives.alternatives_pure] using hψ
+    obtain rfl := Set.mem_singleton_iff.1 h
+    exact Relation.ReflTransGen.refl
+  · intro n c body ih ψ hψ
+    obtain ⟨body', hb, rfl⟩ := WithAlternatives.mem_alternatives_map.1 hψ
+    exact lift_bind (ih body' hb)
+  · intro cs' hcs'
+    have h : cs' ∈ ({[]} : Set (List (Tree C W))) := by
+      simpa [hamblin.hamblinList, WithAlternatives.alternatives_pure] using hcs'
+    obtain rfl := Set.mem_singleton_iff.1 h
+    exact List.Forall₂.nil
+  · intro t ts iht ihts cs' hcs'
+    obtain ⟨g, hg, bs, hbs, rfl⟩ := WithAlternatives.mem_alternatives_seq.1 hcs'
+    obtain ⟨b, hb, rfl⟩ := WithAlternatives.mem_alternatives_map.1 hg
+    exact List.Forall₂.cons (iht b hb) (ihts bs hbs)
+
+/-- The compositional fragment: the alternatives the Hamblin engine evokes from the lexicon are
+structural alternatives. -/
+theorem hamblin_alternatives_subset (lex : Finset (Tree C W)) (φ : Tree C W) :
+    (hamblin lex φ).alternatives ⊆ structuralAlternatives lex φ :=
+  reachable_of_mem_hamblin lex Set.subset_union_left φ
+
 /-! ### Indirect alternatives -/
 
 variable {S M : Type*}
@@ -413,4 +514,4 @@ theorem indirectFrom_eq_empty_of_forall_pron (allPron : ∀ x ∈ base s, pron x
   rintro x ⟨_, _, sₓ, hMem, hUnpron, _⟩
   exact hUnpron (allPron sₓ hMem)
 
-end Alternatives.Structural
+end Alternatives

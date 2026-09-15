@@ -53,7 +53,7 @@ variable {W : Type*}
 
 section Formal
 
-open Syntax Alternatives.Structural
+open Syntax Alternatives
 
 variable {C V : Type} (lex : Finset (Tree C V)) (φ : Tree C V) (salient : Finset (Tree C V))
 

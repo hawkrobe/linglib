@@ -22,7 +22,7 @@ that John is no bastard, because *that bastard John arrived first* is not a form
 alternative: the epithet construction is a determiner phrase with three daughters, which no
 chain of deletions, contractions, and substitutions from a source of lexical items and
 one-daughter phrases can build (`outOfBlue_no_ACI`, through
-`Alternatives.Structural.subtree_preservation`). Once *that bastard Pedro* has been
+`Alternatives.subtree_preservation`). Once *that bastard Pedro* has been
 mentioned, its phrase enters the substitution source, the epithet alternative is derived by
 substituting it for the subject and then *John* for *Pedro*, the paper's derivation (24)
 (`epithet_alternative_priorMention`), and the inference arises (`priorMention_yes_ACI`).
@@ -49,7 +49,6 @@ namespace LoGuercio2025
 
 open Pragmatics.Expressives
 open Alternatives
-open Alternatives.Structural
 open Syntax
 
 /-! ### The epithet as a structural alternative -/

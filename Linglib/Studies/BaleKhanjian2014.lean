@@ -56,7 +56,7 @@ definite singular.
 
 namespace BaleKhanjian2014
 
-open Data.Examples Syntax Alternatives.Structural
+open Data.Examples Syntax Alternatives
 
 /-! ### Denotations -/
 

@@ -36,7 +36,7 @@ match is a single substitution step of [katzir-2007]'s operations, `structOp_of_
 
 Propositions are sets of worlds, the deontic modal is `Modality.Kratzer.necessity` over a modal
 base and an ordering source, and the lexicon is a list of terminals of `Syntax.Tree` so that
-category match is the substitution step of `Alternatives.Structural.StructOp`; the denotation of
+category match is the substitution step of `Alternatives.StructOp`; the denotation of
 a tree is its terminal's operator and the identity elsewhere. Two-dimensional values are
 `WithAlternatives`, whose `<*>` is pointwise functional application. The embedding data, (14) and
 (18), in which *=mI* below the complementizer *diye* yields a declarative matrix clause and
@@ -59,7 +59,7 @@ rows and not modelled. The examples are the rows of `Data.Examples.TurkHirsch202
 
 namespace TurkHirsch2026
 
-open Alternatives Alternatives.Structural Modality.Kratzer Question Syntax
+open Alternatives Modality.Kratzer Question Syntax
 
 /-! ### The polar morphemes and the deontic modal -/
 
