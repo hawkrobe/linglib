@@ -3,29 +3,41 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Relation.FactorsThroughOn
-import Linglib.Semantics.Focus.Control
+import Mathlib.Order.Interval.Set.Basic
+import Linglib.Semantics.Alternatives.Basic
+import Linglib.Semantics.Exhaustification.Excluder
+import Linglib.Semantics.Focus.Interpretation
 
 /-!
 # É. Kiss (1998): Identificational Focus versus Information Focus
 
-This file formalizes [kiss-1998]'s distinction between identificational focus, which moves to
-the specifier of a functional projection immediately before the verb and expresses exhaustive
-identification, and information focus, which stays in situ after the verb and merely conveys
-new information. On licensed configurations the position determines the focus type
-(`position_determines_focusType`), and the distributional restrictions of §3 follow from the
-compatibility of a constituent's class with a focus type: universals and *is*-phrases are
-barred from identificational focus, *csak*-phrases are obligatorily identificational, and
-*valami* and *valaki* are barred from both (`FocusConfig.Licensed`). Identificational focus is
-the prejacent exhaustified over the resolved alternatives, the substrate's `Focus.onlyVia`, and
-the coordination test and the dialogue test by which the paper diagnoses exhaustivity come out
-as theorems on the hat-and-coat scenario of its examples (`szabolcsi_test`, `farkas_test`).
+This file formalizes [kiss-1998]'s distinction between identificational focus, which in
+Hungarian moves to the immediately preverbal position and expresses exhaustive identification,
+and information focus, which stays in situ after the verb and merely marks its content as new.
+The two types differ in interpretation (`FocusType.interpret`): identificational focus
+exhaustifies the prejacent over the alternatives evoked by the contextually given set, the
+`Exhaustification.exh` of [chierchia-2006], and information focus is the bare prejacent.
+The paper's characterisation of exhaustive identification, that the focus "is identified as
+the exhaustive subset of this set for which the predicate phrase actually holds", is the
+theorem `exh_Ici`, and the coordination test and the dialogue test by which the paper
+diagnoses exhaustivity come out as theorems on the hat-and-coat scenario of its examples
+(`szabolcsi_test`, `farkas_test`). The distributional restrictions of §3 follow from the same
+semantics, exhaustive identification being "exclusion by identification": a universal
+quantifier identifies without excluding (`exh_Ici_restrictor`), a *some*-phrase excludes
+without identifying (`exh_nonempty_eq_empty`), and an additive *also* or *even* phrase
+contradicts its own presupposition unless the alternatives have been narrowed by a prior
+identification, the paper's (18) (`disjoint_exh_additive`, `additive_exh_of_notMem`).
 
 ## Implementation notes
 
-* `Position`, `FocusType`, `ConstituentClass` and `FocusConfig` are the paper's analytical
-  classification of Hungarian focus, not consensus typology, so they live here rather than in
-  a Fragment.
+* The scenario tracks only which of the given elements the predicate phrase holds of, so a
+  world is a subset of the given set, the proposition that the predicate holds of a group
+  `s` is the principal upper set `Set.Ici s`, and exhaustive identification over the given
+  set `A` is the interval `Set.Icc s (s ∪ Aᶜ)`: exactly `s` among the given elements, with
+  the non-given ones unconstrained.
+* *csak* 'only' phrases are obligatorily identificational because *csak* assigns the
+  identificational focus feature (§8); the exclusion is the position's and *csak* adds an
+  evaluative presupposition, which is outside this model.
 
 ## TODO
 
@@ -36,233 +48,143 @@ as theorems on the hat-and-coat scenario of its examples (`szabolcsi_test`, `far
 ## References
 
 * [kiss-1998]
+* [chierchia-2006]
 -/
 
 namespace Kiss1998
 
-/-! ### Structural position and focus type (§1, §2) -/
+open Exhaustification Focus.Interpretation Set
 
-/-- The two structural positions of a focused constituent in Hungarian: `preverbal` is
-Spec,FP, the identificational slot, `postverbal` is in situ inside the VP. -/
-inductive Position
-  | preverbal
-  | postverbal
-  deriving DecidableEq, Repr
+variable {ι : Type*} {A : Set ι} {a b : ι}
 
-/-- The two focus types: identificational focus carries an exhaustivity entailment,
-information focus does not. -/
+/-- The alternatives a focused constituent evokes over the contextually given set `A`: for
+each given element, that the predicate phrase holds of it. -/
+def alternatives (A : Set ι) : PropFocusValue (Set ι) := (λ i => Ici {i}) '' A
+
+/-- The alternatives are those Hamblin composition assigns to the predicate phrase applied to
+a focused argument ranging over the given set. -/
+theorem alternatives_eq (A : Set ι) (a : ι) :
+    alternatives A = ((λ i => Ici {i}) <$> (⟨a, A⟩ : WithAlternatives ι)).alternatives := by
+  ext q
+  simp only [alternatives, mem_image, WithAlternatives.mem_alternatives_map]
+
+/-- The two focus types: identificational focus, which in Hungarian sits immediately before
+the verb, and information focus, which stays in situ after it. -/
 inductive FocusType
   | identificational
   | information
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Whether the focus type carries an exhaustivity entailment (§2). -/
-def FocusType.IsExhaustive (t : FocusType) : Prop := t = .identificational
-
-/-- The canonical position of a focus type (§2): identificational focus moves to Spec,FP,
-information focus stays postverbal. -/
-def positionFor : FocusType → Position
-  | .identificational => .preverbal
-  | .information => .postverbal
-
-/-! ### Constituent classes and licensing (§3) -/
-
-/-- The classes of focused constituent behind the distributional facts of §3: `regular` DPs
-occur as either focus type, `universal` is the *minden*, *X is* and *még … is* class barred from
-identificational focus (17b–d), `onlyPhrase` is *csak X*, obligatorily identificational, and
-`someIndef` is *valami* and *valaki*, barred from both (17e). -/
-inductive ConstituentClass
-  | regular
-  | universal
-  | onlyPhrase
-  | someIndef
   deriving DecidableEq, Repr
 
-/-- Class–type compatibility (§3). -/
-def ConstituentClass.compatibleWith : ConstituentClass → FocusType → Prop
-  | .regular, _ => True
-  | .universal, .identificational => False
-  | .universal, .information => True
-  | .onlyPhrase, .identificational => True
-  | .onlyPhrase, .information => False
-  | .someIndef, _ => False
+/-- The interpretation of a focus type over the given set `A`: identificational focus
+exhaustifies its prejacent over the alternatives, information focus asserts it as is. -/
+def FocusType.interpret (A : Set ι) : FocusType → Set (Set ι) → Set (Set ι)
+  | .identificational => exh (alternatives A)
+  | .information => id
 
-instance (c : ConstituentClass) (t : FocusType) : Decidable (c.compatibleWith t) := by
-  cases c <;> cases t <;> unfold ConstituentClass.compatibleWith <;> infer_instance
+@[simp] theorem interpret_identificational (p : Set (Set ι)) :
+    FocusType.identificational.interpret A p = exh (alternatives A) p := rfl
 
-/-- A Hungarian focused-clause configuration. -/
-structure FocusConfig where
-  /-- The structural position of the focused constituent. -/
-  position : Position
-  /-- The focus type. -/
-  focusType : FocusType
-  /-- The class of the focused constituent. -/
-  cclass : ConstituentClass
-  deriving DecidableEq, Repr
+@[simp] theorem interpret_information (p : Set (Set ι)) :
+    FocusType.information.interpret A p = p := rfl
 
-/-- A configuration is licensed when its position is canonical for its focus type (§2) and
-its constituent class is compatible with that type (§3). -/
-def FocusConfig.Licensed (c : FocusConfig) : Prop :=
-  c.position = positionFor c.focusType ∧ c.cclass.compatibleWith c.focusType
+/-! ### Exhaustive identification (§2) -/
 
-instance (c : FocusConfig) : Decidable c.Licensed := inferInstanceAs (Decidable (_ ∧ _))
-
-/-- On licensed configurations the preverbal position is the identificational focus. -/
-theorem licensed_position_determines_type {c : FocusConfig} (h : c.Licensed) :
-    c.position = .preverbal ↔ c.focusType = .identificational := by
-  obtain ⟨p, t, _⟩ := c
-  cases p <;> cases t <;> simp_all [FocusConfig.Licensed, positionFor]
-
-/-- *csak*-phrases are identificational foci (§3). -/
-theorem onlyPhrase_forces_identificational {c : FocusConfig} (h : c.Licensed)
-    (hcc : c.cclass = .onlyPhrase) : c.focusType = .identificational := by
-  obtain ⟨_, t, _⟩ := c
-  subst hcc
-  cases t <;> simp_all [FocusConfig.Licensed, ConstituentClass.compatibleWith]
-
-/-- *valami* and *valaki* can never be focused (17e): no licensed configuration has a
-`someIndef` constituent. -/
-theorem someIndef_never_licensed {c : FocusConfig} (h : c.Licensed) : c.cclass ≠ .someIndef := by
-  obtain ⟨_, t, _⟩ := c
-  rintro rfl
-  cases t <;> exact (h.2 : False).elim
-
-/-! ### Position determines focus type (§2) -/
-
-/-- The factor witnessing §2: the focus type as a function of the position. -/
-def typeOfPosition : Position → FocusType
-  | .preverbal => .identificational
-  | .postverbal => .information
-
-/-- On licensed configurations the focus type is `typeOfPosition` of the position. -/
-theorem focusType_eqOn_typeOfPosition :
-    Set.EqOn FocusConfig.focusType (typeOfPosition ∘ FocusConfig.position) {c | c.Licensed} := by
-  rintro c ⟨hpos, -⟩
-  rw [Function.comp_apply, hpos]
-  cases c.focusType <;> rfl
-
-/-- Position determines focus type on licensed configurations, the structural claim of §2. -/
-theorem position_determines_focusType :
-    Function.FactorsThroughOn FocusConfig.focusType FocusConfig.position {c | c.Licensed} :=
-  Function.factorsThroughOn_iff_exists_eqOn.mpr ⟨typeOfPosition, focusType_eqOn_typeOfPosition⟩
-
-/-- The semantic payoff of §2: on licensed configurations the preverbal position is the
-exhaustive one. -/
-theorem preverbal_iff_exhaustive {c : FocusConfig} (h : c.Licensed) :
-    c.position = .preverbal ↔ c.focusType.IsExhaustive :=
-  licensed_position_determines_type h
-
-/-! ### The paper's configurations, (8), (17b) and (19b) -/
-
-/-- (8a) *Mari egy kalapot nézett ki magának* 'It was a HAT that Mary picked for herself':
-a regular DP in preverbal identificational focus, the configuration also of (5a). -/
-def preverbalHat : FocusConfig := ⟨.preverbal, .identificational, .regular⟩
-
-/-- (8b) *Mari ki nézett magának EGY KALAPOT* 'Mary picked for herself A HAT': a regular DP
-in postverbal information focus, the configuration also of (5b). -/
-def postverbalHat : FocusConfig := ⟨.postverbal, .information, .regular⟩
-
-/-- (17b) \**Mari minden kalapot nézett ki magának*: a universal in the identificational
-position. -/
-def starredUniversal : FocusConfig := ⟨.preverbal, .identificational, .universal⟩
-
-/-- (19b) *Minden kollégámat meg hívtam* 'I invited EVERY COLLEAGUE OF MINE': a universal as
-postverbal information focus. -/
-def universalInformation : FocusConfig := ⟨.postverbal, .information, .universal⟩
-
-/-- The minimal pair (8) and the universal of (19b) are licensed; a universal in the
-identificational position (17b), *csak X* as information focus and *valami* in either position
-are not. -/
-theorem licensing :
-    preverbalHat.Licensed ∧ postverbalHat.Licensed ∧ universalInformation.Licensed ∧
-      ¬ starredUniversal.Licensed ∧
-      ¬ (FocusConfig.mk .postverbal .information .onlyPhrase).Licensed ∧
-      ¬ (FocusConfig.mk .preverbal .identificational .someIndef).Licensed ∧
-      ¬ (FocusConfig.mk .postverbal .information .someIndef).Licensed := by
-  decide
-
-/-! ### Exhaustive identification (§2)
-
-The hat-and-coat model of the paper's test sentences, (8) and (12)–(15). Identificational
-focus is the prejacent exhaustified over the resolved alternatives, a covert obligatory
-`Focus.onlyVia`, and information focus is the bare prejacent. -/
-
-open Focus (onlyVia)
-
-/-- Worlds tracking what Mary picked for herself. -/
-inductive HatWorld
-  | hatOnly
-  | coatOnly
-  | both
-  | neither
-  deriving DecidableEq, Repr
-
-/-- Mary picked a hat, at least. -/
-def pickedHat : Set HatWorld := {.hatOnly, .both}
-
-/-- Mary picked a coat, at least. -/
-def pickedCoat : Set HatWorld := {.coatOnly, .both}
-
-/-- The resolved atomic alternatives of the picking scenario. -/
-def hatAlts : Focus.Interpretation.PropFocusValue HatWorld := {pickedHat, pickedCoat}
-
-/-- Identificational focus: the prejacent exhaustified over the resolved alternatives, the
-exhaustive subset of the relevant set of §2. -/
-def identificational (p : Set HatWorld) : Set HatWorld := p ∩ onlyVia hatAlts p
-
-/-- The identificational meaning of (8a) is that Mary picked exactly a hat. -/
-theorem identificational_hat_eq : identificational pickedHat = {HatWorld.hatOnly} := by
+/-- Exhaustive identification of a group over the given set, the paper's (9): the predicate
+holds of `s`, and of no other given element. -/
+theorem exh_Ici (A s : Set ι) : exh (alternatives A) (Ici s) = Icc s (s ∪ Aᶜ) := by
   ext w
-  constructor
-  · rintro ⟨hp, hw⟩
-    have hcoat := hw pickedCoat (Or.inr rfl)
-    cases w with
-    | hatOnly => rfl
-    | coatOnly => exact absurd hp (λ h => h.elim nofun nofun)
-    | both =>
-      have heq : pickedCoat = pickedHat := hcoat (Or.inr rfl)
-      have hmem : HatWorld.coatOnly ∈ pickedHat :=
-        heq ▸ (show HatWorld.coatOnly ∈ pickedCoat from Or.inl rfl)
-      exact absurd hmem (λ h => h.elim nofun nofun)
-    | neither => exact absurd hp (λ h => h.elim nofun nofun)
-  · rintro rfl
-    refine ⟨Or.inl rfl, λ q hq hwq => ?_⟩
-    rcases hq with rfl | rfl
-    · rfl
-    · exact absurd hwq (λ h => h.elim nofun nofun)
+  simp only [mem_exh, alternatives, mem_Ici, mem_Icc, forall_mem_image, Ici_subset_Ici,
+    singleton_subset_iff]
+  refine and_congr_right λ _ => ⟨λ h i hiw => ?_, λ h i hiA hiw => ?_⟩
+  · exact (mem_union _ _ _).2 ((em (i ∈ A)).imp_left (h · hiw))
+  · exact ((mem_union _ _ _).1 (h hiw)).resolve_right (not_not.2 hiA)
 
-/-- The coordination test, (12) against (13): the identificational *a hat* contradicts the
-hat-and-coat content, while the information-focus *a hat* is entailed by it. -/
-theorem szabolcsi_test :
-    identificational pickedHat ∩ (pickedHat ∩ pickedCoat) = ∅ ∧
-      pickedHat ∩ pickedCoat ⊆ pickedHat := by
-  refine ⟨?_, Set.inter_subset_left⟩
-  rw [identificational_hat_eq]
-  ext w
-  constructor
-  · rintro ⟨rfl, -, hcoat⟩
-    exact absurd hcoat (λ h => h.elim nofun nofun)
-  · exact λ h => h.elim
+/-- Over the whole domain, exhaustive identification of `s` says that the predicate holds of
+`s` and nothing else. -/
+theorem exh_Ici_univ (s : Set ι) : exh (alternatives univ) (Ici s) = {s} := by
+  rw [exh_Ici, compl_univ, union_empty, Icc_self]
 
-/-- The dialogue test, (15): where Mary picked a coat too, the identificational claim is false,
-so the reply *No, she picked a coat, too* denies its exhaustivity, while the information-focus
+/-- Szabolcsi's coordination test, (12) against (13): the identificational *a hat* contradicts
+the identificational *a hat and a coat*, while the information-focus *a hat* follows from the
+information-focus *a hat and a coat*. -/
+theorem szabolcsi_test (hb : b ∈ A) (hab : a ≠ b) :
+    Disjoint (FocusType.identificational.interpret A (Ici {a, b}))
+        (FocusType.identificational.interpret A (Ici {a})) ∧
+      FocusType.information.interpret A (Ici {a, b}) ⊆
+        FocusType.information.interpret A (Ici {a}) := by
+  refine ⟨?_, Ici_subset_Ici.2 (singleton_subset_iff.2 (mem_insert a _))⟩
+  rw [interpret_identificational, interpret_identificational, exh_Ici, exh_Ici, disjoint_left]
+  rintro w ⟨hw, -⟩ ⟨-, hw'⟩
+  rcases (mem_union _ _ _).1 (hw' (hw (mem_insert_of_mem a (mem_singleton b)))) with h | h
+  · exact hab (mem_singleton_iff.1 h).symm
+  · exact h hb
+
+/-- Farkas's dialogue test, (15): where Mary picked a coat too, the identificational claim is
+false, so *No, she picked a coat, too* denies its exhaustivity, while the information-focus
 claim is true and the denial is out of place. -/
-theorem farkas_test :
-    HatWorld.both ∉ identificational pickedHat ∧ HatWorld.both ∈ pickedHat := by
-  refine ⟨?_, Or.inr rfl⟩
-  rw [identificational_hat_eq]
-  exact nofun
+theorem farkas_test (hb : b ∈ A) (hab : a ≠ b) :
+    {a, b} ∉ FocusType.identificational.interpret A (Ici {a}) ∧
+      {a, b} ∈ FocusType.information.interpret A (Ici {a}) := by
+  refine ⟨?_, singleton_subset_iff.2 (mem_insert a _)⟩
+  rw [interpret_identificational, exh_Ici, mem_Icc, not_and]
+  intro _ h
+  rcases (mem_union _ _ _).1 (h (mem_insert_of_mem a (mem_singleton b))) with hba | hbA
+  · exact hab (mem_singleton_iff.1 hba).symm
+  · exact hbA hb
 
-/-- The denotation of each focus type for the hat prejacent. -/
-def semanticsOf : FocusType → Set HatWorld
-  | .identificational => identificational pickedHat
-  | .information => pickedHat
+/-- Identificational focus fails the entailment that information focus passes: its
+interpretation is not monotone in the prejacent. -/
+theorem identificational_not_monotone (hb : b ∈ A) (hab : a ≠ b) :
+    ¬ Monotone (FocusType.identificational.interpret A) := λ h =>
+  (farkas_test hb hab).1 <| h (Ici_subset_Ici.2 (singleton_subset_iff.2 (mem_insert a _))) <| by
+    rw [interpret_identificational, exh_Ici]
+    exact left_mem_Icc.2 subset_union_left
 
-/-- Position determines the semantics: the preverbal slot's meaning is exhaustified, the
-postverbal one's is plain. -/
-theorem position_determines_exhaustification :
-    semanticsOf (typeOfPosition .preverbal) = {HatWorld.hatOnly} ∧
-      semanticsOf (typeOfPosition .postverbal) = pickedHat :=
-  ⟨identificational_hat_eq, rfl⟩
+theorem information_monotone (A : Set ι) :
+    Monotone (FocusType.information.interpret A) := monotone_id
+
+/-! ### Distributional restrictions (§3)
+
+Exhaustive identification is exclusion by identification: an identificational focus names
+the given elements the predicate holds of and excludes the rest. The constituents barred
+from the identificational position, (17b–e), are those for which one half fails. -/
+
+/-- A universal quantifier identifies without excluding (17b): over its restrictor, the
+exhaustification of *every hat* is vacuous. -/
+theorem exh_Ici_restrictor (A : Set ι) : exh (alternatives A) (Ici A) = Ici A := by
+  rw [exh_Ici, union_compl_self, ← top_eq_univ, Icc_top]
+
+/-- A *some*-phrase excludes without identifying (17e): the exhaustification of *something*
+over a given set with two elements is contradictory. -/
+theorem exh_nonempty_eq_empty (hA : A.Nontrivial) :
+    exh (alternatives A) {w | (w ∩ A).Nonempty} = ∅ := by
+  refine eq_empty_of_forall_notMem λ w hw => ?_
+  obtain ⟨⟨i, hiw, hiA⟩, h⟩ := mem_exh.1 hw
+  obtain ⟨j, hjA, hji⟩ := hA.exists_ne i
+  exact hji (mem_singleton_iff.1 (singleton_subset_iff.1
+    (h _ ⟨i, hiA, rfl⟩ (singleton_subset_iff.2 hiw) ⟨j, mem_singleton j, hjA⟩))).symm
+
+/-- The additive presupposition of *also a* and *even a*: the predicate holds of some other
+given element. -/
+def additive (A : Set ι) (a : ι) : Set (Set ι) := {w | ∃ b ∈ w ∩ A, b ≠ a}
+
+/-- An additive phrase identifies without excluding (17c, 17d): its presupposition
+contradicts the exhaustification of its prejacent. -/
+theorem disjoint_exh_additive (A : Set ι) (a : ι) :
+    Disjoint (exh (alternatives A) (Ici {a})) (additive A a) := by
+  rw [exh_Ici, disjoint_left]
+  rintro w ⟨-, hw⟩ ⟨b, ⟨hbw, hbA⟩, hba⟩
+  rcases hw hbw with h | h
+  · exact hba h
+  · exact h hbA
+
+/-- The cleft *also*-phrase of (18): once a prior identification has removed `b` from the
+given set, *it was also `a`* identifies `a` in addition, excluding everybody but `a` and `b`. -/
+theorem additive_exh_of_notMem (hb : b ∉ A) (hab : b ≠ a) :
+    {a, b} ∈ exh (alternatives A) (Ici {a}) ∩ additive (insert b A) a := by
+  refine ⟨?_, b, ⟨mem_insert_of_mem a (mem_singleton b), mem_insert b A⟩, hab⟩
+  rw [exh_Ici, mem_Icc, insert_subset_iff]
+  exact ⟨singleton_subset_iff.2 (mem_insert a _), mem_union_left _ (mem_singleton a),
+    singleton_subset_iff.2 (mem_union_right _ hb)⟩
 
 end Kiss1998
