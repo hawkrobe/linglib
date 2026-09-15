@@ -21,8 +21,8 @@ connects it to existing domain-specific implementations:
    count = maxStrength − strength(c). Wang2023's `mpConstraint` is
    an instance (`phiMP`).
 
-2. **Structural alternatives** (`Alternatives.Blocked` over
-   `Alternatives.sameAssertion` in `Semantics.Alternatives.Competition`):
+2. **Structural alternatives** (`NeoGricean.Blocked` over
+   `NeoGricean.sameAssertion` in `Pragmatics.NeoGricean.Competition`):
    MP defined over syntactic trees, parametric in an alternative source
    `Tree C W → Set (Tree C W)`. The classical Katzir
    2007 source is `katzirSource lex`; the indirect-alternative source

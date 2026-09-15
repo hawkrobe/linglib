@@ -12,7 +12,7 @@ source, the lexicon together with the tree's own subtrees. `StructOp` is one suc
 `atMostAsComplex` its reflexive-transitive closure, the complexity preorder of the paper's
 definition (19), `equalComplexity` its equivalence kernel, and `structuralAlternatives` the set
 of trees at most as complex as the given one, definition (20); `katzirSource` packages it as an
-an alternative source for the competition relation of `Alternatives.Competition`.
+an alternative source for the competition relation of `NeoGricean.Competition`.
 
 Two general facts serve the paper's examples, which live in `Studies/Katzir2007.lean`. No
 operation introduces a category absent from the tree and the source
@@ -135,7 +135,7 @@ def structuralAlternatives {C W : Type} (lex : List (Tree C W))
     (φ : Tree C W) : Set (Tree C W) :=
   {ψ | atMostAsComplex (substitutionSource lex φ) ψ φ}
 
-/-- The structural alternatives as an alternative source for `Alternatives.Blocked`. -/
+/-- The structural alternatives as an alternative source for `NeoGricean.Blocked`. -/
 def katzirSource {C W : Type} (lex : List (Tree C W)) : Tree C W → Set (Tree C W) :=
   structuralAlternatives lex
 

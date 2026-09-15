@@ -1,6 +1,6 @@
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Alternatives.Structural
-import Linglib.Semantics.Alternatives.Competition
+import Linglib.Pragmatics.NeoGricean.Competition
 import Linglib.Data.Examples.LoGuercio2025
 
 /-!
@@ -14,7 +14,7 @@ of felicitous use, so one sentence has stronger such content than another when i
 set is a proper subset of the other's, and the principle Maximize Conventional Implicatures!
 forbids a sentence when a formal alternative in the sense of [katzir-2007] and
 [fox-katzir-2011], one no more complex than it, has stronger content. All three principles
-are instances of the substrate's `Alternatives.Blocked`, here along conventional-implicature
+are instances of the substrate's `NeoGricean.Blocked`, here along conventional-implicature
 content.
 
 The worked case is the epithet. Out of the blue, *John arrived first* carries no inference
@@ -50,6 +50,7 @@ namespace LoGuercio2025
 open Pragmatics.Expressives
 open Alternatives
 open Alternatives.Structural
+open NeoGricean
 open Syntax
 
 /-! ### The epithet as a structural alternative -/
