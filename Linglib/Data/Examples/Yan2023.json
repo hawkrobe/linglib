@@ -230,5 +230,131 @@
     "comment": "Licensed only by the enriched reinterpretation of TRIP, which the premise does not justify.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_12",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I don't want to eat any fast food.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I don't want to eat any fast food.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["evidence", "monotonicity"],
+      ["item", "NPI any"]
+    ],
+    "comment": "The NPI is licensed under negated want, which requires want to be upward monotonic.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_13",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (6)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Jones wants to buy a green sweater, but she doesn't want to buy a sweater.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Jones wants to buy a green sweater, but she doesn't want to buy a sweater.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["evidence", "monotonicity"],
+      ["role", "contradiction"]
+    ],
+    "comment": "Infelicitous, as expected if want is upward monotonic; from Zimmermann 2006.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_14",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (8b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is ok for John to send the letter, and it is ok for him to burn it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is ok for John to send the letter, and it is ok for him to burn it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "Ross"],
+      ["role", "free-choice inference"]
+    ],
+    "comment": "The □-free-choice inference from the disjunctive want (8a), read with want scoping over the disjunction.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_15",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (16c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I'm ok to teach on the days that are not Tuesday next semester.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I'm ok to teach on the days that are not Tuesday next semester.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "Heim"],
+      ["role", "unwarranted inference"]
+    ],
+    "comment": "Drawn from the reinterpreted conclusion (16b) by free choice; not justified by the premise.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_16",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (19a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The school wants that students who struggle with math attend tutoring.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The school wants that students who struggle with math attend tutoring.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "Good Samaritan under desire"],
+      ["role", "premise"]
+    ],
+    "comment": "A Good Samaritan case under desire, with a wide- and a narrow-scope reading of the relative clause.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yan2023_17",
+    "source": {"bibkey": "yan-2023", "paperLabel": "Ch. 4 (19b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The school wants that students struggle with math.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The school wants that students struggle with math.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["puzzle", "Good Samaritan under desire"],
+      ["role", "monotonic conclusion"]
+    ],
+    "comment": "Follows from the wide-scope reading of (19a) by conjunction elimination; the paper leaves this case to a scope solution.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   }
 ]
