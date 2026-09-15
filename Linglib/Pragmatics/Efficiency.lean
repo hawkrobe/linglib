@@ -82,4 +82,46 @@ theorem weightedCost_mono_β (c : CostPair) {β₁ β₂ : ℝ}
     weightedCost c β₁ ≤ weightedCost c β₂ :=
   add_le_add (le_refl _) (mul_le_mul_of_nonneg_right hβ hc)
 
+/-- Optimal cost pairs move along the frontier as the tradeoff parameter grows: the pair
+optimal at the larger `β` has the smaller `cost₁` and the larger `cost₂`. -/
+theorem frontier_antitone {a b : CostPair} {β₁ β₂ : ℝ} (hβ₁ : 0 ≤ β₁) (hβ : β₁ < β₂)
+    (h₁ : weightedCost a β₁ ≤ weightedCost b β₁)
+    (h₂ : weightedCost b β₂ ≤ weightedCost a β₂) :
+    b.cost₁ ≤ a.cost₁ ∧ a.cost₂ ≤ b.cost₂ := by
+  unfold weightedCost at h₁ h₂
+  have hb : b.cost₁ ≤ a.cost₁ := by
+    by_contra hc
+    nlinarith [mul_pos (sub_pos.2 hβ) (sub_pos.2 (not_le.mp hc))]
+  exact ⟨hb, by nlinarith [mul_nonneg hβ₁ (sub_nonneg.2 hb)]⟩
+
+/-- The deviation from an encoding optimal at `β` is nonnegative. -/
+theorem efficiencyLossAt_nonneg {attested optimal : CostPair} {β : ℝ}
+    (h : weightedCost optimal β ≤ weightedCost attested β) :
+    0 ≤ efficiencyLossAt attested optimal β :=
+  sub_nonneg.2 h
+
+/-- The efficiency loss against encodings optimal at each listed `β` is nonnegative. -/
+theorem efficiencyLoss_nonneg {attested : CostPair} {optimalAt : ℝ → CostPair} {βs : List ℝ}
+    (h : ∀ β ∈ βs, weightedCost (optimalAt β) β ≤ weightedCost attested β) :
+    0 ≤ efficiencyLoss attested optimalAt βs := by
+  unfold efficiencyLoss
+  have key : ∀ (l : List ℝ) (x : ℝ), 0 ≤ x → (∀ y ∈ l, 0 ≤ y) → 0 ≤ l.foldl min x := by
+    intro l
+    induction l with
+    | nil => intro x hx _; simpa using hx
+    | cons y ys ih =>
+      intro x hx hl
+      exact ih _ (le_min hx (hl y (List.mem_cons_self ..)))
+        λ z hz => hl z (List.mem_cons_of_mem _ hz)
+  cases hβs : βs.map λ β => efficiencyLossAt attested (optimalAt β) β with
+  | nil => exact le_rfl
+  | cons x xs =>
+    have hall : ∀ y ∈ x :: xs, 0 ≤ y := by
+      rw [← hβs]
+      simp only [List.mem_map, forall_exists_index, and_imp]
+      rintro y β hβ rfl
+      exact efficiencyLossAt_nonneg (h β hβ)
+    exact key xs x (hall x (List.mem_cons_self ..))
+      λ z hz => hall z (List.mem_cons_of_mem _ hz)
+
 end Pragmatics.Efficiency
