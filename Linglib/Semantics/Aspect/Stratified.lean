@@ -69,12 +69,6 @@ property.
   realized in linglib by `HasSubintervalProp` in
   `Semantics/Aspect/SubintervalProperty.lean` rather than as a decomposition
   form. The `(τ, point-granularity)` form has no current consumer.
-* `Studies/Champollion2017.lean` covers distributivity (Ch 6) + a basic
-  subinterval-reference↔Vendler atelicity bridge (§ 5), but does NOT yet
-  formalize Champollion's distinctive Ch 6 *push carts all the way to the
-  store for fifty minutes* contrast — the empirical case where stratified
-  reference and Krifka's divisive-reference diagnostic make divergent
-  predictions.
 
 ## References
 

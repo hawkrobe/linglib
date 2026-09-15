@@ -29,6 +29,9 @@ paper are checked against the adjacency condition on a finite model (`Movement`)
   relates the null object.
 * The source and goal conditions quantify the subpath and the subevent separately; the
   formalization ties them through the thematic relation, as the paper's telicity proof does.
+* The measure adverbial (55) is formalized only through its part relation `IsTemporalPart`,
+  which [champollion-2017] takes up; the manuscript's universal clause ranges over the parts of
+  the witness `e′`, where Champollion's restatement ranges over the parts of `e`.
 * The strict-movement telicity claim of the paper does not follow from adjacency and
   mapping to objects alone (adjacency may be empty), and the tangentiality condition on
   sums of movements, the derived measure functions for movement and the changes in other
@@ -100,6 +103,29 @@ theorem not_isTelic_of_cum [SemilatticeSup β] {precedes : β → β → Prop} {
     (hP : CUM P) {e e' e'' : β} (he : P e) (he' : P e') (h'' : e'' ≤ e)
     (hp : precedes e' e'') : ¬ IsTelic precedes P :=
   λ hT => (hT (e ⊔ e') e' (hP he he') he' le_sup_right).2.2 ⟨e'', h''.trans le_sup_left, hp⟩
+
+/-! ### Measure adverbials -/
+
+section MeasureAdverbial
+
+variable {T : Type*} [PartialOrder β] [PartialOrder T] (τ : β → T)
+
+/-- A temporal part of an event, the part relation with respect to a temporal measure (55): a
+part beside which the event has a part with a non-overlapping runtime. -/
+def IsTemporalPart (e' e : β) : Prop := e' ≤ e ∧ ∃ e'' ≤ e, ¬ Overlap (τ e') (τ e'')
+
+variable {τ}
+
+theorem IsTemporalPart.le {e' e : β} (h : IsTemporalPart τ e' e) : e' ≤ e := h.1
+
+/-- A temporal part with a non-null runtime is a proper part. -/
+theorem IsTemporalPart.ne {e' e : β} (hτ : Monotone τ) (h : IsTemporalPart τ e' e)
+    (h₀ : ∀ e'', e'' ≤ e → ¬ IsBot (τ e'')) : e' ≠ e := by
+  rintro rfl
+  obtain ⟨_, e'', he'', hov⟩ := h
+  exact hov ⟨τ e'', h₀ e'' he'', hτ he'', le_rfl⟩
+
+end MeasureAdverbial
 
 /-! ### Eating apples -/
 

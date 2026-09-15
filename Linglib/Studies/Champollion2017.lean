@@ -2,6 +2,7 @@ import Linglib.Semantics.Aspect.Stratified
 import Linglib.Semantics.ArgumentStructure.Verb
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Studies.Krifka1998
 
 /-!
 # Champollion 2017: distributivity as a bridge between aspect and measurement
@@ -23,6 +24,15 @@ recorded as such, over the Fragment verbs' denotations.
 Vendler classes are not among the book's primitives; its atelicity diagnostic is the
 subinterval-reference test, not a class label.
 
+Chapter 6 sets the book's strata-based account of *for*-adverbials against [krifka-1998]'s
+subregion-based one, whose presupposition (28) requires every temporal part of the event to fall
+under the predicate. On an event that splits into two temporally non-overlapping parts the
+subregion presupposition yields stratified reference along the runtime
+(`stratifiedReference_of_divisiveness`); the *push carts all the way to the store for fifty
+minutes* scenario of Figure 6.2, on a model of eight legs of four trips, has stratified reference
+but violates the presupposition at the halfway legs (`pushCarts_stratified`,
+`pushCarts_not_subregion`), which is the chapter's case against divisive reference.
+
 ## Main definitions
 
 * `Verb.StratifiesOver` — a verb's denotation has stratified distributive reference along a role
@@ -33,6 +43,20 @@ subinterval-reference test, not a class label.
 
 * `lexicallyCumulative_imp_cum` — lexical cumulativity entails Krifka's `CUM`
 * `subintervalReference_iff_cover` — atelicity is a finite cover into proper-subinterval parts
+* `stratifiedReference_of_divisiveness` — on a temporally separable event, Krifka's divisiveness
+  clause gives stratified reference along the runtime
+* `pushCarts_stratified`, `pushCarts_not_subregion` — the Figure 6.2 event has stratified
+  reference and fails the subregion presupposition
+
+## Implementation notes
+
+* The runtime dimension of chapter 6 is any monotone map into a part order of times, so the
+  stratified reference in play is the generic `StratifiedReference τ (· < ·)` rather than the
+  interval-runtime `SubintervalReference`; runtimes of back-and-forth events are discontinuous
+  (the chapter's footnote on the scenario), and the finite model takes them to be sets of
+  instants.
+* The presupposition (28) is stated as the chapter states it, with the universal clause over the
+  temporal parts of the event; the reflexive case is the predicate at the event itself.
 
 ## References
 
@@ -118,5 +142,62 @@ theorem subintervalReference_iff_cover {T : Type*} [LinearOrder T]
         (∀ p ∈ parts, P p ∧ p.runtime < e.runtime) ∧ parts.sup' hne id = e := by
   unfold SubintervalReference StratifiedReference SubintervalGranularity
   exact algClosure_iff_exists_sup' _ _
+
+/-! ### Aspect and space: the subregion and strata approaches (§6.3–6.4) -/
+
+section Subregion
+
+open Krifka1998
+
+variable {α T : Type*} [SemilatticeSup α] [PartialOrder T] (τ : α → T) (P : α → Prop)
+
+/-- The subregion presupposition (28) that the chapter attributes to [krifka-1998]'s
+*for*-adverbial: the event has a temporal part, and every temporal part of it falls under the
+predicate. -/
+def SubregionPresup (e : α) : Prop :=
+  (∃ e', IsTemporalPart τ e' e) ∧ ∀ e', IsTemporalPart τ e' e → P e'
+
+variable {τ P}
+
+/-- On an event that splits into two parts with non-overlapping, non-null runtimes, the
+divisiveness clause of the subregion presupposition yields stratified reference along the
+runtime: the two parts are each other's temporal siblings, so both fall under the predicate,
+and each has a properly smaller runtime. -/
+theorem stratifiedReference_of_divisiveness (hτ : Monotone τ) {a b : α}
+    (hov : ¬ Overlap (τ a) (τ b)) (ha : ¬ IsBot (τ a)) (hb : ¬ IsBot (τ b))
+    (hdiv : ∀ e', IsTemporalPart τ e' (a ⊔ b) → P e') :
+    StratifiedReference τ (· < ·) P (a ⊔ b) :=
+  .sum (.base ⟨hdiv a ⟨le_sup_left, b, le_sup_right, hov⟩, lt_of_le_of_ne (hτ le_sup_left)
+      λ h => hov ⟨τ b, hb, h ▸ hτ le_sup_right, le_rfl⟩⟩)
+    (.base ⟨hdiv b ⟨le_sup_right, a, le_sup_left, λ o => hov o.symm⟩,
+      lt_of_le_of_ne (hτ le_sup_right) λ h => hov ⟨τ a, ha, le_rfl, h ▸ hτ le_sup_left⟩⟩)
+
+/-- The Back and forth scenario of Figure 6.2: four trips of two legs each, a leg at each
+instant, the even legs from the lot halfway to the store and the odd legs on to the store. An
+event is a set of legs and its runtime the set of their instants. -/
+abbrev Leg := Fin 8
+
+/-- *push carts all the way to the store* holds of a nonempty event whose path reaches the
+store, that is, one containing a leg on to the store. -/
+def PushCartsToStore (e : Finset Leg) : Prop := e.Nonempty ∧ ∃ k ∈ e, k.val % 2 = 1
+
+instance : DecidablePred PushCartsToStore := λ _ => by unfold PushCartsToStore; infer_instance
+
+/-- The fifty-minute event divides along time into its four trips, each of which reaches the
+store within a proper part of the runtime: the strata-based account admits the *for*-adverbial
+(Figure 6.2a). -/
+theorem pushCarts_stratified :
+    StratifiedReference id (· < ·) PushCartsToStore (Finset.univ : Finset Leg) :=
+  (algClosure_iff_exists_sup' _ _).2
+    ⟨{{0, 1}, {2, 3}, {4, 5}, {6, 7}}, by decide, by decide +kernel, by decide +kernel⟩
+
+/-- The halfway legs form a temporal part of the event that does not reach the store, the
+offending event of §6.4.1, so the subregion presupposition fails (Figure 6.2b). -/
+theorem pushCarts_not_subregion :
+    ¬ SubregionPresup id PushCartsToStore (Finset.univ : Finset Leg) := λ ⟨_, hdiv⟩ =>
+  absurd (hdiv {0, 2, 4, 6} ⟨by decide, {1, 3, 5, 7}, by decide,
+    λ h => overlap_iff_not_disjoint.1 h (by decide)⟩) (by decide)
+
+end Subregion
 
 end Champollion2017
