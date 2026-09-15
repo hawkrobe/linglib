@@ -34,12 +34,13 @@ section Monadic
 
 variable (Sym : Type u)
 
-/-- The relation symbols of the monadic language on `Sym`: `Sym` at arity one, none otherwise. -/
+/-- The relation symbols of the monadic language on `Sym` are the elements of `Sym` at arity one,
+with no symbols at any other arity. -/
 def monadicRel : ℕ → Type u
   | 1 => Sym
   | _ => PEmpty
 
-/-- The monadic language on `Sym`: one unary relation symbol for each element of `Sym` and no
+/-- The monadic language on `Sym` has one unary relation symbol for each element of `Sym` and no
 other symbols. -/
 @[simps]
 def monadic : Language.{0, u} := ⟨fun _ => Empty, monadicRel Sym⟩
