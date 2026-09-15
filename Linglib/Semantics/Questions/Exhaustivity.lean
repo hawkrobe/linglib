@@ -26,7 +26,6 @@ operator on the members of `H` true at `w`:
   doxastic alternatives, and `PossiblyIgnorant H c R x`, [dayal-2025]'s
   requirement on the perspectival center of a question;
 - `exhCell H p` and `exhaustifiedPartition H`, [fox-2018]'s cells;
-- `relExh H w M`, [xiang-2022]'s exhaustivity relative to a modal base;
 - `ofFinset F`, a finite family of finite propositions, on which the
   presuppositions are decidable.
 
@@ -50,7 +49,6 @@ of [dayal-2016] needs Hamblin sets whose members entail one another, which
 * [dayal-2016]
 * [dayal-2025]
 * [fox-2018]
-* [xiang-2022]
 -/
 
 namespace Question
@@ -406,17 +404,6 @@ theorem dayalStrongAns_eq_some_iff {A : Set W} :
     exact ⟨⟨p, hp⟩, exhCell_eq_strongAnswer H w hp⟩
   · rintro ⟨⟨p, hp⟩, rfl⟩
     exact ⟨p, hp, exhCell_eq_strongAnswer H w hp⟩
-
-/-! ### Relativized exhaustivity ([xiang-2022]) -/
-
-/-- `p` is the strongest true member relative to the modal base `M`: true at
-`w`, compatible with `M`, and entailing every other such member within `M`. -/
-def IsStrongestRelTrueAnswer (M : Set W) (p : Set W) : Prop :=
-  p ∈ H ∧ w ∈ p ∧ (∃ v ∈ M, v ∈ p) ∧
-    ∀ q ∈ H, w ∈ q → (∃ v ∈ M, v ∈ q) → p ∩ M ⊆ q ∩ M
-
-/-- Relativized exhaustivity: a strongest true member relative to `M` exists. -/
-def relExh (M : Set W) : Prop := ∃ p, IsStrongestRelTrueAnswer H w M p
 
 /-! ### Finite Hamblin sets
 
