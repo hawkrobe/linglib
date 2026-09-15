@@ -25,12 +25,12 @@ so the paper's footnote on Hausa rereads the in situ and ex situ answers of
 ## Implementation notes
 
 The paper's Givenness is the substrate's `WithAlternatives.Given`, and its *only* (56) is
-`Exhaustification.excludes` at the salient contrast set the squiggle also carries (55b), so
-the paper's indirect association through two occurrences of the contextual variable is a fact
-about the substrate and is not restated. The
-squiggle operator is bundled with proofs of the first two contrast conditions of (49); the
-third, which prevents overfocusing by comparing [FoC]/[G]-variants, is not formalized. The
-prosodic spell-out of the features in English (§6–§7) is prose.
+`Exhaustification.excludes` at the salient contrast set the squiggle also carries (55b), so the
+paper's indirect association through two occurrences of the contextual variable is a fact about
+the substrate and is not restated. The squiggle operator is bundled with `Focus.SquiggleInd` for
+each antecedent, the first two contrast conditions of (49); the third, which prevents overfocusing
+by comparing [FoC]/[G]-variants, is not formalized. The prosodic spell-out of the features in
+English (§6–§7) is prose.
 
 ## References
 
@@ -83,16 +83,15 @@ theorem useConditional_projects_through_neg {W : Type*} (atIssue requirement : W
 
 /-- The squiggle operator with a set of discourse antecedents (54), carrying the first two
 contrast conditions of (49): each antecedent is among the alternatives and differs from the
-ordinary value. -/
+ordinary value, the individual case of [rooth-1992]'s presupposition, `Focus.SquiggleInd`. -/
 structure ContrastOperator (α : Type*) where
   /-- The meaning in its scope. -/
   meaning : WithAlternatives α
   /-- The contrasting discourse referents. -/
   antecedents : List α
-  /-- (49i): each antecedent is an alternative. -/
-  antecedents_in_alts : ∀ a ∈ antecedents, a ∈ meaning.alternatives
-  /-- (49ii): each antecedent differs from the ordinary value. -/
-  antecedents_ne_ordinary : ∀ a ∈ antecedents, a ≠ meaning.ordinary
+  /-- (49i) and (49ii): each antecedent resolves the squiggle against the meaning. -/
+  antecedents_squiggle :
+    ∀ a ∈ antecedents, Focus.SquiggleInd meaning.ordinary meaning.alternatives a
 
 /-- The operator consumes the alternatives: the ordinary value is unchanged and the
 alternatives value collapses to it. -/
