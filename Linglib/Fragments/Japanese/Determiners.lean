@@ -141,6 +141,9 @@ def ryoho : JapaneseQuantEntry :=
 def allQuantifiers : List JapaneseQuantEntry :=
   [subete, dono_N_mo, dare_ka, dare_mo, nan_nin_ka, hotondo, ryoho]
 
+/-- The Japanese determiner inventory: quantifiers only, there being no articles. -/
+def inventory : Determiner.Inventory := allQuantifiers.map (.quantifier ·.toQuantifier)
+
 def lookup (romaji : String) : Option JapaneseQuantEntry :=
   allQuantifiers.find? λ e => e.romaji == romaji
 

@@ -1,198 +1,218 @@
 import Linglib.Pragmatics.InformationTheory.ChannelCapacity
 
 /-!
-# Zaslavsky, Kemp, Tishby & Regier (2019)
-[zaslavsky-etal-2019]
+# Zaslavsky et al. (2019): Color Naming Reflects Both Perceptual Structure and Communicative Need
 
-Color Naming Reflects Both Perceptual Structure and Communicative Need.
-Topics in Cognitive Science 11(1), 207–219.
+This file formalizes [zaslavsky-etal-2019]'s information-theoretic link between communicative
+need and communicative precision in color naming. A language's color naming distribution
+`p(w | c)` is a channel from colors to words (`CommChannel`), and the expected surprisal
+`S(c)` of a color under a need distribution `p(c)` is its communicative imprecision
+(`commPrecision`), the measure with which [gibson-etal-2017] found warm colors named more
+precisely than cool ones across languages. The paper's central observation is that the need
+distribution maximizing the information the lexicon conveys, the capacity-achieving prior of
+[cover-thomas-2006], satisfies `p(c) ∝ exp(−S(c))`, so that `−log p(c)` is linear in `S(c)`
+with slope one (`cap_linear`), which ties the asymmetry in need to the asymmetry in precision.
 
-## Core Contributions
+Two of the paper's constructions are formalized here. The artificial naming systems obtained
+by clustering the color chips in perceptual space are deterministic channels (`ofPartition`),
+whose surprisal under a uniform need is the log size of the color's cluster
+(`commPrecision_ofPartition_uniform`), so that their warm–cool asymmetry is an asymmetry in
+cluster size (`warmCoolAsymmetry_ofPartition_uniform_iff`); their capacity-achieving prior
+spreads mass equally over clusters (`isCAP_clusterPrior`), attaining the capacity `log k` of a
+`k`-term deterministic lexicon (`mutualInfo_clusterPrior`). The universal need distribution
+inferred from the World Color Survey averages the per-language capacity-achieving priors
+(`averagePrior`).
 
-[zaslavsky-etal-2019] adjudicate between two explanations of
-cross-linguistic color naming patterns: perceptual structure (the geometry
-of CIELAB space) and communicative need (how often colors must be
-communicated). Their key finding is that *both* matter.
+## Implementation notes
 
-1. **Perceptual structure partly explains the warm–cool asymmetry.**
-   K-means clustering on CIELAB coordinates produces artificial naming
-   systems that already show lower expected surprisal S(c) for warm
-   colors — without any communicative pressure.
+* The perceptual coordinates of the chips and the `k`-means procedure are not represented;
+  a clustering enters only through its assignment of chips to terms.
+* `WarmCoolAsymmetry` states the paper's empirical pattern as a property of a channel, a need
+  distribution and a temperature classification; the survey data that instantiate it are not
+  in the library.
 
-2. **Communicative need contributes beyond perceptual structure.**
-   The salience-weighted prior (from natural image statistics) exhibits
-   a linear −log p(c) vs S(c) relationship predicted by the CAP theorem,
-   while the perceptually-derived KM-CAP prior does not.
+## References
 
-3. **The CAP theorem links need and precision.**
-   At a capacity-achieving prior, −log p(c) = S(c) + log Z. This
-   information-theoretic identity is the paper's central theoretical
-   contribution, formalized in `Pragmatics.InformationTheory.ChannelCapacity.cap_linear`.
-
-## Integration
-
-- Theory layer: `Pragmatics.InformationTheory.Channel` (CommChannel,
-  commPrecision, mutualInfo) and `Pragmatics.InformationTheory.ChannelCapacity`
-  (IsCAP, cap_linear, channelCapacity).
-- The RSA connection: a CommChannel is an RSA literal speaker S₀,
-  and the posterior is the literal listener L₀.
+* [zaslavsky-etal-2019]
+* [gibson-etal-2017]
+* [cover-thomas-2006]
+* [shannon-1948]
+* [zaslavsky-kemp-regier-tishby-2018]
 -/
 
 namespace ZaslavskyEtAl2019
 
-open Pragmatics.InformationTheory
+open Pragmatics.InformationTheory Finset Real
 
--- ============================================================================
--- §1. The WCS Color Domain
--- ============================================================================
+variable {C W : Type} [Fintype C]
 
-/-- The 80 WCS color chips analyzed by [zaslavsky-etal-2019].
-    These are the standard Munsell chips from the World Color Survey,
-    excluding achromatic chips. Each chip has coordinates in CIELAB
-    perceptual color space. -/
-abbrev WCSChip := Fin 80
+/-! ### The warm–cool asymmetry -/
 
-/-- Temperature classification: warm vs cool.
-    The warm–cool asymmetry in communicative precision is the paper's
-    central empirical finding. Warm colors (reds, yellows) have
-    lower S(c) than cool colors (blues, greens) across languages. -/
-inductive Temperature where
-  | warm   -- reds, yellows
-  | cool   -- blues, greens
+/-- The temperature of a color chip. -/
+inductive Temperature
+  | warm | cool
   deriving DecidableEq, Repr
 
--- ============================================================================
--- §2. Communicative Precision and the Warm–Cool Asymmetry
--- ============================================================================
+section Asymmetry
 
-/-- The paper's main empirical finding: across languages,
-    warm colors have lower expected surprisal (= higher communicative
-    precision) than cool colors, regardless of prior choice.
+variable [Fintype W]
 
-    We state this as a property of a naming channel and temperature
-    classification rather than as a concrete computation (which would
-    require the full WCS dataset). -/
-def WarmCoolAsymmetry {W : Type} [Fintype W] (nc : CommChannel WCSChip W) (prior : WCSChip → ℝ)
-    (temp : WCSChip → Temperature) : Prop :=
-  let warmChips := Finset.univ.filter (λ c => temp c == .warm)
-  let coolChips := Finset.univ.filter (λ c => temp c == .cool)
-  (∑ c ∈ warmChips, commPrecision nc prior c) / warmChips.card <
-  (∑ c ∈ coolChips, commPrecision nc prior c) / coolChips.card
+/-- The warm–cool asymmetry of [gibson-etal-2017]: under the need distribution `p`, the warm
+colors have lower mean expected surprisal than the cool ones. -/
+def WarmCoolAsymmetry (nc : CommChannel C W) (p : C → ℝ) (temp : C → Temperature) : Prop :=
+  (∑ c ∈ univ.filter (temp · = .warm), commPrecision nc p c) / (univ.filter (temp · = .warm)).card
+    < (∑ c ∈ univ.filter (temp · = .cool), commPrecision nc p c)
+        / (univ.filter (temp · = .cool)).card
 
--- ============================================================================
--- §3. Perceptual Structure (CIELAB)
--- ============================================================================
+end Asymmetry
 
-/-- CIELAB coordinates for a WCS chip. L* = lightness, a* = red-green,
-    b* = yellow-blue. Euclidean distance in CIELAB approximates
-    perceptual dissimilarity.
+/-! ### Hard clusterings and the cluster prior -/
 
-    The irregular distribution of the 80 WCS chips in CIELAB reveals
-    perceptual asymmetries between warm and cool colors that partly
-    explain the communicative precision asymmetry. -/
-structure CIELABCoord where
-  L : Float   -- lightness (0 = black, 100 = white)
-  a : Float   -- red-green axis (+ = red, − = green)
-  b : Float   -- yellow-blue axis (+ = yellow, − = blue)
-  deriving Repr
+variable [DecidableEq W]
 
-/-- Perceptual distance between two colors in CIELAB (Euclidean). -/
-def cielabDist (p q : CIELABCoord) : Float :=
-  ((p.L - q.L)^2 + (p.a - q.a)^2 + (p.b - q.b)^2).sqrt
+/-- The chips assigned to the term `w` by the clustering `f`. -/
+def cluster (f : C → W) (w : W) : Finset C := univ.filter (λ c => f c = w)
 
-/-- A perceptually-derived naming system: k-means clustering on CIELAB
-    assigns each chip to the nearest centroid, creating a hard partition.
-    The paper shows these systems *also* exhibit warm–cool asymmetry in
-    S(c), demonstrating that perceptual structure alone partially accounts
-    for the effect. -/
-structure KMeansSystem where
-  /-- Number of clusters (= number of color terms in the language). -/
-  k : Nat
-  /-- Cluster assignment for each chip. -/
-  assignment : WCSChip → Fin k
+/-- The need distribution that spreads mass equally over the clusters of `f` and uniformly
+within each. -/
+noncomputable def clusterPrior (f : C → W) (c : C) : ℝ :=
+  1 / ((univ.image f).card * (cluster f (f c)).card)
 
-/-- Convert a hard k-means partition to a CommChannel.
-    A hard partition assigns p(w|c) = 1 if w = assignment(c), else 0.
-    This is a deterministic channel (zero conditional entropy). -/
-noncomputable def KMeansSystem.toChannel (km : KMeansSystem) :
-    CommChannel WCSChip (Fin km.k) where
-  encode c w := if km.assignment c = w then 1 else 0
-  encode_nonneg _ _ := by split <;> norm_num
-  encode_sum_one c := by simp [Finset.mem_univ]
+theorem clusterPrior_pos (f : C → W) (c : C) : 0 < clusterPrior f c := by
+  have hk : (0 : ℝ) < (univ.image f).card := by
+    exact_mod_cast card_pos.mpr ⟨f c, mem_image_of_mem f (mem_univ c)⟩
+  have hcl : (0 : ℝ) < (cluster f (f c)).card := by
+    exact_mod_cast card_pos.mpr ⟨c, by simp [cluster]⟩
+  unfold clusterPrior
+  positivity
 
--- ============================================================================
--- §4. Averaging CAPs across Languages
--- ============================================================================
+/-- Each cluster carries mass `1 / k` under the cluster prior. -/
+theorem sum_clusterPrior_cluster (f : C → W) (c : C) :
+    ∑ c' ∈ cluster f (f c), clusterPrior f c' = 1 / (univ.image f).card := by
+  have hcl : (0 : ℝ) < (cluster f (f c)).card := by
+    exact_mod_cast card_pos.mpr ⟨c, by simp [cluster]⟩
+  rw [sum_congr rfl (λ c' hc' => show clusterPrior f c' =
+      1 / ((univ.image f).card * (cluster f (f c)).card) by
+    simp only [cluster, mem_filter, mem_univ, true_and] at hc'
+    simp only [clusterPrior, hc']), sum_const, nsmul_eq_mul]
+  field_simp
 
-/-! The paper infers a universal need distribution by averaging per-language
-capacity-achieving priors (eq. 7): p̄(c) = 1/L Σ_l p_l(c), where each
-p_l is the CAP for language l's naming system p_l(w|c), found via
-Blahut-Arimoto.
+/-- The cluster prior is a probability distribution. -/
+theorem sum_clusterPrior [Nonempty C] (f : C → W) : ∑ c, clusterPrior f c = 1 := by
+  have hk : (0 : ℝ) < (univ.image f).card := by
+    exact_mod_cast card_pos.mpr (univ_nonempty.image f)
+  rw [← sum_fiberwise_of_maps_to (s := univ) (t := univ.image f) (g := f)
+      (λ c _ => mem_image_of_mem f (mem_univ c)),
+    sum_congr rfl (g := λ _ => 1 / ((univ.image f).card : ℝ)) (λ w hw => ?_), sum_const,
+    nsmul_eq_mul]
+  · field_simp
+  · obtain ⟨c, -, rfl⟩ := mem_image.mp hw
+    exact sum_clusterPrior_cluster f c
 
-Crucially, averaging CAPs does NOT in general preserve the CAP condition
-(footnote 4 of [zaslavsky-etal-2019]): each p_l satisfies IsCAP for
-its own channel, but the averaged p̄ need not be a CAP for any single
-channel. The paper's key empirical finding is a *dissociation*:
+/-! ### Naming systems from a hard clustering -/
 
-- **WCS-CAP** (averaged from actual WCS+ languages): empirically
-  approximates a CAP — −log p̄(c) vs S̄(c) is approximately linear.
-- **KM-CAP** (averaged from k-means systems): does NOT approximate
-  a CAP (r = 0.32) — suggesting real naming systems encode communicative
-  structure beyond perceptual clustering.
-- **Salience-weighted prior** (from natural image statistics,
-  [gibson-etal-2017]): exhibits both the linear CAP relation AND the
-  warm–cool asymmetry — evidence for communicative need beyond perceptual
-  structure. -/
+variable [Fintype W]
 
-/-- Average a collection of per-language priors to obtain a universal
-    need distribution (eq. 7 of [zaslavsky-etal-2019]). -/
-noncomputable def averageCAP {L : Nat}
-    (priors : Fin L → (WCSChip → ℝ)) : WCSChip → ℝ :=
-  fun c => (∑ l : Fin L, priors l c) / L
+/-- The deterministic naming channel of a hard clustering: each color is named by the term of
+its cluster. -/
+def ofPartition (f : C → W) : CommChannel C W where
+  encode c w := if f c = w then 1 else 0
+  encode_nonneg _ _ := by split_ifs <;> norm_num
+  encode_sum_one _ := by simp
 
--- ============================================================================
--- §5. CAP Predictions
--- ============================================================================
+theorem marginalWord_ofPartition (f : C → W) (p : C → ℝ) (w : W) :
+    marginalWord (ofPartition f) p w = ∑ c ∈ cluster f w, p c := by
+  simp [marginalWord, ofPartition, cluster, sum_filter]
 
-/-- Any TRUE capacity-achieving prior exhibits the linear relation
-    −log p(c) = S(c) + log Z (eq. 6 of [zaslavsky-etal-2019]).
+theorem posterior_ofPartition (f : C → W) (p : C → ℝ) (c : C) :
+    posterior (ofPartition f) p (f c) c = p c / ∑ c' ∈ cluster f (f c), p c' := by
+  unfold posterior
+  rw [marginalWord_ofPartition]
+  simp [ofPartition]
 
-    This applies to each per-language CAP p_l found via Blahut-Arimoto.
-    However, the paper tests *averaged* priors (see `averageCAP`), not
-    individual ones. The empirical finding that WCS-CAP approximately
-    satisfies this relation despite averaging is evidence that the CAP
-    condition is robust across languages. KM-CAP's failure to satisfy
-    it (r = 0.32) shows that perceptual structure alone does not yield
-    the same robustness. -/
-theorem cap_implies_linearity {W : Type} [Fintype W]
-    (nc : CommChannel WCSChip W) (prior : WCSChip → ℝ)
-    (hCAP : IsCAP nc prior) {c : WCSChip} (hc : prior c > 0) :
-    ∃ Z > 0, -Real.log (prior c) = commPrecision nc prior c + Real.log Z :=
-  cap_linear' nc prior hCAP hc
+/-- A color's expected surprisal under a deterministic channel is the surprisal of its
+posterior given its own term. -/
+theorem commPrecision_ofPartition (f : C → W) (p : C → ℝ) (c : C) :
+    commPrecision (ofPartition f) p c = -log (posterior (ofPartition f) p (f c) c) := by
+  simp [commPrecision, ofPartition, ite_mul]
 
--- ============================================================================
--- §6. The RSA Connection
--- ============================================================================
+/-- Under a positive need distribution, the surprisal of a color is the log mass of its cluster
+less its own log need. -/
+theorem commPrecision_ofPartition_eq (f : C → W) {p : C → ℝ} (hp : ∀ c, 0 < p c) (c : C) :
+    commPrecision (ofPartition f) p c = log (∑ c' ∈ cluster f (f c), p c') - log (p c) := by
+  have hmass : 0 < ∑ c' ∈ cluster f (f c), p c' :=
+    sum_pos (λ c' _ => hp c') ⟨c, by simp [cluster]⟩
+  rw [commPrecision_ofPartition, posterior_ofPartition, log_div (hp c).ne' hmass.ne']
+  ring
 
-/-! A naming channel p(w|c) is exactly an RSA literal speaker S₀ evaluated
-at each world c. The posterior p(c|w) is the RSA literal listener L₀.
-Channel capacity `channelCapacity nc` = max_{p(c)} I(W;C) is the maximum
-informativity achievable under any world prior.
+/-- Under a uniform need, the surprisal of a color is the log size of its cluster. -/
+theorem commPrecision_ofPartition_uniform (f : C → W) (c : C) :
+    commPrecision (ofPartition f) (λ _ => 1 / Fintype.card C) c = log (cluster f (f c)).card := by
+  have hC : (0 : ℝ) < Fintype.card C := by
+    exact_mod_cast Fintype.card_pos_iff.mpr ⟨c⟩
+  have hcl : (0 : ℝ) < (cluster f (f c)).card := by
+    exact_mod_cast card_pos.mpr ⟨c, by simp [cluster]⟩
+  rw [commPrecision_ofPartition_eq f (λ _ => by positivity), sum_const, nsmul_eq_mul,
+    log_mul hcl.ne' (by positivity)]
+  ring
 
-The paper shows that natural color naming systems operate near capacity:
-the salience-weighted prior exhibits the linear CAP relation with high
-correlation. This means color naming systems are approximately
-information-theoretically optimal — a prediction that RSA makes for
-any rational communication system.
+/-- For a clustering system, the warm–cool asymmetry under a uniform need is an asymmetry in
+mean log cluster size. -/
+theorem warmCoolAsymmetry_ofPartition_uniform_iff (f : C → W) (temp : C → Temperature) :
+    WarmCoolAsymmetry (ofPartition f) (λ _ => 1 / Fintype.card C) temp ↔
+      (∑ c ∈ univ.filter (temp · = .warm), log (cluster f (f c)).card)
+          / (univ.filter (temp · = .warm)).card
+        < (∑ c ∈ univ.filter (temp · = .cool), log (cluster f (f c)).card)
+          / (univ.filter (temp · = .cool)).card := by
+  simp only [WarmCoolAsymmetry, commPrecision_ofPartition_uniform]
 
-The key difference from standard RSA: this paper analyzes the *prior*
-p(c), not the speaker/listener strategies. RSA typically takes the prior
-as given and derives speaker/listener behavior. The CAP framework goes
-one level up: it asks what prior would make the entire system optimally
-informative, and shows that natural priors approximate this optimum.
+/-! ### The capacity-achieving prior of a clustering system -/
 
-This "prior optimization" perspective connects to [zaslavsky-hu-levy-2020]'s
-rate-distortion view of RSA, where the rationality parameter α trades off
-compression rate against distortion. -/
+/-- The cluster prior satisfies the capacity-achieving condition `p(c) ∝ exp(−S(c))` with
+normalizer the number of terms. -/
+theorem clusterPrior_eq_exp (f : C → W) (c : C) :
+    clusterPrior f c =
+      exp (-commPrecision (ofPartition f) (clusterPrior f) c) / (univ.image f).card := by
+  have hk : (0 : ℝ) < (univ.image f).card := by
+    exact_mod_cast card_pos.mpr ⟨f c, mem_image_of_mem f (mem_univ c)⟩
+  have hcl : (0 : ℝ) < (cluster f (f c)).card := by
+    exact_mod_cast card_pos.mpr ⟨c, by simp [cluster]⟩
+  rw [commPrecision_ofPartition_eq f (clusterPrior_pos f), sum_clusterPrior_cluster]
+  unfold clusterPrior
+  rw [one_div, log_inv, one_div, log_inv, log_mul hk.ne' hcl.ne',
+    show -(-log ((univ.image f).card : ℝ)
+        - -(log ((univ.image f).card : ℝ) + log ((cluster f (f c)).card : ℝ)))
+      = -log ((cluster f (f c)).card : ℝ) by ring,
+    exp_neg, exp_log hcl]
+  field_simp
+
+/-- The cluster prior is a capacity-achieving prior of the clustering system. -/
+theorem isCAP_clusterPrior (f : C → W) [Nonempty C] :
+    IsCAP (ofPartition f) (clusterPrior f) :=
+  ⟨(univ.image f).card, by exact_mod_cast card_pos.mpr (univ_nonempty.image f),
+    λ c _ => clusterPrior_eq_exp f c⟩
+
+/-- A `k`-term clustering system conveys `log k` bits about color at its capacity-achieving
+prior. -/
+theorem mutualInfo_clusterPrior [Nonempty C] (f : C → W) :
+    mutualInfo (ofPartition f) (clusterPrior f) = log (univ.image f).card :=
+  mutualInfo_eq_log_Z_of_cap _ _ (by exact_mod_cast card_pos.mpr (univ_nonempty.image f))
+    (λ c _ => clusterPrior_eq_exp f c) (λ c => (clusterPrior_pos f c).le) (sum_clusterPrior f)
+    (clusterPrior_pos f)
+
+/-! ### The universal need distribution -/
+
+/-- The universal need distribution inferred from a survey: the average of the per-language
+capacity-achieving priors. -/
+noncomputable def averagePrior {L : ℕ} (priors : Fin L → C → ℝ) (c : C) : ℝ :=
+  (∑ l, priors l c) / L
+
+/-- The average of probability distributions is a probability distribution. -/
+theorem sum_averagePrior {L : ℕ} (hL : 0 < L) (priors : Fin L → C → ℝ)
+    (h : ∀ l, ∑ c, priors l c = 1) : ∑ c, averagePrior priors c = 1 := by
+  simp only [averagePrior]
+  rw [← sum_div, sum_comm]
+  simp only [h, sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one]
+  exact div_self (by exact_mod_cast hL.ne')
 
 end ZaslavskyEtAl2019

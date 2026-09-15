@@ -321,7 +321,7 @@ private def adjectiveOf : String → Option Degree.GradableAdjective
   | _ => none
 
 open English.Nouns in
-private def nounOf : String → Option NounEntry
+private def nounOf : String → Option English.Nouns.Noun
   | "man" => some man
   | "father" => some father
   | "mother" => some mother

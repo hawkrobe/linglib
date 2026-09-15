@@ -119,8 +119,7 @@ def impFilter (p q : PartialProp W) : PartialProp W where
 
     Generalizes `disjFilterLeft` to a presuppositional first disjunct
     (`orFilter_ofProp`). The symmetric K&P variant is
-    `PartialProp.orKPSymmetric`; the positive-antecedent variant is
-    `PartialProp.orPositive` (`Presupposition.Trivalent`). -/
+    `PartialProp.orKPSymmetric` (`Presupposition.Trivalent`). -/
 def orFilter (p q : PartialProp W) : PartialProp W where
   presup := fun w => p.presup w ∧ (¬p.assertion w → q.presup w)
   assertion := fun w => p.assertion w ∨ q.assertion w

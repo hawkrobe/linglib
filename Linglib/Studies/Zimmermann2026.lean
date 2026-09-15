@@ -5,55 +5,41 @@ import Linglib.Studies.Zimmermann2008
 import Linglib.Logic.Modal.Extensional
 
 /-!
-# [zimmermann-2026]: African Lambdas I — The Nominal Domain
+# Zimmermann (2026): African Lambdas I, The Nominal Domain
 
-[zimmermann-2026] §3.3's comparative claim about marked indefinites: Akan
-*bí* and Hausa *wani/wata* are near-identical in distribution but differ
-in one decisive respect — under negation *wani*-NPs scope freely
-(ex. (13), from [zimmermann-2014]) while *bí*-NPs must outscope negation
-(ex. (15)). The review concludes the two markers need contrasting
-analyses — (16a) skolemized choice function for *bí* ([owusu-2022],
-after [kratzer-1998-pseudoscope] and [mirrazi-2024]) vs (16b)
-∃-quantifier for *wani* ([zimmermann-2008]; cf. [schwarzschild-2002]) —
-and that the two-way African comparison discriminates between CF- and
-∃-analyses of indefinites where comparison with English alone cannot.
-
-## Main declarations
-
-* `Akan.Determiners.Indefinite.z2026IndefType`,
-  `Hausa.Determiners.Indefinite.z2026IndefType` — the review's (16)
-  classification over the two Fragment inventories, discharging the
-  substrate `IndefType` contrast.
-* `Zimmermann2026.wani_scopings_diverge` — (13): the ∃-analysis' two
-  scopings are truth-conditionally distinct on [zimmermann-2008]'s
-  passenger model.
-* `Zimmermann2026.bi_reading_not_narrow` — (15): the CF reading is not
-  the ¬ > ∃ reading on [owusu-2022]'s two-person model.
-* `Zimmermann2026.bi_negation_construals_collapse` — the review's
-  "negation is not an intensional operator" gloss: extensionality of
-  negation collapses the situation pronoun's bound/free construals.
+This file formalizes the comparative claim about marked indefinites in §3.3 of
+[zimmermann-2026]'s review of formal semantic work on African languages. Akan *bí* and Hausa
+*wani* are near-identical in distribution, but under negation *wani* phrases scope freely, (13)
+after [zimmermann-2014], while *bí* phrases must outscope negation, (15). The review takes the
+contrast to require different analyses, (16): a skolemized choice function for *bí*, after
+[owusu-2022], and an existential quantifier for *wani*, after [zimmermann-2008]. The two
+classifications are recorded on the fragment inventories (`z2026IndefType`); the existential
+analysis makes the two scopings of *wani* truth-conditionally distinct on the passenger model
+of `Zimmermann2008` (`wani_scopings_diverge`); the choice-function analysis gives *bí* under
+negation a reading distinct from the narrow-scope one on the model of `Owusu2022`
+(`bi_reading_not_narrow`); and the review's explanation, that negation is not an intensional
+operator and so cannot shift the situation argument of the choice function, is the collapse
+of the bound and free construals of the situation pronoun under an extensional operator
+(`bi_negation_construals_collapse`).
 
 ## Implementation notes
 
-Review-anchor discipline: only the comparison the review itself draws is
-formalized here — the (16) classification and the (13)/(15) scope
-divergence. The per-language analyses are consumed from their primary
-sources' formalizations: `Studies/Zimmermann2008` (Hausa model,
-`wani_wide_scope`, `wani_narrow_scope_false`) and `Studies/Owusu2022`
-(Akan model, `skolemDenot`, `bi_wide_scope_witnessed`, `someone_sang`).
+* Only the comparison the review itself draws is formalized; the per-language analyses are
+  consumed from the studies of their primary sources.
+* Bare noun phrases, which take obligatory narrow scope in both languages, are outside the
+  classification of (16).
 
-## Todo
+## TODO
 
-* Ga *ko* (∃-bound CF) vs *kome* (contextually bound CF) and the
-  no-student datum unattested with English indefinites (§3.3 ex. (17)).
-* Bare NPs: obligatory narrow scope in both languages; covert-∃
-  availability under [chierchia-1998]-style blocking by the overt
-  markers (§3.3–§3.4).
-* DEF–INDEF co-occurrence *bí nó* via [partee-1987] type-shift of the
-  CF output (§3.4 ex. (18)).
-* The DEF-marking landscape of §3.1 (uniqueness ι, familiar *nó*,
-  demonstrative analyses) — the [schwarz-2013] / [bombi-2018] /
-  [owusu-2022] rivalry on the shared Akan entries.
+* The Ga markers *ko* and *kome* of (17) and the co-occurrence of definite and indefinite
+  markers of (18).
+
+## References
+
+* [zimmermann-2026]
+* [zimmermann-2014]
+* [zimmermann-2008]
+* [owusu-2022]
 -/
 
 open Quantification.ChoiceFunction (IndefType)
@@ -92,9 +78,9 @@ passenger model the ∃ > ¬ reading holds while ¬ > ∃ fails, so the scopal
 flexibility of *wani* is empirically detectable. -/
 theorem wani_scopings_diverge :
     ¬ ((¬ ∃ x : Zimmermann2008.Faasinjee, Zimmermann2008.Daura x) ↔
-      some_sem (fun _ : Zimmermann2008.Faasinjee => True)
+      some_sem (λ _ : Zimmermann2008.Faasinjee => True)
         (¬ Zimmermann2008.Daura ·)) :=
-  fun h =>
+  λ h =>
     Zimmermann2008.wani_narrow_scope_false (h.mpr Zimmermann2008.wani_wide_scope)
 
 /-- (15): the CF analysis (16a) assigns *bí* under negation a reading
@@ -104,8 +90,8 @@ over (16b) for *bí*. -/
 theorem bi_reading_not_narrow :
     ∀ d ∈ Owusu2022.skolemDenot Owusu2022.preferAma () .bi,
       ¬ ((¬ ∃ x, Owusu2022.ToDwom x) ↔
-        ¬ Owusu2022.ToDwom (d (fun _ _ => True))) :=
-  fun d hd h =>
+        ¬ Owusu2022.ToDwom (d (λ _ _ => True))) :=
+  λ d hd h =>
     h.mpr (Owusu2022.bi_wide_scope_witnessed d hd) Owusu2022.someone_sang
 
 /-- The review's negation gloss, formalized: "as negation is not an
@@ -121,10 +107,10 @@ extensionality at work, not a triviality. -/
 theorem bi_negation_construals_collapse {S E : Type*}
     (f : SkolemCF S E) (s₀ : S) (P : S → E → Prop)
     (VP : E → S → Prop) :
-    ((fun p s => ¬ p s)
-        (fun s => VP (f.applyIntensionAt .bound s s₀ P) s) s₀ ↔
-     (fun p s => ¬ p s)
-        (fun s => VP (f.applyIntensionAt .free s s₀ P) s) s₀) :=
+    ((λ p s => ¬ p s)
+        (λ s => VP (f.applyIntensionAt .bound s s₀ P) s) s₀ ↔
+     (λ p s => ¬ p s)
+        (λ s => VP (f.applyIntensionAt .free s s₀ P) s) s₀) :=
   bound_free_collapse ModalLogic.IsExtensionalAt.neg f P VP
 
 end Zimmermann2026

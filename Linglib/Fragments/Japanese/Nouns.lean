@@ -16,7 +16,7 @@ from the enum-as-source-of-truth fragment (`Japanese.Classifier`).
 namespace Japanese.Nouns
 
 open Japanese (Classifier)
-open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
+open Semantics.Kinds.NMP (NominalMapping)
 
 /-- A lexical entry for a Japanese noun. -/
 structure NounEntry where
@@ -43,14 +43,9 @@ structure NP where
   usePlural : Bool := false
   deriving Repr, BEq
 
-/-- Japanese has no articles, so no type shifts are blocked. -/
-def japaneseBlocking : BlockingPrinciple :=
-  { determiners := []
-  , iotaBlocked := false
-  , existsBlocked := false
-  , downBlocked := false }
-
-def japaneseMapping : NominalMapping := .argOnly
+/-- Japanese is [+arg, −pred]: nouns denote kinds, and with no articles
+(`Japanese.Determiners.inventory`) no covert shift is blocked ([chierchia-1998]). -/
+def nominalMapping : NominalMapping := .argOnly
 
 def bareNP (n : NounEntry) : NP :=
   { noun := n, isBare := true }
@@ -107,10 +102,6 @@ def allNouns : List NounEntry := [
 
 def lookup (form : String) : Option NounEntry :=
   allNouns.find? λ n => n.form == form || n.pluralForm == some form
-
-def bareNPLicensed : Bool := true
-
-example : bareNPLicensed = true := rfl
 
 -- ============================================================================
 -- Verification

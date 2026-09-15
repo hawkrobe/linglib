@@ -1,56 +1,44 @@
 import Linglib.Logic.Team.QBSML.FreeChoice
 import Linglib.Logic.Team.BSML.Scenarios
+import Linglib.Data.Examples.Yan2023
 
 /-!
-# [yan-2023]: Monotonicity under desire as a neglect-zero effect
+# Yan (2023): Monotonicity in Intensional Contexts
 
-Chapter 4 of [yan-2023] defends an upward-monotonic semantics for desire
-verbs against three classical puzzles — Ross's paradox under *want*
-([ross-1944]; the desiderative version is due to [crnic-2011]), Asher's
-puzzle (reported in [heim-1992]) and Heim's own teach-on-Tuesdays example
-([heim-1992]) — by reducing all three to free-choice inferences in QBSML
-([aloni-vanormondt-2023]): the monotonic step is semantically valid on the
-NE-free fragment, the paradoxical "ok with the unwanted alternative"
-inference is pragmatically valid only for the *enriched* conclusion, and
-the enriched conclusion is not derivable from the premise. The dissertation
-calls the general effect — semantic weakening licensing pragmatic
-neglect-zero consequences — the *weakening effect triggered by
-monotonicity* (WEM); this chapter is its desire-verb case study. Where no
-overt disjunction occurs (Asher, Heim), the paper's one new formal object
-— the **reinterpretation function** `∥·∥_P` (Definition 32) — supplies it:
-a predicate `Q` with a contextually salient sub-predicate `P` is
-reinterpreted as `(P ∧ Q) ∨ (¬P ∧ Q)`, licensed because the two are
-classically equivalent (`eval_reinterpret_iff`) yet pragmatically distinct
-under `[·]⁺`.
+This file formalizes the fourth chapter of [yan-2023], which defends an upward-monotonic
+semantics for desire verbs against Ross's paradox under *want* ([ross-1944], [crnic-2011]),
+Asher's puzzle and Heim's teaching example ([heim-1992]) by reducing all three to free-choice
+inferences in the quantified bilateral state-based modal logic of [aloni-vanormondt-2023].
+The monotonic step is semantically valid on the NE-free fragment (`ross_monotone`,
+`asher_monotone`), the paradoxical *ok with the unwanted alternative* inference is
+pragmatically valid only from the enriched conclusion by □-free choice (`ross_fc`,
+`asher_fc`, `heim_fc`), and the enriched conclusion is not supported by the desire state that
+supports the enriched premise (`ross_premise`, `ross_blocked`, `asher_premise`,
+`asher_blocked`). Where no overt disjunction occurs, the reinterpretation function
+(`reinterpret`) rewrites a predicate with a contextually salient sub-predicate as the
+disjunction of the sub-predicate and its complement within the predicate; it preserves the
+NE-free fragment and is bilaterally equivalent to the original (`reinterpret_neFree`,
+`eval_reinterpret_iff`), yet under pragmatic enrichment the two come apart
+(`asher_concl_enriched`).
 
-This file derives the chapter's account from the QBSML substrate
-(`Logic/Team/QBSML/FreeChoice.lean`): the □-FC fact it invokes
-(Fact 13) is `boxFC`; the quantified variant needed for Asher and Heim is
-`boxExiFC`; the semantic validity of the monotonic steps is
-`support_disj_inl` / `support_nec_mono`. The verbs *want* / *it is ok* are
-the Hintikka-style `□`/`◇` over a bouletic accessibility relation, exactly
-as in the paper (§4.4.1; the positive semantics of *want* itself is
-deferred to the dissertation's Chapter 5).
+## Implementation notes
 
-## Main declarations
+*Want* and *it is ok* are the necessity and possibility modals over a bouletic accessibility
+relation, as in the chapter, whose language has a primitive □, a derived ◇, and no universal
+quantifier; the reinterpretation function is extended to the possibility and universal
+clauses of the library's formula type by commuting with them. Enrichment is placed in the
+wide form of the chapter's free-choice fact, outside the modal. The sub-predicate relation
+is a contextual parameter; the chapter's denotational side condition holds in the two-world
+model of Asher's puzzle (`asherModel_free_ssubset_trip`). The alternative ◇-free-choice
+route for Heim's example through a conditional desire is not modelled.
 
-* `reinterpret` — Yan's reinterpretation function `∥·∥_P` (Definition 32),
-  an instance of `Formula.mapAtoms`.
-* `reinterpret_neFree`, `eval_reinterpret_iff` — reinterpretation stays
-  NE-free and is bilaterally equivalent to the original (substitution
-  *salva veritate*; the classical equivalence of `Qx` and
-  `(Px ∧ Qx) ∨ (¬Px ∧ Qx)` lifted to team semantics).
-* `ross_monotone`, `ross_fc`, `ross_premise`, `ross_blocked` — Ross's
-  paradox: monotonicity is semantically valid, FC pragmatically valid, and
-  the enriched disjunctive premise underivable (the paper's Figure 4.2).
-* `asher_monotone`, `asher_fc`, `asher_premise`, `asher_blocked`,
-  `asher_concl_enriched` — Asher's puzzle via reinterpretation of TRIP by
-  FREE (the paper's Figure 4.3), with the non-vacuity of reinterpretation
-  under `[·]⁺` witnessed at the same state, and the denotational side
-  condition FREE ⊊ TRIP realised globally
-  (`asherModel_free_ssubset_trip`).
-* `heim_fc` — Heim's example via reinterpretation of TEACH by TUESDAY (the
-  paper omits the rest of the derivation as parallel to Asher's; so do we).
+## References
+
+* [yan-2023]
+* [aloni-vanormondt-2023]
+* [crnic-2011]
+* [heim-1992]
+* [ross-1944]
 -/
 
 namespace Yan2023
@@ -103,8 +91,7 @@ def reinterpret (sub : Pred → Pred → Prop) [DecidableRel sub] (P : Pred) :
 
 variable (sub : Pred → Pred → Prop) [DecidableRel sub] (P : Pred)
 
-/-- Equation lemma: reinterpretation at a variable atom. Not `@[simp]` —
-    unfolding is opt-in. -/
+/-- Reinterpretation at a variable atom. -/
 theorem reinterpret_pred (Q : Pred) (x : Var) :
     reinterpret sub P (.pred Q x : Formula Var Const Pred) =
       if sub P Q then
@@ -113,7 +100,7 @@ theorem reinterpret_pred (Q : Pred) (x : Var) :
       else .pred Q x :=
   rfl
 
-/-- Equation lemma: reinterpretation at a constant atom. -/
+/-- Reinterpretation at a constant atom. -/
 theorem reinterpret_predc (Q : Pred) (c : Const) :
     reinterpret sub P (.predc Q c : Formula Var Const Pred) =
       if sub P Q then
@@ -145,9 +132,8 @@ end Reinterpret
 
 The classical equivalence of `Qx` and `(Px ∧ Qx) ∨ (¬Px ∧ Qx)` justifying
 reinterpretation ([yan-2023] §4.3.2) holds bilaterally in team semantics —
-for *unenriched* formulas. Under `[·]⁺` the two sides diverge, which is the
-entire point: the enriched reinterpreted formula carries free-choice
-commitments the original does not. -/
+for unenriched formulas. Under `[·]⁺` the two sides diverge: the enriched
+reinterpreted formula carries free-choice commitments the original does not. -/
 
 section SalvaVeritate
 
@@ -541,10 +527,10 @@ theorem asher_blocked :
     "it is possible to have a counterexample where `[∃xQx]⁺` is supported
     but `[∃x((Px ∨ ¬Px) ∧ Qx)]⁺` is not" — displayed there with the
     `(Px ∨ ¬Px) ∧ Qx` shape rather than Definition 32's). The
-    *unreinterpreted* enriched conclusion `[□∃xTx]⁺` IS supported at the
-    very state where `asher_blocked` refutes the enriched reinterpreted
-    form — the two classically equivalent formulas (`eval_reinterpret_iff`)
-    come apart under `[·]⁺`, which is the paper's whole point. -/
+    unreinterpreted enriched conclusion `[□∃xTx]⁺` is supported at the
+    state where `asher_blocked` refutes the enriched reinterpreted form: the
+    two classically equivalent formulas (`eval_reinterpret_iff`) come apart
+    under `[·]⁺`. -/
 theorem asher_concl_enriched :
     support asherModel (Formula.enrich asherConcl) asherState := by
   show support asherModel
@@ -575,8 +561,8 @@ semester." ([heim-1992]; [yan-2023] §4.3.3.) Same shape as Asher's puzzle:
 TEACH is reinterpreted by its salient sub-predicate TEACH-ON-TUESDAY, and
 quantified □-FC then licenses the unjustified "ok to teach on non-Tuesdays".
 The paper omits the rest of the derivation as parallel to Asher's
-(§4.4.3: "the details … are omitted"); so do we — the blocking countermodel
-is isomorphic to `asher_blocked`'s. The paper also sketches an alternative
+(§4.4.3); the blocking countermodel is that of `asher_blocked`. The paper also
+sketches an alternative
 ◊-FC route via the conditional-desire rephrasing of the example (its
 (17)–(18)); that variant is not formalized here. -/
 

@@ -175,6 +175,60 @@ def ex6_ctx2 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def all : List LinguisticExample := [ex1, ex2, ex3, ex4b, ex5_ctx1, ex5_ctx2, ex5_ctx3, ex6_ctx1, ex6_ctx2]
+def ex4a : LinguisticExample :=
+  { id := "zheng2025_ex4a"
+    source := ⟨"xu-2018", "p. 449"⟩
+    reportedIn := some ⟨"zheng-2025", "(4a)"⟩
+    language := "mand1415"
+    primaryText := "Nandao wuli mei ren?"
+    discourseSegments := []
+    glossedTokens := [("nandao", "nandao"), ("wuli", "room.in"), ("mei", "no"), ("ren", "person")]
+    translation := "It is not the case there are not people in the room, right?"
+    context := "The speaker believes there is no one in the room."
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("evidential_bias", "false"), ("epistemic_bias", "true"), ("unexpected_evidence", "false")]
+    comment := "The prejacent matches the speaker's belief; with no evidence for it the question is out."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex12a : LinguisticExample :=
+  { id := "zheng2025_ex12a"
+    source := ⟨"xu-2012", "p. 510"⟩
+    reportedIn := some ⟨"zheng-2025", "(12a)"⟩
+    language := "mand1415"
+    primaryText := "Nandao Lisi hui lai"
+    discourseSegments := []
+    glossedTokens := [("nandao", "nandao"), ("Lisi", "Lisi"), ("hui", "will"), ("lai", "come")]
+    translation := "Lisi will not come"
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("clause_type", "declarative")]
+    comment := "Nandao does not combine with a declarative, with or without the question particle."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex12b : LinguisticExample :=
+  { id := "zheng2025_ex12b"
+    source := ⟨"xu-2012", "p. 512"⟩
+    reportedIn := some ⟨"zheng-2025", "(12b)"⟩
+    language := "mand1415"
+    primaryText := "Nandao Zhangsan weishenme qu xuexiao ma?"
+    discourseSegments := []
+    glossedTokens := [("nandao", "nandao"), ("Zhangsan", "Zhangsan"), ("weishenme", "why"), ("qu", "go"), ("xuexiao", "school"), ("ma", "Y/N-Q")]
+    translation := "Why does Zhangsan go to school?"
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("clause_type", "wh-question")]
+    comment := "Nandao does not combine with a wh-question."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def all : List LinguisticExample := [ex1, ex2, ex3, ex4b, ex5_ctx1, ex5_ctx2, ex5_ctx3, ex6_ctx1, ex6_ctx2, ex4a, ex12a, ex12b]
 
 end Zheng2025.Examples

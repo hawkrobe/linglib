@@ -15,7 +15,7 @@ still be kind-referring, supporting [krifka-2003] over [chierchia-1998].
 
 namespace Dutch.Nouns
 
-open Semantics.Kinds.NMP (BlockingPrinciple)
+open Semantics.Kinds.NMP (NominalMapping)
 
 /-- A lexical entry for a Dutch noun. -/
 structure NounEntry where
@@ -89,12 +89,9 @@ def definiteNP (n : NounEntry) (det : String := "de") (num : NPNumber := .sg) : 
 def eenNP (n : NounEntry) : NP :=
   { noun := n, number := .sg, isBare := false, determiner := some "een" }
 
-/-- Dutch blocking: articles block covert type shifts, bare singulars cannot occur. -/
-def dutchBlocking : BlockingPrinciple :=
-  { determiners := ["de", "het", "een", "alle", "geen", "sommige"]
-  , iotaBlocked := true
-  , existsBlocked := true
-  , downBlocked := false }
+/-- Dutch is [+arg, +pred], like the other Germanic languages ([chierchia-1998]); its articles
+(`Dutch.Determiners.inventory`) block the covert ι and ∃. -/
+def nominalMapping : NominalMapping := .argAndPred
 
 /-- BP scope: unscrambled = narrow, scrambled = wide. -/
 def barePluralScope (np : NP) : String :=
@@ -151,14 +148,6 @@ def lookup (form : String) : Option NounEntry :=
     n.formSg == form ||
     n.formPl == some form ||
     n.formDim == some form
-
-def barePluralLicensed : Bool := !dutchBlocking.downBlocked
-def bareMassLicensed : Bool := !dutchBlocking.downBlocked
-def bareSingularLicensed : Bool := !dutchBlocking.iotaBlocked || !dutchBlocking.existsBlocked
-
-example : barePluralLicensed = true := rfl
-example : bareMassLicensed = true := rfl
-example : bareSingularLicensed = false := rfl
 
 def boekenScrambled : NP := barePluralScrambled boek
 def boekenUnscrambled : NP := barePluralUnscrambled boek

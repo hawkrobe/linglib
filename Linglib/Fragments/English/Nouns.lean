@@ -1,262 +1,147 @@
-import Linglib.Data.UD.Basic
-import Linglib.Syntax.Gender.Basic
-import Linglib.Semantics.Genericity.NominalMappingParameter
+import Linglib.Syntax.Category.Noun.Basic
 import Linglib.Semantics.Plurality.MassCount
+import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Morphology.Word.Basic
+import Linglib.Fragments.English.Inflection
 
-open Morphology (Word)
+/-!
+# English nouns
 
-/-! # English Noun Lexicon Fragment
+The English noun as a lexical entry: the root `Noun` with the mass/count feature, whether it is
+a proper name, its lexical gender where it has one, and its plural where that is not the regular
+*-s* one, which `Inflection.lean`'s `suffixS` supplies. English nouns have no grammatical
+gender; the label recorded for *man*, *woman* and the names is the natural gender their pronouns
+agree with. English sets [chierchia-1998]'s Nominal Mapping Parameter to [+arg, +pred], so
+nouns denote kinds or predicates: with *the* and *a* blocking the covert ι and ∃, bare plurals
+and bare mass nouns are arguments and a bare singular count noun is not
+(`Studies/Chierchia1998.lean`).
 
-English NP structure. Bare plurals/mass nouns OK, bare singulars blocked.
+## Main definitions
+
+* `Noun` — the entry, with `Noun.realize` giving its form at a number
+* `Noun.toWordSg`, `Noun.toWord` — the entry as a `Word` token
+* `nominalMapping` — the Nominal Mapping Parameter setting
+
+## References
+
+* [chierchia-1998]
+* [krifka-2026]
 -/
 
 namespace English.Nouns
 
+open Semantics.Kinds.NMP (NominalMapping)
+open Morphology (Word)
 
-open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
-
-
-/-- A lexical entry for an English noun.
-
-    The `countable` field records a morphosyntactic fact about the
-    noun's conventional behavior in English (does it pluralize? does
-    it take "a"?). This is theory-neutral data:
-
-    - **[chierchia-1998]** treats `countable` as a lexical feature
-      on nouns, directly encoding the mass/count distinction.
-    - **[borer-2005]** claims `countable` is *derivable from*
-      functional structure (presence of Q in the EP spine) and
-      should not be a primitive. See `same_root_mass_and_count`.
-
-    Both theories are compatible with this fragment: Chierchia uses
-    the field directly; Borer proves it redundant via a bridge. -/
-structure NounEntry where
-  /-- Singular form -/
-  formSg : String
-  /-- Plural form (none for mass nouns) -/
-  formPl : Option String := none
-  /-- Mass/count feature -/
+/-- An English noun: the root entry with the mass/count feature, whether it is a proper name,
+its lexical gender where it has one, and its plural where that is not the regular *-s* one. -/
+structure Noun extends _root_.Noun where
+  /-- The mass/count feature ([krifka-2026]). -/
   countable : MassCount := .count
-  /-- Is this a proper name? -/
+  /-- Whether the entry is a proper name. -/
   proper : Bool := false
-  /-- Lexical gender, where known (proper names, gendered common nouns) — the
-      single source for a name's gender, read into the `Word` by `toWordSg`. -/
+  /-- The natural gender the noun's pronouns agree with, where it has one. -/
   gender : Option Gender := none
-  deriving Repr, BEq
-
-/-- Number marking on an English NP -/
-inductive NPNumber where
-  | sg    -- Singular
-  | pl    -- Plural
-  | mass  -- Mass (no number distinction)
+  /-- The plural, where it is not the regular *-s* one. -/
+  irregularPlural : Option String := none
   deriving DecidableEq, Repr
 
-/-- An English noun phrase. -/
-structure NP where
-  /-- The underlying noun -/
-  noun : NounEntry
-  /-- Number marking -/
-  number : NPNumber
-  /-- Is this a bare NP (no determiner)? -/
-  isBare : Bool
-  /-- The determiner (if not bare) -/
-  determiner : Option String := none
-  deriving Repr, BEq
+instance : HasGender Noun := ⟨λ n => n.gender⟩
 
-/-- Is this NP a bare plural? -/
-def NP.isBarePlural (np : NP) : Bool :=
-  np.isBare && np.number == .pl
+/-- A common count noun; English is the metalanguage, so the gloss is the form. -/
+def Noun.common (form : String) : Noun := { form, gloss := form }
 
-/-- Is this NP a bare mass noun? -/
-def NP.isBareMass (np : NP) : Bool :=
-  np.isBare && np.number == .mass
+/-- A mass noun. -/
+def Noun.mass (form : String) : Noun := { form, gloss := form, countable := .mass }
 
-/-- Is this NP a bare singular? -/
-def NP.isBareSingular (np : NP) : Bool :=
-  np.isBare && np.number == .sg
+/-- A proper name. -/
+def Noun.name (form : String) (gender : Option Gender := none) : Noun :=
+  { form, gloss := form, proper := true, gender }
 
+/-- The form at a number: the citation form in the singular; in the plural, for a common count
+noun, the irregular plural where there is one and else the regular *-s* one. -/
+def Noun.realize (n : Noun) : Number → Option String
+  | .singular => some n.form
+  | .plural =>
+    if n.countable = .mass ∨ n.proper then none
+    else some (n.irregularPlural.getD (suffixS n.form))
+  | _ => none
 
-/-- Create a bare plural NP -/
-def barePlural (n : NounEntry) : NP :=
-  { noun := n, number := .pl, isBare := true }
+/-- The singular as a word token: a `PROPN` in the third person for a name, else a `NOUN`, with
+the gender where the entry has one. -/
+def Noun.toWordSg (n : Noun) : Word :=
+  { form := n.form
+    cat := if n.proper then .PROPN else .NOUN
+    features := { number := some .Sing
+                  person := if n.proper then some .third else none
+                  gender := n.gender.bind Gender.toUD } }
 
-/-- Create a bare mass NP -/
-def bareMass (n : NounEntry) : NP :=
-  { noun := n, number := .mass, isBare := true }
+/-- The entry as a word token at a number, where it has a form there. -/
+def Noun.toWord (n : Noun) (num : Number) : Option Word :=
+  (n.realize num).map λ form =>
+    { n.toWordSg with form, features := { n.toWordSg.features with number := num.toUD } }
 
-/-- Create a bare singular NP (ungrammatical in English) -/
-def bareSingular (n : NounEntry) : NP :=
-  { noun := n, number := .sg, isBare := true }
+theorem Noun.toWord_singular (n : Noun) : n.toWord .singular = some n.toWordSg := rfl
 
-/-- Create a definite NP with "the" -/
-def theNP (n : NounEntry) (num : NPNumber := .sg) : NP :=
-  { noun := n, number := num, isBare := false, determiner := some "the" }
+/-! ### Count nouns -/
 
-/-- Create an indefinite singular NP with "a" -/
-def aNP (n : NounEntry) : NP :=
-  { noun := n, number := .sg, isBare := false, determiner := some "a" }
+def pizza : Noun := .common "pizza"
+def book : Noun := .common "book"
+def cat : Noun := .common "cat"
+def dog : Noun := .common "dog"
+def girl : Noun := .common "girl"
+def boy : Noun := .common "boy"
+def ball : Noun := .common "ball"
+def table : Noun := .common "table"
+def squirrel : Noun := .common "squirrel"
+def kitchen : Noun := .common "kitchen"
+def story : Noun := .common "story"
+def lawyer : Noun := .common "lawyer"
+def student : Noun := .common "student"
+def teacher : Noun := .common "teacher"
+def soldier : Noun := .common "soldier"
+def horse : Noun := .common "horse"
+def brother : Noun := .common "brother"
+def spy : Noun := .common "spy"
+def idea : Noun := .common "idea"
+def bean : Noun := .common "bean"
+def father : Noun := { Noun.common "father" with gender := some .masculine }
+def mother : Noun := { Noun.common "mother" with gender := some .feminine }
+def man : Noun := { Noun.common "man" with gender := some .masculine, irregularPlural := "men" }
+def woman : Noun :=
+  { Noun.common "woman" with gender := some .feminine, irregularPlural := "women" }
+def fireman : Noun := { Noun.common "fireman" with irregularPlural := "firemen" }
+def person : Noun := { Noun.common "person" with irregularPlural := "people" }
+def child : Noun := { Noun.common "child" with irregularPlural := "children" }
 
-/-- Create an NP with a specific determiner -/
-def withDet (n : NounEntry) (det : String) (num : NPNumber := .sg) : NP :=
-  { noun := n, number := num, isBare := false, determiner := some det }
+/-! ### Mass nouns -/
 
+def water : Noun := .mass "water"
+def sand : Noun := .mass "sand"
+def trash : Noun := .mass "trash"
+def furniture : Noun := .mass "furniture"
+def rice : Noun := .mass "rice"
+def gold : Noun := .mass "gold"
+def air : Noun := .mass "air"
+def wine : Noun := .mass "wine"
+def coffee : Noun := .mass "coffee"
+def beer : Noun := .mass "beer"
+def milk : Noun := .mass "milk"
+def tea : Noun := .mass "tea"
 
-/-- English is a [+arg, +pred] language ([chierchia-1998]):
-    nouns can denote both arguments (kinds) and predicates (properties).
-    Bare plurals can be kind-denoting without overt D. -/
-def englishMapping : NominalMapping := .argAndPred
+/-! ### Proper names -/
 
-/-- English has articles that block covert type shifts:
-    - "the" blocks ι (iota, definite description)
-    - "a/some" blocks ∃ for singulars
-    - Nothing blocks ∩ (kind formation)
+def john : Noun := .name "John" (some .masculine)
+def mary : Noun := .name "Mary" (some .feminine)
+def bill : Noun := .name "Bill" (some .masculine)
+def sue : Noun := .name "Sue" (some .feminine)
+def fred : Noun := .name "Fred" (some .masculine)
+def sam : Noun := .name "Sam"
+def pat : Noun := .name "Pat"
 
-    Result: bare singulars cannot occur as arguments. -/
-def englishBlocking : BlockingPrinciple :=
-  { determiners := ["the", "a", "some", "every", "no"]
-  , iotaBlocked := true
-  , existsBlocked := true
-  , downBlocked := false }
+/-! ### The Nominal Mapping Parameter -/
 
-
-def pizza : NounEntry := { formSg := "pizza", formPl := "pizzas" }
-def book : NounEntry := { formSg := "book", formPl := "books" }
-def cat : NounEntry := { formSg := "cat", formPl := "cats" }
-def dog : NounEntry := { formSg := "dog", formPl := "dogs" }
-def girl : NounEntry := { formSg := "girl", formPl := "girls" }
-def boy : NounEntry := { formSg := "boy", formPl := "boys" }
-def ball : NounEntry := { formSg := "ball", formPl := "balls" }
-def table : NounEntry := { formSg := "table", formPl := "tables" }
-def squirrel : NounEntry := { formSg := "squirrel", formPl := "squirrels" }
-def man : NounEntry := { formSg := "man", formPl := "men", gender := some .masculine }
-def woman : NounEntry := { formSg := "woman", formPl := "women", gender := some .feminine }
-def father : NounEntry := { formSg := "father", formPl := "fathers", gender := some .masculine }
-def mother : NounEntry := { formSg := "mother", formPl := "mothers", gender := some .feminine }
-def kitchen : NounEntry := { formSg := "kitchen", formPl := "kitchens" }
-def story : NounEntry := { formSg := "story", formPl := "stories" }
-def person : NounEntry := { formSg := "person", formPl := "people" }
-def child : NounEntry := { formSg := "child", formPl := "children" }
-def lawyer : NounEntry := { formSg := "lawyer", formPl := "lawyers" }
-def student : NounEntry := { formSg := "student", formPl := "students" }
-def teacher : NounEntry := { formSg := "teacher", formPl := "teachers" }
-def fireman : NounEntry := { formSg := "fireman", formPl := "firemen" }
-def soldier : NounEntry := { formSg := "soldier", formPl := "soldiers" }
-def horse : NounEntry := { formSg := "horse", formPl := "horses" }
-def brother : NounEntry := { formSg := "brother", formPl := "brothers" }
-def spy : NounEntry := { formSg := "spy", formPl := "spies" }
-
-def water : NounEntry := { formSg := "water", formPl := none, countable := .mass }
-def sand : NounEntry := { formSg := "sand", formPl := none, countable := .mass }
-def trash : NounEntry := { formSg := "trash", formPl := none, countable := .mass }
-def furniture : NounEntry := { formSg := "furniture", formPl := none, countable := .mass }
-def rice : NounEntry := { formSg := "rice", formPl := none, countable := .mass }
-def gold : NounEntry := { formSg := "gold", formPl := none, countable := .mass }
-def air : NounEntry := { formSg := "air", formPl := none, countable := .mass }
-def wine : NounEntry := { formSg := "wine", formPl := none, countable := .mass }
-def coffee : NounEntry := { formSg := "coffee", formPl := none, countable := .mass }
-def idea : NounEntry := { formSg := "idea", formPl := some "ideas" }
-def beer : NounEntry := { formSg := "beer", formPl := none, countable := .mass }
-def milk : NounEntry := { formSg := "milk", formPl := none, countable := .mass }
-def tea : NounEntry := { formSg := "tea", formPl := none, countable := .mass }
-
-/-- Mixed drink nouns: count despite denoting liquids ([moon-2026]).
-    Countability derives from a MEASURED PART (shot of spirit/espresso),
-    not from Universal Packager coercion. -/
-def martini : NounEntry := { formSg := "martini", formPl := "martinis" }
-def margarita : NounEntry := { formSg := "margarita", formPl := "margaritas" }
-def negroni : NounEntry := { formSg := "negroni", formPl := "negronis" }
-def mojito : NounEntry := { formSg := "mojito", formPl := "mojitos" }
-def daiquiri : NounEntry := { formSg := "daiquiri", formPl := "daiquiris" }
-def mimosa : NounEntry := { formSg := "mimosa", formPl := "mimosas" }
-def cappuccino : NounEntry := { formSg := "cappuccino", formPl := "cappuccinos" }
-def americano : NounEntry := { formSg := "americano", formPl := "americanos" }
-def latte : NounEntry := { formSg := "latte", formPl := "lattes" }
-def macchiato : NounEntry := { formSg := "macchiato", formPl := "macchiatos" }
-
-def john : NounEntry := { formSg := "John", formPl := none, proper := true, gender := some .masculine }
-def mary : NounEntry := { formSg := "Mary", formPl := none, proper := true, gender := some .feminine }
-def bill : NounEntry := { formSg := "Bill", formPl := none, proper := true, gender := some .masculine }
-def sue : NounEntry := { formSg := "Sue", formPl := none, proper := true, gender := some .feminine }
-def fred : NounEntry := { formSg := "Fred", formPl := none, proper := true, gender := some .masculine }
-def sam : NounEntry := { formSg := "Sam", formPl := none, proper := true }
-def pat : NounEntry := { formSg := "Pat", formPl := none, proper := true }
-
-def bean : NounEntry := { formSg := "bean", formPl := some "beans" }
-
-def allNouns : List NounEntry := [
-  pizza, book, cat, dog, girl, boy, ball, table, squirrel,
-  man, woman, kitchen, story, person, child, lawyer, student, teacher, fireman, soldier, horse,
-  brother, spy,
-  water, sand, trash, furniture, rice, gold, air, wine, coffee, beer, milk, tea,
-  martini, margarita, negroni, mojito, daiquiri, mimosa,
-  cappuccino, americano, latte, macchiato,
-  john, mary, bill, sue, fred, sam, pat,
-  bean
-]
-
-/-- Convert a noun entry to a `Word` in singular form.
-    Proper names get `cat :=.PROPN, person :=.third`.
-    Common nouns get `cat :=.NOUN, countable`. -/
-def NounEntry.toWordSg (n : NounEntry) : Word :=
-  { form := n.formSg
-  , cat := if n.proper then .PROPN else .NOUN
-  , features := {
-      number := some .Sing
-    , person := if n.proper then some .third else none
-    , gender := n.gender.bind (·.toUD)
-    }
-  }
-
-/-- Convert a noun entry to a `Word` in plural form.
-    Defaults to appending "s" if no irregular plural is specified. -/
-def NounEntry.toWordPl (n : NounEntry) : Word :=
-  { form := (n.formPl.getD (n.formSg ++ "s"))
-  , cat := .NOUN
-  , features := {
-      number := some .Plur
-    }
-  }
-
-def lookup (form : String) : Option NounEntry :=
-  allNouns.find? λ n => n.formSg == form || n.formPl == some form
-
-
-/-- In English, bare plurals are licensed -/
-def barePluralLicensed : Bool := !englishBlocking.downBlocked
-
-/-- In English, bare mass nouns are licensed -/
-def bareMassLicensed : Bool := !englishBlocking.downBlocked
-
-/-- In English, bare singulars are NOT licensed -/
-def bareSingularLicensed : Bool :=
-  !englishBlocking.iotaBlocked ∨ !englishBlocking.existsBlocked
-
--- Verify our expectations
-example : barePluralLicensed = true := rfl
-example : bareMassLicensed = true := rfl
-example : bareSingularLicensed = false := rfl
-
-
-/-- "dogs" as bare plural -/
-def dogs : NP := barePlural dog
-
-/-- "water" as bare mass -/
-def waterNP : NP := bareMass water
-
-/-- "the dog" -/
-def theDog : NP := theNP dog
-
-/-- "a dog" -/
-def aDog : NP := aNP dog
-
-/-- "every dog" -/
-def everyDog : NP := withDet dog "every"
-
--- Examples verifying structure
-example : dogs.isBarePlural = true := rfl
-example : waterNP.isBareMass = true := rfl
-example : theDog.isBare = false := rfl
-example : aDog.determiner = some "a" := rfl
+/-- English is [+arg, +pred]: nouns denote kinds or predicates ([chierchia-1998]). -/
+def nominalMapping : NominalMapping := .argAndPred
 
 end English.Nouns

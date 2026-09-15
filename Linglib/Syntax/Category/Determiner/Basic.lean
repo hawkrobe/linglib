@@ -240,6 +240,14 @@ end Inventory
 
 /-! ### Kind predicates over an inventory (for realization) -/
 
+/-- The occurrence is a definite article. -/
+def Entry.IsDefiniteArticle : Entry → Prop
+  | .article a => a.definiteness = .definite
+  | _          => False
+
+instance : DecidablePred Entry.IsDefiniteArticle := fun e => by
+  cases e <;> unfold Entry.IsDefiniteArticle <;> infer_instance
+
 /-- The occurrence is an indefinite article. -/
 def Entry.IsIndefiniteArticle : Entry → Prop
   | .article a => a.definiteness = .indefinite

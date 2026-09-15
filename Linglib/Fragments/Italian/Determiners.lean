@@ -37,6 +37,44 @@ structure ItalianQuantifierEntry extends Quantifier where
   gender : Option Gender := none
   deriving Repr
 
+/-! ## Articles
+
+The definite article *il*, *lo*, *la* and plural *i*, *gli*, *le*, one syncretic definite
+covering the [schwarz-2009] use types; the indefinite *un*, *uno*, *una*; and the partitive
+*del*, *dello*, *della* and plural *dei*, *degli*, *delle*, the indefinite of mass nouns and
+plurals. -/
+
+/-- The definite article with the given form. -/
+private def definite (form : String) : Article :=
+  { form, definiteness := .definite, exponent := .dedicatedMorpheme
+    uses := [.immediateSituation, .largerSituation, .anaphoric, .donkey] }
+
+/-- The indefinite article with the given form. -/
+private def indefinite (form : String) : Article :=
+  { form, definiteness := .indefinite, exponent := .dedicatedMorpheme }
+
+def il : Article := definite "il"
+def lo : Article := definite "lo"
+def la : Article := definite "la"
+def i : Article := definite "i"
+def gli : Article := definite "gli"
+def le : Article := definite "le"
+def un : Article := indefinite "un"
+def uno : Article := indefinite "uno"
+def una : Article := indefinite "una"
+def del : Article := indefinite "del"
+def dello : Article := indefinite "dello"
+def della : Article := indefinite "della"
+def dei : Article := indefinite "dei"
+def degli : Article := indefinite "degli"
+def delle : Article := indefinite "delle"
+
+/-- All Italian article entries. -/
+def allArticles : List Article :=
+  [il, lo, la, i, gli, le, un, uno, una, del, dello, della, dei, degli, delle]
+
+/-! ## Quantificational determiners -/
+
 /-- *ogni* — every (invariant, singular, universal). -/
 def ogni : ItalianQuantifierEntry :=
   { form := "ogni"
@@ -139,6 +177,13 @@ def allQuantifiers : List ItalianQuantifierEntry := [
   ogni, qualche, nessuno, nessuna, tutti, tutte,
   alcuni, alcune, molti, molte, pochi, poche
 ]
+
+/-- The Italian determiner inventory. -/
+def inventory : Determiner.Inventory :=
+  allArticles.map .article ++ allQuantifiers.map (.quantifier ·.toQuantifier)
+
+/-- Italian derives the `.generallyMarked` [moroney-2021] cell. -/
+theorem marking : inventory.markingStrategy = .generallyMarked := by decide
 
 /-- Lookup by form. -/
 def lookup (form : String) : Option ItalianQuantifierEntry :=

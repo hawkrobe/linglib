@@ -94,4 +94,8 @@ def allQuantifiers : List Quantifier :=
 /-- All French article entries. -/
 def allArticles : List Article := [un, les]
 
+/-- The French determiner inventory. -/
+def inventory : Determiner.Inventory :=
+  allArticles.map .article ++ allQuantifiers.map .quantifier
+
 end French.Determiners
