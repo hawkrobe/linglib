@@ -280,5 +280,171 @@
     "comment": "With de the classifier denotes an abstract unit: the mensural reading.",
     "metaLanguage": "stan1293",
     "lgrConformance": ""
+  },
+  {
+    "id": "wangsun2026_13",
+    "source": {"bibkey": "wang-sun-2026", "paperLabel": "(31)"},
+    "reportedIn": null,
+    "language": "mand1415",
+    "primaryText": "nà hěn dà de yī zhāng zhuōzi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nà", "that"], ["hěn", "very"], ["dà", "big"], ["de", "DE"], ["yī", "one"], ["zhāng", "CL"],
+      ["zhuōzi", "table"]
+    ],
+    "translation": "that very big table",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "de-marked"],
+      ["position", "D _ Num"]
+    ],
+    "comment": "A de-marked modifier between the demonstrative and the numeral.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wangsun2026_14",
+    "source": {"bibkey": "wang-sun-2026", "paperLabel": "(37a)"},
+    "reportedIn": null,
+    "language": "mand1415",
+    "primaryText": "hěn míngguì de sān gè bēizi de jiǔ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["hěn", "very"], ["míngguì", "expensive"], ["de", "DE"], ["sān", "three"], ["gè", "CL"],
+      ["bēizi", "glass"], ["de", "DE"], ["jiǔ", "liquor"]
+    ],
+    "translation": "three glassfuls of very expensive liquor",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "two de-marked"],
+      ["target", "D"]
+    ],
+    "comment": "Two de-marked modifiers cannot both be 2-parts of D; acceptable only if the glasses are expensive.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wangsun2026_15",
+    "source": {"bibkey": "wang-sun-2026", "paperLabel": "(37b)"},
+    "reportedIn": null,
+    "language": "mand1415",
+    "primaryText": "hěn dà de sān gè bēizi de jiǔ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["hěn", "very"], ["dà", "big"], ["de", "DE"], ["sān", "three"], ["gè", "CL"],
+      ["bēizi", "glass"], ["de", "DE"], ["jiǔ", "liquor"]
+    ],
+    "translation": "liquor in the volume of three very big glasses",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modifier", "nested de-marked"]
+    ],
+    "comment": "The outer modifier is part of the modifier of D, not of D.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wangsun2026_16",
+    "source": {"bibkey": "wang-sun-2026", "paperLabel": "(43a)"},
+    "reportedIn": null,
+    "language": "mand1415",
+    "primaryText": "Sān gè píngguǒ, Zhāngsān chī-le.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sān", "three"], ["gè", "CL"], ["píngguǒ", "apple"], ["Zhāngsān", "Zhangsan"],
+      ["chī-le", "eat-PFV"]
+    ],
+    "translation": "Three apples, Zhangsan ate.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topicalisation", "D"]
+    ],
+    "comment": "The whole D topicalises: D is a part of O, a 1-part of C.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wangsun2026_17",
+    "source": {"bibkey": "wang-sun-2026", "paperLabel": "(44a)"},
+    "reportedIn": null,
+    "language": "mand1415",
+    "primaryText": "Píngguǒ, Zhāngsān chī-le sān gè hěn dà de.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Píngguǒ", "apple"], ["Zhāngsān", "Zhangsan"], ["chī-le", "eat-PFV"], ["sān", "three"],
+      ["gè", "CL"], ["hěn", "very"], ["dà", "big"], ["de", "DE"]
+    ],
+    "translation": "(As to) apples, Zhangsan ate three very big (ones).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topicalisation", "N"],
+      ["modifier", "2-part of Cl"]
+    ],
+    "comment": "N topicalises past a modifier that is the classifier's 2-part: D's 2-part is free.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wangsun2026_18",
+    "source": {"bibkey": "wang-sun-2026", "paperLabel": "(44b)"},
+    "reportedIn": null,
+    "language": "mand1415",
+    "primaryText": "Píngguǒ, Zhāngsān chī-le hěn dà de sān gè.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Píngguǒ", "apple"], ["Zhāngsān", "Zhangsan"], ["chī-le", "eat-PFV"], ["hěn", "very"],
+      ["dà", "big"], ["de", "DE"], ["sān", "three"], ["gè", "CL"]
+    ],
+    "translation": "(As to) apples, Zhangsan ate three very big (ones).",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["topicalisation", "N"],
+      ["modifier", "2-part of D"]
+    ],
+    "comment": "N cannot topicalise when the modifier fills D's 2-part.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "wangsun2026_19",
+    "source": {"bibkey": "wang-sun-2026", "paperLabel": "(45a)"},
+    "reportedIn": null,
+    "language": "mand1415",
+    "primaryText": "Píngguǒ bǐ yīngtáo duō sān kē.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Píngguǒ", "apple"], ["bǐ", "than"], ["yīngtáo", "cherry"], ["duō", "much"],
+      ["sān", "three"], ["kē", "CL"]
+    ],
+    "translation": "There are three more apples than cherries.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["use", "measure"],
+      ["noun", "absent"]
+    ],
+    "comment": "The measure use: the numeral and classifier with no noun, Q the 2-part of Deg.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   }
 ]
