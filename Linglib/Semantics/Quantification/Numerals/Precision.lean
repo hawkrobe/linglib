@@ -25,7 +25,7 @@ pragmatic halo, [krifka-2007]'s approximate interpretation.
   functions of the k-ness score (`Roundness.roundnessScore`). Only the
   monotone relationship — rounder numerals carry wider halos and favour
   approximate construal — is motivated by the cited papers
-  ([woodin-etal-2023]'s corpus finding); the magnitude constants and the
+  ([woodin-etal-2024]'s corpus finding); the magnitude constants and the
   score threshold are stipulations of this formalisation.
 -/
 

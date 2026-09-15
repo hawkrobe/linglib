@@ -18,7 +18,7 @@ Preservation (Ch. 6 (31), final form Ch. 7 (18)) blocks an imprecise construal o
 subexpression that loses an inference, entailment or incompatibility, that its precise construal
 licenses about a scalar or structural alternative. `Violates` is that constraint for one
 alternative, and with alternatives the numerals at least as round (79a) it derives the
-round–non-round asymmetry from [woodin-etal-2023]'s roundness score alone: the halo of *99* meets
+round–non-round asymmetry from [woodin-etal-2024]'s roundness score alone: the halo of *99* meets
 that of its alternative *100* as soon as it admits any deviation (`ninetyNine_blocked`), whereas
 the nearest alternative of *100* below a thousand is *200*, so deviations under fifty are
 preserved (`hundred_preserved`); *more than 100* is blocked by bare *100* at any deviation, and
@@ -41,7 +41,7 @@ modelled.
 * [haslinger-2025-diss]
 * [haslinger-2024]
 * [kriz-spector-2021]
-* [woodin-etal-2023]
+* [woodin-etal-2024]
 -/
 
 namespace Haslinger2025
