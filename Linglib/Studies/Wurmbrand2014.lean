@@ -1,254 +1,268 @@
-import Linglib.Data.Examples.Schema
-import Linglib.Semantics.Tense.Reichenbach
-import Linglib.Semantics.Tense.Pronoun
-import Linglib.Semantics.Tense.Embedding
+import Linglib.Core.Order.Interval
+import Linglib.Semantics.Tense.Decomposition
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Data.Examples.Wurmbrand2014
 
 /-!
-# [wurmbrand-2014]: Tense and aspect in English infinitives
-[wurmbrand-2014]
+# Wurmbrand (2014): Tense and Aspect in English Infinitives
 
-Wurmbrand (Linguistic Inquiry 45(3), 2014) classifies English infinitival
-complements into three types based on tense-aspect behavior:
+This file formalizes [wurmbrand-2014]'s account of the temporal composition of English
+infinitival complements. Three classes are distinguished by whether a bare, nonprogressive
+verb phrase can be episodic: future infinitives allow it, propositional attitude infinitives
+never do, and tenseless simultaneous infinitives allow it depending on the matrix tense
+(`InfinitivalTenseClass`). The distribution is derived from viewpoint aspect. Perfective
+aspect includes the event time in the reference time and imperfective the reverse
+(`Perfective`), and an episodic eventive predicate occupies an extended interval, so
+perfective fails whenever the reference time is an instant (`not_perfective_of_isPoint`).
+Each class fixes the embedded reference time (`ReferenceTime`): the future modal *woll* shifts
+it to an unrestricted interval after the evaluation time, a propositional attitude imposes the
+holder's NOW, an instant, and a tenseless simultaneous infinitive inherits the matrix reference
+time, an instant under present tense and an extended interval under past. The three rows of
+the paper's table follow (`Episodic`), and a verb ambiguous between classes, like *seem*, is
+episodic exactly when one of its classes is (`Verb.Episodic`).
 
-1. **Future irrealis** (`decide`, `want`, `plan`, `hope`): no independent
-   tense; future orientation comes from a woll-like operator selected by
-   the matrix verb. Example: "Leo decided to read a book" — reading is
-   future of deciding.
-2. **Propositional** (`believe`, `claim`): NOW-anchored tense. The
-   embedded event is simultaneous with the matrix attitude. Example: "Leo
-   believes Julia to be a princess" — princess-status at believing time.
-3. **Restructuring** (`try`, `begin`): dependent on matrix tense; embedded
-   event in the same temporal domain as the matrix.
+Future infinitives are tenseless: finite *will* is present tense plus *woll* and *would* is
+past plus *woll* (`Composition`), so finite future is absolute while infinitival future is
+relative to the matrix event (`infinitival_relative`), and infinitives are invisible to the
+sequence-of-tense rule, whose local tense feature skips them (`localTense`): a past under an
+infinitive under past deletes, a past under *will* does not, and a silent *would* in the
+infinitive would wrongly license deletion under a *will* matrix (`silent_would_wrong`).
 
-## Empirical anchors
+## Implementation notes
 
-- (1a) "Leo decided to read a book." — future irrealis
-- (1b) "Leo believes Julia to be a princess." — propositional
-- (2a) "Leo decided to bring the toys tomorrow." — future-irrealis +
-  episodic adverbial OK
-- (2b) "*Leo believed Julia to bring the toys right then." — propositional
-  + episodic adverbial blocks bare infinitive (needs progressive)
+Times are the nonempty intervals of a linear order; an instant is an interval whose endpoints
+coincide. The evaluation time of *woll* and the attitude holder's NOW are one instant
+parameter, and adverbials that restrict a reference time to an instant fall under the same
+lemma as the NOW. The obligatory deletion of *would*'s past is taken as the paper does, as a
+lexical requirement.
 
-## Lean encoding
+## References
 
-The `InfinitivalTenseClass` type is substrate (`Minimalist.ExtendedProjection`),
-shared with `Studies/Ostrove2026`. Wurmbrand's apparatus — temporal orientation,
-woll decomposition, episodic predictions, and the verb classification table — is
-study-local below; the empirical examples are generated from
-`Data/Examples/Wurmbrand2014.json`.
-
+* [wurmbrand-2014]
+* [ogihara-1996]
+* [abusch-1988]
+* [wurmbrand-2001]
+* [landau-2000]
 -/
 
 namespace Wurmbrand2014
 
-open Tense
-open Tense
-open Data.Examples (LinguisticExample)
-open Minimalist (InfinitivalTenseClass ComplementSize)
+open Tense Minimalist
 
-/-! ### Temporal orientation by class -/
+/-! ### Viewpoint aspect -/
 
-/-- The temporal orientation of a complement relative to the matrix event. -/
-inductive TemporalOrientation where
-  /-- Complement event after the matrix event. -/
-  | futureOriented
-  /-- Complement event simultaneous with the matrix event. -/
-  | simultaneous
-  /-- Complement event's temporal location depends entirely on the matrix. -/
-  | dependent
+section Aspect
+
+variable {T : Type*} [LinearOrder T]
+
+/-- Perfective aspect: the event time is included in the reference time. -/
+def Perfective (e r : NonemptyInterval T) : Prop := e ≤ r
+
+/-- Imperfective aspect: the reference time is included in the event time. -/
+def Imperfective (e r : NonemptyInterval T) : Prop := r ≤ e
+
+/-- An extended event time cannot be included in an instant: perfective aspect fails at a
+point reference time, the present, an attitude holder's NOW, or a reference time an adverbial
+restricts to an instant. -/
+theorem not_perfective_of_isPoint {e r : NonemptyInterval T} (he : ¬ e.IsPoint)
+    (hr : r.IsPoint) : ¬ Perfective e r := by
+  intro h
+  rw [Perfective, NonemptyInterval.le_def] at h
+  exact he (le_antisymm e.fst_le_snd (h.2.trans (hr.symm.le.trans h.1)))
+
+/-- Imperfective aspect, the progressive, is available at any instant within the event. -/
+theorem imperfective_pure_of_mem {e : NonemptyInterval T} {t : T} (h : t ∈ e) :
+    Imperfective e (NonemptyInterval.pure t) := by
+  rw [Imperfective, NonemptyInterval.le_def]
+  exact NonemptyInterval.mem_def.mp h
+
+/-! ### The reference time of an infinitive -/
+
+variable (matrixR : NonemptyInterval T) (now : T)
+
+/-- The reference time each class assigns the embedded aspect, given the matrix reference
+time and the evaluation instant: after *woll*, any interval after the evaluation time; under a
+propositional attitude, the holder's NOW; in a tenseless simultaneous infinitive, the matrix
+reference time. -/
+def ReferenceTime : InfinitivalTenseClass → NonemptyInterval T → Prop
+  | .futureIrrealis, r => now < r.fst
+  | .propositional, r => r = NonemptyInterval.pure now
+  | .restructuring, r => r = matrixR
+
+/-- A bare episodic verb phrase is available when some reference time of the class includes
+an extended event time. -/
+def Episodic (c : InfinitivalTenseClass) : Prop :=
+  ∃ r, ReferenceTime matrixR now c r ∧
+    ∃ e : NonemptyInterval T, ¬ e.IsPoint ∧ Perfective e r
+
+/-- A future infinitive always has an episodic reading: *woll* supplies an unrestricted
+interval. -/
+theorem episodic_futureIrrealis [NoMaxOrder T] : Episodic matrixR now .futureIrrealis := by
+  obtain ⟨a, ha⟩ := exists_gt now
+  obtain ⟨b, hb⟩ := exists_gt a
+  exact ⟨⟨(a, b), hb.le⟩, ha, ⟨(a, b), hb.le⟩, hb.ne, le_rfl⟩
+
+/-- A propositional attitude infinitive never has one: the holder's NOW is an instant. -/
+theorem not_episodic_propositional : ¬ Episodic matrixR now .propositional := by
+  rintro ⟨r, rfl, e, he, h⟩
+  exact not_perfective_of_isPoint he (show (NonemptyInterval.pure now).IsPoint from rfl) h
+
+/-- A tenseless simultaneous infinitive has one exactly when the matrix reference time is
+extended: under past tense, but not under present, nor under an adverbial restricting it to
+an instant. -/
+theorem episodic_restructuring_iff :
+    Episodic matrixR now .restructuring ↔ ¬ matrixR.IsPoint := by
+  constructor
+  · rintro ⟨r, rfl, e, he, h⟩ hp
+    exact not_perfective_of_isPoint he hp h
+  · exact λ h => ⟨matrixR, rfl, matrixR, h, le_rfl⟩
+
+/-! ### Verbs -/
+
+/-- The infinitive-taking verbs of the paper's table. -/
+inductive Verb where
+  | decide
+  | want
+  | promise
+  | expect
+  | claim
+  | believe
+  | try_
+  | begin_
+  | manage
+  | seem
   deriving DecidableEq, Repr
 
-/-- Each infinitival class's predicted temporal orientation. -/
-def classOrientation : InfinitivalTenseClass → TemporalOrientation
-  | .futureIrrealis => .futureOriented
-  | .propositional => .simultaneous
-  | .restructuring => .dependent
+/-- The classes a verb's infinitive may belong to: *expect* is future or, as a belief,
+propositional; *seem* is tenseless simultaneous or, with an attitude holder, propositional. -/
+def Verb.classes : Verb → List InfinitivalTenseClass
+  | .decide | .want | .promise => [.futureIrrealis]
+  | .expect => [.futureIrrealis, .propositional]
+  | .claim | .believe => [.propositional]
+  | .try_ | .begin_ | .manage => [.restructuring]
+  | .seem => [.restructuring, .propositional]
 
-/-! ### Woll decomposition -/
+/-- A verb's infinitive has an episodic reading when one of its classes does. -/
+def Verb.Episodic (v : Verb) : Prop :=
+  ∃ c ∈ v.classes, Wurmbrand2014.Episodic matrixR now c
 
-/-- *will* = PRES + *woll*; *would* = PAST + *woll* (§2). The tense component
-    undergoes SOT; *woll* supplies the future orientation. -/
-structure WollDecomposition where
-  /-- The tense component (a `Finset Ordering` comparison cell). -/
-  tense : Finset Ordering
-  /-- Whether *woll* is present (future orientation). -/
-  hasWoll : Bool
+/-- *believe* never allows a bare episodic complement. -/
+theorem believe_not_episodic : ¬ Verb.believe.Episodic matrixR now := by
+  rintro ⟨c, hc, h⟩
+  simp only [Verb.classes, List.mem_singleton] at hc
+  exact not_episodic_propositional matrixR now (hc ▸ h)
+
+/-- *seem* allows one exactly when the matrix reference time is extended: its propositional
+option adds nothing. -/
+theorem seem_episodic_iff : Verb.seem.Episodic matrixR now ↔ ¬ matrixR.IsPoint := by
+  constructor
+  · rintro ⟨c, hc, h⟩
+    simp only [Verb.classes, List.mem_cons, List.not_mem_nil, or_false] at hc
+    rcases hc with rfl | rfl
+    · exact (episodic_restructuring_iff matrixR now).mp h
+    · exact absurd h (not_episodic_propositional matrixR now)
+  · exact λ h => ⟨.restructuring, by simp [Verb.classes],
+      (episodic_restructuring_iff matrixR now).mpr h⟩
+
+/-- *decide* always allows one. -/
+theorem decide_episodic [NoMaxOrder T] : Verb.decide.Episodic matrixR now :=
+  ⟨.futureIrrealis, by simp [Verb.classes], episodic_futureIrrealis matrixR now⟩
+
+end Aspect
+
+/-! ### Temporal composition -/
+
+/-- The temporal composition of a clause: an optional tense feature and whether the future
+modal *woll* is present. -/
+structure Composition where
+  tense : Option (Finset Ordering)
+  woll : Bool
   deriving DecidableEq
 
-/-- *will* = present + woll. -/
-def will_ : WollDecomposition where
-  tense := present
-  hasWoll := true
+/-- Finite *will*: present tense plus *woll*. -/
+def will : Composition := ⟨some present, true⟩
 
-/-- *would* = past + woll. -/
-def would_ : WollDecomposition where
-  tense := past
-  hasWoll := true
+/-- Finite *would*: past tense plus *woll*. -/
+def would : Composition := ⟨some past, true⟩
 
-/-- Plain present (no woll). -/
-def plainPresent : WollDecomposition where
-  tense := present
-  hasWoll := false
+/-- An infinitive: no tense, with or without *woll*. -/
+def infinitive (woll : Bool) : Composition := ⟨none, woll⟩
 
-/-- *will* and *would* share the woll component. -/
-theorem will_would_share_woll : will_.hasWoll = would_.hasWoll := rfl
+/-- The composition of each class: all tenseless, with *woll* in the future class only. -/
+def composition : InfinitivalTenseClass → Composition
+  | .futureIrrealis => infinitive true
+  | .propositional | .restructuring => infinitive false
 
-/-- *will* and *would* differ only in tense. -/
-theorem will_would_tense_differs : will_.tense ≠ would_.tense := by decide
+/-- *woll* projects the modal layer: a class has *woll* exactly when its complement is a
+ModP. -/
+theorem woll_iff_modP (c : InfinitivalTenseClass) :
+    (composition c).woll = true ↔ c.toComplementSize = .modP := by
+  cases c <;> decide
 
-/-- Only future-irrealis infinitives contain the future modal *woll*. -/
-def classHasWoll : InfinitivalTenseClass → Bool
-  | .futureIrrealis => true
-  | .propositional => false
-  | .restructuring => false
+section Future
 
-theorem futureIrrealis_has_woll : classHasWoll .futureIrrealis = true := rfl
-theorem propositional_no_woll : classHasWoll .propositional = false := rfl
-theorem restructuring_no_woll : classHasWoll .restructuring = false := rfl
+variable {T : Type*} [LinearOrder T]
 
-/-! ### Episodic interpretation predictions (Table 3) -/
+/-- Where a composition with *woll* locates its event: after the utterance time when present
+tense is present, after the evaluation time otherwise. -/
+def Composition.Locates (c : Composition) (utterance eval e : T) : Prop :=
+  c.woll = true ∧ if c.tense = some present then utterance < e else eval < e
 
-/-- Availability of bare (nonprogressive) episodic interpretations (§4). -/
-inductive EpisodicAvailability where
-  /-- Possible: *woll* supplies an unrestricted future reference time. -/
-  | possible
-  /-- Impossible: the attitude holder's NOW is too short for perfective. -/
-  | impossible
-  /-- Matrix-dependent: possible iff the matrix reference time is large enough. -/
-  | matrixDependent
-  deriving DecidableEq, Repr
+/-- Finite future is absolute: the event follows the utterance time. -/
+theorem will_absolute {utterance eval e : T} (h : will.Locates utterance eval e) :
+    utterance < e := by
+  simpa [will, Composition.Locates] using h.2
 
-/-- Each class's episodic prediction. -/
-def classEpisodicPrediction : InfinitivalTenseClass → EpisodicAvailability
-  | .futureIrrealis => .possible
-  | .propositional => .impossible
-  | .restructuring => .matrixDependent
+/-- Infinitival future is relative: the event may precede the utterance time so long as it
+follows the matrix evaluation time. -/
+theorem infinitival_relative [DenselyOrdered T] {utterance eval : T} (h : eval < utterance) :
+    ∃ e, (infinitive true).Locates utterance eval e ∧ e < utterance := by
+  obtain ⟨e, h₁, h₂⟩ := exists_between h
+  exact ⟨e, ⟨rfl, by simpa [infinitive] using h₁⟩, h₂⟩
 
-theorem propositional_no_episodic :
-    classEpisodicPrediction .propositional = .impossible := rfl
-theorem restructuring_episodic_matrix_dependent :
-    classEpisodicPrediction .restructuring = .matrixDependent := rfl
-theorem futureIrrealis_episodic_possible :
-    classEpisodicPrediction .futureIrrealis = .possible := rfl
+end Future
 
-/-! ### Verb classification -/
+/-! ### Sequence of tense -/
 
-/-- A verb classified by its infinitival tense class (Table 4). -/
-structure InfinitivalVerb where
-  /-- The verb lemma. -/
-  lemma_ : String
-  /-- Its tense class. -/
-  tenseClass : InfinitivalTenseClass
-  deriving Repr
+/-- The local tense feature of an embedded tense: the nearest tense feature above it,
+infinitives contributing none. -/
+def localTense : List (Option (Finset Ordering)) → Option (Finset Ordering)
+  | [] => none
+  | some f :: _ => some f
+  | none :: rest => localTense rest
 
-def want : InfinitivalVerb := ⟨"want", .futureIrrealis⟩
-def decide : InfinitivalVerb := ⟨"decide", .futureIrrealis⟩
-def plan : InfinitivalVerb := ⟨"plan", .futureIrrealis⟩
-def promise : InfinitivalVerb := ⟨"promise", .futureIrrealis⟩
-def believe : InfinitivalVerb := ⟨"believe", .propositional⟩
-def claim : InfinitivalVerb := ⟨"claim", .propositional⟩
-def try_ : InfinitivalVerb := ⟨"try", .restructuring⟩
-def begin_ : InfinitivalVerb := ⟨"begin", .restructuring⟩
-def manage : InfinitivalVerb := ⟨"manage", .restructuring⟩
+/-- Ogihara's rule: an embedded tense may delete when its local tense feature is the same
+feature. -/
+def sotApplies (above : List (Option (Finset Ordering))) (embedded : Finset Ordering) : Bool :=
+  match localTense above with
+  | some m => Decomposition.sotDeletionApplicable m embedded
+  | none => false
 
-/-- A verb ambiguous between two infinitival tense classes. -/
-structure AmbiguousVerb where
-  lemma_ : String
-  readings : List InfinitivalTenseClass
-  deriving Repr
+/-- The present of *will* intervenes between two pasts, blocking deletion. -/
+theorem sot_will_blocks : sotApplies [will.tense, some past] past = false := by decide
 
-/-- *expect* is ambiguous between future-irrealis and propositional (§3, §4.3). -/
-def expect : AmbiguousVerb := ⟨"expect", [.futureIrrealis, .propositional]⟩
+/-- A tenseless infinitive does not intervene, so the lower past deletes. -/
+theorem sot_infinitive_transparent :
+    sotApplies [(infinitive true).tense, some past] past = true := by
+  decide
 
-/-- *seem* is restructuring, but propositional with an experiencer (§4.4). -/
-def seem : AmbiguousVerb := ⟨"seem", [.restructuring, .propositional]⟩
+/-- The past of *would* licenses deletion below it. -/
+theorem sot_would : sotApplies [would.tense, some past] past = true := by decide
 
-theorem expect_is_ambiguous : expect.readings.length > 1 := by decide
-theorem seem_is_ambiguous : seem.readings.length > 1 := by decide
+/-- Under a *will* matrix, a past below an infinitive finds no past above it. -/
+theorem sot_will_infinitive : sotApplies [(infinitive true).tense, will.tense] past = false := by
+  decide
 
-/-! ### Per-class classification theorems -/
+/-- A silent *would* in the infinitive would license deletion under a *will* matrix, contrary
+to the judgment. -/
+theorem silent_would_wrong : sotApplies [would.tense, will.tense] past = true := by decide
 
-/-- `want` is future-irrealis → future-oriented complement. -/
-theorem wurmbrandClassifiesWant :
-    want.tenseClass = .futureIrrealis ∧
-    classOrientation .futureIrrealis = .futureOriented := ⟨rfl, rfl⟩
+/-- *would*'s past must delete: it is licensed only below a past. -/
+def WouldLicensed (above : List (Option (Finset Ordering))) : Prop := sotApplies above past = true
 
-/-- `believe` is propositional → simultaneous complement. -/
-theorem wurmbrandClassifiesBelieve :
-    believe.tenseClass = .propositional ∧
-    classOrientation .propositional = .simultaneous := ⟨rfl, rfl⟩
+instance : DecidablePred WouldLicensed := λ _ => inferInstanceAs (Decidable (_ = true))
 
-/-- `try` is restructuring → dependent on matrix temporal domain. -/
-theorem wurmbrandClassifiesTry :
-    try_.tenseClass = .restructuring ∧
-    classOrientation .restructuring = .dependent := ⟨rfl, rfl⟩
-
-/-! ### Derivation theorems -/
-
-theorem futureIrrealis_is_future_oriented :
-    classOrientation .futureIrrealis = .futureOriented := rfl
-theorem propositional_now_anchored :
-    classOrientation .propositional = .simultaneous := rfl
-theorem restructuring_dependent :
-    classOrientation .restructuring = .dependent := rfl
-
-/-- Propositional NOW-anchoring connects to attitude embedding: the
-    embedded perspective time is the matrix event time (`embeddedFrame`). -/
-theorem propositional_uses_attitude_eval_time :
-    classOrientation .propositional = .simultaneous ∧
-    ∀ (f : Tense.ReichenbachFrame ℕ) (embR embE : ℕ),
-      (Tense.embeddedFrame f embR embE).perspectiveTime = f.eventTime :=
-  ⟨rfl, fun _ _ _ => rfl⟩
-
-/-- Restructuring infinitives lack independent tense: `dependent` orientation,
-    the smallest complement size (`vP`), and no woll. -/
-theorem restructuring_minimal_structure :
-    classOrientation .restructuring = .dependent ∧
-    InfinitivalTenseClass.toComplementSize .restructuring = .vP ∧
-    classHasWoll .restructuring = false :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- Future-oriented complements have woll and project a modal (wollP ≈ ModP). -/
-theorem futureIrrealis_structural_future :
-    classHasWoll .futureIrrealis = true ∧
-    InfinitivalTenseClass.toComplementSize .futureIrrealis = .modP ∧
-    classOrientation .futureIrrealis = .futureOriented :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- Woll presence correlates exactly with future orientation. -/
-theorem woll_iff_future :
-    ∀ c : InfinitivalTenseClass,
-      classHasWoll c = true ↔ classOrientation c = .futureOriented := by
-  intro c; cases c <;> simp [classHasWoll, classOrientation]
-
-/-! ### Complement-size hierarchy
-
-Wurmbrand's theory-internal sizing is `wollP > TP > vP/AspP`. The substrate
-`InfinitivalTenseClass.toComplementSize` maps future-irrealis and propositional
-to the same fseq tier (ModP/TP), so the strict ordering is recorded here via a
-study-local rank. -/
-
-/-- Wurmbrand's complement-size rank: future-irrealis > propositional > restructuring. -/
-def sizeRank : InfinitivalTenseClass → Nat
-  | .futureIrrealis => 3
-  | .propositional => 2
-  | .restructuring => 1
-
-theorem complement_size_hierarchy :
-    sizeRank .futureIrrealis > sizeRank .propositional ∧
-    sizeRank .propositional > sizeRank .restructuring := by decide
-
-/-- Episodic availability tracks complement size: complements with their own
-    temporal elements allow episodic readings; smaller ones are matrix-dependent. -/
-theorem episodic_correlates_with_size :
-    classEpisodicPrediction .futureIrrealis = .possible ∧
-    InfinitivalTenseClass.toComplementSize .futureIrrealis = .modP ∧
-    classEpisodicPrediction .propositional = .impossible ∧
-    InfinitivalTenseClass.toComplementSize .propositional = .tP ∧
-    classEpisodicPrediction .restructuring = .matrixDependent ∧
-    InfinitivalTenseClass.toComplementSize .restructuring = .vP :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+/-- Temporal *would* under *will* is out, under a past matrix in. -/
+theorem would_licensing : ¬ WouldLicensed [will.tense] ∧ WouldLicensed [some past] := by decide
 
 end Wurmbrand2014
