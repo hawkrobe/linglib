@@ -91,8 +91,8 @@ theorem classicality_univ (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
     support univAccessModel (.univ .x (.disj three more)) s ↔
       ∀ i ∈ s,
         (FirstOrder.Language.Formula.all₁ QVar.x
-          ((monadicRel Predicate.three).formula₁ (FirstOrder.Language.Term.var QVar.x) ⊔
-            (monadicRel Predicate.more).formula₁
+          ((predSymb Predicate.three).formula₁ (FirstOrder.Language.Term.var QVar.x) ⊔
+            (predSymb Predicate.more).formula₁
               (FirstOrder.Language.Term.var QVar.x))).RealizeAt
           univAccessModel.interp i.world (v i) :=
   support_iff_forall_realizeAt univAccessModel rfl s v hv

@@ -35,7 +35,7 @@ variable [DecidableEq Domain] [Fintype Domain] [Inhabited Domain]
     NE-free fragment. -/
 theorem support_singleton_iff_st (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
-    {τ : ModalFormula (Language.monadicWithConstants Const Pred) Var} {k : ℕ}
+    {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var} {k : ℕ}
     (hτ : φ.toModal? = some τ)
     {i : Index W Var Domain} {v : Var → Domain} (u : ℕ → W)
     (hv : ∀ y, i.assign y = some (v y)) (hu : u k = i.world) :
@@ -48,7 +48,7 @@ theorem support_singleton_iff_st (M : Model W Domain Const Pred)
     as a sentence of `M.correspondence`. -/
 theorem models_toSentence_of_support (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
-    {τ : ModalFormula (Language.monadicWithConstants Const Pred) Var}
+    {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var}
     (hτ : φ.toModal? = some τ)
     (hcl : (stClose 0 (τ.st 0)).freeVarFinset = ∅)
     {i : Index W Var Domain} {v : Var → Domain}
@@ -71,7 +71,7 @@ theorem models_toSentence_of_support (M : Model W Domain Const Pred)
 theorem exists_support_of_models_toSentence
     (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
-    {τ : ModalFormula (Language.monadicWithConstants Const Pred) Var}
+    {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var}
     (hτ : φ.toModal? = some τ)
     (hcl : (stClose 0 (τ.st 0)).freeVarFinset = ∅)
     (h : letI := M.correspondence
@@ -109,7 +109,7 @@ theorem exists_support_of_models_toSentence
 theorem support_compactness {Var : Type*} [DecidableEq Var] [Fintype Var]
     {Const : Type u} {Pred : Type v} {ι : Type*}
     {φs : ι → Formula Var Const Pred}
-    {τs : ι → ModalFormula (Language.monadicWithConstants Const Pred) Var}
+    {τs : ι → ModalFormula ((Language.monadic Pred)[[Const]]) Var}
     (hτ : ∀ i, (φs i).toModal? = some (τs i))
     (hcl : ∀ i, (stClose 0 ((τs i).st 0)).freeVarFinset = ∅)
     (hfin : ∀ s : Finset ι, ∃ (W Domain : Type max u v)
@@ -126,7 +126,7 @@ theorem support_compactness {Var : Type*} [DecidableEq Var] [Fintype Var]
   obtain ⟨W, Domain, _, _, _, _, M, i, v, hv, hs⟩ := hfin (Finset.univ.image f)
   let _S := M.correspondence
   have : Nonempty (W ⊕ Domain) := ⟨Sum.inl i.world⟩
-  have : (W ⊕ Domain) ⊨ (T₀ : (Language.monadicWithConstants Const Pred).correspondence.Theory) := by
+  have : (W ⊕ Domain) ⊨ (T₀ : ((Language.monadic Pred)[[Const]]).correspondence.Theory) := by
     refine ⟨fun σ hσ => ?_⟩
     obtain ⟨x, rfl⟩ : ∃ x : T₀,
         (stClose 0 ((τs (f x)).st 0)).toSentence (hcl (f x)) = σ :=

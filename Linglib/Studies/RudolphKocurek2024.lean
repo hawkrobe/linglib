@@ -162,7 +162,7 @@ instance instDec [Fintype I] [Fintype E] [DecidableEq E]
     [hA : DecidableAtoms interp] (le : I → I → Prop) [DecidableRel le] :
     ∀ (φ : ComparativeFormula L E) (i : I) (w : W), Decidable (Realize interp φ le i w)
   | .ofFormula ψ, i, w =>
-      @Formula.decRealize L E (interp i w) _ _ (λ n r x => hA i w n r x) E ψ id
+      @Formula.decidableRealize L E (interp i w) _ _ (λ n r x => hA i w n r x) E ψ id
   | .not A, i, w => @instDecidableNot _ (instDec le A i w)
   | .inf A B, i, w => @instDecidableAnd _ _ (instDec le A i w) (instDec le B i w)
   | .sup A B, i, w => @instDecidableOr _ _ (instDec le A i w) (instDec le B i w)
@@ -617,7 +617,7 @@ instance EvalRevised.instDec [Fintype I] [Fintype E] [DecidableEq E]
     ∀ (φ : ComparativeFormula L E) (i : I) (w : W),
       Decidable (EvalRevised interp φ ord i w)
   | .ofFormula ψ, i, w =>
-      @Formula.decRealize L E (interp i w) _ _ (λ n r x => hA i w n r x) E ψ id
+      @Formula.decidableRealize L E (interp i w) _ _ (λ n r x => hA i w n r x) E ψ id
   | .not A, i, w => @instDecidableNot _ (EvalRevised.instDec ord A i w)
   | .inf A B, i, w =>
       @instDecidableAnd _ _ (EvalRevised.instDec ord A i w) (EvalRevised.instDec ord B i w)
@@ -1506,10 +1506,10 @@ instance : DecidableRel ord₃.le := λ _ _ => inferInstanceAs (Decidable (_ = t
 /-- An interpretation family over a monadic language from a truth table. -/
 @[instance_reducible] def interpOf {Sym I E : Type*} (f : I → Sym → E → Bool) :
     I → W → (Language.monadic Sym).Structure E :=
-  λ i _ => monadicStructure λ P e => f i P e = true
+  λ i _ => monadic.structure λ P e => f i P e = true
 
 instance {Sym I E : Type*} (f : I → Sym → E → Bool) : DecidableAtoms (interpOf f) :=
-  λ _ _ => monadicStructure.decRelMap _
+  inferInstance
 
 /-- The predicates *linguist* and *philosopher*. -/
 inductive Pred | linguist | philosopher

@@ -26,8 +26,8 @@ by state non-emptiness.
 * `State.modalLift`: a set of worlds, paired with one assignment.
 * `Formula`: the formula language; `Formula.nec` is the derived `□`;
   `Formula.NEFree` the NE-free fragment.
-* `Model`, `Model.ofMonadic`: models, as `ModalStructure`s over
-  `Language.monadicWithConstants`.
+* `Model`, `Model.ofMonadic`: models, as `ModalStructure`s over the monadic
+  signature with constants `(Language.monadic Pred)[[Const]]`.
 * `eval`, `support`, `antiSupport`: bilateral evaluation.
 * `ModalStructure.IsStateBased`, `ModalStructure.IsIndisputable`: frame
   conditions via `s↓`.
@@ -410,26 +410,32 @@ theorem Formula.NEFree.mapAtoms
     construction, not by bridge. -/
 abbrev Model (W : Type*) (Domain : Type*) (Const : Type*)
     (Pred : Type*) :=
-  FirstOrder.Language.ModalStructure
-    (Language.monadicWithConstants Const Pred) W Domain
+  FirstOrder.Language.ModalStructure ((Language.monadic Pred)[[Const]]) W Domain
+
+/-- The unary relation symbol of the predicate `P`. -/
+abbrev predSymb (P : Pred) : ((Language.monadic Pred)[[Const]]).Relations 1 :=
+  Sum.inl P
 
 /-- The QBSML model with accessibility `access`, constant interpretation
     `κ`, and valuation `V`. -/
 def Model.ofMonadic {W Domain Const Pred : Type*} (access : W → Finset W)
     (κ : W → Const → Domain) (V : W → Pred → Domain → Prop) :
     Model W Domain Const Pred :=
-  ⟨access, fun w => Language.monadicWithConstantsStructure (κ w) (V w)⟩
+  ⟨access, fun w =>
+    letI := Language.monadic.structure (V w)
+    letI := Language.constantsOn.structure (κ w)
+    inferInstance⟩
 
 @[simp] theorem predInterp_ofMonadic {W Domain Const Pred : Type*}
     (access : W → Finset W) (κ : W → Const → Domain)
     (V : W → Pred → Domain → Prop) (P : Pred) (w : W) (d : Domain) :
-    (Model.ofMonadic access κ V).relInterp₁ P w d ↔ V w P d :=
+    (Model.ofMonadic access κ V).relInterp₁ (predSymb P) w d ↔ V w P d :=
   Iff.rfl
 
 @[simp] theorem constInterp_ofMonadic {W Domain Const Pred : Type*}
     (access : W → Finset W) (κ : W → Const → Domain)
     (V : W → Pred → Domain → Prop) (c : Const) (w : W) :
-    (Model.ofMonadic access κ V).constInterp c w = κ w c :=
+    (Model.ofMonadic access κ V).constInterp ((Language.monadic Pred).con c) w = κ w c :=
   rfl
 
 /-! ### Bilateral evaluation -/
@@ -446,13 +452,15 @@ variable [Fintype Domain]
 def eval (M : Model W Domain Const Pred) :
     Bool → Formula Var Const Pred → Finset (Index W Var Domain) → Prop
   | true,  .pred P x, s =>
-      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ M.relInterp₁ P i.world d
+      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ M.relInterp₁ (predSymb P) i.world d
   | false, .pred P x, s =>
-      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ ¬ M.relInterp₁ P i.world d
+      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ ¬ M.relInterp₁ (predSymb P) i.world d
   | true,  .predc P c, s =>
-      ∀ i ∈ s, M.relInterp₁ P i.world (M.constInterp c i.world)
+      ∀ i ∈ s,
+        M.relInterp₁ (predSymb P) i.world (M.constInterp ((Language.monadic Pred).con c) i.world)
   | false, .predc P c, s =>
-      ∀ i ∈ s, ¬ M.relInterp₁ P i.world (M.constInterp c i.world)
+      ∀ i ∈ s,
+        ¬ M.relInterp₁ (predSymb P) i.world (M.constInterp ((Language.monadic Pred).con c) i.world)
   | true,  .ne, s => s.Nonempty
   | false, .ne, s => s = ∅
   | true,  .neg ψ, s => eval M false ψ s
