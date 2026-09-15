@@ -1,298 +1,152 @@
+import Mathlib.Analysis.SpecialFunctions.Log.Base
 import Linglib.Pragmatics.Efficiency
-import Linglib.Pragmatics.AsymmetricCommunication
+import Linglib.Data.Examples.XuEtAl2024
 
 /-!
-# Word Reuse and Combination Support Efficient Communication
-[xu-etal-2024]
+# Xu, Kemp, Frermann & Xu (2024): Word Reuse and Combination Support Efficient Communication
 
-Xu, A., Kemp, C., Frermann, L., & Xu, Y. (2024). Word reuse and combination
-support efficient communication of emerging concepts. *PNAS* 121(46),
-e2406971121.
+This file formalizes the efficient-communication account of lexicalization in [xu-etal-2024].
+A novel concept enters the lexicon by reusing an existing form or by combining existing forms
+into a compound, and both strategies are shaped by a tradeoff between speaker effort, the
+expected length of the form, and information loss, the expected surprisal of the intended
+concept under the listener's distribution (`costs`). The speaker produces from the expanded
+lexicon while the listener, who has not yet acquired the new pairs, interprets each form as
+the label of a category with a prototype, assigning concepts probability by a similarity
+choice rule (`listener`), so the listener's distribution is positive, normalized, and
+decreasing in the distance to the prototype (`listener_pos`, `sum_listener`, `listener_anti`).
+The combined objective weights the two costs by a tradeoff parameter and, with need held
+fixed, decomposes into an item-level objective, so an encoding that is optimal concept by
+concept is optimal overall (`weightedCost_costs`, `weightedCost_le_of_forall`). Along the
+frontier the optimal encodings trade length for informativeness as the parameter grows
+(`Pragmatics.Efficiency.frontier_antitone`), and a compound is longer than the constituent it
+reuses (`length_compound`), the length half of the tradeoff the paper reports between the two
+strategies. An item is literal when the intended concept is a hyponym of an existing sense of
+the reused form or of the compound's head (`Literal`), and the model predicts that a form
+whose prototype lies closer to the intended concept incurs less information loss
+(`surprisal_anti`).
 
-## Empirical contributions
+## Implementation notes
 
-Using WordNet data from English, French, and Finnish (1900–2000):
+The speaker's distribution is a point mass on the intended concept, so the expected
+Kullback–Leibler divergence of the paper is the expected surprisal. Need probabilities and
+the production policy enter through one weight per concept over a deterministic encoding, the
+case under which the paper computes its frontier. The corpus results, the fitted sensitivity
+parameter, the sentence-encoder prototypes, and the baseline encodings are not restated; the
+attested items of the paper's first table and the near-synonyms of its second are recorded
+as examples.
 
-1. Both reuse items and compounds sit near the Pareto frontier of
-   communicative efficiency (Fig. 2).
-2. Attested encodings are more efficient than random and near-synonym
-   baselines (Fig. 3).
-3. Literal items (hyponymic reuse, endocentric compounds) tend to be
-   more efficient than nonliteral counterparts (paper §3.2; significant
-   for French and Finnish reuse, with English reuse supplemented by
-   compound head words because WordNet does not directly classify
-   English-reuse literality).
-4. Reuse items tend shorter than compounds across all three languages;
-   compounds tend more informative than reuse items in English and
-   French only (paper §3.3 — Finnish does not show the informativeness
-   asymmetry).
+## References
 
-## Connection to polysemy
-
-Word reuse is a polysemy-generating process: when *mouse* acquires the
-sense "computer peripheral", the word becomes polysemous. This study
-provides an information-theoretic account of why productive polysemy
-exists — it is communicatively efficient under a tradeoff between
-length and listener confusion. Bridges synchronic copredication judgments
-([asher-2011], [gotham-2017]) to a diachronic functional account.
+* [xu-etal-2024]
+* [kemp-regier-2012]
+* [zaslavsky-kemp-regier-tishby-2018]
+* [regier-kemp-kay-2015]
 -/
 
-namespace XuEtAl2024.Polysemy
+namespace XuEtAl2024
 
-open Pragmatics.Communication (AsymmetricCommModel)
-open Pragmatics.Efficiency (CostPair weightedCost)
+open Pragmatics.Efficiency Finset
 
-/-! ## §0. Lexicalization substrate
+/-- Surprisal in bits. -/
+noncomputable def surprisal (x : ℝ) : ℝ := -Real.logb 2 x
 
-The information-theoretic model of lexicalization: novel concepts enter
-the lexicon either by *reuse* (an existing word picks up a new sense —
-*mouse* → computer peripheral) or by *compounding* (concatenation of
-existing words — *spreadsheet*). Both strategies are shaped by the same
-tradeoff between speaker effort (word length) and information loss
-(listener confusion).
+/-- Surprisal decreases as probability grows. -/
+theorem surprisal_anti {x y : ℝ} (hx : 0 < x) (hxy : x ≤ y) : surprisal y ≤ surprisal x :=
+  neg_le_neg (Real.logb_le_logb_of_le (by norm_num) hx hxy)
 
-This is a model of **innovation spread under variation**, not a
-synchronic optimization of a static lexicon. [xu-etal-2024] §1–§2 ground
-in the variation-theory tradition ([weinreich-labov-herzog-1968],
-[milroy-milroy-1985], [labov-2011]): there is a spread interval
-`[t₁, t₂]` during which only some members of the speech community have
-acquired the new encoding `E*`. The speaker's production policy is
-conditioned on the expanded lexicon `L'` (= `L ∪ E*`); the listener's
-interpretation is conditioned on the existing lexicon `L`. This
-asymmetry is the diachronic content — it lives at the type level via
-`Pragmatics.Communication.AsymmetricCommModel` (its `produce` and
-`comprehend` are independent functions that may disagree). -/
+/-! ### The listener -/
 
-/-- Strategy by which a novel concept enters the lexicon
-    ([xu-etal-2024] Table 1: reuse items R vs. compounds C).
+section Listener
 
-    The paper notes that borrowing (e.g., *tofu*) and coinage (e.g.,
-    *quark*) are additional lexicalization strategies excluded from
-    its scope; this enum mirrors that scope restriction. -/
-inductive Strategy where
-  /-- Reuse an existing word for a new meaning.
-      E.g., *mouse* (rodent → peripheral), *dish* (plate → antenna). -/
-  | reuse
-  /-- Concatenate existing words into a compound.
-      E.g., *birthday card*, *spreadsheet*, *urban renewal*. -/
-  | compound
-  deriving DecidableEq, Repr
+variable {C W Q : Type*} [Fintype C]
 
-/-- Literality of the form–meaning relationship. Literal items tend to
-    be more communicatively efficient ([xu-etal-2024] §3.2).
+/-- The similarity choice listener: the probability of a concept given a form falls off
+exponentially, at rate `γ`, with the concept's distance from the form's prototype. -/
+noncomputable def listener (γ : ℝ) (d : C → Q → ℝ) (q : W → Q) (w : W) (c : C) : ℝ :=
+  Real.exp (-γ * d c (q w)) / ∑ c', Real.exp (-γ * d c' (q w))
 
-    This binary distinction is a coarsening of the continuous taxonomic-
-    distance measures the paper *also* tests (Wu-Palmer 1994;
-    Leacock-Chodorow-Miller 1998), reported in paper §3.2 final
-    paragraph + SI §S5.E as monotonically correlated with efficiency
-    loss. The enum captures the headline literal/non-literal contrast;
-    a continuous version would parameterize over a distance metric. -/
-inductive Literality where
-  /-- Form directly relates to the intended concept.
-      - Reuse: intended sense is a hyponym of an existing sense.
-      - Compound: endocentric (head = superordinate of intended concept). -/
-  | literal
-  /-- Metaphorical or metonymic relationship.
-      - Reuse: e.g., *mouse* for computer peripheral.
-      - Compound: exocentric, e.g., *boîte noire* = flight recorder. -/
-  | nonliteral
-  deriving DecidableEq, Repr
+variable (γ : ℝ) (d : C → Q → ℝ) (q : W → Q) (w : W)
 
-/-- A form–concept pair in an emerging encoding (one entry in `E*`).
+/-- The listener never assigns zero probability. -/
+theorem listener_pos [Nonempty C] (c : C) : 0 < listener γ d q w c :=
+  div_pos (Real.exp_pos _) (sum_pos (λ _ _ => Real.exp_pos _) univ_nonempty)
 
-    The `concept` field is a human-readable label. In [xu-etal-2024]
-    actual use, concepts are WordNet sense IDs embedded via Sentence-BERT
-    (paper §5.3); two distinct senses can share a surface label, so
-    serious instantiation needs disambiguating IDs. The string here is
-    a presentation-layer convenience for example data. -/
-structure FormConceptPair where
-  form : String
-  concept : String
-  strategy : Strategy
-  literality : Literality
-  deriving Repr
+/-- The listener's distribution is normalized. -/
+theorem sum_listener [Nonempty C] : ∑ c, listener γ d q w c = 1 := by
+  unfold listener
+  rw [← sum_div, div_self (sum_pos (λ _ _ => Real.exp_pos _) univ_nonempty).ne']
 
-/-- Orthographic form length, used as the speaker-effort proxy in
-    [xu-etal-2024] (paper eq. 2). -/
-def FormConceptPair.formLength (p : FormConceptPair) : ℕ := p.form.length
+/-- A concept closer to the prototype is more probable. -/
+theorem listener_anti (hγ : 0 ≤ γ) {c c' : C} (h : d c (q w) ≤ d c' (q w)) :
+    listener γ d q w c' ≤ listener γ d q w c :=
+  div_le_div_of_nonneg_right
+    (Real.exp_le_exp.2 (by nlinarith)) (sum_nonneg λ _ _ => (Real.exp_pos _).le)
 
-/-- Per-pair surprisal cap used when `model.comprehend` returns a
-    non-positive value. The paper's softmax model never produces zero
-    listener probability, so this bound is for numeric robustness only.
-    Default is 20 nats ≈ 28.8 bits, comfortably above attested typical
-    information loss of ~10–15 bits ([xu-etal-2024] Fig. 2 axes;
-    paper uses log₂, this file uses natural log). -/
-def surprisalCap : ℝ := 20
+/-- With no sensitivity the listener is uniform. -/
+theorem listener_zero (c : C) : listener 0 d q w c = 1 / Fintype.card C := by
+  simp [listener]
 
-/-- Communicative costs of an encoding under an asymmetric communication
-    model. Cost₂ uses `model.comprehend` (the listener-side channel
-    conditioned on the existing lexicon `L`), reflecting the diachronic
-    asymmetry [xu-etal-2024] introduces. The speaker-side `produce`
-    channel is not consumed in the deterministic-policy case (see below)
-    but lives in the same `model` so future non-deterministic versions
-    can read it.
+end Listener
 
-    `cost₁` (paper eq. 2): expected word length under `needProb`.
-    `cost₂` (paper eq. 3): expected surprisal under the listener
-    distribution. The unweighted sum `cost₂ + β · cost₁` recovers
-    `L_β` (paper eq. 4); the per-pair, proportional rearrangement is
-    paper eq. 5. We use natural log throughout, so `cost₂` is in nats;
-    multiply by `1 / Real.log 2` for the paper's bits convention.
+/-! ### Communicative costs -/
 
-    **Deterministic-policy assumption.** The signature takes
-    `needProb : String → ℝ` (a concept-only marginal) rather than a
-    joint `p(c, w | L')`. This silently assumes a deterministic
-    production policy — one form per concept in `pairs`. Paper §5.2
-    estimates `p(c, w | L') = p(w | L') · p(c | w, L')` separately for
-    each language; under the assumption that each emerging form-sense
-    pair appears with multiplicity 1 in `E*`, the joint reduces to
-    `needProb p.concept` and these costs are exact. With non-deterministic
-    encodings (multiple forms competing for one concept), use the joint
-    instead and marginalize. -/
-noncomputable def encodingCosts
-    (pairs : List FormConceptPair)
-    (needProb : String → ℝ)
-    (model : AsymmetricCommModel String String) : CostPair where
-  cost₁ := (pairs.map fun p => needProb p.concept * (p.formLength : ℝ)).sum
-  cost₂ := (pairs.map fun p =>
-    let score := model.comprehend p.concept p.form
-    needProb p.concept * if score ≤ 0 then surprisalCap else -Real.log score).sum
+section Costs
 
-/-- Combined cost (paper eq. 4): `L_β = info_loss + β · effort`.
-    The β-scalarization of an encoding's `CostPair`; parameterizes the
-    Pareto frontier in `Pragmatics.Efficiency`. -/
-noncomputable def unifiedObjective
-    (pairs : List FormConceptPair)
-    (needProb : String → ℝ)
-    (model : AsymmetricCommModel String String)
-    (β : ℝ) : ℝ :=
-  weightedCost (encodingCosts pairs needProb model) β
+variable {C W : Type*} [Fintype C]
 
-/-! ## §1. Example data (Table 1) -/
+/-- The costs of an encoding `f` of the emerging concepts under need `p`, form length `l`,
+and listener `m`: expected length and expected surprisal of the intended concept. -/
+noncomputable def costs (p : C → ℝ) (l : W → ℝ) (m : W → C → ℝ) (f : C → W) :
+    CostPair :=
+  ⟨∑ c, p c * l (f c), ∑ c, p c * surprisal (m (f c) c)⟩
 
-/-- English reuse items from paper Table 1. -/
-def englishReuse : List FormConceptPair :=
-  [ { form := "locker",  concept := "storage trunk",      strategy := .reuse, literality := .literal }
-  , { form := "printer", concept := "data output device", strategy := .reuse, literality := .literal }
-  , { form := "dish",    concept := "parabolic antenna",  strategy := .reuse, literality := .nonliteral } ]
+/-- The item-level objective: the surprisal of the concept under the form, plus the weighted
+length of the form. -/
+noncomputable def itemObjective (l : W → ℝ) (m : W → C → ℝ) (β : ℝ) (c : C) (w : W) :
+    ℝ :=
+  surprisal (m w c) + β * l w
 
-/-- English compounds from paper Table 1. -/
-def englishCompounds : List FormConceptPair :=
-  [ { form := "birthday card", concept := "birthday greeting card", strategy := .compound, literality := .literal }
-  , { form := "urban renewal", concept := "urban redevelopment",    strategy := .compound, literality := .literal }
-  , { form := "spreadsheet",   concept := "financial software",     strategy := .compound, literality := .nonliteral } ]
+/-- The combined objective is the need-weighted sum of the item-level objectives. -/
+theorem weightedCost_costs (p : C → ℝ) (l : W → ℝ) (m : W → C → ℝ) (f : C → W)
+    (β : ℝ) :
+    weightedCost (costs p l m f) β = ∑ c, p c * itemObjective l m β c (f c) := by
+  simp only [weightedCost, costs, itemObjective, mul_add, sum_add_distrib, mul_sum]
+  congr 1
+  exact sum_congr rfl λ _ _ => by ring
 
-/-- French reuse items. -/
-def frenchReuse : List FormConceptPair :=
-  [ { form := "antenne",   concept := "radio/TV antenna",   strategy := .reuse, literality := .literal }
-  , { form := "publicité", concept := "commercial ad",      strategy := .reuse, literality := .literal }
-  , { form := "émuler",    concept := "software emulation", strategy := .reuse, literality := .nonliteral } ]
+/-- An encoding that is optimal for every concept is optimal overall. -/
+theorem weightedCost_le_of_forall {p : C → ℝ} (hp : ∀ c, 0 ≤ p c) (l : W → ℝ)
+    (m : W → C → ℝ) {f g : C → W} (β : ℝ)
+    (h : ∀ c, itemObjective l m β c (f c) ≤ itemObjective l m β c (g c)) :
+    weightedCost (costs p l m f) β ≤ weightedCost (costs p l m g) β := by
+  rw [weightedCost_costs, weightedCost_costs]
+  exact sum_le_sum λ c _ => mul_le_mul_of_nonneg_left (h c) (hp c)
 
-/-- French compounds. -/
-def frenchCompounds : List FormConceptPair :=
-  [ { form := "turbine à gaz",   concept := "gas turbine",     strategy := .compound, literality := .literal }
-  , { form := "galaxie spirale", concept := "spiral galaxy",   strategy := .compound, literality := .literal }
-  , { form := "boîte noire",     concept := "flight recorder", strategy := .compound, literality := .nonliteral } ]
+end Costs
 
-/-! ## §2. Strategy properties (verified on example data)
+/-! ### Reuse and combination -/
 
-The full Pareto-efficiency claims (Figs. 2–3) depend on a fitted
-sentence-encoder embedding for the listener's prototype distribution
-(paper §5.3) and 100,000 random/near-synonym baseline encodings per
-language–interval cell (paper §5.5); they are not reduced to
-`decide`-checkable form here. The claims that ARE decide-checkable on
-the Table-1 examples are about word length — the speaker-effort axis. -/
+section Forms
 
-/-- Reuse items are shorter on average than compounds (paper §3.3:
-    holds across all three languages and all time intervals). -/
-theorem english_reuse_shorter :
-    (englishReuse.map (·.formLength)).sum / englishReuse.length <
-    (englishCompounds.map (·.formLength)).sum / englishCompounds.length := by
-  decide
+variable {A C Q : Type*}
 
-/-- French reuse items are also shorter on average than French compounds. -/
-theorem french_reuse_shorter :
-    (frenchReuse.map (·.formLength)).sum / frenchReuse.length <
-    (frenchCompounds.map (·.formLength)).sum / frenchCompounds.length := by
-  decide
+/-- A compound concatenates two existing forms. -/
+def compound (w₁ w₂ : List A) : List A := w₁ ++ w₂
 
-/-- Both strategies include literal and nonliteral items in the
-    paper's Table 1 sample. -/
-theorem both_literalities :
-    (englishReuse.any (·.literality == .literal)) ∧
-    (englishReuse.any (·.literality == .nonliteral)) ∧
-    (englishCompounds.any (·.literality == .literal)) ∧
-    (englishCompounds.any (·.literality == .nonliteral)) := by
-  decide
+/-- A compound is longer than a constituent it could have reused. -/
+theorem length_compound (w₁ : List A) {w₂ : List A} (h : w₂ ≠ []) :
+    w₁.length < (compound w₁ w₂).length := by
+  simp [compound, List.length_pos_iff_ne_nil.2 h]
 
-/-! ## §3. Substrate witnesses
+/-- The prototype of a compound is the sum of its constituents' prototypes. -/
+def compoundPrototype [Add Q] (q : List A → Q) (w₁ w₂ : List A) : Q := q w₁ + q w₂
 
-Concrete instantiations of `encodingCosts` and `unifiedObjective`
-demonstrate the Theory-layer substrate is operationally consumed.
-The toy `needProb` and `model` below are not the paper's actual
-fitted distributions; they are stipulated only to anchor the
-type-checking. Real instantiation requires the WordNet+Sentence-BERT
-pipeline of paper §5.3 + §5.4. -/
+/-- An item is literal when its concept is a hyponym of an existing sense of the form that
+carries it: the reused form, or the head of a compound. -/
+def Literal (Hypo : C → C → Prop) (senses : List A → Set C) (carrier : List A) (c : C) :
+    Prop :=
+  ∃ c' ∈ senses carrier, Hypo c c'
 
-/-- A toy uniform-need distribution: `1/n` for each concept in a
-    list-derived encoding, `0` elsewhere. Constant function for the
-    witness; serious use would derive from corpus frequencies. -/
-noncomputable def uniformNeed (n : ℕ) : String → ℝ :=
-  fun _ => 1 / n
+end Forms
 
-/-- A toy symmetric communication model with constant listener score `1/2`.
-    Makes `encodingCosts.cost₂` a determinate value for the witness
-    theorems below. -/
-noncomputable def stipulatedModel : AsymmetricCommModel String String :=
-  AsymmetricCommModel.symmetric (fun _ _ => 1 / 2)
-
-/-- The English-reuse encoding's costs under the toy model. -/
-noncomputable def englishReuseCosts : CostPair :=
-  encodingCosts englishReuse (uniformNeed englishReuse.length) stipulatedModel
-
-/-- The English-compound encoding's costs under the toy model. -/
-noncomputable def englishCompoundsCosts : CostPair :=
-  encodingCosts englishCompounds (uniformNeed englishCompounds.length) stipulatedModel
-
-/-- `unifiedObjective` decomposes into `weightedCost (encodingCosts ...) β`.
-    This `rfl` theorem witnesses that the named `unifiedObjective` hook
-    is the `β`-scalarization of the cost pair the substrate computes —
-    no extra arithmetic, no glue. -/
-theorem unifiedObjective_eq_weightedCost
-    (pairs : List FormConceptPair) (np : String → ℝ)
-    (m : AsymmetricCommModel String String) (β : ℝ) :
-    unifiedObjective pairs np m β =
-    weightedCost (encodingCosts pairs np m) β := rfl
-
-/-! ## §4. Reuse as polysemy generation -/
-
-/-- Word reuse creates polysemy: the reused word acquires a new sense
-    alongside its existing one. Connects the diachronic process of
-    lexicalization to the synchronic phenomenon of polysemy.
-
-    Copredication ([asher-2011], [gotham-2017]) is the synchronic
-    *consequence* of reuse (multiple aspects coexist); this paper's
-    account explains the diachronic *cause* (efficiency pressure).
-
-    **Caveat on the copredication bridge.** Xu's reuse polysemy and
-    *logical* polysemy are not the same phenomenon. Logical polysemy
-    involves sortally-compatible aspects with a shared individuation
-    ground (book = phys × info, both individuating one volume); Xu's
-    *mouse* → peripheral generates two unrelated sortal categories
-    with no shared ground. The honest bridge: Xu's *literal* reuse
-    (hyponymic, e.g. *car* narrowed from *wheeled cart*) is compatible
-    with logical polysemy (shared ground); Xu's *non-literal* reuse
-    (metaphorical, e.g. *mouse*) is not. The `Literality` enum
-    in the Theory file is the partition this distinction lives on. -/
-def reuseIsPolysemyGeneration : List FormConceptPair → List String :=
-  List.filterMap fun p =>
-    if p.strategy == .reuse
-    then some s!"'{p.form}' is polysemous: original sense + '{p.concept}'"
-    else none
-
-/-- All reuse items in the English data generate polysemy. -/
-theorem all_english_reuse_creates_polysemy :
-    (reuseIsPolysemyGeneration englishReuse).length = englishReuse.length := by
-  decide
-
-end XuEtAl2024.Polysemy
+end XuEtAl2024

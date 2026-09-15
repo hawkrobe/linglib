@@ -1,0 +1,406 @@
+[
+  {
+    "id": "xuetal2024_1",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "locker",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A trunk for storing personal possessions; usually kept at the foot of a bed",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "deedbox", "judgment": "acceptable"},
+      {"form": "strongbox", "judgment": "acceptable"},
+      {"form": "storeroom", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "reuse"],
+      ["interval", "1940+"]
+    ],
+    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_2",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "printer",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "An output device that prints the results of data processing",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "reuse"],
+      ["interval", "1940+"]
+    ],
+    "comment": "An attested emerging form-sense pair.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_3",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "dish",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Directional antenna consisting of a parabolic reflector for microwave or radio",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "reuse"],
+      ["interval", "1940+"]
+    ],
+    "comment": "An attested emerging form-sense pair.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_4",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "birthday card",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A card expressing a birthday greeting",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "compound"],
+      ["interval", "1900+"]
+    ],
+    "comment": "An attested emerging form-sense pair.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_5",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "urban renewal",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The clearing and rebuilding and redevelopment of urban slums",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "renewal", "judgment": "acceptable"},
+      {"form": "renovation", "judgment": "acceptable"},
+      {"form": "urban-renovation", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "compound"],
+      ["interval", "1940+"]
+    ],
+    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_6",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "spreadsheet",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A screen-oriented interactive program enabling a user to lay out financial data",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "compound"],
+      ["interval", "1980+"]
+    ],
+    "comment": "An attested emerging form-sense pair.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_7",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "antenne",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "An electrical device that sends or receives radio or television signals",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "reuse"],
+      ["interval", "1900+"]
+    ],
+    "comment": "An attested emerging form-sense pair.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_8",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "publicité",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A commercially sponsored ad on radio or television",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "réclame", "judgment": "acceptable"},
+      {"form": "annonce", "judgment": "acceptable"},
+      {"form": "pub", "judgment": "acceptable"},
+      {"form": "emballage", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "reuse"],
+      ["interval", "1920+"]
+    ],
+    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_9",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "émuler",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Imitate the function of another system, as by modifying the hardware or the software",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "reuse"],
+      ["interval", "1960+"]
+    ],
+    "comment": "An attested emerging form-sense pair.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_10",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "turbine à gaz",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Turbine that converts the chemical energy of a liquid fuel into mechanical energy",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "turbine", "judgment": "acceptable"},
+      {"form": "générateur", "judgment": "acceptable"},
+      {"form": "moteur-gaz", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "compound"],
+      ["interval", "1900+"]
+    ],
+    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_11",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "galaxie spirale",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A galaxy having a spiral structure; arms containing younger stars spiral out from old stars",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "compound"],
+      ["interval", "1900+"]
+    ],
+    "comment": "An attested emerging form-sense pair.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_12",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "stan1290",
+    "primaryText": "boîte noire",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Equipment that records information about the performance of an aircraft during flight",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "compound"],
+      ["interval", "1940+"]
+    ],
+    "comment": "An attested emerging form-sense pair.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_13",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "lähetys",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Message that is transmitted by radio or television",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "lasti", "judgment": "acceptable"},
+      {"form": "rahti", "judgment": "acceptable"},
+      {"form": "toimitus", "judgment": "acceptable"},
+      {"form": "kuorma", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "reuse"],
+      ["interval", "1900+"]
+    ],
+    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_14",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "suodatin",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "An air filter on the end of a cigarette; contains material that filters the smoke",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "reuse"],
+      ["interval", "1920+"]
+    ],
+    "comment": "An attested emerging form-sense pair.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_15",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "ajaa",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Carry out a process or program, as on a computer or a machine",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "reuse"],
+      ["interval", "1940+"]
+    ],
+    "comment": "An attested emerging form-sense pair.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_16",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "sotarikos",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A crime committed in wartime; violation of rules of war",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "rikos", "judgment": "acceptable"},
+      {"form": "laittomuus", "judgment": "acceptable"},
+      {"form": "sota-laittomuus", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "compound"],
+      ["interval", "1900+"]
+    ],
+    "comment": "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_17",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "taisteluväsymys",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A mental disorder caused by stress of active warfare",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "compound"],
+      ["interval", "1900+"]
+    ],
+    "comment": "An attested emerging form-sense pair.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "xuetal2024_18",
+    "source": {"bibkey": "xu-etal-2024", "paperLabel": "Table 1"},
+    "reportedIn": null,
+    "language": "finn1318",
+    "primaryText": "kauppa-apulainen",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "A salesperson in a store",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["strategy", "compound"],
+      ["interval", "1920+"]
+    ],
+    "comment": "An attested emerging form-sense pair.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]

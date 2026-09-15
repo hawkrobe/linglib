@@ -9,8 +9,6 @@ distribution `p(w | c)` — the basic Shannon channel restricted to finite
 input/output types. Used as substrate by:
 
 - `ChannelCapacity.lean` — capacity, CAP, mutual-information bounds
-- `Pragmatics.AsymmetricCommunication` — speaker-listener
-  asymmetric setups (variation, iterated learning)
 - `ZaslavskyEtAl2019` — color naming
 - `Studies/XuEtAl2024.lean` — listener model conditioned on `L`
 - RSA literal speaker S₀ (the channel) and L₀ (the posterior)
