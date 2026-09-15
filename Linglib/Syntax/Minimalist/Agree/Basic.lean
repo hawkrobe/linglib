@@ -7,17 +7,18 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
 # Agree: closest goals, horizons, and valuation
 
 This file defines the structural conditions of Agree over syntactic objects and its valuation
-step over feature bundles. A goal is a *closest goal* for a probe when it lies in the probe's
-c-command domain, satisfies the probe's relativization, and no other such node asymmetrically
-c-commands it: the Minimal Link Condition of [chomsky-1995], with mutually c-commanding
-candidates equidistant. A target is *behind a horizon* for a probe when a leaf of the horizon
-category lies in the probe's domain and c-commands the target, so the probe's search terminates
-before reaching it ([keine-2019]). Valuation copies a goal's value into an unvalued probe slot
-and is inflationary in the subsumption order on bundles: Agree only adds information.
+step over feature bundles. A closest goal for a probe is a node of the probe's c-command domain
+that satisfies the probe's relativization and that no other such node asymmetrically
+c-commands, which is the Minimal Link Condition of [chomsky-1995] with mutually c-commanding
+candidates equidistant. A target lies behind a horizon for a probe when a leaf of the horizon
+category lies in the probe's domain and c-commands the target, so that the probe's search
+terminates before reaching it ([keine-2019]). Valuation copies a goal's value into an unvalued
+probe slot and is inflationary in the subsumption order on bundles, so Agree only adds
+information.
 
-The closest-goal predicate is the tree-native form of the list search `Probe.search`: when a
-goal sequence enumerates the probe's domain with no later goal asymmetrically c-commanding an
-earlier one, the goal the search finds is a closest goal (`isClosestGoalIn_of_search`).
+The closest-goal predicate is the tree-native form of the list search `Probe.search`. A probe's
+search over an enumeration of its domain sorted by c-command finds one of its closest visible
+goals (`isClosestGoalIn_of_search_eq_some`).
 
 ## Main definitions
 
@@ -39,42 +40,38 @@ variable {root probe goal : SyntacticObject} {pred : SyntacticObject → Prop}
 
 /-! ### Closest goals -/
 
-/-- `goal` is a closest `pred`-goal for `probe` in `root`: `probe` c-commands `goal`, `goal`
-satisfies `pred`, and no `pred`-node in `probe`'s c-command domain asymmetrically c-commands
-`goal`. Mutually c-commanding candidates are equidistant and do not block each other. -/
+/-- A closest `pred`-goal for `probe` in `root` is a node of `probe`'s c-command domain
+satisfying `pred` that no other `pred`-node of the domain asymmetrically c-commands. Mutually
+c-commanding candidates are equidistant and do not block each other. -/
 def isClosestGoalIn (root probe goal : SyntacticObject) (pred : SyntacticObject → Prop) : Prop :=
-  cCommandsIn root probe goal ∧ pred goal ∧
-    ∀ x ∈ root.subtrees, pred x → cCommandsIn root probe x → ¬ asymCCommandsIn root x goal
+  goal ∈ domainIn root probe ∧ pred goal ∧
+    ∀ x ∈ domainIn root probe, pred x → ¬ asymCCommandsIn root x goal
 
 instance [DecidablePred pred] (root probe goal : SyntacticObject) :
     Decidable (isClosestGoalIn root probe goal pred) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ x ∈ root.subtrees, _))
+  inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ x ∈ domainIn root probe, _))
 
-/-- The goal a list search finds over the probe's domain is a closest goal, provided the
-sequence enumerates the domain and no later goal asymmetrically c-commands an earlier one: the
-tree-native predicate agrees with the list engine `Probe.search`. -/
-theorem isClosestGoalIn_of_search [DecidablePred pred] {dom : List SyntacticObject}
-    (hdom : ∀ x ∈ root.subtrees, cCommandsIn root probe x → x ∈ dom)
-    (hcc : ∀ x ∈ dom, cCommandsIn root probe x)
+/-- A probe's search over an enumeration of its domain sorted by c-command finds one of its
+closest visible goals. -/
+theorem isClosestGoalIn_of_search_eq_some {p : Probe SyntacticObject} {dom : List SyntacticObject}
+    (hdom : (dom : Multiset SyntacticObject) = domainIn root probe)
     (hord : dom.Pairwise λ x y => ¬ asymCCommandsIn root y x)
-    (h : (Probe.ofVis λ x => decide (pred x)).search dom = some goal) :
-    isClosestGoalIn root probe goal pred := by
-  obtain ⟨hvis, l₁, l₂, rfl, hl₁⟩ := Probe.search_eq_some_iff_closest.mp h
-  refine ⟨hcc goal (by simp), of_decide_eq_true hvis, λ x hx hpx hcx hasym => ?_⟩
-  rcases List.mem_append.mp (hdom x hx hcx) with hx₁ | hx₂
-  · exact absurd hpx (by simpa [Probe.ofVis] using hl₁ x hx₁)
-  · rcases List.mem_cons.mp hx₂ with rfl | hx₂
-    · exact hasym.2 hasym.1
-    · exact (List.pairwise_cons.mp (List.pairwise_append.mp hord).2.1).1 x hx₂ hasym
+    (h : p.search dom = some goal) :
+    isClosestGoalIn root probe goal (p.vis ·) := by
+  refine ⟨?_, Probe.visible_of_search_eq_some h, λ x hx hvx hasym => ?_⟩
+  · rw [← hdom]; exact Multiset.mem_coe.2 (Probe.mem_of_search_eq_some h)
+  · rw [← hdom] at hx
+    exact Probe.not_rel_of_search_eq_some hord h x (Multiset.mem_coe.1 hx) hvx
+      (λ e => hasym.2 (e ▸ hasym.1)) hasym
 
 /-! ### Horizons -/
 
-/-- `target` is behind a horizon of category `c` for `probe` in `root`: a `c` leaf in `probe`'s
-c-command domain c-commands `target`, so `probe`'s search terminates before reaching it
+/-- A target lies behind a horizon of category `c` for `probe` in `root` when a `c` leaf of
+`probe`'s c-command domain c-commands it, so that `probe`'s search terminates before reaching it
 ([keine-2019]). With N a horizon for the wh-probe on C, the D head of `[DP D [PossP Psr N]]`
 stays visible while the possessor, c-commanded by N, does not ([aissen-polian-2025]). -/
 def behindHorizonIn (root probe target : SyntacticObject) (c : Cat) : Prop :=
-  ∃ n ∈ root.subtrees, isLeafOf c n ∧ cCommandsIn root probe n ∧ cCommandsIn root n target
+  ∃ n ∈ domainIn root probe, isLeafOf c n ∧ cCommandsIn root n target
 
 instance (root probe target : SyntacticObject) (c : Cat) :
     Decidable (behindHorizonIn root probe target c) :=
@@ -98,7 +95,7 @@ private def sisters : PlanarSyntacticObject := {T₀, {D₁, D₂}}
 example : isClosestGoalIn twoD T₀ D₁ (isLeafOf .D) ∧
     ¬ isClosestGoalIn twoD T₀ D₂ (isLeafOf .D) := by decide
 
-/-- Sisters are equidistant: both are closest goals. -/
+/-- Sisters are equidistant, so both are closest goals. -/
 example : isClosestGoalIn sisters T₀ D₁ (isLeafOf .D) ∧
     isClosestGoalIn sisters T₀ D₂ (isLeafOf .D) := by decide
 
@@ -113,8 +110,8 @@ variable (probe goal : FeatureBundle) (t : FeatureType)
 
 /-! ### Valuation -/
 
-/-- Value dimension `t` of `b` with `v` when its slot is unvalued; a valued or absent slot is
-left as it is. -/
+/-- The bundle `b` with dimension `t` valued by `v` when its slot is unvalued; a valued or absent
+slot is left as it is. -/
 def valueAt (b : FeatureBundle) (t : FeatureType) (v : t.ValueOf) : FeatureBundle :=
   Function.update b t ((b t).valueWith v)
 
@@ -122,12 +119,12 @@ def valueAt (b : FeatureBundle) (t : FeatureType) (v : t.ValueOf) : FeatureBundl
     b.valueAt t v t = (b t).valueWith v := by
   simp [valueAt]
 
-/-- Valuation is inflationary in the subsumption order: Agree only adds information. -/
+/-- Valuation is inflationary in the subsumption order, so Agree only adds information. -/
 theorem le_valueAt (b : FeatureBundle) (v : t.ValueOf) : b ≤ b.valueAt t v :=
   le_update_self_iff.mpr (FeatureSlot.le_valueWith v _)
 
-/-- Apply Agree at dimension `t`: the probe's bundle valued from the goal's value at `t`, or
-`none` when the goal has no value to transmit. -/
+/-- The probe's bundle valued from the goal's value at dimension `t`, or `none` when the goal has
+no value to transmit. -/
 def applyAgree : Option FeatureBundle :=
   (goal.getValuedFeature t).map (probe.valueAt t)
 

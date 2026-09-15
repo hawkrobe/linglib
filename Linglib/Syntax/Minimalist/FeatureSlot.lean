@@ -40,8 +40,8 @@ the bundle subsumption order (`Features.BundleLike.Subsumes`) is built from.
 
 namespace Minimalist
 
-/-- A feature-checking slot for value type `α`: `absent` / `unvalued` (probe) /
-`valued v`. See the module docstring. -/
+/-- A feature-checking slot for value type `α` is `absent`, `unvalued` (a probe), or `valued v`.
+See the module docstring. -/
 inductive FeatureSlot (α : Type*) where
   | absent
   | unvalued
@@ -56,7 +56,7 @@ instance : Bot (FeatureSlot α) := ⟨absent⟩
 
 @[simp] theorem bot_eq_absent : (⊥ : FeatureSlot α) = absent := rfl
 
-/-- The slot specifies a (present) feature: it is not `absent`. -/
+/-- The slot specifies a present feature, that is, it is not `absent`. -/
 def isSpecified : FeatureSlot α → Bool
   | absent => false
   | _ => true
@@ -76,7 +76,7 @@ def value? : FeatureSlot α → Option α
   | valued v => some v
   | _ => none
 
-/-- Value the slot with `v` when it is unvalued; an absent or valued slot is left as it is. -/
+/-- The slot valued with `v` when it is unvalued; an absent or valued slot is left as it is. -/
 def valueWith (v : α) : FeatureSlot α → FeatureSlot α
   | unvalued => valued v
   | s => s
@@ -89,8 +89,8 @@ theorem valueWith_of_ne_unvalued (v : α) {s : FeatureSlot α} (h : s ≠ unvalu
     valueWith v s = s := by
   cases s <;> simp_all [valueWith]
 
-/-- Subsumption: `absent ≤ unvalued ≤ valued v`, with distinct values
-incomparable. The reflexive-transitive order on the three checking states. -/
+/-- The subsumption order on checking states, `absent ≤ unvalued ≤ valued v`, with distinct
+values incomparable. -/
 protected inductive LE : FeatureSlot α → FeatureSlot α → Prop
   | absent_le (s) : FeatureSlot.LE absent s
   | unvalued_le_unvalued : FeatureSlot.LE unvalued unvalued

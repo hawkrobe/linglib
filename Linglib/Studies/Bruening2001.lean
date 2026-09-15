@@ -35,15 +35,15 @@ open Minimalist Minimalist.SyntacticObject
 
 variable {tree head x y : SyntacticObject} {qs : List SyntacticObject}
 
-/-- A quantifier the P-feature-bearing head can attract: one in its c-command domain. The subject,
-merged in the head's specifier, is not among them. -/
+/-- A quantifier the P-feature-bearing head can attract is one in its c-command domain. The
+subject, merged in the head's specifier, is not among them. -/
 def Attractable (tree head x : SyntacticObject) : Prop := cCommandsIn tree head x
 
 instance : Decidable (Attractable tree head x) := inferInstanceAs (Decidable (cCommandsIn _ _ _))
 
-/-- Shortest: attracting `x` first is licensed only when no other candidate asymmetrically
-c-commands it, since such a candidate would form a smaller well-formed pair with the attractor:
-`x` is a closest goal among the candidates. -/
+/-- Shortest licenses attracting `x` first only when no other candidate asymmetrically c-commands
+it, since such a candidate would form a smaller well-formed pair with the attractor. Thus `x` is
+a closest goal among the candidates. -/
 def LicensedFirst (tree head : SyntacticObject) (qs : List SyntacticObject)
     (x : SyntacticObject) : Prop :=
   isClosestGoalIn tree head x (· ∈ qs)
@@ -52,7 +52,7 @@ instance : Decidable (LicensedFirst tree head qs x) :=
   inferInstanceAs (Decidable (isClosestGoalIn _ _ _ _))
 
 /-- Since later movements tuck in beneath earlier ones, the quantifier attracted first takes widest
-scope: scope is ambiguous exactly when two candidates may be attracted first. -/
+scope, so scope is ambiguous exactly when two candidates may be attracted first. -/
 def Ambiguous (tree head : SyntacticObject) (qs : List SyntacticObject) : Prop :=
   ∃ x ∈ qs, ∃ y ∈ qs, x ≠ y ∧ LicensedFirst tree head qs x ∧ LicensedFirst tree head qs y
 
@@ -62,10 +62,10 @@ instance : Decidable (Ambiguous tree head qs) := inferInstanceAs (Decidable (∃
 whatever interpretation moving it first would produce. -/
 theorem not_licensedFirst_of_asymCCommand (hy : y ∈ qs) (hattr : Attractable tree head y)
     (hasym : asymCCommandsIn tree y x) : ¬ LicensedFirst tree head qs x :=
-  fun ⟨_, _, h⟩ => h y (mem_subtrees_of_cCommandsIn hattr) hy hattr hasym
+  fun ⟨_, _, h⟩ => h y (mem_domainIn.2 hattr) hy hasym
 
-/-- Two candidates that c-command each other both satisfy Shortest, so either may be attracted
-first: the pairs they form with the attractor are equivalent. -/
+/-- Two candidates that c-command each other both satisfy Shortest, since the pairs they form with
+the attractor are equivalent, so either may be attracted first. -/
 theorem ambiguous_of_mutual_cCommand (hx : x ∈ qs) (hy : y ∈ qs) (hne : x ≠ y)
     (hattrx : Attractable tree head x) (hattry : Attractable tree head y)
     (hxy : cCommandsIn tree x y) (hyx : cCommandsIn tree y x)
@@ -74,8 +74,8 @@ theorem ambiguous_of_mutual_cCommand (hx : x ∈ qs) (hy : y ∈ qs) (hne : x �
     rintro a ha b hb - ⟨hba, hab⟩
     rcases hother a ha with rfl | rfl <;> rcases hother b hb with rfl | rfl
     exacts [hab hba, hab hxy, hab hyx, hab hba]
-  exact ⟨x, hx, y, hy, hne, ⟨hattrx, hx, fun b _ hb _ => key x hx b hb hattrx⟩,
-    ⟨hattry, hy, fun b _ hb _ => key y hy b hb hattry⟩⟩
+  exact ⟨x, hx, y, hy, hne, ⟨mem_domainIn.2 hattrx, hx, fun b _ hb => key x hx b hb hattrx⟩,
+    ⟨mem_domainIn.2 hattry, hy, fun b _ hb => key y hy b hb hattry⟩⟩
 
 /-! ### The double object construction -/
 
@@ -92,7 +92,7 @@ private def everyTelescope : PlanarSyntacticObject := .leaf ⟨.simple .D [] "ev
 /-- The preposition of the locative variant. -/
 private def toP : PlanarSyntacticObject := .leaf ⟨.simple .P [.D] "to", 409⟩
 
-/-- `{Ozzy, {v, {gave, {a girl, {Appl, every telescope}}}}}`: the first object is the argument of
+/-- `{Ozzy, {v, {gave, {a girl, {Appl, every telescope}}}}}`. The first object is the argument of
 the applicative head, merged above the projection containing the second, so it asymmetrically
 c-commands it. -/
 private def doc : PlanarSyntacticObject := {ozzy, {v, {gave, {aGirl, {appl, everyTelescope}}}}}
@@ -110,7 +110,7 @@ theorem doc_frozen : LicensedFirst doc v docQuantifiers aGirl ∧
   ⟨by decide, not_licensedFirst_of_asymCCommand (y := aGirl) (by simp [docQuantifiers]) (by decide)
     doc_goal_asym_theme⟩
 
-/-- No two candidates may be attracted first: the double object construction is unambiguous. -/
+/-- No two candidates may be attracted first, so the double object construction is unambiguous. -/
 theorem doc_not_ambiguous : ¬ Ambiguous doc v docQuantifiers := by decide
 
 /-! ### The locative variant -/
@@ -118,11 +118,11 @@ theorem doc_not_ambiguous : ¬ Ambiguous doc v docQuantifiers := by decide
 /-- The PP that pied-pipes the goal. -/
 private def toAGirl : PlanarSyntacticObject := {toP, aGirl}
 
-/-- `{Ozzy, {v, {gave, {every telescope, {to, a girl}}}}}`: the direct object and the PP are
+/-- `{Ozzy, {v, {gave, {every telescope, {to, a girl}}}}}`. The direct object and the PP are
 co-arguments of the same head, hence sisters, and c-command each other. -/
 private def locative : PlanarSyntacticObject := {ozzy, {v, {gave, {everyTelescope, toAGirl}}}}
 
-/-- The candidates in the locative: the direct object, and the PP that pied-pipes the goal. -/
+/-- The candidates in the locative, the direct object and the PP that pied-pipes the goal. -/
 private def locativeQuantifiers : List SyntacticObject := [everyTelescope, toAGirl]
 
 /-- Direct object and PP c-command each other, so neither asymmetrically c-commands the other. -/
@@ -140,11 +140,11 @@ theorem locative_ambiguous : Ambiguous locative v locativeQuantifiers :=
 /-! ### The freezing is relativized -/
 
 /-- The subject is merged in the attractor's specifier, outside its c-command domain, so it never
-competes with the objects for attraction: either object can take scope over it even where the two
-objects' relative scope is frozen. -/
+competes with the objects for attraction, and either object can take scope over it even where the
+two objects' relative scope is frozen. -/
 theorem subject_not_attractable : ¬ Attractable doc v ozzy := by decide
 
-/-- The passive of a double object construction: with no external argument, the goal raises to the
+/-- The passive of a double object construction. With no external argument, the goal raises to the
 subject position, out of the attractor's domain, leaving the theme as the only candidate. -/
 private def passive : PlanarSyntacticObject := {aGirl, {v, {gave, {appl, everyTelescope}}}}
 
