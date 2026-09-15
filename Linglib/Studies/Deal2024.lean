@@ -79,7 +79,7 @@ def bears (p : Person) : PersonFeature → Bool
   | .addr => p == .second || p == .firstInclusive
 
 /-- Bearing a feature entails bearing what it entails. -/
-theorem bears_of_entails {f g : PersonFeature} (h : personGeometry.Entails g f) (p : Person)
+theorem bears_of_mem_above {f g : PersonFeature} (h : f ∈ personGeometry.above g) (p : Person)
     (hp : bears p g = true) : bears p f = true := by
   revert h hp
   cases f <;> cases g <;> cases p <;> decide

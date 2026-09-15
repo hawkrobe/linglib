@@ -155,7 +155,7 @@ def system : System where
 def inanimate (n : Greek.StandardModern.Gender.Noun) : Bundle Node :=
   system.conceptual .thing ∪ system.arbitrary n.gender
 
-theorem fem_entails_masc : system.geometry.Entails .fem .masc := by decide
+theorem masc_mem_above_fem : .masc ∈ system.geometry.above .fem := by decide
 
 /-- Uniform humans resolve to their shared gender. -/
 theorem human_uniform :
@@ -279,7 +279,7 @@ def system : System where
 def inanimate (n : Icelandic.Gender.Noun) : Bundle Node :=
   system.conceptual .thing ∪ system.arbitrary n.gender
 
-theorem fem_not_entails_masc : ¬ system.geometry.Entails .fem .masc := by decide
+theorem masc_not_mem_above_fem : .masc ∉ system.geometry.above .fem := by decide
 
 /-- *Maðurinn og konan eru þreytt*, where only CLASS survives. -/
 theorem human_mismatch : system.resolved .man .woman = some .neuter := by decide
