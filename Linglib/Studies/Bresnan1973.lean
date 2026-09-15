@@ -359,7 +359,7 @@ def orderOf (e : LinguisticExample) : Option Order :=
 def headOf (e : LinguisticExample) : Option Head := do
   let cat ← (e.feature? "head").bind catOf
   let site ← (e.feature? "head_site").bind positionOf
-  pure ⟨cat, site, ((e.feature? "adjective").bind adjectiveOf).bind (·.polarity)⟩
+  pure ⟨cat, site, ((e.feature? "adjective").bind adjectiveOf).map (·.polarity)⟩
 
 /-- What a row's clause supplies. -/
 def supplyOf (e : LinguisticExample) : Option Supply := do

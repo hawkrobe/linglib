@@ -267,7 +267,7 @@ namespace GradableAdjective
 /-- The scale the adjective measures on: its dimension's, dualized for the negative member of
 an antonym pair (`.open_` for a non-gradable, which has no scale). -/
 def scaleType (g : GradableAdjective) : Boundedness :=
-  (g.dimension.map fun d => d.boundedness.ofPolarity (g.polarity.getD .positive)).getD .open_
+  (g.dimension.map λ d => g.polarity • d.boundedness).getD .open_
 
 /-- The positive standard: the scale's default, unless overridden (the *good*/MPA residual). -/
 def standard (g : GradableAdjective) : PositiveStandard :=

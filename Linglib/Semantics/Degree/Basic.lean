@@ -36,7 +36,8 @@ Framework-specific content for [rett-2026] (fixed-point ambidirectionality) live
 * `maxComparative` — the max-quantified clausal comparative ([von-stechow-1984],
   [rullmann-1995]): independent matrix/than witness predicates over `thanDegrees`,
   with the unique-witness collapse `maxComparative_unique`.
-* `taller_shorter_antonymy` — antonymy is argument swap plus direction reversal.
+* `comparativeSem_negative_mul` / `comparativeSem_toDual` — antonymy is argument swap
+  under the polarity group, and polarity is the order dual.
 * `comparative_iff_Iic_ssubset` — comparison as extent inclusion ([kennedy-1999]).
 * `antonymy_biconditional` / `not_crossExtentInclusion` — the antonymy
   biconditional derived from extent complementarity, and cross-polar anomaly
@@ -89,27 +90,26 @@ theorem comparativeSem_eq_MAX {β : Type*} [LinearOrder β] (μ : Entity → β)
 
 /-! ### Antonymy as scale reversal -/
 
-/-- "A taller than B" ↔ "B shorter than A" — antonymy is argument swap plus
-direction reversal. -/
-theorem taller_shorter_antonymy (μ : Entity → α) (a b : Entity) :
-    comparativeSem μ a b .positive ↔ comparativeSem μ b a .negative :=
-  Iff.rfl
+/-- The comparative of the opposite polarity is the same comparison with its arguments
+exchanged: *A is taller than B* iff *B is shorter than A*. -/
+theorem comparativeSem_negative_mul (μ : Entity → α) (a b : Entity) (p : ScalePolarity) :
+    comparativeSem μ a b (.negative * p) ↔ comparativeSem μ b a p := by
+  cases p <;> exact Iff.rfl
 
-/-- Equative antonymy: "A as tall as B" ↔ "B as short as A". -/
-theorem equative_antonymy (μ : Entity → α) (a b : Entity) :
-    equativeSem μ a b .positive ↔ equativeSem μ b a .negative :=
-  Iff.rfl
+/-- *A is as tall as B* iff *B is as short as A*. -/
+theorem equativeSem_negative_mul (μ : Entity → α) (a b : Entity) (p : ScalePolarity) :
+    equativeSem μ a b (.negative * p) ↔ equativeSem μ b a p := by
+  cases p <;> exact Iff.rfl
 
-/-- The negative comparative is the positive one on the order dual: antonyms impose inverse
-orderings on shared degrees ([kennedy-2007] fn. 29). -/
-theorem comparativeSem_negative_iff_toDual (μ : Entity → α) (a b : Entity) :
-    comparativeSem μ a b .negative ↔ comparativeSem (OrderDual.toDual ∘ μ) a b .positive :=
-  Iff.rfl
+/-- Polarity is the order dual: inverting the ordering of the degrees inverts the polarity
+([kennedy-2007] fn. 29). -/
+theorem comparativeSem_toDual (μ : Entity → α) (a b : Entity) (p : ScalePolarity) :
+    comparativeSem (OrderDual.toDual ∘ μ) a b p ↔ comparativeSem μ a b (.negative * p) := by
+  cases p <;> exact Iff.rfl
 
-/-- The negative equative is the positive one on the order dual. -/
-theorem equativeSem_negative_iff_toDual (μ : Entity → α) (a b : Entity) :
-    equativeSem μ a b .negative ↔ equativeSem (OrderDual.toDual ∘ μ) a b .positive :=
-  Iff.rfl
+theorem equativeSem_toDual (μ : Entity → α) (a b : Entity) (p : ScalePolarity) :
+    equativeSem (OrderDual.toDual ∘ μ) a b p ↔ equativeSem μ a b (.negative * p) := by
+  cases p <;> exact Iff.rfl
 
 end Direct
 

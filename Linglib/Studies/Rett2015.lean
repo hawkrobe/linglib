@@ -110,7 +110,7 @@ positive-antonym counterparts are not. -/
 /-- The implicature deriving evaluativity for a fragment adjective in a construction, read off
 its lexicalized polarity. -/
 def evaluativity (a : GradableAdjective) (c : Construction) : Option Implicature :=
-  a.polarity.bind (implicature c)
+  implicature c a.polarity
 
 theorem as_short_as : evaluativity short .equative = some .manner := rfl
 

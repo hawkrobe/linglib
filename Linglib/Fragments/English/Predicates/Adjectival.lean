@@ -32,7 +32,7 @@ abbrev AdjectivalPredicateEntry := GradableAdjective
 /-- "tall" — open scale, contrary to "short" -/
 def tall : AdjectivalPredicateEntry where
   form := "tall"
-  polarity := some .positive
+  polarity := .positive
   dimension := some .height
   antonymForm := some "short"
   antonymRelation := some .contrary
@@ -40,7 +40,7 @@ def tall : AdjectivalPredicateEntry where
 /-- "short" — open scale, contrary to "tall" -/
 def short : AdjectivalPredicateEntry where
   form := "short"
-  polarity := some .negative
+  polarity := .negative
   dimension := some .height
   antonymForm := some "tall"
   antonymRelation := some .contrary
@@ -48,7 +48,7 @@ def short : AdjectivalPredicateEntry where
 /-- "high" — open scale, contrary to "low" -/
 def high : AdjectivalPredicateEntry where
   form := "high"
-  polarity := some .positive
+  polarity := .positive
   dimension := some .height
   antonymForm := some "low"
   antonymRelation := some .contrary
@@ -63,7 +63,7 @@ For the 2-place veridical-preferential attitude predicate
 -/
 def happy : AdjectivalPredicateEntry where
   form := "happy"
-  polarity := some .positive
+  polarity := .positive
   dimension := some .happiness
   antonymForm := some "unhappy"
   antonymRelation := some .contrary
@@ -72,7 +72,7 @@ def happy : AdjectivalPredicateEntry where
 /-- "unhappy" — open scale, contrary to "happy" -/
 def unhappy : AdjectivalPredicateEntry where
   form := "unhappy"
-  polarity := some .negative
+  polarity := .negative
   dimension := some .happiness
   antonymForm := some "happy"
   antonymRelation := some .contrary
@@ -98,7 +98,7 @@ def full : AdjectivalPredicateEntry where
     contradictory to "full". -/
 def empty : AdjectivalPredicateEntry where
   form := "empty"
-  polarity := some .negative
+  polarity := .negative
   dimension := some .fullness
   antonymForm := some "full"
   antonymRelation := some .contradictory
@@ -146,7 +146,7 @@ def wet : AdjectivalPredicateEntry where
     complete dryness). -/
 def dry : AdjectivalPredicateEntry where
   form := "dry"
-  polarity := some .negative
+  polarity := .negative
   dimension := some .wetness
   antonymForm := some "wet"
   antonymRelation := some .contradictory
@@ -162,7 +162,7 @@ def clean : AdjectivalPredicateEntry where
 /-- "dirty" — closed scale (maximally dirty), contradictory to "clean" -/
 def dirty : AdjectivalPredicateEntry where
   form := "dirty"
-  polarity := some .negative
+  polarity := .negative
   dimension := some .cleanliness
   antonymForm := some "clean"
   antonymRelation := some .contradictory
@@ -194,7 +194,7 @@ def open_ : AdjectivalPredicateEntry where
 /-- "closed" — closed scale, contradictory to "open" -/
 def closed_ : AdjectivalPredicateEntry where
   form := "closed"
-  polarity := some .negative
+  polarity := .negative
   dimension := some .openness
   antonymForm := some "open"
   antonymRelation := some .contradictory
@@ -203,7 +203,7 @@ def closed_ : AdjectivalPredicateEntry where
 /-- "shut" — closed scale, contradictory to "open" (near-synonym of "closed") -/
 def shut : AdjectivalPredicateEntry where
   form := "shut"
-  polarity := some .negative
+  polarity := .negative
   dimension := some .openness
   antonymForm := some "open"
   antonymRelation := some .contradictory
@@ -220,7 +220,7 @@ def free_ : AdjectivalPredicateEntry where
 /-- "loose" — closed scale (maximally loose), contradictory to "tight" -/
 def loose : AdjectivalPredicateEntry where
   form := "loose"
-  polarity := some .negative
+  polarity := .negative
   dimension := some .tightness
   antonymForm := some "tight"
   antonymRelation := some .contradictory
@@ -237,7 +237,7 @@ def tight : AdjectivalPredicateEntry where
     any non-zero bend). Shares the closed `.straightness` scale with "straight". -/
 def bent : AdjectivalPredicateEntry where
   form := "bent"
-  polarity := some .negative
+  polarity := .negative
   dimension := some .straightness
   antonymForm := some "straight"
   antonymRelation := some .contradictory
@@ -252,7 +252,7 @@ def smooth : AdjectivalPredicateEntry where
 /-- "rough" — closed scale, contradictory to "smooth" -/
 def rough : AdjectivalPredicateEntry where
   form := "rough"
-  polarity := some .negative
+  polarity := .negative
   dimension := some .smoothness
   antonymForm := some "smooth"
   antonymRelation := some .contradictory
@@ -331,7 +331,7 @@ def pristine : AdjectivalPredicateEntry where
 /-- "filthy" — closed scale, contrary to "pristine" (extreme absolute: gap exists) -/
 def filthy : AdjectivalPredicateEntry where
   form := "filthy"
-  polarity := some .negative
+  polarity := .negative
   dimension := some .cleanliness
   antonymForm := some "pristine"
   antonymRelation := some .contrary

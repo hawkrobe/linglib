@@ -1,8 +1,10 @@
+import Mathlib.Algebra.Group.Action.Defs
 import Mathlib.Algebra.Order.Ring.Int
 import Mathlib.Order.Directed
 import Mathlib.Order.Interval.Set.Defs
 import Mathlib.Order.WithBot
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Semantics.Degree.Polarity
 
 /-!
 # Scale boundedness
@@ -17,8 +19,10 @@ of each shape, a section of `ofOrder`.
 
 The negative member of an antonym pair measures on the same degrees under the inverse ordering
 ([kennedy-2007] (60) and fn. 29, [kennedy-mcnally-2005] fn. 7). `Boundedness.dual` is that
-operation on tags, and `ofOrder_orderDual` identifies it with mathlib's order dual. `withMin` and
-`withMax` adjoin an endpoint, the shapes of the rays `Set.Ici a` and `Set.Iic a`.
+operation on tags, and `ofOrder_orderDual` identifies it with mathlib's order dual; the polarity
+group `ScalePolarity` acts on tags through it, `p • b` being the scale the `p` member of an
+antonym pair on `b` measures on. `withMin` and `withMax` adjoin an endpoint, the shapes of the
+rays `Set.Ici a` and `Set.Iic a`.
 
 ## Main definitions
 
@@ -27,8 +31,8 @@ operation on tags, and `ofOrder_orderDual` identifies it with mathlib's order du
 * `Boundedness.dual`, `Boundedness.withMin`, `Boundedness.withMax`: the ends exchanged, a least
   degree adjoined, a greatest degree adjoined.
 * `Boundedness.degreeShape`: a linear order of each boundedness.
-* `ScalePolarity` and `Boundedness.ofPolarity`: which member of an antonym pair an adjective is,
-  and the scale that member measures on.
+* The `MulAction ScalePolarity Boundedness` instance: the negative member of an antonym pair
+  measures on the dual.
 
 ## Main results
 
@@ -227,25 +231,17 @@ theorem exists_isTop_degreeShape (b : Boundedness) : (∃ m : b.degreeShape, IsT
 
 end Boundedness
 
-/-! ### Scale polarity -/
+/-! ### The polarity action -/
 
-/-- Which member of an antonym pair an adjective is: `positive` measures in the unmarked
-direction (*tall*, *hot*), `negative` in the inverted one (*short*, *cold*). -/
-inductive ScalePolarity where
-  | positive
-  | negative
-  deriving DecidableEq, Repr, Fintype
+/-- The negative member of an antonym pair measures on the dual scale. -/
+instance : MulAction ScalePolarity Boundedness where
+  smul
+    | .positive, b => b
+    | .negative, b => b.dual
+  one_smul _ := rfl
+  mul_smul := by decide
 
-/-- The scale an adjective measures on: its dimension's scale for the positive member of an
-antonym pair, the same scale with the ends exchanged for the negative member. -/
-def Boundedness.ofPolarity (b : Boundedness) : ScalePolarity → Boundedness
-  | .positive => b
-  | .negative => b.dual
-
-@[simp] theorem Boundedness.ofPolarity_positive (b : Boundedness) :
-    b.ofPolarity .positive = b := rfl
-
-@[simp] theorem Boundedness.ofPolarity_negative (b : Boundedness) :
-    b.ofPolarity .negative = b.dual := rfl
+@[simp] theorem Boundedness.negative_smul (b : Boundedness) : ScalePolarity.negative • b = b.dual :=
+  rfl
 
 end Degree

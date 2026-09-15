@@ -123,7 +123,7 @@ def table61 : ScalePolarity → Boundedness → DegreeModifier → Bool
 
 /-- Every cell of (61) is the endpoint structure of the adjective's own scale. -/
 theorem table61_iff_licenses (p : ScalePolarity) (b : Boundedness) (m : DegreeModifier) :
-    table61 p b m = true ↔ Licenses m (b.ofPolarity p) := by
+    table61 p b m = true ↔ Licenses m (p • b) := by
   cases p <;> cases b <;> cases m <;> decide
 
 open English.Predicates.Adjectival in
