@@ -214,6 +214,12 @@ theorem priorOfWeights_singleton_ne_zero {x : W} (h : w x ≠ 0) : priorOfWeight
   rw [priorOfWeights_singleton]
   exact_mod_cast h
 
+/-- The mass of a finite set under the weight prior is the sum of its weights. -/
+theorem priorOfWeights_apply_finset (s : Finset W) :
+    priorOfWeights w ↑s = ∑ x ∈ s, (w x : ℝ≥0∞) := by
+  rw [← sum_measure_singleton]
+  simp only [priorOfWeights_singleton]
+
 /-- On natural-number weights and likelihoods the literal listener is the weighted likelihood
 over its total. -/
 theorem literalListener_natCast_real_singleton (lik : U → W → ℕ) (u : U) (x : W) :

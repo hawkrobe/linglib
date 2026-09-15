@@ -1,0 +1,152 @@
+[
+  {
+    "id": "warstadt2022_1",
+    "source": {"bibkey": "warstadt-2022", "paperLabel": "(1a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Tom doesn't have a green card.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Does Tom need a visa?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["presupposition", "Tom is a non-US citizen"],
+      ["projection", "projects"],
+      ["qud", "need visa"]
+    ],
+    "comment": "Negating the species predicate triggers the defeasible genus inference under this question.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "warstadt2022_2",
+    "source": {"bibkey": "warstadt-2022", "paperLabel": "(1a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Tom doesn't have a green card.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Can Tom get a free drink? The local bar is giving free drinks to anyone with a green card.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["presupposition", "Tom is a non-US citizen"],
+      ["projection", "absent"],
+      ["qud", "free drink"]
+    ],
+    "comment": "Under the free-drink question the genus inference is reported to be absent.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "warstadt2022_3",
+    "source": {"bibkey": "warstadt-2022", "paperLabel": "(1b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "None of the new hires has a green card.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["presupposition", "the new hires are non-US citizens"],
+      ["projection", "universal"]
+    ],
+    "comment": "The genus inference projects universally out of the quantifier.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "warstadt2022_4",
+    "source": {"bibkey": "warstadt-2022", "paperLabel": "(4a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Tom is not an Olympic sprinter.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["level", "species"],
+      ["inference", "Tom is an athlete"],
+      ["strength", "stronger"]
+    ],
+    "comment": "Negating the species predicate projects the family predicate more strongly than negating the genus.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "warstadt2022_5",
+    "source": {"bibkey": "warstadt-2022", "paperLabel": "(4b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Tom is not a runner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["level", "genus"],
+      ["inference", "Tom is an athlete"],
+      ["strength", "weaker"]
+    ],
+    "comment": "Negating the genus predicate projects the family predicate only weakly.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "warstadt2022_6",
+    "source": {"bibkey": "warstadt-2022", "paperLabel": "(4c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Tom is an athlete.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["level", "family"]
+    ],
+    "comment": "The family-level inference of (4a) and (4b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "warstadt2022_7",
+    "source": {"bibkey": "warstadt-2022", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Did he recently stop smoking?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Why is Tom chewing on his pencil?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["trigger", "stop"],
+      ["projection", "reduced"]
+    ],
+    "comment": "Geurts's example: under this question there is less need to accommodate that Tom smoked.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
