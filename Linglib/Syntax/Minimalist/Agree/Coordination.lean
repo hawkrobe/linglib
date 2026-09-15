@@ -1,37 +1,28 @@
 import Linglib.Syntax.Minimalist.Features
-import Mathlib.Data.List.Basic
+import Mathlib.Data.Finset.Basic
 
 /-!
 # Coordination resolution over a dual-feature system
 
-This file defines resolution of gender features on a coordinate structure in a dual-feature
-system: a nominal's features are interpretable, sent to LF, or uninterpretable, sent to PF, and
-resolution is the composition of *percolation*, which collects one feature set from each conjunct
-at the coordination, with *conversion*, which intersects the interpretable sets so that the group
-bears exactly the features every member has. Uninterpretable sets are not intersected; they are
-realized set by set, and realization converges only when every set receives the same exponent. A
-feature geometry records, for each node, the nodes it entails, and a geometry satisfies mismatch
-resolution when every pair of its nodes resolves to something without default insertion.
+This file defines the resolution of gender features on a coordinate structure in a
+dual-feature system ([adamson-anagnostopoulou-2025], after [smith-2015]). A nominal's bundle
+has an interpretable feature set, sent to LF, and an uninterpretable one, sent to PF.
+Resolution percolates the interpretable sets of the conjuncts to the coordination and converts
+them by intersection, so that the coordination bears exactly the features every conjunct has.
+Uninterpretable sets are not intersected but realized set by set, and their realization
+converges only when every set receives the same exponent; at Transfer the redundancy rule sends
+a nominal's interpretable features to PF when it has no uninterpretable ones. A feature
+geometry assigns each node the nodes it entails, which orders the nodes by entailment, and it
+satisfies mismatch resolution when every two of its nodes share an entailed node, so that no
+coordination needs a default.
 
 ## Main definitions
 
-* `Minimalist.Coordination.Annotated`, `Minimalist.Coordination.Bundle`: features annotated for
-  interpretability and the feature sets of a nominal.
-* `Minimalist.Coordination.percolate`, `Minimalist.Coordination.percolateU`: the interpretable and
-  uninterpretable sets a conjunct contributes.
-* `Minimalist.Coordination.conversion`, `Minimalist.Coordination.resolve`,
-  `Minimalist.Coordination.resolveN`: intersection of percolated interpretable sets.
-* `Minimalist.Coordination.redundancy`: the copying of interpretable values into empty
-  uninterpretable slots at Transfer.
-* `Minimalist.Coordination.realizeAll`: realization of a family of feature sets, converging only
-  on a single exponent.
-* `Minimalist.Coordination.MismatchResolutionOn`, `Minimalist.Coordination.Geometry`,
-  `Geometry.Entails`, `Geometry.MismatchResolution`.
-
-## Main statements
-
-* `Minimalist.Coordination.resolveN_binary`: n-ary resolution restricts to binary resolution.
-* `Minimalist.Coordination.resolve_self`: uniform conjuncts resolve to their shared features.
+* `Minimalist.Coordination.Bundle`, `Minimalist.Coordination.Bundle.single`,
+  `Minimalist.Coordination.Bundle.toPF`
+* `Minimalist.Coordination.resolve`, `Minimalist.Coordination.realizeAll`
+* `Minimalist.Coordination.Geometry`, `Minimalist.Coordination.Geometry.Entails`,
+  `Minimalist.Coordination.Geometry.MismatchResolution`
 
 ## References
 
@@ -43,145 +34,103 @@ namespace Minimalist.Coordination
 
 variable {F E : Type*}
 
-/-- A feature value annotated for interpretability. -/
-structure Annotated (F : Type*) where
-  value : F
-  interp : Interpretability
-  deriving DecidableEq, Repr
+/-- The gender features of a nominal in a dual-feature system, the interpretable ones sent to
+LF and the uninterpretable ones sent to PF. -/
+structure Bundle (F : Type*) where
+  /-- The interpretable features. -/
+  interp : Finset F
+  /-- The uninterpretable features. -/
+  uninterp : Finset F
+  deriving DecidableEq
 
-/-- The gender features of a nominal, interpretable and uninterpretable. -/
-abbrev Bundle (F : Type*) := List (Annotated F)
+namespace Bundle
 
-/-- The interpretable values of a bundle: what percolates to LF-bound resolution. -/
-def percolate (fs : Bundle F) : List F :=
-  (fs.filter (·.interp = .interpretable)).map (·.value)
+/-- A bundle of interpretable features only. -/
+def ofInterp (s : Finset F) : Bundle F := ⟨s, ∅⟩
 
-/-- The uninterpretable values of a bundle. -/
-def percolateU (fs : Bundle F) : List F :=
-  (fs.filter (·.interp = .uninterpretable)).map (·.value)
+/-- A bundle of uninterpretable features only. -/
+def ofUninterp (s : Finset F) : Bundle F := ⟨∅, s⟩
 
-/-- Interpretable annotation of every value in a list. -/
-def interpretable (vs : List F) : Bundle F := vs.map fun v => ⟨v, .interpretable⟩
+/-- A single feature with the interpretability its host carries. -/
+def single (v : F) : Interpretability → Bundle F
+  | .interpretable => ⟨{v}, ∅⟩
+  | .uninterpretable => ⟨∅, {v}⟩
 
-/-- Uninterpretable annotation of every value in a list. -/
-def uninterpretable (vs : List F) : Bundle F := vs.map fun v => ⟨v, .uninterpretable⟩
+/-- The features of two stacked layers. -/
+instance [DecidableEq F] : Union (Bundle F) :=
+  ⟨fun a b => ⟨a.interp ∪ b.interp, a.uninterp ∪ b.uninterp⟩⟩
 
-@[simp] theorem percolate_interpretable (vs : List F) : percolate (interpretable vs) = vs := by
-  simp [percolate, interpretable, List.filter_map, Function.comp_def]
+@[simp] theorem interp_union [DecidableEq F] (a b : Bundle F) :
+    (a ∪ b).interp = a.interp ∪ b.interp := rfl
+@[simp] theorem uninterp_union [DecidableEq F] (a b : Bundle F) :
+    (a ∪ b).uninterp = a.uninterp ∪ b.uninterp := rfl
+@[simp] theorem interp_ofInterp (s : Finset F) : (ofInterp s).interp = s := rfl
+@[simp] theorem uninterp_ofInterp (s : Finset F) : (ofInterp s).uninterp = ∅ := rfl
+@[simp] theorem interp_ofUninterp (s : Finset F) : (ofUninterp s).interp = ∅ := rfl
+@[simp] theorem uninterp_ofUninterp (s : Finset F) : (ofUninterp s).uninterp = s := rfl
 
-@[simp] theorem percolateU_uninterpretable (vs : List F) :
-    percolateU (uninterpretable vs) = vs := by
-  simp [percolateU, uninterpretable, List.filter_map, Function.comp_def]
+/-- The features a nominal sends to PF at Transfer, its interpretable ones when it has no
+uninterpretable ones, the redundancy rule. -/
+def toPF [DecidableEq F] (b : Bundle F) : Finset F :=
+  if b.uninterp = ∅ then b.interp else b.uninterp
 
-@[simp] theorem percolate_append (fs gs : Bundle F) :
-    percolate (fs ++ gs) = percolate fs ++ percolate gs := by
-  simp [percolate]
+@[simp] theorem toPF_ofInterp [DecidableEq F] (s : Finset F) : (ofInterp s).toPF = s := by
+  simp [toPF]
 
-@[simp] theorem percolateU_append (fs gs : Bundle F) :
-    percolateU (fs ++ gs) = percolateU fs ++ percolateU gs := by
-  simp [percolateU]
+end Bundle
 
-@[simp] theorem percolate_uninterpretable (vs : List F) : percolate (uninterpretable vs) = [] := by
-  simp [percolate, uninterpretable, List.filter_map, Function.comp_def]
+/-- Resolution of two conjuncts, the interpretable features that percolate from both, converted
+by intersection. -/
+def resolve [DecidableEq F] (a b : Bundle F) : Finset F := a.interp ∩ b.interp
 
-@[simp] theorem percolateU_interpretable (vs : List F) : percolateU (interpretable vs) = [] := by
-  simp [percolateU, interpretable, List.filter_map, Function.comp_def]
-
-/-- The redundancy rule at Transfer: interpretable values fill an empty uninterpretable slot. -/
-def redundancy (iFs uFs : List F) : List F := if uFs.isEmpty then iFs else uFs
-
-@[simp] theorem redundancy_nil (iFs : List F) : redundancy iFs [] = iFs := rfl
-
-theorem redundancy_of_ne_nil (iFs : List F) {uFs : List F} (h : uFs ≠ []) :
-    redundancy iFs uFs = uFs := by
-  simp [redundancy, h]
-
-/-- Realization of a family of feature sets: the exponent they all receive, if they agree. -/
-def realizeAll [DecidableEq E] (realize : List F → Option E) : List (List F) → Option E
-  | [] => none
-  | s :: ss => if ∀ t ∈ ss, realize t = realize s then realize s else none
-
-@[simp] theorem realizeAll_singleton [DecidableEq E] (realize : List F → Option E) (s : List F) :
-    realizeAll realize [s] = realize s := by
-  simp [realizeAll]
-
-theorem realizeAll_pair [DecidableEq E] (realize : List F → Option E) (s t : List F) :
-    realizeAll realize [s, t] = if realize t = realize s then realize s else none := by
-  simp [realizeAll]
-
-variable [DecidableEq F]
-
-/-- Conversion: the values shared by two percolated sets, in the order of the first. -/
-def conversion (xs ys : List F) : List F := xs.filter (· ∈ ys)
-
-theorem mem_conversion {xs ys : List F} {v : F} : v ∈ conversion xs ys ↔ v ∈ xs ∧ v ∈ ys := by
-  simp [conversion]
-
-@[simp] theorem conversion_self (xs : List F) : conversion xs xs = xs :=
-  List.filter_eq_self.2 fun _ h => decide_eq_true h
-
-/-- Resolution of two conjuncts: the shared interpretable values, none if there are none. -/
-def resolve (fs gs : Bundle F) : Option (List F) :=
-  match conversion (percolate fs) (percolate gs) with
-  | [] => none
-  | vs => some vs
-
-/-- Resolution of a family of conjuncts by iterated conversion. -/
-def resolveN (bundles : List (Bundle F)) : Option (List F) :=
-  match bundles.map percolate with
-  | [] => none
-  | first :: rest =>
-    match rest.foldl conversion first with
-    | [] => none
-    | vs => some vs
-
-theorem resolveN_binary (fs gs : Bundle F) : resolveN [fs, gs] = resolve fs gs := rfl
-
-/-- Uniform conjuncts resolve to their shared features. -/
-theorem resolve_self (fs : Bundle F) (h : percolate fs ≠ []) :
-    resolve fs fs = some (percolate fs) := by
-  unfold resolve
-  rw [conversion_self]
-  split
-  · exact absurd (by assumption) h
-  · rfl
+theorem resolve_comm [DecidableEq F] (a b : Bundle F) : resolve a b = resolve b a :=
+  Finset.inter_comm _ _
 
 /-- Single-feature conjuncts resolve to their feature exactly when both are interpretable and
 match. -/
-theorem resolve_singleton (x y : F) (i j : Interpretability) :
-    resolve [⟨x, i⟩] [⟨y, j⟩] =
-      if i = .interpretable ∧ j = .interpretable ∧ x = y then some [x] else none := by
-  cases i <;> cases j <;> by_cases h : x = y <;> simp [resolve, percolate, conversion, h]
+@[simp] theorem resolve_single [DecidableEq F] (x y : F) (i j : Interpretability) :
+    resolve (.single x i) (.single y j) =
+      if i = .interpretable ∧ j = .interpretable ∧ x = y then {x} else ∅ := by
+  cases i <;> cases j <;> by_cases h : x = y <;> simp [resolve, Bundle.single, h]
 
-/-- Every pair of bundles resolves without default insertion. -/
-def MismatchResolutionOn (bundles : List (Bundle F)) : Prop :=
-  ∀ a ∈ bundles, ∀ b ∈ bundles, (resolve a b).isSome
+/-- Realization of a family of feature sets, the exponent they all receive. -/
+def realizeAll [DecidableEq E] (realize : Finset F → Option E) : List (Finset F) → Option E
+  | [] => none
+  | s :: ss => if ∀ t ∈ ss, realize t = realize s then realize s else none
 
-instance (bundles : List (Bundle F)) : Decidable (MismatchResolutionOn bundles) :=
-  inferInstanceAs (Decidable (∀ a ∈ bundles, ∀ b ∈ bundles, _ = true))
+@[simp] theorem realizeAll_singleton [DecidableEq E] (realize : Finset F → Option E)
+    (s : Finset F) : realizeAll realize [s] = realize s := by
+  simp [realizeAll]
 
-/-- A feature geometry: for each node, the nodes it entails, itself included. -/
+/-- A feature geometry over `F`, a set of nodes and, for each node, the nodes it entails, itself
+included. -/
 structure Geometry (F : Type*) where
   /-- The nodes. -/
-  nodes : List F
+  nodes : Finset F
   /-- The closure of a node under entailment. -/
-  above : F → List F
+  above : F → Finset F
 
 namespace Geometry
 
 variable (G : Geometry F)
 
-/-- `a` entails `b` when `b`'s closure lies within `a`'s. -/
-def Entails (a b : F) : Prop := List.Subset (G.above b) (G.above a)
+/-- `a` entails `b` when everything `b` entails, `a` entails. -/
+def Entails (a b : F) : Prop := G.above b ⊆ G.above a
 
-instance (a b : F) : Decidable (G.Entails a b) :=
-  inferInstanceAs (Decidable (∀ x, x ∈ G.above b → x ∈ G.above a))
+instance [DecidableEq F] (a b : F) : Decidable (G.Entails a b) :=
+  inferInstanceAs (Decidable (G.above b ⊆ G.above a))
 
-/-- Every pair of nodes resolves without default insertion. -/
-def MismatchResolution : Prop :=
-  MismatchResolutionOn (G.nodes.map fun a => interpretable (G.above a))
+theorem Entails.refl (a : F) : G.Entails a a := Finset.Subset.refl _
 
-instance : Decidable G.MismatchResolution := inferInstanceAs (Decidable (MismatchResolutionOn _))
+theorem Entails.trans {a b c : F} (hab : G.Entails a b) (hbc : G.Entails b c) : G.Entails a c :=
+  Finset.Subset.trans hbc hab
+
+/-- Every two nodes share an entailed node, so no coordination of them needs a default. -/
+def MismatchResolution [DecidableEq F] : Prop :=
+  ∀ a ∈ G.nodes, ∀ b ∈ G.nodes, (G.above a ∩ G.above b).Nonempty
+
+instance [DecidableEq F] : Decidable G.MismatchResolution := by
+  unfold MismatchResolution; infer_instance
 
 end Geometry
 

@@ -47,7 +47,7 @@ namespace Carstens2026
 
 open Bantu Data.Examples Reference.Prominence Minimalist.Coordination
 
-/-- (13), (77b): whether the n of a gender carries a feature that percolates to &P. -/
+/-- Whether the n of a gender carries a feature that percolates to &P, (13) and (77b). -/
 def interpretability : GenderStatus → Minimalist.Interpretability
   | .interpretable _ => .interpretable
   | .uninterpretable => .uninterpretable
@@ -56,11 +56,11 @@ def interpretability : GenderStatus → Minimalist.Interpretability
 
 section Mechanism
 
-variable {G C : Type*} [DecidableEq G] [DecidableEq C]
+variable {G C : Type*} [DecidableEq G]
 
-/-- A Bantu nominal, (10), (72)–(73): a core nP of the gender that carries the semantic flavor of
-what it denotes, wrapped, when its visible class belongs to another gender, in an outer nP of
-that gender. -/
+/-- A Bantu nominal is a core nP of the gender that carries the semantic flavor of what it
+denotes, wrapped, when its visible class belongs to another gender, in an outer nP of that
+gender, (10) and (72)–(73). -/
 structure Nominal (G : Type*) where
   core : G
   outer : Option G := none
@@ -77,34 +77,32 @@ def visible : G := n.outer.getD n.core
 
 /-- The visible gender's feature as percolation sees it, annotated with the interpretability of
 the gender's n. -/
-def visibleBundle : Bundle G := [⟨n.visible, interpretability (status n.visible)⟩]
+def visibleBundle : Bundle G := .single n.visible (interpretability (status n.visible))
 
 /-- The core's feature, always interpretable. -/
-def coreBundle : Bundle G := [⟨n.core, .interpretable⟩]
+def coreBundle : Bundle G := .single n.core .interpretable
 
 end Nominal
 
-/-- Agreement valued by a resolved feature set: the plural class of its one gender. -/
-def valued : Option (List G) → Option C
-  | some [g] => some (pluralClass g)
-  | _ => none
-
 variable (a b : Nominal G)
 
-/-- Highest Wins (79): the visible genders percolate and intersect, the shared gender valuing
-its plural class. -/
+/-- Highest Wins (79), where the visible genders percolate and intersect, the shared gender
+valuing its plural class. -/
 def highestWins : Option C :=
-  valued pluralClass (resolve (a.visibleBundle status) (b.visibleBundle status))
+  if a.visible ∈ resolve (a.visibleBundle status) (b.visibleBundle status) then
+    some (pluralClass a.visible)
+  else none
 
-/-- Best Semantic Match (80): the cores intersect, a total match of gender with flavor, the
-shared core valuing its plural class. -/
-def bestSemanticMatch : Option C := valued pluralClass (resolve a.coreBundle b.coreBundle)
+/-- Best Semantic Match (80), where the cores intersect, a total match of gender with flavor,
+the shared core valuing its plural class. -/
+def bestSemanticMatch : Option C :=
+  if a.core ∈ resolve a.coreBundle b.coreBundle then some (pluralClass a.core) else none
 
 /-- `c` values plural agreement on &P under one of the two grammars (§5.1). -/
 def Values (c : C) : Prop :=
   highestWins status pluralClass a b = some c ∨ bestSemanticMatch pluralClass a b = some c
 
-instance (c : C) : Decidable (Values status pluralClass a b c) :=
+instance [DecidableEq C] (c : C) : Decidable (Values status pluralClass a b c) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 variable {a b}
@@ -115,22 +113,25 @@ theorem highestWins_eq :
         some (pluralClass a.visible)
       else none := by
   unfold highestWins Nominal.visibleBundle
-  rw [resolve_singleton]
-  split_ifs with h₁ h₂ h₂
-  · rfl
-  · exact absurd ⟨h₁.1, h₁.2.2⟩ h₂
-  · exact absurd ⟨h₂.1, h₂.2 ▸ h₂.1, h₂.2⟩ h₁
-  · rfl
+  rw [resolve_single]
+  by_cases h : interpretability (status a.visible) = .interpretable ∧ a.visible = b.visible
+  · have h' : interpretability (status a.visible) = .interpretable ∧
+        interpretability (status b.visible) = .interpretable ∧ a.visible = b.visible :=
+      ⟨h.1, h.2 ▸ h.1, h.2⟩
+    simp [h, h']
+  · have h' : ¬ (interpretability (status a.visible) = .interpretable ∧
+        interpretability (status b.visible) = .interpretable ∧ a.visible = b.visible) :=
+      fun ⟨h₁, _, h₃⟩ => h ⟨h₁, h₃⟩
+    simp [h, h']
 
 theorem bestSemanticMatch_eq :
     bestSemanticMatch pluralClass a b =
       if a.core = b.core then some (pluralClass a.core) else none := by
   unfold bestSemanticMatch Nominal.coreBundle
-  simp only [resolve_singleton, true_and]
-  split_ifs <;> rfl
+  by_cases h : a.core = b.core <;> simp [h]
 
-/-- (52a–b), (54): uniform conjuncts pair with gender-matching plural agreement exactly when
-their gender is interpretable. -/
+/-- Uniform conjuncts pair with gender-matching plural agreement exactly when their gender is
+interpretable, (52a–b) and (54). -/
 theorem matching_iff (h : a.visible = b.visible) :
     highestWins status pluralClass a b = some (pluralClass a.visible) ↔
       interpretability (status a.visible) = .interpretable := by
@@ -139,7 +140,7 @@ theorem matching_iff (h : a.visible = b.visible) :
   · simp [h]
   · simp [hi]
 
-/-- (77): a u-gender stacked above a core is ignored, the cores alone valuing agreement. -/
+/-- A u-gender stacked above a core is ignored, the cores alone valuing agreement (77). -/
 theorem values_iff_of_uninterpretable
     (hu : interpretability (status a.visible) = .uninterpretable) (c : C) :
     Values status pluralClass a b c ↔ bestSemanticMatch pluralClass a b = some c := by
@@ -147,9 +148,9 @@ theorem values_iff_of_uninterpretable
   rw [highestWins_eq]
   simp [hu]
 
-/-- (78)–(80): an arbitrary member of an interpretable gender stacked above a core carries both
-i-genders to &P, uniform conjuncts match twice, and the two grammars value the visible and the
-core plural respectively. -/
+/-- An arbitrary member of an interpretable gender stacked above a core carries both i-genders
+to &P, uniform conjuncts match twice, and the two grammars value the visible and the core
+plural respectively, (78)–(80). -/
 theorem two_grammars {g : G} (ho : a.outer = some g)
     (hi : interpretability (status g) = .interpretable) :
     highestWins status pluralClass a a = some (pluralClass g) ∧
@@ -168,8 +169,8 @@ theorem highestWins_eq_bestSemanticMatch (ha : a.outer = none) (hb : b.outer = n
   rw [highestWins_eq, bestSemanticMatch_eq, ha', hb']
   simp [hi]
 
-/-- (91)–(92), (111)–(112): with neither the visible genders nor the cores matching, no class
-values agreement and the conjunction is ineffable. -/
+/-- With neither the visible genders nor the cores matching, no class values agreement and the
+conjunction is ineffable, (91)–(92) and (111)–(112). -/
 theorem not_values (hv : a.visible ≠ b.visible) (hc : a.core ≠ b.core) (c : C) :
     ¬ Values status pluralClass a b c := by
   unfold Values
@@ -180,8 +181,8 @@ end Mechanism
 
 /-! ### Xhosa (71)–(73) -/
 
-/-- (71): the core genders of Xhosa's three entity types, gender A i[human], E i[animal] and
-D i[inanimate]. -/
+/-- The core genders of Xhosa's three entity types, gender A i[human], E i[animal] and
+D i[inanimate] (71). -/
 def xhosaCore : AnimacyLevel → Xhosa.Gender
   | .human => .genderA
   | .animate => .genderE
@@ -198,8 +199,8 @@ theorem xhosaCore_status (a : AnimacyLevel) :
     (xhosaCore a).status = .interpretable (xhosaFlavor a) := by
   cases a <;> rfl
 
-/-- (72)–(73): a noun's nominal, its core from what it denotes and, when its class belongs to
-another gender, that gender stacked above. -/
+/-- A noun's nominal, its core from what it denotes and, when its class belongs to another
+gender, that gender stacked above, (72)–(73). -/
 def xhosaNominal (n : Xhosa.NounEntry) : Nominal Xhosa.Gender :=
   ⟨xhosaCore n.animacy,
     (Xhosa.Gender.ofSingular n.cls).filter λ g => decide (g ≠ xhosaCore n.animacy)⟩
@@ -220,7 +221,7 @@ theorem shonaCore_status (a : AnimacyLevel) :
     (shonaCore a).status = .interpretable (if a = .human then .human else .nonhuman) := by
   cases a <;> rfl
 
-/-- A Shona noun's nominal; (98): a diminutive's u-gender 12/13 stacks above its core. -/
+/-- A Shona noun's nominal, where a diminutive's u-gender 12/13 stacks above its core (98). -/
 def shonaNominal (n : Shona.NounEntry) : Nominal Shona.Gender :=
   ⟨shonaCore n.animacy,
     (Shona.Gender.ofSingular n.cls).filter λ g => decide (g ≠ shonaCore n.animacy)⟩
@@ -283,23 +284,23 @@ def shonaAccepted (e : LinguisticExample) : List Shona.NounClass :=
 def shonaRejected (e : LinguisticExample) : List Shona.NounClass :=
   (features e "rejected").filterMap shonaClassOf
 
-/-- (6)–(9), (37)–(49), (55), (81)–(91), (111): every class a row accepts values agreement under
-one of the two grammars, and none it rejects does. -/
+/-- Every class a row accepts values agreement under one of the two grammars, and none it
+rejects does, (6)–(9), (37)–(49), (55), (81)–(91) and (111). -/
 theorem xhosa_rows :
     ∀ e ∈ rows "xhos1239", ∃ p ∈ xhosaConjuncts e,
       (∀ c ∈ xhosaAccepted e, XhosaValues p.1 p.2 c) ∧
         ∀ c ∈ xhosaRejected e, ¬ XhosaValues p.1 p.2 c := by
   decide +kernel
 
-/-- (58)–(68): the same over the Shona rows, matching agreement confined to 1/2 and 7/8. -/
+/-- The same over the Shona rows, matching agreement confined to 1/2 and 7/8, (58)–(68). -/
 theorem shona_rows :
     ∀ e ∈ rows "shon1251", ∃ p ∈ shonaConjuncts e,
       (∀ c ∈ shonaAccepted e, ShonaValues p.1 p.2 c) ∧
         ∀ c ∈ shonaRejected e, ¬ ShonaValues p.1 p.2 c := by
   decide +kernel
 
-/-- Table 13, (52a–b): gender-matching agreement is chosen at least as often as default
-exactly in the cells whose gender is interpretable. -/
+/-- Gender-matching agreement is chosen at least as often as default exactly in the cells whose
+gender is interpretable, Table 13 and (52a–b). -/
 theorem table13 :
     ∀ e ∈ rows "xhos1239", ∀ m ∈ e.nat? "matching", ∀ d ∈ e.nat? "default",
       ∀ p ∈ xhosaConjuncts e,
@@ -308,7 +309,7 @@ theorem table13 :
 
 /-! ### Taraldsen et al.'s reading (§3.2.3) -/
 
-/-- The same failures read structurally by [taraldsen-et-al-2018]: the genders whose singular
+/-- The same failures read structurally by [taraldsen-et-al-2018]. The genders whose singular
 and plural prefixes share one classifier N are exactly the interpretable genders, the paper's
 diagnostic and their partition of the Xhosa data coinciding. -/
 theorem taraldsen_split (g : Xhosa.Gender) :
