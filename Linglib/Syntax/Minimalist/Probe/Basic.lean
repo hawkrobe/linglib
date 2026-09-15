@@ -16,9 +16,8 @@ search.
 
 This models a probe's *search* (locality, intervention, satisfaction);
 feature *transmission* — what a successful Agree copies/shares/values — is
-a separate concern (`FeatureBundle.applyAgree`). This is the general core: the
-φ-specialization is in `Probe/Phi.lean`, the satisfaction spec in
-`Probe/Satisfaction.lean`, Keine's horizon spec in `Probe/Profile.lean`.
+a separate concern (`FeatureBundle.applyAgree`). This is the general core; the
+φ-specialization is in `Probe/Phi.lean` and Keine's horizon profiles in `Probe/Profile.lean`.
 
 ## Main declarations
 
@@ -29,18 +28,16 @@ a separate concern (`FeatureBundle.applyAgree`). This is the general core: the
   licenses at most one goal (the Person Licensing Condition's engine).
 - `Probe.cascade` — ordered probe sequence, first with output wins.
 
-`toProbe` specs denoting a `Probe`: `Probe.Target.toProbe`,
-`SatisfactionCond.toProbe`, `Probe.Profile.toProbe`,
+`toProbe` specs denoting a `Probe`: `Probe.Target.toProbe`, `Probe.Profile.toProbe`,
 `Probe.Articulated.toProbes`, `Deal2024.ProbeState.probe`.
 
 ## TODO
 
-- **Transmission axis.** `Probe` models *search*, not what a successful
-  Agree copies/shares/values. A `Probe.agreeWith : Probe α → (α → V) →
-  List α → Σ` (Σ = `Option V` / `List V` for [hiraiwa-2001] Multiple
-  Agree / a shared-occurrence type for Frampton-Gutmann feature-sharing)
-  would fold `FeatureBundle.applyAgree`, Multiple Agree, Agree-Link/Copy
-  ([arregi-nevins-2012]), and case-by-Agree into one extension.
+- **The Agree operation.** `Probe` models search, not what a successful Agree does to
+  the found goal. Valuing the probe (`FeatureBundle.applyAgree`), assigning case to the
+  goal, and Multiple Agree with every visible goal ([hiraiwa-2001]) are folds over
+  `search`; `Studies/Amato2025.lean` carries a local version of the operation that the
+  substrate should provide.
 - **Upward Agree.** Search is downward (c-command, `search_eq_some_iff_closest`);
   add a direction parameter for Bjorkman & Zeijlstra (2019)-style upward Agree.
 - **`Preorder (Probe α)`** by pointwise `vis`-refinement, so

@@ -2671,8 +2671,6 @@ import Linglib.Syntax.Mereological.Basic
 import Linglib.Syntax.Mereological.Interpretation
 import Linglib.Syntax.Mereological.Parthood
 import Linglib.Syntax.Minimalist.Agree.Basic
-import Linglib.Syntax.Minimalist.Agree.Checking
-import Linglib.Syntax.Minimalist.Agree.Consistency
 import Linglib.Syntax.Minimalist.Agree.Coordination
 import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Syntax.Minimalist.Defs
@@ -2713,8 +2711,6 @@ import Linglib.Syntax.Minimalist.Phi.Recursion
 import Linglib.Syntax.Minimalist.Probe.Basic
 import Linglib.Syntax.Minimalist.Probe.Phi
 import Linglib.Syntax.Minimalist.Probe.Profile
-import Linglib.Syntax.Minimalist.Probe.Satisfaction
-import Linglib.Syntax.Minimalist.Probe.Transmission
 import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.SyntacticObject.Derivation

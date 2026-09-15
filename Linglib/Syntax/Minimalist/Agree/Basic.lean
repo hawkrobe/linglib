@@ -64,6 +64,17 @@ theorem isClosestGoalIn_of_search_eq_some {p : Probe SyntacticObject} {dom : Lis
     exact Probe.not_rel_of_search_eq_some hord h x (Multiset.mem_coe.1 hx) hvx
       (λ e => hasym.2 (e ▸ hasym.1)) hasym
 
+/-- Sisters are equidistant. A closest goal need only be free of asymmetric c-command by the
+`pred`-nodes of the domain that are not its sisters, since a sister never asymmetrically
+c-commands it. -/
+theorem isClosestGoalIn_iff_forall_not_sister :
+    isClosestGoalIn root probe goal pred ↔
+      goal ∈ domainIn root probe ∧ pred goal ∧ ∀ x ∈ domainIn root probe, pred x →
+        ¬ areSistersIn root x goal → ¬ asymCCommandsIn root x goal :=
+  and_congr_right λ _ => and_congr_right λ _ => forall₂_congr λ _ _ => imp_congr_right λ _ =>
+    ⟨λ h _ => h, λ h hasym => (em _).elim (λ hs => not_asymCCommandsIn_of_areSistersIn hs hasym)
+      (λ hs => h hs hasym)⟩
+
 /-! ### Horizons -/
 
 /-- A target lies behind a horizon of category `c` for `probe` in `root` when a `c` leaf of
@@ -76,31 +87,6 @@ def behindHorizonIn (root probe target : SyntacticObject) (c : Cat) : Prop :=
 instance (root probe target : SyntacticObject) (c : Cat) :
     Decidable (behindHorizonIn root probe target c) :=
   Multiset.decidableExistsMultiset
-
-/-! ### Witnesses -/
-
-private def T₀ : PlanarSyntacticObject := .leaf ⟨.simple .T [], 1⟩
-private def V₀ : PlanarSyntacticObject := .leaf ⟨.simple .V [], 2⟩
-private def N₀ : PlanarSyntacticObject := .leaf ⟨.simple .N [], 3⟩
-private def D₁ : PlanarSyntacticObject := .leaf ⟨.simple .D [], 4⟩
-private def D₂ : PlanarSyntacticObject := .leaf ⟨.simple .D [], 5⟩
-
-/-- `[T [D₁ [V [N D₂]]]]`. -/
-private def twoD : PlanarSyntacticObject := {T₀, {D₁, {V₀, {N₀, D₂}}}}
-
-/-- `[T [D₁ D₂]]`. -/
-private def sisters : PlanarSyntacticObject := {T₀, {D₁, D₂}}
-
-/-- The higher D is the closest D-goal and shields the lower one. -/
-example : isClosestGoalIn twoD T₀ D₁ (isLeafOf .D) ∧
-    ¬ isClosestGoalIn twoD T₀ D₂ (isLeafOf .D) := by decide
-
-/-- Sisters are equidistant, so both are closest goals. -/
-example : isClosestGoalIn sisters T₀ D₁ (isLeafOf .D) ∧
-    isClosestGoalIn sisters T₀ D₂ (isLeafOf .D) := by decide
-
-/-- The lower D lies behind the N horizon; the higher one does not. -/
-example : behindHorizonIn twoD T₀ D₂ .N ∧ ¬ behindHorizonIn twoD T₀ D₁ .N := by decide
 
 end SyntacticObject
 
