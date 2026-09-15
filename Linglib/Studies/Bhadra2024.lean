@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Subsingleton
 import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Semantics.ArgumentStructure.Thematic.Defs
+import Linglib.Semantics.ArgumentStructure.ThematicRole
 import Linglib.Semantics.Events.Basic
 
 /-!

@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Thematic.Defs
+import Linglib.Semantics.ArgumentStructure.ThematicRole
 import Linglib.Discourse.Commitment.Table
 import Linglib.Semantics.Mood.Defs
 import Linglib.Data.Examples.Rudin2025b
