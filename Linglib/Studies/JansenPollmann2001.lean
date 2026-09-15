@@ -38,7 +38,7 @@ frequency on magnitude and the four properties stays in prose.
 ## Implementation notes
 
 * The paper's definition allows the zeroth power; `Roundness.roundnessScore` follows
-  [woodin-etal-2023] in requiring the first, which is `k`-ness with `k` scaled by ten. The
+  [woodin-etal-2024] in requiring the first, which is `k`-ness with `k` scaled by ten. The
   divergence shows at 15, which has 5-ness under the paper's definition but not 50-ness
   (`fifteen_hasKness_five_not_fifty`), so `Precision.inferPrecisionMode` misses it. The paper's
   10-ness is the `k = 1` family, as its example *70 has only 10-ness* shows.
@@ -47,7 +47,7 @@ frequency on magnitude and the four properties stays in prose.
 
 * [jansen-pollmann-2001]
 * [sigurd-1988]
-* [woodin-etal-2023]
+* [woodin-etal-2024]
 * [hurford-1975]
 -/
 

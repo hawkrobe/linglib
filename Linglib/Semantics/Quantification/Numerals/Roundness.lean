@@ -4,18 +4,18 @@ import Mathlib.Data.Nat.Log
 # Graded Numeral Roundness (k-ness Model)
 
 Framework-agnostic infrastructure for graded numeral roundness,
-following [sigurd-1988], [jansen-pollmann-2001], and [woodin-etal-2023].
+following [sigurd-1988], [jansen-pollmann-2001], and [woodin-etal-2024].
 
 A number n has **k-ness** if it lies in [jansen-pollmann-2001]'s set
 k × (1–9 × 10ⁿ): n = m × k × 10^b with 1 ≤ m ≤ 9 — so 10-ness is the
 k = 1 family, per their own example "70 has only 10-ness". The roundness
-score follows [woodin-etal-2023] in requiring b ≥ 1, which drops the
+score follows [woodin-etal-2024] in requiring b ≥ 1, which drops the
 single digits from 10-ness and 15, 45, … from 5-ness; since k-ness with
 b ≥ 1 is 10k-ness, one predicate serves both (cf.
 `Studies/JansenPollmann2001.lean` for the divergence).
 
 The 6 properties, ordered by strength as frequency predictors in
-[woodin-etal-2023]'s negative binomial regression (strongest first):
+[woodin-etal-2024]'s negative binomial regression (strongest first):
 10-ness (β = 4.46), 2.5-ness (β = 3.84), 5-ness (β = 3.39),
 2-ness (β = 2.74), multiple of 10 (β = 2.45), multiple of 5 (β = 0.06);
 the 2-ness and multiple-of-10 credible intervals overlap.
@@ -35,7 +35,7 @@ the 2-ness and multiple-of-10 credible intervals overlap.
   expressions* (2001)][jansen-pollmann-2001]
 * [B. Sigurd, *Round numbers* (1988)][sigurd-1988]
 * [G. Woodin, B. Winter, J. Littlemore, M. Perlman, J. Grieve, *Large-scale patterns of
-  number use in spoken and written English* (2023)][woodin-etal-2023]
+  number use in spoken and written English* (2023)][woodin-etal-2024]
 * [M. Krifka, *Approximate interpretation of number words* (2007)][krifka-2007]
 * [C. Cummins, *Constraints on numerical expressions* (2015)][cummins-2015]
 -/
@@ -81,10 +81,10 @@ theorem hasKness_ten_mul_iff {k n : ℕ} :
 The six graded roundness properties of [sigurd-1988] and
 [jansen-pollmann-2001] — multiple of 5, multiple of 10, 2-ness, 2.5-ness,
 5-ness, 10-ness — counted equally. The count predicts numeral frequency
-and pragmatic behavior ([woodin-etal-2023]). -/
+and pragmatic behavior ([woodin-etal-2024]). -/
 
 /-- Count of true roundness properties (0–6). Higher = rounder. The k-ness properties
-are taken with a positive exponent, following [woodin-etal-2023], so 2-, 2½-, 5- and
+are taken with a positive exponent, following [woodin-etal-2024], so 2-, 2½-, 5- and
 10-ness are `HasKness 20`, `HasKness 25`, `HasKness 50` and `HasKness 10`. -/
 def roundnessScore (n : ℕ) : ℕ :=
   (if 5 ∣ n then 1 else 0) + (if 10 ∣ n then 1 else 0) +

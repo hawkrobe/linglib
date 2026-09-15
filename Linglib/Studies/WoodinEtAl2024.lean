@@ -1,160 +1,158 @@
 import Linglib.Semantics.Quantification.Numerals.Roundness
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.NormNum
+import Mathlib.Analysis.SpecialFunctions.Log.Base
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
-# [woodin-etal-2023]: Numeral Frequency and Roundness
-[sigurd-1988] [woodin-etal-2023]
+# Woodin, Winter, Littlemore, Perlman & Grieve (2024): Large-Scale Patterns of Number Use
 
-Corpus study showing number frequency is predicted by:
-(a) log magnitude, and
-(b) graded roundness via Sigurd/Jansen & Pollmann k-ness properties.
+This file formalizes the model of number frequency in [woodin-etal-2024]'s corpus study of the
+British National Corpus: the log frequency of a number is a linear function of its log
+magnitude and of which roundness properties it has (`Model.predicted`). The six properties
+are being a multiple of five, being a multiple of ten, and the 10-ness, 2-ness, 2½-ness and
+5-ness of [jansen-pollmann-2001], taken with a positive power of ten so that every round
+number is a multiple of five (`Property.Holds`). The properties nest: 10-ness, 2-ness and
+5-ness entail being a multiple of ten, and every property entails being a multiple of five
+(`multipleOf5_mem_of_mem`),
+and the unweighted count of properties is the roundness score of the substrate
+(`card_properties`). With non-negative weights the roundness term is monotone in the property
+set, and a rounder number of comparable magnitude is predicted more frequent exactly when the
+weights of its extra properties outweigh the magnitude penalty (`predicted_le_iff`), the case
+the study illustrates with 99 and 100 (`predicted_99_le_100_iff`).
 
-Key finding: each k-ness property has an independent positive effect on frequency,
-with 10-ness being the strongest predictor and multipleOf5 the weakest.
+## Implementation notes
 
-## Register Effect
+The fitted coefficients, the ordering of the properties by effect size, the residual analysis
+of culturally salient numbers, and the register comparisons are results of the corpus study
+and are not restated here; the theorems are over an arbitrary model, with the sign conditions
+the study reports as hypotheses.
 
-Informational texts (Wikipedia) show stronger roundness effects than
-non-informational texts (fiction, conversation), suggesting roundness
-interacts with communicative goals.
+## References
 
+* [woodin-etal-2024]
+* [jansen-pollmann-2001]
+* [sigurd-1988]
 -/
 
 namespace WoodinEtAl2024
 
-open Numerals.Roundness
+open Numerals.Roundness Finset
 
-/-! ### β coefficients from the negative binomial regression (§4.2, [woodin-etal-2023]) -/
+/-! ### The roundness properties -/
 
-/--
-Regression coefficient for each k-ness property on log frequency.
+/-- The six roundness properties of the model. -/
+inductive Property where
+  | multipleOf5
+  | multipleOf10
+  | tenness
+  | twoness
+  | twoAndAHalfness
+  | fiveness
+  deriving DecidableEq, Repr, Fintype
 
-Higher β = stronger positive effect on numeral frequency in corpora.
-All coefficients are positive: each property independently increases frequency.
--/
-structure RoundnessCoefficient where
-  property : String
-  β : ℚ
-  deriving Repr
+/-- Whether a number has a property; the k-ness properties take a positive power of ten. -/
+def Property.Holds : Property → ℕ → Prop
+  | .multipleOf5, n => 5 ∣ n
+  | .multipleOf10, n => 10 ∣ n
+  | .tenness, n => HasKness 10 n
+  | .twoness, n => HasKness 20 n
+  | .twoAndAHalfness, n => HasKness 25 n
+  | .fiveness, n => HasKness 50 n
 
-/-- β coefficients ordered by magnitude (§4.2). -/
-def β_tenness : RoundnessCoefficient :=
-  { property := "10-ness", β := 446 / 100 }  -- 4.46
+instance (p : Property) (n : ℕ) : Decidable (p.Holds n) := by
+  cases p <;> unfold Property.Holds <;> infer_instance
 
-def β_2_5ness : RoundnessCoefficient :=
-  { property := "2.5-ness", β := 384 / 100 }  -- 3.84
+/-- The properties a number has. -/
+def properties (n : ℕ) : Finset Property := univ.filter (·.Holds n)
 
-def β_5ness : RoundnessCoefficient :=
-  { property := "5-ness", β := 339 / 100 }  -- 3.39
+theorem mem_properties {p : Property} {n : ℕ} : p ∈ properties n ↔ p.Holds n := by
+  simp [properties]
 
-def β_2ness : RoundnessCoefficient :=
-  { property := "2-ness", β := 274 / 100 }  -- 2.74
+/-- 10-ness, 2-ness and 5-ness make a number a multiple of ten. -/
+theorem dvd_ten_of_holds {p : Property} {n : ℕ}
+    (hp : p = .tenness ∨ p = .twoness ∨ p = .fiveness) (h : p.Holds n) : 10 ∣ n := by
+  rcases hp with rfl | rfl | rfl
+  · exact h.dvd
+  · exact Nat.dvd_trans (by norm_num) h.dvd
+  · exact Nat.dvd_trans (by norm_num) h.dvd
 
-def β_mult10 : RoundnessCoefficient :=
-  { property := "multipleOf10", β := 245 / 100 }  -- 2.45
+/-- Every roundness property makes a number a multiple of five: a number with any property
+is a multiple of five. -/
+theorem multipleOf5_mem_of_mem {p : Property} {n : ℕ} (h : p ∈ properties n) :
+    Property.multipleOf5 ∈ properties n := by
+  rw [mem_properties] at h ⊢
+  cases p with
+  | multipleOf5 => exact h
+  | multipleOf10 => exact Nat.dvd_trans (by norm_num) h
+  | twoAndAHalfness => exact Nat.dvd_trans (by norm_num) h.dvd
+  | tenness => exact Nat.dvd_trans (by norm_num) (dvd_ten_of_holds (.inl rfl) h)
+  | twoness => exact Nat.dvd_trans (by norm_num) (dvd_ten_of_holds (.inr (.inl rfl)) h)
+  | fiveness => exact Nat.dvd_trans (by norm_num) (dvd_ten_of_holds (.inr (.inr rfl)) h)
 
-def β_mult5 : RoundnessCoefficient :=
-  { property := "multipleOf5", β := 6 / 100 }  -- 0.06
+/-- The number of properties is the substrate's roundness score. -/
+theorem card_properties (n : ℕ) : (properties n).card = roundnessScore n := by
+  have hu : (univ : Finset Property) = {.multipleOf5, .multipleOf10, .tenness, .twoness,
+      .twoAndAHalfness, .fiveness} := by decide
+  rw [properties, card_filter, hu]
+  simp only [sum_insert, mem_insert, mem_singleton, reduceCtorEq, or_self, not_false_eq_true,
+    sum_singleton, Property.Holds, roundnessScore]
+  ring
 
-/-- The 6 coefficients in descending order. -/
-def roundnessHierarchy : List RoundnessCoefficient :=
-  [β_tenness, β_2_5ness, β_5ness, β_2ness, β_mult10, β_mult5]
+/-! ### The frequency model -/
 
--- Hierarchy ordering verification
-#guard β_tenness.β > β_2_5ness.β
-#guard β_2_5ness.β > β_5ness.β
-#guard β_5ness.β > β_2ness.β
-#guard β_2ness.β > β_mult10.β
-#guard β_mult10.β > β_mult5.β
+/-- A model of log frequency: a coefficient on log magnitude and a weight per roundness
+property. -/
+structure Model where
+  magnitude : ℝ
+  weight : Property → ℝ
 
-theorem hierarchy_ordering :
-    β_tenness.β > β_2_5ness.β ∧
-    β_2_5ness.β > β_5ness.β ∧
-    β_5ness.β > β_2ness.β ∧
-    β_2ness.β > β_mult10.β ∧
-    β_mult10.β > β_mult5.β := by
-  norm_num [β_tenness, β_2_5ness, β_5ness, β_2ness, β_mult10, β_mult5]
+namespace Model
 
-/-! ### Frequency-weighted roundness score -/
+variable (M : Model)
 
-/--
-Frequency-weighted roundness score using Woodin et al.'s β coefficients.
+/-- The predicted log frequency of a number. -/
+noncomputable def predicted (n : ℕ) : ℝ :=
+  M.magnitude * Real.logb 10 n + ∑ p ∈ properties n, M.weight p
 
-Unlike the unweighted `roundnessScore` (which counts properties equally),
-this weights each property by its empirical frequency effect.
--/
-def weightedRoundnessScore (n : ℕ) : ℚ :=
-  (if 5 ∣ n then β_mult5.β else 0) +
-  (if 10 ∣ n then β_mult10.β else 0) +
-  (if HasKness 20 n then β_2ness.β else 0) +
-  (if HasKness 25 n then β_2_5ness.β else 0) +
-  (if HasKness 50 n then β_5ness.β else 0) +
-  (if HasKness 10 n then β_tenness.β else 0)
+/-- With non-negative weights, the roundness term is monotone in the property set. -/
+theorem sum_weight_le_of_subset (hw : ∀ p, 0 ≤ M.weight p) {n m : ℕ}
+    (h : properties n ⊆ properties m) :
+    ∑ p ∈ properties n, M.weight p ≤ ∑ p ∈ properties m, M.weight p :=
+  sum_le_sum_of_subset_of_nonneg h λ p _ _ => hw p
 
--- Weighted score verification
-#guard weightedRoundnessScore 7 = 0
-#guard weightedRoundnessScore 100 > weightedRoundnessScore 50
-#guard weightedRoundnessScore 50 > weightedRoundnessScore 110
+/-- At equal roundness, a negative magnitude coefficient predicts the smaller number more
+frequent. -/
+theorem predicted_anti (hM : M.magnitude ≤ 0) {n m : ℕ} (hn : 0 < n) (hnm : n ≤ m)
+    (h : properties n = properties m) : M.predicted m ≤ M.predicted n := by
+  unfold predicted
+  rw [h]
+  have := mul_le_mul_of_nonpos_left
+    (Real.logb_le_logb_of_le (by norm_num : (1 : ℝ) < 10) (Nat.cast_pos.mpr hn)
+      (Nat.cast_le.mpr hnm)) hM
+  linarith
 
-theorem weighted_100_gt_50 :
-    weightedRoundnessScore 100 > weightedRoundnessScore 50 := by decide +kernel
+/-- A rounder number is predicted at least as frequent as a less round one exactly when the
+weights of its extra properties make up the magnitude difference. -/
+theorem predicted_le_iff {n m : ℕ} (h : properties n ⊆ properties m) :
+    M.predicted n ≤ M.predicted m ↔
+      -M.magnitude * (Real.logb 10 m - Real.logb 10 n) ≤
+        ∑ p ∈ properties m \ properties n, M.weight p := by
+  unfold predicted
+  rw [← sum_sdiff h]
+  constructor <;> intro h' <;> linarith
 
-theorem weighted_50_gt_110 :
-    weightedRoundnessScore 50 > weightedRoundnessScore 110 := by decide +kernel
+/-- The study's illustration: 100 has every property and 99 none, so 100 is predicted more
+frequent exactly when the summed weights make up the magnitude penalty of one part in a
+hundred. -/
+theorem predicted_99_le_100_iff :
+    M.predicted 99 ≤ M.predicted 100 ↔
+      -M.magnitude * Real.logb 10 (100 / 99) ≤ ∑ p, M.weight p := by
+  have h99 : properties 99 = ∅ := by decide
+  have h100 : properties 100 = univ := by decide
+  rw [predicted_le_iff M (by rw [h99]; exact empty_subset _), h99, h100, sdiff_empty,
+    Real.logb_div (by norm_num) (by norm_num)]
+  push_cast
+  exact Iff.rfl
 
-theorem weighted_7_eq_zero :
-    weightedRoundnessScore 7 = 0 := by decide +kernel
-
-/-- `weightedRoundnessScore 50 > 0`: 50 has multipleOf5, multipleOf10,
-    2.5-ness, 5-ness, and 10-ness (50 = 5 × 10¹), so its weighted score is
-    the strictly positive sum of those β coefficients. -/
-theorem weighted_50_pos : weightedRoundnessScore 50 > 0 := by decide +kernel
-
-theorem weighted_50_gt_7 :
-    weightedRoundnessScore 50 > weightedRoundnessScore 7 := by
-  rw [weighted_7_eq_zero]; exact weighted_50_pos
-
-/-- **RSA utterance prior from corpus frequency.** Rounder numerals have
-    higher prior weight, so `weightedRoundnessScore` doubles as an
-    empirically-grounded RSA utterance prior: rounder numerals are more
-    likely to be chosen, all else equal. The strict-monotonicity chain
-    `100 > 50 > 7` realises this on representative cases. -/
-theorem roundness_prior_monotone :
-    weightedRoundnessScore 100 > weightedRoundnessScore 50 ∧
-    weightedRoundnessScore 50 > weightedRoundnessScore 7 :=
-  ⟨weighted_100_gt_50, weighted_50_gt_7⟩
-
-/-! ### Register effect data -/
-
-/--
-Register type from corpus analysis.
-
-Informational registers (Wikipedia) show stronger roundness effects
-than non-informational registers (fiction, conversation).
--/
-inductive Register where
-  | informational      -- Wikipedia, academic, news
-  | nonInformational   -- fiction, conversation
-  deriving Repr, DecidableEq
-
-/-- Register effect datum: roundness β is larger in informational texts. -/
-structure RegisterEffectDatum where
-  register : Register
-  roundnessEffectMagnitude : String  -- qualitative comparison
-  notes : String
-  deriving Repr
-
-def informationalEffect : RegisterEffectDatum :=
-  { register := .informational
-  , roundnessEffectMagnitude := "stronger"
-  , notes := "Wikipedia shows strongest roundness effects; consistent with communicative precision demands"
-  }
-
-def nonInformationalEffect : RegisterEffectDatum :=
-  { register := .nonInformational
-  , roundnessEffectMagnitude := "weaker"
-  , notes := "Fiction/conversation show weaker roundness effects; approximate use less marked"
-  }
+end Model
 
 end WoodinEtAl2024
