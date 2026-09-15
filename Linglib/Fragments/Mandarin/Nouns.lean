@@ -19,7 +19,7 @@ of Aikhenvald's semantic generalizations about classifier selection.
 namespace Mandarin.Nouns
 
 open Mandarin.Classifiers
-open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
+open Semantics.Kinds.NMP (NominalMapping)
 
 /-- A lexical entry for a Mandarin noun.
 
@@ -49,14 +49,9 @@ def NP.classifier (np : NP) : Option Classifier :=
 def NP.classifierForm (np : NP) : Option String :=
   np.classifier.map (·.form)
 
-/-- Mandarin has no articles, so no type shifts are blocked. -/
-def mandarinBlocking : BlockingPrinciple :=
-  { determiners := []
-  , iotaBlocked := false
-  , existsBlocked := false
-  , downBlocked := false }
-
-def mandarinMapping : NominalMapping := .argOnly
+/-- Mandarin is [+arg, −pred]: nouns denote kinds, and with no articles
+(`Mandarin.Determiners.inventory`) no covert shift is blocked ([chierchia-1998]). -/
+def nominalMapping : NominalMapping := .argOnly
 
 def bareNP (n : NounEntry) : NP :=
   { noun := n, isBare := true }
@@ -128,10 +123,6 @@ def allNouns : List NounEntry := [
 
 def lookup (form : String) : Option NounEntry :=
   allNouns.find? λ n => n.form == form
-
-def bareNPLicensed : Bool := true
-
-example : bareNPLicensed = true := rfl
 
 -- ============================================================================
 -- Verification: classifier selection is semantically coherent
