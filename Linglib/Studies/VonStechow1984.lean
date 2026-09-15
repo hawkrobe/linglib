@@ -6,33 +6,36 @@ import Linglib.Data.Examples.VonStechow1984
 import Mathlib.Tactic.Linarith
 
 /-!
-# Von Stechow 1984: Comparing Semantic Theories of Comparison
+# von Stechow (1984): Comparing Semantic Theories of Comparison
 
-[von-stechow-1984] evaluates eight semantic theories of the comparative —
-[russell-1905], [postal-1974], [williams-1977], [seuren-1973],
-[lewis-1970], [klein-1980], [cresswell-1976], [hellan-1981] — against
-nine phenomena (table (xvii)) and synthesizes them: Russellian definite
-descriptions of degrees plus an ACTUALLY operator. Russell's ambiguity
-("I thought your yacht was larger than it is") is the presence or
-absence of ACTUALLY in the than-clause, not degree-operator scope.
-Example stimuli live in `Data.Examples.VonStechow1984` (`Examples.*`).
+This file formalizes the parts of [von-stechow-1984]'s comparison of eight semantic theories
+of the comparative that turn on its own synthesis, Russellian definite descriptions of degrees
+with an ACTUALLY operator. Russell's yacht ambiguity (1) is the presence or absence of ACTUALLY
+in the than-clause: the de re reading compares the believed length with the actual one and the
+de dicto reading compares a length with itself, hence is contradictory (`deReComparative`,
+`deDictoComparative`), and the ambiguous counterfactual (26) is read the same way. A
+disjunctive than-clause entails both disjuncts (v), the downward entailingness that licenses
+its negative polarity items (§VI); a modal comparative (x) compares maxima over the accessible
+worlds (§VIII); and Klein's degree-free ordering agrees with degree comparison on simple
+comparatives and parts from it on the differential and factor constructions (171) (§XI). The
+synthesis rules make *more* additive and *as* multiplicative in their differential (R4, R5,
+`moreSem`, `asSem`), and *too* a comparative against a counterfactually determined threshold
+(R13), so that a pack too heavy to lift is heavier than in every world where it can be lifted
+(227).
 
-## Main definitions
+## Implementation notes
 
-* `deReComparative`, `deDictoComparative`: Russell's ambiguity as an
-  ACTUALLY-anchored vs belief-world than-clause standard (§§II–V)
-* `moreSem`, `asSem`: synthesis rules R4 (additive *more*) and
-  R5 (multiplicative *as*) (§XIII)
+Degrees form a linear order, with the additive or multiplicative structure the rule at hand
+needs; measures are world-indexed where ACTUALLY matters and extensional otherwise. The
+descriptive-adequacy table (xvii) over the eight theories is not transcribed, and the rules R6
+to R12 for the positive, nominal, mass and adverbial comparatives are not formalized. The
+paper's examples are the rows of `Data.Examples.VonStechow1984`.
 
-## Main results
+## References
 
-* `deDicto_absurd`: the ACTUALLY-less reading is contradictory
-* `maxDeg_witness`: modal comparatives as `IsGreatest` over accessible
-  worlds (§VIII)
-* `klein_agrees_on_simple`: the degree-free ordering matches degree
-  comparison on simple comparatives, not on differentials (§XI)
-* `moreSem_exceeds_counterfactual_worlds`: R13 — *too* as `moreSem` with
-  a counterfactual threshold (§XIII.6)
+* [von-stechow-1984]
+* [russell-1905]
+* [klein-1980]
 -/
 
 namespace VonStechow1984
@@ -57,7 +60,7 @@ def intensionalComparative (μ : W → Entity → D) (w : W) (a b : Entity) : Pr
 /-- A rigid measure reduces `intensionalComparative` to the extensional
 `comparativeSem`. -/
 theorem intensionalComparative_rigid (μe : Entity → D) (w : W) (a b : Entity) :
-    intensionalComparative (fun _ => μe) w a b ↔
+    intensionalComparative (λ _ => μe) w a b ↔
       comparativeSem μe a b .positive :=
   Iff.rfl
 
@@ -107,7 +110,7 @@ theorem maxDeg_witness {acc : Set W} {μA μB : W → D} {maxA maxB : D}
     (hgt : maxB < maxA) :
     ∃ w ∈ acc, ∀ v ∈ acc, μB v < μA w := by
   obtain ⟨w, hw, rfl⟩ := hmaxA.1
-  exact ⟨w, hw, fun v hv => lt_of_le_of_lt (hmaxB.2 ⟨v, hv, rfl⟩) hgt⟩
+  exact ⟨w, hw, λ v hv => lt_of_le_of_lt (hmaxB.2 ⟨v, hv, rfl⟩) hgt⟩
 
 /-- Klein's degree-free ordering ([klein-1980]; §XI) matches degree
 comparison on simple comparatives via `measureDelineation`; the divergence
@@ -152,7 +155,7 @@ theorem asSem_factor_bridge [Mul D] (μ : Entity → D) (a b : Entity)
     (factor : D) (h : factorEquative μ a b factor) : asSem μ a factor (μ b) :=
   le_of_eq h.symm
 
-/-- R13 (p. 69, §XIII.6): `⟦too⟧(d₁)(A⁰)(p)(x) = the max.d [x is d-A⁰]
+/-- R13 (§XIII): `⟦too⟧(d₁)(A⁰)(p)(x) = the max.d [x is d-A⁰]
 λd₂ [p □→ A⁰(x, d₂ − d₁)]` — *too* is R4's `moreSem` with a
 counterfactually determined threshold (DegP head `Degree.Head.excessive`):
 when the threshold is greatest over the accessible worlds, being `excess`
@@ -161,15 +164,15 @@ theorem moreSem_exceeds_counterfactual_worlds
     [AddCommMonoid D] [IsOrderedCancelAddMonoid D]
     (μ : W → Entity → D) (w₀ : W) (acc : Set W) (x : Entity)
     {threshold excess : D} (hexcess : 0 < excess)
-    (hmax : IsGreatest ((fun w => μ w x) '' acc) threshold)
+    (hmax : IsGreatest ((λ w => μ w x) '' acc) threshold)
     (htoo : moreSem (μ w₀) x excess threshold) :
     ∀ w ∈ acc, μ w x < μ w₀ x :=
-  fun w hw => (hmax.2 ⟨w, hw, rfl⟩).trans_lt
+  λ w hw => (hmax.2 ⟨w, hw, rfl⟩).trans_lt
     ((lt_add_of_pos_left threshold hexcess).trans_le htoo)
 
 -- (227) (`Examples.ex227`): an 80 kg pack with a 30 kg liftable
 -- threshold is at least 50 kg too heavy.
-example : moreSem (fun _ : Unit => (80 : ℚ)) () 50 30 := by
+example : moreSem (λ _ : Unit => (80 : ℚ)) () 50 30 := by
   norm_num [moreSem]
 
 end VonStechow1984
