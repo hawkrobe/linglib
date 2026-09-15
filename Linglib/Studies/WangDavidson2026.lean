@@ -1,439 +1,234 @@
-import Linglib.Semantics.Exhaustification.Finite
 import Linglib.Semantics.Exhaustification.Trivalent
-import Linglib.Logic.Trivalent.Prop3
-import Linglib.Semantics.Presupposition.Basic
-import Mathlib.Tactic.DeriveFintype
+import Linglib.Semantics.Dynamic.Partial
+import Linglib.Data.Examples.WangDavidson2026
+import Mathlib.Data.Fintype.Prod
 
 /-!
 # Wang & Davidson (2026): Presupposition Filtering in Disjunction
-[wang-davidson-2026]
 
-Yiqian Wang and Kathryn Davidson, "Presupposition filtering in
-disjunction: The role of exclusive interpretation."
-*Proceedings of Sinn und Bedeutung* 30.
+This file formalizes [wang-davidson-2026]'s survey of what fully semantic implementations of
+exclusive disjunction predict for presupposition projection. Under Strong Kleene an inclusive
+disjunction is true when one disjunct is, whatever the other, so a true disjunct filters the
+other's presupposition, whereas an exclusive disjunction is undefined whenever a disjunct is
+(`Filters`, `not_filters_xor`). Bivalent exhaustification ([fox-2007]) strengthens a disjunction
+to its exclusive reading (`exh_or`), so once the strengthened truth conditions feed the projection
+computation three projection theories agree that an exclusive disjunction projects uniformly:
+Strong Kleene ([mayr-romoli-2016a]); [george-2008]'s algorithm, rendered as `george` over any
+classical connective, which agrees with Strong Kleene on inclusive and exclusive disjunction
+(`george_or`, `george_xor`) while filtering conjunction only from left to right; and dynamic
+semantics, where each of the eight context change potentials that [rothschild-2011]'s
+restrictions allow for exclusive disjunction is admitted only by a context satisfying both
+presuppositions (`xorCCPs_admits`). The trivalent exhaustifiers of [spector-sudo-2017] split:
+weak-negation EXH¹ is undefined exactly where its prejacent is, so it leaves projection alone,
+while strong-negation EXH² is undefined wherever an innocently excludable alternative is, and
+for a disjunction the conjunction alternative's presupposition together with the disjunction's
+is both disjuncts' (`sup_inf_ne_indet_iff`). The theories predicting that more exclusive readings
+mean less filtering are the paper's Type A; the paper's Mandarin experiment on *huozhe* finds no
+such effect.
 
-## Summary
+## Implementation notes
 
-The paper asks whether exclusive interpretation of disjunction (via
-scalar implicature / exhaustification) affects presupposition
-projection. The answer, both theoretically and empirically, is:
+The exhaustification identity is checked on the four valuations of two atoms, the free model of
+a propositional identity. George's algorithm is stated as the paper renders it, on the set of
+classical values a trivalent argument leaves open. The experiment's ratings are not formalized;
+its stimuli are in `Data.Examples.WangDavidson2026`.
 
-**Most theories predict yes, but the experiment finds no.**
+## References
 
-## Theoretical Contribution (§3)
-
-The paper surveys combinations of:
-- Exhaustification theories: bivalent EXH, trivalent EXH¹, EXH²
-- Projection theories: Strong Kleene, George 2008, classic dynamic
-  semantics
-
-These divide into two classes:
-
-- **Type A**: increasing exclusivity *reduces* filtering
-  (bivalent EXH + SK/George/dynamic; EXH² + any projection)
-- **Type B**: exclusivity has *no effect* on filtering
-  (EXH¹ + any projection)
-
-The core mechanism: under Strong Kleene, inclusive disjunction
-(`⊔` on `Trivalent`) can return `.true` even when one disjunct is
-undefined — so a true first disjunct "filters" the second's
-presupposition failure. Exclusive disjunction (`Trivalent.xor`)
-cannot: it returns `.indet` whenever either input is `.indet`.
-
-### Feed-forward assumption (§5)
-
-The Type A prediction for bivalent EXH depends on a **feed-forward**
-assumption: the strengthened (exclusive) truth conditions must be
-computed early enough to be visible to the projection computation.
-Without this, bivalent EXH + SK would not predict Type A because
-the projection computation would see only the original inclusive
-truth conditions. This assumption is architecturally non-trivial —
-see [wang-davidson-2026] §5.
-
-## Empirical Contribution (§4)
-
-Mandarin experiment using *huozhe* ('or'), manipulating exclusivity
-via environmental monotonicity (UE → more exclusive, DE → less).
-Two presupposition triggers: *jie* 'quit' and *zhidao* 'know'.
-
-**Key result**: PREDICATE × MONOTONICITY interaction is not significant
-(p = .30, BF₁₀ = 0.52). No evidence that exclusivity modulates
-filtering. This challenges Type A theories and is consistent with
-Type B (EXH¹).
-
-**Secondary finding**: filtering (a)symmetry depends on trigger.
-*jie* shows asymmetric filtering (PREDICATE × ORDER: p = .01);
-*zhidao* shows symmetric filtering (uniform, p = .99 for PREDICATE).
+* [wang-davidson-2026]
+* [fox-2007]
+* [george-2008]
+* [kalomoiros-schwarz-2024]
+* [mayr-romoli-2016a]
+* [rothschild-2011]
+* [spector-sudo-2017]
 -/
 
 namespace WangDavidson2026
 
-open Trivalent (Prop3)
-open Presupposition
-open Exhaustification (innocent predToFinset altsFromPreds)
-open Exhaustification.Trivalent
-
-
--- ════════════════════════════════════════════════════════════════
--- § 1. The Strong Kleene prediction (§3.1.1)
--- ════════════════════════════════════════════════════════════════
-
-/-!
-### Inclusive vs exclusive disjunction under Strong Kleene
-
-The fundamental asymmetry: inclusive disjunction can "see past" an
-undefined disjunct when the other is true. Exclusive cannot.
-
-This single fact drives the Type A prediction for bivalent EXH + SK:
-since `bivalent_exh_yields_xor` shows Exh strengthens ∨ to ⊻,
-and `Trivalent.xor_indet_iff` shows ⊻ propagates undefinedness
-unconditionally, exhaustification eliminates filtering.
--/
-
-/-- Inclusive disjunction allows filtering: a true first disjunct
-    absorbs the second's presupposition failure. -/
-theorem sk_inclusive_filters : (Trivalent.true ⊔ Trivalent.indet) = .true := rfl
-
-/-- Exclusive disjunction does not filter: even when one disjunct
-    is true, an undefined partner makes the result undefined. -/
-theorem sk_exclusive_no_filter : Trivalent.xor .true .indet = .indet := rfl
-
-/-- The filtering contrast is symmetric: both `join` and `xor` are
-    commutative, so the direction doesn't matter for SK.
-
-    This is what [kalomoiros-schwarz-2024] call "symmetric
-    projection" — filtering is equally (un)available in both
-    directions. -/
-theorem sk_filtering_symmetric :
-    (Trivalent.indet ⊔ Trivalent.true) = .true ∧ Trivalent.xor .indet .true = .indet :=
-  ⟨rfl, rfl⟩
-
-
--- ════════════════════════════════════════════════════════════════
--- § 1b. PartialProp bridge: filtering vs non-filtering disjunction
--- ════════════════════════════════════════════════════════════════
-
-/-!
-### PartialProp exclusive disjunction
-
-`PartialProp.xor` requires both presuppositions to hold — it never
-filters presupposition failure from either disjunct. This mirrors
-the SK XOR truth table (Figure 2 in the paper).
-
-Note: SK *inclusive* filtering (`.true ⊔ .indet = .true` on `Trivalent`)
-is an emergent property of the SK truth table, not a `PartialProp`
-connective. The contrast is between `⊔` (filters) and
-`Trivalent.xor` (does not filter), verified in §1 above.
--/
-
-section PartialPropBridge
-
-variable {W : Type*}
-
-/-- `PartialProp.xor` does not filter: when q's presupposition fails,
-    the result is always undefined regardless of p. -/
-theorem prprop_exclusive_no_filter (p q : PartialProp W) (w : W)
-    (hq : ¬q.presup w) :
-    (PartialProp.xor p q).eval w = .indet :=
-  PartialProp.eval_xor_no_filter p q w hq
-
-end PartialPropBridge
-
-
--- ════════════════════════════════════════════════════════════════
--- § 2. Type A / Type B classification (§3.3)
--- ════════════════════════════════════════════════════════════════
-
-/-- Theory classification from §3.3:
-    theories are grouped by their prediction about the effect of
-    exclusivity on presupposition filtering across disjunction. -/
-inductive TheoryClass where
-  /-- Increasing exclusivity *reduces* filtering. -/
-  | typeA
-  /-- Exclusivity has *no effect* on filtering. -/
-  | typeB
-  deriving DecidableEq, Repr
-
-/-- Exhaustification strategy: bivalent ([fox-2007]) or trivalent
-    ([spector-sudo-2017]). -/
-inductive ExhStrategy where
-  | bivalent   -- Fox 2007
-  | exh1       -- Spector & Sudo 2017, weak negation
-  | exh2       -- Spector & Sudo 2017, strong negation
-  deriving DecidableEq, Repr
-
-/-- Semantic presupposition projection theory. -/
-inductive ProjectionTheory where
-  | strongKleene       -- Strong Kleene truth tables
-  | george2008         -- George's algorithm
-  | dynamicSemantics   -- Classic CCP (Heim 1983)
-  deriving DecidableEq, Repr
-
-/-- Classify a combination of exhaustification + projection theory
-    into Type A or Type B.
-
-    Type A (exclusivity reduces filtering):
-    - bivalent EXH + any of the three projection theories
-    - EXH² + any projection theory
-
-    Type B (no effect of exclusivity):
-    - EXH¹ + any projection theory -/
-def classify (exh : ExhStrategy) (_proj : ProjectionTheory) : TheoryClass :=
-  match exh with
-  | .bivalent => .typeA
-  | .exh2     => .typeA
-  | .exh1     => .typeB
-
-/-- EXH¹ is always Type B regardless of projection theory. -/
-theorem exh1_always_typeB (proj : ProjectionTheory) :
-    classify .exh1 proj = .typeB := by
-  cases proj <;> rfl
-
-/-- Bivalent EXH is always Type A regardless of projection theory. -/
-theorem bivalent_always_typeA (proj : ProjectionTheory) :
-    classify .bivalent proj = .typeA := by
-  cases proj <;> rfl
-
-/-- EXH² is always Type A regardless of projection theory. -/
-theorem exh2_always_typeA (proj : ProjectionTheory) :
-    classify .exh2 proj = .typeA := by
-  cases proj <;> rfl
-
-
--- ════════════════════════════════════════════════════════════════
--- § 3. Bridge to Fox 2007 (§3.1)
--- ════════════════════════════════════════════════════════════════
-
-/-!
-### Bivalent EXH strengthens inclusive to exclusive
-
-The bridge from bivalent EXH to the SK prediction:
-1. `bivalent_exh_yields_xor`: Exh(Alt)(p∨q) = p ⊕ q
-2. The exclusive truth conditions, when lifted to Trivalent via SK,
-   yield `Trivalent.xor` — which propagates `#` unconditionally
-3. Therefore: bivalent EXH + SK → no filtering (Type A prediction)
-
-This chain depends on the **feed-forward assumption** (§5):
-the strengthened exclusive truth conditions must be visible to the
-projection computation. Without it, projection would see only the
-original inclusive conditions and filtering would be unaffected.
--/
-
-/-- Four propositional worlds with two atomic propositions. -/
-inductive PQWorld where
-  | pOnly | qOnly | both | neither
-  deriving Repr, DecidableEq, Fintype
-
-def pProp : PQWorld → Bool | .pOnly | .both => true | _ => false
-def qProp : PQWorld → Bool | .qOnly | .both => true | _ => false
-def pOrQ  : PQWorld → Bool | .neither => false | _ => true
-def pAndQ : PQWorld → Bool | .both => true | _ => false
-
-/-- Sauerland alternatives for `p ∨ q`: `{p∨q, p, q, p∧q}`. -/
-private abbrev disjAltsF : Finset (Finset PQWorld) :=
-  altsFromPreds [pOrQ, pProp, qProp, pAndQ]
-
-private abbrev pOrQF : Finset PQWorld := predToFinset pOrQ
-
-/-- Bivalent EXH on inclusive disjunction yields exclusive disjunction:
-    `exh(p ∨ q)` is the set of worlds where exactly one of `p`, `q` holds. -/
-theorem bivalent_exh_yields_xor :
-    innocent.exh disjAltsF pOrQF
-      = predToFinset (fun w => pOrQ w && !pAndQ w) := by decide
-
-/-- The classical exclusive disjunction (Bool XOR) agrees with
-    Strong Kleene XOR on defined inputs. -/
-theorem bool_xor_lifts_to_sk (a b : Bool) :
-    Trivalent.xor (Trivalent.ofBool a) (Trivalent.ofBool b) =
-    Trivalent.ofBool (a ^^ b) :=
-  Trivalent.xor_ofBool a b
-
-
--- ════════════════════════════════════════════════════════════════
--- § 4. EXH¹ vs EXH² on disjunction (§3.2)
--- ════════════════════════════════════════════════════════════════
-
-/-!
-### Bathroom disjunction model
-
-"φ or ψ" where ψ presupposes π and ¬φ entails π. We instantiate the
-generic trivalent EXH¹/EXH² operators on a 3-world toy model that
-captures the experiment's critical configuration.
--/
-
-/-- Three worlds for the bathroom disjunction:
-    - `pOnly`: p true, q's presupposition fails (#)
-    - `qOnly`: p false, q true (presupposition satisfied)
-    - `neither`: p false, q false (presupposition satisfied) -/
-inductive BathWorld where
-  | pOnly | qOnly | neither
-  deriving Repr, DecidableEq, Fintype
-
-/-- p: always defined (no presupposition). -/
-def pT3 : BathWorld → Trivalent
-  | .pOnly => .true
-  | _ => .false
-
-/-- q: presupposes ¬p (defined only when p is false). -/
-def qT3 : BathWorld → Trivalent
-  | .pOnly => .indet  -- presupposition failure
-  | .qOnly => .true
-  | .neither => .false
-
-/-- Inclusive disjunction under Strong Kleene allows filtering:
-    at `pOnly`, p is true and q is undefined, but `join` returns true.
-    The second disjunct's presupposition is "filtered". -/
-theorem inclusive_allows_filtering :
-    pT3 .pOnly ⊔ qT3 .pOnly = .true := by rfl
-
-/-- Exclusive disjunction does NOT allow filtering:
-    at `pOnly`, `xor` returns undefined because q's value is unknown. -/
-theorem exclusive_no_filtering :
-    Trivalent.xor (pT3 .pOnly) (qT3 .pOnly) = .indet := by rfl
-
-/-- Inclusive disjunction as Prop3 (Strong Kleene). -/
-def inclDisj : BathWorld → Trivalent := fun w => pT3 w ⊔ qT3 w
-
-/-- Exclusive disjunction as Prop3 (Strong Kleene). -/
-def exclDisj : BathWorld → Trivalent := fun w => Trivalent.xor (pT3 w) (qT3 w)
-
-/-- Inclusive disjunction is defined at pOnly (filtering). -/
-theorem incl_defined_at_pOnly : inclDisj .pOnly = .true := by rfl
-
-/-- Exclusive disjunction is undefined at pOnly (no filtering). -/
-theorem excl_undef_at_pOnly : exclDisj .pOnly = .indet := by rfl
-
-/-- Alternative set for the bathroom disjunction: {p∨q, p, q, p∧q}.
-    The conjunction alternative `p ∧ q` is the only IE alternative
-    (by [fox-2007]). -/
-def bathAlts : List (BathWorld → Trivalent) :=
-  [ inclDisj, pT3, qT3
-  , fun w => pT3 w ⊓ qT3 w ]
-
-/-!
-### EXH¹ vs EXH² on the bathroom disjunction
-
-EXH¹ uses **weak negation** (`~# = true`), so the conjunction
-alternative's undefinedness at `pOnly` is harmlessly "negated":
-EXH¹ preserves filtering (Type B).
-
-EXH² uses **strong negation** (`~# = #`), so the conjunction
-alternative's undefinedness propagates upward as a new presupposition
-requirement: EXH² destroys filtering (Type A). -/
-
-/-- EXH¹ preserves filtering at the critical world (Type B). -/
-theorem exh1_preserves_filtering :
-    exh1 bathAlts inclDisj .pOnly = .true := by native_decide
-
-/-- EXH² destroys filtering at the critical world (Type A). -/
-theorem exh2_destroys_filtering :
-    exh2 bathAlts inclDisj .pOnly = .indet := by native_decide
-
-
--- ════════════════════════════════════════════════════════════════
--- § 5. Experimental data (§4)
--- ════════════════════════════════════════════════════════════════
-
-/-- Monotonicity environment, used as between-subjects factor.
-    UE = unembedded disjunction (more exclusive readings);
-    DE = disjunction in conditional antecedent (fewer exclusive readings). -/
-inductive Monotonicity where
-  | UE  -- upward-entailing (unembedded disjunction)
-  | DE  -- downward-entailing (conditional antecedent)
-  deriving DecidableEq, Repr
-
-/-- Predicate type: whether test sentence contains presupposition trigger. -/
-inductive Predicate where
-  | ps    -- presuppositional trigger present
-  | noPs  -- non-presuppositional counterpart
-  deriving DecidableEq, Repr
-
-/-- Order of trigger in disjunction. -/
-inductive Order where
-  | first   -- trigger in first disjunct
-  | second  -- trigger in second disjunct
-  deriving DecidableEq, Repr
-
-/-- Presupposition triggers used in the experiment. -/
-inductive Trigger where
-  | jie     -- 戒 'quit' (change-of-state, strong projector)
-  | zhidao  -- 知道 'know' (factive, weaker projector)
-  deriving DecidableEq, Repr
-
-/-- Experimental finding summary. -/
-structure Finding where
-  description : String
-  significant : Bool
-
-/-- Norming task validation: the monotonicity manipulation successfully
-    modulates exclusivity (Fisher's exact test, p = .011).
-    UE: 23.3% exclusive responses; DE: 0% exclusive responses. -/
-def normingValidation : Finding where
-  description := "Norming task: exclusive responses UE 23.3% vs DE 0%, p = .011"
-  significant := true
-
-/-- The critical null result: PREDICATE × MONOTONICITY is not significant.
-    p = .30 (frequentist), BF₁₀ = 0.52 (Bayesian).
-    No evidence that exclusivity modulates filtering. -/
-def mainResult : Finding where
-  description := "PREDICATE × MONOTONICITY interaction: p = .30, BF₁₀ = 0.52"
-  significant := false
-
-/-- Control validation: the paradigm detects presuppositional
-    definedness costs. CONTEXT manipulation is significant (p < .001). -/
-def controlValidation : Finding where
-  description := "CONTEXT (EI vs S) main effect: p < .001"
-  significant := true
-
-/-- *jie* shows asymmetric filtering: PREDICATE × ORDER is significant
-    (β = −1.81, SE = 0.72, p = .01). R-to-L filtering is weaker
-    than L-to-R. -/
-def jieAsymmetry : Finding where
-  description := "jie PREDICATE × ORDER: β = −1.81, SE = 0.72, p = .01"
-  significant := true
-
-/-- *zhidao* shows symmetric filtering: PREDICATE × ORDER is not
-    significant (p = .40), and PREDICATE main effect p = .99
-    (uniform filtering). -/
-def zhidaoSymmetry : Finding where
-  description := "zhidao PREDICATE × ORDER: p = .40; PREDICATE: p = .99"
-  significant := false
-
-/-- The norming task confirms the manipulation is effective. -/
-theorem norming_validates_manipulation :
-    normingValidation.significant = true := rfl
-
-/-- The null result is consistent with Type B theories (EXH¹). -/
-theorem null_result_consistent_with_typeB :
-    mainResult.significant = false := rfl
-
-/-- The null result challenges all Type A theories:
-    three bivalent EXH + projection combinations and EXH² + any. -/
-theorem null_result_challenges_typeA :
-    mainResult.significant = false ∧
-    classify .bivalent .strongKleene = .typeA ∧
-    classify .bivalent .george2008 = .typeA ∧
-    classify .bivalent .dynamicSemantics = .typeA ∧
-    classify .exh2 .strongKleene = .typeA :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-/-- End-to-end argumentation chain: Fox 2007 computes exclusive
-    truth conditions → SK propagates undefinedness → Type A predicted →
-    experiment finds no effect → challenges bivalent EXH + SK.
-
-    This links `bivalent_exh_yields_xor`, `Trivalent.xor_indet_iff`,
-    the Type A classification, and the null experimental result. -/
-theorem end_to_end_bivalent_sk_challenged :
-    -- (1) Bivalent EXH yields exclusive disjunction
-    (innocent.exh disjAltsF pOrQF
-      = predToFinset (fun w => pOrQ w && !pAndQ w)) ∧
-    -- (2) SK XOR propagates undefinedness
-    (Trivalent.xor .true .indet = .indet) ∧
-    -- (3) This combination is classified Type A
-    (classify .bivalent .strongKleene = .typeA) ∧
-    -- (4) The experiment finds no effect (challenging Type A)
-    (mainResult.significant = false) :=
-  ⟨bivalent_exh_yields_xor, rfl, rfl, rfl⟩
+open Exhaustification Exhaustification.Trivalent Presupposition DynamicSemantics CCP.Partial
 
+/-! ### Filtering by a trivalent connective -/
+
+/-- A trivalent connective filters from left to right when a defined left argument can make the
+whole defined with an undefined right argument. -/
+def FiltersLR (f : Trivalent → Trivalent → Trivalent) : Prop := ∃ a, f a .indet ≠ .indet
+
+/-- Filtering from right to left. -/
+def FiltersRL (f : Trivalent → Trivalent → Trivalent) : Prop := ∃ b, f .indet b ≠ .indet
+
+/-- A connective filters when it does so in either direction. -/
+def Filters (f : Trivalent → Trivalent → Trivalent) : Prop := FiltersLR f ∨ FiltersRL f
+
+/-- Strong Kleene inclusive disjunction filters in both directions (Table 1). -/
+theorem filtersLR_sup : FiltersLR (· ⊔ ·) := ⟨.true, by decide⟩
+
+theorem filtersRL_sup : FiltersRL (· ⊔ ·) := ⟨.true, by decide⟩
+
+/-- Strong Kleene exclusive disjunction never filters (Table 2). -/
+theorem not_filters_xor : ¬ Filters Trivalent.xor := by
+  rintro (⟨a, h⟩ | ⟨b, h⟩)
+  · exact h (Trivalent.xor_indet_right a)
+  · exact h (Trivalent.xor_indet_left b)
+
+/-! ### Bivalent exhaustification yields exclusive disjunction -/
+
+/-- The valuations of two atoms. -/
+abbrev Val := Bool × Bool
+
+/-- The alternatives of `p ∨ q`: `p`, `q` and `p ∧ q` (3a). -/
+def orAlts : Finset (Finset Val) :=
+  altsFromPreds [λ v => v.1 || v.2, Prod.fst, Prod.snd, λ v => v.1 && v.2]
+
+/-- Only the conjunction is innocently excludable (3b). -/
+theorem excluded_or :
+    innocent.excluded orAlts (predToFinset λ v : Val => v.1 || v.2)
+      = {predToFinset λ v : Val => v.1 && v.2} := by
+  decide
+
+/-- Bivalent exhaustification of `p ∨ q` is `p xor q` (3c). -/
+theorem exh_or :
+    innocent.exh orAlts (predToFinset λ v : Val => v.1 || v.2)
+      = predToFinset λ v : Val => v.1 ^^ v.2 := by
+  decide
+
+/-! ### George's algorithm -/
+
+/-- The classical values a trivalent value leaves open. -/
+def values : Trivalent → Finset Bool
+  | .true => {true}
+  | .false => {false}
+  | .indet => Finset.univ
+
+/-- [george-2008]'s algorithm for the trivalent table of a classical connective, as
+[kalomoiros-schwarz-2024] render it: if the left argument settles the value, that is the value;
+otherwise, if some value of the right argument could make the sentence true, the two arguments
+settle the value or the sentence is undefined; otherwise it is undefined. -/
+def george (f : Bool → Bool → Bool) (a b : Trivalent) : Trivalent :=
+  if ∀ x ∈ values a, ∀ y, f x y then .true
+  else if ∀ x ∈ values a, ∀ y, f x y = false then .false
+  else if ∃ y, ∀ x ∈ values a, f x y then
+    if ∀ x ∈ values a, ∀ y ∈ values b, f x y then .true
+    else if ∀ x ∈ values a, ∀ y ∈ values b, f x y = false then .false
+    else .indet
+  else .indet
+
+/-- On inclusive disjunction George's algorithm is Strong Kleene. -/
+theorem george_or : george (· || ·) = (· ⊔ ·) := by
+  funext a b; revert a b; decide
+
+/-- On exclusive disjunction George's algorithm is Strong Kleene too. -/
+theorem george_xor : george (· ^^ ·) = Trivalent.xor := by
+  funext a b; revert a b; decide
+
+/-- George's algorithm filters conjunction from left to right only. -/
+theorem filtersLR_george_and : FiltersLR (george (· && ·)) := ⟨.false, by decide⟩
+
+theorem not_filtersRL_george_and : ¬ FiltersRL (george (· && ·)) := by
+  rintro ⟨b, h⟩; revert b; decide
+
+theorem not_filters_george_xor : ¬ Filters (george (· ^^ ·)) := george_xor ▸ not_filters_xor
+
+/-! ### Dynamic semantics -/
+
+section Dynamic
+
+variable {W : Type*} (α β : PartialProp W) {s : Set W}
+
+/-- Update with a proposition or with its negation. -/
+def lit : Bool → PartialProp W → CCP.Partial W
+  | true, p => ofPartialProp p
+  | false, p => CCP.Partial.neg (ofPartialProp p)
+
+/-- The context `C[p][q]`, for `p` and `q` propositions or their negations. -/
+def chain (b₁ : Bool) (p : PartialProp W) (b₂ : Bool) (q : PartialProp W) : CCP.Partial W :=
+  seq (lit b₁ p) (lit b₂ q)
+
+/-- The union of two updates, defined when both are. -/
+def union (φ ψ : CCP.Partial W) : CCP.Partial W :=
+  λ s => ⟨(φ s).Dom ∧ (ψ s).Dom, λ h => (φ s).get h.1 ∪ (ψ s).get h.2⟩
+
+/-- The context minus two updates, defined when both are. -/
+def diff (φ ψ : CCP.Partial W) : CCP.Partial W :=
+  λ s => ⟨(φ s).Dom ∧ (ψ s).Dom, λ h => (s \ (φ s).get h.1) \ (ψ s).get h.2⟩
+
+/-- The eight context change potentials for `α xor β` (Table 3). -/
+def xorCCPs : List (CCP.Partial W) :=
+  [union (chain true α false β) (chain true β false α),
+   union (chain false α true β) (chain false β true α),
+   union (chain true α false β) (chain false α true β),
+   union (chain true β false α) (chain false β true α),
+   diff (chain true α true β) (chain false β false α),
+   diff (chain false α false β) (chain true β true α),
+   diff (chain true α true β) (chain false α false β),
+   diff (chain true β true α) (chain false β false α)]
+
+/-- A presupposition satisfied on `C[α]` and on `C[¬α]` is satisfied on `C`. -/
+theorem presupSatisfied_of_split (h₁ : Context.presupSatisfied {w ∈ s | α.assertion w} β)
+    (h₂ : Context.presupSatisfied (s \ {w ∈ s | α.assertion w}) β) :
+    Context.presupSatisfied s β := λ w hw => by
+  by_cases ha : α.assertion w
+  · exact h₁ ⟨hw, ha⟩
+  · exact h₂ ⟨hw, λ h => ha h.2⟩
+
+/-- Every context change potential for exclusive disjunction is admitted only by a context
+satisfying both presuppositions: no filtering. -/
+theorem xorCCPs_admits :
+    ∀ u ∈ xorCCPs α β, u.admits s →
+      Context.presupSatisfied s α ∧ Context.presupSatisfied s β := by
+  simp only [xorCCPs, List.mem_cons, List.mem_nil_iff, or_false]
+  rintro u (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl) ⟨⟨h₁, h₂⟩, ⟨h₃, h₄⟩⟩
+  · exact ⟨h₁, h₃⟩
+  · exact ⟨h₁, h₃⟩
+  · exact ⟨h₁, presupSatisfied_of_split α β h₂ h₄⟩
+  · exact ⟨presupSatisfied_of_split β α h₂ h₄, h₁⟩
+  · exact ⟨h₁, h₃⟩
+  · exact ⟨h₁, h₃⟩
+  · exact ⟨h₁, presupSatisfied_of_split α β h₂ h₄⟩
+  · exact ⟨presupSatisfied_of_split β α h₂ h₄, h₁⟩
+
+/-- Inclusive dynamic disjunction, by contrast, filters: a context can admit `α ∨ β` without
+satisfying `β`'s presupposition. -/
+theorem exists_disj_admits_not_presupSatisfied :
+    ∃ (α β : PartialProp Bool), (disj (ofPartialProp α) (ofPartialProp β)).admits Set.univ ∧
+      ¬ Context.presupSatisfied Set.univ β := by
+  refine ⟨{ presup := λ _ => True, assertion := (· = true) },
+    { presup := (· = false), assertion := λ _ => True }, ⟨λ _ _ => trivial, ?_⟩, ?_⟩
+  · rintro (_ | _) hw
+    · rfl
+    · exact absurd ⟨trivial, rfl⟩ hw.2
+  · exact λ h => Bool.noConfusion (h (Set.mem_univ true))
+
+end Dynamic
+
+/-! ### Trivalent exhaustification -/
+
+/-- The presupposition of `α ∨ β` together with that of `α ∧ β` is that of both disjuncts
+under Strong Kleene (8), so EXH², which imports the conjunction alternative's presupposition,
+makes an exhaustified disjunction project uniformly. -/
+theorem sup_inf_ne_indet_iff (a b : Trivalent) :
+    (a ⊔ b ≠ .indet ∧ a ⊓ b ≠ .indet) ↔ a ≠ .indet ∧ b ≠ .indet := by
+  revert a b; decide
+
+/-- A bathroom disjunction on the valuations of two atoms: `bathLeft` is always defined and
+`bathRight` presupposes its negation. -/
+def bathLeft : Trivalent.Prop3 Val := λ v => .ofBool v.1
+
+def bathRight : Trivalent.Prop3 Val := λ v => if v.1 then .indet else .ofBool v.2
+
+/-- The alternatives of the bathroom disjunction. -/
+def bathAlts : List (Trivalent.Prop3 Val) :=
+  [bathLeft, bathRight, λ v => bathLeft v ⊓ bathRight v]
+
+/-- The inclusive bathroom disjunction. -/
+def bathOr : Trivalent.Prop3 Val := λ v => bathLeft v ⊔ bathRight v
+
+/-- EXH¹ keeps the filtering: where the left disjunct is true and the right undefined, the
+exhaustified disjunction is true. -/
+theorem exh1_bathOr : exh1 bathAlts bathOr (true, false) = Trivalent.true := by decide
+
+/-- EXH² undoes it: the undefined conjunction alternative makes the exhaustified disjunction
+undefined there. -/
+theorem exh2_bathOr : exh2 bathAlts bathOr (true, false) = Trivalent.indet := by decide
 
 end WangDavidson2026
