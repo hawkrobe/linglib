@@ -17,23 +17,12 @@ sets for the same expression:
   indirect alternatives — pronounceable expressions equivalent in
   meaning to an unpronounceable Katzir alternative
 
-All of these are functions `S → Set S`. We give that function type a
-name so that pragmatic competition operators (`violatesMP`,
-`violatesMaximize`, `violatesMCIs`, in `Alternatives.Competition`) can be
-parameterized over the alternative source rather than hardcoding any
-single one.
-
-This follows mathlib's pattern of naming a function-shaped abstraction
-under a structural alias (cf. `Set α := α → Prop`, `Rel α β := α → β →
-Prop`) rather than as a typeclass — there is no canonical alternative
-source per carrier type, since different theories supply different
-sources for the same parse. The alias also inherits the pointwise
-`CompleteLattice` on `S → Set S` for free, so source subsumption is just
-`≤` (pointwise `⊆`) and source union is `⊔`.
+All of these are functions `S → Set S`, ordered pointwise, so that one source subsumes
+another when it is `≤` it and the competition relation of `Alternatives.Competition` is
+monotone in the source.
 
 ## Main definitions
 
-* `Source` — the alternative-source abbreviation `S → Set S`.
 * `indirectFrom` — the indirect-alternative combinator: pronounceable
   expressions meaning-equivalent to an *unpronounceable* alternative of
   the original, at most as complex
@@ -49,14 +38,6 @@ sources for the same parse. The alias also inherits the pointwise
 -/
 
 namespace Alternatives
-
-/-- An alternative source assigns to each expression a set of competitors.
-
-Theory-specific base sources live elsewhere:
-`Alternatives.Structural.katzirSource` (Katzir 2007),
-`Alternatives.HornScale.toSource` (Horn scales), etc. The combinator
-`indirectFrom` below transforms any base source. -/
-abbrev Source (S : Type*) := S → Set S
 
 variable {S M : Type*}
 
@@ -78,13 +59,13 @@ Both the surrogate `s'` (the indirect alternative `I`) and the witness
 `sₓ` are constrained by `pron`: `I` must be pronounceable while `sₓ` —
 the silent structural alternative it stands in for — must not be, per
 the paper's definition. -/
-def indirectFrom (base : Source S) (pron : S → Prop)
+def indirectFrom (base : S → Set S) (pron : S → Prop)
     (meaning : S → M) (size : S → Nat) :
-    Source S :=
+    S → Set S :=
   fun s =>
     {s' | pron s' ∧ size s' ≤ size s ∧ ∃ sₓ ∈ base s, ¬ pron sₓ ∧ meaning s' = meaning sₓ}
 
-variable {base : Source S} {pron : S → Prop}
+variable {base : S → Set S} {pron : S → Prop}
   {meaning : S → M} {size : S → Nat} {s' s : S}
 
 /-- Membership in the indirect-alternative source. -/

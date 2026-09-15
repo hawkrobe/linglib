@@ -14,8 +14,8 @@ of felicitous use, so one sentence has stronger such content than another when i
 set is a proper subset of the other's, and the principle Maximize Conventional Implicatures!
 forbids a sentence when a formal alternative in the sense of [katzir-2007] and
 [fox-katzir-2011], one no more complex than it, has stronger content. All three principles
-are instances of the substrate's `Alternatives.violatesMaximize`, of which `violatesMCIs` is
-the conventional-implicature instantiation.
+are instances of the substrate's `Alternatives.Blocked`, here along conventional-implicature
+content.
 
 The worked case is the epithet. Out of the blue, *John arrived first* carries no inference
 that John is no bastard, because *that bastard John arrived first* is not a formal
@@ -165,32 +165,28 @@ abbrev World : Type := Bool
 /-- The felicity-set content of the paper's (12): a sentence with the epithet construction is
 felicitous only where the speaker holds the attitude; any other sentence is felicitous
 everywhere. -/
-def expressiveCI (φ : Tree Cat EWord) (w : World) : Prop := HasEpithet φ → w = true
+def expressiveCI (φ : Tree Cat EWord) : Set World := {w | HasEpithet φ → w = true}
 
 /-- The epithet sentence has stronger content than the bare one: its felicity set is a proper
 subset. -/
 theorem epithet_ciStronger_than_bare :
-    (∀ w, expressiveCI bastardJohnArrived w → expressiveCI johnArrived w) ∧
-      ∃ w, expressiveCI johnArrived w ∧ ¬ expressiveCI bastardJohnArrived w :=
-  ⟨λ _ _ h => absurd h (by decide), false, λ h => absurd h (by decide),
-    λ h => Bool.false_ne_true (h (by decide))⟩
+    expressiveCI bastardJohnArrived ⊂ expressiveCI johnArrived :=
+  LE.le.ssubset_of_not_superset (λ _ _ h => absurd h (by decide))
+    (Set.not_subset.2 ⟨false, λ h => absurd h (by decide),
+      λ h => Bool.false_ne_true (h (by decide))⟩)
 
 /-! ### The inference -/
 
 /-- Out of the blue the bare sentence does not violate the principle: every formal
 alternative is free of the epithet construction, so none has stronger content. -/
-theorem outOfBlue_no_ACI :
-    ¬ violatesMCIs (World := World) (katzirSource epithetLex) expressiveCI johnArrived
-      (λ _ => True) := by
-  rintro ⟨φ', hφ', _, ⟨w, _, h_alt⟩, _⟩
+theorem outOfBlue_no_ACI : ¬ Blocked (katzirSource epithetLex) expressiveCI johnArrived := by
+  rintro ⟨φ', hφ', hss⟩
+  obtain ⟨w, -, h_alt⟩ := Set.not_subset.1 hss.2
   exact h_alt λ ⟨s, hs, hse⟩ => absurd (WideDP.of_isEpithet hse) (no_wideDP_outOfBlue hφ' s hs)
 
 /-- After the mention the bare sentence violates the principle: the epithet sentence is a
 formal alternative with stronger content. -/
-theorem priorMention_yes_ACI :
-    violatesMCIs (World := World) (katzirSource priorContextLex) expressiveCI johnArrived
-      (λ _ => True) :=
-  ⟨bastardJohnArrived, epithet_alternative_priorMention, epithet_ciStronger_than_bare.1,
-    epithet_ciStronger_than_bare.2, trivial⟩
+theorem priorMention_yes_ACI : Blocked (katzirSource priorContextLex) expressiveCI johnArrived :=
+  ⟨bastardJohnArrived, epithet_alternative_priorMention, epithet_ciStronger_than_bare⟩
 
 end LoGuercio2025

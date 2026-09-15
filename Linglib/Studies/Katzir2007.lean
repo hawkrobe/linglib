@@ -10,8 +10,8 @@ are the trees obtainable from it by deletion, contraction, and substitution of c
 same-category items of the substitution source, the lexicon together with the sentence's own
 subtrees (its definitions (19) to (21) and (41), the substrate `Alternatives.Structural`).
 The conversational principle (21) then forbids asserting a sentence when a structural
-alternative is strictly stronger and weakly assertable, the substrate's
-`Alternatives.violatesConversationalPrinciple` at the source `katzirSource`.
+alternative is strictly stronger and weakly assertable, the substrate's `Alternatives.Blocked`
+over the weakly assertable structural alternatives.
 
 The examples are the paper's Section 4 and 5 sentences over a small lexicon. For (25),
 *all of the cake* is an alternative of the same complexity as *some of the cake*
@@ -115,24 +115,27 @@ inductive Cake
 
 /-- The truth conditions the paper assumes for (25): *some* holds of any eating, *all* of the
 whole, *some but not all* of a part; the other trees are not interpreted. -/
-def cakeMeaning (t : Tree Cat Word) (c : Cake) : Prop :=
-  (t = someSentence ∧ c ≠ .none) ∨ (t = allSentence ∧ c = .whole) ∨
-    (t = someButNotAllSentence ∧ c = .part)
+def cakeMeaning (t : Tree Cat Word) : Set Cake :=
+  {c | (t = someSentence ∧ c ≠ .none) ∨ (t = allSentence ∧ c = .whole) ∨
+    (t = someButNotAllSentence ∧ c = .part)}
+
+/-- The alternatives of (21): structural alternatives that are weakly assertable. -/
+def assertableAlts (wa : Tree Cat Word → Prop) (t : Tree Cat Word) : Set (Tree Cat Word) :=
+  {t' ∈ katzirSource lexicon t | wa t'}
 
 /-- If *all* is weakly assertable, asserting *some* violates the conversational principle. -/
-theorem violates_of_weaklyAssertable_all {wa : Tree Cat Word → Prop} (h : wa allSentence) :
-    violatesConversationalPrinciple (katzirSource lexicon) cakeMeaning someSentence wa :=
-  ⟨allSentence, all_mem_alternatives,
-    λ c hc => by simp_all [cakeMeaning, someSentence, allSentence, someButNotAllSentence],
-    ⟨.part, by simp [cakeMeaning], by simp [cakeMeaning, someSentence, allSentence,
-      someButNotAllSentence]⟩, h⟩
+theorem blocked_of_weaklyAssertable_all {wa : Tree Cat Word → Prop} (h : wa allSentence) :
+    Blocked (assertableAlts wa) cakeMeaning someSentence :=
+  ⟨allSentence, ⟨all_mem_alternatives, h⟩, LE.le.ssubset_of_not_superset
+    (λ c hc => by simp_all [cakeMeaning, someSentence, allSentence, someButNotAllSentence])
+    (Set.not_subset.2 ⟨.part, by simp [cakeMeaning], by simp [cakeMeaning, someSentence,
+      allSentence, someButNotAllSentence]⟩)⟩
 
 /-- The primary implicature of (25a): a speaker who obeys the principle has *all* not weakly
 assertable; the symmetric alternative, being no alternative, licenses nothing. -/
 theorem primary_implicature_some {wa : Tree Cat Word → Prop}
-    (h : ¬ violatesConversationalPrinciple (katzirSource lexicon) cakeMeaning someSentence wa) :
-    ¬ wa allSentence :=
-  λ hwa => h (violates_of_weaklyAssertable_all hwa)
+    (h : ¬ Blocked (assertableAlts wa) cakeMeaning someSentence) : ¬ wa allSentence :=
+  λ hwa => h (blocked_of_weaklyAssertable_all hwa)
 
 /-! ### Disjunction (Section 4.2) -/
 
@@ -185,19 +188,21 @@ abbrev Fruits := Bool × Bool
 
 /-- The truth conditions of (26) and (27): the disjunction, the conjunction, and each
 disjunct. -/
-def fruitMeaning (t : Tree Cat Word) (f : Fruits) : Prop :=
-  (t = orSentence ∧ (f.1 ∨ f.2)) ∨ (t = andSentence ∧ f.1 ∧ f.2) ∨
-    (t = leftDisjunct ∧ f.1) ∨ (t = rightDisjunct ∧ f.2)
+def fruitMeaning (t : Tree Cat Word) : Set Fruits :=
+  {f | (t = orSentence ∧ (f.1 ∨ f.2)) ∨ (t = andSentence ∧ f.1 ∧ f.2) ∨
+    (t = leftDisjunct ∧ f.1) ∨ (t = rightDisjunct ∧ f.2)}
 
 /-- The primary inferences (28): a speaker of the disjunction who obeys the principle has the
 conjunction and each disjunct not weakly assertable. -/
 theorem primary_inferences_or {wa : Tree Cat Word → Prop}
-    (h : ¬ violatesConversationalPrinciple (katzirSource lexicon) fruitMeaning orSentence wa) :
+    (h : ¬ Blocked (assertableAlts wa) fruitMeaning orSentence) :
     ¬ wa andSentence ∧ ¬ wa leftDisjunct ∧ ¬ wa rightDisjunct := by
-  refine ⟨λ hwa => h ⟨andSentence, and_mem_alternatives, ?_, ⟨(true, false), ?_, ?_⟩, hwa⟩,
-    λ hwa => h ⟨leftDisjunct, leftDisjunct_mem_alternatives, ?_, ⟨(false, true), ?_, ?_⟩, hwa⟩,
-    λ hwa => h ⟨rightDisjunct, rightDisjunct_mem_alternatives, ?_, ⟨(true, false), ?_, ?_⟩,
-      hwa⟩⟩ <;>
+  refine ⟨λ hwa => h ⟨andSentence, ⟨and_mem_alternatives, hwa⟩,
+      LE.le.ssubset_of_not_superset ?_ (Set.not_subset.2 ⟨(true, false), ?_, ?_⟩)⟩,
+    λ hwa => h ⟨leftDisjunct, ⟨leftDisjunct_mem_alternatives, hwa⟩,
+      LE.le.ssubset_of_not_superset ?_ (Set.not_subset.2 ⟨(false, true), ?_, ?_⟩)⟩,
+    λ hwa => h ⟨rightDisjunct, ⟨rightDisjunct_mem_alternatives, hwa⟩,
+      LE.le.ssubset_of_not_superset ?_ (Set.not_subset.2 ⟨(true, false), ?_, ?_⟩)⟩⟩ <;>
   simp_all [fruitMeaning, orSentence, andSentence, leftDisjunct, rightDisjunct]
 
 /-! ### Strictly simpler alternatives (Section 4.3) -/
