@@ -10,29 +10,30 @@ and any content function `S → Set W`, over the alternative sources of
 which keeps the alternatives with the same at-issue content. The neo-Gricean conversational
 principle is `Blocked` along at-issue content over the weakly assertable alternatives
 ([katzir-2007]), Maximize Presupposition is `Blocked` along presuppositional content over
-`sameAssertion` ([heim-1991], [schlenker-2012]), and Maximize Conventional Implicatures is
-`Blocked` along conventional-implicature content ([lo-guercio-2025]).
+`sameAssertion` (`Presupposition.MaximizePresupposition.Blocked`, [heim-1991]), and Maximize
+Conventional Implicatures is `Blocked` along conventional-implicature content
+([lo-guercio-2025]). The relation carries no theory of why blocking obtains, so the pragmatic
+and grammatical accounts of each principle state their disagreement over one definition.
 
 ## Main definitions
 
-* `NeoGricean.Blocked` — some alternative is strictly stronger along the content dimension.
-* `NeoGricean.sameAssertion` — the alternatives with the same at-issue content.
+* `Competition.Blocked` — some alternative is strictly stronger along the content dimension.
+* `Competition.sameAssertion` — the alternatives with the same at-issue content.
 
 ## Main results
 
-* `NeoGricean.Blocked.mono` — blocking is monotone in the source.
-* `NeoGricean.not_blocked_of_forall_subset` — an expression at least as strong as each of
+* `Competition.Blocked.mono` — blocking is monotone in the source.
+* `Competition.not_blocked_of_forall_subset` — an expression at least as strong as each of
   its alternatives is not blocked.
 
 ## References
 
 * [katzir-2007]
 * [heim-1991]
-* [schlenker-2012]
 * [lo-guercio-2025]
 -/
 
-namespace NeoGricean
+namespace Competition
 
 variable {S W : Type*} {alts alts' : S → Set S} {content assertion : S → Set W} {φ φ' : S}
 
@@ -63,4 +64,4 @@ theorem sameAssertion_le (assertion : S → Set W) (alts : S → Set S) :
     sameAssertion assertion alts ≤ alts :=
   λ _ _ h => h.1
 
-end NeoGricean
+end Competition
