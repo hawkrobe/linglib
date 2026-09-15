@@ -45,8 +45,8 @@ open Morphology (Word)
 
 /-! ### Words from the Fragment lexicon -/
 
-private abbrev john := English.Nouns.john.toWordSg
-private abbrev mary := English.Nouns.mary.toWordSg
+private abbrev john := English.Nouns.john.toWord
+private abbrev mary := English.Nouns.mary.toWord
 private abbrev ball := English.Nouns.ball.toWordSg
 private abbrev book := English.Nouns.book.toWordSg
 private abbrev pizza := English.Nouns.pizza.toWordSg

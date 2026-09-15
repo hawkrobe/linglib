@@ -155,18 +155,18 @@ deriving the weight-sensitivity of heavy NP shift (cf. example (6)). -/
 
 /-- (11a) "John threw out the trash", total dependency length 6. -/
 def lightParticleEarly : Graph 5 :=
-  .ofArcs [john.toWordSg, throw.toWordPast, out.toWord, the.toWord, trash.toWordSg]
+  .ofArcs [john.toWord, throw.toWordPast, out.toWord, the.toWord, trash.toWordSg]
     1 [(1, 0, .nsubj), (1, 2, .compound), (1, 4, .obj), (4, 3, .det)]
 
 /-- (11b) "John threw the trash out", total dependency length 7. -/
 def lightParticleLate : Graph 5 :=
-  .ofArcs [john.toWordSg, throw.toWordPast, the.toWord, trash.toWordSg, out.toWord]
+  .ofArcs [john.toWord, throw.toWordPast, the.toWord, trash.toWordSg, out.toWord]
     1 [(1, 0, .nsubj), (1, 3, .obj), (3, 2, .det), (1, 4, .compound)]
 
 /-- (11c) "John threw out the trash sitting in the kitchen", total 11. -/
 def heavyParticleEarly : Graph 9 :=
   .ofArcs
-    [john.toWordSg, throw.toWordPast, out.toWord, the.toWord, trash.toWordSg,
+    [john.toWord, throw.toWordPast, out.toWord, the.toWord, trash.toWordSg,
      sit.toWordPresPart, in_.toWord, the.toWord, kitchen.toWordSg]
     1
     [(1, 0, .nsubj), (1, 2, .compound), (1, 4, .obj), (4, 3, .det),
@@ -175,7 +175,7 @@ def heavyParticleEarly : Graph 9 :=
 /-- (11d) "John threw the trash sitting in the kitchen out", total 16. -/
 def heavyParticleLate : Graph 9 :=
   .ofArcs
-    [john.toWordSg, throw.toWordPast, the.toWord, trash.toWordSg,
+    [john.toWord, throw.toWordPast, the.toWord, trash.toWordSg,
      sit.toWordPresPart, in_.toWord, the.toWord, kitchen.toWordSg, out.toWord]
     1
     [(1, 0, .nsubj), (1, 3, .obj), (3, 2, .det), (3, 4, .acl),

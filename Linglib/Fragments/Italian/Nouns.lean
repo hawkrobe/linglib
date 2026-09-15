@@ -6,7 +6,7 @@ import Linglib.Semantics.Genericity.NominalMappingParameter
 # Italian nouns
 
 The Italian noun as a lexical entry: the root `GenderedNoun` over the masculine and feminine
-genders, with the mass/count feature, whether it is a proper name, and its plural. Italian is
+genders, with the mass/count feature and its plural; names are the root `ProperName`. Italian is
 [−arg, +pred] ([chierchia-1998]): nouns are predicates and need a determiner
 (`Italian.Determiners.inventory`) to be arguments, so no bare nominal is one; the definite
 plural denotes a kind and the bare plural, where licensed, a property
@@ -22,13 +22,10 @@ namespace Italian.Nouns
 
 open Genericity
 
-/-- An Italian noun: the root gendered entry with the mass/count feature, whether it is a
-proper name, and its plural. -/
+/-- An Italian noun: the root gendered entry with the mass/count feature and its plural. -/
 structure Noun extends GenderedNoun Gender where
   /-- The mass/count feature. -/
   countable : MassCount := .count
-  /-- Whether the entry is a proper name. -/
-  proper : Bool := false
   /-- The plural. -/
   plural : Option String := none
   deriving DecidableEq, Repr
@@ -65,12 +62,12 @@ def latte : Noun := { form := "latte", gloss := "milk", gender := .masculine, co
 
 /-! ### Proper names -/
 
-/-- A personal name, its gender following the referent's sex. -/
-private def name (form : String) (gender : Gender) : Noun :=
-  { form, gloss := form, gender, isNaturalGender := true, proper := true }
+/-- A personal name with its natural gender. -/
+private def name (form : String) (gender : Gender) : ProperName :=
+  { form, gloss := form, gender := some gender }
 
-def paolo : Noun := name "Paolo" .masculine
-def maria : Noun := name "Maria" .feminine
+def paolo : ProperName := name "Paolo" .masculine
+def maria : ProperName := name "Maria" .feminine
 
 /-! ### The Nominal Mapping Parameter -/
 
