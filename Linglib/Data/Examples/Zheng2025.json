@@ -166,5 +166,74 @@
       ["unexpected_evidence", "false"]
     ],
     "comment": "Expected evidence: the same evidence is unremarkable given B's knowledge, so nandao is infelicitous."
+  },
+  {
+    "id": "zheng2025_ex4a",
+    "source": {"bibkey": "xu-2018", "paperLabel": "p. 449"},
+    "reportedIn": {"bibkey": "zheng-2025", "paperLabel": "(4a)"},
+    "language": "mand1415",
+    "primaryText": "Nandao wuli mei ren?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nandao", "nandao"], ["wuli", "room.in"], ["mei", "no"], ["ren", "person"]
+    ],
+    "translation": "It is not the case there are not people in the room, right?",
+    "context": "The speaker believes there is no one in the room.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["evidential_bias", "false"],
+      ["epistemic_bias", "true"],
+      ["unexpected_evidence", "false"]
+    ],
+    "comment": "The prejacent matches the speaker's belief; with no evidence for it the question is out.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "zheng2025_ex12a",
+    "source": {"bibkey": "xu-2012", "paperLabel": "p. 510"},
+    "reportedIn": {"bibkey": "zheng-2025", "paperLabel": "(12a)"},
+    "language": "mand1415",
+    "primaryText": "Nandao Lisi hui lai",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nandao", "nandao"], ["Lisi", "Lisi"], ["hui", "will"], ["lai", "come"]
+    ],
+    "translation": "Lisi will not come",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause_type", "declarative"]
+    ],
+    "comment": "Nandao does not combine with a declarative, with or without the question particle.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "zheng2025_ex12b",
+    "source": {"bibkey": "xu-2012", "paperLabel": "p. 512"},
+    "reportedIn": {"bibkey": "zheng-2025", "paperLabel": "(12b)"},
+    "language": "mand1415",
+    "primaryText": "Nandao Zhangsan weishenme qu xuexiao ma?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["nandao", "nandao"], ["Zhangsan", "Zhangsan"], ["weishenme", "why"], ["qu", "go"],
+      ["xuexiao", "school"], ["ma", "Y/N-Q"]
+    ],
+    "translation": "Why does Zhangsan go to school?",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["clause_type", "wh-question"]
+    ],
+    "comment": "Nandao does not combine with a wh-question.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
   }
 ]
