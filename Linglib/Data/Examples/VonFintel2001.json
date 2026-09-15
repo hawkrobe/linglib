@@ -1,0 +1,451 @@
+[
+  {
+    "id": "vonfintel2001_1",
+    "source": {"bibkey": "geis-zwicky-1971", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(1)"},
+    "language": "stan1293",
+    "primaryText": "If you mow the lawn, I'll give you five dollars.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "perfection: no five dollars without mowing", "judgment": "questionable"},
+      {"name": "strengthening: the five dollars are not free for the taking", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["inference", "conditional perfection"],
+      ["flavor", "bouletic"]
+    ],
+    "comment": "Geis and Zwicky's invited inference; Lilje's addressee may still ask whether cleaning the garage would earn the money.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_2",
+    "source": {"bibkey": "geis-zwicky-1971", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(2)"},
+    "language": "stan1293",
+    "primaryText": "If John leans out of that window any further, he'll fall.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["inference", "conditional perfection"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_3",
+    "source": {"bibkey": "geis-zwicky-1971", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(3)"},
+    "language": "stan1293",
+    "primaryText": "If you disturb me tonight, I won't let you go to the movies tomorrow.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["inference", "conditional perfection"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_4",
+    "source": {"bibkey": "geis-zwicky-1971", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(4)"},
+    "language": "stan1293",
+    "primaryText": "If you heat iron in a fire, it turns red.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["inference", "conditional perfection"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_6",
+    "source": {"bibkey": "lilje-1972", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(6)"},
+    "language": "stan1293",
+    "primaryText": "If it doesn't say 'Goodyear', it isn't Polyglas.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "perfection", "judgment": "unacceptable"},
+      {"name": "strengthening: the object is not necessarily not Polyglas", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["inference", "no perfection"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_7",
+    "source": {"bibkey": "lilje-1972", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(7)"},
+    "language": "stan1293",
+    "primaryText": "If this cactus grows native to Idaho, then it's not an Astrophytum.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "An information-seeking dialogue on whether the cactus is an Astrophytum.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "perfection", "judgment": "unacceptable"},
+      {"name": "strengthening: it is not settled that the cactus is not an Astrophytum", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["inference", "no perfection"],
+      ["question", "information-seeking"]
+    ],
+    "comment": "A speaker who has just learned the antecedent may utter it to show how the conclusion was reached.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_8",
+    "source": {"bibkey": "lilje-1972", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(8)"},
+    "language": "stan1293",
+    "primaryText": "If you scratch on the eight-ball, then you lost the game.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "perfection", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["inference", "no perfection"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_9",
+    "source": {"bibkey": "lilje-1972", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(9)"},
+    "language": "stan1293",
+    "primaryText": "If the axioms aren't consistent with each other, then every WFF in the system is a theorem.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "perfection", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["inference", "no perfection"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_10",
+    "source": {"bibkey": "boer-lycan-1973", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(10)"},
+    "language": "stan1293",
+    "primaryText": "If John quits, he will be replaced.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "perfection", "judgment": "unacceptable"},
+      {"name": "strengthening: it is not settled that John will be replaced", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["inference", "no perfection"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_11",
+    "source": {"bibkey": "von-fintel-2001", "paperLabel": "(11)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If you get a \"B\" on your next history test, I will give you $5.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Uttered by the wealthy aunt of an uninspired C-average high school student.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "perfection: the student must avoid an A", "judgment": "unacceptable"},
+      {"name": "strengthening: no $5 for another C", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["inference", "no perfection"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_17a",
+    "source": {"bibkey": "von-fintel-2001", "paperLabel": "(17)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "not only warm but hot",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "not only some but all", "judgment": "acceptable"},
+      {"form": "not only John but John and Mary", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "not only α but β"],
+      ["scale", "same monotonicity"]
+    ],
+    "comment": "Evidence for Matsumoto's monotonicity condition on Horn scales.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_17b",
+    "source": {"bibkey": "von-fintel-2001", "paperLabel": "(17)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "not only some but some and not all",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "not only John but only John", "judgment": "unacceptable"},
+      {"form": "not only John but John and not Mary", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["test", "not only α but β"],
+      ["scale", "mixed monotonicity"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_seat",
+    "source": {"bibkey": "cornulier-1983", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "p. 9"},
+    "language": "stan1293",
+    "primaryText": "One is allowed to sit in this seat if one is disabled or one is older than 70.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A sign on public transportation.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "perfection: only the disabled or the over-70 may sit here", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["inference", "conditional perfection"],
+      ["presumption", "exhaustivity"]
+    ],
+    "comment": "The utterance situation suggests that other sufficient conditions would have been mentioned.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_p14_2",
+    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(2) p. 14"},
+    "language": "stan1293",
+    "primaryText": "Q: Who left the party early? A: Robin and Hilary left the party early.",
+    "discourseSegments": [
+      "Who left the party early?",
+      "Robin and Hilary left the party early."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "exhaustive: Robin and Hilary and nobody else", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["answer", "exhaustive"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_p15_3",
+    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": ""},
+    "reportedIn": {"bibkey": "von-fintel-2001", "paperLabel": "(3) p. 15"},
+    "language": "stan1293",
+    "primaryText": "Q: Will Robin come to the party? A: If there is vegetarian food Robin will come to the party.",
+    "discourseSegments": [
+      "Will Robin come to the party?",
+      "If there is vegetarian food Robin will come to the party."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "exhaustive: Robin comes only if there is vegetarian food", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["answer", "exhaustive"],
+      ["inference", "conditional perfection"]
+    ],
+    "comment": "A conditional answer to a yes/no question, read as the answer to under which conditions Robin comes.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_p17_4a",
+    "source": {"bibkey": "von-fintel-2001", "paperLabel": "(4) p. 17"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Q: Will you give me $5 if I mow the lawn for you? A: Sure, I will give you $5 if you mow the lawn.",
+    "discourseSegments": [
+      "Will you give me $5 if I mow the lawn for you?",
+      "Sure, I will give you $5 if you mow the lawn."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Q: Will the TV work if it is humid? A: Yes, the TV will work if it is humid.", "judgment": "acceptable"}
+    ],
+    "readings": [
+      {"name": "perfection", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["question", "yes/no conditional"],
+      ["inference", "no perfection"]
+    ],
+    "comment": "Exhaustivity applies vacuously to a yes-answer.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_p17_5",
+    "source": {"bibkey": "von-fintel-2001", "paperLabel": "(5) p. 17"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A: John is in Amherst today. B: If he is in Amherst, he'll be home late tonight.",
+    "discourseSegments": [
+      "John is in Amherst today.",
+      "If he is in Amherst, he'll be home late tonight."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Implicit question: what of current interest follows from John's being in Amherst today?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "perfection: he is home late only if in Amherst", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["question", "consequences of an antecedent"],
+      ["inference", "no perfection"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_p17_6",
+    "source": {"bibkey": "von-fintel-2001", "paperLabel": "(6) p. 17"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Q: Where around here can I buy Italian newspapers? A: You can get them at Out of Town News in Harvard Square.",
+    "discourseSegments": [
+      "Where around here can I buy Italian newspapers?",
+      "You can get them at Out of Town News in Harvard Square."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "exhaustive", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["question", "mention-some"]
+    ],
+    "comment": "One convenient place is enough; a teenager asking how to earn five dollars is answered likewise without perfection.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "vonfintel2001_18",
+    "source": {"bibkey": "von-fintel-2001", "paperLabel": "(18)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Q: Will you be upset if I call you at home tonight? A: I will be upset if you call me after midnight.",
+    "discourseSegments": [
+      "Will you be upset if I call you at home tonight?",
+      "I will be upset if you call me after midnight."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "relativized perfection: a call before midnight will not upset her about its time", "judgment": "acceptable"},
+      {"name": "full perfection: nothing but a call after midnight upsets her", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["inference", "relativized perfection"],
+      ["question", "antecedents from a narrow set"]
+    ],
+    "comment": "An insult during a call before midnight is not excluded; modeled after an example of Irene Heim's.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
