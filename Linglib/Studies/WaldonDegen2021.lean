@@ -186,7 +186,8 @@ private theorem listener_real (L : List (List Word)) (scene : Finset Referent) (
         ∑ r', if r' ∈ scene then prefixMeaning vc vs L scene (ctx ++ [w]) r' else 0 := by
   have hnn := prefixMeaning_nonneg hc.le hc0.le hs.le hs0.le L scene (ctx ++ [w])
   simp only [listener]
-  rw [Kernel.ofWeights_real_singleton _ _ (λ _ => by simp only [listenerWeight]; split_ifs <;> simp)]
+  rw [Kernel.ofWeights_real_singleton _ _
+    (λ _ => by simp only [listenerWeight]; split_ifs <;> simp)]
   congr 1
   · simp only [listenerWeight]; split_ifs <;> simp [ENNReal.toReal_ofReal (hnn _)]
   · exact Finset.sum_congr rfl λ r' _ => by
