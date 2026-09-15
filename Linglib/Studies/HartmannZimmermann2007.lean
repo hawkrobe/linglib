@@ -36,8 +36,8 @@ prepublication manuscript of the chapter.
 
 ## TODO
 
-* The like-for-like contrast with Hungarian: *kawài* against the exhaustification that
-  `Kiss1998.FocusType.interpret` assigns to the identificational position.
+* The like-for-like contrast with Hungarian: *kawài* against the exhaustification over
+  `Kiss1998.alternatives` that the identificational position performs.
 * §2.3 multiple foci: one ex-situ focus with in-situ foci (18a–c).
 * §4 focus pied-piping and partial focus movement, and the final Ex-Situ Generalisation of their
   (47), which need a structured-meaning overlap predicate.
