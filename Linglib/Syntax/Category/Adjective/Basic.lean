@@ -85,7 +85,7 @@ structure Adjective where
   /-- The direction of the ordering the adjective imposes on its `dimension`: antonyms share a
       dimension and reverse the ordering (*tall* positive, *short* negative), so the negative
       member measures on the dual scale. -/
-  polarity : Degree.ScalePolarity := .positive
+  polarity : Degree.Polarity := .positive
   /-- Comparative/superlative morphology. -/
   comparison : Adjective.ComparisonFacet := .regular
   /-- Lexical antonym's surface form, when it has a stable one. -/

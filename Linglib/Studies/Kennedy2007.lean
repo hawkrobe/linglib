@@ -105,26 +105,33 @@ instance : ∀ (m : DegreeModifier) (b : Boundedness), Decidable (Licenses m b)
   | .maximizer, b => inferInstanceAs (Decidable b.HasMax)
   | .minimizer, b => inferInstanceAs (Decidable b.HasMin)
 
-/-- Table (61) as printed: whether a maximizer or minimizer is acceptable with the positive or
-negative member of an antonym pair, by the pair's scale type. -/
-def table61 : ScalePolarity → Boundedness → DegreeModifier → Bool
-  | .positive, .open_, _ => false
-  | .positive, .lowerBounded, .maximizer => false
-  | .positive, .lowerBounded, .minimizer => true
-  | .positive, .upperBounded, .maximizer => true
-  | .positive, .upperBounded, .minimizer => false
-  | .positive, .closed, _ => true
-  | .negative, .open_, _ => false
-  | .negative, .lowerBounded, .maximizer => true
-  | .negative, .lowerBounded, .minimizer => false
-  | .negative, .upperBounded, .maximizer => false
-  | .negative, .upperBounded, .minimizer => true
-  | .negative, .closed, _ => true
+/-- The A_pos row of table (61): whether a maximizer or minimizer is acceptable with the
+positive member of an antonym pair, by the pair's scale type. -/
+def table61Pos : Boundedness → DegreeModifier → Bool
+  | .open_, _ => false
+  | .lowerBounded, .maximizer => false
+  | .lowerBounded, .minimizer => true
+  | .upperBounded, .maximizer => true
+  | .upperBounded, .minimizer => false
+  | .closed, _ => true
+
+/-- The A_neg row of table (61). -/
+def table61Neg : Boundedness → DegreeModifier → Bool
+  | .open_, _ => false
+  | .lowerBounded, .maximizer => true
+  | .lowerBounded, .minimizer => false
+  | .upperBounded, .maximizer => false
+  | .upperBounded, .minimizer => true
+  | .closed, _ => true
+
+/-- Table (61) as printed, by the member of the pair. -/
+def table61 (p : Polarity) (b : Boundedness) (m : DegreeModifier) : Bool :=
+  if p = .positive then table61Pos b m else table61Neg b m
 
 /-- Every cell of (61) is the endpoint structure of the adjective's own scale. -/
-theorem table61_iff_licenses (p : ScalePolarity) (b : Boundedness) (m : DegreeModifier) :
+theorem table61_iff_licenses (p : Polarity) (b : Boundedness) (m : DegreeModifier) :
     table61 p b m = true ↔ Licenses m (p • b) := by
-  cases p <;> cases b <;> cases m <;> decide
+  rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> cases b <;> cases m <;> decide
 
 open English.Predicates.Adjectival in
 /-- The Fragment's antonym pairs fill (61): *completely full/empty*, *slightly wet* but

@@ -220,7 +220,7 @@ position of its governing QP, and the polarity of the adjective that QP modifies
 structure Head where
   cat : Cat
   site : Position
-  polarity : Option Degree.ScalePolarity
+  polarity : Option Degree.Polarity
   deriving DecidableEq, Repr
 
 /-- (296): privative adjectives such as *short* admit no modifier of definite measurement,
@@ -262,7 +262,7 @@ theorem not_formation_of_privative {h : Head} {c : Supply} (hh : h.cat = .qp)
 
 /-- (296b): with the AP as head the identity holds of the AP, and the definiteness of its Q
 is not at issue, *shorter than five feet*. -/
-theorem formation_ap_measure (site : Position) (polarity : Option Degree.ScalePolarity) :
+theorem formation_ap_measure (site : Position) (polarity : Option Degree.Polarity) :
     Formation ⟨.ap, site, polarity⟩ ⟨.ap, .measure⟩ :=
   ⟨.inl rfl, λ h => Cat.noConfusion h, λ h => Cat.noConfusion h⟩
 

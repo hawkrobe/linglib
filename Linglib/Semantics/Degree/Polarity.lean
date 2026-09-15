@@ -1,21 +1,23 @@
-import Mathlib.Algebra.Group.Defs
-import Mathlib.Tactic.DeriveFintype
+import Mathlib.Algebra.Ring.Int.Units
+import Mathlib.Algebra.GroupWithZero.Units.Fintype
+import Mathlib.Algebra.Group.Action.Defs
 
 /-!
-# Scale polarity
+# Polarity
 
-This file defines `Degree.ScalePolarity`, which member of an antonym pair a gradable adjective
-is. The two members measure on the same degrees under inverse orderings ([kennedy-2007] (60)
-and fn. 29, [kennedy-mcnally-2005] fn. 7): the positive member (*tall*, *hot*) in the unmarked
+This file defines `Degree.Polarity`, which member of an antonym pair a gradable adjective is.
+The two members measure on the same degrees under inverse orderings ([kennedy-2007] (60) and
+fn. 29, [kennedy-mcnally-2005] fn. 7): the positive member (*tall*, *hot*) in the unmarked
 direction, the negative member (*short*, *cold*) in the inverted one. Inverting an ordering
-twice restores it, so polarities compose as the group of order two with `positive` as identity,
-and `negative * p` is the polarity of the antonym of a `p` adjective. Its actions, on scale
-boundedness and on the comparative, are in `Semantics/Degree/Boundedness` and
-`Semantics/Degree/Basic`.
+twice restores it, so polarities compose as the sign group `ℤˣ`, `positive` being `1` and
+`negative` being `-1`, and `negative * p` is the polarity of the antonym of a `p` adjective. The
+sign acts on scale boundedness through the order dual (`Semantics/Degree/Boundedness`) and on
+an additive scale by negating the measure (`Semantics/Degree/Basic`).
 
 ## Main definitions
 
-* `ScalePolarity`, a `CommGroup` with `positive = 1`.
+* `Polarity`, the sign group `ℤˣ`, with its two members `Polarity.positive` and
+  `Polarity.negative`.
 
 ## References
 
@@ -25,42 +27,47 @@ boundedness and on the comparative, are in `Semantics/Degree/Boundedness` and
 
 namespace Degree
 
-/-- Which member of an antonym pair an adjective is: `positive` measures in the unmarked
-direction (*tall*, *hot*), `negative` in the inverted one (*short*, *cold*). -/
-inductive ScalePolarity where
-  | positive
-  | negative
-  deriving DecidableEq, Repr, Fintype
+/-- Which member of an antonym pair an adjective is, as a sign: `positive` measures in the
+unmarked direction (*tall*, *hot*), `negative` in the inverted one (*short*, *cold*). -/
+abbrev Polarity := ℤˣ
 
-namespace ScalePolarity
+namespace Polarity
 
-instance : One ScalePolarity := ⟨positive⟩
+/-- The unmarked member of an antonym pair (*tall*, *hot*). -/
+def positive : Polarity := 1
 
-/-- Composition of orderings inversions: `negative * p` is the polarity of the antonym of a
-`p` adjective. -/
-instance : Mul ScalePolarity :=
-  ⟨λ | positive, q => q | negative, positive => negative | negative, negative => positive⟩
+/-- The marked member of an antonym pair (*short*, *cold*). -/
+def negative : Polarity := -1
 
-@[simp] theorem positive_eq_one : positive = 1 := rfl
+theorem positive_eq_one : positive = 1 := rfl
 
-instance : CommGroup ScalePolarity where
-  mul_assoc := by decide
-  one_mul := by decide
-  mul_one := by decide
-  inv := id
-  inv_mul_cancel := by decide
-  mul_comm := by decide
+theorem negative_eq_neg_one : negative = -1 := rfl
 
-@[simp] theorem negative_mul_negative : negative * negative = 1 := rfl
+@[simp] theorem negative_ne_positive : negative ≠ positive := by decide
 
-@[simp] theorem inv_eq (p : ScalePolarity) : p⁻¹ = p := rfl
+@[simp] theorem positive_ne_negative : positive ≠ negative := by decide
 
-@[simp] theorem mul_self (p : ScalePolarity) : p * p = 1 := by cases p <;> rfl
+theorem eq_positive_or_eq_negative (p : Polarity) : p = positive ∨ p = negative :=
+  Int.units_eq_one_or p
 
-theorem eq_one_or_eq_negative (p : ScalePolarity) : p = 1 ∨ p = negative := by cases p <;> simp
+@[simp] theorem positive_mul (p : Polarity) : positive * p = p := one_mul p
 
-theorem negative_ne_one : negative ≠ 1 := nofun
+@[simp] theorem mul_positive (p : Polarity) : p * positive = p := mul_one p
 
-end ScalePolarity
+/-- Two inversions restore the ordering: the antonym of *short* is *tall*, and *less short than*
+is *taller than*. Sentential negation is not a polarity: *not short* is the contradictory of
+*short* and does not entail *tall* (`Degree.Antonymy`). -/
+@[simp] theorem negative_mul_negative : negative * negative = positive := by decide
+
+@[simp] theorem mul_self (p : Polarity) : p * p = positive := by
+  rcases eq_positive_or_eq_negative p with rfl | rfl <;> decide
+
+@[simp] theorem inv_eq_self (p : Polarity) : p⁻¹ = p := by
+  rcases eq_positive_or_eq_negative p with rfl | rfl <;> decide
+
+@[simp] theorem positive_smul {M : Type*} [MulAction Polarity M] (x : M) : positive • x = x :=
+  one_smul _ x
+
+end Polarity
 
 end Degree

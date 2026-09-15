@@ -19,9 +19,9 @@ of each shape, a section of `ofOrder`.
 
 The negative member of an antonym pair measures on the same degrees under the inverse ordering
 ([kennedy-2007] (60) and fn. 29, [kennedy-mcnally-2005] fn. 7). `Boundedness.dual` is that
-operation on tags, and `ofOrder_orderDual` identifies it with mathlib's order dual; the polarity
-group `ScalePolarity` acts on tags through it, `p • b` being the scale the `p` member of an
-antonym pair on `b` measures on. `withMin` and `withMax` adjoin an endpoint, the shapes of the
+operation on tags, and `ofOrder_orderDual` identifies it with mathlib's order dual; the sign
+group `Polarity` acts on tags through it, `p • b` being the scale the `p` member of an antonym
+pair on `b` measures on. `withMin` and `withMax` adjoin an endpoint, the shapes of the
 rays `Set.Ici a` and `Set.Iic a`.
 
 ## Main definitions
@@ -31,7 +31,7 @@ rays `Set.Ici a` and `Set.Iic a`.
 * `Boundedness.dual`, `Boundedness.withMin`, `Boundedness.withMax`: the ends exchanged, a least
   degree adjoined, a greatest degree adjoined.
 * `Boundedness.degreeShape`: a linear order of each boundedness.
-* The `MulAction ScalePolarity Boundedness` instance: the negative member of an antonym pair
+* The `MulAction Polarity Boundedness` instance: the negative member of an antonym pair
   measures on the dual.
 
 ## Main results
@@ -234,14 +234,14 @@ end Boundedness
 /-! ### The polarity action -/
 
 /-- The negative member of an antonym pair measures on the dual scale. -/
-instance : MulAction ScalePolarity Boundedness where
-  smul
-    | .positive, b => b
-    | .negative, b => b.dual
+instance : MulAction Polarity Boundedness where
+  smul p b := if p = .positive then b else b.dual
   one_smul _ := rfl
-  mul_smul := by decide
+  mul_smul p q b := by
+    rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;>
+      rcases Polarity.eq_positive_or_eq_negative q with rfl | rfl <;> simp [HSMul.hSMul, SMul.smul]
 
-@[simp] theorem Boundedness.negative_smul (b : Boundedness) : ScalePolarity.negative • b = b.dual :=
+@[simp] theorem Boundedness.negative_smul (b : Boundedness) : Polarity.negative • b = b.dual :=
   rfl
 
 end Degree

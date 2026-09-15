@@ -71,7 +71,7 @@ def ScalarDimension.domain : ScalarDimension → PropertyDomain
     (24)–(27), [kennedy-2007] (33), (60)): *??completely wet* but *completely dry* makes
     wetness lower closed, *fully straight* but *??fully bent* makes straightness upper
     closed, *100% full/empty* makes fullness closed. The negative member of an antonym
-    pair measures on the dual (`ScalePolarity.negative • b`). Reducible so the degree fiber's
+    pair measures on the dual (`Polarity.negative • b`). Reducible so the degree fiber's
     `OrderTop`/`NoMaxOrder` instances synthesise through it. -/
 abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
   | .openness | .curvature | .cracking | .denting | .scratching | .boiling
