@@ -3,6 +3,7 @@ import Linglib.Semantics.Causation.Interpretation
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Clause.Complementation
 import Linglib.Morphology.Word.Basic
+import Linglib.Fragments.English.Inflection
 
 open Morphology (Word)
 
@@ -30,42 +31,6 @@ open Degree (Boundedness)
 open Aspect (VerbIncClass)
 open ArgumentStructure
 open ArgumentStructure
-
--- ════════════════════════════════════════════════════
--- § English Morphophonological Rules
--- ════════════════════════════════════════════════════
-
-private def isVowel (c : Char) : Bool :=
-  c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'
-
-/-- Does the stem end in a consonant followed by 'y'? -/
-private def endsWithConsonantY (s : String) : Bool :=
-  match s.toList.reverse with
-  | 'y' :: c :: _ => !isVowel c
-  | _ => false
-
-/-- Does the stem end in a sibilant (sh, ch, ss, x, z)? -/
-private def endsWithSibilant (s : String) : Bool :=
-  s.endsWith "sh" || s.endsWith "ch" || s.endsWith "ss" ||
-  s.endsWith "x" || s.endsWith "z"
-
-/-- Compute regular 3sg present form. -/
-def regular3sg (stem : String) : String :=
-  if endsWithConsonantY stem then (stem.toList.dropLast ++ "ies".toList) |> String.ofList
-  else if endsWithSibilant stem then stem ++ "es"
-  else stem ++ "s"
-
-/-- Compute regular past tense / past participle form. -/
-def regularPast (stem : String) : String :=
-  if endsWithConsonantY stem then (stem.toList.dropLast ++ "ied".toList) |> String.ofList
-  else if stem.endsWith "e" then stem ++ "d"
-  else stem ++ "ed"
-
-/-- Compute regular present participle form. -/
-def regularPresPart (stem : String) : String :=
-  if stem.endsWith "e" && !stem.endsWith "ee" then
-    (stem.toList.dropLast ++ "ing".toList) |> String.ofList
-  else stem ++ "ing"
 
 -- ════════════════════════════════════════════════════
 -- § VerbEntry (extends Verb with English morphology)
@@ -100,10 +65,10 @@ structure VerbEntry extends Verb where
     ``` -/
 def VerbEntry.mkRegular (core : Verb) : VerbEntry :=
   { toVerb := core
-    form3sg := regular3sg core.form
-    formPast := regularPast core.form
-    formPastPart := regularPast core.form
-    formPresPart := regularPresPart core.form
+    form3sg := suffixS core.form
+    formPast := suffixEd core.form
+    formPastPart := suffixEd core.form
+    formPresPart := suffixIng core.form
     isRegular := true }
 
 /-- The inflectional cells of an entry. -/

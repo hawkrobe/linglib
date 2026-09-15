@@ -278,8 +278,8 @@ def toNominalMapping (dp : DPParameter) : NominalMapping :=
 
 /-- The parameters of the three languages yield the mappings their fragments declare. -/
 theorem fragment_mappings :
-    toNominalMapping romance = Italian.Nouns.italianMapping ∧
-      toNominalMapping english = English.Nouns.englishMapping ∧
-      toNominalMapping greek = Greek.StandardModern.Nouns.greekMapping := ⟨rfl, rfl, rfl⟩
+    toNominalMapping romance = Italian.Nouns.nominalMapping ∧
+      toNominalMapping english = English.Nouns.nominalMapping ∧
+      toNominalMapping greek = Greek.StandardModern.Nouns.nominalMapping := ⟨rfl, rfl, rfl⟩
 
 end Longobardi2001

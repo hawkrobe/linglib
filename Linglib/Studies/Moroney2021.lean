@@ -7,7 +7,7 @@ import Linglib.Fragments.German.Determiners
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Thai.Determiners
 import Linglib.Fragments.Shan.Determiners
-import Linglib.Fragments.Shan.Nouns
+import Linglib.Fragments.Shan.Determiners
 import Linglib.Studies.Jenks2018
 
 /-!
@@ -18,8 +18,8 @@ anaphoric definiteness, instantiating an unmarked cell that [jenks-2018]'s defin
 typology had no slot for. Because Shan has no articles, no covert type-shift is blocked — ι,
 ι^x and ∩ are all available to bare nouns — while the optional demonstratives *nâj/nân*
 only add spatial content. The cell is derived from `Shan.Determiners.inventory`, the
-bare-noun reading distribution from `MeaningPreservation.selectShift` over
-`Shan.Nouns.blocking`, and the refutation is stated against
+bare-noun reading distribution from `MeaningPreservation.selectShift` over the shifts the
+inventory leaves unblocked, and the refutation is stated against
 `Jenks2018.attested`.
 
 Her comparison of Shan and English bare nouns (Table 2.3) finds them alike on the
@@ -47,14 +47,14 @@ open Mereology (CUM)
 
 /-! ### Type-shift selection -/
 
-/-- The type-shift context of a Shan number-neutral bare noun: nothing is blocked
-(`Shan.Nouns.blocking`), and only the predicate's kind-compatibility varies. -/
+/-- The type-shift context of a Shan number-neutral bare noun: the inventory blocks nothing,
+and only the predicate's kind-compatibility varies. -/
 def shanCtx (downDefined : Bool) : MeaningPreservation.TypeShiftContext :=
   { number := .neutral
   , downDefined := downDefined
-  , iotaBlocked := Shan.Nouns.blocking.iotaBlocked
+  , iotaBlocked := decide (Shan.Determiners.inventory.Blocks .iota)
   , iotaAnaphoricBlocked := false
-  , existsBlocked := Shan.Nouns.blocking.existsBlocked
+  , existsBlocked := decide (Shan.Determiners.inventory.Blocks .exists)
   , instantiationAccessible := true }
 
 /-- With a non-kind predicate a Shan bare noun type-shifts by ι — the definite reading —

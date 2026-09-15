@@ -46,28 +46,12 @@ partition are disjoint) is derived there.
 
 namespace Semantics.Kinds.MeaningPreservation
 
-open Semantics.Kinds.NMP (NominalMapping BlockingPrinciple downDefinedFor)
+open Semantics.Kinds.NMP (NominalMapping Shift DownDefined)
 
 variable (World Atom : Type)
 
 -- Type-Shifting Operations (with Ranking)
 
-/--
-Type-shifting operations from [partee-1987] / [dayal-2004].
-
-These convert between semantic types:
-- ∩ (down/cap): Property → Kind (nominalization)
-- ι (iota): Property → Individual (definite description)
-- ∃ (exists): Property → GQ (existential quantification)
--/
-inductive TypeShift where
-  | down           -- ∩: λP λs ιx[Ps(x)] - kind formation
-  | iota           -- ι: λP ιx[Ps(x)] - unique definite description
-  | iotaAnaphoric  -- ι^x: λP λQ ιx[Ps(x) ∧ Q(x)] - anaphoric definite
-                   -- ([moroney-2021] §4.3 (anaphoric iota)): presupposes unique P-satisfier
-                   -- that additionally satisfies anaphoric restrictor Q
-  | exists         -- ∃: λP λQ ∃x[P(x) ∧ Q(x)] - existential
-  deriving DecidableEq, Repr
 
 /--
 Meaning Preservation Ranking ([dayal-2004]: 408)
@@ -82,18 +66,18 @@ that "loses" some information.
 ιP preserves P's intension (picks unique satisfier per world)
 ∃P only preserves existence of some satisfier (loses identity)
 -/
-def meaningPreservationRank : TypeShift → Nat
+def meaningPreservationRank : Shift → Nat
   | .down          => 1 -- Highest rank (most preserving)
   | .iota          => 1 -- Same rank as ∩
   | .iotaAnaphoric => 1 -- Same rank as ι: preserves full semantic content
   | .exists        => 2 -- Lower rank (less preserving)
 
 /-- Type shifts with equal rank are equally preferred -/
-def equallyPreferred (t1 t2 : TypeShift) : Bool :=
+def equallyPreferred (t1 t2 : Shift) : Bool :=
   meaningPreservationRank t1 == meaningPreservationRank t2
 
 /-- t1 is more preferred than t2 if it has lower rank -/
-def morePreferred (t1 t2 : TypeShift) : Bool :=
+def morePreferred (t1 t2 : Shift) : Bool :=
   meaningPreservationRank t1 < meaningPreservationRank t2
 
 -- Verify the ranking
@@ -282,7 +266,7 @@ Available type-shifts given context.
 
 Returns shifts in preference order (most preferred first).
 -/
-def availableShifts (ctx : TypeShiftContext) : List TypeShift :=
+def availableShifts (ctx : TypeShiftContext) : List Shift :=
   let shifts := []
   -- ∩ is available if defined and number is compatible.
   -- For .neutral (Shan), ∩ is available (bare nouns can be kind-denoting).
@@ -317,7 +301,7 @@ Select the best available type-shift.
 
 Follows Meaning Preservation: choose highest-ranked available shift.
 -/
-def selectShift (ctx : TypeShiftContext) : Option TypeShift :=
+def selectShift (ctx : TypeShiftContext) : Option Shift :=
   (availableShifts ctx).head?
 
 -- ============================================================================
@@ -326,7 +310,7 @@ def selectShift (ctx : TypeShiftContext) : Option TypeShift :=
 
 /-! ## Intensional Semantics of Type-Shifts
 
-The `TypeShift` enum above classifies type-shifts abstractly; the
+The `Shift` enum above classifies type-shifts abstractly; the
 `availableShifts`/`selectShift` functions determine which are available.
 What's been missing is the *intensional denotation* of each shift.
 
@@ -562,7 +546,7 @@ def modificationBlocksKind : ModificationEffect :=
 -- Grounding Theorems
 
 /-- Meaning preservation ranking is transitive -/
-theorem ranking_transitive (t1 t2 t3 : TypeShift)
+theorem ranking_transitive (t1 t2 t3 : Shift)
     (h1 : morePreferred t1 t2 = true)
     (h2 : morePreferred t2 t3 = true) :
     morePreferred t1 t3 = true := by
@@ -603,95 +587,48 @@ theorem english_singular_kind_uses_iota :
     }
     selectShift ctx = some .iota := rfl
 
--- Dayal/Chierchia Integration
+/-! ### Dayal's contexts from Chierchia's parameters
 
-/--
-Convert Chierchia's BlockingPrinciple + noun info to Dayal's TypeShiftContext.
+Dayal's framework generalizes Chierchia's: where the Blocking Principle and the definedness of ∩
+decide whether a bare argument is licensed at all, `selectShift` decides which shift it takes. -/
 
-This shows how Dayal's framework generalizes Chierchia's:
-- Chierchia: BlockingPrinciple + MassCount + isPlural → bare argument OK?
-- Dayal: TypeShiftContext → which type-shift is selected?
--/
-def chierchiaToContext (bp : BlockingPrinciple) (nt : MassCount) (isPlural : Bool)
+/-- The number feature of a nominal: mass, singular, plural, or number-neutral for a general
+number form, every other count value counting as plural. -/
+def numberFeature : MassCount → Number → NumberFeature
+  | .mass, _ => .mass
+  | .count, .general => .neutral
+  | .count, .singular => .sg
+  | .count, _ => .pl
+
+/-- The type-shift context of a bare nominal in a language with the determiners `ds`: ∩ is
+defined as `DownDefined` says, and each shift is blocked as the Blocking Principle decides. -/
+def chierchiaToContext (ds : Determiner.Inventory) (nt : MassCount) (num : Number)
     (instantiationAccessible : Bool := true) : TypeShiftContext :=
-  { number := match nt with
-              | .mass => .mass
-              | .count => if isPlural then .pl else .sg
-  , downDefined := downDefinedFor nt isPlural
-  , iotaBlocked := bp.iotaBlocked
-  , iotaAnaphoricBlocked := bp.iotaBlocked  -- Default: same as ι.
-      -- Languages with weak/strong article splits (German) override this.
-  , existsBlocked := bp.existsBlocked
-  , instantiationAccessible := instantiationAccessible
-  }
+  { number := numberFeature nt num
+    downDefined := decide (DownDefined nt num)
+    iotaBlocked := decide (ds.Blocks .iota)
+    iotaAnaphoricBlocked := decide (ds.Blocks .iotaAnaphoric)
+    existsBlocked := decide (ds.Blocks .exists)
+    instantiationAccessible }
 
-/--
-English-like blocking principle: has "the" and "a", so ι and ∃ blocked.
--/
-def englishBlocking : BlockingPrinciple :=
-  { determiners := ["the", "a", "some"]
-  , iotaBlocked := true
-  , existsBlocked := true
-  , downBlocked := false }
+variable {ds : Determiner.Inventory} {num : Number}
 
-/--
-Dayal's framework is consistent with Chierchia's for English.
+/-- Where Chierchia licenses a bare plural, ι and ∃ blocked and ∩ defined, Dayal selects ∩. -/
+theorem selectShift_plural (hι : ds.Blocks .iota) (hex : ds.Blocks .exists) :
+    selectShift (chierchiaToContext ds .count .plural) = some .down := by
+  simp [selectShift, availableShifts, chierchiaToContext, numberFeature, DownDefined, hι, hex]
 
-When Chierchia predicts bare plurals are licensed (∩ defined and not blocked),
-Dayal's selectShift returns.down (the kind-forming shift).
--/
-theorem dayal_consistent_english_bare_plural :
-    let ctx := chierchiaToContext englishBlocking .count true
-    selectShift ctx = some .down := by decide
+/-- Where Chierchia rules out a bare singular count noun, ∩ undefined and ι, ι^x and ∃ blocked,
+Dayal selects no shift. -/
+theorem selectShift_singular (hι : ds.Blocks .iota) (hx : ds.Blocks .iotaAnaphoric)
+    (hex : ds.Blocks .exists) :
+    selectShift (chierchiaToContext ds .count .singular) = none := by
+  simp [selectShift, availableShifts, chierchiaToContext, numberFeature, DownDefined, hι, hx, hex]
 
-/--
-When ∩ is undefined (singular count) and ι/∃ are blocked (English),
-both frameworks predict bare singular is OUT.
--/
-theorem dayal_consistent_english_bare_singular_out :
-    let ctx := chierchiaToContext englishBlocking .count false
-    selectShift ctx = none := by decide
-
-/--
-Mass nouns: both frameworks predict bare mass nouns are OK (use ∩).
--/
-theorem dayal_consistent_english_mass_noun :
-    let ctx := chierchiaToContext englishBlocking .mass false
-    selectShift ctx = some .down := by decide
-
-/--
-Dayal subsumes Chierchia: When a type-shift is available, selectShift finds it.
-
-Verified for the key cases via the concrete theorems above.
-The general pattern: selectShift returns Some iff at least one of:
-- ∩ is defined (bare plural/mass)
-- ι is not blocked
-- ∃ is not blocked
--/
-theorem dayal_subsumes_chierchia_plural_available :
-    let ctx := chierchiaToContext englishBlocking .count true
-    (selectShift ctx).isSome = true := by decide
-
-theorem dayal_subsumes_chierchia_singular_blocked :
-    let ctx := chierchiaToContext englishBlocking .count false
-    (selectShift ctx).isSome = false := by decide
-
-/--
-Romance-like blocking: has definite article, so bare kinds need "the".
-But for kind reference, the definite is used (not blocked for that purpose).
--/
-def romanceBlocking : BlockingPrinciple :=
-  { determiners := ["le", "la", "les", "un", "une", "des"]
-  , iotaBlocked := true
-  , existsBlocked := true
-  , downBlocked := false }
-
-/--
-In Romance, bare plurals are also predicted to use ∩ when available.
--/
-theorem dayal_consistent_romance_bare_plural :
-    let ctx := chierchiaToContext romanceBlocking .count true
-    selectShift ctx = some .down := by decide
+/-- A bare mass noun takes ∩ in either framework, whatever the determiners block. -/
+theorem selectShift_mass : selectShift (chierchiaToContext ds .mass num) = some .down := by
+  cases h : decide (ds.Blocks .exists) <;>
+    simp [selectShift, availableShifts, chierchiaToContext, numberFeature, DownDefined, h]
 
 /--
 Meaning Preservation explains Chierchia's blocking.

@@ -27,7 +27,7 @@ indefinite plural — Italian has no bare plural arguments.
 
 namespace Italian.Nouns
 
-open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
+open Semantics.Kinds.NMP (NominalMapping)
 
 -- ============================================================================
 -- § 2: Noun Entry
@@ -51,17 +51,9 @@ structure NounEntry where
 -- § 3: Chierchia Parameters
 -- ============================================================================
 
-/-- Italian is a [-arg, +pred] language. -/
-def italianMapping : NominalMapping := .predOnly
-
-/-- Italian has a rich article system that blocks most bare arguments. -/
-def italianBlocking : BlockingPrinciple :=
-  { determiners := ["il", "lo", "la", "i", "gli", "le",
-                     "un", "uno", "una",
-                     "del", "dello", "della", "dei", "degli", "delle"]
-  , iotaBlocked := true
-  , existsBlocked := true
-  , downBlocked := false }
+/-- Italian is [−arg, +pred]: nouns are predicates and need D to be arguments
+([chierchia-1998]); its articles are `Italian.Determiners.inventory`. -/
+def nominalMapping : NominalMapping := .predOnly
 
 -- ============================================================================
 -- § 4: Determiners
@@ -179,15 +171,6 @@ def lookup (form : String) : Option NounEntry :=
 -- § 9: Bare Argument Licensing
 -- ============================================================================
 
-/-- In Italian, bare plurals are NOT generally licensed. -/
-def barePluralLicensed : Bool := false
-
-/-- In Italian, bare singulars are NOT licensed. -/
-def bareSingularLicensed : Bool := false
-
-example : barePluralLicensed = false := rfl
-example : bareSingularLicensed = false := rfl
-
 -- ============================================================================
 -- § 9a: Nominal Denotation — Kind vs Property ([guerrini-2026])
 -- ============================================================================
@@ -198,17 +181,17 @@ open Semantics.Kinds.NMP (CanDenoteKind CanDenoteProperty)
     Because Italian is [-arg, +pred], D is required for argumenthood.
     With D present, the noun maps to a kind via ∩. -/
 theorem definitePluralDenotesKind :
-    CanDenoteKind italianMapping True := trivial
+    CanDenoteKind nominalMapping True := trivial
 
 /-- Italian bare plurals cannot denote kinds: derived from `predOnly` + no D.
     Without D, Italian nouns remain predicates. No covert ∩ is available. -/
 theorem barePluralCannotDenoteKind :
-    ¬ CanDenoteKind italianMapping False := id
+    ¬ CanDenoteKind nominalMapping False := id
 
 /-- Italian bare plurals denote properties: derived from `predOnly`.
     All [+pred] languages allow property denotation for nouns. -/
 theorem barePluralDenotesProperty :
-    CanDenoteProperty italianMapping := trivial
+    CanDenoteProperty nominalMapping := trivial
 
 -- ============================================================================
 -- § 10: NP Examples

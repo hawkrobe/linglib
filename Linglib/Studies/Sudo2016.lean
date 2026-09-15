@@ -171,7 +171,7 @@ def japaneseStrategy : Classifier.Strategy := .sudoBlocking
 /-- Sudo and Chierchia assign Japanese different strategies: the classifier atomizes a
 kind-denoting noun for [chierchia-1998], and blocks the ∪-operator on numerals here. -/
 theorem sudo_disagrees_with_chierchia_on_japanese :
-    japaneseStrategy ≠ NMP.japaneseStrategy := by decide
+    japaneseStrategy ≠ Chierchia1998.japaneseStrategy := by decide
 
 /-! ### Witnesses on the set-based ontology -/
 

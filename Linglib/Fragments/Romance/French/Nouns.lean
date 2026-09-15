@@ -12,7 +12,7 @@ French NP structure with gender. Bare arguments restricted ([chierchia-1998] [-a
 
 namespace French.Nouns
 
-open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
+open Semantics.Kinds.NMP (NominalMapping)
 
 /--
 A lexical entry for a French noun.
@@ -60,17 +60,9 @@ structure NP where
 instance : HasNumber NP := ⟨fun np => Number.fromUD np.number⟩
 
 
-/--
-French has a rich article system that blocks most bare arguments.
--/
-def frenchBlocking : BlockingPrinciple :=
-  { determiners := ["le", "la", "les", "un", "une", "des", "du", "de la"]
-  , iotaBlocked := true
-  , existsBlocked := true  -- Including plurals
-  , downBlocked := false }
-
-/-- French is a [-arg, +pred] language -/
-def frenchMapping : NominalMapping := .predOnly
+/-- French is [−arg, +pred]: nouns are predicates and need D to be arguments
+([chierchia-1998]); its articles are `French.Determiners.inventory`. -/
+def nominalMapping : NominalMapping := .predOnly
 
 
 /-- Create a definite NP (le/la/les) -/
@@ -140,17 +132,6 @@ def allNouns : List NounEntry := [
 
 def lookup (form : String) : Option NounEntry :=
   allNouns.find? λ n => n.formSg == form || n.formPl == some form
-
-
-/-- In French, bare plurals are NOT generally licensed -/
-def barePluralLicensed : Bool := false
-
-/-- In French, bare singulars are NOT licensed -/
-def bareSingularLicensed : Bool := false
-
--- Verify
-example : barePluralLicensed = false := rfl
-example : bareSingularLicensed = false := rfl
 
 
 /-- "le chien" (the dog) -/

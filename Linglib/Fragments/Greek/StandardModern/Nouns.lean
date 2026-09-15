@@ -1,41 +1,24 @@
 import Linglib.Semantics.Genericity.NominalMappingParameter
 
-/-! # Greek Noun Fragment
+/-!
+# Greek nominal parameters
 
-Greek nominal parameters. Greek is a [-arg, +pred] language like Romance:
-bare nouns are predicative (need D for argumenthood), bare plurals cannot
-denote kinds without an overt definite article.
+Greek is [−arg, +pred] like Romance ([chierchia-1998]): bare nouns are predicates and need D to
+be arguments, and bare plurals cannot denote kinds without the definite article. Its articles are
+`Greek.StandardModern.Determiners.inventory`. Greek differs from Romance in DP-internal syntax:
+adjectives are prenominal, so N cannot raise past them, and a proper name cannot satisfy strong
+D by raising and takes the definite article instead (`Studies/Longobardi2001.lean`).
 
-Greek differs from Romance in DP-internal syntax: adjectives are prenominal
-(as in Germanic), indicating that N cannot raise past the α constituent
-(opaque α). This means proper names cannot satisfy strong D by N-raising
-and must instead appear with an overt definite article.
+## References
+
+* [chierchia-1998]
 -/
 
 namespace Greek.StandardModern.Nouns
 
-open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
+open Semantics.Kinds.NMP (NominalMapping)
 
-/-- Greek is a [-arg, +pred] language: nouns are predicates,
-    bare arguments are not licensed for kind reference.
-    Same as Romance ([chierchia-1998]). -/
-def greekMapping : NominalMapping := .predOnly
-
-/-- Greek has a rich article system that blocks bare arguments. -/
-def greekBlocking : BlockingPrinciple :=
-  { determiners := ["o", "i", "to", "oi", "ta",   -- definite
-                     "enas", "mia", "ena"]          -- indefinite
-  , iotaBlocked := true
-  , existsBlocked := true
-  , downBlocked := true }
-
-/-- Greek bare plurals are not licensed as arguments. -/
-def barePluralLicensed : Bool := !greekBlocking.downBlocked
-
-/-- Greek bare singulars are not licensed as arguments. -/
-def bareSingularLicensed : Bool := false
-
-example : barePluralLicensed = false := rfl
-example : bareSingularLicensed = false := rfl
+/-- Greek is [−arg, +pred]: nouns are predicates and need D to be arguments. -/
+def nominalMapping : NominalMapping := .predOnly
 
 end Greek.StandardModern.Nouns

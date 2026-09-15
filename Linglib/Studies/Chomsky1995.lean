@@ -25,7 +25,6 @@ namespace Chomsky1995
 
 open Minimalist SyntacticObject
 open English.Predicates.Verbal (VerbEntry)
-open English.Nouns (NounEntry)
 
 /-- Map a verb's complement type to its selectional stack: each c-selected argument is one
     `Cat` feature consumed by complement Merge; nominal arguments are `.D` (the DP hypothesis).
@@ -40,9 +39,9 @@ def verbToSelStack (v : VerbEntry) : SelStack :=
 def verbToSO (v : VerbEntry) (id : Nat) : SyntacticObject :=
   mkLeafPhon .V (verbToSelStack v) v.form3sg id
 
-/-- A `NounEntry` as a leaf: proper names project as `.D`, common nouns as bare `.N`. -/
-def nounToSO (n : NounEntry) (id : Nat) : SyntacticObject :=
-  if n.proper then mkLeafPhon .D [] n.formSg id else mkLeafPhon .N [] n.formSg id
+/-- A noun entry as a leaf: proper names project as `.D`, common nouns as bare `.N`. -/
+def nounToSO (n : English.Nouns.Noun) (id : Nat) : SyntacticObject :=
+  if n.proper then mkLeafPhon .D [] n.form id else mkLeafPhon .N [] n.form id
 
 /-- "John sees Mary" as a Minimalist Merge derivation: *see*'s complement
     is *Mary* (`em .right`), then *John* is added as specifier (`em .left`). -/

@@ -150,15 +150,15 @@ def definite : Nominal → Bool
   | .italianDefinitePlural => true
   | _ => false
 
-/-- Whether the noun is plural, so that kind formation is defined for it (16). -/
-def plural : Nominal → Bool
-  | .singularIndefinite => false
-  | _ => true
+/-- The noun's number, which decides whether kind formation is defined for it (16). -/
+def number : Nominal → Number
+  | .singularIndefinite => .singular
+  | _ => .plural
 
 /-- (10a) and (16): the expression denotes a kind when the parameter or the article makes kind
 formation available and the noun is plural. -/
 def CanDenoteKind (n : Nominal) : Prop :=
-  NMP.CanDenoteKind n.mapping (n.definite = true) ∧ NMP.downDefinedFor .count n.plural = true
+  NMP.CanDenoteKind n.mapping (n.definite = true) ∧ NMP.DownDefined .count n.number
 
 /-- (145): the expression denotes a property when the parameter allows it and no article has
 formed a kind. -/

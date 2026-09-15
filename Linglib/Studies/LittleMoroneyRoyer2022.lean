@@ -212,7 +212,7 @@ theorem plural_cooccurrence :
 /-- [chierchia-1998]'s classifier-for-noun analysis of Mandarin extends to
 Shan but not to Ch'ol. -/
 theorem chierchia_covers_shan_not_chol :
-    shanStrategy = NMP.mandarinStrategy ∧ cholStrategy ≠ NMP.mandarinStrategy := by
+    shanStrategy = Chierchia1998.mandarinStrategy ∧ cholStrategy ≠ Chierchia1998.mandarinStrategy := by
   decide
 
 end LittleMoroneyRoyer2022

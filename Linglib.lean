@@ -1063,7 +1063,6 @@ import Linglib.Fragments.Romanian.MoodChoice
 import Linglib.Fragments.Sesotho.Morph
 import Linglib.Fragments.Shan.Classifiers
 import Linglib.Fragments.Shan.Determiners
-import Linglib.Fragments.Shan.Nouns
 import Linglib.Fragments.Shona.Basic
 import Linglib.Fragments.Shona.Nouns
 import Linglib.Fragments.Singlish.Questions
