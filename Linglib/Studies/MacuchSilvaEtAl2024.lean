@@ -1,4 +1,5 @@
-import Linglib.Semantics.Alternatives.Lexical
+import Mathlib.Order.WithBot
+import Mathlib.Tactic.DeriveFintype
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.Data.Nat.Cast.Order.Basic
@@ -15,7 +16,7 @@ ideal: the proportion itself for a failure framing and its complement for a succ
 (`difficulty`), so the two difficulties of one table sum to one (`difficulty_add`). The
 account predicts that as difficulty grows the speaker retreats to informationally weaker
 quantifiers, *all* giving way to *most* and then to *some*, those truthful over broader ranges
-of outcomes: truth is inherited down the lexical scale (`Truthful.of_entails`), the strongest
+of outcomes: truth is inherited down the lexical scale (`Truthful.of_le`), the strongest
 truthful quantifier for the goal-congruent adjective is monotone in the count it describes
 (`strongest_mono`), and difficulty orders those counts the other way, so the strongest
 truthful quantifier weakens with difficulty (`weakening_with_difficulty`). The paper thereby
@@ -24,9 +25,11 @@ utterance to a property of the situation.
 
 ## Implementation notes
 
-Proportions and difficulties are rationals; the quantifier scale and its entailments are
-those of `Semantics.Alternatives.Lexical`. The paper's refined difficulty, which also counts
-the students scoring zero, and the response probabilities of Figure 5 are described in prose.
+Proportions and difficulties are rationals. The positive quantifiers form the scale ⟨some,
+most, all⟩, ordered by rank, and *none* is the bottom adjoined to it (`WithBot`): the strongest
+truthful quantifier is *none* exactly when the count is zero. The paper's refined difficulty,
+which also counts the students scoring zero, and the response probabilities of Figure 5 are
+described in prose.
 
 ## References
 
@@ -35,8 +38,6 @@ the students scoring zero, and the response probabilities of Figure 5 are descri
 -/
 
 namespace MacuchSilvaEtAl2024
-
-open Alternatives.Quantifiers
 
 /-- The framing goal: present the results as a success or as a failure. -/
 inductive Goal where
@@ -114,66 +115,87 @@ theorem count_le_of_difficulty_le {s₁ s₂ : ExamStimulus} (g : Goal) (h : s�
     simp only [Goal.adjective, count]
     omega
 
-/-! ### Truthful quantifiers -/
+/-! ### The quantifier scale -/
+
+/-- The positive quantifiers of the experiment, the Horn scale ⟨some, most, all⟩. -/
+inductive Quantifier where
+  | some_
+  | most
+  | all
+  deriving DecidableEq, Fintype
+
+/-- The position of a quantifier on the scale. -/
+def Quantifier.rank : Quantifier → ℕ
+  | .some_ => 0
+  | .most => 1
+  | .all => 2
+
+/-- The scale order: *some* below *most* below *all*. -/
+instance : LinearOrder Quantifier := LinearOrder.lift' Quantifier.rank (by decide)
 
 /-- The quantifier is truthful of the count the adjective describes. -/
-def Truthful (s : ExamStimulus) (a : Adjective) : QuantExpr → Prop
+def Truthful (s : ExamStimulus) (a : Adjective) : Quantifier → Prop
   | .all => s.count a = s.nTotal
   | .most => s.nTotal < 2 * s.count a
   | .some_ => 0 < s.count a
-  | .none_ => s.count a = 0
 
 instance (s : ExamStimulus) (a : Adjective) : DecidablePred (Truthful s a) := λ q => by
   cases q <;> unfold Truthful <;> infer_instance
 
-/-- Truth is inherited down the scale: a quantifier entailed by a truthful one is truthful. -/
-theorem Truthful.of_entails {s : ExamStimulus} {a : Adjective} {q q' : QuantExpr}
-    (h : entails q q' = true) (hq : Truthful s a q) : Truthful s a q' := by
+/-- Truth is inherited down the scale: a quantifier below a truthful one is truthful. -/
+theorem Truthful.of_le {s : ExamStimulus} {a : Adjective} {q q' : Quantifier} (h : q' ≤ q)
+    (hq : Truthful s a q) : Truthful s a q' := by
   have := s.nTotal_pos
-  cases q <;> cases q' <;> simp only [entails, Bool.false_eq_true] at h <;>
-    simp only [Truthful] at hq ⊢ <;> omega
-
-/-- The position of a quantifier on the scale, *none* below *some* below *most* below *all*. -/
-def rank : QuantExpr → ℕ
-  | .none_ => 0
-  | .some_ => 1
-  | .most => 2
-  | .all => 3
+  cases q <;> cases q' <;> simp only [Truthful] at hq ⊢ <;>
+    first | omega | exact absurd h (by decide)
 
 /-- The strongest truthful quantifier: *all* of a full count, *most* of a majority, *some* of
-any positive count, and *none* otherwise. -/
-def strongest (s : ExamStimulus) (a : Adjective) : QuantExpr :=
-  if s.count a = s.nTotal then .all
-  else if s.nTotal < 2 * s.count a then .most
-  else if 0 < s.count a then .some_
-  else .none_
+any positive count, and *none*, the bottom of the scale, otherwise. -/
+def strongest (s : ExamStimulus) (a : Adjective) : WithBot Quantifier :=
+  if s.count a = s.nTotal then ↑Quantifier.all
+  else if s.nTotal < 2 * s.count a then ↑Quantifier.most
+  else if 0 < s.count a then ↑Quantifier.some_
+  else ⊥
 
-theorem strongest_truthful (s : ExamStimulus) (a : Adjective) : Truthful s a (strongest s a) := by
+/-- *None* is the strongest description exactly of a zero count. -/
+theorem strongest_eq_bot_iff (s : ExamStimulus) (a : Adjective) :
+    strongest s a = ⊥ ↔ s.count a = 0 := by
+  have := s.nTotal_pos
   unfold strongest
-  split_ifs <;> simp only [Truthful] <;> omega
+  split_ifs <;> simp <;> omega
 
-/-- Every truthful positive quantifier is entailed by the strongest one. -/
-theorem entails_strongest {s : ExamStimulus} {a : Adjective} {q : QuantExpr} (hq : Truthful s a q)
-    (hne : q ≠ .none_) : entails (strongest s a) q = true := by
+theorem strongest_truthful (s : ExamStimulus) (a : Adjective) {q : Quantifier}
+    (h : strongest s a = ↑q) : Truthful s a q := by
+  unfold strongest at h
+  split_ifs at h with h1 h2 h3
+  · cases WithBot.coe_inj.1 h; exact h1
+  · cases WithBot.coe_inj.1 h; exact h2
+  · cases WithBot.coe_inj.1 h; exact h3
+  · exact absurd h WithBot.bot_ne_coe
+
+/-- Every truthful quantifier lies below the strongest one. -/
+theorem Truthful.le_strongest {s : ExamStimulus} {a : Adjective} {q : Quantifier}
+    (hq : Truthful s a q) : ↑q ≤ strongest s a := by
   have := s.nCorrect_le
   have := s.nTotal_pos
-  cases a <;> cases q <;> simp only [Truthful, count] at hq <;> unfold strongest <;>
-    split_ifs <;> simp only [entails, count] at * <;> omega
+  unfold strongest
+  cases a <;> cases q <;> simp only [Truthful, count] at hq <;> split_ifs <;>
+    first | exact WithBot.coe_le_coe.2 (by decide) | simp only [count] at * ; omega
 
 /-- The strongest truthful quantifier is monotone in the count: more of the described answers,
 a stronger quantifier. -/
 theorem strongest_mono {s₁ s₂ : ExamStimulus} (a : Adjective) (h : s₁.nTotal = s₂.nTotal)
-    (hc : s₁.count a ≤ s₂.count a) : rank (strongest s₁ a) ≤ rank (strongest s₂ a) := by
+    (hc : s₁.count a ≤ s₂.count a) : strongest s₁ a ≤ strongest s₂ a := by
   have := s₁.count_le a
   have := s₂.count_le a
   unfold strongest
-  split_ifs <;> simp only [rank] <;> omega
+  split_ifs <;> first | exact bot_le | exact WithBot.coe_le_coe.2 (by decide) | omega
 
 /-- Weakening with difficulty: between two tables of one size, the harder the framing toward a
 goal, the weaker the strongest quantifier truthful of the goal-congruent count. -/
 theorem weakening_with_difficulty {s₁ s₂ : ExamStimulus} (g : Goal) (h : s₁.nTotal = s₂.nTotal)
     (hd : difficulty s₁ g ≤ difficulty s₂ g) :
-    rank (strongest s₂ g.adjective) ≤ rank (strongest s₁ g.adjective) :=
+    strongest s₂ g.adjective ≤ strongest s₁ g.adjective :=
   strongest_mono _ h.symm (count_le_of_difficulty_le g h hd)
 
 end MacuchSilvaEtAl2024

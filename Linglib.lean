@@ -766,7 +766,6 @@ import Linglib.Fragments.English.QuestionParticles
 import Linglib.Fragments.English.Questions
 import Linglib.Fragments.English.Reciprocals
 import Linglib.Fragments.English.Relativization
-import Linglib.Fragments.English.Scales
 import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.English.Tense
@@ -1395,7 +1394,6 @@ import Linglib.Processing.Psychophysics.Thurstone
 import Linglib.Processing.VisualWorld
 import Linglib.Semantics.Alternatives.Basic
 import Linglib.Semantics.Alternatives.Extremum
-import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Semantics.Alternatives.Source
 import Linglib.Semantics.Alternatives.Structural
 import Linglib.Semantics.Alternatives.Symmetric

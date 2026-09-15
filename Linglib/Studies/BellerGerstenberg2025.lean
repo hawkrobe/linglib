@@ -3,7 +3,6 @@ import Mathlib.Tactic.DeriveFintype
 import Linglib.Pragmatics.RSA.Uniform
 import Linglib.Semantics.Causation.SEM.Bool
 import Linglib.Semantics.Causation.SEM.Counterfactual
-import Linglib.Semantics.Alternatives.Lexical
 
 /-!
 # Beller and Gerstenberg 2025: causal expressions from counterfactual simulation
@@ -60,7 +59,7 @@ fitted noise, softening, and optimality parameters (θ, σ, ν, λ).
 
 namespace BellerGerstenberg2025
 
-open Causation Causation.SEM Alternatives RSA
+open Causation Causation.SEM RSA
 open scoped ENNReal
 
 /-! ### Expressions and aspects -/
@@ -263,17 +262,25 @@ theorem listener_noDifference_identifies {α : ℝ} (hα : 0 < α) :
 
 /-! ### The Horn scale -/
 
-/-- The scale ⟨affected, enabled, caused⟩, weakest to strongest; its order is the
-specificity hierarchy `caused_implies_enabled`, `enabled_implies_affected`. -/
-def causalScale : HornScale CausalExpression :=
-  ⟨[.affected, .enabled, .caused]⟩
+/-- The scale ⟨affected, enabled, caused⟩, weakest to strongest. -/
+def causalScale : Fin 3 → CausalExpression := ![.affected, .enabled, .caused]
 
-theorem affected_alternatives :
-    strongerAlternatives causalScale .affected = [.enabled, .caused] := by
-  decide
-
-theorem enabled_alternatives : strongerAlternatives causalScale .enabled = [.caused] := by
-  decide
+/-- The scale is a Horn scale: its meanings are strictly antitone in scale position, each
+member entailing the weaker ones and not conversely, the specificity hierarchy
+`caused_implies_enabled` and `enabled_implies_affected`. -/
+theorem causalScale_strictAnti :
+    StrictAnti λ i => {cw | expressionMeaning cw (causalScale i)} := by
+  rw [Fin.strictAnti_iff_succ_lt]
+  intro i
+  fin_cases i
+  · show ({cw | expressionMeaning cw .enabled} : Set CausalWorld) <
+      {cw | expressionMeaning cw .affected}
+    exact LE.le.ssubset_of_not_superset (λ cw h => enabled_implies_affected cw h)
+      (Set.not_subset.2 ⟨⟨false, true, false⟩, by decide, by decide⟩)
+  · show ({cw | expressionMeaning cw .caused} : Set CausalWorld) <
+      {cw | expressionMeaning cw .enabled}
+    exact LE.le.ssubset_of_not_superset (λ cw h => caused_implies_enabled cw h)
+      (Set.not_subset.2 ⟨⟨true, false, false⟩, by decide, by decide⟩)
 
 /-! ### Aspects from a structural model -/
 
