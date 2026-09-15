@@ -1,0 +1,78 @@
+[
+  {
+    "id": "waldondegen2021_1",
+    "source": {"bibkey": "waldon-degen-2021", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "La tachuela azul pequeña",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["La", "det.def.f.sg"], ["tachuela", "pin"], ["azul", "blue"], ["pequeña", "small.f.sg"]
+    ],
+    "translation": "The small blue pin",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "La tachuela pequeña azul", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["idiolect", "Spanish-postnominal"],
+      ["order", "noun color size"]
+    ],
+    "comment": "Fully postnominal modification; the reverse adjective order was offered by none of the four consultants.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "waldondegen2021_2a",
+    "source": {"bibkey": "waldon-degen-2021", "paperLabel": "(2a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "La tachuela azul y pequeña",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["La", "det.f.sg"], ["tachuela", "pin"], ["azul", "blue"], ["y", "and"],
+      ["pequeña", "small.f.sg"]
+    ],
+    "translation": "the small blue pin",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "La tachuela pequeña y azul", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["idiolect", "Spanish-postnominal-conjunctive"],
+      ["order", "suspended under conjunction"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "waldondegen2021_3a",
+    "source": {"bibkey": "waldon-degen-2021", "paperLabel": "(3a)"},
+    "reportedIn": null,
+    "language": "stan1288",
+    "primaryText": "La pequeña tachuela azul",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["La", "det.f.sg"], ["pequeña", "small.f.sg"], ["tachuela", "pin"], ["azul", "blue"]
+    ],
+    "translation": "the small blue pin",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "La azul tachuela pequeña", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["idiolect", "Spanish-split"],
+      ["order", "size noun color"]
+    ],
+    "comment": "Offered by one consultant, for whom the color-first split is out.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
