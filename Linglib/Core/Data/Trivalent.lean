@@ -314,7 +314,7 @@ def ofBoolHom : BoundedLatticeHom Bool Trivalent where
 /-- Strong Kleene exclusive disjunction: true when exactly one operand is true,
 undefined when either operand is. Unlike `⊔`, XOR cannot "see past" an undefined
 operand — `.true ⊔ .indet = .true`, but `xor .true .indet = .indet`
-([wang-davidson-2026], Figure 2). -/
+([wang-davidson-2026], Table 2). -/
 def xor : Trivalent → Trivalent → Trivalent
   | .true, .false => .true
   | .false, .true => .true
