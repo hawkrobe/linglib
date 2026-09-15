@@ -22,8 +22,7 @@ them requires. This file gives them one shared signature.
   not host).
 * `AgreesOnCase` / `AgreesOnSource` compare two accounts per projection.
   Divergence is the negation, witnessed by a stimulus — generalizing the
-  `agree_on_…`/`diverge_on_…` pattern of `Studies/Woolford1997.lean` and
-  `Studies/Baker2015.lean`.
+  `agree_on_…`/`diverge_on_…` pattern of `Studies/Baker2015.lean`.
 
 The Chomskyan Case Filter (`Syntax/Minimalist/Case.lean`) is a *checker*, not an
 assigner, and is bridged separately. The paper-anchored dependent-case ⟺
