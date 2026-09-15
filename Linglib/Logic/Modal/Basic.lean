@@ -16,7 +16,9 @@ necessity by shrinking accessibility), and the modal square of
 opposition. It also defines the bundled frame classes `IsS5Frame`,
 `IsKD45Frame`, `IsK45Frame`, `IsKTBFrame`, and the indicial operators,
 with Montague's S5 `box`/`diamond` as the universal-accessibility case
-`R = ⊤`.
+`R = ⊤`, and lifts `box` and `diamond` to propositions as sets: `nec R p`
+and `poss R p` are the `SetRel.core` and `SetRel.preimage` of the
+accessibility relation.
 
 ## References
 
@@ -165,20 +167,68 @@ def IsIndicial (N : (W → Prop) → W → Prop) : Prop :=
 
 theorem box_isIndicial : IsIndicial □[R] := ⟨R, rfl⟩
 
-/-! ### Flat S5 operators
+/-! ### Necessity and possibility of propositions as sets
 
-`poss`/`nec` are the flat existential/universal modals (`∃ w` / `∀ w`) —
-the S5 operators `□[⊤]`/`◇[⊤]` with their vestigial evaluation world
-dropped. -/
+A proposition as a set `p : Set W` carries `box` and `diamond` through membership: `nec R p`
+is the `SetRel.core` and `poss R p` the `SetRel.preimage` of the accessibility relation. The
+relation may run between different world types, as when a modal base pairs an evaluation world
+with the worlds of a prejacent. -/
 
-/-- Flat S5 possibility: `poss p` iff `p` holds at some world. -/
-def poss (p : W → Prop) : Prop := ∃ w, p w
+section Sets
 
-/-- Flat S5 necessity: `nec p` iff `p` holds at every world. -/
-def nec (p : W → Prop) : Prop := ∀ w, p w
+variable {W' : Type*} (R : W' → W → Prop) {p q : Set W} {x : W'}
 
-theorem nec_mono : Monotone (nec (W := W)) :=
-  fun _ _ h hn w => h w (hn w)
+/-- The worlds all of whose accessible worlds lie in `p`: `□[R]` on a proposition as a set. -/
+def nec (p : Set W) : Set W' := {x | ∀ v, R x v → v ∈ p}
+
+/-- The worlds with an accessible world in `p`: `◇[R]` on a proposition as a set. -/
+def poss (p : Set W) : Set W' := {x | ∃ v, R x v ∧ v ∈ p}
+
+@[simp] theorem mem_nec : x ∈ nec R p ↔ ∀ v, R x v → v ∈ p := Iff.rfl
+
+@[simp] theorem mem_poss : x ∈ poss R p ↔ ∃ v, R x v ∧ v ∈ p := Iff.rfl
+
+theorem mem_nec_iff_box {R : W → W → Prop} {w : W} : w ∈ nec R p ↔ □[R] (· ∈ p) w :=
+  Iff.rfl
+
+theorem mem_poss_iff_diamond {R : W → W → Prop} {w : W} :
+    w ∈ poss R p ↔ ◇[R] (· ∈ p) w :=
+  Iff.rfl
+
+variable {R}
+
+theorem nec_mono : Monotone (nec R) := fun _ _ h _ hx v hv => h (hx v hv)
+
+theorem poss_mono : Monotone (poss R) := fun _ _ h _ ⟨v, hv, hp⟩ => ⟨v, hv, h hp⟩
+
+@[simp] theorem compl_nec : (nec R p)ᶜ = poss R pᶜ := by
+  ext; simp [not_forall]
+
+@[simp] theorem compl_poss : (poss R p)ᶜ = nec R pᶜ := by
+  ext; simp [not_exists, not_and]
+
+theorem nec_inter : nec R (p ∩ q) = nec R p ∩ nec R q := by
+  ext; simp [forall_and]
+
+theorem poss_union : poss R (p ∪ q) = poss R p ∪ poss R q := by
+  ext; simp [exists_or, and_or_left]
+
+theorem poss_inter_subset : poss R (p ∩ q) ⊆ poss R p ∩ poss R q :=
+  fun _ ⟨v, hv, h⟩ => ⟨⟨v, hv, h.1⟩, ⟨v, hv, h.2⟩⟩
+
+theorem nec_union_subset : nec R p ∪ nec R q ⊆ nec R (p ∪ q) :=
+  fun _ h v hv => h.elim (fun h => Or.inl (h v hv)) (fun h => Or.inr (h v hv))
+
+@[simp] theorem nec_univ : nec R (Set.univ : Set W) = Set.univ := by simp [Set.eq_univ_iff_forall]
+
+@[simp] theorem poss_empty : poss R (∅ : Set W) = ∅ := by simp [Set.eq_empty_iff_forall_notMem]
+
+/-- Over the identity relation both operators are the identity. -/
+@[simp] theorem nec_eq (p : Set W) : nec Eq p = p := by ext; simp
+
+@[simp] theorem poss_eq (p : Set W) : poss Eq p = p := by ext; simp
+
+end Sets
 
 /-! ### Decidability over finite worlds -/
 

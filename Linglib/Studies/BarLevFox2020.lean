@@ -54,32 +54,11 @@ section FreeChoice
 
 variable (R : W → W → Prop) (a b : Set W)
 
-/-- Permission: possibility over the accessibility relation `R`, as a proposition. -/
-abbrev poss (p : Set W) : Set W := ◇[R] p
-
-/-- Obligation: necessity over the accessibility relation `R`, as a proposition. -/
-abbrev nec (s : Set W) : Set W := □[R] s
-
 /-- The alternatives of `◇(a ∨ b)`: the disjunction replaced by its disjuncts and their
 conjunction. -/
 def fcAlts : Set (Set W) := {poss R (a ∪ b), poss R a, poss R b, poss R (a ∩ b)}
 
 variable {R a b}
-
-theorem poss_mono {p q : Set W} (h : p ⊆ q) : poss R p ⊆ poss R q :=
-  λ _ ⟨v, hv, h'⟩ => ⟨v, hv, h h'⟩
-
-theorem poss_union : poss R (a ∪ b) = poss R a ∪ poss R b :=
-  Set.ext λ _ => ⟨λ ⟨v, hv, h⟩ => h.elim (λ h => Or.inl ⟨v, hv, h⟩) (λ h => Or.inr ⟨v, hv, h⟩),
-    λ h => h.elim (λ ⟨v, hv, h⟩ => ⟨v, hv, Or.inl h⟩) (λ ⟨v, hv, h⟩ => ⟨v, hv, Or.inr h⟩)⟩
-
-theorem poss_inter_subset : poss R (a ∩ b) ⊆ poss R a ∩ poss R b :=
-  λ _ ⟨v, hv, h⟩ => ⟨⟨v, hv, h.1⟩, ⟨v, hv, h.2⟩⟩
-
-theorem poss_compl {s : Set W} : poss R sᶜ = (nec R s)ᶜ :=
-  Set.ext λ _ => ⟨λ ⟨v, hv, h⟩ hb => h (hb v hv),
-    λ h => let ⟨v, hv⟩ := not_forall.1 h
-      ⟨v, (Classical.not_imp.1 hv).1, (Classical.not_imp.1 hv).2⟩⟩
 
 variable (h₁ : ∃ w ∈ poss R a, w ∉ poss R b) (h₂ : ∃ w ∈ poss R b, w ∉ poss R a)
   (h : ∃ w ∈ poss R a ∩ poss R b, w ∉ poss R (a ∩ b))
@@ -404,11 +383,6 @@ def negativeUniversalAlts : Set (Set W) :=
 
 variable {R p q}
 
-theorem mem_nec_inter {s t : Set W} {w : W} : w ∈ nec R (s ∩ t) ↔ w ∈ nec R s ∧ w ∈ nec R t :=
-  ⟨λ h => ⟨λ v hv => (h v hv).1, λ v hv => (h v hv).2⟩, λ h v hv => ⟨h.1 v hv, h.2 v hv⟩⟩
-
-theorem nec_mono {s t : Set W} (h : s ⊆ t) : nec R s ⊆ nec R t := λ _ h' v hv => h (h' v hv)
-
 /-- Negative universal free choice (47): the alternatives of `¬∃x □(px ∧ qx)` stand in the
 entailment pattern of universal free choice, so with the corresponding worlds it strengthens
 to `¬∃x □px ∧ ¬∃x □qx ∧ ∀x □(px ∨ qx)`. -/
@@ -423,9 +397,9 @@ theorem negativeUniversalFreeChoice
       ((⋃ x, nec R (p x))ᶜ ∩ (⋃ x, nec R (q x))ᶜ) ∩ ⋂ x, nec R (p x ∪ q x) := by
   obtain ⟨x₀⟩ := ‹Nonempty D›
   have hpq : ∀ {w : W} {x : D}, w ∉ nec R (p x) → w ∉ nec R (p x ∩ q x) :=
-    λ h h' => h (mem_nec_inter.1 h').1
+    λ h h' => h λ v hv => (h' v hv).1
   have hqp : ∀ {w : W} {x : D}, w ∉ nec R (q x) → w ∉ nec R (p x ∩ q x) :=
-    λ h h' => h (mem_nec_inter.1 h').2
+    λ h h' => h λ v hv => (h' v hv).2
   rw [negativeUniversalAlts, exhIEII_quantified ?_ ?_ ?_ ?_ ?_]
   · ext w
     simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_union, Set.mem_compl_iff,
@@ -446,8 +420,8 @@ theorem negativeUniversalFreeChoice
     · exact Or.inr (Or.inl ⟨hq, ⟨x₀, hw x₀⟩, ⟨x₀, hq x₀⟩⟩)
     push Not at hq
     obtain ⟨z, hz⟩ := hq
-    exact Or.inr (Or.inr ⟨⟨x₀, hw x₀⟩, ⟨z, λ h => hw z (mem_nec_inter.2 ⟨h, hz⟩)⟩,
-      ⟨y, λ h => hw y (mem_nec_inter.2 ⟨hy, h⟩)⟩⟩)
+    exact Or.inr (Or.inr ⟨⟨x₀, hw x₀⟩, ⟨z, λ h => hw z λ v hv => ⟨h v hv, hz v hv⟩⟩,
+      ⟨y, λ h => hw y λ v hv => ⟨hy v hv, h v hv⟩⟩⟩)
   · obtain ⟨w, hP, hQ⟩ := h₁
     refine ⟨w, ?_⟩
     simp only [Set.mem_compl_iff, Set.mem_iInter, Set.mem_iUnion, not_exists, not_forall, not_not]

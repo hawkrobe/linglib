@@ -1,6 +1,7 @@
 import Mathlib.Data.Finset.Basic
 import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Resolution
+import Linglib.Logic.Modal.Basic
 
 /-!
 # Answerhood operators on Hamblin sets
@@ -20,8 +21,13 @@ operator on the members of `H` true at `w`:
   returns it and `dayalStrongAns` applies Heim's strengthening to it;
 - `IsExhaustivelyResolvableOn H s`, the presupposition on an information
   state: a least member the state supports, Dayal's at the singleton `{w}`;
-- `box H R`, the question under necessity, whose presupposition at a world is
-  the prejacent's on that world's modal base (`isExhaustivelyResolvable_box_iff`);
+- `isExhaustivelyResolvable_range_iff`, the presupposition on a topical
+  property `P : α → Set W` from short answers to propositions ([xiang-2022]),
+  whose Hamblin set is `Set.range P`: a true short answer entailing every
+  true one;
+- `box H R`, the question under necessity, the image of `H` under
+  `ModalLogic.nec R`, whose presupposition at a world is the prejacent's on
+  that world's modal base (`isExhaustivelyResolvable_box_iff`);
 - `KnowsAnswer H w R x`, an agent's knowledge of the answer through their
   doxastic alternatives, and `PossiblyIgnorant H c R x`, [dayal-2025]'s
   requirement on the perspectival center of a question;
@@ -49,6 +55,7 @@ of [dayal-2016] needs Hamblin sets whose members entail one another, which
 * [dayal-2016]
 * [dayal-2025]
 * [fox-2018]
+* [xiang-2022]
 -/
 
 namespace Question
@@ -170,6 +177,38 @@ theorem IsExhaustivelyResolvable.exists_mem {H : Set (Set W)} {w : W}
     (h : IsExhaustivelyResolvable H w) : ∃ p ∈ H, w ∈ p :=
   let ⟨p, hp⟩ := h; ⟨p, hp.1.1, hp.1.2⟩
 
+/-! ### Topical properties
+
+A question as a topical property `P : α → Set W`, from short answers to propositions
+([xiang-2022]), has the Hamblin set `Set.range P`, whose true members are the image of the
+true short answers. -/
+
+section Range
+
+variable {α : Type*}
+
+theorem trueAnswers_range (P : α → Set W) (w : W) :
+    trueAnswers (Set.range P) w = P '' {a | w ∈ P a} := by
+  ext p
+  constructor
+  · rintro ⟨⟨a, rfl⟩, hw⟩
+    exact ⟨a, hw, rfl⟩
+  · rintro ⟨a, hw, rfl⟩
+    exact ⟨⟨a, rfl⟩, hw⟩
+
+/-- Dayal's presupposition on a topical property: a true short answer whose proposition
+entails every true one. -/
+theorem isExhaustivelyResolvable_range_iff (P : α → Set W) (w : W) :
+    IsExhaustivelyResolvable (Set.range P) w ↔
+      ∃ a, w ∈ P a ∧ ∀ b, w ∈ P b → P a ⊆ P b := by
+  constructor
+  · rintro ⟨p, ⟨⟨a, rfl⟩, hw⟩, hmin⟩
+    exact ⟨a, hw, fun b hb => hmin ⟨⟨b, rfl⟩, hb⟩⟩
+  · rintro ⟨a, hw, hmin⟩
+    exact ⟨P a, ⟨⟨a, rfl⟩, hw⟩, by rintro q ⟨⟨b, rfl⟩, hb⟩; exact hmin b hb⟩
+
+end Range
+
 theorem isLeast_singleton (p : Set W) : IsLeast {p} p :=
   ⟨Set.mem_singleton p, fun _ hq => le_of_eq (Set.mem_singleton_iff.1 hq).symm⟩
 
@@ -287,13 +326,12 @@ theorem isExhaustivelyResolvableOn_singleton :
 
 /-! ### Questions under necessity -/
 
-/-- The question `□Q` over the accessibility `R`: every member necessitated, holding at `x`
-when it holds at every world accessible from `x`. -/
-def box {W' : Type*} (R : W' → W → Prop) : Set (Set W') :=
-  (fun p => {x | ∀ v, R x v → v ∈ p}) '' H
+/-- The question `□Q` over the accessibility `R`: every member necessitated, the image of `H`
+under `ModalLogic.nec R`. -/
+def box {W' : Type*} (R : W' → W → Prop) : Set (Set W') := ModalLogic.nec R '' H
 
 theorem mem_box {W' : Type*} {R : W' → W → Prop} {q : Set W'} :
-    q ∈ box H R ↔ ∃ p ∈ H, {x | ∀ v, R x v → v ∈ p} = q := Iff.rfl
+    q ∈ box H R ↔ ∃ p ∈ H, ModalLogic.nec R p = q := Iff.rfl
 
 /-- Necessity lifts the presupposition: `□Q` is resolvable at `x` iff `Q` is resolvable on the
 worlds accessible from `x`, provided every world is the sole world accessible from some `x`. -/
