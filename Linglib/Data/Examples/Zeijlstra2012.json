@@ -1,0 +1,136 @@
+[
+  {
+    "id": "zeijlstra2012_20a",
+    "source": {"bibkey": "zeijlstra-2012", "paperLabel": "(20a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John said Mary was ill",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John said Mary was ill",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "sequence of tense"]
+    ],
+    "comment": "The subordinate past does not introduce a semantic past of its own; the sentence allows a simultaneous and a back-shifted reading but no forward shift.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "zeijlstra2012_20b",
+    "source": {"bibkey": "zeijlstra-2012", "paperLabel": "(20b)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Jan zei dat Marie ziek was",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Jan", "John"], ["zei", "said"], ["dat", "that"], ["Marie", "Mary"], ["ziek", "ill"],
+      ["was", "was"]
+    ],
+    "translation": "John said Mary was ill",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "sequence of tense"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "zeijlstra2012_21",
+    "source": {"bibkey": "zeijlstra-2012", "paperLabel": "(21)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Wolfgang played tennis on every Sunday",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Wolfgang played tennis on every Sunday",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "tense scope"]
+    ],
+    "comment": "The quantifier scopes between the past tense and the verb, so the past morpheme is not itself the semantic past operator.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "zeijlstra2012_50a",
+    "source": {"bibkey": "zeijlstra-2012", "paperLabel": "(50a)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Gianni non ha detto niente a nessuno",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["non", "NEG"], ["ha", "has"], ["detto", "said"],
+      ["niente", "n-thing"], ["a", "to"], ["nessuno", "n-body"]
+    ],
+    "translation": "Gianni didn't say anything to anybody",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "negative concord"],
+      ["type", "non-strict"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "zeijlstra2012_51a",
+    "source": {"bibkey": "zeijlstra-2012", "paperLabel": "(51a)"},
+    "reportedIn": null,
+    "language": "czec1258",
+    "primaryText": "Dnes nikdo nevolá nikomu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Dnes", "today"], ["nikdo", "n-body"], ["nevolá", "NEG.calls"], ["nikomu", "n-body"]
+    ],
+    "translation": "Today nobody is calling anybody",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "negative concord"],
+      ["type", "strict"]
+    ],
+    "comment": "The negative marker is obligatory; without it the sentence is out.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "zeijlstra2012_53",
+    "source": {"bibkey": "zeijlstra-2012", "paperLabel": "(53)"},
+    "reportedIn": null,
+    "language": "ital1282",
+    "primaryText": "Gianni non ha detto che ha telefonato a nessuno",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gianni", "Gianni"], ["non", "NEG"], ["ha", "has"], ["detto", "said"], ["che", "that"],
+      ["ha", "has"], ["telefonato", "called"], ["a", "to"], ["nessuno", "n-body"]
+    ],
+    "translation": "John didn't say that he called anybody",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["phenomenon", "negative concord"],
+      ["locality", "across CP"]
+    ],
+    "comment": "Negative Concord does not cross the embedded clause boundary, unlike Sequence of Tense.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]

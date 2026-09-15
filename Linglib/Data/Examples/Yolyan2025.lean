@@ -1,0 +1,252 @@
+import Linglib.Data.Examples.Schema
+
+/-!
+# `Yolyan2025` — typed example data
+
+Auto-generated from `Linglib/Data/Examples/Yolyan2025.json` by
+`scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
+the generator. Consumers (the paper's study file, test-suite hubs) import
+this module; declarations live in `namespace Yolyan2025.Examples`.
+-/
+
+namespace Yolyan2025.Examples
+
+open Data.Examples
+
+def ex_2_11a_1 : LinguisticExample :=
+  { id := "yolyan2025_2_11a_1"
+    source := ⟨"yolyan-2025", "Example 2.11 (a)"⟩
+    reportedIn := none
+    language := "bemb1257"
+    primaryText := "bá-ká-fík-á"
+    discourseSegments := []
+    glossedTokens := [("bá", "they"), ("ká", "FUT"), ("fík", "arrive"), ("á", "FV")]
+    translation := "they will arrive"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("underlying_form", "/bá-ka-fik-a/"), ("spreading", "unbounded"), ("tone_skeleton_input", "HLLL"), ("tone_skeleton_output", "HHHH")]
+    comment := "Copperbelt Bemba data cited from Bickmore and Kula (2013) and Kula and Bickmore (2015)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_2_11a_2 : LinguisticExample :=
+  { id := "yolyan2025_2_11a_2"
+    source := ⟨"yolyan-2025", "Example 2.11 (a)"⟩
+    reportedIn := none
+    language := "bemb1257"
+    primaryText := "bá-ká-mú-lóndólól-á"
+    discourseSegments := []
+    glossedTokens := [("bá", "they"), ("ká", "FUT"), ("mú", "him/her"), ("lóndólól", "introduce"), ("á", "FV")]
+    translation := "they will introduce him/her"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("underlying_form", "/bá-ka-mu-londolol-a/"), ("spreading", "unbounded")]
+    comment := ""
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_2_11b_1 : LinguisticExample :=
+  { id := "yolyan2025_2_11b_1"
+    source := ⟨"yolyan-2025", "Example 2.11 (b)"⟩
+    reportedIn := none
+    language := "bemb1257"
+    primaryText := "bá-ká-pát-à kó"
+    discourseSegments := []
+    glossedTokens := [("bá", "they"), ("ká", "FUT"), ("pát", "hate"), ("à", "FV"), ("kó", "kó")]
+    translation := "they will hate"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("underlying_form", "/bá-ka-pat-a kó/"), ("spreading", "bounded"), ("tone_skeleton_input", "HLLLH"), ("tone_skeleton_output", "HHHLH")]
+    comment := "The following high tone of kó blocks unbounded spreading; only the next two vowels surface high."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_2_11b_2 : LinguisticExample :=
+  { id := "yolyan2025_2_11b_2"
+    source := ⟨"yolyan-2025", "Example 2.11 (b)"⟩
+    reportedIn := none
+    language := "bemb1257"
+    primaryText := "bá-ká-ló-òndòlòl-à kó"
+    discourseSegments := []
+    glossedTokens := [("bá", "they"), ("ká", "FUT"), ("ló", "introduce"), ("òndòlòl", "introduce"), ("à", "FV"), ("kó", "kó")]
+    translation := "they will introduce them"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("underlying_form", "/bá-ka-londolol-a kó/"), ("spreading", "bounded")]
+    comment := "Form as printed in the paper; the root londolol is split across the second spread vowel."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_2_11c : LinguisticExample :=
+  { id := "yolyan2025_2_11c"
+    source := ⟨"yolyan-2025", "Example 2.11 (c)"⟩
+    reportedIn := none
+    language := "bemb1257"
+    primaryText := "ù-kù-tùl-à"
+    discourseSegments := []
+    glossedTokens := [("ù", "INF"), ("kù", "INF"), ("tùl", "pierce"), ("à", "FV")]
+    translation := "to pierce"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("underlying_form", "/u-ku-tul-a/"), ("spreading", "none"), ("tone_skeleton_input", "LLLL"), ("tone_skeleton_output", "LLLL")]
+    comment := "No underlying high tone; every vowel surfaces low by default."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_2_12a_1 : LinguisticExample :=
+  { id := "yolyan2025_2_12a_1"
+    source := ⟨"yolyan-2025", "Example 2.12 (a)"⟩
+    reportedIn := none
+    language := "nyan1302"
+    primaryText := "bu-tí-ʃē"
+    discourseSegments := []
+    glossedTokens := [("bu", "1P"), ("tí", "NEG"), ("ʃē", "grow")]
+    translation := "1P-NEG-grow"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("root_atr", "+"), ("blocking", "none")]
+    comment := "Tutrugbu data cited from McCollum et al. (2020) and McCollum and Essegbey (2018)."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_2_12a_2 : LinguisticExample :=
+  { id := "yolyan2025_2_12a_2"
+    source := ⟨"yolyan-2025", "Example 2.12 (a)"⟩
+    reportedIn := none
+    language := "nyan1302"
+    primaryText := "e-tí-be-ʃē"
+    discourseSegments := []
+    glossedTokens := [("e", "3S"), ("tí", "NEG"), ("be", "FUT"), ("ʃē", "grow")]
+    translation := "3S-NEG-FUT-grow"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("root_atr", "+"), ("blocking", "none")]
+    comment := ""
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_2_12b_1 : LinguisticExample :=
+  { id := "yolyan2025_2_12b_1"
+    source := ⟨"yolyan-2025", "Example 2.12 (b)"⟩
+    reportedIn := none
+    language := "nyan1302"
+    primaryText := "bʊ-tɪ́-bá"
+    discourseSegments := []
+    glossedTokens := [("bʊ", "1P"), ("tɪ́", "NEG"), ("bá", "come")]
+    translation := "1P-NEG-come"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("root_atr", "-"), ("blocking", "none")]
+    comment := ""
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_2_12b_2 : LinguisticExample :=
+  { id := "yolyan2025_2_12b_2"
+    source := ⟨"yolyan-2025", "Example 2.12 (b)"⟩
+    reportedIn := none
+    language := "nyan1302"
+    primaryText := "a-tɪ́-ba-bá"
+    discourseSegments := []
+    glossedTokens := [("a", "3S"), ("tɪ́", "NEG"), ("ba", "FUT"), ("bá", "come")]
+    translation := "3S-NEG-FUT-come"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("root_atr", "-"), ("blocking", "none")]
+    comment := ""
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_2_12c_1 : LinguisticExample :=
+  { id := "yolyan2025_2_12c_1"
+    source := ⟨"yolyan-2025", "Example 2.12 (c)"⟩
+    reportedIn := none
+    language := "nyan1302"
+    primaryText := "i-tí-wu"
+    discourseSegments := []
+    glossedTokens := [("i", "1S"), ("tí", "NEG"), ("wu", "climb")]
+    translation := "1S-NEG-climb"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("root_atr", "+"), ("blocking", "none"), ("initial_high", "yes")]
+    comment := "The [+high] initial prefix harmonizes: no [-high] vowel intervenes."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_2_12c_2 : LinguisticExample :=
+  { id := "yolyan2025_2_12c_2"
+    source := ⟨"yolyan-2025", "Example 2.12 (c)"⟩
+    reportedIn := none
+    language := "nyan1302"
+    primaryText := "ɪ-ba-wu"
+    discourseSegments := []
+    glossedTokens := [("ɪ", "1S"), ("ba", "FUT"), ("wu", "climb")]
+    translation := "1S-FUT-climb"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("root_atr", "+"), ("blocking", "conditional"), ("initial_high", "yes")]
+    comment := "The [-high] prefix ba blocks harmony onto the [+high] initial prefix."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_2_12c_3 : LinguisticExample :=
+  { id := "yolyan2025_2_12c_3"
+    source := ⟨"yolyan-2025", "Example 2.12 (c)"⟩
+    reportedIn := none
+    language := "nyan1302"
+    primaryText := "ɪ-tɪ́-ka-a-ba-ba-wu"
+    discourseSegments := []
+    glossedTokens := [("ɪ", "1S"), ("tɪ́", "NEG"), ("ka", "PFV"), ("a", "PROG"), ("ba", "VENT"), ("ba", "VENT"), ("wu", "climb")]
+    translation := "1S-NEG-PFV-PROG-VENT-VENT-climb"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("root_atr", "+"), ("blocking", "conditional"), ("initial_high", "yes")]
+    comment := ""
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def ex_2_12c_4 : LinguisticExample :=
+  { id := "yolyan2025_2_12c_4"
+    source := ⟨"yolyan-2025", "Example 2.12 (c)"⟩
+    reportedIn := none
+    language := "nyan1302"
+    primaryText := "e-tí-ke-e-be-be-wu"
+    discourseSegments := []
+    glossedTokens := [("e", "3S"), ("tí", "NEG"), ("ke", "PFV"), ("e", "PROG"), ("be", "VENT"), ("be", "VENT"), ("wu", "climb")]
+    translation := "3S-NEG-PFV-PROG-VENT-VENT-climb"
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("root_atr", "+"), ("blocking", "none"), ("initial_high", "no")]
+    comment := "With a [-high] initial prefix the [-high] vowels do not block, and every prefix harmonizes."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def all : List LinguisticExample := [ex_2_11a_1, ex_2_11a_2, ex_2_11b_1, ex_2_11b_2, ex_2_11c, ex_2_12a_1, ex_2_12a_2, ex_2_12b_1, ex_2_12b_2, ex_2_12c_1, ex_2_12c_2, ex_2_12c_3, ex_2_12c_4]
+
+end Yolyan2025.Examples
