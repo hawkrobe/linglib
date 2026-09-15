@@ -1393,7 +1393,6 @@ import Linglib.Processing.Psychophysics.Psychophysics
 import Linglib.Processing.Psychophysics.SignalDetection
 import Linglib.Processing.Psychophysics.Thurstone
 import Linglib.Processing.VisualWorld
-import Linglib.Semantics.Alternatives.AsymStronger
 import Linglib.Semantics.Alternatives.Basic
 import Linglib.Semantics.Alternatives.Competition
 import Linglib.Semantics.Alternatives.Extremum
