@@ -2,67 +2,43 @@ import Linglib.Syntax.Agreement.ContainmentPair
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Semantics.Presupposition.PhiFeatures
+import Linglib.Semantics.Alternatives.Competition
 
 /-!
 # Maximize Presupposition
-[heim-1991]
 
-Maximize Presupposition (MP) is a pragmatic principle: among competing
-expressions with the same assertive content, use the one with the
-strongest *satisfied* presupposition.
+This file defines Maximize Presupposition ([heim-1991]) in its two formulations. As
+competition, `Blocked`: an expression is blocked when an alternative with the same assertion
+carries a strictly stronger presupposition, the anti-presupposition of [percus-2006] and
+[sauerland-2008], stated over any alternative source by `Alternatives.Blocked` and so shared
+by the pragmatic reading, which derives it from Gricean reasoning ([schlenker-2012]), and the
+grammatical, locally applied one ([singh-2011]). As a violable constraint, `mpConstraintOf`:
+over candidates carrying a presuppositional strength, violations count the distance from the
+maximal strength, so that Maximize Presupposition is antagonistic to a markedness penalty on
+strength (`mp_reverses_markedness`); `phiMP` is its φ-feature instance, and `PragConstraint.MP`
+of `Studies/Wang2025.lean` ranks it against internal coherence and felicity ([wang-2025]).
 
-## Three formulations unified
+## Main definitions
 
-This module provides a general, domain-agnostic formulation of MP and
-connects it to existing domain-specific implementations:
+* `Blocked` — blocked under Maximize Presupposition: a same-assertion alternative with a
+  strictly stronger presupposition.
+* `mpConstraintOf`, `markednessPenalty` — the constraint pair over a strength function.
+* `phiMP`, `phiMarkedness` — the pair on φ-feature containment pairs.
 
-1. **OT formulation** (`mpConstraintOf`): MP as a `Constraint C`
-   parameterized by a presuppositional strength function. Violation
-   count = maxStrength − strength(c). Wang2023's `mpConstraint` is
-   an instance (`phiMP`).
+## Main results
 
-2. **Structural alternatives** (`NeoGricean.Blocked` over
-   `NeoGricean.sameAssertion` in `Pragmatics.NeoGricean.Competition`):
-   MP defined over syntactic trees, parametric in an alternative source
-   `Tree C W → Set (Tree C W)`. The classical Katzir
-   2007 source is `katzirSource lex`; the indirect-alternative source
-   `Alternatives.indirectFrom`
-   ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025])
-   competes with unpronounceable Katzir witnesses (e.g. *les deux NP*
-   competes with the silent *tous les NP.dual* via the Indirect
-   Alternative construction). Bridge to the OT formulation is
-   conceptual: both enforce "prefer the strongest presupposition"
-   but over different candidate-generation mechanisms.
+* `mp_reverses_markedness`, `mp_selects_strongest`, `markedness_selects_weakest` — the two
+  constraints order candidates oppositely, and each selects its extreme.
+* `phi_mp_selects_maximal`, `phi_strength_nesting` — the φ-feature instance.
 
-3. **IC/FP/MP ranking** (`PragConstraint.MP` in
-   `Studies/Wang2025.lean`): MP as a
-   violable constraint ranked below IC (Internal Coherence) and FP
-   (Felicity Presupposition). Describes MP's position in the
-   constraint hierarchy for presupposition obligatoriness
-   ([wang-2025]). The alternative-structure typology driving it lives in
-   `Studies/Wang2025.lean`; consensus trigger types in
-   `Presupposition.TriggerTypology`.
+## References
 
-## Core abstraction
-
-MP competition requires three ingredients:
-
-1. A **candidate set** — forms that can fill the same syntactic position
-2. A **presuppositional strength measure** — `strength : C → Nat`
-3. A **same-assertion condition** — all candidates have identical
-   at-issue content (e.g., `phiPresup_same_assertion`)
-
-MP penalizes failure to maximize strength: candidates with weaker
-presuppositions incur more violations. The key structural property:
-MP is *antagonistic* to markedness constraints, which penalize
-strength directly (`mp_reverses_markedness`).
-
-## Architecture
-
-- §1: Abstract MP and markedness constraints (`mpConstraintOf`, `markednessPenalty`)
-- §2: Structural properties (reversal, dominance)
-- §3: Phi-feature instance (`phiMP`)
-- §4: Presuppositional strict total order on well-formed cells
+* [heim-1991]
+* [percus-2006]
+* [sauerland-2008]
+* [schlenker-2012]
+* [singh-2011]
+* [wang-2025]
 -/
 
 namespace Presupposition.MaximizePresupposition
@@ -71,6 +47,11 @@ open Agreement (ContainmentPair)
 open Constraints OptimalityTheory
 open Core.Optimization.Evaluation
 open Presupposition.PhiFeatures
+
+/-- `φ` is blocked under Maximize Presupposition when an alternative with the same assertion
+carries a strictly stronger presupposition. -/
+def Blocked {S W : Type*} (alts : S → Set S) (presup assertion : S → Set W) (φ : S) : Prop :=
+  Alternatives.Blocked (Alternatives.sameAssertion assertion alts) presup φ
 
 -- ============================================================================
 -- §1  Abstract MP and Markedness Constraints

@@ -18,7 +18,7 @@ sets for the same expression:
   meaning to an unpronounceable Katzir alternative
 
 All of these are functions `S → Set S`, ordered pointwise, so that one source subsumes
-another when it is `≤` it and the competition relation of `NeoGricean.Competition` is
+another when it is `≤` it and the competition relation of `Alternatives.Competition` is
 monotone in the source.
 
 ## Main definitions
