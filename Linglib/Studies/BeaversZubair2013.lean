@@ -77,9 +77,9 @@ inductive Reading where
 /-- A reading's denotation: `causerSuppress` leaves the causer as an open variable;
     reflexive resolution binds it to the patient, existential resolution closes it.
     The verb is causer-first (`vp x y`: causer `x`, patient `y`). -/
-def Reading.resolve {E W : Type} {s : CauserSort} (r : Reading)
-    (h : s.admitsIndividual) (vp : Ty.Domain E W (.e ⇒ .e ⇒ .t)) :
-    Ty.Domain E W (.e ⇒ .t) :=
+def Reading.resolve {E : Type} {s : CauserSort} (r : Reading)
+    (h : s.admitsIndividual) (vp : E → E → Prop) :
+    E → Prop :=
   match r with
   | .reflexive   => fun y => causerSuppress s h y vp y
   | .existential => fun y => ∃ x, causerSuppress s h x vp y
@@ -95,15 +95,15 @@ def caseOfReading : Reading → Case
 /-- Any causative claim entails the existentially-resolved inchoative: inchoatives are
     true in agentive contexts ((51), §5.3), so the ban on volitive inchoatives must be
     formal rather than truth-conditional. -/
-theorem causative_entails_existential {E W : Type} {s : CauserSort}
-    (h : s.admitsIndividual) (vp : Ty.Domain E W (.e ⇒ .e ⇒ .t)) (x y : E)
+theorem causative_entails_existential {E : Type} {s : CauserSort}
+    (h : s.admitsIndividual) (vp : E → E → Prop) (x y : E)
     (hxy : vp x y) : Reading.existential.resolve h vp y :=
   ⟨x, hxy⟩
 
 /-- The reflexive resolution entails the existential one: (78a) supplies the patient
     itself as witness for (78b). -/
-theorem reflexive_entails_existential {E W : Type} {s : CauserSort}
-    (h : s.admitsIndividual) (vp : Ty.Domain E W (.e ⇒ .e ⇒ .t)) (y : E)
+theorem reflexive_entails_existential {E : Type} {s : CauserSort}
+    (h : s.admitsIndividual) (vp : E → E → Prop) (y : E)
     (hy : Reading.reflexive.resolve h vp y) : Reading.existential.resolve h vp y :=
   ⟨y, hy⟩
 
@@ -150,7 +150,7 @@ theorem volitive_admitted :
 
 /-- The operator instantiates for *kadann*: the `decide`-discharged obligation is the
     predictive engine at work. -/
-example {E W : Type} (z : E) (vp : Ty.Domain E W (.e ⇒ .t)) : Ty.Domain E W .t :=
+example {E : Type} (z : E) (vp : E → Prop) : Prop :=
   causerSuppress kadann.causerSort (by decide) z vp
 
 end BeaversZubair2013

@@ -276,7 +276,7 @@ it and the possessor surfaces as subject — *Tono ber-topi* 'Tono has a
 hat on' (59). Sortal nouns are monadic, so suppression leaves no slot
 for a subject: *ber-buku is a type mismatch, deriving the relational
 restriction (61). -/
-theorem conflation_derivation (pi : Ty.Domain E W (.e ⇒ .e ⇒ .t))
+theorem conflation_derivation (pi : E → E → Prop)
     (possessum possessor : E) :
     suppressArg possessum pi possessor = pi possessum possessor := rfl
 

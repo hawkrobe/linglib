@@ -16,7 +16,7 @@ thereby a terminal for the composition engine.
 The class has one field, like `FunLike`: the parameters an interpretation is relativized to,
 the model, context, index and assignment of [montague-1973] and [kaplan-1989], are not slots of
 the class but Reader arguments of the domain `D`, in that order, so a Kaplanian expression
-denotes a `Reference.Character`, an assignment-sensitive one a `Composition.Ty.DomainG`, and an
+denotes a `Reference.Character`, an assignment-sensitive one an `Assignment E → _`, and an
 intension a `W → _`. Instance resolution requires every type parameter of `D` to be fixed by
 `α`; an object interpreted relative to data its type does not mention, a tree relative to a
 lexicon, keeps an explicit interpretation function (`Composition.Tree.interp`, mathlib's

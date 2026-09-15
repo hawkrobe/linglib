@@ -192,7 +192,7 @@ theorem rows_agree :
 /-- A demonstrative description denotes the value of its index in every situation where its
 restrictor holds of it: it cannot covary through the situation pronoun as the bare unique
 definite does, (27) to (30). -/
-theorem interpret_demonstrative_eq_some_iff {E W : Type} (R : Ty.DomainGS E W .et)
+theorem interpret_demonstrative_eq_some_iff {E W : Type} (R : Restrictor E W)
     (δ : Reference.Deixis) (s d : Nat) (g : Assignment E) (gs : SitAssignment W) (x : E) :
     interpret (.demonstrative R δ s d) g gs = some x ↔ R g gs (g d) ∧ x = g d := by
   rw [interpret_demonstrative]

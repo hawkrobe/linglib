@@ -1,4 +1,3 @@
-import Linglib.Semantics.Composition.Ty
 import Linglib.Semantics.Composition.Assignment
 import Linglib.Semantics.Modification.Basic
 
@@ -52,18 +51,15 @@ Result: `λx. ⟦relative clause⟧(x) ∧ N(x)` — the head property intersect
 abstracted clause property (the restrictive case; see the implementation note).
 That the RC is an intersective modifier is true by construction.
 -/
-def denote {E W : Type} (n : ℕ)
-    (headNoun : Ty.DomainG E W (.e ⇒ .t))
-    (relClauseBody : Ty.DomainG E W .t)
-    : Ty.DomainG E W (.e ⇒ .t) :=
+def denote {E : Type} (n : ℕ) (headNoun : Assignment E → E → Prop)
+    (relClauseBody : Assignment E → Prop) : Assignment E → E → Prop :=
   fun g => intersective (lambdaAbsG n relClauseBody g) (headNoun g)
 
 /-- Head and relative clause modify symmetrically: the head noun and the
     gap-abstracted clause intersect in either order (intersective modification is
     commutative). -/
-theorem denote_comm {E W : Type} (n : ℕ)
-    (headNoun : Ty.DomainG E W (.e ⇒ .t))
-    (relClauseBody : Ty.DomainG E W .t)
+theorem denote_comm {E : Type} (n : ℕ) (headNoun : Assignment E → E → Prop)
+    (relClauseBody : Assignment E → Prop)
     (g : Assignment E)
     : denote n headNoun relClauseBody g =
       intersective (headNoun g) (lambdaAbsG n relClauseBody g) := by
