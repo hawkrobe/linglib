@@ -10,8 +10,10 @@ Over a `Fintype` of worlds, with propositions as `Finset`s, compatibility, maxim
 compatibility, innocent excludability and the cell are decidable: every compatible set lies
 in `excludables`, so maximality is a search over its powerset. `innocent` packages innocent
 exclusion as an `Excluder`, and the structural theorems compute `innocent.exh` and
-`tolerant.exh` for alternative sets of a given shape. `preFilter_can_create_implicature`
-witnesses that removing a symmetric alternative before exclusion strengthens the result.
+`tolerant.exh` for alternative sets of a given shape. Under the coercion to sets an excluder
+is `exh` over the alternatives it selects (`Excluder.coe_exh`), and the innocent excluder is
+`exhIE` (`coe_innocent_exh`). `preFilter_can_create_implicature` witnesses that removing a
+symmetric alternative before exclusion strengthens the result.
 
 ## References
 
@@ -35,6 +37,9 @@ def asSetOfSets (E : Finset (Finset W)) : Set (Set W) :=
     s ∈ asSetOfSets E ↔ ∃ a ∈ E, (↑a : Set W) = s := by
   simp [asSetOfSets]
 
+theorem finite_asSetOfSets (E : Finset (Finset W)) : (asSetOfSets E).Finite :=
+  (Finset.finite_toSet E).image _
+
 variable [Fintype W] [DecidableEq W]
 
 /-- The complement of a `Finset`, as a set. -/
@@ -57,6 +62,18 @@ theorem coe_tolerant_exh (ALT : Finset (Finset W)) (φ : Finset W) :
     forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, Finset.coe_subset]
   exact and_congr_right λ _ => forall₂_congr λ _ _ =>
     ⟨λ h hw => not_not.1 λ hs => h hs hw, λ h hs hw => hs (h hw)⟩
+
+/-- An excluder denying only alternatives the prejacent does not entail is `exh` over the
+alternatives it selects. -/
+theorem Excluder.coe_exh (E : Excluder W) (ALT : Finset (Finset W)) (φ : Finset W)
+    (h : ∀ a ∈ E.excluded ALT φ, ¬ φ ⊆ a) :
+    (↑(E.exh ALT φ) : Set W) = Exhaustification.exh (asSetOfSets (E.excluded ALT φ)) ↑φ := by
+  ext w
+  rw [Finset.mem_coe, Excluder.mem_exh_iff, Exhaustification.mem_exh]
+  refine and_congr_right λ _ => ⟨λ h' q hq hw => ?_, λ h' a ha hw => ?_⟩
+  · obtain ⟨a, ha, rfl⟩ := mem_asSetOfSets.1 hq
+    exact absurd hw (h' a ha)
+  · exact h a ha (Finset.coe_subset.1 (h' ↑a (mem_asSetOfSets.2 ⟨a, ha, rfl⟩) hw))
 
 variable (ALT : Finset (Finset W)) (φ : Finset W)
 
@@ -343,6 +360,15 @@ instance decidableCell (w : W) :
 def innocent {W : Type*} [Fintype W] [DecidableEq W] : Excluder W where
   excluded := innocentlyExcludable
   excluded_subset := innocentlyExcludable_subset
+
+/-- The innocent excluder computes `exhIE`. -/
+theorem coe_innocent_exh : (↑(innocent.exh ALT φ) : Set W) = exhIE (asSetOfSets ALT) ↑φ := by
+  ext w
+  rw [Finset.mem_coe, Excluder.mem_exh_iff, mem_exhIE_iff _ _ (finite_asSetOfSets ALT)]
+  refine and_congr_right λ _ =>
+    ⟨λ h a ha => ?_, λ h a ha => h ↑a ((isInnocentlyExcludable_iff ALT φ a).2 ha)⟩
+  obtain ⟨b, hb, rfl⟩ := mem_asSetOfSets.1 ha.1
+  exact h b ((isInnocentlyExcludable_iff ALT φ b).1 ha)
 
 /-- With nothing innocently excludable, exhaustification is vacuous. -/
 theorem innocent_exh_eq_phi_of_innocentlyExcludable_empty
