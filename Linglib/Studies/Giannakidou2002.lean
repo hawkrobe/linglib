@@ -1,6 +1,6 @@
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Studies.Karttunen1974
-import Linglib.Fragments.English.TemporalExpressions
+import Linglib.Fragments.English.TemporalConnectives
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 import Linglib.Fragments.Icelandic.TemporalConnectives
@@ -37,8 +37,8 @@ homogeneity criterion with negation playing no role (`diagnostics_predicted`).
   perfective description places it within the reference interval, an imperfective one strictly
   around it. The until interval is required to be nondegenerate, which is what excludes a single
   event from satisfying the durative condition at both its endpoints.
-* Which connectives are durative and which punctual is read off the fragments' `order` and
-  `forcesPunctual`; English *until* gets its eventive use from the polarity-item fragment. That
+* Which connectives are durative and which punctual is read off the fragments' `relation` and
+  `punctual`; English *until* gets its eventive use from the polarity-item fragment. That
   *para monon*, *fyrr en* and English *until* need an antiveridical licenser while Dutch *pas* is
   a positive polarity item is the paper's classification and is recorded here, not in the
   fragments.
@@ -170,12 +170,12 @@ inductive Connective
   deriving DecidableEq, Repr
 
 /-- The fragment entry of each connective. -/
-def Connective.entry : Connective → English.TemporalExpressions.TemporalExprEntry
-  | .until => English.TemporalExpressions.until_
+def Connective.entry : Connective → Tense.Connective
+  | .until => English.TemporalConnectives.until_
   | .mexri => Greek.StandardModern.TemporalConnectives.mexri
   | .paraMonon => Greek.StandardModern.TemporalConnectives.paraMonon
   | .prin => Greek.StandardModern.TemporalConnectives.prin
-  | .til => Icelandic.TemporalConnectives.flangaTil
+  | .til => Icelandic.TemporalConnectives.thangadTil
   | .fyrrEn => Icelandic.TemporalConnectives.fyrrEn
   | .tot => Dutch.TemporalConnectives.tot
   | .pas => Dutch.TemporalConnectives.pas
@@ -195,15 +195,15 @@ def Connective.polarity : Connective → Polarity
   | .pas => .ppi
   | .mexri | .prin | .til | .tot => .neutral
 
-/-- Durative UNTIL: an *until*-ordered entry that does not force a punctual reading. -/
+/-- Durative UNTIL: an *until* entry that is not punctual. -/
 abbrev Connective.Durative (c : Connective) : Prop :=
-  c.entry.order = .until_ ∧ c.entry.forcesPunctual = false
+  c.entry.relation = .until_ ∧ ¬ c.entry.punctual
 
 /-- Eventive UNTIL: a punctual entry, or an *until* with a polarity-item use. -/
 abbrev Connective.Eventive (c : Connective) : Prop :=
-  c.entry.forcesPunctual = true ∨ c.polarityItem.isSome = true
+  c.entry.punctual ∨ c.polarityItem.isSome = true
 
-abbrev Connective.Before (c : Connective) : Prop := c.entry.order = .before
+abbrev Connective.Before (c : Connective) : Prop := c.entry.relation = .before
 
 /-- The viewpoint of the main clause. -/
 inductive AspectForm

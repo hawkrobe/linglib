@@ -1,4 +1,5 @@
 import Linglib.Semantics.Tense.Embedding
+import Linglib.Fragments.English.TemporalConnectives
 import Linglib.Fragments.Japanese.TemporalConnectives
 import Linglib.Data.Examples.ArreguiKusumoto1998
 import Mathlib.Tactic.DeriveFintype
@@ -28,7 +29,7 @@ quantificational, bound by a covert adverb of quantification, and a past-tense o
 * `TP`, `Tense.tp`: a tensed clause as a set of times (past operator) or a proposition open
   in the tense variable (present); `TP.atSpeech` saturates it with the speech time.
 * `before`, `after`, `Veridical`: the connective denotations and the veridicality contrast
-  they predict for the English and Japanese fragment entries.
+  they predict for the relations the English and Japanese fragment entries lexicalize.
 * `relativeClause`, `selectTP`: the two adjunct structures; `Structure.of` assigns them by
   language and connective, and `composes` says which tenses each admits.
 * `relativeTense`: the rival consistency requirement, with the rows it mispredicts.
@@ -45,7 +46,7 @@ quantificational, bound by a covert adverb of quantification, and a past-tense o
 
 namespace ArreguiKusumoto1998
 
-open Data.Examples English.TemporalExpressions Japanese.TemporalConnectives
+open Data.Examples English.TemporalConnectives Japanese.TemporalConnectives
 open Tense (SOTParameter EmbeddedTenseReading availableReadings)
 
 variable {T : Type*}
@@ -140,17 +141,20 @@ theorem veridical_after : Veridical (after (T := T)) := λ _ _ ⟨t', _, h⟩ =>
 theorem not_veridical_before (t : T) : ¬ Veridical (before (T := T)) :=
   λ h => (h (λ _ => False) t λ _ h => h.elim).elim λ _ h => h
 
-/-- The connective denotation of a fragment entry's order, where the paper gives one. -/
-def denotation : TemporalOrder → Option ((T → Prop) → T → Prop)
+/-- The connective denotation of a fragment entry's relation, where the paper gives one. -/
+def denotation : Tense.Connective.Relation → Option ((T → Prop) → T → Prop)
   | .before => some before
   | .after => some after
   | _ => none
 
-/-- The fragments' veridicality field is the veridicality of the denotation. -/
-theorem complementVeridical_iff (t : T) :
-    ∀ e ∈ [before_, after_, mae, ato], ∀ C ∈ denotation (T := T) e.order,
-      (e.complementVeridical = true ↔ Veridical C) := by
-  simp [before_, after_, mae, ato, denotation, veridical_after, not_veridical_before t]
+/-- The English and Japanese *before* words are non-veridical and the *after* words veridical. -/
+theorem fragments_veridical (t : T) :
+    (∀ e ∈ [English.TemporalConnectives.before, mae],
+      ∀ C ∈ denotation (T := T) e.relation, ¬ Veridical C) ∧
+    ∀ e ∈ [English.TemporalConnectives.after, ato],
+      ∀ C ∈ denotation (T := T) e.relation, Veridical C := by
+  simp [English.TemporalConnectives.before, English.TemporalConnectives.after, mae, ato,
+    denotation, veridical_after, not_veridical_before t]
 
 /-! ### Relative-clause adjuncts -/
 

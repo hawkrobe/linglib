@@ -1,5 +1,6 @@
 import Linglib.Studies.Anscombe1964
 import Linglib.Semantics.Degree.Basic
+import Linglib.Data.Examples.Rett2020a
 
 /-!
 # Rett (2020): Eliminating EARLIEST: a general semantics for before and after
@@ -25,10 +26,11 @@ time, `before_iff_beforeEver`.
 
 Run times are the substrate's `RunTimes`, sets of intervals, and an eventuality's duration is
 its `timeTrace`; the coercions act on the trace, so an eventuality's class enters only through
-which coercion `readings` makes available, as in the paper's (19) and (21). The typological
-survey of section 2.4 lives in the temporal-connective fragments, and the veridicality
-asymmetry and the NPI facts of (25) and (26) receive no proposal in the paper beyond
-monotonicity.
+which coercion `readings` makes available, as in the paper's (19) and (21). Of the typological
+survey of section 2.4, the rows record the Serbo-Croatian and Tagalog sentences whose overt aspect
+selects a reading, `Marking.select`, with the unambiguous Tagalog *before* and German *after*
+sentences; the veridicality asymmetry and the NPI facts of (25) and (26) receive no proposal in
+the paper beyond monotonicity.
 
 ## References
 
@@ -49,7 +51,7 @@ monotonicity.
 
 namespace Rett2020a
 
-open Tense Degree Anscombe1964
+open Tense Degree Anscombe1964 Data.Examples
 
 variable {T : Type*} [LinearOrder T]
 
@@ -321,5 +323,68 @@ of the embedded clause. -/
 theorem after_imp_after : after A B → Anscombe.after A B := by
   rintro ⟨t, ht, m, hm, htm⟩
   exact ⟨t, ht, m, hm.1, htm⟩
+
+/-! ### Overt aspect marking -/
+
+/-- The aspect of an embedded culmination in a language that grammaticizes the coercion: the
+Serbo-Croatian perfective and the Tagalog ability-and-involuntary-action perfective are
+culminating, their imperfective and neutral-perfective counterparts non-culminating, (11) and
+(12). -/
+inductive Marking
+  | nonCulminating
+  | culminating
+  deriving DecidableEq
+
+/-- The reading a marking selects among a culmination's: its run times, or under a culminating
+marking their telos. -/
+def Marking.select : Marking → RunTimes T → RunTimes T
+  | .nonCulminating, p => p
+  | .culminating, p => completive p
+
+theorem Marking.select_mem_readings (m : Marking) (p : RunTimes T) :
+    m.select p ∈ readings .culmination p := by
+  cases m <;> simp [Marking.select, readings]
+
+/-- The bound of the embedded eventuality a *before* clause is read against. -/
+inductive Bound
+  | initial
+  | final
+  deriving DecidableEq
+
+/-- The time of a bound of an interval. -/
+def Bound.time : Bound → NonemptyInterval T → T
+  | .initial, i => i.fst
+  | .final, i => i.snd
+
+/-- A non-culminating marking reads *before* against the onset, a culminating one against the
+telos. -/
+def Marking.bound : Marking → Bound
+  | .nonCulminating => .initial
+  | .culminating => .final
+
+/-- Against a culmination, *before* under a marking is precedence of the bound the marking
+selects. -/
+theorem before_select (m : Marking) :
+    before A (m.select (accomplishmentDenotation i)) ↔ ∃ t ∈ timeTrace A, t < m.bound.time i := by
+  cases m
+  · exact before_culmination_start A i
+  · exact before_culmination_telos A i
+
+/-- The marking of a row's embedded clause. -/
+def marking? (r : LinguisticExample) : Option Marking :=
+  r.parse? "aspect" [("imperfective", .nonCulminating), ("perfective", .culminating),
+    ("pfv.neut", .nonCulminating), ("aia", .culminating)]
+
+/-- The bounds a row's accepted readings are read against. -/
+def bounds (r : LinguisticExample) : List Bound :=
+  (r.readings.filter (·.2 = .acceptable)).filterMap λ x =>
+    match x.1 with
+    | "before-start" => some .initial
+    | "before-finish" => some .final
+    | _ => none
+
+/-- A marked *before* sentence has the one reading its marking selects. -/
+theorem rows_marking : ∀ r ∈ Examples.all, ∀ m ∈ marking? r, bounds r = [m.bound] := by
+  decide
 
 end Rett2020a
