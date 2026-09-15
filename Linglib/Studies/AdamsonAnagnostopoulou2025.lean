@@ -90,11 +90,11 @@ namespace System
 variable (L : System)
 
 /-- The interpretable features of a nominal with referent `r`. -/
-def conceptual (r : Referent) : Bundle Node := .ofInterp (L.geometry.above (L.iNode r))
+def conceptual (r : Referent) : Bundle Node := .ofInterp (L.geometry.entailments (L.iNode r))
 
 /-- The uninterpretable features of a nominal of grammatical gender `g`. -/
 def arbitrary (g : Gender) (human : Bool := false) : Bundle Node :=
-  .ofUninterp (L.geometry.above (L.uNode g human))
+  .ofUninterp (L.geometry.entailments (L.uNode g human))
 
 /-- The exponent of a feature set under the Subset Principle. -/
 def realize (fs : Finset Node) : Option Gender :=
@@ -133,13 +133,13 @@ open _root_.Greek.StandardModern.Gender
 def system : System where
   geometry :=
     { nodes := {.cls, .masc, .fem}
-      above
+      entailments
         | .fem => {.fem, .masc, .cls}
         | .masc => {.masc, .cls}
         | .cls => {.cls}
         | n => {n}
-      self_mem_above := by decide
-      above_subset_above := by decide }
+      mem_entailments_self := by decide
+      entailments_subset_of_mem := by decide }
   iNode
     | .man => .masc
     | .woman => .fem
@@ -155,7 +155,7 @@ def system : System where
 def inanimate (n : Greek.StandardModern.Gender.Noun) : Bundle Node :=
   system.conceptual .thing ∪ system.arbitrary n.gender
 
-theorem masc_mem_above_fem : .masc ∈ system.geometry.above .fem := by decide
+theorem masc_mem_entailments_fem : .masc ∈ system.geometry.entailments .fem := by decide
 
 /-- Uniform humans resolve to their shared gender. -/
 theorem human_uniform :
@@ -258,13 +258,13 @@ open _root_.Icelandic.Gender
 def system : System where
   geometry :=
     { nodes := {.cls, .masc, .fem}
-      above
+      entailments
         | .fem => {.fem, .cls}
         | .masc => {.masc, .cls}
         | .cls => {.cls}
         | n => {n}
-      self_mem_above := by decide
-      above_subset_above := by decide }
+      mem_entailments_self := by decide
+      entailments_subset_of_mem := by decide }
   iNode
     | .man => .masc
     | .woman => .fem
@@ -279,7 +279,7 @@ def system : System where
 def inanimate (n : Icelandic.Gender.Noun) : Bundle Node :=
   system.conceptual .thing ∪ system.arbitrary n.gender
 
-theorem masc_not_mem_above_fem : .masc ∉ system.geometry.above .fem := by decide
+theorem masc_not_mem_entailments_fem : .masc ∉ system.geometry.entailments .fem := by decide
 
 /-- *Maðurinn og konan eru þreytt*, where only CLASS survives. -/
 theorem human_mismatch : system.resolved .man .woman = some .neuter := by decide
@@ -307,15 +307,15 @@ INDIV. -/
 def system : System where
   geometry :=
     { nodes := {.cls, .indiv, .grp, .masc, .anim, .fem}
-      above
+      entailments
         | .fem => {.fem, .anim, .masc, .indiv, .cls}
         | .anim => {.anim, .masc, .indiv, .cls}
         | .masc => {.masc, .indiv, .cls}
         | .grp => {.grp, .indiv, .cls}
         | .indiv => {.indiv, .cls}
         | .cls => {.cls}
-      self_mem_above := by decide
-      above_subset_above := by decide }
+      mem_entailments_self := by decide
+      entailments_subset_of_mem := by decide }
   iNode
     | .man => .anim
     | .woman => .fem
@@ -351,7 +351,7 @@ theorem neuter_pair : system.converted (inanimate selo) (inanimate brdo) = some 
   decide
 
 /-- Neuter alone is mass, so without GRP it stays neuter. -/
-theorem neuter_mass : system.realize (system.geometry.above .cls) = some .neuter := by decide
+theorem neuter_mass : system.realize (system.geometry.entailments .cls) = some .neuter := by decide
 
 end BCS
 

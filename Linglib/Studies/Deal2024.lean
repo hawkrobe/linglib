@@ -56,8 +56,8 @@ inductive PersonFeature where
   | addr
   deriving DecidableEq, Repr, Fintype
 
-/-- The features bearing a feature entails bearing: the feature and its dominators. -/
-def PersonFeature.below : PersonFeature → Finset PersonFeature
+/-- The entailments of a feature, itself and its dominators. -/
+def PersonFeature.entailments : PersonFeature → Finset PersonFeature
   | .phi => {.phi}
   | .part => {.phi, .part}
   | .spkr => {.phi, .part, .spkr}
@@ -66,9 +66,9 @@ def PersonFeature.below : PersonFeature → Finset PersonFeature
 /-- The person geometry, [φ] at the bottom and [SPKR] and [ADDR] maximal. -/
 def personGeometry : Minimalist.Geometry PersonFeature where
   nodes := Finset.univ
-  above := PersonFeature.below
-  self_mem_above := by decide
-  above_subset_above := by decide
+  entailments := PersonFeature.entailments
+  mem_entailments_self := by decide
+  entailments_subset_of_mem := by decide
 
 /-- Whether a person bears a feature, from the shared decomposition: [PART] is participant,
 [SPKR] is author, and [ADDR] is borne by the second person and the inclusive first. -/
@@ -78,9 +78,9 @@ def bears (p : Person) : PersonFeature → Bool
   | .spkr => (decomposePerson p).hasAuthor
   | .addr => p == .second || p == .firstInclusive
 
-/-- Bearing a feature entails bearing what it entails. -/
-theorem bears_of_mem_above {f g : PersonFeature} (h : f ∈ personGeometry.above g) (p : Person)
-    (hp : bears p g = true) : bears p f = true := by
+/-- Bearing a feature entails bearing its entailments. -/
+theorem bears_of_mem_entailments {f g : PersonFeature} (h : f ∈ personGeometry.entailments g)
+    (p : Person) (hp : bears p g = true) : bears p f = true := by
   revert h hp
   cases f <;> cases g <;> cases p <;> decide
 
