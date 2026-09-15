@@ -1,6 +1,6 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.ModelTheory.Monadic
+import Linglib.Core.ModelTheory.LanguageMap
 import Linglib.Core.ModelTheory.Semantics
 import Linglib.Core.Order.TotalPreorder
 import Linglib.Logic.ComparativeProbability.WorldOrdering

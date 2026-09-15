@@ -4,7 +4,9 @@ import Mathlib.ModelTheory.Basic
 # The monadic language on a type of predicate symbols
 
 This file defines the monadic first-order language on a type `Sym` of predicate symbols, the
-relational counterpart of `Language.constantsOn`, and its structures.
+relational counterpart of `Language.constantsOn`, and its structures. Like `constantsOn`, it is a
+language constructor rather than a fixed signature, and it sits beside `constantsOn` in
+`Mathlib/ModelTheory/LanguageMap.lean`.
 
 ## Main definitions
 
