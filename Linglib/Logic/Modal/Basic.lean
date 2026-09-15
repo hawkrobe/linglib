@@ -242,4 +242,14 @@ instance [Fintype W] (R : W → W → Prop) (p : W → Prop) (w : W)
     Decidable (diamond R p w) :=
   inferInstanceAs (Decidable (∃ v, R w v ∧ p v))
 
+instance {W' : Type*} [Fintype W] (R : W' → W → Prop) (p : Set W) (x : W')
+    [∀ v, Decidable (R x v)] [DecidablePred (· ∈ p)] :
+    Decidable (x ∈ nec R p) :=
+  inferInstanceAs (Decidable (∀ v, R x v → v ∈ p))
+
+instance {W' : Type*} [Fintype W] (R : W' → W → Prop) (p : Set W) (x : W')
+    [∀ v, Decidable (R x v)] [DecidablePred (· ∈ p)] :
+    Decidable (x ∈ poss R p) :=
+  inferInstanceAs (Decidable (∃ v, R x v ∧ v ∈ p))
+
 end ModalLogic
