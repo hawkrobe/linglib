@@ -561,7 +561,8 @@ semester." ([heim-1992]; [yan-2023] §4.3.3.) Same shape as Asher's puzzle:
 TEACH is reinterpreted by its salient sub-predicate TEACH-ON-TUESDAY, and
 quantified □-FC then licenses the unjustified "ok to teach on non-Tuesdays".
 The paper omits the rest of the derivation as parallel to Asher's
-(§4.4.3); the blocking countermodel is that of `asher_blocked`. The paper also sketches an alternative
+(§4.4.3); the blocking countermodel is that of `asher_blocked`. The paper also
+sketches an alternative
 ◊-FC route via the conditional-desire rephrasing of the example (its
 (17)–(18)); that variant is not formalized here. -/
 
