@@ -1,5 +1,6 @@
 import Linglib.Semantics.Alternatives.Symmetric
 import Linglib.Studies.Katzir2007
+import Linglib.Semantics.Exhaustification.Excluder
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Logic.Modal.Defs
 import Linglib.Data.Examples.FoxKatzir2011
