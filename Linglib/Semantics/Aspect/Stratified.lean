@@ -163,7 +163,7 @@ Champollion's `DistributiveReference` takes a *functional* thematic role
 `θ : α → Entity` (the unique role-filler). linglib's neo-Davidsonian roles
 are *relational* — `ArgumentStructure.ThematicRel = Entity → Event → Prop`,
 `Agent(a, e)` — with thematic uniqueness available as
-`ArgumentStructure.UP`. `RelationalDistributiveReference` is the relational
+`Mereology.UP`. `RelationalDistributiveReference` is the relational
 form, so the distributivity property composes directly with a
 `ThematicFrame` / `Verb.denote` without picking a role function. It
 coincides with the functional form on a role's graph
@@ -172,7 +172,7 @@ coincides with the functional form on a role's graph
 /-- Relational Stratified Distributive Reference: the role is a
     neo-Davidsonian relation `R : Entity → α → Prop`. A stratum `y` counts
     iff it has an atomic `R`-filler. Under thematic uniqueness
-    (`ArgumentStructure.UP R`) that filler is unique, recovering "the
+    (`Mereology.UP R`) that filler is unique, recovering "the
     `R`-filler of `y` is atomic". -/
 def RelationalDistributiveReference {Entity α : Type*} [PartialOrder Entity]
     [SemilatticeSup α] (R : Entity → α → Prop) (P : α → Prop) (x : α) : Prop :=

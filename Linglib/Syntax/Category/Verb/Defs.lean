@@ -56,7 +56,7 @@ open NaturalLogic (Signature)
 open Causation.Psych (CausalSource)
 open ArgumentStructure (EntailmentProfile)
 open Aspect.DegreeAchievement (DegreeAchievementScale)
-open Aspect.Incremental (VerbIncClass)
+open Aspect (VerbIncClass)
 open ArgumentStructure
 
 /-! ### Selectional and inflectional enums -/

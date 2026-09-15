@@ -1,6 +1,4 @@
-import Linglib.Semantics.Mereology
-import Linglib.Semantics.ArgumentStructure.Thematic.Mereology
-import Linglib.Semantics.Aspect.Cumulativity
+import Linglib.Semantics.Mereology.Relation
 import Mathlib.Order.WellFounded
 
 /-!
@@ -29,7 +27,7 @@ require atomic rather than quantized verbal predicates.
 
 The paper's relations are stated with the library's object-first thematic relations, so its
 uniqueness of objects is `UP`, uniqueness of events `GUE`, mapping to objects `MO`, mapping
-to events `ME`, and summativity `CumTheta`; cumulative and quantized reference are
+to events `ME`, and summativity `SUM`; cumulative and quantized reference are
 `Mereology.CUM` and `Mereology.QUA`. Theorem (T 3) needs a nonempty predicate, since the
 empty predicate is both quantized and strictly cumulative. The proof of (T 13) establishes
 that every verbal event has a part outside the predicate; its conclusion that the event
@@ -46,7 +44,7 @@ negation (§6) and quantification (§7) are prose.
 
 namespace Krifka1989
 
-open Mereology ArgumentStructure Aspect.Cumulativity
+open Mereology
 
 /-! ### Reference types (§2) -/
 
@@ -156,14 +154,13 @@ variable {α : E → Prop} {δ : O → Prop} {θ : O → E → Prop}
 
 /-- (T 7): a cumulative verb, a cumulative nominal predicate, and a summative relation
 give a cumulative verbal predicate. -/
-theorem cum_ofTheta (hα : CUM α) (hδ : CUM δ) (hθ : CumTheta θ) : CUM (ofTheta α δ θ) :=
-  λ e ⟨ha, x, hx, hθx⟩ e' ⟨ha', x', hx', hθx'⟩ =>
-    ⟨hα ha ha', x ⊔ x', hδ hx hx', hθ x x' e e' hθx hθx'⟩
+theorem cum_ofTheta (hα : CUM α) (hδ : CUM δ) (hθ : SUM θ) : CUM (ofTheta α δ θ) :=
+  λ _ ⟨ha, x, hx, hθx⟩ _ ⟨ha', x', hx', hθx'⟩ => ⟨hα ha ha', x ⊔ x', hδ hx hx', hθ hθx hθx'⟩
 
 /-- (T 8): a singular nominal predicate, a summative relation, and a strictly cumulative
 verbal predicate force an iterative event, since two distinct events with the one object
 sum to an event subjecting it twice. -/
-theorem exists_iter (hδ : SNG δ) (hθ : CumTheta θ) (hne : ∃ e, ofTheta α δ θ e)
+theorem exists_iter (hδ : SNG δ) (hθ : SUM θ) (hne : ∃ e, ofTheta α δ θ e)
     (hs : SCUM (ofTheta α δ θ)) : ∃ e x, ITER θ e x := by
   obtain ⟨e₁, hα₁, x₁, hx₁, hθ₁⟩ := hne
   obtain ⟨hcum, hsng⟩ := hs
@@ -176,26 +173,26 @@ theorem exists_iter (hδ : SNG δ) (hθ : CumTheta θ) (hne : ∃ e, ofTheta α 
   obtain ⟨x, _, huniq⟩ := hδ
   rw [← huniq x₁ hx₁] at hθ₁
   rw [← huniq x₂ hx₂] at hθ₂
-  exact ⟨e₁ ⊔ e₂, x, by simpa using hθ x x e₁ e₂ hθ₁ hθ₂, e₁, e₂, x, le_sup_left,
+  exact ⟨e₁ ⊔ e₂, x, by simpa using hθ hθ₁ hθ₂, e₁, e₂, x, le_sup_left,
     le_sup_right, hne, le_rfl, hθ₁, hθ₂⟩
 
 /-- (T 9): without iteration the verbal predicate of a singular nominal predicate is not
 strictly cumulative. -/
-theorem not_scum_of_not_iter (hδ : SNG δ) (hθ : CumTheta θ) (hne : ∃ e, ofTheta α δ θ e)
+theorem not_scum_of_not_iter (hδ : SNG δ) (hθ : SUM θ) (hne : ∃ e, ofTheta α δ θ e)
     (hi : ∀ e x, ¬ ITER θ e x) : ¬ SCUM (ofTheta α δ θ) := λ hs =>
   let ⟨e, x, h⟩ := exists_iter hδ hθ hne hs; hi e x h
 
 /-- (T 10): uniqueness of events excludes iteration. -/
 theorem not_iter_of_gue (h : GUE θ) (e : E) (x : O) : ¬ ITER θ e x :=
-  λ ⟨_, _, _, _, _, _, hne, _, h', h''⟩ => hne (h _ _ _ h' h'')
+  λ ⟨_, _, _, _, _, _, hne, _, h', h''⟩ => hne (h h' h'')
 
 /-- (T 11): a quantized nominal predicate transfers quantization to the verbal predicate when
 the relation has uniqueness of objects, mapping to objects, and no iteration. -/
 theorem qua_ofTheta (hδ : QUA δ) (hu : UP θ) (hm : MO θ) (hi : ∀ e x, ¬ ITER θ e x) :
     QUA (ofTheta α δ θ) :=
   qua_of_forall λ e₁ e₂ ⟨_, x₁, hx₁, hθ₁⟩ hlt ⟨_, x₂, hx₂, hθ₂⟩ => by
-    obtain ⟨x₃, hx₃, hθ₃⟩ := hm x₁ e₁ e₂ hθ₁ hlt.le
-    have h32 : x₃ = x₂ := hu x₃ x₂ e₂ hθ₃ hθ₂
+    obtain ⟨x₃, hx₃, hθ₃⟩ := hm hθ₁ hlt.le
+    have h32 : x₃ = x₂ := hu hθ₃ hθ₂
     subst h32
     have hne : x₁ ≠ x₃ := λ h =>
       hi e₁ x₁ ⟨hθ₁, e₁, e₂, x₁, le_rfl, hlt.le, hlt.ne', le_rfl, hθ₁, h ▸ hθ₃⟩
@@ -213,9 +210,9 @@ theorem exists_le_not_ofTheta (hδ : SQUA δ) (hm : ME θ) (hu : UP θ) (e : E)
     (he : ofTheta α δ θ e) : ∃ e' ≤ e, ¬ ofTheta α δ θ e' := by
   obtain ⟨_, x, hx, hθx⟩ := he
   obtain ⟨y, hyx⟩ := hδ.2 x hx
-  obtain ⟨e', he', hθy⟩ := hm x e y hθx hyx.le
+  obtain ⟨e', he', hθy⟩ := hm hθx hyx.le
   refine ⟨e', he', λ ⟨_, z, hz, hθz⟩ => ?_⟩
-  have hzy : z = y := hu z y e' hθz hθy
+  have hzy : z = y := hu hθz hθy
   subst hzy
   exact hδ.1 hz hx hyx.ne hyx.le
 
@@ -245,7 +242,7 @@ def ThematicClass.UniqueEvents : ThematicClass → Prop
 /-- What (14) requires of a relation in a class: summativity throughout, graduality for the
 gradual classes, uniqueness of events for effected and consumed patients. -/
 def ThematicClass.Requires (c : ThematicClass) (θ : O → E → Prop) : Prop :=
-  CumTheta θ ∧ (c.Gradual → GRAD θ) ∧ (c.UniqueEvents → GUE θ)
+  SUM θ ∧ (c.Gradual → GRAD θ) ∧ (c.UniqueEvents → GUE θ)
 
 /-- Effected and consumed patients make a quantized object into a quantized verbal
 predicate (T 12): *write a letter* and *eat an apple* are telic. -/

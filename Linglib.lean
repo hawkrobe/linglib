@@ -1428,7 +1428,6 @@ import Linglib.Semantics.Root.PropertyConcept
 import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Semantics.ArgumentStructure.Thematic.Basic
 import Linglib.Semantics.ArgumentStructure.Thematic.Defs
-import Linglib.Semantics.ArgumentStructure.Thematic.Mereology
 import Linglib.Semantics.ArgumentStructure.Valency
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 import Linglib.Semantics.Aspect.AtomDist
@@ -1439,7 +1438,6 @@ import Linglib.Semantics.Aspect.Composition
 import Linglib.Semantics.Aspect.Cumulativity
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Aspect.Incremental
-import Linglib.Semantics.Aspect.PrecedenceClosure
 import Linglib.Semantics.Aspect.Stratified
 import Linglib.Semantics.Aspect.SubeventStructure
 import Linglib.Semantics.Aspect.SubintervalProperty

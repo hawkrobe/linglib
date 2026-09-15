@@ -1,4 +1,5 @@
 import Linglib.Semantics.Aspect.Cumulativity
+import Linglib.Semantics.ArgumentStructure.Affectedness
 import Linglib.Data.Examples.Filip2012
 
 /-!
@@ -10,7 +11,7 @@ telic/atelic distinction is diagnosed by temporal adverbials — *in an hour* wi
 taken as quantized (23) and atelic ones as cumulative (24), the substrate's `QUA` and `CUM`.
 Aspectual composition (25)–(27) is [krifka-1989]'s: the predicate an incremental verb forms
 with its object is quantized or cumulative as the object is, the substrate's
-`qua_propagation` and `cum_propagation` for `IsSincVerb`, while a verb without the
+`vp_qua` and `vp_cum` for a strictly incremental relation, while a verb without the
 incremental mapping, like *watch*, is atelic whatever its object (26). Hence the three
 classes of (28): telic verbs, whose eventualities have no proper parts in the relation
 (`Quantized`, `telic_of_quantized`); atelic verbs, whose relation persists to the parts of an
@@ -45,7 +46,7 @@ diagnostic data (1), (25), (26), (31), (37) are rows of `Data/Examples/Filip2012
 
 namespace Filip2012
 
-open Mereology ArgumentStructure Aspect.Incremental Aspect.Cumulativity Data.Examples
+open Mereology ArgumentStructure Aspect Data.Examples
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
@@ -82,19 +83,19 @@ theorem not_telic_of_persistent {θ : α → β → Prop} (h : Persistent θ) (O
   hQ ⟨x, hx, h x e hθ e' hlt.le⟩ he hlt.ne hlt.le
 
 /-- An atelic verb with a cumulative object forms a cumulative predicate. -/
-theorem atelic_of_persistent {θ : α → β → Prop} [IsCumThetaVerb θ] {OBJ : α → Prop}
+theorem atelic_of_persistent {θ : α → β → Prop} (hθ : SUM θ) {OBJ : α → Prop}
     (hObj : CUM OBJ) : Atelic (VP θ OBJ) :=
-  cum_propagation hObj
+  vp_cum hθ hObj
 
 /-- (27), (28iii), (29ii): an incremental verb is lexically unmarked for telicity — its
 non-degeneracy provides a quantized object with which its predicate is telic and a cumulative
 one with which it is atelic and not telic. -/
-theorem incremental_underspecified {θ : α → β → Prop} [IsSincVerb θ] :
+theorem incremental_underspecified {θ : α → β → Prop} (h : SINC θ) (hU : UP θ) (hs : SUM θ) :
     (∃ OBJ : α → Prop, QUA OBJ ∧ Telic (VP θ OBJ) ∧ ∃ e, VP θ OBJ e) ∧
     (∃ OBJ : α → Prop, CUM OBJ ∧ Atelic (VP θ OBJ) ∧ ¬ Telic (VP θ OBJ)) := by
-  obtain ⟨x, y, e, e', hlt, hlt', hθ, hθ'⟩ := (IsSincVerb.sinc (θ := θ)).extended
-  refine ⟨⟨(· = x), singleton_qua x, qua_propagation (singleton_qua x), e, x, rfl, hθ⟩,
-    ⟨λ _ => True, λ _ _ _ _ => trivial, cum_propagation (λ _ _ _ _ => trivial), λ hQ => ?_⟩⟩
+  obtain ⟨x, y, e, e', hlt, hlt', hθ, hθ'⟩ := h.extended
+  refine ⟨⟨(· = x), singleton_qua x, vp_qua hU h.mso (singleton_qua x), e, x, rfl, hθ⟩,
+    ⟨λ _ => True, λ _ _ _ _ => trivial, vp_cum hs (λ _ _ _ _ => trivial), λ hQ => ?_⟩⟩
   exact hQ ⟨y, trivial, hθ'⟩ ⟨x, trivial, hθ⟩ hlt'.ne hlt'.le
 
 /-- (29i): telicity does not require incrementality — a quantized verb is not strictly
@@ -136,7 +137,7 @@ structure Row where
 
 /-- The telicity the classification assigns: telic verbs form telic predicates
 (`telic_of_quantized`), atelic verbs never do (`not_telic_of_persistent`), and incremental
-verbs follow their object ((27): `qua_propagation`, `cum_propagation`). -/
+verbs follow their object ((27): `vp_qua`, `vp_cum`). -/
 def Row.Telic (r : Row) : Prop :=
   match r.cls, r.obj with
   | .telic, _ => True

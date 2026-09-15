@@ -27,7 +27,7 @@ namespace English.Predicates.Verbal
 open ArgumentStructure
 open Aspect.DegreeAchievement (DegreeAchievementScale)
 open Degree (Boundedness)
-open Aspect.Incremental (VerbIncClass)
+open Aspect (VerbIncClass)
 open ArgumentStructure
 open ArgumentStructure
 

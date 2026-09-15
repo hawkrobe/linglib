@@ -45,8 +45,7 @@ portions, and measured parts.
 namespace Moon2026
 
 open Mereology
-open Aspect.Incremental (IsSincVerb)
-open Aspect.Cumulativity (VP)
+open Aspect (SINC VP)
 
 /-! ### Mereotopology -/
 
@@ -189,41 +188,40 @@ theorem mixedDrink_middle_ground {a b : α} (ha : mixedDrinkDen recipe μ phase 
 
 omit [TopologicalSpace α] in
 /-- Neither cumulativity nor quantization of the object propagates to the VP, so neither
-`cum_propagation` nor `qua_propagation` fires; the gap itself propagates. Two objects whose
+`vp_cum` nor `vp_qua` fires; the gap itself propagates. Two objects whose
 sum is not an object witness the failure of cumulativity on the VP: the sum event's object
 would have to be their sum. -/
 private theorem not_cum_vp {β : Type*} [SemilatticeSup β] {θ : α → β → Prop} {OBJ : α → Prop}
-    (hCumTheta : ArgumentStructure.CumTheta θ) (hUP : ArgumentStructure.UP θ) {x y : α}
+    (hs : SUM θ) (hU : UP θ) {x y : α}
     {e₁ e₂ : β} (hx : OBJ x) (hy : OBJ y) (hθ₁ : θ x e₁) (hθ₂ : θ y e₂) (hSum : ¬ OBJ (x ⊔ y)) :
     ¬ CUM (VP θ OBJ) := by
   intro hCum
   obtain ⟨z, hz_obj, hz_θ⟩ := hCum ⟨x, hx, hθ₁⟩ ⟨y, hy, hθ₂⟩
-  exact hSum (hUP z (x ⊔ y) (e₁ ⊔ e₂) hz_θ (hCumTheta x y e₁ e₂ hθ₁ hθ₂) ▸ hz_obj)
+  exact hSum (hU hz_θ (hs hθ₁ hθ₂) ▸ hz_obj)
 
 omit [TopologicalSpace α] in
 /-- With a strictly incremental verb, an object neither cumulative nor quantized yields a VP
 neither cumulative nor quantized: the sum witnesses refute cumulativity and a proper object
 part, mapped to a proper subevent, refutes quantization. -/
-theorem middle_ground_stable {β : Type*} [SemilatticeSup β] {θ : α → β → Prop} [IsSincVerb θ]
-    {OBJ : α → Prop} {a b : α} {e_a e_b : β} (ha : OBJ a) (hb : OBJ b) (hθ_a : θ a e_a)
-    (hθ_b : θ b e_b) (hSum : ¬ OBJ (a ⊔ b)) {x y : α} {e_x : β} (hx : OBJ x) (hy : OBJ y)
-    (hlt : y < x) (hθ_x : θ x e_x) : ¬ CUM (VP θ OBJ) ∧ ¬ QUA (VP θ OBJ) := by
-  refine ⟨not_cum_vp ArgumentStructure.IsCumThetaVerb.cumTheta IsSincVerb.up ha hb hθ_a hθ_b
-    hSum, λ hQua => ?_⟩
-  obtain ⟨e_y, he_y_lt, hθ_y⟩ := (IsSincVerb.sinc (θ := θ)).mse x e_x y hθ_x hlt
+theorem middle_ground_stable {β : Type*} [SemilatticeSup β] {θ : α → β → Prop} (h : SINC θ)
+    (hU : UP θ) (hs : SUM θ) {OBJ : α → Prop} {a b : α} {e_a e_b : β} (ha : OBJ a) (hb : OBJ b)
+    (hθ_a : θ a e_a) (hθ_b : θ b e_b) (hSum : ¬ OBJ (a ⊔ b)) {x y : α} {e_x : β} (hx : OBJ x)
+    (hy : OBJ y) (hlt : y < x) (hθ_x : θ x e_x) : ¬ CUM (VP θ OBJ) ∧ ¬ QUA (VP θ OBJ) := by
+  refine ⟨not_cum_vp hs hU ha hb hθ_a hθ_b hSum, λ hQua => ?_⟩
+  obtain ⟨e_y, he_y_lt, hθ_y⟩ := h.mse hθ_x hlt
   exact hQua ⟨y, hy, hθ_y⟩ ⟨x, hx, hθ_x⟩ he_y_lt.ne he_y_lt.le
 
 /-- The middle ground propagates to VPs: a strictly incremental drinking verb with a
 mixed-drink object is neither cumulative nor quantized (`middle_ground_stable`). -/
-theorem mixedDrink_VP_propagation_gap {β : Type*} [SemilatticeSup β] (drinkTheme : α → β → Prop)
-    [IsSincVerb drinkTheme] {a b : α} {e_a e_b : β} (ha : mixedDrinkDen recipe μ phase a)
-    (hb : mixedDrinkDen recipe μ phase b) (hθ_a : drinkTheme a e_a) (hθ_b : drinkTheme b e_b)
+theorem mixedDrink_VP_propagation_gap {β : Type*} [SemilatticeSup β] {drinkTheme : α → β → Prop}
+    (h : SINC drinkTheme) (hU : UP drinkTheme) (hs : SUM drinkTheme) {a b : α} {e_a e_b : β}
+    (ha : mixedDrinkDen recipe μ phase a) (hb : mixedDrinkDen recipe μ phase b) (hθ_a : drinkTheme a e_a) (hθ_b : drinkTheme b e_b)
     (hSum : ¬ mixedDrinkDen recipe μ phase (a ⊔ b)) {x y : α} {e_x : β}
     (hx : mixedDrinkDen recipe μ phase x) (hy : mixedDrinkDen recipe μ phase y) (hlt : y < x)
     (hθ_x : drinkTheme x e_x) :
     ¬ CUM (VP drinkTheme (mixedDrinkDen recipe μ phase)) ∧
       ¬ QUA (VP drinkTheme (mixedDrinkDen recipe μ phase)) :=
-  middle_ground_stable ha hb hθ_a hθ_b hSum hx hy hlt hθ_x
+  middle_ground_stable h hU hs ha hb hθ_a hθ_b hSum hx hy hlt hθ_x
 
 /-! ### Modifying the ratios -/
 
