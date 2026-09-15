@@ -76,39 +76,37 @@ theorem restrict_top_subset (P : Ent → Prop) : restrict ⊤ φ ⊆ restrict P 
   restrict_anti le_top
 
 /-- The focus alternatives *bhii* induces from alternative predicates. -/
-def alternatives (Ps : List (Ent → Prop)) (φ : World → Ent → Prop) : List (Set World) :=
-  Ps.map (exist · φ)
+def alternatives (Ps : Set (Ent → Prop)) (φ : World → Ent → Prop) : Set (Set World) :=
+  (exist · φ) '' Ps
 
-variable {Ps : List (Ent → Prop)}
+variable {Ps : Set (Ent → Prop)}
 
 /-- In an upward-entailing context the presupposition of *bhii* is contradictory as soon as
 there is an alternative, cardinality or contextual property: each entails the assertion and
 so is at least as likely. -/
-theorem ue_clash (hμ : Monotone μ) (hPs : Ps ≠ []) :
+theorem ue_clash (hμ : Monotone μ) (hPs : Ps.Nonempty) :
     ¬ evenPresup μ (exist ⊤ φ) (alternatives Ps φ) :=
-  let ⟨P, hP⟩ := Ps.exists_mem_of_ne_nil hPs
-  not_evenPresup_of_subset hμ (List.mem_map_of_mem hP) (exist_subset_exist_top P)
+  let ⟨P, hP⟩ := hPs
+  not_evenPresup_of_subset hμ ⟨P, hP, rfl⟩ (exist_subset_exist_top P)
 
 /-- A downward-entailing operator reverses the entailments, so under it the presupposition
 asks only that no alternative be exactly as likely; negation, the complement of a prohibition
 verb, and the permission an imperative grants are such operators. -/
 theorem de_presup (hμ : Monotone μ) {Q : Set World → Set World} (hQ : Antitone Q) :
-    evenPresup μ (Q (exist ⊤ φ)) ((alternatives Ps φ).map Q) ↔
+    evenPresup μ (Q (exist ⊤ φ)) (Q '' alternatives Ps φ) ↔
       ∀ P ∈ Ps, μ (Q (exist ⊤ φ)) ≠ μ (Q (exist P φ)) := by
   rw [evenPresup_iff_ne hμ]
-  · simp [alternatives]
-  · simp only [alternatives, List.map_map, List.mem_map, Function.comp_def,
-      forall_exists_index, and_imp]
-    rintro _ P hP rfl
-    exact hQ (exist_subset_exist_top P)
+  · simp [alternatives, Set.image_image]
+  · simp only [alternatives, Set.image_image, Set.forall_mem_image]
+    exact λ P _ => hQ (exist_subset_exist_top P)
 
 /-- *koii bhii aayaa* against *koii bhii nahiiN aayaa*, and the two implicature sets of a
 yes-no question: the positive reading clashes and the negative one is satisfiable. Negation
 inside the existential, the only scope English gives a subject indefinite, is again a positive
 context, which is why English lacks the subject NPIs that Hindi licenses. -/
-theorem clausemate_negation (hμ : Monotone μ) (hPs : Ps ≠ []) :
+theorem clausemate_negation (hμ : Monotone μ) (hPs : Ps.Nonempty) :
     ¬ evenPresup μ (exist ⊤ φ) (alternatives Ps φ) ∧
-      (evenPresup μ (exist ⊤ φ)ᶜ ((alternatives Ps φ).map compl) ↔
+      (evenPresup μ (exist ⊤ φ)ᶜ (compl '' alternatives Ps φ) ↔
         ∀ P ∈ Ps, μ (exist ⊤ φ)ᶜ ≠ μ (exist P φ)ᶜ) ∧
       ¬ evenPresup μ (exist ⊤ λ w x => ¬ φ w x) (alternatives Ps λ w x => ¬ φ w x) :=
   ⟨ue_clash hμ hPs, de_presup hμ compl_anti, ue_clash hμ hPs⟩
@@ -116,13 +114,12 @@ theorem clausemate_negation (hμ : Monotone μ) (hPs : Ps ≠ []) :
 /-- In the restriction of a generic the assertion entails every alternative, so the
 presupposition is satisfiable and the free-choice reading licensed. -/
 theorem generic_presup (hμ : Monotone μ) :
-    evenPresup μ (restrict ⊤ φ) (Ps.map (restrict · φ)) ↔
+    evenPresup μ (restrict ⊤ φ) ((restrict · φ) '' Ps) ↔
       ∀ P ∈ Ps, μ (restrict ⊤ φ) ≠ μ (restrict P φ) := by
   rw [evenPresup_iff_ne hμ]
   · simp
-  · simp only [List.mem_map, forall_exists_index, and_imp]
-    rintro _ P hP rfl
-    exact restrict_top_subset P
+  · simp only [Set.forall_mem_image]
+    exact λ P _ => restrict_top_subset P
 
 end Model
 

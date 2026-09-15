@@ -16,6 +16,8 @@ and the semantics of the focus and givenness features in `Semantics/Focus/`.
 ## Main definitions
 
 * `WithAlternatives` — an ordinary value together with the alternatives it evokes
+* `WithAlternatives.unfeatured`, `WithAlternatives.focused` — the meanings of an unfocused and
+  of an F-marked expression, evoking only their own value and every value respectively
 * `WithAlternatives.WellFormed` — the containment constraint: the alternatives include the
   ordinary value
 * `WithAlternatives.Given` — the alternatives have collapsed to a singleton
@@ -54,6 +56,18 @@ def WithAlternatives.unfeatured {α : Type*} (x : α) : WithAlternatives α :=
 
 @[simp] theorem WithAlternatives.unfeatured_alternatives {α : Type*} (x : α) :
     (WithAlternatives.unfeatured x).alternatives = {x} := rfl
+
+/-- The meaning of an F-marked expression whose alternatives are its whole type: `focused x`
+has ordinary value `x` and evokes every value ([rooth-1992]'s focus semantic value of a
+constant). -/
+def WithAlternatives.focused {α : Type*} (x : α) : WithAlternatives α :=
+  { ordinary := x, alternatives := Set.univ }
+
+@[simp] theorem WithAlternatives.focused_ordinary {α : Type*} (x : α) :
+    (WithAlternatives.focused x).ordinary = x := rfl
+
+@[simp] theorem WithAlternatives.focused_alternatives {α : Type*} (x : α) :
+    (WithAlternatives.focused x).alternatives = Set.univ := rfl
 
 /-! ### The composition engine
 
@@ -102,6 +116,11 @@ instance : LawfulMonad WithAlternatives := LawfulMonad.mk'
     b ∈ (mf <*> ma).alternatives ↔ ∃ g ∈ mf.alternatives, ∃ a ∈ ma.alternatives, g a = b := by
   simp [Seq.seq, unfeatured, eq_comm]
 
+/-- Mapping over an F-marked constituent evokes the whole range of the function. -/
+theorem alternatives_map_focused (f : α → β) (x : α) :
+    (f <$> focused x).alternatives = Set.range f := by
+  ext b; simp [focused]
+
 /-! ### The alternatives as a morphism into the `Set` applicative
 
 With the laws above these exhibit the monad as a span `Id ⟵ WithAlternatives ⟶ Set`: ordinary
@@ -123,6 +142,8 @@ def WellFormed (m : WithAlternatives α) : Prop := m.ordinary ∈ m.alternatives
 
 theorem WellFormed.unfeatured (x : α) :
     (WithAlternatives.unfeatured x).WellFormed := rfl
+
+theorem WellFormed.focused (x : α) : (WithAlternatives.focused x).WellFormed := Set.mem_univ x
 
 /-- Composition preserves well-formedness. -/
 theorem WellFormed.bind {m : WithAlternatives α} {f : α → WithAlternatives β}

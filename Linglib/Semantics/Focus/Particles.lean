@@ -2,20 +2,18 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Order.Monotone.Basic
 
 /-!
-# Focus-sensitive particles: even and only
+# The focus particle *even*
 
-This file defines the truth-conditional contribution of the focus particles *even* and
-*only*, with propositions as `Set World`. A likelihood is a monotone map from propositions
-into a partial order, so that a stronger proposition is at most as likely; the scalar
-presupposition of *even* ([karttunen-peters-1979]) is that the prejacent is less likely than
-every focus alternative, and the assertion of *only* ([rooth-1992]) that no focus alternative
-holds.
+This file defines the scalar presupposition of the focus particle *even*, with propositions
+as `Set World`. A likelihood is a monotone map from propositions into a partial order, so that
+a stronger proposition is at most as likely; the presupposition ([karttunen-peters-1979]) is
+that the prejacent is less likely than every focus alternative. The exclusion asserted by
+*only* is `Exhaustification.excludes`.
 
 ## Main definitions
 
 * `Focus.Particles.evenPresup`: the prejacent is less likely than every alternative under a
   likelihood.
-* `Focus.Particles.onlyAssertion`: no focus alternative holds.
 
 ## Main results
 
@@ -31,7 +29,6 @@ in `Studies/Francescotti1995.lean`.
 ## References
 
 * [karttunen-peters-1979]
-* [rooth-1992]
 * [lahiri-1998]
 * [crnic-2014]
 * [francescotti-1995]
@@ -40,17 +37,12 @@ in `Studies/Francescotti1995.lean`.
 namespace Focus.Particles
 
 variable {World α : Type*} [PartialOrder α] {μ : Set World → α} {p q : Set World}
-  {alts : List (Set World)}
+  {alts : Set (Set World)}
 
 /-- The scalar presupposition of *even* ([karttunen-peters-1979]) under a likelihood `μ`: the
 prejacent `p` is less likely than every focus alternative. -/
-def evenPresup (μ : Set World → α) (p : Set World) (alts : List (Set World)) : Prop :=
+def evenPresup (μ : Set World → α) (p : Set World) (alts : Set (Set World)) : Prop :=
   ∀ q ∈ alts, μ p < μ q
-
-/-- The assertion of *only*: no focus alternative holds. The prejacent is presupposed
-separately; the alternative list excludes it. -/
-def onlyAssertion (alts : List (Set World)) : Set World :=
-  {w | ∀ q ∈ alts, w ∉ q}
 
 /-- Under a likelihood respecting entailment, an alternative that entails the prejacent is at
 least as likely and so refutes the presupposition of *even*. -/

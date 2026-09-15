@@ -1,5 +1,6 @@
 import Linglib.Semantics.Alternatives.Symmetric
 import Linglib.Studies.Katzir2007
+import Linglib.Semantics.Exhaustification.Excluder
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Logic.Modal.Defs
 import Linglib.Data.Examples.FoxKatzir2011
@@ -12,7 +13,8 @@ and of association with focus are one set, [katzir-2007]'s structural alternativ
 the salient constituents of the context (`formalAlternatives`), and that symmetry among
 alternatives is broken only there: contextual restriction never keeps one of two alternatives
 that partition the assertion while pruning the other. The implicature and *only* operators
-`SM` and `Only` negate the strictly stronger and the non-weaker alternatives; on symmetric
+`SM` and `Exhaustification.exh` negate the strictly stronger and the non-entailed
+alternatives; on symmetric
 alternatives both are contradictory (`SM_eq_empty_of_isSymmetric`), a universal operator above
 the assertion removes the symmetry and both inferences arise (`mem_SM_nec`), innocent exclusion
 negates neither symmetric alternative (`exhIE_eq_self_of_isSymmetric`), and a contextual set
@@ -92,20 +94,11 @@ variable (A : Set (Set W)) (S : Set W)
 /-- The alternatives negated for scalar implicature: the strictly stronger members. -/
 def nSI : Set (Set W) := {p ∈ A | p ⊂ S}
 
-/-- The alternatives negated by *only*: the non-weaker members. -/
-def nAF : Set (Set W) := {p ∈ A | ¬ S ⊆ p}
-
 /-- The scalar implicature: the negations of the strictly stronger alternatives. -/
 def SI : Set W := ⋂ p ∈ nSI A S, pᶜ
 
 /-- The strengthened meaning. -/
 def SM : Set W := S ∩ SI A S
-
-/-- The exclusion of *only*: the negations of the non-weaker alternatives. -/
-def EXC : Set W := ⋂ p ∈ nAF A S, pᶜ
-
-/-- *Only*: the prejacent with the non-weaker alternatives denied. -/
-def Only : Set W := S ∩ EXC A S
 
 variable {A S}
 
@@ -114,16 +107,10 @@ theorem mem_SM {w : W} : w ∈ SM A S ↔ w ∈ S ∧ ∀ p ∈ A, p ⊂ S → w
   exact and_congr_right λ _ =>
     ⟨λ h p hp hps => h p ⟨hp, hps⟩, λ h p ⟨hp, hps⟩ => h p hp hps⟩
 
-theorem mem_Only {w : W} : w ∈ Only A S ↔ w ∈ S ∧ ∀ p ∈ A, ¬ S ⊆ p → w ∉ p := by
-  simp only [Only, EXC, nAF, mem_inter_iff, mem_iInter₂, mem_ofPred_eq, mem_compl_iff]
-  exact and_congr_right λ _ =>
-    ⟨λ h p hp hps => h p ⟨hp, hps⟩, λ h p ⟨hp, hps⟩ => h p hp hps⟩
-
-theorem nSI_subset_nAF : nSI A S ⊆ nAF A S := λ _ ⟨hp, hps⟩ => ⟨hp, (ssubset_def ▸ hps).2⟩
-
-/-- *Only* is at least as strong as the strengthened meaning. -/
-theorem Only_subset_SM : Only A S ⊆ SM A S := λ _ hw =>
-  mem_SM.2 ⟨(mem_Only.1 hw).1, λ p hp hps => (mem_Only.1 hw).2 p hp (ssubset_def ▸ hps).2⟩
+/-- *Only*, the prejacent with the alternatives it does not entail denied
+(`Exhaustification.exh`), is at least as strong as the strengthened meaning. -/
+theorem exh_subset_SM : exh A S ⊆ SM A S := λ _ hw =>
+  mem_SM.2 ⟨hw.1, λ p hp hps hwp => (ssubset_def ▸ hps).2 (hw.2 p hp hwp)⟩
 
 end Operators
 
@@ -146,9 +133,9 @@ theorem SM_eq_empty_of_isSymmetric (h : IsSymmetric S S₁ S₂) (h₁ : S₁ �
   · exact hall S₂ h₂ (h.symm.ssubset_left hne₁) hw₂
 
 /-- *Only* on symmetric alternatives is contradictory as well. -/
-theorem Only_eq_empty_of_isSymmetric (h : IsSymmetric S S₁ S₂) (h₁ : S₁ ∈ A) (h₂ : S₂ ∈ A)
-    (hne₁ : S₁.Nonempty) (hne₂ : S₂.Nonempty) : Only A S = ∅ :=
-  subset_empty_iff.1 ((SM_eq_empty_of_isSymmetric h h₁ h₂ hne₁ hne₂) ▸ Only_subset_SM)
+theorem exh_eq_empty_of_isSymmetric (h : IsSymmetric S S₁ S₂) (h₁ : S₁ ∈ A) (h₂ : S₂ ∈ A)
+    (hne₁ : S₁.Nonempty) (hne₂ : S₂.Nonempty) : exh A S = ∅ :=
+  subset_empty_iff.1 ((SM_eq_empty_of_isSymmetric h h₁ h₂ hne₁ hne₂) ▸ exh_subset_SM)
 
 /-- Neither symmetric alternative is innocently excludable given the assertion. -/
 theorem not_isInnocentlyExcludable_of_isSymmetric (h : IsSymmetric S S₁ S₂)
@@ -234,14 +221,14 @@ theorem mem_SM_nec {x : W} (hx : x ∈ nec R S) (hx₁ : x ∉ nec R S₁) (hx�
   · exact hx₂
 
 /-- Both exclusions of *only* arise under the universal operator. -/
-theorem mem_Only_nec {x : W} (hx : x ∈ nec R S) (hx₁ : x ∉ nec R S₁) (hx₂ : x ∉ nec R S₂) :
-    x ∈ Only {nec R S, nec R S₁, nec R S₂} (nec R S) := by
-  refine mem_Only.2 ⟨hx, λ p hp hps => ?_⟩
+theorem mem_exh_nec {x : W} (hx : x ∈ nec R S) (hx₁ : x ∉ nec R S₁) (hx₂ : x ∉ nec R S₂) :
+    x ∈ exh {nec R S, nec R S₁, nec R S₂} (nec R S) := by
+  refine ⟨hx, λ p hp hxp => ?_⟩
   simp only [mem_insert_iff, mem_singleton_iff] at hp
   obtain h1 | h1 | h1 := hp <;> subst p
-  · exact (hps subset_rfl).elim
-  · exact hx₁
-  · exact hx₂
+  · exact subset_rfl
+  · exact absurd hxp hx₁
+  · exact absurd hxp hx₂
 
 end Universal
 
@@ -262,7 +249,7 @@ theorem mem_inter_of_isSymmetric (h : IsSymmetric S S₁ S₂) (R : BooleanSubal
 /-- Exhaustively relevant given a restriction: its *only*-meaning lies in the Boolean closure of
 the restriction. -/
 def ExhaustivelyRelevant (A : Set (Set W)) (p : Set W) : Prop :=
-  Only A p ∈ BooleanSubalgebra.closure A
+  exh A p ∈ BooleanSubalgebra.closure A
 
 /-- An allowable restriction of the formal alternatives: it keeps the assertion, and prunes
 nothing exhaustively relevant. -/
@@ -275,13 +262,13 @@ theorem not_isAllowableRestriction_pair (hS : S = S₁ ∪ S₂) (h₂₁ : ¬ S
     (h₂ : S₂ ∉ ({S, S₁} : Set (Set W))) : ¬ IsAllowableRestriction F {S, S₁} S := by
   rintro ⟨-, hall⟩
   refine hall S₂ ⟨hF, h₂⟩ ?_
-  have hOnly : Only {S, S₁} S₂ = S \ S₁ := by
+  have hOnly : exh {S, S₁} S₂ = S \ S₁ := by
     subst hS
     ext w
-    rw [mem_Only, union_sdiff_left, mem_sdiff]
+    rw [mem_exh, union_sdiff_left, mem_sdiff]
     simp only [mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq]
-    exact ⟨λ ⟨hw, _, h⟩ => ⟨hw, h h₂₁⟩,
-      λ ⟨hw, h⟩ => ⟨hw, λ hn => (hn subset_union_right).elim, λ _ => h⟩⟩
+    exact ⟨λ ⟨hw, _, h⟩ => ⟨hw, λ h1 => h₂₁ (h h1)⟩,
+      λ ⟨hw, h⟩ => ⟨hw, λ _ => subset_union_right, λ h1 => (h h1).elim⟩⟩
   rw [ExhaustivelyRelevant, hOnly]
   exact BooleanSubalgebra.sdiff_mem (BooleanSubalgebra.subset_closure (by simp))
     (BooleanSubalgebra.subset_closure (by simp))
