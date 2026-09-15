@@ -6,11 +6,23 @@ Authors: Robert Hawkins
 import Mathlib.Data.Fin.VecNotation
 
 /-!
-# Mapping a function over `![…]`
+# Composing a function with `![…]`
 
-`[UPSTREAM]` candidate for `Mathlib/Data/Fin/VecNotation.lean`. The η-expanded
-forms of `Fin.comp_cons` and of the empty case, stated on the lambda
-`fun i => f (![a, …] i)` so that `simp` pushes `f` into a vector literal.
+`[UPSTREAM]` candidate for `Mathlib/Data/Fin/VecNotation.lean`. This file restates
+`Fin.comp_cons` for `Matrix.vecCons`, so that `f ∘ ![a, b]` rewrites to `![f a, f b]`.
+`Matrix.vecCons` is a `def` rather than a reducible alias of `Fin.cons`, so
+`Fin.comp_cons` does not fire on a vector literal, and mathlib has no `vecCons` form.
+
+The primed lemmas state the same equations on the lambda `fun i => f (![a, b] i)`.
+`simp` does not identify `f ∘ v` with `fun i => f (v i)`, and the lambda is the form
+that structural recursion through a `Fin n → α` argument produces (a substitution's
+`fun i => (ts i).subst σ`), whereas `∘` is the form mathlib's `Equiv.map_rel` and
+`Fin.comp_cons` produce; a rewrite set that pushes `f` into a literal needs both.
+
+## Main statements
+
+* `Matrix.comp_vecCons`, `Matrix.comp_vecEmpty`: `f ∘ ![…]` pushes `f` into the literal.
+* `Matrix.comp_vecCons'`, `Matrix.comp_vecEmpty'`: the same for `fun i => f (![…] i)`.
 -/
 
 namespace Matrix
@@ -18,10 +30,17 @@ namespace Matrix
 variable {α β : Type*} {n : ℕ}
 
 theorem comp_vecCons (f : α → β) (a : α) (v : Fin n → α) :
+    f ∘ vecCons a v = vecCons (f a) (f ∘ v) :=
+  Fin.comp_cons f a v
+
+theorem comp_vecEmpty (f : α → β) : f ∘ ![] = (![] : Fin 0 → β) :=
+  empty_eq _
+
+theorem comp_vecCons' (f : α → β) (a : α) (v : Fin n → α) :
     (fun i => f (vecCons a v i)) = vecCons (f a) fun i => f (v i) :=
   Fin.comp_cons f a v
 
-theorem comp_vecEmpty (f : α → β) : (fun i => f (![] i)) = (![] : Fin 0 → β) :=
-  funext fun i => i.elim0
+theorem comp_vecEmpty' (f : α → β) : (fun i => f (![] i)) = (![] : Fin 0 → β) :=
+  empty_eq _
 
 end Matrix

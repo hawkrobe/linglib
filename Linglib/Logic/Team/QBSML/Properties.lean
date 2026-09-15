@@ -631,10 +631,7 @@ omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Finty
       M.relInterp₁ (predSymb P) w (v x) := by
   let _S := M.interp w
   show ((predSymb P).formula₁ (Term.var x)).Realize v ↔ _
-  have hfun : (![v x] : Fin 1 → Domain) = fun _ => v x := by
-    funext j
-    simp only [Matrix.cons_val_fin_one]
-  rw [Formula.realize_rel₁, Term.realize_var, hfun]
+  rw [Formula.realize_rel₁, Term.realize_var, Matrix.cons_fin_one]
   exact Iff.rfl
 
 omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
@@ -647,12 +644,7 @@ omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Finty
   let _S := M.interp w
   show ((predSymb P).formula₁ (((Language.monadic Pred).con c).term)).Realize v
     ↔ _
-  have hfun : (![(((Language.monadic Pred).con c).term).realize v] :
-      Fin 1 → Domain) = fun _ => M.constInterp ((Language.monadic Pred).con c) w := by
-    funext j
-    rw [Matrix.cons_val_fin_one]
-    exact Term.realize_constants
-  rw [Formula.realize_rel₁, hfun]
+  rw [Formula.realize_rel₁, Term.realize_constants, Matrix.cons_fin_one]
   exact Iff.rfl
 
 /-- Translate the modal-free fragment of QBSML into mathlib first-order

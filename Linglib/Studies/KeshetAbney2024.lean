@@ -140,13 +140,13 @@ theorem expandSelf_discourseMight : discourseMight.expandSelf = discourse .might
   rw [Formula.expandSelf, show discourseMight.defs = [(.E, descE)] from rfl, Formula.expand]
   simp only [List.foldl_cons, List.foldl_nil, discourseMight, discourse, Modal.apply, Formula.some_,
     continuation, Term.sgPronoun, descE, access, base, Expr.substLabels, Expr.substLabels,
-    assignment, Matrix.comp_vecCons, Matrix.comp_vecEmpty, reduceIte, Option.getD_some]
+    assignment, Matrix.comp_vecCons', Matrix.comp_vecEmpty', reduceIte, Option.getD_some]
 
 theorem expandSelf_discourseMust : discourseMust.expandSelf = discourse .must descE := by
   rw [Formula.expandSelf, show discourseMust.defs = [(.E, descE)] from rfl, Formula.expand]
-  simp only [List.foldl_cons, List.foldl_nil, discourseMust, discourse, Modal.apply,
-    continuation, Term.sgPronoun, descE, access, base, Expr.substLabels, Expr.substLabels,
-    assignment, Matrix.comp_vecCons, Matrix.comp_vecEmpty, reduceIte, Option.getD_some]
+  simp only [List.foldl_cons, List.foldl_nil, discourseMust, discourse, Modal.apply, continuation,
+    Term.sgPronoun, descE, access, base, Expr.substLabels, Expr.substLabels, assignment,
+    Matrix.comp_vecCons', Matrix.comp_vecEmpty', reduceIte, Option.getD_some]
 
 theorem expandSelf_bathroom :
     bathroom.expandSelf =
@@ -154,8 +154,8 @@ theorem expandSelf_bathroom :
         (.labelDef .X descE) := by
   rw [Formula.expandSelf, show bathroom.defs = [(.X, descE)] from rfl, Formula.expand]
   simp only [List.foldl_cons, List.foldl_nil, bathroom, Formula.disj, continuation, Term.sgPronoun,
-    descE, Expr.substLabels, Expr.substLabels, assignment, Matrix.comp_vecCons,
-    Matrix.comp_vecEmpty, reduceIte, Option.getD_some]
+    descE, Expr.substLabels, Expr.substLabels, assignment, Matrix.comp_vecCons',
+    Matrix.comp_vecEmpty', reduceIte, Option.getD_some]
 
 /-! ### Values and felicity at a world of evaluation -/
 

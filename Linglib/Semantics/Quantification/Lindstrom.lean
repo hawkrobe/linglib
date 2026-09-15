@@ -1,3 +1,4 @@
+import Linglib.Core.Data.Fin.VecNotation
 import Linglib.Core.ModelTheory.Lindstrom
 import Linglib.Semantics.Quantification.Basic
 
@@ -153,22 +154,17 @@ end Det
 
 /-! ### The Aristotelian determiner classes -/
 
-/-- `g ∘ ![z] = ![g z]` for a single-element tuple. -/
-private theorem comp_cons_fin_one {β γ : Type*} (g : β → γ) (z : β) :
-    g ∘ ![z] = ![g z] := by
-  funext i; simp only [Function.comp_apply, Matrix.cons_val_fin_one]
-
 /-- Transfer a `RelMap` fact for `U` across `e.symm`: `RelMap_N U ![y] ↔ RelMap_M U ![e.symm y]`. -/
 private theorem relMap_symm_U {M N : Bundled.{u} L_UV.Structure} (e : M ≃[L_UV] N) (y : N) :
     N.str.RelMap uRel ![y] ↔ M.str.RelMap uRel ![e.symm y] := by
   have h := e.map_rel uRel ![e.symm y]
-  rwa [comp_cons_fin_one, e.apply_symm_apply] at h
+  rwa [Matrix.comp_vecCons, Matrix.comp_vecEmpty, e.apply_symm_apply] at h
 
 /-- Transfer a `RelMap` fact for `V` across `e.symm`. -/
 private theorem relMap_symm_V {M N : Bundled.{u} L_UV.Structure} (e : M ≃[L_UV] N) (y : N) :
     N.str.RelMap vRel ![y] ↔ M.str.RelMap vRel ![e.symm y] := by
   have h := e.map_rel vRel ![e.symm y]
-  rwa [comp_cons_fin_one, e.apply_symm_apply] at h
+  rwa [Matrix.comp_vecCons, Matrix.comp_vecEmpty, e.apply_symm_apply] at h
 
 /-- `every`: `∀ x, U x → V x`. -/
 def everyDet : Det.{u} where
@@ -192,8 +188,10 @@ def someDet : Det.{u} where
         (∃ y : Q, Q.str.RelMap uRel ![y] ∧ Q.str.RelMap vRel ![y]) := by
       rintro P Q g ⟨x, hu, hv⟩
       refine ⟨g x, ?_, ?_⟩
-      · have := (g.map_rel uRel ![x]).mpr hu; rwa [comp_cons_fin_one] at this
-      · have := (g.map_rel vRel ![x]).mpr hv; rwa [comp_cons_fin_one] at this
+      · have := (g.map_rel uRel ![x]).mpr hu
+        rwa [Matrix.comp_vecCons, Matrix.comp_vecEmpty] at this
+      · have := (g.map_rel vRel ![x]).mpr hv
+        rwa [Matrix.comp_vecCons, Matrix.comp_vecEmpty] at this
     exact ⟨key e, key e.symm⟩
 
 /-- `no`: `∀ x, U x → ¬ V x`. -/
