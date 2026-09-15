@@ -55,7 +55,7 @@ variable {W T : Type*} [LinearOrder T]
     plain SUB is the weaker conditional and does not on its own express
     Bennett-Partee/Dowty homogeneity.
 
-    The `Stratified.SubintervalReference` decomposition form at
+    The `SubintervalReference` decomposition form at
     [champollion-2017]'s analogous parameter-space point (dim = τ,
     point-interval granularity) is genuinely different math — ∃-decomposition
     over P-parts vs ∀-projection over hypothetical witness events; the
