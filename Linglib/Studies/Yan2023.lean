@@ -1,183 +1,154 @@
 import Linglib.Logic.Team.QBSML.FreeChoice
 import Linglib.Logic.Team.BSML.Scenarios
-import Linglib.Data.Examples.Yan2023
 
 /-!
 # Yan (2023): Monotonicity in Intensional Contexts
 
-This file formalizes the fourth chapter of [yan-2023], which defends an upward-monotonic
-semantics for desire verbs against Ross's paradox under *want* ([ross-1944], [crnic-2011]),
-Asher's puzzle and Heim's teaching example ([heim-1992]) by reducing all three to free-choice
-inferences in the quantified bilateral state-based modal logic of [aloni-vanormondt-2023].
-The monotonic step is semantically valid on the NE-free fragment (`ross_monotone`,
-`asher_monotone`), the paradoxical *ok with the unwanted alternative* inference is
-pragmatically valid only from the enriched conclusion by □-free choice (`ross_fc`,
-`asher_fc`, `heim_fc`), and the enriched conclusion is not supported by the desire state that
-supports the enriched premise (`ross_premise`, `ross_blocked`, `asher_premise`,
-`asher_blocked`). Where no overt disjunction occurs, the reinterpretation function
-(`reinterpret`) rewrites a predicate with a contextually salient sub-predicate as the
-disjunction of the sub-predicate and its complement within the predicate; it preserves the
-NE-free fragment and is bilaterally equivalent to the original (`reinterpret_neFree`,
-`eval_reinterpret_iff`), yet under pragmatic enrichment the two come apart
-(`asher_concl_enriched`).
+This file formalizes Chapter 4 of [yan-2023], which defends an upward-monotonic semantics for
+desire verbs against three puzzles: Asher's puzzle and the teach-on-Tuesdays example reported
+in [heim-1992], and Ross's paradox under *want* from [crnic-2011] after [ross-1944]. *Want*
+is the necessity modal over a bouletic accessibility relation and *it is ok* its dual, §4.4.1,
+in the quantified bilateral state-based modal logic of [aloni-vanormondt-2023]. Each puzzle
+reduces to a free-choice inference: the monotonic step is valid on the NE-free fragment
+(`nec_disj_intro`, `nec_exi_within_mono`); the inference that the agent is ok with the
+unwanted alternative follows by □-free choice, Fact 13, from the pragmatically enriched
+disjunctive conclusion (`ross_fc`, `fc_of_reinterpret`); and at a desire state that supports
+the enriched premise the enriched conclusion is unsupported (`ross_blocked`, `asher_blocked`,
+`heim_blocked`), so the three puzzles are pragmatic failures, Table 4.3. Where no disjunction
+is overt, the reinterpretation function of Definition 32 supplies one: a predicate with a
+contextually salient sub-predicate is read as the disjunction of the predicate within the
+sub-predicate and outside it (`reinterpret`), which stays NE-free and is bilaterally
+equivalent to the original (`reinterpret_neFree`, `eval_reinterpret_iff`) yet parts from it
+under enrichment (`asher_concl_enriched`, `asher_blocked`).
 
 ## Implementation notes
 
-*Want* and *it is ok* are the necessity and possibility modals over a bouletic accessibility
-relation, as in the chapter, whose language has a primitive □, a derived ◇, and no universal
-quantifier; the reinterpretation function is extended to the possibility and universal
-clauses of the library's formula type by commuting with them. Enrichment is placed in the
-wide form of the chapter's free-choice fact, outside the modal. The sub-predicate relation
-is a contextual parameter; the chapter's denotational side condition holds in the two-world
-model of Asher's puzzle (`asherModel_free_ssubset_trip`). The alternative ◇-free-choice
-route for Heim's example through a conditional desire is not modelled.
+* The language of Definition 24 has primitive □, derived ◇ and no ∀. The substrate `Formula`
+  has primitive ◇ and ∀ with □ derived, so the enrichment of `□φ` is the negation-clause
+  enrichment of `¬◇¬φ`, under which Fact 13 holds as `boxFC`; `reinterpret` extends
+  Definition 32 to ∀ and, as a totality filler, to NE.
+* The side condition of Definition 32, that the denotation of the sub-predicate is a proper
+  subset of the predicate's, is checked against the global model (`IsSubPred`): within the
+  agent's desire worlds it must fail, since blocking requires every trip there to be free. The
+  relation `sub` that triggers reinterpretation is therefore a contextual parameter, and
+  `eval_reinterpret_iff` holds for any choice of it.
+* The premise of Asher's puzzle is `□∃x(FREE x ∧ TRIP x)`, the paper's `□∃x FREE x`
+  unabbreviated after its footnote reading the generalisation as conjunction elimination; the
+  conclusion `◇∃x ¬FREE x` of (27d) is `◇∃x(¬FREE x ∧ TRIP x)`.
+* Asher's and Heim's puzzles share one two-world model, `desireModel`: every predicate holds
+  at the desire world and only the wanted predicate at the other. The ◇-free-choice route
+  through the conditional rephrasing (17)–(18) and the deontic applications of §4.5 are not
+  formalized.
 
 ## References
 
 * [yan-2023]
 * [aloni-vanormondt-2023]
-* [crnic-2011]
+* [aloni-2022]
 * [heim-1992]
+* [crnic-2011]
 * [ross-1944]
+* [von-fintel-1999]
 -/
 
 namespace Yan2023
 
 open QBSML
-open Team (splitsAs_empty_self)
 open BSML (QVar)
 
-/-! ### The reinterpretation function -/
+variable {W Var Domain Const Pred : Type*}
 
-section Reinterpret
+/-! ### The reinterpretation function, Definition 32 -/
 
-variable {Var Const Pred : Type*}
+/-- `Q` within `P`: `P x ∧ Q x`, the paper's `P_Q x`. -/
+def within (P Q : Pred) (x : Var) : Formula Var Const Pred := .conj (.pred P x) (.pred Q x)
 
-/-- **Reinterpretation** `∥·∥_P` ([yan-2023] Definition 32): rewrite each
-    atom `Q t` whose predicate has `P` as a (contextually salient)
-    sub-predicate as the disjunction `(P t ∧ Q t) ∨ (¬P t ∧ Q t)`, and
-    commute with every connective (`Formula.mapAtoms`).
+/-- `Q` outside `P`: `¬P x ∧ Q x`, the paper's `¬P_Q x`. -/
+def without (P Q : Pred) (x : Var) : Formula Var Const Pred :=
+  .conj (.neg (.pred P x)) (.pred Q x)
 
-    `sub P Q` plays the paper's side condition `P ⊂ Q`. That condition is
-    *denotational* there (the denotation of `P` a proper subset of `Q`'s),
-    but the paper leaves open against which model it is checked — in the
-    agent's own desire-state denotations it must fail for blocking to
-    arise, so it is only sensible against a common-ground/global model
-    (realised by the two-world `asherModel` below,
-    `asherModel_free_ssubset_trip`). `sub` therefore stays an
-    unconstrained contextual parameter, which `eval_reinterpret_iff` shows
-    is truth-conditionally harmless; the salience requirement is likewise
-    contextual and not part of the function.
+theorem within_neFree (P Q : Pred) (x : Var) : (within P Q x : Formula Var Const Pred).NEFree :=
+  .conj (.pred _ _) (.pred _ _)
 
-    The paper's language `L_D` (its Definition 24) has primitive `□`,
-    derived `◇`, and no `∀`, so Definition 32 has no `◇`/`∀` clauses: the
-    `.poss` clause here recovers its derived-`◇` behaviour definitionally,
-    and `.univ` extends the function to the full `Formula` language.
-    The `.ne` clause is a totality filler — the paper defines `∥·∥` on the
-    NE-free fragment only. -/
+theorem without_neFree (P Q : Pred) (x : Var) :
+    (without P Q x : Formula Var Const Pred).NEFree :=
+  .conj (.neg (.pred _ _)) (.pred _ _)
+
+/-- Reinterpretation by `P`: each atom whose predicate `Q` has `P` as a contextually salient
+sub-predicate, `sub P Q`, becomes the disjunction of `Q` within `P` and `Q` outside `P`, and
+the function commutes with every connective. -/
 def reinterpret (sub : Pred → Pred → Prop) [DecidableRel sub] (P : Pred) :
     Formula Var Const Pred → Formula Var Const Pred :=
   Formula.mapAtoms
-    (fun Q x =>
-      if sub P Q then
-        .disj (.conj (.pred P x) (.pred Q x))
-              (.conj (.neg (.pred P x)) (.pred Q x))
-      else .pred Q x)
-    (fun Q c =>
-      if sub P Q then
-        .disj (.conj (.predc P c) (.predc Q c))
-              (.conj (.neg (.predc P c)) (.predc Q c))
+    (λ Q x => if sub P Q then .disj (within P Q x) (without P Q x) else .pred Q x)
+    (λ Q c => if sub P Q then
+        .disj (.conj (.predc P c) (.predc Q c)) (.conj (.neg (.predc P c)) (.predc Q c))
       else .predc Q c)
+
+section Reinterpret
 
 variable (sub : Pred → Pred → Prop) [DecidableRel sub] (P : Pred)
 
-/-- Reinterpretation at a variable atom. -/
-theorem reinterpret_pred (Q : Pred) (x : Var) :
-    reinterpret sub P (.pred Q x : Formula Var Const Pred) =
-      if sub P Q then
-        .disj (.conj (.pred P x) (.pred Q x))
-              (.conj (.neg (.pred P x)) (.pred Q x))
-      else .pred Q x :=
-  rfl
-
-/-- Reinterpretation at a constant atom. -/
-theorem reinterpret_predc (Q : Pred) (c : Const) :
-    reinterpret sub P (.predc Q c : Formula Var Const Pred) =
-      if sub P Q then
-        .disj (.conj (.predc P c) (.predc Q c))
-              (.conj (.neg (.predc P c)) (.predc Q c))
-      else .predc Q c :=
-  rfl
-
-/-- Reinterpretation preserves NE-freeness. -/
-theorem reinterpret_neFree {φ : Formula Var Const Pred}
-    (h : φ.NEFree) : (reinterpret sub P φ).NEFree :=
+/-- Reinterpretation stays in the NE-free fragment. -/
+theorem reinterpret_neFree {φ : Formula Var Const Pred} (h : φ.NEFree) :
+    (reinterpret sub P φ).NEFree :=
   h.mapAtoms
-    (fun Q x => by
+    (λ Q x => by
       show Formula.NEFree (if sub P Q then _ else _)
       split
-      · exact .disj (.conj (.pred _ _) (.pred _ _))
-          (.conj (.neg (.pred _ _)) (.pred _ _))
+      · exact .disj (within_neFree _ _ _) (without_neFree _ _ _)
       · exact .pred _ _)
-    (fun Q c => by
+    (λ Q c => by
       show Formula.NEFree (if sub P Q then _ else _)
       split
-      · exact .disj (.conj (.predc _ _) (.predc _ _))
-          (.conj (.neg (.predc _ _)) (.predc _ _))
+      · exact .disj (.conj (.predc _ _) (.predc _ _)) (.conj (.neg (.predc _ _)) (.predc _ _))
       · exact .predc _ _)
+
+/-- The reinterpreted want `□∃x‖Qx‖_P` is the disjunctive want. -/
+theorem reinterpret_nec_exi {Q : Pred} (h : sub P Q) (x : Var) :
+    reinterpret sub P (Formula.nec (.exi x (.pred Q x)) : Formula Var Const Pred) =
+      Formula.nec (.exi x (.disj (within P Q x) (without P Q x))) := by
+  simp [reinterpret, Formula.mapAtoms, Formula.nec, h]
 
 end Reinterpret
 
-/-! ### Substitution salva veritate
+/-! ### Substitution salva veritate, §4.3.2
 
-The classical equivalence of `Qx` and `(Px ∧ Qx) ∨ (¬Px ∧ Qx)` justifying
-reinterpretation ([yan-2023] §4.3.2) holds bilaterally in team semantics —
-for unenriched formulas. Under `[·]⁺` the two sides diverge: the enriched
-reinterpreted formula carries free-choice commitments the original does not. -/
+The classical equivalence of `Q x` and `(P x ∧ Q x) ∨ (¬P x ∧ Q x)` that licenses
+reinterpretation holds bilaterally in team semantics for unenriched formulas. -/
 
 section SalvaVeritate
 
-variable {W Var Domain Const Pred : Type*}
-variable [DecidableEq W]
-variable [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
+variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 variable (M : Model W Domain Const Pred)
 
-private theorem eval_iff_of_atom_pred (P Q : Pred) (x : Var) (b : Bool)
+private theorem eval_within_disj_without (P Q : Pred) (x : Var) (b : Bool)
     (s : Finset (Index W Var Domain)) :
-    eval M b (Formula.disj
-        (.conj (.pred P x) (.pred Q x))
-        (.conj (.neg (.pred P x)) (.pred Q x))) s ↔
-      eval M b (Formula.pred Q x) s := by
+    eval M b (Formula.disj (within P Q x) (without P Q x)) s ↔ eval M b (Formula.pred Q x) s := by
   classical
   cases b with
   | true =>
     constructor
-    · rintro ⟨t₁, t₂, hsplit, ⟨-, hQ₁⟩, ⟨-, hQ₂⟩⟩
-      intro i hi
+    · rintro ⟨t₁, t₂, hsplit, ⟨-, hQ₁⟩, ⟨-, hQ₂⟩⟩ i hi
       rw [← hsplit] at hi
-      rcases Finset.mem_union.mp hi with h | h
-      · exact hQ₁ i h
-      · exact hQ₂ i h
+      exact (Finset.mem_union.mp hi).elim (hQ₁ i) (hQ₂ i)
     · intro hQ
-      refine ⟨s.filter (fun i => ∀ d, i.assign x = some d →
-          M.relInterp₁ P i.world d),
-        s.filter (fun i => ¬ ∀ d, i.assign x = some d →
-          M.relInterp₁ P i.world d),
+      refine ⟨s.filter (λ i => ∀ d, i.assign x = some d → M.relInterp₁ P i.world d),
+        s.filter (λ i => ¬ ∀ d, i.assign x = some d → M.relInterp₁ P i.world d),
         Finset.filter_union_filter_not_eq _ s, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
       · intro i hi
         obtain ⟨his, hcond⟩ := Finset.mem_filter.mp hi
         obtain ⟨d, hd, -⟩ := hQ i his
         exact ⟨d, hd, hcond d hd⟩
-      · exact fun i hi => hQ i (Finset.mem_of_mem_filter i hi)
+      · exact λ i hi => hQ i (Finset.mem_of_mem_filter i hi)
       · intro i hi
-        obtain ⟨his, hncond⟩ := Finset.mem_filter.mp hi
+        obtain ⟨-, hncond⟩ := Finset.mem_filter.mp hi
         push Not at hncond
         exact hncond
-      · exact fun i hi => hQ i (Finset.mem_of_mem_filter i hi)
+      · exact λ i hi => hQ i (Finset.mem_of_mem_filter i hi)
   | false =>
     constructor
-    · rintro ⟨⟨t₁, t₂, hsplit₁, hnP, hnQ₁⟩, ⟨u₁, u₂, hsplit₂, hP, hnQ₂⟩⟩
-      intro i hi
+    · rintro ⟨⟨t₁, t₂, hsplit₁, hnP, hnQ₁⟩, ⟨u₁, u₂, hsplit₂, hP, hnQ₂⟩⟩ i hi
       rcases Finset.mem_union.mp (hsplit₁ ▸ hi) with hit₁ | hit₂
       · rcases Finset.mem_union.mp (hsplit₂ ▸ hi) with hiu₁ | hiu₂
         · obtain ⟨d, hd, hnp⟩ := hnP i hit₁
@@ -187,426 +158,367 @@ private theorem eval_iff_of_atom_pred (P Q : Pred) (x : Var) (b : Bool)
         · exact hnQ₂ i hiu₂
       · exact hnQ₁ i hit₂
     · intro h
-      exact ⟨⟨∅, s, splitsAs_empty_self s,
-          support_empty_of_neFree (.neg (.pred P x)) M, h⟩,
-        ⟨∅, s, splitsAs_empty_self s,
-          support_empty_of_neFree (.pred P x) M, h⟩⟩
+      exact ⟨⟨∅, s, Team.splitsAs_empty_self s, support_empty_of_neFree (.neg (.pred P x)) M, h⟩,
+        ⟨∅, s, Team.splitsAs_empty_self s, support_empty_of_neFree (.pred P x) M, h⟩⟩
 
-private theorem eval_iff_of_atom_predc (P Q : Pred) (c : Const) (b : Bool)
+private theorem eval_predc_disj (P Q : Pred) (c : Const) (b : Bool)
     (s : Finset (Index W Var Domain)) :
-    eval M b (Formula.disj
-        (.conj (.predc P c) (.predc Q c))
+    eval M b (Formula.disj (.conj (.predc P c) (.predc Q c))
         (.conj (.neg (.predc P c)) (.predc Q c))) s ↔
       eval M b (Formula.predc Q c) s := by
   classical
   cases b with
   | true =>
     constructor
-    · rintro ⟨t₁, t₂, hsplit, ⟨-, hQ₁⟩, ⟨-, hQ₂⟩⟩
-      intro i hi
+    · rintro ⟨t₁, t₂, hsplit, ⟨-, hQ₁⟩, ⟨-, hQ₂⟩⟩ i hi
       rw [← hsplit] at hi
-      rcases Finset.mem_union.mp hi with h | h
-      · exact hQ₁ i h
-      · exact hQ₂ i h
+      exact (Finset.mem_union.mp hi).elim (hQ₁ i) (hQ₂ i)
     · intro hQ
-      refine ⟨s.filter (fun i => M.relInterp₁ P i.world (M.constInterp c i.world)),
-        s.filter (fun i => ¬ M.relInterp₁ P i.world (M.constInterp c i.world)),
+      refine ⟨s.filter (λ i => M.relInterp₁ P i.world (M.constInterp c i.world)),
+        s.filter (λ i => ¬ M.relInterp₁ P i.world (M.constInterp c i.world)),
         Finset.filter_union_filter_not_eq _ s, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
-      · exact fun i hi => (Finset.mem_filter.mp hi).2
-      · exact fun i hi => hQ i (Finset.mem_of_mem_filter i hi)
-      · exact fun i hi => (Finset.mem_filter.mp hi).2
-      · exact fun i hi => hQ i (Finset.mem_of_mem_filter i hi)
+      · exact λ i hi => (Finset.mem_filter.mp hi).2
+      · exact λ i hi => hQ i (Finset.mem_of_mem_filter i hi)
+      · exact λ i hi => (Finset.mem_filter.mp hi).2
+      · exact λ i hi => hQ i (Finset.mem_of_mem_filter i hi)
   | false =>
     constructor
-    · rintro ⟨⟨t₁, t₂, hsplit₁, hnP, hnQ₁⟩, ⟨u₁, u₂, hsplit₂, hP, hnQ₂⟩⟩
-      intro i hi
+    · rintro ⟨⟨t₁, t₂, hsplit₁, hnP, hnQ₁⟩, ⟨u₁, u₂, hsplit₂, hP, hnQ₂⟩⟩ i hi
       rcases Finset.mem_union.mp (hsplit₁ ▸ hi) with hit₁ | hit₂
       · rcases Finset.mem_union.mp (hsplit₂ ▸ hi) with hiu₁ | hiu₂
         · exact absurd (hP i hiu₁) (hnP i hit₁)
         · exact hnQ₂ i hiu₂
       · exact hnQ₁ i hit₂
     · intro h
-      exact ⟨⟨∅, s, splitsAs_empty_self s,
-          support_empty_of_neFree (.neg (.predc P c)) M, h⟩,
-        ⟨∅, s, splitsAs_empty_self s,
-          support_empty_of_neFree (.predc P c) M, h⟩⟩
+      exact ⟨⟨∅, s, Team.splitsAs_empty_self s, support_empty_of_neFree (.neg (.predc P c)) M, h⟩,
+        ⟨∅, s, Team.splitsAs_empty_self s, support_empty_of_neFree (.predc P c) M, h⟩⟩
 
-/-- **Substitution salva veritate** ([yan-2023] §4.3.2): reinterpretation
-    is bilaterally equivalent to the original — `∥φ∥_P` and `φ` are
-    supported and anti-supported by exactly the same states. This is the
-    team-semantic form of the classical equivalence
-    `∀x Qx ≡ ∀x((Qx ∧ Px) ∨ (Qx ∧ ¬Px))` the paper invokes to license
-    reinterpretation. Holds for any `sub` and any formula (the paper's
-    conditions on `sub` — sub-predicatehood, salience — govern felicity,
-    not truth); `eval_mapAtoms_iff` reduces it to the two atom
-    equivalences. -/
-theorem eval_reinterpret_iff (sub : Pred → Pred → Prop) [DecidableRel sub]
-    (P : Pred) (φ : Formula Var Const Pred) (b : Bool)
-    (s : Finset (Index W Var Domain)) :
-    eval M b (reinterpret sub P φ) s ↔ eval M b φ s :=
+variable (sub : Pred → Pred → Prop) [DecidableRel sub] (P : Pred) (φ : Formula Var Const Pred)
+  (s : Finset (Index W Var Domain))
+
+/-- Reinterpretation is bilaterally equivalent to the original: `‖φ‖_P` and `φ` are
+supported and anti-supported by the same states, for any `sub`, since the sub-predicate and
+salience conditions govern felicity rather than truth. -/
+theorem eval_reinterpret_iff (b : Bool) : eval M b (reinterpret sub P φ) s ↔ eval M b φ s :=
   eval_mapAtoms_iff M
-    (fun Q x b s => by
+    (λ Q x b s => by
       show eval M b (if sub P Q then _ else _) s ↔ _
       split
-      · exact eval_iff_of_atom_pred M P Q x b s
+      · exact eval_within_disj_without M P Q x b s
       · exact Iff.rfl)
-    (fun Q c b s => by
+    (λ Q c b s => by
       show eval M b (if sub P Q then _ else _) s ↔ _
       split
-      · exact eval_iff_of_atom_predc M P Q c b s
+      · exact eval_predc_disj M P Q c b s
       · exact Iff.rfl)
     φ b s
 
-/-- Support is invariant under reinterpretation. -/
-theorem support_reinterpret_iff (sub : Pred → Pred → Prop) [DecidableRel sub]
-    (P : Pred) (φ : Formula Var Const Pred)
-    (s : Finset (Index W Var Domain)) :
-    support M (reinterpret sub P φ) s ↔ support M φ s :=
-  eval_reinterpret_iff M sub P φ true s
+theorem support_reinterpret_iff : support M (reinterpret sub P φ) s ↔ support M φ s :=
+  eval_reinterpret_iff M sub P φ s true
 
-/-- Anti-support is invariant under reinterpretation. -/
-theorem antiSupport_reinterpret_iff (sub : Pred → Pred → Prop)
-    [DecidableRel sub] (P : Pred) (φ : Formula Var Const Pred)
-    (s : Finset (Index W Var Domain)) :
+theorem antiSupport_reinterpret_iff :
     antiSupport M (reinterpret sub P φ) s ↔ antiSupport M φ s :=
-  eval_reinterpret_iff M sub P φ false s
+  eval_reinterpret_iff M sub P φ s false
 
 end SalvaVeritate
 
-/-! ### Ross's paradox under desire
+/-! ### Monotonicity, free choice and blocking, §4.4.3
 
-"John wants to send the letter. ⇒ John wants to send the letter or burn
-it." ([yan-2023] §4.1.3, after [crnic-2011]; deontic original
-[ross-1944].) The monotonic step is semantically valid (`ross_monotone`,
-the `[Want]A ⇒ [Want](A ∨ B)` mode of [yan-2023] Table 4.1, classified
-semantically valid in §4.4.3); the paradoxical "ok to burn" follows by
-□-FC only from the *enriched* disjunctive premise (`ross_fc`), which the
-agent's actual desire state supports the premise of (`ross_premise`) but
-not the enriched conclusion (`ross_blocked`) — the paper's Figure 4.2.
-Enrichment placement follows Fact 13's official wide form `[□(· ∨ ·)]⁺`
-rather than the figures' elliptical `□[· ∨ ·]⁺`. -/
+The pattern of Figures 4.2 and 4.3 on an arbitrary model: the monotonic step is valid, the
+enriched conclusion yields the unwanted possibility by □-free choice, and a desire state whose
+accessible worlds contain no instance of the unwanted disjunct supports the enriched premise
+but not the enriched conclusion. -/
 
-/-- Ross-paradox predicates: sending and burning the letter. -/
-inductive RossPred | send | burn
+section Pattern
+
+variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
+variable (M : Model W Domain Const Pred) {s : Finset (Index W Var Domain)}
+
+/-- Disjunction introduction under *want*, the mode of Ross's paradox in Table 4.1. -/
+theorem nec_disj_intro {α β : Formula Var Const Pred} (hβ : β.NEFree)
+    (h : support M α.nec s) : support M (Formula.disj α β).nec s :=
+  support_nec_mono M (λ _ => support_disj_inl M hβ) h
+
+/-- Conjunction elimination under *want* and ∃, the mode of Asher's and Heim's puzzles in
+Table 4.1. -/
+theorem nec_exi_within_mono {P Q : Pred} {x : Var}
+    (h : support M (Formula.nec (.exi x (within P Q x))) s) :
+    support M (Formula.nec (.exi x (.pred Q x))) s :=
+  support_nec_mono M (λ _ h' => by obtain ⟨hf, hne, hs⟩ := h'; exact ⟨hf, hne, hs.2⟩) h
+
+/-- Free choice from the enriched reinterpreted want, (14) and (27): the agent is ok with `Q`
+within `P` and with `Q` outside `P`. -/
+theorem fc_of_reinterpret {sub : Pred → Pred → Prop} [DecidableRel sub] {P Q : Pred} {x : Var}
+    (hsub : sub P Q)
+    (h : support M (Formula.enrich (reinterpret sub P (Formula.nec (.exi x (.pred Q x))))) s) :
+    support M (.poss (.exi x (within P Q x))) s ∧
+      support M (.poss (.exi x (without P Q x))) s := by
+  rw [reinterpret_nec_exi sub P hsub] at h
+  exact boxExiFC M (within_neFree _ _ _) (without_neFree _ _ _) h
+
+/-- The enriched want of a constant atom is supported at a nonempty state each of whose
+indices sees some world, all of them verifying the atom. -/
+theorem support_enrich_nec_predc {A : Pred} {c : Const} (hs : s.Nonempty)
+    (hacc : ∀ i ∈ s, (M.access i.world).Nonempty)
+    (hA : ∀ i ∈ s, ∀ w ∈ M.access i.world, M.relInterp₁ A w (M.constInterp c w)) :
+    support M (Formula.enrich (Formula.nec (.predc A c))) s := by
+  rw [support_enrich_nec_iff]
+  refine ⟨λ i hi => ⟨λ j hj => hA i hi j.world (State.mem_modalLift.mp hj).1, ?_⟩, hs⟩
+  obtain ⟨w, hw⟩ := hacc i hi
+  exact ⟨(w, i.assign), State.mem_modalLift.mpr ⟨hw, rfl⟩⟩
+
+/-- The enriched disjunctive want `[□(A c ∨ B c)]⁺` is unsupported at a nonempty state none
+of whose accessible worlds verifies `B c`. -/
+theorem not_support_enrich_nec_disj {A B : Pred} {c : Const} (hs : s.Nonempty)
+    (hB : ∀ i ∈ s, ∀ w ∈ M.access i.world, ¬ M.relInterp₁ B w (M.constInterp c w)) :
+    ¬ support M (Formula.enrich (Formula.nec (.disj (.predc A c) (.predc B c)))) s := by
+  intro h
+  obtain ⟨i, hi⟩ := hs
+  obtain ⟨X, hX, ⟨w, hw⟩, hsupp⟩ := (boxFC M (.predc _ _) (.predc _ _) h).2 i hi
+  exact hB i hi w (hX hw) (hsupp (w, i.assign) (State.mem_modalLift.mpr ⟨hw, rfl⟩))
+
+/-- The enriched want `[□∃x(P x ∧ Q x)]⁺` is supported at a nonempty state each of whose
+indices sees some world, all of them holding an individual that is `P` and `Q`. -/
+theorem support_enrich_nec_exi_within {P Q : Pred} {x : Var} (hs : s.Nonempty)
+    (hacc : ∀ i ∈ s, (M.access i.world).Nonempty)
+    (hPQ : ∀ i ∈ s, ∀ w ∈ M.access i.world, ∃ d, M.relInterp₁ P w d ∧ M.relInterp₁ Q w d) :
+    support M (Formula.enrich (Formula.nec (.exi x (within P Q x)))) s := by
+  classical
+  rw [support_enrich_nec_iff]
+  refine ⟨λ i hi => ?_, hs⟩
+  obtain ⟨w₀, hw₀⟩ := hacc i hi
+  have hL : (State.modalLift (M.access i.world) i.assign).Nonempty :=
+    ⟨(w₀, i.assign), State.mem_modalLift.mpr ⟨hw₀, rfl⟩⟩
+  set hf : Index W Var Domain → Finset Domain :=
+    λ j => Finset.univ.filter (λ d => M.relInterp₁ P j.world d ∧ M.relInterp₁ Q j.world d)
+  have hfne : ∀ j ∈ State.modalLift (M.access i.world) i.assign, (hf j).Nonempty := by
+    intro j hj
+    obtain ⟨d, hd⟩ := hPQ i hi j.world (State.mem_modalLift.mp hj).1
+    exact ⟨d, by simp [hf, hd]⟩
+  have hext : (State.extendFunctional (State.modalLift (M.access i.world) i.assign) x
+      hf).Nonempty := by
+    obtain ⟨j, hj⟩ := hL
+    obtain ⟨d, hd⟩ := hfne j hj
+    exact ⟨j.update x d, State.mem_extendFunctional.mpr ⟨j, hj, d, hd, rfl⟩⟩
+  refine ⟨⟨hf, hfne, ⟨⟨λ j' hj' => ?_, hext⟩, ⟨λ j' hj' => ?_, hext⟩⟩, hext⟩, hL⟩
+  · obtain ⟨j, -, d, hd, rfl⟩ := State.mem_extendFunctional.mp hj'
+    exact ⟨d, by simp, ((Finset.mem_filter.mp hd).2).1⟩
+  · obtain ⟨j, -, d, hd, rfl⟩ := State.mem_extendFunctional.mp hj'
+    exact ⟨d, by simp, ((Finset.mem_filter.mp hd).2).2⟩
+
+/-- The enriched premise supports the enriched unreinterpreted conclusion: the same witnesses
+serve `[□∃x Q x]⁺`. -/
+theorem support_enrich_nec_exi_pred_of_within {P Q : Pred} {x : Var}
+    (h : support M (Formula.enrich (Formula.nec (.exi x (within P Q x)))) s) :
+    support M (Formula.enrich (Formula.nec (.exi x (.pred Q x)))) s := by
+  rw [support_enrich_nec_iff] at h ⊢
+  refine ⟨λ i hi => ?_, h.2⟩
+  obtain ⟨⟨hf, hfne, ⟨⟨-, hQ⟩, -⟩⟩, hL⟩ := h.1 i hi
+  exact ⟨⟨hf, hfne, hQ⟩, hL⟩
+
+/-- The enriched reinterpreted want `[□∃x‖Q x‖_P]⁺` is unsupported at a nonempty state whose
+accessible worlds have every `Q` within `P`: by free choice it would need an accessible `Q`
+outside `P`. -/
+theorem not_support_enrich_reinterpret {sub : Pred → Pred → Prop} [DecidableRel sub]
+    {P Q : Pred} {x : Var} (hsub : sub P Q) (hs : s.Nonempty)
+    (hPQ : ∀ i ∈ s, ∀ w ∈ M.access i.world, ∀ d, M.relInterp₁ Q w d → M.relInterp₁ P w d) :
+    ¬ support M (Formula.enrich (reinterpret sub P (Formula.nec (.exi x (.pred Q x))))) s := by
+  intro h
+  obtain ⟨i, hi⟩ := hs
+  obtain ⟨X, hX, ⟨w, hw⟩, hf, hfne, hs'⟩ := (fc_of_reinterpret M hsub h).2 i hi
+  have hj : ((w, i.assign) : Index W Var Domain) ∈ State.modalLift X i.assign :=
+    State.mem_modalLift.mpr ⟨hw, rfl⟩
+  obtain ⟨d, hd⟩ := hfne _ hj
+  have hjd : Index.update (w, i.assign) x d ∈
+      State.extendFunctional (State.modalLift X i.assign) x hf :=
+    State.mem_extendFunctional.mpr ⟨_, hj, d, hd, rfl⟩
+  obtain ⟨d₁, hd₁, hnP⟩ := hs'.1 _ hjd
+  obtain ⟨d₂, hd₂, hQ⟩ := hs'.2 _ hjd
+  simp at hd₁ hd₂
+  subst hd₁ hd₂
+  exact hnP (hPQ i hi w (hX hw) d hQ)
+
+end Pattern
+
+/-! ### Ross's paradox under desire, (3), (26), Figure 4.2 -/
+
+/-- Sending and burning the letter. -/
+inductive RossPred
+  | send | burn
   deriving DecidableEq, Repr
 
-/-- `SEND a`: the letter is sent (constant atom; `a` is the letter). -/
+/-- `SEND a`, with the constant `a` the letter. -/
 def sendL : Formula QVar Unit RossPred := .predc .send ()
 
-/-- `BURN a`: the letter is burnt. -/
+/-- `BURN a`. -/
 def burnL : Formula QVar Unit RossPred := .predc .burn ()
 
-theorem sendL_neFree : sendL.NEFree := .predc _ _
-theorem burnL_neFree : burnL.NEFree := .predc _ _
-
-/-- John's bouletic state: a single desire-world where the letter is sent
-    and not burnt, reflexively accessible. -/
+/-- John's desire state: one desire world, reflexively accessible, where the letter is sent and
+not burnt. -/
 def rossModel : Model Unit Unit Unit RossPred :=
   .ofMonadic (λ _ => {()}) (λ _ _ => ()) (λ _ P _ => P = RossPred.send)
 
-/-- The Ross evaluation state: the single desire-world with the empty
-    assignment. -/
-def rossState : Finset (Index Unit QVar Unit) := {((), fun _ => none)}
+/-- The desire world with the empty assignment. -/
+def rossState : Finset (Index Unit QVar Unit) := {((), λ _ => none)}
 
-/-- **Semantic validity of the monotonic step**:
-    `□SEND a ⊨ □(SEND a ∨ BURN a)` — disjunction introduction under the
-    bouletic `□` (`support_disj_inl` + `support_nec_mono`). -/
-theorem ross_monotone {s : Finset (Index Unit QVar Unit)}
-    (h : support rossModel sendL.nec s) :
+/-- The monotonic step (26a) to (26b) is semantically valid. -/
+theorem ross_monotone {s : Finset (Index Unit QVar Unit)} (h : support rossModel sendL.nec s) :
     support rossModel (sendL.disj burnL).nec s :=
-  support_nec_mono rossModel
-    (fun _ ht => support_disj_inl rossModel burnL_neFree ht) h
+  nec_disj_intro rossModel (.predc _ _) h
 
-/-- **Pragmatic validity of the FC step** ([yan-2023] (26), instance of
-    Fact 13): `[□(SEND a ∨ BURN a)]⁺ ⊨ ◇SEND a ∧ ◇BURN a` — from the
-    enriched disjunctive want, both "it is ok to send" and the paradoxical
-    "it is ok to burn". Direct instance of `boxFC`. -/
+/-- From the enriched disjunctive want, it is ok to send, (26c), and ok to burn, (26d). -/
 theorem ross_fc {s : Finset (Index Unit QVar Unit)}
     (h : support rossModel (Formula.enrich (sendL.disj burnL).nec) s) :
     support rossModel (.poss sendL) s ∧ support rossModel (.poss burnL) s :=
-  boxFC rossModel sendL_neFree burnL_neFree h
+  boxFC rossModel (.predc _ _) (.predc _ _) h
 
-/-- The premise is assertable: John's desire state supports the enriched
-    `[□SEND a]⁺`. -/
-theorem ross_premise :
-    support rossModel (Formula.enrich sendL.nec) rossState := by
-  rw [support_enrich_nec_iff]
-  refine ⟨fun i _ => ⟨fun j _ => rfl, ?_⟩, Finset.singleton_nonempty _⟩
-  exact ⟨((), i.assign),
-    State.mem_modalLift.mpr ⟨Finset.mem_singleton_self _, rfl⟩⟩
+/-- The enriched premise `[□SEND a]⁺` is supported at John's desire state. -/
+theorem ross_premise : support rossModel (Formula.enrich sendL.nec) rossState :=
+  support_enrich_nec_predc rossModel (Finset.singleton_nonempty _)
+    (λ _ _ => Finset.singleton_nonempty _) (λ _ _ _ _ => rfl)
 
-/-- **The block** ([yan-2023] Figure 4.2): John's desire state does *not*
-    support the enriched disjunctive want `[□(SEND a ∨ BURN a)]⁺` — were it
-    assertable, □-FC would force an accessible burn-world, and there is
-    none. The paradox dissolves: `◇BURN a` is licensed only by a premise
-    the discourse never grants. -/
-theorem ross_blocked :
-    ¬ support rossModel
-      (Formula.enrich (sendL.disj burnL).nec) rossState := by
-  intro h
-  obtain ⟨-, hburn⟩ := ross_fc h
-  obtain ⟨X, hX, ⟨w, hw⟩, hsupp⟩ :=
-    hburn ((), fun _ => none) (Finset.mem_singleton_self _)
-  have hmem : ((w, fun _ => none) : Index Unit QVar Unit) ∈
-      State.modalLift X (fun _ => none) :=
-    State.mem_modalLift.mpr ⟨hw, rfl⟩
-  exact RossPred.noConfusion (hsupp _ hmem)
+/-- The enriched disjunctive want `[□(SEND a ∨ BURN a)]⁺` is not supported there: free choice
+would require an accessible burn world. -/
+theorem ross_blocked : ¬ support rossModel (Formula.enrich (sendL.disj burnL).nec) rossState :=
+  not_support_enrich_nec_disj rossModel (Finset.singleton_nonempty _)
+    (λ _ _ _ _ h => RossPred.noConfusion h)
 
-/-! ### Asher's puzzle
+/-! ### A desire model for a salient sub-predicate
 
-"Nicholas wants a free trip on the Concorde. ⇒ Nicholas wants a trip on
-the Concorde." ([heim-1992], reported from Asher; [yan-2023] §4.3.2.) No
-overt disjunction — the FC trigger is supplied by reinterpreting TRIP by
-its salient sub-predicate FREE-TRIP: `∥TRIP x∥ = (F ∧ T)x ∨ (¬F ∧ T)x`.
-The premise is `□∃x(Fx ∧ Tx)` — the paper's `◻∃xFREEx` unabbreviated, per
-its footnote treating the generalization as conjunction elimination
-(`TRIP(x) ∧ FREE(x) ⇒ TRIP(x)`) and its §4.5 gloss
-`[Want](FREE ∧ TRIP) ⇒ [Want]TRIP`; the unabbreviated form is also what
-makes the monotonic step QBSML-valid without a lexical meaning postulate.
-The paper's (27) displays use `FREE` elliptically for the subscripted
-`FREE_TRIP` form, so its conclusion `◊∃x¬FREEx` is our
-`◇∃x(¬Fx ∧ Tx)`. -/
+Nicholas wants a free trip, (1); I want to teach on Tuesdays, (2). At the desire world every
+predicate holds of the one individual; at the other world only the wanted predicate, so the
+sub-predicate's denotation is a proper subset globally. -/
 
-/-- Asher-puzzle predicates: being free and being a trip (on the
-    Concorde). -/
-inductive AsherPred | free | trip
+/-- `P` is a sub-predicate of `Q` in `M`: its denotation is a proper subset of `Q`'s. -/
+def IsSubPred (M : Model W Domain Const Pred) (P Q : Pred) : Prop :=
+  (∀ w d, M.relInterp₁ P w d → M.relInterp₁ Q w d) ∧
+    ∃ w d, M.relInterp₁ Q w d ∧ ¬ M.relInterp₁ P w d
+
+/-- The two-world desire model for the wanted predicate `Q`: only the desire world `true` is
+accessible; every predicate holds there and only `Q` at `false`. -/
+def desireModel (Q : Pred) : Model Bool Unit Unit Pred :=
+  .ofMonadic (λ _ => {true}) (λ _ _ => ()) (λ w P _ => P = Q ∨ w = true)
+
+/-- The desire world with the empty assignment. -/
+def desireState : Finset (Index Bool QVar Unit) := {(true, λ _ => none)}
+
+/-- Any other predicate is a sub-predicate of `Q` in `desireModel Q`. -/
+theorem isSubPred_desireModel {P Q : Pred} (h : P ≠ Q) : IsSubPred (desireModel Q) P Q :=
+  ⟨λ _ _ _ => Or.inl rfl, false, (), Or.inl rfl, λ h' => h'.elim h Bool.false_ne_true⟩
+
+/-- The enriched premise `[□∃x(P x ∧ Q x)]⁺` is supported at the desire state. -/
+theorem desireModel_premise (P Q : Pred) :
+    support (desireModel Q) (Formula.enrich (Formula.nec (.exi QVar.x (within P Q .x))))
+      desireState :=
+  support_enrich_nec_exi_within _ (Finset.singleton_nonempty _)
+    (λ _ _ => Finset.singleton_nonempty _)
+    (λ _ _ _ hw => ⟨(), Or.inr (Finset.mem_singleton.mp hw), Or.inr (Finset.mem_singleton.mp hw)⟩)
+
+/-- The enriched unreinterpreted conclusion `[□∃x Q x]⁺` is supported at the desire state. -/
+theorem desireModel_concl_enriched (P Q : Pred) :
+    support (desireModel Q) (Formula.enrich (Formula.nec (.exi QVar.x (.pred Q .x))))
+      desireState :=
+  support_enrich_nec_exi_pred_of_within _ (desireModel_premise P Q)
+
+/-- The enriched reinterpreted conclusion `[□∃x‖Q x‖_P]⁺` is not supported at the desire
+state: every `Q` in the desire world is `P`. The two classically equivalent conclusions part
+under enrichment. -/
+theorem desireModel_blocked {sub : Pred → Pred → Prop} [DecidableRel sub] {P Q : Pred}
+    (hsub : sub P Q) :
+    ¬ support (desireModel Q)
+      (Formula.enrich (reinterpret sub P (Formula.nec (.exi QVar.x (.pred Q .x))))) desireState :=
+  not_support_enrich_reinterpret _ hsub (Finset.singleton_nonempty _)
+    (λ _ _ _ hw _ _ => Or.inr (Finset.mem_singleton.mp hw))
+
+/-! ### Asher's puzzle, (1), (27), Figure 4.3 -/
+
+/-- Being free and being a trip on the Concorde. -/
+inductive AsherPred
+  | free | trip
   deriving DecidableEq, Repr
 
 /-- FREE is the contextually salient sub-predicate of TRIP. -/
-def subFree : AsherPred → AsherPred → Prop
-  | .free, .trip => True
-  | _, _ => False
+def subFree (P Q : AsherPred) : Prop := P = .free ∧ Q = .trip
 
-instance : DecidableRel subFree := fun a b =>
-  match a, b with
-  | .free, .trip => .isTrue trivial
-  | .free, .free => .isFalse id
-  | .trip, .free => .isFalse id
-  | .trip, .trip => .isFalse id
+instance : DecidableRel subFree := λ _ _ => inferInstanceAs (Decidable (_ ∧ _))
 
-/-- `Fx ∧ Tx`: a free trip. -/
-def freeTrip : Formula QVar Unit AsherPred :=
-  .conj (.pred .free .x) (.pred .trip .x)
+/-- Nicholas wants a free trip, `□∃x(FREE x ∧ TRIP x)`, (27a). -/
+abbrev asherPremise : Formula QVar Unit AsherPred := (Formula.exi .x (within .free .trip .x)).nec
 
-/-- `¬Fx ∧ Tx`: a non-free trip — the unwanted disjunct reinterpretation
-    introduces. -/
-def nonFreeTrip : Formula QVar Unit AsherPred :=
-  .conj (.neg (.pred .free .x)) (.pred .trip .x)
+/-- Nicholas wants a trip, `□∃x TRIP x`, (27b). -/
+abbrev asherConcl : Formula QVar Unit AsherPred := (Formula.exi .x (.pred .trip .x)).nec
 
-theorem freeTrip_neFree : freeTrip.NEFree := .conj (.pred _ _) (.pred _ _)
-theorem nonFreeTrip_neFree : nonFreeTrip.NEFree :=
-  .conj (.neg (.pred _ _)) (.pred _ _)
+/-- The side condition of Definition 32 holds globally. -/
+theorem asher_isSubPred : IsSubPred (desireModel AsherPred.trip) .free .trip :=
+  isSubPred_desireModel (by decide)
 
-/-- The premise `□∃x(Fx ∧ Tx)`: Nicholas wants a free trip. -/
-def asherPremise : Formula QVar Unit AsherPred :=
-  (Formula.exi .x freeTrip).nec
-
-/-- The conclusion `□∃xTx`: Nicholas wants a trip. -/
-def asherConcl : Formula QVar Unit AsherPred :=
-  (Formula.exi QVar.x (.pred .trip .x)).nec
-
-/-- Reinterpreting TRIP by FREE in the conclusion yields exactly the
-    disjunctive want `□∃x((F ∧ T)x ∨ (¬F ∧ T)x)` — definitional. -/
-theorem reinterpret_asherConcl :
-    reinterpret subFree .free asherConcl =
-      (Formula.exi QVar.x (.disj freeTrip nonFreeTrip)).nec := rfl
-
-section AsherGeneric
-
-variable {W Domain : Type*} [DecidableEq W] [DecidableEq Domain]
-  [Fintype Domain]
-
-/-- **Semantic validity of the monotonic step**: `□∃x(Fx ∧ Tx) ⊨ □∃xTx`
-    (conjunction elimination under `∃` under `□`), for any model. -/
-theorem asher_monotone (M : Model W Domain Unit AsherPred)
-    {s : Finset (Index W QVar Domain)}
+/-- The monotonic step (27a) to (27b) is semantically valid on any model. -/
+theorem asher_monotone {W Domain : Type*} [DecidableEq W] [DecidableEq Domain] [Fintype Domain]
+    (M : Model W Domain Unit AsherPred) {s : Finset (Index W QVar Domain)}
     (h : support M asherPremise s) : support M asherConcl s :=
-  support_nec_mono M
-    (fun _ h' => by
-      obtain ⟨hf, hne, hs⟩ := h'
-      exact ⟨hf, hne, hs.2⟩) h
+  nec_exi_within_mono M h
 
-/-- **The unwarranted inference** ([yan-2023] (27) and §4.4.3): the
-    *enriched reinterpreted* conclusion `[□∃x∥Tx∥_F]⁺` licenses, by
-    quantified □-FC, both "ok with a free trip" and "ok with a non-free
-    trip" — the latter being what makes the monotonic conclusion sound
-    wrong. -/
-theorem asher_fc (M : Model W Domain Unit AsherPred)
-    {s : Finset (Index W QVar Domain)}
-    (h : support M
-      (Formula.enrich (reinterpret subFree .free asherConcl)) s) :
-    support M (.poss (.exi QVar.x freeTrip)) s ∧
-    support M (.poss (.exi QVar.x nonFreeTrip)) s := by
-  rw [reinterpret_asherConcl] at h
-  exact boxExiFC M
-    freeTrip_neFree nonFreeTrip_neFree h
+/-- The enriched reinterpreted conclusion licenses being ok with a free trip, (27c), and with
+a non-free trip, (27d). -/
+theorem asher_fc {W Domain : Type*} [DecidableEq W] [DecidableEq Domain] [Fintype Domain]
+    (M : Model W Domain Unit AsherPred) {s : Finset (Index W QVar Domain)}
+    (h : support M (Formula.enrich (reinterpret subFree .free asherConcl)) s) :
+    support M (.poss (.exi .x (within .free .trip .x))) s ∧
+      support M (.poss (.exi .x (without .free .trip .x))) s :=
+  fc_of_reinterpret M ⟨rfl, rfl⟩ h
 
-end AsherGeneric
-
-/-- Nicholas's bouletic state against a two-world background: in the
-    desire-world `true` every trip is free; the non-desire world `false`
-    has a non-free trip; only the desire-world is bouletically
-    accessible. -/
-def asherModel : Model Bool Unit Unit AsherPred :=
-  .ofMonadic (λ _ => {true}) (λ _ _ => ()) (λ w P _ => P = .trip ∨ w = true)
-
-/-- The Asher evaluation state: the desire-world with the empty
-    assignment. -/
-def asherState : Finset (Index Bool QVar Unit) := {(true, fun _ => none)}
-
-/-- The paper's denotational side condition FREE ⊊ TRIP holds in the
-    global model: FREE ⊆ TRIP at every world, strictly at the non-desire
-    world. (In the desire-worlds themselves the inclusion is *not* strict —
-    necessarily so, since blocking requires no accessible non-free trip;
-    see `reinterpret`.) -/
-theorem asherModel_free_ssubset_trip :
-    (∀ w d, asherModel.relInterp₁ .free w d → asherModel.relInterp₁ .trip w d) ∧
-    ∃ w d, asherModel.relInterp₁ .trip w d ∧
-      ¬ asherModel.relInterp₁ .free w d :=
-  ⟨fun _ _ _ => Or.inl rfl,
-   false, (), Or.inl rfl, fun h => by
-     rcases h with h | h
-     · exact AsherPred.noConfusion h
-     · exact Bool.noConfusion h⟩
-
-/-- The premise is assertable: the desire state supports
-    `[□∃x(Fx ∧ Tx)]⁺`. -/
 theorem asher_premise :
-    support asherModel (Formula.enrich asherPremise) asherState := by
-  show support asherModel
-    (Formula.enrich (Formula.exi QVar.x freeTrip).nec) asherState
-  rw [support_enrich_nec_iff]
-  refine ⟨fun i _ => ?_, Finset.singleton_nonempty _⟩
-  have hLne : (State.modalLift {true} i.assign :
-      Finset (Index Bool QVar Unit)).Nonempty :=
-    ⟨(true, i.assign),
-      State.mem_modalLift.mpr ⟨Finset.mem_singleton_self _, rfl⟩⟩
-  have hext : (State.extendFunctional (State.modalLift {true} i.assign)
-      QVar.x (fun _ => {()})).Nonempty := by
-    obtain ⟨j, hj⟩ := hLne
-    exact ⟨j.update QVar.x (),
-      State.mem_extendFunctional.mpr
-        ⟨j, hj, (), Finset.mem_singleton_self _, rfl⟩⟩
-  have hpt : ∀ P : AsherPred, ∀ j ∈ State.extendFunctional
-      (State.modalLift {true} i.assign) QVar.x (fun _ => ({()} : Finset Unit)),
-      ∃ d, j.assign QVar.x = some d ∧ asherModel.relInterp₁ P j.world d := by
-    intro P j hj
-    obtain ⟨i', hi', d, -, rfl⟩ := State.mem_extendFunctional.mp hj
-    exact ⟨d, by simp,
-      Or.inr (Finset.mem_singleton.mp (State.mem_modalLift.mp hi').1)⟩
-  refine ⟨⟨fun _ => {()}, fun _ _ => Finset.singleton_nonempty _, ?_⟩, hLne⟩
-  exact ⟨⟨⟨hpt .free, hext⟩, ⟨hpt .trip, hext⟩⟩, hext⟩
+    support (desireModel AsherPred.trip) (Formula.enrich asherPremise) desireState :=
+  desireModel_premise _ _
 
-/-- **The block** ([yan-2023] Figure 4.3): the desire state does *not*
-    support the enriched reinterpreted conclusion `[□∃x∥Tx∥_F]⁺` — by
-    `asher_fc` it would force an accessible non-free-trip witness, and all
-    trips in Nicholas's desire-worlds are free. "Ok with a non-free trip"
-    is licensed only by a premise the discourse never grants. -/
-theorem asher_blocked :
-    ¬ support asherModel
-      (Formula.enrich (reinterpret subFree .free asherConcl))
-      asherState := by
-  intro h
-  obtain ⟨-, hnf⟩ := asher_fc asherModel h
-  obtain ⟨X, hX, ⟨w, hw⟩, hsupp⟩ :=
-    hnf (true, fun _ => none) (Finset.mem_singleton_self _)
-  obtain ⟨hf, hfne, hs⟩ := hsupp
-  have hmem : ((w, fun _ => none) : Index Bool QVar Unit) ∈
-      State.modalLift X (fun _ => none) :=
-    State.mem_modalLift.mpr ⟨hw, rfl⟩
-  obtain ⟨d, hd⟩ := hfne _ hmem
-  have hjmem : Index.update ((w, fun _ => none) : Index Bool QVar Unit)
-      QVar.x d ∈
-      State.extendFunctional (State.modalLift X (fun _ => none))
-        QVar.x hf :=
-    State.mem_extendFunctional.mpr ⟨_, hmem, d, hd, rfl⟩
-  obtain ⟨d', -, hnp⟩ := hs.1 _ hjmem
-  exact hnp (Or.inr (Finset.mem_singleton.mp (hX hw)))
-
-/-- **Reinterpretation is pragmatically non-vacuous** ([yan-2023] §4.4.3:
-    "it is possible to have a counterexample where `[∃xQx]⁺` is supported
-    but `[∃x((Px ∨ ¬Px) ∧ Qx)]⁺` is not" — displayed there with the
-    `(Px ∨ ¬Px) ∧ Qx` shape rather than Definition 32's). The
-    unreinterpreted enriched conclusion `[□∃xTx]⁺` is supported at the
-    state where `asher_blocked` refutes the enriched reinterpreted form: the
-    two classically equivalent formulas (`eval_reinterpret_iff`) come apart
-    under `[·]⁺`. -/
 theorem asher_concl_enriched :
-    support asherModel (Formula.enrich asherConcl) asherState := by
-  show support asherModel
-    (Formula.enrich (Formula.exi QVar.x (.pred .trip .x)).nec)
-    asherState
-  rw [support_enrich_nec_iff]
-  refine ⟨fun i _ => ?_, Finset.singleton_nonempty _⟩
-  have hLne : (State.modalLift {true} i.assign :
-      Finset (Index Bool QVar Unit)).Nonempty :=
-    ⟨(true, i.assign),
-      State.mem_modalLift.mpr ⟨Finset.mem_singleton_self _, rfl⟩⟩
-  have hext : (State.extendFunctional (State.modalLift {true} i.assign)
-      QVar.x (fun _ => {()})).Nonempty := by
-    obtain ⟨j, hj⟩ := hLne
-    exact ⟨j.update QVar.x (),
-      State.mem_extendFunctional.mpr
-        ⟨j, hj, (), Finset.mem_singleton_self _, rfl⟩⟩
-  refine ⟨⟨fun _ => {()}, fun _ _ => Finset.singleton_nonempty _, ?_, hext⟩,
-    hLne⟩
-  intro j hj
-  obtain ⟨i', -, d, -, rfl⟩ := State.mem_extendFunctional.mp hj
-  exact ⟨d, by simp, Or.inl rfl⟩
+    support (desireModel AsherPred.trip) (Formula.enrich asherConcl) desireState :=
+  desireModel_concl_enriched .free _
 
-/-! ### Heim's example
+/-- Nicholas's desire state supports the enriched premise but not the enriched reinterpreted
+conclusion: being ok with a non-free trip is licensed only by a premise never granted. -/
+theorem asher_blocked :
+    ¬ support (desireModel AsherPred.trip)
+      (Formula.enrich (reinterpret subFree .free asherConcl)) desireState :=
+  desireModel_blocked ⟨rfl, rfl⟩
 
-"I want to teach on Tuesdays next semester. ⇒ I want to teach next
-semester." ([heim-1992]; [yan-2023] §4.3.3.) Same shape as Asher's puzzle:
-TEACH is reinterpreted by its salient sub-predicate TEACH-ON-TUESDAY, and
-quantified □-FC then licenses the unjustified "ok to teach on non-Tuesdays".
-The paper omits the rest of the derivation as parallel to Asher's
-(§4.4.3); the blocking countermodel is that of `asher_blocked`. The paper also
-sketches an alternative
-◊-FC route via the conditional-desire rephrasing of the example (its
-(17)–(18)); that variant is not formalized here. -/
+/-! ### Heim's example, (2), (15)–(16)
 
-/-- Heim-example predicates: being on Tuesday and being a teaching (next
-    semester). -/
-inductive HeimPred | tuesday | teach
+TEACH is reinterpreted by its salient sub-predicate teaching on Tuesday; the paper leaves the
+derivation as parallel to Asher's. -/
+
+/-- Being on Tuesday and being a teaching next semester. -/
+inductive HeimPred
+  | tuesday | teach
   deriving DecidableEq, Repr
 
 /-- TUESDAY is the contextually salient sub-predicate of TEACH. -/
-def subTuesday : HeimPred → HeimPred → Prop
-  | .tuesday, .teach => True
-  | _, _ => False
+def subTuesday (P Q : HeimPred) : Prop := P = .tuesday ∧ Q = .teach
 
-instance : DecidableRel subTuesday := fun a b =>
-  match a, b with
-  | .tuesday, .teach => .isTrue trivial
-  | .tuesday, .tuesday => .isFalse id
-  | .teach, .tuesday => .isFalse id
-  | .teach, .teach => .isFalse id
+instance : DecidableRel subTuesday := λ _ _ => inferInstanceAs (Decidable (_ ∧ _))
 
-/-- `TUEx ∧ TEACHx`: a Tuesday teaching. -/
-def tuesdayTeach : Formula QVar Unit HeimPred :=
-  .conj (.pred .tuesday .x) (.pred .teach .x)
+/-- I want to teach next semester, `□∃x TEACH x`, (15b). -/
+abbrev heimConcl : Formula QVar Unit HeimPred := (Formula.exi .x (.pred .teach .x)).nec
 
-/-- `¬TUEx ∧ TEACHx`: a non-Tuesday teaching. -/
-def nonTuesdayTeach : Formula QVar Unit HeimPred :=
-  .conj (.neg (.pred .tuesday .x)) (.pred .teach .x)
+/-- The enriched reinterpreted conclusion licenses being ok with teaching on a non-Tuesday,
+(16c). -/
+theorem heim_fc {W Domain : Type*} [DecidableEq W] [DecidableEq Domain] [Fintype Domain]
+    (M : Model W Domain Unit HeimPred) {s : Finset (Index W QVar Domain)}
+    (h : support M (Formula.enrich (reinterpret subTuesday .tuesday heimConcl)) s) :
+    support M (.poss (.exi .x (within .tuesday .teach .x))) s ∧
+      support M (.poss (.exi .x (without .tuesday .teach .x))) s :=
+  fc_of_reinterpret M ⟨rfl, rfl⟩ h
 
-/-- The conclusion `□∃x TEACHx`: I want to teach next semester. -/
-def heimConcl : Formula QVar Unit HeimPred :=
-  (Formula.exi QVar.x (.pred .teach .x)).nec
+theorem heim_premise :
+    support (desireModel HeimPred.teach)
+      (Formula.enrich (Formula.nec (.exi QVar.x (within .tuesday .teach .x)))) desireState :=
+  desireModel_premise _ _
 
-/-- **The unwarranted inference** ([yan-2023] §4.4.3, "Reinterpretation of
-    TEACH"): the enriched reinterpreted conclusion `[□∃x∥TEACHx∥_TUE]⁺`
-    licenses "ok to teach on a non-Tuesday" by quantified □-FC. -/
-theorem heim_fc {W Domain : Type*} [DecidableEq W] [DecidableEq Domain]
-    [Fintype Domain] (M : Model W Domain Unit HeimPred)
-    {s : Finset (Index W QVar Domain)}
-    (h : support M
-      (Formula.enrich (reinterpret subTuesday .tuesday heimConcl)) s) :
-    support M (.poss (.exi QVar.x tuesdayTeach)) s ∧
-    support M (.poss (.exi QVar.x nonTuesdayTeach)) s :=
-  boxExiFC M
-    (.conj (.pred _ _) (.pred _ _))
-    (.conj (.neg (.pred _ _)) (.pred _ _)) h
+/-- The desire state of a speaker who teaches only on Tuesdays supports the enriched premise
+(15a) but not the enriched reinterpreted conclusion. -/
+theorem heim_blocked :
+    ¬ support (desireModel HeimPred.teach)
+      (Formula.enrich (reinterpret subTuesday .tuesday heimConcl)) desireState :=
+  desireModel_blocked ⟨rfl, rfl⟩
 
 end Yan2023
