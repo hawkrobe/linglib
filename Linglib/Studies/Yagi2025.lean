@@ -1,881 +1,450 @@
+import Mathlib.Tactic.FinCases
+import Mathlib.Data.Fintype.Basic
 import Linglib.Semantics.Presupposition.Trivalent
 import Linglib.Logic.Trivalent.Prop3
 import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
-import Linglib.Semantics.Dynamic.Partial
-import Linglib.Studies.Geurts2005
-import Linglib.Semantics.Presupposition.Basic
-import Mathlib.Tactic.DeriveFintype
+import Linglib.Data.Examples.Yagi2025
 
 /-!
-# Conflicting Presuppositions in Disjunction
-[yagi-2025]
+# Yagi (2025): Conflicting Presuppositions in Disjunction
 
-Squib-replication of [yagi-2025] (S&P 18:7) on disjunctions
-`φ_p ∨ ψ_q` with `p ∧ q = ⊥`. Yagi argues:
+This file formalizes [yagi-2025]'s survey of disjunctions whose disjuncts carry contradictory
+presuppositions (`Conflict`), *Either the King of Buganda is opening parliament or the
+President of Buganda is conducting the ceremony*. Such a disjunction presupposes the
+disjunction of the two presuppositions and is false when that holds and both disjuncts are
+false. Four theories fail the second observation. Under Strong Kleene disjunction the sentence
+is true whenever defined, so it is never false and its negation never true
+(`orStrong_ne_false`, `neg_orStrong_ne_true`); the symmetric two-dimensional definition of
+[karttunen-peters-1979] has a presupposition that entails the assertion
+(`orKPSymmetric_ne_false`), and replacing it by the disjunction of the presuppositions
+(`orSeven`) fixes the case but predicts a tautologous presupposition for *either baldness is
+not hereditary or all of Bill's children are bald* (`orSeven_presup_of_left`); the update
+of [heim-1982] and [beaver-2001], with failure as a designated state, is defined only when the
+first disjunct already holds throughout the input, so it is uninformative wherever defined
+(`disjS_eq_some_iff`); and the local contexts of [schlenker-2009] admit only worlds where one
+disjunct is defined and true (`local_contexts_force_truth`). Of the two reactions, the
+meta-assertion operator of [beaver-krahmer-2001] makes the disjunction false, but also where
+neither presupposition holds, and leaves it presuppositionless (`or_assertMeta_false_iff`,
+`or_assertMeta_presup`); inserting it on one disjunct under Strong Kleene yields only a
+conditional presupposition (`orStrong_assertMeta_presup_iff`). Flexible accommodation splits
+the input by two accommodated propositions (`flexS`). With the default tautologies it is
+never defined under conflict (`flexS_top_eq_none`) and violates genuineness when a
+presupposition contradicts the other disjunct (`not_genuine_top`); accommodating each
+disjunct's negated rival presupposition derives both observations (`flexS_split_eq_some_iff`,
+`negOf_flexS_split`), at the cost of demanding accommodation where the standard update
+filters the presupposition away (`exists_disjS_some_flexS_top_none`).
 
-  (2a) the disjunction presupposes `p ∨ q`;
-  (2b) it can be false (when both disjuncts are false).
+## Implementation notes
 
-§2 surveys four projection theories — Strong Kleene, two-dimensional
-[karttunen-peters-1979], dynamic update ([heim-1982],
-[veltman-1996], [beaver-2001]), and [schlenker-2009]'s
-local contexts — each failing (2b). §3 considers two reactions:
-[beaver-krahmer-2001]'s 𝒜-operator (loses presupposition),
-and [geurts-2005]'s flexible accommodation (captures (2a–b) at the
-cost of an underspecified accommodation mechanism that interacts oddly
-with negation, and at the cost of overgenerating non-projection in
-non-conflicting cases like (18)).
+The designated undefined state of the update semantics is `none` on `Option (State W)`, with
+union and subtraction absorbing it. The meta-assertion operator is stated on partial
+propositions and agrees with the trivalent `Prop3.metaAssert` (`eval_assertMeta`). The
+licensing constraint on the operator is not modelled.
 
-[aloni-2022]'s bilateral state semantics is a substantively
-different account that also delivers a "split" disjunction; we mention
-it here because Yagi cites it alongside Geurts as a flexible-accommodation
-co-developer, but it is formalised separately at
-`Studies/Aloni2022.lean` and not engaged here.
+## References
 
-Yagi's example (8) — "Either baldness is not hereditary, or all of Bill's
-children are bald" ([karttunen-1974-presupposition]) — appears in §2.2 as a
-counterexample to the K&P modification `Π(φ ∨ ψ) := Π(φ) ∨ Π(ψ)` (eq. 7).
-This formula is exactly what `PartialProp.orFlex.presup` computes. The
-flexible-accommodation framework Yagi defends in §3.2 evades the eq. (7)
-problem via the `χ = ω = ⊤` accommodation default, which we have not
-formalised here (we have only the static `orFlex` connective, not the
-parametric dynamic update `s[χ][φ] ∪ s[ω][ψ]` of Yagi's eq. 13).
-
-The §3.2 discussion of how dynamic negation requires genuineness to hold
-within negation scope ("peculiar, given that we end up negating both
-disjuncts") motivated the strengthening of `PartialProp.genuineness` from a
-singleton-survival check (now `PartialProp.liveness`) to the two-conjunct
-definition with disjunction-update survival.
-
-## Connective inventory used
-
-- `⊔` on `Trivalent` (Strong Kleene): never false (`strong_kleene_never_false`)
-- `PartialProp.or` (classical): never defined (`classical_never_defined`)
-- `PartialProp.orPositive` (symmetric, positive-antecedent filtering of
-  [kalomoiros-schwarz-2021]): wrong presupposition
-  (`filter_wrong_at_kingOpens`)
-- `PartialProp.orKPSymmetric` (symmetric, negative-antecedent K&P of Yagi Def 2):
-  presupposition entails assertion (`kp_presup_entails_assertion`)
-- `exhaustive_uninformative` ([geurts-2005]'s Exhaustivity on the modal
-  disjunction of the two partial propositions): the *consequence* (not the
-  derivation) of [schlenker-2009] §2.4 (`truthset_uninformative_geurts_route`)
-- `Prop3.metaAssert`: allows falsity, no presupposition
-  (`metaAssert_allows_falsity`, `metaAssert_no_gap`)
-- `PartialProp.orFlex` = `PartialProp.orBelnap` (substrate identity from
-  `Semantics/Presupposition/Basic.lean`): correct (2a) and (2b), with a
-  discriminating world `noHeadOfState` to prove the presupposition is
-  non-trivial
-- `PartialProp.orFlex.presup` overgenerates trivial-truth in eq. (7) shape:
-  `eq7_too_weak_for_ex8` exhibits the empirical mismatch at world `noChild`
-- For example (18), `orFlex` predicts non-projection only because the left
-  disjunct is presuppositionless (`ex18_orFlex_no_projection_via_vacuous_left`,
-  `ex18_unprincipled_in_right_presup_failure`); the principled K1973
-  asymmetric route (`ex18_asymmetric_K1973_principled`) goes via
-  `PartialProp.disjFilterLeft_eliminates_presup_when_neg_entails`
+* [yagi-2025]
+* [beaver-2001]
+* [beaver-krahmer-2001]
+* [geurts-2005]
+* [heim-1982]
+* [karttunen-peters-1979]
+* [schlenker-2009]
+* [zimmermann-2000]
 -/
 
 namespace Yagi2025
 
-open Trivalent (isDefined metaAssert Prop3)
-open Presupposition
+open Presupposition Trivalent UpdateSemantics Classical
 
-/-! ## World type
+variable {W : Type*}
 
-[yagi-2025] ex. (1c), after [beaver-2001]: "Either the King
-of Buganda is now opening parliament or the President of Buganda is
-conducting the ceremony." A nation has either a king or a president
-(presuppositions conflict), and the head of state may or may not be
-performing the relevant ceremonial duty. We add a fifth world
-`noHeadOfState` so the disjunctive presupposition `p ∨ q` is non-trivial
-— without it, every world would satisfy the expected presupposition and
-`flex_correct_presup` would degenerate to `True ↔ True`. -/
-inductive W where
-  | kingOpens
-  | kingDoesnt
-  | presidentConducts
-  | presidentDoesnt
-  | noHeadOfState
-  deriving DecidableEq, Repr, Inhabited, Fintype
+/-- Two partial propositions have conflicting presuppositions. -/
+def Conflict (φ ψ : PartialProp W) : Prop := ∀ w, ¬ (φ.presup w ∧ ψ.presup w)
 
-/-- Presupposition `p`: the nation has a king. -/
-def hasKing : W → Prop
-  | .kingOpens | .kingDoesnt => True
-  | _ => False
+/-- A partial proposition whose presupposition entails its assertion is never false. -/
+theorem eval_ne_false_of_imp {d : PartialProp W} {w : W} (h : d.presup w → d.assertion w) :
+    d.eval w ≠ .false := by
+  by_cases hp : d.presup w
+  · simp [PartialProp.eval, hp, h hp]
+  · simp [PartialProp.eval, hp]
 
-instance : DecidablePred hasKing
-  | .kingOpens | .kingDoesnt => isTrue trivial
-  | .presidentConducts | .presidentDoesnt | .noHeadOfState => isFalse id
+/-- Its negation is never true. -/
+theorem eval_neg_ne_true_of_imp {d : PartialProp W} {w : W}
+    (h : d.presup w → d.assertion w) : (PartialProp.neg d).eval w ≠ .true := by
+  by_cases hp : d.presup w
+  · simp [PartialProp.eval, PartialProp.neg, hp, h hp]
+  · simp [PartialProp.eval, PartialProp.neg, hp]
 
-/-- Presupposition `q`: the nation has a president. -/
-def hasPresident : W → Prop
-  | .presidentConducts | .presidentDoesnt => True
-  | _ => False
+/-! ### Strong Kleene and two-dimensional disjunction -/
 
-instance : DecidablePred hasPresident
-  | .presidentConducts | .presidentDoesnt => isTrue trivial
-  | .kingOpens | .kingDoesnt | .noHeadOfState => isFalse id
+variable {φ ψ : PartialProp W}
 
-/-- `p ∧ q = ⊥`: the presuppositions conflict. -/
-theorem presups_conflict : ∀ w, ¬(hasKing w ∧ hasPresident w) := by
-  decide
+/-- Under conflict, the Strong Kleene presupposition entails the assertion. -/
+theorem orStrong_presup_imp (h : Conflict φ ψ) (w : W) :
+    (PartialProp.orStrong φ ψ).presup w → (PartialProp.orStrong φ ψ).assertion w := by
+  rintro (hpq | hφ | hψ)
+  · exact absurd hpq (h w)
+  · exact Or.inl hφ
+  · exact Or.inr hψ
 
-/-- φ_p: "The King is opening parliament" — presupposes `hasKing`. -/
-def kingOpensParl : PartialProp W where
-  presup := hasKing
-  assertion w := w = .kingOpens
+/-- The Strong Kleene disjunction is never false. -/
+theorem orStrong_ne_false (h : Conflict φ ψ) (w : W) :
+    (PartialProp.orStrong φ ψ).eval w ≠ .false :=
+  eval_ne_false_of_imp (orStrong_presup_imp h w)
 
-/-- ψ_q: "The President is conducting the ceremony" — presupposes `hasPresident`. -/
-def presConductsCeremony : PartialProp W where
-  presup := hasPresident
-  assertion w := w = .presidentConducts
+/-- Its negation is never true. -/
+theorem neg_orStrong_ne_true (h : Conflict φ ψ) (w : W) :
+    (PartialProp.neg (PartialProp.orStrong φ ψ)).eval w ≠ .true :=
+  eval_neg_ne_true_of_imp (orStrong_presup_imp h w)
 
+/-- The symmetric two-dimensional disjunction is never false either. -/
+theorem orKPSymmetric_ne_false (h : Conflict φ ψ) (w : W) :
+    (PartialProp.orKPSymmetric φ ψ).eval w ≠ .false :=
+  eval_ne_false_of_imp (PartialProp.orKPSymmetric_presup_entails_when_conflicting φ ψ w (h w))
 
-/-! ## Empirical observations
+/-- The modified two-dimensional disjunction whose presupposition is the disjunction of the
+presuppositions. -/
+def orSeven (φ ψ : PartialProp W) : PartialProp W where
+  presup w := φ.presup w ∨ ψ.presup w
+  assertion w := φ.assertion w ∨ ψ.assertion w
 
-[yagi-2025] (2a–b). Note that (2a) is non-trivial here — the
-discriminating world `noHeadOfState` falsifies `expectedPresup`. -/
+/-- The modification is false exactly where a presupposition holds and both assertions fail. -/
+theorem orSeven_eval_false_iff (w : W) :
+    (orSeven φ ψ).eval w = .false ↔
+      (φ.presup w ∨ ψ.presup w) ∧ ¬ φ.assertion w ∧ ¬ ψ.assertion w := by
+  by_cases hp : φ.presup w ∨ ψ.presup w <;> simp [PartialProp.eval, orSeven, hp]
 
-/-- The expected presupposition: the nation has some head of state. -/
-def expectedPresup : W → Prop := fun w => hasKing w ∨ hasPresident w
+/-- With a presuppositionless first disjunct the modification presupposes nothing. -/
+theorem orSeven_presup_of_left (h : ∀ w, φ.presup w) (w : W) : (orSeven φ ψ).presup w :=
+  Or.inl (h w)
 
-instance : DecidablePred expectedPresup := fun w => by
-  unfold expectedPresup; infer_instance
+/-! ### Update semantics with a designated undefined state -/
 
-/-- (2a) holds at every world *with* a head of state. The fifth world
-`noHeadOfState` falsifies it — the test is now non-trivial. -/
-theorem presup_iff_has_head_of_state :
-    ∀ w, expectedPresup w ↔ w ≠ W.noHeadOfState := by decide
+@[simp] theorem mem_prop {p : W → Prop} {s : State W} {w : W} :
+    w ∈ Update.prop p s ↔ w ∈ s ∧ p w := Iff.rfl
 
-/-- (2a) is falsified at `noHeadOfState`. -/
-theorem presup_fails_at_no_head : ¬expectedPresup W.noHeadOfState := by decide
+/-- Union with the undefined state absorbing. -/
+def unionU : Option (State W) → Option (State W) → Option (State W)
+  | some a, some b => some (a ∪ b)
+  | _, _ => none
 
-/-- (2b): the disjunction can be false. At `kingDoesnt` the presupposition
-is satisfied but both disjuncts fail. -/
-theorem can_be_false :
-    expectedPresup W.kingDoesnt ∧
-    ¬kingOpensParl.assertion W.kingDoesnt ∧
-    ¬presConductsCeremony.assertion W.kingDoesnt :=
-  ⟨Or.inl trivial,
-   show W.kingDoesnt ≠ W.kingOpens by decide,
-   show W.kingDoesnt ≠ W.presidentConducts by decide⟩
+@[simp] theorem unionU_some_some (a b : State W) : unionU (some a) (some b) = some (a ∪ b) :=
+  rfl
 
+@[simp] theorem unionU_none_left (b : Option (State W)) : unionU none b = none := by
+  cases b <;> rfl
 
-/-! ## Failure 1: Strong Kleene ([yagi-2025] §2.1, Definition 1) -/
+@[simp] theorem unionU_none_right (a : Option (State W)) : unionU a none = none := by
+  cases a <;> rfl
 
-/-- Strong Kleene disjunction of the two presuppositional propositions. -/
-noncomputable def skDisj : Prop3 W :=
-  kingOpensParl.eval ⊔ presConductsCeremony.eval
+/-- Update by a partial proposition: undefined unless the presupposition holds throughout. -/
+noncomputable def updateS (φ : PartialProp W) (s : State W) : Option (State W) :=
+  if ∀ w ∈ s, φ.presup w then some (Update.prop φ.assertion s) else none
 
-/-- Strong Kleene never produces false for this disjunction. Because
-presuppositions conflict, at least one disjunct is always undefined, so
-the table never reaches the 0 ∨ 0 = 0 row. -/
-theorem strong_kleene_never_false : ∀ w, skDisj w ≠ .false := by
-  intro w
-  cases w <;>
-    (simp [skDisj, PartialProp.eval, kingOpensParl, presConductsCeremony,
-      hasKing, hasPresident] <;> try decide)
+/-- Negation of an update: the input minus the result. -/
+def negOf (upd : State W → Option (State W)) (s : State W) : Option (State W) :=
+  (upd s).map (s \ ·)
 
+/-- Disjunction: the first update, joined with the second in the negation of the first. -/
+noncomputable def disjS (φ ψ : PartialProp W) (s : State W) : Option (State W) :=
+  unionU (updateS φ s) ((negOf (updateS φ) s).bind (updateS ψ))
 
-/-! ## Failure 2: Two-dimensional semantics ([yagi-2025] §2.2)
-
-[karttunen-peters-1979], with [yagi-2025]'s symmetric Definition 2
-(per fn 2, citing [kalomoiros-schwarz-2021] for empirical support of
-symmetry). The substrate `PartialProp.orKPSymmetric` matches Yagi's Def 2 directly:
-
-  Π(φ ∨ ψ) = (¬A(ψ) → Π(φ)) ∧ (¬A(φ) → Π(ψ))
-
-`PartialProp.orPositive` is a *different* symmetric variant with positive-antecedent
-conditionals plus an extra `Π(φ) ∨ Π(ψ)` disjunct, which is **strictly
-stronger** than `orKPSymmetric` (worked counterexample: at a world with `A(φ)=⊤`,
-`A(ψ)=⊥`, `Π(φ)=⊤`, `Π(ψ)=⊥`, `orKPSymmetric` is defined, `orPositive` is not).
-The two are not predictionally equivalent, and neither is the asymmetric
-[karttunen-1973] rule (24b) used as `PartialProp.disjFilterLeft` —
-see `Studies/Karttunen1973.lean`. -/
-
-/-- Classical disjunction requires both presuppositions: presup = `p ∧ q`. -/
-def classicalDisj : PartialProp W := PartialProp.or kingOpensParl presConductsCeremony
-
-/-- `PartialProp.or` is never defined when presuppositions conflict. -/
-theorem classical_never_defined : ∀ w, ¬classicalDisj.presup w := fun w h =>
-  presups_conflict w h
-
-/-- The symmetric positive-antecedent filtering disjunction
-(`PartialProp.orPositive`). Encodes
-`(A(φ) → Π(ψ)) ∧ (A(ψ) → Π(φ)) ∧ (Π(φ) ∨ Π(ψ))` — strictly stronger
-than `orKPSymmetric`. The conjunct `Π(φ) ∨ Π(ψ)` matches the eq. (7) modification
-discussed by [yagi-2025] §2.2 (after Def 3) as a candidate fix. -/
-def filterDisj : PartialProp W := PartialProp.orPositive kingOpensParl presConductsCeremony
-
-/-- `orPositive` predicts presupposition failure at `kingOpens`, where the
-disjunction should clearly be true: the filtering condition demands the
-president-presupposition hold when the king-assertion is true. -/
-theorem filter_wrong_at_kingOpens : ¬filterDisj.presup W.kingOpens := by
-  intro h
-  -- The failing implication: at `kingOpens`, the king-assertion is true
-  -- while the president-presupposition is false, so `A(p) → Π(q)` fails.
-  have hp_assert : kingOpensParl.assertion W.kingOpens := rfl
-  exact (h.1 hp_assert : presConductsCeremony.presup W.kingOpens)
-
-/-- The expected presupposition is satisfied at `kingOpens`. -/
-theorem expected_satisfied_at_kingOpens : expectedPresup W.kingOpens := Or.inl trivial
-
-/-- K&P two-dimensional disjunction applied to the Buganda scenario. -/
-def kpDisj : PartialProp W := PartialProp.orKPSymmetric kingOpensParl presConductsCeremony
-
-/-- K&P's presupposition entails the assertion when presuppositions conflict:
-whenever Π = 1, A = 1. Derived from the substrate
-`PartialProp.orKPSymmetric_presup_entails_when_conflicting`. [yagi-2025] §2.2 (5)–(6). -/
-theorem kp_presup_entails_assertion :
-    ∀ w, kpDisj.presup w → kpDisj.assertion w := by
-  intro w h
-  exact PartialProp.orKPSymmetric_presup_entails_when_conflicting _ _ w (presups_conflict w) h
-
-
-/-! ## Failure 3: Update semantics ([yagi-2025] §2.3)
-
-Bridges to `UpdateSemantics.Basic`, which
-collapses the [heim-1982]/[veltman-1996]/[beaver-2001]
-treatments of presuppositional disjunction into a single `PUpdate.disjPresup`
-operator. -/
-
-section UpdateSemantics
-
-open UpdateSemantics
-
-/-! ### Presuppositional updates over `Option`-states
-
-[yagi-2025]'s Definition 4-5 apparatus, single-consumer and hence
-study-local: `Option (State W)` renders Definition 5's failure value as
-`none`. The canonical `Part`-based partiality layer is
-`DynamicSemantics.CCP.Partial`; `PUpdate.presup_ne_none_iff_admits`
-identifies the two where they overlap, and the `Option` form survives for
-the disjunction machinery (`disjPresup`, `disjFlex`) below. -/
-
-section PolymorphicState
-variable {V : Type*}
-
-/-- The designated undefined state: update failure.
-
-    [yagi-2025] Definition 5: when a presupposition is not satisfied,
-    the update yields ∗. We model ∗ as `none` via `Option (State V)`. -/
-abbrev PState (V : Type*) := Option (State V)
-
-open Classical in
-/-- Presuppositional update: update by φ_p is defined only when the
-    presupposition p is supported (i.e. `s[p] = s`).
-
-    [yagi-2025] Definition 5:
-      s[φ_p] = ∗  if s[p] ≠ s
-             = s[φ]  otherwise
-
-    [heim-1982] [beaver-2001] [veltman-1996] -/
-noncomputable def PUpdate.presup (p φ : V → Prop) : PState V → PState V
-  | none => none
-  | some s =>
-    if Update.prop p s = s then
-      some (Update.prop φ s)
-    else
-      none
-
-/-- `PUpdate.presup` is the `Option`-valued shadow of
-    `DynamicSemantics.CCP.Partial.ofPartialProp`: defined (≠ `none`) at `some s` exactly
-    when `s` admits the corresponding partial update. `CCP.Partial` is the
-    canonical `Part`-based form; this clause survives for the
-    [yagi-2025] disjunction machinery below. -/
-theorem PUpdate.presup_ne_none_iff_admits (p φ : V → Prop) (s : State V) :
-    PUpdate.presup p φ (some s) ≠ none ↔
-      (DynamicSemantics.CCP.Partial.ofPartialProp ⟨p, φ⟩).admits s := by
-  simp only [PUpdate.presup]
+theorem updateS_eq_some_iff {s t : State W} :
+    updateS φ s = some t ↔ (∀ w ∈ s, φ.presup w) ∧ t = Update.prop φ.assertion s := by
+  unfold updateS
   split_ifs with h
-  · refine ⟨fun _ w hw => ?_, fun _ => Option.some_ne_none _⟩
-    have hm : w ∈ Update.prop p s := h.symm ▸ hw
-    exact hm.2
-  · refine ⟨fun hne => absurd rfl hne, fun hadm => absurd ?_ h⟩
-    have hadm' : ∀ w ∈ s, p w := hadm
-    exact Set.ext fun w => ⟨fun hw => hw.1, fun hw => ⟨hw, hadm' w hw⟩⟩
+  · exact ⟨λ e => ⟨h, (Option.some_inj.mp e).symm⟩, λ e => by rw [e.2]⟩
+  · exact iff_of_false (by simp) (λ e => h e.1)
 
-/-- Negation extended to PState: s[¬φ] = s/s[φ].
+theorem updateS_eq_none_iff {s : State W} :
+    updateS φ s = none ↔ ¬ ∀ w ∈ s, φ.presup w := by
+  unfold updateS
+  split_ifs with h
+  · exact iff_of_false (by simp) (not_not.2 h)
+  · exact iff_of_true rfl h
 
-    [yagi-2025] Definition 4: s[¬φ] = s \ s[φ]. -/
-def PUpdate.neg (φ : V → Prop) : PState V → PState V
-  | none => none
-  | some s => some (s \ Update.prop φ s)
+/-- The disjunction is defined exactly when the first presupposition holds throughout the
+input and the second holds wherever the first disjunct fails. -/
+theorem disjS_isSome_iff (s : State W) :
+    (disjS φ ψ s).isSome ↔
+      (∀ w ∈ s, φ.presup w) ∧ ∀ w ∈ s, ¬ φ.assertion w → ψ.presup w := by
+  unfold disjS negOf
+  by_cases hp : ∀ w ∈ s, φ.presup w
+  · rw [updateS_eq_some_iff.2 ⟨hp, rfl⟩, Option.map_some, Option.bind_some]
+    have hiff : (∀ w ∈ s \ Update.prop φ.assertion s, ψ.presup w) ↔
+        ∀ w ∈ s, ¬ φ.assertion w → ψ.presup w := by
+      constructor
+      · intro hq w hw hφ; exact hq w ⟨hw, λ h => hφ h.2⟩
+      · intro hq w hw; exact hq w hw.1 (λ h => hw.2 ⟨hw.1, h⟩)
+    by_cases hq : ∀ w ∈ s \ Update.prop φ.assertion s, ψ.presup w
+    · rw [updateS_eq_some_iff.2 ⟨hq, rfl⟩, unionU_some_some]
+      exact iff_of_true rfl ⟨hp, hiff.1 hq⟩
+    · rw [updateS_eq_none_iff.2 hq, unionU_none_right]
+      exact iff_of_false (by simp) (λ h => hq (hiff.2 h.2))
+  · rw [updateS_eq_none_iff.2 hp, unionU_none_left]
+    exact iff_of_false (by simp) (λ h => hp h.1)
 
-/-- Disjunction extended to PState: s[φ ∨ ψ] = s[φ] ∪ s[¬φ][ψ].
+/-- Under conflict the disjunction is defined only when the first disjunct already holds
+throughout the input, and then it returns the input: defined only if uninformative. -/
+theorem disjS_eq_some_iff (h : Conflict φ ψ) (s t : State W) :
+    disjS φ ψ s = some t ↔
+      (∀ w ∈ s, φ.presup w) ∧ (∀ w ∈ s, φ.assertion w) ∧ t = s := by
+  have hempty : updateS ψ (s \ s) = some ∅ :=
+    updateS_eq_some_iff.2 ⟨by simp, by ext w; simp⟩
+  constructor
+  · intro ht
+    have hs := (disjS_isSome_iff s).1 (by rw [ht]; rfl)
+    have hφ : ∀ w ∈ s, φ.assertion w := λ w hw =>
+      by_contra λ hn => h w ⟨hs.1 w hw, hs.2 w hw hn⟩
+    refine ⟨hs.1, hφ, ?_⟩
+    have hprop : Update.prop φ.assertion s = s :=
+      Set.ext λ w => ⟨λ h => h.1, λ hw => ⟨hw, hφ w hw⟩⟩
+    rw [disjS, negOf, updateS_eq_some_iff.2 ⟨hs.1, rfl⟩, hprop, Option.map_some,
+      Option.bind_some, hempty, unionU_some_some, Set.union_empty] at ht
+    exact (Option.some_inj.mp ht).symm
+  · rintro ⟨hp, hφ, ht⟩
+    have hprop : Update.prop φ.assertion s = s :=
+      Set.ext λ w => ⟨λ h => h.1, λ hw => ⟨hw, hφ w hw⟩⟩
+    rw [disjS, negOf, updateS_eq_some_iff.2 ⟨hp, rfl⟩, hprop, Option.map_some, Option.bind_some,
+      hempty, unionU_some_some, Set.union_empty, ht]
 
-    [yagi-2025] Definition 4, [heim-1982].
-    Extended with ∗ ∪ s = s ∪ ∗ = ∗. -/
-def PUpdate.disj (φ ψ : V → Prop) : PState V → PState V
-  | none => none
-  | some s =>
-    let left := Update.prop φ s
-    let negLeft := s \ left
-    let right := Update.prop ψ negLeft
-    some (left ∪ right)
+/-! ### Local contexts -/
 
-/-- Presuppositional disjunction: s[φ_p ∨ ψ_q].
-    Apply presupposition checks to each disjunct.
-
-    This is the standard Heim/Beaver definition:
-      s[φ_p ∨ ψ_q] = s[φ_p] ∪ s[¬φ_p][ψ_q]
-
-    Both presuppositional updates must be defined for the result to be
-    defined: s[φ_p] requires s ⊨ p, and s[¬φ_p][ψ_q] requires s[¬φ_p] ⊨ q. -/
-noncomputable def PUpdate.disjPresup (p φ q ψ : V → Prop) :
-    PState V → PState V
-  | none => none
-  | some s =>
-    -- Left disjunct: s[φ_p]
-    let left := PUpdate.presup p φ (some s)
-    -- Right context: s[¬φ_p] — but ¬φ_p requires negating the presuppositional φ
-    -- Following Yagi: s[¬φ_p] = s \ s[φ_p], but s[φ_p] may be ∗
-    match left with
-    | none => none  -- left undefined → whole disjunction undefined
-    | some leftResult =>
-      let negLeftCtx := s \ leftResult
-      -- Right disjunct: s[¬φ_p][ψ_q]
-      let right := PUpdate.presup q ψ (some negLeftCtx)
-      match right with
-      | none => none
-      | some rightResult => some (leftResult ∪ rightResult)
-
-/-- **Flexible accommodation disjunction** (dynamic version).
-
-    [yagi-2025] (13) / [geurts-2005] / [aloni-2022]:
-      s[φ ∨ ψ] = s[χ][φ] ∪ s[ω][ψ], where s[χ] ∪ s[ω] = s
-
-    The propositions χ and ω *split* the state s into two substates.
-    By default χ = ω = ⊤ (both tautological), but when the default
-    violates genuineness ([zimmermann-2000]), the split becomes
-    non-trivial: χ = ¬q and ω = ¬p for conflicting presuppositions. -/
-noncomputable def PUpdate.disjFlex (χ φ_presup φ ω ψ_presup ψ : V → Prop)
-    (_h_split : ∀ s : State V, Update.prop χ s ∪ Update.prop ω s = s) :
-    PState V → PState V
-  | none => none
-  | some s =>
-    let leftCtx := Update.prop χ s
-    let rightCtx := Update.prop ω s
-    let left := PUpdate.presup φ_presup φ (some leftCtx)
-    let right := PUpdate.presup ψ_presup ψ (some rightCtx)
-    match left, right with
-    | some l, some r => some (l ∪ r)
-    | _, _ => none  -- ∗ poisons: if either side is undefined, result is ∗
-
-/-! ### Yagi's core observations -/
-
-/-- Presuppositional disjunction update is uninformative when both
-    presuppositions are already supported: if s ⊨ p and s ⊨ q and the
-    disjunction φ ∨ ψ is already true throughout s, the update returns
-    s unchanged.
-
-    Note: this applies to **non-conflicting** presuppositions. When
-    p ∧ q = ⊥, the hypotheses hp and hq are jointly unsatisfiable
-    (unless s = ∅). For the conflicting case, see
-    `update_yields_undefined` in the Yagi2025 study, which shows the
-    update is undefined (∗) rather than uninformative. -/
-theorem presup_disj_uninformative_when_supported (p φ q ψ : V → Prop) (s : State V)
-    (hp : Update.prop p s = s) (hq : Update.prop q s = s)
-    (h_or : ∀ w, w ∈ s → (φ w ∨ ψ w)) :
-    PUpdate.disjPresup p φ q ψ (some s) = some s := by
-  unfold PUpdate.disjPresup PUpdate.presup
-  -- Helper: q holds at every world in s (from hq)
-  have hq_at : ∀ w, w ∈ s → q w := by
-    intro w hw
-    have : w ∈ Update.prop q s := hq.symm ▸ hw
-    exact this.2
-  -- Helper: q is supported on any subset of s
-  have hq_sub : ∀ t : State V, t ⊆ s → Update.prop q t = t := by
-    intro t ht; ext w
-    exact ⟨fun h => h.1, fun hw => ⟨hw, hq_at w (ht hw)⟩⟩
-  -- Helper: ψ holds everywhere in s \ Update.prop φ s (by h_or + φ failure)
-  have hψ_sub : ∀ w, w ∈ s \ Update.prop φ s → ψ w := by
-    intro w ⟨hw, hnφ⟩
-    cases h_or w hw with
-    | inl h => exact absurd (show w ∈ Update.prop φ s from ⟨hw, h⟩) hnφ
-    | inr h => exact h
-  have h_q_neg : Update.prop q (s \ Update.prop φ s) = s \ Update.prop φ s :=
-    hq_sub _ (fun _ h => h.1)
-  simp only [hp, ↓reduceIte, h_q_neg]
-  -- Result: Update.prop φ s ∪ Update.prop ψ (s \ Update.prop φ s) = s
-  suffices h : Update.prop φ s ∪ Update.prop ψ (s \ Update.prop φ s) = s by
-    exact congrArg some h
-  apply Set.Subset.antisymm
-  · intro w hw
-    cases hw with
-    | inl h => exact h.1
-    | inr h => exact h.1.1
-  · intro w hw
-    by_cases hφ : φ w
-    · exact Set.mem_union_left _ ⟨hw, hφ⟩
-    · exact Set.mem_union_right _ ⟨⟨hw, fun h => hφ h.2⟩, hψ_sub w ⟨hw, fun h => hφ h.2⟩⟩
-
-
-end PolymorphicState
-
-/-- The ideal input state for (1c): all worlds with a head of state. The
-`noHeadOfState` world is excluded — Yagi's discussion presupposes a context
-where the disjunctive presupposition `p ∨ q` is satisfied. -/
-def bugandaState : State W :=
-  { W.kingOpens, W.kingDoesnt, W.presidentConducts, W.presidentDoesnt }
-
-/-- Presupposition `p` (`hasKing`) is NOT supported in `bugandaState`:
-updating by `p` eliminates the president-worlds. -/
-theorem hasKing_not_supported :
-    Update.prop hasKing bugandaState ≠ bugandaState := by
-  intro h
-  have hmem : W.presidentConducts ∈ Update.prop hasKing bugandaState := by
-    rw [h]; right; right; left; rfl
-  exact hmem.2
-
-/-- Presupposition `q` (`hasPresident`) is NOT supported in `bugandaState`. -/
-theorem hasPresident_not_supported :
-    Update.prop hasPresident bugandaState ≠ bugandaState := by
-  intro h
-  have hmem : W.kingOpens ∈ Update.prop hasPresident bugandaState := by
-    rw [h]; left; rfl
-  exact hmem.2
-
-/-- The presuppositional disjunction update yields `∗` (none) on
-`bugandaState`. [yagi-2025] §2.3: the update `s[φ_p ∨ ψ_q]` results
-in undefinedness because the presupposition check for the first disjunct
-(`s[p] = s`) fails. -/
-theorem update_yields_undefined :
-    PUpdate.disjPresup hasKing kingOpensParl.assertion hasPresident
-      presConductsCeremony.assertion (some bugandaState) = none := by
-  simp only [PUpdate.disjPresup, PUpdate.presup, if_neg hasKing_not_supported]
-
-/-- Both presuppositions fail on `bugandaState`: combined with
-`update_yields_undefined`, the standard dynamic definition has no
-defined-and-informative output for conflicting presuppositions. -/
-theorem neither_presup_supported :
-    Update.prop hasKing bugandaState ≠ bugandaState ∧
-    Update.prop hasPresident bugandaState ≠ bugandaState :=
-  ⟨hasKing_not_supported, hasPresident_not_supported⟩
-
-end UpdateSemantics
-
-
-/-! ## Failure 4: [schlenker-2009]'s incremental evaluation
-([yagi-2025] §2.4)
-
-Yagi's §2.4 derivation: Schlenker's pragmatic condition on local contexts
-admits a context-world `w` only if `w` survives the local-context update
-of the second disjunct's presupposition; walking through the cases for
-the conflicting-presupposition setup, Yagi concludes that `s_0` ends up
-containing **only** worlds where some disjunct's assertion-plus-presupposition
-holds — at which point the disjunction is trivially true and uninformative.
-
-What we actually formalise here is the **consequence**, not Yagi's
-derivation. We stipulate the truth-set `truthSet` directly (kingOpens +
-presidentConducts — the worlds where some disjunct is defined-and-true)
-and show via `exhaustive_uninformative` that
-the disjunction is true throughout `truthSet`. This is an instance of
-Geurts's exhaustivity-implies-uninformativity, which Yagi argues coincides
-with Schlenker's verdict on the same context. The actual Schlenker
-local-context derivation would require a `localContext` operator on
-`PUpdate` (s/s[¬φ]) that we have not formalised; the present theorem is
-the static reduction.
-
-Note: `truthSet`-uninformativity is structurally trivial — any proposition
-is uninformative on its own truth-set. The substantive Schlenker move is
-*deriving* that `s_0` reduces to the truth-set; we punt on that derivation. -/
-
-/-- The truth-set of the Buganda disjunction: the worlds where some
-disjunct's presupposition-and-assertion holds. Yagi §2.4 argues
-Schlenker's pragmatic condition forces `s_0 ⊆ truthSet`. -/
-def truthSet : Set W := { W.kingOpens, W.presidentConducts }
-
-/-- [geurts-2005]'s modal disjunction of two partial propositions: the
-domains are the presuppositions, the contents the assertions. -/
-def geurtsDisjunction (p q : PartialProp W) : Geurts2005.Disjunction W :=
-  [⟨p.presup, .possibility, p.assertion⟩, ⟨q.presup, .possibility, q.assertion⟩]
-
-/-- A world lies in some cell of the Geurts disjunction exactly when `orFlex`
-asserts it there: the cells are `presup ∧ assertion`. -/
-theorem mem_iUnion_cell_geurtsDisjunction_iff (p q : PartialProp W) (w : W) :
-    w ∈ ⋃ d ∈ geurtsDisjunction p q, d.cell ↔ (PartialProp.orFlex p q).assertion w := by
-  simp only [geurtsDisjunction, Geurts2005.Disjunct.cell, Set.mem_iUnion, List.mem_cons,
-    List.not_mem_nil, or_false, exists_prop, exists_eq_or_imp, exists_eq_left, Set.mem_inter_iff]
-  exact Iff.rfl
-
-/-- Under Geurts's Exhaustivity the disjunction is true throughout the
-background: the formal residue of [schlenker-2009]'s local-context failure. -/
-theorem exhaustive_uninformative (p q : PartialProp W) (C : Set W)
-    (h : Geurts2005.Disjunction.Exhaustive C (geurtsDisjunction p q)) {w : W} (hw : w ∈ C) :
-    (PartialProp.orFlex p q).assertion w :=
-  (mem_iUnion_cell_geurtsDisjunction_iff p q w).mp (h hw)
-
-/-- Geurts exhaustivity holds on `truthSet`: every truth-set world is in
-some disjunct's cell. -/
-theorem truthSet_exhausted :
-    Geurts2005.Disjunction.Exhaustive truthSet
-      (geurtsDisjunction kingOpensParl presConductsCeremony) := by
+/-- If each disjunct's presupposition is entailed by its local context, the negation of the
+other disjunct within the global context, then under conflict every world of the global
+context makes some disjunct defined and true. -/
+theorem local_contexts_force_truth (h : Conflict φ ψ) (s : State W)
+    (h₁ : ∀ w ∈ s, ¬ (φ.presup w ∧ φ.assertion w) → ψ.presup w)
+    (h₂ : ∀ w ∈ s, ¬ (ψ.presup w ∧ ψ.assertion w) → φ.presup w) :
+    ∀ w ∈ s, (φ.presup w ∧ φ.assertion w) ∨ (ψ.presup w ∧ ψ.assertion w) := by
   intro w hw
-  rcases hw with rfl | rfl
-  · exact Set.mem_iUnion₂.mpr ⟨_, List.mem_cons_self .., ⟨trivial, rfl⟩⟩
-  · exact Set.mem_iUnion₂.mpr ⟨_, List.mem_cons_of_mem _ (List.mem_cons_self ..), ⟨trivial, rfl⟩⟩
+  by_cases hp : φ.presup w
+  · exact Or.inl (by_contra λ hn => h w ⟨hp, h₁ w hw hn⟩)
+  · exact Or.inr (by_contra λ hn => hp (h₂ w hw hn))
 
-/-- Trivalent-set uninformativity via Geurts (the *consequence* of Yagi §2.4,
-not Schlenker's actual local-context derivation): the disjunction is true
-throughout the stipulated `truthSet`. A faithful Schlenker formalisation
-would derive `s_0 ⊆ truthSet` from a `localContext` PUpdate operator we
-have not built. -/
-theorem truthset_uninformative_geurts_route :
-    ∀ w ∈ truthSet,
-      (PartialProp.orFlex kingOpensParl presConductsCeremony).assertion w :=
-  λ _ hw => exhaustive_uninformative _ _ truthSet truthSet_exhausted hw
+/-! ### The meta-assertion operator -/
 
-
-/-! ## Reaction 1: Meta-assertion ([yagi-2025] §3.1, [beaver-krahmer-2001])
-
-Yagi §3.1 has two prongs: (i) the truth-functional behavior of `𝒜` (we
-formalize this), and (ii) the *licensing constraint* on when `𝒜` may be
-inserted (Beaver & Krahmer's condition: insert iff the formula would be
-undefined OR a part is replaceable by `⊥`/`⊤` without semantic effect).
-Yagi argues this constraint licenses the [beaver-krahmer-2001]
-analysis (10) `𝒜φ_p ∨_w 𝒜ψ_q` but does NOT license the Strong-Kleene
-counterpart (11) `φ_p ∨_s 𝒜ψ_q`, leaving Yagi's verdict on §3.1 partly
-negative ("I cannot offer a constraint now").
-
-We formalize the truth-functional content; the licensing constraint
-remains prose-only because it requires a "replaceability" predicate
-that is itself an open theoretical question. -/
-
-/-- The disjunction `𝒜φ_p ∨ 𝒜ψ_q` of Yagi (10), with `𝒜` the
-meta-assertion operator of Yagi Definition 6 (truth table `1↦1, 0↦0,
-∗↦0`). We use `Prop3.or` (Strong Kleene join) — since `metaAssert`
-maps each disjunct to a bivalent value, Strong and Weak Kleene agree
-on the result, and Yagi's discussion uses Weak Kleene (Def 7) only as
-a notational matter. -/
-noncomputable def metaAssertDisj : Prop3 W :=
-  Prop3.metaAssert kingOpensParl.eval ⊔ Prop3.metaAssert presConductsCeremony.eval
-
-/-- Meta-assertion allows falsity (unlike Strong Kleene). Satisfies (2b). -/
-theorem metaAssert_allows_falsity :
-    metaAssertDisj W.kingDoesnt = .false := by
-  simp [metaAssertDisj, PartialProp.eval, kingOpensParl, presConductsCeremony,
-    hasKing, hasPresident]
-
-/-- Meta-assertion loses the presupposition: `𝒜φ_p` has no presupposition
-(it maps `∗` to `0`), so the Strong Kleene disjunction `𝒜φ_p ∨_s ψ_q`
-only presupposes `¬𝒜ψ_q → p` per Yagi (11), not `p ∨ q`. -/
-theorem metaAssert_always_defined : ∀ w, (metaAssertDisj w).isDefined := by
-  intro w; cases w <;>
-    simp [metaAssertDisj, PartialProp.eval, kingOpensParl, presConductsCeremony,
-      hasKing, hasPresident, Trivalent.isDefined]
-
-/-- The meta-assertion disjunction is bivalent — no gap, no presupposition
-via the standard gap mechanism. -/
-theorem metaAssert_no_gap : ∀ w, metaAssertDisj w ≠ .indet := by
-  intro w; cases w <;>
-    simp [metaAssertDisj, PartialProp.eval, kingOpensParl, presConductsCeremony,
-      hasKing, hasPresident]
-
-
-/-! ## Reaction 2: Flexible accommodation ([yagi-2025] §3.2,
-[geurts-2005], [aloni-2022])
-
-Uses the substrate `PartialProp.orFlex`, with the discriminating world
-`noHeadOfState` ensuring the (2a) test is non-trivial. -/
-
-/-- The flexible accommodation disjunction. -/
-def flexDisj : PartialProp W := PartialProp.orFlex kingOpensParl presConductsCeremony
-
-/-- (2a) at the discriminating world: `flexDisj.presup` *fails* at
-`noHeadOfState`. Without this world, `expectedPresup` would be a
-tautology and `flex_correct_presup_iff_expected` would degenerate to
-`True ↔ True`. -/
-theorem flex_presup_fails_at_no_head : ¬flexDisj.presup W.noHeadOfState := by
-  rintro (h | h) <;> exact h
-
-/-- (2a) at a head-of-state world: `flexDisj.presup` *holds* at `kingOpens`. -/
-theorem flex_presup_holds_at_kingOpens : flexDisj.presup W.kingOpens :=
-  Or.inl trivial
-
-/-- (2a) globally: `flexDisj.presup` matches `expectedPresup` at every
-world. With `noHeadOfState` in the world model, this is a non-trivial
-biconditional (both sides fail there; both sides hold elsewhere). -/
-theorem flex_correct_presup_iff_expected :
-    ∀ w, flexDisj.presup w ↔ expectedPresup w := fun _ => Iff.rfl
-
-/-- Complete truth table: flexible accommodation predicts the right value
-at every head-of-state world. (At `noHeadOfState` the disjunction is
-undefined.) -/
-theorem flex_truth_table :
-    flexDisj.eval W.kingOpens = .true ∧
-    flexDisj.eval W.kingDoesnt = .false ∧
-    flexDisj.eval W.presidentConducts = .true ∧
-    flexDisj.eval W.presidentDoesnt = .false := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    simp [flexDisj, PartialProp.orFlex, PartialProp.orBelnap, PartialProp.eval, kingOpensParl, presConductsCeremony,
-      hasKing, hasPresident]
-
-/-- Flexible accommodation is undefined at the discriminating world
-`noHeadOfState`. -/
-theorem flex_undefined_at_no_head :
-    flexDisj.eval W.noHeadOfState = .indet := by
-  simp [flexDisj, PartialProp.orFlex, PartialProp.orBelnap, PartialProp.eval, kingOpensParl, presConductsCeremony,
-    hasKing, hasPresident]
-
-/-- (2b): `flexDisj` is false at `kingDoesnt` (king present but not opening). -/
-theorem flex_can_be_false : flexDisj.eval W.kingDoesnt = .false := flex_truth_table.2.1
-
-
-/-! ### Genuineness
-
-[yagi-2025] Definition 8 (after [zimmermann-2000]): each
-disjunct must contribute a "live possibility" — there is `w ∈ s` with
-`{w}[φ] = {w}` AND `w ∈ s[φ ∨ ψ]`. The substrate
-`PartialProp.genuineness disj p q s` parameterises on the disjunction
-connective `disj` whose update we test against; the simpler
-singleton-survival check is now `PartialProp.liveness`. Under `orFlex`,
-`liveness ⇒ genuineness` (`liveness_implies_genuineness_orFlex`), so
-discharging genuineness reduces to discharging liveness. -/
-
-/-- Genuineness for the Buganda flex disjunction holds against the
-two-element witness state `{kingOpens, presConducts}`: each disjunct's
-witness world survives both its own update and the joint orFlex update. -/
-theorem flex_genuineness :
-    PartialProp.genuineness PartialProp.orFlex kingOpensParl presConductsCeremony
-      ⟨[W.kingOpens, W.presidentConducts], by simp⟩ := by
-  apply PartialProp.liveness_implies_genuineness_orFlex
-  exact ⟨⟨W.kingOpens, by simp, trivial, rfl⟩,
-         ⟨W.presidentConducts, by simp, trivial, rfl⟩⟩
-
-
-/-! ### Substrate observation: orFlex = orBelnap
-
-NOT a Yagi claim — [belnap-1970] is not in his references.
-In the substrate, `orFlex` is *definitionally* `orBelnap` (an abbrev in
-`Semantics/Presupposition/Basic.lean`), and
-`mem_iUnion_cell_geurtsDisjunction_iff` extends the identity to
-[geurts-2005]'s modal-disjunction view. We instantiate it at the
-Buganda case for clarity. -/
-
-/-- Substrate identity at the Buganda case: `flexDisj = orBelnap`. -/
-theorem flexDisj_eq_orBelnap :
-    flexDisj = PartialProp.orBelnap kingOpensParl presConductsCeremony :=
-  rfl
-
-
-/-! ### Negation interaction ([yagi-2025] §3.2 final paragraphs)
-
-Yagi's *static* negation works fine — preserves presupposition, flips
-assertion. His *dynamic* negation `s[¬(φ_p ∨ ψ_q)] = s/(s[χ][φ_p] ∪ s[χ][ψ_q])`
-requires genuineness to hold within the scope of negation, which Yagi
-calls "peculiar, given that we end up negating both disjuncts". The
-peculiarity surfaces only at the dynamic level — at the static
-`PartialProp.neg` connective, the assertion just flips and presupposition is
-preserved (`neg_presup`); there is no genuineness check to violate.
-
-We do not formalise the dynamic version here because it would require
-the Update-Semantics state operator `s[¬φ] = s/s[φ]` paired with the
-parametric flex update `s[χ][φ] ∪ s[ω][ψ]` of Yagi's eq. (13), neither
-of which we have built. The static `negFlexDisj` truth-table below shows
-the *intended* truth conditions (negation true at king-doesn't and
-president-doesn't, where both disjuncts fail); Yagi's "peculiarity"
-diagnosis lives at the dynamic level above this static reduction. -/
-
-/-- Negation of the flexible accommodation disjunction. -/
-def negFlexDisj : PartialProp W := PartialProp.neg flexDisj
-
-/-- Static negation preserves the presupposition (substrate `neg_presup`). -/
-theorem neg_flex_presup_preserved :
-    negFlexDisj.presup = flexDisj.presup := PartialProp.neg_presup flexDisj
-
-/-- Static negation gives the right truth values at the head-of-state worlds:
-true at king-doesn't and president-doesn't (both disjuncts false). -/
-theorem neg_flex_truth_table :
-    negFlexDisj.eval W.kingOpens = .false ∧
-    negFlexDisj.eval W.kingDoesnt = .true ∧
-    negFlexDisj.eval W.presidentConducts = .false ∧
-    negFlexDisj.eval W.presidentDoesnt = .true := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    simp [negFlexDisj, PartialProp.neg, flexDisj, PartialProp.orFlex, PartialProp.orBelnap, PartialProp.eval,
-      kingOpensParl, presConductsCeremony, hasKing, hasPresident]
-
-
-/-! ## [yagi-2025] example (8) Karttunen 1974: eq. (7) is too weak
-
-[yagi-2025] §2.2 (between Def 3 and §2.3) considers a modification
-to K&P, `Π(φ ∨ ψ) := Π(φ) ∨ Π(ψ)` (eq. (7)). This formula IS what
-`PartialProp.orFlex.presup` computes. Yagi shows it correctly predicts (1c)
-Buganda but is "too weak" for (8) [karttunen-1974-presupposition]: "Either baldness
-is not hereditary, or all of Bill's children are bald." Eq. (7) predicts
-the tautological presupposition `⊤ ∨ Π(ψ) = ⊤`, but the empirical
-intuition is that (8) presupposes Bill has children.
-
-Important scope note: Yagi's §3.2 flexible-accommodation framework is
-NOT subject to this critique — it handles the analog (14) correctly via
-the `χ = ω = ⊤` accommodation default (only when that violates an
-independent pragmatic principle does the split become non-trivial). The
-critique here applies to the *static* `orFlex.presup` formula (which
-matches eq. (7) at the presup level), not to the dynamic flex update
-`s[χ][φ] ∪ s[ω][ψ]` of eq. (13), which we have not formalised. -/
-
-/-- Worlds for example (8). -/
-inductive W8 where
-  | hasChildAllBald
-  | hasChildSomeNotBald
-  | noChild
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
-/-- "Bill has a child" — presupposition trigger for "all of Bill's children ...". -/
-def billHasChild : W8 → Prop
-  | .hasChildAllBald | .hasChildSomeNotBald => True
-  | .noChild => False
-
-instance : DecidablePred billHasChild
-  | .hasChildAllBald | .hasChildSomeNotBald => isTrue trivial
-  | .noChild => isFalse id
-
-/-- "Baldness is not hereditary" — no presupposition. -/
-def baldnessNotHereditary : PartialProp W8 where
+/-- The meta-assertion operator: always defined, true where the proposition is defined and
+true. -/
+def assertMeta (φ : PartialProp W) : PartialProp W where
   presup _ := True
-  assertion _ := True
+  assertion w := φ.presup w ∧ φ.assertion w
 
-/-- "All of Bill's children are bald" — factive on `billHasChild`. -/
-def allBillsChildrenBald : PartialProp W8 where
-  presup := billHasChild
-  assertion w := w = .hasChildAllBald
+/-- It agrees with the trivalent operator. -/
+theorem eval_assertMeta (w : W) : (assertMeta φ).eval w = Prop3.metaAssert φ.eval w := by
+  by_cases hp : φ.presup w <;> by_cases ha : φ.assertion w <;>
+    simp [PartialProp.eval, assertMeta, hp, ha, Trivalent.metaAssert]
 
-/-- The static flex disjunction for (8) — assertion ignored, only the
-presup formula matters here. -/
-def ex8FlexDisj : PartialProp W8 := PartialProp.orFlex baldnessNotHereditary allBillsChildrenBald
+/-- The disjunction of two meta-asserted disjuncts has no presupposition. -/
+theorem or_assertMeta_presup (w : W) :
+    (PartialProp.or (assertMeta φ) (assertMeta ψ)).presup w :=
+  ⟨trivial, trivial⟩
 
-/-- The empirical presupposition Karttunen attributes to (8): "Bill has
-children". This is the predicate that any adequate theory of disjunctive
-projection should derive. -/
-def ex8ExpectedPresup : W8 → Prop := billHasChild
+/-- It is false whenever neither disjunct is defined and true, so also where neither
+presupposition holds. -/
+theorem or_assertMeta_false_iff (w : W) :
+    (PartialProp.or (assertMeta φ) (assertMeta ψ)).eval w = .false ↔
+      ¬ (φ.presup w ∧ φ.assertion w) ∧ ¬ (ψ.presup w ∧ ψ.assertion w) := by
+  simp [PartialProp.eval, PartialProp.or, assertMeta, not_or]
 
-/-- Eq. (7) predicts a tautological presupposition for (8): `orFlex.presup`
-is universally `True` because the first disjunct is presuppositionless. -/
-theorem ex7_presup_trivial_for_ex8 : ∀ w, ex8FlexDisj.presup w :=
-  fun _ => Or.inl trivial
+/-- Meta-asserting one disjunct under Strong Kleene yields the conditional presupposition
+that the first presupposition holds unless the second disjunct is defined and true. -/
+theorem orStrong_assertMeta_presup_iff (w : W) :
+    (PartialProp.orStrong φ (assertMeta ψ)).presup w ↔
+      (¬ (ψ.presup w ∧ ψ.assertion w) → φ.presup w) := by
+  simp only [PartialProp.orStrong, assertMeta, and_true, true_and]
+  constructor
+  · rintro (hp | ⟨hp, -⟩ | hψ) <;> intro hn
+    · exact hp
+    · exact hp
+    · exact absurd hψ hn
+  · intro hc
+    by_cases hψ : ψ.presup w ∧ ψ.assertion w
+    · exact Or.inr (Or.inr hψ)
+    · exact Or.inl (hc hψ)
 
-/-- The empirical presupposition is non-trivial: it fails at `noChild`. -/
-theorem expected_presup_fails_at_noChild : ¬ex8ExpectedPresup W8.noChild := id
+/-! ### Flexible accommodation -/
 
-/-- [yagi-2025]'s eq. (7) critique made formal: the eq. (7) formula
-(= `orFlex.presup`) does NOT match the empirical presupposition. Witness:
-at `noChild`, eq. (7) says `True` (presup satisfied), but the empirical
-intuition says `False` (presup failure — "Bill has children" doesn't hold).
-This is the contrast Yagi flags as making eq. (7) "too weak". -/
-theorem eq7_too_weak_for_ex8 :
-    ex8FlexDisj.presup ≠ ex8ExpectedPresup := fun h =>
-  expected_presup_fails_at_noChild (h ▸ ex7_presup_trivial_for_ex8 _)
+/-- The update by a disjunction whose disjuncts are evaluated in the input restricted by the
+accommodated propositions `χ` and `ω`. -/
+noncomputable def flexS (χ ω : W → Prop) (φ ψ : PartialProp W) (s : State W) :
+    Option (State W) :=
+  unionU (updateS φ (Update.prop χ s)) (updateS ψ (Update.prop ω s))
 
+/-- The accommodated propositions split the input. -/
+def Splits (χ ω : W → Prop) (s : State W) : Prop := Update.prop χ s ∪ Update.prop ω s = s
 
-/-! ## [yagi-2025] example (18) Beaver 2001:115: the unprincipled success
+theorem splits_top (s : State W) : Splits (λ _ => True) (λ _ => True) s := by
+  ext w; simp
 
-"Either John didn't solve the problem or Mary realized that the problem
-is solved." The factive presupposition of "realize" does NOT project.
-[yagi-2025] §3.2 final paragraphs: standard update semantics
-correctly predicts non-projection here, while flexible accommodation may
-predict it correctly *but for the wrong reason* — the incompatibility
-that motivates accommodation in (1c) and (15) is absent in (18), so
-genuineness should not even fire. The success is unprincipled.
+/-- Each disjunct's negated rival presupposition splits any input under conflict. -/
+theorem splits_of_conflict (h : Conflict φ ψ) (s : State W) :
+    Splits (λ w => ¬ ψ.presup w) (λ w => ¬ φ.presup w) s := by
+  ext w
+  simp only [Set.mem_union, mem_prop]
+  constructor
+  · rintro (⟨hw, -⟩ | ⟨hw, -⟩) <;> exact hw
+  · intro hw
+    by_cases hp : φ.presup w
+    · exact Or.inl ⟨hw, λ hq => h w ⟨hp, hq⟩⟩
+    · exact Or.inr ⟨hw, hp⟩
 
-Linglib's [karttunen-1973] formalisation
-(`Studies/Karttunen1973.lean`) handles (18) via
-the **asymmetric** `disjFilterLeft` rule (24b): when `¬A` entails `Π(B)`,
-the presupposition is filtered. This is the principled alternative
-that the symmetric variants (`orKPSymmetric`, `orPositive`) cannot offer. -/
+theorem prop_top (s : State W) : Update.prop (λ _ : W => True) s = s := by ext w; simp
 
-/-- Worlds for example (18). -/
-inductive W18 where
-  | solvedRealized
-  | solvedNotRealized
-  | notSolved
-  deriving DecidableEq, Repr, Inhabited, Fintype
+/-- With the default tautologies the update is defined exactly when both presuppositions
+hold throughout, and then returns the worlds verifying either assertion. -/
+theorem flexS_top_eq_some_iff (s t : State W) :
+    flexS (λ _ => True) (λ _ => True) φ ψ s = some t ↔
+      (∀ w ∈ s, φ.presup w) ∧ (∀ w ∈ s, ψ.presup w) ∧
+        t = Update.prop φ.assertion s ∪ Update.prop ψ.assertion s := by
+  simp only [flexS, prop_top]
+  by_cases hp : ∀ w ∈ s, φ.presup w
+  · by_cases hq : ∀ w ∈ s, ψ.presup w
+    · rw [updateS_eq_some_iff.2 ⟨hp, rfl⟩, updateS_eq_some_iff.2 ⟨hq, rfl⟩, unionU_some_some]
+      exact ⟨λ e => ⟨hp, hq, (Option.some_inj.mp e).symm⟩, λ e => by rw [e.2.2]⟩
+    · rw [updateS_eq_none_iff.2 hq, unionU_none_right]
+      exact iff_of_false (by simp) (λ e => hq e.2.1)
+  · rw [updateS_eq_none_iff.2 hp, unionU_none_left]
+    exact iff_of_false (by simp) (λ e => hp e.1)
 
-/-- "John solved the problem". -/
-def solved : W18 → Prop
-  | .solvedRealized | .solvedNotRealized => True
-  | .notSolved => False
+/-- Under conflict the default is never defined on a nonempty input. -/
+theorem flexS_top_eq_none (h : Conflict φ ψ) {s : State W} (hs : s.Nonempty) :
+    flexS (λ _ => True) (λ _ => True) φ ψ s = none := by
+  obtain ⟨w, hw⟩ := hs
+  cases ht : flexS (λ _ => True) (λ _ => True) φ ψ s with
+  | none => rfl
+  | some t =>
+    obtain ⟨hp, hq, -⟩ := (flexS_top_eq_some_iff s t).1 ht
+    exact absurd ⟨hp w hw, hq w hw⟩ (h w)
 
-instance : DecidablePred solved
-  | .solvedRealized | .solvedNotRealized => isTrue trivial
-  | .notSolved => isFalse id
+/-- Accommodating each disjunct's negated rival presupposition, the update is defined exactly
+when some presupposition holds at every world of the input, and returns the worlds where a
+disjunct is defined and true. -/
+theorem flexS_split_eq_some_iff (h : Conflict φ ψ) (s t : State W) :
+    flexS (λ w => ¬ ψ.presup w) (λ w => ¬ φ.presup w) φ ψ s = some t ↔
+      (∀ w ∈ s, φ.presup w ∨ ψ.presup w) ∧
+        t = {w ∈ s | (φ.presup w ∧ φ.assertion w) ∨ (ψ.presup w ∧ ψ.assertion w)} := by
+  have key : (∀ w ∈ Update.prop (λ w => ¬ ψ.presup w) s, φ.presup w) ∧
+      (∀ w ∈ Update.prop (λ w => ¬ φ.presup w) s, ψ.presup w) ↔
+        ∀ w ∈ s, φ.presup w ∨ ψ.presup w := by
+    constructor
+    · rintro ⟨h₁, h₂⟩ w hw
+      by_cases hq : ψ.presup w
+      · exact Or.inr hq
+      · exact Or.inl (h₁ w ⟨hw, hq⟩)
+    · intro hor
+      exact ⟨λ w hw => (hor w hw.1).resolve_right hw.2,
+        λ w hw => (hor w hw.1).resolve_left hw.2⟩
+  have hset : ∀ (h₁ : ∀ w ∈ Update.prop (λ w => ¬ ψ.presup w) s, φ.presup w)
+      (h₂ : ∀ w ∈ Update.prop (λ w => ¬ φ.presup w) s, ψ.presup w),
+      Update.prop φ.assertion (Update.prop (λ w => ¬ ψ.presup w) s) ∪
+        Update.prop ψ.assertion (Update.prop (λ w => ¬ φ.presup w) s) =
+      {w ∈ s | (φ.presup w ∧ φ.assertion w) ∨ (ψ.presup w ∧ ψ.assertion w)} := by
+    intro h₁ h₂
+    ext w
+    simp only [Set.mem_union, mem_prop, Set.mem_setOf_eq]
+    constructor
+    · rintro (⟨⟨hw, hq⟩, hφ⟩ | ⟨⟨hw, hp⟩, hψ⟩)
+      · exact ⟨hw, Or.inl ⟨h₁ w ⟨hw, hq⟩, hφ⟩⟩
+      · exact ⟨hw, Or.inr ⟨h₂ w ⟨hw, hp⟩, hψ⟩⟩
+    · rintro ⟨hw, ⟨hp, hφ⟩ | ⟨hq, hψ⟩⟩
+      · exact Or.inl ⟨⟨hw, λ hq => h w ⟨hp, hq⟩⟩, hφ⟩
+      · exact Or.inr ⟨⟨hw, λ hp => h w ⟨hp, hq⟩⟩, hψ⟩
+  simp only [flexS]
+  by_cases h₁ : ∀ w ∈ Update.prop (λ w => ¬ ψ.presup w) s, φ.presup w
+  · by_cases h₂ : ∀ w ∈ Update.prop (λ w => ¬ φ.presup w) s, ψ.presup w
+    · rw [updateS_eq_some_iff.2 ⟨h₁, rfl⟩, updateS_eq_some_iff.2 ⟨h₂, rfl⟩,
+        unionU_some_some, hset h₁ h₂]
+      exact ⟨λ e => ⟨key.1 ⟨h₁, h₂⟩, (Option.some_inj.mp e).symm⟩,
+        λ e => by rw [e.2]⟩
+    · rw [updateS_eq_none_iff.2 h₂, unionU_none_right]
+      exact iff_of_false (by simp) (λ e => h₂ (key.2 e.1).2)
+  · rw [updateS_eq_none_iff.2 h₁, unionU_none_left]
+    exact iff_of_false (by simp) (λ e => h₁ (key.2 e.1).1)
 
-/-- "Mary realized the problem is solved" — factive: presupposes problem is solved. -/
-def maryRealized : PartialProp W18 where
-  presup := solved
-  assertion w := w = .solvedRealized
+/-- The negation of the split update removes exactly the worlds where both disjuncts are
+false: the disjunction can be false. -/
+theorem negOf_flexS_split (h : Conflict φ ψ) {s : State W}
+    (hs : ∀ w ∈ s, φ.presup w ∨ ψ.presup w) :
+    negOf (flexS (λ w => ¬ ψ.presup w) (λ w => ¬ φ.presup w) φ ψ) s =
+      some {w ∈ s |
+        ¬ (φ.presup w ∧ φ.assertion w) ∧ ¬ (ψ.presup w ∧ ψ.assertion w)} := by
+  rw [negOf, (flexS_split_eq_some_iff h s _).2 ⟨hs, rfl⟩, Option.map_some]
+  congr 1
+  ext w
+  simp only [Set.mem_diff, Set.mem_setOf_eq, not_and, not_or]
+  tauto
 
-/-- "John didn't solve the problem" — no presupposition. -/
-def johnDidntSolve : PartialProp W18 where
-  presup _ := True
-  assertion w := ¬solved w
+/-- Genuineness: each disjunct is defined and true at some world of the input that survives
+the update. -/
+def Genuine (upd : State W → Option (State W)) (φ ψ : PartialProp W) (s : State W) : Prop :=
+  (∃ w ∈ s, φ.presup w ∧ φ.assertion w ∧ ∃ t, upd s = some t ∧ w ∈ t) ∧
+    (∃ w ∈ s, ψ.presup w ∧ ψ.assertion w ∧ ∃ t, upd s = some t ∧ w ∈ t)
 
-/-- The symmetric positive-antecedent `orPositive` overgenerates here:
-predicts presupposition failure at `notSolved`, where the disjunction
-should be defined-and-true. -/
-theorem ex18_symmetric_orPositive_overgenerates :
-    ¬(PartialProp.orPositive johnDidntSolve maryRealized).presup W18.notSolved := by
-  rintro ⟨h, _, _⟩
-  exact (h (fun (h' : solved W18.notSolved) => h') : solved W18.notSolved)
+/-- When the first assertion contradicts the second presupposition, the default update, where
+defined, violates genuineness: it presupposes the second presupposition throughout, which
+empties the first disjunct. -/
+theorem not_genuine_top (h : ∀ w, ¬ (φ.assertion w ∧ ψ.presup w)) {s t : State W}
+    (ht : flexS (λ _ => True) (λ _ => True) φ ψ s = some t) :
+    ¬ Genuine (flexS (λ _ => True) (λ _ => True) φ ψ) φ ψ s := by
+  rintro ⟨⟨w, hw, -, hφ, -⟩, -⟩
+  exact h w ⟨hφ, ((flexS_top_eq_some_iff s t).1 ht).2.1 w hw⟩
 
-/-- `orFlex` predicts non-projection at `notSolved`. The proof goes
-through the LEFT disjunct of `Π(φ) ∨ Π(ψ)`: `johnDidntSolve.presup` is
-universally `True` (no presupposition). -/
-theorem ex18_orFlex_no_projection_via_vacuous_left :
-    (PartialProp.orFlex johnDidntSolve maryRealized).presup W18.notSolved :=
-  Or.inl trivial
+/-- The standard update filters a presupposition entailed by the negation of the first
+disjunct, where the default accommodation still demands it: a singleton input where the
+first disjunct holds and the second presupposition fails. -/
+theorem exists_disjS_some_flexS_top_none (hφ : ∀ w, φ.presup w) {w : W}
+    (hw : φ.assertion w) (hq : ¬ ψ.presup w) :
+    (disjS φ ψ {w}).isSome ∧ flexS (λ _ => True) (λ _ => True) φ ψ {w} = none := by
+  refine ⟨(disjS_isSome_iff _).2 ⟨λ _ _ => hφ _, ?_⟩, ?_⟩
+  · rintro v rfl hv
+    exact absurd hw hv
+  · cases ht : flexS (λ _ => True) (λ _ => True) φ ψ {w} with
+    | none => rfl
+    | some t => exact absurd (((flexS_top_eq_some_iff _ t).1 ht).2.1 w rfl) hq
 
-/-- The structural reason for `ex18_orFlex_no_projection_via_vacuous_left`:
-`johnDidntSolve` has NO presupposition, so any `orFlex.presup` involving
-it is universally satisfied — independently of `maryRealized.presup`. -/
-theorem ex18_left_presup_vacuous : ∀ w, johnDidntSolve.presup w := fun _ => trivial
+/-! ### The ideal input -/
 
-/-- [yagi-2025] §3.2's "unprincipled success" diagnosis made
-structural: at `notSolved`, the right disjunct's presupposition `solved`
-*fails*, so `(orFlex _ maryRealized).presup` would have NO support if
-the left disjunct also had a presupposition. The success at (18) rides
-entirely on the left disjunct being presuppositionless — which is an
-accident of (18)'s lexical content, not a consequence of genuineness or
-accommodation. The contrast: in (1c) Buganda, BOTH disjuncts carry
-presuppositions, so `orFlex.presup` provides genuine accommodation work;
-in (18), only the right disjunct does, so the left disjunct's vacuous
-`True` carries the prediction unilaterally. -/
-theorem ex18_unprincipled_in_right_presup_failure :
-    ¬maryRealized.presup W18.notSolved ∧
-    (PartialProp.orFlex johnDidntSolve maryRealized).presup W18.notSolved ∧
-    (∀ w, johnDidntSolve.presup w) :=
-  ⟨id, ex18_orFlex_no_projection_via_vacuous_left, ex18_left_presup_vacuous⟩
+/-- The four worlds of the ideal input: king opening, king not opening, president conducting,
+president not conducting. -/
+abbrev IW := Fin 4
 
-/-- [karttunen-1973]'s asymmetric rule (24b) — formalised in
-`PartialProp.disjFilterLeft` — gives a *principled* derivation: `¬(¬solved) =
-solved` entails the factive presupposition, so it is filtered
-(`PartialProp.disjFilterLeft_eliminates_presup_when_neg_entails`). -/
-theorem ex18_asymmetric_K1973_principled :
-    (PartialProp.disjFilterLeft (fun w => ¬solved w) maryRealized).presup
-      = fun _ => True := by
-  apply PartialProp.disjFilterLeft_eliminates_presup_when_neg_entails
-  intro w hw
-  -- hw : ¬¬solved w, so solved w.
-  exact (Classical.not_not.mp hw : maryRealized.presup w)
+/-- *The King of Buganda is opening parliament*. -/
+def kingOpens : PartialProp IW where
+  presup w := w < 2
+  assertion w := w = 0
 
+/-- *The President of Buganda is conducting the ceremony*. -/
+def presidentConducts : PartialProp IW where
+  presup w := 2 ≤ w
+  assertion w := w = 2
 
-/-! ## Summary
+theorem conflict_buganda : Conflict kingOpens presidentConducts := by
+  unfold Conflict kingOpens presidentConducts; decide
 
-Compact API restating the core verdicts. We keep only the headline
-results — the per-failure detail theorems above already document the
-content. -/
-
-/-- `orFlex` satisfies both Yagi headline observations: (2a) correct
-presupposition at the discriminating world, (2b) can be false. -/
-theorem orFlex_satisfies_both :
-    (∀ w, flexDisj.presup w ↔ expectedPresup w) ∧
-    flexDisj.eval W.kingDoesnt = .false :=
-  ⟨flex_correct_presup_iff_expected, flex_truth_table.2.1⟩
-
-/-- The substrate-canonical orFlex / orBelnap / Geurts three-way
-identity, instantiated at the Buganda case. The substrate-side identity
-is definitional (`orFlex` is an abbrev for `orBelnap`); the Geurts side
-is `mem_iUnion_cell_geurtsDisjunction_iff`. -/
-theorem orFlex_eq_orBelnap_at_buganda :
-    PartialProp.orFlex (W := W) = PartialProp.orBelnap :=
-  rfl
+/-- On the ideal input the split update keeps the worlds where the head of state performs
+the duty, and its negation the others. -/
+theorem buganda_split :
+    flexS (λ w => ¬ presidentConducts.presup w) (λ w => ¬ kingOpens.presup w) kingOpens
+      presidentConducts Set.univ = some {0, 2} ∧
+    negOf (flexS (λ w => ¬ presidentConducts.presup w) (λ w => ¬ kingOpens.presup w)
+      kingOpens presidentConducts) Set.univ = some {1, 3} := by
+  have hs : ∀ w ∈ (Set.univ : Set IW), kingOpens.presup w ∨ presidentConducts.presup w := by
+    unfold kingOpens presidentConducts
+    intro w _; fin_cases w <;> decide
+  constructor
+  · rw [flexS_split_eq_some_iff conflict_buganda]
+    refine ⟨hs, ?_⟩
+    ext w
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_setOf_eq, Set.mem_univ,
+      true_and, kingOpens, presidentConducts]
+    fin_cases w <;> decide
+  · rw [negOf_flexS_split conflict_buganda hs]
+    congr 1
+    ext w
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_setOf_eq, Set.mem_univ,
+      true_and, kingOpens, presidentConducts]
+    fin_cases w <;> decide
 
 end Yagi2025
