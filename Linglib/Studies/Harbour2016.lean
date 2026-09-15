@@ -253,10 +253,10 @@ theorem attested_number_systems_derivable :
 
 /-! ### Harbour's sign decomposition of the Cysouw categories ([harbour-2016] Table 4.3)
 
-The neutral `Person.Category.toFeatures` underdetermines the group categories
-(`excl`/`minIncl`/`augIncl` all `⟨true,true⟩`). Harbour's **operational signs** distinguish
-them; that distinction is *this theory's* commitment, derived from the partition above. A
-dedicated `Sign` carrier is used rather than `Person.Features`, because the
+The neutral `Person.Category.toFeatures` underdetermines the group categories (`speakerOthers`,
+`speakerAddressee` and `speakerAddresseeOthers` all `⟨true,true⟩`). Harbour's **operational
+signs** distinguish them; that distinction is *this theory's* commitment, derived from the
+partition above. A dedicated `Sign` carrier is used rather than `Person.Features`, because the
 exclusive's `+author −participant` is exactly the combination the neutral type's `wellFormed`
 invariant (SAP containment: author ⟹ participant) rejects — for operations, not SAP-membership
 predicates, that invariant does not apply ([harbour-2016] Ch. 9). -/
@@ -271,18 +271,19 @@ structure Sign where
   deriving DecidableEq, Repr
 
 /-- Harbour's signs for a Cysouw `Category` ([harbour-2016] Table 4.3). The 1st-person
-*exclusive* — and the singular speaker `.s1`, which Harbour's quadripartition lumps into
+*exclusive* — and the singular speaker `.speaker`, which Harbour's quadripartition lumps into
 the exclusive cell `i_o` (p. 96) — is `+author −participant`, so it does *not* collapse
 with the *inclusive* `+author +participant`, unlike the neutral `Category.toFeatures`. -/
 def signOf : Category → Sign
-  | .minIncl | .augIncl => ⟨true, true⟩    -- +author +participant (inclusive)
-  | .s1 | .excl         => ⟨true, false⟩   -- +author −participant (exclusive / sg speaker)
-  | .s2 | .secondGrp    => ⟨false, true⟩   -- −author +participant
-  | .s3 | .thirdGrp     => ⟨false, false⟩  -- −author −participant
+  | .speakerAddressee | .speakerAddresseeOthers => ⟨true, true⟩  -- +author +participant
+  | .speaker | .speakerOthers => ⟨true, false⟩                   -- +author −participant
+  | .addressee | .addresseeOthers => ⟨false, true⟩               -- −author +participant
+  | .other | .others => ⟨false, false⟩                           -- −author −participant
 
 /-- Harbour's signs distinguish exclusive from inclusive, where the neutral membership
 decomposition (`Category.toFeatures`) collapses them (cf. `Examples.inclusive_ne_exclusive`). -/
-theorem signOf_excl_ne_incl : signOf .excl ≠ signOf .minIncl := by decide
+theorem signOf_speakerOthers_ne_speakerAddressee :
+    signOf .speakerOthers ≠ signOf .speakerAddressee := by decide
 
 /-! ### Application: the Tamil clusivity contrast through the Pronoun API
 
@@ -322,7 +323,8 @@ theorem tamil_clusivity_collapsed_by_toFeatures :
 combinatorics of chapter 9 generate and the calculus fills
 (`Examples.exclusive_includes_speaker`). -/
 theorem exclusive_sign_filtered :
-    ¬ (Agreement.ContainmentPair.mk (signOf .excl).participant (signOf .excl).author).WellFormed :=
-  by decide
+    ¬ (Agreement.ContainmentPair.mk (signOf .speakerOthers).participant
+        (signOf .speakerOthers).author).WellFormed := by
+  decide
 
 end Harbour2016

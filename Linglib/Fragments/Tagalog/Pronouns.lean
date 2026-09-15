@@ -147,7 +147,7 @@ theorem minimal_augmented :
     (dual inclusive) form iff the language commits to the minimal-augmented
     clusivity system. -/
 theorem clusivity_consistent :
-    (∃ p ∈ pronouns, p.categories = {.minIncl}) ↔ clusivity.toPattern.SplitInclusive := by
+    (∃ p ∈ pronouns, p.categories = {.speakerAddressee}) ↔ clusivity.toPattern.SplitInclusive := by
   decide
 
 /-- Every Tagalog pronoun is well-formed: clusivity is borne only by the

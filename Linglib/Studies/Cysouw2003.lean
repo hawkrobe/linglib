@@ -167,8 +167,8 @@ into paradigms with and without an inclusive/exclusive opposition goes (§4.5–
 Ojibwe and Huave prefixes, whose inclusive is a singular morpheme, under the opposition), and
 as §4.7 counts any 1+2 against 1+2+3 difference as a minimal/augmented inclusive. -/
 def weMarking : WeMarking :=
-  if ¬ s .minIncl .augIncl then .minimalAugmented
-  else if ¬ s .minIncl .excl then .inclusiveExclusive else .unified
+  if ¬ s .speakerAddressee .speakerAddresseeOthers then .minimalAugmented
+  else if ¬ s .speakerAddressee .speakerOthers then .inclusiveExclusive else .unified
 
 /-- The hierarchy (4.108), (10.7) as a constraint on which oppositions a paradigm may give up:
 singulars merge only where groups already merge, and groups merge only once 'we' is one
@@ -239,11 +239,11 @@ namespace RarePattern
 
 /-- Fig. 3.7's letters as morpheme classes, `0` the singular class. -/
 def labels : RarePattern → Category → ℕ
-  | .pf, .minIncl => 1 | .pf, .augIncl => 2 | .pf, .excl => 2
-  | .pg, .minIncl => 1 | .pg, .augIncl => 2 | .pg, .excl => 1
-  | .ph, .minIncl => 1 | .ph, .augIncl => 2
-  | .pi, .augIncl => 1 | .pi, .excl => 1
-  | .pj, .excl => 1
+  | .pf, .speakerAddressee => 1 | .pf, .speakerAddresseeOthers => 2 | .pf, .speakerOthers => 2
+  | .pg, .speakerAddressee => 1 | .pg, .speakerAddresseeOthers => 2 | .pg, .speakerOthers => 1
+  | .ph, .speakerAddressee => 1 | .ph, .speakerAddresseeOthers => 2
+  | .pi, .speakerAddresseeOthers => 1 | .pi, .speakerOthers => 1
+  | .pj, .speakerOthers => 1
   | _, _ => 0
 
 /-- The rare pattern as a setoid on the four cells. -/
@@ -275,24 +275,46 @@ namespace Kind
 /-- Morpheme classes of each named structure (Figs. 4.9–4.11); the wildcard covers the
 three 'we' cells. -/
 def labels : Kind → Category → ℕ
-  | .latin => λ | .s1 => 0 | .s2 => 1 | .s3 => 2 | .secondGrp => 4 | .thirdGrp => 5 | _ => 3
-  | .sinhalese => λ | .s1 => 0 | .s2 => 1 | .s3 => 2 | .secondGrp => 4 | .thirdGrp => 2 | _ => 3
-  | .berik => λ | .s1 => 0 | .s2 => 1 | .s3 => 2 | .secondGrp => 1 | .thirdGrp => 2 | _ => 3
-  | .maricopa => λ | .s1 => 0 | .s2 => 1 | .s3 => 2 | .secondGrp => 1 | .thirdGrp => 2 | _ => 0
-  | .maranao => λ | .s1 => 0 | .s2 => 1 | .s3 => 2 | .minIncl => 3 | .augIncl => 4 | .excl => 5
-                  | .secondGrp => 6 | .thirdGrp => 7
-  | .mandara => λ | .s1 => 0 | .s2 => 1 | .s3 => 2 | .excl => 4 | .secondGrp => 5
-                  | .thirdGrp => 6 | _ => 3
-  | .tupiGuarani => λ | .s1 => 0 | .s2 => 1 | .s3 => 2 | .excl => 4 | .secondGrp => 5
-                      | .thirdGrp => 2 | _ => 3
-  | .kwakiutl => λ | .s1 => 0 | .s2 => 1 | .s3 => 2 | .excl => 4 | .secondGrp => 1
-                   | .thirdGrp => 2 | _ => 3
-  | .sierraPopoluca => λ | .s1 => 0 | .s2 => 1 | .s3 => 2 | .excl => 0 | .secondGrp => 1
-                         | .thirdGrp => 2 | _ => 3
-  | .slave => λ | .s1 => 0 | .s2 => 1 | .s3 => 2 | .secondGrp => 3 | .thirdGrp => 4 | _ => 3
-  | .nezPerce => λ | .s1 => 0 | .s2 => 1 | .s3 => 2 | .secondGrp => 4 | .thirdGrp => 4 | _ => 3
-  | .kombai => λ | .s1 => 0 | .s2 => 1 | .s3 => 1 | .secondGrp => 3 | .thirdGrp => 3 | _ => 2
-  | .omie => λ | .s1 => 0 | .s2 => 1 | .s3 => 2 | .secondGrp => 4 | .thirdGrp => 3 | _ => 3
+  | .latin => λ
+    | .speaker => 0 | .addressee => 1 | .other => 2
+    | .addresseeOthers => 4 | .others => 5 | _ => 3
+  | .sinhalese => λ
+    | .speaker => 0 | .addressee => 1 | .other => 2
+    | .addresseeOthers => 4 | .others => 2 | _ => 3
+  | .berik => λ
+    | .speaker => 0 | .addressee => 1 | .other => 2
+    | .addresseeOthers => 1 | .others => 2 | _ => 3
+  | .maricopa => λ
+    | .speaker => 0 | .addressee => 1 | .other => 2
+    | .addresseeOthers => 1 | .others => 2 | _ => 0
+  | .maranao => λ
+    | .speaker => 0 | .addressee => 1 | .other => 2
+    | .speakerAddressee => 3 | .speakerAddresseeOthers => 4 | .speakerOthers => 5
+    | .addresseeOthers => 6 | .others => 7
+  | .mandara => λ
+    | .speaker => 0 | .addressee => 1 | .other => 2
+    | .speakerOthers => 4 | .addresseeOthers => 5 | .others => 6 | _ => 3
+  | .tupiGuarani => λ
+    | .speaker => 0 | .addressee => 1 | .other => 2
+    | .speakerOthers => 4 | .addresseeOthers => 5 | .others => 2 | _ => 3
+  | .kwakiutl => λ
+    | .speaker => 0 | .addressee => 1 | .other => 2
+    | .speakerOthers => 4 | .addresseeOthers => 1 | .others => 2 | _ => 3
+  | .sierraPopoluca => λ
+    | .speaker => 0 | .addressee => 1 | .other => 2
+    | .speakerOthers => 0 | .addresseeOthers => 1 | .others => 2 | _ => 3
+  | .slave => λ
+    | .speaker => 0 | .addressee => 1 | .other => 2
+    | .addresseeOthers => 3 | .others => 4 | _ => 3
+  | .nezPerce => λ
+    | .speaker => 0 | .addressee => 1 | .other => 2
+    | .addresseeOthers => 4 | .others => 4 | _ => 3
+  | .kombai => λ
+    | .speaker => 0 | .addressee => 1 | .other => 1
+    | .addresseeOthers => 3 | .others => 3 | _ => 2
+  | .omie => λ
+    | .speaker => 0 | .addressee => 1 | .other => 2
+    | .addresseeOthers => 4 | .others => 3 | _ => 3
 
 /-- The names the rows use. -/
 def names : List (String × Kind) :=
@@ -427,9 +449,10 @@ def ofExample? (e : Data.Examples.LinguisticExample) : Option Row := do
   let kind ← optional? e "kind" Kind.names
   let rare ← optional? e "fpc" [("Pf", .pf), ("Pg", .pg), ("Ph", .ph), ("Pi", .pi), ("Pj", .pj)]
   pure { id := e.id, chapter, ubiquity, marking, kind, rare
-         forms := λ | .s1 => s1 | .s2 => s2 | .s3 => s3 | .minIncl => minIncl
-                    | .augIncl => augIncl | .excl => excl | .secondGrp => secondGrp
-                    | .thirdGrp => thirdGrp }
+         forms := λ
+           | .speaker => s1 | .addressee => s2 | .other => s3
+           | .speakerAddressee => minIncl | .speakerAddresseeOthers => augIncl
+           | .speakerOthers => excl | .addresseeOthers => secondGrp | .others => thirdGrp }
 
 theorem isSome_ofExample : ∀ e ∈ Examples.all, (ofExample? e).isSome := by decide
 

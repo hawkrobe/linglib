@@ -176,8 +176,8 @@ structure PersonalPronoun extends Pronoun where
       person and number realize. A polite pronoun overrides the default: the formal `person`
       and `number` govern agreement, clitic allomorphy and reflexive binding, while the
       referential categories govern the PCC, the Fancy Constraint and resolved agreement
-      ([adamson-zompi-2025]); Italian LEI denotes `{s2}` and German *Sie*, addressee or
-      addressees, `{s2, secondGrp}`. -/
+      ([adamson-zompi-2025]); Italian LEI denotes `{addressee}` and German *Sie*, addressee or
+      addressees, `{addressee, addresseeOthers}`. -/
   referential : Finset Person.Category :=
     (Option.map₂ Person.Category.ofPersonNumber person number).getD ∅
   deriving BEq, DecidableEq

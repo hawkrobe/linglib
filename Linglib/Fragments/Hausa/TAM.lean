@@ -120,20 +120,20 @@ end Subject
     actually appear in the PAC paradigm (`Person.Category` includes
     inclusive/exclusive distinctions that Hausa lacks). -/
 def hausaSubjects : List Subject :=
-  [ ⟨.s1, none⟩,                     -- 1sg (no gender)
-    ⟨.s2, some .masculine⟩,          -- 2sg.M
-    ⟨.s2, some .feminine⟩,           -- 2sg.F
-    ⟨.s3, some .masculine⟩,          -- 3sg.M
-    ⟨.s3, some .feminine⟩,           -- 3sg.F
-    ⟨.excl, none⟩,                   -- 1pl  (Hausa has no incl/excl split)
-    ⟨.secondGrp, none⟩,              -- 2pl
-    ⟨.thirdGrp, none⟩ ]              -- 3pl
+  [ ⟨.speaker, none⟩,                     -- 1sg (no gender)
+    ⟨.addressee, some .masculine⟩,          -- 2sg.M
+    ⟨.addressee, some .feminine⟩,           -- 2sg.F
+    ⟨.other, some .masculine⟩,          -- 3sg.M
+    ⟨.other, some .feminine⟩,           -- 3sg.F
+    ⟨.speakerOthers, none⟩,                   -- 1pl  (Hausa has no incl/excl split)
+    ⟨.addresseeOthers, none⟩,              -- 2pl
+    ⟨.others, none⟩ ]              -- 3pl
 
 /-- **Gender contrast is restricted to the singular.** A Hausa subject
     has a gender contrast only in 2sg or 3sg cells. -/
 theorem gender_contrast_only_in_singular :
     ∀ s ∈ hausaSubjects, s.HasGenderContrast →
-      s.person = .s2 ∨ s.person = .s3 := by
+      s.person = .addressee ∨ s.person = .other := by
   decide
 
 -- ============================================================================
@@ -184,50 +184,50 @@ theorem mkRelativePAC_wellFormed (s : Subject) (t : TAM) (f : String)
 
 /-- 3sg.M completive, General form *yā* (high tone). -/
 def cmp_3sm_G : PAC :=
-  mkGeneralPAC ⟨.s3, some .masculine⟩ .completive "yā"
+  mkGeneralPAC ⟨.other, some .masculine⟩ .completive "yā"
 
 /-- 3sg.M completive, Relative form *yà* (low tone). The G/R contrast
     here is purely tonal — a textbook minimal pair. -/
 def cmp_3sm_R : PAC :=
-  mkRelativePAC ⟨.s3, some .masculine⟩ .completive "yà" trivial
+  mkRelativePAC ⟨.other, some .masculine⟩ .completive "yà" trivial
 
 /-- 3sg.F completive, Relative form *ta* ([newman-2000] §70.2,
     [hartmann-zimmermann-2007] eq. 24). -/
 def cmp_3sf_R : PAC :=
-  mkRelativePAC ⟨.s3, some .feminine⟩ .completive "ta" trivial
+  mkRelativePAC ⟨.other, some .feminine⟩ .completive "ta" trivial
 
 /-- 3sg.M continuous, General form *yanā*. -/
 def cont_3sm_G : PAC :=
-  mkGeneralPAC ⟨.s3, some .masculine⟩ .continuous "yanā"
+  mkGeneralPAC ⟨.other, some .masculine⟩ .continuous "yanā"
 
 /-- 3sg.M continuous, Relative form *yake* — a stem alternation, not
     just a tone change ([newman-2000] §70.2). -/
 def cont_3sm_R : PAC :=
-  mkRelativePAC ⟨.s3, some .masculine⟩ .continuous "yake" trivial
+  mkRelativePAC ⟨.other, some .masculine⟩ .continuous "yake" trivial
 
 /-- 3sg.F continuous, Relative form *takèe*
     ([hartmann-zimmermann-2007] eq. 22). -/
 def cont_3sf_R : PAC :=
-  mkRelativePAC ⟨.s3, some .feminine⟩ .continuous "takèe" trivial
+  mkRelativePAC ⟨.other, some .feminine⟩ .continuous "takèe" trivial
 
 /-- 1sg completive, General form *naa*
     ([hartmann-zimmermann-2007] eq. 23). -/
 def cmp_1sg_G : PAC :=
-  mkGeneralPAC ⟨.s1, none⟩ .completive "naa"
+  mkGeneralPAC ⟨.speaker, none⟩ .completive "naa"
 
 /-- 1sg continuous, Relative form *nakèe*
     ([hartmann-zimmermann-2007] eq. 29). -/
 def cont_1sg_R : PAC :=
-  mkRelativePAC ⟨.s1, none⟩ .continuous "nakèe" trivial
+  mkRelativePAC ⟨.speaker, none⟩ .continuous "nakèe" trivial
 
 /-- 1sg future *zân* ([hartmann-zimmermann-2007] eqs. 25, 30).
     No General/Relative contrast in the future TAM. -/
 def fut_1sg : PAC :=
-  mkGeneralPAC ⟨.s1, none⟩ .future "zân"
+  mkGeneralPAC ⟨.speaker, none⟩ .future "zân"
 
 /-- 3sg.M subjunctive *yà*. No General/Relative contrast in this TAM. -/
 def subj_3sm : PAC :=
-  mkGeneralPAC ⟨.s3, some .masculine⟩ .subjunctive "yà"
+  mkGeneralPAC ⟨.other, some .masculine⟩ .subjunctive "yà"
 
 /-- The PAC registry: representative cells used by downstream fragments
     (notably `Hausa/Focus.lean`). Every entry is well-formed by

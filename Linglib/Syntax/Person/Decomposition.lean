@@ -178,46 +178,56 @@ singular participants plus the five attested of the seven logical groups
 of Table 3.1 — 1+1 (mass speaking) and 2+2 (present-audience-only) are
 dismissed as not grammaticalized, his §3.4). -/
 inductive Category where
-  | s1        -- speaker (1st person singular)
-  | s2        -- addressee (2nd person singular)
-  | s3        -- other (3rd person singular)
-  | minIncl   -- 1+2: minimal inclusive ('we' = speaker + addressee only)
-  | augIncl   -- 1+2+3: augmented inclusive ('we' = speaker + addressee + others)
-  | excl      -- 1+3: exclusive ('we' = speaker + others, excluding addressee)
-  | secondGrp -- 2+3: second person group ('you all', addressee + others)
-  | thirdGrp  -- 3+3: third person group ('they')
+  /-- The speaker alone, Cysouw's 1. -/
+  | speaker
+  /-- The addressee alone, Cysouw's 2. -/
+  | addressee
+  /-- A single other, Cysouw's 3. -/
+  | other
+  /-- The minimal inclusive, speaker and addressee only, Cysouw's 1+2. -/
+  | speakerAddressee
+  /-- The augmented inclusive, speaker and addressee with others, Cysouw's 1+2+3. -/
+  | speakerAddresseeOthers
+  /-- The exclusive, speaker with others but not the addressee, Cysouw's 1+3. -/
+  | speakerOthers
+  /-- The addressee with others, Cysouw's 2+3. -/
+  | addresseeOthers
+  /-- Several others, Cysouw's 3+3. -/
+  | others
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 namespace Category
 
 /-- All 8 categories in canonical order (singular, then group). -/
 def all : List Category :=
-  [.s1, .s2, .s3, .minIncl, .augIncl, .excl, .secondGrp, .thirdGrp]
+  [.speaker, .addressee, .other, .speakerAddressee, .speakerAddresseeOthers, .speakerOthers,
+    .addresseeOthers, .others]
 
 theorem all_length : all.length = 8 := by decide
 
 /-- Is this a singular (individual) category? -/
 def IsSingular (c : Category) : Prop :=
-  c = .s1 ∨ c = .s2 ∨ c = .s3
+  c = .speaker ∨ c = .addressee ∨ c = .other
 
 instance : DecidablePred IsSingular := fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Is this a group (non-singular) category? -/
 def IsGroup (c : Category) : Prop :=
-  c = .minIncl ∨ c = .augIncl ∨ c = .excl ∨ c = .secondGrp ∨ c = .thirdGrp
+  c = .speakerAddressee ∨ c = .speakerAddresseeOthers ∨ c = .speakerOthers ∨
+    c = .addresseeOthers ∨ c = .others
 
 instance : DecidablePred IsGroup := fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Is this part of the first person complex (contains speaker as part of a group)? -/
 def IsFirstPersonComplex (c : Category) : Prop :=
-  c = .minIncl ∨ c = .augIncl ∨ c = .excl
+  c = .speakerAddressee ∨ c = .speakerAddresseeOthers ∨ c = .speakerOthers
 
 instance : DecidablePred IsFirstPersonComplex :=
   fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Is this an inclusive category (contains both speaker and addressee)? -/
 def IsInclusive (c : Category) : Prop :=
-  c = .minIncl ∨ c = .augIncl
+  c = .speakerAddressee ∨ c = .speakerAddresseeOthers
 
 instance : DecidablePred IsInclusive :=
   fun _ => inferInstanceAs (Decidable (_ ∨ _))
@@ -228,7 +238,7 @@ theorem IsInclusive.isFirstPersonComplex {c : Category} (h : c.IsInclusive) :
 
 /-- Does this category include the speaker? -/
 def IncludesSpeaker (c : Category) : Prop :=
-  c = .s1 ∨ c = .minIncl ∨ c = .augIncl ∨ c = .excl
+  c = .speaker ∨ c = .speakerAddressee ∨ c = .speakerAddresseeOthers ∨ c = .speakerOthers
 
 instance : DecidablePred IncludesSpeaker :=
   fun _ => inferInstanceAs (Decidable (_ ∨ _))
@@ -242,7 +252,7 @@ theorem IsInclusive.includesSpeaker {c : Category} (h : c.IsInclusive) : c.Inclu
 
 /-- Does this category include the addressee? -/
 def IncludesAddressee (c : Category) : Prop :=
-  c = .s2 ∨ c = .minIncl ∨ c = .augIncl ∨ c = .secondGrp
+  c = .addressee ∨ c = .speakerAddressee ∨ c = .speakerAddresseeOthers ∨ c = .addresseeOthers
 
 instance : DecidablePred IncludesAddressee :=
   fun _ => inferInstanceAs (Decidable (_ ∨ _))
@@ -255,16 +265,16 @@ end Category
 
 /-- Map singular Category to UD.Person. -/
 def Category.toUDPerson : Category → Option UD.Person
-  | .s1 => some .first
-  | .s2 => some .second
-  | .s3 => some .third
+  | .speaker => some .first
+  | .addressee => some .second
+  | .other => some .third
   | _   => none
 
 /-- Map UD.Person to singular Category. -/
 def Category.fromUDPerson : UD.Person → Option Category
-  | .first  => some .s1
-  | .second => some .s2
-  | .third  => some .s3
+  | .first  => some .speaker
+  | .second => some .addressee
+  | .third  => some .other
   | .zero   => none
 
 /-- Round-trip: UD.Person → Category → UD.Person is identity. -/
@@ -277,61 +287,63 @@ theorem ud_person_roundtrip :
 /-- Map Category to traditional person × number pair. -/
 def Category.toUDPersonNumber :
     Category → Option (UD.Person × UD.Number)
-  | .s1       => some (.first, .Sing)
-  | .s2       => some (.second, .Sing)
-  | .s3       => some (.third, .Sing)
-  | .minIncl  => some (.first, .Dual)
-  | .augIncl  => some (.first, .Plur)
-  | .excl     => some (.first, .Plur)
-  | .secondGrp => some (.second, .Plur)
-  | .thirdGrp  => some (.third, .Plur)
+  | .speaker => some (.first, .Sing)
+  | .addressee => some (.second, .Sing)
+  | .other => some (.third, .Sing)
+  | .speakerAddressee => some (.first, .Dual)
+  | .speakerAddresseeOthers => some (.first, .Plur)
+  | .speakerOthers => some (.first, .Plur)
+  | .addresseeOthers => some (.second, .Plur)
+  | .others => some (.third, .Plur)
 
 /-- UD conflates inclusive and exclusive under first person plural. -/
 theorem ud_conflates_incl_excl :
-    Category.toUDPersonNumber .augIncl =
-    Category.toUDPersonNumber .excl := rfl
+    Category.toUDPersonNumber .speakerAddresseeOthers =
+    Category.toUDPersonNumber .speakerOthers := rfl
 
 /-- The [cysouw-2003] categories a (person, number) coordinate pair can realize. Clusivity
     rides on the person value and the minimal/augmented coordinates give the minimal/augmented
-    inclusives directly (Tagalog *kata* = `(firstInclusive, minimal)` ↦ `{minIncl}`). A
-    clusivity-unmarked non-singular first person is the syncretism `{minIncl, augIncl, excl}`
-    (English *we*), general number is noncommittal between the singular and the group category
-    (`(second, general)` ↦ `{s2, secondGrp}`), and a singular bearing clusivity or the
-    impersonal person realizes nothing. -/
+    inclusives directly (Tagalog *kata* = `(firstInclusive, minimal)` ↦ `{speakerAddressee}`). A
+    clusivity-unmarked non-singular first person is the syncretism
+    `{speakerAddressee, speakerAddresseeOthers, speakerOthers}` (English *we*), general number is
+    noncommittal between the singular and the group category (`(second, general)` ↦
+    `{addressee, addresseeOthers}`), and a singular bearing clusivity or the impersonal person
+    realizes nothing. -/
 def Category.ofPersonNumber : Person → Number → Finset Category
-  | .first, .singular | .first, .minimal => {.s1}
-  | .first, .dual => {.minIncl, .excl}
-  | .first, .general => {.s1, .minIncl, .augIncl, .excl}
-  | .first, _ => {.minIncl, .augIncl, .excl}
+  | .first, .singular | .first, .minimal => {.speaker}
+  | .first, .dual => {.speakerAddressee, .speakerOthers}
+  | .first, .general => {.speaker, .speakerAddressee, .speakerAddresseeOthers, .speakerOthers}
+  | .first, _ => {.speakerAddressee, .speakerAddresseeOthers, .speakerOthers}
   | .firstInclusive, .singular => ∅
-  | .firstInclusive, .minimal | .firstInclusive, .dual => {.minIncl}
-  | .firstInclusive, .general => {.minIncl, .augIncl}
-  | .firstInclusive, _ => {.augIncl}
+  | .firstInclusive, .minimal | .firstInclusive, .dual => {.speakerAddressee}
+  | .firstInclusive, .general => {.speakerAddressee, .speakerAddresseeOthers}
+  | .firstInclusive, _ => {.speakerAddresseeOthers}
   | .firstExclusive, .singular => ∅
-  | .firstExclusive, _ => {.excl}
-  | .second, .singular | .second, .minimal => {.s2}
-  | .second, .general => {.s2, .secondGrp}
-  | .second, _ => {.secondGrp}
-  | .third, .singular | .third, .minimal => {.s3}
-  | .third, .general => {.s3, .thirdGrp}
-  | .third, _ => {.thirdGrp}
+  | .firstExclusive, _ => {.speakerOthers}
+  | .second, .singular | .second, .minimal => {.addressee}
+  | .second, .general => {.addressee, .addresseeOthers}
+  | .second, _ => {.addresseeOthers}
+  | .third, .singular | .third, .minimal => {.other}
+  | .third, .general => {.other, .others}
+  | .third, _ => {.others}
   | .zero, _ => ∅
 
 /-- The person coordinate of each referential category — the projection
     the canonical inventory recovers losslessly where UD cannot:
-    `minIncl`/`augIncl` ↦ `firstInclusive`, `excl` ↦ `firstExclusive`.
+    `speakerAddressee` and `speakerAddresseeOthers` ↦ `firstInclusive`, `speakerOthers` ↦
+    `firstExclusive`.
     (The number coordinate is `toUDPersonNumber`'s second component; the
     full `Category ≃ compatible (Person × Number)` junction is the
     planned phase-2 theorem.) -/
 def Category.person : Category → Person
-  | .s1        => .first
-  | .s2        => .second
-  | .s3        => .third
-  | .minIncl   => .firstInclusive
-  | .augIncl   => .firstInclusive
-  | .excl      => .firstExclusive
-  | .secondGrp => .second
-  | .thirdGrp  => .third
+  | .speaker        => .first
+  | .addressee        => .second
+  | .other        => .third
+  | .speakerAddressee   => .firstInclusive
+  | .speakerAddresseeOthers   => .firstInclusive
+  | .speakerOthers      => .firstExclusive
+  | .addresseeOthers => .second
+  | .others  => .third
 
 /-- The person projection tracks speaker inclusion. -/
 theorem person_includesSpeaker_iff (c : Category) :
@@ -342,7 +354,7 @@ theorem person_includesSpeaker_iff (c : Category) :
 /-- Unlike UD realization, the person projection separates inclusive
     from exclusive. -/
 theorem person_separates_clusivity :
-    Category.augIncl.person ≠ Category.excl.person := by decide
+    Category.speakerAddresseeOthers.person ≠ Category.speakerOthers.person := by decide
 
 /-- `ofPersonNumber` inverts the person projection: every category is recovered from its
     coordinates at some number value. -/
@@ -417,21 +429,22 @@ end Category
     - `hasParticipant` = `includesSpeaker ∨ includesAddressee`: the referent
       contains at least one speech-act participant.
 
-    Features underdetermine group categories: `excl`, `minIncl`, and `augIncl` all
-    map to `⟨true, true⟩` — a genuine property of the descriptive two-feature system
+    Features underdetermine group categories: `speakerOthers`, `speakerAddressee`, and
+    `speakerAddresseeOthers` all map to `⟨true, true⟩` — a genuine property of the descriptive
+    two-feature system
     (the `Category` enum carries the clusivity distinction the features cannot). The
     theory-laden Harbour-*sign* decomposition that *does* distinguish the exclusive
     (`+author −participant`) lives in the theory layer
     (as `Studies.Harbour2016.signOf`, over `Syntax.Minimalist.Phi.Lattice` operators), not here. -/
 def Category.toFeatures : Category → Features
-  | .s1        => ⟨true, true⟩
-  | .s2        => ⟨true, false⟩
-  | .s3        => ⟨false, false⟩
-  | .minIncl   => ⟨true, true⟩
-  | .augIncl   => ⟨true, true⟩
-  | .excl      => ⟨true, true⟩
-  | .secondGrp => ⟨true, false⟩
-  | .thirdGrp  => ⟨false, false⟩
+  | .speaker        => ⟨true, true⟩
+  | .addressee        => ⟨true, false⟩
+  | .other        => ⟨false, false⟩
+  | .speakerAddressee   => ⟨true, true⟩
+  | .speakerAddresseeOthers   => ⟨true, true⟩
+  | .speakerOthers      => ⟨true, true⟩
+  | .addresseeOthers => ⟨true, false⟩
+  | .others  => ⟨false, false⟩
 
 /-- `hasAuthor` ↔ `IncludesSpeaker` for all categories. -/
 theorem toFeatures_author_iff_speaker (p : Category) :
@@ -453,9 +466,9 @@ theorem Category.toFeatures_wellFormed (p : Category) :
 
 /-- The singular Category of a tripartition person value. -/
 def Category.ofSingularPerson : Person → Option Category
-  | .first  => some .s1
-  | .second => some .s2
-  | .third  => some .s3
+  | .first  => some .speaker
+  | .second => some .addressee
+  | .third  => some .other
   | _ => none
 
 /-- Round-trip: singular categories are recovered from their person
@@ -470,21 +483,21 @@ theorem singular_category_roundtrip (c : Category) (h : c.IsSingular) :
     [−participant, −author]. This unifies the Category decomposition
     in `Spanish/PersonFeatures.lean` with `Phi.Geometry.decomposePerson`. -/
 theorem includesSpeaker_iff_author :
-    Category.s1.IncludesSpeaker ∧
-    ¬ Category.s2.IncludesSpeaker ∧
-    ¬ Category.s3.IncludesSpeaker := by decide
+    Category.speaker.IncludesSpeaker ∧
+    ¬ Category.addressee.IncludesSpeaker ∧
+    ¬ Category.other.IncludesSpeaker := by decide
 
 theorem includesAddressee_iff_participant_not_author :
-    ¬ Category.s1.IncludesAddressee ∧
-    Category.s2.IncludesAddressee ∧
-    ¬ Category.s3.IncludesAddressee := by decide
+    ¬ Category.speaker.IncludesAddressee ∧
+    Category.addressee.IncludesAddressee ∧
+    ¬ Category.other.IncludesAddressee := by decide
 
 /-- SAP (speech-act participant) = `IncludesSpeaker ∨ IncludesAddressee`
     for singular categories. This matches `Person.isSAP`. -/
 theorem singular_sap_match :
-    (Category.s1.IncludesSpeaker ∨ Category.s1.IncludesAddressee) ∧
-    (Category.s2.IncludesSpeaker ∨ Category.s2.IncludesAddressee) ∧
-    ¬ (Category.s3.IncludesSpeaker ∨ Category.s3.IncludesAddressee) := by decide
+    (Category.speaker.IncludesSpeaker ∨ Category.speaker.IncludesAddressee) ∧
+    (Category.addressee.IncludesSpeaker ∨ Category.addressee.IncludesAddressee) ∧
+    ¬ (Category.other.IncludesSpeaker ∨ Category.other.IncludesAddressee) := by decide
 
 -- ============================================================================
 -- § 10: Category Consistency

@@ -93,18 +93,18 @@ its minimal/augmented split being a matter of number. -/
 def Pronoun.toCategory (p : Pronoun) : Option Category :=
   p.person.eval.bind fun r =>
     match r, p.plural with
-    | .si, false => some .s1
-    | .si, true => some .excl
-    | .siu, true => some .augIncl
-    | .addressees, false => some .s2
-    | .addressees, true => some .secondGrp
-    | .others, false => some .s3
-    | .others, true => some .thirdGrp
+    | .si, false => some .speaker
+    | .si, true => some .speakerOthers
+    | .siu, true => some .speakerAddresseeOthers
+    | .addressees, false => some .addressee
+    | .addressees, true => some .addresseeOthers
+    | .others, false => some .other
+    | .others, true => some .others
     | _, _ => none
 
 /-- The inventory realizes every category but the minimal inclusive. -/
 theorem toCategory_inventory :
-    ∀ c ∈ Category.all, c ≠ .minIncl ↔ ∃ p ∈ inventory, p.toCategory = some c := by
+    ∀ c ∈ Category.all, c ≠ .speakerAddressee ↔ ∃ p ∈ inventory, p.toCategory = some c := by
   decide
 
 theorem toCategory_inclusive_singular : (⟨inclusive, false⟩ : Pronoun).toCategory = none := rfl

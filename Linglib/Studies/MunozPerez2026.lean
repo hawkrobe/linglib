@@ -296,23 +296,23 @@ def applySpanishFission (p : Category) (heads : List VerbHead) :
 /-- Fission applies only to 1SG and 2SG.
     DERIVED from [+PARTICIPANT, +SINGULAR] feature condition. -/
 theorem fission_person_restriction :
-    IsFissionApplicable .s1 ∧
-    IsFissionApplicable .s2 ∧
-    ¬ IsFissionApplicable .s3 ∧
-    ¬ IsFissionApplicable .minIncl ∧
-    ¬ IsFissionApplicable .augIncl ∧
-    ¬ IsFissionApplicable .excl ∧
-    ¬ IsFissionApplicable .secondGrp ∧
-    ¬ IsFissionApplicable .thirdGrp := by decide
+    IsFissionApplicable .speaker ∧
+    IsFissionApplicable .addressee ∧
+    ¬ IsFissionApplicable .other ∧
+    ¬ IsFissionApplicable .speakerAddressee ∧
+    ¬ IsFissionApplicable .speakerAddresseeOthers ∧
+    ¬ IsFissionApplicable .speakerOthers ∧
+    ¬ IsFissionApplicable .addresseeOthers ∧
+    ¬ IsFissionApplicable .others := by decide
 
 /-- The person restriction matches the empirical data:
     Fission applies ↔ stylistic LE is grammatical. -/
 theorem person_restriction_matches_data :
-    IsFissionApplicable .s1 ∧
+    IsFissionApplicable .speaker ∧
     person_1sg.acceptability = .ok ∧
-    IsFissionApplicable .s2 ∧
+    IsFissionApplicable .addressee ∧
     person_2sg.acceptability = .ok ∧
-    ¬ IsFissionApplicable .s3 ∧
+    ¬ IsFissionApplicable .other ∧
     person_3sg.acceptability = .unacceptable := by
   refine ⟨?_, rfl, ?_, rfl, ?_, rfl⟩ <;> decide
 
@@ -321,9 +321,9 @@ theorem person_restriction_matches_data :
 /-- Stylistic LE requires inchoative context (vGO ∧ vBE).
     DERIVED from Fission's structural context condition. -/
 theorem stylLE_requires_inchoative :
-    (applySpanishFission .s1 [.vCAUSE, .vGO, .vBE]).isSome = true ∧
-    (applySpanishFission .s1 [.vDO]).isSome = false ∧
-    (applySpanishFission .s1 [.vDO, .vCAUSE, .vGO, .vBE]).isSome = false := by
+    (applySpanishFission .speaker [.vCAUSE, .vGO, .vBE]).isSome = true ∧
+    (applySpanishFission .speaker [.vDO]).isSome = false ∧
+    (applySpanishFission .speaker [.vDO, .vCAUSE, .vGO, .vBE]).isSome = false := by
   decide
 
 /-- Every Muñoz-Pérez verb that licenses stylistic LE has inchoative structure.
@@ -361,12 +361,12 @@ theorem blocking_verbs_all_unmarked :
 /-- When Fission applies, the output clitic satisfies the PF
     marking condition (syncretic with reflexive), making SE optional. -/
 theorem se_optional_1sg :
-    ∃ out, applySpanishFission .s1 [.vCAUSE, .vGO, .vBE] = some out ∧
+    ∃ out, applySpanishFission .speaker [.vCAUSE, .vGO, .vBE] = some out ∧
       AnticausativePF out :=
   ⟨{ cl1Form := "me", cl2Form := "le" }, by decide, by decide⟩
 
 theorem se_optional_2sg :
-    ∃ out, applySpanishFission .s2 [.vCAUSE, .vGO, .vBE] = some out ∧
+    ∃ out, applySpanishFission .addressee [.vCAUSE, .vGO, .vBE] = some out ∧
       AnticausativePF out :=
   ⟨{ cl1Form := "te", cl2Form := "le" }, by decide, by decide⟩
 
@@ -400,38 +400,38 @@ theorem three_way_synonymy_from_vacuity :
 
 /-- Fission applies to 1SG in inchoative context. -/
 theorem fission_1sg_inchoative :
-    applySpanishFission .s1 [.vCAUSE, .vGO, .vBE] =
+    applySpanishFission .speaker [.vCAUSE, .vGO, .vBE] =
       some { cl1Form := "me", cl2Form := "le" } := by decide
 
 /-- Fission applies to 2SG in inchoative context. -/
 theorem fission_2sg_inchoative :
-    applySpanishFission .s2 [.vCAUSE, .vGO, .vBE] =
+    applySpanishFission .addressee [.vCAUSE, .vGO, .vBE] =
       some { cl1Form := "te", cl2Form := "le" } := by decide
 
 /-- Fission does NOT apply to 3SG (not [+PART]). -/
 theorem fission_blocked_3sg :
-    applySpanishFission .s3 [.vCAUSE, .vGO, .vBE] = none := by decide
+    applySpanishFission .other [.vCAUSE, .vGO, .vBE] = none := by decide
 
 /-- Fission does NOT apply in non-inchoative context (activity). -/
 theorem fission_blocked_activity :
-    applySpanishFission .s1 [.vDO] = none := by decide
+    applySpanishFission .speaker [.vDO] = none := by decide
 
 /-- Fission does NOT apply in causative context (has vDO). -/
 theorem fission_blocked_causative :
-    applySpanishFission .s1 [.vDO, .vCAUSE, .vGO, .vBE] = none := by decide
+    applySpanishFission .speaker [.vDO, .vCAUSE, .vGO, .vBE] = none := by decide
 
 /-- 1SG Cl₁ is "me" (reflects [+AUTHOR]). -/
 theorem cl1_1sg_is_me :
-    (applySpanishFission .s1 [.vCAUSE, .vGO, .vBE]).map (·.cl1Form) = some "me" := by decide
+    (applySpanishFission .speaker [.vCAUSE, .vGO, .vBE]).map (·.cl1Form) = some "me" := by decide
 
 /-- 2SG Cl₁ is "te" (reflects [-AUTHOR]). -/
 theorem cl1_2sg_is_te :
-    (applySpanishFission .s2 [.vCAUSE, .vGO, .vBE]).map (·.cl1Form) = some "te" := by decide
+    (applySpanishFission .addressee [.vCAUSE, .vGO, .vBE]).map (·.cl1Form) = some "te" := by decide
 
 /-- Cl₂ is always invariable "le". -/
 theorem cl2_invariable :
-    (applySpanishFission .s1 [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" ∧
-    (applySpanishFission .s2 [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" := by decide
+    (applySpanishFission .speaker [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" ∧
+    (applySpanishFission .addressee [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" := by decide
 
 /-! ### Against a null-reflexive extension of [koontz-garboden-2009]
 
