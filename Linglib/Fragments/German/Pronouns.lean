@@ -49,7 +49,7 @@ number are those of the third person plural; it denotes the addressee alone or w
 ([adamson-zompi-2025]). -/
 def sie_formal : PersonalPronoun :=
   { form := "Sie", person := some .third, number := some .plural, register := .formal,
-    referential := {.s2, .secondGrp} }
+    referential := {.addressee, .addresseeOthers} }
 
 /-- The third person singular masculine *er*. -/
 def er : PersonalPronoun :=

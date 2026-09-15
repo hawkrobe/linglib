@@ -39,21 +39,21 @@ instance : DecidablePred IsFissionApplicable :=
 -- ============================================================================
 
 /-- Fission applies to 1SG. -/
-theorem fission_1sg : IsFissionApplicable .s1 := by decide
+theorem fission_1sg : IsFissionApplicable .speaker := by decide
 
 /-- Fission applies to 2SG. -/
-theorem fission_2sg : IsFissionApplicable .s2 := by decide
+theorem fission_2sg : IsFissionApplicable .addressee := by decide
 
 /-- Fission does NOT apply to 3SG (not a participant). -/
-theorem fission_not_3sg : ¬ IsFissionApplicable .s3 := by decide
+theorem fission_not_3sg : ¬ IsFissionApplicable .other := by decide
 
 /-- Fission does NOT apply to group categories (not singular). -/
 theorem fission_not_groups :
-    ¬ IsFissionApplicable .minIncl ∧
-    ¬ IsFissionApplicable .augIncl ∧
-    ¬ IsFissionApplicable .excl ∧
-    ¬ IsFissionApplicable .secondGrp ∧
-    ¬ IsFissionApplicable .thirdGrp := by decide
+    ¬ IsFissionApplicable .speakerAddressee ∧
+    ¬ IsFissionApplicable .speakerAddresseeOthers ∧
+    ¬ IsFissionApplicable .speakerOthers ∧
+    ¬ IsFissionApplicable .addresseeOthers ∧
+    ¬ IsFissionApplicable .others := by decide
 
 /-- Exactly 2 of the 8 person categories trigger Fission. -/
 theorem fission_count :

@@ -52,16 +52,16 @@ abbrev Cell := {c : Category // c.IncludesSpeaker}
 namespace Cell
 
 /-- The singular speaker. -/
-def s1 : Cell := ⟨.s1, by decide⟩
+def speaker : Cell := ⟨.speaker, by decide⟩
 
 /-- The minimal inclusive 1+2. -/
-def minIncl : Cell := ⟨.minIncl, by decide⟩
+def speakerAddressee : Cell := ⟨.speakerAddressee, by decide⟩
 
 /-- The augmented inclusive 1+2+3. -/
-def augIncl : Cell := ⟨.augIncl, by decide⟩
+def speakerAddresseeOthers : Cell := ⟨.speakerAddresseeOthers, by decide⟩
 
 /-- The exclusive 1+3. -/
-def excl : Cell := ⟨.excl, by decide⟩
+def speakerOthers : Cell := ⟨.speakerOthers, by decide⟩
 
 end Cell
 
@@ -74,22 +74,23 @@ namespace Pattern
 variable (r : Pattern)
 
 /-- Some 'we' cell is not marked like the speaker (Fig. 3.10's first question). -/
-def SpecializedWe : Prop := ∃ c : Cell, c.1.IsFirstPersonComplex ∧ ¬ r c Cell.s1
+def SpecializedWe : Prop := ∃ c : Cell, c.1.IsFirstPersonComplex ∧ ¬ r c Cell.speaker
 
 /-- Both inclusive cells are marked neither like the speaker nor like the exclusive
 (Fig. 3.10's second question, read as his Fig. 3.8 reads it for the common types). -/
 def SpecializedInclusive : Prop :=
-  ∀ c : Cell, c.1.IsInclusive → ¬ r c Cell.s1 ∧ ¬ r c Cell.excl
+  ∀ c : Cell, c.1.IsInclusive → ¬ r c Cell.speaker ∧ ¬ r c Cell.speakerOthers
 
 /-- The exclusive is marked neither like the speaker nor like an inclusive cell (Fig. 3.10's
 third question). -/
 def SpecializedExclusive : Prop :=
-  ¬ r Cell.excl Cell.s1 ∧ ∀ c : Cell, c.1.IsInclusive → ¬ r Cell.excl c
+  ¬ r Cell.speakerOthers Cell.speaker ∧ ∀ c : Cell, c.1.IsInclusive → ¬ r Cell.speakerOthers c
 
 /-- Minimal and augmented inclusive are marked apart and neither like the speaker (Fig. 3.10's
 fourth question). -/
 def SplitInclusive : Prop :=
-  ¬ r Cell.minIncl Cell.augIncl ∧ ¬ r Cell.minIncl Cell.s1 ∧ ¬ r Cell.augIncl Cell.s1
+  ¬ r Cell.speakerAddressee Cell.speakerAddresseeOthers ∧
+    ¬ r Cell.speakerAddressee Cell.speaker ∧ ¬ r Cell.speakerAddresseeOthers Cell.speaker
 
 variable [DecidableRel (⇑r)]
 
@@ -103,13 +104,14 @@ end Pattern
 /-- Fig. 3.2's letters as morpheme classes, `0` being the class of the singular speaker,
 Fig. 3.1's dash, in which every category outside the first person complex is placed. -/
 def labels : Clusivity → Category → ℕ
-  | .unifiedWe, .minIncl | .unifiedWe, .augIncl | .unifiedWe, .excl => 1
-  | .onlyInclusive, .minIncl | .onlyInclusive, .augIncl => 1
-  | .inclusiveExclusive, .minIncl | .inclusiveExclusive, .augIncl => 1
-  | .inclusiveExclusive, .excl => 2
-  | .minimalAugmented, .minIncl => 1
-  | .minimalAugmented, .augIncl => 2
-  | .minimalAugmented, .excl => 3
+  | .unifiedWe, .speakerAddressee | .unifiedWe, .speakerAddresseeOthers
+  | .unifiedWe, .speakerOthers => 1
+  | .onlyInclusive, .speakerAddressee | .onlyInclusive, .speakerAddresseeOthers => 1
+  | .inclusiveExclusive, .speakerAddressee | .inclusiveExclusive, .speakerAddresseeOthers => 1
+  | .inclusiveExclusive, .speakerOthers => 2
+  | .minimalAugmented, .speakerAddressee => 1
+  | .minimalAugmented, .speakerAddresseeOthers => 2
+  | .minimalAugmented, .speakerOthers => 3
   | _, _ => 0
 
 /-- The type's pattern, Fig. 3.2's column as a setoid on the four cells. -/

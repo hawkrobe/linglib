@@ -53,7 +53,7 @@ def tu : PersonalPronoun :=
     [adamson-zompi-2025] -/
 def lei_formal : PersonalPronoun :=
   { form := "Lei", person := some .third, number := some .singular, register := .formal,
-    referential := {.s2} }
+    referential := {.addressee} }
 
 /-- *lui* — 3sg masculine. -/
 def lui : PersonalPronoun :=

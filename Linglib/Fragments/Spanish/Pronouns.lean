@@ -45,7 +45,7 @@ def tu : PersonalPronoun :=
     [adamson-zompi-2025] -/
 def usted : PersonalPronoun :=
   { form := "usted", person := some .third, number := some .singular, register := .formal,
-    referential := {.s2} }
+    referential := {.addressee} }
 
 /-- *él* — 3sg masculine. -/
 def el : PersonalPronoun :=
@@ -66,7 +66,7 @@ def vosotros : PersonalPronoun :=
 /-- *ustedes* — 2pl formal / general (triggers 3pl agreement). -/
 def ustedes : PersonalPronoun :=
   { form := "ustedes", person := some .third, number := some .plural, register := .formal,
-    referential := {.secondGrp} }
+    referential := {.addresseeOthers} }
 
 /-- *ellos* — 3pl masculine. -/
 def ellos : PersonalPronoun :=
