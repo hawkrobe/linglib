@@ -1,5 +1,4 @@
-import Linglib.Syntax.Minimalist.SyntacticObject.Build
-import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
+import Linglib.Syntax.Minimalist.Agree.Basic
 
 /-!
 # Bruening 2001: QR obeys Superiority
@@ -43,13 +42,14 @@ def Attractable (tree head x : SyntacticObject) : Prop := cCommandsIn tree head 
 instance : Decidable (Attractable tree head x) := inferInstanceAs (Decidable (cCommandsIn _ _ _))
 
 /-- Shortest: attracting `x` first is licensed only when no other candidate asymmetrically
-c-commands it, since such a candidate would form a smaller well-formed pair with the attractor. -/
+c-commands it, since such a candidate would form a smaller well-formed pair with the attractor:
+`x` is a closest goal among the candidates. -/
 def LicensedFirst (tree head : SyntacticObject) (qs : List SyntacticObject)
     (x : SyntacticObject) : Prop :=
-  x ∈ qs ∧ Attractable tree head x ∧
-    ∀ y ∈ qs, Attractable tree head y → ¬ asymCCommandsIn tree y x
+  isClosestGoalIn tree head x (· ∈ qs)
 
-instance : Decidable (LicensedFirst tree head qs x) := inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+instance : Decidable (LicensedFirst tree head qs x) :=
+  inferInstanceAs (Decidable (isClosestGoalIn _ _ _ _))
 
 /-- Since later movements tuck in beneath earlier ones, the quantifier attracted first takes widest
 scope: scope is ambiguous exactly when two candidates may be attracted first. -/
@@ -62,7 +62,7 @@ instance : Decidable (Ambiguous tree head qs) := inferInstanceAs (Decidable (∃
 whatever interpretation moving it first would produce. -/
 theorem not_licensedFirst_of_asymCCommand (hy : y ∈ qs) (hattr : Attractable tree head y)
     (hasym : asymCCommandsIn tree y x) : ¬ LicensedFirst tree head qs x :=
-  fun ⟨_, _, h⟩ => h y hy hattr hasym
+  fun ⟨_, _, h⟩ => h y (mem_subtrees_of_cCommandsIn hattr) hy hattr hasym
 
 /-- Two candidates that c-command each other both satisfy Shortest, so either may be attracted
 first: the pairs they form with the attractor are equivalent. -/
@@ -74,8 +74,8 @@ theorem ambiguous_of_mutual_cCommand (hx : x ∈ qs) (hy : y ∈ qs) (hne : x �
     rintro a ha b hb - ⟨hba, hab⟩
     rcases hother a ha with rfl | rfl <;> rcases hother b hb with rfl | rfl
     exacts [hab hba, hab hxy, hab hyx, hab hba]
-  exact ⟨x, hx, y, hy, hne, ⟨hx, hattrx, fun b hb _ => key x hx b hb hattrx⟩,
-    ⟨hy, hattry, fun b hb _ => key y hy b hb hattry⟩⟩
+  exact ⟨x, hx, y, hy, hne, ⟨hattrx, hx, fun b _ hb _ => key x hx b hb hattrx⟩,
+    ⟨hattry, hy, fun b _ hb _ => key y hy b hb hattry⟩⟩
 
 /-! ### The double object construction -/
 

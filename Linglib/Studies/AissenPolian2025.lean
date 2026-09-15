@@ -13,7 +13,7 @@ it. Hence only non-specific possessums strand, and the possessor that reaches Sp
 ψ-subject of a categorical judgment.
 
 Nominal opacity is the profile `nominalOpacity` read through `Invisible`, Attract Closest is
-`isClosestGoalIn` over D-bearing leaves on the paper's structures, `judgment` reads the
+`isClosestGoalIn` over D leaves on the paper's structures, `judgment` reads the
 judgment type off the same search, and the paper's examples are the rows, over which
 `stranding_iff`, `piedPiping_specific` and `psi_no_piedPiping` hold.
 
@@ -52,17 +52,17 @@ def secondaryWh : Probe.Profile := ⟨.D, none⟩
 /-- `target` is invisible to a probe with profile `p` sitting at `probe` when it lies behind the
 profile's horizon. -/
 def Invisible (p : Probe.Profile) (root probe target : SyntacticObject) : Prop :=
-  ∃ h, p.horizon = some h ∧ behindHorizonIn root probe target h
+  ∃ h ∈ p.horizon, behindHorizonIn root probe target h
 
 theorem invisible_iff_behindHorizon (h : Cat) (root probe target : SyntacticObject)
     {p : Probe.Profile} (hp : p.horizon = some h) :
-    Invisible p root probe target ↔ behindHorizonIn root probe target h :=
-  ⟨fun ⟨_, hh, hb⟩ => by rw [hp] at hh; exact Option.some_inj.1 hh ▸ hb, fun hb => ⟨h, hp, hb⟩⟩
+    Invisible p root probe target ↔ behindHorizonIn root probe target h := by
+  simp [Invisible, hp]
 
 /-- A probe without horizon sees everything in its domain. -/
 theorem not_invisible_of_horizon_none (root probe target : SyntacticObject) {p : Probe.Profile}
-    (hp : p.horizon = none) : ¬ Invisible p root probe target :=
-  fun ⟨_, hh, _⟩ => by simp [hp] at hh
+    (hp : p.horizon = none) : ¬ Invisible p root probe target := by
+  simp [Invisible, hp]
 
 theorem dProbe_sees_through (root probe target : SyntacticObject) :
     ¬ Invisible dProbeT root probe target ∧ ¬ Invisible dProbeAppl root probe target ∧
@@ -71,12 +71,6 @@ theorem dProbe_sees_through (root probe target : SyntacticObject) :
    not_invisible_of_horizon_none _ _ _ rfl⟩
 
 /-! ### The structures -/
-
-/-- A leaf is D-bearing when its token's outer category is D: the goals of an [EPP:D] probe. -/
-def hasD (s : SyntacticObject) : Bool :=
-  match s.getLIToken with
-  | some tok => tok.item.outerCat == .D
-  | none => false
 
 private def C₀ : PlanarSyntacticObject := .leaf ⟨.simple .C [], 1⟩
 private def T₀ : PlanarSyntacticObject := .leaf ⟨.simple .T [], 2⟩
@@ -150,50 +144,50 @@ theorem psr_invisible_pp : Invisible nominalOpacity (cp (themeLoc ThemeN)) C₀ 
 theorem dHead_visible :
     ¬ Invisible nominalOpacity (cp unaccDP) C₀ D₀ :=
   fun ⟨_, hh, hb⟩ => by
-    simp only [nominalOpacity, Option.some.injEq] at hh
+    simp only [nominalOpacity, Option.mem_def, Option.some.injEq] at hh
     exact absurd (hh ▸ hb) (by decide)
 
 /-! ### Attract Closest -/
 
 /-- The possessor of a non-specific S_O is T⁰'s closest D-goal: it raises to Spec,TP and can
 strand the possessum. -/
-theorem unacc_possP_psr_closest : isClosestGoalIn unaccPossP T₀ Psr hasD := by decide
+theorem unacc_possP_psr_closest : isClosestGoalIn unaccPossP T₀ Psr (isLeafOf .D) := by decide
 
 /-- In a specific S_O the D layer is the closer goal: the whole DP raises and the possessor is
 shielded. -/
-theorem unacc_dp_dHead_closest : isClosestGoalIn unaccDP T₀ D₀ hasD ∧
-      ¬ isClosestGoalIn unaccDP T₀ Psr hasD :=
+theorem unacc_dp_dHead_closest : isClosestGoalIn unaccDP T₀ D₀ (isLeafOf .D) ∧
+      ¬ isClosestGoalIn unaccDP T₀ Psr (isLeafOf .D) :=
   ⟨by decide, by decide⟩
 
 /-- The agent of a transitive is the closer goal, so the possessor of O cannot reach Spec,TP. -/
-theorem trans_agt_closest : isClosestGoalIn transPossP T₀ Agt hasD ∧
-      ¬ isClosestGoalIn transPossP T₀ Psr hasD :=
+theorem trans_agt_closest : isClosestGoalIn transPossP T₀ Agt (isLeafOf .D) ∧
+      ¬ isClosestGoalIn transPossP T₀ Psr (isLeafOf .D) :=
   ⟨by decide, by decide⟩
 
 /-- In the raising applicative the possessor of O is Appl⁰'s closest D-goal: it externalizes to
 Spec,ApplP. -/
-theorem appl_psr_closest : isClosestGoalIn raisingAppl Appl₀ Psr hasD := by decide
+theorem appl_psr_closest : isClosestGoalIn raisingAppl Appl₀ Psr (isLeafOf .D) := by decide
 
 /-- A specific unergative subject stops T⁰ before the possessor inside the locative PP. -/
-theorem unerg_specific_blocks : isClosestGoalIn (unerg SubjD) T₀ SubjD hasD ∧
-      ¬ isClosestGoalIn (unerg SubjD) T₀ Psr hasD :=
+theorem unerg_specific_blocks : isClosestGoalIn (unerg SubjD) T₀ SubjD (isLeafOf .D) ∧
+      ¬ isClosestGoalIn (unerg SubjD) T₀ Psr (isLeafOf .D) :=
   ⟨by decide, by decide⟩
 
 /-- A non-specific unergative subject is no DP, so the possessor is the closest goal. -/
-theorem unerg_nonspecific_psr_closest : isClosestGoalIn (unerg SubjN) T₀ Psr hasD := by decide
+theorem unerg_nonspecific_psr_closest : isClosestGoalIn (unerg SubjN) T₀ Psr (isLeafOf .D) := by decide
 
 /-- A specific theme c-commanding the locative PP raises instead of the possessor. -/
-theorem theme_specific_blocks : isClosestGoalIn (themeLoc ThemeD) T₀ ThemeD hasD ∧
-      ¬ isClosestGoalIn (themeLoc ThemeD) T₀ Psr hasD :=
+theorem theme_specific_blocks : isClosestGoalIn (themeLoc ThemeD) T₀ ThemeD (isLeafOf .D) ∧
+      ¬ isClosestGoalIn (themeLoc ThemeD) T₀ Psr (isLeafOf .D) :=
   ⟨by decide, by decide⟩
 
 /-- A non-specific theme lets T⁰ reach the possessor inside the PP. -/
-theorem theme_nonspecific_psr_closest : isClosestGoalIn (themeLoc ThemeN) T₀ Psr hasD := by decide
+theorem theme_nonspecific_psr_closest : isClosestGoalIn (themeLoc ThemeN) T₀ Psr (isLeafOf .D) := by decide
 
 /-- With the experiencer PP merged above the theme, neither c-commands the other and both are
 closest goals; the experiential reading requires the experiencer to raise. -/
-theorem experiencer_both_closest : isClosestGoalIn experiencer T₀ Psr hasD ∧
-      isClosestGoalIn experiencer T₀ ThemeD hasD :=
+theorem experiencer_both_closest : isClosestGoalIn experiencer T₀ Psr (isLeafOf .D) ∧
+      isClosestGoalIn experiencer T₀ ThemeD (isLeafOf .D) :=
   ⟨by decide, by decide⟩
 
 /-! ### Judgment type -/
@@ -205,13 +199,13 @@ inductive JudgmentType
   deriving DecidableEq, Repr
 
 instance (root probe : SyntacticObject) :
-    Decidable (∃ g ∈ root.subtrees, isClosestGoalIn root probe g hasD) :=
+    Decidable (∃ g ∈ root.subtrees, isClosestGoalIn root probe g (isLeafOf .D)) :=
   Multiset.decidableExistsMultiset
 
 /-- A clause is categorical when T⁰'s [EPP:D] probe finds a goal to raise to Spec,TP — the
 ψ-subject — and thetic when it finds none. -/
 def judgment (root probe : SyntacticObject) : JudgmentType :=
-  if ∃ g ∈ root.subtrees, isClosestGoalIn root probe g hasD then .categorical else .thetic
+  if ∃ g ∈ root.subtrees, isClosestGoalIn root probe g (isLeafOf .D) then .categorical else .thetic
 
 /-- An existential with a bare pivot contains no DP: the clause is thetic. -/
 theorem existential_thetic : judgment existential T₀

@@ -119,6 +119,18 @@ def getLIToken (s : SyntacticObject) : Option LIToken :=
 
 @[simp] theorem getLIToken_traceOf (tok : LIToken) : (traceOf tok).getLIToken = none := rfl
 
+/-- `s` is a lexical leaf whose item's outer category is `c`. -/
+def isLeafOf (c : Cat) (s : SyntacticObject) : Prop :=
+  s.getLIToken.map (·.item.outerCat) = some c
+
+instance (c : Cat) : DecidablePred (isLeafOf c) := λ _ => inferInstanceAs (Decidable (_ = _))
+
+@[simp] theorem isLeafOf_leaf (c : Cat) (tok : LIToken) :
+    isLeafOf c (SyntacticObject.leaf tok) ↔ tok.item.outerCat = c := by
+  simp [isLeafOf]
+
+@[simp] theorem not_isLeafOf_trace (c : Cat) : ¬ isLeafOf c trace := by simp [isLeafOf]
+
 theorem traceOf_ne_trace (tok : LIToken) : traceOf tok ≠ trace := by
   intro h
   have h' : (Sum.inr (some tok) : Vertex) = Sum.inr none :=

@@ -76,6 +76,19 @@ def value? : FeatureSlot α → Option α
   | valued v => some v
   | _ => none
 
+/-- Value the slot with `v` when it is unvalued; an absent or valued slot is left as it is. -/
+def valueWith (v : α) : FeatureSlot α → FeatureSlot α
+  | unvalued => valued v
+  | s => s
+
+@[simp] theorem valueWith_absent (v : α) : valueWith v absent = absent := rfl
+@[simp] theorem valueWith_unvalued (v : α) : valueWith v unvalued = valued v := rfl
+@[simp] theorem valueWith_valued (v w : α) : valueWith v (valued w) = valued w := rfl
+
+theorem valueWith_of_ne_unvalued (v : α) {s : FeatureSlot α} (h : s ≠ unvalued) :
+    valueWith v s = s := by
+  cases s <;> simp_all [valueWith]
+
 /-- Subsumption: `absent ≤ unvalued ≤ valued v`, with distinct values
 incomparable. The reflexive-transitive order on the three checking states. -/
 protected inductive LE : FeatureSlot α → FeatureSlot α → Prop
@@ -113,6 +126,12 @@ instance : PartialOrder (FeatureSlot α) where
 
 instance : OrderBot (FeatureSlot α) where
   bot_le a := .absent_le a
+
+/-- Valuation is inflationary in the subsumption order. -/
+theorem le_valueWith (v : α) (s : FeatureSlot α) : s ≤ valueWith v s := by
+  cases s with
+  | unvalued => exact .unvalued_le_valued v
+  | _ => exact le_rfl
 
 instance [DecidableEq α] (a b : FeatureSlot α) : Decidable (a ≤ b) :=
   match a, b with

@@ -320,12 +320,6 @@ def DPType.subsumes : DPType → DPType → Bool
     Requires checking [·D·] on T. -/
 def DPType.canAMove (n : DPType) : Bool := n.checksMerge .D
 
-/-- Test whether a syntactic object is a K-headed lexical leaf. -/
-private def isKLeaf (s : SyntacticObject) : Bool :=
-  match s.getLIToken with
-  | some tok => tok.item.outerCat == .K
-  | none => false
-
 /-- A KP is a DP wrapped in an inherent case shell (K head). At the
     immediate-child level: a node is "KP" iff *some* immediate daughter
     is a K-headed leaf.
@@ -338,7 +332,7 @@ private def isKLeaf (s : SyntacticObject) : Bool :=
     left/right symmetry is automatic. TODO Phase 2: refine via
     head-function-aware projection (`SyntacticObject.selHead`). -/
 private def isKP (s : SyntacticObject) : Prop :=
-  ∃ d, immediatelyContains s d ∧ isKLeaf d
+  ∃ d, immediatelyContains s d ∧ isLeafOf .K d
 
 /-! #### `isKP` detection — positive and negative witnesses
 
@@ -350,11 +344,6 @@ The tokens are local probes (ids 900–902) for these checks only. -/
 private def kProbeK  : LIToken := ⟨.simple .K [.D] (phonForm := "K"), 900⟩
 private def kProbeD  : LIToken := ⟨.simple .D [] (phonForm := "the dog"), 901⟩
 private def kProbeV  : LIToken := ⟨.simple .V [.D] (phonForm := "see"), 902⟩
-
-/-- A K-headed leaf is detected by `isKLeaf`; a D-headed leaf is not. -/
-private theorem isKLeaf_detects :
-    isKLeaf (leaf kProbeK) = true ∧ isKLeaf (leaf kProbeD) = false := by
-  decide
 
 /-- Positive: `[K DP]` (a K daughter present) is a KP. -/
 private theorem isKP_detects_kp :

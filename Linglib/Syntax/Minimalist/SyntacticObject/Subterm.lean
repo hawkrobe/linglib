@@ -326,6 +326,13 @@ def cCommandsIn (root x y : SyntacticObject) : Prop :=
 instance (root x y : SyntacticObject) : Decidable (cCommandsIn root x y) :=
   Multiset.decidableExistsMultiset
 
+/-- A c-commanded object is a subterm of the root. -/
+theorem mem_subtrees_of_cCommandsIn {root x y : SyntacticObject} (h : cCommandsIn root x y) :
+    y ∈ root.subtrees := by
+  obtain ⟨z, hz, -, rfl | hzy⟩ := h
+  · exact hz
+  · exact subtrees_subset_of_mem hz (mem_subtrees_of_contains hzy)
+
 /-- `x` c-commands `y` in `root` and `y` does not c-command `x`. -/
 def asymCCommandsIn (root x y : SyntacticObject) : Prop :=
   cCommandsIn root x y ∧ ¬ cCommandsIn root y x
