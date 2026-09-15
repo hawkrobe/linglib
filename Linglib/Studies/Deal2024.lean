@@ -110,14 +110,14 @@ def ProbeState.initial : ProbeState := ⟨{.phi}, false, []⟩
 /-- The probe a state denotes: a goal is visible when it bears every feature of the interaction
 condition. -/
 def ProbeState.probe (st : ProbeState) : Probe Person :=
-  .ofVis λ p => decide (∀ f ∈ st.int, bears p f = true)
+  .relativized λ p => decide (∀ f ∈ st.int, bears p f = true)
 
 /-- One step of the walk: a satisfied probe is inert, (8b); otherwise a visible goal is
 interacted with, its position recorded, the goal's dynamic features are copied into the
 interaction condition, and the probe is satisfied when the goal bears the satisfaction
 feature, (44) and (45). -/
 def step (g : Grammar) (st : ProbeState) (t : Person × ℕ) : ProbeState :=
-  if st.satisfied || !st.probe.vis t.1 then st
+  if st.satisfied || !st.probe.sat t.1 then st
   else
     { int := st.int ∪ g.dynamic.filter (bears t.1 · = true)
       satisfied := g.satisfaction.any (bears t.1 ·)
@@ -136,9 +136,9 @@ theorem int_subset_step (g : Grammar) (st : ProbeState) (t : Person × ℕ) :
   · exact Finset.subset_union_left
 
 /-- The probe a later state denotes sees no more than an earlier one. -/
-theorem probe_vis_antitone (g : Grammar) (st : ProbeState) (t : Person × ℕ) (a : Person)
-    (h : (step g st t).probe.vis a = true) : st.probe.vis a = true := by
-  simp only [ProbeState.probe, Probe.ofVis, decide_eq_true_eq] at h ⊢
+theorem probe_sat_antitone (g : Grammar) (st : ProbeState) (t : Person × ℕ) (a : Person)
+    (h : (step g st t).probe.sat a = true) : st.probe.sat a = true := by
+  simp only [ProbeState.probe, Probe.relativized, decide_eq_true_eq] at h ⊢
   exact λ f hf => h f (int_subset_step g st t hf)
 
 /-- A satisfied probe is inert. -/

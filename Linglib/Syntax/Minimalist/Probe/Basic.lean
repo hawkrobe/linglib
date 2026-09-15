@@ -2,67 +2,57 @@ import Mathlib.Data.Set.Subsingleton
 import Mathlib.Data.List.Basic
 
 /-!
-# Probe: relativized search over a goal sequence
-[bejar-rezac-2003] [preminger-2014]
+# Probes as interaction and satisfaction specifications
 
-A `Probe α` is the theory-agnostic relativized-*search* kernel over a
-goal sequence `List α`. It bundles what the probe *sees* (`vis` — the
-search halts at the first visible goal) and what it can *value* there
-(`act` — a visible but inactive goal absorbs the probe, [deal-2024]-style
-interaction vs. satisfaction). Probe *specifications* — relativized
-targets, satisfaction conditions, horizon profiles, articulated/dynamic
-probes — denote a `Probe` by a `toProbe`-map rather than re-implementing
-search.
+This file defines a probe over a goal type as two predicates on goals, following
+[deal-2025a]'s interaction/satisfaction theory of Agree. A goal *interacts* with the probe
+when it bears features the probe copies, and *satisfies* it when it bears features that halt
+the search. A search over an ordered goal sequence stops at the first satisfying goal, and the
+probe Agrees with that goal when it also interacts; a satisfying goal that does not interact
+absorbs the probe, [deal-2024]'s satisfaction without interaction. The outcome of a search is
+`valued` iff some goal satisfies the probe, and an unvalued outcome is failed Agree, tolerated
+under [preminger-2014]'s obligatory-operations model. The full operation, which copies from
+every interacting goal up to the satisfier, is `Probe.run` in `Probe/Run.lean`.
 
-This models a probe's *search* (locality, intervention, satisfaction);
-feature *transmission* — what a successful Agree copies/shares/values — is
-a separate concern (`FeatureBundle.applyAgree`). This is the general core; the
-φ-specialization is in `Probe/Phi.lean` and Keine's horizon profiles in `Probe/Profile.lean`.
+Probe *specifications*, such as relativized targets, horizon profiles and articulated probes,
+denote a `Probe` by a `toProbe` map rather than re-implementing search.
 
-## Main declarations
+## Main definitions
 
-- `Probe`, `Probe.ofVis`, `Probe.ofAct`, `Probe.indiscriminate` — the bundle and constructors.
-- `Probe.search` / `Probe.agree` — first visible goal / that goal if active.
-- `Probe.outcome`, `Probe.Outcome` — valued vs. unvalued.
-- `Probe.Licensed`, `Probe.AllLicensed`, `allLicensed_iff` — one search
-  licenses at most one goal (the Person Licensing Condition's engine).
-- `Probe.cascade` — ordered probe sequence, first with output wins.
+* `Minimalist.Probe`, `Minimalist.Probe.relativized`, `Minimalist.Probe.ofInt`,
+  `Minimalist.Probe.insatiable`, `Minimalist.Probe.indiscriminate`
+* `Minimalist.Probe.search`, `Minimalist.Probe.agree`, `Minimalist.Probe.outcome`
+* `Minimalist.Probe.Licensed`, `Minimalist.Probe.AllLicensed`, `Minimalist.Probe.cascade`
 
-`toProbe` specs denoting a `Probe`: `Probe.Target.toProbe`, `Probe.Profile.toProbe`,
-`Probe.Articulated.toProbes`, `Deal2024.ProbeState.probe`.
+## Main results
 
-## TODO
+* `Minimalist.Probe.search_eq_some_iff_closest`: locality as list search.
+* `Minimalist.Probe.not_rel_of_search_eq_some`: the found goal is minimal for any precedence
+  the sequence respects.
+* `Minimalist.Probe.allLicensed_iff`: one search licenses at most one goal.
 
-- **The Agree operation.** `Probe` models search, not what a successful Agree does to
-  the found goal. Valuing the probe (`FeatureBundle.applyAgree`), assigning case to the
-  goal, and Multiple Agree with every visible goal ([hiraiwa-2001]) are folds over
-  `search`; `Studies/Amato2025.lean` carries a local version of the operation that the
-  substrate should provide.
-- **Upward Agree.** Search is downward (c-command, `search_eq_some_iff_closest`);
-  add a direction parameter for Bjorkman & Zeijlstra (2019)-style upward Agree.
-- **`Preorder (Probe α)`** by pointwise `vis`-refinement, so
-  `outcome_valued_mono` / `Deal2024.probe_vis_antitone` become order facts.
-- **`HalpertHammerly2026.agreementClass`**: re-stipulated relativized
-  search; should be two `Probe` searches with a `_eq_derived` theorem.
+## References
+
+* [deal-2025a], [deal-2024]
+* [bejar-rezac-2003], [preminger-2014]
+* [chomsky-2000]
 -/
 
 namespace Minimalist
 
 variable {α : Type*}
 
-/-- A probe over goals of type `α` is a relativized search (`vis`) with an activity gate
-(`act`). -/
+/-- A probe over goals of type `α` is an interaction predicate, the goals it copies from, and a
+satisfaction predicate, the goals that halt its search ([deal-2025a]). -/
 structure Probe (α : Type*) where
-  /-- A visible goal halts the search ([deal-2024] interaction). -/
-  vis : α → Bool
-  /-- A visible but inactive goal absorbs the probe without valuing it
-      ([deal-2024] satisfaction); defaults to always-active. -/
-  act : α → Bool := fun _ => true
+  /-- The goal bears features the probe copies. -/
+  int : α → Bool
+  /-- The goal bears features that halt the probe's search. -/
+  sat : α → Bool
 
-/-- The outcome of an obligatory probing operation ([preminger-2014] Ch. 5):
-    `valued` iff the search found a goal. An `unvalued` outcome is *failed Agree*
-    — under the obligatory-operations model it is tolerated (no crash) and spells
-    out as the Elsewhere/default entry; study files read it off `Probe.outcome`. -/
+/-- The outcome of an obligatory probing operation, `valued` iff the search found a goal. An
+`unvalued` outcome is failed Agree, tolerated under [preminger-2014]'s obligatory-operations
+model and spelled out as the default exponent. -/
 inductive Probe.Outcome where
   /-- The search found a goal. -/
   | valued
@@ -72,120 +62,124 @@ inductive Probe.Outcome where
 
 namespace Probe
 
-/-- A probe with a visibility condition and no activity restriction. -/
-def ofVis (vis : α → Bool) : Probe α := { vis := vis }
+/-- The probe relativized to `f`, which interacts with and is satisfied by the same goals, the
+`[INT:F, SAT:F]` probe of [bejar-rezac-2003] and [preminger-2014]. -/
+def relativized (f : α → Bool) : Probe α := ⟨f, f⟩
 
-/-- The indiscriminate probe sees every goal, so bare minimality delivers the closest one
-([halpert-2012]'s L⁰). -/
-def indiscriminate : Probe α := ofVis fun _ => true
+/-- The probe satisfied by every goal and interacting with those that pass `int`, which Agrees
+with the closest goal iff that goal is active, the Active Goal Hypothesis of [chomsky-2000]. -/
+def ofInt (int : α → Bool) : Probe α := ⟨int, fun _ => true⟩
 
-/-- A probe with no visibility condition, gated only by activity. It finds the closest goal and
-Agrees with it iff that goal is active, the Active Goal Hypothesis of [chomsky-2000]. -/
-def ofAct (act : α → Bool) : Probe α := { vis := fun _ => true, act := act }
+/-- The insatiable probe interacting with `f`, which no goal halts, so that it copies from every
+`f`-goal in its domain, Multiple Agree ([deal-2025a]). -/
+def insatiable (f : α → Bool) : Probe α := ⟨f, fun _ => false⟩
+
+/-- The indiscriminate probe, which every goal satisfies and interacts with, so that bare
+minimality delivers the closest goal ([halpert-2012]'s L⁰). -/
+def indiscriminate : Probe α := relativized fun _ => true
+
+@[simp] theorem relativized_int (f : α → Bool) : (relativized f).int = f := rfl
+@[simp] theorem relativized_sat (f : α → Bool) : (relativized f).sat = f := rfl
+@[simp] theorem ofInt_int (f : α → Bool) : (ofInt f).int = f := rfl
+@[simp] theorem ofInt_sat (f : α → Bool) (a : α) : (ofInt f).sat a = true := rfl
+@[simp] theorem insatiable_int (f : α → Bool) : (insatiable f).int = f := rfl
+@[simp] theorem insatiable_sat (f : α → Bool) (a : α) : (insatiable f).sat a = false := rfl
 
 /-! ### Search -/
 
-/-- The goal a probe finds in an ordered goal sequence, the first goal visible to it. -/
+/-- The goal a probe finds in an ordered goal sequence, the first goal that satisfies it. -/
 def search (p : Probe α) (goals : List α) : Option α :=
-  goals.find? p.vis
+  goals.find? p.sat
 
-/-- The found goal, if it passes the activity condition. A visible inactive goal absorbs the
-probe. -/
+/-- The found goal, if it interacts with the probe. A satisfying goal that does not interact
+absorbs the probe. -/
 def agree (p : Probe α) (goals : List α) : Option α :=
-  (p.search goals).filter p.act
+  (p.search goals).filter p.int
 
 variable {p : Probe α} {goals : List α}
 
-/-- A probe finds nothing iff no goal is visible to it. -/
+/-- A probe finds nothing iff no goal satisfies it. -/
 @[simp]
-theorem search_eq_none_iff :
-    p.search goals = none ↔ ∀ a ∈ goals, ¬ p.vis a := by
+theorem search_eq_none_iff : p.search goals = none ↔ ∀ a ∈ goals, ¬ p.sat a := by
   simp [search, List.find?_eq_none]
 
 /-- The found goal is a member of the sequence. -/
-theorem mem_of_search_eq_some {a : α}
-    (h : p.search goals = some a) : a ∈ goals :=
+theorem mem_of_search_eq_some {a : α} (h : p.search goals = some a) : a ∈ goals :=
   List.mem_of_find?_eq_some h
 
-/-- The found goal is visible to the probe. -/
-theorem visible_of_search_eq_some {a : α}
-    (h : p.search goals = some a) : p.vis a :=
+/-- The found goal satisfies the probe. -/
+theorem sat_of_search_eq_some {a : α} (h : p.search goals = some a) : p.sat a :=
   List.find?_some h
 
-/-- Over a two-goal sequence whose lower goal's visibility entails
-    the higher's, the search lands on the higher goal if anywhere —
-    the kernel of "gluttony/competition only in inverse
-    configurations" ([coon-keine-2021]) and of highest-only licensing
-    ([halpert-2012]). -/
-theorem search_pair_of_imp {a b : α}
-    (h : p.vis b → p.vis a) :
-    p.search [a, b] = if p.vis a then some a else none := by
+/-- Over a two-goal sequence whose lower goal's satisfaction entails the higher's, the search
+lands on the higher goal if anywhere, the kernel of gluttony only in inverse configurations
+([coon-keine-2021]) and of highest-only licensing ([halpert-2012]). -/
+theorem search_pair_of_imp {a b : α} (h : p.sat b → p.sat a) :
+    p.search [a, b] = if p.sat a then some a else none := by
   simp only [search, List.find?_cons, List.find?_nil]
-  revert h; cases p.vis a <;> cases p.vis b <;> simp
+  revert h; cases p.sat a <;> cases p.sat b <;> simp
 
-/-- The probe Agrees with `a` iff the search finds `a` and `a` is
-    active. -/
+/-- The probe Agrees with `a` iff the search finds `a` and `a` interacts. -/
 theorem agree_eq_some_iff {a : α} :
-    p.agree goals = some a ↔
-      p.search goals = some a ∧ p.act a := by
+    p.agree goals = some a ↔ p.search goals = some a ∧ p.int a := by
   cases h : p.search goals with
   | none => simp [agree, h]
   | some b =>
-    simp only [agree, h, Option.filter_some, Option.ite_none_right_eq_some,
-      Option.some.injEq]
+    simp only [agree, h, Option.filter_some, Option.ite_none_right_eq_some, Option.some.injEq]
     constructor
     · rintro ⟨hb, rfl⟩
       exact ⟨rfl, hb⟩
     · rintro ⟨hb, ha⟩
       exact ⟨hb ▸ ha, hb.symm ▸ rfl⟩
 
-/-- An activity-gated probe finds the closest goal. -/
-@[simp] theorem ofAct_search (act : α → Bool) : (ofAct act).search goals = goals.head? := by
+/-- A probe satisfied by every goal finds the closest one. -/
+@[simp] theorem ofInt_search (int : α → Bool) : (ofInt int).search goals = goals.head? := by
   cases goals <;> rfl
 
-/-- An activity-gated probe Agrees with the closest goal iff that goal is active. -/
-theorem ofAct_agree_eq_some_iff {act : α → Bool} {a : α} :
-    (ofAct act).agree goals = some a ↔ goals.head? = some a ∧ act a := by
-  rw [agree_eq_some_iff, ofAct_search]; rfl
+/-- A probe satisfied by every goal Agrees with the closest one iff it interacts. -/
+theorem ofInt_agree_eq_some_iff {int : α → Bool} {a : α} :
+    (ofInt int).agree goals = some a ↔ goals.head? = some a ∧ int a := by
+  rw [agree_eq_some_iff, ofInt_search]; rfl
 
-/-- An inactive closest goal absorbs the probe, a match without Agree. -/
-theorem agree_eq_none_of_inactive {a : α}
-    (h : p.search goals = some a) (ha : p.act a = false) :
+/-- A satisfying goal that does not interact absorbs the probe. -/
+theorem agree_eq_none_of_not_int {a : α} (h : p.search goals = some a) (ha : p.int a = false) :
     p.agree goals = none := by
   simp [agree, h, Option.filter_some, ha]
 
 @[simp] theorem search_nil : p.search [] = none := rfl
 
-/-- Satisfaction refines interaction, so what the probe Agrees with, it found. -/
-theorem agree_le_search {a : α} (h : p.agree goals = some a) :
-    p.search goals = some a :=
+/-- What the probe Agrees with, it found. -/
+theorem agree_le_search {a : α} (h : p.agree goals = some a) : p.search goals = some a :=
   (agree_eq_some_iff.mp h).1
 
-/-- When every goal is active, Agree coincides with search — the `act`
-    gate is degenerate for `ofVis`-built probes. -/
-theorem agree_eq_search_of_act (h : ∀ a, p.act a) :
+/-- When every satisfying goal interacts, Agree coincides with search. -/
+theorem agree_eq_search_of_int (h : ∀ a, p.sat a → p.int a) :
     p.agree goals = p.search goals := by
   rw [agree]
-  cases p.search goals with
+  cases hs : p.search goals with
   | none => rfl
-  | some a => rw [Option.filter_some, if_pos (h a)]
+  | some a => rw [Option.filter_some, if_pos (h a (sat_of_search_eq_some hs))]
 
-theorem agree_eq_none_iff :
-    p.agree goals = none ↔ ¬ ∃ a, p.search goals = some a ∧ p.act a := by
+/-- A relativized probe Agrees with the goal it finds. -/
+theorem relativized_agree (f : α → Bool) :
+    (relativized f).agree goals = (relativized f).search goals :=
+  agree_eq_search_of_int fun _ h => h
+
+theorem agree_eq_none_iff : p.agree goals = none ↔ ¬ ∃ a, p.search goals = some a ∧ p.int a := by
   simp only [← Option.not_isSome_iff_eq_none, Option.isSome_iff_exists, agree_eq_some_iff]
 
-/-- Locality as list search. The probe finds `a` iff `a` is visible and every earlier goal is
-invisible, so that nothing intervenes. -/
+/-- Locality as list search. The probe finds `a` iff `a` satisfies it and every earlier goal
+does not, so that nothing intervenes. -/
 theorem search_eq_some_iff_closest {a : α} :
     p.search goals = some a ↔
-      p.vis a ∧ ∃ l₁ l₂, goals = l₁ ++ a :: l₂ ∧ ∀ b ∈ l₁, !p.vis b :=
+      p.sat a ∧ ∃ l₁ l₂, goals = l₁ ++ a :: l₂ ∧ ∀ b ∈ l₁, !p.sat b :=
   List.find?_eq_some_iff_append
 
 /-- Over a goal sequence in which no later goal precedes an earlier one, the found goal is
-minimal among the visible goals. -/
+minimal among the satisfying goals. -/
 theorem not_rel_of_search_eq_some {r : α → α → Prop} {a : α}
     (hord : goals.Pairwise λ x y => ¬ r y x) (h : p.search goals = some a) :
-    ∀ b ∈ goals, p.vis b → b ≠ a → ¬ r b a := by
+    ∀ b ∈ goals, p.sat b → b ≠ a → ¬ r b a := by
   obtain ⟨-, l₁, l₂, rfl, hl₁⟩ := search_eq_some_iff_closest.mp h
   intro b hb hvb hne hba
   rcases List.mem_append.mp hb with hb | hb
@@ -194,7 +188,7 @@ theorem not_rel_of_search_eq_some {r : α → α → Prop} {a : α}
     · exact hne rfl
     · exact (List.pairwise_cons.mp (List.pairwise_append.mp hord).2.1).1 b hb hba
 
-/-! ### Outcomes ([preminger-2014] Ch. 5) -/
+/-! ### Outcomes -/
 
 /-- The outcome of an obligatory probing operation over a goal sequence, `valued` iff the search
 finds a goal. -/
@@ -202,37 +196,31 @@ def outcome (p : Probe α) (goals : List α) : Probe.Outcome :=
   if (p.search goals).isSome then .valued else .unvalued
 
 /-- The probe is valued iff the search finds a goal. -/
-theorem outcome_eq_valued_iff_isSome :
-    p.outcome goals = .valued ↔ (p.search goals).isSome := by
+theorem outcome_eq_valued_iff_isSome : p.outcome goals = .valued ↔ (p.search goals).isSome := by
   rw [outcome]
   cases (p.search goals).isSome <;> decide
 
 /-- The probe ends unvalued iff the search comes back empty. -/
-theorem outcome_eq_unvalued_iff_eq_none :
-    p.outcome goals = .unvalued ↔ p.search goals = none := by
+theorem outcome_eq_unvalued_iff_eq_none : p.outcome goals = .unvalued ↔ p.search goals = none := by
   rw [outcome]
   cases p.search goals <;>
     simp only [Option.isSome_none, Option.isSome_some, Bool.false_eq_true,
       if_false, if_true, reduceCtorEq]
 
-/-- The probe is valued iff some goal is visible to it. -/
+/-- The probe is valued iff some goal satisfies it. -/
 @[simp]
-theorem outcome_eq_valued_iff :
-    p.outcome goals = .valued ↔ ∃ a ∈ goals, p.vis a :=
+theorem outcome_eq_valued_iff : p.outcome goals = .valued ↔ ∃ a ∈ goals, p.sat a :=
   outcome_eq_valued_iff_isSome.trans List.find?_isSome
 
-/-- The probe ends unvalued iff no goal is visible to it. -/
+/-- The probe ends unvalued iff no goal satisfies it. -/
 @[simp]
-theorem outcome_eq_unvalued_iff :
-    p.outcome goals = .unvalued ↔ ∀ a ∈ goals, ¬ p.vis a := by
+theorem outcome_eq_unvalued_iff : p.outcome goals = .unvalued ↔ ∀ a ∈ goals, ¬ p.sat a := by
   rw [outcome_eq_unvalued_iff_eq_none]
   exact search_eq_none_iff
 
-/-- Widening visibility can only keep a probe valued. If `p` is valued and `q` sees everything `p`
-sees among `goals`, so is `q`. This is the substrate home of [deal-2024]-style narrowing, whose
-`Deal2024.probe_vis_antitone` is the contrapositive on a probe family. -/
-theorem outcome_valued_mono {q : Probe α}
-    (h : ∀ a ∈ goals, p.vis a → q.vis a) :
+/-- Widening satisfaction can only keep a probe valued. If `p` is valued and `q` is satisfied by
+everything that satisfies `p` among `goals`, so is `q`. -/
+theorem outcome_valued_mono {q : Probe α} (h : ∀ a ∈ goals, p.sat a → q.sat a) :
     p.outcome goals = .valued → q.outcome goals = .valued := by
   simp only [outcome_eq_valued_iff]
   rintro ⟨a, ha, hva⟩
@@ -250,41 +238,35 @@ instance [DecidableEq α] (p : Probe α) (goals : List α) (a : α) :
   inferInstanceAs (Decidable (p.search goals = some a))
 
 /-- One search licenses at most one goal. -/
-theorem Licensed.unique {a b : α}
-    (ha : p.Licensed goals a) (hb : p.Licensed goals b) : a = b :=
+theorem Licensed.unique {a b : α} (ha : p.Licensed goals a) (hb : p.Licensed goals b) : a = b :=
   Option.some.inj (ha.symm.trans hb)
 
-/-- Licensing is being the closest visible goal, with no matching goal intervening. This is
-`search_eq_some_iff_closest` in the licensing API. -/
+/-- Licensing is being the closest satisfying goal, with no satisfying goal intervening. -/
 theorem licensed_iff_closest {a : α} :
-    p.Licensed goals a ↔
-      p.vis a ∧ ∃ l₁ l₂, goals = l₁ ++ a :: l₂ ∧ ∀ b ∈ l₁, !p.vis b :=
+    p.Licensed goals a ↔ p.sat a ∧ ∃ l₁ l₂, goals = l₁ ++ a :: l₂ ∧ ∀ b ∈ l₁, !p.sat b :=
   search_eq_some_iff_closest
 
 /-- A licensed goal is a member of the sequence. -/
 theorem Licensed.mem {a : α} (h : p.Licensed goals a) : a ∈ goals :=
   mem_of_search_eq_some h
 
-/-- A licensed goal is visible to the probe. -/
-theorem Licensed.vis {a : α} (h : p.Licensed goals a) : p.vis a :=
-  visible_of_search_eq_some h
+/-- A licensed goal satisfies the probe. -/
+theorem Licensed.sat {a : α} (h : p.Licensed goals a) : p.sat a :=
+  sat_of_search_eq_some h
 
-/-- Licensing by the indiscriminate probe is being the structurally
-    closest goal — bare minimality, [halpert-2012]'s L⁰. -/
+/-- Licensing by the indiscriminate probe is being the structurally closest goal, bare
+minimality ([halpert-2012]'s L⁰). -/
 theorem indiscriminate_licensed_iff {a : α} :
     (indiscriminate : Probe α).Licensed goals a ↔ goals.head? = some a := by
-  unfold Licensed search indiscriminate ofVis
+  unfold Licensed search indiscriminate relativized
   cases goals <;>
-    simp only [List.find?_nil, List.find?_cons_of_pos, List.head?_nil,
-      List.head?_cons]
+    simp only [List.find?_nil, List.find?_cons_of_pos, List.head?_nil, List.head?_cons]
 
-/-- Every goal that needs licensing is licensed by the probe's
-    search. Which goals *need* licensing (`needs`) and which the
-    probe *sees* (`p.vis`) come apart in general: [halpert-2012]'s
-    Zulu L⁰ sees every goal (augmented nominals intervene) while only
-    augmentless nominals need it. Feature-relativized probes are the
-    diagonal `p.AllLicensed p.vis` — the probe sees exactly the needy
-    ([bejar-rezac-2003]'s π as relativized by [preminger-2014]). -/
+/-- Every goal that needs licensing is licensed by the probe's search. Which goals need licensing
+(`needs`) and which satisfy the probe come apart in general, since [halpert-2012]'s Zulu L⁰ is
+satisfied by every goal while only augmentless nominals need it; feature-relativized probes are
+the diagonal `p.AllLicensed p.sat`, where the probe is satisfied by exactly the needy
+([bejar-rezac-2003]'s π as relativized by [preminger-2014]). -/
 def AllLicensed (p : Probe α) (needs : α → Bool) (goals : List α) : Prop :=
   ∀ a ∈ goals, needs a = true → p.Licensed goals a
 
@@ -292,37 +274,30 @@ instance [DecidableEq α] (p : Probe α) (needs : α → Bool) (goals : List α)
     Decidable (p.AllLicensed needs goals) :=
   inferInstanceAs (Decidable (∀ a ∈ goals, needs a = true → p.Licensed goals a))
 
-/-- On the diagonal (probe relativized to exactly the needy), all
-    needy goals are licensed iff the visible goals are subsingleton:
-    one search, one Agree relation, at most one licensee — the fact
-    behind [preminger-2014]'s AF person restriction. (The
-    off-diagonal variant of the same one-licensee engine drives
-    [bejar-rezac-2003]'s PCC — `Studies/BejarRezac2003.lean`.) -/
-theorem allLicensed_iff {vis : α → Bool} {goals : List α} :
-    (ofVis vis).AllLicensed vis goals ↔
-      ∀ a ∈ goals, ∀ b ∈ goals, vis a → vis b → a = b := by
+/-- On the diagonal, where the probe is relativized to exactly the needy goals, all needy goals
+are licensed iff the satisfying goals are subsingleton, one search licensing at most one goal,
+the fact behind [preminger-2014]'s person restriction. -/
+theorem allLicensed_iff {f : α → Bool} {goals : List α} :
+    (relativized f).AllLicensed f goals ↔ ∀ a ∈ goals, ∀ b ∈ goals, f a → f b → a = b := by
   constructor
   · intro h a ha b hb hva hvb
     exact (h a ha hva).unique (h b hb hvb)
   · intro h a ha hva
     obtain ⟨b, hb⟩ := Option.isSome_iff_exists.mp
       (List.find?_isSome.mpr ⟨a, ha, hva⟩)
-    have hba := h b (mem_of_search_eq_some (p := ofVis vis) hb) a ha
-      (visible_of_search_eq_some (p := ofVis vis) hb) hva
+    have hba := h b (mem_of_search_eq_some (p := relativized f) hb) a ha
+      (sat_of_search_eq_some (p := relativized f) hb) hva
     exact hba ▸ hb
 
-/-- `allLicensed_iff` in `Set.Subsingleton` form, for mathlib-API
-    discoverability. -/
-theorem allLicensed_iff_subsingleton {vis : α → Bool} {goals : List α} :
-    (ofVis vis).AllLicensed vis goals ↔
-      {a | a ∈ goals ∧ vis a}.Subsingleton := by
+/-- `allLicensed_iff` in `Set.Subsingleton` form. -/
+theorem allLicensed_iff_subsingleton {f : α → Bool} {goals : List α} :
+    (relativized f).AllLicensed f goals ↔ {a | a ∈ goals ∧ f a}.Subsingleton := by
   rw [allLicensed_iff]
   exact ⟨fun h a ha b hb => h a ha.1 b hb.1 ha.2 hb.2,
          fun h a ha b hb hva hvb => h ⟨ha, hva⟩ ⟨hb, hvb⟩⟩
 
 /-- Licensing by the indiscriminate probe pins every needy goal to the head of the sequence, the
-highest-element condition of [halpert-2012], where an augmentless nominal must be the highest
-nominal in its vP. -/
+highest-element condition of [halpert-2012]. -/
 theorem indiscriminate_allLicensed_iff {needs : α → Bool} {goals : List α} :
     (indiscriminate : Probe α).AllLicensed needs goals ↔
       ∀ a ∈ goals, needs a = true → goals.head? = some a :=
@@ -340,11 +315,9 @@ def cascade (ps : List (Probe α)) (goals : List α) : Option α :=
 
 variable {ps : List (Probe α)}
 
-/-- A cascade delivers nothing iff no goal is visible to any probe. -/
+/-- A cascade delivers nothing iff no goal satisfies any probe. -/
 @[simp]
-theorem cascade_eq_none_iff :
-    cascade ps goals = none ↔
-      ∀ q ∈ ps, ∀ a ∈ goals, ¬ q.vis a := by
+theorem cascade_eq_none_iff : cascade ps goals = none ↔ ∀ q ∈ ps, ∀ a ∈ goals, ¬ q.sat a := by
   simp [cascade, List.findSome?_eq_none_iff]
 
 /-- Unfold one probe of the cascade. -/
@@ -355,13 +328,12 @@ theorem cascade_cons {q : Probe α} :
 
 @[simp] theorem cascade_nil : cascade ([] : List (Probe α)) goals = none := rfl
 
-@[simp] theorem cascade_singleton {q : Probe α} :
-    cascade [q] goals = q.search goals := by
+@[simp] theorem cascade_singleton {q : Probe α} : cascade [q] goals = q.search goals := by
   rw [cascade_cons, cascade_nil]
   cases q.search goals <;> rfl
 
-/-- `cascade` is a monoid map `(List (Probe α), ++) → (Option α, <|>)`:
-    the single-slot competition runs the left probes, then the right. -/
+/-- `cascade` is a monoid map `(List (Probe α), ++) → (Option α, <|>)`, the single-slot
+competition running the left probes and then the right. -/
 theorem cascade_append {qs : List (Probe α)} :
     cascade (ps ++ qs) goals = (cascade ps goals <|> cascade qs goals) := by
   unfold cascade
@@ -369,14 +341,12 @@ theorem cascade_append {qs : List (Probe α)} :
   cases ps.findSome? (·.search goals) <;> rfl
 
 /-- The cascade's goal is licensed by one of its probes. -/
-theorem exists_licensed_of_cascade_eq_some {a : α}
-    (h : cascade ps goals = some a) :
+theorem exists_licensed_of_cascade_eq_some {a : α} (h : cascade ps goals = some a) :
     ∃ q ∈ ps, q.Licensed goals a :=
   List.exists_of_findSome?_eq_some h
 
 /-- The cascade's goal is a member of the sequence. -/
-theorem mem_of_cascade_eq_some {a : α}
-    (h : cascade ps goals = some a) : a ∈ goals :=
+theorem mem_of_cascade_eq_some {a : α} (h : cascade ps goals = some a) : a ∈ goals :=
   let ⟨_, _, hq⟩ := exists_licensed_of_cascade_eq_some h
   mem_of_search_eq_some hq
 

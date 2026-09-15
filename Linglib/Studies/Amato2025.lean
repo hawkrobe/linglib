@@ -1,5 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Minimalist.Agree.Basic
+import Linglib.Syntax.Minimalist.Probe.Run
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 
@@ -89,10 +90,10 @@ where
   go : Option H → List FeatureType → State H → List (Option H) × State H
   | _, [], s => ([], s)
   | prev, t :: ts, s =>
-    let g := (Probe.ofVis (goalMatches s α t)).search
+    let r := (Probe.relativized (goalMatches s α t)).run (λ g s => agree act s α t g) s
       (prev.elim dom (λ β => dom.dropWhile (λ x => decide (x ≠ β))))
-    let r := go g ts (g.elim s (agree act s α t))
-    (g :: r.1, r.2)
+    let rest := go r.halt ts r.state
+    (r.halt :: rest.1, rest.2)
 
 /-- The domain of a probe nested under the goal `β`: the suffix of the c-command order
 from `β`. -/
@@ -121,7 +122,7 @@ def multipleAgree (s : State H) (α : H) (t : FeatureType) (dom : List H) : List
 first; each later application, its landing site being above the probe, searches the
 remaining domain afresh. The movers, in order of movement. -/
 def whFronting (s : State H) (α : H) (dom : List H) : List H :=
-  let p := Probe.ofVis (goalMatches s α .wh)
+  let p := Probe.relativized (goalMatches s α .wh)
   match (multipleAgree s α .wh dom).getLast? with
   | none => []
   | some β =>
@@ -456,7 +457,7 @@ theorem bulgarian_order : whFronting bulgarianInitial .c bulgarianDomain = [.whO
 
 /-- Without Multiple Agree the wh-probe's first goal is the subject, the order minimality
 alone predicts. -/
-example : (Probe.ofVis (goalMatches bulgarianInitial .c .wh)).search bulgarianDomain =
+example : (Probe.relativized (goalMatches bulgarianInitial .c .wh)).search bulgarianDomain =
     some .whSbj := by decide
 
 /-! ### Agreement with unmarked DPs in Hindi-Urdu (§4.3.1) -/

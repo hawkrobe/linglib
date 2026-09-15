@@ -7,10 +7,10 @@ This file formalizes [halpert-2019]'s derivation of cross-linguistic variation i
 raising-to-subject without the Phase Impenetrability Condition. Two properties of a clausal
 complement do the work, `Clause`: whether it is a φ-goal that matrix T interacts with, and
 whether it can satisfy the EPP by moving to Spec,TP, together with whether T has an EPP at all.
-The engine is `Syntax/Minimalist/Probe/Basic.lean`'s `Probe`: [deal-2015a-nels]'s interaction
-is `Probe.vis`, the search halting on a φ-bearing clause, and satisfaction is `Probe.act`, the
-goal being able to occupy Spec,TP, so the matrix-T EPP probe is `eppProbe` and the derivation it
-drives is `raisingOutcome`. When the closest clause interacts but cannot satisfy the EPP it
+The engine is `Syntax/Minimalist/Probe/Basic.lean`'s `Probe`, whose search a φ-bearing clause
+halts, `Probe.sat`, and which Agrees with the goal it halts on when that goal can occupy Spec,TP,
+`Probe.int`, so the matrix-T EPP probe is `eppProbe` and the derivation it drives is
+`raisingOutcome`. When the closest clause interacts but cannot satisfy the EPP it
 absorbs the probe, and T probes a second time ([rackowski-richards-2005]), reaching the embedded
 subject, hyper-raising, when it genuinely Agreed with the clause (section 4.3), and stalling in
 defective intervention when it did not, the English `that`-clause of section 5.3. The attested
@@ -62,13 +62,14 @@ inductive Goal
   | subject
   deriving DecidableEq, Repr
 
-/-- The matrix-T EPP probe: [deal-2015a-nels]'s *interaction* is `Probe.vis`
-    (the search halts on an intervening clause), *satisfaction* is
-    `Probe.act` (the goal can occupy Spec,TP). The embedded subject is a
-    movable φ-goal — visible and EPP-satisfying. -/
+/-- The matrix-T EPP probe, whose search an intervening φ-bearing clause halts and which Agrees
+with the goal it halts on when that goal can occupy Spec,TP. The embedded subject is a movable
+φ-goal, halting and EPP-satisfying. [deal-2015a-nels]'s interaction is the halting here and
+satisfaction the Agree, the reverse of [deal-2025a]'s algorithm, on which the second probing of
+section 4.3 is one `Probe.run` whose interacting clause does not satisfy the probe. -/
 def eppProbe : Probe Goal where
-  vis := fun g => match g with | .clause c => c.interacts | .subject => true
-  act := fun g => match g with | .clause c => c.canSatisfyEPP | .subject => true
+  int := fun g => match g with | .clause c => c.canSatisfyEPP | .subject => true
+  sat := fun g => match g with | .clause c => c.interacts | .subject => true
 
 /-- The clause c-commands the embedded subject. -/
 def goals (c : Clause) : List Goal := [.clause c, .subject]
@@ -96,7 +97,7 @@ inductive RaisingOutcome
     `[clause, subject]`: a transparent clause is skipped and the subject
     raises; a clause that satisfies the EPP is Agreed-with and raises
     whole; an interacting clause that cannot satisfy the EPP absorbs the
-    probe (`Probe.agree_eq_none_of_inactive`), and the licensed second
+    probe (`Probe.agree_eq_none_of_not_int`), and the licensed second
     probe reaches the embedded subject (`hyperRaises`) iff T genuinely
     Agreed with the clause, else stalls (`blocked`). -/
 def raisingOutcome (c : Clause) (hasEPP : Bool) : RaisingOutcome :=
@@ -144,7 +145,7 @@ theorem raisingOutcome_eq_hyperRaises {c : Clause} (hi : c.interacts = true)
     (ha : c.canAgree = true) (he : c.canSatisfyEPP = false) :
     raisingOutcome c true = .hyperRaises := by
   have : eppProbe.agree (goals c) = none :=
-    Probe.agree_eq_none_of_inactive (search_clause hi) he
+    Probe.agree_eq_none_of_not_int (search_clause hi) he
   simp only [raisingOutcome, this, ha, if_true]
 
 /-- A defective intervener (interacts, but T cannot Agree with it) stalls
@@ -153,7 +154,7 @@ theorem raisingOutcome_eq_blocked {c : Clause} (hi : c.interacts = true)
     (ha : c.canAgree = false) (he : c.canSatisfyEPP = false) :
     raisingOutcome c true = .blocked := by
   have : eppProbe.agree (goals c) = none :=
-    Probe.agree_eq_none_of_inactive (search_clause hi) he
+    Probe.agree_eq_none_of_not_int (search_clause hi) he
   simp only [raisingOutcome, this, ha, if_true, if_false, Bool.false_eq_true]
 
 /-! ### Cross-linguistic raising profiles -/

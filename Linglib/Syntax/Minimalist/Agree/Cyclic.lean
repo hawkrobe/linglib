@@ -1,5 +1,6 @@
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Probe.Phi
+import Linglib.Syntax.Minimalist.Probe.Run
 
 /-!
 # Cyclic Agree over articulated person probes
@@ -17,7 +18,10 @@ argument's person is unlicensed by the core probe.
 
 An articulated probe is a family of flat relativized searches, one per segment, over the
 cyclically ordered arguments, so the residue-based definitions factor through `Probe.search`
-(`eaIsLicensed_iff_segment_licensed`, `cycleSegments_eq_segmentGoal_filters`).
+(`eaIsLicensed_iff_segment_licensed`, `cycleSegments_eq_segmentGoal_filters`). It is also a
+single probe of [deal-2025a]'s interaction/satisfaction theory, interacting with every segment
+and satisfied by its innermost one, whose run copies exactly the segments of the two cycles
+(`toSpec_run_state`).
 
 ## Main definitions
 
@@ -37,6 +41,7 @@ cyclically ordered arguments, so the residue-based definitions factor through `P
 ## References
 
 * [bejar-rezac-2009]
+* [deal-2025a]
 * [harley-ritter-2002]
 * [coon-keine-2021]
 -/
@@ -271,7 +276,7 @@ def segVisible (geom : Geometry) (s : Segment) (t : Controller × Person) : Bool
 
 /-- A probe segment as a `Probe` over argument tokens. -/
 def segProbe (geom : Geometry) (s : Segment) : Probe (Controller × Person) :=
-  .ofVis (segVisible geom s)
+  .relativized (segVisible geom s)
 
 /-- The goal a single segment Agrees with, the first argument in cyclic order that bears it. -/
 def segmentGoal (geom : Geometry) (ea ia : Person) (s : Segment) :
@@ -283,14 +288,16 @@ external one bears it. -/
 theorem segmentGoal_eq_ea_iff (geom : Geometry) (ea ia : Person) (s : Segment) :
     segmentGoal geom ea ia s = some (.ea, ea) ↔
       (personSpec geom ia).contains s = false ∧ (personSpec geom ea).contains s = true := by
-  simp only [segmentGoal, segProbe, Probe.ofVis, Probe.search, goalTokens, segVisible, List.find?]
+  simp only [segmentGoal, segProbe, Probe.relativized, Probe.search, goalTokens, segVisible,
+    List.find?]
   cases h1 : (personSpec geom ia).contains s <;>
     cases h2 : (personSpec geom ea).contains s <;> simp
 
 /-- A segment finds the internal argument iff it bears the segment. -/
 theorem segmentGoal_eq_ia_iff (geom : Geometry) (ea ia : Person) (s : Segment) :
     segmentGoal geom ea ia s = some (.ia, ia) ↔ (personSpec geom ia).contains s = true := by
-  simp only [segmentGoal, segProbe, Probe.ofVis, Probe.search, goalTokens, segVisible, List.find?]
+  simp only [segmentGoal, segProbe, Probe.relativized, Probe.search, goalTokens, segVisible,
+    List.find?]
   cases h1 : (personSpec geom ia).contains s <;>
     cases h2 : (personSpec geom ea).contains s <;> simp
 
@@ -341,5 +348,39 @@ theorem cycleSegments_eq_segmentGoal_filters (geom : Geometry) (probe : Probe.Ar
       rw [Bool.eq_iff_iff, beq_iff_eq, segmentGoal_eq_ea_iff]
       cases h1 : (personSpec geom ia).contains s <;>
         cases h2 : (personSpec geom ea).contains s <;> simp_all
+
+/-! ### The articulated probe as an interaction/satisfaction specification
+
+Under the hierarchical person specifications a goal bearing a probe's innermost segment bears
+every segment, so halting on the innermost segment is halting when the probe is fully valued.
+An articulated probe is then the specification interacting with all of its segments and
+satisfied by the innermost, and [deal-2025a]'s Agree over the two argument tokens copies
+exactly the segments the two cycles check. -/
+
+/-- An articulated probe as a `[INT:probe, SAT:innermost]` specification. -/
+def _root_.Minimalist.Probe.Articulation.toSpec (probe : Probe.Articulation) :
+    Probe.Spec Segment :=
+  ⟨probe.toFinset, probe.getLast?.toList.toFinset⟩
+
+/-- The segments an argument token bears. -/
+def tokenFeats (geom : Geometry) (t : Controller × Person) : Finset Segment :=
+  (personSpec geom t.2).toFinset
+
+/-- The segments an articulated probe copies over the two cyclically ordered arguments are the
+segments of its two cycles. -/
+theorem toSpec_run_state :
+    ∀ probe ∈ [flatProbe, partialProbe, fullProbeStd, fullProbeAddr],
+      ∀ geom ∈ [Geometry.standard, .addressee, .branching], ∀ ea ia : Person,
+      (probe.toSpec.run (tokenFeats geom) (goalTokens ea ia)).state =
+        ((cycleSegments geom probe ea ia).1 ++ (cycleSegments geom probe ea ia).2).toFinset := by
+  decide
+
+/-- The articulated probe halts on the internal argument iff that argument leaves no residue. -/
+theorem toSpec_run_halt_eq_ia_iff :
+    ∀ probe ∈ [flatProbe, partialProbe, fullProbeStd, fullProbeAddr],
+      ∀ geom ∈ [Geometry.standard, .addressee, .branching], ∀ ea ia : Person,
+      ((probe.toSpec.run (tokenFeats geom) (goalTokens ea ia)).halt = some (.ia, ia) ↔
+        activeResidue probe (personSpec geom ia) = []) := by
+  decide
 
 end Minimalist.CyclicAgree

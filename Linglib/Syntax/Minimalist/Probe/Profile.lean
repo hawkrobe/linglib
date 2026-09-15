@@ -107,7 +107,7 @@ theorem isVacuous_mk_none (head : Cat) : (Probe.Profile.mk head none).isVacuous 
 /-- The probe a profile denotes over goals exposing a label, which sees a goal iff the goal's
 label is transparent to it. -/
 def toProbe {α : Type*} (labelOf : α → List Cat) : Probe α :=
-  .ofVis λ a => p.transparentToLabel (labelOf a)
+  .relativized λ a => p.transparentToLabel (labelOf a)
 
 end Probe.Profile
 

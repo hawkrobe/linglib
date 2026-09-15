@@ -59,7 +59,7 @@ goals the head encounters. -/
 abbrev Goal := (NP × Valuation) × ℕ
 
 /-- The φ-probe relativized to unmarked case: it sees exactly the caseless DPs. -/
-def unmarkedProbe : Probe Goal := Probe.ofVis λ g => g.1.2.isNone
+def unmarkedProbe : Probe Goal := Probe.relativized λ g => g.1.2.isNone
 
 /-- The stack (8) over the goals a head encounters in order: the position of the DP assigned
 dependent case, if the first probe finds a caseless DP to unlock the second and the second,
@@ -91,8 +91,8 @@ theorem stack_eq_none_of_subsingleton {goals : List (NP × Valuation)}
       decide_eq_true_eq, and_imp]
     intro g' hg' hne hvis
     have hg := Probe.mem_of_search_eq_some hs
-    have hv := Probe.visible_of_search_eq_some hs
-    simp only [unmarkedProbe, Probe.ofVis, Option.isNone_iff_eq_none] at hv hvis
+    have hv := Probe.sat_of_search_eq_some hs
+    simp only [unmarkedProbe, Probe.relativized, Option.isNone_iff_eq_none] at hv hvis
     exact hne (h g'.2 g.2 g' hg' g hg rfl rfl hvis hv)
 
 /-- Minimal compliance: the DP that unlocks the stack is not the one it marks. -/

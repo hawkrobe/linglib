@@ -40,7 +40,7 @@ instance : DecidablePred Agreement.Cell.IsParticipant := fun c =>
 /-- The `Probe` a `Probe.Target` denotes: relativized to the sought
     feature, over φ-cells (π⁰ = `Probe.Target.participant.toProbe`). -/
 def Probe.Target.toProbe (t : Probe.Target) : Probe Agreement.Cell :=
-  .ofVis (·.visibleTo t)
+  .relativized (·.visibleTo t)
 
 /-- A nominal as the goal of a φ-probe: its Case-licensing state (`LicensedNP`) together
 with its φ-cell. A relativized probe reads the cell for visibility; Agree reads the Case
@@ -95,7 +95,7 @@ theorem PhiGoal.isActive_unvalued (cell : Agreement.Cell) :
     [bejar-rezac-2003]'s F-licensing route and multi-cycle repairs (see
     `BejarRezac2003.PLCOk`). -/
 def PLC {α : Type*} (cellOf : α → Agreement.Cell) (goals : List α) : Prop :=
-  (Probe.ofVis fun a => (cellOf a).visibleTo .participant).AllLicensed
+  (Probe.relativized fun a => (cellOf a).visibleTo .participant).AllLicensed
     (fun a => (cellOf a).visibleTo .participant) goals
 
 instance {α : Type*} [DecidableEq α] (cellOf : α → Agreement.Cell) (goals : List α) :

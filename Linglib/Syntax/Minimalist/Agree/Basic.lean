@@ -57,8 +57,8 @@ theorem isClosestGoalIn_of_search_eq_some {p : Probe SyntacticObject} {dom : Lis
     (hdom : (dom : Multiset SyntacticObject) = domainIn root probe)
     (hord : dom.Pairwise λ x y => ¬ asymCCommandsIn root y x)
     (h : p.search dom = some goal) :
-    isClosestGoalIn root probe goal (p.vis ·) := by
-  refine ⟨?_, Probe.visible_of_search_eq_some h, λ x hx hvx hasym => ?_⟩
+    isClosestGoalIn root probe goal (p.sat ·) := by
+  refine ⟨?_, Probe.sat_of_search_eq_some h, λ x hx hvx hasym => ?_⟩
   · rw [← hdom]; exact Multiset.mem_coe.2 (Probe.mem_of_search_eq_some h)
   · rw [← hdom] at hx
     exact Probe.not_rel_of_search_eq_some hord h x (Multiset.mem_coe.1 hx) hvx
