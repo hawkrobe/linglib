@@ -31,8 +31,8 @@ and satisfied by its innermost one, whose run copies exactly the segments of the
 * `Minimalist.CyclicAgree.Segment`: the privative person segments.
 * `Minimalist.CyclicAgree.PersonGeometry`: the standard, addressee and branching geometries over
   the segments, each denoting a `Minimalist.Geometry`.
-* `Minimalist.CyclicAgree.personSpec`: the segments a person bears under a geometry, the closure
-  of its innermost segment.
+* `Minimalist.CyclicAgree.personSpec`: the segments a person bears under a geometry, the
+  entailments of its innermost segment.
 * `Minimalist.Probe.Articulation`, `Minimalist.CyclicAgree.AgreementSystem`: an articulated
   probe, and a geometry together with a probe.
 * `Minimalist.CyclicAgree.activeResidue`, `Minimalist.CyclicAgree.agreementValue`,
@@ -84,9 +84,9 @@ inductive PersonGeometry where
 
 namespace PersonGeometry
 
-/-- The closure of a segment, `pi` under `participant` under the innermost segments the geometry
+/-- The entailments of a segment, `pi` by `participant` by the innermost segments the geometry
 has. -/
-def above : PersonGeometry → Segment → Finset Segment
+def entailments : PersonGeometry → Segment → Finset Segment
   | _, .pi => {.pi}
   | _, .participant => {.participant, .pi}
   | .standard, .speaker | .branching, .speaker => {.speaker, .participant, .pi}
@@ -100,9 +100,9 @@ def toGeometry (geom : PersonGeometry) : Minimalist.Geometry Segment where
     | .standard => {.pi, .participant, .speaker}
     | .addressee => {.pi, .participant, .addressee}
     | .branching => {.pi, .participant, .speaker, .addressee}
-  above := geom.above
-  self_mem_above := by cases geom <;> decide
-  above_subset_above := by cases geom <;> decide
+  entailments := geom.entailments
+  mem_entailments_self := by cases geom <;> decide
+  entailments_subset_of_mem := by cases geom <;> decide
 
 /-- The innermost segment a person bears under a geometry. -/
 def node (geom : PersonGeometry) : Person → Segment
@@ -116,10 +116,10 @@ def node (geom : PersonGeometry) : Person → Segment
 
 end PersonGeometry
 
-/-- The segments a person bears under a geometry, the closure of its innermost segment, from the
-outermost to the innermost. -/
+/-- The segments a person bears under a geometry, the entailments of its innermost segment, from
+the outermost to the innermost. -/
 def personSpec (geom : PersonGeometry) (p : Person) : List Segment :=
-  Segment.all.filter fun s => decide (s ∈ geom.toGeometry.above (geom.node p))
+  Segment.all.filter fun s => decide (s ∈ geom.toGeometry.entailments (geom.node p))
 
 /-- Every person bears `pi` under every geometry. -/
 theorem pi_mem_personSpec (geom : PersonGeometry) (p : Person) :
