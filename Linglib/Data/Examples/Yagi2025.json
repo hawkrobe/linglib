@@ -1,0 +1,237 @@
+[
+  {
+    "id": "yagi2025_1",
+    "source": {"bibkey": "yagi-2025", "paperLabel": "(1a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The liquid in this tank has either stopped fermenting or it has not yet begun to ferment.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The liquid in this tank has either stopped fermenting or it has not yet begun to ferment.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["presuppositions", "conflicting"]
+    ],
+    "comment": "Hausser 1976. The disjunctive presupposition is a tautology; false if the liquid is fermenting.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yagi2025_2",
+    "source": {"bibkey": "yagi-2025", "paperLabel": "(1b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Suzan either met the king or the president of Bessarabia.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Suzan either met the king or the president of Bessarabia.",
+    "context": "Bessarabia has a head of state, who is either a king or a president.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["presuppositions", "conflicting"]
+    ],
+    "comment": "Landman 1986. False if Suzan did not meet the head of the nation.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yagi2025_3",
+    "source": {"bibkey": "yagi-2025", "paperLabel": "(1c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either the King of Buganda is now opening parliament or the President of Buganda is conducting the ceremony.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Either the King of Buganda is now opening parliament or the President of Buganda is conducting the ceremony.",
+    "context": "The state has either a king or a president.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "presupposes a king or a president", "judgment": "acceptable"},
+      {"name": "false if the head of state is not opening parliament", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["presuppositions", "conflicting"]
+    ],
+    "comment": "Beaver 2001.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yagi2025_4",
+    "source": {"bibkey": "yagi-2025", "paperLabel": "(3)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is not the case that the liquid in this tank has either stopped fermenting or it has not yet begun to ferment.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is not the case that the liquid in this tank has either stopped fermenting or it has not yet begun to ferment.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "true if the liquid is fermenting", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["negation", "of conflicting disjunction"]
+    ],
+    "comment": "Hausser 1976.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yagi2025_5",
+    "source": {"bibkey": "yagi-2025", "paperLabel": "(4)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Neither is the King of Buganda now opening parliament nor is the President of Buganda conducting the ceremony.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Neither is the King of Buganda now opening parliament nor is the President of Buganda conducting the ceremony.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "true if the head of the nation is not opening parliament", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["negation", "of conflicting disjunction"]
+    ],
+    "comment": "Beaver 2001.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yagi2025_6",
+    "source": {"bibkey": "yagi-2025", "paperLabel": "(8)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either baldness is not hereditary, or all of Bill's children are bald.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Either baldness is not hereditary, or all of Bill's children are bald.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "presupposes that Bill has children", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["presupposition", "projects"]
+    ],
+    "comment": "Karttunen 1974. The disjunction-of-presuppositions modification predicts a tautologous presupposition here.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yagi2025_7",
+    "source": {"bibkey": "yagi-2025", "paperLabel": "(15a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either Bill has no child or all of Bill's children are bald.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Either Bill has no child or all of Bill's children are bald.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["accommodation", "non-tautological"]
+    ],
+    "comment": "The first assertion contradicts the second presupposition, so the default accommodation violates genuineness.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yagi2025_8",
+    "source": {"bibkey": "yagi-2025", "paperLabel": "(18)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either John didn't solve the problem or Mary realized that the problem is solved.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Either John didn't solve the problem or Mary realized that the problem is solved.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "the factive presupposition need not project", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["presupposition", "filtered"]
+    ],
+    "comment": "Beaver 2001. The standard update predicts the lack of projection; the default accommodation does not.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yagi2025_9",
+    "source": {"bibkey": "yagi-2025", "paperLabel": "(ia)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It must be here or (else) it must be there.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It must be here or (else) it must be there.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "one of the following obtains: it must be here; it must be there", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["reading", "modal split"]
+    ],
+    "comment": "Geurts 2005.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yagi2025_10",
+    "source": {"bibkey": "yagi-2025", "paperLabel": "(iiib)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The doctor can tell you right away what's the matter with you, or the nurse can make an appointment for you.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The doctor can tell you right away what's the matter with you, or the nurse can make an appointment for you.",
+    "context": "The phone will be answered by either a doctor or a secretary.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reading", "modal split"]
+    ],
+    "comment": "Landman 1986. Each disjunct is interpreted against one disjunct of the preceding sentence.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "yagi2025_11",
+    "source": {"bibkey": "yagi-2025", "paperLabel": "(ii)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either John is not a scuba diver, or his wetsuit is blue.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Either John is not a scuba diver, or his wetsuit is blue.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "presupposes that if John is a scuba diver he has a wetsuit", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["presupposition", "conditional"]
+    ],
+    "comment": "Katzir and Singh 2012.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
