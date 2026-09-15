@@ -108,7 +108,7 @@ private theorem elim_comp_splitOn [DecidableEq V] (U : Finset V) (v : V → M)
 
 private theorem extendOn_agrees [DecidableEq V] (U : Finset V) (v : V → M)
     (i : {x // x ∈ U} → M) : ∀ x ∉ U, extendOn U v i x = v x := by
-  intro x hx; simp only [extendOn, dif_neg hx]
+  intro x hx; simp only [extendOn, dite_eq_right hx]
 
 private theorem extendOn_restrict [DecidableEq V] (U : Finset V) (v v' : V → M)
     (h : ∀ x ∉ U, v' x = v x) : extendOn U v (fun s => v' s.val) = v' := by

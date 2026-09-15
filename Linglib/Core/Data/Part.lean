@@ -34,7 +34,7 @@ theorem mem_or_iff : a ∈ p.or q ↔ a ∈ p ∨ ¬p.Dom ∧ a ∈ q := by
   · simp [Part.or, eq_none_iff'.mpr h]
 
 @[simp] theorem none_or : Part.none.or q = q :=
-  if_neg not_none_dom
+  ite_eq_right not_none_dom
 
 @[simp] theorem or_none : p.or none = p := by
   by_cases h : p.Dom
@@ -42,7 +42,7 @@ theorem mem_or_iff : a ∈ p.or q ↔ a ∈ p ∨ ¬p.Dom ∧ a ∈ q := by
   · simp [Part.or, eq_none_iff'.mpr h]
 
 @[simp] theorem some_or : (Part.some a).or q = Part.some a :=
-  if_pos trivial
+  ite_eq_left trivial
 
 @[simp] theorem bot_or : (⊥ : Part α).or q = q :=
   none_or

@@ -370,9 +370,9 @@ private lemma filterMap_weightedSum {n k' : ℕ}
     simp only [List.map_cons, List.sum_cons]
     by_cases hpos : 0 < w hd
     · -- Include entry: filterMap keeps it
-      simp only [List.filterMap_cons, dif_pos hpos, List.map_cons, List.sum_cons, ih]
+      simp only [List.filterMap_cons, dite_eq_left hpos, List.map_cons, List.sum_cons, ih]
     · -- Skip entry: filterMap drops it, contribution is 0
-      simp only [List.filterMap_cons, dif_neg hpos]
+      simp only [List.filterMap_cons, dite_eq_right hpos]
       rw [ih]
       have : w hd = 0 := le_antisymm (not_lt.mp hpos) (hw hd)
       simp [this]
@@ -454,7 +454,7 @@ private theorem cancellation_nonempty {n : ℕ} (sys : QualitativeProbability (S
     have hx_nn : ∀ i : Fin n, 0 ≤ x i := by
       intro i
       have h := hsat ⟨i.val, by omega⟩
-      simp only [ineqFn, dif_pos i.isLt, Polyhedral.Ineq.sat, Polyhedral.dot, ite_mul,
+      simp only [ineqFn, dite_eq_left i.isLt, Polyhedral.Ineq.sat, Polyhedral.dot, ite_mul,
         neg_one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
       linarith
     -- Extract ordering constraints
@@ -545,7 +545,7 @@ private theorem cancellation_nonempty {n : ℕ} (sys : QualitativeProbability (S
       have h1 : ∑ i : Fin n, ws ⟨i.val, by omega⟩ * (ineqFn ⟨i.val, by omega⟩).rhs = 0 :=
         Finset.sum_eq_zero fun i _ => by
           have : (ineqFn ⟨i.val, by omega⟩).rhs = 0 := by
-            simp only [ineqFn, dif_pos i.isLt]
+            simp only [ineqFn, dite_eq_left i.isLt]
           simp [this]
       have h2 : ∑ m : Fin k, ws ⟨n + m.val, by omega⟩ *
           (ineqFn ⟨n + m.val, by omega⟩).rhs = 0 :=
@@ -583,9 +583,9 @@ private theorem cancellation_nonempty {n : ℕ} (sys : QualitativeProbability (S
       have h_nn : ∑ i : Fin n, ws ⟨i.val, by omega⟩ * (ineqFn ⟨i.val, by omega⟩).lhs j =
           -ws ⟨j.val, by omega⟩ := by
         rw [Finset.sum_eq_single j]
-        · simp only [ineqFn, dif_pos j.isLt]; simp
+        · simp only [ineqFn, dite_eq_left j.isLt]; simp
         · intro i _ hij
-          simp only [ineqFn, dif_pos i.isLt]
+          simp only [ineqFn, dite_eq_left i.isLt]
           simp [show j ≠ i from Ne.symm hij]
         · intro h; exact absurd (Finset.mem_univ j) h
       -- Ordering: simplify lhs
@@ -643,7 +643,7 @@ private theorem cancellation_nonempty {n : ℕ} (sys : QualitativeProbability (S
       ⟨⟨(sp.get s₀).1, (sp.get s₀).2, ws ⟨(n + k) + s₀.val, by omega⟩,
         strictPairs_disj sys s₀, hs₀⟩,
         List.mem_append_left _ (List.mem_append_right _
-          (List.mem_filterMap.mpr ⟨s₀, List.mem_finRange s₀, dif_pos hs₀⟩)),
+          (List.mem_filterMap.mpr ⟨s₀, List.mem_finRange s₀, dite_eq_left hs₀⟩)),
         strictPairs_strict sys s₀⟩
     have hQ_valid : Q.isValid sys.ge := by
       intro wc hwc

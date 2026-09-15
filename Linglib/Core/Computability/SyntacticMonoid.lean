@@ -216,7 +216,7 @@ theorem syntacticCon_eq_ker_transitionHom : L.syntacticCon = Con.ker L.toDFA.tra
 /-! ### Myhill–Nerode -/
 
 theorem IsRegular.finite_syntacticMonoid (h : L.IsRegular) : Finite L.SyntacticMonoid := by
-  haveI := h.finite_range_leftQuotient.to_subtype
+  have := h.finite_range_leftQuotient.to_subtype
   show Finite (syntacticCon L).Quotient
   rw [syntacticCon_eq_ker_transitionHom]
   exact Finite.of_equiv _ (DFA.transitionMonoidEquiv L.toDFA).symm.toEquiv

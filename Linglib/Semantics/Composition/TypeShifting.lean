@@ -225,12 +225,12 @@ private theorem filter_decEq_of_mem [DecidableEq E]
     | head =>
       have hdec : @decide (j = j) inferInstance = true :=
         @decide_eq_true _ inferInstance rfl
-      rw [List.filter_cons, if_pos hdec, filter_tl_nil hd_nmem]
+      rw [List.filter_cons, ite_eq_left hdec, filter_tl_nil hd_nmem]
     | tail _ hmem' =>
       have hne : ¬ (j = hd) := fun heq => hd_nmem (heq ▸ hmem')
       have hdec : ¬ (@decide (j = hd) inferInstance = true) :=
         fun h => absurd (@of_decide_eq_true _ inferInstance h) hne
-      rw [List.filter_cons, if_neg hdec]
+      rw [List.filter_cons, ite_eq_right hdec]
       exact ih hmem' tl_nd
 
 /-- `lower ∘ individual = some` on the domain (Partee's round-trip).

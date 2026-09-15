@@ -111,7 +111,7 @@ theorem barbara :
     (compile_andTree (compile_aTree hy hz) (compile_aTree hx hy))
     (compile_aTree hx hz)
     (fun M S v h => by
-      letI := S
+      let := S
       simp only [Formula.realize_inf, realize_all₁, Formula.realize_imp] at h ⊢
       exact fun a hXa => h.1 a (h.2 a hXa)) g
 
@@ -123,7 +123,7 @@ theorem celarent :
     (compile_andTree (compile_eTree hy hz) (compile_aTree hx hy))
     (compile_eTree hx hz)
     (fun M S v h => by
-      letI := S
+      let := S
       simp only [Formula.realize_inf, realize_all₁, Formula.realize_imp,
         Formula.realize_not] at h ⊢
       exact fun a hXa => h.1 a (h.2 a hXa)) g
@@ -136,7 +136,7 @@ theorem darii :
     (compile_andTree (compile_aTree hy hz) (compile_iTree hx hy))
     (compile_iTree hx hz)
     (fun M S v h => by
-      letI := S
+      let := S
       simp only [Formula.realize_inf, realize_all₁, realize_ex₁,
         Formula.realize_imp] at h ⊢
       obtain ⟨hYZ, a, hXa, hYa⟩ := h
@@ -150,7 +150,7 @@ theorem ferio :
     (compile_andTree (compile_eTree hy hz) (compile_iTree hx hy))
     (compile_oTree hx hz)
     (fun M S v h => by
-      letI := S
+      let := S
       simp only [Formula.realize_inf, realize_all₁, realize_ex₁,
         Formula.realize_imp, Formula.realize_not] at h ⊢
       obtain ⟨hYZ, a, hXa, hYa⟩ := h

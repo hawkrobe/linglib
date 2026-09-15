@@ -184,7 +184,7 @@ theorem score_of_mem (g : Goal) (μ : Measure Object) (lam c : ℝ) {t : Object}
     (h : t ∈ u.extension) :
     score g μ lam c t u = ((lam * (g.value ((L0 μ u).real {t}) - u.cost c) : ℝ) : EReal) := by
   unfold score
-  rw [if_pos h]
+  rw [ite_eq_left h]
 
 theorem score_ne_bot (g : Goal) (μ : Measure Object) (lam c : ℝ) {t : Object} {u : Word}
     (h : t ∈ u.extension) : score g μ lam c t u ≠ ⊥ := by
@@ -194,7 +194,7 @@ theorem score_ne_bot (g : Goal) (μ : Measure Object) (lam c : ℝ) {t : Object}
 theorem score_of_notMem (g : Goal) (μ : Measure Object) (lam c : ℝ) {t : Object} {u : Word}
     (h : t ∉ u.extension) : score g μ lam c t u = ⊥ := by
   unfold score
-  rw [if_neg h]
+  rw [ite_eq_right h]
 
 /-- Every object has a true word. -/
 theorem exists_score_ne_bot (g : Goal) (μ : Measure Object) (lam c : ℝ) (t : Object) :

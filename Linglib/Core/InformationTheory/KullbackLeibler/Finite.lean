@@ -75,7 +75,7 @@ theorem klDiv_uniformOn_of_subset [DecidableEq α] {A B : Finset α} (hA : A.Non
   filter_upwards [(Measure.rnDeriv_eq_div_singleton hac).filter_mono hac.ae_le,
     ae_cond_mem (A.finite_toSet.measurableSet)] with a ha hmem
   rw [ha, uniformOn_finset_apply_singleton, uniformOn_finset_apply_singleton,
-    if_pos (Finset.mem_coe.1 hmem), if_pos (hAB (Finset.mem_coe.1 hmem)), div_eq_mul_inv,
+    ite_eq_left (Finset.mem_coe.1 hmem), ite_eq_left (hAB (Finset.mem_coe.1 hmem)), div_eq_mul_inv,
     inv_inv, mul_comm, ← div_eq_mul_inv]
 
 end InformationTheory

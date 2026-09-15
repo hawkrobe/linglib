@@ -1049,7 +1049,7 @@ theorem evalLex_horrible_extension_pos (vt : ValidThreshold) (u : EvalUtterance)
       rw [this]
       decide +revert
     rw [this]
-    simp only [if_true, mul_one]
+    simp only [ite_true, mul_one]
     exact heightPriorPMF_pos _
   · -- .silent: always true
     show heightPriorPMF _ *
@@ -1057,7 +1057,7 @@ theorem evalLex_horrible_extension_pos (vt : ValidThreshold) (u : EvalUtterance)
         (1 : ℝ≥0∞) else 0) ≠ 0
     have : evalLex muHorrible (validToThreshold vt) .silent (deg 0) = true := rfl
     rw [this]
-    simp only [if_true, mul_one]
+    simp only [ite_true, mul_one]
     exact heightPriorPMF_pos _
 
 /-- Stage 1 literal listener under `muHorrible` at valid threshold `vt`. -/
@@ -1228,13 +1228,13 @@ theorem adjLex_warm_extension_pos (vt : ValidThreshold) (u : RSA.Nouwen2024.AdjU
       -- vt : Fin 3 means vt.val ∈ {0,1,2}; case-bash with decide.
       fin_cases vt <;> decide
     rw [this]
-    simp only [if_true, mul_one]
+    simp only [ite_true, mul_one]
     exact priorAfterEvalPos_pos_at_horrible_pos (by decide)
   · -- .silent: always true
     show priorAfterEvalPos _ * _ ≠ 0
     have : adjLex (validToThreshold vt) .silent (deg 5) = true := rfl
     rw [this]
-    simp only [if_true, mul_one]
+    simp only [ite_true, mul_one]
     exact priorAfterEvalPos_pos_at_horrible_pos (by decide)
 
 /-- Stage 2 literal listener with prior Π (the L&G "two priors" pattern:
@@ -1317,7 +1317,7 @@ noncomputable def seqAdjL1HorriblyWarm (u : RSA.Nouwen2024.AdjUtterance) : PMF H
             exact Real.exp_pos _)
           have hntop : adjL0_warmAt 0 .warm (deg 5) ≠ ⊤ := PMF.apply_ne_top _ _
           exact (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hL0_warm) hntop).ne'
-        rw [dif_pos h_dite]
+        rw [dite_eq_left h_dite]
         -- Now S1Belief positive at u — case on u
         cases u
         · -- .warm: L0(.warm | deg 5) > 0 from hL0_warm
@@ -1417,7 +1417,7 @@ theorem evalSpeaker_apply_of_true (vt : ValidThreshold) (w : Height)
   have hL0pos : evalL0_horribleAt vt .eval_pos w = heightPriorPMF w * (evalMass vt)⁻¹ := by
     unfold evalL0_horribleAt
     rw [RSA.L0LassiterGoodman_apply, hw]
-    simp only [if_true, mul_one]
+    simp only [ite_true, mul_one]
     rfl
   have hL0sil : evalL0_horribleAt vt .silent w = heightPriorPMF w := by
     unfold evalL0_horribleAt
@@ -1458,7 +1458,7 @@ theorem adjSpeaker_apply_of_true (vt : ValidThreshold) (w : Height)
   have hL0warm : adjL0_warmAt vt .warm w = priorAfterEvalPos w * (adjMass vt)⁻¹ := by
     unfold adjL0_warmAt
     rw [RSA.L0LassiterGoodman_apply, hw]
-    simp only [if_true, mul_one]
+    simp only [ite_true, mul_one]
     rfl
   have hL0sil : adjL0_warmAt vt .silent w = priorAfterEvalPos w := by
     unfold adjL0_warmAt
@@ -1475,7 +1475,7 @@ theorem adjSpeaker_apply_of_true (vt : ValidThreshold) (w : Height)
     · rw [adjCostFactor_silent] at h3
       exact one_ne_zero h3
   unfold adjSpeaker_warmAt
-  rw [dif_pos h_dite, RSA.S1Belief_apply, sumAdjUtt, hL0warm, hL0sil, adjCostFactor_silent,
+  rw [dite_eq_left h_dite, RSA.S1Belief_apply, sumAdjUtt, hL0warm, hL0sil, adjCostFactor_silent,
     mul_one, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)]
   have hP4 : (priorAfterEvalPos w) ^ (4 : ℝ) ≠ 0 :=
     (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hPi) hPt).ne'
@@ -1514,7 +1514,7 @@ theorem adjSpeaker_apply_of_false (vt : ValidThreshold) (w : Height)
     · rw [adjCostFactor_silent] at h3
       exact one_ne_zero h3
   unfold adjSpeaker_warmAt
-  rw [dif_pos h_dite, RSA.S1Belief_apply, hL0warm,
+  rw [dite_eq_left h_dite, RSA.S1Belief_apply, hL0warm,
     ENNReal.zero_rpow_of_pos (by norm_num), zero_mul, zero_mul]
 
 /-! ### Mass monotonicity — structural, no value computation
@@ -1714,7 +1714,7 @@ noncomputable def simMass (l : Threshold × Threshold) (u : Utterance) : ℝ≥0
 private theorem simMass_ne_zero_of_true {l : Threshold × Threshold} {u : Utterance}
     {h : Height} (hu : meaning u h l.1 l.2 = true) : simMass l u ≠ 0 :=
   ENNReal.summable.tsum_ne_zero_iff.mpr
-    ⟨h, by rw [hu]; simp only [if_true, mul_one]; exact heightPriorPMF_pos h⟩
+    ⟨h, by rw [hu]; simp only [ite_true, mul_one]; exact heightPriorPMF_pos h⟩
 
 private theorem sumUtt4 (f : Utterance → ℝ≥0∞) :
     ∑' u, f u = f .bare_warm + f .horribly_warm + f .pleasantly_warm + f .silent := by
@@ -1743,8 +1743,8 @@ private theorem simValue_of_allTrue (l : Threshold × Threshold) (h : Height)
         (if meaning u h' l.1 l.2 then (1 : ℝ≥0∞) else 0)) ≠ 0 :=
       simMass_ne_zero_of_true (hall u)
     unfold simL0At
-    rw [dif_pos hm, RSA.L0LassiterGoodman_apply, hall u]
-    simp only [if_true, mul_one]
+    rw [dite_eq_left hm, RSA.L0LassiterGoodman_apply, hall u]
+    simp only [ite_true, mul_one]
     rfl
   have h_pos : (∑' u, ((simL0At l) u h : ℝ≥0∞) ^ (4 : ℝ) * simCostFactor u) ≠ 0 := by
     rw [sumUtt4]
@@ -1763,7 +1763,7 @@ private theorem simValue_of_allTrue (l : Threshold × Threshold) (h : Height)
       · norm_num at hneg
     · exact simCostFactor_pos .silent h5
   unfold simSpeakerAt
-  rw [dif_pos h_pos, RSA.S1Belief_apply, sumUtt4, hL0 .bare_warm, hL0 .horribly_warm,
+  rw [dite_eq_left h_pos, RSA.S1Belief_apply, sumUtt4, hL0 .bare_warm, hL0 .horribly_warm,
     hL0 .pleasantly_warm, hL0 .silent]
   simp only [ENNReal.mul_rpow_of_nonneg _ _ (by norm_num : (0:ℝ) ≤ 4)]
   have hP4 : (heightPriorPMF h) ^ (4 : ℝ) ≠ 0 :=
@@ -1893,10 +1893,10 @@ theorem evalL0At_silent (evalMu : Height → ℕ) (vt : ValidThreshold) (w : Hei
   have hm : (∑' h, heightPriorPMF h *
       (if evalLex evalMu (validToThreshold vt) .silent h then (1 : ℝ≥0∞) else 0)) = 1 := by
     simp only [show ∀ h, evalLex evalMu (validToThreshold vt) .silent h = true from
-      λ _ => rfl, if_true, mul_one]
+      λ _ => rfl, ite_true, mul_one]
     exact PMF.tsum_coe _
   unfold evalL0At
-  rw [dif_pos (by rw [hm]; exact one_ne_zero)]
+  rw [dite_eq_left (by rw [hm]; exact one_ne_zero)]
   exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (λ _ => rfl) _ _
 
 private theorem evalSpeakerAt_h_pos (evalMu : Height → ℕ) (vt : ValidThreshold)
@@ -1920,10 +1920,10 @@ theorem evalSpeakerAt_apply_of_false (evalMu : Height → ℕ) (vt : ValidThresh
     evalSpeakerAt evalMu vt w .eval_pos = 0 := by
   have hL0 : evalL0At evalMu vt .eval_pos w = 0 := by
     unfold evalL0At
-    rw [dif_pos hne, RSA.L0LassiterGoodman_apply, hw]
+    rw [dite_eq_left hne, RSA.L0LassiterGoodman_apply, hw]
     simp
   unfold evalSpeakerAt
-  rw [dif_pos (evalSpeakerAt_h_pos evalMu vt w), RSA.S1Belief_apply, hL0,
+  rw [dite_eq_left (evalSpeakerAt_h_pos evalMu vt w), RSA.S1Belief_apply, hL0,
     ENNReal.zero_rpow_of_pos (by norm_num), zero_mul, zero_mul]
 
 /-- Generic on-support positivity (given a nonempty `.eval_pos` extension). -/
@@ -1935,10 +1935,10 @@ theorem evalSpeakerAt_apply_ne_zero_of_true (evalMu : Height → ℕ) (vt : Vali
     evalSpeakerAt evalMu vt w .eval_pos ≠ 0 := by
   have hL0 : evalL0At evalMu vt .eval_pos w ≠ 0 := by
     unfold evalL0At
-    rw [dif_pos hne, ← PMF.mem_support_iff, RSA.mem_support_L0LassiterGoodman_iff]
+    rw [dite_eq_left hne, ← PMF.mem_support_iff, RSA.mem_support_L0LassiterGoodman_iff]
     exact ⟨heightPriorPMF_pos w, hw⟩
   unfold evalSpeakerAt
-  rw [dif_pos (evalSpeakerAt_h_pos evalMu vt w)]
+  rw [dite_eq_left (evalSpeakerAt_h_pos evalMu vt w)]
   exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ hL0 (evalCostFactor_pos _)
 
 /-- Nonempty `.eval_pos` extension for μ_pleasant at every valid threshold
@@ -1951,7 +1951,7 @@ theorem evalMass_pleasant_ne_zero (vt : ValidThreshold) :
   have ht : evalLex muPleasant (validToThreshold vt) .eval_pos (deg 3) = true := by
     revert vt; decide
   rw [ht]
-  simp only [if_true, mul_one]
+  simp only [ite_true, mul_one]
   exact heightPriorPMF_pos _
 
 /-- Backgrounded prior for "pleasantly": stage-1 posterior under μ_pleasant. -/
@@ -2013,7 +2013,7 @@ private theorem adjMass_pleasant_zero_ne_zero :
   apply ENNReal.summable.tsum_ne_zero_iff.mpr
   refine ⟨deg 4, ?_⟩
   rw [show adjLex (validToThreshold 0) .warm (deg 4) = true from by decide]
-  simp only [if_true, mul_one]
+  simp only [ite_true, mul_one]
   exact priorAfterEvalPosPleasant_pos_at (by decide)
 
 /-- The stage-2 pleasantly speaker is positive on `.warm` at `deg 4`, `vt = 0`. -/
@@ -2021,7 +2021,7 @@ private theorem adjSpeakerPleasant_warm_deg4_ne_zero :
     adjSpeakerPleasantAt 0 (deg 4) .warm ≠ 0 := by
   have hL0 : adjL0PleasantAt 0 .warm (deg 4) ≠ 0 := by
     unfold adjL0PleasantAt
-    rw [dif_pos adjMass_pleasant_zero_ne_zero, ← PMF.mem_support_iff,
+    rw [dite_eq_left adjMass_pleasant_zero_ne_zero, ← PMF.mem_support_iff,
       RSA.mem_support_L0LassiterGoodman_iff]
     exact ⟨priorAfterEvalPosPleasant_pos_at (by decide), by decide⟩
   have h_pos : (∑' u, ((adjL0PleasantAt 0) u (deg 4) : ℝ≥0∞) ^ (4 : ℝ) *
@@ -2033,7 +2033,7 @@ private theorem adjSpeakerPleasant_warm_deg4_ne_zero :
       rw [ENNReal.ofReal_ne_zero_iff]
       exact Real.exp_pos _
   unfold adjSpeakerPleasantAt
-  rw [dif_pos h_pos]
+  rw [dite_eq_left h_pos]
   exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ hL0 (by
     unfold adjCostFactor
     rw [ENNReal.ofReal_ne_zero_iff]
@@ -2055,10 +2055,10 @@ noncomputable def seqAdjL1PleasantlyWarm (u : RSA.Nouwen2024.AdjUtterance) : PMF
             have hm : (∑' h, priorAfterEvalPosPleasant h *
                 (if adjLex (validToThreshold 0) .silent h then (1 : ℝ≥0∞) else 0)) = 1 := by
               simp only [show ∀ h, adjLex (validToThreshold 0) .silent h = true from
-                λ _ => rfl, if_true, mul_one]
+                λ _ => rfl, ite_true, mul_one]
               exact PMF.tsum_coe _
             unfold adjL0PleasantAt
-            rw [dif_pos (by rw [hm]; exact one_ne_zero),
+            rw [dite_eq_left (by rw [hm]; exact one_ne_zero),
               RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (λ _ => rfl)]
             exact priorAfterEvalPosPleasant_pos_at (by decide)
           have h_pos : (∑' u', ((adjL0PleasantAt 0) u' (deg 4) : ℝ≥0∞) ^ (4 : ℝ) *
@@ -2069,7 +2069,7 @@ noncomputable def seqAdjL1PleasantlyWarm (u : RSA.Nouwen2024.AdjUtterance) : PMF
                 (PMF.apply_ne_top _ _)).ne'
             · rw [adjCostFactor_silent]; exact one_ne_zero
           unfold adjSpeakerPleasantAt
-          rw [dif_pos h_pos]
+          rw [dite_eq_left h_pos]
           exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ hL0 (by
             rw [adjCostFactor_silent]; exact one_ne_zero)))
 
@@ -2140,10 +2140,10 @@ theorem evalL0At_usual (vt : ValidThreshold) (u : EvalUtterance) (w : Height) :
     evalL0At muUsualN vt u w = heightPriorPMF w := by
   have hm : (∑' h, heightPriorPMF h *
       (if evalLex muUsualN (validToThreshold vt) u h then (1 : ℝ≥0∞) else 0)) = 1 := by
-    simp only [evalLex_usual_true, if_true, mul_one]
+    simp only [evalLex_usual_true, ite_true, mul_one]
     exact PMF.tsum_coe _
   unfold evalL0At
-  rw [dif_pos (by rw [hm]; exact one_ne_zero)]
+  rw [dite_eq_left (by rw [hm]; exact one_ne_zero)]
   exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _
     (λ w' => evalLex_usual_true vt u w') _ _
 
@@ -2154,7 +2154,7 @@ theorem evalSpeakerAt_usual_apply (vt : ValidThreshold) (w : Height) :
   have hP0 : heightPriorPMF w ≠ 0 := heightPriorPMF_pos w
   have hPt : heightPriorPMF w ≠ ⊤ := PMF.apply_ne_top _ _
   unfold evalSpeakerAt
-  rw [dif_pos (evalSpeakerAt_h_pos muUsualN vt w), RSA.S1Belief_apply, sumEvalUtt,
+  rw [dite_eq_left (evalSpeakerAt_h_pos muUsualN vt w), RSA.S1Belief_apply, sumEvalUtt,
     evalL0At_usual, evalL0At_usual, evalCostFactor_silent, mul_one]
   have hP4 : (heightPriorPMF w) ^ (4 : ℝ) ≠ 0 :=
     (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hP0) hPt).ne'
@@ -2246,10 +2246,10 @@ theorem adjL0WithPrior_silent (Pi : PMF Height) (vt : ValidThreshold) (w : Heigh
   have hm : (∑' h, Pi h *
       (if adjLex (validToThreshold vt) .silent h then (1 : ℝ≥0∞) else 0)) = 1 := by
     simp only [show ∀ h, adjLex (validToThreshold vt) .silent h = true from
-      λ _ => rfl, if_true, mul_one]
+      λ _ => rfl, ite_true, mul_one]
     exact PMF.tsum_coe _
   unfold adjL0WithPrior
-  rw [dif_pos (by rw [hm]; exact one_ne_zero)]
+  rw [dite_eq_left (by rw [hm]; exact one_ne_zero)]
   exact RSA.L0LassiterGoodman_apply_of_meaning_true _ _ _ (λ _ => rfl) _ _
 
 private theorem adjSpeakerWithPrior_h_pos (Pi : PMF Height) (vt : ValidThreshold)
@@ -2284,16 +2284,16 @@ theorem adjSpeakerWithPrior_apply_of_true (Pi : PMF Height) (vt : ValidThreshold
   have hPt : Pi w ≠ ⊤ := PMF.apply_ne_top _ _
   have hmne : adjMassP Pi vt ≠ 0 :=
     ENNReal.summable.tsum_ne_zero_iff.mpr
-      ⟨w, by rw [hw]; simp only [if_true, mul_one]; exact hPw⟩
+      ⟨w, by rw [hw]; simp only [ite_true, mul_one]; exact hPw⟩
   have hL0warm : adjL0WithPrior Pi vt .warm w = Pi w * (adjMassP Pi vt)⁻¹ := by
     have hm' : (∑' h, Pi h *
         (if adjLex (validToThreshold vt) .warm h then (1 : ℝ≥0∞) else 0)) ≠ 0 := hmne
     unfold adjL0WithPrior
-    rw [dif_pos hm', RSA.L0LassiterGoodman_apply, hw]
-    simp only [if_true, mul_one]
+    rw [dite_eq_left hm', RSA.L0LassiterGoodman_apply, hw]
+    simp only [ite_true, mul_one]
     rfl
   unfold adjSpeakerWithPrior
-  rw [dif_pos (adjSpeakerWithPrior_h_pos Pi vt hPw), RSA.S1Belief_apply, sumAdjUtt,
+  rw [dite_eq_left (adjSpeakerWithPrior_h_pos Pi vt hPw), RSA.S1Belief_apply, sumAdjUtt,
     hL0warm, adjL0WithPrior_silent, adjCostFactor_silent, mul_one,
     ENNReal.mul_rpow_of_nonneg _ _ (by norm_num : (0 : ℝ) ≤ 4)]
   have hP4 : (Pi w) ^ (4 : ℝ) ≠ 0 := (ENNReal.rpow_pos (pos_iff_ne_zero.mpr hPw) hPt).ne'
@@ -2326,14 +2326,14 @@ private theorem bareAdj_marginal_ne_zero (u : RSA.Nouwen2024.AdjUtterance) :
             (if adjLex (validToThreshold 0) .warm h then (1 : ℝ≥0∞) else 0)) ≠ 0 :=
           ENNReal.summable.tsum_ne_zero_iff.mpr
             ⟨deg 4, by rw [show adjLex (validToThreshold 0) .warm (deg 4) = true from
-              by decide]; simp only [if_true, mul_one]; exact heightPriorPMF_pos _⟩
+              by decide]; simp only [ite_true, mul_one]; exact heightPriorPMF_pos _⟩
         unfold adjL0WithPrior
-        rw [dif_pos hmne, ← PMF.mem_support_iff, RSA.mem_support_L0LassiterGoodman_iff]
+        rw [dite_eq_left hmne, ← PMF.mem_support_iff, RSA.mem_support_L0LassiterGoodman_iff]
         exact ⟨heightPriorPMF_pos _, by decide⟩
       · rw [adjL0WithPrior_silent]
         exact heightPriorPMF_pos _
     unfold adjSpeakerWithPrior
-    rw [dif_pos (adjSpeakerWithPrior_h_pos heightPriorPMF 0 (heightPriorPMF_pos (deg 4)))]
+    rw [dite_eq_left (adjSpeakerWithPrior_h_pos heightPriorPMF 0 (heightPriorPMF_pos (deg 4)))]
     exact RSA.S1Belief_apply_ne_zero_of_pos _ _ _ _ _ _ hL0 hcf
 
 /-- Baseline chain: bare "warm" over the raw height prior. -/
@@ -2394,7 +2394,7 @@ private theorem bareMass_ne_zero (vt : ValidThreshold) :
     adjMassP heightPriorPMF vt ≠ 0 :=
   ENNReal.summable.tsum_ne_zero_iff.mpr ⟨deg 4, by
     rw [show adjLex (validToThreshold vt) .warm (deg 4) = true from by revert vt; decide]
-    simp only [if_true, mul_one]
+    simp only [ite_true, mul_one]
     exact heightPriorPMF_pos _⟩
 
 /-- Bare "warm" prefers the moderate `deg 4` over the extreme `deg 6`: both

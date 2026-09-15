@@ -148,9 +148,9 @@ theorem denote_result_entails_resultState (M : CosModel Entity State T)
     (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s := by
   unfold denote at h
   by_cases hc : Root.Kind.cause ∈ v.closedKinds
-  · rw [if_pos hc] at h
+  · rw [ite_eq_left hc] at h
     exact M.causative_entails_resultState v y x e h
-  · rw [if_neg hc, if_pos hres] at h
+  · rw [ite_eq_right hc, ite_eq_left hres] at h
     exact ⟨e, M.inchoative_entails_resultState v x e h⟩
 
 /-- The denotational result entailment **is** the template diagnostic: a verb

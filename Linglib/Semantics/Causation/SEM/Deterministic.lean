@@ -9,7 +9,7 @@ SEMs. The per-vertex pattern is intrinsically the deterministic
 specialization — see "Why per-vertex is deterministic-only" below.
 
 `developDetVtx M s v : α v` is the per-vertex value, defined via
-`IsDAG.wf.fix` (recurses on `IsStrictAncestor`). The whole-valuation
+`WellFounded.fix` on `IsDAG` (recurses on `IsStrictAncestor`). The whole-valuation
 wrapper `developDet M s : Valuation α` is the **canonical public name**
 for "develop a deterministic acyclic SEM against a partial valuation."
 Returns `some` at every vertex (every vertex reaches a value via parent
@@ -78,7 +78,7 @@ variable {V : Type*} {α : V → Type*}
 noncomputable def developDetVtx (M : SEM V α) [hDag : CausalGraph.IsDAG M.graph]
     [SEM.IsDeterministic M]
     (s : Valuation α) : (v : V) → α v :=
-  hDag.wf.fix (C := fun v => α v) (fun v rec =>
+  hDag.fix (C := fun v => α v) (fun v rec =>
     match s.get v with
     | some x => x
     | none =>
@@ -163,7 +163,7 @@ theorem developDet_hasValue_iff (M : SEM V α) [CausalGraph.IsDAG M.graph]
 noncomputable def developDetVtx? (M : SEM V α) [hDag : CausalGraph.IsDAG M.graph]
     [SEM.IsDeterministic M] [DecidableEq V] (s : Valuation α) :
     (v : V) → Option (α v) :=
-  hDag.wf.fix (C := fun v => Option (α v)) (fun v rec =>
+  hDag.fix (C := fun v => Option (α v)) (fun v rec =>
     match s.get v with
     | some x => some x
     | none =>
@@ -219,7 +219,7 @@ theorem developDetVtx?_inner {s : Valuation α} {v : V}
   simp only [h]
   have hAll : ∀ u : M.graph.parents v, (developDetVtx? M s u.val).isSome :=
     fun u => by rw [hρ u]; rfl
-  rw [if_neg hPar, dif_pos hAll]
+  rw [ite_eq_right hPar, dite_eq_left hAll]
   refine congrArg some (congrArg _ (funext fun u => ?_))
   simp only [hρ u, Option.get_some]
 
@@ -235,14 +235,14 @@ theorem developDetVtx?_inner_none {s : Valuation α} {v : V}
     fun hE => (Finset.eq_empty_iff_forall_notMem.mp hE) u.val u.property
   have hAll : ¬ ∀ w : M.graph.parents v, (developDetVtx? M s w.val).isSome :=
     fun hA => by have h2 := hA u; rw [hu] at h2; simp at h2
-  rw [if_neg hPar, dif_neg hAll]
+  rw [ite_eq_right hPar, dite_eq_right hAll]
 
 /-- **Refinement**: wherever the strict dynamics resolves a vertex, the
     eager-total `developDetVtx` agrees. -/
 theorem developDetVtx_eq_of_developDetVtx?_eq_some
     {s : Valuation α} {v : V} {x : α v}
     (h : developDetVtx? M s v = some x) : developDetVtx M s v = x := by
-  induction v using (IsWellFounded.wf (r := M.graph.IsStrictAncestor)).induction with
+  induction v using (inferInstance : M.graph.IsDAG).induction with
   | _ v ih =>
     rw [developDetVtx?_unfold] at h
     rw [developDetVtx_unfold]
@@ -252,14 +252,14 @@ theorem developDetVtx_eq_of_developDetVtx?_eq_some
       simp only [hsv] at h ⊢
       by_cases hPar : M.graph.parents v = ∅
       · simp [hPar] at h
-      · simp only [hPar, if_false] at h
+      · simp only [hPar, ite_false] at h
         by_cases hAll : ∀ u : M.graph.parents v, (developDetVtx? M s u.val).isSome
-        · rw [dif_pos hAll] at h
+        · rw [dite_eq_left hAll] at h
           rw [← Option.some.inj h]
           refine congrArg _ (funext fun u => ?_)
           exact ih u.val (Relation.TransGen.single u.property)
             (Option.some_get (hAll u)).symm
-        · rw [dif_neg hAll] at h
+        · rw [dite_eq_right hAll] at h
           exact absurd h (by simp)
 
 end PartialDevelopment
@@ -320,18 +320,18 @@ theorem developDetVtxFuel_eq_developDetVtx?
       · have hpt : ∀ u : M.graph.parents v,
             developDetVtxFuel M s n u.val = developDetVtx? M s u.val :=
           fun u => ih (by have := r.map_rel u.property; omega)
-        simp only [hPar, if_false]
+        simp only [hPar, ite_false]
         by_cases hAll : ∀ u : M.graph.parents v, (developDetVtx? M s u.val).isSome
         · have hAll' : ∀ u : M.graph.parents v,
               (developDetVtxFuel M s n u.val).isSome :=
             fun u => by rw [hpt u]; exact hAll u
-          rw [dif_pos hAll', dif_pos hAll]
+          rw [dite_eq_left hAll', dite_eq_left hAll]
           refine congrArg some (congrArg _ (funext fun u => ?_))
           simp only [hpt u]
         · have hAll' : ¬ ∀ u : M.graph.parents v,
               (developDetVtxFuel M s n u.val).isSome :=
             fun hA => hAll (fun u => by rw [← hpt u]; exact hA u)
-          rw [dif_neg hAll', dif_neg hAll]
+          rw [dite_eq_right hAll', dite_eq_right hAll]
 
 /-- Transfer a concrete fuel computation to the canonical strict fixed
     point. The usual study idiom:

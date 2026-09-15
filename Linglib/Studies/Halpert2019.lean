@@ -129,7 +129,7 @@ theorem raisingOutcome_eq_subjectRaises {c : Clause} (h : c.interacts = false) :
     raisingOutcome c true = .subjectRaises := by
   have : eppProbe.agree (goals c) = some .subject :=
     Probe.agree_eq_some_iff.mpr ⟨search_subject h, rfl⟩
-  simp only [raisingOutcome, this, if_true]
+  simp only [raisingOutcome, this, ite_true]
 
 /-- A φ-goal that satisfies the EPP raises as a whole clause; the
     embedded subject does not move. -/
@@ -137,7 +137,7 @@ theorem raisingOutcome_eq_clauseRaises {c : Clause} (hi : c.interacts = true)
     (he : c.canSatisfyEPP = true) : raisingOutcome c true = .clauseRaises := by
   have : eppProbe.agree (goals c) = some (.clause c) :=
     Probe.agree_eq_some_iff.mpr ⟨search_clause hi, he⟩
-  simp only [raisingOutcome, this, if_true]
+  simp only [raisingOutcome, this, ite_true]
 
 /-- A φ-goal that interacts but cannot satisfy the EPP absorbs the first
     Agree; the licensed second probe reaches the embedded subject. -/
@@ -146,7 +146,7 @@ theorem raisingOutcome_eq_hyperRaises {c : Clause} (hi : c.interacts = true)
     raisingOutcome c true = .hyperRaises := by
   have : eppProbe.agree (goals c) = none :=
     Probe.agree_eq_none_of_not_int (search_clause hi) he
-  simp only [raisingOutcome, this, ha, if_true]
+  simp only [raisingOutcome, this, ha, ite_true]
 
 /-- A defective intervener (interacts, but T cannot Agree with it) stalls
     the probe: no second Agree, no raising. -/
@@ -155,7 +155,7 @@ theorem raisingOutcome_eq_blocked {c : Clause} (hi : c.interacts = true)
     raisingOutcome c true = .blocked := by
   have : eppProbe.agree (goals c) = none :=
     Probe.agree_eq_none_of_not_int (search_clause hi) he
-  simp only [raisingOutcome, this, ha, if_true, if_false, Bool.false_eq_true]
+  simp only [raisingOutcome, this, ha, ite_true, ite_false, Bool.false_eq_true]
 
 /-! ### Cross-linguistic raising profiles -/
 

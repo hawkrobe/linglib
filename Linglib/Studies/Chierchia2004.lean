@@ -1,4 +1,4 @@
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
 # Chierchia 2004: parallel recursive strengthening

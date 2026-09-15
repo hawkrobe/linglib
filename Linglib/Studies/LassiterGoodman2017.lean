@@ -217,8 +217,8 @@ theorem sorites_uncertainty (x : ℕ → D) (hx : Monotone x) (n : ℕ) :
   have h := adams ρ (Finset.range (n + 1))
     (λ i => if i < n then (Set.Ico (x i) (x (i + 1)))ᶜ else Set.Iio (x n))
     (λ _ _ => .of_discrete) (C := Set.Iio (x 0)) ?_
-  · rw [Finset.sum_range_succ, if_neg (lt_irrefl n),
-      Finset.sum_congr rfl (λ i hi => by rw [if_pos (Finset.mem_range.mp hi)]),
+  · rw [Finset.sum_range_succ, ite_eq_right (lt_irrefl n),
+      Finset.sum_congr rfl (λ i hi => by rw [ite_eq_left (Finset.mem_range.mp hi)]),
       add_comm] at h
     simp only [prob_compl_eq_one_sub (MeasurableSet.of_discrete),
       ENNReal.sub_sub_cancel ENNReal.one_ne_top prob_le_one] at h
@@ -226,10 +226,10 @@ theorem sorites_uncertainty (x : ℕ → D) (hx : Monotone x) (n : ℕ) :
   · intro θ hθ
     rw [Set.mem_iInter₂] at hθ
     have htop := hθ n (Finset.mem_range.mpr n.lt_succ_self)
-    rw [if_neg (lt_irrefl n)] at htop
+    rw [ite_eq_right (lt_irrefl n)] at htop
     exact sorites_valid x n htop λ i hi => by
       have := hθ i (Finset.range_mono n.le_succ hi)
-      rwa [if_pos (Finset.mem_range.mp hi)] at this
+      rwa [ite_eq_left (Finset.mem_range.mp hi)] at this
 
 /-- Under Adams's Thesis (eq. 40) an inductive premise is the conditional probability that
 the lower member is tall given that the upper one is, which is at most the material premise,

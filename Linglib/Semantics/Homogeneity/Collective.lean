@@ -69,15 +69,15 @@ theorem generalisedTruthValue_distributive_reduction
     superTrue pred ⟨a, hne⟩ := by
   unfold generalisedTruthValue superTrue
   by_cases hall : ∀ x ∈ a, pred x
-  · rw [if_pos hall, if_pos hall]
-  · rw [if_neg hall, if_neg hall]
+  · rw [ite_eq_left hall, ite_eq_left hall]
+  · rw [ite_eq_right hall, ite_eq_right hall]
     by_cases hnone : ∀ x ∈ a, ¬ pred x
     · have hNoWitness : ¬ ∃ b ∈ domain, overlaps a b ∧ ∀ x ∈ b, pred x := by
         rintro ⟨b, _, hov, hPb⟩
         obtain ⟨y, hy⟩ := Finset.not_disjoint_iff_nonempty_inter.mp hov
         rw [Finset.mem_inter] at hy
         exact hnone y hy.1 (hPb y hy.2)
-      rw [if_neg hNoWitness, if_pos hnone]
+      rw [ite_eq_right hNoWitness, ite_eq_left hnone]
     · push Not at hnone
       obtain ⟨x, hxa, hpx⟩ := hnone
       have hOv : overlaps a {x} := by
@@ -87,7 +87,7 @@ theorem generalisedTruthValue_distributive_reduction
       have hWitness : ∃ b ∈ domain, overlaps a b ∧ ∀ y ∈ b, pred y :=
         ⟨{x}, hdomain x hxa, hOv,
           fun y hy => by rw [Finset.mem_singleton.mp hy]; exact hpx⟩
-      rw [if_pos hWitness, if_neg]
+      rw [ite_eq_left hWitness, ite_eq_right]
       intro hf; exact hf x hxa hpx
 
 end Homogeneity

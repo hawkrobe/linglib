@@ -201,7 +201,7 @@ theorem Consecutive.ne {l : List A} (hnd : l.Nodup) {x y : A} (h : Consecutive l
   obtain ⟨i, hx, hy⟩ := h
   rintro rfl
   have hi : i < l.length := (List.getElem?_eq_some_iff.1 hx).1
-  have := (List.getElem?_inj hi hnd).1 (hx.trans hy.symm)
+  have := (List.Nodup.getElem?_inj hi hnd).1 (hx.trans hy.symm)
   omega
 
 theorem Consecutive.asymm {l : List A} (hnd : l.Nodup) {x y : A} (hxy : Consecutive l x y) :
@@ -209,8 +209,8 @@ theorem Consecutive.asymm {l : List A} (hnd : l.Nodup) {x y : A} (hxy : Consecut
   rintro ⟨j, hy', hx'⟩
   obtain ⟨i, hx, hy⟩ := hxy
   have hi : i < l.length := (List.getElem?_eq_some_iff.1 hx).1
-  have h₁ := (List.getElem?_inj hi hnd).1 (hx.trans hx'.symm)
-  have h₂ := (List.getElem?_inj (List.getElem?_eq_some_iff.1 hy).1 hnd).1 (hy.trans hy'.symm)
+  have h₁ := (List.Nodup.getElem?_inj hi hnd).1 (hx.trans hx'.symm)
+  have h₂ := (List.Nodup.getElem?_inj (List.getElem?_eq_some_iff.1 hy).1 hnd).1 (hy.trans hy'.symm)
   omega
 
 theorem exists_consecutive_or_getLast {l : List A} {x : A} (hx : x ∈ l) :
@@ -293,10 +293,10 @@ theorem RingConfig.not_pairSymmetricOn [DecidableEq A] (h : RingConfig R X) :
   · exact hb.asymm hnd hba
   · obtain ⟨i, hi, hi'⟩ := hb
     have hi₁ : i + 1 < l.length := (List.getElem?_eq_some_iff.1 hi').1
-    have e₁ := (List.getElem?_inj hi₁ hnd).1
+    have e₁ := (List.Nodup.getElem?_inj hi₁ hnd).1
       (hi'.trans (List.getElem?_eq_getElem (by omega)).symm)
     rw [List.head?_eq_getElem?] at hhead
-    have e₂ := (List.getElem?_inj (by omega : 0 < l.length) hnd).1 (hhead.trans hi.symm)
+    have e₂ := (List.Nodup.getElem?_inj (by omega : 0 < l.length) hnd).1 (hhead.trans hi.symm)
     omega
 
 theorem RadialConfig.not_pairSymmetricOn [DecidableEq A] (h : RadialConfig R X) :
@@ -340,7 +340,7 @@ theorem RingConfig.oneWayWeak [DecidableEq A] (h : RingConfig R X) :
     refine ⟨l[0], List.mem_toFinset.2 (List.getElem_mem _),
       (hiff x _).2 (Or.inr ⟨hlast, hhead⟩), λ hx0 => ?_⟩
     rw [List.getLast?_eq_getElem?, hx0] at hlast
-    have := (List.getElem?_inj (by omega : l.length - 1 < l.length) hnd).1
+    have := (List.Nodup.getElem?_inj (by omega : l.length - 1 < l.length) hnd).1
       (hlast.trans (List.getElem?_eq_getElem (by omega)).symm)
     omega
 

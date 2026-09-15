@@ -6,6 +6,8 @@ Authors: Robert Hawkins
 import Mathlib.Probability.Decision.Risk.Basic
 import Mathlib.Probability.Decision.Risk.Countable
 import Mathlib.Analysis.Convex.StdSimplex
+import Mathlib.Geometry.Convex.ConvexSpace.CompactSpaceStdSimplex
+import Mathlib.Geometry.Convex.ConvexSpace.Module
 import Mathlib.Analysis.LocallyConvex.Separation
 import Mathlib.Analysis.Normed.Module.FiniteDimension
 import Mathlib.MeasureTheory.Measure.Count
@@ -68,7 +70,7 @@ uniform prior, the Bayes risk of any experiment `Q` evaluated at the identity es
 while every estimator for `P` produces a garbling, whose `f`-value exceeds the separation level.
 This realizes `bayesRisk ℓ P' π < bayesRisk ℓ P π`, contradicting the hypothesis — no minimax
 theorem is needed, the infimum is bounded below directly. All analytic inputs come from Mathlib
-(`isCompact_stdSimplex`, the `geometric_hahn_banach_*` lemmas, `bayesRisk_fintype`). The
+(`StdSimplex.compactSpace`, the `geometric_hahn_banach_*` lemmas, `bayesRisk_fintype`). The
 kernel-to-stochastic-matrix bridge (`encode`, `garblingMap`, `buildKernel`) is currently
 `private` proof scaffolding; it is a self-contained finite-kernel ↔ row-stochastic-matrix
 correspondence that would naturally graduate to its own public file when upstreamed.
@@ -80,7 +82,7 @@ correspondence that would naturally graduate to its own public file when upstrea
 
 universe u
 
-open MeasureTheory
+open MeasureTheory Convexity
 open scoped ENNReal ProbabilityTheory
 
 namespace ProbabilityTheory
@@ -116,7 +118,7 @@ protected theorem Kernel.IsGarblingOf.trans {𝓧'' : Type*} [MeasurableSpace �
     P''.IsGarblingOf P := by
   obtain ⟨η₂, hη₂, rfl⟩ := h₂
   obtain ⟨η₁, hη₁, rfl⟩ := h₁
-  haveI := hη₁; haveI := hη₂
+  have := hη₁; have := hη₂
   exact ⟨η₂ ∘ₖ η₁, inferInstance, (η₂.comp_assoc η₁ P).symm⟩
 
 /-- `P` **Blackwell-dominates** `P'`: for every decision problem (action space `𝓨`, loss `ℓ`)
@@ -135,7 +137,7 @@ theorem bayesRisk_le_of_isGarblingOf {𝓨 : Type u} [MeasurableSpace 𝓨]
     (h : P'.IsGarblingOf P) (π : Measure Θ) :
     bayesRisk ℓ P π ≤ bayesRisk ℓ P' π := by
   obtain ⟨η, hη, rfl⟩ := h
-  haveI := hη
+  have := hη
   exact bayesRisk_le_bayesRisk_comp ℓ P π η
 
 /-- **Easy direction, bundled.** A garbling of `P` is Blackwell-dominated by `P`. -/
@@ -167,7 +169,7 @@ private noncomputable def encode (Q : Kernel Θ 𝓧') : Θ → 𝓧' → ℝ :=
 /-- The stochastic matrices `𝓧 → 𝓧' → ℝ`: each row is a probability vector. The encodings
 of the Markov kernels `η : Kernel 𝓧 𝓧'`. -/
 private def stochasticMatrices : Set (𝓧 → 𝓧' → ℝ) :=
-  Set.univ.pi fun _ => stdSimplex ℝ 𝓧'
+  Set.univ.pi fun _ => Set.range fun w : StdSimplex ℝ 𝓧' => ⇑w.weights
 
 /-- Post-composition by a stochastic matrix, as a linear map on the matrix space:
 `M ↦ (θ, x') ↦ ∑ₓ M x x' · (P θ {x}).toReal`. On `M = encode η` this is `encode (η ∘ₖ P)`
@@ -187,11 +189,14 @@ private noncomputable def garblingSet (P : Kernel Θ 𝓧) : Set (Θ → 𝓧' �
 
 private theorem convex_garblingSet (P : Kernel Θ 𝓧) :
     Convex ℝ (garblingSet (𝓧' := 𝓧') P) :=
-  (convex_pi fun _ _ => convex_stdSimplex ℝ 𝓧').linear_image _
+  (convex_pi fun _ _ => ConvexSpace.AffineMap.convex_range
+    ⟨_, (IsAffineMap.linearMap Finsupp.lcoeFun).comp (StdSimplex.isAffineMap_weights ℝ 𝓧')⟩)
+    |>.linear_image _
 
 private theorem isCompact_garblingSet (P : Kernel Θ 𝓧) :
     IsCompact (garblingSet (𝓧' := 𝓧') P) :=
-  (isCompact_univ_pi fun _ => isCompact_stdSimplex ℝ 𝓧').image
+  (isCompact_univ_pi fun _ =>
+    isCompact_range (StdSimplex.isEmbedding_toFun_comp_weights ℝ 𝓧').continuous).image
     (garblingMap P).continuous_of_finiteDimensional
 
 private theorem isClosed_garblingSet (P : Kernel Θ 𝓧) :
@@ -238,10 +243,17 @@ private lemma buildKernel_apply (M : 𝓧 → 𝓧' → ℝ) (x : 𝓧) (y : �
   rw [Finset.sum_ite_eq' Finset.univ y fun x' => ENNReal.ofReal (M x x')]
   simp
 
+/-- A row of a stochastic matrix is a probability vector. -/
+private theorem stochasticMatrices_row {M : 𝓧 → 𝓧' → ℝ} (hM : M ∈ stochasticMatrices)
+    (x : 𝓧) : (∀ x', 0 ≤ M x x') ∧ ∑ x', M x x' = 1 := by
+  have hx := Set.mem_univ_pi.mp hM x
+  rw [StdSimplex.range_toFun_comp_weights] at hx
+  exact ⟨fun x' => Set.mem_iInter.mp hx.1 x', hx.2⟩
+
 private theorem isMarkovKernel_buildKernel {M : 𝓧 → 𝓧' → ℝ}
     (hM : M ∈ stochasticMatrices) : IsMarkovKernel (buildKernel M) := by
   refine ⟨fun x => ⟨?_⟩⟩
-  have hx := Set.mem_univ_pi.mp hM x
+  have hx := stochasticMatrices_row hM x
   show (∑ x' : 𝓧', ENNReal.ofReal (M x x') • Measure.dirac x') Set.univ = 1
   rw [Measure.finsetSum_apply]
   simp only [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
@@ -251,7 +263,7 @@ private theorem encodeMatrix_buildKernel {M : 𝓧 → 𝓧' → ℝ}
     (hM : M ∈ stochasticMatrices) : encodeMatrix (buildKernel M) = M := by
   ext x x'
   show (buildKernel M x {x'}).toReal = M x x'
-  rw [buildKernel_apply, ENNReal.toReal_ofReal ((Set.mem_univ_pi.mp hM x).1 x')]
+  rw [buildKernel_apply, ENNReal.toReal_ofReal ((stochasticMatrices_row hM x).1 x')]
 
 /-- **Step 6 of the converse.** If `encode P'` lies in the garbling polytope of `P`, its
 witness stochastic matrix builds a Markov kernel `η` with `η ∘ₖ P = P'`, so `P'` is a
@@ -260,7 +272,7 @@ private theorem isGarblingOf_of_encode_mem (P : Kernel Θ 𝓧) [IsMarkovKernel 
     {P' : Kernel Θ 𝓧'} [IsMarkovKernel P'] (hmem : encode P' ∈ garblingSet P) :
     P'.IsGarblingOf P := by
   obtain ⟨M, hM, hMeq⟩ := hmem
-  haveI := isMarkovKernel_buildKernel hM
+  have := isMarkovKernel_buildKernel hM
   refine ⟨buildKernel M, inferInstance, encode_injective ?_⟩
   rw [encode_comp, encodeMatrix_buildKernel hM, hMeq]
 
@@ -283,7 +295,8 @@ private theorem sum_encode_eq [Fintype Θ] (Q : Kernel Θ 𝓧') [IsMarkovKernel
 /-- The encoded stochastic matrix of a Markov kernel lies in the product of standard simplices. -/
 private theorem encodeMatrix_mem (η : Kernel 𝓧 𝓧') [IsMarkovKernel η] :
     encodeMatrix η ∈ stochasticMatrices := by
-  simp only [stochasticMatrices, Set.mem_univ_pi, stdSimplex, Set.mem_ofPred_eq, encodeMatrix]
+  simp only [stochasticMatrices, Set.mem_univ_pi, StdSimplex.range_toFun_comp_weights,
+    Set.mem_inter_iff, Set.mem_iInter, Set.mem_ofPred_eq, encodeMatrix]
   refine fun x => ⟨fun x' => ENNReal.toReal_nonneg, ?_⟩
   rw [← ENNReal.toReal_sum fun x' _ => measure_ne_top _ _, sum_measure_singleton,
     Finset.coe_univ, measure_univ, ENNReal.toReal_one]
@@ -296,7 +309,7 @@ private theorem clm_apply_eq_sum_single [Fintype Θ] [DecidableEq Θ] [Decidable
   have hv : (∑ θ, ∑ x', v θ x' • (Pi.single θ (Pi.single x' (1 : ℝ)) : Θ → 𝓧' → ℝ)) = v := by
     funext θ₀ x'₀
     simp only [Finset.sum_apply, Pi.smul_apply, Pi.single_apply, ite_apply, Pi.zero_apply,
-      smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true,
+      smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true,
       Finset.sum_ite_irrel, Finset.sum_const_zero]
   calc f v
       = f (∑ θ, ∑ x', v θ x' • (Pi.single θ (Pi.single x' (1 : ℝ)) : Θ → 𝓧' → ℝ)) := by rw [hv]
@@ -414,7 +427,7 @@ theorem isGarblingOf_of_bayesRisk_uniform_le
     have hP_ge : ENNReal.ofReal ((Fintype.card Θ : ℝ)⁻¹ * u + C) ≤ bayesRisk ℓ P π := by
       rw [bayesRisk]
       refine le_iInf fun κ => le_iInf fun hκ => ?_
-      haveI := hκ
+      have := hκ
       have hcomp : avgRisk ℓ P κ π = avgRisk ℓ (κ ∘ₖ P) Kernel.id π := by
         simp only [avgRisk, Kernel.id_comp]
       rw [hcomp, key (κ ∘ₖ P)]
@@ -618,7 +631,7 @@ theorem bayesRisk_deterministic [Fintype Θ] [Fintype 𝓧] [DecidableEq 𝓧]
   · -- `≥`: every Markov estimator's cellwise risk exceeds the cellwise infimum.
     rw [bayesRisk]
     refine le_iInf fun κ => le_iInf fun hκ => ?_
-    haveI := hκ
+    have := hκ
     rw [avgRisk_deterministic_fintype_eq hf ℓ π κ]
     refine Finset.sum_le_sum fun x _ => ?_
     calc (⨅ y : 𝓨, F x y)

@@ -294,12 +294,12 @@ private theorem lift_eq_mulPrime_map (f g : ConnesKreimer R (UnorderedTree α) �
     (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     Algebra.TensorProduct.lift f g (fun _ _ => Commute.all _ _) z =
       LinearMap.mul' R ℛ (TensorProduct.map f.toLinearMap g.toLinearMap z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
+  induction z using TensorProduct.inductionOn with
   | tmul a b =>
     rw [Algebra.TensorProduct.lift_tmul, TensorProduct.map_tmul, LinearMap.mul'_apply]; rfl
   | add x y hx hy => rw [map_add, map_add, map_add, hx, hy]
 
+omit [CharZero R] [NoZeroDivisors R] [DecidableEq α] in
 /-- **The convolution `φ₋ ⋆ φ` on a tree generator is the renormalized value `φ₊(T)`.** Restates
     the keystone `birkhoffFactorization_ofTree` as a value in the character monoid, for a character
     `φ : H →ₐ[R] R` (unital via `map_one`). -/
@@ -310,6 +310,7 @@ theorem convMul_birkhoffMinus_apply_ofTree (φ : ConnesKreimer R (UnorderedTree 
   rw [AlgHom.convMul_apply, lift_eq_mulPrime_map]
   exact birkhoffFactorization_ofTree φ.toLinearMap RB (map_one φ) T
 
+omit [CharZero R] [NoZeroDivisors R] [DecidableEq α] in
 /-- **The full Birkhoff factorization `φ₊ = φ₋ ⋆ φ`** ([marcolli-chomsky-berwick-2025] Def. 3.1.6)
     on *all* of `H` for a character `φ : H →ₐ[R] R`: the renormalized character `φ₊` (the
     multiplicative `(1 − R)(φ̃)`) is the convolution `φ₋ ⋆ φ`. Lifts the keystone (which holds on

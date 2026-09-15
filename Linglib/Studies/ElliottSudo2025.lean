@@ -253,10 +253,10 @@ theorem possible_disjModal_atom_iff :
   constructor
   · intro h
     by_contra hc
-    rw [if_neg (key.not.mpr hc)] at h
+    rw [ite_eq_right (key.not.mpr hc)] at h
     exact Set.not_nonempty_empty h
   · rintro ⟨hc, ht⟩
-    rw [if_pos (key.mpr ⟨hc, ht⟩), disj_positive_eq, disjPos1_atom]
+    rw [ite_eq_left (key.mpr ⟨hc, ht⟩), disj_positive_eq, disjPos1_atom]
     exact hc.mono Set.subset_union_left
 
 /-- Subsistence into a worldly restriction of the state is that restriction's holding throughout,

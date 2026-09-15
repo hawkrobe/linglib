@@ -216,8 +216,8 @@ theorem DRS.transition_empty [Nonempty M] (W : Type*) (X : Finset V)
   · rintro rfl
     refine ⟨fun v => if hv : v ∈ (↑X : Set V) then e ⟨v, hv⟩
       else Classical.arbitrary M, fun v => if hv : v ∈ (↑X : Set V) then e ⟨v, hv⟩
-      else Classical.arbitrary M, funext fun v => dif_pos v.2,
-      funext fun v => dif_pos v.2, fun v _ => rfl, trivial⟩
+      else Classical.arbitrary M, funext fun v => dite_eq_left v.2,
+      funext fun v => dite_eq_left v.2, fun v _ => rfl, trivial⟩
 
 /-- Established referents persist along a DRS transition. -/
 theorem DRS.transition_isExtension (W : Type*) (K : DRS L V) (X : Finset V)
@@ -262,8 +262,8 @@ theorem DRS.mem_state {W : Type*} {K : DRS L V} {hK : K.IsProper}
     exact hv
   · rintro ⟨hq, f, g, hrel, hvals⟩
     refine ⟨hq, ⟨q.world, fun _ => ⊥⟩, ⟨q.world, rfl⟩, ?_, rfl,
-      (↑(∅ : Finset V) : Set V).restrict f,
-      (↑(∅ ∪ K.referents) : Set V).restrict g,
+      (↑(∅ : Finset V) : Set V).domRestrict f,
+      (↑(∅ ∪ K.referents) : Set V).domRestrict g,
       fun v => absurd v.2 (by simp), fun v => hvals v, f, g, rfl, rfl, hrel⟩
     ext v
     exact iff_of_false (fun h => h) (by simp)
@@ -303,18 +303,18 @@ private theorem DRS.toRelAt_adjust {X Δ U : Finset V} {conds : List (Condition 
         rcases Finset.mem_union.mp (Finset.mem_coe.mp hx) with h | h
         · exact h
         · exact absurd h hxU
-      simp only [if_pos hxΔ]
+      simp only [ite_eq_left hxΔ]
       exact (hag (Finset.mem_coe.mpr hxX)).symm
-    · simp only [if_neg hxΔ]
+    · simp only [ite_eq_right hxΔ]
   refine ⟨⟨?_, ?_⟩, hkk'⟩
   · intro x hx
     by_cases hxΔ : x ∈ Δ
-    · simp only [if_pos hxΔ]
+    · simp only [ite_eq_left hxΔ]
     · have hxX : x ∈ X := by
         rcases Finset.mem_union.mp (Finset.mem_coe.mp hx) with h | h
         · exact h
         · exact absurd h hxΔ
-      simp only [if_neg hxΔ]
+      simp only [ite_eq_right hxΔ]
       exact hag (Finset.mem_coe.mpr hxX)
   · rw [Finset.union_right_comm]
     exact (hIH _).mpr ((Condition.holdsAllAt_congr conds hfvc hkk'.symm).mp hh)
@@ -525,14 +525,14 @@ private theorem DRS.toRel_of_toRelAt' {X U : Finset V} {conds : List (Condition 
   have heq : Set.EqOn (fun x => if x ∈ U then g' x else g x) g' ↑(X ∪ U) := by
     intro x hx
     by_cases hxU : x ∈ U
-    · simp only [if_pos hxU]
+    · simp only [ite_eq_left hxU]
     · have hxX : x ∈ X := by
         rcases Finset.mem_union.mp (Finset.mem_coe.mp hx) with h | h
         · exact h
         · exact absurd h hxU
-      simp only [if_neg hxU]
+      simp only [ite_eq_right hxU]
       exact (hag (Finset.mem_coe.mpr hxX)).symm
-  exact ⟨⟨fun x hxU => if_neg hxU,
+  exact ⟨⟨fun x hxU => ite_eq_right hxU,
     (hIH _).mpr ((Condition.holdsAllAt_congr conds hfvc heq).mpr hh)⟩, heq⟩
 
 mutual

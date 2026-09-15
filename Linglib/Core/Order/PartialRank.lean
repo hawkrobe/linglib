@@ -111,7 +111,7 @@ theorem rankLT_irrefl (a : α) : ¬RankLT r a a := fun h => by
 
 /-- `RankLT` is a strict order — the bridge to mathlib's order
     constructors. -/
-instance (r : α → Option β) [Preorder β] : IsStrictOrder α (RankLT r) where
+instance (r : α → Option β) : IsStrictOrder α (RankLT r) where
   irrefl := rankLT_irrefl
   trans _ _ _ := RankLT.trans
 
@@ -122,8 +122,7 @@ instance (r : α → Option β) [Preorder β] : IsStrictOrder α (RankLT r) wher
     global instance.
 
     See note [reducible non-instances]. -/
-abbrev partialOrderOfRank (r : α → Option β) [Preorder β] :
-    PartialOrder α :=
+abbrev partialOrderOfRank (r : α → Option β) : PartialOrder α :=
   partialOrderOfSO (RankLT r)
 
 end Preorder

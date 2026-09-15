@@ -245,7 +245,7 @@ private theorem maxMin_go (p : Constituent → Bool) :
         rw [List.any_eq_false] at hany
         exact noAny_go p c (by simpa [anyAtLevel] using hany c hc)
       simp only [maximalProjections.go, Bool.not_false, Bool.true_and, hl,
-        if_true, minimalProjections.go, hmin, if_true, hgoList, List.append_nil]
+        ite_true, minimalProjections.go, hmin, ite_true, hgoList, List.append_nil]
     · rw [Bool.not_eq_true] at hl
       simp only [maximalProjections.go, Bool.not_false, Bool.true_and, hl,
         Bool.or_false, minimalProjections.go, isMinimalProj, Bool.false_and]

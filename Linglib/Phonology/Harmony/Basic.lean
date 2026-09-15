@@ -168,7 +168,7 @@ theorem Pattern.harmonic_iff_agreeOn {p : Pattern α V} {w : List α}
   have hmem : ∀ s ∈ p.tier w, p.participation s = .participating :=
     fun s hs => h s (List.mem_of_mem_filter hs)
 
-  haveI : Trans (fun a b => p.value a = p.value b)
+  have : Trans (fun a b => p.value a = p.value b)
       (fun a b => p.value a = p.value b) (fun a b => p.value a = p.value b) :=
     ⟨fun h₁ h₂ => h₁.trans h₂⟩
   unfold Pattern.Harmonic Pattern.AgreeOn

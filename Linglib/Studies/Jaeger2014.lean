@@ -1,6 +1,6 @@
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Analysis.Convex.StdSimplex
+import Mathlib.Geometry.Convex.ConvexSpace.Defs
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.Fintype.Pigeonhole
@@ -37,7 +37,7 @@ Section 7, it is not credible.
 
 ## Implementation notes
 
-* Beliefs are functions to `ℝ`; `Δ(M)` is mathlib's `stdSimplex ℝ M`, and the full-support and
+* Beliefs are functions to `ℝ`; `Δ(M)` is mathlib's `StdSimplex ℝ M`, and the full-support and
   support-restricted variants `int(Δ(M))` and `Δ(P)` are stated locally, the relative interior of
   the simplex having no lightweight mathlib form.
 * Examples 1 to 5 and 7 to 10, including the comparison with [franke-2011]'s iterated best
@@ -62,30 +62,38 @@ including versions supported on a given strategy set — Jäger's `Δ(M)` and
 
 variable {M : Type*}
 
-/-- Jäger's `Δ(M)` is mathlib's standard simplex, `stdSimplex ℝ M`; the
-full-support and support-restricted variants below have no mathlib
-counterpart and are stated relative to it. A full-support probability
-distribution: Jäger's `int(Δ(M))`. -/
+/-- Jäger's `Δ(M)` is mathlib's standard simplex `StdSimplex ℝ M`, viewed as the set of its
+weight vectors; the full-support and support-restricted variants below have no mathlib
+counterpart and are stated relative to it. -/
+def simplex (M : Type*) [Fintype M] : Set (M → ℝ) :=
+  Set.range fun w : Convexity.StdSimplex ℝ M => ⇑w.weights
+
+theorem mem_simplex_iff [Fintype M] {q : M → ℝ} :
+    q ∈ simplex M ↔ (∀ x, 0 ≤ q x) ∧ ∑ x, q x = 1 := by
+  rw [simplex, Convexity.StdSimplex.range_toFun_comp_weights]
+  simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_ofPred_eq]
+
+/-- A full-support probability distribution: Jäger's `int(Δ(M))`. -/
 def IsFullDist [Fintype M] (q : M → ℝ) : Prop :=
   (∀ x, 0 < q x) ∧ ∑ x, q x = 1
 
 /-- A distribution supported inside `P`: Jäger's `Δ(P)` for `P ⊆ M`. -/
 def IsDistOn [Fintype M] (P : Set M) (q : M → ℝ) : Prop :=
-  q ∈ stdSimplex ℝ M ∧ ∀ x ∉ P, q x = 0
+  q ∈ simplex M ∧ ∀ x ∉ P, q x = 0
 
 /-- A distribution with support exactly `P`: Jäger's `int(Δ(P)))` for
 `P ⊆ M` — positive on `P`, zero off it. -/
 def IsFullDistOn [Fintype M] (P : Set M) (q : M → ℝ) : Prop :=
   (∀ x ∈ P, 0 < q x) ∧ (∀ x ∉ P, q x = 0) ∧ ∑ x, q x = 1
 
-theorem IsFullDist.mem_stdSimplex [Fintype M] {q : M → ℝ} (h : IsFullDist q) :
-    q ∈ stdSimplex ℝ M :=
-  ⟨λ x => (h.1 x).le, h.2⟩
+theorem IsFullDist.mem_simplex [Fintype M] {q : M → ℝ} (h : IsFullDist q) :
+    q ∈ simplex M :=
+  mem_simplex_iff.2 ⟨λ x => (h.1 x).le, h.2⟩
 
 /-- A full-support-on-`P` distribution is supported inside any superset. -/
 theorem IsFullDistOn.isDistOn [Fintype M] {P P' : Set M} {q : M → ℝ}
     (h : IsFullDistOn P q) (hPP' : P ⊆ P') : IsDistOn P' q :=
-  ⟨⟨λ x => (em (x ∈ P)).elim (λ hx => (h.1 x hx).le) (λ hx => (h.2.1 x hx).ge),
+  ⟨mem_simplex_iff.2 ⟨λ x => (em (x ∈ P)).elim (λ hx => (h.1 x hx).le) (λ hx => (h.2.1 x hx).ge),
     h.2.2⟩,
    λ x hx => h.2.1 x (λ hxP => hx (hPP' hxP))⟩
 
@@ -207,8 +215,8 @@ belongs to a pair of sets each of whose members is a best response to some
 belief supported inside the other set. -/
 def IsRationalizable (s : C → W → F) (r : C → F → A) : Prop :=
   ∃ (S : Set (C → W → F)) (R : Set (C → F → A)),
-    (∀ s' ∈ S, ∃ ρ q, IsDistOn R ρ ∧ q ∈ stdSimplex ℝ C ∧ s' ∈ g.senderBR ρ q) ∧
-    (∀ r' ∈ R, ∃ σ q, IsDistOn S σ ∧ q ∈ stdSimplex ℝ C ∧ r' ∈ g.receiverBR σ q) ∧
+    (∀ s' ∈ S, ∃ ρ q, IsDistOn R ρ ∧ q ∈ simplex C ∧ s' ∈ g.senderBR ρ q) ∧
+    (∀ r' ∈ R, ∃ σ q, IsDistOn S σ ∧ q ∈ simplex C ∧ r' ∈ g.receiverBR σ q) ∧
     s ∈ S ∧ r ∈ R
 
 /-! ### Theorem 1: pragmatic rationalizability implies rationalizability
@@ -293,7 +301,7 @@ theorem prs_rationalizable {s : C → W → F} {r : C → F → A}
     obtain ⟨m, hm, hs'm⟩ := hs' a
     obtain ⟨ρ, q, hρ, hq, hBR⟩ := hs'm
     exact ⟨ρ, q, hρ.isDistOn (g.icrR_subset_prsR hab heq hm.le),
-      hq.mem_stdSimplex, hBR⟩
+      hq.mem_simplex, hBR⟩
   · -- every recurring receiver strategy is a BR to a belief inside prsS
     intro r' hr'
     obtain ⟨m, hm, hr'm⟩ := hr' (a + 1)
@@ -301,7 +309,7 @@ theorem prs_rationalizable {s : C → W → F} {r : C → F → A}
     have hk : a ≤ k := by omega
     obtain ⟨⟨σ, q, hσ, hq, hBR⟩, -⟩ := hr'm
     exact ⟨σ, q, hσ.isDistOn (g.icrS_subset_prsS hab heq hk),
-      hq.mem_stdSimplex, hBR⟩
+      hq.mem_simplex, hBR⟩
 
 
 /-! ### Best-response characterizations
@@ -354,7 +362,7 @@ private theorem receiverBR_objective_eq (σ : (C → W → F) → ℝ) (q : C �
   conv_rhs => rw [← Finset.mul_sum]
   congr 1
   exact ((Finset.sum_ite_eq Finset.univ (s c' w)
-    (λ f => g.uR c w (r c f))).trans (if_pos (Finset.mem_univ _))).symm
+    (λ f => g.uR c w (r c f))).trans (ite_eq_left (Finset.mem_univ _))).symm
 
 /-- Receiver best responses, pointwise: `r'` is a best response iff at
 every context and signal it picks an action maximizing posterior-weighted

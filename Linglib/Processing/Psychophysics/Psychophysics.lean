@@ -282,7 +282,7 @@ theorem multidimensional_decomposition {D : Type*} [Fintype D] [DecidableEq D]
       v (mix T) = v a₀ * ∏ d ∈ T, (ms.scale d (a d) / ms.scale d (a₀ d)) by
     have hfull := key Finset.univ
     have hmix_univ : mix Finset.univ = a :=
-      funext fun d => if_pos (Finset.mem_univ d)
+      funext fun d => ite_eq_left (Finset.mem_univ d)
     rw [hmix_univ] at hfull
     rw [hfull, Finset.prod_div_distrib, ← hP₀_def, ← mul_div_assoc, mul_div_right_comm]
   intro T
@@ -301,7 +301,7 @@ theorem multidimensional_decomposition {D : Type*} [Fintype D] [DecidableEq D]
     have hri := ind.ratio_indep d₀ (mix T') (a d₀)
     have hv_ne : v (mix T') ≠ 0 := ne_of_gt (ind.v_pos _)
     rw [div_eq_iff hv_ne] at hri
-    have hmix_d₀ : (mix T') d₀ = a₀ d₀ := if_neg hd₀
+    have hmix_d₀ : (mix T') d₀ = a₀ d₀ := ite_eq_right hd₀
     rw [hmix_d₀] at hri
     rw [hri, ih]
     ring

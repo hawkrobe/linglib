@@ -40,8 +40,8 @@ theorem appendMap_val (f : Fin m → Fin m') (g : Fin n → Fin n') (k : Fin (m 
       if h : (k : ℕ) < m then (f ⟨k, h⟩ : ℕ)
       else (g ⟨(k : ℕ) - m, by have := k.2; omega⟩ : ℕ) + m' := by
   refine Fin.addCases (fun a => ?_) (fun b => ?_) k
-  · rw [dif_pos (by simp)]; simp
-  · rw [dif_neg (by simp)]; simp; omega
+  · rw [dite_eq_left (by simp)]; simp
+  · rw [dite_eq_right (by simp)]; simp; omega
 
 /-- Value of a **common-codomain** `Fin.append` (the copairing `Fin (m + n) → Fin p`)
     at a raw index: left-block indices route through `u`, right-block (shifted)
@@ -51,8 +51,8 @@ theorem append_val {p : ℕ} (u : Fin m → Fin p) (v : Fin n → Fin p) (k : Fi
       if h : (k : ℕ) < m then (u ⟨k, h⟩).val
       else (v ⟨(k : ℕ) - m, by have := k.2; omega⟩).val := by
   refine Fin.addCases (fun a => ?_) (fun a => ?_) k
-  · rw [Fin.append_left, dif_pos (by simp)]; simp
-  · rw [Fin.append_right, dif_neg (by simp)]; congr 1; simp
+  · rw [Fin.append_left, dite_eq_left (by simp)]; simp
+  · rw [Fin.append_right, dite_eq_right (by simp)]; congr 1; simp
 
 @[simp] theorem appendMap_id : appendMap (id : Fin m → _) (id : Fin n → _) = id := by
   simp [appendMap]

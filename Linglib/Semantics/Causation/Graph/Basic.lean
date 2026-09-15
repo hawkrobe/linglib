@@ -53,12 +53,12 @@ instance IsStrictAncestor.decidable [Fintype V] [DecidableEq V] (G : CausalGraph
     (fun a b => by simp [G.mem_children_iff]) u v
 
 /-- **Acyclicity**: the strict-ancestor relation is well-founded — no
-    infinite chain of parents. An `abbrev` for mathlib's `IsWellFounded`
-    class, so its API (`IsWellFounded.wf`, induction, `fix`) applies
-    directly; required by the `develop` fixpoint and well-founded
-    recursion over the parent relation. -/
+    infinite chain of parents. An `abbrev` for `WellFounded`, which mathlib
+    registers as a class, so its API (induction, `fix`) applies directly;
+    required by the `develop` fixpoint and well-founded recursion over the
+    parent relation. -/
 abbrev IsDAG (G : CausalGraph V) : Prop :=
-  IsWellFounded V G.IsStrictAncestor
+  WellFounded G.IsStrictAncestor
 
 /-- A ranking of a causal graph is a relation homomorphism from the
     parent relation into `<` on `ℕ` — mathlib's `RelHom`, so the bundled
@@ -71,7 +71,7 @@ abbrev Ranking (G : CausalGraph V) : Type _ :=
     homomorphism (`RelHomClass.wellFounded`) and lifts to the transitive
     closure (`WellFounded.transGen`). -/
 theorem Ranking.isDAG {G : CausalGraph V} (r : Ranking G) : IsDAG G :=
-  ⟨(RelHomClass.wellFounded r wellFounded_lt).transGen⟩
+  (RelHomClass.wellFounded r wellFounded_lt).transGen
 
 /-- A graph is acyclic if every edge strictly decreases some `ℕ`-valued
     depth function — `Ranking.isDAG` with the certificate passed loose. -/

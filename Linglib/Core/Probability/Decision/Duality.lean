@@ -135,7 +135,7 @@ theorem bayesRisk_deterministic_regretLoss [MeasurableSpace W]
           dp.cellProbability (Finset.univ.filter (classify · = o)) *
             dp.condValue acts (Finset.univ.filter (classify · = o))) := by
   classical
-  haveI : Nonempty acts := hacts.to_subtype
+  have : Nonempty acts := hacts.to_subtype
   set fiber : O → Finset W := fun o => Finset.univ.filter (classify · = o)
     with hfiber_def
   set uSum : Finset W → A → ℝ :=
@@ -267,7 +267,7 @@ private lemma bayesRisk_deterministic_toReal_utility
           * dp.condValue Finset.univ
         (Finset.univ.filter (classifier · = o))) := by
   classical
-  haveI : IsFiniteMeasure dp.priorMeasure := inferInstance
+  have : IsFiniteMeasure dp.priorMeasure := inferInstance
   rw [bayesRisk_deterministic (measurable_of_countable classifier) ℓ dp.priorMeasure]
   have hℓ_pt : ∀ w o', ℓ w o' = ENNReal.ofReal ((ℓ w o').toReal) := fun w o' =>
     (ENNReal.ofReal_toReal (hℓ_fin w o')).symm

@@ -233,7 +233,7 @@ theorem mpProfile_complementary (S : Condition → Prop) [DecidablePred S] (c : 
 everywhere but in the Sg condition. -/
 theorem mpProfile_certain_uniqueness (c : Condition) :
     mpProfile (·.pMultiple = 0) c = if c = .sg then 0 else 1 := by
-  cases c <;> norm_num [mpProfile, Condition.pMultiple] <;> decide
+  cases c <;> norm_num [mpProfile, Condition.pMultiple]
 
 /-- With the singular presupposing that prototypical witnesses are unique, (8) read as
 uniqueness in most situations, Maximize Presupposition yields H1, which the experiment

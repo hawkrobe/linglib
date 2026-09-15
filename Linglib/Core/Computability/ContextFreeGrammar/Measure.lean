@@ -81,10 +81,10 @@ theorem offspring_singleton (s : Symbol T G.NT) (syms : List (Symbol T G.NT)) :
       · rw [W.weight_eq_zero_of_not_mem _ fun h' => h (Finset.mem_filter.mpr ⟨h', rfl⟩)]
     · obtain ⟨-, rfl⟩ := Finset.mem_filter.mp hr
       by_cases hs : r.output = syms
-      · rw [Set.indicator_of_mem (by simpa using hs), if_pos (by cases r; simp_all)]
+      · rw [Set.indicator_of_mem (by simpa using hs), ite_eq_left (by cases r; simp_all)]
         simp
       · rw [Set.indicator_of_notMem (by simpa using hs),
-          if_neg fun h => hs (congrArg ContextFreeRule.output h)]
+          ite_eq_right fun h => hs (congrArg ContextFreeRule.output h)]
         simp
 
 theorem offspring_nonterminal_univ (A : G.NT) :

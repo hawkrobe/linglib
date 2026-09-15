@@ -165,7 +165,7 @@ def ifThen (α ψ : Sentence W) : Sentence W :=
 /-- For a factual antecedent the shifted state is the intersection, when nonempty. -/
 theorem isMaxAccepting_ofProp (p : Set W) (hne : (s ∩ p).Nonempty) :
     IsMaxAccepting s (ofProp p) (s ∩ p) :=
-  ⟨Set.inter_subset_left, hne, λ _ hw => hw.2, λ t ht _ hacc w hw => ⟨ht hw, hacc w hw⟩⟩
+  ⟨Set.inter_subset_left, hne, λ _ hw => hw.2, λ _ ht _ hacc w hw => ⟨ht hw, hacc w hw⟩⟩
 
 /-- A conditional whose antecedent is an epistemic contradiction is never true. -/
 theorem ifThen_contra_false {p : Set W} : ¬ ifThen (contra p) ψ s w := by

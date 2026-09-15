@@ -32,7 +32,7 @@ def config (w : List α) : ℤ → Option α :=
   simp [config]
 
 lemma config_neg (h : i < 0) : w.config i = none := by
-  rw [config, if_neg (by omega)]
+  rw [config, ite_eq_right (by omega)]
 
 @[simp] lemma config_nil : ([] : List α).config i = none := by
   rw [config]

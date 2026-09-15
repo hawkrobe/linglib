@@ -57,11 +57,11 @@ theorem anchor_le_or_le_compl_mem_closure (σ : ι → Bool) {ψ : W → Bool}
     by_cases h : σ i = true
     · refine Or.inl (le_iff_forall.mpr fun w hw => ?_)
       simp only [anchor, decide_eq_true_eq] at hw
-      simpa only [if_pos h] using hw i
+      simpa only [ite_eq_left h] using hw i
     · refine Or.inr (le_iff_forall.mpr fun w hw => ?_)
       simp only [anchor, decide_eq_true_eq] at hw
       have := hw i
-      rw [if_neg h] at this
+      rw [ite_eq_right h] at this
       simp only [Pi.compl_apply, this, Bool.compl_eq_bnot, Bool.not_false]
   | bot => exact Or.inr (by simp only [compl_bot, le_top])
   | sup x _ y _ ihx ihy =>

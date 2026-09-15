@@ -48,8 +48,6 @@ variable {R : Type*} [CommRing R] {α : Type*} (T T₁ T₂ : UnorderedTree α)
 
 variable [DecidableEq α]
 
-variable [CharZero R] [NoZeroDivisors R]
-
 /-- The single-tree delta `δ_T = lcoeff R {T}` is a dual primitive: the
 bialgebraic content of [marcolli-chomsky-berwick-2025]'s observation (book
 p. 79) that primitives in the dual are exactly the single-tree deltas. -/
@@ -57,7 +55,7 @@ theorem lcoeff_singleton_isDualPrimitive :
     IsDualPrimitive R (lcoeff R ({T} : Forest (UnorderedTree α))) := by
   classical
   refine ⟨by rw [← of'_zero, lcoeff_apply, coeff_of',
-    if_neg (Multiset.zero_ne_singleton T)], ?_⟩
+    ite_eq_right (Multiset.zero_ne_singleton T)], ?_⟩
   have key : (LinearMap.mul R (ConnesKreimer R (UnorderedTree α))).compr₂ (lcoeff R {T}) =
       (lcoeff R ({T} : Forest (UnorderedTree α))).smulRight CoalgebraStruct.counit +
         (CoalgebraStruct.counit).smulRight (lcoeff R {T}) := by
@@ -85,14 +83,14 @@ theorem lcoeff_singleton_isDualPrimitive :
     · simp_all
     · simp_all
     · simp_all
-    · rw [if_neg (not_or.mpr ⟨h₁, h₂⟩), if_neg h₁, if_neg h₂, add_zero]
+    · rw [ite_eq_right (not_or.mpr ⟨h₁, h₂⟩), ite_eq_right h₁, ite_eq_right h₂, add_zero]
   intro x y
   simpa using LinearMap.congr_fun (LinearMap.congr_fun key x) y
 
 /-- [marcolli-chomsky-berwick-2025] Lemma 1.7.3, membership form: single-tree
 deltas lie in the Lie subalgebra of dual primitives (so their brackets do too,
 by `LieSubalgebra.lie_mem`). -/
-theorem toConv_lcoeff_singleton_mem_dualPrimitives :
+theorem toConv_lcoeff_singleton_mem_dualPrimitives [CharZero R] [NoZeroDivisors R] :
     toConv (lcoeff R ({T} : Forest (UnorderedTree α))) ∈
       dualPrimitives R (ConnesKreimer R (UnorderedTree α)) :=
   lcoeff_singleton_isDualPrimitive T
@@ -111,7 +109,7 @@ theorem convMul_lcoeff_singleton_apply_ofTree :
   simp only [map_add, map_multiset_sum, Multiset.map_map, Function.comp_apply,
     TensorProduct.map_tmul, LinearMap.mul'_apply, ofTree, lcoeff_apply, ← of'_zero,
     coeff_of', Multiset.singleton_inj, ite_zero_mul_ite_zero, one_mul,
-    Multiset.zero_ne_singleton, if_false, mul_zero, zero_add]
+    Multiset.zero_ne_singleton, ite_false, mul_zero, zero_add]
   unfold countSingleCutsRho
   rw [Multiset.countP_eq_card_filter]
   induction cutSummandsN T using Multiset.induction with
@@ -126,7 +124,7 @@ theorem convMul_lcoeff_singleton_apply_ofTree :
 [marcolli-chomsky-berwick-2025] in Δ^ρ form; the book's
 `c^T_{T₁,T₂} − c^T_{T₂,T₁}` is stated for the trace-leaf coproduct `Δ^c`,
 which agrees under the trace-erasure projection (`eraseTracesAlgHom`). -/
-theorem lie_lcoeff_singleton_apply_ofTree :
+theorem lie_lcoeff_singleton_apply_ofTree [CharZero R] [NoZeroDivisors R] :
     ⁅toConv (lcoeff R {T₁}), toConv (lcoeff R ({T₂} : Forest (UnorderedTree α)))⁆
         (ofTree T) =
       (countSingleCutsRho T T₁ T₂ : R) - countSingleCutsRho T T₂ T₁ := by

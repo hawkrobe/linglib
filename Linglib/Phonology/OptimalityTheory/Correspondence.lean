@@ -284,11 +284,11 @@ theorem diagram_edge : (diagram form hasEdge).edge r₁ r₂ =
 
 theorem diagram_edge_pos {r₁ r₂ : Role} (h : hasEdge r₁ r₂) :
     (diagram form hasEdge).edge r₁ r₂ = diagonal (form r₁).length (form r₂).length :=
-  if_pos h
+  ite_eq_left h
 
 theorem diagram_edge_neg {r₁ r₂ : Role} (h : ¬ hasEdge r₁ r₂) :
     (diagram form hasEdge).edge r₁ r₂ = ∅ :=
-  if_neg h
+  ite_eq_right h
 
 theorem diagram_isSymmetric (hsymm : ∀ {r₁ r₂}, hasEdge r₁ r₂ → hasEdge r₂ r₁) :
     IsSymmetric (diagram form hasEdge) := by

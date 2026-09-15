@@ -280,7 +280,7 @@ theorem isTest_exists_iff [Nontrivial E] :
       rwa [show (λ n => if n = x then g x else g' n) = g from
         funext λ n => by by_cases hn : n = x <;> simp [hn, hg']]⟩)
   obtain ⟨e, he⟩ := exists_ne (g x)
-  have := congr_fun ((hg (λ n => if n = x then e else g n) λ _ hn => if_neg hn).trans
+  have := congr_fun ((hg (λ n => if n = x then e else g n) λ _ hn => ite_eq_right hn).trans
     (hg g λ _ _ => rfl).symm) x
   exact he (by simpa using this)
 

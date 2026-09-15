@@ -248,7 +248,7 @@ theorem dens_one : dens 1 = literals := rfl
 theorem dens_eq_biUnion {n : ℕ} (hn : 2 ≤ n) :
     dens n = (range (n - 1)).biUnion λ i => combine (dens (i + 1)) (dens (n - 1 - i)) := by
   obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 := ⟨n - 1, by omega⟩
-  rw [dens, densAux_succ, if_neg (show k + 1 ≠ 1 by omega)]
+  rw [dens, densAux_succ, ite_eq_right (show k + 1 ≠ 1 by omega)]
   refine biUnion_congr rfl λ i hi => ?_
   rw [mem_range] at hi
   rw [densAux_eq (n := i + 1) (f := k) (g := i + 1) (by omega) le_rfl,
@@ -320,15 +320,15 @@ def complexity (m : Meaning) : ℕ :=
 
 theorem complexity_eq_iff {m : Meaning} (hm : m ⊆ space) {n : ℕ} :
     complexity m = n ↔ m ∈ Formula.dens n ∧ ∀ k < n, m ∉ Formula.dens k := by
-  rw [complexity, dif_pos hm, Nat.find_eq_iff]
+  rw [complexity, dite_eq_left hm, Nat.find_eq_iff]
 
 theorem complexity_le {m : Meaning} (φ : Formula) (h : φ.den = m) : complexity m ≤ φ.atoms := by
-  rw [complexity, dif_pos (h ▸ φ.den_subset)]
+  rw [complexity, dite_eq_left (h ▸ φ.den_subset)]
   exact Nat.find_le (h ▸ (Formula.den_mem_dens φ).1)
 
 theorem exists_den_atoms {m : Meaning} (hm : m ⊆ space) :
     ∃ φ : Formula, φ.atoms = complexity m ∧ φ.den = m := by
-  rw [complexity, dif_pos hm]
+  rw [complexity, dite_eq_left hm]
   exact Formula.exists_den_of_mem_dens (Nat.find_spec (Formula.exists_mem_dens hm))
 
 theorem one_le_complexity {m : Meaning} (hm : m ⊆ space) : 1 ≤ complexity m := by
@@ -411,7 +411,7 @@ theorem listen_product {F : Finset ModalForce} {Φ : Finset ModalFlavor} {p : Fo
   have hF0 : (F.card : ℚ) ≠ 0 := by exact_mod_cast (card_pos.2 ⟨_, hF⟩).ne'
   have hΦ0 : (Φ.card : ℚ) ≠ 0 := by exact_mod_cast (card_pos.2 ⟨_, hΦ⟩).ne'
   rw [listen, expect_eq_sum_div_card, card_product]
-  simp only [utility, sum_add_distrib, sum_product, sum_ite_eq, if_pos hF, if_pos hΦ,
+  simp only [utility, sum_add_distrib, sum_product, sum_ite_eq, ite_eq_left hF, ite_eq_left hΦ,
     sum_const, nsmul_eq_mul, sum_comm (s := F) (t := Φ)]
   push_cast
   field_simp
@@ -450,7 +450,7 @@ theorem informativeness_whole (need : ForceFlavor → ℚ) :
   rw [mul_sum]
   refine sum_congr rfl λ p hp => ?_
   have hs : speakers whole p = {space} := by
-    rw [speakers, whole, Multiset.filter_singleton, if_pos hp]
+    rw [speakers, whole, Multiset.filter_singleton, ite_eq_left hp]
   rw [hs, Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_singleton, space,
     listen_product (mem_product.1 hp).1 (mem_product.1 hp).2]
   simp [forces, flavors]

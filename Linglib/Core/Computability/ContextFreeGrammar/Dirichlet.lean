@@ -1,6 +1,6 @@
 import Linglib.Core.Computability.ContextFreeGrammar.Probabilistic
 import Linglib.Core.Probability.PolyaUrn
-import Mathlib.Data.ENNReal.BigOperators
+import Mathlib.Basic.ENNReal.BigOperators
 
 /-!
 # Dirichlet priors on probabilistic context-free grammars
@@ -179,17 +179,17 @@ theorem sum_predictive_eq_one {a : G.NT} [Nonempty (G.RulesWithLHS a)]
 noncomputable def predictivePCFG (D : Multiset (RoseTree (Symbol T G.NT))) : PCFG G where
   weight r := if r ∈ G.rules then ENNReal.ofReal (M.predictive r D) else 0
   weight_nonneg _ := zero_le
-  weight_eq_zero_of_not_mem _ hr := if_neg hr
+  weight_eq_zero_of_not_mem _ hr := ite_eq_right hr
   sum_weight a ha := by
     have := nonempty_rulesWithLHS_of_mem_image ha
-    rw [Finset.sum_congr rfl λ r hr => if_pos (Finset.mem_filter.mp hr).1,
+    rw [Finset.sum_congr rfl λ r hr => ite_eq_left (Finset.mem_filter.mp hr).1,
       ← ENNReal.ofReal_sum_of_nonneg λ r hr => M.predictive_nonneg (Finset.mem_filter.mp hr).1 D,
       M.sum_predictive_eq_one D, ENNReal.ofReal_one]
 
 theorem predictivePCFG_weight {r : ContextFreeRule T G.NT} (hr : r ∈ G.rules)
     (D : Multiset (RoseTree (Symbol T G.NT))) :
     (M.predictivePCFG D).weight r = ENNReal.ofReal (M.predictive r D) :=
-  if_pos hr
+  ite_eq_left hr
 
 /-- Conditioning on a corpus and then taking the prior predictive is taking the posterior
 predictive. -/

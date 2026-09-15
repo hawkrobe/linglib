@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Computability.ContextFreeGrammar
-import Mathlib.Data.Countable.Basic
+import Mathlib.Basic.Countable.Basic
 
 /-!
 # Symbols, rules and derivations of a context-free grammar

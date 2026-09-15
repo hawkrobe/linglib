@@ -150,10 +150,10 @@ theorem pairing_one_right (w : ConnesKreimer R (UnorderedTree α)) :
       rw [pairing_of'_of', ConnesKreimer.counit_of']
       by_cases h : F = (0 : Forest (UnorderedTree α))
       · subst h
-        rw [if_pos rfl, if_pos Multiset.card_zero]
+        rw [ite_eq_left rfl, ite_eq_left Multiset.card_zero]
         show ((UnorderedTree.forestAutCard (0 : Forest (UnorderedTree α)) : ℕ) : R) = 1
         rw [UnorderedTree.forestAutCard_zero, Nat.cast_one]
-      · rw [if_neg h, if_neg (by simpa [Multiset.card_eq_zero] using h)]
+      · rw [ite_eq_right h, ite_eq_right (by simpa [Multiset.card_eq_zero] using h)]
   exact LinearMap.congr_fun h w
 
 /-- Each pairing against a basis element `of' G` extracts the coefficient
@@ -176,7 +176,7 @@ theorem pairing_apply_of' (x : ConnesKreimer R (UnorderedTree α))
     by_cases h : F = G
     · subst h
       simp [smul_eq_mul]
-    · simp [if_neg h]
+    · simp [ite_eq_right h]
 
 /-- **Non-degeneracy** of the pairing over `CharZero R` with no zero
     divisors. If `pairing x y = 0` for all `y`, then `x = 0`. Uses
@@ -251,7 +251,7 @@ theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (UnorderedTree α)) :
   -- Step 3: split on whether `W = C₁ + C₂` using `split_ifs` to handle the
   by_cases hW : W = C₁ + C₂
   · -- W = C₁ + C₂. LHS = forestAutCard W.
-    rw [if_pos hW]
+    rw [ite_eq_left hW]
     -- Use `filter_eq'` to extract the (C₁, C₂) summand.
     -- Each term: nonzero only when p = (C₁, C₂).
     -- Rewrite via filter (· = (C₁,C₂)) + filter (· ≠ ...).
@@ -292,7 +292,7 @@ theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (UnorderedTree α)) :
           rw [h1] at heq
           exact add_left_cancel heq
         exact absurd (Prod.ext h1 h2) hp_ne
-      · rw [if_neg h1, zero_mul]
+      · rw [ite_eq_right h1, zero_mul]
     rw [h_vanish, add_zero]
     -- Surviving piece: `filter (· = (C₁,C₂)) (antidiagonal W) = replicate (count ...) (C₁,C₂)`.
     subst hW
@@ -315,7 +315,7 @@ theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (UnorderedTree α)) :
     -- propositional equality; `convert` closes the residual.
     convert hcast using 4
   · -- W ≠ C₁ + C₂. LHS = 0. The if now uses the ambient instance.
-    simp only [if_neg hW]
+    simp only [ite_eq_right hW]
     -- Every p ∈ antidiagonal W has p.1 + p.2 = W ≠ C₁ + C₂. So at every p, the term is 0.
     symm
     -- Rewrite the map via map_congr so each term becomes 0; then sum of all-zeros = 0.
@@ -333,8 +333,8 @@ theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (UnorderedTree α)) :
         · exfalso
           apply hW
           rw [← hp_sum, h1, h2]
-        · rw [if_pos h1, if_neg h2, mul_zero]
-      · rw [if_neg h1, zero_mul]
+        · rw [ite_eq_left h1, ite_eq_right h2, mul_zero]
+      · rw [ite_eq_right h1, zero_mul]
     rw [h_each_zero]
     -- Sum of all-zeros = 0.
     simp [Multiset.map_const']
@@ -538,7 +538,7 @@ noncomputable def pairing₃ :
 Two reduction lemmas that express `pairing₃ (x ⊗ (y ⊗ z'))` evaluated on
 shifted tensor forms in terms of `pairing₂` and binary `pairing`,
 consumed by the Δ^ρ duality chain in `Coproduct/PruningDuality.lean`.
-Both are proved by `TensorProduct.induction_on`, reducing to the
+Both are proved by `TensorProduct.inductionOn`, reducing to the
 pure-tensor case where `pairing₃_tmul_tmul_tmul` and
 `pairing₂_tmul_tmul` agree. -/
 
@@ -552,8 +552,7 @@ lemma pairing₃_assoc_tmul
     pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
         ((TensorProduct.assoc R _ _ _) (U ⊗ₜ[R] c)) =
       pairing₂ (R := R) (x ⊗ₜ[R] y) U * pairing z' c := by
-  induction U using TensorProduct.induction_on with
-  | zero => simp
+  induction U using TensorProduct.inductionOn with
   | tmul a b =>
     simp only [TensorProduct.assoc_tmul, pairing₃_tmul_tmul_tmul,
                pairing₂_tmul_tmul, _root_.mul_assoc]
@@ -567,8 +566,7 @@ lemma pairing₃_tmul_apply
     (S : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z')) (a ⊗ₜ[R] S) =
       pairing x a * pairing₂ (R := R) (y ⊗ₜ[R] z') S := by
-  induction S using TensorProduct.induction_on with
-  | zero => simp
+  induction S using TensorProduct.inductionOn with
   | tmul b c =>
     simp only [pairing₃_tmul_tmul_tmul, pairing₂_tmul_tmul]
   | add S₁ S₂ ih₁ ih₂ =>
@@ -582,7 +580,7 @@ natural basis of `CK = (Forest T) →₀ R`. -/
 
 /-- Bilinear extension: `pairing₃ (of' F ⊗ s) (of' G ⊗ t) = pairing (of' F)
     (of' G) * pairing₂ s t` for arbitrary `s, t ∈ CK ⊗ CK`. Proven via
-    `TensorProduct.induction_on` on `s` and `t`, reducing to the pure-tensor
+    `TensorProduct.inductionOn` on `s` and `t`, reducing to the pure-tensor
     case where `pairing₃_tmul_tmul_tmul` and `pairing₂_tmul_tmul` agree. -/
 private theorem pairing₃_of'_tmul_of'_tmul (F G : Forest (UnorderedTree α))
     (s t : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
@@ -592,11 +590,9 @@ private theorem pairing₃_of'_tmul_of'_tmul (F G : Forest (UnorderedTree α))
       pairing (ConnesKreimer.of' (R := R) F)
                               (ConnesKreimer.of' G) *
         pairing₂ (R := R) s t := by
-  induction s using TensorProduct.induction_on with
-  | zero => simp
+  induction s using TensorProduct.inductionOn with
   | tmul b c =>
-    induction t using TensorProduct.induction_on with
-    | zero => simp
+    induction t using TensorProduct.inductionOn with
     | tmul y z =>
       simp only [pairing₃_tmul_tmul_tmul, pairing₂_tmul_tmul]
     | add t₁ t₂ ih₁ ih₂ =>
@@ -636,9 +632,9 @@ private theorem pairing₂_nondegenerate
     rw [map_finsuppSum (pairing₂ (R := R) (ConnesKreimer.of' F ⊗ₜ[R] y))] at h_eval
     simp only [hℬ, pairing₂_tmul_tmul, pairing_of'_of'] at h_eval
     rw [Finsupp.sum_eq_single F
-          (fun G _ hGF => by rw [if_neg (fun heq => hGF heq.symm), zero_mul])
+          (fun G _ hGF => by rw [ite_eq_right (fun heq => hGF heq.symm), zero_mul])
           (fun _ => by rw [LinearMap.map_zero, mul_zero])] at h_eval
-    rw [if_pos rfl] at h_eval
+    rw [ite_eq_left rfl] at h_eval
     rcases mul_eq_zero.mp h_eval with h' | h'
     · exact absurd h' h_aut_ne
     · exact h'
@@ -677,9 +673,9 @@ theorem pairing₃_nondegenerate
           (pairing₃ (R := R) (ConnesKreimer.of' F ⊗ₜ[R] (x ⊗ₜ[R] y)))] at h_eval
     simp only [hℬ, pairing₃_of'_tmul_of'_tmul, pairing_of'_of'] at h_eval
     rw [Finsupp.sum_eq_single F
-          (fun G _ hGF => by rw [if_neg (fun heq => hGF heq.symm), zero_mul])
+          (fun G _ hGF => by rw [ite_eq_right (fun heq => hGF heq.symm), zero_mul])
           (fun _ => by rw [LinearMap.map_zero, mul_zero])] at h_eval
-    rw [if_pos rfl] at h_eval
+    rw [ite_eq_left rfl] at h_eval
     rcases mul_eq_zero.mp h_eval with h' | h'
     · exact absurd h' h_aut_ne
     · exact h'

@@ -110,7 +110,7 @@ theorem polarHahn_eq_zero (s : LaurentSeries A) (h : ∀ i : ℤ, i < 0 → s.co
 
 /-- `1 = t⁰` is nonpolar. -/
 @[simp] theorem polarHahn_one : polarHahn (1 : LaurentSeries A) = 0 :=
-  polarHahn_eq_zero _ fun i hi => by rw [HahnSeries.coeff_one, if_neg (by omega)]
+  polarHahn_eq_zero _ fun i hi => by rw [HahnSeries.coeff_one, ite_eq_right (by omega)]
 
 /-! ### Monomials -/
 
@@ -156,7 +156,7 @@ theorem support_subset_nonneg (s : LaurentSeries A) (hs : polarHahn s = 0) :
     s.support ⊆ {i : ℤ | 0 ≤ i} := fun i hi => by
   show 0 ≤ i
   by_contra h
-  have hc : s.coeff i = (polarHahn s).coeff i := by rw [coeff_polarHahn, if_pos (not_le.mp h)]
+  have hc : s.coeff i = (polarHahn s).coeff i := by rw [coeff_polarHahn, ite_eq_left (not_le.mp h)]
   rw [hs, HahnSeries.coeff_zero] at hc
   exact (HahnSeries.mem_support _ _).mp hi hc
 
@@ -178,7 +178,7 @@ theorem support_polarHahn_subset (s : LaurentSeries A) :
   rw [HahnSeries.mem_support, coeff_polarHahn] at hi
   show i < 0
   by_contra h
-  rw [if_neg h] at hi
+  rw [ite_eq_right h] at hi
   exact hi rfl
 
 /-- The complementary part `1 − R` is supported on non-negative degrees. -/
@@ -187,7 +187,7 @@ theorem support_sub_polarHahn_subset (s : LaurentSeries A) :
   rw [HahnSeries.mem_support, HahnSeries.coeff_sub, coeff_polarHahn] at hi
   show 0 ≤ i
   by_contra h
-  rw [if_pos (not_le.mp h), sub_self] at hi
+  rw [ite_eq_left (not_le.mp h), sub_self] at hi
   exact hi rfl
 
 /-- A product of polar parts has no non-negative-degree coefficients (the polar series form a

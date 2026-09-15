@@ -86,8 +86,8 @@ private theorem ite_mul_sum_eq_mul_filter_sum {R : Type*} [CommSemiring R]
     rw [Multiset.map_cons, Multiset.sum_cons, ih, Multiset.filter_cons,
         Multiset.map_add, Multiset.sum_add, mul_add]
     by_cases h : a.1 = K
-    · rw [if_pos h, if_pos h, Multiset.map_singleton, Multiset.sum_singleton]
-    · rw [if_neg h, if_neg h]; simp
+    · rw [ite_eq_left h, ite_eq_left h, Multiset.map_singleton, Multiset.sum_singleton]
+    · rw [ite_eq_right h, ite_eq_right h]; simp
 
 /-- The double-sum analogue for case 3(b): a doubly-filtered conjunction-if
     cut-sum factors into `N` times the two single matching-cut sums. Proven
@@ -108,21 +108,21 @@ private theorem ite_and_double_sum_eq {R : Type*} [CommSemiring R]
           * ((t.filter (fun q => q.1 = Kβ)).map (fun q => ofTree (R := R) q.2)).sum := by
     intro p
     by_cases hα : p.1 = Kα
-    · rw [if_pos hα]
+    · rw [ite_eq_left hα]
       have hmap : (t.map (fun q => if p.1 = Kα ∧ q.1 = Kβ
               then N * (ofTree (R := R) p.2 * ofTree (R := R) q.2) else 0))
             = t.map (fun q => if q.1 = Kβ
               then (N * ofTree (R := R) p.2) * ofTree (R := R) q.2 else 0) :=
         Multiset.map_congr rfl fun q _ => by
           by_cases hβ : q.1 = Kβ
-          · rw [if_pos ⟨hα, hβ⟩, if_pos hβ, mul_assoc]
-          · rw [if_neg (fun h => hβ h.2), if_neg hβ]
+          · rw [ite_eq_left ⟨hα, hβ⟩, ite_eq_left hβ, mul_assoc]
+          · rw [ite_eq_right (fun h => hβ h.2), ite_eq_right hβ]
       rw [hmap]
       exact ite_mul_sum_eq_mul_filter_sum t Kβ (N * ofTree (R := R) p.2)
-    · rw [if_neg hα, zero_mul]
+    · rw [ite_eq_right hα, zero_mul]
       refine Multiset.sum_eq_zero fun x hx => ?_
       obtain ⟨q, _, rfl⟩ := Multiset.mem_map.mp hx
-      rw [if_neg (fun h => hα h.1)]
+      rw [ite_eq_right (fun h => hα h.1)]
   rw [Multiset.map_congr rfl (fun p _ => step1 p),
       Multiset.sum_map_mul_right, ite_mul_sum_eq_mul_filter_sum s Kα N]
 
@@ -161,7 +161,7 @@ theorem mergeOp_sideward_2b_general_pair {R : Type*} [CommSemiring R]
         ((ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))
           * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))) = 0 := by
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, ← of'_singleton, ← of'_singleton,
-        ← of'_add, mergePost_basis_tensor, if_neg]
+        ← of'_add, mergePost_basis_tensor, ite_eq_right]
     intro h_eq
     apply h_β_ne_Tj
     have h' : ({T_i} : Forest (UnorderedTree α)) + ({T_j} : Forest (UnorderedTree α))
@@ -198,7 +198,7 @@ theorem mergeOp_sideward_2b_general_pair {R : Type*} [CommSemiring R]
           ((of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)
             * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))) = 0
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, ← of'_singleton, ← of'_add,
-        mergePost_basis_tensor, if_neg]
+        mergePost_basis_tensor, ite_eq_right]
     intro h_eq
     have h_T_j_mem : T_j ∈ p.1 + ({T_j} : Forest (UnorderedTree α)) :=
       Multiset.mem_add.mpr (Or.inr (Multiset.mem_singleton.mpr rfl))
@@ -222,7 +222,7 @@ theorem mergeOp_sideward_2b_general_pair {R : Type*} [CommSemiring R]
     obtain ⟨p', hp', rfl⟩ := Multiset.mem_map.mp hy
     show mergePost (R := R) (α := α) lbl T_i β
           ((of' (R := R) p.1 ⊗ₜ[R] ofTree p.2) * (of' (R := R) p'.1 ⊗ₜ[R] ofTree p'.2)) = 0
-    rw [Algebra.TensorProduct.tmul_mul_tmul, ← of'_add, mergePost_basis_tensor, if_neg]
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← of'_add, mergePost_basis_tensor, ite_eq_right]
     intro h_eq
     have h_T_i_mem : T_i ∈ p.1 + p'.1 := by
       rw [h_eq]; exact Multiset.mem_cons_self _ _
@@ -327,7 +327,7 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
         ((ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))
           * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))) = 0 := by
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, ← of'_singleton, ← of'_singleton,
-        ← of'_add, mergePost_basis_tensor, if_neg]
+        ← of'_add, mergePost_basis_tensor, ite_eq_right]
     intro h_eq
     have h_T_i_mem : T_i ∈ ({T_i} : Forest (UnorderedTree α)) + ({T_j} : Forest
       (UnorderedTree α)) :=
@@ -348,7 +348,7 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
           ((ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))
             * (of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)) = 0
     rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, ← of'_singleton, ← of'_add,
-        mergePost_basis_tensor, if_neg]
+        mergePost_basis_tensor, ite_eq_right]
     intro h_eq
     have h_T_i_mem : T_i ∈ ({T_i} : Forest (UnorderedTree α)) + p.1 :=
       Multiset.mem_add.mpr (Or.inl (Multiset.mem_singleton.mpr rfl))
@@ -368,7 +368,7 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
           ((of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)
             * (ofTree T_j ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))) = 0
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, ← of'_singleton, ← of'_add,
-        mergePost_basis_tensor, if_neg]
+        mergePost_basis_tensor, ite_eq_right]
     intro h_eq
     have h_T_j_mem : T_j ∈ p.1 + ({T_j} : Forest (UnorderedTree α)) :=
       Multiset.mem_add.mpr (Or.inr (Multiset.mem_singleton.mpr rfl))
@@ -407,7 +407,7 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
           else 0
     rw [Algebra.TensorProduct.tmul_mul_tmul, ← of'_add, mergePost_basis_tensor]
     by_cases h_sum : p.1 + q.1 = ({α_t, β} : Forest (UnorderedTree α))
-    · rw [if_pos h_sum]
+    · rw [ite_eq_left h_sum]
       have h_split : p.1 = ({α_t} : Forest (UnorderedTree α)) ∧
                      q.1 = ({β} : Forest (UnorderedTree α)) := by
         refine ⟨?_, ?_⟩
@@ -424,14 +424,14 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
             have h_q : Multiset.count x q.1 = 0 :=
               Multiset.count_eq_zero.mpr (h_T_j_no_α q hq)
             omega
-          · rw [Multiset.count_singleton, if_neg hx_α]
+          · rw [Multiset.count_singleton, ite_eq_right hx_α]
             by_cases hx_β : x = β
             · subst hx_β
               exact Multiset.count_eq_zero.mpr (h_T_i_no_β p hp)
             · have h_target_zero :
                   Multiset.count x ({α_t, β} : Forest (UnorderedTree α)) = 0 := by
                 show Multiset.count x (α_t ::ₘ ({β} : Forest (UnorderedTree α))) = 0
-                rw [Multiset.count_cons, Multiset.count_singleton, if_neg hx_α, if_neg hx_β]
+                rw [Multiset.count_cons, Multiset.count_singleton, ite_eq_right hx_α, ite_eq_right hx_β]
               omega
         · apply Multiset.ext.mpr
           intro x
@@ -446,18 +446,18 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
             have h_p : Multiset.count x p.1 = 0 :=
               Multiset.count_eq_zero.mpr (h_T_i_no_β p hp)
             omega
-          · rw [Multiset.count_singleton, if_neg hx_β]
+          · rw [Multiset.count_singleton, ite_eq_right hx_β]
             by_cases hx_α : x = α_t
             · subst hx_α
               exact Multiset.count_eq_zero.mpr (h_T_j_no_α q hq)
             · have h_target_zero :
                   Multiset.count x ({α_t, β} : Forest (UnorderedTree α)) = 0 := by
                 show Multiset.count x (α_t ::ₘ ({β} : Forest (UnorderedTree α))) = 0
-                rw [Multiset.count_cons, Multiset.count_singleton, if_neg hx_α, if_neg hx_β]
+                rw [Multiset.count_cons, Multiset.count_singleton, ite_eq_right hx_α, ite_eq_right hx_β]
               omega
-      rw [if_pos h_split]
-    · rw [if_neg h_sum,
-          if_neg (show ¬ (p.1 = ({α_t} : Forest (UnorderedTree α)) ∧
+      rw [ite_eq_left h_split]
+    · rw [ite_eq_right h_sum,
+          ite_eq_right (show ¬ (p.1 = ({α_t} : Forest (UnorderedTree α)) ∧
                           q.1 = ({β} : Forest (UnorderedTree α)))
             from fun ⟨hc, hc'⟩ => h_sum (by rw [hc, hc']; rfl))]
   rw [h_pp, h_ps, h_sp, h_ss]
@@ -555,7 +555,7 @@ theorem mergeOp_sideward_3a_general_pair {R : Type*} [CommSemiring R]
   rw [show mergePost (R := R) (α := α) lbl α_t β
         (ofTree T_i ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α))) = 0 from by
       rw [show (ofTree T_i : ConnesKreimer R (UnorderedTree α)) = of' ({T_i} : Forest (UnorderedTree α))
-            from rfl, mergePost_basis_tensor, if_neg]
+            from rfl, mergePost_basis_tensor, ite_eq_right]
       intro h_eq
       have h_T_i_mem : T_i ∈ ({T_i} : Forest (UnorderedTree α)) := Multiset.mem_singleton.mpr rfl
       rw [h_eq, show ({α_t, β} : Forest (UnorderedTree α)) = α_t ::ₘ ({β} : Forest (UnorderedTree α))

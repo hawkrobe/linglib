@@ -158,7 +158,7 @@ theorem preserve?_cons_cons (i j : ℕ) (rest_e rest_f : Path) :
 @[simp] theorem preserve?_self : ∀ (e : Path), preserve? e e = none
   | []      => rfl
   | i :: rest => by
-    rw [preserve?_cons_cons, if_pos rfl, preserve?_self rest]
+    rw [preserve?_cons_cons, ite_eq_left rfl, preserve?_self rest]
     rfl
 
 /-- Off-diagonal: when `f ≠ e`, `preserve? e f` is `some _`. The path is
@@ -196,9 +196,9 @@ theorem preserve?_of_ne : ∀ (e f : Path) (_h : f ≠ e),
     · -- i = j, recurse on rest
       have hrest : rest_f ≠ rest_e := by
         intro heq; apply h; rw [hij, heq]
-      rw [if_pos hij, if_pos hij, preserve?_of_ne rest_e rest_f hrest]
+      rw [ite_eq_left hij, ite_eq_left hij, preserve?_of_ne rest_e rest_f hrest]
       rfl
-    · rw [if_neg hij, if_neg hij]
+    · rw [ite_eq_right hij, ite_eq_right hij]
 
 /-! ## §5: Commutativity + lifted-equals-nested
 
@@ -277,9 +277,9 @@ theorem insertAt_commute_diff : ∀ (e f : Path) (_h : f ≠ e) (t₁ t₂ t₃ 
             Pathed.insertAt_cons_of_not_lt _ _ _ _ _ hi]
     · -- i ≠ j: paths branch at the root; sub-case on bounds.
       rw [show preserveOf (i :: rest_e) (j :: rest_f) = j :: rest_f
-            from by rw [preserveOf_cons_cons, if_neg hij],
+            from by rw [preserveOf_cons_cons, ite_eq_right hij],
           show preserveOf (j :: rest_f) (i :: rest_e) = i :: rest_e
-            from by rw [preserveOf_cons_cons, if_neg (Ne.symm hij)]]
+            from by rw [preserveOf_cons_cons, ite_eq_right (Ne.symm hij)]]
       by_cases hi : i < cs.length
       · by_cases hj : j < cs.length
         · -- Both in bounds, i ≠ j: use set_comm + getElem_set_ne.
@@ -394,7 +394,7 @@ private theorem verticesAux_set (i offset : ℕ) (X : RoseTree α) (cs : List (R
       ++ verticesAux (offset + i + 1) (cs.drop (i + 1)) := by
   have hlen : (cs.take i).length = i := by
     rw [List.length_take]; omega
-  rw [List.set_eq_take_append_cons_drop, if_pos hi, verticesAux_append,
+  rw [List.set_eq_take_append_cons_drop, ite_eq_left hi, verticesAux_append,
       verticesAux_cons, hlen, ← List.append_assoc]
 
 /-! ### Substrate: `filterMap (preserve? (i :: rest))` away from `i` -/
@@ -425,7 +425,7 @@ private theorem filterMap_preserve?_cons_disjoint :
       have heq : (preserve? (i :: rest)) ∘ (offset :: ·) = some ∘ (offset :: ·) := by
         funext q
         show preserve? (i :: rest) (offset :: q) = some (offset :: q)
-        rw [preserve?_cons_cons, if_neg hoffset_ne]
+        rw [preserve?_cons_cons, ite_eq_right hoffset_ne]
       rw [heq]
       exact congr_fun (List.filterMap_eq_map (f := (offset :: ·))) _
     · exact filterMap_preserve?_cons_disjoint i rest (offset + 1) cs' h'
@@ -551,7 +551,7 @@ theorem vertices_insertAt_decomp : ∀ (e : Path) (t₁ t₂ : RoseTree α)
               (fun q : Path => preserve? (i :: rest) (i :: q)) from by
           funext q
           show (preserve? rest q).map ((i : ℕ) :: ·) = preserve? (i :: rest) (i :: q)
-          rw [preserve?_cons_cons, if_pos rfl]]
+          rw [preserve?_cons_cons, ite_eq_left rfl]]
     -- Simplify `(i :: ·) ∘ lift rest = lift (i :: rest)`.
     rw [show ((i : ℕ) :: ·) ∘ lift rest = lift (i :: rest) from by
           funext q

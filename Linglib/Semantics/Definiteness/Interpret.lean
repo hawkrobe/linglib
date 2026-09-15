@@ -184,8 +184,8 @@ theorem interpret_anaphoric_witness_is_indexed
   classical
   rw [interpret_anaphoric] at h
   by_cases hR : R g gs (g d)
-  · rw [if_pos hR] at h; exact (Option.some_inj.mp h).symm
-  · rw [if_neg hR] at h; cases h
+  · rw [ite_eq_left hR] at h; exact (Option.some_inj.mp h).symm
+  · rw [ite_eq_right hR] at h; cases h
 
 /-- An anaphoric definite returns a witness iff the restrictor holds of the
     indexed entity. -/
@@ -224,6 +224,6 @@ theorem interpret_anaphoric_eq_unique_of_existsUnique
     (hSat : R g gs (g i)) (hUniq : ∀ y, R g gs y → y = g i) :
     interpret (.anaphoric R i) g gs = interpret (.unique R sIdx) g gs := by
   rw [interpret_unique_eq_some_of_existsUnique R sIdx g gs (g i) hSat hUniq,
-      interpret_anaphoric, if_pos hSat]
+      interpret_anaphoric, ite_eq_left hSat]
 
 end Definiteness

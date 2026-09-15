@@ -24,7 +24,7 @@ theorem toDigits_ten_injective : Function.Injective (toDigits 10) := by
   intro m n h
   induction m using Nat.strongRecOn generalizing n with
   | _ m ih =>
-  rw [toDigits_eq_if (by omega), toDigits_eq_if (n := n) (by omega)] at h
+  rw [toDigits_eq_ite (by omega), toDigits_eq_ite (n := n) (by omega)] at h
   split_ifs at h with hm hn hn
   · exact (digitChar_eq_digitChar_iff _ hm _ hn).mp (List.singleton_inj.mp h)
   · have hl := congrArg List.length h

@@ -475,7 +475,7 @@ theorem causallyEntails_mono [DecidableEq V] [DecidableValuation α]
     {s s' : Valuation α} (hcons : isConsistentSuper M s s')
     {v : V} {x : α v} (h : causallyEntails M s v x) :
     causallyEntails M s' v x := by
-  induction v using (IsWellFounded.wf (r := M.graph.IsStrictAncestor)).induction with
+  induction v using (inferInstance : M.graph.IsDAG).induction with
   | _ v ih =>
     cases hs'v : s'.get v with
     | some z =>
@@ -508,15 +508,15 @@ theorem causallyEntails_mono [DecidableEq V] [DecidableValuation α]
         simp only [hsv] at h
         by_cases hPar : M.graph.parents v = ∅
         · simp [hPar] at h
-        · simp only [hPar, if_false] at h
+        · simp only [hPar, ite_false] at h
           by_cases hAll : ∀ u : M.graph.parents v, (developDetVtx? M s u.val).isSome
-          · rw [dif_pos hAll] at h
+          · rw [dite_eq_left hAll] at h
             refine developDetVtx?_inner M hs'v hPar
               (fun u => (developDetVtx? M s u.val).get (hAll u)) (fun u => ?_) |>.trans ?_
             · exact ih u.val (Relation.TransGen.single u.property)
                 (Option.some_get (hAll u)).symm
             · exact h
-          · rw [dif_neg hAll] at h
+          · rw [dite_eq_right hAll] at h
             exact absurd h (by simp)
 
 /-- **Exogenous settlement**: `s'` extends `base` by fixing only

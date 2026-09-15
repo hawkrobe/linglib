@@ -210,7 +210,7 @@ theorem literalListener_unif_betweenMeaning {N a b : ℕ} (hb : b ≤ N) (k : �
   split_ifs with h
   · refine (RSA.literalListener_indicator_apply_singleton (unif N)
       (λ p : ℕ × ℕ => Set.Icc p.1 p.2) h).trans ?_
-    rw [unif_apply_Icc hb, unif_apply_singleton, if_pos (h.2.trans hb), mul_one]
+    rw [unif_apply_Icc hb, unif_apply_singleton, ite_eq_left (h.2.trans hb), mul_one]
   · exact RSA.literalListener_indicator_apply_singleton_of_notMem _
       (λ p : ℕ × ℕ => Set.Icc p.1 p.2) h
 
@@ -468,7 +468,7 @@ the speaker never uses it. -/
 theorem table1_speaker_exactly4 {lam : ℝ} (hlam : 0 < lam) :
     speaker lam (λ _ : Unit => table1) L0 () {.exactly4} = 0 :=
   speaker_apply_singleton_eq_zero hlam λ h => by
-    have h3 := h (show L0 .exactly4 {3} = 0 by rw [L0_exactly4_apply_singleton, if_neg (by decide)])
+    have h3 := h (show L0 .exactly4 {3} = 0 by rw [L0_exactly4_apply_singleton, ite_eq_right (by decide)])
     rw [table1_apply_singleton] at h3
     simp [table1Weight] at h3
 
@@ -516,9 +516,9 @@ theorem belief_apply_singleton [MeasurableSingletonClass X] (o : O) (x : X) :
   simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff, Prod.mk.injEq, and_comm]
 
 theorem isProbabilityMeasure_belief [IsFiniteMeasure P] {o : O} (ho : P (Prod.snd ⁻¹' {o}) ≠ 0) :
-    IsProbabilityMeasure (belief P o) :=
-  haveI := cond_isProbabilityMeasure (μ := P) ho
-  Measure.isProbabilityMeasure_map measurable_fst.aemeasurable
+    IsProbabilityMeasure (belief P o) := by
+  have := cond_isProbabilityMeasure (μ := P) ho
+  unfold belief; infer_instance
 
 variable [Fintype X] [MeasurableSingletonClass X] [Fintype M] [MeasurableSingletonClass M]
   (meaning : M → X → ℝ≥0∞)
@@ -861,7 +861,7 @@ theorem wir_ne_bir :
     intro y hy
     rw [cond_apply' (.singleton 1), within_dist,
       Set.inter_eq_right.mpr (Set.singleton_subset_iff.mpr (Set.mem_Icc.mpr ⟨by omega, by omega⟩)),
-      unif_apply_Icc (by omega), unif_apply_singleton, if_pos (by norm_num), mul_one]
+      unif_apply_Icc (by omega), unif_apply_singleton, ite_eq_left (by norm_num), mul_one]
   have hw : (wir (unif 2) ((2 : ℝ≥0∞)⁻¹ • unif 1) (Nat.dist 1)).real {1} = 2 / 3 := by
     rw [measureReal_def, wir, Measure.bind_apply (.singleton 1) measurable_from_nat.aemeasurable,
       lintegral_smul_measure, lintegral_unif, Finset.sum_range_succ, Finset.sum_range_one,
@@ -869,7 +869,7 @@ theorem wir_ne_bir :
     norm_num [ENNReal.toReal_mul, ENNReal.toReal_add, ENNReal.toReal_inv]
   have hb : (bir (unif 2) ((2 : ℝ≥0∞)⁻¹ • unif 1) (Nat.dist 1)).real {1} = 1 / 2 := by
     rw [measureReal_def, bir_apply_singleton, lintegral_unif, Finset.sum_range_succ,
-      Finset.sum_range_succ, Finset.sum_range_one, unif_apply_singleton, if_pos (by norm_num),
+      Finset.sum_range_succ, Finset.sum_range_one, unif_apply_singleton, ite_eq_left (by norm_num),
       one_mul]
     simp only [aroundWeight, Measure.smul_apply, smul_eq_mul, unif_apply_Ici, Nat.dist]
     norm_num [ENNReal.toReal_mul, ENNReal.toReal_add, ENNReal.toReal_inv, ENNReal.toReal_div]

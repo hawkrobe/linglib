@@ -355,7 +355,7 @@ def ex43a : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def ex43a_ : LinguisticExample :=
+def ex43a' : LinguisticExample :=
   { id := "matthewson2013_ex43a'"
     source := ⟨"matthewson-2013", "(43a')"⟩
     reportedIn := none
@@ -391,7 +391,7 @@ def ex44 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def ex44_ : LinguisticExample :=
+def ex44' : LinguisticExample :=
   { id := "matthewson2013_ex44'"
     source := ⟨"matthewson-2013", "(44')"⟩
     reportedIn := none
@@ -535,7 +535,7 @@ def ex53 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def ex53_ : LinguisticExample :=
+def ex53' : LinguisticExample :=
   { id := "matthewson2013_ex53'"
     source := ⟨"matthewson-2013", "(53')"⟩
     reportedIn := none
@@ -571,7 +571,7 @@ def ex56 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def ex56_ : LinguisticExample :=
+def ex56' : LinguisticExample :=
   { id := "matthewson2013_ex56'"
     source := ⟨"matthewson-2013", "(56')"⟩
     reportedIn := none
@@ -625,7 +625,7 @@ def ex73 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def ex73_ : LinguisticExample :=
+def ex73' : LinguisticExample :=
   { id := "matthewson2013_ex73'"
     source := ⟨"matthewson-2013", "(73')"⟩
     reportedIn := none
@@ -661,7 +661,7 @@ def ex83 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def ex83_ : LinguisticExample :=
+def ex83' : LinguisticExample :=
   { id := "matthewson2013_ex83'"
     source := ⟨"matthewson-2013", "(83')"⟩
     reportedIn := none
@@ -715,6 +715,6 @@ def ex96 : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def all : List LinguisticExample := [ex22, ex29, ex30, ex37, ex38a, ex38b, ex39a, ex40a, ex41a, ex42a, ex39b, ex40b, ex41b, ex42b, ex39c, ex40c, ex41c, ex42c, ex43a, ex43a_, ex44, ex44_, ex47a, ex48a, ex47b, ex48b, ex47c, ex48c, ex53, ex53_, ex56, ex56_, ex62, ex73, ex73_, ex83, ex83_, ex95a, ex96]
+def all : List LinguisticExample := [ex22, ex29, ex30, ex37, ex38a, ex38b, ex39a, ex40a, ex41a, ex42a, ex39b, ex40b, ex41b, ex42b, ex39c, ex40c, ex41c, ex42c, ex43a, ex43a', ex44, ex44', ex47a, ex48a, ex47b, ex48b, ex47c, ex48c, ex53, ex53', ex56, ex56', ex62, ex73, ex73', ex83, ex83', ex95a, ex96]
 
 end Matthewson2013.Examples

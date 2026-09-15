@@ -556,7 +556,7 @@ def lexFinNatOf {C : Type*} {n : Nat}
 
 /-- `WithTop (Lex (Fin n → Nat))` is a `LinearOrderedAddCommMonoidWithTop`:
     it extends the ordered cancel monoid with an absorbing top element.
-    Prerequisite for the tropical semiring: mathlib's `Tropical` wrapper
+    Prerequisite for the tropical semiring: mathlib's `MinTropical` wrapper
     then provides `CommSemiring` automatically. -/
 noncomputable instance (n : Nat) :
     LinearOrderedAddCommMonoidWithTop (WithTop (Lex (Fin n → Nat))) where
@@ -586,12 +586,12 @@ noncomputable instance (n : Nat) :
             (le_of_add_le_add_left (le_of_eq h.symm)))
 
 /-- The tropical semiring on `Lex (Fin n → Nat)`:
-    `Tropical (WithTop (Lex (Fin n → Nat)))` is a `CommSemiring` where
+    `MinTropical (WithTop (Lex (Fin n → Nat)))` is a `CommSemiring` where
     addition is `min` (under the lex order) and multiplication is
     componentwise `+`. Derived, not stipulated. Linguistic packaging:
     `Studies/Riggle2009b.lean` after [riggle-2009b]. -/
 noncomputable example (n : Nat) :
-    CommSemiring (Tropical (WithTop (Lex (Fin n → Nat)))) :=
+    CommSemiring (MinTropical (WithTop (Lex (Fin n → Nat)))) :=
   inferInstance
 
 

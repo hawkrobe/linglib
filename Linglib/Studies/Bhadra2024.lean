@@ -91,14 +91,14 @@ noncomputable def ofSet {State : Type*} (O : Set State) : OutcomeCardinality :=
 variable {State : Type*} {O : Set State}
 
 theorem ofSet_eq_multi (h : O.Nontrivial) : ofSet O = .multi := by
-  rw [ofSet, if_pos h]
+  rw [ofSet, ite_eq_left h]
 
 theorem ofSet_eq_singleton (hne : O.Nonempty) (hnt : ¬ O.Nontrivial) :
     ofSet O = .singleton := by
-  rw [ofSet, if_neg hnt, if_pos hne]
+  rw [ofSet, ite_eq_right hnt, ite_eq_left hne]
 
 theorem ofSet_eq_empty (h : ¬ O.Nonempty) : ofSet O = .empty := by
-  rw [ofSet, if_neg (fun hnt => h hnt.nonempty), if_neg h]
+  rw [ofSet, ite_eq_right (fun hnt => h hnt.nonempty), ite_eq_right h]
 
 @[simp] theorem ofSet_singleton (s : State) : ofSet ({s} : Set State) = .singleton :=
   ofSet_eq_singleton ⟨s, rfl⟩ (by rw [Set.not_nontrivial_iff]; exact Set.subsingleton_singleton)
@@ -315,7 +315,7 @@ theorem breakLimb_re : reSem (twice .intact .broken) breakLimbVRO ev₂ () :=
 /-- *#rebreak a sewer* (73a): the broken sewer is not an admissible start state. -/
 theorem breakSewer_not_re (e : Event ℤ) : ¬ reSem (twice .intact .broken) breakSewerVRO e () :=
   not_reSem_of_outcome_not_threshold _ _ () (fun e' he' => by
-    rcases he' with rfl | rfl <;> simp [breakSewerVRO, acts, resState, twice, ev₁, ev₂, Event.τ]) e
+    rcases he' with rfl | rfl <;> simp [breakSewerVRO, resState, twice, ev₁, ev₂, Event.τ]) e
 
 inductive SurfaceState where
   | unaltered | surfaceAltered
@@ -335,7 +335,7 @@ theorem hit_not_un (k : StateFunction Unit SurfaceState ℤ) (e : Event ℤ) :
 /-- *\*rehit* (48): impingement leaves the surface altered, never again unaltered. -/
 theorem hit_not_re (e : Event ℤ) : ¬ reSem (twice .unaltered .surfaceAltered) hitVRO e () :=
   not_reSem_of_outcome_not_threshold _ _ () (fun e' he' => by
-    rcases he' with rfl | rfl <;> simp [hitVRO, acts, resState, twice, ev₁, ev₂, Event.τ]) e
+    rcases he' with rfl | rfl <;> simp [hitVRO, resState, twice, ev₁, ev₂, Event.τ]) e
 
 inductive TruckState where
   | empty | full
@@ -367,7 +367,7 @@ def shatterVRO : VerbOutcomes Unit MirrorState ℤ where
 theorem shatter_not_re (e : Event ℤ) :
     ¬ reSem (twice .intact .shattered) shatterVRO e () :=
   not_reSem_of_outcome_not_threshold _ _ () (fun e' he' => by
-    rcases he' with rfl | rfl <;> simp [shatterVRO, acts, resState, twice, ev₁, ev₂, Event.τ]) e
+    rcases he' with rfl | rfl <;> simp [shatterVRO, resState, twice, ev₁, ev₂, Event.τ]) e
 
 /-- *re-* is indifferent to outcome cardinality: it attaches to a singleton-outcome root. -/
 theorem re_on_singleton :

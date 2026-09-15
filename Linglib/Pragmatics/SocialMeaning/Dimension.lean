@@ -1,5 +1,5 @@
 import Linglib.Core.Combinatorics.SimpleGraph.MaximalIndepSet
-import Mathlib.Data.Sign.Defs
+import Mathlib.Basic.Sign.Defs
 
 /-!
 # Dimensions of social evaluation

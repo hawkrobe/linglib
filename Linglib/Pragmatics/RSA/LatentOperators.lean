@@ -157,7 +157,7 @@ theorem L0LassiterGoodman_apply_lt_iff_prior_lt (P : PMF W) (meaning : U → W �
     L0LassiterGoodman P meaning u h_pos w₁ < L0LassiterGoodman P meaning u h_pos w₂ ↔
       P w₁ < P w₂ := by
   rw [L0LassiterGoodman_apply_lt_iff, h₁, h₂]
-  simp only [if_true, mul_one]
+  simp only [ite_true, mul_one]
 
 /-- The `≤` companion of `L0LassiterGoodman_apply_lt_iff_prior_lt`. -/
 theorem L0LassiterGoodman_apply_le_iff_prior_le (P : PMF W) (meaning : U → W → Bool)
@@ -166,7 +166,7 @@ theorem L0LassiterGoodman_apply_le_iff_prior_le (P : PMF W) (meaning : U → W �
     L0LassiterGoodman P meaning u h_pos w₁ ≤ L0LassiterGoodman P meaning u h_pos w₂ ↔
       P w₁ ≤ P w₂ := by
   rw [L0LassiterGoodman_apply_le_iff, h₁, h₂]
-  simp only [if_true, mul_one]
+  simp only [ite_true, mul_one]
 
 /-! ## Marginalization over latents
 

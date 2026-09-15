@@ -1,4 +1,4 @@
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
 import Linglib.Data.Examples.Ahn2015
 
 /-!

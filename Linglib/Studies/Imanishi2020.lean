@@ -250,7 +250,7 @@ theorem chol_qanjobal_markers :
 
 /-- The external argument never takes genitive from D under the restriction, (66) and (68). -/
 theorem subject_ne_gen (h : c.Restricted) : c.subject ≠ some .gen := by
-  simp only [subject, if_pos h]
+  simp only [subject, ite_eq_left h]
   split <;> simp
 
 /-- The non-finiteness diagnostic of (59) and (60): a set B marker inside the nominalized clause

@@ -502,7 +502,7 @@ theorem genProb_lt_of_ssubset {s₁ s₂ : Finset Ctx} (h : s₂ ⊂ s₁)
     exact_mod_cast Finset.card_pos.mpr ⟨c, hc⟩
   have hlt : (s₂.card : ℚ) < s₁.card := by
     exact_mod_cast Finset.card_lt_card h
-  simp only [genProb, if_pos hc, if_pos hc₁]
+  simp only [genProb, ite_eq_left hc, ite_eq_left hc₁]
   gcongr
 
 /-- Uniform generation probability ranks supports by cardinality at a
@@ -515,7 +515,7 @@ theorem genProb_le_iff_card_le {s₁ s₂ : Finset Ctx} {c : Ctx}
     genProb s₁ c ≤ genProb s₂ c ↔ s₂.card ≤ s₁.card := by
   have hs₁ : (0 : ℚ) < s₁.card := by exact_mod_cast Finset.card_pos.mpr ⟨c, h₁⟩
   have hs₂ : (0 : ℚ) < s₂.card := by exact_mod_cast Finset.card_pos.mpr ⟨c, h₂⟩
-  simp only [genProb, if_pos h₁, if_pos h₂]
+  simp only [genProb, ite_eq_left h₁, ite_eq_left h₂]
   rw [inv_le_inv₀ hs₁ hs₂]
   exact_mod_cast Iff.rfl
 

@@ -393,14 +393,14 @@ theorem evalPortmanteau_eq_functionCompositionDefault (Lindex : Z → L)
     (functionCompositionDefault_applies Lindex bm bn (Lindex wσ.1, wσ.2))
   unfold evalPortmanteau
   by_cases h : (applicable bmn (Lindex wσ.1, wσ.2)).isEmpty = true
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     rw [List.isEmpty_iff] at h
     rw [selectMinimal_eq_none_iff.mpr h, Option.none_or] at hsel
     conv_rhs => rw [evalBlock, evalBlockForm, hsel]
     simp only [functionCompositionDefault, Prod.mk.eta]
     refine Prod.ext rfl ?_
     simp only [evalBlock_snd]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     rw [List.isEmpty_iff] at h
     obtain ⟨r, hr⟩ := List.exists_mem_of_ne_nil _ h
     obtain ⟨r', hr'⟩ := Option.isSome_iff_exists.mp

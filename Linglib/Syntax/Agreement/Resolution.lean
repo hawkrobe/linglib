@@ -1,5 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
-import Mathlib.Logic.Basic
+import Mathlib.Basic.Logic.Basic
 
 /-!
 # Resolution rules

@@ -398,13 +398,13 @@ theorem not_ratioInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j
   have hf : f ∈ ratio := ⟨λ l => if l = j then 2 else 1,
     λ l => by dsimp only; split_ifs <;> norm_num, λ l t => by simp only [f]; split_ifs <;> simp⟩
   have hx : (v.transform f) x = Pi.single i (c j) := funext λ l => by
-    simp only [Profile.transform, v, f, if_true, Pi.single_apply]
+    simp only [Profile.transform, v, f, ite_true, Pi.single_apply]
     split_ifs <;> simp_all
   have hy : (v.transform f) y = Pi.single j (2 * c i) := funext λ l => by
-    simp only [Profile.transform, v, f, hxy.symm, if_false, if_true, Pi.single_apply]
+    simp only [Profile.transform, v, f, hxy.symm, ite_false, ite_true, Pi.single_apply]
     split_ifs <;> simp_all
   have := congrFun (congrFun (h f hf v) x) y
-  simp only [utilitarian, hx, hy, v, if_true, hxy.symm, if_false, dotProduct_single,
+  simp only [utilitarian, hx, hy, v, ite_true, hxy.symm, ite_false, dotProduct_single,
     mul_comm (c j) (c i), eq_iff_iff] at this
   have hpos := mul_pos hi hj
   exact (this.2 le_rfl).not_gt (by linarith)
@@ -504,9 +504,9 @@ theorem iff_of_pattern (hO : Invariant ordinal a) (hI : Independent a)
     funext λ i => by
       simp only [Profile.transform, f]
       rcases lt_trichotomy (u x i) (u y i) with hlt | heq | hgt
-      · rw [if_neg hlt.ne, if_pos hlt, abs_of_pos (sub_pos.2 hlt), div_self (sub_pos.2 hlt).ne']
+      · rw [ite_eq_right hlt.ne, ite_eq_left hlt, abs_of_pos (sub_pos.2 hlt), div_self (sub_pos.2 hlt).ne']
       · simp [heq]
-      · rw [if_neg hgt.ne', if_neg (lt_asymm hgt), if_pos hgt, abs_of_neg (sub_neg.2 hgt),
+      · rw [ite_eq_right hgt.ne', ite_eq_right (lt_asymm hgt), ite_eq_left hgt, abs_of_neg (sub_neg.2 hgt),
           div_neg, div_self (sub_neg.2 hgt).ne]
   have hyw : Profile.transform (f v) v y = Profile.transform (f w) w y := by
     rw [hy, hy]
@@ -527,16 +527,16 @@ theorem decisiveOn_of_almost (hW : WeakOrderValued a) (hP : WeakPareto a) (hI : 
   have hx : v' x = v x := funext λ i => by simp [v', hxy]
   have hz : v' z = v z := funext λ i => by simp [v', hzy]
   have hG : ∀ i ∈ G, v' y i < v' x i := λ i hi => by
-    simp only [v', if_true, if_neg hxy, if_pos hi]
+    simp only [v', ite_true, ite_eq_right hxy, ite_eq_left hi]
     linarith [hv i hi]
   have hG' : ∀ i ∉ G, v' x i < v' y i := λ i hi => by
-    simp only [v', if_true, if_neg hxy, if_neg hi]
+    simp only [v', ite_true, ite_eq_right hxy, ite_eq_right hi]
     linarith [le_max_left (v x i) (v z i)]
   have hyz : ∀ i, v' z i < v' y i := λ i => by
     by_cases hi : i ∈ G
-    · simp only [v', if_true, if_neg hzy, if_pos hi]
+    · simp only [v', ite_true, ite_eq_right hzy, ite_eq_left hi]
       linarith [hv i hi]
-    · simp only [v', if_true, if_neg hzy, if_neg hi]
+    · simp only [v', ite_true, ite_eq_right hzy, ite_eq_right hi]
       linarith [le_max_right (v x i) (v z i)]
   have := hW.1 v'
   have h₃ : AsymmRel (a v') x z := (h v' hG hG').trans_le (hP v' y z hyz).1
@@ -554,15 +554,15 @@ theorem decisiveOn_of_almost' (hW : WeakOrderValued a) (hP : WeakPareto a) (hI :
   have hy : v' y = v y := funext λ i => by simp [v', hxy.symm]
   have hzx' : ∀ i, v' x i < v' z i := λ i => by
     by_cases hi : i ∈ G
-    · simp only [v', if_true, if_neg hzx, if_pos hi]
+    · simp only [v', ite_true, ite_eq_right hzx, ite_eq_left hi]
       linarith [hv i hi]
-    · simp only [v', if_true, if_neg hzx, if_neg hi]
+    · simp only [v', ite_true, ite_eq_right hzx, ite_eq_right hi]
       linarith [min_le_left (v z i) (v y i)]
   have hG : ∀ i ∈ G, v' y i < v' x i := λ i hi => by
-    simp only [v', if_true, if_neg hxy.symm, if_pos hi]
+    simp only [v', ite_true, ite_eq_right hxy.symm, ite_eq_left hi]
     linarith [hv i hi]
   have hG' : ∀ i ∉ G, v' x i < v' y i := λ i hi => by
-    simp only [v', if_true, if_neg hxy.symm, if_neg hi]
+    simp only [v', ite_true, ite_eq_right hxy.symm, ite_eq_right hi]
     linarith [min_le_right (v z i) (v y i)]
   have := hW.1 v'
   have h₃ : AsymmRel (a v') z y := (hP v' z x hzx').trans_le (h v' hG hG').1
@@ -715,7 +715,7 @@ end Arrow
 
 section Scores
 
-variable [Field K] [LinearOrder K] [IsStrictOrderedRing K]
+variable [Field K]
 
 /-- Lift Bool dimension predicates to `K`-valued measure functions.
     Each `d : α → Bool` becomes `λ x => if d x then 1 else 0`. -/
@@ -726,6 +726,31 @@ def boolMeasures (dims : List (α → Bool)) : List (α → K) :=
     measure function along one dimension ([waldon-etal-2023]'s eq. (8)). -/
 def weightedScore (weights : List K) (measures : List (α → K)) (x : α) : K :=
   (weights.zip measures).foldl (λ acc (w, f) => acc + w * f x) 0
+
+/-- Multiplicative (Cobb-Douglas) score: Πᵢ fᵢ(x).
+    [sassoon-fadlon-2017] argue natural kind nouns compose
+    multiplicatively: failure on ANY single dimension kills membership.
+    Contrast with additive `weightedScore` for artifact nouns. -/
+def multiplicativeScore (measures : List (α → K)) (x : α) : K :=
+  measures.foldl (λ acc f => acc * f x) 1
+
+/-- The weighted score is the sum of the weighted measurements. -/
+theorem weightedScore_eq_sum (weights : List K) (measures : List (α → K)) (x : α) :
+    weightedScore weights measures x = ((weights.zip measures).map λ p => p.1 * p.2 x).sum := by
+  rw [weightedScore, List.sum_eq_foldl, ← List.foldl_map]
+
+/-- The multiplicative score is the product of the measurements. -/
+theorem multiplicativeScore_eq_prod (measures : List (α → K)) (x : α) :
+    multiplicativeScore measures x = (measures.map (· x)).prod := by
+  rw [multiplicativeScore, List.prod_eq_foldl, ← List.foldl_map]
+
+/-- A natural kind fails on any single dimension: one zero measurement zeroes the product. -/
+theorem multiplicativeScore_eq_zero {measures : List (α → K)} {x : α} {f : α → K}
+    (hf : f ∈ measures) (h : f x = 0) : multiplicativeScore measures x = 0 := by
+  rw [multiplicativeScore_eq_prod]
+  exact List.prod_eq_zero (List.mem_map.2 ⟨f, hf, h⟩)
+
+variable [LinearOrder K] [IsStrictOrderedRing K]
 
 /-- Spatially-normalized weighted score: (Σᵢ wᵢ·fᵢ(x)) / s(x).
 
@@ -778,7 +803,7 @@ theorem spatialNormalizedScore_le_one
     (hpos : 0 < spatial x) :
     spatialNormalizedScore weights measures spatial x ≤ 1 := by
   unfold spatialNormalizedScore
-  rw [if_neg hpos.ne']
+  rw [ite_eq_right hpos.ne']
   exact div_le_one_of_le₀ hsum hpos.le
 
 /-- A nonnegative weighted score over a nonnegative extent normalises to a nonnegative score;
@@ -792,31 +817,8 @@ theorem spatialNormalizedScore_nonneg
     0 ≤ spatialNormalizedScore weights measures spatial x := by
   unfold spatialNormalizedScore
   by_cases h : spatial x = 0
-  · rw [if_pos h]
-  · rw [if_neg h]; exact div_nonneg hnum hspatial
-
-/-- Multiplicative (Cobb-Douglas) score: Πᵢ fᵢ(x).
-    [sassoon-fadlon-2017] argue natural kind nouns compose
-    multiplicatively: failure on ANY single dimension kills membership.
-    Contrast with additive `weightedScore` for artifact nouns. -/
-def multiplicativeScore (measures : List (α → K)) (x : α) : K :=
-  measures.foldl (λ acc f => acc * f x) 1
-
-/-- The weighted score is the sum of the weighted measurements. -/
-theorem weightedScore_eq_sum (weights : List K) (measures : List (α → K)) (x : α) :
-    weightedScore weights measures x = ((weights.zip measures).map λ p => p.1 * p.2 x).sum := by
-  rw [weightedScore, List.sum_eq_foldl, ← List.foldl_map]
-
-/-- The multiplicative score is the product of the measurements. -/
-theorem multiplicativeScore_eq_prod (measures : List (α → K)) (x : α) :
-    multiplicativeScore measures x = (measures.map (· x)).prod := by
-  rw [multiplicativeScore, List.prod_eq_foldl, ← List.foldl_map]
-
-/-- A natural kind fails on any single dimension: one zero measurement zeroes the product. -/
-theorem multiplicativeScore_eq_zero {measures : List (α → K)} {x : α} {f : α → K}
-    (hf : f ∈ measures) (h : f x = 0) : multiplicativeScore measures x = 0 := by
-  rw [multiplicativeScore_eq_prod]
-  exact List.prod_eq_zero (List.mem_map.2 ⟨f, hf, h⟩)
+  · rw [ite_eq_left h]
+  · rw [ite_eq_right h]; exact div_nonneg hnum hspatial
 
 /-- An artifact compensates: with positive weights and nonnegative measurements, one positive
 measurement makes the weighted score positive. -/

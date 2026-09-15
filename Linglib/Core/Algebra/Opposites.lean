@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 [UPSTREAM] candidate: `Mathlib.Algebra.Opposites`, where `MulOpposite` is defined.
 -/
 import Mathlib.Algebra.Opposites
-import Mathlib.Data.Finite.Defs
+import Mathlib.Basic.Finite.Defs
 
 /-!
 # Finiteness of the multiplicative opposite

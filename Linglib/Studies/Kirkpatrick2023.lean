@@ -66,10 +66,10 @@ def holds : Prop := ∀ e ∈ g.update σ, g.restrictor e → g.scope e
 
 instance : Decidable (g.holds σ) := by unfold holds; infer_instance
 
-theorem update_of_exists (h : ∃ e ∈ σ, g.restrictor e) : g.update σ = σ := if_pos h
+theorem update_of_exists (h : ∃ e ∈ σ, g.restrictor e) : g.update σ = σ := ite_eq_left h
 
 theorem update_of_forall (h : ∀ e ∈ σ, ¬ g.restrictor e) : g.update σ = σ ∪ g.normal :=
-  if_neg λ ⟨e, he, hr⟩ => h e he hr
+  ite_eq_right λ ⟨e, he, hr⟩ => h e he hr
 
 /-- Expansion is one-way, fn. 24: the horizon never shrinks. -/
 theorem subset_update : σ ⊆ g.update σ := by

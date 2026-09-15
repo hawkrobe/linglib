@@ -76,7 +76,7 @@ variable {T C : Type*} [Fintype T] [DecidableEq T] [MeasurableSpace T]
 
 theorem uniformListener_liftSem_none_apply_singleton (t : T) :
     uniformListener (liftSem sem) none {t} = (Fintype.card T : ℝ≥0∞)⁻¹ := by
-  rw [uniformListener_apply_singleton, liftSem_none, if_pos (Finset.mem_univ t),
+  rw [uniformListener_apply_singleton, liftSem_none, ite_eq_left (Finset.mem_univ t),
     Finset.card_univ]
 
 /-- The share of a content utterance: its informativity weight over the state's profile sum

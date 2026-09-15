@@ -118,7 +118,7 @@ def MeasurementLevel.AdmitsFactorPhrase (l : MeasurementLevel) : Prop :=
   l = .ratio ∨ l = .extensive
 
 instance : DecidablePred MeasurementLevel.AdmitsFactorPhrase :=
-  fun l => inferInstanceAs (Decidable (_ ∨ _))
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Subcomparatives ("shorter than the house is high") require extensive
     commensurability: two measure functions sharing a unit. Hence

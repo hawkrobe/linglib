@@ -13,7 +13,7 @@ the RUM/decoder picture to the parsing-theoretic semiring picture
 
 | Decoder            | Underlying algebraic structure                    |
 |--------------------|---------------------------------------------------|
-| `argminDecoder`    | min-plus tropical semiring `Tropical R`           |
+| `argminDecoder`    | min-plus tropical semiring `MinTropical R`           |
 | `argmaxDecoder`    | max-plus semiring (= tropical over `OrderDual R`) |
 | `softmaxDecoder α` | log-sum-exp ("warped") semiring on `ℝ`            |
 
@@ -24,7 +24,7 @@ job is then to identify which candidates realise the additive identity.
 
 ## What this file proves
 
-The bridge to mathlib's `Tropical R` (a min-plus semiring): the tropical
+The bridge to mathlib's `MinTropical R` (a min-plus semiring): the tropical
 sum of `trop`-tagged scores is `trop` of their `inf`. Specialised to a
 Finset of candidates, this says that choosing the additive identity in
 the tropical semiring picks out exactly the score that `argminDecoder`
@@ -49,7 +49,7 @@ exactly the argmax condition.
 
 namespace Core.Optimization
 
-open Tropical Filter Topology
+open MinTropical Filter Topology
 
 -- ============================================================================
 -- § 1: Tropical Sum = Inf (Min-Plus / OT)
@@ -57,7 +57,7 @@ open Tropical Filter Topology
 
 /-- The tropical sum of scores equals the `inf` of the underlying values.
 
-    Aggregating "or" alternatives in `Tropical R` (where `+` is `min`)
+    Aggregating "or" alternatives in `MinTropical R` (where `+` is `min`)
     computes the minimum. This is the algebraic statement underlying
     `argminDecoder`: the argmin selects the candidate realising the
     tropical sum.

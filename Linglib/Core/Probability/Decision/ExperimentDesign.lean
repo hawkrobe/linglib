@@ -3,7 +3,7 @@ import Linglib.Core.Analysis.Convex.Function
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Analysis.Convex.Jensen
 import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 
 /-!
 # Experiments, posteriors and the expected value of information
@@ -187,7 +187,7 @@ belief vector, hence convex. -/
 theorem convexOn_decisionValue : ConvexOn ℝ Set.univ (decisionValue U actions) := by
   by_cases h : actions.Nonempty
   · have heq : decisionValue U actions
-        = λ post => actions.sup' h λ a => ∑ w, post w * U w a := funext λ post => dif_pos h
+        = λ post => actions.sup' h λ a => ∑ w, post w * U w a := funext λ post => dite_eq_left h
     rw [heq]
     refine ConvexOn.finset_sup'_apply h λ a _ => ?_
     have hlin : (λ post : W → ℝ => ∑ w, post w * U w a)
@@ -197,7 +197,7 @@ theorem convexOn_decisionValue : ConvexOn ℝ Set.univ (decisionValue U actions)
         mul_comm]
     rw [hlin]
     exact LinearMap.convexOn _ convex_univ
-  · have heq : decisionValue U actions = λ _ => (0 : ℝ) := funext λ post => dif_neg h
+  · have heq : decisionValue U actions = λ _ => (0 : ℝ) := funext λ post => dite_eq_right h
     rw [heq]
     exact convexOn_const 0 convex_univ
 
@@ -207,11 +207,11 @@ theorem decisionValue_smul {c : ℝ} (hc : 0 ≤ c) :
   funext post
   simp only [decisionValue, Pi.smul_apply, smul_eq_mul]
   by_cases h : actions.Nonempty
-  · rw [dif_pos h, dif_pos h, mul₀_sup' hc]
+  · rw [dite_eq_left h, dite_eq_left h, mul₀_sup' hc]
     exact sup'_congr h rfl λ a _ => by
       rw [mul_sum]
       exact sum_congr rfl λ w _ => by ring
-  · rw [dif_neg h, dif_neg h, mul_zero]
+  · rw [dite_eq_right h, dite_eq_right h, mul_zero]
 
 namespace ObservationModel
 
@@ -248,7 +248,7 @@ private lemma marginal_mul_decisionValue [DecidableEq O] [DecidableEq W] (classi
       acts.sup' hacts (λ a => ((∑ w ∈ fiber, dp.prior w * dp.utility w a : ℚ) : ℝ)) :=
     apply_sup'_eq_sup'_comp hacts _ (λ x y => Rat.cast_max x y)
   rw [hcast_sup]
-  simp only [decisionValue, dif_pos hacts]
+  simp only [decisionValue, dite_eq_left hacts]
   by_cases h0 : m = 0
   · rw [h0, zero_mul]
     rw [hm_eq] at h0
@@ -268,7 +268,7 @@ private lemma marginal_mul_decisionValue [DecidableEq O] [DecidableEq W] (classi
       intro w
       change (if m = 0 then (0 : ℝ)
               else (dp.prior w : ℝ) * (if classify w = o then 1 else 0) / m) = _
-      rw [if_neg h0]
+      rw [ite_eq_right h0]
     simp_rw [hpost_eq]
     rw [show (∑ w : W, ((dp.prior w : ℝ) * (if classify w = o then 1 else 0) / m) *
           ((dp.utility w a : ℝ))) =
@@ -311,7 +311,7 @@ theorem eig_deterministic_eq_questionUtility [DecidableEq O] [DecidableEq W] [De
         = acts.sup' hacts (λ a => ∑ w ∈ cell, dp.prior w * dp.utility w a) := by
     intro cell
     unfold DecisionProblem.cellProbability DecisionProblem.condValue
-    rw [dif_pos hacts]
+    rw [dite_eq_left hacts]
     have htp_nonneg : 0 ≤ cell.sum dp.prior := sum_nonneg (λ w _ => hprior w)
     by_cases htp : cell.sum dp.prior = 0
     · rw [htp, zero_mul]
@@ -325,13 +325,13 @@ theorem eig_deterministic_eq_questionUtility [DecidableEq O] [DecidableEq W] [De
       have hcEU : DecisionProblem.condExpectedUtility dp cell a
           = cell.sum (λ w => dp.prior w / cell.sum dp.prior * dp.utility w a) := by
         show (if cell.sum dp.prior = 0 then (0 : ℚ) else _) = _
-        rw [if_neg htp]
+        rw [ite_eq_right htp]
       rw [hcEU, mul_sum]
       refine sum_congr rfl (λ w _ => ?_)
       rw [div_mul_eq_mul_div, ← mul_div_assoc, mul_div_cancel_left₀ _ htp]
   have hdpv : decisionValue (λ w a => (dp.utility w a : ℝ)) acts (λ w => (dp.prior w : ℝ))
       = ((DecisionProblem.value dp acts : ℚ) : ℝ) := by
-    simp only [decisionValue, DecisionProblem.value, dif_pos hacts]
+    simp only [decisionValue, DecisionProblem.value, dite_eq_left hacts]
     rw [show acts.sup' hacts (λ a => ∑ w : W, (dp.prior w : ℝ) * (dp.utility w a : ℝ))
          = acts.sup' hacts (λ a => ((DecisionProblem.expectedUtility dp a : ℚ) : ℝ)) from ?_]
     · exact (apply_sup'_eq_sup'_comp hacts _ (λ x y => Rat.cast_max x y)).symm

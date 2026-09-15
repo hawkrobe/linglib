@@ -150,12 +150,12 @@ noncomputable def projectKComponent (k : ℕ) :
 @[simp] theorem projectKComponent_of'_eq (k : ℕ) (F : Forest (UnorderedTree α))
     (h : F.card = k) :
     projectKComponent (R := R) k (of' F) = of' F := by
-  rw [projectKComponent, ConnesKreimer.linearLift_of', if_pos h]
+  rw [projectKComponent, ConnesKreimer.linearLift_of', ite_eq_left h]
 
 @[simp] theorem projectKComponent_of'_ne (k : ℕ) (F : Forest (UnorderedTree α))
     (h : F.card ≠ k) :
     projectKComponent (R := R) k (of' F) = 0 := by
-  rw [projectKComponent, ConnesKreimer.linearLift_of', if_neg h]
+  rw [projectKComponent, ConnesKreimer.linearLift_of', ite_eq_right h]
 
 /-! ### The FormSet operator `FS^(k)` (MCB Def 1.16.1)
 

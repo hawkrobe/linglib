@@ -111,7 +111,7 @@ theorem getElem?_commonPrefix_ne {α : Type*} [DecidableEq α] :
     · subst h
       simp only [commonPrefix]
       exact getElem?_commonPrefix_ne
-    · simp only [commonPrefix, if_neg h, List.length_nil,
+    · simp only [commonPrefix, ite_eq_right h, List.length_nil,
         List.getElem?_cons_zero, Option.some.injEq]
       rintro rfl rfl
       exact h

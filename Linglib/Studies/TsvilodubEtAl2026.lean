@@ -72,12 +72,12 @@ variable {dp actions}
 
 theorem utility_le_bestUtilityAt (hne : actions.Nonempty) {a : A} (ha : a ∈ actions) (w : W) :
     dp.utility w a ≤ bestUtilityAt dp actions w := by
-  rw [bestUtilityAt, dif_pos hne]
+  rw [bestUtilityAt, dite_eq_left hne]
   exact Finset.le_sup' _ ha
 
 private theorem condExpectedUtility_singleton {w : W} (h : dp.prior w ≠ 0) (a : A) :
     dp.condExpectedUtility {w} a = dp.utility w a := by
-  simp only [condExpectedUtility, Finset.sum_singleton, if_neg h, div_self h, one_mul]
+  simp only [condExpectedUtility, Finset.sum_singleton, ite_eq_right h, div_self h, one_mul]
 
 private theorem prior_mul_condValue_singleton (w : W) :
     dp.prior w * dp.condValue actions {w} = dp.prior w * bestUtilityAt dp actions w := by
@@ -231,7 +231,7 @@ theorem policy_prefers_ms1_of_confident {α : ℝ} (hα : 0 < α) {ε δ : ℚ} 
 
 private theorem bestUtilityAt_problem {ε δ : ℚ} (hδ : 0 ≤ δ) (g : Goal) :
     bestUtilityAt (problem ε δ) Finset.univ g = 1 := by
-  rw [bestUtilityAt, dif_pos Finset.univ_nonempty]
+  rw [bestUtilityAt, dite_eq_left Finset.univ_nonempty]
   refine le_antisymm (Finset.sup'_le _ _ λ r _ => ?_) ?_
   · cases g <;> cases r <;> simp [problem] <;> linarith
   · cases g

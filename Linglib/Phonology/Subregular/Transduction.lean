@@ -113,9 +113,9 @@ theorem emitAt_eq_of_agree {r : ℕ} {T : Transduction α β}
   intro cl hcl
   have hb := hT c cl hcl
   by_cases h : cl.1.Realize w n
-  · rw [if_pos h, if_pos ((QF.BackBounded.realize_congr hn hn' hlbl hedge hb).mp h)]
-  · rw [if_neg h,
-      if_neg (fun hh => h ((QF.BackBounded.realize_congr hn hn' hlbl hedge hb).mpr hh))]
+  · rw [ite_eq_left h, ite_eq_left ((QF.BackBounded.realize_congr hn hn' hlbl hedge hb).mp h)]
+  · rw [ite_eq_right h,
+      ite_eq_right (fun hh => h ((QF.BackBounded.realize_congr hn hn' hlbl hedge hb).mpr hh))]
 
 end Transduction
 

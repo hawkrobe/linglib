@@ -185,7 +185,7 @@ theorem ruleCount_node_terminal (r : ContextFreeRule T N) (a : T)
     (cs : List (RoseTree (Symbol T N))) :
     ruleCount r (node (.terminal a) cs) = (cs.map (ruleCount r)).sum := by
   simp only [ruleCount, offspring_node, List.count_cons, List.count_flatten, List.map_map,
-    Function.comp_def, beq_iff_eq, Prod.mk.injEq, reduceCtorEq, false_and, if_false, add_zero]
+    Function.comp_def, beq_iff_eq, Prod.mk.injEq, reduceCtorEq, false_and, ite_false, add_zero]
   rfl
 
 /-- The number of applications of the rule `r` in a corpus of trees. -/

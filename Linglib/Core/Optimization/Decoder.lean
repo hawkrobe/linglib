@@ -34,7 +34,7 @@ For *deterministic* (point-mass noise) decoders, the algebraic structure
 on scores is a semiring:
 
   - `argmaxDecoder` over `ℝ`         ↔  max-plus semiring
-  - `argminDecoder` over `Tropical R` ↔  min-plus (tropical) semiring
+  - `argminDecoder` over `MinTropical R` ↔  min-plus (tropical) semiring
   - `softmaxDecoder` over `ℝ`         ↔  log-sum-exp ("warped") semiring
 
 The zero-temperature limit `softmax → argmax` is precisely the semiring
@@ -150,7 +150,7 @@ instance softmaxDecoder_isProb {Cand : Type*} (α : ℝ) :
       show (if c ∈ cands then Real.exp (α * score c) /
                 ∑ c' ∈ cands, Real.exp (α * score c') else 0)
             = Real.exp (α * score c) / ∑ c' ∈ cands, Real.exp (α * score c')
-        from if_pos hc)]
+        from ite_eq_left hc)]
     rw [← Finset.sum_div, div_self (ne_of_gt hZ)]
 
 /-- For a non-empty candidate set with a linearly ordered score, the

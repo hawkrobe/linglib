@@ -185,12 +185,12 @@ theorem it_of_inanimate {s : Stage} {a : Antecedent} (hs : a.singular = true)
   obtain ⟨b, hb, hsp⟩ := List.mem_filterMap.1 hf
   obtain ⟨g, hg, rfl⟩ := List.mem_map.1 hb
   have hg' : g = none := by
-    simp only [Stage.genders, hi, if_true, List.mem_append, List.mem_singleton] at hg
+    simp only [Stage.genders, hi, ite_true, List.mem_append, List.mem_singleton] at hg
     rcases hg with h | h
     · split at h <;> simp at h; exact h
     · exact h
   subst hg'
-  simp only [Antecedent.numFeatures, hs, hi, if_true, Option.map_none, Option.toList_none,
+  simp only [Antecedent.numFeatures, hs, hi, ite_true, Option.map_none, Option.toList_none,
     List.append_nil, List.singleton_append] at hsp
   rw [(by decide : spellout [.sg, .inanim] = some "it")] at hsp
   exact (Option.some.inj hsp).symm

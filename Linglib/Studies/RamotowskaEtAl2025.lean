@@ -168,9 +168,9 @@ theorem unembedded (h : Mixed sim A w D B) {d : ι} (hd : d ∈ D) :
   have hnot' : ¬ ∀ w' ∈ closest sim A w, ¬ B d w' := λ hnone => hnone w₁ hw₁ hB₁
   refine ⟨hnot, ?_, ?_⟩
   · unfold selectionalCounterfactual
-    rw [if_neg hnot, if_neg hnot']
+    rw [ite_eq_right hnot, ite_eq_right hnot']
   · unfold homogeneityCounterfactual
-    rw [if_neg hnot, if_neg hnot']
+    rw [ite_eq_right hnot, ite_eq_right hnot']
 
 /-- The universal theory turns on polarity: since every player's counterfactual is false, the
 positive sentences are false and the negative ones true. -/

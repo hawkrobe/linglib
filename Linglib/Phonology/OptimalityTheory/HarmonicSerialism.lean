@@ -56,6 +56,27 @@ open Constraints Core.Optimization.Evaluation
 
 /-! ### The serial search -/
 
+/-- Lift a relation to `Option`, with `none` a bottom below every `some`: the
+well-founded carrier for the search orbit, where failure counts as a final descent. -/
+private def optionRel {C : Type*} (lt : C → C → Prop) : Option C → Option C → Prop
+  | _, none => False
+  | none, some _ => True
+  | some a, some b => lt a b
+
+private theorem optionRel_wf {C : Type*} {lt : C → C → Prop} (wf : WellFounded lt) :
+    WellFounded (optionRel lt) := by
+  have hnone : Acc (optionRel lt) none := Acc.intro _ fun _ hy => hy.elim
+  refine ⟨fun o => ?_⟩
+  cases o with
+  | none => exact hnone
+  | some a =>
+    induction a using wf.induction with
+    | _ a IH =>
+      refine Acc.intro _ fun o' ho' => ?_
+      match o', ho' with
+      | none, _ => exact hnone
+      | some a', h => exact IH a' h
+
 section Iteration
 
 variable {C : Type*} [DecidableEq C]
@@ -101,35 +122,14 @@ include hcv in
 /-- One round from a non-converged form recurses with the picked successor. -/
 theorem iterateGen_succ_of_step (hpick : pick (step c) = some c') :
     iterateGen step pick (n + 1) c = iterateGen step pick n c' := by
-  rw [iterateGen, Function.iterate_succ_apply, hsStep_some, if_neg hcv, hpick]; rfl
+  rw [iterateGen, Function.iterate_succ_apply, hsStep_some, ite_eq_right hcv, hpick]; rfl
 
 include hcv in
 /-- One round from a non-converged form where `pick` fails yields `none`, durably. -/
 theorem iterateGen_of_pickFail (hpick : pick (step c) = none) :
     iterateGen step pick (n + 1) c = none := by
-  rw [iterateGen, Function.iterate_succ_apply, hsStep_some, if_neg hcv, hpick]
+  rw [iterateGen, Function.iterate_succ_apply, hsStep_some, ite_eq_right hcv, hpick]
   exact Function.IsFixedPt.iterate isFixedPt_hsStep_none n
-
-/-- Lift a relation to `Option`, with `none` a bottom below every `some`: the
-well-founded carrier for the search orbit, where failure counts as a final descent. -/
-private def optionRel (lt : C → C → Prop) : Option C → Option C → Prop
-  | _, none => False
-  | none, some _ => True
-  | some a, some b => lt a b
-
-private theorem optionRel_wf {lt : C → C → Prop} (wf : WellFounded lt) :
-    WellFounded (optionRel lt) := by
-  have hnone : Acc (optionRel lt) none := Acc.intro _ fun _ hy => hy.elim
-  refine ⟨fun o => ?_⟩
-  cases o with
-  | none => exact hnone
-  | some a =>
-    induction a using wf.induction with
-    | _ a IH =>
-      refine Acc.intro _ fun o' ho' => ?_
-      match o', ho' with
-      | none, _ => exact hnone
-      | some a', h => exact IH a' h
 
 /-- The search step moves every non-fixed point strictly down the lifted harmony
 order: non-converged forms descend by `sound`, failure descends to the bottom. -/
@@ -142,9 +142,9 @@ private theorem hsStep_descends {lt : C → C → Prop}
   | some a =>
     rw [hsStep_some] at hne ⊢
     by_cases hcv : step a = {a}
-    · rw [if_pos hcv] at hne
+    · rw [ite_eq_left hcv] at hne
       exact absurd rfl hne
-    · rw [if_neg hcv] at hne ⊢
+    · rw [ite_eq_right hcv] at hne ⊢
       match hp : pick (step a) with
       | none => exact trivial
       | some a' =>
@@ -219,7 +219,7 @@ with no intermediate combinator. Simp-normalized toward `Converged`. -/
 /-- GEN-restriction to the faithful candidate forces convergence. -/
 theorem converged_of_singleton_gen (h : D.gen c = ({c} : Finset C)) : D.Converged c := by
   show D.evalFilter (D.gen c) = ({c} : Finset C)
-  rw [h, evalFilter, dif_pos (Finset.singleton_nonempty c)]
+  rw [h, evalFilter, dite_eq_left (Finset.singleton_nonempty c)]
   exact argMinSet_singleton c _
 
 /-- An `n`-round HS derivation: `iterateGen` over `stepOptimum` with a caller-supplied

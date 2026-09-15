@@ -217,13 +217,13 @@ theorem holds_exists (i j : NonemptyInterval T) : ∃ r : AllenRelation, r.holds
 def sgn (a b : T) : Ordering :=
   if a < b then .lt else if a = b then .eq else .gt
 
-theorem sgn_lt {a b : T} (h : a < b) : sgn a b = .lt := if_pos h
+theorem sgn_lt {a b : T} (h : a < b) : sgn a b = .lt := ite_eq_left h
 
 theorem sgn_eq {a b : T} (h : a = b) : sgn a b = .eq := by
   subst h; simp [sgn]
 
 theorem sgn_gt {a b : T} (h : b < a) : sgn a b = .gt := by
-  unfold sgn; rw [if_neg (lt_asymm h), if_neg (ne_of_gt h)]
+  unfold sgn; rw [ite_eq_right (lt_asymm h), ite_eq_right (ne_of_gt h)]
 
 /-- The 4-tuple signature of an interval pair: pairwise comparisons of
     `(i.fst vs j.fst, i.fst vs j.snd, i.snd vs j.fst,

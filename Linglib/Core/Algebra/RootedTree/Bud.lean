@@ -107,8 +107,8 @@ theorem getElem?_inputs_node {l r : Tree Ω} :
     (node c l r).inputs[i]? =
       if i < l.numInputs then l.inputs[i]? else r.inputs[i - l.numInputs]? := by
   by_cases h : i < l.numInputs
-  · rw [if_pos h, inputs_node, List.getElem?_append_left (by simpa using h)]
-  · rw [if_neg h, inputs_node,
+  · rw [ite_eq_left h, inputs_node, List.getElem?_append_left (by simpa using h)]
+  · rw [ite_eq_right h, inputs_node,
       List.getElem?_append_right (by simpa using not_lt.mp h), length_inputs]
 
 /-- Graft `s` onto the `i`-th leaf of `x`: the free binary operad's
@@ -148,9 +148,9 @@ theorem graft_unit (h : x.inputs[i]? = some d) : x.graft i (leaf d) = x := by
     rw [getElem?_inputs_node] at h
     rw [graft_node]
     by_cases hi : i < l.numInputs
-    · rw [if_pos hi] at h ⊢
+    · rw [ite_eq_left hi] at h ⊢
       rw [ihl h]
-    · rw [if_neg hi] at h ⊢
+    · rw [ite_eq_right hi] at h ⊢
       rw [ihr h]
 
 /-- Grafting splices the inserted tree's inputs into the host's. -/
@@ -165,12 +165,12 @@ theorem inputs_graft (h : i < x.numInputs) :
     have hlen : l.inputs.length = l.numInputs := l.length_inputs
     rw [graft_node]
     by_cases hi : i < l.numInputs
-    · rw [if_pos hi]
+    · rw [ite_eq_left hi]
       have h0 : i - l.numInputs = 0 := by omega
       have h1 : i + 1 - l.numInputs = 0 := by omega
       simp [ihl hi, List.take_append,
         List.drop_append, h0, h1]
-    · rw [if_neg hi]
+    · rw [ite_eq_right hi]
       have hle : l.inputs.length ≤ i := by omega
       have h2 : i - l.numInputs < r.numInputs := by
         have := numInputs_node (c := c) (l := l) (r := r) ▸ h
@@ -214,14 +214,14 @@ theorem mem_inputs_graft (h : x.inputs[i]? = some s.out) :
     rw [getElem?_inputs_node] at h
     rw [graft_node]
     by_cases hi : i < l.numInputs
-    · rw [if_pos hi] at h ⊢
+    · rw [ite_eq_left hi] at h ⊢
       intro d hd
       rcases List.mem_append.mp hd with hd | hd
       · rcases ihl h d hd with hd | hd
         · exact .inl (List.mem_append.mpr (.inl hd))
         · exact .inr hd
       · exact .inl (List.mem_append.mpr (.inr hd))
-    · rw [if_neg hi] at h ⊢
+    · rw [ite_eq_right hi] at h ⊢
       intro d hd
       rcases List.mem_append.mp hd with hd | hd
       · exact .inl (List.mem_append.mpr (.inl hd))
@@ -244,14 +244,14 @@ theorem mem_inputs_graft_of_mem (h : x.inputs[i]? = some s.out) :
     rw [getElem?_inputs_node] at h
     rw [graft_node]
     by_cases hi : i < l.numInputs
-    · rw [if_pos hi] at h ⊢
+    · rw [ite_eq_left hi] at h ⊢
       intro d hd
       rcases List.mem_append.mp hd with hd | hd
       · rcases ihl h d hd with hd | hd
         · exact .inl (List.mem_append.mpr (.inl hd))
         · exact .inr hd
       · exact .inl (List.mem_append.mpr (.inr hd))
-    · rw [if_neg hi] at h ⊢
+    · rw [ite_eq_right hi] at h ⊢
       intro d hd
       rcases List.mem_append.mp hd with hd | hd
       · exact .inl (List.mem_append.mpr (.inl hd))
@@ -271,9 +271,9 @@ theorem mem_inputs_graft_of_mem_right (h : x.inputs[i]? = some s.out) :
     rw [getElem?_inputs_node] at h
     rw [graft_node]
     by_cases hi : i < l.numInputs
-    · rw [if_pos hi] at h ⊢
+    · rw [ite_eq_left hi] at h ⊢
       exact fun d hd => List.mem_append.mpr (.inl (ihl h d hd))
-    · rw [if_neg hi] at h ⊢
+    · rw [ite_eq_right hi] at h ⊢
       exact fun d hd => List.mem_append.mpr (.inr (ihr h d hd))
 
 /-- Nested insertions compose, with the inner index offset by the outer
@@ -289,13 +289,13 @@ theorem graft_graft (hi : i < x.numInputs) (hj : j < s.numInputs) :
     · have hlg : i + j < (l.graft i s).numInputs := by
         rw [numInputs_graft hil]
         omega
-      rw [graft_node, if_pos hil, graft_node, if_pos hlg, graft_node,
-        if_pos hil, ihl hil]
+      rw [graft_node, ite_eq_left hil, graft_node, ite_eq_left hlg, graft_node,
+        ite_eq_left hil, ihl hil]
     · have hir : i - l.numInputs < r.numInputs := by
         have := numInputs_node (c := c) (l := l) (r := r) ▸ hi
         omega
-      rw [graft_node, if_neg hil, graft_node, if_neg (by omega), graft_node,
-        if_neg hil, (by omega : i + j - l.numInputs = i - l.numInputs + j),
+      rw [graft_node, ite_eq_right hil, graft_node, ite_eq_right (by omega), graft_node,
+        ite_eq_right hil, (by omega : i + j - l.numInputs = i - l.numInputs + j),
         ihr hir]
 
 /-- `P` holds at every internal vertex, of the vertex color and the two
@@ -327,9 +327,9 @@ theorem NodeLocal.graft {P : Ω → Ω → Ω → Prop} (hx : x.NodeLocal P)
     rw [getElem?_inputs_node] at h
     rw [graft_node]
     by_cases hi : i < l.numInputs
-    · rw [if_pos hi] at h ⊢
+    · rw [ite_eq_left hi] at h ⊢
       exact ⟨(out_graft h).symm ▸ hP, ihl hl h, hr⟩
-    · rw [if_neg hi] at h ⊢
+    · rw [ite_eq_right hi] at h ⊢
       exact ⟨(out_graft h).symm ▸ hP, hl, ihr hr h⟩
 
 end Tree
@@ -411,7 +411,7 @@ theorem Derives.node {a b : Ω} {S S' : Tree Ω}
     simpa [Tree.graft_node, Tree.graft_leaf_zero] using this
   have h₂ := h₁.compose (i := S.numInputs)
     (by simp only [Tree.numInputs_node, Tree.numInputs_leaf]; omega)
-    (by rw [Tree.getElem?_inputs_node, if_neg (lt_irrefl _)]; simp)
+    (by rw [Tree.getElem?_inputs_node, ite_eq_right (lt_irrefl _)]; simp)
     hb
   simpa [Tree.graft_node, lt_self_iff_false, Nat.sub_self] using h₂
 

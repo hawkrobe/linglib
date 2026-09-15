@@ -701,7 +701,7 @@ theorem toNumberTree_spec [Fintype α] [DecidableEq α] (q : GQ α)
         (univ.filter (fun x => A x && !(B x))).card :=
     ⟨A, B, rfl, rfl⟩
   unfold toNumberTree
-  rw [dif_pos hexists]
+  rw [dite_eq_left hexists]
   have hspec := hexists.choose_spec.choose_spec
   have hIff := gq_depends_on_card q hCons hQ A B _ _ hspec.1.symm hspec.2.symm
   rw [hIff, decide_eq_true_iff]

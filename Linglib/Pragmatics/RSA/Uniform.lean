@@ -74,7 +74,7 @@ theorem uniformListener_apply_singleton_le_one (c : C) (t : T) :
 
 theorem uniformListener_apply_singleton_ne_zero {c : C} {t : T} (h : t ∈ sem c) :
     uniformListener sem c {t} ≠ 0 := by
-  rw [uniformListener_apply_singleton, if_pos h]
+  rw [uniformListener_apply_singleton, ite_eq_left h]
   simp
 
 omit [DecidableEq T] in
@@ -125,7 +125,7 @@ theorem isMarkovKernel_uniformSpeaker {α : ℝ} (hα : 0 ≤ α) (hsem : ∀ t,
 
 theorem uniformSpeaker_apply_singleton_eq_zero {α : ℝ} (hα : 0 < α) {t : T} {c : C}
     (h : t ∉ sem c) : uniformSpeaker sem α t {c} = 0 :=
-  speaker_apply_singleton_eq_zero hα (by rw [uniformListener_apply_singleton, if_neg h])
+  speaker_apply_singleton_eq_zero hα (by rw [uniformListener_apply_singleton, ite_eq_right h])
 
 theorem uniformSpeaker_apply_singleton_ne_zero {α : ℝ} (hα : 0 ≤ α) {t : T} {c : C}
     (h : t ∈ sem c) : uniformSpeaker sem α t {c} ≠ 0 :=
@@ -139,7 +139,7 @@ theorem uniformSpeaker_apply_singleton_eq_one {α : ℝ} (hα : 0 < α) {t : T} 
   speaker_apply_singleton_eq_one (L := uniformListener sem) (cost := 1) hα one_ne_zero
     ENNReal.one_ne_top (uniformListener_apply_singleton_ne_zero sem hmem)
     (uniformListener_apply_singleton_le_one sem c t) fun c' hc' => by
-      rw [uniformListener_apply_singleton, if_neg (hother c' hc')]
+      rw [uniformListener_apply_singleton, ite_eq_right (hother c' hc')]
 
 /-- With positive finite cost factors, a speaker over the uniform literal listener produces a
 choice at a state exactly when the choice is true there. -/
@@ -149,7 +149,7 @@ theorem speaker_uniformListener_apply_singleton_ne_zero_iff {α : ℝ} (hα : 0 
   ⟨λ h => by
     by_contra hmem
     exact h (speaker_apply_singleton_eq_zero hα
-      (by rw [uniformListener_apply_singleton, if_neg hmem])),
+      (by rw [uniformListener_apply_singleton, ite_eq_right hmem])),
    λ h => speaker_apply_singleton_ne_zero hα.le hc0 hctop
     (λ c' => uniformListener_apply_singleton_le_one sem c' t)
     (uniformListener_apply_singleton_ne_zero sem h)⟩
@@ -175,7 +175,7 @@ theorem uniformSpeaker_apply_singleton_of_profile_eq {α : ℝ} (hα : 0 < α) {
     uniformSpeaker sem α t {c} = uniformSpeaker sem α t' {c} := by
   rw [uniformSpeaker_apply_singleton, uniformSpeaker_apply_singleton,
     sum_rpow_uniformListener sem hα, sum_rpow_uniformListener sem hα, hprof,
-    uniformListener_apply_singleton, uniformListener_apply_singleton, if_pos hmem, if_pos hmem']
+    uniformListener_apply_singleton, uniformListener_apply_singleton, ite_eq_left hmem, ite_eq_left hmem']
 
 theorem sum_fiber_rpow_uniformListener {α : ℝ} (hα : 0 < α) (o : O) (t : T) :
     ∑ c ∈ Finset.univ.filter (obs · = o), uniformListener sem c {t} ^ α
@@ -252,8 +252,8 @@ theorem uniformSpeaker_real_singleton_lt_of_card_lt {α : ℝ} (hα : 0 < α) {t
       (ENNReal.sum_ne_top.mpr fun u _ => ENNReal.mul_ne_top
         (weight_rpow_ne_top hα.le (uniformListener_apply_singleton_le_one sem u t))
         ENNReal.one_ne_top),
-    uniformListener_apply_singleton, uniformListener_apply_singleton, if_pos hmem,
-    if_pos hmem']
+    uniformListener_apply_singleton, uniformListener_apply_singleton, ite_eq_left hmem,
+    ite_eq_left hmem']
   simp only [Pi.one_apply, mul_one]
   exact ENNReal.rpow_lt_rpow (ENNReal.inv_lt_inv.2 (by exact_mod_cast hcard)) hα
 
@@ -270,7 +270,7 @@ theorem uniformSpeaker_real_singleton_of_profile_replicate {α : ℝ} (hα : 0 <
   have hn : (sem c).card = n := Multiset.eq_of_mem_replicate (hprof ▸ hcmem)
   have hn0 : n ≠ 0 := hn ▸ Finset.card_ne_zero_of_mem hmem
   have hx : (0 : ℝ) < ((n : ℝ))⁻¹ ^ α := Real.rpow_pos_of_pos (by positivity) α
-  rw [uniformSpeaker_real_singleton sem hα, if_pos hmem, hprof, hn,
+  rw [uniformSpeaker_real_singleton sem hα, ite_eq_left hmem, hprof, hn,
     show ((Multiset.replicate m n).invPowSum α).toReal = m * ((n : ℝ))⁻¹ ^ α by
       rw [Multiset.invPowSum_replicate, ENNReal.toReal_mul, ENNReal.toReal_natCast,
         ← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast],
@@ -356,7 +356,7 @@ theorem uniformJointListener_snd_real_lt_of_divPowSum (hsem : ∀ t, ∃ c, t �
     (Nat.pos_iff_ne_zero.mp (lt_of_le_of_lt (Nat.zero_le _) hlt))
   have hmem₀ : t₀ ∈ sem c₂ := by
     by_contra h
-    exact ht₀ (if_neg h)
+    exact ht₀ (ite_eq_right h)
   have hprior : ∀ c : C,
       (∑ t : T, (uniformOn (Set.univ : Set T)).real {t} * (uniformSpeaker sem k t).real {c})
       = (uniformOn (Set.univ : Set T)).real {t₀} * ∑ t : T,

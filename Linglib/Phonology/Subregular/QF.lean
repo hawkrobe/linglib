@@ -123,7 +123,7 @@ theorem eval_var_eq_some_iff : Term.var.eval w n = some v ↔ v = n ∧ n < w.le
   omega
 
 /-- The variable reads its own in-domain position. -/
-@[simp] theorem eval_var (h : n < w.length) : Term.var.eval w n = some n := if_pos h
+@[simp] theorem eval_var (h : n < w.length) : Term.var.eval w n = some n := ite_eq_left h
 
 /-- Terms read in-domain positions. -/
 theorem eval_lt : ∀ {t : Term} {v : ℕ}, t.eval w n = some v → v < w.length
@@ -142,7 +142,7 @@ theorem eval_lt : ∀ {t : Term} {v : ℕ}, t.eval w n = some v → v < w.length
 @[simp] theorem eval_succ_var : Term.var.succ.eval w n = succ? w n := by
   rcases Nat.lt_or_ge n w.length with h | h
   · rw [eval_succ, eval_var h, Option.bind_some]
-  · rw [eval_succ, eval, if_neg (by simpa using h), Option.bind_none, eq_comm,
+  · rw [eval_succ, eval, ite_eq_right (by simpa using h), Option.bind_none, eq_comm,
       Option.eq_none_iff_forall_ne_some]
     intro m hm
     have := (succ?_eq_some_iff.mp hm).2
@@ -237,11 +237,11 @@ theorem eval_backward (hn : n < w.length) :
     simp only [Backward] at ht
     simp only [eval_pred, ih ht, pdepth]
     by_cases h : t.pdepth ≤ n
-    · rw [if_pos h, Option.bind_some]
+    · rw [ite_eq_left h, Option.bind_some]
       by_cases h0 : t.pdepth = n
-      · subst h0; rw [Nat.sub_self, pred?_zero, if_neg (by omega)]
-      · rw [pred?_of_pos (by omega) (by omega), if_pos (by omega), Nat.sub_sub]
-    · rw [if_neg h, Option.bind_none, if_neg (by omega)]
+      · subst h0; rw [Nat.sub_self, pred?_zero, ite_eq_right (by omega)]
+      · rw [pred?_of_pos (by omega) (by omega), ite_eq_left (by omega), Nat.sub_sub]
+    · rw [ite_eq_right h, Option.bind_none, ite_eq_right (by omega)]
 
 end Term
 
@@ -313,17 +313,17 @@ theorem BackBounded.realize_congr {r : ℕ} {w w' : List α} {n n' : ℕ}
     rintro ⟨ht, hb⟩
     simp only [Realize, Term.eval_backward hn ht, Term.eval_backward hn' ht]
     by_cases h : t.pdepth ≤ n
-    · rw [if_pos h, if_pos ((hedge t.pdepth hb).mp h)]
+    · rw [ite_eq_left h, ite_eq_left ((hedge t.pdepth hb).mp h)]
       simp only [Option.bind_some]
       rw [hlbl t.pdepth hb]
-    · rw [if_neg h, if_neg (fun hh => h ((hedge t.pdepth hb).mpr hh)),
+    · rw [ite_eq_right h, ite_eq_right (fun hh => h ((hedge t.pdepth hb).mpr hh)),
         Option.bind_none, Option.bind_none]
   | defined t =>
     rintro ⟨ht, hb⟩
     simp only [Realize, Term.eval_backward hn ht, Term.eval_backward hn' ht]
     by_cases h : t.pdepth ≤ n
-    · rw [if_pos h, if_pos ((hedge t.pdepth hb).mp h)]; simp
-    · rw [if_neg h, if_neg (fun hh => h ((hedge t.pdepth hb).mpr hh))]
+    · rw [ite_eq_left h, ite_eq_left ((hedge t.pdepth hb).mp h)]; simp
+    · rw [ite_eq_right h, ite_eq_right (fun hh => h ((hedge t.pdepth hb).mpr hh))]
   | tru => intro _; simp [Realize]
   | fls => intro _; simp [Realize]
   | neg φ ih => intro hφ; simp only [Realize, ih hφ]

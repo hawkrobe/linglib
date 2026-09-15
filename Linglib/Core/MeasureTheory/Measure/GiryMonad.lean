@@ -30,9 +30,8 @@ recursive probabilistic programs of [kozen-1981], stated on the monad of [giry-1
   suprema of measures.
 * `MeasureTheory.Measure.iSup_bind_of_monotone`, `MeasureTheory.Measure.bind_iSup_of_monotone`:
   `bind` commutes with monotone suprema in each argument.
-* `MeasureTheory.Measure.bind_map`, `MeasureTheory.Measure.map_bind`,
-  `MeasureTheory.Measure.bind_comm`: `bind` and `map` interchange, and two independent `bind`s
-  commute (Fubini).
+* `MeasureTheory.Measure.bind_map`, `MeasureTheory.Measure.map_bind`: `bind` and `map`
+  interchange.
 * `MeasureTheory.Measure.ωScottContinuous_bind`, `MeasureTheory.Measure.ωScottContinuous_map`,
   `MeasureTheory.Measure.ωScottContinuous_prod`: `bind` is ω-Scott-continuous jointly in the
   measure and the kernel, `map` in the measure and `prod` in both factors, so operators built
@@ -168,29 +167,6 @@ theorem map_bind {μ : Measure α} {f : α → Measure β} {g : β → γ} (hf :
   rw [map_apply hg hs, bind_apply (hg hs) hf.aemeasurable,
     bind_apply (f := fun a => (f a).map g) hs ((measurable_map _ hg).comp hf).aemeasurable]
   simp_rw [map_apply hg hs]
-
-/-- Two independent `bind`s commute: Fubini on the Giry monad. -/
-theorem bind_comm {μ : Measure α} {ν : Measure β} [SFinite μ] [SFinite ν]
-    {f : α → β → Measure γ} (hf : Measurable (Function.uncurry f)) :
-    μ.bind (fun a => ν.bind (f a)) = ν.bind fun b => μ.bind (f · b) := by
-  have hfs : ∀ s, MeasurableSet s → Measurable (Function.uncurry fun a b => f a b s) :=
-    fun s hs => (measurable_coe hs).comp hf
-  have hl : ∀ a, AEMeasurable (f a) ν := fun a =>
-    (hf.comp measurable_prodMk_left : Measurable (f a)).aemeasurable
-  have hr : ∀ b, AEMeasurable (f · b) μ := fun b =>
-    (hf.comp measurable_prodMk_right : Measurable (f · b)).aemeasurable
-  have h1 : Measurable fun a => ν.bind (f a) :=
-    measurable_of_measurable_coe _ fun s hs => by
-      simp_rw [fun a => bind_apply hs (hl a)]
-      exact (hfs s hs).lintegral_prod_right'
-  have h2 : Measurable fun b => μ.bind (f · b) :=
-    measurable_of_measurable_coe _ fun s hs => by
-      simp_rw [fun b => bind_apply hs (hr b)]
-      exact (hfs s hs).lintegral_prod_left'
-  ext s hs
-  rw [bind_apply hs h1.aemeasurable, bind_apply hs h2.aemeasurable]
-  simp_rw [fun a => bind_apply hs (hl a), fun b => bind_apply hs (hr b)]
-  exact lintegral_lintegral_swap (hfs s hs).aemeasurable
 
 end Interchange
 

@@ -1,4 +1,4 @@
-import Mathlib.Logic.Basic
+import Mathlib.Basic.Logic.Basic
 import Mathlib.Order.BooleanAlgebra.Basic
 import Mathlib.Order.Hom.Basic
 

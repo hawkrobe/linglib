@@ -282,7 +282,7 @@ theorem probit_gain_following (u : Underlying) (o : Onset) (w : Fin 6 → ℝ) (
     probit (pNHG ⟨u, o, .monosyllable⟩ w σ) - probit (pNHG ⟨u, o, .disyllable⟩ w σ) =
       nhgProbitChange (hDiff ⟨u, o, .disyllable⟩ w) (w 2) (σ * √3) (2 * σ) := by
   rw [probit_pNHG, probit_pNHG, nhgProbitChange, ← hDiff_following u o w]
-  simp only [if_true, if_false, reduceCtorEq]
+  simp only [ite_true, ite_false, reduceCtorEq]
   rw [show √(4 : ℝ) = 2 by rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]]
   ring
 

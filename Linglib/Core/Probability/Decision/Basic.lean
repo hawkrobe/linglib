@@ -127,30 +127,30 @@ variable {dp} {actions : Finset A} {cell : Finset W}
 
 omit [IsStrictOrderedRing K] in
 theorem value_of_nonempty [Fintype W] (h : actions.Nonempty) :
-    dp.value actions = actions.sup' h dp.expectedUtility := dif_pos h
+    dp.value actions = actions.sup' h dp.expectedUtility := dite_eq_left h
 
 omit [IsStrictOrderedRing K] in
 @[simp] theorem value_empty [Fintype W] : dp.value (∅ : Finset A) = 0 :=
-  dif_neg Finset.not_nonempty_empty
+  dite_eq_right Finset.not_nonempty_empty
 
 omit [IsStrictOrderedRing K] in
 theorem condValue_of_nonempty (h : actions.Nonempty) :
     dp.condValue actions cell = actions.sup' h (dp.condExpectedUtility cell) :=
-  dif_pos h
+  dite_eq_left h
 
 omit [IsStrictOrderedRing K] in
 @[simp] theorem condValue_empty : dp.condValue (∅ : Finset A) cell = 0 :=
-  dif_neg Finset.not_nonempty_empty
+  dite_eq_right Finset.not_nonempty_empty
 
 omit [IsStrictOrderedRing K] in
 theorem condExpectedUtility_of_ne_zero (h : cell.sum dp.prior ≠ 0) (a : A) :
     dp.condExpectedUtility cell a
       = cell.sum (λ w => (dp.prior w / cell.sum dp.prior) * dp.utility w a) :=
-  if_neg h
+  ite_eq_right h
 
 omit [IsStrictOrderedRing K] in
 @[simp] theorem condExpectedUtility_of_eq_zero (h : cell.sum dp.prior = 0) (a : A) :
-    dp.condExpectedUtility cell a = 0 := if_pos h
+    dp.condExpectedUtility cell a = 0 := ite_eq_left h
 
 end CharacterizationApi
 
@@ -170,16 +170,16 @@ variable {dp} {worlds : Finset W} {actions : Finset A} {a : A}
 
 omit [IsStrictOrderedRing K] in
 theorem securityLevel_of_nonempty (h : worlds.Nonempty) :
-    dp.securityLevel worlds a = worlds.inf' h (λ w => dp.utility w a) := dif_pos h
+    dp.securityLevel worlds a = worlds.inf' h (λ w => dp.utility w a) := dite_eq_left h
 
 omit [IsStrictOrderedRing K] in
 theorem maximinValue_of_nonempty (h : actions.Nonempty) :
     dp.maximinValue worlds actions = actions.sup' h (dp.securityLevel worlds) :=
-  dif_pos h
+  dite_eq_left h
 
 omit [IsStrictOrderedRing K] in
 @[simp] theorem maximinValue_empty :
-    dp.maximinValue worlds (∅ : Finset A) = 0 := dif_neg Finset.not_nonempty_empty
+    dp.maximinValue worlds (∅ : Finset A) = 0 := dite_eq_right Finset.not_nonempty_empty
 
 end MaximinApi
 
@@ -278,11 +278,11 @@ private lemma optimalAction_expectedUtility_eq_value (dp : DecisionProblem K W A
      | none => (0 : K)) = dp.value actions := by
   unfold optimalAction value
   by_cases hne : actions.Nonempty
-  · rw [dif_pos hne, dif_pos hne]; simp only []
+  · rw [dite_eq_left hne, dite_eq_left hne]; simp only []
     have hspec := (Finset.exists_max_image actions dp.expectedUtility hne).choose_spec
     exact le_antisymm (Finset.le_sup' _ hspec.1)
       (Finset.sup'_le hne _ λ a ha => hspec.2 a ha)
-  · rw [dif_neg hne, dif_neg hne]
+  · rw [dite_eq_right hne, dite_eq_right hne]
 
 omit [IsStrictOrderedRing K] in
 /-- `EUV(Q) = EVSI(Q)`: the expected utility value of a question equals its
@@ -359,7 +359,7 @@ private lemma cellProbability_mul_condValue_eq_uValue (dp : DecisionProblem K W 
     dp.cellProbability cell * dp.condValue acts cell = uValue dp acts cell := by
   unfold uValue
   by_cases hne : acts.Nonempty
-  · rw [condValue_of_nonempty hne, dif_pos hne]
+  · rw [condValue_of_nonempty hne, dite_eq_left hne]
     have htp_nonneg : 0 ≤ dp.cellProbability cell :=
       Finset.sum_nonneg (λ w _ => hprior w)
     by_cases htp : dp.cellProbability cell = 0
@@ -377,7 +377,7 @@ private lemma cellProbability_mul_condValue_eq_uValue (dp : DecisionProblem K W 
       rw [condExpectedUtility_of_ne_zero hS, Finset.mul_sum]
       refine Finset.sum_congr rfl (λ w _ => ?_)
       rw [div_mul_eq_mul_div, ← mul_div_assoc, mul_div_cancel_left₀ _ hS]
-  · rw [Finset.not_nonempty_iff_eq_empty.mp hne, condValue_empty, dif_neg
+  · rw [Finset.not_nonempty_iff_eq_empty.mp hne, condValue_empty, dite_eq_right
       Finset.not_nonempty_empty, mul_zero]
 
 variable [DecidableEq W]
@@ -391,12 +391,12 @@ private lemma uValue_union_le (dp : DecisionProblem K W A) (acts : Finset A)
     uValue dp acts (c₁ ∪ c₂) ≤ uValue dp acts c₁ + uValue dp acts c₂ := by
   unfold uValue
   by_cases hne : acts.Nonempty
-  · rw [dif_pos hne, dif_pos hne, dif_pos hne]
+  · rw [dite_eq_left hne, dite_eq_left hne, dite_eq_left hne]
     refine Finset.sup'_le hne _ (λ a ha => ?_)
     rw [Finset.sum_union hdisj]
     exact add_le_add (Finset.le_sup' (λ a => ∑ w ∈ c₁, dp.prior w * dp.utility w a) ha)
       (Finset.le_sup' (λ a => ∑ w ∈ c₂, dp.prior w * dp.utility w a) ha)
-  · rw [dif_neg hne, dif_neg hne, dif_neg hne, add_zero]
+  · rw [dite_eq_right hne, dite_eq_right hne, dite_eq_right hne, add_zero]
 
 /-- **Splitting a cell never decreases its decision value**: for disjoint cells `c₁`, `c₂`
 and a nonnegative prior,
@@ -451,8 +451,8 @@ private lemma uValue_empty (dp : DecisionProblem K W A) (acts : Finset A) :
     uValue dp acts ∅ = 0 := by
   unfold uValue
   by_cases h : acts.Nonempty
-  · rw [dif_pos h]; simp only [Finset.sum_empty, Finset.sup'_const]
-  · rw [dif_neg h]
+  · rw [dite_eq_left h]; simp only [Finset.sum_empty, Finset.sup'_const]
+  · rw [dite_eq_right h]
 
 /-- **General superadditivity of `uValue`**: splitting a union of pairwise-disjoint cells
 into its pieces never lowers the best-action value, `uValue (⨆ parts) ≤ ∑ uValue`. The

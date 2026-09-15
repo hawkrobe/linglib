@@ -63,7 +63,7 @@ theorem ltALT_wf_of_finite (hfin : ALT.Finite) : WellFounded (ltALT ALT) := by
     simp only [ltALT, hle, InvImage, Finset.ssubset_iff_subset_ne]
     exact and_congr_right λ h => ⟨λ hn heq => hn (heq ▸ le_rfl), λ hne h' => hne (le_antisymm h h')⟩
   rw [this]
-  exact InvImage.wf f IsWellFounded.wf
+  exact InvImage.wf f Finset.isWellFounded_ssubset
 
 /-- A satisfiable prejacent has a minimal world when `ALT` is finite. -/
 theorem exists_minimal_of_finite (hfin : ALT.Finite) (hsat : ∃ w, φ w) :

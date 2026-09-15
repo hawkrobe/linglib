@@ -72,9 +72,9 @@ theorem NoComplexityLoss.em_case1 {α : Type*} [DecidableEq (UnorderedTree α)]
     show (if T = S ∨ T = S' then UnorderedTree.node lbl {S, S'} else T)
             ∈ ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) + Fhat
     by_cases hcase : T = S ∨ T = S'
-    · rw [if_pos hcase]
+    · rw [ite_eq_left hcase]
       exact Multiset.mem_add.mpr (Or.inl (Multiset.mem_singleton.mpr rfl))
-    · rw [if_neg hcase]
+    · rw [ite_eq_right hcase]
       have hT_Fhat : T ∈ Fhat := by
         rcases Multiset.mem_add.mp hT with hT_pair | hT_Fhat
         · exfalso; apply hcase
@@ -87,11 +87,11 @@ theorem NoComplexityLoss.em_case1 {α : Type*} [DecidableEq (UnorderedTree α)]
   · intro T _
     show (if T = S ∨ T = S' then UnorderedTree.node lbl {S, S'} else T).numNodes ≥ T.numNodes
     by_cases hcase : T = S ∨ T = S'
-    · rw [if_pos hcase, UnorderedTree.numNodes_node,
+    · rw [ite_eq_left hcase, UnorderedTree.numNodes_node,
           show ({S, S'} : Forest (UnorderedTree α)) = S ::ₘ {S'} from rfl,
           Multiset.map_cons, Multiset.sum_cons, Multiset.map_singleton, Multiset.sum_singleton]
       rcases hcase with rfl | rfl <;> omega
-    · rw [if_neg hcase]
+    · rw [ite_eq_right hcase]
 
 /-- **M-C-B Prop 1.6.10, IM positive direction.** The IM workspace
     transformation `{T} → {M(Q, β)}` (Q = T/β the deletion-quotient of the
@@ -191,7 +191,7 @@ theorem NoComplexityLoss.not_map_sideward_2b {α : Type*} [DecidableEq (Unordere
   have h_ineq :
       (if T_j = T_i then UnorderedTree.node lbl {T_i, β} else T_j_q).numNodes ≥ T_j.numNodes :=
     h_ncl.2 T_j h_T_j_mem
-  rw [if_neg h_neq] at h_ineq
+  rw [ite_eq_right h_neq] at h_ineq
   have h_cons := cutSummandsN_numNodes T_j p_j hp_j
   rw [h_cf] at h_cons
   simp only [Multiset.map_singleton, Multiset.sum_singleton] at h_cons
@@ -238,7 +238,7 @@ theorem NoComplexityLoss.not_map_sideward_3b {α : Type*} [DecidableEq (Unordere
   intro h_ncl
   have h_ineq : (if T_i = T_i then T_iq else T_jq).numNodes ≥ T_i.numNodes :=
     h_ncl.2 T_i (Multiset.mem_cons_self _ _)
-  rw [if_pos rfl] at h_ineq
+  rw [ite_eq_left rfl] at h_ineq
   have h_cons := cutSummandsN_numNodes T_i p_i hp_i
   rw [h_cf_i] at h_cons
   simp only [Multiset.map_singleton, Multiset.sum_singleton] at h_cons

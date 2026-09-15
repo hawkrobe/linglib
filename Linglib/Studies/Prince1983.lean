@@ -577,7 +577,7 @@ theorem endRule_of_peak {e : Edge} {L : ℕ} {fco : Bool} {g : Grid} (hL : peak 
     le_antisymm (by simpa [List.getD_eq_getElem?_getD, hil] using le_peak (List.getElem_mem hil))
       hpi
   simp only [endRule, hn, hi, hgi, Nat.max_eq_right (Nat.le_succ _)]
-  rw [if_pos]
+  rw [ite_eq_left]
   refine Or.inr λ j _ => ⟨λ hc => ?_, λ hc => ?_⟩
   · obtain ⟨hij, -, hj, -⟩ := hc
     have hle : g[j]?.getD 0 ≤ peak g := by
@@ -654,7 +654,7 @@ theorem garawa_getD {n i : ℕ} (hi : 2 ≤ i) (hin : i < n) :
     getD_reverse _ (by simp; omega), alt_getD, alt_length]
   have h1 : n - 2 - 1 - i < n - 2 := by omega
   have h2 : n - 2 - 1 - i = n - 1 - (i + 2) := by omega
-  rw [if_pos h1, h2]
+  rw [ite_eq_left h1, h2]
   rcases Nat.mod_two_eq_zero_or_one (n - 1 - (i + 2)) with h | h <;> simp [h]
 
 /-- Winnebago (65): with the initial syllable extrametrical, a trough-first sweep from the left
@@ -704,7 +704,7 @@ theorem third_syllable_iff (d : Dir) (a : Altitude) (x : Bool) :
     cases d <;> cases a <;> cases x <;> decide
   · rintro ⟨rfl, rfl, rfl⟩ n hn
     obtain ⟨m, rfl⟩ : ∃ m, n = m + 4 := ⟨n - 4, by omega⟩
-    simp only [alternating, if_true]
+    simp only [alternating, ite_true]
     rw [List.replicate_succ]
     simp only [elm, pg, Altitude.start, sweep_replicate]
     simp [alt, List.findIdx?_cons]
@@ -751,9 +751,9 @@ def qs (w : List Syllable.Weight) : Grid := w.flatMap mora
 /-- The grid position of the nucleus of syllable `k`. -/
 def nucleus (w : List Syllable.Weight) (k : ℕ) : ℕ := (qs (w.take k)).length
 
-theorem mora_of_two_le {m : Syllable.Weight} (h : 2 ≤ m) : mora m = [2, 1] := if_pos h
+theorem mora_of_two_le {m : Syllable.Weight} (h : 2 ≤ m) : mora m = [2, 1] := ite_eq_left h
 
-theorem mora_of_lt {m : Syllable.Weight} (h : m < 2) : mora m = [1] := if_neg (Nat.not_le.2 h)
+theorem mora_of_lt {m : Syllable.Weight} (h : m < 2) : mora m = [1] := ite_eq_right (Nat.not_le.2 h)
 
 theorem qs_cons (m : Syllable.Weight) (w : List Syllable.Weight) :
     qs (m :: w) = mora m ++ qs w :=
@@ -899,7 +899,7 @@ theorem endRule_initial_singleton {x : ℕ} (hx : 1 ≤ x) (fco : Bool) :
     endRule .initial 2 fco [x] = [max x 2] := by
   simp only [endRule, min_one_peak (List.mem_cons_self ..) hx, edgeIdx?, List.findIdx?_cons,
     decide_eq_true hx, ↓reduceIte, List.set_cons_zero, List.getD_cons_zero]
-  rw [if_pos (Or.inr λ j hj => ?_)]
+  rw [ite_eq_left (Or.inr λ j hj => ?_)]
   simp only [List.length_singleton] at hj
   obtain rfl : j = 0 := by omega
   simp [Clash]
@@ -935,7 +935,7 @@ theorem endRule_final_singleton {x : ℕ} (hx : 1 ≤ x) (fco : Bool) :
   have hidx : edgeIdx? .final 1 [x] = some 0 := by simp [edgeIdx?, lastIdx?_cons, hx]
   simp only [endRule, min_one_peak (List.mem_cons_self ..) hx, hidx, List.set_cons_zero,
     List.getD_cons_zero]
-  rw [if_pos (Or.inr λ j hj => ?_)]
+  rw [ite_eq_left (Or.inr λ j hj => ?_)]
   simp only [List.length_singleton] at hj
   obtain rfl : j = 0 := by omega
   simp [Clash]
@@ -1105,9 +1105,9 @@ theorem lastIdx?_endRule_initial {g : Grid} (hg : ∀ x ∈ g, 1 ≤ x ∧ x ≤
       obtain ⟨hy1, -⟩ := hg y (by simp)
       rw [endRule_initial_two hy1]
       by_cases hy2 : y < 2
-      · rw [if_pos (Or.inr hy2)]
+      · rw [ite_eq_left (Or.inr hy2)]
         simp [lastIdx?_cons]
-      · rw [if_neg (by simpa using hy2)]
+      · rw [ite_eq_right (by simpa using hy2)]
         simp [lastIdx?_cons, Nat.not_lt.1 hy2]
   · rw [endRule_initial_of_two_le hx]
     simp [lastIdx?_cons, hx]
@@ -1184,7 +1184,7 @@ theorem komi_light {v : List Syllable.Weight} {m : Syllable.Weight}
     MainStressAt (defaultOpposite .initial (v ++ [m])) (nucleus (v ++ [m]) v.length) := by
   have hm : m < 2 := hl m (by simp)
   refine mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two _)) (e := .initial) ?_
-  rw [edgeIdx?, Edge.flip, endRule_final_qs, if_neg (Nat.not_le.2 hm), nucleus_append_length,
+  rw [edgeIdx?, Edge.flip, endRule_final_qs, ite_eq_right (Nat.not_le.2 hm), nucleus_append_length,
     qs_eq_replicate λ x hx => hl x (List.mem_append_left _ hx), List.findIdx?_append]
   simp [List.findIdx?_cons, List.findIdx?_replicate]
 
@@ -1210,7 +1210,7 @@ theorem findIdx?_endRule_initial_fco {g : Grid} (hg : ∀ x ∈ g, 1 ≤ x ∧ x
     cases t with
     | nil => simp [endRule_initial_singleton le_rfl, List.findIdx?_cons]
     | cons y t =>
-      rw [endRule_initial_two (hg y (by simp)).1, if_pos (Or.inl rfl)]
+      rw [endRule_initial_two (hg y (by simp)).1, ite_eq_left (Or.inl rfl)]
       simp [List.findIdx?_cons]
   · rw [endRule_initial_of_two_le hx]
     simp [List.findIdx?_cons, hx]
@@ -1243,7 +1243,7 @@ theorem malayalam_first {m : Syllable.Weight} {w : List Syllable.Weight}
     | cons m₁ w =>
       have hm₁ : m₁ < 2 := Nat.not_le.1 λ h₁ => h ⟨hm', m₁, rfl, h₁⟩
       rw [qs_cons, mora_of_lt hm₁, List.singleton_append, endRule_initial_two le_rfl,
-        if_pos (Or.inr Nat.one_lt_two)]
+        ite_eq_left (Or.inr Nat.one_lt_two)]
       simp [List.findIdx?_cons]
 
 /-- Malayalam (§3.7): a heavy second syllable after a light first one carries the main stress. -/
@@ -1252,7 +1252,7 @@ theorem malayalam_second {m₀ m₁ : Syllable.Weight} {w : List Syllable.Weight
   refine mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two _)) (e := .initial) ?_
   rw [edgeIdx?, qs_cons, qs_cons, mora_of_lt h₀, mora_of_two_le h₁, List.singleton_append,
     List.cons_append, List.cons_append, List.nil_append, endRule_initial_two (Nat.le_succ 1),
-    if_neg (by simp)]
+    ite_eq_right (by simp)]
   simp [List.findIdx?_cons]
 
 end Prince1983

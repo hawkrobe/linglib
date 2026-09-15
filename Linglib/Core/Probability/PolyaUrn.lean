@@ -1,7 +1,7 @@
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 import Mathlib.RingTheory.Polynomial.Pochhammer
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Algebra.BigOperators.Field
@@ -237,10 +237,10 @@ private lemma snoc_count_eq [DecidableEq α] {N : ℕ}
   by_cases hcd : d = c
   · subst hcd
     rw [Function.update_self, card_eq, card_eq, Fin.sum_univ_castSucc]
-    simp only [Fin.snoc_castSucc, Fin.snoc_last, if_true]
+    simp only [Fin.snoc_castSucc, Fin.snoc_last, ite_true]
   · rw [Function.update_of_ne hcd, card_eq, card_eq, Fin.sum_univ_castSucc]
     simp only [Fin.snoc_castSucc, Fin.snoc_last]
-    rw [if_neg (fun h => hcd h.symm), add_zero]
+    rw [ite_eq_right (fun h => hcd h.symm), add_zero]
 
 omit [Fintype α] in
 /-- Appending a draw increments its colour's count. -/
@@ -258,7 +258,7 @@ lemma sum_counts_eq_length [DecidableEq α] {N : ℕ} (seq : Fin N → α) :
     intro i
     rw [Finset.sum_eq_single (seq i)]
     · simp
-    · intros b _ hb; rw [if_neg (Ne.symm hb)]
+    · intros b _ hb; rw [ite_eq_right (Ne.symm hb)]
     · intro h; exact absurd (Finset.mem_univ _) h
   simp_rw [this]
   simp
@@ -443,8 +443,8 @@ theorem predictive_mono [DecidableEq α] (u : PolyaUrn α)
           if j = i then (counts₂ i : ℝ) - (counts₁ i : ℝ) else 0 := by
       intro j
       by_cases hji : j = i
-      · rw [hji, if_pos rfl]
-      · rw [if_neg hji, h_eq j hji, sub_self]
+      · rw [hji, ite_eq_left rfl]
+      · rw [ite_eq_right hji, h_eq j hji, sub_self]
     rw [Finset.sum_congr rfl (fun j _ => hpoint j), Finset.sum_ite_eq' Finset.univ i]
     simp
   have hδ_nonneg : 0 ≤ (counts₂ i : ℝ) - (counts₁ i : ℝ) := by

@@ -68,10 +68,10 @@ theorem map_getElem?_hi_iff : (P.map w)[j]? = some P.hi ↔ P.Surfaces w j := by
   constructor
   · rintro ⟨a, -, ha⟩
     by_contra hs
-    rw [if_neg hs] at ha
+    rw [ite_eq_right hs] at ha
     exact P.hi_ne_lo ha.symm
   · exact fun hs => ⟨w[j]'(P.lt_length hs), List.getElem?_eq_getElem (P.lt_length hs),
-      if_pos hs⟩
+      ite_eq_left hs⟩
 
 theorem map_getElem?_lo_iff :
     (P.map w)[j]? = some P.lo ↔ j < w.length ∧ ¬ P.Surfaces w j := by
@@ -79,9 +79,9 @@ theorem map_getElem?_lo_iff :
   constructor
   · rintro ⟨a, ha, hout⟩
     refine ⟨(List.getElem?_eq_some_iff.mp ha).1, fun hs => ?_⟩
-    rw [if_pos hs] at hout
+    rw [ite_eq_left hs] at hout
     exact P.hi_ne_lo hout
-  · exact fun ⟨hj, hs⟩ => ⟨w[j], List.getElem?_eq_getElem hj, if_neg hs⟩
+  · exact fun ⟨hj, hs⟩ => ⟨w[j], List.getElem?_eq_getElem hj, ite_eq_right hs⟩
 
 /-- Faithfulness at the map level: an underlying marked tone survives. -/
 theorem map_getElem?_hi_of_getElem?_hi (h : w[i]? = some P.hi) :

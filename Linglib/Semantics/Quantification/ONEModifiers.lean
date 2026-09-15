@@ -61,7 +61,7 @@ structure ONE_AT {α : Type*} [PartialOrder α] (P : α → Prop) : Prop where
 theorem ONE_AT_implies_ONE_empty {α : Type*} [PartialOrder α]
     {P : α → Prop} (h : ONE_AT P) : ONE_empty P where
   has_two := h.has_two
-  pairwise_disjoint := λ x y hPx hPy ⟨z, hz, hzx, hzy⟩ =>
+  pairwise_disjoint := λ x y hPx hPy ⟨_, hz, hzx, hzy⟩ =>
     let hzx_eq := Atom.eq (h.all_atomic x hPx) hzx hz  -- z = x
     let hzy_eq := Atom.eq (h.all_atomic y hPy) hzy hz  -- z = y
     hzx_eq.symm.trans hzy_eq

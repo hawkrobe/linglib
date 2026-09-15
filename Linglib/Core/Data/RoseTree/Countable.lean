@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Data.RoseTree.Basic
 import Mathlib.Data.W.Basic
 import Mathlib.Logic.Encodable.Basic
-import Mathlib.Data.Countable.Basic
+import Mathlib.Basic.Countable.Basic
 
 /-!
 # Countability of rose trees

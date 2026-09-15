@@ -5,7 +5,7 @@ import Linglib.Pragmatics.SocialMeaning.Dimension
 import Linglib.Pragmatics.SocialMeaning.Persona
 import Linglib.Studies.BeltramaSoltBurnett2023
 import Linglib.Data.Examples.BeltramaSchwarz2024
-import Mathlib.Data.Sign.Defs
+import Mathlib.Basic.Sign.Defs
 import Mathlib.Tactic.NormNum
 
 /-!

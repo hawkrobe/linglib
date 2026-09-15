@@ -1,4 +1,5 @@
 import Linglib.Semantics.Dynamic.DRS.Basic
+import Mathlib.Data.Finset.Piecewise
 
 /-!
 # Verifying embeddings for DRSs

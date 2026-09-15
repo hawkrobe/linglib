@@ -143,6 +143,7 @@ theorem superadditive_resourceLimitation_iff (base c₁ c₂ : α) (overload : �
     Superadditive (resourceLimitation base c₁ c₂ overload capacity) ↔ 0 < overload capacity := by
   rw [superadditive_iff_dd_pos, dd_resourceLimitation]
 
+omit [IsStrictOrderedRing α] in
 /-- Limited capacity: with a penalty decreasing in capacity, the island effect decreases as
 capacity grows, the prediction of the paper's Figure 2a. -/
 theorem dd_resourceLimitation_antitone (base c₁ c₂ : α) {overload : α → α}
@@ -150,6 +151,7 @@ theorem dd_resourceLimitation_antitone (base c₁ c₂ : α) {overload : α → 
     Antitone λ capacity => dd (resourceLimitation base c₁ c₂ overload capacity) := by
   simpa only [dd_resourceLimitation] using h
 
+omit [IsStrictOrderedRing α] in
 /-- Overload: a speaker whose capacity covers both costs shows no island effect. -/
 theorem dd_resourceLimitation_eq_zero (base c₁ c₂ : α) {overload : α → α}
     (h : ∀ capacity, c₁ + c₂ ≤ capacity → overload capacity = 0) {capacity : α}

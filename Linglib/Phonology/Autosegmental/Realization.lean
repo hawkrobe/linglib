@@ -53,7 +53,7 @@ variable {S : Type*} (g₀ : S → TieredAR ι τ)
     both directions preserve arcs. -/
 noncomputable def fullIsoToWideIso {A B : TieredAR ι τ}
     (e : Graph.Iso A.obj B.obj) : (⟨A⟩ : PrecAR ι τ) ≅ ⟨B⟩ :=
-  CategoryTheory.isoMk (mkIso e) e.toHom_precPreserving e.symm.toHom_precPreserving
+  CategoryTheory.WideSubcategory.isoMk (mkIso e) e.toHom_precPreserving e.symm.toHom_precPreserving
 
 /-- The class of a representation, its isomorphism class in the skeleton of the
     precedence-preserving category. -/

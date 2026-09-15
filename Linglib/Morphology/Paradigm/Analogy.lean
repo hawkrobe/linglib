@@ -1,6 +1,7 @@
 import Linglib.Morphology.Paradigm.Basic
 import Mathlib.Algebra.Group.Hom.Defs
 import Mathlib.Tactic.Abel
+import Mathlib.Basic.IsEmpty.Basic
 
 /-!
 # Proportional analogy

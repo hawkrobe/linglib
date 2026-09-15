@@ -113,10 +113,10 @@ theorem superTrue_true_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred 
     (S : SpecSpace Spec) :
     superTrue eval S = Trivalent.true ↔ ∀ s ∈ S.admissible, eval s := by
   unfold superTrue
-  refine ⟨fun h => ?_, fun h => if_pos h⟩
+  refine ⟨fun h => ?_, fun h => ite_eq_left h⟩
   by_cases hall : ∀ s ∈ S.admissible, eval s
   · exact hall
-  · rw [if_neg hall] at h
+  · rw [ite_eq_right hall] at h
     split at h <;> cases h
 
 /-- Super-falsity ↔ universally false across the space. -/
@@ -126,15 +126,15 @@ theorem superTrue_false_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred
   unfold superTrue
   refine ⟨fun h => ?_, fun haf => ?_⟩
   · have hnt : ¬(∀ s ∈ S.admissible, eval s) := by
-      intro ht; rw [if_pos ht] at h; cases h
-    rw [if_neg hnt] at h
+      intro ht; rw [ite_eq_left ht] at h; cases h
+    rw [ite_eq_right hnt] at h
     by_cases haf : ∀ s ∈ S.admissible, ¬ eval s
     · exact haf
-    · rw [if_neg haf] at h; cases h
+    · rw [ite_eq_right haf] at h; cases h
   · have hnt : ¬(∀ s ∈ S.admissible, eval s) := by
       obtain ⟨s₀, hs₀⟩ := S.nonempty
       intro ht; exact haf s₀ hs₀ (ht s₀ hs₀)
-    rw [if_neg hnt, if_pos haf]
+    rw [ite_eq_right hnt, ite_eq_left haf]
 
 /-- Indefiniteness ↔ witnesses on both sides. -/
 theorem superTrue_indet_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
@@ -144,9 +144,9 @@ theorem superTrue_indet_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred
   unfold superTrue
   refine ⟨fun h => ?_, fun ⟨⟨st, hst, hvt⟩, ⟨sf, hsf, hvf⟩⟩ => ?_⟩
   · have hnt : ¬(∀ s ∈ S.admissible, eval s) := by
-      intro ht; rw [if_pos ht] at h; cases h
+      intro ht; rw [ite_eq_left ht] at h; cases h
     have hnf : ¬(∀ s ∈ S.admissible, ¬ eval s) := by
-      intro hf; rw [if_neg hnt, if_pos hf] at h; cases h
+      intro hf; rw [ite_eq_right hnt, ite_eq_left hf] at h; cases h
     refine ⟨?_, ?_⟩
     · by_contra hcon
       apply hnf
@@ -159,7 +159,7 @@ theorem superTrue_indet_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred
       exact hcon ⟨s, hs, hes⟩
   · have hnt : ¬(∀ s ∈ S.admissible, eval s) := fun h => hvf (h sf hsf)
     have hnf : ¬(∀ s ∈ S.admissible, ¬ eval s) := fun h => h st hst hvt
-    rw [if_neg hnt, if_neg hnf]
+    rw [ite_eq_right hnt, ite_eq_right hnf]
 
 /-- **`superTrue` is `Trivalent.dist` on the admissible Finset.**
 
@@ -179,18 +179,18 @@ theorem superTrue_eq_dist {Spec : Type*} (eval : Spec → Prop) [DecidablePred e
     superTrue eval S = Trivalent.dist S.admissible eval := by
   unfold superTrue Trivalent.dist
   by_cases h_all : ∀ a ∈ S.admissible, eval a
-  · rw [if_pos h_all, if_pos h_all]
-  · rw [if_neg h_all, if_neg h_all]
+  · rw [ite_eq_left h_all, ite_eq_left h_all]
+  · rw [ite_eq_right h_all, ite_eq_right h_all]
     by_cases h_some : ∃ a ∈ S.admissible, eval a
-    · rw [if_pos h_some]
+    · rw [ite_eq_left h_some]
       have hnaf : ¬ ∀ s ∈ S.admissible, ¬ eval s := by
         obtain ⟨s, hs, hev⟩ := h_some
         intro hf; exact hf s hs hev
-      rw [if_neg hnaf]
-    · rw [if_neg h_some]
+      rw [ite_eq_right hnaf]
+    · rw [ite_eq_right h_some]
       have haf : ∀ s ∈ S.admissible, ¬ eval s := by
         intro s hs hev; exact h_some ⟨s, hs, hev⟩
-      rw [if_pos haf]
+      rw [ite_eq_left haf]
 
 /-- D = super-truth projected to its `Prop` characterization. -/
 theorem definitely_iff_superTrue {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]

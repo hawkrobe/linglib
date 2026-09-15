@@ -9,7 +9,7 @@ import Linglib.Core.Algebra.Group.Aperiodic
 import Linglib.Core.Algebra.Group.Subquotient
 import Mathlib.Algebra.Group.Prod
 import Mathlib.Algebra.Group.PUnit
-import Mathlib.Data.Finite.Defs
+import Mathlib.Basic.Finite.Defs
 
 /-!
 # Pseudovarieties of finite monoids

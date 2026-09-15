@@ -8,7 +8,7 @@ import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Hom.BoundedLattice
 import Mathlib.Order.MinMax
-import Mathlib.Data.Sign.Defs
+import Mathlib.Basic.Sign.Defs
 import Linglib.Core.Order.DeMorganAlgebra.Defs
 
 /-!

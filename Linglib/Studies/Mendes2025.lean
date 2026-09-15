@@ -420,7 +420,7 @@ Uses SUBJ without FUT — allows past/present alternatives.
 def deriveCounterfactual
     (maria : E)
     (atHomeRel answerRel : E → Index W T → Prop)
-    (cfVar speechVar : ℕ)
+    (cfVar : ℕ)
     (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
   let c₁ := dynSUBJ history cfVar c
   let c₂ := lexAtHome atHomeRel maria cfVar c₁
@@ -496,7 +496,6 @@ theorem sf_weakens_presup {W T E : Type*} [LE T]
     (history : HistoricalAlternatives W T)
     (restrictor : E → Index W T → Prop)
     (s₀ : Index W T)
-    (h_no_actual : ¬∃ x, restrictor x s₀)
     (h_possible : ∃ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁) :
     ∃ x, sfRestrictor history restrictor s₀ x := by
   obtain ⟨s₁, h_s₁, x, hx⟩ := h_possible
@@ -537,7 +536,6 @@ theorem relClause_sf_weakens_quantifier {W T E : Type*} [LE T]
     (history : HistoricalAlternatives W T)
     (noun relClause : E → Index W T → Prop)
     (s₀ : Index W T)
-    (h_none_actual : ¬∃ x, noun x s₀ ∧ relClause x s₀)
     (h_some_possible : ∃ s₁ ∈ historicalBase history s₀, ∃ x, noun x s₁ ∧ relClause x s₁) :
     ∃ x, relClauseSF history noun relClause s₀ x := by
   obtain ⟨s₁, h_s₁, x, hx⟩ := h_some_possible

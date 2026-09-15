@@ -1,4 +1,4 @@
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
 import Mathlib.Logic.Function.Basic
 import Linglib.Logic.PIP.Syntax
 

@@ -1,5 +1,5 @@
 import Mathlib.Data.Part
-import Mathlib.Logic.Nontrivial.Defs
+import Mathlib.Basic.Nontrivial.Defs
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Logic.Trivalent.Prop3
 import Linglib.Semantics.Definiteness.Maximality

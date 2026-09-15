@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Functor
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
 import Linglib.Fragments.Japanese.Determiners
 import Linglib.Fragments.German.ModalIndefinites
 import Linglib.Fragments.Latvian.IndeterminatePronouns

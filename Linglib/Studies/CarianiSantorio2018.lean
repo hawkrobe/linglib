@@ -107,7 +107,7 @@ theorem selFn_inclusion (w : W) (A : Set W) (hA : A.Nonempty) :
 theorem selFn_centering (w : W) (A : Set W) (hw : w ∈ A) :
     selFn w A = w := by
   unfold selFn
-  rw [if_pos hw]
+  rw [ite_eq_left hw]
 
 noncomputable def cynthiaSel : SelectionFunction W where
   sel := selFn
@@ -187,9 +187,9 @@ theorem cynthia_credence_one_third :
       cynthiaPMF_support_in_histAlt]
   rw [PMF.probOfSet_apply, univ_W_eq, Finset.sum_insert (by decide),
       Finset.sum_insert (by decide), Finset.sum_singleton,
-      if_pos (show (W.cw) ∈ warriorsCap by decide),
-      if_neg (show (W.cg) ∉ warriorsCap by decide),
-      if_neg (show (W.cn) ∉ warriorsCap by decide)]
+      ite_eq_left (show (W.cw) ∈ warriorsCap by decide),
+      ite_eq_right (show (W.cg) ∉ warriorsCap by decide),
+      ite_eq_right (show (W.cn) ∉ warriorsCap by decide)]
   simp only [cynthiaPMF, PMF.ofFintype_apply]
   rw [← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
   norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
@@ -228,18 +228,18 @@ theorem cap_warriors_credence_one_half :
   have hwears : cynthiaPMF.probOfSet wearsCap = 2/3 := by
     rw [PMF.probOfSet_apply, univ_W_eq, Finset.sum_insert (by decide),
         Finset.sum_insert (by decide), Finset.sum_singleton,
-        if_pos (show (W.cw) ∈ wearsCap by decide),
-        if_pos (show (W.cg) ∈ wearsCap by decide),
-        if_neg (show (W.cn) ∉ wearsCap by decide)]
+        ite_eq_left (show (W.cw) ∈ wearsCap by decide),
+        ite_eq_left (show (W.cg) ∈ wearsCap by decide),
+        ite_eq_right (show (W.cn) ∉ wearsCap by decide)]
     simp only [cynthiaPMF, PMF.ofFintype_apply]
     rw [← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
     norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]
   have hinter : cynthiaPMF.probOfSet (wearsCap ∩ warriorsCap) = 1/3 := by
     rw [PMF.probOfSet_apply, univ_W_eq, Finset.sum_insert (by decide),
         Finset.sum_insert (by decide), Finset.sum_singleton,
-        if_pos (show (W.cw) ∈ wearsCap ∩ warriorsCap by decide),
-        if_neg (show (W.cg) ∉ wearsCap ∩ warriorsCap by decide),
-        if_neg (show (W.cn) ∉ wearsCap ∩ warriorsCap by decide)]
+        ite_eq_left (show (W.cw) ∈ wearsCap ∩ warriorsCap by decide),
+        ite_eq_right (show (W.cg) ∉ wearsCap ∩ warriorsCap by decide),
+        ite_eq_right (show (W.cn) ∉ wearsCap ∩ warriorsCap by decide)]
     simp only [cynthiaPMF, PMF.ofFintype_apply]
     rw [← ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)]
     norm_num [ENNReal.toReal_div, ENNReal.toReal_add, ENNReal.add_eq_top, ENNReal.div_eq_top]

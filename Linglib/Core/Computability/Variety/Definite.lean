@@ -54,7 +54,7 @@ variable {α : Type*} {L : Language α} {k : ℕ}
 alphabet: the projection is a section, and its image consists of words of length `≤ k`. -/
 private theorem isRegular_of_syntacticClass_takeAt [Finite α] (e : Edge)
     (h : ∀ w : List α, L.syntacticClass (e.takeAt k w) = L.syntacticClass w) : L.IsRegular := by
-  haveI : Finite {w : List α // w.length ≤ k} := (List.finite_length_le α k).to_subtype
+  have : Finite {w : List α // w.length ≤ k} := (List.finite_length_le α k).to_subtype
   refine IsRegular.of_finite_syntacticMonoid (Finite.of_surjective
     (fun w : {w : List α // w.length ≤ k} => L.syntacticClass w.1) fun m => ?_)
   obtain ⟨u, rfl⟩ := L.syntacticClass_surjective m
@@ -293,7 +293,7 @@ exactly the definite languages. -/
 theorem langs_definiteVariety_iff [Finite α] :
     Semigroup.definiteVariety.langs L ↔ ∃ k, L.IsDefinite k := by
   refine ⟨fun h => ?_, fun ⟨_, hk⟩ => hk.langs⟩
-  haveI : Finite L.SyntacticMonoid := IsRegular.finite_syntacticMonoid h.1
+  have : Finite L.SyntacticMonoid := IsRegular.finite_syntacticMonoid h.1
   exact exists_isDefinite_of_satisfies_omegaDefiniteEquation
     (isDefinite_syntacticSemigroup_iff_omegaDefiniteEquation.1 h.2)
 
@@ -302,7 +302,7 @@ exactly the reverse-definite languages. -/
 theorem langs_reverseDefiniteVariety_iff [Finite α] :
     Semigroup.reverseDefiniteVariety.langs L ↔ ∃ k, L.IsReverseDefinite k := by
   refine ⟨fun h => ?_, fun ⟨_, hk⟩ => hk.langs⟩
-  haveI : Finite L.SyntacticMonoid := IsRegular.finite_syntacticMonoid h.1
+  have : Finite L.SyntacticMonoid := IsRegular.finite_syntacticMonoid h.1
   exact exists_isReverseDefinite_of_satisfies_omegaReverseDefiniteEquation
     (isReverseDefinite_syntacticSemigroup_iff_omegaReverseDefiniteEquation.1 h.2)
 

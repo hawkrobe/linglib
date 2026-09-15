@@ -60,7 +60,7 @@ theorem softmaxDecoder_eq_exp_score_sub_lse {Cand : Type*} (α : ℝ) (hα : α 
   have hne : cands.Nonempty := ⟨c, hc⟩
   show (if c ∈ cands then exp (α * score c) / ∑ c' ∈ cands, exp (α * score c')
         else 0) = _
-  rw [if_pos hc, ← exp_alpha_lseFinset α hα hne score]
+  rw [ite_eq_left hc, ← exp_alpha_lseFinset α hα hne score]
   rw [show α * (score c - lseFinset α cands score)
         = α * score c - α * lseFinset α cands score from by ring,
       Real.exp_sub]
@@ -101,6 +101,6 @@ theorem softmaxDecoder_eq_exp_div_exp_lse {Cand : Type*} (α : ℝ) (hα : α �
   have hne : cands.Nonempty := ⟨c, hc⟩
   show (if c ∈ cands then exp (α * score c) / ∑ c' ∈ cands, exp (α * score c')
         else 0) = _
-  rw [if_pos hc, ← exp_alpha_lseFinset α hα hne score]
+  rw [ite_eq_left hc, ← exp_alpha_lseFinset α hα hne score]
 
 end Core.Optimization

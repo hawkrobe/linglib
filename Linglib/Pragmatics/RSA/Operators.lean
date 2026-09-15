@@ -258,7 +258,7 @@ theorem softmaxBelief_ne_zero_of_qOk [Fintype W]
     (h : qOk u) :
     softmaxBelief lex belief α qOk u ≠ 0 := by
   unfold softmaxBelief
-  rw [if_pos h]
+  rw [ite_eq_left h]
   exact (ENNReal.ofReal_pos.mpr (Real.exp_pos _)).ne'
 
 /-- The score is `0` exactly when the quality predicate fails. The
@@ -270,7 +270,7 @@ theorem softmaxBelief_eq_zero_of_not_qOk [Fintype W]
     (h : ¬ qOk u) :
     softmaxBelief lex belief α qOk u = 0 := by
   unfold softmaxBelief
-  rw [if_neg h]
+  rw [ite_eq_right h]
 
 /-- Cover discharge: a single quality-OK witness is enough to make the
 fan-out sum non-zero — the standard `PMF.normalize` precondition shape. -/
@@ -302,7 +302,7 @@ theorem softmaxBelief_concentrated_apply [Fintype W] [DecidableEq W]
   split_ifs with h_qOk
   · congr 1
     rw [one_mul, Finset.sum_eq_single sStar]
-    · simp only [if_pos, one_mul]
+    · simp only [ite_eq_left, one_mul]
       exact Real.exp_log (h h_qOk)
     · intro s _ hs
       simp [hs]
@@ -333,7 +333,7 @@ theorem softmaxBelief_uniform_on_support [Fintype W]
     (h_sum : (∑ s, belief s) = 1) :
     softmaxBelief lex belief 1 qOk u = ENNReal.ofReal v := by
   unfold softmaxBelief
-  rw [if_pos h_qok]
+  rw [ite_eq_left h_qok]
   congr 1
   rw [one_mul]
   have h_eq : ∀ s ∈ Finset.univ, belief s * Real.log (lex u s) = belief s * Real.log v := by

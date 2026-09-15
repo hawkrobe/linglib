@@ -47,7 +47,7 @@ do (`defUpdateTopic_descUpdate`).
 
 namespace Krifka2013
 
-variable {I W X : Type*} [DecidableEq I] [DecidableEq W]
+variable {I W X : Type*}
 
 /-- A common ground (§3.1): the admissible interpretations and the possible worlds. -/
 @[ext]
@@ -95,7 +95,7 @@ theorem ordConnected_defUpdate [Preorder I] (hI : (↑cg.interps : Set I).OrdCon
     (hφ : ∀ w ∈ cg.worlds, {i | φ i w}.OrdConnected) :
     (↑(cg.defUpdate φ).interps : Set I).OrdConnected := by
   refine ⟨λ x hx y hy z hz => ?_⟩
-  simp only [defUpdate, Finset.coe_filter, Set.mem_sep_iff, Finset.mem_coe] at hx hy ⊢
+  simp only [defUpdate, Finset.coe_filter] at hx hy ⊢
   exact ⟨hI.out hx.1 hy.1 hz, λ w hw => (hφ w hw).out (hx.2 w hw) (hy.2 w hw) hz⟩
 
 /-- A definitional generic from an empirical finding ((31)–(36)): with the species rule (33)

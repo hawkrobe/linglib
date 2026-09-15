@@ -138,8 +138,8 @@ end ToyFacts
 
 /-- The toy structure: constants denote their entities; relations carry the
 facts (binary relations subject-first). -/
-def toyStructure : toyLang.Structure ToyEntity where
-  funMap {n} f v :=
+abbrev toyStructure : toyLang.Structure ToyEntity where
+  funMap f v :=
     match f, v with
     | .john, _ => ToyEntity.john
     | .mary, _ => ToyEntity.mary

@@ -103,7 +103,7 @@ theorem isStarFree_univ : IsStarFree (Set.univ : Language α) :=
 /-- Star-free languages are closed under finitely-indexed intersections. -/
 theorem IsStarFree.iInter {ι : Type*} [Finite ι] {f : ι → Language α}
     (h : ∀ i, (f i).IsStarFree) : IsStarFree (⋂ i, f i) := by
-  haveI := Fintype.ofFinite ι
+  have := Fintype.ofFinite ι
   classical
   rw [show (⋂ i, f i) = ⋂ i ∈ (Finset.univ : Finset ι), f i by simp]
   induction (Finset.univ : Finset ι) using Finset.induction_on with

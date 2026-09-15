@@ -232,7 +232,7 @@ theorem phase_internal_obligatory {sp : Spine} {i : ℕ} {h : Head} (hi : sp[i]?
     (he : h.epp = true) (ha : Accessible sp i) : i + 1 ≤ landing sp := by
   obtain ⟨hlen, -⟩ := List.getElem?_eq_some_iff.1 hi
   have hstep : stateAt sp (i + 1) = ⟨i + 1, false⟩ := by
-    rw [stateAt_succ_of_getElem? hi, step, if_neg (by simpa [Accessible] using ha), if_pos he]
+    rw [stateAt_succ_of_getElem? hi, step, ite_eq_right (by simpa [Accessible] using ha), ite_eq_left he]
   calc i + 1 = (stateAt sp (i + 1)).height := by rw [hstep]
     _ ≤ landing sp := height_stateAt_mono sp hlen
 
@@ -243,8 +243,8 @@ theorem cross_phasal_frozen {sp : Spine} {i : ℕ} {h : Head} (hi : sp[i]? = som
     (hp : h.phase = true) (he : h.epp = false) (ha : Accessible sp i) :
     landing sp ≤ i ∧ ∀ j, i < j → ¬ Accessible sp j := by
   have hstep : stateAt sp (i + 1) = ⟨(stateAt sp i).height, true⟩ := by
-    rw [stateAt_succ_of_getElem? hi, step, if_neg (by simpa [Accessible] using ha),
-      if_neg (by simp [he]), if_pos hp]
+    rw [stateAt_succ_of_getElem? hi, step, ite_eq_right (by simpa [Accessible] using ha),
+      ite_eq_right (by simp [he]), ite_eq_left hp]
   obtain ⟨hlen, -⟩ := List.getElem?_eq_some_iff.1 hi
   refine ⟨?_, λ j hij hj => ?_⟩
   · rw [landing, frozen_stateAt_of_le hlen (by rw [hstep]), hstep]

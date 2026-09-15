@@ -1,4 +1,4 @@
-import Mathlib.Logic.Basic
+import Mathlib.Basic.Logic.Basic
 import Mathlib.Logic.Relator
 import Mathlib.Order.Defs.Unbundled
 import Mathlib.Order.PropInstances

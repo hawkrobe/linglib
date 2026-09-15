@@ -26,7 +26,7 @@ variable {F M : Type*} [NormedAddCommGroup F] [NormedAddCommGroup M] [NormedSpac
 /-- The production map is Lipschitz with constant its operator norm. -/
 theorem lipschitzWith_production :
     LipschitzWith ‖D.production.toContinuousLinearMap‖₊ D.production :=
-  D.production.toContinuousLinearMap.lipschitz
+  D.production.toContinuousLinearMap.lipschitzWith
 
 /-- Meanings within `ε` of each other produce forms within `‖production‖ * ε`. -/
 theorem norm_production_sub_le {e₁ e₂ : M} {ε : ℝ} (h : ‖e₁ - e₂‖ ≤ ε) :

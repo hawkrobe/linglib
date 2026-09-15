@@ -74,7 +74,7 @@ theorem replace_merge_of_ne {l r target replacement : SyntacticObject} (h : merg
     replace (merge l r) target replacement
       = merge (replace l target replacement) (replace r target replacement) := by
   apply Subtype.ext
-  rw [replace_val, merge_val, UnorderedTree.replace_node_pair, if_neg, merge_val, replace_val,
+  rw [replace_val, merge_val, UnorderedTree.replace_node_pair, ite_eq_right, merge_val, replace_val,
     replace_val]
   rw [← merge_val]
   exact fun heq => h (Subtype.ext heq)
@@ -84,14 +84,14 @@ theorem replace_lexLeaf_of_ne {tok : LIToken} {target replacement : SyntacticObj
       = SyntacticObject.leaf tok := by
   apply Subtype.ext
   rw [replace_val, show (SyntacticObject.leaf tok).val = UnorderedTree.leaf (Sum.inl tok) from rfl,
-      UnorderedTree.replace_leaf, if_neg]
+      UnorderedTree.replace_leaf, ite_eq_right]
   exact fun heq => h (Subtype.ext heq)
 
 theorem replace_traceLeaf_of_ne {target replacement : SyntacticObject}
     (h : trace ≠ target) : replace trace target replacement = trace := by
   apply Subtype.ext
   rw [replace_val, show trace.val = UnorderedTree.leaf (Sum.inr none) from rfl,
-      UnorderedTree.replace_leaf, if_neg]
+      UnorderedTree.replace_leaf, ite_eq_right]
   exact fun heq => h (Subtype.ext heq)
 
 /-- Moving the daughter `r` out of `[l r]` and leaving a trace yields `[l′ t]`, with `l′` the

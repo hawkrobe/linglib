@@ -56,7 +56,7 @@ theorem expectedValue_congr (h : p = q) : expectedValue pr V bel p = expectedVal
 theorem expectedValue_eq (h : HasPositiveBeliefMass pr bel p) :
     expectedValue pr V bel p = (∑ w ∈ cell bel p, pr w * V w) / ∑ w ∈ cell bel p, pr w := by
   have hne := h.ne'
-  simp only [expectedValue, DecisionProblem.condExpectedUtility, toDecisionProblem, if_neg hne]
+  simp only [expectedValue, DecisionProblem.condExpectedUtility, toDecisionProblem, ite_eq_right hne]
   rw [eq_div_iff hne, Finset.sum_mul]
   exact Finset.sum_congr rfl λ w _ => by field_simp
 

@@ -205,10 +205,10 @@ private theorem sourGrapes_flankWord_mid {u v : SG} {d : ℕ} :
   rw [sourGrapes, List.getElem?_mapIdx, getElem?_flankWord_mid (by omega) (by omega),
     Option.map_some]
   by_cases h : u = .plus ∧ v ≠ .blk
-  · rw [if_pos h, if_pos ⟨rfl,
+  · rw [ite_eq_left h, ite_eq_left ⟨rfl,
       (mem_take_flankWord_iff (by decide) (by omega)).mpr h.1,
       λ hb => h.2 ((mem_drop_flankWord_iff (by decide) (by omega)).mp hb)⟩]
-  · rw [if_neg h, if_neg λ ⟨_, ht, hd⟩ =>
+  · rw [ite_eq_right h, ite_eq_right λ ⟨_, ht, hd⟩ =>
       h ⟨(mem_take_flankWord_iff (by decide) (by omega)).mp ht,
         λ hv => hd ((mem_drop_flankWord_iff (by decide) (by omega)).mpr hv)⟩]
 

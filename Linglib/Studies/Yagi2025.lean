@@ -343,7 +343,7 @@ theorem flexS_split_eq_some_iff (h : Conflict φ ψ) (s t : State W) :
       {w ∈ s | (φ.presup w ∧ φ.assertion w) ∨ (ψ.presup w ∧ ψ.assertion w)} := by
     intro h₁ h₂
     ext w
-    simp only [Set.mem_union, mem_prop, Set.mem_setOf_eq]
+    simp only [Set.mem_union, mem_prop, Set.mem_ofPred_eq]
     constructor
     · rintro (⟨⟨hw, hq⟩, hφ⟩ | ⟨⟨hw, hp⟩, hψ⟩)
       · exact ⟨hw, Or.inl ⟨h₁ w ⟨hw, hq⟩, hφ⟩⟩
@@ -373,7 +373,7 @@ theorem negOf_flexS_split (h : Conflict φ ψ) {s : State W}
   rw [negOf, (flexS_split_eq_some_iff h s _).2 ⟨hs, rfl⟩, Option.map_some]
   congr 1
   ext w
-  simp only [Set.mem_diff, Set.mem_setOf_eq, not_and, not_or]
+  simp only [Set.mem_sdiff, Set.mem_ofPred_eq, not_and, not_or]
   tauto
 
 /-- Genuineness: each disjunct is defined and true at some world of the input that survives
@@ -437,13 +437,13 @@ theorem buganda_split :
   · rw [flexS_split_eq_some_iff conflict_buganda]
     refine ⟨hs, ?_⟩
     ext w
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_setOf_eq, Set.mem_univ,
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_ofPred_eq, Set.mem_univ,
       true_and, kingOpens, presidentConducts]
     fin_cases w <;> decide
   · rw [negOf_flexS_split conflict_buganda hs]
     congr 1
     ext w
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_setOf_eq, Set.mem_univ,
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_ofPred_eq, Set.mem_univ,
       true_and, kingOpens, presidentConducts]
     fin_cases w <;> decide
 

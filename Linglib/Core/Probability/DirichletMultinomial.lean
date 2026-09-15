@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Probability.PolyaUrn
 import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.MeasureTheory.Measure.Dirac
+import Mathlib.MeasureTheory.Measure.Dirac.Basic
 import Mathlib.MeasureTheory.Measure.Real
 
 /-!
@@ -171,8 +171,8 @@ theorem seqLaw_real_singleton (N : ℕ) (seq : Fin N → α) :
 instance (N : ℕ) : IsProbabilityMeasure (u.seqLaw N) :=
   (u.hasSum_one_seqLaw N).isProbabilityMeasure_sum_dirac fun _ => (u.seqProb_pos _).le
 
-instance (N : ℕ) : IsProbabilityMeasure (u.dirichletMultinomial N) :=
-  Measure.isProbabilityMeasure_map .of_discrete
+instance (N : ℕ) : IsProbabilityMeasure (u.dirichletMultinomial N) := by
+  unfold dirichletMultinomial; infer_instance
 
 /-- The closed-form Dirichlet–multinomial mass: the multinomial coefficient times the
 per-sequence likelihood `Γ(Σπ) / Γ(Σπ + N) · ∏ Γ(π_i + x_i) / Γ(π_i)`. -/

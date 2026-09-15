@@ -3,7 +3,7 @@ import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Multiset
 import Mathlib.Combinatorics.Enumerative.Composition
 import Mathlib.Combinatorics.Enumerative.Partition.Basic
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 import Mathlib.Order.Partition.Finpartition
 import Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno
 import Mathlib.RingTheory.Polynomial.Pochhammer
@@ -258,7 +258,7 @@ theorem extendLeft_toNatPartition {n : ℕ} (c : OrderedFinpartition n) :
   show (Finset.univ : Finset (Fin (c.length + 1))).val.map (Fin.cons 1 c.partSize) =
        (1 : ℕ) ::ₘ (Finset.univ : Finset (Fin c.length)).val.map c.partSize
   rw [Fin.univ_succ]
-  simp [Multiset.map_cons, Function.comp_def, Fin.cons_succ]
+  simp [Function.comp_def, Fin.cons_succ]
 
 /-- Mathlib's `OrderedFinpartition.extendMiddle k` (= "extend block k by 1
     element") corresponds to `Nat.Partition.replaceMem (partSize k)` at the
@@ -610,8 +610,8 @@ theorem partitionProb_replaceMem_mul {n : ℕ} (q : Nat.Partition n) (m : ℕ)
     linarith
   obtain ⟨m_n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn_pos.ne'
   obtain ⟨m_block, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hm_pos.ne'
-  simp only [partitionProb, Nat.Partition.replaceMem_parts, Nat.Partition.replaceMem_card,
-             Nat.add_sub_cancel, Nat.succ_eq_add_one]
+  simp only [partitionProb, Nat.Partition.replaceMem_parts, Nat.add_sub_cancel,
+    Nat.succ_eq_add_one]
   rw [Multiset.map_cons, Multiset.prod_cons]
   -- Extract the m-th block factor on the RHS via cons_erase.
   conv_rhs =>
@@ -661,10 +661,8 @@ theorem partitionProb_extend_sum (n : ℕ) (c : OrderedFinpartition n) :
     rw [Subsingleton.elim c (default : OrderedFinpartition 0)]
     show p.partitionProb _ + ∑ _k, _ =
         p.partitionProb (default : OrderedFinpartition 0).toNatPartition
-    simp [OrderedFinpartition.extendLeft_toNatPartition, partitionProb,
-          Subsingleton.elim (default : OrderedFinpartition 0).toNatPartition
-            (default : Nat.Partition 0),
-          default, Nat.Partition.indiscrete, Nat.Partition.consOne]
+    simp [OrderedFinpartition.extendLeft_toNatPartition, partitionProb, default,
+      Nat.Partition.consOne]
   | n + 1, c =>
     have hθ_pos : (0 : ℝ) < ((n + 1 : ℕ) : ℝ) + p.concentration := by
       have h1 : -p.discount < p.concentration := p.concentration_gt
@@ -676,7 +674,7 @@ theorem partitionProb_extend_sum (n : ℕ) (c : OrderedFinpartition n) :
     have hcard : c.toNatPartition.parts.card = c.length := by
       show (Multiset.map c.partSize (Finset.univ : Finset (Fin c.length)).val).card
             = c.length
-      simp [Multiset.card_map, Finset.card_univ, Fintype.card_fin]
+      simp
     rw [hcard, Finset.mul_sum]
     conv_lhs =>
       enter [2, 2, k]

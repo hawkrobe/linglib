@@ -81,25 +81,25 @@ private lemma filter_sandwich_of_pos_pos {T : α → Bool} {aL aR : α} (hL : T 
     (hR : T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
     (sandwich kL aL mid kR aR).filter T = sandwich kL aL (mid.filter T) kR aR := by
   unfold sandwich
-  rw [filter_replicate_append_replicate, if_pos hL, if_pos hR]
+  rw [filter_replicate_append_replicate, ite_eq_left hL, ite_eq_left hR]
 
 private lemma filter_sandwich_of_neg_pos {T : α → Bool} {aL aR : α} (hL : ¬ T aL = true)
     (hR : T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
     (sandwich kL aL mid kR aR).filter T = mid.filter T ++ replicate kR aR := by
   unfold sandwich
-  rw [filter_replicate_append_replicate, if_neg hL, if_pos hR, replicate_zero, nil_append]
+  rw [filter_replicate_append_replicate, ite_eq_right hL, ite_eq_left hR, replicate_zero, nil_append]
 
 private lemma filter_sandwich_of_pos_neg {T : α → Bool} {aL aR : α} (hL : T aL = true)
     (hR : ¬ T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
     (sandwich kL aL mid kR aR).filter T = replicate kL aL ++ mid.filter T := by
   unfold sandwich
-  rw [filter_replicate_append_replicate, if_pos hL, if_neg hR, replicate_zero, append_nil]
+  rw [filter_replicate_append_replicate, ite_eq_left hL, ite_eq_right hR, replicate_zero, append_nil]
 
 private lemma filter_sandwich_of_neg_neg {T : α → Bool} {aL aR : α} (hL : ¬ T aL = true)
     (hR : ¬ T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
     (sandwich kL aL mid kR aR).filter T = mid.filter T := by
   unfold sandwich
-  rw [filter_replicate_append_replicate, if_neg hL, if_neg hR, replicate_zero, replicate_zero,
+  rw [filter_replicate_append_replicate, ite_eq_right hL, ite_eq_right hR, replicate_zero, replicate_zero,
     nil_append, append_nil]
 
 private lemma sublist_sandwich_of_sublist_mid {pat mid : List α} (h : pat <+ mid)

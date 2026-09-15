@@ -52,9 +52,9 @@ otherwise `none`. -/
 def apply (rule : FusionRule F) (p q : List F) : Option (List F) :=
   if rule.condition p q then some (p ++ q) else none
 
-theorem apply_pos (h : rule.condition p q) : rule.apply p q = some (p ++ q) := if_pos h
+theorem apply_pos (h : rule.condition p q) : rule.apply p q = some (p ++ q) := ite_eq_left h
 
-theorem apply_neg (h : ¬ rule.condition p q) : rule.apply p q = none := if_neg h
+theorem apply_neg (h : ¬ rule.condition p q) : rule.apply p q = none := ite_eq_right h
 
 @[simp] theorem apply_eq_some_iff :
     rule.apply p q = some out ↔ rule.condition p q ∧ p ++ q = out := by

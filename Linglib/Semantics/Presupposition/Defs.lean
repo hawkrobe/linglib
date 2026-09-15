@@ -84,7 +84,7 @@ theorem toPart_surjective [Inhabited α] :
     Function.Surjective (toPart : PartialValue W α → W → Part α) := λ f =>
   ⟨⟨λ w => (f w).Dom, λ w => if h : (f w).Dom then (f w).get h else default⟩, by
     funext w
-    exact Part.ext' Iff.rfl (λ h₁ _ => dif_pos h₁)⟩
+    exact Part.ext' Iff.rfl (λ h₁ _ => dite_eq_left h₁)⟩
 
 end PartialValue
 
@@ -205,12 +205,12 @@ characterizations rather than the classical `if`-nest. -/
 theorem eval_ofProp3 (p : Prop3 W) : (ofProp3 p).eval = p := by
   funext w; simp only [eval, ofProp3]
   by_cases h1 : p w ≠ .indet
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     by_cases h2 : p w = .true
-    · rw [if_pos h2, h2]
-    · rw [if_neg h2]; symm
+    · rw [ite_eq_left h2, h2]
+    · rw [ite_eq_right h2]; symm
       exact match p w, h1, h2 with | .false, _, _ => rfl
-  · rw [if_neg h1]; symm; exact not_not.mp h1
+  · rw [ite_eq_right h1]; symm; exact not_not.mp h1
 
 /-- `eval` is surjective — every three-valued proposition has a total representative,
     `ofProp3` being a section. -/

@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 [UPSTREAM] candidate: `Mathlib.Algebra.Group.End`, where `Function.End` is defined.
 -/
 import Mathlib.Algebra.Group.End
-import Mathlib.Data.Finite.Prod
+import Mathlib.Basic.Finite.Prod
 
 /-!
 # Finiteness of the endomorphism monoid

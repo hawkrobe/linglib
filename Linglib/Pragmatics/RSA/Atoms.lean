@@ -137,16 +137,17 @@ theorem expAtom_pow_mul_exp_nat_mul {q : ℝ} (n : ℕ) :
     Real.exp_zero]
 
 /-- Lower certificate: `r ^ n · exp (n·q) < 1` gives `r < expAtom q`. -/
-theorem lt_expAtom {q r : ℝ} {n : ℕ} (hn : n ≠ 0) (hr : 0 ≤ r)
+theorem lt_expAtom {q r : ℝ} {n : ℕ} (hr : 0 ≤ r)
     (h : r ^ n * Real.exp (n * q) < 1) : r < expAtom q := by
   have hpos := expAtom_pos q
   have hid := expAtom_pow_mul_exp_nat_mul (q := q) n
   have he := Real.exp_pos ((n : ℝ) * q)
   refine lt_of_pow_lt_pow_left₀ n hpos.le ?_
-  nlinarith [pow_nonneg hr n]
+  have hrn := pow_nonneg hr n
+  nlinarith
 
 /-- Upper certificate: `1 < s ^ n · exp (n·q)` gives `expAtom q < s`. -/
-theorem expAtom_lt {q s : ℝ} {n : ℕ} (hn : n ≠ 0) (hs : 0 ≤ s)
+theorem expAtom_lt {q s : ℝ} {n : ℕ} (hs : 0 ≤ s)
     (h : 1 < s ^ n * Real.exp (n * q)) : expAtom q < s := by
   have hpos := expAtom_pos q
   have hid := expAtom_pow_mul_exp_nat_mul (q := q) n

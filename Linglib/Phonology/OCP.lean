@@ -167,11 +167,11 @@ not a retraction repairing its output. -/
 def block (xs : List α) : List α :=
   if IsClean (rule xs) then rule xs else xs
 
-theorem block_eq_rule {xs : List α} (hc : IsClean (rule xs)) : block rule xs = rule xs := if_pos hc
+theorem block_eq_rule {xs : List α} (hc : IsClean (rule xs)) : block rule xs = rule xs := ite_eq_left hc
 
 /-- Antigemination: the rule fails to apply exactly when it would create an OCP
 violation, leaving the input unrepaired (contrast `collapse`). -/
-theorem block_eq_self {xs : List α} (hc : ¬ IsClean (rule xs)) : block rule xs = xs := if_neg hc
+theorem block_eq_self {xs : List α} (hc : ¬ IsClean (rule xs)) : block rule xs = xs := ite_eq_right hc
 
 /-- Blocking never worsens a clean tier. -/
 theorem block_isClean {xs : List α} (hx : IsClean xs) : IsClean (block rule xs) := by

@@ -327,14 +327,14 @@ theorem solvable_rsa_prefers :
     rsaSpeaker_real, rsaSpeaker_real]
   simp only [sum_word, L0_toReal, hb, hg, hbo, hmi, uniform, measureReal_def,
     priorOfWeights_singleton, Nat.cast_one]
-  rw [if_pos (by decide : (1 : Fin 3) ∈ solvable.sem (.color .blue)),
-    if_neg (by decide : (1 : Fin 3) ∉ solvable.sem (.color .green)),
-    if_neg (by decide : (1 : Fin 3) ∉ solvable.sem (.shape .boot)),
-    if_pos (by decide : (1 : Fin 3) ∈ solvable.sem (.shape .mitt)),
-    if_pos (by decide : (0 : Fin 3) ∈ solvable.sem (.color .blue)),
-    if_neg (by decide : (0 : Fin 3) ∉ solvable.sem (.color .green)),
-    if_pos (by decide : (0 : Fin 3) ∈ solvable.sem (.shape .boot)),
-    if_neg (by decide : (0 : Fin 3) ∉ solvable.sem (.shape .mitt))]
+  rw [ite_eq_left (by decide : (1 : Fin 3) ∈ solvable.sem (.color .blue)),
+    ite_eq_right (by decide : (1 : Fin 3) ∉ solvable.sem (.color .green)),
+    ite_eq_right (by decide : (1 : Fin 3) ∉ solvable.sem (.shape .boot)),
+    ite_eq_left (by decide : (1 : Fin 3) ∈ solvable.sem (.shape .mitt)),
+    ite_eq_left (by decide : (0 : Fin 3) ∈ solvable.sem (.color .blue)),
+    ite_eq_right (by decide : (0 : Fin 3) ∉ solvable.sem (.color .green)),
+    ite_eq_left (by decide : (0 : Fin 3) ∈ solvable.sem (.shape .boot)),
+    ite_eq_right (by decide : (0 : Fin 3) ∉ solvable.sem (.shape .mitt))]
   norm_num
 
 /-- The baseline is at chance between the two blue objects. -/
@@ -368,14 +368,14 @@ theorem reducible_rsa_prefers :
     rsaSpeaker_real, rsaSpeaker_real]
   simp only [sum_word, L0_toReal, hb, hg, hbo, hmi, uniform, measureReal_def,
     priorOfWeights_singleton, Nat.cast_one]
-  rw [if_pos (by decide : (2 : Fin 3) ∈ reducible.sem (.color .blue)),
-    if_neg (by decide : (2 : Fin 3) ∉ reducible.sem (.color .green)),
-    if_neg (by decide : (2 : Fin 3) ∉ reducible.sem (.shape .boot)),
-    if_pos (by decide : (2 : Fin 3) ∈ reducible.sem (.shape .mitt)),
-    if_pos (by decide : (0 : Fin 3) ∈ reducible.sem (.color .blue)),
-    if_neg (by decide : (0 : Fin 3) ∉ reducible.sem (.color .green)),
-    if_pos (by decide : (0 : Fin 3) ∈ reducible.sem (.shape .boot)),
-    if_neg (by decide : (0 : Fin 3) ∉ reducible.sem (.shape .mitt))]
+  rw [ite_eq_left (by decide : (2 : Fin 3) ∈ reducible.sem (.color .blue)),
+    ite_eq_right (by decide : (2 : Fin 3) ∉ reducible.sem (.color .green)),
+    ite_eq_right (by decide : (2 : Fin 3) ∉ reducible.sem (.shape .boot)),
+    ite_eq_left (by decide : (2 : Fin 3) ∈ reducible.sem (.shape .mitt)),
+    ite_eq_left (by decide : (0 : Fin 3) ∈ reducible.sem (.color .blue)),
+    ite_eq_right (by decide : (0 : Fin 3) ∉ reducible.sem (.color .green)),
+    ite_eq_left (by decide : (0 : Fin 3) ∈ reducible.sem (.shape .boot)),
+    ite_eq_right (by decide : (0 : Fin 3) ∉ reducible.sem (.shape .mitt))]
   norm_num
 
 end Contexts

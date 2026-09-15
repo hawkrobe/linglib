@@ -600,8 +600,8 @@ theorem crossedPair_round {j : ℕ} (hj : j < 5) :
     have := directional_injective hk
     omega
   exact ⟨⟨2 * j, by omega, rfl⟩, ⟨2 * j + 1, by omega, rfl⟩,
-    by rw [kissAg, if_pos ⟨j, hj, rfl⟩], by rw [kissTh, if_pos ⟨j, hj, rfl⟩],
-    by rw [kissAg, if_neg hodd], by rw [kissTh, if_neg hodd]⟩
+    by rw [kissAg, ite_eq_left ⟨j, hj, rfl⟩], by rw [kissTh, ite_eq_left ⟨j, hj, rfl⟩],
+    by rw [kissAg, ite_eq_right hodd], by rw [kissTh, ite_eq_right hodd]⟩
 
 theorem directional_not_le {i k : ℕ} (h : i ≠ k) : ¬ directional i ≤ directional k :=
   λ hle => by

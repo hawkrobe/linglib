@@ -78,7 +78,7 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*}
         ← of'_add,
         show ({S} : Forest (UnorderedTree α)) + ({S'} : Forest (UnorderedTree α))
             = ({S, S'} : Forest (UnorderedTree α)) from rfl,
-        mergePost_basis_tensor, if_pos rfl, mul_one]
+        mergePost_basis_tensor, ite_eq_left rfl, mul_one]
   -- Term 2 (prim S × cut-sum S'): vanishes (crown of S' is never {S'}).
   have h_ps :
       mergePost (R := R) (α := α) lbl S S'
@@ -93,7 +93,7 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*}
           ((ofTree S ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))
             * (of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)) = 0
     rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, ← of'_singleton, ← of'_add,
-        mergePost_basis_tensor, if_neg]
+        mergePost_basis_tensor, ite_eq_right]
     intro hcontra
     apply cutSummandsN_crown_ne_singleton S' p hp
     have heq : ({S} : Forest (UnorderedTree α)) + p.1
@@ -114,7 +114,7 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*}
           ((of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)
             * (ofTree S' ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)))) = 0
     rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, ← of'_singleton, ← of'_add,
-        mergePost_basis_tensor, if_neg]
+        mergePost_basis_tensor, ite_eq_right]
     intro hcontra
     apply cutSummandsN_crown_ne_singleton S p hp
     have heq : p.1 + ({S'} : Forest (UnorderedTree α))
@@ -142,7 +142,7 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*}
     show mergePost (R := R) (α := α) lbl S S'
           ((of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)
             * (of' (R := R) p'.1 ⊗ₜ[R] ofTree p'.2)) = 0
-    rw [Algebra.TensorProduct.tmul_mul_tmul, ← of'_add, mergePost_basis_tensor, if_neg]
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← of'_add, mergePost_basis_tensor, ite_eq_right]
     intro hcontra
     have hwS := cutSummandsN_numNodes S p hp
     have hwS' := cutSummandsN_numNodes S' p' hp'

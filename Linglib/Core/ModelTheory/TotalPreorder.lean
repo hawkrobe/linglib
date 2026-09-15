@@ -47,7 +47,7 @@ decidable presentation of the model-theoretic object. -/
 theorem toStructure_model (ord : Core.Order.TotalPreorder α) :
     letI := ord.toStructure
     α ⊨ Language.order.totalPreorderTheory := by
-  letI := ord.toStructure
+  let := ord.toStructure
   refine Theory.model_iff _ |>.mpr fun φ hφ => ?_
   simp only [Language.totalPreorderTheory, Language.preorderTheory,
     Set.mem_insert_iff, Set.mem_singleton_iff] at hφ

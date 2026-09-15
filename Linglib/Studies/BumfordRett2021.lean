@@ -516,8 +516,8 @@ private theorem worldMeasure_extension (sem : Utterance → Sigma → EvalWorld 
   refine Finset.sum_congr rfl λ w _ => ?_
   rw [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply' _ .of_discrete]
   by_cases h : sem u σ w = true
-  · rw [Set.indicator_of_mem (show w ∈ extension sem σ u from h), Pi.one_apply, mul_one, if_pos h]
-  · rw [Set.indicator_of_notMem (show w ∉ extension sem σ u from h), mul_zero, if_neg h,
+  · rw [Set.indicator_of_mem (show w ∈ extension sem σ u from h), Pi.one_apply, mul_one, ite_eq_left h]
+  · rw [Set.indicator_of_notMem (show w ∉ extension sem σ u from h), mul_zero, ite_eq_right h,
       Rat.cast_zero, ENNReal.ofReal_zero]
 
 /-- Kernel-clean evaluation of an extension's mass: the `ℝ≥0∞` fan-out

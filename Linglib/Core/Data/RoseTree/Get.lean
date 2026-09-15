@@ -222,7 +222,7 @@ private theorem eq_take_append_cons_drop {cs : List (RoseTree α)} {i : ℕ} {c 
 
 private theorem set_eq_take_append_cons_drop {cs : List (RoseTree α)} {i : ℕ} {c : RoseTree α}
     (hc : cs[i]? = some c) (x : RoseTree α) : cs.set i x = cs.take i ++ x :: cs.drop (i + 1) := by
-  rw [List.set_eq_take_append_cons_drop, if_pos (List.getElem?_eq_some_iff.mp hc).1]
+  rw [List.set_eq_take_append_cons_drop, ite_eq_left (List.getElem?_eq_some_iff.mp hc).1]
 
 /-- Replacing inside the tree splits the frontier into the leaves left of the address, the
 frontier of the subtree there, and the leaves to its right. -/

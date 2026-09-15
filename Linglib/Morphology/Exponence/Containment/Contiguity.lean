@@ -139,7 +139,7 @@ theorem mem_ofPattern {p : Paradigm n F} {it : SpanRule n F} :
     · exact ⟨s, by assumption, (Option.some.inj hs).symm⟩
     · exact absurd hs (by simp)
   · rintro ⟨s, hfo, rfl⟩
-    exact ⟨s, by rw [if_pos hfo]⟩
+    exact ⟨s, by rw [ite_eq_left hfo]⟩
 
 omit [DecidableEq F] in
 theorem threshold_ofPattern {p : Paradigm n F} {s : Fin n} :
@@ -365,7 +365,7 @@ theorem mem_spelloutOfPattern {p : Paradigm n F} {it : SpanRule n F} :
     · exact ⟨s, by assumption, (Option.some.inj hs).symm⟩
     · exact absurd hs (by simp)
   · rintro ⟨s, hlo, rfl⟩
-    exact ⟨s, by rw [if_pos hlo]⟩
+    exact ⟨s, by rw [ite_eq_left hlo]⟩
 
 theorem contextFree_spelloutOfPattern (p : Paradigm n F) :
     ContextFree (spelloutOfPattern p) := by

@@ -282,9 +282,9 @@ theorem defaultTelicity_iff (s : Aspect.DegreeAchievementScale) (i top : ℚ)
     exact Boundedness.hasGreatest_degreeShape_iff _
   rw [key]
   by_cases hmax : s.scaleBoundedness.HasMax
-  · rw [if_pos hmax]
+  · rw [ite_eq_left hmax]
     exact iff_of_true hmax (hasTelic_of_bound rfl hi)
-  · rw [if_neg hmax]
+  · rw [ite_eq_right hmax]
     exact iff_of_false hmax (not_hasTelic_none rfl)
 
 end HayKennedyLevin1999

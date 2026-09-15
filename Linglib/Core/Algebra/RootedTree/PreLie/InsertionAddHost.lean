@@ -157,9 +157,9 @@ theorem kBucketSum_assignment_rewrite [DecidableEq τ] (idx : List τ)
     rw [bucketSlice_cons_cons]
     by_cases h : t = t'
     · subst h
-      rw [if_pos rfl, Function.update_self]
+      rw [ite_eq_left rfl, Function.update_self]
       simp [List.append_assoc]
-    · rw [if_neg h, Function.update_of_ne (Ne.symm h)]
+    · rw [ite_eq_right h, Function.update_of_ne (Ne.symm h)]
       simp
 
 end KBucketSum
@@ -220,12 +220,12 @@ theorem hostBucketSum_eq_kBucketSum
     refine Multiset.bind_congr fun b _ => ?_
     cases b with
     | true =>
-      rw [if_pos rfl, ih]
+      rw [ite_eq_left rfl, ih]
       congr 1
       funext c
       cases c <;> simp [Function.update_self]
     | false =>
-      rw [if_neg (by decide : (false : Bool) ≠ true), ih]
+      rw [ite_eq_right (by decide : (false : Bool) ≠ true), ih]
       congr 1
       funext c
       cases c <;> simp [Function.update_self]
@@ -249,7 +249,7 @@ theorem hostBucketSum_assignment_rewrite
   refine Multiset.bind_congr fun assn _ => ?_
   rw [hostBucketSum_eq_kBucketSum, kBucketSum_nil_remaining]
   simp only [bucketSlice_bool_true, bucketSlice_bool_false, Bool.false_eq_true,
-             if_true, reduceIte]
+             ite_true, reduceIte]
 
 /-! ## §2: Base case — `hostBucketSum [] host_B [] [] guests = insertionForest host_B guests`
 
@@ -285,9 +285,9 @@ private theorem hostBucketSum_nil_A_pre_A_cons_zero
       (Multiset.bind_zero _)
     intro b _
     cases b
-    · rw [if_neg (by decide : (false : Bool) ≠ true)]
+    · rw [ite_eq_right (by decide : (false : Bool) ≠ true)]
       exact ih pre_A (pre_B ++ [x])
-    · rw [if_pos rfl]
+    · rw [ite_eq_left rfl]
       -- pre_A ++ [x] = a :: (pre_A ++ [x]) when pre_A is non-empty,
       -- or a :: [x] when pre_A = []. Use `cons_append`.
       show hostBucketSum [] host_B (a :: pre_A ++ [x]) pre_B rest = 0
@@ -325,7 +325,7 @@ private theorem hostBucketSum_nil_A_pre_B_remaining
           rw [show ([true, false] : List Bool) = true :: false :: ([] : List Bool) from rfl]
           rfl]
     rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
-    rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]
+    rw [ite_eq_left rfl, ite_eq_right (by decide : (false : Bool) ≠ true)]
     -- True branch: pre_A = [] ++ [x] = [x] ≠ [], so it's 0.
     rw [show ([] : List (RoseTree α)) ++ [x] = x :: [] from rfl]
     rw [hostBucketSum_nil_A_pre_A_cons_zero host_B x [] pre_B rest]
@@ -562,7 +562,7 @@ private theorem hostBucketSum_eq_hostTripleSum_aux
     rw [hostBucketSum_cons_remaining]
     rw [show (Multiset.ofList [true, false] : Multiset Bool) = (true ::ₘ false ::ₘ 0) from rfl]
     rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
-    rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]
+    rw [ite_eq_left rfl, ite_eq_right (by decide : (false : Bool) ≠ true)]
     rw [ih (pre_A ++ [x]) pre_B, ih pre_A (pre_B ++ [x])]
     rw [show (pre_A ++ [x]).length = pre_A.length + 1 from by simp]
     rw [listChoices_succ_append_bind pre_A.length]
@@ -586,7 +586,7 @@ private theorem hostBucketSum_eq_hostTripleSum_aux
       rw [List.zip_append hassn_len.symm]; rfl
     -- Substitute and simplify both summands of g
     rw [hzip_t, hzip_f]
-    -- Reduce the singleton filterMap using `if_pos rfl` and `if_neg`:
+    -- Reduce the singleton filterMap using `ite_eq_left rfl` and `ite_eq_right`:
     -- For (x, true): filter_true → some x → [x]; filter_false → none → [].
     -- For (x, false): filter_true → none → []; filter_false → some x → [x].
     have h_true_t : ([(x, true)] : List (RoseTree α × Bool)).filterMap
@@ -751,7 +751,7 @@ private theorem hostTripleSum_T_split (T : RoseTree α) (F_A host_B : List (Rose
           rw [hostBucketSum_cons_remaining]
           rw [show (Multiset.ofList [true, false] : Multiset Bool) = (true ::ₘ false ::ₘ 0) from rfl]
           rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
-          rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]]
+          rw [ite_eq_left rfl, ite_eq_right (by decide : (false : Bool) ≠ true)]]
     -- Distribute (HBS₁ + HBS₂).map (T' :: ·) = HBS₁.map (T' :: ·) + HBS₂.map (T' :: ·)
     -- and (insertion T x).bind T' => (X + Y).map ... = (insertion T x).bind T' => X.map ... + (insertion T x).bind T' => Y.map ...
     rw [show ∀ X Y : Multiset (List (RoseTree α)),
@@ -1002,7 +1002,7 @@ private theorem filterMap_t_add_filterMap_f_eq_self {β : Type*}
         congr 1
         exact ih assn_rest hlen'
       | false =>
-        simp only [if_neg (by decide : (false : Bool) ≠ true)]
+        simp only [ite_eq_right (by decide : (false : Bool) ≠ true)]
         show ((l_rest.zip assn_rest).filterMap
                 (fun p => if p.snd = true then some p.fst else none) :
                 Multiset β) +
@@ -1112,7 +1112,7 @@ private theorem listChoices_bridge_powerset {β : Type*} [DecidableEq β]
                 (fun p => if p.snd then some p.fst else none)) : Multiset β)
           rw [show (a :: l_rest).zip (false :: assn') = (a, false) :: l_rest.zip assn' from rfl]
           rw [List.filterMap_cons]
-          simp only [if_neg (by decide : (false : Bool) ≠ true)]]
+          simp only [ite_eq_right (by decide : (false : Bool) ≠ true)]]
     -- Now LHS = (lc).map (a ::ₘ filter_t l_rest) + (lc).map (filter_t l_rest)
     -- RHS: (a ::ₘ ↑l_rest).powerset = ↑l_rest.powerset + (↑l_rest.powerset).map (a ::ₘ ·)
     --     [by Multiset.powerset_cons]
@@ -1236,8 +1236,8 @@ private theorem bucketSlice_preserves_perm
     | cons b assn_rest =>
       rw [bucketSlice_cons_cons, bucketSlice_cons_cons]
       by_cases hb : b = t
-      · rw [if_pos hb, if_pos hb]; exact List.Forall₂.cons hd_pe (ih assn_rest)
-      · rw [if_neg hb, if_neg hb]; exact ih assn_rest
+      · rw [ite_eq_left hb, ite_eq_left hb]; exact List.Forall₂.cons hd_pe (ih assn_rest)
+      · rw [ite_eq_right hb, ite_eq_right hb]; exact ih assn_rest
 
 /-- **Forest version of guest-Perm invariance**: `Forall₂ Perm`
     on guests preserves `(insertionForest F Ts).map (List.map mk)`.

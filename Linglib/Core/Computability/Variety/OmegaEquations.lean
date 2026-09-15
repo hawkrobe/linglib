@@ -289,7 +289,7 @@ private lemma left_absorbing_of_omegaDefiniteEquation
     s * L.syntacticClass v =
     L.syntacticClass v := by
   classical
-  haveI : Fintype L.SyntacticMonoid := Fintype.ofFinite _
+  have : Fintype L.SyntacticMonoid := Fintype.ofFinite _
   have hNat : Nat.card L.SyntacticMonoid = Fintype.card L.SyntacticMonoid :=
     Nat.card_eq_fintype_card
   rw [hNat] at hv
@@ -499,7 +499,7 @@ private lemma right_absorbing_of_omegaReverseDefiniteEquation
     L.syntacticClass v * s =
     L.syntacticClass v := by
   classical
-  haveI : Fintype L.SyntacticMonoid := Fintype.ofFinite _
+  have : Fintype L.SyntacticMonoid := Fintype.ofFinite _
   have hNat : Nat.card L.SyntacticMonoid = Fintype.card L.SyntacticMonoid :=
     Nat.card_eq_fintype_card
   rw [hNat] at hv
@@ -775,7 +775,7 @@ private lemma sandwich_absorbing_of_omegaGeneralizedDefiniteEquation
     L.syntacticClass v =
     L.syntacticClass v := by
   classical
-  haveI : Fintype L.SyntacticMonoid := Fintype.ofFinite _
+  have : Fintype L.SyntacticMonoid := Fintype.ofFinite _
   have hNat : Nat.card L.SyntacticMonoid = Fintype.card L.SyntacticMonoid :=
     Nat.card_eq_fintype_card
   rw [hNat] at hv

@@ -60,7 +60,7 @@ open Data.Examples Syntax Alternatives.Structural
 
 /-! ### Denotations -/
 
-variable {α : Type*} [DecidableEq α]
+variable {α : Type*}
 
 /-- The singular noun over the boys `B`: every nonempty group of them. -/
 def general (B : Finset α) : Finset (Finset α) := B.powerset.filter (·.Nonempty)
@@ -73,10 +73,6 @@ def ofCard (n : ℕ) (P : Finset (Finset α)) : Finset (Finset α) := P.filter (
 
 /-- *yergu* 'two'. -/
 abbrev two (P : Finset (Finset α)) : Finset (Finset α) := ofCard 2 P
-
-/-- The supremum operator: the join of a set of groups when the set contains it. -/
-def sup? (P : Finset (Finset α)) : Option (Finset α) :=
-  if P.sup id ∈ P then some (P.sup id) else none
 
 theorem mem_general {B x : Finset α} : x ∈ general B ↔ x ⊆ B ∧ x.Nonempty := by
   simp [general]
@@ -98,6 +94,12 @@ theorem two_general_eq_two_strictPlural (B : Finset α) :
   · rintro ⟨⟨h, -⟩, hc⟩; exact ⟨⟨h, by omega⟩, hc⟩
   · rintro ⟨⟨h, -⟩, hc⟩; exact ⟨⟨h, Finset.card_pos.1 (by omega)⟩, hc⟩
 
+variable [DecidableEq α]
+
+/-- The supremum operator: the join of a set of groups when the set contains it. -/
+def sup? (P : Finset (Finset α)) : Option (Finset α) :=
+  if P.sup id ∈ P then some (P.sup id) else none
+
 theorem sup_general (B : Finset α) : (general B).sup id = B := by
   apply le_antisymm (Finset.sup_le λ x hx => (mem_general.1 hx).1)
   rcases B.eq_empty_or_nonempty with rfl | hB
@@ -108,8 +110,8 @@ theorem sup_general (B : Finset α) : (general B).sup id = B := by
 theorem sup?_general (B : Finset α) : sup? (general B) = if B.Nonempty then some B else none := by
   rw [sup?, sup_general]
   by_cases hB : B.Nonempty
-  · rw [if_pos (mem_general.2 ⟨subset_rfl, hB⟩), if_pos hB]
-  · rw [if_neg (λ h => hB (mem_general.1 h).2), if_neg hB]
+  · rw [ite_eq_left (mem_general.2 ⟨subset_rfl, hB⟩), ite_eq_left hB]
+  · rw [ite_eq_right (λ h => hB (mem_general.1 h).2), ite_eq_right hB]
 
 theorem sup_strictPlural (B : Finset α) :
     (strictPlural B).sup id = if 2 ≤ B.card then B else ∅ := by
@@ -126,8 +128,8 @@ theorem sup?_strictPlural (B : Finset α) :
     sup? (strictPlural B) = if 2 ≤ B.card then some B else none := by
   rw [sup?, sup_strictPlural]
   by_cases h : 2 ≤ B.card
-  · rw [if_pos h, if_pos (mem_strictPlural.2 ⟨subset_rfl, h⟩), if_pos h]
-  · rw [if_neg h, if_neg (λ hm => absurd (mem_strictPlural.1 hm).2 (by simp)), if_neg h]
+  · rw [ite_eq_left h, ite_eq_left (mem_strictPlural.2 ⟨subset_rfl, h⟩), ite_eq_left h]
+  · rw [ite_eq_right h, ite_eq_right (λ hm => absurd (mem_strictPlural.1 hm).2 (by simp)), ite_eq_right h]
 
 /-- At the number phrase, the plural's presupposition is the stronger: whenever the plural
     definite is defined so is the singular. -/
@@ -143,10 +145,10 @@ theorem strictPlural_presupposition_stronger (B : Finset α) :
     exactly when the plural definite's presupposition fails. -/
 theorem strict_singular_iff (B : Finset α) (hB : B.Nonempty) :
     (sup? (general B)).map Finset.card = some 1 ↔ sup? (strictPlural B) = none := by
-  rw [sup?_general, sup?_strictPlural, if_pos hB]
+  rw [sup?_general, sup?_strictPlural, ite_eq_left hB]
   have := Finset.card_pos.2 hB
   constructor
-  · intro h; simp only [Option.map_some, Option.some.injEq] at h; rw [if_neg (by omega)]
+  · intro h; simp only [Option.map_some, Option.some.injEq] at h; rw [ite_eq_right (by omega)]
   · intro h; split_ifs at h with h₂; simp; omega
 
 /-- Under a numeral the definite singular and plural carry the same presupposition at the

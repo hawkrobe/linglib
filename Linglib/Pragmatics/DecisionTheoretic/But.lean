@@ -197,7 +197,7 @@ theorem default_but_properties (μ : Measure W) [IsProbabilityMeasure μ]
     (hNegA : negRelevant (defaultButCtx μ b hbm) a)
     (ha0 : μ a ≠ 0) (hB : μ b ≠ 0) (hNB : μ bᶜ ≠ 0) :
     μ[|a] b < μ b := by
-  haveI : (defaultButCtx μ b hbm).Nondegenerate := ⟨hB, hNB⟩
+  have : (defaultButCtx μ b hbm).Nondegenerate := ⟨hB, hNB⟩
   have hcross := (negRelevant_iff_real_cross (defaultButCtx μ b hbm) ha0).mp hNegA
   set pB := (μ b).toReal with hpB_def
   set pnB := (μ bᶜ).toReal with hpnB_def

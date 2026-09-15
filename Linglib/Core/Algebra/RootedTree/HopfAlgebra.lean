@@ -294,7 +294,7 @@ private lemma cutListSummandsP_filter_card_zero :
       (cutListSummandsP cs).filter (fun pf => pf.1.card = 0) = {(0, cs)}
   | [] => by
     rw [cutListSummandsP_nil, Multiset.filter_singleton]
-    rw [if_pos (by simp : ((0, ([] : List (RoseTree α))) :
+    rw [ite_eq_left (by simp : ((0, ([] : List (RoseTree α))) :
       Forest (RoseTree α) × List (RoseTree α)).1.card = 0)]
   | c :: cs' => by
     rw [cutListSummandsP_cons, Multiset.filter_map]
@@ -320,7 +320,7 @@ private lemma cutListSummandsP_filter_card_zero :
         -- For augActionP filter, factor through cutSummandsP_filter_card_zero c (mutual call).
         have h_aug : (augActionP c).filter (fun pf => pf.1.card = 0) = {(0, some c)} := by
           rw [augActionP_eq, Multiset.filter_cons]
-          rw [if_neg (by simp : ¬({c} : Forest (RoseTree α)).card = 0)]
+          rw [ite_eq_right (by simp : ¬({c} : Forest (RoseTree α)).card = 0)]
           rw [Multiset.zero_add, Multiset.filter_map]
           refine Eq.trans (congrArg (Multiset.map _) (Multiset.filter_congr
             (q := fun (s : Forest (RoseTree α) × RoseTree α) => s.1.card = 0)
@@ -748,8 +748,7 @@ private lemma lift_eq_mulPrime_comp_map
     Algebra.TensorProduct.lift f g comm z =
     LinearMap.mul' R (ConnesKreimer R (UnorderedTree α))
       (TensorProduct.map f.toLinearMap g.toLinearMap z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
+  induction z using TensorProduct.inductionOn with
   | tmul a b =>
     rw [Algebra.TensorProduct.lift_tmul, TensorProduct.map_tmul,
         LinearMap.mul'_apply]

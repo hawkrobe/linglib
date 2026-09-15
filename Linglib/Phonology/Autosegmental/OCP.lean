@@ -104,11 +104,11 @@ noncomputable def AR.collapseIdx [Finite X.obj.V] (i : ι) (p : ℕ) : ℕ :=
 
 @[simp] theorem AR.collapseIdx_self [Finite X.obj.V] (p : ℕ) :
     X.collapseIdx m m p = runIdx (X.tierWord m) p :=
-  if_pos rfl
+  ite_eq_left rfl
 
 @[simp] theorem AR.collapseIdx_of_ne [Finite X.obj.V] {i : ι} (h : i ≠ m) (p : ℕ) :
     X.collapseIdx m i p = p :=
-  if_neg h
+  ite_eq_right h
 
 /-- **The OCP-merging collapse**: melody tier `m` destuttered, links repointed
     through `runIdx`, other tiers untouched. -/

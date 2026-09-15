@@ -126,8 +126,7 @@ omit [DecidableEq S] [Nonempty S] [Nonempty C] in
 instance (ρ : Fin n → Option R) : IsFiniteKernel (m.emissions ρ) :=
   ⟨⟨1, ENNReal.one_lt_top, λ s => by
     rw [emissions_apply, Measure.pi_univ]
-    exact Finset.prod_le_one (λ _ _ => zero_le) λ i _ =>
-      m.emission_univ_le_one _ _⟩⟩
+    exact Finset.prod_le_one λ i _ => m.emission_univ_le_one _ _⟩⟩
 
 omit [Nonempty C] in
 /-- The joint law of scenario and concept assignments (Figure 5, nodes 1–9). -/

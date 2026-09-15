@@ -131,7 +131,9 @@ instance {S T M : Type*} [Repr S] [Repr T] [Repr M] : Repr (FloatingForm S T M) 
 
 namespace FloatingForm
 
-variable {S T M : Type*} [DecidableEq S] [DecidableEq T] [DecidableEq M] (f : FloatingForm S T M)
+section
+
+variable {S T M : Type*} [DecidableEq M] (f : FloatingForm S T M)
 
 /-! ### Surface graph (derived view) -/
 
@@ -199,11 +201,17 @@ abbrev IsDeletedLink (l : Link) : Prop := l ∈ f.links ∧ l ∉ f.surfaceLinks
 /-- The lower-tier slot `i` is linked on the surface. -/
 abbrev SurfaceLinkedLower (i : SegIdx) : Prop := ∃ l ∈ f.surfaceLinks, l.snd = i
 
+end
+
+section
+
+variable {S T M : Type*} (f : FloatingForm S T M)
+
 /-- The presentation is in bounds: every link's endpoints index into the
     tiers. -/
 def InBounds : Prop := ∀ p ∈ f.links, p.1 < f.upper.len ∧ p.2 < f.lower.len
 
-instance [DecidableEq S] [DecidableEq T] : Decidable f.InBounds :=
+instance : Decidable f.InBounds :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-! ### Input concatenation -/
@@ -234,6 +242,12 @@ def hconcat (g : FloatingForm S T M) : FloatingForm S T M :=
 @[simp] theorem hconcat_deletedTier (g : FloatingForm S T M) :
     (f.hconcat g).deletedTier = ∅ := rfl
 
+end
+
+section
+
+variable {S T M : Type*} [DecidableEq M] (f : FloatingForm S T M)
+
 /-! ### Atomic GEN operations -/
 
 /-- Delete the underlying upper-tier element at index `k`. Cascades to remove
@@ -261,6 +275,13 @@ abbrev Crosses (k : TierIdx) (i : SegIdx) : Prop :=
   IndexCrosses f.surfaceLinks (k, i)
 
 /-! ### GEN: one-step candidate generation -/
+
+end
+
+section Gen
+
+variable {S T M : Type*} [DecidableEq S] [DecidableEq T] [DecidableEq M]
+  (f : FloatingForm S T M)
 
 /-- One-step GEN: the faithful candidate, deleting each alive tone, and (for
     each FLOATING tone) inserting a link to each TBU that doesn't cross an
@@ -296,6 +317,12 @@ theorem gen_preserves_isPlanar (h : f.SurfaceIsPlanar) :
   · exact IsNonCrossing.insert_of_not_indexCrosses h' hnx
 
 /-! ### Indicator vectors for constraint evaluation -/
+
+end Gen
+
+section
+
+variable {S T M : Type*} [DecidableEq M] (f : FloatingForm S T M)
 
 /-- Indicator vector of floating upper-tier elements, in tier order: entry `k`
     is `1` iff `upper[k]` is currently floating, else `0`. Drives directional
@@ -345,6 +372,8 @@ def emptyInput : FloatingForm S T M :=
 /-- Left-to-right concatenation of a list of input states. -/
 def concatInputs (gs : List (FloatingForm S T M)) : FloatingForm S T M :=
   gs.foldr hconcat emptyInput
+
+end
 
 end FloatingForm
 

@@ -161,13 +161,13 @@ noncomputable def s1 (cost : U → ℝ≥0∞) (ctx : List U) : Kernel W U :=
 omit [Nonempty W] in
 theorem s1_apply {ctx : List U} {r : W} (hnd : ¬ g.DeadEnd ctx r) (cost : U → ℝ≥0∞) :
     g.s1 cost ctx r = speaker 1 cost (g.l0 ctx) r := by
-  rw [s1, Kernel.ofFunOfCountable_apply, if_neg hnd]
+  rw [s1, Kernel.ofFunOfCountable_apply, ite_eq_right hnd]
 
 omit [Nonempty W] in
 theorem s1_apply_deadEnd {ctx : List U} {r : W} (hd : g.DeadEnd ctx r) (cost : U → ℝ≥0∞) :
     g.s1 cost ctx r
       = uniformOn ↑(Finset.univ.filter fun u : U => 0 < g.viableExts (ctx ++ [u])) := by
-  rw [s1, Kernel.ofFunOfCountable_apply, if_pos hd]
+  rw [s1, Kernel.ofFunOfCountable_apply, ite_eq_left hd]
 
 instance (cost : U → ℝ≥0∞) (ctx : List U) : IsFiniteKernel (g.s1 cost ctx) :=
   ⟨⟨1, ENNReal.one_lt_top, fun r => by
@@ -251,7 +251,7 @@ omit [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U] in
 listener at least chance probability of it. -/
 theorem globalL0_ge_inv_card {u : g.Complete} {r : W} (htrue : g.sem u.val r = true) :
     ((Fintype.card W : ℝ≥0∞))⁻¹ ≤ g.globalL0 u {r} := by
-  rw [globalL0_apply, if_pos htrue]
+  rw [globalL0_apply, ite_eq_left htrue]
   calc ((Fintype.card W : ℝ≥0∞))⁻¹
       ≤ (((Finset.univ.filter fun r' => g.sem u.val r').card : ℕ) : ℝ≥0∞)⁻¹ := by
         refine ENNReal.inv_le_inv' ?_
@@ -643,7 +643,7 @@ theorem figureThree_global_indifferent :
       (Finset.univ.filter fun r' => figureThree.sem u.val r').card = 2 →
       figureThree.globalL0 u {AbstractWorld.W1} = 1 / 2 := by
     intro u htrue hcard
-    rw [figureThree.globalL0_apply, htrue, hcard, if_pos rfl, Nat.cast_ofNat]
+    rw [figureThree.globalL0_apply, htrue, hcard, ite_eq_left rfl, Nat.cast_ofNat]
   rw [ReferenceGame.globalS1, speaker_apply_singleton, speaker_apply_singleton,
     key ⟨[.A, .A], fig3_mem_AA⟩ (by decide) (by decide),
     key ⟨[.B, .A], fig3_mem_BA⟩ (by decide) (by decide)]
@@ -727,7 +727,7 @@ private theorem step1 {κ : ℝ≥0∞} (hκ0 : κ ≠ 0) (hκtop : κ ≠ ∞) 
       · rw [game.l0_apply_eq_zero hw (by decide), ENNReal.toReal_zero]
   have hκ : (κ.toReal) ≠ 0 := ENNReal.toReal_ne_zero.mpr ⟨hκ0, hκtop⟩
   have hc : ∀ u' : Word, u' ≠ .stop → (cost κ u').toReal = κ.toReal := fun u' hu' => by
-    rw [cost, if_neg hu']
+    rw [cost, ite_eq_right hu']
   rcases hu with rfl | rfl <;>
     · rw [hd, hr, hz .hat (by decide), hz .blue (by decide), hz .stop (by decide),
         hc .dress (by decide), hc .red (by decide)]
@@ -781,7 +781,7 @@ theorem global_prefers_bare_noun {κ : ℝ≥0∞} (hκ0 : κ ≠ 0) (hκlt : κ
       (Finset.univ.filter fun r' => game.sem u.val r').card = 1 →
       game.globalL0 u {Referent.redDress} = 1 := by
     intro u htrue hcard
-    rw [game.globalL0_apply, htrue, hcard, if_pos rfl, Nat.cast_one, div_one]
+    rw [game.globalL0_apply, htrue, hcard, ite_eq_left rfl, Nat.cast_one, div_one]
   have hc1 : ReferenceGame.uttCost (cost κ) [Word.dress, Word.stop] = κ := by
     simp [ReferenceGame.uttCost, cost]
   have hc2 : ReferenceGame.uttCost (cost κ) [Word.red, Word.dress, Word.stop] = κ * κ := by

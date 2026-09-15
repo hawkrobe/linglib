@@ -233,7 +233,7 @@ noncomputable def mightOrdUpdate (p : Set W) (c : OrdState W) : OrdState W :=
 
 theorem mightOrdUpdate_of_compatible {p : Set W} {c : OrdState W} (h : (c.base ∩ p).Nonempty) :
     mightOrdUpdate p c = ⟨c.base, (· ∈ p) :: c.ordering⟩ := by
-  rw [mightOrdUpdate, if_pos h]
+  rw [mightOrdUpdate, ite_eq_left h]
 
 /-- Adding the prejacent to the ordering source is commensurate: with the prejacent among the
 ordering propositions, only a prejacent world can better a prejacent world, so a prejacent
@@ -332,7 +332,7 @@ the meta-intensionalization. -/
 theorem mustOrdUpdate_removal :
     mustOrdUpdate ({0, 1} : Set (Fin 3)) ⟨Set.univ, [(· ∈ ({2} : Set (Fin 3)))]⟩ ∈
       MIOrd (mustOrd {0, 1}) := by
-  rw [mustOrdUpdate, if_pos ⟨0, Set.mem_univ _, by simp⟩, List.filter_cons_of_neg, List.filter_nil]
+  rw [mustOrdUpdate, ite_eq_left ⟨0, Set.mem_univ _, by simp⟩, List.filter_cons_of_neg, List.filter_nil]
   · exact must_needs_prejacent.2
   · simp only [decide_eq_true_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
     decide

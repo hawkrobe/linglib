@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Insert
-import Mathlib.Data.Set.Lattice
+import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
 # Meanings with alternatives

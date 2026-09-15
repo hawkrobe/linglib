@@ -487,7 +487,7 @@ theorem ratPartition_pos {α : ℕ} [ViableSpeaker (powUtility α (L0OfPred m hn
     exact hu' (by rw [powUtility, L0OfPred_eq_zero m hne hm, ENNReal.log_zero,
       EReal.mul_bot_of_pos (by exact_mod_cast Nat.pos_of_ne_zero hα)])
   have hc : 0 < (RSA.extensionOf (m i) u').card := Finset.card_pos.mpr (hne i u')
-  rw [ratWeight, if_pos hm]
+  rw [ratWeight, ite_eq_left hm]
   positivity
 
 theorem ratS1_nonneg (α : ℕ) (i : I) (w : W) (u : U) : 0 ≤ ratS1 m α i w u :=

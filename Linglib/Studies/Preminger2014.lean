@@ -165,7 +165,7 @@ theorem participant_marker (s o : Cell) (h : ¬ (s.IsParticipant ∧ o.IsPartici
     (s.IsParticipant → afMarker s o = some (exponent s)) ∧
       (o.IsParticipant → afMarker s o = some (exponent o)) := by
   have hplc : Plc s o := (personRestriction_iff_plc s o).1 h
-  rw [afMarker, if_pos hplc, afTarget_eq]
+  rw [afMarker, ite_eq_left hplc, afTarget_eq]
   refine ⟨λ hs => by simp [hs], λ ho => ?_⟩
   have hs : ¬ s.IsParticipant := λ hs => h ⟨hs, ho⟩
   simp [hs, ho]
@@ -187,7 +187,7 @@ theorem failed_agree_tolerated (s o : Cell) (hs : ¬ s.IsParticipant) (ho : ¬ o
     (hsp : ¬ s.isPlural) (hop : ¬ o.isPlural) :
     afTarget s o = none ∧ afMarker s o = some [] := by
   have hplc : Plc s o := (personRestriction_iff_plc s o).1 λ h => hs h.1
-  rw [afMarker, if_pos hplc, afTarget_eq]
+  rw [afMarker, ite_eq_left hplc, afTarget_eq]
   simp [hs, ho, hsp, hop]
 
 /-- No gratuitous nonagreement (114): with no participant argument, a plural argument must be
@@ -196,7 +196,7 @@ theorem plural_marker (s o : Cell) (hs : ¬ s.IsParticipant) (ho : ¬ o.IsPartic
     (s.isPlural → afMarker s o = some (exponent s)) ∧
       (¬ s.isPlural → o.isPlural → afMarker s o = some (exponent o)) := by
   have hplc : Plc s o := (personRestriction_iff_plc s o).1 λ h => hs h.1
-  rw [afMarker, if_pos hplc, afTarget_eq]
+  rw [afMarker, ite_eq_left hplc, afTarget_eq]
   exact ⟨λ hsp => by simp [hs, ho, hsp], λ hsp hop => by simp [hs, ho, hsp, hop]⟩
 
 /-! ### Against the alternatives (§4.2, chapter 7) -/

@@ -2,6 +2,8 @@ import Linglib.Semantics.Dynamic.DRS.Basic
 import Mathlib.CategoryTheory.Category.Basic
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Fintype.Sigma
+import Mathlib.Data.Fintype.Sets
+import Mathlib.Data.Fintype.Prod
 
 /-!
 # Contexts, renamings, and literals

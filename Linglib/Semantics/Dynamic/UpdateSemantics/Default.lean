@@ -257,7 +257,7 @@ theorem presumably_passes (σ : ExpState W) (φ : W → Prop)
     (hex : ∃ w ∈ σ.info, φ w) :
     presumablyTest φ σ = σ := by
   simp only [presumablyTest]
-  rw [if_pos]
+  rw [ite_eq_left]
   intro w hw
   exact (Normality.optimal_of_respects_connected σ.order φ σ.info
     hresp hconn hex hw).2
@@ -272,7 +272,7 @@ theorem normally_presumably_succeeds (φ : W → Prop) (d : Set W)
     let σ : ExpState W := ⟨d, Normality.total⟩
     presumablyTest φ (σ.promote φ) = σ.promote φ := by
   simp only [presumablyTest, ExpState.promote, ExpState.optimal]
-  rw [if_pos]
+  rw [ite_eq_left]
   intro w hw
   rw [Normality.refine_total_optimal φ d hex] at hw
   exact hw.2

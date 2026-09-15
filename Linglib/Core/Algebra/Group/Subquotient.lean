@@ -69,7 +69,7 @@ theorem IsSubquotient.trans (hTS : IsSubquotient T S) (hSR : IsSubquotient S R) 
   obtain ⟨M, g, hg⟩ := hSR
   have e := Submonoid.equivMapOfInjective (N.comap g) M.subtype M.subtype_injective
   exact ⟨(N.comap g).map M.subtype, (f.comp (g.submonoidComap N)).comp e.symm.toMonoidHom,
-    (hf.comp (g.submonoidComap_surjective_of_surjective N hg)).comp e.symm.surjective⟩
+    (hf.comp (g.submonoidComap_surjective N hg)).comp e.symm.surjective⟩
 
 @[to_additive]
 theorem IsSubquotient.of_injective (f : T →* S) (hf : Function.Injective f) :

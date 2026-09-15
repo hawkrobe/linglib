@@ -371,14 +371,14 @@ theorem headTerminal_sound {t leaf : Tree} (h : leaf ∈ headTerminals t) :
     IsHeadTerminal t leaf := by
   induction t using Tree.recLeafBranch with
   | leaf a ha =>
-    rw [headTerminals_node, if_pos ⟨ha, rfl⟩, List.mem_singleton] at h
+    rw [headTerminals_node, ite_eq_left ⟨ha, rfl⟩, List.mem_singleton] at h
     subst h; exact .leaf ha
   | branch a cs hne IH =>
-    rw [headTerminals_node, if_neg hne, List.mem_flatMap] at h
+    rw [headTerminals_node, ite_eq_right hne, List.mem_flatMap] at h
     obtain ⟨c, hc, hmem⟩ := h
     by_cases hh : c.value.isHead = true
-    · rw [if_pos hh] at hmem; exact .head hc hh (IH c hc hmem)
-    · rw [if_neg hh] at hmem; exact absurd hmem List.not_mem_nil
+    · rw [ite_eq_left hh] at hmem; exact .head hc hh (IH c hc hmem)
+    · rw [ite_eq_right hh] at hmem; exact absurd hmem List.not_mem_nil
 
 /-! ## Head-preservation: the foot commuting square
 
@@ -389,7 +389,7 @@ heights are `2` at the head σ and `1` elsewhere, so the grid peaks at `2`. -/
     recovers its metrical grid — the commuting square `columns ∘ toProsTree = toGrid`. -/
 theorem columns_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
     columns (f.toProsTree w) = Foot.toGrid f := by
-  rw [Foot.toProsTree, columns_node, if_neg (by simp [Constituent.isSyl]),
+  rw [Foot.toProsTree, columns_node, ite_eq_right (by simp [Constituent.isSyl]),
       List.flatMap_map, Foot.toGrid, List.map_eq_flatMap]
   refine List.flatMap_congr fun i _ => ?_
   by_cases hi : i = f.head <;>
@@ -453,10 +453,10 @@ private theorem depth_word_child_le {ch : Tree}
 private theorem toGrid_bounds {t : Tree} : ∀ c ∈ columns t, 1 ≤ c ∧ c ≤ t.depth := by
   induction t using Tree.recLeafBranch with
   | leaf a ha =>
-    rw [columns_node, if_pos ⟨ha, rfl⟩, RoseTree.depth_node]
+    rw [columns_node, ite_eq_left ⟨ha, rfl⟩, RoseTree.depth_node]
     intro c hc; simp only [List.mem_singleton] at hc; omega
   | branch a cs hne IH =>
-    rw [columns_node, if_neg hne, RoseTree.depth_node]
+    rw [columns_node, ite_eq_right hne, RoseTree.depth_node]
     intro c hc
     rw [List.mem_flatMap] at hc
     obtain ⟨ch, hch, hc⟩ := hc
@@ -504,12 +504,12 @@ theorem col_le_two_or_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0) :
   obtain ⟨ha, hchild⟩ := isWord_children hw hr
   have hσ : a.isSyl = false := Constituent.isSyl_eq_false_of_isOm ha
   intro c hc
-  rw [columns_node, if_neg (by simp [hσ]), List.mem_flatMap] at hc
+  rw [columns_node, ite_eq_right (by simp [hσ]), List.mem_flatMap] at hc
   obtain ⟨ch, hch, hc⟩ := hc
   rcases mem_toGrid_edge hc with hcol | hhead
   · exact .inl (le_trans (toGrid_bounds c hcol).2 (depth_word_child_le (hchild ch hch)))
   · refine .inr ?_
-    rw [headHeights_node, if_neg (by simp [hσ]), List.mem_flatMap]
+    rw [headHeights_node, ite_eq_right (by simp [hσ]), List.mem_flatMap]
     exact ⟨ch, hch, by rwa [headHeights_edge] at hhead⟩
 
 /-- In a word the head terminal sits below ω, so its height is at least `2`. -/
@@ -518,7 +518,7 @@ theorem two_le_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0)
   obtain ⟨a, cs⟩ := t
   obtain ⟨ha, _⟩ := isWord_children hw hr
   have hσ : a.isSyl = false := Constituent.isSyl_eq_false_of_isOm ha
-  rw [headHeights_node, if_neg (by simp [hσ]), List.mem_flatMap] at hh
+  rw [headHeights_node, ite_eq_right (by simp [hσ]), List.mem_flatMap] at hh
   obtain ⟨ch, hch, hh⟩ := hh
   split at hh
   · obtain ⟨h', hh', rfl⟩ := List.mem_map.mp hh

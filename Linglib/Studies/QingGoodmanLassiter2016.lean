@@ -607,7 +607,7 @@ end Cells
 /-- The prior mass of a pair, on reals. -/
 private theorem pairPrior_real (π : Finset World → ℕ) (w : World) (C : Finset World)
     (h : w ∈ C) : (pairPrior π).real {(w, C)} = π C := by
-  rw [measureReal_def, pairPrior_singleton, if_pos h, ENNReal.toReal_natCast]
+  rw [measureReal_def, pairPrior_singleton, ite_eq_left h, ENNReal.toReal_natCast]
 
 /-- The speaker at the world in which John still smokes, within the context set that he smoked,
 produces *did not stop smoking*. -/
@@ -623,7 +623,7 @@ private theorem comp_ne_zero (q : QUD) (π : Finset World → ℕ) (hπ : π pas
     (hα : 0 < α) :
     (familySpeaker (λ C => L0 C q) α Utterance.prior ∘ₘ pairPrior π) {notStopped} ≠ 0 := by
   have hμ : pairPrior π {(World.TT, pastT)} ≠ 0 := by
-    rw [pairPrior_singleton, if_pos (by decide)]; exact_mod_cast hπ
+    rw [pairPrior_singleton, ite_eq_left (by decide)]; exact_mod_cast hπ
   have h := comp_familySpeaker_ne_zero (L := λ C => L0 C q) (α := α) (cost := Utterance.prior)
     (μ := pairPrior π) (w := .TT) (l := pastT) (u := notStopped) hμ (speaker_pastT_ne_zero q hα)
   exact h
@@ -691,7 +691,7 @@ theorem uniform_tie {α : ℝ} (hα : 0 < α) :
     listener .max (λ _ => 1) α notStopped {(.TT, pastT)}
       = listener .max (λ _ => 1) α notStopped {(.FF, nowF)} :=
   listener_eq .max _ one_ne_zero hα _ _ _ _
-    (by rw [pairPrior_singleton, pairPrior_singleton, if_pos (by decide), if_pos (by decide)])
+    (by rw [pairPrior_singleton, pairPrior_singleton, ite_eq_left (by decide), ite_eq_left (by decide)])
     ((ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)).1
       ((share_F hα).trans (share_G hα).symm))
 

@@ -3,8 +3,8 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Mathlib.Data.Finite.Sigma
-import Mathlib.Data.Finite.Sum
+import Mathlib.Basic.Finite.Sigma
+import Mathlib.Basic.Finite.Sum
 import Mathlib.Data.Fintype.Sort
 import Mathlib.Data.Fintype.Sum
 import Mathlib.Logic.Equiv.Fin.Basic
@@ -211,9 +211,9 @@ attribute [local instance] Fintype.ofFinite
 
 @[simp] theorem tierLength_tensor (i : ι) :
     (X ⊗ Y).tierLength i = X.tierLength i + Y.tierLength i := by
-  letI := Fintype.ofFinite ((X ⊗ Y).fiber i)
-  letI := Fintype.ofFinite (X.fiber i)
-  letI := Fintype.ofFinite (Y.fiber i)
+  let := Fintype.ofFinite ((X ⊗ Y).fiber i)
+  let := Fintype.ofFinite (X.fiber i)
+  let := Fintype.ofFinite (Y.fiber i)
   simp only [tierLength]
   rw [Fintype.card_congr (fiberTensorEquiv i), Fintype.card_sum]
 
@@ -340,7 +340,7 @@ instance : Finite ((𝟙_ (TieredAR ι τ)).obj.V) :=
 
 @[simp] theorem tierWord_unit (i : ι) :
     (𝟙_ (TieredAR ι τ)).tierWord i = [] := by
-  haveI : IsEmpty ((𝟙_ (TieredAR ι τ)).fiber i) :=
+  have : IsEmpty ((𝟙_ (TieredAR ι τ)).fiber i) :=
     ⟨fun v => v.val.elim⟩
   rw [tierWord_eq_ofFn (OrderIso.ofIsEmpty (Fin 0) _)]
   exact List.ofFn_zero

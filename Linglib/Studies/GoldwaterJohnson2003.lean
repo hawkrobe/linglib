@@ -134,7 +134,7 @@ theorem gjProb_pair (w : Fin n → ℝ) (win lose : Fin n → ℕ) :
   unfold gjProb
   rw [softmax_fin_two]
   congr 1
-  simp only [harmonyScore_eq_neg_sum, pairCON, Fin.isValue, if_true, if_false, one_ne_zero,
+  simp only [harmonyScore_eq_neg_sum, pairCON, Fin.isValue, ite_true, ite_false, one_ne_zero,
     mul_sub, Finset.sum_sub_distrib]
   ring
 

@@ -99,7 +99,7 @@ least 2 (`Roundness.score_ge_two_of_div10`). -/
 theorem inferPrecisionMode_eq_approximate_of_ten_dvd {n : ℕ} (h : 10 ∣ n) :
     inferPrecisionMode n = .approximate := by
   unfold inferPrecisionMode
-  exact if_pos (Roundness.score_ge_two_of_div10 n h)
+  exact ite_eq_left (Roundness.score_ge_two_of_div10 n h)
 
 example : inferPrecisionMode 100 = .approximate := by decide  -- score 6 ≥ 2
 example : inferPrecisionMode 50 = .approximate := by decide   -- score 5 ≥ 2

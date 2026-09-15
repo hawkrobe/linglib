@@ -92,7 +92,7 @@ theorem thresholdGtOn_iff_prevalenceOn {α : Type*} (s : Finset α) (R S : α �
     (hdenom : 0 < denom) (hR : 0 < countOn s R) :
     thresholdGtOn s R S num denom ↔ prevalenceOn s R S > (num : ℚ) / (denom : ℚ) := by
   unfold thresholdGtOn prevalenceOn
-  rw [if_neg (Nat.pos_iff_ne_zero.mp hR)]
+  rw [ite_eq_right (Nat.pos_iff_ne_zero.mp hR)]
   have hdQ : (0 : ℚ) < denom := by exact_mod_cast hdenom
   have hRQ : (0 : ℚ) < countOn s R := by exact_mod_cast hR
   rw [gt_iff_lt, gt_iff_lt, div_lt_iff₀ hdQ, div_mul_eq_mul_div, lt_div_iff₀ hRQ,
@@ -162,7 +162,7 @@ variable {α : Type*} {s : Finset α} {R S : α → Prop} [DecidablePred R] [Dec
 theorem prevalenceOn_eq_one_iff (hR : 0 < countOn s R) :
     prevalenceOn s R S = 1 ↔ everyOn s R S := by
   unfold prevalenceOn
-  rw [if_neg hR.ne', div_eq_one_iff_eq (by exact_mod_cast hR.ne'), Nat.cast_inj]
+  rw [ite_eq_right hR.ne', div_eq_one_iff_eq (by exact_mod_cast hR.ne'), Nat.cast_inj]
   constructor
   · intro h x hx hRx
     by_contra hS
@@ -176,7 +176,7 @@ theorem prevalenceOn_eq_one_iff (hR : 0 < countOn s R) :
 theorem prevalenceOn_eq_zero_iff (hR : 0 < countOn s R) :
     prevalenceOn s R S = 0 ↔ noOn s R S := by
   unfold prevalenceOn
-  rw [if_neg hR.ne', div_eq_zero_iff,
+  rw [ite_eq_right hR.ne', div_eq_zero_iff,
     or_iff_left (by exact_mod_cast hR.ne' : ((countOn s R : ℚ)) ≠ 0),
     Nat.cast_eq_zero, countOn_eq_zero_iff]
   exact ⟨fun h x hx hRx hS => h x hx ⟨hRx, hS⟩, fun h x hx hRS => h x hx hRS.1 hRS.2⟩
@@ -185,7 +185,7 @@ theorem prevalenceOn_eq_zero_iff (hR : 0 < countOn s R) :
 theorem prevalenceOn_pos_iff (hR : 0 < countOn s R) :
     0 < prevalenceOn s R S ↔ someOn s R S := by
   unfold prevalenceOn
-  rw [if_neg hR.ne', lt_div_iff₀ (by exact_mod_cast hR), zero_mul, Nat.cast_pos,
+  rw [ite_eq_right hR.ne', lt_div_iff₀ (by exact_mod_cast hR), zero_mul, Nat.cast_pos,
     countOn_pos_iff]
   exact Iff.rfl
 
@@ -618,8 +618,6 @@ theorem quantityInvariant_of_quantity (q : GQ α) (hQ : Quantity q) :
   · exact key _ _ (fun x => by rw [hA x, hB x])
   · exact key _ _ (fun x => by rw [hA x, hB x])
 
-variable [DecidableEq α]
-
 /-- The four Venn cells of `(R, S)` as the fibers of the `Bool × Bool` code
     `x ↦ (decide (R x), decide (S x))`. The fiber over `(true, true)` is
     `R ∩ S`, over `(true, false)` is `R ∖ S`, etc. -/
@@ -646,7 +644,7 @@ private theorem card_cellCode_fiber (R S : α → Prop)
     equivalence of `cellCode` fibers (`Fintype.equivOfCardEq`); gluing the four
     over the partition of `α` (`Equiv.ofFiberEquiv`) yields a bijection `f`
     with `R₁ ∘ f ↔ R₂` and `S₁ ∘ f ↔ S₂`, to which `hQ` applies. -/
-theorem quantity_of_quantityInvariant (q : GQ α)
+theorem quantity_of_quantityInvariant [DecidableEq α] (q : GQ α)
     (hQ : QuantityInvariant q) :
     Quantity q := by
   classical
@@ -713,17 +711,18 @@ theorem at_most_n_quantity (n : Nat) :
   intro R₁ S₁ R₂ S₂ hTT _ _ _
   simp only [at_most_n_sem]; omega
 
-theorem exactly_n_quantity (n : Nat) :
+theorem exactly_n_quantity [DecidableEq α] (n : Nat) :
     Quantity (exactly_n_sem (α := α) n) := by
   rw [exactly_eq_meet_at_least_at_most]
   exact quantity_gqMeet _ _ (at_least_n_quantity n) (at_most_n_quantity n)
 
-theorem some_quantity : Quantity ⟦some⟧ := by
+theorem some_quantity [DecidableEq α] : Quantity ⟦some⟧ := by
   rw [some_eq_at_least_1]; exact at_least_n_quantity 1
 
-theorem no_quantity : Quantity ⟦no⟧ := by
+theorem no_quantity [DecidableEq α] : Quantity ⟦no⟧ := by
   rw [no_eq_at_most_0]; exact at_most_n_quantity 0
 
+omit [Fintype α] in
 /-- `⟦every⟧` satisfies `QuantityInvariant` (proved directly via bijection
     invariance of `∀`). -/
 private theorem every_quantityInvariant :
@@ -734,7 +733,7 @@ private theorem every_quantityInvariant :
   exact forall_congr' fun x => by
     rw [show A (f x) ↔ A' x from hA x, show B (f x) ↔ B' x from hB x]
 
-theorem every_quantity : Quantity ⟦every⟧ :=
+theorem every_quantity [DecidableEq α] : Quantity ⟦every⟧ :=
   quantity_of_quantityInvariant _ every_quantityInvariant
 
 theorem most_quantity : Quantity ⟦most⟧ := by
@@ -761,7 +760,7 @@ theorem all_but_n_quantity (n : Nat) :
   intro R₁ S₁ R₂ S₂ _ hTF _ _
   simp only [all_but_n_sem]; omega
 
-theorem between_n_m_quantity (n k : Nat) :
+theorem between_n_m_quantity [DecidableEq α] (n k : Nat) :
     Quantity (between_n_m_sem (α := α) n k) :=
   quantity_gqMeet _ _ (at_least_n_quantity n) (at_most_n_quantity k)
 
@@ -882,12 +881,12 @@ theorem count_eq_decidable (P : α → Prop) (inst' : DecidablePred P)
   unfold count countOn; congr 1; apply Finset.filter_congr_decidable
 
 /-- *At most n* at any decidability instance, so that concrete cases evaluate by `decide`. -/
-theorem at_most_n_sem_iff {n : Nat} {R S : α → Prop} [DecidablePred fun x => R x ∧ S x] :
+theorem at_most_n_sem_iff [DecidableEq α] {n : Nat} {R S : α → Prop} [DecidablePred fun x => R x ∧ S x] :
     at_most_n_sem n R S ↔ count (fun x => R x ∧ S x) ≤ n := by
   unfold at_most_n_sem; rw [count_eq_decidable]
 
 /-- *Few* at any decidability instance, so that concrete cases evaluate by `decide`. -/
-theorem few_sem_iff {R S : α → Prop} [DecidablePred fun x => R x ∧ S x]
+theorem few_sem_iff [DecidableEq α] {R S : α → Prop} [DecidablePred fun x => R x ∧ S x]
     [DecidablePred fun x => R x ∧ ¬ S x] :
     few_sem R S ↔ count (fun x => R x ∧ S x) < count (fun x => R x ∧ ¬ S x) := by
   unfold few_sem
@@ -921,7 +920,7 @@ theorem not_restrictorUpwardMono_most_sem : ¬ RestrictorUpwardMono (most_sem : 
   revert key; decide
 
 /-- `most` over a singleton restrictor is the singleton's scope value. -/
-theorem most_sem_singleton_iff (j : α) (S : α → Prop) : most_sem (fun x => j = x) S ↔ S j := by
+theorem most_sem_singleton_iff [DecidableEq α] (j : α) (S : α → Prop) : most_sem (fun x => j = x) S ↔ S j := by
   have h1 : count (fun x => j = x) = 1 := by
     unfold count countOn
     exact Finset.card_eq_one.mpr ⟨j, by ext x; simp only [Finset.mem_filter, Finset.mem_univ,
@@ -1040,13 +1039,11 @@ theorem not_qsymmetric_most_sem : ¬ QSymmetric (most_sem : GQ (Fin 3)) := by
 `Proportional` theorem proved for `most_sem` therefore transfers to it by
 inheritance, not re-proof. -/
 
-omit [DecidableEq α] in
 @[simp] theorem mostOn_univ (R S : α → Prop) [DecidablePred R] [DecidablePred S] :
     mostOn Finset.univ R S ↔ most_sem R S := by
   unfold mostOn most_sem
   congr! 2
 
-omit [DecidableEq α] in
 /-- `mostOn` at the whole carrier is proportional — inherited from
     `most_proportional`, not re-proved: at `s = Finset.univ` the relativized
     `mostOn` IS `most_sem`. -/

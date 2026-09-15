@@ -79,10 +79,10 @@ theorem deviation_coding {r : ρ} {p : Prominence} (h : Deviates θ dflt r p) :
     coding θ (dflt r) < coding θ p ↔ ¬ Indexed θ (dflt r) := by
   by_cases hd : θ ≤ dflt r
   · have hp : ¬ θ ≤ p := λ hp => h.1 hp hd
-    simp only [coding, if_pos hd, if_neg hp]
+    simp only [coding, ite_eq_left hd, ite_eq_right hp]
     exact ⟨λ h => absurd h (by omega), λ h => absurd hd h⟩
   · have hp : θ ≤ p := h.2 hd
-    simp only [coding, if_neg hd, if_pos hp]
+    simp only [coding, ite_eq_right hd, ite_eq_left hp]
     exact ⟨λ _ => hd, λ _ => Nat.zero_lt_one⟩
 
 /-- The deviating referent of a role indexed by default is coded shorter. -/
@@ -90,7 +90,7 @@ theorem deviation_shorter {r : ρ} {p : Prominence} (h : Deviates θ dflt r p)
     (hr : Indexed θ (dflt r)) : coding θ p < coding θ (dflt r) := by
   have hp : ¬ θ ≤ p := λ hp => h.1 hp hr
   have hr' : θ ≤ dflt r := hr
-  simp only [coding, if_neg hp, if_pos hr']
+  simp only [coding, ite_eq_right hp, ite_eq_left hr']
   exact Nat.zero_lt_one
 
 end Principle

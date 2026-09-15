@@ -162,7 +162,7 @@ def stepOnceDetOn [DecidableEq V] [DecidableValuation α]
 
 /-! ### Computational specialization: developDetOn (explicit list) -/
 
-/-! The canonical `developDet` (per-vertex, via `IsDAG.wf.fix`) lives in
+/-! The canonical `developDet` (per-vertex, via `WellFounded.fix` on `IsDAG`) lives in
     `PerVertex.lean`. Below is the **computational specialization**:
     `developDetOn M vs n s` iterates `stepOnceDetOn` `n` times over an
     explicit vertex list `vs`. Computable; reducible structurally for
@@ -482,7 +482,7 @@ private lemma exists_undet_ready [hDag : CausalGraph.IsDAG M.graph]
   obtain ⟨v₀, hv₀⟩ := hExists
   let S : Set V := {v | (s.get v).isNone}
   have hS_nonempty : S.Nonempty := ⟨v₀, hv₀⟩
-  obtain ⟨a, haS, ha_min⟩ := hDag.wf.has_min S hS_nonempty
+  obtain ⟨a, haS, ha_min⟩ := hDag.has_min S hS_nonempty
   refine ⟨a, haS, ?_⟩
   intro u hu
   by_contra hNotSome
@@ -673,7 +673,7 @@ private theorem Mechanism.toFun_eq_of_mech_eq
 
     Substrate fact connecting `intervene`-based development to
     `extend`-based development (the latter underlies `causallySufficient`).
-    The proof goes by `IsDAG.wf.induction` on vertices: at `cause` both sides
+    The proof goes by `WellFounded.induction` on `IsDAG` on vertices: at `cause` both sides
     produce `xC` (LHS via the constant intervention mechanism; RHS via
     `developDetVtx_extended` short-circuit on the extended valuation);
     off-cause both sides reduce to the same mechanism applied to
@@ -694,7 +694,7 @@ theorem developDet_intervene_eq_developDet_extend
   show some (developDetVtx (M.intervene cause xC) s v) =
        some (developDetVtx M (s.extend cause xC) v)
   congr 1
-  induction v using hDag.wf.induction with
+  induction v using hDag.induction with
   | _ w ih =>
     rw [developDetVtx_unfold (M.intervene cause xC) s w]
     rw [developDetVtx_unfold M (s.extend cause xC) w]
@@ -804,7 +804,7 @@ noncomputable def develop [Fintype V] [DecidableEq V] [DecidableValuation α]
     are mathematically the same object viewed two ways:
     - `develop` threads `PMF.bind` through the partial joint via
       iteration over `Fintype.elems.toList`.
-    - `developDet` recurses per-vertex via `IsDAG.wf.fix`, bottoming
+    - `developDet` recurses per-vertex via `WellFounded.fix` on `IsDAG`, bottoming
       out at roots.
     Under `IsDeterministic`, the joint collapses to a Dirac at the
     valuation produced by per-vertex recursion.

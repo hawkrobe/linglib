@@ -84,7 +84,7 @@ theorem predict_softmax_of_mem {α : ℝ} (hd : s.decoder = softmaxDecoder α)
   classical
   show s.decoder.decode s.candidates s.score c = _
   rw [hd]
-  simp only [softmaxDecoder, if_pos hc]
+  simp only [softmaxDecoder, ite_eq_left hc]
 
 /-- Softmax monotonicity: for `α > 0`, the in-set candidate with strictly
     higher score gets strictly higher predicted probability. -/

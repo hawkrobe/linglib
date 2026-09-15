@@ -3607,11 +3607,13 @@ theorem lexical_causatives_match_make :
     break_.causative.map (Causative.toSemantics M) =
       make.causative.map (Causative.toSemantics M) := ⟨rfl, rfl⟩
 
+omit [∀ v, Fintype (α v)] in
 /-- "manage" → polymorphic `Implicative.manageSem`. -/
 theorem manage_semantics_implicative :
     manage.implicative.map (Implicative.toSemantics M) =
     some (Implicative.manageSem M) := rfl
 
+omit [∀ v, Fintype (α v)] in
 /-- "fail" → polymorphic `Implicative.failSem`. -/
 theorem fail_semantics_implicative :
     fail.implicative.map (Implicative.toSemantics M) =

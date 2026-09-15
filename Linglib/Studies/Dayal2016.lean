@@ -1,5 +1,6 @@
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Order.Atoms
+import Mathlib.Data.Set.Lattice.Order
 import Linglib.Data.Examples.Dayal2016
 import Linglib.Syntax.Number.Basic
 import Linglib.Logic.Modal.Defs

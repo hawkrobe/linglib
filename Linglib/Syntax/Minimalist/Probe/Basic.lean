@@ -164,7 +164,7 @@ theorem agree_eq_search_of_int (h : ∀ a, p.sat a → p.int a) :
   rw [agree]
   cases hs : p.search goals with
   | none => rfl
-  | some a => rw [Option.filter_some, if_pos (h a (sat_of_search_eq_some hs))]
+  | some a => rw [Option.filter_some, ite_eq_left (h a (sat_of_search_eq_some hs))]
 
 /-- A relativized probe Agrees with the goal it finds. -/
 theorem relativized_agree (f : α → Bool) :
@@ -211,7 +211,7 @@ theorem outcome_eq_unvalued_iff_eq_none : p.outcome goals = .unvalued ↔ p.sear
   rw [outcome]
   cases p.search goals <;>
     simp only [Option.isSome_none, Option.isSome_some, Bool.false_eq_true,
-      if_false, if_true, reduceCtorEq]
+      ite_false, ite_true, reduceCtorEq]
 
 /-- The probe is valued iff some goal satisfies it. -/
 @[simp]

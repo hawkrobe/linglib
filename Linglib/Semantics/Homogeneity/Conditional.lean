@@ -71,7 +71,7 @@ theorem necessarily_prevents_nonmax (q : Setoid W) (w : W)
     metaAssert_prevents_nonmax q _ w h
   have hCondTrue : bareConditional closestPWorlds Q w = .true :=
     (Set.ext_iff.mp (posExt_strictConditional closestPWorlds Q) w).mp hTrue
-  simp only [bareConditional, dif_pos hne] at hCondTrue
+  simp only [bareConditional, dite_eq_left hne] at hCondTrue
   exact (superTrue_true_iff Q ⟨closestPWorlds w, hne⟩).mp hCondTrue
 
 end Homogeneity

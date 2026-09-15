@@ -62,7 +62,7 @@ noncomputable def bMinusTree (a : α) (T : UnorderedTree α) :
 
 @[simp] theorem bMinusTree_node (a : α) (F : Forest (UnorderedTree α)) :
     bMinusTree (R := R) a (UnorderedTree.node a F) = of' F := by
-  rw [bMinusTree, UnorderedTree.rootValue_node, if_pos rfl,
+  rw [bMinusTree, UnorderedTree.rootValue_node, ite_eq_left rfl,
       UnorderedTree.rootChildren_node]
 
 /-- The B-_a operator on basis forests: `bMinusTree` on singletons, `0`
@@ -90,7 +90,7 @@ theorem bMinusBasis_eq_zero_of_not_singleton_a (a : α)
   rw [bMinusBasis]
   split_ifs with hcard
   · obtain ⟨T, rfl⟩ := Multiset.card_eq_one.mp hcard
-    rw [Multiset.map_singleton, Multiset.sum_singleton, bMinusTree, if_neg]
+    rw [Multiset.map_singleton, Multiset.sum_singleton, bMinusTree, ite_eq_right]
     intro hlab
     exact h ⟨T.rootChildren, by rw [← hlab, UnorderedTree.node_eta]⟩
   · rfl
@@ -131,12 +131,12 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
           pairing_of'_of' G' G]
     by_cases hG : G' = G
     · subst hG
-      rw [if_pos rfl, if_pos rfl, UnorderedTree.forestAutCard_singleton,
+      rw [ite_eq_left rfl, ite_eq_left rfl, UnorderedTree.forestAutCard_singleton,
           UnorderedTree.autCard_node]
-    · rw [if_neg hG, if_neg fun h => hG (by
+    · rw [ite_eq_right hG, ite_eq_right fun h => hG (by
         simpa using congrArg UnorderedTree.rootChildren (Multiset.singleton_inj.mp h))]
   · rw [bMinusBasis_eq_zero_of_not_singleton_a a F hF,
-        if_neg fun h => hF ⟨G, h⟩, pairing_zero_left]
+        ite_eq_right fun h => hF ⟨G, h⟩, pairing_zero_left]
 
 /-- **B+/B- adjointness** under the symmetry-weighted pairing, in mathlib's
     `LinearMap.IsAdjointPair` packaging. -/
@@ -365,7 +365,7 @@ private theorem counit_of'_eq (F : Forest (UnorderedTree α)) :
   by_cases h : F = 0
   · subst h; simp
   · have hne : F.card ≠ 0 := fun hc => h (Multiset.card_eq_zero.mp hc)
-    rw [if_neg hne, if_neg h]
+    rw [ite_eq_right hne, ite_eq_right h]
 
 /-! ### Helpers for `bMinusLin_gl_mul_basis` -/
 
@@ -381,9 +381,9 @@ private theorem bMinusBasis_singleton_node_add (a : α)
        else 0) := by
   by_cases hG : G = 0
   · subst hG
-    rw [add_zero, if_pos rfl, bMinusBasis_singleton_node]
+    rw [add_zero, ite_eq_left rfl, bMinusBasis_singleton_node]
     rfl
-  · rw [if_neg hG]
+  · rw [ite_eq_right hG]
     apply bMinusBasis_eq_zero_of_not_singleton_a
     rintro ⟨G', hG'⟩
     have hcard : ({UnorderedTree.node a F} + G : Forest (UnorderedTree α)).card =
@@ -469,7 +469,7 @@ private lemma sum_powerset_diff_zero_indicator
   induction B using Multiset.induction generalizing f with
   | empty =>
     rw [Multiset.powerset_zero, Multiset.map_singleton, Multiset.sum_singleton]
-    rw [show (0 - (0 : Forest (UnorderedTree α))) = 0 from Multiset.sub_zero _, if_pos rfl]
+    rw [show (0 - (0 : Forest (UnorderedTree α))) = 0 from Multiset.sub_zero _, ite_eq_left rfl]
   | cons T B' ih =>
     rw [Multiset.powerset_cons, Multiset.map_add, Multiset.sum_add]
     have h_first_zero : (B'.powerset.map fun B₁ =>
@@ -483,7 +483,7 @@ private lemma sum_powerset_diff_zero_indicator
       have hne : T ::ₘ B' - B₁ ≠ (0 : Forest (UnorderedTree α)) := by
         rw [Multiset.cons_sub_of_le T hB₁le]
         exact Multiset.cons_ne_zero
-      rw [← hx_eq, if_neg hne]
+      rw [← hx_eq, ite_eq_right hne]
     rw [h_first_zero, zero_add, Multiset.map_map]
     have h_cond_eq : (B'.powerset.map ((fun B₁ =>
             if T ::ₘ B' - B₁ = (0 : Forest (UnorderedTree α)) then f B₁
@@ -591,7 +591,7 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (UnorderedTree α)
     -- Simplify counit and bMinusLin a on of' {node a A'}.
     have h_counit : (ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
         (ConnesKreimer.of' ({UnorderedTree.node a A'} : Forest (UnorderedTree α))) = 0 := by
-      rw [ConnesKreimer.counit_of', Multiset.card_singleton, if_neg one_ne_zero]
+      rw [ConnesKreimer.counit_of', Multiset.card_singleton, ite_eq_right one_ne_zero]
     have h_bmin : bMinusLin (R := R) a
           (ConnesKreimer.of' ({UnorderedTree.node a A'} : Forest (UnorderedTree α))) =
         ConnesKreimer.of' A' := by
@@ -724,7 +724,7 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (UnorderedTree α)
     -- vs A ≠ 0 (counit = 0, RHS = 0; need to show LHS = 0).
     by_cases hA0 : A = 0
     · subst hA0
-      rw [counit_of'_eq, if_pos rfl, one_smul]
+      rw [counit_of'_eq, ite_eq_left rfl, one_smul]
       -- LHS: bMinusLin a (of' 0 *_GL of' B) = bMinusLin a (1 *_GL of' B) = bMinusLin a (of' B).
       show bMinusLin (R := R) a
           ((GrossmanLarson.of' (R := R) (0 : Forest (UnorderedTree α)) :
@@ -738,7 +738,7 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (UnorderedTree α)
       rw [show (GrossmanLarson.of' (R := R) (0 : Forest (UnorderedTree α)) :
               GrossmanLarson R α) = 1 from GrossmanLarson.of'_zero]
       exact one_mul _
-    · rw [counit_of'_eq, if_neg hA0, zero_smul]
+    · rw [counit_of'_eq, ite_eq_right hA0, zero_smul]
       -- LHS = 0; A ≠ 0 and A is not singleton-a-rooted.
       -- Expand of' A *_GL of' B via productForest = powerset-sum.
       change bMinusLin (R := R) a
@@ -929,7 +929,7 @@ private theorem counit_insertionBasis (A B : Forest (UnorderedTree α)) :
     -- So ε(of' F') = 0 for every F'; sum = 0.
     -- And ε(of' A) = 0 (since A.card ≠ 0).
     have hAcard : A.card ≠ 0 := fun hc => hA (Multiset.card_eq_zero.mp hc)
-    rw [if_neg hAcard, zero_mul]
+    rw [ite_eq_right hAcard, zero_mul]
     -- Need: (NIM(A,B).map (fun F' => if F'.card = 0 then 1 else 0)).sum = 0.
     apply Multiset.sum_eq_zero
     intro x hx
@@ -939,7 +939,7 @@ private theorem counit_insertionBasis (A B : Forest (UnorderedTree α)) :
     -- |F'| = |A| ≠ 0.
     have hF'card : F'.card = A.card :=
       UnorderedTree.insertionMultiset_card_eq A B hF'
-    rw [hF'card, if_neg hAcard]
+    rw [hF'card, ite_eq_right hAcard]
 
 /-- The counit `ε` on CK is multiplicative for the GL product on basis.
     `ε(of' A *_GL of' B) = ε(of' A) · ε(of' B)`.
@@ -977,7 +977,7 @@ private theorem counit_gl_mul_basis (A B : Forest (UnorderedTree α)) :
     have hBcard : B.card ≠ 0 := fun hc => hB (Multiset.card_eq_zero.mp hc)
     have hCBzero : (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
         (ConnesKreimer.of' B) = 0 := by
-      rw [ConnesKreimer.counit_of', if_neg hBcard]
+      rw [ConnesKreimer.counit_of', ite_eq_right hBcard]
     rw [hCBzero, mul_zero]
     -- Strategy: expand of' A * of' B via productForest formula, push counit through
     -- the Multiset.sum, show each summand reduces to counit(of' A) * counit(of' B) = 0,

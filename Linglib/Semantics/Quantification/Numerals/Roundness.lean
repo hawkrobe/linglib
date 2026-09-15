@@ -184,7 +184,7 @@ multiple-of-10 both hold). The keystone for downstream sorry-free proofs. -/
 theorem score_ge_two_of_div10 (n : ℕ) (h10 : 10 ∣ n) :
     2 ≤ roundnessScore n := by
   have h5 : 5 ∣ n := Nat.dvd_trans ⟨2, rfl⟩ h10
-  rw [roundnessScore, if_pos h5, if_pos h10]
+  rw [roundnessScore, ite_eq_left h5, ite_eq_left h10]
   omega
 
 end Numerals.Roundness

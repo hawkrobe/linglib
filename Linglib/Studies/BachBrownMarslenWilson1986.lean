@@ -87,7 +87,7 @@ theorem integratedCount_revPerm (k : ℕ) :
   | succ m =>
     simp only [integratedCount, Fin.revPerm_apply, Fin.val_rev]
     by_cases hk : k ≥ m + 1
-    · rw [if_pos hk]
+    · rw [ite_eq_left hk]
       have hall : ∀ i ∈ List.range (m + 1),
           (if _ : i < m + 1 then
             decide (max (m + 1 - (0 + 1)) (m + 1 - (i + 1)) < k) else false) = true := by
@@ -96,7 +96,7 @@ theorem integratedCount_revPerm (k : ℕ) :
         rw [rev_max_eq m i k hi]; omega
       have h := List.countP_eq_length.mpr hall
       rw [List.length_range] at h; exact h
-    · rw [if_neg hk]
+    · rw [ite_eq_right hk]
       apply List.countP_eq_zero.mpr
       intro i hi; simp only [List.mem_range] at hi
       simp only [show i < m + 1 from hi, dite_true, decide_eq_true_eq]
@@ -140,9 +140,9 @@ theorem totalIntegrationCost_revPerm (n : ℕ) :
         unintegratedCount (Fin.revPerm : Equiv.Perm (Fin (m + 1))) (k + 1) = m + 1 := by
       intro k hk
       have hkm := Finset.mem_range.mp hk
-      rw [unintegratedCount_revPerm, if_neg (by omega)]
+      rw [unintegratedCount_revPerm, ite_eq_right (by omega)]
     rw [Finset.sum_range_succ, Finset.sum_const_nat h, Finset.card_range,
-        unintegratedCount_revPerm, if_pos (by omega)]
+        unintegratedCount_revPerm, ite_eq_left (by omega)]
     have := Nat.mul_comm m (m + 1)
     simp only [Nat.add_sub_cancel]
     omega

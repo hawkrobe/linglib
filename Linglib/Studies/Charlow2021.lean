@@ -595,7 +595,7 @@ theorem dependent_indefinites_need_extra {W E : Type*} [Nonempty W] [Nonempty E]
       DynamicSemantics.CCP.IsDistributive depIndef := by
   intro h
   have h0 := h (fun _ => Set.univ) ∅
-  simp only [Set.mem_empty_iff_false, false_and, exists_false, Set.setOf_false] at h0
+  simp only [Set.mem_empty_iff_false, false_and, exists_false, Set.ofPred_false] at h0
   exact Set.univ_nonempty.ne_empty h0
 
 end Charlow2021

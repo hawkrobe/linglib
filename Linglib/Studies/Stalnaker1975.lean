@@ -324,7 +324,7 @@ theorem not_entails_direct :
     λ h => h rfl
   have h2 : Suspect.someoneElse ∈ ({w' | ({Suspect.butler} : Set Suspect)ᶜ w'} : Set Suspect) :=
     λ h => Suspect.noConfusion h
-  simp only [someoneElseFirst, if_neg h1, if_pos h2] at this
+  simp only [someoneElseFirst, ite_eq_right h1, ite_eq_left h2] at this
   exact (by decide : Suspect.someoneElse ≠ .gardener) this
 
 /-! ### Fatalism -/
@@ -416,7 +416,7 @@ theorem fatalism :
           killed] at hw
         have n1 : ¬ ({w : Outcome | w.2 = true} (true, false)) := Bool.false_ne_true
         have p2 : {w : Outcome | w.2 = true} (false, true) := rfl
-        simp only [if_neg n1, if_pos p2] at hw
+        simp only [ite_eq_right n1, ite_eq_left p2] at hw
         exact Bool.false_ne_true hw
       · exact ⟨trivial, Or.inl rfl⟩
       · exact ⟨(false, true), rfl, trivial, Or.inr Bool.false_ne_true⟩

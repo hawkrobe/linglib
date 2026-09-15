@@ -142,12 +142,12 @@ theorem gradingChar_apply_of'_eq (F : Forest (UnorderedTree α)) :
 theorem polarHahn_gradingChar_of' (F : Forest (UnorderedTree α)) :
     polarHahn (gradingChar (R := R) (of' F)) = 0 := by
   rw [gradingChar_apply_of'_eq, polarHahn_single,
-    if_neg (by omega : ¬ ((Forest.numEdges F : ℤ) < 0))]
+    ite_eq_right (by omega : ¬ ((Forest.numEdges F : ℤ) < 0))]
 
 theorem polarHahn_gradingChar_ofTree (T : UnorderedTree α) :
     polarHahn (gradingChar (R := R) (ofTree T)) = 0 := by
   rw [gradingChar_apply_ofTree, polarHahn_single,
-    if_neg (by omega : ¬ ((T.numEdges : ℤ) < 0))]
+    ite_eq_right (by omega : ¬ ((T.numEdges : ℤ) < 0))]
 
 /-! ### Birkhoff renormalization -/
 

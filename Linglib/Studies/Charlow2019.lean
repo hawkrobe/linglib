@@ -135,7 +135,7 @@ theorem antisymmetry_fails {E : Type*} [Nontrivial E] :
   · refine ⟨DPL.Rel.exists_ 0 (DPL.Rel.atom (λ g' => g' 0 = e₁)),
             e₁, ?_, by simp⟩
     funext n
-    by_cases hn : n = 0 <;> simp [hn, g, h, Function.update_apply]
+    by_cases hn : n = 0 <;> simp [hn, g, h]
 
 /-- Charlow's context type: a set of world-assignment pairs. -/
 abbrev State (W E : Type*) := Set (W × Assignment E)
@@ -374,7 +374,7 @@ theorem supportCollapse_singletonLift {W E : Type} [Inhabited E]
     cases h : i.indiv ⟨v'⟩ w with
     | some e =>
       show g₀ v' = e
-      simp only [g₀, dif_pos hv', h]
+      simp only [g₀, dite_eq_left hv', h]
     | star => trivial
   -- The chosen value equals e₀
   have hkey : ∀ g : Assignment E,
@@ -392,7 +392,7 @@ theorem supportCollapse_singletonLift {W E : Type} [Inhabited E]
       (w, g) ∈ singletonLift worlds vars i → g v.idx = e
       then Entity.some (Classical.choose h)
       else Entity.star) = i.indiv v w
-  rw [dif_pos hex, he₀]
+  rw [dite_eq_left hex, he₀]
   congr 1
   -- Classical.choose hex satisfies the property; pin it down via g₀
   have hch := Classical.choose_spec hex g₀ hg₀

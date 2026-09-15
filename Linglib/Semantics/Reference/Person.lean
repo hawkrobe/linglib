@@ -27,7 +27,7 @@ The region semantics grounds the rest of the API:
 
 namespace Person
 
-variable {D : Type*} [DecidableEq D]
+variable {D : Type*}
 
 /-- The region of referents a person value picks out, over an ontology
     with speaker `i` and addressee `u`: `first` includes the speaker
@@ -45,7 +45,7 @@ def interp (i u : D) : Person → Option (Finset D → Prop)
 def region (i u : D) (p : Person) : Finset D → Prop :=
   (interp i u p).getD fun _ => False
 
-instance (i u : D) (p : Person) (s : Finset D) :
+instance [DecidableEq D] (i u : D) (p : Person) (s : Finset D) :
     Decidable (region i u p s) :=
   match p with
   | .first => inferInstanceAs (Decidable (i ∈ s))
@@ -64,14 +64,14 @@ theorem interp_isSome_iff (i u : D) (p : Person) :
     coordination — a `p`-referent united with a `q`-referent is a
     `resolve p q`-referent. The resolution table of
     `Syntax/Person/Resolve.lean` is the shadow of this closure. -/
-theorem interp_resolve (i u : D) :
+theorem interp_resolve [DecidableEq D] (i u : D) :
     ∀ p q : Person, p ≠ .zero → q ≠ .zero →
     ∀ s t : Finset D,
       region i u p s → region i u q t →
       region i u (resolve p q) (s ∪ t) := by
   intro p q hp hq s t hs ht
   cases p <;> cases q <;>
-    simp_all [region, interp, resolve, Finset.mem_union] <;> tauto
+    simp_all [region, interp, resolve, Finset.mem_union]
 
 /-- The profile of `Syntax/Person/Resolve.lean` is the (i, u)-shadow of
     the region: `speaker` records whether the region forces `i ∈ s`, and
@@ -119,7 +119,6 @@ theorem isSAP_iff_forces (i u : D) :
       not_forall]
     exact ⟨∅, by simp⟩
 
-omit [DecidableEq D] in
 /-- Coarsening widens the region: dropping clusivity loses information,
     never referents. -/
 theorem region_coarsen (i u : D) (p : Person) (s : Finset D) :

@@ -79,7 +79,7 @@ def RescorlaWagner.update (rw : RescorlaWagner C)
 theorem RescorlaWagner.update_absent (rw : RescorlaWagner C)
     (present : Finset C) (V : C → ℝ) (c : C) (hc : c ∉ present) :
     rw.update present V c = V c := by
-  simp only [update, if_neg hc]
+  simp only [update, ite_eq_right hc]
 
 /-- **Blocking theorem** ([rescorla-wagner-1972]; [ellis-2006]):
 when cue A already fully predicts the outcome (`V(A) = λ`) and is the only cue
@@ -90,7 +90,7 @@ theorem RescorlaWagner.blocking (rw : RescorlaWagner C)
     (hB : B ∈ present)
     (h_total : ∑ c ∈ present, V c = rw.maxCond) :
     rw.update present V B = V B := by
-  simp only [update, if_pos hB, predictionError, h_total, sub_self,
+  simp only [update, ite_eq_left hB, predictionError, h_total, sub_self,
     mul_zero, add_zero]
 
 /-- When the outcome is fully predicted, *no* present cue learns anything. -/
@@ -132,7 +132,7 @@ theorem RescorlaWagner.totalStrength_recurrence (rw : RescorlaWagner C)
         rw.learnRate * rw.predictionError S V * ∑ c ∈ S, rw.salience c := by
   have h1 : ∀ c ∈ S, rw.update S V c =
       V c + rw.salience c * rw.learnRate * rw.predictionError S V :=
-    fun c hc => by simp only [update, if_pos hc]
+    fun c hc => by simp only [update, ite_eq_left hc]
   rw [Finset.sum_congr rfl h1, Finset.sum_add_distrib]
   congr 1
   rw [← Finset.sum_mul, ← Finset.sum_mul]
@@ -203,7 +203,7 @@ theorem RescorlaWagner.proportional_partition (rw : RescorlaWagner C)
       exact Finset.sum_congr rfl fun c' hc' => by rw [hK c' hc']; ring
     refine ⟨K + rw.learnRate * (rw.maxCond - K * ∑ c' ∈ S, rw.salience c'),
       fun c hc => ?_⟩
-    simp only [RescorlaWagner.iterateConst, RescorlaWagner.update, if_pos hc,
+    simp only [RescorlaWagner.iterateConst, RescorlaWagner.update, ite_eq_left hc,
       RescorlaWagner.predictionError]
     rw [hK c hc, hsum]
     ring

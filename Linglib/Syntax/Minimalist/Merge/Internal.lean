@@ -58,8 +58,8 @@ theorem mergeOpUnit_apply_singleton {α : Type*} [DecidableEq (UnorderedTree α)
     rw [show (ofTree T : ConnesKreimer R (UnorderedTree α)) = of' ({T} : Forest (UnorderedTree α))
           from rfl, mergePostUnit_basis_tensor]
     by_cases hTβ : T = β
-    · rw [if_pos hTβ, if_pos (by rw [hTβ]), mul_one]
-    · rw [if_neg hTβ, if_neg (fun h => hTβ (Multiset.singleton_inj.mp h))]
+    · rw [ite_eq_left hTβ, ite_eq_left (by rw [hTβ]), mul_one]
+    · rw [ite_eq_right hTβ, ite_eq_right (fun h => hTβ (Multiset.singleton_inj.mp h))]
   · -- cut sum: each summand reduces via `mergePostUnit_basis_tensor`.
     rw [_root_.map_multiset_sum, Multiset.map_map]
     congr 1
@@ -91,17 +91,17 @@ theorem mergeOpUnit_apply_singleton_unique
       (UnorderedTree α))) := by
       rw [h_filter]; exact Multiset.mem_singleton_self p0
     exact (Multiset.mem_filter.mp hp0_mem).2
-  rw [mergeOpUnit_apply_singleton, if_neg hTβ, zero_add,
+  rw [mergeOpUnit_apply_singleton, ite_eq_right hTβ, zero_add,
       ← Multiset.filter_add_not (fun p => p.1 = ({β} : Forest (UnorderedTree α))) (cutSummandsN T),
       Multiset.map_add, Multiset.sum_add, h_filter,
-      Multiset.map_singleton, Multiset.sum_singleton, if_pos hp0_cf,
+      Multiset.map_singleton, Multiset.sum_singleton, ite_eq_left hp0_cf,
       show (((cutSummandsN T).filter (fun p => ¬ p.1 = ({β} : Forest (UnorderedTree α)))).map
             (fun p => if p.1 = ({β} : Forest (UnorderedTree α))
               then of' (R := R) ({β} : Forest (UnorderedTree α)) * ofTree p.2 else 0)).sum
                 = 0 from by
         refine Multiset.sum_eq_zero fun x hx => ?_
         obtain ⟨p, hp_filter, rfl⟩ := Multiset.mem_map.mp hx
-        rw [if_neg (Multiset.mem_filter.mp hp_filter).2],
+        rw [ite_eq_right (Multiset.mem_filter.mp hp_filter).2],
       add_zero]
 
 /-- **M-C-B Proposition 1.4.2 (book p. 50): Internal Merge as composition,

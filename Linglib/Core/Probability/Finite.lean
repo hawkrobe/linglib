@@ -1,7 +1,7 @@
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Probability.Distributions.Uniform
-import Mathlib.Data.ENNReal.Operations
-import Mathlib.Data.ENNReal.Inv
+import Mathlib.Basic.ENNReal.Operations
+import Mathlib.Basic.ENNReal.Inv
 
 /-!
 # Finite-fintype convenience naming for `Mathlib.PMF`

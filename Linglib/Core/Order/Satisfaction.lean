@@ -135,7 +135,7 @@ theorem equivalent_trans (o : SatisfactionOrdering α Criterion) {a b c : α}
     connects satisfaction-based orderings (Kratzer modal semantics,
     Phillips-Brown desire) to the default-reasoning infrastructure
     (`Normality.optimal`, `Normality.refine`, `Normality.respects`, CR1–CR4). -/
-def toNormalityOrder (o : SatisfactionOrdering α Criterion) : Preorder α :=
+abbrev toNormalityOrder (o : SatisfactionOrdering α Criterion) : Preorder α :=
   o.toPreorder
 
 /-! ## Maxima and undominated elements -/

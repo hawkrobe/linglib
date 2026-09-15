@@ -233,18 +233,18 @@ theorem eval_neg (p : PartialProp W) (w : W) :
     (neg p).eval w = Trivalent.neg (p.eval w) := by
   simp only [eval, neg]
   by_cases hp : p.presup w
-  · simp only [if_pos hp]
+  · simp only [ite_eq_left hp]
     by_cases ha : p.assertion w
-    · simp [if_pos ha, if_neg (not_not.mpr ha), Trivalent.neg]
-    · simp [if_neg ha, if_pos ha, Trivalent.neg]
-  · simp [if_neg hp, Trivalent.neg]
+    · simp [ite_eq_left ha, ite_eq_right (not_not.mpr ha), Trivalent.neg]
+    · simp [ite_eq_right ha, ite_eq_left ha, Trivalent.neg]
+  · simp [ite_eq_right hp, Trivalent.neg]
 
 /-- Classical conjunction evaluation (both defined). -/
 theorem eval_and (p q : PartialProp W) (w : W)
     (hp : p.presup w) (hq : q.presup w) :
     (and p q).eval w = p.eval w ⊓ q.eval w := by
   have hpq : p.presup w ∧ q.presup w := ⟨hp, hq⟩
-  simp only [eval, and, if_pos hp, if_pos hq, if_pos hpq]
+  simp only [eval, and, ite_eq_left hp, ite_eq_left hq, ite_eq_left hpq]
   by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
     simp [ha, hb]
 
@@ -263,7 +263,7 @@ theorem eval_impFilter_antecedent_false (p q : PartialProp W) (w : W)
     (impFilter p q).eval w = .true := by
   have hpresup : (impFilter p q).presup w := ⟨hp, fun h => absurd h ha⟩
   have hassert : (impFilter p q).assertion w := fun h => absurd h ha
-  simp only [eval, if_pos hpresup, if_pos hassert]
+  simp only [eval, ite_eq_left hpresup, ite_eq_left hassert]
 
 /-- Filtering implication when antecedent true: depends on consequent. -/
 theorem eval_impFilter_antecedent_true (p q : PartialProp W) (w : W)
@@ -273,9 +273,9 @@ theorem eval_impFilter_antecedent_true (p q : PartialProp W) (w : W)
   have hpresup : (impFilter p q).presup w := ⟨hp, fun _ => hq⟩
   by_cases hqa : q.assertion w
   · have hass : (impFilter p q).assertion w := fun _ => hqa
-    simp only [eval, if_pos hpresup, if_pos hass, if_pos hqa]
+    simp only [eval, ite_eq_left hpresup, ite_eq_left hass, ite_eq_left hqa]
   · have hass : ¬(impFilter p q).assertion w := fun h => hqa (h ha)
-    simp only [eval, if_pos hpresup, if_neg hass, if_neg hqa]
+    simp only [eval, ite_eq_left hpresup, ite_eq_right hass, ite_eq_right hqa]
 
 /-- **Karttunen filtering conjunction is Peters' middle Kleene**
     ([peters-1979]): `andFilter` evaluates to the asymmetric
@@ -300,7 +300,7 @@ theorem eval_xor (p q : PartialProp W) (w : W)
     (hp : p.presup w) (hq : q.presup w) :
     (xor p q).eval w = Trivalent.xor (p.eval w) (q.eval w) := by
   have hpq : p.presup w ∧ q.presup w := ⟨hp, hq⟩
-  simp only [eval, xor, if_pos hp, if_pos hq, if_pos hpq]
+  simp only [eval, xor, ite_eq_left hp, ite_eq_left hq, ite_eq_left hpq]
   by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
     simp [ha, hb, Trivalent.xor]
 
@@ -310,7 +310,7 @@ theorem eval_xor_no_filter (p q : PartialProp W) (w : W)
     (hq : ¬q.presup w) :
     (xor p q).eval w = .indet := by
   have : ¬(xor p q).presup w := fun ⟨_, hq'⟩ => hq hq'
-  simp [eval, if_neg this]
+  simp [eval, ite_eq_right this]
 
 /-! ### Embedding combinators ([heim-1992], [karttunen-1973], [delpinal-bassi-sauerland-2024]) -/
 

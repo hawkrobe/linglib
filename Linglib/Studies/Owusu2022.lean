@@ -95,10 +95,10 @@ theorem tying_contentful :
     λ s N => (s, if N (s, true) then true else false),
     λ s x => x.2 = s, true, false, ?_, ?_⟩
   · simp only [SkolemCF.applyIntension]
-    rw [if_pos trivial, if_neg (λ h => Bool.noConfusion h)]
+    rw [ite_eq_left trivial, ite_eq_right (λ h => Bool.noConfusion h)]
     decide
   · simp only [SkolemCF.applyIntension]
-    rw [if_pos trivial]
+    rw [ite_eq_left trivial]
     decide
 
 /-! ### A two-person model of ex. (21)
@@ -139,7 +139,7 @@ theorem bi_wide_scope_witnessed :
     ∀ d ∈ skolemDenot preferAma () .bi,
       ¬ ToDwom (d (λ _ _ => True)) := by
   simp only [skolemDenot_bi, Option.mem_some_iff, forall_eq']
-  simp only [SkolemCF.applyIntension, preferAma, if_true]
+  simp only [SkolemCF.applyIntension, preferAma, ite_true]
   exact id
 
 /-- The narrow-scope (¬ > ∃) reading of ex. (21) — 'no person sang' —
