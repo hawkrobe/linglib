@@ -15,9 +15,10 @@ the focus clitic *=mI*, which by default attaches to a focused covert polarity h
 [atlamaz-2023] derives the Hamblin set of the question from focus alternatives: Σ has the identity
 as ordinary value and the identity and negation as focus value, the alternatives propagate
 pointwise, and a question head C_Q sets the ordinary value of the clause to the focus value of its
-prejacent, `sigmaF`, `tp`, `cq`. The two alternatives of Σ are assumed rather than derived. Under
-[rooth-1985]'s type-theoretic alternatives the focus value of Σ is every propositional operator,
-so the Hamblin set is every proposition, `hamblinType_eq_univ`, and [dayal-1996]'s answerhood
+prejacent, `hamblinSet`. The two alternatives of Σ are assumed rather than derived. Under
+[rooth-1985]'s type-theoretic alternatives Σ_F is the F-marked identity,
+`WithAlternatives.focused`, whose focus value is every propositional operator, so the Hamblin
+set is every proposition, `hamblinType_eq_univ`, and [dayal-1996]'s answerhood
 operator, which selects the strongest true member, returns total information about the world,
 `isStrongestTrueAnswer_hamblinType`; on the sample (31), which adds the deontic modal
 propositions, it returns the conjunction that Ali had to sleep and did, (35b), rather than the
@@ -26,18 +27,21 @@ repair this, since any Hamblin set at all is the intersection of the type-theore
 with some context, `exists_context_inter_eq`, whereas the modalized question (38) is unavailable
 even in the supporting context (39). Instead alternatives are syntactic objects formed under the
 Category Match Constraint (42), [fox-katzir-2011], [katzir-2007]: replacements of the focus share
-its category, `categoryMatch`. With Σ and NEG the only morphemes of category Pol, the Hamblin set
-is the polar one, `hamblinCat_eq`, `hamblinCat_eq_alt_polar`, Dayal's operator returns the
-positive or the negative answer, `isStrongestTrueAnswer_hamblinCat`, and the modal answer (41)
-is not a member, `mem_hamblinCat_iff`. No structural-complexity constraint is involved: category
-match is a single substitution step of [katzir-2007]'s operations, `structOp_of_mem_categoryMatch`.
+its category, which is the terminal clause of the substrate's syntactic composition
+`Alternatives.hamblin`, so Σ_F is that composition interpreted, `sigmaCat`. With Σ and NEG the
+only morphemes of category Pol, the Hamblin set is the polar one, `hamblin_sigma`,
+`hamblinCat_eq`, `hamblinCat_eq_alt_polar`, Dayal's operator returns the positive or the
+negative answer, `isStrongestTrueAnswer_hamblinCat`, and the modal answer (41) is not a member,
+`mem_hamblinCat_iff`. No structural-complexity constraint is involved: the category-match
+alternatives are substitutions at the focus, hence structural alternatives of [katzir-2007]
+without any bound, `Alternatives.hamblin_alternatives_subset`.
 
 ## Implementation notes
 
 Propositions are sets of worlds, the deontic modal is `Modality.Kratzer.necessity` over a modal
-base and an ordering source, and the lexicon is a list of terminals of `Syntax.Tree` so that
-category match is the substitution step of `Alternatives.Structural.StructOp`; the denotation of
-a tree is its terminal's operator and the identity elsewhere. Two-dimensional values are
+base and an ordering source, and the lexicon is a finite set of terminals of `Syntax.Tree`, so
+that category match is the terminal clause of `Alternatives.hamblin`; the denotation of a tree
+is its terminal's operator and the identity elsewhere. Two-dimensional values are
 `WithAlternatives`, whose `<*>` is pointwise functional application. The embedding data, (14) and
 (18), in which *=mI* below the complementizer *diye* yields a declarative matrix clause and
 *=mI* above it a matrix question, so that *=mI* tracks the highest focus mark, are recorded as
@@ -59,7 +63,7 @@ rows and not modelled. The examples are the rows of `Data.Examples.TurkHirsch202
 
 namespace TurkHirsch2026
 
-open Alternatives Alternatives.Structural Modality.Kratzer Question Syntax
+open Alternatives Modality.Kratzer Question Syntax
 
 /-! ### The polar morphemes and the deontic modal -/
 
@@ -76,7 +80,7 @@ inductive Word where
   | deontic
   deriving DecidableEq, Repr
 
-variable {W : Type*} (f : ModalBase W) (g : OrderingSource W)
+variable {W : Type} (f : ModalBase W) (g : OrderingSource W)
 
 /-- The operator a word denotes: Σ the identity, NEG complementation, and the deontic modal
 necessity over the modal base and ordering source. -/
@@ -85,47 +89,47 @@ def Word.den : Word → Set W → Set W
   | .neg => compl
   | .deontic => λ p => {w | necessity f g (· ∈ p) w}
 
-/-- The operator a tree denotes: its terminal's operator, and the identity on a node. -/
-def Tree.den : Tree Cat Word → Set W → Set W
+/-- The operator a tree denotes: its terminal's operator, and the identity elsewhere. -/
+def den : Tree Cat Word → Set W → Set W
   | .terminal _ w => w.den f g
   | _ => id
 
 /-- (44): the lexicon of propositional operators, Σ and NEG of category Pol and the deontic modal
 of its own category. -/
-def lexicon : List (Tree Cat Word) :=
-  [.terminal .pol .sigma, .terminal .pol .neg, .terminal .modal .deontic]
+def lexicon : Finset (Tree Cat Word) :=
+  {.terminal .pol .sigma, .terminal .pol .neg, .terminal .modal .deontic}
 
 /-- The focused polarity head Σ_F. -/
 def sigma : Tree Cat Word := .terminal .pol .sigma
 
-/-! ### Composing the question -/
+/-! ### Composing the question
 
-/-- Σ_F with a given focus value: the identity as ordinary value, (8a). -/
-def sigmaF (A : Set (Set W → Set W)) : WithAlternatives (Set W → Set W) :=
-  { ordinary := id, alternatives := A }
+Σ_F with focus value `A` is the two-dimensional value `⟨id, A⟩`, (8a); the TP applies it
+pointwise to the unfocused prejacent, (9), and C_Q returns the focus value of its prejacent as
+the Hamblin set, (10). Type-theoretic alternatives make Σ_F the F-marked identity,
+`WithAlternatives.focused id`; category match makes it the interpretation of the syntactic
+composition `Alternatives.hamblin` over the lexicon. -/
 
-/-- The TP: Σ_F applied pointwise to the unfocused prejacent `p`, (9). -/
-def tp (A : Set (Set W → Set W)) (p : Set W) : WithAlternatives (Set W) := sigmaF A <*> pure p
+/-- The Hamblin set of the question formed on Σ_F with two-dimensional value `m`: the focus
+value of the TP `m <*> pure p`, (9) and (10). -/
+def hamblinSet (m : WithAlternatives (Set W → Set W)) (p : Set W) : Set (Set W) :=
+  (m <*> pure p).alternatives
 
-/-- (10): C_Q sets the ordinary value to the focus value of its prejacent, the Hamblin set. -/
-def cq (m : WithAlternatives (Set W)) : WithAlternatives (Set (Set W)) :=
-  { ordinary := m.alternatives, alternatives := {m.alternatives} }
-
-theorem tp_alternatives (A : Set (Set W → Set W)) (p : Set W) :
-    (tp A p).alternatives = (· p) '' A := by
-  ext q
-  simp [tp, sigmaF]
+theorem mem_hamblinSet {m : WithAlternatives (Set W → Set W)} {p q : Set W} :
+    q ∈ hamblinSet m p ↔ ∃ g ∈ m.alternatives, g p = q := by
+  rw [hamblinSet, WithAlternatives.alternatives_seq, WithAlternatives.alternatives_pure,
+    Set.seq_singleton]
+  exact Set.mem_image _ _ _
 
 /-! ### Type-theoretic alternatives over-generate -/
 
 /-- The Hamblin set under [rooth-1985]'s type-theoretic focus value, every operator of Σ's type,
-(26). -/
-def hamblinType (p : Set W) : Set (Set W) := (cq (tp Set.univ p)).ordinary
+(26): Σ_F is the F-marked identity. -/
+def hamblinType (p : Set W) : Set (Set W) := hamblinSet (WithAlternatives.focused id) p
 
 /-- (28): the type-theoretic Hamblin set is every proposition. -/
-theorem hamblinType_eq_univ (p : Set W) : hamblinType p = Set.univ := by
-  rw [hamblinType, cq, tp_alternatives]
-  exact Set.eq_univ_of_forall λ q => ⟨λ _ => q, Set.mem_univ _, rfl⟩
+theorem hamblinType_eq_univ (p : Set W) : hamblinType p = Set.univ :=
+  Set.eq_univ_of_forall λ q => mem_hamblinSet.2 ⟨λ _ => q, Set.mem_univ _, rfl⟩
 
 /-- Under type-theoretic alternatives the complete answer at `w` is total information about
 `w`: the responder must supply every true proposition. -/
@@ -165,38 +169,35 @@ theorem exists_context_inter_eq (p : Set W) (H : Set (Set W)) :
 
 /-! ### Category match -/
 
-/-- (42), the Category Match Constraint: the alternatives of a focused constituent are its
-same-category replacements from the lexicon. -/
-def categoryMatch {C V : Type} (lex : List (Tree C V)) (φ : Tree C V) : Set (Tree C V) :=
-  {ψ | ψ ∈ lex ∧ ψ.cat = φ.cat}
-
-/-- A category-match replacement is one substitution step of [katzir-2007]'s structural
-operations; no complexity bound is involved. -/
-theorem structOp_of_mem_categoryMatch {C V : Type} {lex : List (Tree C V)} {φ ψ : Tree C V}
-    (h : ψ ∈ categoryMatch lex φ) : StructOp lex φ ψ :=
-  .subst h.2 h.1
+/-- (42), the Category Match Constraint: Σ_F evokes its same-category replacements from the
+lexicon, the terminal clause of the substrate's syntactic composition, so its two-dimensional
+value is the interpretation of `Alternatives.hamblin`. -/
+def sigmaCat : WithAlternatives (Set W → Set W) := den f g <$> hamblin lexicon sigma
 
 /-- (45): the category-match alternatives of Σ_F are Σ and NEG. -/
-theorem categoryMatch_sigma :
-    categoryMatch lexicon sigma = {.terminal .pol .sigma, .terminal .pol .neg} := by
+theorem hamblin_sigma : (hamblin lexicon sigma).alternatives = {sigma, .terminal .pol .neg} := by
   ext ψ
-  simp only [categoryMatch, lexicon, sigma, Set.mem_ofPred_eq, List.mem_cons, List.not_mem_nil,
-    or_false, Set.mem_insert_iff, Set.mem_singleton_iff]
+  simp only [hamblin, sigma, lexicon, Set.mem_insert_iff, Set.mem_ofPred_eq, Finset.mem_insert,
+    Finset.mem_singleton, Set.mem_singleton_iff]
   constructor
-  · rintro ⟨rfl | rfl | rfl, hc⟩
+  · rintro (rfl | ⟨rfl | rfl | rfl, hc⟩)
+    · exact Or.inl rfl
     · exact Or.inl rfl
     · exact Or.inr rfl
     · exact absurd hc (by decide)
-  · rintro (rfl | rfl) <;> exact ⟨by simp, rfl⟩
+  · rintro (rfl | rfl)
+    · exact Or.inl rfl
+    · exact Or.inr ⟨by simp, rfl⟩
 
 /-- The Hamblin set under category match. -/
-def hamblinCat (p : Set W) : Set (Set W) :=
-  (cq (tp ((Tree.den f g) '' categoryMatch lexicon sigma) p)).ordinary
+def hamblinCat (p : Set W) : Set (Set W) := hamblinSet (sigmaCat f g) p
 
 /-- Under category match the Hamblin set is the polar one, (23). -/
 theorem hamblinCat_eq (p : Set W) : hamblinCat f g p = {p, pᶜ} := by
-  rw [hamblinCat, cq, tp_alternatives, categoryMatch_sigma, Set.image_image, Set.image_pair]
-  rfl
+  ext q
+  rw [hamblinCat, mem_hamblinSet, sigmaCat]
+  simp only [WithAlternatives.mem_alternatives_map, hamblin_sigma]
+  simp [den, Word.den, sigma, eq_comm]
 
 /-- The category-match Hamblin set is the alternative set of the polar interrogative. -/
 theorem hamblinCat_eq_alt_polar {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :

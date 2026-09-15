@@ -8,7 +8,7 @@ This file formalizes the worked examples of [katzir-2007], which replaces the Ho
 neo-Gricean pragmatics by alternatives defined on parse trees: the alternatives of a sentence
 are the trees obtainable from it by deletion, contraction, and substitution of constituents by
 same-category items of the substitution source, the lexicon together with the sentence's own
-subtrees (its definitions (19) to (21) and (41), the substrate `Alternatives.Structural`).
+subtrees (its definitions (19) to (21) and (41), the substrate `Alternatives`).
 The conversational principle (21) then forbids asserting a sentence when a structural
 alternative is strictly stronger and weakly assertable, the substrate's `Alternatives.Blocked`
 over the weakly assertable structural alternatives.
@@ -39,7 +39,7 @@ and the symmetric alternative places the conjunction of quantifiers at the deter
 * [sauerland-2004], [kroch-1972]
 -/
 
-open Syntax Alternatives Alternatives.Structural
+open Syntax Alternatives
 
 namespace Katzir2007
 
@@ -50,12 +50,12 @@ inductive Word
   deriving DecidableEq, Repr
 
 /-- The lexicon: the terminal items available for substitution. -/
-def lexicon : List (Tree Cat Word) :=
-  [.terminal .N .john, .terminal .V .ate, .terminal .Det .some_, .terminal .Det .all_,
+def lexicon : Finset (Tree Cat Word) :=
+  {.terminal .N .john, .terminal .V .ate, .terminal .Det .some_, .terminal .Det .all_,
     .terminal .N .cake, .terminal .N .apple, .terminal .N .pear, .terminal .Conj .or_,
     .terminal .Conj .and_, .terminal .Adj .tall, .terminal .N .man, .terminal .Pron .it,
     .terminal .Aux .was, .terminal .Aux .is, .terminal .Adj .warm, .terminal .Adv .yesterday,
-    .terminal .Adv .today]
+    .terminal .Adv .today}
 
 /-! ### Some, all, some but not all (Section 4.1) -/
 
@@ -84,12 +84,12 @@ theorem leafSubst_some_all : someSentence.leafSubst .some_ .all_ .Det = allSente
 lexicon. -/
 theorem all_mem_alternatives : allSentence ∈ structuralAlternatives lexicon someSentence :=
   leafSubst_some_all ▸ horn_alternatives_are_structural lexicon someSentence .some_ .all_ .Det
-    (by simp [lexicon]) (by simp [lexicon])
+    (by simp [lexicon])
 
 /-- The two are of equal complexity: each is one substitution from the other. -/
 theorem some_all_equalComplexity :
     equalComplexity (substitutionSource lexicon someSentence) someSentence allSentence := by
-  constructor <;>
+  refine ⟨?_, ?_⟩ <;>
   · apply Relation.ReflTransGen.single
     apply StructOp.inChild ⟨1, by simp⟩
     apply StructOp.inChild ⟨1, by simp⟩
@@ -99,7 +99,8 @@ theorem some_all_equalComplexity :
 
 /-- No item of the substitution source of (25a) contains a conjunction phrase. -/
 theorem source_lacks_conjP :
-    ∀ t ∈ substitutionSource lexicon someSentence, ¬ t.ContainsCat Cat.ConjP := by decide
+    ∀ t ∈ substitutionSource lexicon someSentence, ¬ t.ContainsCat Cat.ConjP :=
+  forall_mem_substitutionSource.2 ⟨by decide, by decide⟩
 
 /-- The symmetric alternative is no structural alternative: the operations never introduce
 the conjunction phrase it needs, so the symmetry problem does not arise. -/
@@ -121,7 +122,7 @@ def cakeMeaning (t : Tree Cat Word) : Set Cake :=
 
 /-- The alternatives of (21): structural alternatives that are weakly assertable. -/
 def assertableAlts (wa : Tree Cat Word → Prop) (t : Tree Cat Word) : Set (Tree Cat Word) :=
-  {t' ∈ katzirSource lexicon t | wa t'}
+  {t' ∈ structuralAlternatives lexicon t | wa t'}
 
 /-- If *all* is weakly assertable, asserting *some* violates the conversational principle. -/
 theorem blocked_of_weaklyAssertable_all {wa : Tree Cat Word → Prop} (h : wa allSentence) :
@@ -166,7 +167,7 @@ theorem leafSubst_or_and : orSentence.leafSubst .or_ .and_ .Conj = andSentence :
 /-- The conjunction is an alternative of the disjunction by substitution. -/
 theorem and_mem_alternatives : andSentence ∈ structuralAlternatives lexicon orSentence :=
   leafSubst_or_and ▸ horn_alternatives_are_structural lexicon orSentence .or_ .and_ .Conj
-    (by simp [lexicon]) (by simp [lexicon])
+    (by simp [lexicon])
 
 /-- The left disjunct is an alternative of the disjunction: delete the right disjunct and the
 connective, then contract; the effect of the L connective of [sauerland-2004]. -/
@@ -248,6 +249,6 @@ needs is a subtree of (40a), hence in the substitution source (41). -/
 theorem moreThanWarmYesterday_mem_alternatives :
     moreThanWarmYesterday ∈ structuralAlternatives lexicon warmYesterday :=
   Relation.ReflTransGen.single (StructOp.inChild ⟨0, by simp⟩
-    (StructOp.inChild ⟨2, by simp⟩ (StructOp.subst rfl (by decide))))
+    (StructOp.inChild ⟨2, by simp⟩ (StructOp.subst rfl (Set.mem_union_right _ (by decide)))))
 
 end Katzir2007
