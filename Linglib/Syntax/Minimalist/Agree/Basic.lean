@@ -22,8 +22,12 @@ goals (`isClosestGoalIn_of_search_eq_some`).
 
 ## Main definitions
 
-* `Minimalist.SyntacticObject.isClosestGoalIn`, `Minimalist.SyntacticObject.behindHorizonIn`
-* `Minimalist.FeatureBundle.valueAt`, `Minimalist.FeatureBundle.applyAgree`
+* `Minimalist.SyntacticObject.isClosestGoalIn`: a goal in the probe's domain that no other
+  candidate asymmetrically c-commands.
+* `Minimalist.SyntacticObject.behindHorizonIn`: a target c-commanded by a horizon-category leaf
+  in the probe's domain.
+* `Minimalist.FeatureBundle.valueAt`, `Minimalist.FeatureBundle.applyAgree`: valuation of an
+  unvalued slot, and the probe's bundle valued from a goal's.
 
 ## References
 

@@ -16,9 +16,11 @@ counterpart of a horizon is `SyntacticObject.behindHorizonIn`.
 
 ## Main definitions
 
-* `Minimalist.Probe.Profile`, `Minimalist.Probe.Profile.transparentToLabel`
-* `Minimalist.Probe.Profile.isVacuousFor`, `Minimalist.Probe.Profile.isVacuous`
-* `Minimalist.Probe.Profile.toProbe`
+* `Minimalist.Probe.Profile`: the head hosting a probe and the category that is its horizon.
+* `Minimalist.Probe.Profile.transparentToLabel`: a bilateral label not containing the horizon.
+* `Minimalist.Probe.Profile.isVacuousFor`, `Minimalist.Probe.Profile.isVacuous`: a horizon
+  lying in the probe's own sister, for a given sister label and for the standard spine.
+* `Minimalist.Probe.Profile.toProbe`: the probe a profile denotes over goals exposing labels.
 
 ## Main results
 

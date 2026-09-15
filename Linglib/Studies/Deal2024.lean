@@ -1,5 +1,6 @@
 import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Linglib.Syntax.Minimalist.Probe.Basic
+import Linglib.Syntax.Minimalist.Geometry
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Studies.CoonKeine2021
 import Linglib.Data.Examples.Deal2024
@@ -56,22 +57,18 @@ inductive PersonFeature where
   deriving DecidableEq, Repr, Fintype
 
 /-- The features bearing a feature entails bearing: the feature and its dominators. -/
-def PersonFeature.below : PersonFeature → List PersonFeature
-  | .phi => [.phi]
-  | .part => [.phi, .part]
-  | .spkr => [.phi, .part, .spkr]
-  | .addr => [.phi, .part, .addr]
+def PersonFeature.below : PersonFeature → Finset PersonFeature
+  | .phi => {.phi}
+  | .part => {.phi, .part}
+  | .spkr => {.phi, .part, .spkr}
+  | .addr => {.phi, .part, .addr}
 
-/-- The entailment order: `f ≤ g` when bearing `g` entails bearing `f`; [φ] is the bottom and
-[SPKR] and [ADDR] are maximal. -/
-instance : PartialOrder PersonFeature where
-  le f g := f ∈ g.below
-  le_refl f := by cases f <;> decide
-  le_trans f g h hfg hgh := by revert hfg hgh; cases f <;> cases g <;> cases h <;> decide
-  le_antisymm f g hfg hgf := by revert hfg hgf; cases f <;> cases g <;> decide
-
-instance : DecidableRel (α := PersonFeature) (· ≤ ·) := λ f g =>
-  inferInstanceAs (Decidable (f ∈ g.below))
+/-- The person geometry, [φ] at the bottom and [SPKR] and [ADDR] maximal. -/
+def personGeometry : Minimalist.Geometry PersonFeature where
+  nodes := Finset.univ
+  above := PersonFeature.below
+  self_mem_above := by decide
+  above_subset_above := by decide
 
 /-- Whether a person bears a feature, from the shared decomposition: [PART] is participant,
 [SPKR] is author, and [ADDR] is borne by the second person and the inclusive first. -/
@@ -81,9 +78,9 @@ def bears (p : Person) : PersonFeature → Bool
   | .spkr => (decomposePerson p).hasAuthor
   | .addr => p == .second || p == .firstInclusive
 
-/-- Bearing a feature entails bearing its dominators. -/
-theorem bears_of_le {f g : PersonFeature} (h : f ≤ g) (p : Person) (hp : bears p g = true) :
-    bears p f = true := by
+/-- Bearing a feature entails bearing what it entails. -/
+theorem bears_of_mem_above {f g : PersonFeature} (h : f ∈ personGeometry.above g) (p : Person)
+    (hp : bears p g = true) : bears p f = true := by
   revert h hp
   cases f <;> cases g <;> cases p <;> decide
 

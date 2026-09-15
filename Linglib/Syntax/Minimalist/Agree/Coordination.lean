@@ -1,28 +1,27 @@
 import Linglib.Syntax.Minimalist.Features
-import Mathlib.Data.Finset.Basic
+import Linglib.Syntax.Minimalist.Geometry
 
 /-!
 # Coordination resolution over a dual-feature system
 
-This file defines the resolution of gender features on a coordinate structure in a
-dual-feature system ([adamson-anagnostopoulou-2025], after [smith-2015]). A nominal's bundle
-has an interpretable feature set, sent to LF, and an uninterpretable one, sent to PF.
-Resolution percolates the interpretable sets of the conjuncts to the coordination and converts
-them by intersection, so that the coordination bears exactly the features every conjunct has.
-Uninterpretable sets are not intersected but realized set by set, and their realization
-converges only when every set receives the same exponent; at Transfer the redundancy rule sends
-a nominal's interpretable features to PF when it has no uninterpretable ones. A feature
-geometry assigns each node the nodes it entails, which orders the nodes by entailment, and it
-satisfies mismatch resolution when every two of its nodes share an entailed node, so that no
-coordination needs a default.
+This file defines the resolution of features on a coordinate structure in a dual-feature
+system ([adamson-anagnostopoulou-2025], after [smith-2015]), whose application in the paper is
+to gender. A nominal's bundle has an interpretable feature set, sent to LF, and an
+uninterpretable one, sent to PF. Resolution percolates the interpretable sets of the conjuncts
+to the coordination and converts them by intersection, so that the coordination bears exactly
+the features every conjunct has. Uninterpretable sets are not intersected but realized set by
+set, and their realization converges only when every set receives the same exponent; at
+Transfer the redundancy rule sends a nominal's interpretable features to PF when it has no
+uninterpretable ones. The features a nominal contributes are the closure of a node in a feature
+geometry (`Minimalist.Geometry`), and a geometry satisfying mismatch resolution needs no default.
 
 ## Main definitions
 
-* `Minimalist.Coordination.Bundle`, `Minimalist.Coordination.Bundle.single`,
-  `Minimalist.Coordination.Bundle.toPF`
-* `Minimalist.Coordination.resolve`, `Minimalist.Coordination.realizeAll`
-* `Minimalist.Coordination.Geometry`, `Minimalist.Coordination.Geometry.Entails`,
-  `Minimalist.Coordination.Geometry.MismatchResolution`
+* `Minimalist.Coordination.Bundle`: the interpretable and the uninterpretable features of a
+  nominal, built by `Minimalist.Coordination.Bundle.single` from one feature and its
+  interpretability and sent to PF by `Minimalist.Coordination.Bundle.toPF`.
+* `Minimalist.Coordination.resolve`: the intersection of two conjuncts' interpretable features.
+* `Minimalist.Coordination.realizeAll`: the exponent a family of feature sets all receive.
 
 ## References
 
@@ -34,8 +33,8 @@ namespace Minimalist.Coordination
 
 variable {F E : Type*}
 
-/-- The gender features of a nominal in a dual-feature system, the interpretable ones sent to
-LF and the uninterpretable ones sent to PF. -/
+/-- The features of a nominal in a dual-feature system, the interpretable ones sent to LF and
+the uninterpretable ones sent to PF. -/
 structure Bundle (F : Type*) where
   /-- The interpretable features. -/
   interp : Finset F
@@ -101,37 +100,5 @@ def realizeAll [DecidableEq E] (realize : Finset F → Option E) : List (Finset 
 @[simp] theorem realizeAll_singleton [DecidableEq E] (realize : Finset F → Option E)
     (s : Finset F) : realizeAll realize [s] = realize s := by
   simp [realizeAll]
-
-/-- A feature geometry over `F`, a set of nodes and, for each node, the nodes it entails, itself
-included. -/
-structure Geometry (F : Type*) where
-  /-- The nodes. -/
-  nodes : Finset F
-  /-- The closure of a node under entailment. -/
-  above : F → Finset F
-
-namespace Geometry
-
-variable (G : Geometry F)
-
-/-- `a` entails `b` when everything `b` entails, `a` entails. -/
-def Entails (a b : F) : Prop := G.above b ⊆ G.above a
-
-instance [DecidableEq F] (a b : F) : Decidable (G.Entails a b) :=
-  inferInstanceAs (Decidable (G.above b ⊆ G.above a))
-
-theorem Entails.refl (a : F) : G.Entails a a := Finset.Subset.refl _
-
-theorem Entails.trans {a b c : F} (hab : G.Entails a b) (hbc : G.Entails b c) : G.Entails a c :=
-  Finset.Subset.trans hbc hab
-
-/-- Every two nodes share an entailed node, so no coordination of them needs a default. -/
-def MismatchResolution [DecidableEq F] : Prop :=
-  ∀ a ∈ G.nodes, ∀ b ∈ G.nodes, (G.above a ∩ G.above b).Nonempty
-
-instance [DecidableEq F] : Decidable G.MismatchResolution := by
-  unfold MismatchResolution; infer_instance
-
-end Geometry
 
 end Minimalist.Coordination
