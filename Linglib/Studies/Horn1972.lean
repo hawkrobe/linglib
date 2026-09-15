@@ -1,4 +1,3 @@
-import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Semantics.Quantification.Numerals.Basic
 import Mathlib.Order.Monotone.Basic
 import Mathlib.Data.Fin.Rev
@@ -30,8 +29,8 @@ negation `~Q` lexicalize iff `Q` is compatible and an inner negation `Q~` iff it
 
 * Quantifiers are conditions on the number of satisfiers out of a domain of size `n`, the
   operational procedure of (4.55); *many* and *few*, which depend on an expected size, are
-  left out. Cardinals use the numeral substrate's lower-bound readings, and the connectives
-  the substrate's `Alternatives.ConnWorld`.
+  left out. Cardinals use the numeral substrate's lower-bound readings, and the connectives a
+  four-world model of two disjuncts (`ConnWorld`).
 * The modal and deontic scales, the polarity facts of Chapter 3 and the presupposition theory
   of Section 1.1 are not formalized.
 
@@ -42,7 +41,7 @@ negation `~Q` lexicalize iff `Q` is compatible and an inner negation `Q~` iff it
 
 namespace Horn1972
 
-open Alternatives Numerals
+open Numerals
 
 variable {W : Type*} {n : ℕ}
 
@@ -249,6 +248,24 @@ theorem o_corner_unlexicalizable (hn : 2 ≤ n) :
   ⟨allQ_not_compatible (by omega), not_not.mpr (someQ_compatible hn)⟩
 
 /-! ### The connectives (Sections 2.13 and 4.23) -/
+
+/-- The worlds of two disjuncts: which of them hold. -/
+inductive ConnWorld where
+  | neither
+  | onlyA
+  | onlyB
+  | both
+  deriving DecidableEq, Repr
+
+/-- *A or B*, inclusive. -/
+def orConn : ConnWorld → Prop
+  | .neither => False
+  | _ => True
+
+/-- *A and B*. -/
+def andConn : ConnWorld → Prop
+  | .both => True
+  | _ => False
 
 /-- Negating both disjuncts. -/
 def ConnWorld.swap : ConnWorld → ConnWorld
