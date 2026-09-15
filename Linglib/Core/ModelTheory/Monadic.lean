@@ -1,20 +1,17 @@
-import Mathlib.ModelTheory.Semantics
+import Mathlib.ModelTheory.Basic
 
 /-!
-# Monadic languages and decidable satisfaction on finite structures
+# The monadic language on a type of predicate symbols
 
-This file defines the monadic first-order language on a type of predicate symbols and decidable
-satisfaction on a finite structure.
+This file defines the monadic first-order language on a type `Sym` of predicate symbols, the
+relational counterpart of `Language.constantsOn`, and its structures.
 
 ## Main definitions
 
 - `FirstOrder.Language.monadic Sym` is the relational language whose relation symbols are the
-  elements of `Sym`, all of arity one: the relational counterpart of `Language.constantsOn`.
+  elements of `Sym`, all of arity one.
 - `FirstOrder.Language.monadic.structure holds` is the `monadic Sym`-structure on `E`
   interpreting each symbol `s` as the predicate `holds s`.
-- `FirstOrder.Language.BoundedFormula.decidableRealize` decides `BoundedFormula.Realize` on a
-  finite structure with decidable equality and decidable relations by recursion on the formula,
-  so that `decide` checks satisfaction on concrete finite models.
 
 ## Implementation notes
 
@@ -80,32 +77,5 @@ instance monadic.structure.decidableRelMap [∀ s e, Decidable (holds s e)] :
   | 1, s, v => inferInstanceAs (Decidable (holds s (v 0)))
 
 end Monadic
-
-section DecidableRealize
-
-variable {L : Language} {M : Type*} [L.Structure M] [Fintype M] [DecidableEq M]
-  [∀ (n : ℕ) (r : L.Relations n) (x : Fin n → M), Decidable (RelMap r x)] {α : Type*}
-
-/-- Satisfaction on a finite structure with decidable equality and decidable relations is
-decidable, by recursion on the formula; `decide` reduces through it on concrete models. -/
-instance BoundedFormula.decidableRealize :
-    ∀ {n : ℕ} (φ : L.BoundedFormula α n) (v : α → M) (xs : Fin n → M),
-      Decidable (φ.Realize v xs)
-  | _, .falsum, _, _ => .isFalse id
-  | _, .equal _ _, _, _ => inferInstanceAs (Decidable (_ = _))
-  | _, .rel R _, _, _ => inferInstanceAs (Decidable (RelMap R _))
-  | _, .imp φ ψ, v, xs =>
-    haveI := decidableRealize φ v xs
-    haveI := decidableRealize ψ v xs
-    inferInstanceAs (Decidable (_ → _))
-  | _, .all φ, v, xs =>
-    haveI : ∀ a, Decidable (φ.Realize v (Fin.snoc xs a)) := fun a =>
-      decidableRealize φ v (Fin.snoc xs a)
-    inferInstanceAs (Decidable (∀ a, φ.Realize v (Fin.snoc xs a)))
-
-instance Formula.decidableRealize (φ : L.Formula α) (v : α → M) : Decidable (φ.Realize v) :=
-  BoundedFormula.decidableRealize φ v default
-
-end DecidableRealize
 
 end FirstOrder.Language

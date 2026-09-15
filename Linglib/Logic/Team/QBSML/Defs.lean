@@ -2,7 +2,7 @@ import Mathlib.Data.Finset.Union
 import Mathlib.Data.Fintype.Basic
 import Linglib.Logic.Assignment
 import Linglib.Logic.Modal.FirstOrder.Semantics
-import Linglib.Core.ModelTheory.FiniteModel
+import Linglib.Core.ModelTheory.Monadic
 import Linglib.Logic.Modal.FirstOrder.Semantics
 import Linglib.Logic.Team.Algebra
 import Linglib.Logic.Bilateral.Defs
