@@ -52,7 +52,7 @@ carries its semantic function, and every function is attested (`functions_attest
 
 namespace Snyder2026
 
-open Semantics.Kinds.Subkinds
+open Genericity.Subkinds
 
 /-! ### The three polymorphic analyses and the semantic functions -/
 

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Genericity.NominalMappingParameter
+import Linglib.Semantics.Genericity.Kind
 import Mathlib.Data.Set.Card
 import Mathlib.Order.SupClosed
 
@@ -45,7 +45,7 @@ confined to them.
 
 namespace Krifka2003
 
-open Semantics.Kinds.NMP Mereology
+open Genericity Mereology
 
 variable {World Atom : Type*}
 

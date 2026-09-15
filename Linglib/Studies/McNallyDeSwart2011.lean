@@ -46,7 +46,7 @@ this file and are UNVERIFIED.
 
 namespace McNallyDeSwart2011
 
-open Semantics.Kinds.Subkinds Dutch.Adjectives
+open Genericity.Subkinds Dutch.Adjectives
 
 /-! ### Kinds: the uninflected and derived nominals -/
 

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Genericity.NominalMappingParameter
+import Linglib.Semantics.Genericity.Kind
 import Linglib.Data.Examples.LeBruynDeSwart2022
 
 /-!
@@ -15,7 +15,7 @@ bare plural shift directly to an existential by a local type repair, delivers th
 reading at the scrambled position.
 
 The two derivations coincide below negation (`krifkaUnscrambled`) and part company above it:
-Chierchia's is position-invariant (`Semantics.Kinds.NMP.chierchia_position_invariant`),
+Chierchia's is position-invariant (`Genericity.chierchia_position_invariant`),
 while Krifka's scrambled reading is wide and its narrow reading false exactly when some book
 was finished and some was not (`krifkaScrambled_and_not_unscrambled_iff`), the situation
 the paper's attested example describes. On that two-book model the kind shift cannot deliver
@@ -23,7 +23,7 @@ the attested reading (`chierchia_not_wide`).
 
 ## Implementation notes
 
-Existential closure is the substrate's `Semantics.Kinds.NMP.existsClose` over a finite
+Existential closure is the substrate's `Genericity.existsClose` over a finite
 domain, shared by both derivations so that they differ only in where negation sits; the
 compositional detail of the paper's derivations (38) and (41) is not represented. The
 attested examples are rows of `Data/Examples/LeBruynDeSwart2022.json`.
@@ -37,7 +37,7 @@ attested examples are rows of `Data/Examples/LeBruynDeSwart2022.json`.
 
 namespace LeBruynDeSwart2022
 
-open Semantics.Kinds.NMP
+open Genericity
 
 variable {Entity : Type*} (dom : List Entity) (P Q : Entity → Prop)
 

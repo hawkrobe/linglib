@@ -1,3 +1,4 @@
+import Linglib.Semantics.Genericity.Kind
 import Linglib.Semantics.Genericity.NominalMappingParameter
 import Linglib.Semantics.Plurality.MassCount
 /-
@@ -44,9 +45,8 @@ partition are disjoint) is derived there.
 
 -/
 
-namespace Semantics.Kinds.MeaningPreservation
+namespace Genericity.MeaningPreservation
 
-open Semantics.Kinds.NMP (NominalMapping Shift DownDefined)
 
 variable (World Atom : Type)
 
@@ -66,18 +66,18 @@ that "loses" some information.
 ιP preserves P's intension (picks unique satisfier per world)
 ∃P only preserves existence of some satisfier (loses identity)
 -/
-def meaningPreservationRank : Shift → Nat
+def meaningPreservationRank : CovertShift → Nat
   | .down          => 1 -- Highest rank (most preserving)
   | .iota          => 1 -- Same rank as ∩
   | .iotaAnaphoric => 1 -- Same rank as ι: preserves full semantic content
   | .exists        => 2 -- Lower rank (less preserving)
 
 /-- Type shifts with equal rank are equally preferred -/
-def equallyPreferred (t1 t2 : Shift) : Bool :=
+def equallyPreferred (t1 t2 : CovertShift) : Bool :=
   meaningPreservationRank t1 == meaningPreservationRank t2
 
 /-- t1 is more preferred than t2 if it has lower rank -/
-def morePreferred (t1 t2 : Shift) : Bool :=
+def morePreferred (t1 t2 : CovertShift) : Bool :=
   meaningPreservationRank t1 < meaningPreservationRank t2
 
 -- Verify the ranking
@@ -266,7 +266,7 @@ Available type-shifts given context.
 
 Returns shifts in preference order (most preferred first).
 -/
-def availableShifts (ctx : TypeShiftContext) : List Shift :=
+def availableShifts (ctx : TypeShiftContext) : List CovertShift :=
   let shifts := []
   -- ∩ is available if defined and number is compatible.
   -- For .neutral (Shan), ∩ is available (bare nouns can be kind-denoting).
@@ -301,16 +301,16 @@ Select the best available type-shift.
 
 Follows Meaning Preservation: choose highest-ranked available shift.
 -/
-def selectShift (ctx : TypeShiftContext) : Option Shift :=
+def selectShift (ctx : TypeShiftContext) : Option CovertShift :=
   (availableShifts ctx).head?
 
 -- ============================================================================
--- Intensional Type-Shift Denotations ([moroney-2021] §2.2, §4.3)
+-- Intensional Type-CovertShift Denotations ([moroney-2021] §2.2, §4.3)
 -- ============================================================================
 
 /-! ## Intensional Semantics of Type-Shifts
 
-The `Shift` enum above classifies type-shifts abstractly; the
+The `CovertShift` enum above classifies type-shifts abstractly; the
 `availableShifts`/`selectShift` functions determine which are available.
 What's been missing is the *intensional denotation* of each shift.
 
@@ -334,18 +334,18 @@ section IntensionalDenotations
 variable {World Atom : Type}
 
 /-- ∩-shift (kind formation): maps an intensional property to its kind
-    individual. This IS `NMP.down`. -/
-abbrev shiftDown (P : NMP.Property World Atom) :
-    NMP.Kind World Atom :=
-  NMP.down World Atom P
+    individual. This IS `Property.down`. -/
+abbrev shiftDown (P : Property World Atom) :
+    Kind World Atom :=
+  P.down
 
 /-- ι-shift (unique definite): at world w, returns the unique satisfier
     of P(w) if one exists. This is the world-relative definite description.
 
     [moroney-2021] §2.2: Shan bare nouns get this reading when the
     context supplies a unique referent. -/
-def shiftIota (P : NMP.Property World Atom) (w : World)
-    (unique : ∃! x, x ∈ P w) : NMP.Individual Atom :=
+def shiftIota (P : Property World Atom) (w : World)
+    (unique : ∃! x, x ∈ P w) : Individual Atom :=
   Classical.choose unique.exists
 
 /-- ι^x-shift (anaphoric definite): at world w, returns the unique
@@ -354,18 +354,18 @@ def shiftIota (P : NMP.Property World Atom) (w : World)
     [moroney-2021] §4.3: ι^x P Q = ιx[P(x) ∧ Q(x)]. Shan bare
     nouns get this reading in anaphoric contexts (narrative continuations,
     relational bridging); demonstrative-noun phrases optionally reinforce it. -/
-def shiftIotaAnaphoric (P : NMP.Property World Atom)
-    (Q : NMP.Individual Atom → Prop) (w : World)
-    (unique : ∃! x, x ∈ P w ∧ Q x) : NMP.Individual Atom :=
+def shiftIotaAnaphoric (P : Property World Atom)
+    (Q : Individual Atom → Prop) (w : World)
+    (unique : ∃! x, x ∈ P w ∧ Q x) : Individual Atom :=
   Classical.choose unique.exists
 
 /-- ∃-shift (existential closure): at world w, existentially closes over
-    P(w). This is `NMP.DPP` restricted to a predicate.
+    P(w). This is `DPP` restricted to a predicate.
 
     [moroney-2021] §2.3: the existential reading of Shan bare nouns
     arises via DPP at vP, yielding obligatory low scope w.r.t. negation. -/
-def shiftExists (P : NMP.Property World Atom) (w : World)
-    (predicate : NMP.Individual Atom → Prop) : Prop :=
+def shiftExists (P : Property World Atom) (w : World)
+    (predicate : Individual Atom → Prop) : Prop :=
   ∃ x, x ∈ P w ∧ predicate x
 
 /-- ∩ and ι are both rank-1 shifts (meaning-preserving). ∃ is rank-2
@@ -546,7 +546,7 @@ def modificationBlocksKind : ModificationEffect :=
 -- Grounding Theorems
 
 /-- Meaning preservation ranking is transitive -/
-theorem ranking_transitive (t1 t2 t3 : Shift)
+theorem ranking_transitive (t1 t2 t3 : CovertShift)
     (h1 : morePreferred t1 t2 = true)
     (h2 : morePreferred t2 t3 = true) :
     morePreferred t1 t3 = true := by
@@ -672,4 +672,4 @@ theorem meaning_preservation_derives_kind_preference :
 
 -/
 
-end Semantics.Kinds.MeaningPreservation
+end Genericity.MeaningPreservation

@@ -1,165 +1,82 @@
-import Linglib.Data.UD.Basic
+import Linglib.Syntax.Category.Noun.Basic
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
-# Mandarin Chinese Noun Lexicon Fragment
-[chierchia-1998]
+# Mandarin nouns
 
-Mandarin-specific noun entries. Mandarin is [+arg, -pred]:
-all nouns are kind-denoting by default, no number morphology, no articles,
-classifiers required for counting, bare nouns freely occur as arguments.
+The Mandarin noun as a lexical entry: the root `Noun` with its pinyin, the classifier it counts
+with, and whether it is a proper name. Mandarin is [+arg, −pred] ([chierchia-1998]): nouns
+denote kinds, there is no number morphology and no article, so no covert shift is blocked and
+every bare noun is an argument; counting goes through a classifier
+(`Mandarin.Classifiers`).
 
-Classifiers are now typed `Classifier` values from the classifier
-lexicon (`Mandarin.Classifiers`), replacing the previous
-unstructured `Option String` representation. This enables verification
-of Aikhenvald's semantic generalizations about classifier selection.
+## References
+
+* [chierchia-1998]
 -/
 
 namespace Mandarin.Nouns
 
 open Mandarin.Classifiers
-open Semantics.Kinds.NMP (NominalMapping)
+open Genericity
 
-/-- A lexical entry for a Mandarin noun.
-
-    The `classifier` field points to a typed `Classifier` from the
-    classifier lexicon, carrying semantic information about why that
-    classifier is selected (animacy, shape, function, etc.). -/
-structure NounEntry where
-  form : String
-  pinyin : String := ""
+/-- A Mandarin noun: the root entry with its pinyin, the classifier it counts with, if any, and
+whether it is a proper name. -/
+structure Noun extends _root_.Noun where
+  /-- The pinyin. -/
+  pinyin : String
+  /-- The classifier the noun counts with; none for a mass noun. -/
   classifier : Option Classifier := some ge
+  /-- Whether the entry is a proper name. -/
   proper : Bool := false
-  deriving Repr, BEq
+  deriving DecidableEq, Repr
 
-/-- Mandarin NP structure (no grammatical number or articles). -/
-structure NP where
-  noun : NounEntry
-  isBare : Bool
-  demonstrative : Option String := none
-  numeral : Option Nat := none
-  classifierOverride : Option Classifier := none
-  deriving Repr, BEq
+/-! ### Common nouns -/
 
-def NP.classifier (np : NP) : Option Classifier :=
-  np.classifierOverride <|> np.noun.classifier
+def gou : Noun := { form := "狗", gloss := "dog", pinyin := "gǒu", classifier := some zhi }
+def mao : Noun := { form := "猫", gloss := "cat", pinyin := "māo", classifier := some zhi }
+def niao : Noun := { form := "鸟", gloss := "bird", pinyin := "niǎo", classifier := some zhi }
+def ren : Noun := { form := "人", gloss := "person", pinyin := "rén" }
+def xuesheng : Noun := { form := "学生", gloss := "student", pinyin := "xuésheng" }
+def pengyou : Noun := { form := "朋友", gloss := "friend", pinyin := "péngyou" }
+def laoshi : Noun :=
+  { form := "老师", gloss := "teacher", pinyin := "lǎoshī", classifier := some wei }
+def nuer : Noun := { form := "女儿", gloss := "daughter", pinyin := "nǚ'ér" }
+def erzi : Noun := { form := "儿子", gloss := "son", pinyin := "érzi" }
+def shu : Noun := { form := "书", gloss := "book", pinyin := "shū", classifier := some ben }
+def che : Noun := { form := "车", gloss := "vehicle", pinyin := "chē", classifier := some liang }
+def hua : Noun := { form := "花", gloss := "flower", pinyin := "huā", classifier := some duo }
+def shui : Noun := { form := "水", gloss := "water", pinyin := "shuǐ", classifier := none }
+def fan : Noun := { form := "饭", gloss := "cooked rice", pinyin := "fàn", classifier := none }
 
-/-- The form string of the classifier (for display). -/
-def NP.classifierForm (np : NP) : Option String :=
-  np.classifier.map (·.form)
+/-! ### Part nouns and relational nouns -/
+
+def zuoyi : Noun := { form := "座椅", gloss := "seat", pinyin := "zuòyǐ" }
+def fangxiangpan : Noun := { form := "方向盘", gloss := "steering wheel", pinyin := "fāngxiàngpán" }
+def lunzi : Noun := { form := "轮子", gloss := "wheel", pinyin := "lúnzi" }
+def fengmian : Noun := { form := "封面", gloss := "cover", pinyin := "fēngmiàn" }
+def zuozhe : Noun := { form := "作者", gloss := "author", pinyin := "zuòzhě", classifier := some wei }
+def muqin : Noun := { form := "母亲", gloss := "mother", pinyin := "mǔqīn", classifier := some wei }
+def fuqin : Noun := { form := "父亲", gloss := "father", pinyin := "fùqīn", classifier := some wei }
+def laobanniang : Noun :=
+  { form := "老板娘", gloss := "proprietress", pinyin := "lǎobǎnniáng", classifier := some wei }
+def laoban : Noun := { form := "老板", gloss := "boss", pinyin := "lǎobǎn", classifier := some wei }
+
+/-! ### Proper names -/
+
+/-- A personal name. -/
+private def name (form pinyin : String) : Noun :=
+  { form, gloss := pinyin, pinyin, classifier := none, proper := true }
+
+def zhangsan : Noun := name "张三" "Zhāng Sān"
+def lisi : Noun := name "李四" "Lǐ Sì"
+def xiaoming : Noun := name "小明" "Xiǎo Míng"
+
+/-! ### The Nominal Mapping Parameter -/
 
 /-- Mandarin is [+arg, −pred]: nouns denote kinds, and with no articles
 (`Mandarin.Determiners.inventory`) no covert shift is blocked ([chierchia-1998]). -/
 def nominalMapping : NominalMapping := .argOnly
-
-def bareNP (n : NounEntry) : NP :=
-  { noun := n, isBare := true }
-
-def zheNP (n : NounEntry) : NP :=
-  { noun := n, isBare := false, demonstrative := some "这" }
-
-def naNP (n : NounEntry) : NP :=
-  { noun := n, isBare := false, demonstrative := some "那" }
-
-def numNP (n : NounEntry) (num : Nat) : NP :=
-  { noun := n, isBare := false, numeral := some num }
-
--- ============================================================================
--- Common nouns
--- ============================================================================
-
--- Animals (只 zhī — small animals)
-def gou : NounEntry := { form := "狗", pinyin := "gǒu", classifier := some zhi }
-def mao : NounEntry := { form := "猫", pinyin := "māo", classifier := some zhi }
-def niao : NounEntry := { form := "鸟", pinyin := "niǎo", classifier := some zhi }
-
--- People (个 gè default / 位 wèi honorific)
-def ren : NounEntry := { form := "人", pinyin := "rén", classifier := some ge }
-def xuesheng : NounEntry := { form := "学生", pinyin := "xuésheng", classifier := some ge }
-def pengyou : NounEntry := { form := "朋友", pinyin := "péngyou", classifier := some ge }
-def laoshi : NounEntry := { form := "老师", pinyin := "lǎoshī", classifier := some wei }
-def nuer : NounEntry := { form := "女儿", pinyin := "nǚ'ér", classifier := some ge }
-def erzi : NounEntry := { form := "儿子", pinyin := "érzi", classifier := some ge }
-
--- Objects (various classifiers by shape/function)
-def shu : NounEntry := { form := "书", pinyin := "shū", classifier := some ben }
-def che : NounEntry := { form := "车", pinyin := "chē", classifier := some liang }
-def hua : NounEntry := { form := "花", pinyin := "huā", classifier := some duo }
-
--- Mass nouns (no classifier)
-def shui : NounEntry := { form := "水", pinyin := "shuǐ", classifier := none }
-def fan : NounEntry := { form := "饭", pinyin := "fàn", classifier := none }
-
--- Part-whole nouns
-def zuoyi : NounEntry := { form := "座椅", pinyin := "zuòyǐ", classifier := some ge }
-def fangxiangpan : NounEntry := { form := "方向盘", pinyin := "fāngxiàngpán", classifier := some ge }
-def lunzi : NounEntry := { form := "轮子", pinyin := "lúnzi", classifier := some ge }
-def fengmian : NounEntry := { form := "封面", pinyin := "fēngmiàn", classifier := some ge }
-
--- Relational nouns (位 wèi for human, honorific)
-def zuozhe : NounEntry := { form := "作者", pinyin := "zuòzhě", classifier := some wei }
-def muqin : NounEntry := { form := "母亲", pinyin := "mǔqīn", classifier := some wei }
-def fuqin : NounEntry := { form := "父亲", pinyin := "fùqīn", classifier := some wei }
-def laobanniang : NounEntry := { form := "老板娘", pinyin := "lǎobǎnniáng", classifier := some wei }
-def laoban : NounEntry := { form := "老板", pinyin := "lǎobǎn", classifier := some wei }
-
--- Proper names
-def zhangsan : NounEntry := { form := "张三", pinyin := "Zhāng Sān", proper := true }
-def lisi : NounEntry := { form := "李四", pinyin := "Lǐ Sì", proper := true }
-def xiaoming : NounEntry := { form := "小明", pinyin := "Xiǎo Míng", proper := true }
-
--- ============================================================================
--- Lexicon
--- ============================================================================
-
-def allNouns : List NounEntry := [
-  gou, mao, niao, ren, xuesheng, pengyou, laoshi, nuer, erzi,
-  shu, che, hua, shui, fan,
-  zuoyi, fangxiangpan, lunzi, fengmian,
-  zuozhe, muqin, fuqin, laobanniang, laoban,
-  zhangsan, lisi, xiaoming
-]
-
-def lookup (form : String) : Option NounEntry :=
-  allNouns.find? λ n => n.form == form
-
--- ============================================================================
--- Verification: classifier selection is semantically coherent
--- ============================================================================
-
-/-- All animal nouns take the animal classifier 只. -/
-theorem animals_take_zhi :
-    [gou, mao, niao].all (·.classifier == some zhi) = true := by decide
-
-/-- Honorific-human nouns take 位. -/
-theorem honorific_humans_take_wei :
-    [laoshi, zuozhe, muqin, fuqin].all (·.classifier == some wei) = true := by
-  decide
-
-/-- Books take the bound-volume classifier 本. -/
-theorem books_take_ben : shu.classifier = some ben := rfl
-
-/-- Vehicles take the vehicle classifier 辆. -/
-theorem vehicles_take_liang : che.classifier = some liang := rfl
-
-/-- Mass nouns have no classifier. -/
-theorem mass_nouns_no_classifier :
-    [shui, fan].all (·.classifier == none) = true := by decide
-
--- ============================================================================
--- Example NPs
--- ============================================================================
-
-def gouNP : NP := bareNP gou
-def shuiNP : NP := bareNP shui
-def zheGou : NP := zheNP gou
-def sanBenShu : NP := numNP shu 3
-
-example : gouNP.isBare = true := rfl
-example : zheGou.isBare = false := rfl
-example : sanBenShu.numeral = some 3 := rfl
-example : gouNP.classifierForm = some "只" := rfl
-example : sanBenShu.classifierForm = some "本" := rfl
 
 end Mandarin.Nouns

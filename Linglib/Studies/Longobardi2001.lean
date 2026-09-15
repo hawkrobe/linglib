@@ -52,7 +52,7 @@ the paper's marginal readings as available.
 
 namespace Longobardi2001
 
-open Data.Examples Semantics.Kinds.NMP
+open Data.Examples Genericity
 
 /-- The semantic type of a nominal argument: a constant denoting through the lexical
 reference of its head, or a variable bound by an existential or generic operator. -/

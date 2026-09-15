@@ -16,7 +16,7 @@ D by raising and takes the definite article instead (`Studies/Longobardi2001.lea
 
 namespace Greek.StandardModern.Nouns
 
-open Semantics.Kinds.NMP (NominalMapping)
+open Genericity
 
 /-- Greek is [−arg, +pred]: nouns are predicates and need D to be arguments. -/
 def nominalMapping : NominalMapping := .predOnly

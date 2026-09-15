@@ -201,7 +201,7 @@ theorem xhosaCore_status (a : AnimacyLevel) :
 
 /-- A noun's nominal, its core from what it denotes and, when its class belongs to another
 gender, that gender stacked above, (72)–(73). -/
-def xhosaNominal (n : Xhosa.NounEntry) : Nominal Xhosa.Gender :=
+def xhosaNominal (n : Xhosa.Noun) : Nominal Xhosa.Gender :=
   ⟨xhosaCore n.animacy,
     (Xhosa.Gender.ofSingular n.cls).filter λ g => decide (g ≠ xhosaCore n.animacy)⟩
 
@@ -222,7 +222,7 @@ theorem shonaCore_status (a : AnimacyLevel) :
   cases a <;> rfl
 
 /-- A Shona noun's nominal, where a diminutive's u-gender 12/13 stacks above its core (98). -/
-def shonaNominal (n : Shona.NounEntry) : Nominal Shona.Gender :=
+def shonaNominal (n : Shona.Noun) : Nominal Shona.Gender :=
   ⟨shonaCore n.animacy,
     (Shona.Gender.ofSingular n.cls).filter λ g => decide (g ≠ shonaCore n.animacy)⟩
 

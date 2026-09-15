@@ -46,7 +46,7 @@ formalized, since they need a trivalent `Gen` and a mood licensing substrate.
 
 namespace Guerrini2026
 
-open ModalLogic Plurality Plurality.Cumulativity Semantics.Kinds
+open ModalLogic Plurality Plurality.Cumulativity Genericity
 
 variable {Atom W : Type*} (R : W → W → Prop) (k : W → Finset Atom) (P : Atom → W → Prop) {w : W}
 
@@ -141,7 +141,7 @@ namespace Nominal
 
 /-- (146): [chierchia-1998]'s Nominal Mapping Parameter. English nouns can be kinds or
 properties, Italian nouns are properties. -/
-def mapping : Nominal → NMP.NominalMapping
+def mapping : Nominal → NominalMapping
   | .italianDefinitePlural | .italianBarePlural => .predOnly
   | _ => .argAndPred
 
@@ -158,12 +158,12 @@ def number : Nominal → Number
 /-- (10a) and (16): the expression denotes a kind when the parameter or the article makes kind
 formation available and the noun is plural. -/
 def CanDenoteKind (n : Nominal) : Prop :=
-  NMP.CanDenoteKind n.mapping (n.definite = true) ∧ NMP.DownDefined .count n.number
+  n.mapping.CanDenoteKind (n.definite = true) ∧ DownDefined .count n.number
 
 /-- (145): the expression denotes a property when the parameter allows it and no article has
 formed a kind. -/
 def CanDenoteProperty (n : Nominal) : Prop :=
-  NMP.CanDenoteProperty n.mapping ∧ n.definite = false
+  n.mapping.CanDenoteProperty ∧ n.definite = false
 
 instance : DecidablePred CanDenoteKind := λ n => by unfold CanDenoteKind; infer_instance
 instance : DecidablePred CanDenoteProperty := λ n => by unfold CanDenoteProperty; infer_instance

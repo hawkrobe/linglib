@@ -1,163 +1,81 @@
-import Linglib.Data.UD.Basic
-import Linglib.Syntax.Number.Capabilities
+import Linglib.Syntax.Category.Noun.Basic
+import Linglib.Semantics.Plurality.MassCount
 import Linglib.Semantics.Genericity.NominalMappingParameter
 
 /-!
-# Dutch Noun Lexicon Fragment
-[krifka-2003] [chierchia-1998] [le-bruyn-de-swart-2022]
+# Dutch nouns
 
-Dutch-specific noun entries with scrambling support. Dutch allows scrambling:
-objects can move across negation/adverbs, affecting bare plural scope.
+The Dutch noun as a lexical entry: the root `GenderedNoun` over the common and neuter genders
+that *de* and *het* mark, with the mass/count feature, whether it is a proper name, and its
+plural and diminutive where the entry records them. Dutch is [+arg, +pred] like the other
+Germanic languages ([chierchia-1998]): with *de*, *het* and *een* blocking the covert ι and ∃,
+bare plurals and bare mass nouns are arguments and bare singular count nouns are not. The
+entries are the nouns of [le-bruyn-de-swart-2022]'s scrambling data.
 
-Based on [le-bruyn-de-swart-2022]: scrambled BPs take wide scope but can
-still be kind-referring, supporting [krifka-2003] over [chierchia-1998].
+## References
+
+* [chierchia-1998]
+* [le-bruyn-de-swart-2022]
 -/
 
 namespace Dutch.Nouns
 
-open Semantics.Kinds.NMP (NominalMapping)
+open Genericity
 
-/-- A lexical entry for a Dutch noun. -/
-structure NounEntry where
-  formSg : String
-  formPl : Option String := none
-  countable : Bool := true
+/-- A Dutch noun: the root gendered entry with the mass/count feature, whether it is a proper
+name, and its plural and diminutive where recorded. -/
+structure Noun extends GenderedNoun Gender where
+  /-- The mass/count feature. -/
+  countable : MassCount := .count
+  /-- Whether the entry is a proper name. -/
   proper : Bool := false
-  formDim : Option String := none
-  deriving Repr, BEq
-
-/-- Number marking on a Dutch NP. -/
-inductive NPNumber where
-  | sg | pl | mass
+  /-- The plural. -/
+  plural : Option String := none
+  /-- The diminutive. -/
+  diminutive : Option String := none
   deriving DecidableEq, Repr
 
-/-- Dutch NP number in the canonical inventory; mass NPs bear no
-    count-number value. -/
-def NPNumber.toNumber : NPNumber → Option Number
-  | .sg => some .singular
-  | .pl => some .plural
-  | .mass => none
+instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
 
-/-- Scrambling position in the Dutch middle field. -/
-inductive ScramblingPosition where
-  | unscrambled
-  | scrambled
-  deriving DecidableEq, Repr
+/-! ### Count nouns -/
 
-/-- A Dutch noun phrase with scrambling information. -/
-structure NP where
-  noun : NounEntry
-  number : NPNumber
-  isBare : Bool
-  determiner : Option String := none
-  position : Option ScramblingPosition := none
-  deriving Repr, BEq
+def boek : Noun :=
+  { form := "boek", gloss := "book", gender := .neuter, plural := "boeken", diminutive := "boekje" }
+def mens : Noun :=
+  { form := "mens", gloss := "human", gender := .common, isNaturalGender := true,
+    plural := "mensen" }
+def geest : Noun := { form := "geest", gloss := "ghost", gender := .common, plural := "geesten" }
+def student : Noun :=
+  { form := "student", gloss := "student", gender := .common, isNaturalGender := true,
+    plural := "studenten" }
+def hond : Noun :=
+  { form := "hond", gloss := "dog", gender := .common, plural := "honden", diminutive := "hondje" }
+def kat : Noun :=
+  { form := "kat", gloss := "cat", gender := .common, plural := "katten", diminutive := "katje" }
+def film : Noun :=
+  { form := "film", gloss := "film", gender := .common, plural := "films", diminutive := "filmpje" }
 
-/-- A Dutch NP bears its number slot canonically (`HasNumber`). -/
-instance : HasNumber NP := ⟨fun np => np.number.toNumber⟩
+/-! ### Mass nouns -/
 
-def NP.isBarePlural (np : NP) : Bool :=
-  np.isBare && np.number == .pl
+def water : Noun := { form := "water", gloss := "water", gender := .neuter, countable := .mass }
+def goud : Noun := { form := "goud", gloss := "gold", gender := .neuter, countable := .mass }
+def meel : Noun := { form := "meel", gloss := "flour", gender := .neuter, countable := .mass }
 
-def NP.isScrambled (np : NP) : Bool :=
-  np.position == some .scrambled
+/-! ### Proper names -/
 
-def NP.isBareMass (np : NP) : Bool :=
-  np.isBare && np.number == .mass
+/-- A personal name: common gender, following the referent's sex. -/
+private def name (form : String) : Noun :=
+  { form, gloss := form, gender := .common, isNaturalGender := true, proper := true }
 
-def NP.isBareSingular (np : NP) : Bool :=
-  np.isBare && np.number == .sg
+def helen : Noun := name "Helen"
+def jan : Noun := name "Jan"
+def piet : Noun := name "Piet"
+def marie : Noun := name "Marie"
 
-def barePlural (n : NounEntry) : NP :=
-  { noun := n, number := .pl, isBare := true }
-
-def barePluralScrambled (n : NounEntry) : NP :=
-  { noun := n, number := .pl, isBare := true, position := some .scrambled }
-
-def barePluralUnscrambled (n : NounEntry) : NP :=
-  { noun := n, number := .pl, isBare := true, position := some .unscrambled }
-
-def bareMass (n : NounEntry) : NP :=
-  { noun := n, number := .mass, isBare := true }
-
-def bareSingular (n : NounEntry) : NP :=
-  { noun := n, number := .sg, isBare := true }
-
-def definiteNP (n : NounEntry) (det : String := "de") (num : NPNumber := .sg) : NP :=
-  { noun := n, number := num, isBare := false, determiner := some det }
-
-def eenNP (n : NounEntry) : NP :=
-  { noun := n, number := .sg, isBare := false, determiner := some "een" }
+/-! ### The Nominal Mapping Parameter -/
 
 /-- Dutch is [+arg, +pred], like the other Germanic languages ([chierchia-1998]); its articles
 (`Dutch.Determiners.inventory`) block the covert ι and ∃. -/
 def nominalMapping : NominalMapping := .argAndPred
-
-/-- BP scope: unscrambled = narrow, scrambled = wide. -/
-def barePluralScope (np : NP) : String :=
-  if !np.isBarePlural then "N/A"
-  else match np.position with
-    | some .scrambled => "wide"
-    | some .unscrambled => "narrow"
-    | none => "underspecified"
-
--- Nouns from [le-bruyn-de-swart-2022]
-def boek : NounEntry :=
-  { formSg := "boek", formPl := some "boeken", formDim := some "boekje" }
-
-def mens : NounEntry :=
-  { formSg := "mens", formPl := some "mensen" }
-
-def geest : NounEntry :=
-  { formSg := "geest", formPl := some "geesten" }
-
-def student : NounEntry :=
-  { formSg := "student", formPl := some "studenten" }
-
-def hond : NounEntry :=
-  { formSg := "hond", formPl := some "honden", formDim := some "hondje" }
-
-def kat : NounEntry :=
-  { formSg := "kat", formPl := some "katten", formDim := some "katje" }
-
-def film : NounEntry :=
-  { formSg := "film", formPl := some "films", formDim := some "filmpje" }
-
-def water : NounEntry :=
-  { formSg := "water", formPl := none, countable := false }
-
-def goud : NounEntry :=
-  { formSg := "goud", formPl := none, countable := false }
-
-def meel : NounEntry :=
-  { formSg := "meel", formPl := none, countable := false }
-
-def helen : NounEntry := { formSg := "Helen", formPl := none, proper := true }
-def jan : NounEntry := { formSg := "Jan", formPl := none, proper := true }
-def piet : NounEntry := { formSg := "Piet", formPl := none, proper := true }
-def marie : NounEntry := { formSg := "Marie", formPl := none, proper := true }
-
-def allNouns : List NounEntry := [
-  boek, mens, geest, student, hond, kat, film,
-  water, goud, meel,
-  helen, jan, piet, marie
-]
-
-def lookup (form : String) : Option NounEntry :=
-  allNouns.find? λ n =>
-    n.formSg == form ||
-    n.formPl == some form ||
-    n.formDim == some form
-
-def boekenScrambled : NP := barePluralScrambled boek
-def boekenUnscrambled : NP := barePluralUnscrambled boek
-def mensenScrambled : NP := barePluralScrambled mens
-def geestenUnscrambled : NP := barePluralUnscrambled geest
-
-example : boekenScrambled.isBarePlural = true := rfl
-example : boekenScrambled.isScrambled = true := rfl
-example : boekenUnscrambled.isScrambled = false := rfl
-example : barePluralScope boekenScrambled = "wide" := rfl
-example : barePluralScope boekenUnscrambled = "narrow" := rfl
 
 end Dutch.Nouns

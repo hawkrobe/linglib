@@ -40,7 +40,7 @@ exhaustification of the same abbreviation elsewhere in the library.
 namespace Magri2009
 
 open Exhaustification (innocent predToFinset altsFromPreds)
-open Semantics.Kinds.SortedOntology (PredicateLevel)
+open Genericity.SortedOntology
 
 /-- A scenario for blind scalar implicature computation.
 

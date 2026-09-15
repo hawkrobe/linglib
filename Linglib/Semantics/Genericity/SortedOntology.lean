@@ -61,7 +61,7 @@ See `Studies/LeBruynDeSwart2022.lean` for the Chierchia-vs-Krifka comparison
 on the scrambling data.
 -/
 
-namespace Semantics.Kinds.SortedOntology
+namespace Genericity.SortedOntology
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  Sorted Ontology
@@ -421,4 +421,4 @@ theorem quantified_np_stage_level_non_contradictory
   the belief — only the opaque reading is available.
 -/
 
-end Semantics.Kinds.SortedOntology
+end Genericity.SortedOntology

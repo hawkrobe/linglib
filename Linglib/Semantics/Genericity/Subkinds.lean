@@ -27,7 +27,7 @@ Consumers:
   the framework with the discrete partition (one-class-per-kind).
 -/
 
-namespace Semantics.Kinds.Subkinds
+namespace Genericity.Subkinds
 
 variable {Atom : Type*}
 
@@ -74,4 +74,4 @@ theorem subkindOf_ne (s : Setoid Atom) {a b : Atom} (h : ¬ s.r a b) :
 theorem mem_subkindOf (s : Setoid Atom) {a x : Atom} :
     x ∈ subkindOf s a ↔ s.r a x := Iff.rfl
 
-end Semantics.Kinds.Subkinds
+end Genericity.Subkinds

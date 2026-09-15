@@ -28,7 +28,7 @@ while `pred`/`nom` are *substantive* (depend on entity-property correspondence).
 The `pred`/`nom` pair originates in [chierchia-1984]'s nominalization
 operator `^` from HST* (Cocchiarella's property theory), applied to infinitival
 and gerundive complements. The intensional generalizations are Chierchia's
-∪ (up) and ∩ (down) operators in `Semantics.Kinds.NMP`,
+∪ (`Kind.up`) and ∩ (`Property.down`) operators in `Semantics/Genericity/Kind.lean`,
 which extend the same type-shift to kinds and bare plurals.
 
 -/
@@ -68,7 +68,7 @@ def propIdent (p : (W → Prop)) : Quantifier W :=
     - `pred` is *substantive* — applies to entity-correlates of properties
       and returns the corresponding property.
 
-    The intensional generalization is `Semantics.Kinds.NMP.up`. -/
+    The intensional generalization is `Genericity.Kind.up`. -/
 abbrev pred := @ident E
 
 end TotalShifts
@@ -191,7 +191,7 @@ noncomputable def iota (domain : List E) (P : (E → Prop)) : Option E :=
 
     In the finite extensional setting, NOM = iota (returns the unique
     satisfier of P, if singleton). The intensional generalization is
-    `Semantics.Kinds.NMP.down` (Chierchia's ∩). -/
+    `Genericity.Property.down` (Chierchia's ∩). -/
 noncomputable def NOM (domain : List E) (P : (E → Prop)) : Option E :=
   iota domain P
 
@@ -390,7 +390,7 @@ end NumeralShifts
 
 /-- `NOM(pred(j)) = some j`: nominalizing the predicativization of an entity
     returns that entity. The extensional counterpart of Chierchia's `∩(∪k) = k`
-    (`Semantics.Kinds.NMP.down_up_id`). -/
+    (`Genericity.Kind.down_up`). -/
 theorem NOM_pred [DecidableEq E] (domain : List E) (j : E)
     (hmem : j ∈ domain) (hnd : domain.Nodup) :
     NOM domain (pred j) = some j :=
