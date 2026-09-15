@@ -1,6 +1,6 @@
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Questions.Closure
-import Linglib.Logic.Modal.Defs
+import Linglib.Logic.Modal.Basic
 import Linglib.Data.Examples.Fox2007
 
 /-!
@@ -318,81 +318,61 @@ theorem exh₂_or {p q : Set W} (hp : (p \ q).Nonempty) (hq : (q \ p).Nonempty) 
   (IsDiamond.exh₂_eq_of_eq_inter ⟨rfl, inter_subset_left, inter_subset_right, hp, hq⟩ rfl).trans
     (exhIE_or hp hq)
 
-/-- Possibility as a proposition: the worlds from which some accessible world satisfies `p`. -/
-def poss (R : W → W → Prop) (p : W → Prop) : Set W := {w | ◇[R] p w}
-
-/-- Necessity as a proposition: the worlds from which every accessible world satisfies `p`. -/
-def nec (R : W → W → Prop) (p : W → Prop) : Set W := {w | □[R] p w}
-
 section Modal
 
-variable {R : W → W → Prop} (p q : W → Prop)
+variable {R : W → W → Prop} (p q : Set W)
 
 /-- The Sauerland alternatives of `◇(p ∨ q)` form a diamond whenever each disjunct can be
 permitted without the other. -/
-theorem isDiamond_diamond (hp : (poss R p \ poss R q).Nonempty) (hq : (poss R q \ poss R p).Nonempty) :
-    IsDiamond (poss R (λ v => p v ∨ q v)) (poss R p) (poss R q) (poss R (λ v => p v ∧ q v)) where
-  union := by
-    ext w
-    show (∃ v, R w v ∧ (p v ∨ q v)) ↔ (∃ v, R w v ∧ p v) ∨ ∃ v, R w v ∧ q v
-    simp only [and_or_left, exists_or]
-  le_s := by
-    rintro w ⟨v, hv, hpv, -⟩
-    exact ⟨v, hv, hpv⟩
-  le_n := by
-    rintro w ⟨v, hv, -, hqv⟩
-    exact ⟨v, hv, hqv⟩
+theorem isDiamond_poss (hp : (poss R p \ poss R q).Nonempty)
+    (hq : (poss R q \ poss R p).Nonempty) :
+    IsDiamond (poss R (p ∪ q)) (poss R p) (poss R q) (poss R (p ∩ q)) where
+  union := poss_union
+  le_s := poss_mono inter_subset_left
+  le_n := poss_mono inter_subset_right
   sn := hp
   ns := hq
 
 /-- Free choice permission: with a world where each disjunct is permitted but not both, the
 doubly exhaustified `◇(p ∨ q)` asserts both permissions and denies the joint one. -/
 theorem free_choice (hp : (poss R p \ poss R q).Nonempty) (hq : (poss R q \ poss R p).Nonempty)
-    (h : ((poss R p ∩ poss R q) \ poss R (λ v => p v ∧ q v)).Nonempty) :
-    exh₂ {poss R (λ v => p v ∨ q v), poss R p, poss R q, poss R (λ v => p v ∧ q v)} (poss R (λ v => p v ∨ q v))
-      = (poss R p ∩ poss R q) \ poss R (λ v => p v ∧ q v) :=
-  (isDiamond_diamond p q hp hq).exh₂_eq h
+    (h : ((poss R p ∩ poss R q) \ poss R (p ∩ q)).Nonempty) :
+    exh₂ {poss R (p ∪ q), poss R p, poss R q, poss R (p ∩ q)} (poss R (p ∪ q))
+      = (poss R p ∩ poss R q) \ poss R (p ∩ q) :=
+  (isDiamond_poss p q hp hq).exh₂_eq h
 
 /-- The Sauerland alternatives of `¬□(p ∧ q)` form a diamond whenever each conjunct can be
 required without the other. -/
-theorem isDiamond_not_box (hp : ((nec R p)ᶜ \ (nec R q)ᶜ).Nonempty)
+theorem isDiamond_not_nec (hp : ((nec R p)ᶜ \ (nec R q)ᶜ).Nonempty)
     (hq : ((nec R q)ᶜ \ (nec R p)ᶜ).Nonempty) :
-    IsDiamond (nec R (λ v => p v ∧ q v))ᶜ (nec R p)ᶜ (nec R q)ᶜ (nec R (λ v => p v ∨ q v))ᶜ where
-  union := by
-    ext w
-    show ¬ box R _ w ↔ ¬ box R p w ∨ ¬ box R q w
-    rw [box_and]
-    exact not_and_or
-  le_s := by
-    intro w h hp
-    exact h λ v hv => Or.inl (hp v hv)
-  le_n := by
-    intro w h hq
-    exact h λ v hv => Or.inr (hq v hv)
+    IsDiamond (nec R (p ∩ q))ᶜ (nec R p)ᶜ (nec R q)ᶜ (nec R (p ∪ q))ᶜ where
+  union := by rw [nec_inter, compl_inter]
+  le_s := compl_subset_compl.2 (nec_mono subset_union_left)
+  le_n := compl_subset_compl.2 (nec_mono subset_union_right)
   sn := hp
   ns := hq
 
 /-- Free choice under a negated necessity modal: the doubly exhaustified `¬□(p ∧ q)` asserts
 that neither conjunct is required and that their disjunction is. -/
-theorem free_choice_not_box (hp : ((nec R p)ᶜ \ (nec R q)ᶜ).Nonempty)
+theorem free_choice_not_nec (hp : ((nec R p)ᶜ \ (nec R q)ᶜ).Nonempty)
     (hq : ((nec R q)ᶜ \ (nec R p)ᶜ).Nonempty)
-    (h : (((nec R p)ᶜ ∩ (nec R q)ᶜ) \ (nec R (λ v => p v ∨ q v))ᶜ).Nonempty) :
-    exh₂ {(nec R (λ v => p v ∧ q v))ᶜ, (nec R p)ᶜ, (nec R q)ᶜ, (nec R (λ v => p v ∨ q v))ᶜ} (nec R (λ v => p v ∧ q v))ᶜ
-      = ((nec R p)ᶜ ∩ (nec R q)ᶜ) \ (nec R (λ v => p v ∨ q v))ᶜ :=
-  (isDiamond_not_box p q hp hq).exh₂_eq h
+    (h : (((nec R p)ᶜ ∩ (nec R q)ᶜ) \ (nec R (p ∪ q))ᶜ).Nonempty) :
+    exh₂ {(nec R (p ∩ q))ᶜ, (nec R p)ᶜ, (nec R q)ᶜ, (nec R (p ∪ q))ᶜ}
+        (nec R (p ∩ q))ᶜ
+      = ((nec R p)ᶜ ∩ (nec R q)ᶜ) \ (nec R (p ∪ q))ᶜ :=
+  (isDiamond_not_nec p q hp hq).exh₂_eq h
 
 /-- Simons's reading: with each disjunct exhaustified first, the joint alternative is empty, so
 free choice arrives without the anti-conjunctive inference. -/
 theorem free_choice_exhaustified_disjuncts
-    (hp : (poss R (λ v => p v ∧ ¬ q v) \ poss R (λ v => q v ∧ ¬ p v)).Nonempty)
-    (hq : (poss R (λ v => q v ∧ ¬ p v) \ poss R (λ v => p v ∧ ¬ q v)).Nonempty)
-    (h : (poss R (λ v => p v ∧ ¬ q v) ∩ poss R (λ v => q v ∧ ¬ p v)).Nonempty) :
-    exh₂ {poss R (λ v => (p v ∧ ¬ q v) ∨ (q v ∧ ¬ p v)), poss R (λ v => p v ∧ ¬ q v),
-        poss R (λ v => q v ∧ ¬ p v), poss R (λ v => (p v ∧ ¬ q v) ∧ (q v ∧ ¬ p v))}
-        (poss R (λ v => (p v ∧ ¬ q v) ∨ (q v ∧ ¬ p v)))
-      = poss R (λ v => p v ∧ ¬ q v) ∩ poss R (λ v => q v ∧ ¬ p v) := by
-  have he : poss R (λ v => (p v ∧ ¬ q v) ∧ (q v ∧ ¬ p v)) = (∅ : Set W) :=
-    eq_empty_of_forall_notMem (by rintro w ⟨_, _, ⟨hpv, _⟩, _, hnp⟩; exact hnp hpv)
+    (hp : (poss R (p \ q) \ poss R (q \ p)).Nonempty)
+    (hq : (poss R (q \ p) \ poss R (p \ q)).Nonempty)
+    (h : (poss R (p \ q) ∩ poss R (q \ p)).Nonempty) :
+    exh₂ {poss R (p \ q ∪ q \ p), poss R (p \ q), poss R (q \ p), poss R ((p \ q) ∩ (q \ p))}
+        (poss R (p \ q ∪ q \ p))
+      = poss R (p \ q) ∩ poss R (q \ p) := by
+  have he : poss R ((p \ q) ∩ (q \ p)) = (∅ : Set W) := by
+    rw [show (p \ q) ∩ (q \ p) = ∅ from sdiff_inf_sdiff, poss_empty]
   rw [free_choice _ _ hp hq (by rw [he, sdiff_empty]; exact h), he, sdiff_empty]
 
 end Modal
@@ -511,10 +491,6 @@ end Hamblin
 
 /-! ### A finite model -/
 
-instance {W : Type*} [Fintype W] {R : W → W → Prop} [DecidableRel R] {p : W → Prop}
-    [DecidablePred p] (w : W) : Decidable (w ∈ poss R p) :=
-  inferInstanceAs (Decidable (∃ v, R w v ∧ p v))
-
 /-- The accessibility edges of a seven-world model: from `0` every option is permitted, from
 `4` only the first, from `5` only the second, from `6` each but not both. -/
 def edges : List (ℕ × ℕ) := [(0, 1), (0, 2), (0, 3), (4, 1), (5, 2), (6, 1), (6, 2)]
@@ -524,34 +500,33 @@ def R (w v : Fin 7) : Prop := (w.val, v.val) ∈ edges
 instance : DecidableRel R := λ w v => inferInstanceAs (Decidable ((w.val, v.val) ∈ edges))
 
 /-- The first option holds at worlds `1` and `3`. -/
-def p (v : Fin 7) : Prop := v.val ∈ [1, 3]
+def p : Set (Fin 7) := {v | v.val ∈ [1, 3]}
 
 /-- The second option holds at worlds `2` and `3`. -/
-def q (v : Fin 7) : Prop := v.val ∈ [2, 3]
+def q : Set (Fin 7) := {v | v.val ∈ [2, 3]}
 
-instance : DecidablePred p := λ v => inferInstanceAs (Decidable (v.val ∈ [1, 3]))
-instance : DecidablePred q := λ v => inferInstanceAs (Decidable (v.val ∈ [2, 3]))
+instance : DecidablePred (· ∈ p) := λ v => inferInstanceAs (Decidable (v.val ∈ [1, 3]))
+instance : DecidablePred (· ∈ q) := λ v => inferInstanceAs (Decidable (v.val ∈ [2, 3]))
 
 /-- From world `6`, where each option is permitted but not both, the doubly exhaustified
 permission holds. -/
-example : (6 : Fin 7) ∈ exh₂ {poss R (λ v => p v ∨ q v), poss R p, poss R q,
-    poss R (λ v => p v ∧ q v)} (poss R (λ v => p v ∨ q v)) := by
+example : (6 : Fin 7) ∈ exh₂ {poss R (p ∪ q), poss R p, poss R q, poss R (p ∩ q)}
+    (poss R (p ∪ q)) := by
   rw [free_choice p q ⟨4, by decide⟩ ⟨5, by decide⟩ ⟨6, by decide⟩]
   decide
 
 /-- From world `0`, where both options are jointly permitted, it fails: the anti-conjunctive
 inference. -/
-example : (0 : Fin 7) ∉ exh₂ {poss R (λ v => p v ∨ q v), poss R p, poss R q,
-    poss R (λ v => p v ∧ q v)} (poss R (λ v => p v ∨ q v)) := by
+example : (0 : Fin 7) ∉ exh₂ {poss R (p ∪ q), poss R p, poss R q, poss R (p ∩ q)}
+    (poss R (p ∪ q)) := by
   rw [free_choice p q ⟨4, by decide⟩ ⟨5, by decide⟩ ⟨6, by decide⟩]
   decide
 
 /-- With the disjuncts exhaustified first, world `0` verifies Simons's free-choice reading
 together with the joint permission. -/
-example : (0 : Fin 7) ∈ exh₂ {poss R (λ v => (p v ∧ ¬ q v) ∨ (q v ∧ ¬ p v)),
-      poss R (λ v => p v ∧ ¬ q v), poss R (λ v => q v ∧ ¬ p v),
-      poss R (λ v => (p v ∧ ¬ q v) ∧ (q v ∧ ¬ p v))}
-      (poss R (λ v => (p v ∧ ¬ q v) ∨ (q v ∧ ¬ p v))) ∧ (0 : Fin 7) ∈ poss R (λ v => p v ∧ q v) := by
+example : (0 : Fin 7) ∈ exh₂ {poss R (p \ q ∪ q \ p), poss R (p \ q), poss R (q \ p),
+      poss R ((p \ q) ∩ (q \ p))} (poss R (p \ q ∪ q \ p)) ∧
+    (0 : Fin 7) ∈ poss R (p ∩ q) := by
   rw [free_choice_exhaustified_disjuncts p q ⟨4, by decide⟩ ⟨5, by decide⟩ ⟨0, by decide⟩]
   decide
 
