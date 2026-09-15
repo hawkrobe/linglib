@@ -175,7 +175,7 @@ licit. -/
 theorem sie_accusative :
     Syntacticosemantic (IsLicit weakGrammar) German.Pronouns.er German.Pronouns.sie_pl ∧
       ¬ Syntacticosemantic (IsLicit weakGrammar) German.Pronouns.er
-          German.Pronouns.sie_polite := by
+          German.Pronouns.sie_formal := by
   decide
 
 open CoonKeine2021 in
@@ -183,7 +183,7 @@ open CoonKeine2021 in
 not glutton the person probe where second plural *ihr* does; a singular subject gluttons the
 number probe against plural SIE. -/
 theorem assumed_identity :
-    (∀ p ∈ German.Pronouns.sie_polite.person,
+    (∀ p ∈ German.Pronouns.sie_formal.person,
       ¬ Gluttonous Goal.personSegments weakProbe [dpPl .third, dpPl p]) ∧
       (∀ p ∈ German.Pronouns.ihr.person,
         Gluttonous Goal.personSegments weakProbe [dpPl .third, dpPl p]) ∧
