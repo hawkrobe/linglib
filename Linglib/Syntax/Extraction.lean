@@ -24,9 +24,7 @@ Languages vary dramatically in whether and how they track extraction:
 
 namespace Extraction
 
--- ============================================================================
--- § 1: Extraction Marking Strategy
--- ============================================================================
+/-! ### Extraction marking strategy -/
 
 /-- How a language morphologically marks extraction (A-bar-movement).
 
@@ -64,9 +62,7 @@ Preminger, Coon & Keine, Henderson, etc. with rival analyses — live
 in `Studies/` files anchored on the specific
 paper. They are not enum cases here. -/
 
--- ============================================================================
--- § 2: Extraction Target
--- ============================================================================
+/-! ### Extraction target -/
 
 /-- The grammatical position from which extraction occurs.
 
@@ -102,29 +98,20 @@ inductive Extractee where
 /-! ### Extraction marking as morphological reflexes
 
 A language's extraction marking is the overt morphosyntactic *response* to
-extraction from each target position, as `Reflex` lists — the
+extraction from each target position, as `Reflex` sets — the
 movement itself is not a reflex ([branan-erlewine-2023]). Per-language data
 are a nested `Lang.Extraction` namespace with a host type `Site` and
 
-    realize : ExtractionTarget → List (Reflex Site)
+    realize : ExtractionTarget → Finset (Reflex Site)
 
 (`Site := Empty` for languages that mark nothing). Languages with several
 markers place them at their cells — K'iche' AF at `.subject` and *wi* at
 `.oblique` are different cells of one function, not competing profiles.
-Marker-specific claims are reflex-membership statements. A coarse
+Marker-specific claims are reflex-membership statements, and overt marking
+of a target is `(realize t).Nonempty`. A coarse
 `strategy : ExtractionMarkingStrategy` label may accompany the data as
 WALS-style typology. Per-language `Lang.Extraction` namespaces must not
 redeclare root `Extraction` leaf names, so unqualified references keep
 resolving. -/
-
-/-- Does the language overtly mark extraction from a given target? The
-shared overtness predicate of `Syntax/Reflex.lean`. -/
-def Marked {C : Type*} (realize : ExtractionTarget → List (Reflex C))
-    (t : ExtractionTarget) : Prop :=
-  Reflex.Overt (realize t)
-
-instance {C : Type*} (realize : ExtractionTarget → List (Reflex C))
-    (t : ExtractionTarget) : Decidable (Marked realize t) :=
-  inferInstanceAs (Decidable (Reflex.Overt _))
 
 end Extraction

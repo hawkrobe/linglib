@@ -95,22 +95,22 @@ foci get the boundary after the verb ((25a–c)); progressive foci
 receive nothing ((31)/(32a–c)). Untested frames fall to the unmarked
 default, guarded by `Config.WF`. -/
 def realize : Config → Marking Focused
-  | ⟨.subject, _, _⟩        => ⟨.subject, [.displacement .subject]⟩
-  | ⟨f, .perfective, false⟩ => ⟨f, [.morpheme f]⟩
-  | ⟨f, .perfective, true⟩  => ⟨f, [.boundary .verb]⟩
-  | ⟨f, _, _⟩               => ⟨f, []⟩
+  | ⟨.subject, _, _⟩        => ⟨.subject, {.displacement .subject}⟩
+  | ⟨f, .perfective, false⟩ => ⟨f, {.morpheme f}⟩
+  | ⟨f, .perfective, true⟩  => ⟨f, {.boundary .verb}⟩
+  | ⟨f, _, _⟩               => ⟨f, ∅⟩
 
 /-- Focused subjects are overtly marked in every aspect — the paper's
 §6 subjects-vs-non-subjects generalization, shared with Hausa. -/
 theorem subject_always_marked :
     ∀ c : Config, c.focused = .subject → (realize c).IsOvert
-  | ⟨_, _, _⟩, rfl => List.cons_ne_nil _ _
+  | ⟨_, _, _⟩, rfl => Finset.singleton_nonempty _
 
 /-- Progressive non-subject foci are wholly unmarked ((31)/(32a–c),
 contra Kidda 1993). -/
 theorem progressive_nonsubject_unmarked (c : Config)
     (hs : c.focused ≠ .subject) (ha : c.tam = .continuous) :
-    (realize c).reflexes = [] := by
+    (realize c).reflexes = ∅ := by
   obtain ⟨f, a, t⟩ := c
   cases ha
   cases f <;> first | exact absurd rfl hs | rfl
@@ -119,20 +119,20 @@ theorem progressive_nonsubject_unmarked (c : Config)
 with no overt reflex — (32a), object focus in the progressive. -/
 theorem focus_marking_not_obligatory :
     ∃ c : Config, c.WF ∧ ¬ (realize c).IsOvert :=
-  ⟨⟨.object, .continuous, true⟩, ⟨λ _ => rfl, Or.inr rfl⟩, λ h => h rfl⟩
+  ⟨⟨.object, .continuous, true⟩, ⟨fun _ ↦ rfl, Or.inr rfl⟩, Finset.not_nonempty_empty⟩
 
 /-- Tangale refutes the universalist claim that every focus receives an
 overt reflex — the Tangale side of the counterexample the Hausa
 chapter states against the Basic Focus Rule. -/
 theorem tangale_refutes_perceptibility :
     ¬ EveryTargetOvert realize :=
-  λ h => h ⟨.object, .continuous, true⟩ rfl
+  fun h ↦ Finset.not_nonempty_empty (h ⟨.object, .continuous, true⟩)
 
 /-- The boundary underdetermines the focus extent: on the transitive
 perfective non-subject cells, `focused` does not factor through the
 reflexes — (25a–c) are string- and pitch-identical. -/
 theorem boundary_underdetermines_extent :
-    ¬ Function.FactorsThroughOn Config.focused (λ c => (realize c).reflexes)
+    ¬ Function.FactorsThroughOn Config.focused (fun c ↦ (realize c).reflexes)
         {c | c.tam = .perfective ∧ c.transitive ∧ c.focused ≠ .subject} :=
   Function.not_factorsThroughOn_iff_exists_witness.mpr
     ⟨⟨.verb, .perfective, true⟩, ⟨.object, .perfective, true⟩,
@@ -161,11 +161,11 @@ private def separated : Prosody.Tree :=
 /-- ALIGN-Focus: violated when no φ-edge sits at the focus's left edge
 (leaf offset 1, the object). -/
 private def alignFocus : Constraint Prosody.Tree :=
-  .binary (λ t => ¬ ∃ s ∈ RoseTree.spansOf Prosody.Constituent.isPh t, s.1 = 1)
+  .binary (fun t ↦ ¬ ∃ s ∈ RoseTree.spansOf Prosody.Constituent.isPh t, s.1 = 1)
 
 /-- Phrasal economy: one violation per φ. -/
 private def starPhi : Constraint Prosody.Tree :=
-  λ t => (RoseTree.spansOf Prosody.Constituent.isPh t).length
+  fun t ↦ (RoseTree.spansOf Prosody.Constituent.isPh t).length
 
 /-- Object focus: alignment dominates economy, and the separated parse
 wins — the derived φ-edge after the verb. -/
@@ -222,11 +222,11 @@ fail — one world per free Boolean field. -/
 theorem alt_irredundant : Irredundant alt := by
   intro i
   fin_cases i
-  · exact ⟨⟨true, false, false⟩, rfl, λ j hj => by
+  · exact ⟨⟨true, false, false⟩, rfl, fun j hj ↦ by
       fin_cases j <;> first | exact absurd rfl hj | exact Bool.false_ne_true⟩
-  · exact ⟨⟨false, true, false⟩, rfl, λ j hj => by
+  · exact ⟨⟨false, true, false⟩, rfl, fun j hj ↦ by
       fin_cases j <;> first | exact absurd rfl hj | exact Bool.false_ne_true⟩
-  · exact ⟨⟨false, false, true⟩, rfl, λ j hj => by
+  · exact ⟨⟨false, false, true⟩, rfl, fun j hj ↦ by
       fin_cases j <;> first | exact absurd rfl hj | exact Bool.false_ne_true⟩
 
 /-- The contrast sets by association extent: object ((36a),
@@ -268,11 +268,11 @@ theorem vp_reading_strongest :
 read off the reflex shape. -/
 
 private def strategyLabel (c : Config) : String :=
-  match (realize c).reflexes with
-  | [.displacement _] => "postposing"
-  | [.morpheme _]     => "suffixI"
-  | [.boundary _]     => "boundary"
-  | _                 => "unmarked"
+  let modalities := (realize c).reflexes.image Reflex.modality
+  if .displacement ∈ modalities then "postposing"
+  else if .morpheme ∈ modalities then "suffixI"
+  else if .boundary ∈ modalities then "boundary"
+  else "unmarked"
 
 private def focusedLabel : Focused → String
   | .subject => "subject"

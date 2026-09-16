@@ -28,14 +28,14 @@ inductive Site
 
 /-- The two marked cells: subject extraction takes Agent Focus, oblique extraction adds *wi*;
 core-object extraction is unmarked. -/
-def realize : ExtractionTarget → List (Reflex Site)
-  | .subject => [.morpheme .verb]
-  | .oblique => [.morpheme .verb]
-  | _ => []
+def realize : ExtractionTarget → Finset (Reflex Site)
+  | .subject => {.morpheme .verb}
+  | .oblique => {.morpheme .verb}
+  | _ => ∅
 
 /-- WALS-style label: dedicated morphemes mark extraction. -/
 def strategy : ExtractionMarkingStrategy := .dedicatedMorpheme
 
-theorem marks_oblique : Marked realize .oblique := by decide
+theorem marks_oblique : (realize .oblique).Nonempty := Finset.singleton_nonempty _
 
 end Kiche.Extraction
