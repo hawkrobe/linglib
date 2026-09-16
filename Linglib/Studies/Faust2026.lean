@@ -33,10 +33,11 @@ left unexplained. The pipeline reproduces the paradigms (3), (5), (12) and the t
 * The medial gemination of the Amharic PFV is prespecified ({C C} in (7)) and doubled at
   realization; truncation deletes the final VC when the final C-slot is vacant and the
   pattern truncates (Amharic, not Hebrew).
-* The intruder's line is checked against `NoCrossing`, the No-Crossing Constraint on the
-  consonantal melody of the base merged with the suffix, root elements before the suffix's;
-  `isNonCrossing_melodyLinks_iff` interprets it into `Autosegmental.IsNonCrossing`. The
-  morph's vowel (√(a)t) does not surface in the forms derived, so the affix carries only t.
+* The suffix consonant is the melody element after the root on the consonantal melody of the
+  merged base (`melodyLinks`), and it associates to the rightmost vacant C-slot only if that
+  slot lies in its `Autosegmental.window`, where its line crosses no root line
+  ([goldsmith-1976]); `isNonCrossing_melodyLinks_intrude` is the guarantee. The morph's vowel
+  (√(a)t) does not surface in the forms derived, so the affix carries only t.
 * The squib labels (13c) [mähid] while (12e) and its merger /i,ä/ to [e] give [mähed]; the
   rows follow (12e).
 * Not derived: the IPFV and JUSS, whose prefixal templates the squib does not draw, and the
@@ -211,62 +212,27 @@ def spread (m : TemplateMatch String) : TemplateMatch String :=
 
 /-! ### Intrusion -/
 
-/-- The No-Crossing Constraint ([goldsmith-1976]) on the consonantal melody of a base merged
-with a suffix: the suffix follows the root, so its consonant associates to the left of no root
-line (13). -/
-def NoCrossing (m : TemplateMatch String) : Prop :=
-  ∀ a ∈ m.associations, ∀ b ∈ m.associations,
-    a.source = .root → b.source = .affix → a.slotIndex ≤ b.slotIndex
-
-instance (m : TemplateMatch String) : Decidable (NoCrossing m) :=
-  inferInstanceAs (Decidable (∀ a ∈ m.associations, ∀ b ∈ m.associations, _))
-
 /-- The consonantal melody of a base merged with a suffix, root elements then the suffix's, in
 the coordinates of `Autosegmental.IsNonCrossing`. -/
 def melodyLinks (m : TemplateMatch String) : Finset (Nat × Nat) :=
-  m.links .root ∪ (m.links .affix).image λ p => (p.1 + m.root.arity, p.2)
-
-/-- `NoCrossing` is the cross-tier part of the substrate's non-crossing condition on the merged
-melody: the merged melody is non-crossing iff each tier is and no suffix line lies to the left
-of a root line. -/
-theorem isNonCrossing_melodyLinks_iff (m : TemplateMatch String)
-    (hb : ∀ a ∈ m.associations, a.source = .root → a.melodyIndex < m.root.arity) :
-    IsNonCrossing (melodyLinks m) ↔
-      IsNonCrossing (m.links .root) ∧ IsNonCrossing (m.links .affix) ∧ NoCrossing m := by
-  simp only [isNonCrossing_iff, melodyLinks, Finset.mem_union, Finset.mem_image, NoCrossing]
-  constructor
-  · intro h
-    refine ⟨λ p hp q hq hlt => h p (Or.inl hp) q (Or.inl hq) hlt,
-      λ p hp q hq hlt => h (p.1 + m.root.arity, p.2) (Or.inr ⟨p, hp, rfl⟩)
-        (q.1 + m.root.arity, q.2) (Or.inr ⟨q, hq, rfl⟩) (by simpa using hlt),
-      λ a ha b hb' has hbs => ?_⟩
-    have hp := (m.mem_links (a.melodyIndex, a.slotIndex) .root).mpr ⟨a, ha, has, rfl, rfl⟩
-    have hq := (m.mem_links (b.melodyIndex, b.slotIndex) .affix).mpr ⟨b, hb', hbs, rfl, rfl⟩
-    have := hb a ha has
-    exact h _ (Or.inl hp) _ (Or.inr ⟨_, hq, rfl⟩) (by simp; omega)
-  · rintro ⟨hr, ha, hc⟩ l₁ hl₁ l₂ hl₂ hlt
-    rcases hl₁ with hl₁ | ⟨p, hp, rfl⟩ <;> rcases hl₂ with hl₂ | ⟨q, hq, rfl⟩
-    · exact hr _ hl₁ _ hl₂ hlt
-    · obtain ⟨a, ha', has, h1, h2⟩ := (m.mem_links _ _).mp hl₁
-      obtain ⟨b, hb', hbs, h3, h4⟩ := (m.mem_links _ _).mp hq
-      simp only at h2 h4 ⊢
-      rw [← h2, ← h4]
-      exact hc a ha' b hb' has hbs
-    · obtain ⟨a, ha', has, h1, -⟩ := (m.mem_links _ _).mp hl₂
-      have := hb a ha' has
-      simp only at hlt
-      omega
-    · exact ha p hp q hq (by simpa using hlt)
+  m.links .root ∪ (m.links .affix).image fun p ↦ (p.1 + m.root.arity, p.2)
 
 /-- The feminine morph √(a)t merged with the base, its consonant associated to slot `s`. -/
 def intrudeAt (m : TemplateMatch String) (s : Nat) : TemplateMatch String :=
   { m with affix := ["t"], associations := m.associations ++ [⟨.affix, 0, s⟩] }
 
+theorem melodyLinks_intrudeAt (m : TemplateMatch String) (s : Nat) :
+    melodyLinks (intrudeAt m s) = insert (m.root.arity, s) (melodyLinks m) := by
+  ext p
+  simp [melodyLinks, intrudeAt, TemplateMatch.links, List.filter_append]
+
 /-- Intrusion (10b–c): the morph's consonant associates from right to left, to the rightmost
-vacant C-slot, provided its line crosses none of the root's; otherwise it floats (13b–c). -/
+vacant C-slot, provided that slot lies in its window, so that its line crosses none of the
+root's; otherwise it floats (13b–c). -/
 def intrude (m : TemplateMatch String) : TemplateMatch String :=
-  match m.unfilledCSlots.getLast? with
-  | some s => if NoCrossing (intrudeAt m s) then intrudeAt m s else { m with affix := ["t"] }
+  match m.unfilledCSlots.max? with
+  | some s =>
+    if s ∈ window (melodyLinks m) m.root.arity then intrudeAt m s else { m with affix := ["t"] }
   | none => { m with affix := ["t"] }
 
 theorem misaligned_intrudeAt (m : TemplateMatch String) (s : Nat) :
@@ -283,13 +249,15 @@ theorem misaligned_intrude (m : TemplateMatch String) : Misaligned (intrude m) �
     · exact Iff.rfl
   · exact Iff.rfl
 
-/-- The intruder's line never crosses a root line. -/
-theorem noCrossing_intrude (m : TemplateMatch String) (h : NoCrossing m) :
-    NoCrossing (intrude m) := by
+/-- The intruder's line never crosses a root line: intrusion keeps the merged melody
+non-crossing. -/
+theorem isNonCrossing_melodyLinks_intrude (m : TemplateMatch String)
+    (h : IsNonCrossing (melodyLinks m)) : IsNonCrossing (melodyLinks (intrude m)) := by
   unfold intrude
   split
   · split
-    · assumption
+    · rw [melodyLinks_intrudeAt, isNonCrossing_insert_iff_mem_window]
+      exact ⟨h, ‹_›⟩
     · exact h
   · exact h
 
@@ -336,7 +304,7 @@ def collapse : Bool → List (CVSlot × Option String) → List String
 /-- Truncation (7a): when the pattern truncates and the final C-slot is vacant, the final
 syllable — that slot and the V-slot before it — is deleted. -/
 def truncate (p : Pattern) (m : TemplateMatch String) : CVTemplate :=
-  match m.unfilledCSlots.getLast?, m.template.cSlots.getLast? with
+  match m.unfilledCSlots.max?, m.template.cSlots.max? with
   | some s, some s' =>
     if p.truncates ∧ s = s' then ⟨m.template.slots.take (s - 1)⟩ else m.template
   | _, _ => m.template
@@ -454,7 +422,8 @@ misalignment. -/
 theorem fdj_grnd :
     ⟨.affix, 0, 3⟩ ∈ (derive amharicGrnd Amharic.fdj).associations ∧
     (derive amharicGrnd Amharic.fdj).allCSlotsFilled ∧
-    ¬ Misaligned (derive amharicGrnd Amharic.fdj) := by
+    ¬ Misaligned (derive amharicGrnd Amharic.fdj) ∧
+    IsNonCrossing (melodyLinks (derive amharicGrnd Amharic.fdj)) := by
   decide
 
 /-- (13): all three INF derivations leave a C-slot vacant, but the intruder associates only
@@ -465,8 +434,8 @@ theorem inf_intrusion :
     (associate amharicInf Amharic.sam).unfilledCSlots = [2] ∧
     (associate amharicInf Amharic.hid).unfilledCSlots = [2] ∧
     ⟨.affix, 0, 4⟩ ∈ (derive amharicInf Amharic.sma).associations ∧
-    ¬ NoCrossing (intrudeAt (associate amharicInf Amharic.sam) 2) ∧
-    ¬ NoCrossing (intrudeAt (associate amharicInf Amharic.hid) 2) ∧
+    2 ∉ window (melodyLinks (associate amharicInf Amharic.sam)) Amharic.sam.arity ∧
+    2 ∉ window (melodyLinks (associate amharicInf Amharic.hid)) Amharic.hid.arity ∧
     (derive amharicInf Amharic.sam).unfilledCSlots = [2] ∧
     (derive amharicInf Amharic.hid).unfilledCSlots = [2] ∧
     ¬ Misaligned (derive amharicInf Amharic.sam) ∧
