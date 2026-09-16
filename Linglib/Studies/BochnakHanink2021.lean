@@ -6,19 +6,19 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 /-!
 # Bochnak & Hanink (2021): Clausal embedding in Washo: complementation vs. modification
 
-This file formalizes [bochnak-hanink-2021]'s two strategies of clausal embedding in Washo. A
-presuppositional predicate selects a nominalized clause as a DP complement. A non-presuppositional
-predicate is intransitive, and its dependent-mood clause is an adjoined modifier. We read
-selection off the Fragment's frames and derive Table 2 from it: a predicate selects iff it takes
-the nominalizer as clause-typer, and the selected clause is a CP under D while the modifier is a
-MoodP without C.
+This file formalizes Bochnak and Hanink's two strategies of clausal embedding in Washo. A
+presuppositional predicate selects a nominalized clause as a DP complement. A
+non-presuppositional predicate is intransitive, and its dependent-mood clause is an adjoined
+modifier. We read selection off the Fragment's frames and derive Table 2 from it: a predicate
+selects iff it takes the nominalizer as clause-typer, and the selected clause is a CP under D
+while the modifier is a MoodP without C.
 
-The nominalized complement is [hanink-2021]'s familiar DP over the FPROP type-shift, so it
-denotes the individual whose content is the embedded proposition. It is defined when that
-individual is familiar, not when the proposition is true, which is the paper's case against a
-lexical factivity presupposition (`not_factive`). The dependent mood is generalized conjunction,
-so a modifier equates the content of the attitude event with its clause, and two modifiers on
-one event cannot carry different contents (`stack_eq`).
+The nominalized complement is Hanink's familiar DP over the FPROP type-shift, so it denotes the
+individual whose content is the embedded proposition. It is defined when that individual is
+familiar, not when the proposition is true, which is the paper's case against a lexical factivity
+presupposition (`not_factive`). The dependent mood is generalized conjunction, so a modifier
+equates the content of the attitude event with its clause, and two modifiers on one event cannot
+carry different contents (`stack_eq`).
 
 ## Implementation notes
 

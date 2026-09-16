@@ -4,17 +4,16 @@ import Linglib.Syntax.Category.Complementizer.Basic
 /-!
 # Washo clausal embedding
 
-The complement-taking predicates of Washo (Hokan/isolate, ISO 639-3 `was`) in
-[bochnak-hanink-2021], as verb entries, and the two clause-typers of the clauses they embed.
-The nominalizer *-gi ~ -ge* is the exponent of [hanink-2021]'s index head over a finite clause
-in the independent mood *-i*; the dependent mood *-aʔ* types the bare clause. A predicate's
-frames record its transitivity, the observable behind the paper's split: the nominalizer-takers
-select internal arguments and the *-aʔ*-takers are intransitive (§3.2.2). 'Know', 'remember'
-and 'believe' are inherently negative, so their positive reading carries the negative suffix
-*-e:s* (fn. 7).
+This file records the complement-taking verbs of Washo (Hokan/isolate, ISO 639-3 `was`) from
+Bochnak and Hanink's study of clausal embedding, and the two clause-typers of the clauses they
+embed. The nominalizer *-gi ~ -ge* is the exponent of Hanink's index head over a finite clause
+in the independent mood *-i*; the dependent mood *-aʔ* types a bare clause. A verb's frames
+record its transitivity: the nominalizer-takers select internal arguments and the *-aʔ*-takers
+are intransitive. 'Know', 'remember' and 'believe' are inherently negative, so their positive
+reading carries the negative suffix *-e:s*.
 
-Forms follow [jacobsen-1964]'s orthography: `:` marks vowel length, ʔ ɨ ŋ are IPA, and stress
-is acute. The analysis of the split is `Studies/BochnakHanink2021.lean`.
+Forms follow Jacobsen's orthography: `:` marks vowel length, ʔ ɨ ŋ are IPA, and stress is
+acute. The analysis of the split is in `Studies/BochnakHanink2021.lean`.
 
 ## References
 
