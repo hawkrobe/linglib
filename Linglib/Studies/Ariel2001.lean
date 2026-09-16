@@ -1,5 +1,5 @@
-import Linglib.Semantics.Reference.Accessibility
-import Linglib.Semantics.Reference.Givenness
+import Linglib.Discourse.Accessibility
+import Linglib.Discourse.Givenness
 import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Data.Examples.Ariel2001
 
@@ -37,7 +37,7 @@ does not predict the repeated-name penalty.
 
 namespace Ariel2001
 
-open Reference Data.Examples
+open Discourse Data.Examples
 
 /-! ### Form-function criteria (§1.1) -/
 
@@ -92,7 +92,7 @@ shape (§5.1 records Kirsner's Dutch data against this). -/
 theorem deixis_proximate :
     ∀ a b : AccessibilityLevel, a.head = .demonstrative → b.head = .demonstrative →
       a.modified = b.modified → a.lexical = b.lexical →
-      a.deixis = some .distal → b.deixis = some .proximate → a < b := by
+      a.deixis = some .distal → b.deixis = some .proximal → a < b := by
   decide
 
 /-! ### Accessibility as a complex concept (§1.2) -/

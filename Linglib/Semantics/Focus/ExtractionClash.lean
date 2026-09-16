@@ -1,4 +1,4 @@
-import Linglib.Semantics.Reference.Givenness
+import Linglib.Discourse.Givenness
 import Linglib.Semantics.Focus.Marking
 
 /-!
@@ -12,7 +12,7 @@ over the marking axes `(Mark, BinaryGivenness)`.
 
 namespace Focus.ExtractionClash
 
-open Reference (BinaryGivenness)
+open Discourse
 
 /-- **Information-structural extraction clash** ([erteschik-shir-1973],
     [abeille-et-al-2020]): a focused filler extracted from a
