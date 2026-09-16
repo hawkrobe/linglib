@@ -20,7 +20,8 @@ admitting them, and the marked relations from the suffixes' relations.
 
 ## Main definitions
 
-* `Korean.Converb`, `Korean.converbs` — the converbs
+* `Korean.Converb`, `Korean.converbs` — a converb with its relations and the tense and
+  negation it admits, and the eight of the language
 * `Korean.chaining` — the clause-chaining system, derived from the inventory
 
 ## References

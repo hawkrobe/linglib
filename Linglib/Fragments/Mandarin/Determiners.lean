@@ -1,4 +1,3 @@
-import Linglib.Data.UD.Basic
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.Mandarin.Classifiers

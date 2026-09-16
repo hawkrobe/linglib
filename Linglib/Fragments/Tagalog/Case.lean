@@ -19,7 +19,7 @@ it gives an approximative reading instead, and as restricted with mass nouns.
 
 * `Tagalog.marker` — the common-noun case markers
 * `Tagalog.personalMarker` — the personal-name case markers by number
-* `Tagalog.plural` — the plural proclitic
+* `Tagalog.plural` — the plural proclitic *mga* of common nouns
 
 ## References
 

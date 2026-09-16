@@ -1,4 +1,3 @@
-import Linglib.Data.UD.Basic
 import Linglib.Syntax.WordOrder
 
 /-!

@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Schema
-import Linglib.Data.UD.Basic
+import Linglib.Data.UD.Features
 
 /-!
 # Embedding environments
