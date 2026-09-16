@@ -16,9 +16,10 @@ referent they code, so that a more reduced form codes a more accessible referent
 (`AccessibilityLevel`). A form is classified by its head, whether it is modified, whether it
 carries lexical content, whether a name is full, its deixis, its stress and whether it is bound
 (`AccessibilityLevel.head` and the other features), and the three criteria the scale is claimed
-to reflect are read off the features: informativity, the lexical content a form carries;
+to reflect are read off the features: informativity, the lexical information a form carries;
 rigidity, its ability to pick out a referent by form alone; and attenuation, its phonological
-reduction.
+size. Each is compared, never counted: a form is more informative than another when it carries
+everything the other does, and the rigidity and attenuation scales are the chapter's own.
 
 ## Main definitions
 
@@ -26,7 +27,8 @@ reduction.
 * `AccessibilityLevel.head`, `modified`, `lexical`, `full`, `deixis`, `stressed`, `bound`: the
   features of a form class.
 * `AccessibilityLevel.informativity`, `rigidity`, `attenuation`: the criteria, from the
-  features.
+  features, valued in the information a form carries (`Information`, ordered by inclusion),
+  its `Rigidity` and its `Attenuation`.
 
 ## Implementation notes
 
@@ -172,25 +174,83 @@ instance : DecidablePred bound := λ l => by cases l <;> unfold bound <;> infer_
 
 /-! ### The criteria -/
 
-/-- Informativity: the lexical content a form carries, a lexical head, a modifier and a full
-name each adding to it. -/
-def informativity (l : AccessibilityLevel) : ℕ :=
-  (if l.lexical then 1 else 0) + (if l.modified then 1 else 0) + (if l.full then 1 else 0)
+/-- A piece of the lexical information a form carries. -/
+inductive Information where
+  /-- A lexical head, a noun or a name. -/
+  | lexical
+  /-- A modifier, or the long form of a description. -/
+  | modifier
+  /-- A full rather than a partial name. -/
+  | fullName
+  deriving DecidableEq, Repr, Fintype
+
+/-- A form carries a piece of information. -/
+def Information.CarriedBy : Information → AccessibilityLevel → Prop
+  | .lexical, l => l.lexical
+  | .modifier, l => l.modified
+  | .fullName, l => l.full
+
+instance (l : AccessibilityLevel) : DecidablePred (Information.CarriedBy · l) := fun i => by
+  cases i <;> unfold Information.CarriedBy <;> infer_instance
+
+/-- Informativity: the lexical information a form carries, one form more informative than
+another when it carries everything the other does. -/
+def informativity (l : AccessibilityLevel) : Finset Information :=
+  Finset.univ.filter (Information.CarriedBy · l)
+
+/-- How far a form picks out its referent by its form alone. -/
+inductive Rigidity where
+  /-- A pronominal form: features only. -/
+  | pronominal
+  /-- A lexical description: by its content. -/
+  | descriptive
+  /-- A name. -/
+  | rigid
+  deriving DecidableEq, Repr, Fintype
+
+/-- `pronominal < descriptive < rigid`. -/
+instance : LinearOrder Rigidity :=
+  LinearOrder.lift' (fun r : Rigidity => match r with
+    | .pronominal => (0 : ℕ) | .descriptive => 1 | .rigid => 2) (by decide)
 
 /-- Rigidity: a name picks its referent out by form alone, a lexical description by its
 content, and a pronominal form by features only. -/
-def rigidity (l : AccessibilityLevel) : ℕ :=
-  if l.head = .name then 2 else if l.lexical then 1 else 0
+def rigidity (l : AccessibilityLevel) : Rigidity :=
+  if l.head = .name then .rigid else if l.lexical then .descriptive else .pronominal
 
-/-- Attenuation: phonological reduction, from a lexical form through bare demonstratives and
-stressed, unstressed and cliticized pronouns and verbal agreement to a zero. -/
-def attenuation (l : AccessibilityLevel) : ℕ :=
+/-- The phonological size of a form. -/
+inductive Attenuation where
+  /-- A lexical phrase: a name, a description or a demonstrative with a noun. -/
+  | phrase
+  /-- A stressed word: a stressed pronoun or a bare demonstrative. -/
+  | stressedWord
+  /-- An unstressed word. -/
+  | unstressedWord
+  /-- A clitic. -/
+  | clitic
+  /-- Verbal inflection. -/
+  | inflection
+  /-- Nothing. -/
+  | zero
+  deriving DecidableEq, Repr, Fintype
+
+/-- `phrase < stressedWord < unstressedWord < clitic < inflection < zero`: the more attenuated
+the form, the higher. -/
+instance : LinearOrder Attenuation :=
+  LinearOrder.lift' (fun a : Attenuation => match a with
+    | .phrase => (0 : ℕ) | .stressedWord => 1 | .unstressedWord => 2 | .clitic => 3
+    | .inflection => 4 | .zero => 5) (by decide)
+
+/-- Attenuation: the phonological reduction of a form, from a lexical phrase through bare
+demonstratives and stressed, unstressed and cliticized pronouns and verbal agreement to a
+zero. -/
+def attenuation (l : AccessibilityLevel) : Attenuation :=
   match l.head with
-  | .zero => 5
-  | .inflection => 4
-  | .pronoun => if l.bound then 3 else if l.stressed then 1 else 2
-  | .demonstrative => if l.lexical then 0 else 1
-  | .name | .description => 0
+  | .zero => .zero
+  | .inflection => .inflection
+  | .pronoun => if l.bound then .clitic else if l.stressed then .stressedWord else .unstressedWord
+  | .demonstrative => if l.lexical then .phrase else .stressedWord
+  | .name | .description => .phrase
 
 end AccessibilityLevel
 
