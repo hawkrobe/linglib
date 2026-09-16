@@ -9,44 +9,43 @@ import Linglib.Core.Data.RoseTree.Subtree
 import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 
 /-!
-# Subterms, containment, and c-command
+# Terms, containment, and c-command
 
-This file develops the subterm theory of syntactic objects: containment as a closure of the
-daughter relation, the multisets of subterms and accessible terms that enumerate it, and
+This file develops the theory of terms of syntactic objects: containment as a closure of the
+daughter relation, the multisets of terms and accessible terms that enumerate it, and
 sisterhood and c-command relative to a root. Containment lowers the vertex count, which makes it
 a well-founded strict order and decides it.
 
 ## Main definitions
 
-* `Minimalist.SyntacticObject.immediatelyContains`: `x` immediately contains `y` when `y` is a
+* `SyntacticObject.immediatelyContains`: `x` immediately contains `y` when `y` is a
   root daughter of `x`.
-* `Minimalist.SyntacticObject.contains`: the transitive closure of immediate containment.
-* `Minimalist.SyntacticObject.containsOrEq`: the reflexive transitive closure of immediate
+* `SyntacticObject.contains`: the transitive closure of immediate containment.
+* `SyntacticObject.containsOrEq`: the reflexive transitive closure of immediate
   containment.
-* `Minimalist.SyntacticObject.subtrees`: the subterms of an object, root included, one per
-  vertex.
-* `Minimalist.SyntacticObject.accessibleTerms`: the subterms at the non-root vertices, the
+* `SyntacticObject.terms`: the terms of an object, itself included, one per vertex.
+* `SyntacticObject.accessibleTerms`: the terms at the non-root vertices, the
   accessible terms of [marcolli-chomsky-berwick-2025].
-* `Minimalist.SyntacticObject.areSistersIn`: `x` and `y` are sisters in `root` when they are
-  distinct daughters of one subterm of `root`.
-* `Minimalist.SyntacticObject.cCommandsIn`: `x` c-commands `y` in `root` when a sister of `x`
+* `SyntacticObject.areSistersIn`: `x` and `y` are sisters in `root` when they are
+  distinct daughters of one term of `root`.
+* `SyntacticObject.cCommandsIn`: `x` c-commands `y` in `root` when a sister of `x`
   reflexively contains `y` ([reinhart-1976]).
-* `Minimalist.SyntacticObject.asymCCommandsIn`: c-command in one direction only.
-* `Minimalist.SyntacticObject.domainIn`: the c-command domain of `x` in `root`, the subterms
-  it c-commands.
+* `SyntacticObject.asymCCommandsIn`: c-command in one direction only.
+* `SyntacticObject.domainIn`: the c-command domain of `x` in `root`, the terms it
+  c-commands.
 
 ## Main results
 
-* `Minimalist.SyntacticObject.mem_subtrees`, `mem_accessibleTerms`: the subterms of `x` are
-  the objects it reflexively contains, and the accessible terms those it strictly contains.
-* `Minimalist.SyntacticObject.wellFounded_flip_contains`: the proper subterm relation is
+* `SyntacticObject.mem_terms`, `mem_accessibleTerms`: the terms of `x` are the
+  objects it reflexively contains, and the accessible terms those it strictly contains.
+* `SyntacticObject.wellFounded_flip_contains`: the proper term relation is
   well-founded.
-* `Minimalist.SyntacticObject.card_accessibleTerms`: one accessible term per edge.
+* `SyntacticObject.card_accessibleTerms`: one accessible term per edge.
 
 ## Implementation notes
 
-Syntactic objects are values, not occurrences: a subterm sitting at two vertices is one object
-of multiplicity two in `subtrees`, and containment and c-command relate values, so the two
+Syntactic objects are values, not occurrences: a term sitting at two vertices is one object of
+multiplicity two in `terms`, and containment and c-command relate values, so the two
 daughters of `merge x x` are not sisters.
 
 ## References
@@ -154,7 +153,7 @@ theorem numNodes_lt_of_contains (h : contains x y) : y.val.numNodes < x.val.numN
   transGen_minimal (r' := InvImage (· > ·) fun s : SyntacticObject ↦ s.val.numNodes)
     (fun _ _ ↦ numNodes_lt_of_immediatelyContains) x y h
 
-/-- Being a proper subterm is well-founded: an object has finitely many subterms. -/
+/-- Being a proper term is well-founded: an object has finitely many terms. -/
 theorem wellFounded_flip_contains : WellFounded (flip contains) :=
   Subrelation.wf (fun h ↦ numNodes_lt_of_contains h)
     (InvImage.wf (fun s : SyntacticObject ↦ s.val.numNodes) wellFounded_lt)
@@ -167,11 +166,11 @@ theorem contains_irrefl (x : SyntacticObject) : ¬ contains x x := irrefl x
 
 end SyntacticObject
 
-/-! ### Subterms -/
+/-! ### Terms -/
 
-/-- The subtrees of a syntactic object are syntactic objects. -/
+/-- The subtrees of a syntactic object are its terms, hence syntactic objects. -/
 theorem isSyntacticObject_of_mem_subtrees (s : SyntacticObject) :
-    ∀ m ∈ subtrees s.val, IsSyntacticObject m := by
+    ∀ m ∈ UnorderedTree.subtrees s.val, IsSyntacticObject m := by
   induction s using SyntacticObject.ind with
   | leaf tok =>
     simp only [SyntacticObject.leaf_val, mem_subtrees_leaf, forall_eq]
@@ -191,60 +190,60 @@ namespace SyntacticObject
 
 variable {x y l r : SyntacticObject}
 
-/-- All subterms of a syntactic object, the root included. -/
-def subtrees (s : SyntacticObject) : Multiset SyntacticObject :=
+/-- The terms of a syntactic object, itself included. -/
+def terms (s : SyntacticObject) : Multiset SyntacticObject :=
   (UnorderedTree.subtrees s.val).pmap Subtype.mk (isSyntacticObject_of_mem_subtrees s)
 
-@[simp] theorem map_val_subtrees (s : SyntacticObject) :
-    s.subtrees.map Subtype.val = UnorderedTree.subtrees s.val := by
-  simp [subtrees, Multiset.map_pmap, Multiset.pmap_eq_map]
+@[simp] theorem map_val_terms (s : SyntacticObject) :
+    s.terms.map Subtype.val = UnorderedTree.subtrees s.val := by
+  simp [terms, Multiset.map_pmap, Multiset.pmap_eq_map]
 
-@[simp] theorem subtrees_leaf (tok : LIToken) : (leaf tok).subtrees = {leaf tok} :=
+@[simp] theorem terms_leaf (tok : LIToken) : (leaf tok).terms = {leaf tok} :=
   Multiset.map_injective Subtype.val_injective <| by
-    rw [Multiset.map_singleton, map_val_subtrees, leaf_val, UnorderedTree.subtrees_leaf]
+    rw [Multiset.map_singleton, map_val_terms, leaf_val, UnorderedTree.subtrees_leaf]
 
-@[simp] theorem subtrees_trace : trace.subtrees = {trace} :=
+@[simp] theorem terms_trace : trace.terms = {trace} :=
   Multiset.map_injective Subtype.val_injective <| by
-    rw [Multiset.map_singleton, map_val_subtrees, trace_val, UnorderedTree.subtrees_leaf]
+    rw [Multiset.map_singleton, map_val_terms, trace_val, UnorderedTree.subtrees_leaf]
 
-@[simp] theorem subtrees_traceOf (tok : LIToken) : (traceOf tok).subtrees = {traceOf tok} :=
+@[simp] theorem terms_traceOf (tok : LIToken) : (traceOf tok).terms = {traceOf tok} :=
   Multiset.map_injective Subtype.val_injective <| by
-    rw [Multiset.map_singleton, map_val_subtrees, traceOf_val, UnorderedTree.subtrees_leaf]
+    rw [Multiset.map_singleton, map_val_terms, traceOf_val, UnorderedTree.subtrees_leaf]
 
-@[simp] theorem subtrees_merge (l r : SyntacticObject) :
-    (merge l r).subtrees = merge l r ::ₘ (l.subtrees + r.subtrees) :=
+@[simp] theorem terms_merge (l r : SyntacticObject) :
+    (merge l r).terms = merge l r ::ₘ (l.terms + r.terms) :=
   Multiset.map_injective Subtype.val_injective <| by
-    simp only [Multiset.map_cons, Multiset.map_add, map_val_subtrees, merge_val,
+    simp only [Multiset.map_cons, Multiset.map_add, map_val_terms, merge_val,
       UnorderedTree.subtrees_node_pair]
 
-/-- The subterms of `x` are the objects it reflexively contains. -/
-@[simp] theorem mem_subtrees : y ∈ x.subtrees ↔ containsOrEq x y := by
+/-- The terms of `x` are the objects it reflexively contains. -/
+@[simp] theorem mem_terms : y ∈ x.terms ↔ containsOrEq x y := by
   induction x using ind with
   | leaf tok => simp
   | trace => simp
   | traceOf tok => simp
   | merge l r ihl ihr => simp [ihl, ihr]
 
-theorem self_mem_subtrees (s : SyntacticObject) : s ∈ s.subtrees :=
-  mem_subtrees.2 ReflTransGen.refl
+theorem self_mem_terms (s : SyntacticObject) : s ∈ s.terms :=
+  mem_terms.2 ReflTransGen.refl
 
-theorem subtrees_subset_subtrees (h : containsOrEq x y) : y.subtrees ⊆ x.subtrees :=
-  fun _ hz ↦ mem_subtrees.2 (ReflTransGen.trans h (mem_subtrees.1 hz))
+theorem terms_subset_terms (h : containsOrEq x y) : y.terms ⊆ x.terms :=
+  fun _ hz ↦ mem_terms.2 (ReflTransGen.trans h (mem_terms.1 hz))
 
-/-- One subterm per vertex. -/
-theorem card_subtrees (s : SyntacticObject) : s.subtrees.card = s.val.numNodes := by
-  rw [subtrees, Multiset.card_pmap, UnorderedTree.card_subtrees]
+/-- One term per vertex. -/
+theorem card_terms (s : SyntacticObject) : s.terms.card = s.val.numNodes := by
+  rw [terms, Multiset.card_pmap, UnorderedTree.card_subtrees]
 
 instance (x y : SyntacticObject) : Decidable (containsOrEq x y) :=
-  decidable_of_iff _ mem_subtrees
+  decidable_of_iff _ mem_terms
 
 /-! ### Accessible terms -/
 
-/-- The accessible terms, the subterms at the non-root vertices. -/
-def accessibleTerms (s : SyntacticObject) : Multiset SyntacticObject := s.subtrees.erase s
+/-- The accessible terms, the terms at the non-root vertices. -/
+def accessibleTerms (s : SyntacticObject) : Multiset SyntacticObject := s.terms.erase s
 
-theorem cons_accessibleTerms (s : SyntacticObject) : s ::ₘ s.accessibleTerms = s.subtrees :=
-  Multiset.cons_erase (self_mem_subtrees s)
+theorem cons_accessibleTerms (s : SyntacticObject) : s ::ₘ s.accessibleTerms = s.terms :=
+  Multiset.cons_erase (self_mem_terms s)
 
 @[simp] theorem accessibleTerms_leaf (tok : LIToken) : (leaf tok).accessibleTerms = 0 := by
   simp [accessibleTerms]
@@ -256,7 +255,7 @@ theorem cons_accessibleTerms (s : SyntacticObject) : s ::ₘ s.accessibleTerms =
   simp [accessibleTerms]
 
 @[simp] theorem accessibleTerms_merge (l r : SyntacticObject) :
-    (merge l r).accessibleTerms = l.subtrees + r.subtrees := by
+    (merge l r).accessibleTerms = l.terms + r.terms := by
   simp [accessibleTerms]
 
 /-- The accessible terms of `x` are the objects it contains. -/
@@ -270,7 +269,7 @@ theorem cons_accessibleTerms (s : SyntacticObject) : s ::ₘ s.accessibleTerms =
 /-- One accessible term per edge. -/
 theorem card_accessibleTerms (s : SyntacticObject) :
     s.accessibleTerms.card = s.val.numEdges := by
-  rw [accessibleTerms, Multiset.card_erase_of_mem (self_mem_subtrees s), card_subtrees]; rfl
+  rw [accessibleTerms, Multiset.card_erase_of_mem (self_mem_terms s), card_terms]; rfl
 
 instance (x y : SyntacticObject) : Decidable (contains x y) :=
   decidable_of_iff _ mem_accessibleTerms
@@ -279,10 +278,10 @@ instance (x y : SyntacticObject) : Decidable (contains x y) :=
 
 variable {root : SyntacticObject}
 
-/-- `x` and `y` are sisters in `root` when they are distinct daughters of some subterm of
+/-- `x` and `y` are sisters in `root` when they are distinct daughters of some term of
 `root`. -/
 def areSistersIn (root x y : SyntacticObject) : Prop :=
-  ∃ z ∈ root.subtrees, immediatelyContains z x ∧ immediatelyContains z y ∧ x ≠ y
+  ∃ z ∈ root.terms, immediatelyContains z x ∧ immediatelyContains z y ∧ x ≠ y
 
 instance (root x y : SyntacticObject) : Decidable (areSistersIn root x y) :=
   Multiset.decidableExistsMultiset
@@ -290,15 +289,15 @@ instance (root x y : SyntacticObject) : Decidable (areSistersIn root x y) :=
 theorem areSistersIn.symm (h : areSistersIn root x y) : areSistersIn root y x :=
   let ⟨z, hz, hx, hy, hne⟩ := h; ⟨z, hz, hy, hx, hne.symm⟩
 
-theorem areSistersIn.mem_left (h : areSistersIn root x y) : x ∈ root.subtrees :=
-  let ⟨_, hz, hx, _, _⟩ := h; mem_subtrees.2 (ReflTransGen.tail (mem_subtrees.1 hz) hx)
+theorem areSistersIn.mem_left (h : areSistersIn root x y) : x ∈ root.terms :=
+  let ⟨_, hz, hx, _, _⟩ := h; mem_terms.2 (ReflTransGen.tail (mem_terms.1 hz) hx)
 
-theorem areSistersIn.mem_right (h : areSistersIn root x y) : y ∈ root.subtrees :=
+theorem areSistersIn.mem_right (h : areSistersIn root x y) : y ∈ root.terms :=
   h.symm.mem_left
 
 /-- `x` c-commands `y` in `root` when a sister of `x` contains or equals `y`. -/
 def cCommandsIn (root x y : SyntacticObject) : Prop :=
-  ∃ z ∈ root.subtrees, areSistersIn root x z ∧ containsOrEq z y
+  ∃ z ∈ root.terms, areSistersIn root x z ∧ containsOrEq z y
 
 instance (root x y : SyntacticObject) : Decidable (cCommandsIn root x y) :=
   Multiset.decidableExistsMultiset
@@ -307,16 +306,16 @@ instance (root x y : SyntacticObject) : Decidable (cCommandsIn root x y) :=
 theorem cCommandsIn_of_areSistersIn (h : areSistersIn root x y) : cCommandsIn root x y :=
   ⟨y, h.mem_right, h, ReflTransGen.refl⟩
 
-/-- A c-commanded object is a subterm of the root. -/
-theorem mem_subtrees_of_cCommandsIn (h : cCommandsIn root x y) : y ∈ root.subtrees :=
-  let ⟨_, hz, _, hzy⟩ := h; subtrees_subset_subtrees (mem_subtrees.1 hz) (mem_subtrees.2 hzy)
+/-- A c-commanded object is a term of the root. -/
+theorem mem_terms_of_cCommandsIn (h : cCommandsIn root x y) : y ∈ root.terms :=
+  let ⟨_, hz, _, hzy⟩ := h; terms_subset_terms (mem_terms.1 hz) (mem_terms.2 hzy)
 
 /-- The c-command domain of `x` in `root`, the search space of a probe sitting at `x`. -/
 def domainIn (root x : SyntacticObject) : Multiset SyntacticObject :=
-  root.subtrees.filter (cCommandsIn root x)
+  root.terms.filter (cCommandsIn root x)
 
 @[simp] theorem mem_domainIn : y ∈ domainIn root x ↔ cCommandsIn root x y :=
-  Multiset.mem_filter.trans (and_iff_right_of_imp mem_subtrees_of_cCommandsIn)
+  Multiset.mem_filter.trans (and_iff_right_of_imp mem_terms_of_cCommandsIn)
 
 /-- `x` c-commands `y` in `root` and `y` does not c-command `x`. -/
 def asymCCommandsIn (root x y : SyntacticObject) : Prop :=

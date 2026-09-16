@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
-import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
+import Linglib.Syntax.Minimalist.SyntacticObject.Term
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
 /-!
@@ -22,9 +22,9 @@ MCB** rather than the legacy section-based `phaseComplementZ`/`complementInPlana
 walk (which carried a `side` parameter and a non-commutative `<|>` fallback — a
 section artifact with no place on the unordered carrier). MCB states everything in
 terms of **subtrees, containment, and the head's sister** — exactly the invariant,
-decidable P2 substrate (`subtrees`/`accessibleTerms`/`containsOrEq`/`areSistersIn`/`cCommandsIn`,
+decidable P2 substrate (`terms`/`accessibleTerms`/`containsOrEq`/`areSistersIn`/`cCommandsIn`,
 #797–798) and the selection head (`selHead`, #800). So the whole phase domain is a
-**filter over the already-lifted subterm API** — no section, no `Quot.out`, no fresh
+**filter over the already-lifted term API** — no section, no `Quot.out`, no fresh
 `Perm` proof, and every notion `decide`s.
 
 The keystone identity: the **interior Φ°_ℓ (Def 1.14.3) is the phase head's
@@ -58,7 +58,7 @@ def isPhaseHeadOf (c : Cat) (s : SyntacticObject) : Bool := s.outerCatC == some 
 The head function on `SyntacticObject` is `selHead` (#800); a phase is relative to a tree `T` and
 a phase-head leaf `ℓ` (the study supplies *which* leaf, per the per-analysis
 discipline — C / C+v / +D / +Voice). Every notion is a filter over the invariant
-subterm API (`subtrees`/`accessibleTerms`/`containsOrEq`/`areSistersIn`/`cCommandsIn`), so it
+term API (`terms`/`accessibleTerms`/`containsOrEq`/`areSistersIn`/`cCommandsIn`), so it
 `decide`s — no section, no `Quot.out`, no fresh `Perm` proof. -/
 
 /-- **L_Φ(T)** ([marcolli-chomsky-berwick-2025] Def 1.14.3 eq 1.14.1): `ℓ` is a
@@ -66,7 +66,7 @@ subterm API (`subtrees`/`accessibleTerms`/`containsOrEq`/`areSistersIn`/`cComman
     `leaf ℓ` has a mother whose head is still `ℓ` (so γ_ℓ reaches an internal
     vertex). Read off `selHead` at the mother; section-free. -/
 def isPhaseHead (T : SyntacticObject) (ℓ : LIToken) : Prop :=
-  ∃ n ∈ T.subtrees, immediatelyContains n (SyntacticObject.leaf ℓ) ∧ n.selHead = some ℓ
+  ∃ n ∈ T.terms, immediatelyContains n (SyntacticObject.leaf ℓ) ∧ n.selHead = some ℓ
 
 instance (T : SyntacticObject) (ℓ : LIToken) : Decidable (isPhaseHead T ℓ) :=
   Multiset.decidableExistsMultiset
@@ -77,7 +77,7 @@ instance (T : SyntacticObject) (ℓ : LIToken) : Decidable (isPhaseHead T ℓ) :
     is the largest `ℓ`-headed subtree, so `T_v ⊆ T_{v_ℓ}` iff `T_v` sits inside one
     of them (all `ℓ`-headed vertices lie on γ_ℓ below `v_ℓ`). -/
 def withinProjection (T : SyntacticObject) (ℓ : LIToken) (Tv : SyntacticObject) : Prop :=
-  ∃ p ∈ T.subtrees, p.selHead = some ℓ ∧ containsOrEq p Tv
+  ∃ p ∈ T.terms, p.selHead = some ℓ ∧ containsOrEq p Tv
 
 instance (T : SyntacticObject) (ℓ : LIToken) (Tv : SyntacticObject) :
     Decidable (withinProjection T ℓ Tv) :=
@@ -85,9 +85,9 @@ instance (T : SyntacticObject) (ℓ : LIToken) (Tv : SyntacticObject) :
 
 /-- **The phase Φ_ℓ** ([marcolli-chomsky-berwick-2025] Def 1.14.3 eq 1.14.2):
     `{T_v ∈ Acc'(T) | T_v ⊆ T_{v_ℓ}}` — all accessible terms within the maximal
-    projection (`Acc'(T) = T.subtrees`, including the root). -/
+    projection (`Acc'(T) = T.terms`, including the root). -/
 def phase (T : SyntacticObject) (ℓ : LIToken) : Multiset SyntacticObject :=
-  T.subtrees.filter (fun Tv => withinProjection T ℓ Tv)
+  T.terms.filter (fun Tv => withinProjection T ℓ Tv)
 
 /-- **The interior Φ°_ℓ** ([marcolli-chomsky-berwick-2025] Def 1.14.3 eq 1.14.3):
     `{T_v ∈ Acc(T) | T_v ⊆ T_{s_ℓ}}` — the head's sister `T_{s_ℓ}` and all of its
@@ -120,7 +120,7 @@ instance (T : SyntacticObject) (ℓ : LIToken) (goal : SyntacticObject) :
 /-! ### Membership characterizations -/
 
 @[simp] theorem mem_phase {T : SyntacticObject} {ℓ : LIToken} {Tv : SyntacticObject} :
-    Tv ∈ T.phase ℓ ↔ Tv ∈ T.subtrees ∧ withinProjection T ℓ Tv :=
+    Tv ∈ T.phase ℓ ↔ Tv ∈ T.terms ∧ withinProjection T ℓ Tv :=
   Multiset.mem_filter
 
 /-- **The interior is the phase head's (non-root) c-command domain** — the keystone

@@ -199,13 +199,13 @@ inductive JudgmentType
   deriving DecidableEq, Repr
 
 instance (root probe : SyntacticObject) :
-    Decidable (∃ g ∈ root.subtrees, isClosestGoalIn root probe g (isLeafOf .D)) :=
+    Decidable (∃ g ∈ root.terms, isClosestGoalIn root probe g (isLeafOf .D)) :=
   Multiset.decidableExistsMultiset
 
 /-- A clause is categorical when T⁰'s [EPP:D] probe finds a goal to raise to Spec,TP — the
 ψ-subject — and thetic when it finds none. -/
 def judgment (root probe : SyntacticObject) : JudgmentType :=
-  if ∃ g ∈ root.subtrees, isClosestGoalIn root probe g (isLeafOf .D) then .categorical else .thetic
+  if ∃ g ∈ root.terms, isClosestGoalIn root probe g (isLeafOf .D) then .categorical else .thetic
 
 /-- An existential with a bare pivot contains no DP: the clause is thetic. -/
 theorem existential_thetic : judgment existential T₀

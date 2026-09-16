@@ -50,11 +50,11 @@ uninterpretable `probe` and is the closest such element, no other `pred`-node c-
 probe being asymmetrically c-commanded by it. -/
 def isUpwardGoalIn (root probe goal : SyntacticObject) (pred : SyntacticObject → Prop) : Prop :=
   cCommandsIn root goal probe ∧ pred goal ∧
-    ∀ x ∈ root.subtrees, cCommandsIn root x probe → pred x → ¬ asymCCommandsIn root goal x
+    ∀ x ∈ root.terms, cCommandsIn root x probe → pred x → ¬ asymCCommandsIn root goal x
 
 instance [DecidablePred pred] (root probe goal : SyntacticObject) :
     Decidable (isUpwardGoalIn root probe goal pred) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ x ∈ root.subtrees, _))
+  inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ x ∈ root.terms, _))
 
 /-- Multiple Agree: every probe in the list is checked by the same goal. -/
 def MultipleAgree (root goal : SyntacticObject) (probes : List SyntacticObject)

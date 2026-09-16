@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
-import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
+import Linglib.Syntax.Minimalist.SyntacticObject.Term
 import Linglib.Syntax.Minimalist.Workspace.Basic
 
 /-!
