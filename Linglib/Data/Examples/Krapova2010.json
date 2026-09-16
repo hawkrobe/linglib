@@ -1,0 +1,750 @@
+[
+  {
+    "id": "krapova2010_56a",
+    "source": {
+      "bibkey": "krapova-2010",
+      "paperLabel": "(56a)"
+    },
+    "reportedIn": null,
+    "language": "bulg1262",
+    "primaryText": "Naistina săžaljavam, deto ne otdelix poveče vnimanie na postrojkata.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Naistina",
+        "really"
+      ],
+      [
+        "săžaljavam,",
+        "regret-1sg"
+      ],
+      [
+        "deto",
+        "that"
+      ],
+      [
+        "ne",
+        "not"
+      ],
+      [
+        "otdelix",
+        "devoted-1sg"
+      ],
+      [
+        "poveče",
+        "more"
+      ],
+      [
+        "vnimanie",
+        "attention"
+      ],
+      [
+        "na",
+        "to"
+      ],
+      [
+        "postrojkata",
+        "construction-the"
+      ]
+    ],
+    "translation": "I really regret that I did not devote greater attention to the construction.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Naistina săžaljavam, če ne otdelix poveče vnimanie na postrojkata.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "săžaljavam"
+      ],
+      [
+        "complementizer",
+        "deto"
+      ],
+      [
+        "diagnostic",
+        "detoSelection"
+      ]
+    ],
+    "comment": "deto alternates freely with če, apart from style and register; colloquial speech.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "krapova2010_56b",
+    "source": {
+      "bibkey": "krapova-2010",
+      "paperLabel": "(56b)"
+    },
+    "reportedIn": null,
+    "language": "bulg1262",
+    "primaryText": "Samo me e jad, deto grivnata izčezna sled zatămnenieto.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Samo",
+        "only"
+      ],
+      [
+        "me",
+        "me-ClAcc"
+      ],
+      [
+        "e",
+        "is"
+      ],
+      [
+        "jad,",
+        "anger"
+      ],
+      [
+        "deto",
+        "that"
+      ],
+      [
+        "grivnata",
+        "bracelet-the"
+      ],
+      [
+        "izčezna",
+        "disappeared-3sg"
+      ],
+      [
+        "sled",
+        "after"
+      ],
+      [
+        "zatămnenieto",
+        "eclipse-the"
+      ]
+    ],
+    "translation": "I am only angry that the bracelet disappeared after the eclipse.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Samo me e jad, če grivnata izčezna sled zatămnenieto.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "jad me e"
+      ],
+      [
+        "complementizer",
+        "deto"
+      ],
+      [
+        "diagnostic",
+        "detoSelection"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "krapova2010_57a",
+    "source": {
+      "bibkey": "krapova-2010",
+      "paperLabel": "(57a)"
+    },
+    "reportedIn": null,
+    "language": "bulg1262",
+    "primaryText": "Nikak ne săžaljavam, deto sreštata im se e provalila.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Nikak",
+        "not-at-all"
+      ],
+      [
+        "ne",
+        "not"
+      ],
+      [
+        "săžaljavam,",
+        "regret-1sg"
+      ],
+      [
+        "deto",
+        "that"
+      ],
+      [
+        "sreštata",
+        "meeting-the"
+      ],
+      [
+        "im",
+        "their"
+      ],
+      [
+        "se",
+        "refl"
+      ],
+      [
+        "e",
+        "is"
+      ],
+      [
+        "provalila",
+        "failed-prt"
+      ]
+    ],
+    "translation": "I do not regret at all that their meeting has not taken place.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Nikak ne săžaljavam, če sreštata im se e provalila.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "săžaljavam"
+      ],
+      [
+        "complementizer",
+        "deto"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "negation"
+      ],
+      [
+        "inference",
+        "yes"
+      ]
+    ],
+    "comment": "Presupposes that the meeting has failed, although the speaker does not regret that.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "krapova2010_57b",
+    "source": {
+      "bibkey": "krapova-2010",
+      "paperLabel": "(57b)"
+    },
+    "reportedIn": null,
+    "language": "bulg1262",
+    "primaryText": "Vinoven li săm deto gostite pristignaxa kăsno?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Vinoven",
+        "guilty"
+      ],
+      [
+        "li",
+        "Q"
+      ],
+      [
+        "săm",
+        "am"
+      ],
+      [
+        "deto",
+        "that"
+      ],
+      [
+        "gostite",
+        "guests-the"
+      ],
+      [
+        "pristignaxa",
+        "arrived-3pl"
+      ],
+      [
+        "kăsno",
+        "late"
+      ]
+    ],
+    "translation": "Is it my fault that the guests arrived late?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Vinoven li săm če gostite pristignaxa kăsno?",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "vinoven săm"
+      ],
+      [
+        "complementizer",
+        "deto"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "question"
+      ],
+      [
+        "inference",
+        "yes"
+      ]
+    ],
+    "comment": "Presupposes that the visitors arrived late.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "krapova2010_57c",
+    "source": {
+      "bibkey": "krapova-2010",
+      "paperLabel": "(57c)"
+    },
+    "reportedIn": null,
+    "language": "bulg1262",
+    "primaryText": "Săžaljavam, deto ne moža da ostaneš poveče.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Săžaljavam,",
+        "regret-1sg"
+      ],
+      [
+        "deto",
+        "that"
+      ],
+      [
+        "ne",
+        "not"
+      ],
+      [
+        "moža",
+        "could-2sg"
+      ],
+      [
+        "da",
+        "Mod"
+      ],
+      [
+        "ostaneš",
+        "stay-2sg"
+      ],
+      [
+        "poveče",
+        "more"
+      ]
+    ],
+    "translation": "I regret that you couldn't stay longer.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Săžaljavam, če ne moža da ostaneš poveče.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Săžaljavam, deto ne moža da ostaneš poveče, no vsăšnost ti ostana poveče.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "săžaljavam"
+      ],
+      [
+        "complementizer",
+        "deto"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "cancellation"
+      ],
+      [
+        "inference",
+        "yes"
+      ]
+    ],
+    "comment": "Adding 'but in fact you stayed longer' cancels the presupposition and is a contradiction.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "krapova2010_58a",
+    "source": {
+      "bibkey": "krapova-2010",
+      "paperLabel": "(58a)"
+    },
+    "reportedIn": null,
+    "language": "bulg1262",
+    "primaryText": "Văzmutix se deto ne sa mogli da provedat sreštata.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Văzmutix",
+        "resent-1sg"
+      ],
+      [
+        "se",
+        "refl"
+      ],
+      [
+        "deto",
+        "that"
+      ],
+      [
+        "ne",
+        "not"
+      ],
+      [
+        "sa",
+        "are-3pl"
+      ],
+      [
+        "mogli",
+        "able-pl"
+      ],
+      [
+        "da",
+        "Mod"
+      ],
+      [
+        "provedat",
+        "organize-3pl"
+      ],
+      [
+        "sreštata",
+        "meeting-the"
+      ]
+    ],
+    "translation": "I resent the fact that they were not able to organize the meeting.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {
+        "form": "Văzmutix se če ne sa mogli da provedat sreštata.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "văzmuštavam se"
+      ],
+      [
+        "complementizer",
+        "deto"
+      ],
+      [
+        "diagnostic",
+        "detoSelection"
+      ]
+    ],
+    "comment": "An emotive factive without a za phrase takes če only.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "krapova2010_58b",
+    "source": {
+      "bibkey": "krapova-2010",
+      "paperLabel": "(58b)"
+    },
+    "reportedIn": null,
+    "language": "bulg1262",
+    "primaryText": "Otkrix deto sreštata im se e provalila.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Otkrix",
+        "found-out-1sg"
+      ],
+      [
+        "deto",
+        "that"
+      ],
+      [
+        "sreštata",
+        "meeting-the"
+      ],
+      [
+        "im",
+        "their"
+      ],
+      [
+        "se",
+        "refl"
+      ],
+      [
+        "e",
+        "is"
+      ],
+      [
+        "provalila",
+        "failed-prt"
+      ]
+    ],
+    "translation": "I found out that their meeting has failed.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {
+        "form": "Otkrix če sreštata im se e provalila.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "otkrivam"
+      ],
+      [
+        "complementizer",
+        "deto"
+      ],
+      [
+        "diagnostic",
+        "detoSelection"
+      ]
+    ],
+    "comment": "A semi-factive takes če only.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "krapova2010_59a",
+    "source": {
+      "bibkey": "krapova-2010",
+      "paperLabel": "(59a)"
+    },
+    "reportedIn": null,
+    "language": "bulg1262",
+    "primaryText": "Săžaljavam za provala na sreštata.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Săžaljavam",
+        "regret-1sg"
+      ],
+      [
+        "za",
+        "for"
+      ],
+      [
+        "provala",
+        "failure-the"
+      ],
+      [
+        "na",
+        "of"
+      ],
+      [
+        "sreštata",
+        "meeting-the"
+      ]
+    ],
+    "translation": "I am sorry about the failure of the meeting.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Săžaljavam na provala na sreštata.",
+        "judgment": "ungrammatical"
+      },
+      {
+        "form": "Săžaljavam provala na sreštata.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "săžaljavam"
+      ],
+      [
+        "diagnostic",
+        "zaPhrase"
+      ]
+    ],
+    "comment": "Other prepositions and preposition-less noun phrases are excluded; the nominal paraphrase of (57a).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "krapova2010_59b",
+    "source": {
+      "bibkey": "krapova-2010",
+      "paperLabel": "(59b)"
+    },
+    "reportedIn": null,
+    "language": "bulg1262",
+    "primaryText": "Vinoven li săm za zakăsnenieto na gostite?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Vinoven",
+        "guilty"
+      ],
+      [
+        "li",
+        "Q"
+      ],
+      [
+        "săm",
+        "am"
+      ],
+      [
+        "za",
+        "for"
+      ],
+      [
+        "zakăsnenieto",
+        "delay-the"
+      ],
+      [
+        "na",
+        "of"
+      ],
+      [
+        "gostite",
+        "visitors-the"
+      ]
+    ],
+    "translation": "Am I responsible for the late arrival of the guests?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Vinoven li săm na zakăsnenieto na gostite?",
+        "judgment": "ungrammatical"
+      },
+      {
+        "form": "Vinoven li săm zakăsnenieto na gostite?",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "vinoven săm"
+      ],
+      [
+        "diagnostic",
+        "zaPhrase"
+      ]
+    ],
+    "comment": "The nominal paraphrase of (57b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "krapova2010_fn46i",
+    "source": {
+      "bibkey": "krapova-2010",
+      "paperLabel": "fn. 46 (i)"
+    },
+    "reportedIn": null,
+    "language": "bulg1262",
+    "primaryText": "Văzmutix se če ne sa mogli da provedat sreštata.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Văzmutix",
+        "resent-1sg"
+      ],
+      [
+        "se",
+        "refl"
+      ],
+      [
+        "če",
+        "that"
+      ],
+      [
+        "ne",
+        "not"
+      ],
+      [
+        "sa",
+        "are-3pl"
+      ],
+      [
+        "mogli",
+        "able-pl"
+      ],
+      [
+        "da",
+        "Mod"
+      ],
+      [
+        "provedat",
+        "organize-3pl"
+      ],
+      [
+        "sreštata",
+        "meeting-the"
+      ]
+    ],
+    "translation": "I resent the fact that they were not able to organize the meeting.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Văzmutix se če ne sa mogli da provedat sreštata, no vsăšnost te provedoxa sreštata.",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "văzmuštavam se"
+      ],
+      [
+        "complementizer",
+        "če"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "cancellation"
+      ],
+      [
+        "inference",
+        "yes"
+      ]
+    ],
+    "comment": "The če complement is factive too: factivity is the context's, not the complementizer's.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
