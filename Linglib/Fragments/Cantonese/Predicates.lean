@@ -1,14 +1,15 @@
+import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Clause.Complementation
 
 /-!
 # Cantonese complement-taking predicates
 
-Cantonese complement-taking predicates with their [noonan-2007] class: the desideratives
-*soeng* 'want' and *daasyun* 'intend', the manipulatives *hyun* 'urge', *bik* 'force' and *giu*
-'ask', the attitude verb *seon* 'believe', the utterance verb *gong* 'say' and the factive
-*geidak* 'remember' [matthews-yip-1994]. The size of the complement each selects, and the
-scope of an *again*-element across it, are the analysis of [liu-yip-2026] and live in
-`Studies/LiuYip2026.lean`.
+Cantonese complement-taking verbs as `Verb`s with their character and their [noonan-2007] class:
+the desideratives *soeng* 'want' and *daasyun* 'intend', the manipulatives *hyun* 'urge', *bik*
+'force' and *giu* 'ask', the attitude verb *seon* 'believe', the utterance verb *gong* 'say'
+and the factive *geidak* 'remember' [matthews-yip-1994]. The size of the complement each
+selects, and the scope of an *again*-element across it, are the analysis of [liu-yip-2026] and
+live in `Studies/LiuYip2026.lean`.
 
 ## References
 
@@ -19,52 +20,57 @@ scope of an *again*-element across it, are the analysis of [liu-yip-2026] and li
 
 namespace Cantonese.Predicates
 
-/-- A Cantonese complement-taking predicate: its jyutping, its character, its gloss and its
-[noonan-2007] class. -/
-structure CTPEntry where
-  /-- The jyutping form with tone numbers. -/
-  jyutping : String
+open ArgumentStructure
+
+/-- A Cantonese verb: the cross-linguistic core with the jyutping as citation form, plus its
+characters and its complement-taking predicate class. -/
+structure Verb extends _root_.Verb where
   /-- The characters. -/
   hanzi : String
-  /-- The gloss. -/
-  gloss : String
   /-- The complement-taking predicate class. -/
   ctpClass : CTPClass
-  deriving Repr, DecidableEq
+  deriving Repr
 
 /-- *soeng* 想 'want'. -/
-def soeng : CTPEntry :=
-  { jyutping := "soeng2", hanzi := "想", gloss := "want", ctpClass := .desiderative }
+def soeng : Verb :=
+  { form := "soeng2", hanzi := "想", ctpClass := .desiderative, frames := [Frame.infinitival],
+    passivizable := false, opaqueContext := true,
+    attitude := some (.preferential (.degreeComparison .positive)) }
 
 /-- *hyun* 勸 'urge'. -/
-def hyun : CTPEntry :=
-  { jyutping := "hyun3", hanzi := "勸", gloss := "urge", ctpClass := .manipulative }
+def hyun : Verb :=
+  { form := "hyun3", hanzi := "勸", ctpClass := .manipulative, frames := [Frame.infinitival] }
 
 /-- *bik* 逼 'force'. -/
-def bik : CTPEntry :=
-  { jyutping := "bik1", hanzi := "逼", gloss := "force", ctpClass := .manipulative }
+def bik : Verb :=
+  { form := "bik1", hanzi := "逼", ctpClass := .manipulative, frames := [Frame.infinitival] }
 
 /-- *giu* 叫 'ask, tell'. -/
-def giu : CTPEntry :=
-  { jyutping := "giu3", hanzi := "叫", gloss := "ask, tell", ctpClass := .manipulative }
+def giu : Verb :=
+  { form := "giu3", hanzi := "叫", ctpClass := .manipulative, frames := [Frame.infinitival] }
 
 /-- *daasyun* 打算 'intend, plan'. -/
-def daasyun : CTPEntry :=
-  { jyutping := "daa2syun3", hanzi := "打算", gloss := "intend, plan", ctpClass := .desiderative }
+def daasyun : Verb :=
+  { form := "daa2syun3", hanzi := "打算", ctpClass := .desiderative,
+    frames := [Frame.infinitival], passivizable := false, opaqueContext := true,
+    attitude := some (.preferential (.degreeComparison .positive)) }
 
 /-- *seon* 信 'believe'. -/
-def seon : CTPEntry :=
-  { jyutping := "seon3", hanzi := "信", gloss := "believe", ctpClass := .propAttitude }
+def seon : Verb :=
+  { form := "seon3", hanzi := "信", ctpClass := .propAttitude, frames := [Frame.finiteClause],
+    passivizable := false, opaqueContext := true, attitude := some (.doxastic .veridical) }
 
 /-- *gong* 講 'say'. -/
-def gong : CTPEntry :=
-  { jyutping := "gong2", hanzi := "講", gloss := "say", ctpClass := .utterance }
+def gong : Verb :=
+  { form := "gong2", hanzi := "講", ctpClass := .utterance, frames := [Frame.finiteClause],
+    speechActVerb := true }
 
-/-- *geidak* 記得 'remember'. -/
-def geidak : CTPEntry :=
-  { jyutping := "gei3dak1", hanzi := "記得", gloss := "remember", ctpClass := .knowledge }
+/-- *geidak* 記得 'remember', a factive. -/
+def geidak : Verb :=
+  { form := "gei3dak1", hanzi := "記得", ctpClass := .knowledge, frames := [Frame.finiteClause],
+    passivizable := false, presupType := some .softTrigger }
 
-/-- The predicates. -/
-def all : List CTPEntry := [soeng, hyun, bik, giu, daasyun, seon, gong, geidak]
+/-- The verbs. -/
+def all : List Verb := [soeng, hyun, bik, giu, daasyun, seon, gong, geidak]
 
 end Cantonese.Predicates

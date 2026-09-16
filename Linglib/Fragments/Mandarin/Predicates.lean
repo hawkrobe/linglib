@@ -12,17 +12,13 @@ namespace Mandarin.Predicates
 
 open ArgumentStructure
 
-/-- Mandarin verb entry: extends Verb with no inflectional morphology
-    (Mandarin is an isolating language). -/
-structure MandarinVerbEntry extends Verb where
+/-- A Mandarin verb: the cross-linguistic core with no inflectional fields, Mandarin being
+isolating. -/
+structure Verb extends _root_.Verb where
   deriving Repr, BEq
 
-/-- Smart constructor: sets only the citation form (no inflection). -/
-def MandarinVerbEntry.mk' (core : Verb) : MandarinVerbEntry :=
-  { toVerb := core }
-
 /-- 期待 "qidai" — look forward to (Class 1: positive, non-C-distributive, takes questions). -/
-def qidai : MandarinVerbEntry := .mk' {
+def qidai : Verb := {
   form := "qidai"
   frames := [Frame.finiteClause]
   passivizable := false
@@ -30,7 +26,7 @@ def qidai : MandarinVerbEntry := .mk' {
   attitude := some (.preferential (.relevanceBased .positive)) }
 
 /-- 担心 "danxin" — worry (Class 1: negative, non-C-distributive). -/
-def danxin : MandarinVerbEntry := .mk' {
+def danxin : Verb := {
   form := "danxin"
   frames := [Frame.finiteClause]
   passivizable := false
@@ -38,7 +34,7 @@ def danxin : MandarinVerbEntry := .mk' {
   attitude := some (.preferential .uncertaintyBased) }
 
 /-- 希望 "xiwang" — hope (Class 3: positive, C-distributive, anti-rogative). -/
-def xiwang : MandarinVerbEntry := .mk' {
+def xiwang : Verb := {
   form := "xiwang"
   frames := [Frame.finiteClause]
   passivizable := false
@@ -46,7 +42,7 @@ def xiwang : MandarinVerbEntry := .mk' {
   attitude := some (.preferential (.degreeComparison .positive)) }
 
 /-- 害怕 "haipa" — fear (Class 2: negative, C-distributive, takes questions). -/
-def haipa : MandarinVerbEntry := .mk' {
+def haipa : Verb := {
   form := "haipa"
   frames := [Frame.finiteClause]
   passivizable := false
@@ -58,7 +54,7 @@ def haipa : MandarinVerbEntry := .mk' {
 A nonveridical doxastic attitude. [glass-2025] analyzes its weak
 contrafactive postsupposition (◇¬p, not derivable from veridicality alone);
 that paper-specific apparatus lives in `Glass2025`, not on this entry. -/
-def yiwei : MandarinVerbEntry := .mk' {
+def yiwei : Verb := {
   form := "yiwei"
   frames := [Frame.finiteClause]
   passivizable := false
@@ -66,7 +62,7 @@ def yiwei : MandarinVerbEntry := .mk' {
   attitude := some (.doxastic .nonVeridical) }
 
 /-- 认为 "rènwéi" — think, hold the view that: the neutral nonveridical doxastic verb. -/
-def renwei : MandarinVerbEntry := .mk' {
+def renwei : Verb := {
   form := "renwei"
   frames := [Frame.finiteClause]
   passivizable := false
@@ -80,7 +76,7 @@ dynamicity of the complements each predicate selects are the analysis of [liu-yi
 in `Studies/LiuYip2026.lean`. -/
 
 /-- 想 *xiang* 'want' — desiderative; nonfinite-taking. [liu-yip-2026]. -/
-def xiang : MandarinVerbEntry := .mk' {
+def xiang : Verb := {
   form := "xiang"
   frames := [Frame.infinitival]
   passivizable := false
@@ -88,7 +84,7 @@ def xiang : MandarinVerbEntry := .mk' {
   attitude := some (.preferential (.degreeComparison .positive)) }
 
 /-- 让 *rang* 'let' — manipulative; nonfinite-taking. [liu-yip-2026]. -/
-def rang : MandarinVerbEntry := .mk' {
+def rang : Verb := {
   form := "rang"
   frames := [Frame.infinitival]
   passivizable := false
@@ -96,7 +92,7 @@ def rang : MandarinVerbEntry := .mk' {
 
 /-- 相信 *xiangxin* 'believe' — propositional attitude; finite-taking
     (CP-only). [liu-yip-2026]. -/
-def xiangxin : MandarinVerbEntry := .mk' {
+def xiangxin : Verb := {
   form := "xiangxin"
   frames := [Frame.finiteClause]
   passivizable := false
@@ -104,21 +100,21 @@ def xiangxin : MandarinVerbEntry := .mk' {
   attitude := some (.doxastic .veridical) }
 
 /-- 劝 *quan* 'urge' — manipulative; nonfinite-taking. [liu-yip-2026]. -/
-def quan : MandarinVerbEntry := .mk' {
+def quan : Verb := {
   form := "quan"
   frames := [Frame.infinitival]
   passivizable := true
   opaqueContext := false }
 
 /-- 逼 *bi* 'force' — manipulative; nonfinite-taking [liu-yip-2026]. -/
-def bi : MandarinVerbEntry := .mk' {
+def bi : Verb := {
   form := "bi"
   frames := [Frame.infinitival]
   passivizable := true
   opaqueContext := false }
 
 /-- 打算 *dasuan* 'plan' — desiderative; nonfinite-taking [liu-yip-2026]. -/
-def dasuan : MandarinVerbEntry := .mk' {
+def dasuan : Verb := {
   form := "dasuan"
   frames := [Frame.infinitival]
   passivizable := false
@@ -126,17 +122,17 @@ def dasuan : MandarinVerbEntry := .mk' {
   attitude := some (.preferential (.degreeComparison .positive)) }
 
 /-- 设法 *shefa* 'try' — achievement; nonfinite-taking [liu-yip-2026]. -/
-def shefa : MandarinVerbEntry := .mk' {
+def shefa : Verb := {
   form := "shefa"
   frames := [Frame.infinitival]
   passivizable := false
   opaqueContext := false }
 
-def allVerbs : List MandarinVerbEntry :=
+def allVerbs : List Verb :=
   [qidai, danxin, xiwang, haipa, yiwei, renwei,
    xiang, rang, xiangxin, quan, bi, dasuan, shefa]
 
-def lookup (form : String) : Option MandarinVerbEntry :=
+def lookup (form : String) : Option Verb :=
   allVerbs.find? (·.form == form)
 
 end Mandarin.Predicates
