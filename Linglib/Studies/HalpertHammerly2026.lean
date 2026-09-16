@@ -1,4 +1,4 @@
-import Linglib.Syntax.Agreement.ContainmentPair
+import Linglib.Core.Order.UpperLower.Finset
 import Linglib.Syntax.Person.Features
 import Linglib.Fragments.Xhosa.Nouns
 import Linglib.Syntax.Minimalist.Probe.Basic
@@ -155,25 +155,8 @@ abbrev AnimacyFeatures := Finset AnimacyFeature
 
 namespace AnimacyFeatures
 
-/-- The animacy features as the two features of a containment pair, [Animate] the outer and
-[Human] the inner. -/
-def featureEquiv : AnimacyFeature ≃ Agreement.ContainmentPair.Feature where
-  toFun
-    | .animate => .outer
-    | .human => .inner
-  invFun
-    | .outer => .animate
-    | .inner => .human
-  left_inv f := by cases f <;> rfl
-  right_inv f := by cases f <;> rfl
-
-/-- The features as a containment pair. -/
-def featuresEquiv : AnimacyFeatures ≃ Agreement.ContainmentPair := featureEquiv.finsetCongr
-
-instance : Agreement.ContainmentPairLike AnimacyFeatures := .ofEquiv featuresEquiv
-
 /-- Coherence: [+Human] entails [+Animate] (footnote 10). -/
-abbrev WellFormed (af : AnimacyFeatures) : Prop := Agreement.ContainmentPairLike.WellFormed af
+abbrev WellFormed (af : AnimacyFeatures) : Prop := IsLowerSet (↑af : Set AnimacyFeature)
 
 /-- The features as a specification of the [Animate] and [Human] features of (3). -/
 def spec (af : AnimacyFeatures) : Spec := fun q ↦

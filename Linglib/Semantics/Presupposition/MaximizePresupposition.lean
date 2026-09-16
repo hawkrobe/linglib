@@ -160,7 +160,7 @@ theorem markedness_selects_weakest {C : Type*} [DecidableEq C] (candidates : Lis
 
 The containment-pair cells with `specLevel` as strength are an instance of the competition:
 a cell denotes a domain restriction, which asserts nothing, and the strength ordering is domain
-containment (`ContainmentPair.dom_subset_of_specLevel_le`). -/
+containment (`IsLowerSet.inf_le_inf_of_card_le`). -/
 
 /-- The φ-feature Maximize Presupposition constraint: `mpConstraintOf` at `specLevel`. -/
 def phiMP : Constraint ContainmentPair :=

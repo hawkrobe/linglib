@@ -47,13 +47,11 @@ open Agreement Constraints OptimalityTheory
 
 /-! ### The recruited values are the least specified cells (§4.1) -/
 
-/-- The plural is the least specified number cell (54). -/
-theorem plural_toPair : ContainmentPairLike.toPair Number.pluralF = ContainmentPair.minimal :=
-  rfl
+/-- The plural is the least specified number cell, the empty bundle (54). -/
+theorem plural_eq_bot : Number.pluralF = ⊥ := rfl
 
-/-- The third person is the least specified person cell (55). -/
-theorem third_toPair : ContainmentPairLike.toPair Person.thirdF = ContainmentPair.minimal :=
-  rfl
+/-- The third person is the least specified person cell, the empty bundle (55). -/
+theorem third_eq_bot : Person.thirdF = ⊥ := rfl
 
 /-! ### The Taboo of Directness and Maximize Presupposition! (§4.2) -/
 
