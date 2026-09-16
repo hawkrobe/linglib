@@ -138,14 +138,14 @@ abbrev nonMasculine : Set (Finset ReferentGender) := {s | ∀ r ∈ s, r ≠ .ma
 /-- Neuter agreement presupposes that every conjunct is genderless. -/
 abbrev genderless : Set (Finset ReferentGender) := {s | ∀ r ∈ s, r = .inanimate}
 
-/-- Sauerland's sorting of a coordination by its conjuncts. -/
-instance sorts : Gender.Sorts (Finset ReferentGender) := ⟨nonMasculine, genderless⟩
+/-- The natural gender of a coordination, read off its conjuncts. -/
+instance naturalGender : NaturalGender (Finset ReferentGender) := ⟨nonMasculine, genderless⟩
 
-@[simp] theorem sorts_female : Gender.Sorts.female (E := Finset ReferentGender) = nonMasculine :=
-  rfl
+@[simp] theorem naturalGender_female :
+    NaturalGender.female (E := Finset ReferentGender) = nonMasculine := rfl
 
-@[simp] theorem sorts_inanimate :
-    Gender.Sorts.inanimate (E := Finset ReferentGender) = genderless := rfl
+@[simp] theorem naturalGender_inanimate :
+    NaturalGender.inanimate (E := Finset ReferentGender) = genderless := rfl
 
 /-- *Jan a Věra*, *Matka a její dítě* and *Otec a jeho dítě*, as the sums of their conjuncts. -/
 def janVera : Finset ReferentGender := {.male, .female}
@@ -162,7 +162,7 @@ theorem czech_gender :
       otecDite ∉ Gender.dom (some .feminine) ∧
       otecDite ∈ Gender.dom (some .masculine) := by
   simp only [Gender.mem_dom_feminine, Gender.mem_dom_neuter, Gender.dom_masculine, Set.mem_univ,
-    and_true, sorts_female, sorts_inanimate]
+    and_true, naturalGender_female, naturalGender_inanimate]
   decide
 
 /-! ### Politeness -/

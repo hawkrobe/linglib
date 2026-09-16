@@ -29,7 +29,7 @@ The φ-domain reads the entry's referential person and number
 features, so a polite pronoun that agrees as third plural presupposes its addressee
 (`PersonalPronoun.phiDom_congr`). The speaker and the addressee are the agent and the addressee
 of the context of utterance (`Reference.Context`), and the female and the inanimate referents
-are the sorts the entity domain comes equipped with (`Gender.Sorts`).
+are the natural gender the entity domain comes equipped with (`NaturalGender`).
 
 ## References
 
@@ -41,7 +41,7 @@ open Reference
 
 namespace PersonalPronoun
 
-variable {E W P T : Type*} [PartialOrder E] [Gender.Sorts E] (e : PersonalPronoun) (i : ℕ)
+variable {E W P T : Type*} [PartialOrder E] [NaturalGender E] (e : PersonalPronoun) (i : ℕ)
   (c : Context W E P T)
 
 /-- The φ-domain of a pronoun entry over an entity domain `E`: the person domain of its

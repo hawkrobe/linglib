@@ -19,7 +19,7 @@ Principle as a consequence of the privative geometry rather than a stipulation. 
 number and gender values denote through their bundles (`Person.dom`, `Number.dom`,
 `Gender.dom`), person at parthood of the agent and the addressee of the context of utterance
 (`Reference.Context`), number at atomicity, gender at the female and the inanimate sorts the
-entity domain comes equipped with (`Gender.Sorts`), the three columns of one skeleton
+entity domain comes equipped with (`NaturalGender`), the three columns of one skeleton
 [harbour-2016]; an absent feature, and a value without a bundle, the impersonal person, the
 numbers beyond the dual and the non-sex-based genders, denote the whole domain. The semantically
 unmarked values, third person, plural and masculine, are the minimal cells, and their
@@ -142,29 +142,30 @@ end Number
 
 /-! ### Gender -/
 
-namespace Gender
-
-/-- The sorts of an entity domain that the gender features presuppose: the female and the
-inanimate referents. -/
-class Sorts (E : Type*) where
-  /-- The female referents, presupposed by the feminine. -/
+/-- Natural gender on an entity domain: the female and the inanimate referents, which the
+feminine and the neuter presuppose. -/
+class NaturalGender (E : Type*) where
+  /-- The female referents. -/
   female : Set E
-  /-- The inanimate referents, presupposed by the neuter. -/
+  /-- The inanimate referents. -/
   inanimate : Set E
 
-variable {E : Type*} [Sorts E] (x : E)
+namespace Gender
 
-/-- The domain of an optional gender value over a sorted entity domain: neuter the inanimate
-referents, feminine the female ones, masculine everything; an absent feature and the
+variable {E : Type*} [NaturalGender E] (x : E)
+
+/-- The domain of an optional gender value over an entity domain with natural gender: neuter the
+inanimate referents, feminine the female ones, masculine everything; an absent feature and the
 non-sex-based genders restrict nothing. -/
 def dom (g : Option Gender) : Set E :=
-  (g.bind Features.fromGender).elim Set.univ (ContainmentPairLike.dom Sorts.inanimate Sorts.female)
+  (g.bind Features.fromGender).elim Set.univ
+    (ContainmentPairLike.dom NaturalGender.inanimate NaturalGender.female)
 
 @[simp] theorem dom_none : dom (E := E) none = Set.univ := rfl
 
-@[simp] theorem mem_dom_neuter : x ∈ dom (some .neuter) ↔ x ∈ Sorts.inanimate := Iff.rfl
+@[simp] theorem mem_dom_neuter : x ∈ dom (some .neuter) ↔ x ∈ NaturalGender.inanimate := Iff.rfl
 
-@[simp] theorem mem_dom_feminine : x ∈ dom (some .feminine) ↔ x ∈ Sorts.female := Iff.rfl
+@[simp] theorem mem_dom_feminine : x ∈ dom (some .feminine) ↔ x ∈ NaturalGender.female := Iff.rfl
 
 @[simp] theorem dom_masculine : dom (E := E) (some .masculine) = Set.univ := rfl
 

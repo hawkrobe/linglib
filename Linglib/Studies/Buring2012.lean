@@ -35,7 +35,7 @@ namespace Buring2012
 
 open English.Pronouns Presupposition
 
-variable {E P T : Type*} [PartialOrder E] [Gender.Sorts E] (e : PersonalPronoun) (g : Assignment E)
+variable {E P T : Type*} [PartialOrder E] [NaturalGender E] (e : PersonalPronoun) (g : Assignment E)
   (n : ℕ) (c : Reference.Context PUnit E P T) (scope : E → PUnit → Prop)
 
 /-- A pronoun denotes the value of its index under the assignment: its selector is the canonical
@@ -46,12 +46,13 @@ theorem selector_eq_assignment :
 
 /-- A feminine pronoun is undefined of a non-female referent: the feature does not assert that the
 referent is female, it presupposes it, so the denotation has no value at all when it fails. -/
-theorem undefined_of_non_female (hfem : e.gender = some .feminine) (h : g n ∉ Gender.Sorts.female) :
+theorem undefined_of_non_female (hfem : e.gender = some .feminine)
+    (h : g n ∉ NaturalGender.female) :
     ¬ ((e.denote n c).toPartialProp scope g).presup ⟨⟩ := by
   simp [hfem, h]
 
 /-- *She* is undefined of a male referent. -/
-theorem she_undefined_of_non_female (h : g n ∉ Gender.Sorts.female) :
+theorem she_undefined_of_non_female (h : g n ∉ NaturalGender.female) :
     ¬ ((she.denote n c).toPartialProp scope g).presup ⟨⟩ :=
   undefined_of_non_female she g n c scope rfl h
 
@@ -81,7 +82,7 @@ theorem they_defined_regardless_of_gender :
 
 /-- The two entries come apart exactly at the referents the gender feature excludes: where *she*
 has no value, *they* has one. -/
-theorem they_defined_where_she_undefined (h : g n ∉ Gender.Sorts.female) :
+theorem they_defined_where_she_undefined (h : g n ∉ NaturalGender.female) :
     ¬ ((she.denote n c).toPartialProp scope g).presup ⟨⟩ ∧
       ((they.denote n c).toPartialProp scope g).presup ⟨⟩ :=
   ⟨she_undefined_of_non_female g n c scope h,
