@@ -37,9 +37,11 @@ open Degree (ScalarDimension)
 
 /-! ### Comparison morphology -/
 
-/-- How a comparative/superlative grade is formed. -/
+/-- How a comparative or superlative grade is formed: by affixation or by a degree word.
+Suppletion is orthogonal, recorded by the root pattern `suppletion`; *better* is synthetic and
+suppletive. -/
 inductive Adjective.ComparisonStrategy
-  | synthetic | periphrastic | suppletive
+  | synthetic | periphrastic
   deriving DecidableEq, Repr, BEq
 
 /-- The comparison paradigm of an adjective: the comparative and superlative forms, how each
@@ -70,11 +72,10 @@ def periphrastic (comparative superlative : String) : Adjective.Comparison :=
   { formComp := comparative, formSuper := superlative
   , comparativeStrategy := .periphrastic, superlativeStrategy := .periphrastic }
 
-/-- Suppletive comparison: both graded forms on another root, in the given root pattern. -/
+/-- Synthetic comparison on another root, in the given root pattern: *good – better – best*. -/
 def suppletive (comparative superlative : String)
     (pattern : Morphology.Paradigm 3 ℕ := Morphology.Paradigm.abb) : Adjective.Comparison :=
-  { formComp := comparative, formSuper := superlative
-  , comparativeStrategy := .suppletive, superlativeStrategy := .suppletive, suppletion := pattern }
+  { formComp := comparative, formSuper := superlative, suppletion := pattern }
 
 end Adjective.Comparison
 

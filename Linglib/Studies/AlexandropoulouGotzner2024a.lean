@@ -64,7 +64,7 @@ instance : DecidablePred Cell.HasGap :=
 
 /-- The relative/absolute split of the cells is the Fragment's derived Kennedy class. -/
 theorem cell_classes :
-    large.adjectiveClass = .relativeGradable ∧ gigantic.adjectiveClass = .relativeGradable ∧
+    large.adjectiveClass = .relative ∧ gigantic.adjectiveClass = .relative ∧
     clean.adjectiveClass = .absoluteMaximum ∧ dirty.adjectiveClass = .absoluteMinimum ∧
     pristine.adjectiveClass = .absoluteMaximum ∧ filthy.adjectiveClass = .absoluteMinimum := by
   decide

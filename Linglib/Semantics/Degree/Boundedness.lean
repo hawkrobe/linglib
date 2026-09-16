@@ -48,8 +48,8 @@ scales may further approach a value without reaching it or be unbounded ([kenned
 fn. 28); the tag does not record that. -/
 inductive Boundedness where
   | open_        -- neither endpoint: *tall*
-  | lowerBounded -- a minimum, no maximum: *wet*
-  | upperBounded -- a maximum, no minimum: *dry*
+  | lowerClosed -- a minimum, no maximum: *wet*
+  | upperClosed -- a maximum, no minimum: *dry*
   | closed       -- both: *full*
   deriving DecidableEq, Repr, Fintype
 
@@ -59,21 +59,21 @@ namespace Boundedness
 
 /-- The scale has a minimum. -/
 def HasMin : Boundedness → Prop
-  | .lowerBounded | .closed => True
-  | .open_ | .upperBounded => False
+  | .lowerClosed | .closed => True
+  | .open_ | .upperClosed => False
 
 /-- The scale has a maximum. -/
 def HasMax : Boundedness → Prop
-  | .upperBounded | .closed => True
-  | .open_ | .lowerBounded => False
+  | .upperClosed | .closed => True
+  | .open_ | .lowerClosed => False
 
 instance : DecidablePred HasMin
-  | .open_ | .upperBounded => isFalse id
-  | .lowerBounded | .closed => isTrue trivial
+  | .open_ | .upperClosed => isFalse id
+  | .lowerClosed | .closed => isTrue trivial
 
 instance : DecidablePred HasMax
-  | .open_ | .lowerBounded => isFalse id
-  | .upperBounded | .closed => isTrue trivial
+  | .open_ | .lowerClosed => isFalse id
+  | .upperClosed | .closed => isTrue trivial
 
 /-- A boundedness is determined by which endpoints it has. -/
 @[ext] theorem ext {b c : Boundedness} (hmin : b.HasMin ↔ c.HasMin) (hmax : b.HasMax ↔ c.HasMax) :
@@ -88,8 +88,8 @@ variable {D : Type*}
 open Classical in
 /-- The boundedness of an order: which of a least and a greatest element it has. -/
 noncomputable def ofOrder (D : Type*) [LE D] : Boundedness :=
-  if ∃ m : D, IsBot m then if ∃ m : D, IsTop m then closed else lowerBounded
-  else if ∃ m : D, IsTop m then upperBounded else open_
+  if ∃ m : D, IsBot m then if ∃ m : D, IsTop m then closed else lowerClosed
+  else if ∃ m : D, IsTop m then upperClosed else open_
 
 section LE
 variable [LE D]
@@ -125,8 +125,8 @@ end OfOrder
 /-- The antonym's scale: the same degrees with the ends exchanged ([kennedy-2007] (60)). -/
 def dual : Boundedness → Boundedness
   | .open_ => .open_
-  | .lowerBounded => .upperBounded
-  | .upperBounded => .lowerBounded
+  | .lowerClosed => .upperClosed
+  | .upperClosed => .lowerClosed
   | .closed => .closed
 
 @[simp] theorem hasMin_dual {b : Boundedness} : b.dual.HasMin ↔ b.HasMax := by
@@ -149,13 +149,13 @@ of [kennedy-2007] (60) and [kennedy-mcnally-2005] measures on the order dual. -/
 
 /-- A least degree adjoined: the shape of the ray `Set.Ici a` (`ofOrder_Ici`). -/
 def withMin : Boundedness → Boundedness
-  | .open_ | .lowerBounded => .lowerBounded
-  | .upperBounded | .closed => .closed
+  | .open_ | .lowerClosed => .lowerClosed
+  | .upperClosed | .closed => .closed
 
 /-- A greatest degree adjoined: the shape of the ray `Set.Iic a` (`ofOrder_Iic`). -/
 def withMax : Boundedness → Boundedness
-  | .open_ | .upperBounded => .upperBounded
-  | .lowerBounded | .closed => .closed
+  | .open_ | .upperClosed => .upperClosed
+  | .lowerClosed | .closed => .closed
 
 @[simp] theorem hasMin_withMin (b : Boundedness) : b.withMin.HasMin := by cases b <;> trivial
 
@@ -199,8 +199,8 @@ end Ray
 /-- A linear order of each boundedness: the integers with the tagged endpoints adjoined. -/
 abbrev degreeShape : Boundedness → Type
   | .open_ => ℤ
-  | .lowerBounded => WithBot ℤ
-  | .upperBounded => WithTop ℤ
+  | .lowerClosed => WithBot ℤ
+  | .upperClosed => WithTop ℤ
   | .closed => WithTop (WithBot ℤ)
 
 instance instLinearOrderDegreeShape (b : Boundedness) : LinearOrder b.degreeShape := by
@@ -209,9 +209,9 @@ instance instLinearOrderDegreeShape (b : Boundedness) : LinearOrder b.degreeShap
 /-- `degreeShape` is a section of `ofOrder`: every boundedness is that of a linear order. -/
 @[simp] theorem ofOrder_degreeShape : ∀ b : Boundedness, ofOrder b.degreeShape = b
   | .open_ => ext (iff_of_false not_hasMin_ofOrder id) (iff_of_false not_hasMax_ofOrder id)
-  | .lowerBounded =>
+  | .lowerClosed =>
     ext (iff_of_true hasMin_ofOrder_of_orderBot trivial) (iff_of_false not_hasMax_ofOrder id)
-  | .upperBounded =>
+  | .upperClosed =>
     ext (iff_of_false not_hasMin_ofOrder id) (iff_of_true hasMax_ofOrder_of_orderTop trivial)
   | .closed =>
     ext (iff_of_true hasMin_ofOrder_of_orderBot trivial)

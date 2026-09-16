@@ -53,7 +53,7 @@ inductive PositiveStandard where
   /-- Upper-bounded / closed: θ = maximum (e.g., "full", "dry"). -/
   | maxEndpoint
   /-- Necessity standard: θ = minimum value for pursuit ([beltrama-2025]). -/
-  | functional
+  | necessity
   deriving DecidableEq, Repr
 
 /-- Whether the positive standard depends on contextual domain information.
@@ -68,20 +68,20 @@ def PositiveStandard.RequiresComparisonClass : PositiveStandard → Prop
   | .contextual  => True
   | .minEndpoint => False
   | .maxEndpoint => False
-  | .functional  => True
+  | .necessity  => True
 
 instance : DecidablePred PositiveStandard.RequiresComparisonClass
   | .contextual  => inferInstanceAs (Decidable True)
   | .minEndpoint => inferInstanceAs (Decidable False)
   | .maxEndpoint => inferInstanceAs (Decidable False)
-  | .functional  => inferInstanceAs (Decidable True)
+  | .necessity  => inferInstanceAs (Decidable True)
 
 /-- Kennedy's adjective classification by scale structure and standard
 type [kennedy-2007] [kennedy-mcnally-2005], plus a
 `nonGradable` case for adjectives outside the degree-based fragment. -/
 inductive AdjectiveClass where
   /-- Standard varies with comparison class — *tall*, *expensive*, *big*. -/
-  | relativeGradable
+  | relative
   /-- Threshold fixed at scale maximum — *full*, *straight*, *closed*, *dry*. -/
   | absoluteMaximum
   /-- Threshold fixed at scale minimum — *wet*, *bent*, *open*, *dirty*. -/
@@ -98,10 +98,10 @@ inductive AdjectiveClass where
 /-- Coarse two-way classification: relative vs absolute. Collapses
 `absoluteMaximum` and `absoluteMinimum`. -/
 def AdjectiveClass.IsRelative (c : AdjectiveClass) : Prop :=
-  c = .relativeGradable
+  c = .relative
 
 instance : DecidablePred AdjectiveClass.IsRelative :=
-  fun c => decEq c .relativeGradable
+  fun c => decEq c .relative
 
 
 /-- The positive-form standards Interpretive Economy admits for a scale ([kennedy-2007]
@@ -113,7 +113,7 @@ def Boundedness.Admits (b : Boundedness) : PositiveStandard → Prop
   | .contextual  => b = .open_
   | .minEndpoint => b.HasMin
   | .maxEndpoint => b.HasMax
-  | .functional  => False
+  | .necessity  => False
 
 instance (b : Boundedness) (s : PositiveStandard) : Decidable (b.Admits s) := by
   cases s <;> simp only [Boundedness.Admits] <;> infer_instance
@@ -123,8 +123,8 @@ preference: where one standard is admitted it is forced, and a totally closed sc
 maximum (a maximum standard entails a minimum one). -/
 def Boundedness.defaultStandard : Boundedness → PositiveStandard
   | .open_        => .contextual
-  | .lowerBounded => .minEndpoint
-  | .upperBounded => .maxEndpoint
+  | .lowerClosed => .minEndpoint
+  | .upperClosed => .maxEndpoint
   | .closed       => .maxEndpoint
 
 /-- The default standard is always admitted. -/
@@ -210,7 +210,7 @@ inductive SpatialConfigType where
     scale, differing only in pole). -/
 structure GradableAdjective extends Adjective where
   /-- Override the Kennedy default standard (the `good`/MPA residual: an open-shape
-      scale that nonetheless takes a functional/contextual standard, [beltrama-2025]).
+      scale that nonetheless takes a necessity or contextual standard, [beltrama-2025]).
       `none` = take the derived default. -/
   standardOverride : Option PositiveStandard := none
   /-- Lexical antonym's logical relation (contrary vs contradictory). -/
@@ -247,10 +247,10 @@ def adjectiveClass (g : GradableAdjective) : AdjectiveClass :=
   | none => .nonGradable
   | some _ =>
     match g.standard with
-    | .contextual  => .relativeGradable
+    | .contextual  => .relative
     | .minEndpoint => .absoluteMinimum
     | .maxEndpoint => .absoluteMaximum
-    | .functional  => .mildlyPositive
+    | .necessity  => .mildlyPositive
 
 /-- Comparison-class dependence — the relative/absolute distinction, derived. -/
 def IsRelative (g : GradableAdjective) : Prop := g.adjectiveClass.IsRelative
@@ -403,6 +403,6 @@ def predictedBinding : Degree.PositiveStandard → DimensionBindingType
   | .maxEndpoint  => .conjunctive
   | .minEndpoint  => .disjunctive
   | .contextual   => .mixed
-  | .functional   => .mixed   -- evaluative; context-dependent like contextual
+  | .necessity   => .mixed   -- evaluative; context-dependent like contextual
 
 end Degree

@@ -401,20 +401,20 @@ abbrev unpleasant := pleasantness.neg
     (necessity) standard ([beltrama-2025]), recorded via `standardOverride`. -/
 def decent : GradableAdjective :=
   { form := "decent", dimension := some .value, evaluativeValence := some .positive
-  , standardOverride := some .functional }
+  , standardOverride := some .necessity }
 
 /-- "acceptable" — mildly-positive adjective; open `.value` scale, functional
     standard ([beltrama-2025]). Deverbal *-able* form: the modal suffix
     contributes the functional standard. -/
 def acceptable : GradableAdjective :=
   { form := "acceptable", dimension := some .value, evaluativeValence := some .positive
-  , standardOverride := some .functional }
+  , standardOverride := some .necessity }
 
 /-- "adequate" — mildly-positive adjective; open `.value` scale, functional
     (necessity) standard ([beltrama-2025]). -/
 def adequate : GradableAdjective :=
   { form := "adequate", dimension := some .value, evaluativeValence := some .positive
-  , standardOverride := some .functional }
+  , standardOverride := some .necessity }
 
 /-! ## Deadjectival intensifier bases ([nouwen-2024])
 

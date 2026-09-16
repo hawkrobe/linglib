@@ -77,8 +77,8 @@ abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
   | .openness | .curvature | .cracking | .denting | .scratching | .boiling
   | .alive | .freedom | .fullness | .shattering | .tightness | .pregnancy => .closed
   | .straightness | .flatness | .cleanliness | .purity | .smoothness | .safety
-  | .confidence => .upperBounded
-  | .wetness => .lowerBounded
+  | .confidence => .upperClosed
+  | .wetness => .lowerClosed
   | .height | .width | .length | .weight | .thickness | .depth | .speed
   | .strength | .age | .generalSize | .temperature | .brightness | .volume
   | .happiness | .cost | .price | .quality | .value | .danger | .beauty
@@ -127,15 +127,15 @@ theorem ScalarDimension.hasGreatest_degree_iff (d : ScalarDimension) :
     greatest degree gives a telic reading ([kennedy-levin-2008]). -/
 def ScalarDimension.defaultTelicity (d : ScalarDimension) : Telicity :=
   match d.boundedness with
-  | .closed | .upperBounded => .telic
-  | .open_ | .lowerBounded => .atelic
+  | .closed | .upperClosed => .telic
+  | .open_ | .lowerClosed => .atelic
 
 /-- Default Vendler class: degree achievements are dynamic and durative, so a
     closed scale gives an accomplishment, an open one an activity. -/
 def ScalarDimension.defaultVendlerClass (d : ScalarDimension) : VendlerClass :=
   match d.boundedness with
-  | .closed | .upperBounded => .accomplishment
-  | .open_ | .lowerBounded => .activity
+  | .closed | .upperClosed => .accomplishment
+  | .open_ | .lowerClosed => .activity
 
 /-- **The Kennedy–Levin thesis as a theorem.** `defaultTelicity` is exactly the
     order-theoretic fact: a degree achievement is telic iff its scale's degree type
