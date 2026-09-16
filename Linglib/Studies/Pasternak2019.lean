@@ -25,10 +25,10 @@ monotonic.
 
 ## Implementation notes
 
-The zero-degree amendment to the than-clause set and the reduction of a comparative to its
-greatest witnesses under a monotone measure live in `Semantics/Degree/Quantifier`
-(`maxComparativeZero`, `maxComparative_of_isGreatest`); the part-whole order on eventualities
-is the event mereology of `Semantics/Events/Basic`. The two-dimensional state ontology that
+The reduction of a comparative to its greatest witnesses under a monotone measure is
+`Degree.maxComparative_of_isGreatest`; the zero-degree amendment to the than-clause set is the
+paper's own (`thanDegreesZero`); the part-whole order on eventualities is the event mereology
+of `Semantics/Events/Basic`. The two-dimensional state ontology that
 grounds the salient part-whole relation, the Mandarin data, and the desire predicates are not
 formalized.
 
@@ -111,18 +111,26 @@ section Zero
 
 variable [Zero D] (v frame)
 
+/-- The than-clause degree set with the scale's zero degree added (62): its maximum exists even
+without a than-clause witness. -/
+def thanDegreesZero (Pthan : Event T → Prop) : Set D :=
+  insert 0 (thanDegrees Pthan v.μint)
+
 /-- The intensity comparative with the zero degree added to the than-clause set (62). -/
 def intensityComparativeZero (α β x y : Entity) : Prop :=
-  maxComparativeZero (themed v frame α x) (themed v frame β y) v.μint
+  ∃ δ, IsGreatest (thanDegreesZero v (themed v frame β y)) δ ∧
+    ∃ e, themed v frame α x e ∧ δ < v.μint e
 
 variable {v frame}
 
-/-- The than-clause positive is not entailed (63): with the zero degree the comparative is
-consistent with there being no `β`-eventuality at all. -/
+/-- The than-clause positive is not entailed (63): with no `β`-eventuality of positive
+intensity the comparative holds of any `α`-eventuality of positive intensity, *Jack admires the
+chairman more than Jill does; in fact, Jill doesn't admire him at all*. -/
 theorem intensityComparativeZero_of_none {e : Event T} (he : themed v frame α x e)
     (hpos : 0 < v.μint e) (hβ : ∀ e', themed v frame β y e' → v.μint e' ≤ 0) :
     intensityComparativeZero v frame α β x y :=
-  maxComparativeZero_of_forall_le_zero he hpos hβ
+  ⟨0, ⟨Set.mem_insert _ _, λ _ hd => (Set.mem_insert_iff.1 hd).elim le_of_eq
+    λ ⟨e', he', hle⟩ => hle.trans (hβ e' he')⟩, e, he, hpos⟩
 
 end Zero
 
