@@ -4,6 +4,7 @@ import Linglib.Fragments.Ndebele.Clause
 import Linglib.Fragments.NezPerce.Clause
 import Linglib.Data.Examples.Deal2026
 import Linglib.Studies.BochnakHanink2021
+import Linglib.Syntax.Category.Verb.Complement.Takes
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 
 /-!
@@ -24,8 +25,9 @@ or not. The Nez Perce embedding strategy is read off the paper's judgments, the 
 complement of it carries the *yox̂ ke* edge (`RelativeEmbedding`). Every relative embedding
 is factive (`relative_factive`), factivity being the Fragment entries' [karttunen-1971] class,
 which the projection trials (33)–(36) and (68) confirm row by row (`projection_rows`). The
-Adyghe and Bulgarian Ā flags come from their Fragments' relativizer observables, the shells
-from the spines, and the case half of the diagnostic (21) that *yox̂* is a D from the
+Adyghe Ā flag is that 'think' takes the Fragment's *ze-re-* typer, the Bulgarian one is
+[krapova-2010]'s double requirement over the Fragment's frames (`DetoComplement`), the shells
+come from the spines, and the case half of the diagnostic (21) that *yox̂* is a D from the
 Fragment's relative-pronoun paradigm.
 
 ## Implementation notes
@@ -84,7 +86,7 @@ def RelativeEmbedding (v : NezPerce.Verb) : Prop :=
 instance (v : NezPerce.Verb) : Decidable (RelativeEmbedding v) :=
   inferInstanceAs (Decidable (∃ row ∈ Examples.all, _))
 
-/-- A predicate's strategy: relative when it embeds relatively, simplex otherwise. Both
+/-- A predicate's strategy is relative when it embeds relatively and simplex otherwise. Both
 strategies select a CP; the contrast is internal to the clause selected. -/
 def strategy (v : NezPerce.Verb) : EmbeddingStrategy :=
   if RelativeEmbedding v then .relative else .simplex
@@ -101,8 +103,8 @@ theorem relative_factive :
     ∀ v ∈ verbs, strategy v = .relative → v.toVerb.factivePresup = true := by
   decide
 
-/-- The projection trials (33)–(36) and (68): consultants endorse the complement under negation,
-in a question or in a conditional antecedent exactly for the factive predicates. -/
+/-- Consultants endorse the complement under negation, in a question or in a conditional
+antecedent exactly for the factive predicates, the projection trials (33)–(36) and (68). -/
 theorem projection_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "projection" →
       ∀ v ∈ verbs, row.feature? "verb" = some v.form →
@@ -124,20 +126,36 @@ def nezPerce (v : NezPerce.Verb) : Cell := ⟨ClauseSpine.cP, strategy v == .rel
 def englishThink : Cell := ⟨ClauseSpine.cP, false⟩
 
 /-- The Adyghe relative embedding of (43), V D N CP with an Ā-dependency, the flag from the
-Fragment: 'think' requires the relativizer and the high applicative *ze-re-* on its tensed
+Fragment: 'think' takes the relativizer *ze-* with the applicative *re-* on its tensed
 complement ([caponigro-polinsky-2011]). -/
 def adygheRelative : Cell :=
-  ⟨ClauseSpine.cP.extend [.N, .D], Adyghe.Clause.gwepshesa.highApplicative == .required⟩
+  ⟨ClauseSpine.cP.extend [.N, .D], decide (Adyghe.gwepshesa.toVerb.takes Adyghe.zeRe)⟩
+
+/-- [krapova-2010]'s double requirement, reported at footnote 22: *deto* introduces the
+complement of a predicate that is an emotive factive and takes a *za* phrase. -/
+def DetoComplement (v : Bulgarian.Verb) : Prop :=
+  v.factivity = some .emotive ∧ ∃ fr ∈ v.frames, Complement.Position.adpositional ∈ fr
+
+instance (v : Bulgarian.Verb) : Decidable (DetoComplement v) :=
+  inferInstanceAs (Decidable (_ ∧ ∃ fr ∈ v.frames, _))
+
+/-- The double requirement picks out exactly the predicates Krapova lists as *deto*-takers, and
+neither condition suffices: *văzmuštavam se* 'resent' is emotive without a *za* phrase, and
+*razbiram* 'comprehend' is factive without being emotive. -/
+theorem detoComplement_iff :
+    (∀ v ∈ Bulgarian.verbs, DetoComplement v ↔ v.form ∈ Bulgarian.detoTakers.map (·.form)) ∧
+      ¬ DetoComplement Bulgarian.vazmushtavamSe ∧ ¬ DetoComplement Bulgarian.razbiram := by
+  decide
 
 /-- English N complementation, *the fact that S*: V D N CP without an Ā-dependency, the DP
 shell with an N co-argument of [hankamer-mikkelsen-2021]. -/
 def englishNComplementation : Cell := ⟨ClauseSpine.cP.extend [.N, .D], false⟩
 
 /-- The Bulgarian relative embedding of (49), V P D CP with an Ā-dependency, the flag from the
-Fragment: *săžaljavam* 'regret' takes the *deto* complement [krapova-2010] analyzes as a hidden
-relative. -/
+Fragment: *săžaljavam* 'regret' meets the double requirement, so it takes the *deto*
+complement [krapova-2010] analyzes as a hidden relative. -/
 def bulgarianRelative : Cell :=
-  ⟨ClauseSpine.cP.extend [.D, .P], Bulgarian.Clause.sazhaljavam.deto == .alternating⟩
+  ⟨ClauseSpine.cP.extend [.D, .P], decide (DetoComplement Bulgarian.sazhaljavam)⟩
 
 /-- The Ndebele embedding of (78), V P D CP without an Ā-dependency: the preposition *nga*
 'about' over the class-15 augment [pietraszko-2019] takes as a D over *kuthi*. -/
@@ -173,7 +191,7 @@ theorem table80 :
     (∃ v ∈ verbs, v.toVerb.factivePresup = true ∧ strategy v = .relative) ∧
       (∃ v ∈ verbs, v.toVerb.factivePresup = true ∧ strategy v = .simplex) ∧
       (∃ v ∈ verbs, v.toVerb.factivePresup = false ∧ strategy v = .simplex) ∧
-      (∃ v ∈ Adyghe.Clause.relativeTakers, v.factive = some false) := by
+      (∃ v ∈ Adyghe.verbs, v.toVerb.takes Adyghe.zeRe ∧ v.toVerb.factivePresup = false) := by
   decide
 
 /-! ### The D-inflection diagnostic (21) -/
