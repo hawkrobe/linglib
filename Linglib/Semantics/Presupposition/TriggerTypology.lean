@@ -27,9 +27,12 @@ namespace Presupposition
 [abusch-2010]: hard triggers always project (*too*, *again*, *also*), soft triggers project
 context-sensitively (*stop*, *know*), and an implicative presupposes a prerequisite. -/
 inductive TriggerType where
-  | hardTrigger        -- Projective in all contexts
-  | softTrigger        -- Factive: complement truth presupposed, locally accommodatable
-  | prerequisiteSoft   -- Prerequisite: causal prerequisite presupposed ([nadathur-2023-implicatives])
+  /-- Projective in every context. -/
+  | hardTrigger
+  /-- A factive or change-of-state trigger, locally accommodatable. -/
+  | softTrigger
+  /-- An implicative, presupposing its causal prerequisite ([nadathur-2023-implicatives]). -/
+  | prerequisiteSoft
   deriving DecidableEq, Repr
 
 /-- Is this trigger locally accommodatable (soft)?
