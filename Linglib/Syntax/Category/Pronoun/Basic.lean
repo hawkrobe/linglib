@@ -8,6 +8,7 @@ import Linglib.Syntax.Person.Clusivity
 import Linglib.Syntax.Binding.CoreferenceStatus
 import Linglib.Syntax.Person.Decomposition
 import Linglib.Morphology.Word.Basic
+import Linglib.Syntax.Agreement.Phi
 import Mathlib.Data.Option.NAry
 
 open Morphology (Word)
@@ -158,6 +159,16 @@ structure Pronoun where
 def Pronoun.categories (p : Pronoun) : Finset Person.Category :=
   (Option.map₂ Person.Category.ofPersonNumber p.person p.number).getD ∅
 
+/-- The bundle a pronoun bears: its person, number, gender and case. -/
+def Pronoun.phi (p : Pronoun) : Agreement.Bundle
+  | .person => p.person
+  | .number => p.number
+  | .gender => p.gender
+  | .case => p.case_
+  | .definiteness => ⊥
+
+instance : HasPhi Pronoun := ⟨Pronoun.phi⟩
+
 /-- Cross-linguistic *personal/referential* pronoun: the general `Pronoun` object
 (form + φ-features) plus the register and the referential categories specific to deictic
 pronouns. Covers personal pronouns across all Fragment languages;
@@ -249,6 +260,8 @@ instance (p : Pronoun) : Decidable p.WellFormed := by
   unfold WellFormed; infer_instance
 
 /-! ### Lexical entry schemas ([alok-bhalla-2026]) -/
+
+instance : HasPhi PersonalPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
 
 /-- Cross-linguistic allocutive marker entry.
 

@@ -42,7 +42,7 @@ structure DemonstrativePronoun extends Pronoun where
   deriving Repr, DecidableEq
 
 /-- A demonstrative pronoun bears φ via its `Pronoun` core. -/
-instance : HasPhi DemonstrativePronoun := ⟨fun d => d.toPronoun.toWord.phi⟩
+instance : HasPhi DemonstrativePronoun := ⟨fun d ↦ d.toPronoun.phi⟩
 
 instance : Proform DemonstrativePronoun := ⟨fun d => Proform.Domain d.toPronoun⟩
 

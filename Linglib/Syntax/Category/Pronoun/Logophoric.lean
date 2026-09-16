@@ -48,7 +48,7 @@ structure LogophoricPronoun extends Pronoun where
   deriving Repr, DecidableEq
 
 /-- A logophoric pronoun bears φ via its `Pronoun` core. -/
-instance : HasPhi LogophoricPronoun := ⟨fun p => p.toPronoun.toWord.phi⟩
+instance : HasPhi LogophoricPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
 
 instance : Proform LogophoricPronoun := ⟨fun p => Proform.Domain p.toPronoun⟩
 

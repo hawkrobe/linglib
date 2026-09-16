@@ -41,14 +41,7 @@ is a theory question for study files.
 
 open Morphology (Word)
 
-/-! ### φ instances and the pro-form -/
-
-instance : HasPhi Pronoun := ⟨fun p => p.toWord.phi⟩
-instance : HasPhi PersonalPronoun := ⟨fun p => p.toPronoun.toWord.phi⟩
-
-/-- A pronoun agrees exactly as its projected word does. -/
-theorem HasPhi.agree_toWord {β : Type*} [HasPhi β] (p : Pronoun) (b : β) :
-    HasPhi.Agree p b ↔ HasPhi.Agree p.toWord b := Iff.rfl
+/-! ### The pro-form -/
 
 /-- A pro-form takes its antecedents from a fixed form-class — its *domain*
 (the notion originates with [bloomfield-1933]'s substitutes). -/

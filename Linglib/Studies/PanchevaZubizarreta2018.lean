@@ -202,46 +202,40 @@ theorem family_logophoric_assignments :
 
 /-! ### The paper's examples (§4) -/
 
-/-- The person of a clitic entry, undefined only for the impersonal value that object clitics
-never bear. -/
-private def cliticLevel? : UD.Person → Option Person
-  | .zero => none
-  | p => some (Person.fromUD p)
-
 /-- Italian dative *gli* is third person and accusative *ti* second, so the weak PCC bans the
 pair. -/
 theorem italian_weak_glidat_tiacc :
-    cliticLevel? Italian.Pronouns.gli_dat.person = some .third ∧
-      cliticLevel? Italian.Pronouns.ti_acc.person = some .second ∧
+    Italian.Pronouns.gli_dat.person = .third ∧
+      Italian.Pronouns.ti_acc.person = .second ∧
       ¬ IsLicit weakGrammar .third .second :=
   ⟨rfl, rfl, by decide⟩
 
 /-- Italian *ti la*, second-person dative over third-person accusative, is licit. -/
 theorem italian_weak_tidat_lacl :
-    cliticLevel? Italian.Pronouns.ti_dat.person = some .second ∧
-      cliticLevel? Italian.Pronouns.la_cl.person = some .third ∧
+    Italian.Pronouns.ti_dat.person = .second ∧
+      Italian.Pronouns.la_cl.person = .third ∧
       IsLicit weakGrammar .second .third :=
   ⟨rfl, rfl, by decide⟩
 
 /-- Spanish *te me* (23), second-person dative over first-person accusative, is licit in the
 weak variety. -/
 theorem spanish_weak_tedat_meacc :
-    cliticLevel? Spanish.Clitics.te_dat.person = some .second ∧
-      cliticLevel? Spanish.Clitics.me_acc.person = some .first ∧
+    Spanish.Clitics.te_dat.person = .second ∧
+      Spanish.Clitics.me_acc.person = .first ∧
       IsLicit weakGrammar .second .first :=
   ⟨rfl, rfl, by decide⟩
 
 /-- Spanish *me te*, first-person dative over second-person accusative, is licit as well. -/
 theorem spanish_weak_medat_teacc :
-    cliticLevel? Spanish.Clitics.me_dat.person = some .first ∧
-      cliticLevel? Spanish.Clitics.te_acc.person = some .second ∧
+    Spanish.Clitics.me_dat.person = .first ∧
+      Spanish.Clitics.te_acc.person = .second ∧
       IsLicit weakGrammar .first .second :=
   ⟨rfl, rfl, by decide⟩
 
 /-- Spanish *me le* (24), third-person dative over first-person accusative, is banned. -/
 theorem spanish_weak_ledat_meacc_banned :
-    cliticLevel? Spanish.Clitics.le_dat.person = some .third ∧
-      cliticLevel? Spanish.Clitics.me_acc.person = some .first ∧
+    Spanish.Clitics.le_dat.person = .third ∧
+      Spanish.Clitics.me_acc.person = .first ∧
       ¬ IsLicit weakGrammar .third .first :=
   ⟨rfl, rfl, by decide⟩
 
