@@ -253,23 +253,19 @@ def ModalVerb.aux : ModalVerb → Auxiliary
   | .should => English.Auxiliaries.should
   | .must => English.Auxiliaries.must
 
-/-- The epistemic force of an auxiliary in the fragment, if it has an epistemic reading. -/
-def epistemicForce (a : Auxiliary) : Option ModalForce :=
-  (a.modality.filter (·.flavor == .epistemic)).head?.map (·.force)
+/-- The epistemic forces of each modal verb, read off the fragment. -/
+def ModalVerb.forces (v : ModalVerb) : Finset ModalForce := v.aux.toModalItem.forcesOf .epistemic
 
-/-- The force of each modal verb, read off the fragment. -/
-def ModalVerb.force (v : ModalVerb) : Option ModalForce := epistemicForce v.aux
+theorem forces_might : ModalVerb.might.forces = {.possibility} := by decide
 
-theorem force_might : ModalVerb.might.force = some .possibility := rfl
+theorem forces_must : ModalVerb.must.forces = {.necessity} := by decide
 
-theorem force_must : ModalVerb.must.force = some .necessity := rfl
-
-theorem force_should : ModalVerb.should.force = some .weakNecessity := rfl
+theorem forces_should : ModalVerb.should.forces = {.weakNecessity} := by decide
 
 /-- Under the ordering, a possibility modal never carries a higher threshold than a modal of
 necessity or weak necessity. -/
 theorem force_threshold_le (h : Θ.Ordered) {v v' : ModalVerb}
-    (hv : v.force = some .possibility) (hv' : v'.force ≠ some .possibility) :
+    (hv : v.forces = {.possibility}) (hv' : v'.forces ≠ {.possibility}) :
     v.threshold Θ ≤ v'.threshold Θ := by
   have hc := h.could_might; have hm := h.might_may; have hl := h.may_likely
   have hb := h.likely_believes; have hs := h.believes_should; have hu := h.should_must

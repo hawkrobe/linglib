@@ -122,10 +122,10 @@ theorem ModalFeature.checks_negated_iff {checker checked : ModalFeature}
   simp only [ModalFeature.Checks, ModalFeature.negated, hi, hu, true_and]
   cases checker.force <;> cases checked.force <;> decide
 
-/-- The feature of a modal auxiliary of the Fragment: the force of its first meaning,
-uninterpretable, Zeijlstra's generalization that auxiliaries contribute no operator. -/
-def auxiliaryFeature (a : Auxiliary) : Option ModalFeature :=
-  a.modality.head?.map λ ff => ⟨ff.force, .uninterpretable⟩
+/-- The features of a modal auxiliary of the Fragment: the forces of its meanings, uninterpretable,
+Zeijlstra's generalization that auxiliaries contribute no operator. -/
+def auxiliaryFeatures (a : Auxiliary) : Finset ModalFeature :=
+  a.toModalItem.forces.image (⟨·, .uninterpretable⟩)
 
 /-! ### Modal concord (§3) -/
 
@@ -159,10 +159,10 @@ theorem not_checks_of_interpretable (op : ModalFeature) {f : ModalFeature}
 /-- The Fragment's modals pair as the paper needs: *may* with *may*, *must* with *must*, *may*
 with *can*, [alonso-ovalle-2006]'s mixed form of footnote 4, and *may* not with *must*. -/
 theorem fragment_concord :
-    (∀ f ∈ auxiliaryFeature may, ∀ g ∈ auxiliaryFeature may, Concord f g) ∧
-      (∀ f ∈ auxiliaryFeature must, ∀ g ∈ auxiliaryFeature must, Concord f g) ∧
-      (∀ f ∈ auxiliaryFeature may, ∀ g ∈ auxiliaryFeature can, Concord f g) ∧
-      (∀ f ∈ auxiliaryFeature may, ∀ g ∈ auxiliaryFeature must, ¬ Concord f g) := by
+    (∀ f ∈ auxiliaryFeatures may, ∀ g ∈ auxiliaryFeatures may, Concord f g) ∧
+      (∀ f ∈ auxiliaryFeatures must, ∀ g ∈ auxiliaryFeatures must, Concord f g) ∧
+      (∀ f ∈ auxiliaryFeatures may, ∀ g ∈ auxiliaryFeatures can, Concord f g) ∧
+      (∀ f ∈ auxiliaryFeatures may, ∀ g ∈ auxiliaryFeatures must, ¬ Concord f g) := by
   decide
 
 /-! ### Concord across negation (§4.2) -/
@@ -171,29 +171,29 @@ theorem fragment_concord :
 silent possibility operator, (29a), and not by a necessity one, (29c), so the sentence conveys
 a permission to do neither and not an obligation to do neither. -/
 theorem need_not :
-    ∀ f ∈ auxiliaryFeature need,
+    ∀ f ∈ auxiliaryFeatures need,
       ModalFeature.Checks ⟨.possibility, .interpretable⟩ f.negated ∧
         ¬ ModalFeature.Checks ⟨.necessity, .interpretable⟩ f.negated := by
   decide
 
 /-! ### The rows -/
 
-/-- The modal feature of a modal named in the rows: the auxiliaries' from the Fragment, and the
+/-- The modal features of a modal named in the rows: the auxiliaries' from the Fragment, and the
 interpretable feature of the non-auxiliary modals, (20). -/
-private def featureOf : String → Option ModalFeature
-  | "may" => auxiliaryFeature may
-  | "can" => auxiliaryFeature can
-  | "must" => auxiliaryFeature must
-  | "need" => auxiliaryFeature need
-  | "allow" | "it's ok" | "be allowed" | "be permitted" => some ⟨.possibility, .interpretable⟩
-  | "demand" | "be required" => some ⟨.necessity, .interpretable⟩
-  | _ => none
+private def featuresOf : String → Finset ModalFeature
+  | "may" => auxiliaryFeatures may
+  | "can" => auxiliaryFeatures can
+  | "must" => auxiliaryFeatures must
+  | "need" => auxiliaryFeatures need
+  | "allow" | "it's ok" | "be allowed" | "be permitted" => {⟨.possibility, .interpretable⟩}
+  | "demand" | "be required" => {⟨.necessity, .interpretable⟩}
+  | _ => ∅
 
 /-- A coordination of two modals has a narrow-scope reading exactly when their features are in
 concord. -/
 theorem coordination_rows :
-    ∀ e ∈ Examples.all, ∀ f₁ ∈ (e.feature? "modal1").bind featureOf,
-      ∀ f₂ ∈ (e.feature? "modal2").bind featureOf,
+    ∀ e ∈ Examples.all, ∀ m₁ ∈ e.feature? "modal1", ∀ m₂ ∈ e.feature? "modal2",
+      ∀ f₁ ∈ featuresOf m₁, ∀ f₂ ∈ featuresOf m₂,
         (e.feature? "narrowReading" ≠ none ↔ Concord f₁ f₂) := by
   decide
 
@@ -206,8 +206,8 @@ theorem narrow_reading_available :
 /-- Modal concord between a higher and a lower modal is available exactly when the higher
 feature checks the lower one, negated when negation intervenes. -/
 theorem concord_rows :
-    ∀ e ∈ Examples.all, ∀ op ∈ (e.feature? "checker").bind featureOf,
-      ∀ f ∈ (e.feature? "checked").bind featureOf,
+    ∀ e ∈ Examples.all, ∀ c ∈ e.feature? "checker", ∀ k ∈ e.feature? "checked",
+      ∀ op ∈ featuresOf c, ∀ f ∈ featuresOf k,
         ((∃ r ∈ e.readings, r.1 = "modal concord" ∧ r.2 = .acceptable) ↔
           op.Checks (if e.feature? "negated" = some "true" then f.negated else f)) := by
   decide

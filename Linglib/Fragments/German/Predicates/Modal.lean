@@ -2,25 +2,18 @@ import Linglib.Semantics.Modality.Basic
 import Linglib.Syntax.Category.Auxiliary.Basic
 
 /-!
-# German Modal Verb Fragment
+# German modal verbs
 
-Lexical entries for German modal verbs, as `Auxiliary` entries cited by
-their infinitives.
+Lexical entries for the German modal verbs as `Auxiliary` entries cited by their infinitives:
+*können*, *dürfen*, *müssen*, *sollen*, *mögen* and *wollen*, each with a fixed force and a
+contextually variable flavor in the sense of [kratzer-1981], so that every meaning is a product of
+a force with a set of flavors; and the Konjunktiv II *sollte*, individuated as a separate modal on
+the morphological criterion of [steinert-threlkeld-imel-guo-2023].
 
-German has six core modals, each with fixed force and contextually variable
-flavor. All modal meanings are Cartesian products (force × flavors), so
-they all satisfy IFF.
+## References
 
-| Modal    | 3sg  | Force       | Flavors                |
-|----------|------|-------------|------------------------|
-| können   | kann | possibility | epistemic, circumstantial |
-| dürfen   | darf | possibility | deontic                |
-| müssen   | muss | necessity   | epistemic, deontic     |
-| sollen   | soll | necessity   | deontic                |
-| mögen    | mag  | possibility | epistemic              |
-| wollen   | will | necessity   | bouletic               |
-
-Reference: Kratzer, A. (1981). The Notional Category of Modality.
+* [kratzer-1981]
+* [steinert-threlkeld-imel-guo-2023]
 -/
 
 namespace German.Predicates.Modal
@@ -32,32 +25,32 @@ open Modality (ForceFlavor ModalForce ModalFlavor)
 /-- *können* — "can/may": epistemic + circumstantial possibility. -/
 def koennen : Auxiliary where
   form := "können"
-  modality := [.possibility] ×ˢ [.epistemic, .circumstantial]
+  modality := {.possibility} ×ˢ {.epistemic, .circumstantial}
 
 /-- *dürfen* — "may/be allowed to": deontic possibility. -/
 def duerfen : Auxiliary where
   form := "dürfen"
-  modality := [.possibility] ×ˢ [.deontic]
+  modality := {.possibility} ×ˢ {.deontic}
 
 /-- *müssen* — "must/have to": epistemic + deontic necessity. -/
 def muessen : Auxiliary where
   form := "müssen"
-  modality := [.necessity] ×ˢ [.epistemic, .deontic]
+  modality := {.necessity} ×ˢ {.epistemic, .deontic}
 
 /-- *sollen* — "should/be supposed to": deontic necessity. -/
 def sollen : Auxiliary where
   form := "sollen"
-  modality := [.necessity] ×ˢ [.deontic]
+  modality := {.necessity} ×ˢ {.deontic}
 
 /-- *mögen* — "may" (epistemic): epistemic possibility. -/
 def moegen : Auxiliary where
   form := "mögen"
-  modality := [.possibility] ×ˢ [.epistemic]
+  modality := {.possibility} ×ˢ {.epistemic}
 
 /-- *wollen* — "want to": bouletic necessity. -/
 def wollen : Auxiliary where
   form := "wollen"
-  modality := [.necessity] ×ˢ [.bouletic]
+  modality := {.necessity} ×ˢ {.bouletic}
 
 /-- *sollte* — Konjunktiv II of *sollen*: weak necessity across multiple flavors.
     Treated as a **separate modal** from *sollen* because it has complex
@@ -66,7 +59,7 @@ def wollen : Auxiliary where
     Both *soll* and *sollte* individually satisfy IFF. -/
 def sollte : Auxiliary where
   form := "sollte"
-  modality := [.weakNecessity] ×ˢ [.deontic, .epistemic, .circumstantial]
+  modality := {.weakNecessity} ×ˢ {.deontic, .epistemic, .circumstantial}
 
 /-! ### All Modals -/
 
@@ -75,11 +68,8 @@ def allModals : List Auxiliary :=
 
 /-! ### Grounding Theorems -/
 
-/-- *sollte* has wider flavor range than *sollen* (morphological flavor change). -/
-theorem sollte_wider_than_sollen :
-    sollte.modality.length > sollen.modality.length := by decide
-
-/-- Seven modals total (including *sollte* as distinct from *sollen*). -/
-theorem allModals_size : allModals.length = 7 := rfl
+/-- *sollte* has a wider flavor range than *sollen*, the morphological flavor change. -/
+theorem sollen_flavors_ssubset_sollte :
+    sollen.toModalItem.flavors ⊂ sollte.toModalItem.flavors := by decide
 
 end German.Predicates.Modal

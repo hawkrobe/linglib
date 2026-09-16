@@ -44,9 +44,9 @@ structure Auxiliary where
   features : UD.MorphFeatures := {}
   /-- The modality, as force–flavor pairs; empty for the non-modal
       auxiliaries. -/
-  modality : List ForceFlavor := []
+  modality : Finset ForceFlavor := ∅
   register : Level := .neutral
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 namespace Auxiliary
 
@@ -65,7 +65,7 @@ def person (a : Auxiliary) : Option UD.Person := a.features.person
 def number (a : Auxiliary) : Option UD.Number := a.features.number
 
 /-- The modal item an auxiliary contributes: form, meanings, register. -/
-def toModalItem (a : Auxiliary) : ModalItem := ⟨a.form, a.modality.toFinset, a.register⟩
+def toModalItem (a : Auxiliary) : ModalItem := ⟨a.form, a.modality, a.register⟩
 
 instance : HasNumber Auxiliary := ⟨fun a => a.features.number.bind Number.fromUD⟩
 
