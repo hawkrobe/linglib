@@ -19,7 +19,6 @@ frames lives study-side (`Studies/RomeroHan2004.lean`).
 
 * `PQForm` — the three polar-question forms.
 * `OriginalBias`, `ContextualEvidence` — the two directional bias dimensions.
-* `EvidentialBiasStrength` — strength of contextual-evidence bias by negation scope.
 * `originalBiasOK`, `evidenceBiasOK` — Romero's compatibility tables.
 -/
 
@@ -34,8 +33,7 @@ inductive PQForm where
   | PosQ
   /-- Low negation question: [not p?]. "Is Jane not coming?" -/
   | LoNQ
-  /-- High negation question: [n't p?]. "Isn't Jane coming?"
-      In Czech: interrogative (VSO) word order. -/
+  /-- High negation question: [n't p?]. "Isn't Jane coming?" -/
   | HiNQ
   deriving DecidableEq, Repr, Fintype
 
@@ -60,19 +58,6 @@ inductive ContextualEvidence where
   | neutral
   /-- Current context provides evidence against `p`. -/
   | againstP
-  deriving DecidableEq, Repr
-
-/-- Strength of contextual-evidence bias associated with a negation scope,
-bridging Romero's typology to Staňková's three-way Czech distinction:
-inner negation → strong (□_ev(¬p)), medial → weak (¬□_ev(p)), outer (FALSUM)
-→ no □_ev involvement. -/
-inductive EvidentialBiasStrength where
-  /-- Inner: □_ev(¬p). -/
-  | strong
-  /-- Medial: ¬□_ev(p). -/
-  | weak
-  /-- Outer: FALSUM, not □_ev-based. -/
-  | none_
   deriving DecidableEq, Repr
 
 /-- Original speaker bias conditions on PQ forms ([romero-2024] Table 1).

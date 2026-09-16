@@ -1,6 +1,5 @@
 import Linglib.Fragments.Slavic.Czech.Particles
 import Linglib.Fragments.Slavic.Czech.PolarityItems
-import Linglib.Semantics.Questions.CzechNegation
 import Linglib.Semantics.Questions.Bias
 import Linglib.Logic.Modal.Defs
 import Linglib.Studies.Simik2024
@@ -34,15 +33,12 @@ matching the question's polarity, against the speaker's prior belief (`copak_req
 
 ## Implementation notes
 
-The main experiment (seventy-five speakers, a fully crossed design of verb position,
+The readings of negation are [simik-2024]'s inner and outer negation. The main experiment (seventy-five speakers, a fully crossed design of verb position,
 indefinite and context, cumulative link mixed models) found a main effect of the indefinite
 in interrogative questions, no effect of context there, a preference for negative contexts
 and for concord items in declarative questions, high naturalness of interrogative questions
 under positive evidence, a main effect of the indefinite for *náhodou* questions, and a
-main effect of context for *copak* questions; these results are stated in prose only. The
-three-way negation of [stankova-2026] is the project's canonical reading type, so the verb in
-situ also admits its medial reading, which this paper does not distinguish from inner
-negation; the substrate's evidential bias strengths fix the evidence each reading requires.
+main effect of context for *copak* questions; these results are stated in prose only.
 
 ## References
 
@@ -58,7 +54,6 @@ negation; the substrate's evidential bias strengths fix the evidence each readin
 namespace StankovaSimik2025
 
 open Czech.Particles (nahodou copak)
-open Czech.Negation
 open Question
 open Simik2024
 
@@ -72,32 +67,25 @@ inductive VerbPosition
   | nonV1
   deriving DecidableEq, Repr, Fintype
 
-/-- The height of the negated verb, in the coordinates of the negation positions: the
-clause-initial verb raises above the canonical negation operator into the region FALSUM
-c-commands, the verb in situ stays in TP (the paper's (11) and (12)). -/
-def VerbPosition.verbHeight : VerbPosition → ℕ
-  | .v1 => Position.outer.toNat
-  | .nonV1 => Position.inner.toNat
-
-/-- The readings of negation available at a verb position: the clause-initial verb is
-licensed by FALSUM alone, the verb in situ by FALSUM or by the canonical operator. -/
-def VerbPosition.availableReadings : VerbPosition → List Position
+/-- The readings of negation available at a verb position: the clause-initial verb raises
+above the canonical operator and is licensed by FALSUM alone, the verb in situ by FALSUM or
+by the canonical operator (the paper's (11) and (12)). -/
+def VerbPosition.availableReadings : VerbPosition → List Negation
   | .v1 => [.outer]
-  | .nonV1 => [.inner, .medial, .outer]
+  | .nonV1 => [.inner, .outer]
 
-/-- A reading is available exactly when its operator c-commands the negated verb, that is,
-sits at or above it. -/
-theorem mem_availableReadings_iff (wp : VerbPosition) (pos : Position) :
-    pos ∈ wp.availableReadings ↔ wp.verbHeight ≤ pos.toNat := by
-  cases wp <;> cases pos <;> decide
+/-- A reading is available exactly when its operator c-commands the negated verb: FALSUM
+always, the canonical operator only over the verb in situ. -/
+theorem mem_availableReadings_iff (wp : VerbPosition) (n : Negation) :
+    n ∈ wp.availableReadings ↔ n = .outer ∨ wp = .nonV1 := by
+  cases wp <;> cases n <;> decide
 
 /-- The unmarked reading at a verb position: the lowest available operator. -/
-def VerbPosition.defaultReading : VerbPosition → Position
+def VerbPosition.defaultReading : VerbPosition → Negation
   | .v1 => .outer
   | .nonV1 => .inner
 
-theorem defaultReading_eq_min (wp : VerbPosition) :
-    wp.availableReadings.min? = some wp.defaultReading := by
+theorem defaultReading_mem (wp : VerbPosition) : wp.defaultReading ∈ wp.availableReadings := by
   cases wp <;> decide
 
 /-! ### Indefinites as proxies for the readings -/
@@ -115,34 +103,31 @@ def Indefinite.entry : Indefinite → Polarity.Item
   | .ppi => Czech.PolarityItems.nejaky
 
 /-- A polarity item is licensed at a reading of negation when a positive polarity item
-escapes the canonical operator and a negative one falls under it (the paper's (11) and (12)):
-the canonical operator is inner negation, FALSUM and the medial operator are
-non-propositional. -/
-def LicensedAt (e : Polarity.Item) (pos : Position) : Prop :=
-  (e.isPPI → pos ≠ .inner) ∧ (e.isNPI → pos = .inner)
+falls under FALSUM and a negative one under the canonical operator (the paper's (11) and
+(12)). -/
+def LicensedAt (e : Polarity.Item) (n : Negation) : Prop :=
+  (e.isPPI → n = .outer) ∧ (e.isNPI → n = .inner)
 
-instance (e : Polarity.Item) (pos : Position) : Decidable (LicensedAt e pos) := by
+instance (e : Polarity.Item) (n : Negation) : Decidable (LicensedAt e n) := by
   unfold LicensedAt; infer_instance
 
 /-- The two indefinites split the readings: the polarity item is licensed exactly where the
 concord item is not. -/
-theorem licensedAt_ppi_iff_not_nci (pos : Position) :
-    LicensedAt Indefinite.ppi.entry pos ↔ ¬ LicensedAt Indefinite.nci.entry pos := by
-  cases pos <;> decide
+theorem licensedAt_ppi_iff_not_nci (n : Negation) :
+    LicensedAt Indefinite.ppi.entry n ↔ ¬ LicensedAt Indefinite.nci.entry n := by
+  cases n <;> decide
 
 /-! ### Bias and felicity -/
 
-/-- The contextual evidence a reading of negation requires: inner negation, with strong
-evidential bias, negative evidence; medial negation, with weak bias, no positive evidence;
-FALSUM, with no evidential bias, nothing. -/
-def readingEvidenceOK (pos : Position) (ctx : ContextualEvidence) : Prop :=
-  match pos.biasStrength with
-  | .strong => ctx = .againstP
-  | .weak => ctx ≠ .forP
-  | .none_ => True
+/-- The contextual evidence a reading of negation requires: the canonical operator
+negative evidence, as in the evidentially biased contexts of [gunlogson-2002] and
+[sudo-2013]; FALSUM, conveying epistemic rather than evidential bias, nothing. -/
+def readingEvidenceOK : Negation → ContextualEvidence → Prop
+  | .inner, ctx => ctx = .againstP
+  | .outer, _ => True
 
-instance (pos : Position) (ctx : ContextualEvidence) : Decidable (readingEvidenceOK pos ctx) := by
-  cases pos <;> simp only [readingEvidenceOK, Position.biasStrength] <;> infer_instance
+instance (n : Negation) (ctx : ContextualEvidence) : Decidable (readingEvidenceOK n ctx) := by
+  cases n <;> unfold readingEvidenceOK <;> infer_instance
 
 /-- Declarative word order requires contextual evidence ([gunlogson-2002]); interrogative
 word order requires none. -/
@@ -158,7 +143,7 @@ instance (wp : VerbPosition) (ctx : ContextualEvidence) :
 available at its verb position licenses the indefinite and admits the context's evidence, and
 the word order admits the evidence. -/
 def Felicitous (wp : VerbPosition) (ind : Indefinite) (ctx : ContextualEvidence) : Prop :=
-  (∃ pos ∈ wp.availableReadings, LicensedAt ind.entry pos ∧ readingEvidenceOK pos ctx) ∧
+  (∃ n ∈ wp.availableReadings, LicensedAt ind.entry n ∧ readingEvidenceOK n ctx) ∧
     wordOrderEvidenceOK wp ctx
 
 instance (wp : VerbPosition) (ind : Indefinite) (ctx : ContextualEvidence) :
@@ -208,15 +193,15 @@ theorem falsum_broader_than_english_hiNQ :
 /-- *Náhodou* excludes the concord item at either verb position: the item needs inner
 negation and the particle needs FALSUM (the paper's (17) and (18)). -/
 theorem nahodou_excludes_nci (wp : VerbPosition) :
-    ¬ ∃ pos ∈ wp.availableReadings,
-      LicensedAt Indefinite.nci.entry pos ∧ NahodouLicensed .negative pos := by
+    ¬ ∃ n ∈ wp.availableReadings,
+      LicensedAt Indefinite.nci.entry n ∧ NahodouLicensed .negative n := by
   cases wp <;> decide
 
 /-- *Náhodou* is felicitous with the polarity item at either verb position, the verb in situ
 being licensed by FALSUM under a contrastive topic. -/
 theorem nahodou_ppi (wp : VerbPosition) :
-    ∃ pos ∈ wp.availableReadings,
-      LicensedAt Indefinite.ppi.entry pos ∧ NahodouLicensed .negative pos := by
+    ∃ n ∈ wp.availableReadings,
+      LicensedAt Indefinite.ppi.entry n ∧ NahodouLicensed .negative n := by
   cases wp <;> decide
 
 /-- *Copak* is felicitous exactly when the context's evidence matches the question's
