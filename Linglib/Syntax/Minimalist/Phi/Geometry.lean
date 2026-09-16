@@ -55,11 +55,12 @@ alignment systems ([pancheva-zubizarreta-2018] §2.1 (11)).
 
 ## Relationship to Core PersonFeatures
 
-`DecomposedPerson` extends `Person.Features`
-(the framework-neutral [±participant, ±author] decomposition) with
-the Minimalism-specific [±proximate] feature. The two-feature core
-is shared across all theoretical frameworks; `[±proximate]` is
-specific to [pancheva-zubizarreta-2018]'s P-Constraint.
+`DecomposedPerson` is the set of positive features among [proximate],
+[participant] and [author], and `DecomposedPerson.toFeatures` projects
+it to `Person.Features` (the framework-neutral [±participant, ±author]
+decomposition). The two-feature core is shared across all theoretical
+frameworks; `[±proximate]` is specific to
+[pancheva-zubizarreta-2018]'s P-Constraint.
 
 ## Person Type
 
@@ -87,64 +88,63 @@ namespace Minimalist
 
 open Reference.Prominence
 
--- ============================================================================
--- § 1: Decomposed Person Features
--- ============================================================================
+/-! ### The decomposition -/
 
-/-- Person features decomposed according to [preminger-2014]'s
-    geometry, extended with `[±proximate]` from
-    [pancheva-zubizarreta-2018].
+namespace DecomposedPerson
 
-    Extends `Person.Features` (the framework-neutral
-    [±participant, ±author] core) with the Minimalism-specific
-    [±proximate] feature:
+/-- The features of the decomposition, each entailing the next along the containment
+hierarchy `[author] → [participant] → [proximate]`: [proximate] marks potential
+point-of-view centres, [participant] the first and second person, [author] the first. The paper
+treats them as privative, a third person lacking [participant] rather than bearing
+[−participant], which the set of positive features renders directly. -/
+inductive Feature where
+  | proximate
+  | participant
+  | author
+  deriving DecidableEq, Repr, Fintype
 
-    - [proximate] marks potential point-of-view centers. 1P/2P are
-      inherently [+proximate]; 3P can be contextually [+proximate].
-    - [participant] distinguishes 1st/2nd from 3rd person.
-    - [author] distinguishes 1st from 2nd person.
+/-- Position on the dependency chain, proximate below participant below author. -/
+def Feature.rank : Feature → Fin 3
+  | .proximate => 0
+  | .participant => 1
+  | .author => 2
 
-    The geometry imposes a containment hierarchy:
-      [+author] → [+participant] → [+proximate]
+instance : LinearOrder Feature := LinearOrder.lift' Feature.rank (by decide)
 
-    Note: The paper treats these as **privative** features:
-    3rd person simply LACKS [participant], rather than bearing
-    [−participant]. We encode this as `Bool` for computational
-    convenience; the well-formedness constraint `wellFormed`
-    ensures the privative entailments are maintained. -/
-structure DecomposedPerson extends Person.Features where
-  /-- Bears [proximate]? SAPs inherently; 3P contextually. -/
-  hasProximate : Bool
-  deriving DecidableEq, Repr
+/-- The framework-neutral person features inside the decomposition. -/
+def Feature.ofCore : Person.Feature → Feature
+  | .participant => .participant
+  | .author => .author
 
-/-- Geometry well-formedness: [author] → [participant] → [proximate].
-    Each feature entails the next in the containment hierarchy. -/
-def DecomposedPerson.wellFormed (dp : DecomposedPerson) : Bool :=
-  (!dp.hasAuthor || dp.hasParticipant) &&
-  (!dp.hasParticipant || dp.hasProximate)
+end DecomposedPerson
 
--- ============================================================================
--- § 2: Person Decomposition
--- ============================================================================
+/-- A person decomposed according to the geometry, extended with [±proximate]: the positive
+features. -/
+abbrev DecomposedPerson := Finset DecomposedPerson.Feature
 
-/-- Decompose a person value into sub-features.
+namespace DecomposedPerson
 
-    - 1st person: [+proximate, +participant, +author]
-    - 2nd person: [+proximate, +participant, −author]
-    - 3rd person: [−proximate, −participant, −author]
+/-- Geometry well-formedness, `[author] → [participant] → [proximate]`: the positive features
+form a lower set of the containment chain. -/
+def WellFormed (dp : DecomposedPerson) : Prop := IsLowerSet (↑dp : Set Feature)
 
-    3rd person is [-proximate] by default; contextual [+proximate]
-    marking is handled by the P-Constraint evaluation. -/
+instance : DecidablePred WellFormed := fun _ ↦ inferInstanceAs (Decidable (IsLowerSet _))
+
+/-- The framework-neutral core of a decomposition, its participant and author features. -/
+def toFeatures (dp : DecomposedPerson) : Person.Features :=
+  Finset.univ.filter fun f ↦ Feature.ofCore f ∈ dp
+
+end DecomposedPerson
+
+/-- Decompose a person value: the first person bears all three features, the second
+[proximate] and [participant], the third none, contextual [+proximate] marking of a third
+person being handled by the P-Constraint evaluation. -/
 def decomposePerson : Person → DecomposedPerson
-  | .first | .firstInclusive | .firstExclusive =>
-      { hasParticipant := true,  hasAuthor := true,  hasProximate := true }
-  | .second => { hasParticipant := true,  hasAuthor := false, hasProximate := true }
-  | .third | .zero =>
-      { hasParticipant := false, hasAuthor := false, hasProximate := false }
+  | .first | .firstInclusive | .firstExclusive => {.proximate, .participant, .author}
+  | .second => {.proximate, .participant}
+  | .third | .zero => ∅
 
--- ============================================================================
--- § 3: Probe Targets
--- ============================================================================
+/-! ### Probe targets -/
 
 /-- What a phi-probe seeks.
 
@@ -168,12 +168,10 @@ inductive Probe.Target where
     to the probe iff it bears the probe's target feature. -/
 def probeVisible (target : Probe.Target) (person : Person) (isPlural : Bool) : Bool :=
   match target with
-  | .participant => (decomposePerson person).hasParticipant
+  | .participant => decide (.participant ∈ decomposePerson person)
   | .plural => isPlural
 
--- ============================================================================
--- § 4: Probe Resolution Rank
--- ============================================================================
+/-! ### Probe resolution rank -/
 
 /-- Probe resolution rank for a DP under the two-probe (π⁰ ≫ #⁰) system.
 
@@ -193,18 +191,15 @@ def probeVisible (target : Probe.Target) (person : Person) (isPlural : Bool) : B
     `Probe/Basic.lean`). It is not a salience scale
     ([preminger-2014] Ch. 7). -/
 def probeResolutionRank (person : Person) (isPlural : Bool) : Nat :=
-  if (decomposePerson person).hasParticipant then 2
+  if .participant ∈ decomposePerson person then 2
   else if isPlural then 1
   else 0
 
--- ============================================================================
--- § 5: Verification — Cross-module Agreement and Hierarchy
--- ============================================================================
+/-! ### Agreement with the neutral decomposition -/
 
 /-- All person values yield well-formed decompositions. -/
-theorem all_decompositions_wellFormed (p : Person) :
-    (decomposePerson p).wellFormed = true := by
-  cases p <;> rfl
+theorem all_decompositions_wellFormed (p : Person) : (decomposePerson p).WellFormed := by
+  cases p <;> decide
 
 /-- `decomposePerson` is consistent with the framework-neutral
     `Person.toFeatures`: the [±participant, ±author] core of
@@ -213,7 +208,7 @@ theorem decomposePerson_toFeatures_eq (p : Person) :
     ∀ f, p.toFeatures = some f → (decomposePerson p).toFeatures = f := by
   cases p <;> intro f hf <;>
     simp only [Person.toFeatures, Option.some.injEq, reduceCtorEq] at hf <;>
-    subst hf <;> rfl
+    subst hf <;> decide
 
 /-- Rank is monotone in the probe hierarchy: any DP visible to π⁰
     (rank 2) outranks any DP visible only to #⁰ (rank 1), which
@@ -227,10 +222,10 @@ theorem rank_hierarchy :
     this single `decide` keeps a kept-tested-shape signal without
     inflating the API surface. -/
 example :
-    (decomposePerson .first).hasParticipant = true ∧
-    (decomposePerson .first).hasAuthor = true ∧
-    (decomposePerson .second).hasAuthor = false ∧
-    (decomposePerson .third).hasParticipant = false ∧
+    .participant ∈ decomposePerson .first ∧
+    .author ∈ decomposePerson .first ∧
+    .author ∉ decomposePerson .second ∧
+    .participant ∉ decomposePerson .third ∧
     probeVisible .participant .first false = true ∧
     probeVisible .participant .third false = false ∧
     probeVisible .plural .third true = true ∧

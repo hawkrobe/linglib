@@ -74,8 +74,8 @@ def personGeometry : Minimalist.Geometry PersonFeature where
 [SPKR] is author, and [ADDR] is borne by the second person and the inclusive first. -/
 def bears (p : Person) : PersonFeature → Bool
   | .phi => true
-  | .part => (decomposePerson p).hasParticipant
-  | .spkr => (decomposePerson p).hasAuthor
+  | .part => decide (.participant ∈ decomposePerson p)
+  | .spkr => decide (.author ∈ decomposePerson p)
   | .addr => p == .second || p == .firstInclusive
 
 /-- Bearing a feature entails bearing its entailments. -/

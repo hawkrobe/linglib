@@ -13,16 +13,17 @@ the referential categories decompose, and both decompositions underdetermine clu
 
 ## Main definitions
 
-* `Person.Features`: the two features.
-* `Person.toFeatures`: the features of a person value, none for the impersonal.
-* `Person.featuresEquiv`: the features as a containment pair.
+* `Person.Feature`: the two features, author depending on participant.
+* `Person.Features`: a bundle, the positive features.
+* `Person.toFeatures`: the bundle of a person value, none for the impersonal.
+* `Person.featuresEquiv`: the bundles as containment pairs.
 * `Features.WellFormed`: the containment filter.
-* `Category.toFeatures`: the features of a referential category.
+* `Category.toFeatures`: the bundle of a referential category.
 
 ## Main results
 
-* `Person.card_wellFormed`: exactly three well-formed combinations.
-* `Person.no_fourth_person`: no four well-formed combinations are distinct.
+* `Person.card_wellFormed`: exactly three well-formed bundles.
+* `Person.no_fourth_person`: no four well-formed bundles are distinct.
 * `Category.toFeatures_wellFormed`: every category decomposes well-formedly.
 
 ## References
@@ -38,26 +39,34 @@ open Agreement (ContainmentPair ContainmentPairLike)
 
 namespace Person
 
-/-- Bivalent person features [±participant, ±author]. The three persons are the three
-combinations the containment filter `Features.WellFormed` admits: first
-[+participant, +author], second [+participant, −author], third [−participant, −author]. -/
-structure Features where
-  /-- [+participant]: the referent includes a speech-act participant. -/
-  hasParticipant : Bool
-  /-- [+author]: the referent includes the speaker. -/
-  hasAuthor : Bool
+/-- The two person features, the author feature depending on the participant feature. -/
+inductive Feature where
+  /-- [participant]: the referent includes a speech-act participant. -/
+  | participant
+  /-- [author]: the referent includes the speaker. -/
+  | author
   deriving DecidableEq, Repr, Fintype
 
-/-- First person features, [+participant, +author]. -/
-def firstF : Features := ⟨true, true⟩
+/-- Position on the dependency chain, participant below author. -/
+def Feature.rank : Feature → Fin 2
+  | .participant => 0
+  | .author => 1
 
-/-- Second person features, [+participant, −author]. -/
-def secondF : Features := ⟨true, false⟩
+instance : LinearOrder Feature := LinearOrder.lift' Feature.rank (by decide)
 
-/-- Third person features, [−participant, −author]. -/
-def thirdF : Features := ⟨false, false⟩
+/-- A person feature bundle: the positive features. -/
+abbrev Features := Finset Feature
 
-/-- The features of a person value. The quadripartition cells share `firstF`, the two-feature
+/-- First person, [+participant, +author]. -/
+def firstF : Features := {.participant, .author}
+
+/-- Second person, [+participant, −author]. -/
+def secondF : Features := {.participant}
+
+/-- Third person, [−participant, −author]. -/
+def thirdF : Features := ∅
+
+/-- The bundle of a person value. The quadripartition cells share `firstF`, the two-feature
 system underdetermining clusivity, and the impersonal `zero` has no decomposition. -/
 def toFeatures : Person → Option Features
   | .first | .firstInclusive | .firstExclusive => some firstF
@@ -67,21 +76,28 @@ def toFeatures : Person → Option Features
 
 /-! ### The containment presentation -/
 
-/-- The decomposition is carrier-equivalent to the containment pair, `outer` the participant
-feature and `inner` the author feature. -/
-def featuresEquiv : Features ≃ ContainmentPair where
-  toFun f := ⟨f.hasParticipant, f.hasAuthor⟩
-  invFun p := ⟨p.outer, p.inner⟩
-  left_inv := fun ⟨_, _⟩ ↦ rfl
-  right_inv := fun ⟨_, _⟩ ↦ rfl
+/-- The person features as the two features of a containment pair, participant the outer and
+author the inner. -/
+def featureEquiv : Feature ≃ ContainmentPair.Feature where
+  toFun
+    | .participant => .outer
+    | .author => .inner
+  invFun
+    | .outer => .participant
+    | .inner => .author
+  left_inv f := by cases f <;> rfl
+  right_inv f := by cases f <;> rfl
+
+/-- The bundles as containment pairs. -/
+def featuresEquiv : Features ≃ ContainmentPair := featureEquiv.finsetCongr
 
 instance : ContainmentPairLike Features := .ofEquiv featuresEquiv
 
 /-- The three persons land on the three well-formed cells. -/
-@[simp] theorem firstF_is_maximal : ContainmentPairLike.toPair firstF = .maximal := rfl
+@[simp] theorem firstF_is_maximal : ContainmentPairLike.toPair firstF = .maximal := by decide
 @[simp] theorem secondF_is_intermediate :
-    ContainmentPairLike.toPair secondF = .intermediate := rfl
-@[simp] theorem thirdF_is_minimal : ContainmentPairLike.toPair thirdF = .minimal := rfl
+    ContainmentPairLike.toPair secondF = .intermediate := by decide
+@[simp] theorem thirdF_is_minimal : ContainmentPairLike.toPair thirdF = .minimal := by decide
 
 /-- The containment filter: an author is necessarily a participant. -/
 abbrev Features.WellFormed (pf : Features) : Prop := ContainmentPairLike.WellFormed pf
@@ -90,10 +106,10 @@ abbrev Features.WellFormed (pf : Features) : Prop := ContainmentPairLike.WellFor
 @[simp] theorem secondF_wellFormed : secondF.WellFormed := by decide
 @[simp] theorem thirdF_wellFormed : thirdF.WellFormed := by decide
 
-/-- The combination [−participant, +author] is the only one that violates containment. -/
-theorem not_wellFormed_mk_false_true : ¬ (⟨false, true⟩ : Features).WellFormed := by decide
+/-- The bundle with the author feature alone is the one that violates containment. -/
+theorem not_wellFormed_singleton_author : ¬ ({.author} : Features).WellFormed := by decide
 
-/-- Exactly three well-formed combinations, the carrier count of the containment chain. -/
+/-- Exactly three well-formed bundles, the carrier count of the containment chain. -/
 theorem card_wellFormed : Fintype.card {pf : Features // pf.WellFormed} = 3 := by decide
 
 /-- Every defined decomposition is well-formed. -/
@@ -104,10 +120,10 @@ theorem toFeatures_wellFormed (p : Person) : ∀ f, p.toFeatures = some f → f.
 
 /-- `IsSAP` is featural participanthood. -/
 theorem isSAP_iff_participant (p : Person) :
-    ∀ f, p.toFeatures = some f → (p.IsSAP ↔ f.hasParticipant = true) := by
+    ∀ f, p.toFeatures = some f → (p.IsSAP ↔ .participant ∈ f) := by
   cases p <;> intro f hf <;>
     simp only [toFeatures, Option.some.injEq, reduceCtorEq] at hf <;>
-    subst hf <;> simp [IsSAP, firstF, secondF, thirdF]
+    subst hf <;> decide
 
 /-- No four-way singular person distinction, inherited from the containment pair. -/
 theorem no_fourth_person :
@@ -122,21 +138,30 @@ namespace Category
 
 variable {c : Category}
 
-/-- The features of a category: whether it contains a speech-act participant and whether it
-contains the speaker. The features underdetermine the first person complex, whose three
-categories all map to `firstF`. The decomposition that distinguishes the exclusive lives in
-`Studies.Harbour2016.signOf`. -/
-def toFeatures (c : Category) : Features :=
-  ⟨decide c.participants.Nonempty, decide c.IncludesSpeaker⟩
+/-- The category bears the feature: [participant] when it contains a speech-act participant,
+[author] when it contains the speaker. -/
+def Bears (c : Category) : Feature → Prop
+  | .participant => c.participants.Nonempty
+  | .author => c.IncludesSpeaker
 
-@[simp] theorem toFeatures_hasAuthor : c.toFeatures.hasAuthor = true ↔ c.IncludesSpeaker := by
+instance : DecidablePred c.Bears := fun f ↦ by cases f <;> unfold Bears <;> infer_instance
+
+/-- The bundle of a category. The features underdetermine the first person complex, whose
+three categories all map to `firstF`. The decomposition that distinguishes the exclusive lives
+in `Studies.Harbour2016.signOf`. -/
+def toFeatures (c : Category) : Features := Finset.univ.filter c.Bears
+
+@[simp] theorem mem_toFeatures {f : Feature} : f ∈ c.toFeatures ↔ c.Bears f := by
   simp [toFeatures]
 
-@[simp] theorem toFeatures_hasParticipant :
-    c.toFeatures.hasParticipant = true ↔ c.IncludesSpeaker ∨ c.IncludesAddressee := by
+@[simp] theorem author_mem_toFeatures : .author ∈ c.toFeatures ↔ c.IncludesSpeaker := by
+  simp [Bears]
+
+@[simp] theorem participant_mem_toFeatures :
+    .participant ∈ c.toFeatures ↔ c.IncludesSpeaker ∨ c.IncludesAddressee := by
   cases c <;> decide +kernel
 
-/-- Every category yields well-formed features. -/
+/-- Every category yields a well-formed bundle. -/
 theorem toFeatures_wellFormed (c : Category) : c.toFeatures.WellFormed := by
   cases c <;> decide +kernel
 

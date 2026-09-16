@@ -90,9 +90,7 @@ theorem isLicit_iff_pConstraint (g : Grammar) (io do_ : Person) :
 
 /-- The number of positive features in a person decomposition: first person bears proximate,
 participant, and author, second person two of them, third person none (11). -/
-def positiveFeatureCount (dp : Minimalist.DecomposedPerson) : ℕ :=
-  (if dp.hasProximate then 1 else 0) + (if dp.hasParticipant then 1 else 0) +
-    (if dp.hasAuthor then 1 else 0)
+def positiveFeatureCount (dp : Minimalist.DecomposedPerson) : ℕ := dp.card
 
 /-- The Person Hierarchy is derived: the prominence order coincides with the order by count of
 positive features (§2.1). -/

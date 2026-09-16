@@ -60,20 +60,15 @@ variable {E : Type*} (inner outer : Set E)
 
 /-- The domain of a cell through two sets: the maximal cell is `inner`, the intermediate cell
 `outer` and the minimal cell everything. -/
-def dom : ContainmentPair → Set E
-  | ⟨true, true⟩ => inner
-  | ⟨true, false⟩ => outer
-  | ⟨false, _⟩ => Set.univ
+def dom (p : ContainmentPair) : Set E :=
+  if .outer ∈ p then if .inner ∈ p then inner else outer else Set.univ
 
-@[simp] theorem dom_maximal : maximal.dom inner outer = inner := rfl
+@[simp] theorem dom_maximal : maximal.dom inner outer = inner := by simp [dom, maximal]
 
-@[simp] theorem dom_intermediate : intermediate.dom inner outer = outer := rfl
+@[simp] theorem dom_intermediate : intermediate.dom inner outer = outer := by
+  simp [dom, intermediate]
 
-@[simp] theorem dom_minimal : minimal.dom inner outer = Set.univ := rfl
-
-/-- The specification level of a pair is at most its two features. -/
-theorem specLevel_le_two (c : ContainmentPair) : c.specLevel ≤ 2 := by
-  obtain ⟨_ | _, _ | _⟩ := c <;> decide
+@[simp] theorem dom_minimal : minimal.dom inner outer = Set.univ := by simp [dom, minimal]
 
 /-- The Feature-Subset Principle: with `inner ⊆ outer`, a more specified well-formed cell's
 domain is contained in a less specified one's. -/
@@ -82,7 +77,7 @@ theorem dom_subset_of_specLevel_le (h : inner ⊆ outer) {c₁ c₂ : Containmen
     c₁.dom inner outer ⊆ c₂.dom inner outer := by
   rcases classification c₁ hw₁ with rfl | rfl | rfl <;>
     rcases classification c₂ hw₂ with rfl | rfl | rfl <;>
-      simp_all [maximal, intermediate, minimal, specLevel, dom, Set.subset_univ]
+      simp_all
 
 end Agreement.ContainmentPair
 
@@ -114,18 +109,22 @@ def dom : Option Person → Set E
 
 @[simp] theorem dom_none : dom c none = Set.univ := rfl
 
-@[simp] theorem mem_dom_first : x ∈ dom c (some .first) ↔ c.agent ≤ x := Iff.rfl
+@[simp] theorem mem_dom_first : x ∈ dom c (some .first) ↔ c.agent ≤ x := by
+  simp [dom, ContainmentPairLike.dom, toFeatures]
 
 @[simp] theorem mem_dom_firstInclusive :
     x ∈ dom c (some .firstInclusive) ↔ c.agent ≤ x ∧ c.addressee ≤ x := Iff.rfl
 
 @[simp] theorem mem_dom_firstExclusive :
-    x ∈ dom c (some .firstExclusive) ↔ c.agent ≤ x := Iff.rfl
+    x ∈ dom c (some .firstExclusive) ↔ c.agent ≤ x := by
+  simp [dom, ContainmentPairLike.dom, toFeatures]
 
 @[simp] theorem mem_dom_second :
-    x ∈ dom c (some .second) ↔ c.agent ≤ x ∨ c.addressee ≤ x := Iff.rfl
+    x ∈ dom c (some .second) ↔ c.agent ≤ x ∨ c.addressee ≤ x := by
+  simp [dom, ContainmentPairLike.dom, toFeatures]
 
-@[simp] theorem dom_third : dom c (some .third) = Set.univ := rfl
+@[simp] theorem dom_third : dom c (some .third) = Set.univ := by
+  simp [dom, ContainmentPairLike.dom, toFeatures]
 
 @[simp] theorem dom_zero : dom c (some .zero) = Set.univ := rfl
 
@@ -150,11 +149,14 @@ def dom (n : Option Number) : Set E :=
 
 @[simp] theorem dom_none : dom (E := E) none = Set.univ := rfl
 
-@[simp] theorem mem_dom_singular : x ∈ dom (E := E) (some .singular) ↔ Atom x := Iff.rfl
+@[simp] theorem mem_dom_singular : x ∈ dom (E := E) (some .singular) ↔ Atom x := by
+  simp [dom, ContainmentPairLike.dom, Features.ofNumber]
 
-@[simp] theorem dom_dual : dom (E := E) (some .dual) = Set.univ := rfl
+@[simp] theorem dom_dual : dom (E := E) (some .dual) = Set.univ := by
+  simp [dom, ContainmentPairLike.dom, Features.ofNumber]
 
-@[simp] theorem dom_plural : dom (E := E) (some .plural) = Set.univ := rfl
+@[simp] theorem dom_plural : dom (E := E) (some .plural) = Set.univ := by
+  simp [dom, ContainmentPairLike.dom, Features.ofNumber]
 
 end Number
 
@@ -185,11 +187,14 @@ def dom (g : Option Gender) : Set E :=
 @[simp] theorem dom_none : dom (E := E) none = Set.univ := rfl
 
 @[simp] theorem mem_dom_neuter :
-    x ∈ dom (some .neuter) ↔ x ∉ Gendered.masculine ∧ x ∉ Gendered.feminine := Iff.rfl
+    x ∈ dom (some .neuter) ↔ x ∉ Gendered.masculine ∧ x ∉ Gendered.feminine := by
+  simp [dom, ContainmentPairLike.dom, Features.fromGender]
 
-@[simp] theorem mem_dom_feminine : x ∈ dom (some .feminine) ↔ x ∉ Gendered.masculine := Iff.rfl
+@[simp] theorem mem_dom_feminine : x ∈ dom (some .feminine) ↔ x ∉ Gendered.masculine := by
+  simp [dom, ContainmentPairLike.dom, Features.fromGender]
 
-@[simp] theorem dom_masculine : dom (E := E) (some .masculine) = Set.univ := rfl
+@[simp] theorem dom_masculine : dom (E := E) (some .masculine) = Set.univ := by
+  simp [dom, ContainmentPairLike.dom, Features.fromGender]
 
 /-- The neuter domain lies inside the feminine one: the containment `[+neuter] → [+feminine]`
 of the decomposition, as a fact about referents. -/
