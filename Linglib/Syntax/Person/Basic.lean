@@ -22,9 +22,10 @@ from UD alone.
 
 This mirrors the `Number` API (`Syntax/Number/Basic.lean`): canonical
 analytical inventory at root namespace, UD demoted to realization,
-capability mixin (`Syntax/Person/Capabilities.lean`), unified
-resolution (`Syntax/Person/Resolve.lean`), feature decomposition and
-the Cysouw categories (`Syntax/Person/Decomposition.lean`).
+unified resolution (`Syntax/Person/Resolve.lean`), feature
+decomposition and the Cysouw categories
+(`Syntax/Person/Decomposition.lean`), and the marking types of the
+first person complex (`Syntax/Person/Clusivity.lean`).
 
 `Person.prominence` is the graded prominence scale over this
 inventory, consumed by person-hierarchy and scenario-split accounts.
@@ -188,25 +189,6 @@ theorem tripartition_no_clusivity : ¬tripartition.HasClusivity := by
 
 theorem quadripartition_clusivity : quadripartition.HasClusivity := by
   decide
-
-/-- **Addressee inclusion implication I** at the value level
-    ([cysouw-2003] (3.23), Fig 3.8): a distinguished exclusive requires a
-    distinguished inclusive. The converse fails — only-inclusive systems
-    (his (Pc), Maká) have an inclusive value whose exclusive is covered
-    by the singular morpheme. (Over the common paradigm types; the rare
-    Binandere pattern, his (3.22)/(Pj), is the noted incidental
-    exception.) -/
-def ExclusiveImpliesInclusive (ns : System) : Prop :=
-  .firstExclusive ∈ ns.values → .firstInclusive ∈ ns.values
-
-instance : DecidablePred ExclusiveImpliesInclusive := fun ns => by
-  unfold ExclusiveImpliesInclusive; infer_instance
-
-theorem tripartition_exclImpliesIncl :
-    tripartition.ExclusiveImpliesInclusive := by decide
-
-theorem quadripartition_exclImpliesIncl :
-    quadripartition.ExclusiveImpliesInclusive := by decide
 
 end System
 
