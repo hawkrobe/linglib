@@ -29,15 +29,15 @@ abbrev coreInventory : Finset Case :=
 
 /-- The 6-case core extended with vocative; the inventory of
     Ukrainian, Polish, Czech, and Serbo-Croat. Does **not** satisfy
-    `Case.IsValidInventory` — see `sevenCaseInventory_not_isValid`. -/
-abbrev sevenCaseInventory : Finset Case :=
+    `Case.IsValidInventory` — see `fullInventory_not_isValid`. -/
+abbrev fullInventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .loc, .inst, .voc}
 
 /-! ## API -/
 
 theorem coreInventory_card : coreInventory.card = 6 := by decide
 
-theorem sevenCaseInventory_card : sevenCaseInventory.card = 7 := by decide
+theorem fullInventory_card : fullInventory.card = 7 := by decide
 
 /-! ## Blake (typological hierarchy) -/
 
@@ -46,7 +46,7 @@ theorem coreInventory_isValid :
 
 /-- VOC at Blake-rank 0 leaves a gap at rank 1 (COM/spatial), breaking
     contiguity. -/
-theorem sevenCaseInventory_not_isValid :
-    ¬ Case.IsValidInventory sevenCaseInventory := by decide
+theorem fullInventory_not_isValid :
+    ¬ Case.IsValidInventory fullInventory := by decide
 
 end Slavic.Case

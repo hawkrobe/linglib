@@ -15,6 +15,6 @@ nominative elsewhere ([short-1993-czech]).
 namespace Czech.Case
 
 /-- The Czech cases: the seven-case Slavic inventory. -/
-abbrev caseInventory : Finset Case := Slavic.Case.sevenCaseInventory
+abbrev inventory : Finset Case := Slavic.Case.fullInventory
 
 end Czech.Case

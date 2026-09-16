@@ -31,7 +31,7 @@ namespace Latin.Case
 -- ============================================================================
 
 /-- Standard Latin 6-case inventory (NOM ACC GEN DAT ABL VOC). -/
-def caseInventory : Finset Case :=
+def inventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .abl, .voc}
 
 /-- The hierarchy-relevant subset (excluding VOC at rank 0). -/

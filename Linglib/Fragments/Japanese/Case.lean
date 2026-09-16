@@ -253,21 +253,21 @@ theorem postpositions_none_omissible :
 /-- The `Case` categories realized by Japanese case markers, derived
     from `caseMarkers`. Changing a marker's `cases` field automatically
     propagates here — there is no separately stipulated set to drift from. -/
-def caseInventory : Finset Case :=
+def inventory : Finset Case :=
   (caseMarkers.map (·.cases)).foldr (· ∪ ·) ∅
 
 /-- Every Blake hierarchy rank from 0 to 6 is realized in the Japanese
     inventory. This is strictly stronger than `IsValidInventory` (which only
     rules out interior gaps) — Japanese is the maximally Blake-realizing
     inventory among the languages currently in `Fragments/`. -/
-theorem caseInventory_realizes_all_blake_ranks :
-    ∀ r : Fin 7, ∃ c ∈ caseInventory, c.hierarchyRank = r := by decide
+theorem inventory_realizes_all_blake_ranks :
+    ∀ r : Fin 7, ∃ c ∈ inventory, c.hierarchyRank = r := by decide
 
 /-- Contiguous on Blake's hierarchy. (Trivially follows from
-    `caseInventory_realizes_all_blake_ranks`, but stated separately so that
+    `inventory_realizes_all_blake_ranks`, but stated separately so that
     consumers comparing inventories across Fragments can `exact` it.) -/
-theorem caseInventory_isValid :
-    Case.IsValidInventory caseInventory := by decide
+theorem inventory_isValid :
+    Case.IsValidInventory inventory := by decide
 
 /-! ### Polysemy as theorems
 

@@ -19,11 +19,11 @@ peripheral" inventory: core cases + genitive.
 namespace Greek.Case
 
 /-- Modern Greek 3-case inventory (excluding VOC). -/
-def caseInventory : Finset Case :=
+def inventory : Finset Case :=
   {.nom, .acc, .gen}
 
 -- Contiguous on Blake's hierarchy (ranks 6, 6, 5).
-example : Case.IsValidInventory caseInventory := by decide
+example : Case.IsValidInventory inventory := by decide
 
 /-- Classical Greek with dative. -/
 def classicalInventory : Finset Case :=

@@ -49,7 +49,7 @@ namespace Finnish.Case
       decomposition (`Syntax/Case/Order.lean`)
     - ESS →.ess, TRANSL →.transl, ABESS →.abess
     - INSTR →.inst, COM →.com -/
-def caseInventory : Finset Case :=
+def inventory : Finset Case :=
   {.nom, .acc, .gen, .part, .ine, .ade, .ela, .abl, .ill, .all,
    .ess, .transl, .abess, .inst, .com}
 
@@ -62,7 +62,7 @@ def caseInventory : Finset Case :=
     languages like Finnish fill the dative slot with a local case
     extension (ALL → DAT, formalized in `Case.Extends`). -/
 theorem inventory_fails_strict :
-    ¬ Case.IsValidInventory caseInventory := by decide
+    ¬ Case.IsValidInventory inventory := by decide
 
 /-- The allative-for-dative substitution is exactly the extension path
     in [heine-2009] Table 29.6, formalized in `Case.Extends`. -/
@@ -163,7 +163,7 @@ theorem localCases_distinct :
 
 /-- All 6 local cases appear in the full Finnish inventory. -/
 theorem localCases_subset_inventory :
-    ∀ lc ∈ allLocalCases, lc.coreCase ∈ caseInventory := by decide
+    ∀ lc ∈ allLocalCases, lc.coreCase ∈ inventory := by decide
 
 /-- Within each direction, internal and external suffixes differ. -/
 theorem internal_external_distinct (d : Direction) :

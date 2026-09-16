@@ -8,12 +8,12 @@ Per [shevelov-1993] (p. 956), Ukrainian preserves the original
 6-case set (NOM/ACC/GEN/DAT/INST/LOC) and additionally retains a
 productive vocative — robust in the singular (батько → батьку,
 син → сину, хлопець → хлопче), eroded in the plural except for
-панове/panove 'gentlemen'. `caseInventory` aliases the shared 6-case
-core; `Slavic.Case.sevenCaseInventory` carries the +VOC form.
+панове/panove 'gentlemen'. `inventory` aliases the shared 6-case
+core; `Slavic.Case.fullInventory` carries the +VOC form.
 -/
 
 namespace Ukrainian.Case
 
-abbrev caseInventory : Finset Case := Slavic.Case.coreInventory
+abbrev inventory : Finset Case := Slavic.Case.coreInventory
 
 end Ukrainian.Case

@@ -32,11 +32,11 @@ namespace Hindi.Case
 /-- Hindi case inventory. ACC/DAT share -ko; ABL/INST share -se.
     Both syncretic pairs are included as distinct Case values since
     they occupy different positions on Blake's hierarchy. -/
-def caseInventory : Finset Case :=
+def inventory : Finset Case :=
   {.nom, .erg, .acc, .dat, .gen, .loc, .abl, .inst}
 
 -- Contiguous on Blake's hierarchy (ranks 6 down to 2, all present).
-example : Case.IsValidInventory caseInventory := by decide
+example : Case.IsValidInventory inventory := by decide
 
 -- ============================================================================
 -- Section 2: Syncretism

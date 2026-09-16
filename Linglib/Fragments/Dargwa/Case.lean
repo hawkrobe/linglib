@@ -37,7 +37,7 @@ namespace Dargwa.Case
     "being-in-a-state" predicates, analogous to the Finnish essive.
 
     Genitive has two allomorphs: -la and -lla. -/
-def caseInventory : Finset Case :=
+def inventory : Finset Case :=
   {.abs, .erg, .gen, .dat, .com, .ess}
 
 /-- Dargwa's grammatical case inventory violates strict contiguity
@@ -48,7 +48,7 @@ def caseInventory : Finset Case :=
     encode in other languages. The grammatical vs. locative split is
     a structural feature of Nakh-Dagestanian languages. -/
 theorem inventory_not_strictly_contiguous :
-    ¬ Case.IsValidInventory caseInventory := by decide
+    ¬ Case.IsValidInventory inventory := by decide
 
 -- ============================================================================
 -- § 2: Consistent Ergative Alignment
@@ -71,7 +71,7 @@ def patientCase : Case := .abs
 
 /-- The inventory contains both core ergative cases. -/
 theorem has_core_ergative :
-    .abs ∈ caseInventory ∧ .erg ∈ caseInventory := by
+    .abs ∈ inventory ∧ .erg ∈ inventory := by
   refine ⟨?_, ?_⟩ <;> decide
 
 /-- Dargwa is consistently ergative (no split). -/

@@ -16,10 +16,10 @@ maps cleanly onto Blake's hierarchy with no gaps.
 namespace Korean.Case
 
 /-- Korean case inventory. -/
-def caseInventory : Finset Case :=
+def inventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com}
 
 -- Contiguous on Blake's hierarchy (ranks 6 down to 1).
-example : Case.IsValidInventory caseInventory := by decide
+example : Case.IsValidInventory inventory := by decide
 
 end Korean.Case

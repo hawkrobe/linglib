@@ -71,7 +71,7 @@ namespace Hungarian.Case
     matrix). The omission of `.gen` reflects the descriptive-grammar
     consensus ([kenesei-vago-fenyvesi-1998], [rounds-2001]) and
     [caha-2008] §5 — Hungarian has no morphological genitive. -/
-def caseInventory : Finset Case :=
+def inventory : Finset Case :=
   {.nom, .acc, .dat, .ine, .ade, .sup, .ela, .abl, .del, .ill, .all, .sub,
    .inst, .com, .caus}
 
@@ -95,6 +95,6 @@ theorem localCases_distinct :
     surface counterexample to Blake, resolved (per Blake fn. 8) by the
     dative-as-possessor syncretism. -/
 theorem inventory_fails_strict :
-    ¬ Case.IsValidInventory caseInventory := by decide
+    ¬ Case.IsValidInventory inventory := by decide
 
 end Hungarian.Case

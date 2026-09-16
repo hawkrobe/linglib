@@ -19,7 +19,7 @@ which is not context-free.
 namespace SwissGerman.Case
 
 /-- Swiss German uses the same 4-case inventory as Standard German. -/
-def caseInventory : Finset Case := {.nom, .acc, .gen, .dat}
+def inventory : Finset Case := {.nom, .acc, .gen, .dat}
 
 /-- Verbs that participate in cross-serial subordinate clause constructions.
 
