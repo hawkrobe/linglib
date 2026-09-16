@@ -278,6 +278,11 @@ structure AntonymPair where
   posComparison : Adjective.Comparison := .regular
   /-- The negative pole's comparison paradigm. -/
   negComparison : Adjective.Comparison := .regular
+  /-- The positive pole's standard when it departs from the scale's default: the minimum for
+      a partial adjective like *open* on a closed scale. -/
+  posStandardOverride : Option PositiveStandard := none
+  /-- The negative pole's standard when it departs from the dual scale's default. -/
+  negStandardOverride : Option PositiveStandard := none
   /-- The positive pole's evaluative valence; the negative pole's is its `flip`. -/
   evaluativeValence : Option EvaluativeValence := none
   /-- The resultative spatial-configuration class the poles share. -/
@@ -290,6 +295,7 @@ def pos (p : AntonymPair) : GradableAdjective where
   form := p.posForm
   dimension := some p.dimension
   comparison := p.posComparison
+  standardOverride := p.posStandardOverride
   antonymForm := some p.negForm
   antonymRelation := some p.relation
   evaluativeValence := p.evaluativeValence
@@ -301,6 +307,7 @@ def neg (p : AntonymPair) : GradableAdjective where
   polarity := .negative
   dimension := some p.dimension
   comparison := p.negComparison
+  standardOverride := p.negStandardOverride
   antonymForm := some p.posForm
   antonymRelation := some p.relation
   evaluativeValence := p.evaluativeValence.map EvaluativeValence.flip

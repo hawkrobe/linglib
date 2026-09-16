@@ -52,12 +52,15 @@ abbrev happy := happiness.pos
 abbrev unhappy := happiness.neg
 
 def sad : GradableAdjective :=
-  { form := "sad", dimension := some .happiness, comparison := .synthetic "sadder" "saddest"
+  { form := "sad", polarity := .negative, dimension := some .happiness
+  , comparison := .synthetic "sadder" "saddest"
   , antonymForm := some "happy", antonymRelation := some .contrary
   , evaluativeValence := some .negative }
 
+/-- Both poles take the maximum standard, so a half-full glass is neither full nor empty
+([kennedy-mcnally-2005] (28a)). -/
 def fullness : AntonymPair :=
-  { dimension := .fullness, relation := .contradictory, posForm := "full", negForm := "empty"
+  { dimension := .fullness, relation := .contrary, posForm := "full", negForm := "empty"
   , posComparison := .synthetic "fuller" "fullest"
   , negComparison := .synthetic "emptier" "emptiest" }
 
@@ -91,8 +94,7 @@ abbrev wet := wetness.pos
 abbrev dry := wetness.neg
 
 def cleanliness : AntonymPair :=
-  { dimension := .cleanliness, relation := .contradictory, posForm := "clean", negForm := "dirty"
-  , evaluativeValence := some .positive }
+  { dimension := .cleanliness, relation := .contradictory, posForm := "clean", negForm := "dirty" }
 
 abbrev clean := cleanliness.pos
 
@@ -110,9 +112,11 @@ def flat : GradableAdjective :=
   { form := "flat", dimension := some .flatness, antonymForm := some "bumpy"
   , antonymRelation := some .contradictory, spatialConfigType := some .surfaceOrient }
 
+/-- *open* takes the minimum standard, any amount of opening ([kennedy-2007] (68)); *closed* the
+maximum. -/
 def openness : AntonymPair :=
   { dimension := .openness, relation := .contradictory, posForm := "open", negForm := "closed"
-  , spatialConfigType := some .barrierConfig }
+  , posStandardOverride := some .minEndpoint, spatialConfigType := some .barrierConfig }
 
 abbrev open_ := openness.pos
 
@@ -153,8 +157,11 @@ def pure_ : GradableAdjective :=
   { form := "pure", dimension := some .purity, antonymForm := some "impure"
   , antonymRelation := some .contradictory }
 
+/-- *dead* takes the maximum standard and is rarely used imprecisely ([kennedy-mcnally-2005]);
+*alive* the minimum. -/
 def life : AntonymPair :=
-  { dimension := .alive, relation := .contradictory, posForm := "alive", negForm := "dead" }
+  { dimension := .alive, relation := .contradictory, posForm := "alive", negForm := "dead"
+  , posStandardOverride := some .minEndpoint }
 
 abbrev alive := life.pos
 
@@ -323,13 +330,15 @@ abbrev ugly := beauty.neg
 def important : GradableAdjective :=
   { form := "important", dimension := some .importance }
 
-def safe : GradableAdjective :=
-  { form := "safe", dimension := some .safety, antonymForm := some "dangerous"
-  , antonymRelation := some .contrary, evaluativeValence := some .positive }
+/-- *completely safe* but *??completely dangerous*: an upper-closed scale
+([kennedy-mcnally-2005] (27c)). -/
+def safety : AntonymPair :=
+  { dimension := .safety, relation := .contradictory, posForm := "safe", negForm := "dangerous"
+  , evaluativeValence := some .positive }
 
-def dangerous : GradableAdjective :=
-  { form := "dangerous", dimension := some .danger, antonymForm := some "safe"
-  , antonymRelation := some .contrary, evaluativeValence := some .negative }
+abbrev safe := safety.pos
+
+abbrev dangerous := safety.neg
 
 /-! ## Physical disturbance deverbal adjectives
 
@@ -345,26 +354,26 @@ dented*), compatible with *completely* and *partially*. Contra
     NOT a two-point scale: accepts *more cracked*, *completely cracked*,
     *partially cracked*, *badly cracked* ([tham-2025] §2.3–2.4). -/
 def cracked : GradableAdjective :=
-  { form := "cracked", dimension := some .cracking }
+  { form := "cracked", dimension := some .cracking, standardOverride := some .minEndpoint }
 
 /-- "dented" — closed scale.
     Deverbal adjective from *dent*. Accepts *more dented*, *completely dented*,
     *badly dented* ([tham-2025] (11a), (20b)). -/
 def dented : GradableAdjective :=
-  { form := "dented", dimension := some .denting }
+  { form := "dented", dimension := some .denting, standardOverride := some .minEndpoint }
 
 /-- "scratched" — closed scale.
     Deverbal adjective from *scratch*. Accepts *more scratched*, *completely
     scratched*, *badly scratched* ([tham-2025] (11b), (20c)). -/
 def scratched : GradableAdjective :=
-  { form := "scratched", dimension := some .scratching }
+  { form := "scratched", dimension := some .scratching, standardOverride := some .minEndpoint }
 
 /-- "shattered" — closed scale, NON-GRADABLE.
     Deverbal adjective from *shatter* (Levin 45.1 Break verbs).
     Contrast: ??*more shattered*, punctual verb, no durative reading.
     Not a physical disturbance predicate ([tham-2025] (12c)). -/
 def shattered : GradableAdjective :=
-  { form := "shattered", dimension := some .shattering }
+  { form := "shattered" }
 
 /-! ## Mildly positive adjectives (MPAs)
 
@@ -507,12 +516,12 @@ def pairs : List AntonymPair := [
   height, happiness, fullness, heat, cost, wetness, cleanliness, straightness, openness,
   smoothness, hardness, life, size, extremeSize, pristineness, warmth, weight, thickness, depth,
   strength, speed, age, brightness, volume, confidence, sureness, value, beauty, pleasantness,
-  expectation, possibility]
+  expectation, possibility, safety]
 
 /-- The entries outside an antonym pair. -/
 def singletons : List GradableAdjective := [
   high, sad, flat, shut, free_, loose, tight, pure_, pregnant, long, wide, smart, confident,
-  doubtful, important, safe, dangerous, cracked, dented, scratched, shattered, nice, decent,
+  doubtful, important, cracked, dented, scratched, shattered, nice, decent,
   acceptable, adequate, horrible, terrible, awful, dreadful, frightening, disgusting, annoying,
   scary, wonderful, delightful, gorgeous, surprising, remarkable, stunning, expected]
 

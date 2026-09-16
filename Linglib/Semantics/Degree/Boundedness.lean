@@ -8,7 +8,7 @@ import Mathlib.Tactic.DeriveFintype
 # Scale boundedness
 
 This file defines `Degree.Boundedness`, the four-way classification of scales by the endpoints
-they have, of [kennedy-mcnally-2005] (22) and [kennedy-2007] (59), found independently by
+they have, of [kennedy-mcnally-2005] (23) and [kennedy-2007] (59), found independently by
 [rotstein-winter-2004]. A boundedness is the endpoint profile of an order: `Boundedness.ofOrder D`
 reads it off the order `D` from the existence of a least and a greatest element, so that a scale's
 tag is a fact about its degrees. The tag itself is what a lexical entry stores, since a record
@@ -16,7 +16,7 @@ field cannot hold an `OrderTop` instance, and `Boundedness.degreeShape` is a can
 of each shape, a section of `ofOrder`.
 
 The negative member of an antonym pair measures on the same degrees under the inverse ordering
-([kennedy-2007] (60) and fn. 29, [kennedy-mcnally-2005] fn. 7). `Boundedness.dual` is that
+([kennedy-2007] (60), [kennedy-mcnally-2005]). `Boundedness.dual` is that
 operation on tags, and `ofOrder_orderDual` identifies it with mathlib's order dual. `withMin` and
 `withMax` adjoin an endpoint, the shapes of the rays `Set.Ici a` and `Set.Iic a`.
 
@@ -43,7 +43,7 @@ operation on tags, and `ofOrder_orderDual` identifies it with mathlib's order du
 
 namespace Degree
 
-/-- Which endpoints a scale has ([kennedy-mcnally-2005] (22), [kennedy-2007] (59)). Open
+/-- Which endpoints a scale has ([kennedy-mcnally-2005] (23), [kennedy-2007] (59)). Open
 scales may further approach a value without reaching it or be unbounded ([kennedy-2007]
 fn. 28); the tag does not record that. -/
 inductive Boundedness where
@@ -140,7 +140,7 @@ theorem dual_involutive : Function.Involutive dual := λ b => by cases b <;> rfl
 @[simp] theorem dual_dual (b : Boundedness) : b.dual.dual = b := dual_involutive b
 
 /-- Inverting the ordering of the degrees exchanges the ends of the scale: the negative antonym
-of [kennedy-2007] fn. 29 and [kennedy-mcnally-2005] fn. 7 measures on the order dual. -/
+of [kennedy-2007] (60) and [kennedy-mcnally-2005] measures on the order dual. -/
 @[simp] theorem ofOrder_orderDual {D : Type*} [LE D] : ofOrder Dᵒᵈ = (ofOrder D).dual :=
   ext (by simp [hasMin_ofOrder, hasMax_ofOrder, OrderDual.exists])
     (by simp [hasMin_ofOrder, hasMax_ofOrder, OrderDual.exists])
