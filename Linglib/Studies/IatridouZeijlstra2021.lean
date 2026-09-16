@@ -1,5 +1,4 @@
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Semantics.Tense.TemporalAdverbials
 import Linglib.Studies.IatridouEtAl2001
 
 /-!
@@ -41,7 +40,7 @@ negated claim survives.
 
 namespace IatridouZeijlstra2021
 
-open Aspect NonemptyInterval Tense.TemporalAdverbials
+open Aspect NonemptyInterval
 
 variable {W T : Type*} [LinearOrder T]
 
@@ -119,7 +118,7 @@ boundary, *until* rightward from the left boundary (Section 6). -/
 
 /-- The boundary that is fixed for the adverbial: the right boundary of a perfect time span,
 set by Tense, (14b), or the left boundary of an until time span, set contextually. -/
-def fixed : IatridouEtAl2001.BoundaryKind → T → PTSConstraint T
+def fixed : IatridouEtAl2001.BoundaryKind → T → NonemptyInterval T → Prop
   | .right, t => (RB · t)
   | .left, t => LB t
 
@@ -186,11 +185,10 @@ theorem event_near_rb (h : Widened .left t P w τ) {s : T} (hs : τ.snd < s) :
   exact ⟨e, hP, (le_def.1 he).2, lt_of_not_ge λ hge => hne (le_def.2 ⟨(le_def.1 he).1, hge⟩)⟩
 
 /-- A boundary adverbial that fixes its own boundary, *in (the last) 5 years* or *since 2015*
-setting the left boundary at `s` (`forDurationFrom`, `everSince`), leaves the actuality
-inference cancelable: the negated perfect holds in a model with no relevant event at all,
-(11)–(12) and (23). -/
-theorem cancelable_of_forDurationFrom (s : T) (hs : s ≤ t) :
-    ∃ P : W → Event T → Prop, ∃ τ, forDurationFrom s τ ∧ RB τ t ∧ ¬ PRFV P w τ ∧ ∀ e, ¬ P w e :=
+setting the left boundary at `s` (`Aspect.LB`), leaves the actuality inference cancelable: the
+negated perfect holds in a model with no relevant event at all, (11)–(12) and (23). -/
+theorem cancelable_of_lb (s : T) (hs : s ≤ t) :
+    ∃ P : W → Event T → Prop, ∃ τ, LB s τ ∧ RB τ t ∧ ¬ PRFV P w τ ∧ ∀ e, ¬ P w e :=
   ⟨λ _ _ => False, ⟨(s, t), hs⟩, rfl, rfl, λ ⟨_, _, h⟩ => h, λ _ => id⟩
 
 /-! ### *Until* with an imperfective predicate

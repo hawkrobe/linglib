@@ -15,7 +15,9 @@ features (`forXPrediction`, `inXPrediction`, `progressivePrediction`). Viewpoint
 [klein-1994]: a viewpoint relates the topic time to the situation time (`ViewpointType`,
 `ViewpointType.ttTSitRelation`), and the compositional operators of [knick-sharf-2026] take an
 event predicate to an interval predicate (`IMPF`, `PRFV`, `PROSP`), an interval predicate to a
-point predicate through the perfect time span (`PERF`, `PERF_XN`), and on to tense.
+point predicate through the perfect time span (`PERF`, `PERF_XN`), and on to tense. The perfect
+time span of [iatridou-anagnostopoulou-izvorski-2001] admits the spans a perfect-level adverbial
+allows (`PERF_ADV`), of which the plain and extended-now perfects are the two instances.
 
 ## Implementation notes
 
@@ -29,6 +31,9 @@ point predicate through the perfect time span (`PERF`, `PERF_XN`), and on to ten
   predicate applies to the outer reference time, under the paper's convention that beneath the
   perfect it corresponds to the perfect time span. A boundary is a time point here where the
   paper has a final or initial subinterval.
+* A perfect-level adverbial is a predicate on spans, so *since t₀* is `LB t₀` and the covert
+  adverbial of an unmodified perfect is `⊤`; at a fixed right boundary such a predicate is
+  interchangeable with a domain restriction on the left boundary (`perf_adv_iff_perf_xn_image`).
 * The non-strict imperfective `UNBOUNDED` is [pancheva-2003]'s Asp₂ value, (7b), whose
   strict counterpart is `IMPF`.
 * `Event T` and event predicates come from `Semantics/Events/Basic.lean`; tense-aspect
@@ -42,6 +47,7 @@ point predicate through the perfect time span (`PERF`, `PERF_XN`), and on to ten
 * [klein-1994]
 * [knick-sharf-2026]
 * [pancheva-2003]
+* [iatridou-anagnostopoulou-izvorski-2001]
 -/
 
 namespace Aspect
@@ -306,5 +312,50 @@ theorem perf_monotone {p q : IntervalPred W T} (h : ∀ w t, p w t → q w t) (w
 forms. -/
 def IntervalPred.atPoint (p : IntervalPred W T) : PointPred W T :=
   λ s => p s.world (NonemptyInterval.pure s.time)
+
+/-! ### The perfect-level adverbial -/
+
+/-- The perfect over the spans a perfect-level adverbial admits, the perfect time span of
+[iatridou-anagnostopoulou-izvorski-2001]: some admissible span right-bounded by the reference time
+satisfies the interval predicate. -/
+def PERF_ADV (p : IntervalPred W T) (adv : NonemptyInterval T → Prop) : PointPred W T :=
+  λ s => ∃ pts : NonemptyInterval T, adv pts ∧ RB pts s.time ∧ p s.world pts
+
+variable (p : IntervalPred W T) (s : Reference.Index W T)
+
+/-- The covert adverbial of an unmodified perfect admits every span. -/
+theorem perf_adv_top_iff_perf : PERF_ADV p ⊤ s ↔ PERF p s :=
+  ⟨λ ⟨pts, _, hRB, hp⟩ => ⟨pts, hRB, hp⟩, λ ⟨pts, hRB, hp⟩ => ⟨pts, trivial, hRB, hp⟩⟩
+
+/-- A perfect-level adverbial is a conjunct of the interval predicate. -/
+theorem perf_adv_iff_perf_inf (adv : NonemptyInterval T → Prop) :
+    PERF_ADV p adv s ↔ PERF (λ w pts => adv pts ∧ p w pts) s :=
+  ⟨λ ⟨pts, hadv, hRB, hp⟩ => ⟨pts, hRB, hadv, hp⟩, λ ⟨pts, hRB, hadv, hp⟩ => ⟨pts, hadv, hRB, hp⟩⟩
+
+/-- A weaker adverbial admits more spans. -/
+theorem perf_adv_monotone {adv adv' : NonemptyInterval T → Prop} (h : ∀ pts, adv pts → adv' pts) :
+    PERF_ADV p adv s → PERF_ADV p adv' s :=
+  λ ⟨pts, hadv, hRB, hp⟩ => ⟨pts, h pts hadv, hRB, hp⟩
+
+/-- A domain restriction on the left boundary is the adverbial admitting the spans that start
+in it. -/
+theorem perf_xn_iff_perf_adv (tᵣ : Set T) : PERF_XN p tᵣ s ↔ PERF_ADV p (·.fst ∈ tᵣ) s :=
+  ⟨λ ⟨pts, _, hmem, hLB, hRB, hp⟩ => ⟨pts, Set.mem_of_eq_of_mem hLB hmem, hRB, hp⟩,
+    λ ⟨pts, hmem, hRB, hp⟩ => ⟨pts, pts.fst, hmem, rfl, hRB, hp⟩⟩
+
+/-- *Since t₀*: the spans with left boundary `t₀` are the singleton domain restriction. -/
+theorem perf_adv_lb_iff_perf_xn (t₀ : T) : PERF_ADV p (LB t₀) s ↔ PERF_XN p {t₀} s :=
+  ⟨λ ⟨pts, hLB, hRB, hp⟩ => ⟨pts, t₀, rfl, hLB, hRB, hp⟩,
+    λ ⟨pts, _, htLB, hLB, hRB, hp⟩ => ⟨pts, hLB.trans htLB, hRB, hp⟩⟩
+
+/-- At a fixed right boundary an adverbial is a domain restriction on the left boundary: the left
+boundaries of the admissible spans ending there. -/
+theorem perf_adv_iff_perf_xn_image (adv : NonemptyInterval T → Prop) (w : W) (t : T) :
+    PERF_ADV p adv ⟨w, t⟩ ↔ PERF_XN p ((·.fst) '' {pts | adv pts ∧ RB pts t}) ⟨w, t⟩ :=
+  ⟨λ ⟨pts, hadv, hRB, hp⟩ => ⟨pts, pts.fst, ⟨pts, ⟨hadv, hRB⟩, rfl⟩, rfl, hRB, hp⟩,
+    λ ⟨pts, _, ⟨pts', ⟨hadv, hRB'⟩, hfst⟩, hLB, hRB, hp⟩ =>
+      have : pts' = pts :=
+        NonemptyInterval.ext (Prod.ext (hfst.trans hLB.symm) (hRB'.trans hRB.symm))
+      ⟨pts, this ▸ hadv, hRB, hp⟩⟩
 
 end Aspect

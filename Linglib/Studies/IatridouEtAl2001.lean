@@ -1,4 +1,4 @@
-import Linglib.Semantics.Tense.TemporalAdverbials
+import Linglib.Semantics.Aspect.Basic
 import Mathlib.Data.Finset.Image
 
 /-!
@@ -43,7 +43,7 @@ has no universal perfect while Bulgarian's imperfective and neutral participles 
 
 namespace IatridouEtAl2001
 
-open Aspect Tense.TemporalAdverbials
+open Aspect
 
 variable {W T : Type*} [LinearOrder T]
 
@@ -94,26 +94,26 @@ theorem existential_mono {w : W} {pts pts' : NonemptyInterval T} (hle : pts ≤ 
 
 /-- Point 1: on the universal reading the eventuality holds at the right boundary, the time
 tense supplies, by assertion; in the present perfect that is the utterance time. -/
-theorem universal_at_rb {adv : PTSConstraint T} {w : W} {t : T}
+theorem universal_at_rb {adv : NonemptyInterval T → Prop} {w : W} {t : T}
     (h : PERF_ADV (universal P) adv ⟨w, t⟩) : ∃ e, P w e ∧ t ∈ e.τ := by
-  obtain ⟨pts, hrb, _, e, he, hall⟩ := h
+  obtain ⟨pts, _, hrb, e, he, hall⟩ := h
   have hrb' : pts.snd = t := hrb
   exact ⟨e, he, hall t (NonemptyInterval.mem_def.2 ⟨hrb' ▸ pts.fst_le_snd, hrb'.ge⟩)⟩
 
 /-- Mittwoch's observation, on the left boundary: with *since 1990* the eventuality holds in
 1990 by assertion. -/
 theorem universal_at_lb {t₀ : T} {w : W} {t : T}
-    (h : PERF_ADV (universal P) (everSince t₀) ⟨w, t⟩) : ∃ e, P w e ∧ t₀ ∈ e.τ := by
-  obtain ⟨pts, _, hlb, e, he, hall⟩ := h
+    (h : PERF_ADV (universal P) (LB t₀) ⟨w, t⟩) : ∃ e, P w e ∧ t₀ ∈ e.τ := by
+  obtain ⟨pts, hlb, _, e, he, hall⟩ := h
   have hlb' : pts.fst = t₀ := hlb
   exact ⟨e, he, hall t₀ (NonemptyInterval.mem_def.2 ⟨hlb'.le, hlb' ▸ pts.fst_le_snd⟩)⟩
 
 /-- Point 5: anteriority is not a component of the perfect. A bounded eventuality inside a
 span that ends at the tense's time ends by that time, which in the present perfect is
 pastness; the universal perfect, holding at that time, is not anterior. -/
-theorem bounded_before_rb {adv : PTSConstraint T} {w : W} {t : T}
+theorem bounded_before_rb {adv : NonemptyInterval T → Prop} {w : W} {t : T}
     (h : PERF_ADV (bounded P) adv ⟨w, t⟩) : ∃ e, P w e ∧ e.τ.snd ≤ t := by
-  obtain ⟨pts, hrb, _, e, he, hle⟩ := h
+  obtain ⟨pts, _, hrb, e, he, hle⟩ := h
   have hrb' : pts.snd = t := hrb
   exact ⟨e, he, hrb' ▸ (NonemptyInterval.le_def.1 hle).2⟩
 
