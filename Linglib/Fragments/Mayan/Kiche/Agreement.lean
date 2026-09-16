@@ -4,7 +4,6 @@ import Linglib.Data.UD.Basic
 import Linglib.Syntax.Number.Basic
 import Linglib.Semantics.Reference.Prominence
 import Linglib.Fragments.Mayan.Params
-import Linglib.Syntax.Extraction
 import Linglib.Syntax.Clause.ArgumentRole
 import Linglib.Syntax.Person.Basic
 

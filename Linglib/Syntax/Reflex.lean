@@ -10,9 +10,9 @@ import Mathlib.Data.Finset.Basic
 
 A grammar leaves perceptible traces of a constituent's designated status: a focus
 ([hartmann-zimmermann-2004] on Tangale, [hartmann-zimmermann-2007] on Hausa,
-[branan-erlewine-2023]), an A′-extraction site (`Syntax/Extraction.lean`, the Mayan
-fragments), an intermediate landing site of successive-cyclic movement ([mccloskey-2002],
-[georgi-2017]). A `Reflex` is a marking `Reflex.Modality` at a host constituent, and a
+[branan-erlewine-2023]), an A′-extraction site (the Mayan fragments, whose `Extraction.realize`
+records the reflexes of extracting each `RelativeClause.Position`), an intermediate landing
+site of successive-cyclic movement ([mccloskey-2002], [georgi-2017]). A `Reflex` is a marking `Reflex.Modality` at a host constituent, and a
 `Reflex.Marking` pairs a target with the set of reflexes marking it. Modalities classify by
 `Reflex.Channel`, the literature's phonological vs morphological vs syntactic cut. Like
 `Data.Examples.Judgment` for acceptability, this is a prediction-target vocabulary: studies
