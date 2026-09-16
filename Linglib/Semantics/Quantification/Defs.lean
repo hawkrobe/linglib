@@ -381,6 +381,10 @@ def LivesOn (Q : Quantifier α) (A : α → Prop) : Prop :=
     `pure`. -/
 def individual (a : α) : Quantifier α := fun P => P a
 
+/-- The Montague lift is injective: an entity is recovered from its principal ultrafilter. -/
+theorem individual_injective : Function.Injective (individual (α := α)) :=
+  fun a b h => (show b = a from (congrFun h (· = a)).mp rfl).symm
+
 /-! ### Mathlib Bridge -/
 
 /-- `ScopeUpwardMono q` is `∀ R, Monotone (q R)` under the Pi-of-Prop
