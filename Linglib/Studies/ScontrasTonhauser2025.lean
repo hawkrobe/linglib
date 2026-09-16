@@ -10,7 +10,7 @@ of *know* from under negation, on the RSA kernel pipeline. A world settles wheth
 the complement and whether it is true; the six utterances of (3) have the literal meanings of
 (4), *know* factive and *think* not (`literal`, from `Factivity`); the two questions of the
 experiments, whether Cole believes the complement and whether it is true, partition the worlds
-(`project`); a literal listener interprets the utterance within the speaker's private
+(`Question.answer`); a literal listener interprets the utterance within the speaker's private
 assumptions, a set of worlds, and answers the question (5) (`L0`); the speaker best-responds at
 rationality `α`, paying a cost that doubles for the complex utterances (6) (`S1`); and the
 pragmatic listener, who hears the utterance and the question, inverts the speaker jointly over
@@ -65,12 +65,6 @@ open scoped ENNReal
 
 namespace ScontrasTonhauser2025
 
-/-- A world (4): whether Cole believes the complement and whether it is true. -/
-abbrev World := Bool × Bool
-
-instance : HasBelief World := ⟨Prod.fst⟩
-instance : HasComplement World := ⟨Prod.snd⟩
-
 instance : MeasurableSpace (Finset World) := ⊤
 instance : DiscreteMeasurableSpace (Finset World) := ⟨λ _ => trivial⟩
 
@@ -92,32 +86,28 @@ instance : DecidablePred Utt.Complex := λ u => inferInstanceAs (Decidable (u �
 
 /-- The literal meanings (4): *know* is factive and *think* is not, and the simple utterances
 assert the complement or its negation. -/
-def literal : Utt → World → Bool
-  | .knowPos => factivePos
-  | .knowNeg => factiveNeg
-  | .thinkPos => nonFactivePos
-  | .thinkNeg => nonFactiveNeg
-  | .cPos => HasComplement.c
-  | .cNeg => λ w => !HasComplement.c w
+def literal : Utt → World → Prop
+  | .knowPos => World.Knows
+  | .knowNeg => (¬ World.Knows ·)
+  | .thinkPos => World.Thinks
+  | .thinkNeg => (¬ World.Thinks ·)
+  | .cPos => (·.complement = true)
+  | .cNeg => (·.complement = false)
+
+instance (u : Utt) : DecidablePred (literal u) := by cases u <;> unfold literal <;> infer_instance
 
 /-- The extension of an utterance. -/
-def sem (u : Utt) : Finset World := Finset.univ.filter λ w => literal u w = true
+def sem (u : Utt) : Finset World := Finset.univ.filter (literal u)
 
 /-- Negated *think* is semantically stronger than negated *know*: it excludes the world in which
 Cole believes a false complement as well. -/
 theorem sem_thinkNeg_ssubset_sem_knowNeg : sem .thinkNeg ⊂ sem .knowNeg := by decide
 
-/-- The projections of the two questions: whether Cole believes the complement, and whether it
-is true. -/
-def project : QUD → World → Bool
-  | .bel, w => w.1
-  | .c, w => w.2
+/-- The cell of a world under a question: the worlds giving the same answer. -/
+def cell (q : Question) (w : World) : Finset World :=
+  Finset.univ.filter λ w' => q.answer w' = q.answer w
 
-/-- The cell of a world under a question. -/
-def cell (q : QUD) (w : World) : Finset World :=
-  Finset.univ.filter λ w' => project q w' = project q w
-
-theorem cell_preimage (q : QUD) (w : World) : project q ⁻¹' {project q w} = ↑(cell q w) := by
+theorem cell_preimage (q : Question) (w : World) : q.answer ⁻¹' {q.answer w} = ↑(cell q w) := by
   ext w'
   simp [cell]
 
@@ -125,16 +115,16 @@ theorem cell_preimage (q : QUD) (w : World) : project q ⁻¹' {project q w} = �
 
 /-- The literal listener within an assumption set (5): uniform on the worlds of the set at which
 the utterance is true, projected onto the question's answers. -/
-noncomputable def L0 (A : Finset World) (q : QUD) : Kernel Utt World :=
-  projListener project
+noncomputable def L0 (A : Finset World) (q : Question) : Kernel Utt World :=
+  projListener Question.answer
     (literalListener (Measure.count.restrict ↑A) λ u => (↑(sem u) : Set World).indicator 1) q
 
 /-- The counts behind the literal listener: worlds of the assumption set at which the utterance
 is true and the question's answer is the world's, over those at which the utterance is true. -/
-def l0 (A : Finset World) (q : QUD) (u : Utt) (w : World) : ℕ × ℕ :=
+def l0 (A : Finset World) (q : Question) (u : Utt) (w : World) : ℕ × ℕ :=
   (((A ∩ sem u).filter (· ∈ cell q w)).card, (A ∩ sem u).card)
 
-theorem L0_apply (A : Finset World) (q : QUD) (u : Utt) (w : World) :
+theorem L0_apply (A : Finset World) (q : Question) (u : Utt) (w : World) :
     L0 A q u {w} = ((l0 A q u w).1 : ℝ≥0∞) / (l0 A q u w).2 := by
   have e1 : (↑(sem u) : Set World) ∩ ↑A = ↑(A ∩ sem u) := by ext; simp [and_comm]
   have e2 : (↑(sem u) : Set World) ∩ ↑(cell q w) ∩ ↑A = ↑((A ∩ sem u).filter (· ∈ cell q w)) := by
@@ -145,13 +135,13 @@ theorem L0_apply (A : Finset World) (q : QUD) (u : Utt) (w : World) :
     Measure.restrict_apply MeasurableSet.of_discrete, e1, e2, Measure.count_apply_finset,
     Measure.count_apply_finset, l0, ENNReal.div_eq_inv_mul]
 
-theorem L0_le_one (A : Finset World) (q : QUD) (u : Utt) (w : World) : L0 A q u {w} ≤ 1 := by
+theorem L0_le_one (A : Finset World) (q : Question) (u : Utt) (w : World) : L0 A q u {w} ≤ 1 := by
   rw [L0_apply]
   exact ENNReal.div_le_of_le_mul (by rw [one_mul]; exact_mod_cast Finset.card_filter_le _ _)
 
 /-- A speaker who assumes the complement interprets negated *know* and negated *think* alike:
 within the assumption set, the belief is false under both. -/
-theorem L0_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : QUD) :
+theorem L0_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : Question) :
     L0 A q .knowNeg = L0 A q .thinkNeg := by
   have h : A ∩ sem .knowNeg = A ∩ sem .thinkNeg := by
     ext w
@@ -165,13 +155,13 @@ theorem L0_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : QU
 /-- Under the belief question, a speaker who assumes the complement answers fully with negated
 *know* at a world in which Cole does not believe the complement. -/
 theorem L0_knowNeg_bel_eq_one {A : Finset World} (hA : A ⊆ sem .cPos) {w : World} (hw : w ∈ A)
-    (hb : w.1 = false) : L0 A .bel .knowNeg {w} = 1 := by
+    (hb : w.believes = false) : L0 A .belief .knowNeg {w} = 1 := by
   rw [L0_apply, l0, Finset.filter_true_of_mem]
   · refine ENNReal.div_self ?_ (ENNReal.natCast_ne_top _)
     refine Nat.cast_ne_zero.mpr (Finset.card_pos.mpr ⟨w, Finset.mem_inter.mpr ⟨hw, ?_⟩⟩).ne'
     obtain ⟨b, c⟩ := w
     have hc := (Finset.mem_filter.mp (hA hw)).2
-    simp only at hb
+    simp only [World.believes] at hb
     subst hb
     revert hc
     cases c <;> decide
@@ -180,30 +170,32 @@ theorem L0_knowNeg_bel_eq_one {A : Finset World} (hA : A ⊆ sem .cPos) {w : Wor
     have hc := (Finset.mem_filter.mp (hA hw'A)).2
     obtain ⟨b, c⟩ := w'
     obtain ⟨b₀, c₀⟩ := w
-    simp only at hb
+    simp only [World.believes] at hb
     subst hb
-    simp only [cell, project, Finset.mem_filter, Finset.mem_univ, true_and]
+    simp only [cell, Question.answer, Finset.mem_filter, Finset.mem_univ, true_and]
     revert hc hl
-    cases b <;> cases c <;> decide
+    cases b <;> cases c <;> cases c₀ <;> decide
 
 /-- Without assumptions, negated *think* answers the belief question fully at a world in which
 Cole does not believe the complement. -/
-theorem L0_univ_bel_thinkNeg {w : World} (hb : w.1 = false) :
-    L0 Finset.univ .bel .thinkNeg {w} = 1 := by
+theorem L0_univ_bel_thinkNeg {w : World} (hb : w.believes = false) :
+    L0 Finset.univ .belief .thinkNeg {w} = 1 := by
   obtain ⟨b, c⟩ := w
-  simp only at hb
+  simp only [World.believes] at hb
   subst hb
-  rw [L0_apply, show l0 Finset.univ .bel .thinkNeg (false, c) = (2, 2) from by cases c <;> decide]
+  rw [L0_apply,
+    show l0 Finset.univ .belief .thinkNeg ⟨false, c⟩ = (2, 2) from by cases c <;> decide]
   exact ENNReal.div_self (by norm_num) (by norm_num)
 
 /-- Without assumptions, negated *know* leaves the belief question open at such a world: it is
 also true where Cole believes a false complement. -/
-theorem L0_univ_bel_knowNeg {w : World} (hb : w.1 = false) :
-    L0 Finset.univ .bel .knowNeg {w} = 2 / 3 := by
+theorem L0_univ_bel_knowNeg {w : World} (hb : w.believes = false) :
+    L0 Finset.univ .belief .knowNeg {w} = 2 / 3 := by
   obtain ⟨b, c⟩ := w
-  simp only at hb
+  simp only [World.believes] at hb
   subst hb
-  rw [L0_apply, show l0 Finset.univ .bel .knowNeg (false, c) = (2, 3) from by cases c <;> decide]
+  rw [L0_apply,
+    show l0 Finset.univ .belief .knowNeg ⟨false, c⟩ = (2, 3) from by cases c <;> decide]
   norm_num
 
 /-! ### The speaker (6) -/
@@ -222,14 +214,14 @@ theorem cost_ne_top {κ : ℝ≥0∞} (hκ : κ ≠ ∞) (u : Utt) : cost κ u �
 
 /-- The speaker within an assumption set (6): the best response at rationality `α` to the literal
 listener projected by the question, with the cost factor. -/
-noncomputable def S1 (α : ℝ) (κ : ℝ≥0∞) (A : Finset World) (q : QUD) : Kernel World Utt :=
+noncomputable def S1 (α : ℝ) (κ : ℝ≥0∞) (A : Finset World) (q : Question) : Kernel World Utt :=
   speaker α (cost κ) (L0 A q)
 
 variable (α : ℝ) (κ : ℝ≥0∞)
 
 /-- A speaker who assumes the complement produces negated *know* and negated *think* alike,
 under either question: they are equally informative and equally costly. -/
-theorem S1_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : QUD) (w : World) :
+theorem S1_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : Question) (w : World) :
     S1 α κ A q w {.knowNeg} = S1 α κ A q w {.thinkNeg} := by
   rw [S1, speaker_apply_singleton, speaker_apply_singleton, L0_knowNeg_eq_thinkNeg hA]
   rfl
@@ -238,11 +230,12 @@ theorem S1_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : QU
 not believe the complement prefers negated *think* to negated *know*: the stronger utterance is
 the more informative. -/
 theorem S1_univ_bel_knowNeg_lt_thinkNeg (hα : 0 < α) (hκ0 : κ ≠ 0) (hκ : κ ≠ ∞) {w : World}
-    (hb : w.1 = false) :
-    (S1 α κ Finset.univ .bel w).real {.knowNeg} < (S1 α κ Finset.univ .bel w).real {.thinkNeg} := by
+    (hb : w.believes = false) :
+    (S1 α κ Finset.univ .belief w).real {.knowNeg} <
+      (S1 α κ Finset.univ .belief w).real {.thinkNeg} := by
   have hc : cost κ .thinkNeg = κ ^ 2 := ite_eq_left (by decide)
   have hc' : cost κ .knowNeg = κ ^ 2 := ite_eq_left (by decide)
-  rw [S1, speaker_real_singleton_lt_iff hα.le (cost_ne_top hκ) (L0_le_one Finset.univ .bel · w)
+  rw [S1, speaker_real_singleton_lt_iff hα.le (cost_ne_top hκ) (L0_le_one Finset.univ .belief · w)
     ⟨.thinkNeg, by
       rw [L0_univ_bel_thinkNeg hb, ENNReal.one_rpow, one_mul]
       exact cost_ne_zero hκ0 _⟩,
@@ -255,9 +248,9 @@ theorem S1_univ_bel_knowNeg_lt_thinkNeg (hα : 0 < α) (hκ0 : κ ≠ 0) (hκ : 
 
 /-- Under the belief question the speaker's choice depends on the world only through Cole's
 belief: the question's cells do. -/
-theorem S1_bel_congr (A : Finset World) {w w' : World} (h : w.1 = w'.1) :
-    S1 α κ A .bel w = S1 α κ A .bel w' := by
-  have hc : cell .bel w = cell .bel w' := by ext; simp [cell, project, h]
+theorem S1_bel_congr (A : Finset World) {w w' : World} (h : w.believes = w'.believes) :
+    S1 α κ A .belief w = S1 α κ A .belief w' := by
+  have hc : cell .belief w = cell .belief w' := by ext; simp [cell, Question.answer, h]
   rw [S1, speaker]
   exact Measure.ext_of_singleton λ u => by
     simp only [Kernel.ofWeights_apply_singleton, L0_apply, l0, hc]
@@ -287,7 +280,7 @@ instance [IsFiniteMeasure μ] [IsFiniteMeasure ν] : IsFiniteMeasure (pairPrior 
 
 /-- The pragmatic listener (7): the family listener over assumption sets, hearing the utterance
 under a known question. -/
-noncomputable def L1 [IsFiniteMeasure μ] [IsFiniteMeasure ν] (q : QUD) :
+noncomputable def L1 [IsFiniteMeasure μ] [IsFiniteMeasure ν] (q : Question) :
     Kernel Utt (World × Finset World) :=
   familyListener (λ A => L0 A q) α (cost κ) (pairPrior μ ν)
 
@@ -301,7 +294,7 @@ theorem pairPrior_real [IsFiniteMeasure μ] [IsFiniteMeasure ν] (w : World) (A 
 /-- An utterance true at a world of positive prior lying in an assumption set of positive prior
 has a positive marginal. -/
 theorem comp_ne_zero [IsFiniteMeasure μ] [IsFiniteMeasure ν] (hα : 0 ≤ α) (hκ0 : κ ≠ 0)
-    (hκ : κ ≠ ∞) (q : QUD) {u : Utt} {w : World} {A : Finset World} (hw : w ∈ A)
+    (hκ : κ ≠ ∞) (q : Question) {u : Utt} {w : World} {A : Finset World} (hw : w ∈ A)
     (hu : w ∈ sem u) (hμ : μ {w} ≠ 0) (hν : ν {A} ≠ 0) :
     (familySpeaker (λ A => L0 A q) α (cost κ) ∘ₘ pairPrior μ ν) {u} ≠ 0 := by
   refine comp_familySpeaker_ne_zero (w := w) (l := A) ?_ ?_
@@ -318,13 +311,13 @@ theorem comp_ne_zero [IsFiniteMeasure μ] [IsFiniteMeasure ν] (hα : 0 ≤ α) 
 
 section PriorEffect
 
-variable (β γ : Measure Bool) (q : QUD) (u : Utt)
+variable (β γ : Measure Bool) (q : Question) (u : Utt)
 
 /-- The listener's evidence for a value of the complement: the speaker's production of the
 utterance at the worlds with that value, weighted by the belief prior and by the assumption
 prior over the assumption sets containing them. It does not depend on the complement prior. -/
 noncomputable def cWeight (c : Bool) : ℝ :=
-  ∑ b, ∑ A, if (b, c) ∈ A then β.real {b} * ν.real {A} * (S1 α κ A q (b, c)).real {u} else 0
+  ∑ b, ∑ A, if ⟨b, c⟩ ∈ A then β.real {b} * ν.real {A} * (S1 α κ A q ⟨b, c⟩).real {u} else 0
 
 theorem cWeight_nonneg (c : Bool) : 0 ≤ cWeight α κ ν β q u c :=
   Finset.sum_nonneg λ _ _ => Finset.sum_nonneg λ _ _ => by
@@ -333,12 +326,12 @@ theorem cWeight_nonneg (c : Bool) : 0 ≤ cWeight α κ ν β q u c :=
     · exact le_rfl
 
 private theorem sum_pairs (f : World × Finset World → ℝ) :
-    ∑ p, f p = ∑ b, ∑ c, ∑ A, f ((b, c), A) := by
+    ∑ p, f p = ∑ b, ∑ c, ∑ A, f (⟨b, c⟩, A) := by
   rw [Fintype.sum_prod_type, Fintype.sum_prod_type]
 
 private theorem sum_pairs_c (f : World × Finset World → ℝ) :
-    ∑ p ∈ Finset.univ.filter (λ p : World × Finset World => p.1.2 = true), f p
-      = ∑ b, ∑ A, f ((b, true), A) := by
+    ∑ p ∈ Finset.univ.filter (λ p : World × Finset World => p.1.complement = true), f p
+      = ∑ b, ∑ A, f (⟨b, true⟩, A) := by
   rw [Finset.sum_filter, sum_pairs]
   simp
 
@@ -358,12 +351,12 @@ private theorem comp_real :
 evidence for it, over the evidence for either value. -/
 theorem L1_c_real (hu : (familySpeaker (λ A => L0 A q) α (cost κ) ∘ₘ pairPrior (β.prod γ) ν)
     {u} ≠ 0) :
-    (L1 α κ (β.prod γ) ν q u).real {p | p.1.2 = true}
+    (L1 α κ (β.prod γ) ν q u).real {p | p.1.complement = true}
       = γ.real {true} * cWeight α κ ν β q u true
         / (γ.real {true} * cWeight α κ ν β q u true
           + γ.real {false} * cWeight α κ ν β q u false) := by
-  have hE : ({p : World × Finset World | p.1.2 = true} : Set _)
-      = ↑(Finset.univ.filter λ p : World × Finset World => p.1.2 = true) := by ext; simp
+  have hE : ({p : World × Finset World | p.1.complement = true} : Set _)
+      = ↑(Finset.univ.filter λ p : World × Finset World => p.1.complement = true) := by ext; simp
   rw [measureReal_def, L1, familyListener, hE, posterior_apply_finset _ _ hu, ENNReal.toReal_div,
     ENNReal.toReal_sum (λ _ _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
     ← measureReal_def, comp_real]
@@ -388,8 +381,8 @@ theorem L1_c_mono (γ' : Measure Bool) [IsProbabilityMeasure γ']
     (hu : (familySpeaker (λ A => L0 A q) α (cost κ) ∘ₘ pairPrior (β.prod γ) ν) {u} ≠ 0)
     (hu' : (familySpeaker (λ A => L0 A q) α (cost κ) ∘ₘ pairPrior (β.prod γ') ν) {u} ≠ 0)
     (h : γ.real {true} ≤ γ'.real {true}) :
-    (L1 α κ (β.prod γ) ν q u).real {p | p.1.2 = true}
-      ≤ (L1 α κ (β.prod γ') ν q u).real {p | p.1.2 = true} := by
+    (L1 α κ (β.prod γ) ν q u).real {p | p.1.complement = true}
+      ≤ (L1 α κ (β.prod γ') ν q u).real {p | p.1.complement = true} := by
   have hd : 0 < γ.real {true} * cWeight α κ ν β q u true
       + γ.real {false} * cWeight α κ ν β q u false := by
     rw [← comp_real]

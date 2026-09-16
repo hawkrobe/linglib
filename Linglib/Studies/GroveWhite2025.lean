@@ -30,7 +30,7 @@ where the discrete-factivity model fits best and the two gradient-factivity mode
 
 ## Implementation notes
 
-Readings are `Factivity.factivePos` and `Factivity.nonFactivePos`, the *know* and *think*
+Readings are `Factivity.World.Knows` and `Factivity.World.Thinks`, the *know* and *think*
 denotations of the library's factivity substrate. Answers are measures on the unit interval;
 resolved factivity is a Bernoulli draw of a reading bound through the answer, unresolved
 factivity the image of the answer under the probability of the disjunction in (14), with the
@@ -61,13 +61,11 @@ inductive FactivityReading where
 instance : MeasurableSpace FactivityReading := ⊤
 instance : DiscreteMeasurableSpace FactivityReading := ⟨λ _ => trivial⟩
 
-variable {W : Type*} [HasBelief W] [HasComplement W]
-
-/-- The parent nodes of (13): reading `m` is `factivePos`, belief with the complement, and
-reading `n` is `nonFactivePos`, belief alone. -/
-def clauseEmbeddingSem : FactivityReading → W → Bool
-  | .factive => factivePos
-  | .nonfactive => nonFactivePos
+/-- The parent nodes of (13): reading `m` is *know*, belief with the complement, and reading
+`n` is *think*, belief alone. -/
+def clauseEmbeddingSem : FactivityReading → Factivity.World → Prop
+  | .factive => Factivity.World.Knows
+  | .nonfactive => Factivity.World.Thinks
 
 /-! ### Norming models, section 4.2 -/
 
@@ -82,7 +80,7 @@ noncomputable abbrev normingDiscrete (p : I) : Measure I := Ber(1, 0, p)
 /-! ### Completing a norming model by factivity, section 4.3 -/
 
 /-- Resolved factivity: a reading of (13) is drawn with `P(m) = τ`; under `m` the complement is
-entailed (`Factivity.factivePos_entails_c`) and the answer is `1`, under `n` the answer follows
+entailed (`Factivity.World.Knows.complement`) and the answer is `1`, under `n` the answer follows
 `ν`. -/
 noncomputable def resolvedFactivity (τ : I) (ν : Measure I) : Measure I :=
   Ber(FactivityReading.factive, FactivityReading.nonfactive, τ).bind λ
