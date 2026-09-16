@@ -1,4 +1,4 @@
-import Linglib.Semantics.Definiteness.Defs
+import Linglib.Semantics.Reference.Definiteness
 import Linglib.Semantics.Reference.Deixis
 import Linglib.Syntax.Number.Basic
 import Linglib.Morphology.Word.Basic
@@ -14,7 +14,7 @@ determiners — a surface `form`; each specialization adds its own structure.
 A language's determiner inventory is a `Determiner.Inventory` (a heterogeneous
 list of the four kinds) declared in its Fragment as `{Lang}.Determiners.inventory`
 — there is no per-language wrapper record. The [moroney-2021] definiteness-marking
-typology (`DefMarkingStrategy`) is *derived* from the inventory by
+typology (`MarkingStrategy`) is *derived* from the inventory by
 `Inventory.markingStrategy`, not stipulated: a language's Moroney cell is a
 theorem about its declared determiners, checked by `decide`.
 
@@ -35,21 +35,21 @@ localized to a single declaration.
 * `Determiner.Inventory.markingStrategy` — derives the [moroney-2021] 4-cell
   typology from a declared inventory.
 * `Determiner.Inventory.Realizes` — morphological realization: the declared
-  inventory carries a form for a given `DescriptionKind`.
+  inventory carries a form for a given `Description.Kind`.
 
 ## Implementation notes
 
-An `Article`'s admissible [schwarz-2009] strengths are `Article.presupTypes`
+An `Article`'s admissible [schwarz-2009] strengths are `Article.strengths`
 (Frame-free, read off `uses`); its denotation is `Article.toDescriptions`
-(`Semantics/Definiteness/Determiner.lean`, Frame-aware) — the set of `Description`s
-those strengths admit via `Description.ofPresupType`, so a syncretic article like
+(`Semantics/Reference/Determiner.lean`, Frame-aware) — the set of `Description`s
+those strengths admit via `Description.ofStrength`, so a syncretic article like
 English *the* denotes *both* the weak and the strong description. The possessive
 denotation is `Possessive.denote` (same file); the `Quantifier` generalized-quantifier
 denotation (`Semantics/Quantification`) is supplied externally by its consumers.
 This file stays the Frame-free lexical/typological layer.
 -/
 
-open Definiteness
+open Reference
 
 namespace Determiner
 
@@ -94,7 +94,7 @@ structure Article extends Determiner where
   /-- How the article is realized. -/
   exponent : Determiner.Exponent
   /-- The definite use-types this article obligatorily expones. -/
-  uses : List DefiniteUseType := []
+  uses : List DefiniteUse := []
   deriving DecidableEq, Repr
 
 /-- A demonstrative determiner (*this*/*that* book). `definiteUses` is nonempty iff the
@@ -105,7 +105,7 @@ structure DemonstrativeDeterminer extends Determiner where
   /-- Deictic feature (proximal/medial/distal/unspecified). -/
   deictic : Reference.Deixis
   /-- Definite use-types this demonstrative obligatorily expones. -/
-  definiteUses : List DefiniteUseType := []
+  definiteUses : List DefiniteUse := []
   deriving DecidableEq, Repr
 
 /-- The demonstrative determiner exposes its `deictic` field as the `Demonstrative` capability,
@@ -129,7 +129,7 @@ structure Quantifier extends Determiner where
 
 /-- A possessive determiner (my/your/the boy's). Its denotation is definiteness
 via a possession relation — `Possessive.denote` in
-`Semantics/Definiteness/Determiner.lean`. -/
+`Semantics/Reference/Determiner.lean`. -/
 structure Possessive extends Determiner
   deriving DecidableEq, Repr
 
@@ -148,7 +148,7 @@ inductive Entry where
 declared `uses`/`definiteUses` field for articles and demonstratives; quantifiers
 and possessives expone none. (That indefinite articles declare empty `uses` is a
 data convention of `Article.uses`, not enforced here.) -/
-def Entry.definiteUses : Entry → List DefiniteUseType
+def Entry.definiteUses : Entry → List DefiniteUse
   | .article a      => a.uses
   | .demonstrative d => d.definiteUses
   | .quantifier _   => []
@@ -171,20 +171,20 @@ namespace Inventory
 
 /-! ### Deriving the Moroney typology from a declared determiner set -/
 
-/-- The declared inventory obligatorily marks presupposition type `p` — some
-determiner expones a definite use whose presupposition is `p`. -/
-def MarksPresup (ds : Inventory) (p : DefPresupType) : Prop :=
-  ∃ e ∈ ds, ∃ u ∈ e.definiteUses, useTypeToPresupType u = p
+/-- The declared inventory obligatorily marks article strength `p` — some determiner expones
+a definite use calling for `p`. -/
+def Marks (ds : Inventory) (p : Description.Strength) : Prop :=
+  ∃ e ∈ ds, ∃ u ∈ e.definiteUses, u.strength = p
 
-instance (ds : Inventory) (p : DefPresupType) : Decidable (ds.MarksPresup p) := by
-  unfold MarksPresup; infer_instance
+instance (ds : Inventory) (p : Description.Strength) : Decidable (ds.Marks p) := by
+  unfold Marks; infer_instance
 
 /-- Some single determiner is the exponent of *both* presupposition types
 (English *the*). Distinguishes `.generallyMarked` (one form covers both) from
 `.bipartite` (German weak vs strong). -/
 def IsSyncretic (ds : Inventory) : Prop :=
-  ∃ e ∈ ds, (∃ u ∈ e.definiteUses, useTypeToPresupType u = .uniqueness)
-          ∧ (∃ u ∈ e.definiteUses, useTypeToPresupType u = .familiarity)
+  ∃ e ∈ ds, (∃ u ∈ e.definiteUses, u.strength = .uniqueness)
+          ∧ (∃ u ∈ e.definiteUses, u.strength = .familiarity)
 
 instance (ds : Inventory) : Decidable ds.IsSyncretic := by
   unfold IsSyncretic; infer_instance
@@ -201,40 +201,38 @@ boolean article inventory (each cell characterized by
 - uniqueness unmarked, familiarity marked (e.g. via demonstrative) → `.markedAnaphoric`
 - neither marked → `.unmarked`
 -/
-def markingStrategy (ds : Inventory) : DefMarkingStrategy :=
-  if MarksPresup ds .uniqueness then
-    if MarksPresup ds .familiarity then
+def markingStrategy (ds : Inventory) : MarkingStrategy :=
+  if Marks ds .uniqueness then
+    if Marks ds .familiarity then
       if IsSyncretic ds then .generallyMarked else .bipartite
     else .generallyMarked
-  else if MarksPresup ds .familiarity then .markedAnaphoric else .unmarked
+  else if Marks ds .familiarity then .markedAnaphoric else .unmarked
 
 /-! Each cell of the derivation, characterized by its row of the decision table. -/
 
 theorem markingStrategy_eq_generallyMarked_iff {ds : Inventory} :
     ds.markingStrategy = .generallyMarked ↔
-      ds.MarksPresup .uniqueness ∧ (ds.IsSyncretic ∨ ¬ds.MarksPresup .familiarity) := by
+      ds.Marks .uniqueness ∧ (ds.IsSyncretic ∨ ¬ds.Marks .familiarity) := by
   unfold markingStrategy; split_ifs <;> simp_all
 
 theorem markingStrategy_eq_bipartite_iff {ds : Inventory} :
     ds.markingStrategy = .bipartite ↔
-      ds.MarksPresup .uniqueness ∧ ds.MarksPresup .familiarity ∧ ¬ds.IsSyncretic := by
+      ds.Marks .uniqueness ∧ ds.Marks .familiarity ∧ ¬ds.IsSyncretic := by
   unfold markingStrategy; split_ifs <;> simp_all
 
 theorem markingStrategy_eq_markedAnaphoric_iff {ds : Inventory} :
     ds.markingStrategy = .markedAnaphoric ↔
-      ¬ds.MarksPresup .uniqueness ∧ ds.MarksPresup .familiarity := by
+      ¬ds.Marks .uniqueness ∧ ds.Marks .familiarity := by
   unfold markingStrategy; split_ifs <;> simp_all
 
 theorem markingStrategy_eq_unmarked_iff {ds : Inventory} :
     ds.markingStrategy = .unmarked ↔
-      ¬ds.MarksPresup .uniqueness ∧ ¬ds.MarksPresup .familiarity := by
+      ¬ds.Marks .uniqueness ∧ ¬ds.Marks .familiarity := by
   unfold markingStrategy; split_ifs <;> simp_all
 
-/-- Derived Schwarz/Patel-Grosz–Grosz 3-cell `ArticleType` classification. Lossy:
-`.generallyMarked` and `.markedAnaphoric` both collapse to `.weakOnly`, as
-`strategyToArticleType` documents. -/
-def articleType (ds : Inventory) : ArticleType :=
-  strategyToArticleType (markingStrategy ds)
+/-- The derived [schwarz-2009] three-cell article system, the coarsening
+`MarkingStrategy.articleType` of the marking strategy. -/
+def articleType (ds : Inventory) : ArticleType := (markingStrategy ds).articleType
 
 end Inventory
 
@@ -279,8 +277,8 @@ namespace Inventory
 /-- Morphological realization: the declared determiner inventory contains a
 form for the given kind of nominal description. Bare nominals need no
 determiner, so `.bare` is vacuously realized; unique and anaphoric definites
-need a determiner exponing the corresponding presupposition type
-(`MarksPresup`); indefinite/demonstrative/possessive need a determiner of that
+need a determiner marking the corresponding strength
+(`Marks`); indefinite/demonstrative/possessive need a determiner of that
 kind.
 
 This is inventory data, not syntactic licensing — no structural relation
@@ -289,11 +287,11 @@ felicity: a kind can be *expressed* without a determiner realizing it (Shan
 anaphoric definites surface as bare nouns, [moroney-2021]), and which realized
 form a context *selects* (type-shift blocking, Index!, Maximize Presupposition)
 is downstream pragmatics ([jenks-2018], `Studies/Jenks2018.lean`). -/
-def Realizes (ds : Inventory) : DescriptionKind → Prop
+def Realizes (ds : Inventory) : Description.Kind → Prop
   | .bare          => True
   | .indefinite    => ∃ e ∈ ds, e.IsIndefiniteArticle
-  | .unique        => MarksPresup ds .uniqueness
-  | .anaphoric     => MarksPresup ds .familiarity
+  | .unique        => Marks ds .uniqueness
+  | .anaphoric     => Marks ds .familiarity
   | .demonstrative => ∃ e ∈ ds, e.IsDemonstrative
   | .possessive    => ∃ e ∈ ds, e.IsPossessive
 
@@ -301,10 +299,10 @@ instance (ds : Inventory) : DecidablePred ds.Realizes := fun k => by
   cases k <;> unfold Realizes <;> infer_instance
 
 /-- Realizing an article strength's kind is exactly marking that strength: the
-description-kind pipeline (`DefPresupType.toKind`) and the inventory pipeline
-(`MarksPresup`) coincide by construction. -/
-theorem realizes_toKind (ds : Inventory) (p : DefPresupType) :
-    ds.Realizes p.toKind ↔ ds.MarksPresup p := by
+description-kind pipeline (`Description.Strength.toKind`) and the inventory pipeline
+(`Marks`) coincide by construction. -/
+theorem realizes_toKind (ds : Inventory) (p : Description.Strength) :
+    ds.Realizes p.toKind ↔ ds.Marks p := by
   cases p <;> exact Iff.rfl
 
 end Inventory
@@ -358,19 +356,18 @@ end Determiner
 The [schwarz-2009] presupposition types an article *can* express — its
 admissible readings, read off `uses`. A syncretic article (English *the*) admits
 both; a weak- or strong-only article admits one. The image of these under
-`Description.ofPresupType` is the article's set of possible denotations
-(`Article.toDescriptions`, in `Definiteness/Determiner.lean`). -/
+`Description.ofStrength` is the article's set of possible denotations
+(`Article.toDescriptions`, in `Reference/Determiner.lean`). -/
 
-/-- The [schwarz-2009] strengths an article admits, read off its `uses` (as a
-list — `DefPresupType` is binary, so its content is the membership-closure). -/
-def Article.presupTypes (a : Article) : List DefPresupType :=
-  a.uses.map useTypeToPresupType
+/-- The [schwarz-2009] strengths an article admits, read off its `uses`. -/
+def Article.strengths (a : Article) : List Description.Strength :=
+  a.uses.map DefiniteUse.strength
 
-/-- An article admits strength `p` iff a one-article inventory containing it marks
-`p` — the single-article case of `Determiner.Inventory.MarksPresup`. -/
-theorem Article.mem_presupTypes_iff_marksPresup (a : Article) (p : DefPresupType) :
-    p ∈ a.presupTypes ↔ Determiner.Inventory.MarksPresup [.article a] p := by
-  unfold Article.presupTypes Determiner.Inventory.MarksPresup
+/-- An article admits strength `p` iff a one-article inventory containing it marks `p`, the
+single-article case of `Determiner.Inventory.Marks`. -/
+theorem Article.mem_strengths_iff_marks (a : Article) (p : Description.Strength) :
+    p ∈ a.strengths ↔ Determiner.Inventory.Marks [.article a] p := by
+  unfold Article.strengths Determiner.Inventory.Marks
   rw [List.mem_map]
   exact ⟨fun ⟨u, hu, h⟩ => ⟨_, List.mem_singleton_self _, u, hu, h⟩,
     fun ⟨e, he, u, hu, h⟩ => by obtain rfl := List.mem_singleton.mp he; exact ⟨u, hu, h⟩⟩

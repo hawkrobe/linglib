@@ -1,4 +1,4 @@
-import Linglib.Semantics.Definiteness.Description
+import Linglib.Semantics.Reference.Description
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Possession.Basic
@@ -33,7 +33,7 @@ a demonstrative's deictic feature projects: deixis filters the referent but neve
   `PersonalPronoun.phiPresup`'s `speaker`/`addressee`).
 * `DemonstrativeDeterminer.denote` — the demonstrative's `Nominal`.
 * `Article.toDescriptions` — an article's possible descriptions, the image of
-  its admissible [schwarz-2009] strengths under `Description.ofPresupType`.
+  its admissible [schwarz-2009] strengths under `Description.ofStrength`.
 * `Article.denotations` — an article's possible `Nominal`s, the image of
   `Article.toDescriptions` under `Description.toNominal`; a syncretic article
   (English *the*) denotes both the weak and the strong description.
@@ -52,9 +52,8 @@ situation `W`, exactly as for `PersonalPronoun.denote`. `Quantifier` (a generali
 not an individual denotation — it has no `Nominal`) remains deferred.
 -/
 
-namespace Definiteness
+namespace Reference
 
-open Reference (Nominal)
 open Semantics Semantics.Composition
 
 variable {E W : Type} (R : Restrictor E W) (d : ℕ) (possessor : Assignment E → W → E)
@@ -116,23 +115,23 @@ theorem DemonstrativeDeterminer.denote_selector_congr (dem₁ dem₂ : Demonstra
 /-! ### The article's descriptions and denotations -/
 
 /-- An article's possible (definite-description) denotations: the image of its
-admissible [schwarz-2009] strengths (`Article.presupTypes`) under
-`Description.ofPresupType`. A syncretic article (English *the*) denotes both
+admissible [schwarz-2009] strengths (`Article.strengths`) under
+`Description.ofStrength`. A syncretic article (English *the*) denotes both
 the weak and the strong description, not a single one. -/
 def _root_.Article.toDescriptions (a : Article) (R : Restrictor E W) (idx : ℕ) :
     List (Description E W) :=
-  a.presupTypes.map (Description.ofPresupType · R idx)
+  a.strengths.map (Description.ofStrength · R idx)
 
 /-- An article realizes the kind of each of its own possible descriptions:
-the denotation pipeline (`ofPresupType`) and the inventory pipeline
-(`Determiner.Inventory.Realizes`) coincide through `kind_ofPresupType` and
+the denotation pipeline (`ofStrength`) and the inventory pipeline
+(`Determiner.Inventory.Realizes`) coincide through `kind_ofStrength` and
 `realizes_toKind`. -/
 theorem _root_.Article.realizes_of_mem_toDescriptions (a : Article) (idx : ℕ)
     (k : Description E W) (hk : k ∈ a.toDescriptions R idx) :
     Determiner.Inventory.Realizes [.article a] k.kind := by
   obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hk
-  rw [Description.kind_ofPresupType, Determiner.Inventory.realizes_toKind]
-  exact (Article.mem_presupTypes_iff_marksPresup a p).mp hp
+  rw [Description.kind_ofStrength, Determiner.Inventory.realizes_toKind]
+  exact (Article.mem_strengths_iff_marks a p).mp hp
 
 /-- An article's possible denotations: the `Nominal`s of its admissible
 descriptions (`Article.toDescriptions`). A syncretic article (English *the*)
@@ -194,7 +193,7 @@ variable (g : Assignment E) (s : W)
 
 /-- The possessive determiner's restrictor *is* Barker's `π` of the noun predicate `R`
 and the possession relation `rel` at the situation, applied to the possessor: the
-`Definiteness` and `Possession` encodings select through the same construction, by
+`Reference` and `Possession` encodings select through the same construction, by
 construction. -/
 theorem Description.denote_possessive_eq_pi :
     ⟦Description.possessive R possessor rel⟧ g s
@@ -211,4 +210,4 @@ theorem Possessive.denote_isSome_iff_existsUnique (p : Possessive) :
 
 end DescriptionUnification
 
-end Definiteness
+end Reference

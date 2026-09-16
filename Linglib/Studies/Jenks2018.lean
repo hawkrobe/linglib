@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Jenks2018
-import Linglib.Semantics.Definiteness.Description
+import Linglib.Semantics.Reference.Description
 import Linglib.Semantics.Genericity.MeaningPreservation
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Cantonese.Determiners
@@ -28,7 +28,7 @@ fragments derive, marked-unique being the unattested fourth (`table2`).
 ## Implementation notes
 
 * The environments are the paper's six, mapped to [schwarz-2013]'s presupposition types by
-  `useTypeToPresupType` and `bridgingPresupType`; the marked form is the language's obligatory
+  `DefiniteUse.strength` and `Bridging.strength`; the marked form is the language's obligatory
   exponent of the environment's presupposition, the demonstrative in Mandarin and [Clf-N] in
   Cantonese, so Cantonese's restricted demonstrative, (57), is not modelled.
 * [jenks-2018] types the index of ι^x as a property, Section 4.4; the substrate's
@@ -44,7 +44,7 @@ fragments derive, marked-unique being the unattested fourth (`table2`).
 
 namespace Jenks2018
 
-open Data.Examples Definiteness Determiner Semantics Semantics.Composition
+open Data.Examples Reference Determiner Semantics Semantics.Composition
   Genericity.MeaningPreservation
 
 /-! ### Environments and principles -/
@@ -60,13 +60,13 @@ inductive Environment
   deriving DecidableEq, Repr
 
 /-- The presupposition an environment licenses, [schwarz-2013]'s split of bridging included. -/
-def Environment.presup : Environment → DefPresupType
-  | .largerSituation => useTypeToPresupType .largerSituation
-  | .immediateSituation => useTypeToPresupType .immediateSituation
-  | .partWholeBridging => bridgingPresupType .partWhole
-  | .producerBridging => bridgingPresupType .relational
-  | .anaphoric => useTypeToPresupType .anaphoric
-  | .donkey => useTypeToPresupType .donkey
+def Environment.presup : Environment → Description.Strength
+  | .largerSituation => DefiniteUse.strength .largerSituation
+  | .immediateSituation => DefiniteUse.strength .immediateSituation
+  | .partWholeBridging => Bridging.strength .partWhole
+  | .producerBridging => Bridging.strength .relational
+  | .anaphoric => DefiniteUse.strength .anaphoric
+  | .donkey => DefiniteUse.strength .donkey
 
 /-- A description's discourse status, Section 5.3: no topic, a continuing topic or a new one. -/
 inductive Topic
@@ -77,7 +77,7 @@ inductive Topic
 
 /-- The Blocking Principle, (23): the covert ι is available exactly when no overt determiner
 marks uniqueness. -/
-def IotaAvailable (inv : Inventory) : Prop := ¬ inv.MarksPresup .uniqueness
+def IotaAvailable (inv : Inventory) : Prop := ¬ inv.Marks .uniqueness
 
 /-- An index is available exactly in the environments licensed by familiarity, Section 5.1:
 prior mention of the referent or, in producer-product bridging, of its argument. -/
@@ -86,10 +86,10 @@ def IndexAvailable (env : Environment) : Prop := env.presup = .familiarity
 /-- The bare noun is licit: ι is available and, by Index!, (50), no indexed form competes, or the
 description is a continuing topic, Section 5.3. -/
 def BareLicit (inv : Inventory) (env : Environment) (t : Topic) : Prop :=
-  IotaAvailable inv ∧ (¬ (IndexAvailable env ∧ inv.MarksPresup .familiarity) ∨ t = .continuing)
+  IotaAvailable inv ∧ (¬ (IndexAvailable env ∧ inv.Marks .familiarity) ∨ t = .continuing)
 
 /-- The marked form is licit: the inventory marks the environment's presupposition. -/
-def MarkedLicit (inv : Inventory) (env : Environment) : Prop := inv.MarksPresup env.presup
+def MarkedLicit (inv : Inventory) (env : Environment) : Prop := inv.Marks env.presup
 
 instance (inv : Inventory) : Decidable (IotaAvailable inv) := by
   unfold IotaAvailable; infer_instance
@@ -106,7 +106,7 @@ instance (inv : Inventory) (env : Environment) : Decidable (MarkedLicit inv env)
 /-- Index!: with an index available and an indexed form in the inventory, a bare noun that is
 not a continuing topic is out. -/
 theorem not_bareLicit_of_indexAvailable {inv : Inventory} {env : Environment} {t : Topic}
-    (h : IndexAvailable env) (hm : inv.MarksPresup .familiarity) (ht : t ≠ .continuing) :
+    (h : IndexAvailable env) (hm : inv.Marks .familiarity) (ht : t ≠ .continuing) :
     ¬ BareLicit inv env t :=
   λ ⟨_, h'⟩ => h'.elim (λ h'' => h'' ⟨h, hm⟩) ht
 
@@ -117,8 +117,8 @@ overt exponent of its meaning, (23). -/
 def shiftContext (inv : Inventory) : TypeShiftContext where
   number := .neutral
   downDefined := false
-  iotaBlocked := decide (inv.MarksPresup .uniqueness)
-  iotaAnaphoricBlocked := decide (inv.MarksPresup .familiarity)
+  iotaBlocked := decide (inv.Marks .uniqueness)
+  iotaAnaphoricBlocked := decide (inv.Marks .familiarity)
   existsBlocked := decide (inv.Realizes .indefinite)
   instantiationAccessible := true
 
@@ -216,7 +216,7 @@ theorem bare_covaries {W : Type} (g : Assignment W) (s : W) :
 
 /-- Table 2's attested cells: bipartite (German, Lakhota), marked anaphoric (Mandarin, Akan, Wu)
 and generally marked (Cantonese, English); the marked-unique cell is unattested. -/
-def attested : List DefMarkingStrategy := [.bipartite, .markedAnaphoric, .generallyMarked]
+def attested : List MarkingStrategy := [.bipartite, .markedAnaphoric, .generallyMarked]
 
 /-- The fragments derive Table 2's columns: German bipartite, Mandarin marked anaphoric,
 Cantonese and English generally marked. -/

@@ -2,7 +2,7 @@ import Mathlib.Data.Part
 import Mathlib.Basic.Nontrivial.Defs
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Logic.Trivalent.Prop3
-import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Reference.Iota
 import Linglib.Semantics.Dynamic.Partial
 import Linglib.Data.Examples.CoppockBeaver2015
 
@@ -34,7 +34,7 @@ the paper reports are the rows of `Data/Examples/CoppockBeaver2015.json`.
 
 * Predicates are trivalent properties. The paper's counting abbreviations `|P| ≤ 1` and
   `|P| = 1` and the exclusive component of *only* are read on the positive extension through
-  the substrate's `Uniqueness` and `Existence`, so that the entries are computable given
+  mathlib's `Set.Subsingleton` and `Set.Nonempty`, so that the entries are computable given
   decidability of weak uniqueness, which finite models supply; the same abbreviations as
   formulas of the paper's logic, with Haug's universal quantifier and the Weak Kleene
   conditional, are shown to give the same entries pointwise.
@@ -71,7 +71,7 @@ the paper reports are the rows of `Data/Examples/CoppockBeaver2015.json`.
 
 ## References
 
-* [E. Coppock, D. Beaver, *Definiteness and determinacy* (2015)][coppock-beaver-2015]
+* [E. Coppock, D. Beaver, *Reference and determinacy* (2015)][coppock-beaver-2015]
 * [D. Beaver, E. Krahmer, *A Partial Account of Presupposition Projection*
   (2001)][beaver-krahmer-2001]
 * [D. Haug, *Partial dynamic semantics for anaphora* (2014)][haug-2014]
@@ -88,17 +88,17 @@ the paper reports are the rows of `Data/Examples/CoppockBeaver2015.json`.
 
 namespace CoppockBeaver2015
 
-open Trivalent Trivalent.Prop3 Definiteness
+open Trivalent Trivalent.Prop3 Reference
 
 variable {E W : Type*}
 
 /-! ### Weak uniqueness and the lexical entries -/
 
-/-- Weak uniqueness `|P| ≤ 1`: the substrate's `Uniqueness` on the positive extension. -/
-def WeakUnique (P : Prop3 E) : Prop := Uniqueness (P · = .true)
+/-- Weak uniqueness `|P| ≤ 1`: the positive extension is a subsingleton. -/
+def WeakUnique (P : Prop3 E) : Prop := {x | P x = .true}.Subsingleton
 
 instance [Fintype E] [DecidableEq E] (P : Prop3 E) : Decidable (WeakUnique P) := by
-  unfold WeakUnique Uniqueness; infer_instance
+  unfold WeakUnique Set.Subsingleton; infer_instance
 
 /-- Nothing other than `x` is a `P`: the exclusive component of *only* (57). -/
 def Exclusive (P : Prop3 E) (x : E) : Prop := ∀ y, y ≠ x → P y ≠ .true
@@ -135,7 +135,7 @@ theorem only_eq_false_iff : only P x = .false ↔ P x = .true ∧ ∃ y, y ≠ x
 theorem only_eq_indet_iff : only P x = .indet ↔ P x ≠ .true := by simp [only]
 
 /-- There is never more than one only `P`: an *only* phrase satisfies weak uniqueness. -/
-theorem weakUnique_only (P : Prop3 E) : WeakUnique (only P) := λ x y hx hy => by
+theorem weakUnique_only (P : Prop3 E) : WeakUnique (only P) := λ x hx y hy => by
   by_contra h
   exact (only_eq_true_iff.1 hx).2 y (Ne.symm h) (only_eq_true_iff.1 hy).1
 
@@ -166,7 +166,7 @@ theorem neg_the_eq_indet_iff : neg (the P x) = .indet ↔ ¬ WeakUnique P ∨ P 
 /-- Uniqueness without existence: the empty restrictor is weakly unique, so the definite of
 an empty noun is false rather than undefined, the predicative reading of (13). -/
 theorem the_false (x : E) : the (λ _ => .false) x = .false :=
-  congrFun (the_eq_of_weakUnique λ _ _ h => by simp at h) x
+  congrFun (the_eq_of_weakUnique λ _ h => by simp at h) x
 
 /-- Existence does not project, (45a): *that is not the heart* is true when there are no
 hearts. -/
@@ -222,12 +222,12 @@ theorem atMostOne_eq_ofProp {P : Prop3 E} [Decidable (WeakUnique P)] (h : ∃ x,
       forall'_eq_false_iff, ofProp_ne_indet, ofProp_eq_true_iff, ofProp_eq_false_iff, or_false,
       ne_eq]
     constructor
-    · rintro ⟨-, hu⟩ x y hx hy
+    · rintro ⟨-, hu⟩ x hx y hy
       by_contra hxy
       exact hu x ⟨hx, y, hy, hxy⟩
     · intro hu
       exact ⟨⟨x₀, λ h => h.elim hx₀ λ hy => hx₀ (hy x₀)⟩,
-        λ x ⟨hx, y, hy, hxy⟩ => hxy (hu x y hx hy)⟩
+        λ x ⟨hx, y, hy, hxy⟩ => hxy (hu hx hy)⟩
 
 /-- The definite article is the paper's entry (50) pointwise. -/
 theorem the_eq_meetWeak_atMostOne [DecidablePred (WeakUnique (E := E))] (P : Prop3 E) (x : E) :
@@ -267,7 +267,7 @@ def PresupposesUniqueness (D : Prop3 E → Prop3 E) : Prop :=
 
 /-- An entry presupposes existence when it is classical only on nonempty restrictors. -/
 def PresupposesExistence (D : Prop3 E → Prop3 E) : Prop :=
-  ∀ P x, D P x ≠ .indet → Existence (P · = .true)
+  ∀ P x, D P x ≠ .indet → {x | P x = .true}.Nonempty
 
 section Rivals
 
@@ -309,7 +309,7 @@ theorem not_presupposesUniqueness_theRussellian [Nontrivial E] :
     ¬ PresupposesUniqueness (theRussellian (E := E)) := by
   intro h
   obtain ⟨x, y, hxy⟩ := exists_pair_ne E
-  exact hxy (h (λ _ => .true) x (by simp [theRussellian]) x y rfl rfl)
+  exact hxy (h (λ _ => .true) x (by simp [theRussellian]) rfl rfl)
 
 theorem not_presupposesExistence_theRussellian [Nonempty E] :
     ¬ PresupposesExistence (theRussellian (E := E)) := by
@@ -323,17 +323,17 @@ theorem theFregean_ne_indet_iff {P : Prop3 E} {x : E} :
   simp [theFregean, not_or]
 
 theorem presupposesUniqueness_theFregean : PresupposesUniqueness (theFregean (E := E)) :=
-  λ _ _ h => ((existsUnique_iff_existence_and_uniqueness _).1 (theFregean_ne_indet_iff.1 h).1).2
+  λ _ _ h => (existsUnique_iff_nonempty_subsingleton.1 (theFregean_ne_indet_iff.1 h).1).2
 
 theorem presupposesExistence_theFregean : PresupposesExistence (theFregean (E := E)) :=
-  λ _ _ h => ((existsUnique_iff_existence_and_uniqueness _).1 (theFregean_ne_indet_iff.1 h).1).1
+  λ _ _ h => (existsUnique_iff_nonempty_subsingleton.1 (theFregean_ne_indet_iff.1 h).1).1
 
 /-- Lowering the Russellian quantifier by `be` presupposes nothing (Table 2). -/
 theorem not_presupposesUniqueness_be_theRussellianGQ [Nontrivial E] :
     ¬ PresupposesUniqueness (λ P : Prop3 E => be (theRussellianGQ P)) := by
   intro h
   obtain ⟨x, y, hxy⟩ := exists_pair_ne E
-  exact hxy (h (λ _ => .true) x (by simp [be, theRussellianGQ]) x y rfl rfl)
+  exact hxy (h (λ _ => .true) x (by simp [be, theRussellianGQ]) rfl rfl)
 
 theorem not_presupposesExistence_be_theRussellianGQ [Nonempty E] :
     ¬ PresupposesExistence (λ P : Prop3 E => be (theRussellianGQ P)) := by
@@ -349,11 +349,11 @@ theorem be_theFregeanGQ_ne_indet_iff {P : Prop3 E} {x : E} :
 /-- Lowering the Fregean quantifier by `be` presupposes both existence and uniqueness. -/
 theorem presupposesUniqueness_be_theFregeanGQ :
     PresupposesUniqueness (λ P : Prop3 E => be (theFregeanGQ P)) := λ _ _ h =>
-  ((existsUnique_iff_existence_and_uniqueness _).1 (be_theFregeanGQ_ne_indet_iff.1 h)).2
+  (existsUnique_iff_nonempty_subsingleton.1 (be_theFregeanGQ_ne_indet_iff.1 h)).2
 
 theorem presupposesExistence_be_theFregeanGQ :
     PresupposesExistence (λ P : Prop3 E => be (theFregeanGQ P)) := λ _ _ h =>
-  ((existsUnique_iff_existence_and_uniqueness _).1 (be_theFregeanGQ_ne_indet_iff.1 h)).1
+  (existsUnique_iff_nonempty_subsingleton.1 (be_theFregeanGQ_ne_indet_iff.1 h)).1
 
 end Rivals
 
@@ -381,7 +381,7 @@ theorem the_dominates_an [Nontrivial E] [DecidablePred (WeakUnique (E := E))] :
   · exact (isBivalent_iff_forall_ne_indet P).1 hP x
   · obtain ⟨x, y, hxy⟩ := exists_pair_ne E
     have := h (λ _ => .true) (λ _ => .inl rfl) x (by simp [an])
-    exact hxy ((the_ne_indet_iff.1 this).1 x y rfl rfl)
+    exact hxy ((the_ne_indet_iff.1 this).1 rfl rfl)
 
 /-- The update of a context with a sentential meaning (74), the Heimian partial update of
 the meaning read as a partial proposition: defined when the meaning is classical throughout
@@ -437,7 +437,7 @@ end Derivations
 noncomputable def iota (P : Prop3 E) : Option E := russellIota (P · = .true)
 
 theorem iota_isSome_iff (P : Prop3 E) : (iota P).isSome ↔ ∃! x, P x = .true :=
-  russellIota_isSome_iff_exists_unique _
+  russellIota_isSome_iff _
 
 theorem iota_eq_none_iff (P : Prop3 E) : iota P = none ↔ ¬ ∃! x, P x = .true := by
   rw [← Option.not_isSome_iff_eq_none, iota_isSome_iff]
@@ -451,7 +451,7 @@ theorem iota_the [DecidablePred (WeakUnique (E := E))] (P : Prop3 E) : iota (the
   by_cases h : WeakUnique P
   · rw [the_eq_of_weakUnique h]
   · rw [(iota_eq_none_iff _).2 λ ⟨_, hx, _⟩ => by simp [the_eq_indet_of_not_weakUnique h] at hx,
-      (iota_eq_none_iff _).2 λ hu => h ((existsUnique_iff_existence_and_uniqueness _).1 hu).2]
+      (iota_eq_none_iff _).2 λ hu => h (existsUnique_iff_nonempty_subsingleton.1 hu).2]
 
 /-- The determinate reading (87): undefinedness of the individual percolates (86), so the
 sentence is classical exactly when the description has exactly one satisfier. -/
@@ -477,7 +477,7 @@ theorem not_update_dom_iota_of_not_blocks [Nontrivial E] [DecidablePred (WeakUni
     have hne : (iota (π w)).elim .indet (G w) ≠ .indet := hd hw
     rcases hi : iota (π w) with _ | x
     · simp [hi] at hne
-    · exact ((existsUnique_iff_existence_and_uniqueness _).1
+    · exact (existsUnique_iff_nonempty_subsingleton.1
         ((iota_isSome_iff _).1 (by rw [hi]; rfl))).2)
 
 section AntiUniqueness
@@ -532,7 +532,7 @@ theorem not_classicallyEquivalent_toRelational_the [DecidableEq E]
     [DecidablePred (WeakUnique (E := E))] {poss : E → E → Trivalent} {x y : E}
     (h : poss x y = .false) : ¬ ClassicallyEquivalent (λ P => toRelational poss P y) the := by
   intro hc
-  have hU : WeakUnique (λ z : E => ofProp (z = x)) := λ a b ha hb =>
+  have hU : WeakUnique (λ z : E => ofProp (z = x)) := λ a ha b hb =>
     (ofProp_eq_true_iff.1 ha).trans (ofProp_eq_true_iff.1 hb).symm
   have h₁ : toRelational poss (λ z => ofProp (z = x)) y x = .false := by
     show meetWeak (ofProp (x = x)) (poss x y) = .false
@@ -623,7 +623,7 @@ theorem onlySurvivor_sam : onlySurvivor .sam = .true :=
 
 /-- The description holds of as many people as there are crashes with a single survivor. -/
 theorem not_weakUnique_onlySurvivor : ¬ WeakUnique onlySurvivor := λ h =>
-  absurd (h .scott .sam onlySurvivor_scott onlySurvivor_sam) (by decide)
+  absurd (h onlySurvivor_scott onlySurvivor_sam) (by decide)
 
 /-- (68): *an only survivor of a plane crash* is not blocked on this derivation. -/
 theorem not_blocks : ¬ Blocks Set.univ (λ α (_ : Unit) => α onlySurvivor .scott) the an :=

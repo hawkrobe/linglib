@@ -1,5 +1,5 @@
 import Linglib.Fragments.Akan.Determiners
-import Linglib.Semantics.Quantification.ChoiceFunction
+import Linglib.Semantics.Reference.ChoiceFunction
 
 /-!
 # Owusu (2022): Cross-Categorial Definiteness/Familiarity
@@ -17,7 +17,7 @@ reading true and the narrow-scope reading false (`bi_wide_scope_witnessed`, `som
 ## Implementation notes
 
 The substrate type is the skolemized choice function of
-`Semantics/Quantification/ChoiceFunction`, and the bare noun phrase is not analysed here, bare
+`Semantics/Reference/ChoiceFunction`, and the bare noun phrase is not analysed here, bare
 nouns receiving kind and indefinite readings outside the choice-function analysis. Wide scope
 under negation follows because the choice-function variable is contextually given and
 negation binds no situation variable, so the function's referent is fixed before negation
@@ -47,7 +47,7 @@ machinery beyond the fixed-situation fragment formalized here.
 * [arkoh-matthewson-2013]
 -/
 
-open Quantification.ChoiceFunction
+open Reference
 
 namespace Owusu2022
 
@@ -76,11 +76,11 @@ CF-selected member of the (at `s₀`) non-empty restrictor fails `VP`,
 some restrictor member fails `VP`, witnessed by the CF's choice. It does
 not entail the narrow-scope ¬ > ∃ (see the model below). -/
 theorem bi_wide_scope_specific {S E : Type*}
-    {f : SkolemCF S E} {s₀ : S} (hf : (f s₀).isCorrect)
+    {f : SkolemCF S E} {s₀ : S} (hf : (f s₀).IsCorrect)
     {P : S → E → Prop} {VP : E → Prop} (hN : ∃ x, P s₀ x) :
     ∀ d ∈ skolemDenot f s₀ .bi, ¬ VP (d P) → ∃ x, P s₀ x ∧ ¬ VP x := by
   simp only [skolemDenot_bi, Option.mem_some_iff, forall_eq']
-  exact cf_wide_scope_specific (f s₀) hf hN
+  exact cf_wide_scope_specific hf hN
 
 /-- Entry (67)'s same-index tying is contentful in both coordinates:
 a single CF/restrictor pair where the tied denotation `f_s(P(s))`
@@ -123,7 +123,7 @@ open Classical in
 noncomputable def preferAma : SkolemCF Unit Onipa :=
   λ _ P => if P .ama then .ama else .kofi
 
-theorem preferAma_correct : preferAma.isCorrect := by
+theorem preferAma_correct : preferAma.IsCorrect := by
   intro _ P ⟨x, hPx⟩
   unfold preferAma
   split_ifs with h

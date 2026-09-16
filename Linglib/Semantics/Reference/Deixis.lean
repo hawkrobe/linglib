@@ -1,40 +1,18 @@
 /-!
-# Deictic Features: Demonstrative Distance and Person Orientation
-[moroney-2021]
+# Deixis
 
-Framework-agnostic enumeration of deictic features carried by demonstratives.
-Promoted from `Fragments/Shan/Definiteness.SpatialRelation` (which carried
-just `proximal | distal`) for cross-fragment reuse.
+The deictic feature of a demonstrative: proximal, medial, or distal, or unspecified for a
+demonstrative that encodes no distance contrast. Two-way systems, English *this* and *that* or
+Shan *nâj* and *nân* ([moroney-2021]), use the proximal and distal values; three-way
+distance-oriented systems, Latin *hic*, *iste*, *ille*, add the medial one; German *dieser* is
+unspecified. Finer contrasts, person orientation, visibility or elevation, are added when a
+fragment needs them. A description carries its feature as `Reference.Description.demonstrative`,
+and a word-class-neutral carrier exposes it through the `Demonstrative` class.
 
-## Coverage
+## References
 
-The four constructors cover the WALS Ch. 41 distance-system typology:
-
-- **Two-way systems** (~54% of attested languages): use `proximal | distal`.
-  English (this/that), Mandarin (zhe/na), French (ce N-ci/ce N-la), Shan
-  (nâj/nân), Magahi (i/ũ), and most Indo-European languages.
-
-- **Three-way distance-oriented systems**: use `proximal | medial | distal`.
-  Latin (hic/iste/ille), Spanish (este/ese/aquel), Hunzib.
-
-- **Distance-neutral demonstratives** (Modern German *dieser*, Hawaiian
-  no-contrast forms): use `unspecified`.
-
-## Out of scope at this enum
-
-Adding more granularity (person-orientation, visibility, elevation, posture)
-should follow the *concrete-then-abstract* discipline: add a constructor
-when a fragment actually needs it, not in anticipation. Specifically:
-
-- **Person-oriented three-way systems** (Japanese ko/so/a, Korean i/ku/ce):
-  add `nearSpeaker | nearHearer | awayFromBoth` constructors when the first
-  fragment needs them.
-- **Visibility contrasts** (Quechua, Kwakwaka'wakw, ASL): add `visible |
-  invisible` constructors when a fragment needs them.
-- **Elevation contrasts** (Dyirbal, Nepali): add when needed.
-
-This is the centralized type referenced by `Definiteness.Description.deictic`
-(forthcoming) and by demonstrative entries in `Fragments/`.
+* [moroney-2021]
+* [patel-grosz-grosz-2017]
 -/
 
 namespace Reference

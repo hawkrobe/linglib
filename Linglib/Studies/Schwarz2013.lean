@@ -1,4 +1,4 @@
-import Linglib.Semantics.Definiteness.Defs
+import Linglib.Semantics.Reference.Definiteness
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Fragments.German.Determiners
 import Linglib.Fragments.Fering.Determiners
@@ -19,7 +19,7 @@ definites as bare nominals (Akan *nó*, Mauritian Creole *la*), languages with t
 covering both use families that fits neither pattern. Each language's cell is derived from its
 fragment's `Determiners.inventory` through the substrate's `markingStrategy`, and the bridging
 split, part-whole bridging with the weak article and producer bridging with the strong one, is the
-substrate's `bridgingPresupType`. The Lakhota classification is tentative in the survey itself,
+substrate's `Bridging.strength`. The Lakhota classification is tentative in the survey itself,
 whose footnote 16 concedes [ingham-2003]'s anaphoric *kiŋ*; the project fragment encodes that
 anaphoric use, under which the derived cell flips from bipartite to generally marked
 (`anaphoric_kin_flips_cell`).
@@ -40,7 +40,7 @@ survey reports no data on the remaining languages.
 
 namespace Schwarz2013
 
-open Definiteness
+open Reference
 
 /-! ### The German/Fering baseline (§3.1) -/
 
@@ -56,8 +56,8 @@ theorem german_fering_bipartite :
 weak article, and producer bridging, the play and its author, the strong one, in German (16)
 and Fering (17) alike. -/
 theorem bridging_split :
-    bridgingPresupType .partWhole = .uniqueness ∧
-    bridgingPresupType .relational = .familiarity :=
+    Bridging.strength .partWhole = .uniqueness ∧
+    Bridging.strength .relational = .familiarity :=
   ⟨rfl, rfl⟩
 
 /-! ### Languages with exclusively anaphoric articles (§4.1) -/
@@ -72,10 +72,10 @@ theorem exclusively_anaphoric :
 /-- The §4.1 pattern through the cell's characterization: neither language marks uniqueness
 overtly and both mark familiarity. -/
 theorem weak_definites_bare :
-    (¬ Akan.Determiners.inventory.MarksPresup .uniqueness ∧
-      Akan.Determiners.inventory.MarksPresup .familiarity) ∧
-    (¬ MauritianCreole.Determiners.inventory.MarksPresup .uniqueness ∧
-      MauritianCreole.Determiners.inventory.MarksPresup .familiarity) :=
+    (¬ Akan.Determiners.inventory.Marks .uniqueness ∧
+      Akan.Determiners.inventory.Marks .familiarity) ∧
+    (¬ MauritianCreole.Determiners.inventory.Marks .uniqueness ∧
+      MauritianCreole.Determiners.inventory.Marks .familiarity) :=
   ⟨Determiner.Inventory.markingStrategy_eq_markedAnaphoric_iff.mp
       Akan.Determiners.marking,
     Determiner.Inventory.markingStrategy_eq_markedAnaphoric_iff.mp

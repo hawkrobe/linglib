@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Reference.Character
 import Linglib.Semantics.Reference.Nominal
-import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Reference.Iota
 
 /-!
 # Donnellan (1966): Reference and Definite Descriptions
@@ -35,38 +35,32 @@ decided here: the file gives Donnellan's truth conditions for each use.
 
 namespace Donnellan1966
 
-open Reference Definiteness
+open Reference
 
-variable {W E : Type*} {domain : List E} {φ : E → W → Prop} [∀ e w, Decidable (φ e w)]
-  {w : W} {e intended : E}
+variable {W E : Type*} {φ : E → W → Prop} {w : W} {e intended : E}
 
 /-- The attributive use: at each world, the unique satisfier of the description there. -/
-def attributive (domain : List E) (φ : E → W → Prop) [∀ e w, Decidable (φ e w)] :
-    W → Option E :=
-  λ w => russellIotaList domain λ e => decide (φ e w)
+noncomputable def attributive (φ : E → W → Prop) : W → Option E := fun w ↦ russellIota (φ · w)
 
-theorem attributive_eq_some_iff :
-    attributive domain φ w = some e ↔ domain.filter (λ e => decide (φ e w)) = [e] :=
-  russellIotaList_eq_some_iff ..
+theorem attributive_eq_some_iff : attributive φ w = some e ↔ φ e w ∧ ∀ x, φ x w → x = e :=
+  russellIota_eq_some_iff _
 
 /-- The attributive use as a nominal denotation: the selector is the pointwise iota and there
 is no presupposition beyond its definedness. -/
-def attributiveNominal (domain : List E) (φ : E → W → Prop) [∀ e w, Decidable (φ e w)] :
-    Nominal Unit W E :=
-  .ofReferent (attributive domain φ)
+noncomputable def attributiveNominal (φ : E → W → Prop) : Nominal Unit W E :=
+  .ofReferent (attributive φ)
 
 /-- Where the description picks out `e`, the attributive use of *the φ is ψ* asserts `ψ e`. -/
-theorem attributiveNominal_assertion (ψ : E → W → Prop) (h : attributive domain φ w = some e) :
-    ((attributiveNominal domain φ).resolve ψ ()).assertion w ↔ ψ e w := by
+theorem attributiveNominal_assertion (ψ : E → W → Prop) (h : attributive φ w = some e) :
+    ((attributiveNominal φ).resolve ψ ()).assertion w ↔ ψ e w := by
   simp [attributiveNominal, Nominal.resolve, Nominal.ofReferent,
     Presupposition.PartialProp.presupOfReferent, h]
 
 /-- Donnellan's scene: the description uniquely fits `e` at `w` while the speaker intends
 someone else, so the attributive use denotes `e` and the referential use, the constant
 character at the intended referent, does not. -/
-theorem attributive_ne_const_of_misfit (h : attributive domain φ w = some e)
-    (hne : e ≠ intended) :
-    attributive domain φ w ≠ some (Character.const intended () w) := by
+theorem attributive_ne_const_of_misfit (h : attributive φ w = some e) (hne : e ≠ intended) :
+    attributive φ w ≠ some (Character.const intended () w) := by
   simpa [h] using hne
 
 end Donnellan1966

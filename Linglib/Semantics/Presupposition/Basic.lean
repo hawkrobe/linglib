@@ -386,11 +386,9 @@ theorem negFactive_presup_eq (complement : PartialProp W)
 - `scope : E → W → Prop` — what is asserted of the chosen referent,
 
 build the `PartialProp` that presupposes referent definedness and asserts the
-scope of the referent. This is the single source of truth for all definite
-denotations in the library: uniqueness-based (`russellIotaList domain R`),
-familiarity-based (`russellIotaList dc.salient R`), anaphoric
-(`russellIotaList domain (R ∧ Q)`), and Donnellan's attributive
-(`attributiveContent domain R`) all instantiate the selector slot. -/
+scope of the referent. Every definite denotation in the library instantiates the selector
+slot: the Russellian iota `Reference.russellIota` over a restrictor, over the restrictor
+conjoined with identity to an antecedent, and Donnellan's attributive use pointwise. -/
 def presupOfReferent {E : Type*} (referent : W → Option E)
     (scope : E → W → Prop) : PartialProp W where
   presup := fun w => (referent w).isSome

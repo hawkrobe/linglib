@@ -1494,10 +1494,6 @@ import Linglib.Semantics.Conditionals.SimilarityOrdering
 import Linglib.Semantics.Conditionals.Stalnaker
 import Linglib.Semantics.Conditionals.Sweetser
 import Linglib.Semantics.Conditionals.WillConditional
-import Linglib.Semantics.Definiteness.Basic
-import Linglib.Semantics.Definiteness.Defs
-import Linglib.Semantics.Definiteness.Description
-import Linglib.Semantics.Definiteness.Maximality
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Aggregation
 import Linglib.Semantics.Degree.Antonymy
@@ -1664,7 +1660,6 @@ import Linglib.Semantics.Presupposition.Trivalent
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Quantification.Binominal
 import Linglib.Semantics.Quantification.BinominalDefs
-import Linglib.Semantics.Quantification.ChoiceFunction
 import Linglib.Semantics.Quantification.Counting
 import Linglib.Semantics.Quantification.CovertQuantifier
 import Linglib.Semantics.Quantification.Defs
