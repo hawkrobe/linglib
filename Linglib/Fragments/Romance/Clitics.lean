@@ -67,6 +67,12 @@ anaphor and an accusative or dative object clitic a Principle-B pronominal. -/
 def CliticEntry.bindingClass (c : CliticEntry) : Binding.BindingClass :=
   match c.case_ with | .reflexive => .reflexive | _ => .pronoun
 
+/-- A clitic is a Principle-A anaphor when its binding class is. -/
+abbrev CliticEntry.IsAnaphor (c : CliticEntry) : Prop := c.bindingClass.IsAnaphor
+
+/-- A clitic is a Principle-B pronominal when its binding class is. -/
+abbrev CliticEntry.IsPronominal (c : CliticEntry) : Prop := c.bindingClass.IsPronominal
+
 /-- Look up the form for a given person, number, and paradigm cell. -/
 def lookupForm (paradigm : List CliticEntry) (p : Person) (n : Number)
     (c : CliticCase) : Option String :=

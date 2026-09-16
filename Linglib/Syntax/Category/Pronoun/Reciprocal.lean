@@ -22,7 +22,7 @@ not pronouns and stay bare markers.
     exponent of reciprocity, with the strategy it realizes and the readings it covers. The
     kind fixes the Principle-A reciprocal binding class, so entries need not restate it. -/
 structure ReciprocalPronoun extends Pronoun where
-  bindingClass := some .reciprocal
+  bindingClass := .reciprocal
   /-- The nominal strategy: a dedicated pronoun (*egymás*, *otagai*) or a bipartite quantifier
       NP (*each other*). -/
   strategy : Reciprocal.Strategy := .recipPronoun

@@ -71,8 +71,11 @@ live in the entry names. -/
 def TurkishAnaphor.bindingClass (a : TurkishAnaphor) : Binding.BindingClass :=
   match a.anaphorType with | .reciprocal => .reciprocal | .reflexive => .reflexive
 
+/-- An anaphor is a Principle-A anaphor when its binding class is. -/
+abbrev TurkishAnaphor.IsAnaphor (a : TurkishAnaphor) : Prop := a.bindingClass.IsAnaphor
+
 /-- Every Turkish anaphor is a Principle-A anaphor. -/
-theorem TurkishAnaphor.bindingClass_isAnaphor (a : TurkishAnaphor) : a.bindingClass.IsAnaphor := by
+theorem TurkishAnaphor.isAnaphor (a : TurkishAnaphor) : a.IsAnaphor := by
   cases h : a.anaphorType <;> simp [TurkishAnaphor.bindingClass, h, Binding.BindingClass.IsAnaphor]
 
 /-- birbirleri as direct object (ACC case).

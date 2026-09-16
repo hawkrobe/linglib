@@ -161,8 +161,8 @@ def paradigm : List CliticEntry :=
 /-! ### Capability checks -/
 
 -- The reflexive clitic *si* is a Principle-A anaphor; the accusative *lo* a pronominal.
-example : si_refl.bindingClass.IsAnaphor := by decide
-example : lo_cl.bindingClass.IsPronominal := by decide
+example : si_refl.IsAnaphor := by decide
+example : lo_cl.IsPronominal := by decide
 
 /-- Look up the form for a given person, number, and case in the paradigm. -/
 def lookupForm : Person → Number → CliticCase → Option String :=

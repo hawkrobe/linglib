@@ -65,7 +65,7 @@ def ye : LogophoricPronoun :=
     Principle-A reflexive (`bindingClass := .reflexive`), so its licensing axis (pivot) and its
     binding axis (anaphor) are distinct. -/
 def zibun : LogophoricPronoun :=
-  { form := "zibun", bindingClass := some .reflexive, requiredRole := .pivot }
+  { form := "zibun", bindingClass := .reflexive, requiredRole := .pivot }
 
 /-! ### Licensing, derived from the hierarchy -/
 
@@ -87,7 +87,7 @@ theorem zibun_licensed_by_pivot : Logophoric.LicensedBy zibun .pivot := by decid
 its binding class: [sells-1987]'s role-oriented anaphora, carried as two independent axes on one
 object. -/
 theorem zibun_anaphor_yet_pivot_oriented :
-    zibun.bindingClassD.IsAnaphor ∧ Logophoric.requiredRole zibun = LogophoricRole.pivot :=
+    zibun.toPronoun.IsAnaphor ∧ Logophoric.requiredRole zibun = LogophoricRole.pivot :=
   ⟨Or.inl rfl, rfl⟩
 
 /-- Generic consumer of the capability: *every* logophoric pronoun is licensed by a `source`
