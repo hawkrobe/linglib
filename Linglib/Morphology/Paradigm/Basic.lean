@@ -1,10 +1,12 @@
 import Mathlib.Data.Rat.Defs
+import Linglib.Core.Data.Setoid.Basic
 
 /-!
 # Paradigms: forms over ordered cells
 
 The morphologist's primary observable: a **paradigm** assigns a surface
-form to each of `n` linearly ordered cells. One type serves both
+form to each of `n` linearly ordered cells; its **syncretism** is the
+kernel setoid of that assignment (`syncretism`). One type serves both
 research lines that consume it — realization-pattern typology (*ABA and
 contiguity, `Morphology/Paradigm/Contiguity.lean`) and paradigm-cell
 information theory (implicative structure and complexity,
@@ -16,6 +18,7 @@ paradigms over graded cells.
 ## Main declarations
 
 * `Paradigm n F` — assignment of a form to each of the `n` cells
+* `syncretism` — the kernel setoid of a form assignment, `Setoid.ker`
 * `ParadigmSystem n Form` — paradigms with frequency weights, organized
   by inflection class
 * `cellDistribution`, `jointCellDistribution` — empirical form
@@ -33,6 +36,18 @@ each cell. The single carrier for realization patterns
 ([ackerman-malouf-2013]; a weighted system of paradigms is a
 `ParadigmSystem`). -/
 abbrev Paradigm (n : ℕ) (F : Type*) := Fin n → F
+
+/-- The **syncretism** relation of a form assignment `p`: two cells are
+syncretic iff `p` assigns them the same form. Exactly the kernel setoid
+`Setoid.ker p`; its equivalence classes are the syncretism patterns, and
+two assignments have the same pattern iff their syncretisms agree. -/
+abbrev syncretism {Cell F : Type*} (p : Cell → F) : Setoid Cell := Setoid.ker p
+
+/-- Two form assignments have the same syncretism pattern iff they identify
+the same pairs of cells. -/
+theorem syncretism_eq_iff {Cell F G : Type*} {p : Cell → F} {q : Cell → G} :
+    syncretism p = syncretism q ↔ ∀ a b, p a = p b ↔ q a = q b := by
+  simp only [syncretism, Setoid.ext_iff, Setoid.ker_def]
 
 /-- A paradigm system: paradigms (inflection classes) paired with
 frequency weights. -/

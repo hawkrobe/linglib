@@ -1,4 +1,3 @@
-import Linglib.Morphology.Paradigm.Degree
 import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Data.Forms.SmithMoskalEtAl2019
 
@@ -63,7 +62,7 @@ containment of section 4.1.
 
 namespace SmithMoskalEtAl2019
 
-open Morphology Morphology.Degree Morphology.Containment
+open Morphology Morphology.Containment
 
 /-! ### Paradigms from the form table -/
 
@@ -123,20 +122,21 @@ theorem aba_not_generable : ¬ ElsewhereGenerable ![0, 1, 0] :=
   mt (generable_iff_contiguous _).mp (by decide)
 
 /-- The attested patterns of the case hierarchy: Lezgian AAA, Icelandic and Russian ABB. -/
-theorem lezgian_aaa : degreeShape lezgian1sg = aaa := by decide
+theorem lezgian_aaa : syncretism lezgian1sg = syncretism Paradigm.aaa := by decide
 
-theorem icelandic_abb : degreeShape icelandic1sg = abb := by decide
+theorem icelandic_abb : syncretism icelandic1sg = syncretism Paradigm.abb := by decide
 
-theorem russian_abb : degreeShape russian1sg = abb := by decide
+theorem russian_abb : syncretism russian1sg = syncretism Paradigm.abb := by decide
 
 /-- The attested ABB of the number hierarchy: Awtuw's plural and dual share a base. -/
-theorem awtuw_abb : degreeShape awtuw1 = abb := by decide
+theorem awtuw_abb : syncretism awtuw1 = syncretism Paradigm.abb := by decide
 
 /-- The rules (15) for the Icelandic first singular: an accusative-conditioned *m-* and an
 elsewhere *ég*; by containment the *m-* base spreads to the dative. -/
 def icelandicVocab : List (SpanRule 3 String) := [⟨"ég", 0, none⟩, ⟨"m", 0, some 1⟩]
 
-theorem icelandic_abb_generated : degreeShape (realize icelandicVocab) = abb := by decide
+theorem icelandic_abb_generated :
+    syncretism (realize icelandicVocab) = syncretism Paradigm.abb := by decide
 
 /-! ### Structural adjacency and the absence of AAB for degree, section 2 -/
 
@@ -157,9 +157,9 @@ theorem aab_not_generable_of_terminal_adjacent {v : List (SpanRule 3 ℕ)} (hT :
 /-! ### AAB attested for case, section 3.6, and for number, section 4.2 -/
 
 /-- Wardaman and Khinalugh are AAB: contiguous, the third cell alone suppletive. -/
-theorem wardaman_aab : degreeShape wardaman3sg = aab := by decide
+theorem wardaman_aab : syncretism wardaman3sg = syncretism Paradigm.aab := by decide
 
-theorem khinalugh_aab : degreeShape khinalugh2sg = aab := by decide
+theorem khinalugh_aab : syncretism khinalugh2sg = syncretism Paradigm.aab := by decide
 
 /-- Genuine AAB against syncretism: the Wardaman and Khinalugh absolutive and ergative are
 distinct forms on one base, where the Archi second singular's are identical, the {A=A}B of
@@ -172,11 +172,11 @@ theorem genuine_aab :
 theorem archi_syncretic : Forms.archi_2sg_abs.form = Forms.archi_2sg_erg.form := by decide
 
 /-- The number witnesses of Table 46 are AAB. -/
-theorem yagua_aab : degreeShape yagua2 = aab := by decide
+theorem yagua_aab : syncretism yagua2 = syncretism Paradigm.aab := by decide
 
-theorem wambaya_aab : degreeShape wambaya1incl = aab := by decide
+theorem wambaya_aab : syncretism wambaya1incl = syncretism Paradigm.aab := by decide
 
-theorem dehu_aab : degreeShape dehu3m = aab := by decide
+theorem dehu_aab : syncretism dehu3m = syncretism Paradigm.aab := by decide
 
 /-- The attested AAB patterns are contiguous, so containment admits them, yet no terminal
 vocabulary under structural adjacency generates them: the adjacency condition is what the
@@ -243,7 +243,7 @@ def wardamanVocab : List (SpanRule 3 String) := [⟨"narnaj", 0, none⟩, ⟨"gu
 and generates the attested AAB. -/
 theorem wardaman_aab_generated :
     Antihomophonous wardamanVocab ∧ DomainLocal 2 wardamanVocab ∧
-      degreeShape (realize wardamanVocab) = aab := by
+      syncretism (realize wardamanVocab) = syncretism Paradigm.aab := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-- The same vocabulary satisfies neither structural adjacency nor [bobaljik-2012]'s

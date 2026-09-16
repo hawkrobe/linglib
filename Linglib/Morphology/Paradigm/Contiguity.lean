@@ -1,4 +1,5 @@
 import Linglib.Morphology.Paradigm.Basic
+import Mathlib.Tactic.FinCases
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Order.Interval.Finset.Fin
 import Mathlib.Order.Interval.Set.OrdConnected
@@ -24,10 +25,13 @@ assignment being the kernel of a monotone score (`FeasiblyMonotone`) —
 behind Graf's instance-by-instance verification, independently of any
 insertion mechanism.
 
-Theory-laden derivations of contiguity (vocabulary insertion under the
-Elsewhere Condition over containment hierarchies) live in
-`Morphology/Exponence/Containment/Contiguity.lean`; the n = 3 degree
-specialization in `Morphology/Paradigm/Degree.lean`.
+Over three cells the five syncretism patterns are named as
+[bobaljik-2012] names the degree patterns (`Paradigm.aaa`, `Paradigm.abb`,
+`Paradigm.abc`, `Paradigm.aba`, `Paradigm.aab`); ABA is the one contiguity
+excludes (`isContiguous_iff_syncretism_ne_aba`). Theory-laden derivations
+of contiguity (vocabulary insertion under the Elsewhere Condition over
+containment hierarchies) live in
+`Morphology/Exponence/Containment/Contiguity.lean`.
 
 ## Main declarations
 
@@ -36,6 +40,8 @@ specialization in `Morphology/Paradigm/Degree.lean`.
 * `FeasiblyMonotone`, `isContiguous_iff_feasiblyMonotone` —
   [graf-2019]'s monotonicity reconstruction of *ABA
 * `IsContiguous.comp_monotone`, `isContiguous_comp_left` — composition API
+* `Paradigm.aaa` … `Paradigm.aab`, `isContiguous_iff_syncretism_ne_aba` —
+  the three-cell patterns and the one contiguity excludes
 
 ## References
 
@@ -98,6 +104,70 @@ def FeasiblyMonotone (p : ι → F) : Prop :=
   ∃ g : ι → ℕ, Monotone g ∧ ∀ i j, p i = p j ↔ g i = g j
 
 end Preorder
+
+/-! ### The three-cell patterns
+
+The five syncretism patterns of a three-cell chain, as form-class indices,
+named as [bobaljik-2012] names the degree patterns over positive <
+comparative < superlative. A concrete paradigm has a pattern when its
+`syncretism` is the pattern's. ABA is the pattern contiguity excludes; AAB
+is contiguous, and its exclusion for degree is a vocabulary-level matter
+(`Morphology/Exponence/Containment/Contiguity.lean`). -/
+
+namespace Paradigm
+
+/-- AAA: one form throughout (*tall – taller – tallest*). -/
+def aaa : Paradigm 3 ℕ := ![0, 0, 0]
+
+/-- ABB: the two upper cells share a form the lowest lacks (*good – better – best*). -/
+def abb : Paradigm 3 ℕ := ![0, 1, 1]
+
+/-- ABC: three forms (*bonus – melior – optimus*). -/
+def abc : Paradigm 3 ℕ := ![0, 1, 2]
+
+/-- ABA: the outer cells share a form the middle one lacks. -/
+def aba : Paradigm 3 ℕ := ![0, 1, 0]
+
+/-- AAB: the two lower cells share a form the highest lacks. -/
+def aab : Paradigm 3 ℕ := ![0, 0, 1]
+
+end Paradigm
+
+/-- Over three cells contiguity is the one condition on the outer pair. -/
+theorem isContiguous_fin_three_iff (p : Paradigm 3 F) :
+    IsContiguous p ↔ (p 0 = p 2 → p 0 = p 1) := by
+  refine ⟨fun h ↦ h (i := 0) (j := 1) (k := 2) (by decide) (by decide),
+    fun h i j k hij hjk heq ↦ ?_⟩
+  fin_cases i <;> fin_cases j <;> fin_cases k <;>
+    first
+    | rfl
+    | exact heq
+    | exact h heq
+    | exact absurd hij (by decide)
+    | exact absurd hjk (by decide)
+
+/-- A three-cell paradigm has the ABA pattern iff its outer cells agree and
+its middle cell differs. -/
+theorem syncretism_eq_aba_iff (p : Paradigm 3 F) :
+    syncretism p = syncretism Paradigm.aba ↔ p 0 = p 2 ∧ p 0 ≠ p 1 := by
+  rw [syncretism_eq_iff]
+  refine ⟨fun h ↦ ⟨(h 0 2).mpr rfl, fun h01 ↦ absurd ((h 0 1).mp h01) (by decide)⟩, ?_⟩
+  rintro ⟨h02, h01⟩ a b
+  have h12 : p 1 ≠ p 2 := fun h ↦ h01 (h02.trans h.symm)
+  fin_cases a <;> fin_cases b <;>
+    first
+    | exact iff_of_true rfl rfl
+    | exact iff_of_true h02 rfl
+    | exact iff_of_true h02.symm rfl
+    | exact iff_of_false h01 (by decide)
+    | exact iff_of_false h01.symm (by decide)
+    | exact iff_of_false h12 (by decide)
+    | exact iff_of_false h12.symm (by decide)
+
+/-- ABA is the only three-cell pattern contiguity excludes. -/
+theorem isContiguous_iff_syncretism_ne_aba (p : Paradigm 3 F) :
+    IsContiguous p ↔ syncretism p ≠ syncretism Paradigm.aba := by
+  rw [isContiguous_fin_three_iff, ne_eq, syncretism_eq_aba_iff, not_and, not_not]
 
 /-! ### Graf's monotonicity reconstruction
 

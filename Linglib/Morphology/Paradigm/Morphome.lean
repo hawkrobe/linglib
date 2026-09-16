@@ -7,9 +7,9 @@ import Mathlib.Data.Set.Subsingleton
 # Morphomes: syncretism classes with no natural characterization
 
 A realization map `p : Cell → F` assigns a form to each paradigm cell. Its
-**syncretism** relation — cells receiving the same form — is exactly
-mathlib's kernel setoid `Setoid.ker p`, and the syncretism classes are its
-equivalence classes. A **morphome** ([aronoff-1994] coined the term) is a
+**syncretism** relation — cells receiving the same form — is the kernel
+setoid `Morphology.syncretism p` of `Morphology/Paradigm/Basic.lean`, and
+the syncretism classes are its equivalence classes. A **morphome** ([aronoff-1994] coined the term) is a
 systematic syncretism that does not define a natural class; [herce-2023]
 adopts the working definition "a systematic morphological syncretism which
 does not define a (syntactically or semantically) natural class" (Trommer
@@ -42,8 +42,6 @@ jargon, and "metasyncretism" does not appear in the book.
 
 ## Main declarations
 
-* `Morphology.syncretism` — the syncretism setoid of a realization map
-  (`Setoid.ker`)
 * `Morphology.syncretismClass` — the class (fiber) of a given cell
 * `Morphology.formCells` — the cells a form realizes, the `Finset` face of the class
 * `Morphology.IsMorphome` — a nontrivial syncretism class failing `Natural`
@@ -54,20 +52,6 @@ jargon, and "metasyncretism" does not appear in the book.
 namespace Morphology
 
 variable {Cell F : Type*}
-
-/-- The **syncretism** relation of a realization map `p`: two cells are
-syncretic iff `p` assigns them the same form. Exactly the kernel setoid
-`Setoid.ker p`; its equivalence classes are the paradigm's syncretism
-patterns. -/
-abbrev syncretism (p : Cell → F) : Setoid Cell := Setoid.ker p
-
-variable {G : Type*}
-
-/-- Two realization maps have the same syncretism pattern iff they identify
-the same pairs of cells. -/
-theorem syncretism_eq_iff {p : Cell → F} {q : Cell → G} :
-    syncretism p = syncretism q ↔ ∀ a b, p a = p b ↔ q a = q b := by
-  simp only [syncretism, Setoid.ext_iff, Setoid.ker_def]
 
 /-- The syncretism class of a cell `a`: every cell realized as `a` is. -/
 def syncretismClass (p : Cell → F) (a : Cell) : Set Cell := {x | p x = p a}
