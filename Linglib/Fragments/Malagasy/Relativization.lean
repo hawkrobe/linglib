@@ -1,27 +1,25 @@
 import Linglib.Syntax.Clause.Relative
 
 /-!
-# Malagasy Relativization Fragment
-[keenan-comrie-1977]
+# Malagasy relative clauses
 
-One relative clause marker:
-- Gap construction (-case, postnominal, covers SU only)
+Malagasy relativizes subjects only. The head noun is followed, optionally, by the invariable
+relativizer *izay* and then by the clause with the relativized position left empty, as in *ny
+mpianatra izay nahita ny vehivavy* 'the student that saw the woman'. Any other noun phrase must
+first be promoted to subject by the voice system and then relativized as a subject. The data
+are [keenan-comrie-1977]'s.
 
-Malagasy is a predicate-initial Austronesian language where only the
-pivot (subject/topic) can be directly relativized. Non-subjects require
-voice alternation to promote the target to pivot position before
-relativization.
+## References
 
-Data from [keenan-comrie-1977] Table 1.
+* [keenan-comrie-1977]
 -/
 
 namespace Malagasy
 
 open RelativeClause
 
-/-- Gap construction. Postnominal RC. Only the pivot (subject) can be
-    relativized. Voice alternation required for underlying non-subjects.
-    E.g., "ny lehilahy [izay nandao _]" 'the man [that left _]'. -/
+/-- The postnominal clause, optionally introduced by *izay*, leaves the relativized position
+empty and relativizes subjects only. -/
 def relGap : Marker :=
   { form := "izay/∅"
   , npRel := .gap
@@ -29,7 +27,7 @@ def relGap : Marker :=
   , placement := .postNominal
   , positions := {.subject} }
 
-/-- All Malagasy relative clause markers. -/
+/-- The Malagasy relative-clause markers. -/
 def relMarkers : List Marker := [relGap]
 
 end Malagasy

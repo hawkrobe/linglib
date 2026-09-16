@@ -1,14 +1,15 @@
 import Linglib.Syntax.Clause.Relative
 
 /-!
-# Welsh relative-clause markers
+# Welsh relative clauses
 
-The two relative particles of Welsh as [keenan-comrie-1977] records them. The particle *a*
-introduces a postnominal clause whose relativized position is deleted and relativizes subjects
-and direct objects; the particle *y* introduces a postnominal clause with a personal pronoun at
-the relativized position and relativizes the positions from indirect object down. The paper's
-examples are *y bachgen a oedd yn darllen* 'the boy who was reading' and *dyma'r llyfr y
-darllenais y stori ynddo* 'here is the book in which I read the story'.
+Welsh has two relative particles. *A* introduces a postnominal relative clause in which the
+relativized position is left empty, and it relativizes subjects and direct objects: *y bachgen a
+oedd yn darllen* 'the boy who was reading'. *Y* introduces a postnominal relative clause in which
+the relativized position holds a personal pronoun, and it relativizes everything from indirect
+objects down to objects of comparison: *dyma'r llyfr y darllenais y stori ynddo* 'here is the
+book in which I read the story', with the pronoun in *ynddo* 'in it'. The data are
+[keenan-comrie-1977]'s.
 
 ## References
 
@@ -19,8 +20,8 @@ namespace Welsh
 
 open RelativeClause
 
-/-- The relative particle *a* introduces a postnominal clause whose relativized position is
-deleted; it relativizes subjects and direct objects. -/
+/-- The particle *a* leaves the relativized position empty and relativizes subjects and direct
+objects. -/
 def relParticleA : Marker :=
   { form := "a"
   , npRel := .gap
@@ -28,8 +29,8 @@ def relParticleA : Marker :=
   , placement := .postNominal
   , positions := {.subject, .directObject} }
 
-/-- The relative particle *y* introduces a postnominal clause with a personal pronoun at the
-relativized position; it relativizes the positions from indirect object down. -/
+/-- The particle *y* puts a personal pronoun in the relativized position and relativizes
+everything from indirect objects down. -/
 def relParticleY : Marker :=
   { form := "y"
   , npRel := .resumptive

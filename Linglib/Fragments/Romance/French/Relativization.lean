@@ -1,25 +1,26 @@
 import Linglib.Syntax.Clause.Relative
 
 /-!
-# French Relativization Fragment
-[keenan-comrie-1977]
+# French relative clauses
 
-One relative clause marker: the case-coding relative pronoun system
-*qui/que/dont/lequel* (+case, postnominal, covers SU–GEN; Table 1
-leaves OCOMP blank).
+French has one relative-clause strategy, postnominal, with a relative pronoun whose form codes
+the relativized position: *qui* for subjects, *que* for direct objects, *dont* for genitives and
+*lequel* after prepositions. It relativizes subjects through genitives; an object of comparison
+cannot be relativized, so there is no relative clause for *le jeune homme* in *Marie est plus
+grande que le jeune homme*. The data are [keenan-comrie-1977]'s.
 
-Data from [keenan-comrie-1977] Table 1.
+## References
+
+* [keenan-comrie-1977]
+* [keenan-comrie-1979]
 -/
 
 namespace French
 
 open RelativeClause
 
-/-- Relative pronoun system *qui* (SU), *que* (DO), *dont* (GEN),
-    *lequel* (with prepositions); postnominal RC. Covers SU–GEN
-    (Table 1 p. 76; OCOMP blank). "The form of the relative pronoun is
-    different for each position on the AH, so French has only a [+case]
-    RC-forming strategy" ([keenan-comrie-1979] p. 335, exx. (21)-(22)). -/
+/-- The relative pronouns *qui*, *que*, *dont* and *lequel* code the relativized position and
+relativize subjects through genitives. -/
 def relQui : Marker :=
   { form := "qui/que/dont/lequel"
   , npRel := .relPronoun
@@ -27,7 +28,7 @@ def relQui : Marker :=
   , placement := .postNominal
   , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
 
-/-- All French relative clause markers. -/
+/-- The French relative-clause markers. -/
 def relMarkers : List Marker := [relQui]
 
 end French

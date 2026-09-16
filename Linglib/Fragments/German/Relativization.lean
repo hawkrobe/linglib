@@ -1,28 +1,28 @@
 import Linglib.Syntax.Clause.Relative
 
 /-!
-# German Relativization Fragment
-[keenan-comrie-1977]
+# German relative clauses
 
-Two relative clause markers:
-- Relative pronoun *der/die/das* (+case, postnominal, covers SU–GEN;
-  Table 1 leaves OCOMP blank)
-- Prenominal participial construction (-case, covers SU only), the
-  paper's European example of a subjects-only participial strategy
-  (§1.3.1 p. 70, alongside Russian and Polish)
+German has two relative-clause strategies, the paper's opening illustration of a language with
+more than one. The relative pronoun *der*, *die*, *das* declines for case and introduces a
+postnominal clause, as in *der Mann, der in seinem Büro arbeitet* 'the man who is working in
+his study'; it relativizes subjects through genitives, and objects of comparison cannot be
+relativized. The participial construction precedes its head, as in *der in seinem Büro
+arbeitende Mann* 'the man who is working in his study', and relativizes subjects only. The
+data are [keenan-comrie-1977]'s.
 
-Data from [keenan-comrie-1977] Table 1.
+## References
+
+* [keenan-comrie-1977]
+* [keenan-comrie-1979]
 -/
 
 namespace German
 
 open RelativeClause
 
-/-- Relative pronoun *der/die/das*, inflected for case; postnominal RC.
-    Covers SU–GEN (Table 1 p. 77; OCOMP blank).
-    The paper's ex. (1): "der Mann, der in seinem Büro arbeitet"
-    'the man who is working in his study'; [keenan-comrie-1979] p. 337
-    exx. (31)-(32) show the case contrast (*der* nom. vs *den* acc.). -/
+/-- The relative pronoun *der*, *die*, *das* declines for the case of the relativized position
+and relativizes subjects through genitives. -/
 def relDer : Marker :=
   { form := "der/die/das"
   , npRel := .relPronoun
@@ -30,10 +30,8 @@ def relDer : Marker :=
   , placement := .postNominal
   , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
 
-/-- Prenominal participial construction; NP_rel is deleted (gap). Covers
-    SU only — the subjects-only participial strategy of §1.3.1 p. 70.
-    The paper's ex. (2): "der in seinem Büro arbeitende Mann"
-    'the man who is working in his study'. -/
+/-- The prenominal participial construction leaves the relativized position empty and
+relativizes subjects only. -/
 def relParticiple : Marker :=
   { form := "participle"
   , npRel := .gap
@@ -41,7 +39,7 @@ def relParticiple : Marker :=
   , placement := .preNominal
   , positions := {.subject} }
 
-/-- All German relative clause markers. -/
+/-- The German relative-clause markers. -/
 def relMarkers : List Marker := [relDer, relParticiple]
 
 end German

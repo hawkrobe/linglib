@@ -1,26 +1,27 @@
 import Linglib.Syntax.Clause.Relative
 
 /-!
-# Japanese Relativization Fragment
-[keenan-comrie-1977]
+# Japanese relative clauses
 
-Two relative clause markers, both prenominal and unmarked (no
-relativizer, no relative pronoun):
-- gap in NP_rel (-case, covers SU–GEN; OBL and GEN only for some NPs,
-  OCOMP marginal)
-- retained pronoun in NP_rel (+case, GEN only, and only for some NPs)
+Japanese relative clauses precede their head with no relativizer and no relative pronoun. The
+relativized position is normally left empty, and this relativizes subjects, direct objects and
+indirect objects freely and obliques and genitives for some noun phrases; objects of comparison
+are not relativized, though the paper judges the result not too bad. A pronoun may instead be
+retained, and only when the relativized position is a genitive. The data are
+[keenan-comrie-1977]'s.
 
-Data from [keenan-comrie-1977] Table 1 and Table 2.
+## References
+
+* [keenan-comrie-1977]
+* [keenan-comrie-1979]
 -/
 
 namespace Japanese
 
 open RelativeClause
 
-/-- Unmarked prenominal RC; NP_rel is deleted (gap). Covers SU–GEN
-    (Table 1 p. 77: OBL and GEN carry split x/y entries — the strategy
-    applies only for some NPs in those positions — and OCOMP is coded
-    as not applying, though "the result is not judged too bad"). -/
+/-- The unmarked prenominal clause leaves the relativized position empty and relativizes subjects
+through genitives. -/
 def relGap : Marker :=
   { form := "∅"
   , npRel := .gap
@@ -28,12 +29,7 @@ def relGap : Marker :=
   , placement := .preNominal
   , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
 
-/-- Unmarked prenominal RC with a retained pronoun in NP_rel. GEN only,
-    and only for some NPs (Table 1 p. 77; Table 2 codes Japanese
-    retention as absent above GEN): "occasionally, however, a pronoun
-    may be retained when the NP_rel is genitive"
-    ([keenan-comrie-1979] p. 339, ex. (49) with retained *zibun*,
-    citing Kuno). -/
+/-- The unmarked prenominal clause with a retained pronoun relativizes genitives only. -/
 def relRetention : Marker :=
   { form := "∅ + pronoun"
   , npRel := .resumptive
@@ -41,7 +37,7 @@ def relRetention : Marker :=
   , placement := .preNominal
   , positions := {.genitive} }
 
-/-- All Japanese relative clause markers. -/
+/-- The Japanese relative-clause markers. -/
 def relMarkers : List Marker := [relGap, relRetention]
 
 end Japanese

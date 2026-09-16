@@ -1,26 +1,28 @@
 import Linglib.Syntax.Clause.Relative
 
 /-!
-# Russian Relativization Fragment
-[keenan-comrie-1977]
+# Russian relative clauses
 
-One relative clause marker: the declining relative pronoun *kotoryj*
-(+case, postnominal, covers SU–GEN; Table 1 leaves OCOMP blank).
-§1.3.1 also mentions a subjects-only participial strategy for Russian
-(alongside German and Polish), but Table 1 does not enter it, so it is
-not encoded here.
+Russian has one relative-clause strategy, postnominal, with the relative pronoun *kotoryj*
+declining for the case of the relativized position: *devuška, kotoruju Džon ljubit* 'the girl
+who John likes' against *devuška, kotoraja ljubit Džona* 'the girl who likes John', the
+paper's illustration of a case-coding strategy. It relativizes subjects through genitives. The
+participial construction that relativizes subjects only, which the paper mentions for Russian
+alongside German and Polish, is not entered in its Table 1 and is not recorded here. The data
+are [keenan-comrie-1977]'s.
 
-Data from [keenan-comrie-1977] Table 1.
+## References
+
+* [keenan-comrie-1977]
+* [keenan-comrie-1979]
 -/
 
 namespace Russian
 
 open RelativeClause
 
-/-- Declining relative pronoun *kotoryj*; postnominal RC. Covers SU–GEN
-    (Table 1 p. 78; OCOMP blank). "The RC construction is essentially as
-    in Polish, the relative pronoun being *kotoryj*"
-    ([keenan-comrie-1979] p. 344, exx. (87)-(88)). -/
+/-- The relative pronoun *kotoryj* declines for the case of the relativized position and
+relativizes subjects through genitives. -/
 def relKotoryj : Marker :=
   { form := "kotoryj"
   , npRel := .relPronoun
@@ -28,7 +30,7 @@ def relKotoryj : Marker :=
   , placement := .postNominal
   , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
 
-/-- All Russian relative clause markers. -/
+/-- The Russian relative-clause markers. -/
 def relMarkers : List Marker := [relKotoryj]
 
 end Russian

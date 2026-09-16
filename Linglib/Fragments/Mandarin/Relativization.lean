@@ -1,33 +1,28 @@
 import Linglib.Syntax.Clause.Relative
 
 /-!
-# Mandarin Relativization Fragment
-[keenan-comrie-1977]
+# Mandarin relative clauses
 
-Two relative clause markers, both prenominal with the clause-final
-particle *de*:
-- gap in NP_rel (-case, covers SU/DO)
-- retained pronoun in NP_rel (+case, covers DO–OCOMP; retention is
-  optional at DO)
+Mandarin relative clauses precede their head and end in the particle *de*. The relativized
+position may be left empty, which relativizes subjects and direct objects, or filled by a
+personal pronoun, which relativizes everything from direct objects down to objects of
+comparison; the two overlap at direct objects, where retention is optional. Mandarin is the
+sample's only prenominal-clause language whose pronoun-retention strategy reaches the bottom of
+the hierarchy. The data are [keenan-comrie-1977]'s, whose Table 1 lists the language as
+Chinese (spoken Pekingese).
 
-The two strategies overlap at DO, and the +case strategy reaches the
-bottom of the Accessibility Hierarchy — a prenominal-RC language with
-pronoun retention down to OCOMP, unlike the sample's other prenominal
-languages (Korean, Japanese, Basque).
+## References
 
-Data from [keenan-comrie-1977] Table 1 ("Chinese (spoken Pekingese)")
-and Table 2 (retention pattern); [keenan-comrie-1979] p. 334 names the
-"invariable particle *de*" and exemplifies the retention pattern
-(exx. (9)-(11): no pronoun for SU, optional for DO, obligatory below). -/
+* [keenan-comrie-1977]
+* [keenan-comrie-1979]
+-/
 
 namespace Mandarin
 
 open RelativeClause
 
-/-- Prenominal RC closed by the particle *de*; NP_rel is deleted (gap).
-    Covers subject and direct object relativization.
-    E.g., "[ _ mǎi shū de] rén" '[ _ buys book DE] person' = 'the person
-    who buys books'. -/
+/-- The prenominal *de*-clause with the relativized position left empty relativizes subjects and
+direct objects. -/
 def relDeGap : Marker :=
   { form := "de"
   , npRel := .gap
@@ -35,11 +30,8 @@ def relDeGap : Marker :=
   , placement := .preNominal
   , positions := {.subject, .directObject} }
 
-/-- Prenominal RC closed by *de* with a personal pronoun retained in
-    NP_rel; the pronoun (with its coverb where applicable) expresses the
-    relativized role, so the strategy is +case in [keenan-comrie-1977]'s
-    sense. Covers DO–OCOMP per Table 1; Table 2 records retention as
-    optional at DO and normal from IO down. -/
+/-- The prenominal *de*-clause with a retained pronoun relativizes everything from direct objects
+down. -/
 def relDeResumptive : Marker :=
   { form := "de"
   , npRel := .resumptive
@@ -47,7 +39,7 @@ def relDeResumptive : Marker :=
   , placement := .preNominal
   , positions := {.directObject, .indirectObject, .oblique, .genitive, .objComparison} }
 
-/-- All Mandarin relative clause markers. -/
+/-- The Mandarin relative-clause markers. -/
 def relMarkers : List Marker := [relDeGap, relDeResumptive]
 
 end Mandarin
