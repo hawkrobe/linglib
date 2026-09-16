@@ -32,7 +32,7 @@ cascade makes it audible.
 
 ## Implementation notes
 
-Realisation uses the shared `Reflex.Marking` reflex vocabulary, and the paper's strategy
+Realisation uses the shared `Reflex` vocabulary, and the paper's strategy
 labels are read off the reflex shape where `marking_matches_rows` pins the configurations to the
 data rows. Configurations carry the fragment's tense–aspect type: the perfective rows are
 [kidda-1985]'s singular perfective and the paper's progressive is the fragment's continuous
@@ -94,23 +94,23 @@ intransitive predicate focus bears *-i* ((24b)); transitive perfective
 foci get the boundary after the verb ((25a–c)); progressive foci
 receive nothing ((31)/(32a–c)). Untested frames fall to the unmarked
 default, guarded by `Config.WF`. -/
-def realize : Config → Marking Focused
-  | ⟨.subject, _, _⟩        => ⟨.subject, {.displacement .subject}⟩
-  | ⟨f, .perfective, false⟩ => ⟨f, {.morpheme f}⟩
-  | ⟨f, .perfective, true⟩  => ⟨f, {.boundary .verb}⟩
-  | ⟨f, _, _⟩               => ⟨f, ∅⟩
+def realize : Config → Finset (Reflex Focused)
+  | ⟨.subject, _, _⟩        => {.displacement .subject}
+  | ⟨f, .perfective, false⟩ => {.morpheme f}
+  | ⟨_, .perfective, true⟩  => {.boundary .verb}
+  | _                       => ∅
 
 /-- Focused subjects are overtly marked in every aspect — the paper's
 §6 subjects-vs-non-subjects generalization, shared with Hausa. -/
 theorem subject_always_marked :
-    ∀ c : Config, c.focused = .subject → (realize c).IsOvert
+    ∀ c : Config, c.focused = .subject → (realize c).Nonempty
   | ⟨_, _, _⟩, rfl => Finset.singleton_nonempty _
 
 /-- Progressive non-subject foci are wholly unmarked ((31)/(32a–c),
 contra Kidda 1993). -/
 theorem progressive_nonsubject_unmarked (c : Config)
     (hs : c.focused ≠ .subject) (ha : c.tam = .continuous) :
-    (realize c).reflexes = ∅ := by
+    realize c = ∅ := by
   obtain ⟨f, a, t⟩ := c
   cases ha
   cases f <;> first | exact absurd rfl hs | rfl
@@ -118,7 +118,7 @@ theorem progressive_nonsubject_unmarked (c : Config)
 /-- Focus marking is not obligatory: a well-formed focus configuration
 with no overt reflex — (32a), object focus in the progressive. -/
 theorem focus_marking_not_obligatory :
-    ∃ c : Config, c.WF ∧ ¬ (realize c).IsOvert :=
+    ∃ c : Config, c.WF ∧ ¬ (realize c).Nonempty :=
   ⟨⟨.object, .continuous, true⟩, ⟨fun _ ↦ rfl, Or.inr rfl⟩, Finset.not_nonempty_empty⟩
 
 /-- Tangale refutes the universalist claim that every focus receives an
@@ -132,7 +132,7 @@ theorem tangale_refutes_perceptibility :
 perfective non-subject cells, `focused` does not factor through the
 reflexes — (25a–c) are string- and pitch-identical. -/
 theorem boundary_underdetermines_extent :
-    ¬ Function.FactorsThroughOn Config.focused (fun c ↦ (realize c).reflexes)
+    ¬ Function.FactorsThroughOn Config.focused realize
         {c | c.tam = .perfective ∧ c.transitive ∧ c.focused ≠ .subject} :=
   Function.not_factorsThroughOn_iff_exists_witness.mpr
     ⟨⟨.verb, .perfective, true⟩, ⟨.object, .perfective, true⟩,
@@ -268,7 +268,7 @@ theorem vp_reading_strongest :
 read off the reflex shape. -/
 
 private def strategyLabel (c : Config) : String :=
-  let modalities := (realize c).reflexes.image Reflex.modality
+  let modalities := (realize c).image Reflex.modality
   if .displacement ∈ modalities then "postposing"
   else if .morpheme ∈ modalities then "suffixI"
   else if .boundary ∈ modalities then "boundary"

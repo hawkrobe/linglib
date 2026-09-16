@@ -28,7 +28,7 @@ strategy applies to a continuous segment of the hierarchy, and a strategy may ce
 lower point (Section 1.2). A strategy is primary when it relativizes subjects, and the paper's
 Primary Relativization Constraint, that a primary strategy reaching a low position reaches
 every higher one, follows from continuity: the positions a continuous primary strategy covers
-form an upper set of the hierarchy order (`isUpperSet_of_isContinuous`, `prc_of_hc2`).
+form an upper set of the hierarchy order (`prc_of_hc2`).
 
 The constraints are then checked on the seventeen languages of Table 1 whose relativization
 markers the fragments record (`hc1_verified`, `hc2_verified`), so every primary strategy of the
@@ -74,16 +74,10 @@ hierarchy, every position above one it reaches. -/
 def SatisfiesPRC (markers : List Marker) : Prop :=
   ∀ m ∈ markers, m.IsPrimary → IsUpperSet (m.positions : Set Position)
 
-/-- A continuous strategy that relativizes subjects covers an upper set: from a covered
-position up to the subject everything is covered. -/
-theorem isUpperSet_of_isContinuous {m : Marker} (hc : m.IsContinuous) (hp : m.IsPrimary) :
-    IsUpperSet (m.positions : Set Position) :=
-  fun _ _ hab ha ↦ hc.out ha hp ⟨hab, le_top⟩
-
 /-- The Primary Relativization Constraint follows from HC₂ and the definition of primary, as
-the paper derives it. -/
+the paper derives it: a continuous strategy that relativizes subjects covers an upper set. -/
 theorem prc_of_hc2 {markers : List Marker} (h : SatisfiesHC2 markers) : SatisfiesPRC markers :=
-  fun m hm hp ↦ isUpperSet_of_isContinuous (h m hm) hp
+  fun m hm hp ↦ isUpperSet_coe_of_ordConnected (h m hm) hp
 
 /-! ### The sample (Table 1)
 
@@ -129,12 +123,12 @@ theorem prc_verified : ∀ markers ∈ sample, SatisfiesPRC markers :=
   fun _ h ↦ prc_of_hc2 (hc2_verified _ h)
 
 /-- In the sample every primary strategy covers exactly the closed interval from its cut-off up
-to the subject, by HC₂ and `Marker.positions_eq_Icc_top`: what Table 1 records as a run of `+`
-entries ending at the subject. -/
+to the subject, by HC₂ and `Finset.eq_Icc_top_of_ordConnected`: what Table 1 records as a run
+of `+` entries ending at the subject. -/
 theorem primary_positions_eq_Icc_top :
     ∀ markers ∈ sample, ∀ m ∈ markers, (hp : m.IsPrimary) →
       m.positions = Icc (m.positions.min' ⟨⊤, hp⟩) ⊤ :=
-  fun _ h m hm hp ↦ m.positions_eq_Icc_top (hc2_verified _ h m hm) hp
+  fun _ h m hm hp ↦ eq_Icc_top_of_ordConnected (hc2_verified _ h m hm) hp
 
 /-- Every position from subject to genitive is the cut-off of some primary strategy in the
 sample, which covers exactly the interval from there up to the subject: the Section 1.3 argument
@@ -150,7 +144,7 @@ theorem each_upper_cutoff_attested :
 /-- Toba Batak relativizes subjects by one strategy and indirect objects through genitives by
 another, but direct objects by neither: the gap lies between two continuous strategies, which
 is why the constraints govern strategies rather than languages. -/
-theorem toba_batak_do_gap : ∀ m ∈ tobaBatak, ¬ m.Covers .directObject := by decide
+theorem toba_batak_do_gap : ∀ m ∈ tobaBatak, .directObject ∉ m.positions := by decide
 
 theorem toba_batak_hc2 : SatisfiesHC2 tobaBatak := by decide
 

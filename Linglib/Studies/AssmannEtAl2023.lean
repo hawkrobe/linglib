@@ -199,7 +199,7 @@ def focusNode : Focused → Node
     not the default clausal one. -/
 theorem overt_iff_marking_ne_default :
     ∀ c : Config, c.WF → ∀ inv ∈ tangale c.tam,
-      ((realize c).IsOvert ↔ marking inv (focusNode c.focused) ≠ some .s) := by
+      ((realize c).Nonempty ↔ marking inv (focusNode c.focused) ≠ some .s) := by
   intro c
   obtain ⟨f, a, t⟩ := c
   cases f <;> cases a <;> cases t <;> decide

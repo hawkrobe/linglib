@@ -17,19 +17,15 @@ schema the fragments instantiate for a language's relative-clause markers.
   with the subject on top: the Accessibility Hierarchy.
 * `RelativeClause.Placement` — the clause's placement relative to the head noun.
 * `RelativeClause.NPRel` — what occupies the relativized position.
-* `RelativeClause.Realization` — what one derivation realizes, the hook a syntactic account
-  projects to.
-* `RelativeClause.Marker` — a relative-clause marker, with the positions it `Covers`, its
+* `RelativeClause.Marker` — a relative-clause marker with the positions it relativizes, its
   contiguity `IsContinuous` and the primary-strategy predicate `IsPrimary`.
 
 ## Implementation notes
 
 The accessibility order is lifted from `Position.rank`, so a strategy's contiguity (Keenan and
-Comrie's second Hierarchy Constraint) is order-connectedness of the set it covers, hence
-(`Marker.isContinuous_iff`) coverage of a closed interval of the hierarchy, and a continuous
-primary strategy covers the interval from its cut-off up to the subject
-(`Marker.positions_eq_Icc_top`), the Primary Relativization Constraint. The positions a marker
-covers are a `Finset`, since only membership matters.
+Comrie's second Hierarchy Constraint) is order-connectedness of the set it covers, and the
+Primary Relativization Constraint is `Finset.eq_Icc_top_of_ordConnected` on that set. The
+positions a marker covers are a `Finset`, since only membership matters.
 
 ## References
 
@@ -121,16 +117,6 @@ inductive NPRel where
   | nonReduction
   deriving DecidableEq, Repr
 
-/-! ### Realization -/
-
-/-- What a single relative-clause derivation realizes, stated framework-neutrally: the
-relativized position and what occupies it. A syntactic account's derivation, HPSG's GAP/MOD
-percolation or Minimalism's trace and predicate abstraction, projects to a `Realization`. -/
-structure Realization where
-  position : Position
-  npRel : NPRel
-  deriving DecidableEq, Repr
-
 /-! ### Relative-clause markers -/
 
 /-- A relative-clause marker or construction of a language, the linguistic object a fragment
@@ -158,41 +144,17 @@ namespace Marker
 
 variable (m : Marker)
 
-/-- The marker relativizes the position `p`. -/
-def Covers (p : Position) : Prop := p ∈ m.positions
-
-instance (p : Position) : Decidable (m.Covers p) := inferInstanceAs (Decidable (p ∈ _))
-
 /-- The positions the marker covers form a contiguous segment of the hierarchy,
 [keenan-comrie-1977]'s second Hierarchy Constraint: the covered set is order-connected. -/
 def IsContinuous : Prop := (m.positions : Set Position).OrdConnected
 
 instance : Decidable m.IsContinuous :=
-  decidable_of_iff
-    (∀ x ∈ m.positions, ∀ y ∈ m.positions, ∀ z, x ≤ z → z ≤ y → z ∈ m.positions) (by
-      simp only [IsContinuous, Set.ordConnected_iff, Set.subset_def, Set.mem_Icc, Finset.mem_coe,
-        and_imp]
-      exact ⟨fun h x hx y hy _ z hxz hzy ↦ h x hx y hy z hxz hzy,
-        fun h x hx y hy z hxz hzy ↦ h x hx y hy (hxz.trans hzy) z hxz hzy⟩)
-
-/-- A marker covering some position is continuous iff it covers exactly the closed interval
-from its lowest to its highest position. -/
-theorem isContinuous_iff (h : m.positions.Nonempty) :
-    m.IsContinuous ↔ m.positions = Finset.Icc (m.positions.min' h) (m.positions.max' h) :=
-  Finset.ordConnected_coe_iff_eq_Icc h
+  inferInstanceAs (Decidable (m.positions : Set Position).OrdConnected)
 
 /-- The marker is primary in [keenan-comrie-1977]'s sense: it relativizes subjects. -/
-def IsPrimary : Prop := m.Covers ⊤
+def IsPrimary : Prop := ⊤ ∈ m.positions
 
-instance : Decidable m.IsPrimary := inferInstanceAs (Decidable (m.Covers ⊤))
-
-/-- A continuous primary marker covers the positions from its lowest, its cut-off, up to the
-subject: [keenan-comrie-1977]'s Primary Relativization Constraint. -/
-theorem positions_eq_Icc_top (hc : m.IsContinuous) (hp : m.IsPrimary) :
-    m.positions = Finset.Icc (m.positions.min' ⟨⊤, hp⟩) ⊤ := by
-  ext p
-  simp only [Finset.mem_Icc, le_top, and_true]
-  exact ⟨Finset.min'_le _ _, fun h ↦ hc.out (Finset.min'_mem _ _) hp ⟨h, le_top⟩⟩
+instance : Decidable m.IsPrimary := inferInstanceAs (Decidable (_ ∈ _))
 
 end Marker
 
