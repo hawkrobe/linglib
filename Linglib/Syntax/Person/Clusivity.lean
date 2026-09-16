@@ -1,27 +1,38 @@
 import Linglib.Core.Data.Setoid.Basic
 import Linglib.Core.Order.UpperLower.Finset
-import Linglib.Syntax.Person.Decomposition
+import Linglib.Syntax.Person.Category
 
 /-!
-# Clusivity: marking types of the first person complex
+# Marking types of the first person complex
 
-A person paradigm marks the three 'we' categories 1+2, 1+2+3 and 1+3 either by a morpheme of
-their own or by one that also marks a singular category, and groups them in some way.
-[cysouw-2003] writes such a pattern with a letter per specialized morpheme class and a dash
-where a singular morpheme is reused, and of the fifteen possible patterns finds five common.
-These form `Clusivity`, each given by `toPattern` as a setoid on the four speaker-including
-categories, the singular speaker standing for any singular morpheme.
+This file defines the five common marking types of the first person complex. A person paradigm
+marks the three 'we' categories 1+2, 1+2+3 and 1+3 either by a morpheme of their own or by one
+that also marks a singular category, and groups them in some way. A pattern is that grouping as
+a setoid on the four speaker-including categories, the singular speaker standing for any
+singular morpheme. Four questions asked in order tell the types apart, and the types are
+exactly the lower sets of the questions, each positive answer presupposing the ones before it.
+The First Person Hierarchy is the order of these profiles.
 
-The types are told apart by four questions asked in order: whether 'we', the inclusive and the
-exclusive are specialized, and whether the inclusive is split. A pattern's `profile` is the
-questions it answers positively. The common types are exactly the lower sets of the questions,
-each positive answer presupposing the ones before it, which is how the two addressee inclusion
-implications read as conditions, and the First Person Hierarchy is the order of the profiles.
+## Main definitions
 
-The five rare attested patterns are not types in this sense and live with the study. The
-typology is finer than [cysouw-2013]'s WALS chapter, which collapses minimal/augmented into
-inclusive/exclusive and whose "no 'we'" value is the absence of any first-person non-singular,
-not `noWe`.
+* `Person.Clusivity`: the five common types.
+* `Clusivity.Pattern`: a marking pattern, a setoid on `Clusivity.Cell`.
+* `Clusivity.Question`: the four questions, a chain.
+* `Pattern.profile`: the questions a pattern answers positively.
+* `Pattern.RespectsHierarchy`: the profile is a lower set of the questions.
+* `Clusivity.toPattern`: the pattern of a type.
+
+## Main results
+
+* `Clusivity.rung_bijective`: the types are exactly the lower sets of the questions.
+* `Clusivity.le_iff_profile_subset`: the hierarchy is the order of the profiles.
+
+## Implementation notes
+
+The five rare attested patterns are not types in this sense and live with the study of the
+book. The typology is finer than the WALS chapter on clusivity, which collapses
+minimal/augmented into inclusive/exclusive and whose "no 'we'" value is the absence of any
+first-person non-singular, not `noWe`.
 
 ## References
 
@@ -32,7 +43,7 @@ not `noWe`.
 namespace Person
 
 /-- The five common marking types of the first person complex, the common five of the fifteen
-patterns of [cysouw-2003]'s Fig. 3.1. -/
+possible patterns. -/
 inductive Clusivity where
   /-- No 'we' category has a specialized morpheme, as in the English inflection (Pb). -/
   | noWe
@@ -49,7 +60,7 @@ inductive Clusivity where
 
 namespace Clusivity
 
-/-- The four cells of a pattern, the categories that include the speaker; the singular speaker
+/-- The four cells of a pattern, the categories that include the speaker. The singular speaker
 stands for every singular morpheme. -/
 abbrev Cell := {c : Category // c.IncludesSpeaker}
 

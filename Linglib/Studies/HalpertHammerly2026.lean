@@ -1,5 +1,5 @@
 import Linglib.Syntax.Agreement.ContainmentPair
-import Linglib.Syntax.Person.Decomposition
+import Linglib.Syntax.Person.Features
 import Linglib.Fragments.Xhosa.Nouns
 import Linglib.Syntax.Minimalist.Probe.Basic
 import Linglib.Data.Examples.HalpertHammerly2026

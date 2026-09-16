@@ -22,10 +22,10 @@ from UD alone.
 
 This mirrors the `Number` API (`Syntax/Number/Basic.lean`): canonical
 analytical inventory at root namespace, UD demoted to realization,
-unified resolution (`Syntax/Person/Resolve.lean`), feature
-decomposition and the Cysouw categories
-(`Syntax/Person/Decomposition.lean`), and the marking types of the
-first person complex (`Syntax/Person/Clusivity.lean`).
+unified resolution (`Syntax/Person/Resolve.lean`), the referential
+categories (`Syntax/Person/Category.lean`), the feature decomposition
+(`Syntax/Person/Features.lean`) and the marking types of the first
+person complex (`Syntax/Person/Clusivity.lean`).
 
 `Person.prominence` is the graded prominence scale over this
 inventory, consumed by person-hierarchy and scenario-split accounts.

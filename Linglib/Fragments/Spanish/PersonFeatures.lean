@@ -1,4 +1,4 @@
-import Linglib.Syntax.Person.Decomposition
+import Linglib.Syntax.Person.Features
 
 /-!
 # Person Feature Decomposition for Spanish Clitics

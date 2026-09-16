@@ -6,7 +6,7 @@ import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Gender.Basic
 import Linglib.Syntax.Person.Clusivity
 import Linglib.Syntax.Binding.Basic
-import Linglib.Syntax.Person.Decomposition
+import Linglib.Syntax.Person.Category
 import Linglib.Morphology.Word.Basic
 import Linglib.Syntax.Agreement.Phi
 import Mathlib.Data.Option.NAry
