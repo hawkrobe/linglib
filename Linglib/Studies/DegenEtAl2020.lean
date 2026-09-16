@@ -228,6 +228,19 @@ theorem size_overmodification_iff (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hc0 : 0 < xc)
   have hk : 0 < xc * (1 - xc) := mul_pos hc0 (by linarith)
   constructor <;> intro h <;> nlinarith [hk]
 
+/-- A description distinguishes a pin under the continuous meaning exactly when it does under
+the literal listener, so that the pin is the listener's best guess. -/
+theorem distinguishes_iff_L0 (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hc0 : 0 ≤ xc) (hc1 : xc ≤ 1)
+    {u : Utterance} (hpos : 0 < ∑ w, meaning xs xc u w) (C : Finset World) (r : World) :
+    Reference.Distinguishes (meaning xs xc) C r u ↔
+      Reference.Distinguishes (fun u w => L0 xs xc u {w}) C r u := by
+  rw [L0, distinguishes_literalListener_uniformOn_iff
+    (by rw [← ENNReal.ofReal_sum_of_nonneg fun w _ => meaning_nonneg hs0 hs1 hc0 hc1 u w]
+        exact (ENNReal.ofReal_pos.2 hpos).ne')
+    (ENNReal.sum_ne_top.2 fun _ _ => ENNReal.ofReal_ne_top)]
+  exact forall₂_congr fun c _ =>
+    (ENNReal.ofReal_lt_ofReal_iff_of_nonneg (meaning_nonneg hs0 hs1 hc0 hc1 u c)).symm
+
 /-- The sufficient *small* distinguishes the small blue pin from the big ones, so that the
 listener's best guess is the target, exactly when the size channel beats chance. -/
 theorem small_distinguishes_iff :

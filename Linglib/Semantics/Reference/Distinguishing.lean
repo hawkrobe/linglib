@@ -12,7 +12,8 @@ in a preorder. At truth values this is the distinguishing description of [dale-r
 which holds of the referent and of no distractor, and the Russellian uniqueness of
 `Reference.russellIota` over the domain the contrast set restricts. Under a graded semantics it
 says the referent is the literal listener's best guess, since a strictly monotone rescaling of
-compatibility such as the listener's normalization does not change it. A graded description
+compatibility such as the listener's normalization does not change it
+(`RSA.distinguishes_literalListener_uniformOn_iff`). A graded description
 distinguishes exactly when some level set of its compatibility does, so the truth-valued notion
 is the general one at a threshold.
 
@@ -66,11 +67,11 @@ section LinearOrder
 
 variable [LinearOrder α] {compat : D → E → α} {C : Finset E} {r : E} {d : D}
 
-/-- A strictly monotone rescaling of compatibility, such as the literal listener's normalization
-of a description over the domain, preserves distinguishing. -/
-theorem distinguishes_comp_iff [Preorder β] {φ : D → α → β} (hφ : ∀ d, StrictMono (φ d)) :
+/-- A rescaling of compatibility that is strictly monotone at the description, such as the
+literal listener's normalization over the domain, preserves distinguishing. -/
+theorem distinguishes_comp_iff [Preorder β] {φ : D → α → β} (hφ : StrictMono (φ d)) :
     Distinguishes (fun d x ↦ φ d (compat d x)) C r d ↔ Distinguishes compat C r d :=
-  forall₂_congr fun c _ ↦ (hφ d).lt_iff_lt (a := compat d c) (b := compat d r)
+  forall₂_congr fun c _ ↦ hφ.lt_iff_lt (a := compat d c) (b := compat d r)
 
 /-- A graded compatibility distinguishes exactly when some threshold of it does, and the
 referent's own compatibility is such a threshold. -/
