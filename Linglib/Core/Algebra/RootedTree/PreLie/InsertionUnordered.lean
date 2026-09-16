@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
-import Linglib.Core.Data.List.Perm
 import Linglib.Core.Data.List.Zip
 import Linglib.Core.Data.Multiset.Antidiagonal
 import Linglib.Core.Data.RoseTree.DecEq
@@ -50,108 +49,6 @@ the Algebra leg; were it to graduate to `Combinatorics/`, the imports
 would become strictly hierarchical.
 -/
 
-
-namespace RoseTree.Pathed
-
-variable {α : Type*}
-
-/-! ### Descent substrate: `insertionForest` on `mk`-images
-
-`UnorderedTree.insertionMultiset` reads `insertionForest` through `L ↦ ↑(L.map mk)`, which
-forgets the order of each output list. At that level the host list may be permuted and the
-guests replaced by any list with the same `mk`-image. -/
-
-private theorem msform_cons (T : RoseTree α) (L : List (RoseTree α)) :
-    (↑((T :: L).map UnorderedTree.mk) : Multiset (UnorderedTree α)) =
-      UnorderedTree.mk T ::ₘ ↑(L.map UnorderedTree.mk) := rfl
-
-private theorem msform_append (A B : List (RoseTree α)) :
-    (↑((A ++ B).map UnorderedTree.mk) : Multiset (UnorderedTree α)) =
-      ↑(A.map UnorderedTree.mk) + ↑(B.map UnorderedTree.mk) := by
-  rw [List.map_append, Multiset.coe_add]
-
-/-- Two hosts commute once output order is forgotten. -/
-private theorem insertionForest_pair_swap_msform (x y : RoseTree α) (gs : List (RoseTree α)) :
-    (insertionForest [y, x] gs).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
-      (insertionForest [x, y] gs).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) := by
-  rw [show [y, x] = [y] ++ [x] from rfl, show [x, y] = [x] ++ [y] from rfl,
-    insertionForest_append, insertionForest_append, Multiset.map_bind, Multiset.map_bind,
-    Multiset.bind_revzip_sublists'_swap gs fun r s =>
-      ((insertionForest [y] r).bind fun A => (insertionForest [x] s).map (A ++ ·)).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))]
-  refine Multiset.bind_congr fun p _ => ?_
-  rw [Multiset.map_bind, Multiset.map_bind]
-  simp only [Multiset.map_map]
-  simp only [← Multiset.bind_singleton]
-  rw [Multiset.bind_bind]
-  refine Multiset.bind_congr fun A _ => Multiset.bind_congr fun B _ => ?_
-  show ({(↑((B ++ A).map UnorderedTree.mk) : Multiset (UnorderedTree α))} : Multiset _) =
-    {(↑((A ++ B).map UnorderedTree.mk) : Multiset (UnorderedTree α))}
-  rw [msform_append, msform_append, add_comm]
-
-/-- Host-`Perm` invariance once output order is forgotten. -/
-theorem insertionForest_perm_host_msform {host host' : List (RoseTree α)} (h : host.Perm host')
-    (gs : List (RoseTree α)) :
-    (insertionForest host gs).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
-      (insertionForest host' gs).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) := by
-  induction h generalizing gs with
-  | nil => rfl
-  | cons x _ ih =>
-    rw [insertionForest_cons, insertionForest_cons, Multiset.map_bind, Multiset.map_bind]
-    refine Multiset.bind_congr fun p _ => ?_
-    rw [Multiset.map_bind, Multiset.map_bind]
-    refine Multiset.bind_congr fun T' _ => ?_
-    rw [Multiset.map_map, Multiset.map_map,
-      show ((fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) ∘ (T' :: ·)) =
-        ((UnorderedTree.mk T' ::ₘ ·) ∘
-          (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))) from
-        funext fun L => msform_cons T' L,
-      ← Multiset.map_map, ← Multiset.map_map, ih]
-  | swap x y l =>
-    rw [show y :: x :: l = [y, x] ++ l from rfl, show x :: y :: l = [x, y] ++ l from rfl,
-      insertionForest_append, insertionForest_append, Multiset.map_bind, Multiset.map_bind]
-    refine Multiset.bind_congr fun p _ => ?_
-    have key : ∀ hs : List (RoseTree α),
-        ((insertionForest hs p.1).bind fun A => (insertionForest l p.2).map (A ++ ·)).map
-            (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
-          ((insertionForest hs p.1).map
-            (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))).bind fun M =>
-            (insertionForest l p.2).map fun B => M + ↑(B.map UnorderedTree.mk) := by
-      intro hs
-      rw [Multiset.map_bind, Multiset.bind_map]
-      refine Multiset.bind_congr fun A _ => ?_
-      rw [Multiset.map_map]
-      exact Multiset.map_congr rfl fun B _ => msform_append A B
-    rw [key, key, insertionForest_pair_swap_msform]
-  | trans _ _ ih₁ ih₂ => exact (ih₁ gs).trans (ih₂ gs)
-
-/-- Guest invariance once output order is forgotten: guest lists with the same `mk`-image
-    multiset give the same outputs. -/
-theorem insertionForest_msform_invariance_guests [DecidableEq α]
-    (host : List (RoseTree α)) {gs1 gs2 : List (RoseTree α)}
-    (h : (gs1.map UnorderedTree.mk).Perm (gs2.map UnorderedTree.mk)) :
-    (insertionForest host gs1).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
-      (insertionForest host gs2).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) := by
-  obtain ⟨gs_mid, hperm, hF⟩ := List.exists_perm_forall₂_of_map_perm UnorderedTree.mk h
-  have h_forall : List.Forall₂ RoseTree.Perm gs_mid gs2 :=
-    hF.imp fun a b (h : UnorderedTree.mk a = UnorderedTree.mk b) => UnorderedTree.mk_eq_mk_iff.mp h
-  have hwrap : ∀ s : Multiset (List (RoseTree α)),
-      s.map (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
-        (s.map (List.map UnorderedTree.mk)).map
-          fun L : List (UnorderedTree α) => (↑L : Multiset (UnorderedTree α)) := by
-    intro s
-    rw [Multiset.map_map]
-    rfl
-  rw [hwrap, hwrap, insertionForest_perm_guests host hperm,
-    insertionForest_forall₂_perm_guests host h_forall]
-
-end RoseTree.Pathed
 
 namespace UnorderedTree
 variable {α : Type*}
@@ -394,23 +291,8 @@ theorem insertionMultiset_singleton_node [DecidableEq α]
     rw [Multiset.toList_singleton]
     rfl]
   -- §3: swap the host representative under the msform map.
-  have h_host := RoseTree.Pathed.insertionForest_perm_host
-    (B.toList.map Quotient.out) (List.Forall₂.cons h_equiv List.Forall₂.nil)
-  have h_host' :
-      (RoseTree.Pathed.insertionForest [Quotient.out (UnorderedTree.node a A')]
-          (B.toList.map Quotient.out)).map
-        (fun L => (Multiset.ofList (L.map UnorderedTree.mk) :
-          Multiset (UnorderedTree α))) =
-      (RoseTree.Pathed.insertionForest
-          [RoseTree.node a (A'.toList.map Quotient.out)]
-          (B.toList.map Quotient.out)).map
-        (fun L => Multiset.ofList (L.map UnorderedTree.mk)) := by
-    have h2 := congrArg
-      (Multiset.map (fun l : List (UnorderedTree α) =>
-        (Multiset.ofList l : Multiset (UnorderedTree α)))) h_host
-    rw [Multiset.map_map, Multiset.map_map] at h2
-    exact h2
-  rw [h_host']
+  rw [RoseTree.Pathed.insertionForest_permList_host_msform
+    (RoseTree.PermList.of_forall₂ (List.Forall₂.cons h_equiv List.Forall₂.nil)) _]
   -- §4: singleton-forest reduction + the node split, over `sublists'.revzip` of `B.toList`.
   rw [RoseTree.Pathed.insertionForest_singleton, Multiset.map_map,
     RoseTree.Pathed.insertion_node, Multiset.map_bind, List.sublists'_map, List.revzip_map,
