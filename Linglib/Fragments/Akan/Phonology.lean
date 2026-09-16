@@ -1,111 +1,113 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Phonology.Segmental.Basic
-import Linglib.Phonology.Subregular.LocalRewrite
+import Linglib.Phonology.Segmental.FeatureClass
 
 /-!
-# Akan Phonological Inventory (Palatalization-Relevant Segments)
-[mccarthy-prince-1995] [schachter-fromkin-1968]
+# Akan segments
 
-Segment inventory for the Akan velar–palatal alternation and its
-interaction with reduplication (§5.1 of [mccarthy-prince-1995]).
+This file lists the vowels of Akan as segments, together with the two consonants of its
+velar–palatal alternation. Akan has nine vowels, /i ɪ e ɛ a ɔ o ʊ u/, which Dolphyne
+groups into an advanced set /i e o u/ and an unadvanced set /ɪ ɛ a ɔ ʊ/ that do not mix
+within a word, the tongue-root harmony Stewart identified; in Casali's typology the
+inventory is a five-height system, with the low vowel the only one lacking a partner. In
+Akuapem and Asante a tenth quality, the advanced variant of /a/ before syllables with
+/i u/, joins the advanced set; it is not represented here. Velar stops become corono-dorsal
+palatal affricates before front vowels, the alternation McCarthy and Prince's account of
+Akan reduplication turns on; the consonants carry Hayes's manner and laryngeal
+specifications and McCarthy and Prince's corono-dorsal analysis of the palatal.
 
-Akan palatalization: velars become corono-dorsal complex segments
-(palatals) before front vowels. The segments defined here are the
-minimal inventory needed to ground the OT analysis:
+## Main definitions
 
-- `/k/`: voiceless velar stop ([+dorsal, −coronal])
-- `/tɕ/`: voiceless palatal affricate ([+coronal, +dorsal, +del.rel.])
-- `/a/`: low vowel ([−front] — does not trigger palatalization)
-- `/ɪ/`: high front vowel ([+front] — triggers palatalization)
+* `Akan.Phonology.Vowel`: the nine vowels.
+* `Akan.Phonology.Vowel.segment`: the segment of each vowel.
+* `Akan.Phonology.Vowel.atr`: the [ATR] value of each vowel.
+* `Akan.Phonology.inventory`: the set of vowel segments.
+* `Akan.Phonology.Consonant`: the velar stop and its palatalized output.
+* `Akan.Phonology.Consonant.segment`: the segment of each consonant.
 
-The feature specifications follow [hayes-2009] for manner and
-laryngeal features, and the corono-dorsal complex analysis of Akan
-palatals from [mccarthy-prince-1995] (citing Keating 1987,
-Clements 1976, Hume 1992).
+## References
+
+* [dolphyne-1988]
+* [stewart-1967]
+* [casali-2003]
+* [mccarthy-prince-1995]
+* [hayes-2009]
 -/
 
 open Phonology
 
 namespace Akan.Phonology
 
--- ============================================================================
--- § 1: Consonant Inventory
--- ============================================================================
+/-! ### Vowels -/
 
-/-- /k/: voiceless velar stop — [+dorsal, −coronal].
-    The underlying segment in stems like /ka/ 'bite'. -/
-def seg_k : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, false), (Feature.continuant, false),
-   (Feature.voice, false), (Feature.delayedRelease, false),
-   (Feature.dorsal, true), (Feature.coronal, false)]
+/-- The nine vowels of Akan. Constructor names ASCII-ize the IPA, a capital standing for the
+unadvanced counterpart: `I` is ɪ, `E` is ɛ, `O` is ɔ, and `U` is ʊ. -/
+inductive Vowel where
+  | i | e | o | u
+  | I | E | a | O | U
+  deriving DecidableEq, Repr, Fintype
 
-/-- /tɕ/: voiceless palatal affricate — [+coronal, +dorsal, +del.rel.].
-    The palatalized output of /k/ before front vowels.
-    Corono-dorsal complex segment per Keating 1987 (cited in
-    [mccarthy-prince-1995]): palatalization spreads [+coronal,
-    −anterior] from the front vowel while preserving [+dorsal]. -/
-def seg_tc : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, false), (Feature.continuant, false),
-   (Feature.voice, false), (Feature.delayedRelease, true),
-   (Feature.dorsal, true), (Feature.coronal, true),
-   (Feature.anterior, false), (Feature.distributed, true)]
+/-- The vowel of the given height and backness, rounded or not, with the given [ATR]
+value. -/
+private def vowel (ht : Segment.Height) (bk : Segment.Backness) (round atr : Bool) :
+    Segment :=
+  ((Segment.vowel ht bk).setFeature .round round).setFeature .atr atr
 
--- ============================================================================
--- § 2: Vowel Inventory
--- ============================================================================
+/-- The segment of each vowel. The pairs /i ɪ/, /e ɛ/, /o ɔ/ and /u ʊ/ differ only in
+[ATR], and /a/ is the unadvanced low vowel. -/
+def Vowel.segment : Vowel → Segment
+  | .i => vowel .high .front false true
+  | .e => vowel .mid .front false true
+  | .o => vowel .mid .back true true
+  | .u => vowel .high .back true true
+  | .I => vowel .high .front false false
+  | .E => vowel .mid .front false false
+  | .a => vowel .low .central false false
+  | .O => vowel .mid .back true false
+  | .U => vowel .high .back true false
 
-/-- /a/: low vowel — [−front, +back].
-    Does not trigger palatalization. -/
-def seg_a : Segment := Segment.ofSpecs
-  [(Feature.syllabic, true), (Feature.consonantal, false),
-   (Feature.sonorant, true), (Feature.continuant, true),
-   (Feature.voice, true), (Feature.dorsal, true),
-   (Feature.low, true), (Feature.front, false), (Feature.back, true)]
+/-- The set of vowel segments. -/
+def inventory : Finset Segment := Finset.univ.image Vowel.segment
 
-/-- /ɪ/: high front vowel — [+front, −back, +high].
-    Triggers palatalization of preceding velars. The [+front] feature
-    (combined with [+coronal] in Hume 1992's analysis of front vowels)
-    is the trigger for PAL. -/
-def seg_i : Segment := Segment.ofSpecs
-  [(Feature.syllabic, true), (Feature.consonantal, false),
-   (Feature.sonorant, true), (Feature.continuant, true),
-   (Feature.voice, true), (Feature.dorsal, true),
-   (Feature.high, true), (Feature.front, true), (Feature.back, false)]
+/-- The [ATR] value of a vowel is read off its segment. -/
+def Vowel.atr (v : Vowel) : Bool := decide (v.segment.HasValue .atr true)
 
--- ============================================================================
--- § 3: Feature Verification
--- ============================================================================
+/-! ### The velar–palatal alternation -/
 
-/-- /k/ is [−coronal] — the target of palatalization. -/
-theorem k_minus_coronal : seg_k.HasValue Feature.coronal false = true := by decide
+/-- The voiceless velar stop /k/ and the voiceless palatal affricate /tɕ/ it becomes before
+a front vowel. -/
+inductive Consonant where
+  | k | tc
+  deriving DecidableEq, Repr, Fintype
 
-/-- /tɕ/ is [+coronal] — the output of palatalization. -/
-theorem tc_plus_coronal : seg_tc.HasValue Feature.coronal true = true := by decide
+/-- The segment of each consonant. The stop is [+dorsal, −coronal]; the affricate keeps
+[+dorsal] and adds [+coronal, −anterior, +distributed] with delayed release, so it is a
+corono-dorsal complex segment. -/
+def Consonant.segment : Consonant → Segment
+  | .k => Segment.ofSpecs
+      [(.syllabic, false), (.consonantal, true), (.sonorant, false), (.continuant, false),
+       (.voice, false), (.delayedRelease, false), (.dorsal, true), (.coronal, false)]
+  | .tc => Segment.ofSpecs
+      [(.syllabic, false), (.consonantal, true), (.sonorant, false), (.continuant, false),
+       (.voice, false), (.delayedRelease, true), (.dorsal, true), (.coronal, true),
+       (.anterior, false), (.distributed, true)]
 
-/-- /k/ is [+dorsal]. -/
-theorem k_plus_dorsal : seg_k.HasValue Feature.dorsal true = true := by decide
+/-- Palatalization changes the value of [coronal]. -/
+theorem k_tc_coronal :
+    Consonant.k.segment.HasValue .coronal false ∧
+      Consonant.tc.segment.HasValue .coronal true := by
+  decide
 
-/-- /tɕ/ is [+dorsal] — corono-dorsal complex segment. -/
-theorem tc_plus_dorsal : seg_tc.HasValue Feature.dorsal true = true := by decide
+/-- The palatal affricate has two designated articulators. -/
+theorem tc_isComplex : Consonant.tc.segment.IsComplex := by decide
 
-/-- /ɪ/ is [+front] — the trigger for palatalization. -/
-theorem i_plus_front : seg_i.HasValue Feature.front true = true := by decide
-
-/-- /a/ is [−front] — does not trigger palatalization. -/
-theorem a_minus_front : seg_a.HasValue Feature.front false = true := by decide
-
-/-- Palatalization is a [coronal] feature change: /k/ is [−cor], /tɕ/ is [+cor].
-    The OT constraints IDENT-IO(−cor) and IDENT-BR(−cor) penalize exactly
-    this feature difference. -/
-theorem palatalization_is_coronal_change :
-    seg_k.HasValue Feature.coronal false = true ∧
-    seg_tc.HasValue Feature.coronal true = true := ⟨by decide, by decide⟩
-
-/-- OCP(+cor) targets segments that are [+coronal]. /tɕ/ violates OCP
-    when adjacent to another [+coronal] segment. /k/ does not. -/
-theorem ocp_targets_palatalized :
-    seg_tc.HasValue Feature.coronal true = true ∧
-    seg_k.HasValue Feature.coronal true = false := ⟨by decide, by decide⟩
+/-- The front vowel /ɪ/ triggers palatalization and the low vowel /a/ does not. -/
+theorem I_front_a_not_front :
+    Vowel.I.segment.HasValue .front true ∧ Vowel.a.segment.HasValue .front false := by
+  decide
 
 end Akan.Phonology
