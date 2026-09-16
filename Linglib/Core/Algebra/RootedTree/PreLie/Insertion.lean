@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.PreLie.Graft
+import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
 import Linglib.Core.Data.List.Sublists
 import Linglib.Core.Data.Multiset.Powerset
 import Linglib.Core.Data.UnorderedTree.Basic
@@ -35,7 +36,7 @@ namespace `RoseTree.Pathed`.
 - §6: Host invariance via the `swapPathAt` path-relabel bijection.
 - §7: Forest invariance (`insertionForest_perm_host`,
   `insertionForest_perm_guests`).
-- §8: Singleton-host insertion.
+- §8: Singleton hosts and single guests (`insertionForest_singleton`, `insertion_singleton`).
 
 ## Status
 
@@ -1337,11 +1338,21 @@ theorem insertionForest_forall₂_perm_guests
   exact List.map_congr_left fun choice _ => map_mk_eq_of_forall2_perm
     (multiGraftChildren_perm_pair_Forall₂ F (zip_pair_Forall₂ choice h))
 
-/-! ### §8: Singleton-host insertion = single-tree insertion lifted to singleton lists
+/-! ### §8: Singleton hosts and single guests
 
-`insertionForest [T] gs = (insertion T gs).map (fun T' => [T'])` — when the
-host has exactly one tree, the multi-graft is just the single-tree multi-graft
-with each output wrapped in a singleton list. -/
+A one-tree host reduces `insertionForest` to `insertion`, and a single guest reduces
+`insertion` to the pre-Lie product `RoseTree.insertSum`. -/
+
+/-- Choices of length one are the letters. -/
+theorem listChoices_one {β : Type*} (xs : List β) : listChoices xs 1 = xs.map fun x => [x] :=
+  List.map_eq_flatMap.symm
+
+/-- With a single guest, the multi-insertion is the Chapoton–Livernet pre-Lie product. -/
+theorem insertion_singleton (T g : RoseTree α) : insertion T [g] = RoseTree.insertSum T g := by
+  rw [insertion_def, insertSum_eq_coe_map_insertAt, List.length_singleton, listChoices_one,
+    List.map_map]
+  congr 1
+  exact List.map_congr_left fun v _ => multiGraft_singleton T v g
 
 /-- `insertion T []` is the singleton `{T}` — multi-graft of no guests is
     the identity. -/
