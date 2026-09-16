@@ -25,9 +25,8 @@ def relKotoryj : Marker :=
   { form := "kotoryj"
   , npRel := .relPronoun
   , bearsCaseMarking := true
-  , rcPosition := .postNominal
-  , positions := [.subject, .directObject, .indirectObject, .oblique, .genitive]
-  , notes := "Declining relative pronoun; OCOMP no data" }
+  , placement := .postNominal
+  , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
 
 /-- All Russian relative clause markers. -/
 def relMarkers : List Marker := [relKotoryj]

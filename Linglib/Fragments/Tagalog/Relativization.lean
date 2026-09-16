@@ -29,9 +29,8 @@ def relLinkerPost : Marker :=
   { form := "na/-ng"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .postNominal
-  , positions := [.subject]
-  , notes := "Linker; subject (ang-phrase) only; voice promotes non-subjects" }
+  , placement := .postNominal
+  , positions := {.subject} }
 
 /-- Prenominal RC with the linker *na ~ -ng*; NP_rel is deleted.
     Subjects only. "Restricting clauses can sometimes, especially when
@@ -41,9 +40,8 @@ def relLinkerPre : Marker :=
   { form := "na/-ng"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .preNominal
-  , positions := [.subject]
-  , notes := "Linker; subject (ang-phrase) only; voice promotes non-subjects" }
+  , placement := .preNominal
+  , positions := {.subject} }
 
 /-- All Tagalog relative clause markers. -/
 def relMarkers : List Marker := [relLinkerPost, relLinkerPre]

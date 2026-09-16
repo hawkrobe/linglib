@@ -27,9 +27,8 @@ def relParticiple : Marker :=
   { form := "-(y)En/-DIK"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .preNominal
-  , positions := [.subject, .directObject, .indirectObject, .oblique]
-  , notes := "Participial; NP_rel deleted" }
+  , placement := .preNominal
+  , positions := {.subject, .directObject, .indirectObject, .oblique} }
 
 /-- Prenominal participial RC with a retained pronominal element in
     NP_rel: for an adnominal genitive, a possessive suffix retained on
@@ -41,9 +40,8 @@ def relRetention : Marker :=
   { form := "-(y)En/-DIK + pronoun"
   , npRel := .resumptive
   , bearsCaseMarking := true
-  , rcPosition := .preNominal
-  , positions := [.genitive, .objComparison]
-  , notes := "GEN: possessive suffix on head noun; OCOMP: stressed pronoun, marginal" }
+  , placement := .preNominal
+  , positions := {.genitive, .objComparison} }
 
 /-- All Turkish relative clause markers. -/
 def relMarkers : List Marker := [relParticiple, relRetention]

@@ -72,9 +72,8 @@ def ambaGap : Marker :=
   { form := "amba"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .postNominal
-  , positions := [.subject, .directObject]
-  , notes := "amba-RC; gap; SU/DO; agreement obligatory on verb" }
+  , placement := .postNominal
+  , positions := {.subject, .directObject} }
 
 /-- The *amba*-complementizer with bound resumptive pronoun
     (person-matching). Objects of monosyllabic prepositions inside
@@ -84,9 +83,8 @@ def ambaBound : Marker :=
   { form := "amba + bound RP"
   , npRel := .resumptiveBound
   , bearsCaseMarking := true
-  , rcPosition := .postNominal
-  , positions := [.oblique]
-  , notes := "amba-RC; bound resumptive (person-matching); obligatory in islands" }
+  , placement := .postNominal
+  , positions := {.oblique} }
 
 /-- The *amba*-complementizer with movement resumptive pronoun
     (personless). Objects of monosyllabic prepositions in parasitic
@@ -96,9 +94,8 @@ def ambaMovement : Marker :=
   { form := "amba + movement RP"
   , npRel := .resumptiveMovement
   , bearsCaseMarking := true
-  , rcPosition := .postNominal
-  , positions := [.oblique]
-  , notes := "amba-RC; movement resumptive (personless); in parasitic gaps" }
+  , placement := .postNominal
+  , positions := {.oblique} }
 
 /-- All Swahili relative clause markers. -/
 def relMarkers : List Marker := [ambaGap, ambaBound, ambaMovement]

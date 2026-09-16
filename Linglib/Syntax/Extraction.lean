@@ -71,7 +71,7 @@ paper. They are not enum cases here. -/
 /-- The grammatical position from which extraction occurs.
 
     This intersects with the [keenan-comrie-1977] Accessibility Hierarchy
-    (see `Typology/RelativeClause/Basic.lean`), but is defined independently
+    (see `Syntax/RelativeClause/Basic.lean`), but is defined independently
     because extraction morphology may make finer distinctions than
     relativization. -/
 inductive ExtractionTarget where

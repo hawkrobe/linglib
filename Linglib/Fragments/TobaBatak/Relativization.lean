@@ -25,9 +25,8 @@ def relGap : Marker :=
   { form := "∅"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .postNominal
-  , positions := [.subject]
-  , notes := "Gap; SU only; §1.3.2" }
+  , placement := .postNominal
+  , positions := {.subject} }
 
 /-- Resumptive pronoun construction. NP_rel is a pronominal copy
     bearing case. Postnominal RC. Covers IO, OBL, GEN.
@@ -37,9 +36,8 @@ def relResumptive : Marker :=
   { form := "pronoun"
   , npRel := .resumptive
   , bearsCaseMarking := true
-  , rcPosition := .postNominal
-  , positions := [.indirectObject, .oblique, .genitive]
-  , notes := "Resumptive; IO/OBL/GEN; DO gap genuine; §1.3.2" }
+  , placement := .postNominal
+  , positions := {.indirectObject, .oblique, .genitive} }
 
 /-- All Toba Batak relative clause markers. -/
 def relMarkers : List Marker := [relGap, relResumptive]

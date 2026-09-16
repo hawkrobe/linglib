@@ -39,9 +39,8 @@ def relSheGap : Marker :=
   { form := "she-"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .postNominal
-  , positions := [.subject, .directObject]
-  , notes := "Complementizer she-; gap; covers SU/DO; §1.3.2" }
+  , placement := .postNominal
+  , positions := {.subject, .directObject} }
 
 /-- Complementizer *she-* with resumptive pronoun. Same complementizer
     introduces the RC, but NP_rel is a resumptive personal pronoun.
@@ -51,9 +50,8 @@ def relSheResumptive : Marker :=
   { form := "she- + pronoun"
   , npRel := .resumptive
   , bearsCaseMarking := true
-  , rcPosition := .postNominal
-  , positions := [.directObject, .indirectObject, .oblique, .genitive, .objComparison]
-  , notes := "Complementizer she-; resumptive; DO–OCOMP; DO shared; §1.3.2" }
+  , placement := .postNominal
+  , positions := {.directObject, .indirectObject, .oblique, .genitive, .objComparison} }
 
 /-- Complementizer *she-* with movement resumptive in PPs. Obligatory —
     the PP object cannot be a gap (no P-stranding in Hebrew). Shows
@@ -64,9 +62,8 @@ def relSheMovementResumptive : Marker :=
   { form := "she- + movement RP"
   , npRel := .resumptiveMovement
   , bearsCaseMarking := true
-  , rcPosition := .postNominal
-  , positions := [.oblique, .genitive]
-  , notes := "she- + obligatory resumptive in PPs; movement copy; reconstruction; [sichel-2014]" }
+  , placement := .postNominal
+  , positions := {.oblique, .genitive} }
 
 /-- Complementizer *she-* with bound resumptive for direct objects.
     Optional — alternates with gap. When used, behaves as a bound
@@ -77,9 +74,8 @@ def relSheBoundResumptive : Marker :=
   { form := "she- + bound RP"
   , npRel := .resumptiveBound
   , bearsCaseMarking := true
-  , rcPosition := .postNominal
-  , positions := [.directObject]
-  , notes := "she- + optional resumptive for DO; bound pronoun; no reconstruction; [sichel-2014]" }
+  , placement := .postNominal
+  , positions := {.directObject} }
 
 /-- All Hebrew relative clause markers. The legacy `relSheResumptive`
     marker is retained for backward compatibility with

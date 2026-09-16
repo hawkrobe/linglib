@@ -28,9 +28,8 @@ def relJoka : Marker :=
   { form := "joka"
   , npRel := .relPronoun
   , bearsCaseMarking := true
-  , rcPosition := .postNominal
-  , positions := [.subject, .directObject, .indirectObject, .oblique, .genitive]
-  , notes := "Relative pronoun; declines for case; OCOMP does not exist" }
+  , placement := .postNominal
+  , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
 
 /-- Participial construction. Prenominal RC formed with a participle.
     NP_rel is a gap. Covers SU and DO only.
@@ -39,9 +38,8 @@ def relParticipial : Marker :=
   { form := "participle"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .preNominal
-  , positions := [.subject, .directObject]
-  , notes := "Participial; prenominal; covers SU/DO only" }
+  , placement := .preNominal
+  , positions := {.subject, .directObject} }
 
 /-- All Finnish relative clause markers. -/
 def relMarkers : List Marker := [relJoka, relParticipial]

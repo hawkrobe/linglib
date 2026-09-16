@@ -31,9 +31,8 @@ def relJo : Marker :=
   { form := "jo/jis-"
   , npRel := .relPronoun
   , bearsCaseMarking := true
-  , rcPosition := .postNominal
-  , positions := [.subject, .directObject, .indirectObject, .oblique, .genitive]
-  , notes := "Case-inflected relative pronoun; OCOMP starred (treated as OBL)" }
+  , placement := .postNominal
+  , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
 
 /-- Correlative *jo … vo*: "the head NP in the NP_rel position, still
     marked by the relativization marker, and cross-referenced in the
@@ -45,9 +44,8 @@ def relCorrelative : Marker :=
   { form := "jo … vo"
   , npRel := .relPronoun
   , bearsCaseMarking := true
-  , rcPosition := .correlative
-  , positions := [.subject, .directObject, .indirectObject, .oblique, .genitive]
-  , notes := "Correlative; K&C Table 1 codes as internal; OCOMP starred" }
+  , placement := .correlative
+  , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
 
 /-- All Hindi-Urdu relative clause markers. -/
 def relMarkers : List Marker := [relJo, relCorrelative]
