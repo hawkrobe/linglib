@@ -1,142 +1,101 @@
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Discourse Coherence Relations
-[hobbs-1979] [kehler-2002] [umbach-2004]
-Coherence relations classifying how adjacent discourse segments
-connect (resemblance / cause–effect / contiguity), with directionality
-and projections to coherence class. Kehler 2002's tripartition,
-extended with SDRT additions (`background`, `consequence`,
-`alternation`); CONTRAST / CORRECTION distinguished per
-[umbach-2004].
+# Coherence relations
+
+This file defines the coherence relations of [kehler-2002], the ways two adjacent discourse
+segments are understood to connect, and their classification into the three kinds of connection
+between ideas Hume distinguished: resemblance, cause–effect, and contiguity. The classes differ in
+the inference that establishes the relation. A resemblance relation aligns the predicates and
+arguments of the two segments and compares them; a cause–effect relation infers a proposition from
+each segment and connects the two by an implication; a contiguity relation reads the second
+segment's eventuality as continuing from the end state of the first. A cause–effect relation is
+oriented by which segment supplies the cause, and the orientation is defined on exactly that
+class (`Relation.causalDirection_isSome_iff`), so Explanation is Result with the segments
+exchanged, and Denial of Preventer is Violated Expectation with the segments exchanged.
+
+## Main definitions
+
+* `Discourse.Coherence.Class`: resemblance, cause–effect, or contiguity.
+* `Discourse.Coherence.Relation`: the eleven relations, with `Relation.toClass`.
+* `Discourse.Coherence.Direction`, `Relation.causalDirection`: which segment a cause–effect
+  relation takes as the cause.
+
+## References
+
+* [kehler-2002]
+* [hobbs-1979]
 -/
+
 namespace Discourse.Coherence
-/-! ### Coherence Classes ([kehler-2002]) -/
-/-- Kehler's three coherence classes, corresponding to Hume's three
-    associative connections between ideas. -/
-inductive CoherenceClass where
-  | resemblance   -- Parallel, Contrast (similarity of structure)
-  | causeEffect   -- Result, Explanation (causal connection)
-  | contiguity    -- Occasion, Elaboration (spatiotemporal adjacency)
-  deriving DecidableEq, Repr
-/-! ### Coherence Relations -/
-/-- Discourse coherence relations: Kehler's tripartition plus SDRT
-    additions. CONTRAST and CORRECTION are distinguished per
-    [umbach-2004] (additional vs substitutive exclusion). -/
-inductive CoherenceRelation where
-  | explanation   -- "because": effect → cause (backward causal)
-  | result        -- "so": cause → effect (forward causal)
-  | violatedExpectation  -- "but"/"nevertheless": cause → denied expected effect ([kehler-2002])
-  | occasion      -- "and then": event₁ → event₂ (= SDRT's Narration)
-  | elaboration   -- further detail on the same event
-  | parallel      -- structural similarity between segments
-  | contrast      -- "but"/"although": similarity + dissimilarity + exclusion of additional alternative
-  | correction    -- "but" (corrective) / German *sondern*: exclusion by substitution
-  | background    -- [asher-lascarides-2003]: scene-setting; β provides setting for α
-  | consequence   -- [asher-lascarides-2003]: discourse-level conditional
-  | alternation   -- [asher-lascarides-2003]: discourse-level disjunction
+
+/-- The three kinds of connection between ideas, which classify coherence relations by the
+inference that establishes them. -/
+inductive Class where
+  /-- The predicates and arguments of the segments are aligned and compared. -/
+  | resemblance
+  /-- A proposition inferred from each segment, the two connected by an implication. -/
+  | causeEffect
+  /-- The second segment's eventuality continues from the end state of the first. -/
+  | contiguity
   deriving DecidableEq, Repr, Fintype
-/-! ### Properties -/
-/-- Classify each relation into its coherence class. -/
-def CoherenceRelation.toClass : CoherenceRelation → CoherenceClass
-  | .explanation  => .causeEffect
-  | .result       => .causeEffect
-  | .violatedExpectation => .causeEffect
-  | .occasion     => .contiguity
-  | .elaboration  => .contiguity
-  | .parallel     => .resemblance
-  | .contrast     => .resemblance
-  | .correction   => .resemblance
-  | .background   => .contiguity     -- scene-setting: spatiotemporal adjacency
-  | .consequence  => .causeEffect    -- discourse-level conditional
-  | .alternation  => .resemblance    -- discourse-level disjunction
-/-- Causal direction: does the relation seek a cause in the prior segment? -/
-inductive CausalDirection where
-  | backward   -- Prior segment is effect, continuation provides cause
-  | forward    -- Prior segment is cause, continuation provides effect
-  | none       -- No causal search
-  deriving DecidableEq, Repr
-/-- The causal direction of each relation. -/
-def CoherenceRelation.causalDirection : CoherenceRelation → CausalDirection
-  | .explanation  => .backward    -- "because": backward search for cause
-  | .result       => .forward     -- "so": forward to effect
-  | .violatedExpectation => .forward  -- forward to the denied expected effect
-  | .occasion     => .none        -- "and then": temporal, not causal
-  | .elaboration  => .none        -- same event, no causal search
-  | .parallel     => .none        -- structural, not causal
-  | .contrast     => .none        -- resemblance, not causal
-  | .correction   => .none        -- resemblance, not causal
-  | .background   => .none        -- scene-setting, not causal
-  | .consequence  => .forward     -- discourse-level conditional, hypothetical-causal
-  | .alternation  => .none        -- discourse-level disjunction, not causal
-/-- Does this relation trigger a search for a cause? -/
-def CoherenceRelation.selectsCause (r : CoherenceRelation) : Prop :=
-  r.causalDirection = .backward
-instance (r : CoherenceRelation) : Decidable r.selectsCause := by
-  unfold CoherenceRelation.selectsCause; infer_instance
-/-- Does this relation trigger a search for an effect? -/
-def CoherenceRelation.selectsEffect (r : CoherenceRelation) : Prop :=
-  r.causalDirection = .forward
-instance (r : CoherenceRelation) : Decidable r.selectsEffect := by
-  unfold CoherenceRelation.selectsEffect; infer_instance
-/-! ### Enumeration -/
-/-- Every coherence relation, for marginalizing over the full set
-    (e.g. the next-mention mixture `Σ_CR P(CR) · f(CR)`). -/
-def CoherenceRelation.all : List CoherenceRelation :=
-  [.explanation, .result, .violatedExpectation, .occasion, .elaboration, .parallel,
-   .contrast, .correction, .background, .consequence, .alternation]
-/-- `all` is exhaustive. Adding a constructor breaks this proof, forcing every
-    marginalization over `all` to be revisited rather than silently dropping a
-    relation. -/
-theorem CoherenceRelation.mem_all (r : CoherenceRelation) : r ∈ all := by
+
+/-- The coherence relations of [kehler-2002], each holding between a first segment and the
+second that continues it. -/
+inductive Relation where
+  /-- A common predicate over pairwise similar arguments. -/
+  | parallel
+  /-- A common predicate over pairwise similar arguments, one negated or the arguments
+  contrasted. -/
+  | contrast
+  /-- A generalization, then an instance of it. -/
+  | exemplification
+  /-- An instance, then the generalization it instantiates. -/
+  | generalization
+  /-- A generalization and an instance that runs against it, in either order. -/
+  | exception
+  /-- A second description of the first segment's eventuality. -/
+  | elaboration
+  /-- The first segment's proposition brings about the second's (*and so*). -/
+  | result
+  /-- The second segment's proposition brings about the first's (*because*). -/
+  | explanation
+  /-- The first segment's proposition would normally rule out the second's (*but*). -/
+  | violatedExpectation
+  /-- The second segment's proposition would normally rule out the first's (*even though*). -/
+  | denialOfPreventer
+  /-- The second segment's eventuality follows on the end state of the first's. -/
+  | occasion
+  deriving DecidableEq, Repr, Fintype
+
+/-- Which segment a cause–effect relation takes as the cause: the first, so that the cause
+precedes its effect, or the second, so that the effect precedes its cause. -/
+inductive Direction where
+  | forward
+  | backward
+  deriving DecidableEq, Repr, Fintype
+
+namespace Relation
+
+/-- The class of a relation. -/
+def toClass : Relation → Class
+  | .parallel | .contrast | .exemplification | .generalization | .exception | .elaboration =>
+    .resemblance
+  | .result | .explanation | .violatedExpectation | .denialOfPreventer => .causeEffect
+  | .occasion => .contiguity
+
+/-- The direction of a cause–effect relation: Result and Violated Expectation take the first
+segment as the cause, Explanation and Denial of Preventer the second. -/
+def causalDirection : Relation → Option Direction
+  | .result | .violatedExpectation => some .forward
+  | .explanation | .denialOfPreventer => some .backward
+  | _ => none
+
+/-- A relation has a direction exactly when it is a cause–effect relation. -/
+theorem causalDirection_isSome_iff (r : Relation) :
+    r.causalDirection.isSome ↔ r.toClass = .causeEffect := by
   cases r <;> decide
-/-! ### Connective–Relation Mapping -/
-/-- German/English connective forms used as experimental stimuli
-    ([solstad-bott-2022], Exps 1–4). -/
-inductive Connective where
-  | because     -- "weil" / "because" → I-Caus
-  | andSo       -- "sodass" / "and so" → I-Cons
-  | although    -- "obwohl" / "although"
-  | andThen     -- "und dann" / "and then"
-  deriving DecidableEq, Repr
-/-- Map connectives to the coherence relation they signal. -/
-def Connective.toRelation : Connective → CoherenceRelation
-  | .because   => .explanation
-  | .andSo     => .result
-  | .although  => .contrast
-  | .andThen   => .occasion
-/-! ### Theorems -/
-/-- "because" selects for causes (backward causal). -/
-theorem because_selects_cause :
-    (Connective.toRelation .because).selectsCause := rfl
-/-- "and so" selects for effects (forward causal / I-Cons). -/
-theorem andSo_selects_effect :
-    (Connective.toRelation .andSo).selectsEffect := rfl
-/-- "although" does not select for causes. -/
-theorem although_not_causal :
-    ¬ (Connective.toRelation .although).selectsCause := by decide
-/-- "and then" does not select for causes. -/
-theorem andThen_not_causal :
-    ¬ (Connective.toRelation .andThen).selectsCause := by decide
-/-- "because" and "and so" are both causal but in opposite directions: I-Caus is backward, I-Cons is forward. -/
-theorem because_andSo_opposite_directions :
-    (Connective.toRelation .because).causalDirection = .backward ∧
-    (Connective.toRelation .andSo).causalDirection = .forward := ⟨rfl, rfl⟩
-/-- Both causal relations (explanation, result) belong to causeEffect class. -/
-theorem causal_relations_same_class :
-    CoherenceRelation.explanation.toClass =
-    CoherenceRelation.result.toClass := rfl
-/-- Occasion and elaboration belong to contiguity class. -/
-theorem contiguity_relations_same_class :
-    CoherenceRelation.occasion.toClass =
-    CoherenceRelation.elaboration.toClass := rfl
-/-- CONTRAST and CORRECTION are both resemblance relations
-    ([umbach-2004], [kehler-2002]). -/
-theorem contrast_correction_same_class :
-    CoherenceRelation.contrast.toClass =
-    CoherenceRelation.correction.toClass := rfl
-/-- CONTRAST and CORRECTION are distinct despite sharing a class
-    ([umbach-2004]). -/
-theorem contrast_ne_correction :
-    CoherenceRelation.contrast ≠ CoherenceRelation.correction := by decide
+
+end Relation
+
 end Discourse.Coherence

@@ -15,7 +15,7 @@ from the final state of the prompt's eventuality, held by the experiencer of the
 the participant the action affects. Both mechanisms read off a verb class's proto-role grid
 ([dowty-1991]): `CarriesSlot` is the stimulus label, `HoldsEndState` the experiencer label or
 causal affectedness, `ICaus` and `ICons` the resulting coreference predictions, and `Bias`
-routes them through the causal direction of the relation a connective signals.
+routes them through the direction of the cause–effect relation a connective signals.
 
 The rival One-Mechanism Account of [crinean-garnham-2006] reads both biases off one causal
 decomposition, causes with agents and stimuli alike, consequences with experiencers and
@@ -130,23 +130,36 @@ instance (r : RoleList) (a : Argument) : Decidable (ICaus r a) := by
 instance (r : RoleList) (a : Argument) : Decidable (ICons r a) := by
   unfold ICons; infer_instance
 
+/-- The connectives of the continuation prompts: German *weil* and *sodass*, the paper's
+*because* and *and so*. -/
+inductive Connective where
+  | because
+  | andSo
+  deriving DecidableEq, Fintype, Repr
+
+/-- The cause–effect relation a connective signals. -/
+def Connective.relation : Connective → Relation
+  | .because => .explanation
+  | .andSo => .result
+
 /-- The coreference bias a connective elicits: the slot argument when the relation it
-signals seeks a cause, the end-state argument when it seeks an effect. -/
+signals seeks its cause in the continuation, the end-state argument when it seeks its
+effect there. -/
 def Bias (r : RoleList) (c : Connective) (a : Argument) : Prop :=
-  (c.toRelation.selectsCause ∧ ICaus r a) ∨ (c.toRelation.selectsEffect ∧ ICons r a)
+  match c.relation.causalDirection with
+  | some .backward => ICaus r a
+  | some .forward => ICons r a
+  | none => False
+
+@[simp] theorem bias_because (r : RoleList) (a : Argument) : Bias r .because a ↔ ICaus r a :=
+  Iff.rfl
+
+@[simp] theorem bias_andSo (r : RoleList) (a : Argument) : Bias r .andSo a ↔ ICons r a :=
+  Iff.rfl
 
 instance (r : RoleList) (c : Connective) (a : Argument) : Decidable (Bias r c a) := by
-  unfold Bias; infer_instance
-
-@[simp] theorem bias_because (r : RoleList) (a : Argument) :
-    Bias r .because a ↔ ICaus r a := by
-  simp [Bias, Connective.toRelation, CoherenceRelation.selectsCause,
-    CoherenceRelation.selectsEffect, CoherenceRelation.causalDirection]
-
-@[simp] theorem bias_andSo (r : RoleList) (a : Argument) :
-    Bias r .andSo a ↔ ICons r a := by
-  simp [Bias, Connective.toRelation, CoherenceRelation.selectsCause,
-    CoherenceRelation.selectsEffect, CoherenceRelation.causalDirection]
+  cases c
+  exacts [decidable_of_iff _ (bias_because r a).symm, decidable_of_iff _ (bias_andSo r a).symm]
 
 theorem icaus_flip {r r' : RoleList} (h : flip r = some r') (a : Argument) :
     ICaus r' a ↔ ICaus r a.swap := by
@@ -159,7 +172,7 @@ theorem icons_flip {r r' : RoleList} (h : flip r = some r') (a : Argument) :
 /-- Exchanging subject and object exchanges the biases, whatever the connective. -/
 theorem bias_flip {r r' : RoleList} (h : flip r = some r') (c : Connective) (a : Argument) :
     Bias r' c a ↔ Bias r c a.swap := by
-  simp [Bias, icaus_flip h, icons_flip h]
+  cases c <;> simp [icaus_flip h, icons_flip h]
 
 /-! ### The psych doublets -/
 
@@ -196,13 +209,13 @@ theorem icausOne_of_icaus {r : RoleList} {a : Argument} (h : ICaus r a) : ICausO
 
 /-- The coherence relation the One-Mechanism Account predicts for a continuation about `a`:
 an explanation about a cause argument, a consequence about an end-state argument. -/
-def oneMechanism (r : RoleList) (a : Argument) : Option CoherenceRelation :=
+def oneMechanism (r : RoleList) (a : Argument) : Option Relation :=
   if ICausOne r a then some .explanation else if ICons r a then some .result else none
 
 /-- The coherence relation the Two-Mechanism Account predicts: slot filling takes
 precedence over contiguity, so a slot predicate is continued by an explanation whichever
 argument the continuation is about, and a slotless predicate has no preferred relation. -/
-def twoMechanism (r : RoleList) : Option CoherenceRelation :=
+def twoMechanism (r : RoleList) : Option Relation :=
   if ∃ a, ICaus r a then some .explanation else none
 
 /-- The accounts agree on the slot argument. -/

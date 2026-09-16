@@ -37,9 +37,8 @@ non-subjects, a gradient the backward-looking center of a grammatical-role Cente
 ## Implementation notes
 
 Rates are the paper's percentages, read from the rows with `nat?` and cast to `ℚ`; computed
-quantities are compared through their integer numerators. Violated Expectation is
-`CoherenceRelation.violatedExpectation`; relations the paper's coding does not record carry no
-probability.
+quantities are compared through their integer numerators. Relations the paper's coding does not
+record match no row and carry no probability.
 
 ## References
 
@@ -116,7 +115,7 @@ def pct (fs : List (String × String)) (key : String) : ℕ :=
     (·.nat? key)).headD 0
 
 /-- The paper's names for the coded relations. -/
-def relationTag : CoherenceRelation → String
+def relationTag : Relation → String
   | .occasion => "occasion"
   | .elaboration => "elaboration"
   | .explanation => "explanation"
@@ -124,10 +123,10 @@ def relationTag : CoherenceRelation → String
   | .result => "result"
   | .parallel => "parallel"
   | .contrast => "contrast"
-  | .correction => "correction"
-  | .background => "background"
-  | .consequence => "consequence"
-  | .alternation => "alternation"
+  | .exemplification => "exemplification"
+  | .generalization => "generalization"
+  | .exception => "exception"
+  | .denialOfPreventer => "denialOfPreventer"
 
 /-- The instruction of the instruction manipulation. -/
 inductive Instruction where
@@ -183,14 +182,14 @@ theorem imperfective_more_source : aspectSource "perfective" < aspectSource "imp
   decide
 
 /-- Table 2: the frequency of a relation in the perfective continuations. -/
-def perfectiveFrequency (c : CoherenceRelation) : ℕ :=
+def perfectiveFrequency (c : Relation) : ℕ :=
   pct [("table", "2"), ("relation", relationTag c)] "frequency"
 
 /-- Table 2: the Source bias of a relation in the perfective continuations. -/
-def perfectiveSourceGiven (c : CoherenceRelation) : ℕ :=
+def perfectiveSourceGiven (c : Relation) : ℕ :=
   pct [("table", "2"), ("relation", relationTag c)] "sourceGivenRelation"
 
-private theorem mixture_div (p b : CoherenceRelation → ℕ) :
+private theorem mixture_div (p b : Relation → ℕ) :
     mixture (λ c => (p c : ℚ) / 100) (λ c => (b c : ℚ) / 100) =
       ((∑ c, p c * b c : ℕ) : ℚ) / 10000 := by
   rw [eq_div_iff (by norm_num), mixture, sum_mul]
@@ -212,11 +211,11 @@ theorem perfective_mixture_masks_biases :
   refine ⟨?_, ?_, by decide, by decide, by decide⟩ <;> rw [mixture_div, h] <;> norm_num
 
 /-- Table 3: the frequency of a relation under an instruction. -/
-def frequency (i : Instruction) (c : CoherenceRelation) : ℕ :=
+def frequency (i : Instruction) (c : Relation) : ℕ :=
   pct [("table", "3"), ("instruction", i.tag), ("relation", relationTag c)] "frequency"
 
 /-- Table 4: the Source bias of a relation in the instruction experiment. -/
-def sourceGiven (c : CoherenceRelation) : ℕ :=
+def sourceGiven (c : Relation) : ℕ :=
   pct [("table", "4"), ("relation", relationTag c)] "instructionManipulation"
 
 /-- Table 5: the observed Source interpretation rate under an instruction. -/
@@ -242,7 +241,7 @@ theorem instruction_mixtures :
 /-! ### Bidirectionality (Table 6) -/
 
 /-- Table 6: the frequency of a relation by prompt type. -/
-def promptFrequency (p : Prompt) (c : CoherenceRelation) : ℕ :=
+def promptFrequency (p : Prompt) (c : Relation) : ℕ :=
   pct [("table", "6"), ("prompt", p.tag), ("relation", relationTag c)] "frequency"
 
 /-- The share of first mentions to the Goal by prompt type. -/
