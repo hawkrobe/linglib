@@ -223,7 +223,7 @@
         "projection"
       ],
       [
-        "family",
+        "environment",
         "negation"
       ],
       [
@@ -303,7 +303,7 @@
         "projection"
       ],
       [
-        "family",
+        "environment",
         "question"
       ],
       [

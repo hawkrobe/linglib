@@ -1,7 +1,10 @@
 [
   {
     "id": "tonhauseretal2013_1a",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(1a)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(1a)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "The present queen of France lives in Ithaca.",
@@ -13,9 +16,18 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["family", "atomic"],
-      ["trigger", "definite"],
-      ["content", "existence of a unique queen of France"]
+      [
+        "environment",
+        "atomic"
+      ],
+      [
+        "trigger",
+        "definite"
+      ],
+      [
+        "content",
+        "existence of a unique queen of France"
+      ]
     ],
     "comment": "The family-of-sentences diagnostic of Chierchia and McConnell-Ginet: the existence implication survives in (1b)-(1d).",
     "metaLanguage": "stan1293",
@@ -23,7 +35,10 @@
   },
   {
     "id": "tonhauseretal2013_1b",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(1b)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(1b)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "It is not the case that the present queen of France lives in Ithaca.",
@@ -35,9 +50,18 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["family", "negation"],
-      ["trigger", "definite"],
-      ["content", "existence of a unique queen of France"]
+      [
+        "environment",
+        "negation"
+      ],
+      [
+        "trigger",
+        "definite"
+      ],
+      [
+        "content",
+        "existence of a unique queen of France"
+      ]
     ],
     "comment": "",
     "metaLanguage": "stan1293",
@@ -45,7 +69,10 @@
   },
   {
     "id": "tonhauseretal2013_1c",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(1c)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(1c)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Does the present queen of France live in Ithaca?",
@@ -57,9 +84,18 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["family", "question"],
-      ["trigger", "definite"],
-      ["content", "existence of a unique queen of France"]
+      [
+        "environment",
+        "question"
+      ],
+      [
+        "trigger",
+        "definite"
+      ],
+      [
+        "content",
+        "existence of a unique queen of France"
+      ]
     ],
     "comment": "",
     "metaLanguage": "stan1293",
@@ -67,7 +103,10 @@
   },
   {
     "id": "tonhauseretal2013_1d",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(1d)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(1d)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If the present queen of France lives in Ithaca, she has probably met Nelly.",
@@ -79,9 +118,18 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["family", "conditional antecedent"],
-      ["trigger", "definite"],
-      ["content", "existence of a unique queen of France"]
+      [
+        "environment",
+        "conditional antecedent"
+      ],
+      [
+        "trigger",
+        "definite"
+      ],
+      [
+        "content",
+        "existence of a unique queen of France"
+      ]
     ],
     "comment": "",
     "metaLanguage": "stan1293",
@@ -89,7 +137,10 @@
   },
   {
     "id": "tonhauseretal2013_13",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(13)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(13)"
+    },
     "reportedIn": null,
     "language": "para1311",
     "primaryText": "Pe aña memby Márko ko'ãga oipota amba'apo iñhermáno karniseríape.",
@@ -101,11 +152,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "expressive"],
-      ["content", "negative evaluation"],
-      ["context", "m-neutral"],
-      ["diagnostic", "strong contextual felicity"],
-      ["scf", "no"]
+      [
+        "trigger",
+        "expressive"
+      ],
+      [
+        "content",
+        "negative evaluation"
+      ],
+      [
+        "context",
+        "m-neutral"
+      ],
+      [
+        "diagnostic",
+        "strong contextual felicity"
+      ],
+      [
+        "scf",
+        "no"
+      ]
     ],
     "comment": "Acceptable in a context neutral about the speaker's low opinion: the expressive imposes no strong contextual felicity constraint, (12i).",
     "metaLanguage": "stan1293",
@@ -113,7 +179,10 @@
   },
   {
     "id": "tonhauseretal2013_14a",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(14a)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(14a)"
+    },
     "reportedIn": null,
     "language": "para1311",
     "primaryText": "Simon, chekichihakue, oñe'ẽ Aleman.",
@@ -125,11 +194,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "appositive"],
-      ["content", "descriptive content"],
-      ["context", "m-neutral"],
-      ["diagnostic", "strong contextual felicity"],
-      ["scf", "no"]
+      [
+        "trigger",
+        "appositive"
+      ],
+      [
+        "content",
+        "descriptive content"
+      ],
+      [
+        "context",
+        "m-neutral"
+      ],
+      [
+        "diagnostic",
+        "strong contextual felicity"
+      ],
+      [
+        "scf",
+        "no"
+      ]
     ],
     "comment": "Raul need not already know that Simon is Maria's ex-boyfriend.",
     "metaLanguage": "stan1293",
@@ -137,7 +221,10 @@
   },
   {
     "id": "tonhauseretal2013_14b",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(14b)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(14b)"
+    },
     "reportedIn": null,
     "language": "para1311",
     "primaryText": "Papa Benedícto 16, onasẽva'ekue Alemániape, oiko Rómape.",
@@ -149,11 +236,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "NRRC"],
-      ["content", "descriptive content"],
-      ["context", "m-neutral"],
-      ["diagnostic", "strong contextual felicity"],
-      ["scf", "no"]
+      [
+        "trigger",
+        "NRRC"
+      ],
+      [
+        "content",
+        "descriptive content"
+      ],
+      [
+        "context",
+        "m-neutral"
+      ],
+      [
+        "diagnostic",
+        "strong contextual felicity"
+      ],
+      [
+        "scf",
+        "no"
+      ]
     ],
     "comment": "",
     "metaLanguage": "stan1293",
@@ -161,7 +263,10 @@
   },
   {
     "id": "tonhauseretal2013_15a",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(15a)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(15a)"
+    },
     "reportedIn": null,
     "language": "para1311",
     "primaryText": "Maléna hasy ra'e. Aimete ogue'ẽ.",
@@ -173,11 +278,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "aimete 'almost'"],
-      ["content", "polar implication"],
-      ["context", "m-neutral"],
-      ["diagnostic", "strong contextual felicity"],
-      ["scf", "no"]
+      [
+        "trigger",
+        "aimete 'almost'"
+      ],
+      [
+        "content",
+        "polar implication"
+      ],
+      [
+        "context",
+        "m-neutral"
+      ],
+      [
+        "diagnostic",
+        "strong contextual felicity"
+      ],
+      [
+        "scf",
+        "no"
+      ]
     ],
     "comment": "The context is neutral about whether Malena threw up.",
     "metaLanguage": "stan1293",
@@ -185,7 +305,10 @@
   },
   {
     "id": "tonhauseretal2013_15b",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(15b)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(15b)"
+    },
     "reportedIn": null,
     "language": "para1311",
     "primaryText": "Chénte amopotĩ ñanderóga!",
@@ -197,11 +320,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "-nte 'only'"],
-      ["content", "prejacent"],
-      ["context", "m-neutral"],
-      ["diagnostic", "strong contextual felicity"],
-      ["scf", "no"]
+      [
+        "trigger",
+        "-nte 'only'"
+      ],
+      [
+        "content",
+        "prejacent"
+      ],
+      [
+        "context",
+        "m-neutral"
+      ],
+      [
+        "diagnostic",
+        "strong contextual felicity"
+      ],
+      [
+        "scf",
+        "no"
+      ]
     ],
     "comment": "The mother did not previously know that the youngest daughter cleans the house.",
     "metaLanguage": "stan1293",
@@ -209,7 +347,10 @@
   },
   {
     "id": "tonhauseretal2013_16a",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(16a)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(16a)"
+    },
     "reportedIn": null,
     "language": "para1311",
     "primaryText": "Pe kuimba'e nderu.",
@@ -221,11 +362,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "demonstrative NP"],
-      ["content", "descriptive content"],
-      ["context", "m-neutral, n-positive"],
-      ["diagnostic", "strong contextual felicity"],
-      ["scf", "no"]
+      [
+        "trigger",
+        "demonstrative NP"
+      ],
+      [
+        "content",
+        "descriptive content"
+      ],
+      [
+        "context",
+        "m-neutral, n-positive"
+      ],
+      [
+        "diagnostic",
+        "strong contextual felicity"
+      ],
+      [
+        "scf",
+        "no"
+      ]
     ],
     "comment": "Neutral about the demonstratum being a man, positive about the speaker indicating something; the descriptive content imposes no constraint while the indication implication does, (18).",
     "metaLanguage": "stan1293",
@@ -233,7 +389,10 @@
   },
   {
     "id": "tonhauseretal2013_16b",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(16b)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(16b)"
+    },
     "reportedIn": null,
     "language": "para1311",
     "primaryText": "Ha'e peteĩ kuimba'e.",
@@ -245,11 +404,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "ha'e '3rd'"],
-      ["content", "human referent"],
-      ["context", "m-neutral, n-positive"],
-      ["diagnostic", "strong contextual felicity"],
-      ["scf", "no"]
+      [
+        "trigger",
+        "ha'e '3rd'"
+      ],
+      [
+        "content",
+        "human referent"
+      ],
+      [
+        "context",
+        "m-neutral, n-positive"
+      ],
+      [
+        "diagnostic",
+        "strong contextual felicity"
+      ],
+      [
+        "scf",
+        "no"
+      ]
     ],
     "comment": "The human implication of the pronoun imposes no constraint; its existence implication does, (19).",
     "metaLanguage": "stan1293",
@@ -257,7 +431,10 @@
   },
   {
     "id": "tonhauseretal2013_17a",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(17a)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(17a)"
+    },
     "reportedIn": null,
     "language": "para1311",
     "primaryText": "Ñandechofeur okaru empanáda avei.",
@@ -269,11 +446,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "avei 'too'"],
-      ["content", "existence of an alternative"],
-      ["context", "m-neutral"],
-      ["diagnostic", "strong contextual felicity"],
-      ["scf", "yes"]
+      [
+        "trigger",
+        "avei 'too'"
+      ],
+      [
+        "content",
+        "existence of an alternative"
+      ],
+      [
+        "context",
+        "m-neutral"
+      ],
+      [
+        "diagnostic",
+        "strong contextual felicity"
+      ],
+      [
+        "scf",
+        "yes"
+      ]
     ],
     "comment": "Unacceptable when nobody else is known to be eating empanadas, and acceptable in the minimally different context of (17b) where Malena is eating empanadas: the constraint, (12ii).",
     "metaLanguage": "stan1293",
@@ -281,7 +473,10 @@
   },
   {
     "id": "tonhauseretal2013_22a",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(22a)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(22a)"
+    },
     "reportedIn": null,
     "language": "para1311",
     "primaryText": "Ko mburuvicha Fransiagua oiko Lóndrepe.",
@@ -293,10 +488,22 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "demonstrative NP"],
-      ["content", "indication"],
-      ["context", "m-neutral"],
-      ["diagnostic", "projection"]
+      [
+        "trigger",
+        "demonstrative NP"
+      ],
+      [
+        "content",
+        "indication"
+      ],
+      [
+        "context",
+        "m-neutral"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ]
     ],
     "comment": "A decontextualized utterance of a trigger with the constraint is unacceptable, so implication judgments cannot diagnose its projection; the family-of-sentences diagnostic (24i) tests acceptability across contexts instead, after Matthewson (2004).",
     "metaLanguage": "stan1293",
@@ -304,7 +511,10 @@
   },
   {
     "id": "tonhauseretal2013_30a",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(30a)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(30a)"
+    },
     "reportedIn": null,
     "language": "para1311",
     "primaryText": "Ñandechofeur okaru empanáda avei.",
@@ -316,12 +526,30 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["family", "atomic"],
-      ["trigger", "avei 'too'"],
-      ["content", "existence of an alternative"],
-      ["context", "m-neutral"],
-      ["diagnostic", "projection"],
-      ["projective", "yes"]
+      [
+        "environment",
+        "atomic"
+      ],
+      [
+        "trigger",
+        "avei 'too'"
+      ],
+      [
+        "content",
+        "existence of an alternative"
+      ],
+      [
+        "context",
+        "m-neutral"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "projective",
+        "yes"
+      ]
     ],
     "comment": "The atomic sentence and its modal, conditional and question variants (30b)-(30d) are unacceptable in the neutral context and acceptable in the positive context of (31): the existence implication is projective, (24i).",
     "metaLanguage": "stan1293",
@@ -329,7 +557,10 @@
   },
   {
     "id": "tonhauseretal2013_30b",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(30b)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(30b)"
+    },
     "reportedIn": null,
     "language": "para1311",
     "primaryText": "Ikatu okaru empanáda avei ñandechofeur.",
@@ -341,12 +572,30 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["family", "epistemic modal"],
-      ["trigger", "avei 'too'"],
-      ["content", "existence of an alternative"],
-      ["context", "m-neutral"],
-      ["diagnostic", "projection"],
-      ["projective", "yes"]
+      [
+        "environment",
+        "epistemic modal"
+      ],
+      [
+        "trigger",
+        "avei 'too'"
+      ],
+      [
+        "content",
+        "existence of an alternative"
+      ],
+      [
+        "context",
+        "m-neutral"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "projective",
+        "yes"
+      ]
     ],
     "comment": "",
     "metaLanguage": "stan1293",
@@ -354,7 +603,10 @@
   },
   {
     "id": "tonhauseretal2013_30c",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(30c)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(30c)"
+    },
     "reportedIn": null,
     "language": "para1311",
     "primaryText": "Okarúramo empanáda avei ñandechofeur, asẽta kolektívogui.",
@@ -366,12 +618,30 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["family", "conditional antecedent"],
-      ["trigger", "avei 'too'"],
-      ["content", "existence of an alternative"],
-      ["context", "m-neutral"],
-      ["diagnostic", "projection"],
-      ["projective", "yes"]
+      [
+        "environment",
+        "conditional antecedent"
+      ],
+      [
+        "trigger",
+        "avei 'too'"
+      ],
+      [
+        "content",
+        "existence of an alternative"
+      ],
+      [
+        "context",
+        "m-neutral"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "projective",
+        "yes"
+      ]
     ],
     "comment": "",
     "metaLanguage": "stan1293",
@@ -379,7 +649,10 @@
   },
   {
     "id": "tonhauseretal2013_30d",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(30d)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(30d)"
+    },
     "reportedIn": null,
     "language": "para1311",
     "primaryText": "Okarúpa empanada avei ñandechofeur?",
@@ -391,12 +664,30 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["family", "question"],
-      ["trigger", "avei 'too'"],
-      ["content", "existence of an alternative"],
-      ["context", "m-neutral"],
-      ["diagnostic", "projection"],
-      ["projective", "yes"]
+      [
+        "environment",
+        "question"
+      ],
+      [
+        "trigger",
+        "avei 'too'"
+      ],
+      [
+        "content",
+        "existence of an alternative"
+      ],
+      [
+        "context",
+        "m-neutral"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "projective",
+        "yes"
+      ]
     ],
     "comment": "The negative variant is excluded since avei cannot occur inside the negation circumfix (footnote 17).",
     "metaLanguage": "stan1293",
@@ -404,7 +695,10 @@
   },
   {
     "id": "tonhauseretal2013_38a",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(38a)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(38a)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Jane believes that Bill has stopped smoking (although he's actually never been a smoker).",
@@ -416,10 +710,22 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "stop"],
-      ["content", "prestate"],
-      ["diagnostic", "obligatory local effect"],
-      ["localEffect", "yes"]
+      [
+        "trigger",
+        "stop"
+      ],
+      [
+        "content",
+        "prestate"
+      ],
+      [
+        "diagnostic",
+        "obligatory local effect"
+      ],
+      [
+        "localEffect",
+        "yes"
+      ]
     ],
     "comment": "The report attributes to Jane the belief that Bill has been a smoker: the prestate has local effect, and always does, (39a).",
     "metaLanguage": "stan1293",
@@ -427,7 +733,10 @@
   },
   {
     "id": "tonhauseretal2013_38b",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(38b)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(38b)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Joan believes that her chip, which she had installed last month, has a twelve year guarantee.",
@@ -439,10 +748,22 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "NRRC"],
-      ["content", "descriptive content"],
-      ["diagnostic", "obligatory local effect"],
-      ["localEffect", "yes"]
+      [
+        "trigger",
+        "NRRC"
+      ],
+      [
+        "content",
+        "descriptive content"
+      ],
+      [
+        "diagnostic",
+        "obligatory local effect"
+      ],
+      [
+        "localEffect",
+        "yes"
+      ]
     ],
     "comment": "From Amaral, Roberts and Smith (2007). Here the NRRC's content is part of Joan's belief state, but it need not be, (39b).",
     "metaLanguage": "stan1293",
@@ -450,7 +771,10 @@
   },
   {
     "id": "tonhauseretal2013_39a",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(39a)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(39a)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Jane believes that Bill has stopped smoking and that he has never been a smoker.",
@@ -462,10 +786,22 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "stop"],
-      ["content", "prestate"],
-      ["diagnostic", "obligatory local effect"],
-      ["ole", "yes"]
+      [
+        "trigger",
+        "stop"
+      ],
+      [
+        "content",
+        "prestate"
+      ],
+      [
+        "diagnostic",
+        "obligatory local effect"
+      ],
+      [
+        "ole",
+        "yes"
+      ]
     ],
     "comment": "The conjoined complements attribute inconsistent beliefs to Jane: the prestate of *stop* has obligatory local effect, (41iib).",
     "metaLanguage": "stan1293",
@@ -473,7 +809,10 @@
   },
   {
     "id": "tonhauseretal2013_39b",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(39b)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(39b)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Jane believes that Bill, who is Sue's cousin, is Sue's brother.",
@@ -485,10 +824,22 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "NRRC"],
-      ["content", "descriptive content"],
-      ["diagnostic", "obligatory local effect"],
-      ["ole", "no"]
+      [
+        "trigger",
+        "NRRC"
+      ],
+      [
+        "content",
+        "descriptive content"
+      ],
+      [
+        "diagnostic",
+        "obligatory local effect"
+      ],
+      [
+        "ole",
+        "no"
+      ]
     ],
     "comment": "The speaker attributes to Jane only the belief that Bill is Sue's brother, not that he is her cousin: no obligatory local effect, (41iic).",
     "metaLanguage": "stan1293",
@@ -496,7 +847,10 @@
   },
   {
     "id": "tonhauseretal2013_46a",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(46a)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(46a)"
+    },
     "reportedIn": null,
     "language": "para1311",
     "primaryText": "Raul ova Buénos Áirespe, hákatu Juan ndoikuáai. Ha'e oimo'ã Maléna avei ovaha Buénos Áirespe.",
@@ -508,11 +862,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "avei 'too'"],
-      ["content", "existence of an alternative"],
-      ["context", "globally m-positive, locally m-neutral"],
-      ["diagnostic", "obligatory local effect"],
-      ["ole", "yes"]
+      [
+        "trigger",
+        "avei 'too'"
+      ],
+      [
+        "content",
+        "existence of an alternative"
+      ],
+      [
+        "context",
+        "globally m-positive, locally m-neutral"
+      ],
+      [
+        "diagnostic",
+        "obligatory local effect"
+      ],
+      [
+        "ole",
+        "yes"
+      ]
     ],
     "comment": "The global context entails that someone moved to Buenos Aires while the attitude holder is explicitly ignorant of it: unacceptability shows the constraint must be met in the local context, (41i).",
     "metaLanguage": "stan1293",
@@ -520,7 +889,10 @@
   },
   {
     "id": "tonhauseretal2013_46b",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(46b)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(46b)"
+    },
     "reportedIn": null,
     "language": "para1311",
     "primaryText": "Ema'ẽmi! Upépe oĩ peteĩ kuimba'e. Maléna ndohecháni. Ha'e oimo'ã ha'e hasyha.",
@@ -532,11 +904,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "ha'e '3rd'"],
-      ["content", "existence of referent"],
-      ["context", "globally m-positive, locally m-neutral"],
-      ["diagnostic", "obligatory local effect"],
-      ["ole", "yes"]
+      [
+        "trigger",
+        "ha'e '3rd'"
+      ],
+      [
+        "content",
+        "existence of referent"
+      ],
+      [
+        "context",
+        "globally m-positive, locally m-neutral"
+      ],
+      [
+        "diagnostic",
+        "obligatory local effect"
+      ],
+      [
+        "ole",
+        "yes"
+      ]
     ],
     "comment": "One of three consultants accepted this example (footnote 24).",
     "metaLanguage": "stan1293",
@@ -544,7 +931,10 @@
   },
   {
     "id": "tonhauseretal2013_54a",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(54a)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(54a)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Wilma likes that car.",
@@ -556,11 +946,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "demonstrative NP"],
-      ["content", "indication"],
-      ["context", "m-neutral"],
-      ["diagnostic", "strong contextual felicity"],
-      ["scf", "yes"]
+      [
+        "trigger",
+        "demonstrative NP"
+      ],
+      [
+        "content",
+        "indication"
+      ],
+      [
+        "context",
+        "m-neutral"
+      ],
+      [
+        "diagnostic",
+        "strong contextual felicity"
+      ],
+      [
+        "scf",
+        "yes"
+      ]
     ],
     "comment": "The indication implication, that the speaker is indicating something, imposes the constraint.",
     "metaLanguage": "stan1293",
@@ -568,7 +973,10 @@
   },
   {
     "id": "tonhauseretal2013_54b",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(54b)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(54b)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If Wilma likes that car, she has good taste.",
@@ -580,12 +988,30 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["family", "conditional antecedent"],
-      ["trigger", "demonstrative NP"],
-      ["content", "indication"],
-      ["context", "m-neutral"],
-      ["diagnostic", "projection"],
-      ["projective", "yes"]
+      [
+        "environment",
+        "conditional antecedent"
+      ],
+      [
+        "trigger",
+        "demonstrative NP"
+      ],
+      [
+        "content",
+        "indication"
+      ],
+      [
+        "context",
+        "m-neutral"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "projective",
+        "yes"
+      ]
     ],
     "comment": "The constraint survives embedding in the antecedent: the indication implication is projective.",
     "metaLanguage": "stan1293",
@@ -593,7 +1019,10 @@
   },
   {
     "id": "tonhauseretal2013_54c",
-    "source": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(54c)"},
+    "source": {
+      "bibkey": "tonhauser-beaver-roberts-simons-2013",
+      "paperLabel": "(54c)"
+    },
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Pebbles thinks Wilma likes that car, but of course Pebbles has no idea that I'm pointing to it.",
@@ -605,11 +1034,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["trigger", "demonstrative NP"],
-      ["content", "indication"],
-      ["context", "globally m-positive, locally m-neutral"],
-      ["diagnostic", "obligatory local effect"],
-      ["ole", "no"]
+      [
+        "trigger",
+        "demonstrative NP"
+      ],
+      [
+        "content",
+        "indication"
+      ],
+      [
+        "context",
+        "globally m-positive, locally m-neutral"
+      ],
+      [
+        "diagnostic",
+        "obligatory local effect"
+      ],
+      [
+        "ole",
+        "no"
+      ]
     ],
     "comment": "Acceptable with the attitude holder ignorant of the indication: no obligatory local effect, so the indication implication is in class D.",
     "metaLanguage": "stan1293",

@@ -6,7 +6,7 @@ import Linglib.Data.Examples.Deal2026
 import Linglib.Data.Examples.Krapova2010
 import Linglib.Studies.BochnakHanink2021
 import Linglib.Syntax.Category.Verb.Complement.Takes
-import Linglib.Semantics.Presupposition.FamilyOfSentences
+import Linglib.Semantics.Presupposition.Environment
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 
 /-!
@@ -111,7 +111,7 @@ theorem relative_factive :
 antecedent exactly for the factive predicates, the projection trials (33)–(36) and (68); no
 trial is in the first person, so no semi-factive is cancelled ([karttunen-1971]). -/
 theorem projection_rows :
-    ∀ row ∈ Examples.all, ∀ f ∈ row.family?, ∀ p ∈ row.person?,
+    ∀ row ∈ Examples.all, ∀ f ∈ row.environment?, ∀ p ∈ row.person?,
       ∀ v ∈ verbs, row.feature? "verb" = some v.form →
         (row.projective? = some true ↔
           v.toVerb.factivePresup = true ∧ ∀ c ∈ v.factivity, ¬ c.Cancelled f p) := by
@@ -174,7 +174,7 @@ theorem zaPhrase_rows :
 /-- Krapova's factivity tests (57a–b): the complement survives negation and a question exactly
 for the factive predicates, and the emotive factives are cancelled nowhere. -/
 theorem krapova_projection_rows :
-    ∀ row ∈ Krapova2010.Examples.all, ∀ f ∈ row.family?, ∀ p ∈ row.person?,
+    ∀ row ∈ Krapova2010.Examples.all, ∀ f ∈ row.environment?, ∀ p ∈ row.person?,
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
         (row.projective? = some true ↔
           v.toVerb.factivePresup = true ∧ ∀ c ∈ v.factivity, ¬ c.Cancelled f p) := by

@@ -1050,7 +1050,7 @@
         "projection"
       ],
       [
-        "family",
+        "environment",
         "negation"
       ],
       [
@@ -1125,7 +1125,7 @@
         "projection"
       ],
       [
-        "family",
+        "environment",
         "negation"
       ],
       [
@@ -1188,7 +1188,7 @@
         "projection"
       ],
       [
-        "family",
+        "environment",
         "negation"
       ],
       [
@@ -1255,7 +1255,7 @@
         "projection"
       ],
       [
-        "family",
+        "environment",
         "question"
       ],
       [
@@ -1334,7 +1334,7 @@
         "projection"
       ],
       [
-        "family",
+        "environment",
         "conditional antecedent"
       ],
       [
