@@ -49,19 +49,19 @@ open _root_.Agreement
 -- ============================================================================
 
 /-- Object agreement prefixes, as a descriptive paradigm over canonical φ-cells
-    (`Agreement.Cell` — the same φ a pronoun carries). SAP objects
+    (`Agreement.Bundle` — the same φ a pronoun carries). SAP objects
     (1st/2nd person) receive an overt prefix; 3rd person objects have no entry
-    (unmarked). A controller's `Word.agrCell` indexes it directly. -/
+    (unmarked). A controller's `Word.phi` indexes it directly. -/
 def objectAgr : Paradigm String :=
-  [(.pn .first .Sing, "m-"), (.pn .second .Sing, "g-"),
-   (.pn .first .Plur, "gv-"), (.pn .second .Plur, "g-")]
+  [(.pn .first .singular, "m-"), (.pn .second .singular, "g-"),
+   (.pn .first .plural, "gv-"), (.pn .second .plural, "g-")]
 
 /-- A P/R argument is indexed iff the object paradigm realizes its φ-cell.
     Differential: SAP cells are present, 3rd person absent. -/
-def isIndexed (c : Cell) : Bool := (objectAgr.realize c).isSome
+def isIndexed (c : Bundle) : Bool := (objectAgr.realize c).isSome
 
 /-- Subject agreement is always present (not differential). -/
-def subjectIsIndexed (_ : Cell) : Bool := true
+def subjectIsIndexed (_ : Bundle) : Bool := true
 
 -- ============================================================================
 -- § 2: Verification
@@ -69,21 +69,21 @@ def subjectIsIndexed (_ : Cell) : Bool := true
 
 /-- SAP objects are indexed (receive an overt prefix). -/
 theorem sap_objects_indexed :
-    isIndexed (.pn .first .Sing) = true ∧ isIndexed (.pn .second .Sing) = true ∧
-    isIndexed (.pn .first .Plur) = true ∧ isIndexed (.pn .second .Plur) = true := by decide
+    isIndexed (.pn .first .singular) = true ∧ isIndexed (.pn .second .singular) = true ∧
+    isIndexed (.pn .first .plural) = true ∧ isIndexed (.pn .second .plural) = true := by decide
 
 /-- 3rd person objects are NOT indexed (no prefix). -/
 theorem third_objects_not_indexed :
-    isIndexed (.pn .third .Sing) = false ∧ isIndexed (.pn .third .Plur) = false := by decide
+    isIndexed (.pn .third .singular) = false ∧ isIndexed (.pn .third .plural) = false := by decide
 
 /-- P indexing is differential. -/
 theorem p_indexing_differential :
-    Cell.pnCells.any isIndexed = true ∧
-    !(Cell.pnCells.all isIndexed) = true := by decide
+    Bundle.pnCells.any isIndexed = true ∧
+    !(Bundle.pnCells.all isIndexed) = true := by decide
 
 /-- The indexed/not-indexed split aligns with SAP vs 3rd. -/
 theorem indexed_iff_sap :
-    Cell.pnCells.all (fun c => isIndexed c == c.isSAP) = true := by decide
+    Bundle.pnCells.all (fun c => isIndexed c == decide c.IsSAP) = true := by decide
 
 -- ============================================================================
 -- § 5: Tense-Conditioned Split-Ergative Case ([harris-1981])

@@ -12,14 +12,14 @@ Items on `GramFeature`s, and a vocabulary is built from a paradigm's cells.
 ## Main definitions
 
 * `Minimalist.spellout` — the Subset Principle over a bundle's features.
-* `Agreement.Cell.toPhiFeatures`, `Minimalist.vocabularyOfCells` — a
+* `Agreement.Bundle.toPhiFeatures`, `Minimalist.vocabularyOfCells` — a
   vocabulary from paradigm cells.
 -/
 
 /-- The φ-feature list of a person-number cell, in the shape
 `Minimalist.vocabularyOfCells` consumes. -/
-def Agreement.Cell.toPhiFeatures (c : Agreement.Cell) : List Minimalist.PhiFeature :=
-  [.person c.toPerson, .number (if c.isPlural then .plural else .singular)]
+def Agreement.Bundle.toPhiFeatures (c : Agreement.Bundle) : List Minimalist.PhiFeature :=
+  [.person c.person, .number (if c.IsPlural then .plural else .singular)]
 
 namespace Minimalist
 

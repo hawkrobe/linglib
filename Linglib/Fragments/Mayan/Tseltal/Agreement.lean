@@ -76,25 +76,25 @@ def setBLinearity : MarkerLinearity := .suffixal
     by separate suffixes not part of the person marker). -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
-    [(.pn .first .Sing, [.pref "j"]), (.pn .second .Sing, [.pref "a"]),
-     (.pn .third .Sing, [.pref "s"]), (.pn .first .Plur, [.pref "j"]),
-     (.pn .second .Plur, [.pref "a"]), (.pn .third .Plur, [.pref "s"])]
+    [(.pn .first .singular, [.pref "j"]), (.pn .second .singular, [.pref "a"]),
+     (.pn .third .singular, [.pref "s"]), (.pn .first .plural, [.pref "j"]),
+     (.pn .second .plural, [.pref "a"]), (.pn .third .plural, [.pref "s"])]
   | .vowel =>
-    [(.pn .first .Sing, [.pref "k"]), (.pn .second .Sing, [.pref "aw"]),
-     (.pn .third .Sing, [.pref "y"]), (.pn .first .Plur, [.pref "k"]),
-     (.pn .second .Plur, [.pref "aw"]), (.pn .third .Plur, [.pref "y"])]
+    [(.pn .first .singular, [.pref "k"]), (.pn .second .singular, [.pref "aw"]),
+     (.pn .third .singular, [.pref "y"]), (.pn .first .plural, [.pref "k"]),
+     (.pn .second .plural, [.pref "aw"]), (.pn .third .plural, [.pref "y"])]
 
 /-- Set B (ABS) exponents for Oxchuc Tseltal ([polian-2013]): suffixes on
     the verb stem; 3rd person singular has zero exponence. -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .Sing, [.suff "on"]), (.pn .second .Sing, [.suff "at"]),
-   (.pn .third .Sing, []), (.pn .first .Plur, [.suff "otik"]),
-   (.pn .second .Plur, [.suff "ex"]), (.pn .third .Plur, [.suff "ik"])]
+  [(.pn .first .singular, [.suff "on"]), (.pn .second .singular, [.suff "at"]),
+   (.pn .third .singular, []), (.pn .first .plural, [.suff "otik"]),
+   (.pn .second .plural, [.suff "ex"]), (.pn .third .plural, [.suff "ik"])]
 
 /-- 3rd person absolutive is null — invariant across the standard
     Mayan branches per [kaufman-norman-1984] Table 8. **Not**
     pan-Mayan: see Mam exception via `Mayan.isStandard`. -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some [] := rfl
+theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] := rfl
 
 /-- Tseltal Set B differs from Tsotsil in linearity (suffixal vs
     prefixal-or-suffixal); the marker set assignment is identical. -/

@@ -75,31 +75,31 @@ def absPosition : Mayan.ABSPosition := .high
     plural word *heb'*. -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
-    [(.pn .first .Sing, [.pref "hin"]), (.pn .second .Sing, [.pref "ha"]),
-     (.pn .third .Sing, [.pref "s"]), (.pn .first .Plur, [.pref "ko"]),
-     (.pn .second .Plur, [.pref "he"]),
-     (.pn .third .Plur, [.pref "s", .free "heb'"])]
+    [(.pn .first .singular, [.pref "hin"]), (.pn .second .singular, [.pref "ha"]),
+     (.pn .third .singular, [.pref "s"]), (.pn .first .plural, [.pref "ko"]),
+     (.pn .second .plural, [.pref "he"]),
+     (.pn .third .plural, [.pref "s", .free "heb'"])]
   | .vowel =>
-    [(.pn .first .Sing, [.pref "w"]), (.pn .second .Sing, [.pref "h"]),
-     (.pn .third .Sing, [.pref "y"]), (.pn .first .Plur, [.pref "j"]),
-     (.pn .second .Plur, [.pref "hey"]),
-     (.pn .third .Plur, [.pref "y", .free "heb'"])]
+    [(.pn .first .singular, [.pref "w"]), (.pn .second .singular, [.pref "h"]),
+     (.pn .third .singular, [.pref "y"]), (.pn .first .plural, [.pref "j"]),
+     (.pn .second .plural, [.pref "hey"]),
+     (.pn .third .plural, [.pref "y", .free "heb'"])]
 
 /-- Set B (absolutive) markers: suffixes
     ([coon-mateo-pedro-preminger-2014] table (13)). The 3pl cell is the
     free plural word *heb'* alone (zero person exponence plus the
     plural particle); 1pl *-on* is the table's ASCII for *-on̈* [-oŋ]. -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .Sing, [.suff "in"]), (.pn .second .Sing, [.suff "ach"]),
-   (.pn .third .Sing, []), (.pn .first .Plur, [.suff "on"]),
-   (.pn .second .Plur, [.suff "ex"]), (.pn .third .Plur, [.free "heb'"])]
+  [(.pn .first .singular, [.suff "in"]), (.pn .second .singular, [.suff "ach"]),
+   (.pn .third .singular, []), (.pn .first .plural, [.suff "on"]),
+   (.pn .second .plural, [.suff "ex"]), (.pn .third .plural, [.free "heb'"])]
 
 /-- 3rd person absolutive has zero exponence. -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some [] := rfl
+theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] := rfl
 
 /-- 3rd person ergative is *s-* pre-consonantally, *y-* pre-vocalically. -/
 theorem p3sg_erg_allomorphy :
-    (setAExponent .consonant).realize (.pn .third .Sing) = some [.pref "s"] ∧
-    (setAExponent .vowel).realize (.pn .third .Sing) = some [.pref "y"] := ⟨rfl, rfl⟩
+    (setAExponent .consonant).realize (.pn .third .singular) = some [.pref "s"] ∧
+    (setAExponent .vowel).realize (.pn .third .singular) = some [.pref "y"] := ⟨rfl, rfl⟩
 
 end Qanjobal

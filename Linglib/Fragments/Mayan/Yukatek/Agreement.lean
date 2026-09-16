@@ -57,27 +57,27 @@ def absPosition : Mayan.ABSPosition := .low
     prefix plus the plural suffixes *-e'ex*/*-o'ob'*. -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
-    [(.pn .first .Sing, [.pref "in"]), (.pn .second .Sing, [.pref "a"]),
-     (.pn .third .Sing, [.pref "u"]), (.pn .first .Plur, [.pref "k"]),
-     (.pn .second .Plur, [.pref "a", .suff "e'ex"]),
-     (.pn .third .Plur, [.pref "u", .suff "o'ob'"])]
+    [(.pn .first .singular, [.pref "in"]), (.pn .second .singular, [.pref "a"]),
+     (.pn .third .singular, [.pref "u"]), (.pn .first .plural, [.pref "k"]),
+     (.pn .second .plural, [.pref "a", .suff "e'ex"]),
+     (.pn .third .plural, [.pref "u", .suff "o'ob'"])]
   | .vowel =>
-    [(.pn .first .Sing, [.pref "inw"]), (.pn .second .Sing, [.pref "aw"]),
-     (.pn .third .Sing, [.pref "uy"]), (.pn .first .Plur, [.pref "k"]),
-     (.pn .second .Plur, [.pref "aw", .suff "e'ex"]),
-     (.pn .third .Plur, [.pref "uy", .suff "o'ob'"])]
+    [(.pn .first .singular, [.pref "inw"]), (.pn .second .singular, [.pref "aw"]),
+     (.pn .third .singular, [.pref "uy"]), (.pn .first .plural, [.pref "k"]),
+     (.pn .second .plural, [.pref "aw", .suff "e'ex"]),
+     (.pn .third .plural, [.pref "uy", .suff "o'ob'"])]
 
 /-! ### Set B exponents -/
 
 /-- Set B markers; zero-exponence 3SG ([hofling-2017] Table 24.12). -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .Sing, [.suff "en"]), (.pn .second .Sing, [.suff "ech"]),
-   (.pn .third .Sing, []), (.pn .first .Plur, [.suff "o'on"]),
-   (.pn .second .Plur, [.suff "e'ex"]), (.pn .third .Plur, [.suff "o'ob'"])]
+  [(.pn .first .singular, [.suff "en"]), (.pn .second .singular, [.suff "ech"]),
+   (.pn .third .singular, []), (.pn .first .plural, [.suff "o'on"]),
+   (.pn .second .plural, [.suff "e'ex"]), (.pn .third .plural, [.suff "o'ob'"])]
 
 /-- 3rd person absolutive is null, as across the standard Mayan
     branches ([kaufman-norman-1984] Table 8). -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some [] := rfl
+theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] := rfl
 
 /-! ### Argument positions -/
 

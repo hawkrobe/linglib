@@ -44,13 +44,13 @@ theorem followers_table :
 
 /-- §3.2.1: the second-person possessive -(I)n on *kız*, *el*, *kol* and *göz*. -/
 theorem iType :
-    surface ([k, ı, z] ++ (Nominal.Exponent.possessive (.pn .second .Sing)).form) =
+    surface ([k, ı, z] ++ (Nominal.Exponent.possessive (.pn .second .singular)).form) =
         [k, ı, z, ı, n] ∧
-    surface ([e, l] ++ (Nominal.Exponent.possessive (.pn .second .Sing)).form) =
+    surface ([e, l] ++ (Nominal.Exponent.possessive (.pn .second .singular)).form) =
         [e, l, i, n] ∧
-    surface ([k, o, l] ++ (Nominal.Exponent.possessive (.pn .second .Sing)).form) =
+    surface ([k, o, l] ++ (Nominal.Exponent.possessive (.pn .second .singular)).form) =
         [k, o, l, u, n] ∧
-    surface ([g, ö, z] ++ (Nominal.Exponent.possessive (.pn .second .Sing)).form) =
+    surface ([g, ö, z] ++ (Nominal.Exponent.possessive (.pn .second .singular)).form) =
         [g, ö, z, ü, n] := by
   decide
 
@@ -65,7 +65,7 @@ theorem last_vowel_decides :
 the `D` of -DI voiced after `l`. -/
 theorem iterated :
     surface ([ü, z] ++ Verb.Exponent.passive.form ++ Verb.Exponent.di.form ++
-        (Verb.Exponent.person .one (.pn .second .Plur)).form) =
+        (Verb.Exponent.person .one (.pn .second .plural)).form) =
       [ü, z, ü, l, d, ü, n, ü, z] := by
   decide
 
@@ -73,16 +73,16 @@ theorem iterated :
 *gör-üyor-um*; the invariable converb -(y)ken, *bak-mış-ken*. -/
 theorem retriggering :
     surface ([g, ö, r] ++ Verb.Exponent.iyor.form ++
-        (Verb.Exponent.person .two (.pn .first .Sing)).form) = [g, ö, r, ü, y, o, r, u, m] ∧
+        (Verb.Exponent.person .two (.pn .first .singular)).form) = [g, ö, r, ü, y, o, r, u, m] ∧
     surface ([b, a, k] ++ Verb.Exponent.miş.form ++ [k, e, n]) = [b, a, k, m, ı, ş, k, e, n] := by
   decide
 
 /-- §3.4 (iv): the palatal l of *gol* and *hal* fronts the suffix, *gol-ü* and *hal-im*,
 while rounding still comes from the vowel. -/
 theorem palatal_l :
-    surface ([g, o, l'] ++ (Nominal.Exponent.possessive (.pn .third .Sing)).form) =
+    surface ([g, o, l'] ++ (Nominal.Exponent.possessive (.pn .third .singular)).form) =
       [g, o, l', ü] ∧
-    surface ([h, a, l'] ++ (Nominal.Exponent.possessive (.pn .first .Sing)).form) =
+    surface ([h, a, l'] ++ (Nominal.Exponent.possessive (.pn .first .singular)).form) =
       [h, a, l', i, m] := by
   decide
 
@@ -104,9 +104,9 @@ theorem negative_raised :
 string, the evidential copula with its buffer `y`, and a group-2 person marker. -/
 theorem nominal_predicate :
     surface ([e, v] ++ Nominal.Exponent.plural.form ++
-        (Nominal.Exponent.possessive (.pn .first .Plur)).form ++ Nominal.Exponent.locative.form ++
+        (Nominal.Exponent.possessive (.pn .first .plural)).form ++ Nominal.Exponent.locative.form ++
         [y] ++ Verb.Exponent.evidentialCopula.form ++
-        (Verb.Exponent.person .two (.pn .third .Plur)).form) =
+        (Verb.Exponent.person .two (.pn .third .plural)).form) =
       [e, v, l, e, r, i, m, i, z, d, e, y, m, i, ş, l, e, r] := by
   decide
 
@@ -115,7 +115,7 @@ theorem nominal_predicate :
 /-- §8.1 (1) *çocuk-lar-ın-a* 'to your children': number - possession - case. -/
 theorem nominal :
     Nominal.system.Licenses []
-      [⟨_, .plural⟩, ⟨_, .possessive (.pn .second .Sing)⟩, ⟨_, .dative⟩] := by
+      [⟨_, .plural⟩, ⟨_, .possessive (.pn .second .singular)⟩, ⟨_, .dative⟩] := by
   decide
 
 /-- §8.2 (7) *Döğ-üş-tür-t-ül-me-yebil-iyor-muş-sunuz-dur*: every slot of the finite verb,
@@ -123,7 +123,7 @@ the voice slot filled by four stacked suffixes. -/
 theorem finite_verb :
     Verb.system.Licenses []
       [⟨_, .reciprocal⟩, ⟨_, .causative⟩, ⟨_, .causative⟩, ⟨_, .passive⟩, ⟨_, .negative⟩,
-        ⟨_, .abil⟩, ⟨_, .iyor⟩, ⟨_, .evidentialCopula⟩, ⟨_, .person .two (.pn .second .Plur)⟩,
+        ⟨_, .abil⟩, ⟨_, .iyor⟩, ⟨_, .evidentialCopula⟩, ⟨_, .person .two (.pn .second .plural)⟩,
         ⟨_, .dir⟩] := by
   decide
 
@@ -133,7 +133,7 @@ theorem tam_positions :
     Verb.system.Licenses [] [⟨_, .possibility⟩, ⟨_, .negative⟩, ⟨_, .miş⟩, ⟨_, .dir⟩] ∧
     Verb.system.Licenses [] [⟨_, .abil⟩, ⟨_, .acak⟩, ⟨_, .evidentialCopula⟩] ∧
     Verb.system.Licenses []
-      [⟨_, .di⟩, ⟨_, .pastCopula⟩, ⟨_, .person .one (.pn .second .Sing)⟩] := by
+      [⟨_, .di⟩, ⟨_, .pastCopula⟩, ⟨_, .person .one (.pn .second .singular)⟩] := by
   decide
 
 /-- The negative follows voice and precedes the tense/aspect/modality marker (§8.2.2), and

@@ -45,7 +45,7 @@ probe is `Probe.ofInt`, the probe gated only by the Active Goal Hypothesis.
 * [chomsky-2000]: Agree, the Active Goal Hypothesis, and closest c-command.
 * [anagnostopoulou-2003]: checking of the person feature by the dative and the
   cliticization loophole.
-* [harley-ritter-2002]: the person geometry behind `Agreement.Cell.IsParticipant`.
+* [harley-ritter-2002]: the person geometry behind `Agreement.Bundle.IsParticipant`.
 * [zaenen-maling-thrainsson-1985], [taraldsen-1995], [sigurdsson-1996]: the Icelandic
   dative subject and its person restriction.
 -/
@@ -56,7 +56,7 @@ open Minimalist Agreement
 
 /-- A dative: Case valued by its own φ-bearing functional category — applicative P or
 dative marker — and so inactive for outside Agree (§4). -/
-def dat (c : Cell) : PhiGoal := .valued .dat c
+def dat (c : Bundle) : PhiGoal := .valued .dat c
 
 /-- The person probe of a Case-licensing head: every nominal bears a person value (8), and
 a nominal whose Case is already valued is inactive (§2, §4). -/
@@ -109,24 +109,24 @@ theorem plcOk_singleCycle_iff_allLicensed (goals : List PhiGoal) :
 
 /-- Over a dative and an unvalued nominal in one person-Agree cycle, the condition holds iff
 the lower nominal is 3rd person ((1), (7)). -/
-theorem strong_pcc (cd ca : Cell) :
+theorem strong_pcc (cd ca : Bundle) :
     PLCOk [[dat cd, .unvalued ca]] [dat cd, .unvalued ca] ↔ ¬ ca.IsParticipant := by
   rw [plcOk_iff]
   simp [dat]
 
 -- (1): *le lui* licit, *te lui* excluded.
 example :
-    PLCOk [[dat (.pn .third .Sing), .unvalued (.pn .third .Sing)]]
-      [dat (.pn .third .Sing), .unvalued (.pn .third .Sing)] ∧
-    ¬ PLCOk [[dat (.pn .third .Sing), .unvalued (.pn .second .Sing)]]
-      [dat (.pn .third .Sing), .unvalued (.pn .second .Sing)] := by
+    PLCOk [[dat (.pn .third .singular), .unvalued (.pn .third .singular)]]
+      [dat (.pn .third .singular), .unvalued (.pn .third .singular)] ∧
+    ¬ PLCOk [[dat (.pn .third .singular), .unvalued (.pn .second .singular)]]
+      [dat (.pn .third .singular), .unvalued (.pn .second .singular)] := by
   decide
 
 /-! ### Obviation -/
 
 /-- In the prepositional construction the theme is the highest nominal and the goal sits
 under P, so the person probe Agrees with the theme and P licenses the goal ((3), (11a)). -/
-theorem pp_repair (ct cg : Cell) :
+theorem pp_repair (ct cg : Bundle) :
     PLCOk [[.unvalued ct, dat cg]] [.unvalued ct, dat cg] := by
   rw [plcOk_iff]
   simp [dat]
@@ -140,7 +140,7 @@ def dncCycles (dativeEPP : Bool) (d n : PhiGoal) : List (List PhiGoal) :=
 
 /-- The Person Case Constraint applies in a dative–nominative construction iff the dative
 satisfies the EPP (§5). -/
-theorem dnc_pcc_iff (dativeEPP : Bool) (cd cn : Cell) :
+theorem dnc_pcc_iff (dativeEPP : Bool) (cd cn : Bundle) :
     PLCOk (dncCycles dativeEPP (dat cd) (.unvalued cn)) [dat cd, .unvalued cn] ↔
       (dativeEPP = true → ¬ cn.IsParticipant) := by
   rw [plcOk_iff]
@@ -148,10 +148,10 @@ theorem dnc_pcc_iff (dativeEPP : Bool) (cd cn : Cell) :
 
 -- (12) Icelandic *þið* excluded; (13) French *je lui fus présenté* licit.
 example :
-    ¬ PLCOk (dncCycles true (dat (.pn .third .Sing)) (.unvalued (.pn .second .Sing)))
-        [dat (.pn .third .Sing), .unvalued (.pn .second .Sing)] ∧
-    PLCOk (dncCycles false (dat (.pn .third .Sing)) (.unvalued (.pn .first .Sing)))
-        [dat (.pn .third .Sing), .unvalued (.pn .first .Sing)] := by
+    ¬ PLCOk (dncCycles true (dat (.pn .third .singular)) (.unvalued (.pn .second .singular)))
+        [dat (.pn .third .singular), .unvalued (.pn .second .singular)] ∧
+    PLCOk (dncCycles false (dat (.pn .third .singular)) (.unvalued (.pn .first .singular)))
+        [dat (.pn .third .singular), .unvalued (.pn .first .singular)] := by
   decide
 
 end BejarRezac2003

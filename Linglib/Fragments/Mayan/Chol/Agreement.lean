@@ -170,28 +170,28 @@ def absIntranSInNonFinite : Bool := false
     suffix `-ob` for 3pl. -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
-    [(.pn .first .Sing, [.pref "k"]), (.pn .second .Sing, [.pref "a"]),
-     (.pn .third .Sing, [.pref "i"]),
-     (.pn .first .Plur, [.pref "k", .encl "la"]),
-     (.pn .second .Plur, [.pref "a", .encl "la"]),
-     (.pn .third .Plur, [.pref "i", .suff "ob"])]
+    [(.pn .first .singular, [.pref "k"]), (.pn .second .singular, [.pref "a"]),
+     (.pn .third .singular, [.pref "i"]),
+     (.pn .first .plural, [.pref "k", .encl "la"]),
+     (.pn .second .plural, [.pref "a", .encl "la"]),
+     (.pn .third .plural, [.pref "i", .suff "ob"])]
   | .vowel =>
-    [(.pn .first .Sing, [.pref "k"]), (.pn .second .Sing, [.pref "aw"]),
-     (.pn .third .Sing, [.pref "iy"]),
-     (.pn .first .Plur, [.pref "k", .encl "la"]),
-     (.pn .second .Plur, [.pref "aw", .encl "la"]),
-     (.pn .third .Plur, [.pref "iy", .suff "ob"])]
+    [(.pn .first .singular, [.pref "k"]), (.pn .second .singular, [.pref "aw"]),
+     (.pn .third .singular, [.pref "iy"]),
+     (.pn .first .plural, [.pref "k", .encl "la"]),
+     (.pn .second .plural, [.pref "aw", .encl "la"]),
+     (.pn .third .plural, [.pref "iy", .suff "ob"])]
 
 /-- Set B (absolutive) markers: suffixes ([vazquez-alvarez-2011]
     Table 10, p. 83). 3rd singular has zero exponence; 3pl is the plural
     suffix alone; 1pl/2pl are discontinuous with the inclusive `=la`
     enclitic per the convention above. -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .Sing, [.suff "oñ"]), (.pn .second .Sing, [.suff "ety"]),
-   (.pn .third .Sing, []),
-   (.pn .first .Plur, [.suff "oñ", .encl "la"]),
-   (.pn .second .Plur, [.suff "ety", .encl "la"]),
-   (.pn .third .Plur, [.suff "ob"])]
+  [(.pn .first .singular, [.suff "oñ"]), (.pn .second .singular, [.suff "ety"]),
+   (.pn .third .singular, []),
+   (.pn .first .plural, [.suff "oñ", .encl "la"]),
+   (.pn .second .plural, [.suff "ety", .encl "la"]),
+   (.pn .third .plural, [.suff "ob"])]
 
 /-- 3rd person absolutive is null — invariant across the standard
     Mayan branches (Cholan, Q'anjob'alan, Tseltalan, K'ichean) per
@@ -200,7 +200,7 @@ def setBExponent : ExponentTable :=
     ([scott-2023]), and `Mayan.isStandard` excludes Mam from the
     cross-Mayan theorem
     (`CoonMateoPedroPreminger2014.mayan_p3sg_abs_null`). -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some [] := rfl
+theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] := rfl
 
 /-- 3rd person Set A allomorphy: pre-consonantal `i-` vs pre-vocalic
     `iy-`. Distinct from Q'anjob'al's `s-` vs `y-` (the proto-Mayan
@@ -208,8 +208,8 @@ theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some [] := rfl
     and Chol inherited the leveled form per [kaufman-norman-1984]
     p. 91). -/
 theorem p3sg_erg_allomorphy :
-    (setAExponent .consonant).realize (.pn .third .Sing) = some [.pref "i"] ∧
-    (setAExponent .vowel).realize (.pn .third .Sing) = some [.pref "iy"] :=
+    (setAExponent .consonant).realize (.pn .third .singular) = some [.pref "i"] ∧
+    (setAExponent .vowel).realize (.pn .third .singular) = some [.pref "iy"] :=
   ⟨rfl, rfl⟩
 
 end Chol

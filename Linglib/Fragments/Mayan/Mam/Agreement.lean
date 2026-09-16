@@ -25,7 +25,7 @@ This fragment records SJA Mam specifically. Other Mam dialects, notably Ixtahuac
 (England 1983b, used by [zavala-maldonado-2017] §4–5), are characterized as ergative with a
 neutral pattern in aspectless dependent clauses; per [scott-2023] §1.2.4 and Table 1.2, Mam
 dialects vary substantially. The tripartite case function is `Alignment.tripartite.assignCase`
-via `Mayan.caseMam`. Person-number cells are the canonical φ-cells `Agreement.Cell`; the
+via `Mayan.caseMam`. Person-number cells are the canonical φ-cells `Agreement.Bundle`; the
 pronoun lexicon and its feature values live in `Fragments/Mayan/Mam/Pronouns.lean`, and the
 derivation of the paradigms from a Vocabulary in `Studies/Scott2023.lean`.
 -/
@@ -44,13 +44,13 @@ open Agreement
     the other markers do not alternate. -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
-    [(.pn .first .Sing, [.pref "n"]), (.pn .second .Sing, [.pref "t"]),
-     (.pn .third .Sing, [.pref "t"]), (.pn .first .Plur, [.pref "q"]),
-     (.pn .second .Plur, [.pref "ky"]), (.pn .third .Plur, [.pref "ky"])]
+    [(.pn .first .singular, [.pref "n"]), (.pn .second .singular, [.pref "t"]),
+     (.pn .third .singular, [.pref "t"]), (.pn .first .plural, [.pref "q"]),
+     (.pn .second .plural, [.pref "ky"]), (.pn .third .plural, [.pref "ky"])]
   | .vowel =>
-    [(.pn .first .Sing, [.pref "w"]), (.pn .second .Sing, [.pref "t"]),
-     (.pn .third .Sing, [.pref "t"]), (.pn .first .Plur, [.pref "q"]),
-     (.pn .second .Plur, [.pref "ky"]), (.pn .third .Plur, [.pref "ky"])]
+    [(.pn .first .singular, [.pref "w"]), (.pn .second .singular, [.pref "t"]),
+     (.pn .third .singular, [.pref "t"]), (.pn .first .plural, [.pref "q"]),
+     (.pn .second .plural, [.pref "ky"]), (.pn .third .plural, [.pref "ky"])]
 
 /-- Set B (ABS) markers ([scott-2023] Table 3.5). The 2/3SG form tz'= is
     the Elsewhere default: it realizes both real 2/3SG intransitive-S
@@ -59,14 +59,14 @@ def setAExponent : Phonology.Segment.Class → ExponentTable
     specific Vocabulary Items but surface via Elsewhere fallback (see
     `setBSpecificCells`). -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .Sing, [.free "chin"]), (.pn .second .Sing, [.procl "tz'"]),
-   (.pn .third .Sing, [.procl "tz'"]), (.pn .first .Plur, [.free "qo"]),
-   (.pn .second .Plur, [.free "chi"]), (.pn .third .Plur, [.free "chi"])]
+  [(.pn .first .singular, [.free "chin"]), (.pn .second .singular, [.procl "tz'"]),
+   (.pn .third .singular, [.procl "tz'"]), (.pn .first .plural, [.free "qo"]),
+   (.pn .second .plural, [.free "chi"]), (.pn .third .plural, [.free "chi"])]
 
 /-- The four Set B cells with specific Vocabulary Items ([scott-2023]);
     2SG and 3SG fall through to the Elsewhere entry. -/
-def setBSpecificCells : List Cell :=
-  [.pn .first .Sing, .pn .first .Plur, .pn .second .Plur, .pn .third .Plur]
+def setBSpecificCells : List Bundle :=
+  [.pn .first .singular, .pn .first .plural, .pn .second .plural, .pn .third .plural]
 
 /-- The Elsewhere Set B marker, surfacing in transitives when Infl's
     probe is blocked and for 2/3SG intransitive S. -/
@@ -132,22 +132,22 @@ def setBLinearity : MarkerLinearity := .prefixal
 
 /-- Set A 1SG marker: pre-consonantal `n-`, pre-vocalic `w-`. -/
 theorem setA_1sg :
-    (setAExponent .consonant).realize (.pn .first .Sing) = some [.pref "n"] ∧
-    (setAExponent .vowel).realize (.pn .first .Sing) = some [.pref "w"] := ⟨rfl, rfl⟩
+    (setAExponent .consonant).realize (.pn .first .singular) = some [.pref "n"] ∧
+    (setAExponent .vowel).realize (.pn .first .singular) = some [.pref "w"] := ⟨rfl, rfl⟩
 
 /-- Set A 3SG marker is `t-` (the default singular Set A — syncretic with 2SG). -/
 theorem setA_3sg :
-    (setAExponent .consonant).realize (.pn .third .Sing) = some [.pref "t"] := rfl
+    (setAExponent .consonant).realize (.pn .third .singular) = some [.pref "t"] := rfl
 
 /-- Set B 1SG marker is *chin*. -/
-theorem setB_1sg : setBExponent.realize (.pn .first .Sing) = some [.free "chin"] := rfl
+theorem setB_1sg : setBExponent.realize (.pn .first .singular) = some [.free "chin"] := rfl
 
 /-- Set B 3SG marker is the default `tz'=`. -/
-theorem setB_3sg : setBExponent.realize (.pn .third .Sing) = some defaultSetB := rfl
+theorem setB_3sg : setBExponent.realize (.pn .third .singular) = some defaultSetB := rfl
 
 /-- A controller's φ-features index the agreement paradigm directly: the
     Set A table is keyed by canonical φ-cells, so a pronoun's
-    `Word.agrCell` drives realization in one shared feature space
+    `Word.phi` drives realization in one shared feature space
     ([corbett-1998]; [scott-2023] Ch. 2). The realizational account
     (impoverishment, Elsewhere; [scott-2023] Ch. 4) stays in the study. -/
 theorem erg_1sg_from_phi :
