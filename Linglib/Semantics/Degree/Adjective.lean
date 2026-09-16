@@ -202,17 +202,17 @@ inductive SpatialConfigType where
 
 /-- A **gradable adjective**: the syntactic `Adjective` (`Syntax/Category/Adjective`) refined
     with the degree-**semantic** layer that becomes relevant in this module — the
-    Kennedy `standardOverride`, and the lexical-semantic fields `antonymRelation`,
+    Kennedy `lexicalStandard`, and the lexical-semantic fields `antonymRelation`,
     resultative `spatialConfigType` ([levin-2026]), and `evaluativeValence`
     ([nouwen-2024]). The scale shape (`scaleType`), positive `standard`, and Kennedy
     `adjectiveClass` are *derived views* below — the fix for the old stored `scaleType`
     that conflated scale shape with pole (`wet`/`dry` share one closed `.wetness`
     scale, differing only in pole). -/
 structure GradableAdjective extends Adjective where
-  /-- Override the Kennedy default standard (the `good`/MPA residual: an open-shape
-      scale that nonetheless takes a necessity or contextual standard, [beltrama-2025]).
-      `none` = take the derived default. -/
-  standardOverride : Option PositiveStandard := none
+  /-- The lexically fixed positive standard, when the scale's default does not apply: a
+      partial adjective on a closed scale, or the *good*/MPA residual, an open scale with a
+      necessity or contextual standard ([beltrama-2025]). `none` takes the scale's default. -/
+  lexicalStandard : Option PositiveStandard := none
   /-- Lexical antonym's logical relation (contrary vs contradictory). -/
   antonymRelation : Option AntonymRelation := none
   /-- Resultative spatial-configuration class ([levin-2026]). -/
@@ -231,12 +231,12 @@ an antonym pair (`.open_` for a non-gradable, which has no scale). -/
 def scaleType (g : GradableAdjective) : Boundedness :=
   (g.dimension.map λ d => g.polarity • d.boundedness).getD .open_
 
-/-- The positive standard: the scale's default, unless overridden (the *good*/MPA residual). -/
+/-- The positive standard: the lexically fixed one if any, else the scale's default. -/
 def standard (g : GradableAdjective) : PositiveStandard :=
-  g.standardOverride.getD g.scaleType.defaultStandard
+  g.lexicalStandard.getD g.scaleType.defaultStandard
 
-/-- An override-free entry's standard is one its scale admits. -/
-theorem admits_standard (g : GradableAdjective) (h : g.standardOverride = none) :
+/-- Without a lexically fixed standard, the standard is one the scale admits. -/
+theorem admits_standard (g : GradableAdjective) (h : g.lexicalStandard = none) :
     g.scaleType.Admits g.standard := by
   simp [standard, h, Boundedness.admits_defaultStandard]
 
@@ -278,11 +278,11 @@ structure AntonymPair where
   posComparison : Adjective.Comparison := .regular
   /-- The negative pole's comparison paradigm. -/
   negComparison : Adjective.Comparison := .regular
-  /-- The positive pole's standard when it departs from the scale's default: the minimum for
-      a partial adjective like *open* on a closed scale. -/
-  posStandardOverride : Option PositiveStandard := none
-  /-- The negative pole's standard when it departs from the dual scale's default. -/
-  negStandardOverride : Option PositiveStandard := none
+  /-- The positive pole's lexically fixed standard, when it departs from the scale's default:
+      the minimum for a partial adjective like *open* on a closed scale. -/
+  posLexicalStandard : Option PositiveStandard := none
+  /-- The negative pole's lexically fixed standard, when it departs from the dual's default. -/
+  negLexicalStandard : Option PositiveStandard := none
   /-- The positive pole's evaluative valence; the negative pole's is its `flip`. -/
   evaluativeValence : Option EvaluativeValence := none
   /-- The resultative spatial-configuration class the poles share. -/
@@ -295,7 +295,7 @@ def pos (p : AntonymPair) : GradableAdjective where
   form := p.posForm
   dimension := some p.dimension
   comparison := p.posComparison
-  standardOverride := p.posStandardOverride
+  lexicalStandard := p.posLexicalStandard
   antonymForm := some p.negForm
   antonymRelation := some p.relation
   evaluativeValence := p.evaluativeValence
@@ -307,7 +307,7 @@ def neg (p : AntonymPair) : GradableAdjective where
   polarity := .negative
   dimension := some p.dimension
   comparison := p.negComparison
-  standardOverride := p.negStandardOverride
+  lexicalStandard := p.negLexicalStandard
   antonymForm := some p.posForm
   antonymRelation := some p.relation
   evaluativeValence := p.evaluativeValence.map EvaluativeValence.flip

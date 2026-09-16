@@ -16,7 +16,7 @@ same type with `dimension = none`.
 
 The **degree-semantic** layer lives one layer up, in `Semantics/Gradability`, where the
 scale's boundedness, positive standard, and Kennedy class *become relevant*: the
-`GradableAdjective` refinement there `extends Adjective` with the `standardOverride`
+`GradableAdjective` refinement there `extends Adjective` with the `lexicalStandard`
 and derives `scaleType`/`standard`/`adjectiveClass` from the (shape, pole, override).
 This file deliberately does not depend on the Degree/Kennedy semantics.
 

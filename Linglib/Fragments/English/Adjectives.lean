@@ -116,7 +116,7 @@ def flat : GradableAdjective :=
 maximum. -/
 def openness : AntonymPair :=
   { dimension := .openness, relation := .contradictory, posForm := "open", negForm := "closed"
-  , posStandardOverride := some .minEndpoint, spatialConfigType := some .barrierConfig }
+  , posLexicalStandard := some .minEndpoint, spatialConfigType := some .barrierConfig }
 
 abbrev open_ := openness.pos
 
@@ -161,7 +161,7 @@ def pure_ : GradableAdjective :=
 *alive* the minimum. -/
 def life : AntonymPair :=
   { dimension := .alive, relation := .contradictory, posForm := "alive", negForm := "dead"
-  , posStandardOverride := some .minEndpoint }
+  , posLexicalStandard := some .minEndpoint }
 
 abbrev alive := life.pos
 
@@ -309,7 +309,7 @@ def doubtful : GradableAdjective :=
 /-- "good" — open value scale, contrary to "bad". "good" takes a contextual
     standard and patterns with relative adjectives ([beltrama-2025] §3); on the
     open `.value` scale this class is *derived* (open ⇒ contextual) rather than
-    stipulated, so no `standardOverride` is needed. -/
+    stipulated, so no `lexicalStandard` is needed. -/
 def value : AntonymPair :=
   { dimension := .value, relation := .contrary, posForm := "good", negForm := "bad"
   , posComparison := .suppletive "better" "best", negComparison := .suppletive "worse" "worst"
@@ -354,19 +354,19 @@ dented*), compatible with *completely* and *partially*. Contra
     NOT a two-point scale: accepts *more cracked*, *completely cracked*,
     *partially cracked*, *badly cracked* ([tham-2025] §2.3–2.4). -/
 def cracked : GradableAdjective :=
-  { form := "cracked", dimension := some .cracking, standardOverride := some .minEndpoint }
+  { form := "cracked", dimension := some .cracking, lexicalStandard := some .minEndpoint }
 
 /-- "dented" — closed scale.
     Deverbal adjective from *dent*. Accepts *more dented*, *completely dented*,
     *badly dented* ([tham-2025] (11a), (20b)). -/
 def dented : GradableAdjective :=
-  { form := "dented", dimension := some .denting, standardOverride := some .minEndpoint }
+  { form := "dented", dimension := some .denting, lexicalStandard := some .minEndpoint }
 
 /-- "scratched" — closed scale.
     Deverbal adjective from *scratch*. Accepts *more scratched*, *completely
     scratched*, *badly scratched* ([tham-2025] (11b), (20c)). -/
 def scratched : GradableAdjective :=
-  { form := "scratched", dimension := some .scratching, standardOverride := some .minEndpoint }
+  { form := "scratched", dimension := some .scratching, lexicalStandard := some .minEndpoint }
 
 /-- "shattered" — closed scale, NON-GRADABLE.
     Deverbal adjective from *shatter* (Levin 45.1 Break verbs).
@@ -398,23 +398,23 @@ abbrev pleasant := pleasantness.pos
 abbrev unpleasant := pleasantness.neg
 
 /-- "decent" — a mildly-positive adjective: open `.value` scale with a functional
-    (necessity) standard ([beltrama-2025]), recorded via `standardOverride`. -/
+    (necessity) standard ([beltrama-2025]), recorded via `lexicalStandard`. -/
 def decent : GradableAdjective :=
   { form := "decent", dimension := some .value, evaluativeValence := some .positive
-  , standardOverride := some .necessity }
+  , lexicalStandard := some .necessity }
 
 /-- "acceptable" — mildly-positive adjective; open `.value` scale, functional
     standard ([beltrama-2025]). Deverbal *-able* form: the modal suffix
     contributes the functional standard. -/
 def acceptable : GradableAdjective :=
   { form := "acceptable", dimension := some .value, evaluativeValence := some .positive
-  , standardOverride := some .necessity }
+  , lexicalStandard := some .necessity }
 
 /-- "adequate" — mildly-positive adjective; open `.value` scale, functional
     (necessity) standard ([beltrama-2025]). -/
 def adequate : GradableAdjective :=
   { form := "adequate", dimension := some .value, evaluativeValence := some .positive
-  , standardOverride := some .necessity }
+  , lexicalStandard := some .necessity }
 
 /-! ## Deadjectival intensifier bases ([nouwen-2024])
 
