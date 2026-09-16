@@ -52,7 +52,7 @@ atoms to exist, which the survey's unbounded domain supplies and a finite one do
 -/
 namespace BylininaNouwen2020
 
-open Definiteness Degree Quantification Set
+open Reference Degree Quantification Set
 
 variable {α : Type*}
 
