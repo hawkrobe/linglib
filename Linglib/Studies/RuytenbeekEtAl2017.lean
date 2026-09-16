@@ -44,7 +44,7 @@ possible*, which it attributes to the permission reading of *pouvoir*, is not de
 
 namespace RuytenbeekEtAl2017
 
-open Data.Examples French
+open Data.Examples Discourse.SpeechAct French
 open Modality (ModalFlavor ModalForce)
 open Mood (Illocutionary)
 open Mood.Illocutionary (primaryFlavor)

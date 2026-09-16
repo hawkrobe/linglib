@@ -66,7 +66,7 @@ of specificity descends the order on queries (`gradient_antitone`).
 
 namespace FrancikClark1985
 
-open Data.Examples
+open Data.Examples Discourse.SpeechAct
 
 /-- What a request asks about: nothing, one preparatory condition, or anything that could stand
 in the way (*Can you tell me?*, *Could you tell me?*). -/
@@ -198,14 +198,14 @@ example : Pinpoints .general {.ability, .willingness} :=
 
 private def queries : List (String × Query) :=
   [("direct", .direct), ("knowledge", .condition .knowledge), ("memory", .condition .memory),
-   ("perception", .condition .perception), ("permission", .condition .permission),
-   ("willingness", .condition .willingness),
-   ("speakerIgnorance", .condition .speakerIgnorance), ("general", .general)]
+   ("source", .condition .source), ("permission", .condition .permission),
+   ("willingness", .condition .willingness), ("speakerMemory", .condition .speakerMemory),
+   ("general", .general)]
 
 private def conditions : List (String × PreparatoryCondition) :=
   [("ability", .ability), ("knowledge", .knowledge), ("memory", .memory),
-   ("perception", .perception), ("permission", .permission), ("willingness", .willingness),
-   ("speakerIgnorance", .speakerIgnorance)]
+   ("source", .source), ("permission", .permission), ("willingness", .willingness),
+   ("speakerMemory", .speakerMemory)]
 
 /-- A request the paper discusses: its query, the greatest potential obstacle in its scenario,
 whether the paper finds it appropriate, and whether it belongs to the gradient of specificity. -/
@@ -252,7 +252,7 @@ def timeForms : List TimeForm := Examples.all.filterMap TimeForm.ofExample
 /-- Every form produced without the watch overcomes the doubt that the student can find out the
 time; the direct *What time is it?* was produced only with it. -/
 theorem time_produced_overcomes :
-    ∀ r ∈ timeForms, 0 < r.high → Overcomes r.query {.perception} := by
+    ∀ r ∈ timeForms, 0 < r.high → Overcomes r.query {.source} := by
   decide
 
 /-- A cell of Table 3: a form's query, the obstacle of the scenario type, and its mean

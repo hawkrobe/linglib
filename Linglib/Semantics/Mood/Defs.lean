@@ -29,9 +29,6 @@ embedding predicates, and the bridge from the UD `Mood` feature.
 * `Component`, `HasTarget` — [portner-2018]'s classification: the
   coordinate of the mood state each category operates on.
 * `UD.Mood.toClauseType` — corpus bridge.
-
-The Searle-class and direction-of-fit API for `Illocutionary` is in
-`Discourse/SpeechAct.lean`.
 -/
 
 namespace Mood

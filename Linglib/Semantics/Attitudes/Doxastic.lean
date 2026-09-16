@@ -1,6 +1,5 @@
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Attitudes.Basic
-import Linglib.Discourse.SpeechAct
 
 /-!
 # Doxastic attitude semantics
@@ -28,10 +27,7 @@ implication.
 
 Opacity: `SubstitutionMayFail` states that an opaque predicate can
 distinguish co-extensional complements, and `DeDicto`/`DeRe` give the
-two quantifier construals of an embedded indefinite. `psychMode` maps
-veridicality to [searle-1983]'s psychological mode: veridical attitudes
-are perception-like (the world must cause the state), non-veridical
-ones belief-like.
+two quantifier construals of an embedded indefinite.
 
 The presuppositional typology of doxastic verbs ([glass-2025]) lives in
 `Studies/Glass2025.lean`; the causal derivation of the contrafactive
@@ -177,13 +173,5 @@ def DeRe {D : Type*} (V : DoxasticPredicate W E) (agent : E)
   ∃ x ∈ domain, V.HoldsAt agent (predicate x) w worlds
 
 /-! ### Psychological mode -/
-
-/-- [searle-1983]'s psychological mode from veridicality: veridical
-    attitudes are perception-like (the world must cause the state);
-    non-veridical attitudes are belief-like (satisfaction requires only
-    that the content match reality). -/
-def psychMode : Veridicality → PsychMode
-  | .veridical => .perception
-  | .nonVeridical => .belief
 
 end Doxastic

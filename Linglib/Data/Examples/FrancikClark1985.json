@@ -17,11 +17,11 @@
     "paperFeatures": [
       [
         "query",
-        "perception"
+        "source"
       ],
       [
         "obstacle",
-        "perception"
+        "source"
       ],
       [
         "appropriate",
@@ -52,7 +52,7 @@
       ],
       [
         "obstacle",
-        "perception"
+        "source"
       ],
       [
         "appropriate",
@@ -176,7 +176,7 @@
       ],
       [
         "obstacle",
-        "perception"
+        "source"
       ],
       [
         "appropriate",
@@ -211,7 +211,7 @@
       ],
       [
         "obstacle",
-        "perception"
+        "source"
       ],
       [
         "appropriate",
@@ -246,7 +246,7 @@
       ],
       [
         "obstacle",
-        "perception"
+        "source"
       ],
       [
         "appropriate",
@@ -277,11 +277,11 @@
     "paperFeatures": [
       [
         "query",
-        "perception"
+        "source"
       ],
       [
         "obstacle",
-        "perception"
+        "source"
       ],
       [
         "appropriate",
@@ -312,11 +312,11 @@
     "paperFeatures": [
       [
         "query",
-        "perception"
+        "source"
       ],
       [
         "obstacle",
-        "perception"
+        "source"
       ],
       [
         "appropriate",
@@ -409,11 +409,11 @@
     "paperFeatures": [
       [
         "query",
-        "speakerIgnorance"
+        "speakerMemory"
       ],
       [
         "obstacle",
-        "speakerIgnorance"
+        "speakerMemory"
       ],
       [
         "appropriate",
@@ -471,11 +471,11 @@
     "paperFeatures": [
       [
         "query",
-        "perception"
+        "source"
       ],
       [
         "obstacle",
-        "perception"
+        "source"
       ],
       [
         "appropriate",
@@ -506,7 +506,7 @@
       ],
       [
         "obstacle",
-        "perception"
+        "source"
       ],
       [
         "appropriate",
@@ -638,7 +638,7 @@
     "paperFeatures": [
       [
         "query",
-        "perception"
+        "source"
       ],
       [
         "directness",
@@ -813,7 +813,7 @@
     "paperFeatures": [
       [
         "query",
-        "perception"
+        "source"
       ],
       [
         "directness",
@@ -922,7 +922,7 @@
       ],
       [
         "obstacle",
-        "speakerIgnorance"
+        "speakerMemory"
       ],
       [
         "ratingHigh",
@@ -1027,7 +1027,7 @@
       ],
       [
         "obstacle",
-        "speakerIgnorance"
+        "speakerMemory"
       ],
       [
         "ratingHigh",
@@ -1132,7 +1132,7 @@
       ],
       [
         "obstacle",
-        "speakerIgnorance"
+        "speakerMemory"
       ],
       [
         "ratingHigh",
@@ -1237,7 +1237,7 @@
       ],
       [
         "obstacle",
-        "speakerIgnorance"
+        "speakerMemory"
       ],
       [
         "ratingHigh",
@@ -1268,7 +1268,7 @@
     "paperFeatures": [
       [
         "query",
-        "speakerIgnorance"
+        "speakerMemory"
       ],
       [
         "obstacle",
@@ -1303,7 +1303,7 @@
     "paperFeatures": [
       [
         "query",
-        "speakerIgnorance"
+        "speakerMemory"
       ],
       [
         "obstacle",
@@ -1338,11 +1338,11 @@
     "paperFeatures": [
       [
         "query",
-        "speakerIgnorance"
+        "speakerMemory"
       ],
       [
         "obstacle",
-        "speakerIgnorance"
+        "speakerMemory"
       ],
       [
         "ratingHigh",
