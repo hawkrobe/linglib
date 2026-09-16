@@ -29,7 +29,7 @@ def li : Particle where
 /-- разве razve is the mirative/dubitative question particle, signalling
 conflict between the speaker's prior epistemic state and current
 contextual evidence. -/
-def razve_ : Particle where
+def razve : Particle where
   form := "razve"
   script := some "разве"
   position := some .clauseInitial
@@ -41,6 +41,6 @@ def razve_ : Particle where
     | _, _ => none
 
 /-- All Russian question particles indexed in this file. -/
-def allQuestionParticles : List Particle := [li, razve_]
+def allQuestionParticles : List Particle := [li, razve]
 
 end Russian.QuestionParticles

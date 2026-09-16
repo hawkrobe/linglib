@@ -34,7 +34,7 @@ whose formal properties the chapter leaves open.
 
 namespace Simik2024
 
-open Russian.QuestionParticles (li razve_)
+open Russian.QuestionParticles
 
 /-! ### The razve family (§4.2.4)
 
@@ -48,9 +48,9 @@ precise semantics open. -/
 
 /-- The §4.2.4 kin list: the cross-Slavic mirative/dubitative family. -/
 def razveFamily : List Particle :=
-  [razve_, Ukrainian.QuestionParticles.xiba, Polish.QuestionParticles.czyzby,
+  [razve, Ukrainian.QuestionParticles.xiba, Polish.QuestionParticles.czyzby,
    Bulgarian.QuestionParticles.nima, Macedonian.QuestionParticles.zar,
-   Serbian.QuestionParticles.zar_, Czech.Particles.copak]
+   Serbian.QuestionParticles.zar, Czech.Particles.copak]
 
 /-- Contextual-evidence requirement: *razve* presupposes evidential bias
 for the prejacent (§4.2.4), extended here to the kin the chapter reports
@@ -67,7 +67,7 @@ def razveOriginalBias : Option Question.OriginalBias :=
 /-- *Razve* is a root phenomenon while *li* is obligatory in subordinated
 polar questions (§4.2.4) — read off the fragment cells. -/
 theorem razve_root_li_embedded :
-    ¬ razve_.LicensedInEmbed .subordinated ∧
+    ¬ razve.LicensedInEmbed .subordinated ∧
       li.Licensed .polar .subordinated := by decide
 
 /-! ### Default PQ strategies (§4.1)
