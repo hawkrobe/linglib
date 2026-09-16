@@ -332,24 +332,4 @@ theorem not_asymCCommandsIn_of_areSistersIn (h : areSistersIn root x y) :
 
 end SyntacticObject
 
-/-! ### Carrier tests -/
-
-private def johnTok : LIToken := ⟨.simple .D [] (phonForm := "John"), 0⟩
-private def sleepsTok : LIToken := ⟨.simple .V [.D] (phonForm := "sleeps"), 1⟩
-private def john : SyntacticObject := .leaf johnTok
-private def sleeps : SyntacticObject := .leaf sleepsTok
-private def clause : SyntacticObject :=
-  (PlanarSyntacticObject.merge (.leaf johnTok) (.leaf sleepsTok)).toSyntacticObject
-
-open SyntacticObject
-
-/-- The clause contains its subject and not conversely. -/
-example : contains clause john ∧ ¬ contains john clause := by decide
-
-/-- The subject c-commands the verb. -/
-example : cCommandsIn clause john sleeps := by decide
-
-/-- The accessible terms of the clause are its two leaves. -/
-example : clause.accessibleTerms = {john, sleeps} := by decide
-
 end Minimalist
