@@ -1,4 +1,5 @@
 import Linglib.Pragmatics.RSA.Uniform
+import Linglib.Semantics.Reference.Distinguishing
 import Mathlib.Algebra.Order.Field.Basic
 
 /-!
@@ -226,6 +227,28 @@ theorem size_overmodification_iff (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hc0 : 0 < xc)
   rw [div_lt_div_iff₀ hsum' hsum]
   have hk : 0 < xc * (1 - xc) := mul_pos hc0 (by linarith)
   constructor <;> intro h <;> nlinarith [hk]
+
+/-- The sufficient *small* distinguishes the small blue pin from the big ones, so that the
+listener's best guess is the target, exactly when the size channel beats chance. -/
+theorem small_distinguishes_iff :
+    Reference.Distinguishes (meaning xs xc) {.bigBlue, .bigRed} .smallBlue .small ↔ 1/2 < xs := by
+  simp [Reference.Distinguishes, meaning, channel, Utterance.size, Utterance.color, World.big,
+    World.blue]
+  constructor <;> intro h <;> linarith
+
+/-- The redundant *small blue* distinguishes the pin exactly when the size channel beats chance
+and the two channels together exceed one, so a noisy colour channel can cost identification
+that the sufficient description had; with Boolean channels both descriptions distinguish. -/
+theorem smallBlue_distinguishes_iff (hc : 0 < xc) :
+    Reference.Distinguishes (meaning xs xc) {.bigBlue, .bigRed} .smallBlue .smallBlue ↔
+      1/2 < xs ∧ 1 < xs + xc := by
+  simp [Reference.Distinguishes, meaning, channel, Utterance.size, Utterance.color, World.big,
+    World.blue]
+  constructor
+  · rintro ⟨h1, h2⟩
+    exact ⟨by nlinarith, by nlinarith⟩
+  · rintro ⟨h1, h2⟩
+    exact ⟨by nlinarith, by nlinarith⟩
 
 /-- With Boolean channels the redundant modifier adds nothing: *small* and *small blue* both
 identify the small blue pin with certainty and are produced alike. -/

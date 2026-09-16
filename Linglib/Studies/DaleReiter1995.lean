@@ -66,22 +66,31 @@ def Applies (kb : KB E A V) (x : E) (p : A × V) : Prop := kb x p.1 = some p.2
 instance [DecidableEq V] (kb : KB E A V) (x : E) (p : A × V) : Decidable (Applies kb x p) := by
   unfold Applies; infer_instance
 
-/-- The entities of which every pair of a description holds. -/
-def extension (kb : KB E A V) (L : Description A V) : Set E := {x | ∀ p ∈ L, Applies kb x p}
+/-- Every pair of a description holds of the entity. -/
+def extension (kb : KB E A V) (L : Description A V) (x : E) : Prop := ∀ p ∈ L, Applies kb x p
 
-instance [DecidableEq V] (kb : KB E A V) (L : Description A V) :
-    DecidablePred (· ∈ extension kb L) :=
-  fun _ ↦ by unfold extension; infer_instance
+instance [DecidableEq V] (kb : KB E A V) (L : Description A V) (x : E) :
+    Decidable (extension kb L x) := by
+  unfold extension; infer_instance
 
-/-- A distinguishing description of `r` against the contrast set `C`, every pair holding of
-`r` and every distractor failing some pair ((3), conditions C1 and C2). -/
-abbrev Distinguishing (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) : Prop :=
-  Reference.Distinguishes (extension kb) C r L
+/-- A distinguishing description of `r` against the contrast set `C` holds of `r` and
+distinguishes it from `C`, so that every pair holds of `r` and every distractor fails some
+pair. -/
+def Distinguishing (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) : Prop :=
+  extension kb L r ∧ Reference.Distinguishes (extension kb) C r L
+
+instance [DecidableEq V] (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) :
+    Decidable (Distinguishing kb r C L) := by
+  unfold Distinguishing; infer_instance
 
 theorem distinguishing_iff {kb : KB E A V} {r : E} {C : Finset E} {L : Description A V} :
     Distinguishing kb r C L ↔
       (∀ p ∈ L, Applies kb r p) ∧ ∀ c ∈ C, ∃ p ∈ L, ¬ Applies kb c p := by
-  simp [Reference.Distinguishes, extension]
+  simp only [Distinguishing, Reference.Distinguishes, Prop.lt_iff, extension]
+  refine and_congr_right fun h ↦ forall₂_congr fun c _ ↦ ?_
+  rw [and_iff_left h]
+  push Not
+  exact Iff.rfl
 
 /-- The members of the contrast set a pair rules out (§2.2). -/
 def rulesOut [DecidableEq V] (kb : KB E A V) (C : Finset E) (p : A × V) : Finset E :=
@@ -142,8 +151,10 @@ theorem noUnnecessary_iff_minimal :
   refine ⟨fun h ↦ ⟨h.1, fun L' hL' hle ↦ ?_⟩, fun h ↦ ⟨h.1, fun p hp hd ↦ ?_⟩⟩
   · by_contra hne
     obtain ⟨p, hp, hp'⟩ := not_subset.mp hne
-    refine h.2 p hp ⟨fun q hq ↦ h.1.1 q (mem_of_mem_erase hq), fun c hc hcL ↦ ?_⟩
-    exact hL'.2 c hc fun q hq ↦ hcL q (mem_erase.mpr ⟨fun h ↦ hp' (h ▸ hq), hle hq⟩)
+    refine h.2 p hp (distinguishing_iff.2
+      ⟨fun q hq ↦ h.1.1 q (mem_of_mem_erase hq), fun c hc ↦ ?_⟩)
+    obtain ⟨q, hq, hcq⟩ := (distinguishing_iff.1 hL').2 c hc
+    exact ⟨q, mem_erase.mpr ⟨fun h ↦ hp' (h ▸ hq), hle hq⟩, hcq⟩
   · exact notMem_erase p L (h.2 hd (erase_subset p L) hp)
 
 /-- A shortest description has no unnecessary pair, so Full Brevity never includes an
