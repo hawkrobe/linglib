@@ -43,9 +43,9 @@ variable {Entity W D : Type*} [LinearOrder D]
 
 /-! ### Monotone increasing quantifiers -/
 
-/-- Section 2.1: on a finite domain the two scopes of an upper-interval DegP under *every girl*
-coincide, the comparative (10) at `Ioi t`, the equative (13a) at `Ici t`, and, at a type of
-worlds, the necessity operator (16). -/
+/-- On a finite domain the two scopes of an upper-interval DegP under *every girl* coincide, the
+comparative (10) at `Ioi t`, the equative (13a) at `Ici t`, and, at a type of worlds, the
+necessity operator (16) (Section 2.1). -/
 theorem forall_collapse [Finite Entity] {girl : Entity → Prop} (hg : ∃ x, girl x)
     (μ : Entity → D) {U : Set D} (hU : IsUpperSet U) :
     highScope (maxIn U) (every_sem girl) μ ↔ lowScope (maxIn U) (every_sem girl) μ :=
@@ -59,19 +59,19 @@ theorem exists_collapse [Finite Entity] (girl : Entity → Prop) (μ : Entity �
 
 /-! ### Monotone decreasing and non-monotone operators -/
 
-/-- (17c): the degrees to which Mary is not tall have no maximum. -/
+/-- The degrees to which Mary is not tall have no maximum (17c). -/
 theorem negation_high_undefined [NoMaxOrder D] (μ : Entity → D) (a : Entity) :
     ¬ ∃ m, IsGreatest (scopeDegrees (λ S => ¬ S a) μ) m :=
   not_isGreatest_scopeDegrees (Q := λ S => ¬ S a) (λ _ _ h hT hS => hT (h a hS)) μ
 
-/-- (18c): the degrees to which at most two girls are tall have no maximum. -/
+/-- The degrees to which at most two girls are tall have no maximum (18c). -/
 theorem atMost_high_undefined [Fintype Entity] [NoMaxOrder D] (girl : Entity → Prop)
     (μ : Entity → D) : ¬ ∃ m, IsGreatest (scopeDegrees (at_most_n_sem 2 girl) μ) m :=
   not_isGreatest_scopeDegrees (antitone_at_most_n_sem (α := Entity) 2 girl) μ
 
-/-- (20): the maximal degree to which exactly two girls are tall, when defined, is the maximal
-degree to which at least two are, so the high scope (20c) means *at least two girls are taller
-than 5 feet*. -/
+/-- The maximal degree to which exactly two girls are tall, when defined, is the maximal degree
+to which at least two are, so the high scope (20c) means *at least two girls are taller than 5
+feet* (20). -/
 theorem exactly_high_atLeast [Fintype Entity] {girl : Entity → Prop} {μ : Entity → D} {m : D}
     (h : IsGreatest (scopeDegrees (exactly_n_sem 2 girl) μ) m) :
     IsGreatest (scopeDegrees (at_least_n_sem 2 girl) μ) m := by
@@ -81,8 +81,8 @@ theorem exactly_high_atLeast [Fintype Entity] {girl : Entity → Prop} {μ : Ent
 /-! ### Exactly-differentials and less -/
 
 /-- Under *every girl* the low scope entails the high one at every interval, the shortest girl
-attaining the maximum: (22c) is weaker than (22b) at `{t}`, (24c) than (24b) at `Iio t`, and
-at a type of worlds (28c) than (28b) and (30c) than (30b). -/
+attaining the maximum, so (22c) is weaker than (22b) at `{t}`, (24c) than (24b) at `Iio t`,
+and at a type of worlds (28c) than (28b) and (30c) than (30b). -/
 theorem forall_high_of_low [Finite Entity] {girl : Entity → Prop} (hg : ∃ x, girl x)
     (μ : Entity → D) (U : Set D) :
     lowScope (maxIn U) (every_sem girl) μ → highScope (maxIn U) (every_sem girl) μ :=
@@ -91,31 +91,31 @@ theorem forall_high_of_low [Finite Entity] {girl : Entity → Prop} (hg : ∃ x,
   highScope_every_of_lowScope ⟨x₀, hx₀, λ y hy => hmin ⟨y, hy⟩⟩
 
 /-- Under *some girl* the high scope entails the low one at every interval, the tallest girl
-being a witness: (21c) is stronger than (21b), and at a type of worlds (29c) than (29b) and
-(31c) than (31b). -/
+being a witness, so (21c) is stronger than (21b), and at a type of worlds (29c) than (29b)
+and (31c) than (31b). -/
 theorem exists_low_of_high (girl : Entity → Prop) (μ : Entity → D) (U : Set D) :
     highScope (maxIn U) (some_sem girl) μ → lowScope (maxIn U) (some_sem girl) μ :=
   lowScope_some_of_highScope
 
-/-- Two girls, one exactly the standard's height in inches and one taller: the degrees to which
-every girl is tall are those up to the shorter. -/
+/-- For two girls, one exactly the standard's height in inches and one taller, the degrees to
+which every girl is tall are those up to the shorter. -/
 private theorem scopeDegrees_heights :
     scopeDegrees (every_sem λ _ : Fin 2 => True) ![49, 50] = Iic 49 := by
   ext d
   simp [scopeDegrees, every_sem, Fin.forall_fin_two]
   omega
 
-/-- (22): the high scope is true and the low scope false when the shortest girl is exactly 4'1''
-and another is taller, so *every girl is exactly 1'' taller than that* is false there and (22c)
-is no reading of it. -/
+/-- The high scope is true and the low scope false when the shortest girl is exactly 4'1'' and
+another is taller, so *every girl is exactly 1'' taller than that* is false there and (22c) is
+no reading of it (22). -/
 theorem exactly_high_not_low :
     highScope (maxIn {49}) (every_sem λ _ : Fin 2 => True) ![49, 50] ∧
       ¬ lowScope (maxIn {49}) (every_sem λ _ : Fin 2 => True) ![49, 50] :=
   ⟨⟨49, rfl, scopeDegrees_heights ▸ isGreatest_Iic⟩,
     λ h => by simpa using lowScope_maxIn.1 h 1 trivial⟩
 
-/-- (24): the high scope of *every girl is less tall than that* says only that the shortest girl
-is, and is true where the sentence is false. -/
+/-- The high scope of *every girl is less tall than that* says only that the shortest girl is,
+and is true where the sentence is false (24). -/
 theorem less_high_not_low :
     highScope (maxIn (Iio 50)) (every_sem λ _ : Fin 2 => True) ![49, 50] ∧
       ¬ lowScope (maxIn (Iio 50)) (every_sem λ _ : Fin 2 => True) ![49, 50] :=
@@ -124,8 +124,8 @@ theorem less_high_not_low :
 
 /-! ### Intensional verbs -/
 
-/-- (30c): *the paper is required to be less long than t* with the DegP over *required* says that
-the paper is not required to be as long as *t*. -/
+/-- *The paper is required to be less long than t* with the DegP over *required* says that the
+paper is not required to be as long as *t* (30c). -/
 theorem required_less [Finite W] {Acc : Set W} (hAcc : Acc.Nonempty) (ℓ : W → D) (t : D) :
     highScope (maxIn (Iio t)) (every_sem (· ∈ Acc)) ℓ ↔ ¬ every_sem (· ∈ Acc) λ w => t ≤ ℓ w := by
   have : Nonempty W := hAcc.to_type
@@ -133,16 +133,16 @@ theorem required_less [Finite W] {Acc : Set W} (hAcc : Acc.Nonempty) (ℓ : W �
   exact highScope_maxIn_Iio_iff (monotone_every_sem _) (λ h => let ⟨w, hw⟩ := hAcc; h w hw)
     ⟨ℓ w₀, λ v _ => hw₀ v⟩
 
-/-- (31c): *the paper is allowed to be less long than t* with the DegP over *allowed* says that
-the paper is not allowed to be as long as *t*. -/
+/-- *The paper is allowed to be less long than t* with the DegP over *allowed* says that the
+paper is not allowed to be as long as *t* (31c). -/
 theorem allowed_less [Finite W] {Acc : Set W} (hAcc : Acc.Nonempty) (ℓ : W → D) (t : D) :
     highScope (maxIn (Iio t)) (some_sem (· ∈ Acc)) ℓ ↔ ¬ some_sem (· ∈ Acc) λ w => t ≤ ℓ w :=
   highScope_maxIn_Iio_iff (monotone_some_sem _) (λ ⟨_, _, h⟩ => h)
     (let ⟨w, hw⟩ := hAcc; ⟨ℓ w, w, hw, le_rfl⟩)
 
-/-- (36): with the maximum of (35), *I want the paper to be less long than t* with the DegP over
-*want* says that the greatest lower bound of the lengths the paper is desired not to have, those
-no desired world reaches, is below *t*, and that is the low-scope reading (36a). -/
+/-- With the maximum of (35), *I want the paper to be less long than t* with the DegP over
+*want* says that the greatest lower bound of the lengths the paper is desired not to have,
+those no desired world reaches, is below *t*, which is the low-scope reading (36a). -/
 theorem negRaising_collapse [Finite W] [DenselyOrdered D] {Des : Set W} (hDes : Des.Nonempty)
     (ℓ : W → D) (t : D) :
     (∃ m ∈ Iio t, IsGLB (scopeDegrees (no_sem (· ∈ Des)) ℓ) m) ↔
@@ -159,13 +159,13 @@ theorem negRaising_collapse [Finite W] [DenselyOrdered D] {Des : Set W} (hDes : 
 
 /-! ### The superlative -/
 
-/-- (59a): *-est* applied to `R`, `λx. max{d : R(x, d)} > max{d : ∃y ≠ x. R(y, d)}`, over a
-monotone adjective and a comparison class `C`: the max-quantified comparative of `x` against the
-other members. -/
+/-- The entry for *-est* (59a), `λx. max{d : R(x, d)} > max{d : ∃y ≠ x. R(y, d)}`, over a
+monotone adjective and a comparison class `C` is the max-quantified comparative of `x` against
+the other members. -/
 def est (μ : Entity → D) (C : Set Entity) (x : Entity) : Prop :=
   maxComparative (· = x) (λ y => y ∈ C ∧ y ≠ x) μ
 
-/-- (59): over a comparison class with someone else in it, *-est* is the absolute superlative. -/
+/-- Over a comparison class with someone else in it, *-est* is the absolute superlative (59). -/
 theorem est_iff_absoluteSuperlative [Finite Entity] {μ : Entity → D} {C : Set Entity}
     {x : Entity} (hx : x ∈ C) (hC : ∃ y ∈ C, y ≠ x) : est μ C x ↔ absoluteSuperlative μ C x := by
   have h := highScope_maxIn_Iio_iff (μ := μ) (t := μ x) (monotone_some_sem λ y => y ∈ C ∧ y ≠ x)

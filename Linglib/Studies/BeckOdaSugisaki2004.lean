@@ -64,7 +64,7 @@ variable {Entity D : Type*} [LinearOrder D]
 
 /-! ### The standard analysis -/
 
-/-- The comparative morpheme on degree sets: `er D₁ D₂` holds iff `max D₂ > max D₁` (8). -/
+/-- The comparative morpheme on degree sets, where `er D₁ D₂` holds iff `max D₂ > max D₁` (8). -/
 def er (D₁ D₂ : Set D) : Prop :=
   ∃ m₁ m₂, IsGreatest D₁ m₁ ∧ IsGreatest D₂ m₂ ∧ m₁ < m₂
 
@@ -85,8 +85,8 @@ theorem er_Iic_iff_subcomparative (μ ν : Entity → D) (a b : Entity) :
 
 /-! ### The contextual analysis -/
 
-/-- The positive form at a contextual standard: `pos μ c x` holds iff `x` is `d`-A for some
-`d > c` (20). -/
+/-- The positive form at a contextual standard, where `pos μ c x` holds iff `x` is `d`-A for
+some `d > c` (20). -/
 def pos (μ : Entity → D) (c : D) (x : Entity) : Prop :=
   ∃ d, d ≤ μ x ∧ c < d
 
@@ -136,7 +136,7 @@ theorem isGreatest_card_of_isMaximal {Atom : Type*} {P : Finset Atom → Prop}
 
 /-! ### Subcomparatives -/
 
-/-- An individual standard lies on the matrix dimension: the reading of the shelf–door
+/-- An individual standard lies on the matrix dimension, so the reading of the shelf–door
 sentence with the door as standard differs from the subcomparative ((74), (79)). -/
 theorem pos_ne_subcomparative :
     ∃ μ ν : Fin 2 → ℕ, subcomparative μ ν 0 1 ∧ ¬ pos μ (μ 1) 0 :=
@@ -150,7 +150,7 @@ theorem not_isGreatest_nobody [NoMaxOrder D] (bought : Entity → Prop) (μ : En
     ¬ ∃ m, IsGreatest (scopeDegrees (no_sem bought) μ) m :=
   not_isGreatest_scopeDegrees (antitone_no_sem bought) μ
 
-/-- `er` over a negated *than*-clause never holds: the negative island ((11), (87a)). -/
+/-- `er` over a negated *than*-clause never holds, the negative island ((11), (87a)). -/
 theorem not_er_nobody [NoMaxOrder D] (bought : Entity → Prop) (μ : Entity → D) (S : Set D) :
     ¬ er (scopeDegrees (no_sem bought) μ) S :=
   fun ⟨m, _, hm, _, _⟩ => not_isGreatest_nobody bought μ ⟨m, hm⟩
@@ -187,8 +187,8 @@ theorem er_everyone_without_shared_book :
 
 /-! ### The main clause and scope -/
 
-/-- The comparative on adjective meanings: `erJ c P x` holds iff the greatest degree to which
-`x` is `P` exceeds `c` (133). -/
+/-- The comparative on adjective meanings, where `erJ c P x` holds iff the greatest degree to
+which `x` is `P` exceeds `c` (133). -/
 def erJ (c : D) (P : D → Entity → Prop) (x : Entity) : Prop :=
   maxIn (Set.Ioi c) {d | P d x}
 
@@ -198,13 +198,13 @@ theorem erJ_iff_pos (μ : Entity → D) (c : D) (x : Entity) :
     erJ c (fun d x => d ≤ μ x) x ↔ pos μ c x :=
   maxIn_Ioi_Iic_iff μ c x
 
-/-- The wide-scope reading of *need to be exactly s long*, the comparative over `need`: the
-greatest degree reached in every acceptable world is the target `s` (136b). -/
+/-- The wide-scope reading of *need to be exactly s long*, the comparative over `need`, says
+that the greatest degree reached in every acceptable world is the target `s` (136b). -/
 def wideScope {W : Type*} (acc : Set W) (μ : W → D) (s : D) : Prop :=
   highScope (maxIn {s}) (every_sem (· ∈ acc)) μ
 
-/-- The in-situ reading, which `erJ` with a differential yields: in every acceptable world the
-greatest degree is the target `s`. -/
+/-- The in-situ reading, which `erJ` with a differential yields, says that in every acceptable
+world the greatest degree is the target `s`. -/
 def inSitu {W : Type*} (acc : Set W) (μ : W → D) (s : D) : Prop :=
   lowScope (maxIn {s}) (every_sem (· ∈ acc)) μ
 

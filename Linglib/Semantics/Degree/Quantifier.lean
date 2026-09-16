@@ -56,13 +56,13 @@ variable {α D : Type*}
 section Preorder
 variable [Preorder D] {Q : Quantifier α} {μ : α → D} {d : D}
 
-/-- The maximum of `P` lies in `U`: the degree quantifiers of [heim-2001], *-er than `t`* at
-`U = Ioi t`, *less than `t`* at `Iio t`, *exactly `δ` -er than `t`* at `{t + δ}`, and the
-equative at `Ici t`. -/
+/-- The greatest element of `P` lies in `U`. These are the degree quantifiers of [heim-2001],
+*-er than `t`* at `U = Ioi t`, *less than `t`* at `Iio t`, *exactly `δ` -er than `t`* at
+`{t + δ}`, and the equative at `Ici t`. -/
 def maxIn (U P : Set D) : Prop := ∃ m ∈ U, IsGreatest P m
 
-/-- The degrees at which `Q` holds of the entities reaching them, `Q (Comparison.ge.over μ d)`:
-the degree predicate abstracted over `Q`'s scope. -/
+/-- The degrees at which `Q` holds of the entities reaching them, the degree predicate abstracted
+over the scope of `Q`. Membership at `d` is `Q (Comparison.ge.over μ d)`. -/
 def scopeDegrees (Q : Quantifier α) (μ : α → D) : Set D := {d | Q λ x => d ≤ μ x}
 
 theorem mem_scopeDegrees : d ∈ scopeDegrees Q μ ↔ Q λ x => d ≤ μ x := Iff.rfl
@@ -75,7 +75,7 @@ def lowScope (𝒟 : Set D → Prop) (Q : Quantifier α) (μ : α → D) : Prop 
 def highScope (𝒟 : Set D → Prop) (Q : Quantifier α) (μ : α → D) : Prop :=
   𝒟 (scopeDegrees Q μ)
 
-/-- The than-clause degree set: the degrees reached by some `P`-witness. -/
+/-- The than-clause degree set, the degrees reached by some `P`-witness. -/
 def thanDegrees (P : α → Prop) (μ : α → D) : Set D := scopeDegrees (some_sem P) μ
 
 theorem mem_thanDegrees {P : α → Prop} : d ∈ thanDegrees P μ ↔ ∃ x, P x ∧ d ≤ μ x := Iff.rfl
@@ -103,14 +103,14 @@ theorem isLowerSet_scopeDegrees (hQ : Monotone Q) (μ : α → D) : IsLowerSet (
 theorem isUpperSet_scopeDegrees (hQ : Antitone Q) (μ : α → D) : IsUpperSet (scopeDegrees Q μ) :=
   λ _ _ h hd => hQ (λ _ hx => h.trans hx) hd
 
-/-- Under an antitone quantifier, negation, *at most n*, *refuse*, the degree set has no maximum
-on a scale without a top: the high-scope reading is a presupposition failure. -/
+/-- Under an antitone quantifier, negation, *at most n* or *refuse*, the degree set has no
+maximum on a scale without a top, so the high-scope reading is a presupposition failure. -/
 theorem not_isGreatest_scopeDegrees [NoMaxOrder D] (hQ : Antitone Q) (μ : α → D) :
     ¬ ∃ m, IsGreatest (scopeDegrees Q μ) m :=
   λ ⟨_, hm⟩ => (isUpperSet_scopeDegrees hQ μ).not_bddAbove ⟨_, hm.1⟩ hm.bddAbove
 
-/-- The degree set of a monotone quantifier with a maximum is the maximum's principal lower set:
-the degrees to which the shortest girl is tall. -/
+/-- The degree set of a monotone quantifier with a maximum is the principal lower set of the
+maximum, the degrees to which the shortest girl is tall. -/
 theorem scopeDegrees_eq_Iic (hQ : Monotone Q) {m : D} (hm : IsGreatest (scopeDegrees Q μ) m) :
     scopeDegrees Q μ = Iic m :=
   (mem_upperBounds_iff_subset_Iic.1 hm.2).antisymm
@@ -124,8 +124,9 @@ variable [PartialOrder D] {U P : Set D} {Q : Quantifier α} {μ : α → D}
 theorem maxIn_Iic {a : D} : maxIn U (Iic a) ↔ a ∈ U :=
   ⟨λ ⟨_, hm, h⟩ => h.unique isGreatest_Iic ▸ hm, λ h => ⟨a, h, isGreatest_Iic⟩⟩
 
-/-- Scope splitting: the degree quantifier at the complementary interval is the negated one
-under the presupposition that the maximum exists, *less than t* as *not as … as t*. -/
+/-- The degree quantifier at the complementary interval is the negated one under the
+presupposition that the maximum exists, the scope splitting of *less than t* as *not as … as
+t*. -/
 theorem maxIn_compl : maxIn Uᶜ P ↔ (∃ m, IsGreatest P m) ∧ ¬ maxIn U P :=
   ⟨λ ⟨m, hm, h⟩ => ⟨⟨m, h⟩, λ ⟨_, hm', h'⟩ => hm (h'.unique h ▸ hm')⟩,
     λ ⟨⟨m, h⟩, hn⟩ => ⟨m, λ hm => hn ⟨m, hm, h⟩, h⟩⟩
@@ -135,23 +136,23 @@ interval, `Comparison.over` at that interval. -/
 theorem lowScope_maxIn : lowScope (maxIn U) Q μ ↔ Q λ x => μ x ∈ U := by
   simp only [lowScope, maxIn_Iic]
 
-/-- The high scope at an upper set entails the low one over a monotone quantifier: if the
-shortest girl is taller than `t`, every girl is. -/
+/-- The high scope at an upper set entails the low one over a monotone quantifier, since if the
+shortest girl is taller than `t` every girl is. -/
 theorem lowScope_of_highScope (hQ : Monotone Q) (hU : IsUpperSet U)
     (h : highScope (maxIn U) Q μ) : lowScope (maxIn U) Q μ :=
   let ⟨_, hmU, hm⟩ := h; lowScope_maxIn.2 (hQ (λ _ hx => hU hx hmU) hm.1)
 
 /-- The low scope entails the high one under `every` at every interval when the restrictor has
-a least-measuring member: if every girl's height lies in the interval, so does the shortest
-girl's. -/
+a least-measuring member, since if every girl's height lies in the interval so does the
+shortest girl's. -/
 theorem highScope_every_of_lowScope {R : α → Prop} (hR : ∃ x, R x ∧ ∀ y, R y → μ x ≤ μ y)
     (h : lowScope (maxIn U) (every_sem R) μ) : highScope (maxIn U) (every_sem R) μ := by
   rw [lowScope_maxIn] at h
   obtain ⟨x₀, hx₀, hmin⟩ := hR
   exact ⟨μ x₀, h x₀ hx₀, hmin, λ _ hd => hd x₀ hx₀⟩
 
-/-- The high scope entails the low one under `some` at every interval: the tallest witness is a
-witness. -/
+/-- The high scope entails the low one under `some` at every interval, the tallest witness being
+a witness. -/
 theorem lowScope_some_of_highScope {R : α → Prop} (h : highScope (maxIn U) (some_sem R) μ) :
     lowScope (maxIn U) (some_sem R) μ := by
   obtain ⟨m, hmU, ⟨x, hx, hmx⟩, hub⟩ := h
@@ -163,8 +164,8 @@ section LinearOrder
 variable [LinearOrder D] {U : Set D} {Q Q' : Quantifier α} {μ : α → D}
 
 /-- On a finite domain the degree set of a monotone quantifier that fails on the empty
-predicate has a maximum as soon as it is nonempty, attained by an entity: the shortest girl
-under *every girl*, the tallest under *some girl*. -/
+predicate has a maximum as soon as it is nonempty, attained by an entity, the shortest girl
+under *every girl* and the tallest under *some girl*. -/
 theorem exists_isGreatest_scopeDegrees [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥)
     (h : (scopeDegrees Q μ).Nonempty) : ∃ x, IsGreatest (scopeDegrees Q μ) (μ x) := by
   -- every degree of the set lies below a measured degree of the set
@@ -183,7 +184,7 @@ theorem exists_isGreatest_scopeDegrees [Finite α] (hQ : Monotone Q) (hQ₀ : ¬
   exact hdy.trans (hmax ⟨y, hy⟩)
 
 /-- The low scope at an upper set entails the high one over a monotone quantifier on a finite
-domain: if every girl is taller than `t`, so is the shortest. -/
+domain, since if every girl is taller than `t` so is the shortest. -/
 theorem highScope_of_lowScope [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥) (hU : IsUpperSet U)
     (h : lowScope (maxIn U) Q μ) : highScope (maxIn U) Q μ := by
   rw [lowScope_maxIn] at h
@@ -200,8 +201,8 @@ theorem highScope_maxIn_iff_lowScope [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q
     (hU : IsUpperSet U) : highScope (maxIn U) Q μ ↔ lowScope (maxIn U) Q μ :=
   ⟨lowScope_of_highScope hQ hU, highScope_of_lowScope hQ hQ₀ hU⟩
 
-/-- *Less than `t`* over a monotone quantifier, high, is *not as … as `t`*, low: the
-scope-splitting reading, `NEG + as … as`. -/
+/-- *Less than `t`* over a monotone quantifier, high, is *not as … as `t`*, low, the
+scope-splitting reading `NEG + as … as`. -/
 theorem highScope_maxIn_Iio_iff [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥)
     (hne : (scopeDegrees Q μ).Nonempty) {t : D} :
     highScope (maxIn (Iio t)) Q μ ↔ ¬ Q λ x => t ≤ μ x := by
@@ -212,15 +213,15 @@ theorem highScope_maxIn_Iio_iff [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥)
   exact maxIn_compl.trans (and_iff_right ⟨_, hx⟩)
 
 /-- Under the meet of a quantifier with an antitone one, *exactly n* as *at least n* and *at
-most n*, the maximum of the degree set, when defined, is that of the other conjunct: high-scope
-*exactly two girls are taller than t* means *at least two*. -/
+most n*, the maximum of the degree set, when defined, is that of the other conjunct, so
+high-scope *exactly two girls are taller than t* means *at least two*. -/
 theorem isGreatest_scopeDegrees_of_inf (hQ' : Antitone Q') {m : D}
     (h : IsGreatest (scopeDegrees (Q ⊓ Q') μ) m) : IsGreatest (scopeDegrees Q μ) m :=
   ⟨h.1.1, λ _ hd => le_of_not_gt λ hmd =>
     (h.2 ⟨hd, hQ' (λ _ hx => hmd.le.trans hx) h.1.2⟩).not_gt hmd⟩
 
 /-- On a dense scale the maximum of a degree set with a maximum is the greatest lower bound of
-its complement: the maximum of [heim-2001]'s trivalent entry agrees with the bivalent one. -/
+its complement, so the maximum of [heim-2001]'s trivalent entry agrees with the bivalent one. -/
 theorem isGLB_compl_scopeDegrees [DenselyOrdered D] (hQ : Monotone Q) {m : D}
     (hm : IsGreatest (scopeDegrees Q μ) m) : IsGLB (scopeDegrees Q μ)ᶜ m := by
   rw [scopeDegrees_eq_Iic hQ hm, compl_Iic]
@@ -245,12 +246,12 @@ case. -/
 section MaxQuantified
 variable [Preorder D] {Pmatrix Pthan : α → Prop} {μ : α → D}
 
-/-- The max-quantified comparative: the `Pthan` degree set has a greatest element `δ`, and some
-`Pmatrix`-witness measures strictly above `δ`. -/
+/-- The max-quantified comparative holds when the `Pthan` degree set has a greatest element `δ`
+and some `Pmatrix`-witness measures strictly above `δ`. -/
 def maxComparative (Pmatrix Pthan : α → Prop) (μ : α → D) : Prop :=
   ∃ δ, IsGreatest (thanDegrees Pthan μ) δ ∧ ∃ x, Pmatrix x ∧ δ < μ x
 
-/-- The max-quantified equative: `maxComparative` with the weak threshold. -/
+/-- The max-quantified equative, `maxComparative` with the weak threshold. -/
 def maxEquative (Pmatrix Pthan : α → Prop) (μ : α → D) : Prop :=
   ∃ δ, IsGreatest (thanDegrees Pthan μ) δ ∧ ∃ x, Pmatrix x ∧ δ ≤ μ x
 
@@ -306,9 +307,9 @@ degree-set standard. It is `Comparison.gt.overSet μ`, the strict set-standard p
 section SetOfDegrees
 variable [Preorder D] (μ : α → D) {Δ : Set D}
 
-/-- The set-of-degrees comparative as a strict-interval inclusion: `y` clears the than-clause iff
-every standard degree lies strictly below `μ y`, the strict mirror of
-`mem_upperBounds_iff_subset_Iic`. -/
+/-- The set-of-degrees comparative as a strict-interval inclusion, the strict mirror of
+`mem_upperBounds_iff_subset_Iic`. An entity `y` clears the than-clause iff every standard
+degree lies strictly below `μ y`. -/
 theorem mem_gtOverSet_iff_subset_Iio (y : α) : y ∈ Comparison.gt.overSet μ Δ ↔ Δ ⊆ Iio (μ y) :=
   Iff.rfl
 
@@ -344,8 +345,8 @@ semantic reflex of [bobaljik-2012]'s containment `[[[ADJ] CMPR] SPRL]`. -/
 section Superlative
 variable [LinearOrder D] {μ : α → D} {C : Set α} {x y : α}
 
-/-- The absolute superlative: `x` is the most `μ` member of the comparison class `C`, beating
-every other member on the comparative. -/
+/-- The absolute superlative holds of `x` when `x` is in the comparison class `C` and beats every
+other member on the comparative. -/
 def absoluteSuperlative (μ : α → D) (C : Set α) (x : α) : Prop :=
   x ∈ C ∧ ∀ y ∈ C, y ≠ x → comparativeSem μ x y .positive
 
