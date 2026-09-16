@@ -5,42 +5,38 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.PreLie.Graft
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
+import Linglib.Core.Data.List.Perm
 import Linglib.Core.Data.List.Sublists
 import Linglib.Core.Data.Multiset.Powerset
 import Linglib.Core.Data.UnorderedTree.Basic
 import Mathlib.Data.Multiset.Bind
 
 /-!
-# Foissy 2021 Theorem 5.1 multi-tree insertion (path-based)
-[foissy-typed-decorated-rooted-trees-2018]
-[foissy-introduction-hopf-algebras-trees]
+# Multi-tree insertion on `RoseTree α`
 
-The Foissy 2021 Theorem 5.1 multi-tree multi-vertex insertion operator.
-Defined as a sum over functions `Ts → V(T)` of `multiGraft`, taken as
-a `Multiset` to make the sum-over-choices commutative.
+Foissy's multi-tree, multi-vertex insertion: `insertion T gs` sums, over all assignments of the
+guests `gs` to vertices of the host `T`, the simultaneous graft `multiGraft`; `insertionForest`
+is the same sum over the vertices of a host forest. Both are multisets so that the sum over
+assignments is commutative.
 
-Sibling to `Graft.lean` (path-based multi-graft primitive). Lives under
-namespace `RoseTree.Pathed`.
+## Main results
 
-## File scope
+* `bind_listChoices_filter`: the keystone. A sum over vertex assignments, viewed through a
+  predicate on vertices, is a sum over `gs.sublists'.revzip` of independent assignments for the
+  two buckets. `insertionForest_cons`, `insertionForest_append`, and `insertion_node` are its
+  instances.
+* `bind_listChoices_zip_perm`: permuting the guests permutes the assignments, so `insertion` and
+  `insertionForest` are invariant under guest permutation once outputs are read through
+  `UnorderedTree.mk`.
+* `insertion_perm_host`, `insertionForest_permList_host_msform`,
+  `insertionForest_perm_host_msform`, `insertionForest_msform_invariance_guests`: the
+  invariances that make `UnorderedTree.insertionMultiset` well defined.
+* `insertion_singleton`: with a single guest, insertion is the pre-Lie product `insertSum`.
 
-- §1: `listChoices` — choice-list enumeration, and the keystone `bind_listChoices_filter`
-  splitting choices over `gs.sublists'.revzip`.
-- §2: `insertion` — Foissy 2021 Theorem 5.1, single-tree host.
-- §3: `insertionForest` — forest host, its `sublists'.revzip` recursion
-  (`insertionForest_cons`, `insertionForest_append`), and the node-host decomposition
-  (`insertion_node`).
-- §4: Pair-list `Perm`-invariance for `multiGraft`.
-- §5: Guest-list invariance for `insertion` (`insertion_perm_guests`).
-- §5.5: Validity discharge for `listChoices`-derived pair lists.
-- §6: Host invariance via the `swapPathAt` path-relabel bijection.
-- §7: Forest invariance (`insertionForest_perm_host`,
-  `insertionForest_perm_guests`).
-- §8: Singleton hosts and single guests (`insertionForest_singleton`, `insertion_singleton`).
+## References
 
-## Status
-
-`[UPSTREAM]` candidate. **Sorry-free**.
+* [foissy-typed-decorated-rooted-trees-2018]
+* [foissy-introduction-hopf-algebras-trees]
 -/
 
 namespace RoseTree
@@ -51,12 +47,10 @@ open RoseTree UnorderedTree
 
 variable {α : Type*}
 
-/-! ## §1: `listChoices` enumeration -/
+/-! ## `listChoices`: assignments of guests to vertices -/
 
-/-- All length-`n` lists with entries from `xs` (with repetition).
-    The "n-fold list power" used in Foissy 2021 Theorem 5.1's
-    vertex-choice sum. Representation-independent (no `Vertex`
-    dependence): copied from the legacy `Insertion.lean`. -/
+/-- All length-`n` lists with entries from `xs`, with repetition: the assignments of `n`
+    guests to the vertices `xs`. -/
 def listChoices {β : Type*} : List β → Nat → List (List β)
   | _,  0     => [[]]
   | xs, n + 1 => xs.flatMap fun v => (listChoices xs n).map (v :: ·)
@@ -171,10 +165,10 @@ theorem bind_listChoices_zip_perm {β γ δ : Type*} (xs : List β) {gs gs' : Li
       Multiset.bind_congr fun ch _ => hG (List.Perm.swap _ _ _)
   | trans _ _ ih₁ ih₂ => exact (ih₁ G hG).trans (ih₂ G hG)
 
-/-! ## §2: `insertion` — Foissy 2021 Theorem 5.1 -/
+/-! ## `insertion`: single-tree host -/
 
-/-- Foissy 2021 Theorem 5.1 multi-graft on a single-tree host. Sum over
-    `(v₁, …, vₙ) ∈ V(T)ⁿ` of `multiGraft T [(v₁, T₁), …, (vₙ, Tₙ)]`. -/
+/-- Multi-graft on a single-tree host: the sum over `(v₁, …, vₙ) ∈ V(T)ⁿ` of
+    `multiGraft T [(v₁, T₁), …, (vₙ, Tₙ)]`. -/
 def insertion (T : RoseTree α) (Ts : List (RoseTree α)) : Multiset (RoseTree α) :=
   Multiset.ofList <| (listChoices (vertices T) Ts.length).map
     fun choice => multiGraft T (choice.zip Ts)
@@ -184,7 +178,7 @@ theorem insertion_def (T : RoseTree α) (Ts : List (RoseTree α)) :
       Multiset.ofList ((listChoices (vertices T) Ts.length).map
         fun choice => multiGraft T (choice.zip Ts)) := rfl
 
-/-! ## §3: `insertionForest` — forest host -/
+/-! ## `insertionForest`: forest host -/
 
 /-- Multi-graft into a host forest: the sum over assignments of guests to forest vertices of
     the simultaneous `multiGraftChildren`. -/
@@ -345,7 +339,7 @@ theorem insertion_node (a : α) (cs gs : List (RoseTree α)) :
     Multiset.map_map, ← Multiset.bind_singleton]
   rfl
 
-/-! ## §4: Pair-list `Perm` invariance for `multiGraft`
+/-! ## Pair-list `Perm` invariance for `multiGraft`
 
 `multiGraft T pairs` is `Perm`-invariant under permutation of the
 pair list: grafts at distinct paths commute, and grafts at the same
@@ -469,13 +463,13 @@ private theorem multiGraftChildren_perm_pair_Forall₂ :
         | succ _ => exact Option.Rel.some ⟨rfl, hsnd⟩
 end
 
-/-! ## §5: Guest-list invariance for `insertion`
+/-! ## Guest invariance
 
-`bind_listChoices_zip_perm` (§1) permutes the zipped pair lists along a guest permutation, and
+`bind_listChoices_zip_perm` permutes the zipped pair lists along a guest permutation, and
 `multiGraft` is `Perm`-invariant in its pair list. -/
 
 /-- Single-tree `insertion` is `mk`-invariant under `List.Perm` of guests. -/
-private theorem insertion_perm_guests (t : RoseTree α)
+theorem insertion_perm_guests (t : RoseTree α)
     {Ts Ts' : List (RoseTree α)} (h : Ts.Perm Ts') :
     (insertion t Ts).map UnorderedTree.mk =
       (insertion t Ts').map UnorderedTree.mk := by
@@ -484,798 +478,6 @@ private theorem insertion_perm_guests (t : RoseTree α)
   exact bind_listChoices_zip_perm (vertices t) h
     (fun ps => {UnorderedTree.mk (multiGraft t ps)})
     fun hp => by rw [UnorderedTree.mk_eq_mk_iff.mpr (multiGraft_perm_pair t hp)]
-
-/-- Guest-list `Forall₂ Perm` lifts to `insertion mk`-equality. -/
-theorem insertion_forall₂_perm_guests (t : RoseTree α)
-    {Ts Ts' : List (RoseTree α)} (h : List.Forall₂ Perm Ts Ts') :
-    (insertion t Ts).map UnorderedTree.mk =
-      (insertion t Ts').map UnorderedTree.mk := by
-  have hlen : Ts.length = Ts'.length := h.length_eq
-  rw [insertion_def, insertion_def, Multiset.map_coe, Multiset.map_coe,
-      List.map_map, List.map_map, hlen]
-  congr 1
-  apply List.map_congr_left
-  intro choice _
-  apply UnorderedTree.mk_eq_mk_iff.mpr
-  -- multiGraft t (choice.zip Ts) ~ multiGraft t (choice.zip Ts')
-  -- via List.Forall₂ for the pair (fst eq, snd perm)
-  exact multiGraft_perm_pair_Forall₂ t (zip_pair_Forall₂ choice h)
-
-/-! ## §5.5: Validity discharge for `listChoices`-derived pair lists -/
-
-/-- Every path in a `choice.zip Ts` pair list is a valid path in `T`, when
-    `choice ∈ listChoices (vertices T) Ts.length`. Discharges the validity
-    hypothesis of the graft operations for `listChoices`-derived pair lists. -/
-theorem forall_zip_isValidPath_of_listChoices
-    (T : RoseTree α) (Ts : List (RoseTree α))
-    (choice : List Path)
-    (h_choice : choice ∈ listChoices (vertices T) Ts.length)
-    (pair : Path × RoseTree α) (h_pair : pair ∈ choice.zip Ts) :
-    IsValidPath pair.fst T := by
-  exact forall_isValidPath T ((mem_listChoices.mp h_choice).2 _ (List.of_mem_zip h_pair).1)
-
-/-! ## §6: Host invariance via path-swap bijection
-
-`insertion T Ts` is `mk`-invariant under `Perm` of the host: the
-original blocker for the path-based refactor.
-
-Strategy:
-1. `swapPathAt n` — swap the first index `n ↔ n+1` in a path.
-2. `vertices_swap_perm` — applying `swapPathAt pre.length` to vertices of
-   `node a (pre ++ l :: r :: post)` is a `List.Perm` of vertices of
-   `node a (pre ++ r :: l :: post)`. Reduces to a `List.Perm` of two
-   appendable middle blocks, via `verticesAux_append` + a
-   `List.perm_append_comm`.
-3. `multiGraft_swap_perm` — the multiGraft results differ only by
-   the swap of l/r in the root children list.
-4. `vertices_recurse_perm` / `multiGraft_recurse_perm` — the child-recursion
-   building block, lifting an inner bijection via `pathLiftRecurse`.
-5. `hasPathBij_of_perm` (with its `PermList` companion) assembles these
-   building blocks over the mutual `Perm`/`PermList` structure;
-   `insertion_eq_of_pathBij` turns the bijection into `mk`-equality. -/
-
-/-- Swap the first index `n ↔ n+1` of a path. Acts as identity on paths
-    starting outside `{n, n+1}` and on the root path `[]`. -/
-private def swapPathAt (n : ℕ) : Path → Path
-  | []        => []
-  | i :: rest =>
-      if i = n then (n + 1) :: rest
-      else if i = n + 1 then n :: rest
-      else i :: rest
-
-@[simp] private theorem swapPathAt_nil (n : ℕ) : swapPathAt n [] = [] := rfl
-
-private theorem swapPathAt_cons_eq (n : ℕ) (rest : Path) :
-    swapPathAt n (n :: rest) = (n + 1) :: rest := by
-  simp [swapPathAt]
-
-private theorem swapPathAt_cons_eq_succ (n : ℕ) (rest : Path) :
-    swapPathAt n ((n + 1) :: rest) = n :: rest := by
-  simp [swapPathAt]
-
-private theorem swapPathAt_cons_of_ne (n i : ℕ) (rest : Path)
-    (h1 : i ≠ n) (h2 : i ≠ n + 1) :
-    swapPathAt n (i :: rest) = i :: rest := by
-  simp [swapPathAt, h1, h2]
-
-/-- For paths produced by `verticesAux start cs` with all indices
-    bounded below `n`, `swapPathAt n` acts as the identity. -/
-private theorem map_swapPathAt_verticesAux_below
-    (n start : ℕ) (cs : List (RoseTree α)) (h : start + cs.length ≤ n) :
-    (verticesAux start cs).map (swapPathAt n) = verticesAux start cs := by
-  induction cs generalizing start with
-  | nil => rfl
-  | cons c cs ih =>
-    rw [verticesAux_cons, List.map_append, List.map_map]
-    have hlt : start < n := by simp [List.length_cons] at h; omega
-    have hcs : start + 1 + cs.length ≤ n := by
-      simp [List.length_cons] at h; omega
-    congr 1
-    · refine List.map_congr_left fun q _ => ?_
-      show swapPathAt n (start :: q) = start :: q
-      exact swapPathAt_cons_of_ne n start q (Nat.ne_of_lt hlt) (by omega)
-    · exact ih (start + 1) hcs
-
-/-- For paths produced by `verticesAux start cs` with all indices
-    bounded above `n + 1`, `swapPathAt n` acts as the identity. -/
-private theorem map_swapPathAt_verticesAux_above
-    (n start : ℕ) (cs : List (RoseTree α)) (h : n + 1 < start) :
-    (verticesAux start cs).map (swapPathAt n) = verticesAux start cs := by
-  induction cs generalizing start with
-  | nil => rfl
-  | cons c cs ih =>
-    rw [verticesAux_cons, List.map_append, List.map_map]
-    have h' : n + 1 < start + 1 := by omega
-    congr 1
-    · refine List.map_congr_left fun q _ => ?_
-      show swapPathAt n (start :: q) = start :: q
-      exact swapPathAt_cons_of_ne n start q (by omega) (by omega)
-    · exact ih (start + 1) h'
-
-/-- Vertices of `node a (pre ++ l :: r :: post)` mapped through
-    `swapPathAt pre.length` is a `List.Perm` of vertices of
-    `node a (pre ++ r :: l :: post)`. -/
-private theorem vertices_swap_perm (a : α) (pre : List (RoseTree α))
-    (l r : RoseTree α) (post : List (RoseTree α)) :
-    ((vertices (RoseTree.node a (pre ++ l :: r :: post))).map
-        (swapPathAt pre.length)).Perm
-      (vertices (RoseTree.node a (pre ++ r :: l :: post))) := by
-  set n := pre.length with hn
-  rw [vertices_node, vertices_node]
-  -- Expand verticesAux via _append, plus verticesAux_cons twice
-  rw [verticesAux_append, verticesAux_append, Nat.zero_add,
-      verticesAux_cons, verticesAux_cons, verticesAux_cons, verticesAux_cons,
-      List.map_cons]
-  rw [swapPathAt_nil]
-  refine List.Perm.cons _ ?_
-  -- Distribute List.map over ++
-  rw [List.map_append, List.map_append, List.map_append]
-  -- pre's slice: identity
-  rw [map_swapPathAt_verticesAux_below n 0 pre (by simp [hn])]
-  -- post's slice: identity
-  rw [map_swapPathAt_verticesAux_above n (n + 2) post (by omega)]
-  -- l's slice: n → n+1
-  have hl : (List.map (fun x => n :: x) (vertices l)).map (swapPathAt n) =
-            List.map (fun x => (n + 1) :: x) (vertices l) := by
-    rw [List.map_map]
-    refine List.map_congr_left fun q _ => ?_
-    exact swapPathAt_cons_eq n q
-  -- r's slice: n+1 → n
-  have hr : (List.map (fun x => (n + 1) :: x) (vertices r)).map (swapPathAt n) =
-            List.map (fun x => n :: x) (vertices r) := by
-    rw [List.map_map]
-    refine List.map_congr_left fun q _ => ?_
-    exact swapPathAt_cons_eq_succ n q
-  rw [hl, hr]
-  -- Goal: pre' ++ (l@n+1) ++ ((r@n) ++ post') ~ pre' ++ ((r@n) ++ ((l@n+1) ++ post'))
-  -- Common prefix `pre'` peels off; then swap two middle blocks.
-  refine List.Perm.append_left _ ?_
-  rw [← List.append_assoc, ← List.append_assoc]
-  refine List.Perm.append_right _ ?_
-  exact List.perm_append_comm
-
-/-! ### §6.2 substrate: pair-relabel + perm prefix-cons-lift -/
-
-/-- The path-relabel function for swapAtRoot. -/
-private def pathRelabelSwap (n : ℕ) : Path × RoseTree α → Path × RoseTree α :=
-  Prod.map (swapPathAt n) id
-
-@[simp] private theorem pathRelabelSwap_fst (n : ℕ) (p : Path × RoseTree α) :
-    (pathRelabelSwap n p).fst = swapPathAt n p.fst := rfl
-
-@[simp] private theorem pathRelabelSwap_snd (n : ℕ) (p : Path × RoseTree α) :
-    (pathRelabelSwap n p).snd = p.snd := rfl
-
-/-- Path bijection for a single-child recursion: lift an inner path
-    bijection `f` (applicable to vertices of the changed subtree at child
-    position `n`) to the whole tree. Identity on paths not going through
-    child `n`. -/
-private def pathLiftRecurse (n : ℕ) (f : Path → Path) : Path → Path
-  | []        => []
-  | i :: rest => if i = n then n :: f rest else i :: rest
-
-@[simp] private theorem pathLiftRecurse_nil (n : ℕ) (f : Path → Path) :
-    pathLiftRecurse n f [] = [] := rfl
-
-private theorem pathLiftRecurse_cons_eq (n : ℕ) (f : Path → Path) (rest : Path) :
-    pathLiftRecurse n f (n :: rest) = n :: f rest := by
-  simp [pathLiftRecurse]
-
-private theorem pathLiftRecurse_cons_of_ne (n i : ℕ) (f : Path → Path) (rest : Path)
-    (h : i ≠ n) :
-    pathLiftRecurse n f (i :: rest) = i :: rest := by
-  simp [pathLiftRecurse, h]
-
-/-- `pathLiftRecurse n f` acts as identity on paths produced by
-    `verticesAux start cs` when those paths' first indices are all below `n`. -/
-private theorem map_pathLiftRecurse_verticesAux_below
-    (n start : ℕ) (f : Path → Path) (cs : List (RoseTree α))
-    (h : start + cs.length ≤ n) :
-    (verticesAux start cs).map (pathLiftRecurse n f) = verticesAux start cs := by
-  induction cs generalizing start with
-  | nil => rfl
-  | cons c cs ih =>
-    rw [verticesAux_cons, List.map_append, List.map_map]
-    have hlt : start < n := by simp [List.length_cons] at h; omega
-    have hcs : start + 1 + cs.length ≤ n := by simp [List.length_cons] at h; omega
-    congr 1
-    · refine List.map_congr_left fun q _ => ?_
-      show pathLiftRecurse n f (start :: q) = start :: q
-      exact pathLiftRecurse_cons_of_ne n start f q (Nat.ne_of_lt hlt)
-    · exact ih (start + 1) hcs
-
-/-- `pathLiftRecurse n f` acts as identity on paths produced by
-    `verticesAux start cs` when those paths' first indices are all above `n`. -/
-private theorem map_pathLiftRecurse_verticesAux_above
-    (n start : ℕ) (f : Path → Path) (cs : List (RoseTree α))
-    (h : n < start) :
-    (verticesAux start cs).map (pathLiftRecurse n f) = verticesAux start cs := by
-  induction cs generalizing start with
-  | nil => rfl
-  | cons c cs ih =>
-    rw [verticesAux_cons, List.map_append, List.map_map]
-    have h' : n < start + 1 := by omega
-    congr 1
-    · refine List.map_congr_left fun q _ => ?_
-      show pathLiftRecurse n f (start :: q) = start :: q
-      exact pathLiftRecurse_cons_of_ne n start f q (by omega : start ≠ n)
-    · exact ih (start + 1) h'
-
-/-- Vertices Perm under a single-child recursion: given a path bijection on
-    the changed subtree, lift to a Perm on the bigger tree's vertices. -/
-private theorem vertices_recurse_perm (a : α) (pre : List (RoseTree α))
-    (old new : RoseTree α) (post : List (RoseTree α)) (f : Path → Path)
-    (hf : ((vertices old).map f).Perm (vertices new)) :
-    ((vertices (RoseTree.node a (pre ++ old :: post))).map
-        (pathLiftRecurse pre.length f)).Perm
-      (vertices (RoseTree.node a (pre ++ new :: post))) := by
-  set n := pre.length with hn_eq
-  rw [vertices_node, vertices_node,
-      verticesAux_append, verticesAux_append, Nat.zero_add,
-      verticesAux_cons, verticesAux_cons, List.map_cons, pathLiftRecurse_nil]
-  refine List.Perm.cons _ ?_
-  rw [List.map_append, List.map_append]
-  rw [map_pathLiftRecurse_verticesAux_below n 0 f pre (by simp [hn_eq])]
-  rw [map_pathLiftRecurse_verticesAux_above n (n + 1) f post (by omega)]
-  -- Goal: pre' ++ ((vertices old).map (n :: ·)).map (pathLiftRecurse n f) ++ post' ~Perm~
-  --       pre' ++ (vertices new).map (n :: ·) ++ post'
-  refine List.Perm.append_left _ (List.Perm.append_right _ ?_)
-  -- Goal: ((vertices old).map (n :: ·)).map (pathLiftRecurse n f) ~Perm~ (vertices new).map (n :: ·)
-  rw [List.map_map]
-  -- Goal: List.map (pathLiftRecurse n f ∘ fun x => n :: x) (vertices old) ~Perm~ ...
-  have h_map_eq : List.map (pathLiftRecurse n f ∘ fun x => n :: x) (vertices old) =
-                  ((vertices old).map f).map (fun x => n :: x) := by
-    rw [List.map_map]
-    refine List.map_congr_left fun q _ => ?_
-    show pathLiftRecurse n f (n :: q) = n :: f q
-    exact pathLiftRecurse_cons_eq n f q
-  rw [h_map_eq]
-  exact hf.map _
-
-/-- Helper: `Perm` of two trees with a common children prefix.
-    Lifts `(node a cs) ~ (node a ds)` to `(node a (pre ++ cs)) ~ (node a (pre ++ ds))`
-    by iterated `Perm.cons_child`. -/
-private theorem perm_append_left_node {a : α} (pre : List (RoseTree α))
-    {cs ds : List (RoseTree α)}
-    (h : Perm (.node a cs) (.node a ds)) :
-    Perm (.node a (pre ++ cs)) (.node a (pre ++ ds)) := by
-  induction pre with
-  | nil => exact h
-  | cons p pre' ih => exact Perm.cons_child p ih
-
-/-- `multiGraft` is `Perm`-invariant under a single-child recursion:
-    if the inner subtree change `old → new` admits a path-bijection `f`
-    that turns `multiGraft old` into `multiGraft new ∘ relabel-via-f`, then
-    the same holds for the host with prefix `pre` and suffix `post`, using
-    `pathLiftRecurse pre.length f`. -/
-private theorem multiGraft_recurse_perm (a : α)
-    {old new : RoseTree α} (f : Path → Path)
-    (hf : ∀ sub_pairs, Perm (multiGraft old sub_pairs)
-                                    (multiGraft new (sub_pairs.map (Prod.map f id)))) :
-    ∀ (pre : List (RoseTree α)) (post : List (RoseTree α))
-      (pairs : List (Path × RoseTree α)),
-    Perm
-      (multiGraft (RoseTree.node a (pre ++ old :: post)) pairs)
-      (multiGraft (RoseTree.node a (pre ++ new :: post))
-                  (pairs.map (Prod.map (pathLiftRecurse pre.length f) id))) := by
-  intro pre post pairs
-  induction pre generalizing pairs with
-  | nil =>
-    simp only [List.nil_append, List.length_nil]
-    rw [multiGraft_node, multiGraft_node]
-    rw [multiGraftChildren_cons_cs old post, multiGraftChildren_cons_cs new post]
-    -- Three filter equalities.
-    have h_RP : pairs.filterMap rootPrependFilter =
-                (pairs.map (Prod.map (pathLiftRecurse 0 f) id)).filterMap
-                  rootPrependFilter := by
-      rw [List.filterMap_map]
-      refine List.filterMap_congr fun pair _ => ?_
-      cases hp : pair.fst with
-      | nil => simp [hp, rootPrependFilter, pathLiftRecurse]
-      | cons i rest =>
-        by_cases h1 : i = 0
-        · subst h1; simp [hp, rootPrependFilter, pathLiftRecurse]
-        · simp [hp, rootPrependFilter, pathLiftRecurse_cons_of_ne 0 i f rest h1]
-    have h_cP : (pairs.filterMap headChildFilter).map (Prod.map f id) =
-                (pairs.map (Prod.map (pathLiftRecurse 0 f) id)).filterMap
-                  headChildFilter := by
-      rw [List.filterMap_map, List.map_filterMap]
-      refine List.filterMap_congr fun pair _ => ?_
-      cases hp : pair.fst with
-      | nil => simp [hp, headChildFilter, pathLiftRecurse]
-      | cons i rest =>
-        by_cases h1 : i = 0
-        · subst h1; simp [hp, headChildFilter, pathLiftRecurse_cons_eq]
-        · simp [hp, headChildFilter,
-                pathLiftRecurse_cons_of_ne 0 i f rest h1]
-          cases i with
-          | zero => exact absurd rfl h1
-          | succ k => rfl
-    have h_csP : pairs.filterMap tailChildFilter =
-                 (pairs.map (Prod.map (pathLiftRecurse 0 f) id)).filterMap
-                   tailChildFilter := by
-      rw [List.filterMap_map]
-      refine List.filterMap_congr fun pair _ => ?_
-      cases hp : pair.fst with
-      | nil => simp [hp, tailChildFilter, pathLiftRecurse]
-      | cons i rest =>
-        by_cases h1 : i = 0
-        · subst h1; simp [hp, tailChildFilter, pathLiftRecurse_cons_eq]
-        · simp [hp, tailChildFilter, pathLiftRecurse_cons_of_ne 0 i f rest h1]
-    -- Use hf on the head child; identity on root prepends and post; lift via recurse.
-    have h_old := hf (pairs.filterMap headChildFilter)
-    rw [h_cP] at h_old
-    rw [← h_RP, ← h_csP]
-    -- Goal: node a (RP ++ multiGraft old cP :: mGC post csP) ~PE~
-    --        node a (RP ++ multiGraft new cP' :: mGC post csP) where
-    --        cP' = (pairs.map ...).filterMap headChildFilter = cP.map (Prod.map f id)
-    exact perm_append_left_node _
-      (Perm.congr_child [] _ h_old)
-  | cons c pre' ih =>
-    rw [show (c :: pre') ++ old :: post = c :: (pre' ++ old :: post) from rfl,
-        show (c :: pre') ++ new :: post = c :: (pre' ++ new :: post) from rfl,
-        show (c :: pre').length = pre'.length + 1 from rfl]
-    rw [multiGraft_node, multiGraft_node]
-    rw [multiGraftChildren_cons_cs c (pre' ++ old :: post),
-        multiGraftChildren_cons_cs c (pre' ++ new :: post)]
-    -- Three filter equalities.
-    have h_RP : pairs.filterMap rootPrependFilter =
-                (pairs.map (Prod.map (pathLiftRecurse (pre'.length + 1) f) id)).filterMap
-                  rootPrependFilter := by
-      rw [List.filterMap_map]
-      refine List.filterMap_congr fun pair _ => ?_
-      cases hp : pair.fst with
-      | nil => simp [hp, rootPrependFilter, pathLiftRecurse]
-      | cons i rest =>
-        by_cases h1 : i = pre'.length + 1
-        · subst h1; simp [hp, rootPrependFilter, pathLiftRecurse_cons_eq]
-        · simp [hp, rootPrependFilter,
-                pathLiftRecurse_cons_of_ne (pre'.length + 1) i f rest h1]
-    have h_cP : pairs.filterMap headChildFilter =
-                (pairs.map (Prod.map (pathLiftRecurse (pre'.length + 1) f) id)).filterMap
-                  headChildFilter := by
-      rw [List.filterMap_map]
-      refine List.filterMap_congr fun pair _ => ?_
-      cases hp : pair.fst with
-      | nil => simp [hp, headChildFilter, pathLiftRecurse]
-      | cons i rest =>
-        by_cases h1 : i = pre'.length + 1
-        · subst h1
-          simp [hp, headChildFilter, pathLiftRecurse_cons_eq]
-        · simp [hp, headChildFilter,
-                pathLiftRecurse_cons_of_ne (pre'.length + 1) i f rest h1]
-    have h_csP : (pairs.filterMap tailChildFilter).map
-                   (Prod.map (pathLiftRecurse pre'.length f) id) =
-                 (pairs.map (Prod.map (pathLiftRecurse (pre'.length + 1) f) id)).filterMap
-                   tailChildFilter := by
-      rw [List.filterMap_map, List.map_filterMap]
-      refine List.filterMap_congr fun pair _ => ?_
-      cases hp : pair.fst with
-      | nil => simp [hp, tailChildFilter, pathLiftRecurse]
-      | cons i rest =>
-        by_cases h1 : i = pre'.length + 1
-        · subst h1
-          simp [hp, tailChildFilter, pathLiftRecurse_cons_eq,
-                pathLiftRecurse_cons_eq pre'.length f rest]
-        · simp [hp, tailChildFilter,
-                pathLiftRecurse_cons_of_ne (pre'.length + 1) i f rest h1]
-          cases i with
-          | zero => simp
-          | succ j =>
-            have hjne : j ≠ pre'.length := by intro heq; apply h1; omega
-            simp [pathLiftRecurse_cons_of_ne pre'.length j f rest hjne]
-    -- Apply IH on pre' with input csP (= pairs.filterMap tailChildFilter).
-    -- IH gives PE on multiGrafts; unfold via multiGraft_node and discard empty rootPrepends
-    -- (tailChildFilter only produces non-empty fsts).
-    have h_ih := ih (pairs.filterMap tailChildFilter)
-    rw [h_csP] at h_ih
-    rw [multiGraft_node, multiGraft_node] at h_ih
-    have h_RP_lhs : (pairs.filterMap tailChildFilter).filterMap rootPrependFilter = [] := by
-      rw [List.filterMap_filterMap]
-      apply List.filterMap_eq_nil_iff.mpr
-      intro pair _
-      cases hp : pair.fst with
-      | nil => simp [hp, tailChildFilter]
-      | cons i rest =>
-        cases i with
-        | zero => simp [hp, tailChildFilter]
-        | succ j => simp [hp, tailChildFilter, rootPrependFilter]
-    have h_RP_rhs : ((pairs.map (Prod.map (pathLiftRecurse (pre'.length + 1) f) id)).filterMap
-                       tailChildFilter).filterMap rootPrependFilter = [] := by
-      rw [List.filterMap_filterMap, List.filterMap_map]
-      apply List.filterMap_eq_nil_iff.mpr
-      intro pair _
-      cases hp : pair.fst with
-      | nil => simp [hp, tailChildFilter, pathLiftRecurse]
-      | cons i rest =>
-        by_cases h1 : i = pre'.length + 1
-        · subst h1
-          simp [hp, tailChildFilter, pathLiftRecurse_cons_eq, rootPrependFilter]
-        · simp [hp, tailChildFilter,
-                pathLiftRecurse_cons_of_ne (pre'.length + 1) i f rest h1]
-          cases i with
-          | zero => simp
-          | succ j => simp [rootPrependFilter]
-    rw [h_RP_lhs, List.nil_append] at h_ih
-    rw [h_RP_rhs, List.nil_append] at h_ih
-    rw [← h_RP, ← h_cP]
-    -- Goal: node a (RP ++ multiGraft c cP :: mGC (pre' ++ old :: post) csP) ~PE~
-    --        node a (RP ++ multiGraft c cP :: mGC (pre' ++ new :: post) csP_relabeled)
-    exact perm_append_left_node _ (Perm.cons_child _ h_ih)
-
-/-- `multiGraft` is `Perm`-invariant under swap of two adjacent
-    root children, with pairs relabeled via `swapPathAt`. The proof
-    decomposes both sides into matching children lists (up to a single
-    swap of the two adjacent root children).
-
-    Sub-lemmas for the filter equalities are proved inline as `have`
-    statements to ensure the inline-match expressions unify with the
-    matcher generated by `multiGraft_node`. -/
-private theorem multiGraft_swap_perm
-    (a : α) (pre : List (RoseTree α)) (l r : RoseTree α)
-    (post : List (RoseTree α)) (pairs : List (Path × RoseTree α)) :
-    Perm
-      (multiGraft (RoseTree.node a (pre ++ l :: r :: post)) pairs)
-      (multiGraft (RoseTree.node a (pre ++ r :: l :: post))
-                  (pairs.map (pathRelabelSwap pre.length))) := by
-  -- The cleanest path: induct on pre, peeling off one child at a time.
-  -- Base case (pre = []) does the actual swap; inductive case lifts via
-  -- Perm.cons_child.
-  induction pre generalizing pairs with
-  | nil =>
-    simp only [List.nil_append, List.length_nil]
-    rw [multiGraft_node, multiGraft_node]
-    -- Build sub-perms and combine via Perm.node_of_perm.
-    have h_RP_perm : (pairs.filterMap fun pair => match pair.fst with
-                                                    | []     => some pair.snd
-                                                    | _ :: _ => none).Perm
-                      ((pairs.map (pathRelabelSwap 0)).filterMap
-                          fun pair => match pair.fst with
-                                       | []     => some pair.snd
-                                       | _ :: _ => none) := by
-      rw [List.filterMap_map]
-      apply List.Perm.of_eq
-      refine List.filterMap_congr fun pair _ => ?_
-      simp only [Function.comp, pathRelabelSwap_fst, pathRelabelSwap_snd]
-      cases hp : pair.fst with
-      | nil => rw [swapPathAt_nil]
-      | cons i rest =>
-        by_cases h1 : i = 0
-        · subst h1; rw [swapPathAt_cons_eq]
-        · by_cases h2 : i = 1
-          · subst h2; rw [swapPathAt_cons_eq_succ]
-          · rw [swapPathAt_cons_of_ne 0 i rest h1 h2]
-    have h_mGC_perm : (multiGraftChildren (l :: r :: post) pairs).Perm
-                      (multiGraftChildren (r :: l :: post)
-                          (pairs.map (pathRelabelSwap 0))) := by
-      -- Decompose both via cons_cs (now using top-level filter helpers).
-      rw [multiGraftChildren_cons_cs l (r :: post),
-          multiGraftChildren_cons_cs r (l :: post),
-          multiGraftChildren_cons_cs r post,
-          multiGraftChildren_cons_cs l post]
-      -- Three filter equalities, each via List.filterMap_map +
-      -- List.filterMap_filterMap + List.filterMap_congr + case analysis.
-      have h_l : pairs.filterMap headChildFilter =
-                 ((pairs.map (pathRelabelSwap 0)).filterMap tailChildFilter).filterMap
-                    headChildFilter := by
-        rw [List.filterMap_map, List.filterMap_filterMap]
-        refine List.filterMap_congr fun pair _ => ?_
-        cases hp : pair.fst with
-        | nil => simp [hp, headChildFilter, tailChildFilter]
-        | cons i rest =>
-          by_cases h1 : i = 0
-          · subst h1; simp [hp, headChildFilter, tailChildFilter,
-                            pathRelabelSwap, swapPathAt]
-          · by_cases h2 : i = 1
-            · subst h2; simp [hp, headChildFilter, tailChildFilter,
-                              pathRelabelSwap, swapPathAt]
-            · cases i with
-              | zero => exact absurd rfl h1
-              | succ j =>
-                cases j with
-                | zero => exact absurd rfl h2
-                | succ k => simp [hp, headChildFilter, tailChildFilter,
-                                  pathRelabelSwap, swapPathAt]
-      have h_r : (pairs.filterMap tailChildFilter).filterMap headChildFilter =
-                 (pairs.map (pathRelabelSwap 0)).filterMap headChildFilter := by
-        rw [List.filterMap_map, List.filterMap_filterMap]
-        refine List.filterMap_congr fun pair _ => ?_
-        cases hp : pair.fst with
-        | nil => simp [hp, headChildFilter, tailChildFilter]
-        | cons i rest =>
-          by_cases h1 : i = 0
-          · subst h1; simp [hp, headChildFilter, tailChildFilter,
-                            pathRelabelSwap, swapPathAt]
-          · by_cases h2 : i = 1
-            · subst h2; simp [hp, headChildFilter, tailChildFilter,
-                              pathRelabelSwap, swapPathAt]
-            · cases i with
-              | zero => exact absurd rfl h1
-              | succ j =>
-                cases j with
-                | zero => exact absurd rfl h2
-                | succ k => simp [hp, headChildFilter, tailChildFilter,
-                                  pathRelabelSwap, swapPathAt]
-      have h_post : (pairs.filterMap tailChildFilter).filterMap tailChildFilter =
-                    ((pairs.map (pathRelabelSwap 0)).filterMap tailChildFilter).filterMap
-                       tailChildFilter := by
-        rw [List.filterMap_map, List.filterMap_filterMap, List.filterMap_filterMap]
-        refine List.filterMap_congr fun pair _ => ?_
-        cases hp : pair.fst with
-        | nil => simp [hp, tailChildFilter]
-        | cons i rest =>
-          by_cases h1 : i = 0
-          · subst h1; simp [hp, tailChildFilter, pathRelabelSwap, swapPathAt]
-          · by_cases h2 : i = 1
-            · subst h2; simp [hp, tailChildFilter, pathRelabelSwap, swapPathAt]
-            · cases i with
-              | zero => exact absurd rfl h1
-              | succ j =>
-                cases j with
-                | zero => exact absurd rfl h2
-                | succ k => simp [hp, tailChildFilter, pathRelabelSwap, swapPathAt]
-      rw [h_l, h_r, h_post]
-      exact List.Perm.swap _ _ _
-    exact Perm.node_of_perm (List.Perm.append h_RP_perm h_mGC_perm)
-  | cons c pre' ih =>
-    -- pre = c :: pre'. n = pre'.length + 1.
-    -- Strategy: peel off `c` via multiGraftChildren_cons_cs, identify the
-    -- rootPrepends and head-child filter (invariant under relabel-at-(n+1)
-    -- since the relabel only swaps indices n+1, n+2), then apply IH on
-    -- pre' with input = pairs.filterMap tailChildFilter.
-    rw [show (c :: pre') ++ l :: r :: post = c :: (pre' ++ l :: r :: post) from rfl,
-        show (c :: pre') ++ r :: l :: post = c :: (pre' ++ r :: l :: post) from rfl,
-        show (c :: pre').length = pre'.length + 1 from rfl]
-    rw [multiGraft_node, multiGraft_node]
-    rw [multiGraftChildren_cons_cs c (pre' ++ l :: r :: post),
-        multiGraftChildren_cons_cs c (pre' ++ r :: l :: post)]
-    -- Three filter equalities.
-    have h_RP : pairs.filterMap rootPrependFilter =
-                (pairs.map (pathRelabelSwap (pre'.length + 1))).filterMap
-                  rootPrependFilter := by
-      rw [List.filterMap_map]
-      refine List.filterMap_congr fun pair _ => ?_
-      cases hp : pair.fst with
-      | nil => simp [hp, rootPrependFilter, pathRelabelSwap, swapPathAt]
-      | cons i rest =>
-        by_cases h1 : i = pre'.length + 1
-        · subst h1; simp [hp, rootPrependFilter, pathRelabelSwap, swapPathAt]
-        · by_cases h2 : i = pre'.length + 1 + 1
-          · subst h2; simp [hp, rootPrependFilter, pathRelabelSwap, swapPathAt]
-          · simp [hp, rootPrependFilter, pathRelabelSwap,
-                  swapPathAt_cons_of_ne (pre'.length + 1) i rest h1 h2]
-    have h_X_l : pairs.filterMap headChildFilter =
-                 (pairs.map (pathRelabelSwap (pre'.length + 1))).filterMap
-                   headChildFilter := by
-      rw [List.filterMap_map]
-      refine List.filterMap_congr fun pair _ => ?_
-      cases hp : pair.fst with
-      | nil => simp [hp, headChildFilter, pathRelabelSwap, swapPathAt]
-      | cons i rest =>
-        by_cases h1 : i = pre'.length + 1
-        · subst h1; simp [hp, headChildFilter, pathRelabelSwap, swapPathAt]
-        · by_cases h2 : i = pre'.length + 1 + 1
-          · subst h2; simp [hp, headChildFilter, pathRelabelSwap, swapPathAt]
-          · simp [hp, headChildFilter, pathRelabelSwap,
-                  swapPathAt_cons_of_ne (pre'.length + 1) i rest h1 h2]
-    have h_X_pre : (pairs.map (pathRelabelSwap (pre'.length + 1))).filterMap
-                       tailChildFilter =
-                   (pairs.filterMap tailChildFilter).map
-                       (pathRelabelSwap pre'.length) := by
-      rw [List.filterMap_map, List.map_filterMap]
-      refine List.filterMap_congr fun pair _ => ?_
-      cases hp : pair.fst with
-      | nil => simp [hp, tailChildFilter, pathRelabelSwap, swapPathAt]
-      | cons i rest =>
-        by_cases h1 : i = pre'.length + 1
-        · subst h1
-          simp [hp, tailChildFilter, pathRelabelSwap, swapPathAt]
-        · by_cases h2 : i = pre'.length + 1 + 1
-          · subst h2
-            simp [hp, tailChildFilter, pathRelabelSwap, swapPathAt]
-          · cases i with
-            | zero =>
-              simp [hp, tailChildFilter, pathRelabelSwap,
-                    swapPathAt_cons_of_ne (pre'.length + 1) 0 rest h1 h2]
-            | succ j =>
-              have hjne : j ≠ pre'.length := by intro heq; apply h1; omega
-              have hjne2 : j ≠ pre'.length + 1 := by intro heq; apply h2; omega
-              simp [hp, tailChildFilter, pathRelabelSwap,
-                    swapPathAt_cons_of_ne (pre'.length + 1) (j + 1) rest h1 h2,
-                    swapPathAt_cons_of_ne pre'.length j rest hjne hjne2]
-    -- Use IH on pre' with input = pairs.filterMap tailChildFilter.
-    have h_ih := ih (pairs.filterMap tailChildFilter)
-    -- IH: Perm (multiGraft (node a (pre' ++ l :: r :: post)) X_pre)
-    --                 (multiGraft (node a (pre' ++ r :: l :: post)) (X_pre.map ...))
-    -- Unfold both sides of IH to expose mGC.
-    rw [multiGraft_node, multiGraft_node] at h_ih
-    -- The rootPrepends in h_ih's LHS: (pairs.filterMap tailChildFilter).filterMap rootPrependFilter.
-    -- tailChildFilter never outputs empty fst, so this is [].
-    have h_empty_RP_lhs :
-        (pairs.filterMap tailChildFilter).filterMap rootPrependFilter = [] := by
-      rw [List.filterMap_filterMap]
-      apply List.filterMap_eq_nil_iff.mpr
-      intro pair _
-      cases hp : pair.fst with
-      | nil => simp [hp, tailChildFilter]
-      | cons i rest =>
-        cases i with
-        | zero => simp [hp, tailChildFilter]
-        | succ j => simp [hp, tailChildFilter, rootPrependFilter]
-    have h_empty_RP_rhs :
-        ((pairs.filterMap tailChildFilter).map (pathRelabelSwap pre'.length)).filterMap
-          rootPrependFilter = [] := by
-      rw [List.filterMap_map, List.filterMap_filterMap]
-      apply List.filterMap_eq_nil_iff.mpr
-      intro pair _
-      cases hp : pair.fst with
-      | nil => simp [hp, tailChildFilter]
-      | cons i rest =>
-        cases i with
-        | zero => simp [hp, tailChildFilter]
-        | succ j =>
-          by_cases hj1 : j = pre'.length
-          · subst hj1
-            simp [hp, tailChildFilter, pathRelabelSwap, rootPrependFilter,
-                  swapPathAt_cons_eq]
-          · by_cases hj2 : j = pre'.length + 1
-            · subst hj2
-              simp [hp, tailChildFilter, pathRelabelSwap, rootPrependFilter,
-                    swapPathAt_cons_eq_succ]
-            · simp [hp, tailChildFilter, pathRelabelSwap, rootPrependFilter,
-                    swapPathAt_cons_of_ne pre'.length j rest hj1 hj2]
-    rw [h_empty_RP_lhs, List.nil_append] at h_ih
-    rw [h_empty_RP_rhs, List.nil_append] at h_ih
-    -- Now h_ih has form: Perm (node a (mGC ... X_pre)) (node a (mGC ... X_pre_relabeled))
-    -- Use h_X_pre to rewrite X_pre_relabeled inside.
-    rw [← h_X_pre] at h_ih
-    -- Lift IH through cons (multiGraft c X_l ::) and append_left (RP ++).
-    have h_after_cons : Perm
-        (RoseTree.node a (multiGraft c (pairs.filterMap headChildFilter) ::
-                         multiGraftChildren (pre' ++ l :: r :: post)
-                           (pairs.filterMap tailChildFilter)))
-        (RoseTree.node a (multiGraft c (pairs.filterMap headChildFilter) ::
-                         multiGraftChildren (pre' ++ r :: l :: post)
-                           ((pairs.map (pathRelabelSwap (pre'.length + 1))).filterMap
-                             tailChildFilter))) :=
-      Perm.cons_child _ h_ih
-    have h_after_append := perm_append_left_node
-                            (pairs.filterMap rootPrependFilter) h_after_cons
-    -- Goal's RHS uses relabeled forms; rewrite back to unrelabeled to match
-    -- h_after_append.
-    rw [← h_RP, ← h_X_l]
-    exact h_after_append
-
-/-! ### §6.3 substrate for `insertion_perm_host`
-
-The `swapAtRoot` case of `insertion_permStep_host` needs to lift a Perm
-of vertices into a Perm of choice lists (via `listChoices`), then combine
-with `multiGraft_swap_perm` to get equal `mk`-mapped insertion
-outputs. Helpers below build this bridge. -/
-
-/-- `listChoices` respects `List.Perm` of the source: a Perm of `xs` and
-    `ys` lifts to a Perm of `listChoices xs n` and `listChoices ys n`. -/
-private theorem listChoices_perm {β : Type*} {xs ys : List β}
-    (h : xs.Perm ys) (n : Nat) :
-    (listChoices xs n).Perm (listChoices ys n) := by
-  induction n with
-  | zero => exact List.Perm.refl _
-  | succ n ih =>
-    rw [listChoices_succ, listChoices_succ]
-    refine h.flatMap (fun b _ => ?_)
-    exact ih.map _
-
-/-- Generic lifting: a path bijection `f` that turns vertices of `t` into a
-    `Perm` of vertices of `t'` and turns `multiGraft t pairs` into a
-    `Perm` of `multiGraft t' (pairs.map (Prod.map f id))` lifts to
-    `mk`-equality of `insertion t Ts` and `insertion t' Ts`. -/
-private theorem insertion_eq_of_pathBij {t t' : RoseTree α}
-    (f : Path → Path)
-    (hf_perm : ((vertices t).map f).Perm (vertices t'))
-    (hf_graft : ∀ pairs, Perm (multiGraft t pairs)
-                                      (multiGraft t' (pairs.map (Prod.map f id))))
-    (Ts : List (RoseTree α)) :
-    (insertion t Ts).map UnorderedTree.mk = (insertion t' Ts).map UnorderedTree.mk := by
-  rw [insertion_def, insertion_def, Multiset.map_coe, Multiset.map_coe,
-      List.map_map, List.map_map]
-  refine Quot.sound ?_
-  have hlc_eq : listChoices ((vertices t).map f) Ts.length =
-                (listChoices (vertices t) Ts.length).map (List.map f) :=
-    listChoices_map _ _ _
-  have hlc_perm := listChoices_perm hf_perm Ts.length
-  rw [hlc_eq] at hlc_perm
-  -- LHS values agree with t'-multiGraft after relabel; RHS values are just t'-multiGraft.
-  have step1 :
-      ((listChoices (vertices t) Ts.length).map
-          (fun choice => UnorderedTree.mk (multiGraft t (choice.zip Ts)))).Perm
-      ((listChoices (vertices t) Ts.length).map
-          (fun choice => UnorderedTree.mk (multiGraft t' ((choice.map f).zip Ts)))) := by
-    apply List.Perm.of_eq
-    apply List.map_congr_left
-    intro choice _
-    apply UnorderedTree.mk_eq_mk_iff.mpr
-    have h_mge := hf_graft (choice.zip Ts)
-    have h_zip : (choice.zip Ts).map (Prod.map f id) = (choice.map f).zip Ts := by
-      simp [List.zip_map_left]
-    rw [h_zip] at h_mge
-    exact h_mge
-  have step2 :
-      ((listChoices (vertices t) Ts.length).map
-          (fun choice => UnorderedTree.mk (multiGraft t' ((choice.map f).zip Ts)))).Perm
-      ((listChoices (vertices t') Ts.length).map
-          (fun choice => UnorderedTree.mk (multiGraft t' (choice.zip Ts)))) := by
-    have := hlc_perm.map (fun choice => UnorderedTree.mk (multiGraft t' (choice.zip Ts)))
-    rw [List.map_map] at this
-    exact this
-  exact step1.trans step2
-
-/-- A path bijection `f` relating the vertex enumeration and `multiGraft`
-    behaviour of `t` and `t'`, the data `insertion_eq_of_pathBij` turns into
-    `mk`-equality. Reflexive and transitive, and produced by every `Perm`
-    of hosts (`hasPathBij_of_perm`). -/
-private def HasPathBij (t t' : RoseTree α) : Prop :=
-  ∃ f : Path → Path,
-    ((vertices t).map f).Perm (vertices t') ∧
-    ∀ pairs, Perm (multiGraft t pairs)
-                  (multiGraft t' (pairs.map (Prod.map f id)))
-
-private theorem HasPathBij.refl (t : RoseTree α) : HasPathBij t t :=
-  ⟨id, by simp, fun pairs => by simpa using Perm.refl _⟩
-
-private theorem HasPathBij.trans {t t' t'' : RoseTree α}
-    (h₁ : HasPathBij t t') (h₂ : HasPathBij t' t'') : HasPathBij t t'' := by
-  obtain ⟨f, hvf, hgf⟩ := h₁
-  obtain ⟨g, hvg, hgg⟩ := h₂
-  refine ⟨g ∘ f, ?_, fun pairs => ?_⟩
-  · rw [← List.map_map]
-    exact (hvf.map g).trans hvg
-  · refine (hgf pairs).trans ?_
-    have h := hgg (pairs.map (Prod.map f id))
-    rw [List.map_map,
-        show (Prod.map g id ∘ Prod.map f id) = Prod.map (g ∘ f) id from
-          funext fun _ => rfl] at h
-    exact h
-
-mutual
-/-- Every `Perm` of hosts admits a path bijection. For a `swap` of two root
-    children the bijection is `swapPathAt`; for a `cons` (a `Perm` on one
-    child) it is `pathLiftRecurse` of the child's bijection; both thread a
-    child-prefix context via the mutually-recursive `PermList` companion. -/
-private theorem hasPathBij_of_perm :
-    ∀ {t t' : RoseTree α}, Perm t t' → HasPathBij t t'
-  | _, _, .node h => hasPathBij_of_permList h _ []
-  | _, _, .trans h₁ h₂ => (hasPathBij_of_perm h₁).trans (hasPathBij_of_perm h₂)
-
-/-- Companion of `hasPathBij_of_perm`: a `PermList` of children, in any
-    prefix context, gives a path bijection on the enclosing node. -/
-private theorem hasPathBij_of_permList :
-    ∀ {cs ds : List (RoseTree α)}, PermList cs ds →
-      ∀ (a : α) (pre : List (RoseTree α)),
-        HasPathBij (.node a (pre ++ cs)) (.node a (pre ++ ds))
-  | _, _, .nil, _, _ => .refl _
-  | _, _, @PermList.cons _ c d cs ds hcd hs, a, pre => by
-    obtain ⟨f, hvf, hgf⟩ := hasPathBij_of_perm hcd
-    have head : HasPathBij (.node a (pre ++ c :: cs)) (.node a (pre ++ d :: cs)) :=
-      ⟨pathLiftRecurse pre.length f,
-       vertices_recurse_perm a pre c d cs f hvf,
-       fun pairs => multiGraft_recurse_perm a f hgf pre cs pairs⟩
-    have tail := hasPathBij_of_permList hs a (pre ++ [d])
-    simp only [List.append_assoc, List.singleton_append] at tail
-    exact head.trans tail
-  | _, _, .swap c d cs, a, pre =>
-    ⟨swapPathAt pre.length, vertices_swap_perm a pre d c cs,
-     fun pairs => multiGraft_swap_perm a pre d c cs pairs⟩
-  | _, _, .trans h₁ h₂, a, pre =>
-    (hasPathBij_of_permList h₁ a pre).trans (hasPathBij_of_permList h₂ a pre)
-end
-
-/-- `insertion T Ts` is `mk`-invariant under `Perm` of the host. -/
-private theorem insertion_perm_host (Ts : List (RoseTree α))
-    {t t' : RoseTree α} (h : Perm t t') :
-    (insertion t Ts).map UnorderedTree.mk =
-      (insertion t' Ts).map UnorderedTree.mk := by
-  obtain ⟨f, hf_perm, hf_graft⟩ := hasPathBij_of_perm h
-  exact insertion_eq_of_pathBij f hf_perm hf_graft Ts
 
 /-- `List.Forall₂ Perm` lifts to `List` equality after mapping by
     `UnorderedTree.mk` — used for the `Ts = []` base case of forest host
@@ -1286,34 +488,6 @@ private theorem map_mk_eq_of_forall2_perm {F F' : List (RoseTree α)}
   induction h with
   | nil => rfl
   | cons hd_pe _ ih => simp [UnorderedTree.mk_eq_mk_iff.mpr hd_pe, ih]
-
-/-- Forest host invariance: `Forall₂ Perm F F'` lifts to
-    `mk`-equality of `insertionForest F Ts` and `insertionForest F' Ts`. -/
-theorem insertionForest_perm_host
-    (Ts : List (RoseTree α)) {F F' : List (RoseTree α)}
-    (h : List.Forall₂ Perm F F') :
-    (insertionForest F Ts).map (List.map UnorderedTree.mk) =
-      (insertionForest F' Ts).map (List.map UnorderedTree.mk) := by
-  induction h generalizing Ts with
-  | nil => rfl
-  | @cons T T' F_tail F'_tail hd_pe _ ih =>
-    rw [insertionForest_cons, insertionForest_cons, Multiset.map_bind, Multiset.map_bind]
-    refine Multiset.bind_congr fun p _ => ?_
-    rw [Multiset.map_bind, Multiset.map_bind]
-    simp only [Multiset.map_map, Function.comp, List.map_cons]
-    let f_T : UnorderedTree α → Multiset (List (UnorderedTree α)) := fun mk_T_ins =>
-      (insertionForest F_tail p.2).map (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk)
-    let f_T' : UnorderedTree α → Multiset (List (UnorderedTree α)) := fun mk_T_ins =>
-      (insertionForest F'_tail p.2).map (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk)
-    change (insertion T _).bind (fun T_ins => f_T (UnorderedTree.mk T_ins)) =
-      (insertion T' _).bind (fun T_ins => f_T' (UnorderedTree.mk T_ins))
-    rw [← Multiset.bind_map, ← Multiset.bind_map, insertion_perm_host _ hd_pe]
-    refine Multiset.bind_congr fun mk_T_ins _ => ?_
-    show (insertionForest F_tail _).map (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk) =
-      (insertionForest F'_tail _).map (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk)
-    rw [show (fun F_ins : List (RoseTree α) => mk_T_ins :: F_ins.map UnorderedTree.mk) =
-        ((fun L : List (UnorderedTree α) => mk_T_ins :: L) ∘ List.map UnorderedTree.mk) from rfl,
-      ← Multiset.map_map, ← Multiset.map_map, ih]
 
 /-- Forest guest invariance: `List.Perm` of guests lifts to `mk`-equality of
     `insertionForest`. -/
@@ -1338,7 +512,162 @@ theorem insertionForest_forall₂_perm_guests
   exact List.map_congr_left fun choice _ => map_mk_eq_of_forall2_perm
     (multiGraftChildren_perm_pair_Forall₂ F (zip_pair_Forall₂ choice h))
 
-/-! ### §8: Singleton hosts and single guests
+/-! ## Descent to `UnorderedTree.mk`
+
+`UnorderedTree.insertionMultiset` reads `insertionForest` through `L ↦ ↑(L.map mk)`, which
+forgets the order of each output list. At that level the host list may be permuted, each host
+may be replaced by a `Perm`-related tree, and the guests by any list with the same `mk`-image:
+`insertion_node` and `insertionForest_cons` push `mk` through the recursion, and a host
+permutation reduces to swapping two adjacent hosts under `insertionForest_append`. -/
+
+private theorem msform_cons (T : RoseTree α) (L : List (RoseTree α)) :
+    (↑((T :: L).map UnorderedTree.mk) : Multiset (UnorderedTree α)) =
+      UnorderedTree.mk T ::ₘ ↑(L.map UnorderedTree.mk) := rfl
+
+private theorem msform_append (A B : List (RoseTree α)) :
+    (↑((A ++ B).map UnorderedTree.mk) : Multiset (UnorderedTree α)) =
+      ↑(A.map UnorderedTree.mk) + ↑(B.map UnorderedTree.mk) := by
+  rw [List.map_append, Multiset.coe_add]
+
+/-- The host-forest recursion under `mk`. -/
+theorem insertionForest_cons_msform (T : RoseTree α) (F gs : List (RoseTree α)) :
+    (insertionForest (T :: F) gs).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
+      (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun p =>
+        ((insertion T p.1).map UnorderedTree.mk).bind fun X =>
+          ((insertionForest F p.2).map
+            (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))).map
+            (X ::ₘ ·) := by
+  rw [insertionForest_cons, Multiset.map_bind]
+  refine Multiset.bind_congr fun p _ => ?_
+  rw [Multiset.map_bind, Multiset.bind_map]
+  refine Multiset.bind_congr fun T' _ => ?_
+  rw [Multiset.map_map, Multiset.map_map]
+  exact Multiset.map_congr rfl fun L _ => msform_cons T' L
+
+/-- The node-host decomposition under `mk`. -/
+theorem insertion_node_msform (a : α) (cs gs : List (RoseTree α)) :
+    (insertion (RoseTree.node a cs) gs).map UnorderedTree.mk =
+      (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun p =>
+        ((insertionForest cs p.2).map
+            (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))).map fun X =>
+          UnorderedTree.node a (↑(p.1.map UnorderedTree.mk) + X) := by
+  rw [insertion_node, Multiset.map_bind]
+  refine Multiset.bind_congr fun p _ => ?_
+  rw [Multiset.map_map, Multiset.map_map]
+  refine Multiset.map_congr rfl fun cs' _ => ?_
+  show UnorderedTree.mk (RoseTree.node a (p.1 ++ cs')) = _
+  rw [← UnorderedTree.node_mk_tree_list, List.map_append, ← Multiset.coe_add]
+  rfl
+
+/-- Two hosts commute once output order is forgotten. -/
+private theorem insertionForest_pair_swap_msform (x y : RoseTree α) (gs : List (RoseTree α)) :
+    (insertionForest [y, x] gs).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
+      (insertionForest [x, y] gs).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) := by
+  rw [show [y, x] = [y] ++ [x] from rfl, show [x, y] = [x] ++ [y] from rfl,
+    insertionForest_append, insertionForest_append, Multiset.map_bind, Multiset.map_bind,
+    Multiset.bind_revzip_sublists'_swap gs fun r s =>
+      ((insertionForest [y] r).bind fun A => (insertionForest [x] s).map (A ++ ·)).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))]
+  refine Multiset.bind_congr fun p _ => ?_
+  rw [Multiset.map_bind, Multiset.map_bind]
+  simp only [Multiset.map_map]
+  simp only [← Multiset.bind_singleton]
+  rw [Multiset.bind_bind]
+  refine Multiset.bind_congr fun A _ => Multiset.bind_congr fun B _ => ?_
+  show ({(↑((B ++ A).map UnorderedTree.mk) : Multiset (UnorderedTree α))} : Multiset _) =
+    {(↑((A ++ B).map UnorderedTree.mk) : Multiset (UnorderedTree α))}
+  rw [msform_append, msform_append, add_comm]
+
+/-- Host-`Perm` invariance once output order is forgotten. -/
+theorem insertionForest_perm_host_msform {host host' : List (RoseTree α)} (h : host.Perm host')
+    (gs : List (RoseTree α)) :
+    (insertionForest host gs).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
+      (insertionForest host' gs).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) := by
+  induction h generalizing gs with
+  | nil => rfl
+  | cons x _ ih =>
+    rw [insertionForest_cons, insertionForest_cons, Multiset.map_bind, Multiset.map_bind]
+    refine Multiset.bind_congr fun p _ => ?_
+    rw [Multiset.map_bind, Multiset.map_bind]
+    refine Multiset.bind_congr fun T' _ => ?_
+    rw [Multiset.map_map, Multiset.map_map,
+      show ((fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) ∘ (T' :: ·)) =
+        ((UnorderedTree.mk T' ::ₘ ·) ∘
+          (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))) from
+        funext fun L => msform_cons T' L,
+      ← Multiset.map_map, ← Multiset.map_map, ih]
+  | swap x y l =>
+    rw [show y :: x :: l = [y, x] ++ l from rfl, show x :: y :: l = [x, y] ++ l from rfl,
+      insertionForest_append, insertionForest_append, Multiset.map_bind, Multiset.map_bind]
+    refine Multiset.bind_congr fun p _ => ?_
+    have key : ∀ hs : List (RoseTree α),
+        ((insertionForest hs p.1).bind fun A => (insertionForest l p.2).map (A ++ ·)).map
+            (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
+          ((insertionForest hs p.1).map
+            (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))).bind fun M =>
+            (insertionForest l p.2).map fun B => M + ↑(B.map UnorderedTree.mk) := by
+      intro hs
+      rw [Multiset.map_bind, Multiset.bind_map]
+      refine Multiset.bind_congr fun A _ => ?_
+      rw [Multiset.map_map]
+      exact Multiset.map_congr rfl fun B _ => msform_append A B
+    rw [key, key, insertionForest_pair_swap_msform]
+  | trans _ _ ih₁ ih₂ => exact (ih₁ gs).trans (ih₂ gs)
+
+mutual
+/-- `insertion` is `mk`-invariant under `Perm` of the host. -/
+theorem insertion_perm_host : ∀ {t t' : RoseTree α}, Perm t t' → ∀ Ts : List (RoseTree α),
+    (insertion t Ts).map UnorderedTree.mk = (insertion t' Ts).map UnorderedTree.mk
+  | _, _, .node h, Ts => by
+    rw [insertion_node_msform, insertion_node_msform]
+    exact Multiset.bind_congr fun p _ => by rw [insertionForest_permList_host_msform h]
+  | _, _, .trans h₁ h₂, Ts => (insertion_perm_host h₁ Ts).trans (insertion_perm_host h₂ Ts)
+/-- `insertionForest` is `mk`-invariant under `PermList` of the hosts. -/
+theorem insertionForest_permList_host_msform :
+    ∀ {cs ds : List (RoseTree α)}, PermList cs ds → ∀ gs : List (RoseTree α),
+    (insertionForest cs gs).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
+      (insertionForest ds gs).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))
+  | _, _, .nil, _ => rfl
+  | _, _, .cons hcd hs, gs => by
+    rw [insertionForest_cons_msform, insertionForest_cons_msform]
+    exact Multiset.bind_congr fun p _ => by
+      rw [insertion_perm_host hcd, insertionForest_permList_host_msform hs]
+  | _, _, .swap c d cs, gs => insertionForest_perm_host_msform (List.Perm.swap c d cs) gs
+  | _, _, .trans h₁ h₂, gs =>
+    (insertionForest_permList_host_msform h₁ gs).trans
+      (insertionForest_permList_host_msform h₂ gs)
+end
+
+/-- Guest invariance once output order is forgotten: guest lists with the same `mk`-image
+    multiset give the same outputs. -/
+theorem insertionForest_msform_invariance_guests [DecidableEq α]
+    (host : List (RoseTree α)) {gs1 gs2 : List (RoseTree α)}
+    (h : (gs1.map UnorderedTree.mk).Perm (gs2.map UnorderedTree.mk)) :
+    (insertionForest host gs1).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
+      (insertionForest host gs2).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) := by
+  obtain ⟨gs_mid, hperm, hF⟩ := List.exists_perm_forall₂_of_map_perm UnorderedTree.mk h
+  have h_forall : List.Forall₂ RoseTree.Perm gs_mid gs2 :=
+    hF.imp fun a b (h : UnorderedTree.mk a = UnorderedTree.mk b) => UnorderedTree.mk_eq_mk_iff.mp h
+  have hwrap : ∀ s : Multiset (List (RoseTree α)),
+      s.map (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
+        (s.map (List.map UnorderedTree.mk)).map
+          fun L : List (UnorderedTree α) => (↑L : Multiset (UnorderedTree α)) := by
+    intro s
+    rw [Multiset.map_map]
+    rfl
+  rw [hwrap, hwrap, insertionForest_perm_guests host hperm,
+    insertionForest_forall₂_perm_guests host h_forall]
+
+/-! ## Singleton hosts and single guests
 
 A one-tree host reduces `insertionForest` to `insertion`, and a single guest reduces
 `insertion` to the pre-Lie product `RoseTree.insertSum`. -/

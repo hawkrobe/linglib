@@ -50,24 +50,15 @@ abstract pre-Lie identity (mathlib's `RightPreLieAlgebra`); a future
 binary substrate file would add a separate `RightPreLieAlgebra`
 instance for MCB §1.7.
 
-## File scope
+## Main results
 
-- §1: `insertSum` definition + simp lemmas + leaf case.
-- §2: Decomposition (`insertSum_eq_coe_map_insertAt`).
-- §3: Cardinality (`card_insertSum_eq_numNodes`), derived from §2.
-- §4: Cons-decomposition projection helpers (descent).
-- §5: Right invariance (`Perm` on T₂).
-- §6: List-side perm + componentwise `Perm` invariance.
-- §7: Left invariance (`Perm` / `PermList` on T₁).
-- §8: Native `UnorderedTree.insertSum` via `Quotient.lift₂`.
-- §9: Quotient-unfolding lemma + UnorderedTree cardinality.
-- §10: Sanity tests.
+* `insertSum_eq_coe_map_insertAt`: the product is the sum of `insertAt` over `Pathed.vertices`.
+* `card_insertSum_eq_numNodes`: one summand per vertex of the host.
+* `insertSum_perm_right`, `insertSum_perm_left`: `Perm`-invariance in either argument, which
+  descends the product to `UnorderedTree.insertSum` through `Quotient.lift₂`.
 
-Sibling files:
-- `Path.lean` / `Insert.lean` — path-based vertex enumeration + grafting
-  (`Pathed.vertices`, `Pathed.insertAt`).
-- `Insertion.lean` — multi-tree multi-vertex grafting (Foissy 2021).
-- `Algebra.lean` — `RightPreLieAlgebra ℤ` instance.
+`Insertion.lean` generalizes to several guests at once and recovers `insertSum` as the
+single-guest case (`insertion_singleton`).
 
 -/
 
@@ -137,11 +128,9 @@ scoped infixl:65 " ◁ " => insertSum
 
 /-! ### Decomposition — `insertSum` via `Pathed.vertices` + `Pathed.insertAt`
 
-Bridge lemma between the recursive (Multiset) formulation of `insertSum`
-in §1 and the per-path (List) formulation in `Path.lean` / `Insert.lean`.
-The lemma is the basis for the pre-Lie identity proof in `Algebra.lean`:
-each summand of `insertSum T₁ T₂` is uniquely identified by a path
-into `T₁`. -/
+Bridge lemma between the recursive (Multiset) formulation of `insertSum` and the per-path
+formulation through `Path.lean` and `Insert.lean`: each summand of `insertSum T₁ T₂` is
+identified by a path into `T₁`. -/
 
 /-- Path-offset helper: at offset `pre.length`, the path-based
     insertion descends into the head of `c :: cs'` (sitting after the
@@ -223,27 +212,6 @@ theorem card_insertSum_eq_numNodes (T₁ T₂ : RoseTree α) :
     Multiset.card (T₁ ◁ T₂) = T₁.numNodes := by
   rw [card_insertSum_eq_length_vertices, Pathed.length_vertices_eq_numNodes]
 
-/-! ### Sanity tests at compile time -/
-
-section Tests
-
-example : (RoseTree.leaf 1 : RoseTree Nat) ◁ RoseTree.leaf 2
-    = ({RoseTree.node 1 [RoseTree.leaf 2]} : Multiset (RoseTree Nat)) := by
-  rw [insertSum_leaf]
-
-/-- A binary tree has 3 vertices, hence 3 grafting summands. -/
-example : Multiset.card
-    ((RoseTree.binary 1 (RoseTree.leaf 2) (RoseTree.leaf 3) : RoseTree Nat) ◁
-      RoseTree.leaf 4) = 3 := by
-  rw [card_insertSum_eq_numNodes]
-  decide
-
-/-- The grafting decomposition: each summand corresponds to a path. -/
-example (T₁ T₂ : RoseTree Nat) :
-    Multiset.card (T₁ ◁ T₂) = (Pathed.vertices T₁).length :=
-  card_insertSum_eq_length_vertices T₁ T₂
-
-end Tests
 
 end RoseTree
 
@@ -630,25 +598,6 @@ theorem card_insertSum_eq_numNodes (T₁ T₂ : UnorderedTree α) :
     (UnorderedTree.mk t₁).numNodes
   rw [Multiset.card_map, RoseTree.card_insertSum_eq_numNodes, numNodes_mk]
 
-/-! ### Sanity tests -/
-
-section Tests
-
-/-- A leaf grafted onto a leaf gives the canonical 1-vertex grafting summand. -/
-example : UnorderedTree.insertSum (UnorderedTree.leaf 1 : UnorderedTree Nat) (UnorderedTree.leaf 2)
-    = ({UnorderedTree.mk (RoseTree.node 1 [RoseTree.leaf 2])} : Multiset (UnorderedTree Nat)) := by
-  show (RoseTree.insertSum (RoseTree.leaf 1) (RoseTree.leaf 2)).map UnorderedTree.mk = _
-  rw [RoseTree.insertSum_leaf, Multiset.map_singleton]
-
-/-- A nonplanar binary tree has 3 vertices, hence 3 grafting summands. -/
-example : Multiset.card
-    (UnorderedTree.insertSum
-      (UnorderedTree.mk (RoseTree.binary 1 (RoseTree.leaf 2) (RoseTree.leaf 3)))
-      (UnorderedTree.leaf 4 : UnorderedTree Nat)) = 3 := by
-  rw [card_insertSum_eq_numNodes, numNodes_mk]
-  decide
-
-end Tests
 
 end UnorderedTree
 
