@@ -65,10 +65,12 @@ abbrev Polarity := ℤˣ
 
 namespace Polarity
 
-/-- The unmarked member of an antonym pair (*tall*, *hot*). -/
+/-- The member of an antonym pair measuring in the scale's increasing direction (*tall*, *hot*);
+markedness is a separate matter, since equipollent pairs like *hot*/*cold* have no unmarked
+member. -/
 def positive : Polarity := 1
 
-/-- The marked member of an antonym pair (*short*, *cold*). -/
+/-- The member of an antonym pair measuring on the dual scale (*short*, *cold*). -/
 def negative : Polarity := -1
 
 theorem positive_eq_one : positive = 1 := rfl
