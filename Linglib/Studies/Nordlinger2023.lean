@@ -21,11 +21,11 @@ This file formalizes the generalizations of the review of reciprocal constructio
 [nordlinger-2023], which organizes the classificatory work of [nedjalkov-2007a],
 [maslova-2008], [evans-2008], and [siloni-2012] around two correlations. Nominal and
 argument strategies tend to preserve the valency of the base verb while verb-marking
-strategies tend to reduce it, so across the sampled profiles every nominal primary
-strategy is bivalent and every monovalent construction is verb-marked
-(`nominal_strategy_bivalent`, `monovalent_implies_verbal`), and the observed valency
-follows the strategy's default everywhere but Wambaya, whose ergative-retaining
-reflexive–reciprocal clause stays bivalent (`valency_follows_default_except_wambaya`).
+strategies tend to reduce it: across the sampled profiles the observed valency is the
+strategy's default, derived in the substrate from the coding-frame effect of
+reciprocalization (`valency_follows_default`), so every nominal primary strategy is
+bivalent and every monovalent construction is verb-marked (`nominal_strategy_bivalent`,
+`monovalent_implies_verbal`).
 Discontinuous reciprocals, with the reciprocants split across the subject and a comitative
 phrase, are licensed exactly for lexically formed reciprocal verbs on the typology of
 [siloni-2012], which the review's Greek, Swahili, Hungarian, French, and Czech judgments
@@ -70,8 +70,6 @@ open Reciprocal
     first) plus the observed valency, formation locus, and discontinuity
     judgments from the review; the primary strategy is derived from the inventory. -/
 structure RecipProfile where
-  language : String
-  iso : String
   /-- Marker inventory (primary strategy first), sourced from the
       language's `Fragments/{Lang}/Reciprocals.lean`. -/
   markers : List Marker
@@ -83,7 +81,7 @@ structure RecipProfile where
       ([nordlinger-2023] §3.3 judgments), independent of `formation` so
       Siloni's prediction can be checked rather than stipulated -/
   discontinuousAttested : Option Bool := none
-  deriving Repr, DecidableEq
+  deriving DecidableEq
 
 /-- Primary strategy: the strategy of the inventory's first marker. -/
 def RecipProfile.primaryStrategy (p : RecipProfile) : Option Strategy :=
@@ -98,8 +96,7 @@ def RecipProfile.primaryStrategy (p : RecipProfile) : Option Strategy :=
     formation-level discontinuity value is recorded. Expresses all six
     reciprocity types (ex. 44). -/
 def rpEnglish : RecipProfile :=
-  { language := "English", iso := "eng"
-  , markers := English.Reciprocals.markers
+  { markers := English.Reciprocals.markers
   , valency := .bivalent }
 
 /-- Russian: bipartite NP *drug druga* 'other other-ACC'
@@ -108,8 +105,7 @@ def rpEnglish : RecipProfile :=
     (monovalent; ex. 31). Unlike French *se* (a separable clitic),
     *-sja* is a bound suffix. -/
 def rpRussian : RecipProfile :=
-  { language := "Russian", iso := "rus"
-  , markers := Russian.Reciprocals.markers
+  { markers := Russian.Reciprocals.markers
   , valency := .bivalent }
 
 /-- Swahili: verbal affix *-an-* (monovalent, distinct from reflexive
@@ -119,8 +115,7 @@ def rpRussian : RecipProfile :=
     presented in §3.3 ([siloni-2012] itself does not discuss Swahili).
     The morphological rule is `Swahili.Reciprocals.reciprocalAffix`. -/
 def rpSwahili : RecipProfile :=
-  { language := "Swahili", iso := "swh"
-  , markers := Swahili.Reciprocals.markers
+  { markers := Swahili.Reciprocals.markers
   , valency := .monovalent
   , formation := some .lexical
   , discontinuousAttested := some true }
@@ -130,8 +125,7 @@ def rpSwahili : RecipProfile :=
     own classification; forms discontinuous reciprocals with comitative
     *-val* (ex. 38, from [dimitriadis-2008]). -/
 def rpHungarian : RecipProfile :=
-  { language := "Hungarian", iso := "hun"
-  , markers := Hungarian.Reciprocals.markers
+  { markers := Hungarian.Reciprocals.markers
   , valency := .monovalent
   , formation := some .lexical
   , discontinuousAttested := some true }
@@ -143,8 +137,7 @@ def rpHungarian : RecipProfile :=
     reading (ex. 35). Syntax-formed, and discontinuous reciprocals are
     ungrammatical (ex. 39). -/
 def rpFrench : RecipProfile :=
-  { language := "French", iso := "fra"
-  , markers := French.Reciprocals.markers
+  { markers := French.Reciprocals.markers
   , valency := .monovalent
   , formation := some .syntactic
   , discontinuousAttested := some false }
@@ -157,8 +150,7 @@ def rpFrench : RecipProfile :=
     lexicon-formed under Siloni's typology as presented in §3.3
     ([siloni-2012] itself does not discuss Greek). -/
 def rpGreek : RecipProfile :=
-  { language := "Modern Greek", iso := "ell"
-  , markers := Greek.StandardModern.Reciprocals.markers
+  { markers := Greek.StandardModern.Reciprocals.markers
   , valency := .monovalent
   , formation := some .lexical
   , discontinuousAttested := some true }
@@ -169,8 +161,7 @@ def rpGreek : RecipProfile :=
     *sich*-reciprocals are syntactic reciprocal verbs; the review does
     not take this up, so no formation value is recorded. -/
 def rpGerman : RecipProfile :=
-  { language := "German", iso := "deu"
-  , markers := German.Reciprocals.markers
+  { markers := German.Reciprocals.markers
   , valency := .bivalent }
 
 /-- Mandarin: compound verb strategy *dǎ-lái-dǎ-qù*
@@ -179,21 +170,19 @@ def rpGerman : RecipProfile :=
     [konig-kokutani-2006]); [evans-2008] treats verb compounding as a
     multiclausal strategy. -/
 def rpMandarin : RecipProfile :=
-  { language := "Mandarin", iso := "cmn"
-  , markers := Mandarin.Reciprocals.markers
+  { markers := Mandarin.Reciprocals.markers
   , valency := .monovalent }
 
-/-- Wambaya: reciprocal clitic *-ngg-* (RR morpheme in the auxiliary),
-    identical to reflexive. [nordlinger-2023] ex. 11 (citing
-    [nordlinger-1998], p. 142). Bivalent: nominal subjects retain
-    ergative marking under reciprocalization ([evans-et-al-2007]:
-    transitivity is compromised but argument structure undisturbed);
-    the NOM subject in ex. 11 is a free pronoun, which declines
-    nominative/accusative regardless of transitivity
-    ([nordlinger-1998]). -/
+/-- Wambaya: bound reciprocal pronoun *-ngg-* (RR morpheme in the
+    auxiliary's pronominal complex), identical to reflexive
+    ([nordlinger-2023] ex. 11, citing [nordlinger-1998]); grouped with
+    the NP strategies of ex. 9–10 by [konig-kokutani-2006] and
+    [evans-2008]. Bivalent: nominal subjects retain ergative marking
+    under reciprocalization ([evans-et-al-2007]); the NOM subject in
+    ex. 11 is a free pronoun, which declines nominative/accusative
+    regardless of transitivity ([nordlinger-1998]). -/
 def rpWambaya : RecipProfile :=
-  { language := "Wambaya", iso := "wmb"
-  , markers := Wambaya.Reciprocals.markers
+  { markers := Wambaya.Reciprocals.markers
   , valency := .bivalent }
 
 /-- Icelandic: bipartite NP *hvort annað*, each part independently
@@ -202,15 +191,13 @@ def rpWambaya : RecipProfile :=
     *annað* shows the clause remains transitive.
     [nordlinger-2023] ex. 17 (citing [hurst-nordlinger-2021]). -/
 def rpIcelandic : RecipProfile :=
-  { language := "Icelandic", iso := "isl"
-  , markers := Icelandic.Reciprocals.markers
+  { markers := Icelandic.Reciprocals.markers
   , valency := .bivalent }
 
 /-- Chicheŵa: verbal affix *-an-* (monovalent).
     [nordlinger-2023] ex. 20 (citing [dalrymple-et-al-1994]). -/
 def rpChichewa : RecipProfile :=
-  { language := "Chicheŵa", iso := "nya"
-  , markers := Chichewa.Reciprocals.markers
+  { markers := Chichewa.Reciprocals.markers
   , valency := .monovalent }
 
 /-- Czech: reciprocal clitic *se* (monovalent, reflexive-identical;
@@ -220,8 +207,7 @@ def rpChichewa : RecipProfile :=
     discontinuous reciprocals are unavailable ([nordlinger-2023] p. 86,
     with French). -/
 def rpCzech : RecipProfile :=
-  { language := "Czech", iso := "ces"
-  , markers := Czech.Reciprocals.markers
+  { markers := Czech.Reciprocals.markers
   , valency := .monovalent
   , formation := some .syntactic
   , discontinuousAttested := some false }
@@ -233,31 +219,26 @@ def allRecipProfiles : List RecipProfile :=
 
 /-! ### Strategy and valency -/
 
+/-- The observed valency of every primary construction in the sample is its strategy's
+default, derived in the substrate from the detransitivizing coding-frame effect of
+reciprocalization; the review's counterexamples, Tonga and Malagasy, lie outside the
+sample. -/
+theorem valency_follows_default :
+    ∀ p ∈ allRecipProfiles, ∀ s ∈ p.primaryStrategy, p.valency = s.defaultValency := by
+  decide
+
+variable {p : RecipProfile} {s : Strategy}
+
 /-- Nominal and argument strategies preserve valency: every nominal primary strategy in the
 sample is bivalent. -/
-theorem nominal_strategy_bivalent :
-    ∀ p ∈ allRecipProfiles, ∀ s ∈ p.primaryStrategy, s.isNominal = true →
-      p.valency = .bivalent := by
-  decide
-
-/-- Verbal affixes reduce valency: every verbal-affix primary strategy is monovalent. -/
-theorem verbal_affix_monovalent :
-    ∀ p ∈ allRecipProfiles, p.primaryStrategy = some .verbalAffix → p.valency = .monovalent := by
-  decide
+theorem nominal_strategy_bivalent (hp : p ∈ allRecipProfiles) (hs : s ∈ p.primaryStrategy)
+    (h : s.IsNominal) : p.valency = .bivalent := by
+  rw [valency_follows_default p hp s hs, Strategy.defaultValency_eq_bivalent_iff]; exact h
 
 /-- Conversely, no monovalent reciprocal construction in the sample is nominal. -/
-theorem monovalent_implies_verbal :
-    ∀ p ∈ allRecipProfiles, p.valency = .monovalent →
-      ∀ s ∈ p.primaryStrategy, s.isNominal = false := by
-  decide
-
-/-- The observed valency is the strategy's default, derived in the substrate from the
-detransitivizing coding-frame effect of reciprocalization, throughout the sample except
-Wambaya, whose ergative-retaining clause stays bivalent ([evans-et-al-2007]). -/
-theorem valency_follows_default_except_wambaya :
-    ∀ p ∈ allRecipProfiles, p.iso ≠ "wmb" →
-      ∀ s ∈ p.primaryStrategy, p.valency = s.defaultValency := by
-  decide
+theorem monovalent_implies_verbal (hp : p ∈ allRecipProfiles) (hs : s ∈ p.primaryStrategy)
+    (h : p.valency = .monovalent) : ¬ s.IsNominal := by
+  rwa [valency_follows_default p hp s hs, Strategy.defaultValency_eq_monovalent_iff] at h
 
 /-! ### Discontinuous reciprocals -/
 
@@ -328,13 +309,13 @@ polysemy types are attested by markers outside the 12-language sample. -/
     citing [nedjalkov-2007b]). -/
 def yakutUs : Marker :=
   { form := "-üs", strategy := .verbalAffix
-  , readings := [.reciprocal, .collective, .sociative] }
+  , readings := {.reciprocal, .collective, .sociative} }
 
 /-- East Futunan *fe-...-ʼaki*: reciprocal + iterative — *fe-tapa-ʼaki*
     'sparkle again and again' ([nordlinger-2023] ex. 50, citing
     [nedjalkov-2007b]). -/
 def eastFutunanFeAki : Marker :=
   { form := "fe-...-ʼaki", strategy := .verbalAffix
-  , readings := [.reciprocal, .iterative] }
+  , readings := {.reciprocal, .iterative} }
 
 end Nordlinger2023

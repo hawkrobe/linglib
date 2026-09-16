@@ -28,17 +28,17 @@ structure ReciprocalPronoun extends Pronoun where
       NP (*each other*). -/
   strategy : Reciprocal.Strategy := .recipPronoun
   /-- The readings the form covers. -/
-  readings : List Reciprocal.Reading := [.reciprocal]
-  deriving Repr, DecidableEq
+  readings : Finset Reciprocal.Reading := {.reciprocal}
+  deriving DecidableEq
 
 /-- The marker entry of a reciprocal pronoun. -/
 def ReciprocalPronoun.toMarker (p : ReciprocalPronoun) : Reciprocal.Marker :=
   { form := p.form, script := p.script, strategy := p.strategy, readings := p.readings }
 
 /-- A reciprocal pronoun bears φ via its `Pronoun` core. -/
-instance : HasPhi ReciprocalPronoun := ⟨λ p => p.toPronoun.toWord.phi⟩
+instance : HasPhi ReciprocalPronoun := ⟨fun p ↦ p.toPronoun.toWord.phi⟩
 
-instance : Proform ReciprocalPronoun := ⟨λ p => Proform.Domain p.toPronoun⟩
+instance : Proform ReciprocalPronoun := ⟨fun p ↦ Proform.Domain p.toPronoun⟩
 
 /-- Its binding class is the `Pronoun` core's, defaulting to the reciprocal. -/
-instance : Bound ReciprocalPronoun := ⟨λ p => p.toPronoun.bindingClass.getD .reciprocal⟩
+instance : Bound ReciprocalPronoun := ⟨fun p ↦ p.toPronoun.bindingClass.getD .reciprocal⟩

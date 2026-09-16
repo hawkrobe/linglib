@@ -25,7 +25,7 @@ open Reciprocal
 /-- se — reflexive/reciprocal clitic ([nordlinger-2023] ex. 28, 47). -/
 def se : Marker :=
   { form := "se", strategy := .recipClitic
-  , readings := [.reciprocal, .reflexive] }
+  , readings := {.reciprocal, .reflexive} }
 
 /-- l'un l'autre — bipartite reciprocal NP. -/
 def lunLautre : Marker :=

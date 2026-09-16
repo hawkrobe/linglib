@@ -22,7 +22,7 @@ open Reciprocal
 /-- se — reflexive/reciprocal clitic ([nordlinger-2023] ex. 29). -/
 def se : Marker :=
   { form := "se", strategy := .recipClitic
-  , readings := [.reciprocal, .reflexive] }
+  , readings := {.reciprocal, .reflexive} }
 
 /-- jeden druhého — bipartite periphrastic reciprocal 'one the-other'
     ([siloni-2012]'s Czech examples). -/

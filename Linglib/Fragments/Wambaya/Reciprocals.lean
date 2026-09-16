@@ -9,9 +9,11 @@ open Morphology (Word)
 [nordlinger-2023]
 
 Wambaya (Australian, Mirndi) marks reciprocity with the bound
-morpheme **-ngg-** (glossed RR = reciprocal/reflexive) in the
-auxiliary verb complex. The same morpheme serves both reciprocal
-and reflexive functions — a clitic strategy.
+morpheme **-ngg-** (glossed RR = reciprocal/reflexive) in the object
+slot of the auxiliary's pronominal complex, a bound reciprocal pronoun
+([evans-2008]); the same morpheme serves both reciprocal and reflexive
+functions. Nominal subjects keep ergative marking under
+reciprocalization ([evans-et-al-2007]), so the clause stays bivalent.
 
 In [nordlinger-2023] ex. 11 (citing [nordlinger-1998], p. 142):
 "Alag-bulu wurlu-**ngg**-a nyurrunyurru" = 'The two children are
@@ -31,12 +33,12 @@ def rrMorpheme : Word :=
   { form :="-ngg-", cat := .PART, features := {}}
 
 open Reciprocal in
-/-- The RR clitic as a typological marker: it serves both reciprocal and
-    reflexive functions (WALS "identical to reflexive" follows by
-    `Reciprocal.ofInventory`; form derived from `rrMorpheme`). -/
+/-- The RR morpheme as a typological marker: a bound reciprocal pronoun
+    serving both reciprocal and reflexive functions (form derived from
+    `rrMorpheme`). -/
 def rr : Marker :=
-  { form := rrMorpheme.form, strategy := .recipClitic
-  , readings := [.reciprocal, .reflexive] }
+  { form := rrMorpheme.form, strategy := .boundPronoun
+  , readings := {.reciprocal, .reflexive} }
 
 open Reciprocal in
 /-- Marker inventory. -/

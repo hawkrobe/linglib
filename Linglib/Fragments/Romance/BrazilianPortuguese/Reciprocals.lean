@@ -20,7 +20,7 @@ open Reciprocal
 /-- se — reflexive/reciprocal clitic ([palmieri-2024] ch. 2). -/
 def seClitic : Marker :=
   { form := "se", strategy := .recipClitic
-  , readings := [.reciprocal, .reflexive] }
+  , readings := {.reciprocal, .reflexive} }
 
 /-- um o outro — periphrastic bipartite reciprocal (attested in [palmieri-2024] ch. 2 (se-omission licensor in finite clauses)). -/
 def bipartite : Marker :=

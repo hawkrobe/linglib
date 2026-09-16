@@ -418,12 +418,6 @@ and every property is a literal of one affordance. -/
 theorem holds_syntactic_iff (p : Property) : p.Holds .syntactic ↔ ¬ p.Holds .lexical := by
   cases p <;> decide
 
-/-- The derived discontinuity prediction agrees with the substrate classifier
-`Formation.allowsDiscontinuous`. -/
-theorem holds_discontinuous_iff (f : Formation) :
-    Property.discontinuous.Holds f ↔ f.allowsDiscontinuous = true := by
-  cases f <;> decide
-
 /-- The discontinuous construction is a property of symmetric verbs, those whose reciprocity is
 a singular event (section 7.5): both are the absence of plural events at the locus. -/
 theorem holds_discontinuous_iff_singularEvent (f : Formation) :

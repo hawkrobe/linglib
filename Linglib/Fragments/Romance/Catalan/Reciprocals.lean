@@ -20,7 +20,7 @@ open Reciprocal
 /-- es — reflexive/reciprocal clitic ([palmieri-2024] ch. 2). -/
 def seClitic : Marker :=
   { form := "es", strategy := .recipClitic
-  , readings := [.reciprocal, .reflexive] }
+  , readings := {.reciprocal, .reflexive} }
 
 /-- l'un a l'altre — periphrastic bipartite reciprocal (consensus periphrastic). -/
 def bipartite : Marker :=

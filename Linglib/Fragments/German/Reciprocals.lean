@@ -31,7 +31,7 @@ def einander : Marker :=
     treats *sich*-reciprocals as syntactic reciprocal verbs). -/
 def sich : Marker :=
   { form := "sich", strategy := .recipPronoun
-  , readings := [.reciprocal, .reflexive] }
+  , readings := {.reciprocal, .reflexive} }
 
 /-- The dedicated reciprocal form is distinct from the reflexive. -/
 theorem einander_distinct_from_sich :

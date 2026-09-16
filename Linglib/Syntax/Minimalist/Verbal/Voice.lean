@@ -112,12 +112,6 @@ def Flavor.recipFormation : Flavor → Option _root_.Reciprocal.Formation
   | .reciprocal => some .syntactic
   | _ => none
 
-/-- Voice-formed reciprocals license no discontinuous construction
-    ([siloni-2012] §7: *\*Jean s'est embrassé avec Marie*). -/
-theorem reciprocal_voice_no_discontinuous :
-    (Flavor.reciprocal.recipFormation.map
-      _root_.Reciprocal.Formation.allowsDiscontinuous) = some false := rfl
-
 /-! ### The Voice head -/
 
 /-- A Voice head: a flavor plus featural and per-construction properties. -/
