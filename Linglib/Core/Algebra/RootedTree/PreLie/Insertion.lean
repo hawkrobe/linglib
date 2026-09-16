@@ -305,6 +305,65 @@ theorem insertionForest_append (xs ys gs : List (RoseTree α)) :
         (insertionForest ys s).map ((T' :: A) ++ ·)]
     exact Multiset.bind_congr fun p _ => Multiset.bind_bind _ _
 
+/-- **Split law**: splits of an output list are splits of the hosts and of the guests, each
+guest following its host. Stated in continuation form over a function `K` of the two parts. -/
+theorem insertionForest_bind_revzip_sublists' {δ : Type*} (hs gs : List (RoseTree α))
+    (K : List (RoseTree α) → List (RoseTree α) → Multiset δ) :
+    (insertionForest hs gs).bind (fun L =>
+        (L.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun x =>
+          K x.1 x.2) =
+      (hs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun h =>
+        (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun q =>
+          (insertionForest h.2 q.2).bind fun L₂ =>
+            (insertionForest h.1 q.1).bind fun L₁ => K L₁ L₂ := by
+  induction hs generalizing gs K with
+  | nil =>
+    simp only [List.sublists'_nil, List.revzip_singleton, Multiset.coe_singleton,
+      Multiset.singleton_bind]
+    rw [Multiset.bind_revzip_sublists'_swap gs fun x y =>
+        (insertionForest [] y).bind fun L₂ => (insertionForest [] x).bind fun L₁ => K L₁ L₂,
+      bind_revzip_insertionForest_nil gs fun L₂ s =>
+        (insertionForest [] s).bind fun L₁ => K L₁ L₂]
+    cases gs <;> simp
+  | cons T hs ih =>
+    have hL : (insertionForest (T :: hs) gs).bind (fun L =>
+          (L.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun x =>
+            K x.1 x.2) =
+        (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun p =>
+          (insertion T p.1).bind fun T' =>
+            ((hs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind
+              fun h => (p.2.sublists'.revzip :
+                  Multiset (List (RoseTree α) × List (RoseTree α))).bind fun q =>
+                (insertionForest h.2 q.2).bind fun L₂ =>
+                  (insertionForest h.1 q.1).bind fun L₁ => K L₁ (T' :: L₂)) +
+            ((hs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind
+              fun h => (p.2.sublists'.revzip :
+                  Multiset (List (RoseTree α) × List (RoseTree α))).bind fun q =>
+                (insertionForest h.2 q.2).bind fun L₂ =>
+                  (insertionForest h.1 q.1).bind fun L₁ => K (T' :: L₁) L₂) := by
+      rw [insertionForest_cons, Multiset.bind_assoc]
+      refine Multiset.bind_congr fun p _ => ?_
+      rw [Multiset.bind_assoc]
+      refine Multiset.bind_congr fun T' _ => ?_
+      simp only [Multiset.bind_map, List.revzip_sublists'_cons, ← Multiset.coe_add,
+        Multiset.add_bind, ← Multiset.map_coe, Prod.map_fst, Prod.map_snd, id_eq,
+        Multiset.bind_add]
+      rw [ih p.2 fun a b => K a (T' :: b), ih p.2 fun a b => K (T' :: a) b]
+    rw [hL]
+    simp only [Multiset.bind_add, List.revzip_sublists'_cons, ← Multiset.coe_add,
+      Multiset.add_bind, ← Multiset.map_coe, Multiset.bind_map, Prod.map_fst, Prod.map_snd,
+      id_eq, insertionForest_cons, Multiset.bind_assoc]
+    rw [Multiset.bind_bind_bind_comm, Multiset.bind_bind_bind_comm]
+    congr 1
+    · exact Multiset.bind_congr fun h _ => Multiset.bind_revzip_sublists'_bind_assoc gs
+        (insertion T) fun T' g₁ g₂ => (insertionForest h.2 g₂).bind fun L₂ =>
+          (insertionForest h.1 g₁).bind fun L₁ => K L₁ (T' :: L₂)
+    · refine Multiset.bind_congr fun h _ => ?_
+      rw [Multiset.bind_revzip_sublists'_bind_assoc' gs (insertion T) fun T' g₁ g₂ =>
+        (insertionForest h.2 g₂).bind fun L₂ => (insertionForest h.1 g₁).bind fun L₁ =>
+          K (T' :: L₁) L₂]
+      exact Multiset.bind_congr fun q _ => Multiset.bind_bind_bind_comm _ _ _ _
+
 /-- **Node-host decomposition**: guests split into a sublist prepended at the root, in guest
 order, and its complement grafted into the child forest. -/
 theorem insertion_node (a : α) (cs gs : List (RoseTree α)) :

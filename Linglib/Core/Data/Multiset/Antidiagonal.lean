@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Data.Multiset.Powerset
 import Mathlib.Data.Multiset.Antidiagonal
+import Linglib.Core.Data.List.Zip
 
 /-!
 # Counting pairs in `Multiset.antidiagonal`
@@ -30,6 +31,14 @@ the closed form also evaluates `Finsupp.antidiagonal'`.
 namespace Multiset
 
 variable {α : Type*}
+
+/-- `antidiagonal` of a coerced list enumerates `sublists'.revzip`. -/
+theorem antidiagonal_coe_sublists' (l : List α) :
+    antidiagonal (l : Multiset α) =
+      ((l.sublists'.revzip.map fun p => ((p.1 : Multiset α), (p.2 : Multiset α)) :
+        List (Multiset α × Multiset α)) : Multiset (Multiset α × Multiset α)) := by
+  rw [antidiagonal_coe', powersetAux', List.revzip_map]
+  rfl
 
 /-- `antidiagonal` is invariant under `Prod.swap`: commutativity of `+` permutes the
     ordered splits. -/
