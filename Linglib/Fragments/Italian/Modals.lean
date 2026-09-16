@@ -28,7 +28,7 @@ When non-restructured (high): epistemic readings available.
 
 -/
 
-namespace Italian.Modals
+namespace Italian
 
 open Modality (ModalForce ModalFlavor ForceFlavor)
 open Modality (ModalPosition EventBinder)
@@ -207,4 +207,4 @@ theorem dovere_flavors_match_position :
   · decide
 
 
-end Italian.Modals
+end Italian

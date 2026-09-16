@@ -518,9 +518,9 @@ theorem not_forceFlavorIndependent_diagonal :
 /-- Naturalness is graded: Modern Greek, one of the sampled languages, has one IFF modal in
 three, where the Washo and Koryak inventories are fully natural. -/
 theorem naturalness_greek_washo_koryak :
-    naturalness Greek.StandardModern.Modals.allExpressions = 1 / 3 ∧
+    naturalness Greek.StandardModern.modals = 1 / 3 ∧
       naturalness Washo.modals = 1 ∧
-      naturalness Koryak.Modals.allExpressions = 1 := by
+      naturalness Koryak.modals = 1 := by
   decide +kernel
 
 end ImelGuoSteinertThrelkeld2026

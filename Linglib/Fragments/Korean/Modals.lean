@@ -13,7 +13,7 @@ coh-*, and the possibility expressions *ci(-to) molun-*, *swu(-to) iss-* and *-t
 * [qing-uegaki-2025]
 -/
 
-namespace Korean.Modals
+namespace Korean
 
 open Modality (ForceFlavor ModalItem)
 
@@ -35,7 +35,7 @@ def ciMolun : ModalItem := { form := "ci(-to) molun-", meaning := {pe} }
 def swuIss : ModalItem := { form := "swu(-to) iss-", meaning := {pe, pc} }
 def toToy : ModalItem := { form := "-to + toy-", meaning := {pd, pc} }
 
-def allExpressions : List ModalItem :=
+def modals : List ModalItem :=
   [napo, keyss, yaHa, ke, they, yaKeyss, kesiCoh, ciMolun, swuIss, toToy]
 
-end Korean.Modals
+end Korean

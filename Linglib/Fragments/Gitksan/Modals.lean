@@ -22,7 +22,7 @@ Fig. 1).
 | Reportative      | gat         | gat             |
 -/
 
-namespace Gitksan.Modals
+namespace Gitksan
 
 open Modality (ForceFlavor ModalItem)
 
@@ -80,7 +80,7 @@ def anookxw : ModalItem := { form := "anook(xw)", meaning := {pd} }
     "(WEAK)" reflects this uncertainty. -/
 def sgi : ModalItem := { form := "sgi", meaning := {wnd, wnc} }
 
-def allExpressions : List ModalItem :=
+def modals : List ModalItem :=
   [imaa, gat, daakhlxw, anookxw, sgi]
 
 /-! ## The two domains -/
@@ -91,4 +91,4 @@ def epistemicModals : List ModalItem := [imaa, gat]
 /-- Circumstantial modals. -/
 def circumstantialModals : List ModalItem := [daakhlxw, anookxw, sgi]
 
-end Gitksan.Modals
+end Gitksan

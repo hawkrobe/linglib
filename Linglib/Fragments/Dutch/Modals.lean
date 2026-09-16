@@ -10,7 +10,7 @@ Dutch has one non-IFF modal: zou/zouden...kunnen expresses
 {(nec,e),(poss,e),(poss,c)} which is not Cartesian-closed.
 -/
 
-namespace Dutch.Modals
+namespace Dutch
 
 open Modality (ForceFlavor ModalItem)
 
@@ -33,8 +33,8 @@ def moetEigenlijk : ModalItem := { form := "moet/moeten eigenlijk", meaning := {
 def misschien : ModalItem := { form := "misschien", meaning := {pe} }
 def magMogen : ModalItem := { form := "mag/mogen", meaning := {pd} }
 
-def allExpressions : List ModalItem :=
+def modals : List ModalItem :=
   [zal, moetMoeten, zouMoeten, kanKunnen, zouKunnen, waarschijnlijk,
    zalWaarschijnlijk, moetEigenlijk, misschien, magMogen]
 
-end Dutch.Modals
+end Dutch

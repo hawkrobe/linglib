@@ -12,7 +12,7 @@ past imperfect, which carries the same force ([ferreira-2023]).
 * [ferreira-2023]
 -/
 
-namespace Portuguese.Modals
+namespace Portuguese
 
 open Modality
 
@@ -50,4 +50,4 @@ def tinhaQue : ModalItem where
   form := "tinha que"
   meaning := {.necessity} ×ˢ Finset.univ
 
-end Portuguese.Modals
+end Portuguese
