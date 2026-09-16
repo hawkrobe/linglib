@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Subsingleton
-import Linglib.Semantics.Quantification.Defs
+import Linglib.Semantics.Quantification.Basic
 
 /-!
 # The Russellian iota
@@ -12,7 +12,9 @@ the extension (`existsUnique_iff_nonempty_subsingleton`), the two components
 
 [partee-1987]'s partial type shifts are Russellian iotas: `THE`, the Montague lift of the unique
 member of a property, and `lower`, the entity whose lift a principal ultrafilter is; each inverts
-its total shift (`THE_ident`, `lower_individual`).
+its total shift (`THE_ident`, `lower_individual`). The determiner `Quantification.the_sem` is the
+same object at the third type: it asserts its scope of the Russellian referent, and it is `THE`
+applied to the scope (`the_sem_iff_russellIota`, `the_sem_iff_THE`).
 
 ## Main definitions
 
@@ -23,6 +25,8 @@ its total shift (`THE_ident`, `lower_individual`).
 
 * `russellIota_eq_some_iff`, `russellIota_isSome_iff`, `russellIota_eq_none_iff`.
 * `existsUnique_iff_nonempty_subsingleton`: `∃!` is nonemptiness with subsingletonness.
+* `the_sem_iff_russellIota`, `the_sem_iff_THE`: the determiner, entity and quantifier meanings
+  of the definite article agree.
 
 ## References
 
@@ -86,6 +90,23 @@ theorem lower_individual : lower (individual j) = some j :=
 
 theorem THE_ident : THE (ident j) = some (individual j) := by
   rw [THE, russellIota_ident]; rfl
+
+/-! ### The three types of the definite article -/
+
+variable (S : E → Prop)
+
+/-- The determiner *the* asserts its scope of the Russellian referent. -/
+theorem the_sem_iff_russellIota : the_sem P S ↔ ∃ x ∈ russellIota P, S x :=
+  exists_congr fun x ↦ and_congr_left' <|
+    (⟨fun h ↦ ⟨(h x).2 rfl, fun y ↦ (h y).1⟩, fun ⟨hx, hu⟩ y ↦ ⟨hu y, fun e ↦ e ▸ hx⟩⟩ :
+      (∀ y, P y ↔ y = x) ↔ P x ∧ ∀ y, P y → y = x).trans (russellIota_eq_some_iff P).symm
+
+/-- The determiner *the* is the quantifier `THE` applied to its scope. -/
+theorem the_sem_iff_THE : the_sem P S ↔ ∃ Q ∈ THE P, Q S :=
+  (the_sem_iff_russellIota P S).trans
+    ⟨fun ⟨x, hx, hS⟩ ↦ ⟨individual x, Option.map_eq_some_iff.2 ⟨x, hx, rfl⟩, hS⟩,
+      fun ⟨_, hQ, hS⟩ ↦
+        let ⟨x, hx, hxQ⟩ := Option.map_eq_some_iff.1 hQ; ⟨x, hx, (hxQ ▸ hS : individual x S)⟩⟩
 
 end Partee
 
