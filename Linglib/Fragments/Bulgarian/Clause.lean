@@ -1,255 +1,239 @@
-import Linglib.Syntax.Clause.Complementation
-import Linglib.Semantics.Attitudes.Factivity
+import Linglib.Syntax.Category.Verb.Basic
+import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
-# Bulgarian Clausal Embedding Inventory
+# Bulgarian clausal embedding
 
-[krapova-2010]
+Bulgarian (Slavic, ISO 639-3 `bul`) introduces a finite complement clause with the default
+complementizer *če* 'that'. With a class of emotive factive predicates such as *săžaljavam*
+'regret', *radvam se* 'be happy' and *sram me e* 'feel ashamed', the invariant relativizer
+*deto* introduces the complement as well, alternating freely with *če* apart from register, and
+also in the form *zadeto*. These predicates all take a *za* 'for' prepositional phrase beside
+the clause. The transitive factives *razbiram* 'comprehend', *vzemam predvid* 'take into
+account', *imam predvid* 'bear in mind', *prenebregvam* 'ignore' and *griža se* 'take care',
+the emotive *văzmuštavam se* 'resent', which takes no *za* phrase, and the semi-factives
+*znaja* 'know', *pomnja* 'remember', *otkrivam* 'find out', *viždam* 'see', *čuvam* 'hear' and
+*zabeljazvam* 'notice' take *če* only.
 
-Bulgarian (Slavic, ISO 639-3 `bul`) inventory of complement-taking
-predicates around the invariant complementizer *deto*. [krapova-2010]
-§5: *deto*-complements are available exactly to emotive factives that
-also select a *za*-PP — factivity is necessary but not sufficient
-(*văzmuštavam se* 'resent' is factive yet *deto*-excluded, her (58a)) —
-and where available, *deto* "seems to freely alternate" with default
-*če*, partly conditioned by register (colloquial; her fn. 45). The
-*za*-PP selection biconditional and the hidden-relative analysis are
-paper-specific and live study-side; this file carries the two directly
-observed axes. Both predicate lists are open-ended in the paper ("such
-as …", "e.g. …") — the inventories below are the predicates Krapova
-names, not the full classes.
+Forms follow Krapova's scientific transliteration, *ă* for ъ; several citation forms are
+multiword impersonals with an experiencer clitic, as *jad me e*. The predicate lists are the
+ones Krapova names and are open-ended in the paper. The data are Krapova's; the hidden-relative
+analysis of *deto* and the double requirement behind its distribution are stated in
+`Studies/Deal2026.lean`.
 
-Forms follow the paper's scientific transliteration (*ă* for ъ; several
-citation forms are multiword impersonals with an experiencer clitic,
-e.g. *jad me e*).
+## References
+
+* [krapova-2010]
+* [kiparsky-kiparsky-1970]
+* [karttunen-1971]
+* [noonan-2007]
 -/
 
-namespace Bulgarian.Clause
+namespace Bulgarian
 
-/-! ### Predicate schema -/
+/-! ### Clause-typers -/
 
-/-- Whether a predicate's notional complement may be introduced by the
-    invariant complementizer *deto* ([krapova-2010] §5). Two values
-    because only two are attested: *deto* is never obligatory — where
-    possible it alternates with default *če* (which her fn. 46 says
-    "may show up in all complement clauses") — and the alternation is
-    partly register-conditioned (colloquial, fn. 45). -/
-inductive DetoAvailability where
-  /-- *deto* possible, alternating with *če* ((56)–(57)). -/
-  | alternating
-  /-- *če* only ((58)). -/
-  | excluded
-  deriving DecidableEq, Repr
+/-- The default complementizer *če* 'that', available in every complement clause (fn. 46). -/
+def che : Complementizer where
+  morphs := [.free "če"]
+  coding := some .indicative
+  force := some .declarative
 
-/-- A Bulgarian complement-taking predicate.
+/-- The invariant relativizer *deto*, which also introduces the complements of the emotive
+factives that take a *za* phrase, alternating with *če* (§5). -/
+def deto : Complementizer where
+  morphs := [.free "deto"]
+  coding := some .indicative
+  force := some .declarative
 
-    - `ctpClass`: [noonan-2007] category; `none` where unclear.
-    - `factivity`: [krapova-2010] §5's split of the factives into
-      emotives and semi-factives, the [karttunen-1971] classes; her
-      projection trials ((57)) run on *săžaljavam* and *vinoven săm* only.
-    - `deto`: the observed *deto* axis ([krapova-2010] §5). -/
-structure BulgarianEmbedder where
-  form : String
-  gloss : String
+/-- The form *zadeto* of the same complementizer (fn. 45). -/
+def zadeto : Complementizer where
+  morphs := [.free "zadeto"]
+  coding := some .indicative
+  force := some .declarative
+
+/-! ### Predicates -/
+
+/-- A Bulgarian complement-taking predicate is a verb entry with its [noonan-2007] class. -/
+structure Verb extends _root_.Verb where
+  /-- The [noonan-2007] class, `none` where the data give no clear assignment. -/
   ctpClass : Option CTPClass
-  factivity : Factivity
-  deto : DetoAvailability
-  deriving DecidableEq, Repr
+  deriving Repr
 
-/-! ### The *deto*-takers — emotive factives ([krapova-2010] §5)
+/-- The frames of an emotive factive, a finite clause or a *za* phrase (59). -/
+private def emotiveFrames : List Frame := [Frame.finiteClause, [.adpositional]]
 
-"Predicates of emotive reaction or emotive appraisal"; all
-[noonan-2007]-commentative, all "true" factive. -/
-
-/-- *săžaljavam* 'regret' — the projection-trial predicate ((57a), (57c));
-    the *zadeto* variant is exhibited at [deal-2026] (49). -/
-def sazhaljavam : BulgarianEmbedder where
-  form := "săžaljavam"; gloss := "regret"
+/-- *săžaljavam* 'regret', the predicate of the projection trials (57). -/
+def sazhaljavam : Verb where
+  form := "săžaljavam"
+  frames := emotiveFrames
   ctpClass := some .commentative
-  factivity := .emotive
-  deto := .alternating
+  attitude := some (.preferential (.degreeComparison .negative))
+  factivity := some .emotive
 
-/-- *vinoven săm* 'be one's fault' ((57b), under matrix question). -/
-def vinovenSam : BulgarianEmbedder where
-  form := "vinoven săm"; gloss := "be one's fault"
+/-- *vinoven săm* 'be one's fault' ((57b)). -/
+def vinovenSam : Verb where
+  form := "vinoven săm"
+  frames := emotiveFrames
   ctpClass := some .commentative
-  factivity := .emotive
-  deto := .alternating
+  factivity := some .emotive
 
-/-- *jad me e* 'be sorry; regret' ((56b)). -/
-def jadMeE : BulgarianEmbedder where
-  form := "jad me e"; gloss := "be sorry; regret"
+/-- *jad me e* 'be sorry, regret' ((56b)). -/
+def jadMeE : Verb where
+  form := "jad me e"
+  frames := emotiveFrames
   ctpClass := some .commentative
-  factivity := .emotive
-  deto := .alternating
+  attitude := some (.preferential (.degreeComparison .negative))
+  factivity := some .emotive
 
 /-- *radvam se* 'be happy'. -/
-def radvamSe : BulgarianEmbedder where
-  form := "radvam se"; gloss := "be happy"
+def radvamSe : Verb where
+  form := "radvam se"
+  frames := emotiveFrames
   ctpClass := some .commentative
-  factivity := .emotive
-  deto := .alternating
+  attitude := some (.preferential (.degreeComparison .positive))
+  factivity := some .emotive
 
 /-- *nedovolstvam* 'be dissatisfied'. -/
-def nedovolstvam : BulgarianEmbedder where
-  form := "nedovolstvam"; gloss := "be dissatisfied"
+def nedovolstvam : Verb where
+  form := "nedovolstvam"
+  frames := emotiveFrames
   ctpClass := some .commentative
-  factivity := .emotive
-  deto := .alternating
+  attitude := some (.preferential (.degreeComparison .negative))
+  factivity := some .emotive
 
 /-- *pritesnjavam se* 'worry'. -/
-def pritesnjavamSe : BulgarianEmbedder where
-  form := "pritesnjavam se"; gloss := "worry"
+def pritesnjavamSe : Verb where
+  form := "pritesnjavam se"
+  frames := emotiveFrames
   ctpClass := some .commentative
-  factivity := .emotive
-  deto := .alternating
+  attitude := some (.preferential .uncertaintyBased)
+  factivity := some .emotive
 
 /-- *žal mi e* 'be sorry'. -/
-def zhalMiE : BulgarianEmbedder where
-  form := "žal mi e"; gloss := "be sorry"
+def zhalMiE : Verb where
+  form := "žal mi e"
+  frames := emotiveFrames
   ctpClass := some .commentative
-  factivity := .emotive
-  deto := .alternating
+  attitude := some (.preferential (.degreeComparison .negative))
+  factivity := some .emotive
 
 /-- *măčno mi e* 'be sad'. -/
-def machnoMiE : BulgarianEmbedder where
-  form := "măčno mi e"; gloss := "be sad"
+def machnoMiE : Verb where
+  form := "măčno mi e"
+  frames := emotiveFrames
   ctpClass := some .commentative
-  factivity := .emotive
-  deto := .alternating
+  attitude := some (.preferential (.degreeComparison .negative))
+  factivity := some .emotive
 
 /-- *sram me e* 'feel ashamed'. -/
-def sramMeE : BulgarianEmbedder where
-  form := "sram me e"; gloss := "feel ashamed"
+def sramMeE : Verb where
+  form := "sram me e"
+  frames := emotiveFrames
   ctpClass := some .commentative
-  factivity := .emotive
-  deto := .alternating
+  attitude := some (.preferential (.degreeComparison .negative))
+  factivity := some .emotive
 
-/-! ### The *deto*-excluded factives
-
-"True" factives on [kiparsky-kiparsky-1970]'s list that nonetheless
-reject *deto* ([krapova-2010] pp. 1265–1266) — her evidence that
-factivity does not suffice. -/
-
-/-- *văzmuštavam se* 'resent' ((58a)) — the named dissociation witness:
-    emotive and factive, but takes no *za*-PP and no *deto*. -/
-def vazmushtavamSe : BulgarianEmbedder where
-  form := "văzmuštavam se"; gloss := "resent"
+/-- *văzmuštavam se* 'resent', emotive and factive but without a *za* phrase ((58a)). -/
+def vazmushtavamSe : Verb where
+  form := "văzmuštavam se"
+  frames := [Frame.finiteClause]
   ctpClass := some .commentative
-  factivity := .emotive
-  deto := .excluded
+  attitude := some (.preferential (.degreeComparison .negative))
+  factivity := some .emotive
 
-/-- *razbiram* 'comprehend'. -/
-def razbiram : BulgarianEmbedder where
-  form := "razbiram"; gloss := "comprehend"
+/-- *razbiram* 'comprehend', a transitive factive on Kiparsky and Kiparsky's list. -/
+def razbiram : Verb where
+  form := "razbiram"
+  frames := [Frame.finiteClause]
   ctpClass := some .knowledge
-  factivity := .emotive
-  deto := .excluded
+  attitude := some (.doxastic .veridical)
 
-/-- *vzemam previd* 'take into account' (printed *previd*, beside
-    *imam predvid* — transcribed verbatim). -/
-def vzemamPrevid : BulgarianEmbedder where
-  form := "vzemam previd"; gloss := "take into account"
+/-- *vzemam predvid* 'take into account', printed *previd* in the paper. -/
+def vzemamPredvid : Verb where
+  form := "vzemam predvid"
+  frames := [Frame.finiteClause]
   ctpClass := none
-  factivity := .emotive
-  deto := .excluded
+  attitude := some (.doxastic .veridical)
 
 /-- *imam predvid* 'bear in mind'. -/
-def imamPredvid : BulgarianEmbedder where
-  form := "imam predvid"; gloss := "bear in mind"
+def imamPredvid : Verb where
+  form := "imam predvid"
+  frames := [Frame.finiteClause]
   ctpClass := none
-  factivity := .emotive
-  deto := .excluded
+  attitude := some (.doxastic .veridical)
 
 /-- *prenebregvam* 'ignore'. -/
-def prenebregvam : BulgarianEmbedder where
-  form := "prenebregvam"; gloss := "ignore"
+def prenebregvam : Verb where
+  form := "prenebregvam"
+  frames := [Frame.finiteClause]
   ctpClass := none
-  factivity := .emotive
-  deto := .excluded
+  attitude := some (.doxastic .veridical)
 
-/-- *griža se* 'take care' (on [krapova-2010]'s reading of the
-    [kiparsky-kiparsky-1970] factive list). -/
-def grizhaSe : BulgarianEmbedder where
-  form := "griža se"; gloss := "take care"
+/-- *griža se* 'take care'. -/
+def grizhaSe : Verb where
+  form := "griža se"
+  frames := [Frame.finiteClause]
   ctpClass := none
-  factivity := .emotive
-  deto := .excluded
+  attitude := some (.doxastic .veridical)
 
-/-! ### The *deto*-excluded semi-factives ([krapova-2010] p. 1266) -/
-
-/-- *znaja* 'know'. -/
-def znaja : BulgarianEmbedder where
-  form := "znaja"; gloss := "know"
+/-- *znaja* 'know', a semi-factive. -/
+def znaja : Verb where
+  form := "znaja"
+  frames := [Frame.finiteClause]
   ctpClass := some .knowledge
-  factivity := .semi
-  deto := .excluded
+  attitude := some (.doxastic .veridical)
+  factivity := some .semi
 
 /-- *pomnja* 'remember'. -/
-def pomnja : BulgarianEmbedder where
-  form := "pomnja"; gloss := "remember"
+def pomnja : Verb where
+  form := "pomnja"
+  frames := [Frame.finiteClause]
   ctpClass := some .knowledge
-  factivity := .semi
-  deto := .excluded
+  attitude := some (.doxastic .veridical)
+  factivity := some .semi
 
 /-- *otkrivam* 'find out'. -/
-def otkrivam : BulgarianEmbedder where
-  form := "otkrivam"; gloss := "find out"
+def otkrivam : Verb where
+  form := "otkrivam"
+  frames := [Frame.finiteClause]
   ctpClass := some .knowledge
-  factivity := .semi
-  deto := .excluded
+  attitude := some (.doxastic .veridical)
+  factivity := some .semi
 
-/-- *viždam* 'see' (the propositional reading). -/
-def vizhdam : BulgarianEmbedder where
-  form := "viždam"; gloss := "see"
+/-- *viždam* 'see', on the propositional reading. -/
+def vizhdam : Verb where
+  form := "viždam"
+  frames := [Frame.finiteClause]
   ctpClass := some .perception
-  factivity := .semi
-  deto := .excluded
+  attitude := some (.doxastic .veridical)
+  factivity := some .semi
 
-/-- *čuvam* 'hear' (the propositional reading). -/
-def chuvam : BulgarianEmbedder where
-  form := "čuvam"; gloss := "hear"
+/-- *čuvam* 'hear', on the propositional reading. -/
+def chuvam : Verb where
+  form := "čuvam"
+  frames := [Frame.finiteClause]
   ctpClass := some .perception
-  factivity := .semi
-  deto := .excluded
+  attitude := some (.doxastic .veridical)
+  factivity := some .semi
 
-/-- *zabeljazvam* 'notice' (perception/knowledge borderline). -/
-def zabeljazvam : BulgarianEmbedder where
-  form := "zabeljazvam"; gloss := "notice"
+/-- *zabeljazvam* 'notice'. -/
+def zabeljazvam : Verb where
+  form := "zabeljazvam"
+  frames := [Frame.finiteClause]
   ctpClass := none
-  factivity := .semi
-  deto := .excluded
+  attitude := some (.doxastic .veridical)
+  factivity := some .semi
 
-/-! ### Inventories -/
+/-- The predicates Krapova names. -/
+def verbs : List Verb :=
+  [sazhaljavam, vinovenSam, jadMeE, radvamSe, nedovolstvam, pritesnjavamSe, zhalMiE, machnoMiE,
+    sramMeE, vazmushtavamSe, razbiram, vzemamPredvid, imamPredvid, prenebregvam, grizhaSe,
+    znaja, pomnja, otkrivam, vizhdam, chuvam, zabeljazvam]
 
-/-- The predicates [krapova-2010] names (open-ended lists — see module
-    docstring). -/
-def allEmbedders : List BulgarianEmbedder :=
-  [sazhaljavam, vinovenSam, jadMeE, radvamSe, nedovolstvam,
-   pritesnjavamSe, zhalMiE, machnoMiE, sramMeE,
-   vazmushtavamSe, razbiram, vzemamPrevid, imamPredvid, prenebregvam,
-   grizhaSe, znaja, pomnja, otkrivam, vizhdam, chuvam, zabeljazvam]
+/-- The predicates whose complement *deto* may introduce (§5). -/
+def detoTakers : List Verb :=
+  [sazhaljavam, vinovenSam, jadMeE, radvamSe, nedovolstvam, pritesnjavamSe, zhalMiE, machnoMiE,
+    sramMeE]
 
-/-- The *deto*-takers. -/
-def detoTakers : List BulgarianEmbedder :=
-  allEmbedders.filter (·.deto == .alternating)
-
-/-- Drift sentry: the *deto*-takers are exactly the nine emotive
-    factives Krapova names. -/
-theorem detoTakers_membership :
-    detoTakers = [sazhaljavam, vinovenSam, jadMeE, radvamSe,
-                  nedovolstvam, pritesnjavamSe, zhalMiE, machnoMiE,
-                  sramMeE] := by decide
-
-/-- Every *deto*-taker is a "true" (emotive) factive. -/
-theorem detoTakers_all_emotive :
-    detoTakers.all (·.factivity == .emotive) = true := by decide
-
-/-- Factivity does not suffice for *deto*: "true" factives with *deto*
-    excluded exist (*văzmuštavam se* and the transitive class) —
-    [krapova-2010]'s dissociation. -/
-theorem factivity_not_sufficient_for_deto :
-    ∃ v ∈ allEmbedders,
-      v.factivity = .emotive ∧ v.deto = .excluded := by decide
-
-end Bulgarian.Clause
+end Bulgarian
