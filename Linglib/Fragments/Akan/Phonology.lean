@@ -10,10 +10,10 @@ import Linglib.Phonology.Subregular.LocalRewrite
 /-!
 # Akan segments
 
-The nine-vowel ±ATR inventory of Akan (Kwa; Ghana), /i ɪ e ɛ a ɔ o ʊ u/
-([stewart-1967]; [dolphyne-1988]): four [+ATR] vowels /i e o u/ paired with /ɪ ɛ ɔ ʊ/,
-and the low vowel /a/ [−ATR] without a phonemic counterpart. Vowels in a word agree in
-tongue-root position, the contrast Stewart first identified as tongue-root advancement.
+The nine-vowel ±ATR inventory of Akan (Kwa; Ghana), /i ɪ e ɛ a ɔ o ʊ u/, the five-height
+system of [casali-2003]: four [+ATR] vowels /i e o u/ paired with /ɪ ɛ ɔ ʊ/, and the low
+vowel /a/ [−ATR] without a phonemic counterpart. Vowels in a word agree in tongue-root
+position, the contrast [stewart-1967] identified as tongue-root advancement.
 With them, the consonants of the velar–palatal alternation that reduplication interacts
 with ([mccarthy-prince-1995] §5.1): velars become corono-dorsal palatals before front
 vowels, with the feature specifications of [hayes-2009] for manner and laryngeal

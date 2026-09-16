@@ -8,8 +8,8 @@ import Linglib.Phonology.Segmental.Basic
 /-!
 # Yoruba vowels
 
-The seven oral vowels of Standard Yoruba, /i e ɛ a ɔ o u/ ([awobuluyi-1978];
-[archangeli-pulleyblank-1989]): the mid vowels pair for tongue root, /e o/ [+ATR]
+The seven oral vowels of Standard Yoruba, /i e ɛ a ɔ o u/, the mid-only tongue-root system
+of [casali-2003] analyzed in [archangeli-pulleyblank-1989]: the mid vowels pair, /e o/ [+ATR]
 against /ɛ ɔ/ [−ATR], while the high vowels /i u/ are [+ATR] and the low vowel /a/
 [−ATR] without counterparts. Non-high vowels in a word agree in ATR. The nasal vowels
 are not represented.
