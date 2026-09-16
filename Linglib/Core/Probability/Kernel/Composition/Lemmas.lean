@@ -105,3 +105,16 @@ theorem parallelComp_id_comp_real_singleton (ρ : Measure (α × β)) [IsFiniteM
 end Atoms
 
 end MeasureTheory.Measure
+
+namespace ProbabilityTheory.Kernel
+
+variable {α β γ : Type*} [MeasurableSpace α] [MeasurableSpace β] [MeasurableSpace γ]
+
+/-- A composition of kernels at an atom, over a finite middle type. -/
+theorem comp_apply_singleton [Fintype β] [MeasurableSingletonClass β]
+    [MeasurableSingletonClass γ] (η : Kernel β γ) (κ : Kernel α β) (a : α) (c : γ) :
+    (η ∘ₖ κ) a {c} = ∑ b, κ a {b} * η b {c} := by
+  rw [comp_apply' _ _ _ (.singleton c), lintegral_fintype]
+  exact Finset.sum_congr rfl fun b _ => mul_comm _ _
+
+end ProbabilityTheory.Kernel

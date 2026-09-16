@@ -97,6 +97,18 @@ theorem ofWeights_real_singleton_of_pair {w : α → β → ℝ≥0∞} (a : α)
     Fintype.sum_eq_add b b' hbb' (λ c hc => of_not_not (mt (hsupp c) (not_or.mpr hc))),
     ENNReal.toReal_div, ENNReal.toReal_add (htop b) (htop b')]
 
+/-- A row whose weight is concentrated at one point is the Dirac measure there. -/
+theorem ofWeights_apply_eq_dirac [DecidableEq β] {w : α → β → ℝ≥0∞} {a : α} {b₀ : β} {c : ℝ≥0∞}
+    (hc0 : c ≠ 0) (hc : c ≠ ∞) (h : ∀ b, w a b = if b = b₀ then c else 0) :
+    ofWeights w a = Measure.dirac b₀ := by
+  refine Measure.ext_of_singleton fun b => ?_
+  simp only [ofWeights_apply_singleton, h, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
+    Measure.dirac_apply' _ (.singleton b), Set.indicator_apply, Set.mem_singleton_iff,
+    Pi.one_apply]
+  by_cases hb : b = b₀
+  · subst hb; simp [ENNReal.div_self hc0 hc]
+  · simp [hb, Ne.symm hb]
+
 /-- The mass of a finite event under a weight-kernel row. -/
 theorem ofWeights_apply_finset (w : α → β → ℝ≥0∞) (a : α) (E : Finset β) :
     ofWeights w a ↑E = (∑ b ∈ E, w a b) / ∑ b, w a b := by
