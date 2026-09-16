@@ -6,10 +6,11 @@ import Linglib.Syntax.Category.Complementizer.Basic
 
 Washo (Hokan/isolate, ISO 639-3 `was`) has two ways of embedding a clause under a verb. A
 verb of knowledge or perception such as *hamup'ay* 'forget' or *i:gi* 'see' takes a nominalized
-clause: the clause stays in the independent mood *-i* and closes with the nominalizer
-*-gi ~ -ge*, the exponent of Hanink's index head. A verb of thought or speech such as *hamu*
-'think' or *i:d* 'say' is intransitive, and the clause it embeds is bare, in the dependent mood
-*-aʔ*. The two classes differ in transitivity, which each verb's frames record: 'know' and 'see'
+clause: the clause keeps its subject agreement, tense and switch-reference marking, stays in the
+independent mood *-i*, and closes with the nominalizer *-gi ~ -ge*, which inflects for case.
+A verb of thought or speech such as *hamu* 'think' or *i:d* 'say' is intransitive, and the clause
+it embeds is bare: it carries the dependent mood *-aʔ*, no nominalizer and no switch-reference
+marking. The two classes differ in transitivity, which each verb's frames record: 'know' and 'see'
 also take plain DP objects, while 'think' is questioned with *how* rather than *what*, and
 'dream' embeds a bare clause only with the reflexive prefix *gum-*. 'Know', 'remember' and
 'believe' are inherently negative, so their positive reading carries the negative suffix
@@ -34,17 +35,16 @@ open Morphology (Morph)
 /-! ### Clause-typers -/
 
 /-- The clausal nominalizer *-ge*, the accusative form of *-gi ~ -ge* that attitude complements
-bear (fn. 6). It is the exponent of the index head under D, not a C: the clause it closes is a
-finite indicative CP with subject agreement, tense and switch reference, so its coding is
-indicative and the nominal shell is its licenser (§3.1). -/
+bear (fn. 6). The clause it closes keeps subject agreement, tense, the independent mood and
+switch-reference marking, so it is coded as a finite indicative clause in a nominal shell. -/
 def ge : Complementizer where
   morphs := [.suff "ge"]
   coding := some .indicative
   verbForm := some .Fin
   licenser := some .nominal
 
-/-- The dependent mood *-aʔ*, a Mood head that types a bare embedded clause and never a matrix
-clause; the clause it heads has no C and no switch-reference marking (§3.2.1). -/
+/-- The dependent mood *-aʔ*, which marks a bare embedded clause and never a matrix clause; the
+clause it marks carries no nominalizer and no switch-reference marking (§3.2.1). -/
 def aq : Complementizer where
   morphs := [.suff "aʔ"]
   verbForm := some .Fin
