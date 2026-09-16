@@ -1,4 +1,3 @@
-import Mathlib.Data.Finset.Union
 import Linglib.Syntax.Case.Basic
 
 /-!
@@ -17,7 +16,7 @@ lexemes refine the single *ni* entry, the matter of `Studies/SadakaneKoizumi1995
 
 ## Main definitions
 
-* `Japanese.Case.CaseMarker`, `Japanese.Case.caseParticles`, `Japanese.Case.postpositions` —
+* `Japanese.Case.Marker`, `Japanese.Case.caseParticles`, `Japanese.Case.postpositions` —
   the markers and Tsujimura's two classes
 * `Japanese.Case.inventory` — the cases the markers realize
 
@@ -37,65 +36,61 @@ lexemes refine the single *ni* entry, the matter of `Studies/SadakaneKoizumi1995
 
 namespace Japanese.Case
 
-/-- A case-marking particle: its kana form, its romanization and the cases it realizes. -/
-structure CaseMarker where
-  /-- The kana form. -/
-  form : String
+/-- A case-marking particle: its kana form and the cases it realizes, with its romanization. -/
+structure Marker extends _root_.Case.Marker where
   /-- The romanization. -/
   romaji : String
-  /-- The cases the marker realizes. -/
-  cases : Finset Case
   deriving DecidableEq
 
 /-! ### Case particles -/
 
 /-- *ga*, the nominative. -/
-def ga : CaseMarker := { form := "が", romaji := "ga", cases := {.nom} }
+def ga : Marker := { form := "が", romaji := "ga", cases := {.nom} }
 
 /-- *o*, the accusative. -/
-def o : CaseMarker := { form := "を", romaji := "o", cases := {.acc} }
+def o : Marker := { form := "を", romaji := "o", cases := {.acc} }
 
 /-- *no*, the genitive. -/
-def no_ : CaseMarker := { form := "の", romaji := "no", cases := {.gen} }
+def no_ : Marker := { form := "の", romaji := "no", cases := {.gen} }
 
 /-- *ni*: the dative of recipients, the allative of goals, the temporal of times and the
 locative of existence. -/
-def ni : CaseMarker := { form := "に", romaji := "ni", cases := {.dat, .loc, .all, .tem} }
+def ni : Marker := { form := "に", romaji := "ni", cases := {.dat, .loc, .all, .tem} }
 
 /-! ### Postpositions -/
 
 /-- *de*: the locative of an action's place and the instrumental. -/
-def de : CaseMarker := { form := "で", romaji := "de", cases := {.loc, .inst} }
+def de : Marker := { form := "で", romaji := "de", cases := {.loc, .inst} }
 
 /-- *e*, the allative of motion toward. -/
-def e : CaseMarker := { form := "へ", romaji := "e", cases := {.all} }
+def e : Marker := { form := "へ", romaji := "e", cases := {.all} }
 
 /-- *to*, the comitative. -/
-def to_ : CaseMarker := { form := "と", romaji := "to", cases := {.com} }
+def to_ : Marker := { form := "と", romaji := "to", cases := {.com} }
 
 /-- *kara*, the ablative of spatial and temporal sources. -/
-def kara : CaseMarker := { form := "から", romaji := "kara", cases := {.abl} }
+def kara : Marker := { form := "から", romaji := "kara", cases := {.abl} }
 
 /-- *made*, the terminative of spatial and temporal endpoints. -/
-def made : CaseMarker := { form := "まで", romaji := "made", cases := {.ter} }
+def made : Marker := { form := "まで", romaji := "made", cases := {.ter} }
 
 /-- *yori*, the literary ablative, in the colloquial language the standard marker of the
 comparative (`Japanese.Comparison.yori`). -/
-def yori : CaseMarker := { form := "より", romaji := "yori", cases := {.abl} }
+def yori : Marker := { form := "より", romaji := "yori", cases := {.abl} }
 
 /-! ### Tsujimura's classes and the inventory -/
 
 /-- The case particles, dropped in casual speech. -/
-def caseParticles : Finset CaseMarker := {ga, o, no_, ni}
+def caseParticles : Finset Marker := {ga, o, no_, ni}
 
 /-- The postpositions, which carry a meaning and are never dropped. -/
-def postpositions : Finset CaseMarker := {de, e, to_, kara, made, yori}
+def postpositions : Finset Marker := {de, e, to_, kara, made, yori}
 
 /-- All the case markers. -/
-def caseMarkers : Finset CaseMarker := caseParticles ∪ postpositions
+def caseMarkers : Finset Marker := caseParticles ∪ postpositions
 
 /-- The cases the markers realize. -/
-def inventory : Finset Case := caseMarkers.biUnion (·.cases)
+def inventory : Finset Case := _root_.Case.Marker.inventory (caseMarkers.image (·.toMarker))
 
 /-- Every rank of Blake's hierarchy is realized. -/
 theorem inventory_realizes_all_blake_ranks :

@@ -3,10 +3,11 @@ import Linglib.Syntax.Category.Coordinator
 /-!
 # Korean coordinators
 
-Korean coordinates noun phrases with enclitic particles: *-(i)rang* 'and' of the informal
-register, with *-(k)wa* and *-hako* its more formal alternatives, and *-to* 'and' on each
-conjunct, which is also the additive particle 'too'. Mitrović and Sauerland take *-(i)rang* for
-the J particle and *-to* for the μ particle of their decomposition of conjunction.
+Korean coordinates noun phrases with the comitative particles *-(g)wa*, *-hago* and the casual
+*-(i)rang* 'and, with' between the conjuncts, and with the delimiter *-do* 'also' after each
+conjunct, as Sohn describes them. Mitrović and Sauerland take *-(i)rang* for the J particle and
+*-do* for the μ particle of their decomposition of conjunction. Sohn writes *(k)wa*, *hako*,
+*(i)lang* and *to*.
 
 ## Main definitions
 
@@ -16,11 +17,12 @@ the J particle and *-to* for the μ particle of their decomposition of conjuncti
 
 * [mitrovic-2021]
 * [mitrovic-sauerland-2016]
+* [sohn-1994]
 -/
 
 namespace Korean.Coordination
 
-/-- *-(i)rang* 'and', enclitic on the first conjunct, informal. -/
+/-- *-(i)rang* 'and, with', enclitic on the first conjunct, casual. -/
 def irang : Coordinator :=
   { form := "-(i)rang", gloss := "and", role := .j, kind := .bound .after .clitic }
 

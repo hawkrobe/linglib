@@ -263,7 +263,7 @@ theorem english_particle : type1985 English.Comparison.than = some .particle := 
 /-- Korean has a separative comparative and deranked chains: the chain type its comparative is
 modelled on has the strategy its clause-chaining fragment shows. -/
 theorem korean_consistent :
-    ∀ ct, Models ct .separative → ct.strategy = strategy Korean.MedialVerbs.chaining := by
+    ∀ ct, Models ct .separative → ct.strategy = strategy Korean.chaining := by
   decide
 
 /-- Turkish likewise. -/

@@ -3,14 +3,16 @@ import Linglib.Syntax.Comparative
 /-!
 # Korean comparison
 
-Korean compares with the standard marked by the particle *-boda* 'from, than', of separative
-origin, and the adjective in its bare form, with the adverb *deo* 'more' as an optional
-intensifier: *Yenghi-ga Chelswu-boda (deo) khu-ta* 'Yenghi is taller than Chelswu'. It is a
-separative comparative in Stassen's typology, and the superlative is the comparative with a
-universal standard.
+Korean has no adjectival affix like English *-er*. Comparison is made with the particle *-boda*
+'than' after the noun phrase compared with, of separative origin, and the adjective in its bare
+form, *Yongho-ga Minca-boda keu-da* 'Yongho is taller than Minca', with the adverb *deo* 'more'
+as an optional intensifier and the standard and the compared phrase free to scramble, as Sohn
+describes it. It is a separative comparative in Stassen's typology, and the superlative is the
+comparative with a universal standard. Sohn writes *pota* and *te*.
 
 ## References
 
+* [sohn-1994]
 * [stassen-1985]
 -/
 

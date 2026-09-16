@@ -1,19 +1,22 @@
-import Mathlib.Data.Finset.Union
 import Linglib.Syntax.Case.Basic
 
 /-!
 # Korean case markers
 
-Korean marks case with postpositional particles, several with allomorphs chosen by the final
-segment of the noun: the nominative *-i* after a consonant and *-ga* after a vowel, the
-accusative *-eul* and *-reul*, the genitive *-ui*, the dative *-ege*, or *-hante* in the
-colloquial language, the locative *-eseo*, the ablative *-buteo* and *-eseo*, the instrumental
-*-(eu)ro* and the comitative *-gwa* and *-wa*, as Sohn describes them. The cases the markers
-realize run from the nominative to the comitative without a gap on Blake's hierarchy.
+Korean marks case with postpositional particles, which Sohn treats as bound words rather than
+clitics, several with allomorphs chosen by the final segment of the noun: the nominative *-i*
+after a consonant and *-ga* after a vowel, the accusative *-eul* and *-reul*, the genitive
+*-ui*, the dative *-ege*, colloquially *-hante* and to a social superior *-kke*, the locative
+*-e* of a state and goal and *-eseo* of an action and source, the ablative *-buteo*, the
+instrumental and directional *-(eu)ro*, and the comitative *-gwa* and *-wa*, *-hago* and the
+casual *-(i)rang*. Casual speech drops the nominative, accusative, genitive and dative
+particles. The cases the markers realize run from the nominative to the comitative without a
+gap on Blake's hierarchy. Forms are in the Revised Romanization; Sohn writes *ka*, *(l)ul*,
+*uy*, *eykey*, *hanthey*, *kkey*, *ey*, *eyse*, *pwuthe*, *(u)lo* and *(k)wa*.
 
 ## Main definitions
 
-* `Korean.Case.CaseMarker`, `Korean.Case.markers` — the markers
+* `Korean.Case.markers` — the markers, with allomorphs in the form
 * `Korean.Case.inventory` — the cases they realize
 
 ## Main results
@@ -23,48 +26,47 @@ realize run from the nominative to the comitative without a gap on Blake's hiera
 ## References
 
 * [blake-1994]
-* [sohn-1999]
+* [sohn-1994]
 -/
 
 namespace Korean.Case
 
-/-- A case-marking particle: its form, with allomorphs, and the cases it realizes. -/
-structure CaseMarker where
-  /-- The romanized form, allomorphs separated by a slash. -/
-  form : String
-  /-- The cases the marker realizes. -/
-  cases : Finset Case
-  deriving DecidableEq
-
 /-- The nominative *-i* after a consonant and *-ga* after a vowel. -/
-def ga : CaseMarker := { form := "-i/-ga", cases := {.nom} }
+def ga : Case.Marker := { form := "-i/-ga", cases := {.nom} }
 
 /-- The accusative *-eul* after a consonant and *-reul* after a vowel. -/
-def reul : CaseMarker := { form := "-eul/-reul", cases := {.acc} }
+def reul : Case.Marker := { form := "-eul/-reul", cases := {.acc} }
 
 /-- The genitive *-ui*. -/
-def ui : CaseMarker := { form := "-ui", cases := {.gen} }
+def ui : Case.Marker := { form := "-ui", cases := {.gen} }
 
 /-- The dative *-ege*, colloquially *-hante*. -/
-def ege : CaseMarker := { form := "-ege/-hante", cases := {.dat} }
+def ege : Case.Marker := { form := "-ege/-hante", cases := {.dat} }
 
-/-- *-eseo*, the locative of an action's place and the ablative. -/
-def eseo : CaseMarker := { form := "-eseo", cases := {.loc, .abl} }
+/-- The honorific dative *-kke*. -/
+def kke : Case.Marker := { form := "-kke", cases := {.dat} }
 
-/-- The ablative *-buteo* of temporal and spatial starting points. -/
-def buteo : CaseMarker := { form := "-buteo", cases := {.abl} }
+/-- *-e*, the locative of a state and the goal of motion. -/
+def e : Case.Marker := { form := "-e", cases := {.loc, .all} }
 
-/-- The instrumental *-euro* after a consonant and *-ro* after a vowel. -/
-def ro : CaseMarker := { form := "-(eu)ro", cases := {.inst} }
+/-- *-eseo*, the locative of an action and the source of motion. -/
+def eseo : Case.Marker := { form := "-eseo", cases := {.loc, .abl} }
 
-/-- The comitative *-gwa* after a consonant and *-wa* after a vowel. -/
-def wa : CaseMarker := { form := "-gwa/-wa", cases := {.com} }
+/-- The ablative *-buteo* 'from', also after *-eseo* and *-(eu)ro*. -/
+def buteo : Case.Marker := { form := "-buteo", cases := {.abl} }
+
+/-- *-(eu)ro*, the instrumental and the directional 'toward'. -/
+def ro : Case.Marker := { form := "-(eu)ro", cases := {.inst, .all} }
+
+/-- The comitative *-gwa* after a consonant and *-wa* after a vowel, *-hago*, and the casual
+*-(i)rang*. -/
+def wa : Case.Marker := { form := "-gwa/-wa, -hago, -(i)rang", cases := {.com} }
 
 /-- The case markers. -/
-def markers : Finset CaseMarker := {ga, reul, ui, ege, eseo, buteo, ro, wa}
+def markers : Finset Case.Marker := {ga, reul, ui, ege, kke, e, eseo, buteo, ro, wa}
 
 /-- The cases the markers realize. -/
-def inventory : Finset Case := markers.biUnion (·.cases)
+def inventory : Finset Case := Case.Marker.inventory markers
 
 /-- The inventory is contiguous on Blake's hierarchy. -/
 theorem inventory_isValid : Case.IsValidInventory inventory := by decide

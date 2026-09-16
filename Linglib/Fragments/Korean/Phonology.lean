@@ -4,9 +4,13 @@ import Linglib.Phonology.Subregular.LocalRewrite
 /-!
 # Korean stop nasalization
 
-A Korean stop becomes a nasal before a nasal: *pap* 'rice' with *-man* 'only' is *pamman*.
+A Korean stop becomes the nasal of its place before a nasal, so that morpheme-final /p t k/
+and /m n ŋ/, which contrast in *pak* 'gourd' and *paŋ* 'room', are pronounced alike before a
+nasal: *tɕakɨn-pak nɛmsɛ-ka* 'the smell of a small gourd' and *tɕakɨn-paŋ nɛmsɛ-ka* 'the
+smell of a small room' are the same string of sounds, Hayes's illustration of neutralization.
 Hayes writes the rule as the change of a non-affricate stop to a voiced nasal sonorant before
-a nasal, and that is how it is written here, over the segments the rule needs.
+a nasal, leaving its place alone, and that is how it is written here over the segments the
+rule needs.
 
 ## Main definitions
 
@@ -14,8 +18,8 @@ a nasal, and that is how it is written here, over the segments the rule needs.
 
 ## Main results
 
-* `Korean.Phonology.pap_man` — *pap-man* surfaces with a bilabial nasal in place of the
-  second stop, and *pap* alone is unchanged
+* `Korean.Phonology.pak_paŋ_neutralized` — *pak* and *paŋ* before *n* derive the same string,
+  and *pak* alone is unchanged
 
 ## References
 
@@ -33,9 +37,11 @@ private def stop : List (Feature × Bool) :=
   [(.syllabic, false), (.consonantal, true), (.sonorant, false), (.continuant, false),
     (.voice, false), (.delayedRelease, false)]
 
-/-- The features every nasal shares. -/
+/-- The features every nasal shares; a nasal is a non-continuant without delayed release, so
+the rule's change leaves a nasal as it is. -/
 private def nasalSpecs : List (Feature × Bool) :=
-  [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.nasal, true), (.voice, true)]
+  [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.nasal, true), (.voice, true),
+    (.continuant, false), (.delayedRelease, false)]
 
 /-- The features every vowel shares. -/
 private def vowel : List (Feature × Bool) :=
@@ -56,6 +62,9 @@ def m : Segment := Segment.ofSpecs (nasalSpecs ++ [(.labial, true)])
 
 /-- The alveolar nasal. -/
 def n : Segment := Segment.ofSpecs (nasalSpecs ++ [(.coronal, true), (.anterior, true)])
+
+/-- The velar nasal. -/
+def ŋ : Segment := Segment.ofSpecs (nasalSpecs ++ [(.dorsal, true)])
 
 /-- The low vowel. -/
 def a : Segment := Segment.ofSpecs vowel
@@ -85,11 +94,12 @@ def stopNasalization : Rule where
   effect := .changeFeatures (Segment.ofSpecs [(.nasal, true), (.voice, true), (.sonorant, true)])
   rightContext := [.seg (Segment.ofSpecs [(.nasal, true)])]
 
-/-- *pap-man* surfaces with a bilabial nasal for its second stop and nothing else changed;
-*pap* alone is unchanged. -/
-theorem pap_man :
-    (∃ s, derive [stopNasalization] [p, a, p, m, a, n] = [p, a, s, m, a, n] ∧ m ≤ s) ∧
-      derive [stopNasalization] [p, a, p] = [p, a, p] :=
-  ⟨⟨_, rfl, by decide⟩, by decide⟩
+/-- *pak* 'gourd' and *paŋ* 'room' before *n* derive the same string, with the velar nasal;
+*pak* alone is unchanged. -/
+theorem pak_paŋ_neutralized :
+    derive [stopNasalization] [p, a, k, n] = [p, a, ŋ, n] ∧
+      derive [stopNasalization] [p, a, ŋ, n] = [p, a, ŋ, n] ∧
+      derive [stopNasalization] [p, a, k] = [p, a, k] := by
+  decide
 
 end Korean.Phonology
