@@ -157,7 +157,7 @@ theorem classifier_choice_semantic :
     (Mandarin.Classifiers.allClassifiers.filter (!·.isDefault)).all (·.semantics ≠ []) ∧
     ∀ c : Japanese.Classifier, ¬ Japanese.Classifier.IsDefault c →
       ¬ Japanese.Classifier.IsMensural c → c.encodes ≠ [] :=
-  ⟨by decide, Japanese.Classifier.specific_classifiers_have_semantics⟩
+  ⟨by decide, fun _ h _ ↦ h⟩
 
 /-! ### Preferred semantics -/
 

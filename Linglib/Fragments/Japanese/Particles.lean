@@ -2,25 +2,30 @@ import Linglib.Syntax.Category.Particle.Basic
 import Linglib.Pragmatics.Expressives.Kind
 
 /-!
-# Japanese Particles
-[dayal-2025] [kubota-2026] [sauerland-yatsushiro-2017]
+# Japanese particles
 
-## Part 1: Interrogative Particles
+The clause-final particles of Japanese questions and their distribution over matrix, embedded
+and quoted clauses: the question particle *ka*, obligatory in embedded questions and optional
+in matrix ones, its informal counterpart *no*, the declarative complementizer *koto*, the
+meta-question particle *kke*, which asks the addressee to remind the speaker of an answer and
+occurs only in matrix questions and quotations, and the conjectural *darō*, which embeds
+declaratives and questions alike. The file also lists the adverbs and focus particles Kubota
+analyses as outlook markers, *dōse* 'anyway', *yahari* 'after all', *koso* 'precisely' and the
+rest, use-conditional items whose meaning is the matter of `Studies/Kubota2026.lean`.
 
-Q-morphemes and related particles in Japanese, as `Particle` values with
-embedding-distribution facets.
+## Main definitions
 
-1. *ka/no*: Clause-typing Q-morphemes — appear in subordinated interrogatives
-2. *koto*: Declarative complementizer (contrast with *ka* in interrogatives)
-3. *kke*: Meta question particle — only in matrix and quotation
-4. *daroo*: Conjectural/epistemic copula
+* `Japanese.Particles.ka`, `no_`, `koto`, `kke`, `daroo` — the clause-typing particles with
+  their embedding distributions
+* `Japanese.OutlookMarkers.all` — the outlook markers
 
-## Part 2: Outlook Markers
+## References
 
-Adverbs and focus particles that express subjective evaluation and manage
-discourse stances, following [kubota-2026]. The fragment carries the theory-neutral
-lexical inventory (form + category); [kubota-2026]'s two-layered meaning and modal
-selectional generalizations live in `Studies/Kubota2026.lean`.
+* [dayal-2025]
+* [kubota-2026]
+* [roelofsen-uegaki-2020]
+* [sauerland-yatsushiro-2017]
+* [uegaki-roelofsen-2018]
 -/
 
 namespace Japanese.Particles
@@ -111,23 +116,17 @@ def allParticles : List Particle := [ka, no_, koto, kke, daroo]
 end Japanese.Particles
 
 
-/-! ## Part 2: Outlook Markers
-
-Theory-neutral lexical inventory of the Japanese adverbs and focus particles that
-[kubota-2026] analyses as outlook markers ([kubota-2026] (1)-(2)). The two-layered
-denotation and the modal selectional generalizations are paper apparatus and live in
-`Studies/Kubota2026.lean`. -/
+/-! ### Outlook markers -/
 
 namespace Japanese.OutlookMarkers
 
-/-- Gross syntactic category of an outlook marker ([kubota-2026] (1)-(2)): the standard
-adverb vs. *toritate* focus-particle distinction. -/
+/-- The category of an outlook marker: an adverb or a *toritate* focus particle. -/
 inductive Category where
   | adverb
   | focusParticle
   deriving DecidableEq, Repr, Inhabited
 
-/-- An outlook-marker lexical entry — theory-neutral surface facts only. -/
+/-- An outlook marker: its form, romanization, gloss and category. -/
 structure OutlookMarkerForm where
   form : String
   romaji : String
@@ -135,11 +134,10 @@ structure OutlookMarkerForm where
   category : Category
   deriving DecidableEq, Repr
 
-/-- Outlook markers are all use-conditional items of one expressive class — the consensus
-metadata Fragments carry. -/
+/-- Outlook markers are use-conditional items of one expressive class. -/
 def expressiveKind : Pragmatics.Expressives.Kind := .outlookMarker
 
-/-! ### Adverbs ([kubota-2026] (1)) -/
+/-! #### Adverbs -/
 
 def dōse : OutlookMarkerForm := ⟨"どうせ", "dōse", "anyway", .adverb⟩
 def shosen : OutlookMarkerForm := ⟨"所詮", "shosen", "anyway/after all", .adverb⟩
@@ -152,13 +150,13 @@ def yoppodo : OutlookMarkerForm := ⟨"よっぽど", "yoppodo", "much more/rath
 def semete : OutlookMarkerForm := ⟨"せめて", "semete", "at least", .adverb⟩
 def mashite : OutlookMarkerForm := ⟨"まして", "mashite", "let alone", .adverb⟩
 
-/-! ### Focus particles ([kubota-2026] (2)) -/
+/-! #### Focus particles -/
 
 def nanka : OutlookMarkerForm := ⟨"なんか", "nanka", "anything like", .focusParticle⟩
 def kurai : OutlookMarkerForm := ⟨"くらい", "kurai", "at least", .focusParticle⟩
 def koso : OutlookMarkerForm := ⟨"こそ", "koso", "precisely", .focusParticle⟩
 
-/-- The Japanese outlook-marker lexical inventory ([kubota-2026] (1)-(2)). -/
+/-- The outlook markers. -/
 def all : List OutlookMarkerForm :=
   [dōse, shosen, yahari, kekkyoku, masani, mushiro, kaette, yoppodo, semete, mashite,
    nanka, kurai, koso]

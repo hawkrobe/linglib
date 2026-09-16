@@ -1,16 +1,24 @@
 import Linglib.Phonology.Prosody.Intonation
 
 /-!
-# Japanese Prosody Fragment
+# Japanese prosody
 
-Word-level prosodic entries for Tokyo Japanese: lexical pitch accent as a mora
-position ([beckman-pierrehumbert-1986]; [kawahara-2015]) and an affix lexicon
-classified by the eight-way `Prosody.AffixAccentType` typology
-([kawahara-2015] §6).
+Tokyo Japanese has a lexical pitch accent, at most one per word, on a mora: *ame* 'candy'
+is unaccented and *a'me* 'rain' accented on its first mora, *uma'i* 'delicious' accented and
+*amai* 'sweet' not. Affixes fall into Kawahara's eight accentual classes by whether they bear
+an accent, keep or delete the root's, and place one before or after themselves. The entries
+are the minimal pairs and accentual-phrase materials of Kawahara and of Beckman and
+Pierrehumbert.
 
-Accent values are grounded in the sources' own data: the presence/location
-minimal pairs of [kawahara-2015] (1) and (28), and the accentual-phrase
-materials of [beckman-pierrehumbert-1986] (Figs. 6–13).
+## Main definitions
+
+* `Japanese.Prosody.ProsodicEntry` — a word with its mora count and accent position
+* `Japanese.Prosody.AffixEntry` — an affix with its accentual class
+
+## References
+
+* [beckman-pierrehumbert-1986]
+* [kawahara-2015]
 -/
 
 namespace Japanese.Prosody
@@ -31,9 +39,10 @@ structure ProsodicEntry where
   nMorae : ℕ
   deriving Repr
 
-/-- Whether the entry bears an accent. -/
-def ProsodicEntry.isAccented (e : ProsodicEntry) : Bool :=
-  e.accentMora.isSome
+/-- The entry bears an accent. -/
+def ProsodicEntry.Accented (e : ProsodicEntry) : Prop := e.accentMora.isSome
+
+instance (e : ProsodicEntry) : Decidable e.Accented := inferInstanceAs (Decidable (_ = true))
 
 /-! ### Sample entries
 
@@ -65,10 +74,6 @@ def amai : ProsodicEntry :=
     where AP-grouping with *uma'i* deletes this accent). -/
 def mame : ProsodicEntry :=
   { form := "mame", gloss := "beans", accentMora := some 1, nMorae := 2 }
-
-theorem ameRain_accented : ameRain.isAccented = true := rfl
-
-theorem ameCandy_unaccented : ameCandy.isAccented = false := rfl
 
 /-! ### Affix accent lexicon
 

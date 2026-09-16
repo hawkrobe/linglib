@@ -1,21 +1,17 @@
 import Linglib.Syntax.Comparative
 
 /-!
-# Japanese Comparative Construction [stassen-1985]
+# Japanese comparison
 
-Japanese uses a **separative** comparative construction: the standard NP is
-marked with the postposition *yori* ('from/than'), which has ablative
-semantics. The adjective appears in its bare (positive) form with no
-comparative morphology.
+Japanese compares with the standard marked by the postposition *yori* 'from, than', the
+ablative of the literary language, and the adjective in its bare form: *Tarō wa Hanako yori se
+ga takai* 'Taro is taller than Hanako'. It is a separative comparative in Stassen's typology,
+its marker taken from spatial case, and the superlative is the comparative with a universal
+standard, *dare yori mo* 'than anyone'.
 
-Example: *Taroo wa Hanako yori se ga takai*
-         'Taro TOP Hanako from height NOM tall'
-         = 'Taro is taller than Hanako'
+## References
 
-The marker *yori* is etymologically and synchronically a separative/ablative
-postposition, also used in spatial 'from' contexts. This exemplifies
-[stassen-1985]'s localistic hypothesis: comparative markers are borrowed
-from spatial case morphology.
+* [stassen-1985]
 -/
 
 namespace Japanese.Comparison

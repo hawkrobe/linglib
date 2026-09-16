@@ -1,181 +1,134 @@
-import Linglib.Data.UD.Basic
 import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Fragments.English.Determiners
+import Linglib.Semantics.Quantification.Lexicon
+import Linglib.Fragments.Japanese.Coordination
 
-/-! # Japanese Quantifier Fragment
+/-!
+# Japanese quantifiers
 
-Japanese quantifiers differ from English in three key ways:
-1. Floating quantifiers: gakusei-ga san-nin kita (students-NOM three-CL came)
-2. Wh-indeterminates: dare-ka (who-Q = someone), dare-mo (who-∀ = everyone)
-3. No articles — bare nouns are ambiguous (generic/definite/indefinite)
+Japanese has no articles, and most of its quantifiers are built from an indeterminate pronoun
+(*dare* 'who', *nani* 'what', *dono* 'which', *nan* 'how many') and a particle: with *ka* the
+phrase is existential (*dare-ka* 'someone'), with *mo* universal (*dare-mo* 'everyone', *dono*
+N *mo* 'every N'), the particles being the coordinators *ka* 'or' and *mo* 'and', so that the
+force of the phrase is the Boolean operation of its particle. The remaining quantifiers are
+words of their own: *subete* 'all', *hotondo* 'most' and *ryōhō* 'both'. Numeral quantifiers
+such as *nan-nin-ka* 'several people' float away from their noun phrase, and *dare-mo* under
+clausemate negation is the negative indefinite of `Fragments/Japanese/PolarityItems.lean`.
 
-Key typological properties:
-- Particle-based force: -ka (existential), -mo (universal), -demo (free choice)
-- Floating quantifiers interact with case marking for scope
-- Conservativity expected to hold (universal)
-- Negative concord via -mo...nai: dare-mo...nai = nobody
+## Main definitions
 
+* `Japanese.Determiners.Indeterminate`, `Japanese.Determiners.Indefinite` — the indeterminate
+  pronouns and the quantifiers an indeterminate and a particle form, with the force
+  `Indefinite.force` of the particle
+* `Japanese.Determiners.inventory` — the determiner inventory, quantifiers only
+
+## References
+
+* [chierchia-1998]
+* [kratzer-shimoyama-2002]
+* [shimoyama-2006]
 -/
 
 namespace Japanese.Determiners
 
-open English.Determiners (QForce Monotonicity Strength)
+open Quantification.Lexicon
 
-/-- Japanese quantifier entry. `extends Syntax.Determiner.Quantifier` (the
-    marked-determiner base — the inherited `form` holds the kana/kanji surface
-    form) and adds indeterminate/particle morphology, floating-quantifier
-    properties, and the typological metadata labels (`qforce`/`monotonicity`/
-    `strength`). -/
-structure JapaneseQuantEntry extends Quantifier where
-  /-- Rōmaji romanization -/
-  romaji : String
-  /-- English gloss -/
-  gloss : String
-  /-- Quantificational force -/
-  qforce : QForce
-  /-- Monotonicity -/
-  monotonicity : Monotonicity := .increasing
-  /-- Weak/strong -/
-  strength : Strength := .weak
-  /-- Quantificational particle (ka/mo/demo) if built from indeterminate -/
-  particle : Option String := none
-  /-- Whether this quantifier can float (appear separated from its NP) -/
-  floats : Bool := false
-  /-- Whether this quantifier requires clausemate negation (negative concord) -/
-  requiresNegation : Bool := false
-  /-- The wh-indeterminate base (e.g., "dare" for dare-ka/dare-mo) -/
-  indeterminate : Option String := none
-  deriving Repr, BEq
+/-- The indeterminate pronouns. -/
+inductive Indeterminate where
+  /-- *dare* 'who'. -/
+  | dare
+  /-- *nani* 'what'. -/
+  | nani
+  /-- *dono* 'which', a determiner. -/
+  | dono
+  /-- *nan* 'how many', before a classifier. -/
+  | nan
+  deriving DecidableEq, Repr, Fintype
 
--- ============================================================================
--- Entries
--- ============================================================================
+namespace Indeterminate
 
-/-- すべて subete "all" — universal, increasing, strong.
-    すべての学生 subete-no gakusei "all students" -/
-def subete : JapaneseQuantEntry :=
-  { form := "すべて"
-  , romaji := "subete"
-  , gloss := "all"
-  , qforce := .universal
-  , monotonicity := .increasing
-  , strength := .strong }
+/-- The romanization. -/
+def romaji : Indeterminate → String
+  | .dare => "dare"
+  | .nani => "nani"
+  | .dono => "dono"
+  | .nan => "nan"
 
-/-- どのNも dono_N_mo "every N" — universal, increasing, strong.
-    Built from wh-indeterminate dono + particle mo.
-    どの学生も dono gakusei mo "every student" -/
-def dono_N_mo : JapaneseQuantEntry :=
-  { form := "どの…も"
-  , romaji := "dono-N-mo"
-  , gloss := "every"
-  , qforce := .universal
-  , monotonicity := .increasing
-  , strength := .strong
-  , particle := some "mo"
-  , indeterminate := some "dono" }
+/-- The kanji or kana form. -/
+def form : Indeterminate → String
+  | .dare => "誰"
+  | .nani => "何"
+  | .dono => "どの"
+  | .nan => "何"
 
-/-- 誰か dare_ka "someone" — existential, increasing, weak.
-    Built from wh-indeterminate dare + particle ka. -/
-def dare_ka : JapaneseQuantEntry :=
-  { form := "誰か"
-  , romaji := "dare-ka"
-  , gloss := "someone"
-  , qforce := .existential
-  , monotonicity := .increasing
-  , strength := .weak
-  , particle := some "ka"
-  , indeterminate := some "dare" }
+end Indeterminate
 
-/-- 誰も dare_mo "everyone / nobody" — universal (affirmative) or
-    negative universal (with clausemate negation: dare-mo...nai).
-    [shimoyama-2006]: -mo is Hamblin universal over indeterminate set. -/
-def dare_mo : JapaneseQuantEntry :=
-  { form := "誰も"
-  , romaji := "dare-mo"
-  , gloss := "everyone / nobody (with negation)"
-  , qforce := .universal
-  , monotonicity := .increasing
-  , strength := .strong
-  , particle := some "mo"
-  , requiresNegation := false  -- affirmative use exists
-  , indeterminate := some "dare" }
+/-- The force a particle gives an indeterminate: existential for the disjunction *ka* and
+universal for the conjunction *mo*. -/
+def particleForce (p : Coordinator) : QForce :=
+  match p.role with
+  | .disj => .existential
+  | _ => .universal
 
-/-- 何人か nan_nin_ka "several people" — existential numeral+CL+ka.
-    Floating quantifier: 学生が何人か来た gakusei-ga nan-nin-ka kita. -/
-def nan_nin_ka : JapaneseQuantEntry :=
-  { form := "何人か"
-  , romaji := "nan-nin-ka"
-  , gloss := "several (people)"
-  , qforce := .existential
-  , monotonicity := .increasing
-  , strength := .weak
-  , particle := some "ka"
-  , floats := true
-  , indeterminate := some "nan" }
+/-- A quantifier built from an indeterminate and a particle, with the classifier or noun
+between them where there is one. -/
+structure Indefinite where
+  /-- The indeterminate. -/
+  indeterminate : Indeterminate
+  /-- The particle, *ka* or *mo*. -/
+  particle : Coordinator
+  /-- What stands between the indeterminate and the particle. -/
+  host : Option String := none
+  deriving DecidableEq, Repr
 
-/-- ほとんど hotondo "most/almost all" — proportional, increasing, strong. -/
-def hotondo : JapaneseQuantEntry :=
-  { form := "ほとんど"
-  , romaji := "hotondo"
-  , gloss := "most"
-  , qforce := .proportional
-  , monotonicity := .increasing
-  , strength := .strong }
+namespace Indefinite
 
-/-- 両方 ryōhō "both" — universal dual, strong.
-    両方の学生 ryōhō-no gakusei "both students".
-    Presupposes exactly two referents (like English "both").
-    K&S: both = every restricted to dual sets. -/
-def ryoho : JapaneseQuantEntry :=
-  { form := "両方"
-  , romaji := "ryōhō"
-  , gloss := "both"
-  , qforce := .universal
-  , monotonicity := .increasing
-  , strength := .strong }
+variable (q : Indefinite)
 
--- ============================================================================
--- Lexicon
--- ============================================================================
+/-- The romanized form, the parts joined by hyphens. -/
+def romaji : String :=
+  q.indeterminate.romaji ++ "-" ++ (q.host.elim "" (· ++ "-")) ++ q.particle.form
 
-def allQuantifiers : List JapaneseQuantEntry :=
-  [subete, dono_N_mo, dare_ka, dare_mo, nan_nin_ka, hotondo, ryoho]
+/-- The force of the quantifier, that of its particle. -/
+def force : QForce := particleForce q.particle
 
-/-- The Japanese determiner inventory: quantifiers only, there being no articles. -/
-def inventory : Determiner.Inventory := allQuantifiers.map (.quantifier ·.toQuantifier)
+/-- The quantifier as a determiner entry. -/
+def toQuantifier : Quantifier := { form := q.romaji }
 
-def lookup (romaji : String) : Option JapaneseQuantEntry :=
-  allQuantifiers.find? λ e => e.romaji == romaji
+end Indefinite
 
--- ============================================================================
--- Verification
--- ============================================================================
+/-- *dare-ka* 'someone'. -/
+def dare_ka : Indefinite := ⟨.dare, Coordination.ka, none⟩
 
-/-- dare-ka is built from indeterminate dare + particle ka. -/
-theorem dare_ka_indeterminate :
-    dare_ka.indeterminate = some "dare" ∧ dare_ka.particle = some "ka" :=
-  ⟨rfl, rfl⟩
+/-- *dare-mo* 'everyone'. -/
+def dare_mo : Indefinite := ⟨.dare, Coordination.mo, none⟩
 
-/-- dare-mo is built from indeterminate dare + particle mo. -/
-theorem dare_mo_indeterminate :
-    dare_mo.indeterminate = some "dare" ∧ dare_mo.particle = some "mo" :=
-  ⟨rfl, rfl⟩
+/-- *dono* N *mo* 'every N'. -/
+def dono_N_mo : Indefinite := ⟨.dono, Coordination.mo, some "N"⟩
 
-/-- Particle shift: same indeterminate base, different force.
-    ka → existential, mo → universal. -/
-theorem particle_force_shift :
-    dare_ka.qforce = .existential ∧ dare_mo.qforce = .universal :=
-  ⟨rfl, rfl⟩
+/-- *nan-nin-ka* 'several people', with the classifier *-nin*. -/
+def nan_nin_ka : Indefinite := ⟨.nan, Coordination.ka, some "nin"⟩
 
-/-- nan-nin-ka floats. -/
-theorem nan_nin_ka_floats : nan_nin_ka.floats = true := rfl
+/-- The indeterminate quantifiers. -/
+def indefinites : List Indefinite := [dare_ka, dare_mo, dono_N_mo, nan_nin_ka]
 
-/-- ryōhō is universal and strong (like English "both"). -/
-theorem ryoho_universal_strong :
-    ryoho.qforce = .universal ∧ ryoho.strength = .strong :=
-  ⟨rfl, rfl⟩
+/-- *subete* 'all'. -/
+def subete : Quantifier := { form := "subete" }
 
-/-- Fragment has 7 entries. -/
-theorem fragment_size : allQuantifiers.length = 7 := rfl
+/-- *hotondo* 'most'. -/
+def hotondo : Quantifier := { form := "hotondo" }
+
+/-- *ryōhō* 'both'. -/
+def ryoho : Quantifier := { form := "ryōhō" }
+
+/-- The determiner inventory: quantifiers only, there being no articles. -/
+def inventory : Determiner.Inventory :=
+  (indefinites.map (.quantifier ·.toQuantifier)) ++ [.quantifier subete, .quantifier hotondo,
+    .quantifier ryoho]
+
+/-- The universal indeterminates are the ones not built on the disjunction. -/
+theorem Indefinite.force_eq_universal_iff (q : Indefinite) :
+    q.force = .universal ↔ q.particle.role ≠ .disj := by
+  unfold Indefinite.force particleForce
+  cases q.particle.role <;> simp
 
 end Japanese.Determiners

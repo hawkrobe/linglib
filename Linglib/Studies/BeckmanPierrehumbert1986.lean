@@ -223,12 +223,12 @@ open Japanese.Prosody
 /-- The accentual phrase over grouped word entries: accented, always H*+L, iff some word is
 lexically accented, grouping deleting all but one accent. -/
 def AccentualPhrase.ofWords (ws : List ProsodicEntry) : AccentualPhrase :=
-  { accent := if ws.any (·.isAccented) then .H_star_plus_L else .null
+  { accent := if ws.any (decide ·.Accented) then .H_star_plus_L else .null
     nWords := ws.length }
 
 /-- A phrase of words triggers catathesis iff some word is accented. -/
 theorem ofWords_isBitonal (ws : List ProsodicEntry) :
-    (AccentualPhrase.ofWords ws).accent.isBitonal = ws.any (·.isAccented) := by
+    (AccentualPhrase.ofWords ws).accent.isBitonal = ws.any (decide ·.Accented) := by
   unfold AccentualPhrase.ofWords
   split <;> simp_all [PitchAccent.isBitonal]
 

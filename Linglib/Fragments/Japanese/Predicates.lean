@@ -1,165 +1,116 @@
 import Linglib.Syntax.Category.Verb.Basic
 
 /-!
-# Japanese Predicate Lexicon Fragment
-[qing-uegaki-2025] [ozaki-2026]
+# Japanese predicates
 
-Japanese predicates relevant to [qing-uegaki-2025]. Properties like
-C-distributivity and NVP class are DERIVED from the `attitude` field.
+The Japanese clause-embedding and departure predicates the studies of Qing and Uegaki and of
+Ozaki consume: the preferential attitudes *tanoshimi* 'look forward to', *osore* 'fear',
+*kitai* 'expect', *nozomu* 'hope' and *shinpai* 'worry', whose distributivity over
+alternatives follows from the kind of preference each records; the morphological causative
+in *-(s)ase*, whose causee is accusative under the coercive reading and dative under the
+permissive one; and the departure verbs *hanareru* 'leave' and *deru* 'exit', which take
+their source in the accusative or the ablative and are unaccusative, their Voice being
+non-thematic.
+
+## Main definitions
+
+* `Japanese.Predicates.Verb` — a Japanese verb, the root `Verb` with its romanization
+
+## References
+
+* [ozaki-2026]
+* [qing-uegaki-2025]
+* [song-1996]
 -/
 
 namespace Japanese.Predicates
 
 open ArgumentStructure
 
-/-- Japanese verb entry: extends Verb with Japanese inflectional paradigm. -/
-structure JapaneseVerbEntry extends Verb where
-  /-- Nonpast finite form -/
-  form3sg : String
-  /-- Past form (-ta) -/
-  formPast : String
-  /-- Gerund / -te form -/
-  formGerund : String
-  /-- Progressive (-teiru) -/
-  formProgressive : String
+/-- A Japanese verb: the root entry, its `form` the romanized citation form. -/
+structure Verb extends _root_.Verb where
   deriving Repr, BEq
 
-/-- 楽しみ "tanosimi" — looking forward to (Class 1: positive, non-C-distributive). -/
-def tanosimi : JapaneseVerbEntry where
+/-! ### Preferential attitudes -/
+
+/-- *tanoshimi* 'look forward to', a positive preference relative to relevance. -/
+def tanosimi : Verb where
   form := "tanosimi"
-  form3sg := "tanosimi da"
-  formPast := "tanosimi datta"
-  formGerund := "tanosimi"
-  formProgressive := "tanosimi"
   frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.relevanceBased .positive))
 
-/-- 恐れ "osore" — fear (Class 2: negative, C-distributive). -/
-def osore : JapaneseVerbEntry where
+/-- *osore* 'fear', a negative preference by comparison of degrees. -/
+def osore : Verb where
   form := "osore"
-  form3sg := "osoreru"
-  formPast := "osoreta"
-  formGerund := "osorete"
-  formProgressive := "osoreteiru"
   frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .negative))
 
-/-- 期待 "kitai" — expect/hope (Class 3: positive, C-distributive, anti-rogative). -/
-def kitai : JapaneseVerbEntry where
+/-- *kitai* 'expect, hope', a positive preference by comparison of degrees. -/
+def kitai : Verb where
   form := "kitai"
-  form3sg := "kitai suru"
-  formPast := "kitai shita"
-  formGerund := "kitai shite"
-  formProgressive := "kitai shiteiru"
   frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
 
-/-- 望む "nozomu" — hope (Class 3: positive, C-distributive, anti-rogative). -/
-def nozomu : JapaneseVerbEntry where
+/-- *nozomu* 'hope', a positive preference by comparison of degrees. -/
+def nozomu : Verb where
   form := "nozomu"
-  form3sg := "nozomu"
-  formPast := "nozonda"
-  formGerund := "nozonde"
-  formProgressive := "nozondeiru"
   frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
 
-/-- 心配 "shinpai" — worry (Class 1: non-C-distributive). -/
-def shinpai : JapaneseVerbEntry where
+/-- *shinpai* 'worry', a preference relative to uncertainty. -/
+def shinpai : Verb where
   form := "shinpai"
-  form3sg := "shinpai suru"
-  formPast := "shinpai shita"
-  formGerund := "shinpai shite"
-  formProgressive := "shinpai shiteiru"
   frames := [Frame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .uncertaintyBased)
 
-/-! ## Causative predicates
+/-! ### Causatives -/
 
-Japanese morphological causative suffix *-(s)ase* ([song-1996]: COMPACT type).
-Case marking on the causee distinguishes coercion from permission:
-- ACC *o* = less causee control → `.make` (coercive reading)
-- DAT *ni* = more causee control → `.enable` (permissive reading)
-
-"Hanako ga Ziroo o ik-ase-ta" = "Hanako made Ziro go" (ACC → make)
-"Hanako ga Ziroo ni ik-ase-ta" = "Hanako let Ziro go" (DAT → enable) -/
-
-/-- 行かせる "ik-ase-ru" — go-CAUS (ACC causee = make reading). -/
-def ik_ase : JapaneseVerbEntry where
+/-- *ik-ase-ru* 'make go', the causative of *iku* with an accusative causee. -/
+def ik_ase : Verb where
   form := "ik-ase-ru"
-  form3sg := "ik-ase-ru"
-  formPast := "ik-ase-ta"
-  formGerund := "ik-ase-te"
-  formProgressive := "ik-ase-teiru"
   frames := [Frame.smallClause]
   readings := [{ frame := Frame.smallClause, control := some .objectControl }]
   causative := some .make
 
-/-- 食べさせる "tabe-sase-ru" — eat-CAUS (ACC causee = make reading). -/
-def tabe_sase : JapaneseVerbEntry where
+/-- *tabe-sase-ru* 'make eat', the causative of *taberu* with an accusative causee. -/
+def tabe_sase : Verb where
   form := "tabe-sase-ru"
-  form3sg := "tabe-sase-ru"
-  formPast := "tabe-sase-ta"
-  formGerund := "tabe-sase-te"
-  formProgressive := "tabe-sase-teiru"
   frames := [Frame.smallClause]
   readings := [{ frame := Frame.smallClause, control := some .objectControl }]
   causative := some .make
 
-/-- Japanese causative -(s)ase uses `.make` builder (direct causation reading). -/
-theorem ik_ase_is_make :
-    ik_ase.causative = some .make := rfl
+/-! ### Departure verbs -/
 
-/-! ## Accusative/Ablative Alternation Verbs
-
-Departure verbs that allow source marking with ACC *-o* or ABL *kara*.
-These are dyadic unaccusatives: two internal arguments, no thematic Voice.
--/
-
-/-- 離れる "hanareru" — leave (dyadic unaccusative, ACC/ABL alternation).
-    Leaver = theme (raised to subject), Source = source of departure.
-    `voiceType := .nonThematic` — unaccusativity is derived from Voice
-    selection, not stipulated ([kratzer-1996], [ozaki-2026]). -/
-def hanareru : JapaneseVerbEntry where
+/-- *hanareru* 'leave': the leaver its theme, the source accusative or ablative, and no
+thematic Voice. -/
+def hanareru : Verb where
   form := "hanareru"
-  form3sg := "hanareru"
-  formPast := "hanareta"
-  formGerund := "hanarete"
-  formProgressive := "hanareteiru"
   frames := [Frame.np]
   unaccusative := true
   voiceType := some .nonThematic
   passivizable := false
 
-/-- 出る "deru" — exit (dyadic unaccusative, ACC/ABL alternation).
-    Leaver = theme (raised to subject), Source = source of departure.
-    `voiceType := .nonThematic` — unaccusativity is derived from Voice
-    selection, not stipulated ([kratzer-1996], [ozaki-2026]). -/
-def deru : JapaneseVerbEntry where
+/-- *deru* 'exit': the leaver its theme, the source accusative or ablative, and no thematic
+Voice. -/
+def deru : Verb where
   form := "deru"
-  form3sg := "deru"
-  formPast := "deta"
-  formGerund := "dete"
-  formProgressive := "deteiru"
   frames := [Frame.np]
   unaccusative := true
   voiceType := some .nonThematic
   passivizable := false
 
-def allVerbs : List JapaneseVerbEntry :=
-  [tanosimi, osore, kitai, shinpai, ik_ase, tabe_sase, hanareru, deru]
-
-def lookup (form : String) : Option JapaneseVerbEntry :=
-  allVerbs.find? (·.form == form)
+/-- The verbs. -/
+def allVerbs : List Verb :=
+  [tanosimi, osore, kitai, nozomu, shinpai, ik_ase, tabe_sase, hanareru, deru]
 
 end Japanese.Predicates

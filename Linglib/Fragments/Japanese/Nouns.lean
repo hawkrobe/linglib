@@ -7,9 +7,9 @@ import Linglib.Semantics.Genericity.NominalMappingParameter
 
 The Japanese noun as a lexical entry: the root `Noun` with its romanization, the classifier it
 counts with, and the optional plural in *-tachi* where the entry records one; a name is the root
-`ProperName` with its romanization. Japanese is [+arg, −pred] ([chierchia-1998]): nouns denote kinds, and with no
-articles no covert shift is blocked, so every bare noun is an argument. The classifiers are
-`Japanese.Classifier`.
+`ProperName` with its romanization. Japanese is [+arg, −pred] ([chierchia-1998]): nouns denote
+kinds, and with no articles no covert shift is blocked, so every bare noun is an argument. The
+classifiers are `Japanese.Classifier`.
 
 ## References
 
@@ -38,17 +38,21 @@ structure Noun extends _root_.Noun where
 def inu : Noun := { form := "犬", gloss := "dog", romaji := "inu", classifier := some .hiki }
 def neko : Noun := { form := "猫", gloss := "cat", romaji := "neko", classifier := some .hiki }
 def hito : Noun :=
-  { form := "人", gloss := "person", romaji := "hito", classifier := some .nin, plural := "人たち" }
+  { form := "人", gloss := "person", romaji := "hito", classifier := some .nin,
+    plural := "人たち" }
 def hon : Noun := { form := "本", gloss := "book", romaji := "hon", classifier := some .satsu }
 def kuruma : Noun := { form := "車", gloss := "car", romaji := "kuruma", classifier := some .dai }
 def tori : Noun := { form := "鳥", gloss := "bird", romaji := "tori", classifier := some .wa }
 def hana : Noun := { form := "花", gloss := "flower", romaji := "hana", classifier := some .hon }
 def mizu : Noun := { form := "水", gloss := "water", romaji := "mizu", classifier := none }
-def gohan : Noun := { form := "ご飯", gloss := "cooked rice", romaji := "gohan", classifier := none }
+def gohan : Noun :=
+  { form := "ご飯", gloss := "cooked rice", romaji := "gohan", classifier := none }
 def musume : Noun :=
-  { form := "娘", gloss := "daughter", romaji := "musume", classifier := some .nin, plural := "娘たち" }
+  { form := "娘", gloss := "daughter", romaji := "musume", classifier := some .nin,
+    plural := "娘たち" }
 def musuko : Noun :=
-  { form := "息子", gloss := "son", romaji := "musuko", classifier := some .nin, plural := "息子たち" }
+  { form := "息子", gloss := "son", romaji := "musuko", classifier := some .nin,
+    plural := "息子たち" }
 def gakusei : Noun :=
   { form := "学生", gloss := "student", romaji := "gakusei", classifier := some .nin,
     plural := "学生たち" }

@@ -1,31 +1,34 @@
 /-!
-# Japanese Passive Types
-[jo-seo-2023] [ozaki-2026]
+# Japanese passives
 
-Japanese has two structurally distinct passive constructions that look
-superficially similar (both use *-(r)are-*):
+Japanese has two passives in *-(r)are-*. The direct passive reduces valency and needs a verb
+with a thematic Voice, one that projects an external argument; its agent may be marked with
+*niyotte*. The indirect or adversative passive adds an affected argument and is available for
+every verb, unaccusatives included; its agent takes *ni* only, the substitution of *niyotte*
+being Jo and Seo's test for the two.
 
-- **Direct passive** (*-niyotte* agent): valency-reducing, requires thematic
-  Voice. Only available for verbs that project an external argument.
-- **Indirect (adversative) passive** (*-ni* agent): introduces a malefactive
-  argument. Available for ALL verbs, including unaccusatives and intransitives.
+## References
 
-The *niyotte* substitution test distinguishes them: direct passives allow the
-dative agent marker *ni* to be replaced with *niyotte*; indirect passives
-do not ([jo-seo-2023]).
+* [jo-seo-2023]
+* [ozaki-2026]
 -/
 
 namespace Japanese.Passive
 
-/-- Types of passive in Japanese. -/
+/-- The two passives. -/
 inductive PassiveType where
-  | direct    -- *-niyotte* agent, requires thematic Voice
-  | indirect  -- *-rare-* adversative, available for all verbs
+  /-- The direct passive, with a *niyotte* agent. -/
+  | direct
+  /-- The indirect, adversative passive, with a *ni* agent. -/
+  | indirect
   deriving DecidableEq, Repr
 
-/-- Direct passive requires thematic Voice (an agentive external argument). -/
-def PassiveType.requiresThematicVoice : PassiveType → Bool
-  | .direct => true
-  | .indirect => false
+/-- The direct passive needs a verb with thematic Voice. -/
+def PassiveType.RequiresThematicVoice : PassiveType → Prop
+  | .direct => True
+  | .indirect => False
+
+instance : DecidablePred PassiveType.RequiresThematicVoice := fun t ↦ by
+  cases t <;> unfold PassiveType.RequiresThematicVoice <;> infer_instance
 
 end Japanese.Passive
