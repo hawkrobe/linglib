@@ -1,19 +1,16 @@
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Subregular.LocalRewrite
-import Linglib.Data.PHOIBLE.Inventories.English
 
 /-!
 # English phonology
 
 Segments of English in [hayes-2009]'s feature system, each a partial specification so that
-a bundle doubles as the natural class it names, two of the book's English rules as local
-rewrite rules, and the PHOIBLE inventory ([moran-mccloy-2019]) the fragment is checked
-against.
+a bundle doubles as the natural class it names, and two of the book's English rules as local
+rewrite rules.
 
 ## References
 
 * [hayes-2009]
-* [moran-mccloy-2019]
 -/
 
 open Phonology
@@ -203,12 +200,5 @@ def postnasalDeletion : Rule where
   effect := .delete
   leftContext := [.seg (Segment.ofSpecs [(Feature.nasal, true)])]
   rightContext := [.seg (Segment.ofSpecs [(Feature.syllabic, true)])]
-
-/-! ### The PHOIBLE inventory -/
-
-/-- The PHOIBLE inventory of Standard English (inventory 160, the SPA doculect); the other
-English doculects are in `Data.PHOIBLE.Inventories.English`. -/
-def phonemeInventory : Data.PHOIBLE.Inventory :=
-  Data.PHOIBLE.Inventories.English.eng
 
 end English.Phonology

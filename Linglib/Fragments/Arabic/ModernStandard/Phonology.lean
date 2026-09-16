@@ -1,25 +1,15 @@
-import Linglib.Data.PHOIBLE.Inventories.Arabic
 import Mathlib.Data.Finset.Insert
 
 /-!
 # Modern Standard Arabic phonology
 
-The 28 consonants of Modern Standard Arabic ([ryding-2005]) as
-`Consonant`, with the labial place class `Consonant.IsLabial` consumed by
-the OCP-Place co-occurrence literature. `phonemeInventory` binds the
-canonical PHOIBLE doculect ([moran-mccloy-2019] ID 2157, an urban
-composite of Safad, Beirut, Damascus, and Kuwait), which confirms the
-consensus values /dʒ/ (ج) and /ðˤ/ (ظ) — corpus-transcription traditions
-write these as g and zˤ — and differs from the classical inventory only
-in dialect-phonetic detail (aspiration marks, an emphatic lateral).
+The 28 consonants of Modern Standard Arabic ([ryding-2005]) as `Consonant`, with the labial
+place class `Consonant.IsLabial` consumed by the OCP-Place co-occurrence literature. The
+consensus values /dʒ/ (ج) and /ðˤ/ (ظ) are those of [ryding-2005]; corpus-transcription
+traditions write them as g and zˤ.
 -/
 
 namespace Arabic.ModernStandard
-
-/-- The canonical PHOIBLE inventory for ISO `arb`
-([moran-mccloy-2019] ID 2157). -/
-def phonemeInventory : Data.PHOIBLE.Inventory :=
-  Data.PHOIBLE.Inventories.Arabic.arb
 
 /-- The 28 consonants of Modern Standard Arabic ([ryding-2005]), IPA with
 `Emph` for the emphatic (superscript ˁ) series. -/
