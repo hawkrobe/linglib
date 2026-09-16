@@ -25,10 +25,10 @@ running scene are classified.
   distinguishing descriptions.
 * The theorem that a duplicate-attribute over-specification is real or nominal uses that a
   knowledge base assigns one value per attribute, so a distinguishing description has one type.
-* The paper's scenes are figures; the ones here carry the properties its text attributes to
-  them, a large green chair among a small red chair and a small green fan, and a small green
-  front-facing desk among a small green side-facing desk, a large green front-facing desk and a
-  small green front-facing chair.
+* The scenes carry the objects and colours of the paper's two figures. Sizes and orientations,
+  which the figures do not label, are as the text's classifications require: only the target of
+  the first scene is large, and in the second every small object is green and the target and one
+  other desk face front.
 
 ## References
 
@@ -242,8 +242,9 @@ end Kinds
 
 /-- The objects of the two scenes. -/
 inductive Obj
-  | chair₁ | chair₂ | fan
-  | desk₁ | desk₂ | desk₃ | chair₃
+  | greyDesk | redSofa | greenChair | greenSofa | blueChair | greenFan | greenDesk
+  | greyChair | largeGreenChair | smallGreenChair | targetDesk | largeGreenDesk | smallGreenDesk
+  | greyDesk'
   deriving DecidableEq, Repr
 
 /-- The attributes, with `type` the head noun. -/
@@ -253,77 +254,107 @@ inductive Attr
 
 /-- The values. -/
 inductive Value
-  | chair | fan | desk | large | small | green | red | blue | front | side
+  | chair | sofa | desk | fan | large | small | grey | red | green | blue | front | side
   deriving DecidableEq, Repr
 
-/-- The running scene, a large green chair among a small red chair and a small green fan. -/
+/-- The first scene, a large green chair among a grey desk, a red sofa, a green sofa, a blue
+chair, a green fan and a green desk. -/
 def scene₁ : KB Obj Attr Value
-  | .chair₁, .type => some .chair
-  | .chair₁, .size => some .large
-  | .chair₁, .colour => some .green
-  | .chair₂, .type => some .chair
-  | .chair₂, .size => some .small
-  | .chair₂, .colour => some .red
-  | .fan, .type => some .fan
-  | .fan, .size => some .small
-  | .fan, .colour => some .green
+  | .greenChair, .type => some .chair
+  | .greenChair, .size => some .large
+  | .greenChair, .colour => some .green
+  | .greyDesk, .type => some .desk
+  | .greyDesk, .size => some .small
+  | .greyDesk, .colour => some .grey
+  | .redSofa, .type => some .sofa
+  | .redSofa, .size => some .small
+  | .redSofa, .colour => some .red
+  | .greenSofa, .type => some .sofa
+  | .greenSofa, .size => some .small
+  | .greenSofa, .colour => some .green
+  | .blueChair, .type => some .chair
+  | .blueChair, .size => some .small
+  | .blueChair, .colour => some .blue
+  | .greenFan, .type => some .fan
+  | .greenFan, .size => some .small
+  | .greenFan, .colour => some .green
+  | .greenDesk, .type => some .desk
+  | .greenDesk, .size => some .small
+  | .greenDesk, .colour => some .green
   | _, _ => none
 
-/-- The distractors of the running scene. -/
-def distractors₁ : Finset Obj := {.chair₂, .fan}
+/-- The distractors of the first scene. -/
+def distractors₁ : Finset Obj :=
+  {.greyDesk, .redSofa, .greenSofa, .blueChair, .greenFan, .greenDesk}
 
 /-- *The large one* is minimal, *the large green one* a real over-specification, *the green chair*
 a numerical one, *the large chair* a nominal one, and *the green chair that has the same colour
 as the fan*, which expresses the colour twice, a duplicate-attribute and real one. -/
 theorem scene₁_over :
-    IsMinimal scene₁ .chair₁ distractors₁ {(.size, .large)} ∧
-      RealOverSpecified scene₁ .type .chair₁ distractors₁ {(.size, .large), (.colour, .green)} ∧
-      NumericallyOverSpecified scene₁ .chair₁ distractors₁ {(.colour, .green), (.type, .chair)} ∧
-      NominallyOverSpecified scene₁ .type .chair₁ distractors₁
+    IsMinimal scene₁ .greenChair distractors₁ {(.size, .large)} ∧
+      RealOverSpecified scene₁ .type .greenChair distractors₁
+        {(.size, .large), (.colour, .green)} ∧
+      NumericallyOverSpecified scene₁ .greenChair distractors₁
+        {(.colour, .green), (.type, .chair)} ∧
+      NominallyOverSpecified scene₁ .type .greenChair distractors₁
         {(.size, .large), (.type, .chair)} ∧
-      DuplicateOverSpecified scene₁ .chair₁ distractors₁
+      DuplicateOverSpecified scene₁ .greenChair distractors₁
         {(.colour, .green), (.type, .chair), (.colour, .green)} ∧
-      RealOverSpecified scene₁ .type .chair₁ distractors₁
+      RealOverSpecified scene₁ .type .greenChair distractors₁
         {(.colour, .green), (.type, .chair), (.colour, .green)} := by
-  refine ⟨isMinimal_of_card_eq_one ⟨.chair₂, by decide⟩ (by decide) rfl, by decide,
+  refine ⟨isMinimal_of_card_eq_one ⟨.blueChair, by decide⟩ (by decide) rfl, by decide,
     ⟨by decide, by decide, fun h ↦ h.not_prop_of_lt (j := {(.size, .large)}) (by decide)
       (by decide)⟩, by decide, by decide, by decide⟩
 
-/-- *The chair* is purely under-specified and *the large blue chair* wrong. -/
+/-- *The chair* is purely under-specified, and a description calling the green chair blue, as
+the paper's *the large blue chair in the middle* does, is wrong. -/
 theorem scene₁_under :
-    PurelyUnderSpecified scene₁ .chair₁ distractors₁ {(.type, .chair)} ∧
-      Wrong scene₁ .chair₁ {(.size, .large), (.colour, .blue), (.type, .chair)} := by
+    PurelyUnderSpecified scene₁ .greenChair distractors₁ {(.type, .chair)} ∧
+      Wrong scene₁ .greenChair {(.size, .large), (.colour, .blue), (.type, .chair)} := by
   decide
 
-/-- The second scene, a small green front-facing desk among a small green side-facing desk, a
-large green front-facing desk and a small green front-facing chair. -/
+/-- The second scene, a small green front-facing desk among a grey chair, a large and a small
+green chair, a large green front-facing desk, a small green side-facing desk and a grey desk. -/
 def scene₂ : KB Obj Attr Value
-  | .desk₁, .type => some .desk
-  | .desk₁, .size => some .small
-  | .desk₁, .colour => some .green
-  | .desk₁, .orientation => some .front
-  | .desk₂, .type => some .desk
-  | .desk₂, .size => some .small
-  | .desk₂, .colour => some .green
-  | .desk₂, .orientation => some .side
-  | .desk₃, .type => some .desk
-  | .desk₃, .size => some .large
-  | .desk₃, .colour => some .green
-  | .desk₃, .orientation => some .front
-  | .chair₃, .type => some .chair
-  | .chair₃, .size => some .small
-  | .chair₃, .colour => some .green
-  | .chair₃, .orientation => some .front
+  | .targetDesk, .type => some .desk
+  | .targetDesk, .size => some .small
+  | .targetDesk, .colour => some .green
+  | .targetDesk, .orientation => some .front
+  | .greyChair, .type => some .chair
+  | .greyChair, .size => some .large
+  | .greyChair, .colour => some .grey
+  | .greyChair, .orientation => some .front
+  | .largeGreenChair, .type => some .chair
+  | .largeGreenChair, .size => some .large
+  | .largeGreenChair, .colour => some .green
+  | .largeGreenChair, .orientation => some .front
+  | .smallGreenChair, .type => some .chair
+  | .smallGreenChair, .size => some .small
+  | .smallGreenChair, .colour => some .green
+  | .smallGreenChair, .orientation => some .front
+  | .largeGreenDesk, .type => some .desk
+  | .largeGreenDesk, .size => some .large
+  | .largeGreenDesk, .colour => some .green
+  | .largeGreenDesk, .orientation => some .front
+  | .smallGreenDesk, .type => some .desk
+  | .smallGreenDesk, .size => some .small
+  | .smallGreenDesk, .colour => some .green
+  | .smallGreenDesk, .orientation => some .side
+  | .greyDesk', .type => some .desk
+  | .greyDesk', .size => some .large
+  | .greyDesk', .colour => some .grey
+  | .greyDesk', .orientation => some .side
   | _, _ => none
 
 /-- The distractors of the second scene. -/
-def distractors₂ : Finset Obj := {.desk₂, .desk₃, .chair₃}
+def distractors₂ : Finset Obj :=
+  {.greyChair, .largeGreenChair, .smallGreenChair, .largeGreenDesk, .smallGreenDesk, .greyDesk'}
 
 /-- *The green small desk* is mixed, since every small object is green, and *the front-facing
 desk* is purely under-specified. -/
 theorem scene₂_under :
-    Mixed scene₂ .desk₁ distractors₂ {(.colour, .green), (.size, .small), (.type, .desk)} ∧
-      PurelyUnderSpecified scene₂ .desk₁ distractors₂
+    Mixed scene₂ .targetDesk distractors₂ {(.colour, .green), (.size, .small), (.type, .desk)} ∧
+      PurelyUnderSpecified scene₂ .targetDesk distractors₂
         {(.orientation, .front), (.type, .desk)} := by
   decide
 
