@@ -2570,7 +2570,6 @@ import Linglib.Syntax.Category.Particle.Basic
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Category.Pronoun.Demonstrative
 import Linglib.Syntax.Category.Pronoun.Indefinite
-import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm
 import Linglib.Syntax.Category.Pronoun.Logophoric
 import Linglib.Syntax.Category.Pronoun.Reciprocal
 import Linglib.Syntax.Category.Pronoun.WALS

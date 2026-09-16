@@ -1,57 +1,44 @@
-import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm
+import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
-# German Indefinite Pronouns
-[aloni-port-2015] [bubnov-2026] [wals-2013]
+# German indefinite pronouns
 
-German uses multiple morphological bases for indefinites: the dedicated
-prefix *irgend-* (special), and the generic-noun-derived *jemand* 'someone'
-and *etwas* 'something'. Per [wals-2013] F46A, German is classified
-`.mixed` on this basis.
+German has indefinite pronouns of two morphological kinds: *jemand* 'someone' and *etwas*
+'something', built on generic nouns (*jemand* from *je-man* 'ever-person'), and the *irgend-*
+series, *irgendwer*, *irgendwas*, built with a dedicated indefinite prefix. *Jemand* and *etwas*
+are used for a referent the speaker has in mind or presupposes; *irgend-* is used for one the
+speaker presupposes but cannot identify and for irrealis non-specific reference, a distribution
+it reached from an earlier non-specific use, as Aloni and Port describe. Kratzer and Shimoyama's
+domain-widening analysis of *irgendein* is the matter of `German.ModalIndefinites`.
 
-*irgend-* is an epistemic indefinite (D&A type iv, `var(∅,x)`):
-its semantics requires variation across epistemic alternatives, allowing
-both specific-unknown and non-specific contexts. Diachronically, *irgend-*
-extended from non-specific to epistemic ([aloni-port-2015]),
-instantiating the semantic weakening path `var(v,x) → var(∅,x)`
-([bubnov-2026] §6, Figure 3).
+## References
 
-See also `German.ModalIndefinites` for the modal-indefinite
-perspective on *irgendein* (domain widening per
-[kratzer-shimoyama-2002]).
+* [aloni-port-2015]
+* [haspelmath-1997]
+* [kratzer-shimoyama-2002]
 -/
 
 namespace German.Indefinites
 
 open Indefinite
 
-/-- German *irgend-*: dedicated indefinite prefix (special basis),
-    epistemic indefinite (D&A type iv).
-    [aloni-port-2015]; [bubnov-2026] §6, Table 3. -/
+/-- The *irgend-* series: built with a dedicated prefix, used for a referent the speaker cannot
+identify and for irrealis non-specific reference. -/
 def irgendEntry : IndefinitePronoun where
   form := "irgend-"
   ontology := .person
   basis := .special
   functions := {.specificUnknown, .irrealis}
 
-/-- German *jemand* 'someone' / *etwas* 'something': generic-noun-derived
-    (etymologically *je-man[d]* 'ever-person'); used for SK + SU. -/
+/-- *Jemand* 'someone' and *etwas* 'something': built on generic nouns, used for a referent the
+speaker has in mind or presupposes. -/
 def jemandEntry : IndefinitePronoun where
   form := "jemand/etwas"
   ontology := .person
   basis := .genericNoun
   functions := {.specificKnown, .specificUnknown}
 
-/-- The German indefinite paradigm: special prefix + generic-noun forms,
-    yielding WALS F46A `.mixed`. -/
-def paradigm : IndefiniteParadigm where
-  language := "German"
-  isoCode := "deu"
-  forms := [irgendEntry, jemandEntry]
-
-/-- German's WALS F46A classification: paradigm uses two distinct bases
-    (`.special` and `.genericNoun`) → derives `.mixed`. -/
-theorem german_paradigm_is_mixed :
-    paradigm.toWALS46A = some .mixed := rfl
+/-- The German paradigm: the dedicated prefix and the generic-noun forms. -/
+def paradigm : IndefiniteParadigm := [irgendEntry, jemandEntry]
 
 end German.Indefinites

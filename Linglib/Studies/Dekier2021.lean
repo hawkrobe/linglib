@@ -1,5 +1,5 @@
 import Linglib.Morphology.Exponence.Containment.Contiguity
-import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm
+import Linglib.Syntax.Category.Pronoun.Indefinite
 import Linglib.Fragments.English.Indefinites
 import Linglib.Fragments.Slavic.Russian.Indefinites
 import Linglib.Fragments.Yakut.Indefinites
@@ -30,7 +30,8 @@ spellout-driven movement where prefixes arise by subderivation, (57).
 Layers are the grades `Fin 3` of the containment substrate and entries its context-free span
 rules, with `spellout` the exponent of the Superset-and-Elsewhere winner. Fragment forms are
 whole pronouns where the paper lists markers, so the Fragment-side theorems compare coverage
-patterns and the paper's marker tables are rows. The derivations of prefixes and suffixes in
+patterns and the paper's marker tables are rows; a layer's form is the one series covering its
+function, `none` at a gap or where series overlap. The derivations of prefixes and suffixes in
 §4.2 are not modelled.
 
 ## References
@@ -61,26 +62,39 @@ def layer : HaspelmathFunction → Option (Fin 3)
 /-- The function each layer spells out. -/
 def function : Fin 3 → HaspelmathFunction := ![.irrealis, .specificUnknown, .specificKnown]
 
+/-- The form of a paradigm at a function, when one series covers it: `none` at a gap or where
+series overlap. -/
+def formAt (p : IndefiniteParadigm) (f : HaspelmathFunction) : Option String :=
+  match p.filter (f ∈ ·.functions) with
+  | [e] => some e.form
+  | _ => none
+
 /-- A paradigm's forms over the three layers, the triple the syncretism patterns classify. -/
 def pattern (p : IndefiniteParadigm) : Paradigm 3 (Option String) :=
-  λ g => p.formAt (function g)
+  fun g ↦ formAt p (function g)
+
+/-- The layers a series covers. -/
+def layers (e : IndefinitePronoun) : Finset (Fin 3) :=
+  Finset.univ.filter (function · ∈ e.functions)
 
 /-- The nanosyntactic lexicon of a paradigm: each form stores the largest layer it covers, the
 Superset and Elsewhere Principles deriving the rest of its coverage. -/
 def lexicon (p : IndefiniteParadigm) : List (SpanRule 3 String) :=
-  p.forms.filterMap λ e => (e.functionList.filterMap layer).max?.map (⟨e.form, ·, none⟩)
+  p.filterMap fun e ↦ (layers e).max.map (⟨e.form, ·, none⟩)
 
 /-! ### Syncretism and its absence -/
 
 /-- The syncretism patterns of Table 1 from the Fragments' coverage of the map: English AAA,
-Yakut ABB, Latin AAB, Russian ABC, and none for Kannada, whose paradigm has a gap. -/
+Yakut ABB, Latin AAB and Russian ABC. -/
 theorem fragment_syncretism :
-    English.Indefinites.paradigm.syncretism = some .AAA ∧
-      Yakut.Indefinites.paradigm.syncretism = some .ABB ∧
-      Latin.Indefinites.paradigm.syncretism = some .AAB ∧
-      Russian.Indefinites.paradigm.syncretism = some .ABC ∧
-      Kannada.Indefinites.paradigm.syncretism = none := by
+    syncretism (pattern English.Indefinites.paradigm) = syncretism Paradigm.aaa ∧
+      syncretism (pattern Yakut.Indefinites.paradigm) = syncretism Paradigm.abb ∧
+      syncretism (pattern Latin.Indefinites.paradigm) = syncretism Paradigm.aab ∧
+      syncretism (pattern Russian.Indefinites.paradigm) = syncretism Paradigm.abc := by
   decide
+
+/-- Kannada's paradigm has a gap at the specific known layer. -/
+theorem kannada_gap : pattern Kannada.Indefinites.paradigm 2 = none := rfl
 
 /-- The lexicon read off each Fragment paradigm reproduces its coverage of the three functions
 by spellout: (59) English, (63) Russian, (67) Yakut, (70) Latin, and Kannada with its gap. -/
@@ -103,14 +117,14 @@ out every layer it contains, so a lone gap is the specific known type and two ga
 specific types. -/
 theorem ne_none_of_le {v : List (SpanRule 3 String)} {g g' : Fin 3} (h : g ≤ g')
     (hg' : spellout v g' ≠ none) : spellout v g ≠ none :=
-  λ hg => hg' (spellout_eq_none_of_le hg h)
+  fun hg ↦ hg' (spellout_eq_none_of_le hg h)
 
 /-- With the interrogative pronoun as a layer below the hierarchy, (78) and (79): Mandarin
 *shénme* spells out the interrogative and the non-specific layer, Dutch *wat* all four. -/
 theorem interrogative_subset :
     spellout [(⟨"shénme", 1, none⟩ : SpanRule 4 String)] =
         ![some "shénme", some "shénme", none, none] ∧
-      spellout [(⟨"wat", 3, none⟩ : SpanRule 4 String)] = λ _ => some "wat" := by
+      spellout [(⟨"wat", 3, none⟩ : SpanRule 4 String)] = fun _ ↦ some "wat" := by
   decide
 
 /-! ### The sample -/
