@@ -23,8 +23,8 @@ phonological feature geometries of [clements-1985] and [sagey-1986].
 
 ## Main definitions
 
-* `Node`, `Node.parent`, and dominance `≤`, a `PartialOrder` with the root as `⊥`;
-  `Node.below` is the content a node brings with it.
+* `Node`, `Node.ancestors` and `Node.parent`, and dominance `≤`, a `PartialOrder` with the
+  root as `⊥`; `Node.below` is the content a node brings with it.
 * `Node.defaultDependent?`, `fillDefaults`: the default daughters and their fill-in.
 * `personNodes`, `numberNodes`, `cell`: the geometries of person, of number, and of
   a person–number cell, relative to an active inventory.
@@ -32,7 +32,7 @@ phonological feature geometries of [clements-1985] and [sagey-1986].
 
 ## Main results
 
-* `le_iff`: dominance is membership in the parent chain, hence decidable.
+* `le_iff_reflTransGen`: dominance is the reflexive transitive closure of direct dependence.
 * `cell_isLowerSet`: every assigned geometry is a lower set.
 * `fillDefaults_isLowerSet`: default fill-in preserves lower sets.
 
@@ -86,104 +86,95 @@ inductive Node where
 
 namespace Node
 
-/-- The node each node depends on; the root alone has none. -/
-def parent : Node → Option Node
-  | .referringExpression => none
-  | .participant | .individuation => some .referringExpression
-  | .speaker | .addressee => some .participant
-  | .multispeaker => some .speaker
-  | .group | .minimal | .nounClass => some .individuation
-  | .augmented => some .minimal
-  | .animate | .inanimate => some .nounClass
-  | .feminine | .masculine => some .animate
+/-- The nodes a node depends on, nearest first: the tree as the path from each node to
+the root. -/
+def ancestors : Node → List Node
+  | .referringExpression => []
+  | .participant | .individuation => [.referringExpression]
+  | .speaker | .addressee => [.participant, .referringExpression]
+  | .multispeaker => [.speaker, .participant, .referringExpression]
+  | .group | .minimal | .nounClass => [.individuation, .referringExpression]
+  | .augmented => [.minimal, .individuation, .referringExpression]
+  | .animate | .inanimate => [.nounClass, .individuation, .referringExpression]
+  | .feminine | .masculine => [.animate, .nounClass, .individuation, .referringExpression]
 
-/-- The first `k` links of the parent chain. -/
-def ancestorsAux : ℕ → Node → List Node
-  | 0, _ => []
-  | k + 1, n => match n.parent with
-    | none => []
-    | some p => p :: ancestorsAux k p
+/-- The node a node depends on directly; the root alone has none. -/
+def parent (n : Node) : Option Node := n.ancestors.head?
 
-/-- The proper ancestors of a node, nearest first; the tree has depth four. -/
-def ancestors (n : Node) : List Node := ancestorsAux 4 n
-
-/-- Dominance: `a` lies on the parent chain of `b`, so that `b` depends on `a`. -/
-def Dominates (a b : Node) : Prop := Relation.ReflTransGen (fun x y => x.parent = some y) b a
-
-theorem parent_mem_ancestorsAux {n p : Node} (h : n.parent = some p) (k : ℕ) :
-    p ∈ ancestorsAux (k + 1) n := by
-  simp [ancestorsAux, h]
-
-theorem dominates_of_mem_ancestorsAux :
-    ∀ (k : ℕ) {a b : Node}, a ∈ ancestorsAux k b → Dominates a b
-  | 0, _, _, h => by simp [ancestorsAux] at h
-  | k + 1, a, b, h => by
-    simp only [ancestorsAux] at h
-    split at h
-    · simp at h
-    · rename_i p hp
-      rcases List.mem_cons.1 h with rfl | h
-      · exact .single hp
-      · exact (dominates_of_mem_ancestorsAux k h).head hp
-
-theorem mem_ancestors_of_parent_of_mem_ancestors :
-    ∀ {a b m : Node}, m ∈ b.ancestors → m.parent = some a → a ∈ b.ancestors := by
+/-- The paths cohere: a node's ancestors are its parent followed by the parent's. -/
+theorem ancestors_eq_cons : ∀ {n p : Node}, n.parent = some p → n.ancestors = p :: p.ancestors := by
   decide
 
-/-- Dominance is membership in the parent chain. -/
-theorem dominates_iff (a b : Node) : Dominates a b ↔ a = b ∨ a ∈ b.ancestors := by
-  refine ⟨fun h => ?_, fun h => h.elim (fun h => h ▸ .refl) (dominates_of_mem_ancestorsAux 4)⟩
-  induction h with
-  | refl => exact .inl rfl
-  | tail _ hma ih =>
-    refine .inr (ih.elim (fun h => h ▸ parent_mem_ancestorsAux hma 3) fun h => ?_)
-    exact mem_ancestors_of_parent_of_mem_ancestors h hma
+theorem mem_ancestors_trans : ∀ {a b c : Node}, a ∈ b.ancestors → b ∈ c.ancestors →
+    a ∈ c.ancestors := by
+  decide
+
+/-- Dominance: `a` is `b` or one of the nodes `b` depends on. -/
+def Dominates (a b : Node) : Prop := a = b ∨ a ∈ b.ancestors
+
+instance : DecidableRel Dominates := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The dominance order: `a ≤ b` when `b` depends on `a`. -/
 instance : PartialOrder Node where
   le := Dominates
-  le_refl _ := .refl
-  le_trans _ _ _ h₁ h₂ := Relation.ReflTransGen.trans h₂ h₁
-  le_antisymm a b h₁ h₂ :=
-    (by decide : ∀ a b : Node, (a = b ∨ a ∈ b.ancestors) → (b = a ∨ b ∈ a.ancestors) → a = b)
-      a b ((dominates_iff a b).1 h₁) ((dominates_iff b a).1 h₂)
+  le_refl _ := .inl rfl
+  le_trans := by decide
+  le_antisymm := by decide
 
-theorem le_iff (a b : Node) : a ≤ b ↔ a = b ∨ a ∈ b.ancestors := dominates_iff a b
+theorem le_iff (a b : Node) : a ≤ b ↔ a = b ∨ a ∈ b.ancestors := Iff.rfl
 
-instance : DecidableLE Node := fun a b => decidable_of_iff _ (le_iff a b).symm
+instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (Dominates a b))
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
+
+/-- Dominance is the reflexive transitive closure of direct dependence. -/
+theorem le_iff_reflTransGen (a b : Node) :
+    a ≤ b ↔ Relation.ReflTransGen (fun x y ↦ x.parent = some y) b a := by
+  constructor
+  · rintro (rfl | h)
+    · exact .refl
+    · suffices key : ∀ k, ∀ b : Node, b.ancestors.length ≤ k → a ∈ b.ancestors →
+          Relation.ReflTransGen (fun x y ↦ x.parent = some y) b a from
+        key _ b le_rfl h
+      intro k
+      induction k with
+      | zero => intro b hb ha; simp [List.length_eq_zero_iff.1 (Nat.le_zero.1 hb)] at ha
+      | succ k ih =>
+        intro b hb ha
+        obtain ⟨p, hp⟩ : ∃ p, b.parent = some p :=
+          Option.ne_none_iff_exists'.1 fun h ↦ by
+            rw [parent, List.head?_eq_none_iff] at h; simp [h] at ha
+        rw [ancestors_eq_cons hp] at ha hb
+        rcases List.mem_cons.1 ha with rfl | ha
+        · exact .single hp
+        · exact (ih p (Nat.le_of_succ_le_succ hb) ha).head hp
+  · intro h
+    induction h with
+    | refl => exact .inl rfl
+    | @tail c d _ hcd ih =>
+      refine .inr ?_
+      have hmem : d ∈ c.ancestors := by rw [ancestors_eq_cons hcd]; exact List.mem_cons_self
+      exact ih.elim (fun h ↦ h ▸ hmem) fun h ↦ mem_ancestors_trans hmem h
 
 /-- The root dominates every node. -/
 instance : OrderBot Node where
   bot := .referringExpression
-  bot_le b := (le_iff .referringExpression b).2 (by revert b; decide)
+  bot_le := by decide
 
 instance : LocallyFiniteOrder Node := Fintype.toLocallyFiniteOrder
 
-theorem lt_of_parent {a b : Node} (h : b.parent = some a) : a < b := by
-  revert h; cases a <;> cases b <;> decide
+theorem lt_of_parent : ∀ {a b : Node}, b.parent = some a → a < b := by decide
 
-/-- Every node. -/
-def all : List Node :=
-  [.referringExpression, .participant, .speaker, .multispeaker, .addressee, .individuation, .group,
-    .minimal, .augmented, .nounClass, .animate, .inanimate, .feminine, .masculine]
+/-- The nodes a node depends on, itself included and the root excluded, from the root down:
+the content a privative feature brings with it. -/
+def below (n : Node) : List Node := ((n :: n.ancestors).filter (· ≠ ⊥)).reverse
 
-theorem mem_all (n : Node) : n ∈ all := by cases n <;> decide
+theorem mem_below : ∀ {a n : Node}, a ∈ below n ↔ ⊥ < a ∧ a ≤ n := by decide
 
-/-- The nodes a node depends on, itself included and the root excluded: the
-content a privative feature brings with it. -/
-def below (n : Node) : List Node := all.filter fun a => ⊥ < a ∧ a ≤ n
-
-theorem mem_below {a n : Node} : a ∈ below n ↔ ⊥ < a ∧ a ≤ n := by
-  simp [below, mem_all]
-
-theorem toFinset_below (n : Node) : (below n).toFinset = Finset.Ioc ⊥ n := by
-  ext a; simp [mem_below]
+theorem toFinset_below : ∀ n : Node, (below n).toFinset = Finset.Ioc ⊥ n := by decide
 
 /-- A dependent brings more than what it depends on. -/
-theorem below_subset_below {a b : Node} (h : a ≤ b) : below a ⊆ below b :=
-  fun _ hx => mem_below.2 ⟨(mem_below.1 hx).1, (mem_below.1 hx).2.trans h⟩
+theorem below_subset_below : ∀ {a b : Node}, a ≤ b → below a ⊆ below b := by decide
 
 /-- The default daughter of an organizing node: Speaker, Minimal, Inanimate. -/
 def defaultDependent? : Node → Option Node
