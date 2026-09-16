@@ -17,27 +17,38 @@ and the minimal cell everything. When the inner set is contained in the outer, t
 by specification level (`ContainmentPair.dom_subset_of_specLevel_le`), the Feature-Subset
 Principle as a consequence of the privative geometry rather than a stipulation. The person,
 number and gender values denote through their bundles (`Person.dom`, `Number.dom`,
-`Gender.dom`), person at parthood of the agent and the addressee of the context of utterance
-(`Reference.Context`), number at atomicity, gender at the female and the inanimate sorts the
-entity domain comes equipped with (`NaturalGender`), the three columns of one skeleton
-[harbour-2016]; an absent feature, and a value without a bundle, the impersonal person, the
-numbers beyond the dual and the non-sex-based genders, denote the whole domain. The semantically
-unmarked values, third person, plural and masculine, are the minimal cells, and their
-unrestricted domain is what honorification recruits [wang-r-2023].
+`Gender.dom`): person at parthood of the agent and the addressee of the context of utterance
+(`Reference.Context`), number at atomicity, and gender at the gender of the referent, the
+referents gendered masculine and feminine that the entity domain comes equipped with
+(`Gendered`): the feminine presupposes a referent not gendered masculine and the neuter one
+gendered neither way, so the neuter domain lies inside the feminine one
+(`Gender.dom_neuter_subset_dom_feminine`), the markedness ordering of [sauerland-2008b]. The
+three columns are one skeleton, the containment pair of [harley-ritter-2002] and
+[adger-harbour-2008]. An absent feature, and a value without a bundle, the impersonal person,
+the numbers beyond the dual and the non-sex-based genders, denote the whole domain. The
+semantically unmarked values, third person, plural and masculine, are the minimal cells, and
+their unrestricted domain is what honorification recruits [wang-r-2023].
 
 ## Implementation notes
 
-The dual's minimality domain needs a mereological predicate the entity domain's order does not
-supply, so the number outer set is the whole domain and the dual restricts nothing. The
-neuter ↦ inanimate cell and the gender containment are less established than the person and
-number columns (German *das Mädchen* 'the girl' is neuter and animate); the established core is
-feminine presupposing female with masculine unmarked [sauerland-2008].
+The gender of a referent is a social category, not an anatomical one: a referent may be
+gendered neither way, and then only a form without a gender feature is defined of it, the
+account of singular *they* in [bjorkman-2017] and [konnelly-cowper-2020]. The person entries
+take the agent and the addressee as parts of the referent where [sauerland-2003] has them
+overlap it; the two coincide for an atomic agent and addressee. The two-feature decomposition
+does not see clusivity, so the inclusive is refined to referents including the addressee and
+the exclusive leaves the addressee's exclusion to Maximize Presupposition. The dual's minimality
+domain needs a mereological predicate the entity domain's order does not supply, so the number
+outer set is the whole domain and the dual restricts nothing.
 
 ## References
 
 * [sauerland-2003]
-* [sauerland-2008]
-* [harbour-2016]
+* [sauerland-2008b]
+* [harley-ritter-2002]
+* [adger-harbour-2008]
+* [bjorkman-2017]
+* [konnelly-cowper-2020]
 * [wang-r-2023]
 -/
 
@@ -93,18 +104,20 @@ namespace Person
 variable {W E P T : Type*} [PartialOrder E] (c : Reference.Context W E P T) (x : E)
 
 /-- The domain of an optional person value at a context of utterance: first person the
-referents including the agent, second those including the agent or the addressee, third
-everything; an absent feature and the impersonal restrict nothing. -/
-def dom (p : Option Person) : Set E :=
-  (p.bind toFeatures).elim Set.univ
-    (ContainmentPairLike.dom (Set.Ici c.agent) (Set.Ici c.agent ∪ Set.Ici c.addressee))
+referents including the agent, the inclusive those including the agent and the addressee,
+second those including the agent or the addressee, third everything; an absent feature and the
+impersonal restrict nothing. -/
+def dom : Option Person → Set E
+  | some .firstInclusive => Set.Ici c.agent ∩ Set.Ici c.addressee
+  | p => (p.bind toFeatures).elim Set.univ
+      (ContainmentPairLike.dom (Set.Ici c.agent) (Set.Ici c.agent ∪ Set.Ici c.addressee))
 
 @[simp] theorem dom_none : dom c none = Set.univ := rfl
 
 @[simp] theorem mem_dom_first : x ∈ dom c (some .first) ↔ c.agent ≤ x := Iff.rfl
 
 @[simp] theorem mem_dom_firstInclusive :
-    x ∈ dom c (some .firstInclusive) ↔ c.agent ≤ x := Iff.rfl
+    x ∈ dom c (some .firstInclusive) ↔ c.agent ≤ x ∧ c.addressee ≤ x := Iff.rfl
 
 @[simp] theorem mem_dom_firstExclusive :
     x ∈ dom c (some .firstExclusive) ↔ c.agent ≤ x := Iff.rfl
@@ -115,6 +128,11 @@ def dom (p : Option Person) : Set E :=
 @[simp] theorem dom_third : dom c (some .third) = Set.univ := rfl
 
 @[simp] theorem dom_zero : dom c (some .zero) = Set.univ := rfl
+
+/-- The inclusive lies inside the first person. -/
+theorem dom_firstInclusive_subset_dom_first :
+    dom c (some .firstInclusive) ⊆ dom c (some .first) :=
+  Set.inter_subset_left
 
 end Person
 
@@ -142,31 +160,41 @@ end Number
 
 /-! ### Gender -/
 
-/-- Natural gender on an entity domain: the female and the inanimate referents, which the
-feminine and the neuter presuppose. -/
-class NaturalGender (E : Type*) where
-  /-- The female referents. -/
-  female : Set E
-  /-- The inanimate referents. -/
-  inanimate : Set E
+/-- The gender of referents, as socially constituted: the referents gendered masculine and those
+gendered feminine, disjoint. Grammatical gender presupposes it, and a referent may be gendered
+neither way. -/
+class Gendered (E : Type*) where
+  /-- The referents gendered masculine. -/
+  masculine : Set E
+  /-- The referents gendered feminine. -/
+  feminine : Set E
+  /-- No referent is gendered both ways. -/
+  disjoint : Disjoint masculine feminine
 
 namespace Gender
 
-variable {E : Type*} [NaturalGender E] (x : E)
+variable {E : Type*} [Gendered E] (x : E)
 
-/-- The domain of an optional gender value over an entity domain with natural gender: neuter the
-inanimate referents, feminine the female ones, masculine everything; an absent feature and the
-non-sex-based genders restrict nothing. -/
+/-- The domain of an optional gender value over a gendered entity domain: the feminine the
+referents not gendered masculine, the neuter those gendered neither way, the masculine
+everything; an absent feature and the non-sex-based genders restrict nothing. -/
 def dom (g : Option Gender) : Set E :=
   (g.bind Features.fromGender).elim Set.univ
-    (ContainmentPairLike.dom NaturalGender.inanimate NaturalGender.female)
+    (ContainmentPairLike.dom (Gendered.masculineᶜ ∩ Gendered.feminineᶜ) Gendered.masculineᶜ)
 
 @[simp] theorem dom_none : dom (E := E) none = Set.univ := rfl
 
-@[simp] theorem mem_dom_neuter : x ∈ dom (some .neuter) ↔ x ∈ NaturalGender.inanimate := Iff.rfl
+@[simp] theorem mem_dom_neuter :
+    x ∈ dom (some .neuter) ↔ x ∉ Gendered.masculine ∧ x ∉ Gendered.feminine := Iff.rfl
 
-@[simp] theorem mem_dom_feminine : x ∈ dom (some .feminine) ↔ x ∈ NaturalGender.female := Iff.rfl
+@[simp] theorem mem_dom_feminine : x ∈ dom (some .feminine) ↔ x ∉ Gendered.masculine := Iff.rfl
 
 @[simp] theorem dom_masculine : dom (E := E) (some .masculine) = Set.univ := rfl
+
+/-- The neuter domain lies inside the feminine one: the containment `[+neuter] → [+feminine]`
+of the decomposition, as a fact about referents. -/
+theorem dom_neuter_subset_dom_feminine :
+    dom (E := E) (some .neuter) ⊆ dom (some .feminine) :=
+  Set.inter_subset_left
 
 end Gender

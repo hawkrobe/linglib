@@ -12,7 +12,7 @@ import Mathlib.Tactic.DeriveFintype
 This file formalizes [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]'s account of the
 anti-duality of French *tous*. English *all* and *every* are unusable in a domain known to hold
 two individuals because Maximize Presupposition prefers *both* ([percus-2006],
-[sauerland-2008]); *tous* is anti-dual too although French has no word for *both*, the puzzle
+[sauerland-2008a]); *tous* is anti-dual too although French has no word for *both*, the puzzle
 of [chemla-2007] taken by [buccola-kriz-chemla-2018] to show a conceptual alternative at work.
 The account posits a dual number feature in every language, syncretic with the plural in
 French, so that the string *tous les NP* is ambiguous between a plural and a dual parse; Avoid
@@ -49,7 +49,7 @@ are not formalized.
 * [chemla-2007]
 * [buccola-kriz-chemla-2018]
 * [percus-2006]
-* [sauerland-2008]
+* [sauerland-2008a]
 * [sauerland-2003]
 -/
 
