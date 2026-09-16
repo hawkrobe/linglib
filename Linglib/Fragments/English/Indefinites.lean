@@ -1,47 +1,32 @@
-import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm
+import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
-# English Indefinite Pronouns
-[haspelmath-1997] [wals-2013]
+# English indefinite pronouns
 
-English forms its indefinite pronouns by prefixing `some-` to the
-generic-noun stems `-one`, `-body`, `-thing`, `-where` — yielding
-*someone*, *somebody*, *something*, *somewhere* (and parallel `any-`,
-`no-`, `every-` series). Per [wals-2013] F46A, English is classified
-`.genericNounBased` on this basis.
+English builds its indefinite pronouns on generic nouns: *some-* prefixed to *-one*, *-body*,
+*-thing* and *-where* gives *someone*, *somebody*, *something* and *somewhere*, with parallel
+*any-*, *no-* and *every-* series. The *some-* series is used alike for a referent the speaker
+has in mind, for one the speaker presupposes but cannot identify, and for irrealis non-specific
+reference.
 
-The single `some-` series covers all three SK/SU/NS functions on
-[haspelmath-1997]'s map, yielding the AAA syncretism (D&A type i
-unmarked).
+## References
+
+* [haspelmath-1997]
 -/
 
 namespace English.Indefinites
 
 open Indefinite
 
-/-- English `some-` series (*someone*, *somebody*, *something*, …):
-    AAA syncretism, D&A type i unmarked. The form is generic-noun-based
-    (the host stems `-one`, `-body`, `-thing` are nouns), per WALS F46A. -/
+/-- The *some-* series, *someone*, *somebody*, *something*: built on generic nouns and used in
+all three specific functions. -/
 def someEntry : IndefinitePronoun where
   form := "someone/-body/-thing"
   ontology := .person
   basis := .genericNoun
   functions := {.specificKnown, .specificUnknown, .irrealis}
 
-/-- The English indefinite paradigm (one series, parallel to *any-*/*no-*
-    not yet formalized). -/
-def paradigm : IndefiniteParadigm where
-  language := "English"
-  isoCode := "eng"
-  forms := [someEntry]
-
-/-- English `some-` covers all three SK/SU/NS functions: AAA syncretism. -/
-theorem english_paradigm_is_AAA : paradigm.syncretism = some .AAA := rfl
-
-/-- English's WALS F46A classification: derived from the paradigm's
-    morphological-basis distribution (single basis `.genericNoun` →
-    F46A `.genericNounBased`). -/
-theorem english_paradigm_is_genericNounBased :
-    paradigm.toWALS46A = some .genericNounBased := rfl
+/-- The English paradigm, its *some-* series; *any-* and *no-* are not entered. -/
+def paradigm : IndefiniteParadigm := [someEntry]
 
 end English.Indefinites

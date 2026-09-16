@@ -291,8 +291,8 @@ instance (c : LicensingContext) (e : Item) :
 
 `Polarity.LicensingContext.haspelmathFunction` (in `Semantics/Quantification/Indefinite.lean`)
 classifies each licensing environment by the [haspelmath-1997] map function it
-realizes. The theorems here ground the map's stipulated polarity-side
-classifiers (`HaspelmathFunction.isDE`/`isFC`) in `LicensingContext.properties`. -/
+realizes. The theorems here ground the map's polarity regions (`Indefinite.npiRegion` and the
+free-choice function) in `LicensingContext.properties`. -/
 
 /-- [haspelmath-1997]'s free-choice region coincides exactly with the
 [kadmon-landman-1993] generic-indefinite mechanism class: a context realizes
@@ -304,16 +304,16 @@ theorem haspelmathFunction_freeChoice_iff_genericIndefinite
       c.properties.mechanism = .byGenericIndefinite := by
   cases c <;> decide
 
-/-- Every context realizing an NPI-region function (`HaspelmathFunction.isDE`:
-question through direct negation) either supplies Zwarts strength or is the
-entropy row — the map's classical NPI region is weak-NPI-licensable, though
-not uniformly DE (questions license by entropy, [van-rooy-2003-npi]). -/
+/-- Every context realizing a function of `Indefinite.npiRegion` (question through direct
+negation) either supplies Zwarts strength or is the entropy row — the map's classical NPI
+region is weak-NPI-licensable, though not uniformly DE (questions license by entropy,
+[van-rooy-2003-npi]). -/
 theorem haspelmathFunction_npi_region_licensable (c : LicensingContext)
     (f : Indefinite.HaspelmathFunction) (hf : c.haspelmathFunction = some f)
-    (hDE : f.isDE = true) :
+    (hr : f ∈ Indefinite.npiRegion) :
     c.properties.strawsonSignature.toDEStrength.isSome ∨
       c.properties.mechanism = .byEntropy := by
-  revert hf hDE; cases c <;> cases f <;> decide
+  revert hf hr; cases c <;> cases f <;> decide
 
 /-- A context is **Strawson-only** when no classical signature row holds
 ([von-fintel-1999]): only-focus, adversatives, temporal *since*,

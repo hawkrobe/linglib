@@ -1,51 +1,39 @@
-import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm
+import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
-# Latin Indefinite Pronouns
-[haspelmath-1997] [bubnov-2026]
+# Latin indefinite pronouns
 
-Latin has a two-way split in the SK–SU–NS region of [haspelmath-1997]'s
-map: *aliquis* (`ali-` + interrogative `quis`) covers non-specific and
-specific-unknown (AAB pattern); *quidam* (interrogative `qui` + `-dam`)
-covers specific-known. Both forms are interrogative-based.
+Latin builds its indefinite pronouns on the interrogative *quis*: *aliquis*, with the prefix
+*ali-*, is used for a referent the speaker presupposes but cannot identify and for irrealis
+non-specific reference, and *quidam*, with the suffix *-dam*, for a referent the speaker has in
+mind.
 
-Latin is not in [wals-2013] F46A's 326-language sample; the
-morphological-basis encoding is recorded for cross-linguistic
-comparison anyway.
+## References
+
+* [bubnov-2026]
+* [haspelmath-1997]
 -/
 
 namespace Latin.Indefinites
 
 open Indefinite
 
-/-- Latin *aliquis*: non-specific + specific-unknown (AAB pattern).
-    Interrogative-based: `ali-` + interrogative `quis`. D&A type iv
-    epistemic (`var(∅,x)`); distribution matches profile.
-    [haspelmath-1997], [bubnov-2026] Table 1. -/
+/-- *Aliquis*: the prefix *ali-* on the interrogative, for a referent the speaker cannot identify
+and for irrealis non-specific reference. -/
 def aliEntry : IndefinitePronoun where
   form := "aliquis"
   ontology := .person
   basis := .interrogative
   functions := {.specificUnknown, .irrealis}
 
-/-- Latin *quidam*: specific-known indefinite (interrogative `qui` + `-dam`).
-    D&A type v `dep(∅,x)`.
-    [haspelmath-1997], [bubnov-2026] Table 1. -/
+/-- *Quidam*: the suffix *-dam* on the interrogative, for a referent the speaker has in mind. -/
 def damEntry : IndefinitePronoun where
   form := "quidam"
   ontology := .person
   basis := .interrogative
   functions := {.specificKnown}
 
-/-- The Latin indefinite paradigm: AAB pattern, both forms
-    interrogative-based. -/
-def paradigm : IndefiniteParadigm where
-  language := "Latin"
-  isoCode := "lat"
-  forms := [aliEntry, damEntry]
-
-/-- Latin paradigm exhibits Haspelmath's AAB syncretism: NS+SU
-    coexpressed (`aliquis`), SK distinct (`quidam`). -/
-theorem latin_paradigm_is_AAB : paradigm.syncretism = some .AAB := rfl
+/-- The Latin paradigm: *aliquis* and *quidam*. -/
+def paradigm : IndefiniteParadigm := [aliEntry, damEntry]
 
 end Latin.Indefinites

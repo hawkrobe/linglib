@@ -1,85 +1,42 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
 import Linglib.Semantics.Quantification.Indefinite
 import Linglib.Syntax.Category.Pronoun.Basic
 
-open Morphology (Word)
-
 /-!
-# Indefinite pronouns — the pronominal carrier of the indefinite series
-[haspelmath-1997]
+# Indefinite pronouns
 
-The **pronoun** member of the cross-categorial indefinite series: `IndefinitePronoun` `extends`
-the general `Pronoun` (`Syntax/Category/Pronoun/Basic.lean`) and carries the [haspelmath-1997] series data
-(via `Semantics/Quantification/Indefinite.lean`). A form like *someone* is one such object, instantiated in a
-Fragment, that flows through the Pronoun API like any other pronoun.
-
-This is *one carrier* of the series, not its home: indefiniteness is word-class-neutral (the
-`Indefinite` capability and its feature taxonomy live in `Semantics/Quantification/Indefinite.lean`). An indefinite
-determiner (*some* book) or pro-adverb (*somewhere*) would be a sibling carrier — a different
-word-class object supplying its own `instance : Indefinite That` — read by the same `[Indefinite α]`
-generic code. Cross-linguistic generalizations *over* indefinite pronouns (paradigm, WALS F46A
-bridge, syncretism) are typological and live in `Typology/Indefinite.lean`.
+An indefinite pronoun is a pronoun with a place in an indefinite series: the region of
+[haspelmath-1997]'s implicational map its series covers, the ontological category it belongs to
+and the morphological basis it is built from. A language's paradigm is the list of its series;
+the adjacency requirement on each series and the syncretism of a paradigm across the specific
+functions are the matter of `Studies/Haspelmath1997.lean` and `Studies/Dekier2021.lean`.
 
 ## Main declarations
 
-* `Indefinite.IndefinitePronoun` — the lexical object (`extends Pronoun`).
-* `instance : Indefinite Indefinite.IndefinitePronoun` — the pronoun carrier of the series.
-* `HasPhi` instance routing the object through the Pronoun API.
+* `Indefinite.IndefinitePronoun`: a pronoun with its series data, `extends Pronoun`.
+* `Indefinite.IndefiniteParadigm`: a language's indefinite series.
+
+## References
+
+* [haspelmath-1997]
 -/
 
 namespace Indefinite
 
-
-/-- A single indefinite pronoun — the canonical lexical object, `extends`ing the
-    general `Pronoun` (surface `form` + φ-features) with the indefinite-series
-    structure: its `ontology`-cal category ([haspelmath-1997] §3.1.3), its
-    morphological `basis`, and the `functions` it covers on the implicational map.
-
-    This is the single source of truth for an indefinite pronoun: it *is* a
-    `Pronoun`, so it flows through the Pronoun API, and it carries its own
-    distribution. `functions` is the realized cross-linguistic distribution
-    (textbook-consensus data); theory-specific predictions about which functions
-    a form *should* cover (Degano & Aloni 7-type team-semantics, choice-function
-    denotation, Hamblin alternatives) are projections into theory-side types,
-    not fields here. -/
+/-- An indefinite pronoun: its surface form and φ-features as a `Pronoun`, with the ontological
+category and morphological basis of its series and the functions of the map the series covers.
+The functions are the series' attested distribution, which a paradigm mate may narrow. -/
 structure IndefinitePronoun extends Pronoun where
-  /-- The [haspelmath-1997] §3.1.3 ontological category (person, thing, …). -/
+  /-- The ontological category of the series. -/
   ontology : OntologicalCategory
-  /-- The morphological derivation strategy (interrogative-based, etc.). -/
+  /-- The morphological basis the series is built from. -/
   basis : MorphologicalBasis
-  /-- The functions on [haspelmath-1997]'s implicational map this form
-      covers (a contiguous region; see `IndefiniteParadigm.AllContiguous`). -/
+  /-- The functions of the map the series covers. -/
   functions : Finset HaspelmathFunction
   deriving DecidableEq
 
-/-- Manual `Repr` showing just the surface `form` to avoid the `unsafe`
-    `Repr (Finset α)` instance from `Mathlib.Data.Finset.Sort`, which
-    would propagate unsafety into every consumer of `IndefinitePronoun`. -/
-instance : Repr IndefinitePronoun where
-  reprPrec e _ := s!"{e.form}"
+instance : HasPhi IndefinitePronoun := ⟨fun e ↦ e.toPronoun.phi⟩
 
-/-- Does this entry cover function `f`? -/
-def IndefinitePronoun.covers (e : IndefinitePronoun) (f : HaspelmathFunction) : Bool :=
-  decide (f ∈ e.functions)
-
-/-- For each form, the list of functions it covers, in `HaspelmathFunction.all`
-    order. -/
-def IndefinitePronoun.functionList (e : IndefinitePronoun) : List HaspelmathFunction :=
-  HaspelmathFunction.all.filter (e.covers ·)
-
-/-- Coverage of a single form: number of functions it spans. -/
-def IndefinitePronoun.coverage (e : IndefinitePronoun) : Nat :=
-  e.functionList.length
+/-- A language's indefinite paradigm: its series. -/
+abbrev IndefiniteParadigm := List IndefinitePronoun
 
 end Indefinite
-
-/-! ### Capability instances -/
-
-/-- An indefinite pronoun bears φ via its `Pronoun` core. -/
-instance : HasPhi Indefinite.IndefinitePronoun := ⟨fun e ↦ e.toPronoun.phi⟩
-
-/-- The indefinite pronoun is the pronominal carrier of the indefinite series. -/
-instance : Indefinite Indefinite.IndefinitePronoun :=
-  ⟨Indefinite.IndefinitePronoun.ontology, Indefinite.IndefinitePronoun.basis,
-   Indefinite.IndefinitePronoun.functions⟩

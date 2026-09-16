@@ -1,75 +1,75 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
+import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+import Mathlib.Combinatorics.SimpleGraph.Maps
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Semantics.Polarity.LicensingContext
 
 /-!
-# Indefinite series — feature taxonomy and the word-class-neutral capability
-[haspelmath-1997]
+# The implicational map of indefinite series
 
-The *indefinite series* is cross-categorial: a single series (English *some-*) spans pronouns
-(*someone*, *something*), determiners (*some* book), and pro-adverbs (*somewhere*, *somehow*,
-*sometime*). [haspelmath-1997]'s cover term "indefinite pronoun" notwithstanding, indefiniteness is
-**not** inherently pronominal — the ontological category fixes the member's word class (`person`/
-`thing` → pronoun, `place`/`manner`/`time` → pro-adverb, `determiner` → determiner).
-
-This file is therefore word-class-**neutral**: the [haspelmath-1997] feature dimensions (function
-coverage, ontology, morphological basis) and the `Indefinite` *capability* (`[Indefinite α]`) that
-exposes them over any carrier. The capability is the indefinite analogue of mathlib's
-`MonoidHomClass`-over-`MonoidHom`: a carrier-class-specific indefinite object (`IndefinitePronoun`
-in `Syntax/Category/Pronoun/Indefinite.lean`; a future `IndefiniteDeterminer` over `Definiteness`'s
-`Determiner`) supplies one `instance : Indefinite That`, and generic code reads the series data via
-`[Indefinite α]`.
+An indefinite series (English *some-*, Russian *-nibud'*) is used in some of nine functions,
+which [haspelmath-1997] arranges on an implicational map: a graph on the functions whose
+adjacency requirement says that the functions a series covers form a connected region. The map
+is `implicationalMap` and a region's connectedness is `Contiguous`, the connectedness of the
+induced subgraph, so the book's requirement is a statement of graph theory. A series is further
+described by the ontological category it belongs to (person, thing, place, …) and the
+morphological basis it is built from (an interrogative, a generic noun, a dedicated marker or an
+existential construction); the carrier bundling these with a form is `IndefinitePronoun` in
+`Syntax/Category/Pronoun/Indefinite.lean`.
 
 ## Main declarations
 
-* `Indefinite.HaspelmathFunction` — the 9 functions on [haspelmath-1997]'s implicational map, with
-  the map's intrinsic adjacency / contiguity structure.
-* `Indefinite.OntologicalCategory`, `Indefinite.MorphologicalBasis` — the ontology and
-  derivation-strategy feature dimensions.
-* `Indefinite` — the capability mixin `[Indefinite α]`: a carrier exposing the indefinite-series
-  feature data (ontology / basis / function-coverage), word-class-neutral.
+* `Indefinite.HaspelmathFunction`: the nine functions, with the book's numbering `number` and the
+  neighbours `adjacent` of each on the map.
+* `Indefinite.implicationalMap`: the map as a `SimpleGraph`.
+* `Indefinite.Contiguous`: a region of the map induces a connected subgraph; decidable.
+* `Indefinite.npiRegion`: the functions of the map in which negative polarity items occur.
+* `Polarity.LicensingContext.haspelmathFunction`: the function a licensing environment realizes.
+* `Indefinite.OntologicalCategory`, `Indefinite.MorphologicalBasis`: the two further dimensions
+  of a series.
+
+## Implementation notes
+
+The empty region is not contiguous, as `SimpleGraph.Connected` requires a vertex; a series
+covers at least one function. The book counts the possible regions of the map differently from
+the graph encoded here; see the TODO of `Studies/Haspelmath1997.lean`.
+
+## References
+
+* [haspelmath-1997]
+* [hoeksema-1983]
+* [wals-2013]
 -/
 
 namespace Indefinite
 
-/-! ### The implicational-map function inventory ([haspelmath-1997]) -/
+/-! ### The functions and the map -/
 
-/-- The 9 indefinite-series functions on [haspelmath-1997]'s
-    implicational map. A single form covers a contiguous region of the map. -/
+/-- The nine functions of [haspelmath-1997]'s implicational map. -/
 inductive HaspelmathFunction where
-  /-- Function 1: Specific known. Speaker has a referent in mind. -/
+  /-- Specific known: the speaker has a referent in mind. -/
   | specificKnown
-  /-- Function 2: Specific unknown. Speaker presupposes a referent
-      but cannot identify it. -/
+  /-- Specific unknown: the speaker presupposes a referent but cannot identify it. -/
   | specificUnknown
-  /-- Function 3: Irrealis non-specific. No specific referent intended. -/
+  /-- Irrealis non-specific: no specific referent is intended. -/
   | irrealis
-  /-- Function 4: Polar / content question. -/
+  /-- Questions. -/
   | question
-  /-- Function 5: Conditional protasis. -/
+  /-- The protasis of a conditional. -/
   | conditional
-  /-- Function 8: Standard of comparison. -/
+  /-- The standard of a comparative. -/
   | comparative
-  /-- Function 6: Indirect negation (superordinate or implicit negation:
-      *without*, *doubt*, *deny*). -/
+  /-- Indirect negation: superordinate or implicit negation (*without*, *doubt*, *deny*). -/
   | indirectNeg
-  /-- Function 7: Direct (clause-mate) negation. -/
+  /-- Direct, clause-mate negation. -/
   | directNeg
-  /-- Function 9: Free choice. -/
+  /-- Free choice. -/
   | freeChoice
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
-/-- All nine functions, listed in map order. -/
-def HaspelmathFunction.all : List HaspelmathFunction :=
-  [ .specificKnown, .specificUnknown, .irrealis, .question
-  , .conditional, .indirectNeg, .directNeg, .comparative, .freeChoice ]
+namespace HaspelmathFunction
 
-theorem HaspelmathFunction.mem_all (f : HaspelmathFunction) : f ∈ HaspelmathFunction.all := by
-  cases f <;> simp [HaspelmathFunction.all]
-
-/-- The book's numbering of the functions: the positions on the map, in which it states the
-distribution of a series. -/
-def HaspelmathFunction.number : HaspelmathFunction → Nat
+/-- The book's numbering of the functions, in which it states the distribution of a series. -/
+def number : HaspelmathFunction → ℕ
   | .specificKnown => 1
   | .specificUnknown => 2
   | .irrealis => 3
@@ -80,23 +80,20 @@ def HaspelmathFunction.number : HaspelmathFunction → Nat
   | .comparative => 8
   | .freeChoice => 9
 
-/-- Adjacency on [haspelmath-1997]'s implicational map (Fig. 4.4, verified
-    against the book): two-dimensional, with the specificity chain feeding
-    parallel question and conditional tracks.
+/-- The neighbours of a function on the map: a chain from specific known through specific
+unknown to irrealis, which feeds two parallel tracks, question to indirect negation to direct
+negation and conditional to comparative to free choice, the tracks joined at question and
+conditional and at indirect negation and comparative.
 
-    ```
-                          (4) question —— (6) indirect neg —— (7) direct neg
-                               |                |
-    (1) SK — (2) SU — (3) irr <
-                               |                |
-                          (5) conditional — (8) comparative — (9) free choice
-    ```
-
-    Edges: 1–2, 2–3, 3–4, 3–5, 4–5, 4–6, 5–8, 6–7, 6–8, 8–9. Note direct
-    negation hangs off indirect negation only, and comparative links
-    conditional, indirect negation, and free choice. Crucial typological
-    claim: any indefinite series covers a *contiguous* region. -/
-def HaspelmathFunction.adjacent : HaspelmathFunction → List HaspelmathFunction
+```
+                      (4) question —— (6) indirect neg —— (7) direct neg
+                           |                |
+(1) SK — (2) SU — (3) irr <
+                           |                |
+                      (5) conditional — (8) comparative — (9) free choice
+```
+-/
+def adjacent : HaspelmathFunction → List HaspelmathFunction
   | .specificKnown   => [.specificUnknown]
   | .specificUnknown => [.specificKnown, .irrealis]
   | .irrealis        => [.specificUnknown, .question, .conditional]
@@ -107,34 +104,40 @@ def HaspelmathFunction.adjacent : HaspelmathFunction → List HaspelmathFunction
   | .comparative     => [.conditional, .indirectNeg, .freeChoice]
   | .freeChoice      => [.comparative]
 
-/-- Is `f` a downward-entailing / nonveridical context (the classical
-    NPI-licensing region: question, conditional, indirect/direct negation)?
-    Used by [chierchia-2006]-style polarity-item typologies to predict
-    NPI distribution. -/
-def HaspelmathFunction.isDE : HaspelmathFunction → Bool
-  | .question | .conditional | .indirectNeg | .directNeg => true
-  | _ => false
+end HaspelmathFunction
 
-/-- Is `f` a free-choice context (comparative + freeChoice)? Comparative
-    standards are universal-flavored and pattern with FC cross-linguistically
-    ([haspelmath-1997]). -/
-def HaspelmathFunction.isFC : HaspelmathFunction → Bool
-  | .comparative | .freeChoice => true
-  | _ => false
+/-- The implicational map: the graph on the functions with the edges of
+`HaspelmathFunction.adjacent`. -/
+def implicationalMap : SimpleGraph HaspelmathFunction where
+  Adj f g := g ∈ f.adjacent
+  symm := ⟨by decide⟩
+  loopless := ⟨by decide⟩
 
-/-- The [haspelmath-1997] map function a licensing environment realizes, for
-    the polarity-relevant reading of an indefinite in that environment.
-    Partial: `none` for environments outside the map's function inventory
-    (the Ladusaw-tradition rows `few`, `atMost`, `superlative`, `onlyFocus`,
-    `tooTo`, `universalRestrictor`, `sinceTemporal`; also `nobody`,
-    `beforeClause`, `adversative`, whose placement between direct and
-    indirect negation is not verified against the book and is left unmapped).
-    Interpretation-light judgment calls, documented: the modal, imperative,
-    generic, and free-relative rows map to `freeChoice` — their
-    polarity-relevant realization — although the same environments host plain
-    irrealis uses of non-polarity indefinites; both comparative rows realize
-    the standard-of-comparison function regardless of NPI-licensability
-    (`phrasalComparative` licenses no NPIs, [hoeksema-1983]). -/
+instance : DecidableRel implicationalMap.Adj :=
+  fun f g ↦ inferInstanceAs (Decidable (g ∈ f.adjacent))
+
+/-- A region of the map is **contiguous** when it induces a connected subgraph: the adjacency
+requirement on the functions a series covers. -/
+def Contiguous (s : Finset HaspelmathFunction) : Prop :=
+  (implicationalMap.induce (s : Set HaspelmathFunction)).Connected
+
+instance (s : Finset HaspelmathFunction) : Decidable (Contiguous s) :=
+  inferInstanceAs (Decidable (implicationalMap.induce (s : Set HaspelmathFunction)).Connected)
+
+/-- The region of the map in which negative polarity items occur: questions, conditionals and
+the two negations. -/
+def npiRegion : Finset HaspelmathFunction :=
+  {.question, .conditional, .indirectNeg, .directNeg}
+
+/-- The function a licensing environment realizes, for the polarity-relevant reading of an
+indefinite in it, and `none` for an environment outside the map's inventory: the rows of the
+Ladusaw tradition (*few*, *at most*, superlatives, focus *only*, *too … to*, the restrictor of a
+universal, temporal *since*), and *nobody*, *before*-clauses and adversatives, whose placement
+between direct and indirect negation the book does not settle. The modal, imperative, generic
+and free-relative rows realize free choice, their polarity-relevant use, although the same
+environments host plain irrealis uses of other indefinites; both comparatives realize the
+standard of comparison, although the phrasal comparative licenses no polarity item
+([hoeksema-1983]). -/
 def _root_.Polarity.LicensingContext.haspelmathFunction :
     Polarity.LicensingContext → Option HaspelmathFunction
   | .negation => some .directNeg
@@ -146,120 +149,48 @@ def _root_.Polarity.LicensingContext.haspelmathFunction :
   | .freeRelative => some .freeChoice
   | _ => none
 
-/-- The licensing environments realizing a map function — the preimage of
-    `Polarity.LicensingContext.haspelmathFunction`. Empty for the specificity
-    triangle (`specificKnown`, `specificUnknown`, `irrealis`), whose
-    realizations are positive or irrealis clauses outside the
-    licensing-context inventory (matching the Fragment convention that an
-    empty `licensingContexts` list means the item needs positive contexts). -/
-def HaspelmathFunction.contexts (f : HaspelmathFunction) :
-    Finset Polarity.LicensingContext :=
-  Finset.univ.filter (·.haspelmathFunction = some f)
+/-! ### Ontological category and morphological basis -/
 
-/-- BFS on the implicational map restricted to a given set of functions.
-    Returns the set of nodes reachable from `start` through edges whose
-    endpoints both lie in `funcs`. -/
-def HaspelmathFunction.bfsReachable
-    (funcs : List HaspelmathFunction) (start : HaspelmathFunction)
-    (fuel : Nat := 10) : List HaspelmathFunction :=
-  let rec go (queue visited : List HaspelmathFunction) (fuel : Nat) :
-      List HaspelmathFunction :=
-    match fuel, queue with
-    | 0,         _       => visited
-    | _,         []      => visited
-    | fuel + 1, f :: rest =>
-      let neighbors := f.adjacent.filter (λ g =>
-        funcs.contains g && !visited.contains g)
-      go (rest ++ neighbors) (visited ++ neighbors) fuel
-  go [start] [start] fuel
-
-/-- A list of functions is *contiguous* on the implicational map iff BFS
-    from any element reaches all others. [haspelmath-1997]'s key
-    constraint: every indefinite series must cover a contiguous region. -/
-def HaspelmathFunction.isContiguous (funcs : List HaspelmathFunction) : Bool :=
-  match funcs with
-  | []     => true
-  | f :: _ => funcs.all (HaspelmathFunction.bfsReachable funcs f 15).contains
-
-/-! ### Ontological categories ([haspelmath-1997] §3.1.3) -/
-
-/-- The ontological categories of the indefinite series
-    ([haspelmath-1997] §3.1.3, Table 3.1). The seven core categories —
-    person, thing, property, place, time, manner, amount — are the categories
-    "most often expressed by simple means in the languages of the world"; the
-    human/non-human cut (person vs thing, *somebody* vs *something*) is made
-    practically everywhere. The category also fixes the member's word class:
-    `person`/`thing` are pronouns, `place`/`time`/`manner` pro-adverbs,
-    `determiner` ('which', *some N*) a determiner — `reason` ('why') is, like
-    `determiner`, common but non-universal (English and German have no
-    indefinite *somewhy*). -/
+/-- The ontological categories of a series. Person, thing, property, place, time, manner and
+amount are the seven the book finds expressed by simple means in most languages, the cut
+between person and thing (*somebody* against *something*) being made nearly everywhere; the
+category fixes the word class of the member, a pronoun for person and thing and a pro-adverb
+for place, time and manner. Determiners (*some* N) and reasons (*for some reason*) are common but
+not universal: English and German have no *somewhy*. -/
 inductive OntologicalCategory where
-  /-- Person: *somebody/someone* (interrogative *who?*). -/
+  /-- Person: *somebody*, *someone*, interrogative *who*. -/
   | person
-  /-- Thing: *something* (interrogative *what?*). -/
+  /-- Thing: *something*, interrogative *what*. -/
   | thing
-  /-- Property / kind: *some kind of* (interrogative *what kind?*). -/
+  /-- Property or kind: *some kind of*, interrogative *what kind*. -/
   | property
-  /-- Place: *somewhere* (interrogative *where?*). -/
+  /-- Place: *somewhere*, interrogative *where*. -/
   | place
-  /-- Time: *sometime* (interrogative *when?*). -/
+  /-- Time: *sometime*, interrogative *when*. -/
   | time
-  /-- Manner: *somehow* (interrogative *how?*). -/
+  /-- Manner: *somehow*, interrogative *how*. -/
   | manner
-  /-- Amount: *some amount* (interrogative *how much?*). -/
+  /-- Amount: *some amount*, interrogative *how much*. -/
   | amount
-  /-- Determiner: *some N* / 'which' — non-universal, distinct from the
-      substantival 'who'/'what'. -/
+  /-- Determiner: *some* N, interrogative *which*. -/
   | determiner
-  /-- Reason / cause: 'for some reason' (interrogative *why?*) — non-universal. -/
+  /-- Reason: *for some reason*, interrogative *why*. -/
   | reason
   deriving DecidableEq, Repr
 
-/-- The seven core ontological categories realized "practically everywhere"
-    ([haspelmath-1997] §3.1.3); excludes the non-universal `determiner`
-    and `reason`. -/
-def OntologicalCategory.core : List OntologicalCategory :=
-  [.person, .thing, .property, .place, .time, .manner, .amount]
-
-/-- All nine ontological categories (the seven core plus `determiner`, `reason`). -/
-def OntologicalCategory.all : List OntologicalCategory :=
-  OntologicalCategory.core ++ [.determiner, .reason]
-
-/-! ### Morphological basis ([haspelmath-1997]; = WALS F46A categories) -/
-
-/-- [haspelmath-1997]'s four morphological strategies for deriving
-    indefinite-series forms. Aligns with the four single-strategy values of
-    [wals-2013] F46A; F46A's `.mixed` cell arises only at the
-    paradigm level (see `IndefiniteParadigm.toWALS46A`, in `Typology/Indefinite.lean`). -/
+/-- The four ways a series is built: from an interrogative pronoun (Russian *kto-nibud'*), from
+a generic noun (English *somebody*), with a dedicated indefinite marker (German *irgend-*), or
+by an existential construction. These are the four single-basis cells of chapter 46 of
+[wals-2013]; its fifth cell, mixed, describes a paradigm using several bases. -/
 inductive MorphologicalBasis where
-  /-- Built from interrogative pronouns (`who-`, `what-`, …). -/
+  /-- Built from an interrogative pronoun. -/
   | interrogative
-  /-- Built from generic nouns ('person', 'thing', 'place'). -/
+  /-- Built from a generic noun for person, thing or place. -/
   | genericNoun
-  /-- A dedicated indefinite morpheme. -/
+  /-- Built with a dedicated indefinite marker. -/
   | special
-  /-- An existential predication construction. -/
+  /-- An existential construction. -/
   | existentialConstruction
   deriving DecidableEq, Repr
 
 end Indefinite
-
-/-! ### The capability -/
-
-/-- The indefinite-series capability `[Indefinite α]`: a carrier `α` exposing the
-    [haspelmath-1997] series data — its ontological category, morphological basis, and the
-    contiguous region of the implicational map it covers — over any word-class representation.
-
-    Word-class-neutral by design (`Indefinite` ≠ pronoun): the sole current carrier is
-    `Indefinite.IndefinitePronoun` (`Syntax/Category/Pronoun/Indefinite.lean`), but an indefinite
-    determiner (over `Definiteness`'s `Determiner`) or pro-adverb supplies its own
-    `instance : Indefinite That`
-    and is then read by the same generic `[Indefinite α]` code. This is the indefinite analogue of
-    mathlib's `MonoidHomClass`-over-`MonoidHom`/`RingHom`. -/
-class Indefinite (α : Type*) where
-  /-- The ontological category the carrier realizes (fixes its word class). -/
-  ontology : α → Indefinite.OntologicalCategory
-  /-- The morphological derivation strategy. -/
-  basis : α → Indefinite.MorphologicalBasis
-  /-- The implicational-map functions the carrier covers. -/
-  functions : α → Finset Indefinite.HaspelmathFunction

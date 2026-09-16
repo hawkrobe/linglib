@@ -1,51 +1,40 @@
-import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm
+import Linglib.Syntax.Category.Pronoun.Indefinite
 
 /-!
-# Kannada Indefinite Pronouns
-[haspelmath-1997] [degano-aloni-2025] [bubnov-2026] [wals-2013]
+# Kannada indefinite pronouns
 
-Kannada indefinites are formed by suffixing particles to interrogative
-pronouns: *yāru-oo* 'someone (specific unknown)', *yāru-aadaruu* 'anyone
-(non-specific)', etc. Per [wals-2013] F46A, Kannada is classified
-`.interrogativeBased`.
+Kannada builds its indefinite pronouns by suffixing a particle to an interrogative pronoun:
+*yāru-oo* 'someone', on *yāru* 'who', for a referent the speaker presupposes but cannot
+identify, and *yāru-aadaruu* 'anyone' for irrealis non-specific reference. Neither is used for a
+referent the speaker has in mind.
 
-*-oo* is the canonical example of D&A type vii specific-unknown
-(`dep(v,x) ∧ var(∅,x)`): a conjunctive requirement making the referent
-constant within each epistemic world but varying across worlds — "specific
-but unknown." This conjunctive type is cross-linguistically rare
-([bubnov-2026] §6, [degano-aloni-2025]).
+## References
+
+* [degano-aloni-2025]
+* [haspelmath-1997]
 -/
 
 namespace Kannada.Indefinites
 
 open Indefinite
 
-/-- Kannada *-oo*: specific-unknown indefinite suffix on interrogative
-    bases (e.g., *yāru-oo* 'someone'). D&A type vii: `dep(v,x) ∧ var(∅,x)`.
-    [haspelmath-1997], [degano-aloni-2025]. -/
+/-- The *-oo* series, *yāru-oo* 'someone': on an interrogative base, for a referent the speaker
+cannot identify. -/
 def ooEntry : IndefinitePronoun where
   form := "yāru-oo"
   ontology := .person
   basis := .interrogative
   functions := {.specificUnknown}
 
-/-- Kannada *-aadaruu*: non-specific indefinite suffix on interrogative
-    bases (e.g., *yāru-aadaruu* 'anyone'). D&A type iii: `var(v,x)`. -/
+/-- The *-aadaruu* series, *yāru-aadaruu* 'anyone': on an interrogative base, for irrealis
+non-specific reference. -/
 def aadaruuEntry : IndefinitePronoun where
   form := "yāru-aadaruu"
   ontology := .person
   basis := .interrogative
   functions := {.irrealis}
 
-/-- The Kannada indefinite paradigm: SK gap, NS + SU only. -/
-def paradigm : IndefiniteParadigm where
-  language := "Kannada"
-  isoCode := "kan"
-  forms := [ooEntry, aadaruuEntry]
-
-/-- Kannada's WALS F46A classification: single basis `.interrogative`
-    across both forms → derives `.interrogativeBased`. -/
-theorem kannada_paradigm_is_interrogativeBased :
-    paradigm.toWALS46A = some .interrogativeBased := rfl
+/-- The Kannada paradigm: no series for a referent the speaker has in mind. -/
+def paradigm : IndefiniteParadigm := [ooEntry, aadaruuEntry]
 
 end Kannada.Indefinites

@@ -257,17 +257,17 @@ end Existential
 polarity and free choice, English among them: the *any*-series covers direct negation and free
 choice. -/
 theorem any_double_duty :
-    ∃ e ∈ Haspelmath1997.english.forms,
-      e.covers .directNeg = true ∧ e.covers .freeChoice = true := by
+    ∃ e ∈ Haspelmath1997.english,
+      .directNeg ∈ e.functions ∧ .freeChoice ∈ e.functions := by
   decide
 
 /-- The other half separate the two, as Romance does: no Italian series covering direct
 negation covers free choice, and the free-choice series *-unque* covers no negation function. -/
 theorem italian_separates_uses :
-    ∀ e ∈ Haspelmath1997.italian.forms,
-      (e.covers .directNeg = true → e.covers .freeChoice = false) ∧
-        (e.covers .freeChoice = true →
-          e.covers .directNeg = false ∧ e.covers .indirectNeg = false) := by
+    ∀ e ∈ Haspelmath1997.italian,
+      (.directNeg ∈ e.functions → .freeChoice ∉ e.functions) ∧
+        (.freeChoice ∈ e.functions →
+          .directNeg ∉ e.functions ∧ .indirectNeg ∉ e.functions) := by
   decide
 
 end Chierchia2006
