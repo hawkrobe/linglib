@@ -67,8 +67,8 @@ def StatusSuffix.form : StatusSuffix → String
   | .tv  => "-V'"
 
 -- The substantive claim "A-extraction is banned without AF" is expressed
--- as `Extraction.Marked Extraction.realize .subject` (the agent's position
--- in the basic transitive clause).
+-- as `(Extraction.realize .subject).Nonempty` (the agent's position in the
+-- basic transitive clause).
 
 /-! ### Agent Focus construction -/
 
@@ -204,9 +204,9 @@ inductive Site where
 /-- 3rd-person agent (subject) extraction switches the verb to AF (the
     suffix *-on*, [coon-mateo-pedro-preminger-2014]); nothing else is
     marked. -/
-def realize : ExtractionTarget → List (Reflex Site)
-  | .subject => [.morpheme .verb]
-  | _ => []
+def realize : ExtractionTarget → Finset (Reflex Site)
+  | .subject => {.morpheme .verb}
+  | _ => ∅
 
 /-- WALS-style label: a dedicated morpheme marks extraction. -/
 def strategy : ExtractionMarkingStrategy := .dedicatedMorpheme

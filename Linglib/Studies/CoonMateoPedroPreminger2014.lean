@@ -359,18 +359,18 @@ theorem absPosition_matches_template (lang : Mayan) :
 /-- Whether a registered fragment marks transitive-subject extraction on the verb; the Yukatek
 fragment records no extraction reflexes. -/
 def MarksSubjectExtraction : Mayan → Prop
-  | .Chol => Marked Chol.Extraction.realize .subject
-  | .Qanjobal => Marked Qanjobal.Extraction.realize .subject
-  | .Kaqchikel => Marked Kaqchikel.Extraction.realize .subject
-  | .Tseltal => Marked Tseltal.Extraction.realize .subject
-  | .Tsotsil => Marked Tsotsil.Extraction.realize .subject
-  | .Mam => Marked Mam.Extraction.realize .subject
-  | .Kiche => Marked Kiche.Extraction.realize .subject
+  | .Chol => (Chol.Extraction.realize .subject).Nonempty
+  | .Qanjobal => (Qanjobal.Extraction.realize .subject).Nonempty
+  | .Kaqchikel => (Kaqchikel.Extraction.realize .subject).Nonempty
+  | .Tseltal => (Tseltal.Extraction.realize .subject).Nonempty
+  | .Tsotsil => (Tsotsil.Extraction.realize .subject).Nonempty
+  | .Mam => (Mam.Extraction.realize .subject).Nonempty
+  | .Kiche => (Kiche.Extraction.realize .subject).Nonempty
   | .Yukatek => False
 
 instance : ∀ lang : Mayan, Decidable (MarksSubjectExtraction lang)
   | .Chol | .Qanjobal | .Kaqchikel | .Tseltal | .Tsotsil | .Mam | .Kiche =>
-      inferInstanceAs (Decidable (Marked _ _))
+      Finset.decidableNonempty
   | .Yukatek => inferInstanceAs (Decidable False)
 
 /-- Tada's generalization over the fragments (19): a registered language marks subject

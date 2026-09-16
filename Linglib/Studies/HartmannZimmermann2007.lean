@@ -168,22 +168,22 @@ private def mkInSituUtt (pac : PAC) (g : Gender) (sg : Bool)
 
 /-- Ex-situ new-information focus ((22), `Examples.ex22`). -/
 def exSitu_newInfo : FocusUtterance :=
-  mkExSituUtt cont_3sf_R .masculine true true (λ _ => rfl) (ctx .newInfo)
+  mkExSituUtt cont_3sf_R .masculine true true (fun _ ↦ rfl) (ctx .newInfo)
 
 /-- Ex-situ corrective focus on a feminine subject ((24),
 `Examples.ex24`). -/
 def exSitu_corrective : FocusUtterance :=
-  mkExSituUtt cmp_3sf_R .feminine true true (λ _ => rfl) (ctx .corrective) .subject
+  mkExSituUtt cmp_3sf_R .feminine true true (fun _ ↦ rfl) (ctx .corrective) .subject
 
 /-- Ex-situ selective focus, no stabilizer ((29), `Examples.ex29`). -/
 def exSitu_selective : FocusUtterance :=
-  mkExSituUtt cont_1sg_R .masculine true false (λ _ => rfl) (ctx .selective)
+  mkExSituUtt cont_1sg_R .masculine true false (fun _ ↦ rfl) (ctx .selective)
 
 /-- Ex-situ contrastive focus, no stabilizer ((27), `Examples.ex27`);
 the paper's 4sg impersonal *akèe* is approximated with the 3sg.M
 Relative continuous. -/
 def exSitu_contrastive : FocusUtterance :=
-  mkExSituUtt cont_3sm_R .masculine true false (λ _ => rfl) (ctx .contrastive)
+  mkExSituUtt cont_3sm_R .masculine true false (fun _ ↦ rfl) (ctx .contrastive)
 
 /-- In-situ new-information focus ((23), `Examples.ex23`). -/
 def inSitu_newInfo : FocusUtterance := mkInSituUtt cmp_1sg_G .masculine true (ctx .newInfo)
@@ -217,7 +217,7 @@ types. -/
 theorem strategy_does_not_determine_pragType :
     ¬ Function.FactorsThroughOn
         FocusUtterance.pragType
-        (λ u : FocusUtterance => u.cfg.strategy)
+        (fun u : FocusUtterance ↦ u.cfg.strategy)
         {u | u.IsHausaLicensed} := by
   rw [Function.not_factorsThroughOn_iff_exists_witness]
   exact ⟨exSitu_newInfo, exSitu_corrective,
@@ -228,7 +228,7 @@ theorem strategy_does_not_determine_pragType :
 theorem strategy_underdetermines_pragType_inSitu :
     ¬ Function.FactorsThroughOn
         FocusUtterance.pragType
-        (λ u : FocusUtterance => u.cfg.strategy)
+        (fun u : FocusUtterance ↦ u.cfg.strategy)
         {u | u.IsHausaLicensed ∧ u.cfg.strategy = .inSitu} := by
   rw [Function.not_factorsThroughOn_iff_exists_witness]
   exact ⟨inSitu_newInfo, inSitu_corrective,
@@ -251,7 +251,7 @@ theorem starred_inSitu_subject_not_IsHausaLicensed :
 
 /-- The grammatical ex-situ subject focus ((17 A1), `Examples.ex17a1`). -/
 def licensed_exSitu_subject : FocusUtterance :=
-  mkExSituUtt cont_3sm_R .masculine true true (λ _ => rfl) (ctx .newInfo) .subject
+  mkExSituUtt cont_3sm_R .masculine true true (fun _ ↦ rfl) (ctx .newInfo) .subject
 
 theorem licensed_exSitu_subject_IsHausaLicensed :
     licensed_exSitu_subject.IsHausaLicensed := by decide
@@ -267,14 +267,22 @@ theorem exSitu_subject_subjunctive_IsHausaLicensed :
 
 /-! ## Universalist Basic Focus Rule (§5, §6.2) -/
 
-/-- An overt reflex of focus: non-vacuous fronting (subjects front
-string-vacuously), Relative-form morphology, or a stabilizer. -/
+/-- The overt reflexes of a focus utterance in the shared `Reflex.Marking` vocabulary:
+non-vacuous fronting (subjects front string-vacuously), Relative-form morphology, and the
+stabilizer. -/
+def FocusUtterance.marking (u : FocusUtterance) : Marking Focused :=
+  ⟨u.focused,
+    (if u.focused = .nonSubject ∧ u.cfg.strategy = .exSitu then {.displacement u.focused}
+      else ∅) ∪
+    (if u.cfg.pac.mode = .relative then {.morpheme u.focused} else ∅) ∪
+    (if u.cfg.hasStab then {.morpheme u.focused} else ∅)⟩
+
+/-- A morphosyntactic reflex of focus: some reflex outside the phonological channel. -/
 def FocusUtterance.HasMorphosyntacticReflex (u : FocusUtterance) : Prop :=
-  (u.focused = .nonSubject ∧ u.cfg.strategy = .exSitu) ∨
-    u.cfg.pac.mode = .relative ∨ u.cfg.hasStab = true
+  ∃ ρ ∈ u.marking.reflexes, ρ.modality.channel ≠ .phonological
 
 instance (u : FocusUtterance) : Decidable u.HasMorphosyntacticReflex :=
-  inferInstanceAs (Decidable ((_ ∧ _) ∨ _ ∨ _))
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The universalist claim — [selkirk-1995]'s Basic Focus Rule and its
 tradition (§5, §6.2) — that every focused utterance carries some
@@ -286,42 +294,29 @@ def UniversalBFR : Prop :=
 /-- (23) is licensed and reflex-free; the §5 pilot finds no prosodic
 reflex either. -/
 theorem hausa_falsifies_UniversalBFR : ¬ UniversalBFR :=
-  λ h => absurd (h inSitu_newInfo (by decide)) (by decide)
+  fun h ↦ absurd (h inSitu_newInfo (by decide)) (by decide)
 
 /-- The subject-side counterexample (the (8) pattern). -/
 theorem exSitu_subject_subjunctive_no_reflex :
     ¬ exSitu_subject_subjunctive.HasMorphosyntacticReflex := by decide
 
-/-- The overt reflexes of a focus utterance in the shared
-`Reflex.Marking` vocabulary: non-vacuous fronting,
-Relative-form morphology, and the stabilizer. -/
-def FocusUtterance.reflexes (u : FocusUtterance) : List (Reflex Focused) :=
-  (if u.focused = .nonSubject ∧ u.cfg.strategy = .exSitu
-    then [.displacement u.focused] else []) ++
-  (if u.cfg.pac.mode = .relative then [.morpheme u.focused] else []) ++
-  (if u.cfg.hasStab then [.morpheme u.focused] else [])
-
-/-- The disjunctive reflex predicate coincides with overtness of the
-reflex list. -/
+/-- Every Hausa focus reflex is morphosyntactic, so a morphosyntactic reflex is just an overt
+one. -/
 theorem hasMorphosyntacticReflex_iff (u : FocusUtterance) :
-    u.HasMorphosyntacticReflex ↔
-      (Marking.mk u.focused u.reflexes).IsOvert := by
-  by_cases h1 : u.focused = .nonSubject ∧ u.cfg.strategy = .exSitu <;>
-  by_cases h2 : u.cfg.pac.mode = .relative <;>
-  by_cases h3 : u.cfg.hasStab = true <;>
-    simp [FocusUtterance.HasMorphosyntacticReflex, FocusUtterance.reflexes,
-      Marking.IsOvert, Reflex.Overt, h1, h2, h3]
+    u.HasMorphosyntacticReflex ↔ u.marking.IsOvert := by
+  refine ⟨fun ⟨ρ, hρ, _⟩ ↦ ⟨ρ, hρ⟩, fun ⟨ρ, hρ⟩ ↦ ⟨ρ, hρ, ?_⟩⟩
+  simp only [FocusUtterance.marking, Finset.mem_union] at hρ
+  split_ifs at hρ <;> simp only [Finset.mem_singleton, Finset.notMem_empty, or_false, false_or,
+    or_assoc, or_self] at hρ <;> rcases hρ with rfl | rfl <;> nofun
 
 /-- Hausa refutes the universalist claim that every (licensed) focus
 receives an overt reflex — the same `EveryTargetOvert` shape
 Tangale refutes in `HartmannZimmermann2004.lean`. -/
 theorem hausa_refutes_perceptibility :
     ¬ Reflex.EveryTargetOvert
-        (λ u : {u : FocusUtterance // u.IsHausaLicensed} =>
-          Marking.mk u.1.focused u.1.reflexes) :=
-  λ h => absurd
-    ((hasMorphosyntacticReflex_iff inSitu_newInfo).mpr
-      (h ⟨inSitu_newInfo, by decide⟩))
+        (fun u : {u : FocusUtterance // u.IsHausaLicensed} ↦ u.1.marking) :=
+  fun h ↦ absurd
+    ((hasMorphosyntacticReflex_iff inSitu_newInfo).mpr (h ⟨inSitu_newInfo, by decide⟩))
     (by decide)
 
 /-! ## Polar tone of *nē/cē* (§2.1)

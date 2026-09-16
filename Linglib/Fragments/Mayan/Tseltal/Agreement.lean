@@ -106,8 +106,8 @@ namespace Extraction
 
 /-- No Agent Focus morphology is required for A-extraction, consistent
     with Tseltal being LOW-ABS. -/
-def realize : ExtractionTarget → List (Reflex Empty) :=
-  fun _ => []
+def realize : ExtractionTarget → Finset (Reflex Empty) :=
+  fun _ ↦ ∅
 
 /-- WALS-style label: extraction is unmarked. -/
 def strategy : ExtractionMarkingStrategy := .unmarked

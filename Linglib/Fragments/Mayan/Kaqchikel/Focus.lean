@@ -14,7 +14,7 @@ fronts like A but intransitive verbs have no AF form.
 ## Main declarations
 
 * `Kaqchikel.focusRealize`: focus realization by focused argument
-  position, as a `Reflex.Marking` reflex list.
+  position, as a `Reflex.Marking`.
 * `Kaqchikel.af_reflex_iff`: the verb-hosted AF reflex appears exactly
   under transitive-subject (A) focus.
 * `Kaqchikel.marked_subject_is_A_not_S`: the A-focus vs S-focus split
@@ -58,8 +58,8 @@ inductive FocusSite where
     default. -/
 def focusRealize : ArgumentRole → Marking FocusSite
   | .A => ⟨.focusPhrase,
-           [.displacement .focusPhrase, .morpheme .focusPhrase, .morpheme .verb]⟩
-  | _  => ⟨.focusPhrase, [.displacement .focusPhrase, .morpheme .focusPhrase]⟩
+           {.displacement .focusPhrase, .morpheme .focusPhrase, .morpheme .verb}⟩
+  | _  => ⟨.focusPhrase, {.displacement .focusPhrase, .morpheme .focusPhrase}⟩
 
 /-- The verb-hosted reflex (AF) appears under transitive-subject focus
     only. -/

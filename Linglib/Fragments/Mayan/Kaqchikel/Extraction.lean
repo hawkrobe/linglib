@@ -44,9 +44,9 @@ inductive Site where
 /-- Transitive-subject extraction switches the verb to AF (the suffix
     *-ö* or *-n*, with Set A suppressed, [erlewine-2016]); nothing else
     is marked. -/
-def realize : ExtractionTarget → List (Reflex Site)
-  | .subject => [.morpheme .verb]
-  | _ => []
+def realize : ExtractionTarget → Finset (Reflex Site)
+  | .subject => {.morpheme .verb}
+  | _ => ∅
 
 /-- WALS-style label: a dedicated morpheme marks extraction. -/
 def strategy : ExtractionMarkingStrategy := .dedicatedMorpheme
