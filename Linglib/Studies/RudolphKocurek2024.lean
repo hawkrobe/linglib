@@ -1469,7 +1469,7 @@ theorem mc_iff_comparativeSem (A B : ComparativeFormula L E) (w : W) :
     EvalRevised interp (.comp A B) ord i w ↔
     Degree.comparativeSem (λ φ => formulaDeg interp ord i φ w) A B .positive := by
   rw [mc_iff_degree_gt]
-  simp only [Degree.comparativeSem, gt_iff_lt]
+  simp only [Degree.comparativeSem_positive]
   exact (deg_lt_deg_iff ord i (denotation_subset_field interp ord i A w)
     (denotation_subset_field interp ord i B w)).symm
 

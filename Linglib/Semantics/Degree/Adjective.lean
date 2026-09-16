@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Boundedness
 import Linglib.Semantics.Degree.Scale
-import Linglib.Semantics.Degree.AntonymyType
+import Linglib.Semantics.Degree.Antonymy
 import Linglib.Semantics.Degree.Discrete
 import Linglib.Syntax.Category.Adjective.Basic
 
@@ -9,19 +9,18 @@ import Linglib.Syntax.Category.Adjective.Basic
 
 Adjective-specific degree semantics, layered on the syntactic `Adjective`
 (`Syntax/Category/Adjective`): the `GradableAdjective` lexeme with its derived Kennedy
-classification, the two-threshold model for contrary antonyms, and multidimensional
-binding ([sassoon-2013]).
+classification, and multidimensional binding ([sassoon-2013]).
 
 ## Main definitions
 
 * `GradableAdjective` — a syntactic `Adjective` refined with the degree-semantic
   layer; `scaleType`, `standard`, and `adjectiveClass` are derived views.
-* `ThresholdPair` — the two thresholds of a contrary antonym pair, with a gap.
 * `InformationalStrength` — the weak/strong distinction ([alexandropoulou-gotzner-2024b]).
 * `DimensionBindingType` — how a multidimensional adjective binds its dimensions.
 
 The finite degree carrier `Bounded`, its `Threshold`, and the threshold semantics
-(`positiveMeaning`, `negativeMeaning`) live in `Semantics/Degree/Discrete`.
+(`positiveMeaning`, `negativeMeaning`) live in `Semantics/Degree/Discrete`; the antonym
+pair's polarity, relation and two-threshold model in `Semantics/Degree/Antonymy`.
 The intersective/subsective/privative classification lives in
 `Semantics/Modification/Classification.lean`.
 -/
@@ -148,51 +147,6 @@ def Boundedness.IsRelative (b : Boundedness) : Prop := b.defaultStandard.Require
 instance : DecidablePred Boundedness.IsRelative :=
   fun b => inferInstanceAs (Decidable b.defaultStandard.RequiresComparisonClass)
 
-/-! ### Two-threshold model for contrary antonyms -/
-
-/-- The two thresholds of a contrary antonym pair (*happy*/*unhappy*): `pos` for the
-positive form (true when `degree > pos`) and `neg` for the negative form (true when
-`degree < neg`). When `neg < pos` a gap region `[neg, pos]` — "neither" — lies between
-them; that strict inequality is taken as a hypothesis where a gap is needed
-(`contrary_gap_exists`, `gap_nonempty`), not stored as an invariant. -/
-structure ThresholdPair (max : Nat) where
-  pos : Threshold max
-  neg : Threshold max
-  deriving Repr, DecidableEq, BEq
-
-/-! ### Negation semantics
-
-The two-threshold model for contrary antonyms: the general threshold semantics of
-`Semantics/Degree/Basic` (`positiveMeaning`/`negativeMeaning`/`notPositiveMeaning`) read
-through a `ThresholdPair`'s two poles. -/
-
-section TwoThreshold
-variable {max : Nat} (d : Bounded max)
-
-/-- Contradictory negation *not happy* — `d ≤ θ` (`Degree.notPositiveMeaning`). -/
-abbrev contradictoryNeg (θ : Threshold max) : Prop := Degree.notPositiveMeaning d θ
-
-/-- Contrary negation *unhappy* — `d < θ_neg` (`Degree.negativeMeaning`). -/
-abbrev contraryNeg (θ_neg : Threshold max) : Prop := Degree.negativeMeaning d θ_neg
-
-/-- The gap region: `d` is neither positive nor negative (`neg ≤ d ≤ pos`). -/
-abbrev inGapRegion (tp : ThresholdPair max) : Prop :=
-  (tp.neg : Bounded max) ≤ d ∧ d ≤ (tp.pos : Bounded max)
-
-/-- Positive form *happy* at the pair's upper threshold — `d > pos`. -/
-abbrev positiveMeaning' (tp : ThresholdPair max) : Prop :=
-  Degree.positiveMeaning d tp.pos
-
-/-- Negative form *unhappy* at the pair's lower threshold — `d < neg`. -/
-abbrev contraryNegMeaning (tp : ThresholdPair max) : Prop :=
-  Degree.negativeMeaning d tp.neg
-
-/-- *not unhappy* — the complement of the negative form (`neg ≤ d`). -/
-abbrev notContraryNegMeaning (tp : ThresholdPair max) : Prop :=
-  (tp.neg : Bounded max) ≤ d
-
-end TwoThreshold
-
 /-! ### Informational strength -/
 
 /--
@@ -267,7 +221,7 @@ namespace GradableAdjective
 /-- The scale the adjective measures on: its dimension's, dualized for the negative member of
 an antonym pair (`.open_` for a non-gradable, which has no scale). -/
 def scaleType (g : GradableAdjective) : Boundedness :=
-  (g.dimension.map fun d => d.boundedness.ofPolarity (g.polarity.getD .positive)).getD .open_
+  (g.dimension.map λ d => g.polarity • d.boundedness).getD .open_
 
 /-- The positive standard: the scale's default, unless overridden (the *good*/MPA residual). -/
 def standard (g : GradableAdjective) : PositiveStandard :=

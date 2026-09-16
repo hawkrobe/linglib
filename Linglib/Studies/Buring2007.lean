@@ -55,7 +55,7 @@ the accessible worlds agree on the standard's degree.
 namespace Buring2007
 
 open ModalLogic
-open Degree (ScalePolarity)
+open Degree (Polarity)
 
 /-! ### The comparative and the degree negation -/
 
@@ -109,7 +109,7 @@ inductive Dimension where
 /-- An adjective: a dimension, measured positively (*long*) or negatively (*short*). -/
 structure Adjective where
   dimension : Dimension
-  polarity : ScalePolarity
+  polarity : Polarity
   deriving DecidableEq, Repr
 
 /-- A comparative pairing a matrix adjective with a than-clause adjective. -/
@@ -204,7 +204,7 @@ theorem reading_not_synonymous :
         ¬ Degree.comparativeSem (m .length) standard subject .positive := by
   refine ⟨fun d b => match d with | .length => if b then 12 else 10 | _ => 15,
     true, false, ?_, ?_⟩ <;>
-    simp [Comparative.reading, Degree.subcomparative, nomaly, Degree.comparativeSem]
+    simp [Comparative.reading, Degree.subcomparative, nomaly, Degree.comparativeSem_positive]
 
 /-! ### A modal in the than-clause -/
 

@@ -148,7 +148,7 @@ theorem moreSem_differential_bridge [AddCommGroup D] [IsOrderedAddMonoid D]
 /-- R5 at factor 1 is the equative. -/
 theorem asSem_equative_bridge [MulOneClass D] (μ : Entity → D) (a b : Entity) :
     asSem μ a 1 (μ b) ↔ equativeSem μ a b .positive := by
-  simp [asSem, equativeSem, one_mul]
+  simp [asSem, equativeSem_positive, one_mul]
 
 /-- A tight factor phrase entails R5's at-least semantics. -/
 theorem asSem_factor_bridge [Mul D] (μ : Entity → D) (a b : Entity)

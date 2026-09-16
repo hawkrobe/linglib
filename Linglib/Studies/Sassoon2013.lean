@@ -1,5 +1,4 @@
 import Linglib.Semantics.Degree.Adjective
-import Linglib.Semantics.Degree.Boundedness
 import Linglib.Data.Examples.Sassoon2013
 
 /-!

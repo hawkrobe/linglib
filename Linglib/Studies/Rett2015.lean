@@ -19,7 +19,7 @@ exclude each other, `comparative_antonym_variant`.
 
 ## Implementation notes
 
-Antonym polarity is the adjective's `Adjective.polarity`, the `ScalePolarity` that
+Antonym polarity is the adjective's `Adjective.polarity`, the `Polarity` that
 `Degree.equativeSem` and `Degree.comparativeSem` take as their direction; negative antonyms
 are the marked members of their pairs ([bierwisch-1989], [kennedy-2007]). The positive
 construction and the measure phrase have no polarity-parametrized semantics in the substrate,
@@ -37,7 +37,7 @@ so their rows of `IsPolarInvariant` are the book's classification.
 
 namespace Rett2015
 
-open Degree (ScalePolarity)
+open Degree (Polarity)
 open Degree
 open English.Predicates.Adjectival (tall short)
 
@@ -55,13 +55,9 @@ instance : DecidablePred IsPolarInvariant
   | .positive | .comparative | .measurePhrase => isFalse id
 
 /-- Negative antonyms are the marked members of their pairs. -/
-def IsMarked : ScalePolarity → Prop
-  | .negative => True
-  | .positive => False
+def IsMarked (p : Polarity) : Prop := p = .negative
 
-instance : DecidablePred IsMarked
-  | .negative => isTrue trivial
-  | .positive => isFalse id
+instance : DecidablePred IsMarked := λ p => inferInstanceAs (Decidable (p = .negative))
 
 /-! ### The implicature derivation -/
 
@@ -76,31 +72,31 @@ inductive Implicature where
 the positive construction is strengthened by Quantity for both antonyms, and the Marked
 Meaning Principle makes the marked antonym of a polar-invariant construction evaluative by
 Manner. -/
-def implicature (c : Construction) (p : ScalePolarity) : Option Implicature :=
+def implicature (c : Construction) (p : Polarity) : Option Implicature :=
   if c = .positive then some .quantity
   else if IsPolarInvariant c ∧ IsMarked p then some .manner else none
 
 /-- A construction–polarity pair is evaluative iff some implicature derives it. -/
-def Evaluative (c : Construction) (p : ScalePolarity) : Prop := implicature c p ≠ none
+def Evaluative (c : Construction) (p : Polarity) : Prop := implicature c p ≠ none
 
-instance (c : Construction) (p : ScalePolarity) : Decidable (Evaluative c p) :=
+instance (c : Construction) (p : Polarity) : Decidable (Evaluative c p) :=
   inferInstanceAs (Decidable (_ ≠ _))
 
 /-- The Marked Meaning Principle: Manner-derived evaluativity exactly for the marked antonym
 in a polar-invariant construction. -/
-theorem implicature_eq_manner_iff (c : Construction) (p : ScalePolarity) :
+theorem implicature_eq_manner_iff (c : Construction) (p : Polarity) :
     implicature c p = some .manner ↔ IsPolarInvariant c ∧ IsMarked p := by
-  cases c <;> cases p <;> decide
+  cases c <;> rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> decide
 
 /-- Quantity-derived evaluativity is the positive construction's alone. -/
-theorem implicature_eq_quantity_iff (c : Construction) (p : ScalePolarity) :
+theorem implicature_eq_quantity_iff (c : Construction) (p : Polarity) :
     implicature c p = some .quantity ↔ c = .positive := by
-  cases c <;> cases p <;> decide
+  cases c <;> rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> decide
 
 /-- Evaluativity is the positive construction or the Marked Meaning Principle. -/
-theorem evaluative_iff (c : Construction) (p : ScalePolarity) :
+theorem evaluative_iff (c : Construction) (p : Polarity) :
     Evaluative c p ↔ c = .positive ∨ (IsPolarInvariant c ∧ IsMarked p) := by
-  cases c <;> cases p <;> decide
+  cases c <;> rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> decide
 
 /-! ### The book's contrasts
 
@@ -110,7 +106,7 @@ positive-antonym counterparts are not. -/
 /-- The implicature deriving evaluativity for a fragment adjective in a construction, read off
 its lexicalized polarity. -/
 def evaluativity (a : GradableAdjective) (c : Construction) : Option Implicature :=
-  a.polarity.bind (implicature c)
+  implicature c a.polarity
 
 theorem as_short_as : evaluativity short .equative = some .manner := rfl
 
@@ -136,7 +132,8 @@ strengthened equative reduces to `μ a = μ b`. -/
 theorem exact_equative_antonym_invariant :
     (equativeSem μ a b .positive ∧ ¬ comparativeSem μ a b .positive) ↔
       (equativeSem μ a b .negative ∧ ¬ comparativeSem μ a b .negative) := by
-  simp only [equativeSem, comparativeSem, ge_iff_le, not_lt]
+  simp only [equativeSem_positive, equativeSem_negative, comparativeSem_positive,
+    comparativeSem_negative, not_lt]
   exact and_comm
 
 /-- Both strengthened antonym equatives are the "exactly" reading
@@ -144,7 +141,7 @@ theorem exact_equative_antonym_invariant :
 theorem exact_equative_eq_strengthened :
     (equativeSem μ a b .positive ∧ ¬ comparativeSem μ a b .positive) ↔
       equativeStrengthened μ a b := by
-  simp only [equativeSem, comparativeSem, equativeStrengthened, ge_iff_le, not_lt,
+  simp only [equativeSem_positive, comparativeSem_positive, equativeStrengthened, not_lt,
     le_antisymm_iff]
   exact and_comm
 
@@ -159,7 +156,7 @@ complementary truth conditions, so no truth-conditionally equivalent unmarked al
 exists. -/
 theorem comparative_antonym_variant (h : μ a ≠ μ b) :
     comparativeSem μ a b .positive ↔ ¬ comparativeSem μ a b .negative := by
-  simp only [comparativeSem, not_lt]
+  simp only [comparativeSem_positive, comparativeSem_negative, not_lt]
   exact ⟨le_of_lt, λ hle => hle.lt_of_ne h.symm⟩
 
 end PolarVarianceGrounding
@@ -168,17 +165,17 @@ end PolarVarianceGrounding
 
 /-- A Table 3.1 judgment: construction, antonym polarity, and whether the sentence is
 evaluative. The ungrammatical negative-antonym measure phrase carries no judgment. -/
-def datum (e : Data.Examples.LinguisticExample) : Option (Construction × ScalePolarity × Bool) :=
+def datum (e : Data.Examples.LinguisticExample) : Option (Construction × Polarity × Bool) :=
   do
     let c ← e.parse? "construction" [("positive", Construction.positive),
       ("comparative", .comparative), ("equative", .equative), ("measurePhrase", .measurePhrase),
       ("degreeQuestion", .degreeQuestion)]
-    let p ← e.parse? "polarity" [("positive", ScalePolarity.positive), ("negative", .negative)]
+    let p ← e.parse? "polarity" [("positive", Polarity.positive), ("negative", .negative)]
     let v ← e.parse? "evaluative" [("true", true), ("false", false)]
     pure (c, p, v)
 
 /-- The Table 3.1 judgments. -/
-def data : List (Construction × ScalePolarity × Bool) := Examples.all.filterMap datum
+def data : List (Construction × Polarity × Bool) := Examples.all.filterMap datum
 
 /-- The predictions match every Table 3.1 judgment. -/
 theorem evaluative_iff_observed : ∀ d ∈ data, Evaluative d.1 d.2.1 ↔ d.2.2 = true := by

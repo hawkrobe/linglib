@@ -7,6 +7,7 @@ import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.Linking
+import Linglib.Semantics.Degree.Boundedness
 
 /-!
 # The resultative construction family

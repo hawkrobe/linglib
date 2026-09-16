@@ -71,8 +71,8 @@ def ScalarDimension.domain : ScalarDimension → PropertyDomain
     (24)–(27), [kennedy-2007] (33), (60)): *??completely wet* but *completely dry* makes
     wetness lower closed, *fully straight* but *??fully bent* makes straightness upper
     closed, *100% full/empty* makes fullness closed. The negative member of an antonym
-    pair measures on the dual (`Boundedness.ofPolarity`). Reducible so the degree fiber's
-    `OrderTop`/`NoMaxOrder` instances synthesise through it. -/
+    pair measures on the dual (`Polarity.negative • b` in `Semantics/Degree/Antonymy`).
+    Reducible so the degree fiber's `OrderTop`/`NoMaxOrder` instances synthesise through it. -/
 abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
   | .openness | .curvature | .cracking | .denting | .scratching | .boiling
   | .alive | .freedom | .fullness | .shattering | .tightness | .pregnancy => .closed
@@ -119,7 +119,7 @@ instance instLinearOrderDimensionDegree (d : ScalarDimension) : LinearOrder d.de
     canonical scale `HasMax` — grounded for all dimensions in one application. -/
 theorem ScalarDimension.hasGreatest_degree_iff (d : ScalarDimension) :
     (∃ m : d.degree, IsTop m) ↔ d.boundedness.HasMax :=
-  Boundedness.hasGreatest_degreeShape_iff d.boundedness
+  Boundedness.exists_isTop_degreeShape d.boundedness
 
 /-! ### Derived aspectual views (verb side) -/
 

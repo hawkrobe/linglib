@@ -149,7 +149,7 @@ inductive Scale where
   deriving DecidableEq
 
 /-- A scale read upward or, for *short*, downward: the relation of a degree (2.1). -/
-abbrev DirectedScale := Scale × ScalePolarity
+abbrev DirectedScale := Scale × Polarity
 
 /-- The scale a `paperFeatures` label names. -/
 def DirectedScale.ofLabel : String → Option DirectedScale

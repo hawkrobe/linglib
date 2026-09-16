@@ -1,8 +1,9 @@
 import Mathlib.Order.Interval.Set.LinearOrder
 import Mathlib.Order.Bounds.Basic
+import Mathlib.Algebra.Order.Module.Defs
 import Linglib.Semantics.Degree.Comparison
 import Linglib.Semantics.Degree.Defs
-import Linglib.Semantics.Degree.Boundedness
+import Linglib.Semantics.Degree.Antonymy
 
 /-!
 # Degree comparison: the point-standard core
@@ -36,7 +37,9 @@ Framework-specific content for [rett-2026] (fixed-point ambidirectionality) live
 * `maxComparative` — the max-quantified clausal comparative ([von-stechow-1984],
   [rullmann-1995]): independent matrix/than witness predicates over `thanDegrees`,
   with the unique-witness collapse `maxComparative_unique`.
-* `taller_shorter_antonymy` — antonymy is argument swap plus direction reversal.
+* `comparativeSem_negative_mul` / `comparativeSem_toDual` / `comparativeSem_smul` — antonymy
+  is argument swap under the sign group; polarity is the order dual, and on an additive scale
+  the sign of the measure.
 * `comparative_iff_Iic_ssubset` — comparison as extent inclusion ([kennedy-1999]).
 * `antonymy_biconditional` / `not_crossExtentInclusion` — the antonymy
   biconditional derived from extent complementarity, and cross-polar anomaly
@@ -56,28 +59,36 @@ variable {Entity : Type*} {α : Type*} [Preorder α]
 `μ b` on the directed scale. Only `[Preorder α]`
 — connectedness-agnostic background orderings (CSW confidence states)
 are in scope. -/
-def comparativeSem (μ : Entity → α) (a b : Entity) (dir : ScalePolarity) : Prop :=
-  match dir with
-  | .positive => μ a > μ b
-  | .negative => μ a < μ b
+def comparativeSem (μ : Entity → α) (a b : Entity) (p : Polarity) : Prop :=
+  if p = .positive then μ a > μ b else μ a < μ b
 
-/-- Equative semantics: "A is as Adj as B" iff `μ a ≥ μ b` on the directed scale. -/
-def equativeSem (μ : Entity → α) (a b : Entity) (dir : ScalePolarity) : Prop :=
-  match dir with
-  | .positive => μ a ≥ μ b
-  | .negative => μ a ≤ μ b
+/-- Equative semantics: "A is as tall as B" iff `μ a ≥ μ b` on the directed scale. -/
+def equativeSem (μ : Entity → α) (a b : Entity) (p : Polarity) : Prop :=
+  if p = .positive then μ a ≥ μ b else μ a ≤ μ b
+
+@[simp] theorem comparativeSem_positive (μ : Entity → α) (a b : Entity) :
+    comparativeSem μ a b .positive ↔ μ b < μ a := Iff.rfl
+
+@[simp] theorem comparativeSem_negative (μ : Entity → α) (a b : Entity) :
+    comparativeSem μ a b .negative ↔ μ a < μ b := Iff.rfl
+
+@[simp] theorem equativeSem_positive (μ : Entity → α) (a b : Entity) :
+    equativeSem μ a b .positive ↔ μ b ≤ μ a := Iff.rfl
+
+@[simp] theorem equativeSem_negative (μ : Entity → α) (a b : Entity) :
+    equativeSem μ a b .negative ↔ μ a ≤ μ b := Iff.rfl
 
 /-- **Grounding**: the positive binary comparative is the strict-`>` point
 predication of `Degree.Comparison` at the standard `μ b` — not a reinvention. -/
 theorem comparativeSem_positive_eq_over (μ : Entity → α) (a b : Entity) :
     comparativeSem μ a b .positive ↔ a ∈ Comparison.gt.over μ (μ b) := by
-  simp only [comparativeSem, Comparison.mem_over, Comparison.rel]
+  simp only [comparativeSem_positive, Comparison.mem_over, Comparison.rel]
 
 /-- **Grounding**: the positive equative is the `≥` point predication of
 `Degree.Comparison` at the standard `μ b`. -/
 theorem equativeSem_positive_eq_over (μ : Entity → α) (a b : Entity) :
     equativeSem μ a b .positive ↔ a ∈ Comparison.ge.over μ (μ b) := by
-  simp only [equativeSem, Comparison.mem_over, Comparison.rel]
+  simp only [equativeSem_positive, Comparison.mem_over, Comparison.rel]
 
 /-- **MAX–direct bridge**: the direct comparison `μ a > μ b` is equivalent to
 the MAX-based formulation. -/
@@ -85,22 +96,57 @@ theorem comparativeSem_eq_MAX {β : Type*} [LinearOrder β] (μ : Entity → β)
     (a b : Entity) :
     comparativeSem μ a b .positive ↔
       ∃ m ∈ maxOnScale .gt ({μ b} : Set β), μ a > m := by
-  simp only [comparativeSem, maxOnScale_singleton, Set.mem_singleton_iff, exists_eq_left]
+  simp only [comparativeSem_positive, maxOnScale_singleton, Set.mem_singleton_iff,
+    exists_eq_left]
 
 /-! ### Antonymy as scale reversal -/
 
-/-- "A taller than B" ↔ "B shorter than A" — antonymy is argument swap plus
-direction reversal. -/
-theorem taller_shorter_antonymy (μ : Entity → α) (a b : Entity) :
-    comparativeSem μ a b .positive ↔ comparativeSem μ b a .negative :=
-  Iff.rfl
+/-- The comparative of the opposite polarity is the same comparison with its arguments
+exchanged: *A is taller than B* iff *B is shorter than A*. -/
+theorem comparativeSem_negative_mul (μ : Entity → α) (a b : Entity) (p : Polarity) :
+    comparativeSem μ a b (.negative * p) ↔ comparativeSem μ b a p := by
+  rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> simp
 
-/-- Equative antonymy: "A as tall as B" ↔ "B as short as A". -/
-theorem equative_antonymy (μ : Entity → α) (a b : Entity) :
-    equativeSem μ a b .positive ↔ equativeSem μ b a .negative :=
-  Iff.rfl
+/-- *A is as tall as B* iff *B is as short as A*. -/
+theorem equativeSem_negative_mul (μ : Entity → α) (a b : Entity) (p : Polarity) :
+    equativeSem μ a b (.negative * p) ↔ equativeSem μ b a p := by
+  rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> simp
+
+/-- Polarity is the order dual: inverting the ordering of the degrees inverts the polarity
+([kennedy-2007] fn. 29). -/
+theorem comparativeSem_toDual (μ : Entity → α) (a b : Entity) (p : Polarity) :
+    comparativeSem (OrderDual.toDual ∘ μ) a b p ↔ comparativeSem μ a b (.negative * p) := by
+  rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> simp
+
+theorem equativeSem_toDual (μ : Entity → α) (a b : Entity) (p : Polarity) :
+    equativeSem (OrderDual.toDual ∘ μ) a b p ↔ equativeSem μ a b (.negative * p) := by
+  rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> simp
 
 end Direct
+
+/-! ### Polarity as a sign -/
+
+section Sign
+
+/-- The negative member measures the negated degree. -/
+@[simp] theorem Polarity.negative_smul {α : Type*} [AddCommGroup α] (x : α) :
+    Polarity.negative • x = -x := by
+  simp [Polarity.negative_eq_neg_one, Units.smul_def]
+
+variable {Entity α : Type*} [AddCommGroup α] [PartialOrder α] [IsOrderedAddMonoid α]
+
+/-- On an additive scale the sign acts on the measure itself: a `p` adjective is the positive
+adjective of the signed measure `p • μ`, so the negative member measures `-μ`, the degree
+negation of its antonym. -/
+theorem comparativeSem_smul (μ : Entity → α) (a b : Entity) (p : Polarity) :
+    comparativeSem (p • μ) a b .positive ↔ comparativeSem μ a b p := by
+  rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> simp
+
+theorem equativeSem_smul (μ : Entity → α) (a b : Entity) (p : Polarity) :
+    equativeSem (p • μ) a b .positive ↔ equativeSem μ a b p := by
+  rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> simp
+
+end Sign
 
 /-! ### Boundary dependence -/
 
@@ -208,7 +254,7 @@ def negatedEquative [LinearOrder D] (μ : Entity → D) (a b : Entity) : Prop :=
 /-- Negated equative is the negation of the literal equative. -/
 theorem negatedEquative_iff_not_sem [LinearOrder D] (μ : Entity → D) (a b : Entity) :
     negatedEquative μ a b ↔ ¬ equativeSem μ a b .positive := by
-  simp only [negatedEquative, equativeSem, ge_iff_le, not_le]
+  simp only [negatedEquative, equativeSem_positive, not_le]
 
 /-- Equative as positive extent inclusion ([kennedy-1999]): "A is as tall as B"
 iff every degree B has (`Set.Iic (μ b)`), A also has. -/

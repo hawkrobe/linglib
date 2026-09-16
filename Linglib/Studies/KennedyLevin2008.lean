@@ -13,7 +13,7 @@ This file formalizes the account of variable telicity in degree achievements of
 [kennedy-levin-2008]. A degree achievement is the verbal positive form (26) of a measure of
 change function (25), the difference function (23) of the adjective's measure function, whose
 derived scale has as its minimum the degree the argument has when the event begins and inherits
-a maximum from the adjective's scale exactly when that scale has one (`deltaBoundedness`,
+a maximum from the adjective's scale exactly when that scale has one (`ofOrder_derivedScale`,
 `isLeast_derivedScale`, `isGreatest_derivedScale`). Interpretive Economy (18) then licenses two
 standards on the derived scale: its minimum, true of any positive change, the comparative and
 atelic reading every degree achievement has ((22), `minStandard_iff`); and, when the adjective's
@@ -51,21 +51,6 @@ open Degree Aspect
 
 /-! ### The measure of change and its scale (Sections 3.2 and 3.3) -/
 
-/-- The scale of a measure of change: closed below at the degree the argument starts with, and
-closed above exactly when the adjective's scale is. -/
-def deltaBoundedness : Boundedness → Boundedness
-  | .open_ | .lowerBounded => .lowerBounded
-  | .upperBounded | .closed => .closed
-
-/-- The derived scale always has a minimum, the derived zero. -/
-theorem deltaBoundedness_hasMin (b : Boundedness) : (deltaBoundedness b).HasMin := by
-  cases b <;> decide
-
-/-- The derived scale has a maximum exactly when the adjective's scale has one. -/
-theorem deltaBoundedness_hasMax_iff (b : Boundedness) :
-    (deltaBoundedness b).HasMax ↔ b.HasMax := by
-  cases b <;> decide
-
 section Readings
 
 variable {α δ T : Type*} [LinearOrder δ] (m : TemporalMeasure α δ T) (x : α) (i f : T)
@@ -76,6 +61,12 @@ def derivedScale : Set δ := Set.Ici (m x i)
 
 /-- The derived zero: the argument's initial degree is the least degree of the derived scale. -/
 theorem isLeast_derivedScale : IsLeast (derivedScale m x i) (m x i) := isLeast_Ici
+
+/-- The derived scale is closed below at the degree the argument starts with, and closed above
+exactly when the adjective's scale is. -/
+theorem ofOrder_derivedScale :
+    Boundedness.ofOrder (derivedScale m x i) = (Boundedness.ofOrder δ).withMin :=
+  Boundedness.ofOrder_Ici
 
 /-- A greatest degree of the adjective's scale is the greatest of the derived scale. -/
 theorem isGreatest_derivedScale [OrderTop δ] : IsGreatest (derivedScale m x i) ⊤ :=
