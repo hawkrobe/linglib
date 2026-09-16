@@ -891,7 +891,6 @@ import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Italian.Questions
 import Linglib.Fragments.Italian.Tense
 import Linglib.Fragments.Januubi.Negation
-import Linglib.Fragments.Japanese.Adposition
 import Linglib.Fragments.Japanese.Case
 import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Fragments.Japanese.Comparison
@@ -912,7 +911,6 @@ import Linglib.Fragments.Japanese.Questions
 import Linglib.Fragments.Japanese.Relativization
 import Linglib.Fragments.Japanese.TemporalConnectives
 import Linglib.Fragments.Japanese.TemporalDeictic
-import Linglib.Fragments.Japanese.WordOrder
 import Linglib.Fragments.Jarawara.PossessedNouns
 import Linglib.Fragments.Javanese.Modals
 import Linglib.Fragments.Kannada.Coordination

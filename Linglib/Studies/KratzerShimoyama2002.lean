@@ -245,7 +245,7 @@ open Data.Examples
 and differ in force. -/
 theorem japanese_same_base :
     Japanese.Determiners.dare_ka.indeterminate = Japanese.Determiners.dare_mo.indeterminate ∧
-      Japanese.Determiners.dare_ka.qforce ≠ Japanese.Determiners.dare_mo.qforce :=
+      Japanese.Determiners.dare_ka.force ≠ Japanese.Determiners.dare_mo.force :=
   ⟨rfl, by decide⟩
 
 /-- The Latvian series of [haspelmath-1997] are selective: in every row the existential,

@@ -83,9 +83,8 @@ theorem alternation_verbs_unaccusative :
 /-- The direct passive requires thematic Voice, which the non-thematic head does not
 provide: (20) is out. -/
 theorem direct_passive_requires_voice :
-    Japanese.Passive.PassiveType.requiresThematicVoice .direct = true ∧
-      ¬ anticausative.AssignsTheta :=
-  ⟨rfl, by decide⟩
+    Japanese.Passive.PassiveType.RequiresThematicVoice .direct ∧ ¬ anticausative.AssignsTheta :=
+  ⟨trivial, by decide⟩
 
 /-! ### Case assignment (§3) -/
 

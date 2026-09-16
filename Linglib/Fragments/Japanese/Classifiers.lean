@@ -1,104 +1,73 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Fintype.Card
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Category.Classifier.Basic
 
 /-!
-# Japanese Numeral Classifier Inventory
-[aikhenvald-2000] [downing-1996] [sudo-2016]
+# Japanese numeral classifiers
 
-The closed inventory of Japanese numeral classifiers (josūshi 助数詞) as a
-finite inductive type. Properties (form, gloss, encoded semantic
-parameters, dimensionality, mensural-vs-sortal, default flag) are
-projection functions or `Decidable` predicates over the type, not fields
-on a struct.
+Japanese counts with a classifier suffixed to the numeral and chosen by the semantics of the
+noun: *-nin* for people, *-hiki* for small animals, *-hon* for long thin things, *-mai* for
+flat ones, *-satsu* for bound volumes, and the general *-tsu*, which encodes nothing. Downing's
+questionnaire gives the inventory: the twenty-seven classifiers every respondent used and six
+more that a majority used, to which the textbook counter of cupfuls *-hai* and Sudo's
+non-atomic *-kumi* 'pair' and *-daasu* 'dozen' are added, though Downing's definition sets
+groupings, measures and containers aside. The typological parameters of Aikhenvald are read off
+the inventory. Allomorphy (*ippon*, *sanbon*, *roppon*) and the native and Sino-Japanese
+numeral series are not recorded.
 
-## Inventory provenance
+## Main definitions
 
-- The 27 core entries are [downing-1996]'s Table 1.1, the forms every one of
-  its fifteen questionnaire respondents used.
-- The 6 extended entries (`sao`, `wa`, `furi`, `zen`, `kyaku`, `rin`) are drawn
-  from the 47 forms of [downing-1996]'s Table 1.2, the forms a majority of its
-  respondents used; `rin` is also [sudo-2016]'s worked example (eq. 4).
-- `kumi` and `daasu` are [sudo-2016]'s worked examples of non-atomic
-  classifiers (eqs. 9a, 9b) and `hai` the textbook counter of cupfuls; all
-  three lie outside [downing-1996]'s definition, which excludes groupings,
-  standard measures and containers (Chapter 1).
+* `Japanese.Classifier` — the inventory, with `form`, `romaji`, `gloss`, the semantic
+  parameters `encodes` and the shape dimension `shapeDim`
+* `Japanese.Classifier.IsDefault`, `Japanese.Classifier.IsMensural` — the general classifier,
+  which encodes no parameter, and the measure classifiers
 
-## Out of scope
+## Main results
 
-- Phonological allomorphy (rendaku/sokuon: ippon/sanbon/roppon for
-  `-hon`, ippiki/sanbiki/roppiki for `-hiki`) — would belong with
-  `Phonology/`.
-- Native vs Sino-Japanese numeral series split (`tsu` selects native
-  hitotsu/futatsu/...; Sino-classifiers select ichi/ni/san/...).
-- Inventory expansion to high-frequency classifiers not in Downing's
-  inventory (`-kai` 回, `-bai` 倍, `-ban` 番, `-do` 度, etc.).
+* `Japanese.Classifier.isDefault_iff` — *-tsu* is the one general classifier
 
-The typological parameters follow [downing-1996] and [aikhenvald-2000]: numeral classifiers
-suffixed to numerals, chosen on semantic grounds, with *tsu* as the general classifier; the
-semantic parameters and the general classifier are read off the inventory.
+## References
+
+* [aikhenvald-2000]
+* [allan-1977]
+* [downing-1996]
+* [sudo-2016]
 -/
 
 namespace Japanese
 
-/-- The closed inventory of Japanese numeral classifiers. Constructors are
-    named by Hepburn romanization, with kanji-distinct homophones
-    disambiguated by content (e.g., `kenBuilding` 軒 vs `kenIncident` 件). -/
+/-- The Japanese numeral classifiers, named by their romanization, the two *ken* told apart by
+their kanji. -/
 inductive Classifier where
-  -- Downing 1996 core inventory — animacy
   | tsu | nin | mei | hiki | tou
-  -- core — shape
   | hon | mai | ko | satsu | tsubu
-  -- core — function
   | dai | kenBuilding | kenIncident | ki | ku | kyoku | mon | mune
   | seki | soku | soo | ten | toori | tsuu | kabu | shoku | teki
-  -- Downing 1996 extended inventory, Table 1.2
   | sao | wa | furi | zen | kyaku | rin
-  -- outside Downing's definition: the textbook `hai`, Sudo 2016's `kumi`, `daasu`
   | hai | kumi | daasu
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr, Fintype
 
 namespace Classifier
 
-/-- The 27 core classifiers of [downing-1996], Table 1.1. -/
+/-- The twenty-seven classifiers every respondent of Downing's questionnaire used. -/
 def core : List Classifier :=
   [.tsu, .nin, .mei, .hiki, .tou,
    .hon, .mai, .ko, .satsu, .tsubu,
    .dai, .kenBuilding, .kenIncident, .ki, .ku, .kyoku, .mon, .mune,
    .seki, .soku, .soo, .ten, .toori, .tsuu, .kabu, .shoku, .teki]
 
-/-- The classifiers carried from [downing-1996]'s extended inventory, Table 1.2. -/
-def extended : List Classifier :=
-  [.sao, .wa, .furi, .zen, .kyaku, .rin]
+/-- The six further classifiers a majority of Downing's respondents used. -/
+def extended : List Classifier := [.sao, .wa, .furi, .zen, .kyaku, .rin]
 
-/-- The counters outside [downing-1996]'s definition: the textbook `-hai`
-    (cupful), and [sudo-2016]'s non-atomic `-kumi` (pair) and `-daasu`
-    (dozen), eqs. 9a and 9b. -/
-def additions : List Classifier :=
-  [.hai, .kumi, .daasu]
+/-- The counters outside Downing's definition: *-hai*, and Sudo's *-kumi* and *-daasu*. -/
+def additions : List Classifier := [.hai, .kumi, .daasu]
 
-/-- The full inventory: Downing core ++ Downing extended ++ additions.
-    Source-of-truth for consumer iteration (lookup, aggregations) and the
-    `Fintype` instance. -/
+/-- The inventory in order of provenance. -/
 def all : List Classifier := core ++ extended ++ additions
 
-theorem all_nodup : all.Nodup := by decide
-
+/-- The three provenance lists partition the inventory. -/
 theorem mem_all (c : Classifier) : c ∈ all := by cases c <;> simp [all, core, extended, additions]
 
-end Classifier
-
-instance : Fintype Classifier where
-  elems := Classifier.all.toFinset
-  complete c := List.mem_toFinset.mpr (Classifier.mem_all c)
-
-namespace Classifier
-
-/-! ## §1: Surface form -/
-
-/-- The kanji (or hiragana, for `-tsu`) form of the classifier. -/
+/-- The kanji, or kana for *-tsu*. -/
 def form : Classifier → String
   | .tsu => "つ"
   | .nin => "人" | .mei => "名" | .hiki => "匹" | .tou => "頭"
@@ -112,7 +81,7 @@ def form : Classifier → String
   | .hai => "杯"
   | .rin => "輪" | .kumi => "組" | .daasu => "ダース"
 
-/-- Hepburn romanization of the classifier. -/
+/-- The romanization. -/
 def romaji : Classifier → String
   | .tsu => "tsu"
   | .nin => "nin" | .mei => "mei" | .hiki => "hiki" | .tou => "tou"
@@ -126,7 +95,7 @@ def romaji : Classifier → String
   | .hai => "hai"
   | .rin => "rin" | .kumi => "kumi" | .daasu => "daasu"
 
-/-- A short English gloss describing the classifier's selection criterion. -/
+/-- What the classifier selects for. -/
 def gloss : Classifier → String
   | .tsu => "general"
   | .nin => "person" | .mei => "person.formal" | .hiki => "small.animal" | .tou => "large.animal"
@@ -142,23 +111,14 @@ def gloss : Classifier → String
   | .kyaku => "legged.furniture" | .hai => "cupful"
   | .rin => "flower" | .kumi => "pair/group" | .daasu => "dozen"
 
-/-! ## §2: Semantic parameters and shape -/
-
-/-- The semantic parameters this classifier encodes
-    ([aikhenvald-2000] typological vocabulary).
-
-    Every constructor has an explicit arm; no fall-through. Adding a
-    classifier requires deciding what it encodes — the type checker
-    enforces it. -/
+/-- The semantic parameters the classifier encodes, in Aikhenvald's vocabulary. -/
 def encodes : Classifier → List Classifier.Parameter
-  -- animacy
   | .tsu => []
   | .nin => [.humanness]
   | .mei => [.humanness, .register]
   | .hiki => [.animacy, .size]
   | .tou => [.animacy, .size]
   | .wa => [.animacy]
-  -- shape
   | .hon => [.shape]
   | .mai => [.shape]
   | .ko => [.shape]
@@ -166,7 +126,6 @@ def encodes : Classifier → List Classifier.Parameter
   | .tsubu => [.shape]
   | .sao => [.shape]
   | .rin => [.shape, .boundedness]
-  -- function
   | .dai => [.function]
   | .kenBuilding => [.function]
   | .kenIncident => [.function]
@@ -185,22 +144,14 @@ def encodes : Classifier → List Classifier.Parameter
   | .furi => [.function]
   | .zen => [.function]
   | .kyaku => [.function]
-  -- mensural
   | .hai => [.quanta]
   | .shoku => [.quanta]
   | .teki => [.quanta]
   | .daasu => [.quanta]
-  -- arrangement
   | .kumi => [.arrangement, .quanta]
 
-/-- Shape dimensionality sub-classification per [allan-1977]'s
-    1D/2D/3D scheme (cf. [downing-1996]). Only meaningful when
-    `encodes` includes `.shape`.
-
-    `-rin` 輪 is left as `none`: although it encodes shape, it tracks
-    boundedness/ring-form (wheels, single blossoms) rather than fitting
-    cleanly on the 1D/2D/3D axis. See `encodes`, where `-rin` carries
-    `.shape` and `.boundedness`. -/
+/-- The dimensionality of a shape classifier in Allan's scheme; *-rin*, which selects for the
+ring shape of wheels and blossoms, has none. -/
 def shapeDim : Classifier → Option Classifier.Dimension
   | .hon => some .oneD
   | .sao => some .oneD
@@ -210,89 +161,35 @@ def shapeDim : Classifier → Option Classifier.Dimension
   | .tsubu => some .threeD
   | _ => none
 
-/-! ## §3: Property predicates -/
+/-- The general classifier encodes no parameter. -/
+def IsDefault (c : Classifier) : Prop := c.encodes = []
 
-/-- A classifier is *mensural* if it counts entities by a measure
-    (containers, portions, drops, fixed-quantity multiples) rather than
-    by atomic instances. `-daasu` ダース (← English "dozen") is mensural
-    since it counts in fixed groups of 12. -/
-def IsMensural (c : Classifier) : Prop :=
-  c = .hai ∨ c = .shoku ∨ c = .teki ∨ c = .daasu
+instance : DecidablePred IsDefault := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
-instance : DecidablePred IsMensural := fun c =>
-  inferInstanceAs (Decidable (c = .hai ∨ c = .shoku ∨ c = .teki ∨ c = .daasu))
+/-- *-tsu* is the one general classifier. -/
+theorem isDefault_iff (c : Classifier) : IsDefault c ↔ c = .tsu := by cases c <;> decide
 
-/-- A classifier is the *default* (semantically bleached, residue) classifier
-    of the language. Japanese: `tsu`. -/
-def IsDefault (c : Classifier) : Prop := c = .tsu
+/-- A measure classifier counts by cupfuls, portions, drops or dozens rather than by
+individuals. -/
+def IsMensural (c : Classifier) : Prop := c = .hai ∨ c = .shoku ∨ c = .teki ∨ c = .daasu
 
-instance : DecidablePred IsDefault := fun c =>
-  inferInstanceAs (Decidable (c = .tsu))
+instance : DecidablePred IsMensural := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _))
 
-/-- `c` encodes the semantic parameter `p` iff `p ∈ c.encodes`. -/
+/-- The classifier encodes the parameter. -/
 def Encodes (c : Classifier) (p : Classifier.Parameter) : Prop := p ∈ c.encodes
 
 instance (c : Classifier) (p : Classifier.Parameter) : Decidable (Encodes c p) :=
   inferInstanceAs (Decidable (p ∈ c.encodes))
 
-/-! ## §4: Lookup and aggregations -/
+/-- The general classifier. -/
+def defaultClassifier? : Option Classifier := all.find? fun c ↦ decide (IsDefault c)
 
-/-- The default classifier of Japanese, derived from `IsDefault`. -/
-def defaultClassifier? : Option Classifier :=
-  all.find? fun c => decide (IsDefault c)
-
-/-- Lookup a classifier by surface form. Returns `none` if the form is not
-    in the inventory. -/
-def lookup (s : String) : Option Classifier :=
-  all.find? fun c => c.form = s
-
-/-- The list of all semantic parameters encoded by some classifier in the
-    inventory (with duplicates removed), the system's `classifierSemantics`. -/
-def allEncodedParams : List Classifier.Parameter :=
-  (all.flatMap encodes).eraseDups
-
-/-! ## §6: Structural theorems -/
-
-/-- The inventory has 36 classifiers (27 core + 6 extended + 3 additions). -/
-theorem inventory_size : all.length = 36 := by decide
-
-/-- The default classifier exists and is `tsu`. -/
-theorem default_eq_tsu : defaultClassifier? = some .tsu := by decide
-
-/-- `tsu` is the only classifier flagged as default. -/
-theorem isDefault_iff_tsu (c : Classifier) : IsDefault c ↔ c = .tsu := Iff.rfl
-
-/-- Exactly four classifiers are mensural: `hai`, `shoku`, `teki`, `daasu`. -/
-theorem mensural_count :
-    (all.filter (fun c => decide (IsMensural c))).length = 4 := by decide
-
-/-- Every non-default sortal classifier encodes at least one semantic parameter.
-    The default `tsu` is the only semantically empty classifier. -/
-theorem specific_classifiers_have_semantics :
-    ∀ c : Classifier, ¬IsDefault c → ¬IsMensural c → c.encodes ≠ [] := by
-  decide
-
-/-- All three shape dimensions are attested in the inventory. -/
-theorem all_dimensions_attested :
-    (∃ c : Classifier, shapeDim c = some .oneD) ∧
-    (∃ c : Classifier, shapeDim c = some .twoD) ∧
-    (∃ c : Classifier, shapeDim c = some .threeD) :=
-  ⟨⟨Classifier.hon, rfl⟩, ⟨Classifier.mai, rfl⟩, ⟨Classifier.ko, rfl⟩⟩
-
-/-- 軒 `kenBuilding` and 件 `kenIncident` are distinct classifiers sharing
-    the same Hepburn romanization but differing in kanji form. -/
-theorem ken_disambiguation : kenBuilding.form ≠ kenIncident.form := by decide
-
-/-- 軒 and 件 share their romanization (the homophony Downing flags). -/
-theorem ken_homophony : kenBuilding.romaji = kenIncident.romaji := rfl
+/-- The parameters some classifier encodes. -/
+def allEncodedParams : List Classifier.Parameter := (all.flatMap encodes).eraseDups
 
 end Classifier
 
-end Japanese
-
-/-! ### Typological parameters -/
-
-namespace Japanese
+/-! ### Aikhenvald's parameters -/
 
 /-- Classifiers occur in the numeral phrase and characterize the head noun. -/
 def classifierLocus : Classifier.Scope := .numeralNP
