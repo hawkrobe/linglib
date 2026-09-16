@@ -1,5 +1,6 @@
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.Presupposition.PhiFeatures
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 
 /-!
@@ -7,15 +8,15 @@ import Linglib.Semantics.Presupposition.MaximizePresupposition
 
 [sauerland-2003] locates the interpreted number feature in a φ-head above DP and
 interprets agreement features as presuppositions: `[Sg]` is the identity function
-presupposing an atom (his entry admits an atom or a mass; `Number.presup` keeps the atomic
+presupposing an atom (his entry admits an atom or a mass; `Number.dom` keeps the atomic
 case), `[Pl]` the identity with no presupposition, and [heim-1991]'s
 Maximize Presupposition selects the most specific feature whose presupposition holds. The
 coordination *Kai and Lina* is the first argument: each conjunct is an atom but their sum
 is not, so the φ-head above the coordination can only carry `[Pl]` (`coordination_plural`),
 while at an atom Maximize Presupposition blocks `[Pl]` (`mp_selects_sg`, over the constraint
 `phiMP`). The two domains are nested (`sg_domain_ssubset_pl`), an instance of his
-Feature-Subset Principle, and the competition is presuppositional rather than scalar
-(`sg_pl_competition`).
+Feature-Subset Principle, and since the features are domain restrictions the competition is
+presuppositional rather than scalar.
 
 *Every* decomposes into a definite `DER`, taking the maximal element of a cumulative
 restrictor (`der_unique`; his cover-based `*` is `Mereology.algClosure_iff_exists_sup'`),
@@ -53,15 +54,14 @@ variable [SemilatticeSup E] {a b : E}
 
 /-- The φ-head above a coordination of two distinct atoms cannot carry `[Sg]`. -/
 theorem coordination_plural (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
-    ¬ (Number.presup (E := E) .singular).defined (a ⊔ b) :=
+    a ⊔ b ∉ Number.dom (E := E) (some .singular) :=
   not_atom_sup_of_ne ha hb hne
 
 /-- The Feature-Subset Principle for number: the domain of `[Sg]` is a proper subset of the
 domain of `[Pl]`. -/
 theorem sg_domain_ssubset_pl (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
-    {x | (Number.presup (E := E) .singular).defined x} ⊂
-      {x | (Number.presup (E := E) .plural).defined x} :=
-  ⟨fun _ _ ↦ trivial, fun h ↦ not_atom_sup_of_ne ha hb hne (@h (a ⊔ b) trivial)⟩
+    Number.dom (E := E) (some .singular) ⊂ Number.dom (some .plural) :=
+  ⟨Set.subset_univ _, fun h ↦ not_atom_sup_of_ne ha hb hne (h (Set.mem_univ _))⟩
 
 /-- `DER` is well defined on a cumulative restrictor: `*R` has at most one maximal element. -/
 theorem der_unique {R : E → Prop} {m₁ m₂ : E} (h₁ : Maximal (AlgClosure R) m₁)
@@ -77,14 +77,6 @@ theorem mp_selects_sg (rest : List (Constraint ContainmentPair)) :
       (List.cons_ne_nil _ _)).optimal,
       c.specLevel = ContainmentPair.maximal.specLevel :=
   phi_mp_selects_maximal _ rest (List.cons_ne_nil _ _) (.head _)
-
-/-- The competition between `[Sg]` and `[Pl]` is presuppositional, not scalar: identical
-assertions, ordered presuppositions. -/
-theorem sg_pl_competition [PartialOrder E] (x : E) :
-    ((Number.presup (E := E) .singular).assertion x ↔
-        (Number.presup (E := E) .plural).assertion x) ∧
-      ContainmentPair.minimal.specLevel < ContainmentPair.maximal.specLevel :=
-  ⟨Iff.rfl, by decide⟩
 
 /-! ### *Every* as `JE ∘ DER`, and the indefinite -/
 
@@ -141,31 +133,44 @@ inductive ReferentGender where
   deriving DecidableEq, Repr
 
 /-- Feminine agreement presupposes that no conjunct of the coordination is male. -/
-abbrev nonMasculine (s : Finset ReferentGender) : Prop := ∀ r ∈ s, r ≠ .male
+abbrev nonMasculine : Set (Finset ReferentGender) := {s | ∀ r ∈ s, r ≠ .male}
 
 /-- Neuter agreement presupposes that every conjunct is genderless. -/
-abbrev genderless (s : Finset ReferentGender) : Prop := ∀ r ∈ s, r = .inanimate
+abbrev genderless : Set (Finset ReferentGender) := {s | ∀ r ∈ s, r = .inanimate}
+
+/-- Sauerland's sorting of a coordination by its conjuncts. -/
+instance sorts : Gender.Sorts (Finset ReferentGender) := ⟨nonMasculine, genderless⟩
+
+@[simp] theorem sorts_female : Gender.Sorts.female (E := Finset ReferentGender) = nonMasculine :=
+  rfl
+
+@[simp] theorem sorts_inanimate :
+    Gender.Sorts.inanimate (E := Finset ReferentGender) = genderless := rfl
+
+/-- *Jan a Věra*, *Matka a její dítě* and *Otec a jeho dítě*, as the sums of their conjuncts. -/
+def janVera : Finset ReferentGender := {.male, .female}
+def matkaDite : Finset ReferentGender := {.female, .inanimate}
+def otecDite : Finset ReferentGender := {.male, .inanimate}
 
 /-- Sauerland's Czech coordinations, as sums of their conjuncts: *Jan a Věra* excludes
 feminine, *Matka a její dítě* takes feminine but not neuter, and *Otec a jeho dítě* takes
 only the vacuous masculine. -/
 theorem czech_gender :
-    ¬ (Gender.presup nonMasculine genderless .feminine).defined {.male, .female} ∧
-      (Gender.presup nonMasculine genderless .feminine).defined {.female, .inanimate} ∧
-      ¬ (Gender.presup nonMasculine genderless .neuter).defined {.female, .inanimate} ∧
-      ¬ (Gender.presup nonMasculine genderless .feminine).defined {.male, .inanimate} ∧
-      (Gender.presup nonMasculine genderless .masculine).defined {.male, .inanimate} := by
-  simp only [Gender.presup_feminine_defined, Gender.presup_neuter_defined,
-    Gender.presup_masculine_defined, and_true]
+    janVera ∉ Gender.dom (some .feminine) ∧
+      matkaDite ∈ Gender.dom (some .feminine) ∧
+      matkaDite ∉ Gender.dom (some .neuter) ∧
+      otecDite ∉ Gender.dom (some .feminine) ∧
+      otecDite ∈ Gender.dom (some .masculine) := by
+  simp only [Gender.mem_dom_feminine, Gender.mem_dom_neuter, Gender.dom_masculine, Set.mem_univ,
+    and_true, sorts_female, sorts_inanimate]
   decide
 
 /-! ### Politeness -/
 
 /-- Polite address recruits the semantically unmarked values, plural and third person, whose
 vacuous presuppositions hold of any addressee (German *Sie*). -/
-theorem politeness_unmarked [PartialOrder E] (speaker addressee x : E) :
-    (Number.presup (E := E) .plural).defined x ∧
-      (Person.presup speaker addressee .third).defined x :=
-  ⟨trivial, trivial⟩
+theorem politeness_unmarked {W P T : Type*} [PartialOrder E] (c : Reference.Context W E P T) :
+    Number.dom (E := E) (some .plural) = Set.univ ∧ Person.dom c (some .third) = Set.univ :=
+  ⟨rfl, rfl⟩
 
 end Sauerland2003

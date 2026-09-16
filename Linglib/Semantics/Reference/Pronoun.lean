@@ -13,22 +13,23 @@ import Linglib.Semantics.Composition.Assignment
 
 A `PersonalPronoun` entry denotes as a `Nominal` whose selector is the variable denotation
 `interpPronoun`, the value of the entry's index under the assignment, and whose intrinsic
-presupposition is the φ-feature presupposition of the resolved referent
-(`PersonalPronoun.phiPresup`, `PersonalPronoun.denote`): the conjunction of `Person.presup`,
-`Number.presup` and `Gender.presup` at the entry's referential person and number and its
-gender. The selector does not vary with the world of evaluation
+presupposition is that the resolved referent lies in the entry's φ-domain
+(`PersonalPronoun.phiDom`, `PersonalPronoun.denote`), the intersection of `Person.dom` at the
+context of utterance, `Number.dom` and `Gender.dom` at the entry's referential person and number
+and its gender. The selector does not vary with the world of evaluation
 (`PersonalPronoun.isRigid_denote_selector`): a pronoun refers directly. This is the survey of
 [buring-2012]: one denotation serves the bound, anaphoric and deictic uses, binding being an
 operator on the assignment (`Composition/Binding.lean`), and an absent or unmarked feature
-contributes the trivial presupposition, the treatment of [sauerland-2003].
+restricts nothing, the treatment of [sauerland-2003].
 
 ## Implementation notes
 
-The presupposition reads the entry's referential person and number
+The φ-domain reads the entry's referential person and number
 (`PersonalPronoun.referentialPerson`, `PersonalPronoun.referentialNumber`), not its agreement
 features, so a polite pronoun that agrees as third plural presupposes its addressee
-(`PersonalPronoun.phiPresup_congr`). The speaker, the addressee and the gender predicates are
-parameters of the model, as the proximity predicates are for the demonstrative determiner.
+(`PersonalPronoun.phiDom_congr`). The speaker and the addressee are the agent and the addressee
+of the context of utterance (`Reference.Context`), and the female and the inanimate referents
+are the sorts the entity domain comes equipped with (`Gender.Sorts`).
 
 ## References
 
@@ -36,56 +37,51 @@ parameters of the model, as the proximity predicates are for the demonstrative d
 * [sauerland-2003]
 -/
 
-open Presupposition Reference
+open Reference
 
 namespace PersonalPronoun
 
-variable {E W : Type*} [PartialOrder E] (e : PersonalPronoun) (i : ℕ) (speaker addressee : E)
-  (isFemale isInanimate : E → Prop)
+variable {E W P T : Type*} [PartialOrder E] [Gender.Sorts E] (e : PersonalPronoun) (i : ℕ)
+  (c : Context W E P T)
 
-/-- The φ-feature presupposition of a pronoun entry over an entity domain `E`: the person
-presupposition of its referential person, the number presupposition of its referential number
-and the gender presupposition of its gender, conjoined. The model supplies the speaker and the
-addressee for person and the gender predicates; number atomicity comes from the parthood order. -/
-def phiPresup : PartialProp E :=
-  (e.referentialPerson.elim PartialProp.top (Person.presup speaker addressee)).and
-    ((e.referentialNumber.elim PartialProp.top Number.presup).and
-      (e.gender.elim PartialProp.top (Gender.presup isFemale isInanimate)))
+/-- The φ-domain of a pronoun entry over an entity domain `E`: the person domain of its
+referential person at the context of utterance, the number domain of its referential number and
+the gender domain of its gender, intersected. -/
+def phiDom : Set E :=
+  Person.dom c e.referentialPerson ∩
+    Number.dom e.referentialNumber ∩
+    Gender.dom e.gender
 
-@[simp] theorem phiPresup_defined (x : E) :
-    (e.phiPresup speaker addressee isFemale isInanimate).defined x ↔
-      (e.referentialPerson.elim PartialProp.top (Person.presup speaker addressee)).defined x ∧
-        (e.referentialNumber.elim PartialProp.top Number.presup).defined x ∧
-          (e.gender.elim PartialProp.top (Gender.presup isFemale isInanimate)).defined x :=
-  Iff.rfl
+@[simp] theorem mem_phiDom (x : E) :
+    x ∈ e.phiDom c ↔
+      x ∈ Person.dom c e.referentialPerson ∧ x ∈ Number.dom e.referentialNumber ∧
+        x ∈ Gender.dom e.gender := by
+  simp only [phiDom, Set.mem_inter_iff, and_assoc]
 
-/-- The φ-feature presupposition depends on the referential categories and the gender alone,
-not on the agreement person and number. -/
-theorem phiPresup_congr {e₁ e₂ : PersonalPronoun} (hr : e₁.referential = e₂.referential)
-    (hg : e₁.gender = e₂.gender) :
-    e₁.phiPresup speaker addressee isFemale isInanimate =
-      e₂.phiPresup speaker addressee isFemale isInanimate := by
-  simp only [phiPresup, referentialPerson, referentialNumber, hr, hg]
+/-- The φ-domain depends on the referential categories and the gender alone, not on the
+agreement person and number. -/
+theorem phiDom_congr {e₁ e₂ : PersonalPronoun} (hr : e₁.referential = e₂.referential)
+    (hg : e₁.gender = e₂.gender) : e₁.phiDom c = e₂.phiDom c := by
+  simp only [phiDom, referentialPerson, referentialNumber, hr, hg]
 
 /-- A pronoun's denotation: the selector is the variable denotation `interpPronoun i`, always
-defined under a total assignment, and the intrinsic presupposition is the φ-feature
-presupposition of the resolved referent `g i`. -/
+defined under a total assignment, and the intrinsic presupposition is that the resolved referent
+`g i` lies in the φ-domain. -/
 def denote : Nominal (Assignment E) W E where
-  presup g _ := (e.phiPresup speaker addressee isFemale isInanimate).defined (g i)
+  presup g _ := g i ∈ e.phiDom c
   selector g _ := some (Semantics.Composition.interpPronoun i g)
 
 @[simp] theorem denote_presup (g : Assignment E) (w : W) :
-    (e.denote i speaker addressee isFemale isInanimate).presup g w =
-      (e.phiPresup speaker addressee isFemale isInanimate).defined (g i) :=
+    (e.denote i c).presup g w = (g i ∈ e.phiDom c) :=
   rfl
 
 @[simp] theorem denote_selector (g : Assignment E) (w : W) :
-    (e.denote i speaker addressee isFemale isInanimate).selector g w = some (g i) :=
+    (e.denote i c).selector g w = some (g i) :=
   rfl
 
 /-- A pronoun's referent does not vary with the world: the selector is rigid. -/
 theorem isRigid_denote_selector (g : Assignment E) :
-    IsRigid ((e.denote (W := W) i speaker addressee isFemale isInanimate).selector g) :=
+    IsRigid ((e.denote i c).selector g) :=
   isRigid_const _
 
 end PersonalPronoun
