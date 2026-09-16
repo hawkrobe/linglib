@@ -1050,12 +1050,16 @@
         "projection"
       ],
       [
-        "environment",
+        "family",
         "negation"
       ],
       [
-        "inference",
+        "projective",
         "yes"
+      ],
+      [
+        "person",
+        "3"
       ]
     ],
     "comment": "",
@@ -1121,12 +1125,16 @@
         "projection"
       ],
       [
-        "environment",
+        "family",
         "negation"
       ],
       [
-        "inference",
+        "projective",
         "yes"
+      ],
+      [
+        "person",
+        "3"
       ]
     ],
     "comment": "",
@@ -1180,12 +1188,16 @@
         "projection"
       ],
       [
-        "environment",
+        "family",
         "negation"
       ],
       [
-        "inference",
+        "projective",
         "no"
+      ],
+      [
+        "person",
+        "3"
       ]
     ],
     "comment": "",
@@ -1243,12 +1255,16 @@
         "projection"
       ],
       [
-        "environment",
+        "family",
         "question"
       ],
       [
-        "inference",
+        "projective",
         "no"
+      ],
+      [
+        "person",
+        "3"
       ]
     ],
     "comment": "",
@@ -1318,12 +1334,16 @@
         "projection"
       ],
       [
-        "environment",
-        "conditional"
+        "family",
+        "conditional antecedent"
       ],
       [
-        "inference",
+        "projective",
         "yes"
+      ],
+      [
+        "person",
+        "3"
       ]
     ],
     "comment": "",

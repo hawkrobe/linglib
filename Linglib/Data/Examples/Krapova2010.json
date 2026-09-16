@@ -223,12 +223,16 @@
         "projection"
       ],
       [
-        "environment",
+        "family",
         "negation"
       ],
       [
-        "inference",
+        "projective",
         "yes"
+      ],
+      [
+        "person",
+        "1"
       ]
     ],
     "comment": "Presupposes that the meeting has failed, although the speaker does not regret that.",
@@ -299,12 +303,16 @@
         "projection"
       ],
       [
-        "environment",
+        "family",
         "question"
       ],
       [
-        "inference",
+        "projective",
         "yes"
+      ],
+      [
+        "person",
+        "1"
       ]
     ],
     "comment": "Presupposes that the visitors arrived late.",
@@ -376,15 +384,11 @@
       ],
       [
         "diagnostic",
-        "projection"
+        "contradiction"
       ],
       [
-        "environment",
-        "cancellation"
-      ],
-      [
-        "inference",
-        "yes"
+        "person",
+        "1"
       ]
     ],
     "comment": "Adding 'but in fact you stayed longer' cancels the presupposition and is a contradiction.",
@@ -732,15 +736,11 @@
       ],
       [
         "diagnostic",
-        "projection"
+        "contradiction"
       ],
       [
-        "environment",
-        "cancellation"
-      ],
-      [
-        "inference",
-        "yes"
+        "person",
+        "1"
       ]
     ],
     "comment": "The če complement is factive too: factivity is the context's, not the complementizer's.",
