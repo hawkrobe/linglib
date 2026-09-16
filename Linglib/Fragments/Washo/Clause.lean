@@ -4,20 +4,17 @@ import Linglib.Syntax.Category.Complementizer.Basic
 /-!
 # Washo clausal embedding
 
-The complement-taking predicates of Washo (Hokan/isolate, ISO 639-3 `was`) with quotable data
-in [bochnak-hanink-2021], as verb entries, and the two clause-typers at the right edge of the
-clauses they embed (Table 1): the clausal nominalizer *-gi ~ -ge*, the exponent of
-[hanink-2021]'s index head over a finite clause in the independent mood *-i*, and the dependent
-mood *-aʔ*. A predicate's frames carry its transitivity, the observable behind the paper's
-split: the nominalizer-takers select internal arguments, shown by the plain DP objects of 'know'
-and 'see' and by subject/object agreement, and the *-aʔ*-takers are intransitive, shown by the
-*how* question word they take and by the reflexive *gum-* on 'dream' (§3.2.2). 'Know',
-'remember' and 'believe' belong to a small inherently negative class whose positive reading
-carries the negative suffix *-e:s*, and 'remember' is negated 'forget' (fn. 7).
+The complement-taking predicates of Washo (Hokan/isolate, ISO 639-3 `was`) in
+[bochnak-hanink-2021], as verb entries, and the two clause-typers of the clauses they embed.
+The nominalizer *-gi ~ -ge* is the exponent of [hanink-2021]'s index head over a finite clause
+in the independent mood *-i*; the dependent mood *-aʔ* types the bare clause. A predicate's
+frames record its transitivity, the observable behind the paper's split: the nominalizer-takers
+select internal arguments and the *-aʔ*-takers are intransitive (§3.2.2). 'Know', 'remember'
+and 'believe' are inherently negative, so their positive reading carries the negative suffix
+*-e:s* (fn. 7).
 
-Forms follow the paper's orthography after [jacobsen-1964]: `:` marks vowel length, ʔ ɨ ŋ are
-IPA, and stress is acute. The complementation-against-modification analysis is
-`Studies/BochnakHanink2021.lean`.
+Forms follow [jacobsen-1964]'s orthography: `:` marks vowel length, ʔ ɨ ŋ are IPA, and stress
+is acute. The analysis of the split is `Studies/BochnakHanink2021.lean`.
 
 ## References
 
@@ -34,16 +31,14 @@ open Morphology (Morph)
 /-! ### Clause-typers -/
 
 /-- The clausal nominalizer *-ge*, the accusative form of *-gi ~ -ge* that attitude complements
-bear (fn. 6), types a nominalized clause in the independent mood and is licensed by the nominal
-projection. -/
+bear (fn. 6). -/
 def ge : Complementizer where
   morphs := [.suff "ge"]
   coding := some .nominalized
   verbForm := some .Fin
   licenser := some .nominal
 
-/-- The dependent mood *-aʔ* types the bare clause under a non-nominalizing predicate and never
-a matrix clause ((2), (13)–(16)). -/
+/-- The dependent mood *-aʔ*, which types a bare embedded clause and never a matrix clause. -/
 def aq : Complementizer where
   morphs := [.suff "aʔ"]
   verbForm := some .Fin
@@ -51,10 +46,10 @@ def aq : Complementizer where
 
 /-! ### Predicates -/
 
-/-- A Washo complement-taking predicate is the cross-linguistic verb entry with its
-[noonan-2007] class and the clause-typer at the right edge of the clause it embeds. -/
-structure Embedder extends Verb where
-  /-- The [noonan-2007] class, `none` where the paper's data give no clear assignment. -/
+/-- A Washo complement-taking predicate is a verb entry with its [noonan-2007] class and the
+clause-typer of the clause it embeds. -/
+structure Verb extends _root_.Verb where
+  /-- The [noonan-2007] class, `none` where the data give no clear assignment. -/
   ctpClass : Option CTPClass
   /-- The clause-typer on the embedded clause (Table 1). -/
   typer : Complementizer
@@ -66,87 +61,84 @@ def es : Morph := .suff "e:s"
 /-- The reflexive prefix *gum-*. -/
 def gum : Morph := .pref "gum"
 
-/-- *hamup'ay* 'forget' ((1), (9), (34)). -/
-def hamupay : Embedder where
+/-- *hamup'ay* 'forget' (1). -/
+def hamupay : Verb where
   form := "hamup'ay"
   frames := [Frame.gerund]
   ctpClass := some .knowledge
   typer := ge
 
-/-- *hamup'ay-e:s* 'remember' is negated 'forget' ((8), (86)). -/
-def hamupayEs : Embedder := { hamupay with form := hamupay.form ++ toString es }
+/-- *hamup'ay-e:s* 'remember', negated 'forget' (8). -/
+def hamupayEs : Verb := { hamupay with form := hamupay.form ++ toString es }
 
-/-- *ašaš-e:s* 'know', the positive form of *ašaš* 'not know', also takes a plain familiar DP,
-'that man' ((6), (79), (87)). -/
-def ashashEs : Embedder where
+/-- *ašaš-e:s* 'know', negated 'not know'; it also takes a plain DP ((6), (79)). -/
+def ashashEs : Verb where
   form := "ašaš" ++ toString es
   frames := [Frame.gerund, Frame.np]
   ctpClass := some .knowledge
   typer := ge
 
-/-- *i:gi* 'see' takes a nominalized clause on the propositional reading, an internally headed
-relative, and a plain DP ((10), (20), (88), (89)). -/
-def iigi : Embedder where
+/-- *i:gi* 'see'; it also takes an internally headed relative and a plain DP ((10), (20),
+(89)). -/
+def iigi : Verb where
   form := "i:gi"
   frames := [Frame.gerund, Frame.np]
   ctpClass := some .perception
   typer := ge
 
-/-- *damal* 'hear' is attested with event nominalizations, 'it raining' and 'the man singing'
-((11), (84)). -/
-def damal : Embedder where
+/-- *damal* 'hear', attested with event nominalizations ((11), (84)). -/
+def damal : Verb where
   form := "damal"
   frames := [Frame.gerund]
   ctpClass := some .perception
   typer := ge
 
-/-- *hamu* 'think' is intransitive, questioned with *how* rather than *what* ((2), (13), (41),
-(49)). -/
-def hamu : Embedder where
+/-- *hamu* 'think', intransitive, questioned with *how* rather than *what* ((2), (49)). -/
+def hamu : Verb where
   form := "hamu"
   frames := []
   ctpClass := some .propAttitude
   typer := aq
 
-/-- *i:d* 'say' is intransitive ((14), (47), (50)). -/
-def iid : Embedder where
+/-- *i:d* 'say', intransitive ((14), (50)). -/
+def iid : Verb where
   form := "i:d"
   frames := []
   ctpClass := some .utterance
   typer := aq
   speechActVerb := true
 
-/-- *mɨtgi:bɨl-e:s* 'believe' is negated 'disbelieve' ((16)). -/
-def metgiibilEs : Embedder where
+/-- *mɨtgi:bɨl-e:s* 'believe', negated 'disbelieve' (16). -/
+def metgiibilEs : Verb where
   form := "mɨtgi:bɨl" ++ toString es
   frames := []
   ctpClass := some .propAttitude
   typer := aq
 
-/-- *suʔuʔuš* 'dream' without the reflexive is transitive, 'dream of bread', and its nominalized
-clause is an internally headed relative, not a *that*-clause ((53), (55)). -/
-def suus : Embedder where
+/-- *suʔuʔuš* 'dream' without the reflexive, transitive; its nominalized clause is an internally
+headed relative ((53), (55)). -/
+def suus : Verb where
   form := "suʔuʔuš"
   frames := [Frame.np, Frame.gerund]
   ctpClass := none
   typer := ge
 
-/-- *gum-suʔuʔuš* 'dream' with the reflexive is intransitive and embeds the dependent-mood clause
-read as a *that*-clause ((15), (52), (54)). -/
-def gumsuus : Embedder :=
+/-- *gum-suʔuʔuš* 'dream' with the reflexive, intransitive; its dependent-mood clause is read as a
+*that*-clause ((15), (52), (54)). -/
+def gumsuus : Verb :=
   { suus with
     form := toString gum ++ suus.form
     voiceType := some .reflexive
     frames := []
     typer := aq }
 
-/-- The predicates with quotable per-predicate data. -/
-def embedders : List Embedder :=
+/-- The predicates with per-predicate data in the paper. -/
+def verbs : List Verb :=
   [hamupay, hamupayEs, ashashEs, iigi, damal, hamu, iid, metgiibilEs, suus, gumsuus]
 
-/-- The embedded clause bears the dependent mood under an intransitive predicate and the
-nominalizer under a transitive one (Table 1 read against transitivity). -/
-theorem typer_eq : ∀ v ∈ embedders, v.typer = if v.frames = [] then aq else ge := by
+/-- An intransitive predicate embeds a dependent-mood clause and a transitive one a nominalized
+clause (Table 1). -/
+theorem typer_eq : ∀ v ∈ verbs, v.typer = if v.frames = [] then aq else ge := by
   decide
 
 end Washo.Clause
