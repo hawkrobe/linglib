@@ -1,5 +1,6 @@
 import Mathlib.Order.Nat
-import Linglib.Data.UD.Basic
+import Linglib.Data.UD.UPOS
+import Linglib.Data.UD.Features
 import Linglib.Syntax.Case.Basic
 import Linglib.Pragmatics.SocialMeaning.Register
 import Linglib.Semantics.Reference.Prominence

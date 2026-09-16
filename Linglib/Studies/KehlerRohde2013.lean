@@ -1,5 +1,6 @@
 import Linglib.Data.Examples.KehlerRohde2013
-import Linglib.Data.UD.Basic
+import Linglib.Data.UD.UPOS
+import Linglib.Data.UD.Features
 import Linglib.Discourse.Coherence
 import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Discourse.Centering.Instances.GrammaticalRole

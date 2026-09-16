@@ -15,7 +15,7 @@ non-thematic.
 ## Main definitions
 
 * `Japanese.Verb` — a Japanese verb, the root `Verb` with its romanization
-* `Japanese.verbs` — the inventory
+* `Japanese.verbs` — the attitude, causative and departure verbs
 
 ## References
 

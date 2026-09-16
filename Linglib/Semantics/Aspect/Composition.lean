@@ -1,5 +1,4 @@
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Data.UD.Basic
 import Linglib.Semantics.Plurality.MassCount
 
 /-!

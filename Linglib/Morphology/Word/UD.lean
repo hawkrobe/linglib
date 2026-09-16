@@ -14,8 +14,17 @@ features, and an annotation ingests as an agreement bundle.
 
 ## Main declarations
 
-* `Person.toUD`, `Number.toUD`, `Gender.toUD`, `Case.toUD` and the `fromUD` ingestions
-* `Morphology.Features.toUD`, `Morphology.Features.ofUD`, `Agreement.Bundle.ofUD`
+* `Person.toUD`, `Person.fromUD`: realization of a person as a tag, clusivity collapsing to
+  the first person, and ingestion of a tag, with `Person.fromUD_toUD` showing ingestion after
+  realization is coarsening.
+* `Number.toUD`, `Number.fromUD`: the partial realization and ingestion of number, with
+  `Number.roundtrip_fromUD_toUD` on the seven values that have a tag.
+* `Gender.toUD`, `Gender.fromUD`: realization where a tag exists and total ingestion,
+  `Gender.isPartialInv_fromUD_toUD` making realization a partial inverse.
+* `Case.toUD`, `Case.fromUD`: the bijection between the two case inventories.
+* `Morphology.Features.toUD`, `Morphology.Features.ofUD`: the annotation record a token's
+  features realize as, and the features an annotation ingests as.
+* `Agreement.Bundle.ofUD`: the agreement bundle an annotation ingests as.
 
 ## References
 

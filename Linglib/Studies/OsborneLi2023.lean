@@ -1,5 +1,5 @@
 import Linglib.Syntax.DependencyGrammar.Basic
-import Linglib.Data.UD.Basic
+import Linglib.Data.UD.UPOS
 import Linglib.Morphology.Word.Basic
 import Linglib.Data.Examples.OsborneLi2023
 

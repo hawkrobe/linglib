@@ -1,4 +1,3 @@
-import Linglib.Data.UD.Basic
 import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Number.Basic
 import Linglib.Syntax.Person.Basic

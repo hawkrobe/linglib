@@ -1,3 +1,4 @@
+import Mathlib.Data.Set.Lattice.Image
 import Linglib.Semantics.Alternatives.Basic
 import Linglib.Semantics.Alternatives.Structural
 import Linglib.Semantics.Questions.Exhaustivity

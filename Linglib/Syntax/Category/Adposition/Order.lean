@@ -1,5 +1,4 @@
 import Linglib.Data.WALS.Features.F85A
-import Linglib.Data.UD.Basic
 import Linglib.Syntax.WordOrder
 
 /-!
