@@ -144,7 +144,6 @@ import Linglib.Logic.Aristotelian.Bitstring
 import Linglib.Logic.Aristotelian.Diagram
 import Linglib.Logic.Aristotelian.Morphism
 import Linglib.Logic.Aristotelian.Partition
-import Linglib.Logic.Aristotelian.Probabilistic
 import Linglib.Logic.Aristotelian.Square
 import Linglib.Logic.Assignment
 import Linglib.Logic.BeliefRevision
@@ -295,8 +294,6 @@ import Linglib.Core.Probability.Finite
 import Linglib.Core.Probability.Gaussian
 import Linglib.Core.Probability.GibbsVariational
 import Linglib.Core.Probability.Gumbel
-import Linglib.Core.Probability.Hypergeometric
-import Linglib.Core.Probability.JointPosterior
 import Linglib.Core.Probability.Kernel.Composition.Lemmas
 import Linglib.Core.Probability.Kernel.Mixture
 import Linglib.Core.Probability.Kernel.OfWeights
@@ -304,13 +301,10 @@ import Linglib.Core.Probability.Kernel.Posterior
 import Linglib.Core.Probability.Uniform
 import Linglib.Core.Probability.UniformOn
 import Linglib.Core.Probability.LikelihoodRatio
-import Linglib.Core.Probability.Marginal
 import Linglib.Core.Probability.PitmanYor
 import Linglib.Core.Probability.PolyaUrn
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.RandomUtility
-import Linglib.Core.Probability.Scores
-import Linglib.Core.Probability.Softmax
 import Linglib.Core.Probability.SoftmaxTheory
 import Linglib.Core.Relation.ReflTransGen
 import Linglib.Core.RingTheory.Bialgebra.Basic
@@ -1322,13 +1316,11 @@ import Linglib.Pragmatics.NeoGricean.Basic
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Uniform
 import Linglib.Pragmatics.RSA.Profile
-import Linglib.Pragmatics.RSA.Canonical
 import Linglib.Pragmatics.RSA.Gibbs
 import Linglib.Pragmatics.RSA.Incremental
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Pragmatics.RSA.QUD
-import Linglib.Pragmatics.RSA.ScoreChain
 import Linglib.Pragmatics.RSA.Silence
 import Linglib.Pragmatics.RSA.SimpAttr
 import Linglib.Pragmatics.RelevanceTheory.CognitiveEffects
