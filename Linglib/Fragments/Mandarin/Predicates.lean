@@ -73,17 +73,13 @@ def renwei : MandarinVerbEntry := .mk' {
   opaqueContext := true
   attitude := some (.doxastic .nonVeridical) }
 
-/-! ## Liu & Yip 2026 complement-taking predicates
+/-! ### Complement-taking predicates of [liu-yip-2026]
 
-Seven additional Mandarin CTPs cited by [liu-yip-2026] (lists in (18)
-and (19)) for the *you*-skipping pattern. Theory-light: only consensus
-typology — surface form, finite vs nonfinite complement selection, and
-[noonan-2007] `CTPClass`. The [+D] / [-D] selectional refinement
-within nonfinite TPs (Lin & Liu 2009) is theory-laden and lives in
-`Studies/LiuYip2026.lean` as a Studies-side
-projection per the audit's "derive don't stipulate" discipline. -/
+Surface form and finite versus nonfinite complement selection only; the sizes and the
+dynamicity of the complements each predicate selects are the analysis of [liu-yip-2026] and live
+in `Studies/LiuYip2026.lean`. -/
 
-/-- 想 *xiang* 'want' — desiderative; nonfinite-taking. Liu & Yip 2026 (18). -/
+/-- 想 *xiang* 'want' — desiderative; nonfinite-taking. [liu-yip-2026]. -/
 def xiang : MandarinVerbEntry := .mk' {
   form := "xiang"
   frames := [Frame.infinitival]
@@ -91,7 +87,7 @@ def xiang : MandarinVerbEntry := .mk' {
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive)) }
 
-/-- 让 *rang* 'let' — manipulative; nonfinite-taking. Liu & Yip 2026 (18). -/
+/-- 让 *rang* 'let' — manipulative; nonfinite-taking. [liu-yip-2026]. -/
 def rang : MandarinVerbEntry := .mk' {
   form := "rang"
   frames := [Frame.infinitival]
@@ -99,7 +95,7 @@ def rang : MandarinVerbEntry := .mk' {
   opaqueContext := false }
 
 /-- 相信 *xiangxin* 'believe' — propositional attitude; finite-taking
-    (CP-only). Liu & Yip 2026 (19) — blocks *you*-skipping. -/
+    (CP-only). [liu-yip-2026]. -/
 def xiangxin : MandarinVerbEntry := .mk' {
   form := "xiangxin"
   frames := [Frame.finiteClause]
@@ -107,24 +103,21 @@ def xiangxin : MandarinVerbEntry := .mk' {
   opaqueContext := true
   attitude := some (.doxastic .veridical) }
 
-/-- 劝 *quan* 'urge' — manipulative; nonfinite-taking. Liu & Yip 2026 (18). -/
+/-- 劝 *quan* 'urge' — manipulative; nonfinite-taking. [liu-yip-2026]. -/
 def quan : MandarinVerbEntry := .mk' {
   form := "quan"
   frames := [Frame.infinitival]
   passivizable := true
   opaqueContext := false }
 
-/-- 逼 *bi* 'force' — manipulative; nonfinite-taking. Liu & Yip 2026 (18)
-    (listed as *bi(po)*). -/
+/-- 逼 *bi* 'force' — manipulative; nonfinite-taking [liu-yip-2026]. -/
 def bi : MandarinVerbEntry := .mk' {
   form := "bi"
   frames := [Frame.infinitival]
   passivizable := true
   opaqueContext := false }
 
-/-- 打算 *dasuan* 'plan' — desiderative; nonfinite-taking. Liu & Yip 2026
-    (18). Liu & Yip Appendix A discusses *dasuan*'s ambiguity between
-    Type II (TP) and Type III (vP) selection. -/
+/-- 打算 *dasuan* 'plan' — desiderative; nonfinite-taking [liu-yip-2026]. -/
 def dasuan : MandarinVerbEntry := .mk' {
   form := "dasuan"
   frames := [Frame.infinitival]
@@ -132,8 +125,7 @@ def dasuan : MandarinVerbEntry := .mk' {
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive)) }
 
-/-- 设法 *shefa* 'try' — achievement; nonfinite-taking. Liu & Yip 2026 (18).
-    [noonan-2007] classifies 'try' under the achievement CTP class. -/
+/-- 设法 *shefa* 'try' — achievement; nonfinite-taking [liu-yip-2026]. -/
 def shefa : MandarinVerbEntry := .mk' {
   form := "shefa"
   frames := [Frame.infinitival]
@@ -146,16 +138,5 @@ def allVerbs : List MandarinVerbEntry :=
 
 def lookup (form : String) : Option MandarinVerbEntry :=
   allVerbs.find? (·.form == form)
-
-/-! ## Drift sentries on the Liu&Yip2026 cohort -/
-
-/-- The seven Liu & Yip 2026 predicates split into 6 nonfinite-takers
-    (allow *you*-skipping per (18)) and 1 finite-taker (blocks it per (19)). -/
-theorem liuyip_partition :
-    [xiang, rang, quan, bi, dasuan, shefa].all
-      (·.complementType = .infinitival) = true ∧
-    xiangxin.complementType = .finiteClause := by
-  refine ⟨?_, rfl⟩
-  decide
 
 end Mandarin.Predicates

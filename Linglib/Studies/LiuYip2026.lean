@@ -1,7 +1,6 @@
 import Linglib.Syntax.Minimalist.Verbal.Aspect
-import Linglib.Syntax.Minimalist.Probe.Profile
-import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
-import Linglib.Semantics.Aspect.Basic
+import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Fragments.Mandarin.Particles
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Cantonese.Aspect
 import Linglib.Fragments.Cantonese.Particles
@@ -9,307 +8,350 @@ import Linglib.Fragments.Cantonese.Predicates
 import Linglib.Fragments.Cantonese.ResultativeComplements
 
 /-!
-# Liu and Yip (2026): Again, Finiteness, and Split Aspect in Chinese Languages
+# Liu and Yip (2026): Again, finiteness, and split aspect in Chinese languages
 
-This file formalizes the size-based finiteness and split-aspect analysis of [liu-yip-2026]
-for Mandarin and Cantonese. Complement clauses come in three sizes, finite CP, nonfinite TP
-without aspect restructuring, and nonfinite vP with it (`typeI`, `typeII`, `typeIII`),
-instantiating the implicational complementation hierarchy of [wurmbrand-lohninger-2023].
-Aspect splits into an outer projection above vP and an inner one inside it: Mandarin *you*
-and Cantonese *-faan* associate with the outer projection and can scope exceptionally, by
-movement with reconstruction and by Agree respectively, while Mandarin *zai* and Cantonese
-*-gwo* associate with the inner projection and never mismatch. A TP-sized complement's own
-outer aspect head blocks the matrix probe's reach to the embedded *again*-element, a
-defective intervention in the sense of [chomsky-2000] (`defectiveIntervention`), and vP is
-the minimal nonfinite size, the inner projection being mandatory above V.
+This file formalizes the size-based account of finiteness and of exceptional scope in
+[liu-yip-2026]. Verb complements in Mandarin and Cantonese come in three sizes, a finite CP, a
+nonfinite TP and a nonfinite vP, and the two aspect projections of the split aspect approach
+sit at fixed heights, the outer one at the level of T above vP and the inner one at the level
+of v, so every complement contains inner aspect and only a TP or larger contains outer aspect
+(`Contains`). An *again*-element or aspectual suffix associates with one of the two
+projections, by movement for Mandarin preverbal *you* and by agreement for the suffixes, and
+takes exceptional scope across a complement, skipping the matrix predicate or lowering onto it,
+exactly when the complement has no projection of its flavour to intervene, so that it
+associates with the matrix one (`ExceptionalScope`). The paper's tables follow from that one
+definition: outer-associated elements, Mandarin *you*, Cantonese *-faan* and the outer
+aspectual suffixes, take exceptional scope across a vP and across nothing larger
+(`exceptionalScope_outer_iff`); inner-associated elements, Mandarin *zai*, Cantonese *zoi* and
+repetitive *-gwo*, the continuous *-zyu* and the phase complements, never do
+(`not_exceptionalScope_inner`), which is the argument that vP is the minimal size of a nonfinite
+clause; and transparency is downward closed along the size hierarchy
+(`ExceptionalScope.anti`), the implicational complementation hierarchy of
+[wurmbrand-lohninger-2023]. Mandarin *you* alone carries the unvalued dynamic feature of
+[lin-liu-2009] and must be licensed by an outer aspect head bearing `[+D]`, which the paper's
+selectional table for *xiang* 'want', *rang* 'let' and *xiangxin* 'believe' turns into the
+embeddability of *you* (`Pred.embedsYou`) and into the blocking of aspect lowering by an embedded
+*you* (`not_exceptionalScope_of_licensesDynamic`).
+
+## Main definitions
+
+* `Contains`, `ExceptionalScope` — a complement size contains an aspect projection, and an
+  element of that flavour takes exceptional scope across it.
+* `Again`, `Again.flavor`, `Again.NeedsDynamic` — the six *again*-elements, the projection each
+  associates with, and the dynamic feature of *you*.
+* `aspectFlavor`, `phaseComplementFlavor` — the association of the Cantonese aspect suffixes
+  and phase complements.
+* `Pred.selects`, `Complement.LicensesDynamic`, `CPred.size` — the complements the Mandarin
+  and Cantonese predicates select.
+
+## Main results
+
+* `exceptionalScope_outer_iff`, `not_exceptionalScope_inner`, `ExceptionalScope.anti` — the
+  scope pattern by size and flavour, and the implicational hierarchy.
+* `generalization_I`, `generalization_II`, `correlation_I`, `correlation_II` — the Mandarin
+  generalizations as consequences.
+* `cantonese_lowering`, `aspect_lowering`, `no_phaseComplement_lowering` — the Cantonese
+  pattern for the *again*-elements, the aspect suffixes and the phase complements.
+* `embedsYou`, `not_exceptionalScope_of_licensesDynamic` — the licensing of *you* and its
+  blocking of aspect lowering.
 
 ## Implementation notes
 
-The complementation hierarchy, the truncation operator of [wurmbrand-2001], and the
-exfoliation of [pesetsky-2021] are local to this file. The intervener is a
-featurally matching head in a probe position, not a category in a bilateral label, and the
-aspect-lowering and *-faan*-lowering derivations are kept parallel rather than identified.
-The minimal-vP claim is recorded per fragment as an empirical generalization.
-
-## TODO
-
-Exfoliation, a uniform *again*-presupposition substrate, the restitutive reading, and the
-German and Romance restructuring typology of [wurmbrand-2014] are not represented.
+The heights are those of the functional sequence in `Syntax/Minimalist/ExtendedProjection`,
+outer aspect at the level of T and inner aspect at the level of v, so containment is a
+comparison of levels. Defective intervention [chomsky-2000] is not a relation between heads: an
+embedded projection blocks association whatever its features, which is the paper's claim. The
+semicomplementizer and Exfoliation, the restitutive reading, the Italian parallel and the
+crosstype ambiguity of *dasuan* 'plan' are not represented.
 
 ## References
 
 * [liu-yip-2026]
 * [wurmbrand-lohninger-2023]
-* [wurmbrand-2001]
+* [lin-liu-2009]
 * [chomsky-2000]
-* [pesetsky-2021]
-* [wurmbrand-2014]
 -/
 
 namespace LiuYip2026
 
-open Minimalist (AspFlavor AspHead Probe.Profile ClauseSpine ComplementSize Cat fValue)
+open Minimalist
 
-/-- [liu-yip-2026]'s Type I: finite (CP). Selected by *xiangxin* 'believe',
-    *shuo* 'say' etc.; blocks *you*-skipping and *-faan*-lowering. -/
-def typeI : ComplementSize := ComplementSize.cP
+/-! ### Clause sizes and the projections they contain -/
 
-/-- [liu-yip-2026]'s Type II: nonfinite without Aspect Restructuring (TP).
-    Selected when the predicate licenses TP but blocks *-faan*-lowering
-    via embedded AspP_outer intervention. -/
-def typeII : ComplementSize := ComplementSize.tP
+/-- Type I, the finite CP. -/
+def typeI : ComplementSize := .cP
 
-/-- [liu-yip-2026]'s Type III: nonfinite *with* Aspect Restructuring (vP).
-    Selected by *xiang* 'want', *rang* 'let' etc.; permits *you*-skipping
-    and *-faan*-lowering. -/
-def typeIII : ComplementSize := ComplementSize.vP
+/-- Type II, the nonfinite TP without aspect restructuring. -/
+def typeII : ComplementSize := .tP
 
-/-- Type ordering: vP < TP < CP (size-wise, per `fValue`). -/
-theorem types_ordered :
-    typeIII.fLevel < typeII.fLevel ∧ typeII.fLevel < typeI.fLevel := by decide
+/-- Type III, the nonfinite vP with aspect restructuring. -/
+def typeIII : ComplementSize := .vP
 
-/-- The Implicational Complementation Hierarchy of [wurmbrand-lohninger-2023]:
-    proposition > situation > event in transparency-decreasing order.
+/-- A complement of size `s` contains the aspect projection of flavour `f`: the outer
+projection sits at the level of T and the inner one at the level of v. -/
+def Contains (s : ComplementSize) (f : AspFlavor) : Prop := f.defaultFLevel ≤ s.fLevel
 
-    Local to this Studies file; promotion to `Syntax/Complementation/`
-    is contingent on a second paper-anchored consumer (the control
-    studies — e.g. Studies/Landau2015.lean — and Studies/Grano2024.lean
-    are candidate second sites).
+instance (s : ComplementSize) (f : AspFlavor) : Decidable (Contains s f) :=
+  inferInstanceAs (Decidable (_ ≤ _))
 
-    `LinearOrder` is *not* derived: the implicational content of the ICH is
-    a theorem about a *transparency relation*, not a structural property of
-    the class lattice. The order here is just the enum's natural one
-    (event < situation < proposition); the implicational claim is
-    `transparency_downward_closed` below. -/
+/-- Every complement from vP up contains inner aspect. -/
+theorem contains_inner {s : ComplementSize} (h : ComplementSize.vP ≤ s) : Contains s .inner := h
+
+/-- A complement contains outer aspect exactly when it is at least a TP. -/
+theorem contains_outer_iff (s : ComplementSize) : Contains s .outer ↔ ComplementSize.tP ≤ s :=
+  Iff.rfl
+
+/-- An element associated with the projection of flavour `f` takes exceptional scope across a
+complement of size `s`, skipping the matrix predicate or lowering onto it, when the complement
+has no projection of that flavour to intervene, so that the element associates with the matrix
+one. -/
+def ExceptionalScope (f : AspFlavor) (s : ComplementSize) : Prop := ¬ Contains s f
+
+instance (f : AspFlavor) (s : ComplementSize) : Decidable (ExceptionalScope f s) :=
+  inferInstanceAs (Decidable (¬ _))
+
+/-- Transparency is downward closed along the size hierarchy: what crosses a larger complement
+crosses a smaller one, the implicational complementation hierarchy. -/
+theorem ExceptionalScope.anti {f : AspFlavor} {s s' : ComplementSize} (h : s ≤ s')
+    (hs : ExceptionalScope f s') : ExceptionalScope f s :=
+  fun hc ↦ hs (le_trans hc (ComplementSize.le_def.mp h))
+
+/-- Outer-associated elements take exceptional scope across a complement smaller than a TP,
+the vP, and across nothing larger. -/
+theorem exceptionalScope_outer_iff (s : ComplementSize) :
+    ExceptionalScope .outer s ↔ s < ComplementSize.tP :=
+  Nat.not_le
+
+/-- Inner-associated elements never take exceptional scope: every complement contains inner
+aspect, so vP is the minimal size of a nonfinite clause. -/
+theorem not_exceptionalScope_inner {s : ComplementSize} (h : ComplementSize.vP ≤ s) :
+    ¬ ExceptionalScope .inner s :=
+  fun hs ↦ hs (contains_inner h)
+
+/-- Generalization II: exceptional scope crosses a nonfinite vP, not a nonfinite TP nor a
+finite CP. -/
+theorem generalization_II :
+    ExceptionalScope .outer typeIII ∧ ¬ ExceptionalScope .outer typeII ∧
+      ¬ ExceptionalScope .outer typeI := by
+  decide
+
+/-! ### The *again*-elements and their projections -/
+
+/-- The *again*-type elements of the two languages: Mandarin preverbal *you* and *zai*,
+Cantonese preverbal *jau* and *zoi* and postverbal *-faan* and repetitive *-gwo*. -/
+inductive Again where
+  | you
+  | zai
+  | jau
+  | zoi
+  | faan
+  | gwo
+  deriving DecidableEq, Repr
+
+/-- The Mandarin lexical entry of an element. -/
+def Again.mandarin : Again → Option Mandarin.Particles.PresupParticle
+  | .you => some Mandarin.Particles.you
+  | .zai => some Mandarin.Particles.zai
+  | _ => none
+
+/-- The Cantonese lexical entry of an element. -/
+def Again.cantonese : Again → Option Cantonese.Particles.PresupParticle
+  | .jau => some Cantonese.Particles.jau
+  | .zoi => some Cantonese.Particles.zoi
+  | .faan => some Cantonese.Particles.faan
+  | .gwo => some Cantonese.Particles.gwo
+  | _ => none
+
+/-- The projection each element associates with: *you* by movement and *-faan* by agreement
+with the outer one, *zai*, *zoi* and repetitive *-gwo* with the inner one; preverbal *jau* is
+base-generated where it is pronounced and associates with neither. -/
+def Again.flavor : Again → Option AspFlavor
+  | .you | .faan => some .outer
+  | .zai | .zoi | .gwo => some .inner
+  | .jau => none
+
+/-- The element carries the unvalued dynamic feature `[u+D]` that an outer aspect head bearing
+`[+D]` must check: *you* alone. -/
+def Again.NeedsDynamic (a : Again) : Prop := a = .you
+
+instance : DecidablePred Again.NeedsDynamic := fun a ↦ inferInstanceAs (Decidable (a = .you))
+
+/-- The element takes exceptional scope across some complement. -/
+def Again.Skips (a : Again) : Prop :=
+  ∃ f ∈ a.flavor, ∃ s ∈ [typeI, typeII, typeIII], ExceptionalScope f s
+
+instance : DecidablePred Again.Skips := fun a ↦ by
+  unfold Again.Skips; cases a.flavor <;> simp only [Option.mem_def] <;> infer_instance
+
+/-- An element takes exceptional scope somewhere exactly when it associates with the outer
+projection. -/
+theorem skips_iff (a : Again) : a.Skips ↔ a.flavor = some .outer := by cases a <;> decide
+
+/-- Generalization I: exceptional scope is found with *you* but not with *zai*. -/
+theorem generalization_I : Again.you.Skips ∧ ¬ Again.zai.Skips := by decide
+
+/-- The Cantonese pattern: *-faan* lowers, repetitive *-gwo* does not, and neither preverbal
+adverb has exceptional scope. -/
+theorem cantonese_lowering :
+    Again.faan.Skips ∧ ¬ Again.gwo.Skips ∧ ¬ Again.jau.Skips ∧ ¬ Again.zoi.Skips := by
+  decide
+
+/-- Correlation I: a Mandarin *again*-element has exceptional scope iff it cannot surface in
+an embedded nonfinite clause without a dynamic aspect, that is, iff it carries `[u+D]`. -/
+theorem correlation_I : ∀ a ∈ [Again.you, Again.zai], (a.Skips ↔ a.NeedsDynamic) := by decide
+
+/-- Correlation II: an *again*-element has exceptional scope iff its projection is at least as
+high as the aspectual heads, the level of `Asp` in the functional sequence. -/
+theorem correlation_II (a : Again) :
+    a.Skips ↔ ∃ f ∈ a.flavor, fValue .Asp ≤ f.defaultFLevel := by
+  cases a <;> decide
+
+/-! ### Aspect suffixes and phase complements -/
+
+/-- The association of the Cantonese aspect suffixes: the perfective *-zo*, the progressive
+*-gan* and the experiential *-gwo* with the outer projection, the continuous *-zyu* with the
+inner one. -/
+def aspectFlavor (m : Cantonese.Aspect.Marker) : AspFlavor :=
+  if m = Cantonese.Aspect.zyu then .inner else .outer
+
+/-- Every phase complement associates with the inner projection. -/
+def phaseComplementFlavor (_ : Cantonese.ResultativeComplements.PhaseComplement) : AspFlavor :=
+  .inner
+
+/-- Aspect lowering: an outer aspect suffix embedded in a vP is interpreted on the matrix
+predicate, and the continuous *-zyu* alone is not. -/
+theorem aspect_lowering :
+    ∀ m ∈ Cantonese.Aspect.markers,
+      (ExceptionalScope (aspectFlavor m) typeIII ↔ m ≠ Cantonese.Aspect.zyu) := by
+  decide
+
+/-- No phase complement lowers across any complement. -/
+theorem no_phaseComplement_lowering (pc : Cantonese.ResultativeComplements.PhaseComplement)
+    {s : ComplementSize} (h : ComplementSize.vP ≤ s) :
+    ¬ ExceptionalScope (phaseComplementFlavor pc) s :=
+  not_exceptionalScope_inner h
+
+/-! ### Selection and the licensing of *you* -/
+
+/-- A complement as a predicate selects it: a vP, a TP whose outer aspect head has the given
+dynamicity, or a CP. -/
+inductive Complement where
+  | vP
+  | tP (d : Aspect.Dynamicity)
+  | cP
+  deriving DecidableEq, Repr
+
+/-- The size of a complement. -/
+def Complement.size : Complement → ComplementSize
+  | .vP => .vP
+  | .tP _ => .tP
+  | .cP => .cP
+
+/-- A complement licenses a `[u+D]` element when it has an outer aspect head bearing `[+D]`: a
+dynamic TP, or a CP, whose outer aspect head may be dynamic. -/
+def Complement.LicensesDynamic (c : Complement) : Prop := c = .tP .dynamic ∨ c = .cP
+
+instance : DecidablePred Complement.LicensesDynamic := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- A complement that licenses *you* contains outer aspect, so nothing outer-associated takes
+exceptional scope across it: an embedded *you* blocks aspect lowering. -/
+theorem not_exceptionalScope_of_licensesDynamic {c : Complement} (h : c.LicensesDynamic) :
+    ¬ ExceptionalScope .outer c.size := by
+  rcases h with rfl | rfl <;> decide
+
+/-- The three Mandarin predicates of the selectional table. -/
+inductive Pred where
+  | xiang
+  | rang
+  | xiangxin
+  deriving DecidableEq, Repr
+
+/-- The lexical entry of a predicate. -/
+def Pred.entry : Pred → Mandarin.Predicates.MandarinVerbEntry
+  | .xiang => Mandarin.Predicates.xiang
+  | .rang => Mandarin.Predicates.rang
+  | .xiangxin => Mandarin.Predicates.xiangxin
+
+/-- The complements each predicate selects: *xiang* 'want' a vP or a stative TP, *rang* 'let'
+a vP or a TP of either dynamicity, *xiangxin* 'believe' a CP. -/
+def Pred.selects : Pred → List Complement
+  | .xiang => [.vP, .tP .stative]
+  | .rang => [.vP, .tP .stative, .tP .dynamic]
+  | .xiangxin => [.cP]
+
+/-- *You* can surface in a complement of the predicate iff the predicate selects a complement
+licensing `[u+D]`. -/
+def Pred.EmbedsYou (p : Pred) : Prop := ∃ c ∈ p.selects, c.LicensesDynamic
+
+instance : DecidablePred Pred.EmbedsYou := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+/-- *You* skips the predicate iff the predicate selects a vP. -/
+def Pred.SkipsYou (p : Pred) : Prop := ∃ c ∈ p.selects, ExceptionalScope .outer c.size
+
+instance : DecidablePred Pred.SkipsYou := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+/-- The selectional table: *want* embeds no *you* but is skipped, *let* does both, *believe*
+embeds *you* and is not skipped. -/
+theorem embedsYou :
+    (¬ Pred.xiang.EmbedsYou ∧ Pred.xiang.SkipsYou) ∧ (Pred.rang.EmbedsYou ∧ Pred.rang.SkipsYou) ∧
+      (Pred.xiangxin.EmbedsYou ∧ ¬ Pred.xiangxin.SkipsYou) := by
+  decide
+
+/-- The Cantonese predicates and the size of the complement each selects: the nonfinite
+clause-taking *soeng* 'want', *hyun* 'urge', *bik* 'force', *giu* 'ask' and *daasyun* 'intend'
+a vP, the finite clause-taking *seon* 'believe', *gong* 'say' and *geidak* 'remember' a CP. -/
+inductive CPred where
+  | soeng
+  | hyun
+  | bik
+  | giu
+  | daasyun
+  | seon
+  | gong
+  | geidak
+  deriving DecidableEq, Repr
+
+/-- The lexical entry of a predicate. -/
+def CPred.entry : CPred → Cantonese.Predicates.CTPEntry
+  | .soeng => Cantonese.Predicates.soeng
+  | .hyun => Cantonese.Predicates.hyun
+  | .bik => Cantonese.Predicates.bik
+  | .giu => Cantonese.Predicates.giu
+  | .daasyun => Cantonese.Predicates.daasyun
+  | .seon => Cantonese.Predicates.seon
+  | .gong => Cantonese.Predicates.gong
+  | .geidak => Cantonese.Predicates.geidak
+
+/-- The size of the complement each predicate selects. -/
+def CPred.size : CPred → ComplementSize
+  | .soeng | .hyun | .bik | .giu | .daasyun => .vP
+  | .seon | .gong | .geidak => .cP
+
+/-- *-Faan* lowers across the complement of *soeng* 'want' and not across that of *seon*
+'believe'. -/
+theorem faan_lowering :
+    ExceptionalScope .outer CPred.soeng.size ∧ ¬ ExceptionalScope .outer CPred.seon.size := by
+  decide
+
+/-! ### The implicational complementation hierarchy -/
+
+/-- The semantic complement classes of the hierarchy, event, situation and proposition, and
+the minimal size each maps to. -/
 inductive ComplementClass where
-  /-- Smallest, most transparent: vP-level event reports. -/
   | event
-  /-- Mid: TP-level situation reports. -/
   | situation
-  /-- Largest, most opaque: CP-level proposition reports. -/
   | proposition
   deriving DecidableEq, Repr
 
-/-- Numeric rank for ComplementClass: event = 0, situation = 1, proposition = 2. -/
-def ComplementClass.rank : ComplementClass → Nat
-  | .event => 0
-  | .situation => 1
-  | .proposition => 2
-
-/-- Project a `ComplementSize` onto the [wurmbrand-lohninger-2023]
-    3-tier `ComplementClass`, by `fValue` thresholds. This is
-    [liu-yip-2026]'s *Chinese-specific* mapping (the paper notes
-    explicitly that other languages may calibrate differently). The Studies
-    file instantiates the mapping; a richer cross-linguistic substrate would
-    parameterize it per-language. -/
-def complementClass (cs : ComplementSize) : ComplementClass :=
-  if cs.fLevel ≥ fValue .C then .proposition
-  else if cs.fLevel ≥ fValue .T then .situation
-  else .event
-
-theorem typeI_proposition : complementClass typeI = .proposition := by decide
-theorem typeII_situation : complementClass typeII = .situation := by decide
-theorem typeIII_event : complementClass typeIII = .event := by decide
-
-/-- [wurmbrand-2001]-style restructuring: drop the topmost projected
-    head from a `ClauseSpine`. Returns `none` if the spine has only one
-    head (the floor).
-
-    Local to this Studies file. Fails the ≥2-consumer rule for substrate;
-    promotion candidate when `Fragments/Italian/Modals.lean`'s informal
-    restructuring discussion gets a Studies file or when a
-    [wurmbrand-2014] study lands.
-
-    Implementation: the dropLast of an at-least-2-element list is non-empty,
-    proved via the `[x, y :: rest]` pattern's structural guarantee. -/
-def restructure : ClauseSpine → Option ClauseSpine
-  | ⟨[], h⟩ => absurd rfl h
-  | ⟨[_], _⟩ => none
-  | ⟨x :: y :: rest, _⟩ =>
-    some ⟨x :: (y :: rest).dropLast, by simp [List.cons_ne_nil]⟩
-
-/-- Restructuring strictly decreases spine length (when defined).
-    The proof unfolds via the structural constructors of `ClauseSpine`. -/
-theorem restructure_decreases (s : ClauseSpine) :
-    ∀ s' ∈ restructure s, s'.projectedHeads.length < s.projectedHeads.length := by
-  intro s' hs'
-  obtain ⟨heads, nonempty⟩ := s
-  match heads, nonempty, hs' with
-  | [], h, _ => exact absurd rfl h
-  | [_], _, hs' => simp [restructure] at hs'
-  | x :: y :: rest, _, hs' =>
-    -- restructure returns `some ⟨x :: (y :: rest).dropLast, _⟩`
-    -- so s' has projectedHeads = x :: (y :: rest).dropLast.
-    -- Original heads.length = 2 + rest.length;
-    -- s'.projectedHeads.length = 1 + (y :: rest).dropLast.length
-    --                          = 1 + (1 + rest.length - 1) = 1 + rest.length.
-    simp only [restructure, Option.mem_def, Option.some.injEq] at hs'
-    cases hs'
-    simp [List.length_dropLast]
-
-/-- [liu-yip-2026]'s defective intervention ([chomsky-2000]): an
-    *embedded* head of the same category as the matrix probe blocks Agree,
-    regardless of bilateral labeling. The featural-compatibility check
-    enforces that intervention is by an *element occupying an embedded
-    probe position*, not by a category in a sister's label.
-
-    `intervenes` returns `true` when the embedded head's selectional
-    requirement (e.g. Asp_outer's [+D] dynamicity expectation) overlaps with
-    the matrix probe's expectation in a way that creates a defective
-    intervention configuration. The simplest such check: same-flavor +
-    same-or-compatible selectional spec.
-
-    This predicate deliberately does NOT call
-    `Probe.Profile.transparentToLabel` — head-as-intervener and label-as-locus
-    diverge on featurally-mismatched probes. -/
-def intervenes (matrixProbe : AspHead) (embeddedHead : AspHead) : Bool :=
-  -- Same flavor + featurally compatible (or both indifferent)
-  matrixProbe.flavor = embeddedHead.flavor &&
-    (match matrixProbe.selectsDynamicity, embeddedHead.selectsDynamicity with
-     | none, _ => true        -- matrix indifferent: any embedded head intervenes
-     | _, none => true        -- embedded indifferent: still intervenes (head presence)
-     | some _, some _ => true -- both present: intervention regardless of value match
-    )
-
-/-- Studies-side projection: Mandarin *you* 'again' is typed as an
-    AspP_outer-associated probe-bearing head with a [+D] dynamicity
-    selectional restriction (per [lin-liu-2009], building on
-    [shen-2004]). The lexical entry in `Fragments/Mandarin/Particles.lean`
-    carries only the presupposition trigger; the syntactic typing here
-    is [liu-yip-2026]'s analytical commitment. -/
-def youAspHead : AspHead := AspHead.outerDynamic
-
-/-- Studies-side projection: Mandarin *zai* 'again' is typed as an
-    AspP_inner-associated bare head, no dynamicity restriction. -/
-def zaiAspHead : AspHead := AspHead.bareInner
-
-theorem you_outer : youAspHead.flavor = .outer := rfl
-theorem zai_inner : zaiAspHead.flavor = .inner := rfl
-theorem you_requires_dynamic :
-    youAspHead.selectsDynamicity = some .dynamic := rfl
-theorem zai_no_requirement :
-    zaiAspHead.selectsDynamicity = none := rfl
-
-/-- The association of the Cantonese aspect suffixes with the two projections: the perfective
-*-zo* and the progressive *-gan* with the outer one, the experiential *-gwo* and the continuous
-*-zyu* with the inner one. -/
-def aspectFlavor (m : Cantonese.Aspect.Marker) : AspFlavor :=
-  if m = Cantonese.Aspect.zo ∨ m = Cantonese.Aspect.gan then .outer else .inner
-
-/-- The association of the Cantonese *again*-elements with the two projections: *zoi* with the
-inner one, the parallel of Mandarin *zai*, and *jau* and *-faan* with the outer one. -/
-def againFlavor (p : Cantonese.Particles.PresupParticle) : AspFlavor :=
-  if p = Cantonese.Particles.zoi then .inner else .outer
-
-/-- Every Cantonese phase complement is inner-aspectual. -/
-def phaseComplementAspHead (_ : Cantonese.ResultativeComplements.PhaseComplement) : AspHead :=
-  AspHead.bareInner
-
-/-- Cantonese *-faan* 'again' is AspP_outer-associated but, unlike Mandarin *you*, carries no
-`[+D]` selectional restriction: it combines with stative *jau* 'have'. -/
-def faanAspHead : AspHead := { flavor := againFlavor Cantonese.Particles.faan }
-
-/-- Cantonese *-gwo* in its repetitive use is AspP_inner-associated, as is its experiential use.
--/
-def gwoAspHead : AspHead := { flavor := aspectFlavor Cantonese.Aspect.gwo }
-
-theorem faan_outer_no_dyn :
-    faanAspHead.flavor = .outer ∧ faanAspHead.selectsDynamicity = none := by decide
-
-theorem gwo_inner : gwoAspHead.flavor = .inner := by decide
-
-/-- Mandarin *you* and Cantonese *-faan* are BOTH outer-aspect, but only
-    *you* carries [+D]. Encoding *-faan* with
-    `selectsDynamicity = some .dynamic` would over-predict (it would force
-    incompatibility with stative *jau*). -/
-theorem you_vs_faan_dynamicity :
-    youAspHead.selectsDynamicity = some .dynamic ∧
-    faanAspHead.selectsDynamicity = none := by decide
-
-/-- **Generalization I** ([liu-yip-2026]): in Mandarin, an
-    *again*-element exhibits exceptional scopal behavior IFF it is
-    outer-aspect-associated.
-
-    On the substrate: `youAspHead.isOuter = true` (you may skip);
-    `zaiAspHead.isOuter = false` (zai may not). The empirical content is the
-    biconditional between AspFlavor and the scope-mismatch facts the paper
-    documents. -/
-theorem generalization_I_mandarin :
-    youAspHead.isOuter = true ∧ zaiAspHead.isOuter = false := by
-  refine ⟨rfl, rfl⟩
-
-/-- **Generalization I** (Cantonese counterpart): *-faan* (outer) may lower;
-    *-gwo* (inner) may not. -/
-theorem generalization_I_cantonese :
-    faanAspHead.isOuter = true ∧ gwoAspHead.isOuter = false := by decide
-
-/-- **Generalization II** ([liu-yip-2026]): the exceptional scopal
-    behavior of *again* may cross nonfinite (vP) but not finite (CP) clause
-    boundaries.
-
-    On the substrate: this is an instance of upward entailment of opacity
-    (`Probe.Profile.transparentToLabel_eq_false_of_subset`). Stated here without invoking
-    bilateral labeling — see §5 above. The content is that for any matrix
-    *again*-bearing AspO probe, the *complement clause's size* determines
-    transparency: vP transparent, TP / CP opaque. -/
-theorem generalization_II_mandarin :
-    typeIII.fLevel < typeII.fLevel ∧ typeII.fLevel < typeI.fLevel := by decide
-
-/-- **Correlation I** ([liu-yip-2026], Mandarin): an *again*-element
-    exhibits exceptional scopal behavior IFF it cannot surface in an
-    embedded nonfinite clause without a dynamic ([+D]) aspect.
-
-    On the substrate: this is the consequence of Mandarin *you*'s
-    `selectsDynamicity = some .dynamic`. *zai*, with no such restriction,
-    can attach to either dynamic or stative complements but never scopes
-    mismatch. -/
-theorem correlation_I_mandarin :
-    youAspHead.licensesDynamicity .dynamic = true ∧
-    youAspHead.licensesDynamicity .stative = false ∧
-    zaiAspHead.licensesDynamicity .dynamic = true ∧
-    zaiAspHead.licensesDynamicity .stative = true := by
-  refine ⟨rfl, rfl, rfl, rfl⟩
-
-/-- **Correlation II** ([liu-yip-2026]): an *again*-element exhibits
-    exceptional scopal behavior IFF it is structurally higher than
-    aspectual elements.
-
-    On the substrate: AspO has higher `defaultFLevel` (2) than AspI (1).
-    Outer *you* / *-faan* are above the inner aspectual elements;
-    inner *zai* / *-gwo* are not. -/
-theorem correlation_II_mandarin :
-    AspFlavor.outer.defaultFLevel > AspFlavor.inner.defaultFLevel := by decide
-
-/-! The minimal-vP claim is an *empirical* generalization about Chinese, not
-a structural property derived from substrate. Stated here as a per-fragment
-assertion that every nonfinite-clause-taking predicate in the Mandarin and
-Cantonese fragments selects a complement of size ≥ vP. Falsifiable by a
-single new datum. -/
-
-open Mandarin.Predicates in
-/-- All Mandarin nonfinite-takers (xiang, rang, quan, bi, dasuan, shefa)
-    have `complementType = .infinitival`, consistent with vP-as-floor and
-    falsifiable by a single new datum. The Fragment-side companion is
-    `Mandarin.Predicates.liuyip_partition`. -/
-theorem mandarin_nonfinite_takers_min_vP :
-    [xiang, rang, quan, bi, dasuan, shefa].all
-      (·.complementType = .infinitival) = true := by decide
-
-open Cantonese.Predicates in
-/-- All Cantonese nonfinite-takers select `[.vP]` per the per-language
-    fragment classification ([liu-yip-2026]). -/
-theorem cantonese_nonfinite_takers_min_vP :
-    [soeng, hyun, bik, giu, daasyun].all (·.selects = [.vP]) = true := by decide
-
-/-- [wurmbrand-lohninger-2023] ICH classes track structural size —
-    proposition = CP, situation = TP, event = vP. Replaces the retired
-    projection onto the deleted surface enum, which forced
-    situation/event onto an Ā-dependency cell the ICH does not claim.
-    ([deal-2026]'s shell/Ā axes live in `Studies/Deal2026.lean`;
-    the ICH makes no claim on either axis, so no bridge is stated.) -/
+/-- The minimal size of each class: vP, TP and CP. -/
 def ComplementClass.size : ComplementClass → ComplementSize
-  | .proposition => .cP
-  | .situation => .tP
   | .event => .vP
+  | .situation => .tP
+  | .proposition => .cP
+
+/-- A dependency transparent for a class is transparent for every more integrated class. -/
+theorem ComplementClass.exceptionalScope_of_le {f : AspFlavor} {c c' : ComplementClass}
+    (h : c.size ≤ c'.size) (hs : ExceptionalScope f c'.size) : ExceptionalScope f c.size :=
+  hs.anti h
 
 end LiuYip2026
