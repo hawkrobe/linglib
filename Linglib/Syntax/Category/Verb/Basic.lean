@@ -79,7 +79,7 @@ def Verb.preferentialValence (v : Verb) : Option Preferential.Valence :=
   v.attitude.bind (·.valence)
 
 /-- Does this verb presuppose its complement via factivity? True iff it carries a
-    [karttunen-1971] factivity class or is doxastic veridical. -/
+    [karttunen-1971b] factivity class or is doxastic veridical. -/
 def Verb.factivePresup (v : Verb) : Bool :=
   v.factivity.isSome ||
     match v.attitude with

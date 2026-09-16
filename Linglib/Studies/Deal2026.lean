@@ -25,7 +25,7 @@ simplex, and Adyghe uses the relative strategy for every tensed notional complem
 or not. The Nez Perce embedding strategy is read off the paper's judgments, the rows of
 `Data/Examples/Deal2026.json`: a predicate embeds relatively when a grammatical notional
 complement of it carries the *yox̂ ke* edge (`RelativeEmbedding`). Every relative embedding
-is factive (`relative_factive`), factivity being the Fragment entries' [karttunen-1971] class,
+is factive (`relative_factive`), factivity being the Fragment entries' [karttunen-1971b] class,
 which the projection trials (33)–(36) and (68) confirm row by row (`projection_rows`). The
 Adyghe Ā flag is that 'think' takes the Fragment's *ze-re-* typer, the Bulgarian one is
 [krapova-2010]'s double requirement over the Fragment's frames (`DetoComplement`), checked
@@ -64,7 +64,7 @@ against factivity, needs Turkish *düşün-* 'think', which has no Fragment.
 * [chomsky-1970]
 * [deal-2025b]
 * [deal-2015a-nels]
-* [karttunen-1971]
+* [karttunen-1971b]
 * [tonhauser-beaver-roberts-simons-2013]
 -/
 
@@ -109,7 +109,7 @@ theorem relative_factive :
 
 /-- Consultants endorse the complement under negation, in a question or in a conditional
 antecedent exactly for the factive predicates, the projection trials (33)–(36) and (68); no
-trial is in the first person, so no semi-factive is cancelled ([karttunen-1971]). -/
+trial is in the first person, so no semi-factive is cancelled ([karttunen-1971b]). -/
 theorem projection_rows :
     ∀ row ∈ Examples.all, ∀ f ∈ row.environment?, ∀ p ∈ row.person?,
       ∀ v ∈ verbs, row.feature? "verb" = some v.form →

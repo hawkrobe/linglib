@@ -4,7 +4,7 @@ import Mathlib.Tactic.TypeStar
 # Factive and non-factive attitude semantics
 
 The factive/non-factive distinction of [kiparsky-kiparsky-1970] and
-[karttunen-1971] over Boolean world models: a world type carries
+[karttunen-1971b] over Boolean world models: a world type carries
 orthogonal dimensions — `HasComplement` (is the complement true?) and
 `HasBelief` (does the agent believe it?) — and the know-type and
 think-type verbs differ in whether the complement dimension enters the
@@ -29,14 +29,14 @@ of the RSA model of [scontras-tonhauser-2025]
 [grove-white-2025]'s lexical entry for *know*
 (`Studies/GroveWhite2025.lean`).
 
-`Factivity` is [karttunen-1971]'s split of the factive predicates into the
+`Factivity` is [karttunen-1971b]'s split of the factive predicates into the
 true factives, the emotives *regret* and *be glad*, and the semi-factives
 *know*, *discover* and *realize*, whose presupposition is cancelled in the
 first person under a question or a conditional antecedent. Lexical entries
 record it on `Verb.Presupposition.factivity`.
 -/
 
-/-- The factivity class of a predicate ([karttunen-1971]): an emotive true factive such as
+/-- The factivity class of a predicate ([karttunen-1971b]): an emotive true factive such as
 *regret*, or a semi-factive such as *know* and *discover*, whose presupposition is cancelled
 in the first person under a question or a conditional antecedent. -/
 inductive Factivity where

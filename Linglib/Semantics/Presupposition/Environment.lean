@@ -13,13 +13,13 @@ when the embedded members still carry it. Example rows record a sentence's envir
 the content projected, and the person of the matrix subject, and the readers here type those
 features. Karttunen's cancellation is the one lexical prediction
 over the family: a semi-factive loses its presupposition in the first person under a question
-or a conditional antecedent, while an emotive factive keeps it everywhere ([karttunen-1971]).
+or a conditional antecedent, while an emotive factive keeps it everywhere ([karttunen-1971b]).
 
 ## References
 
 * [tonhauser-beaver-roberts-simons-2013]
 * [matthewson-2004]
-* [karttunen-1971]
+* [karttunen-1971b]
 -/
 
 namespace Presupposition
@@ -50,7 +50,7 @@ end Environment
 
 /-- A factivity class loses its presupposition in an environment with a matrix subject of the
 given person: the semi-factives in the first person under a question or a conditional
-antecedent, and nothing else ([karttunen-1971]). -/
+antecedent, and nothing else ([karttunen-1971b]). -/
 def _root_.Factivity.Cancelled : Factivity → Environment → UD.Person → Prop
   | .semi, .question, .first => True
   | .semi, .conditionalAntecedent, .first => True
