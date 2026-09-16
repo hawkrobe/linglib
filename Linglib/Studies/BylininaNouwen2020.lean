@@ -11,11 +11,11 @@ properties, and the survey's point is that the three are notational variants rel
 type-shifts: the counting operator `MANY` takes the number to the predicate ((22), (23)), the
 survey's `CARD` takes the predicate back to the number ((24), (25)), and [partee-1987]'s `BE` and
 `iota`, the Russellian `russellIota`, lower [kennedy-2015]'s degree quantifier, `λP. max(P) = n`,
-to the number ((49), (50)). The survey then fills the empty slot in the landscape with a lower-bound degree quantifier, the
-Montague lift of the number ((52)), and an operator `MAX` sending a quantifier to the properties
-whose maximum lies in every member of it ((53)), which turns the lower-bound quantifier into the
-exactly-reading one ((54)) while keeping the lower bound basic, as the polarity behaviour of
-*zero* argues it should ([bylinina-nouwen-2018]).
+to the number ((49), (50)). The survey then fills the empty slot in the landscape with a lower-bound
+degree quantifier, the Montague lift of the number ((52)), and an operator `MAX` sending a
+quantifier to the properties whose maximum lies in every member of it ((53)), which turns the
+lower-bound quantifier into the exactly-reading one ((54)) while keeping the lower bound basic, as
+the polarity behaviour of *zero* argues it should ([bylinina-nouwen-2018]).
 
 ## Main definitions
 
