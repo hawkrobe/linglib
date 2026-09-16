@@ -23,8 +23,8 @@ or a conditional antecedent, while an emotive factive keeps it everywhere ([kart
 
 namespace Presupposition
 
-/-- A member of the family of sentences: the atomic sentence or one of its embeddings under an
-entailment-cancelling operator. -/
+/-- A member of the family of sentences is the atomic sentence or one of its embeddings under
+an entailment-cancelling operator. -/
 inductive Family where
   | atomic
   | negation
