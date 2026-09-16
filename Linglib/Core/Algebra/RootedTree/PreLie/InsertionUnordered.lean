@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
-import Linglib.Core.Algebra.RootedTree.PreLie.InsertionAddHost
+import Linglib.Core.Data.List.Perm
 import Linglib.Core.Data.List.Zip
 import Linglib.Core.Data.Multiset.Antidiagonal
 import Linglib.Core.Data.RoseTree.DecEq
@@ -51,8 +51,109 @@ would become strictly hierarchical.
 -/
 
 
-namespace UnorderedTree
+namespace RoseTree.Pathed
 
+variable {α : Type*}
+
+/-! ### Descent substrate: `insertionForest` on `mk`-images
+
+`UnorderedTree.insertionMultiset` reads `insertionForest` through `L ↦ ↑(L.map mk)`, which
+forgets the order of each output list. At that level the host list may be permuted and the
+guests replaced by any list with the same `mk`-image. -/
+
+private theorem msform_cons (T : RoseTree α) (L : List (RoseTree α)) :
+    (↑((T :: L).map UnorderedTree.mk) : Multiset (UnorderedTree α)) =
+      UnorderedTree.mk T ::ₘ ↑(L.map UnorderedTree.mk) := rfl
+
+private theorem msform_append (A B : List (RoseTree α)) :
+    (↑((A ++ B).map UnorderedTree.mk) : Multiset (UnorderedTree α)) =
+      ↑(A.map UnorderedTree.mk) + ↑(B.map UnorderedTree.mk) := by
+  rw [List.map_append, Multiset.coe_add]
+
+/-- Two hosts commute once output order is forgotten. -/
+private theorem insertionForest_pair_swap_msform (x y : RoseTree α) (gs : List (RoseTree α)) :
+    (insertionForest [y, x] gs).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
+      (insertionForest [x, y] gs).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) := by
+  rw [show [y, x] = [y] ++ [x] from rfl, show [x, y] = [x] ++ [y] from rfl,
+    insertionForest_append, insertionForest_append, Multiset.map_bind, Multiset.map_bind,
+    Multiset.bind_revzip_sublists'_swap gs fun r s =>
+      ((insertionForest [y] r).bind fun A => (insertionForest [x] s).map (A ++ ·)).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))]
+  refine Multiset.bind_congr fun p _ => ?_
+  rw [Multiset.map_bind, Multiset.map_bind]
+  simp only [Multiset.map_map]
+  simp only [← Multiset.bind_singleton]
+  rw [Multiset.bind_bind]
+  refine Multiset.bind_congr fun A _ => Multiset.bind_congr fun B _ => ?_
+  show ({(↑((B ++ A).map UnorderedTree.mk) : Multiset (UnorderedTree α))} : Multiset _) =
+    {(↑((A ++ B).map UnorderedTree.mk) : Multiset (UnorderedTree α))}
+  rw [msform_append, msform_append, add_comm]
+
+/-- Host-`Perm` invariance once output order is forgotten. -/
+theorem insertionForest_perm_host_msform {host host' : List (RoseTree α)} (h : host.Perm host')
+    (gs : List (RoseTree α)) :
+    (insertionForest host gs).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
+      (insertionForest host' gs).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) := by
+  induction h generalizing gs with
+  | nil => rfl
+  | cons x _ ih =>
+    rw [insertionForest_cons, insertionForest_cons, Multiset.map_bind, Multiset.map_bind]
+    refine Multiset.bind_congr fun p _ => ?_
+    rw [Multiset.map_bind, Multiset.map_bind]
+    refine Multiset.bind_congr fun T' _ => ?_
+    rw [Multiset.map_map, Multiset.map_map,
+      show ((fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) ∘ (T' :: ·)) =
+        ((UnorderedTree.mk T' ::ₘ ·) ∘
+          (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))) from
+        funext fun L => msform_cons T' L,
+      ← Multiset.map_map, ← Multiset.map_map, ih]
+  | swap x y l =>
+    rw [show y :: x :: l = [y, x] ++ l from rfl, show x :: y :: l = [x, y] ++ l from rfl,
+      insertionForest_append, insertionForest_append, Multiset.map_bind, Multiset.map_bind]
+    refine Multiset.bind_congr fun p _ => ?_
+    have key : ∀ hs : List (RoseTree α),
+        ((insertionForest hs p.1).bind fun A => (insertionForest l p.2).map (A ++ ·)).map
+            (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
+          ((insertionForest hs p.1).map
+            (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))).bind fun M =>
+            (insertionForest l p.2).map fun B => M + ↑(B.map UnorderedTree.mk) := by
+      intro hs
+      rw [Multiset.map_bind, Multiset.bind_map]
+      refine Multiset.bind_congr fun A _ => ?_
+      rw [Multiset.map_map]
+      exact Multiset.map_congr rfl fun B _ => msform_append A B
+    rw [key, key, insertionForest_pair_swap_msform]
+  | trans _ _ ih₁ ih₂ => exact (ih₁ gs).trans (ih₂ gs)
+
+/-- Guest invariance once output order is forgotten: guest lists with the same `mk`-image
+    multiset give the same outputs. -/
+theorem insertionForest_msform_invariance_guests [DecidableEq α]
+    (host : List (RoseTree α)) {gs1 gs2 : List (RoseTree α)}
+    (h : (gs1.map UnorderedTree.mk).Perm (gs2.map UnorderedTree.mk)) :
+    (insertionForest host gs1).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
+      (insertionForest host gs2).map
+        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) := by
+  obtain ⟨gs_mid, hperm, hF⟩ := List.exists_perm_forall₂_of_map_perm UnorderedTree.mk h
+  have h_forall : List.Forall₂ RoseTree.Perm gs_mid gs2 :=
+    hF.imp fun a b (h : UnorderedTree.mk a = UnorderedTree.mk b) => UnorderedTree.mk_eq_mk_iff.mp h
+  have hwrap : ∀ s : Multiset (List (RoseTree α)),
+      s.map (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
+        (s.map (List.map UnorderedTree.mk)).map
+          fun L : List (UnorderedTree α) => (↑L : Multiset (UnorderedTree α)) := by
+    intro s
+    rw [Multiset.map_map]
+    rfl
+  rw [hwrap, hwrap, insertionForest_perm_guests host hperm,
+    insertionForest_forall₂_perm_guests host h_forall]
+
+end RoseTree.Pathed
+
+namespace UnorderedTree
 variable {α : Type*}
 
 /-- Multi-tree insertion at the nonplanar level. Given a host forest
@@ -134,37 +235,13 @@ theorem toList_map_quotientOut_add_perm (M N : Multiset (UnorderedTree α)) :
   rw [← List.map_append]
   exact (Multiset.toList_add_perm M N).map _
 
-/-- Substrate for `insertionMultiset_card_eq`: every output list in
-    `insertionForest host guests` has length equal to the host length.
-    `insertionForest` produces `T' :: F'` lists by recursion on the host;
-    each step prepends one tree and recurses on the tail. -/
-private theorem _root_.RoseTree.Pathed.insertionForest_length
-    {α : Type*} :
-    ∀ (host guests : List (RoseTree α)) {L : List (RoseTree α)},
-      L ∈ RoseTree.Pathed.insertionForest host guests → L.length = host.length
-  | [],     [],         L, hL => by
-    rw [RoseTree.Pathed.insertionForest_nil_nil] at hL
-    rw [Multiset.mem_singleton.mp hL]
-  | [],     _ :: _,     L, hL => by
-    rw [RoseTree.Pathed.insertionForest_empty_host_nonempty_guests] at hL
-    exact absurd hL (Multiset.notMem_zero L)
-  | T :: F, [],         L, hL => by
-    rw [RoseTree.Pathed.insertionForest_cons_host_nil_guests] at hL
-    rw [Multiset.mem_singleton.mp hL]
-  | T :: F, T_g :: Ts,  L, hL => by
-    rw [RoseTree.Pathed.insertionForest_cons_assignment] at hL
-    -- L ∈ bind of bind of map; unfold mem step by step.
-    rw [Multiset.mem_bind] at hL
-    obtain ⟨assignment, _hass, hL⟩ := hL
-    rw [Multiset.mem_bind] at hL
-    obtain ⟨T', _hT', hL⟩ := hL
-    rw [Multiset.mem_map] at hL
-    obtain ⟨F', hF'mem, hL_eq⟩ := hL
-    -- L = T' :: F', with F' from the inner insertionForest F (sub-guests).
-    have hF'len : F'.length = F.length :=
-      RoseTree.Pathed.insertionForest_length F _ hF'mem
-    rw [← hL_eq, List.length_cons, hF'len, List.length_cons]
-  termination_by host _ => host.length
+/-- Every output list of `insertionForest host guests` has the host's length. -/
+private theorem _root_.RoseTree.Pathed.insertionForest_length {α : Type*}
+    (host guests : List (RoseTree α)) {L : List (RoseTree α)}
+    (hL : L ∈ RoseTree.Pathed.insertionForest host guests) : L.length = host.length := by
+  rw [RoseTree.Pathed.insertionForest_def, Multiset.mem_coe, List.mem_map] at hL
+  obtain ⟨ch, -, rfl⟩ := hL
+  exact RoseTree.Pathed.multiGraftChildren_length host _
 
 /-- The insertion multiset preserves cardinality: every forest in
     `insertionMultiset A B` has the same cardinality as `A`.
@@ -390,8 +467,7 @@ theorem insertionMultiset_singleton_node [DecidableEq α]
 Multi-graft into a disjoint-union host decomposes over guest partitions
 (the combinatorial heart of [oudom-guin-2008] Prop 2.7.iii);
 `insertionMultiset` computes on arbitrary `RoseTree`-level
-representatives. Proved by descent from the `RoseTree.Pathed` substrate
-(`InsertionAddHost.lean`). -/
+representatives. Proved by descent from `RoseTree.Pathed.insertionForest_append`. -/
 
 section
 variable [DecidableEq α]
@@ -403,284 +479,56 @@ theorem insertionMultiset_add_host
         ((UnorderedTree.insertionMultiset A C₁) ×ˢ
           (UnorderedTree.insertionMultiset B (C - C₁))).map
           (fun p => p.1 + p.2)) := by
-  -- Steps 1-5: Unfold NIM, apply host-Perm bridge, hostBucketSum bridge, assignment
-  -- rewrite, and push msform through the outer bind.
   unfold UnorderedTree.insertionMultiset
+  -- §1: permute the host to the concatenation, then split the guests along `sublists'.revzip`.
   rw [RoseTree.Pathed.insertionForest_perm_host_msform
-        (UnorderedTree.toList_map_quotientOut_add_perm A B) (C.toList.map Quotient.out)]
-  rw [← RoseTree.Pathed.hostBucketSum_eq_insertionForest]
-  rw [RoseTree.Pathed.hostBucketSum_assignment_rewrite]
-  rw [Multiset.map_bind, List.length_map]
-  simp only [List.nil_append]
-  -- Step 6: Define `msform : List (RoseTree α) → Multiset (UnorderedTree α)` as a local
-  -- abbreviation matching `UnorderedTree.insertionMultiset`'s post-processing.
-  set msform : List (RoseTree α) → Multiset (UnorderedTree α) :=
-    fun L => (Multiset.ofList (L.map UnorderedTree.mk)) with hmsform
-  -- Step 7: Strategy — define `F : Multiset × Multiset → Multiset Multiset` so:
-  --   LHS_inner(assn) = F (↑filter_t (C.toList zip assn), ↑filter_f (...))
-  --   RHS_inner(C₁)   = F (C₁, C - C₁)
-  -- Then RHS = (C.powerset.map (s ↦ (s, C - s))).bind F = (↑lc).bind (F ∘ ...) by
-  -- the powerset bridge. The remaining work is per-assn equality.
-  set F : Multiset (UnorderedTree α) × Multiset (UnorderedTree α) →
-            Multiset (Multiset (UnorderedTree α)) :=
-    fun pair =>
-      Multiset.map (fun p : Multiset (UnorderedTree α) × Multiset (UnorderedTree α) => p.1 + p.2)
-        (Multiset.map msform
-            (RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList A))
-              (List.map Quotient.out pair.1.toList)) ×ˢ
-          Multiset.map msform
-            (RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList B))
-              (List.map Quotient.out (Multiset.toList pair.2)))) with hF
-  -- Step 7a: RHS = (C.powerset.map (s ↦ (s, C - s))).bind F via `← Multiset.bind_map`.
-  have h_rhs_step1 :
-      ((Multiset.powerset C).bind fun C₁ => F (C₁, C - C₁)) =
-      ((Multiset.powerset C).map (fun s : Multiset (UnorderedTree α) => (s, C - s))).bind F := by
-    rw [Multiset.bind_map]
-  -- Step 7b: Apply the powerset bridge to convert
-  -- `(C.powerset.map (s, C-s))` to `(↑lc).map (filter_t, filter_f)`.
-  have h_rhs_step2 :
-      ((Multiset.powerset C).map (fun s : Multiset (UnorderedTree α) => (s, C - s))) =
-      (Multiset.ofList (RoseTree.Pathed.listChoices [true, false] C.toList.length)).map
-        (fun assn : List Bool =>
-          let s_t : Multiset (UnorderedTree α) :=
-            (C.toList.zip assn).filterMap (fun p => if p.snd then some p.fst else none)
-          let s_f : Multiset (UnorderedTree α) :=
-            (C.toList.zip assn).filterMap (fun p => if p.snd then none else some p.fst)
-          (s_t, s_f)) := by
-    rw [show C = (↑(C.toList) : Multiset (UnorderedTree α)) from C.coe_toList.symm]
-    rw [← RoseTree.Pathed.listChoices_bridge_powerset_paired (l := C.toList)]
-    simp only [Multiset.coe_toList]
-  -- Step 7c: Reshape RHS to (↑lc).bind (F ∘ ...) so we can match per-assn.
-  show ((↑(RoseTree.Pathed.listChoices [true, false] C.toList.length) :
-          Multiset (List Bool)).bind fun a =>
-        Multiset.map msform
-          (RoseTree.Pathed.hostBucketSum (List.map Quotient.out (Multiset.toList A))
-            (List.map Quotient.out (Multiset.toList B))
-            (List.filterMap (fun p => if p.snd = true then some p.fst else none)
-              ((List.map Quotient.out (Multiset.toList C)).zip a))
-            (List.filterMap (fun p => if p.snd = true then none else some p.fst)
-              ((List.map Quotient.out (Multiset.toList C)).zip a))
-            [])) =
-      (Multiset.powerset C).bind fun C₁ => F (C₁, C - C₁)
-  rw [h_rhs_step1, h_rhs_step2, Multiset.bind_map]
-  -- Step 8: Per-assn reduction via Multiset.bind_congr.
-  refine Multiset.bind_congr fun assn h_assn => ?_
-  have hlen : assn.length = C.toList.length := by
-    have : assn ∈ RoseTree.Pathed.listChoices [true, false] C.toList.length :=
-      Multiset.mem_coe.mp h_assn
-    exact RoseTree.Pathed.mem_listChoices_bool_length C.toList.length assn this
-  -- Step 8a: Apply hostBucketSum_nil_remaining and combine the two `.map`s.
-  rw [RoseTree.Pathed.hostBucketSum_nil_remaining, Multiset.map_map]
-  -- Step 8b: Unfold F on the RHS and abbreviate the filter results at multiset level.
-  rw [hF]
-  set s_t : Multiset (UnorderedTree α) :=
-    (List.filterMap (fun p => if p.snd = true then some p.fst else none)
-      ((Multiset.toList C).zip assn) : Multiset (UnorderedTree α)) with hs_t
-  set s_f : Multiset (UnorderedTree α) :=
-    (List.filterMap (fun p => if p.snd = true then none else some p.fst)
-      ((Multiset.toList C).zip assn) : Multiset (UnorderedTree α)) with hs_f
-  -- Beta-reduce the let binding on the RHS via `show`.
-  show ((RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList A))
-            (List.filterMap (fun p => if p.snd = true then some p.fst else none)
-              ((List.map Quotient.out (Multiset.toList C)).zip assn))) ×ˢ
-        RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList B))
-            (List.filterMap (fun p => if p.snd = true then none else some p.fst)
-              ((List.map Quotient.out (Multiset.toList C)).zip assn))).map
-        (msform ∘ fun p => p.fst ++ p.snd) =
-      (Multiset.map msform
-          (RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList A))
-            (List.map Quotient.out s_t.toList)) ×ˢ
-        Multiset.map msform
-          (RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList B))
-            (List.map Quotient.out s_f.toList))).map (fun p => p.fst + p.snd)
-  -- Step 8c: Set up `RoseTree`-level/canonical guest lists and bridge them via Perm.
-  -- LHS uses `((C.toList.map Q.out).zip assn).filterMap_t` (`RoseTree` level).
-  -- RHS uses `s_t.toList.map Q.out` (canonical Q.out of multiset). Both have multiset
-  -- image `s_t = ↑((C.toList.zip assn).filterMap_t)` after `.map mk`.
-  set ft_tree : List (RoseTree α) :=
-    List.filterMap (fun p => if p.snd = true then some p.fst else none)
-      ((List.map Quotient.out (Multiset.toList C)).zip assn) with hft_tree
-  set ff_tree : List (RoseTree α) :=
-    List.filterMap (fun p => if p.snd = true then none else some p.fst)
-      ((List.map Quotient.out (Multiset.toList C)).zip assn) with hff_tree
-  set ft_canon : List (RoseTree α) := s_t.toList.map Quotient.out with hft_canon
-  set ff_canon : List (RoseTree α) := s_f.toList.map Quotient.out with hff_canon
-  -- Step 8c.1: List-level: `((l.map Q.out).zip a).filterMap_t.map mk = (l.zip a).filterMap_t`.
-  have h_ft_mk_eq : ft_tree.map UnorderedTree.mk =
-      (((Multiset.toList C).zip assn).filterMap
-        (fun p => if p.snd then some p.fst else none) : List (UnorderedTree α)) := by
-    have h_aux : ∀ (l : List (UnorderedTree α)) (a : List Bool),
-        (((l.map Quotient.out).zip a).filterMap (fun p => if p.snd = true then some p.fst else none)).map
-          UnorderedTree.mk = (l.zip a).filterMap (fun p => if p.snd = true then some p.fst else none) := by
-      intro l a
-      induction l generalizing a with
-      | nil =>
-        show (((([] : List (UnorderedTree α)).map Quotient.out).zip a).filterMap _).map UnorderedTree.mk = _
-        rw [show ([] : List (UnorderedTree α)).map Quotient.out = [] from rfl]
-        rfl
-      | cons x rest ih =>
-        cases a with
-        | nil =>
-          rw [show ((x :: rest).map Quotient.out).zip ([] : List Bool) = [] from by
-            cases (x :: rest).map Quotient.out <;> rfl]
-          rfl
-        | cons b a_rest =>
-          rw [show (x :: rest).map Quotient.out =
-                Quotient.out x :: rest.map Quotient.out from rfl]
-          rw [show (Quotient.out x :: rest.map Quotient.out).zip (b :: a_rest) =
-                (Quotient.out x, b) :: (rest.map Quotient.out).zip a_rest from rfl]
-          rw [show (x :: rest).zip (b :: a_rest) = (x, b) :: rest.zip a_rest from rfl]
-          rw [List.filterMap_cons, List.filterMap_cons]
-          cases b with
-          | true =>
-            -- if true then some Q.out x else none = some (Q.out x); on RHS some x.
-            show (Quotient.out x ::
-                ((rest.map Quotient.out).zip a_rest).filterMap
-                  (fun p => if p.snd = true then some p.fst else none)).map UnorderedTree.mk =
-                x ::
-                (rest.zip a_rest).filterMap
-                  (fun p => if p.snd = true then some p.fst else none)
-            rw [show ((Quotient.out x ::
-                ((rest.map Quotient.out).zip a_rest).filterMap
-                  (fun p => if p.snd = true then some p.fst else none)).map UnorderedTree.mk) =
-                UnorderedTree.mk (Quotient.out x) ::
-                  (((rest.map Quotient.out).zip a_rest).filterMap
-                    (fun p => if p.snd = true then some p.fst else none)).map UnorderedTree.mk from rfl]
-            rw [ih a_rest]
-            congr 1
-            exact x.out_eq
-          | false =>
-            -- if false then some else none = none; both sides skip.
-            show (((rest.map Quotient.out).zip a_rest).filterMap
-                  (fun p => if p.snd = true then some p.fst else none)).map UnorderedTree.mk =
-                (rest.zip a_rest).filterMap
-                  (fun p => if p.snd = true then some p.fst else none)
-            exact ih a_rest
-    show (ft_tree.map UnorderedTree.mk : List (UnorderedTree α)) =
-        ((Multiset.toList C).zip assn).filterMap (fun p => if p.snd = true then some p.fst else none)
-    exact h_aux C.toList assn
-  -- Step 8c.2: Same identity for filter_f.
-  have h_ff_mk_eq : ff_tree.map UnorderedTree.mk =
-      (((Multiset.toList C).zip assn).filterMap
-        (fun p => if p.snd then none else some p.fst) : List (UnorderedTree α)) := by
-    have h_aux : ∀ (l : List (UnorderedTree α)) (a : List Bool),
-        (((l.map Quotient.out).zip a).filterMap
-          (fun p => if p.snd = true then none else some p.fst)).map UnorderedTree.mk =
-        (l.zip a).filterMap (fun p => if p.snd = true then none else some p.fst) := by
-      intro l a
-      induction l generalizing a with
-      | nil =>
-        show (((([] : List (UnorderedTree α)).map Quotient.out).zip a).filterMap _).map UnorderedTree.mk = _
-        rw [show ([] : List (UnorderedTree α)).map Quotient.out = [] from rfl]
-        rfl
-      | cons x rest ih =>
-        cases a with
-        | nil =>
-          rw [show ((x :: rest).map Quotient.out).zip ([] : List Bool) = [] from by
-            cases (x :: rest).map Quotient.out <;> rfl]
-          rfl
-        | cons b a_rest =>
-          rw [show (x :: rest).map Quotient.out =
-                Quotient.out x :: rest.map Quotient.out from rfl]
-          rw [show (Quotient.out x :: rest.map Quotient.out).zip (b :: a_rest) =
-                (Quotient.out x, b) :: (rest.map Quotient.out).zip a_rest from rfl]
-          rw [show (x :: rest).zip (b :: a_rest) = (x, b) :: rest.zip a_rest from rfl]
-          rw [List.filterMap_cons, List.filterMap_cons]
-          cases b with
-          | true =>
-            -- if true then none else some = none; both sides skip.
-            show (((rest.map Quotient.out).zip a_rest).filterMap
-                  (fun p => if p.snd = true then none else some p.fst)).map UnorderedTree.mk =
-                (rest.zip a_rest).filterMap
-                  (fun p => if p.snd = true then none else some p.fst)
-            exact ih a_rest
-          | false =>
-            -- if false then none else some Q.out x = some Q.out x; on RHS some x.
-            show (Quotient.out x ::
-                ((rest.map Quotient.out).zip a_rest).filterMap
-                  (fun p => if p.snd = true then none else some p.fst)).map UnorderedTree.mk =
-                x ::
-                (rest.zip a_rest).filterMap
-                  (fun p => if p.snd = true then none else some p.fst)
-            rw [show ((Quotient.out x ::
-                ((rest.map Quotient.out).zip a_rest).filterMap
-                  (fun p => if p.snd = true then none else some p.fst)).map UnorderedTree.mk) =
-                UnorderedTree.mk (Quotient.out x) ::
-                  (((rest.map Quotient.out).zip a_rest).filterMap
-                    (fun p => if p.snd = true then none else some p.fst)).map UnorderedTree.mk from rfl]
-            rw [ih a_rest]
-            congr 1
-            exact x.out_eq
-    show (ff_tree.map UnorderedTree.mk : List (UnorderedTree α)) =
-        ((Multiset.toList C).zip assn).filterMap (fun p => if p.snd = true then none else some p.fst)
-    exact h_aux C.toList assn
-  -- Step 8c.3: `(s.toList.map Q.out).map mk = s.toList` (Quotient.out_eq componentwise).
-  have h_ft_canon_mk : ft_canon.map UnorderedTree.mk = s_t.toList := by
-    show (s_t.toList.map Quotient.out).map UnorderedTree.mk = s_t.toList
-    induction s_t.toList with
-    | nil => rfl
-    | cons hd tl ih =>
-      show UnorderedTree.mk (Quotient.out hd) :: ((tl.map Quotient.out).map UnorderedTree.mk) =
-           hd :: tl
-      rw [ih]
-      congr 1
-      exact hd.out_eq
-  have h_ff_canon_mk : ff_canon.map UnorderedTree.mk = s_f.toList := by
-    show (s_f.toList.map Quotient.out).map UnorderedTree.mk = s_f.toList
-    induction s_f.toList with
-    | nil => rfl
-    | cons hd tl ih =>
-      show UnorderedTree.mk (Quotient.out hd) :: ((tl.map Quotient.out).map UnorderedTree.mk) =
-           hd :: tl
-      rw [ih]
-      congr 1
-      exact hd.out_eq
-  -- Step 8c.4: Both `(ft_tree.map mk)` and `(ft_canon.map mk)` have multiset image `s_t`,
-  -- hence are `Perm`-equivalent (via `Multiset.coe_eq_coe`).
-  have h_ft_eq_coe : (↑(ft_tree.map UnorderedTree.mk) : Multiset (UnorderedTree α)) = s_t := by
-    rw [h_ft_mk_eq, hs_t]
-  have h_ff_eq_coe : (↑(ff_tree.map UnorderedTree.mk) : Multiset (UnorderedTree α)) = s_f := by
-    rw [h_ff_mk_eq, hs_f]
-  have h_ft_canon_eq_coe : (↑(ft_canon.map UnorderedTree.mk) : Multiset (UnorderedTree α)) = s_t := by
-    rw [h_ft_canon_mk]; exact s_t.coe_toList
-  have h_ff_canon_eq_coe : (↑(ff_canon.map UnorderedTree.mk) : Multiset (UnorderedTree α)) = s_f := by
-    rw [h_ff_canon_mk]; exact s_f.coe_toList
-  have h_ft_perm : (ft_tree.map UnorderedTree.mk).Perm (ft_canon.map UnorderedTree.mk) := by
-    rw [← Multiset.coe_eq_coe, h_ft_eq_coe, h_ft_canon_eq_coe]
-  have h_ff_perm : (ff_tree.map UnorderedTree.mk).Perm (ff_canon.map UnorderedTree.mk) := by
-    rw [← Multiset.coe_eq_coe, h_ff_eq_coe, h_ff_canon_eq_coe]
-  -- Step 8c.5: Apply guest-msform invariance to swap `RoseTree`-level guests for canonical.
-  have h_iF_A : (RoseTree.Pathed.insertionForest
-        (List.map Quotient.out (Multiset.toList A)) ft_tree).map msform =
-      (RoseTree.Pathed.insertionForest
-        (List.map Quotient.out (Multiset.toList A)) ft_canon).map msform :=
-    RoseTree.Pathed.insertionForest_msform_invariance_guests _ h_ft_perm
-  have h_iF_B : (RoseTree.Pathed.insertionForest
-        (List.map Quotient.out (Multiset.toList B)) ff_tree).map msform =
-      (RoseTree.Pathed.insertionForest
-        (List.map Quotient.out (Multiset.toList B)) ff_canon).map msform :=
-    RoseTree.Pathed.insertionForest_msform_invariance_guests _ h_ff_perm
-  -- Step 8d: Use guest-msform invariance to align the canonical-guest form on the
-  -- RHS back to the `RoseTree`-level guest form. Then both sides share `M_A` and `M_B` below.
-  rw [← h_iF_A, ← h_iF_B]
-  set M_A : Multiset (List (RoseTree α)) :=
-    RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList A)) ft_tree with hM_A
-  set M_B : Multiset (List (RoseTree α)) :=
-    RoseTree.Pathed.insertionForest (List.map Quotient.out (Multiset.toList B)) ff_tree with hM_B
-  -- Step 8e: Push msform through `(M_A ×ˢ M_B)`. Both sides expand via
-  -- `Multiset.product = bind` and `msform (a ++ b) = msform a + msform b`.
-  show (M_A.bind (fun a => M_B.map (Prod.mk a))).map (msform ∘ fun p => p.fst ++ p.snd) =
-      ((M_A.map msform).bind (fun ma => (M_B.map msform).map (Prod.mk ma))).map
-        (fun p => p.fst + p.snd)
+      (UnorderedTree.toList_map_quotientOut_add_perm A B) (C.toList.map Quotient.out),
+    RoseTree.Pathed.insertionForest_append, Multiset.map_bind, List.sublists'_map,
+    List.revzip_map, ← Multiset.map_coe, Multiset.bind_map]
+  -- §2: the powerset bind is the bind over `sublists'.revzip` of `C.toList`.
+  have h_rhs : (C.powerset.bind fun C₁ =>
+        ((UnorderedTree.insertionMultiset A C₁) ×ˢ
+          (UnorderedTree.insertionMultiset B (C - C₁))).map fun p => p.1 + p.2) =
+      (C.toList.sublists'.revzip :
+          Multiset (List (UnorderedTree α) × List (UnorderedTree α))).bind fun p =>
+        ((UnorderedTree.insertionMultiset A ↑p.1) ×ˢ
+          (UnorderedTree.insertionMultiset B ↑p.2)).map fun q => q.1 + q.2 := by
+    have h := Multiset.coe_revzip_sublists' C.toList
+    rw [Multiset.coe_toList] at h
+    calc _ = (C.powerset.map fun s => (s, C - s)).bind fun q =>
+            ((UnorderedTree.insertionMultiset A q.1) ×ˢ
+              (UnorderedTree.insertionMultiset B q.2)).map fun r => r.1 + r.2 :=
+          (Multiset.bind_map _ _ _).symm
+      _ = _ := by rw [← h, ← Multiset.map_coe, Multiset.bind_map]
+  refine Eq.trans ?_ h_rhs.symm
+  -- §3: per guest split, the planar buckets are `Quotient.out` images of the nonplanar ones.
+  refine Multiset.bind_congr fun (p : List (UnorderedTree α) × List (UnorderedTree α)) _ => ?_
+  dsimp only [Prod.map_fst, Prod.map_snd]
+  have h_out : ∀ l : List (UnorderedTree α), (l.map Quotient.out).map UnorderedTree.mk = l :=
+    fun l => by
+      rw [List.map_map]
+      exact (List.map_congr_left fun x _ => Quotient.out_eq x).trans (List.map_id _)
+  have hA := RoseTree.Pathed.insertionForest_msform_invariance_guests
+    (A.toList.map Quotient.out) (gs1 := p.1.map Quotient.out)
+    (gs2 := (↑p.1 : Multiset (UnorderedTree α)).toList.map Quotient.out)
+    (Multiset.coe_eq_coe.mp (by rw [h_out, h_out, Multiset.coe_toList]))
+  have hB := RoseTree.Pathed.insertionForest_msform_invariance_guests
+    (B.toList.map Quotient.out) (gs1 := p.2.map Quotient.out)
+    (gs2 := (↑p.2 : Multiset (UnorderedTree α)).toList.map Quotient.out)
+    (Multiset.coe_eq_coe.mp (by rw [h_out, h_out, Multiset.coe_toList]))
+  unfold UnorderedTree.insertionMultiset
+  rw [← hA, ← hB]
+  -- §4: `msform` turns `++` into `+`, so the product form is the bind form.
+  show _ = ((Multiset.map _ (RoseTree.Pathed.insertionForest (A.toList.map Quotient.out)
+        (p.1.map Quotient.out))).bind fun ma =>
+      (Multiset.map _ (RoseTree.Pathed.insertionForest (B.toList.map Quotient.out)
+        (p.2.map Quotient.out))).map (Prod.mk ma)).map _
   rw [Multiset.map_bind, Multiset.map_bind, Multiset.bind_map]
   refine Multiset.bind_congr fun a _ => ?_
   rw [Multiset.map_map, Multiset.map_map, Multiset.map_map]
-  apply Multiset.map_congr rfl
-  intros b _
-  show msform (a ++ b) = msform a + msform b
-  rw [hmsform]
+  refine Multiset.map_congr rfl fun b _ => ?_
   show (↑((a ++ b).map UnorderedTree.mk) : Multiset (UnorderedTree α)) =
-       ↑(a.map UnorderedTree.mk) + ↑(b.map UnorderedTree.mk)
+    ↑(a.map UnorderedTree.mk) + ↑(b.map UnorderedTree.mk)
   rw [List.map_append, Multiset.coe_add]
 
 end

@@ -11,6 +11,9 @@ import Mathlib.Data.List.Perm.Basic
 `List.Perm.congr_arity₂`: a list function symmetric on pairs and constant above
 length two is `Perm`-invariant. Keystone for node algebras whose only
 order-sensitive shape is binary (Merge-style algebras over unordered daughters).
+
+`List.exists_perm_forall₂_of_map_perm`: a permutation of images lifts to a permutation of the
+sources followed by a pointwise identification of images.
 -/
 
 /-- A list function symmetric on pairs and constant above length two is
@@ -34,3 +37,17 @@ theorem List.Perm.congr_arity₂ {β γ : Type*} {g : List β → γ} {c : γ}
     | [] => exact hswap y x
     | _ :: _ => rw [hbig _ (by simp +arith), hbig _ (by simp +arith)]
   | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+/-- A permutation of `f`-images lifts through `f`: `l₁` permutes to a list whose `f`-image
+    agrees pointwise with that of `l₂`. -/
+theorem List.exists_perm_forall₂_of_map_perm {α β : Type*} [DecidableEq α] (f : α → β) :
+    ∀ {l₂ l₁ : List α}, (l₁.map f).Perm (l₂.map f) →
+      ∃ l, l₁.Perm l ∧ List.Forall₂ (fun a b => f a = f b) l l₂
+  | [], l₁, h =>
+    ⟨[], List.map_eq_nil_iff.mp h.eq_nil ▸ List.Perm.refl _, List.Forall₂.nil⟩
+  | b :: l₂, l₁, h => by
+    obtain ⟨a, ha, hfa⟩ := List.mem_map.mp (h.symm.subset List.mem_cons_self)
+    have h' := ((List.perm_cons_erase ha).map f).symm.trans h
+    rw [List.map_cons, List.map_cons, hfa] at h'
+    obtain ⟨l, hl, hF⟩ := exists_perm_forall₂_of_map_perm f h'.cons_inv
+    exact ⟨a :: l, (List.perm_cons_erase ha).trans (hl.cons a), List.Forall₂.cons hfa hF⟩
