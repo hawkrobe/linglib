@@ -63,17 +63,17 @@ namespace Gender
 
 variable {N T F : Type*}
 
-/-- Zaliznjak's agreement classes: two nouns are in one class when they take the same form
-on every target in every morphosyntactic form. -/
+/-- Two nouns fall in one of Zaliznjak's agreement classes when they take the same form on
+every target in every morphosyntactic form. -/
 abbrev agreementClasses (agr : N → T → F) : Setoid N := Setoid.ker agr
 
-/-- The controller genders are the agreement classes: as many as the agreement map has
-values. -/
+/-- The controller genders, being the agreement classes, are as many as the agreement map
+has values. -/
 theorem card_quotient_agreementClasses (agr : N → T → F) :
     Nat.card (Quotient (agreementClasses agr)) = Nat.card (Set.range agr) :=
   Nat.card_congr (Setoid.quotientKerEquivRange agr)
 
-/-- The target genders of a target: the forms it shows. -/
+/-- The target genders of a target are the forms it shows. -/
 abbrev targetGenders (agr : N → T → F) (t : T) : Set F := Set.range (agr · t)
 
 /-- The controller genders are at most the product of the target genders over the targets. -/
@@ -135,10 +135,10 @@ end NumberMap
 /-! ### Polarity
 
 A fusional exponent of two features, gender and number in the Somali article, is polar when
-changing either value alone changes the form and changing both restores it: the polar
-opposites are identical ([corbett-1991] chapter 7; [corbett-1998]). Polarity is a syncretism
-across the numbers with none within them, so it is a parallel system, and it confines both
-features to two values. -/
+changing either value alone changes the form and changing both restores it, so that the polar
+opposites are identical ([corbett-1991] chapter 7; [corbett-1998]). A polar exponent is
+syncretic across the numbers and within neither, so it is a parallel system, and it confines
+both features to two values. -/
 
 section Polar
 
@@ -167,8 +167,8 @@ theorem Polar.injective (h : Polar f) (t : T) : Function.Injective (f · t) :=
 theorem Polar.faithful [Nonempty T] (h : Polar f) : Faithful f :=
   fun _ _ e ↦ h.injective (Classical.arbitrary T) (congrFun e _)
 
-/-- Polarity needs two-valued features: with three values of one feature, two of them would
-share a form. -/
+/-- A polar exponent admits at most two values of either feature, since with three values of
+one feature two of them would share a form. -/
 theorem Polar.card_le_two [Fintype G] [Nontrivial T] (h : Polar f) :
     Fintype.card G ≤ 2 := by
   by_contra hc
@@ -187,7 +187,7 @@ theorem Polar.card_eq_two [Fintype G] [Nontrivial G] [Nontrivial T] (h : Polar f
     Fintype.card G = 2 :=
   le_antisymm h.card_le_two Fintype.one_lt_card
 
-/-- Polarity is syncretism across the numbers and none within them: a parallel system. -/
+/-- A polar exponent is a parallel system. -/
 theorem Polar.parallel (h : Polar f) (t t' : T) : Parallel (f · t) (f · t') :=
   ⟨fun _ _ e ↦ congrArg (f · t') (h.injective t e),
     fun _ _ e ↦ congrArg (f · t) (h.injective t' e)⟩
