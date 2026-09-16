@@ -14,7 +14,8 @@ non-thematic.
 
 ## Main definitions
 
-* `Japanese.Predicates.Verb` — a Japanese verb, the root `Verb` with its romanization
+* `Japanese.Verb` — a Japanese verb, the root `Verb` with its romanization
+* `Japanese.verbs` — the inventory
 
 ## References
 
@@ -23,7 +24,7 @@ non-thematic.
 * [song-1996]
 -/
 
-namespace Japanese.Predicates
+namespace Japanese
 
 open ArgumentStructure
 
@@ -109,8 +110,8 @@ def deru : Verb where
   voiceType := some .nonThematic
   passivizable := false
 
-/-- The verbs. -/
-def allVerbs : List Verb :=
+/-- The inventory. -/
+def verbs : List Verb :=
   [tanosimi, osore, kitai, nozomu, shinpai, ik_ase, tabe_sase, hanareru, deru]
 
-end Japanese.Predicates
+end Japanese
