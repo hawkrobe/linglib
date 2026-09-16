@@ -159,8 +159,8 @@ theorem markedness_selects_weakest {C : Type*} [DecidableEq C] (candidates : Lis
 /-! ### The φ-feature instance
 
 The containment-pair cells with `specLevel` as strength are an instance of the competition:
-every cell asserts nothing (`ContainmentPair.presup_assertion`), and the strength ordering is
-domain containment (`ContainmentPair.presup_defined_of_specLevel_le`). -/
+a cell denotes a domain restriction, which asserts nothing, and the strength ordering is domain
+containment (`ContainmentPair.dom_subset_of_specLevel_le`). -/
 
 /-- The φ-feature Maximize Presupposition constraint: `mpConstraintOf` at `specLevel`. -/
 def phiMP : Constraint ContainmentPair :=
