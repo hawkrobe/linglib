@@ -1,4 +1,5 @@
-import Linglib.Semantics.Composition.TypeShifting
+import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Definiteness.Maximality
 import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
@@ -43,7 +44,7 @@ formalized.
 
 namespace Partee1987
 
-open Quantification Definiteness Semantics.Composition.TypeShifting
+open Quantification Definiteness
 
 variable {E : Type*} (j : E) (P : E → Prop)
 

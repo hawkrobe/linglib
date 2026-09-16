@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Functor
 import Linglib.Studies.Charlow2018
 import Linglib.Semantics.Composition.Cont
-import Linglib.Semantics.Composition.TypeShifting
+import Linglib.Semantics.Quantification.Quantifier
 
 /-!
 # Charlow 2020: the scope of alternatives
@@ -207,8 +207,7 @@ handle indefinites compositionally. -/
 
 section LiftDecomposition
 
-open Quantification (individual A)
-open Semantics.Composition.TypeShifting (ident A_ident_eq_individual)
+open Quantification (individual A ident A_ident_eq_individual)
 
 variable {E W : Type}
 
@@ -216,7 +215,7 @@ variable {E W : Type}
 using `A` (which takes an explicit domain):
 `A(domain)(ident j)(P) = (∃ x ∈ domain, j = x ∧ P x)`. When `j ∈ domain`
 this reduces to `P j = individual j P`. This is exactly
-`A_ident_eq_individual` from `TypeShifting.lean`, re-exposed in the
+`A_ident_eq_individual` from `Quantifier.lean`, re-exposed in the
 set-monad context. -/
 theorem lift_eq_A_eta (domain : List E) (j : E)
     (hj : j ∈ domain) (_hnd : domain.Nodup) :

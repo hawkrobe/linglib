@@ -16,8 +16,10 @@ upward-closed quantifiers that [barwise-cooper-1981] take natural-language
 determiners to denote, the two form a `GaloisCoinsertion`. Sending a quantifier through `BE` and back preserves truth
 conditions exactly when it is a principal ultrafilter: a proper name survives
 the round trip, `every student` does not. `Ty.det` names the determiner type
-⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩, and the shifts relating `Quantifier` to the other noun-phrase
-types are [partee-1987]'s, in `Semantics.Composition.TypeShifting`.
+⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩. The shifts relating `Quantifier` to the other noun-phrase types are
+[partee-1987]'s: the total ones are `individual`, `ident`, `A` and `BE`, with the two faces
+of Partee's triangle `BE_individual_eq_ident` and `A_ident_eq_individual` proved here, and
+the partial ones, `Definiteness.THE` and `Definiteness.lower`, are Russellian iotas.
 -/
 
 namespace Quantification
@@ -53,6 +55,16 @@ def BE (Q : Quantifier E) : E → Prop :=
 /-- Existential closure: `A(P) = λQ. ∃x ∈ domain. P(x) ∧ Q(x)`. -/
 def A (domain : List E) (P : E → Prop) : Quantifier E :=
   fun Q => ∃ x ∈ domain, P x ∧ Q x
+
+/-- `BE ∘ individual = ident`, the right face of [partee-1987]'s triangle. -/
+theorem BE_individual_eq_ident (j : E) : BE (individual j) = ident j :=
+  funext fun _ => propext eq_comm
+
+/-- `A ∘ ident = individual` on the domain, the left face of the triangle. -/
+theorem A_ident_eq_individual (domain : List E) (j : E) (hj : j ∈ domain) :
+    A domain (ident j) = individual j := by
+  funext P
+  exact propext ⟨fun ⟨_, _, rfl, hP⟩ => hP, fun hP => ⟨j, hj, rfl, hP⟩⟩
 
 /-! ### `BE` as a bounded-lattice homomorphism -/
 

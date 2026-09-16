@@ -22,7 +22,7 @@ This models the fake-fur widening of [partee-2010] § 4 (its formulae
 there. `isNonVacuous` states the NVP bivalently, simplifying
 [kamp-partee-1995]'s partial setting. Not to be confused with complement
 coercion (`Studies/Pustejovsky1995.lean`), NP type-shifting
-(`Semantics/Composition/TypeShifting.lean`), or aspectual coercion
+(`Semantics/Quantification/Quantifier.lean`), or aspectual coercion
 (`Semantics/Aspect/Composition.lean`).
 -/
 

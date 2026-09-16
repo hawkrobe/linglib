@@ -1,8 +1,9 @@
 import Linglib.Semantics.Composition.Assignment
+import Linglib.Semantics.Quantification.Defs
 
 /-!
 # Maximality and Coppock–Beaver Factorization
-[sharvy-1980] [kriz-2015] [coppock-beaver-2015] [russell-1905]
+[sharvy-1980] [kriz-2015] [coppock-beaver-2015] [russell-1905] [partee-1987]
 
 Predicate operators consumed by the `Description` interpretation function in
 `Semantics/Definiteness/Description.lean`. They operate over entity predicates
@@ -25,6 +26,11 @@ predicate's domain.
   returns the join of all satisfiers. We supply both:
     - `russellIota` — order-free unique-element selector
     - `sharvyMax` — preorder-relative maximal-element selector
+
+- **Partee's partial shifts** ([partee-1987]): `THE`, the Montague lift of
+  the unique member of a property, and `lower`, the entity a principal
+  ultrafilter is the lift of, are Russellian iotas; each inverts its total
+  shift (`THE_ident`, `lower_individual`, `russellIota_ident`).
 
 - **Križ homogeneity** ([kriz-2015]): the predicate `homogeneous P S`
   holds when the scope predicate is either uniformly true or uniformly false
@@ -141,6 +147,30 @@ theorem russellIota_eq_some_iff {E : Type*} (P : E → Prop) (e : E) :
     unfold russellIota
     rw [dite_eq_left hu]
     exact congrArg some (huniq _ hu.choose_spec.1)
+
+/-! ### Partee's partial shifts -/
+
+section Partee
+open Quantification
+
+variable {E : Type*}
+
+/-- The presuppositional definite article, the Montague lift of the unique `P`. -/
+noncomputable def THE (P : E → Prop) : Option (Quantifier E) := (russellIota P).map individual
+
+/-- The entity whose Montague lift is `Q`, when `Q` is a principal ultrafilter. -/
+noncomputable def lower (Q : Quantifier E) : Option E := russellIota fun j => Q = individual j
+
+theorem russellIota_ident (j : E) : russellIota (ident j) = some j :=
+  (russellIota_eq_some_iff _ _).2 ⟨rfl, fun _ h => h⟩
+
+theorem lower_individual (j : E) : lower (individual j) = some j :=
+  (russellIota_eq_some_iff _ _).2 ⟨rfl, fun _ h => (individual_injective h).symm⟩
+
+theorem THE_ident (j : E) : THE (ident j) = some (individual j) := by
+  rw [THE, russellIota_ident]; rfl
+
+end Partee
 
 /-- Computable list-based Russellian iota: returns the unique witness when
     `domain.filter P` is a singleton, `none` otherwise. This is the concrete
