@@ -1,5 +1,5 @@
 import Linglib.Semantics.Causation.Implicative
-import Linglib.Studies.Karttunen1971
+import Linglib.Studies.Karttunen1971a
 
 /-!
 # Nadathur (2023): Causal Semantics for Implicative Verbs
@@ -227,7 +227,7 @@ recovers Karttunen's (37) presupposition itself at every consistent completion, 
 at the Dreyfus model by `Nadathur2023.dare_felicitous_for_msg` together
 with `Nadathur2023.no_msg_without_nerve`. -/
 
-namespace Karttunen1971
+namespace Karttunen1971a
 
 open Implicative
 
@@ -263,4 +263,4 @@ theorem schema_manage_presup {V : Type*} {α : V → Type*}
       (SEM.causallyEntails M s' c xC) :=
   (complement_iff_prerequisite M hexo hp hsuf hnec s' hset hc).symm
 
-end Karttunen1971
+end Karttunen1971a

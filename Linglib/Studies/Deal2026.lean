@@ -7,6 +7,7 @@ import Linglib.Data.Examples.Krapova2010
 import Linglib.Studies.BochnakHanink2021
 import Linglib.Syntax.Category.Verb.Complement.Takes
 import Linglib.Semantics.Presupposition.Environment
+import Linglib.Studies.Karttunen1971b
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 
 /-!
@@ -108,13 +109,18 @@ theorem relative_factive :
   decide
 
 /-- Consultants endorse the complement under negation, in a question or in a conditional
-antecedent exactly for the factive predicates, the projection trials (33)–(36) and (68); no
-trial is in the first person, so no semi-factive is cancelled ([karttunen-1971b]). -/
+antecedent exactly for the factive predicates, the projection trials (33)–(36) and (68). -/
 theorem projection_rows :
-    ∀ row ∈ Examples.all, ∀ f ∈ row.environment?, ∀ p ∈ row.person?,
-      ∀ v ∈ verbs, row.feature? "verb" = some v.form →
-        (row.projective? = some true ↔
-          v.toVerb.factivePresup = true ∧ ∀ c ∈ v.factivity, ¬ c.Cancelled f p) := by
+    ∀ row ∈ Examples.all, ∀ _ ∈ row.environment?, ∀ v ∈ verbs, row.feature? "verb" = some v.form →
+      (row.projective? = some true ↔ v.toVerb.factivePresup = true) := by
+  decide
+
+/-- The semi-factive *cuukwe* 'know' projects from a third-person conditional antecedent, (68),
+where [karttunen-1971b]'s semi-factive postulates yield nothing; his (25b–c) are first person. -/
+theorem cuukwe_conditional_projects :
+    ¬ Karttunen1971b.Projects .semi .conditionalAntecedent ∧
+      ∃ row ∈ Examples.all, row.environment? = some .conditionalAntecedent ∧
+        row.feature? "verb" = some cuukwe.form ∧ row.projective? = some true := by
   decide
 
 /-! ### Table (79): internal against external syntax -/
@@ -172,12 +178,11 @@ theorem zaPhrase_rows :
   decide
 
 /-- Krapova's factivity tests (57a–b): the complement survives negation and a question exactly
-for the factive predicates, and the emotive factives are cancelled nowhere. -/
+for the factive predicates. -/
 theorem krapova_projection_rows :
-    ∀ row ∈ Krapova2010.Examples.all, ∀ f ∈ row.environment?, ∀ p ∈ row.person?,
+    ∀ row ∈ Krapova2010.Examples.all, ∀ _ ∈ row.environment?,
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
-        (row.projective? = some true ↔
-          v.toVerb.factivePresup = true ∧ ∀ c ∈ v.factivity, ¬ c.Cancelled f p) := by
+        (row.projective? = some true ↔ v.toVerb.factivePresup = true) := by
   decide
 
 /-- Krapova's contradiction tests (57c) and footnote 46: a continuation denying the complement

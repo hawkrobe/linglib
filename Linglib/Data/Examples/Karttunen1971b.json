@@ -1,0 +1,670 @@
+[
+  {
+    "id": "karttunen1971b_2a",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(2a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Bill regrets that Sheila is no longer young.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Bill regrets that Sheila is no longer young.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "regret"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "atomic"
+      ],
+      [
+        "projective",
+        "yes"
+      ],
+      [
+        "person",
+        "3"
+      ]
+    ],
+    "comment": "Presupposes (3), Sheila is no longer young.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "karttunen1971b_2b",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(2b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Bill doesn't regret that Sheila is no longer young.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Bill doesn't regret that Sheila is no longer young.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "regret"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "negation"
+      ],
+      [
+        "projective",
+        "yes"
+      ],
+      [
+        "person",
+        "3"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "karttunen1971b_2c",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(2c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Does Bill regret that Sheila is no longer young?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Does Bill regret that Sheila is no longer young?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "regret"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "question"
+      ],
+      [
+        "projective",
+        "yes"
+      ],
+      [
+        "person",
+        "3"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "karttunen1971b_22a",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(22a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John didn't regret that he had not told the truth.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John didn't regret that he had not told the truth.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "regret"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "negation"
+      ],
+      [
+        "projective",
+        "yes"
+      ],
+      [
+        "person",
+        "3"
+      ]
+    ],
+    "comment": "All of (22) presuppose that John had not told the truth.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "karttunen1971b_22b",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(22b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John didn't realize that he had not told the truth.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John didn't realize that he had not told the truth.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "realize"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "negation"
+      ],
+      [
+        "projective",
+        "yes"
+      ],
+      [
+        "person",
+        "3"
+      ]
+    ],
+    "comment": "All of (22) presuppose that John had not told the truth.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "karttunen1971b_22c",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(22c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John didn't discover that he had not told the truth.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John didn't discover that he had not told the truth.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "discover"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "negation"
+      ],
+      [
+        "projective",
+        "yes"
+      ],
+      [
+        "person",
+        "3"
+      ]
+    ],
+    "comment": "All of (22) presuppose that John had not told the truth.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "karttunen1971b_23",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(23)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John DIDN'T regret that he had not told the truth.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John DIDN'T regret that he had not told the truth.",
+    "context": "An emphatic denial of somebody else's previous assertion; continued 'How could he have done that when he knew that what he had said was true?'",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "regret"
+      ],
+      [
+        "diagnostic",
+        "denial"
+      ],
+      [
+        "environment",
+        "negation"
+      ],
+      [
+        "projective",
+        "no"
+      ],
+      [
+        "person",
+        "3"
+      ]
+    ],
+    "comment": "The one circumstance in which (22) carries no commitment; footnote 7 analyzes it as 'it is not true that', the external negation of three-valued logic.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "karttunen1971b_24a",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(24a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Did you regret that you had not told the truth?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did you regret that you had not told the truth?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "regret"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "question"
+      ],
+      [
+        "projective",
+        "yes"
+      ],
+      [
+        "person",
+        "2"
+      ]
+    ],
+    "comment": "Most informants agree the question commits the speaker to the view that the addressee has not told the truth.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "karttunen1971b_24b",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(24b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Did you realize that you had not told the truth?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did you realize that you had not told the truth?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "realize"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "question"
+      ],
+      [
+        "person",
+        "2"
+      ]
+    ],
+    "comment": "'Possibly also with realize' the question commits the speaker; no judgment is recorded.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "karttunen1971b_24c",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(24c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Did you discover that you had not told the truth?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Did you discover that you had not told the truth?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "discover"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "question"
+      ],
+      [
+        "projective",
+        "no"
+      ],
+      [
+        "person",
+        "2"
+      ]
+    ],
+    "comment": "Can also be understood as a sincere request for information: both a factive and a non-factive interpretation.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "karttunen1971b_25a",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(25a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If I regret later that I have not told the truth, I will confess it to everyone.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If I regret later that I have not told the truth, I will confess it to everyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "regret"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "conditional antecedent"
+      ],
+      [
+        "projective",
+        "yes"
+      ],
+      [
+        "person",
+        "1"
+      ]
+    ],
+    "comment": "The first clause contains an admission that the complement is true.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "karttunen1971b_25b",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(25b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If I realize later that I have not told the truth, I will confess it to everyone.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If I realize later that I have not told the truth, I will confess it to everyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "realize"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "conditional antecedent"
+      ],
+      [
+        "projective",
+        "no"
+      ],
+      [
+        "person",
+        "1"
+      ]
+    ],
+    "comment": "One only admits that there is a possibility that one has not told the truth.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "karttunen1971b_25c",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(25c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If I discover later that I have not told the truth, I will confess it to everyone.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If I discover later that I have not told the truth, I will confess it to everyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "discover"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "conditional antecedent"
+      ],
+      [
+        "projective",
+        "no"
+      ],
+      [
+        "person",
+        "1"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "karttunen1971b_26a",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(26a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is possible that I will regret later that I have not told the truth.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is possible that I will regret later that I have not told the truth.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "regret"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "epistemic modal"
+      ],
+      [
+        "projective",
+        "yes"
+      ],
+      [
+        "person",
+        "1"
+      ]
+    ],
+    "comment": "What (25a) conversationally implies; by the stronger postulates (11') one can infer the complement.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "karttunen1971b_26b",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(26b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is possible that I will realize later that I have not told the truth.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is possible that I will realize later that I have not told the truth.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "realize"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "epistemic modal"
+      ],
+      [
+        "projective",
+        "no"
+      ],
+      [
+        "person",
+        "1"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "karttunen1971b_26c",
+    "source": {
+      "bibkey": "karttunen-1971b",
+      "paperLabel": "(26c)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is possible that I will discover later that I have not told the truth.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is possible that I will discover later that I have not told the truth.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "discover"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "epistemic modal"
+      ],
+      [
+        "projective",
+        "no"
+      ],
+      [
+        "person",
+        "1"
+      ]
+    ],
+    "comment": "From the fact that it is possible that I may discover something I cannot conclude that it is the case.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
