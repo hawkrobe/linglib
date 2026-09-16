@@ -56,7 +56,6 @@ syncretisms and the nominative stem-allomorphy generalization (16) remain.
 namespace Graf2019
 
 open Morphology Morphology.Containment
-open Morphology.Paradigm
 open English.Modifiers.Adjectives
 
 /-! ### Four characterizations coincide over a linear hierarchy -/
@@ -86,7 +85,7 @@ theorem english_suppletion_feasiblyMonotone :
 
 /-- The unattested *ABA row: no order on the forms makes *good, better, goodest* monotone,
 whatever the order of the codomain. -/
-theorem aba_not_feasiblyMonotone : ¬ FeasiblyMonotone aba := by
+theorem aba_not_feasiblyMonotone : ¬ FeasiblyMonotone Paradigm.aba := by
   rw [← isContiguous_iff_feasiblyMonotone]
   decide
 
@@ -128,7 +127,7 @@ person (Winnebago) though not in adjectival gradation, where its absence has to 
 for instance in terms of syntactic containment. -/
 
 /-- AAB is feasibly monotonic. -/
-theorem aab_feasiblyMonotone : FeasiblyMonotone aab := by
+theorem aab_feasiblyMonotone : FeasiblyMonotone Paradigm.aab := by
   rw [← isContiguous_iff_feasiblyMonotone]
   decide
 
