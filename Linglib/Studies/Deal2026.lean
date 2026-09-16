@@ -2,6 +2,7 @@ import Linglib.Fragments.Adyghe.Clause
 import Linglib.Fragments.Bulgarian.Clause
 import Linglib.Fragments.Ndebele.Clause
 import Linglib.Fragments.NezPerce.Clause
+import Linglib.Data.Examples.Deal2026
 import Linglib.Studies.BochnakHanink2021
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 
@@ -18,10 +19,14 @@ the CP contains an Ā-dependency, and every cell of the table is filled: the int
 a clause does not predict its external syntax. Factivity cross-cuts the Ā axis as well, table
 (80): within Nez Perce every relative embedding is factive but *cuukwe* 'know' is factive and
 simplex, and Adyghe uses the relative strategy for every tensed notional complement, factive
-or not. The Nez Perce embedding strategy is derived from the Fragment's *yox̂ ke* edge
-observable, the Adyghe and Bulgarian Ā flags from their Fragments' relativizer observables,
-the shells from the spines, and the case half of the diagnostic (21) that *yox̂* is a D from
-the Fragment's relative-pronoun paradigm.
+or not. The Nez Perce embedding strategy is read off the paper's judgments, the rows of
+`Data/Examples/Deal2026.json`: a predicate embeds relatively when a grammatical notional
+complement of it carries the *yox̂ ke* edge (`RelativeEmbedding`). Every relative embedding
+is factive (`relative_factive`), factivity being the Fragment entries' [karttunen-1971] class,
+which the projection trials (33)–(36) and (68) confirm row by row (`projection_rows`). The
+Adyghe and Bulgarian Ā flags come from their Fragments' relativizer observables, the shells
+from the spines, and the case half of the diagnostic (21) that *yox̂* is a D from the
+Fragment's relative-pronoun paradigm.
 
 ## Implementation notes
 
@@ -54,11 +59,12 @@ against factivity, needs Turkish *düşün-* 'think', which has no Fragment.
 * [chomsky-1970]
 * [deal-2025b]
 * [deal-2015a-nels]
+* [karttunen-1971]
 -/
 
 namespace Deal2026
 
-open NezPerce.Clause Minimalist
+open NezPerce Minimalist Data.Examples
 
 /-! ### The embedding strategy -/
 
@@ -69,11 +75,39 @@ inductive EmbeddingStrategy where
   | simplex
   deriving DecidableEq, Repr
 
-/-- A predicate's strategy, from the Fragment's edge observable: relative when *yox̂ ke* is
-obligatory on its complement, simplex when the complement may be bare. Both strategies select
-a CP; the contrast is internal to the clause selected. -/
-def strategy (v : NezPerceEmbedder) : EmbeddingStrategy :=
-  if v.yoxKeEdge = .obligatory then .relative else .simplex
+/-- A predicate embeds relatively when some grammatical notional complement of it carries the
+*yox̂ ke* edge ((27)–(28)); *cuukwe*'s (66b) is only marginal. -/
+def RelativeEmbedding (v : NezPerce.Verb) : Prop :=
+  ∃ row ∈ Examples.all, row.feature? "verb" = some v.form ∧
+    row.feature? "edge" = some "yoxKe" ∧ row.judgment = .acceptable
+
+instance (v : NezPerce.Verb) : Decidable (RelativeEmbedding v) :=
+  inferInstanceAs (Decidable (∃ row ∈ Examples.all, _))
+
+/-- A predicate's strategy: relative when it embeds relatively, simplex otherwise. Both
+strategies select a CP; the contrast is internal to the clause selected. -/
+def strategy (v : NezPerce.Verb) : EmbeddingStrategy :=
+  if RelativeEmbedding v then .relative else .simplex
+
+/-- The relative-embedding predicates take no noun-phrase object, (41). -/
+theorem nominal_rows :
+    ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "nominalComplement" →
+      ∀ v ∈ verbs, row.feature? "verb" = some v.form →
+        (row.judgment = .acceptable ↔ ∃ fr ∈ v.frames, fr.HasNominal) := by
+  decide
+
+/-- Every relative embedding is factive (§7). -/
+theorem relative_factive :
+    ∀ v ∈ verbs, strategy v = .relative → v.toVerb.factivePresup = true := by
+  decide
+
+/-- The projection trials (33)–(36) and (68): consultants endorse the complement under negation,
+in a question or in a conditional antecedent exactly for the factive predicates. -/
+theorem projection_rows :
+    ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "projection" →
+      ∀ v ∈ verbs, row.feature? "verb" = some v.form →
+        (row.feature? "inference" = some "yes" ↔ v.toVerb.factivePresup = true) := by
+  decide
 
 /-! ### Table (79): internal against external syntax -/
 
@@ -84,7 +118,7 @@ structure Cell where
   internalAbar : Bool
 
 /-- A Nez Perce cell: a bare CP whose Ā-dependency is the relative strategy. -/
-def nezPerce (v : NezPerceEmbedder) : Cell := ⟨ClauseSpine.cP, strategy v == .relative⟩
+def nezPerce (v : NezPerce.Verb) : Cell := ⟨ClauseSpine.cP, strategy v == .relative⟩
 
 /-- English simplex V complementation, *think*: a bare CP without an Ā-dependency. -/
 def englishThink : Cell := ⟨ClauseSpine.cP, false⟩
@@ -136,9 +170,9 @@ factive simplex embedding, *cuukwe* 'know'; a non-factive simplex embedding, *ne
 and a non-factive relative embedding, Adyghe 'think', which requires the relative strategy for
 its tensed complement. Factivity and relative-embedding syntax vary independently. -/
 theorem table80 :
-    (∃ v ∈ allEmbedders, v.factive = true ∧ strategy v = .relative) ∧
-      (∃ v ∈ allEmbedders, v.factive = true ∧ strategy v = .simplex) ∧
-      (∃ v ∈ allEmbedders, v.factive = false ∧ strategy v = .simplex) ∧
+    (∃ v ∈ verbs, v.toVerb.factivePresup = true ∧ strategy v = .relative) ∧
+      (∃ v ∈ verbs, v.toVerb.factivePresup = true ∧ strategy v = .simplex) ∧
+      (∃ v ∈ verbs, v.toVerb.factivePresup = false ∧ strategy v = .simplex) ∧
       (∃ v ∈ Adyghe.Clause.relativeTakers, v.factive = some false) := by
   decide
 
