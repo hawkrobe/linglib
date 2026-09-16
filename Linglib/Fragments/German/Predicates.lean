@@ -164,7 +164,6 @@ def bestrafen : GermanVerbEntry where
   formPast := "bestrafte"
   formPastPart := "bestraft"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 /-- *belohnen* — "reward": presupposes the object did something praiseworthy -/
@@ -174,7 +173,6 @@ def belohnen : GermanVerbEntry where
   formPast := "belohnte"
   formPastPart := "belohnt"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 /-- *loben* — "praise": presupposes praiseworthy behavior by the object -/
@@ -184,7 +182,6 @@ def loben : GermanVerbEntry where
   formPast := "lobte"
   formPastPart := "gelobt"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 /-- *kritisieren* — "criticise": presupposes the object did something wrong -/
@@ -194,7 +191,6 @@ def kritisieren : GermanVerbEntry where
   formPast := "kritisierte"
   formPastPart := "kritisiert"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 /-- *danken* — "thank": presupposes the object did something helpful -/
@@ -204,7 +200,6 @@ def danken : GermanVerbEntry where
   formPast := "dankte"
   formPastPart := "gedankt"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 /-- *verklagen* — "sue": presupposes the object caused harm -/
@@ -214,7 +209,6 @@ def verklagen : GermanVerbEntry where
   formPast := "verklagte"
   formPastPart := "verklagt"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 /-- *gratulieren* — "congratulate": presupposes the object achieved something -/
@@ -224,7 +218,6 @@ def gratulieren : GermanVerbEntry where
   formPast := "gratulierte"
   formPastPart := "gratuliert"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 /-- *zurechtweisen* — "rebuke": presupposes the object misbehaved -/
@@ -234,7 +227,6 @@ def zurechtweisen : GermanVerbEntry where
   formPast := "wies zurecht"
   formPastPart := "zurechtgewiesen"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 /-- *anzeigen* — "report (to authorities)": presupposes the object did something illegal -/
@@ -244,7 +236,6 @@ def anzeigen : GermanVerbEntry where
   formPast := "zeigte an"
   formPastPart := "angezeigt"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 /-- *auszeichnen* — "award/honor": presupposes the object did something meritorious -/
@@ -254,7 +245,6 @@ def auszeichnen : GermanVerbEntry where
   formPast := "zeichnete aus"
   formPastPart := "ausgezeichnet"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 /-- *belangen* — "prosecute": presupposes the object committed an offense -/
@@ -264,7 +254,6 @@ def belangen : GermanVerbEntry where
   formPast := "belangte"
   formPastPart := "belangt"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 /-- *ehren* — "honor": presupposes the object did something worthy of honor -/
@@ -274,7 +263,6 @@ def ehren : GermanVerbEntry where
   formPast := "ehrte"
   formPastPart := "geehrt"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 /-- *entlassen* — "dismiss/fire": presupposes the object did something
@@ -285,7 +273,6 @@ def entlassen : GermanVerbEntry where
   formPast := "entließ"
   formPastPart := "entlassen"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 /-- *sich rächen an* — "take revenge on": presupposes the object
@@ -296,7 +283,6 @@ def raechen : GermanVerbEntry where
   formPast := "rächte sich"
   formPastPart := "sich gerächt"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 /-- *sich revanchieren bei* — "reciprocate/repay": presupposes the
@@ -307,7 +293,6 @@ def revanchieren : GermanVerbEntry where
   formPast := "revanchierte sich"
   formPastPart := "sich revanchiert"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 /-- *zur Verantwortung ziehen* — "hold accountable": presupposes
@@ -318,7 +303,6 @@ def zurVerantwortungZiehen : GermanVerbEntry where
   formPast := "zog zur Verantwortung"
   formPastPart := "zur Verantwortung gezogen"
   frames := [Frame.np]
-  presupType := some .softTrigger
   senseTag := .occasion
 
 -- ============================================================================
@@ -589,26 +573,26 @@ def lookup (form : String) : Option GermanVerbEntry :=
 -- § 7: Occasion Verb Grounding Theorems
 -- ============================================================================
 
-/-- All 16 German occasion verbs are soft presupposition triggers. -/
+/-- All 16 German occasion verbs are soft presupposition triggers, derived from their
+    occasion sense ([solstad-bott-2024]). -/
 theorem occasion_verbs_soft_trigger :
-    bestrafen.presupType = some .softTrigger ∧
-    belohnen.presupType = some .softTrigger ∧
-    loben.presupType = some .softTrigger ∧
-    kritisieren.presupType = some .softTrigger ∧
-    danken.presupType = some .softTrigger ∧
-    verklagen.presupType = some .softTrigger ∧
-    gratulieren.presupType = some .softTrigger ∧
-    zurechtweisen.presupType = some .softTrigger ∧
-    anzeigen.presupType = some .softTrigger ∧
-    auszeichnen.presupType = some .softTrigger ∧
-    belangen.presupType = some .softTrigger ∧
-    ehren.presupType = some .softTrigger ∧
-    entlassen.presupType = some .softTrigger ∧
-    raechen.presupType = some .softTrigger ∧
-    revanchieren.presupType = some .softTrigger ∧
-    zurVerantwortungZiehen.presupType = some .softTrigger :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl,
-   rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+    bestrafen.triggerType = some .softTrigger ∧
+    belohnen.triggerType = some .softTrigger ∧
+    loben.triggerType = some .softTrigger ∧
+    kritisieren.triggerType = some .softTrigger ∧
+    danken.triggerType = some .softTrigger ∧
+    verklagen.triggerType = some .softTrigger ∧
+    gratulieren.triggerType = some .softTrigger ∧
+    zurechtweisen.triggerType = some .softTrigger ∧
+    anzeigen.triggerType = some .softTrigger ∧
+    auszeichnen.triggerType = some .softTrigger ∧
+    belangen.triggerType = some .softTrigger ∧
+    ehren.triggerType = some .softTrigger ∧
+    entlassen.triggerType = some .softTrigger ∧
+    raechen.triggerType = some .softTrigger ∧
+    revanchieren.triggerType = some .softTrigger ∧
+    zurVerantwortungZiehen.triggerType = some .softTrigger := by
+  decide
 
 /-- All 16 German occasion verbs use the `.occasion` sense tag. -/
 theorem occasion_verbs_sense_tag :

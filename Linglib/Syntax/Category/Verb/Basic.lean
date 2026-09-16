@@ -90,21 +90,21 @@ def Verb.factivePresup (v : Verb) : Bool :=
 def Verb.presupposesComplement (v : Verb) : Bool :=
   v.factivePresup || v.cosType.isSome
 
+/-- The kind of presupposition trigger a verb is, derived from its event structure rather than
+    stipulated ([roberts-simons-2024]): a verb that presupposes its complement, by factivity or
+    a change of state, is a soft trigger; an implicative presupposes its causal prerequisite
+    ([nadathur-2023-implicatives]); and an occasion verb presupposes the occasion it evokes
+    ([solstad-bott-2024]). The soft/hard distinction is not operationalized, so `.softTrigger`
+    is the placeholder for the first and third. -/
+def Verb.triggerType (v : Verb) : Option Presupposition.TriggerType :=
+  if v.presupposesComplement then some .softTrigger
+  else if v.implicative.isSome then some .prerequisiteSoft
+  else if v.senseTag = .occasion then some .softTrigger
+  else none
+
 /-- Is this verb a presupposition trigger? -/
-def Verb.isPresupTrigger (v : Verb) : Bool :=
-  v.presupType.isSome
-
-/-- Presupposition trigger type DERIVED from event structure rather than
-    stipulated. [roberts-simons-2024] argue that presupposition status
-    follows from a verb's event structure (factivity, CoS type), not from
-    a lexically specified trigger type. This accessor derives the prediction:
-    verbs with factive or CoS event structure are presupposition triggers.
-
-    Note: R&S (p. 705) argue that the soft/hard trigger distinction "has
-    never been clearly operationalized." We use `.softTrigger` here as a
-    placeholder, not as an endorsement of a binary soft/hard taxonomy. -/
-def Verb.derivedPresupType (v : Verb) : Option PresupTriggerType :=
-  if v.presupposesComplement then some .softTrigger else none
+def Verb.isTrigger (v : Verb) : Bool :=
+  v.triggerType.isSome
 
 /-- Is this verb a causative? DERIVED from causative field. -/
 def Verb.isCausative (v : Verb) : Bool :=

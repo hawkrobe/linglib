@@ -68,7 +68,7 @@ def gong : Verb :=
 /-- *geidak* 記得 'remember', a factive. -/
 def geidak : Verb :=
   { form := "gei3dak1", hanzi := "記得", predicateClass := .knowledge, frames := [Frame.finiteClause],
-    passivizable := false, presupType := some .softTrigger, factivity := some .semi }
+    passivizable := false, factivity := some .semi }
 
 /-- The verbs. -/
 def all : List Verb := [soeng, hyun, bik, giu, daasyun, seon, gong, geidak]

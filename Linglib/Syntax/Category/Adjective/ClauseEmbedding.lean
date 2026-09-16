@@ -27,8 +27,8 @@ open NaturalLogic (Signature)
 structure ClauseEmbeddingAdjective extends Adjective where
   /-- What kind of clause the adjective embeds. -/
   complementType : ComplementType := .finiteClause
-  /-- Presupposition trigger class, if the adjective is a trigger. -/
-  presupType : Option PresupTriggerType := none
+  /-- The [karttunen-1971b] factivity class, if the adjective is factive. -/
+  factivity : Option Factivity := none
   /-- Attitude semantics, if applicable. -/
   attitude : Option Attitude := none
   /-- Does the adjective create an opaque context? -/

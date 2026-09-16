@@ -10,7 +10,7 @@ Re-exports verbal predicate entries.
 namespace English.Predicates
 
 export Verbal (
-  -- Types (PresupTriggerType/ComplementType/ControlType are root-namespace now)
+  -- Types (Presupposition.TriggerType/ComplementType/ControlType are root-namespace now)
   VerbEntry
   -- Functions
   allVerbs

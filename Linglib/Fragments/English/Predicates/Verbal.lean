@@ -301,7 +301,6 @@ def see : VerbEntry where
   frames := [Frame.np, Frame.finiteClause]
   subjectEntailments := some perception.subjectProfile
   vendlerClass := some .state
-  presupType := some .softTrigger
   attitude := some (.doxastic .veridical)
   levinClass := some .see
 
@@ -319,7 +318,6 @@ def know : VerbEntry where
   frames := [Frame.finiteClause, Frame.question]
   vendlerClass := some .state
   passivizable := false
-  presupType := some .softTrigger
   projectionBehavior := some .hole
   complementSig := some .mono
   attitude := some (.doxastic .veridical)
@@ -335,7 +333,6 @@ def regret : VerbEntry where
   frames := [Frame.finiteClause]
   vendlerClass := some .state
   passivizable := false
-  presupType := some .softTrigger
   projectionBehavior := some .hole
   attitude := some (.preferential (.degreeComparison .negative))
   factivity := some .emotive
@@ -346,7 +343,6 @@ def realize : VerbEntry := .mkRegular {
   frames := [Frame.finiteClause]
   vendlerClass := some .achievement
   passivizable := false
-  presupType := some .softTrigger
   projectionBehavior := some .hole
   attitude := some (.doxastic .veridical)
   factivity := some .semi }
@@ -357,7 +353,6 @@ def discover : VerbEntry := .mkRegular {
   frames := [Frame.finiteClause, Frame.question]
   vendlerClass := some .achievement
   passivizable := false
-  presupType := some .softTrigger
   projectionBehavior := some .hole
   attitude := some (.doxastic .veridical)
   factivity := some .semi }
@@ -368,7 +363,6 @@ def notice : VerbEntry := .mkRegular {
   frames := [Frame.finiteClause]
   vendlerClass := some .achievement
   passivizable := false
-  presupType := some .softTrigger
   projectionBehavior := some .hole
   attitude := some (.doxastic .veridical)
   factivity := some .semi }
@@ -388,7 +382,6 @@ def stop : VerbEntry where
   readings := [{ frame := Frame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  presupType := some .softTrigger
   projectionBehavior := some .hole
   cosType := some .cessation
   levinClass := some .aspectual
@@ -404,7 +397,6 @@ def quit : VerbEntry where
   readings := [{ frame := Frame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  presupType := some .softTrigger
   cosType := some .cessation
   levinClass := some .aspectual
 
@@ -415,7 +407,6 @@ def start : VerbEntry := .mkRegular {
   readings := [{ frame := Frame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  presupType := some .softTrigger
   cosType := some .inception
   levinClass := some .aspectual }
 
@@ -430,7 +421,6 @@ def begin_ : VerbEntry where
   readings := [{ frame := Frame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  presupType := some .softTrigger
   cosType := some .inception
   levinClass := some .aspectual
 
@@ -441,7 +431,6 @@ def continue_ : VerbEntry := .mkRegular {
   readings := [{ frame := Frame.gerund, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false
-  presupType := some .softTrigger
   cosType := some .continuation
   levinClass := some .aspectual }
 
@@ -456,7 +445,6 @@ def keep : VerbEntry where
   readings := [{ frame := Frame.gerund, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false
-  presupType := some .softTrigger
   cosType := some .continuation
   levinClass := some .aspectual
 
@@ -474,7 +462,6 @@ def manage : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   passivizable := false
   projectionBehavior := some .hole
-  presupType := some .prerequisiteSoft
   implicative := some .positive }
 
 /-- "fail" — negative implicative: "failed to VP" entails "not VP" -/
@@ -1280,7 +1267,6 @@ def reveal : VerbEntry := .mkRegular {
   frames := [Frame.finiteClause]
   speechActVerb := true
   vendlerClass := some .achievement
-  presupType := some .softTrigger
   attitude := some (.doxastic .veridical)
   levinClass := some .say }
 
@@ -1575,7 +1561,6 @@ def remember_rog : VerbEntry := .mkRegular {
   frames := [Frame.finiteClause, Frame.question]
   vendlerClass := some .state
   passivizable := false
-  presupType := some .softTrigger
   attitude := some (.doxastic .veridical)
   senseTag := .rogative }
 
@@ -1589,7 +1574,6 @@ def forget_rog : VerbEntry where
   frames := [Frame.finiteClause, Frame.question]
   vendlerClass := some .state
   passivizable := false
-  presupType := some .softTrigger
   attitude := some (.doxastic .veridical)
   senseTag := .rogative
 
@@ -1619,7 +1603,6 @@ def manage_occasion : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   passivizable := false
   implicative := some .positive
-  presupType := some .prerequisiteSoft
   senseTag := .occasion }
 
 /-- "dare" — positive implicative with prerequisite presupposition: courage.
@@ -1632,7 +1615,6 @@ def dare : VerbEntry := .mkRegular {
   readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  presupType := some .prerequisiteSoft
   implicative := some .positive }
 
 /-- "bother" — positive implicative with prerequisite presupposition: engagement.
@@ -1645,7 +1627,6 @@ def bother : VerbEntry := .mkRegular {
   readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  presupType := some .prerequisiteSoft
   implicative := some .positive }
 
 /-- "hesitate" — polarity-reversing one-way implicative.
@@ -1660,7 +1641,6 @@ def hesitate : VerbEntry := .mkRegular {
   readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false
-  presupType := some .prerequisiteSoft
   implicative := some .negative }
 
 /-- "venture" — positive implicative ([karttunen-1971] ex. 2):
