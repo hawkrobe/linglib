@@ -1,4 +1,3 @@
-import Linglib.Discourse.Coherence
 import Linglib.Data.Examples.AsherLascarides2003
 import Mathlib.Data.Nat.Notation
 import Mathlib.Logic.Relation
@@ -31,22 +30,23 @@ related by Background, the first of those units is the one label not available.
 
 namespace AsherLascarides2003
 
-open Data.Examples Discourse.Coherence Relation
+open Data.Examples Relation
 
 /-! ### Rhetorical relations -/
 
-/-- A rhetorical relation in a structure: a coherence relation, or the topic relation ⇓
-    between a summarizing constituent and the one it summarizes. -/
+/-- The rhetorical relations of the worked structures, with the topic relation ⇓ between a
+    summarizing constituent and the one it summarizes. -/
 inductive Rel
-  | of (r : CoherenceRelation)
+  | narration
+  | background
+  | elaboration
+  | explanation
   | topic
   deriving DecidableEq
 
-/-- Elaboration, Explanation, and the topic relation subordinate; every other relation
-    coordinates. -/
-def Rel.Subordinating (r : Rel) : Prop := r ∈ [.of .elaboration, .of .explanation, .topic]
-
-instance : DecidablePred Rel.Subordinating := λ r => inferInstanceAs (Decidable (r ∈ _))
+/-- Elaboration, Explanation, and the topic relation subordinate; Narration and Background
+    coordinate. -/
+abbrev Rel.Subordinating (r : Rel) : Prop := r = .elaboration ∨ r = .explanation ∨ r = .topic
 
 /-! ### Structures and the right frontier -/
 
@@ -84,8 +84,8 @@ def SDRS.Available (s : SDRS L) : L → Prop := ReflTransGen s.Above s.last
     the meal `2` is narrated with the competition `5` and elaborated by `7`, in which the
     salmon `3` is narrated with the cheese `4`; the competition is last. -/
 def example17 : SDRS ℕ where
-  edges := [⟨0, 1, 6, .of .elaboration⟩, ⟨6, 2, 5, .of .occasion⟩, ⟨6, 2, 7, .of .elaboration⟩,
-    ⟨7, 3, 4, .of .occasion⟩]
+  edges := [⟨0, 1, 6, .elaboration⟩, ⟨6, 2, 5, .narration⟩, ⟨6, 2, 7, .elaboration⟩,
+    ⟨7, 3, 4, .narration⟩]
   last := 5
 
 /-- The frontier of the narrative is the competition, the constituent containing it, the
@@ -123,7 +123,7 @@ theorem rows_continuation :
 /-- The abstract example: a topic `3` over a constituent `4` whose content relates `1` and
     `2` by Background, with `2` last. -/
 def example21 : SDRS ℕ where
-  edges := [⟨0, 3, 4, .topic⟩, ⟨4, 1, 2, .of .background⟩]
+  edges := [⟨0, 3, 4, .topic⟩, ⟨4, 1, 2, .background⟩]
   last := 2
 
 /-- The frontier is the last label, the constituent containing it, the topic above that, and
