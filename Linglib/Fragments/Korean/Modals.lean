@@ -1,10 +1,16 @@
 import Linglib.Semantics.Modality.Basic
 
 /-!
-# Korean Modal Inventory
+# Korean modals
 
-Modal expressions from Korean (Koreanic), based on
-[qing-uegaki-2025].
+The Korean modal expressions of Qing and Uegaki's survey with the forces and flavours each
+expresses: the epistemic necessity suffixes *-napo-*, *-keyss-*, *ke-* and *they-*, the
+deontic and circumstantial necessity of *-ya ha-* and *-ya keyss-*, the circumstantial *kes.i
+coh-*, and the possibility expressions *ci(-to) molun-*, *swu(-to) iss-* and *-to toy-*.
+
+## References
+
+* [qing-uegaki-2025]
 -/
 
 namespace Korean.Modals

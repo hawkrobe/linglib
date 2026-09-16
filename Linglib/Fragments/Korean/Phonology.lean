@@ -2,129 +2,94 @@ import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
-# Korean Phonological Inventory
+# Korean stop nasalization
 
-Korean segments and the stop nasalization rule, using the SPE formalism
-from `Subregular.LocalRewrite`.
+A Korean stop becomes a nasal before a nasal: *pap* 'rice' with *-man* 'only' is *pamman*.
+Hayes writes the rule as the change of a non-affricate stop to a voiced nasal sonorant before
+a nasal, and that is how it is written here, over the segments the rule needs.
 
-## Segments
+## Main definitions
 
-Core inventory for the nasalization demo: /p t k m n a i u l/.
-Korean stops are specified as [-del.rel.] (non-affricate), which is the
-target feature for the nasalization rule.
+* `Korean.Phonology.stopNasalization` — the rule
 
-## Rules
+## Main results
 
-1. **Stop Nasalization** (Hayes p.132): `[-del.rel.] → [+nasal, +voice, +son] / __ [+nasal]`
+* `Korean.Phonology.pap_man` — *pap-man* surfaces with a bilabial nasal in place of the
+  second stop, and *pap* alone is unchanged
 
-[hayes-2009]
+## References
+
+* [hayes-2009]
 -/
 
-open Phonology
-open Subregular.LocalRewrite
+open Phonology Subregular.LocalRewrite
 
 namespace Korean.Phonology
 
--- ============================================================================
--- § 1: Segment Inventory
--- ============================================================================
+/-! ### Segments -/
 
-/-- /p/: voiceless bilabial stop (non-affricate) -/
-def p : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, false), (Feature.continuant, false),
-   (Feature.voice, false), (Feature.delayedRelease, false),
-   (Feature.labial, true)]
+/-- The features every plain stop shares. -/
+private def stop : List (Feature × Bool) :=
+  [(.syllabic, false), (.consonantal, true), (.sonorant, false), (.continuant, false),
+    (.voice, false), (.delayedRelease, false)]
 
-/-- /t/: voiceless alveolar stop (non-affricate) -/
-def t : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, false), (Feature.continuant, false),
-   (Feature.voice, false), (Feature.delayedRelease, false),
-   (Feature.coronal, true), (Feature.anterior, true)]
+/-- The features every nasal shares. -/
+private def nasalSpecs : List (Feature × Bool) :=
+  [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.nasal, true), (.voice, true)]
 
-/-- /k/: voiceless velar stop (non-affricate) -/
-def k : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, false), (Feature.continuant, false),
-   (Feature.voice, false), (Feature.delayedRelease, false),
-   (Feature.dorsal, true)]
+/-- The features every vowel shares. -/
+private def vowel : List (Feature × Bool) :=
+  [(.syllabic, true), (.consonantal, false), (.sonorant, true), (.continuant, true),
+    (.voice, true)]
 
-/-- /m/: bilabial nasal -/
-def m : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, true), (Feature.nasal, true),
-   (Feature.voice, true), (Feature.labial, true)]
+/-- The voiceless bilabial stop. -/
+def p : Segment := Segment.ofSpecs (stop ++ [(.labial, true)])
 
-/-- /n/: alveolar nasal -/
-def n : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, true), (Feature.nasal, true),
-   (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, true)]
+/-- The voiceless alveolar stop. -/
+def t : Segment := Segment.ofSpecs (stop ++ [(.coronal, true), (.anterior, true)])
 
-/-- /a/: low vowel -/
-def a : Segment := Segment.ofSpecs
-  [(Feature.syllabic, true), (Feature.consonantal, false),
-   (Feature.sonorant, true), (Feature.continuant, true),
-   (Feature.voice, true)]
+/-- The voiceless velar stop. -/
+def k : Segment := Segment.ofSpecs (stop ++ [(.dorsal, true)])
 
-/-- /i/: high front unrounded vowel -/
-def i : Segment := Segment.ofSpecs
-  [(Feature.syllabic, true), (Feature.consonantal, false),
-   (Feature.sonorant, true), (Feature.continuant, true),
-   (Feature.voice, true), (Feature.dorsal, true),
-   (Feature.high, true), (Feature.low, false), (Feature.back, false),
-   (Feature.round, false)]
+/-- The bilabial nasal. -/
+def m : Segment := Segment.ofSpecs (nasalSpecs ++ [(.labial, true)])
 
-/-- /u/: high back rounded vowel -/
-def u : Segment := Segment.ofSpecs
-  [(Feature.syllabic, true), (Feature.consonantal, false),
-   (Feature.sonorant, true), (Feature.continuant, true),
-   (Feature.voice, true), (Feature.dorsal, true),
-   (Feature.high, true), (Feature.low, false), (Feature.back, true),
-   (Feature.round, true)]
+/-- The alveolar nasal. -/
+def n : Segment := Segment.ofSpecs (nasalSpecs ++ [(.coronal, true), (.anterior, true)])
 
-/-- /l/: alveolar lateral -/
-def l : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, true), (Feature.continuant, true),
-   (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, true),
-   (Feature.lateral, true)]
+/-- The low vowel. -/
+def a : Segment := Segment.ofSpecs vowel
 
--- ============================================================================
--- § 2: Rules
--- ============================================================================
+/-- The high front unrounded vowel. -/
+def i : Segment :=
+  Segment.ofSpecs
+    (vowel ++ [(.dorsal, true), (.high, true), (.low, false), (.back, false), (.round, false)])
 
-/-- Stop Nasalization (Hayes p.132):
-    `[-del.rel.] → [+nasal, +voice, +son] / __ [+nasal]`
+/-- The high back rounded vowel. -/
+def u : Segment :=
+  Segment.ofSpecs
+    (vowel ++ [(.dorsal, true), (.high, true), (.low, false), (.back, true), (.round, true)])
 
-    Non-affricate stops become nasalized before nasals. -/
+/-- The alveolar lateral. -/
+def l : Segment :=
+  Segment.ofSpecs
+    [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.continuant, true),
+      (.voice, true), (.coronal, true), (.anterior, true), (.lateral, true)]
+
+/-! ### The rule -/
+
+/-- A non-affricate stop becomes a voiced nasal sonorant before a nasal. -/
 def stopNasalization : Rule where
-  name := "Korean Stop Nasalization"
-  target := Segment.ofSpecs [(Feature.delayedRelease, false)]
-  effect := .changeFeatures (Segment.ofSpecs
-    [(Feature.nasal, true), (Feature.voice, true), (Feature.sonorant, true)])
-  rightContext := [.seg (Segment.ofSpecs [(Feature.nasal, true)])]
+  name := "stop nasalization"
+  target := Segment.ofSpecs [(.delayedRelease, false)]
+  effect := .changeFeatures (Segment.ofSpecs [(.nasal, true), (.voice, true), (.sonorant, true)])
+  rightContext := [.seg (Segment.ofSpecs [(.nasal, true)])]
 
--- ============================================================================
--- § 3: Verification
--- ============================================================================
-
-/-- Korean stops have [-del.rel.], matching the nasalization target. -/
-theorem p_matches_nasalization_target :
-    p.HasValue Feature.delayedRelease false = true := by decide
-
-theorem t_matches_nasalization_target :
-    t.HasValue Feature.delayedRelease false = true := by decide
-
-theorem k_matches_nasalization_target :
-    k.HasValue Feature.delayedRelease false = true := by decide
-
-/-- Vowels and nasals lack [-del.rel.], so they don't trigger nasalization. -/
-theorem a_not_nasalization_target :
-    a.Unspecified Feature.delayedRelease := by decide
-
-theorem m_not_nasalization_target :
-    m.Unspecified Feature.delayedRelease := by decide
+/-- *pap-man* surfaces with a bilabial nasal for its second stop and nothing else changed;
+*pap* alone is unchanged. -/
+theorem pap_man :
+    (∃ s, derive [stopNasalization] [p, a, p, m, a, n] = [p, a, s, m, a, n] ∧ m ≤ s) ∧
+      derive [stopNasalization] [p, a, p] = [p, a, p] :=
+  ⟨⟨_, rfl, by decide⟩, by decide⟩
 
 end Korean.Phonology

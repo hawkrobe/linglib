@@ -1,35 +1,35 @@
 import Linglib.Syntax.Category.Coordinator
 
 /-!
-# Korean Coordination Morphemes
-[mitrovic-2021]
+# Korean coordinators
 
-Korean has multiple postpositive bound coordinators with register/style
-differences. The [mitrovic-sauerland-2016] J-μ classification used
-in `Studies/MitrovicSauerland2016.lean` treats *-(i)rang* as J and *-to*
-as μ; the latter doubles as the additive ("also") particle.
+Korean coordinates noun phrases with enclitic particles: *-(i)rang* 'and' of the informal
+register, with *-(k)wa* and *-hako* its more formal alternatives, and *-to* 'and' on each
+conjunct, which is also the additive particle 'too'. Mitrović and Sauerland take *-(i)rang* for
+the J particle and *-to* for the μ particle of their decomposition of conjunction.
 
-- *-(i)rang* — J, bound, postpositive (informal): "A-(i)rang B"
-- *-to* — MU, bound, additive: "A-to B-to" = 'A also, B also' = 'both A and B'
-- *-(k)wa* and *-hako* are register variants of J (not formalised here).
+## Main definitions
 
-Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.korean`).
+* `Korean.Coordination.irang`, `Korean.Coordination.to_` — the two particles
+
+## References
+
+* [mitrovic-2021]
+* [mitrovic-sauerland-2016]
 -/
 
 namespace Korean.Coordination
 
-/-- *-(i)rang* — J particle, informal register. Bound, postpositive. -/
+/-- *-(i)rang* 'and', enclitic on the first conjunct, informal. -/
 def irang : Coordinator :=
-  { form := "-(i)rang", gloss := "and"
-  , role := .j, kind := .bound .after .clitic
-  , note := "informal register; -kwa/-hako are more formal alternatives" }
+  { form := "-(i)rang", gloss := "and", role := .j, kind := .bound .after .clitic }
 
-/-- *-to* — MU particle, additive. Bound, postpositive on each conjunct.
-    Doubles as the additive focus particle ("also/too"). -/
+/-- *-to* 'and', enclitic on each conjunct, also the additive 'too'. -/
 def to_ : Coordinator :=
-  { form := "-to", gloss := "also, too; and (MU)"
-  , role := .mu, kind := .bound .after .clitic, alsoAdditive := true }
+  { form := "-to", gloss := "also, too; and", role := .mu, kind := .bound .after .clitic,
+    alsoAdditive := true }
 
+/-- The coordinators. -/
 def allEntries : List Coordinator := [irang, to_]
 
 end Korean.Coordination

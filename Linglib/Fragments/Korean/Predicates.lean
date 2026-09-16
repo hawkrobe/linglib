@@ -1,80 +1,52 @@
 import Linglib.Syntax.Category.Verb.Basic
 
 /-!
-# Korean Predicate Lexicon Fragment
-[song-1996]
+# Korean causative verbs
 
-Korean causative predicates, including the PURP-type *-ke ha-* causative. The *-ke ha-* construction is non-implicative: the caused
-event is not entailed to have actually occurred.
+Korean has two causatives. The periphrastic *-ke ha-* 'make do' is purposive and not
+implicative: *Keeho-ka Jinee-ka wus-ke ha-ess-ta* 'Keeho caused Jinee to smile' does not
+entail that Jinee smiled. The morphological causative in *-i-* and its allomorphs is compact,
+as in *cwuk-i-ta* 'kill' from *cwuk-ta* 'die', and entails the caused event.
 
-"Keeho-ka Jinee-ka wus-ke ha-əss-ta" = "Keeho caused Jinee to smile"
-(Jinee may not have actually smiled — purposive, not sequential)
+## Main definitions
 
+* `Korean.Verb` — a Korean verb, the root `Verb`
+* `Korean.verbs` — the inventory
+
+## References
+
+* [song-1996]
 -/
 
-namespace Korean.Predicates
+namespace Korean
 
 open ArgumentStructure
 
-/-- Korean verb entry: extends Verb with Korean inflectional paradigm. -/
-structure KoreanVerbEntry extends Verb where
-  /-- Declarative form (-ta) -/
-  formDecl : String
-  /-- Past form (-əss-ta) -/
-  formPast : String
-  /-- Adnominal form (-n) -/
-  formAdnom : String
-  /-- Progressive form (-go itta) -/
-  formProgressive : String
+/-- A Korean verb, the root entry with its citation form in *-ta*. -/
+structure Verb extends _root_.Verb where
   deriving Repr, BEq
 
-/-- 웃게 하다 "wus-ke ha-da" — smile-PURP do = "cause to smile". -/
-def wus_ke_ha : KoreanVerbEntry where
-  form := "wus-ke ha-da"
-  formDecl := "wus-ke ha-n-da"
-  formPast := "wus-ke ha-əss-ta"
-  formAdnom := "wus-ke ha-n"
-  formProgressive := "wus-ke ha-go itta"
+/-- *wus-ke ha-ta* 'cause to smile', the periphrastic causative. -/
+def wus_ke_ha : Verb where
+  form := "wus-ke ha-ta"
   frames := [Frame.infinitival]
   readings := [{ frame := Frame.infinitival, control := some .objectControl }]
   causative := some .cause
 
-/-- 읽게 하다 "ilk-ke ha-da" — read-PURP do = "cause to read". -/
-def ilk_ke_ha : KoreanVerbEntry where
-  form := "ilk-ke ha-da"
-  formDecl := "ilk-ke ha-n-da"
-  formPast := "ilk-ke ha-əss-ta"
-  formAdnom := "ilk-ke ha-n"
-  formProgressive := "ilk-ke ha-go itta"
+/-- *ilk-ke ha-ta* 'cause to read', the periphrastic causative. -/
+def ilk_ke_ha : Verb where
+  form := "ilk-ke ha-ta"
   frames := [Frame.infinitival]
   readings := [{ frame := Frame.infinitival, control := some .objectControl }]
   causative := some .cause
 
-/-- 죽이다 "cwuk-i-da" — die-CAUS = "to kill" (lexical/morphological COMPACT). -/
-def cwuk_i : KoreanVerbEntry where
-  form := "cwuk-i-da"
-  formDecl := "cwuk-i-n-da"
-  formPast := "cwuk-yəss-ta"
-  formAdnom := "cwuk-i-n"
-  formProgressive := "cwuk-i-go itta"
+/-- *cwuk-i-ta* 'kill', the morphological causative of *cwuk-ta* 'die'. -/
+def cwuk_i : Verb where
+  form := "cwuk-i-ta"
   frames := [Frame.np]
   causative := some .make
 
-/-- Korean PURP-type *-ke ha-* uses `.cause` builder. -/
-theorem wus_ke_ha_is_cause :
-    wus_ke_ha.causative = some .cause := rfl
+/-- The inventory. -/
+def verbs : List Verb := [wus_ke_ha, ilk_ke_ha, cwuk_i]
 
-/-- Korean COMPACT-type *-i-* uses `.make` builder. -/
-theorem cwuk_i_is_make :
-    cwuk_i.causative = some .make := rfl
-
-/-- The two Korean causative types use different builders. -/
-theorem purp_compact_different_builders :
-    wus_ke_ha.causative ≠ cwuk_i.causative := by decide
-
-def allVerbs : List KoreanVerbEntry := [wus_ke_ha, ilk_ke_ha, cwuk_i]
-
-def lookup (form : String) : Option KoreanVerbEntry :=
-  allVerbs.find? (·.form == form)
-
-end Korean.Predicates
+end Korean

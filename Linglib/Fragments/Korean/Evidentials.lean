@@ -1,21 +1,25 @@
 import Linglib.Semantics.Tense.Evidential
 
 /-!
-# Korean evidential fragment
-[cumming-2026]
+# Korean tense under the evidentials
 
-Paradigm cells for Korean tense under the evidentials *-te* (table (18)) and *-ney*
-(table (19)) of [cumming-2026], following [lee-2011] and [lee-2013]: under either
-evidential, tense fixes the evidential perspective, while *-te* places the sensory evidence
-in the past of speech and *-ney* at speech, so that the utterance perspective is derived. The
-printed rows of table (19) are labelled *-te* under the *-ney* heading.
+The cells of Korean tense under the evidentials *-te* and *-ney* as Cumming tabulates them
+after Lee: under either evidential the tense fixes the perspective of the evidence, while
+*-te* places the sensory evidence before the utterance and *-ney* at the utterance, so that the
+utterance perspective follows.
+
+## References
+
+* [cumming-2026]
+* [lee-2011]
+* [lee-2013]
 -/
 
 namespace Korean.Evidentials
 
 open Tense.Evidential
 
-/-! ### *-te* (table (18)) -/
+/-! ### *-te* -/
 
 /-- Past under *-te*: the event precedes the past sensory evidence. -/
 def tePast : TAMEEntry where
@@ -35,7 +39,7 @@ def teFuture : TAMEEntry where
   ep := .prospective
   up := .unconstrained
 
-/-! ### *-ney* (table (19)) -/
+/-! ### *-ney* -/
 
 /-- Past under *-ney*: the event precedes the present sensory evidence. -/
 def neyPast : TAMEEntry where
