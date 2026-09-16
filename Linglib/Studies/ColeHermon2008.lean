@@ -1,6 +1,7 @@
 import Mathlib.Data.Fin.VecNotation
 import Linglib.Data.Examples.ColeHermon2008
 import Linglib.Fragments.TobaBatak.Basic
+import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Semantics.ArgumentStructure.Valency
 import Linglib.Syntax.Minimalist.Movement.Freezing
 import Linglib.Syntax.Minimalist.Movement.Reconstruction

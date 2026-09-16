@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.HPSG.Construction
-import Linglib.Data.UD.Basic
+import Linglib.Data.UD.UPOS
 
 /-!
 # HPSG categories: grounding in Universal Dependencies and compatibility

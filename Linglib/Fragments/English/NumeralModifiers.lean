@@ -18,7 +18,6 @@ from "up to" (positive), predicting divergent framing effects.
 
 -/
 
-import Linglib.Data.UD.Basic
 import Linglib.Semantics.Degree.PropertyDomain
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Quantification.Numerals.Basic

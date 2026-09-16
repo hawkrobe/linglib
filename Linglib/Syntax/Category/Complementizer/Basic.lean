@@ -1,4 +1,5 @@
-import Linglib.Data.UD.Basic
+import Linglib.Data.UD.UPOS
+import Linglib.Data.UD.Features
 import Linglib.Semantics.Mood.Defs
 import Linglib.Syntax.Clause.Complementation
 import Linglib.Morphology.Morph

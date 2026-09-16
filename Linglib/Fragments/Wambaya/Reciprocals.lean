@@ -1,4 +1,4 @@
-import Linglib.Data.UD.Basic
+import Linglib.Data.UD.UPOS
 import Linglib.Syntax.Reciprocal
 import Linglib.Morphology.Word.Basic
 

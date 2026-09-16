@@ -14,7 +14,7 @@ Yale forms.
 ## Main definitions
 
 * `Korean.Verb` — a Korean verb, the root `Verb`
-* `Korean.verbs` — the inventory
+* `Korean.verbs` — the causative verbs of the two constructions
 
 ## References
 

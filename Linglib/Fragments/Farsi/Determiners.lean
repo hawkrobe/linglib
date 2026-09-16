@@ -1,4 +1,3 @@
-import Linglib.Data.UD.Basic
 import Linglib.Semantics.Reference.ChoiceFunction
 import Mathlib.Data.Rat.Defs
 

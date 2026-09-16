@@ -1,5 +1,5 @@
 import Linglib.Semantics.Possession.Defs
-import Linglib.Data.UD.Basic
+import Linglib.Data.UD.Features
 import Linglib.Syntax.Number.Basic
 import Linglib.Syntax.Person.Basic
 import Linglib.Syntax.Gender.Basic

@@ -11,7 +11,8 @@ conjunct, as Sohn describes them. Mitrović and Sauerland take *-(i)rang* for th
 
 ## Main definitions
 
-* `Korean.Coordination.irang`, `Korean.Coordination.to_` — the two particles
+* `Korean.Coordination.irang`, `Korean.Coordination.to_` — the comitative *-(i)rang* 'and'
+  and the additive *-to* 'also', Mitrović and Sauerland's J and μ particles
 
 ## References
 
