@@ -219,7 +219,7 @@ structure Aspect where
 
 /-- Presupposition profile: factivity class, trigger type and complement-projection behavior. -/
 structure Presupposition where
-  /-- The [karttunen-1971] factivity class of a factive predicate; `none` for a
+  /-- The [karttunen-1971b] factivity class of a factive predicate; `none` for a
       non-factive. -/
   factivity : Option _root_.Factivity := none
   /-- Is the verb a presupposition trigger? -/

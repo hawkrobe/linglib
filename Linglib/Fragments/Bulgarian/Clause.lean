@@ -25,7 +25,7 @@ analysis of *deto* and the double requirement behind its distribution are stated
 
 * [krapova-2010]
 * [kiparsky-kiparsky-1970]
-* [karttunen-1971]
+* [karttunen-1971b]
 * [noonan-2007]
 -/
 
