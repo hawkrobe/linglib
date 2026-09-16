@@ -1,44 +1,58 @@
 import Linglib.Syntax.Category.Particle.Basic
 
 /-!
-# Serbian Question Particles
-[simik-2024]
+# Serbian question particles
 
-Lexical entries for Serbian interrogative particles as `Particle` values.
-Bias classifications (zar's evidential requirement) and layer assignments
-live in `Simik2024`.
+Serbian polar questions are marked by intonation alone, by the enclitic *li*
+hosted by the fronted finite verb, or by sentence-initial *da li*, which
+[browne-1993] regards as the full form of *li* and which leaves the order of
+the rest of the clause free; both markers also introduce embedded and
+alternative questions. Colloquial *je li* and the mirative *zar* are the
+tag-forming markers *je li?* and *zar ne?* of [browne-1993]; [simik-2024]
+reports *je li* as the colloquial rival of the neutral *da li* strategy and
+*zar* as the Serbian kin of Russian *razve*, whose formal semantics the
+chapter leaves open. Bias profiles of the strategies live in `Simik2024`.
 
-## Cross-Module Connections
+## References
 
-- `Simik2024.serbian` (`Studies/Simik2024`): PQ strategy profile
-  (da li + verb movement) and the neutral/evidential contrast
+* [browne-1993], §4.2
+* [simik-2024], §4.1, §4.2.4
 -/
 
 namespace Serbian.QuestionParticles
 
-/-- da li — default PQ particle combination ([simik-2024] ex. 31):
-clause-initial particle + verb movement. Neutral baseline. -/
+/-- *li* is the enclitic polar question marker, hosted by the finite verb in
+its full form, which it draws to the front of the clause. -/
+def li : Particle where
+  form := "li"
+  position := some .secondPosition
+  distribution := fun c e => match c, e with
+    | .polar, .matrix => some .optional
+    | .polar, .subordinated => some .optional
+    | .alternative, .matrix => some .optional
+    | _, _ => none
+
+/-- *da li* is the sentence-initial polar question marker, the full form of
+*li* that leaves the order of the remaining clause free. -/
 def daLi : Particle where
   form := "da li"
   position := some .clauseInitial
-  distribution := fun c e => match c, e with
-    | .declarative, .matrix => some .excluded
-    | .polar, .matrix => some .optional
-    | .constituent, .matrix => some .excluded
-    | _, _ => none
+  distribution := li.distribution
 
-/-- zar — mirative/dubitative particle (RAZVE family, [simik-2024]
-§4.2.4). Compatible with both outer and inner negation (like Russian
-razve). Evidential classification in `Simik2024`. -/
-def zar_ : Particle where
-  form := "zar"
+/-- *je li* is the colloquial sentence-initial polar question marker, also
+the tag *je li?*. -/
+def jeLi : Particle where
+  form := "je li"
   position := some .clauseInitial
   distribution := fun c e => match c, e with
-    | .declarative, .matrix => some .excluded
     | .polar, .matrix => some .optional
-    | .constituent, .matrix => some .excluded
     | _, _ => none
 
-def allQuestionParticles : List Particle := [daLi, zar_]
+/-- *zar* is the clause-initial mirative particle, kin of Russian *razve*,
+also the tag *zar ne?*. -/
+def zar : Particle where
+  form := "zar"
+  position := some .clauseInitial
+  distribution := jeLi.distribution
 
 end Serbian.QuestionParticles
