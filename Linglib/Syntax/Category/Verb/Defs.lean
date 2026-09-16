@@ -2,6 +2,7 @@ import Linglib.Syntax.Clause.Complementation
 import Linglib.Syntax.Category.Verb.Complement.Basic
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.Presupposition.Basic
+import Linglib.Semantics.Presupposition.TriggerTypology
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Attitudes.Basic
 import Linglib.Semantics.Attitudes.Factivity
@@ -85,38 +86,6 @@ inductive VoiceType where
 def VoiceType.assignsTheta : VoiceType → Bool
   | .agentive | .reflexive | .experiencer => true
   | .nonThematic | .expletive => false
-
-/-- The kind of presupposition trigger a predicate is, the hard/soft classification of
-[abusch-2010]: hard triggers always project (*too*, *again*, *also*), soft triggers project
-context-sensitively (*stop*, *know*), and an implicative presupposes a prerequisite. -/
-inductive Presupposition.TriggerType where
-  | hardTrigger        -- Projective in all contexts
-  | softTrigger        -- Factive: complement truth presupposed, locally accommodatable
-  | prerequisiteSoft   -- Prerequisite: causal prerequisite presupposed ([nadathur-2023-implicatives])
-  deriving DecidableEq, Repr
-
-/-- Is this trigger locally accommodatable (soft)?
-    Both factive and prerequisite triggers are soft. -/
-def Presupposition.TriggerType.isSoft : Presupposition.TriggerType → Bool
-  | .hardTrigger => false
-  | .softTrigger => true
-  | .prerequisiteSoft => true
-
-/--
-Complement presupposition projection behavior ([karttunen-1973]).
-
-Orthogonal to `Presupposition.TriggerType` (whether the verb *triggers* presuppositions):
-this classifies what the verb does with presuppositions *of its complement*.
-
-- `plug`: blocks all complement presuppositions (*say*, *tell*, *promise*)
-- `hole`: lets all complement presuppositions project (*know*, *regret*, *stop*)
-- `filter`: conditionally cancels some complement presuppositions (*if...then*, *and*, *or*)
--/
-inductive ProjectionBehavior where
-  | plug    -- Blocks complement presuppositions
-  | hole    -- Passes complement presuppositions through
-  | filter  -- Conditionally cancels complement presuppositions
-  deriving DecidableEq, Repr
 
 /--
 Disambiguates polysemous verb entries that share a citation form.
@@ -222,7 +191,7 @@ structure Presupposition where
   factivity : Option _root_.Factivity := none
   /-- How does the verb treat presuppositions of its complement?
       Orthogonal to `Verb.triggerType`. [karttunen-1973] -/
-  projectionBehavior : Option ProjectionBehavior := none
+  projectionBehavior : Option Presupposition.ProjectionBehavior := none
   deriving Repr, BEq
 
 /-- Causal/implicative semantics: implicative polarity, causative mechanism,
