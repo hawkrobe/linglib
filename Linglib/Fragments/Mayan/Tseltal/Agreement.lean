@@ -35,6 +35,12 @@ exponent (∅). Grammatical-function classification is shared across Tseltalan
 Tseltalan languages are uniformly **ergative-absolutive** with no
 aspect-conditioned split (in contrast with Cholan; per [polian-2013]): Set A
 indicates A, Set B indicates S and P alike.
+
+## References
+
+* [aissen-polian-2025]
+* [kaufman-norman-1984]
+* [polian-2013]
 -/
 
 

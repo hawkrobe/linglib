@@ -15,20 +15,21 @@ records the reflexes each `Mayan.ExtractionSite` licenses), an intermediate land
 successive-cyclic movement ([mccloskey-2002], [georgi-2017]). A `Reflex` is a marking
 `Reflex.Modality` at a host constituent; a marking system assigns each designated target its
 finite set of reflexes. Modalities classify by `Reflex.Channel`, the phonological vs
-morphological vs syntactic cut. Like
-`Data.Examples.Judgment` for acceptability, this is a prediction-target vocabulary: studies
-translate theory-native predictions into it, and no theory consumes it as machinery.
+morphological vs syntactic cut. Like `Data.Examples.Judgment` for acceptability, this is a
+prediction-target vocabulary: studies translate theory-native predictions into it, and no
+theory consumes it as machinery.
 
 ## Main declarations
 
 * `Reflex.PiedPipes`, `Reflex.AntiPiedPipes`, `Reflex.ExactlyTargets`:
   [branan-erlewine-2023]'s three host–target configurations in the containment order.
-* `Reflex.EveryTargetOvert`: the universalist claim that every designated target is overtly
-  marked, which Tangale and Hausa focus refute.
 
 ## Implementation notes
 
-Only perceptible alternants are reflexes. A string-vacuous operation (Hausa subject fronting)
+The universalist claim that every designated target receives an overt reflex is
+`∀ i, (realize i).Nonempty` over a marking system, which Tangale and Hausa focus each refute
+([hartmann-zimmermann-2004], [hartmann-zimmermann-2007]). Only perceptible alternants are
+reflexes. A string-vacuous operation (Hausa subject fronting)
 contributes none; a default exponent surfacing regardless of the designation (Wolof expletive
 *l-*, [georgi-2017]) is not a reflex, since reflexes covary with the target; and zero is never
 a reflex, covert marking being exponence-side competition rather than a marking modality.
@@ -139,18 +140,15 @@ theorem AntiPiedPipes.not_exactlyTargets (h : AntiPiedPipes s target) :
     ¬ ExactlyTargets s target :=
   fun he ↦ let ⟨ρ, hρ, hlt⟩ := h; (he ρ hρ ▸ hlt).false
 
-variable (s target) [DecidableLT C] [DecidableEq C]
+instance [DecidableLT C] : Decidable (PiedPipes s target) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-instance : Decidable (PiedPipes s target) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
-instance : Decidable (AntiPiedPipes s target) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
-instance : Decidable (ExactlyTargets s target) := inferInstanceAs (Decidable (∀ _ ∈ _, _))
+instance [DecidableLT C] : Decidable (AntiPiedPipes s target) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+instance [DecidableEq C] : Decidable (ExactlyTargets s target) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 end Containment
-
-/-- The universalist claim over a marking system `realize`: every designated target receives an
-overt reflex. Tangale and Hausa focus each refute their instance ([hartmann-zimmermann-2004],
-[hartmann-zimmermann-2007]). -/
-def EveryTargetOvert {I : Type*} (realize : I → Finset (Reflex C)) : Prop :=
-  ∀ i, (realize i).Nonempty
 
 end Reflex

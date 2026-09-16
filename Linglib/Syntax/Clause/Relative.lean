@@ -24,7 +24,7 @@ schema the fragments instantiate for a language's relative-clause markers.
 
 The accessibility order is lifted from `Position.rank`, so a strategy's contiguity (Keenan and
 Comrie's second Hierarchy Constraint) is order-connectedness of the set it covers, and the
-Primary Relativization Constraint is `Finset.eq_Icc_top_of_ordConnected` on that set. The
+Primary Relativization Constraint is `Finset.eq_Icc_top_of_ordConnected_coe` on that set. The
 positions a marker covers are a `Finset`, since only membership matters.
 
 ## References

@@ -83,7 +83,7 @@ abbrev Spine := List Head
 /-- A clause of the given size with `n` directionals above Voice (8). Nonfinite clauses, which lack
 Voice, lack directionals (§3.4). -/
 def spine (s : ClauseSpine) (n : ℕ) : Spine :=
-  s.projectedHeads.flatMap λ c =>
+  s.projectedHeads.flatMap fun c ↦
     if c = .Voice then .cat .Voice :: List.replicate n .dir else [.cat c]
 
 /-- The reduced K'ichean complement of [mendes-ranero-2021], an AspP without a CP layer (§5.1). -/
@@ -92,13 +92,13 @@ def aspP : ClauseSpine := ⟨[.V, .Appl, .v, .Voice, .Asp], by decide⟩
 /-- The feature bearers of [Ā], (41) and (44): C⁰, Voice⁰ and Dir⁰. -/
 def BearsA (h : Head) : Prop := h = .cat .C ∨ h = .cat .Voice ∨ h = .dir
 
-instance : DecidablePred BearsA := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+instance : DecidablePred BearsA := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
 /-- The heads that copy the mover's [obl] and host the reflex, (45)–(46): Voice⁰ and Dir⁰. C⁰
 attracts by [Ā] alone, so there is no C-domain reflex. -/
 def HostsReflex (h : Head) : Prop := h = .cat .Voice ∨ h = .dir
 
-instance : DecidablePred HostsReflex := λ _ => inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred HostsReflex := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 theorem HostsReflex.bearsA {h : Head} (hh : HostsReflex h) : BearsA h := Or.inr hh
 
@@ -111,12 +111,12 @@ abbrev Dependency := List Spine
 /-- The movement path, (43): the [Ā]-bearing heads of the clauses crossed, bottom-up and tagged by
 clause. By Attract Closest (39) the mover stops in the specifier of each. -/
 def path (d : Dependency) : List (ℕ × Head) :=
-  (List.range d.length).flatMap λ i =>
-    ((d.getD i []).filter λ h => decide (BearsA h)).map (i, ·)
+  (List.range d.length).flatMap fun i ↦
+    ((d.getD i []).filter fun h ↦ decide (BearsA h)).map (i, ·)
 
 /-- The sites of the reflex: the Agree relations with Voice⁰ or Dir⁰ along the path (§4.2). -/
 def sites (d : Dependency) : List (ℕ × Head) :=
-  (path d).filter λ p => decide (HostsReflex p.2)
+  (path d).filter fun p ↦ decide (HostsReflex p.2)
 
 /-- =(y)a' is licensed in clause `i` of the dependency when the path has a site there. -/
 def Licensed (d : Dependency) (i : ℕ) : Prop := i ∈ (sites d).map Prod.fst
@@ -222,7 +222,7 @@ theorem fpg (e m : Spine) : CopyLicensed [e, m] 1 ↔ .cat .C ∈ e := by
 Ā-agreement gives one per Voice⁰ and Dir⁰ (§3.1, §5.1). -/
 theorem copy_single_site (n : ℕ) : (∀ i, CopyLicensed [spine .cP n] i → i = 0) ∧
     (sites [spine .cP n]).length = n + 1 :=
-  ⟨λ i h => h.elim id λ h' => by
+  ⟨fun i h ↦ h.elim id fun h' ↦ by
     have h1 := h'.1
     have h2 := h'.2.1
     simp only [List.length_singleton] at h2
@@ -275,12 +275,12 @@ theorem table4 (a : Mayan.Adjunct) :
   decide
 
 /-- The Mam fragment licenses the enclitic for exactly the [obl]-bearing classes. -/
-theorem mam_realize_iff_bearsObl (a : Mayan.Adjunct) :
+theorem mam_realize_nonempty_iff_bearsObl (a : Mayan.Adjunct) :
     (Mam.Extraction.realize (.adjunct a)).Nonempty ↔ BearsObl a :=
   Mam.Extraction.realize_adjunct_nonempty_iff a
 
 /-- The K'iche' fragment licenses *wi* for exactly the low classes. -/
-theorem kiche_realize_iff_isLow (a : Mayan.Adjunct) :
+theorem kiche_realize_nonempty_iff_isLow (a : Mayan.Adjunct) :
     (Kiche.Extraction.realize (.adjunct a)).Nonempty ↔ IsLow a :=
   Kiche.Extraction.realize_adjunct_nonempty_iff a
 
@@ -345,9 +345,10 @@ def reflexTable : List (String × Bool) := [("licensed", true), ("blocked", fals
 /-- The monoclausal Mam rows of §2 and §3.5–3.6: the enclitic is licensed exactly for the movers
 bearing [obl]. -/
 theorem mamRows_realizable :
-    ∀ e ∈ [ex_10b, ex_11b, ex_12b, ex_13a, ex_13b, ex_14b, ex_15b, ex_16b, ex_17b, ex_18b, ex_19b,
-        ex_20b, ex_21b, ex_35c, ex_37, ex_65],
-      ∀ m, e.parse? "mover" moverTable = some m → ∀ b, e.parse? "reflex" reflexTable = some b →
+    ∀ e ∈ [ex_10b, ex_11b, ex_12b, ex_13a, ex_13b, ex_14b, ex_15b, ex_16b, ex_17b, ex_18b,
+        ex_19b, ex_20b, ex_21b, ex_35c, ex_37, ex_65],
+      ∀ m, e.parse? "mover" moverTable = some m →
+        ∀ b, e.parse? "reflex" reflexTable = some b →
         (b = true ↔ Realizable m [spine .cP 0] 0) := by
   decide
 
@@ -370,7 +371,7 @@ def sizeTable : List (String × ClauseSpine) :=
 /-- The dependency of a long-distance row: the embedded clause and, when the wh-expression lands
 in the matrix clause, the full-CP matrix clause above it. -/
 def dependencyOf (e : LinguisticExample) : Option Dependency :=
-  (e.parse? "embeddedSize" sizeTable).bind λ s =>
+  (e.parse? "embeddedSize" sizeTable).bind fun s ↦
     e.parse? "landing" [("embedded", [spine s 0]), ("matrix", [spine s 0, spine .cP 0])]
 
 /-- The long-distance Mam rows (24), (26), (31) and (34), Table 3: the reflex in each clause
@@ -384,8 +385,10 @@ theorem mamLD_licensed :
 /-- The long-distance K'iche' rows (52) and (53) follow from copy spellout. -/
 theorem kicheLD_copy :
     ∀ e ∈ [ex_52, ex_53], ∀ d, dependencyOf e = some d →
-      (∀ b, e.parse? "embeddedReflex" reflexTable = some b → (b = true ↔ CopyLicensed d 0)) ∧
-        ∀ b, e.parse? "matrixReflex" reflexTable = some b → (b = true ↔ CopyLicensed d 1) := by
+      (∀ b, e.parse? "embeddedReflex" reflexTable = some b →
+          (b = true ↔ CopyLicensed d 0)) ∧
+        ∀ b, e.parse? "matrixReflex" reflexTable = some b →
+          (b = true ↔ CopyLicensed d 1) := by
   decide
 
 end ElkinsTorrenceBrown2026

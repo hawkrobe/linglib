@@ -18,6 +18,12 @@ them.
   role each promotes to pivot.
 * `TobaBatak.VoiceSystem.voices`, `VoiceSystem.symmetry`: the inventory as the voice typology
   reads it.
+
+## References
+
+* [cole-hermon-2008]
+* [erlewine-2018]
+* [schachter-1984]
 -/
 
 open Voice (PivotTarget VoiceEntry VoiceSystemSymmetry)

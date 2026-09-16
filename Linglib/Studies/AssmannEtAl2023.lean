@@ -65,7 +65,7 @@ instance : PartialOrder Node where
   le_trans := by decide
   le_antisymm := by decide
 
-instance : DecidableLE Node := λ _ _ => inferInstanceAs (Decidable (_ = true))
+instance : DecidableLE Node := fun _ _ ↦ inferInstanceAs (Decidable (_ = true))
 
 /-- The constituents containing a focus form a chain: the skeleton is a tree. -/
 theorem isChain_Ici (f : Node) : IsChain (· ≤ ·) (Set.Ici f) := by
@@ -83,12 +83,12 @@ instance (n : Node) : Decidable n.Word := by unfold Node.Word; infer_instance
 
 /-- The marking an inventory uses for a focus: its usable constituent. -/
 def marking (inv : List Node) (f : Node) : Option Node :=
-  inv.find? λ m => decide (Usable inv m f)
+  inv.find? fun m ↦ decide (Usable inv m f)
 
 /-- The usable marking is the one found: on a tree there is exactly one. -/
 theorem marking_eq_some {inv : List Node} {m f : Node} (h : Usable inv m f) :
     marking inv f = some m := by
-  have hsome : (inv.find? λ m => decide (Usable inv m f)).isSome :=
+  have hsome : (inv.find? fun m ↦ decide (Usable inv m f)).isSome :=
     List.find?_isSome.2 ⟨m, h.1, decide_eq_true h⟩
   obtain ⟨m', hm'⟩ := Option.isSome_iff_exists.1 hsome
   have hp := List.find?_some hm'

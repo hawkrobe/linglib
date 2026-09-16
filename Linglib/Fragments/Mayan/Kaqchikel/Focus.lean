@@ -28,12 +28,15 @@ focus (no *ja*, no AF). Across Mayan, information focus stays in situ
 and unmarked except for the transitive subject, which in AF-languages
 must front and trigger AF ([aissen-2017]); Kaqchikel-specific in-situ
 data are not in the sources here, so `focusRealize` covers the fronted
-construction only and no `EveryTargetOvert` claim is made.
+construction only, and no claim that every focus is overtly marked is made.
+
+## References
+
+* [aissen-2017]
+* [erlewine-2016]
 -/
 
 namespace Kaqchikel
-
-open Reflex
 
 /-! ### Realization -/
 

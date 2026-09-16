@@ -56,6 +56,33 @@ ABS=NOM (HIGH-ABS) has Infl⁰ assign nominative, ABS=DEF (LOW-ABS) has v⁰
 assign accusative, with "absolutive" a cover term either way
 ([legate-2008]). Both types assign ergative uniformly (via transitive
 v⁰) and nominative to intransitive subjects (via Infl⁰).
+
+## References
+
+* [aissen-england-zavala-2017]
+* [aissen-polian-2025]
+* [coon-2013]
+* [coon-mateo-pedro-preminger-2014]
+* [corbett-1998]
+* [elkins-torrence-brown-2026]
+* [erlewine-2016]
+* [garcia-matzar-rodriguez-guajan-1997]
+* [hofling-2017]
+* [imanishi-2014]
+* [imanishi-2020]
+* [kaufman-norman-1984]
+* [koizumi-2023]
+* [legate-2008]
+* [mateo-toledo-2008]
+* [mendes-ranero-2021]
+* [mondloch-2017]
+* [polian-2013]
+* [polian-2017]
+* [preminger-2014]
+* [scott-2023]
+* [tada-1993]
+* [vazquez-alvarez-2011]
+* [zavala-maldonado-2017]
 -/
 
 /-- The Mayan languages with consolidated Fragment files. -/

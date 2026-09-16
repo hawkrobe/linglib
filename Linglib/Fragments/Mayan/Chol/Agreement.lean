@@ -102,6 +102,18 @@ Sa/So/fluid-S into one intransitive subject category — sufficient
 for the perfective↔non-perfective split formalization but undermodels
 the agentive split. Future refinement: split into `intranSAgentive` /
 `intranSPatientive` / `intranSFluid`.
+
+## References
+
+* [arcos-lopez-2009]
+* [coon-2013]
+* [coon-mateo-pedro-preminger-2014]
+* [dixon-1994]
+* [imanishi-2020]
+* [kaufman-norman-1984]
+* [martinez-cruz-2007]
+* [scott-2023]
+* [vazquez-alvarez-2011]
 -/
 
 

@@ -77,7 +77,7 @@ def SatisfiesPRC (markers : List Marker) : Prop :=
 /-- The Primary Relativization Constraint follows from HC₂ and the definition of primary, as
 the paper derives it: a continuous strategy that relativizes subjects covers an upper set. -/
 theorem prc_of_hc2 {markers : List Marker} (h : SatisfiesHC2 markers) : SatisfiesPRC markers :=
-  fun m hm hp ↦ isUpperSet_coe_of_ordConnected (h m hm) hp
+  fun m hm hp ↦ Set.OrdConnected.isUpperSet_of_top_mem (h m hm) hp
 
 /-! ### The sample (Table 1)
 
@@ -123,12 +123,12 @@ theorem prc_verified : ∀ markers ∈ sample, SatisfiesPRC markers :=
   fun _ h ↦ prc_of_hc2 (hc2_verified _ h)
 
 /-- In the sample every primary strategy covers exactly the closed interval from its cut-off up
-to the subject, by HC₂ and `Finset.eq_Icc_top_of_ordConnected`: what Table 1 records as a run
-of `+` entries ending at the subject. -/
+to the subject, by HC₂ and `Finset.eq_Icc_top_of_ordConnected_coe`: what Table 1 records as a
+run of `+` entries ending at the subject. -/
 theorem primary_positions_eq_Icc_top :
     ∀ markers ∈ sample, ∀ m ∈ markers, (hp : m.IsPrimary) →
       m.positions = Icc (m.positions.min' ⟨⊤, hp⟩) ⊤ :=
-  fun _ h m hm hp ↦ eq_Icc_top_of_ordConnected (hc2_verified _ h m hm) hp
+  fun _ h m hm hp ↦ eq_Icc_top_of_ordConnected_coe (hc2_verified _ h m hm) hp
 
 /-- Every position from subject to genitive is the cut-off of some primary strategy in the
 sample, which covers exactly the interval from there up to the subject: the Section 1.3 argument

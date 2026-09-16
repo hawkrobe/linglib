@@ -44,6 +44,10 @@ Antipassive reuses the same *-on* morpheme in non-finite embedded
 transitives (where Infl⁰ is absent), analyzed as the same case-assigning
 mechanism. Tables and examples cite [coon-mateo-pedro-preminger-2014]
 tables (13) and (14).
+
+## References
+
+* [coon-mateo-pedro-preminger-2014]
 -/
 
 

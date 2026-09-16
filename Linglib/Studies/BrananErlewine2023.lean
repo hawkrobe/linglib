@@ -83,19 +83,13 @@ def moPiedPiped : Finset (Reflex Node) := {.morpheme .vp}
 subject properly contained in it (Nagano's anti-pied-piping datum). -/
 def moAntiPiedPiped : Finset (Reflex Node) := {.morpheme .sbj}
 
-/-- (1): Hungarian movement of exactly the focused argument to
-the immediately preverbal focus position. -/
-def movementExact : Finset (Reflex Node) := {.displacement .obj}
-
-/-- (3): [a [használt]F autót] adta el — the whole object DP moves
-for a focus on the attributive adjective (Kenesei's pied-piping
-datum). -/
-def movementPiedPiped : Finset (Reflex Node) := {.displacement .obj}
-
-/-- (7): Péter [a Hamletet] [olvasta fel _ a kertben]F — predicate
-focus with movement of the object properly contained in it (Kenesei's
+/-- (1), (3), (7): Hungarian movement of the object DP to the
+immediately preverbal focus position, one reflex serving a focus on
+the object itself, on its attributive adjective ([a [használt]F autót]
+adta el, Kenesei's pied-piping datum) and on the predicate containing
+it (Péter [a Hamletet] [olvasta fel _ a kertben]F, Kenesei's
 anti-pied-piping datum). -/
-def movementAntiPiedPiped : Finset (Reflex Node) := {.displacement .obj}
+def objectMovement : Finset (Reflex Node) := {.displacement .obj}
 
 /-! ### All three relations, in both processes -/
 
@@ -108,15 +102,15 @@ theorem mo_attests_all_relations :
 /-- Hungarian focus movement attests all three host–focus relations
 (1)/(3)/(7). -/
 theorem movement_attests_all_relations :
-    ExactlyTargets movementExact .obj ∧ PiedPipes movementPiedPiped .att ∧
-    AntiPiedPipes movementAntiPiedPiped .vp := by decide
+    ExactlyTargets objectMovement .obj ∧ PiedPipes objectMovement .att ∧
+    AntiPiedPipes objectMovement .vp := by decide
 
 /-- Neither particle placement nor focus movement strictly targets the
 F-marked constituent: each tolerates mismatches in both directions. -/
 theorem msf_tolerates_mismatches :
     ¬ ExactlyTargets moPiedPiped .obj ∧ ¬ ExactlyTargets moAntiPiedPiped .s ∧
-    ¬ ExactlyTargets movementPiedPiped .att ∧
-    ¬ ExactlyTargets movementAntiPiedPiped .vp :=
+    ¬ ExactlyTargets objectMovement .att ∧
+    ¬ ExactlyTargets objectMovement .vp :=
   ⟨mo_attests_all_relations.2.1.not_exactlyTargets,
    mo_attests_all_relations.2.2.not_exactlyTargets,
    movement_attests_all_relations.2.1.not_exactlyTargets,
