@@ -29,6 +29,8 @@ comparative `maxComparative` compares a matrix witness with its maximum.
 * `highScope_maxIn_iff_lowScope`: over a monotone quantifier on a finite domain, a degree
   quantifier at an upper set takes scope without truth-conditional effect.
 * `not_isGreatest_scopeDegrees`: under an antitone quantifier the degree set has no maximum.
+* `highScope_maxIn_singleton_every`, `highScope_maxIn_singleton_some`: the exact degree
+  quantifier over `every` names the infimum of the measures and over `some` their greatest.
 * `isGreatest_scopeDegrees_of_inf`: under a meet with an antitone quantifier the maximum is the
   other conjunct's.
 * `maxComparative_unique`: with unique witnesses the max-quantified comparative is direct
@@ -60,6 +62,8 @@ variable [Preorder D] {Q : Quantifier α} {μ : α → D} {d : D}
 *-er than `t`* at `U = Ioi t`, *less than `t`* at `Iio t`, *exactly `δ` -er than `t`* at
 `{t + δ}`, and the equative at `Ici t`. -/
 def maxIn (U P : Set D) : Prop := ∃ m ∈ U, IsGreatest P m
+
+theorem maxIn_singleton {P : Set D} {a : D} : maxIn {a} P ↔ IsGreatest P a := exists_eq_left
 
 /-- The degrees at which `Q` holds of the entities reaching them, the degree predicate abstracted
 over the scope of `Q`. Membership at `d` is `Q (Comparison.ge.over μ d)`. -/
@@ -150,6 +154,24 @@ theorem highScope_every_of_lowScope {R : α → Prop} (hR : ∃ x, R x ∧ ∀ y
   rw [lowScope_maxIn] at h
   obtain ⟨x₀, hx₀, hmin⟩ := hR
   exact ⟨μ x₀, h x₀ hx₀, hmin, λ _ hd => hd x₀ hx₀⟩
+
+/-- The exact degree quantifier over `every R`: the greatest degree every `R`-witness reaches is
+the infimum of their measures. -/
+theorem highScope_maxIn_singleton_every {R : α → Prop} {m : D} :
+    highScope (maxIn {m}) (every_sem R) μ ↔ IsGLB (μ '' {x | R x}) m := by
+  rw [highScope, maxIn_singleton, scopeDegrees_every]; rfl
+
+/-- The exact degree quantifier over `some R`: the greatest degree some `R`-witness reaches is
+the greatest of their measures. -/
+theorem highScope_maxIn_singleton_some {R : α → Prop} {m : D} :
+    highScope (maxIn {m}) (some_sem R) μ ↔ IsGreatest (μ '' {x | R x}) m := by
+  rw [highScope, maxIn_singleton]
+  constructor
+  · rintro ⟨⟨x, hx, hmx⟩, hub⟩
+    exact ⟨⟨x, hx, (hub ⟨x, hx, le_rfl⟩).antisymm hmx⟩,
+      λ _ ⟨y, hy, hdy⟩ => hdy ▸ hub ⟨y, hy, le_rfl⟩⟩
+  · rintro ⟨⟨x, hx, rfl⟩, hub⟩
+    exact ⟨⟨x, hx, le_rfl⟩, λ _ ⟨y, hy, hdy⟩ => hdy.trans (hub ⟨y, hy, rfl⟩)⟩
 
 /-- The high scope entails the low one under `some` at every interval, the tallest witness being
 a witness. -/

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Quantification.Numerals.Basic
+import Linglib.Semantics.Degree.Quantifier
 import Linglib.Pragmatics.NeoGricean.Basic
-import Mathlib.Order.Bounds.Basic
 
 /-!
 # Kennedy (2015): A "de-Fregean" Semantics (and Neo-Gricean Pragmatics) for Modified and Unmodified Numerals
@@ -9,12 +9,13 @@ This file formalizes the de-Fregean semantics of [kennedy-2015]: a numeral, bare
 is a quantifier over degree properties, true of a property when its greatest degree stands in
 the numeral's relation to the number, `max{n | D(n)} = m` for the bare numeral ((29)), `> m` and
 `< m` for the Class A modifiers *more than* and *fewer than* ((41)), `≥ m` and `≤ m` for the
-Class B modifiers *at least* and *at most* ((42)). Applied to the degrees a count reaches this is
-the substrate's `Degree.Comparison.over`, so bare numerals are two-sided without a Horn scale
-(`deFregean_Iic`), and the one-sided readings of numerals under root modals ((31)–(34)) are
-matters of scope: a bare numeral scoping over a necessity modal states the least count the modal
-requires and over a possibility modal the greatest it allows (`necessity_wide_iff`,
-`possibility_wide_iff`).
+Class B modifiers *at least* and *at most* ((42)); this is the substrate's degree quantifier
+`Degree.maxIn` at the comparison's interval. Applied to the degrees a count reaches it is the
+comparison of the count, so bare numerals are two-sided without a Horn scale
+(`maxIn_interval_Iic`), and the one-sided readings of numerals under root modals ((31)–(34)) are
+matters of scope, `Degree.highScope`: a bare numeral scoping over a necessity modal names the
+least count the modal requires and over a possibility modal the greatest it allows
+(`necessity_wide_iff`, `possibility_wide_iff`).
 
 The ignorance inferences of the Class B modifiers are Sauerland's primary implicatures ((43))
 over Kennedy's single alternative set, the five forms of one numeral ((46)): *at least m* is
@@ -29,7 +30,9 @@ strengthens to a secondary one ((44)), each contradicting the assertion together
 
 The worlds of the pragmatics are counts, so a form's content is the set `c.over id m` of counts,
 the alternatives are the images of the substrate's `Numerals.kennedyAlternatives`, and the
-neo-Gricean operators are `NeoGricean.commitment` and `NeoGricean.IsSecondaryImplicature`. The
+neo-Gricean operators are `NeoGricean.commitment` and `NeoGricean.IsSecondaryImplicature`. A
+root modal is the quantifier `every_sem R` or `some_sem R` over its accessible worlds `R`, and
+the numeral's two scopes are `Degree.lowScope` and `Degree.highScope` of `maxIn {m}` over it. The
 interactions of Class B modifiers with root modals (Section 4.2) are not formalized.
 
 ## References
@@ -41,13 +44,12 @@ interactions of Class B modifiers with root modals (Section 4.2) are not formali
 
 namespace Kennedy2015
 
-open Degree Numerals NeoGricean Set
+open Degree Numerals NeoGricean Quantification Set
 
-/-! ### The de-Fregean semantics (Section 3) -/
+/-! ### The de-Fregean semantics (Section 3)
 
-/-- (29), (41), (42): the numeral form `c m` is true of a degree property `D` when `D` has a
-greatest degree standing in the relation `c` to `m`. -/
-def deFregean (c : Comparison) (m : ℕ) (D : Set ℕ) : Prop := ∃ k, IsGreatest D k ∧ c.rel k m
+(29), (41), (42): the numeral form `c m` is true of a degree property when its greatest degree
+stands in the relation `c` to `m`, the substrate's `maxIn (c.interval m)`. -/
 
 /-- A count reaching a degree is a member of the comparison's interval. -/
 theorem mem_over (c : Comparison) (m n : ℕ) : n ∈ c.over id m ↔ c.rel n m :=
@@ -55,62 +57,38 @@ theorem mem_over (c : Comparison) (m n : ℕ) : n ∈ c.over id m ↔ c.rel n m 
 
 /-- On the degrees a count reaches, the de-Fregean form is the comparison of the count itself,
 the substrate's meaning of the numeral: two-sided bare content with no Horn scale. -/
-theorem deFregean_Iic (c : Comparison) (m n : ℕ) : deFregean c m (Iic n) ↔ n ∈ c.over id m := by
-  constructor
-  · rintro ⟨k, hk, hrel⟩
-    rw [← isGreatest_Iic.unique hk] at hrel
-    exact (mem_over c m n).mpr hrel
-  · exact λ h => ⟨n, isGreatest_Iic, (mem_over c m n).mp h⟩
+theorem maxIn_interval_Iic (c : Comparison) (m n : ℕ) :
+    maxIn (c.interval m) (Iic n) ↔ n ∈ c.over id m :=
+  maxIn_Iic
 
 section Modals
 
-variable {W : Type*}
-
-/-- The degrees reached in every accessible world: the property a numeral measures when it
-scopes over a necessity modal. -/
-def necessityDegrees (R : Set W) (count : W → ℕ) : Set ℕ := {n | ∀ w ∈ R, n ≤ count w}
-
-/-- The degrees reached in some accessible world: the property a numeral measures when it
-scopes over a possibility modal. -/
-def possibilityDegrees (R : Set W) (count : W → ℕ) : Set ℕ := {n | ∃ w ∈ R, n ≤ count w}
+variable {W : Type*} (R : W → Prop) (count : W → ℕ) (m : ℕ)
 
 /-- (33a), (34a): under a modal the bare numeral keeps its two-sided content in each accessible
 world. -/
-theorem narrow_scope_two_sided (R : Set W) (count : W → ℕ) (m : ℕ) :
-    (∀ w ∈ R, deFregean .eq m (Iic (count w))) ↔ ∀ w ∈ R, count w = m := by
-  simp only [deFregean_Iic]
-  exact Iff.rfl
+theorem narrow_scope_two_sided (Q : Quantifier W) :
+    lowScope (maxIn {m}) Q count ↔ Q λ w => count w = m :=
+  lowScope_maxIn
 
-/-- (33b): over a necessity modal the bare numeral is lower-bounded: every accessible world
-reaches `m` and one reaches exactly `m`, so `m` is the least count the modal requires. -/
-theorem necessity_wide_iff (R : Set W) (count : W → ℕ) (m : ℕ) :
-    deFregean .eq m (necessityDegrees R count) ↔
-      (∀ w ∈ R, m ≤ count w) ∧ ∃ w ∈ R, count w = m := by
-  constructor
-  · rintro ⟨k, ⟨hmem, hub⟩, hkm⟩
-    have hkm' : k = m := hkm
-    subst hkm'
-    refine ⟨hmem, ?_⟩
-    by_contra h
-    push Not at h
-    have : k + 1 ∈ necessityDegrees R count :=
-      λ w hw => Nat.lt_of_le_of_ne (hmem w hw) (h w hw).symm
-    exact absurd (hub this) (by omega)
-  · rintro ⟨hall, w, hw, hwm⟩
-    exact ⟨m, ⟨hall, λ n hn => hwm ▸ hn w hw⟩, rfl⟩
+/-- In `ℕ` an infimum is attained. -/
+private theorem isGLB_iff_isLeast {s : Set ℕ} : IsGLB s m ↔ IsLeast s m :=
+  ⟨λ h => h.isLeast <| by_contra λ hm => absurd
+      (h.2 (show m + 1 ∈ lowerBounds s from
+        λ x hx => Nat.lt_of_le_of_ne (h.1 hx) λ e => hm (e ▸ hx))) (by omega),
+    IsLeast.isGLB⟩
 
-/-- (34b): over a possibility modal the bare numeral is upper-bounded: some accessible world
-reaches exactly `m` and none exceeds it, so `m` is the greatest count the modal allows. -/
-theorem possibility_wide_iff (R : Set W) (count : W → ℕ) (m : ℕ) :
-    deFregean .eq m (possibilityDegrees R count) ↔
-      (∃ w ∈ R, count w = m) ∧ ∀ w ∈ R, count w ≤ m := by
-  constructor
-  · rintro ⟨k, ⟨⟨w, hw, hwk⟩, hub⟩, hkm⟩
-    have hkm' : k = m := hkm
-    subst hkm'
-    exact ⟨⟨w, hw, le_antisymm (hub ⟨w, hw, le_rfl⟩) hwk⟩, λ w' hw' => hub ⟨w', hw', le_rfl⟩⟩
-  · rintro ⟨⟨w, hw, hwm⟩, hall⟩
-    exact ⟨m, ⟨⟨w, hw, hwm.ge⟩, λ _ ⟨w', hw', hn⟩ => hn.trans (hall w' hw')⟩, rfl⟩
+/-- (33b): over a necessity modal the bare numeral is lower-bounded: `m` is the least count the
+modal requires. -/
+theorem necessity_wide_iff :
+    highScope (maxIn {m}) (every_sem R) count ↔ IsLeast (count '' {w | R w}) m :=
+  highScope_maxIn_singleton_every.trans (isGLB_iff_isLeast m)
+
+/-- (34b): over a possibility modal the bare numeral is upper-bounded: `m` is the greatest count
+the modal allows. -/
+theorem possibility_wide_iff :
+    highScope (maxIn {m}) (some_sem R) count ↔ IsGreatest (count '' {w | R w}) m :=
+  highScope_maxIn_singleton_some
 
 end Modals
 

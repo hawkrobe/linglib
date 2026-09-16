@@ -40,6 +40,10 @@ theorem individual_eq_pure (a : E) : individual a = (pure a : Cont Prop E) := rf
 /-- Montague lift is combinatory logic's type-raising combinator `T`. -/
 theorem individual_eq_T (a : E) : individual a = Combinator.T (β := Prop) a := rfl
 
+/-- The sets of a principal ultrafilter intersect to the singleton of its generator. -/
+theorem sInter_individual (a : E) : ⋂₀ (individual a : Set (Set E)) = {a} :=
+  Set.ext fun _ => ⟨fun h => h {a} rfl, fun h _ hs => h ▸ hs⟩
+
 /-! ### Predicative content and existential closure -/
 
 /-- Predicative content of a quantifier: `BE(Q) = λx. Q(λy. y = x)`. -/

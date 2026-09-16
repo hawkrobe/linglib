@@ -47,6 +47,10 @@ Uses `j = x` order for definitional equality with `BE(individual j)`. -/
 def ident (j : E) : (E → Prop) :=
   fun x => j = x
 
+/-- `ident` is injective: an entity is recovered from its singleton property. -/
+theorem ident_injective : Function.Injective (ident (E := E)) :=
+  fun a b h => (show b = a from (congrFun h a).mp rfl).symm
+
 /-- Propositional analogue of `ident`: `propIdent(p) = λq. [p = q]`,
 i.e. the singleton question `{p}` from a proposition `p`.
 
