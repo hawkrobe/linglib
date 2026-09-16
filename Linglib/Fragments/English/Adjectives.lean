@@ -6,9 +6,7 @@ import Linglib.Semantics.Degree.Adjective
 This file lists the English adjective lexemes. An entry records the surface
 form, the scalar dimension, the polarity, the antonym and the comparison
 paradigm: the comparative and superlative forms with their root pattern,
-`Paradigm.abb` for *good – better – best*. The scale shape, the positive
-standard and the Kennedy class are derived from the dimension and the
-polarity, not stored.
+`Paradigm.abb` for *good – better – best*.
 
 ## References
 
