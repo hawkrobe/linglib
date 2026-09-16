@@ -1,5 +1,5 @@
+import Linglib.Core.Analysis.MeanInequalities
 import Linglib.Core.Probability.Scores
-import Linglib.Pragmatics.RSA.Atoms
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Data.Examples.BergenGoodman2015
@@ -33,9 +33,9 @@ so the eq. 7 softmax is degenerate and eq. 8 reduces to the channel row
 eq. 7 utilities are channel-weighted geometric means of literal
 posteriors (`xAtom`, `yAtom`) — and fully parametric in ε: the mechanism
 theorem `xAtom_lt_yAtom` places the atoms strictly on either side of the
-unstressed posterior by the two-factor GM bounds in
-`Pragmatics/RSA/Atoms.lean`, and the headline reduces to that ordering
-plus algebra. No magnitude certificates.
+unstressed posterior by the weighted geometric-mean bounds of
+`Core/Analysis/MeanInequalities.lean`, and the headline reduces to that
+ordering plus algebra. No magnitude certificates.
 
 ## References
 
@@ -361,12 +361,12 @@ theorem xAtom_lt_yAtom (hε0 : 0 < ε) (hε : ε < 2/3) :
     rw [div_lt_iff₀ h2]; linarith
   calc xAtom ε < (1 - ε/2) / (2 + ε) := by
         rw [xAtom, hb, ha]
-        exact RSA.rpow_mul_rpow_lt hu hv hv le_rfl huv (by linarith) hε0
-          (by ring)
+        exact (Real.geom_mean2_weighted_lt_max (by linarith) hε0 hv.le hu.le (by ring)
+          huv.ne').trans_eq (max_eq_left huv.le)
     _ < yAtom ε := by
-        rw [yAtom, hB, hb, mul_comm]
-        exact RSA.lt_rpow_mul_rpow hv hvhalf le_rfl (by linarith)
-          (by linarith) (by ring)
+        rw [yAtom, hB, hb]
+        exact (min_eq_right hvhalf.le).symm.trans_lt (Real.min_lt_geom_mean2_weighted
+          (by linarith) (by linarith) (by norm_num) hv (by ring) hvhalf.ne')
 
 theorem xAtom_pos (hε0 : 0 < ε) (hε1 : ε < 1) : 0 < xAtom ε := by
   obtain ⟨_, hb, ha⟩ := l0_values hε0 hε1
