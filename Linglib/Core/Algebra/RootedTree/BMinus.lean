@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
-import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
 import Linglib.Core.Data.Multiset.Antidiagonal
 import Mathlib.LinearAlgebra.SesquilinearForm.Basic
 import Mathlib.Tactic.Ring

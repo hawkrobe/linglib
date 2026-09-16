@@ -211,7 +211,7 @@ end
 /-! ### Filter characterizations
 
 Each pair filter is a `List.filter` on the path followed by a projection, so pair lists can be
-bucketed by a predicate on paths (`bind_listChoices_filter` in `InsertionNodeDecomp.lean`). -/
+bucketed by a predicate on paths (`bind_listChoices_filter` in `Insertion.lean`). -/
 
 theorem filterMap_rootPrependFilter (pairs : List (Path × RoseTree α)) :
     pairs.filterMap rootPrependFilter =

@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionAddHost
-import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
 import Linglib.Core.Data.List.Zip
 import Linglib.Core.Data.Multiset.Antidiagonal
 import Linglib.Core.Data.RoseTree.DecEq
@@ -153,7 +152,7 @@ private theorem _root_.RoseTree.Pathed.insertionForest_length
     rw [RoseTree.Pathed.insertionForest_cons_host_nil_guests] at hL
     rw [Multiset.mem_singleton.mp hL]
   | T :: F, T_g :: Ts,  L, hL => by
-    rw [RoseTree.Pathed.insertionForest_cons_cons] at hL
+    rw [RoseTree.Pathed.insertionForest_cons_assignment] at hL
     -- L ∈ bind of bind of map; unfold mem step by step.
     rw [Multiset.mem_bind] at hL
     obtain ⟨assignment, _hass, hL⟩ := hL

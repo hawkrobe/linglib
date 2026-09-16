@@ -413,29 +413,6 @@ private theorem product_map_append_eq_bind_map
   rw [Multiset.map_map]
   rfl
 
-/-- Uniform decomposition of `insertionForest (T :: F) X` over `[true, false]`-assignments
-    of `X`'s elements to the T-bucket or F-bucket. Works for empty X via singleton bind. -/
-theorem insertionForest_cons_assignment (T : RoseTree α)
-    (F : List (RoseTree α)) (X : List (RoseTree α)) :
-    insertionForest (T :: F) X =
-      (Multiset.ofList (listChoices [true, false] X.length)).bind fun α =>
-        (insertion T
-            ((X.zip α).filterMap (fun p => if p.snd then some p.fst else none))).bind
-          fun T' =>
-            (insertionForest F
-                ((X.zip α).filterMap (fun p => if p.snd then none else some p.fst))).map
-              fun F' => T' :: F' := by
-  match X with
-  | [] =>
-    rw [insertionForest_cons_host_nil_guests]
-    -- listChoices [t,f] 0 = [[]], so ofList = {[]}
-    simp only [List.length_nil, listChoices_zero, List.zip_nil_right, List.filterMap_nil,
-               Multiset.coe_singleton, Multiset.singleton_bind]
-    rw [insertion_nil_guests, insertionForest_nil_guests]
-    rw [Multiset.singleton_bind, Multiset.map_singleton]
-  | x :: rest =>
-    exact insertionForest_cons_cons T F x rest
-
 /-- **Lemma X (listChoices append-decomposition)**: enumerating length-`(n+1)`
     bit vectors and applying `g` equals enumerating length-`n` bit vectors and
     summing `g (α ++ [true]) + g (α ++ [false])`. Multiset-level, NOT list-level. -/
