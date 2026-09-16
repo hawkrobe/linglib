@@ -12,7 +12,7 @@ The root-namespace `Case` type is the canonical, analytical case
 inventory: the values languages' case systems distinguish. All
 theoretical machinery — Blake's hierarchy (here), Caha containment
 (`Syntax/Case/Order.lean`), syncretism and *ABA
-(`Morphology/Paradigm/Case.lean`), grammaticalization clines
+(`Morphology.IsContiguous` over that order), grammaticalization clines
 (`Morphology/Grammaticalization/Case.lean`) — operates over this type.
 
 `UD.Case` (`Data/UD/Basic.lean`) is the *realization* vocabulary — what
