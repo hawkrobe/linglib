@@ -11,24 +11,36 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 /-!
 # Subterms, containment, and c-command
 
-This file develops the subterm theory of syntactic objects. Containment is the transitive
-closure of immediate containment, the daughter relation, and reflexive containment its
-reflexive transitive closure. `subtrees` enumerates the subterms, root included, and
-`accessibleTerms` the proper ones, so membership in the two multisets is reflexive and strict
-containment. Containment lowers the vertex count, which makes it a well-founded strict order and
-decides it. Sisterhood and c-command are relative to a root.
+This file develops the subterm theory of syntactic objects: containment as a closure of the
+daughter relation, the multisets of subterms and accessible terms that enumerate it, and
+sisterhood and c-command relative to a root. Containment lowers the vertex count, which makes it
+a well-founded strict order and decides it.
 
 ## Main definitions
 
-* `Minimalist.SyntacticObject.immediatelyContains`, `contains`, `containsOrEq`
-* `Minimalist.SyntacticObject.subtrees`, `accessibleTerms`
-* `Minimalist.SyntacticObject.areSistersIn`, `cCommandsIn`, `asymCCommandsIn`, `domainIn`
+* `Minimalist.SyntacticObject.immediatelyContains`: `x` immediately contains `y` when `y` is a
+  root daughter of `x`.
+* `Minimalist.SyntacticObject.contains`: the transitive closure of immediate containment.
+* `Minimalist.SyntacticObject.containsOrEq`: the reflexive transitive closure of immediate
+  containment.
+* `Minimalist.SyntacticObject.subtrees`: the subterms of an object, root included, one per
+  vertex.
+* `Minimalist.SyntacticObject.accessibleTerms`: the subterms at the non-root vertices, the
+  accessible terms of [marcolli-chomsky-berwick-2025].
+* `Minimalist.SyntacticObject.areSistersIn`: `x` and `y` are sisters in `root` when they are
+  distinct daughters of one subterm of `root`.
+* `Minimalist.SyntacticObject.cCommandsIn`: `x` c-commands `y` in `root` when a sister of `x`
+  reflexively contains `y` ([reinhart-1976]).
+* `Minimalist.SyntacticObject.asymCCommandsIn`: c-command in one direction only.
+* `Minimalist.SyntacticObject.domainIn`: the c-command domain of `x` in `root`, the subterms
+  it c-commands.
 
 ## Main results
 
-* `Minimalist.SyntacticObject.mem_subtrees`, `mem_accessibleTerms`: the two multisets
-  enumerate reflexive and strict containment.
-* `Minimalist.SyntacticObject.wellFounded_flip_contains`: the subterm relation is well-founded.
+* `Minimalist.SyntacticObject.mem_subtrees`, `mem_accessibleTerms`: the subterms of `x` are
+  the objects it reflexively contains, and the accessible terms those it strictly contains.
+* `Minimalist.SyntacticObject.wellFounded_flip_contains`: the proper subterm relation is
+  well-founded.
 * `Minimalist.SyntacticObject.card_accessibleTerms`: one accessible term per edge.
 
 ## Implementation notes
