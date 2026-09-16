@@ -1,0 +1,162 @@
+[
+  {
+    "id": "rett2020a_9",
+    "source": {"bibkey": "rett-2020a", "paperLabel": "(9)"},
+    "reportedIn": null,
+    "language": "taga1270",
+    "primaryText": "Nakilala ni-Mary si-John bago siya um-akyat sa bundok.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Nakilala", "PFV.TV-meet"], ["ni-Mary", "GEN-Mary"], ["si-John", "SUBJ-John"],
+      ["bago", "before"], ["siya", "SUBJ.3SG"], ["um-akyat", "PFV.AV-climb"], ["sa", "OBL"],
+      ["bundok", "mountain"]
+    ],
+    "translation": "Mary met John before he climbed to the top of the mountain.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "before-start", "judgment": "acceptable"},
+      {"name": "before-finish", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["embedded", "culmination"]
+    ],
+    "comment": "Unambiguously read against the onset; Dutch, Hungarian and Italian consultants report the same.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "rett2020a_10",
+    "source": {"bibkey": "rett-2020a", "paperLabel": "(10)"},
+    "reportedIn": null,
+    "language": "stan1295",
+    "primaryText": "Mary hat John getroffen, nachdem er Single war.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mary", "Mary"], ["hat", "had-3SG"], ["John", "John"], ["getroffen,", "met"],
+      ["nachdem", "after"], ["er", "he"], ["Single", "single"], ["war.", "was-3SG"]
+    ],
+    "translation": "Mary met John after he was single.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "after-finish", "judgment": "acceptable"},
+      {"name": "after-start", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "after"],
+      ["embedded", "process"]
+    ],
+    "comment": "Unambiguously read against the end; Turkish consultants report the same.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "rett2020a_11a",
+    "source": {"bibkey": "rett-2020a", "paperLabel": "(11a)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Mary je srela Johna pre nego što se peo na vrh planine.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mary", "Mary-NOM"], ["je", "is-PRES-3FS"], ["srela", "met-PP-3FS"], ["Johna", "John-ACC"],
+      ["pre", "before"], ["nego", "than"], ["što", "PTCL"], ["se", "REFL"],
+      ["peo", "climb-IMP-3MS"], ["na", "on"], ["vrh", "top-ACC"], ["planine.", "mountain-GEN"]
+    ],
+    "translation": "Mary met John before he climbed to the top of the mountain.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [
+      {"name": "before-start", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["embedded", "culmination"],
+      ["aspect", "imperfective"]
+    ],
+    "comment": "Acceptable to the extent an imperfective is without an overt inchoative marker.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "rett2020a_11b",
+    "source": {"bibkey": "rett-2020a", "paperLabel": "(11b)"},
+    "reportedIn": null,
+    "language": "sout1528",
+    "primaryText": "Mary je srela Johna pre nego što se popeo na vrh planine.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mary", "Mary-NOM"], ["je", "is-PRES-3FS"], ["srela", "met-PP-3FS"], ["Johna", "John-ACC"],
+      ["pre", "before"], ["nego", "than"], ["što", "PTCL"], ["se", "REFL"],
+      ["popeo", "climb-PP-3MS"], ["na", "on"], ["vrh", "top-ACC"], ["planine.", "mountain-GEN"]
+    ],
+    "translation": "Mary met John before he climbed to the top of the mountain.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "before-finish", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["embedded", "culmination"],
+      ["aspect", "perfective"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "rett2020a_12a",
+    "source": {"bibkey": "rett-2020a", "paperLabel": "(12a)"},
+    "reportedIn": null,
+    "language": "taga1270",
+    "primaryText": "Um-alis siya bago niya w<in>alis-an ang-sahig.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Um-alis", "AV.PFV.NEUT-leave"], ["siya", "SUBJ.3SG"], ["bago", "before"],
+      ["niya", "NON.SUBJ.3SG"], ["w<in>alis-an", "PFV.NEUT-sweep-LV"],
+      ["ang-sahig.", "SUBJ-floor"]
+    ],
+    "translation": "She left before he swept the floor.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "before-start", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["embedded", "culmination"],
+      ["aspect", "pfv.neut"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "rett2020a_12b",
+    "source": {"bibkey": "rett-2020a", "paperLabel": "(12b)"},
+    "reportedIn": null,
+    "language": "taga1270",
+    "primaryText": "Um-alis siya bago niya na-walis-an ang-sahig.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Um-alis", "AV.PFV.NEUT-leave"], ["siya", "SUBJ.3SG"], ["bago", "before"],
+      ["niya", "NON.SUBJ.3SG"], ["na-walis-an", "PFV.AIA-sweep-LV"], ["ang-sahig.", "SUBJ-floor"]
+    ],
+    "translation": "She left before he swept the floor.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "before-finish", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["construction", "before"],
+      ["embedded", "culmination"],
+      ["aspect", "aia"]
+    ],
+    "comment": "The ability-and-involuntary-action perfective is the culminating one (Dell 1983).",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
