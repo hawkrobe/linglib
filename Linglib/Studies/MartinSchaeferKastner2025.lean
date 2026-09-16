@@ -1,4 +1,3 @@
-import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Fragments.Romance.French.Predicates
