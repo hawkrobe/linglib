@@ -1,4 +1,4 @@
-import Linglib.Syntax.RelativeClause.Basic
+import Linglib.Syntax.Clause.Relative
 
 /-!
 # Yoruba Relativization Fragment

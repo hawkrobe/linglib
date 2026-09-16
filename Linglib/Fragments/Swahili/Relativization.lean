@@ -1,5 +1,5 @@
 import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.RelativeClause.Basic
+import Linglib.Syntax.Clause.Relative
 import Linglib.Fragments.Swahili.Basic
 
 /-!
