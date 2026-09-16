@@ -24,7 +24,10 @@ carry different contents (`stack_eq`).
 
 * `Cat` has no mood head, so the MoodP of (47b) is the T-level spine; what matters is that it
   projects neither C nor D.
-* The holder and theme arguments of the event semantics in (78) and (92) are not represented.
+* The holder and theme arguments of the event semantics in (78) and (92) are not represented,
+  the content function drops the paper's world index, and the independent mood *-i*, the
+  identity (74), has no declaration.
+* `not_factive` is a structural witness about the familiar DP, not a Washo datum.
 
 ## TODO
 
@@ -93,8 +96,8 @@ theorem denote_complement :
 theorem denote_complement_isSome_iff : (⟦complement cont p d⟧ g s).isSome ↔ cont (g d) = p :=
   Description.denote_anaphoric_isSome_iff _ _ _ _
 
-/-- The complement can be defined at a situation where its content is false, so factivity is
-not lexically specified (§5.3.2). -/
+/-- The complement can be defined at a situation where its content is false: familiarity is
+not factivity (§5.3.1), the warrant for (86)–(87) in §5.3.2. -/
 theorem not_factive :
     ∃ (cont : Unit → Bool → Prop) (p : Bool → Prop) (g : Assignment Unit) (s : Bool),
       (⟦complement cont p 0⟧ g s).isSome ∧ ¬ p s :=

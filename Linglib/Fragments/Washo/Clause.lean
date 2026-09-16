@@ -34,14 +34,17 @@ open Morphology (Morph)
 /-! ### Clause-typers -/
 
 /-- The clausal nominalizer *-ge*, the accusative form of *-gi ~ -ge* that attitude complements
-bear (fn. 6). -/
+bear (fn. 6). It is the exponent of the index head under D, not a C: the clause it closes is a
+finite indicative CP with subject agreement, tense and switch reference, so its coding is
+indicative and the nominal shell is its licenser (§3.1). -/
 def ge : Complementizer where
   morphs := [.suff "ge"]
-  coding := some .nominalized
+  coding := some .indicative
   verbForm := some .Fin
   licenser := some .nominal
 
-/-- The dependent mood *-aʔ*, which types a bare embedded clause and never a matrix clause. -/
+/-- The dependent mood *-aʔ*, a Mood head that types a bare embedded clause and never a matrix
+clause; the clause it heads has no C and no switch-reference marking (§3.2.1). -/
 def aq : Complementizer where
   morphs := [.suff "aʔ"]
   verbForm := some .Fin
@@ -67,7 +70,7 @@ def gum : Morph := .pref "gum"
 /-- *hamup'ay* 'forget' (1). -/
 def hamupay : Verb where
   form := "hamup'ay"
-  frames := [Frame.gerund]
+  frames := [Frame.finiteClause]
   ctpClass := some .knowledge
   typer := ge
 
@@ -77,7 +80,7 @@ def hamupayEs : Verb := { hamupay with form := hamupay.form ++ toString es }
 /-- *ašaš-e:s* 'know', negated 'not know'; it also takes a plain DP ((6), (79)). -/
 def ashashEs : Verb where
   form := "ašaš" ++ toString es
-  frames := [Frame.gerund, Frame.np]
+  frames := [Frame.finiteClause, Frame.np]
   ctpClass := some .knowledge
   typer := ge
 
@@ -85,14 +88,15 @@ def ashashEs : Verb where
 (89)). -/
 def iigi : Verb where
   form := "i:gi"
-  frames := [Frame.gerund, Frame.np]
+  frames := [Frame.finiteClause, Frame.np]
   ctpClass := some .perception
   typer := ge
 
-/-- *damal* 'hear', attested with event nominalizations ((11), (84)). -/
+/-- *damal* 'hear', attested only with event nominalizations, the perception reading that needs
+no FPROP shift ((11), (84)). -/
 def damal : Verb where
   form := "damal"
-  frames := [Frame.gerund]
+  frames := [Frame.finiteClause]
   ctpClass := some .perception
   typer := ge
 
@@ -122,7 +126,7 @@ def metgiibilEs : Verb where
 headed relative ((53), (55)). -/
 def suus : Verb where
   form := "suʔuʔuš"
-  frames := [Frame.np, Frame.gerund]
+  frames := [Frame.np, Frame.finiteClause]
   ctpClass := none
   typer := ge
 
