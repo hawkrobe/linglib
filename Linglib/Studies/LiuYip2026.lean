@@ -190,23 +190,33 @@ theorem you_requires_dynamic :
 theorem zai_no_requirement :
     zaiAspHead.selectsDynamicity = none := rfl
 
-/-- Studies-side projection: Cantonese *-faan* 'again' is
-    AspP_outer-associated but, unlike Mandarin *you*, does NOT carry a [+D]
-    selectional restriction (it is compatible with stative *jau* 'have' per
-    [liu-yip-2026]). -/
-def faanAspHead : AspHead := Cantonese.Aspect.faan.toAspHead
+/-- The association of the Cantonese aspect suffixes with the two projections: the perfective
+*-zo* and the progressive *-gan* with the outer one, the experiential *-gwo* and the continuous
+*-zyu* with the inner one. -/
+def aspectFlavor (m : Cantonese.Aspect.Marker) : AspFlavor :=
+  if m = Cantonese.Aspect.zo ∨ m = Cantonese.Aspect.gan then .outer else .inner
 
-/-- Studies-side projection: Cantonese *-gwo* (repetitive use) is
-    AspP_inner-associated. Its experiential use is also AspP_inner per the
-    lexical entry, but pragmatically distinct. -/
-def gwoAspHead : AspHead := Cantonese.Aspect.gwo.toAspHead
+/-- The association of the Cantonese *again*-elements with the two projections: *zoi* with the
+inner one, the parallel of Mandarin *zai*, and *jau* and *-faan* with the outer one. -/
+def againFlavor (p : Cantonese.Particles.PresupParticle) : AspFlavor :=
+  if p = Cantonese.Particles.zoi then .inner else .outer
+
+/-- Every Cantonese phase complement is inner-aspectual. -/
+def phaseComplementAspHead (_ : Cantonese.ResultativeComplements.PhaseComplement) : AspHead :=
+  AspHead.bareInner
+
+/-- Cantonese *-faan* 'again' is AspP_outer-associated but, unlike Mandarin *you*, carries no
+`[+D]` selectional restriction: it combines with stative *jau* 'have'. -/
+def faanAspHead : AspHead := { flavor := againFlavor Cantonese.Particles.faan }
+
+/-- Cantonese *-gwo* in its repetitive use is AspP_inner-associated, as is its experiential use.
+-/
+def gwoAspHead : AspHead := { flavor := aspectFlavor Cantonese.Aspect.gwo }
 
 theorem faan_outer_no_dyn :
-    faanAspHead.flavor = .outer ∧ faanAspHead.selectsDynamicity = none := by
-  refine ⟨rfl, rfl⟩
+    faanAspHead.flavor = .outer ∧ faanAspHead.selectsDynamicity = none := by decide
 
-theorem gwo_inner :
-    gwoAspHead.flavor = .inner := rfl
+theorem gwo_inner : gwoAspHead.flavor = .inner := by decide
 
 /-- Mandarin *you* and Cantonese *-faan* are BOTH outer-aspect, but only
     *you* carries [+D]. Encoding *-faan* with
@@ -214,8 +224,7 @@ theorem gwo_inner :
     incompatibility with stative *jau*). -/
 theorem you_vs_faan_dynamicity :
     youAspHead.selectsDynamicity = some .dynamic ∧
-    faanAspHead.selectsDynamicity = none := by
-  refine ⟨rfl, rfl⟩
+    faanAspHead.selectsDynamicity = none := by decide
 
 /-- **Generalization I** ([liu-yip-2026]): in Mandarin, an
     *again*-element exhibits exceptional scopal behavior IFF it is
@@ -232,8 +241,7 @@ theorem generalization_I_mandarin :
 /-- **Generalization I** (Cantonese counterpart): *-faan* (outer) may lower;
     *-gwo* (inner) may not. -/
 theorem generalization_I_cantonese :
-    faanAspHead.isOuter = true ∧ gwoAspHead.isOuter = false := by
-  refine ⟨rfl, rfl⟩
+    faanAspHead.isOuter = true ∧ gwoAspHead.isOuter = false := by decide
 
 /-- **Generalization II** ([liu-yip-2026]): the exceptional scopal
     behavior of *again* may cross nonfinite (vP) but not finite (CP) clause
