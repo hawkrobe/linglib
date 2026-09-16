@@ -1,14 +1,27 @@
 import Linglib.Syntax.Category.Verb.Basic
 
 /-!
-# Mandarin Predicate Lexicon Fragment
-[qing-uegaki-2025] [glass-2025]
+# Mandarin predicates
 
-Mandarin predicates relevant to [qing-uegaki-2025]. Properties like
-C-distributivity and NVP class are DERIVED from the `attitude` field.
+The Mandarin clause-embedding predicates the studies of Qing and Uegaki, of Glass and of Liu
+and Yip consume: the preferential attitudes *qidai* 'look forward to', *danxin* 'worry',
+*xiwang* 'hope' and *haipa* 'fear', the doxastic *yiwei* 'think, wrongly' and *renwei*
+'think', and the control and causative predicates *xiang* 'want', *rang* 'let', *xiangxin*
+'believe', *quan* 'urge', *bi* 'force', *dasuan* 'plan' and *shefa* 'try'. Mandarin is
+isolating, so a verb carries no inflectional fields beyond the root entry.
+
+## Main definitions
+
+* `Mandarin.Verb` — a Mandarin verb, the root `Verb`
+* `Mandarin.verbs` — the inventory
+
+## References
+
+* [glass-2025]
+* [qing-uegaki-2025]
 -/
 
-namespace Mandarin.Predicates
+namespace Mandarin
 
 open ArgumentStructure
 
@@ -128,11 +141,9 @@ def shefa : Verb := {
   passivizable := false
   opaqueContext := false }
 
-def allVerbs : List Verb :=
+def verbs : List Verb :=
   [qidai, danxin, xiwang, haipa, yiwei, renwei,
    xiang, rang, xiangxin, quan, bi, dasuan, shefa]
 
-def lookup (form : String) : Option Verb :=
-  allVerbs.find? (·.form == form)
 
-end Mandarin.Predicates
+end Mandarin

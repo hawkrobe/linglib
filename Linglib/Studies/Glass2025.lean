@@ -49,7 +49,7 @@ admitted states (`rows_admits`).
 namespace Glass2025
 
 open Doxastic Presupposition Data.Examples
-open English.Predicates.Verbal Mandarin.Predicates
+open English.Predicates.Verbal
 
 variable {W : Type*} {c : Set W} {p : W → Prop}
 
@@ -218,7 +218,7 @@ theorem think_profile :
 
 /-- The fragment's veridicality alone makes yǐwéi nonfactive. -/
 theorem yiwei_profile_ofVeridicality :
-    yiwei.toVerb.veridicality?.map Profile.ofVeridicality = some .nonfactive := by
+    Mandarin.yiwei.toVerb.veridicality?.map Profile.ofVeridicality = some .nonfactive := by
   decide
 
 /-- A belief report of the paper: the verb's profile, the state of the Common Ground in the
@@ -234,7 +234,7 @@ veridicality, yǐwéi from the paper's analysis. -/
 def verbProfiles : List (String × Profile) :=
   [("know", (know.toVerb.veridicality?.map Profile.ofVeridicality).getD .nonfactive),
    ("think", (think.toVerb.veridicality?.map Profile.ofVeridicality).getD .nonfactive),
-   ("renwei", (renwei.toVerb.veridicality?.map Profile.ofVeridicality).getD .nonfactive),
+   ("renwei", (Mandarin.renwei.toVerb.veridicality?.map Profile.ofVeridicality).getD .nonfactive),
    ("yiwei", yiweiProfile)]
 
 def Row.ofExample (ex : LinguisticExample) : Option Row := do

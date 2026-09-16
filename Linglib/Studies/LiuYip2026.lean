@@ -267,10 +267,10 @@ inductive Pred where
   deriving DecidableEq, Repr
 
 /-- The lexical entry of a predicate. -/
-def Pred.entry : Pred → Mandarin.Predicates.Verb
-  | .xiang => Mandarin.Predicates.xiang
-  | .rang => Mandarin.Predicates.rang
-  | .xiangxin => Mandarin.Predicates.xiangxin
+def Pred.entry : Pred → Mandarin.Verb
+  | .xiang => Mandarin.xiang
+  | .rang => Mandarin.rang
+  | .xiangxin => Mandarin.xiangxin
 
 /-- The complements each predicate selects: *xiang* 'want' a vP or a stative TP, *rang* 'let'
 a vP or a TP of either dynamicity, *xiangxin* 'believe' a CP. -/

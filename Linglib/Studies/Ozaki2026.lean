@@ -76,7 +76,7 @@ theorem diagnostics_both_markings :
 /-- The Fragment records both verbs with non-thematic Voice, from which their unaccusativity
 is derived, and as non-passivizable. -/
 theorem alternation_verbs_unaccusative :
-    ∀ v ∈ [Japanese.Predicates.hanareru, Japanese.Predicates.deru],
+    ∀ v ∈ [Japanese.hanareru, Japanese.deru],
       v.voiceType = some .nonThematic ∧ v.toVerb.IsUnaccusative ∧
         v.passivizable = false := by
   decide
