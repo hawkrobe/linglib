@@ -1,32 +1,27 @@
 import Linglib.Semantics.Polarity.Licensing
 
 /-!
-# Czech Polarity-Sensitive Items
-[haspelmath-1997]
+# Czech polarity items
+[haspelmath-1997] [stankova-2025] [stankova-2026]
 
-Lexical entries for Czech n-words (the *ni-* series), typed by the
-theory-neutral categories from `Polarity`. Standard
-sentential negation (the *ne-* prefix) lives in the sibling
-`Fragments/Czech/Negation.lean`; this file holds only the lexical
-reactives (operator/lexical-reactive split documented in
-`Core/Lexical/NegMarker.lean`).
-
-## The Czech *ni-* series
-
-Czech is a strict-NC language (Slavic pattern): every n-word obligatorily
-co-occurs with the *ne-* prefixed verb form, regardless of position.
-*Nikdo nepřišel* 'Nobody NEG.came'; *Neviděl nikoho* 'NEG.saw nobody'.
-Both preverbal and postverbal n-words require *ne-* — unlike Italian/
-Spanish position-dependent NC.
+Czech indefinites come in two polarity-sensitive series, typed by `Polarity.Item`. The
+*ni-* series (*nikdo*, *nic*, *nikdy*, *nikam*) and the determiner *žádný* are strict
+negative concord items: every one obligatorily co-occurs with the *ne-* prefixed verb,
+*Nikdo nepřišel* 'Nobody NEG.came', *Neviděl nikoho* 'NEG.saw nobody', regardless of
+position, unlike the position-dependent concord of Italian or Spanish. The *ně-* series
+(*někdo*, the determiner *nějaký*) are positive polarity items, which cannot be
+interpreted in the immediate scope of clausemate negation; the two determiners therefore
+diagnose the position of negation in polar questions ([stankova-2025],
+[stankova-2026]). The *ne-* prefix itself lives in the sibling `Negation.lean`.
 -/
 
 namespace Czech.PolarityItems
 
 open Polarity
 
-/-- *nikdo* — N-word for human ('nobody').
-    Strict NC: requires the *ne-* prefix on the verb regardless of
-    position. -/
+/-! ### The *ni-* series -/
+
+/-- *nikdo* 'nobody', the human concord item. -/
 def nikdo : Item :=
   { form := "nikdo"
   , licensor := some .antiMorphic
@@ -35,7 +30,7 @@ def nikdo : Item :=
   , scalarDirection := some .strengthening
   , morphology := .indefPlusNeg }
 
-/-- *nic* — N-word for non-human ('nothing'). -/
+/-- *nic* 'nothing', the non-human concord item. -/
 def nic : Item :=
   { form := "nic"
   , licensor := some .antiMorphic
@@ -44,7 +39,7 @@ def nic : Item :=
   , scalarDirection := some .strengthening
   , morphology := .indefPlusNeg }
 
-/-- *nikdy* — Temporal n-word ('never'). -/
+/-- *nikdy* 'never', the temporal concord item. -/
 def nikdy : Item :=
   { form := "nikdy"
   , licensor := some .antiMorphic
@@ -53,7 +48,7 @@ def nikdy : Item :=
   , scalarDirection := some .strengthening
   , morphology := .indefPlusNeg }
 
-/-- *nikam* — Locative n-word ('nowhere'). -/
+/-- *nikam* 'nowhere', the directional concord item. -/
 def nikam : Item :=
   { form := "nikam"
   , licensor := some .antiMorphic
@@ -62,7 +57,8 @@ def nikam : Item :=
   , scalarDirection := some .strengthening
   , morphology := .indefPlusNeg }
 
-/-- *žádný* — Determiner n-word ('no/none'). -/
+/-- *žádný* 'no', the determiner concord item, licensed by inner negation alone in polar
+    questions ([stankova-2026]). -/
 def zadny : Item :=
   { form := "žádný"
   , licensor := some .antiMorphic
@@ -70,23 +66,36 @@ def zadny : Item :=
   , licensingContexts := [.negation]
   , scalarDirection := some .strengthening }
 
-/-! ### Joint -/
+/-! ### The *ně-* series -/
 
-/-- The Czech polarity-item inventory: the Fragment-side joint listing
-    every polarity item this fragment defines. -/
-def items : List Item :=
-  [nikdo, nic, nikdy, nikam, zadny]
+/-- *nějaký* 'some', the determiner positive polarity item, admitted by outer and medial
+    negation in polar questions ([stankova-2025], [stankova-2026]). -/
+def nejaky : Item :=
+  { form := "nějaký"
+  , ppi := true
+  , baseForce := .existential
+  , licensingContexts := [] }
+
+/-- *někdo* 'someone', the human positive polarity item, which replaces *nikdo* under
+    the non-propositional negation of a fear-predicate complement ([stankova-2025]). -/
+def nekdo : Item :=
+  { form := "někdo"
+  , ppi := true
+  , baseForce := .existential
+  , licensingContexts := [] }
+
+/-- The Czech polarity items. -/
+def items : List Item := [nikdo, nic, nikdy, nikam, zadny, nejaky, nekdo]
 
 /-! ### Verification -/
 
-/-- The strict-NC *ni-* series characterized exactly: clausemate negation is
-    the only licensing environment. -/
-theorem niSeries_licensing_characterized :
+/-- Clausemate negation is the only licensing environment of the *ni-* series, and nothing
+    licenses the *ně-* series. -/
+theorem items_licensing_characterized :
     ∀ e ∈ items, ∀ c, c.licenses e ↔ c ∈ e.licensingContexts := by decide
 
-/-- The *ni-* series is morphologically marked as `indefPlusNeg`. -/
+/-- The *ni-* series is morphologically indefinite plus negation. -/
 theorem niSeries_morphology :
-    [nikdo, nic, nikdy, nikam].all (fun e => e.morphology == .indefPlusNeg) = true := by
-  decide
+    ∀ e ∈ [nikdo, nic, nikdy, nikam], e.morphology = .indefPlusNeg := by decide
 
 end Czech.PolarityItems
