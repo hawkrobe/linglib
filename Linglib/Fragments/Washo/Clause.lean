@@ -6,11 +6,12 @@ import Linglib.Syntax.Category.Complementizer.Basic
 
 Washo (Hokan/isolate, ISO 639-3 `was`) has two ways of embedding a clause under a verb. A
 verb of knowledge or perception such as *hamup'ay* 'forget' or *i:gi* 'see' takes a nominalized
-clause: the clause stays in the independent mood *-i* and closes with the nominalizer
-*-gi ~ -ge*, the exponent of Hanink's index head. A verb of thought or speech such as *hamu*
-'think' or *i:d* 'say' is intransitive, and the clause it embeds is bare, in the dependent mood
-*-aʔ*. The two classes differ in transitivity, which each verb's frames record: 'know' and 'see'
-also take plain DP objects, while 'think' is questioned with *how* rather than *what*, and
+clause: the clause keeps its subject agreement, tense and switch-reference marking, stays in the
+independent mood *-i*, and closes with the nominalizer *-gi ~ -ge*, which inflects for case.
+A verb of thought or speech such as *hamu* 'think' or *i:d* 'say' is intransitive, and the clause
+it embeds is bare: it carries the dependent mood *-aʔ*, no nominalizer and no switch-reference
+marking. The two classes differ in transitivity, which each verb's frames record: 'know' and 'see'
+also take plain noun-phrase objects, while 'think' is questioned with *how* rather than *what*, and
 'dream' embeds a bare clause only with the reflexive prefix *gum-*. 'Know', 'remember' and
 'believe' are inherently negative, so their positive reading carries the negative suffix
 *-e:s*, and 'remember' is negated 'forget'.
@@ -34,14 +35,16 @@ open Morphology (Morph)
 /-! ### Clause-typers -/
 
 /-- The clausal nominalizer *-ge*, the accusative form of *-gi ~ -ge* that attitude complements
-bear (fn. 6). -/
+bear (fn. 6). The clause it closes keeps subject agreement, tense, the independent mood and
+switch-reference marking, so it is coded as a finite indicative clause in a nominal shell. -/
 def ge : Complementizer where
   morphs := [.suff "ge"]
-  coding := some .nominalized
+  coding := some .indicative
   verbForm := some .Fin
   licenser := some .nominal
 
-/-- The dependent mood *-aʔ*, which types a bare embedded clause and never a matrix clause. -/
+/-- The dependent mood *-aʔ*, which marks a bare embedded clause and never a matrix clause; the
+clause it marks carries no nominalizer and no switch-reference marking (§3.2.1). -/
 def aq : Complementizer where
   morphs := [.suff "aʔ"]
   verbForm := some .Fin
@@ -67,7 +70,7 @@ def gum : Morph := .pref "gum"
 /-- *hamup'ay* 'forget' (1). -/
 def hamupay : Verb where
   form := "hamup'ay"
-  frames := [Frame.gerund]
+  frames := [Frame.finiteClause]
   ctpClass := some .knowledge
   typer := ge
 
@@ -77,7 +80,7 @@ def hamupayEs : Verb := { hamupay with form := hamupay.form ++ toString es }
 /-- *ašaš-e:s* 'know', negated 'not know'; it also takes a plain DP ((6), (79)). -/
 def ashashEs : Verb where
   form := "ašaš" ++ toString es
-  frames := [Frame.gerund, Frame.np]
+  frames := [Frame.finiteClause, Frame.np]
   ctpClass := some .knowledge
   typer := ge
 
@@ -85,14 +88,15 @@ def ashashEs : Verb where
 (89)). -/
 def iigi : Verb where
   form := "i:gi"
-  frames := [Frame.gerund, Frame.np]
+  frames := [Frame.finiteClause, Frame.np]
   ctpClass := some .perception
   typer := ge
 
-/-- *damal* 'hear', attested with event nominalizations ((11), (84)). -/
+/-- *damal* 'hear', attested only with event nominalizations, the perception reading that needs
+no FPROP shift ((11), (84)). -/
 def damal : Verb where
   form := "damal"
-  frames := [Frame.gerund]
+  frames := [Frame.finiteClause]
   ctpClass := some .perception
   typer := ge
 
@@ -122,7 +126,7 @@ def metgiibilEs : Verb where
 headed relative ((53), (55)). -/
 def suus : Verb where
   form := "suʔuʔuš"
-  frames := [Frame.np, Frame.gerund]
+  frames := [Frame.np, Frame.finiteClause]
   ctpClass := none
   typer := ge
 
