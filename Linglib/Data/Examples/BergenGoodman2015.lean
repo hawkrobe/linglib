@@ -27,7 +27,7 @@ def stressed_subject : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("stress", "subject"), ("reading", "exhaustive")]
-    comment := "Migrated from Phenomena/Focus/ProsodicExhaustivity.lean stressedSubject. Stress on the subject signals exhaustive knowledge: only Bob went. Modeled by the noisy-channel ProsodyModel in Studies/BergenGoodman2015.lean (stress reduces the noise rate on the stressed word)."
+    comment := "Migrated from Phenomena/Focus/ProsodicExhaustivity.lean stressedSubject. Stress on the subject signals exhaustive knowledge: only Bob went. Modeled by the noisy-channel Prosody model in Studies/BergenGoodman2015.lean (stress halves the rate at which the subject is misheard)."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 

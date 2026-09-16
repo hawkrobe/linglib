@@ -1,514 +1,383 @@
-import Linglib.Core.Analysis.MeanInequalities
-import Linglib.Core.Probability.Scores
-import Linglib.Pragmatics.RSA.LatentOperators
-import Linglib.Pragmatics.RSA.Operators
+import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Linglib.Data.Examples.BergenGoodman2015
 
 /-!
-# The strategic use of noise
+# Bergen & Goodman (2015): The strategic use of noise in pragmatic reasoning
 
-Formalization of [bergen-goodman-2015] (Topics in Cognitive Science 7). RSA over a noisy channel
-P_N(u_p | u_i): the listener reasons about which intended utterance the
-perceived one came from (eq. 6), the speaker about which utterances
-survive noise (eqs. 7–8).
+This file formalizes [bergen-goodman-2015]'s noisy-channel rational speech acts model: a
+literal listener who decodes the intended utterance before interpreting it (eq. 6), a speaker
+whose utility is the channel-expected log posterior of the intended meaning (eq. 7), and a
+pragmatic listener who folds the speaker through the channel (eq. 8), over a channel in which
+each utterance is misperceived as at most one other, at a rate the speaker lowers by stressing
+a word (`slipChannel`). Sentence fragments have no literal meaning, yet both listeners read the
+fragment "Bob" as the point mass on Bob having gone, at every positive deletion rate
+(`Ellipsis.l0_subject`, `Ellipsis.l1_subject`), because only "Bob went to the movies" deletes
+to it. Stress halves the rate at which a subject is misheard as the other, so the exponentiated
+utility of a subject sentence is `exp (-binEntropy rate) / 2`, and a speaker who knows that only
+Bob went prefers "BOB went" to "Bob went" (`Prosody.s1_bobWent_lt_BOB_went`), the form the
+paper's exhaustive row records (`Prosody.model_matches_stress_rows`).
+
+## Main definitions
+
+* `l0`, `s1`, `l1` — eqs. 6–8 over a literal meaning `lit : U → Finset M`, a channel `N`, and
+  a set of speaker alternatives.
+* `slipChannel` — the channel of a slip rate and a slip target.
 
 ## Main results
 
-* `l0_fragment_correct` / `l1_fragment_correct`: "Bob" — no literal
-  meaning — is interpreted as "Bob went to the movies" (the ellipsis case study):
-  noise-deletion reasoning recovers the unique full-sentence source.
-* `l0_fragment_robust`: the fragment inference holds for every noise rate
-  δ ∈ (0, 1), not just the sampled δ = 1/100.
-* `stress_increases_exhaustivity`: at every noise rate ε < 2/3, "BOB
-  went" (stressed) is more likely than "Bob went" to mean only-Bob (the
-  prosody case study) — stress reduces noise on the word it protects.
-* `stress_increases_discrimination`: the channel-level mechanism, for
-  every ε ∈ (0, 1).
+* `Ellipsis.l0_subject`, `Ellipsis.l1_subject` — a subject fragment is the point mass on its
+  source, for every positive deletion rate.
+* `Prosody.s1Score_eq_exp_neg_binEntropy` — a subject sentence's exponentiated utility is
+  `exp (-binEntropy rate) / 2`.
+* `Prosody.s1_bobWent_lt_BOB_went` — the knowledgeable speaker prefers the stressed form.
 
 ## Implementation notes
 
-Ellipsis is exact ℚ≥0: each meaning has a unique truthful full sentence,
-so the eq. 7 softmax is degenerate and eq. 8 reduces to the channel row
-(`s1nQ`); listeners are `PMF.ofScores`. Prosody is transcendental — the
-eq. 7 utilities are channel-weighted geometric means of literal
-posteriors (`xAtom`, `yAtom`) — and fully parametric in ε: the mechanism
-theorem `xAtom_lt_yAtom` places the atoms strictly on either side of the
-unstressed posterior by the weighted geometric-mean bounds of
-`Core/Analysis/MeanInequalities.lean`, and the headline reduces to that
-ordering plus algebra. No magnitude certificates.
+Priors are uniform, the rationality parameter is `1`, and utterances are costless, so eq. 7's
+exponentiated utility is the product of literal posteriors raised to channel probabilities.
+The speaker's alternatives are a parameter: the three full sentences for ellipsis (the paper's
+simplification) and all five prosodic forms for prosody. Prosody is perceived, so the stressed
+and unstressed forms are two copies of the subject-confusion channel at rates `ε / 2` and `ε`.
+The prosody speaker is the paper's knowledgeable one, for whom the divergence utility is eq. 7.
+
+## TODO
+
+* Fragment production (Fig. 1, right) needs utterance costs; the ignorant speaker's lower
+  stress rate (Fig. 2, right) needs the divergence utility over observations.
+* The listener's exhaustive reading of stress (Fig. 2, left) is the paper's depth-two result
+  over knowledge states; at depth one it reduces to the monotonicity in the rate of the
+  confusion odds `(r ^ (1 - r) * (1 - r) ^ r) / ((1 - r) ^ (1 - r) * r ^ r)`, not yet proved.
 
 ## References
 
-* [bergen-goodman-2015] — the paper; equations (6)–(8) follow its model section.
-* [frank-goodman-2012] — the RSA base the noisy channel extends.
+* [bergen-goodman-2015]
+* [frank-goodman-2012]
 -/
-
-open BigOperators RSA Real
-open scoped NNRat ENNReal
 
 namespace BergenGoodman2015
 
+open Finset Real
+
+section Model
+
+variable {M U : Type*} {rate : U → ℝ} {slip : U → Option U} {u v : U}
+  {lit : U → Finset M} {N : U → U → ℝ}
+
+section Channel
+
+variable [DecidableEq U]
+
+/-- The channel of a slip rate and a slip target: an intended utterance is perceived intact
+with probability `1 - rate u` and as `slip u` with probability `rate u`. -/
+noncomputable def slipChannel (rate : U → ℝ) (slip : U → Option U) (u_i u_p : U) : ℝ :=
+  if u_p = u_i then 1 - rate u_i else if slip u_i = some u_p then rate u_i else 0
+
+theorem slipChannel_self (rate : U → ℝ) (slip : U → Option U) (u : U) :
+    slipChannel rate slip u u = 1 - rate u := by simp [slipChannel]
+
+theorem slipChannel_of_slip (h : slip u = some v) (hne : v ≠ u) :
+    slipChannel rate slip u v = rate u := by simp [slipChannel, hne, h]
+
+theorem slipChannel_of_ne (h₁ : v ≠ u) (h₂ : slip u ≠ some v) :
+    slipChannel rate slip u v = 0 := by simp [slipChannel, h₁, h₂]
+
+theorem slipChannel_nonneg (h₀ : ∀ u, 0 ≤ rate u) (h₁ : ∀ u, rate u ≤ 1) (u v : U) :
+    0 ≤ slipChannel rate slip u v := by
+  unfold slipChannel; split_ifs <;> linarith [h₀ u, h₁ u]
+
+end Channel
+
+variable [Fintype U] [DecidableEq M]
+
+/-- The literal listener's score for `m` on perceiving `u_p`: the channel summed over the
+intended utterances true of `m` (eq. 6, uniform priors). -/
+noncomputable def l0Score (lit : U → Finset M) (N : U → U → ℝ) (u_p : U) (m : M) : ℝ :=
+  ∑ u_i, if m ∈ lit u_i then N u_i u_p else 0
+
+theorem l0Score_nonneg (hN : ∀ u v, 0 ≤ N u v) (u_p : U) (m : M) : 0 ≤ l0Score lit N u_p m :=
+  sum_nonneg fun u _ => by split_ifs <;> [exact hN u u_p; exact le_rfl]
+
+variable [Fintype M]
+
+/-- The literal listener (eq. 6). -/
+noncomputable def l0 (lit : U → Finset M) (N : U → U → ℝ) (u_p : U) (m : M) : ℝ :=
+  l0Score lit N u_p m / ∑ m', l0Score lit N u_p m'
+
+theorem l0_nonneg (hN : ∀ u v, 0 ≤ N u v) (u_p : U) (m : M) : 0 ≤ l0 lit N u_p m :=
+  div_nonneg (l0Score_nonneg hN _ _) (sum_nonneg fun _ _ => l0Score_nonneg hN _ _)
+
+/-- The exponentiated speaker utility (eq. 7): the literal posteriors of `m` at the perceived
+utterances, weighted geometrically by the channel. -/
+noncomputable def s1Score (lit : U → Finset M) (N : U → U → ℝ) (m : M) (u_i : U) : ℝ :=
+  ∏ u_p, l0 lit N u_p m ^ N u_i u_p
+
+theorem s1Score_nonneg (hN : ∀ u v, 0 ≤ N u v) (m : M) (u_i : U) : 0 ≤ s1Score lit N m u_i :=
+  prod_nonneg fun _ _ => rpow_nonneg (l0_nonneg hN _ _) _
+
+/-- The speaker, choosing among the alternatives `A` (eq. 4). -/
+noncomputable def s1 (lit : U → Finset M) (N : U → U → ℝ) (A : Finset U) (m : M) (u_i : U) :
+    ℝ :=
+  s1Score lit N m u_i / ∑ u ∈ A, s1Score lit N m u
+
+/-- The pragmatic listener's score: the speaker folded through the channel (eq. 8). -/
+noncomputable def l1Score (lit : U → Finset M) (N : U → U → ℝ) (A : Finset U) (u_p : U)
+    (m : M) : ℝ :=
+  ∑ u_i ∈ A, s1 lit N A m u_i * N u_i u_p
+
+/-- The pragmatic listener (eq. 8). -/
+noncomputable def l1 (lit : U → Finset M) (N : U → U → ℝ) (A : Finset U) (u_p : U) (m : M) :
+    ℝ :=
+  l1Score lit N A u_p m / ∑ m', l1Score lit N A u_p m'
+
+variable [DecidableEq U]
+
+/-- Over a slip channel, eq. 7's product has two factors: the intact and the slipped
+perception. -/
+theorem s1Score_slipChannel_of_slip (h : slip u = some v) (hne : v ≠ u) (m : M) :
+    s1Score lit (slipChannel rate slip) m u =
+      l0 lit (slipChannel rate slip) u m ^ (1 - rate u) *
+        l0 lit (slipChannel rate slip) v m ^ rate u := by
+  unfold s1Score
+  rw [← prod_subset (subset_univ {u, v}) fun w _ hw => ?_, prod_pair hne.symm,
+    slipChannel_self, slipChannel_of_slip h hne]
+  simp only [mem_insert, mem_singleton, not_or] at hw
+  rw [slipChannel_of_ne hw.1 (by rw [h]; exact fun e => hw.2 (Option.some.inj e).symm),
+    rpow_zero]
+
+end Model
+
 /-! ## Ellipsis
 
-Three meanings, seven utterances (full sentences plus fragments); only
-full sentences have literal meaning, and per-word deletion (rate δ) turns
-them into fragments. -/
+Three meanings and the full sentences expressing them; deletion strikes the predicate, leaving a
+subject fragment with no literal meaning. -/
 
-namespace EllipsisModel
+namespace Ellipsis
 
-/-- Meanings: who went to the movies. -/
-inductive Meaning where
+/-- Who went to the movies. -/
+inductive Meaning
   | aliceWent
   | bobWent
   | nobodyWent
-  deriving DecidableEq, Fintype, Repr, Inhabited
+  deriving DecidableEq, Fintype
 
-/-- Utterances: full sentences and fragments. Fragments arise from
-    noise deleting words from full sentences. -/
-inductive Utterance where
-  | aliceWentToMovies
-  | bobWentToMovies
-  | nobodyWentToMovies
-  | alice
-  | bob
-  | nobody
-  | wentToMovies
-  deriving DecidableEq, Fintype, Repr, Inhabited
+/-- The full sentences and the fragments deletion leaves: a subject alone or the predicate. -/
+inductive Utterance
+  | full (m : Meaning)
+  | subject (m : Meaning)
+  | predicate
+  deriving DecidableEq, Fintype
 
-/-- Literal meaning: only full sentences have truth conditions.
-    Fragments have no literal meaning — this is the key to the model. -/
-def literalMeaning : Utterance → Meaning → Bool
-  | .aliceWentToMovies, .aliceWent => true
-  | .bobWentToMovies, .bobWent => true
-  | .nobodyWentToMovies, .nobodyWent => true
-  | _, _ => false
+/-- Full sentences mean what they say; fragments have no literal meaning. -/
+def lit : Utterance → Finset Meaning
+  | .full m => {m}
+  | _ => ∅
 
-/-- Prior over utterances (speaker's production probability).
-    Only full sentences are in the speaker's production distribution. -/
-noncomputable def utterancePrior : Utterance → ℝ
-  | .aliceWentToMovies => 1
-  | .bobWentToMovies => 1
-  | .nobodyWentToMovies => 1
+/-- Deletion strikes the predicate of a full sentence at rate `δ`. -/
+noncomputable def rate (δ : ℝ) : Utterance → ℝ
+  | .full _ => δ
   | _ => 0
 
-/-- Deletion channel: a full sentence survives with probability 1 − δ or
-loses its predicate with probability δ (the path relevant to "Bob"). -/
-noncomputable def noiseChannel (δ : ℝ) : Utterance → Utterance → ℝ
-  | .aliceWentToMovies, .aliceWentToMovies => 1 - δ
-  | .aliceWentToMovies, .alice => δ
-  | .bobWentToMovies, .bobWentToMovies => 1 - δ
-  | .bobWentToMovies, .bob => δ
-  | .nobodyWentToMovies, .nobodyWentToMovies => 1 - δ
-  | .nobodyWentToMovies, .nobody => δ
-  | .alice, .alice => 1
-  | .bob, .bob => 1
-  | .nobody, .nobody => 1
-  | .wentToMovies, .wentToMovies => 1
-  | _, _ => 0
+/-- Deleting the predicate leaves the subject. -/
+def slip : Utterance → Option Utterance
+  | .full m => some (.subject m)
+  | _ => none
 
-/-! ### The ellipsis chain -/
+/-- The deletion channel at rate `δ`. -/
+noncomputable abbrev N (δ : ℝ) : Utterance → Utterance → ℝ := slipChannel (rate δ) slip
 
-/-- ℚ noise rate (1%; Fig. 1 shows robustness across 10⁻⁵–10⁻¹). -/
-def δQ : ℚ≥0 := 1/100
+/-- The speaker's alternatives: the three full sentences. -/
+def fullSentences : Finset Utterance := univ.map ⟨Utterance.full, fun _ _ => Utterance.full.inj⟩
 
-/-- ℚ noise channel (word deletion, mirroring `noiseChannel`). -/
-def noiseQ : Utterance → Utterance → ℚ≥0
-  | .aliceWentToMovies, .aliceWentToMovies => 1 - δQ
-  | .aliceWentToMovies, .alice => δQ
-  | .bobWentToMovies, .bobWentToMovies => 1 - δQ
-  | .bobWentToMovies, .bob => δQ
-  | .nobodyWentToMovies, .nobodyWentToMovies => 1 - δQ
-  | .nobodyWentToMovies, .nobody => δQ
-  | .alice, .alice => 1
-  | .bob, .bob => 1
-  | .nobody, .nobody => 1
-  | .wentToMovies, .wentToMovies => 1
-  | _, _ => 0
+variable {δ : ℝ} (m : Meaning)
 
-/-- ℚ utterance prior (only full sentences are produced). -/
-def utterancePriorQ : Utterance → ℚ≥0
-  | .aliceWentToMovies => 1
-  | .bobWentToMovies => 1
-  | .nobodyWentToMovies => 1
-  | _ => 0
+/-- Only the full sentence for `m` is true of `m`. -/
+theorem l0Score_eq (u_p : Utterance) : l0Score lit (N δ) u_p m = N δ (.full m) u_p := by
+  unfold l0Score
+  rw [sum_eq_single (.full m)]
+  · simp [lit]
+  · rintro (m' | m' | _) _ h
+    · have : m ≠ m' := fun e => h (by rw [e])
+      simp [lit, this]
+    · simp [lit]
+    · simp [lit]
+  · exact fun h => absurd (mem_univ _) h
 
-/-- ℚ noisy literal-listener score (eq. 6 numerator). -/
-def noisyMeaningQ (u_p : Utterance) (m : Meaning) : ℚ≥0 :=
-  ∑ u_i, (if literalMeaning u_i m then (1 : ℚ≥0) else 0) *
-    utterancePriorQ u_i * noiseQ u_i u_p
+theorem l0Score_full (δ : ℝ) : l0Score lit (N δ) (.full m) = Pi.single m (1 - δ) := by
+  ext m'
+  by_cases h : m' = m
+  · subst h; simp [l0Score_eq, N, slipChannel, rate]
+  · simp [l0Score_eq, N, slipChannel, slip, h, Ne.symm h]
 
-/-- The unique full sentence expressing each meaning. -/
-def fullOf : Meaning → Utterance
-  | .aliceWent => .aliceWentToMovies
-  | .bobWent => .bobWentToMovies
-  | .nobodyWent => .nobodyWentToMovies
+theorem l0Score_subject (δ : ℝ) : l0Score lit (N δ) (.subject m) = Pi.single m δ := by
+  ext m'
+  by_cases h : m' = m
+  · subst h; simp [l0Score_eq, N, slipChannel, slip, rate]
+  · simp [l0Score_eq, N, slipChannel, slip, h]
 
-/-- The noise-folded pragmatic speaker (eqs. 7–8). Each meaning has exactly
-one truthful full sentence, so eq. 7's softmax has singleton support and
-the intended-speaker distribution is degenerate at `fullOf m`; eq. 8's fold
-then reduces to the channel row of `fullOf m`. -/
-def s1nQ (m : Meaning) (u_p : Utterance) : ℚ≥0 := noiseQ (fullOf m) u_p
+private theorem l0_of_l0Score {c : ℝ} (hc : c ≠ 0) {u_p : Utterance}
+    (h : l0Score lit (N δ) u_p = Pi.single m c) : l0 lit (N δ) u_p = Pi.single m 1 := by
+  ext m'
+  simp only [l0, h, Pi.single_apply]
+  split_ifs <;> simp [div_self hc]
 
-/-- Literal listener over meanings (eq. 6). -/
-noncomputable def l0 (u_p : Utterance) : PMF Meaning :=
-  .ofScores .uniform fun m => noisyMeaningQ u_p m
+/-- A full sentence is interpreted literally, at every deletion rate below `1`. -/
+theorem l0_full (hδ : δ ≠ 1) : l0 lit (N δ) (.full m) = Pi.single m 1 :=
+  l0_of_l0Score m (sub_ne_zero.mpr hδ.symm) (l0Score_full m δ)
 
-/-- Pragmatic listener over meanings (eq. 8, uniform meaning prior). -/
-noncomputable def l1 (u_p : Utterance) : PMF Meaning :=
-  .ofScores .uniform fun m => s1nQ m u_p
+/-- A subject fragment is the point mass on the meaning whose full sentence deletes to it, at
+every positive deletion rate. -/
+theorem l0_subject (hδ : δ ≠ 0) : l0 lit (N δ) (.subject m) = Pi.single m 1 :=
+  l0_of_l0Score m hδ (l0Score_subject m δ)
 
-/-- Noisy L0 meaning (Eq. 6 numerator).
+/-- The speaker's score is `1` at the full sentence for `m` and `0` at the other full
+sentences. -/
+theorem s1Score_full (hδ₀ : δ ≠ 0) (hδ₁ : δ ≠ 1) (m' : Meaning) :
+    s1Score lit (N δ) m (.full m') = if m' = m then 1 else 0 := by
+  rw [N, s1Score_slipChannel_of_slip (show slip (.full m') = some (.subject m') from rfl)
+    (by simp), l0_full m' hδ₁, l0_subject m' hδ₀]
+  by_cases h : m' = m
+  · subst h; simp
+  · simp [h, Ne.symm h, rate, zero_rpow (sub_ne_zero.mpr hδ₁.symm), zero_rpow hδ₀]
 
-    meaning(u_p, m) = Σ_{u_i} ⟦u_i⟧(m) · P(u_i) · P_N(u_p | u_i)
+theorem l1Score_subject (hδ₀ : δ ≠ 0) (hδ₁ : δ ≠ 1) :
+    l1Score lit (N δ) fullSentences (.subject m) = Pi.single m δ := by
+  ext m'
+  simp only [l1Score, s1, fullSentences, sum_map, Function.Embedding.coeFn_mk,
+    s1Score_full _ hδ₀ hδ₁, sum_ite_eq', mem_univ, ite_true, div_one, ite_mul, one_mul,
+    zero_mul, ← l0Score_eq, l0Score_subject]
 
-    The listener considers all intended utterances u_i with meaning m,
-    weighted by how likely noise would produce the perceived u_p. -/
-noncomputable def noisyMeaning (δ : ℝ) (u_p : Utterance) (m : Meaning) : ℝ :=
-  ∑ u_i : Utterance,
-    (if literalMeaning u_i m then (1 : ℝ) else 0) *
-    utterancePrior u_i * noiseChannel δ u_i u_p
+/-- The pragmatic listener also reads a subject fragment as the point mass on its source. -/
+theorem l1_subject (hδ₀ : δ ≠ 0) (hδ₁ : δ ≠ 1) :
+    l1 lit (N δ) fullSentences (.subject m) = Pi.single m 1 := by
+  ext m'
+  simp only [l1, l1Score_subject m hδ₀ hδ₁, Pi.single_apply]
+  split_ifs <;> simp [div_self hδ₀]
 
-/-! ### Ellipsis Predictions -/
-
-/-- Hearing the fragment "Bob" — no literal meaning — L0 infers "Bob
-went": the only full sentence producing "Bob" by deletion. -/
-theorem l0_fragment_correct :
-    l0 .bob .aliceWent < l0 .bob .bobWent ∧
-    l0 .bob .nobodyWent < l0 .bob .bobWent :=
-  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
-
-/-- The same for the "Nobody" fragment. -/
-theorem l0_nobody_correct :
-    l0 .nobody .aliceWent < l0 .nobody .nobodyWent ∧
-    l0 .nobody .bobWent < l0 .nobody .nobodyWent :=
-  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
-
-/-- Full sentences are interpreted literally (sanity check). -/
-theorem l0_full_sentence_correct :
-    l0 .bobWentToMovies .aliceWent < l0 .bobWentToMovies .bobWent ∧
-    l0 .bobWentToMovies .nobodyWent < l0 .bobWentToMovies .bobWent :=
-  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
-
-/-- The pragmatic listener agrees on the fragment. -/
-theorem l1_fragment_correct :
-    l1 .bob .aliceWent < l1 .bob .bobWent ∧
-    l1 .bob .nobodyWent < l1 .bob .bobWent :=
-  ⟨PMF.ofScores_lt _ (by decide +kernel), PMF.ofScores_lt _ (by decide +kernel)⟩
-
-/-! ### Parametric robustness (Fig. 1, left panel) -/
-
-/-- The noisy meaning at "bob" is δ for bobWent and 0 for all others.
-
-    Only "Bob went to the movies" can produce "Bob" via noise deletion,
-    and only with meaning bobWent. Therefore L0("bob") = δ/δ = 1. -/
-theorem noisyMeaning_bob_bobWent (δ : ℝ) :
-    noisyMeaning δ .bob .bobWent = δ := by
-  unfold noisyMeaning
-  rw [Finset.sum_eq_single .bobWentToMovies]
-  · simp [literalMeaning, utterancePrior, noiseChannel]
-  · intro u_i _ hu; cases u_i <;> simp_all [literalMeaning, utterancePrior, noiseChannel]
-  · intro h; exact absurd (Finset.mem_univ _) h
-
-theorem noisyMeaning_bob_aliceWent (δ : ℝ) :
-    noisyMeaning δ .bob .aliceWent = 0 := by
-  unfold noisyMeaning
-  apply Finset.sum_eq_zero
-  intro u_i _; cases u_i <;> simp [literalMeaning, utterancePrior, noiseChannel]
-
-theorem noisyMeaning_bob_nobodyWent (δ : ℝ) :
-    noisyMeaning δ .bob .nobodyWent = 0 := by
-  unfold noisyMeaning
-  apply Finset.sum_eq_zero
-  intro u_i _; cases u_i <;> simp [literalMeaning, utterancePrior, noiseChannel]
-
-/-- Fragment interpretation at every noise rate δ > 0 — "this reasoning
-will work even if the noise rate is arbitrarily close to 0, so long as it
-is positive": "Bob" only arises from "Bob went", so L0 gives it
-probability δ/δ = 1. -/
-theorem l0_fragment_robust (δ₀ : ℝ) (hδ : δ₀ ≠ 0) :
-    noisyMeaning δ₀ .bob .bobWent /
-      (noisyMeaning δ₀ .bob .aliceWent + noisyMeaning δ₀ .bob .bobWent +
-       noisyMeaning δ₀ .bob .nobodyWent) = 1 := by
-  rw [noisyMeaning_bob_bobWent, noisyMeaning_bob_aliceWent, noisyMeaning_bob_nobodyWent]
-  simp [div_self hδ]
-
-end EllipsisModel
+end Ellipsis
 
 /-! ## Prosody
 
-Stress halves the noise rate on the stressed word (the paper's ε/n at n = 2).
-An exhaustive-knowledge speaker must protect "Bob" from mishearing, a
-non-exhaustive one need not — so the listener reads stress as
-exhaustivity. -/
+Stress halves the rate at which a subject is misheard as the other (the paper's `ε / n` at
+`n = 2`); the conjunction is never misheard. A speaker who knows that only Bob went must keep
+the listener from hearing "Alice went", so stress is worth more to them. -/
 
-namespace ProsodyModel
+namespace Prosody
 
-/-- Meanings: who went to the movies (exhaustive vs non-exhaustive). -/
-inductive Meaning where
+/-- Who went: one of them alone, or both. -/
+inductive Meaning
   | onlyAlice
   | onlyBob
   | both
-  deriving DecidableEq, Fintype, Repr, Inhabited
+  deriving DecidableEq, Fintype
 
-/-- Utterances: with and without prosodic stress (CAPS = stress). -/
-inductive Utterance where
+/-- The subject sentences, stressed (capitals) or not, and the conjunction. -/
+inductive Utterance
   | aliceWent
   | ALICE_went
   | bobWent
   | BOB_went
   | aliceAndBobWent
-  deriving DecidableEq, Fintype, Repr, Inhabited
+  deriving DecidableEq, Fintype
 
-/-- Literal meaning: lower-bound semantics.
-    "Alice went" is true if Alice went (regardless of others). -/
-def literalMeaning : Utterance → Meaning → Bool
-  | .aliceWent, .onlyAlice => true
-  | .aliceWent, .both => true
-  | .ALICE_went, .onlyAlice => true
-  | .ALICE_went, .both => true
-  | .bobWent, .onlyBob => true
-  | .bobWent, .both => true
-  | .BOB_went, .onlyBob => true
-  | .BOB_went, .both => true
-  | .aliceAndBobWent, .both => true
-  | _, _ => false
+/-- Lower-bound literal meanings: "Alice went" is true whenever Alice went. -/
+def lit : Utterance → Finset Meaning
+  | .aliceWent | .ALICE_went => {.onlyAlice, .both}
+  | .bobWent | .BOB_went => {.onlyBob, .both}
+  | .aliceAndBobWent => {.both}
 
-/-- Noise channel with prosody.
+/-- Subjects are confused at rate `ε`, halved under stress; the conjunction is safe. -/
+noncomputable def rate (ε : ℝ) : Utterance → ℝ
+  | .aliceWent | .bobWent => ε
+  | .ALICE_went | .BOB_went => ε / 2
+  | .aliceAndBobWent => 0
 
-    The confusion is between subjects: "Alice" ↔ "Bob".
-    - No stress: ε chance of subject confusion
-    - With stress: ε/2 chance (stress reduces noise) -/
-noncomputable def noiseChannel (ε : ℝ) : Utterance → Utterance → ℝ
-  | .aliceWent, .aliceWent => 1 - ε
-  | .aliceWent, .bobWent => ε
-  | .bobWent, .bobWent => 1 - ε
-  | .bobWent, .aliceWent => ε
-  | .ALICE_went, .ALICE_went => 1 - ε/2
-  | .ALICE_went, .aliceWent => ε/2
-  | .BOB_went, .BOB_went => 1 - ε/2
-  | .BOB_went, .bobWent => ε/2
-  | .aliceAndBobWent, .aliceAndBobWent => 1
-  | _, _ => 0
+/-- A subject is misheard as the other subject, with its prosody. -/
+def slip : Utterance → Option Utterance
+  | .aliceWent => some .bobWent
+  | .bobWent => some .aliceWent
+  | .ALICE_went => some .BOB_went
+  | .BOB_went => some .ALICE_went
+  | .aliceAndBobWent => none
 
-/-- Noisy L0 meaning (Eq. 6 numerator) for the prosody model. -/
-noncomputable def noisyMeaning (ε : ℝ) (u_p : Utterance) (m : Meaning) : ℝ :=
-  ∑ u_i : Utterance,
-    (if literalMeaning u_i m then (1 : ℝ) else 0) *
-    noiseChannel ε u_i u_p
-
-/-- Literal listener over meanings given the perceived utterance
-(eq. 6, uniform priors). -/
-noncomputable def l0 (ε : ℝ) (u_p : Utterance) (m : Meaning) : ℝ :=
-  noisyMeaning ε u_p m / ∑ m', noisyMeaning ε u_p m'
-
-private theorem sumMeaningsR (f : Meaning → ℝ) :
-    ∑ m, f m = f .onlyAlice + f .onlyBob + f .both := by
-  rw [show (Finset.univ : Finset Meaning) = {.onlyAlice, .onlyBob, .both} from rfl,
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_singleton]
-  ring
-
-private theorem sumUttsR (f : Utterance → ℝ) :
-    ∑ u, f u = f .aliceWent + f .ALICE_went + f .bobWent + f .BOB_went +
-      f .aliceAndBobWent := by
-  rw [show (Finset.univ : Finset Utterance)
-      = {.aliceWent, .ALICE_went, .bobWent, .BOB_went, .aliceAndBobWent} from rfl,
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-    Finset.sum_singleton]
-  ring
-
-section Parametric
+/-- The subject-confusion channel at rate `ε`. -/
+noncomputable abbrev N (ε : ℝ) : Utterance → Utterance → ℝ := slipChannel (rate ε) slip
 
 variable {ε : ℝ}
 
-/-- The literal posteriors, symbolically in ε: the stressed percept pins
-the subject against `both`; the unstressed one mixes in the confusable
-subject. -/
-private theorem l0_values (hε0 : 0 < ε) (hε1 : ε < 1) :
-    l0 ε .BOB_went .onlyBob = 1/2 ∧
-    l0 ε .bobWent .onlyBob = (1 - ε/2) / (2 + ε) ∧
-    l0 ε .aliceWent .onlyBob = ε / (2 + ε) := by
-  refine ⟨?_, ?_, ?_⟩ <;>
-    · norm_num [l0, noisyMeaning, sumMeaningsR, sumUttsR, literalMeaning,
-        noiseChannel]
-      rw [div_eq_div_iff (ne_of_gt (by linarith)) (ne_of_gt (by linarith))]
-      ring
+private theorem sum_univ_utt (f : Utterance → ℝ) :
+    ∑ u, f u = f .aliceWent + f .ALICE_went + f .bobWent + f .BOB_went + f .aliceAndBobWent := by
+  rw [show (univ : Finset Utterance)
+      = {.aliceWent, .ALICE_went, .bobWent, .BOB_went, .aliceAndBobWent} from rfl,
+    sum_insert (by decide), sum_insert (by decide), sum_insert (by decide),
+    sum_insert (by decide), sum_singleton]
+  ring
 
-/-- Unstressed speaker-utility atom (eq. 7): the channel-weighted geometric
-mean of the literal posteriors for uttering "Bob went". -/
-noncomputable def xAtom (ε : ℝ) : ℝ :=
-  l0 ε .bobWent .onlyBob ^ (1 - ε) * l0 ε .aliceWent .onlyBob ^ ε
+private theorem sum_univ_mean (f : Meaning → ℝ) :
+    ∑ m, f m = f .onlyAlice + f .onlyBob + f .both := by
+  rw [show (univ : Finset Meaning) = {.onlyAlice, .onlyBob, .both} from rfl,
+    sum_insert (by decide), sum_insert (by decide), sum_singleton]
+  ring
 
-/-- Stressed speaker-utility atom (eq. 7) for "BOB went". -/
-noncomputable def yAtom (ε : ℝ) : ℝ :=
-  l0 ε .BOB_went .onlyBob ^ (1 - ε/2) * l0 ε .bobWent .onlyBob ^ (ε/2)
+/-- The literal posteriors of `onlyBob`: the intact subject sentence at one minus its rate,
+the confused one at its rate, each over the two meanings a subject sentence is true of. -/
+private theorem l0_onlyBob :
+    l0 lit (N ε) .bobWent .onlyBob = (1 - ε) / 2 ∧
+    l0 lit (N ε) .aliceWent .onlyBob = ε / 2 ∧
+    l0 lit (N ε) .BOB_went .onlyBob = (1 - ε / 2) / 2 ∧
+    l0 lit (N ε) .ALICE_went .onlyBob = ε / 4 := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;>
+    · simp only [l0, l0Score, sum_univ_utt, sum_univ_mean, lit, N, slipChannel, rate, slip]
+      norm_num <;> ring
 
-/-- The paper's mechanism, at every noise rate ε < 2/3: the stressed atom
-strictly exceeds the unstressed one. Stress both concentrates the channel
-on the informative percept and sharpens that percept's posterior, so the
-weighted geometric means separate across the unstressed posterior
-`(1 − ε/2)/(2 + ε)` — no magnitude computation involved. -/
-theorem xAtom_lt_yAtom (hε0 : 0 < ε) (hε : ε < 2/3) :
-    xAtom ε < yAtom ε := by
-  obtain ⟨hB, hb, ha⟩ := l0_values hε0 (by linarith)
-  have h2 : (0:ℝ) < 2 + ε := by linarith
-  have hv : (0:ℝ) < (1 - ε/2) / (2 + ε) := div_pos (by linarith) h2
-  have hu : (0:ℝ) < ε / (2 + ε) := div_pos hε0 h2
-  have huv : ε / (2 + ε) < (1 - ε/2) / (2 + ε) := by
-    apply div_lt_div_of_pos_right _ h2; linarith
-  have hvhalf : (1 - ε/2) / (2 + ε) < 1/2 := by
-    rw [div_lt_iff₀ h2]; linarith
-  calc xAtom ε < (1 - ε/2) / (2 + ε) := by
-        rw [xAtom, hb, ha]
-        exact (Real.geom_mean2_weighted_lt_max (by linarith) hε0 hv.le hu.le (by ring)
-          huv.ne').trans_eq (max_eq_left huv.le)
-    _ < yAtom ε := by
-        rw [yAtom, hB, hb]
-        exact (min_eq_right hvhalf.le).symm.trans_lt (Real.min_lt_geom_mean2_weighted
-          (by linarith) (by linarith) (by norm_num) hv (by ring) hvhalf.ne')
+/-- Eq. 7 for a subject sentence at slip rate `r`: the exponentiated utility of the meaning it
+is true of alone is `exp (-binEntropy r) / 2`. -/
+theorem rpow_mul_rpow_eq_exp_neg_binEntropy {r : ℝ} (hr₀ : 0 < r) (hr₁ : r < 1) :
+    ((1 - r) / 2) ^ (1 - r) * (r / 2) ^ r = exp (-binEntropy r) / 2 := by
+  rw [rpow_def_of_pos (div_pos (by linarith) two_pos), rpow_def_of_pos (div_pos hr₀ two_pos),
+    ← exp_add, log_div (sub_ne_zero.mpr hr₁.ne') two_ne_zero, log_div hr₀.ne' two_ne_zero,
+    show exp (-binEntropy r) / 2 = exp (-binEntropy r - log 2) by
+      rw [exp_sub, exp_log two_pos],
+    binEntropy, log_inv, log_inv]
+  congr 1; ring
 
-theorem xAtom_pos (hε0 : 0 < ε) (hε1 : ε < 1) : 0 < xAtom ε := by
-  obtain ⟨_, hb, ha⟩ := l0_values hε0 hε1
-  rw [xAtom, hb, ha]
-  have h2 : (0:ℝ) < 2 + ε := by linarith
-  exact mul_pos (Real.rpow_pos_of_pos (div_pos (by linarith) h2) _)
-    (Real.rpow_pos_of_pos (div_pos hε0 h2) _)
+/-- The knowledgeable speaker's scores for the two forms of "Bob went" are the entropy forms of
+their rates. -/
+theorem s1Score_eq_exp_neg_binEntropy (hε₀ : 0 < ε) (hε₁ : ε < 1) :
+    s1Score lit (N ε) .onlyBob .bobWent = exp (-binEntropy ε) / 2 ∧
+    s1Score lit (N ε) .onlyBob .BOB_went = exp (-binEntropy (ε / 2)) / 2 := by
+  obtain ⟨hb, ha, hB, hA⟩ := l0_onlyBob (ε := ε)
+  refine ⟨?_, ?_⟩
+  · rw [N, s1Score_slipChannel_of_slip (show slip .bobWent = some .aliceWent from rfl)
+      (by decide), hb, ha]
+    exact rpow_mul_rpow_eq_exp_neg_binEntropy hε₀ hε₁
+  · rw [N, s1Score_slipChannel_of_slip (show slip .BOB_went = some .ALICE_went from rfl)
+      (by decide), hB, hA]
+    have := rpow_mul_rpow_eq_exp_neg_binEntropy (half_pos hε₀) (by linarith)
+    rwa [show ε / 2 / 2 = ε / 4 by ring] at this
 
-theorem yAtom_pos (hε0 : 0 < ε) (hε1 : ε < 1) : 0 < yAtom ε := by
-  obtain ⟨hB, hb, _⟩ := l0_values hε0 hε1
-  rw [yAtom, hB, hb]
-  have h2 : (0:ℝ) < 2 + ε := by linarith
-  exact mul_pos (Real.rpow_pos_of_pos (by norm_num) _)
-    (Real.rpow_pos_of_pos (div_pos (by linarith) h2) _)
+/-- A speaker who knows that only Bob went scores "BOB went" above "Bob went": halving the
+rate lowers its binary entropy. -/
+theorem s1Score_bobWent_lt_BOB_went (hε₀ : 0 < ε) (hε : ε ≤ 1 / 2) :
+    s1Score lit (N ε) .onlyBob .bobWent < s1Score lit (N ε) .onlyBob .BOB_went := by
+  obtain ⟨hb, hB⟩ := s1Score_eq_exp_neg_binEntropy hε₀ (by linarith)
+  rw [hb, hB]
+  refine div_lt_div_of_pos_right (exp_lt_exp.2 (neg_lt_neg ?_)) two_pos
+  exact binEntropy_strictMonoOn ⟨by linarith, by norm_num; linarith⟩
+    ⟨hε₀.le, by norm_num; linarith⟩ (by linarith)
 
-/-- The atoms are the paper's exponentiated eq.-7 utilities. -/
-theorem xAtom_eq_exp (hε0 : 0 < ε) (hε1 : ε < 1) :
-    xAtom ε = Real.exp ((1 - ε) * Real.log (l0 ε .bobWent .onlyBob) +
-      ε * Real.log (l0 ε .aliceWent .onlyBob)) := by
-  obtain ⟨_, hb, ha⟩ := l0_values hε0 hε1
-  have h2 : (0:ℝ) < 2 + ε := by linarith
-  have hvpos : (0:ℝ) < l0 ε .bobWent .onlyBob := by
-    rw [hb]; exact div_pos (by linarith) h2
-  have hupos : (0:ℝ) < l0 ε .aliceWent .onlyBob := by
-    rw [ha]; exact div_pos hε0 h2
-  rw [xAtom, Real.rpow_def_of_pos hvpos, Real.rpow_def_of_pos hupos,
-    ← Real.exp_add]
-  ring_nf
-
-/-- Speaker-utility atoms per (meaning, utterance): the truthful subject
-utterances carry `xAtom`/`yAtom` (by Alice/Bob symmetry), the `both`
-meaning's subject atoms are identically `1/2`, and the conjunction is
-noise-free. -/
-noncomputable def eAtom (ε : ℝ) : Meaning → Utterance → ℝ
-  | .onlyBob, .bobWent => xAtom ε
-  | .onlyBob, .BOB_went => yAtom ε
-  | .onlyAlice, .aliceWent => xAtom ε
-  | .onlyAlice, .ALICE_went => yAtom ε
-  | .both, .aliceAndBobWent => 1
-  | .both, _ => 1/2
-  | _, _ => 0
-
-/-- Pragmatic-listener score (eq. 8): speaker-normalized atoms folded
-through the channel. -/
-noncomputable def l1Score (ε : ℝ) (u_p : Utterance) (m : Meaning) : ℝ :=
-  (∑ u_i, eAtom ε m u_i * noiseChannel ε u_i u_p) / ∑ u_i, eAtom ε m u_i
-
-/-- Pragmatic listener (eq. 8). -/
-noncomputable def l1PMF (ε : ℝ) (u_p : Utterance) : PMF Meaning :=
-  PMF.normalizeOrUniform fun m => ENNReal.ofReal (l1Score ε u_p m)
-
-private theorem noiseChannel_nonneg (hε0 : 0 < ε) (hε1 : ε < 1)
-    (u p : Utterance) : 0 ≤ noiseChannel ε u p := by
-  cases u <;> cases p <;> simp only [noiseChannel] <;> linarith
-
-private theorem eAtom_nonneg (hε0 : 0 < ε) (hε1 : ε < 1)
-    (m : Meaning) (u : Utterance) : 0 ≤ eAtom ε m u := by
-  have hx := (xAtom_pos hε0 hε1).le
-  have hy := (yAtom_pos hε0 hε1).le
-  cases m <;> cases u <;> simp only [eAtom] <;> first | assumption | norm_num
-
-private theorem l1Score_nonneg (hε0 : 0 < ε) (hε1 : ε < 1)
-    (u_p : Utterance) (m : Meaning) : 0 ≤ l1Score ε u_p m :=
-  div_nonneg
-    (Finset.sum_nonneg fun u _ =>
-      mul_nonneg (eAtom_nonneg hε0 hε1 m u) (noiseChannel_nonneg hε0 hε1 u u_p))
-    (Finset.sum_nonneg fun u _ => eAtom_nonneg hε0 hε1 m u)
-
-/-- The six score values the headline compares (symbolic in ε). -/
-private theorem l1Score_values (hε0 : 0 < ε) (hε1 : ε < 1) :
-    l1Score ε .BOB_went .onlyBob
-        = yAtom ε * (1 - ε/2) / (xAtom ε + yAtom ε) ∧
-    l1Score ε .BOB_went .onlyAlice = 0 ∧
-    l1Score ε .BOB_went .both = (1 - ε/2) / 6 ∧
-    l1Score ε .bobWent .onlyBob
-        = (xAtom ε * (1 - ε) + yAtom ε * (ε/2)) / (xAtom ε + yAtom ε) ∧
-    l1Score ε .bobWent .onlyAlice = xAtom ε * ε / (xAtom ε + yAtom ε) ∧
-    l1Score ε .bobWent .both = (1 + ε/2) / 6 := by
-  have hxy : xAtom ε + yAtom ε ≠ 0 := by
-    have := xAtom_pos hε0 hε1; have := yAtom_pos hε0 hε1; linarith
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
-    · unfold l1Score
-      rw [sumUttsR, sumUttsR]
-      simp only [eAtom, noiseChannel]
-      norm_num
-      try rw [div_eq_div_iff hxy hxy]
-      try ring
-
-private theorem sum_pos_BOB (hε0 : 0 < ε) (hε1 : ε < 1) :
-    0 < ∑ m, l1Score ε .BOB_went m := by
-  obtain ⟨hB_ob, hB_oa, hB_both, _, _, _⟩ := l1Score_values hε0 hε1
-  have hx := xAtom_pos hε0 hε1; have hy := yAtom_pos hε0 hε1
-  rw [sumMeaningsR, hB_oa, hB_ob, hB_both]
-  have : (0:ℝ) < yAtom ε * (1 - ε/2) / (xAtom ε + yAtom ε) := by
-    apply div_pos _ (by linarith); nlinarith
-  nlinarith
-
-private theorem sum_pos_bob (hε0 : 0 < ε) (hε1 : ε < 1) :
-    0 < ∑ m, l1Score ε .bobWent m := by
-  obtain ⟨_, _, _, hb_ob, hb_oa, hb_both⟩ := l1Score_values hε0 hε1
-  have hx := xAtom_pos hε0 hε1; have hy := yAtom_pos hε0 hε1
-  rw [sumMeaningsR, hb_oa, hb_ob, hb_both]
-  have h1 : (0:ℝ) ≤ xAtom ε * ε / (xAtom ε + yAtom ε) := by positivity
-  have h2 : (0:ℝ) ≤ (xAtom ε * (1 - ε) + yAtom ε * (ε/2)) / (xAtom ε + yAtom ε) := by
-    apply div_nonneg _ (by linarith); nlinarith
-  nlinarith
-
-/-- Stress increases the exhaustive interpretation, at every noise rate
-ε < 2/3: "BOB went" is strictly more likely than "Bob went" to mean only
-Bob went. By posterior dominance (`Finset.div_sum_lt_div_sum`), the
-comparison is cell-by-cell odds dominance: trivial at `onlyAlice` (the
-stressed row is zero there) and `onlyBob`, and the atom ordering
-`xAtom < yAtom` — the paper's mechanism — at `both`. -/
-theorem stress_increases_exhaustivity (hε0 : 0 < ε) (hε : ε < 2/3) :
-    l1PMF ε .bobWent .onlyBob < l1PMF ε .BOB_went .onlyBob := by
-  have hε1 : ε < 1 := by linarith
-  have hx := xAtom_pos hε0 hε1
-  have hxy := xAtom_lt_yAtom hε0 hε
-  obtain ⟨hB_ob, hB_oa, hB_both, hb_ob, _, hb_both⟩ := l1Score_values hε0 hε1
-  have hboth : l1Score ε .bobWent .onlyBob * l1Score ε .BOB_went .both <
-      l1Score ε .BOB_went .onlyBob * l1Score ε .bobWent .both := by
-    rw [hb_ob, hB_both, hB_ob, hb_both, div_mul_div_comm, div_mul_div_comm]
-    have hy := yAtom_pos hε0 hε1
-    exact div_lt_div_of_pos_right (by nlinarith [mul_pos hx hε0]) (by nlinarith)
-  rw [l1PMF, l1PMF]
-  exact PMF.normalizeOrUniform_ofReal_lt_cross (l1Score_nonneg hε0 hε1 _)
-    (l1Score_nonneg hε0 hε1 _) (sum_pos_bob hε0 hε1) (sum_pos_BOB hε0 hε1)
-    (Finset.div_sum_lt_div_sum (sum_pos_bob hε0 hε1) (sum_pos_BOB hε0 hε1)
-      (fun c => match c with
-        | .onlyAlice => by
-            rw [hB_oa, mul_zero]
-            exact mul_nonneg (l1Score_nonneg hε0 hε1 _ _) (l1Score_nonneg hε0 hε1 _ _)
-        | .onlyBob => (mul_comm _ _).le
-        | .both => hboth.le)
-      ⟨.both, hboth⟩)
-
-end Parametric
-
-/-- The paper's working regime (ε = 1/100) is inside the parametric
-theorem's range. -/
-example : l1PMF (1/100) .bobWent .onlyBob < l1PMF (1/100) .BOB_went .onlyBob :=
-  stress_increases_exhaustivity (by norm_num) (by norm_num)
+/-- The knowledgeable speaker prefers the stressed form (Fig. 2, right, at depth one). -/
+theorem s1_bobWent_lt_BOB_went (hε₀ : 0 < ε) (hε : ε ≤ 1 / 2) :
+    s1 lit (N ε) univ .onlyBob .bobWent < s1 lit (N ε) univ .onlyBob .BOB_went := by
+  refine div_lt_div_of_pos_right (s1Score_bobWent_lt_BOB_went hε₀ hε) ?_
+  rw [sum_univ_utt]
+  have hB : 0 < s1Score lit (N ε) .onlyBob .BOB_went := by
+    rw [(s1Score_eq_exp_neg_binEntropy hε₀ (by linarith)).2]; positivity
+  have hN : ∀ u v, 0 ≤ N ε u v :=
+    slipChannel_nonneg (fun u => by cases u <;> simp [rate] <;> linarith)
+      (fun u => by cases u <;> simp [rate] <;> linarith)
+  have h := fun u => s1Score_nonneg (lit := lit) hN Meaning.onlyBob u
+  linarith [h .aliceWent, h .ALICE_went, h .bobWent, h .aliceAndBobWent]
 
 /-- Utterance adapter: a row's `stress` feature as an utterance. -/
 def uttOf (row : Data.Examples.LinguisticExample) : Option Utterance :=
@@ -517,24 +386,14 @@ def uttOf (row : Data.Examples.LinguisticExample) : Option Utterance :=
   | some "none"    => some .bobWent
   | _              => none
 
-/-- The model's L1 assigns the exhaustive meaning more probability at the
-stressed row's utterance than at the unstressed row's, matching the rows'
-recorded `reading` contrast. -/
+/-- A speaker with the exhaustive meaning prefers the stressed row's form to the unstressed
+row's, at the paper's rate. -/
 theorem model_matches_stress_rows :
     ∃ u_s u_u, uttOf Examples.stressed_subject = some u_s ∧
       uttOf Examples.unstressed_subject = some u_u ∧
-      l1PMF (1/100) u_u .onlyBob < l1PMF (1/100) u_s .onlyBob :=
-  ⟨_, _, rfl, rfl, stress_increases_exhaustivity (by norm_num) (by norm_num)⟩
+      s1 lit (N (1 / 100)) univ .onlyBob u_u < s1 lit (N (1 / 100)) univ .onlyBob u_s :=
+  ⟨_, _, rfl, rfl, s1_bobWent_lt_BOB_went (by norm_num) (by norm_num)⟩
 
-/-- Stress widens the channel's correct-vs-confused gap by exactly ε
-(1 − ε stressed versus 1 − 2ε unstressed) — the channel-level face of the
-mechanism, at every noise rate. -/
-theorem stress_increases_discrimination {ε : ℝ} (hε : 0 < ε) :
-    noiseChannel ε .BOB_went .BOB_went - noiseChannel ε .BOB_went .bobWent >
-    noiseChannel ε .bobWent .bobWent - noiseChannel ε .bobWent .aliceWent := by
-  simp only [noiseChannel]
-  linarith
-
-end ProsodyModel
+end Prosody
 
 end BergenGoodman2015
