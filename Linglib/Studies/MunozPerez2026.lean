@@ -373,9 +373,9 @@ theorem se_optional_2sg :
 /-- The DAT-REFL syncretism that enables SE-optionality is present
     for exactly the persons where Fission applies. -/
 theorem syncretism_aligns_with_fission :
-    datReflSyncretic .first .Sing = true ∧
-    datReflSyncretic .second .Sing = true ∧
-    datReflSyncretic .third .Sing = false := ⟨rfl, rfl, rfl⟩
+    datReflSyncretic .first .singular = true ∧
+    datReflSyncretic .second .singular = true ∧
+    datReflSyncretic .third .singular = false := ⟨rfl, rfl, rfl⟩
 
 /-! ### Three-way synonymy -/
 

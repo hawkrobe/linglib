@@ -155,12 +155,12 @@ accusative is a discourse participant when it is first or second person, and a t
 is an attitude holder exactly on its *de se* reading. -/
 
 /-- The center a dative clitic realizes. -/
-def dativeCenter : UD.Person → LogoCenter
+def dativeCenter : Person → LogoCenter
   | .third => .empathyLocus
   | _ => .discourseParticipant
 
 /-- The center an accusative clitic realizes, given whether it is read *de se*. -/
-def accusativeCenter : UD.Person → Bool → LogoCenter
+def accusativeCenter : Person → Bool → LogoCenter
   | .third, true => .attitudeHolder
   | .third, false => .empathyLocus
   | _, _ => .discourseParticipant
