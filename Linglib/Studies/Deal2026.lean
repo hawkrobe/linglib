@@ -6,6 +6,7 @@ import Linglib.Data.Examples.Deal2026
 import Linglib.Data.Examples.Krapova2010
 import Linglib.Studies.BochnakHanink2021
 import Linglib.Syntax.Category.Verb.Complement.Takes
+import Linglib.Semantics.Presupposition.Environment
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 
 /-!
@@ -64,6 +65,7 @@ against factivity, needs Turkish *düşün-* 'think', which has no Fragment.
 * [deal-2025b]
 * [deal-2015a-nels]
 * [karttunen-1971]
+* [tonhauser-beaver-roberts-simons-2013]
 -/
 
 namespace Deal2026
@@ -106,11 +108,13 @@ theorem relative_factive :
   decide
 
 /-- Consultants endorse the complement under negation, in a question or in a conditional
-antecedent exactly for the factive predicates, the projection trials (33)–(36) and (68). -/
+antecedent exactly for the factive predicates, the projection trials (33)–(36) and (68); no
+trial is in the first person, so no semi-factive is cancelled ([karttunen-1971]). -/
 theorem projection_rows :
-    ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "projection" →
+    ∀ row ∈ Examples.all, ∀ f ∈ row.environment?, ∀ p ∈ row.person?,
       ∀ v ∈ verbs, row.feature? "verb" = some v.form →
-        (row.feature? "inference" = some "yes" ↔ v.toVerb.factivePresup = true) := by
+        (row.projective? = some true ↔
+          v.toVerb.factivePresup = true ∧ ∀ c ∈ v.factivity, ¬ c.Cancelled f p) := by
   decide
 
 /-! ### Table (79): internal against external syntax -/
@@ -167,12 +171,21 @@ theorem zaPhrase_rows :
           ∀ a ∈ row.alternatives, a.2 = .ungrammatical := by
   decide
 
-/-- Krapova's factivity tests (57) and footnote 46: the complement survives negation, a question
-and an attempted cancellation exactly for the factive predicates, under *deto* and *če* alike. -/
+/-- Krapova's factivity tests (57a–b): the complement survives negation and a question exactly
+for the factive predicates, and the emotive factives are cancelled nowhere. -/
 theorem krapova_projection_rows :
-    ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "projection" →
+    ∀ row ∈ Krapova2010.Examples.all, ∀ f ∈ row.environment?, ∀ p ∈ row.person?,
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
-        (row.feature? "inference" = some "yes" ↔ v.toVerb.factivePresup = true) := by
+        (row.projective? = some true ↔
+          v.toVerb.factivePresup = true ∧ ∀ c ∈ v.factivity, ¬ c.Cancelled f p) := by
+  decide
+
+/-- Krapova's contradiction tests (57c) and footnote 46: a continuation denying the complement
+is unacceptable exactly under a factive predicate, under *deto* and *če* alike. -/
+theorem krapova_contradiction_rows :
+    ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "contradiction" →
+      ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
+        ((∃ a ∈ row.alternatives, a.2 = .unacceptable) ↔ v.toVerb.factivePresup = true) := by
   decide
 
 /-- English N complementation, *the fact that S*: V D N CP without an Ā-dependency, the DP

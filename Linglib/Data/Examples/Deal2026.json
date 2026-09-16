@@ -1054,8 +1054,12 @@
         "negation"
       ],
       [
-        "inference",
+        "projective",
         "yes"
+      ],
+      [
+        "person",
+        "3"
       ]
     ],
     "comment": "",
@@ -1125,8 +1129,12 @@
         "negation"
       ],
       [
-        "inference",
+        "projective",
         "yes"
+      ],
+      [
+        "person",
+        "3"
       ]
     ],
     "comment": "",
@@ -1184,8 +1192,12 @@
         "negation"
       ],
       [
-        "inference",
+        "projective",
         "no"
+      ],
+      [
+        "person",
+        "3"
       ]
     ],
     "comment": "",
@@ -1247,8 +1259,12 @@
         "question"
       ],
       [
-        "inference",
+        "projective",
         "no"
+      ],
+      [
+        "person",
+        "3"
       ]
     ],
     "comment": "",
@@ -1319,11 +1335,15 @@
       ],
       [
         "environment",
-        "conditional"
+        "conditional antecedent"
       ],
       [
-        "inference",
+        "projective",
         "yes"
+      ],
+      [
+        "person",
+        "3"
       ]
     ],
     "comment": "",
