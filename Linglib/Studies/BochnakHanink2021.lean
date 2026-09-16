@@ -41,12 +41,12 @@ one event cannot carry different contents (`stack_eq`).
 
 namespace BochnakHanink2021
 
-open Washo.Clause Minimalist Semantics Semantics.Composition Reference
+open Washo Minimalist Semantics Semantics.Composition Reference
 
 /-! ### Selection -/
 
 /-- A predicate selects if it has an internal-argument frame (§3.2.2). -/
-def Selects (v : Washo.Clause.Verb) : Prop := v.frames ≠ []
+def Selects (v : Washo.Verb) : Prop := v.frames ≠ []
 
 instance : DecidablePred Selects := fun v ↦ inferInstanceAs (Decidable (v.frames ≠ []))
 
@@ -61,7 +61,7 @@ def complementSpine : ClauseSpine := ClauseSpine.cP.extend [.D]
 def modifierSpine : ClauseSpine := ClauseSpine.tP
 
 /-- The spine of the clause a predicate embeds. -/
-def spine (v : Washo.Clause.Verb) : ClauseSpine :=
+def spine (v : Washo.Verb) : ClauseSpine :=
   if Selects v then complementSpine else modifierSpine
 
 /-- The embedded clause projects D, and then also C, iff it bears the nominalizer (Table 2). -/

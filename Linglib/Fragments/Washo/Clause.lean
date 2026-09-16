@@ -24,7 +24,7 @@ is acute. The analysis of the split is `Studies/BochnakHanink2021.lean`.
 * [jacobsen-1964]
 -/
 
-namespace Washo.Clause
+namespace Washo
 
 open Morphology (Morph)
 
@@ -141,4 +141,4 @@ clause (Table 1). -/
 theorem typer_eq : ∀ v ∈ verbs, v.typer = if v.frames = [] then aq else ge := by
   decide
 
-end Washo.Clause
+end Washo
