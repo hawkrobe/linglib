@@ -4,6 +4,7 @@ import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Attitudes.Basic
+import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Logic.Natural.Basic
@@ -216,8 +217,11 @@ structure Aspect where
   cosType : Option CoSType := none
   deriving Repr, BEq
 
-/-- Presupposition profile: trigger type and complement-projection behavior. -/
+/-- Presupposition profile: factivity class, trigger type and complement-projection behavior. -/
 structure Presupposition where
+  /-- The [karttunen-1971] factivity class of a factive predicate; `none` for a
+      non-factive. -/
+  factivity : Option _root_.Factivity := none
   /-- Is the verb a presupposition trigger? -/
   presupType : Option PresupTriggerType := none
   /-- How does the verb treat presuppositions of its complement?

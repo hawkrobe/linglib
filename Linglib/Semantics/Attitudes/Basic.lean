@@ -3,8 +3,9 @@
 
 This file is the root of the attitude API: the semantic classification a clause-embedding
 predicate's lexical entry records, from which its combinatorial properties are derived. A
-doxastic predicate is veridical or not, the [karttunen-1971] lineage of factive and non-factive
-complement-taking verbs (`Doxastic.Veridicality`). A preferential predicate has an evaluative
+doxastic predicate is veridical or not, the classical cut between *know* and *believe*
+(`Doxastic.Veridicality`); [karttunen-1971]'s finer split of the factives into emotive and
+semi-factive is `Factivity`, on the presupposition facet. A preferential predicate has an evaluative
 valence, positive for *hope* and negative for *fear* (`Preferential.Valence`), and a
 compositional strategy (`Preferential.Strategy`): the degree comparison of [villalta-2008],
 whose question use is the existential over answers, or a relation to the question itself,

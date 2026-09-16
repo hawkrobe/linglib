@@ -323,8 +323,9 @@ def know : VerbEntry where
   projectionBehavior := some .hole
   complementSig := some .mono
   attitude := some (.doxastic .veridical)
+  factivity := some .semi
 
-/-- "regret" — factive, presupposes complement is true -/
+/-- "regret" — emotive factive, presupposes complement is true -/
 def regret : VerbEntry where
   form := "regret"
   form3sg := "regrets"
@@ -336,7 +337,8 @@ def regret : VerbEntry where
   passivizable := false
   presupType := some .softTrigger
   projectionBehavior := some .hole
-  attitude := some (.doxastic .veridical)
+  attitude := some (.preferential (.degreeComparison .negative))
+  factivity := some .emotive
 
 /-- "realize" — factive, presupposes complement is true -/
 def realize : VerbEntry := .mkRegular {
@@ -346,9 +348,10 @@ def realize : VerbEntry := .mkRegular {
   passivizable := false
   presupType := some .softTrigger
   projectionBehavior := some .hole
-  attitude := some (.doxastic .veridical) }
+  attitude := some (.doxastic .veridical)
+  factivity := some .semi }
 
-/-- "discover" — semifactive, weaker projection -/
+/-- "discover" — semi-factive, weaker projection -/
 def discover : VerbEntry := .mkRegular {
   form := "discover"
   frames := [Frame.finiteClause, Frame.question]
@@ -356,9 +359,10 @@ def discover : VerbEntry := .mkRegular {
   passivizable := false
   presupType := some .softTrigger
   projectionBehavior := some .hole
-  attitude := some (.doxastic .veridical) }
+  attitude := some (.doxastic .veridical)
+  factivity := some .semi }
 
-/-- "notice" — semifactive -/
+/-- "notice" — semi-factive -/
 def notice : VerbEntry := .mkRegular {
   form := "notice"
   frames := [Frame.finiteClause]
@@ -366,7 +370,8 @@ def notice : VerbEntry := .mkRegular {
   passivizable := false
   presupType := some .softTrigger
   projectionBehavior := some .hole
-  attitude := some (.doxastic .veridical) }
+  attitude := some (.doxastic .veridical)
+  factivity := some .semi }
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Change of State
