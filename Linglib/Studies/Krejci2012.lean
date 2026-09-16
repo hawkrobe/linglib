@@ -263,12 +263,8 @@ def type (c : Causative) : WithBot Tier := c.reach.max
 
 /-- A process that respects the hierarchy reaches exactly the tiers up to its type. -/
 theorem mem_reach_iff {c : Causative} (h : c.RespectsHierarchy) (t : Tier) :
-    t ∈ c.reach ↔ ↑t ≤ c.type := by
-  refine ⟨Finset.le_max, λ ht => ?_⟩
-  unfold type at ht
-  rcases hm : c.reach.max with _ | m <;> rw [hm] at ht
-  · exact absurd ht (WithBot.not_coe_le_bot t)
-  · exact h (WithBot.coe_le_coe.1 ht) (Finset.mem_of_max hm)
+    t ∈ c.reach ↔ ↑t ≤ c.type :=
+  h.mem_iff_le_max
 
 end Causative
 
