@@ -42,11 +42,10 @@ inductive Adjective.ComparisonStrategy
   | synthetic | periphrastic | suppletive
   deriving DecidableEq, Repr, BEq
 
-/-- Grade-level comparison morphology: the cross-linguistic structure (per-grade
-    formation strategy + the root pattern, whose *ABA constraint lives in
-    `Morphology/Paradigm/Contiguity.lean`, [bobaljik-2012]) plus the surface comparative and
-    superlative forms. -/
-structure Adjective.ComparisonFacet where
+/-- The comparison paradigm of an adjective: the comparative and superlative forms, how each
+    grade is formed, and the root pattern over the three grades, whose *ABA constraint lives in
+    `Morphology/Paradigm/Contiguity.lean` ([bobaljik-2012]). -/
+structure Adjective.Comparison where
   formComp  : Option String := none
   formSuper : Option String := none
   comparativeStrategy : Adjective.ComparisonStrategy := .synthetic
@@ -57,8 +56,27 @@ structure Adjective.ComparisonFacet where
   equative : Option Adjective.ComparisonStrategy := none
   deriving DecidableEq, Repr, BEq
 
-/-- No comparison marking (the default). -/
-def Adjective.ComparisonFacet.regular : Adjective.ComparisonFacet := {}
+namespace Adjective.Comparison
+
+/-- No comparison forms recorded (the default). -/
+def regular : Adjective.Comparison := {}
+
+/-- Synthetic comparison: a comparative and a superlative form on one root. -/
+def synthetic (comparative superlative : String) : Adjective.Comparison :=
+  { formComp := comparative, formSuper := superlative }
+
+/-- Periphrastic comparison: *more X* and *most X*. -/
+def periphrastic (comparative superlative : String) : Adjective.Comparison :=
+  { formComp := comparative, formSuper := superlative
+  , comparativeStrategy := .periphrastic, superlativeStrategy := .periphrastic }
+
+/-- Suppletive comparison: both graded forms on another root, in the given root pattern. -/
+def suppletive (comparative superlative : String)
+    (pattern : Morphology.Paradigm 3 ℕ := Morphology.Paradigm.abb) : Adjective.Comparison :=
+  { formComp := comparative, formSuper := superlative
+  , comparativeStrategy := .suppletive, superlativeStrategy := .suppletive, suppletion := pattern }
+
+end Adjective.Comparison
 
 /-! ### The adjective object -/
 
@@ -86,7 +104,7 @@ structure Adjective where
       member measures on the dual scale. -/
   polarity : Degree.Polarity := .positive
   /-- Comparative/superlative morphology. -/
-  comparison : Adjective.ComparisonFacet := .regular
+  comparison : Adjective.Comparison := .regular
   /-- Lexical antonym's surface form, when it has a stable one. -/
   antonymForm : Option String := none
   deriving Repr, DecidableEq, BEq

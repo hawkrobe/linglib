@@ -7,7 +7,7 @@ import Linglib.Syntax.Category.Adjective.Basic
 Latin comparative and superlative morphology, used for cross-linguistic
 verification of [bobaljik-2012]'s *ABA constraint and pattern inventory. Latin
 adjectives instantiate the general `Adjective` object (`Syntax/Category/Adjective/Basic.lean`),
-carrying their morphology in the `comparison` facet; the data here is purely
+carrying their morphology as their comparison paradigm; the data here is purely
 morphological (no scale `dimension`).
 
 Latin exhibits all three attested degree suppletion patterns:
@@ -35,20 +35,17 @@ namespace Latin.Adjectives
     comparative and superlative with productive suffixes *-ior*/*-issimus*. -/
 def longus : Adjective :=
   { form := "longus"
-  , comparison := { formComp := "longior", formSuper := "longissimus"
-                  , suppletion := Morphology.Paradigm.aaa } }
+  , comparison := .synthetic "longior" "longissimus" }
 
 /-- *altus – altior – altissimus* ('tall/high/deep'): regular. -/
 def altus : Adjective :=
   { form := "altus"
-  , comparison := { formComp := "altior", formSuper := "altissimus"
-                  , suppletion := Morphology.Paradigm.aaa } }
+  , comparison := .synthetic "altior" "altissimus" }
 
 /-- *fortis – fortior – fortissimus* ('brave/strong'): regular. -/
 def fortis : Adjective :=
   { form := "fortis"
-  , comparison := { formComp := "fortior", formSuper := "fortissimus"
-                  , suppletion := Morphology.Paradigm.aaa } }
+  , comparison := .synthetic "fortior" "fortissimus" }
 
 /-! ### Suppletive adjectives -/
 
@@ -57,33 +54,26 @@ def fortis : Adjective :=
     suppletive. -/
 def bonus : Adjective :=
   { form := "bonus"
-  , comparison := { formComp := "melior", formSuper := "optimus"
-                  , suppletion := Morphology.Paradigm.abc
-                  , comparativeStrategy := .suppletive, superlativeStrategy := .suppletive } }
+  , comparison := .suppletive "melior" "optimus" Morphology.Paradigm.abc }
 
 /-- *malus – peior – pessimus* ('bad – worse – worst'): ABB — one suppletive
     root *pēj-*/*pe-* in both graded forms ([bobaljik-2012] Table 4.1). -/
 def malus : Adjective :=
   { form := "malus"
-  , comparison := { formComp := "peior", formSuper := "pessimus"
-                  , suppletion := Morphology.Paradigm.abb
-                  , comparativeStrategy := .suppletive, superlativeStrategy := .suppletive } }
+  , comparison := .suppletive "peior" "pessimus" }
 
 /-- *magnus – maior – maximus* ('great – greater – greatest'): irregular but
     not suppletive — *mag-*, *mai-*, *max-* are one root, and the triple is
     absent from [bobaljik-2012]'s Table 4.1. AAA. -/
 def magnus : Adjective :=
   { form := "magnus"
-  , comparison := { formComp := "maior", formSuper := "maximus"
-                  , suppletion := Morphology.Paradigm.aaa } }
+  , comparison := .synthetic "maior" "maximus" }
 
 /-- *parvus – minor – minimus* ('small – smaller – smallest'): ABB, suppletive
     root *min-* shared across comparative and superlative. -/
 def parvus : Adjective :=
   { form := "parvus"
-  , comparison := { formComp := "minor", formSuper := "minimus"
-                  , suppletion := Morphology.Paradigm.abb
-                  , comparativeStrategy := .suppletive, superlativeStrategy := .suppletive } }
+  , comparison := .suppletive "minor" "minimus" }
 
 /-! ### Inventory -/
 
