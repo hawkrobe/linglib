@@ -84,6 +84,13 @@ def toPartialProp (nd : Nominal Ctx W E) (scope : E → W → Prop)
   PartialProp.and { presup := nd.presup c, assertion := fun _ => True }
     (nd.resolve scope c)
 
+@[simp] theorem resolve_presup (nd : Nominal Ctx W E) (scope : E → W → Prop) (c : Ctx) (w : W) :
+    (nd.resolve scope c).presup w = (nd.selector c w).isSome := rfl
+
+@[simp] theorem toPartialProp_presup (nd : Nominal Ctx W E) (scope : E → W → Prop) (c : Ctx)
+    (w : W) : (nd.toPartialProp scope c).presup w ↔ nd.presup c w ∧ (nd.selector c w).isSome :=
+  Iff.rfl
+
 /-! ### Monad structure
 
 `Nominal Ctx W` is the presupposition-projecting partiality monad: `bind`
@@ -132,9 +139,9 @@ private theorem bind_pure' (nd : Nominal Ctx W α) : nd >>= pure = nd := by
 re-selects by `pure`, and associativity is what makes possessive nesting
 (*John's mother's friend*) free. -/
 instance : LawfulMonad (Nominal Ctx W) := LawfulMonad.mk' (Nominal Ctx W)
-  (id_map := λ nd => bind_pure' nd)
-  (pure_bind := λ a k => by ext c w <;> simp)
-  (bind_assoc := λ nd k h => by
+  (id_map := fun nd ↦ bind_pure' nd)
+  (pure_bind := fun a k ↦ by ext c w <;> simp)
+  (bind_assoc := fun nd k h ↦ by
     ext c w <;> simp only [bind_presup, bind_selector] <;> cases nd.selector c w <;>
       simp [and_assoc])
 
@@ -163,7 +170,8 @@ def toNominal (χ : Character C W E) : Nominal C W E where
 context: the referent does not vary with the world of evaluation. -/
 theorem isDirectlyReferential_iff (χ : Character C W E) :
     χ.IsDirectlyReferential ↔ ∀ c, IsRigid (χ.toNominal.selector c) :=
-  forall_congr' λ _ => ⟨λ h => h.map some, λ h => h.of_comp_injective (Option.some_injective E)⟩
+  forall_congr' fun _ ↦
+    ⟨fun h ↦ h.map some, fun h ↦ h.of_comp_injective (Option.some_injective E)⟩
 
 end Character
 

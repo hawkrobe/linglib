@@ -26,21 +26,21 @@ namespace Semantics.Composition
 
 open scoped Assignment
 
-variable {E α β γ : Type}
+variable {E α β γ : Type*}
 
 /-- Pronoun/variable denotation: ⟦xₙ⟧^g = g(n). -/
-def interpPronoun (n : ℕ) : Assignment E → E := λ g => g n
+def interpPronoun (n : ℕ) : Assignment E → E := fun g ↦ g n
 
 /-- Lift a constant denotation to assignment-relative form. -/
-def constDenot (d : α) : Assignment E → α := λ _ => d
+def constDenot (d : α) : Assignment E → α := fun _ ↦ d
 
 /-- Function application with assignments. -/
 def applyG (f : Assignment E → α → β) (x : Assignment E → α) : Assignment E → β :=
-  λ g => f g (x g)
+  fun g ↦ f g (x g)
 
 /-- Lambda abstraction with variable binding. -/
 def lambdaAbsG (n : ℕ) (body : Assignment E → α) : Assignment E → E → α :=
-  λ g x => body (g[n ↦ x])
+  fun g x ↦ body (g[n ↦ x])
 
 theorem lambdaAbsG_apply (n : ℕ) (body : Assignment E → α) (arg : E) (g : Assignment E) :
     lambdaAbsG n body g arg = body (g[n ↦ arg]) := rfl
@@ -63,12 +63,12 @@ theorem applyG_constDenot_id (v : Assignment E → α) : applyG (constDenot id) 
 
 /-- **Interchange**: `u ⊛ ρ y = ρ (· y) ⊛ u`. -/
 theorem applyG_constDenot_interchange (u : Assignment E → α → β) (y : α) :
-    applyG u (constDenot y) = applyG (constDenot λ f : α → β => f y) u := rfl
+    applyG u (constDenot y) = applyG (constDenot fun f : α → β ↦ f y) u := rfl
 
 /-- **Composition**: `ρ comp ⊛ u ⊛ v ⊛ w = u ⊛ (v ⊛ w)`. -/
 theorem applyG_composition
     (u : Assignment E → β → γ) (v : Assignment E → α → β) (w : Assignment E → α) :
-    applyG (applyG (applyG (constDenot λ (f : β → γ) (g : α → β) x => f (g x)) u) v) w =
+    applyG (applyG (applyG (constDenot fun (f : β → γ) (g : α → β) x ↦ f (g x)) u) v) w =
       applyG u (applyG v w) := rfl
 
 end ApplicativeFunctor
@@ -85,17 +85,17 @@ Enables higher-order variables: a pronoun anaphoric to an *intension*
 (type `g → g → a`) is flattened to a standard denotation (type `g → a`)
 by evaluating the retrieved intension at the current assignment. -/
 def denotGJoin (ho : Assignment E → Assignment E → α) : Assignment E → α :=
-  fun g => ho g g
+  fun g ↦ ho g g
 
 /-- **Left identity**: `μ (ρ d) = d`. -/
-theorem denotGJoin_const (d : Assignment E → α) : denotGJoin (fun _ => d) = d := rfl
+theorem denotGJoin_const (d : Assignment E → α) : denotGJoin (fun _ ↦ d) = d := rfl
 
 /-- **Right identity**: `μ (λg. ρ(d g)) = d`. -/
-theorem denotGJoin_inner_const (d : Assignment E → α) : denotGJoin (fun g _ => d g) = d := rfl
+theorem denotGJoin_inner_const (d : Assignment E → α) : denotGJoin (fun g _ ↦ d g) = d := rfl
 
 /-- **Associativity**: `μ ∘ μ = μ ∘ fmap μ`. -/
 theorem denotGJoin_assoc (hho : Assignment E → Assignment E → Assignment E → α) :
-    denotGJoin (denotGJoin hho) = denotGJoin (fun g => denotGJoin (hho g)) := rfl
+    denotGJoin (denotGJoin hho) = denotGJoin (fun g ↦ denotGJoin (hho g)) := rfl
 
 end MonadicJoin
 
@@ -113,10 +113,10 @@ Both reuse `Assignment` at different instantiations, so mathlib's
 
 /-- Situation assignment: maps situation-pronoun indices to frame indices.
     Reuses `Assignment` at type `W`. -/
-abbrev SitAssignment (W : Type) := Assignment W
+abbrev SitAssignment (W : Type*) := Assignment W
 
 /-- Situation-pronoun denotation: ⟦sₙ⟧^{gs} = gs(n). Parallels `interpPronoun`. -/
-def interpSitPronoun {W : Type} (n : Nat) : SitAssignment W → W :=
-  fun gs => gs n
+def interpSitPronoun {W : Type*} (n : ℕ) : SitAssignment W → W :=
+  fun gs ↦ gs n
 
 end Semantics.Composition
