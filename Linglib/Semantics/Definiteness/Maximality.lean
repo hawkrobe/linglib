@@ -5,7 +5,7 @@ import Linglib.Semantics.Composition.Assignment
 [sharvy-1980] [kriz-2015] [coppock-beaver-2015] [russell-1905]
 
 Predicate operators consumed by the `Description` interpretation function in
-`Semantics/Definiteness/Interpret.lean`. They operate over entity predicates
+`Semantics/Definiteness/Description.lean`. They operate over entity predicates
 `E → Prop` — the extensional fragment of `Semantics.Composition.Ty.Domain E W .et`.
 At type `.et` a denotation reduces to `E → Prop` with no occurrence of the
 situation type `W`, so these world-blind operators do not bind it: they apply
@@ -35,7 +35,7 @@ predicate's domain.
 ## Design notes
 
 - **No semantic interpretation here.** This file provides only the operators.
-  `Semantics/Definiteness/Interpret.lean` wires `Description` constructors to them.
+  `Semantics/Definiteness/Description.lean` wires `Description` constructors to them.
 
 - **Ord-free vs. order-relative.** `russellIota` uses only `Eq`; `sharvyMax`
   requires `PartialOrder E`. This is the [sharvy-1980] /
@@ -46,7 +46,7 @@ predicate's domain.
 - **`Option` is the right return type.** A definite description with an
   unsatisfied uniqueness presupposition has no referent; rather than throw
   an exception or produce an arbitrary witness, we return `none`. The
-  interpretation function in `Semantics/Definiteness/Interpret.lean` lifts this to
+  denotation in `Semantics/Definiteness/Description.lean` lifts this to
   presupposition failure at the propositional level.
 -/
 

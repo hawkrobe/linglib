@@ -38,7 +38,7 @@ interpretation; the gender-mismatch corpus counts are described in prose.
 
 namespace PatelGroszGrosz2017
 
-open Definiteness
+open Definiteness Semantics
 
 /-- The pragmatic effects that license the strong-article series (§5): the speaker's
 emotional engagement with the referent, disambiguation away from the most prominent
@@ -100,13 +100,18 @@ two satisfiers, the weak description of *er* fails uniqueness while the strong d
 of *der* reads its referent off the discourse index, the two-satisfier scenario of the
 Schwarz study. -/
 theorem der_er_can_diverge :
-    Definiteness.interpret
-        (Definiteness.Description.ofPresupType .uniqueness Schwarz2009.studentRestr 0)
-        Schwarz2009.gAlice Schwarz2009.gs0 ≠
-      Definiteness.interpret
-        (Definiteness.Description.ofPresupType .familiarity Schwarz2009.studentRestr 0)
-        Schwarz2009.gAlice Schwarz2009.gs0 :=
-  Schwarz2009.two_articles_can_disagree
+    ⟦Description.ofPresupType .uniqueness Schwarz2009.studentRestr 0⟧ Schwarz2009.gAlice true ≠
+      ⟦Description.ofPresupType .familiarity Schwarz2009.studentRestr 0⟧ Schwarz2009.gAlice true :=
+  Schwarz2009.two_articles_can_disagree true
+
+/-- DEM = PER + index: the strong description of *der* is the weak description of *er* exactly
+when every satisfier of the restrictor is the antecedent, so the index is the whole difference
+between the series. -/
+theorem der_eq_er_of_unique {E W : Type} (R : Restrictor E W) (i : ℕ) (g : Assignment E) (s : W)
+    (hUniq : ∀ y, R g s y → y = g i) :
+    ⟦Description.ofPresupType .familiarity R i⟧ g s =
+      ⟦Description.ofPresupType .uniqueness R i⟧ g s :=
+  congrArg russellIota (funext fun x ↦ propext ⟨And.left, fun h ↦ ⟨h, hUniq x h⟩⟩)
 
 /-! ### Minimize DP! (§5) -/
 
