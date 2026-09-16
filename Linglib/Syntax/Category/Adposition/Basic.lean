@@ -72,6 +72,8 @@ inductive Complement where
   | clause
   /-- Adjectival complement (Dutch *tot voor kort* 'until recently'). -/
   | ap
+  /-- Measure-phrase complement (*for three hours*, *three days ago*). -/
+  | measure
   deriving DecidableEq, Repr, Fintype
 
 /-- Exponence on the grammaticalization cline (criterion 5). `affix` is the
