@@ -6,561 +6,174 @@ import Linglib.Syntax.Gender.Decomposition
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
-# Presuppositional Semantics of Phi-Features
-[sauerland-2003] [sauerland-2008] [harbour-2016] [heim-1991] [wang-r-2023]
+# Presuppositional semantics of φ-features
 
-Phi-features (number, person, definiteness) are **presuppositional partial
-identity functions** on the entity domain, ordered by presuppositional
-strength via `Agreement.ContainmentPair.specLevel`.
+A φ-feature denotes a presuppositional partial identity function on the entity domain
+[sauerland-2003]. The cell of a containment pair denotes through two predicates
+(`ContainmentPair.presup`): the maximal cell presupposes the inner predicate, the intermediate
+cell the outer one and the minimal cell nothing, and every cell asserts nothing
+(`ContainmentPair.presup_assertion`). When the inner predicate entails the outer, the domains
+nest by specification level (`ContainmentPair.presup_defined_of_specLevel_le`), the
+Feature-Subset Principle as a consequence of the privative geometry rather than a stipulation.
+The person, number and gender values denote through their bundles (`Person.presup`,
+`Number.presup`, `Gender.presup`), person at the speaker's and the addressee's parthood, number
+at atomicity, gender at femaleness and inanimacy, the three columns of one skeleton
+[harbour-2016]; a value without a bundle, the impersonal person, the numbers beyond the dual and
+the non-sex-based genders, presupposes nothing. The semantically unmarked values, third person,
+plural and masculine, are the minimal cells, and their vacuous presupposition is what
+honorification recruits [wang-r-2023].
 
-The core mathematical object is `phiPresup`: a single function that maps
-each `ContainmentPair` cell to a `PartialProp`, using two predicates (innerP,
-outerP) corresponding to the inner and outer privative features. Since
-the three well-formed cells have 2, 1, and 0 marked features respectively,
-their presuppositions are automatically nested — more marked features =
-stronger presupposition = smaller domain.
+## Implementation notes
 
-## Domains
+The dual's minimality presupposition needs a mereological predicate the entity domain's order
+does not supply, so the number outer predicate is trivial and the dual presupposes nothing. The
+neuter ↦ inanimate cell and the gender containment are less established than the person and
+number columns (German *das Mädchen* 'the girl' is neuter and animate); the established core is
+feminine presupposing female with masculine unmarked [sauerland-2008].
 
-| Domain       | innerP           | outerP                        | maximal (2) | intermediate (1) | minimal (0) |
-|-------------|------------------|-------------------------------|-------------|-------------------|-------------|
-| Number      | Atom             | MinimalGroup                  | singular    | dual              | plural      |
-| Person      | speaker ≤ ·      | speaker ≤ · ∨ addressee ≤ ·   | 1st         | 2nd               | 3rd         |
-| Gender      | isInanimate      | isFemale                      | neuter      | feminine          | masculine   |
-| Definiteness| familiar/unique  | —                             | definite    | —                 | indefinite  |
+## References
 
-## Semantic Markedness ([wang-r-2023])
-
-The semantically **unmarked** values (plural, 3rd person, indefinite) are
-precisely those at the minimal cell (specLevel 0) with vacuous
-presuppositions. These are the values recruited cross-linguistically for
-honorification — an observation that falls out from the presuppositional
-framework without stipulation.
+* [sauerland-2003]
+* [sauerland-2008]
+* [harbour-2016]
+* [wang-r-2023]
 -/
 
-namespace Presupposition.PhiFeatures
-
-open Mereology (Atom)
-open Agreement (ContainmentPair ContainmentPairLike)
-open Presupposition
-
--- ============================================================================
--- §1  Generic Presuppositional Denotations
--- ============================================================================
-
-/-- Generic presuppositional denotation from a privative feature pair.
-
-    Maps each `ContainmentPair` cell to a `PartialProp` using two predicates:
-    `innerP` for [±inner] and `outerP` for [±outer].
-
-    | Cell         | outer | inner | Presupposition |
-    |--------------|-------|-------|----------------|
-    | maximal      |   +   |   +   | innerP         |
-    | intermediate |   +   |   −   | outerP         |
-    | minimal      |   −   |   −   | vacuous        |
-
-    Since [+inner] → [+outer] (privative containment), `innerP`
-    implies `outerP`. So maximal's presupposition (innerP) is the
-    strongest — no need to separately conjoin outerP. -/
-def phiPresup {E : Type*} (innerP outerP : E → Prop) :
-    ContainmentPair → PartialProp E
-  | ⟨true, true⟩ => { presup := innerP, assertion := fun _ => True }
-  | ⟨true, false⟩ => { presup := outerP, assertion := fun _ => True }
-  | ⟨false, _⟩ => { presup := fun _ => True, assertion := fun _ => True }
-
-/-- **Feature-Subset Principle, derived from privative geometry.**
-
-    If innerP → outerP (the containment [+inner] → [+outer]), then
-    more specified cells have smaller presuppositional domains. This
-    is the semantic content of `ContainmentPair.spec_strict_order` —
-    not a stipulation but a consequence of the algebraic structure. -/
-theorem phiPresup_nesting {E : Type*}
-    {innerP outerP : E → Prop} (hContain : ∀ x, innerP x → outerP x)
-    {c₁ c₂ : ContainmentPair}
-    (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed)
-    (hSpec : c₁.specLevel ≥ c₂.specLevel) (x : E)
-    (h : (phiPresup innerP outerP c₁).defined x) :
-    (phiPresup innerP outerP c₂).defined x := by
-  rcases ContainmentPair.classification c₁ hw₁ with rfl | rfl | rfl <;>
-    rcases ContainmentPair.classification c₂ hw₂ with rfl | rfl | rfl <;>
-      simp_all [ContainmentPair.maximal, ContainmentPair.intermediate,
-        ContainmentPair.minimal, ContainmentPair.specLevel, Bool.toNat,
-        phiPresup, PartialProp.defined]
-
-/-- All `phiPresup` cells have the same (trivial) assertive content.
-    This is the privative-geometric reason why φ-feature competition
-    is presuppositional, not at-issue. -/
-theorem phiPresup_same_assertion {E : Type*}
-    (innerP outerP : E → Prop) (c₁ c₂ : ContainmentPair) (x : E) :
-    (phiPresup innerP outerP c₁).assertion x ↔
-    (phiPresup innerP outerP c₂).assertion x := by
-  cases c₁ with | mk o₁ i₁ =>
-  cases c₂ with | mk o₂ i₂ =>
-  cases o₁ <;> cases i₁ <;> cases o₂ <;> cases i₂ <;> simp [phiPresup]
-
--- ============================================================================
--- §2  Number Presuppositions
--- ============================================================================
-
-/-- ⟦Sg⟧: presupposes atomicity. The identity function restricted to
-    atoms — defined only when the referent is an atom. -/
-def sgSem (E : Type*) [PartialOrder E] : PartialProp E where
-  presup := Atom
-  assertion := fun _ => True
-
-/-- ⟦Pl⟧: no inherent presupposition. The unrestricted identity function.
-    Its distribution is constrained pragmatically by Maximize Presupposition,
-    not by any semantic content. -/
-def plSem (E : Type*) : PartialProp E where
-  presup := fun _ => True
-  assertion := fun _ => True
-
-/-- ⟦Du⟧: presupposes minimality (no proper non-atomic subpart).
-    The intermediate cell (specLevel 1). -/
-def dualSem {E : Type*} (minimalP : E → Prop) : PartialProp E where
-  presup := minimalP
-  assertion := fun _ => True
-
--- ── Number denotations as `phiPresup` instances ─────
-
-/-- `sgSem` is `phiPresup` at the maximal cell. -/
-@[simp] theorem sgSem_eq_phiPresup {E : Type*} [PartialOrder E]
-    (outerP : E → Prop) :
-    phiPresup Atom outerP .maximal = sgSem E := rfl
-
-/-- `dualSem` is `phiPresup` at the intermediate cell. -/
-@[simp] theorem dualSem_eq_phiPresup {E : Type*} [PartialOrder E]
-    (minimalP : E → Prop) :
-    phiPresup (E := E) Atom minimalP .intermediate = dualSem minimalP := rfl
-
-/-- `plSem` is `phiPresup` at the minimal cell. -/
-@[simp] theorem plSem_eq_phiPresup {E : Type*} (innerP outerP : E → Prop) :
-    phiPresup innerP outerP .minimal = plSem E := rfl
-
--- ── Bridge to Number ─────
-
-/-- Singular features map to the maximal `ContainmentPair` cell (specLevel 2). -/
-@[simp] theorem sg_is_maximal_cell :
-    ContainmentPairLike.toPair Number.singularF = .maximal := rfl
-
-/-- Plural features map to the minimal cell (specLevel 0). -/
-@[simp] theorem pl_is_minimal_cell :
-    ContainmentPairLike.toPair Number.pluralF = .minimal := rfl
-
-/-- The presuppositional asymmetry tracks specification level:
-    singular (specLevel 2) has content; plural (specLevel 0) is vacuous. -/
-theorem presup_strength_tracks_specLevel :
-    ContainmentPairLike.specLevel Number.singularF >
-    ContainmentPairLike.specLevel Number.pluralF := by decide
-
--- ============================================================================
--- §3  Person Presuppositions
--- ============================================================================
-
-section PersonPresuppositions
-
-variable {E : Type*} [PartialOrder E]
-
-/-- ⟦1st⟧: presupposes the referent includes the speaker.
-    Maximal cell [+author, +participant] (specLevel 2). -/
-def firstSem (speaker : E) : PartialProp E where
-  presup := fun x => speaker ≤ x
-  assertion := fun _ => True
-
-/-- ⟦2nd⟧: presupposes the referent includes a speech-act participant.
-    Intermediate cell [−author, +participant] (specLevel 1). -/
-def secondSem (speaker addressee : E) : PartialProp E where
-  presup := fun x => speaker ≤ x ∨ addressee ≤ x
-  assertion := fun _ => True
-
-/-- ⟦3rd⟧: vacuous presupposition.
-    Minimal cell [−author, −participant] (specLevel 0). -/
-def thirdSem : PartialProp E where
-  presup := fun _ => True
-  assertion := fun _ => True
-
-/-- Person domain nesting: dom(1st) ⊆ dom(2nd) ⊆ dom(3rd). -/
-theorem person_domain_nesting (speaker addressee : E) :
-    (∀ x, (firstSem speaker).defined x →
-          (secondSem speaker addressee).defined x) ∧
-    (∀ x, (secondSem speaker addressee).defined x →
-          (thirdSem (E := E)).defined x) :=
-  ⟨fun _ h => Or.inl h, fun _ _ => trivial⟩
-
--- ── Person as `phiPresup` instances ─────
-
-theorem firstSem_eq_phiPresup (speaker addressee : E) :
-    phiPresup (fun x => speaker ≤ x)
-              (fun x => speaker ≤ x ∨ addressee ≤ x)
-              .maximal = firstSem speaker := rfl
-
-theorem secondSem_eq_phiPresup (speaker addressee : E) :
-    phiPresup (fun x => speaker ≤ x)
-              (fun x => speaker ≤ x ∨ addressee ≤ x)
-              .intermediate = secondSem speaker addressee := rfl
-
-theorem thirdSem_eq_phiPresup (speaker addressee : E) :
-    phiPresup (fun x => speaker ≤ x)
-              (fun x => speaker ≤ x ∨ addressee ≤ x)
-              .minimal = (thirdSem : PartialProp E) := rfl
-
-/-- Person nesting is a corollary of `phiPresup_nesting` — the same
-    theorem that derives number nesting also derives person nesting,
-    because both use the same `ContainmentPair` structure. -/
-theorem person_nesting_from_phi (speaker addressee : E)
-    {c₁ c₂ : ContainmentPair}
-    (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed)
-    (hSpec : c₁.specLevel ≥ c₂.specLevel) (x : E)
-    (h : (phiPresup (fun x => speaker ≤ x)
-                     (fun x => speaker ≤ x ∨ addressee ≤ x) c₁).defined x) :
-    (phiPresup (fun x => speaker ≤ x)
-               (fun x => speaker ≤ x ∨ addressee ≤ x) c₂).defined x :=
-  phiPresup_nesting (fun _ h => Or.inl h) hw₁ hw₂ hSpec x h
-
-/-- Person and number have the same `specLevel` ordering — this is the
-    semantic content of [harbour-2016]'s phi kernel isomorphism.
-    Both are `phiPresup` instances over the same `ContainmentPair` cells,
-    so `phiPresup_nesting` applies to both: the nesting is structural,
-    not a per-domain coincidence. -/
-theorem person_number_isomorphism :
-    ContainmentPairLike.specLevel Person.firstF =
-      ContainmentPairLike.specLevel Number.singularF ∧
-    ContainmentPairLike.specLevel Person.secondF =
-      ContainmentPairLike.specLevel Number.dualF ∧
-    ContainmentPairLike.specLevel Person.thirdF =
-      ContainmentPairLike.specLevel Number.pluralF :=
-  ⟨rfl, rfl, rfl⟩
-
-end PersonPresuppositions
-
--- ============================================================================
--- §3b  Gender Presuppositions
--- ============================================================================
-
-/-!
-## §3b: Gender Presuppositions ([sauerland-2008])
-
-Gender features [±feminine, ±neuter] form a third `ContainmentPair` instance,
-with containment [+neuter] → [+feminine] (see `Gender.Features`).
-
-The presuppositional semantics mirrors number and person:
-- **neuter** (maximal, specLevel 2): presupposes inanimate
-- **feminine** (intermediate, specLevel 1): presupposes female
-- **masculine** (minimal, specLevel 0): vacuous (default/unmarked)
-
-**Idealization.** The neuter↦inanimate cell and the gender containment
-geometry are far less established than the person/number columns —
-German *das Mädchen* 'the girl' (neuter, animate, female) is the
-standard counterexample. The established core is feminine presupposing
-female with masculine unmarked ([sauerland-2008]).
-
-[wang-r-2023]: masculine, as the semantically unmarked gender,
-is available for honorific use cross-linguistically — paralleling the
-use of plural (unmarked number) and 3rd person (unmarked person) for
-politeness.
--/
-
-section GenderPresuppositions
-
-variable {E : Type*}
-
-/-- ⟦Neut⟧: presupposes the referent is inanimate.
-    Maximal cell [+feminine, +neuter] (specLevel 2). -/
-def neutSem (isInanimate : E → Prop) : PartialProp E where
-  presup := isInanimate
-  assertion := fun _ => True
-
-/-- ⟦Fem⟧: presupposes the referent is female.
-    Intermediate cell [+feminine, −neuter] (specLevel 1). -/
-def femSem (isFemale : E → Prop) : PartialProp E where
-  presup := isFemale
-  assertion := fun _ => True
-
-/-- ⟦Masc⟧: vacuous presupposition.
-    Minimal cell [−feminine, −neuter] (specLevel 0). -/
-def mascSem : PartialProp E where
-  presup := fun _ => True
-  assertion := fun _ => True
-
--- ── Gender denotations as `phiPresup` instances ─────
-
-/-- `neutSem` is `phiPresup` at the maximal cell. -/
-@[simp] theorem neutSem_eq_phiPresup (isInanimate isFemale : E → Prop) :
-    phiPresup isInanimate isFemale .maximal = neutSem isInanimate := rfl
-
-/-- `femSem` is `phiPresup` at the intermediate cell. -/
-@[simp] theorem femSem_eq_phiPresup (isInanimate isFemale : E → Prop) :
-    phiPresup isInanimate isFemale .intermediate = femSem isFemale := rfl
-
-/-- `mascSem` is `phiPresup` at the minimal cell. -/
-@[simp] theorem mascSem_eq_phiPresup (innerP outerP : E → Prop) :
-    phiPresup innerP outerP .minimal = (mascSem : PartialProp E) := rfl
-
-/-- Gender domain nesting: dom(Neut) ⊆ dom(Fem) ⊆ dom(Masc).
-    Parallels number (sg ⊆ pl) and person (1st ⊆ 3rd). -/
-theorem gender_domain_nesting (isInanimate isFemale : E → Prop)
-    (hContain : ∀ x, isInanimate x → isFemale x) :
-    (∀ x, (neutSem isInanimate).defined x →
-          (femSem isFemale).defined x) ∧
-    (∀ x, (femSem isFemale).defined x →
-          (mascSem (E := E)).defined x) :=
-  ⟨fun _ h => hContain _ h, fun _ _ => trivial⟩
-
-/-- Gender nesting via `phiPresup_nesting` — structurally identical
-    to person nesting and number nesting. -/
-theorem gender_nesting_from_phi (isInanimate isFemale : E → Prop)
-    (hContain : ∀ x, isInanimate x → isFemale x)
-    {c₁ c₂ : ContainmentPair}
-    (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed)
-    (hSpec : c₁.specLevel ≥ c₂.specLevel) (x : E)
-    (h : (phiPresup isInanimate isFemale c₁).defined x) :
-    (phiPresup isInanimate isFemale c₂).defined x :=
-  phiPresup_nesting hContain hw₁ hw₂ hSpec x h
-
-/-- Gender, person, and number have the same `specLevel` ordering —
-    all three domains share the phi kernel structure. -/
-theorem gender_person_number_isomorphism :
-    ContainmentPairLike.specLevel Gender.Features.neuter =
-      ContainmentPairLike.specLevel Person.firstF ∧
-    ContainmentPairLike.specLevel Gender.Features.neuter =
-      ContainmentPairLike.specLevel Number.singularF ∧
-    ContainmentPairLike.specLevel Gender.Features.feminine =
-      ContainmentPairLike.specLevel Person.secondF ∧
-    ContainmentPairLike.specLevel Gender.Features.masculine =
-      ContainmentPairLike.specLevel Person.thirdF :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-end GenderPresuppositions
-
-/-! ### Denotations of the feature values
-
-A feature value denotes through its bundle: `phiPresup` at the bundle's cell when the value
-has one, and the trivial presupposition when it has none (the impersonal person, the numbers
-beyond the dual, the non-sex-based genders) or when the feature is absent, the treatment of an
-unmarked or missing feature in [sauerland-2003]. The dual's minimality presupposition needs a
-mereological predicate the entity domain's order does not supply, so its cell is trivial here. -/
-
-section Values
-
-variable {E : Type*} {F : Type*} [ContainmentPairLike F] (innerP outerP : E → Prop)
-
-/-- The presupposition of an optional bundle: `phiPresup` at its cell, trivial when absent. -/
-def ofFeatures (f : Option F) : PartialProp E :=
-  f.elim PartialProp.top (phiPresup innerP outerP ∘ ContainmentPairLike.toPair)
-
-@[simp] theorem ofFeatures_none :
-    ofFeatures innerP outerP (none : Option F) = PartialProp.top := rfl
-
-@[simp] theorem ofFeatures_some (f : F) :
-    ofFeatures innerP outerP (some f) = phiPresup innerP outerP (ContainmentPairLike.toPair f) :=
-  rfl
-
-/-- The person presupposition of an optional person value. -/
-def personSem [PartialOrder E] (speaker addressee : E) (p : Option Person) : PartialProp E :=
-  ofFeatures (speaker ≤ ·) (fun x ↦ speaker ≤ x ∨ addressee ≤ x) (p.bind Person.toFeatures)
-
-/-- The number presupposition of an optional number value. -/
-def numberSem [PartialOrder E] (n : Option Number) : PartialProp E :=
-  ofFeatures Atom (fun _ ↦ True) (n.bind Number.Features.ofNumber)
-
-/-- The gender presupposition of an optional gender value. -/
-def genderSem (isFemale isInanimate : E → Prop) (g : Option Gender) : PartialProp E :=
-  ofFeatures isInanimate isFemale (g.bind Gender.Features.fromGender)
-
-section PersonNumber
-
-variable [PartialOrder E] (speaker addressee : E)
-
-@[simp] theorem personSem_none : personSem speaker addressee none = PartialProp.top := rfl
-
-@[simp] theorem personSem_first : personSem speaker addressee (some .first) = firstSem speaker :=
-  rfl
-
-@[simp] theorem personSem_firstInclusive :
-    personSem speaker addressee (some .firstInclusive) = firstSem speaker := rfl
-
-@[simp] theorem personSem_firstExclusive :
-    personSem speaker addressee (some .firstExclusive) = firstSem speaker := rfl
-
-@[simp] theorem personSem_second :
-    personSem speaker addressee (some .second) = secondSem speaker addressee := rfl
-
-@[simp] theorem personSem_third : personSem speaker addressee (some .third) = thirdSem := rfl
-
-@[simp] theorem personSem_zero : personSem speaker addressee (some .zero) = PartialProp.top :=
-  rfl
-
-@[simp] theorem numberSem_none : numberSem (E := E) none = PartialProp.top := rfl
-
-@[simp] theorem numberSem_singular : numberSem (E := E) (some .singular) = sgSem E := rfl
-
-@[simp] theorem numberSem_dual : numberSem (E := E) (some .dual) = PartialProp.top := rfl
-
-@[simp] theorem numberSem_plural : numberSem (E := E) (some .plural) = plSem E := rfl
-
-end PersonNumber
-
-section GenderValues
-
-variable (isFemale isInanimate : E → Prop)
-
-@[simp] theorem genderSem_none : genderSem isFemale isInanimate none = PartialProp.top := rfl
-
-@[simp] theorem genderSem_feminine :
-    genderSem isFemale isInanimate (some .feminine) = femSem isFemale := rfl
-
-@[simp] theorem genderSem_neuter :
-    genderSem isFemale isInanimate (some .neuter) = neutSem isInanimate := rfl
-
-@[simp] theorem genderSem_masculine :
-    genderSem isFemale isInanimate (some .masculine) = mascSem := rfl
-
-end GenderValues
-
-end Values
-
--- ============================================================================
--- §4  Definiteness Presuppositions
--- ============================================================================
-
-/-!
-## §4: Definiteness as Presupposition
-
-Definiteness exhibits the same presuppositional asymmetry as number and
-person: definites carry a familiarity/uniqueness presupposition
-([heim-1991], [strawson-1950]), while indefinites carry no
-presupposition. Unlike number and person, definiteness is a binary
-contrast (no intermediate cell), so we instantiate `phiPresup` at the
-maximal and minimal cells only.
-
-[wang-r-2023] relies on this: indefinites are semantically unmarked
-(vacuous presupposition), so they are recruited for honorification in
-languages like Ainu.
--/
-
-section DefinitePresuppositions
-
-variable {E : Type*}
-
-/-- ⟦DEF⟧: presupposes the referent satisfies a contextual familiarity
-    or uniqueness condition. The predicate `familiar` is abstract —
-    concretely it may be Heim's familiarity or Russell's uniqueness
-    (cf. `Reference.Description.Strength`). -/
-def defSem (familiar : E → Prop) : PartialProp E where
-  presup := familiar
-  assertion := fun _ => True
-
-/-- ⟦INDEF⟧: no presupposition. Like `plSem` and `thirdSem`, its
-    distribution is constrained pragmatically by Maximize Presupposition.
-    Using an indefinite when a definite's presupposition is satisfied
-    would violate MP!. -/
-def indefSem : PartialProp E where
-  presup := fun _ => True
-  assertion := fun _ => True
-
-/-- `defSem` is `phiPresup` at the maximal cell (with outerP = familiar). -/
-@[simp] theorem defSem_eq_phiPresup (familiar : E → Prop) :
-    phiPresup familiar familiar .maximal = defSem familiar := rfl
-
-/-- `indefSem` is `phiPresup` at the minimal cell. -/
-@[simp] theorem indefSem_eq_phiPresup (innerP outerP : E → Prop) :
-    phiPresup innerP outerP .minimal = (indefSem : PartialProp E) := rfl
-
-/-- Definiteness domain nesting: dom(DEF) ⊆ dom(INDEF). -/
-theorem def_domain_subset_indef (familiar : E → Prop) (x : E) :
-    (defSem familiar).defined x → (indefSem (E := E)).defined x :=
-  fun _ => trivial
-
-/-- The containment is strict: there exist unfamiliar entities in
-    dom(INDEF) \ dom(DEF). -/
-theorem def_strictly_stronger (familiar : E → Prop)
-    (x : E) (hUnfamiliar : ¬familiar x) :
-    (indefSem (E := E)).defined x ∧ ¬(defSem familiar).defined x :=
-  ⟨trivial, hUnfamiliar⟩
-
-end DefinitePresuppositions
-
--- ============================================================================
--- §5  Semantic Markedness
--- ============================================================================
-
-/-!
-## §5: Semantic Markedness ([wang-r-2023])
-
-A phi-feature value is **semantically unmarked** iff its presupposition is
-vacuous — i.e., it is at the minimal `ContainmentPair` cell (specLevel 0).
-Semantically unmarked values are compatible with a wider range of
-contexts, making them available for pragmatic co-optation (honorification).
-
-This definition is domain-general: it applies uniformly to number
-(plural), person (3rd), and definiteness (indefinite).
--/
-
-/-- A phi-feature value is semantically unmarked iff its specLevel is 0
-    (vacuous presupposition). -/
-def isSemanticUnmarked (c : ContainmentPair) : Bool := c.specLevel == 0
-
-/-- A phi-feature value is semantically marked iff its specLevel is > 0
-    (substantive presupposition). -/
-def isSemanticMarked (c : ContainmentPair) : Bool := c.specLevel > 0
-
-/-- The minimal cell is the unique unmarked cell. -/
-@[simp] theorem minimal_is_unmarked : isSemanticUnmarked .minimal = true := rfl
-
-/-- The maximal cell is marked. -/
-@[simp] theorem maximal_is_marked : isSemanticMarked .maximal = true := rfl
-
-/-- The intermediate cell is marked. -/
-@[simp] theorem intermediate_is_marked : isSemanticMarked .intermediate = true := rfl
-
-/-- Only the minimal cell is unmarked among well-formed cells. -/
-theorem unmarked_iff_minimal (c : ContainmentPair) (hw : c.WellFormed) :
-    isSemanticUnmarked c = true ↔ c = .minimal := by
-  rcases ContainmentPair.classification c hw with rfl | rfl | rfl <;> decide
-
-/-- Unmarked cells have vacuous presuppositions via `phiPresup`. -/
-theorem unmarked_vacuous_presup {E : Type*} (innerP outerP : E → Prop)
-    (c : ContainmentPair) (hw : c.WellFormed)
-    (hu : isSemanticUnmarked c = true) (x : E) :
-    (phiPresup innerP outerP c).defined x := by
-  have hmin := (unmarked_iff_minimal c hw).mp hu
-  subst hmin; trivial
-
--- ============================================================================
--- §6  Presuppositional Strength
--- ============================================================================
-
-/-- Well-formed cells have specLevel ≤ 2. This follows from the
-    three-cell structure of `ContainmentPair` — the maximum is
-    `maximal.specLevel = 2`. -/
-theorem wellFormed_specLevel_le_two (c : ContainmentPair)
-    (hw : c.WellFormed) : c.specLevel ≤ 2 := by
-  rcases ContainmentPair.classification c hw with rfl | rfl | rfl <;> decide
-
-/-- Presuppositional strength = specLevel. Higher specLevel = stronger
-    presupposition = smaller domain. -/
-def presupStrength (c : ContainmentPair) : Nat := c.specLevel
-
-/-- `c₁` has a weaker presupposition than `c₂`. -/
-def presupWeakerThan (c₁ c₂ : ContainmentPair) : Bool :=
-  c₁.specLevel < c₂.specLevel
-
-/-- `c₁` has a stronger presupposition than `c₂`. -/
-def presupStrongerThan (c₁ c₂ : ContainmentPair) : Bool :=
-  c₁.specLevel > c₂.specLevel
-
-/-- Minimal has the weakest presupposition among all cells. -/
-theorem minimal_weakest (c : ContainmentPair) (hw : c.WellFormed)
-    (hne : c ≠ .minimal) :
-    presupWeakerThan .minimal c = true := by
-  rcases ContainmentPair.classification c hw with rfl | rfl | rfl <;>
-    first | decide | exact absurd rfl hne
-
-/-- Maximal has the strongest presupposition among all cells. -/
-theorem maximal_strongest (c : ContainmentPair) (hw : c.WellFormed)
-    (hne : c ≠ .maximal) :
-    presupStrongerThan .maximal c = true := by
-  rcases ContainmentPair.classification c hw with rfl | rfl | rfl <;>
-    first | decide | exact absurd rfl hne
-
-end Presupposition.PhiFeatures
+open Presupposition Mereology
+
+namespace Agreement.ContainmentPair
+
+variable {E : Type*} (innerP outerP : E → Prop)
+
+/-- The presupposition of a cell through two predicates: the maximal cell presupposes `innerP`,
+the intermediate cell `outerP` and the minimal cell nothing; every cell asserts nothing. -/
+def presup : ContainmentPair → PartialProp E
+  | ⟨true, true⟩ => ⟨innerP, fun _ ↦ True⟩
+  | ⟨true, false⟩ => ⟨outerP, fun _ ↦ True⟩
+  | ⟨false, _⟩ => PartialProp.top
+
+@[simp] theorem presup_maximal_defined (x : E) :
+    (maximal.presup innerP outerP).defined x ↔ innerP x := Iff.rfl
+
+@[simp] theorem presup_intermediate_defined (x : E) :
+    (intermediate.presup innerP outerP).defined x ↔ outerP x := Iff.rfl
+
+@[simp] theorem presup_minimal_defined (x : E) : (minimal.presup innerP outerP).defined x :=
+  trivial
+
+@[simp] theorem presup_assertion (c : ContainmentPair) (x : E) :
+    (c.presup innerP outerP).assertion x := by
+  obtain ⟨_ | _, _ | _⟩ := c <;> trivial
+
+/-- The specification level of a pair is at most its two features. -/
+theorem specLevel_le_two (c : ContainmentPair) : c.specLevel ≤ 2 := by
+  obtain ⟨_ | _, _ | _⟩ := c <;> decide
+
+/-- The Feature-Subset Principle: with `innerP` entailing `outerP`, a more specified well-formed
+cell's presupposition entails a less specified one's. -/
+theorem presup_defined_of_specLevel_le (h : ∀ x, innerP x → outerP x)
+    {c₁ c₂ : ContainmentPair} (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed)
+    (hs : c₂.specLevel ≤ c₁.specLevel) {x : E} (hx : (c₁.presup innerP outerP).defined x) :
+    (c₂.presup innerP outerP).defined x := by
+  rcases classification c₁ hw₁ with rfl | rfl | rfl <;>
+    rcases classification c₂ hw₂ with rfl | rfl | rfl <;>
+      simp_all [maximal, intermediate, minimal, specLevel, presup, PartialProp.defined]
+
+end Agreement.ContainmentPair
+
+namespace Agreement.ContainmentPairLike
+
+variable {E F : Type*} [ContainmentPairLike F] (innerP outerP : E → Prop)
+
+/-- The presupposition of a bundle: that of its cell. -/
+def presup (f : F) : PartialProp E := (toPair f).presup innerP outerP
+
+@[simp] theorem presup_assertion (f : F) (x : E) : (presup innerP outerP f).assertion x :=
+  ContainmentPair.presup_assertion innerP outerP _ x
+
+end Agreement.ContainmentPairLike
+
+open Agreement
+
+/-! ### Person -/
+
+namespace Person
+
+variable {E : Type*} [PartialOrder E] (speaker addressee : E) (x : E)
+
+/-- The presupposition of a person value at a speaker and an addressee: first person presupposes
+a referent including the speaker, second one including the speaker or the addressee, third
+nothing; the impersonal has no bundle and presupposes nothing. -/
+def presup (p : Person) : PartialProp E :=
+  p.toFeatures.elim PartialProp.top
+    (ContainmentPairLike.presup (speaker ≤ ·) fun y ↦ speaker ≤ y ∨ addressee ≤ y)
+
+@[simp] theorem presup_first_defined : (presup speaker addressee .first).defined x ↔ speaker ≤ x :=
+  Iff.rfl
+
+@[simp] theorem presup_firstInclusive_defined :
+    (presup speaker addressee .firstInclusive).defined x ↔ speaker ≤ x := Iff.rfl
+
+@[simp] theorem presup_firstExclusive_defined :
+    (presup speaker addressee .firstExclusive).defined x ↔ speaker ≤ x := Iff.rfl
+
+@[simp] theorem presup_second_defined :
+    (presup speaker addressee .second).defined x ↔ speaker ≤ x ∨ addressee ≤ x := Iff.rfl
+
+@[simp] theorem presup_third_defined : (presup speaker addressee .third).defined x := trivial
+
+@[simp] theorem presup_zero_defined : (presup speaker addressee .zero).defined x := trivial
+
+@[simp] theorem presup_assertion (p : Person) : (presup speaker addressee p).assertion x := by
+  unfold presup; cases p.toFeatures <;> simp
+
+end Person
+
+/-! ### Number -/
+
+namespace Number
+
+variable {E : Type*} [PartialOrder E] (x : E)
+
+/-- The presupposition of a number value: singular presupposes an atom, plural nothing, the dual
+nothing pending a minimality predicate, and a value without a bundle nothing. -/
+def presup (n : Number) : PartialProp E :=
+  (Features.ofNumber n).elim PartialProp.top (ContainmentPairLike.presup Atom fun _ ↦ True)
+
+@[simp] theorem presup_singular_defined : (presup (E := E) .singular).defined x ↔ Atom x :=
+  Iff.rfl
+
+@[simp] theorem presup_dual_defined : (presup (E := E) .dual).defined x := trivial
+
+@[simp] theorem presup_plural_defined : (presup (E := E) .plural).defined x := trivial
+
+@[simp] theorem presup_assertion (n : Number) : (presup (E := E) n).assertion x := by
+  unfold presup; cases Features.ofNumber n <;> simp
+
+end Number
+
+/-! ### Gender -/
+
+namespace Gender
+
+variable {E : Type*} (isFemale isInanimate : E → Prop) (x : E)
+
+/-- The presupposition of a gender value at a femaleness and an inanimacy predicate: neuter
+presupposes an inanimate referent, feminine a female one, masculine nothing, and the
+non-sex-based genders have no bundle and presuppose nothing. -/
+def presup (g : Gender) : PartialProp E :=
+  (Features.fromGender g).elim PartialProp.top (ContainmentPairLike.presup isInanimate isFemale)
+
+@[simp] theorem presup_neuter_defined :
+    (presup isFemale isInanimate .neuter).defined x ↔ isInanimate x := Iff.rfl
+
+@[simp] theorem presup_feminine_defined :
+    (presup isFemale isInanimate .feminine).defined x ↔ isFemale x := Iff.rfl
+
+@[simp] theorem presup_masculine_defined : (presup isFemale isInanimate .masculine).defined x :=
+  trivial
+
+@[simp] theorem presup_assertion (g : Gender) : (presup isFemale isInanimate g).assertion x := by
+  unfold presup; cases Features.fromGender g <;> simp
+
+end Gender

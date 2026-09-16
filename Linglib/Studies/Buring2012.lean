@@ -33,7 +33,7 @@ feature of its own.
 
 namespace Buring2012
 
-open English.Pronouns Presupposition Presupposition.PhiFeatures
+open English.Pronouns Presupposition
 
 variable {E : Type} [PartialOrder E] (e : PersonalPronoun) (g : Assignment E) (n : ℕ)
   (spk adr : E) (isFemale isInanimate : E → Prop) (scope : E → PUnit → Prop)
@@ -48,7 +48,7 @@ theorem selector_eq_assignment :
 referent is female, it presupposes it, so the denotation has no value at all when it fails. -/
 theorem undefined_of_non_female (hfem : e.gender = some .feminine) (h : ¬ isFemale (g n)) :
     ¬ ((e.denote n spk adr isFemale isInanimate).toPartialProp scope g).presup ⟨⟩ := by
-  simp [PartialProp.defined, hfem, femSem, h]
+  simp [hfem, h]
 
 /-- *She* is undefined of a male referent. -/
 theorem she_undefined_of_non_female (h : ¬ isFemale (g n)) :
@@ -58,7 +58,7 @@ theorem she_undefined_of_non_female (h : ¬ isFemale (g n)) :
 /-- A first-person pronoun is undefined of a referent that does not include the speaker. -/
 theorem undefined_of_not_speaker (hp : e.referentialPerson = some .first) (h : ¬ spk ≤ g n) :
     ¬ ((e.denote n spk adr isFemale isInanimate).toPartialProp scope g).presup ⟨⟩ := by
-  simp [PartialProp.defined, hp, firstSem, h]
+  simp [hp, h]
 
 /-- *I* is undefined of a referent that does not include the speaker. -/
 theorem i_undefined_of_not_speaker (h : ¬ spk ≤ g n) :
@@ -72,7 +72,7 @@ avoid a gender specification. -/
 theorem defined_of_unmarked_features (hp : e.referentialPerson = some .third)
     (hn : e.referentialNumber = some .plural) (hg : e.gender = none) :
     ((e.denote n spk adr isFemale isInanimate).toPartialProp scope g).presup ⟨⟩ := by
-  simp [PartialProp.defined, hp, hn, hg, thirdSem, plSem]
+  simp [hp, hn, hg]
 
 /-- *They* is defined of a referent of any gender. -/
 theorem they_defined_regardless_of_gender :

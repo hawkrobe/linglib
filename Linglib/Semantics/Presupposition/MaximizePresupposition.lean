@@ -29,7 +29,7 @@ of `Studies/Wang2025.lean` ranks it against internal coherence and felicity ([wa
 
 * `mp_reverses_markedness`, `mp_selects_strongest`, `markedness_selects_weakest` — the two
   constraints order candidates oppositely, and each selects its extreme.
-* `phi_mp_selects_maximal`, `phi_strength_nesting` — the φ-feature instance.
+* `phi_mp_selects_maximal`, `phi_mp_reverses_markedness` — the φ-feature instance.
 
 ## References
 
@@ -43,22 +43,14 @@ of `Studies/Wang2025.lean` ranks it against internal coherence and felicity ([wa
 
 namespace Presupposition.MaximizePresupposition
 
-open Agreement (ContainmentPair)
-open Constraints OptimalityTheory
-open Core.Optimization.Evaluation
-open Presupposition.PhiFeatures
+open Agreement Constraints OptimalityTheory Core.Optimization.Evaluation
 
 /-- `φ` is blocked under Maximize Presupposition when an alternative with the same assertion
 carries a strictly stronger presupposition. -/
 def Blocked {S W : Type*} (alts : S → Set S) (presup assertion : S → Set W) (φ : S) : Prop :=
   Alternatives.Blocked (Alternatives.sameAssertion assertion alts) presup φ
 
--- ============================================================================
--- §1  Abstract MP and Markedness Constraints
--- ============================================================================
-
-/-!
-## §1: Abstract Constraints
+/-! ### Abstract constraints
 
 Two generic constraint constructors, parameterized by a presuppositional
 strength function `strength : C → Nat`:
@@ -75,7 +67,7 @@ markednessPenalty … c = maxStrength` (when `strength c ≤ maxStrength`).
 /-- Build an MP constraint from a presuppositional strength function.
     Violation count = `maxStrength - strength c`: maximal presupposition
     → 0 violations, weaker presupposition → more. -/
-def mpConstraintOf {C : Type} (maxStrength : Nat)
+def mpConstraintOf {C : Type*} (maxStrength : Nat)
     (strength : C → Nat) : Constraint C :=
   fun c => maxStrength - strength c
 
@@ -83,38 +75,33 @@ def mpConstraintOf {C : Type} (maxStrength : Nat)
     Violation count = `strength c`: stronger presupposition → more
     violations. This is the generic form of Wang2023's `todConstraint`
     (Taboo of Directness). -/
-def markednessPenalty {C : Type}
+def markednessPenalty {C : Type*}
     (strength : C → Nat) : Constraint C :=
   strength
 
 /-- Violation counts sum to maxStrength for any candidate whose
     strength does not exceed the maximum. -/
-theorem mp_markedness_complementary {C : Type} (maxStrength : Nat)
+theorem mp_markedness_complementary {C : Type*} (maxStrength : Nat)
     (strength : C → Nat) (c : C) (h : strength c ≤ maxStrength) :
     (mpConstraintOf maxStrength strength) c +
     (markednessPenalty strength) c = maxStrength := by
   simp only [mpConstraintOf, markednessPenalty]; omega
 
--- ============================================================================
--- §2  Structural Properties
--- ============================================================================
-
-/-!
-## §2: Structural Properties
+/-! ### Structural properties
 
 The core algebraic facts about MP and markedness as OT constraints.
 These hold for any candidate type and strength function.
 -/
 
 /-- MP assigns 0 violations to the maximally presupposing candidate. -/
-theorem mp_zero_at_max {C : Type} (maxStrength : Nat) (strength : C → Nat)
+theorem mp_zero_at_max {C : Type*} (maxStrength : Nat) (strength : C → Nat)
     (c : C) (hMax : strength c = maxStrength) :
     (mpConstraintOf maxStrength strength) c = 0 := by
   simp [mpConstraintOf, hMax]
 
 /-- Markedness assigns 0 violations to the minimally presupposing
     candidate. -/
-theorem markedness_zero_at_min {C : Type} (strength : C → Nat)
+theorem markedness_zero_at_min {C : Type*} (strength : C → Nat)
     (c : C) (hMin : strength c = 0) :
     (markednessPenalty strength) c = 0 := by
   simp [markednessPenalty, hMin]
@@ -122,7 +109,7 @@ theorem markedness_zero_at_min {C : Type} (strength : C → Nat)
 /-- **MP and markedness impose opposite orderings**: fewer MP violations
     ↔ more markedness violations. This is the general form of Wang2023's
     `tod_reverses_mp`. -/
-theorem mp_reverses_markedness {C : Type} (maxStrength : Nat)
+theorem mp_reverses_markedness {C : Type*} (maxStrength : Nat)
     (strength : C → Nat) (c₁ c₂ : C)
     (h₁ : strength c₁ ≤ maxStrength) (h₂ : strength c₂ ≤ maxStrength) :
     (markednessPenalty strength) c₁ < (markednessPenalty strength) c₂ ↔
@@ -134,7 +121,7 @@ theorem mp_reverses_markedness {C : Type} (maxStrength : Nat)
     all optimal candidates have maximal presuppositional strength.
     Proof via `optimal_zero_first` — a max-strength candidate has 0 MP
     violations, forcing all winners to have 0 as well. -/
-theorem mp_selects_strongest {C : Type} [DecidableEq C] (candidates : List C)
+theorem mp_selects_strongest {C : Type*} [DecidableEq C] (candidates : List C)
     (maxStrength : Nat) (strength : C → Nat)
     (rest : List (Constraint C))
     (hNE : candidates ≠ [])
@@ -155,7 +142,7 @@ theorem mp_selects_strongest {C : Type} [DecidableEq C] (candidates : List C)
     is the top-ranked constraint, all optimal candidates have zero
     presuppositional strength. This is the general form of Wang2023's
     `tod_mp_only_minimal`. -/
-theorem markedness_selects_weakest {C : Type} [DecidableEq C] (candidates : List C)
+theorem markedness_selects_weakest {C : Type*} [DecidableEq C] (candidates : List C)
     (strength : C → Nat)
     (rest : List (Constraint C))
     (hNE : candidates ≠ [])
@@ -169,67 +156,24 @@ theorem markedness_selects_weakest {C : Type} [DecidableEq C] (candidates : List
         exact ⟨c₀, hm, markedness_zero_at_min strength c₀ hs⟩) hc
   simp only [markednessPenalty] at hZero; exact hZero
 
--- ============================================================================
--- §3  Phi-Feature Instance
--- ============================================================================
+/-! ### The φ-feature instance
 
-/-!
-## §3: Phi-Feature Instance
+The containment-pair cells with `specLevel` as strength are an instance of the competition:
+every cell asserts nothing (`ContainmentPair.presup_assertion`), and the strength ordering is
+domain containment (`ContainmentPair.presup_defined_of_specLevel_le`). -/
 
-The phi-feature system (`ContainmentPair` with `presupStrength = specLevel`)
-is a canonical instance of MP competition:
-
-- **Candidates**: well-formed `ContainmentPair` cells (3 cells)
-- **Strength**: `presupStrength` (= `specLevel`: 0, 1, or 2)
-- **maxStrength**: 2 (= `ContainmentPair.maximal.specLevel`)
-- **Same assertion**: `phiPresup_same_assertion` — all cells have
-  identical (trivially true) at-issue content
-
-This section defines `phiMP` (the instantiation) and proves bridges
-connecting the general theorems to `phiPresup`.
--/
-
-/-- The phi-feature MP constraint: `mpConstraintOf` instantiated with
-    `presupStrength` over `ContainmentPair`. -/
+/-- The φ-feature Maximize Presupposition constraint: `mpConstraintOf` at `specLevel`. -/
 def phiMP : Constraint ContainmentPair :=
-  mpConstraintOf ContainmentPair.maximal.specLevel presupStrength
+  mpConstraintOf ContainmentPair.maximal.specLevel ContainmentPair.specLevel
 
-/-- `phiMP` evaluates to `maxSpec - presupStrength`. -/
 theorem phiMP_eval (c : ContainmentPair) :
-    phiMP c = ContainmentPair.maximal.specLevel - presupStrength c := rfl
+    phiMP c = ContainmentPair.maximal.specLevel - c.specLevel := rfl
 
-/-- The phi-feature markedness constraint: `markednessPenalty` instantiated
-    with `presupStrength`. This is the generic form of ToD. -/
-def phiMarkedness : Constraint ContainmentPair :=
-  markednessPenalty presupStrength
+/-- The φ-feature markedness constraint, `markednessPenalty` at `specLevel`: the generic form
+of the Taboo of Directness. -/
+def phiMarkedness : Constraint ContainmentPair := markednessPenalty ContainmentPair.specLevel
 
-/-- `phiMarkedness` evaluates to `presupStrength`. -/
-theorem phiMarkedness_eval (c : ContainmentPair) :
-    phiMarkedness c = presupStrength c := rfl
-
-/-- Phi-feature competitors satisfy the **same-assertion condition**:
-    all cells of `phiPresup` have identical (trivially true) at-issue
-    content. This is the prerequisite for MP to apply — if assertions
-    differed, the competition would be at-issue (scalar implicature),
-    not presuppositional. -/
-theorem phi_same_assertion {E : Type*} (innerP outerP : E → Prop) :
-    ∀ c₁ c₂ : ContainmentPair, ∀ x : E,
-      (phiPresup innerP outerP c₁).assertion x ↔
-      (phiPresup innerP outerP c₂).assertion x :=
-  fun c₁ c₂ x => phiPresup_same_assertion innerP outerP c₁ c₂ x
-
-/-- Phi-feature competitors satisfy the **presuppositional nesting**
-    condition: stronger presupposition → smaller domain. This ensures
-    the strength ordering corresponds to genuine set-theoretic
-    containment of presuppositional domains. -/
-theorem phi_strength_nesting {E : Type*} {innerP outerP : E → Prop}
-    (hContain : ∀ x, innerP x → outerP x)
-    {c₁ c₂ : ContainmentPair}
-    (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed)
-    (hSpec : presupStrength c₁ ≥ presupStrength c₂) (x : E)
-    (h : (phiPresup innerP outerP c₁).defined x) :
-    (phiPresup innerP outerP c₂).defined x :=
-  phiPresup_nesting hContain hw₁ hw₂ hSpec x h
+theorem phiMarkedness_eval (c : ContainmentPair) : phiMarkedness c = c.specLevel := rfl
 
 /-- MP over phi-features selects the maximal (most marked) cell when
     it is among the candidates. Instantiation of `mp_selects_strongest`
@@ -241,91 +185,18 @@ theorem phi_strength_nesting {E : Type*} {innerP outerP : E → Prop}
     [sauerland-2003] derives the preference for singular from
     exactly this principle. -/
 theorem phi_mp_selects_maximal (candidates : List ContainmentPair)
-    (rest : List (Constraint ContainmentPair))
-    (hNE : candidates ≠ [])
-    (hWF : ∀ c ∈ candidates, c.WellFormed)
+    (rest : List (Constraint ContainmentPair)) (hNE : candidates ≠ [])
     (hMax : ContainmentPair.maximal ∈ candidates) :
     ∀ c ∈ (Tableau.ofRanking candidates (phiMP :: rest) hNE).optimal,
-      presupStrength c = ContainmentPair.maximal.specLevel :=
-  mp_selects_strongest candidates _ presupStrength rest hNE
-    (fun c hc => wellFormed_specLevel_le_two c (hWF c hc))
-    ⟨.maximal, hMax, rfl⟩
+      c.specLevel = ContainmentPair.maximal.specLevel :=
+  mp_selects_strongest candidates _ ContainmentPair.specLevel rest hNE
+    (fun c _ ↦ ContainmentPair.specLevel_le_two c) ⟨.maximal, hMax, rfl⟩
 
 /-- MP and markedness reverse each other over phi-features.
     This is the algebraic core of `tod_reverses_mp` in `Wang2023`. -/
-theorem phi_mp_reverses_markedness (c₁ c₂ : ContainmentPair)
-    (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed) :
-    phiMarkedness c₁ < phiMarkedness c₂ ↔
-    phiMP c₁ > phiMP c₂ :=
-  mp_reverses_markedness _ presupStrength c₁ c₂
-    (wellFormed_specLevel_le_two c₁ hw₁)
-    (wellFormed_specLevel_le_two c₂ hw₂)
-
--- ============================================================================
--- §4  Presuppositional Strict Total Order
--- ============================================================================
-
-/-!
-## §4: `presupWeakerThan` is a Strict Total Order
-
-`presupWeakerThan` (defined in `PhiFeatures`) inherits the strict total
-order structure of `<` on `Nat` via `specLevel`. We prove the standard
-order-theoretic properties on well-formed cells.
-
-The key non-trivial result is **totality**: distinct well-formed cells
-always have different specLevels (`specLevel_injective_wf`), so
-`presupWeakerThan` is a strict linear order on the 3-element set of
-well-formed cells.
--/
-
-/-- `specLevel` is injective on well-formed cells: two well-formed cells
-    with the same specLevel are identical. This follows from the three
-    well-formed cells having specLevels 0, 1, 2 — all distinct. -/
-theorem specLevel_injective_wf (a b : ContainmentPair)
-    (ha : a.WellFormed) (hb : b.WellFormed)
-    (h : a.specLevel = b.specLevel) : a = b := by
-  rcases ContainmentPair.classification a ha with rfl | rfl | rfl <;>
-    rcases ContainmentPair.classification b hb with rfl | rfl | rfl <;>
-    first | rfl | simp_all [ContainmentPair.spec_maximal,
-      ContainmentPair.spec_intermediate, ContainmentPair.spec_minimal]
-
-/-- `presupWeakerThan` is irreflexive. -/
-theorem presupWeakerThan_irrefl (c : ContainmentPair) :
-    presupWeakerThan c c = false := by
-  simp [presupWeakerThan]
-
-/-- `presupWeakerThan` is transitive. -/
-theorem presupWeakerThan_trans (a b c : ContainmentPair)
-    (h₁ : presupWeakerThan a b = true)
-    (h₂ : presupWeakerThan b c = true) :
-    presupWeakerThan a c = true := by
-  simp only [presupWeakerThan, decide_eq_true_eq] at *; omega
-
-/-- `presupWeakerThan` is asymmetric. -/
-theorem presupWeakerThan_asymm (a b : ContainmentPair)
-    (h : presupWeakerThan a b = true) :
-    presupWeakerThan b a = false := by
-  simp only [presupWeakerThan, decide_eq_true_eq, decide_eq_false_iff_not] at *; omega
-
-/-- `presupWeakerThan` is total on well-formed cells: for distinct
-    well-formed cells, either `a < b` or `b < a`. -/
-theorem presupWeakerThan_total (a b : ContainmentPair)
-    (ha : a.WellFormed) (hb : b.WellFormed) (hne : a ≠ b) :
-    presupWeakerThan a b = true ∨ presupWeakerThan b a = true := by
-  simp only [presupWeakerThan, decide_eq_true_eq]
-  have hne' : a.specLevel ≠ b.specLevel :=
-    fun h => hne (specLevel_injective_wf a b ha hb h)
-  omega
-
-/-- `presupStrongerThan` is the converse of `presupWeakerThan`. -/
-theorem strongerThan_iff_not_weakerOrEq (a b : ContainmentPair) :
-    presupStrongerThan a b = true ↔ presupWeakerThan b a = true := by
-  simp [presupStrongerThan, presupWeakerThan, decide_eq_true_eq]
-
-/-- The presuppositional strength ordering is determined by `specLevel`:
-    `a` is strictly weaker than `b` iff `a.specLevel < b.specLevel`. -/
-theorem strength_iff_specLevel (a b : ContainmentPair) :
-    presupWeakerThan a b = true ↔ a.specLevel < b.specLevel := by
-  simp [presupWeakerThan, decide_eq_true_eq]
+theorem phi_mp_reverses_markedness (c₁ c₂ : ContainmentPair) :
+    phiMarkedness c₁ < phiMarkedness c₂ ↔ phiMP c₁ > phiMP c₂ :=
+  mp_reverses_markedness _ ContainmentPair.specLevel c₁ c₂ (ContainmentPair.specLevel_le_two c₁)
+    (ContainmentPair.specLevel_le_two c₂)
 
 end Presupposition.MaximizePresupposition

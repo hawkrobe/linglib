@@ -177,6 +177,8 @@ theorem neg_neg_assertion (p : PartialProp W) (w : W) :
 
 @[simp] theorem top_presup (w : W) : (top : PartialProp W).presup w := trivial
 
+@[simp] theorem top_defined (w : W) : (top : PartialProp W).defined w := trivial
+
 @[simp] theorem top_assertion (w : W) : (top : PartialProp W).assertion w := trivial
 
 @[simp] theorem and_presup (p q : PartialProp W) (w : W) :
