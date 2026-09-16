@@ -1,13 +1,15 @@
 import Linglib.Syntax.Clause.Relative
 
 /-!
-# Korean relative-clause markers
+# Korean relative clauses
 
-The Korean relativization strategies as [keenan-comrie-1977] records them. A prenominal clause
-whose verb carries the adnominal suffix, with the relativized position deleted, relativizes
-subjects through obliques; genitives require the same clause with the possessive pronoun
-retained, as in the paper's *chaki-ij lä-ka chongmyəngha-n kɨ salam* 'the man whose dog is
-smart'. Korean has no relative pronoun or complementizer.
+Korean has no relative pronoun and no complementizer. A relative clause precedes its head noun
+and its verb carries an adnominal suffix, *-(n)ɨn* in the present, *-n* in the past and *-l* in
+the prospective; the relativized position is dropped together with its case marker, and this
+strategy relativizes subjects, direct objects, indirect objects and obliques. A genitive cannot
+be dropped: the possessive pronoun is retained, as in *chaki-ij lä-ka chongmyəngha-n kɨ salam*
+'the man whose dog is smart', literally 'his dog is smart, the man'. The data are
+[keenan-comrie-1977]'s.
 
 ## References
 
@@ -18,9 +20,8 @@ namespace Korean
 
 open RelativeClause
 
-/-- The adnominal verb suffix (*-(n)ɨn* present, *-n* past, *-l* prospective) forms a prenominal
-clause whose relativized position and its case marker are deleted; it relativizes subjects
-through obliques. -/
+/-- The adnominal clause with the relativized position dropped relativizes subjects, direct
+objects, indirect objects and obliques. -/
 def relAdnominal : Marker :=
   { form := "-(n)ɨn, -n, -l"
   , npRel := .gap
@@ -28,8 +29,8 @@ def relAdnominal : Marker :=
   , placement := .preNominal
   , positions := {.subject, .directObject, .indirectObject, .oblique} }
 
-/-- The adnominal clause with the possessive pronoun retained at the relativized position, the
-only strategy for genitives. -/
+/-- The adnominal clause with the possessive pronoun retained is the only way to relativize a
+genitive. -/
 def relGenitive : Marker :=
   { form := "-(ɨ)n + retained pronoun"
   , npRel := .resumptive

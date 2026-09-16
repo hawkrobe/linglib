@@ -1,29 +1,28 @@
 import Linglib.Syntax.Clause.Relative
 
 /-!
-# Finnish Relativization Fragment
-[keenan-comrie-1977]
+# Finnish relative clauses
 
-Two relative clause markers:
-- Relative pronoun *joka* (+case, postnominal, covers SU–GEN)
-- Participial construction (-case, prenominal, covers SU/DO)
+Finnish has two relative-clause strategies. The relative pronoun *joka* declines for the case of
+the relativized position and introduces a postnominal clause; it relativizes subjects through
+genitives. A participial clause precedes its head with no relativizer and the relativized
+position left empty, the participle differing according to whether the head is its subject or
+its object, as in *pöydällä tanssinut poika* 'the boy who had danced on the table' and
+*näkemäni poika* 'the boy that I saw'; it relativizes subjects and direct objects only. Finnish
+is the paper's example of a language whose broader, primary strategy is the case-coding one.
+The data are [keenan-comrie-1977]'s.
 
-Finnish is notable because the +case strategy is the primary (broader) one,
-covering 5 of 6 AH positions. OCOMP does not exist as a distinct
-grammatical category in Finnish.
+## References
 
-Data from [keenan-comrie-1977] Table 1.
+* [keenan-comrie-1977]
 -/
 
 namespace Finnish
 
 open RelativeClause
 
-/-- Relative pronoun *joka*. Declines for case (agreeing with the role
-    inside the RC). Postnominal RC. Covers SU–GEN.
-    OCOMP does not exist as a distinct category in Finnish.
-    E.g., "mies [joka lähti]" 'man [who left]',
-    "kaupunki [jossa asuin]" 'city [where I-lived]'. -/
+/-- The relative pronoun *joka* declines for the case of the relativized position and relativizes
+subjects through genitives. -/
 def relJoka : Marker :=
   { form := "joka"
   , npRel := .relPronoun
@@ -31,9 +30,8 @@ def relJoka : Marker :=
   , placement := .postNominal
   , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
 
-/-- Participial construction. Prenominal RC formed with a participle.
-    NP_rel is a gap. Covers SU and DO only.
-    E.g., "[ _ lähtenyt] mies" '[ _ left] man'. -/
+/-- The prenominal participial clause leaves the relativized position empty and relativizes
+subjects and direct objects only. -/
 def relParticipial : Marker :=
   { form := "participle"
   , npRel := .gap
@@ -41,7 +39,7 @@ def relParticipial : Marker :=
   , placement := .preNominal
   , positions := {.subject, .directObject} }
 
-/-- All Finnish relative clause markers. -/
+/-- The Finnish relative-clause markers. -/
 def relMarkers : List Marker := [relJoka, relParticipial]
 
 end Finnish

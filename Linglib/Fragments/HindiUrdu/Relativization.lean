@@ -1,32 +1,27 @@
 import Linglib.Syntax.Clause.Relative
 
 /-!
-# Hindi-Urdu Relativization Fragment
-[keenan-comrie-1977]
+# Hindi-Urdu relative clauses
 
-Two relative clause markers, both built on the case-inflecting relative
-pronoun *jo* (oblique *jis-*):
-- Postnominal RC with *jo* (+case, covers SU–GEN)
-- Correlative *jo … vo* (+case, covers SU–GEN), which [keenan-comrie-1977]
-  Table 1 codes as their "internal" strategy — the paper's three-way
-  surface typology (postnominal, prenominal, internal) has no separate
-  correlative category, and the head NP occurs within the restricting
-  clause (§1.4.1.2)
+Hindi-Urdu relativizes with the relative pronoun *jo*, oblique *jis-*, which carries the same
+postpositions as an ordinary noun phrase and so codes the relativized position. It occurs in two
+constructions, a postnominal clause and the correlative *jo … vo*, in which the head noun
+stands inside the relative clause and is picked up by *vo* in the main clause; the paper codes
+the correlative as an internally headed strategy. Both relativize subjects through genitives,
+and objects of comparison are treated as obliques governed by postpositions. The data are
+[keenan-comrie-1977]'s.
 
-Both strategies are primary. OCOMP is starred in Table 1: objects of
-comparison are treated as obliques governed by postpositions.
+## References
 
-Data from [keenan-comrie-1977] Table 1 ("Hindi").
+* [keenan-comrie-1977]
+* [keenan-comrie-1979]
 -/
 
 namespace HindiUrdu
 
 open RelativeClause
 
-/-- Postnominal RC with the relative pronoun *jo* (oblique *jis-*),
-    which "carries the same postpositions as ordinary NP's"; such RCs
-    "often occur to the right of the matrix verb". Covers SU–GEN
-    (Table 1 p. 77; [keenan-comrie-1979] p. 338, ex. (41) *jis se*). -/
+/-- The postnominal clause with the relative pronoun *jo* relativizes subjects through genitives. -/
 def relJo : Marker :=
   { form := "jo/jis-"
   , npRel := .relPronoun
@@ -34,12 +29,8 @@ def relJo : Marker :=
   , placement := .postNominal
   , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
 
-/-- Correlative *jo … vo*: "the head NP in the NP_rel position, still
-    marked by the relativization marker, and cross-referenced in the
-    'matrix' clause which follows the entire restricting clause"
-    ([keenan-comrie-1979] p. 338, ex. (42) *jis caakuu … us caakuu*).
-    Coded "internal, +case" in Table 1 p. 77 (K&C's typology lacks a
-    correlative category); covers SU–GEN. -/
+/-- The correlative *jo … vo* keeps the head inside the relative clause and relativizes subjects
+through genitives. -/
 def relCorrelative : Marker :=
   { form := "jo … vo"
   , npRel := .relPronoun
@@ -47,7 +38,7 @@ def relCorrelative : Marker :=
   , placement := .correlative
   , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
 
-/-- All Hindi-Urdu relative clause markers. -/
+/-- The Hindi-Urdu relative-clause markers. -/
 def relMarkers : List Marker := [relJo, relCorrelative]
 
 end HindiUrdu

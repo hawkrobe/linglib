@@ -1,23 +1,27 @@
 import Linglib.Syntax.Clause.Relative
 
 /-!
-# English Relativization Fragment
-[keenan-comrie-1977]
+# English relative clauses
 
-Two relative clause markers:
-- Complementizer *that*/∅ with gap in NP_rel (-case, covers SU/DO)
-- Relative pronoun *who/whom/which/whose* (+case, covers IO–OCOMP)
+English has two relative-clause strategies, both postnominal. The complementizer *that*, or
+nothing at all, introduces a clause in which the relativized position is left empty, and it
+relativizes subjects and direct objects. The relative pronouns *who*, *whom*, *which* and
+*whose* code the relativized position by their form or by a pied-piped preposition, and they
+relativize everything from indirect objects down to objects of comparison, though the paper
+finds *the man who Mary is taller than* "rather uncomfortable". The data are
+[keenan-comrie-1977]'s.
 
-Data from [keenan-comrie-1977] Table 1.
+## References
+
+* [keenan-comrie-1977]
 -/
 
 namespace English
 
 open RelativeClause
 
-/-- Complementizer *that* or zero (∅). NP_rel is deleted (gap).
-    Covers subject and direct object relativization.
-    E.g., "the man [that _ left]", "the book [∅ I read _]". -/
+/-- The complementizer *that*, or no marker at all, leaves the relativized position empty and
+relativizes subjects and direct objects. -/
 def relThat : Marker :=
   { form := "that/∅"
   , npRel := .gap
@@ -25,11 +29,8 @@ def relThat : Marker :=
   , placement := .postNominal
   , positions := {.subject, .directObject} }
 
-/-- Relative pronoun *who/whom/which/whose*. Bears case marking
-    (who/whom/whose distinguish nominative/accusative/genitive).
-    Covers IO–OCOMP via pied-piping.
-    E.g., "the man [to whom I gave the book]",
-    "the man [whose book I read _]". -/
+/-- The relative pronouns *who*, *whom*, *which* and *whose* code the relativized position and
+relativize everything from indirect objects down. -/
 def relWhom : Marker :=
   { form := "who/whom/which/whose"
   , npRel := .relPronoun
@@ -37,7 +38,7 @@ def relWhom : Marker :=
   , placement := .postNominal
   , positions := {.indirectObject, .oblique, .genitive, .objComparison} }
 
-/-- All English relative clause markers. -/
+/-- The English relative-clause markers. -/
 def relMarkers : List Marker := [relThat, relWhom]
 
 end English

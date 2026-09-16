@@ -1,30 +1,27 @@
 import Linglib.Syntax.Clause.Relative
 
 /-!
-# Tagalog Relativization Fragment
-[keenan-comrie-1977]
+# Tagalog relative clauses
 
-Two relative clause markers, differing only in RC position (postnominal
-and prenominal); both use the linker *na ~ -ng* with gap in NP_rel
-(-case) and relativize only the subject (*ang*-phrase). Non-subjects
-are promoted to subject by voice alternation before relativizing.
+Tagalog relativizes only the subject, the *ang*-phrase, so any other noun phrase is first
+promoted to subject by the voice system. The clause is joined to its head by the linker *na*,
+*-ng* after a vowel, with the relativized position left empty, and it may follow or precede the
+head. The paper counts Tagalog among its subjects-only languages on the assumption that the
+focus noun phrase is the subject, an assumption it discusses against Schachter's objections.
+The data are [keenan-comrie-1977]'s.
 
-Tagalog is one of the paper's subjects-only witnesses for HC₁/HC₃
-(§1.3.1 p. 70), "on the assumption that the 'focus' NP is the subject" —
-an assumption the paper itself flags as contested (§1.4.1.1, discussing
-Schachter's critique).
+## References
 
-Data from [keenan-comrie-1977] Table 1.
+* [keenan-comrie-1977]
+* [keenan-comrie-1979]
+* [schachter-otanes-1972]
 -/
 
 namespace Tagalog
 
 open RelativeClause
 
-/-- Postnominal RC with the linker *na ~ -ng* — K&C's "invariable
-    particle *ng*" — NP_rel (the *ang*-phrase) deleted. Subjects only
-    (Table 1 p. 79; [keenan-comrie-1979] p. 347 ex. (110), from
-    [schachter-otanes-1972] p. 123). -/
+/-- The postnominal clause joined by the linker *na ~ -ng* relativizes subjects only. -/
 def relLinkerPost : Marker :=
   { form := "na/-ng"
   , npRel := .gap
@@ -32,10 +29,7 @@ def relLinkerPost : Marker :=
   , placement := .postNominal
   , positions := {.subject} }
 
-/-- Prenominal RC with the linker *na ~ -ng*; NP_rel is deleted.
-    Subjects only. "Restricting clauses can sometimes, especially when
-    short, be presented to the left of the head ... a second RC-forming
-    strategy" ([keenan-comrie-1979] p. 347, ex. (111)). -/
+/-- The prenominal clause joined by the linker *na ~ -ng* relativizes subjects only. -/
 def relLinkerPre : Marker :=
   { form := "na/-ng"
   , npRel := .gap
@@ -43,7 +37,7 @@ def relLinkerPre : Marker :=
   , placement := .preNominal
   , positions := {.subject} }
 
-/-- All Tagalog relative clause markers. -/
+/-- The Tagalog relative-clause markers. -/
 def relMarkers : List Marker := [relLinkerPost, relLinkerPre]
 
 end Tagalog

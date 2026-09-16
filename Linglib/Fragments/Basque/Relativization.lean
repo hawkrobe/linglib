@@ -1,26 +1,26 @@
 import Linglib.Syntax.Clause.Relative
 
 /-!
-# Basque Relativization Fragment
-[keenan-comrie-1977]
+# Basque relative clauses
 
-One relative clause marker: the invariable suffix *-n* at the juncture
-of a prenominal RC, with gap in NP_rel (-case, covers SU/DO/IO). Basque
-is the paper's witness that IO is a possible primary cut-off point —
-it "does appear to discriminate indirect objects from both its
-immediate neighbors on the AH" (§1.3.3 p. 72). Table 1 leaves
-OBL, GEN, and OCOMP blank (no data).
+Basque has one relative-clause strategy. The clause precedes its head, the relativized position
+is left empty, and the juncture is marked by the invariable suffix *-n*, as in *emakumeari
+liburua eman dion gizona* 'the man who has given the book to the woman'. It relativizes
+subjects, direct objects and indirect objects, the three positions cross-referenced on the
+verb; the paper offers Basque as the language whose cut-off falls exactly at the indirect
+object, and records no data for the lower positions. The data are [keenan-comrie-1977]'s.
+
+## References
+
+* [keenan-comrie-1977]
 -/
 
 namespace Basque
 
 open RelativeClause
 
-/-- Invariable relativizer *-n* marking the juncture of a prenominal RC;
-    NP_rel (cross-referenced by a verbal affix) is deleted. Covers SU,
-    DO, IO ([keenan-comrie-1977] §1.3.3 p. 72, ex. (17); Table 1 p. 76).
-    E.g., "emakumeari liburua eman dio-n gizona" 'the man who has given
-    the book to the woman'. -/
+/-- The prenominal clause closed by the suffix *-n* leaves the relativized position empty and
+relativizes subjects, direct objects and indirect objects. -/
 def relN : Marker :=
   { form := "-n"
   , npRel := .gap
@@ -28,7 +28,7 @@ def relN : Marker :=
   , placement := .preNominal
   , positions := {.subject, .directObject, .indirectObject} }
 
-/-- All Basque relative clause markers. -/
+/-- The Basque relative-clause markers. -/
 def relMarkers : List Marker := [relN]
 
 end Basque
