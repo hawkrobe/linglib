@@ -2,6 +2,9 @@ import Linglib.Semantics.Aspect.Basic
 import Linglib.Studies.Karttunen1974
 import Linglib.Fragments.English.TemporalConnectives
 import Linglib.Fragments.English.PolarityItems
+import Linglib.Fragments.Greek.StandardModern.PolarityItems
+import Linglib.Fragments.Icelandic.PolarityItems
+import Linglib.Fragments.Dutch.PolarityItems
 import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 import Linglib.Fragments.Icelandic.TemporalConnectives
 import Linglib.Fragments.Dutch.TemporalConnectives
@@ -38,10 +41,9 @@ homogeneity criterion with negation playing no role (`diagnostics_predicted`).
   around it. The until interval is required to be nondegenerate, which is what excludes a single
   event from satisfying the durative condition at both its endpoints.
 * Which connectives are durative and which punctual is read off the fragments' `relation` and
-  `punctual`; English *until* gets its eventive use from the polarity-item fragment. That
-  *para monon*, *fyrr en* and English *until* need an antiveridical licenser while Dutch *pas* is
-  a positive polarity item is the paper's classification and is recorded here, not in the
-  fragments.
+  `punctual`, and the polarity of the eventive words off their polarity-item entries: *para
+  monon*, *fyrr en* and English *until* are negative polarity items and need an antiveridical
+  licenser, Dutch *pas* is a positive one.
 * The oddity of *Nancy didn't get married until she died* and of its Greek counterpart, which the
   actualization entailment explains, is pragmatic and is left in prose.
 
@@ -180,20 +182,14 @@ def Connective.entry : Connective → Tense.Connective
   | .tot => Dutch.TemporalConnectives.tot
   | .pas => Dutch.TemporalConnectives.pas
 
-/-- The polarity item a connective doubles as: English *until* in its eventive use. -/
+/-- The polarity item a connective is or doubles as: the Greek, Icelandic and Dutch punctual
+*until* words, and English *until* in its eventive use. -/
 def Connective.polarityItem : Connective → Option Polarity.Item
   | .until => some English.PolarityItems.until_
+  | .paraMonon => some Greek.StandardModern.PolarityItems.paraMonon
+  | .fyrrEn => some Icelandic.PolarityItems.fyrrEn
+  | .pas => some Dutch.PolarityItems.pas
   | _ => none
-
-/-- The paper's polarity classification of the eventive UNTIL words. -/
-inductive Polarity
-  | npi | ppi | neutral
-  deriving DecidableEq, Repr
-
-def Connective.polarity : Connective → Polarity
-  | .until | .paraMonon | .fyrrEn => .npi
-  | .pas => .ppi
-  | .mexri | .prin | .til | .tot => .neutral
 
 /-- Durative UNTIL: an *until* entry that is not punctual. -/
 abbrev Connective.Durative (c : Connective) : Prop :=
@@ -245,9 +241,10 @@ abbrev Homog (a : AspectForm) (e : Eventuality) : Prop :=
 /-- The forms that admit the wide-scope reading: the imperfective and the perfect. -/
 abbrev WideScopeForm (a : AspectForm) : Prop := a = .imperfective ∨ a = .perfect
 
-/-- The licensing a connective's polarity demands. -/
+/-- The licensing a connective's polarity item demands: an antiveridical licenser for a negative
+item, none for a positive one. -/
 abbrev Licensed (c : Connective) (l : Licenser) : Prop :=
-  (c.polarity = .npi → l.Antiveridical) ∧ (c.polarity = .ppi → l = .none)
+  ∀ i ∈ c.polarityItem, (i.isNPI → l.Antiveridical) ∧ (i.isPPI → l = .none)
 
 /-- The judgment the two-*until* analysis predicts. -/
 def Predicted (r : Row) : Prop :=
