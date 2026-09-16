@@ -11,12 +11,12 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 /-!
 # Subterms, containment, and c-command
 
-The subterm theory of syntactic objects. Containment is the transitive closure of immediate
-containment, the daughter relation, and reflexive containment its reflexive transitive closure.
-`subtrees` enumerates the subterms, root included, and `accessibleTerms` the proper ones, so
-membership in the two multisets is reflexive and strict containment. Containment lowers the
-vertex count, which makes it a well-founded strict order and decides it. Sisterhood and
-c-command are relative to a root.
+This file develops the subterm theory of syntactic objects. Containment is the transitive
+closure of immediate containment, the daughter relation, and reflexive containment its
+reflexive transitive closure. `subtrees` enumerates the subterms, root included, and
+`accessibleTerms` the proper ones, so membership in the two multisets is reflexive and strict
+containment. Containment lowers the vertex count, which makes it a well-founded strict order and
+decides it. Sisterhood and c-command are relative to a root.
 
 ## Main definitions
 
