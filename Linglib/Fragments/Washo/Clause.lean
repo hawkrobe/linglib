@@ -11,7 +11,7 @@ independent mood *-i*, and closes with the nominalizer *-gi ~ -ge*, which inflec
 A verb of thought or speech such as *hamu* 'think' or *i:d* 'say' is intransitive, and the clause
 it embeds is bare: it carries the dependent mood *-aʔ*, no nominalizer and no switch-reference
 marking. The two classes differ in transitivity, which each verb's frames record: 'know' and 'see'
-also take plain DP objects, while 'think' is questioned with *how* rather than *what*, and
+also take plain noun-phrase objects, while 'think' is questioned with *how* rather than *what*, and
 'dream' embeds a bare clause only with the reflexive prefix *gum-*. 'Know', 'remember' and
 'believe' are inherently negative, so their positive reading carries the negative suffix
 *-e:s*, and 'remember' is negated 'forget'.
