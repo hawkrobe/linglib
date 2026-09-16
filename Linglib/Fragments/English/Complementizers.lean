@@ -11,9 +11,9 @@ under most verbs.
 
 The adverbial subordinators *because*, *although*, *while* are not
 complementizers (adverbial subordination is outside complementation,
-[noonan-2007]); they are plain `SCONJ` words below. The morphologically
-distinct preposition *to* and the infinitival particle *to* live in
-`Auxiliaries.lean` and `FunctionWords.lean` respectively.
+[noonan-2007]); they are plain `SCONJ` words below. The preposition *to* is
+`English.Adpositions.to_` and the infinitival particle *to* is
+`English.Auxiliaries.toInf`.
 -/
 
 namespace English.Complementizers

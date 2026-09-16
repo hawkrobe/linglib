@@ -1,5 +1,6 @@
 import Mathlib.Order.BooleanAlgebra.Basic
 import Linglib.Morphology.Morph
+import Linglib.Morphology.Word.Basic
 
 /-!
 # The Coordinator unit — marking + operation
@@ -23,6 +24,7 @@ additive/focus, adversative contrast) diverging to the relevant studies / the di
 * `Coordinator.Role` — which Boolean operation a coordinator denotes.
 * `Coordinator.op` — the operation a role denotes, polymorphic over `[BooleanAlgebra α]`.
 * `Coordinator` — a lexical coordinator's marking (decidable data Fragments configure).
+* `Coordinator.toWord` — the entry as a UD `CCONJ` word.
 -/
 
 namespace Coordinator
@@ -88,3 +90,6 @@ structure Coordinator where
   /-- Notes on usage or distribution. -/
   note : String := ""
   deriving DecidableEq, Repr
+
+/-- The coordinator as a word, UD category `CCONJ`. -/
+def Coordinator.toWord (c : Coordinator) : Morphology.Word := { form := c.form, cat := .CCONJ }

@@ -2,7 +2,7 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Adposition
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Syntax.DependencyGrammar.Projectivity
 import Linglib.Syntax.DependencyGrammar.Length
@@ -43,7 +43,7 @@ namespace FutrellEtAl2020
 open DependencyGrammar
 open Morphology (Word)
 open English.Nouns English.Predicates.Verbal English.Pronouns English.Determiners
-  English.FunctionWords English.Auxiliaries
+  English.Adpositions English.Auxiliaries
 
 -- `this` is a Lean keyword, so the demonstrative needs a qualified alias.
 private abbrev this_ := English.Determiners.this.toWord

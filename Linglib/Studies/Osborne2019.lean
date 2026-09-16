@@ -2,7 +2,7 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Adposition
 import Linglib.Syntax.WordGrammar.LexicalRules
 import Linglib.Syntax.DependencyGrammar.Valency
 import Linglib.Syntax.DependencyGrammar.Catena
@@ -52,8 +52,8 @@ private abbrev book := English.Nouns.book.toWordSg
 private abbrev pizza := English.Nouns.pizza.toWordSg
 private abbrev the_ := English.Determiners.the.toWord
 private abbrev was_ := English.Auxiliaries.was.toWord
-private abbrev by_ := English.FunctionWords.by_.toWord
-private abbrev to_ := English.FunctionWords.to_.toWord
+private abbrev by_ := English.Adpositions.by_.toWord
+private abbrev to_ := English.Adpositions.to_.toWord
 private abbrev sleeps := English.Predicates.Verbal.sleep.toWord3sg
 private abbrev devours := English.Predicates.Verbal.devour.toWord3sg
 private abbrev gives := English.Predicates.Verbal.give.toWord3sg
