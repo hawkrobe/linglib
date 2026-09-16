@@ -279,7 +279,7 @@ structure AntonymPair where
   /-- The negative pole's comparison paradigm. -/
   negComparison : Adjective.Comparison := .regular
   /-- The positive pole's evaluative valence; the negative pole's is its `flip`. -/
-  valence : Option EvaluativeValence := none
+  evaluativeValence : Option EvaluativeValence := none
   /-- The resultative spatial-configuration class the poles share. -/
   spatialConfigType : Option SpatialConfigType := none
 
@@ -292,7 +292,7 @@ def pos (p : AntonymPair) : GradableAdjective where
   comparison := p.posComparison
   antonymForm := some p.negForm
   antonymRelation := some p.relation
-  evaluativeValence := p.valence
+  evaluativeValence := p.evaluativeValence
   spatialConfigType := p.spatialConfigType
 
 /-- The negative pole, measuring on the dual scale. -/
@@ -303,7 +303,7 @@ def neg (p : AntonymPair) : GradableAdjective where
   comparison := p.negComparison
   antonymForm := some p.posForm
   antonymRelation := some p.relation
-  evaluativeValence := p.valence.map EvaluativeValence.flip
+  evaluativeValence := p.evaluativeValence.map EvaluativeValence.flip
   spatialConfigType := p.spatialConfigType
 
 @[simp] theorem pos_polarity (p : AntonymPair) : p.pos.polarity = .positive := rfl

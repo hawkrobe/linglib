@@ -45,7 +45,7 @@ For the 2-place veridical-preferential attitude predicate
 def happiness : AntonymPair :=
   { dimension := .happiness, relation := .contrary, posForm := "happy", negForm := "unhappy"
   , posComparison := .synthetic "happier" "happiest"
-  , negComparison := .synthetic "unhappier" "unhappiest", valence := some .positive }
+  , negComparison := .synthetic "unhappier" "unhappiest", evaluativeValence := some .positive }
 
 abbrev happy := happiness.pos
 
@@ -92,7 +92,7 @@ abbrev dry := wetness.neg
 
 def cleanliness : AntonymPair :=
   { dimension := .cleanliness, relation := .contradictory, posForm := "clean", negForm := "dirty"
-  , valence := some .positive }
+  , evaluativeValence := some .positive }
 
 abbrev clean := cleanliness.pos
 
@@ -179,7 +179,7 @@ abbrev tiny := extremeSize.neg
 
 def pristineness : AntonymPair :=
   { dimension := .cleanliness, relation := .contrary, posForm := "pristine", negForm := "filthy"
-  , valence := some .positive }
+  , evaluativeValence := some .positive }
 
 abbrev pristine := pristineness.pos
 
@@ -306,7 +306,7 @@ def doubtful : GradableAdjective :=
 def value : AntonymPair :=
   { dimension := .value, relation := .contrary, posForm := "good", negForm := "bad"
   , posComparison := .suppletive "better" "best", negComparison := .suppletive "worse" "worst"
-  , valence := some .positive }
+  , evaluativeValence := some .positive }
 
 abbrev good := value.pos
 
@@ -314,7 +314,7 @@ abbrev bad := value.neg
 
 def beauty : AntonymPair :=
   { dimension := .beauty, relation := .contrary, posForm := "beautiful", negForm := "ugly"
-  , valence := some .positive }
+  , evaluativeValence := some .positive }
 
 abbrev beautiful := beauty.pos
 
@@ -382,7 +382,7 @@ def nice : GradableAdjective :=
     Base for M-degree intensifier *pleasantly*. -/
 def pleasantness : AntonymPair :=
   { dimension := .value, relation := .contrary, posForm := "pleasant", negForm := "unpleasant"
-  , valence := some .positive }
+  , evaluativeValence := some .positive }
 
 abbrev pleasant := pleasantness.pos
 
@@ -466,7 +466,7 @@ def gorgeous : GradableAdjective :=
 
 def expectation : AntonymPair :=
   { dimension := .expectation, relation := .contrary, posForm := "usual", negForm := "unusual"
-  , valence := some .neutral }
+  , evaluativeValence := some .neutral }
 
 abbrev usual := expectation.pos
 
@@ -494,7 +494,7 @@ def expected : GradableAdjective :=
 
 def possibility : AntonymPair :=
   { dimension := .possibility, relation := .contradictory, posForm := "possible"
-  , negForm := "impossible", valence := some .neutral }
+  , negForm := "impossible", evaluativeValence := some .neutral }
 
 abbrev possible := possibility.pos
 
