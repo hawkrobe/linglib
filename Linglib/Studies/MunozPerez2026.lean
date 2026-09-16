@@ -268,7 +268,7 @@ def spanishFissionRule : ApplicativeFission where
   bundleOk := IsFissionApplicable
   decBundle := inferInstance
   realize := λ p => {
-    cl1Form := if p.toFeatures.hasAuthor then "me" else "te"
+    cl1Form := if .author ∈ p.toFeatures then "me" else "te"
     cl2Form := "le"
   }
 

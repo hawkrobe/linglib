@@ -136,20 +136,39 @@ theorem category_contrast (p : Primitive) : category (contrast p) = {p} := by
 
 /-! ### Core noun classes, (19) and (22) -/
 
-/-- The bivalent features [±Animate, ±Human] of a Bantu nominalizing head (19). -/
-structure AnimacyFeatures where
-  isAnimate : Bool
-  isHuman : Bool
+/-- The bivalent features [±Animate, ±Human] of a Bantu nominalizing head (19), [+Human]
+entailing [+Animate]. -/
+inductive AnimacyFeature where
+  | animate
+  | human
   deriving DecidableEq, Repr, Fintype
+
+/-- Position on the dependency chain, animate below human. -/
+def AnimacyFeature.rank : AnimacyFeature → Fin 2
+  | .animate => 0
+  | .human => 1
+
+instance : LinearOrder AnimacyFeature := LinearOrder.lift' AnimacyFeature.rank (by decide)
+
+/-- The features of a nominalizing head: the positive ones. -/
+abbrev AnimacyFeatures := Finset AnimacyFeature
 
 namespace AnimacyFeatures
 
-/-- The features as a containment pair, [+Human] the inner feature entailing [+Animate]. -/
-def featuresEquiv : AnimacyFeatures ≃ Agreement.ContainmentPair where
-  toFun af := ⟨af.isAnimate, af.isHuman⟩
-  invFun p := ⟨p.outer, p.inner⟩
-  left_inv := λ ⟨_, _⟩ => rfl
-  right_inv := λ ⟨_, _⟩ => rfl
+/-- The animacy features as the two features of a containment pair, [Animate] the outer and
+[Human] the inner. -/
+def featureEquiv : AnimacyFeature ≃ Agreement.ContainmentPair.Feature where
+  toFun
+    | .animate => .outer
+    | .human => .inner
+  invFun
+    | .outer => .animate
+    | .inner => .human
+  left_inv f := by cases f <;> rfl
+  right_inv f := by cases f <;> rfl
+
+/-- The features as a containment pair. -/
+def featuresEquiv : AnimacyFeatures ≃ Agreement.ContainmentPair := featureEquiv.finsetCongr
 
 instance : Agreement.ContainmentPairLike AnimacyFeatures := .ofEquiv featuresEquiv
 
@@ -157,8 +176,9 @@ instance : Agreement.ContainmentPairLike AnimacyFeatures := .ofEquiv featuresEqu
 abbrev WellFormed (af : AnimacyFeatures) : Prop := Agreement.ContainmentPairLike.WellFormed af
 
 /-- The features as a specification of the [Animate] and [Human] features of (3). -/
-def spec (af : AnimacyFeatures) : Spec := λ q =>
-  if q = .animal then some af.isAnimate else if q = .human then some af.isHuman else none
+def spec (af : AnimacyFeatures) : Spec := fun q ↦
+  if q = .animal then some (decide (.animate ∈ af))
+  else if q = .human then some (decide (.human ∈ af)) else none
 
 /-- The incoherent combination is the one denoting no primitive at all. -/
 theorem category_spec_eq_empty_iff (af : AnimacyFeatures) :
@@ -175,13 +195,13 @@ abbrev Core := {af : AnimacyFeatures // af.WellFormed}
 namespace Core
 
 /-- HUMAN, [+Animate, +Human]. -/
-def human : Core := ⟨⟨true, true⟩, by decide⟩
+def human : Core := ⟨{.animate, .human}, by decide⟩
 
 /-- ANIMATE, [+Animate, −Human]. -/
-def animal : Core := ⟨⟨true, false⟩, by decide⟩
+def animal : Core := ⟨{.animate}, by decide⟩
 
 /-- INANIMATE, [−Animate, −Human]. -/
-def inanimate : Core := ⟨⟨false, false⟩, by decide⟩
+def inanimate : Core := ⟨∅, by decide⟩
 
 /-- HUMAN denotes every primitive down to the local persons: the class contains the speech-act
 participants, the containment behind their reduction to class 1/2 ((8), (10)). -/
@@ -206,11 +226,8 @@ def ofAnimacyLevel : Reference.Prominence.AnimacyLevel → Core
   | .inanimate => inanimate
 
 /-- (19) in Xhosa: HUMAN is class 1/2, ANIMATE class 9/10, and INANIMATE class 7/8. -/
-def gender : Core → Xhosa.Gender
-  | ⟨⟨true, true⟩, _⟩ => .genderA
-  | ⟨⟨true, false⟩, _⟩ => .genderE
-  | ⟨⟨false, false⟩, _⟩ => .genderD
-  | ⟨⟨false, true⟩, h⟩ => absurd h (by decide)
+def gender (c : Core) : Xhosa.Gender :=
+  if .human ∈ c.1 then .genderA else if .animate ∈ c.1 then .genderE else .genderD
 
 /-- The core class of a gender, read off the semantic core the fragment records for it; none
 for a purely formal gender. -/
@@ -235,7 +252,7 @@ inductive FinalVowel where
   deriving DecidableEq, Repr
 
 /-- (22): the core n is spelled out as -i when [+Human] and as -o otherwise. -/
-def finalVowel (c : Core) : FinalVowel := if c.1.isHuman then .i else .o
+def finalVowel (c : Core) : FinalVowel := if .human ∈ c.1 then .i else .o
 
 /-- At the core, -i is exactly class 1/2: the 73% of Chichewa -i nouns in class 1 reported in
 section 4.1 are the aligned nominals, the rest stacked. -/
@@ -244,13 +261,14 @@ theorem finalVowel_eq_i_iff (c : Core) : c.finalVowel = .i ↔ c.gender = .gende
 
 /-- An exponent conditioned on [±Animate] alone, as Swahili's class 1/2 agreement under animacy
 override (13), treats humans and animals alike: the GENERIC ANIMATE conflation of (5). -/
-theorem eq_of_factorsThrough_isAnimate {β : Type*} {f : Core → β}
-    (hf : Function.FactorsThrough f (·.1.isAnimate)) : f human = f animal :=
-  hf (a := human) (b := animal) rfl
+theorem eq_of_factorsThrough_animate {β : Type*} {f : Core → β}
+    (hf : Function.FactorsThrough f (decide <| .animate ∈ ·.1)) : f human = f animal :=
+  hf (a := human) (b := animal) (by decide)
 
 /-- Xhosa's core genders distinguish [±Human] within [+Animate]. -/
-theorem not_factorsThrough_gender : ¬ Function.FactorsThrough gender (·.1.isAnimate) :=
-  λ h => absurd (h (a := human) (b := animal) rfl) (by decide)
+theorem not_factorsThrough_gender :
+    ¬ Function.FactorsThrough gender (decide <| .animate ∈ ·.1) :=
+  fun h ↦ absurd (h (a := human) (b := animal) (by decide)) (by decide)
 
 /-- The plural subject marker of a core class's gender. -/
 def pluralSubjPrefix (c : Core) : String := c.gender.pluralClass.subjPrefix
@@ -258,7 +276,7 @@ def pluralSubjPrefix (c : Core) : String := c.gender.pluralClass.subjPrefix
 /-- Xhosa's class 8 and class 10 subject markers are both *zi-* (footnote 7): the plural marker
 is conditioned on [±Human] alone, so ANIMATE and INANIMATE share it. -/
 theorem pluralSubjPrefix_factorsThrough :
-    Function.FactorsThrough pluralSubjPrefix (·.1.isHuman) := by
+    Function.FactorsThrough pluralSubjPrefix (decide <| .human ∈ ·.1) := by
   intro a b; revert a b; decide
 
 end Core
@@ -266,19 +284,19 @@ end Core
 /-! ### Local persons -/
 
 /-- The person features [±Participant, ±Author] as a specification of (3). -/
-def personSpec (pf : Person.Features) : Spec := λ q =>
-  if q = .addressee then some pf.hasParticipant
-  else if q = .author then some pf.hasAuthor else none
+def personSpec (pf : Person.Features) : Spec := fun q ↦
+  if q = .addressee then some (decide (.participant ∈ pf))
+  else if q = .author then some (decide (.author ∈ pf)) else none
 
 /-- Local persons are a more highly specified subset of HUMAN (section 3.2): a participant's
 category lies inside the core class, so a probe for class 1/2 finds them, as Lubukusu
 alternative agreement (8) and Zulu person reduction (10) show. -/
-theorem category_personSpec_subset {pf : Person.Features} (h : pf.hasParticipant = true) :
+theorem category_personSpec_subset {pf : Person.Features} (h : .participant ∈ pf) :
     category (personSpec pf) ⊆ category Core.human.1.spec := by
   rw [Core.category_spec_human]
   intro x hx
-  have hx' := mem_category.mp hx .addressee pf.hasParticipant (by simp [personSpec])
-  rw [h] at hx'
+  have hx' := mem_category.mp hx .addressee (decide (.participant ∈ pf)) (by simp [personSpec])
+  rw [decide_eq_true h] at hx'
   exact le_trans (hx'.mpr rfl) (by decide)
 
 /-! ### Stacked nominals, (26) to (29) -/
@@ -289,7 +307,7 @@ spelled out by the core. -/
 structure Nominal where
   core : Core
   secondary : Option Core
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 namespace Nominal
 
@@ -342,7 +360,7 @@ end Nominal
 def flat : Probe Core := Probe.indiscriminate
 
 /-- (29b): the ɸ probe relativized to [+Animate]. -/
-def animateProbe : Probe Core := Probe.relativized (·.1.isAnimate)
+def animateProbe : Probe Core := Probe.relativized (decide <| .animate ∈ ·.1)
 
 /-- The gender a probe agrees in: the allomorph of the n it finds. -/
 def agreement (p : Probe Core) (n : Nominal) : Option Xhosa.Gender :=
@@ -354,16 +372,16 @@ theorem agreement_flat (n : Nominal) : agreement flat n = some n.prefixGender :=
 
 /-- Swahili: with an inanimate secondary n over an animate core, as in (28), the relativized
 probe searches past the secondary n to the core (29b). -/
-theorem animateProbe_search {n : Nominal} (hc : n.core.1.isAnimate = true)
-    (hs : ∀ s ∈ n.secondary, s.1.isAnimate = false) :
+theorem animateProbe_search {n : Nominal} (hc : .animate ∈ n.core.1)
+    (hs : ∀ s ∈ n.secondary, .animate ∉ s.1) :
     animateProbe.search n.heads = some n.core := by
   rcases n with ⟨c, _ | s⟩ <;> simp only at hc hs
   · simp [animateProbe, Probe.search, Nominal.heads, Probe.relativized, hc]
   · simp [animateProbe, Probe.search, Nominal.heads, Probe.relativized, hc, hs s rfl]
 
 /-- Animacy override ((11), (13)): the relativized probe agrees with the core class. -/
-theorem agreement_animateProbe {n : Nominal} (hc : n.core.1.isAnimate = true)
-    (hs : ∀ s ∈ n.secondary, s.1.isAnimate = false) :
+theorem agreement_animateProbe {n : Nominal} (hc : .animate ∈ n.core.1)
+    (hs : ∀ s ∈ n.secondary, .animate ∉ s.1) :
     agreement animateProbe n = some n.core.gender := by
   rw [agreement, animateProbe_search hc hs, Option.map_some]
 
@@ -371,7 +389,7 @@ theorem agreement_animateProbe {n : Nominal} (hc : n.core.1.isAnimate = true)
 aligned noun iff its core is animate, so an inanimate object leaves it unvalued and no object
 marker surfaces. -/
 theorem animateProbe_outcome (c : Core) :
-    animateProbe.outcome (Nominal.mk c none).heads = .valued ↔ c.1.isAnimate = true := by
+    animateProbe.outcome (Nominal.mk c none).heads = .valued ↔ .animate ∈ c.1 := by
   simp [Probe.outcome_eq_valued_iff, Nominal.heads, animateProbe, Probe.relativized]
 
 /-- (28) through (29): *isikhohleli* agrees in class 7 with a flat probe and in class 1 with the

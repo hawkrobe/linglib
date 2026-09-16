@@ -93,8 +93,8 @@ otherwise a plural argument; otherwise nothing (66), (73). -/
 theorem afTarget_eq (s o : Bundle) :
     afTarget s o = if s.IsParticipant then some s else if o.IsParticipant then some o
       else if s.IsPlural then some s else if o.IsPlural then some o else none := by
-  rcases Bool.eq_false_or_eq_true (decomposePerson s.person).hasParticipant with h1 | h1 <;>
-    rcases Bool.eq_false_or_eq_true (decomposePerson o.person).hasParticipant with h2 | h2 <;>
+  by_cases h1 : DecomposedPerson.Feature.participant ∈ decomposePerson s.person <;>
+    by_cases h2 : DecomposedPerson.Feature.participant ∈ decomposePerson o.person <;>
     by_cases h3 : s.IsPlural <;> by_cases h4 : o.IsPlural <;>
     simp [afTarget, piProbe, numProbe, Probe.Target.toProbe, Bundle.visibleTo, probeVisible,
       Bundle.IsParticipant, Probe.cascade, Probe.search, Probe.relativized,
@@ -110,8 +110,8 @@ theorem afTarget_eq_rank (s o : Bundle) :
     afTarget s o = if rank s = 0 ∧ rank o = 0 then none
       else if rank o ≤ rank s then some s else some o := by
   rw [afTarget_eq]
-  rcases Bool.eq_false_or_eq_true (decomposePerson s.person).hasParticipant with h1 | h1 <;>
-    rcases Bool.eq_false_or_eq_true (decomposePerson o.person).hasParticipant with h2 | h2 <;>
+  by_cases h1 : DecomposedPerson.Feature.participant ∈ decomposePerson s.person <;>
+    by_cases h2 : DecomposedPerson.Feature.participant ∈ decomposePerson o.person <;>
     by_cases h3 : s.IsPlural <;> by_cases h4 : o.IsPlural <;>
     simp [rank, probeResolutionRank, Bundle.IsParticipant, Bundle.visibleTo, probeVisible, h1, h2,
       h3, h4]

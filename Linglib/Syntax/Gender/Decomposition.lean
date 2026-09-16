@@ -117,47 +117,63 @@ three well-formed combinations are the three genders of a sex-based system, and 
 parallels person [±author] ⊂ [±participant] and number [±atomic] ⊂ [±minimal], all three
 `ContainmentPairLike` presentations of one skeleton (`Syntax/Agreement/ContainmentPair.lean`). -/
 
-/-- Bivalent gender features [±feminine, ±neuter], reconstructing [sauerland-2003]'s
-    markedness ordering. The three well-formed combinations yield the three sex-based
-    genders: neuter [+feminine, +neuter], feminine [+feminine, −neuter], masculine
-    [−feminine, −neuter]. -/
-structure Features where
-  /-- [+feminine]: non-masculine, the value feminine and neuter share. -/
-  isFeminine : Bool
-  /-- [+neuter]: referent triggers neuter agreement. -/
-  isNeuter : Bool
+/-- The two gender features, neuter depending on feminine, reconstructing
+[sauerland-2003]'s markedness ordering. -/
+inductive Feature where
+  /-- [feminine]: non-masculine, the value feminine and neuter share. -/
+  | feminine
+  /-- [neuter]: the referent triggers neuter agreement. -/
+  | neuter
   deriving DecidableEq, Repr, Fintype
 
+/-- Position on the dependency chain, feminine below neuter. -/
+def Feature.rank : Feature → Fin 2
+  | .feminine => 0
+  | .neuter => 1
+
+instance : LinearOrder Feature := LinearOrder.lift' Feature.rank (by decide)
+
+/-- A gender feature bundle: the positive features. The three well-formed bundles are the
+three sex-based genders: neuter [+feminine, +neuter], feminine [+feminine, −neuter],
+masculine [−feminine, −neuter]. -/
+abbrev Features := Finset Feature
+
 /-- Neuter features: [+feminine, +neuter]. -/
-def Features.neuter : Features := ⟨true, true⟩
+def Features.neuter : Features := {.feminine, .neuter}
 
 /-- Feminine features: [+feminine, −neuter]. -/
-def Features.feminine : Features := ⟨true, false⟩
+def Features.feminine : Features := {.feminine}
 
 /-- Masculine features: [−feminine, −neuter]. -/
-def Features.masculine : Features := ⟨false, false⟩
+def Features.masculine : Features := ∅
 
-/-- The `[±feminine, ±neuter]` decomposition is carrier-equivalent to the
-    containment pair: `outer` = feminine, `inner` = neuter — one edge of the
-    φ-feature iso-web (`phiKernelEquiv, Studies/Harbour2016.lean`). -/
-def featuresEquiv : Features ≃ ContainmentPair where
-  toFun f := ⟨f.isFeminine, f.isNeuter⟩
-  invFun p := ⟨p.outer, p.inner⟩
-  left_inv := λ ⟨_, _⟩ => rfl
-  right_inv := λ ⟨_, _⟩ => rfl
+/-- The gender features as the two features of a containment pair, feminine the outer and
+neuter the inner. -/
+def featureEquiv : Feature ≃ ContainmentPair.Feature where
+  toFun
+    | .feminine => .outer
+    | .neuter => .inner
+  invFun
+    | .outer => .feminine
+    | .inner => .neuter
+  left_inv f := by cases f <;> rfl
+  right_inv f := by cases f <;> rfl
+
+/-- The bundles as containment pairs. -/
+def featuresEquiv : Features ≃ ContainmentPair := featureEquiv.finsetCongr
 
 instance : ContainmentPairLike Features := .ofEquiv featuresEquiv
 
 /-- The three genders land on the three well-formed cells. -/
 @[simp] theorem Features.toPair_neuter :
-    ContainmentPairLike.toPair Features.neuter = .maximal := rfl
+    ContainmentPairLike.toPair Features.neuter = .maximal := by decide
 @[simp] theorem Features.toPair_feminine :
-    ContainmentPairLike.toPair Features.feminine = .intermediate := rfl
+    ContainmentPairLike.toPair Features.feminine = .intermediate := by decide
 @[simp] theorem Features.toPair_masculine :
-    ContainmentPairLike.toPair Features.masculine = .minimal := rfl
+    ContainmentPairLike.toPair Features.masculine = .minimal := by decide
 
-/-- Well-formedness: [+neuter] → [+feminine] — neuter entails feminine in
-    the feature geometry, inherited from `ContainmentPair.WellFormed`. -/
+/-- Well-formedness: [+neuter] → [+feminine], neuter entails feminine in the feature
+geometry, inherited from `ContainmentPair.WellFormed`. -/
 abbrev Features.WellFormed (gf : Features) : Prop :=
   ContainmentPairLike.WellFormed gf
 
@@ -165,27 +181,24 @@ abbrev Features.WellFormed (gf : Features) : Prop :=
 @[simp] theorem Features.feminine_wellFormed : Features.feminine.WellFormed := by decide
 @[simp] theorem Features.masculine_wellFormed : Features.masculine.WellFormed := by decide
 
-/-- The filtered combination [−feminine, +neuter] is the only one that
-    violates containment. -/
-theorem Features.not_wellFormed_mk_false_true : ¬ (⟨false, true⟩ : Features).WellFormed := by
+/-- The bundle with the neuter feature alone is the one that violates containment. -/
+theorem Features.not_wellFormed_singleton_neuter : ¬ ({.neuter} : Features).WellFormed := by
   decide
 
-/-- Exactly 3 well-formed feature combinations (= 3 genders) — the carrier
-    count of the containment chain (`ContainmentPair.card_wellFormed`). -/
+/-- Exactly three well-formed bundles, the three genders, the carrier count of the
+containment chain. -/
 theorem Features.card_wellFormed :
     Fintype.card {gf : Features // gf.WellFormed} = 3 := by decide
 
-/-- Containment: [+neuter] → [+feminine] for all well-formed features. -/
-theorem Features.isFeminine_of_isNeuter :
-    ∀ f : Features, f.WellFormed → f.isNeuter = true → f.isFeminine = true := by
+/-- Containment: [+neuter] → [+feminine] for all well-formed bundles. -/
+theorem Features.feminine_of_neuter :
+    ∀ f : Features, f.WellFormed → .neuter ∈ f → .feminine ∈ f := by
   decide
 
 /-- Map gender features to the comparative labels. -/
-def Features.toGender : Features → Option Gender
-  | ⟨true, true⟩   => some .neuter
-  | ⟨true, false⟩  => some .feminine
-  | ⟨false, false⟩ => some .masculine
-  | ⟨false, true⟩  => none
+def Features.toGender (f : Features) : Option Gender :=
+  if .neuter ∈ f then if .feminine ∈ f then some .neuter else none
+  else if .feminine ∈ f then some .feminine else some .masculine
 
 /-- Map comparative labels to gender features (partial — only sex-based
     labels have feature equivalents). -/

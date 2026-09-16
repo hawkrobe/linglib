@@ -128,7 +128,8 @@ theorem pi_mem_personSpec (geom : PersonGeometry) (p : Person) :
 
 /-- Under the standard geometry a person bears `participant` iff its decomposition does. -/
 theorem std_participant_matches_decomposed (p : Person) :
-    (personSpec .standard p).contains .participant = (decomposePerson p).hasParticipant := by
+    (personSpec .standard p).contains .participant =
+      decide (.participant ∈ decomposePerson p) := by
   cases p <;> decide
 
 /-- Under the standard geometry the second person's segments are among the first person's. -/

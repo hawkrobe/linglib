@@ -16,6 +16,8 @@ implicational hierarchy places a language on a rung.
 ## Main declarations
 
 * `IsLowerSet.mem_iff_le_max` — a lower finset of a linear order is `Iic` of its max.
+* `IsLowerSet.subset_iff_card_le` — lower finsets of a linear order are nested by size, so they
+  form a chain (the `LinearOrder` instance on the subtype).
 * `Finset.lowerSubsets` — the lower sets contained in a finset.
 * `Finset.filter_not_le_mem_lowerSubsets` — removing an upper cone stays inside.
 -/
@@ -37,6 +39,38 @@ theorem IsUpperSet.mem_iff_min_le (h : IsUpperSet (↑s : Set α)) : a ∈ s ↔
   refine ⟨min_le, fun ha ↦ ?_⟩
   obtain ⟨m, hm⟩ := WithTop.ne_top_iff_exists.1 (ne_top_of_le_ne_top WithTop.coe_ne_top ha)
   exact h (WithTop.coe_le_coe.1 (hm ▸ ha)) (mem_of_min hm.symm)
+
+variable {t : Finset α}
+
+/-- Lower finsets of a linear order are nested. [UPSTREAM] -/
+theorem IsLowerSet.subset_or_subset (hs : IsLowerSet (↑s : Set α))
+    (ht : IsLowerSet (↑t : Set α)) : s ⊆ t ∨ t ⊆ s := by
+  simpa using hs.total ht
+
+/-- Among lower finsets of a linear order, inclusion is comparison of sizes. [UPSTREAM] -/
+theorem IsLowerSet.subset_iff_card_le (hs : IsLowerSet (↑s : Set α))
+    (ht : IsLowerSet (↑t : Set α)) : s ⊆ t ↔ s.card ≤ t.card :=
+  ⟨card_le_card, fun h ↦ (hs.subset_or_subset ht).elim id fun hts ↦ by
+    rw [eq_of_subset_of_card_le hts h]⟩
+
+/-- Lower finsets of a linear order are determined by their sizes. [UPSTREAM] -/
+theorem IsLowerSet.eq_iff_card_eq (hs : IsLowerSet (↑s : Set α))
+    (ht : IsLowerSet (↑t : Set α)) : s = t ↔ s.card = t.card :=
+  ⟨congrArg _, fun h ↦ Subset.antisymm ((hs.subset_iff_card_le ht).2 h.le)
+    ((ht.subset_iff_card_le hs).2 h.ge)⟩
+
+/-- The lower finsets of a linear order form a chain under inclusion, the order of their
+sizes: the rungs of an implicational hierarchy. [UPSTREAM] -/
+instance : LinearOrder {s : Finset α // IsLowerSet (↑s : Set α)} where
+  __ := (inferInstance : PartialOrder {s : Finset α // IsLowerSet (↑s : Set α)})
+  le_total s t := s.2.subset_or_subset t.2
+  toDecidableLE s t := inferInstanceAs (Decidable (s.1 ⊆ t.1))
+  toDecidableEq := inferInstance
+  toDecidableLT s t := inferInstanceAs (Decidable (s.1 ⊂ t.1))
+
+theorem IsLowerSet.subtype_le_iff_card_le {s t : {s : Finset α // IsLowerSet (↑s : Set α)}} :
+    s ≤ t ↔ s.1.card ≤ t.1.card :=
+  s.2.subset_iff_card_le t.2
 
 end LinearOrder
 

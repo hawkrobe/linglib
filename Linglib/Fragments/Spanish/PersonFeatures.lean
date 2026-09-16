@@ -21,22 +21,18 @@ namespace Spanish.PersonFeatures
 
 open Person
 
--- ============================================================================
--- § 1: Fission Applicability
--- ============================================================================
+/-! ### Fission Applicability -/
 
 /-- Fission applies iff [+PARTICIPANT, +SINGULAR].
     This derives the person restriction on stylistic applicatives:
     only 1SG and 2SG trigger Fission, not 3SG or any plural. -/
 def IsFissionApplicable (p : Category) : Prop :=
-  p.toFeatures.hasParticipant = true ∧ p.IsSingular
+  .participant ∈ p.toFeatures ∧ p.IsSingular
 
 instance : DecidablePred IsFissionApplicable :=
   fun _ => inferInstanceAs (Decidable (_ ∧ _))
 
--- ============================================================================
--- § 2: Verification Theorems
--- ============================================================================
+/-! ### Verification Theorems -/
 
 /-- Fission applies to 1SG. -/
 theorem fission_1sg : IsFissionApplicable .speaker := by decide

@@ -13,8 +13,9 @@ with person, and the classification of lattice elements by the regions of
 
 ## Main definitions
 
-* `Number.Features`: the `[±atomic, ±minimal]` bundle, with
-  `Features.toNumber`/`Features.ofNumber` relating it to `Number`.
+* `Number.Feature`, `Number.Features`: the `[±atomic, ±minimal]` bundle as
+  the finset of positive features, with `Features.toNumber`/`Features.ofNumber`
+  relating it to `Number`.
 * `Number.featuresEquiv`: the bundle as a `ContainmentPair`, `outer` the
   minimality and `inner` the atomicity feature; `Features.WellFormed` is the
   containment `[+atomic] → [+minimal]`.
@@ -58,30 +59,38 @@ open Mereology (Atom CUM atomize)
 
 /-! ### The feature bundle -/
 
-/-- Harbour's binary number features `[±atomic, ±minimal]`. -/
-structure Features where
-  /-- `[+atomic]`: the referent is an atom. -/
-  isAtomic : Bool
-  /-- `[+minimal]`: the referent is minimal in its region. -/
-  isMinimal : Bool
+/-- Harbour's two number features, atomicity depending on minimality. -/
+inductive Feature where
+  /-- `[minimal]`: the referent is minimal in its region. -/
+  | minimal
+  /-- `[atomic]`: the referent is an atom. -/
+  | atomic
   deriving DecidableEq, Repr, Fintype
 
+/-- Position on the dependency chain, minimal below atomic. -/
+def Feature.rank : Feature → Fin 2
+  | .minimal => 0
+  | .atomic => 1
+
+instance : LinearOrder Feature := LinearOrder.lift' Feature.rank (by decide)
+
+/-- A number feature bundle: the positive features. -/
+abbrev Features := Finset Feature
+
 /-- Singular: `[+atomic, +minimal]`. -/
-def singularF : Features := ⟨true, true⟩
+def singularF : Features := {.minimal, .atomic}
 
 /-- Dual: `[−atomic, +minimal]`. -/
-def dualF : Features := ⟨false, true⟩
+def dualF : Features := {.minimal}
 
 /-- Plural: `[−atomic, −minimal]`. -/
-def pluralF : Features := ⟨false, false⟩
+def pluralF : Features := ∅
 
 /-- The number value a bundle realizes; the ill-formed `[+atomic, −minimal]`
 realizes none. -/
-def Features.toNumber : Features → Option Number
-  | ⟨true, true⟩ => some .singular
-  | ⟨false, true⟩ => some .dual
-  | ⟨false, false⟩ => some .plural
-  | ⟨true, false⟩ => none
+def Features.toNumber (f : Features) : Option Number :=
+  if .atomic ∈ f then if .minimal ∈ f then some .singular else none
+  else if .minimal ∈ f then some .dual else some .plural
 
 /-- The bundle of a basic number value; the values that need feature
 recursion or additivity have none. -/
@@ -93,30 +102,37 @@ def Features.ofNumber : Number → Option Features
 
 /-! ### The containment-pair presentation -/
 
-/-- The bundle as a containment pair: `outer` is minimality and `inner`
-atomicity, so `[+atomic] → [+minimal]` is `[+inner] → [+outer]`, the shape
-shared with person. -/
-def featuresEquiv : Features ≃ ContainmentPair where
-  toFun f := ⟨f.isMinimal, f.isAtomic⟩
-  invFun p := ⟨p.inner, p.outer⟩
-  left_inv := fun ⟨_, _⟩ => rfl
-  right_inv := fun ⟨_, _⟩ => rfl
+/-- The number features as the two features of a containment pair, minimality the outer and
+atomicity the inner, so `[+atomic] → [+minimal]` is `[+inner] → [+outer]`, the shape shared
+with person. -/
+def featureEquiv : Feature ≃ ContainmentPair.Feature where
+  toFun
+    | .minimal => .outer
+    | .atomic => .inner
+  invFun
+    | .outer => .minimal
+    | .inner => .atomic
+  left_inv f := by cases f <;> rfl
+  right_inv f := by cases f <;> rfl
+
+/-- The bundles as containment pairs. -/
+def featuresEquiv : Features ≃ ContainmentPair := featureEquiv.finsetCongr
 
 instance : ContainmentPairLike Features := .ofEquiv featuresEquiv
 
 @[simp] theorem singular_is_maximal :
-    ContainmentPairLike.toPair singularF = .maximal := rfl
+    ContainmentPairLike.toPair singularF = .maximal := by decide
 @[simp] theorem dual_is_intermediate :
-    ContainmentPairLike.toPair dualF = .intermediate := rfl
+    ContainmentPairLike.toPair dualF = .intermediate := by decide
 @[simp] theorem plural_is_minimal :
-    ContainmentPairLike.toPair pluralF = .minimal := rfl
+    ContainmentPairLike.toPair pluralF = .minimal := by decide
 
 /-- A bundle is well-formed if `[+atomic]` entails `[+minimal]`. -/
 abbrev Features.WellFormed (nf : Features) : Prop :=
   ContainmentPairLike.WellFormed nf
 
 theorem atomic_implies_minimal :
-    ∀ f : Features, f.WellFormed → f.isAtomic = true → f.isMinimal = true := by
+    ∀ f : Features, f.WellFormed → .atomic ∈ f → .minimal ∈ f := by
   decide
 
 /-- Exactly three well-formed bundles, the three basic number values. -/

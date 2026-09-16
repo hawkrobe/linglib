@@ -54,9 +54,7 @@ namespace Minimalist.Phi.Recursion
 
 open Number (Features singularF dualF pluralF)
 
--- ============================================================================
--- § 1: Recursion Regions
--- ============================================================================
+/-! ### Recursion Regions -/
 
 /-- A region of the number lattice eligible for recursion.
 
@@ -69,19 +67,17 @@ structure Region where
   /-- The base features must be well-formed. -/
   base_wf : base.WellFormed
   /-- The region must be non-atomic: atoms cannot be recursed. -/
-  base_nonatomic : base.isAtomic = false
+  base_nonatomic : .atomic ∉ base
   deriving DecidableEq
 
 /-- The plural region: [−atomic, −minimal]. Groups of 3 or more. -/
-def pluralRegion : Region := ⟨pluralF, by decide, rfl⟩
+def pluralRegion : Region := ⟨pluralF, by decide, by decide⟩
 
 /-- The non-singular (dual) region: [−atomic, +minimal]. Minimal
     non-atoms (pairs). -/
-def dualRegion : Region := ⟨dualF, by decide, rfl⟩
+def dualRegion : Region := ⟨dualF, by decide, by decide⟩
 
--- ============================================================================
--- § 2: Recursive Number Categories
--- ============================================================================
+/-! ### Recursive Number Categories -/
 
 /-- A recursive number category: one application of [±minimal] within
     a base region.
@@ -112,9 +108,7 @@ def unitAugmented : RecursiveNumber := ⟨dualRegion, true⟩
     Non-singulars that are not minimal = groups of 3+. -/
 def augmented : RecursiveNumber := ⟨dualRegion, false⟩
 
--- ============================================================================
--- § 3: Mapping to Corbett Values
--- ============================================================================
+/-! ### Mapping to Corbett Values -/
 
 /-- Map recursive features to [corbett-2000]'s number categories.
 
@@ -122,21 +116,19 @@ def augmented : RecursiveNumber := ⟨dualRegion, false⟩
     - On the plural region ([−atomic, −minimal]): trial / greater plural
     - On the non-singular region ([−atomic, +minimal]): unit augmented / augmented -/
 def RecursiveNumber.toNumber (r : RecursiveNumber) : Number :=
-  if r.region.base.isMinimal then
+  if .minimal ∈ r.region.base then
     -- Recursion on the non-singular ([−atomic, +minimal]) region
     if r.isMinimalInRegion then .unitAugmented else .augmented
   else
     -- Recursion on the plural ([−atomic, −minimal]) region
     if r.isMinimalInRegion then .trial else .greaterPlural
 
-theorem trial_toNumber : trial.toNumber = .trial := rfl
-theorem greaterPlural_toNumber : greaterPlural.toNumber = .greaterPlural := rfl
-theorem unitAugmented_toNumber : unitAugmented.toNumber = .unitAugmented := rfl
-theorem augmented_toNumber : augmented.toNumber = .augmented := rfl
+theorem trial_toNumber : trial.toNumber = .trial := by decide
+theorem greaterPlural_toNumber : greaterPlural.toNumber = .greaterPlural := by decide
+theorem unitAugmented_toNumber : unitAugmented.toNumber = .unitAugmented := by decide
+theorem augmented_toNumber : augmented.toNumber = .augmented := by decide
 
--- ============================================================================
--- § 4: Impossibility of Singular Recursion
--- ============================================================================
+/-! ### Impossibility of Singular Recursion -/
 
 /-- Recursion on singular is impossible: [+atomic] regions cannot be
     further partitioned because they're singletons.
@@ -148,20 +140,16 @@ theorem no_singular_recursion : ¬∃ (r : Region), r.base = singularF := by
   intro ⟨r, hr⟩
   have := r.base_nonatomic
   rw [hr] at this
-  exact absurd this (by decide)
+  exact this (by decide)
 
--- ============================================================================
--- § 5: Recursion Properties
--- ============================================================================
+/-! ### Recursion Properties -/
 
 /-- Each recursion yields exactly 2 new categories: the [+minimal] and
     [−minimal] subregions are always distinct. -/
 theorem recursion_yields_two (reg : Region) :
     (⟨reg, true⟩ : RecursiveNumber).toNumber ≠
     (⟨reg, false⟩ : RecursiveNumber).toNumber := by
-  simp only [RecursiveNumber.toNumber]
-  have := reg.base_nonatomic
-  cases ha : reg.base.isAtomic <;> cases hm : reg.base.isMinimal <;> simp_all
+  by_cases hm : Number.Feature.minimal ∈ reg.base <;> simp [RecursiveNumber.toNumber, hm]
 
 /-- Trial presupposes plural: the plural region must exist (i.e., the
     base partition must include [−atomic, −minimal]) for trial to arise
@@ -182,9 +170,7 @@ theorem recursion_base_categories :
     trial.region.base.toNumber = some .plural ∧
     unitAugmented.region.base.toNumber = some .dual := ⟨rfl, rfl⟩
 
--- ============================================================================
--- § 6: Only Two Recursion Regions
--- ============================================================================
+/-! ### Only Two Recursion Regions -/
 
 /-- There are exactly two recursion-eligible regions: the dual region
     ([−atomic, +minimal]) and the plural region ([−atomic, −minimal]).
@@ -192,16 +178,10 @@ theorem recursion_base_categories :
     The singular region ([+atomic, +minimal]) is excluded by `base_nonatomic`,
     and the ill-formed [+atomic, −minimal] is excluded by `base_wf`. -/
 theorem only_two_regions (r : Region) : r.base = dualF ∨ r.base = pluralF := by
-  obtain ⟨⟨a, m⟩, _, hna⟩ := r
-  cases a <;> cases m
-  · exact Or.inr rfl  -- false, false → pluralF
-  · exact Or.inl rfl  -- false, true → dualF
-  · simp at hna  -- true, false → contradiction
-  · simp at hna  -- true, true → contradiction
+  obtain ⟨b, hw, hna⟩ := r
+  revert b; decide
 
--- ============================================================================
--- § 8: Harbour Configuration Space
--- ============================================================================
+/-! ### Harbour Configuration Space -/
 
 /-- A Harbour number configuration: which features and operations are active.
 
@@ -283,9 +263,7 @@ def HarbourConfig.categories (c : HarbourConfig) : List Number :=
     else []
   base ++ recursive ++ additive
 
--- ============================================================================
--- § 9: The Main Theorem — Lower Set Property
--- ============================================================================
+/-! ### The Main Theorem — Lower Set Property -/
 
 /-! **The main impossibility theorem.** [corbett-2000]'s implicational
     universals (trial → dual → plural → singular, greaterPaucal → paucal,
@@ -316,9 +294,7 @@ theorem categories_isLowerSet (c : HarbourConfig) (hw : c.wellFormed = true) :
     IsLowerSet {cat : Number | c.categories.contains cat = true} :=
   fun a b hab ha => categories_lowerSet c hw b a hab ha
 
--- ============================================================================
--- § 10: Corollaries
--- ============================================================================
+/-! ### Corollaries -/
 
 /-- General number is outside the Harbour feature system entirely: no
     configuration generates it. -/
@@ -346,9 +322,7 @@ join-semilattice, with the CUM identity for the number–aspect nexus —
 graduated to `Semantics/Plurality/Number.lean` (`Mereology.atomize`,
 `Number.additiveIn`, `Number.additive_subregion_is_cum`). -/
 
--- ============================================================================
--- § 12: Surface Categories and Typological Predictions
--- ============================================================================
+/-! ### Surface Categories and Typological Predictions -/
 
 /-! ### Surface Categories and Typological Predictions
 [harbour-2014] Table 3
@@ -477,9 +451,7 @@ theorem min_system_size :
       (fun e => decide (e.numValues = 0 ∨ e.numValues ≥ 2)) = true := by
   decide
 
--- ============================================================================
--- § 13: Convexity Condition
--- ============================================================================
+/-! ### Convexity Condition -/
 
 /-! ### Convexity Condition
 [harbour-2014] §4.5, (32)
@@ -502,9 +474,7 @@ states [grimm-2018]'s no-discontinuous-category condition on countability
 classes (`Studies/Grimm2018.lean`), so Harbour's and Grimm's convexity
 requirements are the same predicate. -/
 
--- ============================================================================
--- § 14: Axiom of Extension
--- ============================================================================
+/-! ### Axiom of Extension -/
 
 /-! ### Axiom of Extension
 [harbour-2014] §4.2, (27)

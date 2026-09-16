@@ -54,7 +54,7 @@ open scoped DistributedMorphology.VocabularyItem
 decomposition of a person. -/
 def personFeatures (p : Person) : List FeatureVal :=
   match Person.toFeatures p with
-  | some f => [.participant f.hasParticipant, .author f.hasAuthor]
+  | some f => [.participant (decide (.participant ∈ f)), .author (decide (.author ∈ f))]
   | none => []
 
 /-- Number as the feature [±Pl]. -/

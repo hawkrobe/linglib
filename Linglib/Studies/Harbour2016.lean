@@ -254,7 +254,7 @@ theorem attested_number_systems_derivable :
 /-! ### Harbour's sign decomposition of the Cysouw categories ([harbour-2016] Table 4.3)
 
 The neutral `Person.Category.toFeatures` underdetermines the group categories (`speakerOthers`,
-`speakerAddressee` and `speakerAddresseeOthers` all `⟨true,true⟩`). Harbour's **operational
+`speakerAddressee` and `speakerAddresseeOthers` all `firstF`). Harbour's **operational
 signs** distinguish them; that distinction is *this theory's* commitment, derived from the
 partition above. A dedicated `Sign` carrier is used rather than `Person.Features`, because the
 exclusive's `+author −participant` is exactly the combination the neutral type's `wellFormed`
@@ -269,6 +269,10 @@ structure Sign where
   author : Bool
   participant : Bool
   deriving DecidableEq, Repr
+
+/-- A sign read as a containment pair, participant the outer and author the inner feature. -/
+def Sign.toPair (s : Sign) : Agreement.ContainmentPair :=
+  (if s.participant then {.outer} else ∅) ∪ (if s.author then {.inner} else ∅)
 
 /-- Harbour's signs for a Cysouw `Category` ([harbour-2016] Table 4.3). The 1st-person
 *exclusive* — and the singular speaker `.speaker`, which Harbour's quadripartition lumps into
@@ -290,7 +294,7 @@ theorem signOf_speakerOthers_ne_speakerAddressee :
 A lexical pronoun entry feeds Harbour's signs by composing `Pronoun.categories` — the
 [cysouw-2003] category a `person`/`number`/`clusivity` triple realizes — with `signOf`. Tamil's
 clusivity-marked 1pl forms *naam* (inclusive) and *naangaL* (exclusive) land on distinct signs,
-where the neutral `Category.toFeatures` collapses both 1pl categories to `⟨true, true⟩`: the
+where the neutral `Category.toFeatures` collapses both 1pl categories to `firstF`: the
 distinction [harbour-2016]'s decomposition exists to draw, here discharged on real Fragment
 entries rather than a stipulated example. -/
 
@@ -322,9 +326,6 @@ theorem tamil_clusivity_collapsed_by_toFeatures :
 `Syntax/Agreement/ContainmentPair.lean` rejects, the author as a non-participant, which the free
 combinatorics of chapter 9 generate and the calculus fills
 (`Examples.exclusive_includes_speaker`). -/
-theorem exclusive_sign_filtered :
-    ¬ (Agreement.ContainmentPair.mk (signOf .speakerOthers).participant
-        (signOf .speakerOthers).author).WellFormed := by
-  decide
+theorem exclusive_sign_filtered : ¬ (signOf .speakerOthers).toPair.WellFormed := by decide
 
 end Harbour2016
