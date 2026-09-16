@@ -74,7 +74,8 @@ def RootType.ofShape : Shape → RootType
 /-- The two meanings are distinguished within Washo: the existence proof against a universal
 root meaning (section 7). -/
 theorem exists_rootType_ne :
-    ∃ e₁ ∈ propertyConcepts, ∃ e₂ ∈ propertyConcepts, RootType.ofShape e₁.shape ≠ RootType.ofShape e₂.shape :=
+    ∃ e₁ ∈ propertyConcepts, ∃ e₂ ∈ propertyConcepts,
+      RootType.ofShape e₁.shape ≠ RootType.ofShape e₂.shape :=
   ⟨ihuk, by decide, iyel, by decide, by decide⟩
 
 /-! ### The verbalizing heads and their types -/
@@ -235,12 +236,14 @@ theorem toRoot_kinds (e : PropertyConcept) : (toRoot e).kinds = Root.Kinds.prope
 
 /-- The only category whose members share a shape is color, all of whose stems are prefixed
 (appendix). -/
-theorem color_prefixed : ∀ e ∈ propertyConcepts, e.category = .color → e.shape = .prefixed := by decide
+theorem color_prefixed : ∀ e ∈ propertyConcepts, e.category = .color → e.shape = .prefixed := by
+  decide
 
 /-- [dixon-1982]'s categories do not predict the shape: the antonyms *MiLe* 'old' and *ešlut’*
 'young' differ. -/
 theorem category_not_predictive :
-    ∃ e₁ ∈ propertyConcepts, ∃ e₂ ∈ propertyConcepts, e₁.category = e₂.category ∧ e₁.shape ≠ e₂.shape :=
+    ∃ e₁ ∈ propertyConcepts, ∃ e₂ ∈ propertyConcepts,
+      e₁.category = e₂.category ∧ e₁.shape ≠ e₂.shape :=
   ⟨MiLe, by decide, ešlut, by decide, rfl, by decide⟩
 
 end HaninkKoontzGarboden2025
