@@ -1,8 +1,9 @@
 import Linglib.Semantics.Polarity.Licensing
+import Linglib.Fragments.Finnish.TemporalConnectives
 
 /-!
 # Finnish Polarity-Sensitive Items
-[haspelmath-1997], [karlsson-2017]
+[haspelmath-1997], [karlsson-2017], [karttunen-1974]
 
 Finnish indefinite pronoun polarity items, typed by the categories from
 `Polarity`.
@@ -19,6 +20,7 @@ combination, not a single lexical entry.
 
 - **kukaan**: Polarity-sensitive indefinite (questions, conditionals, negation)
 - **kuka tahansa**: Free choice item ('whoever / anyone at all')
+- **vasta**: the positive polarity punctual *until*, German *erst* ([karttunen-1974])
 -/
 
 namespace Finnish.PolarityItems
@@ -60,10 +62,21 @@ def kukaTahansa : Item :=
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , scalarDirection := some .strengthening }
 
+/-! ### PPI -/
+
+/-- *vasta* 'only then', the punctual *until* of a positive clause, the twin of German *erst* and
+the positive counterpart of the negated *ennen kuin* ([karttunen-1974], the paper's (39)). Its
+connective entry is `Finnish.TemporalConnectives.vasta`. -/
+def vasta : Item :=
+  { form := TemporalConnectives.vasta.form
+  , ppi := true
+  , baseForce := .temporal
+  , licensingContexts := [] }
+
 /-! ### Joint -/
 
 /-- All Finnish polarity-sensitive entries declared in this Fragment. -/
-def items : List Item := [kukaan, kukaTahansa]
+def items : List Item := [kukaan, kukaTahansa, vasta]
 
 /-! ### Verification -/
 
