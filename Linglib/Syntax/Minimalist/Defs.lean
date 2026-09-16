@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Multiset.Basic
-import Linglib.Data.UD.Basic
+import Linglib.Data.UD.UPOS
 
 /-!
 # The lexical alphabet of syntactic objects

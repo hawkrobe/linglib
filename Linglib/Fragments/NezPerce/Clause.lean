@@ -1,6 +1,6 @@
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Category.Complementizer.Basic
-import Linglib.Data.UD.Basic
+import Linglib.Data.UD.Features
 
 /-!
 # Nez Perce clausal embedding

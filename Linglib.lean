@@ -467,7 +467,6 @@ import Linglib.Data.PHOIBLE.Inventories.Zulu
 import Linglib.Data.PHOIBLE.Schema
 import Linglib.Data.ProtoRoles.Dowty1991
 import Linglib.Data.ProtoRoles.Schema
-import Linglib.Data.UD.Basic
 import Linglib.Data.WALS.Aggregation
 import Linglib.Data.WALS.Datapoint
 import Linglib.Data.WALS.Features.F100A

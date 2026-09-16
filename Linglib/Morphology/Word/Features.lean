@@ -1,5 +1,5 @@
 import Linglib.Core.Order.Bundle
-import Linglib.Data.UD.Basic
+import Linglib.Data.UD.Features
 import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Gender.Basic
 import Linglib.Syntax.Number.Basic

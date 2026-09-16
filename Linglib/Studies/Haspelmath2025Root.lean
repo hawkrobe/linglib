@@ -1,6 +1,6 @@
 import Mathlib.Order.WithBot
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Data.UD.Basic
+import Linglib.Data.UD.UPOS
 import Linglib.Morphology.ConstructionMorphology.Schema
 import Linglib.Morphology.Root.Basic
 import Linglib.Morphology.Root.Consonantal

@@ -17,7 +17,8 @@ rest, use-conditional items whose meaning is the matter of `Studies/Kubota2026.l
 
 * `Japanese.Particles.ka`, `no_`, `koto`, `kke`, `daroo` — the clause-typing particles with
   their embedding distributions
-* `Japanese.OutlookMarkers.all` — the outlook markers
+* `Japanese.OutlookMarkers.all` — the ten adverbs and three focus particles Kubota
+  analyses as outlook markers
 
 ## References
 

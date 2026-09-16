@@ -1,4 +1,3 @@
-import Linglib.Data.UD.Basic
 import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Gender.Basic
 import Linglib.Syntax.Category.Pronoun.Basic

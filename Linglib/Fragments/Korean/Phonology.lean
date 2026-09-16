@@ -14,7 +14,8 @@ rule needs.
 
 ## Main definitions
 
-* `Korean.Phonology.stopNasalization` — the rule
+* `Korean.Phonology.stopNasalization` — a non-affricate stop becomes a voiced nasal sonorant
+  before a nasal
 
 ## Main results
 

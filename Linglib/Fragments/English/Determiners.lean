@@ -1,4 +1,3 @@
-import Linglib.Data.UD.Basic
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Quantification.Lexicon

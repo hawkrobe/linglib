@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
-import Linglib.Data.UD.Basic
+import Linglib.Data.UD.UPOS
 
 /-!
 # Argument structure in Construction Grammar

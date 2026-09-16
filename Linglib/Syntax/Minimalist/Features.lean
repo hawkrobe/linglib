@@ -1,6 +1,5 @@
 import Linglib.Core.Order.Bundle
 import Linglib.Syntax.Case.Basic
-import Linglib.Data.UD.Basic
 import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Number.Basic
 import Linglib.Syntax.Minimalist.FeatureSlot

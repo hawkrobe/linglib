@@ -7,7 +7,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Combinatorics.Digraph.Basic
 import Mathlib.Combinatorics.Digraph.Orientation
 import Mathlib.Combinatorics.SimpleGraph.Basic
-import Linglib.Data.UD.Basic
+import Linglib.Data.UD.DepRel
 import Linglib.Morphology.Word.Basic
 
 /-!

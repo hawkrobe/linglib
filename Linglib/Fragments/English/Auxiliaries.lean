@@ -1,4 +1,5 @@
-import Linglib.Data.UD.Basic
+import Linglib.Data.UD.UPOS
+import Linglib.Data.UD.Features
 import Linglib.Syntax.Category.Auxiliary.Basic
 import Linglib.Syntax.Number.Basic
 import Linglib.Syntax.Person.Basic
