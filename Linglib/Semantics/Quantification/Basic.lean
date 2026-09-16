@@ -98,6 +98,18 @@ theorem some_scope_up : ScopeUpwardMono ⟦some⟧ := by
 theorem no_scope_down : ScopeDownwardMono ⟦no⟧ := by
   intro R S S' hSS' h x hR hS; exact h x hR (hSS' x hS)
 
+/-- `every R` is a monotone quantifier. -/
+theorem monotone_every_sem (R : α → Prop) : Monotone (every_sem R) :=
+  (scopeUpMono_iff_monotone _).1 every_scope_up R
+
+/-- `some R` is a monotone quantifier. -/
+theorem monotone_some_sem (R : α → Prop) : Monotone (some_sem R) :=
+  (scopeUpMono_iff_monotone _).1 some_scope_up R
+
+/-- `no R` is an antitone quantifier. -/
+theorem antitone_no_sem (R : α → Prop) : Antitone (no_sem R) :=
+  (scopeDownMono_iff_antitone _).1 no_scope_down R
+
 /-! ### Symmetry (P&W Ch.6) -/
 
 theorem some_symmetric : QSymmetric ⟦some⟧ := by

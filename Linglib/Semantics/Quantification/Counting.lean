@@ -496,6 +496,14 @@ theorem at_most_n_scope_down (n : Nat) :
   rw [at_most_eq_outerNeg_at_least_succ]
   exact outerNeg_up_to_down _ (at_least_n_scope_up _)
 
+/-- `at least n R` is a monotone quantifier. -/
+theorem monotone_at_least_n_sem (n : Nat) (R : α → Prop) : Monotone (at_least_n_sem n R) :=
+  (scopeUpMono_iff_monotone _).1 (at_least_n_scope_up n) R
+
+/-- `at most n R` is an antitone quantifier. -/
+theorem antitone_at_most_n_sem (n : Nat) (R : α → Prop) : Antitone (at_most_n_sem n R) :=
+  (scopeDownMono_iff_antitone _).1 (at_most_n_scope_down n) R
+
 /-! ### Smoothness -/
 
 theorem most_downNE : DownNEMon ⟦most⟧ := by
