@@ -18,13 +18,10 @@ namespace English.Predicates.Copular
 open ArgumentStructure
 
 /-- "annoyed (that p)" — emotive factive clause-embedding adjective.
-    [degen-tonhauser-2021], [degen-tonhauser-2022]: canonically factive.
-    Presupposes its complement via emotive semantics, not doxastic
-    veridicality — hence `factivePresup` on the derived `Verb` is
-    `false`, while `presupType = some .softTrigger`. -/
+    [degen-tonhauser-2021], [degen-tonhauser-2022]: canonically factive. -/
 def beAnnoyed : ClauseEmbeddingAdjective where
   form := "annoyed"
-  presupType := some .softTrigger
+  factivity := some .emotive
 
 /-- "right (that p)" — veridical nonfactive clause-embedding adjective.
     [degen-tonhauser-2021], [degen-tonhauser-2022]: veridical nonfactive.
@@ -60,7 +57,7 @@ def ClauseEmbeddingAdjective.toVerb
     (a : ClauseEmbeddingAdjective) : Verb where
   form := "be " ++ a.form
   frames := [a.complementType.toFrame]
-  presupType := a.presupType
+  factivity := a.factivity
   attitude := a.attitude
   opaqueContext := a.opaqueContext
   complementSig := a.complementSig

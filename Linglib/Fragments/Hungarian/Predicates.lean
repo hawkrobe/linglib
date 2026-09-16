@@ -126,7 +126,6 @@ def tud : HungarianVerbEntry where
   formPastDef := "tudta"
   formPastIndef := "tudott"
   frames := [Frame.finiteClause, Frame.question]
-  presupType := some .softTrigger
   factivity := some .semi
   attitude := some (.doxastic .veridical)
   complementSig := some .mono

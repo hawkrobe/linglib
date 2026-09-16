@@ -77,9 +77,9 @@ def factivity : Predicate → Factivity
   | .acknowledge | .admit | .announce | .confess | .confirm
   | .establish | .hear | .inform | .prove => .optionallyFactive
 
-/-- The Fragment's presupposition triggers among the twenty predicates are exactly the
-canonically factive ones, those whose complement the classification takes to be
-presupposed. -/
+/-- The presupposition triggers among the twenty predicates, as derived from the Fragment
+entries' factivity classes and attitudes, are exactly the canonically factive ones, those whose
+complement the classification takes to be presupposed. -/
 theorem isPresupTrigger_iff (p : Predicate) :
     (toPredicateCore p).isPresupTrigger = true ↔ factivity p = .canonicallyFactive := by
   cases p <;> decide

@@ -217,13 +217,12 @@ structure Aspect where
   cosType : Option CoSType := none
   deriving Repr, BEq
 
-/-- Presupposition profile: factivity class, trigger type and complement-projection behavior. -/
+/-- Presupposition profile: factivity class and complement-projection behavior. Whether the
+    verb triggers a presupposition, and of which type, is derived (`Verb.presupType`). -/
 structure Presupposition where
   /-- The [karttunen-1971b] factivity class of a factive predicate; `none` for a
       non-factive. -/
   factivity : Option _root_.Factivity := none
-  /-- Is the verb a presupposition trigger? -/
-  presupType : Option PresupTriggerType := none
   /-- How does the verb treat presuppositions of its complement?
       Orthogonal to `presupType`. [karttunen-1973] -/
   projectionBehavior : Option ProjectionBehavior := none
