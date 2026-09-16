@@ -2719,7 +2719,7 @@ private theorem multiGraftChildren_set_root_unchanged
 /-! ### §10.6.3 Helpers for the descent case -/
 
 /-- `multiGraftChildren cs pairs` has the same length as `cs`. -/
-private theorem multiGraftChildren_length :
+theorem multiGraftChildren_length :
     ∀ (cs : List (RoseTree α)) (pairs : List (Path × RoseTree α)),
     (multiGraftChildren cs pairs).length = cs.length
   | [], _ => rfl

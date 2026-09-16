@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.Data.List.Sublists
 import Linglib.Core.Data.List.Zip
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Data.Multiset.Bind
@@ -68,6 +69,34 @@ theorem powerset_add (F G : Multiset α) :
       show cons a (s₁ + G₁) = cons a s₁ + G₁
       rw [cons_add]
     rw [h₂, ih]
+
+/-! ### Sums over `sublists'.revzip` -/
+
+/-- Swapping the two buckets of every split enumerates the same splits. -/
+theorem bind_revzip_sublists'_swap {β : Type*} (l : List α)
+    (F : List α → List α → Multiset β) :
+    (l.sublists'.revzip : Multiset (List α × List α)).bind (fun p => F p.1 p.2) =
+      (l.sublists'.revzip : Multiset (List α × List α)).bind fun p => F p.2 p.1 := by
+  conv_rhs => rw [← Multiset.coe_reverse, List.reverse_revzip, ← List.revzip_swap,
+    ← Multiset.map_coe, Multiset.bind_map]
+  rfl
+
+/-- Nested splits reassociate: splitting the second bucket of every split enumerates the same
+ordered triples as splitting the first bucket. -/
+theorem bind_revzip_sublists'_assoc {β : Type*} (l : List α)
+    (K : List α → List α → List α → Multiset β) :
+    (l.sublists'.revzip : Multiset (List α × List α)).bind (fun p =>
+        (p.2.sublists'.revzip : Multiset (List α × List α)).bind fun q => K p.1 q.1 q.2) =
+      (l.sublists'.revzip : Multiset (List α × List α)).bind fun p =>
+        (p.1.sublists'.revzip : Multiset (List α × List α)).bind fun q => K q.1 q.2 p.2 := by
+  induction l generalizing K with
+  | nil => simp
+  | cons a l ih =>
+    simp only [List.revzip_sublists'_cons, ← Multiset.coe_add, Multiset.add_bind,
+      ← Multiset.map_coe, Multiset.bind_map, Prod.map_fst, Prod.map_snd, id_eq,
+      Multiset.bind_add]
+    rw [ih fun r r' s => K r r' (a :: s), ih fun r r' s => K r (a :: r') s,
+      ih fun r r' s => K (a :: r) r' s, add_assoc]
 
 variable [DecidableEq α]
 

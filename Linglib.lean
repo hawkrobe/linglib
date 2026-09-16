@@ -39,7 +39,6 @@ import Linglib.Core.Algebra.RootedTree.PreLie.Graft
 import Linglib.Core.Algebra.RootedTree.PreLie.Insert
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
-import Linglib.Core.Algebra.RootedTree.PreLie.InsertionAddHost
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered
 import Linglib.Core.Algebra.RootedTree.PreLie.Path
 import Linglib.Core.Algebra.RootedTree.Primitive

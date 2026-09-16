@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.PreLie.Graft
 import Linglib.Core.Data.List.Sublists
+import Linglib.Core.Data.Multiset.Powerset
 import Linglib.Core.Data.UnorderedTree.Basic
 import Mathlib.Data.Multiset.Bind
 
@@ -26,7 +27,8 @@ namespace `RoseTree.Pathed`.
   splitting choices over `gs.sublists'.revzip`.
 - §2: `insertion` — Foissy 2021 Theorem 5.1, single-tree host.
 - §3: `insertionForest` — forest host, its `sublists'.revzip` recursion
-  (`insertionForest_cons`), and the node-host decomposition (`insertion_node`).
+  (`insertionForest_cons`, `insertionForest_append`), and the node-host decomposition
+  (`insertion_node`).
 - §4: Pair-list `Perm`-invariance for `multiGraft`.
 - §5: Guest-list invariance for `insertion` (`insertion_perm_guests`).
 - §5.5: Validity discharge for `listChoices`-derived pair lists.
@@ -108,26 +110,6 @@ theorem listChoices_map {β γ : Type*} (f : β → γ) (xs : List β) (n : Nat)
 
 /-! ### Guest splits as `sublists'.revzip` -/
 
-/-- Enumerating Boolean masks over `gs` and reading off the two buckets enumerates
-`gs.sublists'.revzip`. -/
-theorem bind_listChoices_bool {β δ : Type*} (gs : List β)
-    (H : List β → List β → Multiset δ) :
-    (listChoices [true, false] gs.length : Multiset (List Bool)).bind (fun m =>
-        H ((gs.zip m).filterMap fun p => if p.2 then some p.1 else none)
-          ((gs.zip m).filterMap fun p => if p.2 then none else some p.1)) =
-      (gs.sublists'.revzip : Multiset (List β × List β)).bind fun p => H p.1 p.2 := by
-  induction gs generalizing H with
-  | nil => simp
-  | cons g gs ih =>
-    rw [List.length_cons, coe_listChoices_succ, Multiset.bind_assoc,
-      show (([true, false] : List Bool) : Multiset Bool) = true ::ₘ {false} from rfl,
-      Multiset.cons_bind, Multiset.singleton_bind, Multiset.bind_map, Multiset.bind_map,
-      List.revzip_sublists'_cons, ← Multiset.coe_add, Multiset.add_bind, ← Multiset.map_coe,
-      ← Multiset.map_coe, Multiset.bind_map, Multiset.bind_map]
-    simp only [List.zip_cons_cons, List.filterMap_cons, Bool.false_eq_true, ite_true, ite_false,
-      Prod.map_fst, Prod.map_snd, id_eq]
-    rw [ih fun r s => H (g :: r) s, ih fun r s => H r (g :: s), add_comm]
-
 /-- **Keystone.** A sum over length-`gs.length` choices from `xs`, viewed through the two
 buckets of a predicate `P` on `xs`, is a sum over `gs.sublists'.revzip` of independent choices
 from `xs.filter P` for the first bucket and from its complement for the second. -/
@@ -166,6 +148,27 @@ theorem bind_listChoices_filter {β γ δ : Type*} (P : β → Prop) [DecidableP
       have hv : P v := by simpa using (List.mem_filter.mp (Multiset.mem_coe.mp hv)).2
       simp only [List.filter_cons, decide_eq_true_eq, hv, not_true_eq_false, ite_true, ite_false]
       exact ih fun a b => G ((v, g) :: a) b
+
+/-- Permuting the guests permutes the zipped pair lists: a sum over choices of a
+`Perm`-invariant function of `ch.zip gs` does not depend on the order of `gs`. -/
+theorem bind_listChoices_zip_perm {β γ δ : Type*} (xs : List β) {gs gs' : List γ}
+    (h : gs.Perm gs') (G : List (β × γ) → Multiset δ)
+    (hG : ∀ {ps ps' : List (β × γ)}, ps.Perm ps' → G ps = G ps') :
+    (listChoices xs gs.length : Multiset (List β)).bind (fun ch => G (ch.zip gs)) =
+      (listChoices xs gs'.length : Multiset (List β)).bind fun ch => G (ch.zip gs') := by
+  induction h generalizing G with
+  | nil => rfl
+  | cons g _ ih =>
+    simp only [List.length_cons, coe_listChoices_succ, Multiset.bind_assoc, Multiset.bind_map,
+      List.zip_cons_cons]
+    exact Multiset.bind_congr fun v _ => ih (fun ps => G ((v, g) :: ps)) fun hp => hG (hp.cons _)
+  | swap a b l =>
+    simp only [List.length_cons, coe_listChoices_succ, Multiset.bind_assoc, Multiset.bind_map,
+      List.zip_cons_cons]
+    rw [Multiset.bind_bind]
+    exact Multiset.bind_congr fun v _ => Multiset.bind_congr fun w _ =>
+      Multiset.bind_congr fun ch _ => hG (List.Perm.swap _ _ _)
+  | trans _ _ ih₁ ih₂ => exact (ih₁ G hG).trans (ih₂ G hG)
 
 /-! ## §2: `insertion` — Foissy 2021 Theorem 5.1 -/
 
@@ -273,20 +276,39 @@ theorem insertionForest_cons (T : RoseTree α) (F gs : List (RoseTree α)) :
   rw [map_zip_map_left fun _ => rfl, map_zip_map_left fun q => by cases q <;> simp]
   rfl
 
-/-- The host-forest recursion by Boolean masks over the guests: the `true` positions go to the
-    head host, the `false` positions to the tail forest. -/
-theorem insertionForest_cons_assignment (T : RoseTree α) (F X : List (RoseTree α)) :
-    insertionForest (T :: F) X =
-      (Multiset.ofList (listChoices [true, false] X.length)).bind fun m =>
-        (insertion T
-            ((X.zip m).filterMap (fun p => if p.snd then some p.fst else none))).bind
-          fun T' =>
-            (insertionForest F
-                ((X.zip m).filterMap (fun p => if p.snd then none else some p.fst))).map
-              fun F' => T' :: F' := by
-  rw [insertionForest_cons]
-  exact (bind_listChoices_bool X fun r s =>
-    (insertion T r).bind fun T' => (insertionForest F s).map (T' :: ·)).symm
+/-- Only the split assigning no guest to the empty forest contributes. -/
+private theorem bind_revzip_insertionForest_nil {δ : Type*} (gs : List (RoseTree α))
+    (H : List (RoseTree α) → List (RoseTree α) → Multiset δ) :
+    (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind
+        (fun p => (insertionForest [] p.1).bind fun A => H A p.2) = H [] gs := by
+  induction gs generalizing H with
+  | nil => simp
+  | cons g gs ih =>
+    simp only [List.revzip_sublists'_cons, ← Multiset.coe_add, Multiset.add_bind,
+      ← Multiset.map_coe, Multiset.bind_map, Prod.map_fst, Prod.map_snd, id_eq,
+      insertionForest_empty_host_nonempty_guests, Multiset.zero_bind, Multiset.bind_zero,
+      add_zero]
+    exact ih fun A s => H A (g :: s)
+
+/-- Grafting into a concatenated host: the guests split into a sublist for the left forest and
+its complement for the right one. -/
+theorem insertionForest_append (xs ys gs : List (RoseTree α)) :
+    insertionForest (xs ++ ys) gs =
+      (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun p =>
+        (insertionForest xs p.1).bind fun A => (insertionForest ys p.2).map (A ++ ·) := by
+  induction xs generalizing gs with
+  | nil =>
+    rw [List.nil_append,
+      bind_revzip_insertionForest_nil gs fun A s => (insertionForest ys s).map (A ++ ·)]
+    exact (Multiset.map_id' _).symm
+  | cons x xs ih =>
+    rw [List.cons_append, insertionForest_cons]
+    simp only [ih, insertionForest_cons, Multiset.map_bind, Multiset.map_map, Multiset.bind_assoc,
+      Multiset.bind_map]
+    rw [← Multiset.bind_revzip_sublists'_assoc gs fun r₁ s₁ s =>
+      (insertion x r₁).bind fun T' => (insertionForest xs s₁).bind fun A =>
+        (insertionForest ys s).map ((T' :: A) ++ ·)]
+    exact Multiset.bind_congr fun p _ => Multiset.bind_bind _ _
 
 /-- **Node-host decomposition**: guests split into a sublist prepended at the root, in guest
 order, and its complement grafted into the child forest. -/
@@ -448,106 +470,19 @@ end
 
 /-! ## §5: Guest-list invariance for `insertion`
 
-`pairSum t pre Ts` aggregates `mk (multiGraft t (pre ++ c.zip Ts))` over
-all choices `c ∈ listChoices (vertices t) |Ts|`. The clean recursive
-equation `pairSum t pre (x :: rest) = bind v over vertices of
-pairSum t (pre ++ [(v, x)]) rest` lets us prove `Ts`-perm invariance by
-`Perm` induction.
-
-Path-based reformulation of the legacy `pairSum` / `insertion_perm_guests`
-machinery. The pair type changes from `Vertex t × RoseTree α` to
-`Path × RoseTree α`. -/
-
-/-- Multi-graft aggregator with an explicit pair pre (path-based). -/
-private def pairSum (t : RoseTree α)
-    (pre : List (Path × RoseTree α))
-    (Ts : List (RoseTree α)) : Multiset (UnorderedTree α) :=
-  Multiset.ofList ((listChoices (vertices t) Ts.length).map
-    fun c => UnorderedTree.mk (multiGraft t (pre ++ c.zip Ts)))
-
-private theorem pairSum_cons (t : RoseTree α)
-    (pre : List (Path × RoseTree α))
-    (x : RoseTree α) (rest : List (RoseTree α)) :
-    pairSum t pre (x :: rest) =
-      (Multiset.ofList (vertices t)).bind fun v =>
-        pairSum t (pre ++ [(v, x)]) rest := by
-  unfold pairSum
-  rw [List.length_cons, listChoices_succ, List.map_flatMap]
-  simp only [List.map_map]
-  rw [← Multiset.coe_bind]
-  refine Multiset.bind_congr fun v _ => ?_
-  apply congrArg Multiset.ofList
-  apply List.map_congr_left
-  intro c_rest _
-  show UnorderedTree.mk (multiGraft t (pre ++ (v :: c_rest).zip (x :: rest))) =
-       UnorderedTree.mk (multiGraft t ((pre ++ [(v, x)]) ++ c_rest.zip rest))
-  have h_args : pre ++ (v :: c_rest).zip (x :: rest) =
-                (pre ++ [(v, x)]) ++ c_rest.zip rest := by
-    rw [List.zip_cons_cons, List.append_assoc]
-    rfl
-  rw [h_args]
-
-/-- `pairSum` is invariant under `List.Perm` of the pre: pair-list order
-    doesn't matter at the nonplanar level. -/
-private theorem pairSum_pre_perm (t : RoseTree α)
-    {pre pre' : List (Path × RoseTree α)}
-    (h : pre.Perm pre') (Ts : List (RoseTree α)) :
-    pairSum t pre Ts = pairSum t pre' Ts := by
-  unfold pairSum
-  congr 1
-  apply List.map_congr_left
-  intro c _
-  apply UnorderedTree.mk_eq_mk_iff.mpr
-  exact multiGraft_perm_pair t (h.append_right _)
-
-/-- Two unfoldings of `pairSum_cons` packed into a normal form for the
-    swap proof. -/
-private theorem pairSum_cons_cons (t : RoseTree α)
-    (pre : List (Path × RoseTree α))
-    (x y : RoseTree α) (rest : List (RoseTree α)) :
-    pairSum t pre (x :: y :: rest) =
-      (Multiset.ofList (vertices t)).bind fun v₀ =>
-        (Multiset.ofList (vertices t)).bind fun v₁ =>
-          pairSum t (pre ++ [(v₀, x), (v₁, y)]) rest := by
-  rw [pairSum_cons]
-  refine Multiset.bind_congr fun v₀ _ => ?_
-  rw [pairSum_cons]
-  refine Multiset.bind_congr fun v₁ _ => ?_
-  congr 1
-  simp [List.append_assoc]
-
-/-- `pairSum` is invariant under swap of the first two guests. -/
-private theorem pairSum_swap (t : RoseTree α)
-    (pre : List (Path × RoseTree α))
-    (a b : RoseTree α) (l : List (RoseTree α)) :
-    pairSum t pre (b :: a :: l) = pairSum t pre (a :: b :: l) := by
-  rw [pairSum_cons_cons, pairSum_cons_cons]
-  rw [Multiset.bind_bind]
-  refine Multiset.bind_congr fun _ _ => Multiset.bind_congr fun _ _ => ?_
-  exact pairSum_pre_perm t (List.Perm.append_left pre (List.Perm.swap _ _ _)) l
-
-/-- `pairSum t pre Ts` is invariant under `List.Perm` of `Ts`. -/
-private theorem pairSum_perm_guests (t : RoseTree α)
-    (pre : List (Path × RoseTree α))
-    {Ts Ts' : List (RoseTree α)} (h : Ts.Perm Ts') :
-    pairSum t pre Ts = pairSum t pre Ts' := by
-  induction h generalizing pre with
-  | nil => rfl
-  | @cons x rest rest' _ ih =>
-    rw [pairSum_cons, pairSum_cons]
-    refine Multiset.bind_congr fun v _ => ?_
-    exact ih (pre ++ [(v, x)])
-  | @swap a b l => exact pairSum_swap t pre a b l
-  | trans _ _ ih₁ ih₂ => exact (ih₁ pre).trans (ih₂ pre)
+`bind_listChoices_zip_perm` (§1) permutes the zipped pair lists along a guest permutation, and
+`multiGraft` is `Perm`-invariant in its pair list. -/
 
 /-- Single-tree `insertion` is `mk`-invariant under `List.Perm` of guests. -/
 private theorem insertion_perm_guests (t : RoseTree α)
     {Ts Ts' : List (RoseTree α)} (h : Ts.Perm Ts') :
     (insertion t Ts).map UnorderedTree.mk =
       (insertion t Ts').map UnorderedTree.mk := by
-  have := pairSum_perm_guests t [] h
-  unfold pairSum at this
-  simpa [insertion_def, Multiset.map_coe, List.map_map, Function.comp_def] using this
+  rw [insertion_def, insertion_def, ← Multiset.map_coe, ← Multiset.map_coe, Multiset.map_map,
+    Multiset.map_map, ← Multiset.bind_singleton, ← Multiset.bind_singleton]
+  exact bind_listChoices_zip_perm (vertices t) h
+    (fun ps => {UnorderedTree.mk (multiGraft t ps)})
+    fun hp => by rw [UnorderedTree.mk_eq_mk_iff.mpr (multiGraft_perm_pair t hp)]
 
 /-- Guest-list `Forall₂ Perm` lifts to `insertion mk`-equality. -/
 theorem insertion_forall₂_perm_guests (t : RoseTree α)
@@ -1359,446 +1294,54 @@ theorem insertionForest_perm_host
     (insertionForest F Ts).map (List.map UnorderedTree.mk) =
       (insertionForest F' Ts).map (List.map UnorderedTree.mk) := by
   induction h generalizing Ts with
-  | nil =>
-    cases Ts with
-    | nil => rfl
-    | cons _ _ => rfl
-  | @cons T T' F_tail F'_tail hd_pe tail_pe ih =>
-    cases Ts with
-    | nil =>
-      simp [insertionForest_cons_host_nil_guests, Multiset.map_singleton,
-            List.map_cons, UnorderedTree.mk_eq_mk_iff.mpr hd_pe,
-            map_mk_eq_of_forall2_perm tail_pe]
-    | cons T_g Ts_inner =>
-      rw [insertionForest_cons_assignment, insertionForest_cons_assignment]
-      rw [Multiset.map_bind, Multiset.map_bind]
-      refine Multiset.bind_congr fun assign _ => ?_
-      rw [Multiset.map_bind, Multiset.map_bind]
-      simp only [Multiset.map_map, Function.comp, List.map_cons]
-      let f_T : UnorderedTree α → Multiset (List (UnorderedTree α)) :=
-        fun mk_T_ins =>
-          (insertionForest F_tail (((T_g :: Ts_inner).zip assign).filterMap fun p =>
-              if p.snd then none else some p.fst)).map
-            (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk)
-      let f_T' : UnorderedTree α → Multiset (List (UnorderedTree α)) :=
-        fun mk_T_ins =>
-          (insertionForest F'_tail (((T_g :: Ts_inner).zip assign).filterMap fun p =>
-              if p.snd then none else some p.fst)).map
-            (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk)
-      change (insertion T _).bind (fun T_ins => f_T (UnorderedTree.mk T_ins)) =
-             (insertion T' _).bind (fun T_ins => f_T' (UnorderedTree.mk T_ins))
-      rw [← Multiset.bind_map, ← Multiset.bind_map]
-      rw [insertion_perm_host _ hd_pe]
-      refine Multiset.bind_congr fun mk_T_ins _ => ?_
-      show (insertionForest F_tail _).map (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk) =
-           (insertionForest F'_tail _).map (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk)
-      rw [show (fun F_ins : List (RoseTree α) => mk_T_ins :: F_ins.map UnorderedTree.mk) =
-              ((fun L : List (UnorderedTree α) => mk_T_ins :: L) ∘ List.map UnorderedTree.mk) from rfl]
-      rw [← Multiset.map_map, ← Multiset.map_map]
-      rw [ih]
-
-/-! ### §7.1 substrate for `insertionForest_perm_guests`
-
-Forest-side analogue of `pairSum`: a Multiset aggregator that splits the
-guest list into a `pre_T` bucket (going to the head host `T`) and a
-`pre_F` bucket (going to the tail forest), then aggregates over all
-remaining assignments. Used to make `Ts`-Perm-invariance provable by
-induction on the Perm structure (the swap case becomes a clean
-`Multiset.bind_bind` after lifting to the mk-mapped level). -/
-
-/-- Aggregator: at the leaf (no remaining guests), produce the inner
-    forest insertion using `pre_T` for `T` and `pre_F` for the tail.
-    At a cons, bind over `[true, false]` and extend either bucket. -/
-private def forestPairSum (F : List (RoseTree α)) :
-    List (RoseTree α) → List (RoseTree α) → List (RoseTree α) →
-      Multiset (List (RoseTree α))
-  | pre_T, pre_F, []       =>
-      match F with
-      | []          =>
-          match pre_T, pre_F with
-          | [], [] => ({[]} : Multiset _)
-          | _, _ => 0
-      | T :: F_tail =>
-          (insertion T pre_T).bind fun T' =>
-            (insertionForest F_tail pre_F).map fun F' => T' :: F'
-  | pre_T, pre_F, x :: rest =>
-      (Multiset.ofList [true, false]).bind fun b =>
-        if b then forestPairSum F (pre_T ++ [x]) pre_F rest
-        else forestPairSum F pre_T (pre_F ++ [x]) rest
-
-/-- Equation lemma: `forestPairSum F pre_T pre_F []` for `F = T :: F_tail`. -/
-private theorem forestPairSum_cons_F_nil_remaining
-    (T : RoseTree α) (F_tail pre_T pre_F : List (RoseTree α)) :
-    forestPairSum (T :: F_tail) pre_T pre_F [] =
-      (insertion T pre_T).bind fun T' =>
-        (insertionForest F_tail pre_F).map fun F' => T' :: F' := by
-  unfold forestPairSum; rfl
-
-/-- Equation lemma: `forestPairSum F pre_T pre_F (x :: rest)`. -/
-private theorem forestPairSum_cons_remaining
-    (F pre_T pre_F : List (RoseTree α)) (x : RoseTree α) (rest : List (RoseTree α)) :
-    forestPairSum F pre_T pre_F (x :: rest) =
-      (Multiset.ofList [true, false]).bind fun b =>
-        if b then forestPairSum F (pre_T ++ [x]) pre_F rest
-        else forestPairSum F pre_T (pre_F ++ [x]) rest := rfl
-
-/-- Assignment-rewrite: `forestPairSum` over remaining guests `Ts`
-    equals the sum over all `[true, false]`-assignments to `Ts` of
-    `forestPairSum` on the empty remaining list with the accumulators
-    augmented by the partition of `Ts.zip α`. This rephrases the
-    recursive accumulator-build as a single bind over `listChoices`. -/
-private theorem forestPairSum_assignment_rewrite (F : List (RoseTree α)) :
-    ∀ (pre_T pre_F : List (RoseTree α)) (Ts : List (RoseTree α)),
-    forestPairSum F pre_T pre_F Ts =
-      (Multiset.ofList (listChoices [true, false] Ts.length)).bind fun α =>
-        forestPairSum F
-          (pre_T ++ (Ts.zip α).filterMap (fun p => if p.snd then some p.fst else none))
-          (pre_F ++ (Ts.zip α).filterMap (fun p => if p.snd then none else some p.fst))
-          [] := by
-  intro pre_T pre_F Ts
-  induction Ts generalizing pre_T pre_F with
-  | nil =>
-    simp [listChoices_zero, List.filterMap_nil, List.append_nil]
-  | cons x rest ih =>
-    rw [forestPairSum_cons_remaining]
-    -- Decompose RHS: listChoices_succ + coe-bind
-    conv_rhs =>
-      rw [show (x :: rest).length = rest.length + 1 from rfl, listChoices_succ]
-      rw [show (Multiset.ofList ([true, false].flatMap fun v =>
-                  (listChoices [true, false] rest.length).map (v :: ·)) :
-                Multiset (List Bool)) =
-              (Multiset.ofList [true, false]).bind fun v =>
-                Multiset.ofList ((listChoices [true, false] rest.length).map (v :: ·))
-              from by rw [← Multiset.coe_bind]]
-      rw [Multiset.bind_assoc]
-    -- Both sides have outer bind on ofList [t,f]; congrue per branch
-    refine Multiset.bind_congr fun b _ => ?_
-    cases b with
-    | true =>
-      rw [ite_eq_left rfl]
-      rw [show (Multiset.ofList ((listChoices [true, false] rest.length).map (true :: ·)) :
-                Multiset (List Bool)) =
-              (Multiset.ofList (listChoices [true, false] rest.length)).map (true :: ·)
-              from rfl]
-      rw [Multiset.bind_map]
-      rw [ih (pre_T ++ [x]) pre_F]
-      refine Multiset.bind_congr fun α _ => ?_
-      rw [List.append_assoc, List.singleton_append]
-      rfl
-    | false =>
-      rw [ite_eq_right (by decide : (false : Bool) ≠ true)]
-      rw [show (Multiset.ofList ((listChoices [true, false] rest.length).map (false :: ·)) :
-                Multiset (List Bool)) =
-              (Multiset.ofList (listChoices [true, false] rest.length)).map (false :: ·)
-              from rfl]
-      rw [Multiset.bind_map]
-      rw [ih pre_T (pre_F ++ [x])]
-      refine Multiset.bind_congr fun α _ => ?_
-      rw [List.append_assoc, List.singleton_append]
-      rfl
-
-/-- `forestPairSum [] [] [] [] = {[]}`. -/
-private theorem forestPairSum_nil_F_nil_pre_nil_Ts :
-    forestPairSum ([] : List (RoseTree α)) [] [] [] =
-      ({[]} : Multiset (List (RoseTree α))) := by
-  unfold forestPairSum; rfl
-
-/-- `forestPairSum []` with a non-empty `pre_T` is `0`. -/
-private theorem forestPairSum_nil_F_zero_of_pre_T_cons
-    (a : RoseTree α) (pre_T pre_F : List (RoseTree α)) :
-    forestPairSum ([] : List (RoseTree α)) (a :: pre_T) pre_F [] = 0 := by
-  unfold forestPairSum; rfl
-
-/-- `forestPairSum []` with empty `pre_T` but non-empty `pre_F` is `0`. -/
-private theorem forestPairSum_nil_F_zero_of_pre_F_cons
-    (a : RoseTree α) (pre_F : List (RoseTree α)) :
-    forestPairSum ([] : List (RoseTree α)) [] (a :: pre_F) [] = 0 := by
-  unfold forestPairSum; rfl
-
-/-- For the empty host `F = []`, if either accumulator is non-empty,
-    `forestPairSum [] pre_T pre_F Ts = 0` regardless of `Ts`. -/
-private theorem forestPairSum_nil_F_eq_zero
-    (pre_T pre_F : List (RoseTree α)) (Ts : List (RoseTree α))
-    (h : pre_T ≠ [] ∨ pre_F ≠ []) :
-    forestPairSum ([] : List (RoseTree α)) pre_T pre_F Ts = 0 := by
-  induction Ts generalizing pre_T pre_F with
-  | nil =>
-    rcases h with h | h
-    · rcases pre_T with _ | ⟨a, pre_T_rest⟩
-      · exact absurd rfl h
-      · exact forestPairSum_nil_F_zero_of_pre_T_cons a pre_T_rest pre_F
-    · rcases pre_F with _ | ⟨a, pre_F_rest⟩
-      · exact absurd rfl h
-      · rcases pre_T with _ | ⟨b, pre_T_rest⟩
-        · exact forestPairSum_nil_F_zero_of_pre_F_cons a pre_F_rest
-        · exact forestPairSum_nil_F_zero_of_pre_T_cons b pre_T_rest (a :: pre_F_rest)
-  | cons x rest ih =>
-    rw [forestPairSum_cons_remaining]
-    refine (Multiset.bind_congr (g := fun _ => (0 : Multiset _)) ?_).trans
-      (Multiset.bind_zero _)
-    intro b _
-    cases b
-    · rw [ite_eq_right (by decide : (false : Bool) ≠ true)]
-      refine ih pre_T (pre_F ++ [x]) ?_
-      right
-      intro h_eq
-      cases pre_F <;> simp at h_eq
-    · rw [ite_eq_left rfl]
-      refine ih (pre_T ++ [x]) pre_F ?_
-      left
-      intro h_eq
-      cases pre_T <;> simp at h_eq
-
-/-- Bridge: `forestPairSum F [] [] Ts = insertionForest F Ts`. -/
-private theorem forestPairSum_eq_insertionForest (F : List (RoseTree α))
-    (Ts : List (RoseTree α)) :
-    forestPairSum F [] [] Ts = insertionForest F Ts := by
-  cases F with
-  | nil =>
-    cases Ts with
-    | nil =>
-      rw [forestPairSum_nil_F_nil_pre_nil_Ts, insertionForest_nil_nil]
-    | cons T_g Ts_inner =>
-      rw [insertionForest_empty_host_nonempty_guests, forestPairSum_cons_remaining]
-      refine (Multiset.bind_congr (g := fun _ => (0 : Multiset _)) ?_).trans
-        (Multiset.bind_zero _)
-      intro b _
-      cases b
-      · rw [ite_eq_right (by decide : (false : Bool) ≠ true)]
-        exact forestPairSum_nil_F_eq_zero [] [T_g] Ts_inner (Or.inr (by simp))
-      · rw [ite_eq_left rfl]
-        exact forestPairSum_nil_F_eq_zero [T_g] [] Ts_inner (Or.inl (by simp))
-  | cons T F_tail =>
-    cases Ts with
-    | nil =>
-      rw [forestPairSum_cons_F_nil_remaining, insertionForest_cons_host_nil_guests,
-          insertionForest_nil_guests]
-      have h_ins_T : insertion T [] = ({T} : Multiset (RoseTree α)) := by
-        rw [insertion_def]
-        simp [listChoices_zero, multiGraft_nil]
-      rw [h_ins_T, Multiset.singleton_bind, Multiset.map_singleton]
-    | cons T_g Ts_inner =>
-      rw [forestPairSum_assignment_rewrite, insertionForest_cons_assignment]
-      refine Multiset.bind_congr fun α _ => ?_
-      simp only [List.nil_append]
-      rw [forestPairSum_cons_F_nil_remaining]
-
-/-- Pair-list Perm invariance of the accumulators, in the `T :: F_tail` case.
-    Takes `ih_F` (forest-Perm invariance on `F_tail`) as an explicit
-    argument to cut circularity with the outer induction on `F`. -/
-private theorem forestPairSum_pre_perm_mk
-    (T : RoseTree α) (F_tail : List (RoseTree α))
-    (ih_F : ∀ {Ts Ts' : List (RoseTree α)} (_ : Ts.Perm Ts'),
-            (insertionForest F_tail Ts).map (List.map UnorderedTree.mk) =
-            (insertionForest F_tail Ts').map (List.map UnorderedTree.mk))
-    {pre_T pre_T' pre_F pre_F' : List (RoseTree α)}
-    (hT : pre_T.Perm pre_T') (hF : pre_F.Perm pre_F')
-    (Ts : List (RoseTree α)) :
-    (forestPairSum (T :: F_tail) pre_T pre_F Ts).map (List.map UnorderedTree.mk) =
-    (forestPairSum (T :: F_tail) pre_T' pre_F' Ts).map (List.map UnorderedTree.mk) := by
-  induction Ts generalizing pre_T pre_T' pre_F pre_F' with
-  | nil =>
-    rw [forestPairSum_cons_F_nil_remaining, forestPairSum_cons_F_nil_remaining,
-        Multiset.map_bind, Multiset.map_bind]
-    -- LHS = (insertion T pre_T).bind fun T' =>
-    --         ((insertionForest F_tail pre_F).map (fun F' => T' :: F')).map (List.map mk)
-    -- = (insertion T pre_T).bind fun T' =>
-    --     (insertionForest F_tail pre_F).map (fun F' => mk T' :: F'.map mk)
-    -- Refactor: factor mk T' out, then use insertion_perm_guests + ih_F
-    rw [show (fun T' : RoseTree α =>
-              ((insertionForest F_tail pre_F).map fun F' => T' :: F').map (List.map UnorderedTree.mk)) =
-            (fun T' : RoseTree α =>
-              ((insertionForest F_tail pre_F).map (List.map UnorderedTree.mk)).map
-                (fun L => UnorderedTree.mk T' :: L))
-            from by
-          funext T'
-          rw [Multiset.map_map, Multiset.map_map]
-          rfl]
-    rw [show (fun T' : RoseTree α =>
-              ((insertionForest F_tail pre_F').map fun F' => T' :: F').map (List.map UnorderedTree.mk)) =
-            (fun T' : RoseTree α =>
-              ((insertionForest F_tail pre_F').map (List.map UnorderedTree.mk)).map
-                (fun L => UnorderedTree.mk T' :: L))
-            from by
-          funext T'
-          rw [Multiset.map_map, Multiset.map_map]
-          rfl]
-    -- Apply ih_F: (insertionForest F_tail pre_F).map (List.map mk) = (insertionForest F_tail pre_F').map (List.map mk)
-    rw [ih_F hF]
-    -- Now both inner forests are on pre_F'. Pull T' through mk via Multiset.bind_map.
-    -- (insertion T pre_T).bind (fun T' => ((insertionForest F_tail pre_F').map (List.map mk)).map (fun L => mk T' :: L))
-    -- = ((insertion T pre_T).map mk).bind (fun mk_T' => ((insertionForest F_tail pre_F').map (List.map mk)).map (fun L => mk_T' :: L))
-    -- via Multiset.bind_map reversed
-    rw [show (insertion T pre_T).bind (fun T' : RoseTree α =>
-              ((insertionForest F_tail pre_F').map (List.map UnorderedTree.mk)).map
-                (fun L => UnorderedTree.mk T' :: L)) =
-            ((insertion T pre_T).map UnorderedTree.mk).bind (fun mk_T' =>
-              ((insertionForest F_tail pre_F').map (List.map UnorderedTree.mk)).map
-                (fun L => mk_T' :: L))
-            from by rw [Multiset.bind_map]]
-    rw [show (insertion T pre_T').bind (fun T' : RoseTree α =>
-              ((insertionForest F_tail pre_F').map (List.map UnorderedTree.mk)).map
-                (fun L => UnorderedTree.mk T' :: L)) =
-            ((insertion T pre_T').map UnorderedTree.mk).bind (fun mk_T' =>
-              ((insertionForest F_tail pre_F').map (List.map UnorderedTree.mk)).map
-                (fun L => mk_T' :: L))
-            from by rw [Multiset.bind_map]]
-    -- Apply insertion_perm_guests on (insertion T pre_T).map mk = (insertion T pre_T').map mk
-    rw [insertion_perm_guests T hT]
-  | cons x rest ih =>
-    rw [forestPairSum_cons_remaining, forestPairSum_cons_remaining,
-        Multiset.map_bind, Multiset.map_bind]
-    refine Multiset.bind_congr fun b _ => ?_
-    cases b
-    · rw [ite_eq_right (by decide : (false : Bool) ≠ true), ite_eq_right (by decide : (false : Bool) ≠ true)]
-      exact ih hT (hF.append_right [x])
-    · rw [ite_eq_left rfl, ite_eq_left rfl]
-      exact ih (hT.append_right [x]) hF
-
-/-- Two-step unfolding: `forestPairSum F pre_T pre_F (x :: y :: rest)`
-    as a nested bind over `[true, false] × [true, false]`. -/
-private theorem forestPairSum_cons_cons_unfold (F : List (RoseTree α))
-    (pre_T pre_F : List (RoseTree α)) (x y : RoseTree α) (rest : List (RoseTree α)) :
-    forestPairSum F pre_T pre_F (x :: y :: rest) =
-      (Multiset.ofList [true, false]).bind fun b_x =>
-        (Multiset.ofList [true, false]).bind fun b_y =>
-          if b_x then
-            (if b_y then forestPairSum F ((pre_T ++ [x]) ++ [y]) pre_F rest
-                   else forestPairSum F (pre_T ++ [x]) (pre_F ++ [y]) rest)
-          else
-            (if b_y then forestPairSum F (pre_T ++ [y]) (pre_F ++ [x]) rest
-                   else forestPairSum F pre_T ((pre_F ++ [x]) ++ [y]) rest) := by
-  rw [forestPairSum_cons_remaining]
-  refine Multiset.bind_congr fun b_x _ => ?_
-  cases b_x
-  · change forestPairSum F pre_T (pre_F ++ [x]) (y :: rest) =
-        (Multiset.ofList [true, false]).bind fun b_y =>
-          if b_y then forestPairSum F (pre_T ++ [y]) (pre_F ++ [x]) rest
-                 else forestPairSum F pre_T ((pre_F ++ [x]) ++ [y]) rest
-    rw [forestPairSum_cons_remaining]
-  · change forestPairSum F (pre_T ++ [x]) pre_F (y :: rest) =
-        (Multiset.ofList [true, false]).bind fun b_y =>
-          if b_y then forestPairSum F ((pre_T ++ [x]) ++ [y]) pre_F rest
-                 else forestPairSum F (pre_T ++ [x]) (pre_F ++ [y]) rest
-    rw [forestPairSum_cons_remaining]
-
-/-- Adjacent swap of remaining guests preserves `forestPairSum` (mk-mapped). -/
-private theorem forestPairSum_swap_mk
-    (T : RoseTree α) (F_tail : List (RoseTree α))
-    (ih_F : ∀ {Ts Ts' : List (RoseTree α)} (_ : Ts.Perm Ts'),
-            (insertionForest F_tail Ts).map (List.map UnorderedTree.mk) =
-            (insertionForest F_tail Ts').map (List.map UnorderedTree.mk))
-    (pre_T pre_F : List (RoseTree α)) (a b : RoseTree α) (rest : List (RoseTree α)) :
-    (forestPairSum (T :: F_tail) pre_T pre_F (a :: b :: rest)).map (List.map UnorderedTree.mk) =
-    (forestPairSum (T :: F_tail) pre_T pre_F (b :: a :: rest)).map (List.map UnorderedTree.mk) := by
-  rw [forestPairSum_cons_cons_unfold, forestPairSum_cons_cons_unfold]
-  -- Push .map mk through both nested binds on both sides
-  rw [Multiset.map_bind]
-  conv_lhs =>
-    rhs; ext _; rw [Multiset.map_bind]
-  rw [Multiset.map_bind]
-  conv_rhs =>
-    rhs; ext _; rw [Multiset.map_bind]
-  -- Now LHS = (ofList [t,f]).bind fun b_a => (ofList [t,f]).bind fun b_b => (... .map mk)
-  --     RHS = (ofList [t,f]).bind fun b_b => (ofList [t,f]).bind fun b_a => (... .map mk)
-  -- Commute LHS binds via bind_bind
-  rw [Multiset.bind_bind]
-  -- Now both sides have outer bind on "b first guest of original RHS = second of original LHS"
-  refine Multiset.bind_congr fun b₁ _ => ?_
-  refine Multiset.bind_congr fun b₂ _ => ?_
-  -- Case-split on (b₁, b₂)
-  cases b₁
-  · cases b₂
-    · -- F, F: pre_F PERM
-      change (forestPairSum (T :: F_tail) pre_T ((pre_F ++ [a]) ++ [b]) rest).map
-                (List.map UnorderedTree.mk) =
-              (forestPairSum (T :: F_tail) pre_T ((pre_F ++ [b]) ++ [a]) rest).map
-                (List.map UnorderedTree.mk)
-      exact forestPairSum_pre_perm_mk T F_tail ih_F
-        (List.Perm.refl pre_T)
-        (by
-          rw [List.append_assoc, List.append_assoc]
-          exact List.Perm.append_left pre_F (List.Perm.swap b a []))
-        rest
-    · -- F, T: equal
-      rfl
-  · cases b₂
-    · -- T, F: equal
-      rfl
-    · -- T, T: pre_T PERM
-      change (forestPairSum (T :: F_tail) ((pre_T ++ [a]) ++ [b]) pre_F rest).map
-                (List.map UnorderedTree.mk) =
-              (forestPairSum (T :: F_tail) ((pre_T ++ [b]) ++ [a]) pre_F rest).map
-                (List.map UnorderedTree.mk)
-      exact forestPairSum_pre_perm_mk T F_tail ih_F
-        (by
-          rw [List.append_assoc, List.append_assoc]
-          exact List.Perm.append_left pre_T (List.Perm.swap b a []))
-        (List.Perm.refl pre_F)
-        rest
-
-/-- `List.Perm` of remaining guests preserves `forestPairSum` (mk-mapped). -/
-private theorem forestPairSum_perm_remaining_mk
-    (T : RoseTree α) (F_tail : List (RoseTree α))
-    (ih_F : ∀ {Ts Ts' : List (RoseTree α)} (_ : Ts.Perm Ts'),
-            (insertionForest F_tail Ts).map (List.map UnorderedTree.mk) =
-            (insertionForest F_tail Ts').map (List.map UnorderedTree.mk))
-    (pre_T pre_F : List (RoseTree α))
-    {Ts Ts' : List (RoseTree α)} (h : Ts.Perm Ts') :
-    (forestPairSum (T :: F_tail) pre_T pre_F Ts).map (List.map UnorderedTree.mk) =
-    (forestPairSum (T :: F_tail) pre_T pre_F Ts').map (List.map UnorderedTree.mk) := by
-  induction h generalizing pre_T pre_F with
   | nil => rfl
-  | @cons x rest rest' _ ih =>
-    rw [forestPairSum_cons_remaining, forestPairSum_cons_remaining,
-        Multiset.map_bind, Multiset.map_bind]
-    refine Multiset.bind_congr fun b _ => ?_
-    cases b
-    · rw [ite_eq_right (by decide : (false : Bool) ≠ true),
-          ite_eq_right (by decide : (false : Bool) ≠ true)]
-      exact ih pre_T (pre_F ++ [x])
-    · rw [ite_eq_left rfl, ite_eq_left rfl]
-      exact ih (pre_T ++ [x]) pre_F
-  | @swap a b l => exact forestPairSum_swap_mk T F_tail ih_F pre_T pre_F b a l
-  | @trans Ts₁ Ts₂ Ts₃ _ _ ih₁ ih₂ => exact (ih₁ pre_T pre_F).trans (ih₂ pre_T pre_F)
+  | @cons T T' F_tail F'_tail hd_pe _ ih =>
+    rw [insertionForest_cons, insertionForest_cons, Multiset.map_bind, Multiset.map_bind]
+    refine Multiset.bind_congr fun p _ => ?_
+    rw [Multiset.map_bind, Multiset.map_bind]
+    simp only [Multiset.map_map, Function.comp, List.map_cons]
+    let f_T : UnorderedTree α → Multiset (List (UnorderedTree α)) := fun mk_T_ins =>
+      (insertionForest F_tail p.2).map (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk)
+    let f_T' : UnorderedTree α → Multiset (List (UnorderedTree α)) := fun mk_T_ins =>
+      (insertionForest F'_tail p.2).map (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk)
+    change (insertion T _).bind (fun T_ins => f_T (UnorderedTree.mk T_ins)) =
+      (insertion T' _).bind (fun T_ins => f_T' (UnorderedTree.mk T_ins))
+    rw [← Multiset.bind_map, ← Multiset.bind_map, insertion_perm_host _ hd_pe]
+    refine Multiset.bind_congr fun mk_T_ins _ => ?_
+    show (insertionForest F_tail _).map (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk) =
+      (insertionForest F'_tail _).map (fun F_ins => mk_T_ins :: F_ins.map UnorderedTree.mk)
+    rw [show (fun F_ins : List (RoseTree α) => mk_T_ins :: F_ins.map UnorderedTree.mk) =
+        ((fun L : List (UnorderedTree α) => mk_T_ins :: L) ∘ List.map UnorderedTree.mk) from rfl,
+      ← Multiset.map_map, ← Multiset.map_map, ih]
 
-/-- Forest guest invariance: `List.Perm` of guests lifts to
-    `mk`-equality of `insertionForest`. -/
+/-- Forest guest invariance: `List.Perm` of guests lifts to `mk`-equality of
+    `insertionForest`. -/
 theorem insertionForest_perm_guests
     (F : List (RoseTree α)) {Ts Ts' : List (RoseTree α)} (h : Ts.Perm Ts') :
     (insertionForest F Ts).map (List.map UnorderedTree.mk) =
       (insertionForest F Ts').map (List.map UnorderedTree.mk) := by
-  induction F generalizing Ts Ts' with
-  | nil =>
-    cases hTs : Ts with
-    | nil =>
-      have hTs' : Ts' = [] := by
-        have hlen := h.length_eq
-        rw [hTs] at hlen
-        exact List.length_eq_zero_iff.mp hlen.symm
-      rw [hTs']
-    | cons _ _ =>
-      cases hTs' : Ts' with
-      | nil =>
-        exfalso
-        have hlen := h.length_eq
-        rw [hTs, hTs'] at hlen
-        simp at hlen
-      | cons _ _ =>
-        simp [insertionForest_empty_host_nonempty_guests]
-  | cons T F_tail ih_F =>
-    rw [show insertionForest (T :: F_tail) Ts = forestPairSum (T :: F_tail) [] [] Ts from
-          (forestPairSum_eq_insertionForest _ _).symm]
-    rw [show insertionForest (T :: F_tail) Ts' = forestPairSum (T :: F_tail) [] [] Ts' from
-          (forestPairSum_eq_insertionForest _ _).symm]
-    exact forestPairSum_perm_remaining_mk T F_tail ih_F [] [] h
+  rw [insertionForest_def, insertionForest_def, ← Multiset.map_coe, ← Multiset.map_coe,
+    Multiset.map_map, Multiset.map_map, ← Multiset.bind_singleton, ← Multiset.bind_singleton]
+  exact bind_listChoices_zip_perm (verticesAux 0 F) h
+    (fun ps => {(multiGraftChildren F ps).map UnorderedTree.mk})
+    fun hp => by rw [map_mk_eq_of_forall2_perm (multiGraftChildren_perm_pair F hp)]
+
+/-- Guest-list `Forall₂ Perm` lifts to `mk`-equality of `insertionForest`. -/
+theorem insertionForest_forall₂_perm_guests
+    (F : List (RoseTree α)) {Ts Ts' : List (RoseTree α)} (h : List.Forall₂ Perm Ts Ts') :
+    (insertionForest F Ts).map (List.map UnorderedTree.mk) =
+      (insertionForest F Ts').map (List.map UnorderedTree.mk) := by
+  rw [insertionForest_def, insertionForest_def, Multiset.map_coe, Multiset.map_coe,
+    List.map_map, List.map_map, h.length_eq]
+  congr 1
+  exact List.map_congr_left fun choice _ => map_mk_eq_of_forall2_perm
+    (multiGraftChildren_perm_pair_Forall₂ F (zip_pair_Forall₂ choice h))
 
 /-! ### §8: Singleton-host insertion = single-tree insertion lifted to singleton lists
 
 `insertionForest [T] gs = (insertion T gs).map (fun T' => [T'])` — when the
 host has exactly one tree, the multi-graft is just the single-tree multi-graft
-with each output wrapped in a singleton list. Used downstream to handle
-`hostTripleSum T [T'] F` patterns at the singleton-F_A level. -/
+with each output wrapped in a singleton list. -/
 
 /-- `insertion T []` is the singleton `{T}` — multi-graft of no guests is
     the identity. -/
@@ -1809,76 +1352,20 @@ theorem insertion_nil_guests (T : RoseTree α) :
              multiGraft_nil, List.map_cons, List.map_nil,
              Multiset.coe_singleton]
 
-/-- `forestPairSum [T] pre (a :: pre_F_rest) gs = 0`. With a non-empty `pre_F`
-    accumulator, the inner `insertionForest [] (a :: pre_F_rest ++ ...)` is 0,
-    and the recursion preserves the non-empty invariant. -/
-private theorem forestPairSum_singleton_host_pre_F_nonempty (T : RoseTree α) (a : RoseTree α) :
-    ∀ (pre pre_F_rest gs : List (RoseTree α)),
-    forestPairSum [T] pre (a :: pre_F_rest) gs = 0 := by
-  intro pre pre_F_rest gs
-  induction gs generalizing pre pre_F_rest with
-  | nil =>
-    rw [forestPairSum_cons_F_nil_remaining]
-    rw [insertionForest_empty_host_nonempty_guests]
-    -- Goal: (insertion T pre).bind (fun T' => (0 : Multiset _).map (fun F' => T' :: F')) = 0
-    rw [show (fun T' : RoseTree α =>
-              ((0 : Multiset (List (RoseTree α))).map (fun F' => T' :: F'))) =
-            (fun (_ : RoseTree α) => (0 : Multiset (List (RoseTree α)))) from by
-          funext T'
-          rw [Multiset.map_zero]]
-    exact Multiset.bind_zero _
-  | cons g rest ih =>
-    rw [forestPairSum_cons_remaining]
-    rw [show (Multiset.ofList [true, false] : Multiset Bool) = (true ::ₘ false ::ₘ 0) from rfl]
-    rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
-    rw [ite_eq_left rfl, ite_eq_right (by decide : (false : Bool) ≠ true)]
-    rw [ih (pre ++ [g]) pre_F_rest]
-    rw [show (a :: pre_F_rest) ++ [g] = a :: (pre_F_rest ++ [g]) from rfl]
-    rw [ih pre (pre_F_rest ++ [g])]
-    rfl
-
-/-- `forestPairSum [T] pre [] gs = (insertion T (pre ++ gs)).map (fun T' => [T'])`.
-    The single-host `[T]` only allows one bucket assignment (all guests to T);
-    the empty `pre_F` accumulator stays empty. Helper for `insertionForest_singleton`.
--/
-private theorem forestPairSum_singleton_host_no_pre_F (T : RoseTree α) :
-    ∀ (pre gs : List (RoseTree α)),
-    forestPairSum [T] pre [] gs = (insertion T (pre ++ gs)).map (fun T' => [T']) := by
-  intro pre gs
-  induction gs generalizing pre with
-  | nil =>
-    rw [forestPairSum_cons_F_nil_remaining, insertionForest_nil_nil, List.append_nil]
-    -- Goal: (insertion T pre).bind (fun T' => ({[]}).map (fun F' => T' :: F')) =
-    --       (insertion T pre).map (fun T' => [T'])
-    rw [show (fun T' : RoseTree α =>
-              ({([] : List (RoseTree α))} : Multiset (List (RoseTree α))).map (fun F' => T' :: F')) =
-            (fun T' : RoseTree α => ({[T']} : Multiset (List (RoseTree α)))) from by
-          funext T'
-          rw [Multiset.map_singleton]]
-    exact Multiset.bind_singleton (s := insertion T pre) (fun T' => [T'])
-  | cons g rest ih =>
-    rw [forestPairSum_cons_remaining]
-    rw [show (Multiset.ofList [true, false] : Multiset Bool) = (true ::ₘ false ::ₘ 0) from rfl]
-    rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
-    rw [ite_eq_left rfl, ite_eq_right (by decide : (false : Bool) ≠ true)]
-    rw [ih (pre ++ [g])]
-    rw [show ([] : List (RoseTree α)) ++ [g] = [g] from rfl]
-    rw [forestPairSum_singleton_host_pre_F_nonempty T g pre [] rest]
-    rw [add_zero]
-    -- (pre ++ [g]) ++ rest = pre ++ (g :: rest)
-    rw [List.append_assoc]
-    rfl
-
-/-- **Singleton-host insertion**: when the host has exactly one tree,
-    `insertionForest` reduces to single-tree `insertion` followed by singleton
-    lift. This lets us match `hostTripleSum T [T_other] F` patterns by
-    converting `(insertionForest [T_other] pre).bind` to `(insertion T_other pre).bind`
-    (via `Multiset.bind_map`). -/
+/-- **Singleton-host insertion**: when the host has exactly one tree, `insertionForest` is
+    single-tree `insertion` with each output wrapped in a singleton list. -/
 theorem insertionForest_singleton (T : RoseTree α) (gs : List (RoseTree α)) :
     insertionForest [T] gs = (insertion T gs).map (fun T' => [T']) := by
-  rw [show insertionForest [T] gs = forestPairSum [T] [] [] gs from
-        (forestPairSum_eq_insertionForest _ _).symm]
-  rw [forestPairSum_singleton_host_no_pre_F T [] gs, List.nil_append]
+  rw [insertionForest_def, insertion_def, verticesAux_cons, verticesAux_nil, List.append_nil,
+    listChoices_map, ← Multiset.map_coe, ← Multiset.map_coe, ← Multiset.map_coe,
+    Multiset.map_map, Multiset.map_map]
+  refine Multiset.map_congr rfl fun u _ => ?_
+  show multiGraftChildren [T] ((u.map (0 :: ·)).zip gs) = [multiGraft T (u.zip gs)]
+  rw [multiGraftChildren_cons_cs, multiGraftChildren_nil_cs, filterMap_headChildFilter,
+    List.filter_eq_self.2 fun p hp => ?_, map_zip_map_left fun _ => rfl]
+  obtain ⟨q, T'⟩ := p
+  obtain ⟨q', -, rfl⟩ := List.mem_map.mp (List.of_mem_zip hp).1
+  simp
 
 end Pathed
 
