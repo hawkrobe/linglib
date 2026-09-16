@@ -10,7 +10,7 @@ import Linglib.Semantics.Alternatives.Competition
 This file defines Maximize Presupposition ([heim-1991]) in its two formulations. As
 competition, `Blocked`: an expression is blocked when an alternative with the same assertion
 carries a strictly stronger presupposition, the anti-presupposition of [percus-2006] and
-[sauerland-2008], stated over any alternative source by `Alternatives.Blocked` and so shared
+[sauerland-2008a], stated over any alternative source by `Alternatives.Blocked` and so shared
 by the pragmatic reading, which derives it from Gricean reasoning ([schlenker-2012]), and the
 grammatical, locally applied one ([singh-2011]). As a violable constraint, `mpConstraintOf`:
 over candidates carrying a presuppositional strength, violations count the distance from the
@@ -35,7 +35,7 @@ of `Studies/Wang2025.lean` ranks it against internal coherence and felicity ([wa
 
 * [heim-1991]
 * [percus-2006]
-* [sauerland-2008]
+* [sauerland-2008a]
 * [schlenker-2012]
 * [singh-2011]
 * [wang-2025]

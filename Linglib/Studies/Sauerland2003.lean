@@ -125,36 +125,27 @@ theorem je_assertion_eq_D [SemilatticeSup E] (X : E) (P : E → Prop) (w : E) :
 
 /-! ### Gender agreement in Czech coordinations -/
 
-/-- The sex or animacy of a referent. -/
-inductive ReferentGender where
-  | male
-  | female
-  | inanimate
+/-- A conjunct of one of Sauerland's Czech coordinations: a man, a woman or a child. -/
+inductive Conjunct where
+  | man
+  | woman
+  | child
   deriving DecidableEq, Repr
 
-/-- Feminine agreement presupposes that no conjunct of the coordination is male. -/
-abbrev nonMasculine : Set (Finset ReferentGender) := {s | ∀ r ∈ s, r ≠ .male}
-
-/-- Neuter agreement presupposes that every conjunct is genderless. -/
-abbrev genderless : Set (Finset ReferentGender) := {s | ∀ r ∈ s, r = .inanimate}
-
-/-- The natural gender of a coordination, read off its conjuncts. -/
-instance naturalGender : NaturalGender (Finset ReferentGender) := ⟨nonMasculine, genderless⟩
-
-@[simp] theorem naturalGender_female :
-    NaturalGender.female (E := Finset ReferentGender) = nonMasculine := rfl
-
-@[simp] theorem naturalGender_inanimate :
-    NaturalGender.inanimate (E := Finset ReferentGender) = genderless := rfl
+/-- A coordination is gendered masculine when a conjunct is a man, and feminine when a conjunct is
+a woman and none is a man; a coordination of children is gendered neither way. -/
+instance gendered : Gendered (Finset Conjunct) where
+  masculine := {s | ∃ r ∈ s, r = .man}
+  feminine := {s | (∃ r ∈ s, r = .woman) ∧ ∀ r ∈ s, r ≠ .man}
+  disjoint := Set.disjoint_left.mpr fun _ ⟨r, hr, hm⟩ ⟨_, hno⟩ ↦ hno r hr hm
 
 /-- *Jan a Věra*, *Matka a její dítě* and *Otec a jeho dítě*, as the sums of their conjuncts. -/
-def janVera : Finset ReferentGender := {.male, .female}
-def matkaDite : Finset ReferentGender := {.female, .inanimate}
-def otecDite : Finset ReferentGender := {.male, .inanimate}
+def janVera : Finset Conjunct := {.man, .woman}
+def matkaDite : Finset Conjunct := {.woman, .child}
+def otecDite : Finset Conjunct := {.man, .child}
 
-/-- Sauerland's Czech coordinations, as sums of their conjuncts: *Jan a Věra* excludes
-feminine, *Matka a její dítě* takes feminine but not neuter, and *Otec a jeho dítě* takes
-only the vacuous masculine. -/
+/-- Sauerland's Czech coordinations: *Jan a Věra* excludes feminine, *Matka a její dítě* takes
+feminine but not neuter, and *Otec a jeho dítě* takes only the vacuous masculine. -/
 theorem czech_gender :
     janVera ∉ Gender.dom (some .feminine) ∧
       matkaDite ∈ Gender.dom (some .feminine) ∧
@@ -162,7 +153,7 @@ theorem czech_gender :
       otecDite ∉ Gender.dom (some .feminine) ∧
       otecDite ∈ Gender.dom (some .masculine) := by
   simp only [Gender.mem_dom_feminine, Gender.mem_dom_neuter, Gender.dom_masculine, Set.mem_univ,
-    and_true, naturalGender_female, naturalGender_inanimate]
+    and_true, Gendered.masculine, Gendered.feminine, Set.mem_ofPred_eq]
   decide
 
 /-! ### Politeness -/

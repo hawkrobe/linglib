@@ -10875,7 +10875,7 @@
   subfield  = {semantics/reference},
   role      = {formalized},
   validated = {true},
-  sources   = {Studies/Arnold2026.lean;Studies/KonnellyCowper2020.lean}
+  sources   = {Fragments/English/Pronouns.lean;Morphology/DistributedMorphology/Categorizer/Gender.lean;Semantics/Presupposition/PhiFeatures.lean;Studies/Arnold2026.lean;Studies/KonnellyCowper2020.lean}
 }
 @article{bjorkman-2017,
   author    = {Bjorkman, Bronwyn},
@@ -10889,7 +10889,7 @@
   subfield  = {syntax/minimalism},
   role      = {cited},
   validated = {true},
-  sources   = {Studies/KonnellyCowper2020.lean}
+  sources   = {Semantics/Presupposition/PhiFeatures.lean;Studies/KonnellyCowper2020.lean}
 }
 @phdthesis{kramer-2009,
   author    = {Kramer, Ruth},
@@ -23743,7 +23743,7 @@
   subfield  = {morphology},
   role      = {cited},
   validated = {true},
-  sources   = {Syntax/Agreement/ContainmentPair.lean;Syntax/Person/Decomposition.lean}
+  sources   = {Semantics/Presupposition/PhiFeatures.lean;Syntax/Agreement/ContainmentPair.lean;Syntax/Person/Decomposition.lean}
 }
 @book{harbour-2016,
   author    = {Harbour, Daniel},
@@ -30831,7 +30831,7 @@
   doi       = {10.1353/lan.2002.0158},
   subfield  = {syntax},
   role      = {cited},
-  sources   = {Data/Examples/HarleyRitter2002.json;Syntax/Agreement/ContainmentPair.lean;Syntax/Person/Decomposition.lean;Syntax/Agreement/Geometry.lean;Studies/AdamsonAnagnostopoulou2025.lean;Studies/BejarRezac2003.lean;Studies/BejarRezac2009.lean;Studies/CoonKeine2021.lean;Studies/GonzalezPootMcGinnis2006.lean;Studies/HarleyRitter2002.lean;Studies/KonnellyCowper2020.lean;Studies/McGinnis2013.lean;Studies/Preminger2014.lean;Syntax/Minimalist/Agree/Cyclic.lean;Syntax/Minimalist/Phi/Geometry.lean;Syntax/Minimalist/Probe/Phi.lean}
+  sources   = {Semantics/Presupposition/PhiFeatures.lean;Studies/AdamsonAnagnostopoulou2025.lean;Studies/BejarRezac2003.lean;Studies/BejarRezac2009.lean;Studies/CoonKeine2021.lean;Studies/GonzalezPootMcGinnis2006.lean;Studies/HarleyRitter2002.lean;Studies/McGinnis2013.lean;Studies/Preminger2014.lean;Syntax/Agreement/ContainmentPair.lean;Syntax/Agreement/Geometry.lean;Syntax/Minimalist/Agree/Cyclic.lean;Syntax/Minimalist/Geometry.lean;Syntax/Minimalist/Phi/Geometry.lean;Syntax/Minimalist/Probe/Phi.lean;Syntax/Person/Decomposition.lean}
 }
 @article{taraldsen-et-al-2018,
   author    = {Taraldsen, Knut Tarald and Taraldsen Medov\'{a}, Lucie and Langa, David},
@@ -33769,17 +33769,35 @@
 }
 % REF: Sauerland (2008). Implicated presuppositions. In A. Steube (ed.),
 % Sentence and Context. Mouton de Gruyter, Berlin.
-@incollection{sauerland-2008,
+@incollection{sauerland-2008a,
   author    = {Sauerland, Uli},
   year      = {2008},
   title     = {Implicated Presuppositions},
-  booktitle = {Sentence and Context},
+  booktitle = {The Discourse Potential of Underspecified Structures},
   editor    = {Steube, Anita},
   publisher = {Mouton de Gruyter},
   address   = {Berlin},
+  pages     = {581--600},
+  doi       = {10.1515/9783110209303.4.581},
   subfield  = {semantics/presupposition},
   role      = {cited},
-  sources   = {Studies/JereticEtAl2025.lean}
+  sources   = {Semantics/Presupposition/MaximizePresupposition.lean;Studies/JereticEtAl2025.lean}
+}
+% REF: Sauerland, U. (2008). On the semantic markedness of phi-features. In Harbour, Adger &
+%      Béjar (eds.), Phi Theory, OUP, 57-82. Verified against Crossref (DOI resolves).
+@incollection{sauerland-2008b,
+  author    = {Sauerland, Uli},
+  year      = {2008},
+  title     = {On the Semantic Markedness of Phi-Features},
+  booktitle = {Phi Theory: Phi-Features across Modules and Interfaces},
+  editor    = {Harbour, Daniel and Adger, David and B{\'e}jar, Susana},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  pages     = {57--82},
+  doi       = {10.1093/oso/9780199213764.003.0003},
+  subfield  = {semantics/presupposition},
+  role      = {cited},
+  sources   = {Semantics/Presupposition/PhiFeatures.lean}
 }
 % REF: Percus (2006). Antipresuppositions. In A. Ueyama (ed.), Theoretical and
 % Empirical Studies of Reference and Anaphora. JSPS, Kyushu Univ.
