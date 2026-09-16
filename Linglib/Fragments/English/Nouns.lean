@@ -119,7 +119,7 @@ def tea : Noun := .mass "tea"
 /-! ### Proper names -/
 
 /-- A name glossed by itself. -/
-private def name (form : String) (gender : Flat Gender := ⊥) : ProperName :=
+private def name (form : String) (gender : Option Gender := none) : ProperName :=
   { form, gloss := form, gender }
 
 def john : ProperName := name "John" (some .masculine)

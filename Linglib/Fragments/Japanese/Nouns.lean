@@ -67,7 +67,7 @@ structure ProperName extends _root_.ProperName where
   deriving DecidableEq, Repr
 
 /-- A personal name glossed by its romanization. -/
-private def name (form romaji : String) (gender : Flat Gender := ⊥) : ProperName :=
+private def name (form romaji : String) (gender : Option Gender := none) : ProperName :=
   { form, gloss := romaji, romaji, gender }
 
 def taro : ProperName := name "太郎" "Tarō" (some .masculine)

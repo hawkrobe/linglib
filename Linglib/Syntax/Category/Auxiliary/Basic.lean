@@ -58,11 +58,11 @@ def toWord (a : Auxiliary) : Word := { form := a.form, cat := .AUX, features := 
 /-- Morphological tense; `none` for base forms such as *can* and *will*. -/
 def tense (a : Auxiliary) : Option UD.Tense := a.features.tense
 
-/-- Agreement person. -/
-def person (a : Auxiliary) : Option UD.Person := a.features.person
+/-- The agreement person. -/
+def person (a : Auxiliary) : Option Person := a.features.person.map Person.fromUD
 
-/-- Agreement number. -/
-def number (a : Auxiliary) : Option UD.Number := a.features.number
+/-- The agreement number. -/
+def number (a : Auxiliary) : Option Number := a.features.number.bind Number.fromUD
 
 /-- The modal item an auxiliary contributes: form, meanings, register. -/
 def toModalItem (a : Auxiliary) : ModalItem := ⟨a.form, a.modality, a.register⟩

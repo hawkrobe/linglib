@@ -232,6 +232,13 @@ theorem Compat.symm [Preorder α] {a b : α} (h : Compat a b) : Compat b a := by
   obtain ⟨ha, hb⟩ := PartialUnify.mem_upperBounds_pair.mp hu
   exact Compat.of_le hb ha
 
+/-- Compatibility of functions is pointwise. -/
+theorem Compat.apply {ι : Type*} {π : ι → Type*} [∀ i, Preorder (π i)]
+    {f g : (i : ι) → π i} (h : Compat f g) (i : ι) : Compat (f i) (g i) := by
+  obtain ⟨u, hu⟩ := h
+  obtain ⟨hf, hg⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+  exact Compat.of_le (hf i) (hg i)
+
 /-- Compatibility persists downward. -/
 theorem Compat.mono [Preorder α] {a b c d : α} (h₁ : a ≤ b) (h₂ : c ≤ d)
     (h : Compat b d) : Compat a c := by

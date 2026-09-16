@@ -92,48 +92,56 @@ open Romance.Clitics (CliticEntry CliticCase)
 (`Fragments/Romance/Clitics.lean`). -/
 
 -- 1sg clitics
-def mi_acc : CliticEntry := { form := "mi", person := .first, number := .Sing,
-                              case_ := .accusative }
-def mi_dat : CliticEntry := { form := "mi", person := .first, number := .Sing, case_ := .dative }
-def mi_refl : CliticEntry := { form := "mi", person := .first, number := .Sing,
-                               case_ := .reflexive }
+def mi_acc : CliticEntry :=
+  { form := "mi", person := .first, number := .singular, case_ := .accusative }
+def mi_dat : CliticEntry :=
+  { form := "mi", person := .first, number := .singular, case_ := .dative }
+def mi_refl : CliticEntry :=
+  { form := "mi", person := .first, number := .singular, case_ := .reflexive }
 
 -- 2sg clitics
-def ti_acc : CliticEntry := { form := "ti", person := .second, number := .Sing,
-                              case_ := .accusative }
-def ti_dat : CliticEntry := { form := "ti", person := .second, number := .Sing, case_ := .dative }
-def ti_refl : CliticEntry := { form := "ti", person := .second, number := .Sing,
-                               case_ := .reflexive }
+def ti_acc : CliticEntry :=
+  { form := "ti", person := .second, number := .singular, case_ := .accusative }
+def ti_dat : CliticEntry :=
+  { form := "ti", person := .second, number := .singular, case_ := .dative }
+def ti_refl : CliticEntry :=
+  { form := "ti", person := .second, number := .singular, case_ := .reflexive }
 
 -- 3sg clitics
-def lo_cl : CliticEntry := { form := "lo", person := .third, number := .Sing, case_ := .accusative }
-def la_cl : CliticEntry := { form := "la", person := .third, number := .Sing, case_ := .accusative }
-def gli_dat : CliticEntry := { form := "gli", person := .third, number := .Sing, case_ := .dative }
-def le_dat : CliticEntry := { form := "le", person := .third, number := .Sing, case_ := .dative }
-def si_refl : CliticEntry := { form := "si", person := .third, number := .Sing,
-                               case_ := .reflexive }
+def lo_cl : CliticEntry :=
+  { form := "lo", person := .third, number := .singular, case_ := .accusative }
+def la_cl : CliticEntry :=
+  { form := "la", person := .third, number := .singular, case_ := .accusative }
+def gli_dat : CliticEntry :=
+  { form := "gli", person := .third, number := .singular, case_ := .dative }
+def le_dat : CliticEntry :=
+  { form := "le", person := .third, number := .singular, case_ := .dative }
+def si_refl : CliticEntry :=
+  { form := "si", person := .third, number := .singular, case_ := .reflexive }
 
 -- 1pl clitics
-def ci_acc : CliticEntry := { form := "ci", person := .first, number := .Plur,
-                              case_ := .accusative }
-def ci_dat : CliticEntry := { form := "ci", person := .first, number := .Plur, case_ := .dative }
-def ci_refl : CliticEntry := { form := "ci", person := .first, number := .Plur,
-                               case_ := .reflexive }
+def ci_acc : CliticEntry :=
+  { form := "ci", person := .first, number := .plural, case_ := .accusative }
+def ci_dat : CliticEntry := { form := "ci", person := .first, number := .plural, case_ := .dative }
+def ci_refl : CliticEntry :=
+  { form := "ci", person := .first, number := .plural, case_ := .reflexive }
 
 -- 2pl clitics
-def vi_acc : CliticEntry := { form := "vi", person := .second, number := .Plur,
-                              case_ := .accusative }
-def vi_dat : CliticEntry := { form := "vi", person := .second, number := .Plur, case_ := .dative }
-def vi_refl : CliticEntry := { form := "vi", person := .second, number := .Plur,
-                               case_ := .reflexive }
+def vi_acc : CliticEntry :=
+  { form := "vi", person := .second, number := .plural, case_ := .accusative }
+def vi_dat : CliticEntry := { form := "vi", person := .second, number := .plural, case_ := .dative }
+def vi_refl : CliticEntry :=
+  { form := "vi", person := .second, number := .plural, case_ := .reflexive }
 
 -- 3pl clitics
-def li_cl : CliticEntry := { form := "li", person := .third, number := .Plur, case_ := .accusative }
-def le_cl : CliticEntry := { form := "le", person := .third, number := .Plur, case_ := .accusative }
-def loro_dat : CliticEntry := { form := "loro", person := .third, number := .Plur,
-                                case_ := .dative }
-def si_refl_pl : CliticEntry := { form := "si", person := .third, number := .Plur,
-                                  case_ := .reflexive }
+def li_cl : CliticEntry :=
+  { form := "li", person := .third, number := .plural, case_ := .accusative }
+def le_cl : CliticEntry :=
+  { form := "le", person := .third, number := .plural, case_ := .accusative }
+def loro_dat : CliticEntry :=
+  { form := "loro", person := .third, number := .plural, case_ := .dative }
+def si_refl_pl : CliticEntry :=
+  { form := "si", person := .third, number := .plural, case_ := .reflexive }
 
 -- ============================================================================
 -- § 3: Paradigm and Syncretism
@@ -159,16 +167,16 @@ example : Bound.IsAnaphor si_refl := by decide
 example : Bound.IsPronominal lo_cl := by decide
 
 /-- Look up the form for a given person, number, and case in the paradigm. -/
-def lookupForm : UD.Person → UD.Number → CliticCase → Option String :=
+def lookupForm : Person → Number → CliticCase → Option String :=
   Romance.Clitics.lookupForm paradigm
 
 /-- Are two clitic cases syncretic for a given person/number combination?
     Derived from the paradigm data. -/
-def isSyncretic : UD.Person → UD.Number → CliticCase → CliticCase → Bool :=
+def isSyncretic : Person → Number → CliticCase → CliticCase → Bool :=
   Romance.Clitics.isSyncretic paradigm
 
 /-- DAT/REFL syncretism for a given person/number. -/
-def datReflSyncretic : UD.Person → UD.Number → Bool :=
+def datReflSyncretic : Person → Number → Bool :=
   Romance.Clitics.datReflSyncretic paradigm
 
 -- ============================================================================
@@ -177,22 +185,22 @@ def datReflSyncretic : UD.Person → UD.Number → Bool :=
 
 -- Syncretism
 /-- 1sg: dative and reflexive are syncretic (both "mi"). -/
-theorem syncretic_1sg : datReflSyncretic .first .Sing = true := rfl
+theorem syncretic_1sg : datReflSyncretic .first .singular = true := by decide
 
 /-- 2sg: dative and reflexive are syncretic (both "ti"). -/
-theorem syncretic_2sg : datReflSyncretic .second .Sing = true := rfl
+theorem syncretic_2sg : datReflSyncretic .second .singular = true := by decide
 
 /-- 3sg: dative and reflexive are NOT syncretic ("gli" ≠ "si"). -/
-theorem not_syncretic_3sg : datReflSyncretic .third .Sing = false := rfl
+theorem not_syncretic_3sg : datReflSyncretic .third .singular = false := by decide
 
 /-- 1pl: dative and reflexive are syncretic (both "ci"). -/
-theorem syncretic_1pl : datReflSyncretic .first .Plur = true := rfl
+theorem syncretic_1pl : datReflSyncretic .first .plural = true := by decide
 
 /-- 2pl: dative and reflexive are syncretic (both "vi"). -/
-theorem syncretic_2pl : datReflSyncretic .second .Plur = true := rfl
+theorem syncretic_2pl : datReflSyncretic .second .plural = true := by decide
 
 /-- 3pl: dative and reflexive are NOT syncretic ("loro" ≠ "si"). -/
-theorem not_syncretic_3pl : datReflSyncretic .third .Plur = false := rfl
+theorem not_syncretic_3pl : datReflSyncretic .third .plural = false := by decide
 
 -- ============================================================================
 -- § 5: Cardinaletti–Starke deficiency classes

@@ -78,7 +78,7 @@ end Indefinite
 /-! ### Capability instances -/
 
 /-- An indefinite pronoun bears φ via its `Pronoun` core. -/
-instance : HasPhi Indefinite.IndefinitePronoun := ⟨fun e => e.toPronoun.toWord.phi⟩
+instance : HasPhi Indefinite.IndefinitePronoun := ⟨fun e ↦ e.toPronoun.phi⟩
 
 instance : Proform Indefinite.IndefinitePronoun := ⟨fun e => Proform.Domain e.toPronoun⟩
 

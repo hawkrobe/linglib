@@ -1,3 +1,4 @@
+import Linglib.Syntax.Agreement.Bundle
 import Linglib.Syntax.Agreement.Target
 import Mathlib.Data.Finset.Basic
 import Mathlib.Tactic.DeriveFintype
@@ -24,21 +25,11 @@ neither is baked into them.
 
 ## Main declarations
 
-- `Agreement.Dimension`: a feature dimension in which forms may covary
-- `Agreement.Profile`: one language's per-target agreement dimensions
+- `Agreement.Profile`: one language's per-target agreement dimensions, over the
+  `Agreement.Dimension` of `Syntax/Agreement/Bundle.lean`
 -/
 
 namespace Agreement
-
-/-- A feature dimension in which a target's form may covary with another
-    element: [corbett-1998] §2's indisputable three plus §2.4's contested
-    pair ([corbett-2006] "less clear" features), the space [norris-2019]'s
-    concord survey ranges over. Whether a given dimension's covariance is
-    agreement proper, government, or feature percolation is an analysis, not
-    a fact of this type. -/
-inductive Dimension where
-  | person | number | gender | case | definiteness
-  deriving DecidableEq, Repr, Fintype
 
 /-- A language's agreement profile (wide sense): for each target category,
     the dimensions in which that target's form covaries. `∅` = invariant

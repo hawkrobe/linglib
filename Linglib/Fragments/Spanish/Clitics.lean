@@ -33,31 +33,48 @@ Schema and capability instances are the shared Romance clitic schema
 (`Fragments/Romance/Clitics.lean`). -/
 
 -- 1SG clitics
-def me_acc : CliticEntry := { form := "me", person := .first, number := .Sing, case_ := .accusative }
-def me_dat : CliticEntry := { form := "me", person := .first, number := .Sing, case_ := .dative }
-def me_refl : CliticEntry := { form := "me", person := .first, number := .Sing, case_ := .reflexive }
+def me_acc : CliticEntry :=
+  { form := "me", person := .first, number := .singular, case_ := .accusative }
+def me_dat : CliticEntry :=
+  { form := "me", person := .first, number := .singular, case_ := .dative }
+def me_refl : CliticEntry :=
+  { form := "me", person := .first, number := .singular, case_ := .reflexive }
 
 -- 2SG clitics
-def te_acc : CliticEntry := { form := "te", person := .second, number := .Sing, case_ := .accusative }
-def te_dat : CliticEntry := { form := "te", person := .second, number := .Sing, case_ := .dative }
-def te_refl : CliticEntry := { form := "te", person := .second, number := .Sing, case_ := .reflexive }
+def te_acc : CliticEntry :=
+  { form := "te", person := .second, number := .singular, case_ := .accusative }
+def te_dat : CliticEntry :=
+  { form := "te", person := .second, number := .singular, case_ := .dative }
+def te_refl : CliticEntry :=
+  { form := "te", person := .second, number := .singular, case_ := .reflexive }
 
 -- 3SG clitics
-def lo : CliticEntry := { form := "lo", person := .third, number := .Sing, case_ := .accusative }
-def la : CliticEntry := { form := "la", person := .third, number := .Sing, case_ := .accusative }
-def le_dat : CliticEntry := { form := "le", person := .third, number := .Sing, case_ := .dative }
-def se_refl : CliticEntry := { form := "se", person := .third, number := .Sing, case_ := .reflexive }
+def lo : CliticEntry :=
+  { form := "lo", person := .third, number := .singular, case_ := .accusative }
+def la : CliticEntry :=
+  { form := "la", person := .third, number := .singular, case_ := .accusative }
+def le_dat : CliticEntry :=
+  { form := "le", person := .third, number := .singular, case_ := .dative }
+def se_refl : CliticEntry :=
+  { form := "se", person := .third, number := .singular, case_ := .reflexive }
 
 -- 1PL clitics
-def nos_acc : CliticEntry := { form := "nos", person := .first, number := .Plur, case_ := .accusative }
-def nos_dat : CliticEntry := { form := "nos", person := .first, number := .Plur, case_ := .dative }
-def nos_refl : CliticEntry := { form := "nos", person := .first, number := .Plur, case_ := .reflexive }
+def nos_acc : CliticEntry :=
+  { form := "nos", person := .first, number := .plural, case_ := .accusative }
+def nos_dat : CliticEntry :=
+  { form := "nos", person := .first, number := .plural, case_ := .dative }
+def nos_refl : CliticEntry :=
+  { form := "nos", person := .first, number := .plural, case_ := .reflexive }
 
 -- 3PL clitics
-def los : CliticEntry := { form := "los", person := .third, number := .Plur, case_ := .accusative }
-def las : CliticEntry := { form := "las", person := .third, number := .Plur, case_ := .accusative }
-def les_dat : CliticEntry := { form := "les", person := .third, number := .Plur, case_ := .dative }
-def se_refl_pl : CliticEntry := { form := "se", person := .third, number := .Plur, case_ := .reflexive }
+def los : CliticEntry :=
+  { form := "los", person := .third, number := .plural, case_ := .accusative }
+def las : CliticEntry :=
+  { form := "las", person := .third, number := .plural, case_ := .accusative }
+def les_dat : CliticEntry :=
+  { form := "les", person := .third, number := .plural, case_ := .dative }
+def se_refl_pl : CliticEntry :=
+  { form := "se", person := .third, number := .plural, case_ := .reflexive }
 
 /-! ### Paradigm and syncretism -/
 
@@ -70,35 +87,35 @@ def paradigm : List CliticEntry :=
     los, las, les_dat, se_refl_pl ]
 
 /-- Look up the form for a given person, number, and case in the paradigm. -/
-def lookupForm : UD.Person → UD.Number → CliticCase → Option String :=
+def lookupForm : Person → Number → CliticCase → Option String :=
   Romance.Clitics.lookupForm paradigm
 
 /-- Are two clitic cases syncretic for a given person/number combination?
     Derived from the paradigm data. -/
-def isSyncretic : UD.Person → UD.Number → CliticCase → CliticCase → Bool :=
+def isSyncretic : Person → Number → CliticCase → CliticCase → Bool :=
   Romance.Clitics.isSyncretic paradigm
 
 /-- The set of person/number combinations where DAT and REFL are syncretic.
     This is the key condition for SE-optionality. -/
-def datReflSyncretic : UD.Person → UD.Number → Bool :=
+def datReflSyncretic : Person → Number → Bool :=
   Romance.Clitics.datReflSyncretic paradigm
 
 /-! ### Verification theorems -/
 
 /-- 1SG: dative and reflexive are syncretic (both "me"). -/
-theorem syncretic_1sg : datReflSyncretic .first .Sing = true := rfl
+theorem syncretic_1sg : datReflSyncretic .first .singular = true := by decide
 
 /-- 2SG: dative and reflexive are syncretic (both "te"). -/
-theorem syncretic_2sg : datReflSyncretic .second .Sing = true := rfl
+theorem syncretic_2sg : datReflSyncretic .second .singular = true := by decide
 
 /-- 3SG: dative and reflexive are NOT syncretic ("le" ≠ "se"). -/
-theorem not_syncretic_3sg : datReflSyncretic .third .Sing = false := rfl
+theorem not_syncretic_3sg : datReflSyncretic .third .singular = false := by decide
 
 /-- 1PL: dative and reflexive are syncretic (both "nos"). -/
-theorem syncretic_1pl : datReflSyncretic .first .Plur = true := rfl
+theorem syncretic_1pl : datReflSyncretic .first .plural = true := by decide
 
 /-- 3PL: dative and reflexive are NOT syncretic ("les" ≠ "se"). -/
-theorem not_syncretic_3pl : datReflSyncretic .third .Plur = false := rfl
+theorem not_syncretic_3pl : datReflSyncretic .third .plural = false := by decide
 
 /-- 1SG forms are identical across all three cases. -/
 theorem me_forms_identical :

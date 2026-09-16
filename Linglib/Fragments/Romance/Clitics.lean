@@ -55,14 +55,13 @@ def CliticCase.toCase : CliticCase → Option Case
 /-- A single clitic form in a paradigm. -/
 structure CliticEntry where
   form : String
-  person : UD.Person
-  number : UD.Number
+  person : Person
+  number : Number
   case_ : CliticCase
   deriving Repr, BEq
 
-/-- A clitic's φ-features (person/number). -/
-instance : HasPhi CliticEntry :=
-  ⟨fun c => { person := some c.person, number := some c.number }⟩
+/-- A clitic bears its person and number. -/
+instance : HasPhi CliticEntry := ⟨fun c ↦ Agreement.Bundle.pn c.person c.number⟩
 
 /-- An object clitic's domain is the nominal tokens. -/
 instance : Proform CliticEntry := ⟨fun _ w => Binding.isNominalCat w.cat = true⟩
@@ -74,7 +73,7 @@ instance : Bound CliticEntry :=
   ⟨fun c => match c.case_ with | .reflexive => .reflexive | _ => .pronoun⟩
 
 /-- Look up the form for a given person, number, and paradigm cell. -/
-def lookupForm (paradigm : List CliticEntry) (p : UD.Person) (n : UD.Number)
+def lookupForm (paradigm : List CliticEntry) (p : Person) (n : Number)
     (c : CliticCase) : Option String :=
   (paradigm.find? (fun e => e.person == p && e.number == n && e.case_ == c)).map
     (·.form)
@@ -82,7 +81,7 @@ def lookupForm (paradigm : List CliticEntry) (p : UD.Person) (n : UD.Number)
 /-- Are two paradigm cells syncretic for a given person/number
     combination? Derived from the paradigm data: syncretism holds iff the
     looked-up forms are identical (and both exist). -/
-def isSyncretic (paradigm : List CliticEntry) (p : UD.Person) (n : UD.Number)
+def isSyncretic (paradigm : List CliticEntry) (p : Person) (n : Number)
     (c1 c2 : CliticCase) : Bool :=
   match lookupForm paradigm p n c1, lookupForm paradigm p n c2 with
   | some f1, some f2 => f1 == f2
@@ -90,8 +89,7 @@ def isSyncretic (paradigm : List CliticEntry) (p : UD.Person) (n : UD.Number)
 
 /-- DAT/REFL syncretism for a given person/number — the key condition for
     SE-optionality ([munoz-perez-2026]). -/
-def datReflSyncretic (paradigm : List CliticEntry) (p : UD.Person)
-    (n : UD.Number) : Bool :=
+def datReflSyncretic (paradigm : List CliticEntry) (p : Person) (n : Number) : Bool :=
   isSyncretic paradigm p n .dative .reflexive
 
 end Romance.Clitics

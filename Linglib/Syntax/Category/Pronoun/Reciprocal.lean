@@ -36,7 +36,7 @@ def ReciprocalPronoun.toMarker (p : ReciprocalPronoun) : Reciprocal.Marker :=
   { form := p.form, script := p.script, strategy := p.strategy, readings := p.readings }
 
 /-- A reciprocal pronoun bears φ via its `Pronoun` core. -/
-instance : HasPhi ReciprocalPronoun := ⟨fun p ↦ p.toPronoun.toWord.phi⟩
+instance : HasPhi ReciprocalPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
 
 instance : Proform ReciprocalPronoun := ⟨fun p ↦ Proform.Domain p.toPronoun⟩
 
