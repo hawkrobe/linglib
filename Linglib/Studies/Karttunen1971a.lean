@@ -26,7 +26,7 @@ one-way cells and the non-implicatives leave the other direction open.
 * [karttunen-1971]
 -/
 
-namespace Karttunen1971
+namespace Karttunen1971a
 
 open Presupposition
 
@@ -151,4 +151,4 @@ theorem ofProp_not_entails :
   ⟨⟨λ _ => True, λ _ => False, ⟨trivial, trivial⟩, id⟩,
    ⟨λ _ => False, λ _ => True, ⟨trivial, id⟩, trivial⟩⟩
 
-end Karttunen1971
+end Karttunen1971a

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Causation.Necessity
 import Linglib.Semantics.Causation.Sufficiency
-import Linglib.Studies.Karttunen1971
+import Linglib.Studies.Karttunen1971a
 
 /-!
 # Nadathur and Lauer (2020): Causal Necessity, Causal Sufficiency, and Causative Verbs
@@ -678,7 +678,7 @@ here; `necessity_cancellable` above is its kernel-checked witness. -/
 
 namespace KarttunenCells
 
-open Karttunen1971 (Schema)
+open Karttunen1971a (Schema)
 
 /-- Derive the Karttunen `Schema` cell from an `Implicative` polarity
     (two-way cell: complement entailment under both polarities). -/

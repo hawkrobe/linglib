@@ -2145,7 +2145,6 @@ import Linglib.Studies.KampReyle1993
 import Linglib.Studies.KampVanGenabithReyle2011
 import Linglib.Studies.KampanarouAlexiadou2026
 import Linglib.Studies.Karlsson2017
-import Linglib.Studies.Karttunen1971
 import Linglib.Studies.Karttunen1973
 import Linglib.Studies.Karttunen1974
 import Linglib.Studies.Karttunen1977

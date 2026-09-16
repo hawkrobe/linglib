@@ -1,6 +1,5 @@
 import Linglib.Data.Examples.Schema
 import Linglib.Data.UD.Basic
-import Linglib.Semantics.Attitudes.Factivity
 
 /-!
 # Embedding environments
@@ -11,20 +10,17 @@ and an epistemic possibility modal. The sentence in each environment is the fami
 of a trigger ([matthewson-2004], [tonhauser-beaver-roberts-simons-2013]), and a content projects
 when the embedded members still carry it. Example rows record a sentence's environment, whether
 the content projected, and the person of the matrix subject, and the readers here type those
-features. Karttunen's cancellation is the one lexical prediction
-over the family: a semi-factive loses its presupposition in the first person under a question
-or a conditional antecedent, while an emotive factive keeps it everywhere ([karttunen-1971b]).
+features.
 
 ## References
 
 * [tonhauser-beaver-roberts-simons-2013]
 * [matthewson-2004]
-* [karttunen-1971b]
 -/
 
 namespace Presupposition
 
-/-- An environment is the position a sentence is embedded in: unembedded, or under an
+/-- An environment is the position a sentence is embedded in, unembedded or under an
 entailment-cancelling operator. -/
 inductive Environment where
   | atomic
@@ -47,17 +43,6 @@ def table : List (String × Environment) :=
     ("conditional antecedent", conditionalAntecedent), ("epistemic modal", epistemicModal)]
 
 end Environment
-
-/-- A factivity class loses its presupposition in an environment with a matrix subject of the
-given person: the semi-factives in the first person under a question or a conditional
-antecedent, and nothing else ([karttunen-1971b]). -/
-def _root_.Factivity.Cancelled : Factivity → Environment → UD.Person → Prop
-  | .semi, .question, .first => True
-  | .semi, .conditionalAntecedent, .first => True
-  | _, _, _ => False
-
-instance (c : Factivity) (f : Environment) (p : UD.Person) : Decidable (c.Cancelled f p) := by
-  unfold Factivity.Cancelled; split <;> infer_instance
 
 end Presupposition
 
