@@ -23,26 +23,7 @@ Factivity is veridicality of the positive form
 projection experiments (BEL? and C?), and `assumesComplement` renders
 "the speaker assumes C" as C holding throughout a belief state.
 
-The semantics is `Bool`-valued: these meanings are the literal meanings
-of the RSA model of [scontras-tonhauser-2025]
-(`Studies/ScontrasTonhauser2025.lean`) and the two readings of
-[grove-white-2025]'s lexical entry for *know*
-(`Studies/GroveWhite2025.lean`).
-
-`Factivity` is [karttunen-1971b]'s split of the factive predicates into the
-true factives, the emotives *regret* and *be glad*, and the semi-factives
-*know*, *discover* and *realize*, whose presupposition is cancelled in the
-first person under a question or a conditional antecedent. Lexical entries
-record it on `Verb.Presupposition.factivity`.
 -/
-
-/-- The factivity class of a predicate ([karttunen-1971b]): an emotive true factive such as
-*regret*, or a semi-factive such as *know* and *discover*, whose presupposition is cancelled
-in the first person under a question or a conditional antecedent. -/
-inductive Factivity where
-  | emotive
-  | semi
-  deriving DecidableEq, Repr
 
 namespace Factivity
 

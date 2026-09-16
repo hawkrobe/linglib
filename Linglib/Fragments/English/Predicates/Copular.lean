@@ -21,7 +21,7 @@ open ArgumentStructure
     [degen-tonhauser-2021], [degen-tonhauser-2022]: canonically factive. -/
 def beAnnoyed : ClauseEmbeddingAdjective where
   form := "annoyed"
-  factivity := some .emotive
+  factivity := some .full
 
 /-- "right (that p)" — veridical nonfactive clause-embedding adjective.
     [degen-tonhauser-2021], [degen-tonhauser-2022]: veridical nonfactive.

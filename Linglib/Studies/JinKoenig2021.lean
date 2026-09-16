@@ -5,6 +5,7 @@ import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Semantics.Attitudes.Verb
 
 /-!
 # Jin and Koenig (2021): A Cross-Linguistic Study of Expletive Negation
@@ -108,33 +109,37 @@ theorem comparative_dual {Entity α : Type*} [LinearOrder α] (μ : Entity → �
 
 /-! ### Verbal triggers -/
 
+/-- The verb's lexical semantics licenses expletive negation (§5.5): a negative-valence
+preferential attitude (*fear*), a negative implicative (*forget*) or a preventive causative
+(*prevent*). -/
+def IsExpletiveNegationTrigger (v : Verb) : Prop :=
+  v.preferentialValence? = some .negative ∨ v.implicative = some .negative ∨
+    v.causative = some .prevent
+
+instance : DecidablePred IsExpletiveNegationTrigger := fun _ ↦
+  inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+
 /-- A negative-valence preferential attitude is a trigger of the *fear* class. -/
-theorem negative_valence_is_en_trigger (v : Verb)
-    (h : v.preferentialValence = some .negative) : v.isENTrigger = true := by
-  simp only [Verb.isENTrigger, h, show (some Preferential.Valence.negative ==
-    some Preferential.Valence.negative) = true from rfl, Bool.true_or]
+theorem negative_valence_is_en_trigger {v : Verb} (h : v.preferentialValence? = some .negative) :
+    IsExpletiveNegationTrigger v := Or.inl h
 
 /-- A negative implicative verb is a trigger of the *forget* class. -/
-theorem negative_implicative_is_en_trigger (v : Verb) (h : v.implicative = some .negative) :
-    v.isENTrigger = true := by
-  simp only [Verb.isENTrigger, h, show (some Implicative.negative ==
-    some Implicative.negative) = true from rfl, Bool.true_or, Bool.or_true]
+theorem negative_implicative_is_en_trigger {v : Verb} (h : v.implicative = some .negative) :
+    IsExpletiveNegationTrigger v := Or.inr (Or.inl h)
 
 /-- A preventive causative is a trigger of the *forget* class. -/
-theorem prevent_is_en_trigger (v : Verb) (h : v.causative = some .prevent) :
-    v.isENTrigger = true := by
-  simp only [Verb.isENTrigger, h, show (some Causative.prevent ==
-    some Causative.prevent) = true from rfl, Bool.or_true]
+theorem prevent_is_en_trigger {v : Verb} (h : v.causative = some .prevent) :
+    IsExpletiveNegationTrigger v := Or.inr (Or.inr h)
 
 open English.Predicates.Verbal in
 /-- The English fragment's *fear*, *dread*, *worry*, *forget* and *prevent* are triggers. -/
 theorem english_triggers :
-    fear.toVerb.isENTrigger = true ∧ dread.toVerb.isENTrigger = true ∧
-      worry.toVerb.isENTrigger = true ∧ forget.toVerb.isENTrigger = true ∧
-      prevent.toVerb.isENTrigger = true :=
-  ⟨negative_valence_is_en_trigger _ rfl, negative_valence_is_en_trigger _ rfl,
-    negative_valence_is_en_trigger _ rfl, negative_implicative_is_en_trigger _ rfl,
-    prevent_is_en_trigger _ rfl⟩
+    IsExpletiveNegationTrigger fear.toVerb ∧ IsExpletiveNegationTrigger dread.toVerb ∧
+      IsExpletiveNegationTrigger worry.toVerb ∧ IsExpletiveNegationTrigger forget.toVerb ∧
+      IsExpletiveNegationTrigger prevent.toVerb :=
+  ⟨negative_valence_is_en_trigger rfl, negative_valence_is_en_trigger rfl,
+    negative_valence_is_en_trigger rfl, negative_implicative_is_en_trigger rfl,
+    prevent_is_en_trigger rfl⟩
 
 /-! ### The examples -/
 

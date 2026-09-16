@@ -28,7 +28,7 @@ structure ClauseEmbeddingAdjective extends Adjective where
   /-- What kind of clause the adjective embeds. -/
   complementType : ComplementType := .finiteClause
   /-- The [karttunen-1971b] factivity class, if the adjective is factive. -/
-  factivity : Option Factivity := none
+  factivity : Option Presupposition.Factivity := none
   /-- Attitude semantics, if applicable. -/
   attitude : Option Attitude := none
   /-- Does the adjective create an opaque context? -/

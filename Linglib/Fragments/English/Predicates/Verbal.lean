@@ -4,6 +4,7 @@ import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Clause.Complementation
 import Linglib.Morphology.Word.Basic
 import Linglib.Fragments.English.Inflection
+import Linglib.Semantics.Causation.Verb
 
 open Morphology (Word)
 
@@ -302,6 +303,7 @@ def see : VerbEntry where
   subjectEntailments := some perception.subjectProfile
   vendlerClass := some .state
   attitude := some (.doxastic .veridical)
+  factivity := some .semi
   levinClass := some .see
 
 -- ════════════════════════════════════════════════════
@@ -335,7 +337,7 @@ def regret : VerbEntry where
   passivizable := false
   projectionBehavior := some .hole
   attitude := some (.preferential (.degreeComparison .negative))
-  factivity := some .emotive
+  factivity := some .full
 
 /-- "realize" — factive, presupposes complement is true -/
 def realize : VerbEntry := .mkRegular {
@@ -1268,6 +1270,7 @@ def reveal : VerbEntry := .mkRegular {
   speechActVerb := true
   vendlerClass := some .achievement
   attitude := some (.doxastic .veridical)
+  factivity := some .full
   levinClass := some .say }
 
 /-- "acknowledge" — optionally factive communication verb -/
@@ -1562,6 +1565,7 @@ def remember_rog : VerbEntry := .mkRegular {
   vendlerClass := some .state
   passivizable := false
   attitude := some (.doxastic .veridical)
+  factivity := some .semi
   senseTag := .rogative }
 
 /-- "forget" in factive/question-embedding sense. -/
@@ -1575,6 +1579,7 @@ def forget_rog : VerbEntry where
   vendlerClass := some .state
   passivizable := false
   attitude := some (.doxastic .veridical)
+  factivity := some .full
   senseTag := .rogative
 
 -- ════════════════════════════════════════════════════
@@ -3471,12 +3476,6 @@ theorem make_type_verbs_share_semantics :
     it uses the dual `preventSem` (blocking). -/
 theorem prevent_not_sufficiency :
     ¬ prevent.toVerb.AssertsSufficiency := by decide
-
-/-- "prevent" is an EN trigger — it entails ¬p in w₀ (complement
-    falsity), satisfying the FORGET class licensing condition
-    ([jin-koenig-2021], §6.1.4). -/
-theorem prevent_is_en_trigger :
-    prevent.toVerb.isENTrigger = true := rfl
 
 /-- make, force, and let have different builders despite shared truth conditions. -/
 theorem causative_builders_distinguished :

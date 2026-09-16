@@ -3,6 +3,7 @@ import Linglib.Semantics.Presupposition.Context
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Data.Examples.Glass2025
+import Linglib.Semantics.Attitudes.Verb
 
 /-!
 # Glass (2025): Attested versus unattested contrafactive belief verbs
@@ -208,16 +209,16 @@ def Profile.ofVeridicality : Veridicality → Profile
 records. -/
 def yiweiProfile : Profile := .weakContrafactive
 
-theorem know_profile : know.toVerb.veridicality.map Profile.ofVeridicality = some .factive := by
+theorem know_profile : know.toVerb.veridicality?.map Profile.ofVeridicality = some .factive := by
   decide
 
 theorem think_profile :
-    think.toVerb.veridicality.map Profile.ofVeridicality = some .nonfactive := by
+    think.toVerb.veridicality?.map Profile.ofVeridicality = some .nonfactive := by
   decide
 
 /-- The fragment's veridicality alone makes yǐwéi nonfactive. -/
 theorem yiwei_profile_ofVeridicality :
-    yiwei.toVerb.veridicality.map Profile.ofVeridicality = some .nonfactive := by
+    yiwei.toVerb.veridicality?.map Profile.ofVeridicality = some .nonfactive := by
   decide
 
 /-- A belief report of the paper: the verb's profile, the state of the Common Ground in the
@@ -231,9 +232,9 @@ structure Row where
 /-- The profiles of the rows' verbs: *know*, *think* and rènwéi from their fragment entries'
 veridicality, yǐwéi from the paper's analysis. -/
 def verbProfiles : List (String × Profile) :=
-  [("know", (know.toVerb.veridicality.map Profile.ofVeridicality).getD .nonfactive),
-   ("think", (think.toVerb.veridicality.map Profile.ofVeridicality).getD .nonfactive),
-   ("renwei", (renwei.toVerb.veridicality.map Profile.ofVeridicality).getD .nonfactive),
+  [("know", (know.toVerb.veridicality?.map Profile.ofVeridicality).getD .nonfactive),
+   ("think", (think.toVerb.veridicality?.map Profile.ofVeridicality).getD .nonfactive),
+   ("renwei", (renwei.toVerb.veridicality?.map Profile.ofVeridicality).getD .nonfactive),
    ("yiwei", yiweiProfile)]
 
 def Row.ofExample (ex : LinguisticExample) : Option Row := do

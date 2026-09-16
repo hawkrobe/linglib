@@ -1,5 +1,6 @@
 import Linglib.Semantics.Questions.QParticleLayer
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Semantics.Presupposition.Verb
 
 /-!
 # The interrogative left periphery
@@ -57,8 +58,8 @@ non-veridical doxastic attitudes uninterrogative, question-taking speech-act
 verbs select SAP, opaque question-taking verbs PerspP, other question-taking
 verbs CP. -/
 def deriveSelectionClass (v : VerbEntry) : SelectionClass :=
-  if v.complementType != .question && !v.takesQuestionBase then .uninterrogative
-  else if v.factivePresup then .responsive
+  if v.complementType ≠ .question ∧ ¬ v.TakesQuestion then .uninterrogative
+  else if v.IsFactive then .responsive
   else match v.attitude with
   | some (.doxastic .nonVeridical) => .uninterrogative
   | _ =>

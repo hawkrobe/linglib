@@ -86,15 +86,20 @@ def veridicality : Attitude → Doxastic.Veridicality
   | .doxastic v => v
   | .preferential _ => .nonVeridical
 
-/-- Whether the predicate is doxastic, as a Boolean for lexicon filters. -/
-def isDoxastic : Attitude → Bool
-  | .doxastic _ => true
-  | .preferential _ => false
+/-- The attitude is doxastic. -/
+def IsDoxastic : Attitude → Prop
+  | .doxastic _ => True
+  | .preferential _ => False
 
-/-- Whether the predicate is preferential, as a Boolean for lexicon filters. -/
-def isPreferential : Attitude → Bool
-  | .doxastic _ => false
-  | .preferential _ => true
+instance : DecidablePred IsDoxastic := fun a ↦ by unfold IsDoxastic; split <;> infer_instance
+
+/-- The attitude is preferential. -/
+def IsPreferential : Attitude → Prop
+  | .doxastic _ => False
+  | .preferential _ => True
+
+instance : DecidablePred IsPreferential := fun a ↦ by
+  unfold IsPreferential; split <;> infer_instance
 
 /-- The strategy of a preferential predicate. -/
 def strategy? : Attitude → Option Preferential.Strategy

@@ -45,14 +45,23 @@ open Semantics
 
 /-! ### The theta-grid (derived from the proto-role profiles) -/
 
-/-- The subject's theta-role, derived from its effective `EntailmentProfile`
-    (verb override, else Levin-class profile) via `EntailmentProfile.toRole`. -/
-def Verb.subjectRole (v : Verb) : Option ThetaRole :=
-  v.effectiveSubjectEntailments.bind (·.toRole)
+/-- The verb is unaccusative when its voice, if recorded, introduces no external argument
+([kratzer-1996]), and otherwise when the entry's flag says so. -/
+def Verb.IsUnaccusative (v : Verb) : Prop :=
+  match v.voiceType with
+  | some vt => ¬ vt.AssignsTheta
+  | none => v.unaccusative = true
 
-/-- The object's theta-role, derived from its effective `EntailmentProfile`. -/
+instance : DecidablePred Verb.IsUnaccusative := fun v ↦ by
+  unfold Verb.IsUnaccusative; split <;> infer_instance
+
+/-- The subject's theta-role, from its entailment profile (`EntailmentProfile.toRole`). -/
+def Verb.subjectRole (v : Verb) : Option ThetaRole :=
+  v.subjectProfile?.bind (·.toRole)
+
+/-- The object's theta-role, from its entailment profile. -/
 def Verb.objectRole (v : Verb) : Option ThetaRole :=
-  v.effectiveObjectEntailments.bind (·.toRole)
+  v.objectProfile?.bind (·.toRole)
 
 /-! ### Change-of-state decomposition ([beavers-koontz-garboden-2020] §1.3.2)
 
@@ -132,8 +141,8 @@ theorem causative_entails_resultState (M : CosModel Entity State T)
     kinds *select the event template* — the denotational payoff of the signature. -/
 def denote (M : CosModel Entity State T) (v : Verb) (y x : Entity) :
     Event T → Prop :=
-  if Root.Kind.cause ∈ v.closedKinds then M.causative v y x
-  else if Root.Kind.result ∈ v.closedKinds then M.inchoative v x
+  if Root.Kind.cause ∈ v.root.closedKinds then M.causative v y x
+  else if Root.Kind.result ∈ v.root.closedKinds then M.inchoative v x
   else M.manner v
 
 /-- The denotational payoff of a `.result` root: any verb whose root signature
@@ -144,10 +153,10 @@ def denote (M : CosModel Entity State T) (v : Verb) (y x : Entity) :
     `denote` is the manner core). -/
 theorem denote_result_entails_resultState (M : CosModel Entity State T)
     (v : Verb) (y x : Entity) (e : Event T)
-    (hres : Root.Kind.result ∈ v.closedKinds)
+    (hres : Root.Kind.result ∈ v.root.closedKinds)
     (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s := by
   unfold denote at h
-  by_cases hc : Root.Kind.cause ∈ v.closedKinds
+  by_cases hc : Root.Kind.cause ∈ v.root.closedKinds
   · rw [ite_eq_left hc] at h
     exact M.causative_entails_resultState v y x e h
   · rw [ite_eq_right hc, ite_eq_left hres] at h

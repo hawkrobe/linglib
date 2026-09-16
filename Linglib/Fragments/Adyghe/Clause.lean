@@ -95,6 +95,7 @@ def gwereqwe : Verb where
   frames := [Frame.finiteClause]
   predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
+  factivity := some .semi
   complementCase := some .abs
 
 /-- *ʔʷa* 'say'. -/

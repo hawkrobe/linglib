@@ -1,5 +1,6 @@
 import Linglib.Studies.DegenTonhauser2021
 import Mathlib.Data.Finset.Lattice.Fold
+import Linglib.Semantics.Presupposition.Verb
 
 /-!
 # Degen and Tonhauser (2022): Are there factive predicates?
@@ -81,7 +82,7 @@ def factivity : Predicate → Factivity
 entries' factivity classes and attitudes, are exactly the canonically factive ones, those whose
 complement the classification takes to be presupposed. -/
 theorem isTrigger_iff (p : Predicate) :
-    (toPredicateCore p).isTrigger = true ↔ factivity p = .canonicallyFactive := by
+    (toPredicateCore p).IsTrigger ↔ factivity p = .canonicallyFactive := by
   cases p <;> decide
 
 /-! ### A categorical distinction as separation -/

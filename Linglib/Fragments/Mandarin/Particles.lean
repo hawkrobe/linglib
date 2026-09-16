@@ -24,7 +24,7 @@ competition analysis built on it live in `Studies/Wang2025.lean`.
 
 namespace Mandarin.Particles
 
-open Presupposition.TriggerTypology
+open Presupposition
 
 /-- Mandarin presupposition triggers studied in [wang-2025] Experiments 1-2. -/
 inductive MandarinTrigger where
@@ -48,7 +48,7 @@ structure PresupParticle where
   /-- English gloss -/
   gloss : String
   /-- Trigger type (consensus classification) -/
-  trigger : PresupTrigger
+  trigger : Trigger
   /-- The trigger identifier of the experimental data, for the particles [wang-2025] tested. -/
   dataTrigger : Option MandarinTrigger := none
   deriving Repr, DecidableEq
@@ -72,7 +72,7 @@ def zai : PresupParticle :=
     *uninterrupted continuation* of P throughout an interval, whereas
     *you* presupposes P-then-not-P-then-P-again. The original encoding
     of *reng* as `.iterative` (matching *you*) collapsed this contrast;
-    `.continuative` was added to `PresupTrigger` to distinguish them. -/
+    `.continuative` was added to `Trigger` to distinguish them. -/
 def reng : PresupParticle :=
   { hanzi := "仍", pinyin := "réng", gloss := "still"
   , trigger := .continuative, dataTrigger := some .reng }

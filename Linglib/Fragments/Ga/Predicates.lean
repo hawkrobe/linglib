@@ -202,6 +202,7 @@ def le : Verb where
   form := "le"
   frames := [kejiFrame]
   attitude := some (.doxastic .veridical)
+  factivity := some .semi
 
 /-- The clause-embedding verbs attested in the paper's examples. -/
 def verbs : List Verb :=

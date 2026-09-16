@@ -2,6 +2,8 @@ import Linglib.Syntax.Control.Defs
 import Linglib.Syntax.Control.Head
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Semantics.Presupposition.Verb
+import Linglib.Semantics.Causation.Verb
 
 /-!
 # Landau (2015): A Two-Tiered Theory of Control
@@ -172,11 +174,11 @@ presupposition the factive class, question embedding without an attitude the int
 class, and a doxastic or preferential attitude the propositional or desiderative class; `none`
 where the fields decide nothing, as for *try*. -/
 def derivedLandauClass (v : Verb) : Option PredicateClass :=
-  if v.cosType.isSome then some .aspectual
-  else if v.implicative.isSome then some .implicative
-  else if v.causative.isSome then some .implicative
-  else if v.factivePresup then some .factive
-  else if v.takesQuestionBase && v.attitude.isNone then some .interrogative
+  if v.cosType ≠ none then some .aspectual
+  else if v.implicative ≠ none then some .implicative
+  else if v.IsCausative then some .implicative
+  else if v.IsFactive then some .factive
+  else if v.TakesQuestion ∧ v.attitude = none then some .interrogative
   else match v.attitude with
     | some (.doxastic _)     => some .propositional
     | some (.preferential _) => some .desiderative
@@ -189,8 +191,7 @@ def derivedControlTier (v : Verb) : Option Tier :=
   else match derivedLandauClass v with
     | some cls => some cls.tier
     | none =>
-      if v.attitude.isSome || v.factivePresup || v.takesQuestionBase
-      then some .logophoric
+      if v.attitude ≠ none ∨ v.IsFactive ∨ v.TakesQuestion then some .logophoric
       else some .predicative
 
 section Verbs

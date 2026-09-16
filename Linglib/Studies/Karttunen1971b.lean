@@ -59,10 +59,10 @@ def _root_.Presupposition.Environment.available : Environment → Available
 
 /-- The postulates of a class say that the sentence and its negation imply the complement for
 every factive, (11), and that its possibility does so for a true factive only, (11'). -/
-def _root_.Factivity.Yields : Factivity → Available → Prop
+def _root_.Presupposition.Factivity.Yields : Factivity → Available → Prop
   | _, .sentence => True
   | _, .negation => True
-  | .emotive, .possibility => True
+  | .full, .possibility => True
   | .semi, .possibility => False
 
 instance (c : Factivity) (a : Available) : Decidable (c.Yields a) := by
@@ -75,7 +75,7 @@ instance (c : Factivity) (e : Environment) : Decidable (Projects c e) :=
   inferInstanceAs (Decidable (c.Yields e.available))
 
 /-- A true factive's complement follows in every environment. -/
-theorem projects_emotive (e : Environment) : Projects .emotive e := by
+theorem projects_full (e : Environment) : Projects .full e := by
   cases e <;> trivial
 
 /-- A semi-factive's complement follows exactly from the sentence or its negation. -/
@@ -90,7 +90,7 @@ def verbs : List Verb := [regret.toVerb, realize.toVerb, discover.toVerb]
 
 /-- The Fragment entry for a row's verb. -/
 def verbOf (row : LinguisticExample) : Option Verb :=
-  (row.feature? "verb").bind (lookupSense verbs ·)
+  (row.feature? "verb").bind (Verb.find? verbs ·)
 
 /-- The judgments of (2), (22) and (24)–(26) are the postulates' predictions, *regret*'s
 complement following everywhere and *realize*'s and *discover*'s under negation only. -/

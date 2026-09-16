@@ -9,6 +9,8 @@ import Linglib.Syntax.Category.Verb.Complement.Takes
 import Linglib.Semantics.Presupposition.Environment
 import Linglib.Studies.Karttunen1971b
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
+import Linglib.Semantics.Presupposition.Verb
+import Linglib.Semantics.Attitudes.Verb
 
 /-!
 # Deal (2026): Clausal complementation as relativization, revisited
@@ -105,14 +107,14 @@ theorem nominal_rows :
 
 /-- Every relative embedding is factive (§7). -/
 theorem relative_factive :
-    ∀ v ∈ verbs, strategy v = .relative → v.toVerb.factivePresup = true := by
+    ∀ v ∈ verbs, strategy v = .relative → v.toVerb.IsFactive := by
   decide
 
 /-- Consultants endorse the complement under negation, in a question or in a conditional
 antecedent exactly for the factive predicates, the projection trials (33)–(36) and (68). -/
 theorem projection_rows :
     ∀ row ∈ Examples.all, ∀ _ ∈ row.environment?, ∀ v ∈ verbs, row.feature? "verb" = some v.form →
-      (row.projective? = some true ↔ v.toVerb.factivePresup = true) := by
+      (row.projective? = some true ↔ v.toVerb.IsFactive) := by
   decide
 
 /-- The semi-factive *cuukwe* 'know' projects from a third-person conditional antecedent, (68),
@@ -144,12 +146,14 @@ def adygheRelative : Cell :=
   ⟨ClauseSpine.cP.extend [.N, .D], decide (Adyghe.gwepshesa.toVerb.takes Adyghe.zeRe)⟩
 
 /-- [krapova-2010]'s double requirement, reported at footnote 22: *deto* introduces the
-complement of a predicate that is an emotive factive and takes a *za* phrase. -/
+complement of a predicate that is an emotive factive, a factive preferential attitude, and
+takes a *za* phrase. -/
 def DetoComplement (v : Bulgarian.Verb) : Prop :=
-  v.factivity = some .emotive ∧ ∃ fr ∈ v.frames, Complement.Position.adpositional ∈ fr
+  v.toVerb.IsPreferential ∧ v.toVerb.IsFactive ∧
+    ∃ fr ∈ v.frames, Complement.Position.adpositional ∈ fr
 
 instance (v : Bulgarian.Verb) : Decidable (DetoComplement v) :=
-  inferInstanceAs (Decidable (_ ∧ ∃ fr ∈ v.frames, _))
+  inferInstanceAs (Decidable (_ ∧ _ ∧ ∃ fr ∈ v.frames, _))
 
 /-- The double requirement picks out exactly the predicates Krapova lists as *deto*-takers, and
 neither condition suffices: *văzmuštavam se* 'resent' is emotive without a *za* phrase, and
@@ -182,7 +186,7 @@ for the factive predicates. -/
 theorem krapova_projection_rows :
     ∀ row ∈ Krapova2010.Examples.all, ∀ _ ∈ row.environment?,
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
-        (row.projective? = some true ↔ v.toVerb.factivePresup = true) := by
+        (row.projective? = some true ↔ v.toVerb.IsFactive) := by
   decide
 
 /-- Krapova's contradiction tests (57c) and footnote 46: a continuation denying the complement
@@ -190,7 +194,7 @@ is unacceptable exactly under a factive predicate, under *deto* and *če* alike.
 theorem krapova_contradiction_rows :
     ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "contradiction" →
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
-        ((∃ a ∈ row.alternatives, a.2 = .unacceptable) ↔ v.toVerb.factivePresup = true) := by
+        ((∃ a ∈ row.alternatives, a.2 = .unacceptable) ↔ v.toVerb.IsFactive) := by
   decide
 
 /-- English N complementation, *the fact that S*: V D N CP without an Ā-dependency, the DP
@@ -234,10 +238,10 @@ factive simplex embedding, *cuukwe* 'know'; a non-factive simplex embedding, *ne
 and a non-factive relative embedding, Adyghe 'think', which requires the relative strategy for
 its tensed complement. Factivity and relative-embedding syntax vary independently. -/
 theorem table80 :
-    (∃ v ∈ verbs, v.toVerb.factivePresup = true ∧ strategy v = .relative) ∧
-      (∃ v ∈ verbs, v.toVerb.factivePresup = true ∧ strategy v = .simplex) ∧
-      (∃ v ∈ verbs, v.toVerb.factivePresup = false ∧ strategy v = .simplex) ∧
-      (∃ v ∈ Adyghe.verbs, v.toVerb.takes Adyghe.zeRe ∧ v.toVerb.factivePresup = false) := by
+    (∃ v ∈ verbs, v.toVerb.IsFactive ∧ strategy v = .relative) ∧
+      (∃ v ∈ verbs, v.toVerb.IsFactive ∧ strategy v = .simplex) ∧
+      (∃ v ∈ verbs, ¬ v.toVerb.IsFactive ∧ strategy v = .simplex) ∧
+      (∃ v ∈ Adyghe.verbs, v.toVerb.takes Adyghe.zeRe ∧ ¬ v.toVerb.IsFactive) := by
   decide
 
 /-! ### The D-inflection diagnostic (21) -/
