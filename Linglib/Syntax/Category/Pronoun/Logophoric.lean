@@ -1,6 +1,5 @@
 import Linglib.Semantics.Reference.Logophoricity
 import Linglib.Syntax.Category.Pronoun.Basic
-import Linglib.Syntax.Category.Pronoun.Capabilities
 
 open Morphology (Word)
 
@@ -21,9 +20,9 @@ Verbal logophoric marking (Gokana) or a logophoric long-distance reflexive would
 carriers — a different word-class object supplying its own `instance : Logophoric That` — read by the
 same `[Logophoric α]` generic code.
 
-The licensing is **orthogonal to `Bound`** (`Syntax/Category/Pronoun/Capabilities.lean`): a form's
-perspectival orientation is not its Principle A/B/C role. *zibun* below is a Principle-A reflexive
-(`Bound.IsAnaphor`) whose logophoric licensing is nonetheless the *pivot* orientation, not
+The licensing is orthogonal to the binding class: a form's perspectival orientation is not its
+Principle A/B/C role. *zibun* below is a Principle-A reflexive whose logophoric licensing is
+nonetheless the *pivot* orientation, not
 configurational binding — [sells-1987]'s thesis that logophoric anaphora is role-oriented, made
 concrete by carrying both axes on one object (`zibun_anaphor_yet_pivot_oriented`).
 
@@ -31,7 +30,7 @@ concrete by carrying both axes on one object (`zibun_anaphor_yet_pivot_oriented`
 
 * `LogophoricPronoun` — the lexical object (`extends Pronoun` + `requiredRole`).
 * `instance : Logophoric LogophoricPronoun` — the pronoun carrier of the series.
-* `HasPhi` / `Proform` / `Bound` instances routing the object through the Pronoun API.
+* `HasPhi` instance routing the object through the Pronoun API.
 * `ye`, `zibun` — worked [sells-1987] entries; licensing derived from the hierarchy.
 -/
 
@@ -50,13 +49,6 @@ structure LogophoricPronoun extends Pronoun where
 /-- A logophoric pronoun bears φ via its `Pronoun` core. -/
 instance : HasPhi LogophoricPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
 
-instance : Proform LogophoricPronoun := ⟨fun p => Proform.Domain p.toPronoun⟩
-
-/-- Its binding class is the `Pronoun` core's, defaulting an undeclared shell to `.pronoun` —
-    independent of its logophoric orientation. -/
-instance : Bound LogophoricPronoun :=
-  ⟨fun p => p.toPronoun.bindingClass.getD .pronoun⟩
-
 /-- The logophoric pronoun is a carrier of the word-class-neutral `Logophoric` capability. -/
 instance : Logophoric LogophoricPronoun := ⟨LogophoricPronoun.requiredRole⟩
 
@@ -71,9 +63,9 @@ def ye : LogophoricPronoun :=
 /-- Japanese long-distance *zibun* — a perspectival reflexive. Its antecedent need only be a
     `pivot` (any point-of-view centre): [sells-1987] "antecedent must be a pivot". Morphologically a
     Principle-A reflexive (`bindingClass := .reflexive`), so its licensing axis (pivot) and its
-    binding axis (anaphor) are distinct — the orthogonality the `Logophoric`/`Bound` split encodes. -/
+    binding axis (anaphor) are distinct. -/
 def zibun : LogophoricPronoun :=
-  { form := "zibun", bindingClass := some .reflexive, requiredRole := .pivot }
+  { form := "zibun", bindingClass := .reflexive, requiredRole := .pivot }
 
 /-! ### Licensing, derived from the hierarchy -/
 
@@ -91,11 +83,11 @@ theorem ye_not_licensed_by_pivot : ¬ Logophoric.LicensedBy ye .pivot := by deci
 /-- Long-distance *zibun* is licensed by any `pivot` — the weakest centre suffices. -/
 theorem zibun_licensed_by_pivot : Logophoric.LicensedBy zibun .pivot := by decide
 
-/-- **Orthogonality of orientation and binding**: *zibun* is a Principle-A anaphor
-    (`Bound.IsAnaphor`) yet its logophoric licensing is the *pivot* orientation, not its binding
-    class — [sells-1987]'s role-oriented anaphora, carried as two independent axes on one object. -/
+/-- *zibun* is a Principle-A anaphor yet its logophoric licensing is the *pivot* orientation, not
+its binding class: [sells-1987]'s role-oriented anaphora, carried as two independent axes on one
+object. -/
 theorem zibun_anaphor_yet_pivot_oriented :
-    Bound.IsAnaphor zibun ∧ Logophoric.requiredRole zibun = LogophoricRole.pivot :=
+    zibun.toPronoun.IsAnaphor ∧ Logophoric.requiredRole zibun = LogophoricRole.pivot :=
   ⟨Or.inl rfl, rfl⟩
 
 /-- Generic consumer of the capability: *every* logophoric pronoun is licensed by a `source`

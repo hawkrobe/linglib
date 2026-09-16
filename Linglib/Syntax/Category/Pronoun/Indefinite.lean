@@ -2,7 +2,6 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Linglib.Semantics.Quantification.Indefinite
 import Linglib.Syntax.Category.Pronoun.Basic
-import Linglib.Syntax.Category.Pronoun.Capabilities
 
 open Morphology (Word)
 
@@ -26,7 +25,7 @@ bridge, syncretism) are typological and live in `Typology/Indefinite.lean`.
 
 * `Indefinite.IndefinitePronoun` — the lexical object (`extends Pronoun`).
 * `instance : Indefinite Indefinite.IndefinitePronoun` — the pronoun carrier of the series.
-* `HasPhi` / `Proform` / `Bound` instances routing the object through the Pronoun API.
+* `HasPhi` instance routing the object through the Pronoun API.
 -/
 
 namespace Indefinite
@@ -79,13 +78,6 @@ end Indefinite
 
 /-- An indefinite pronoun bears φ via its `Pronoun` core. -/
 instance : HasPhi Indefinite.IndefinitePronoun := ⟨fun e ↦ e.toPronoun.phi⟩
-
-instance : Proform Indefinite.IndefinitePronoun := ⟨fun e => Proform.Domain e.toPronoun⟩
-
-/-- An indefinite pronoun is a Principle-B pronominal (its `Pronoun` core's class,
-    defaulting an undeclared φ-shell to `.pronoun`). -/
-instance : Bound Indefinite.IndefinitePronoun :=
-  ⟨fun e => e.toPronoun.bindingClass.getD .pronoun⟩
 
 /-- The indefinite pronoun is the pronominal carrier of the indefinite series. -/
 instance : Indefinite Indefinite.IndefinitePronoun :=

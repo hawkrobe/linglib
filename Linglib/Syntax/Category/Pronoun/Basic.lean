@@ -5,7 +5,7 @@ import Linglib.Pragmatics.SocialMeaning.Register
 import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Gender.Basic
 import Linglib.Syntax.Person.Clusivity
-import Linglib.Syntax.Binding.CoreferenceStatus
+import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Person.Decomposition
 import Linglib.Morphology.Word.Basic
 import Linglib.Syntax.Agreement.Phi
@@ -104,11 +104,10 @@ end Pronoun.Strength
 /-- The general pronoun object: the morphosyntactic core shared by every pronoun
     type (personal, indefinite, demonstrative, interrogative, …). Carries what is true
     of *all* pronouns — surface form, agreement φ-features, and a binding-theoretic
-    `bindingClass` *slot* (the Principle A/B/C role every pronoun has; `none` on the bare
-    base, *fixed by the kind*: `PersonalPronoun` defaults it, reflexive/reciprocal shells
-    declare it) — and has no denotation of its own; each specialization (`PersonalPronoun`
-    for personal/
-    referential pronouns, and future `IndefinitePronoun` etc.) `extends` this and
+    `bindingClass` (the Principle A/B/C role every pronoun has, a pronominal unless
+    the entry or its kind declares otherwise) — and has no denotation of its own; each
+    specialization (`PersonalPronoun` for personal/referential pronouns, and future
+    `IndefinitePronoun` etc.) `extends` this and
     supplies its own meaning. Coexists with `namespace Pronoun` (a type and a
     namespace may share a name, cf. `List`). -/
 structure Pronoun where
@@ -133,17 +132,16 @@ structure Pronoun where
   script : Option String := none
   /-- Pronoun type (UD `PronType`): the pro-form's lexical kind — personal (`Prs`),
       interrogative (`Int`), relative (`Rel`), demonstrative (`Dem`), … Real UD morphology,
-      threaded onto the projected word by `toWord`; doubles as the lexical-kind axis the
-      capability tower deferred. Reciprocal (`Rcp`) is *not* stored: `toWord` derives it
-      from `bindingClass = .reciprocal`. `none` where unspecified. -/
+      threaded onto the projected word by `toWord`. Reciprocal (`Rcp`) is *not* stored:
+      `toWord` derives it from `bindingClass = .reciprocal`. `none` where unspecified. -/
   pronType : Option UD.PronType := none
   /-- The binding class this pro-form declares — its `Binding.BindingSource Pronoun` value:
       Principle A anaphor (`.reflexive`/`.reciprocal`), B pronominal (`.pronoun`), or C
       R-expression. *One* source of an expression's binding class — the lexical declaration
       ([chomsky-1981]'s GB classes); the binding engine is polymorphic over `BindingSource`, so
-      a theory may instead source the class structurally or from context. `none` for a bare
-      φ-shell. -/
-  bindingClass : Option Binding.BindingClass := none
+      a theory may instead source the class structurally or from context. A pronominal,
+      [chomsky-1981]'s elsewhere case, unless declared otherwise. -/
+  bindingClass : Binding.BindingClass := .pronoun
   /-- [cardinaletti-starke-1999] deficiency class of the form-*series* this entry
       represents, when the series is homogeneous (an Italian object clitic
       `some .clitic`, French *lui* `some .strong`). `none` = unrecorded, or no
@@ -174,9 +172,6 @@ instance : HasPhi Pronoun := ⟨Pronoun.phi⟩
 pronouns. Covers personal pronouns across all Fragment languages;
 any language-specific refinements remain in their respective Fragment files. -/
 structure PersonalPronoun extends Pronoun where
-  /-- Personal pronouns are Principle-B pronominals: the *type* fixes the binding class
-      ([chomsky-1981]), overriding `Pronoun`'s `none` default so entries needn't restate it. -/
-  bindingClass := some .pronoun
   /-- Personal pronouns are UD `PronType=Prs`; the *type* fixes the morphology. -/
   pronType := some UD.PronType.Prs
   /-- Register level (formality/honorifics). Binary T/V systems use
@@ -240,8 +235,8 @@ def toWord (p : Pronoun) : Word :=
                   gender := p.gender.bind (·.toUD),
                   -- carry the binding-relevant morphology so a projected pro-form's class is
                   -- read off its own features, not recovered by surface-form lookup
-                  reflex := p.bindingClass == some .reflexive,
-                  pronType := if p.bindingClass == some .reciprocal then some .Rcp
+                  reflex := p.bindingClass == .reflexive,
+                  pronType := if p.bindingClass == .reciprocal then some .Rcp
                               else p.pronType } }
 
 /-! ### Well-formedness ([cysouw-2003]) -/
@@ -260,6 +255,32 @@ instance (p : Pronoun) : Decidable p.WellFormed := by
   unfold WellFormed; infer_instance
 
 /-! ### Lexical entry schemas ([alok-bhalla-2026]) -/
+
+/-- A pronoun is a Principle-A anaphor when its binding class is. -/
+abbrev IsAnaphor (p : Pronoun) : Prop := p.bindingClass.IsAnaphor
+
+/-- A pronoun is a Principle-B pronominal when its binding class is. -/
+abbrev IsPronominal (p : Pronoun) : Prop := p.bindingClass.IsPronominal
+
+/-- A pronoun is a Principle-C referring expression when its binding class is. -/
+abbrev IsRExpression (p : Pronoun) : Prop := p.bindingClass.IsRExpression
+
+/-- A pronoun's projected word classifies as the class the pronoun declares. -/
+theorem bindingClassOf_toWord (p : Pronoun) (h : ¬ p.IsRExpression)
+    (hr : p.pronType = some .Rcp → p.bindingClass = .reciprocal) :
+    Binding.bindingClassOf p.toWord = some p.bindingClass := by
+  rcases hb : p.bindingClass with _ | _ | _ | _ <;>
+      rcases hp : p.pronType with _ | pt <;> (try cases pt) <;>
+    simp_all +decide [Binding.bindingClassOf, Pronoun.toWord,
+      Binding.BindingClass.IsRExpression]
+
+/-- A candidate antecedent of a pronoun is a nominal token that agrees with it in φ-features;
+a pro-form takes its antecedents from a fixed form-class ([bloomfield-1933]). -/
+def CandidateAntecedent (p : Pronoun) (w : Morphology.Word) : Prop :=
+  Binding.isNominalCat w.cat = true ∧ HasPhi.Agree p w
+
+instance (p : Pronoun) (w : Morphology.Word) : Decidable (p.CandidateAntecedent w) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 instance : HasPhi PersonalPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
 

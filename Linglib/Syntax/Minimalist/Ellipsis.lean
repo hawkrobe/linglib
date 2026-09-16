@@ -191,8 +191,7 @@ structure EllipsisType where
 
 /-- Every ellipsis type is a Hankamer–Sag **surface** anaphor ([hankamer-sag-1976]):
     PF-deletion under identity leaves full internal structure in place. So
-    `EllipsisType` is an `Anaphor.HasDepth` carrier (depth `.surface` throughout) —
-    the depth-axis analogue of a `Bound` pronoun. -/
+    `EllipsisType` is an `Anaphor.HasDepth` carrier (depth `.surface` throughout). -/
 instance : Anaphor.HasDepth EllipsisType := ⟨fun _ => .surface⟩
 
 /-- Witness: every ellipsis type is surface. -/

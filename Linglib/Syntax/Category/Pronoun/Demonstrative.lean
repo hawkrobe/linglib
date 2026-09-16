@@ -1,6 +1,5 @@
 import Linglib.Semantics.Reference.Deixis
 import Linglib.Syntax.Category.Pronoun.Basic
-import Linglib.Syntax.Category.Pronoun.Capabilities
 
 open Morphology (Word)
 
@@ -27,7 +26,7 @@ assignment keeps them apart by construction.
 
 * `DemonstrativePronoun` — the deictic demonstrative pronoun (`extends Pronoun` + `deixis`).
 * `instance : Demonstrative DemonstrativePronoun` — its deictic-contrast capability.
-* `HasPhi` / `Proform` / `Bound` instances routing it through the Pronoun API.
+* `HasPhi` instance routing it through the Pronoun API.
 -/
 
 /-- A deictic demonstrative pronoun: the general `Pronoun` (form + φ) plus the
@@ -43,12 +42,6 @@ structure DemonstrativePronoun extends Pronoun where
 
 /-- A demonstrative pronoun bears φ via its `Pronoun` core. -/
 instance : HasPhi DemonstrativePronoun := ⟨fun d ↦ d.toPronoun.phi⟩
-
-instance : Proform DemonstrativePronoun := ⟨fun d => Proform.Domain d.toPronoun⟩
-
-/-- Its binding class is the `Pronoun` core's, defaulting an undeclared shell to `.pronoun`. -/
-instance : Bound DemonstrativePronoun :=
-  ⟨fun d => d.toPronoun.bindingClass.getD .pronoun⟩
 
 /-- The demonstrative pronoun is a carrier of the `Demonstrative` (deictic-contrast) capability. -/
 instance : Demonstrative DemonstrativePronoun := ⟨DemonstrativePronoun.deixis⟩

@@ -26,7 +26,7 @@ def logPl : PersonalPronoun := { form := "mɔ̄", number := some .plural }
 def ordinaryPl : PersonalPronoun := { form := "à̰", person := some .third, number := some .plural }
 
 /-- *ē* — the reflexive (REFL) of (28). -/
-def reflexive : Pronoun := { form := "ē", bindingClass := some .reflexive }
+def reflexive : Pronoun := { form := "ē", bindingClass := .reflexive }
 
 /-- *ɔ̄ŋ̄* — the reciprocal (RECIP) of (28) and (32). -/
 def reciprocal : ReciprocalPronoun := { form := "ɔ̄ŋ̄" }

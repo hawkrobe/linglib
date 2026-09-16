@@ -22,9 +22,9 @@ models extraction and Landau's EIR test (`Syntax/Anaphora/Diagnostic.lean`).
 `.surface`.
 
 This is the **unbounded**-anaphora axis, orthogonal to (and a sibling of) the
-binding-theoretic Principle-A/B/C axis (`Binding.BindingClass` / the `Bound`
-capability): H&S explicitly set aside bounded anaphora (reflexivization) as a
-separate, always-syntactic process. A reflexive is a `Bound.IsAnaphor`; *do so*
+binding-theoretic Principle-A/B/C axis (`Binding.BindingClass`): H&S explicitly set aside
+bounded anaphora (reflexivization) as a separate, always-syntactic process. A reflexive's
+class is a `Binding.BindingClass.IsAnaphor`; *do so*
 is an `Anaphor.Depth.deep`.
 
 Other H&S diagnostics are *not* modeled here: the missing-antecedent test (itself
@@ -38,7 +38,7 @@ deep anaphora, and the Backwards Anaphora Constraint.
 * `Anaphor.Depth.HasInternalStructure` / `Anaphor.Depth.control` — the structural
   property and the depth→control map; `allowsPragmaticControl_iff_…` proves the
   typology's two correlated properties coincide by construction.
-* `Anaphor.HasDepth` — the carrier capability (the depth-axis analogue of `Bound`).
+* `Anaphor.HasDepth` — the carrier capability on the depth axis.
 -/
 
 namespace Anaphor
@@ -113,8 +113,7 @@ end Depth
 
 /-! ### The `HasDepth` capability -/
 
-/-- A carrier whose every element has a Hankamer & Sag `Anaphor.Depth` — the
-    depth-axis analogue of `Bound` (the binding-class axis). An ellipsis-type
+/-- A carrier whose every element has a Hankamer & Sag `Anaphor.Depth`. An ellipsis-type
     record, a paper's datum struct, or a syntactic object each supplies its own
     instance. -/
 class HasDepth (α : Type _) where

@@ -2569,9 +2569,7 @@ import Linglib.Syntax.Category.Noun.Basic
 import Linglib.Syntax.Category.Numeral.Basic
 import Linglib.Syntax.Category.Numeral.Composition
 import Linglib.Syntax.Category.Particle.Basic
-import Linglib.Syntax.Category.Particle.Capabilities
 import Linglib.Syntax.Category.Pronoun.Basic
-import Linglib.Syntax.Category.Pronoun.Capabilities
 import Linglib.Syntax.Category.Pronoun.Demonstrative
 import Linglib.Syntax.Category.Pronoun.Indefinite
 import Linglib.Syntax.Category.Pronoun.IndefiniteParadigm

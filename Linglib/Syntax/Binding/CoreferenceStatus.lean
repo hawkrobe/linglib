@@ -51,56 +51,19 @@ abbrev BindingSource (α : Type _) := α → Option BindingClass
 
 end Binding
 
-/-! ### The `Bound` capability: total binding class on a carrier
+namespace Binding.BindingClass
 
-The typeclass face of the binding-class axis, beside its partial companion
-`Binding.BindingSource`. The *class* is theory-neutral and lives here; each carrier's
-*instance* lives with the carrier (`Pronoun` in `Syntax/Category/Pronoun/Capabilities.lean`,
-Italian clitics and Turkish anaphors in their Fragments). -/
+/-- A class is an anaphor's, Principle A, when it is reflexive or reciprocal. -/
+def IsAnaphor (c : BindingClass) : Prop := c = .reflexive ∨ c = .reciprocal
 
-/-- A carrier whose every element carries a (total) `Binding.BindingClass` — its Principle A/B/C
-role. The typed companion to `Binding.BindingSource` (`α → Option BindingClass`, the *partial*
-source the framework-neutral binding engine consumes): `Bound` is the case where the kind fixes the
-class for the whole carrier. -/
-class Bound (α : Type _) where
-  /-- The Principle A anaphor / B pronominal / C R-expression class. -/
-  bindingClass : α → Binding.BindingClass
+/-- A class is a pronominal's, Principle B. -/
+def IsPronominal (c : BindingClass) : Prop := c = .pronoun
 
-/-- A `[Bound α]` carrier's `Binding.BindingSource` — the canonical mixin → source bridge:
-every element classifies, so the source is total (`some` everywhere). -/
-def Bound.source {α : Type _} [Bound α] : Binding.BindingSource α :=
-  fun a => some (Bound.bindingClass a)
+/-- A class is a referring expression's, Principle C. -/
+def IsRExpression (c : BindingClass) : Prop := c = .rExpression
 
-/-- Principle-A carrier: every element is an anaphor (reflexive or reciprocal). -/
-class Anaphoric (α : Type _) [Bound α] : Prop where
-  isAnaphor : ∀ a : α, Bound.bindingClass a = .reflexive ∨ Bound.bindingClass a = .reciprocal
+instance (c : BindingClass) : Decidable c.IsAnaphor := inferInstanceAs (Decidable (_ ∨ _))
+instance (c : BindingClass) : Decidable c.IsPronominal := inferInstanceAs (Decidable (_ = _))
+instance (c : BindingClass) : Decidable c.IsRExpression := inferInstanceAs (Decidable (_ = _))
 
-/-- Principle-B carrier: every element is a pronominal. -/
-class Pronominal (α : Type _) [Bound α] : Prop where
-  isPronominal : ∀ a : α, Bound.bindingClass a = .pronoun
-
-/-- Principle-C carrier: every element is a referring expression (an R-expression — proper name,
-full NP). Named for the adjectival parallel with `Anaphoric`/`Pronominal`. -/
-class Referring (α : Type _) [Bound α] : Prop where
-  isReferring : ∀ a : α, Bound.bindingClass a = .rExpression
-
-/-- `a` is a Principle-A anaphor (reflexive or reciprocal) — the A/B/C partition as an *element*
-predicate over any `[Bound α]` carrier (a `Pronoun`, an Italian clitic, a Turkish anaphor, …). The
-element-level companion to the carrier-level `Anaphoric` type-marker. -/
-def Bound.IsAnaphor {α : Type _} [Bound α] (a : α) : Prop :=
-  Bound.bindingClass a = .reflexive ∨ Bound.bindingClass a = .reciprocal
-
-/-- `a` is a Principle-B pronominal. -/
-def Bound.IsPronominal {α : Type _} [Bound α] (a : α) : Prop :=
-  Bound.bindingClass a = .pronoun
-
-/-- `a` is a Principle-C R-expression. -/
-def Bound.IsRExpression {α : Type _} [Bound α] (a : α) : Prop :=
-  Bound.bindingClass a = .rExpression
-
-instance {α : Type _} [Bound α] (a : α) : Decidable (Bound.IsAnaphor a) := by
-  unfold Bound.IsAnaphor; infer_instance
-instance {α : Type _} [Bound α] (a : α) : Decidable (Bound.IsPronominal a) := by
-  unfold Bound.IsPronominal; infer_instance
-instance {α : Type _} [Bound α] (a : α) : Decidable (Bound.IsRExpression a) := by
-  unfold Bound.IsRExpression; infer_instance
+end Binding.BindingClass
