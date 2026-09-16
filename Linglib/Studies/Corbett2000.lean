@@ -4,12 +4,12 @@ import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.NormNum
+import Linglib.Syntax.Agreement.Classes
 import Linglib.Syntax.Number.Resolve
 import Linglib.Semantics.Reference.Prominence
 import Linglib.Fragments.Bayso.Number
 import Linglib.Fragments.Teop.Nouns
 import Linglib.Studies.Corbett1991
-import Linglib.Studies.Corbett1998
 import Linglib.Data.Examples.Corbett2000
 
 /-!
@@ -525,7 +525,7 @@ end Kiowa
 against plural *o* and singular *o* against plural *a*, an inverse system which in the
 fragment's two classes has the shape of the Somali article's polarity, Table 5.16. -/
 theorem teop_inverse :
-    Corbett1998.Polar (λ (g : Teop.Gender) (pl : Bool) => Teop.articleForm ⟨g, pl, false⟩) := by
+    Gender.Polar (fun (g : Teop.Gender) (pl : Bool) ↦ Teop.articleForm ⟨g, pl, false⟩) := by
   decide
 
 namespace Rembarrnga
