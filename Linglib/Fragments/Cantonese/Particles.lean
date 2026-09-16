@@ -20,7 +20,7 @@ analysis of [liu-yip-2026] and live in `Studies/LiuYip2026.lean`.
 
 namespace Cantonese.Particles
 
-open Presupposition.TriggerTypology
+open Presupposition
 
 /-- A Cantonese presupposition trigger: its character, its jyutping, its gloss and its trigger
 class. -/
@@ -32,7 +32,7 @@ structure PresupParticle where
   /-- The gloss. -/
   gloss : String
   /-- The trigger class. -/
-  trigger : PresupTrigger
+  trigger : Trigger
   deriving Repr, DecidableEq
 
 /-- The preverbal *jau* 又 'again'. -/

@@ -49,12 +49,12 @@ def Argument.thetaLabel (a : Argument) : Option ThetaRole :=
 def arguments (v : Verb) : List Argument :=
   let frame := v.frames.head?.getD []
   let nominals := frame.countP (· == Complement.Position.nominal)
-  let subj : Argument := ⟨true, v.effectiveSubjectEntailments⟩
+  let subj : Argument := ⟨true, v.subjectProfile?⟩
   let objects : List Argument :=
     match nominals with
     | 0 => []
-    | 1 => [⟨true, v.effectiveObjectEntailments⟩]
-    | _ => [⟨true, none⟩, ⟨true, v.effectiveObjectEntailments⟩]
+    | 1 => [⟨true, v.objectProfile?⟩]
+    | _ => [⟨true, none⟩, ⟨true, v.objectProfile?⟩]
   let obliques : List Argument :=
     (frame.filter (· == Complement.Position.adpositional)).map
       (fun _ => ⟨false, none⟩)

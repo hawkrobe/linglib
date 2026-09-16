@@ -4,6 +4,7 @@ import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Clause.Complementation
 import Linglib.Morphology.Word.Basic
 import Linglib.Fragments.English.Inflection
+import Linglib.Semantics.Causation.Verb
 
 open Morphology (Word)
 
@@ -3475,12 +3476,6 @@ theorem make_type_verbs_share_semantics :
     it uses the dual `preventSem` (blocking). -/
 theorem prevent_not_sufficiency :
     ¬ prevent.toVerb.AssertsSufficiency := by decide
-
-/-- "prevent" is an EN trigger — it entails ¬p in w₀ (complement
-    falsity), satisfying the FORGET class licensing condition
-    ([jin-koenig-2021], §6.1.4). -/
-theorem prevent_is_en_trigger :
-    prevent.toVerb.isENTrigger = true := rfl
 
 /-- make, force, and let have different builders despite shared truth conditions. -/
 theorem causative_builders_distinguished :

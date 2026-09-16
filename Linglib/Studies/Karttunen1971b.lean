@@ -59,7 +59,7 @@ def _root_.Presupposition.Environment.available : Environment → Available
 
 /-- The postulates of a class say that the sentence and its negation imply the complement for
 every factive, (11), and that its possibility does so for a true factive only, (11'). -/
-def _root_.Factivity.Yields : Factivity → Available → Prop
+def _root_.Presupposition.Factivity.Yields : Factivity → Available → Prop
   | _, .sentence => True
   | _, .negation => True
   | .full, .possibility => True
@@ -90,7 +90,7 @@ def verbs : List Verb := [regret.toVerb, realize.toVerb, discover.toVerb]
 
 /-- The Fragment entry for a row's verb. -/
 def verbOf (row : LinguisticExample) : Option Verb :=
-  (row.feature? "verb").bind (lookupSense verbs ·)
+  (row.feature? "verb").bind (Verb.find? verbs ·)
 
 /-- The judgments of (2), (22) and (24)–(26) are the postulates' predictions, *regret*'s
 complement following everywhere and *realize*'s and *discover*'s under negation only. -/

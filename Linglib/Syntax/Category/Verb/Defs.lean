@@ -5,7 +5,6 @@ import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Presupposition.TriggerTypology
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Attitudes.Basic
-import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Logic.Natural.Basic
@@ -20,103 +19,85 @@ import Linglib.Semantics.Root.Defs
 
 /-! # Verb entry — core type
 
-Framework-agnostic types for verb semantics: the selectional/inflectional enums
-(`VoiceType`, `SenseTag`, …; complementation enums live in
-`Syntax/Clause/Complementation.lean`) and the `Verb` structure that bundles the
-semantic fields shared across languages.
+The framework-neutral verb entry: the selectional and inflectional enums (`VoiceType`,
+`SenseTag`, `ImplicitInterp`) and the `Verb` structure, whose fields are grouped into the
+facets `Verb.ArgStructure`, `Verb.Aspect`, `Verb.Presupposition`, `Verb.Causation` and
+`Verb.Attitude` and shared by every language's fragment. Complement selection is a list of
+typed frames, and a frame-conditioned attitude, opacity or control lives on a `Verb.Reading`
+row. The classifications of an entry, factive, causative, trigger and so on, are read off
+these fields in `Syntax/Category/Verb/Basic.lean`.
 
-`Verb` is the **semantic spine** of a verb entry. Its fields are organised
-into facet structures under the `Verb` namespace — `Verb.ArgStructure`,
-`Verb.Aspect`, `Verb.Presupposition`, `Verb.Causation`, `Verb.Attitude`
-— which `Verb` composes via `extends`. Flat field access
-(`v.frames`, `v.attitude`, …) is preserved by `extends`-flattening, and
-language fragments extend `Verb` with their own inflectional paradigms.
-Complement selection is a list of typed `Frame`s
-(`Syntax/Category/Verb/Complement/Basic.lean`); frame-conditioned
-attitude/opacity/control lives on `Verb.Reading` rows; the flat
-readers (`v.complementType`, `v.controlType`, …) are derived accessors
-over `frames`/`readings`.
+## Implementation notes
 
-Verb classification (factive, causative, attitude, …) is DERIVED from these
-primitive fields in `Syntax/Category/Verb/Basic.lean`, not stipulated as an enum.
+* `Verb` composes its facets by `extends`, so a field is reached flat, as `v.frames`, and a
+  language fragment extends `Verb` with its inflectional paradigm.
+* The facets share their names with the theory namespaces whose values they hold, so a
+  facet field names its type with `_root_`.
 
-## Main declarations
-* `Verb` — the composed verb entry spine
-* `Verb.ArgStructure`, `Verb.Aspect`, `Verb.Presupposition`, `Verb.Causation`,
-  `Verb.Attitude` — the field facets
+## References
 
-## Design
-[bale-schwarz-2026] [dayal-2025] [heim-1992] [icard-2012] [kennedy-2007] [maier-2015] [qing-uegaki-2025] [rappaport-hovav-levin-2024] [solstad-bott-2024] [rappaport-hovav-levin-1998]
+* [bale-schwarz-2026]
+* [dayal-2025]
+* [heim-1992]
+* [icard-2012]
+* [kennedy-2007]
+* [maier-2015]
+* [qing-uegaki-2025]
+* [rappaport-hovav-levin-2024]
+* [rappaport-hovav-levin-1998]
+* [solstad-bott-2024]
 -/
 
-open Aspect
-open Presupposition
-open Aspect
-open ArgumentStructure
-open Aspect
+open Aspect ArgumentStructure Presupposition
 open NaturalLogic (Signature)
 open Causation.Psych (CausalSource)
-open ArgumentStructure (EntailmentProfile)
-open Aspect (DegreeAchievementScale)
-open Aspect (VerbIncClass)
-open ArgumentStructure
 
 /-! ### Selectional and inflectional enums -/
 
-/-- Framework-neutral voice type for deriving argument structure properties.
-
-    Captures the external-argument dimension of the verb's syntactic frame
-    without committing to a specific syntactic framework. Maps to
-    `Minimalist.Voice.Flavor` via bridge theorems in interface files.
-
-    - `agentive`: External argument introduced (transitive/unergative)
-    - `nonThematic`: No external argument (unaccusative/anticausative)
-    - `expletive`: No specifier, no semantics (middle voice)
-    - `reflexive`: Agent that binds internal argument ([wood-2015])
-    - `experiencer`: Experiencer external argument ([wood-2015]) -/
+/-- The external-argument dimension of a verb's frame, neutral between syntactic frameworks. -/
 inductive VoiceType where
-  | agentive     -- External argument introduced
-  | nonThematic  -- No external argument (unaccusative)
-  | expletive    -- No specifier, no semantics (middle)
-  | reflexive    -- Agent binds internal argument ([wood-2015])
-  | experiencer  -- Experiencer external argument ([wood-2015])
+  /-- An external argument is introduced: transitives and unergatives. -/
+  | agentive
+  /-- No external argument: unaccusatives and anticausatives. -/
+  | nonThematic
+  /-- No specifier and no semantics: the middle voice. -/
+  | expletive
+  /-- An agent that binds the internal argument ([wood-2015]). -/
+  | reflexive
+  /-- An experiencer external argument ([wood-2015]). -/
+  | experiencer
   deriving DecidableEq, Repr
 
-/-- Does this voice type introduce an external argument? -/
-def VoiceType.assignsTheta : VoiceType → Bool
-  | .agentive | .reflexive | .experiencer => true
-  | .nonThematic | .expletive => false
+/-- The voice type introduces an external argument. -/
+def VoiceType.AssignsTheta (vt : VoiceType) : Prop :=
+  vt = .agentive ∨ vt = .reflexive ∨ vt = .experiencer
 
-/--
-Disambiguates polysemous verb entries that share a citation form.
+instance : DecidablePred VoiceType.AssignsTheta := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
-When a verb has multiple lexical entries (e.g., "remember" as implicative
-vs. "remember" as factive question-embedding), the `SenseTag` records
-*why* multiple entries exist:
-- `.default`: primary/unmarked sense
-- `.rogative`: question-embedding sense
-- `.causative`: causative use of otherwise non-causative verb
-- `.instrumental`: instrument-specific sense
-- `.occasion`: occasion verb sense with experiencer subject
--/
+/-- The sense that distinguishes polysemous entries sharing a citation form, as *remember* the
+implicative and *remember* the question-embedding factive. -/
 inductive SenseTag where
-  | default       -- Primary/unmarked sense
-  | rogative      -- Question-embedding sense
-  | causative     -- Causative use of otherwise non-causative verb
-  | instrumental  -- Instrument-specific sense
-  | occasion      -- Occasion verb sense ([solstad-bott-2024]): agent-evocator subject
-  | stative       -- Stative reading of a polysemous verb (e.g., *suivre* 'follow' positional)
+  /-- The primary sense. -/
+  | default
+  /-- The question-embedding sense. -/
+  | rogative
+  /-- The causative use of an otherwise non-causative verb. -/
+  | causative
+  /-- The instrument-specific sense. -/
+  | instrumental
+  /-- The occasion sense, with an agent-evocator subject ([solstad-bott-2024]). -/
+  | occasion
+  /-- The stative reading of a polysemous verb, as positional *suivre* 'follow'. -/
+  | stative
   deriving DecidableEq, Repr
 
-/-- Interpretation of an implicit (unexpressed) argument.
-
-    Cross-linguistic: applies to any argument position where the verb allows
-    the argument to be absent. The distinction captures whether the missing
-    referent must be pragmatically recoverable (definite) or can be
-    unspecified (indefinite). [bruening-2021], [fillmore-1986]. -/
+/-- The interpretation of an unexpressed argument, pragmatically recoverable or unspecified
+([fillmore-1986], [bruening-2021]). -/
 inductive ImplicitInterp where
-  | indef   -- Existentially bound: unspecified "someone/something"
-  | def     -- Pragmatically recoverable definite
+  /-- Existentially bound: an unspecified someone or something. -/
+  | indef
+  /-- A pragmatically recoverable definite. -/
+  | def
   deriving DecidableEq, Repr
 
 /-! ### Field facets
@@ -141,13 +122,10 @@ structure ArgStructure where
   subjectEntailments : Option EntailmentProfile := none
   /-- Proto-role entailment profile for the first object (internal argument). -/
   objectEntailments : Option EntailmentProfile := none
-  /-- Is the verb unaccusative? (subject is underlying object)
-      When `voiceType` is present, prefer `derivedUnaccusative` which
-      derives this from Voice selection ([kratzer-1996]). -/
+  /-- The verb is unaccusative, its subject an underlying object; `Verb.IsUnaccusative` reads
+      the voice type first when one is recorded ([kratzer-1996]). -/
   unaccusative : Bool := false
-  /-- Framework-neutral voice type: determines whether an external argument
-      is introduced. When set, `derivedUnaccusative` derives unaccusativity
-      from this field, connecting the Fragment entry to Voice theory. -/
+  /-- The voice type, which fixes whether an external argument is introduced. -/
   voiceType : Option VoiceType := none
   /-- Can the verb passivize? -/
   passivizable : Bool := true
@@ -188,10 +166,10 @@ structure Aspect where
 structure Presupposition where
   /-- The [karttunen-1971b] factivity class of a factive predicate; `none` for a
       non-factive. -/
-  factivity : Option _root_.Factivity := none
+  factivity : Option _root_.Presupposition.Factivity := none
   /-- How does the verb treat presuppositions of its complement?
       Orthogonal to `Verb.triggerType`. [karttunen-1973] -/
-  projectionBehavior : Option Presupposition.ProjectionBehavior := none
+  projectionBehavior : Option _root_.Presupposition.ProjectionBehavior := none
   deriving Repr, BEq
 
 /-- Causal/implicative semantics: implicative polarity, causative mechanism,
@@ -211,8 +189,7 @@ structure Causation where
     attitude and opacity (`none` = inherit `Verb.attitude` /
     `Verb.opaqueContext`), and the frame's control type. -/
 structure Reading where
-  /-- The frame this reading is conditioned on (one of the verb's
-      `frames`; `Verb.readingsWF`). -/
+  /-- The frame this reading is conditioned on, one of the verb's frames. -/
   frame : Frame
   /-- Frame-conditioned attitude override. -/
   attitude : Option _root_.Attitude := none
@@ -248,7 +225,6 @@ structure Attitude where
 
 end Verb
 
-section
 /--
 Cross-linguistic verb core: all semantic fields shared across languages.
 
@@ -276,8 +252,6 @@ structure Verb extends
       Most verbs use `.default`; polysemous entries use descriptive tags. -/
   senseTag : SenseTag := .default
   deriving Repr, BEq
-
-end
 
 /-! ### Frame accessors
 
@@ -311,26 +285,20 @@ def Verb.attitudeOn (v : Verb) (fr : Frame) : Option _root_.Attitude :=
   ((v.readings.find? (·.frame == fr)).bind (·.attitude)).orElse
     fun _ => v.attitude
 
-/-- Every reading is keyed to one of the verb's frames. -/
-def Verb.readingsWF (v : Verb) : Prop :=
-  ∀ r ∈ v.readings, r.frame ∈ v.frames
-
 /-- All [noonan-2007] codings across the verb's frames. -/
 def Verb.codings (v : Verb) : List Complement.Coding :=
   v.frames.flatMap Frame.codings
 
 /-- Some frame of the verb records force `f`. -/
-def Verb.takesForce (v : Verb) (f : Mood.Illocutionary) : Prop :=
+def Verb.TakesForce (v : Verb) (f : Mood.Illocutionary) : Prop :=
   ∃ fr ∈ v.frames, fr.hasForce f
 
-instance (v : Verb) (f : Mood.Illocutionary) :
-    Decidable (v.takesForce f) :=
+instance (v : Verb) (f : Mood.Illocutionary) : Decidable (v.TakesForce f) :=
   inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))
 
-/-- The verb records an interrogative frame (responsives and
-    rogatives: know, wonder, ask). Derived from `frames`. -/
-def Verb.takesQuestionBase (v : Verb) : Bool :=
-  decide (v.takesForce .interrogative)
+/-- The verb records an interrogative frame, as the responsives and rogatives *know*, *wonder*
+and *ask* do. -/
+abbrev Verb.TakesQuestion (v : Verb) : Prop := v.TakesForce .interrogative
 
 /-- Some frame of the verb has a clausal position: the verb selects a CP or
     reduced clause ([schwarzer-2026]'s CP-selecting verbs). -/

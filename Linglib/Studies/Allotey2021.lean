@@ -104,7 +104,7 @@ def gaInventory : MinPronInventory PronForm where
 
 /-- The Fragment entry for a row's matrix verb. -/
 def verbOf (row : LinguisticExample) : Option Verb :=
-  (row.feature? "verb").bind (lookupSense verbs ·)
+  (row.feature? "verb").bind (Verb.find? verbs ·)
 
 /-- The clause type a complementizer feature names. -/
 def clauseOf : String → Option EmbeddedClauseType

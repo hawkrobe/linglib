@@ -9,6 +9,8 @@ import Linglib.Syntax.Category.Verb.Complement.Takes
 import Linglib.Semantics.Presupposition.Environment
 import Linglib.Studies.Karttunen1971b
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
+import Linglib.Semantics.Presupposition.Verb
+import Linglib.Semantics.Attitudes.Verb
 
 /-!
 # Deal (2026): Clausal complementation as relativization, revisited

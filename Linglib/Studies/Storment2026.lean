@@ -6,6 +6,7 @@ import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
+import Linglib.Semantics.ArgumentStructure.Verb
 
 /-!
 # Quotative Inversion as Smuggling
@@ -56,7 +57,7 @@ instance (v : Verb) : Decidable v.HasComplement := inferInstanceAs (Decidable (_
     non-thematic (anticausative) for unaccusatives, agentive for
     unergatives ([kratzer-1996]). -/
 def voiceFor (v : Verb) : Head :=
-  if v.derivedUnaccusative then anticausative else agentive
+  if v.IsUnaccusative then anticausative else agentive
 
 /-- The derived prediction: the verb licenses quotative inversion, its Voice being no phase
     head and its complement there to move (§4). -/
@@ -65,23 +66,21 @@ def DerivesQI (v : Verb) : Prop := ¬ v.voiceFor.IsPhasal ∧ v.HasComplement
 instance (v : Verb) : Decidable v.DerivesQI := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Unaccusative verbs project non-thematic (anticausative) Voice. -/
-theorem voiceFor_of_unaccusative (v : Verb)
-    (h : v.derivedUnaccusative = true) : v.voiceFor = anticausative := by
-  unfold voiceFor; simp [h]
+theorem voiceFor_of_unaccusative (v : Verb) (h : v.IsUnaccusative) :
+    v.voiceFor = anticausative := by simp [voiceFor, h]
 
 /-- Unergative verbs project agentive Voice. -/
-theorem voiceFor_of_unergative (v : Verb)
-    (h : v.derivedUnaccusative = false) : v.voiceFor = agentive := by
-  unfold voiceFor; simp [h]
+theorem voiceFor_of_unergative (v : Verb) (h : ¬ v.IsUnaccusative) : v.voiceFor = agentive := by
+  simp [voiceFor, h]
 
 /-- An unaccusative verb with a complement licenses QI. -/
 theorem derivesQI_of_unaccusative_with_complement (v : Verb)
-    (hu : v.derivedUnaccusative = true) (hc : v.HasComplement) : v.DerivesQI :=
+    (hu : v.IsUnaccusative) (hc : v.HasComplement) : v.DerivesQI :=
   ⟨by rw [voiceFor_of_unaccusative v hu]; decide, hc⟩
 
 /-- An unergative verb cannot license QI whatever its complement: agentive Voice is a phase
     head. -/
-theorem not_derivesQI_of_unergative (v : Verb) (hu : v.derivedUnaccusative = false) :
+theorem not_derivesQI_of_unergative (v : Verb) (hu : ¬ v.IsUnaccusative) :
     ¬ v.DerivesQI :=
   λ h => h.1 (by rw [voiceFor_of_unergative v hu]; decide)
 

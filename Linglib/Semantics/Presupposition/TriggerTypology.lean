@@ -1,22 +1,20 @@
 /-!
-# Presupposition trigger types
+# Presupposition triggers
 
-Classification of presupposition triggers by hosting lexical class, the
-consensus inventory of the projection literature (cf. [zeevat-1992],
-[tonhauser-beaver-roberts-simons-2013]). Fragment lexical entries carry a
-`PresupTrigger` value as theory-neutral metadata; orthogonal classifications
-of the same inventory are the projection classes of
-[tonhauser-beaver-roberts-simons-2013] in `Studies/TonhauserEtAl2013`. The
-hard/soft split of [abusch-2010] is `TriggerType`, and [karttunen-1973]'s
-plug/hole/filter classification of what a predicate does with its
-complement's presuppositions is `ProjectionBehavior`; a verb entry's trigger
-type is derived (`Verb.triggerType`).
+The classifications of a presupposition trigger: its hosting lexical class (`Trigger`, the
+consensus inventory of the projection literature after [zeevat-1992] and
+[tonhauser-beaver-roberts-simons-2013]), the hard/soft split of [abusch-2010] (`TriggerType`),
+[karttunen-1971b]'s split of the factive predicates into true factives and semi-factives
+(`Factivity`), and [karttunen-1973]'s plug/hole/filter classification of what a predicate does
+with the presuppositions of its complement (`ProjectionBehavior`). Lexical entries record the
+class and the projection behavior; a verb's trigger type is derived (`Verb.triggerType?`).
 
 ## References
 
 * [zeevat-1992]
 * [tonhauser-beaver-roberts-simons-2013]
 * [abusch-2010]
+* [karttunen-1971b]
 * [karttunen-1973]
 * [nadathur-2023-implicatives]
 -/
@@ -28,19 +26,22 @@ namespace Presupposition
 context-sensitively (*stop*, *know*), and an implicative presupposes a prerequisite. -/
 inductive TriggerType where
   /-- Projective in every context. -/
-  | hardTrigger
+  | hard
   /-- A factive or change-of-state trigger, locally accommodatable. -/
-  | softTrigger
+  | soft
   /-- An implicative, presupposing its causal prerequisite ([nadathur-2023-implicatives]). -/
-  | prerequisiteSoft
+  | prerequisite
   deriving DecidableEq, Repr
 
-/-- Is this trigger locally accommodatable (soft)?
-    Both factive and prerequisite triggers are soft. -/
-def TriggerType.isSoft : TriggerType → Bool
-  | .hardTrigger => false
-  | .softTrigger => true
-  | .prerequisiteSoft => true
+/-- The factivity class of a predicate ([karttunen-1971b]). -/
+inductive Factivity where
+  /-- A true factive such as *regret* or *forget*: the complement follows even from the
+  possibility of the sentence. -/
+  | full
+  /-- A semi-factive such as *know* or *discover*: the complement follows from the sentence and
+  its negation only. -/
+  | semi
+  deriving DecidableEq, Repr
 
 /--
 Complement presupposition projection behavior ([karttunen-1973]).
@@ -58,18 +59,13 @@ inductive ProjectionBehavior where
   | filter  -- Conditionally cancels complement presuppositions
   deriving DecidableEq, Repr
 
-end Presupposition
-
-
-namespace Presupposition.TriggerTypology
-
 /-- Presupposition trigger classes, by hosting lexical item. -/
-inductive PresupTrigger where
-  /-- Definite descriptions: "the X" presupposes X exists and is unique -/
+inductive Trigger where
+  /-- Definite descriptions: "the X" presupposes X exists and is unique. -/
   | definite
-  /-- Factive predicates: "know/regret that P" presupposes P -/
+  /-- Factive predicates: "know/regret that P" presupposes P. -/
   | factive
-  /-- Change-of-state predicates: "stop/start V-ing" presuppose a prior state -/
+  /-- Change-of-state predicates: "stop/start V-ing" presuppose a prior state. -/
   | changeOfState
   /-- Repetitive iteratives: "again" presupposes a prior occurrence.
       An intervening ¬P interval (P-then-¬P-then-P-again) is presupposed
@@ -78,7 +74,7 @@ inductive PresupTrigger where
       (cf. [von-stechow-1996]). English *again*, German *wieder*,
       Mandarin *you* 又, Cantonese *jau*. -/
   | iterative
-  /-- Continuatives: "still" presuppose **uninterrupted** continuation
+  /-- Continuatives: "still" presuppose uninterrupted continuation
       of P throughout an interval up to and including the reference time.
       Distinct from `.iterative` (interruption presupposed only for
       statives) and from `.changeOfState` (which involves a polarity
@@ -95,10 +91,10 @@ inductive PresupTrigger where
   /-- Contrastives: "instead"-type particles presuppose a contextually
       salient contrary expectation. Mandarin *fan'er* 反而 / *er* 而. -/
   | contrastive
-  /-- Cleft constructions: "It was X that..." presupposes existence -/
+  /-- Cleft constructions: "It was X that..." presupposes existence. -/
   | cleft
-  /-- Aspectual predicates: "finish", "continue" presuppose event structure -/
+  /-- Aspectual predicates: "finish", "continue" presuppose event structure. -/
   | aspectual
   deriving DecidableEq, Repr
 
-end Presupposition.TriggerTypology
+end Presupposition

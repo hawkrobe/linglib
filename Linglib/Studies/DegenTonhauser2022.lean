@@ -1,5 +1,6 @@
 import Linglib.Studies.DegenTonhauser2021
 import Mathlib.Data.Finset.Lattice.Fold
+import Linglib.Semantics.Presupposition.Verb
 
 /-!
 # Degen and Tonhauser (2022): Are there factive predicates?

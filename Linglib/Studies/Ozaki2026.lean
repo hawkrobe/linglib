@@ -3,6 +3,7 @@ import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Passive
+import Linglib.Semantics.ArgumentStructure.Verb
 
 /-!
 # Ozaki (2026): Japanese Accusative/Ablative Alternation Verbs Are Unaccusative
@@ -76,7 +77,7 @@ theorem diagnostics_both_markings :
 is derived, and as non-passivizable. -/
 theorem alternation_verbs_unaccusative :
     ∀ v ∈ [Japanese.Predicates.hanareru, Japanese.Predicates.deru],
-      v.voiceType = some .nonThematic ∧ v.toVerb.derivedUnaccusative = true ∧
+      v.voiceType = some .nonThematic ∧ v.toVerb.IsUnaccusative ∧
         v.passivizable = false := by
   decide
 
