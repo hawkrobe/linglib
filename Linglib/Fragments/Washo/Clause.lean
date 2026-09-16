@@ -56,7 +56,7 @@ def aq : Complementizer where
 clause-typer of the clause it embeds. -/
 structure Verb extends _root_.Verb where
   /-- The [noonan-2007] class, `none` where the data give no clear assignment. -/
-  ctpClass : Option CTPClass
+  predicateClass : Option Complement.PredicateClass
   /-- The clause-typer on the embedded clause (Table 1). -/
   typer : Complementizer
   deriving Repr
@@ -71,7 +71,7 @@ def gum : Morph := .pref "gum"
 def hamupay : Verb where
   form := "hamup'ay"
   frames := [Frame.finiteClause]
-  ctpClass := some .knowledge
+  predicateClass := some .knowledge
   typer := ge
 
 /-- *hamup'ay-e:s* 'remember', negated 'forget' (8). -/
@@ -81,7 +81,7 @@ def hamupayEs : Verb := { hamupay with form := hamupay.form ++ toString es }
 def ashashEs : Verb where
   form := "ašaš" ++ toString es
   frames := [Frame.finiteClause, Frame.np]
-  ctpClass := some .knowledge
+  predicateClass := some .knowledge
   typer := ge
 
 /-- *i:gi* 'see'; it also takes an internally headed relative and a plain DP ((10), (20),
@@ -89,7 +89,7 @@ def ashashEs : Verb where
 def iigi : Verb where
   form := "i:gi"
   frames := [Frame.finiteClause, Frame.np]
-  ctpClass := some .perception
+  predicateClass := some .perception
   typer := ge
 
 /-- *damal* 'hear', attested only with event nominalizations, the perception reading that needs
@@ -97,21 +97,21 @@ no FPROP shift ((11), (84)). -/
 def damal : Verb where
   form := "damal"
   frames := [Frame.finiteClause]
-  ctpClass := some .perception
+  predicateClass := some .perception
   typer := ge
 
 /-- *hamu* 'think', intransitive, questioned with *how* rather than *what* ((2), (49)). -/
 def hamu : Verb where
   form := "hamu"
   frames := []
-  ctpClass := some .propAttitude
+  predicateClass := some .propAttitude
   typer := aq
 
 /-- *i:d* 'say', intransitive ((14), (50)). -/
 def iid : Verb where
   form := "i:d"
   frames := []
-  ctpClass := some .utterance
+  predicateClass := some .utterance
   typer := aq
   speechActVerb := true
 
@@ -119,7 +119,7 @@ def iid : Verb where
 def metgiibilEs : Verb where
   form := "mɨtgi:bɨl" ++ toString es
   frames := []
-  ctpClass := some .propAttitude
+  predicateClass := some .propAttitude
   typer := aq
 
 /-- *suʔuʔuš* 'dream' without the reflexive, transitive; its nominalized clause is an internally
@@ -127,7 +127,7 @@ headed relative ((53), (55)). -/
 def suus : Verb where
   form := "suʔuʔuš"
   frames := [Frame.np, Frame.finiteClause]
-  ctpClass := none
+  predicateClass := none
   typer := ge
 
 /-- *gum-suʔuʔuš* 'dream' with the reflexive, intransitive; its dependent-mood clause is read as a

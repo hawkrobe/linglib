@@ -9,8 +9,8 @@ import Mathlib.Data.Nat.Basic
 The cross-linguistic complementation typology: [noonan-2007]'s six
 morphological complement codings (`Complement.Coding`, in his summary
 table's row order via `rank`) and twelve of his fourteen
-complement-taking-predicate classes (`CTPClass`) with their default
-reality status (`RealityStatus`, `ctpRealityStatus`), plus the control
+complement-taking-predicate classes (`Complement.PredicateClass`) with their default
+reality status (`RealityStatus`, `Complement.PredicateClass.realityStatus`), plus the control
 enum for infinitival complements (`ControlType`).
 
 The typed complement-frame object, the flat `ComplementType` view, and
@@ -25,8 +25,8 @@ typological vocabulary rather than analytical commitments.
 
 * `Complement.Coding` + `isReduced` + `rank` — [noonan-2007]'s complement
   types, classified by the morphological coding of the complement clause
-* `CTPClass`, `RealityStatus`, `ctpRealityStatus` — [noonan-2007]'s CTP
-  classification and realis/irrealis defaults
+* `Complement.PredicateClass`, `RealityStatus`, `Complement.PredicateClass.realityStatus` —
+  [noonan-2007]'s predicate classification and realis/irrealis defaults
 * `ControlType` — subject/object control vs raising for infinitival
   complements
 -/
@@ -83,8 +83,8 @@ instance : LinearOrder Coding :=
 
 end Complement
 
-/-- Twelve of [noonan-2007]'s fourteen CTP classes (§3.2; predicates of
-    fearing §3.2.6 and conjunctive predicates §3.2.14 are omitted), in
+/-- Twelve of [noonan-2007]'s fourteen classes of complement-taking predicate (§3.2;
+    predicates of fearing §3.2.6 and conjunctive predicates §3.2.14 are omitted), in
     the chapter's presentation order with perception hoisted next to the
     epistemic classes:
     - Utterance/propAttitude/pretence: report/judge propositional content
@@ -92,8 +92,8 @@ end Complement
     - Perception: direct experience
     - Desiderative/manipulative/modal: irrealis orientation
     - Achievement/phasal: aspectual
-    - Negative: negation as CTP -/
-inductive CTPClass where
+    - Negative: negation as the predicate -/
+inductive Complement.PredicateClass where
   | utterance       -- say, tell, report
   | propAttitude    -- believe, think, suppose
   | pretence        -- pretend, act as if
@@ -121,12 +121,12 @@ inductive RealityStatus where
   | irrealis  -- CTP does not commit to complement truth
   deriving DecidableEq, Repr
 
-/-- Default reality status of each CTP class, extending [noonan-2007]'s
+/-- Default reality status of each predicate class, extending [noonan-2007]'s
     realis/irrealis mood distinction (§3.1.1) from complement roles to
-    CTP classes. The phasal and perception assignments are extensions:
+    predicate classes. The phasal and perception assignments are extensions:
     Noonan assigns their complements determined time reference, not a
     mood value. -/
-def ctpRealityStatus : CTPClass → RealityStatus
+def Complement.PredicateClass.realityStatus : Complement.PredicateClass → RealityStatus
   | .utterance    => .realis
   | .propAttitude => .realis
   | .pretence     => .irrealis

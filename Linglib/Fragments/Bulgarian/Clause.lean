@@ -57,7 +57,7 @@ def zadeto : Complementizer where
 /-- A Bulgarian complement-taking predicate is a verb entry with its [noonan-2007] class. -/
 structure Verb extends _root_.Verb where
   /-- The [noonan-2007] class, `none` where the data give no clear assignment. -/
-  ctpClass : Option CTPClass
+  predicateClass : Option Complement.PredicateClass
   deriving Repr
 
 /-- The frames of an emotive factive, a finite clause or a *za* phrase (59). -/
@@ -67,7 +67,7 @@ private def emotiveFrames : List Frame := [Frame.finiteClause, [.adpositional]]
 def sazhaljavam : Verb where
   form := "săžaljavam"
   frames := emotiveFrames
-  ctpClass := some .commentative
+  predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .negative))
   factivity := some .emotive
 
@@ -75,14 +75,14 @@ def sazhaljavam : Verb where
 def vinovenSam : Verb where
   form := "vinoven săm"
   frames := emotiveFrames
-  ctpClass := some .commentative
+  predicateClass := some .commentative
   factivity := some .emotive
 
 /-- *jad me e* 'be sorry, regret' ((56b)). -/
 def jadMeE : Verb where
   form := "jad me e"
   frames := emotiveFrames
-  ctpClass := some .commentative
+  predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .negative))
   factivity := some .emotive
 
@@ -90,7 +90,7 @@ def jadMeE : Verb where
 def radvamSe : Verb where
   form := "radvam se"
   frames := emotiveFrames
-  ctpClass := some .commentative
+  predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .positive))
   factivity := some .emotive
 
@@ -98,7 +98,7 @@ def radvamSe : Verb where
 def nedovolstvam : Verb where
   form := "nedovolstvam"
   frames := emotiveFrames
-  ctpClass := some .commentative
+  predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .negative))
   factivity := some .emotive
 
@@ -106,7 +106,7 @@ def nedovolstvam : Verb where
 def pritesnjavamSe : Verb where
   form := "pritesnjavam se"
   frames := emotiveFrames
-  ctpClass := some .commentative
+  predicateClass := some .commentative
   attitude := some (.preferential .uncertaintyBased)
   factivity := some .emotive
 
@@ -114,7 +114,7 @@ def pritesnjavamSe : Verb where
 def zhalMiE : Verb where
   form := "žal mi e"
   frames := emotiveFrames
-  ctpClass := some .commentative
+  predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .negative))
   factivity := some .emotive
 
@@ -122,7 +122,7 @@ def zhalMiE : Verb where
 def machnoMiE : Verb where
   form := "măčno mi e"
   frames := emotiveFrames
-  ctpClass := some .commentative
+  predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .negative))
   factivity := some .emotive
 
@@ -130,7 +130,7 @@ def machnoMiE : Verb where
 def sramMeE : Verb where
   form := "sram me e"
   frames := emotiveFrames
-  ctpClass := some .commentative
+  predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .negative))
   factivity := some .emotive
 
@@ -138,7 +138,7 @@ def sramMeE : Verb where
 def vazmushtavamSe : Verb where
   form := "văzmuštavam se"
   frames := [Frame.finiteClause]
-  ctpClass := some .commentative
+  predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .negative))
   factivity := some .emotive
 
@@ -146,42 +146,42 @@ def vazmushtavamSe : Verb where
 def razbiram : Verb where
   form := "razbiram"
   frames := [Frame.finiteClause]
-  ctpClass := some .knowledge
+  predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
 
 /-- *vzemam predvid* 'take into account', printed *previd* in the paper. -/
 def vzemamPredvid : Verb where
   form := "vzemam predvid"
   frames := [Frame.finiteClause]
-  ctpClass := none
+  predicateClass := none
   attitude := some (.doxastic .veridical)
 
 /-- *imam predvid* 'bear in mind'. -/
 def imamPredvid : Verb where
   form := "imam predvid"
   frames := [Frame.finiteClause]
-  ctpClass := none
+  predicateClass := none
   attitude := some (.doxastic .veridical)
 
 /-- *prenebregvam* 'ignore'. -/
 def prenebregvam : Verb where
   form := "prenebregvam"
   frames := [Frame.finiteClause]
-  ctpClass := none
+  predicateClass := none
   attitude := some (.doxastic .veridical)
 
 /-- *griža se* 'take care'. -/
 def grizhaSe : Verb where
   form := "griža se"
   frames := [Frame.finiteClause]
-  ctpClass := none
+  predicateClass := none
   attitude := some (.doxastic .veridical)
 
 /-- *znaja* 'know', a semi-factive. -/
 def znaja : Verb where
   form := "znaja"
   frames := [Frame.finiteClause]
-  ctpClass := some .knowledge
+  predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
@@ -189,7 +189,7 @@ def znaja : Verb where
 def pomnja : Verb where
   form := "pomnja"
   frames := [Frame.finiteClause]
-  ctpClass := some .knowledge
+  predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
@@ -197,7 +197,7 @@ def pomnja : Verb where
 def otkrivam : Verb where
   form := "otkrivam"
   frames := [Frame.finiteClause]
-  ctpClass := some .knowledge
+  predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
@@ -205,7 +205,7 @@ def otkrivam : Verb where
 def vizhdam : Verb where
   form := "viždam"
   frames := [Frame.finiteClause]
-  ctpClass := some .perception
+  predicateClass := some .perception
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
@@ -213,7 +213,7 @@ def vizhdam : Verb where
 def chuvam : Verb where
   form := "čuvam"
   frames := [Frame.finiteClause]
-  ctpClass := some .perception
+  predicateClass := some .perception
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
@@ -221,7 +221,7 @@ def chuvam : Verb where
 def zabeljazvam : Verb where
   form := "zabeljazvam"
   frames := [Frame.finiteClause]
-  ctpClass := none
+  predicateClass := none
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
