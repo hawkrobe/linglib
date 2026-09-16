@@ -1,72 +1,126 @@
 import Mathlib.Data.Finset.Basic
+import Mathlib.Order.Monotone.Basic
+import Linglib.Core.Order.Prop
 import Linglib.Semantics.Reference.Iota
 
 /-!
 # Distinguishing descriptions
 
-A description identifies its referent against a contrast set when it holds of the referent
-and of no distractor, [dale-reiter-1995]'s distinguishing description and the first submaxim
-of [grice-1975]'s Quantity as [engelhardt-etal-2006] reads it for referring expressions. It is
-the Russellian uniqueness of `Reference.russellIota` over the domain the contrast set restricts
-(`distinguishes_iff_russellIota`), stated here with a finite contrast set and a description's
-extension so that it decides on a display.
+A description distinguishes its referent from a contrast set when the referent fits it strictly
+better than every distractor, the fit taking values in a preorder. At truth values this is the
+distinguishing description of [dale-reiter-1995], which holds of the referent and of no
+distractor, and the Russellian uniqueness of `Reference.russellIota` over the domain the
+contrast set restricts. Under a graded semantics it says the referent is the literal listener's
+best guess, since a strictly monotone rescaling of the fit such as the listener's normalization
+does not change it. A graded description distinguishes exactly when some level set of its fit
+does, so the truth-valued notion is the general one at a threshold.
 
 ## Main definitions
 
-* `Reference.Distinguishes`: `d` holds of `r` and of no member of `C`.
+* `Reference.Distinguishes fit C r d`: `r` fits `d` strictly better than every member of `C`.
 
 ## Main results
 
-* `distinguishes_iff_russellIota`: identification against `C` is the definite's uniqueness on
-  `insert r C`.
-* `distinguishes_univ_erase_iff`: against every other individual, `r` is the whole extension.
+* `distinguishes_prop_iff`: at truth values, `d` holds of `r` and of no distractor.
+* `distinguishes_iff_russellIota`, `distinguishes_univ_erase_iff`: identification is the
+  definite's uniqueness on the domain, and `r` is the whole extension against everything else.
+* `distinguishes_comp_iff`: invariance under strictly monotone rescaling of the fit.
+* `distinguishes_iff_exists_threshold`: a graded fit distinguishes exactly when some threshold
+  of it does.
 
 ## References
 
 * [dale-reiter-1995]
 * [grice-1975]
 * [engelhardt-etal-2006]
+* [degen-etal-2020]
 -/
 
 namespace Reference
 
-variable {D E : Type*} (ext : D → Set E) (C : Finset E) (r : E) (d : D)
+variable {D E α β : Type*}
 
-/-- `d` distinguishes `r` from the contrast set `C`: it holds of `r` and of no member of
-`C`. -/
-def Distinguishes : Prop := r ∈ ext d ∧ ∀ c ∈ C, c ∉ ext d
+section Preorder
 
-instance [∀ d, DecidablePred (· ∈ ext d)] : Decidable (Distinguishes ext C r d) := by
+variable [Preorder α] (fit : D → E → α) (C : Finset E) (r : E) (d : D)
+
+/-- The referent `r` fits the description `d` strictly better than every member of the
+contrast set `C`. -/
+def Distinguishes : Prop := ∀ c ∈ C, fit d c < fit d r
+
+instance [DecidableLT α] : Decidable (Distinguishes fit C r d) := by
   unfold Distinguishes; infer_instance
 
-variable {ext C r d}
+variable {fit C r d}
 
-theorem distinguishes_iff_disjoint :
-    Distinguishes ext C r d ↔ r ∈ ext d ∧ Disjoint (ext d) C := by
-  simp [Distinguishes, Set.disjoint_right]
+/-- A distinguishing description distinguishes against any smaller contrast set. -/
+theorem Distinguishes.anti (h : Distinguishes fit C r d) {C' : Finset E} (hC : C' ⊆ C) :
+    Distinguishes fit C' r d :=
+  fun c hc ↦ h c (hC hc)
 
-/-- Identification against a contrast set that excludes the referent is the Russellian
+end Preorder
+
+section LinearOrder
+
+variable [LinearOrder α] {fit : D → E → α} {C : Finset E} {r : E} {d : D}
+
+/-- A strictly monotone rescaling of the fit, such as the literal listener's normalization of a
+description over the domain, preserves distinguishing. -/
+theorem distinguishes_comp_iff [Preorder β] {φ : D → α → β} (hφ : ∀ d, StrictMono (φ d)) :
+    Distinguishes (fun d x ↦ φ d (fit d x)) C r d ↔ Distinguishes fit C r d :=
+  forall₂_congr fun c _ ↦ (hφ d).lt_iff_lt (a := fit d c) (b := fit d r)
+
+/-- A graded fit distinguishes exactly when some threshold of it does, and the referent's own
+fit is such a threshold. -/
+theorem distinguishes_iff_exists_threshold :
+    Distinguishes fit C r d ↔ ∃ t, Distinguishes (fun d x ↦ t ≤ fit d x) C r d := by
+  refine ⟨fun h ↦ ⟨fit d r, fun c hc ↦ Prop.lt_iff.2 ⟨not_le.2 (h c hc), le_rfl⟩⟩, ?_⟩
+  rintro ⟨t, h⟩ c hc
+  obtain ⟨hc', hr⟩ := Prop.lt_iff.1 (h c hc)
+  exact (not_le.1 hc').trans_le hr
+
+end LinearOrder
+
+/-! ### Truth-valued fit -/
+
+section TruthValues
+
+variable (fit : D → E → Prop) (C : Finset E) (r : E) (d : D)
+
+instance [∀ d x, Decidable (fit d x)] : Decidable (Distinguishes fit C r d) := by
+  unfold Distinguishes; infer_instance
+
+variable {fit C r d}
+
+/-- At truth values, a description distinguishes `r` from a nonempty contrast set exactly when
+it holds of `r` and of no distractor. -/
+theorem distinguishes_prop_iff (hC : C.Nonempty) :
+    Distinguishes fit C r d ↔ fit d r ∧ ∀ c ∈ C, ¬ fit d c := by
+  simp only [Distinguishes, Prop.lt_iff]
+  exact ⟨fun h ↦ ⟨(h _ hC.choose_spec).2, fun c hc ↦ (h c hc).1⟩,
+    fun ⟨hr, h⟩ c hc ↦ ⟨h c hc, hr⟩⟩
+
+/-- Identification against a nonempty contrast set that excludes the referent is the Russellian
 uniqueness of the description on the domain `insert r C`. -/
-theorem distinguishes_iff_russellIota [DecidableEq E] (hr : r ∉ C) :
-    Distinguishes ext C r d ↔ russellIota (fun x ↦ x ∈ ext d ∧ x ∈ insert r C) = some r := by
-  rw [russellIota_eq_some_iff]
-  simp only [Distinguishes, Finset.mem_insert, true_or, and_true]
+theorem distinguishes_iff_russellIota [DecidableEq E] (hC : C.Nonempty) (hr : r ∉ C) :
+    Distinguishes fit C r d ↔ russellIota (fun x ↦ fit d x ∧ x ∈ insert r C) = some r := by
+  rw [distinguishes_prop_iff hC, russellIota_eq_some_iff]
+  simp only [Finset.mem_insert, true_or, and_true]
   exact and_congr_right fun _ ↦
     ⟨fun h x ⟨hx, hxr⟩ ↦ hxr.elim id fun hxC ↦ (h x hxC hx).elim,
       fun h c hc hc' ↦ hr (h c ⟨hc', .inr hc⟩ ▸ hc)⟩
 
-/-- Against every other individual of a finite domain, a description distinguishes `r` exactly
-when `r` is its whole extension. -/
-theorem distinguishes_univ_erase_iff [Fintype E] [DecidableEq E] :
-    Distinguishes ext (Finset.univ.erase r) r d ↔ ext d = {r} := by
-  simp only [Distinguishes, Finset.mem_erase, Finset.mem_univ, and_true,
-    Set.eq_singleton_iff_unique_mem]
+/-- Against every other individual of a finite domain with at least two, a description
+distinguishes `r` exactly when `r` is its whole extension. -/
+theorem distinguishes_univ_erase_iff [Fintype E] [DecidableEq E] [Nontrivial E] :
+    Distinguishes fit (Finset.univ.erase r) r d ↔ {x | fit d x} = {r} := by
+  obtain ⟨x, hx⟩ := exists_ne r
+  rw [distinguishes_prop_iff ⟨x, Finset.mem_erase.2 ⟨hx, Finset.mem_univ x⟩⟩]
+  simp only [Finset.mem_erase, Finset.mem_univ, and_true, Set.eq_singleton_iff_unique_mem,
+    Set.mem_ofPred_eq]
   exact and_congr_right fun _ ↦ ⟨fun h x hx ↦ by_contra fun hxr ↦ h x hxr hx,
     fun h c hc hc' ↦ hc (h c hc')⟩
 
-/-- A distinguishing description distinguishes against any smaller contrast set. -/
-theorem Distinguishes.anti (h : Distinguishes ext C r d) {C' : Finset E} (hC : C' ⊆ C) :
-    Distinguishes ext C' r d :=
-  ⟨h.1, fun c hc ↦ h.2 c (hC hc)⟩
+end TruthValues
 
 end Reference
