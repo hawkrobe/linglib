@@ -41,8 +41,11 @@ Designated articulators are the articulator features a segment is specified for
 The contested placements are Hayes's: [strident] and [lateral] are coronal where
 Gussenhoven and Jacobs, Davenport and Hannahs and Clements make them manner
 features, and [tense] is a vowel feature under dorsal where the tree-drawing textbooks give
-[ATR] its own radical or pharyngeal node. Agreement on a class or on the place class is
-decidable, so AGREE-style facts about Fragment segments close by `decide`.
+[ATR] its own radical or pharyngeal node. [ATR] itself, which Hayes lists among the vowel
+features without placing it and allows may be the same feature as [tense], sits beside
+[tense] under dorsal; Halle, Vaux and Wolfe's tree hangs it from Tongue Root in their study.
+Agreement on a class or on the place class is decidable, so AGREE-style facts about Fragment
+segments close by `decide`.
 
 ## References
 
@@ -79,7 +82,7 @@ def Feature.featureClass : Feature → FeatureClass
   | .voice | .spreadGlottis | .constrGlottis => .laryngeal
   | .labial | .round | .labiodental => .labial
   | .coronal | .anterior | .distributed | .strident | .lateral => .coronal
-  | .dorsal | .high | .low | .front | .back | .tense => .dorsal
+  | .dorsal | .high | .low | .front | .back | .tense | .atr => .dorsal
 
 namespace FeatureClass
 

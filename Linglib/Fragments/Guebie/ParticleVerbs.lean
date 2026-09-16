@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Harmony.TongueRoot
+import Linglib.Phonology.Segmental.Basic
 
 /-!
 # Guébie: vowels, ATR, and particle verbs
@@ -17,7 +17,8 @@ same phase, and carries its lexical value otherwise.
 
 ## Main definitions
 
-* `Guebie.Vowel`, `Guebie.Vowel.atr`: the ten-vowel inventory and its ±ATR split.
+* `Guebie.Vowel`, `Guebie.Vowel.segment`, `Guebie.inventory`: the ten vowels, their
+  segments, and the inventory; `Vowel.atr` is the ±ATR split.
 * `Guebie.Morpheme`: a transcription with vowel skeleton; `Morpheme.atr` is its
   lexical ATR value (morpheme-internal vowels agree, `Morpheme.ATRUniform`).
 * `Guebie.ParticleVerb`, `Guebie.particleVerbs`: the (10) inventory plus the
@@ -27,20 +28,40 @@ same phase, and carries its lexical value otherwise.
 
 namespace Guebie
 
+open Phonology
+
 /-- The ten Guébie vowels ([sande-2022] §3.2). Constructor names ASCII-ize the
     IPA (capital = lax −ATR counterpart): `schwa` = ə, `I` = ɪ, `E` = ɛ,
     `O` = ɔ, `U` = ʊ. -/
 inductive Vowel where
   | i | e | schwa | o | u
   | I | E | a | O | U
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
-open Phonology.TongueRoot (ATR)
+/-- A vowel of the given height and backness, rounded or not, with its [ATR] value. -/
+private def vowel (ht : Segment.Height) (bk : Segment.Backness) (round atr : Bool) :
+    Segment :=
+  ((Segment.vowel ht bk).setFeature .round round).setFeature .atr atr
 
-/-- The ±ATR split ([sande-clem-dabkowski-2026] (1)). -/
-def Vowel.atr : Vowel → ATR
-  | .i | .e | .schwa | .o | .u => .plus
-  | .I | .E | .a | .O | .U => .minus
+/-- Each vowel's segment: the ±ATR pairs /i ɪ/, /e ɛ/, /o ɔ/, /u ʊ/ and /ə a/
+    ([sande-clem-dabkowski-2026] (1)). -/
+def Vowel.segment : Vowel → Segment
+  | .i => vowel .high .front false true
+  | .e => vowel .mid .front false true
+  | .schwa => vowel .mid .central false true
+  | .o => vowel .mid .back true true
+  | .u => vowel .high .back true true
+  | .I => vowel .high .front false false
+  | .E => vowel .mid .front false false
+  | .a => vowel .low .central false false
+  | .O => vowel .mid .back true false
+  | .U => vowel .high .back true false
+
+/-- The vowel inventory. -/
+def inventory : Finset Segment := Finset.univ.image Vowel.segment
+
+/-- The ±ATR split, read off the segment. -/
+def Vowel.atr (v : Vowel) : Bool := decide (v.segment.HasValue .atr true)
 
 /-- A Guébie morpheme: transcription, vowel skeleton, optional gloss. -/
 structure Morpheme where
@@ -52,8 +73,8 @@ structure Morpheme where
 /-- The lexical ATR value: the value of the morpheme's (agreeing) vowels. The
     rare vowelless morphemes are treated as `[−ATR]`; they neither trigger nor
     block (kɔ-ɲ 'give' surfaces −ATR, (10)). -/
-def Morpheme.atr (m : Morpheme) : ATR :=
-  (m.vowels.head?.map Vowel.atr).getD .minus
+def Morpheme.atr (m : Morpheme) : Bool :=
+  (m.vowels.head?.map Vowel.atr).getD false
 
 /-- Morpheme-internal vowels agree in ATR ([sande-clem-dabkowski-2026] §2.1). -/
 def Morpheme.ATRUniform (m : Morpheme) : Prop :=
@@ -100,7 +121,7 @@ structure ParticleVerb where
 
 /-- The particle's surface ATR in SAuxOV contexts: the verb root's value
     ([sande-clem-dabkowski-2026] (12)). -/
-def ParticleVerb.harmonizedParticleATR (pv : ParticleVerb) : ATR :=
+def ParticleVerb.harmonizedParticleATR (pv : ParticleVerb) : Bool :=
   pv.verb.atr
 
 /-- The (10) inventory, plus the (11)–(12) /jɔkʊ/+/ni/ and /jɔkʊ/+/ŋwɔsa/ pairs. -/
@@ -119,13 +140,7 @@ theorem particleVerbs_ATRUniform :
 /-- The (11)–(12) alternation: −ATR /jɔkʊ/ surfaces +ATR ([joku]) under harmony
     with the +ATR root /ni/ 'see'. -/
 theorem joku_alternation :
-    jOkU.atr = .minus ∧
-    (ParticleVerb.mk jOkU ni "see").harmonizedParticleATR = .plus := by decide
-
-/-- Guébie's tongue-root row: a ten-vowel `/2IU/` system with root-controlled
-    harmony ([sande-clem-dabkowski-2026] §2.1; [casali-2024-inventory] (1)). No
-    dominance pattern is reported. -/
-def tongueRoot : Phonology.TongueRoot.TongueRootProfile :=
-  { inventoryClass := .twoIU, control := .rootControlled, dominant := none }
+    jOkU.atr = false ∧ (ParticleVerb.mk jOkU ni "see").harmonizedParticleATR = true := by
+  decide
 
 end Guebie

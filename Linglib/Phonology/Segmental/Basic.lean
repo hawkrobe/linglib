@@ -18,6 +18,8 @@ of the Parker sonority ranking.
 
 * `Segment.setFeature_hasValue` &c. — the feature-change operations act as specified.
 * `Sonority.Class.parkerRank_injective` — the Parker scale ranks classes distinctly.
+* `Sonority.Class.toSonority_ofSegment` — the Parker classification coarsens to the
+  six-level one.
 -/
 
 namespace Phonology
@@ -63,6 +65,12 @@ namespace Sonority.Class
 theorem parkerRank_injective : Function.Injective parkerRank := by
   intro a b h
   cases a <;> cases b <;> simp_all [parkerRank]
+
+/-- Classifying on the Parker scale and collapsing the voicing split is the six-level
+    classification. -/
+theorem toSonority_ofSegment (s : Segment) : (ofSegment s).toSonority = Sonority.ofSegment s := by
+  unfold ofSegment Sonority.ofSegment
+  split_ifs <;> rfl
 
 end Sonority.Class
 

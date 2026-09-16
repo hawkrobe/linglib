@@ -1252,7 +1252,6 @@ import Linglib.Studies.Ginzburg2012
 import Linglib.Studies.Heim1982
 import Linglib.Studies.Just2024
 import Linglib.Phonology.Harmony.Basic
-import Linglib.Phonology.Harmony.TongueRoot
 import Linglib.Phonology.OCP
 import Linglib.Phonology.OptimalityTheory.Antimatroid
 import Linglib.Phonology.OptimalityTheory.Cophonology
