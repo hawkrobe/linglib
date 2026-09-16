@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
-import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
+import Linglib.Syntax.Minimalist.SyntacticObject.Term
 import Linglib.Syntax.Binding.Basic
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns

@@ -161,6 +161,11 @@ def trace : SyntacticObject := ⟨UnorderedTree.leaf (Sum.inr none), by decide�
 /-- The trace of `tok`. -/
 def traceOf (tok : LIToken) : SyntacticObject := ⟨UnorderedTree.leaf (Sum.inr (some tok)), rfl⟩
 
+@[simp] theorem leaf_val (tok : LIToken) : (leaf tok).val = UnorderedTree.leaf (Sum.inl tok) := rfl
+@[simp] theorem trace_val : trace.val = UnorderedTree.leaf (Sum.inr none) := rfl
+@[simp] theorem traceOf_val (tok : LIToken) :
+    (traceOf tok).val = UnorderedTree.leaf (Sum.inr (some tok)) := rfl
+
 /-- A bare binary node is a syntactic object exactly when both daughters are. -/
 theorem isSyntacticObject_merge_iff (a b : UnorderedTree Vertex) :
     IsSyntacticObject (UnorderedTree.node (Sum.inr none) {a, b}) ↔

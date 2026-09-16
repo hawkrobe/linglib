@@ -218,7 +218,7 @@ def sneg : PlanarSyntacticObject := non * (tp * focBar)
 
 /-- Some constituent occupies the specifier of the unique focus phrase ([rizzi-1997]). -/
 def FocOccupied : Prop :=
-  ∃ x ∈ (sneg : SyntacticObject).Acc, (sneg : SyntacticObject).areSistersIn x focBar
+  ∃ x ∈ (sneg : SyntacticObject).accessibleTerms, (sneg : SyntacticObject).areSistersIn x focBar
 
 instance : Decidable FocOccupied := Multiset.decidableExistsMultiset
 

@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Probe.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
-import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
+import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
 # Agree: closest goals, horizons, and valuation
