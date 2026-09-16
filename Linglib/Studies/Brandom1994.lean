@@ -1,4 +1,4 @@
-import Linglib.Discourse.SpeechAct
+import Linglib.Discourse.Role
 import Linglib.Discourse.CommonGround
 
 /-!
