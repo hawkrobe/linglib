@@ -22,7 +22,7 @@ central vowel, *’* glottalization, and capital *L* and *M* voiceless sonorants
 * [bochnak-rhomieux-2013]
 -/
 
-namespace Washo.PropertyConcepts
+namespace Washo
 
 open Semantics
 
@@ -38,7 +38,7 @@ inductive Shape where
   deriving DecidableEq, Repr, Fintype
 
 /-- A property-concept stem. -/
-structure Entry where
+structure PropertyConcept where
   stem : String
   gloss : String
   category : PropertyConcept.Class
@@ -47,94 +47,94 @@ structure Entry where
 
 /-! ### Age -/
 
-def MiLe : Entry := ⟨"MiLe", "old", .age, .bare⟩
-def ešlut : Entry := ⟨"ešlut’", "young", .age, .suffixed⟩
+def MiLe : PropertyConcept := ⟨"MiLe", "old", .age, .bare⟩
+def ešlut : PropertyConcept := ⟨"ešlut’", "young", .age, .suffixed⟩
 
 /-! ### Color -/
 
-def leleg : Entry := ⟨"leleg", "red", .color, .prefixed⟩
-def pilpil : Entry := ⟨"p’ilp’il", "blue", .color, .prefixed⟩
-def popo : Entry := ⟨"popo", "white", .color, .prefixed⟩
-def šošoŋ : Entry := ⟨"šošoŋ", "brown", .color, .prefixed⟩
-def yiŋyiŋ : Entry := ⟨"ʔyɨŋʔyɨŋ", "varicolored", .color, .prefixed⟩
+def leleg : PropertyConcept := ⟨"leleg", "red", .color, .prefixed⟩
+def pilpil : PropertyConcept := ⟨"p’ilp’il", "blue", .color, .prefixed⟩
+def popo : PropertyConcept := ⟨"popo", "white", .color, .prefixed⟩
+def šošoŋ : PropertyConcept := ⟨"šošoŋ", "brown", .color, .prefixed⟩
+def yiŋyiŋ : PropertyConcept := ⟨"ʔyɨŋʔyɨŋ", "varicolored", .color, .prefixed⟩
 
 /-! ### Dimension -/
 
-def beheziŋ : Entry := ⟨"beheziŋ", "small", .dimension, .bare⟩
-def wgohat : Entry := ⟨"wgohat", "wide", .dimension, .bare⟩
-def lupdep : Entry := ⟨"ʔlupdep", "thin (of object)", .dimension, .bare⟩
-def udaw : Entry := ⟨"ʔudaw", "tall (of object)", .dimension, .bare⟩
-def iyel : Entry := ⟨"i:yel", "big", .dimension, .suffixed⟩
-def hamham : Entry := ⟨"hamham", "light (in weight)", .dimension, .prefixed⟩
-def šišiš : Entry := ⟨"šɨšɨš", "heavy", .dimension, .prefixed⟩
+def beheziŋ : PropertyConcept := ⟨"beheziŋ", "small", .dimension, .bare⟩
+def wgohat : PropertyConcept := ⟨"wgohat", "wide", .dimension, .bare⟩
+def lupdep : PropertyConcept := ⟨"ʔlupdep", "thin (of object)", .dimension, .bare⟩
+def udaw : PropertyConcept := ⟨"ʔudaw", "tall (of object)", .dimension, .bare⟩
+def iyel : PropertyConcept := ⟨"i:yel", "big", .dimension, .suffixed⟩
+def hamham : PropertyConcept := ⟨"hamham", "light (in weight)", .dimension, .prefixed⟩
+def šišiš : PropertyConcept := ⟨"šɨšɨš", "heavy", .dimension, .prefixed⟩
 
 /-! ### Human propensity -/
 
-def bišapu : Entry := ⟨"bišapuʔ", "hungry", .humanPropensity, .bare⟩
-def gumbiis : Entry := ⟨"gumbiʔis", "proud", .humanPropensity, .bare⟩
-def gumyol : Entry := ⟨"gumyoʔl", "tired", .humanPropensity, .bare⟩
-def kiwil : Entry := ⟨"k’iwɨl", "sharp-thinking", .humanPropensity, .bare⟩
-def Lokaš : Entry := ⟨"Lokaš", "afraid", .humanPropensity, .bare⟩
-def meleyik : Entry := ⟨"meleyɨk", "inebriated", .humanPropensity, .bare⟩
-def melotik : Entry := ⟨"melot’ik", "thirsty", .humanPropensity, .bare⟩
-def šašiw : Entry := ⟨"šašɨw", "afraid", .humanPropensity, .bare⟩
-def tesu : Entry := ⟨"t’e:su", "jealous", .humanPropensity, .bare⟩
-def yaha : Entry := ⟨"yaha", "sick/hurt", .humanPropensity, .bare⟩
-def yomuŋ : Entry := ⟨"yomuŋ", "full (from eating)", .humanPropensity, .bare⟩
-def yumil : Entry := ⟨"yumɨl", "full (from eating)", .humanPropensity, .bare⟩
-def gumsutim : Entry := ⟨"gumsut’ɨm", "brave", .humanPropensity, .suffixed⟩
-def musiw : Entry := ⟨"musiw", "generous", .humanPropensity, .suffixed⟩
-def tamugayl : Entry := ⟨"tamugayʔl", "bored", .humanPropensity, .suffixed⟩
+def bišapu : PropertyConcept := ⟨"bišapuʔ", "hungry", .humanPropensity, .bare⟩
+def gumbiis : PropertyConcept := ⟨"gumbiʔis", "proud", .humanPropensity, .bare⟩
+def gumyol : PropertyConcept := ⟨"gumyoʔl", "tired", .humanPropensity, .bare⟩
+def kiwil : PropertyConcept := ⟨"k’iwɨl", "sharp-thinking", .humanPropensity, .bare⟩
+def Lokaš : PropertyConcept := ⟨"Lokaš", "afraid", .humanPropensity, .bare⟩
+def meleyik : PropertyConcept := ⟨"meleyɨk", "inebriated", .humanPropensity, .bare⟩
+def melotik : PropertyConcept := ⟨"melot’ik", "thirsty", .humanPropensity, .bare⟩
+def šašiw : PropertyConcept := ⟨"šašɨw", "afraid", .humanPropensity, .bare⟩
+def tesu : PropertyConcept := ⟨"t’e:su", "jealous", .humanPropensity, .bare⟩
+def yaha : PropertyConcept := ⟨"yaha", "sick/hurt", .humanPropensity, .bare⟩
+def yomuŋ : PropertyConcept := ⟨"yomuŋ", "full (from eating)", .humanPropensity, .bare⟩
+def yumil : PropertyConcept := ⟨"yumɨl", "full (from eating)", .humanPropensity, .bare⟩
+def gumsutim : PropertyConcept := ⟨"gumsut’ɨm", "brave", .humanPropensity, .suffixed⟩
+def musiw : PropertyConcept := ⟨"musiw", "generous", .humanPropensity, .suffixed⟩
+def tamugayl : PropertyConcept := ⟨"tamugayʔl", "bored", .humanPropensity, .suffixed⟩
 
 /-! ### Value -/
 
-def aŋaw : Entry := ⟨"ʔaŋaw", "good", .value, .bare⟩
-def muaŋ : Entry := ⟨"mu:ʔaŋ", "tasty", .value, .suffixed⟩
-def nuš : Entry := ⟨"ʔnu:š", "poor condition", .value, .suffixed⟩
-def umbiic : Entry := ⟨"ʔumbiʔic’", "expensive", .value, .suffixed⟩
+def aŋaw : PropertyConcept := ⟨"ʔaŋaw", "good", .value, .bare⟩
+def muaŋ : PropertyConcept := ⟨"mu:ʔaŋ", "tasty", .value, .suffixed⟩
+def nuš : PropertyConcept := ⟨"ʔnu:š", "poor condition", .value, .suffixed⟩
+def umbiic : PropertyConcept := ⟨"ʔumbiʔic’", "expensive", .value, .suffixed⟩
 
 /-! ### Physical property -/
 
-def golgoš : Entry := ⟨"golgoš", "short and fat", .physicalProperty, .bare⟩
-def ibik : Entry := ⟨"ibik’", "ripe", .physicalProperty, .bare⟩
-def ihuk : Entry := ⟨"ihuk’", "dry", .physicalProperty, .bare⟩
-def keše : Entry := ⟨"k’eše", "alive", .physicalProperty, .bare⟩
-def metu : Entry := ⟨"metuʔ", "cold", .physicalProperty, .bare⟩
-def mipil : Entry := ⟨"mi:p’ɨl", "full", .physicalProperty, .bare⟩
-def mosot : Entry := ⟨"mosot", "wet", .physicalProperty, .bare⟩
-def mucucu : Entry := ⟨"muc’uc’u", "sweet", .physicalProperty, .bare⟩
-def wihl : Entry := ⟨"wɨhl", "cold", .physicalProperty, .bare⟩
-def yakaš : Entry := ⟨"yak’aš", "warm", .physicalProperty, .bare⟩
-def yasaŋ : Entry := ⟨"yasaŋ", "hot", .physicalProperty, .bare⟩
-def yayaŋ : Entry := ⟨"ʔyaʔyaŋ", "naked", .physicalProperty, .bare⟩
-def gucu : Entry := ⟨"guc’u", "torn", .physicalProperty, .suffixed⟩
-def gumbeyécik : Entry := ⟨"gumbeyéc’ɨk", "closed", .physicalProperty, .suffixed⟩
-def kakt : Entry := ⟨"kakt", "quiet", .physicalProperty, .suffixed⟩
-def Loyaw : Entry := ⟨"Loyaw", "dark", .physicalProperty, .suffixed⟩
-def nuuš : Entry := ⟨"nuʔuš", "stinky", .physicalProperty, .suffixed⟩
-def wkuli : Entry := ⟨"wkuliʔ", "solid", .physicalProperty, .suffixed⟩
-def yacim : Entry := ⟨"yac’im", "smoky", .physicalProperty, .suffixed⟩
-def babab : Entry := ⟨"ba:bab", "spotted", .physicalProperty, .prefixed⟩
-def huhu : Entry := ⟨"hu:hu", "striped", .physicalProperty, .prefixed⟩
-def kawkaw : Entry := ⟨"k’awk’aw", "closed", .physicalProperty, .prefixed⟩
-def kunkun : Entry := ⟨"k’unk’un", "bent", .physicalProperty, .prefixed⟩
-def kaykay : Entry := ⟨"kaykay", "tall", .physicalProperty, .prefixed⟩
-def kuškuš : Entry := ⟨"kuškuš", "short and fat", .physicalProperty, .prefixed⟩
-def lotlot : Entry := ⟨"lotlot", "soft", .physicalProperty, .prefixed⟩
-def mukmuk : Entry := ⟨"mukmuk", "chubby", .physicalProperty, .prefixed⟩
-def naynay : Entry := ⟨"naynay", "muddy", .physicalProperty, .prefixed⟩
-def pepel : Entry := ⟨"p’ep’el", "bitter", .physicalProperty, .prefixed⟩
-def pipi : Entry := ⟨"p’ɨp’ɨ", "thin", .physicalProperty, .prefixed⟩
-def šapšap : Entry := ⟨"šapšap", "fuzzy", .physicalProperty, .prefixed⟩
-def šišip : Entry := ⟨"ši:šip", "straight", .physicalProperty, .prefixed⟩
-def sinsin : Entry := ⟨"sɨnsɨn", "thin", .physicalProperty, .prefixed⟩
-def siwsiw : Entry := ⟨"siwsiw", "smooth", .physicalProperty, .prefixed⟩
-def tetep : Entry := ⟨"t’et’ep", "fat", .physicalProperty, .prefixed⟩
-def tintin : Entry := ⟨"t’ɨnt’ɨn", "rough", .physicalProperty, .prefixed⟩
-def witwit : Entry := ⟨"witwit", "stiff", .physicalProperty, .prefixed⟩
+def golgoš : PropertyConcept := ⟨"golgoš", "short and fat", .physicalProperty, .bare⟩
+def ibik : PropertyConcept := ⟨"ibik’", "ripe", .physicalProperty, .bare⟩
+def ihuk : PropertyConcept := ⟨"ihuk’", "dry", .physicalProperty, .bare⟩
+def keše : PropertyConcept := ⟨"k’eše", "alive", .physicalProperty, .bare⟩
+def metu : PropertyConcept := ⟨"metuʔ", "cold", .physicalProperty, .bare⟩
+def mipil : PropertyConcept := ⟨"mi:p’ɨl", "full", .physicalProperty, .bare⟩
+def mosot : PropertyConcept := ⟨"mosot", "wet", .physicalProperty, .bare⟩
+def mucucu : PropertyConcept := ⟨"muc’uc’u", "sweet", .physicalProperty, .bare⟩
+def wihl : PropertyConcept := ⟨"wɨhl", "cold", .physicalProperty, .bare⟩
+def yakaš : PropertyConcept := ⟨"yak’aš", "warm", .physicalProperty, .bare⟩
+def yasaŋ : PropertyConcept := ⟨"yasaŋ", "hot", .physicalProperty, .bare⟩
+def yayaŋ : PropertyConcept := ⟨"ʔyaʔyaŋ", "naked", .physicalProperty, .bare⟩
+def gucu : PropertyConcept := ⟨"guc’u", "torn", .physicalProperty, .suffixed⟩
+def gumbeyécik : PropertyConcept := ⟨"gumbeyéc’ɨk", "closed", .physicalProperty, .suffixed⟩
+def kakt : PropertyConcept := ⟨"kakt", "quiet", .physicalProperty, .suffixed⟩
+def Loyaw : PropertyConcept := ⟨"Loyaw", "dark", .physicalProperty, .suffixed⟩
+def nuuš : PropertyConcept := ⟨"nuʔuš", "stinky", .physicalProperty, .suffixed⟩
+def wkuli : PropertyConcept := ⟨"wkuliʔ", "solid", .physicalProperty, .suffixed⟩
+def yacim : PropertyConcept := ⟨"yac’im", "smoky", .physicalProperty, .suffixed⟩
+def babab : PropertyConcept := ⟨"ba:bab", "spotted", .physicalProperty, .prefixed⟩
+def huhu : PropertyConcept := ⟨"hu:hu", "striped", .physicalProperty, .prefixed⟩
+def kawkaw : PropertyConcept := ⟨"k’awk’aw", "closed", .physicalProperty, .prefixed⟩
+def kunkun : PropertyConcept := ⟨"k’unk’un", "bent", .physicalProperty, .prefixed⟩
+def kaykay : PropertyConcept := ⟨"kaykay", "tall", .physicalProperty, .prefixed⟩
+def kuškuš : PropertyConcept := ⟨"kuškuš", "short and fat", .physicalProperty, .prefixed⟩
+def lotlot : PropertyConcept := ⟨"lotlot", "soft", .physicalProperty, .prefixed⟩
+def mukmuk : PropertyConcept := ⟨"mukmuk", "chubby", .physicalProperty, .prefixed⟩
+def naynay : PropertyConcept := ⟨"naynay", "muddy", .physicalProperty, .prefixed⟩
+def pepel : PropertyConcept := ⟨"p’ep’el", "bitter", .physicalProperty, .prefixed⟩
+def pipi : PropertyConcept := ⟨"p’ɨp’ɨ", "thin", .physicalProperty, .prefixed⟩
+def šapšap : PropertyConcept := ⟨"šapšap", "fuzzy", .physicalProperty, .prefixed⟩
+def šišip : PropertyConcept := ⟨"ši:šip", "straight", .physicalProperty, .prefixed⟩
+def sinsin : PropertyConcept := ⟨"sɨnsɨn", "thin", .physicalProperty, .prefixed⟩
+def siwsiw : PropertyConcept := ⟨"siwsiw", "smooth", .physicalProperty, .prefixed⟩
+def tetep : PropertyConcept := ⟨"t’et’ep", "fat", .physicalProperty, .prefixed⟩
+def tintin : PropertyConcept := ⟨"t’ɨnt’ɨn", "rough", .physicalProperty, .prefixed⟩
+def witwit : PropertyConcept := ⟨"witwit", "stiff", .physicalProperty, .prefixed⟩
 
 /-- The seventy stems of the appendix. -/
-def all : List Entry :=
+def propertyConcepts : List PropertyConcept :=
   [MiLe, ešlut, leleg, pilpil, popo, šošoŋ, yiŋyiŋ, beheziŋ, wgohat, lupdep, udaw, iyel, hamham,
     šišiš, bišapu, gumbiis, gumyol, kiwil, Lokaš, meleyik, melotik, šašiw, tesu, yaha, yomuŋ,
     yumil, gumsutim, musiw, tamugayl, aŋaw, muaŋ, nuš, umbiic, golgoš, ibik, ihuk, keše, metu,
@@ -142,4 +142,4 @@ def all : List Entry :=
     yacim, babab, huhu, kawkaw, kunkun, kaykay, kuškuš, lotlot, mukmuk, naynay, pepel, pipi,
     šapšap, šišip, sinsin, siwsiw, tetep, tintin, witwit]
 
-end Washo.PropertyConcepts
+end Washo
