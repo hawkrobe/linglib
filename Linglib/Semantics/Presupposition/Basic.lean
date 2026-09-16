@@ -175,6 +175,16 @@ theorem neg_neg_assertion (p : PartialProp W) (w : W) :
 @[simp] theorem neg_neg (p : PartialProp W) : neg (neg p) = p :=
   PartialProp.ext rfl (funext fun _ => propext Classical.not_not)
 
+@[simp] theorem top_presup (w : W) : (top : PartialProp W).presup w := trivial
+
+@[simp] theorem top_assertion (w : W) : (top : PartialProp W).assertion w := trivial
+
+@[simp] theorem and_presup (p q : PartialProp W) (w : W) :
+    (p.and q).presup w ↔ p.presup w ∧ q.presup w := Iff.rfl
+
+@[simp] theorem and_assertion (p q : PartialProp W) (w : W) :
+    (p.and q).assertion w ↔ p.assertion w ∧ q.assertion w := Iff.rfl
+
 /-- The truth operator is always defined (it's a plug). -/
 @[simp] theorem truthOp_presup (p : PartialProp W) (w : W) :
     (truthOp p).presup w := trivial

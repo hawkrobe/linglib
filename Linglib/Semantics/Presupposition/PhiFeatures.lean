@@ -36,13 +36,6 @@ precisely those at the minimal cell (specLevel 0) with vacuous
 presuppositions. These are the values recruited cross-linguistically for
 honorification — an observation that falls out from the presuppositional
 framework without stipulation.
-
-## Architecture
-
-This file was extracted from `Sauerland2003` to
-separate general phi-feature presuppositional theory (which belongs in
-`Theories/`) from Sauerland's specific arguments about number (which
-belong in `Studies/`).
 -/
 
 namespace Presupposition.PhiFeatures
@@ -338,6 +331,93 @@ theorem gender_person_number_isomorphism :
   ⟨rfl, rfl, rfl, rfl⟩
 
 end GenderPresuppositions
+
+/-! ### Denotations of the feature values
+
+A feature value denotes through its bundle: `phiPresup` at the bundle's cell when the value
+has one, and the trivial presupposition when it has none (the impersonal person, the numbers
+beyond the dual, the non-sex-based genders) or when the feature is absent, the treatment of an
+unmarked or missing feature in [sauerland-2003]. The dual's minimality presupposition needs a
+mereological predicate the entity domain's order does not supply, so its cell is trivial here. -/
+
+section Values
+
+variable {E : Type*} {F : Type*} [ContainmentPairLike F] (innerP outerP : E → Prop)
+
+/-- The presupposition of an optional bundle: `phiPresup` at its cell, trivial when absent. -/
+def ofFeatures (f : Option F) : PartialProp E :=
+  f.elim PartialProp.top (phiPresup innerP outerP ∘ ContainmentPairLike.toPair)
+
+@[simp] theorem ofFeatures_none :
+    ofFeatures innerP outerP (none : Option F) = PartialProp.top := rfl
+
+@[simp] theorem ofFeatures_some (f : F) :
+    ofFeatures innerP outerP (some f) = phiPresup innerP outerP (ContainmentPairLike.toPair f) :=
+  rfl
+
+/-- The person presupposition of an optional person value. -/
+def personSem [PartialOrder E] (speaker addressee : E) (p : Option Person) : PartialProp E :=
+  ofFeatures (speaker ≤ ·) (fun x ↦ speaker ≤ x ∨ addressee ≤ x) (p.bind Person.toFeatures)
+
+/-- The number presupposition of an optional number value. -/
+def numberSem [PartialOrder E] (n : Option Number) : PartialProp E :=
+  ofFeatures Atom (fun _ ↦ True) (n.bind Number.Features.ofNumber)
+
+/-- The gender presupposition of an optional gender value. -/
+def genderSem (isFemale isInanimate : E → Prop) (g : Option Gender) : PartialProp E :=
+  ofFeatures isInanimate isFemale (g.bind Gender.Features.fromGender)
+
+section PersonNumber
+
+variable [PartialOrder E] (speaker addressee : E)
+
+@[simp] theorem personSem_none : personSem speaker addressee none = PartialProp.top := rfl
+
+@[simp] theorem personSem_first : personSem speaker addressee (some .first) = firstSem speaker :=
+  rfl
+
+@[simp] theorem personSem_firstInclusive :
+    personSem speaker addressee (some .firstInclusive) = firstSem speaker := rfl
+
+@[simp] theorem personSem_firstExclusive :
+    personSem speaker addressee (some .firstExclusive) = firstSem speaker := rfl
+
+@[simp] theorem personSem_second :
+    personSem speaker addressee (some .second) = secondSem speaker addressee := rfl
+
+@[simp] theorem personSem_third : personSem speaker addressee (some .third) = thirdSem := rfl
+
+@[simp] theorem personSem_zero : personSem speaker addressee (some .zero) = PartialProp.top :=
+  rfl
+
+@[simp] theorem numberSem_none : numberSem (E := E) none = PartialProp.top := rfl
+
+@[simp] theorem numberSem_singular : numberSem (E := E) (some .singular) = sgSem E := rfl
+
+@[simp] theorem numberSem_dual : numberSem (E := E) (some .dual) = PartialProp.top := rfl
+
+@[simp] theorem numberSem_plural : numberSem (E := E) (some .plural) = plSem E := rfl
+
+end PersonNumber
+
+section GenderValues
+
+variable (isFemale isInanimate : E → Prop)
+
+@[simp] theorem genderSem_none : genderSem isFemale isInanimate none = PartialProp.top := rfl
+
+@[simp] theorem genderSem_feminine :
+    genderSem isFemale isInanimate (some .feminine) = femSem isFemale := rfl
+
+@[simp] theorem genderSem_neuter :
+    genderSem isFemale isInanimate (some .neuter) = neutSem isInanimate := rfl
+
+@[simp] theorem genderSem_masculine :
+    genderSem isFemale isInanimate (some .masculine) = mascSem := rfl
+
+end GenderValues
+
+end Values
 
 -- ============================================================================
 -- §4  Definiteness Presuppositions
