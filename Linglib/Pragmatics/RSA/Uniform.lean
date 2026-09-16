@@ -1,6 +1,7 @@
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Profile
 import Linglib.Core.Probability.UniformOn
+import Linglib.Semantics.Reference.Distinguishing
 
 /-!
 # The uniform-prior RSA model
@@ -20,6 +21,9 @@ inequalities (`Multiset.divPowSum`).
 
 ## Main results
 
+* `RSA.distinguishes_literalListener_uniformOn_iff` — a description distinguishes its referent
+  under the literal listener exactly when it does under the meaning, so the referent is the
+  listener's best guess.
 * `RSA.uniformSpeaker_real_singleton_lt_of_card_lt` — informativity monotonicity.
 * `RSA.uniformJointListener_fst_real_lt_of_prodMul_strictDominates` — the certificate
   register.
@@ -100,6 +104,19 @@ theorem literalListener_uniformOn_ofReal_apply_singleton [Nonempty T] {U : Type*
       ENNReal.ofReal (m u t / ∑ t', m u t') := by
   rw [literalListener_uniformOn_apply_singleton, ← ENNReal.ofReal_sum_of_nonneg fun t' _ => hm t',
     ← ENNReal.ofReal_div_of_pos hpos]
+
+omit [DecidableEq T] in
+/-- At a uniform prior the literal listener's masses on the states are the meaning's values
+rescaled by the row sum, so a description distinguishes its referent under the listener exactly
+when it does under the meaning. -/
+theorem distinguishes_literalListener_uniformOn_iff [Nonempty T] {U : Type*} [MeasurableSpace U]
+    [Countable U] [MeasurableSingletonClass U] {m : U → T → ℝ≥0∞} {C : Finset T} {r : T}
+    {u : U} (h0 : ∑ t, m u t ≠ 0) (htop : ∑ t, m u t ≠ ∞) :
+    Reference.Distinguishes (fun u t => literalListener (uniformOn Set.univ) m u {t}) C r u ↔
+      Reference.Distinguishes m C r u := by
+  simp_rw [literalListener_uniformOn_apply_singleton]
+  exact Reference.distinguishes_comp_iff (φ := fun u x => x / ∑ t', m u t')
+    fun _ _ h => ENNReal.div_lt_div_right h0 htop h
 
 /-- The speaker at a uniform prior (eq. 7): best response to `uniformListener` at no cost. -/
 noncomputable abbrev uniformSpeaker (α : ℝ) : Kernel T C := speaker α 1 (uniformListener sem)
