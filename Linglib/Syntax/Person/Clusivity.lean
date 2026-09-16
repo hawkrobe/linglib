@@ -1,23 +1,27 @@
 import Linglib.Core.Data.Setoid.Basic
+import Linglib.Core.Order.UpperLower.Finset
 import Linglib.Syntax.Person.Decomposition
 
 /-!
 # Clusivity: marking types of the first person complex
 
-A person paradigm marks the three 'we' categories 1+2, 1+2+3 and 1+3 either by a morpheme
-of their own or by one that also marks a singular category, and groups them in some way.
-[cysouw-2003]'s Fig. 3.1 writes such a pattern with a letter per specialized morpheme class
-and a dash where a singular morpheme is reused; of the fifteen possible patterns five are
-common (his Table 3.2) and form `Clusivity`. Each type's `toPattern` is that notation as a
-setoid on `Clusivity.Cell`, the four speaker-including categories, the singular speaker
-standing for any singular morpheme, and the four questions of his Fig. 3.10 are read off the
-setoid. The First Person Hierarchy (3.26) is the linear order on the types, along which each
-question's answer is monotone.
+A person paradigm marks the three 'we' categories 1+2, 1+2+3 and 1+3 either by a morpheme of
+their own or by one that also marks a singular category, and groups them in some way.
+[cysouw-2003] writes such a pattern with a letter per specialized morpheme class and a dash
+where a singular morpheme is reused, and of the fifteen possible patterns finds five common.
+These form `Clusivity`, each given by `toPattern` as a setoid on the four speaker-including
+categories, the singular speaker standing for any singular morpheme.
 
-The five rare attested patterns ((Pf)–(Pj), his §3.6.6) are not types in this sense and live
-with the study. The typology is finer than [cysouw-2013]'s WALS chapter, which collapses
-minimal/augmented into inclusive/exclusive and whose "no 'we'" value is the absence of any
-first-person non-singular, not `Clusivity.noWe`.
+The types are told apart by four questions asked in order: whether 'we', the inclusive and the
+exclusive are specialized, and whether the inclusive is split. A pattern's `profile` is the
+questions it answers positively. The common types are exactly the lower sets of the questions,
+each positive answer presupposing the ones before it, which is how the two addressee inclusion
+implications read as conditions, and the First Person Hierarchy is the order of the profiles.
+
+The five rare attested patterns are not types in this sense and live with the study. The
+typology is finer than [cysouw-2013]'s WALS chapter, which collapses minimal/augmented into
+inclusive/exclusive and whose "no 'we'" value is the absence of any first-person non-singular,
+not `noWe`.
 
 ## References
 
@@ -27,8 +31,8 @@ first-person non-singular, not `Clusivity.noWe`.
 
 namespace Person
 
-/-- The five common marking types of the first person complex ([cysouw-2003] Table 3.2, the
-common five of the fifteen patterns of his Fig. 3.1). -/
+/-- The five common marking types of the first person complex, the common five of the fifteen
+patterns of [cysouw-2003]'s Fig. 3.1. -/
 inductive Clusivity where
   /-- No 'we' category has a specialized morpheme, as in the English inflection (Pb). -/
   | noWe
@@ -39,13 +43,13 @@ inductive Clusivity where
   /-- 1+2 and 1+2+3 share one specialized morpheme and 1+3 has another, as in Apalai (Pd). -/
   | inclusiveExclusive
   /-- All three 'we' categories have separate specialized morphemes, as Ilocano
-  *ta* ~ *tayo* ~ *mi* (Pe, his Fig. 3.6). -/
+  *ta* ~ *tayo* ~ *mi* (Pe). -/
   | minimalAugmented
   deriving DecidableEq, Repr, Fintype
 
 namespace Clusivity
 
-/-- Fig. 3.1's four cells, the categories that include the speaker; the singular speaker
+/-- The four cells of a pattern, the categories that include the speaker; the singular speaker
 stands for every singular morpheme. -/
 abbrev Cell := {c : Category // c.IncludesSpeaker}
 
@@ -65,32 +69,61 @@ def speakerOthers : Cell := ⟨.speakerOthers, by decide⟩
 
 end Cell
 
-/-- A marking pattern of the first person complex, Fig. 3.1's notation as a setoid on the
+/-- A marking pattern of the first person complex, the letter notation as a setoid on the
 four cells. -/
 abbrev Pattern := Setoid Cell
+
+/-- The four questions that classify the patterns, in the order the hierarchy asks them. -/
+inductive Question where
+  /-- Is there any specialized form for 'we'? -/
+  | specializedWe
+  /-- Is the inclusive specialized? -/
+  | specializedInclusive
+  /-- Is the exclusive specialized? -/
+  | specializedExclusive
+  /-- Is the inclusive split? -/
+  | splitInclusive
+  deriving DecidableEq, Repr, Fintype
+
+namespace Question
+
+/-- Position in the order of asking. -/
+def rank : Question → Fin 4
+  | .specializedWe => 0
+  | .specializedInclusive => 1
+  | .specializedExclusive => 2
+  | .splitInclusive => 3
+
+instance : LinearOrder Question := LinearOrder.lift' rank (by decide)
+
+end Question
 
 namespace Pattern
 
 variable (r : Pattern)
 
-/-- Some 'we' cell is not marked like the speaker (Fig. 3.10's first question). -/
+/-- Some 'we' cell is not marked like the speaker. -/
 def SpecializedWe : Prop := ∃ c : Cell, c.1.IsFirstPersonComplex ∧ ¬ r c Cell.speaker
 
-/-- Both inclusive cells are marked neither like the speaker nor like the exclusive
-(Fig. 3.10's second question, read as his Fig. 3.8 reads it for the common types). -/
+/-- Both inclusive cells are marked neither like the speaker nor like the exclusive. -/
 def SpecializedInclusive : Prop :=
   ∀ c : Cell, c.1.IsInclusive → ¬ r c Cell.speaker ∧ ¬ r c Cell.speakerOthers
 
-/-- The exclusive is marked neither like the speaker nor like an inclusive cell (Fig. 3.10's
-third question). -/
+/-- The exclusive is marked neither like the speaker nor like an inclusive cell. -/
 def SpecializedExclusive : Prop :=
   ¬ r Cell.speakerOthers Cell.speaker ∧ ∀ c : Cell, c.1.IsInclusive → ¬ r Cell.speakerOthers c
 
-/-- Minimal and augmented inclusive are marked apart and neither like the speaker (Fig. 3.10's
-fourth question). -/
+/-- Minimal and augmented inclusive are marked apart and neither like the speaker. -/
 def SplitInclusive : Prop :=
   ¬ r Cell.speakerAddressee Cell.speakerAddresseeOthers ∧
     ¬ r Cell.speakerAddressee Cell.speaker ∧ ¬ r Cell.speakerAddresseeOthers Cell.speaker
+
+/-- The pattern answers the question positively. -/
+def Answers : Question → Prop
+  | .specializedWe => r.SpecializedWe
+  | .specializedInclusive => r.SpecializedInclusive
+  | .specializedExclusive => r.SpecializedExclusive
+  | .splitInclusive => r.SplitInclusive
 
 variable [DecidableRel (⇑r)]
 
@@ -98,11 +131,21 @@ instance : Decidable r.SpecializedWe := by unfold SpecializedWe; infer_instance
 instance : Decidable r.SpecializedInclusive := by unfold SpecializedInclusive; infer_instance
 instance : Decidable r.SpecializedExclusive := by unfold SpecializedExclusive; infer_instance
 instance : Decidable r.SplitInclusive := by unfold SplitInclusive; infer_instance
+instance : DecidablePred r.Answers := fun q ↦ by cases q <;> unfold Answers <;> infer_instance
+
+/-- The questions the pattern answers positively. -/
+def profile : Finset Question := Finset.univ.filter r.Answers
+
+/-- The pattern fits the hierarchy: read as conditions, each positive answer requires the
+ones before it, so the profile is an initial segment of the questions. -/
+def RespectsHierarchy : Prop := IsLowerSet (↑r.profile : Set Question)
+
+instance : Decidable r.RespectsHierarchy := inferInstanceAs (Decidable (IsLowerSet _))
 
 end Pattern
 
-/-- Fig. 3.2's letters as morpheme classes, `0` being the class of the singular speaker,
-Fig. 3.1's dash, in which every category outside the first person complex is placed. -/
+/-- The letters as morpheme classes, `0` being the class of the singular speaker, the dash,
+in which every category outside the first person complex is placed. -/
 def labels : Clusivity → Category → ℕ
   | .unifiedWe, .speakerAddressee | .unifiedWe, .speakerAddresseeOthers
   | .unifiedWe, .speakerOthers => 1
@@ -114,61 +157,43 @@ def labels : Clusivity → Category → ℕ
   | .minimalAugmented, .speakerOthers => 3
   | _, _ => 0
 
-/-- The type's pattern, Fig. 3.2's column as a setoid on the four cells. -/
+/-- The type's pattern, its column of letters as a setoid on the four cells. -/
 abbrev toPattern (t : Clusivity) : Pattern := Setoid.ker (t.labels ∘ Subtype.val)
 
 /-- The five patterns are distinct. -/
 theorem toPattern_injective : Function.Injective toPattern := by
   show ∀ s t : Clusivity, _ → _; decide +kernel
 
-/-- A specialized exclusive requires a specialized inclusive ((3.23), Fig. 3.8). -/
-theorem specializedInclusive_of_specializedExclusive {t : Clusivity}
-    (h : t.toPattern.SpecializedExclusive) : t.toPattern.SpecializedInclusive := by
-  revert t h; show ∀ t : Clusivity, _; decide +kernel
+/-- The questions a type answers positively. -/
+abbrev profile (t : Clusivity) : Finset Question := t.toPattern.profile
 
-/-- The converse of (3.23) fails at only-inclusive. -/
-theorem onlyInclusive_specializedInclusive : onlyInclusive.toPattern.SpecializedInclusive := by
-  decide +kernel
+/-- Every common type fits the hierarchy: a specialized exclusive requires a specialized
+inclusive and a split inclusive a specialized exclusive, the two addressee inclusion
+implications. -/
+theorem profile_isLowerSet (t : Clusivity) : IsLowerSet (↑t.profile : Set Question) := by
+  revert t; decide +kernel
 
-theorem onlyInclusive_not_specializedExclusive :
-    ¬ onlyInclusive.toPattern.SpecializedExclusive := by
-  decide +kernel
+/-- The rung of a type: its profile, a lower set of the questions. -/
+def rung (t : Clusivity) : {S : Finset Question // IsLowerSet (↑S : Set Question)} :=
+  ⟨t.profile, t.profile_isLowerSet⟩
 
-/-- A split inclusive requires a specialized exclusive ((3.24), Fig. 3.9). -/
-theorem specializedExclusive_of_splitInclusive {t : Clusivity}
-    (h : t.toPattern.SplitInclusive) : t.toPattern.SpecializedExclusive := by
-  revert t h; show ∀ t : Clusivity, _; decide +kernel
+/-- The common types are exactly the rungs of the hierarchy, one for each lower set of the
+questions. -/
+theorem rung_bijective : Function.Bijective rung := by decide +kernel
 
-/-- Position on the First Person Hierarchy (3.26), the number of Fig. 3.10's questions
-answered positively: no-we, unified-we, only-inclusive, inclusive/exclusive,
-minimal/augmented. -/
-def hierarchyRank : Clusivity → ℕ
-  | .noWe => 0
-  | .unifiedWe => 1
-  | .onlyInclusive => 2
-  | .inclusiveExclusive => 3
-  | .minimalAugmented => 4
+/-- The First Person Hierarchy: a type precedes another when it answers fewer of the questions,
+no-we, unified-we, only-inclusive, inclusive/exclusive, minimal/augmented. -/
+instance : LinearOrder Clusivity := LinearOrder.lift' (fun t ↦ t.profile.card) (by decide +kernel)
 
-/-- The First Person Hierarchy (3.26) as the order on the types. -/
-instance : LinearOrder Clusivity := LinearOrder.lift' hierarchyRank (by decide)
+/-- Along the hierarchy each type's profile extends its predecessor's. -/
+theorem le_iff_profile_subset {s t : Clusivity} : s ≤ t ↔ s.profile ⊆ t.profile := by
+  revert s t; decide +kernel
 
-/-- Each of Fig. 3.10's answers is monotone along the hierarchy, so each type's profile
-extends its predecessor's by one positive answer. -/
-theorem specializedWe_of_le {s t : Clusivity} (h : s ≤ t) (hs : s.toPattern.SpecializedWe) :
-    t.toPattern.SpecializedWe := by
-  revert s t h hs; show ∀ s t : Clusivity, _; decide +kernel
+theorem profile_monotone : Monotone profile := fun _ _ ↦ le_iff_profile_subset.1
 
-theorem specializedInclusive_of_le {s t : Clusivity} (h : s ≤ t)
-    (hs : s.toPattern.SpecializedInclusive) : t.toPattern.SpecializedInclusive := by
-  revert s t h hs; show ∀ s t : Clusivity, _; decide +kernel
-
-theorem specializedExclusive_of_le {s t : Clusivity} (h : s ≤ t)
-    (hs : s.toPattern.SpecializedExclusive) : t.toPattern.SpecializedExclusive := by
-  revert s t h hs; show ∀ s t : Clusivity, _; decide +kernel
-
-theorem splitInclusive_of_le {s t : Clusivity} (h : s ≤ t) (hs : s.toPattern.SplitInclusive) :
-    t.toPattern.SplitInclusive := by
-  revert s t h hs; show ∀ s t : Clusivity, _; decide +kernel
+/-- The converse of the first addressee inclusion implication fails at only-inclusive. -/
+theorem onlyInclusive_profile :
+    onlyInclusive.profile = {.specializedWe, .specializedInclusive} := by decide +kernel
 
 end Clusivity
 
