@@ -576,22 +576,22 @@ def lookup (form : String) : Option GermanVerbEntry :=
 /-- All 16 German occasion verbs are soft presupposition triggers, derived from their
     occasion sense ([solstad-bott-2024]). -/
 theorem occasion_verbs_soft_trigger :
-    bestrafen.presupType = some .softTrigger ∧
-    belohnen.presupType = some .softTrigger ∧
-    loben.presupType = some .softTrigger ∧
-    kritisieren.presupType = some .softTrigger ∧
-    danken.presupType = some .softTrigger ∧
-    verklagen.presupType = some .softTrigger ∧
-    gratulieren.presupType = some .softTrigger ∧
-    zurechtweisen.presupType = some .softTrigger ∧
-    anzeigen.presupType = some .softTrigger ∧
-    auszeichnen.presupType = some .softTrigger ∧
-    belangen.presupType = some .softTrigger ∧
-    ehren.presupType = some .softTrigger ∧
-    entlassen.presupType = some .softTrigger ∧
-    raechen.presupType = some .softTrigger ∧
-    revanchieren.presupType = some .softTrigger ∧
-    zurVerantwortungZiehen.presupType = some .softTrigger := by
+    bestrafen.triggerType = some .softTrigger ∧
+    belohnen.triggerType = some .softTrigger ∧
+    loben.triggerType = some .softTrigger ∧
+    kritisieren.triggerType = some .softTrigger ∧
+    danken.triggerType = some .softTrigger ∧
+    verklagen.triggerType = some .softTrigger ∧
+    gratulieren.triggerType = some .softTrigger ∧
+    zurechtweisen.triggerType = some .softTrigger ∧
+    anzeigen.triggerType = some .softTrigger ∧
+    auszeichnen.triggerType = some .softTrigger ∧
+    belangen.triggerType = some .softTrigger ∧
+    ehren.triggerType = some .softTrigger ∧
+    entlassen.triggerType = some .softTrigger ∧
+    raechen.triggerType = some .softTrigger ∧
+    revanchieren.triggerType = some .softTrigger ∧
+    zurVerantwortungZiehen.triggerType = some .softTrigger := by
   decide
 
 /-- All 16 German occasion verbs use the `.occasion` sense tag. -/

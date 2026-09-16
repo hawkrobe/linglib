@@ -86,13 +86,10 @@ def VoiceType.assignsTheta : VoiceType → Bool
   | .agentive | .reflexive | .experiencer => true
   | .nonThematic | .expletive => false
 
-/--
-Presupposition trigger type, the hard/soft classification of [abusch-2010].
-
-- Hard triggers: Always project (too, again, also)
-- Soft triggers: Context-sensitive projection (stop, know)
--/
-inductive PresupTriggerType where
+/-- The kind of presupposition trigger a predicate is, the hard/soft classification of
+[abusch-2010]: hard triggers always project (*too*, *again*, *also*), soft triggers project
+context-sensitively (*stop*, *know*), and an implicative presupposes a prerequisite. -/
+inductive Presupposition.TriggerType where
   | hardTrigger        -- Projective in all contexts
   | softTrigger        -- Factive: complement truth presupposed, locally accommodatable
   | prerequisiteSoft   -- Prerequisite: causal prerequisite presupposed ([nadathur-2023-implicatives])
@@ -100,7 +97,7 @@ inductive PresupTriggerType where
 
 /-- Is this trigger locally accommodatable (soft)?
     Both factive and prerequisite triggers are soft. -/
-def PresupTriggerType.isSoft : PresupTriggerType → Bool
+def Presupposition.TriggerType.isSoft : Presupposition.TriggerType → Bool
   | .hardTrigger => false
   | .softTrigger => true
   | .prerequisiteSoft => true
@@ -108,7 +105,7 @@ def PresupTriggerType.isSoft : PresupTriggerType → Bool
 /--
 Complement presupposition projection behavior ([karttunen-1973]).
 
-Orthogonal to `PresupTriggerType` (whether the verb *triggers* presuppositions):
+Orthogonal to `Presupposition.TriggerType` (whether the verb *triggers* presuppositions):
 this classifies what the verb does with presuppositions *of its complement*.
 
 - `plug`: blocks all complement presuppositions (*say*, *tell*, *promise*)
@@ -218,13 +215,13 @@ structure Aspect where
   deriving Repr, BEq
 
 /-- Presupposition profile: factivity class and complement-projection behavior. Whether the
-    verb triggers a presupposition, and of which type, is derived (`Verb.presupType`). -/
+    verb triggers a presupposition, and of which kind, is derived (`Verb.triggerType`). -/
 structure Presupposition where
   /-- The [karttunen-1971b] factivity class of a factive predicate; `none` for a
       non-factive. -/
   factivity : Option _root_.Factivity := none
   /-- How does the verb treat presuppositions of its complement?
-      Orthogonal to `presupType`. [karttunen-1973] -/
+      Orthogonal to `Verb.triggerType`. [karttunen-1973] -/
   projectionBehavior : Option ProjectionBehavior := none
   deriving Repr, BEq
 
