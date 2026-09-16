@@ -324,9 +324,8 @@ type-shift converts this intensional property into a different semantic type:
 - ∃ (`.exists`): `⟨s,⟨e,t⟩⟩ × s → Prop` — existential closure at a world
 
 These connect the abstract shift-selection machinery to Chierchia's `down`
-operator and the `Definiteness.russellIotaList` /
-`Presupposition.PartialProp.presupOfReferent` canonical pieces consumed by
-`Semantics/Definiteness/Basic.lean`.
+operator and to the Russellian iota (`Reference.russellIota`) lifted by
+`Presupposition.PartialProp.presupOfReferent`.
 -/
 
 section IntensionalDenotations

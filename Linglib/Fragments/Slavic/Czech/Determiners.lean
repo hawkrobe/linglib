@@ -6,7 +6,7 @@ import Linglib.Semantics.Polarity.CzechNegation
 [giannakidou-1998] [stankova-2025] [zeijlstra-2004]
 
 Polarity-sensitive determiners central to Staňková's (2026) three-way negation
-diagnostic. Czech lacks articles (`ArticleType.none_`), so the NCI/PPI contrast
+diagnostic. Czech lacks articles (`ArticleType.articleless`), so the NCI/PPI contrast
 on determiners is the primary scope diagnostic for negation position.
 
 ## Key items

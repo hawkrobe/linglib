@@ -124,7 +124,7 @@ that obligatorily expones anaphoric definiteness is ι^x ([moroney-2021]); no de
 def Blocks (ds : Inventory) : CovertShift → Prop
   | .down => False
   | .iota => ∃ e ∈ ds, e.IsDefiniteArticle
-  | .iotaAnaphoric => ds.MarksPresup .familiarity
+  | .iotaAnaphoric => ds.Marks .familiarity
   | .exists => ∃ e ∈ ds, e.IsIndefiniteArticle
 
 instance (ds : Inventory) : DecidablePred ds.Blocks := λ τ => by

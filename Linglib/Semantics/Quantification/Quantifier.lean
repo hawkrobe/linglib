@@ -19,7 +19,7 @@ the round trip, `every student` does not. `Ty.det` names the determiner type
 ⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩. The shifts relating `Quantifier` to the other noun-phrase types are
 [partee-1987]'s: the total ones are `individual`, `ident`, `A` and `BE`, with the two faces
 of Partee's triangle `BE_individual_eq_ident` and `A_ident_eq_individual` proved here, and
-the partial ones, `Definiteness.THE` and `Definiteness.lower`, are Russellian iotas.
+the partial ones, `Reference.THE` and `Reference.lower`, are Russellian iotas.
 -/
 
 namespace Quantification

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Definiteness.Description
+import Linglib.Semantics.Reference.Description
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Data.Examples.Hanink2021
 import Mathlib.Data.Prod.Lex
@@ -57,7 +57,7 @@ section 4.4 are recorded as data and prose only.
 
 namespace Hanink2021
 
-open Semantics Semantics.Composition Definiteness DistributedMorphology Morphology.Exponence
+open Semantics Semantics.Composition Reference DistributedMorphology Morphology.Exponence
 open scoped Assignment
 
 variable {E W : Type}

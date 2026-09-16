@@ -365,7 +365,7 @@ variable {E : Type*}
 /-- ⟦DEF⟧: presupposes the referent satisfies a contextual familiarity
     or uniqueness condition. The predicate `familiar` is abstract —
     concretely it may be Heim's familiarity or Russell's uniqueness
-    (cf. `Definiteness.DefPresupType`). -/
+    (cf. `Reference.Description.Strength`). -/
 def defSem (familiar : E → Prop) : PartialProp E where
   presup := familiar
   assertion := fun _ => True

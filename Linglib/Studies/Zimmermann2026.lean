@@ -13,7 +13,7 @@ This file formalizes the comparative claim about marked indefinites in §3.3 of
 after [zimmermann-2014], while *bí* phrases must outscope negation, (15). The review takes the
 contrast to require different analyses, (16): a skolemized choice function for *bí*, after
 [owusu-2022], and an existential quantifier for *wani*, after [zimmermann-2008]. The two
-classifications are recorded on the fragment inventories (`z2026IndefType`); the existential
+classifications are recorded on the fragment inventories (`z2026Analysis`); the existential
 analysis makes the two scopings of *wani* truth-conditionally distinct on the passenger model
 of `Zimmermann2008` (`wani_scopings_diverge`); the choice-function analysis gives *bí* under
 negation a reading distinct from the narrow-scope one on the model of `Owusu2022`
@@ -42,14 +42,14 @@ of the bound and free construals of the situation pronoun under an extensional o
 * [owusu-2022]
 -/
 
-open Quantification.ChoiceFunction (IndefType)
+open Reference
 
 namespace Akan.Determiners.Indefinite
 
 /-- [zimmermann-2026] (16a)'s classification of the Akan inventory: *bí*
 denotes a skolemized choice function ([owusu-2022]); bare NPs
 (obligatory narrow scope) are outside the (16) classification. -/
-def z2026IndefType : Indefinite → Option IndefType
+def z2026Analysis : Indefinite → Option IndefiniteAnalysis
   | .bi => some .choiceFunction
   | .bare => none
 
@@ -61,7 +61,7 @@ namespace Hausa.Determiners.Indefinite
 *wani/wata* denotes an ∃-quantifier ([zimmermann-2008],
 [zimmermann-2014]); bare NPs (obligatory narrow scope) are outside the
 (16) classification. -/
-def z2026IndefType : Indefinite → Option IndefType
+def z2026Analysis : Indefinite → Option IndefiniteAnalysis
   | .wani => some .existential
   | .bare => none
 
@@ -70,7 +70,6 @@ end Hausa.Determiners.Indefinite
 namespace Zimmermann2026
 
 open Quantification
-open Quantification.ChoiceFunction
 
 /-- (13): under the ∃-analysis (16b), the two scopings of *wani* under
 negation are truth-conditionally distinct — on [zimmermann-2008]'s

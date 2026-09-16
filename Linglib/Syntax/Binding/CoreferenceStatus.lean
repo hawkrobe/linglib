@@ -29,7 +29,7 @@ inductive CoreferenceStatus where
 
     The *binding-distribution* axis (anaphor/pronominal/r-expression, with the
     anaphor class split into reflexive/reciprocal) — orthogonal to a nominal's
-    `Definiteness.Description` (definiteness/reference flavor) and to a
+    `Reference.Description` (definiteness/reference flavor) and to a
     pronoun's lexical kind. -/
 inductive BindingClass where
   /-- Reflexive anaphor (*himself*, *herself*, *themselves*). -/

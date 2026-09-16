@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Semantics.Quantification.ChoiceFunction
+import Linglib.Semantics.Reference.ChoiceFunction
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -36,12 +36,12 @@ def yek : IndefiniteDeterminer := { form := "یک", romanization := "yek", gloss
 /-- The indefinite enclitic *-i*. -/
 def indef_i : IndefiniteDeterminer := { form := "ـی", romanization := "-i", gloss := "-INDF" }
 
-open Quantification.ChoiceFunction (IndefType SkolemCF)
+open Reference
 
 /-- A plain indefinite with the choice-function properties of [mirrazi-2024]. -/
 structure PlainIndefiniteEntry extends IndefiniteDeterminer where
   /-- Semantic analysis: choice function or ∃-quantifier. -/
-  indefType : IndefType
+  analysis : IndefiniteAnalysis
   /-- Does this determiner carry an independent world/situation variable? -/
   hasWorldVar : Bool
   /-- Number: singular or plural. -/
@@ -51,18 +51,18 @@ structure PlainIndefiniteEntry extends IndefiniteDeterminer where
 /-- *ye*: the singular indefinite determiner, with wide pseudo-scope de dicto readings under
 negated intensional operators ([mirrazi-2024] exx. (1), (4)). -/
 def ye : PlainIndefiniteEntry :=
-  { form := "یه", romanization := "ye", gloss := "some", indefType := .choiceFunction,
+  { form := "یه", romanization := "ye", gloss := "some", analysis := .choiceFunction,
     hasWorldVar := true, isPlural := false }
 
 /-- *čand-ta*: the plural classifier indefinite, alternating with *ye* in [mirrazi-2024]'s
 key examples. -/
 def candTa : PlainIndefiniteEntry :=
   { form := "چندتا", romanization := "čand-ta", gloss := "some.PL-CL",
-    indefType := .choiceFunction, hasWorldVar := true, isPlural := true }
+    analysis := .choiceFunction, hasWorldVar := true, isPlural := true }
 
 /-- *do-ta*: the numeral classifier indefinite ([mirrazi-2024] exx. (8a), (9a)). -/
 def doTa : PlainIndefiniteEntry :=
-  { form := "دوتا", romanization := "do-ta", gloss := "two-CL", indefType := .choiceFunction,
+  { form := "دوتا", romanization := "do-ta", gloss := "two-CL", analysis := .choiceFunction,
     hasWorldVar := true, isPlural := true }
 
 end Farsi.Determiners

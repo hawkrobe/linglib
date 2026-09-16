@@ -1,4 +1,4 @@
-import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Reference.Iota
 import Linglib.Semantics.Modification.Basic
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Data.Examples.AhnKocabDavidson2026
@@ -34,7 +34,7 @@ hypothesis over the consultant data and the experimental stimuli.
 namespace AhnKocabDavidson2026
 
 open Pragmatics.Expressives (TwoDimProp)
-open Definiteness
+open Reference
 
 variable {E L W : Type*}
 
@@ -50,7 +50,7 @@ noncomputable def that (R P : E → Prop) : Option E := russellIota (Modifier.in
 
 /-- `that` refers exactly when there is a unique entity meeting both restrictions. -/
 theorem that_isSome_iff (R P : E → Prop) : (that R P).isSome ↔ ∃! x, P x ∧ R x := by
-  simp [that, russellIota_isSome_iff_exists_unique, and_comm]
+  simp [that, russellIota_isSome_iff, and_comm]
 
 /-- With a trivial nominal restriction (the ASL null pronoun), `that` is `ιx. R(x)`. -/
 theorem that_top (R : E → Prop) : that R ⊤ = russellIota R :=

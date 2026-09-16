@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.Quantifier
-import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Reference.Iota
 import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
@@ -28,7 +28,7 @@ predicative reading having moved into the noun phrase.
 ## Implementation notes
 
 The setting is extensional, so `pred` is `ident`, `nom` and `iota` are both the Russellian
-`Definiteness.russellIota`, and `THE` is the partial composite `lift ∘ iota` the paper offers
+`Reference.russellIota`, and `THE` is the partial composite `lift ∘ iota` the paper offers
 as the alternative to its total, presuppositionless quantifier meaning. Fact 2 is proved after
 [keenan-faltz-1985]: the homomorphism is pinned on the atom at each singleton property, a meet
 of the lifts and their complements, and monotonicity decides it everywhere else. The mappings
@@ -44,7 +44,7 @@ formalized.
 
 namespace Partee1987
 
-open Quantification Definiteness
+open Quantification Reference
 
 variable {E : Type*} (j : E) (P : E → Prop)
 

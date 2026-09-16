@@ -1,7 +1,7 @@
 import Linglib.Data.Examples.Elbourne2013
-import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Reference.Iota
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Quantification.ChoiceFunction
+import Linglib.Semantics.Reference.ChoiceFunction
 import Mathlib.Order.Minimal
 
 /-!
@@ -71,7 +71,7 @@ supplied by NP-deletion.
 
 namespace Elbourne2013
 
-open Definiteness Presupposition Quantification.ChoiceFunction
+open Reference Presupposition
 
 /-! ### Quantification over minimal situations (§2.3.3) -/
 
@@ -117,11 +117,11 @@ noncomputable def the (f : E → S → Prop) (s : S) : Option E := russellIota (
 
 /-- The domain condition of the article: exactly one satisfier in the situation. -/
 theorem the_isSome_iff (f : E → S → Prop) (s : S) : (the f s).isSome ↔ ∃! x, f x s :=
-  russellIota_isSome_iff_exists_unique _
+  russellIota_isSome_iff _
 
 theorem the_eq_some_iff (f : E → S → Prop) (s : S) (x : E) :
     the f s = some x ↔ f x s ∧ ∀ y, f y s → y = x :=
-  russellIota_eq_some_iff _ _
+  russellIota_eq_some_iff _
 
 /-- A pronoun, (4b) of ch. 10: the article's entry, its noun phrase supplied by NP-deletion. -/
 noncomputable def pronoun (np : E → S → Prop) : S → Option E := the np

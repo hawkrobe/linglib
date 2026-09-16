@@ -1,7 +1,7 @@
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Order.UpperLower.Basic
 import Mathlib.Order.Interval.Set.OrdConnected
-import Linglib.Semantics.Definiteness.Defs
+import Linglib.Semantics.Reference.Definiteness
 import Linglib.Syntax.Extraction
 
 /-!
@@ -244,7 +244,7 @@ structure Marker where
       (Wright 1896; Cantarino 1974; [ryding-2005]): MSA *alladhī*
       with definite antecedents vs Ø-relative-pronoun with indefinite
       antecedents. Substrate makes no claim about syntactic mechanism. -/
-  headDefiniteness : Option Definiteness := none
+  headDefiniteness : Option Reference.Definiteness := none
   /-- Additional notes. -/
   notes : String := ""
   deriving BEq, Repr

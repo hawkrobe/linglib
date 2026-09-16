@@ -1,4 +1,4 @@
-import Linglib.Semantics.Definiteness.Defs
+import Linglib.Semantics.Reference.Definiteness
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
@@ -58,7 +58,7 @@ movement that skips a phase edge contradicts the order fixed at Spell-out
 
 namespace ShenHuang2026
 
-open Definiteness Minimalist.Linearization ArgumentStructure
+open Reference Minimalist.Linearization ArgumentStructure
 
 /-- How a wh-dependency is established: overt movement of the wh-phrase, which binds its
 trace, or unselective binding of an in-situ wh-phrase by an operator, a question operator or

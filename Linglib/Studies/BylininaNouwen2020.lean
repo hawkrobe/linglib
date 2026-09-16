@@ -1,4 +1,4 @@
-import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Reference.Iota
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Quantification.Quantifier
 import Mathlib.Data.Fintype.EquivFin
@@ -52,7 +52,7 @@ atoms to exist, which the survey's unbounded domain supplies and a finite one do
 -/
 namespace BylininaNouwen2020
 
-open Definiteness Degree Quantification Set
+open Reference Degree Quantification Set
 
 variable {α : Type*}
 
