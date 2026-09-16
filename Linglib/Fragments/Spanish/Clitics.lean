@@ -1,4 +1,4 @@
-import Linglib.Syntax.Person.Decomposition
+import Linglib.Syntax.Person.Category
 import Linglib.Fragments.Romance.Clitics
 
 /-!

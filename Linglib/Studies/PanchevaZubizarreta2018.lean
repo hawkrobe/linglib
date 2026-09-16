@@ -1,7 +1,7 @@
 import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Semantics.Reference.Logophoricity
-import Linglib.Syntax.Person.Decomposition
+import Linglib.Syntax.Person.Features
 import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Spanish.Clitics
 

@@ -2,7 +2,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Syntax.Category.Auxiliary.Basic
 import Linglib.Syntax.Number.Basic
 import Linglib.Syntax.Person.Basic
-import Linglib.Syntax.Person.Decomposition
+import Linglib.Syntax.Person.Category
 import Linglib.Semantics.Modality.Basic
 import Linglib.Pragmatics.SocialMeaning.Register
 import Linglib.Morphology.Word.Basic

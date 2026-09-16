@@ -3,7 +3,7 @@ import Linglib.Semantics.Mereology
 import Linglib.Semantics.Reference.Context.Basic
 import Linglib.Syntax.Agreement.ContainmentPair
 import Linglib.Semantics.Plurality.NumberFeatures
-import Linglib.Syntax.Person.Decomposition
+import Linglib.Syntax.Person.Features
 import Linglib.Syntax.Gender.Decomposition
 
 /-!

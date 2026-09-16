@@ -1,4 +1,5 @@
-import Linglib.Syntax.Person.Decomposition
+import Linglib.Syntax.Person.Features
+import Linglib.Semantics.Reference.Prominence
 
 /-!
 # Person Feature Geometry [harley-ritter-2002] [bejar-rezac-2003]

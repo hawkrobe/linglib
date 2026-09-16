@@ -1,7 +1,7 @@
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Category.Pronoun.WALS
 import Linglib.Syntax.Person.Clusivity
-import Linglib.Syntax.Person.Decomposition
+import Linglib.Syntax.Person.Category
 
 /-!
 # Tagalog pronoun profile (WALS Chs 39, 40, 44–48)

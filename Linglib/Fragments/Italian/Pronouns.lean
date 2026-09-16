@@ -1,5 +1,5 @@
 import Linglib.Syntax.Category.Pronoun.Basic
-import Linglib.Syntax.Person.Decomposition
+import Linglib.Syntax.Person.Category
 import Linglib.Fragments.Romance.Clitics
 
 /-! # Italian Pronoun and Clitic Fragment
