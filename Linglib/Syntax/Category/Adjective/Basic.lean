@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Antonymy
 import Linglib.Semantics.Degree.Scale
-import Linglib.Morphology.Paradigm.Degree
+import Linglib.Morphology.Paradigm.Contiguity
 
 /-!
 # Adjective
@@ -34,7 +34,6 @@ noun-strategy fragment lands, factor a `PropertyConcept` superclass.
 -/
 
 open Degree (ScalarDimension)
-open Morphology.Degree (DegreePattern)
 
 /-! ### Comparison morphology -/
 
@@ -44,15 +43,15 @@ inductive Adjective.ComparisonStrategy
   deriving DecidableEq, Repr, BEq
 
 /-- Grade-level comparison morphology: the cross-linguistic structure (per-grade
-    formation strategy + the suppletion pattern, whose *ABA constraint lives in
-    `Morphology/Paradigm/Degree.lean`, [bobaljik-2012]) plus the surface comparative and
+    formation strategy + the root pattern, whose *ABA constraint lives in
+    `Morphology/Paradigm/Contiguity.lean`, [bobaljik-2012]) plus the surface comparative and
     superlative forms. -/
 structure Adjective.ComparisonFacet where
   formComp  : Option String := none
   formSuper : Option String := none
   comparativeStrategy : Adjective.ComparisonStrategy := .synthetic
   superlativeStrategy : Adjective.ComparisonStrategy := .synthetic
-  suppletion : DegreePattern := ⟨0, 0, 0⟩
+  suppletion : Morphology.Paradigm 3 ℕ := Morphology.Paradigm.aaa
   /-- Equative strategy, if the language marks it morphologically (not under the
       comparative/superlative containment). -/
   equative : Option Adjective.ComparisonStrategy := none
@@ -98,9 +97,5 @@ namespace Adjective
 def IsGradable (a : Adjective) : Prop := a.dimension.isSome = true
 
 instance (a : Adjective) : Decidable a.IsGradable := by unfold IsGradable; infer_instance
-
-/-- The suppletion pattern of the comparison paradigm — a convenience read of
-    `comparison.suppletion` (the field consumers most often want). -/
-def suppletion (a : Adjective) : DegreePattern := a.comparison.suppletion
 
 end Adjective

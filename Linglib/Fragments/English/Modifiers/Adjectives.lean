@@ -20,7 +20,7 @@ Both share scale type and antonym information, but serve different grammatical f
 
 import Linglib.Data.UD.Basic
 import Linglib.Semantics.Degree.PropertyDomain
-import Linglib.Morphology.Paradigm.Degree
+import Linglib.Morphology.Paradigm.Contiguity
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Morphology.Word.Basic
 
@@ -64,12 +64,10 @@ structure AdjModifierEntry where
       polarity ([sassoon-2013]): *empty* is lower-endpoint but evaluatively
       positive (total, max-standard). -/
   isLowerEndpoint : Bool := false
-  /-- Suppletive pattern across positive, comparative, and superlative
-      grades ([bobaljik-2012]). Default `aaa` = regular (same root
-      throughout). Set to `abb` for suppletive entries like *good/better/best*.
-      See `Morphology/Paradigm/Degree.lean` for pattern definitions and the *ABA
-      constraint. -/
-  suppletion : Morphology.Degree.DegreePattern := ⟨0, 0, 0⟩
+  /-- The root pattern over positive, comparative, and superlative, as form-class
+      indices ([bobaljik-2012]): `Paradigm.aaa` for one root throughout, `Paradigm.abb`
+      for *good – better – best*. -/
+  suppletion : Morphology.Paradigm 3 ℕ := Morphology.Paradigm.aaa
   deriving Repr, BEq
 
 -- ============================================================================
@@ -163,7 +161,7 @@ def good : AdjModifierEntry :=
   , dimension := .value
   , antonymForm := some "bad"
   , antonymRelation := some .contrary
-  , suppletion := ⟨0, 1, 1⟩ }
+  , suppletion := Morphology.Paradigm.abb }
 
 def bad : AdjModifierEntry :=
   { form := "bad"
@@ -174,7 +172,7 @@ def bad : AdjModifierEntry :=
   , antonymForm := some "good"
   , antonymRelation := some .contrary
   , isLowerEndpoint := true
-  , suppletion := ⟨0, 1, 1⟩ }
+  , suppletion := Morphology.Paradigm.abb }
 
 -- ============================================================================
 -- Intelligence Scale

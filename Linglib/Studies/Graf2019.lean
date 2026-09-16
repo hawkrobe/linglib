@@ -1,6 +1,5 @@
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Morphology.Exponence.Containment.Contiguity
-import Linglib.Morphology.Paradigm.Degree
 import Linglib.Syntax.Person.Basic
 import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Mathlib.Tactic.TFAE
@@ -57,7 +56,7 @@ syncretisms and the nominative stem-allomorphy generalization (16) remain.
 namespace Graf2019
 
 open Morphology Morphology.Containment
-open Morphology.Degree
+open Morphology.Paradigm
 open English.Modifiers.Adjectives
 
 /-! ### Four characterizations coincide over a linear hierarchy -/
@@ -81,13 +80,13 @@ theorem isContiguous_tfae {n : ℕ} {F : Type*} (p : Paradigm n F) :
 /-- Every suppletion pattern of the English fragment is feasibly monotonic, Table 1's attested
 rows AAA *smart* and ABB *good*. -/
 theorem english_suppletion_feasiblyMonotone :
-    ∀ e ∈ allEntries, FeasiblyMonotone e.suppletion.toParadigm := by
+    ∀ e ∈ allEntries, FeasiblyMonotone e.suppletion := by
   simp only [← isContiguous_iff_feasiblyMonotone]
   decide
 
 /-- The unattested *ABA row: no order on the forms makes *good, better, goodest* monotone,
 whatever the order of the codomain. -/
-theorem aba_not_feasiblyMonotone : ¬ FeasiblyMonotone aba.toParadigm := by
+theorem aba_not_feasiblyMonotone : ¬ FeasiblyMonotone aba := by
   rw [← isContiguous_iff_feasiblyMonotone]
   decide
 
@@ -129,7 +128,7 @@ person (Winnebago) though not in adjectival gradation, where its absence has to 
 for instance in terms of syntactic containment. -/
 
 /-- AAB is feasibly monotonic. -/
-theorem aab_feasiblyMonotone : FeasiblyMonotone aab.toParadigm := by
+theorem aab_feasiblyMonotone : FeasiblyMonotone aab := by
   rw [← isContiguous_iff_feasiblyMonotone]
   decide
 

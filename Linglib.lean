@@ -1219,7 +1219,6 @@ import Linglib.Morphology.Paradigm.Analogy
 import Linglib.Morphology.Paradigm.Basic
 import Linglib.Morphology.Paradigm.Complexity
 import Linglib.Morphology.Paradigm.Contiguity
-import Linglib.Morphology.Paradigm.Degree
 import Linglib.Morphology.Paradigm.DomainContiguity
 import Linglib.Morphology.Paradigm.Function
 import Linglib.Morphology.Paradigm.Linkage

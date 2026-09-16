@@ -1,4 +1,3 @@
-import Linglib.Morphology.Paradigm.Degree
 import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.DistributedMorphology.Merger
 import Linglib.Fragments.English.Modifiers.Adjectives
@@ -59,32 +58,40 @@ component and its structure.
 
 namespace Bobaljik2012
 
-open Morphology.Degree Morphology.Containment DistributedMorphology
+open Morphology Morphology.Paradigm Morphology.Containment DistributedMorphology
 open English.Modifiers.Adjectives (AdjModifierEntry allEntries good)
 
 /-! ### The patterns on the Fragments (ch. 4) -/
 
 /-- The English Fragment shows only AAA and ABB. -/
-theorem english_patterns : ∀ e ∈ allEntries, e.suppletion = aaa ∨ e.suppletion = abb := by
+theorem english_patterns :
+    ∀ e ∈ allEntries,
+      syncretism e.suppletion = syncretism aaa ∨ syncretism e.suppletion = syncretism abb := by
   decide
 
 /-- The Latin Fragment shows only the attested patterns of (191). -/
 theorem latin_patterns :
     ∀ e ∈ Latin.Adjectives.allEntries,
-      e.suppletion = aaa ∨ e.suppletion = abb ∨ e.suppletion = abc := by
+      syncretism e.comparison.suppletion = syncretism aaa ∨
+        syncretism e.comparison.suppletion = syncretism abb ∨
+        syncretism e.comparison.suppletion = syncretism abc := by
   decide
 
 /-- Latin shows all three: *longus*, *parvus*, *bonus*. -/
 theorem latin_all_three :
-    (∃ e ∈ Latin.Adjectives.allEntries, e.suppletion = aaa) ∧
-      (∃ e ∈ Latin.Adjectives.allEntries, e.suppletion = abb) ∧
-      ∃ e ∈ Latin.Adjectives.allEntries, e.suppletion = abc := by
+    (∃ e ∈ Latin.Adjectives.allEntries, syncretism e.comparison.suppletion = syncretism aaa) ∧
+      (∃ e ∈ Latin.Adjectives.allEntries, syncretism e.comparison.suppletion = syncretism abb) ∧
+      ∃ e ∈ Latin.Adjectives.allEntries, syncretism e.comparison.suppletion = syncretism abc := by
   decide
 
-/-- CSG1 (1) on *good*: a suppletive comparative forces a suppletive
-superlative, by contiguity. -/
-theorem good_csg1 : good.suppletion.SprlSuppletive :=
-  csg_part1 good.suppletion (by decide) (by decide)
+/-- CSG1 (1): in a contiguous pattern a suppletive comparative, whose root differs from the
+positive's, forces a suppletive superlative. -/
+theorem csg1 {F : Type*} {p : Paradigm 3 F} (hc : IsContiguous p) (h : p 1 ≠ p 0) :
+    p 2 ≠ p 0 :=
+  fun h2 ↦ h (hc (i := 0) (j := 1) (k := 2) (by decide) (by decide) h2.symm).symm
+
+/-- CSG1 on *good*: *best* does not return to the root of *good*. -/
+theorem good_csg1 : good.suppletion 2 ≠ good.suppletion 0 := csg1 (by decide) (by decide)
 
 /-- A two-word form: periphrastic *more X*. -/
 def Periphrastic (f : String) : Prop := ' ' ∈ f.toList
@@ -101,14 +108,14 @@ theorem english_ssg :
 /-- RSG (4) on the Fragment: a suppletive comparative is synthetic —
 *better*, *worse*, never *more bett*. -/
 theorem english_rsg :
-    ∀ e ∈ allEntries, e.suppletion.CmprSuppletive → ∃ c ∈ e.formComp, ¬ Periphrastic c := by
+    ∀ e ∈ allEntries, e.suppletion 1 ≠ e.suppletion 0 → ∃ c ∈ e.formComp, ¬ Periphrastic c := by
   decide
 
 /-! ### The book's vocabularies (ch. 2, ch. 5)
 
 Each vocabulary is run through the Elsewhere engine of
-`Morphology/Exponence/Containment/Contiguity.lean`; `degreeShape` reads the
-root pattern off the realized cells. -/
+`Morphology/Exponence/Containment/Contiguity.lean`; the syncretism of the
+realized cells is the root pattern. -/
 
 /-- Czech BAD (39): *hor-* under CMPR, elsewhere *špatn-*. -/
 def czechBad : List (SpanRule 3 String) := [⟨"špatn", 0, none⟩, ⟨"hor", 0, some 1⟩]
@@ -118,18 +125,18 @@ superlative, since the superlative contains its context. -/
 theorem czech_bad_realize : realize czechBad = ![some "špatn", some "hor", some "hor"] := by
   decide
 
-theorem czech_bad_abb : degreeShape (realize czechBad) = abb := by decide
+theorem czech_bad_abb : syncretism (realize czechBad) = syncretism abb := by decide
 
 /-- English GOOD (203): *bett-* under CMPR, elsewhere *good*. -/
 def englishGood : List (SpanRule 3 String) := [⟨"good", 0, none⟩, ⟨"bett", 0, some 1⟩]
 
-theorem english_good_abb : degreeShape (realize englishGood) = abb := by decide
+theorem english_good_abb : syncretism (realize englishGood) = syncretism abb := by decide
 
 /-- English BAD (194): *worse* as a √ROOT+CMPR portmanteau, elsewhere
 *bad*. -/
 def englishBad : List (SpanRule 3 String) := [⟨"bad", 0, none⟩, ⟨"worse", 1, none⟩]
 
-theorem english_bad_abb : degreeShape (realize englishBad) = abb := by decide
+theorem english_bad_abb : syncretism (realize englishBad) = syncretism abb := by decide
 
 /-- Welsh GOOD (198): *gor-* under SPRL and *gwell*, both √ROOT+CMPR
 portmanteaus, elsewhere *da*. -/
@@ -138,7 +145,7 @@ def welshGood : List (SpanRule 3 String) :=
 
 /-- *da, gwell, gor-au*: ABC, since the superlative exponent is a
 portmanteau. -/
-theorem welsh_good_abc : degreeShape (realize welshGood) = abc := by decide
+theorem welsh_good_abc : syncretism (realize welshGood) = syncretism abc := by decide
 
 /-- Latin GOOD (204): *opt-* a √ROOT+CMPR portmanteau under SPRL, *mel-* a
 root allomorph under CMPR, elsewhere *bon*. Since *opt-* expones the CMPR
@@ -149,7 +156,7 @@ def latinBonus : List (SpanRule 3 String) :=
 theorem latin_bonus_realize : realize latinBonus = ![some "bon", some "mel", some "opt"] := by
   decide
 
-theorem latin_realize_abc : degreeShape (realize latinBonus) = abc := by decide
+theorem latin_realize_abc : syncretism (realize latinBonus) = syncretism abc := by decide
 
 /-- Latin satisfies every condition the CSG2 derivation uses. -/
 theorem latin_wellformed :
@@ -181,7 +188,8 @@ ABA has one, accidental homophony, closed by Antihomophony ((44)). -/
 /-- (190): *be(tt)-* conditioned by SPRL across the comparative. -/
 def aabContextual : List (SpanRule 3 String) := [⟨"good", 0, none⟩, ⟨"bett", 0, some 2⟩]
 
-theorem aabContextual_realizes_aab : degreeShape (realize aabContextual) = aab := by decide
+theorem aabContextual_realizes_aab :
+    syncretism (realize aabContextual) = syncretism aab := by decide
 
 /-- Its context skips the comparative: adjacency excludes it. -/
 theorem aabContextual_not_adjacent : ¬ Adjacent aabContextual := by decide
@@ -190,7 +198,7 @@ theorem aabContextual_not_adjacent : ¬ Adjacent aabContextual := by decide
 counterpart — *\*da – da-ch – gor-au*. -/
 def welshAAB : List (SpanRule 3 String) := [⟨"da", 0, none⟩, ⟨"gor", 1, some 2⟩]
 
-theorem welshAAB_realizes_aab : degreeShape (realize welshAAB) = aab := by decide
+theorem welshAAB_realizes_aab : syncretism (realize welshAAB) = syncretism aab := by decide
 
 /-- The node [GOOD, CMPR] has a context-sensitive rule and no context-free
 one: (202) excludes it. -/
@@ -199,7 +207,7 @@ theorem welshAAB_not_grounded : ¬ Grounded welshAAB := by decide
 /-- `realize_const_of_grounded` applied: the AAB cells refute Antihomophony
 and (202) together. -/
 theorem welshAAB_blocked : ¬ (Antihomophonous welshAAB ∧ Grounded welshAAB) :=
-  λ ⟨hAH, hG⟩ =>
+  fun ⟨hAH, hG⟩ ↦
     absurd (realize_const_of_grounded hAH hG (by decide) (by decide)) (by decide)
 
 /-- The homophony loophole of (44): a superlative allomorph accidentally
@@ -207,7 +215,7 @@ homophonous with the positive yields surface ABA. -/
 def fakeAba : List (SpanRule 3 String) :=
   [⟨"A", 0, none⟩, ⟨"B", 0, some 1⟩, ⟨"A", 0, some 2⟩]
 
-theorem fakeAba_realizes_aba : degreeShape (realize fakeAba) = aba := by decide
+theorem fakeAba_realizes_aba : syncretism (realize fakeAba) = syncretism aba := by decide
 
 theorem fakeAba_not_antihomophonous : ¬ Antihomophonous fakeAba := by decide
 

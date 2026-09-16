@@ -25,7 +25,7 @@ graded forms ([bobaljik-2012] Table 4.1), so it is ABB.
 
 namespace Latin.Adjectives
 
-open Morphology.Degree (DegreePattern aaa abb abc)
+open Morphology.Paradigm
 
 -- ============================================================================
 -- § 1: Regular Adjectives (AAA)
