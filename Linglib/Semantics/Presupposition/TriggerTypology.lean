@@ -6,9 +6,60 @@ consensus inventory of the projection literature (cf. [zeevat-1992],
 [tonhauser-beaver-roberts-simons-2013]). Fragment lexical entries carry a
 `PresupTrigger` value as theory-neutral metadata; orthogonal classifications
 of the same inventory are the projection classes of
-[tonhauser-beaver-roberts-simons-2013] in `Studies/TonhauserEtAl2013` and the
-soft/hard distinction in `Semantics.Verb`.
+[tonhauser-beaver-roberts-simons-2013] in `Studies/TonhauserEtAl2013`. The
+hard/soft split of [abusch-2010] is `TriggerType`, and [karttunen-1973]'s
+plug/hole/filter classification of what a predicate does with its
+complement's presuppositions is `ProjectionBehavior`; a verb entry's trigger
+type is derived (`Verb.triggerType`).
+
+## References
+
+* [zeevat-1992]
+* [tonhauser-beaver-roberts-simons-2013]
+* [abusch-2010]
+* [karttunen-1973]
+* [nadathur-2023-implicatives]
 -/
+
+namespace Presupposition
+
+/-- The kind of presupposition trigger a predicate is, the hard/soft classification of
+[abusch-2010]: hard triggers always project (*too*, *again*, *also*), soft triggers project
+context-sensitively (*stop*, *know*), and an implicative presupposes a prerequisite. -/
+inductive TriggerType where
+  /-- Projective in every context. -/
+  | hardTrigger
+  /-- A factive or change-of-state trigger, locally accommodatable. -/
+  | softTrigger
+  /-- An implicative, presupposing its causal prerequisite ([nadathur-2023-implicatives]). -/
+  | prerequisiteSoft
+  deriving DecidableEq, Repr
+
+/-- Is this trigger locally accommodatable (soft)?
+    Both factive and prerequisite triggers are soft. -/
+def TriggerType.isSoft : TriggerType → Bool
+  | .hardTrigger => false
+  | .softTrigger => true
+  | .prerequisiteSoft => true
+
+/--
+Complement presupposition projection behavior ([karttunen-1973]).
+
+Orthogonal to `TriggerType` (whether the verb *triggers* presuppositions):
+this classifies what the verb does with presuppositions *of its complement*.
+
+- `plug`: blocks all complement presuppositions (*say*, *tell*, *promise*)
+- `hole`: lets all complement presuppositions project (*know*, *regret*, *stop*)
+- `filter`: conditionally cancels some complement presuppositions (*if...then*, *and*, *or*)
+-/
+inductive ProjectionBehavior where
+  | plug    -- Blocks complement presuppositions
+  | hole    -- Passes complement presuppositions through
+  | filter  -- Conditionally cancels complement presuppositions
+  deriving DecidableEq, Repr
+
+end Presupposition
+
 
 namespace Presupposition.TriggerTypology
 
