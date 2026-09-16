@@ -44,8 +44,7 @@ Values are classified along two orthogonal dimensions ([corbett-2000]):
 
 The [harbour-2014] feature decomposition and its lattice grounding live in
 `Semantics/Plurality/NumberFeatures.lean`; coordinate resolution in
-`Syntax/Number/Resolve.lean`; the `HasNumber` capability mixin in
-`Syntax/Number/Capabilities.lean`.
+`Syntax/Number/Resolve.lean`.
 -/
 
 /-- Grammatical number: [corbett-2000]'s analytical inventory of number values.

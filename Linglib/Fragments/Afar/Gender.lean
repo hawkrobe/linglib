@@ -30,8 +30,6 @@ def Value.toLabel : Value → Gender
   | .masc => .masculine
   | .fem => .feminine
 
-instance : HasGender Value := ⟨fun g ↦ genderOf g.toLabel⟩
-
 /-- An Afar noun with its gender, the gender of its referents where it has one, and
 whether its citation form ends in an accented vowel. -/
 structure Noun extends GenderedNoun Value where

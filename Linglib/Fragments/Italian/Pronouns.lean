@@ -88,8 +88,7 @@ def pronouns : List PersonalPronoun := [io, tu, lei_formal, lui, lei, noi, voi, 
 
 open Romance.Clitics (CliticEntry CliticCase)
 
-/-! Schema and capability instances (`HasPhi`/`Bound`/`HasPerson`/
-`HasNumber`/`HasCase`) are the shared Romance clitic schema
+/-! Schema and capability instances (`HasPhi`/`Bound`) are the shared Romance clitic schema
 (`Fragments/Romance/Clitics.lean`). -/
 
 -- 1sg clitics

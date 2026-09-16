@@ -9,10 +9,8 @@ import Linglib.Data.UD.Basic
 # The φ-bundle capability
 
 `HasPhi` equips a carrier with its agreement φ-features (person, number,
-gender) as a UD bundle; `HasPhi.Agree` is the induced agreement relation.
-The per-axis analytical capabilities are `HasPerson`/`HasNumber`/`HasGender`;
-`HasPhi` is their UD-realization face, the bundle φ-agreement
-(`UD.MorphFeatures.compatible`) consumes.
+gender) as a UD bundle; `HasPhi.Agree` is the induced agreement relation,
+the bundle φ-agreement (`UD.MorphFeatures.compatible`) consumes.
 -/
 
 /-- A φ-bearer is an expression that exposes person, number, and gender for

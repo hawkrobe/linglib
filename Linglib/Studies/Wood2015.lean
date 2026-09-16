@@ -62,7 +62,7 @@ def Position.IsSpecifier : Position → Prop
 /-- Whether a position lets a caseless element merge in it: Appl demands dative of its
 specifier, Voice and p demand nothing. -/
 def Position.AdmitsCaseless : Position → Prop
-  | .specAppl => applLowRecipient.SpecCanBearCase (none : Option Case)
+  | .specAppl => applLowRecipient.SpecCanBearCase none
   | _ => True
 
 /-- *-st* merges in a specifier position with no case requirement. -/

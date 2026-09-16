@@ -30,8 +30,6 @@ structure Noun extends GenderedNoun Gender where
   plural : Option String := none
   deriving DecidableEq, Repr
 
-instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
-
 /-! ### Count nouns -/
 
 def libro : Noun := { form := "libro", gloss := "book", gender := .masculine, plural := "libri" }

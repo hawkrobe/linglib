@@ -70,17 +70,11 @@ def Value.plConcord : Value → PlConcord
   | .masc | .fem => .rational
   | .neut => .neuter
 
-/-- The gender system: fully labelled, neuter the default. -/
-def system : Gender.System Value where
-  label
-    | .masc => some .masculine
-    | .fem => some .feminine
-    | .neut => some .neuter
-  default := .neut
-
-instance : HasGender Value := ⟨λ g => system.label g⟩
-
-instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
+/-- The comparative label of each gender. -/
+def Value.toLabel : Value → Gender
+  | .masc => .masculine
+  | .fem => .feminine
+  | .neut => .neuter
 
 /-- Singular verb agreement alone distinguishes the three genders. -/
 theorem faithful_sgConcord : Function.Injective Value.sgConcord := by decide

@@ -1,5 +1,4 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Gender.Capabilities
 import Linglib.Syntax.Gender.Basic
 
 /-!
@@ -29,8 +28,6 @@ def Value.toLabel : Value → Gender
   | .masc => .masculine
   | .fem => .feminine
   | .neut => .neuter
-
-instance : HasGender Value := ⟨fun g ↦ genderOf g.toLabel⟩
 
 /-- An adjective by its nominative singular forms. -/
 structure Adjective where

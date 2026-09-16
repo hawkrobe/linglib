@@ -1,6 +1,6 @@
 import Linglib.Data.UD.Basic
-import Linglib.Syntax.Number.Capabilities
-import Linglib.Syntax.Person.Capabilities
+import Linglib.Syntax.Number.Basic
+import Linglib.Syntax.Person.Basic
 import Linglib.Syntax.Clause.Chaining
 
 /-!
@@ -79,11 +79,6 @@ structure PersonNumber where
   person : UD.Person
   number : UD.Number
   deriving DecidableEq, Repr
-
-/-- A person/number index bears its number slot (`HasNumber`). -/
-instance : HasNumber PersonNumber := ⟨fun pn => Number.fromUD pn.number⟩
-
-instance : HasPerson PersonNumber := ⟨fun pn => some (Person.fromUD pn.person)⟩
 
 /-- A DS suffix entry: form + person/number it indexes. -/
 structure DSSuffix where

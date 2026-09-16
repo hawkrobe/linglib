@@ -1,7 +1,7 @@
 import Linglib.Syntax.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Data.UD.Basic
-import Linglib.Syntax.Number.Capabilities
+import Linglib.Syntax.Number.Basic
 import Linglib.Semantics.Reference.Prominence
 import Linglib.Fragments.Mayan.Params
 import Linglib.Syntax.Extraction
@@ -23,8 +23,8 @@ inverted alignment.
 
 ## Main declarations
 
-* `Kiche.PhiFeatures`: person/number/formality bundles, with `HasPerson`
-  and `HasNumber` instances and the informal shorthand `Kiche.phi`.
+* `Kiche.PhiFeatures`: person/number/formality bundles, with the informal shorthand
+  `Kiche.phi`.
 * `Kiche.setBMarker`, `Kiche.setAPreC`, `Kiche.setAPreV`: the Set B
   (absolutive) and Set A (ergative, pre-consonantal / pre-vocalic)
   exponents.
@@ -68,11 +68,6 @@ structure PhiFeatures where
   number : Number
   formality : Formality
   deriving DecidableEq, Repr
-
-/-- A K'iche' φ-bundle bears its number slot (`HasNumber`). -/
-instance : HasNumber PhiFeatures := ⟨fun φ => some φ.number⟩
-
-instance : HasPerson PhiFeatures := ⟨fun φ => some φ.person⟩
 
 /-- Shorthand for informal phi features. -/
 abbrev phi (p : Person) (n : Number) : PhiFeatures :=

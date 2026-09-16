@@ -8,7 +8,7 @@ The nominal categorizer is the locus of grammatical gender: an n may
 carry a valued gender feature (`GenderValue`, a signed `GenderDimension`),
 interpretable (natural)
 or uninterpretable (arbitrary), and Vocabulary Insertion realizes the
-result in the language's own gender system (`Gender.System`), falling
+result in the language's own carrier of genders, falling
 back to the system's morphosyntactic default. The attested realization
 patterns — Set 1, Set 2, three-gender, animacy-based — differ only in
 their system, and PF is blind to interpretability. DM features are the
@@ -23,7 +23,7 @@ head inventory is `KramerN`, whose three-gender bound for one dimension is a the
   selectional feature {D}; `Categorizer.Head.gendered` builds the
   canonical inventory `n_iFem` … `n_uMasc`
 * `Categorizer.Head.realizeGender` — Vocabulary Insertion into a
-  `Gender.System`; `IsSet1` … `IsAnimacyBased` — the attested patterns
+  the carrier; `IsSet1` … `IsAnimacyBased` — the attested patterns
 
 ## Main statements
 
@@ -474,49 +474,51 @@ theorem uninterpretable_gender_unvalued (gf : GenderFeature) (h : gf.interp = .u
 /-! ### Vocabulary Insertion into a gender system
 
 The bridge from features on n to a language's genders is Vocabulary
-Insertion into that language's own `Gender.System` — the carrier
-discipline of `Syntax/Gender/Basic.lean`. One map covers the attested
-patterns of [kramer-2015] Chs 5–7, which differ only in their system:
-the valued feature is realized by `value`, and a bare n falls back to
-the system's morphosyntactic default. -/
+Insertion into that language's own carrier of controller genders, the
+carrier discipline of `Syntax/Gender/Basic.lean`. One map covers the
+attested patterns of [kramer-2015] Chs 5–7, which differ only in their
+carrier: the valued feature is realized by `value`, and a bare n falls
+back to the morphosyntactic default, per-language data that feminine
+defaults show is not derivable ([kramer-2015]). The attested patterns are
+constraints on the comparative labels of the carrier, `label`. -/
 
 variable {G : Type*}
 
-/-- Vocabulary Insertion of gender: realize the head's valued feature in
-the language's own system, falling back to the system's default. -/
-def Categorizer.Head.realizeGender (sys : Gender.System G)
-    (value : GenderValue → G) (ch : Categorizer.Head) : G :=
-  (ch.phi.gender.map fun gf => value gf.val).getD sys.default
+/-- Vocabulary Insertion of gender realizes the head's valued feature in the language's own
+carrier, falling back to the morphosyntactic default. -/
+def Categorizer.Head.realizeGender (default : G) (value : GenderValue → G)
+    (ch : Categorizer.Head) : G :=
+  (ch.phi.gender.map fun gf => value gf.val).getD default
 
-@[simp] theorem realizeGender_gendered (sys : Gender.System G)
+@[simp] theorem realizeGender_gendered (default : G)
     (value : GenderValue → G) (interp : Interpretability)
     (v : GenderValue) :
-    (Categorizer.Head.gendered interp v).realizeGender sys value = value v :=
+    (Categorizer.Head.gendered interp v).realizeGender default value = value v :=
   rfl
 
-@[simp] theorem realizeGender_n_plain (sys : Gender.System G)
+@[simp] theorem realizeGender_n_plain (default : G)
     (value : GenderValue → G) :
-    Categorizer.Head.n_plain.realizeGender sys value = sys.default := rfl
+    Categorizer.Head.n_plain.realizeGender default value = default := rfl
 
 /-- PF is blind to interpretability: heads carrying the same valued
 feature realize alike, whatever their LF status — natural and arbitrary
 gender receive the same Vocabulary Item ([kramer-2015]). -/
-theorem realizeGender_congr (sys : Gender.System G)
+theorem realizeGender_congr (default : G)
     (value : GenderValue → G) {ch₁ ch₂ : Categorizer.Head}
     (h : ch₁.phi.gender.map (·.val) = ch₂.phi.gender.map (·.val)) :
-    ch₁.realizeGender sys value = ch₂.realizeGender sys value := by
+    ch₁.realizeGender default value = ch₂.realizeGender default value := by
   have e : ∀ o : Option GenderFeature,
       o.map (fun gf => value gf.val) = (o.map (·.val)).map value := by
     intro o; cases o <;> rfl
   rw [Categorizer.Head.realizeGender, Categorizer.Head.realizeGender, e, e, h]
 
 /-- Realization sees only what `KramerN.exponence` sees. -/
-theorem realizeGender_ofKramerN (sys : Gender.System G)
+theorem realizeGender_ofKramerN (default : G)
     (value : GenderValue → G) (k₁ k₂ : KramerN)
     (h : k₁.exponence = k₂.exponence) :
-    (Categorizer.Head.ofKramerN k₁).realizeGender sys value =
-      (Categorizer.Head.ofKramerN k₂).realizeGender sys value := by
-  refine realizeGender_congr sys value ?_
+    (Categorizer.Head.ofKramerN k₁).realizeGender default value =
+      (Categorizer.Head.ofKramerN k₂).realizeGender default value := by
+  refine realizeGender_congr default value ?_
   cases k₁ <;> cases k₂ <;> first | rfl | exact absurd h (by decide)
 
 /-! ### The attested realization patterns ([kramer-2015] Chs 5–7)
@@ -527,61 +529,61 @@ Set 1 and Set 2 share a feature inventory and differ only here. -/
 
 /-- A Set 1 system: [+FEM] realizes the feminine-labeled gender and the
 default is masculine-labeled (Amharic, Spanish; [kramer-2015] Ch 6). -/
-def IsSet1 (sys : Gender.System G) (value : GenderValue → G) : Prop :=
-  sys.label (value ⟨.fem, .pos⟩) = some .feminine
-    ∧ sys.label sys.default = some .masculine
+def IsSet1 (label : G → Option Gender) (default : G) (value : GenderValue → G) : Prop :=
+  label (value ⟨.fem, .pos⟩) = some .feminine
+    ∧ label default = some .masculine
 
 /-- A Set 2 system: [−FEM] realizes the masculine-labeled gender and the
 default is feminine-labeled (Maa; [kramer-2015] §6.3). -/
-def IsSet2 (sys : Gender.System G) (value : GenderValue → G) : Prop :=
-  sys.label (value ⟨.fem, .neg⟩) = some .masculine
-    ∧ sys.label sys.default = some .feminine
+def IsSet2 (label : G → Option Gender) (default : G) (value : GenderValue → G) : Prop :=
+  label (value ⟨.fem, .neg⟩) = some .masculine
+    ∧ label default = some .feminine
 
 /-- A three-gender system: both FEM poles are realized and the default
 is neuter-labeled (Mangarayi; [kramer-2015] §7.2 — the other Ch 7 case
 studies add uninterpretable features to this inventory). -/
-def IsThreeGender (sys : Gender.System G) (value : GenderValue → G) : Prop :=
-  sys.label (value ⟨.fem, .pos⟩) = some .feminine
-    ∧ sys.label (value ⟨.fem, .neg⟩) = some .masculine
-    ∧ sys.label sys.default = some .neuter
+def IsThreeGender (label : G → Option Gender) (default : G) (value : GenderValue → G) : Prop :=
+  label (value ⟨.fem, .pos⟩) = some .feminine
+    ∧ label (value ⟨.fem, .neg⟩) = some .masculine
+    ∧ label default = some .neuter
 
 /-- An animacy system: [+ANIM] realizes the animate-labeled gender and
 the default is inanimate-labeled (Lealao Chinantec, [kramer-2015] §5.3;
 Algonquian, §6.4; Teop, [adamson-2024]). -/
-def IsAnimacyBased (sys : Gender.System G) (value : GenderValue → G) : Prop :=
-  sys.label (value ⟨.anim, .pos⟩) = some .animate
-    ∧ sys.label sys.default = some .inanimate
+def IsAnimacyBased (label : G → Option Gender) (default : G) (value : GenderValue → G) : Prop :=
+  label (value ⟨.anim, .pos⟩) = some .animate
+    ∧ label default = some .inanimate
 
 /-- The Set 1 vs Set 2 parameter is exclusive: their defaults carry
 different labels. -/
-theorem not_isSet1_and_isSet2 (sys : Gender.System G)
-    (value : GenderValue → G) : ¬ (IsSet1 sys value ∧ IsSet2 sys value) :=
+theorem not_isSet1_and_isSet2 (label : G → Option Gender) (default : G)
+    (value : GenderValue → G) :
+    ¬ (IsSet1 label default value ∧ IsSet2 label default value) :=
   fun ⟨h₁, h₂⟩ => by have := h₁.2.symm.trans h₂.2; simp at this
 
 /-- In a Set 1 system, arbitrary-feminine n realizes the
 feminine-labeled gender and plain n the masculine-labeled default. -/
-theorem IsSet1.realize_labels {sys : Gender.System G}
-    {value : GenderValue → G} (h : IsSet1 sys value) :
-    sys.label (Categorizer.Head.n_uFem.realizeGender sys value)
+theorem IsSet1.realize_labels {label : G → Option Gender} {default : G}
+    {value : GenderValue → G} (h : IsSet1 label default value) :
+    label (Categorizer.Head.n_uFem.realizeGender default value)
         = some .feminine
-      ∧ sys.label (Categorizer.Head.n_plain.realizeGender sys value)
+      ∧ label (Categorizer.Head.n_plain.realizeGender default value)
         = some .masculine :=
   ⟨h.1, h.2⟩
 
 /-- In a Set 2 system, arbitrary-masculine n realizes the
 masculine-labeled gender and plain n the feminine-labeled default. -/
-theorem IsSet2.realize_labels {sys : Gender.System G}
-    {value : GenderValue → G} (h : IsSet2 sys value) :
-    sys.label (Categorizer.Head.n_uNegFem.realizeGender sys value)
+theorem IsSet2.realize_labels {label : G → Option Gender} {default : G}
+    {value : GenderValue → G} (h : IsSet2 label default value) :
+    label (Categorizer.Head.n_uNegFem.realizeGender default value)
         = some .masculine
-      ∧ sys.label (Categorizer.Head.n_plain.realizeGender sys value)
+      ∧ label (Categorizer.Head.n_plain.realizeGender default value)
         = some .feminine :=
   ⟨h.1, h.2⟩
 
 /-- Set 1 is realizable: the two-gender system over `Bool` with `true`
 the feminine-labeled class. -/
-example : IsSet1 (G := Bool)
-    ⟨fun b => some (if b then .feminine else .masculine), false⟩
+example : IsSet1 (G := Bool) (fun b => some (if b then .feminine else .masculine)) false
     (fun v => v == ⟨.fem, .pos⟩) := by
   constructor <;> rfl
 
@@ -590,16 +592,16 @@ example : IsSet1 (G := Bool)
 /-- The discourse-level gender information a head determines: the
 comparative label of its realized gender, unspecified where the system
 leaves the class unlabeled. -/
-def Categorizer.Head.genderInfo (sys : Gender.System G)
+def Categorizer.Head.genderInfo (label : G → Option Gender) (default : G)
     (value : GenderValue → G) (ch : Categorizer.Head) : Option Gender :=
-  sys.label (ch.realizeGender sys value)
+  label (ch.realizeGender default value)
 
 /-- In a fully labeled system the grammar always determines a concrete
 discourse gender: underspecification ([arnold-2026]) arises from the
 discourse, not from a resolved morphosyntax. -/
-theorem genderInfo_isSome (sys : Gender.System G)
-    (value : GenderValue → G) (hlab : ∀ g, (sys.label g).isSome)
-    (ch : Categorizer.Head) : (ch.genderInfo sys value).isSome :=
+theorem genderInfo_isSome (label : G → Option Gender) (default : G)
+    (value : GenderValue → G) (hlab : ∀ g, (label g).isSome)
+    (ch : Categorizer.Head) : (ch.genderInfo label default value).isSome :=
   hlab _
 
 end DistributedMorphology

@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Syntax.Case.Capabilities
+import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
@@ -150,11 +150,12 @@ theorem ethical_possessive_middle_asymmetry :
 
 /-! ### Case-based blocking of SpecApplP ([wood-2015]) -/
 
-/-- `appl.SpecCanBearCase x`: if `appl` assigns dative, `x` must bear case ([wood-2015]). -/
-def ApplHead.SpecCanBearCase {α : Type*} [HasCase α] (appl : ApplHead) (x : α) : Prop :=
-  appl.assignsDative = true → (HasCase.caseOf x).isSome = true
+/-- If `appl` assigns dative, its specifier, bearing the case `c`, must bear one
+([wood-2015]). -/
+def ApplHead.SpecCanBearCase (appl : ApplHead) (c : Option Case) : Prop :=
+  appl.assignsDative = true → c.isSome = true
 
-instance {α : Type*} [HasCase α] (appl : ApplHead) (x : α) :
-    Decidable (appl.SpecCanBearCase x) := inferInstanceAs (Decidable (_ → _))
+instance (appl : ApplHead) (c : Option Case) : Decidable (appl.SpecCanBearCase c) :=
+  inferInstanceAs (Decidable (_ → _))
 
 end Minimalist

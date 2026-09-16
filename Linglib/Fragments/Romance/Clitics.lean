@@ -1,7 +1,7 @@
 import Linglib.Data.UD.Basic
-import Linglib.Syntax.Case.Capabilities
-import Linglib.Syntax.Number.Capabilities
-import Linglib.Syntax.Person.Capabilities
+import Linglib.Syntax.Case.Basic
+import Linglib.Syntax.Number.Basic
+import Linglib.Syntax.Person.Basic
 import Linglib.Syntax.Category.Pronoun.Capabilities
 
 /-!
@@ -27,8 +27,8 @@ so a Romanian instantiation must split the REFL cell (or make the
 projection person-sensitive) rather than reuse this `toCase`.
 
 The clitic is its own bespoke struct — capabilities (`HasPhi`, `Proform`,
-`Bound`, `HasPerson`, `HasNumber`, `HasCase`) abstract over it without merging it
-into `Pronoun` (the `FunLike`-over-many-hom-types pattern). Deficiency is
+`Bound`) abstract over it without merging it into `Pronoun` (the
+`FunLike`-over-many-hom-types pattern). Deficiency is
 deliberately *not* a capability: it is per-series (a whole clitic paradigm
 is `.clitic`), modelled by the per-language `cliticStrength` and the
 `Strength` order, not by a per-element accessor.
@@ -59,15 +59,6 @@ structure CliticEntry where
   number : UD.Number
   case_ : CliticCase
   deriving Repr, BEq
-
-/-- A clitic bears its φ-slot's number (`HasNumber`). -/
-instance : HasNumber CliticEntry := ⟨fun c => Number.fromUD c.number⟩
-
-instance : HasPerson CliticEntry := ⟨fun c => some (Person.fromUD c.person)⟩
-
-/-- A clitic bears the analytical case its paradigm cell projects to;
-    reflexives, neutralizing the contrast, bear `none`. -/
-instance : HasCase CliticEntry := ⟨fun c => c.case_.toCase⟩
 
 /-- A clitic's φ-features (person/number). -/
 instance : HasPhi CliticEntry :=

@@ -1,7 +1,7 @@
 import Linglib.Semantics.Possession.Defs
 import Linglib.Data.UD.Basic
-import Linglib.Syntax.Number.Capabilities
-import Linglib.Syntax.Person.Capabilities
+import Linglib.Syntax.Number.Basic
+import Linglib.Syntax.Person.Basic
 import Linglib.Syntax.Gender.Basic
 
 /-!
@@ -98,15 +98,11 @@ structure Possessor where
   gender : Option PossGender := none
   deriving DecidableEq, Repr
 
-instance : HasNumber Possessor := ⟨fun p => Number.fromUD p.number⟩
-
 /-- Jarawara's persons in the canonical inventory. -/
 def Person.toPerson : Person → _root_.Person
   | .first => .first
   | .second => .second
   | .third => .third
-
-instance : HasPerson Possessor := ⟨fun p => some p.person.toPerson⟩
 
 /-- The possessor pronoun's form and mora count; third-singular pronouns are unpronounced,
 and only *o-* and *ti-* fall short of the two-mora minimal word. -/

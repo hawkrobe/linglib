@@ -5,8 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Morphology.Word.Basic
 import Linglib.Semantics.Modality.Basic
-import Linglib.Syntax.Number.Capabilities
-import Linglib.Syntax.Person.Capabilities
+import Linglib.Syntax.Number.Basic
+import Linglib.Syntax.Person.Basic
 
 open Morphology (Word)
 open Modality (ForceFlavor ModalItem)
@@ -66,9 +66,5 @@ def number (a : Auxiliary) : Option UD.Number := a.features.number
 
 /-- The modal item an auxiliary contributes: form, meanings, register. -/
 def toModalItem (a : Auxiliary) : ModalItem := ⟨a.form, a.modality, a.register⟩
-
-instance : HasNumber Auxiliary := ⟨fun a => a.features.number.bind Number.fromUD⟩
-
-instance : HasPerson Auxiliary := ⟨fun a => a.features.person.map Person.fromUD⟩
 
 end Auxiliary

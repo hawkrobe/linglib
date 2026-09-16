@@ -27,8 +27,6 @@ def Gender.toGender : Gender → _root_.Gender
   | .gI => .animate
   | .gII => .inanimate
 
-instance : HasGender Gender := ⟨λ g => ↑g.toGender⟩
-
 /-- A noun with its gloss and the gender it takes unpossessed. -/
 abbrev Noun := GenderedNoun Gender
 

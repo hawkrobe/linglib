@@ -5,10 +5,6 @@ Authors: Robert Hawkins
 -/
 import Linglib.Data.UD.Basic
 import Linglib.Syntax.Agreement.Phi
-import Linglib.Syntax.Case.Capabilities
-import Linglib.Syntax.Gender.Capabilities
-import Linglib.Syntax.Number.Capabilities
-import Linglib.Syntax.Person.Capabilities
 import Linglib.Syntax.Binding.CoreferenceStatus
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Category.Pronoun.Basic
@@ -26,12 +22,8 @@ exactly the axes it touches.
 * `Proform` — a pro-form takes its antecedents from a fixed form-class, its
   domain ([bloomfield-1933]); `Proform.CandidateAntecedent` is derived — domain
   membership plus φ-agreement (`HasPhi.Agree`, from `Syntax/Agreement/Phi.lean`).
-* `Bound`, `HasNumber`, `HasPerson`, `HasCase`, `HasGender` instances for the
-  pronoun carriers.
-* `bindingClassOf_toWord`, `numberOf_toWord`, `personOf_toWord`, `caseOf_toWord`,
-  `genderOf_toWord` — `Pronoun.toWord` commutes with each axis, up to what UD
-  realization can express: clusivity, minimal/augmented number, and animacy-based
-  gender are lost; case and binding class are preserved.
+* `Bound` instances for the pronoun carriers.
+* `bindingClassOf_toWord` — `Pronoun.toWord` classifies as its `Bound` class.
 
 ## Implementation notes
 
@@ -105,53 +97,3 @@ theorem bindingClassOf_toWord (p : Pronoun) (h : p.bindingClass ≠ some .rExpre
   rcases hb : p.bindingClass with _ | (_ | _ | _ | _) <;>
       rcases hp : p.pronType with _ | pt <;> (try cases pt) <;>
     simp_all +decide [Binding.bindingClassOf, Pronoun.toWord]
-
-/-! ### The number axis: `HasNumber` instances and faithfulness -/
-
-instance : HasNumber Pronoun := ⟨fun p => p.number⟩
-
-instance : HasNumber PersonalPronoun := ⟨fun p => numberOf p.toPronoun⟩
-
-/-- A pronoun's number survives projection to `Word` exactly on UD-expressible
-values; the minimal/augmented values are lost, since `Number.toUD` is partial. -/
-theorem numberOf_toWord (p : Pronoun) :
-    numberOf p.toWord = p.number.bind fun n => n.toUD.bind Number.fromUD := by
-  show (p.number.bind Number.toUD).bind Number.fromUD = _
-  cases p.number <;> rfl
-
-/-! ### The person axis: `HasPerson` instances and faithfulness -/
-
-instance : HasPerson Pronoun := ⟨fun p => p.person⟩
-
-instance : HasPerson PersonalPronoun := ⟨fun p => personOf p.toPronoun⟩
-
-/-- Projection to `Word` coarsens person, since UD realization has no
-clusivity. -/
-theorem personOf_toWord (p : Pronoun) :
-    personOf p.toWord = (personOf p).map Person.coarsen := by
-  show (p.person.map Person.toUD).map Person.fromUD = p.person.map Person.coarsen
-  simp [Option.map_map, Function.comp_def, Person.fromUD_toUD]
-
-/-! ### The case axis: `HasCase` instances and faithfulness -/
-
-instance : HasCase Pronoun := ⟨fun p => p.case_⟩
-
-instance : HasCase PersonalPronoun := ⟨fun p => caseOf p.toPronoun⟩
-
-/-- Projection to `Word` preserves case, since `Case.toUD` is a bijection. -/
-theorem caseOf_toWord (p : Pronoun) : caseOf p.toWord = caseOf p := by
-  show (p.case_.map Case.toUD).map Case.fromUD = p.case_
-  simp [Option.map_map, Function.comp_def, Case.fromUD_toUD]
-
-/-! ### The gender axis: `HasGender` instances and faithfulness -/
-
-instance : HasGender Pronoun := ⟨fun p => p.gender⟩
-
-instance : HasGender PersonalPronoun := ⟨fun p => genderOf p.toPronoun⟩
-
-/-- A pronoun's gender survives projection to `Word` exactly on UD-expressible
-values; the animacy-based labels are lost, since `Gender.toUD` is partial. -/
-theorem genderOf_toWord (p : Pronoun) :
-    genderOf p.toWord = p.gender.bind fun g => g.toUD.map Gender.fromUD := by
-  show (p.gender.bind Gender.toUD).map Gender.fromUD = _
-  cases p.gender <;> rfl

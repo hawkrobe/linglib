@@ -122,7 +122,8 @@ def tamil : Remainder Gender := ⟨{.masculine, .feminine}, {.neuter}⟩
 /-- Spanish: the remainder split arbitrarily over both core genders
 (Table 1), read off the Fragment. -/
 def spanish : Remainder Gender :=
-  ofNouns Spanish.Gender.allNouns (decide ·.IsNaturalGender) (·.gender.toLabel)
+  ofNouns Spanish.Gender.allNouns (decide <| ·.IsNaturalGender Spanish.Gender.Value.toLabel)
+    (·.gender.toLabel)
 
 /-- Blackfoot: animates animate; inanimates in a novel inanimate gender or
 the recycled animate one. -/
@@ -177,7 +178,7 @@ theorem phonologicalRule_kada : phonologicalRule Hausa.kada ≠ Hausa.kada.gende
 *-ā*: every feminine noun outside the semantic core ends in *-ā*. -/
 theorem feminine_remainder_aa :
     ∀ n ∈ Hausa.allNouns,
-      ¬ n.IsNaturalGender → n.gender = .feminine → n.EndsInAa := by
+      ¬ n.IsNaturalGender id → n.gender = .feminine → n.EndsInAa := by
   decide
 
 /-! ### Lexical gender assignment (§3.2) -/
@@ -210,8 +211,9 @@ end LexicalEntry
 nouns (higher animals honoris causa), [female] for the female-denoting
 ones, and a listed [f] for the arbitrarily feminine remainder. -/
 def lexicalEntry (n : Spanish.Gender.Noun) : LexicalEntry :=
-  ⟨decide n.IsNaturalGender, decide (n.naturalGender = some .feminine),
-    decide (¬ n.IsNaturalGender ∧ n.gender = .fem)⟩
+  ⟨decide (n.IsNaturalGender Spanish.Gender.Value.toLabel),
+    decide (n.naturalGender = some .feminine),
+    decide (¬ n.IsNaturalGender Spanish.Gender.Value.toLabel ∧ n.gender = .fem)⟩
 
 /-- The lexical account recovers the gender of every noun of the Fragment's shape. -/
 theorem lexical_faithful (n : Spanish.Gender.Noun) :
