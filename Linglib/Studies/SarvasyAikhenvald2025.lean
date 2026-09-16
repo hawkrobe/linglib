@@ -49,7 +49,7 @@ open Clause.Chaining
 
 /-- The four systems, from the fragments. -/
 def sample : List System :=
-  [Nungon.MedialVerbs.chaining, Manambu.MedialVerbs.chaining, Korean.MedialVerbs.chaining,
+  [Nungon.MedialVerbs.chaining, Manambu.MedialVerbs.chaining, Korean.chaining,
     Turkish.MedialVerbs.chaining]
 
 /-- Every sampled language chains medial-final, as verb-final languages do. -/
@@ -81,19 +81,19 @@ medial suffixes. -/
 theorem tense_from_final_verb :
     Nungon.MedialVerbs.chaining.tenseFromFinalVerb = true ∧
       Manambu.MedialVerbs.chaining.medialMorph.tense = .restricted ∧
-      Korean.MedialVerbs.chaining.medialMorph.tense = .restricted := by
+      Korean.chaining.medialMorph.tense = .restricted := by
   decide
 
 /-- Korean and Turkish negate medial clauses individually: every Korean suffix admits negation
 and every Turkish converb has a negative form or is negative itself. -/
 theorem negated_individually :
-    Korean.MedialVerbs.chaining.medialMorph.polarity = .full ∧
+    Korean.chaining.medialMorph.polarity = .full ∧
       Turkish.MedialVerbs.chaining.medialMorph.polarity = .full := by
   decide
 
 /-- The medial verbs of the languages without switch-reference are converbs. -/
 theorem converb_form :
-    Korean.MedialVerbs.chaining.medialVerbForm = .Conv ∧
+    Korean.chaining.medialVerbForm = .Conv ∧
       Turkish.MedialVerbs.chaining.medialVerbForm = .Conv := by
   decide
 

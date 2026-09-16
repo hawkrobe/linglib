@@ -1,4 +1,5 @@
 import Mathlib.Data.Finset.Card
+import Mathlib.Data.Finset.Union
 import Mathlib.Order.Fin.Basic
 import Mathlib.Order.Interval.Set.OrdConnected
 import Mathlib.Tactic.DeriveFintype
@@ -34,6 +35,8 @@ inventory at root namespace, UD demoted to realization.
 * `Case.toUD`/`Case.fromUD` — UD realization round-trip
 * `Case.hierarchyRank` — Blake's implicational hierarchy
   ([blake-1994], `Fin 7`-codomain rank)
+* `Case.Marker` — a case marker, its form and the cases it realizes, with the inventory
+  `Case.Marker.inventory` a set of markers realizes
 * `Case.IsValidInventory` — inventory contiguity on the hierarchy,
   decidable, with the order-theoretic characterization
   `isValidInventory_iff_ordConnected`
@@ -242,6 +245,19 @@ theorem isValidInventory_iff_ordConnected (inv : Finset Case) :
   · rintro hconn r ⟨clo, hclo, hlo⟩ ⟨chi, hchi, hhi⟩
     exact hconn _ ⟨clo, hclo, rfl⟩ _ ⟨chi, hchi, rfl⟩
       (le_of_lt (lt_trans hlo hhi)) r ⟨le_of_lt hlo, le_of_lt hhi⟩
+
+/-! ### Markers -/
+
+/-- A case marker: its form and the cases it realizes, several for a polysemous marker. -/
+structure Marker where
+  /-- The form. -/
+  form : String
+  /-- The cases the marker realizes. -/
+  cases : Finset Case
+  deriving DecidableEq
+
+/-- The cases a set of markers realizes. -/
+def Marker.inventory (ms : Finset Marker) : Finset Case := ms.biUnion (·.cases)
 
 /-! Contiguity verdicts on representative inventories (positive: Latin-
     through Finnish-sized systems; negative: hierarchy skips). Kept as
