@@ -1,4 +1,4 @@
-import Linglib.Fragments.English.Modifiers.Adjectives
+import Linglib.Fragments.English.Adjectives
 import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Syntax.Person.Basic
 import Linglib.Syntax.Agreement.PersonCaseConstraint
@@ -56,7 +56,7 @@ syncretisms and the nominative stem-allomorphy generalization (16) remain.
 namespace Graf2019
 
 open Morphology Morphology.Containment
-open English.Modifiers.Adjectives
+open English.Adjectives
 
 /-! ### Four characterizations coincide over a linear hierarchy -/
 
@@ -79,9 +79,11 @@ theorem isContiguous_tfae {n : ℕ} {F : Type*} (p : Paradigm n F) :
 /-- Every suppletion pattern of the English fragment is feasibly monotonic, Table 1's attested
 rows AAA *smart* and ABB *good*. -/
 theorem english_suppletion_feasiblyMonotone :
-    ∀ e ∈ allEntries, FeasiblyMonotone e.suppletion := by
-  simp only [← isContiguous_iff_feasiblyMonotone]
-  decide
+    ∀ e ∈ allEntries, FeasiblyMonotone e.comparison.suppletion := by
+  intro e he
+  rw [← isContiguous_iff_feasiblyMonotone]
+  revert e he
+  decide +kernel
 
 /-- The unattested *ABA row: no order on the forms makes *good, better, goodest* monotone,
 whatever the order of the codomain. -/

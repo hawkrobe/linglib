@@ -4,7 +4,7 @@ import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Semantics.Causation.Resultatives
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Fragments.English.Predicates.Adjectival
+import Linglib.Fragments.English.Adjectives
 import Linglib.Fragments.Mandarin.Resultatives
 import Linglib.Data.Examples.Levin1993
 
@@ -47,8 +47,7 @@ open Reference
 open ArgumentStructure
 open LevinClass (pushPull hit wipe)
 open English.Predicates.Verbal (push pull kick)
-open English.Predicates.Adjectival (open_ closed_ shut free_ loose flat
-  AdjectivalPredicateEntry)
+open English.Adjectives
 open Causation.Resultatives (resultativeCausativeBuilder)
 open Aspect (CoSType)
 open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction
@@ -652,7 +651,7 @@ An intr-*push open* resultative is licensed iff ALL of:
 4. The theme is capable of autonomous motion -/
 
 /-- Full licensing check for an intr-*push open* resultative. -/
-def isLicensed (verbClass : LevinClass) (adj : AdjectivalPredicateEntry)
+def isLicensed (verbClass : LevinClass) (adj : Degree.GradableAdjective)
     (causeStatus : CauseStatus) (theme : ThemeMotionCapacity) : Bool :=
   intrPushOpenClasses.contains verbClass &&
   adj.spatialConfigType.isSome &&
@@ -686,7 +685,7 @@ theorem blocked_wrong_verb_class :
   decide
 
 /-- Blocked: adjective not spatially instantiated (*red* has no spatial config). -/
-private def red_ : AdjectivalPredicateEntry where
+private def red_ : Degree.GradableAdjective where
   form := "red"; dimension := some .color
 
 theorem blocked_wrong_adjective :
@@ -746,7 +745,7 @@ structure FilledResultative where
   /-- The verb's Levin class (manner root) -/
   verbClass : LevinClass
   /-- The result-state adjective (from Fragment) -/
-  adjective : AdjectivalPredicateEntry
+  adjective : Degree.GradableAdjective
   /-- The argument structure construction (typically `resultative`) -/
   construction : Construction MeaningComponents
   /-- The construction adds what the verb lacks: fusion predicts the

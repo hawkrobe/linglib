@@ -1,11 +1,10 @@
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Syntax.Voice.Basic
 
 /-!
 # English Predicates
 
-Re-exports verbal and adjectival predicate entries.
+Re-exports verbal predicate entries.
 -/
 
 namespace English.Predicates
@@ -15,11 +14,6 @@ export Verbal (
   VerbEntry
   -- Functions
   allVerbs
-)
-
-export Adjectival (
-  AdjectivalPredicateEntry
-  allEntries
 )
 
 -- ============================================================================

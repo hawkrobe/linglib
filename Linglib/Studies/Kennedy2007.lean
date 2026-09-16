@@ -1,6 +1,6 @@
 import Linglib.Semantics.Degree.Adjective
 import Linglib.Semantics.Degree.Basic
-import Linglib.Fragments.English.Predicates.Adjectival
+import Linglib.Fragments.English.Adjectives
 
 /-!
 # Kennedy (2007): Vagueness and Grammar
@@ -133,7 +133,7 @@ theorem table61_iff_licenses (p : Polarity) (b : Boundedness) (m : DegreeModifie
     table61 p b m = true ↔ Licenses m (p • b) := by
   rcases Polarity.eq_positive_or_eq_negative p with rfl | rfl <;> cases b <;> cases m <;> decide
 
-open English.Predicates.Adjectival in
+open English.Adjectives in
 /-- The Fragment's antonym pairs fill (61): *completely full/empty*, *slightly wet* but
 *??completely wet*, *completely dry* but *??slightly dry*, *slightly bent* but *??fully bent*,
 *fully straight*, and nothing on the open height scale. -/

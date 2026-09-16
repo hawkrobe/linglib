@@ -1,7 +1,7 @@
 import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Pragmatics.RSA.Operators
 import Linglib.Semantics.Degree.Intensification
-import Linglib.Fragments.English.Predicates.Adjectival
+import Linglib.Fragments.English.Adjectives
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.FinCases
@@ -350,7 +350,7 @@ theorem possibly_zwicky : zwickyHolds possibly_ = true := by native_decide
 /-- Look up the Fragment adjective entry for an intensifier's adjectival base. -/
 def IntensifierEntry.fragmentEntry (e : IntensifierEntry) :
     Option Degree.GradableAdjective :=
-  English.Predicates.Adjectival.lookup e.adjBase
+  English.Adjectives.lookup e.adjBase
 
 /-- Bridge: pleasant's Fragment entry has positive evaluative valence,
     matching the intensifier layer's valence for pleasantly. -/
@@ -540,7 +540,7 @@ theorem goldilocks_exceptions_are_positive_H :
 theorem antonym_pairs_resolve :
     allEntries.all (λ e =>
       match e.fragmentEntry.bind (·.antonymForm) with
-      | some ant => (English.Predicates.Adjectival.lookup ant).isSome
+      | some ant => (English.Adjectives.lookup ant).isSome
       | none => true) = true := by
   native_decide
 

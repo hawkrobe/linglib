@@ -1,6 +1,6 @@
 import Linglib.Morphology.Exponence.Containment.Contiguity
 import Linglib.Morphology.DistributedMorphology.Merger
-import Linglib.Fragments.English.Modifiers.Adjectives
+import Linglib.Fragments.English.Adjectives
 import Linglib.Fragments.Latin.Adjectives
 
 /-!
@@ -59,15 +59,15 @@ component and its structure.
 namespace Bobaljik2012
 
 open Morphology Morphology.Containment DistributedMorphology
-open English.Modifiers.Adjectives (AdjModifierEntry allEntries good)
+open English.Adjectives
 
 /-! ### The patterns on the Fragments (ch. 4) -/
 
 /-- The English Fragment shows only AAA and ABB. -/
 theorem english_patterns :
     ∀ e ∈ allEntries,
-      syncretism e.suppletion = syncretism Paradigm.aaa ∨
-        syncretism e.suppletion = syncretism Paradigm.abb := by
+      syncretism e.comparison.suppletion = syncretism Paradigm.aaa ∨
+        syncretism e.comparison.suppletion = syncretism Paradigm.abb := by
   decide
 
 /-- The Latin Fragment shows only the attested patterns of (191). -/
@@ -95,7 +95,8 @@ theorem csg1 {F : Type*} {p : Paradigm 3 F} (hc : IsContiguous p) (h : p 1 ≠ p
   fun h2 ↦ h (hc (i := 0) (j := 1) (k := 2) (by decide) (by decide) h2.symm).symm
 
 /-- CSG1 on *good*: *best* does not return to the root of *good*. -/
-theorem good_csg1 : good.suppletion 2 ≠ good.suppletion 0 := csg1 (by decide) (by decide)
+theorem good_csg1 : good.comparison.suppletion 2 ≠ good.comparison.suppletion 0 :=
+  csg1 (by decide) (by decide)
 
 /-- A two-word form: periphrastic *more X*. -/
 def Periphrastic (f : String) : Prop := ' ' ∈ f.toList
@@ -105,14 +106,15 @@ instance (f : String) : Decidable (Periphrastic f) := inferInstanceAs (Decidable
 /-- SSG (3) on the Fragment: a synthetic superlative comes with a synthetic
 comparative — structurally, `Synthesis.syntheticAt_of_le`. -/
 theorem english_ssg :
-    ∀ e ∈ allEntries, ∀ s ∈ e.formSuper, ¬ Periphrastic s →
-      ∃ c ∈ e.formComp, ¬ Periphrastic c := by
+    ∀ e ∈ allEntries, ∀ s ∈ e.comparison.formSuper,
+      ¬ Periphrastic s → ∃ c ∈ e.comparison.formComp, ¬ Periphrastic c := by
   decide
 
 /-- RSG (4) on the Fragment: a suppletive comparative is synthetic —
 *better*, *worse*, never *more bett*. -/
 theorem english_rsg :
-    ∀ e ∈ allEntries, e.suppletion 1 ≠ e.suppletion 0 → ∃ c ∈ e.formComp, ¬ Periphrastic c := by
+    ∀ e ∈ allEntries, e.comparison.suppletion 1 ≠ e.comparison.suppletion 0 →
+      ∃ c ∈ e.comparison.formComp, ¬ Periphrastic c := by
   decide
 
 /-! ### The book's vocabularies (ch. 2, ch. 5)

@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.Bresnan1973
 import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Predicates.Adjectival
+import Linglib.Fragments.English.Adjectives
 
 /-!
 # Bresnan (1973): Syntax of the comparative clause construction in English
@@ -312,7 +312,7 @@ private def catOf : String → Option Cat
   | "np" => some .np
   | _ => none
 
-open English.Predicates.Adjectival in
+open English.Adjectives in
 private def adjectiveOf : String → Option Degree.GradableAdjective
   | "tall" => some tall
   | "short" => some short
