@@ -2,7 +2,7 @@ import Linglib.Fragments.Adyghe.Clause
 import Linglib.Fragments.Bulgarian.Clause
 import Linglib.Fragments.Ndebele.Clause
 import Linglib.Fragments.NezPerce.Clause
-import Linglib.Fragments.Washo.Clause
+import Linglib.Studies.BochnakHanink2021
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 
 /-!
@@ -26,9 +26,9 @@ the Fragment's relative-pronoun paradigm.
 ## Implementation notes
 
 The Ā column of (79) is a datum for English, Ndebele and Washo, whose Fragments carry no
-relativizer observable, and the Washo V D CP structure of footnote 33 is a row beside the
-table's six. Table (81), nominalization against factivity, needs Turkish *düşün-* 'think',
-which has no Fragment.
+relativizer observable, and the Washo V D CP structure of footnote 33, the complementation
+spine of [bochnak-hanink-2021], is a row beside the table's six. Table (81), nominalization
+against factivity, needs Turkish *düşün-* 'think', which has no Fragment.
 
 ## TODO
 
@@ -110,8 +110,9 @@ def bulgarianRelative : Cell :=
 def ndebeleEmbedding : Cell := ⟨ClauseSpine.cP.extend [.D, .P], false⟩
 
 /-- The Washo factive of footnote 33, V D CP without an Ā-dependency or an N: a silent D over
-the nominalized clause ([hanink-bochnak-2017], [bochnak-hanink-2021]). -/
-def washoFactive : Cell := ⟨ClauseSpine.cP.extend [.D], false⟩
+the nominalized clause ([hanink-bochnak-2017], [bochnak-hanink-2021]), whose index binds without
+movement ([hanink-2021]). -/
+def washoFactive : Cell := ⟨BochnakHanink2021.complementSpine, false⟩
 
 /-- The rows: the six cells of table (79), with the V CP cell without an Ā-dependency
 witnessed twice, and the Washo structure. -/

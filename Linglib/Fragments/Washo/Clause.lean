@@ -1,171 +1,147 @@
-import Linglib.Syntax.Clause.Complementation
+import Linglib.Syntax.Category.Verb.Basic
+import Linglib.Syntax.Category.Complementizer.Basic
 
 /-!
-# Washo Clausal Embedding Inventory
+# Washo clausal embedding
 
-[bochnak-hanink-2021]
+Washo (Hokan/isolate, ISO 639-3 `was`) has two ways of embedding a clause under a verb. A
+verb of knowledge or perception such as *hamup'ay* 'forget' or *i:gi* 'see' takes a nominalized
+clause: the clause stays in the independent mood *-i* and closes with the nominalizer
+*-gi ~ -ge*, the exponent of Hanink's index head. A verb of thought or speech such as *hamu*
+'think' or *i:d* 'say' is intransitive, and the clause it embeds is bare, in the dependent mood
+*-aʔ*. The two classes differ in transitivity, which each verb's frames record: 'know' and 'see'
+also take plain DP objects, while 'think' is questioned with *how* rather than *what*, and
+'dream' embeds a bare clause only with the reflexive prefix *gum-*. 'Know', 'remember' and
+'believe' are inherently negative, so their positive reading carries the negative suffix
+*-e:s*, and 'remember' is negated 'forget'.
 
-Washo (Hokan/isolate, ISO 639-3 `was`) inventory of complement-taking
-predicates. Theory-light: each predicate carries its
-[noonan-2007] CTP class where clear, [bochnak-hanink-2021]'s
-*presuppositional* classification ((5); their §5.3.2 argues factivity is
-*not* lexically specified — complements of 'remember'/'know' can be
-false, (86)–(87) — so this field deliberately is not named `factive`),
-and one morphological observable — the shape of the complement edge.
+Forms follow Jacobsen's orthography: `:` marks vowel length, ʔ ɨ ŋ are IPA, and stress is
+acute. The data are Bochnak and Hanink's; their analysis of the split as complementation
+against modification is `Studies/BochnakHanink2021.lean`.
 
-Forms follow the paper's orthography (after [jacobsen-1964]): `:` marks
-vowel length, ʔ ɨ ŋ are IPA, stress is acute. 'know' and 'remember'
-belong to a small inherently-negative class — the positive reading
-requires the negative suffix *-e:s*, and 'remember' is simply negated
-'forget' (their fn. 7).
+## References
+
+* [bochnak-hanink-2021]
+* [hanink-2021]
+* [noonan-2007]
+* [jacobsen-1964]
 -/
 
-namespace Washo.Clause
+namespace Washo
 
-/-! ### Predicate schema -/
+open Morphology (Morph)
 
-/-- Morphological shape of a predicate's notional-complement edge
-    ([bochnak-hanink-2021] Table 1). The two morphemes co-vary without
-    exception in their data, so one two-valued observable is faithful;
-    there is no marginal cell. The *-gi ~ -ge* alternation is case
-    (nominative vs accusative, their fn. 6) conditioned by the
-    nominalization's matrix function — attitude complements are all
-    accusative *-ge*. -/
-inductive ComplementEdge where
-  /-- Clausal nominalization: nominalizer *-gi ~ -ge* over independent
-      mood *-i*. -/
-  | nominalized
-  /-- Bare clause: dependent mood *-aʔ*, never nominalized. -/
-  | bare
-  deriving DecidableEq, Repr
+/-! ### Clause-typers -/
 
-/-- A Washo complement-taking predicate.
+/-- The clausal nominalizer *-ge*, the accusative form of *-gi ~ -ge* that attitude complements
+bear (fn. 6). -/
+def ge : Complementizer where
+  morphs := [.suff "ge"]
+  coding := some .nominalized
+  verbForm := some .Fin
+  licenser := some .nominal
 
-    - `ctpClass`: [noonan-2007] category; `none` where the assignment
-      is unclear ('dream').
-    - `presuppositional`: [bochnak-hanink-2021] (5) — "the embedded
-      clause refers to familiar content" — their descriptive
-      classification, deliberately not `factive` (§5.3.2).
-    - `edge`: the complement-edge observable (Table 1). -/
-structure WashoEmbedder where
-  form : String
-  gloss : String
+/-- The dependent mood *-aʔ*, which types a bare embedded clause and never a matrix clause. -/
+def aq : Complementizer where
+  morphs := [.suff "aʔ"]
+  verbForm := some .Fin
+  licenser := some .verbal
+
+/-! ### Predicates -/
+
+/-- A Washo complement-taking predicate is a verb entry with its [noonan-2007] class and the
+clause-typer of the clause it embeds. -/
+structure Verb extends _root_.Verb where
+  /-- The [noonan-2007] class, `none` where the data give no clear assignment. -/
   ctpClass : Option CTPClass
-  presuppositional : Bool
-  edge : ComplementEdge
-  deriving DecidableEq, Repr
+  /-- The clause-typer on the embedded clause (Table 1). -/
+  typer : Complementizer
+  deriving Repr
 
-/-! ### Presuppositional predicates — nominalized complements
+/-- The negative suffix *-e:s*. -/
+def es : Morph := .suff "e:s"
 
-[bochnak-hanink-2021] (5b), §2: complements are always nominalized with
-*-gi ~ -ge* and occur with the independent mood suffix *-i*. -/
+/-- The reflexive prefix *gum-*. -/
+def gum : Morph := .pref "gum"
 
-/-- *hamup'ay* 'forget'. [bochnak-hanink-2021] (1), (9), (31), (33). -/
-def hamupay : WashoEmbedder where
-  form := "hamup'ay"; gloss := "forget"
+/-- *hamup'ay* 'forget' (1). -/
+def hamupay : Verb where
+  form := "hamup'ay"
+  frames := [Frame.gerund]
   ctpClass := some .knowledge
-  presuppositional := true
-  edge := .nominalized
+  typer := ge
 
-/-- *hamup'ay-e:s* 'remember' — negated 'forget' (inherently-negative
-    class, fn. 7). [bochnak-hanink-2021] (8), (86). -/
-def hamupayEs : WashoEmbedder where
-  form := "hamup'ay-e:s"; gloss := "remember"
+/-- *hamup'ay-e:s* 'remember', negated 'forget' (8). -/
+def hamupayEs : Verb := { hamupay with form := hamupay.form ++ toString es }
+
+/-- *ašaš-e:s* 'know', negated 'not know'; it also takes a plain DP ((6), (79)). -/
+def ashashEs : Verb where
+  form := "ašaš" ++ toString es
+  frames := [Frame.gerund, Frame.np]
   ctpClass := some .knowledge
-  presuppositional := true
-  edge := .nominalized
+  typer := ge
 
-/-- *ašaš-e:s* 'know' — negated 'not know' (inherently-negative class).
-    [bochnak-hanink-2021] (6), (32), (87). -/
-def ashashEs : WashoEmbedder where
-  form := "ašaš-e:s"; gloss := "know"
-  ctpClass := some .knowledge
-  presuppositional := true
-  edge := .nominalized
-
-/-- *i:gi* 'see'. Attested with a propositional complement ('I saw that
-    it rained', (10)) and with plain DP objects ((89)).
-    [bochnak-hanink-2021] (10), (20), (88). -/
-def iigi : WashoEmbedder where
-  form := "i:gi"; gloss := "see"
+/-- *i:gi* 'see'; it also takes an internally headed relative and a plain DP ((10), (20),
+(89)). -/
+def iigi : Verb where
+  form := "i:gi"
+  frames := [Frame.gerund, Frame.np]
   ctpClass := some .perception
-  presuppositional := true
-  edge := .nominalized
+  typer := ge
 
-/-- *damal* 'hear'. Attested only on the event-perception reading ('I
-    heard it raining', (11); 'I heard the man singing', (84b)).
-    [bochnak-hanink-2021] (11), (84). -/
-def damal : WashoEmbedder where
-  form := "damal"; gloss := "hear"
+/-- *damal* 'hear', attested with event nominalizations ((11), (84)). -/
+def damal : Verb where
+  form := "damal"
+  frames := [Frame.gerund]
   ctpClass := some .perception
-  presuppositional := true
-  edge := .nominalized
+  typer := ge
 
-/-! ### Non-presuppositional predicates — bare complements
-
-[bochnak-hanink-2021] (5a), §2: complements "surface with the
-'dependent' mood marker -aʔ" and "are never nominalized". -/
-
-/-- *hamu* 'think'. [bochnak-hanink-2021] (2), (13), (41), (42). -/
-def hamu : WashoEmbedder where
-  form := "hamu"; gloss := "think"
+/-- *hamu* 'think', intransitive, questioned with *how* rather than *what* ((2), (49)). -/
+def hamu : Verb where
+  form := "hamu"
+  frames := []
   ctpClass := some .propAttitude
-  presuppositional := false
-  edge := .bare
+  typer := aq
 
-/-- *i:d* 'say'. [bochnak-hanink-2021] (14), (37), (50). -/
-def iid : WashoEmbedder where
-  form := "i:d"; gloss := "say"
+/-- *i:d* 'say', intransitive ((14), (50)). -/
+def iid : Verb where
+  form := "i:d"
+  frames := []
   ctpClass := some .utterance
-  presuppositional := false
-  edge := .bare
+  typer := aq
+  speechActVerb := true
 
-/-- *mɨtgi:bɨl-e:s* 'believe' — negated 'disbelieve' (inherently-
-    negative class, fn. 7). [bochnak-hanink-2021] (16). -/
-def metgiibilEs : WashoEmbedder where
-  form := "mɨtgi:bɨl-e:s"; gloss := "believe"
+/-- *mɨtgi:bɨl-e:s* 'believe', negated 'disbelieve' (16). -/
+def metgiibilEs : Verb where
+  form := "mɨtgi:bɨl" ++ toString es
+  frames := []
   ctpClass := some .propAttitude
-  presuppositional := false
-  edge := .bare
+  typer := aq
 
-/-- *gum-suʔuʔuš* 'dream' (reflexive *gum-*). Its 'that'-complement is
-    always bare ((15), (52), (54)); the nominalized complement of the
-    non-reflexive form is an internally headed relative, not a notional
-    complement ((55)). No clear [noonan-2007] class.
-    [bochnak-hanink-2021] §3.2.2. -/
-def gumsuus : WashoEmbedder where
-  form := "gum-suʔuʔuš"; gloss := "dream"
+/-- *suʔuʔuš* 'dream' without the reflexive, transitive; its nominalized clause is an internally
+headed relative ((53), (55)). -/
+def suus : Verb where
+  form := "suʔuʔuš"
+  frames := [Frame.np, Frame.gerund]
   ctpClass := none
-  presuppositional := false
-  edge := .bare
+  typer := ge
 
-/-! ### Inventories -/
+/-- *gum-suʔuʔuš* 'dream' with the reflexive, intransitive; its dependent-mood clause is read as a
+*that*-clause ((15), (52), (54)). -/
+def gumsuus : Verb :=
+  { suus with
+    form := toString gum ++ suus.form
+    voiceType := some .reflexive
+    frames := []
+    typer := aq }
 
-/-- The complement-taking predicates with quotable per-predicate data in
-    [bochnak-hanink-2021]. -/
-def allEmbedders : List WashoEmbedder :=
-  [hamupay, hamupayEs, ashashEs, iigi, damal,
-   hamu, iid, metgiibilEs, gumsuus]
+/-- The predicates with per-predicate data in the paper. -/
+def verbs : List Verb :=
+  [hamupay, hamupayEs, ashashEs, iigi, damal, hamu, iid, metgiibilEs, suus, gumsuus]
 
-/-- The predicates taking nominalized complements. -/
-def nominalizedTakers : List WashoEmbedder :=
-  allEmbedders.filter (·.edge == .nominalized)
-
-/-- The predicates taking bare complements. -/
-def bareTakers : List WashoEmbedder :=
-  allEmbedders.filter (·.edge == .bare)
-
-/-- Drift sentry: the nominalized-takers are exactly the five
-    presuppositional predicates. -/
-theorem nominalizedTakers_membership :
-    nominalizedTakers = [hamupay, hamupayEs, ashashEs, iigi, damal] := by
+/-- An intransitive predicate embeds a dependent-mood clause and a transitive one a nominalized
+clause (Table 1). -/
+theorem typer_eq : ∀ v ∈ verbs, v.typer = if v.frames = [] then aq else ge := by
   decide
 
-/-- [bochnak-hanink-2021] Table 1's correlation, stated exceptionless in
-    both directions: a predicate takes nominalized complements iff it is
-    presuppositional. -/
-theorem presuppositional_iff_nominalized :
-    ∀ v ∈ allEmbedders,
-      (v.presuppositional = true ↔ v.edge = .nominalized) := by decide
-
-end Washo.Clause
+end Washo
