@@ -2,7 +2,6 @@ import Linglib.Semantics.Questions.Bias
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Semantics.Questions.Exhaustivity
 import Linglib.Semantics.Presupposition.Defs
-import Linglib.Semantics.Polarity.CzechNegation
 import Linglib.Discourse.CommonGround
 import Linglib.Logic.Modal.Defs
 import Linglib.Fragments.Slavic.Russian.QuestionParticles
@@ -61,7 +60,7 @@ normalized `strategy` and `polarity` features. The kin of *razve* across Slavic 
 
 namespace Simik2024
 
-open Question Data.Examples Czech.Negation
+open Question Data.Examples
 
 /-! ### Bias and the polarity of the prejacent (§3.1) -/
 
@@ -503,32 +502,41 @@ theorem assertion_of_falsum [Std.Refl epi] [Std.Refl conv] {w : W}
 
 end Falsum
 
-/-- *Náhodou* is licensed by outer negation and by nothing else (43). -/
-def NahodouLicensed (pol : Polarity) (pos : Position) : Prop :=
-  pol = .negative ∧ pos = .outer
+/-- The two readings of negation in a polar question (the chapter's (14), after
+[ladd-1981] and [repp-2013]): inner negation is the classical propositional operator,
+diagnosed by negative polarity items; outer negation is the non-propositional operator
+FALSUM, diagnosed by positive polarity items. -/
+inductive Negation
+  | inner
+  | outer
+  deriving DecidableEq, Repr, Fintype
 
-instance (pol : Polarity) (pos : Position) : Decidable (NahodouLicensed pol pos) := by
+/-- *Náhodou* is licensed by outer negation and by nothing else (43). -/
+def NahodouLicensed (pol : Polarity) (n : Negation) : Prop :=
+  pol = .negative ∧ n = .outer
+
+instance (pol : Polarity) (n : Negation) : Decidable (NahodouLicensed pol n) := by
   unfold NahodouLicensed; infer_instance
 
 /-- *Náhodou* needs negation (43e). -/
-theorem nahodou_requires_negation (pos : Position) : ¬ NahodouLicensed .positive pos :=
+theorem nahodou_requires_negation (n : Negation) : ¬ NahodouLicensed .positive n :=
   fun h => Polarity.noConfusion h.1
 
 /-- *Náhodou* needs outer negation (43d). -/
-theorem nahodou_requires_outer (pol : Polarity) (pos : Position)
-    (h : NahodouLicensed pol pos) : pos = .outer := h.2
+theorem nahodou_requires_outer (pol : Polarity) (n : Negation)
+    (h : NahodouLicensed pol n) : n = .outer := h.2
 
 /-- The negation reading an indefinite diagnoses: the polarity item outer, the concord
 item inner. -/
-def indefinitePosition? (e : LinguisticExample) : Option Position :=
+def indefiniteNegation? (e : LinguisticExample) : Option Negation :=
   e.parse? "indefinite" [("ppi", .outer), ("nci", .inner)]
 
 /-- The (43) rows with *náhodou* are acceptable exactly when the particle is licensed by
 the polarity and the reading the indefinite diagnoses. -/
 theorem nahodou_examples :
     ∀ e ∈ Examples.all, e.feature? "nahodou" = some "true" →
-      ∀ pol ∈ polarity? e, ∀ pos ∈ indefinitePosition? e,
-        (e.judgment = .acceptable ↔ NahodouLicensed pol pos) := by
+      ∀ pol ∈ polarity? e, ∀ n ∈ indefiniteNegation? e,
+        (e.judgment = .acceptable ↔ NahodouLicensed pol n) := by
   decide
 
 end Simik2024
