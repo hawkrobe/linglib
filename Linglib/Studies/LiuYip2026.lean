@@ -267,7 +267,7 @@ inductive Pred where
   deriving DecidableEq, Repr
 
 /-- The lexical entry of a predicate. -/
-def Pred.entry : Pred → Mandarin.Predicates.MandarinVerbEntry
+def Pred.entry : Pred → Mandarin.Predicates.Verb
   | .xiang => Mandarin.Predicates.xiang
   | .rang => Mandarin.Predicates.rang
   | .xiangxin => Mandarin.Predicates.xiangxin
@@ -312,7 +312,7 @@ inductive CPred where
   deriving DecidableEq, Repr
 
 /-- The lexical entry of a predicate. -/
-def CPred.entry : CPred → Cantonese.Predicates.CTPEntry
+def CPred.entry : CPred → Cantonese.Predicates.Verb
   | .soeng => Cantonese.Predicates.soeng
   | .hyun => Cantonese.Predicates.hyun
   | .bik => Cantonese.Predicates.bik
@@ -326,6 +326,17 @@ def CPred.entry : CPred → Cantonese.Predicates.CTPEntry
 def CPred.size : CPred → ComplementSize
   | .soeng | .hyun | .bik | .giu | .daasyun => .vP
   | .seon | .gong | .geidak => .cP
+
+/-- The sizes agree with the fragment's frames: a predicate selects a CP iff its citation
+frame is a finite clause. -/
+theorem CPred.size_eq_cP_iff (p : CPred) :
+    p.size = .cP ↔ p.entry.complementType = .finiteClause := by
+  cases p <;> decide
+
+/-- Likewise for the Mandarin predicates: *xiangxin* alone selects a CP. -/
+theorem Pred.selects_cP_iff (p : Pred) :
+    Complement.cP ∈ p.selects ↔ p.entry.complementType = .finiteClause := by
+  cases p <;> decide
 
 /-- *-Faan* lowers across the complement of *soeng* 'want' and not across that of *seon*
 'believe'. -/
