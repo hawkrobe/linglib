@@ -4,7 +4,7 @@ import Linglib.Syntax.Binding.Basic
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Coordination
 import Linglib.Processing.Acceptability.MinimalPairs
 
 open Morphology (Word)
@@ -73,7 +73,7 @@ private abbrev eachOther := English.Pronouns.eachOther.toWord
 private abbrev sees := English.Predicates.Verbal.see.toWord3sg
 private abbrev see := English.Predicates.Verbal.see.toWordPl
 private abbrev saw := English.Predicates.Verbal.see.toWordPast
-private abbrev and_ := English.FunctionWords.and_.toWord
+private abbrev and_ := English.Coordination.and_.toWord
 
 /-! ### Coreference / binding (relocated from Minimalist/Coreference.lean)
 

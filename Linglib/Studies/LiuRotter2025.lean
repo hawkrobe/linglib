@@ -1,5 +1,6 @@
 import Linglib.Semantics.Modality.Basic
 import Linglib.Fragments.English.Auxiliaries
+import Linglib.Fragments.English.Adverbs
 import Linglib.Data.Examples.LiuRotter2025
 import Mathlib.Basic.Sign.Defs
 
@@ -38,7 +39,7 @@ off the English auxiliary fragment.
 namespace LiuRotter2025
 
 open Modality (ModalForce ModalItem)
-open English.Auxiliaries
+open English.Auxiliaries English.Adverbs
 open Data.Examples (LinguisticExample)
 
 /-! ### The concord effect as a force-indexed sign -/
@@ -105,11 +106,11 @@ instance : DecidableRel SharesConcordForce :=
 
 /-- *must* and *certainly*, the necessity stimulus, share necessity-type force. -/
 theorem must_certainly_share :
-    SharesConcordForce must.toModalItem certainly.toModalItem := by decide
+    SharesConcordForce must.toModalItem certainly := by decide
 
 /-- *may* and *possibly*, the possibility stimulus, share possibility force. -/
 theorem may_possibly_share :
-    SharesConcordForce may.toModalItem possibly.toModalItem := by decide
+    SharesConcordForce may.toModalItem possibly := by decide
 
 /-! ### Predicting against the data
 

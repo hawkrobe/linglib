@@ -1,4 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Morphology.Word.Basic
 
 /-!
 # Adposition: the function-marking relator
@@ -30,6 +31,7 @@ refines `Case` without being `Case`.
 * `Adposition.RelationType` / `Linearization` / `Complement` / `Exponence` /
   `Form` — the criterion vocabularies
 * `Adposition.isIntransitive` / `isComplex` / `isAmbipositional`
+* `Adposition.toWord` — the entry as a UD `ADP` word
 -/
 
 namespace Adposition
@@ -72,6 +74,8 @@ inductive Complement where
   | clause
   /-- Adjectival complement (Dutch *tot voor kort* 'until recently'). -/
   | ap
+  /-- Measure-phrase complement (*for three hours*, *three days ago*). -/
+  | measure
   deriving DecidableEq, Repr, Fintype
 
 /-- Exponence on the grammaticalization cline (criterion 5). `affix` is the
@@ -128,6 +132,9 @@ def isComplex (a : Adposition) : Bool :=
 /-- Ambipositional: allows both pre- and post-positional order (Dutch *op*). -/
 def isAmbipositional (a : Adposition) : Bool :=
   a.linearization.contains .pre && a.linearization.contains .post
+
+/-- The adposition as a word, UD category `ADP`. -/
+def toWord (a : Adposition) : Morphology.Word := { form := a.form.text, cat := .ADP }
 
 /-! ### Smoke tests — the mature fields exercised (stress-test seeds) -/
 

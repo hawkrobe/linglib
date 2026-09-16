@@ -22,6 +22,8 @@ parameter type of the GQT `gqtMeaning` operator.
 - `Monotonicity` — increasing / decreasing / non-monotone (typological label).
 - `Strength` — weak / strong (Barwise & Cooper §4.3 Table II; weak
   determiners pass `there is/are`).
+- `Adverb` — an adverb of quantification ([lewis-1975]), recorded with the
+  force of the quantifier it lexicalizes.
 -/
 
 
@@ -48,6 +50,15 @@ Strong determiners don't: "*There is every cat." -/
 inductive Strength where
   | weak
   | strong
+  deriving DecidableEq, Repr
+
+/-- An adverb of quantification, a closed-class adverb quantifying over cases, situations or
+occasions ([lewis-1975]): *always*, *usually*, *sometimes*, *never*. -/
+structure Adverb where
+  /-- The surface form. -/
+  form : String
+  /-- The force of the quantifier the adverb lexicalizes. -/
+  force : QForce
   deriving DecidableEq, Repr
 
 end Quantification.Lexicon
