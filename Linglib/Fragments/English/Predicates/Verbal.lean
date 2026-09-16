@@ -6,7 +6,7 @@ import Linglib.Morphology.Word.Basic
 import Linglib.Fragments.English.Inflection
 import Linglib.Semantics.Causation.Verb
 
-open Morphology (Word)
+open Morphology (Word Features)
 
 /-! # Verbal Predicate Lexicon Fragment
 
@@ -3382,70 +3382,45 @@ def lookup (form : String) : Option VerbEntry :=
 def VerbEntry.toWord3sg (v : VerbEntry) : Word :=
   { form := v.form3sg
   , cat := .VERB
-  , features := {
-      number := some .Sing
-      , person := some .third
-      , voice := some .Act
-      , verbForm := some .Fin
-      , tense := some .Pres
-    }
-  }
+  , features := Features.of (number := some .singular) (person := some .third)
+      (voice := some .Act) (verbForm := some .Fin) (tense := some .Pres) }
 
 /-- Convert a verb entry to a `Word` in base/plural present form. -/
 def VerbEntry.toWordPl (v : VerbEntry) : Word :=
   { form := v.form
   , cat := .VERB
-  , features := {
-      number := some .Plur
-      , tense := some .Pres
-    }
-  }
+  , features := Features.of (number := some .plural) (tense := some .Pres) }
 
 /-- Convert a verb entry to a `Word` in base/infinitive form. -/
 def VerbEntry.toWordBase (v : VerbEntry) : Word :=
   { form := v.form
   , cat := .VERB
-  , features := {
-      verbForm := some .Inf
-    }
-  }
+  , features := Features.of (verbForm := some .Inf) }
 
 /-- Convert a verb entry to a `Word` in past tense (active finite) form. -/
 def VerbEntry.toWordPast (v : VerbEntry) : Word :=
   { form := v.formPast
   , cat := .VERB
-  , features := {
-      verbForm := some .Fin
-      , voice := some .Act
-      , tense := some .Past
-    }
-  }
+  , features := Features.of (verbForm := some .Fin) (voice := some .Act) (tense := some .Past) }
 
 /-- The past participle as a `Word`; original valence retained (perfects:
     "has kicked the ball"). -/
 def VerbEntry.toWordPastPart (v : VerbEntry) : Word :=
   { form := v.formPastPart
   , cat := .VERB
-  , features := {
-      verbForm := some .Part
-    }
-  }
+  , features := Features.of (verbForm := some .Part) }
 
 /-- The passive participle as a `Word`. -/
 def VerbEntry.toWordPassive (v : VerbEntry) : Word :=
   { form := v.formPastPart
   , cat := .VERB
-  , features := { verbForm := some .Part, voice := some UD.Voice.Pass }
-  }
+  , features := Features.of (verbForm := some .Part) (voice := some .Pass) }
 
 /-- Convert a verb entry to a `Word` in present participle form. -/
 def VerbEntry.toWordPresPart (v : VerbEntry) : Word :=
   { form := v.formPresPart
   , cat := .VERB
-  , features := {
-      verbForm := some .Part
-    }
-  }
+  , features := Features.of (verbForm := some .Part) }
 
 -- ════════════════════════════════════════════════════
 -- § Causative Grounding Theorems

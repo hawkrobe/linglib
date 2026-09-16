@@ -121,6 +121,6 @@ instance : Decidable p.IsSentential :=
 
 /-- Projection to `Word` (UD `PART`). -/
 def toWord : Word :=
-  { form := p.form, cat := .PART, features := {} }
+  { form := p.form, cat := .PART }
 
 end Particle

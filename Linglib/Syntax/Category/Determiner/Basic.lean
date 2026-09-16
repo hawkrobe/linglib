@@ -84,7 +84,7 @@ structure Determiner where
     every `Determiner` extension via parent projection (`the.toWord`,
     `this.toWord`); the `Pronoun.toWord` analogue for D-heads. -/
 def Determiner.toWord (d : Determiner) : Morphology.Word :=
-  { form := d.form, cat := .DET, features := {} }
+  { form := d.form, cat := .DET }
 
 /-- An article: the definite/indefinite determiner. `uses` is the definite
 use-types it obligatorily expones (empty for indefinites). -/

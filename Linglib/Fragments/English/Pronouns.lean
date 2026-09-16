@@ -124,8 +124,8 @@ def whWords : List Pronoun := [who, whom, what, which, where_, when_, why, how]
 theorem reflexives_are_anaphors : ∀ p ∈ reflexives, p.IsAnaphor := by decide
 
 /-- Every wh-word projects as wh-marked: the entry's `PronType=Int` reaches the surface
-word's morphology (`UD.MorphFeatures.isWh`) through `Pronoun.toWord`. -/
-theorem whWords_project_isWh : ∀ p ∈ whWords, p.toWord.features.isWh := by decide
+word's morphology (`Morphology.Features.IsWh`) through `Pronoun.toWord`. -/
+theorem whWords_project_isWh : ∀ p ∈ whWords, p.toWord.features.IsWh := by decide
 
 end English.Pronouns
 

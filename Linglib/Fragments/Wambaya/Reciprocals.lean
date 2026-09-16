@@ -30,7 +30,7 @@ namespace Wambaya.Reciprocals
     The gloss value represents the morpheme; surface allomorphs vary
     by auxiliary paradigm. -/
 def rrMorpheme : Word :=
-  { form :="-ngg-", cat := .PART, features := {}}
+  { form :="-ngg-", cat := .PART }
 
 open Reciprocal in
 /-- The RR morpheme as a typological marker: a bound reciprocal pronoun

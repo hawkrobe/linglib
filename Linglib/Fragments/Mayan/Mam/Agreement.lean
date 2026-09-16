@@ -152,7 +152,8 @@ theorem setB_3sg : setBExponent.realize (.pn .third .singular) = some defaultSet
     (impoverishment, Elsewhere; [scott-2023] Ch. 4) stays in the study. -/
 theorem erg_1sg_from_phi :
     (setAExponent .consonant).realizeFor
-      { form :="", cat := .PRON, features := { person := some .first, number := some .Sing }} =
+      { form :="", cat := .PRON,
+        features := Morphology.Features.of (person := some .first) (number := some .singular) } =
       some [.pref "n"] := by
   rfl
 

@@ -7,7 +7,7 @@ import Linglib.Semantics.Modality.Basic
 import Linglib.Pragmatics.SocialMeaning.Register
 import Linglib.Morphology.Word.Basic
 
-open Morphology (Word)
+open Morphology (Word Features)
 
 /-!
 # English Auxiliaries
@@ -41,15 +41,14 @@ open SocialMeaning.Register (Level)
 /-- Agreement features of a finite auxiliary. "Past" modals (*could*,
 *would*) carry `Past` as a morphological feature even where they are
 semantically non-past. -/
-private def agr (person : Option UD.Person := none)
-    (number : Option UD.Number := none) (tense : Option UD.Tense := none) :
-    UD.MorphFeatures :=
-  { verbForm := some .Fin, person := person, number := number, tense := tense }
+private def agr (person : Option Person := none) (number : Option Number := none)
+    (tense : Option UD.Tense := none) : Features :=
+  Features.of (verbForm := some .Fin) (person := person) (number := number) (tense := tense)
 
 /-- The contracted negative of an auxiliary: the same entry with the
 contracted form and `Polarity=Neg`. -/
 private def contract (a : Auxiliary) (form : String) : Auxiliary :=
-  { a with form := form, features := { a.features with polarity := some .Neg } }
+  { a with form := form, features := Bundle.set .polarity .Neg a.features }
 
 /-! ### Modals -/
 
@@ -110,10 +109,10 @@ def ought : Auxiliary where
 
 def do_ : Auxiliary where
   form := "do"
-  features := agr (number := some .Plur)
+  features := agr (number := some .plural)
 def does : Auxiliary where
   form := "does"
-  features := agr (person := some .third) (number := some .Sing)
+  features := agr (person := some .third) (number := some .singular)
 def did : Auxiliary where
   form := "did"
   features := agr (tense := some .Past)
@@ -122,28 +121,28 @@ def did : Auxiliary where
 
 def am : Auxiliary where
   form := "am"
-  features := agr (person := some .first) (number := some .Sing)
+  features := agr (person := some .first) (number := some .singular)
 def is_ : Auxiliary where
   form := "is"
-  features := agr (person := some .third) (number := some .Sing)
+  features := agr (person := some .third) (number := some .singular)
 def are : Auxiliary where
   form := "are"
-  features := agr (number := some .Plur)
+  features := agr (number := some .plural)
 def was : Auxiliary where
   form := "was"
-  features := agr (number := some .Sing) (tense := some .Past)
+  features := agr (number := some .singular) (tense := some .Past)
 def were : Auxiliary where
   form := "were"
-  features := agr (number := some .Plur) (tense := some .Past)
+  features := agr (number := some .plural) (tense := some .Past)
 
 /-! ### *Have* -/
 
 def have_ : Auxiliary where
   form := "have"
-  features := agr (number := some .Plur)
+  features := agr (number := some .plural)
 def has : Auxiliary where
   form := "has"
-  features := agr (person := some .third) (number := some .Sing)
+  features := agr (person := some .third) (number := some .singular)
 def had : Auxiliary where
   form := "had"
   features := agr (tense := some .Past)

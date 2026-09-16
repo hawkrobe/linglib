@@ -52,7 +52,7 @@ namespace KehlerRohde2013
 
 open Discourse.Coherence Discourse.Centering Finset
 open Data.Examples (LinguisticExample)
-open Morphology (Word)
+open Morphology (Word Features)
 open UD (Voice)
 
 /-! ### The Bayesian model -/
@@ -406,10 +406,12 @@ lives in the topichood term rather than in Centering's center. -/
 
 /-- The two characters of (20), both third-person singular feminine. -/
 def amanda : Word :=
-  ⟨"Amanda", .PROPN, { person := some .third, number := some .Sing, gender := some .Fem }⟩
+  ⟨"Amanda", .PROPN,
+    Features.of (person := some .third) (number := some .singular) (gender := some .feminine)⟩
 
 def brittany : Word :=
-  ⟨"Brittany", .PROPN, { person := some .third, number := some .Sing, gender := some .Fem }⟩
+  ⟨"Brittany", .PROPN,
+    Features.of (person := some .third) (number := some .singular) (gender := some .feminine)⟩
 
 /-- Both characters are candidate antecedents of the prompt *She*. -/
 theorem she_ambiguous_over_stimuli :

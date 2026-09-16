@@ -31,7 +31,7 @@ open DependencyGrammar (Valency Dir)
 structure LexEntry where
   form : String
   cat : UD.UPOS
-  features : UD.MorphFeatures
+  features : Morphology.Features
   valency : Valency
   inv : Bool := false
   deriving Repr
@@ -79,17 +79,17 @@ def auxInversionRule : LexRule :=
 def passiveRule : LexRule :=
   { name := "Passive"
     applies := λ e =>
-      e.cat == .VERB && e.features.voice != some .Pass &&
+      e.cat == .VERB && e.features .voice != some .Pass &&
       e.valency.any (·.depType == .obj)
     transform := λ e =>
       { e with
-        features := { e.features with voice := some .Pass }
+        features := Bundle.set .voice .Pass e.features
         valency := e.valency.filter (·.depType != .obj) ++ [⟨.obl, .right, false⟩] } }
 
 /-- The passive rule on an active transitive verb entry: it applies, and the derived entry
 carries the passive valency, the object slot removed and an optional *by*-phrase added. -/
 theorem passiveRule_transitive (e : LexEntry) (hc : e.cat = .VERB)
-    (hv : e.features.voice ≠ some .Pass) (h : e.valency = Valency.transitive) :
+    (hv : e.features .voice ≠ some .Pass) (h : e.valency = Valency.transitive) :
     passiveRule.applies e = true ∧
       (passiveRule.transform e).valency = Valency.passiveTransitive := by
   refine ⟨?_, ?_⟩

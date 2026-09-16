@@ -130,11 +130,12 @@ theorem flat_no_join {α : Type*} [DecidableEq α] {a b : α} (h : a ≠ b) :
     Flat.unify (↑a : Flat α) ↑b = none :=
   Flat.unify_distinct_eq_none h
 
-/-- On the UD bundle, the accusative and nominative requirements of the two verbs of (17) are
-    not bounded above in the subsumption order, so Shieber's unification of them fails. -/
+/-- On the token bundle, the accusative and nominative requirements of the two verbs of (17)
+    are not bounded above in the subsumption order, so Shieber's unification of them fails. -/
 theorem requirements_not_compatible :
-    ¬ UD.MorphFeatures.Compatible { case_ := ↑UD.Case.Acc } { case_ := ↑UD.Case.Nom } := by
-  rw [← UD.MorphFeatures.compatible_iff_bddAbove]; decide
+    ¬ Compat (Morphology.Features.of (case_ := some .acc))
+      (Morphology.Features.of (case_ := some .nom)) := by
+  decide
 
 /-- Membership in a set designator is disjunction over its elements, and excludes every other
     atom ((35)). -/

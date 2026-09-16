@@ -1,9 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Core.Order.PartialUnify
-import Linglib.Syntax.Person.Basic
-import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.Gender.Basic
-import Linglib.Syntax.Case.Basic
+import Linglib.Morphology.Word.Features
 
 /-!
 # Feature bundles
@@ -14,21 +11,16 @@ feature bundle over them, a value or nothing in each dimension.
 A bundle is a dependent function from the dimensions to the flat order on each dimension's
 value type, so the pointwise instances give it its partial order, its bottom, the wholly
 unspecified bundle, and its unification: two bundles are compatible when they have a common
-upper bound, an unspecified dimension acting as a wildcard. Corpus bundles in the Universal
-Dependencies vocabulary are ingested by `Agreement.Bundle.ofUD`.
+upper bound, an unspecified dimension acting as a wildcard. A token's bundle is the
+restriction of its features to the agreement dimensions, `Agreement.Bundle.ofFeatures`.
 
 ## Main definitions
 
 * `Agreement.Dimension` — the five dimensions a target's form may covary in
 * `Agreement.Dimension.Value` — the analytical value type of each dimension
 * `Agreement.Bundle` — a value or `⊥` in each dimension
-* `Agreement.Bundle.pn`, `Agreement.Bundle.ofUD` — the person–number bundle and the
-  ingestion of a Universal Dependencies bundle
-
-## Implementation notes
-
-* Universal Dependencies number tags with no analytical value, the inverse, collective and
-  count forms, ingest as `⊥`.
+* `Agreement.Bundle.pn`, `Agreement.Bundle.ofFeatures` — the person–number bundle and the
+  restriction of a token's features
 
 ## References
 
@@ -63,13 +55,21 @@ def Bundle.pn (p : Person) (n : Number) : Bundle
   | .number => n
   | _ => ⊥
 
-/-- The bundle a Universal Dependencies bundle ingests as. -/
-def Bundle.ofUD (f : UD.MorphFeatures) : Bundle
-  | .person => f.person.map Person.fromUD
-  | .number => f.number.bind Number.fromUD
-  | .gender => f.gender.map Gender.fromUD
-  | .case => f.case_.map Case.fromUD
-  | .definiteness => f.definite
+/-- The token feature a dimension is. -/
+def Dimension.toFeature : Dimension → Morphology.Feature
+  | .person => .person
+  | .number => .number
+  | .gender => .gender
+  | .case => .case
+  | .definiteness => .definiteness
+
+/-- The restriction of a token's features to the agreement dimensions. -/
+def Bundle.ofFeatures (f : Morphology.Features) : Bundle
+  | .person => f .person
+  | .number => f .number
+  | .gender => f .gender
+  | .case => f .case
+  | .definiteness => f .definiteness
 
 instance : Repr Bundle where
   reprPrec b _ := repr (b .person, b .number, b .gender, b .case, b .definiteness)

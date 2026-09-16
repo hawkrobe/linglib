@@ -8,7 +8,7 @@ import Linglib.Semantics.Modality.Basic
 import Linglib.Syntax.Number.Basic
 import Linglib.Syntax.Person.Basic
 
-open Morphology (Word)
+open Morphology (Word Features)
 open Modality (ForceFlavor ModalItem)
 open SocialMeaning.Register (Level)
 
@@ -41,7 +41,7 @@ Per-language fragments supply the entries.
 for non-modal auxiliaries), and register. -/
 structure Auxiliary where
   form : String
-  features : UD.MorphFeatures := {}
+  features : Features := ⊥
   /-- The modality, as force–flavor pairs; empty for the non-modal
       auxiliaries. -/
   modality : Finset ForceFlavor := ∅
@@ -56,13 +56,13 @@ def toWord (a : Auxiliary) : Word := { form := a.form, cat := .AUX, features := 
 @[simp] theorem toWord_cat (a : Auxiliary) : a.toWord.cat = .AUX := rfl
 
 /-- Morphological tense; `none` for base forms such as *can* and *will*. -/
-def tense (a : Auxiliary) : Option UD.Tense := a.features.tense
+def tense (a : Auxiliary) : Option UD.Tense := a.features .tense
 
 /-- The agreement person. -/
-def person (a : Auxiliary) : Option Person := a.features.person.map Person.fromUD
+def person (a : Auxiliary) : Option Person := a.features .person
 
 /-- The agreement number. -/
-def number (a : Auxiliary) : Option Number := a.features.number.bind Number.fromUD
+def number (a : Auxiliary) : Option Number := a.features .number
 
 /-- The modal item an auxiliary contributes: form, meanings, register. -/
 def toModalItem (a : Auxiliary) : ModalItem := ⟨a.form, a.modality, a.register⟩

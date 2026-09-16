@@ -2,7 +2,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Morphology.Word.Basic
 import Linglib.Syntax.Reciprocal
 
-open Morphology (Word)
+open Morphology (Word Features)
 
 /-!
 # Mandarin Reciprocal Fragment
@@ -39,11 +39,11 @@ def daLaiDaQu : CompoundRecip :=
 
 /-- 互相 hùxiāng — adverb 'mutually'. -/
 def huxiang : Word :=
-  { form :="hùxiāng", cat := .ADV, features := {}}
+  { form :="hùxiāng", cat := .ADV }
 
 /-- 自己 zìjǐ — reflexive pronoun (for contrast). -/
 def ziji : Word :=
-  { form :="zìjǐ", cat := .PRON, features := { person := some .third }}
+  { form :="zìjǐ", cat := .PRON, features := Features.of (person := some .third) }
 
 /-- Compound reciprocal form is distinct from reflexive. -/
 theorem recip_distinct_from_reflexive :

@@ -23,8 +23,8 @@ export HasPhi (phi)
 /-- A bundle bears itself. -/
 instance : HasPhi Agreement.Bundle := ⟨id⟩
 
-/-- A Universal Dependencies bundle bears what it ingests as. -/
-instance : HasPhi UD.MorphFeatures := ⟨Agreement.Bundle.ofUD⟩
+/-- A token's features bear their agreement dimensions. -/
+instance : HasPhi Morphology.Features := ⟨Agreement.Bundle.ofFeatures⟩
 
 /-- Two φ-bearers agree when their bundles are compatible, an unspecified dimension acting
 as a wildcard. -/

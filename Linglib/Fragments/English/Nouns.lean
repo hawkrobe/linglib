@@ -31,7 +31,7 @@ and bare mass nouns are arguments and a bare singular count noun is not
 namespace English.Nouns
 
 open Genericity
-open Morphology (Word)
+open Morphology (Word Features)
 
 /-- An English noun: the root entry with the mass/count feature, its lexical gender where it
 has one, and its plural where that is not the regular *-s* one. -/
@@ -61,12 +61,12 @@ def Noun.realize (n : Noun) : Number → Option String
 /-- The singular as a word token: a `NOUN` with the gender where the entry has one. -/
 def Noun.toWordSg (n : Noun) : Word :=
   { form := n.form, cat := .NOUN
-    features := { number := some .Sing, gender := n.gender.bind Gender.toUD } }
+    features := Features.of (number := some .singular) (gender := n.gender) }
 
 /-- The entry as a word token at a number, where it has a form there. -/
 def Noun.toWord (n : Noun) (num : Number) : Option Word :=
   (n.realize num).map λ form =>
-    { n.toWordSg with form, features := { n.toWordSg.features with number := num.toUD } }
+    { n.toWordSg with form, features := Features.of (number := some num) (gender := n.gender) }
 
 theorem Noun.toWord_singular (n : Noun) : n.toWord .singular = some n.toWordSg := rfl
 
