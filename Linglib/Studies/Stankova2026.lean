@@ -2,6 +2,7 @@ import Linglib.Syntax.Category.Particle.Capabilities
 import Linglib.Fragments.Slavic.Czech.Particles
 import Linglib.Semantics.Polarity.CzechNegation
 import Linglib.Studies.StankovaSimik2025
+import Linglib.Studies.Simik2024
 import Linglib.Semantics.Questions.Bias
 import Linglib.Data.Examples.Stankova2026
 import Linglib.Data.Examples.StankovaSimik2025
@@ -31,8 +32,6 @@ three LF positions (her (16)) — outer (PolP), medial (ModP), inner (TP)
   axis alongside clause type and embedding.
 * `czech_refines_loNQ` — Czech splits [romero-2024]'s LoNQ into inner
   and medial.
-* `czechBiasProfile` — [simik-2024]'s Table 2 grid of PQ forms by
-  evidential × original bias.
 * `examples_match_table1` — the paper's examples
   (`Data.Examples.Stankova2026`) check against Table 1.
 
@@ -156,29 +155,15 @@ orders; since *ne-* is inseparable from the finite verb, verb position
 determines the syntactic position of negation ([stankova-2025] §2,
 [stankova-2026] §1). The `VerbPosition` API lives with the experiment
 that established it, in `StankovaSimik2025`. Crossing word order with
-polarity gives [simik-2024]'s 2×2 grid of PQ forms, which maps onto
-[romero-2024]'s PosQ/LoNQ/HiNQ typology. -/
-
-/-- [simik-2024]'s 2×2 grid of Czech PQ forms ([simik-2024] §3.2,
-exx. 11-17): word order (interrogative vs declarative) × polarity. -/
-inductive CzechPQForm where
-  /-- Interrogative (V1), positive: the default unbiased PQ. -/
-  | interPPQ
-  /-- Interrogative (V1), negative: outer negation, positive epistemic
-      bias; broader distribution than English HiNQ ([simik-2024] §5). -/
-  | interNPQ
-  /-- Declarative (nonV1), positive: positive evidential bias. -/
-  | declPPQ
-  /-- Declarative (nonV1), negative: negative evidential bias. -/
-  | declNPQ
-  deriving DecidableEq, Repr
+polarity gives [simik-2024]'s 2×2 grid of PQ forms (`Simik2024.CzechPQForm`),
+which maps onto [romero-2024]'s PosQ/LoNQ/HiNQ typology. -/
 
 end Stankova2026
 
 namespace Czech.Negation
 
 open Question
-open Stankova2026 (CzechPQForm)
+open Simik2024
 open StankovaSimik2025 (VerbPosition)
 
 /-- [romero-2024] PQ form of a negation position: outer is high
@@ -211,14 +196,8 @@ namespace Stankova2026
 
 open Czech.Negation
 open Question
+open Simik2024
 open StankovaSimik2025 (VerbPosition)
-
-/-- [romero-2024] PQ form of each [simik-2024] grid cell: InterNPQ is
-HiNQ, DeclNPQ is LoNQ, positive forms are PosQ. -/
-def CzechPQForm.toPQForm : CzechPQForm → PQForm
-  | .interPPQ | .declPPQ => .PosQ
-  | .interNPQ => .HiNQ
-  | .declNPQ  => .LoNQ
 
 /-- The two form typologies agree: [simik-2024]'s grid refines
 [romero-2024]'s. -/
@@ -279,47 +258,6 @@ theorem context_tracks_bias_strength :
     VerbPosition.v1.defaultReading.biasStrength = .none_ ∧
     VerbPosition.nonV1.defaultReading.biasStrength = .strong := ⟨rfl, rfl⟩
 
-/-! ### The Czech bias profile ([simik-2024] Table 2) -/
-
-/-- Which Czech PQ forms are felicitous per contextual evidence ×
-original speaker bias cell ([simik-2024] Table 2, based on
-[stankova-2023]); empty list = no form natural. -/
-def czechBiasProfile : ContextualEvidence → OriginalBias → List CzechPQForm
-  | .forP,     .forP      => []
-  | .forP,     .neutral   => [.declPPQ, .interNPQ]
-  | .forP,     .againstP  => [.declPPQ]
-  | .neutral,  .forP      => [.interPPQ, .interNPQ]
-  | .neutral,  .neutral   => [.interPPQ]
-  | .neutral,  .againstP  => []
-  | .againstP, .forP      => [.declNPQ, .interNPQ]
-  | .againstP, .neutral   => [.declNPQ]
-  | .againstP, .againstP  => []
-
-/-- InterPPQ is the sole form felicitous with no bias at all — the
-default PQ ([simik-2024] §4.1, ex. 25). -/
-theorem interPPQ_is_default :
-    (czechBiasProfile .neutral .neutral).contains .interPPQ = true := rfl
-
-/-- DeclPPQ needs positive contextual evidence ([stankova-2023],
-[simik-2024] §3.2). -/
-theorem declPPQ_requires_positive_evidence :
-    (czechBiasProfile .forP .neutral).contains .declPPQ = true ∧
-    (czechBiasProfile .againstP .neutral).contains .declPPQ = false := ⟨rfl, rfl⟩
-
-/-- DeclNPQ needs negative contextual evidence ([stankova-2023],
-[simik-2024] §3.2). -/
-theorem declNPQ_requires_negative_evidence :
-    (czechBiasProfile .againstP .neutral).contains .declNPQ = true ∧
-    (czechBiasProfile .forP .neutral).contains .declNPQ = false := ⟨rfl, rfl⟩
-
-/-- InterNPQ appears in three bias cells — the broadest distribution
-among negative forms, reflecting Czech outer negation's broader range
-than English HiNQ ([simik-2024] §5). -/
-theorem interNPQ_broad_distribution :
-    (czechBiasProfile .forP .neutral).contains .interNPQ = true ∧
-    (czechBiasProfile .neutral .forP).contains .interNPQ = true ∧
-    (czechBiasProfile .againstP .forP).contains .interNPQ = true := ⟨rfl, rfl, rfl⟩
-
 /-! ### The paper's examples
 
 Typed stimuli live in `Data.Examples.Stankova2026`; each is paired here
@@ -355,7 +293,7 @@ def biasCheckedExamples :
 is felicitous iff it appears in its evidence × original-bias cell. -/
 theorem bias_examples_match_profile :
     biasCheckedExamples.all (fun (e, ev, ob, f) =>
-      (e.judgment == .acceptable) == (czechBiasProfile ev ob).contains f) = true := by
+      (e.judgment == .acceptable) == decide (f ∈ czechBiasProfile ev ob)) = true := by
   decide
 
 end Stankova2026
