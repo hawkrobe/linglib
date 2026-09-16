@@ -29,8 +29,8 @@ weak taboo alone the non-escalating ones.
 
 The cells are `Agreement.ContainmentPair`, singular, dual and plural being the most, the
 intermediate and the least specified cell, with person and definiteness read off the same
-structure; the constraints count violations by `presupStrength`, the taboo as the strength
-itself and MP! as its shortfall from the maximum. The ternary tableaux are decided by the
+structure; the constraints count violations by `specLevel`, the taboo as the level itself and
+MP! as its shortfall from the maximum. The ternary tableaux are decided by the
 kernel. The paper's examples are the rows of `Data.Examples.Wang2023`.
 
 ## References
@@ -43,7 +43,7 @@ kernel. The paper's examples are the rows of `Data.Examples.Wang2023`.
 
 namespace Wang2023
 
-open Agreement Constraints OptimalityTheory Presupposition.PhiFeatures
+open Agreement Constraints OptimalityTheory
 
 /-! ### The recruited values are the least specified cells (§4.1) -/
 
@@ -55,38 +55,31 @@ theorem plural_toPair : ContainmentPairLike.toPair Number.pluralF = ContainmentP
 theorem third_toPair : ContainmentPairLike.toPair Person.thirdF = ContainmentPair.minimal :=
   rfl
 
-/-- The least specified cell carries a vacuous presupposition: its denotation is defined
-everywhere. -/
-theorem minimal_defined {E : Type*} (innerP outerP : E → Prop) (x : E) :
-    (phiPresup innerP outerP ContainmentPair.minimal).defined x :=
-  trivial
-
 /-! ### The Taboo of Directness and Maximize Presupposition! (§4.2) -/
 
 /-- The Taboo of Directness (57): in respect contexts, use the form with the weakest
 presupposition. As a constraint it penalizes presuppositional strength. -/
-def todConstraint : Constraint ContainmentPair := presupStrength
+def todConstraint : Constraint ContainmentPair := ContainmentPair.specLevel
 
 /-- Maximize Presupposition! (59): use the form with the strongest presupposition. As a
 constraint it penalizes the shortfall from the maximal strength. -/
 def mpConstraint : Constraint ContainmentPair :=
-  λ c => ContainmentPair.maximal.specLevel - presupStrength c
+  fun c ↦ ContainmentPair.maximal.specLevel - c.specLevel
 
 theorem mpConstraint_eq_phiMP : mpConstraint = Presupposition.MaximizePresupposition.phiMP :=
   rfl
 
 /-- The two maxims order well-formed cells oppositely. -/
-theorem todConstraint_lt_iff (c₁ c₂ : ContainmentPair) (hw₁ : c₁.WellFormed)
-    (hw₂ : c₂.WellFormed) :
+theorem todConstraint_lt_iff (c₁ c₂ : ContainmentPair) :
     todConstraint c₁ < todConstraint c₂ ↔ mpConstraint c₂ < mpConstraint c₁ :=
-  Presupposition.MaximizePresupposition.phi_mp_reverses_markedness c₁ c₂ hw₁ hw₂
+  Presupposition.MaximizePresupposition.phi_mp_reverses_markedness c₁ c₂
 
 /-- A candidate with violations of the top constraint loses to one without. -/
 theorem not_mem_optimal_of_top_pos {C : Type*} [DecidableEq C] {candidates : List C}
     {top : Constraint C} {rest : List (Constraint C)} {h : candidates ≠ []} {c c₀ : C}
     (hc₀ : c₀ ∈ candidates) (h0 : top c₀ = 0) (hc : 0 < top c) :
     c ∉ (Tableau.ofRanking candidates (top :: rest) h).optimal :=
-  λ hmem => hc.ne' (Tableau.ofRanking_optimal_zero_first top rest ⟨c₀, hc₀, h0⟩ hmem)
+  fun hmem ↦ hc.ne' (Tableau.ofRanking_optimal_zero_first top rest ⟨c₀, hc₀, h0⟩ hmem)
 
 /-- Under Taboo » MP! every optimal candidate is the least specified cell. -/
 theorem tod_mp_only_minimal (candidates : List ContainmentPair)
@@ -110,7 +103,7 @@ theorem tod_mp_minimal_mem_optimal (candidates : List ContainmentPair)
     ContainmentPair.minimal ∈
       (Tableau.ofRanking candidates [todConstraint, mpConstraint] hNE).optimal := by
   rw [Tableau.mem_optimal_iff]
-  refine ⟨List.mem_toFinset.mpr hMin, λ c' _ => ?_⟩
+  refine ⟨List.mem_toFinset.mpr hMin, fun c' _ ↦ ?_⟩
   simp only [Tableau.ofRanking]
   apply not_lt.mp
   intro ⟨i, hlt_eq, hlt⟩
@@ -126,7 +119,7 @@ theorem tod_mp_minimal_mem_optimal (candidates : List ContainmentPair)
         (show (⟨0, _⟩ : Fin 2) < ⟨1, _⟩ from Nat.zero_lt_one)
       exact this
     have hc'_mp : mpConstraint c' = 2 := by
-      simp only [mpConstraint, todConstraint, presupStrength] at hc'_tod ⊢
+      simp only [mpConstraint, todConstraint] at hc'_tod ⊢
       simp only [ContainmentPair.spec_maximal]
       omega
     simp only [List.get] at hlt
@@ -144,7 +137,7 @@ theorem tod_mp_general (candidates : List ContainmentPair)
   ext c
   simp only [Finset.mem_singleton]
   exact ⟨tod_mp_only_minimal candidates hWF hMin hNE c,
-    λ h => h ▸ tod_mp_minimal_mem_optimal candidates hMin hNE⟩
+    fun h ↦ h ▸ tod_mp_minimal_mem_optimal candidates hMin hNE⟩
 
 /-- The unattested honorifics (28): with the taboo on top, the most specified cell, singular,
 local person or definite, is never optimal beside a less specified competitor. -/
@@ -159,7 +152,7 @@ theorem maximal_not_optimal_of_tod_top (candidates : List ContainmentPair)
 
 /-- The weak Taboo of Directness (82b): avoid the form with the strongest presupposition. -/
 def wtodConstraint : Constraint ContainmentPair :=
-  λ c => if presupStrength c = ContainmentPair.maximal.specLevel then 1 else 0
+  fun c ↦ if c.specLevel = ContainmentPair.maximal.specLevel then 1 else 0
 
 /-- The singular, dual and plural of an articulated number system (80). -/
 def number : List ContainmentPair := [.maximal, .intermediate, .minimal]

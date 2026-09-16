@@ -14,9 +14,9 @@ import Linglib.Semantics.Composition.Assignment
 A `PersonalPronoun` entry denotes as a `Nominal` whose selector is the variable denotation
 `interpPronoun`, the value of the entry's index under the assignment, and whose intrinsic
 presupposition is the φ-feature presupposition of the resolved referent
-(`PersonalPronoun.phiPresup`, `PersonalPronoun.denote`): the conjunction of the person, number
-and gender presuppositions of `Presupposition.PhiFeatures`, read off the entry's referential
-person and number and its gender. The selector does not vary with the world of evaluation
+(`PersonalPronoun.phiPresup`, `PersonalPronoun.denote`): the conjunction of `Person.presup`,
+`Number.presup` and `Gender.presup` at the entry's referential person and number and its
+gender. The selector does not vary with the world of evaluation
 (`PersonalPronoun.isRigid_denote_selector`): a pronoun refers directly. This is the survey of
 [buring-2012]: one denotation serves the bound, anaphoric and deictic uses, binding being an
 operator on the assignment (`Composition/Binding.lean`), and an absent or unmarked feature
@@ -36,8 +36,7 @@ parameters of the model, as the proximity predicates are for the demonstrative d
 * [sauerland-2003]
 -/
 
-open Presupposition Presupposition.PhiFeatures
-open Reference
+open Presupposition Reference
 
 namespace PersonalPronoun
 
@@ -49,14 +48,15 @@ presupposition of its referential person, the number presupposition of its refer
 and the gender presupposition of its gender, conjoined. The model supplies the speaker and the
 addressee for person and the gender predicates; number atomicity comes from the parthood order. -/
 def phiPresup : PartialProp E :=
-  (personSem speaker addressee e.referentialPerson).and
-    ((numberSem e.referentialNumber).and (genderSem isFemale isInanimate e.gender))
+  (e.referentialPerson.elim PartialProp.top (Person.presup speaker addressee)).and
+    ((e.referentialNumber.elim PartialProp.top Number.presup).and
+      (e.gender.elim PartialProp.top (Gender.presup isFemale isInanimate)))
 
-@[simp] theorem phiPresup_presup (x : E) :
-    (e.phiPresup speaker addressee isFemale isInanimate).presup x ↔
-      (personSem speaker addressee e.referentialPerson).presup x ∧
-        (numberSem e.referentialNumber).presup x ∧
-          (genderSem isFemale isInanimate e.gender).presup x :=
+@[simp] theorem phiPresup_defined (x : E) :
+    (e.phiPresup speaker addressee isFemale isInanimate).defined x ↔
+      (e.referentialPerson.elim PartialProp.top (Person.presup speaker addressee)).defined x ∧
+        (e.referentialNumber.elim PartialProp.top Number.presup).defined x ∧
+          (e.gender.elim PartialProp.top (Gender.presup isFemale isInanimate)).defined x :=
   Iff.rfl
 
 /-- The φ-feature presupposition depends on the referential categories and the gender alone,
