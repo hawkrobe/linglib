@@ -1,5 +1,4 @@
 import Linglib.Syntax.Reflex
-import Linglib.Syntax.Reflex
 import Linglib.Syntax.Clause.Relative
 
 /-!

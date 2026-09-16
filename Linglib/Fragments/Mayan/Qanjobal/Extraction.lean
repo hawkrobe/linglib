@@ -1,7 +1,6 @@
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Syntax.Reflex
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Reflex
 import Linglib.Syntax.Clause.Relative
 import Linglib.Fragments.Mayan.Params
 
