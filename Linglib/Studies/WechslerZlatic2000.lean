@@ -1,9 +1,5 @@
 import Mathlib.Data.Fintype.Powerset
-import Linglib.Core.Order.Flat
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Gender.Basic
-import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.Person.Basic
+import Linglib.Syntax.Agreement.Bundle
 import Linglib.Syntax.Agreement.Target
 import Linglib.Data.Examples.WechslerZlatic2000
 
@@ -257,68 +253,63 @@ theorem predicted_patterns :
 
 /-! ### Agreement as compatibility -/
 
-/-- The features of an NP-internal target: contextual case with the noun's concord, a feature
-being absent where the target is unmarked for it. -/
-structure ConcordTarget where
-  case : Flat Case
-  number : Flat Number
-  gender : Flat Gender
-  deriving DecidableEq, Repr
+open Agreement (Bundle)
+
+/-- The bundle of an NP-internal target: its case, and its concord number and gender where it
+is marked for them. -/
+private def concordBundle (c : Case) (n : Flat Number) (g : Flat Gender) : Bundle
+  | .case => c
+  | .number => n
+  | .gender => g
+  | _ => ⊥
+
+/-- The bundle of an index-reading target, a pronoun or a finite verb. -/
+private def indexBundle (p : Person) (n : Number) (g : Gender) : Bundle
+  | .person => p
+  | .number => n
+  | .gender => g
+  | _ => ⊥
 
 /-- The noun's concord bundle at a case value. -/
-def Noun.concordAt (n : Noun) (c : Case) : ConcordTarget :=
-  ⟨some c, some n.concord.number, some n.concord.gender⟩
+def Noun.concordAt (n : Noun) (c : Case) : Bundle := concordBundle c n.concord.number n.concord.gender
 
-/-- The features of an index-reading target: a pronoun or a finite verb. -/
-structure IndexTarget where
-  person : Person
-  number : Number
-  gender : Gender
-  deriving DecidableEq, Repr
+/-- The noun's index bundle. -/
+def Noun.indexTarget (n : Noun) : Bundle := indexBundle n.index.person n.index.number n.index.gender
 
-/-- The noun's index bundle as a target. -/
-def Noun.indexTarget (n : Noun) : IndexTarget :=
-  ⟨n.index.person, n.index.number, n.index.gender⟩
+/-- Concord: the target's bundle is compatible with the noun's concord at the case. -/
+def ConcordAgrees (a : Bundle) (n : Noun) (c : Case) : Prop := Compat a (n.concordAt c)
 
-/-- Concord: the target is compatible with the noun's concord in case, number and gender. -/
-def ConcordAgrees (a : ConcordTarget) (n : Noun) (c : Case) : Prop :=
-  Compat a.case (n.concordAt c).case ∧ Compat a.number (n.concordAt c).number ∧
-    Compat a.gender (n.concordAt c).gender
+/-- Index agreement: the target's bundle is compatible with the noun's index. -/
+def IndexAgrees (p : Bundle) (n : Noun) : Prop := Compat p n.indexTarget
 
-instance (a : ConcordTarget) (n : Noun) (c : Case) : Decidable (ConcordAgrees a n c) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+instance (a : Bundle) (n : Noun) (c : Case) : Decidable (ConcordAgrees a n c) :=
+  inferInstanceAs (Decidable (Compat _ _))
 
-/-- Index agreement: the target is compatible with the noun's index in person, number and
-gender. -/
-def IndexAgrees (p : IndexTarget) (n : Noun) : Prop :=
-  p.person = n.indexTarget.person ∧ p.number = n.indexTarget.number ∧
-    p.gender = n.indexTarget.gender
-
-instance (p : IndexTarget) (n : Noun) : Decidable (IndexAgrees p n) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+instance (p : Bundle) (n : Noun) : Decidable (IndexAgrees p n) :=
+  inferInstanceAs (Decidable (Compat _ _))
 
 /-- *ovu dobru*: accusative feminine singular modifiers (41). -/
-def ovu : ConcordTarget := ⟨some .acc, some .singular, some .feminine⟩
+def ovu : Bundle := concordBundle .acc Number.singular Gender.feminine
 
 /-- *ona*: the neuter plural pronoun (41). -/
-def ona : IndexTarget := ⟨.third, .plural, .neuter⟩
+def ona : Bundle := indexBundle .third .plural .neuter
 
 /-- *kojih*: the genitive plural relative pronoun, unmarked for concord number and gender
 (57). -/
-def kojih : ConcordTarget := ⟨some .gen, none, none⟩
+def kojih : Bundle := concordBundle .gen ⊥ ⊥
 
 /-- On a regular noun the two bundles agree with the same targets (6). -/
 theorem knjiga_agrees :
-    ConcordAgrees ⟨some .nom, some .singular, some .feminine⟩ knjiga .nom ∧
-      IndexAgrees ⟨.third, .singular, .feminine⟩ knjiga := by
+    ConcordAgrees (concordBundle .nom Number.singular Gender.feminine) knjiga .nom ∧
+      IndexAgrees (indexBundle .third .singular .feminine) knjiga := by
   decide
 
 /-- Mixed agreement on *deca* (41): the feminine singular modifiers read CONCORD and the
 neuter plural pronoun reads INDEX, while the crossed targets fail (62). -/
 theorem deca_mixed_agreement :
     ConcordAgrees ovu deca .acc ∧ IndexAgrees ona deca ∧
-      ¬ ConcordAgrees ⟨some .acc, some .plural, some .neuter⟩ deca .acc ∧
-      ¬ IndexAgrees ⟨.third, .singular, .feminine⟩ deca := by
+      ¬ ConcordAgrees (concordBundle .acc Number.plural Gender.neuter) deca .acc ∧
+      ¬ IndexAgrees (indexBundle .third .singular .feminine) deca := by
   decide
 
 /-- *kojih* agrees in concord with *deca* (56): unmarked features are compatible with
@@ -327,10 +318,10 @@ theorem kojih_agrees : ConcordAgrees kojih deca .gen := by decide
 
 /-- On a noun whose concord and index match, number agreement with the index is number
 agreement with the concord: the single-bundle illusion of regular nouns. -/
-theorem compatible_indexTarget_iff (n : Noun) (hn : ConInd n) (t : IndexTarget) :
-    Compat (t.number : Flat Number) (n.indexTarget.number : Flat Number) ↔
-      Compat (t.number : Flat Number) (n.concordAt .nom).number := by
-  rw [Noun.indexTarget, Noun.concordAt, hn.1]; exact Iff.rfl
+theorem compat_number_indexTarget_iff (n : Noun) (hn : ConInd n) (t : Bundle) :
+    Compat (t .number) (n.indexTarget .number) ↔
+      Compat (t .number) (n.concordAt .nom .number) := by
+  simp only [Noun.indexTarget, Noun.concordAt, indexBundle, concordBundle, hn.1]
 
 /-! ### The Agreement Hierarchy (63) -/
 
