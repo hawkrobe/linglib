@@ -22,7 +22,7 @@ open Reciprocal
 
 def nonactive : Marker :=
   { form := "-ome", strategy := .verbalAffix
-  , readings := [.reciprocal, .reflexive] }
+  , readings := {.reciprocal, .reflexive} }
 
 /-- o enas ton allon — distinct periphrastic reciprocal, whose existence
     underlies the WALS "mixed" classification ([maslova-nedjalkov-2013]). -/

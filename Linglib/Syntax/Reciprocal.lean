@@ -3,68 +3,73 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.Data.Finset.Insert
 import Linglib.Syntax.Voice.Alternation
+import Linglib.Data.WALS.Features.F106A
 
 /-!
 # Reciprocal constructions: morphosyntactic typology
 
-Cross-linguistic vocabulary for reciprocal constructions: the
-reciprocal-reflexive formal relation (WALS Ch 106, [maslova-nedjalkov-2013]),
-the marking strategy ([nordlinger-2023]'s synthesis of [konig-kokutani-2006],
-[nedjalkov-2007a], and [evans-2008]), the valency effect, and the formation
-locus of reciprocal verbs ([siloni-2008], [siloni-2012]).
-
-The exponence primitive is the marker (`Marker`): form, strategy, and polysemy
-readings. The WALS Ch 106 value is computed from a language's marker inventory
-(`ofInventory`), `isNominal` projects from the coding site, and the default
-valency effect derives from the coding-frame operation a strategy realizes
-(`Voice.reciprocalization`).
+Cross-linguistic vocabulary for reciprocal constructions: the marking strategy
+([nordlinger-2023]'s synthesis of [konig-kokutani-2006], [nedjalkov-2007a], and
+[evans-2008]), the site it codes and the valency it derives, the formation locus
+of reciprocal verbs ([siloni-2008], [siloni-2012]), and the marker inventories
+from which the WALS reciprocal–reflexive value ([maslova-nedjalkov-2013]) is
+computed.
 
 ## Main definitions
 
-* `ReflexiveRelation` — reciprocal/reflexive formal relation (WALS Ch 106).
-* `Strategy` + `codingSite`/`isNominal` — the morphosyntactic locus.
-* `Strategy.alternation` / `defaultValency` — the realized coding-frame
-  operation and the valency effect it derives.
-* `Valency`, `Formation` + `Formation.allowsDiscontinuous`.
-* `Reading`, `Marker`, `ofInventory` — marker inventories and the derived
-  WALS Ch 106 value.
+* `Strategy`, `CodingSite`, `Strategy.codingSite`, `Strategy.IsNominal` — the
+  strategy and the site it marks.
+* `Strategy.alternation`, `Strategy.defaultValency` — the coding-frame operation
+  a predicate-marking strategy realizes ([creissels-2024]'s
+  `Voice.reciprocalization`) and the valency it therefore derives.
+* `Formation` — lexical vs syntactic formation of reciprocal verbs.
+* `Reading`, `Marker`, `ofInventory` — a reciprocal exponent with its polysemy,
+  and the WALS Ch 106 value of an inventory.
 
-Per-language inventories live in `Fragments/{Lang}/Reciprocals.lean`;
-WALS-data grounding lives with the studies that use it (e.g.
-`Studies/Nordlinger2023.lean`), not here. The `Reciprocal` namespace is
-shared with the semantics of reciprocity (`Semantics/Plurality/Reciprocal.lean`,
-`Semantics/Plurality/Reciprocal/Scope.lean`); the pronominal exponent is
-`ReciprocalPronoun` (`Syntax/Category/Pronoun/Reciprocal.lean`).
+## Implementation notes
+
+The strategy fixes the coding site, and the default valency follows from the
+site: argument strategies leave the base verb's frame intact, while predicate
+and multipredicate strategies realize the denucleativizing reciprocalization
+alternation, whose derived construction is intransitive. Languages may override
+the default (Tonga, Malagasy: [maslova-2008], [hurst-2012]), so the observed
+valency is data in the study that records it. A bound reciprocal pronoun
+(Wambaya *-ngg-*) fills an argument slot and is an argument strategy; the clitic
+of a syntactically formed reciprocal verb (French *se*) is not an object
+([siloni-2012]) and marks the predicate.
+
+## References
+
+* [nordlinger-2023]
+* [konig-kokutani-2006]
+* [nedjalkov-2007a]
+* [nedjalkov-2007b]
+* [evans-2008]
+* [maslova-nedjalkov-2013]
+* [siloni-2008]
+* [siloni-2012]
+* [reinhart-siloni-2005]
+* [creissels-2024]
+* [maslova-2008]
+* [hurst-2012]
 -/
 
 namespace Reciprocal
 
-/-- WALS Ch 106 relation between reciprocal and reflexive marking
-([maslova-nedjalkov-2013]). -/
-inductive ReflexiveRelation where
-  /-- "There are no non-iconic reciprocal constructions." -/
-  | noDedicated
-  /-- "All reciprocal constructions are formally distinct from reflexive
-      constructions" (English *each other* vs *themselves*). -/
-  | distinctFromReflexive
-  /-- "There are both reflexive and non-reflexive reciprocal constructions"
-      (German *sich* + *einander*). -/
-  | mixed
-  /-- "The reciprocal and reflexive constructions are formally identical"
-      (Imbabura Quechua *-ri-*). -/
-  | identicalToReflexive
-  deriving DecidableEq, Repr
-
-/-- Morphosyntactic strategy for encoding reciprocity ([nordlinger-2023]
-§3.1's compression of [konig-kokutani-2006], [nedjalkov-2007a], and
-[evans-2008]). -/
+/-- Morphosyntactic strategy for encoding reciprocity ([nordlinger-2023]'s
+compression of [konig-kokutani-2006], [nedjalkov-2007a], and [evans-2008]). -/
 inductive Strategy where
   /-- Bipartite quantifier NP (English *each other*, Icelandic *hvort annað*). -/
   | bipartiteNP
-  /-- Reciprocal pronoun (Hausa *jūnan-mù*). -/
+  /-- Free reciprocal pronoun (Hausa *jūnan-mù*, German *einander*). -/
   | recipPronoun
-  /-- Reciprocal clitic (French *se*, Wambaya *-ngg-*). -/
+  /-- Bound reciprocal pronoun in the object slot of the pronominal complex
+      (Wambaya *-ngg-*, Warlpiri *-nyanu*; [evans-2008]). -/
+  | boundPronoun
+  /-- Clitic of a syntactically formed reciprocal verb (French *se*, Czech *se*;
+      [siloni-2012]). -/
   | recipClitic
   /-- Verbal affix (Swahili *-an-*, Hungarian *-óz-*). -/
   | verbalAffix
@@ -76,7 +81,30 @@ inductive Strategy where
   | compoundVerb
   deriving DecidableEq, Repr
 
-/-- Valency effect of the reciprocal construction ([nordlinger-2023] §3.2). -/
+/-- Where a strategy codes reciprocity: [evans-2008]'s three-way split. -/
+inductive CodingSite where
+  /-- A nonsubject argument position, as an NP or a bound pronominal. -/
+  | argument
+  /-- The predicate: an affix, auxiliary, or clitic, or the lexical entry itself. -/
+  | predicate
+  /-- A fused multipredicate structure. -/
+  | multiclausal
+  deriving DecidableEq, Repr
+
+/-- Coding site of each strategy. -/
+def Strategy.codingSite : Strategy → CodingSite
+  | .bipartiteNP | .recipPronoun | .boundPronoun => .argument
+  | .recipClitic | .verbalAffix | .verbalAuxiliary | .lexical => .predicate
+  | .compoundVerb => .multiclausal
+
+/-- A nominal strategy marks a nonsubject argument position
+([konig-kokutani-2006]). -/
+def Strategy.IsNominal (s : Strategy) : Prop := s.codingSite = .argument
+
+instance : DecidablePred Strategy.IsNominal :=
+  fun s ↦ inferInstanceAs (Decidable (s.codingSite = .argument))
+
+/-- Valency of a reciprocal construction ([nordlinger-2023]). -/
 inductive Valency where
   /-- Two overt syntactic argument slots preserved. -/
   | bivalent
@@ -84,61 +112,41 @@ inductive Valency where
   | monovalent
   deriving DecidableEq, Repr
 
-/-- Coding site of reciprocal marking: argument position, predicate, or
-fused multipredicate structure. -/
-inductive CodingSite where
-  | argument
-  | predicate
-  | multiclausal
-  deriving DecidableEq, Repr
-
-/-- Coding site of each strategy. Clitics sit on the predicate side,
-following [siloni-2012] rather than [konig-kokutani-2006]'s nominal
-grouping. -/
-def Strategy.codingSite : Strategy → CodingSite
-  | .bipartiteNP | .recipPronoun => .argument
-  | .recipClitic | .verbalAffix | .verbalAuxiliary | .lexical => .predicate
-  | .compoundVerb => .multiclausal
-
-/-- Whether the strategy marks a (nonsubject) argument position
-([nordlinger-2023] §3.2). -/
-def Strategy.isNominal (s : Strategy) : Bool :=
-  s.codingSite == .argument
-
 open Voice in
-/-- The coding-frame operation a strategy realizes: grammatical verb-marking
-strategies apply [creissels-2024]'s denucleativizing `reciprocalization`. -/
-def Strategy.alternation : Strategy → Option ValencyAlternation
-  | .recipClitic | .verbalAffix | .verbalAuxiliary | .compoundVerb =>
-      some reciprocalization
-  | .bipartiteNP | .recipPronoun | .lexical => none
+/-- The coding-frame operation a strategy realizes: every strategy marking the
+predicate or a multipredicate structure applies [creissels-2024]'s
+denucleativizing `reciprocalization`; argument strategies leave the frame intact. -/
+def Strategy.alternation (s : Strategy) : Option ValencyAlternation :=
+  if s.IsNominal then none else some reciprocalization
 
-/-- Default valency effect, derived from the realized alternation's
-`derivedTransitive` field; a tendency that languages may override
-(Wambaya, Tonga, Malagasy — [maslova-2008], [hurst-2012]). -/
+/-- Default valency, derived from the realized alternation's `derivedTransitive`
+field; a tendency that languages may override ([maslova-2008], [hurst-2012]). -/
 def Strategy.defaultValency (s : Strategy) : Valency :=
   match s.alternation with
   | some a => if a.derivedTransitive = some false then .monovalent else .bivalent
-  | none   => .bivalent
+  | none => .bivalent
 
-/-- Formation locus of reciprocal verbs: lexical θ-role bundling vs
-syntactic derivation ([siloni-2008], [siloni-2012];
-[reinhart-siloni-2005]'s lex-syn parameter). -/
+/-- Nominal strategies preserve valency by default. -/
+theorem Strategy.defaultValency_eq_bivalent_iff (s : Strategy) :
+    s.defaultValency = .bivalent ↔ s.IsNominal := by
+  cases s <;> decide
+
+/-- Predicate-marking strategies reduce valency by default. -/
+theorem Strategy.defaultValency_eq_monovalent_iff (s : Strategy) :
+    s.defaultValency = .monovalent ↔ ¬ s.IsNominal := by
+  cases s <;> decide
+
+/-- Formation locus of reciprocal verbs: lexical θ-role bundling vs syntactic
+derivation ([siloni-2008], [siloni-2012]; [reinhart-siloni-2005]'s lex-syn
+parameter). -/
 inductive Formation where
   | lexical
   | syntactic
   deriving DecidableEq, Repr
 
-/-- Whether the formation licenses the discontinuous reciprocal
-construction — lexical only ([siloni-2012] §7; verb-level exceptions
-exist, fn. 32). -/
-def Formation.allowsDiscontinuous : Formation → Bool
-  | .lexical   => true
-  | .syntactic => false
-
 /-! ### Marker inventories -/
 
-/-- Readings a reciprocal marker can carry ([nordlinger-2023] §4.2,
+/-- Readings a reciprocal marker can carry ([nordlinger-2023] after
 [nedjalkov-2007b]). -/
 inductive Reading where
   | reciprocal
@@ -157,19 +165,18 @@ structure Marker where
   /-- Morphosyntactic strategy of the exponent. -/
   strategy : Strategy
   /-- Readings the marker covers. -/
-  readings : List Reading := [.reciprocal]
-  deriving DecidableEq, Repr
+  readings : Finset Reading := {.reciprocal}
+  deriving DecidableEq
 
-/-- WALS Ch 106 value computed from a marker inventory: no
-reciprocal-capable marker → `noDedicated`; all also reflexive →
-`identicalToReflexive`; none reflexive → `distinctFromReflexive`;
-both kinds → `mixed`. -/
-def ofInventory (inv : List Marker) : ReflexiveRelation :=
-  let recips := inv.filter (·.readings.contains .reciprocal)
-  if recips.isEmpty then .noDedicated
-  else if recips.all (·.readings.contains .reflexive) then .identicalToReflexive
-  else if recips.all (fun m => !m.readings.contains .reflexive) then
-    .distinctFromReflexive
+open Data.WALS.F106A in
+/-- The WALS Ch 106 value of a marker inventory ([maslova-nedjalkov-2013]): no
+reciprocal-capable marker, every such marker also reflexive, none reflexive, or
+both kinds. -/
+def ofInventory (inv : List Marker) : ReciprocalType :=
+  let recips := inv.filter fun m ↦ Reading.reciprocal ∈ m.readings
+  if recips.isEmpty then .noReciprocalConstruction
+  else if recips.all (fun m ↦ Reading.reflexive ∈ m.readings) then .identicalToReflexive
+  else if recips.all (fun m ↦ Reading.reflexive ∉ m.readings) then .distinctFromReflexive
   else .mixed
 
 end Reciprocal

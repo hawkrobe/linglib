@@ -30,7 +30,7 @@ def drugDruga : Marker :=
     ([nordlinger-2023] ex. 31). -/
 def sja : Marker :=
   { form := "-sja", script := some "-ся", strategy := .verbalAffix
-  , readings := [.reciprocal, .reflexive] }
+  , readings := {.reciprocal, .reflexive} }
 
 /-- себя *sebja* — reflexive pronoun (for contrast). -/
 def sebja : PersonalPronoun :=
