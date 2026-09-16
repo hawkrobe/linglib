@@ -22,7 +22,7 @@ types are [partee-1987]'s, in `Semantics.Composition.TypeShifting`.
 
 namespace Quantification
 
-variable {E : Type}
+variable {E : Type*}
 
 /-! ### The continuation identification
 
@@ -69,7 +69,7 @@ theorem BE_neg (Q : Quantifier E) :
     BE (fun P => ¬(Q P)) = (fun x => ¬(BE Q x)) := rfl
 
 /-- `BE` preserves meets, joins, `⊤` and `⊥` ([partee-1987]). -/
-def BE_hom (E : Type) : BoundedLatticeHom (Quantifier E) (E → Prop) where
+def BE_hom (E : Type*) : BoundedLatticeHom (Quantifier E) (E → Prop) where
   toFun := BE
   map_sup' _ _ := rfl
   map_inf' _ _ := rfl
@@ -171,7 +171,7 @@ monotonicity constraint is exactly the condition making `A` and `BE` an
 adjunction. -/
 
 /-- Upward-closed (monotone) quantifiers: `Q(P)` and `P ≤ P'` imply `Q(P')`. -/
-def UpwardGQ (E : Type) := { Q : Quantifier E // Monotone Q }
+def UpwardGQ (E : Type*) := { Q : Quantifier E // Monotone Q }
 
 instance : PartialOrder (UpwardGQ E) := Subtype.partialOrder _
 
@@ -243,7 +243,7 @@ def Ty.det : Ty := (.e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t)
 
 /-- Existential closure over a complete finite domain is ⟦some⟧: both compute
     `λR.λS. ∃x. R(x) ∧ S(x)`. -/
-theorem A_eq_some_sem (E : Type) (domain : List E)
+theorem A_eq_some_sem (E : Type*) (domain : List E)
     (hComplete : ∀ x : E, x ∈ domain) :
     A domain = (some_sem : GQ E) := by
   funext R S
