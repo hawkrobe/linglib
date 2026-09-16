@@ -580,11 +580,12 @@ hierarchy. -/
 theorem english_not_respectsHorizontalHierarchy :
     ¬ Structure.RespectsHorizontalHierarchy (syncretism englishSubject) := by decide +kernel
 
-/-- The Tagalog *ang* series by referential category. -/
-def tagalogAng (c : Category) : Option String :=
-  (Tagalog.angSeries.find? fun e => decide (e.categories = {c})).map (·.form)
-
 /-- The Tagalog *ang* series is a Maranao-type paradigm. -/
-theorem tagalog_maranao : syncretism tagalogAng = Kind.maranao.pattern := by decide +kernel
+theorem tagalog_maranao : syncretism Tagalog.ang = Kind.maranao.pattern := by decide +kernel
+
+/-- The Tagalog *ang* series is of the minimal-augmented type. -/
+theorem tagalog_minimalAugmented :
+    Structure.HasClusivity (syncretism Tagalog.ang) .minimalAugmented := by
+  decide +kernel
 
 end Cysouw2003

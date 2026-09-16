@@ -1,172 +1,131 @@
-import Linglib.Phonology.Segmental.Basic
+import Linglib.Phonology.Segmental.FeatureClass
 import Linglib.Phonology.Subregular.LocalRewrite
 
 /-!
-# Tagalog Phonological Inventory and Nasal Substitution
-[hayes-2009] [zuraw-2010]
+# Tagalog nasal substitution
 
-Segment inventory and the nasal substitution process for Tagalog,
-defined using the SPE formalism from `Subregular.LocalRewrite`.
+Tagalog has a process by which a prefix-final nasal and a following stem-initial obstruent
+coalesce into a nasal at the obstruent's place: *maŋ-* with *bigáj* 'give' gives *mamigáj* 'to
+distribute', and /p b/ yield /m/, /t d/ yield /n/ and /k g/ yield /ŋ/. It is written here as
+two ordered rules, the assimilation of a nasal to the place of a following obstruent, a process
+of its own in Hayes's textbook, and the deletion of an obstruent after a nasal; the
+assimilation copies the place class. Whether a given prefix and stem undergo the process is
+variable, from nearly always for /p/ to about half the time for /g/ in Zuraw's dictionary
+counts, so *paŋ-* with *tabój* 'goad' keeps its cluster in *pantabój*. The rules give the
+substituted form; the variation is the matter of the studies of Zuraw, of Zuraw and Hayes and
+of Magri.
 
-## Nasal substitution
+## Main definitions
 
-Tagalog has a productive process whereby a nasal-final prefix
-(e.g. maŋ-, paŋ-) combines with an obstruent-initial stem and the
-cluster optionally coalesces into a single nasal homorganic with the
-underlying obstruent ([zuraw-2010]):
+* `Tagalog.Phonology.placeAssimilation`, `Tagalog.Phonology.obstruentDeletion`,
+  `Tagalog.Phonology.nasalSubstitution` — the two rules and their sequence
 
-- `maŋ + bigáj` → `mamigáj` 'to distribute' (substitution applies)
-- `paŋ + tabój` → `pantabój` 'to goad'      (faithful cluster preserved)
+## Main results
 
-The coalescence pattern is homorganic and voicing-neutralizing:
-p,b → m; t,d → n; k,g → ŋ.
+* `Tagalog.Phonology.mamigaj` — *maŋ-* with *bigáj* derives *mamigáj*, and the bare stem is
+  unchanged
+* `Tagalog.Phonology.coalescence` — each obstruent coalesces with a preceding nasal into the
+  nasal of its place
 
-## SPE encoding
+## References
 
-The `Rule` formalism in `Phonology/Subregular/LocalRewrite.lean`
-supports `changeFeatures` and `delete` effects, and segment / wordBoundary
-contexts. It does not support α-spreading (assimilatory rules where the
-target inherits a feature value from the context). Tagalog nasal
-substitution is therefore approximated here as **post-nasal obstruent
-deletion**; the homorganic place of the resulting nasal is supplied by
-the independent rule of homorganic-nasal-place assimilation, which
-[hayes-2009] treats as a separate process.
-
-## Cross-cutting paper analyses
-
-- [zuraw-2010] factorial typology of NS over six obstruents with
-  the constraint set DEP-C / \*NC / \*ASSOC / \*[ŋ / \*[n / \*[m
-  → see `Studies/Zuraw2010.lean`.
-- [zuraw-hayes-2017] 2×2 sub-square analysis (maŋ-other × paŋ-res
-  prefixes, /b/ × /k/ stems) with prefix-indexed UNIFORMITY constraints
-  → see `Studies/ZurawHayes2017.lean`.
-- [magri-2025] MaxEnt-on-square deduction from the Hayes-Zuraw
-  shifted-sigmoids generalization
-  → see `Studies/Magri2025.lean`.
+* [hayes-2009]
+* [magri-2025]
+* [zuraw-2010]
+* [zuraw-hayes-2017]
 -/
 
-open Phonology
-open Subregular.LocalRewrite
+open Phonology Subregular.LocalRewrite
 
 namespace Tagalog.Phonology
 
-/-! ## § 1: Stem-initial obstruents (NS targets) -/
+/-! ### Segments -/
 
-/-- /p/: voiceless bilabial stop -/
-def p : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, false), (Feature.continuant, false),
-   (Feature.voice, false), (Feature.labial, true)]
+/-- The features every stop shares. -/
+private def stop : List (Feature × Bool) :=
+  [(.syllabic, false), (.consonantal, true), (.sonorant, false), (.continuant, false)]
 
-/-- /t/: voiceless alveolar stop -/
-def t : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, false), (Feature.continuant, false),
-   (Feature.voice, false), (Feature.coronal, true), (Feature.anterior, true)]
+/-- The features every nasal shares. -/
+private def nasalSpecs : List (Feature × Bool) :=
+  [(.syllabic, false), (.consonantal, true), (.sonorant, true), (.nasal, true), (.voice, true)]
 
-/-- /k/: voiceless velar stop -/
-def k : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, false), (Feature.continuant, false),
-   (Feature.voice, false), (Feature.dorsal, true)]
+/-- The voiceless bilabial stop. -/
+def p : Segment := Segment.ofSpecs (stop ++ [(.voice, false), (.labial, true)])
 
-/-- /b/: voiced bilabial stop -/
-def b : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, false), (Feature.continuant, false),
-   (Feature.voice, true), (Feature.labial, true)]
+/-- The voiceless alveolar stop. -/
+def t : Segment :=
+  Segment.ofSpecs (stop ++ [(.voice, false), (.coronal, true), (.anterior, true)])
 
-/-- /d/: voiced alveolar stop -/
-def d : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, false), (Feature.continuant, false),
-   (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, true)]
+/-- The voiceless velar stop. -/
+def k : Segment := Segment.ofSpecs (stop ++ [(.voice, false), (.dorsal, true)])
 
-/-- /g/: voiced velar stop -/
-def g : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, false), (Feature.continuant, false),
-   (Feature.voice, true), (Feature.dorsal, true)]
+/-- The voiced bilabial stop. -/
+def b : Segment := Segment.ofSpecs (stop ++ [(.voice, true), (.labial, true)])
 
-/-! ## § 2: Homorganic nasals (NS outputs) -/
+/-- The voiced alveolar stop. -/
+def d : Segment :=
+  Segment.ofSpecs (stop ++ [(.voice, true), (.coronal, true), (.anterior, true)])
 
-/-- /m/: bilabial nasal -/
-def m : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, true), (Feature.nasal, true),
-   (Feature.voice, true), (Feature.labial, true)]
+/-- The voiced velar stop. -/
+def g : Segment := Segment.ofSpecs (stop ++ [(.voice, true), (.dorsal, true)])
 
-/-- /n/: alveolar nasal -/
-def n : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, true), (Feature.nasal, true),
-   (Feature.voice, true), (Feature.coronal, true), (Feature.anterior, true)]
+/-- The bilabial nasal. -/
+def m : Segment := Segment.ofSpecs (nasalSpecs ++ [(.labial, true)])
 
-/-- /ŋ/: velar nasal -/
-def ŋ : Segment := Segment.ofSpecs
-  [(Feature.syllabic, false), (Feature.consonantal, true),
-   (Feature.sonorant, true), (Feature.nasal, true),
-   (Feature.voice, true), (Feature.dorsal, true)]
+/-- The alveolar nasal. -/
+def n : Segment := Segment.ofSpecs (nasalSpecs ++ [(.coronal, true), (.anterior, true)])
 
-/-! ## § 3: Nasal Substitution Rule -/
+/-- The velar nasal. -/
+def ŋ : Segment := Segment.ofSpecs (nasalSpecs ++ [(.dorsal, true)])
 
-/-- **Tagalog Nasal Substitution** ([zuraw-2010]).
+/-- The low vowel. -/
+def a : Segment :=
+  Segment.ofSpecs
+    [(.syllabic, true), (.consonantal, false), (.sonorant, true), (.continuant, true),
+      (.voice, true), (.low, true)]
 
-    Post-nasal obstruent deletion: an obstruent (`[+cons, −son]`) deletes
-    when preceded by a nasal (`[+nasal]`). The homorganic place of the
-    surviving nasal is supplied by general homorganic-nasal-place
-    assimilation, treated as a separate rule ([hayes-2009] Ch 6).
+/-- The high front vowel. -/
+def i : Segment :=
+  Segment.ofSpecs
+    [(.syllabic, true), (.consonantal, false), (.sonorant, true), (.continuant, true),
+      (.voice, true), (.high, true)]
 
-    The variable application of this process — from ~96% for /p/ to
-    ~52% for /g/ in [zuraw-2010]'s dictionary count — is a
-    paper-specific empirical claim and lives in the relevant study
-    files, not here. -/
-def nasalSubstitution : Rule where
-  name := "Tagalog Nasal Substitution"
-  target := Segment.ofSpecs
-    [(Feature.consonantal, true), (Feature.sonorant, false)]
+/-- The palatal glide. -/
+def j : Segment :=
+  Segment.ofSpecs
+    [(.syllabic, false), (.consonantal, false), (.sonorant, true), (.continuant, true),
+      (.voice, true), (.high, true)]
+
+/-! ### The rules -/
+
+/-- A nasal takes the place of a following obstruent. -/
+def placeAssimilation : Rule where
+  name := "nasal place assimilation"
+  target := Segment.ofSpecs [(.nasal, true)]
+  effect := .copyRight FeatureClass.place
+  rightContext := [.seg (Segment.ofSpecs [(.consonantal, true), (.sonorant, false)])]
+
+/-- An obstruent deletes after a nasal. -/
+def obstruentDeletion : Rule where
+  name := "post-nasal obstruent deletion"
+  target := Segment.ofSpecs [(.consonantal, true), (.sonorant, false)]
   effect := .delete
-  leftContext := [.seg (Segment.ofSpecs [(Feature.nasal, true)])]
+  leftContext := [.seg (Segment.ofSpecs [(.nasal, true)])]
 
-/-! ## § 4: Verification -/
+/-- Nasal substitution: place assimilation feeding obstruent deletion. -/
+def nasalSubstitution : List Rule := [placeAssimilation, obstruentDeletion]
 
-/-- /p/ is a voiceless obstruent — matches the NS target. -/
-theorem p_is_voiceless_obstruent :
-    p.HasValue Feature.consonantal true = true ∧
-    p.HasValue Feature.sonorant false = true ∧
-    p.HasValue Feature.voice false = true := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
+/-- *maŋ-* with *bigáj* derives *mamigáj*; the bare stem is unchanged. -/
+theorem mamigaj :
+    derive nasalSubstitution [m, a, ŋ, b, i, g, a, j] = [m, a, m, i, g, a, j] ∧
+      derive nasalSubstitution [b, i, g, a, j] = [b, i, g, a, j] := by
+  decide
 
-/-- /b/ is a voiced obstruent — matches the NS target despite being voiced. -/
-theorem b_is_voiced_obstruent :
-    b.HasValue Feature.consonantal true = true ∧
-    b.HasValue Feature.sonorant false = true ∧
-    b.HasValue Feature.voice true = true := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
-
-/-- /m/, /n/, /ŋ/ are nasals — match the NS left-context. -/
-theorem nasals_are_nasal :
-    m.HasValue Feature.nasal true = true ∧
-    n.HasValue Feature.nasal true = true ∧
-    ŋ.HasValue Feature.nasal true = true := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
-
-/-- All six stem-initial obstruents match the nasal-substitution target. -/
-theorem ns_target_matches_obstruents :
-    nasalSubstitution.target ≤ p ∧
-    nasalSubstitution.target ≤ t ∧
-    nasalSubstitution.target ≤ k ∧
-    nasalSubstitution.target ≤ b ∧
-    nasalSubstitution.target ≤ d ∧
-    nasalSubstitution.target ≤ g := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
-
-/-- The three homorganic nasals do NOT match the obstruent target
-    (sanity check: NS doesn't target nasals themselves). -/
-theorem ns_target_excludes_nasals :
-    ¬ nasalSubstitution.target ≤ m ∧
-    ¬ nasalSubstitution.target ≤ n ∧
-    ¬ nasalSubstitution.target ≤ ŋ := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
+/-- Each obstruent coalesces with a preceding nasal into the nasal of its place. -/
+theorem coalescence :
+    derive nasalSubstitution [ŋ, p] = [m] ∧ derive nasalSubstitution [ŋ, b] = [m] ∧
+      derive nasalSubstitution [ŋ, t] = [n] ∧ derive nasalSubstitution [ŋ, d] = [n] ∧
+      derive nasalSubstitution [ŋ, k] = [ŋ] ∧ derive nasalSubstitution [ŋ, g] = [ŋ] := by
+  decide
 
 end Tagalog.Phonology

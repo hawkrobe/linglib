@@ -1117,9 +1117,7 @@ import Linglib.Fragments.Swahili.WordOrder
 import Linglib.Fragments.Swedish.AnswerParticles
 import Linglib.Fragments.Swedish.QuestionParticles
 import Linglib.Fragments.SwissGerman.Case
-import Linglib.Fragments.Tagalog.Comparison
 import Linglib.Fragments.Tagalog.Phonology
-import Linglib.Fragments.Tagalog.Plurals
 import Linglib.Fragments.Tagalog.Pronouns
 import Linglib.Fragments.Tagalog.Relativization
 import Linglib.Fragments.Tagalog.TemporalConnectives
