@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.Finset.Insert
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Voice.Alternation
 import Linglib.Data.WALS.Features.F106A
 
@@ -24,6 +26,9 @@ computed.
 * `Strategy.alternation`, `Strategy.defaultValency` — the coding-frame operation
   a predicate-marking strategy realizes ([creissels-2024]'s
   `Voice.reciprocalization`) and the valency it therefore derives.
+* `Indicator`, `Construction` — the morphosyntactic indicators of valency, and a
+  construction as its exponent together with what each indicator reports;
+  `Construction.Mixed` is [evans-et-al-2007]'s mixed transitivity effect.
 * `Formation` — lexical vs syntactic formation of reciprocal verbs.
 * `Reading`, `Marker`, `ofInventory` — a reciprocal exponent with its polysemy,
   and the WALS Ch 106 value of an inventory.
@@ -33,9 +38,15 @@ computed.
 The strategy fixes the coding site, and the default valency follows from the
 site: argument strategies leave the base verb's frame intact, while predicate
 and multipredicate strategies realize the denucleativizing reciprocalization
-alternation, whose derived construction is intransitive. Languages may override
-the default (Tonga, Malagasy: [maslova-2008], [hurst-2012]), so the observed
-valency is data in the study that records it. A bound reciprocal pronoun
+alternation, whose derived construction is intransitive. The valency a
+construction actually shows is read off its indicators one at a time, since
+they can disagree: a Kuuk Thaayorre reciprocal keeps ergative on its subject
+with no object slot, a Dalabon one takes intransitive agreement yet incorporates
+the patient ([evans-et-al-2007]). A construction records only the indicators
+a source reports, and languages may override the default throughout (Tonga:
+[maslova-2008]). Hurst's Malagasy case, bivalent at f-structure and monovalent
+at c-structure ([hurst-2012]), splits levels rather than indicators and is not
+representable here. A bound reciprocal pronoun
 (Wambaya *-ngg-*) fills an argument slot and is an argument strategy; the clitic
 of a syntactically formed reciprocal verb (French *se*) is not an object
 ([siloni-2012]) and marks the predicate.
@@ -52,6 +63,7 @@ of a syntactically formed reciprocal verb (French *se*) is not an object
 * [siloni-2012]
 * [reinhart-siloni-2005]
 * [creissels-2024]
+* [evans-et-al-2007]
 * [maslova-2008]
 * [hurst-2012]
 -/
@@ -104,13 +116,14 @@ def Strategy.IsNominal (s : Strategy) : Prop := s.codingSite = .argument
 instance : DecidablePred Strategy.IsNominal :=
   fun s ↦ inferInstanceAs (Decidable (s.codingSite = .argument))
 
-/-- Valency of a reciprocal construction ([nordlinger-2023]). -/
+/-- What a valency indicator reports of a reciprocal construction
+([nordlinger-2023]). -/
 inductive Valency where
-  /-- Two overt syntactic argument slots preserved. -/
+  /-- The base verb's two argument slots preserved. -/
   | bivalent
   /-- The reciprocants form a single subject NP. -/
   | monovalent
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 open Voice in
 /-- The coding-frame operation a strategy realizes: every strategy marking the
@@ -135,6 +148,22 @@ theorem Strategy.defaultValency_eq_bivalent_iff (s : Strategy) :
 theorem Strategy.defaultValency_eq_monovalent_iff (s : Strategy) :
     s.defaultValency = .monovalent ↔ ¬ s.IsNominal := by
   cases s <;> decide
+
+/-! ### Valency indicators -/
+
+/-- A morphosyntactic indicator of a clause's valency ([evans-et-al-2007],
+[nordlinger-2023]). -/
+inductive Indicator where
+  /-- A nonsubject argument slot: an object NP or a bound pronominal in the
+      object position of the pronominal complex. -/
+  | objectSlot
+  /-- Case on the subject NP, ergative for a transitive clause. -/
+  | subjectCase
+  /-- The subject agreement series, transitive or intransitive. -/
+  | agreement
+  /-- Incorporation of the patient nominal into the verb. -/
+  | incorporation
+  deriving DecidableEq, Fintype, Repr
 
 /-- Formation locus of reciprocal verbs: lexical θ-role bundling vs syntactic
 derivation ([siloni-2008], [siloni-2012]; [reinhart-siloni-2005]'s lex-syn
@@ -178,5 +207,40 @@ def ofInventory (inv : List Marker) : ReciprocalType :=
   else if recips.all (fun m ↦ Reading.reflexive ∈ m.readings) then .identicalToReflexive
   else if recips.all (fun m ↦ Reading.reflexive ∉ m.readings) then .distinctFromReflexive
   else .mixed
+
+/-! ### Constructions -/
+
+/-- A reciprocal construction: its exponent, and what each valency indicator a
+description reports says of the clause, `none` where nothing is reported. -/
+structure Construction where
+  /-- The exponent of reciprocity. -/
+  marker : Marker
+  /-- What each reported indicator says of the clause's valency. -/
+  valency : Indicator → Option Valency := fun _ ↦ none
+
+namespace Construction
+
+variable (c : Construction)
+
+/-- The strategy of the construction's exponent. -/
+def strategy : Strategy := c.marker.strategy
+
+/-- Some indicator reports the valency `v`. -/
+def Reads (v : Valency) : Prop := ∃ i, c.valency i = some v
+
+/-- Every reporting indicator agrees on `v`. -/
+def Unanimous (v : Valency) : Prop := ∀ w, c.Reads w → w = v
+
+/-- The indicators disagree: [evans-et-al-2007]'s mixed transitivity effect. -/
+def Mixed : Prop := c.Reads .bivalent ∧ c.Reads .monovalent
+
+instance (v : Valency) : Decidable (c.Reads v) := Fintype.decidableExistsFintype
+instance (v : Valency) : Decidable (c.Unanimous v) := Fintype.decidableForallFintype
+instance : Decidable c.Mixed := instDecidableAnd
+
+theorem not_mixed_of_unanimous {v : Valency} (h : c.Unanimous v) : ¬ c.Mixed :=
+  fun ⟨hb, hm⟩ ↦ absurd ((h _ hb).trans (h _ hm).symm) (by decide)
+
+end Construction
 
 end Reciprocal
