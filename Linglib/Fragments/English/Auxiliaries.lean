@@ -51,42 +51,43 @@ contracted form and `Polarity=Neg`. -/
 private def contract (a : Auxiliary) (form : String) : Auxiliary :=
   { a with form := form, features := { a.features with polarity := some .Neg } }
 
--- Modals. Negative forms from [zwicky-pullum-1983], Table 1.
+/-! ### Modals -/
+
 def can : Auxiliary where
   form := "can"
-  modality := [.possibility] ×ˢ [.epistemic, .deontic, .circumstantial]
+  modality := {.possibility} ×ˢ {.epistemic, .deontic, .circumstantial}
 def could : Auxiliary where
   form := "could"
   features := agr (tense := some .Past)
-  modality := [.possibility] ×ˢ [.epistemic, .deontic, .circumstantial]
+  modality := {.possibility} ×ˢ {.epistemic, .deontic, .circumstantial}
 def will : Auxiliary where
   form := "will"
-  modality := [.necessity] ×ˢ [.epistemic, .circumstantial]
+  modality := {.necessity} ×ˢ {.epistemic, .circumstantial}
 def would : Auxiliary where
   form := "would"
   features := agr (tense := some .Past)
-  modality := [.necessity] ×ˢ [.epistemic, .circumstantial]
+  modality := {.necessity} ×ˢ {.epistemic, .circumstantial}
 def shall : Auxiliary where
   form := "shall"
   register := .formal
-  modality := [.necessity] ×ˢ [.deontic]
+  modality := {.necessity} ×ˢ {.deontic}
 def should : Auxiliary where
   form := "should"
   features := agr (tense := some .Past)
-  modality := [.weakNecessity] ×ˢ [.deontic, .epistemic]
+  modality := {.weakNecessity} ×ˢ {.deontic, .epistemic}
 def may : Auxiliary where
   form := "may"
-  modality := [.possibility] ×ˢ [.epistemic, .deontic]
+  modality := {.possibility} ×ˢ {.epistemic, .deontic}
 def might : Auxiliary where
   form := "might"
   features := agr (tense := some .Past)
-  modality := [.possibility] ×ˢ [.epistemic]
+  modality := {.possibility} ×ˢ {.epistemic}
 def must : Auxiliary where
   form := "must"
   register := .formal
-  modality := [.necessity] ×ˢ [.epistemic, .deontic, .circumstantial]
+  modality := {.necessity} ×ˢ {.epistemic, .deontic, .circumstantial}
 
--- Semi-modals and periphrastic modals
+/-! ### Semi-modals and periphrastic modals -/
 
 /-- *Have to*: periphrastic deontic/circumstantial necessity.
     Informal register variant of *must*.
@@ -94,19 +95,19 @@ def must : Auxiliary where
 def haveTo : Auxiliary where
   form := "have to"
   register := .informal
-  modality := [.necessity] ×ˢ [.deontic, .circumstantial]
+  modality := {.necessity} ×ˢ {.deontic, .circumstantial}
 
--- Semi-modals (Z&P Table 1 rows o–q)
 def dare : Auxiliary where
   form := "dare"
 def need : Auxiliary where
   form := "need"
-  modality := [.necessity] ×ˢ [.deontic, .circumstantial]
+  modality := {.necessity} ×ˢ {.deontic, .circumstantial}
 def ought : Auxiliary where
   form := "ought"
-  modality := [.weakNecessity] ×ˢ [.deontic, .epistemic]
+  modality := {.weakNecessity} ×ˢ {.deontic, .epistemic}
 
--- Do-support
+/-! ### Do-support -/
+
 def do_ : Auxiliary where
   form := "do"
   features := agr (number := some .Plur)
@@ -117,7 +118,8 @@ def did : Auxiliary where
   form := "did"
   features := agr (tense := some .Past)
 
--- Be
+/-! ### *Be* -/
+
 def am : Auxiliary where
   form := "am"
   features := agr (person := some .first) (number := some .Sing)
@@ -134,7 +136,8 @@ def were : Auxiliary where
   form := "were"
   features := agr (number := some .Plur) (tense := some .Past)
 
--- Have
+/-! ### *Have* -/
+
 def have_ : Auxiliary where
   form := "have"
   features := agr (number := some .Plur)
@@ -144,6 +147,8 @@ def has : Auxiliary where
 def had : Auxiliary where
   form := "had"
   features := agr (tense := some .Past)
+
+/-! ### Inventories -/
 
 /-- The modal auxiliaries. -/
 def modals : List Auxiliary :=
@@ -187,12 +192,15 @@ def havent : Auxiliary := contract have_ "haven't"
 def hasnt : Auxiliary := contract has "hasn't"
 def hadnt : Auxiliary := contract had "hadn't"
 
-/-- The contracted negatives. -/
-def negatives : List Auxiliary := [cant, couldnt, wont, wouldnt, shant, shouldnt, mightnt, mustnt, darent, neednt, oughtnt, dont, doesnt, didnt, isnt, arent, wasnt, werent, havent, hasnt, hadnt]
-
 /-- Each auxiliary paired with its contracted negative. -/
 def contractions : List (Auxiliary × Auxiliary) :=
-  [(can, cant), (could, couldnt), (will, wont), (would, wouldnt), (shall, shant), (should, shouldnt), (might, mightnt), (must, mustnt), (dare, darent), (need, neednt), (ought, oughtnt), (do_, dont), (does, doesnt), (did, didnt), (is_, isnt), (are, arent), (was, wasnt), (were, werent), (have_, havent), (has, hasnt), (had, hadnt)]
+  [(can, cant), (could, couldnt), (will, wont), (would, wouldnt), (shall, shant),
+    (should, shouldnt), (might, mightnt), (must, mustnt), (dare, darent), (need, neednt),
+    (ought, oughtnt), (do_, dont), (does, doesnt), (did, didnt), (is_, isnt), (are, arent),
+    (was, wasnt), (were, werent), (have_, havent), (has, hasnt), (had, hadnt)]
+
+/-- The contracted negatives. -/
+def negatives : List Auxiliary := contractions.map (·.2)
 
 /-- The contracted negative of an auxiliary, if it has one. -/
 def negative (a : Auxiliary) : Option Auxiliary :=
@@ -200,12 +208,10 @@ def negative (a : Auxiliary) : Option Auxiliary :=
 
 end Modals
 
--- ============================================================================
--- Infinitival Marker
--- ============================================================================
+/-! ### The infinitival marker -/
 
-/-- Infinitival marker "to" (UD: PART). Distinct from the preposition "to" (ADP).
-    Used in infinitival complements: "John managed to sleep". -/
+/-- The infinitival marker *to*, UD `PART`, distinct from the preposition `English.Adpositions.to_`:
+*John managed to sleep*. -/
 def toInf : Word := Word.mk' "to" .PART
 
 end English.Auxiliaries

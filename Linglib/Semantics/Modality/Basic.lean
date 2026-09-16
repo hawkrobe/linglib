@@ -130,11 +130,21 @@ def Epistemic (m : ModalItem) : Prop := ∀ ff ∈ m.meaning, ff.flavor = .epist
 pair it expresses is epistemic. -/
 def Circumstantial (m : ModalItem) : Prop := ∀ ff ∈ m.meaning, ff.flavor ≠ .epistemic
 
+/-- The forces a modal item expresses. -/
+def forces (m : ModalItem) : Finset ModalForce := m.meaning.image Prod.fst
+
+/-- The flavours a modal item expresses. -/
+def flavors (m : ModalItem) : Finset ModalFlavor := m.meaning.image Prod.snd
+
+/-- The forces a modal item expresses under a flavour. -/
+def forcesOf (m : ModalItem) (fl : ModalFlavor) : Finset ModalForce :=
+  (m.meaning.filter (·.flavor = fl)).image Prod.fst
+
 /-- A modal item varies in force when it expresses two forces. -/
-def VariesForce (m : ModalItem) : Prop := 2 ≤ (m.meaning.image Prod.fst).card
+def VariesForce (m : ModalItem) : Prop := 2 ≤ m.forces.card
 
 /-- A modal item varies in flavour when it expresses two flavours. -/
-def VariesFlavor (m : ModalItem) : Prop := 2 ≤ (m.meaning.image Prod.snd).card
+def VariesFlavor (m : ModalItem) : Prop := 2 ≤ m.flavors.card
 
 instance : DecidablePred Epistemic := λ _ => inferInstanceAs (Decidable (∀ _ ∈ _, _ = _))
 
