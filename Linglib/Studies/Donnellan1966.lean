@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Reference.Character
 import Linglib.Semantics.Reference.Nominal
-import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Definiteness.Iota
 
 /-!
 # Donnellan (1966): Reference and Definite Descriptions
@@ -37,21 +37,19 @@ namespace Donnellan1966
 
 open Reference Definiteness
 
-variable {W E : Type*} {domain : List E} {φ : E → W → Prop} [∀ e w, Decidable (φ e w)]
-  {w : W} {e intended : E}
+variable {W E : Type*} {domain : List E} {φ : E → W → Prop} {w : W} {e intended : E}
 
 /-- The attributive use: at each world, the unique satisfier of the description there. -/
-def attributive (domain : List E) (φ : E → W → Prop) [∀ e w, Decidable (φ e w)] :
-    W → Option E :=
-  λ w => russellIotaList domain λ e => decide (φ e w)
+noncomputable def attributive (domain : List E) (φ : E → W → Prop) : W → Option E :=
+  fun w => russellIota fun e => e ∈ domain ∧ φ e w
 
 theorem attributive_eq_some_iff :
-    attributive domain φ w = some e ↔ domain.filter (λ e => decide (φ e w)) = [e] :=
-  russellIotaList_eq_some_iff ..
+    attributive domain φ w = some e ↔ (e ∈ domain ∧ φ e w) ∧ ∀ x ∈ domain, φ x w → x = e := by
+  simp only [attributive, russellIota_eq_some_iff, and_imp]
 
 /-- The attributive use as a nominal denotation: the selector is the pointwise iota and there
 is no presupposition beyond its definedness. -/
-def attributiveNominal (domain : List E) (φ : E → W → Prop) [∀ e w, Decidable (φ e w)] :
+noncomputable def attributiveNominal (domain : List E) (φ : E → W → Prop) :
     Nominal Unit W E :=
   .ofReferent (attributive domain φ)
 

@@ -3,7 +3,7 @@ import Mathlib.Data.Fin.VecNotation
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.FinCases
 import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Definiteness.Iota
 
 /-!
 # Beck, Oda and Sugisaki 2004: comparison in Japanese without degree abstraction
@@ -29,7 +29,7 @@ no degree-based negative islands — and its scope argument.
 
 * `pos_comparedTo`, `maxIn_Ioi_Iic_iff`: a context setter supplying `y` turns the positive form
   and the contextual comparative into the comparison with `y`.
-* `isGreatest_card_of_isMaximal`: an amount standard is the cardinality of the maximal
+* `isGreatest_card_of_isGreatest`: an amount standard is the cardinality of the maximal
   plurality.
 * `pos_ne_subcomparative`: an individual standard lies on the matrix dimension and does not
   express a subcomparative of degree.
@@ -129,10 +129,10 @@ theorem theC_eq_some_iff (C : Set Entity) (P : Entity → Prop) (y : Entity) :
 
 /-- If `Y` is the maximal `P`-plurality, then the greatest `n` for which some `P`-plurality
 has at least `n` members is the cardinality of `Y` (41a). -/
-theorem isGreatest_card_of_isMaximal {Atom : Type*} {P : Finset Atom → Prop}
-    {Y : Finset Atom} (h : IsMaximal P Y) :
+theorem isGreatest_card_of_isGreatest {Atom : Type*} {P : Finset Atom → Prop}
+    {Y : Finset Atom} (h : IsGreatest {S | P S} Y) :
     IsGreatest {n | ∃ S, P S ∧ n ≤ S.card} Y.card :=
-  ⟨⟨Y, h.1, le_rfl⟩, fun _ ⟨_, hS, hn⟩ => hn.trans (Finset.card_le_card (h.2 _ hS))⟩
+  ⟨⟨Y, h.1, le_rfl⟩, fun _ ⟨_, hS, hn⟩ => hn.trans (Finset.card_le_card (h.2 hS))⟩
 
 /-! ### Subcomparatives -/
 

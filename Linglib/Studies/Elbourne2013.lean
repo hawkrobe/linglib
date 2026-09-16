@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Elbourne2013
-import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Definiteness.Iota
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Quantification.ChoiceFunction
 import Mathlib.Order.Minimal

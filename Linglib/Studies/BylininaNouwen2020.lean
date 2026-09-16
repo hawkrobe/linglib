@@ -1,4 +1,4 @@
-import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Definiteness.Iota
 import Linglib.Semantics.Degree.Quantifier
 import Linglib.Semantics.Quantification.Quantifier
 import Mathlib.Data.Fintype.EquivFin

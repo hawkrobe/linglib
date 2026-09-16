@@ -1,4 +1,4 @@
-import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Definiteness.Iota
 import Linglib.Semantics.Mereology
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Genericity.MeaningPreservation
@@ -160,23 +160,25 @@ theorem maa_cumulative_not_divisive : CUM isDog ∧ ¬ LacksMinimalParts isDog :
 
 /-- The bare definite description: the unique referent satisfying the restrictor, the
 uniqueness reading available to Shan bare nouns. -/
-def bareDefinite {E : Type*} (domain : List E) (restrictor : E → Bool) : Option E :=
-  russellIotaList domain restrictor
+noncomputable def bareDefinite {E : Type*} (domain : List E) (restrictor : E → Prop) : Option E :=
+  russellIota fun x => x ∈ domain ∧ restrictor x
 
 /-- The demonstrative denotation of Moroney's (147)–(148): the bare definite, presupposing a
 unique referent, further required to satisfy the demonstrative's spatial content
 (`ιx[P(x) ∧ CLOSE.TO.SPEAKER(x)]`). -/
-def demDenotation {E : Type*} (domain : List E) (d : DemonstrativeDeterminer)
-    (restrictor : E → Bool) (spatialPred : Reference.Deixis → E → Bool) : Option E :=
-  (bareDefinite domain restrictor).filter (spatialPred d.deictic)
+noncomputable def demDenotation {E : Type*} (domain : List E) (d : DemonstrativeDeterminer)
+    (restrictor : E → Prop) (spatialPred : Reference.Deixis → E → Prop)
+    [∀ δ, DecidablePred (spatialPred δ)] : Option E :=
+  (bareDefinite domain restrictor).filter fun e => decide (spatialPred d.deictic e)
 
 /-- The demonstrative refers exactly when the bare definite does and its referent has the
 demonstrative's spatial property, so *nâj/nân* are optional wherever the bare noun already
 provides the definite reading. -/
 theorem demDenotation_eq_some_iff {E : Type*} (domain : List E) (d : DemonstrativeDeterminer)
-    (restrictor : E → Bool) (spatialPred : Reference.Deixis → E → Bool) (e : E) :
+    (restrictor : E → Prop) (spatialPred : Reference.Deixis → E → Prop)
+    [∀ δ, DecidablePred (spatialPred δ)] (e : E) :
     demDenotation domain d restrictor spatialPred = some e ↔
-      bareDefinite domain restrictor = some e ∧ spatialPred d.deictic e = true :=
-  Option.filter_eq_some_iff
+      bareDefinite domain restrictor = some e ∧ spatialPred d.deictic e := by
+  simp only [demDenotation, Option.filter_eq_some_iff, decide_eq_true_eq]
 
 end Moroney2021

@@ -1,7 +1,7 @@
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Definiteness.Defs
-import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Definiteness.Iota
 import Linglib.Fragments.English.Determiners
 
 /-!
@@ -11,8 +11,7 @@ import Linglib.Fragments.English.Determiners
 Connective tissue between definite-description denotations and the rest of
 the library. The denotational layer itself lives in two canonical pieces:
 
-- `Definiteness.russellIotaList` (the per-context referent selector,
-  Russellian iota over a `List E` filtered by a `Bool` predicate), and
+- `Definiteness.russellIota` (the referent selector, the Russellian iota), and
 - `Presupposition.PartialProp.presupOfReferent` (the combinator lifting a
   referent selector and a scope predicate into a `PartialProp W`).
 
@@ -54,7 +53,7 @@ open Presupposition
 been introduced into the discourse and are available for anaphoric reference.
 Familiarity-based definites (Schwarz's strong article) are evaluated by
 running the canonical Russellian-iota selector
-(`Definiteness.russellIotaList`) over `dc.salient` rather than the full
+(`Definiteness.russellIota`) over `dc.salient` rather than the full
 domain. -/
 structure DiscourseContext (E : Type) where
   /-- Entities currently salient/familiar in discourse -/
@@ -87,7 +86,7 @@ theorem the_is_every_on_singletons {α : Type*}
 open English.Determiners (QForce)
 
 /-- English "the" is `QForce.definite` — its denotation is given by
-composing `presupOfReferent` with `russellIotaList domain restrictor`
+composing `presupOfReferent` with `russellIota (· ∈ domain ∧ restrictor ·)`
 (uniqueness-based, since English is `ArticleType.weakOnly`). The
 familiarity reading arises pragmatically (accommodation) rather than
 structurally. -/

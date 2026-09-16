@@ -2,7 +2,7 @@ import Mathlib.Data.Part
 import Mathlib.Basic.Nontrivial.Defs
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Logic.Trivalent.Prop3
-import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Definiteness.Iota
 import Linglib.Semantics.Dynamic.Partial
 import Linglib.Data.Examples.CoppockBeaver2015
 

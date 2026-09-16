@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.Quantifier
-import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Definiteness.Iota
 import Mathlib.Data.Finset.Lattice.Fold
 
 /-!

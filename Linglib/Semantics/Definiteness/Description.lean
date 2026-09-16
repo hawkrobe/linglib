@@ -1,7 +1,7 @@
 import Linglib.Semantics.Composition.Assignment
 import Linglib.Semantics.Reference.Deixis
 import Linglib.Semantics.Definiteness.Defs
-import Linglib.Semantics.Definiteness.Maximality
+import Linglib.Semantics.Definiteness.Iota
 import Linglib.Semantics.Denotation
 
 /-!
