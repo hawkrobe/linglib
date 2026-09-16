@@ -37,8 +37,7 @@ parameters of the model, as the proximity predicates are for the demonstrative d
 -/
 
 open Presupposition Presupposition.PhiFeatures
-open Reference (Nominal)
-open Semantics.Composition (interpPronoun)
+open Reference
 
 namespace PersonalPronoun
 
@@ -73,7 +72,7 @@ defined under a total assignment, and the intrinsic presupposition is the φ-fea
 presupposition of the resolved referent `g i`. -/
 def denote : Nominal (Assignment E) W E where
   presup g _ := (e.phiPresup speaker addressee isFemale isInanimate).defined (g i)
-  selector g _ := some (interpPronoun i g)
+  selector g _ := some (Semantics.Composition.interpPronoun i g)
 
 @[simp] theorem denote_presup (g : Assignment E) (w : W) :
     (e.denote i speaker addressee isFemale isInanimate).presup g w =
@@ -86,7 +85,7 @@ def denote : Nominal (Assignment E) W E where
 
 /-- A pronoun's referent does not vary with the world: the selector is rigid. -/
 theorem isRigid_denote_selector (g : Assignment E) :
-    Reference.IsRigid ((e.denote (W := W) i speaker addressee isFemale isInanimate).selector g) :=
-  Reference.isRigid_const _
+    IsRigid ((e.denote (W := W) i speaker addressee isFemale isInanimate).selector g) :=
+  isRigid_const _
 
 end PersonalPronoun

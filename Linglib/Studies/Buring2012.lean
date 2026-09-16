@@ -34,7 +34,6 @@ feature of its own.
 namespace Buring2012
 
 open English.Pronouns Presupposition Presupposition.PhiFeatures
-open Semantics.Composition (interpPronoun)
 
 variable {E : Type} [PartialOrder E] (e : PersonalPronoun) (g : Assignment E) (n : ℕ)
   (spk adr : E) (isFemale isInanimate : E → Prop) (scope : E → PUnit → Prop)
@@ -43,7 +42,7 @@ variable {E : Type} [PartialOrder E] (e : PersonalPronoun) (g : Assignment E) (n
 variable lookup, the same one for the bound, anaphoric and deictic uses. -/
 theorem selector_eq_assignment :
     (e.denote (W := PUnit) n spk adr isFemale isInanimate).selector g ⟨⟩
-      = some (interpPronoun (E := E) n g) := rfl
+      = some (Semantics.Composition.interpPronoun n g) := rfl
 
 /-- A feminine pronoun is undefined of a non-female referent: the feature does not assert that the
 referent is female, it presupposes it, so the denotation has no value at all when it fails. -/
