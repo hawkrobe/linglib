@@ -119,6 +119,34 @@ theorem verticesAux_append (i : ℕ) (xs ys : List (RoseTree α)) :
     have : i + 1 + xs.length = i + (xs.length + 1) := by omega
     rw [this]
 
+/-- Starting `verticesAux` at index `i` shifts every head index by `i`. -/
+theorem verticesAux_eq_map_modifyHead (i : ℕ) (cs : List (RoseTree α)) :
+    verticesAux i cs = (verticesAux 0 cs).map (List.modifyHead (· + i)) := by
+  induction cs generalizing i with
+  | nil => rfl
+  | cons c cs ih =>
+    rw [verticesAux_cons, verticesAux_cons, ih (i + 1), ih 1, List.map_append, List.map_map,
+      List.map_map]
+    congr 1
+    · exact List.map_congr_left fun p _ => by simp
+    · exact List.map_congr_left fun p _ => by
+        rw [Function.comp_apply, List.modifyHead_modifyHead]
+        exact congrArg (List.modifyHead · p) (funext fun x => by
+          simp only [Function.comp_apply]
+          omega)
+
+/-- Every path enumerated by `verticesAux i cs` starts with an index of at least `i`. -/
+theorem exists_cons_of_mem_verticesAux {i : ℕ} {cs : List (RoseTree α)} {p : Path}
+    (hp : p ∈ verticesAux i cs) : ∃ k q, i ≤ k ∧ p = k :: q := by
+  induction cs generalizing i with
+  | nil => simp at hp
+  | cons c cs ih =>
+    rw [verticesAux_cons, List.mem_append, List.mem_map] at hp
+    rcases hp with ⟨q, -, rfl⟩ | hp
+    · exact ⟨i, q, Nat.le_refl _, rfl⟩
+    · obtain ⟨k, q, hk, rfl⟩ := ih hp
+      exact ⟨k, q, by omega, rfl⟩
+
 /-! ### Length theorem
 
 The total number of enumerated paths equals the tree's node count

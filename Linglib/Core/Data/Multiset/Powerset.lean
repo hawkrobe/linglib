@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.Data.List.Zip
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Data.Multiset.Bind
 import Mathlib.Data.Multiset.Powerset
@@ -69,6 +70,18 @@ theorem powerset_add (F G : Multiset α) :
     rw [h₂, ih]
 
 variable [DecidableEq α]
+
+/-- `sublists'.revzip` descends to the powerset paired with complements. -/
+theorem coe_revzip_sublists' (l : List α) :
+    ((l.sublists'.revzip.map fun p => ((p.1 : Multiset α), (p.2 : Multiset α)) :
+        List (Multiset α × Multiset α)) : Multiset (Multiset α × Multiset α)) =
+      (l : Multiset α).powerset.map fun s => (s, (l : Multiset α) - s) := by
+  have h : l.sublists'.revzip.map (fun p => ((p.1 : Multiset α), (p.2 : Multiset α))) =
+      (powersetAux' l).revzip := by
+    rw [powersetAux', List.revzip_map]
+    rfl
+  rw [h, revzip_powersetAux_lemma l revzip_powersetAux', powerset_coe', ← Multiset.map_coe]
+  rfl
 
 /-- Nested-powerset reparameterization: iterating `F₁ ⊆ F` then `A ⊆ F₁` enumerates the
     same multiset of pairs as iterating `A ⊆ F` then `B ⊆ F - A`, via the bijection
