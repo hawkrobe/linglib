@@ -614,7 +614,7 @@ theorem akan_normal_identBR_grounded :
     palatalization. -/
 theorem akan_under_pal_grounded :
     seg_k.HasValue Feature.coronal false = true ∧
-    seg_i.HasValue Feature.front true = true := ⟨by native_decide, by native_decide⟩
+    Vowel.I.segment.HasValue Feature.front true = true := ⟨by native_decide, by native_decide⟩
 
 /-- The `over` candidate's IDENT-IO violation is grounded: input /k/
     is [−coronal] but output /tɕ/ is [+coronal] — an IO faithfulness
