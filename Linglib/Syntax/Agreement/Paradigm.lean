@@ -1,119 +1,81 @@
-import Linglib.Data.UD.Basic
+import Linglib.Syntax.Agreement.Bundle
 import Linglib.Semantics.Reference.Prominence
-import Linglib.Morphology.Word.Basic
-import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.Person.Basic
+import Linglib.Morphology.Word.Agree
+
+/-!
+# Agreement paradigms
+
+This file defines the descriptive agreement paradigm, the table from feature bundles to the
+exponents that realize them, and the person–number bundles such a table ranges over.
+
+A paradigm records which forms realize which cells, as a reference grammar lists them, and
+commits to no account of how the table arises: syncretism is a non-injective table and
+defectiveness a partial one. The cells are the bundles of `Syntax/Agreement/Bundle.lean`,
+the feature space a pronoun or a word token already carries, so a controller's `Word.phi`
+indexes a paradigm directly ([corbett-1998]).
+
+## Main definitions
+
+* `Agreement.Bundle.pnCells` — the six person–number bundles
+* `Agreement.Bundle.IsSAP`, `Agreement.Bundle.IsPlural`, `Agreement.Bundle.person` — the
+  speech-act-participant and plural cells, and the person a cell bears
+* `Agreement.Paradigm` — a table from bundles to exponents, with `Paradigm.realize` and
+  `Paradigm.realizeFor`
+
+## References
+
+* [corbett-1998] — agreement paradigms and the shared feature space of pronouns and targets
+* [scott-2023] — Set A and Set B person–number inflection as descriptive tables
+-/
 
 open Morphology (Word)
 
-/-!
-# Agreement paradigms — the descriptive realization table
-[corbett-1998] [scott-2023]
-
-A **theory-neutral** representation of an agreement paradigm: the descriptive
-table mapping agreement-feature cells to their surface exponents, in the sense
-of [corbett-1998] (*Morphology and Agreement*, Handbook of Morphology) and
-the grammar-sketch chapters of descriptive work like [scott-2023] (Ch. 2:
-Set A / Set B person–number inflection).
-
-## Theory-neutrality
-
-This file records *what forms realize which feature cells* — the paradigm table
-a reference grammar lists. It deliberately commits to **no** generative account
-of *how* the table arises. Syncretism is recorded as a plain fact (two cells, one
-form — a non-injective table), not explained. The competing realizational
-analyses — Distributed Morphology (vocabulary insertion + impoverishment;
-[scott-2023] Ch. 4), Paradigm Function Morphology, HPSG type-hierarchy
-unification — are *theories of* this table and belong in `Studies/`, not here.
-
-## One φ-space with pronouns
-
-Per [corbett-1998] (§1), agreement in the wider sense *includes* pronouns —
-diachronically, agreement morphology grammaticalizes from pronouns. The three
-indisputable agreement features (§2) are exactly **person, number, gender**
-(case is government, not agreement). So an `Cell` is the canonical φ-subspace
-a `Pronoun`/`Word` already carries: `Word.agrCell` projects a word's φ-features
-into a paradigm index, so the *same* feature space drives pronoun reference and
-agreement realization — no parallel person/number enum.
-
-## Main declarations
-
-* `Cell` — an agreement-feature cell (person × number × gender), in the
-  canonical `UD` feature types.
-* `Paradigm Exp` — a descriptive table: agreement cells to exponents.
-* `Paradigm.realize` — look up the exponent for a cell (exact match).
-* `Word.agrCell` / `Paradigm.realizeFor` — index a paradigm by a word's φ.
--/
-
 namespace Agreement
 
+namespace Bundle
 
-/-- An agreement-feature cell: the canonical φ-features that may be realized by
-    agreement ([corbett-1998] §2 — person, number, gender; case excluded as
-    government). Uses the same `UD` feature types a `Pronoun`/`Word` carries, so a
-    controller's φ projects directly into the index (`Word.agrCell`). A `none`
-    field is a feature the paradigm does not distinguish. -/
-structure Cell where
-  person : Option UD.Person := none
-  number : Option UD.Number := none
-  gender : Option UD.Gender := none
-  deriving DecidableEq, Repr, BEq
+/-- A cell is a speech-act participant's when its person is first or second. -/
+def IsSAP (b : Bundle) : Prop := b .person = ↑Person.first ∨ b .person = ↑Person.second
 
-/-- Build a person–number cell (the common case: no gender agreement). -/
-def Cell.pn (p : UD.Person) (n : UD.Number) : Cell :=
-  { person := some p, number := some n }
+instance (b : Bundle) : Decidable b.IsSAP := inferInstanceAs (Decidable (_ ∨ _))
 
-/-- Is this a speech-act-participant (1st/2nd person) cell? Drives
-    person-conditioned phenomena like differential indexing ([corbett-1998]). -/
-def Cell.isSAP (c : Cell) : Bool :=
-  c.person == some .first || c.person == some .second
+/-- A cell is plural when its number is. -/
+def IsPlural (b : Bundle) : Prop := b .number = ↑Number.plural
 
-/-- The person level of a cell, on the `Person` scale
-    (an unspecified or 0-person cell maps to `.third`). Adapts a φ-cell to
-    consumers that reason on person prominence (decomposition, indexing). -/
-def Cell.toPerson (c : Cell) : Person :=
-  match c.person with
-  | some .first => .first
-  | some .second => .second
-  | _ => .third
+instance (b : Bundle) : Decidable b.IsPlural := inferInstanceAs (Decidable (_ = _))
 
-/-- Is this a plural cell? -/
-def Cell.isPlural (c : Cell) : Bool := c.number == some .Plur
+/-- The person a cell bears, third where it bears none. -/
+def person (b : Bundle) : Person :=
+  match b .person with
+  | (p : Person) => p
+  | ⊥ => .third
 
-/-- The basic 3-person × {singular, plural} inventory of φ-cells — the cells a
-    person/number agreement paradigm ranges over. -/
-def Cell.pnCells : List Cell :=
-  [.pn .first .Sing, .pn .second .Sing, .pn .third .Sing,
-   .pn .first .Plur, .pn .second .Plur, .pn .third .Plur]
+@[simp] theorem person_pn (p : Person) (n : Number) : (pn p n).person = p := rfl
 
-/-- The φ-cell of a word: its person/number/gender features, as an agreement
-    index. The bridge that lets a pronoun (or any controller) drive an agreement
-    paradigm in the *same* feature space ([corbett-1998] §1). -/
-def _root_.Morphology.Word.agrCell (w : Word) : Cell :=
-  { person := w.features.person, number := w.features.number,
-    gender := w.features.gender }
+/-- The six person–number cells a person–number paradigm ranges over. -/
+def pnCells : List Bundle :=
+  [.pn .first .singular, .pn .second .singular, .pn .third .singular,
+    .pn .first .plural, .pn .second .plural, .pn .third .plural]
 
-/-- An agreement paradigm: the descriptive table of (cell, exponent) entries.
-    `Exp` is the exponent type (a surface string, a structured affix, …).
-    A non-injective table records syncretism as a fact; a partial table (a cell
-    with no entry) records defectiveness. -/
-abbrev Paradigm (Exp : Type _) := List (Cell × Exp)
+end Bundle
+
+/-- An agreement paradigm, the descriptive table of cells and their exponents. -/
+abbrev Paradigm (Exp : Type*) := List (Bundle × Exp)
 
 namespace Paradigm
 
-variable {Exp : Type _}
+variable {Exp : Type*}
 
-/-- The exponent realizing a given cell, by exact match (the first entry whose
-    cell equals `c`). `none` if the paradigm has no entry for the cell. -/
-def realize [DecidableEq Exp] (p : Paradigm Exp) (c : Cell) : Option Exp :=
-  (p.find? (·.1 == c)).map (·.2)
+/-- The exponent realizing a cell, the first entry whose cell it is. -/
+def realize (p : Paradigm Exp) (c : Bundle) : Option Exp :=
+  (p.find? fun e ↦ decide (e.1 = c)).map (·.2)
 
-/-- Realize the exponent agreeing with a controller word, via its `agrCell`. -/
-def realizeFor [DecidableEq Exp] (p : Paradigm Exp) (controller : Word) : Option Exp :=
-  p.realize controller.agrCell
+/-- The exponent agreeing with a controller word. -/
+def realizeFor (p : Paradigm Exp) (controller : Word) : Option Exp :=
+  p.realize controller.phi
 
-/-- The cells the paradigm distinguishes (in declaration order). -/
-def cells (p : Paradigm Exp) : List Cell := p.map (·.1)
+/-- The cells the paradigm distinguishes, in declaration order. -/
+def cells (p : Paradigm Exp) : List Bundle := p.map (·.1)
 
 end Paradigm
 

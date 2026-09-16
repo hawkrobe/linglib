@@ -13,22 +13,22 @@ latter, reading off each ordered cell's exponent.
 ## Main declarations
 
 * `Agreement.Paradigm.toParadigm` — transport a cell-keyed table onto the
-  `n`-cell ordered paradigm along an indexing `Fin n → Agreement.Cell`
+  `n`-cell ordered paradigm along an indexing `Fin n → Agreement.Bundle`
 -/
 
 namespace Agreement.Paradigm
 
-variable {Exp : Type*} [DecidableEq Exp] {n : ℕ}
+variable {Exp : Type*} {n : ℕ}
 
 /-- Transport a descriptive agreement table onto the ordered-cell
 `Morphology.Paradigm`: given an indexing `e` of the `n` ordered cells by
 agreement-feature cells, read off each cell's exponent (`none` where the
 table is defective for that cell). -/
-def toParadigm (e : Fin n → Agreement.Cell) (p : Agreement.Paradigm Exp) :
+def toParadigm (e : Fin n → Agreement.Bundle) (p : Agreement.Paradigm Exp) :
     Morphology.Paradigm n (Option Exp) :=
   fun i => p.realize (e i)
 
-@[simp] theorem toParadigm_apply (e : Fin n → Agreement.Cell)
+@[simp] theorem toParadigm_apply (e : Fin n → Agreement.Bundle)
     (p : Agreement.Paradigm Exp) (i : Fin n) :
     p.toParadigm e i = p.realize (e i) :=
   rfl

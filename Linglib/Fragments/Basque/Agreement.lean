@@ -37,13 +37,13 @@ open _root_.Agreement
 /-- Whether a P argument at a given φ-cell is indexed on the verb. Basque
     cross-references SAP objects (1st/2nd person) but not 3rd person objects in
     the relevant constructions; A/S arguments are always indexed. Keyed by the
-    canonical φ-cell (`Agreement.Cell`), so a pronoun's `Word.agrCell`
+    canonical φ-cell (`Agreement.Bundle`), so a pronoun's `Word.phi`
     drives it directly. -/
-def pIsIndexed (c : Cell) : Bool := c.isSAP
+def pIsIndexed (c : Bundle) : Bool := decide c.IsSAP
 
 /-- Whether an A/S argument is indexed. Always true — A and S indexing is not
     differential in Basque. -/
-def asIsIndexed (_ : Cell) : Bool := true
+def asIsIndexed (_ : Bundle) : Bool := true
 
 -- ============================================================================
 -- § 3: Verification
@@ -51,21 +51,22 @@ def asIsIndexed (_ : Cell) : Bool := true
 
 /-- SAP objects are indexed. -/
 theorem sap_objects_indexed :
-    pIsIndexed (.pn .first .Sing) = true ∧ pIsIndexed (.pn .second .Sing) = true ∧
-    pIsIndexed (.pn .first .Plur) = true ∧ pIsIndexed (.pn .second .Plur) = true := by decide
+    pIsIndexed (.pn .first .singular) = true ∧ pIsIndexed (.pn .second .singular) = true ∧
+    pIsIndexed (.pn .first .plural) = true ∧ pIsIndexed (.pn .second .plural) = true := by decide
 
 /-- 3rd person objects are NOT indexed. -/
 theorem third_objects_not_indexed :
-    pIsIndexed (.pn .third .Sing) = false ∧ pIsIndexed (.pn .third .Plur) = false := by decide
+    pIsIndexed (.pn .third .singular) = false ∧ pIsIndexed (.pn .third .plural) = false := by
+  decide
 
 /-- P indexing is differential: some φ-cells indexed, some not. -/
 theorem p_indexing_differential :
-    Cell.pnCells.any pIsIndexed = true ∧
-    !(Cell.pnCells.all pIsIndexed) = true := by decide
+    Bundle.pnCells.any pIsIndexed = true ∧
+    !(Bundle.pnCells.all pIsIndexed) = true := by decide
 
 /-- A/S indexing is NOT differential: all φ-cells indexed. -/
 theorem as_indexing_uniform :
-    Cell.pnCells.all asIsIndexed = true := by decide
+    Bundle.pnCells.all asIsIndexed = true := by decide
 
 -- ============================================================================
 -- § 5: Case Inventory Validation ([blake-1994])

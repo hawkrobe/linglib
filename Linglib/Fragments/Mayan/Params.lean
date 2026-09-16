@@ -253,12 +253,12 @@ def caseYukatek : UD.Aspect → ArgumentRole → Case
 /-! ### Person-number paradigm
 
 The pan-Mayan person/number agreement paradigm is keyed by the canonical
-    φ-cell `Agreement.Cell` (the same φ a `Pronoun`/`Word` carries): the six
+    φ-cell `Agreement.Bundle` (the same φ a `Pronoun`/`Word` carries): the six
     cells covering the cross-Mayan consensus (Cholan, K'ichean, Q'anjob'alan,
     Tseltalan; [kaufman-norman-1984] Tables 7-8) are exactly
-    `Agreement.Cell.pnCells`. Per-language Set A / Set B tables are
+    `Agreement.Bundle.pnCells`. Per-language Set A / Set B tables are
     `Agreement.Paradigm String` values constructed over those cells, so a
-    controller's `Word.agrCell` indexes them directly ([corbett-1998]).
+    controller's `Word.phi` indexes them directly ([corbett-1998]).
     Languages with a 1pl inclusive/exclusive split (Chol's `-on lojon` 1plExcl,
     [kaufman-norman-1984] p. 91) refine at the per-language level. -/
 
@@ -296,7 +296,7 @@ def VerbForm.agreementSlots (f : VerbForm) : Nat :=
 /-! ### Exponent tables -/
 
 /-- An exponent table: a descriptive agreement paradigm over canonical φ-cells
-    (`Agreement.Cell`), mapping each person/number cell to its
+    (`Agreement.Bundle`), mapping each person/number cell to its
     `List Morphology.Morph` — a possibly empty sequence of `Morphology.Morph`s.
     Zero exponence is `[]`; a discontinuous realization (person marker plus a
     separate plural word, e.g. Q'anjob'al *s-…heb'*) is a two-morph exponent.
@@ -316,7 +316,7 @@ abbrev ExponentTable := Agreement.Paradigm (List Morphology.Morph)
     `CoonMateoPedroPreminger2014.mayan_p3sg_abs_null` quantifies only
     over `isStandard = true`. -/
 def ExponentTable.IsThirdSgZero (e : ExponentTable) : Prop :=
-  e.realize (.pn .third .Sing) = some []
+  e.realize (.pn .third .singular) = some []
 
 instance (e : ExponentTable) : Decidable e.IsThirdSgZero := by
   unfold ExponentTable.IsThirdSgZero; exact inferInstance

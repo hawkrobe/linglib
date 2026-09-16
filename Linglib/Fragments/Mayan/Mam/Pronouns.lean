@@ -104,16 +104,16 @@ inductive PronCell where
   | thirdSg | thirdPl
   deriving DecidableEq, Repr
 
-/-- PronCell person, in the API's vocabulary. -/
-def PronCell.person : PronCell → UD.Person
+/-- The person of a cell, clusivity-unmarked. -/
+def PronCell.person : PronCell → Person
   | .firstSg | .firstPlExcl | .firstPlIncl => .first
   | .secondSg | .secondPl => .second
   | .thirdSg | .thirdPl => .third
 
-/-- PronCell number, in the API's vocabulary. -/
-def PronCell.number : PronCell → UD.Number
-  | .firstSg | .secondSg | .thirdSg => .Sing
-  | _ => .Plur
+/-- The number of a cell. -/
+def PronCell.number : PronCell → Number
+  | .firstSg | .secondSg | .thirdSg => .singular
+  | _ => .plural
 
 /-- PronCell person in the canonical inventory: clusivity rides on the
     person value. -/
@@ -162,7 +162,7 @@ theorem author_iff_first (c : PronCell) :
 /-- The feature table is faithful to the API-side number values:
     [+singular] exactly at singular cells. -/
 theorem singular_iff_sing (c : PronCell) :
-    c.features.singular = true ↔ c.number = .Sing := by
+    c.features.singular = true ↔ c.number = .singular := by
   cases c <;> simp [PronCell.features, PronCell.number]
 
 /-- Independent pronoun by cell (Table 4.1 right column; 3SG has no overt

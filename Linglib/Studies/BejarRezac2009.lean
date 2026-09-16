@@ -45,14 +45,6 @@ namespace BejarRezac2009
 open Minimalist.CyclicAgree
 open Agreement
 
-/-- Person level of a φ-cell (`Agreement.Cell`); Basque and Georgian share
-the same map. -/
-def toLevel (c : Cell) : Person :=
-  match c.person with
-  | some .first => .first
-  | some .second => .second
-  | _ => .third
-
 /-- The three core person values the paper's paradigms range over. -/
 def corePersons : List Person := [.first, .second, .third]
 
@@ -91,25 +83,25 @@ theorem basque_direct_contexts :
 textbook Basque, holds of a φ-cell iff cyclic Agree puts every EA→IA combination with that
 object into an inverse context, since a SAP IA fully checks [u-3-2] and leaves no residue for
 any EA. -/
-theorem basque_indexed_iff_always_inverse : ∀ c ∈ Cell.pnCells,
+theorem basque_indexed_iff_always_inverse : ∀ c ∈ Bundle.pnCells,
     (Basque.Agreement.pIsIndexed c = true ↔
-      ∀ ea : Person, basque.isInverse ea (toLevel c) = true) := by decide
+      ∀ ea : Person, basque.isInverse ea c.person = true) := by decide
 
 /-! ### Georgian: the same [u-3-2] system, plus second-cycle morphology -/
 
 /-- Georgian's paradigm-derived object indexing (`objectAgr` has an
 exponent for a cell or not) matches the inverse classification of the
 shared standard-geometry [u-3-2] system, exactly as in Basque. -/
-theorem georgian_indexed_iff_always_inverse : ∀ c ∈ Cell.pnCells,
+theorem georgian_indexed_iff_always_inverse : ∀ c ∈ Bundle.pnCells,
     (Georgian.Agreement.isIndexed c = true ↔
       ∀ ea ∈ corePersons,
-        isInverseContext .standard partialProbe ea (toLevel c) = true) := by
+        isInverseContext .standard partialProbe ea c.person = true) := by
   decide
 
 /-- 1sg *m-* is first-cycle morphology (18a), since whenever the IA is 1st person the probe is
 fully valued on cycle I, whatever the EA. -/
 theorem georgian_m_is_cycle_I :
-    Georgian.Agreement.objectAgr.realize (.pn .first .Sing) = some "m-" ∧
+    Georgian.Agreement.objectAgr.realize (.pn .first .singular) = some "m-" ∧
     ∀ ea ∈ corePersons,
       hasSecondCycleEffect .standard partialProbe ea .first = false := by
   refine ⟨rfl, ?_⟩; decide

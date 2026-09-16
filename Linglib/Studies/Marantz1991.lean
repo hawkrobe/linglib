@@ -604,15 +604,15 @@ theorem case_direction_changes :
 theorem agreement_invariant_across_series :
     -- The SAME isIndexed function applies in both series:
     -- SAP objects are indexed regardless of case direction
-    isIndexed (.pn .first .Sing) = true ∧ isIndexed (.pn .second .Sing) = true ∧
-    isIndexed (.pn .third .Sing) = false ∧
+    isIndexed (.pn .first .singular) = true ∧ isIndexed (.pn .second .singular) = true ∧
+    isIndexed (.pn .third .singular) = false ∧
     -- And case direction differs:
     georgianLangType .present = .accusative ∧
     georgianLangType .aorist = .ergative := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Subject agreement is non-differential regardless of tense series. -/
 theorem subject_agreement_invariant :
-    Agreement.Cell.pnCells.all subjectIsIndexed = true := by decide
+    Agreement.Bundle.pnCells.all subjectIsIndexed = true := by decide
 
 /-- The split is in case only, not in agreement.
     Case patterns differ across tense series (all 4 verb classes checked),
@@ -623,7 +623,7 @@ theorem case_splits_but_agreement_does_not :
     verbClassSubjectCase .class1 .present ≠ verbClassSubjectCase .class1 .aorist ∧
     -- All 6 φ-cells give the same isIndexed result regardless of which series
     -- we're in (it's not parameterized)
-    Agreement.Cell.pnCells.all (λ c => isIndexed c == c.isSAP) = true := by
+    Agreement.Bundle.pnCells.all (λ c => isIndexed c == decide c.IsSAP) = true := by
   constructor
   · decide
   · decide

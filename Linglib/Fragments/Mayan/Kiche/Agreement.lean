@@ -44,7 +44,7 @@ forms (laal SG, alaq PL) are syntactically postverbal and pattern
 outside the prefix paradigm. K'iche' is HIGH-ABS (Set B pre-stem on
 Infl), and its case wiring reuses `(Mayan.caseKiche .Perf)` (from
 `Alignment.ergative`); the canonical φ-cell exponent tables key on
-`Agreement.Cell` for cross-Mayan consumption. Extraction marking (AF
+`Agreement.Bundle` for cross-Mayan consumption. Extraction marking (AF
 and *wi*) lives in `Kiche/Extraction.lean`.
 -/
 
@@ -318,50 +318,48 @@ def setALinearity : MarkerLinearity := .prefixal
 def setBLinearity : MarkerLinearity := .prefixal
 
 /-- Canonical Set A exponent table (informal) by following-segment
-    environment, keyed on the canonical φ-cell `Agreement.Cell` for
+    environment, keyed on the canonical φ-cell `Agreement.Bundle` for
     cross-Mayan consumption. -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
-    [(.pn .first .Sing, setAPreC (phi .first  .singular)),
-     (.pn .second .Sing, setAPreC (phi .second .singular)),
-     (.pn .third .Sing, setAPreC (phi .third  .singular)),
-     (.pn .first .Plur, setAPreC (phi .first  .plural)),
-     (.pn .second .Plur, setAPreC (phi .second .plural)),
-     (.pn .third .Plur, setAPreC (phi .third  .plural))]
+    [(.pn .first .singular, setAPreC (phi .first  .singular)),
+     (.pn .second .singular, setAPreC (phi .second .singular)),
+     (.pn .third .singular, setAPreC (phi .third  .singular)),
+     (.pn .first .plural, setAPreC (phi .first  .plural)),
+     (.pn .second .plural, setAPreC (phi .second .plural)),
+     (.pn .third .plural, setAPreC (phi .third  .plural))]
   | .vowel =>
-    [(.pn .first .Sing, setAPreV (phi .first  .singular)),
-     (.pn .second .Sing, setAPreV (phi .second .singular)),
-     (.pn .third .Sing, setAPreV (phi .third  .singular)),
-     (.pn .first .Plur, setAPreV (phi .first  .plural)),
-     (.pn .second .Plur, setAPreV (phi .second .plural)),
-     (.pn .third .Plur, setAPreV (phi .third  .plural))]
+    [(.pn .first .singular, setAPreV (phi .first  .singular)),
+     (.pn .second .singular, setAPreV (phi .second .singular)),
+     (.pn .third .singular, setAPreV (phi .third  .singular)),
+     (.pn .first .plural, setAPreV (phi .first  .plural)),
+     (.pn .second .plural, setAPreV (phi .second .plural)),
+     (.pn .third .plural, setAPreV (phi .third  .plural))]
 
 /-- Canonical Set B exponent table (informal) keyed on the canonical φ-cell
-    `Agreement.Cell`. -/
+    `Agreement.Bundle`. -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .Sing, setBMarker (phi .first  .singular)),
-   (.pn .second .Sing, setBMarker (phi .second .singular)),
-   (.pn .third .Sing, setBMarker (phi .third  .singular)),
-   (.pn .first .Plur, setBMarker (phi .first  .plural)),
-   (.pn .second .Plur, setBMarker (phi .second .plural)),
-   (.pn .third .Plur, setBMarker (phi .third  .plural))]
+  [(.pn .first .singular, setBMarker (phi .first  .singular)),
+   (.pn .second .singular, setBMarker (phi .second .singular)),
+   (.pn .third .singular, setBMarker (phi .third  .singular)),
+   (.pn .first .plural, setBMarker (phi .first  .plural)),
+   (.pn .second .plural, setBMarker (phi .second .plural)),
+   (.pn .third .plural, setBMarker (phi .third  .plural))]
 
 /-- 3rd person absolutive is null — invariant across the standard
     Mayan branches per [kaufman-norman-1984] Table 8. **Not**
     pan-Mayan: see Mam exception via `Mayan.isStandard`. -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some [] := rfl
+theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] := rfl
 
 /-! ### Formality-forgetting hom to canonical cells -/
 
-/-- The formality-forgetting hom from K'iche' φ-bundles to the canonical
-    `Agreement.Cell`: an informal bundle maps to its person/number cell
-    (person via `Person.toUD`, number via `Number.toUD`); the two formal
-    2nd-person forms are postverbal, outside the prefix paradigm the
-    Cell-keyed tables record, so they forget to `none`. -/
-def PhiFeatures.toCell (φ : PhiFeatures) : Option Agreement.Cell :=
+/-- The formality-forgetting map from K'iche' φ-bundles to the canonical bundles: an
+informal bundle maps to its person–number cell, and the two formal second-person forms,
+postverbal and outside the prefix paradigm, forget to `none`. -/
+def PhiFeatures.toCell (φ : PhiFeatures) : Option Agreement.Bundle :=
   match φ.formality with
   | .formal => none
-  | .informal => some { person := some φ.person.toUD, number := φ.number.toUD }
+  | .informal => some (.pn φ.person φ.number)
 
 /-- Formal cells lie outside the prefix paradigm and forget to `none`. -/
 theorem toCell_formal (p : Person) (n : Number) :

@@ -56,32 +56,32 @@ open Kaqchikel Minimalist Agreement
 /-! ### The probes and the slot (§4.4) -/
 
 /-- π⁰, the person probe, relativized to [participant]. -/
-def piProbe : Probe Cell := Probe.Target.participant.toProbe
+def piProbe : Probe Bundle := Probe.Target.participant.toProbe
 
 /-- #⁰, the number probe, relativized to [plural]. -/
-def numProbe : Probe Cell := Probe.Target.plural.toProbe
+def numProbe : Probe Bundle := Probe.Target.plural.toProbe
 
 /-- The goal the Agent-Focus slot reflects, given the subject's and the object's cells: the
 person probe's goal, else the number probe's, else none, the competition for the single slot
 (71) as a cascade. -/
-def afTarget (subj obj : Cell) : Option Cell := Probe.cascade [piProbe, numProbe] [subj, obj]
+def afTarget (subj obj : Bundle) : Option Bundle := Probe.cascade [piProbe, numProbe] [subj, obj]
 
 /-- The Person Licensing Condition on the clause's two core arguments. -/
-def Plc (subj obj : Cell) : Prop :=
-  PLC Prod.snd ([(.A, subj), (.P, obj)] : List (ArgumentRole × Cell))
+def Plc (subj obj : Bundle) : Prop :=
+  PLC Prod.snd ([(.A, subj), (.P, obj)] : List (ArgumentRole × Bundle))
 
-instance (subj obj : Cell) : Decidable (Plc subj obj) := inferInstanceAs (Decidable (PLC _ _))
+instance (subj obj : Bundle) : Decidable (Plc subj obj) := inferInstanceAs (Decidable (PLC _ _))
 
 /-- The absolutive exponent of a cell, empty where the paradigm has none. -/
-def exponent (c : Cell) : List Morphology.Morph := (setBExponent.realize c).getD []
+def exponent (c : Bundle) : List Morphology.Morph := (setBExponent.realize c).getD []
 
 /-- The Agent-Focus marker: the exponent of the slot's goal, the empty exponent when both probes
 fail, and undefined when the Person Licensing Condition fails. -/
-def afMarker (subj obj : Cell) : Option (List Morphology.Morph) :=
+def afMarker (subj obj : Bundle) : Option (List Morphology.Morph) :=
   if Plc subj obj then some (((afTarget subj obj).map exponent).getD []) else none
 
 /-- The person restriction (25): at most one core argument bears [participant]. -/
-def PersonRestriction (subj obj : Cell) : Prop := ¬ (subj.IsParticipant ∧ obj.IsParticipant)
+def PersonRestriction (subj obj : Bundle) : Prop := ¬ (subj.IsParticipant ∧ obj.IsParticipant)
 
 instance : DecidableRel PersonRestriction := λ s o =>
   inferInstanceAs (Decidable ¬ (s.IsParticipant ∧ o.IsParticipant))
@@ -90,56 +90,55 @@ instance : DecidableRel PersonRestriction := λ s o =>
 
 /-- Skipping: the slot reflects a participant if either argument is one, the subject first;
 otherwise a plural argument; otherwise nothing (66), (73). -/
-theorem afTarget_eq (s o : Cell) :
+theorem afTarget_eq (s o : Bundle) :
     afTarget s o = if s.IsParticipant then some s else if o.IsParticipant then some o
-      else if s.isPlural then some s else if o.isPlural then some o else none := by
-  rcases Bool.eq_false_or_eq_true (decomposePerson s.toPerson).hasParticipant with h1 | h1 <;>
-    rcases Bool.eq_false_or_eq_true (decomposePerson o.toPerson).hasParticipant with h2 | h2 <;>
-    rcases Bool.eq_false_or_eq_true s.isPlural with h3 | h3 <;>
-    rcases Bool.eq_false_or_eq_true o.isPlural with h4 | h4 <;>
-    simp [afTarget, piProbe, numProbe, Probe.Target.toProbe, Cell.visibleTo, probeVisible,
-      Cell.IsParticipant, Probe.cascade, Probe.search, Probe.relativized,
+      else if s.IsPlural then some s else if o.IsPlural then some o else none := by
+  rcases Bool.eq_false_or_eq_true (decomposePerson s.person).hasParticipant with h1 | h1 <;>
+    rcases Bool.eq_false_or_eq_true (decomposePerson o.person).hasParticipant with h2 | h2 <;>
+    by_cases h3 : s.IsPlural <;> by_cases h4 : o.IsPlural <;>
+    simp [afTarget, piProbe, numProbe, Probe.Target.toProbe, Bundle.visibleTo, probeVisible,
+      Bundle.IsParticipant, Probe.cascade, Probe.search, Probe.relativized,
       List.find?_cons, h1, h2, h3, h4]
 
 /-- The rank of a cell on the hierarchy (23): [participant] above [plural] above the rest, the
 substrate's probe-resolution rank. -/
-def rank (c : Cell) : ℕ := probeResolutionRank c.toPerson c.isPlural
+def rank (c : Bundle) : ℕ := probeResolutionRank c.person (decide c.IsPlural)
 
 /-- The probes derive the hierarchy: the slot reflects the higher-ranked argument, the subject
 at a tie, and nothing when both rank lowest. -/
-theorem afTarget_eq_rank (s o : Cell) :
+theorem afTarget_eq_rank (s o : Bundle) :
     afTarget s o = if rank s = 0 ∧ rank o = 0 then none
       else if rank o ≤ rank s then some s else some o := by
   rw [afTarget_eq]
-  rcases Bool.eq_false_or_eq_true (decomposePerson s.toPerson).hasParticipant with h1 | h1 <;>
-    rcases Bool.eq_false_or_eq_true (decomposePerson o.toPerson).hasParticipant with h2 | h2 <;>
-    rcases Bool.eq_false_or_eq_true s.isPlural with h3 | h3 <;>
-    rcases Bool.eq_false_or_eq_true o.isPlural with h4 | h4 <;>
-    simp [rank, probeResolutionRank, Cell.IsParticipant, Cell.visibleTo, probeVisible, h1, h2, h3,
-      h4]
+  rcases Bool.eq_false_or_eq_true (decomposePerson s.person).hasParticipant with h1 | h1 <;>
+    rcases Bool.eq_false_or_eq_true (decomposePerson o.person).hasParticipant with h2 | h2 <;>
+    by_cases h3 : s.IsPlural <;> by_cases h4 : o.IsPlural <;>
+    simp [rank, probeResolutionRank, Bundle.IsParticipant, Bundle.visibleTo, probeVisible, h1, h2,
+      h3, h4]
 
 /-- The hierarchy (23) as an account, the morphological competition of §3.3.2: the slot shows
 the higher-ranked argument's absolutive marker. -/
-def hierarchyMarker (subj obj : Cell) : List Morphology.Morph :=
+def hierarchyMarker (subj obj : Bundle) : List Morphology.Morph :=
   exponent (if rank obj ≤ rank subj then subj else obj)
 
 /-- The paradigm (22), (74): on every licit pair of person–number cells the probes deliver
 the hierarchy's marker. -/
 theorem af_paradigm :
-    ∀ s ∈ Cell.pnCells, ∀ o ∈ Cell.pnCells,
+    ∀ s ∈ Bundle.pnCells, ∀ o ∈ Bundle.pnCells,
       PersonRestriction s o → afMarker s o = some (hierarchyMarker s o) := by
   decide
 
 /-- The marker is symmetric in subject and object (22, note a), (74): a consequence of skipping,
 the probe finding its goal in either position. -/
-theorem afMarker_comm : ∀ s ∈ Cell.pnCells, ∀ o ∈ Cell.pnCells, afMarker s o = afMarker o s := by
+theorem afMarker_comm :
+    ∀ s ∈ Bundle.pnCells, ∀ o ∈ Bundle.pnCells, afMarker s o = afMarker o s := by
   decide
 
 /-! ### Licensing (§4.4.2) -/
 
 /-- The person restriction is the Person Licensing Condition on the clause's two core
 arguments (76): a single person probe licenses at most one [participant] feature. -/
-theorem personRestriction_iff_plc (s o : Cell) : PersonRestriction s o ↔ Plc s o := by
+theorem personRestriction_iff_plc (s o : Bundle) : PersonRestriction s o ↔ Plc s o := by
   unfold PersonRestriction Plc PLC
   rw [Probe.allLicensed_iff]
   constructor
@@ -154,14 +153,14 @@ theorem personRestriction_iff_plc (s o : Cell) : PersonRestriction s o ↔ Plc s
 
 /-- The marker is undefined exactly when the person restriction is violated; two plural
 arguments in particular are never excluded (77). -/
-theorem afMarker_eq_none_iff (s o : Cell) : afMarker s o = none ↔ ¬ PersonRestriction s o := by
+theorem afMarker_eq_none_iff (s o : Bundle) : afMarker s o = none ↔ ¬ PersonRestriction s o := by
   rw [afMarker, personRestriction_iff_plc]
   split_ifs with h <;> simp [h]
 
 /-- The clitic is featurally coarse (68), (69): with one participant argument, the marker is
 that argument's whole exponent, its number included, whether it is the subject or the object
 and whatever the other argument's number. -/
-theorem participant_marker (s o : Cell) (h : ¬ (s.IsParticipant ∧ o.IsParticipant)) :
+theorem participant_marker (s o : Bundle) (h : ¬ (s.IsParticipant ∧ o.IsParticipant)) :
     (s.IsParticipant → afMarker s o = some (exponent s)) ∧
       (o.IsParticipant → afMarker s o = some (exponent o)) := by
   have hplc : Plc s o := (personRestriction_iff_plc s o).1 h
@@ -174,7 +173,7 @@ theorem participant_marker (s o : Cell) (h : ¬ (s.IsParticipant ∧ o.IsPartici
 
 /-- The slot is empty exactly when both probes end unvalued: failed Agree at the level of
 outcomes and at the level of the slot are one fact. -/
-theorem afTarget_eq_none_iff (s o : Cell) :
+theorem afTarget_eq_none_iff (s o : Bundle) :
     afTarget s o = none ↔
       piProbe.outcome [s, o] = .unvalued ∧ numProbe.outcome [s, o] = .unvalued := by
   rw [afTarget, Probe.cascade_eq_none_iff, Probe.outcome_eq_unvalued_iff,
@@ -183,8 +182,8 @@ theorem afTarget_eq_none_iff (s o : Cell) :
 
 /-- Failed Agree is tolerated (112), (113): with no participant and no plural argument, both
 probes end unvalued, the derivation converges, and the slot carries the null exponent. -/
-theorem failed_agree_tolerated (s o : Cell) (hs : ¬ s.IsParticipant) (ho : ¬ o.IsParticipant)
-    (hsp : ¬ s.isPlural) (hop : ¬ o.isPlural) :
+theorem failed_agree_tolerated (s o : Bundle) (hs : ¬ s.IsParticipant) (ho : ¬ o.IsParticipant)
+    (hsp : ¬ s.IsPlural) (hop : ¬ o.IsPlural) :
     afTarget s o = none ∧ afMarker s o = some [] := by
   have hplc : Plc s o := (personRestriction_iff_plc s o).1 λ h => hs h.1
   rw [afMarker, ite_eq_left hplc, afTarget_eq]
@@ -192,9 +191,9 @@ theorem failed_agree_tolerated (s o : Cell) (hs : ¬ s.IsParticipant) (ho : ¬ o
 
 /-- No gratuitous nonagreement (114): with no participant argument, a plural argument must be
 agreed with, and the slot carries its exponent, the subject's first. -/
-theorem plural_marker (s o : Cell) (hs : ¬ s.IsParticipant) (ho : ¬ o.IsParticipant) :
-    (s.isPlural → afMarker s o = some (exponent s)) ∧
-      (¬ s.isPlural → o.isPlural → afMarker s o = some (exponent o)) := by
+theorem plural_marker (s o : Bundle) (hs : ¬ s.IsParticipant) (ho : ¬ o.IsParticipant) :
+    (s.IsPlural → afMarker s o = some (exponent s)) ∧
+      (¬ s.IsPlural → o.IsPlural → afMarker s o = some (exponent o)) := by
   have hplc : Plc s o := (personRestriction_iff_plc s o).1 λ h => hs h.1
   rw [afMarker, ite_eq_left hplc, afTarget_eq]
   exact ⟨λ hsp => by simp [hs, ho, hsp], λ hsp hop => by simp [hs, ho, hsp, hop]⟩
@@ -207,17 +206,19 @@ the PCC, where the Kichean probe, relativized to [participant], skips the third-
 and licenses the participant below it. -/
 theorem relativization_contrast :
     ¬ BejarRezac2003.PLCOk
-        [[BejarRezac2003.dat (.pn .third .Sing), PhiGoal.unvalued (.pn .first .Sing)]]
-        [BejarRezac2003.dat (.pn .third .Sing), PhiGoal.unvalued (.pn .first .Sing)] ∧
-      Plc (.pn .third .Sing) (.pn .first .Sing) := by
+        [[BejarRezac2003.dat (.pn .third .singular), PhiGoal.unvalued (.pn .first .singular)]]
+        [BejarRezac2003.dat (.pn .third .singular), PhiGoal.unvalued (.pn .first .singular)] ∧
+      Plc (.pn .third .singular) (.pn .first .singular) := by
   decide
 
 /-- The asymmetry a hierarchy cannot state (§7.1): it assigns a marker to two participant
 arguments, which the probes exclude, while two plural arguments are admitted by both. -/
 theorem hierarchy_silent_on_restriction :
-    afMarker (.pn .first .Sing) (.pn .second .Sing) = none ∧
-      hierarchyMarker (.pn .first .Sing) (.pn .second .Sing) = exponent (.pn .first .Sing) ∧
-      afMarker (.pn .third .Plur) (.pn .third .Plur) = some (exponent (.pn .third .Plur)) := by
+    afMarker (.pn .first .singular) (.pn .second .singular) = none ∧
+      hierarchyMarker (.pn .first .singular) (.pn .second .singular) =
+        exponent (.pn .first .singular) ∧
+      afMarker (.pn .third .plural) (.pn .third .plural) =
+        some (exponent (.pn .third .plural)) := by
   decide
 
 end Preminger2014

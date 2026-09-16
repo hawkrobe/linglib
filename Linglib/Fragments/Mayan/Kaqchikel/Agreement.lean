@@ -44,7 +44,7 @@ it live in `Studies/Preminger2014.lean`. The non-perfective case pattern
 progressive *ajin* construction — an analysis, not consensus typology;
 the derivation lives in `Fragments/Mayan/Params.lean`.
 Parenthesized exponent segments drop in certain phonological contexts.
-Person-number cells come from the canonical `Agreement.Cell`
+Person-number cells come from the canonical `Agreement.Bundle`
 (`Syntax/Agreement/Paradigm.lean`).
 -/
 
@@ -69,22 +69,22 @@ def absPosition : Mayan.ABSPosition := .high
     dialectal variant *u-* (Preminger's "r(u)/u-"). -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
-    [(.pn .first .Sing, [.pref "n"]), (.pn .second .Sing, [.pref "a"]),
-     (.pn .third .Sing, [.pref "ru"]), (.pn .first .Plur, [.pref "qa"]),
-     (.pn .second .Plur, [.pref "i"]), (.pn .third .Plur, [.pref "ki"])]
+    [(.pn .first .singular, [.pref "n"]), (.pn .second .singular, [.pref "a"]),
+     (.pn .third .singular, [.pref "ru"]), (.pn .first .plural, [.pref "qa"]),
+     (.pn .second .plural, [.pref "i"]), (.pn .third .plural, [.pref "ki"])]
   | .vowel =>
-    [(.pn .first .Sing, [.pref "w"]), (.pn .second .Sing, [.pref "aw"]),
-     (.pn .third .Sing, [.pref "r"]), (.pn .first .Plur, [.pref "q"]),
-     (.pn .second .Plur, [.pref "iw"]), (.pn .third .Plur, [.pref "k"])]
+    [(.pn .first .singular, [.pref "w"]), (.pn .second .singular, [.pref "aw"]),
+     (.pn .third .singular, [.pref "r"]), (.pn .first .plural, [.pref "q"]),
+     (.pn .second .plural, [.pref "iw"]), (.pn .third .plural, [.pref "k"])]
 
 /-! ### Set B (ABS) exponents -/
 
 /-- Set B (ABS) markers; ∅ 3SG doubles as the Elsewhere default
     ([preminger-2014] table (29), Ch. 5). -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .Sing, [.pref "in"]), (.pn .second .Sing, [.pref "at"]),
-   (.pn .third .Sing, []), (.pn .first .Plur, [.pref "oj"]),
-   (.pn .second .Plur, [.pref "ix"]), (.pn .third .Plur, [.pref "e"])]
+  [(.pn .first .singular, [.pref "in"]), (.pn .second .singular, [.pref "at"]),
+   (.pn .third .singular, []), (.pn .first .plural, [.pref "oj"]),
+   (.pn .second .plural, [.pref "ix"]), (.pn .third .plural, [.pref "e"])]
 
 /-! ### Argument positions -/
 

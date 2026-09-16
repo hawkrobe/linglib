@@ -77,13 +77,13 @@ def setBLinearity : MarkerLinearity := .either
     earlier revision reversed the 1st-person pair). -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
-    [(.pn .first .Sing, [.pref "j"]), (.pn .second .Sing, [.pref "a"]),
-     (.pn .third .Sing, [.pref "s"]), (.pn .first .Plur, [.pref "j"]),
-     (.pn .second .Plur, [.pref "a"]), (.pn .third .Plur, [.pref "s"])]
+    [(.pn .first .singular, [.pref "j"]), (.pn .second .singular, [.pref "a"]),
+     (.pn .third .singular, [.pref "s"]), (.pn .first .plural, [.pref "j"]),
+     (.pn .second .plural, [.pref "a"]), (.pn .third .plural, [.pref "s"])]
   | .vowel =>
-    [(.pn .first .Sing, [.pref "k"]), (.pn .second .Sing, [.pref "av"]),
-     (.pn .third .Sing, [.pref "y"]), (.pn .first .Plur, [.pref "k"]),
-     (.pn .second .Plur, [.pref "av"]), (.pn .third .Plur, [.pref "y"])]
+    [(.pn .first .singular, [.pref "k"]), (.pn .second .singular, [.pref "av"]),
+     (.pn .third .singular, [.pref "y"]), (.pn .first .plural, [.pref "k"]),
+     (.pn .second .plural, [.pref "av"]), (.pn .third .plural, [.pref "y"])]
 
 /-- Set B (ABS) exponents for Zinacantec Tsotsil ([polian-2013]): 3rd
     person singular has zero exponence. The default `-o-` series is
@@ -93,14 +93,14 @@ def setAExponent : Phonology.Segment.Class → ExponentTable
     variants of the same suffixes, recorded here rather than as a
     second table. -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .Sing, [.suff "on"]), (.pn .second .Sing, [.suff "ot"]),
-   (.pn .third .Sing, []), (.pn .first .Plur, [.suff "otik"]),
-   (.pn .second .Plur, [.suff "oxuk"]), (.pn .third .Plur, [.suff "ik"])]
+  [(.pn .first .singular, [.suff "on"]), (.pn .second .singular, [.suff "ot"]),
+   (.pn .third .singular, []), (.pn .first .plural, [.suff "otik"]),
+   (.pn .second .plural, [.suff "oxuk"]), (.pn .third .plural, [.suff "ik"])]
 
 /-- 3rd person absolutive is null — invariant across the standard
     Mayan branches per [kaufman-norman-1984] Table 8. **Not**
     pan-Mayan: see Mam exception via `Mayan.isStandard`. -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some [] := rfl
+theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] := rfl
 
 /-! ### Extraction marking -/
 

@@ -129,7 +129,7 @@ theorem pi_mem_personSegments (g : Goal) : Segment.pi ∈ g.personSegments := by
 /-- The goal as a φ-goal of [bejar-rezac-2003]: an encapsulated dative has its Case valued by
 its own head, a transparent goal has unvalued Case. -/
 def Goal.toPhiGoal (g : Goal) : PhiGoal :=
-  let cell := Agreement.Cell.pn g.person.toUD (if g.plural then .Plur else .Sing)
+  let cell := Agreement.Bundle.pn g.person (if g.plural then .plural else .singular)
   if g.encapsulated then .valued .dat cell else .unvalued cell
 
 /-! ### Segment-based Agree and gluttony (14)–(16) -/

@@ -81,14 +81,14 @@ inductive PersonGroup where
 /-- The person markers of group 1 (§8.4); the second-person plural is also the formal
 singular, and the third-person singular is zero. -/
 def PersonGroup.one.paradigm : Agreement.Paradigm (List Segment) :=
-  [(.pn .first .Sing, [m]), (.pn .second .Sing, [n]), (.pn .third .Sing, []),
-   (.pn .first .Plur, [k]), (.pn .second .Plur, [n, I, z]), (.pn .third .Plur, [l, A, r])]
+  [(.pn .first .singular, [m]), (.pn .second .singular, [n]), (.pn .third .singular, []),
+   (.pn .first .plural, [k]), (.pn .second .plural, [n, I, z]), (.pn .third .plural, [l, A, r])]
 
 /-- The person markers of group 2 (§8.4). -/
 def PersonGroup.two.paradigm : Agreement.Paradigm (List Segment) :=
-  [(.pn .first .Sing, [I, m]), (.pn .second .Sing, [s, I, n]), (.pn .third .Sing, []),
-   (.pn .first .Plur, [I, z]), (.pn .second .Plur, [s, I, n, I, z]),
-   (.pn .third .Plur, [l, A, r])]
+  [(.pn .first .singular, [I, m]), (.pn .second .singular, [s, I, n]), (.pn .third .singular, []),
+   (.pn .first .plural, [I, z]), (.pn .second .plural, [s, I, n, I, z]),
+   (.pn .third .plural, [l, A, r])]
 
 /-- The paradigm of a person-marker group. -/
 def PersonGroup.paradigm : PersonGroup → Agreement.Paradigm (List Segment)
@@ -142,7 +142,7 @@ inductive Exponent : Slot → Type where
   /-- -(y)sA, conditional copula. -/
   | conditionalCopula : Exponent .copula
   /-- A person marker: the cell of a group's paradigm (§8.4). -/
-  | person (group : PersonGroup) (cell : Agreement.Cell) : Exponent .person
+  | person (group : PersonGroup) (cell : Agreement.Bundle) : Exponent .person
   /-- -DIr, generalizing modality (§8.3.3). -/
   | dir : Exponent .generalizing
   deriving DecidableEq
@@ -205,16 +205,16 @@ inductive Slot where
 /-- The possessive suffixes (§8.1.2); the second-person plural is also the formal singular,
 and the third-person forms lose their final `n` word-finally. -/
 def possessives : Agreement.Paradigm (List Segment) :=
-  [(.pn .first .Sing, [I, m]), (.pn .second .Sing, [I, n]), (.pn .third .Sing, [I]),
-   (.pn .first .Plur, [I, m, I, z]), (.pn .second .Plur, [I, n, I, z]),
-   (.pn .third .Plur, [l, A, r, I])]
+  [(.pn .first .singular, [I, m]), (.pn .second .singular, [I, n]), (.pn .third .singular, [I]),
+   (.pn .first .plural, [I, m, I, z]), (.pn .second .plural, [I, n, I, z]),
+   (.pn .third .plural, [l, A, r, I])]
 
 /-- The exponents of each slot (§8.1.1 to §8.1.3). -/
 inductive Exponent : Slot → Type where
   /-- -lAr (§8.1.1). -/
   | plural : Exponent .number
   /-- A possessive suffix: a cell of `possessives` (§8.1.2). -/
-  | possessive (cell : Agreement.Cell) : Exponent .possession
+  | possessive (cell : Agreement.Bundle) : Exponent .possession
   /-- -(y)I. -/
   | accusative : Exponent .case
   /-- -(y)A. -/

@@ -71,6 +71,9 @@ def Bundle.ofUD (f : UD.MorphFeatures) : Bundle
   | .case => f.case_.map Case.fromUD
   | .definiteness => f.definite
 
+instance : Repr Bundle where
+  reprPrec b _ := repr (b .person, b .number, b .gender, b .case, b .definiteness)
+
 @[simp] theorem Bundle.pn_person (p : Person) (n : Number) : Bundle.pn p n .person = p := rfl
 
 @[simp] theorem Bundle.pn_number (p : Person) (n : Number) : Bundle.pn p n .number = n := rfl
