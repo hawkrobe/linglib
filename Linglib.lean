@@ -746,7 +746,6 @@ import Linglib.Fragments.English.Distributives
 import Linglib.Fragments.English.Evidentiality
 import Linglib.Fragments.English.Indefinites
 import Linglib.Fragments.English.MeasurePhrases
-import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.English.Negation
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.NumeralModifiers
@@ -754,7 +753,6 @@ import Linglib.Fragments.English.Phonology
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.English.PolarityMarking
 import Linglib.Fragments.English.Predicates
-import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.English.Predicates.Copular
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns

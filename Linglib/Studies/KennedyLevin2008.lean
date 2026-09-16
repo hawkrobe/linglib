@@ -2,7 +2,7 @@ import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Degree.Measure.Temporal
 import Linglib.Semantics.Degree.Boundedness
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Fragments.English.Predicates.Adjectival
+import Linglib.Fragments.English.Adjectives
 import Mathlib.Order.Max
 import Mathlib.Order.Bounds.Basic
 
@@ -128,15 +128,15 @@ theorem da_vendler_classes_agree :
 
 /-- The adjective–verb pairs of the fragment: *clean*, *straight*, *flat* and *open* with
 closed scales, *long*, *wide*, *cool* and *warm* with open ones. -/
-def pairs : List (English.Predicates.Adjectival.AdjectivalPredicateEntry × Verb) :=
-  [(English.Predicates.Adjectival.clean, English.Predicates.Verbal.clean.toVerb),
-   (English.Predicates.Adjectival.straight, English.Predicates.Verbal.straighten.toVerb),
-   (English.Predicates.Adjectival.flat, English.Predicates.Verbal.flatten.toVerb),
-   (English.Predicates.Adjectival.open_, English.Predicates.Verbal.open_.toVerb),
-   (English.Predicates.Adjectival.long, English.Predicates.Verbal.lengthen.toVerb),
-   (English.Predicates.Adjectival.wide, English.Predicates.Verbal.widen.toVerb),
-   (English.Predicates.Adjectival.cool, English.Predicates.Verbal.cool.toVerb),
-   (English.Predicates.Adjectival.warm, English.Predicates.Verbal.warm.toVerb)]
+def pairs : List (GradableAdjective × Verb) :=
+  [(English.Adjectives.clean, English.Predicates.Verbal.clean.toVerb),
+   (English.Adjectives.straight, English.Predicates.Verbal.straighten.toVerb),
+   (English.Adjectives.flat, English.Predicates.Verbal.flatten.toVerb),
+   (English.Adjectives.open_, English.Predicates.Verbal.open_.toVerb),
+   (English.Adjectives.long, English.Predicates.Verbal.lengthen.toVerb),
+   (English.Adjectives.wide, English.Predicates.Verbal.widen.toVerb),
+   (English.Adjectives.cool, English.Predicates.Verbal.cool.toVerb),
+   (English.Adjectives.warm, English.Predicates.Verbal.warm.toVerb)]
 
 /-- A degree achievement measures on its adjective's scale. -/
 theorem adjective_verb_scales :

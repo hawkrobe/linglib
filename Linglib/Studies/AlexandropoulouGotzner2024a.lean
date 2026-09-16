@@ -1,5 +1,5 @@
 import Linglib.Studies.Krifka2007b
-import Linglib.Fragments.English.Predicates.Adjectival
+import Linglib.Fragments.English.Adjectives
 import Linglib.Data.Examples.AlexandropoulouGotzner2024a
 
 /-!
@@ -32,7 +32,7 @@ variants, and leave Horn's strong-adjective prediction unsupported.
 
 namespace AlexandropoulouGotzner2024a
 
-open Degree Krifka2007b Data.Examples English.Predicates.Adjectival
+open Degree Krifka2007b Data.Examples English.Adjectives
 
 /-! ### Design cells -/
 

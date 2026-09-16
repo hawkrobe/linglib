@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Rett2015
-import Linglib.Fragments.English.Predicates.Adjectival
+import Linglib.Fragments.English.Adjectives
 import Linglib.Semantics.Degree.Basic
 
 /-!
@@ -39,7 +39,7 @@ namespace Rett2015
 
 open Degree (Polarity)
 open Degree
-open English.Predicates.Adjectival (tall short)
+open English.Adjectives
 
 /-! ### Polar (in)variance and markedness -/
 

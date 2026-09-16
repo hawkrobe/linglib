@@ -1,52 +1,49 @@
 import Linglib.Semantics.Degree.Adjective
 
-/-! # Adjectival Predicate Lexicon Fragment
+/-!
+# English adjectives
 
-Gradable adjective entries following [kennedy-2007], typed with
-`Degree.GradableAdjective` (the syntactic `Syntax/Category/Adjective` lexeme
-refined with the degree-semantic layer). Each entry stores its surface form, scalar
-`dimension`, `polarity` or `standardOverride`, and antonym
-data; the scale shape (`scaleType`), positive `standard`, and Kennedy `adjectiveClass`
-are *derived* views, not stored — the fix for the old `scaleType` field that conflated
-scale shape with pole (`wet`/`dry` share one closed `.wetness` scale). The derived
-Kennedy classification is exercised at the end of this file.
+This file lists the English adjective lexemes. An entry records the surface
+form, the scalar dimension, the polarity, the antonym and the comparison
+paradigm: the comparative and superlative forms with their root pattern,
+`Paradigm.abb` for *good – better – best*.
+
+## References
+
+* [kennedy-2007]
+* [bobaljik-2012]
+* [tham-2025]
+* [beltrama-2025]
+* [nouwen-2024]
+* [cariani-santorio-wellwood-2024]
+* [rappaport-hovav-2014]
+* [rotstein-winter-2004]
 -/
 
-namespace English.Predicates.Adjectival
+namespace English.Adjectives
 
-open Degree (AntonymRelation GradableAdjective)
-open Degree (Boundedness)
-open Degree (EvaluativeValence)
-open Degree (AntonymRelation)
-
-
-/-- [kennedy-2007]
-An adjectival predicate entry.
-
-This is an alias for `GradableAdjective` from the Theory module, re-exported
-here for the Fragments organization.
--/
-abbrev AdjectivalPredicateEntry := GradableAdjective
-
+open Degree
 
 /-- "tall" — open scale, contrary to "short" -/
-def tall : AdjectivalPredicateEntry where
+def tall : GradableAdjective where
   form := "tall"
+  comparison := { formComp := some "taller", formSuper := some "tallest" }
   polarity := .positive
   dimension := some .height
   antonymForm := some "short"
   antonymRelation := some .contrary
 
 /-- "short" — open scale, contrary to "tall" -/
-def short : AdjectivalPredicateEntry where
+def short : GradableAdjective where
   form := "short"
+  comparison := { formComp := some "shorter", formSuper := some "shortest" }
   polarity := .negative
   dimension := some .height
   antonymForm := some "tall"
   antonymRelation := some .contrary
 
 /-- "high" — open scale, contrary to "low" -/
-def high : AdjectivalPredicateEntry where
+def high : GradableAdjective where
   form := "high"
   polarity := .positive
   dimension := some .height
@@ -61,8 +58,9 @@ Note: This is the 1-place adjectival predicate "x is happy".
 For the 2-place veridical-preferential attitude predicate
 "x is happy that p", see `Studies/UegakiSudo2019.lean`.
 -/
-def happy : AdjectivalPredicateEntry where
+def happy : GradableAdjective where
   form := "happy"
+  comparison := { formComp := some "happier", formSuper := some "happiest" }
   polarity := .positive
   dimension := some .happiness
   antonymForm := some "unhappy"
@@ -70,8 +68,9 @@ def happy : AdjectivalPredicateEntry where
   evaluativeValence := some .positive
 
 /-- "unhappy" — open scale, contrary to "happy" -/
-def unhappy : AdjectivalPredicateEntry where
+def unhappy : GradableAdjective where
   form := "unhappy"
+  comparison := { formComp := some "unhappier", formSuper := some "unhappiest" }
   polarity := .negative
   dimension := some .happiness
   antonymForm := some "happy"
@@ -79,8 +78,9 @@ def unhappy : AdjectivalPredicateEntry where
   evaluativeValence := some .negative
 
 /-- "sad" — open scale, contrary to "happy" (near-synonym of unhappy) -/
-def sad : AdjectivalPredicateEntry where
+def sad : GradableAdjective where
   form := "sad"
+  comparison := { formComp := some "sadder", formSuper := some "saddest" }
   dimension := some .happiness
   antonymForm := some "happy"
   antonymRelation := some .contrary
@@ -88,16 +88,18 @@ def sad : AdjectivalPredicateEntry where
 
 
 /-- "full" — closed scale, contradictory to "empty" -/
-def full : AdjectivalPredicateEntry where
+def full : GradableAdjective where
   form := "full"
+  comparison := { formComp := some "fuller", formSuper := some "fullest" }
   dimension := some .fullness
   antonymForm := some "empty"
   antonymRelation := some .contradictory  -- Closed scales often contradictory
 
 /-- "empty" — negative pole of the closed fullness scale ⇒ maximum standard (no contents),
     contradictory to "full". -/
-def empty : AdjectivalPredicateEntry where
+def empty : GradableAdjective where
   form := "empty"
+  comparison := { formComp := some "emptier", formSuper := some "emptiest" }
   polarity := .negative
   dimension := some .fullness
   antonymForm := some "full"
@@ -105,30 +107,35 @@ def empty : AdjectivalPredicateEntry where
 
 
 /-- "hot" — open scale, contrary to "cold" -/
-def hot : AdjectivalPredicateEntry where
+def hot : GradableAdjective where
   form := "hot"
+  comparison := { formComp := some "hotter", formSuper := some "hottest" }
   dimension := some .temperature
   antonymForm := some "cold"
   antonymRelation := some .contrary
 
 /-- "cold" — open scale, contrary to "hot" -/
-def cold : AdjectivalPredicateEntry where
+def cold : GradableAdjective where
   form := "cold"
+  comparison := { formComp := some "colder", formSuper := some "coldest" }
   dimension := some .temperature
   antonymForm := some "hot"
   antonymRelation := some .contrary
 
 
 /-- "expensive" — open scale, contrary to "cheap" -/
-def expensive : AdjectivalPredicateEntry where
+def expensive : GradableAdjective where
   form := "expensive"
+  comparison := { formComp := some "more expensive", formSuper := some "most expensive"
+                , comparativeStrategy := .periphrastic, superlativeStrategy := .periphrastic }
   dimension := some .cost
   antonymForm := some "cheap"
   antonymRelation := some .contrary
 
 /-- "cheap" — open scale, contrary to "expensive" -/
-def cheap : AdjectivalPredicateEntry where
+def cheap : GradableAdjective where
   form := "cheap"
+  comparison := { formComp := some "cheaper", formSuper := some "cheapest" }
   dimension := some .cost
   antonymForm := some "expensive"
   antonymRelation := some .contrary
@@ -136,16 +143,18 @@ def cheap : AdjectivalPredicateEntry where
 /-- "wet" — lower-closed wetness scale ⇒ minimum standard (true with any
     non-zero wetness). Shares the closed `.wetness` scale with "dry"; the two
     differ only in pole. -/
-def wet : AdjectivalPredicateEntry where
+def wet : GradableAdjective where
   form := "wet"
+  comparison := { formComp := some "wetter", formSuper := some "wettest" }
   dimension := some .wetness
   antonymForm := some "dry"
   antonymRelation := some .contradictory
 
 /-- "dry" — negative pole of the wetness scale ⇒ maximum standard (true only at
     complete dryness). -/
-def dry : AdjectivalPredicateEntry where
+def dry : GradableAdjective where
   form := "dry"
+  comparison := { formComp := some "drier", formSuper := some "driest" }
   polarity := .negative
   dimension := some .wetness
   antonymForm := some "wet"
@@ -153,14 +162,14 @@ def dry : AdjectivalPredicateEntry where
 
 
 /-- "clean" — closed scale (maximally clean), contradictory to "dirty" -/
-def clean : AdjectivalPredicateEntry where
+def clean : GradableAdjective where
   form := "clean"
   dimension := some .cleanliness
   antonymForm := some "dirty"
   antonymRelation := some .contradictory
 
 /-- "dirty" — closed scale (maximally dirty), contradictory to "clean" -/
-def dirty : AdjectivalPredicateEntry where
+def dirty : GradableAdjective where
   form := "dirty"
   polarity := .negative
   dimension := some .cleanliness
@@ -169,14 +178,14 @@ def dirty : AdjectivalPredicateEntry where
   evaluativeValence := some .negative
 
 /-- "straight" — closed scale (maximally straight), contradictory to "bent" -/
-def straight : AdjectivalPredicateEntry where
+def straight : GradableAdjective where
   form := "straight"
   dimension := some .straightness
   antonymForm := some "bent"
   antonymRelation := some .contradictory
 
 /-- "flat" — closed scale (maximally flat), contradictory to "bumpy" -/
-def flat : AdjectivalPredicateEntry where
+def flat : GradableAdjective where
   form := "flat"
   dimension := some .flatness
   antonymForm := some "bumpy"
@@ -184,7 +193,7 @@ def flat : AdjectivalPredicateEntry where
   spatialConfigType := some .surfaceOrient
 
 /-- "open" — closed scale (maximally open), contradictory to "closed" -/
-def open_ : AdjectivalPredicateEntry where
+def open_ : GradableAdjective where
   form := "open"
   dimension := some .openness
   antonymForm := some "closed"
@@ -192,7 +201,7 @@ def open_ : AdjectivalPredicateEntry where
   spatialConfigType := some .barrierConfig
 
 /-- "closed" — closed scale, contradictory to "open" -/
-def closed_ : AdjectivalPredicateEntry where
+def closed_ : GradableAdjective where
   form := "closed"
   polarity := .negative
   dimension := some .openness
@@ -201,7 +210,7 @@ def closed_ : AdjectivalPredicateEntry where
   spatialConfigType := some .barrierConfig
 
 /-- "shut" — closed scale, contradictory to "open" (near-synonym of "closed") -/
-def shut : AdjectivalPredicateEntry where
+def shut : GradableAdjective where
   form := "shut"
   polarity := .negative
   dimension := some .openness
@@ -210,7 +219,7 @@ def shut : AdjectivalPredicateEntry where
   spatialConfigType := some .barrierConfig
 
 /-- "free" — closed scale (maximally free = unattached), contradictory to "stuck" -/
-def free_ : AdjectivalPredicateEntry where
+def free_ : GradableAdjective where
   form := "free"
   dimension := some .freedom
   antonymForm := some "stuck"
@@ -218,7 +227,7 @@ def free_ : AdjectivalPredicateEntry where
   spatialConfigType := some .unattachment
 
 /-- "loose" — closed scale (maximally loose), contradictory to "tight" -/
-def loose : AdjectivalPredicateEntry where
+def loose : GradableAdjective where
   form := "loose"
   polarity := .negative
   dimension := some .tightness
@@ -227,7 +236,7 @@ def loose : AdjectivalPredicateEntry where
   spatialConfigType := some .unattachment
 
 /-- "tight" — closed scale (maximally tight), contradictory to "loose" -/
-def tight : AdjectivalPredicateEntry where
+def tight : GradableAdjective where
   form := "tight"
   dimension := some .tightness
   antonymForm := some "loose"
@@ -235,7 +244,7 @@ def tight : AdjectivalPredicateEntry where
 
 /-- "bent" — negative pole of the upper-closed straightness scale ⇒ minimum standard (true with
     any non-zero bend). Shares the closed `.straightness` scale with "straight". -/
-def bent : AdjectivalPredicateEntry where
+def bent : GradableAdjective where
   form := "bent"
   polarity := .negative
   dimension := some .straightness
@@ -243,14 +252,14 @@ def bent : AdjectivalPredicateEntry where
   antonymRelation := some .contradictory
 
 /-- "smooth" — closed scale, contradictory to "rough" -/
-def smooth : AdjectivalPredicateEntry where
+def smooth : GradableAdjective where
   form := "smooth"
   dimension := some .smoothness
   antonymForm := some "rough"
   antonymRelation := some .contradictory
 
 /-- "rough" — closed scale, contradictory to "smooth" -/
-def rough : AdjectivalPredicateEntry where
+def rough : GradableAdjective where
   form := "rough"
   polarity := .negative
   dimension := some .smoothness
@@ -258,70 +267,74 @@ def rough : AdjectivalPredicateEntry where
   antonymRelation := some .contradictory
 
 /-- "hard" — open scale, contrary to "soft" -/
-def hard : AdjectivalPredicateEntry where
+def hard : GradableAdjective where
   form := "hard"
   dimension := some .hardness
   antonymForm := some "soft"
   antonymRelation := some .contrary
 
 /-- "soft" — open scale, contrary to "hard" -/
-def soft : AdjectivalPredicateEntry where
+def soft : GradableAdjective where
   form := "soft"
   dimension := some .hardness
   antonymForm := some "hard"
   antonymRelation := some .contrary
 
 /-- "pure" — closed scale (maximally pure), contradictory to "impure" -/
-def pure_ : AdjectivalPredicateEntry where
+def pure_ : GradableAdjective where
   form := "pure"
   dimension := some .purity
   antonymForm := some "impure"
   antonymRelation := some .contradictory
 
 /-- "dead" — closed scale (absolute: maximal endpoint), contradictory to "alive" -/
-def dead : AdjectivalPredicateEntry where
+def dead : GradableAdjective where
   form := "dead"
   dimension := some .alive
   antonymForm := some "alive"
   antonymRelation := some .contradictory
 
 /-- "alive" — closed scale (absolute), contradictory to "dead" -/
-def alive : AdjectivalPredicateEntry where
+def alive : GradableAdjective where
   form := "alive"
   dimension := some .alive
   antonymForm := some "dead"
   antonymRelation := some .contradictory
 
+/-- "pregnant" — non-gradable: no scale -/
+def pregnant : GradableAdjective where
+  form := "pregnant"
+
 /-- "large" — open scale, contrary to "small" -/
-def large : AdjectivalPredicateEntry where
+def large : GradableAdjective where
   form := "large"
   dimension := some .generalSize
   antonymForm := some "small"
   antonymRelation := some .contrary
 
 /-- "small" — open scale, contrary to "large" -/
-def small : AdjectivalPredicateEntry where
+def small : GradableAdjective where
   form := "small"
   dimension := some .generalSize
   antonymForm := some "large"
   antonymRelation := some .contrary
 
 /-- "gigantic" — open scale, contrary to "tiny", informationally stronger than "large" -/
-def gigantic : AdjectivalPredicateEntry where
+def gigantic : GradableAdjective where
   form := "gigantic"
   dimension := some .generalSize
   antonymForm := some "tiny"
   antonymRelation := some .contrary
 
 /-- "tiny" — open scale, contrary to "gigantic", informationally stronger than "small" -/
-def tiny : AdjectivalPredicateEntry where
+def tiny : GradableAdjective where
   form := "tiny"
   dimension := some .generalSize
   antonymForm := some "gigantic"
   antonymRelation := some .contrary
 
 /-- "pristine" — closed scale, contrary to "filthy" (extreme absolute: gap exists) -/
-def pristine : AdjectivalPredicateEntry where
+def pristine : GradableAdjective where
   form := "pristine"
   dimension := some .cleanliness
   antonymForm := some "filthy"
@@ -329,7 +342,7 @@ def pristine : AdjectivalPredicateEntry where
   evaluativeValence := some .positive
 
 /-- "filthy" — closed scale, contrary to "pristine" (extreme absolute: gap exists) -/
-def filthy : AdjectivalPredicateEntry where
+def filthy : GradableAdjective where
   form := "filthy"
   polarity := .negative
   dimension := some .cleanliness
@@ -338,28 +351,28 @@ def filthy : AdjectivalPredicateEntry where
   evaluativeValence := some .negative
 
 /-- "long" — open scale, contrary to "short" (length dimension) -/
-def long : AdjectivalPredicateEntry where
+def long : GradableAdjective where
   form := "long"
   dimension := some .length
   antonymForm := some "short"
   antonymRelation := some .contrary
 
 /-- "wide" — open scale, contrary to "narrow" -/
-def wide : AdjectivalPredicateEntry where
+def wide : GradableAdjective where
   form := "wide"
   dimension := some .width
   antonymForm := some "narrow"
   antonymRelation := some .contrary
 
 /-- "cool" — open scale, contrary to "warm" -/
-def cool : AdjectivalPredicateEntry where
+def cool : GradableAdjective where
   form := "cool"
   dimension := some .temperature
   antonymForm := some "warm"
   antonymRelation := some .contrary
 
 /-- "warm" — open scale, contrary to "cool" -/
-def warm : AdjectivalPredicateEntry where
+def warm : GradableAdjective where
   form := "warm"
   dimension := some .temperature
   antonymForm := some "cool"
@@ -368,84 +381,84 @@ def warm : AdjectivalPredicateEntry where
 /-! ## Physical dimension adjectives -/
 
 /-- "heavy" — open scale, contrary to "light" -/
-def heavy : AdjectivalPredicateEntry where
+def heavy : GradableAdjective where
   form := "heavy"
   dimension := some .weight
   antonymForm := some "light"
   antonymRelation := some .contrary
 
 /-- "light" — open scale, contrary to "heavy" -/
-def light : AdjectivalPredicateEntry where
+def light : GradableAdjective where
   form := "light"
   dimension := some .weight
   antonymForm := some "heavy"
   antonymRelation := some .contrary
 
 /-- "thick" — open scale, contrary to "thin" -/
-def thick : AdjectivalPredicateEntry where
+def thick : GradableAdjective where
   form := "thick"
   dimension := some .thickness
   antonymForm := some "thin"
   antonymRelation := some .contrary
 
 /-- "thin" — open scale, contrary to "thick" -/
-def thin : AdjectivalPredicateEntry where
+def thin : GradableAdjective where
   form := "thin"
   dimension := some .thickness
   antonymForm := some "thick"
   antonymRelation := some .contrary
 
 /-- "deep" — open scale, contrary to "shallow" -/
-def deep : AdjectivalPredicateEntry where
+def deep : GradableAdjective where
   form := "deep"
   dimension := some .depth
   antonymForm := some "shallow"
   antonymRelation := some .contrary
 
 /-- "shallow" — open scale, contrary to "deep" -/
-def shallow : AdjectivalPredicateEntry where
+def shallow : GradableAdjective where
   form := "shallow"
   dimension := some .depth
   antonymForm := some "deep"
   antonymRelation := some .contrary
 
 /-- "strong" — open scale, contrary to "weak" -/
-def strong : AdjectivalPredicateEntry where
+def strong : GradableAdjective where
   form := "strong"
   dimension := some .strength
   antonymForm := some "weak"
   antonymRelation := some .contrary
 
 /-- "weak" — open scale, contrary to "strong" -/
-def weak : AdjectivalPredicateEntry where
+def weak : GradableAdjective where
   form := "weak"
   dimension := some .strength
   antonymForm := some "strong"
   antonymRelation := some .contrary
 
 /-- "fast" — open scale, contrary to "slow" -/
-def fast : AdjectivalPredicateEntry where
+def fast : GradableAdjective where
   form := "fast"
   dimension := some .speed
   antonymForm := some "slow"
   antonymRelation := some .contrary
 
 /-- "slow" — open scale, contrary to "fast" -/
-def slow : AdjectivalPredicateEntry where
+def slow : GradableAdjective where
   form := "slow"
   dimension := some .speed
   antonymForm := some "fast"
   antonymRelation := some .contrary
 
 /-- "old" — open scale, contrary to "young" -/
-def old : AdjectivalPredicateEntry where
+def old : GradableAdjective where
   form := "old"
   dimension := some .age
   antonymForm := some "young"
   antonymRelation := some .contrary
 
 /-- "young" — open scale, contrary to "old" -/
-def young : AdjectivalPredicateEntry where
+def young : GradableAdjective where
   form := "young"
   dimension := some .age
   antonymForm := some "old"
@@ -454,31 +467,98 @@ def young : AdjectivalPredicateEntry where
 /-! ## Sensory adjectives -/
 
 /-- "bright" — open scale, contrary to "dark" -/
-def bright : AdjectivalPredicateEntry where
+def bright : GradableAdjective where
   form := "bright"
   dimension := some .brightness
   antonymForm := some "dark"
   antonymRelation := some .contrary
 
 /-- "dark" — open scale, contrary to "bright" -/
-def dark : AdjectivalPredicateEntry where
+def dark : GradableAdjective where
   form := "dark"
   dimension := some .brightness
   antonymForm := some "bright"
   antonymRelation := some .contrary
 
 /-- "loud" — open scale, contrary to "quiet" -/
-def loud : AdjectivalPredicateEntry where
+def loud : GradableAdjective where
   form := "loud"
   dimension := some .volume
   antonymForm := some "quiet"
   antonymRelation := some .contrary
 
 /-- "quiet" — open scale, contrary to "loud" -/
-def quiet : AdjectivalPredicateEntry where
+def quiet : GradableAdjective where
   form := "quiet"
   dimension := some .volume
   antonymForm := some "loud"
+  antonymRelation := some .contrary
+
+/-! ## Intelligence and confidence
+
+The confidence adjectives are the gradable attitude adjectives of
+[cariani-santorio-wellwood-2024]. They measure on an upper-bounded confidence
+scale, with *certain* at its maximum and *doubtful*, *unsure* and *uncertain*
+on its negative pole. -/
+
+/-- "smart" — open scale, contrary to "dumb" -/
+def smart : GradableAdjective where
+  form := "smart"
+  dimension := some .intelligence
+  comparison := { formComp := some "smarter", formSuper := some "smartest" }
+  antonymForm := some "dumb"
+  antonymRelation := some .contrary
+
+/-- "confident" — upper-bounded confidence scale -/
+def confident : GradableAdjective where
+  form := "confident"
+  dimension := some .confidence
+  comparison := { formComp := some "more confident", formSuper := some "most confident"
+                , comparativeStrategy := .periphrastic, superlativeStrategy := .periphrastic }
+
+/-- "certain" — the maximum of the confidence scale, contrary to "uncertain" -/
+def certain : GradableAdjective where
+  form := "certain"
+  dimension := some .confidence
+  comparison := { formComp := some "more certain", formSuper := some "most certain"
+                , comparativeStrategy := .periphrastic, superlativeStrategy := .periphrastic }
+  antonymForm := some "uncertain"
+  antonymRelation := some .contrary
+
+/-- "sure" — near-synonym of "confident", contrary to "unsure" -/
+def sure : GradableAdjective where
+  form := "sure"
+  dimension := some .confidence
+  comparison := { formComp := some "surer", formSuper := some "surest" }
+  antonymForm := some "unsure"
+  antonymRelation := some .contrary
+
+/-- "doubtful" — negative pole of the confidence scale -/
+def doubtful : GradableAdjective where
+  form := "doubtful"
+  polarity := .negative
+  dimension := some .confidence
+  comparison := { formComp := some "more doubtful", formSuper := some "most doubtful"
+                , comparativeStrategy := .periphrastic, superlativeStrategy := .periphrastic }
+
+/-- "unsure" — negative pole of the confidence scale, contrary to "sure" -/
+def unsure : GradableAdjective where
+  form := "unsure"
+  polarity := .negative
+  dimension := some .confidence
+  comparison := { formComp := some "more unsure", formSuper := some "most unsure"
+                , comparativeStrategy := .periphrastic, superlativeStrategy := .periphrastic }
+  antonymForm := some "sure"
+  antonymRelation := some .contrary
+
+/-- "uncertain" — negative pole of the confidence scale, contrary to "certain" -/
+def uncertain : GradableAdjective where
+  form := "uncertain"
+  polarity := .negative
+  dimension := some .confidence
+  comparison := { formComp := some "more uncertain", formSuper := some "most uncertain"
+                , comparativeStrategy := .periphrastic, superlativeStrategy := .periphrastic }
+  antonymForm := some "certain"
   antonymRelation := some .contrary
 
 /-! ## Evaluative adjectives -/
@@ -487,23 +567,29 @@ def quiet : AdjectivalPredicateEntry where
     standard and patterns with relative adjectives ([beltrama-2025] §3); on the
     open `.value` scale this class is *derived* (open ⇒ contextual) rather than
     stipulated, so no `standardOverride` is needed. -/
-def good : AdjectivalPredicateEntry where
+def good : GradableAdjective where
   form := "good"
+  comparison := { formComp := some "better", formSuper := some "best"
+                , comparativeStrategy := .suppletive, superlativeStrategy := .suppletive
+                , suppletion := Morphology.Paradigm.abb }
   dimension := some .value
   antonymForm := some "bad"
   antonymRelation := some .contrary
   evaluativeValence := some .positive
 
 /-- "bad" — value scale, contrary to "good" -/
-def bad : AdjectivalPredicateEntry where
+def bad : GradableAdjective where
   form := "bad"
+  comparison := { formComp := some "worse", formSuper := some "worst"
+                , comparativeStrategy := .suppletive, superlativeStrategy := .suppletive
+                , suppletion := Morphology.Paradigm.abb }
   dimension := some .value
   antonymForm := some "good"
   antonymRelation := some .contrary
   evaluativeValence := some .negative
 
 /-- "beautiful" — open scale, contrary to "ugly" -/
-def beautiful : AdjectivalPredicateEntry where
+def beautiful : GradableAdjective where
   form := "beautiful"
   dimension := some .beauty
   antonymForm := some "ugly"
@@ -511,7 +597,7 @@ def beautiful : AdjectivalPredicateEntry where
   evaluativeValence := some .positive
 
 /-- "ugly" — open scale, contrary to "beautiful" -/
-def ugly : AdjectivalPredicateEntry where
+def ugly : GradableAdjective where
   form := "ugly"
   dimension := some .beauty
   antonymForm := some "beautiful"
@@ -519,12 +605,12 @@ def ugly : AdjectivalPredicateEntry where
   evaluativeValence := some .negative
 
 /-- "important" — open scale -/
-def important : AdjectivalPredicateEntry where
+def important : GradableAdjective where
   form := "important"
   dimension := some .importance
 
 /-- "safe" — open scale, contrary to "dangerous" -/
-def safe : AdjectivalPredicateEntry where
+def safe : GradableAdjective where
   form := "safe"
   dimension := some .safety
   antonymForm := some "dangerous"
@@ -532,7 +618,7 @@ def safe : AdjectivalPredicateEntry where
   evaluativeValence := some .positive
 
 /-- "dangerous" — open scale, contrary to "safe" -/
-def dangerous : AdjectivalPredicateEntry where
+def dangerous : GradableAdjective where
   form := "dangerous"
   dimension := some .danger
   antonymForm := some "safe"
@@ -552,21 +638,21 @@ dented*), compatible with *completely* and *partially*. Contra
     Deverbal adjective from *crack* (Levin 45.1 Break verbs).
     NOT a two-point scale: accepts *more cracked*, *completely cracked*,
     *partially cracked*, *badly cracked* ([tham-2025] §2.3–2.4). -/
-def cracked : AdjectivalPredicateEntry where
+def cracked : GradableAdjective where
   form := "cracked"
   dimension := some .cracking
 
 /-- "dented" — closed scale.
     Deverbal adjective from *dent*. Accepts *more dented*, *completely dented*,
     *badly dented* ([tham-2025] (11a), (20b)). -/
-def dented : AdjectivalPredicateEntry where
+def dented : GradableAdjective where
   form := "dented"
   dimension := some .denting
 
 /-- "scratched" — closed scale.
     Deverbal adjective from *scratch*. Accepts *more scratched*, *completely
     scratched*, *badly scratched* ([tham-2025] (11b), (20c)). -/
-def scratched : AdjectivalPredicateEntry where
+def scratched : GradableAdjective where
   form := "scratched"
   dimension := some .scratching
 
@@ -574,7 +660,7 @@ def scratched : AdjectivalPredicateEntry where
     Deverbal adjective from *shatter* (Levin 45.1 Break verbs).
     Contrast: ??*more shattered*, punctual verb, no durative reading.
     Not a physical disturbance predicate ([tham-2025] (12c)). -/
-def shattered : AdjectivalPredicateEntry where
+def shattered : GradableAdjective where
   form := "shattered"
   dimension := some .shattering
 
@@ -587,14 +673,14 @@ compatible) predicates. -/
 
 /-- "nice" — open scale, positive evaluative ([nouwen-2024]).
     Base for M-degree intensifier *nicely*. -/
-def nice : AdjectivalPredicateEntry where
+def nice : GradableAdjective where
   form := "nice"
   dimension := some .value
   evaluativeValence := some .positive
 
 /-- "pleasant" — open scale, positive evaluative ([nouwen-2024]).
     Base for M-degree intensifier *pleasantly*. -/
-def pleasant : AdjectivalPredicateEntry where
+def pleasant : GradableAdjective where
   form := "pleasant"
   dimension := some .value
   antonymForm := some "unpleasant"
@@ -603,7 +689,7 @@ def pleasant : AdjectivalPredicateEntry where
 
 /-- "decent" — a mildly-positive adjective: open `.value` scale with a functional
     (necessity) standard ([beltrama-2025]), recorded via `standardOverride`. -/
-def decent : AdjectivalPredicateEntry where
+def decent : GradableAdjective where
   form := "decent"
   dimension := some .value
   standardOverride := some .functional
@@ -612,7 +698,7 @@ def decent : AdjectivalPredicateEntry where
 /-- "acceptable" — mildly-positive adjective; open `.value` scale, functional
     standard ([beltrama-2025]). Deverbal *-able* form: the modal suffix
     contributes the functional standard. -/
-def acceptable : AdjectivalPredicateEntry where
+def acceptable : GradableAdjective where
   form := "acceptable"
   dimension := some .value
   standardOverride := some .functional
@@ -620,7 +706,7 @@ def acceptable : AdjectivalPredicateEntry where
 
 /-- "adequate" — mildly-positive adjective; open `.value` scale, functional
     (necessity) standard ([beltrama-2025]). -/
-def adequate : AdjectivalPredicateEntry where
+def adequate : GradableAdjective where
   form := "adequate"
   dimension := some .value
   standardOverride := some .functional
@@ -633,52 +719,52 @@ Adjectival bases for deadjectival intensifiers. Evaluative adjectives
 Goldilocks effect. Mirative (unusual, surprising) and modal (possible,
 impossible) bases follow Zwicky's generalization. -/
 
--- Negative-evaluative bases → H-degree intensifiers
+/-! ### Negative-evaluative bases: H-degree intensifiers -/
 
 /-- "horrible" — open scale, negative evaluative. Base for H-degree *horribly*. -/
-def horrible : AdjectivalPredicateEntry where
+def horrible : GradableAdjective where
   form := "horrible"
   dimension := some .quality
   evaluativeValence := some .negative
 
 /-- "terrible" — open scale, negative evaluative. Base for H-degree *terribly*. -/
-def terrible : AdjectivalPredicateEntry where
+def terrible : GradableAdjective where
   form := "terrible"
   dimension := some .quality
   evaluativeValence := some .negative
 
 /-- "awful" — open scale, negative evaluative. Base for H-degree *awfully*. -/
-def awful : AdjectivalPredicateEntry where
+def awful : GradableAdjective where
   form := "awful"
   dimension := some .quality
   evaluativeValence := some .negative
 
 /-- "dreadful" — open scale, negative evaluative. Base for H-degree *dreadfully*. -/
-def dreadful : AdjectivalPredicateEntry where
+def dreadful : GradableAdjective where
   form := "dreadful"
   dimension := some .quality
   evaluativeValence := some .negative
 
 /-- "frightening" — open scale, negative evaluative. Base for H-degree *frighteningly*. -/
-def frightening : AdjectivalPredicateEntry where
+def frightening : GradableAdjective where
   form := "frightening"
   dimension := some .danger
   evaluativeValence := some .negative
 
 /-- "disgusting" — open scale, negative evaluative. Base for H-degree *disgustingly*. -/
-def disgusting : AdjectivalPredicateEntry where
+def disgusting : GradableAdjective where
   form := "disgusting"
   dimension := some .quality
   evaluativeValence := some .negative
 
 /-- "annoying" — open scale, negative evaluative. Base for H-degree *annoyingly*. -/
-def annoying : AdjectivalPredicateEntry where
+def annoying : GradableAdjective where
   form := "annoying"
   dimension := some .quality
   evaluativeValence := some .negative
 
 /-- "unpleasant" — open scale, negative evaluative, contrary to "pleasant". -/
-def unpleasant : AdjectivalPredicateEntry where
+def unpleasant : GradableAdjective where
   form := "unpleasant"
   dimension := some .value
   antonymForm := some "pleasant"
@@ -686,35 +772,35 @@ def unpleasant : AdjectivalPredicateEntry where
   evaluativeValence := some .negative
 
 /-- "scary" — open scale, negative evaluative. Base for H-degree *scarily*. -/
-def scary : AdjectivalPredicateEntry where
+def scary : GradableAdjective where
   form := "scary"
   dimension := some .danger
   evaluativeValence := some .negative
 
--- Positive-evaluative bases → M-degree intensifiers
+/-! ### Positive-evaluative bases: M-degree intensifiers -/
 
 /-- "wonderful" — open scale, positive evaluative. Base for M-degree *wonderfully*. -/
-def wonderful : AdjectivalPredicateEntry where
+def wonderful : GradableAdjective where
   form := "wonderful"
   dimension := some .quality
   evaluativeValence := some .positive
 
 /-- "delightful" — open scale, positive evaluative. Base for M-degree *delightfully*. -/
-def delightful : AdjectivalPredicateEntry where
+def delightful : GradableAdjective where
   form := "delightful"
   dimension := some .quality
   evaluativeValence := some .positive
 
 /-- "gorgeous" — open scale, positive evaluative. Base for M-degree *gorgeously*. -/
-def gorgeous : AdjectivalPredicateEntry where
+def gorgeous : GradableAdjective where
   form := "gorgeous"
   dimension := some .beauty
   evaluativeValence := some .positive
 
--- Mirative bases → H-degree intensifiers (not evaluative; §2.4.2)
+/-! ### Mirative bases: H-degree intensifiers, not evaluative -/
 
 /-- "unusual" — open scale, neutral (mirative), contrary to "usual". -/
-def unusual : AdjectivalPredicateEntry where
+def unusual : GradableAdjective where
   form := "unusual"
   dimension := some .expectation
   antonymForm := some "usual"
@@ -722,29 +808,29 @@ def unusual : AdjectivalPredicateEntry where
   evaluativeValence := some .neutral
 
 /-- "surprising" — open scale, neutral (mirative). Base for H-degree *surprisingly*. -/
-def surprising : AdjectivalPredicateEntry where
+def surprising : GradableAdjective where
   form := "surprising"
   dimension := some .expectation
   evaluativeValence := some .neutral
 
 /-- "remarkable" — open scale, positive evaluative (§2.4.1). Extreme positive
     evaluation: H-degree *remarkably* despite positive valence (Goldilocks exception). -/
-def remarkable : AdjectivalPredicateEntry where
+def remarkable : GradableAdjective where
   form := "remarkable"
   dimension := some .quality
   evaluativeValence := some .positive
 
 /-- "stunning" — open scale, positive evaluative (Figure 2, upper-right quadrant).
     Extreme positive evaluation: H-degree *stunningly* (Goldilocks exception). -/
-def stunning : AdjectivalPredicateEntry where
+def stunning : GradableAdjective where
   form := "stunning"
   dimension := some .quality
   evaluativeValence := some .positive
 
--- Modal bases (Zwicky's generalization)
+/-! ### Modal bases: Zwicky's generalization -/
 
 /-- "usual" — open scale, neutral (modal), contrary to "unusual". -/
-def usual : AdjectivalPredicateEntry where
+def usual : GradableAdjective where
   form := "usual"
   dimension := some .expectation
   antonymForm := some "unusual"
@@ -752,13 +838,13 @@ def usual : AdjectivalPredicateEntry where
   evaluativeValence := some .neutral
 
 /-- "expected" — open scale, neutral (modal). Unattested as intensifier (*expectedly). -/
-def expected : AdjectivalPredicateEntry where
+def expected : GradableAdjective where
   form := "expected"
   dimension := some .expectation
   evaluativeValence := some .neutral
 
 /-- "possible" — open scale, neutral (modal), contradictory to "impossible". -/
-def possible : AdjectivalPredicateEntry where
+def possible : GradableAdjective where
   form := "possible"
   dimension := some .possibility
   antonymForm := some "impossible"
@@ -766,15 +852,15 @@ def possible : AdjectivalPredicateEntry where
   evaluativeValence := some .neutral
 
 /-- "impossible" — open scale, neutral (modal), contradictory to "possible". -/
-def impossible : AdjectivalPredicateEntry where
+def impossible : GradableAdjective where
   form := "impossible"
   dimension := some .possibility
   antonymForm := some "possible"
   antonymRelation := some .contradictory
   evaluativeValence := some .neutral
 
-/-- All adjectival predicate entries -/
-def allEntries : List (AdjectivalPredicateEntry) := [
+/-- Every entry of the fragment. -/
+def allEntries : List (GradableAdjective) := [
   -- Height / size
   tall, short, high, large, small, gigantic, tiny,
   -- Happiness / evaluative
@@ -794,7 +880,7 @@ def allEntries : List (AdjectivalPredicateEntry) := [
   -- State: attachment / fit
   free_, loose, tight,
   -- State: hardness, purity, alive
-  hard, soft, pure_, dead, alive,
+  hard, soft, pure_, dead, alive, pregnant,
   -- State: physical disturbance ([tham-2025])
   cracked, dented, scratched, shattered,
   -- Informationally strong
@@ -804,6 +890,8 @@ def allEntries : List (AdjectivalPredicateEntry) := [
   strong, weak, fast, slow, old, young,
   -- Sensory
   bright, dark, loud, quiet,
+  -- Intelligence and confidence
+  smart, confident, certain, sure, doubtful, unsure, uncertain,
   -- Evaluative
   good, bad, beautiful, ugly, important, safe, dangerous, nice, pleasant,
   -- Mildly positive adjectives ([beltrama-2025])
@@ -819,8 +907,8 @@ def allEntries : List (AdjectivalPredicateEntry) := [
   usual, expected, possible, impossible
 ]
 
-/-- Look up an entry by form -/
-def lookup (form : String) : Option (AdjectivalPredicateEntry) :=
+/-- The entry with a given surface form. -/
+def lookup (form : String) : Option (GradableAdjective) :=
   allEntries.find? (·.form == form)
 
-end English.Predicates.Adjectival
+end English.Adjectives

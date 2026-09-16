@@ -21,13 +21,15 @@ replacement of one root by another, not a point on a cline of irregularity:
 *magnus – maior – maximus* keeps one root throughout and is not suppletive,
 and *malus – pēj-or – pe-ssimus* shares one suppletive root across the two
 graded forms ([bobaljik-2012] Table 4.1), so it is ABB.
+
+## References
+
+* [bobaljik-2012]
 -/
 
 namespace Latin.Adjectives
 
--- ============================================================================
--- § 1: Regular Adjectives (AAA)
--- ============================================================================
+/-! ### Regular adjectives (AAA) -/
 
 /-- *longus – longior – longissimus* ('long'): regular synthetic
     comparative and superlative with productive suffixes *-ior*/*-issimus*. -/
@@ -48,9 +50,7 @@ def fortis : Adjective :=
   , comparison := { formComp := "fortior", formSuper := "fortissimus"
                   , suppletion := Morphology.Paradigm.aaa } }
 
--- ============================================================================
--- § 2: Suppletive Adjectives
--- ============================================================================
+/-! ### Suppletive adjectives -/
 
 /-- *bonus – melior – optimus* ('good – better – best'): three distinct
     roots (ABC), the paradigmatic ABC example ([bobaljik-2012]). Both grades
@@ -85,10 +85,9 @@ def parvus : Adjective :=
                   , suppletion := Morphology.Paradigm.abb
                   , comparativeStrategy := .suppletive, superlativeStrategy := .suppletive } }
 
--- ============================================================================
--- § 3: Fragment Inventory
--- ============================================================================
+/-! ### Inventory -/
 
+/-- Every entry of the fragment. -/
 def allEntries : List Adjective :=
   [longus, altus, fortis, bonus, malus, magnus, parvus]
 
