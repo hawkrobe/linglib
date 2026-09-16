@@ -1,4 +1,4 @@
-import Linglib.Semantics.Reference.Givenness
+import Linglib.Discourse.Givenness
 import Linglib.Semantics.Focus.Marking
 import Linglib.Semantics.Focus.ExtractionClash
 
@@ -47,7 +47,7 @@ predicts the same verdict in every construction and is untouched by the result, 
 
 namespace CartnerEtAl2026
 
-open Reference (BinaryGivenness)
+open Discourse
 open Focus (Mark)
 open Focus.ExtractionClash (extractionISClash)
 

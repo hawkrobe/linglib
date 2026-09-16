@@ -5,26 +5,27 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Order.Basic
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Semantics.Reference.Deixis
 
 /-!
 # Accessibility marking
 
-This file defines the Accessibility Marking Scale of [ariel-1990], as printed in
-[ariel-2001]: the classes of referring expression, from a modified full name to a zero,
-ordered by the accessibility of the referent they code, so that a more reduced form codes a
-more accessible referent (`AccessibilityLevel`). A form is classified by its head, whether it
-is modified, whether it carries lexical content, whether a name is full, its deixis, its
-stress and whether it is bound (`AccessibilityLevel.head` and the other features), and the
-three criteria the scale is claimed to reflect are read off the features: informativity, the
-lexical content a form carries; rigidity, its ability to pick out a referent by form alone;
-and attenuation, its phonological reduction.
+The Accessibility Marking Scale of [ariel-1990], as printed in [ariel-2001]: the classes of
+referring expression, from a modified full name to a zero, ordered by the accessibility of the
+referent they code, so that a more reduced form codes a more accessible referent
+(`AccessibilityLevel`). A form is classified by its head, whether it is modified, whether it
+carries lexical content, whether a name is full, its deixis, its stress and whether it is bound
+(`AccessibilityLevel.head` and the other features), and the three criteria the scale is claimed
+to reflect are read off the features: informativity, the lexical content a form carries;
+rigidity, its ability to pick out a referent by form alone; and attenuation, its phonological
+reduction.
 
 ## Main definitions
 
-* `Reference.AccessibilityLevel` — the scale, as a linear order.
-* `AccessibilityLevel.head`, `modified`, `lexical`, `full`, `deixis`, `stressed`, `bound` —
-  the features of a form class.
-* `AccessibilityLevel.informativity`, `rigidity`, `attenuation` — the criteria, from the
+* `Discourse.AccessibilityLevel`: the scale, as a linear order.
+* `AccessibilityLevel.head`, `modified`, `lexical`, `full`, `deixis`, `stressed`, `bound`: the
+  features of a form class.
+* `AccessibilityLevel.informativity`, `rigidity`, `attenuation`: the criteria, from the
   features.
 
 ## Implementation notes
@@ -32,7 +33,7 @@ and attenuation, its phonological reduction.
 The scale is the paper's ordering of its English form classes, taken as data; the criteria
 are not individually monotone along it, and which comparisons each criterion predicts is the
 business of `Studies/Ariel2001.lean`. The cognitive statuses of referents, as against the
-forms that code them, are `Reference.GivennessStatus`.
+forms that code them, are `Discourse.GivennessStatus`.
 
 ## References
 
@@ -40,7 +41,7 @@ forms that code them, are `Reference.GivennessStatus`.
 * [ariel-2001]
 -/
 
-namespace Reference
+namespace Discourse
 
 /-- An accessibility level is a class of referring expression on the Accessibility Marking
 Scale of [ariel-1990], from the least to the most accessible referent it codes. -/
@@ -121,12 +122,6 @@ inductive Head where
   | zero
   deriving DecidableEq, Repr, Fintype
 
-/-- The deixis of a demonstrative. -/
-inductive Deixis where
-  | distal
-  | proximate
-  deriving DecidableEq, Repr, Fintype
-
 /-- The head of a form class. -/
 def head : AccessibilityLevel → Head
   | .fullNameMod | .fullName | .lastName | .firstName => .name
@@ -154,9 +149,9 @@ def full : AccessibilityLevel → Prop
   | _ => False
 
 /-- The deixis of a demonstrative form. -/
-def deixis : AccessibilityLevel → Option Deixis
+def deixis : AccessibilityLevel → Option Reference.Deixis
   | .distalDemMod | .distalDemNP | .distalDem => some .distal
-  | .proxDemMod | .proxDemNP | .proxDem => some .proximate
+  | .proxDemMod | .proxDemNP | .proxDem => some .proximal
   | _ => none
 
 /-- A form is a stressed pronoun. -/
@@ -199,4 +194,4 @@ def attenuation (l : AccessibilityLevel) : ℕ :=
 
 end AccessibilityLevel
 
-end Reference
+end Discourse

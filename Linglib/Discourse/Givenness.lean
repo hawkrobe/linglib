@@ -9,25 +9,25 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # Givenness
 
-This file defines the cognitive statuses of discourse referents. A givenness status is one of
-the six tiers of the Givenness Hierarchy of [gundel-hedberg-zacharski-1993], from *in focus*
-down to *type identifiable*, ordered so that each status entails every lower one
-(`GivennessStatus`); the binary givenness of information structure ([krifka-2008]) is the
-coarsening of the hierarchy at the identifiability boundary ([lambrecht-1994]), *given*
-against *new* (`BinaryGivenness`, `GivennessStatus.toBinary`).
+The cognitive statuses of discourse referents. A givenness status is one of the six tiers of
+the Givenness Hierarchy of [gundel-hedberg-zacharski-1993], from *in focus* down to *type
+identifiable*, ordered so that each status entails every lower one (`GivennessStatus`); the
+binary givenness of information structure ([krifka-2008]) is the coarsening of the hierarchy at
+the identifiability boundary ([lambrecht-1994]), *given* against *new* (`BinaryGivenness`,
+`GivennessStatus.toBinary`).
 
 ## Main definitions
 
-* `Reference.GivennessStatus` — the six-tier hierarchy, as a linear order.
-* `Reference.BinaryGivenness` — given or new, as a linear order.
-* `Reference.GivennessStatus.toBinary` — the identifiability coarsening, monotone.
+* `Discourse.GivennessStatus`: the six-tier hierarchy, as a linear order.
+* `Discourse.BinaryGivenness`: given or new, as a linear order.
+* `Discourse.GivennessStatus.toBinary`: the identifiability coarsening, monotone.
 
 ## Implementation notes
 
 `BinaryGivenness` is identifiability. It is not [prince-1992]'s hearer-old against hearer-new,
 which cross-cuts identifiability, nor alternatives-based givenness ([schwarzschild-1999]); a
 consumer meaning another axis should say so. The finer scales over referring forms are
-`Reference.AccessibilityLevel` ([ariel-2001]) and Centering's information-status tiers
+`Discourse.AccessibilityLevel` ([ariel-2001]) and Centering's information-status tiers
 ([strube-hahn-1999]).
 
 ## References
@@ -39,7 +39,7 @@ consumer meaning another axis should say so. The finer scales over referring for
 * [chafe-1976]
 -/
 
-namespace Reference
+namespace Discourse
 
 /-- A givenness status is a tier of the Givenness Hierarchy of [gundel-hedberg-zacharski-1993],
 the cognitive status of a referent for the hearer. -/
@@ -105,4 +105,4 @@ def GivennessStatus.toBinary : GivennessStatus → BinaryGivenness
 
 theorem GivennessStatus.toBinary_monotone : Monotone GivennessStatus.toBinary := by decide
 
-end Reference
+end Discourse
