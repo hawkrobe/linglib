@@ -279,7 +279,7 @@ theorem closed_scale_bounded :
 
 /-- Upper-bounded scales yield bounded RPs (e.g., "dry"). -/
 theorem upper_bounded_scale_bounded :
-    adjScaleToRPBoundedness .upperBounded = .bounded := rfl
+    adjScaleToRPBoundedness .upperClosed = .bounded := rfl
 
 /-- Open scales yield unbounded RPs (e.g., "tall"). -/
 theorem open_scale_unbounded :
@@ -287,7 +287,7 @@ theorem open_scale_unbounded :
 
 /-- Lower-bounded scales yield unbounded RPs (e.g., "wet"). -/
 theorem lower_bounded_scale_unbounded :
-    adjScaleToRPBoundedness .lowerBounded = .unbounded := rfl
+    adjScaleToRPBoundedness .lowerClosed = .unbounded := rfl
 
 /-- The full aspectual chain: a closed-scale adjective as RP yields a telic
     resultative. `HasMax → bounded → telic → accomplishment`. -/
@@ -300,8 +300,8 @@ theorem closed_scale_telic_resultative (b : Degree.Boundedness) (hMax : b.HasMax
 /-- The dry/wet contrast: dry is productive (bounded → telic),
     wet is not (unbounded → atelic). Derives from scale structure alone. -/
 theorem dry_wet_contrast :
-    adjScaleToRPBoundedness .upperBounded = .bounded ∧
-    adjScaleToRPBoundedness .lowerBounded = .unbounded :=
+    adjScaleToRPBoundedness .upperClosed = .bounded ∧
+    adjScaleToRPBoundedness .lowerClosed = .unbounded :=
   ⟨rfl, rfl⟩
 
 /-! ## Semantic contribution (meaning components)

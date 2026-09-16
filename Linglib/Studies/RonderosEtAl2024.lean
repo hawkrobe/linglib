@@ -174,7 +174,7 @@ instance : DecidablePred Informative
 /-- The adjective classes ([kennedy-2007]): scalar adjectives are relative gradable, colour and
 material adjectives non-gradable. -/
 def AdjType.adjectiveClass : AdjType → Degree.AdjectiveClass
-  | .scalar => .relativeGradable
+  | .scalar => .relative
   | .color | .material => .nonGradable
 
 /-! ### The accounts of the contrast effect -/

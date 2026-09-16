@@ -480,7 +480,7 @@ theorem all_valences_agree :
 /-- All intensifier bases have open scales (§2.1, fn. 3: "I will restrict my
     attention to adjectives with open-ended scales"). Derived from the Fragment.
     *Decent* also derives an open `.value` scale: its necessity standard
-    ([kennedy-mcnally-2005]) is a `standardOverride`, not scale boundedness, so it
+    ([kennedy-mcnally-2005]) is a `lexicalStandard`, not scale boundedness, so it
     no longer needs the exception the earlier lower-bounded modeling required. -/
 theorem all_bases_open_scale :
     allEntries.all (λ e =>

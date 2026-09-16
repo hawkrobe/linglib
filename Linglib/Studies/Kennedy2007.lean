@@ -109,19 +109,19 @@ instance : ∀ (m : DegreeModifier) (b : Boundedness), Decidable (Licenses m b)
 positive member of an antonym pair, by the pair's scale type. -/
 def table61Pos : Boundedness → DegreeModifier → Bool
   | .open_, _ => false
-  | .lowerBounded, .maximizer => false
-  | .lowerBounded, .minimizer => true
-  | .upperBounded, .maximizer => true
-  | .upperBounded, .minimizer => false
+  | .lowerClosed, .maximizer => false
+  | .lowerClosed, .minimizer => true
+  | .upperClosed, .maximizer => true
+  | .upperClosed, .minimizer => false
   | .closed, _ => true
 
 /-- The A_neg row of table (61). -/
 def table61Neg : Boundedness → DegreeModifier → Bool
   | .open_, _ => false
-  | .lowerBounded, .maximizer => true
-  | .lowerBounded, .minimizer => false
-  | .upperBounded, .maximizer => false
-  | .upperBounded, .minimizer => true
+  | .lowerClosed, .maximizer => true
+  | .lowerClosed, .minimizer => false
+  | .upperClosed, .maximizer => false
+  | .upperClosed, .minimizer => true
   | .closed, _ => true
 
 /-- Table (61) as printed, by the member of the pair. -/
