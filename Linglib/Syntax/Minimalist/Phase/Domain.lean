@@ -22,13 +22,13 @@ MCB** rather than the legacy section-based `phaseComplementZ`/`complementInPlana
 walk (which carried a `side` parameter and a non-commutative `<|>` fallback — a
 section artifact with no place on the unordered carrier). MCB states everything in
 terms of **subtrees, containment, and the head's sister** — exactly the invariant,
-decidable P2 substrate (`subtrees`/`Acc`/`containsOrEq`/`areSistersIn`/`cCommandsIn`,
+decidable P2 substrate (`subtrees`/`accessibleTerms`/`containsOrEq`/`areSistersIn`/`cCommandsIn`,
 #797–798) and the selection head (`selHead`, #800). So the whole phase domain is a
 **filter over the already-lifted subterm API** — no section, no `Quot.out`, no fresh
 `Perm` proof, and every notion `decide`s.
 
 The keystone identity: the **interior Φ°_ℓ (Def 1.14.3) is the phase head's
-c-command domain**, `{T_v ∈ Acc(T) | T_v ⊆ T_{s_ℓ}} = Acc.filter (cCommandsIn …
+c-command domain**, `{T_v ∈ Acc(T) | T_v ⊆ T_{s_ℓ}} = accessibleTerms.filter (cCommandsIn …
 (leaf ℓ))` — the standard "complement domain = head's c-command domain" falling
 out of the formalization.
 -/
@@ -58,7 +58,7 @@ def isPhaseHeadOf (c : Cat) (s : SyntacticObject) : Bool := s.outerCatC == some 
 The head function on `SyntacticObject` is `selHead` (#800); a phase is relative to a tree `T` and
 a phase-head leaf `ℓ` (the study supplies *which* leaf, per the per-analysis
 discipline — C / C+v / +D / +Voice). Every notion is a filter over the invariant
-subterm API (`subtrees`/`Acc`/`containsOrEq`/`areSistersIn`/`cCommandsIn`), so it
+subterm API (`subtrees`/`accessibleTerms`/`containsOrEq`/`areSistersIn`/`cCommandsIn`), so it
 `decide`s — no section, no `Quot.out`, no fresh `Perm` proof. -/
 
 /-- **L_Φ(T)** ([marcolli-chomsky-berwick-2025] Def 1.14.3 eq 1.14.1): `ℓ` is a
@@ -96,9 +96,9 @@ def phase (T : SyntacticObject) (ℓ : LIToken) : Multiset SyntacticObject :=
     This **is the phase head's c-command domain**: `T_v ⊆ T_{s_ℓ}` exactly when the
     sister of `ℓ` contains-or-equals `T_v`, i.e. `cCommandsIn T (leaf ℓ) T_v`
     (#798). The textbook "complement domain = head's c-command domain", by
-    construction — and `Acc(T) = T.Acc` (non-root). -/
+    construction — and `Acc(T) = T.accessibleTerms` (non-root). -/
 def phaseInterior (T : SyntacticObject) (ℓ : LIToken) : Multiset SyntacticObject :=
-  T.Acc.filter (fun Tv => cCommandsIn T (SyntacticObject.leaf ℓ) Tv)
+  T.accessibleTerms.filter (fun Tv => cCommandsIn T (SyntacticObject.leaf ℓ) Tv)
 
 /-- **The edge ∂Φ_ℓ** ([marcolli-chomsky-berwick-2025] Def 1.14.3 eq 1.14.4):
     `{T_v ∈ Acc'(T) | T_v ⊆ T_{v_ℓ} ∧ T_v ⊄ T_{s_ℓ}}` — the phase content not in
@@ -126,7 +126,7 @@ instance (T : SyntacticObject) (ℓ : LIToken) (goal : SyntacticObject) :
 /-- **The interior is the phase head's (non-root) c-command domain** — the keystone
     identity (MCB Def 1.14.3, "Z is the interior of the phase"). -/
 @[simp] theorem mem_phaseInterior {T : SyntacticObject} {ℓ : LIToken} {Tv : SyntacticObject} :
-    Tv ∈ T.phaseInterior ℓ ↔ Tv ∈ T.Acc ∧ T.cCommandsIn (SyntacticObject.leaf ℓ) Tv :=
+    Tv ∈ T.phaseInterior ℓ ↔ Tv ∈ T.accessibleTerms ∧ T.cCommandsIn (SyntacticObject.leaf ℓ) Tv :=
   Multiset.mem_filter
 
 @[simp] theorem mem_phaseEdge {T : SyntacticObject} {ℓ : LIToken} {Tv : SyntacticObject} :
@@ -135,7 +135,7 @@ instance (T : SyntacticObject) (ℓ : LIToken) (goal : SyntacticObject) :
 
 /-- The PIC freezes exactly the head's (non-root) c-command domain. -/
 theorem Impenetrable_iff {T : SyntacticObject} {ℓ : LIToken} {goal : SyntacticObject} :
-    Impenetrable T ℓ goal ↔ goal ∈ T.Acc ∧ T.cCommandsIn (SyntacticObject.leaf ℓ) goal :=
+    Impenetrable T ℓ goal ↔ goal ∈ T.accessibleTerms ∧ T.cCommandsIn (SyntacticObject.leaf ℓ) goal :=
   mem_phaseInterior
 
 end SyntacticObject
