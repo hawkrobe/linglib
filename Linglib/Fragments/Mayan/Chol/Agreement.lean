@@ -1,7 +1,6 @@
 import Linglib.Syntax.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Syntax.Reflex
-import Linglib.Syntax.Clause.Relative
 import Linglib.Fragments.Mayan.Params
 import Linglib.Syntax.Clause.ArgumentRole
 
@@ -129,7 +128,7 @@ namespace Extraction
     3rd person follows from the absent AF marking:
     `Maxki₁ tyi y-il-ä (___₁) jiñi wiñik (___₁)?`
     'Who saw the man?' / 'Who did the man see?' -/
-def realize : RelativeClause.Position → Finset (Reflex Empty) :=
+def realize : ArgumentRole → Finset (Reflex Empty) :=
   fun _ ↦ ∅
 
 end Extraction

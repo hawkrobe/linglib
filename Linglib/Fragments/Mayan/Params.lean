@@ -1,3 +1,4 @@
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Data.UD.Features
@@ -39,6 +40,8 @@ syntactic ergativity while LOW-ABS languages do not.
   `Mayan.caseKiche`, `Mayan.caseMam`, `Mayan.caseTseltalan`: per-branch
   aspect-driven case assignment, with `erg…`/`acc…` aspect projections.
 * `Mayan.VerbForm`: transitive vs Agent Focus, and its agreement slots.
+* `Mayan.Adjunct`, `Mayan.ExtractionSite`: the sites of Ā-extraction the extraction
+  morphology distinguishes, indexing the fragments' `Extraction.realize`.
 * `Mayan.ExponentTable`, `Mayan.ExponentTable.IsThirdSgZero`: agreement
   paradigms over φ-cells and the null-3sg predicate.
 * `Mayan.MarkerLinearity`: prefixal / suffixal / either marker linearity.
@@ -418,5 +421,25 @@ def template : Mayan → Morphology.AffixTemplate VerbSlot
     fragments' analytical `absPosition` values. -/
 def templateABSPosition (l : Mayan) : ABSPosition :=
   if .setB ∈ (template l).prefixSlots then .high else .low
+
+/-! ### Extraction sites -/
+
+/-- The classes of non-core arguments and adjuncts whose Ā-extraction Mayan extraction
+morphology distinguishes: the eight classes [elkins-torrence-brown-2026] survey for Mam, among
+them [mendes-ranero-2021]'s low adjuncts (instruments, benefactives, datives, locatives), which
+alone trigger the K'ichean fronting particle *wi*. -/
+inductive Adjunct where
+  | instrument | benefactive | dative | locative | reason | purpose | manner | temporal
+  deriving DecidableEq, Repr, Fintype
+
+/-- The site of an Ā-extraction at the granularity Mayan extraction morphology distinguishes: a
+core argument by its comparative role, or an adjunct by its class. A fragment's
+`Extraction.realize` records for each site the reflexes extraction from it licenses; whether a
+reflex is obligatory, optional or conditioned is stated in the fragment's prose. A fragment
+whose sources document core-argument extraction only indexes `realize` by `ArgumentRole`. -/
+inductive ExtractionSite where
+  | core (r : ArgumentRole)
+  | adjunct (a : Adjunct)
+  deriving DecidableEq, Repr
 
 end Mayan

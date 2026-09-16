@@ -1,7 +1,6 @@
 import Linglib.Fragments.Mayan.Tseltalan
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Syntax.Reflex
-import Linglib.Syntax.Clause.Relative
 import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
@@ -18,7 +17,8 @@ Agreement morphology for Zinacantec Tsotsil (Tseltalan, Mayan)
   prefixal-or-suffixal Set B.
 * `Tsotsil.setAExponent`, `Tsotsil.setBExponent`: Zinacantec Tsotsil
   exponent tables ([polian-2013]).
-* `Tsotsil.Extraction.realize`: unmarked extraction (no Agent Focus).
+* `Tsotsil.Extraction.realize`: the optional, obviation-conditioned Agent Focus form
+  under transitive-subject extraction.
 
 ## Implementation notes
 
@@ -34,6 +34,13 @@ across Tseltalan (`Mayan.Tseltalan`).
 
 Tseltalan languages are uniformly **ergative-absolutive** with no
 aspect-conditioned split (in contrast with Cholan; per [polian-2013]).
+
+## References
+
+* [aissen-1999a]
+* [aissen-polian-2025]
+* [kaufman-norman-1984]
+* [polian-2013]
 -/
 
 
@@ -105,10 +112,18 @@ theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] :=
 
 namespace Extraction
 
-/-- No Agent Focus morphology is required for A-extraction, consistent
-    with Tsotsil being LOW-ABS. -/
-def realize : RelativeClause.Position → Finset (Reflex Empty) :=
-  fun _ ↦ ∅
+/-- The host of the Tsotsil extraction reflex. -/
+inductive Host where
+  | verb
+  deriving DecidableEq, Repr
+
+/-- Transitive-subject extraction may switch the verb to the Agent Focus form. The form is
+not obligatory, agents extracting from transitive and Agent Focus clauses alike, and it is used
+when the patient outranks the agent in obviation ([aissen-1999a]); no other extraction is
+marked. -/
+def realize : ArgumentRole → Finset (Reflex Host)
+  | .A => {.morpheme .verb}
+  | _ => ∅
 
 end Extraction
 

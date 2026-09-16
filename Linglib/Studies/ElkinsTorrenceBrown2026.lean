@@ -1,4 +1,6 @@
 import Linglib.Data.Examples.ElkinsTorrenceBrown2026
+import Linglib.Fragments.Mayan.Mam.Extraction
+import Linglib.Fragments.Mayan.Kiche.Extraction
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Agree.Basic
@@ -253,52 +255,50 @@ theorem origin_only_fails : Licensed [spine .cP 0, spine .cP 0] 1 ∧ (1 : ℕ) 
 
 /-! ### Which movers trigger the reflex (§2, §5.3) -/
 
-/-- The adjunct classes of §2.2. -/
-inductive Adjunct
-  | instrument
-  | benefactive
-  | dative
-  | locative
-  | reason
-  | purpose
-  | manner
-  | temporal
-  deriving DecidableEq, Fintype
-
 /-- The article's featural hypothesis (9), footnotes 3 and 12, §5.3: every adjunct class but the
 temporals bears the [obl] Case feature that Voice⁰ and Dir⁰ copy. -/
-def Adjunct.BearsObl (a : Adjunct) : Prop := a ≠ .temporal
+def BearsObl (a : Mayan.Adjunct) : Prop := a ≠ .temporal
 
-instance : DecidablePred Adjunct.BearsObl := λ _ => inferInstanceAs (Decidable (_ ≠ _))
+instance : DecidablePred BearsObl := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
 
 /-- [mendes-ranero-2021]'s low adjuncts, merged in Spec,ApplP with [appl], which alone trigger
 *wi* (§5.3). -/
-def Adjunct.IsLow (a : Adjunct) : Prop :=
+def IsLow (a : Mayan.Adjunct) : Prop :=
   a = .instrument ∨ a = .benefactive ∨ a = .dative ∨ a = .locative
 
-instance : DecidablePred Adjunct.IsLow := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _))
+instance : DecidablePred IsLow := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _))
 
 /-- Table 4: the Mam and K'ichean triggers differ exactly at reasons, purposes and manners. -/
-theorem table4 (a : Adjunct) :
-    ¬ (a.BearsObl ↔ a.IsLow) ↔ a = .reason ∨ a = .purpose ∨ a = .manner := by
+theorem table4 (a : Mayan.Adjunct) :
+    ¬ (BearsObl a ↔ IsLow a) ↔ a = .reason ∨ a = .purpose ∨ a = .manner := by
   revert a
   decide
+
+/-- The Mam fragment licenses the enclitic for exactly the [obl]-bearing classes. -/
+theorem mam_realize_iff_bearsObl (a : Mayan.Adjunct) :
+    (Mam.Extraction.realize (.adjunct a)).Nonempty ↔ BearsObl a :=
+  Mam.Extraction.realize_adjunct_nonempty_iff a
+
+/-- The K'iche' fragment licenses *wi* for exactly the low classes. -/
+theorem kiche_realize_iff_isLow (a : Mayan.Adjunct) :
+    (Kiche.Extraction.realize (.adjunct a)).Nonempty ↔ IsLow a :=
+  Kiche.Extraction.realize_adjunct_nonempty_iff a
 
 /-- What is extracted, if anything: an absolutive argument, an ergative argument, or an adjunct. -/
 inductive Mover
   | none
   | absolutive
   | ergative
-  | adjunct (a : Adjunct)
+  | adjunct (a : Mayan.Adjunct)
   deriving DecidableEq
 
 /-- Only an adjunct with [obl] feeds the reflex: absolutives and ergatives lack it (§4.2). -/
 def Mover.BearsObl : Mover → Prop
-  | .adjunct a => a.BearsObl
+  | .adjunct a => ElkinsTorrenceBrown2026.BearsObl a
   | _ => False
 
 instance : ∀ m : Mover, Decidable m.BearsObl
-  | .adjunct a => inferInstanceAs (Decidable a.BearsObl)
+  | .adjunct a => inferInstanceAs (Decidable (BearsObl a))
   | .none => inferInstanceAs (Decidable False)
   | .absolutive => inferInstanceAs (Decidable False)
   | .ergative => inferInstanceAs (Decidable False)
@@ -354,7 +354,7 @@ theorem mamRows_realizable :
 /-- The K'iche' rows (51) and (64): *wi* is licensed exactly for the low adjuncts. -/
 theorem kicheRows_low :
     ∀ e ∈ [ex_51, ex_64], ∀ a, e.parse? "mover" moverTable = some (.adjunct a) →
-      ∀ b, e.parse? "reflex" reflexTable = some b → (b = true ↔ a.IsLow) := by
+      ∀ b, e.parse? "reflex" reflexTable = some b → (b = true ↔ IsLow a) := by
   decide
 
 /-- The rows with directionals, (22) and (63): one host per Voice⁰ and directional. -/

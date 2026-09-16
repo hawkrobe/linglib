@@ -1,7 +1,6 @@
 import Linglib.Fragments.Mayan.Tseltalan
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Syntax.Reflex
-import Linglib.Syntax.Clause.Relative
 import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
@@ -105,7 +104,7 @@ namespace Extraction
 
 /-- No Agent Focus morphology is required for A-extraction, consistent
     with Tseltal being LOW-ABS. -/
-def realize : RelativeClause.Position → Finset (Reflex Empty) :=
+def realize : ArgumentRole → Finset (Reflex Empty) :=
   fun _ ↦ ∅
 
 end Extraction

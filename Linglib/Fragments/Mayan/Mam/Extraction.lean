@@ -1,15 +1,16 @@
 import Linglib.Syntax.Reflex
-import Linglib.Syntax.Clause.Relative
+import Linglib.Fragments.Mayan.Params
 
 /-!
 # Mam extraction marking
 
-The extraction marking of Mam (Mayan, Western Highlands of Guatemala) as reflex cells: subject
-(ergative) extraction switches the verb to an antipassive, the Mayan repair for the Ergative
-Extraction Constraint ([aissen-2017]; the San Juan Atitán forms in [scott-2023]), oblique
-extraction places the movement enclitic =(y)a' on the Voice or directional head of the verbal
-complex ([england-1989], [elkins-torrence-brown-2026]), and absolutive extraction is unmarked. The
-distribution of the enclitic across adjunct types, clause sizes and movement paths is the matter
+The extraction marking of Mam (Mayan, Western Highlands of Guatemala) as reflex cells:
+transitive-subject (ergative) extraction switches the verb to an antipassive, the Mam repair for
+the Ergative Extraction Constraint ([aissen-2017]; the San Juan Atitán forms in [scott-2023]);
+extraction of a non-core argument or adjunct of every class but the temporals licenses the
+movement enclitic =(y)a', optionally, on the verbal complex and on a directional auxiliary when
+one is present ([england-1989], [elkins-torrence-brown-2026]); absolutive extraction is
+unmarked. The distribution of the enclitic across clause sizes and movement paths is the matter
 of `Studies/ElkinsTorrenceBrown2026.lean`.
 
 ## References
@@ -22,24 +23,30 @@ of `Studies/ElkinsTorrenceBrown2026.lean`.
 
 namespace Mam.Extraction
 
-/-- Reflex hosts of Mam extraction marking: the verb, and the Voice or directional head hosting
-=(y)a'. -/
-inductive Site
+/-- The hosts of Mam extraction reflexes: the verb stem, the verbal complex the enclitic =(y)a'
+attaches to, and a directional auxiliary. -/
+inductive Host where
   | verb
-  | voiceHead
+  | verbalComplex
+  | directional
   deriving DecidableEq, Repr
 
-/-- The two marked cells: subject extraction antipassivizes the verb, oblique extraction places
-=(y)a' on a Voice or directional head; core-object extraction is unmarked. -/
-def realize : RelativeClause.Position → Finset (Reflex Site)
-  | .subject => {.morpheme .verb}
-  | .oblique => {.morpheme .voiceHead}
+/-- Transitive-subject extraction antipassivizes the verb; extraction of an adjunct of any class
+but the temporals licenses =(y)a' on the verbal complex and on a directional, each optional and
+independent of the other; absolutive and temporal extraction are unmarked. -/
+def realize : Mayan.ExtractionSite → Finset (Reflex Host)
+  | .core .A => {.morpheme .verb}
+  | .adjunct .temporal => ∅
+  | .adjunct _ => {.morpheme .verbalComplex, .morpheme .directional}
   | _ => ∅
 
-theorem marks_oblique : (realize .oblique).Nonempty := Finset.singleton_nonempty _
+/-- The temporals are the one adjunct class whose extraction licenses no reflex. -/
+theorem realize_adjunct_nonempty_iff (a : Mayan.Adjunct) :
+    (realize (.adjunct a)).Nonempty ↔ a ≠ .temporal := by
+  cases a <;> decide
 
-/-- =(y)a' tracks obliques, not subjects: no voice-head reflex under subject extraction. -/
-theorem eqya_not_on_subject : Reflex.morpheme Site.voiceHead ∉ realize .subject := by
+/-- =(y)a' tracks adjuncts, not subjects: no enclitic under transitive-subject extraction. -/
+theorem eqya_not_on_subject : Reflex.morpheme Host.verbalComplex ∉ realize (.core .A) := by
   decide
 
 end Mam.Extraction
