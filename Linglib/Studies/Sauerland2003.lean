@@ -55,13 +55,14 @@ variable [SemilatticeSup E] {a b : E}
 /-- The φ-head above a coordination of two distinct atoms cannot carry `[Sg]`. -/
 theorem coordination_plural (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
     a ⊔ b ∉ Number.dom (E := E) (some .singular) :=
-  not_atom_sup_of_ne ha hb hne
+  (Number.mem_dom_singular _).not.2 (not_atom_sup_of_ne ha hb hne)
 
 /-- The Feature-Subset Principle for number: the domain of `[Sg]` is a proper subset of the
 domain of `[Pl]`. -/
 theorem sg_domain_ssubset_pl (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
-    Number.dom (E := E) (some .singular) ⊂ Number.dom (some .plural) :=
-  ⟨Set.subset_univ _, fun h ↦ not_atom_sup_of_ne ha hb hne (h (Set.mem_univ _))⟩
+    Number.dom (E := E) (some .singular) ⊂ Number.dom (some .plural) := by
+  rw [Number.dom_plural]
+  exact ⟨Set.subset_univ _, fun h ↦ coordination_plural ha hb hne (h (Set.mem_univ _))⟩
 
 /-- `DER` is well defined on a cumulative restrictor: `*R` has at most one maximal element. -/
 theorem der_unique {R : E → Prop} {m₁ m₂ : E} (h₁ : Maximal (AlgClosure R) m₁)

@@ -1,24 +1,23 @@
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Syntax.Number.Basic
 import Linglib.Semantics.Plurality.Number
-import Linglib.Syntax.Agreement.ContainmentPair
+import Linglib.Core.Order.UpperLower.Finset
 
 /-!
 # The feature decomposition of number
 
 This file defines Harbour's `[±atomic, ±minimal]` feature bundle for the
-three basic number values, its presentation as a containment pair shared
-with person, and the classification of lattice elements by the regions of
-`Number.interp`.
+three basic number values, well-formed when the positive features form a
+lower set of the chain minimal < atomic, and the classification of lattice
+elements by the regions of `Number.interp`.
 
 ## Main definitions
 
 * `Number.Feature`, `Number.Features`: the `[±atomic, ±minimal]` bundle as
   the finset of positive features, with `Features.toNumber`/`Features.ofNumber`
   relating it to `Number`.
-* `Number.featuresEquiv`: the bundle as a `ContainmentPair`, `outer` the
-  minimality and `inner` the atomicity feature; `Features.WellFormed` is the
-  containment `[+atomic] → [+minimal]`.
+* `Features.WellFormed`: the containment `[+atomic] → [+minimal]`, a lower
+  set of the feature chain.
 * `Number.latticeToFeatures`: the bundle a lattice element realizes in a
   region, singular on its atoms, dual on its minimal non-atoms, plural
   otherwise.
@@ -54,7 +53,6 @@ where the atoms are the singletons.
 
 namespace Number
 
-open Agreement (ContainmentPair ContainmentPairLike)
 open Mereology (Atom CUM atomize)
 
 /-! ### The feature bundle -/
@@ -100,36 +98,9 @@ def Features.ofNumber : Number → Option Features
   | .plural => some pluralF
   | _ => none
 
-/-! ### The containment-pair presentation -/
-
-/-- The number features as the two features of a containment pair, minimality the outer and
-atomicity the inner, so `[+atomic] → [+minimal]` is `[+inner] → [+outer]`, the shape shared
-with person. -/
-def featureEquiv : Feature ≃ ContainmentPair.Feature where
-  toFun
-    | .minimal => .outer
-    | .atomic => .inner
-  invFun
-    | .outer => .minimal
-    | .inner => .atomic
-  left_inv f := by cases f <;> rfl
-  right_inv f := by cases f <;> rfl
-
-/-- The bundles as containment pairs. -/
-def featuresEquiv : Features ≃ ContainmentPair := featureEquiv.finsetCongr
-
-instance : ContainmentPairLike Features := .ofEquiv featuresEquiv
-
-@[simp] theorem singular_is_maximal :
-    ContainmentPairLike.toPair singularF = .maximal := by decide
-@[simp] theorem dual_is_intermediate :
-    ContainmentPairLike.toPair dualF = .intermediate := by decide
-@[simp] theorem plural_is_minimal :
-    ContainmentPairLike.toPair pluralF = .minimal := by decide
-
-/-- A bundle is well-formed if `[+atomic]` entails `[+minimal]`. -/
-abbrev Features.WellFormed (nf : Features) : Prop :=
-  ContainmentPairLike.WellFormed nf
+/-- A bundle is well-formed if `[+atomic]` entails `[+minimal]`: its positive features form a
+lower set of the chain minimal < atomic. -/
+abbrev Features.WellFormed (nf : Features) : Prop := IsLowerSet (↑nf : Set Feature)
 
 theorem atomic_implies_minimal :
     ∀ f : Features, f.WellFormed → .atomic ∈ f → .minimal ∈ f := by

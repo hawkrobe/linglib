@@ -10,8 +10,10 @@ of positive features among an outer feature and an inner feature depending on it
 well-formed when the inner feature entails the outer, so that the positive features form a
 lower set of the two-element dependency chain. Lower sets of a chain are nested and number one
 more than the chain, which is why two dependent features yield three cells, linearly ordered by
-specification, and never a fourth. Person, number, gender and animacy features present their
-carriers as containment pairs through `ContainmentPairLike`.
+specification, and never a fourth. Person, number, gender and animacy features are finsets over
+their own two-element chains and share this shape through the lower-finset theory of
+`Core/Order/UpperLower/Finset.lean`; this file is the anonymous instance, the cell type of the
+φ-feature competitions.
 
 ## Main definitions
 
@@ -21,14 +23,12 @@ carriers as containment pairs through `ContainmentPairLike`.
 * `ContainmentPair.maximal`, `ContainmentPair.intermediate`, `ContainmentPair.minimal`: the
   three well-formed cells.
 * `ContainmentPair.specLevel`: the number of positive features.
-* `Agreement.ContainmentPairLike`: an injective presentation of a carrier as containment pairs.
 
 ## Main results
 
 * `ContainmentPair.classification`: every well-formed pair is one of the three cells.
 * `ContainmentPair.card_wellFormed`: there are three well-formed cells.
-* `ContainmentPair.no_four_way`, `ContainmentPairLike.no_four_way`: no four distinct
-  well-formed cells.
+* `ContainmentPair.no_four_way`: no four distinct well-formed cells.
 
 ## Implementation notes
 
@@ -145,58 +145,5 @@ theorem no_four_way :
       (fun h ↦ hbd (congrArg Subtype.val h)) (fun h ↦ hcd (congrArg Subtype.val h))
 
 end ContainmentPair
-
-/-! ### Carrier presentation -/
-
-/-- An injective presentation of `α` as containment pairs, the `SetLike` pattern: a map plus
-its injectivity, not a bijection, since a three-valued carrier such as an honorific scale
-embeds onto the well-formed cells only. Well-formedness, specification and the three-cell
-bound are inherited through it. -/
-class ContainmentPairLike (α : Type*) where
-  /-- Present an element as a containment pair. -/
-  toPair : α → ContainmentPair
-  /-- The presentation is faithful. -/
-  toPair_injective : Function.Injective toPair
-
-namespace ContainmentPairLike
-
-variable {α : Type*} [ContainmentPairLike α]
-
-/-- An instance from an outright equivalence, as for person, number and gender features. -/
-@[reducible]
-def ofEquiv {β : Type*} (e : β ≃ ContainmentPair) : ContainmentPairLike β :=
-  ⟨e, e.injective⟩
-
-theorem injective : Function.Injective (toPair (α := α)) :=
-  toPair_injective
-
-/-- Well-formedness through the presentation. -/
-def WellFormed (a : α) : Prop := (toPair a).WellFormed
-
-instance : DecidablePred (WellFormed (α := α)) :=
-  fun a ↦ inferInstanceAs (Decidable (toPair a).WellFormed)
-
-/-- Specification level through the presentation. -/
-def specLevel (a : α) : ℕ := (toPair a).specLevel
-
-/-- No four distinct well-formed elements of a presented carrier. -/
-theorem no_four_way (a b c d : α)
-    (ha : WellFormed a) (hb : WellFormed b) (hc : WellFormed c) (hd : WellFormed d)
-    (hab : a ≠ b) (hac : a ≠ c) (had : a ≠ d) (hbc : b ≠ c) (hbd : b ≠ d) (hcd : c ≠ d) :
-    False :=
-  ContainmentPair.no_four_way (toPair a) (toPair b) (toPair c) (toPair d) ha hb hc hd
-    (fun h ↦ hab (injective h)) (fun h ↦ hac (injective h)) (fun h ↦ had (injective h))
-    (fun h ↦ hbc (injective h)) (fun h ↦ hbd (injective h)) (fun h ↦ hcd (injective h))
-
-/-- The specification ordering transports to any presented triple landing on the three cells,
-so person, number and gender inherit their hierarchy from one chain. -/
-theorem specLevel_strict_order {a b c : α}
-    (ha : toPair a = ContainmentPair.maximal) (hb : toPair b = ContainmentPair.intermediate)
-    (hc : toPair c = ContainmentPair.minimal) :
-    specLevel a > specLevel b ∧ specLevel b > specLevel c := by
-  simp only [specLevel, ha, hb, hc]
-  exact ⟨by decide, by decide⟩
-
-end ContainmentPairLike
 
 end Agreement

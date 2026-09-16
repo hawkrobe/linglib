@@ -1,4 +1,5 @@
 import Mathlib.Order.UpperLower.Basic
+import Mathlib.Data.Finset.Lattice.Fold
 import Mathlib.Data.Finset.Max
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Fintype.Basic
@@ -18,6 +19,7 @@ implicational hierarchy places a language on a rung.
 * `IsLowerSet.mem_iff_le_max` — a lower finset of a linear order is `Iic` of its max.
 * `IsLowerSet.subset_iff_card_le` — lower finsets of a linear order are nested by size, so they
   form a chain (the `LinearOrder` instance on the subtype).
+* `IsLowerSet.inf_le_inf_of_card_le` — infima over lower finsets are antitone in size.
 * `Finset.lowerSubsets` — the lower sets contained in a finset.
 * `Finset.filter_not_le_mem_lowerSubsets` — removing an upper cone stays inside.
 -/
@@ -67,6 +69,13 @@ instance : LinearOrder {s : Finset α // IsLowerSet (↑s : Set α)} where
   toDecidableLE s t := inferInstanceAs (Decidable (s.1 ⊆ t.1))
   toDecidableEq := inferInstance
   toDecidableLT s t := inferInstanceAs (Decidable (s.1 ⊂ t.1))
+
+/-- Over lower finsets of a linear order, the infimum of a family is antitone in size: a
+bigger lower finset meets more. [UPSTREAM] -/
+theorem IsLowerSet.inf_le_inf_of_card_le {β : Type*} [SemilatticeInf β] [OrderTop β] (f : α → β)
+    (hs : IsLowerSet (↑s : Set α)) (ht : IsLowerSet (↑t : Set α)) (h : t.card ≤ s.card) :
+    s.inf f ≤ t.inf f :=
+  Finset.inf_mono ((ht.subset_iff_card_le hs).2 h)
 
 theorem IsLowerSet.subtype_le_iff_card_le {s t : {s : Finset α // IsLowerSet (↑s : Set α)}} :
     s ≤ t ↔ s.1.card ≤ t.1.card :=

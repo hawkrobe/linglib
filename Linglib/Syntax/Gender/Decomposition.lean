@@ -1,5 +1,5 @@
 import Mathlib.Data.Fintype.Card
-import Linglib.Syntax.Agreement.ContainmentPair
+import Linglib.Core.Order.UpperLower.Finset
 import Linglib.Syntax.Gender.Basic
 
 /-!
@@ -20,8 +20,8 @@ pair on the pattern of the person and number presentations.
 
 * `Gender.SplitFeature`: a feature with a morphological and a semantic half, with its five
   exhaustive cases `IsNatural`, `IsHybrid`, `IsArbitrary`, `IsSemanticOnly` and `IsAbsent`.
-* `Gender.Features`: the bivalent [±feminine, ±neuter] features, a `ContainmentPairLike`
-  presentation whose well-formed cells are `Features.neuter`, `Features.feminine` and
+* `Gender.Features`: the bivalent [±feminine, ±neuter] features as finsets over the chain
+  feminine < neuter, whose well-formed cells are `Features.neuter`, `Features.feminine` and
   `Features.masculine`.
 
 ## Implementation notes
@@ -29,8 +29,8 @@ pair on the pattern of the person and number presentations.
 * Kramer's calculus of valued gender features on the nominal categorizer lives beside its
   consumer in `Morphology/DistributedMorphology/Categorizer/Gender.lean`, where its heads
   are the non-hybrid split features.
-* The bivalent presentation's three-cell bound is `ContainmentPairLike.no_four_way`, a claim
-  about the presentation and not about gender systems: Fula has twenty controller genders.
+* The bivalent presentation's three-cell bound `Features.card_wellFormed` is a claim about
+  the presentation and not about gender systems: Fula has twenty controller genders.
 * Hammerly's rejection of both schemes, with masculine a bare gender node and natural
   gender derived at LF, is a single-paper analysis for its study.
 
@@ -42,8 +42,6 @@ pair on the pattern of the person and number presentations.
 * [sauerland-2003] — the markedness ordering the bivalent presentation reconstructs
 * [hammerly-2019]
 -/
-
-open Agreement
 
 namespace Gender
 
@@ -115,7 +113,7 @@ presupposes genderlessness, as two binary features with the containment
 first person for person, and masculine the least. The paper itself states no features; the
 three well-formed combinations are the three genders of a sex-based system, and the scheme
 parallels person [±author] ⊂ [±participant] and number [±atomic] ⊂ [±minimal], all three
-`ContainmentPairLike` presentations of one skeleton (`Syntax/Agreement/ContainmentPair.lean`). -/
+lower sets of a two-feature chain (`Syntax/Agreement/ContainmentPair.lean`). -/
 
 /-- The two gender features, neuter depending on feminine, reconstructing
 [sauerland-2003]'s markedness ordering. -/
@@ -147,35 +145,9 @@ def Features.feminine : Features := {.feminine}
 /-- Masculine features: [−feminine, −neuter]. -/
 def Features.masculine : Features := ∅
 
-/-- The gender features as the two features of a containment pair, feminine the outer and
-neuter the inner. -/
-def featureEquiv : Feature ≃ ContainmentPair.Feature where
-  toFun
-    | .feminine => .outer
-    | .neuter => .inner
-  invFun
-    | .outer => .feminine
-    | .inner => .neuter
-  left_inv f := by cases f <;> rfl
-  right_inv f := by cases f <;> rfl
-
-/-- The bundles as containment pairs. -/
-def featuresEquiv : Features ≃ ContainmentPair := featureEquiv.finsetCongr
-
-instance : ContainmentPairLike Features := .ofEquiv featuresEquiv
-
-/-- The three genders land on the three well-formed cells. -/
-@[simp] theorem Features.toPair_neuter :
-    ContainmentPairLike.toPair Features.neuter = .maximal := by decide
-@[simp] theorem Features.toPair_feminine :
-    ContainmentPairLike.toPair Features.feminine = .intermediate := by decide
-@[simp] theorem Features.toPair_masculine :
-    ContainmentPairLike.toPair Features.masculine = .minimal := by decide
-
 /-- Well-formedness: [+neuter] → [+feminine], neuter entails feminine in the feature
-geometry, inherited from `ContainmentPair.WellFormed`. -/
-abbrev Features.WellFormed (gf : Features) : Prop :=
-  ContainmentPairLike.WellFormed gf
+geometry, so the positive features form a lower set of the chain. -/
+abbrev Features.WellFormed (gf : Features) : Prop := IsLowerSet (↑gf : Set Feature)
 
 @[simp] theorem Features.neuter_wellFormed : Features.neuter.WellFormed := by decide
 @[simp] theorem Features.feminine_wellFormed : Features.feminine.WellFormed := by decide

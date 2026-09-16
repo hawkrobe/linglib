@@ -3,6 +3,7 @@ import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Finset.NAry
 import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Syntax.Person.Features
+import Linglib.Syntax.Agreement.ContainmentPair
 import Linglib.Semantics.Reference.Person
 import Linglib.Semantics.Plurality.NumberFeatures
 import Linglib.Syntax.Minimalist.Phi.Recursion

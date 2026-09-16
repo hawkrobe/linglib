@@ -1,5 +1,5 @@
 import Linglib.Syntax.Person.Category
-import Linglib.Syntax.Agreement.ContainmentPair
+import Linglib.Core.Order.UpperLower.Finset
 
 /-!
 # Bivalent person features
@@ -7,23 +7,21 @@ import Linglib.Syntax.Agreement.ContainmentPair
 This file defines the decomposition of person into two bivalent features. The feature
 [±participant] says whether the referent includes a speech-act participant and [±author]
 whether it includes the speaker, so the three persons are three of the four combinations. The
-fourth, an author who is no participant, is cut by the containment filter, which the features
-inherit from `Agreement.ContainmentPair` through `featuresEquiv`. Both the person inventory and
-the referential categories decompose, and both decompositions underdetermine clusivity.
+fourth, an author who is no participant, is cut by the containment filter: a well-formed bundle
+is a lower set of the chain participant < author. Both the person inventory and the
+referential categories decompose, and both decompositions underdetermine clusivity.
 
 ## Main definitions
 
 * `Person.Feature`: the two features, author depending on participant.
 * `Person.Features`: a bundle, the positive features.
 * `Person.toFeatures`: the bundle of a person value, none for the impersonal.
-* `Person.featuresEquiv`: the bundles as containment pairs.
 * `Features.WellFormed`: the containment filter.
 * `Category.toFeatures`: the bundle of a referential category.
 
 ## Main results
 
-* `Person.card_wellFormed`: exactly three well-formed bundles.
-* `Person.no_fourth_person`: no four well-formed bundles are distinct.
+* `Person.card_wellFormed`: exactly three well-formed bundles, so no fourth person.
 * `Category.toFeatures_wellFormed`: every category decomposes well-formedly.
 
 ## References
@@ -34,8 +32,6 @@ the referential categories decompose, and both decompositions underdetermine clu
 * [D. Harbour, *Impossible Persons* (2016)][harbour-2016]
 * [M. Cysouw, *The Paradigmatic Structure of Person Marking* (2003)][cysouw-2003]
 -/
-
-open Agreement (ContainmentPair ContainmentPairLike)
 
 namespace Person
 
@@ -74,33 +70,9 @@ def toFeatures : Person → Option Features
   | .third => some thirdF
   | .zero => none
 
-/-! ### The containment presentation -/
-
-/-- The person features as the two features of a containment pair, participant the outer and
-author the inner. -/
-def featureEquiv : Feature ≃ ContainmentPair.Feature where
-  toFun
-    | .participant => .outer
-    | .author => .inner
-  invFun
-    | .outer => .participant
-    | .inner => .author
-  left_inv f := by cases f <;> rfl
-  right_inv f := by cases f <;> rfl
-
-/-- The bundles as containment pairs. -/
-def featuresEquiv : Features ≃ ContainmentPair := featureEquiv.finsetCongr
-
-instance : ContainmentPairLike Features := .ofEquiv featuresEquiv
-
-/-- The three persons land on the three well-formed cells. -/
-@[simp] theorem firstF_is_maximal : ContainmentPairLike.toPair firstF = .maximal := by decide
-@[simp] theorem secondF_is_intermediate :
-    ContainmentPairLike.toPair secondF = .intermediate := by decide
-@[simp] theorem thirdF_is_minimal : ContainmentPairLike.toPair thirdF = .minimal := by decide
-
-/-- The containment filter: an author is necessarily a participant. -/
-abbrev Features.WellFormed (pf : Features) : Prop := ContainmentPairLike.WellFormed pf
+/-- The containment filter: an author is necessarily a participant, so the positive features
+form a lower set of the chain. -/
+abbrev Features.WellFormed (pf : Features) : Prop := IsLowerSet (↑pf : Set Feature)
 
 @[simp] theorem firstF_wellFormed : firstF.WellFormed := by decide
 @[simp] theorem secondF_wellFormed : secondF.WellFormed := by decide
@@ -124,13 +96,6 @@ theorem isSAP_iff_participant (p : Person) :
   cases p <;> intro f hf <;>
     simp only [toFeatures, Option.some.injEq, reduceCtorEq] at hf <;>
     subst hf <;> decide
-
-/-- No four-way singular person distinction, inherited from the containment pair. -/
-theorem no_fourth_person :
-    ∀ (a b c d : Features),
-      a.WellFormed → b.WellFormed → c.WellFormed → d.WellFormed →
-      a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False :=
-  fun a b c d ha hb hc hd ↦ ContainmentPairLike.no_four_way a b c d ha hb hc hd
 
 /-! ### The features of a referential category -/
 
