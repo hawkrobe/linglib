@@ -7,7 +7,7 @@ Modal expressions from Hungarian (Uralic), based on
 [qing-uegaki-2025].
 -/
 
-namespace Hungarian.Modals
+namespace Hungarian
 
 open Modality (ForceFlavor ModalItem)
 
@@ -27,7 +27,7 @@ def hatHet : ModalItem := { form := "-hat/-het", meaning := {pe, pd, pc} }
 def tud : ModalItem := { form := "tud-", meaning := {pc} }
 def kép : ModalItem := { form := "kép-", meaning := {pc} }
 
-def allExpressions : List ModalItem :=
+def modals : List ModalItem :=
   [kell, kellene, muszáj, valószínűleg, lehet, hatHet, tud, kép]
 
-end Hungarian.Modals
+end Hungarian

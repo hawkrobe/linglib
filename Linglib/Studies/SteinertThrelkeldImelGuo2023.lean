@@ -55,15 +55,15 @@ theorem washo_modalEq :
 /-- Koryak *ivək* ([mocnik-abramovitz-2019]) satisfies the universal; with its doxastic and
 assertive flavors both epistemic in the fragment's space it varies on a single axis too. -/
 theorem koryak_modalIvek :
-    ForceFlavorIndependent Koryak.Modals.modalIvek.meaning ∧
-      SingleAxis Koryak.Modals.modalIvek.meaning := by
+    ForceFlavorIndependent Koryak.modalIvek.meaning ∧
+      SingleAxis Koryak.modalIvek.meaning := by
   decide
 
 /-- Paciran Javanese *mesthi*, *oleh* and *iso* express one pair each. -/
 theorem javanese_singletons :
-    ForceFlavorIndependent Javanese.Modals.mesthi.meaning ∧
-      ForceFlavorIndependent Javanese.Modals.oleh.meaning ∧
-      ForceFlavorIndependent Javanese.Modals.iso.meaning :=
+    ForceFlavorIndependent Javanese.mesthi.meaning ∧
+      ForceFlavorIndependent Javanese.oleh.meaning ∧
+      ForceFlavorIndependent Javanese.iso.meaning :=
   ⟨.singleton _, .singleton _, .singleton _⟩
 
 /-- The hypothetical *mighst* expresses epistemic possibility and deontic necessity only, which

@@ -9,7 +9,7 @@ Modal expressions from Mandarin (Sino-Tibetan), based on
 Mandarin has many modals, extensive synonymy, but all satisfy IFF.
 -/
 
-namespace Mandarin.Modals
+namespace Mandarin
 
 open Modality (ForceFlavor ModalItem)
 
@@ -33,7 +33,7 @@ def keyi : ModalItem := { form := "kěyǐ", meaning := {pd, pc} }
 def yexu : ModalItem := { form := "yěxǔ", meaning := {pe} }
 def neng : ModalItem := { form := "néng", meaning := {pd, pc} }
 
-def allExpressions : List ModalItem :=
+def modals : List ModalItem :=
   [yiding, biran, juedui, bixu, yao, dei, yinggai, dagai, keneng, keyi, yexu, neng]
 
-end Mandarin.Modals
+end Mandarin

@@ -7,7 +7,7 @@ Modal expressions from Javanese (Austronesian), based on
 [vander-klok-2013a].
 -/
 
-namespace Javanese.Modals
+namespace Javanese
 
 open Modality (ForceFlavor ModalItem)
 
@@ -43,7 +43,7 @@ def kudu1 : ModalItem := { form := "kudu1", meaning := {nd, nc} }
     because ∀ has a unique minimal witness but ∃ does not. -/
 def kudu1Ne : ModalItem := { form := "kudu1-ne", meaning := {wnd, wnc} }
 
-def allExpressions : List ModalItem :=
+def modals : List ModalItem :=
   [mesthi, mesthiNe, paleng, oleh, iso, kudu1, kudu1Ne]
 
-end Javanese.Modals
+end Javanese

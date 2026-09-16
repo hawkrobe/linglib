@@ -322,10 +322,10 @@ def Form.vertex : Form → Vertex
 
 /-- The fragment entry of a form. -/
 def Form.item : Form → ModalItem
-  | .temQue => Portuguese.Modals.terQue
-  | .deve => Portuguese.Modals.dever
-  | .tinhaQue => Portuguese.Modals.tinhaQue
-  | .devia => Portuguese.Modals.devia
+  | .temQue => Portuguese.terQue
+  | .deve => Portuguese.dever
+  | .tinhaQue => Portuguese.tinhaQue
+  | .devia => Portuguese.devia
 
 /-- (83), (135): a form's force in the fragment is weak necessity exactly when its ordering
 source is X-marked; X-marking the modal base leaves the force. -/

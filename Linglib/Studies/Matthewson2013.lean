@@ -46,7 +46,7 @@ its obligatory *dim* keeping it out of the perfective configuration of [hacquard
 
 namespace Matthewson2013
 
-open Modality Data.Examples Gitksan.Modals
+open Modality Data.Examples Gitksan
 
 /-! ### The modal system (Fig. 1) -/
 
@@ -57,7 +57,7 @@ def forceAnalysis (m : ModalItem) : ForceAnalysis :=
   else if m = sgi then .fixed .weakNecessity else .fixed .possibility
 
 theorem forceAnalysis_consistent :
-    ∀ m ∈ allExpressions, (forceAnalysis m).Consistent m.meaning := by
+    ∀ m ∈ modals, (forceAnalysis m).Consistent m.meaning := by
   decide
 
 /-- Gitksan has no strong circumstantial necessity modal. -/
@@ -93,17 +93,17 @@ def Mixed (L : List ModalItem) : Prop :=
 
 instance (L : List ModalItem) : Decidable (Mixed L) := inferInstanceAs (Decidable (_ ∧ _ ∧ ¬ _))
 
-theorem gitksan_mixed : Mixed allExpressions := by decide
+theorem gitksan_mixed : Mixed modals := by decide
 
 /-- Fig. 2 from the fragments: English selects strength and not type, St'át'imcets type and not
 strength, and Javanese both ([rullmann-matthewson-davis-2008], Fig. 3). -/
 theorem fig2 :
     (StrengthSelective (English.Auxiliaries.modals.map Auxiliary.toModalItem) ∧
         ¬ TypeSelective (English.Auxiliaries.modals.map Auxiliary.toModalItem)) ∧
-      (TypeSelective Statimcets.Modals.allExpressions ∧
-        ¬ StrengthSelective Statimcets.Modals.allExpressions) ∧
-      TypeSelective Javanese.Modals.allExpressions ∧
-        StrengthSelective Javanese.Modals.allExpressions := by
+      (TypeSelective Statimcets.modals ∧
+        ¬ StrengthSelective Statimcets.modals) ∧
+      TypeSelective Javanese.modals ∧
+        StrengthSelective Javanese.modals := by
   decide
 
 /-! ### Modal–temporal interaction (§3.3, §4, Fig. 4) -/

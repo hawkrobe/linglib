@@ -40,7 +40,7 @@ The system parallels what English nominal quantification would look
 like with *some* but no *all* or *every*.
 -/
 
-namespace NezPerce.Modals
+namespace NezPerce
 
 open Modality (ForceFlavor ForceAnalysis ModalItem)
 
@@ -55,7 +55,7 @@ private abbrev pc : ForceFlavor := (.possibility, .circumstantial)
     are scalar: no ∀-competitor triggers the 'not all' implicature. -/
 def oqa : ModalItem := { form := "o'qa", meaning := {pc} }
 
-def allExpressions : List ModalItem := [oqa]
+def modals : List ModalItem := [oqa]
 
 /-! ## Force analysis -/
 
@@ -67,4 +67,4 @@ def forceAnalysis : ModalItem → ForceAnalysis
   | ⟨"o'qa", _, _⟩ => .strengthened .possibility
   | _ => .strengthened .possibility
 
-end NezPerce.Modals
+end NezPerce

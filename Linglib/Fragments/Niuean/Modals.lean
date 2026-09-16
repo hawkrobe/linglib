@@ -50,7 +50,7 @@ broader cross-linguistic tendency for force distinctions to be encoded
 in the root/circumstantial domain.
 -/
 
-namespace Niuean.Modals
+namespace Niuean
 
 open Modality (ForceFlavor ForceAnalysis ModalItem)
 
@@ -74,7 +74,7 @@ def maeke : ModalItem := { form := "maeke", meaning := {pc} }
     [seiter-1980] p. 133. -/
 def lata : ModalItem := { form := "lata", meaning := {nc} }
 
-def allExpressions : List ModalItem := [liga, maeke, lata]
+def modals : List ModalItem := [liga, maeke, lata]
 
 /-! ## Force analysis -/
 
@@ -86,4 +86,4 @@ def forceAnalysis : ModalItem → ForceAnalysis
   | ⟨"lata", _, _⟩ => .fixed .necessity
   | _ => .fixed .possibility
 
-end Niuean.Modals
+end Niuean

@@ -21,7 +21,7 @@ We encode the 3×3-projected meaning here. The full doxastic/assertive
 distinction requires a finer-grained flavor type than `ModalFlavor`.
 -/
 
-namespace Koryak.Modals
+namespace Koryak
 
 open Modality (ForceFlavor ModalItem)
 
@@ -34,6 +34,6 @@ private abbrev pe : ForceFlavor := (.possibility, .epistemic)
     Both doxastic and assertive map to epistemic in the 3×3 space. -/
 def modalIvek : ModalItem := { form := "ivək", meaning := {ne, pe} }
 
-def allExpressions : List ModalItem := [modalIvek]
+def modals : List ModalItem := [modalIvek]
 
-end Koryak.Modals
+end Koryak

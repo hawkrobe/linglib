@@ -22,7 +22,7 @@ inferential evidence, *ku7* a report, and *lákw7a* sensory non-visual evidence,
 | lákw7a    | clitic      | epistemic      | poss + nec       | sensory, non-visual |
 -/
 
-namespace Statimcets.Modals
+namespace Statimcets
 
 open Modality (ForceFlavor ForceAnalysis ModalItem)
 
@@ -58,7 +58,7 @@ non-visual evidence ([matthewson-2016] §18.2.4). -/
 -- UNVERIFIED: its force; both forces are recorded on the pattern of the other clitics.
 def lakw7a : ModalItem := { form := "lákw7a", meaning := {pe, ne} }
 
-def allExpressions : List ModalItem := [ka, kaCircumfix, kaInfer, ku7, lakw7a]
+def modals : List ModalItem := [ka, kaCircumfix, kaInfer, ku7, lakw7a]
 
 /-! ## Force analysis -/
 
@@ -80,4 +80,4 @@ def Deniable (m : ModalItem) : Prop := m = lakw7a
 
 instance : DecidablePred Deniable := λ _ => inferInstanceAs (Decidable (_ = _))
 
-end Statimcets.Modals
+end Statimcets

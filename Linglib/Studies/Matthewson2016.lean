@@ -104,7 +104,7 @@ theorem projectionMode_classOf (source : Option CoarseSource) (deniable : Prop)
   unfold classOf; split_ifs <;> simp_all [BackgroundClass.projectionMode]
 
 section Statimcets
-open Statimcets.Modals
+open Statimcets
 
 /-- The class of a St'át'imcets modal. -/
 def statimcetsClass (m : ModalItem) : BackgroundClass := classOf (source m) (Deniable m)
@@ -119,7 +119,7 @@ theorem table18_3 :
 
 /-- St'át'imcets encodes the full three-way split. -/
 theorem statimcets_full_split :
-    ∀ c : BackgroundClass, ∃ m ∈ allExpressions, statimcetsClass m = c := by
+    ∀ c : BackgroundClass, ∃ m ∈ modals, statimcetsClass m = c := by
   decide
 
 /-- The modal a deniability row names. -/
@@ -140,8 +140,8 @@ end Statimcets
 
 /-- No Gitksan modal crosses the epistemic–circumstantial boundary. -/
 theorem gitksan_absolute_split :
-    (∀ e ∈ Gitksan.Modals.epistemicModals, ∀ ff ∈ e.meaning, ff.flavor = .epistemic) ∧
-      ∀ e ∈ Gitksan.Modals.circumstantialModals, ∀ ff ∈ e.meaning, ff.flavor ≠ .epistemic := by
+    (∀ e ∈ Gitksan.epistemicModals, ∀ ff ∈ e.meaning, ff.flavor = .epistemic) ∧
+      ∀ e ∈ Gitksan.circumstantialModals, ∀ ff ∈ e.meaning, ff.flavor ≠ .epistemic := by
   decide
 
 /-! ### Modal force: modals without duals (§18.3.2)
@@ -153,13 +153,13 @@ a possibility modal read as necessity because no necessity modal competes with i
 
 /-- The fragments' force analyses are consistent with their meanings. -/
 theorem force_consistent :
-    (∀ e ∈ Gitksan.Modals.allExpressions,
+    (∀ e ∈ Gitksan.modals,
         (Matthewson2013.forceAnalysis e).Consistent e.meaning) ∧
-      (∀ e ∈ Statimcets.Modals.allExpressions,
-        (Statimcets.Modals.forceAnalysis e).Consistent e.meaning) ∧
-      (∀ e ∈ NezPerce.Modals.allExpressions,
-        (NezPerce.Modals.forceAnalysis e).Consistent e.meaning) ∧
-      ∀ e ∈ Niuean.Modals.allExpressions, (Niuean.Modals.forceAnalysis e).Consistent e.meaning := by
+      (∀ e ∈ Statimcets.modals,
+        (Statimcets.forceAnalysis e).Consistent e.meaning) ∧
+      (∀ e ∈ NezPerce.modals,
+        (NezPerce.forceAnalysis e).Consistent e.meaning) ∧
+      ∀ e ∈ Niuean.modals, (Niuean.forceAnalysis e).Consistent e.meaning := by
   decide
 
 /-- A modal has a dual in an inventory when it is fixed for one force and another item of the
@@ -179,10 +179,10 @@ theorem not_hasDualIn_of_variableForce {L : List ModalItem} {m : ModalItem}
 /-- Gitksan ima('a) and gat, Nez Perce o'qa and St'át'imcets =ka have no duals in their
 inventories. -/
 theorem no_duals :
-    ¬ HasDualIn Gitksan.Modals.allExpressions Gitksan.Modals.imaa ∧
-      ¬ HasDualIn Gitksan.Modals.allExpressions Gitksan.Modals.gat ∧
-      ¬ HasDualIn NezPerce.Modals.allExpressions NezPerce.Modals.oqa ∧
-      ¬ HasDualIn Statimcets.Modals.allExpressions Statimcets.Modals.ka := by
+    ¬ HasDualIn Gitksan.modals Gitksan.imaa ∧
+      ¬ HasDualIn Gitksan.modals Gitksan.gat ∧
+      ¬ HasDualIn NezPerce.modals NezPerce.oqa ∧
+      ¬ HasDualIn Statimcets.modals Statimcets.ka := by
   decide
 
 /-- (37): ima('a) is read as possibility and as necessity alike. -/
@@ -216,7 +216,7 @@ theorem gitksan_orientation_rows :
       ∀ o ∈ (e.feature? "orientation").bind orientationOf,
         (e.judgment = .acceptable ↔
           e.feature? "prospective" = some "true" ∨
-            ¬ Matthewson2013.RequiresDim Gitksan.Modals.imaa o) := by
+            ¬ Matthewson2013.RequiresDim Gitksan.imaa o) := by
   decide
 
 /-- English marks past orientation, by the perfect under the modal among [condoravdi-2002]'s
@@ -224,7 +224,7 @@ scopings, and Gitksan future orientation, by *dim*: the mirror image of §18.4.3
 theorem marking_mirror :
     (∀ s : Condoravdi2002.Scope, s.orientation = .past ↔ s = .modalPerf) ∧
       ∀ o : TemporalOrientation,
-        Matthewson2013.RequiresDim Gitksan.Modals.imaa o ↔ o = .future := by
+        Matthewson2013.RequiresDim Gitksan.imaa o ↔ o = .future := by
   decide
 
 /-! ### Typology (§18.5) -/
@@ -241,23 +241,23 @@ instance (L : List ModalItem) (D : ModalItem → Prop) [DecidablePred D] :
 /-- The flavour–force correlation: Gitksan and Niuean distinguish force among their
 circumstantial modals and not among their epistemic ones. -/
 theorem force_only_circumstantial :
-    (¬ DistinguishesForce Gitksan.Modals.allExpressions ModalItem.Epistemic ∧
-        DistinguishesForce Gitksan.Modals.allExpressions (¬ ·.Epistemic)) ∧
-      ¬ DistinguishesForce Niuean.Modals.allExpressions ModalItem.Epistemic ∧
-        DistinguishesForce Niuean.Modals.allExpressions (¬ ·.Epistemic) := by
+    (¬ DistinguishesForce Gitksan.modals ModalItem.Epistemic ∧
+        DistinguishesForce Gitksan.modals (¬ ·.Epistemic)) ∧
+      ¬ DistinguishesForce Niuean.modals ModalItem.Epistemic ∧
+        DistinguishesForce Niuean.modals (¬ ·.Epistemic) := by
   decide
 
 /-- Niuean's circumstantial *maeke* and *lata* are duals; its epistemic *liga* has none. -/
 theorem niuean_duals :
-    HasDualIn Niuean.Modals.allExpressions Niuean.Modals.maeke ∧
-      HasDualIn Niuean.Modals.allExpressions Niuean.Modals.lata ∧
-      ¬ HasDualIn Niuean.Modals.allExpressions Niuean.Modals.liga := by
+    HasDualIn Niuean.modals Niuean.maeke ∧
+      HasDualIn Niuean.modals Niuean.lata ∧
+      ¬ HasDualIn Niuean.modals Niuean.liga := by
   decide
 
 /-- [nauze-2008]'s universal holds of the four inventories: every modal varies on one axis. -/
 theorem nauze :
-    ∀ e ∈ Gitksan.Modals.allExpressions ++ Statimcets.Modals.allExpressions ++
-      NezPerce.Modals.allExpressions ++ Niuean.Modals.allExpressions, SingleAxis e.meaning := by
+    ∀ e ∈ Gitksan.modals ++ Statimcets.modals ++
+      NezPerce.modals ++ Niuean.modals, SingleAxis e.meaning := by
   decide
 
 /-- [vander-klok-2013b]'s refinement of the universal: within each domain, epistemic and
@@ -281,8 +281,8 @@ theorem VanderKlok.singleAxis {L : List ModalItem} (h : VanderKlok L) {m : Modal
 
 /-- The four inventories satisfy the refinement. -/
 theorem inventories_vanderKlok :
-    VanderKlok Gitksan.Modals.allExpressions ∧ VanderKlok Statimcets.Modals.allExpressions ∧
-      VanderKlok NezPerce.Modals.allExpressions ∧ VanderKlok Niuean.Modals.allExpressions := by
+    VanderKlok Gitksan.modals ∧ VanderKlok Statimcets.modals ∧
+      VanderKlok NezPerce.modals ∧ VanderKlok Niuean.modals := by
   decide
 
 /-- Table 18.4's hypothetical root system: a deontic modal `x` of either force, a necessity
