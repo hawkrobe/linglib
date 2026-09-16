@@ -3,6 +3,7 @@ import Linglib.Fragments.Slavic.Czech.Determiners
 import Linglib.Semantics.Polarity.CzechNegation
 import Linglib.Semantics.Questions.Bias
 import Linglib.Logic.Modal.Defs
+import Linglib.Studies.Simik2024
 
 /-!
 # Staňková and Šimík (2025): Negation in Czech Polar Questions
@@ -10,7 +11,7 @@ import Linglib.Logic.Modal.Defs
 This file formalizes [stankova-2025]'s analysis of negation in Czech polar questions. The
 negative prefix moves with the finite verb, so verb position fixes the position of negation:
 a clause-initial verb sits above the canonical negation operator and can only be licensed by
-the commitment operator FALSUM of [repp-2013] (`falsum`), while a verb in situ is licensed
+the commitment operator FALSUM of [repp-2013] (`Simik2024.falsum`), while a verb in situ is licensed
 either by the operator or by FALSUM (`mem_availableReadings_iff`). Inner negation licenses
 negative concord items and is tied to negative contextual evidence; FALSUM allows positive
 polarity items and conveys weak epistemic bias, indifferent to contextual evidence; and
@@ -22,9 +23,9 @@ polarity item is felicitous in every context and the negative concord item in no
 need contextual evidence, the concord item negative evidence and the polarity item any
 evidence (`nonV1_nci_iff`, `nonV1_ppi_iff`, `nonV1_neutral_infelicitous`). Czech FALSUM is
 thereby broader than English high negation, felicitous even with positive evidence
-(`falsum_broader_than_english_hiNQ`). The particle *náhodou* is licensed by FALSUM alone, so
-it excludes concord items and needs negation whatever the word order
-(`nahodou_excludes_nci`, `nahodou_requires_negation`), and *copak* needs contextual evidence
+(`falsum_broader_than_english_hiNQ`). The particle *náhodou* is licensed by FALSUM alone
+(`Simik2024.NahodouLicensed`), so it excludes concord items whatever the word order
+(`nahodou_excludes_nci`), and *copak* needs contextual evidence
 matching the question's polarity, against the speaker's prior belief (`copak_requires_bias`,
 `copak_prior_ne_evidence`); the two particles part on context sensitivity
 (`nahodou_copak_opposite`).
@@ -58,23 +59,7 @@ open Czech.Particles (nahodou copak)
 open Czech.Determiners (zadny nejaky)
 open Czech.Negation
 open Question
-
-/-! ### FALSUM -/
-
-section Falsum
-
-variable {W : Type*} (epi conv : W → W → Prop) (cg : W → Set (Set W)) (p : Set W)
-
-/-- The FALSUM operator (the paper's (7)): at every world compatible with the bearer's
-knowledge, at every world compatible with their conversational goals, the proposition is
-not in the common ground. -/
-def falsum : Set W := {w | ∀ w', epi w w' → ∀ w'', conv w' w'' → p ∉ cg w''}
-
-/-- FALSUM is a necessity nested in a necessity. -/
-theorem falsum_eq_box_box :
-    falsum epi conv cg p = ModalLogic.box epi (ModalLogic.box conv λ w => p ∉ cg w) := rfl
-
-end Falsum
+open Simik2024
 
 /-! ### Verb position and the readings of negation -/
 
@@ -218,19 +203,6 @@ theorem falsum_broader_than_english_hiNQ :
 
 /-! ### The particles -/
 
-/-- The polarity of a polar question. -/
-inductive Polarity
-  | positive
-  | negative
-  deriving DecidableEq, Repr, Fintype
-
-/-- *Náhodou* is licensed by FALSUM: it is felicitous with a reading of negation exactly when
-that reading is outer. -/
-def NahodouLicensed (pol : Polarity) (pos : Position) : Prop := pol = .negative ∧ pos = .outer
-
-instance (pol : Polarity) (pos : Position) : Decidable (NahodouLicensed pol pos) := by
-  unfold NahodouLicensed; infer_instance
-
 /-- *Náhodou* excludes the concord item at either verb position: the item needs inner
 negation and the particle needs FALSUM (the paper's (17) and (18)). -/
 theorem nahodou_excludes_nci (wp : VerbPosition) :
@@ -244,22 +216,6 @@ theorem nahodou_ppi (wp : VerbPosition) :
     ∃ pos ∈ wp.availableReadings, licenses pos .ppiOutscoping = true ∧
       NahodouLicensed .negative pos := by
   cases wp <;> decide
-
-/-- *Náhodou* needs negation (the paper's (16)). -/
-theorem nahodou_requires_negation (pos : Position) : ¬ NahodouLicensed .positive pos :=
-  λ h => Polarity.noConfusion h.1
-
-/-- The contextual evidence a *copak* question requires: evidence for the prejacent of a
-positive question, against it for a negative one. -/
-def Polarity.evidence : Polarity → ContextualEvidence
-  | .positive => .forP
-  | .negative => .againstP
-
-/-- The speaker's prior belief a *copak* question conveys: against the prejacent of a
-positive question, for it in a negative one (the paper's (19)). -/
-def Polarity.prior : Polarity → OriginalBias
-  | .positive => .againstP
-  | .negative => .forP
 
 /-- *Copak* is felicitous exactly when the context's evidence matches the question's
 polarity. -/

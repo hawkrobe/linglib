@@ -8,7 +8,8 @@ Russian marks formal polar questions with the second-position enclitic
 *li*, obligatory in subordinated polar questions, while colloquial
 matrix polar questions are marked by intonation alone (and can be used
 rhetorically, [esipova-romero-2023]). The clause-initial mirative
-*razve* is restricted to matrix polar questions ([simik-2024] §4.2.4).
+*razve* is restricted to matrix polar questions ([simik-2024] §4.2.4);
+*neuželi* is its VERUM-only sibling.
 -/
 
 namespace Russian.QuestionParticles
@@ -40,7 +41,13 @@ def razve : Particle where
     | .constituent, .matrix => some .excluded
     | _, _ => none
 
-/-- All Russian question particles indexed in this file. -/
-def allQuestionParticles : List Particle := [li, razve]
+/-- неужели neuželi is the mirative question particle that, unlike *razve*,
+lexicalizes VERUM and so combines with inner negation only
+([repp-geist-2022] as reported by [simik-2024]). -/
+def neuzeli : Particle where
+  form := "neuželi"
+  script := some "неужели"
+  position := some .clauseInitial
+  distribution := razve.distribution
 
 end Russian.QuestionParticles

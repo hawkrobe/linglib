@@ -4,8 +4,9 @@ import Linglib.Syntax.Category.Particle.Basic
 # Slovenian Question Particles
 [simik-2024]
 
-Lexical entry for Slovenian *ali* as a `Particle` value. Layer
-assignment lives in `Simik2024`.
+The Slovenian clause-initial polar question particles: *ali* of the
+default (quiz-felicitous) strategy, and the colloquial *a* and *kaj*,
+which the quiz scenario excludes. Bias profiles live in `Simik2024`.
 
 ## Cross-Module Connections
 
@@ -25,6 +26,20 @@ def ali : Particle where
     | .constituent, .matrix => some .excluded
     | _, _ => none
 
-def allQuestionParticles : List Particle := [ali]
+/-- *a* — colloquial clause-initial PQ particle, neutral yet excluded from
+the quiz scenario ([simik-2024] §4.1). -/
+def a : Particle where
+  form := "a"
+  position := some .clauseInitial
+  distribution := fun c e => match c, e with
+    | .polar, .matrix => some .optional
+    | _, _ => none
+
+/-- *kaj* (lit. 'what') — clause-initial PQ particle excluded from the
+quiz scenario ([simik-2024] §4.1). -/
+def kaj : Particle where
+  form := "kaj"
+  position := some .clauseInitial
+  distribution := a.distribution
 
 end Slovenian.QuestionParticles

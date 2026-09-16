@@ -6,7 +6,7 @@ import Linglib.Syntax.Category.Particle.Basic
 
 Macedonian default polar questions are introduced by clause-initial
 *dali*, which admits negation without inducing bias ([simik-2024]
-ex. 32); the mirative *zar* of the cross-Slavic RAZVE family conveys
+ex. 32), or by the verb-attached *li*; the mirative *zar* of the cross-Slavic RAZVE family conveys
 strong bias and is excluded from neutral questions ([simik-2024] §4.1,
 §4.2.4).
 -/
@@ -24,6 +24,19 @@ def dali : Particle where
     | .constituent, .matrix => some .excluded
     | _, _ => none
 
+/-- ли li is the polar question particle enclitic on the fronted verb, a
+less formal quiz-felicitous strategy whose negated form conveys positive
+epistemic bias ([simik-2024] ex. 32b); reported to convey surprise or a
+negative answer expectation, unlike Bulgarian and Russian *li*
+([simik-2024] §4.2.5). -/
+def li : Particle where
+  form := "li"
+  script := some "ли"
+  position := some .secondPosition
+  distribution := fun c e => match c, e with
+    | .polar, .matrix => some .optional
+    | _, _ => none
+
 /-- зар zar is a mirative/dubitative particle of the cross-Slavic RAZVE
 family. -/
 def zar : Particle where
@@ -35,6 +48,6 @@ def zar : Particle where
     | _, _ => none
 
 /-- All Macedonian question particles indexed in this file. -/
-def allQuestionParticles : List Particle := [dali, zar]
+def allQuestionParticles : List Particle := [dali, li, zar]
 
 end Macedonian.QuestionParticles
