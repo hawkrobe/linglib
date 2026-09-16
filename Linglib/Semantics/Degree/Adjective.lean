@@ -15,6 +15,7 @@ classification, and multidimensional binding ([sassoon-2013]).
 
 * `GradableAdjective` — a syntactic `Adjective` refined with the degree-semantic
   layer; `scaleType`, `standard`, and `adjectiveClass` are derived views.
+* `AntonymPair` — the two polar adjectives of one scale, entered once.
 * `InformationalStrength` — the weak/strong distinction ([alexandropoulou-gotzner-2024b]).
 * `DimensionBindingType` — how a multidimensional adjective binds its dimensions.
 
@@ -181,6 +182,13 @@ inductive EvaluativeValence where
   | neutral
   deriving Repr, DecidableEq
 
+/-- The valence of the opposite pole of an antonym pair: positive and negative swap, neutral
+stays. -/
+def EvaluativeValence.flip : EvaluativeValence → EvaluativeValence
+  | .positive => .negative
+  | .negative => .positive
+  | .neutral => .neutral
+
 /-! ### The gradable adjective -/
 
 /-- Spatial configuration type for adjectives in resultative constructions
@@ -194,7 +202,7 @@ inductive SpatialConfigType where
 
 /-- A **gradable adjective**: the syntactic `Adjective` (`Syntax/Category/Adjective`) refined
     with the degree-**semantic** layer that becomes relevant in this module — the
-    Kennedy `standardOverride`, and the lexical-semantic facets `antonymRelation`,
+    Kennedy `standardOverride`, and the lexical-semantic fields `antonymRelation`,
     resultative `spatialConfigType` ([levin-2026]), and `evaluativeValence`
     ([nouwen-2024]). The scale shape (`scaleType`), positive `standard`, and Kennedy
     `adjectiveClass` are *derived views* below — the fix for the old stored `scaleType`
@@ -251,6 +259,63 @@ instance (g : GradableAdjective) : Decidable g.IsRelative := by
   unfold IsRelative; infer_instance
 
 end GradableAdjective
+
+/-! ### Antonym pairs -/
+
+/-- An **antonym pair**: the positive and the negative polar adjective of one scale, each the
+other's lexical antonym under one relation. The shared data is stored once; the two gradable
+adjectives are `AntonymPair.pos` and `AntonymPair.neg`. -/
+structure AntonymPair where
+  /-- The scale both poles measure on. -/
+  dimension : ScalarDimension
+  /-- The logical relation between the poles. -/
+  relation : AntonymRelation
+  /-- The positive pole's surface form. -/
+  posForm : String
+  /-- The negative pole's surface form. -/
+  negForm : String
+  /-- The positive pole's comparison paradigm. -/
+  posComparison : Adjective.Comparison := .regular
+  /-- The negative pole's comparison paradigm. -/
+  negComparison : Adjective.Comparison := .regular
+  /-- The positive pole's evaluative valence; the negative pole's is its `flip`. -/
+  valence : Option EvaluativeValence := none
+  /-- The resultative spatial-configuration class the poles share. -/
+  spatialConfigType : Option SpatialConfigType := none
+
+namespace AntonymPair
+
+/-- The positive pole. -/
+def pos (p : AntonymPair) : GradableAdjective where
+  form := p.posForm
+  dimension := some p.dimension
+  comparison := p.posComparison
+  antonymForm := some p.negForm
+  antonymRelation := some p.relation
+  evaluativeValence := p.valence
+  spatialConfigType := p.spatialConfigType
+
+/-- The negative pole, measuring on the dual scale. -/
+def neg (p : AntonymPair) : GradableAdjective where
+  form := p.negForm
+  polarity := .negative
+  dimension := some p.dimension
+  comparison := p.negComparison
+  antonymForm := some p.posForm
+  antonymRelation := some p.relation
+  evaluativeValence := p.valence.map EvaluativeValence.flip
+  spatialConfigType := p.spatialConfigType
+
+@[simp] theorem pos_polarity (p : AntonymPair) : p.pos.polarity = .positive := rfl
+
+@[simp] theorem neg_polarity (p : AntonymPair) : p.neg.polarity = .negative := rfl
+
+/-- The poles name each other as antonyms. -/
+@[simp] theorem pos_antonymForm (p : AntonymPair) : p.pos.antonymForm = some p.neg.form := rfl
+
+@[simp] theorem neg_antonymForm (p : AntonymPair) : p.neg.antonymForm = some p.pos.form := rfl
+
+end AntonymPair
 
 /-! ### Multidimensional adjectives ([sassoon-2013]) -/
 
