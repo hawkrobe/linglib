@@ -1,5 +1,4 @@
 import Linglib.Semantics.Quantification.Quantifier
-import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Definiteness.Defs
 import Linglib.Semantics.Definiteness.Maximality
@@ -43,7 +42,6 @@ namespace Definiteness
 open Semantics.Composition (Ty)
 open Quantification (every_sem some_sem)
 open Quantification.Quantifier (Ty.det)
-open Semantics.Composition.TypeShifting (iota)
 open Presupposition
 
 -- ============================================================================
@@ -61,26 +59,6 @@ domain. -/
 structure DiscourseContext (E : Type) where
   /-- Entities currently salient/familiar in discourse -/
   salient : List E
-
--- ============================================================================
--- §2: Bridge to Partee's ι (TypeShifting.iota)
--- ============================================================================
-
-/-- The uniqueness presupposition of a definite description holds iff
-Partee's `iota` succeeds on the same domain and restrictor. Both check
-that `domain.filter restrictor` is a singleton; one returns `Bool` (the
-presupposition flag), the other returns `Option E` (the witness). -/
-theorem definite_presup_iff_iota {E : Type} (domain : List E)
-    (restrictor : E → Prop) :
-    (match domain.filter (fun x => @decide (restrictor x) (Classical.dec _)) with
-     | [_] => true | _ => false) =
-    (iota domain restrictor).isSome := by
-  unfold iota
-  generalize domain.filter (fun x => @decide (restrictor x) (Classical.dec _)) = l
-  match l with
-  | [] => rfl
-  | [_] => rfl
-  | _ :: _ :: _ => rfl
 
 -- ============================================================================
 -- §3: Bridge to every_sem (⟦the⟧ = ⟦every⟧ on singletons)

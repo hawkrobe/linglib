@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Control.Basic
-import Linglib.Semantics.Composition.TypeShifting
+import Linglib.Semantics.Composition.Ty
 import Linglib.Studies.Landau2015
 
 /-!
@@ -49,7 +49,7 @@ being validated on the English inventory rather than derived.
 namespace Landau2024
 
 open Control SetRel
-open Semantics.Composition.TypeShifting (ComplementDenotation)
+open Semantics.Composition (Ty)
 
 /-! ### The trichotomy (41) -/
 
@@ -152,16 +152,16 @@ theorem korean_realizes_postal (j : Jussive) : j.controller = postalChoice j.ori
 
 /-! ### Partial control is confined to attitude complements (36), (37) -/
 
-/-- The semantic layer a tier's complement inhabits ((56), (58)): predicative complements are
+/-- The semantic type of a tier's complement ((56), (58)): predicative complements are
 properties, logophoric ones propositions. -/
-def tierDenotation : Landau2015.Tier → ComplementDenotation
-  | .predicative => .property
-  | .logophoric => .proposition
+def tierTy : Landau2015.Tier → Ty
+  | .predicative => .et
+  | .logophoric => .t
 
 /-- Generalization (72): a lexical subject saturates a property, so exactly the propositional,
 logophoric complements license one, the generalization originating with [grano-2015]. -/
 theorem lexicalSubject_iff_logophoric (t : Landau2015.Tier) :
-    tierDenotation t = .proposition ↔ t = .logophoric := by
+    tierTy t = .t ↔ t = .logophoric := by
   cases t <;> decide
 
 /-- The configuration of (37a), *John managed to gather at 6*: the matrix controller in

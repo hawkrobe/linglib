@@ -1480,7 +1480,6 @@ import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Composition.Scope
 import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Composition.Ty
-import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Composition.Writer
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.Counterfactual

@@ -928,23 +928,24 @@ theorem not_restrictorUpwardMono_most_sem : ¬ RestrictorUpwardMono (most_sem : 
   revert key; decide
 
 /-- `most` over a singleton restrictor is the singleton's scope value. -/
-theorem most_sem_singleton_iff [DecidableEq α] (j : α) (S : α → Prop) : most_sem (fun x => j = x) S ↔ S j := by
-  have h1 : count (fun x => j = x) = 1 := by
+theorem most_sem_singleton_iff [DecidableEq α] (j : α) (S : α → Prop) :
+    most_sem (fun x => x = j) S ↔ S j := by
+  have h1 : count (fun x => x = j) = 1 := by
     unfold count countOn
     exact Finset.card_eq_one.mpr ⟨j, by ext x; simp only [Finset.mem_filter, Finset.mem_univ,
-      true_and, Finset.mem_singleton, eq_comm]⟩
+      true_and, Finset.mem_singleton]⟩
   have h0 : count (fun _ : α => False) = 0 := countOn_eq_zero_iff.mpr fun _ _ h => h
   simp only [most_sem]
-  rw [count_eq_decidable (fun x => j = x ∧ S x), count_eq_decidable (fun x => j = x ∧ ¬ S x)]
+  rw [count_eq_decidable (fun x => x = j ∧ S x), count_eq_decidable (fun x => x = j ∧ ¬ S x)]
   by_cases h : S j
-  · rw [count_congr_iff (P := fun x => j = x ∧ S x) (Q := fun x => j = x)
+  · rw [count_congr_iff (P := fun x => x = j ∧ S x) (Q := fun x => x = j)
         fun x => ⟨And.left, fun hx => ⟨hx, hx ▸ h⟩⟩,
-      count_congr_iff (P := fun x => j = x ∧ ¬ S x) (Q := fun _ => False)
+      count_congr_iff (P := fun x => x = j ∧ ¬ S x) (Q := fun _ => False)
         fun x => ⟨fun ⟨hx, hn⟩ => hn (hx ▸ h), False.elim⟩, h1, h0]
     exact iff_of_true (by decide) h
-  · rw [count_congr_iff (P := fun x => j = x ∧ S x) (Q := fun _ => False)
+  · rw [count_congr_iff (P := fun x => x = j ∧ S x) (Q := fun _ => False)
         fun x => ⟨fun ⟨hx, hs⟩ => h (hx ▸ hs), False.elim⟩,
-      count_congr_iff (P := fun x => j = x ∧ ¬ S x) (Q := fun x => j = x)
+      count_congr_iff (P := fun x => x = j ∧ ¬ S x) (Q := fun x => x = j)
         fun x => ⟨And.left, fun hx => ⟨hx, fun hs => h (hx ▸ hs)⟩⟩, h1, h0]
     exact iff_of_false (by decide) h
 
