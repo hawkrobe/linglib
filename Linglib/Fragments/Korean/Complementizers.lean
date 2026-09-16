@@ -1,45 +1,41 @@
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Category.Complementizer.Basic
 
-open Morphology (Word)
-
 /-!
-# Korean Complementizers and Clause-Embedding Verbs
-[bondarenko-2022] [bogal-allbritten-moulton-2018] [kim-min-joo-2009]
+# Korean complementizers and clause-embedding verbs
 
-Korean embeds clauses three ways ([bondarenko-2022] §4.3.2 ex. 45): a
-bare clause in the declarative ending *-ta* plus the connective *-ko*; a
-*-ta*-clause under the adnominal ending *-nun* and the light noun *kes*
-'thing'; and a bare adnominal clause under *kes*. The three endings are
-root `Complementizer` entries, *kes* a `Word`, and the matrix verbs of
-the thesis's Korean data `Verb` entries. The head assignment *-ta* ⇔
-Cont, *-nun*/*-ko* ⇔ Comp allomorphs (ex. 46) is the thesis's analysis,
-not a field.
+Korean embeds a clause in three ways: a bare clause in the declarative ending *-ta* followed
+by the connective *-ko*; a *-ta*-clause under the adnominal ending *-nun* and the light noun
+*kes* 'thing'; and a bare adnominal clause under *kes*. The three endings are complementizer
+entries, *kes* a word, and the matrix verbs of Bondarenko's Korean data verb entries; her
+assignment of *-ta* to the Cont head and of *-nun* and *-ko* to allomorphs of Comp is the
+matter of `Studies/Bondarenko2022.lean`.
+
+## References
+
+* [bogal-allbritten-moulton-2018]
+* [bondarenko-2022]
 -/
 
 namespace Korean.Complementizers
 
-
-
 /-! ### Clause-typing morphemes -/
 
-/-- *-ta* — the declarative ending, on finite verbs and on bare
-embedded clauses (*ilk-ess-ta-ko*, ex. 45a). -/
+/-- *-ta*, the declarative ending, on finite verbs and on bare embedded clauses
+(*ilk-ess-ta-ko*). -/
 def ta : Complementizer where
   morphs := [.suff "ta"]
   verbForm := some .Fin
   force := some .declarative
 
-/-- *-nun* — the adnominal ending, turning a clause into a noun
-modifier; under *kes* 'thing' it yields nominalized complements
-(ex. 45b–c). -/
+/-- *-nun*, the adnominal ending, which turns a clause into a noun modifier and under *kes*
+'thing' yields a nominalized complement. -/
 def nun : Complementizer where
   morphs := [.suff "nun"]
   verbForm := some .Part
   licenser := some .nominal
 
-/-- *-ko* — the connective ending on bare embedded clauses, adjacent
-to the verb (ex. 45a). -/
+/-- *-ko*, the connective ending on bare embedded clauses, adjacent to the verb. -/
 def ko : Complementizer where
   morphs := [.suff "ko"]
   verbForm := some .Conv
@@ -50,21 +46,19 @@ def complementizers : List Complementizer := [ta, nun, ko]
 
 /-! ### The light noun *kes* -/
 
-/-- *kes* — 'thing', the light noun under adnominal clauses
-([kim-min-joo-2009]). -/
-def kes : Word := { form := "kes", cat := .NOUN }
+/-- *kes* 'thing', the light noun under adnominal clauses. -/
+def kes : Morphology.Word := { form := "kes", cat := .NOUN }
 
 /-! ### Matrix verbs -/
 
-/-- *yukamsulewehay-ta* — 'regret'. Preferential negative, stative
-(ex. 45). -/
+/-- *yukamsulewehay-ta* 'regret', a stative negative preference. -/
 def yukamsulewehayta : Verb where
   form := "yukamsulewehay-ta"
   frames := [Frame.finiteClause]
   attitude := some (.preferential (.degreeComparison .negative))
   vendlerClass := some .state
 
-/-- *mit-ta* — 'believe'. Doxastic non-veridical, stative. -/
+/-- *mit-ta* 'believe', a stative non-veridical doxastic. -/
 def mitta : Verb where
   form := "mit-ta"
   frames := [Frame.finiteClause]
@@ -72,7 +66,7 @@ def mitta : Verb where
   vendlerClass := some .state
   opaqueContext := true
 
-/-- *sayngkakha-ta* — 'think'. Doxastic non-veridical, activity. -/
+/-- *sayngkakha-ta* 'think', a non-veridical doxastic activity. -/
 def sayngkakhata : Verb where
   form := "sayngkakha-ta"
   frames := [Frame.finiteClause]
@@ -80,15 +74,14 @@ def sayngkakhata : Verb where
   vendlerClass := some .activity
   opaqueContext := true
 
-/-- *haysekha-ta* — 'interpret' (§2.5). -/
+/-- *haysekha-ta* 'interpret'. -/
 def haysekhata : Verb where
   form := "haysekha-ta"
   frames := [Frame.finiteClause]
   vendlerClass := some .activity
   opaqueContext := true
 
-/-- *selmyengha-ta* — 'explain', the §4.4.2 Theme-argument verb
-(ex. 106–107). -/
+/-- *selmyengha-ta* 'explain', which takes its clause as a theme argument. -/
 def selmyenghata : Verb where
   form := "selmyengha-ta"
   frames := [Frame.finiteClause]

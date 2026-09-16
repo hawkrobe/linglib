@@ -1,21 +1,17 @@
 import Linglib.Syntax.Comparative
 
 /-!
-# Korean Comparative Construction [stassen-1985]
+# Korean comparison
 
-Korean uses a **separative** comparative construction: the standard NP is
-marked with the postposition *-boda* ('from/than'), which has ablative
-semantics. The adjective appears in its bare form with no comparative
-morphology; the optional adverb *deo* ('more') may intensify.
+Korean compares with the standard marked by the particle *-boda* 'from, than', of separative
+origin, and the adjective in its bare form, with the adverb *deo* 'more' as an optional
+intensifier: *Yenghi-ga Chelswu-boda (deo) khu-ta* 'Yenghi is taller than Chelswu'. It is a
+separative comparative in Stassen's typology, and the superlative is the comparative with a
+universal standard.
 
-Example: *Yenghi-ga Chelswu-boda (deo) khu-da*
-         'Yenghi-NOM Chelswu-than (more) tall-DECL'
-         = 'Yenghi is taller than Chelswu'
+## References
 
-The marker *-boda* is sometimes analyzed as a particle rather than a case
-marker, but its ablative/separative semantics ('from the point of view of')
-places Korean firmly in the separative class in [stassen-1985]'s
-typology.
+* [stassen-1985]
 -/
 
 namespace Korean.Comparison

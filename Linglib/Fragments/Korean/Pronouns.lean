@@ -1,128 +1,90 @@
-/-
-# Korean pronouns and speech-style particles
-[kwon-lee-2026] [sohn-1999]
-
-Personal pronouns of Korean and its sentence-final speech-style particles
-(*-yo* polite, *-(su)pnida* formal), which encode the speaker–addressee
-relation and the formality of the discourse and are confined to root clauses
-([alok-bhalla-2026] (8), (13)). The first person has a plain/humble contrast
-(*na* / *jeo*).
-
-## 3rd-Person Reference
-
-Korean is discourse-oriented: the unmarked 3rd-person reference is **null**
-(*pro*). The 3rd-person pronoun system splits by register, with a strong
-written/spoken asymmetry (corpus counts from Lee et al. 2010 cited in
-[kwon-lee-2026] fn. 2):
-
-* *geu* (그) — literary 3sg masculine. 76,235 tokens in written vs only
-  145 in oral data. Yale romanization: *ku*.
-* *geunyeo* (그녀) — literary 3sg feminine. 25,085 written vs 9 oral.
-  Compound of *ku* ('that') + *nye* ('female'); developed under Western
-  influence in the early 20th century. Yale romanization: *kunye*.
-* *gyae* (걔) — colloquial gender-neutral 3sg. The reverse pattern: 1,160
-  oral tokens vs 226 written. Contracted from *ku ay* ('that' + contracted
-  *ai* 'child'). Implies the speaker has familiarity with the referent
-  ([kwon-lee-2026] §5). Yale romanization: *kyay* (used in
-  [kwon-lee-2026]).
-
-Traditional Korean relies on null reference, demonstratives, and full
-NPs (e.g., *ku chinkwu* 'that friend'). Per [kwon-lee-2026],
-the three form types null *pro*, overt *gyae*, and demonstrative+noun
-full NPs instantiate three points on [ariel-2001]'s Accessibility
-Marking Scale.
-
-## Romanization
-
-This file uses **Revised Romanization** for `form` fields (consistent
-with other entries: *na*, *neo*, *geu*). Yale romanizations (used in
-much of the linguistics literature) appear in docstrings only.
-
--/
-
 import Linglib.Syntax.Category.Pronoun.Basic
+
+/-!
+# Korean pronouns and speech-style particles
+
+Korean is discourse-oriented, and the unmarked reference to a third party is a null pronoun,
+a demonstrative or a full noun phrase such as *geu chingu* 'that friend'. The overt pronouns
+divide by register: the first person has the plain *na* and the humble *jeo*, the second the
+plain *neo* and the polite *dangsin*; in the third person *geu*, *geunyeo* and the plural
+*geudeul* belong to the written language, *geunyeo* a compound of *geu* 'that' and *nyeo*
+'female' formed under Western influence, while the colloquial *gyae*, contracted from *geu ai*
+'that child', is neutral for gender and implies familiarity with the referent, as Kwon and Lee
+describe. The sentence-final speech-style particles *-yo* and *-(su)pnida* encode the
+formality of the speaker's relation to the addressee and occur in root clauses only. Forms are
+in the Revised Romanization; the Yale forms *ku*, *kunye*, *kyay* appear in the literature.
+
+## Main definitions
+
+* `Korean.Pronouns.pronouns` — the personal pronouns
+* `Korean.Pronouns.allocutiveParticles` — the speech-style particles
+
+## References
+
+* [alok-bhalla-2026]
+* [kwon-lee-2026]
+* [sohn-1999]
+-/
 
 namespace Korean.Pronouns
 
 open Pronoun
 
--- ============================================================================
--- First Person
--- ============================================================================
-
-/-- 나 *na* — 1sg plain. -/
+/-- The plain first person *na*. -/
 def na : PersonalPronoun :=
   { form := "na", script := some "나", person := some .first, number := some .singular,
     register := .informal }
 
-/-- 저 *jeo* — 1sg humble. -/
+/-- The humble first person *jeo*. -/
 def jeo : PersonalPronoun :=
   { form := "jeo", script := some "저", person := some .first, number := some .singular,
     register := .formal }
 
-/-- 우리 *uri* — 1pl. -/
+/-- The first person plural *uri*. -/
 def uri : PersonalPronoun :=
   { form := "uri", script := some "우리", person := some .first, number := some .plural }
 
--- ============================================================================
--- Second Person (T/V)
--- ============================================================================
-
-/-- 너 *neo* — 2sg plain. -/
+/-- The plain second person *neo*. -/
 def neo : PersonalPronoun :=
   { form := "neo", script := some "너", person := some .second, number := some .singular,
     register := .informal }
 
-/-- 당신 *dangsin* — 2sg polite. -/
+/-- The polite second person *dangsin*. -/
 def dangsin : PersonalPronoun :=
   { form := "dangsin", script := some "당신", person := some .second, number := some .singular,
     register := .formal }
 
--- ============================================================================
--- Third Person
--- ============================================================================
-
-/-- 그 *geu* (Yale: *ku*) — 3sg masculine, **literary** register.
-    76,235 written vs 145 oral tokens ([kwon-lee-2026] fn. 2). -/
+/-- The written-language masculine third person *geu*. -/
 def geu : PersonalPronoun :=
-  { form := "geu", script := some "그", person := some .third, number := some .singular
-  , gender := some .masculine, register := .formal }
+  { form := "geu", script := some "그", person := some .third, number := some .singular,
+    gender := some .masculine, register := .formal }
 
-/-- 그녀 *geunyeo* (Yale: *kunye*) — 3sg feminine, **literary** register.
-    Compound of *ku* ('that') + *nye* ('female'). 25,085 written vs
-    9 oral tokens ([kwon-lee-2026] fn. 2). -/
+/-- The written-language feminine third person *geunyeo*. -/
 def geunyeo : PersonalPronoun :=
-  { form := "geunyeo", script := some "그녀", person := some .third, number := some .singular
-  , gender := some .feminine, register := .formal }
+  { form := "geunyeo", script := some "그녀", person := some .third, number := some .singular,
+    gender := some .feminine, register := .formal }
 
-/-- 걔 *gyae* (Yale: *kyay*) — 3sg gender-neutral, **colloquial** pronoun.
-    Contracted from *ku ay* ('that' + contracted *ai* 'child'). 1,160
-    oral vs 226 written tokens — the reverse register pattern of
-    *geu*/*geunyeo*. Implies familiarity between speaker and referent
-    ([kwon-lee-2026] §5). The overt-pronoun referential form
-    tested in [kwon-lee-2026]'s experiments. -/
+/-- The colloquial third person *gyae*, neutral for gender. -/
 def gyae : PersonalPronoun :=
-  { form := "gyae", script := some "걔", person := some .third, number := some .singular
-  , register := .informal }
+  { form := "gyae", script := some "걔", person := some .third, number := some .singular,
+    register := .informal }
 
-/-- 그들 *geudeul* — 3pl. Plural of *geu*; literary in register
-    (the colloquial plural is the proximal demonstrative + *ai-tul*). -/
+/-- The written-language third person plural *geudeul*. -/
 def geudeul : PersonalPronoun :=
-  { form := "geudeul", script := some "그들", person := some .third, number := some .plural
-  , register := .formal }
+  { form := "geudeul", script := some "그들", person := some .third, number := some .plural,
+    register := .formal }
 
-/-- The pronoun inventory: the literary third-person forms *geu*, *geunyeo*,
-    *geudeul* and the colloquial *gyae* (Yale *ku*, *kunye*, *kutul*, *kyay*). -/
-def pronouns : List PersonalPronoun :=
-  [na, jeo, uri, neo, dangsin, geu, geunyeo, geudeul, gyae]
+/-- The personal pronouns. -/
+def pronouns : Finset PersonalPronoun :=
+  {na, jeo, uri, neo, dangsin, geu, geunyeo, gyae, geudeul}
 
-/-- *-yo* — the polite speech-style particle. -/
+/-- The polite speech-style particle *-yo*. -/
 def yo : AllocutiveEntry := { form := "-yo", register := .neutral, gloss := "POL" }
 
-/-- *-(su)pnida* — the formal speech-style particle. -/
+/-- The formal speech-style particle *-(su)pnida*. -/
 def supnida : AllocutiveEntry := { form := "-(su)pnida", register := .formal, gloss := "FORM" }
 
-/-- The speech-style particles recorded here. -/
+/-- The speech-style particles. -/
 def allocutiveParticles : List AllocutiveEntry := [yo, supnida]
 
 end Korean.Pronouns

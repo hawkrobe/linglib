@@ -1,27 +1,31 @@
 import Linglib.Semantics.Polarity.Licensing
 
 /-!
-# Korean Polarity-Sensitive Items
-[haspelmath-1997]
+# Korean polarity items
 
-Korean indefinite pronoun polarity items, typed by the categories from
-`Polarity`.
+Korean builds its indefinites on the interrogative pronouns, as Japanese does: bare *nwukwu*
+'who' is an indefinite in questions and conditionals; *nwukwu-to*, with the additive particle
+*-to*, is the negative indefinite of *nwukwu-to an wass-ta* 'nobody came', which needs
+clausemate negation, the counterpart of Japanese *dare-mo*; and *nwukwu-na*, whose *-na* is
+the adversative mood of the copula and also means 'or', is the free-choice item of
+*nwukwu-na hal su issta* 'anyone can do it'.
 
-Korean, like Japanese, builds polarity items from wh-words + particles:
-- **nwukwu** (bare): Weak NPI in non-interrogative uses
-- **nwukwu-to** (with clausemate negation): wh + to → 'nobody'
-- **nwukwu-na**: wh + na → FCI (anyone)
+## Main results
+
+* `Korean.PolarityItems.nwukwuTo_licensing_characterized`,
+  `Korean.PolarityItems.korean_licensing_sound` — the predicted and attested licensing
+  environments of the items agree
+
+## References
+
+* [haspelmath-1997]
 -/
 
 namespace Korean.PolarityItems
 
 open Polarity
 
-/-! ### NPIs -/
-
-/-- *nwukwu* (누구, bare) — Weak NPI.
-    Bare wh-word as indefinite in non-interrogative non-specific contexts
-    (conditionals, irrealis). -/
+/-- Bare *nwukwu* 'who', an indefinite in questions and conditionals. -/
 def nwukwu : Item :=
   { form := "nwukwu (누구)"
   , licensor := some .weak
@@ -29,10 +33,8 @@ def nwukwu : Item :=
   , licensingContexts := [.question, .conditionalAntecedent]
   , scalarDirection := some .strengthening }
 
-/-- *nwukwu-to* (누구도, with clausemate negation) — n-word: *nwukwu-to an
-    wass-ta* 'nobody came'. wh + the additive/'even' particle *-to*, requiring
-    clausemate negation — the strict-negative-concord parallel of Japanese
-    *dare-mo* (see `Japanese.PolarityItems.dareMo`). -/
+/-- *nwukwu-to* 'nobody' under clausemate negation, the interrogative with the additive
+particle. -/
 def nwukwuTo : Item :=
   { form := "nwukwu-to (누구도, neg)"
   , licensor := some .antiMorphic
@@ -41,35 +43,22 @@ def nwukwuTo : Item :=
   , scalarDirection := some .strengthening
   , morphology := .indefPlusEven }
 
-/-! ### FCI -/
-
-/-- *nwukwu-na* (누구나) — Free choice item.
-    wh + na: 'nwukwu-na hal su issda' (anyone can do it). The suffix *-na*
-    derives from the adversative mood of *i-* 'be' ('whoever it may be')
-    and also means 'or' ([haspelmath-1997] A.39.2) — an 'it may be'-type
-    source, not an additive/'even' particle, so `morphology` stays
-    `.plain` (the enum lacks a disjunctive-source case). -/
+/-- *nwukwu-na* 'anyone', the free-choice item; *-na* is not an additive particle, so the
+morphology is plain. -/
 def nwukwuNa : Item :=
   { form := "nwukwu-na (누구나)"
   , freeChoice := true
   , baseForce := .existential
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
 
-/-! ### Verification -/
-
-/-- The licensing keystone characterizes *nwukwu-to* exactly: as an n-word it
-    requires an anti-morphic licensor, and clausal negation is the only such
-    row — predicted distribution and attested list coincide. -/
+/-- *Nwukwu-to* needs an anti-morphic licensor, and clausal negation is the only such
+environment: predicted and attested distributions coincide. -/
 theorem nwukwuTo_licensing_characterized :
     ∀ c, c.licenses nwukwuTo ↔ c ∈ nwukwuTo.licensingContexts := by decide
 
-/-- Every attested context of every Korean entry is predicted licensed. -/
+/-- Every attested environment of every item is predicted licensed. -/
 theorem korean_licensing_sound :
     ∀ e ∈ [nwukwu, nwukwuTo, nwukwuNa], ∀ c ∈ e.licensingContexts,
       c.licenses e := by decide
-
-theorem korean_npis_strengthening :
-    [nwukwu, nwukwuTo].all
-      (λ e => e.scalarDirection == some .strengthening) = true := by decide
 
 end Korean.PolarityItems

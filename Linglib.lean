@@ -917,7 +917,6 @@ import Linglib.Fragments.Kannada.Coordination
 import Linglib.Fragments.Kannada.Indefinites
 import Linglib.Fragments.Kashaya.Evidentiality
 import Linglib.Fragments.Kawapanan.Shawi.Basic
-import Linglib.Fragments.Korean.Adposition
 import Linglib.Fragments.Korean.Case
 import Linglib.Fragments.Korean.Comparison
 import Linglib.Fragments.Korean.Complementizers
@@ -931,7 +930,6 @@ import Linglib.Fragments.Korean.PolarityItems
 import Linglib.Fragments.Korean.Predicates
 import Linglib.Fragments.Korean.Pronouns
 import Linglib.Fragments.Korean.Relativization
-import Linglib.Fragments.Korean.WordOrder
 import Linglib.Fragments.Koryak.Modals
 import Linglib.Fragments.Laal.Prosody
 import Linglib.Fragments.Lakhota.Determiners
