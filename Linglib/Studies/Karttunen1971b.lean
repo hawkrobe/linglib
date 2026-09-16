@@ -62,7 +62,7 @@ every factive, (11), and that its possibility does so for a true factive only, (
 def _root_.Factivity.Yields : Factivity → Available → Prop
   | _, .sentence => True
   | _, .negation => True
-  | .emotive, .possibility => True
+  | .full, .possibility => True
   | .semi, .possibility => False
 
 instance (c : Factivity) (a : Available) : Decidable (c.Yields a) := by
@@ -75,7 +75,7 @@ instance (c : Factivity) (e : Environment) : Decidable (Projects c e) :=
   inferInstanceAs (Decidable (c.Yields e.available))
 
 /-- A true factive's complement follows in every environment. -/
-theorem projects_emotive (e : Environment) : Projects .emotive e := by
+theorem projects_full (e : Environment) : Projects .full e := by
   cases e <;> trivial
 
 /-- A semi-factive's complement follows exactly from the sentence or its negation. -/

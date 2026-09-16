@@ -30,17 +30,20 @@ of the RSA model of [scontras-tonhauser-2025]
 (`Studies/GroveWhite2025.lean`).
 
 `Factivity` is [karttunen-1971b]'s split of the factive predicates into the
-true factives, the emotives *regret* and *be glad*, and the semi-factives
-*know*, *discover* and *realize*, whose presupposition is cancelled in the
-first person under a question or a conditional antecedent. Lexical entries
-record it on `Verb.Presupposition.factivity`.
+true factives, *regret*, *forget* and *resent* among them, whose complement
+follows even from the possibility of the sentence, and the semi-factives
+*know*, *discover* and *realize*, whose complement follows from the sentence
+and its negation only. Lexical entries record it on
+`Verb.Presupposition.factivity`.
 -/
 
-/-- The factivity class of a predicate ([karttunen-1971b]): an emotive true factive such as
-*regret*, or a semi-factive such as *know* and *discover*, whose presupposition is cancelled
-in the first person under a question or a conditional antecedent. -/
+/-- The factivity class of a predicate ([karttunen-1971b]). -/
 inductive Factivity where
-  | emotive
+  /-- A true factive such as *regret* or *forget*: the complement follows even from the
+  possibility of the sentence. -/
+  | full
+  /-- A semi-factive such as *know* or *discover*: the complement follows from the sentence and
+  its negation only. -/
   | semi
   deriving DecidableEq, Repr
 

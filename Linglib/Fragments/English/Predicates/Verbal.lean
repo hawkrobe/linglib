@@ -302,6 +302,7 @@ def see : VerbEntry where
   subjectEntailments := some perception.subjectProfile
   vendlerClass := some .state
   attitude := some (.doxastic .veridical)
+  factivity := some .semi
   levinClass := some .see
 
 -- ════════════════════════════════════════════════════
@@ -335,7 +336,7 @@ def regret : VerbEntry where
   passivizable := false
   projectionBehavior := some .hole
   attitude := some (.preferential (.degreeComparison .negative))
-  factivity := some .emotive
+  factivity := some .full
 
 /-- "realize" — factive, presupposes complement is true -/
 def realize : VerbEntry := .mkRegular {
@@ -1268,6 +1269,7 @@ def reveal : VerbEntry := .mkRegular {
   speechActVerb := true
   vendlerClass := some .achievement
   attitude := some (.doxastic .veridical)
+  factivity := some .full
   levinClass := some .say }
 
 /-- "acknowledge" — optionally factive communication verb -/
@@ -1562,6 +1564,7 @@ def remember_rog : VerbEntry := .mkRegular {
   vendlerClass := some .state
   passivizable := false
   attitude := some (.doxastic .veridical)
+  factivity := some .semi
   senseTag := .rogative }
 
 /-- "forget" in factive/question-embedding sense. -/
@@ -1575,6 +1578,7 @@ def forget_rog : VerbEntry where
   vendlerClass := some .state
   passivizable := false
   attitude := some (.doxastic .veridical)
+  factivity := some .full
   senseTag := .rogative
 
 -- ════════════════════════════════════════════════════

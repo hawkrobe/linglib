@@ -58,7 +58,7 @@ verbs select SAP, opaque question-taking verbs PerspP, other question-taking
 verbs CP. -/
 def deriveSelectionClass (v : VerbEntry) : SelectionClass :=
   if v.complementType != .question && !v.takesQuestionBase then .uninterrogative
-  else if v.factivePresup then .responsive
+  else if v.IsFactive then .responsive
   else match v.attitude with
   | some (.doxastic .nonVeridical) => .uninterrogative
   | _ =>

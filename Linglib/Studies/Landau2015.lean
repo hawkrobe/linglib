@@ -175,7 +175,7 @@ def derivedLandauClass (v : Verb) : Option PredicateClass :=
   if v.cosType.isSome then some .aspectual
   else if v.implicative.isSome then some .implicative
   else if v.causative.isSome then some .implicative
-  else if v.factivePresup then some .factive
+  else if v.IsFactive then some .factive
   else if v.takesQuestionBase && v.attitude.isNone then some .interrogative
   else match v.attitude with
     | some (.doxastic _)     => some .propositional
@@ -189,7 +189,7 @@ def derivedControlTier (v : Verb) : Option Tier :=
   else match derivedLandauClass v with
     | some cls => some cls.tier
     | none =>
-      if v.attitude.isSome || v.factivePresup || v.takesQuestionBase
+      if v.attitude.isSome || decide v.IsFactive || v.takesQuestionBase
       then some .logophoric
       else some .predicative
 

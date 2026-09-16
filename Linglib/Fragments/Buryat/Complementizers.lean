@@ -96,6 +96,7 @@ def medexe : Verb where
   form := "mɘdɘxɘ"
   frames := [Frame.finiteClause, Frame.gerund, Frame.question]
   attitude := some (.doxastic .veridical)
+  factivity := some .semi
 
 /-- *xɘlɘxɘ* 'say' — non-factive with bare CPs; nominalized complements
 are existence-entailing (ex. 51; speaker variation per fn. 30). -/

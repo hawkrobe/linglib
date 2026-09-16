@@ -48,7 +48,7 @@ def liloy : Verb where
   frames := [Frame.finiteClause]
   predicateClass := .commentative
   attitude := some (.preferential (.degreeComparison .positive))
-  factivity := some .emotive
+  factivity := some .full
 
 /-- *’etqew* 'be sad' (27b). -/
 def etqew : Verb where
@@ -56,14 +56,14 @@ def etqew : Verb where
   frames := [Frame.finiteClause]
   predicateClass := .commentative
   attitude := some (.preferential (.degreeComparison .negative))
-  factivity := some .emotive
+  factivity := some .full
 
 /-- *cicwaay* 'be surprised' ((27c), (28b)). -/
 def cicwaay : Verb where
   form := "cicwaay"
   frames := [Frame.finiteClause]
   predicateClass := .commentative
-  factivity := some .emotive
+  factivity := some .full
 
 /-- *’eey’s* 'be joyful', which takes no noun-phrase object ((27e), (41)). -/
 def eeys : Verb where
@@ -71,7 +71,7 @@ def eeys : Verb where
   frames := [Frame.finiteClause]
   predicateClass := .commentative
   attitude := some (.preferential (.degreeComparison .positive))
-  factivity := some .emotive
+  factivity := some .full
 
 /-- *q’eese’* 'be bothered, unhappy' (27e). -/
 def qeese : Verb where
@@ -79,7 +79,7 @@ def qeese : Verb where
   frames := [Frame.finiteClause]
   predicateClass := .commentative
   attitude := some (.preferential (.degreeComparison .negative))
-  factivity := some .emotive
+  factivity := some .full
 
 /-- *tim’neeneki* 'be worried', whose complement projects under negation ((27e), (34)). -/
 def timneneki : Verb where
@@ -87,7 +87,7 @@ def timneneki : Verb where
   frames := [Frame.finiteClause]
   predicateClass := .commentative
   attitude := some (.preferential .uncertaintyBased)
-  factivity := some .emotive
+  factivity := some .full
 
 /-- *timiipni* 'remember', a cognitive factive with the relative edge (27d). -/
 def timiipni : Verb where

@@ -86,6 +86,7 @@ def ksero : Verb where
   form := "kséro"
   frames := [Frame.finiteClause]
   attitude := some (.doxastic .veridical)
+  factivity := some .semi
   vendlerClass := some .state
 
 /-- *katalavéno* (καταλαβαίνω) 'understand' — eventive (allows
@@ -95,6 +96,7 @@ def katalaveno : Verb where
   form := "katalavéno"
   frames := [Frame.finiteClause]
   attitude := some (.doxastic .veridical)
+  factivity := some .semi
   vendlerClass := some .achievement
 
 /-- *sinidhitopió* (συνειδητοποιώ) 'realize' — eventive (achievement),
@@ -103,6 +105,7 @@ def sinidhitopio : Verb where
   form := "sinidhitopió"
   frames := [Frame.finiteClause]
   attitude := some (.doxastic .veridical)
+  factivity := some .semi
   vendlerClass := some .achievement
 
 /-- *eksigó* (εξηγώ) 'explain' — accomplishment, takes *oti*
@@ -157,6 +160,7 @@ def thimame : Verb where
   form := "thimáme"
   frames := [Frame.finiteClause]
   attitude := some (.doxastic .veridical)
+  factivity := some .semi
   vendlerClass := some .achievement
 
 /-- *thimáme* — stative direct-perception recollection sense
@@ -168,6 +172,7 @@ def thimameStat : Verb where
   frames := [Frame.finiteClause]
   senseTag := .stative
   attitude := some (.doxastic .veridical)
+  factivity := some .semi
   vendlerClass := some .state
 
 /-- *thimóno* (θυμώνω) 'get angry' — eventive (achievement) sense, the
@@ -212,6 +217,7 @@ def antilamvanome : Verb where
   form := "antilamvánome"
   frames := [Frame.finiteClause]
   attitude := some (.doxastic .veridical)
+  factivity := some .semi
   vendlerClass := some .achievement
 
 /-- *anisixó* (ανησυχώ) 'worry' — preferential (negative valence) experiencer verb,

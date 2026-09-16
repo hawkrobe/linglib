@@ -69,14 +69,15 @@ def sazhaljavam : Verb where
   frames := emotiveFrames
   predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .negative))
-  factivity := some .emotive
+  factivity := some .full
 
 /-- *vinoven săm* 'be one's fault' ((57b)). -/
 def vinovenSam : Verb where
   form := "vinoven săm"
   frames := emotiveFrames
   predicateClass := some .commentative
-  factivity := some .emotive
+  attitude := some (.preferential (.degreeComparison .negative))
+  factivity := some .full
 
 /-- *jad me e* 'be sorry, regret' ((56b)). -/
 def jadMeE : Verb where
@@ -84,7 +85,7 @@ def jadMeE : Verb where
   frames := emotiveFrames
   predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .negative))
-  factivity := some .emotive
+  factivity := some .full
 
 /-- *radvam se* 'be happy'. -/
 def radvamSe : Verb where
@@ -92,7 +93,7 @@ def radvamSe : Verb where
   frames := emotiveFrames
   predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .positive))
-  factivity := some .emotive
+  factivity := some .full
 
 /-- *nedovolstvam* 'be dissatisfied'. -/
 def nedovolstvam : Verb where
@@ -100,7 +101,7 @@ def nedovolstvam : Verb where
   frames := emotiveFrames
   predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .negative))
-  factivity := some .emotive
+  factivity := some .full
 
 /-- *pritesnjavam se* 'worry'. -/
 def pritesnjavamSe : Verb where
@@ -108,7 +109,7 @@ def pritesnjavamSe : Verb where
   frames := emotiveFrames
   predicateClass := some .commentative
   attitude := some (.preferential .uncertaintyBased)
-  factivity := some .emotive
+  factivity := some .full
 
 /-- *žal mi e* 'be sorry'. -/
 def zhalMiE : Verb where
@@ -116,7 +117,7 @@ def zhalMiE : Verb where
   frames := emotiveFrames
   predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .negative))
-  factivity := some .emotive
+  factivity := some .full
 
 /-- *măčno mi e* 'be sad'. -/
 def machnoMiE : Verb where
@@ -124,7 +125,7 @@ def machnoMiE : Verb where
   frames := emotiveFrames
   predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .negative))
-  factivity := some .emotive
+  factivity := some .full
 
 /-- *sram me e* 'feel ashamed'. -/
 def sramMeE : Verb where
@@ -132,7 +133,7 @@ def sramMeE : Verb where
   frames := emotiveFrames
   predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .negative))
-  factivity := some .emotive
+  factivity := some .full
 
 /-- *văzmuštavam se* 'resent', emotive and factive but without a *za* phrase ((58a)). -/
 def vazmushtavamSe : Verb where
@@ -140,7 +141,7 @@ def vazmushtavamSe : Verb where
   frames := [Frame.finiteClause]
   predicateClass := some .commentative
   attitude := some (.preferential (.degreeComparison .negative))
-  factivity := some .emotive
+  factivity := some .full
 
 /-- *razbiram* 'comprehend', a transitive factive on Kiparsky and Kiparsky's list. -/
 def razbiram : Verb where
@@ -148,6 +149,7 @@ def razbiram : Verb where
   frames := [Frame.finiteClause]
   predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
+  factivity := some .full
 
 /-- *vzemam predvid* 'take into account', printed *previd* in the paper. -/
 def vzemamPredvid : Verb where
@@ -155,6 +157,7 @@ def vzemamPredvid : Verb where
   frames := [Frame.finiteClause]
   predicateClass := none
   attitude := some (.doxastic .veridical)
+  factivity := some .full
 
 /-- *imam predvid* 'bear in mind'. -/
 def imamPredvid : Verb where
@@ -162,6 +165,7 @@ def imamPredvid : Verb where
   frames := [Frame.finiteClause]
   predicateClass := none
   attitude := some (.doxastic .veridical)
+  factivity := some .full
 
 /-- *prenebregvam* 'ignore'. -/
 def prenebregvam : Verb where
@@ -169,6 +173,7 @@ def prenebregvam : Verb where
   frames := [Frame.finiteClause]
   predicateClass := none
   attitude := some (.doxastic .veridical)
+  factivity := some .full
 
 /-- *griža se* 'take care'. -/
 def grizhaSe : Verb where
@@ -176,6 +181,7 @@ def grizhaSe : Verb where
   frames := [Frame.finiteClause]
   predicateClass := none
   attitude := some (.doxastic .veridical)
+  factivity := some .full
 
 /-- *znaja* 'know', a semi-factive. -/
 def znaja : Verb where

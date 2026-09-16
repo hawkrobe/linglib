@@ -3,10 +3,9 @@ import Linglib.Semantics.Root.Defs
 
 /-! # Verb entry — derived API
 
-Classification accessors DERIVED from the primitive `Verb` fields:
-unaccusativity from voice, veridicality from the attitude builder, presupposition
-status from event structure, theta-role linking, and so on. Verb classification
-is computed here, not stipulated as enum fields on `Verb`.
+The classifications of a verb entry, read off its primitive fields rather than stored:
+unaccusativity from voice, veridicality from the attitude, factivity from the factivity class,
+trigger status from event structure, and the linking of the external argument.
 -/
 
 open Aspect
@@ -62,33 +61,44 @@ def Verb.effectiveSubjectEntailments (v : Verb) : Option EntailmentProfile :=
 def Verb.effectiveObjectEntailments (v : Verb) : Option EntailmentProfile :=
   v.objectEntailments <|> v.levinClass.bind (·.objectProfile)
 
-/-- Veridicality is DERIVED from the attitude builder -/
+/-- The veridicality of the verb's attitude, if it has one. -/
 def Verb.veridicality (v : Verb) : Option Doxastic.Veridicality :=
   v.attitude.map (·.veridicality)
 
-/-- Is this verb a doxastic attitude? -/
-def Verb.isDoxastic (v : Verb) : Bool :=
-  v.attitude.map (·.isDoxastic) |>.getD false
+/-- The verb is a doxastic attitude. -/
+def Verb.IsDoxastic (v : Verb) : Prop :=
+  match v.attitude with
+  | some (.doxastic _) => True
+  | _ => False
 
-/-- Is this verb a preferential attitude? -/
-def Verb.isPreferential (v : Verb) : Bool :=
-  v.attitude.map (·.isPreferential) |>.getD false
+instance : DecidablePred Verb.IsDoxastic := fun v ↦ by
+  unfold Verb.IsDoxastic; split <;> infer_instance
 
-/-- Valence is DERIVED from the attitude builder (for preferential attitudes) -/
+/-- The verb is a preferential attitude. -/
+def Verb.IsPreferential (v : Verb) : Prop :=
+  match v.attitude with
+  | some (.preferential _) => True
+  | _ => False
+
+instance : DecidablePred Verb.IsPreferential := fun v ↦ by
+  unfold Verb.IsPreferential; split <;> infer_instance
+
+/-- The valence of the verb's preferential attitude, if it has one. -/
 def Verb.preferentialValence (v : Verb) : Option Preferential.Valence :=
   v.attitude.bind (·.valence)
 
-/-- Does this verb presuppose its complement via factivity? True iff it carries a
-    [karttunen-1971b] factivity class or is doxastic veridical. -/
-def Verb.factivePresup (v : Verb) : Bool :=
-  v.factivity.isSome ||
-    match v.attitude with
-    | some (.doxastic .veridical) => true
-    | _ => false
+/-- The verb is factive: it carries a [karttunen-1971b] factivity class. Veridicality is an
+    entailment and does not make a verb factive. -/
+def Verb.IsFactive (v : Verb) : Prop := v.factivity ≠ none
 
-/-- Does this verb presuppose its complement? -/
-def Verb.presupposesComplement (v : Verb) : Bool :=
-  v.factivePresup || v.cosType.isSome
+instance : DecidablePred Verb.IsFactive := fun v ↦
+  inferInstanceAs (Decidable (v.factivity ≠ none))
+
+/-- The verb presupposes its complement, by factivity or as a change of state. -/
+def Verb.PresupposesComplement (v : Verb) : Prop := v.IsFactive ∨ v.cosType ≠ none
+
+instance : DecidablePred Verb.PresupposesComplement := fun v ↦
+  inferInstanceAs (Decidable (v.IsFactive ∨ v.cosType ≠ none))
 
 /-- The kind of presupposition trigger a verb is, derived from its event structure rather than
     stipulated ([roberts-simons-2024]): a verb that presupposes its complement, by factivity or
@@ -97,18 +107,22 @@ def Verb.presupposesComplement (v : Verb) : Bool :=
     ([solstad-bott-2024]). The soft/hard distinction is not operationalized, so `.softTrigger`
     is the placeholder for the first and third. -/
 def Verb.triggerType (v : Verb) : Option Presupposition.TriggerType :=
-  if v.presupposesComplement then some .softTrigger
+  if v.PresupposesComplement then some .softTrigger
   else if v.implicative.isSome then some .prerequisiteSoft
   else if v.senseTag = .occasion then some .softTrigger
   else none
 
-/-- Is this verb a presupposition trigger? -/
-def Verb.isTrigger (v : Verb) : Bool :=
-  v.triggerType.isSome
+/-- The verb is a presupposition trigger. -/
+def Verb.IsTrigger (v : Verb) : Prop := v.triggerType ≠ none
 
-/-- Is this verb a causative? DERIVED from causative field. -/
-def Verb.isCausative (v : Verb) : Bool :=
-  v.causative.isSome
+instance : DecidablePred Verb.IsTrigger := fun v ↦
+  inferInstanceAs (Decidable (v.triggerType ≠ none))
+
+/-- The verb is a causative. -/
+def Verb.IsCausative (v : Verb) : Prop := v.causative ≠ none
+
+instance : DecidablePred Verb.IsCausative := fun v ↦
+  inferInstanceAs (Decidable (v.causative ≠ none))
 
 /-- Does this causative verb assert sufficiency (like "make")?
 
@@ -143,7 +157,7 @@ def Verb.predictedSubjectTheta (v : Verb) : Option ThetaRole :=
   else if v.levinClass == some .weather then none
   else if v.causalSource.isSome then some .stimulus
   else if v.attitude.isSome then some .experiencer
-  else if v.factivePresup && v.attitude.isNone then some .experiencer
+  else if v.IsFactive ∧ v.attitude.isNone then some .experiencer
   else if v.senseTag == .occasion then some .experiencer
   else if v.levinClass == some .flinch then some .experiencer
   else if v.levinClass == some .learn then some .experiencer
@@ -174,10 +188,6 @@ def Verb.isENTrigger (v : Verb) : Bool :=
   -- STOP/PREVENT: causative prevent verbs
   (v.causative == some .prevent)
 
-
-/-- Is this verb a preferential attitude predicate? -/
-def Verb.isPreferentialAttitude (v : Verb) : Bool :=
-  v.preferentialValence.isSome
 
 /-- Look up a verb core by citation form and sense tag. -/
 def lookupSense (verbs : List Verb) (form : String) (tag : SenseTag := .default) :
