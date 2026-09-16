@@ -1332,7 +1332,6 @@ import Linglib.Pragmatics.Implicature.SomeAll
 import Linglib.Pragmatics.InformationTheory.Channel
 import Linglib.Pragmatics.InformationTheory.ChannelCapacity
 import Linglib.Pragmatics.NeoGricean.Basic
-import Linglib.Pragmatics.RSA.Atoms
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Uniform
 import Linglib.Pragmatics.RSA.Profile
