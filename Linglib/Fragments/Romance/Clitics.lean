@@ -2,7 +2,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Number.Basic
 import Linglib.Syntax.Person.Basic
-import Linglib.Syntax.Category.Pronoun.Capabilities
+import Linglib.Syntax.Category.Pronoun.Basic
 
 /-!
 # Romance Clitic Paradigm Schema
@@ -26,9 +26,8 @@ Romanian contrasts reflexive accusative *se* with reflexive dative *își*,
 so a Romanian instantiation must split the REFL cell (or make the
 projection person-sensitive) rather than reuse this `toCase`.
 
-The clitic is its own bespoke struct — capabilities (`HasPhi`, `Proform`,
-`Bound`) abstract over it without merging it into `Pronoun` (the
-`FunLike`-over-many-hom-types pattern). Deficiency is
+The clitic is its own bespoke struct, with its own `HasPhi` instance and binding class,
+not merged into `Pronoun`. Deficiency is
 deliberately *not* a capability: it is per-series (a whole clitic paradigm
 is `.clitic`), modelled by the per-language `cliticStrength` and the
 `Strength` order, not by a per-element accessor.
@@ -63,14 +62,10 @@ structure CliticEntry where
 /-- A clitic bears its person and number. -/
 instance : HasPhi CliticEntry := ⟨fun c ↦ Agreement.Bundle.pn c.person c.number⟩
 
-/-- An object clitic's domain is the nominal tokens. -/
-instance : Proform CliticEntry := ⟨fun _ w => Binding.isNominalCat w.cat = true⟩
-
-/-- Binding class from the clitic's paradigm cell: a reflexive clitic is a
-    Principle-A anaphor; an accusative/dative object clitic is a
-    Principle-B pronominal. -/
-instance : Bound CliticEntry :=
-  ⟨fun c => match c.case_ with | .reflexive => .reflexive | _ => .pronoun⟩
+/-- The binding class of a clitic, from its paradigm cell: a reflexive clitic is a Principle-A
+anaphor and an accusative or dative object clitic a Principle-B pronominal. -/
+def CliticEntry.bindingClass (c : CliticEntry) : Binding.BindingClass :=
+  match c.case_ with | .reflexive => .reflexive | _ => .pronoun
 
 /-- Look up the form for a given person, number, and paradigm cell. -/
 def lookupForm (paradigm : List CliticEntry) (p : Person) (n : Number)

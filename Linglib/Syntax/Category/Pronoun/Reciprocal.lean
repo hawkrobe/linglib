@@ -1,5 +1,4 @@
 import Linglib.Syntax.Category.Pronoun.Basic
-import Linglib.Syntax.Category.Pronoun.Capabilities
 import Linglib.Syntax.Reciprocal
 
 /-!
@@ -16,7 +15,7 @@ not pronouns and stay bare markers.
 
 * `ReciprocalPronoun` — the lexical object (`extends Pronoun` + `strategy` + `readings`).
 * `ReciprocalPronoun.toMarker` — its entry in a marker inventory.
-* `HasPhi` / `Proform` / `Bound` instances routing the object through the Pronoun API.
+* `HasPhi` instance routing the object through the Pronoun API.
 -/
 
 /-- A reciprocal pronoun: the general `Pronoun` (surface `form` + φ-features) as the nominal
@@ -38,7 +37,3 @@ def ReciprocalPronoun.toMarker (p : ReciprocalPronoun) : Reciprocal.Marker :=
 /-- A reciprocal pronoun bears φ via its `Pronoun` core. -/
 instance : HasPhi ReciprocalPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
 
-instance : Proform ReciprocalPronoun := ⟨fun p ↦ Proform.Domain p.toPronoun⟩
-
-/-- Its binding class is the `Pronoun` core's, defaulting to the reciprocal. -/
-instance : Bound ReciprocalPronoun := ⟨fun p ↦ p.toPronoun.bindingClass.getD .reciprocal⟩

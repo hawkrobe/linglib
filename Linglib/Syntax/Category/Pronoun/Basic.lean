@@ -5,7 +5,7 @@ import Linglib.Pragmatics.SocialMeaning.Register
 import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Gender.Basic
 import Linglib.Syntax.Person.Clusivity
-import Linglib.Syntax.Binding.CoreferenceStatus
+import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Person.Decomposition
 import Linglib.Morphology.Word.Basic
 import Linglib.Syntax.Agreement.Phi
@@ -260,6 +260,27 @@ instance (p : Pronoun) : Decidable p.WellFormed := by
   unfold WellFormed; infer_instance
 
 /-! ### Lexical entry schemas ([alok-bhalla-2026]) -/
+
+/-- The binding class a pronoun declares, an undeclared φ-shell being a Principle-B
+pronominal, the elsewhere case ([chomsky-1981]). -/
+def bindingClassD (p : Pronoun) : Binding.BindingClass := p.bindingClass.getD .pronoun
+
+/-- A pronoun's projected word classifies as the class the pronoun declares. -/
+theorem bindingClassOf_toWord (p : Pronoun) (h : p.bindingClass ≠ some .rExpression)
+    (hr : p.pronType = some .Rcp → p.bindingClass = some .reciprocal) :
+    Binding.bindingClassOf p.toWord = some p.bindingClassD := by
+  unfold bindingClassD
+  rcases hb : p.bindingClass with _ | (_ | _ | _ | _) <;>
+      rcases hp : p.pronType with _ | pt <;> (try cases pt) <;>
+    simp_all +decide [Binding.bindingClassOf, Pronoun.toWord]
+
+/-- A candidate antecedent of a pronoun is a nominal token that agrees with it in φ-features;
+a pro-form takes its antecedents from a fixed form-class ([bloomfield-1933]). -/
+def CandidateAntecedent (p : Pronoun) (w : Morphology.Word) : Prop :=
+  Binding.isNominalCat w.cat = true ∧ HasPhi.Agree p w
+
+instance (p : Pronoun) (w : Morphology.Word) : Decidable (p.CandidateAntecedent w) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 instance : HasPhi PersonalPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
 

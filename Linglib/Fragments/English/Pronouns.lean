@@ -2,7 +2,6 @@ import Linglib.Data.UD.Basic
 import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Gender.Basic
 import Linglib.Syntax.Category.Pronoun.Basic
-import Linglib.Syntax.Category.Pronoun.Capabilities
 import Linglib.Syntax.Category.Pronoun.Demonstrative
 
 /-!
@@ -122,7 +121,7 @@ def reciprocals : List Pronoun := [eachOther, oneAnother]
 def whWords : List Pronoun := [who, whom, what, which, where_, when_, why, how]
 
 /-- Every reflexive entry is a Principle-A anaphor by its declaration. -/
-theorem reflexives_are_anaphors : ∀ p ∈ reflexives, Bound.IsAnaphor p := by decide
+theorem reflexives_are_anaphors : ∀ p ∈ reflexives, p.bindingClassD.IsAnaphor := by decide
 
 /-- Every wh-word projects as wh-marked: the entry's `PronType=Int` reaches the surface
 word's morphology (`UD.MorphFeatures.isWh`) through `Pronoun.toWord`. -/

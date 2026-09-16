@@ -1,5 +1,4 @@
 import Linglib.Syntax.Category.Pronoun.Basic
-import Linglib.Syntax.Category.Pronoun.Capabilities
 import Linglib.Syntax.Person.Decomposition
 import Linglib.Fragments.Romance.Clitics
 
@@ -88,7 +87,7 @@ def pronouns : List PersonalPronoun := [io, tu, lei_formal, lui, lei, noi, voi, 
 
 open Romance.Clitics (CliticEntry CliticCase)
 
-/-! Schema and capability instances (`HasPhi`/`Bound`) are the shared Romance clitic schema
+/-! The schema and its `HasPhi` instance are the shared Romance clitic schema
 (`Fragments/Romance/Clitics.lean`). -/
 
 -- 1sg clitics
@@ -161,10 +160,9 @@ def paradigm : List CliticEntry :=
 
 /-! ### Capability checks -/
 
--- The reflexive clitic *si* is a Principle-A anaphor; the accusative *lo* a pronominal —
--- read through the generic `Bound` capability.
-example : Bound.IsAnaphor si_refl := by decide
-example : Bound.IsPronominal lo_cl := by decide
+-- The reflexive clitic *si* is a Principle-A anaphor; the accusative *lo* a pronominal.
+example : si_refl.bindingClass.IsAnaphor := by decide
+example : lo_cl.bindingClass.IsPronominal := by decide
 
 /-- Look up the form for a given person, number, and case in the paradigm. -/
 def lookupForm : Person → Number → CliticCase → Option String :=

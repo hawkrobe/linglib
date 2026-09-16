@@ -1,5 +1,5 @@
 import Linglib.Fragments.Turkish.Case
-import Linglib.Syntax.Category.Pronoun.Capabilities
+import Linglib.Syntax.Binding.CoreferenceStatus
 
 /-!
 # Turkish Anaphors
@@ -61,19 +61,19 @@ structure TurkishAnaphor where
   preverbal : Bool := true
   deriving Repr
 
-/-! ### Anaphors as `Bound` carriers
+/-! ### The binding class
 
-The anaphor's binding class is *derived* from its `anaphorType`, and `Anaphoric` records that the
-whole carrier is Principle-A. (`HasPhi` is not instanced: the struct carries no φ-features —
-the forms *birbirleri*/*kendi* live in the entry names, a pre-existing data gap.) -/
+The anaphor's binding class is derived from its `anaphorType`, and every Turkish anaphor is
+a Principle-A anaphor. The struct carries no φ-features; the forms *birbirleri* and *kendi*
+live in the entry names. -/
 
-/-- Binding class from the anaphor type: reciprocal → reciprocal, reflexive → reflexive. -/
-instance : Bound TurkishAnaphor :=
-  ⟨fun a => match a.anaphorType with | .reciprocal => .reciprocal | .reflexive => .reflexive⟩
+/-- The binding class from the anaphor type. -/
+def TurkishAnaphor.bindingClass (a : TurkishAnaphor) : Binding.BindingClass :=
+  match a.anaphorType with | .reciprocal => .reciprocal | .reflexive => .reflexive
 
 /-- Every Turkish anaphor is a Principle-A anaphor. -/
-instance : Anaphoric TurkishAnaphor where
-  isAnaphor a := by obtain ⟨t, _, _⟩ := a; cases t <;> simp [Bound.bindingClass]
+theorem TurkishAnaphor.bindingClass_isAnaphor (a : TurkishAnaphor) : a.bindingClass.IsAnaphor := by
+  cases h : a.anaphorType <;> simp [TurkishAnaphor.bindingClass, h, Binding.BindingClass.IsAnaphor]
 
 /-- birbirleri as direct object (ACC case).
     Used in [bakay-etal-2026] Experiments 1–3 as the critical anaphor. -/
@@ -102,9 +102,7 @@ theorem birbirleri_requires_plural :
 /-- All birbirleri variants are preverbal -/
 theorem birbirleriAcc_preverbal : birbirleriAcc.preverbal = true := rfl
 
--- *birbirleri* is a Principle-A anaphor, read through the generic `Bound` capability.
-example : Bound.IsAnaphor birbirleriAcc := by decide
-theorem birbirleriAcc_bindingClass : Bound.bindingClass birbirleriAcc = .reciprocal := rfl
+theorem birbirleriAcc_bindingClass : birbirleriAcc.bindingClass = .reciprocal := rfl
 
 /-- The case inventory of birbirleri forms used in [bakay-etal-2026] -/
 def experimentalCases : List Case :=

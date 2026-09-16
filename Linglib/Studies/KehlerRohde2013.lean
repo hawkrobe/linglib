@@ -4,7 +4,6 @@ import Linglib.Discourse.Coherence
 import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Fragments.English.Pronouns
-import Linglib.Syntax.Category.Pronoun.Capabilities
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.NormNum
@@ -415,8 +414,8 @@ def brittany : Word :=
 
 /-- Both characters are candidate antecedents of the prompt *She*. -/
 theorem she_ambiguous_over_stimuli :
-    Proform.CandidateAntecedent English.Pronouns.she amanda ∧
-      Proform.CandidateAntecedent English.Pronouns.she brittany := by
+    English.Pronouns.she.toPronoun.CandidateAntecedent amanda ∧
+      English.Pronouns.she.toPronoun.CandidateAntecedent brittany := by
   decide
 
 /-- The context sentence of (20a): Amanda the subject, Brittany the object. -/
