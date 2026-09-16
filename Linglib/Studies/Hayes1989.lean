@@ -17,10 +17,10 @@ under the ban on crossing association lines. The typological argument of the pap
 derived from the representations: `cl_delete_of_isOnset` is the onset-deletion asymmetry (an
 onset projects no mora, so its loss strands nothing, and Moraic Conservation holds by
 construction), `IsPlanar.cl` says that filling from the nearest linked segment never crosses a
-line, and `not_isPlanar_link_of_onset` is the vowel-loss asymmetry (a stranded mora cannot
-lengthen the vowel to its right across that syllable's onset). The seven CL types of the
-typology, the weight prerequisite of §6, and the two-mora limit and trimoraic syllables of §7
-are run as derivations on the paper's forms.
+line, and `not_isPlanar_link_of_onset` is the vowel-loss asymmetry (the vowel to the right of
+a stranded mora lies outside the mora's `Autosegmental.window`, past that syllable's onset
+line). The seven CL types of the typology, the weight prerequisite of §6, and the two-mora
+limit and trimoraic syllables of §7 are run as derivations on the paper's forms.
 
 ## Implementation notes
 
@@ -174,16 +174,16 @@ inductive Convention
   | fromRight
   deriving DecidableEq, Repr
 
-/-- The segment the convention spreads onto stranded mora `m`, if any. -/
-def filler (m : Node) : Convention → Option ℕ
-  | .fromLeft => ((f.links.filter (·.1 < m)).image (·.2)).max
-  | .fromRight => ((f.links.filter (m < ·.1)).image (·.2)).min
+/-- The lines CL draws: from each stranded mora to the nearest segment linked on the
+    convention's side, the endpoint of the mora's window. -/
+def fills : Convention → Finset (Node × ℕ)
+  | .fromLeft => f.stranded.biUnion fun m ↦ (leftBound f.links m).recBotCoe ∅ fun j ↦ {(m, j)}
+  | .fromRight =>
+    f.stranded.biUnion fun m ↦ (rightBound f.links m).recTopCoe ∅ fun j ↦ {(m, j)}
 
 /-- Compensatory lengthening: every stranded mora is filled by the convention's segment; a
     mora with none stays stranded, for Stray Erasure. -/
-def cl (c : Convention) : Form α :=
-  { f with
-    links := f.links ∪ f.stranded.biUnion fun m ↦ (f.filler m c).elim ∅ fun i ↦ {(m, i)} }
+def cl (c : Convention) : Form α := { f with links := f.links ∪ f.fills c }
 
 /-! #### Moraic Conservation (64)
 
@@ -244,7 +244,7 @@ theorem stranded_delete_of_isOnset {i : ℕ} (h : f.IsOnset i) :
 
 /-- A form with no stranded mora is untouched by CL. -/
 theorem cl_eq_self (h : f.stranded = ∅) (c : Convention) : f.cl c = f := by
-  simp [cl, h]
+  cases c <;> simp [cl, fills, h]
 
 /-- CL from onset deletion is impossible ((57), (63)): with nothing stranded, the convention
     finds nothing to fill, and the mora count could only grow by a mora the representation
@@ -255,9 +255,9 @@ theorem cl_delete_of_isOnset {i : ℕ} (h : f.IsOnset i) (h₀ : f.stranded = �
 
 /-! #### Crossing
 
-Removing lines keeps a form planar, and so does CL: the convention fills a stranded mora from
-the nearest segment linked on its side, and a line to the nearest segment crosses nothing.
-Only `link` can cross, and `isPlanar_link_iff` says exactly when. -/
+Removing lines keeps a form planar, and so does CL: each stranded mora is linked to the
+endpoint of its window, the nearest segment linked on the convention's side. Only `link` can
+cross, and `isPlanar_link_iff` says exactly when. -/
 
 variable {f}
 
@@ -270,86 +270,49 @@ theorem IsPlanar.delink (h : f.IsPlanar) (n : Node) (i : ℕ) : (f.delink n i).I
 theorem IsPlanar.parasitic (h : f.IsPlanar) : f.parasitic.IsPlanar :=
   ⟨h.1.subset (Finset.filter_subset _ _), h.2.subset (Finset.filter_subset _ _)⟩
 
-variable {m n : Node} {i j x : ℕ}
+variable {m : Node} {i : ℕ}
 
-/-- The leftward filler is linked from a node left of `m`. -/
-theorem exists_of_filler_fromLeft (hj : f.filler m .fromLeft = some j) :
-    ∃ n < m, (n, j) ∈ f.links := by
-  obtain ⟨⟨n, x⟩, hp, rfl⟩ := Finset.mem_image.1 (Finset.mem_of_max hj)
-  exact ⟨n, (Finset.mem_filter.1 hp).2, (Finset.mem_filter.1 hp).1⟩
-
-/-- The rightward filler is linked from a node right of `m`. -/
-theorem exists_of_filler_fromRight (hj : f.filler m .fromRight = some j) :
-    ∃ n, m < n ∧ (n, j) ∈ f.links := by
-  obtain ⟨⟨n, x⟩, hp, rfl⟩ := Finset.mem_image.1 (Finset.mem_of_min hj)
-  exact ⟨n, (Finset.mem_filter.1 hp).2, (Finset.mem_filter.1 hp).1⟩
-
-/-- No segment linked from a node left of `m` lies right of the leftward filler. -/
-theorem le_of_filler_fromLeft (hj : f.filler m .fromLeft = some j) (hx : (n, x) ∈ f.links)
-    (hn : n < m) : x ≤ j :=
-  Finset.le_max_of_eq (Finset.mem_image_of_mem _ (Finset.mem_filter.2 ⟨hx, hn⟩)) hj
-
-/-- No segment linked from a node right of `m` lies left of the rightward filler. -/
-theorem filler_fromRight_le (hj : f.filler m .fromRight = some j) (hx : (n, x) ∈ f.links)
-    (hn : m < n) : j ≤ x :=
-  Finset.min_le_of_eq (Finset.mem_image_of_mem _ (Finset.mem_filter.2 ⟨hx, hn⟩)) hj
-
-theorem mem_links_cl {p : Node × ℕ} {c : Convention} : p ∈ (f.cl c).links ↔
-    p ∈ f.links ∨ p.1 ∈ f.stranded ∧ f.filler p.1 c = some p.2 := by
-  simp only [cl, Finset.mem_union, Finset.mem_biUnion]
-  refine or_congr_right ⟨?_, fun ⟨hm, hf⟩ ↦ ⟨p.1, hm, by simp [hf]⟩⟩
+theorem mem_fills_fromLeft {p : Node × ℕ} :
+    p ∈ f.fills .fromLeft ↔ p.1 ∈ f.stranded ∧ leftBound f.links p.1 = p.2 := by
+  simp only [fills, Finset.mem_biUnion]
+  refine ⟨?_, fun ⟨hm, hb⟩ ↦ ⟨p.1, hm, by simp [hb]⟩⟩
   rintro ⟨m, hm, hp⟩
-  cases hf : f.filler m c <;> simp_all
+  cases hb : leftBound f.links m <;> simp_all
 
-/-- **CL is planar**: a line to the nearest segment on one side of a stranded mora crosses no
-    line of a planar form, nor the line of another stranded mora. -/
+theorem mem_fills_fromRight {p : Node × ℕ} :
+    p ∈ f.fills .fromRight ↔ p.1 ∈ f.stranded ∧ rightBound f.links p.1 = p.2 := by
+  simp only [fills, Finset.mem_biUnion]
+  refine ⟨?_, fun ⟨hm, hb⟩ ↦ ⟨p.1, hm, by simp [hb]⟩⟩
+  rintro ⟨m, hm, hp⟩
+  cases hb : rightBound f.links m <;> simp_all
+
+/-- **CL is planar**: the lines from stranded morae to the nearest segment on one side cross
+    neither one another nor the lines of a planar form. -/
 theorem IsPlanar.cl (h : f.IsPlanar) (c : Convention) : (f.cl c).IsPlanar := by
-  refine ⟨isNonCrossing_iff.2 fun l₁ h₁ l₂ h₂ hlt ↦ ?_, h.2⟩
-  have hf := isNonCrossing_iff.1 h.1
-  rw [mem_links_cl] at h₁ h₂
-  rcases h₁ with h₁ | ⟨-, hf₁⟩ <;> rcases h₂ with h₂ | ⟨-, hf₂⟩ <;> cases c
-  · exact hf l₁ h₁ l₂ h₂ hlt
-  · exact hf l₁ h₁ l₂ h₂ hlt
-  · exact le_of_filler_fromLeft hf₂ h₁ hlt
-  · obtain ⟨n, hn, hj⟩ := exists_of_filler_fromRight hf₂
-    exact hf l₁ h₁ (n, l₂.2) hj (hlt.trans hn)
-  · obtain ⟨n, hn, hj⟩ := exists_of_filler_fromLeft hf₁
-    exact hf (n, l₁.2) hj l₂ h₂ (hn.trans hlt)
-  · exact filler_fromRight_le hf₁ h₂ hlt
-  · obtain ⟨n, hn, hj⟩ := exists_of_filler_fromLeft hf₁
-    exact le_of_filler_fromLeft hf₂ hj (hn.trans hlt)
-  · obtain ⟨n, hn, hj⟩ := exists_of_filler_fromRight hf₂
-    exact filler_fromRight_le hf₁ hj (hlt.trans hn)
+  refine ⟨?_, h.2⟩
+  cases c
+  · exact h.1.union_of_leftBound fun p hp ↦ (mem_fills_fromLeft.1 hp).2
+  · exact h.1.union_of_rightBound fun p hp ↦ (mem_fills_fromRight.1 hp).2
 
-/-- Drawing a line keeps a form planar iff the line crosses none already drawn. -/
-theorem isPlanar_link_iff :
-    (f.link m i).IsPlanar ↔ f.IsPlanar ∧ ¬ IndexCrosses f.links (m, i) := by
-  simp only [IsPlanar, link, isNonCrossing_insert_iff_not_indexCrosses, and_right_comm]
-
-/-- A new line from `m` to `i` crosses an existing line from a node to the left of `m` to a
-    slot to the right of `i`. -/
-theorem not_isPlanar_link_of_left (h : (n, x) ∈ f.links) (hn : n < m) (hx : i < x) :
-    ¬ (f.link m i).IsPlanar := fun hp ↦
-  (isPlanar_link_iff.1 hp).2 ⟨(n, x), h, crosses_iff.2 (.inr ⟨hn, hx⟩)⟩
-
-/-- A new line from `m` to `i` crosses an existing line from a node to the right of `m` to a
-    slot to the left of `i`. -/
-theorem not_isPlanar_link_of_right (h : (n, x) ∈ f.links) (hn : m < n) (hx : x < i) :
-    ¬ (f.link m i).IsPlanar := fun hp ↦
-  (isPlanar_link_iff.1 hp).2 ⟨(n, x), h, crosses_iff.2 (.inl ⟨hn, hx⟩)⟩
+/-- Drawing a line keeps a form planar iff its slot lies in the node's window. -/
+theorem isPlanar_link_iff : (f.link m i).IsPlanar ↔ f.IsPlanar ∧ i ∈ window f.links m := by
+  simp only [IsPlanar, link, isNonCrossing_insert_iff_mem_window, and_right_comm]
 
 /-- **The vowel-loss asymmetry** (§5.3.2, (61) and (66)): a stranded mora to the left of a
-    syllable cannot lengthen its nucleus `v` across an onset consonant `c`, whose line from the
-    syllable node it would cross. Rightward CL through vowel loss is unattested. -/
+    syllable cannot lengthen its nucleus `v`, which lies past its window: the onset consonant
+    `c` is linked from the syllable node to its right. Rightward CL through vowel loss is
+    unattested. -/
 theorem not_isPlanar_link_of_onset {v c : ℕ} (hc : (σ v, c) ∈ f.links) (hm : m.slot < v)
-    (hcv : c < v) : ¬ (f.link m v).IsPlanar :=
-  not_isPlanar_link_of_right hc hm hcv
+    (hcv : c < v) : ¬ (f.link m v).IsPlanar := fun hp ↦
+  notMem_window_of_mem_rightIndices (mem_rightIndices.2 ⟨σ v, hm, hc⟩) hcv
+    (isPlanar_link_iff.1 hp).2
 
-/-- (68): a moraic coda `c` between the nucleus `v` and a stranded mora to its right blocks
-    the vowel's lengthening, so vowel-loss CL favours open syllables. -/
+/-- (68): a moraic coda `c` between the nucleus `v` and a stranded mora to its right puts `v`
+    before the mora's window, so vowel-loss CL favours open syllables. -/
 theorem not_isPlanar_link_of_coda {v c : ℕ} (hc : (μ c, c) ∈ f.links) (hv : v < c)
-    (hm : c < m.slot) : ¬ (f.link m v).IsPlanar :=
-  not_isPlanar_link_of_left hc hm hv
+    (hm : c < m.slot) : ¬ (f.link m v).IsPlanar := fun hp ↦
+  notMem_window_of_mem_leftIndices (mem_leftIndices.2 ⟨μ c, hm, hc⟩) hv
+    (isPlanar_link_iff.1 hp).2
 
 end Form
 
@@ -588,7 +551,8 @@ theorem bagien_gf_planar : bagien_gf.IsPlanar := by decide
     spreads onto the mora, which the first syllable adopts: *bag.gyen*. -/
 def baggyen : Form Seg := (bagien_gf.cl fromRight).adjoin
 
-theorem baggyen_filler : bagien_gf.filler (μ 3) fromRight = some 2 := by decide
+theorem baggyen_rightBound : rightBound bagien_gf.links (μ 3) = ((2 : ℕ) : WithTop ℕ) := by
+  decide
 
 theorem baggyen_surface :
     baggyen.surface = [(b, 1), (a, 1), (g, 2), (i, 1), (e, 1), (n, 1)] := by decide
@@ -601,7 +565,8 @@ theorem baggyen_weight : baggyen.weight (σ 1) = 2 := by decide
     *baagyen*, the Managerial Lengthening of English *patience* ((46)). -/
 def baagyen : Form Seg := (bagien_gf.cl fromLeft).adjoin
 
-theorem baagyen_filler : bagien_gf.filler (μ 3) fromLeft = some 1 := by decide
+theorem baagyen_leftBound : leftBound bagien_gf.links (μ 3) = ((1 : ℕ) : WithBot ℕ) := by
+  decide
 
 theorem baagyen_surface :
     baagyen.surface = [(b, 1), (a, 2), (g, 1), (i, 1), (e, 1), (n, 1)] := by decide
