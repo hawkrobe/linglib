@@ -205,6 +205,22 @@ theorem insertionMultiset_zero_left_of_ne_zero (G : Multiset (UnorderedTree α))
   · show (RoseTree.Pathed.insertionForest [] (Quotient.out g :: gs.map Quotient.out)).map _ = 0
     rw [RoseTree.Pathed.insertionForest_empty_host_nonempty_guests, Multiset.map_zero]
 
+/-- One host and one guest: the multi-insertion is the pre-Lie product, each output a
+    singleton forest. -/
+theorem insertionMultiset_singleton_singleton (T g : UnorderedTree α) :
+    insertionMultiset {T} {g} =
+      (UnorderedTree.insertSum T g).map fun S => ({S} : Multiset (UnorderedTree α)) := by
+  have h : UnorderedTree.insertSum T g =
+      (RoseTree.insertSum (Quotient.out T) (Quotient.out g)).map UnorderedTree.mk := by
+    rw [← mk_insertSum]
+    exact (congrArg₂ _ T.out_eq g.out_eq).symm
+  unfold insertionMultiset
+  dsimp only
+  rw [Multiset.toList_singleton, Multiset.toList_singleton, List.map_singleton,
+    List.map_singleton, RoseTree.Pathed.insertionForest_singleton,
+    RoseTree.Pathed.insertion_singleton, h, Multiset.map_map, Multiset.map_map]
+  rfl
+
 /-! ## §2: toList helpers
 
 Multiset's `toList` returns a non-canonical list representative. Two
