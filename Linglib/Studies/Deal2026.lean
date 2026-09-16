@@ -3,6 +3,7 @@ import Linglib.Fragments.Bulgarian.Clause
 import Linglib.Fragments.Ndebele.Clause
 import Linglib.Fragments.NezPerce.Clause
 import Linglib.Data.Examples.Deal2026
+import Linglib.Data.Examples.Krapova2010
 import Linglib.Studies.BochnakHanink2021
 import Linglib.Syntax.Category.Verb.Complement.Takes
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
@@ -26,7 +27,8 @@ complement of it carries the *yox̂ ke* edge (`RelativeEmbedding`). Every relati
 is factive (`relative_factive`), factivity being the Fragment entries' [karttunen-1971] class,
 which the projection trials (33)–(36) and (68) confirm row by row (`projection_rows`). The
 Adyghe Ā flag is that 'think' takes the Fragment's *ze-re-* typer, the Bulgarian one is
-[krapova-2010]'s double requirement over the Fragment's frames (`DetoComplement`), the shells
+[krapova-2010]'s double requirement over the Fragment's frames (`DetoComplement`), checked
+against her sentences (56)–(59) as rows of `Data/Examples/Krapova2010.json`, the shells
 come from the spines, and the case half of the diagnostic (21) that *yox̂* is a D from the
 Fragment's relative-pronoun paradigm.
 
@@ -145,6 +147,32 @@ neither condition suffices: *văzmuštavam se* 'resent' is emotive without a *za
 theorem detoComplement_iff :
     (∀ v ∈ Bulgarian.verbs, DetoComplement v ↔ v.form ∈ Bulgarian.detoTakers.map (·.form)) ∧
       ¬ DetoComplement Bulgarian.vazmushtavamSe ∧ ¬ DetoComplement Bulgarian.razbiram := by
+  decide
+
+/-- Krapova's *deto* sentences (56) and (58) are grammatical exactly for the predicates that meet
+the double requirement, and their *če* variants are always grammatical (fn. 46). -/
+theorem deto_rows :
+    ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "detoSelection" →
+      ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
+        (row.judgment = .acceptable ↔ DetoComplement v) ∧
+          ∀ a ∈ row.alternatives, a.2 = .acceptable := by
+  decide
+
+/-- The nominal paraphrases (59) take the preposition *za* and no other, the adpositional frame
+of the Fragment's emotive factives. -/
+theorem zaPhrase_rows :
+    ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "zaPhrase" →
+      ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
+        (row.judgment = .acceptable ↔ ∃ fr ∈ v.frames, Complement.Position.adpositional ∈ fr) ∧
+          ∀ a ∈ row.alternatives, a.2 = .ungrammatical := by
+  decide
+
+/-- Krapova's factivity tests (57) and footnote 46: the complement survives negation, a question
+and an attempted cancellation exactly for the factive predicates, under *deto* and *če* alike. -/
+theorem krapova_projection_rows :
+    ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "projection" →
+      ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
+        (row.feature? "inference" = some "yes" ↔ v.toVerb.factivePresup = true) := by
   decide
 
 /-- English N complementation, *the fact that S*: V D N CP without an Ā-dependency, the DP
