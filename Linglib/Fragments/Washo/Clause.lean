@@ -4,16 +4,20 @@ import Linglib.Syntax.Category.Complementizer.Basic
 /-!
 # Washo clausal embedding
 
-This file records the complement-taking verbs of Washo (Hokan/isolate, ISO 639-3 `was`) from
-Bochnak and Hanink's study of clausal embedding, and the two clause-typers of the clauses they
-embed. The nominalizer *-gi ~ -ge* is the exponent of Hanink's index head over a finite clause
-in the independent mood *-i*; the dependent mood *-aʔ* types a bare clause. A verb's frames
-record its transitivity: the nominalizer-takers select internal arguments and the *-aʔ*-takers
-are intransitive. 'Know', 'remember' and 'believe' are inherently negative, so their positive
-reading carries the negative suffix *-e:s*.
+Washo (Hokan/isolate, ISO 639-3 `was`) has two ways of embedding a clause under a verb. A
+verb of knowledge or perception such as *hamup'ay* 'forget' or *i:gi* 'see' takes a nominalized
+clause: the clause stays in the independent mood *-i* and closes with the nominalizer
+*-gi ~ -ge*, the exponent of Hanink's index head. A verb of thought or speech such as *hamu*
+'think' or *i:d* 'say' is intransitive, and the clause it embeds is bare, in the dependent mood
+*-aʔ*. The two classes differ in transitivity, which each verb's frames record: 'know' and 'see'
+also take plain DP objects, while 'think' is questioned with *how* rather than *what*, and
+'dream' embeds a bare clause only with the reflexive prefix *gum-*. 'Know', 'remember' and
+'believe' are inherently negative, so their positive reading carries the negative suffix
+*-e:s*, and 'remember' is negated 'forget'.
 
 Forms follow Jacobsen's orthography: `:` marks vowel length, ʔ ɨ ŋ are IPA, and stress is
-acute. The analysis of the split is in `Studies/BochnakHanink2021.lean`.
+acute. The data are Bochnak and Hanink's; their analysis of the split as complementation
+against modification is `Studies/BochnakHanink2021.lean`.
 
 ## References
 
