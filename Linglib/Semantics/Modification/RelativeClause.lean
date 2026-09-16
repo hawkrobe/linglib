@@ -17,7 +17,7 @@ HPSG `SLASH` discharge, a CCG type-raised argument) but converge on this
 denotation.
 
 This is the **semantic half of the `RelativeClause` API**; the classification half
-(`Realization`, `Position`, `NPRel`, …) lives in `Syntax/RelativeClause/`,
+(`Realization`, `Position`, `NPRel`, …) lives in `Syntax/Clause/Relative.lean`,
 sharing the root `RelativeClause` namespace without either importing the other.
 
 ## Main declarations

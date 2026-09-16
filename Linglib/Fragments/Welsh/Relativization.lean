@@ -1,12 +1,14 @@
-import Linglib.Syntax.RelativeClause.Basic
+import Linglib.Syntax.Clause.Relative
 
 /-!
 # Welsh relative-clause markers
 
-The two relative particles of Welsh as [keenan-comrie-1977] records them (Section 1.3.2 and
-Table 1): *a* introduces a postnominal clause with the relativized position deleted and covers
-subjects and direct objects; *y* introduces a postnominal clause with a personal pronoun in the
-relativized position and covers the positions from indirect object down.
+The two relative particles of Welsh as [keenan-comrie-1977] records them. The particle *a*
+introduces a postnominal clause whose relativized position is deleted and relativizes subjects
+and direct objects; the particle *y* introduces a postnominal clause with a personal pronoun at
+the relativized position and relativizes the positions from indirect object down. The paper's
+examples are *y bachgen a oedd yn darllen* 'the boy who was reading' and *dyma'r llyfr y
+darllenais y stori ynddo* 'here is the book in which I read the story'.
 
 ## References
 
@@ -17,8 +19,8 @@ namespace Welsh
 
 open RelativeClause
 
-/-- The particle *a*: postnominal, the relativized position deleted, subjects and direct objects.
-[keenan-comrie-1977]'s (11a), *y bachgen a oedd yn darllen* 'the boy who was reading'. -/
+/-- The relative particle *a* introduces a postnominal clause whose relativized position is
+deleted; it relativizes subjects and direct objects. -/
 def relParticleA : Marker :=
   { form := "a"
   , npRel := .gap
@@ -26,9 +28,8 @@ def relParticleA : Marker :=
   , placement := .postNominal
   , positions := {.subject, .directObject} }
 
-/-- The particle *y*: postnominal, a personal pronoun in the relativized position, indirect
-object through object of comparison. [keenan-comrie-1977]'s (11b), *dyma'r llyfr y darllenais y
-stori ynddo* 'here is the book in which I read the story', with the pronoun in *ynddo* 'in it'. -/
+/-- The relative particle *y* introduces a postnominal clause with a personal pronoun at the
+relativized position; it relativizes the positions from indirect object down. -/
 def relParticleY : Marker :=
   { form := "y"
   , npRel := .resumptive

@@ -2681,7 +2681,6 @@ import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
 import Linglib.Syntax.Negation
 import Linglib.Syntax.Question
 import Linglib.Syntax.Reciprocal
-import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Syntax.Tree.Basic
 import Linglib.Syntax.Tree.Cat
 import Linglib.Syntax.Tree.Command
