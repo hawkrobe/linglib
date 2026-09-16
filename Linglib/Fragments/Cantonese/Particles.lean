@@ -5,7 +5,9 @@ import Linglib.Semantics.Presupposition.TriggerTypology
 
 The Cantonese iterative presupposition triggers, following [matthews-yip-1994]: the preverbal
 adverbs *jau* 又 and *zoi* 再, the counterparts of Mandarin *you* and *zai*
-(`Fragments/Mandarin/Particles.lean`), and the postverbal suffix *-faan* 返 'again, back'. Their
+(`Fragments/Mandarin/Particles.lean`), the postverbal suffix *-faan* 返 'again, back', and the
+postverbal repetitive *-gwo* 過 'again, anew', homophonous with the experiential aspect suffix of
+`Fragments/Cantonese/Aspect.lean`. Their
 association with the outer and inner aspect projections and their scope behaviour are the
 analysis of [liu-yip-2026] and live in `Studies/LiuYip2026.lean`.
 
@@ -45,7 +47,11 @@ def zoi : PresupParticle :=
 def faan : PresupParticle :=
   { hanzi := "返", jyutping := "faan1", gloss := "again", trigger := .iterative }
 
+/-- The postverbal repetitive *-gwo* 過 'again, anew', redoing an event to set its outcome right. -/
+def gwo : PresupParticle :=
+  { hanzi := "過", jyutping := "gwo3", gloss := "again", trigger := .iterative }
+
 /-- The *again*-elements. -/
-def all : List PresupParticle := [jau, zoi, faan]
+def all : List PresupParticle := [jau, zoi, faan, gwo]
 
 end Cantonese.Particles
