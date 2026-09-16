@@ -103,7 +103,7 @@ instance (s : Strategy) : Decidable s.DeletesInternalHead := by
 
 /-- The strategy's NP_rel type in the substrate's inventory, which has no PRO or verb-coding:
 PRO as a gap, verb-coding as non-reduction. -/
-def Strategy.toNPRelType : Strategy → NPRelType
+def Strategy.toNPRel : Strategy → NPRel
   | .invariantRelativizer => .gap
   | .relativePronoun => .relPronoun
   | .resumptive => .resumptive
@@ -137,8 +137,8 @@ structure RC where
   derivation : Derivation
   internalHead : Head
   strategy : Strategy
-  position : AHPosition
-  rcPosition : RCPosition
+  position : Position
+  placement : Placement
   deriving Repr
 
 /-- The overt Head. -/
@@ -160,7 +160,7 @@ instance (r : RC) : Decidable r.WellFormed := by
   unfold RC.WellFormed; infer_instance
 
 /-- The framework-neutral realization the derivation projects onto. -/
-def RC.realization (r : RC) : Realization := ⟨r.position, r.strategy.toNPRelType⟩
+def RC.realization (r : RC) : Realization := ⟨r.position, r.strategy.toNPRel⟩
 
 /-- An internal Head bigger than the external `dP` is categorially distinct from it and cannot be
 deleted, so it is a wh-pronoun or a resumptive. -/

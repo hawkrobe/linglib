@@ -25,9 +25,8 @@ def relGap : Marker :=
   { form := "∅"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .preNominal
-  , positions := [.subject, .directObject, .indirectObject, .oblique, .genitive]
-  , notes := "Unmarked prenominal; OBL/GEN for some NPs only; OCOMP marginal" }
+  , placement := .preNominal
+  , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
 
 /-- Unmarked prenominal RC with a retained pronoun in NP_rel. GEN only,
     and only for some NPs (Table 1 p. 77; Table 2 codes Japanese
@@ -39,9 +38,8 @@ def relRetention : Marker :=
   { form := "∅ + pronoun"
   , npRel := .resumptive
   , bearsCaseMarking := true
-  , rcPosition := .preNominal
-  , positions := [.genitive]
-  , notes := "Retained pronoun; GEN only, for some NPs" }
+  , placement := .preNominal
+  , positions := {.genitive} }
 
 /-- All Japanese relative clause markers. -/
 def relMarkers : List Marker := [relGap, relRetention]

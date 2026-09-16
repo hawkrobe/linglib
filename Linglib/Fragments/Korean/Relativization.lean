@@ -1,18 +1,16 @@
 import Linglib.Syntax.RelativeClause.Basic
 
 /-!
-# Korean Relativization Fragment
-[keenan-comrie-1977]
+# Korean relative-clause markers
 
-Two relative clause markers:
-- Adnominal verb suffix *-(n)ɨn, -n, -l* with gap (-case, covers SU–OBL)
-- Genitive marker *-uy* (+case, covers GEN only)
+The Korean relativization strategies as [keenan-comrie-1977] records them (Section 1.3.4 and
+Table 1): a prenominal clause whose verb carries the adnominal suffix, the relativized position
+deleted, from subject through oblique; and the same prenominal clause with a retained pronoun in
+the relativized position for genitives. Korean has no relative pronoun or complementizer.
 
-Korean has no relative pronouns or complementizers. RCs are prenominal
-with the verb in adnominal form. NP_rel and its case marker are
-obligatorily deleted.
+## References
 
-Data from [keenan-comrie-1977] Table 1.
+* [keenan-comrie-1977]
 -/
 
 namespace Korean
@@ -28,20 +26,18 @@ def relAdnominal : Marker :=
   { form := "-(n)ɨn, -n, -l"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .preNominal
-  , positions := [.subject, .directObject, .indirectObject, .oblique]
-  , notes := "Adnominal verb suffix; gap; NP_rel + case marker deleted" }
+  , placement := .preNominal
+  , positions := {.subject, .directObject, .indirectObject, .oblique} }
 
-/-- Genitive construction. The possessor position is relativized using
-    the genitive marker *-uy*. Prenominal RC.
-    Covers GEN only. -/
+/-- The adnominal clause with a retained pronoun in the relativized position, the strategy
+genitives require: [keenan-comrie-1977]'s (25), *chaki-ij lä-ka chongmyəngha-n kɨ salam* 'the man
+whose dog is smart', with the possessive pronoun *chaki-ij* 'his' retained. -/
 def relGenitive : Marker :=
-  { form := "-uy"
-  , npRel := .gap
+  { form := "-(ɨ)n + retained pronoun"
+  , npRel := .resumptive
   , bearsCaseMarking := true
-  , rcPosition := .preNominal
-  , positions := [.genitive]
-  , notes := "Genitive marker; covers GEN only" }
+  , placement := .preNominal
+  , positions := {.genitive} }
 
 /-- All Korean relative clause markers. -/
 def relMarkers : List Marker := [relAdnominal, relGenitive]

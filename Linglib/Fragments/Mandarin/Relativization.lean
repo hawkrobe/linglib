@@ -32,9 +32,8 @@ def relDeGap : Marker :=
   { form := "de"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .preNominal
-  , positions := [.subject, .directObject]
-  , notes := "Particle de; NP_rel deleted" }
+  , placement := .preNominal
+  , positions := {.subject, .directObject} }
 
 /-- Prenominal RC closed by *de* with a personal pronoun retained in
     NP_rel; the pronoun (with its coverb where applicable) expresses the
@@ -45,9 +44,8 @@ def relDeResumptive : Marker :=
   { form := "de"
   , npRel := .resumptive
   , bearsCaseMarking := true
-  , rcPosition := .preNominal
-  , positions := [.directObject, .indirectObject, .oblique, .genitive, .objComparison]
-  , notes := "Particle de + retained pronoun; optional at DO" }
+  , placement := .preNominal
+  , positions := {.directObject, .indirectObject, .oblique, .genitive, .objComparison} }
 
 /-- All Mandarin relative clause markers. -/
 def relMarkers : List Marker := [relDeGap, relDeResumptive]

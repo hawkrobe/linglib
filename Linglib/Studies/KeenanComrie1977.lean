@@ -1,3 +1,4 @@
+import Mathlib.Order.UpperLower.Basic
 import Linglib.Syntax.RelativeClause.Basic
 import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.Welsh.Relativization
@@ -30,15 +31,16 @@ every higher one, follows from continuity: the positions a continuous primary st
 form an upper set of the hierarchy order (`isUpperSet_of_isContinuous`, `prc_of_hc2`).
 
 The constraints are then checked on the seventeen languages of Table 1 whose relativization
-markers the fragments record (`hc1_verified`, `hc2_verified`); each position from subject to
-genitive is attested as the cut-off of a primary strategy, the paper's Section 1.3 argument for
-the third constraint (`each_upper_cutoff_attested`); and Toba Batak's gap at direct object
-between two continuous strategies shows why the constraints are stated per strategy rather than
-per language (`toba_batak_do_gap`). The per-language theorems read Table 1 off the fragments.
+markers the fragments record (`hc1_verified`, `hc2_verified`), so every primary strategy of the
+sample covers the interval from its cut-off up to the subject (`primary_positions_eq_Icc_top`);
+each position from subject to genitive is attested as the cut-off of a primary strategy, the
+paper's Section 1.3 argument for the third constraint (`each_upper_cutoff_attested`); and Toba
+Batak's gap at direct object between two continuous strategies shows why the constraints are
+stated per strategy rather than per language (`toba_batak_do_gap`).
 
 ## Implementation notes
 
-The hierarchy order is the substrate's `AHPosition` linear order, the subject its top; a
+The hierarchy order is the substrate's `Position` bounded linear order, the subject its top; a
 strategy is a fragment `Marker` with the positions it covers, and its continuity is
 `Marker.IsContinuous`, order-connectedness of the covered set. Modern Standard Arabic
 contributes the two markers Table 1 records rather than the fragment's full inventory, and the
@@ -51,7 +53,7 @@ languages the fragments add after 1977 are not consulted.
 
 namespace KeenanComrie1977
 
-open RelativeClause
+open RelativeClause Finset
 
 /-! ### The Hierarchy Constraints (Section 1.2) -/
 
@@ -70,28 +72,18 @@ instance (markers : List Marker) : Decidable (SatisfiesHC2 markers) :=
 /-- The Primary Relativization Constraint: a primary strategy covers an upper set of the
 hierarchy, every position above one it reaches. -/
 def SatisfiesPRC (markers : List Marker) : Prop :=
-  ∀ m ∈ markers, m.IsPrimary → IsUpperSet {p | m.Covers p}
-
-/-- The subject is the top of the hierarchy. -/
-theorem le_subject (p : AHPosition) : p ≤ .subject := by cases p <;> decide
+  ∀ m ∈ markers, m.IsPrimary → IsUpperSet (m.positions : Set Position)
 
 /-- A continuous strategy that relativizes subjects covers an upper set: from a covered
 position up to the subject everything is covered. -/
 theorem isUpperSet_of_isContinuous {m : Marker} (hc : m.IsContinuous) (hp : m.IsPrimary) :
-    IsUpperSet {p | m.Covers p} :=
-  λ _ b hab ha => hc.out ha hp ⟨hab, le_subject b⟩
+    IsUpperSet (m.positions : Set Position) :=
+  fun _ _ hab ha ↦ hc.out ha hp ⟨hab, le_top⟩
 
 /-- The Primary Relativization Constraint follows from HC₂ and the definition of primary, as
 the paper derives it. -/
 theorem prc_of_hc2 {markers : List Marker} (h : SatisfiesHC2 markers) : SatisfiesPRC markers :=
-  λ m hm hp => isUpperSet_of_isContinuous (h m hm) hp
-
-/-- The lowest position a strategy reaches, its cut-off. -/
-def cutoff (m : Marker) : Option AHPosition := m.positions.min?
-
-/-- The lowest position any strategy of a language reaches. -/
-def lowestCovered (markers : List Marker) : Option AHPosition :=
-  (markers.flatMap (·.positions)).min?
+  fun m hm hp ↦ isUpperSet_of_isContinuous (h m hm) hp
 
 /-! ### The sample (Table 1)
 
@@ -134,14 +126,23 @@ theorem hc2_verified : ∀ markers ∈ sample, SatisfiesHC2 markers := by decide
 
 /-- Hence so does the Primary Relativization Constraint. -/
 theorem prc_verified : ∀ markers ∈ sample, SatisfiesPRC markers :=
-  λ _ h => prc_of_hc2 (hc2_verified _ h)
+  fun _ h ↦ prc_of_hc2 (hc2_verified _ h)
+
+/-- In the sample every primary strategy covers exactly the closed interval from its cut-off up
+to the subject, by HC₂ and `Marker.positions_eq_Icc_top`: what Table 1 records as a run of `+`
+entries ending at the subject. -/
+theorem primary_positions_eq_Icc_top :
+    ∀ markers ∈ sample, ∀ m ∈ markers, (hp : m.IsPrimary) →
+      m.positions = Icc (m.positions.min' ⟨⊤, hp⟩) ⊤ :=
+  fun _ h m hm hp ↦ m.positions_eq_Icc_top (hc2_verified _ h m hm) hp
 
 /-- Every position from subject to genitive is the cut-off of some primary strategy in the
-sample, the Section 1.3 argument that each point of the hierarchy is a possible cut-off; the
-paper's witnesses for the object of comparison are not among the fragments. -/
+sample, which covers exactly the interval from there up to the subject: the Section 1.3 argument
+that each point of the hierarchy is a possible cut-off. The paper's witnesses for the object of
+comparison are not among the fragments. -/
 theorem each_upper_cutoff_attested :
-    ∀ p ∈ [AHPosition.subject, .directObject, .indirectObject, .oblique, .genitive],
-      ∃ markers ∈ sample, ∃ m ∈ markers, m.IsPrimary ∧ cutoff m = some p := by
+    ∀ p ∈ [Position.subject, .directObject, .indirectObject, .oblique, .genitive],
+      ∃ markers ∈ sample, ∃ m ∈ markers, m.positions = Icc p ⊤ := by
   decide
 
 /-! ### Toba Batak (Section 1.2.2) -/
@@ -153,72 +154,11 @@ theorem toba_batak_do_gap : ∀ m ∈ tobaBatak, ¬ m.Covers .directObject := by
 
 theorem toba_batak_hc2 : SatisfiesHC2 tobaBatak := by decide
 
-/-! ### Table 1 by language -/
+/-! ### Strategies by their relativized position (Section 1.3) -/
 
-/-- English: the case-free *that* and gap cover subject and direct object, the case-marked
-*who*/*whom* the four lower positions. -/
-theorem english_full_coverage : english.map (·.positions.length) = [2, 4] := by decide
-
-/-- Welsh (Section 1.3.2): the particle *a* covers subject and direct object, the particle *y*
-with a resumptive the lower four. -/
-theorem welsh_strategy_split :
-    welsh.map (λ m => decide (m.Covers .subject)) = [true, false] ∧
-      welsh.map (λ m => decide (m.Covers .indirectObject)) = [false, true] := by
-  decide
-
-/-- Modern Standard Arabic: the relative pronoun alone covers the subject only, with a
-resumptive the positions below. -/
-theorem arabic_primary_su_only :
-    arabic.map (λ m => decide (m.Covers .subject)) = [true, false] ∧
-      arabic.map (λ m => decide (m.Covers .directObject)) = [false, true] := by
-  decide
-
-/-- Malagasy (Section 1.3.1): a single strategy, subjects only. -/
-theorem malagasy_su_only : lowestCovered malagasy = some .subject := by decide
-
-/-- Korean (Section 1.3.4): the adnominal verb suffix covers subject through oblique, a
-genitive marker the genitive only. -/
-theorem korean_primary_su_to_obl :
-    korean.map cutoff = [some .oblique, some .genitive] := by decide
-
-/-- Mandarin: the gap covers subject and direct object, retention direct object through object
-of comparison, the two overlapping at direct object. -/
-theorem mandarin_retention_reaches_ocomp :
-    lowestCovered mandarin = some .objComparison ∧
-      mandarin.map (λ m => decide (m.Covers .directObject)) = [true, true] := by
-  decide
-
-/-- Basque (Section 1.3.3): a single strategy cutting off at indirect object. -/
-theorem basque_cutoff_at_io :
-    basque.length = 1 ∧ lowestCovered basque = some .indirectObject := by decide
-
-/-- French: the single relative pronoun system covers subject through genitive. -/
-theorem french_single_strategy_to_gen :
-    french.length = 1 ∧ lowestCovered french = some .genitive := by decide
-
-/-- German ((1) and (2), Section 1.3.1): the relative pronoun covers subject through genitive,
-the participial strategy subjects only. -/
-theorem german_participial_su_only : german.map (·.positions.length) = [5, 1] := by decide
-
-/-- Hindi: both strategies are primary and reach the genitive. -/
-theorem hindi_both_strategies_primary :
-    ∀ m ∈ hindi, m.IsPrimary ∧ cutoff m = some .genitive := by decide
-
-/-- Japanese: the gap reaches the genitive. -/
-theorem japanese_gap_to_gen : lowestCovered japanese = some .genitive := by decide
-
-/-- Russian: the single declining relative pronoun covers subject through genitive. -/
-theorem russian_single_strategy_to_gen :
-    russian.length = 1 ∧ lowestCovered russian = some .genitive := by decide
-
-/-- Tagalog (Section 1.3.1): two strategies, each subjects only. -/
-theorem tagalog_su_only : ∀ m ∈ tagalog, m.positions = [.subject] := by decide
-
-/-- Turkish: participles cover subject through oblique, retention the positions below. -/
-theorem turkish_retention_below_participles :
-    lowestCovered turkish = some .objComparison ∧
-      turkish.map cutoff = [some .oblique, some .objComparison] := by
-  decide
+/-- Korean (Section 1.3.4): the gap strategy stops at obliques and genitives require a retained
+pronoun. -/
+theorem korean_genitive_retention : korean.map (·.npRel) = [.gap, .resumptive] := by decide
 
 /-- Finnish (Section 1.3.2): the case-marked *joka* is the broader strategy, the participle
 covering subject and direct object only, both primary. -/

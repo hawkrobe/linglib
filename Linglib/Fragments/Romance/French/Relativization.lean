@@ -24,9 +24,8 @@ def relQui : Marker :=
   { form := "qui/que/dont/lequel"
   , npRel := .relPronoun
   , bearsCaseMarking := true
-  , rcPosition := .postNominal
-  , positions := [.subject, .directObject, .indirectObject, .oblique, .genitive]
-  , notes := "Case-coding relative pronoun system; OCOMP no data" }
+  , placement := .postNominal
+  , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
 
 /-- All French relative clause markers. -/
 def relMarkers : List Marker := [relQui]

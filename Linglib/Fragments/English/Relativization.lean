@@ -22,9 +22,8 @@ def relThat : Marker :=
   { form := "that/∅"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .postNominal
-  , positions := [.subject, .directObject]
-  , notes := "Complementizer that or zero; NP_rel deleted" }
+  , placement := .postNominal
+  , positions := {.subject, .directObject} }
 
 /-- Relative pronoun *who/whom/which/whose*. Bears case marking
     (who/whom/whose distinguish nominative/accusative/genitive).
@@ -35,9 +34,8 @@ def relWhom : Marker :=
   { form := "who/whom/which/whose"
   , npRel := .relPronoun
   , bearsCaseMarking := true
-  , rcPosition := .postNominal
-  , positions := [.indirectObject, .oblique, .genitive, .objComparison]
-  , notes := "Relative pronoun with case (who/whom/whose); pied-piping" }
+  , placement := .postNominal
+  , positions := {.indirectObject, .oblique, .genitive, .objComparison} }
 
 /-- All English relative clause markers. -/
 def relMarkers : List Marker := [relThat, relWhom]

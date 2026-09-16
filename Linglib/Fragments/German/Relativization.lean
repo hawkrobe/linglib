@@ -27,9 +27,8 @@ def relDer : Marker :=
   { form := "der/die/das"
   , npRel := .relPronoun
   , bearsCaseMarking := true
-  , rcPosition := .postNominal
-  , positions := [.subject, .directObject, .indirectObject, .oblique, .genitive]
-  , notes := "Case-inflected relative pronoun; OCOMP no data" }
+  , placement := .postNominal
+  , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
 
 /-- Prenominal participial construction; NP_rel is deleted (gap). Covers
     SU only — the subjects-only participial strategy of §1.3.1 p. 70.
@@ -39,9 +38,8 @@ def relParticiple : Marker :=
   { form := "participle"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .preNominal
-  , positions := [.subject]
-  , notes := "Participial; subjects only" }
+  , placement := .preNominal
+  , positions := {.subject} }
 
 /-- All German relative clause markers. -/
 def relMarkers : List Marker := [relDer, relParticiple]

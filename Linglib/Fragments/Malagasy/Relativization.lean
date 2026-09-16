@@ -26,9 +26,8 @@ def relGap : Marker :=
   { form := "izay/∅"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .postNominal
-  , positions := [.subject]
-  , notes := "Only pivot (subject) relativizable; voice alternation for non-SU" }
+  , placement := .postNominal
+  , positions := {.subject} }
 
 /-- All Malagasy relative clause markers. -/
 def relMarkers : List Marker := [relGap]

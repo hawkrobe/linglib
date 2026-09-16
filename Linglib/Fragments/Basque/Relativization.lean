@@ -25,9 +25,8 @@ def relN : Marker :=
   { form := "-n"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .preNominal
-  , positions := [.subject, .directObject, .indirectObject]
-  , notes := "Invariable juncture suffix -n; NP_rel deleted; OBL-OCOMP no data" }
+  , placement := .preNominal
+  , positions := {.subject, .directObject, .indirectObject} }
 
 /-- All Basque relative clause markers. -/
 def relMarkers : List Marker := [relN]

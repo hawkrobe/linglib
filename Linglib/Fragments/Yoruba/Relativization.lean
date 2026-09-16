@@ -39,7 +39,9 @@ open RelativeClause
 
 /-- §6.19: Subject relativization. The relativized subject is replaced by the
     high-tone third-person singular pronoun `ó`.
-    E.g. `Ọkùnrin tí ó pè mí` 'the man who called me'.
+    E.g. `Ọkùnrin tí ó pè mí` 'the man who called me'; [keenan-comrie-1979]'s
+    example 127 attests the same pattern. WALS F122A codes Yoruba as
+    `pronounRetention` on the same source.
     `bearsCaseMarking := false` per [keenan-comrie-1979]'s analysis of
     `ó` as verb agreement (K&C 1977 Table 1 p. 79 codes Yoruba's SU-strategy
     as -case). -/
@@ -47,13 +49,8 @@ def relTiSubject : Marker :=
   { form := "tí + ó"
   , npRel := .resumptive
   , bearsCaseMarking := false
-  , rcPosition := .postNominal
-  , positions := [.subject]
-  , notes := "[awobuluyi-1978] §6.19: subject replaced by ó. " ++
-             "[keenan-comrie-1979] ex. 127 confirms (`obinrin t' o maa ra it`); " ++
-             "they argue ó is verb agreement, supporting the -case coding " ++
-             "(consistent with K&C 1977 Table 1 p. 79). " ++
-             "Matches WALS F122A `pronounRetention` (the WALS row also cites Awobuluyi 1978)." }
+  , placement := .postNominal
+  , positions := {.subject} }
 
 /-- §6.20: Direct object relativization. The relativized object is dropped
     completely (gap strategy).
@@ -62,12 +59,8 @@ def relTiObject : Marker :=
   { form := "tí + ∅"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .postNominal
-  , positions := [.directObject]
-  , notes := "[awobuluyi-1978] §6.20: object dropped completely. " ++
-             "[keenan-comrie-1979] ex. 125 confirms (`ìṣu ti mo ra (*a) lana naa` — " ++
-             "the resumptive *a is ungrammatical). Matches K&C 1977 Table 1 p. 79 " ++
-             "-case strategy DO=+." }
+  , placement := .postNominal
+  , positions := {.directObject} }
 
 /-- §6.21–6.22: Oblique relativization. Awobuluyi splits this into two
     sub-cases: the prepositions `fi`, `ti`, `bá`, `fún`, `sí` drop their
@@ -75,22 +68,14 @@ def relTiObject : Marker :=
     restructuring (drop + repositioning, with `tí` insertion for place
     nouns and exceptions for `wà`/`gbé`, §6.22). The single-cell
     `Marker.npRel` cannot encode the split, so we record the
-    dominant pattern (`gap`) and document the `ní` case in `notes`.
+    dominant pattern (`gap`); the `ní` case is described here.
     E.g. `Ọbẹ tí mo fi gé e` 'the knife I cut it with'. -/
 def relTiOblique : Marker :=
   { form := "tí + ∅ (5 preps); tí + restructuring (ní)"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .postNominal
-  , positions := [.indirectObject, .oblique]
-  , notes := "[awobuluyi-1978] §6.21: prepositions fi/ti/bá/fún/sí drop their object completely. " ++
-             "§6.22: preposition ní triggers drop+repositioning, with tí-insertion for place-noun objects " ++
-             "and exceptions for the locative verbs wà and gbé. " ++
-             "Indirect object bundled here under §6.21's coverage of fún. " ++
-             "[keenan-comrie-1979] p. 349 reanalyzes IO/OBL/OComp relativization via serial-verb " ++
-             "construction (the relativized position recast as DO of a serial verb), yielding the " ++
-             "same gap strategy by a different analytical route. K&C 1977 Table 1 p. 79 codes these " ++
-             "positions as `*` (does-not-exist-as-such)." }
+  , placement := .postNominal
+  , positions := {.indirectObject, .oblique} }
 
 /-- §6.23: Genitive relativization. The relativized genitive qualifier is
     replaced by `rẹ̀` (singular) or `wọn` (plural) — pronoun retention.
@@ -99,19 +84,16 @@ def relTiOblique : Marker :=
     `bearsCaseMarking := true` per K&C 1977 Table 1 p. 79 (Strategy 2: postnom,
     +case, GEN=+). The genitive-form pronouns `rẹ̀`/`wọn` are morphologically
     distinct from subject `ó` and object `i`/`un`/`ó`, so per Awobuluyi §2.21's
-    polymorphic-noun classification they encode their case role lexically. -/
+    polymorphic-noun classification they encode their case role lexically.
+    Retention is obligatory ([keenan-comrie-1979]'s example 126 rejects the gap),
+    and the genitive is the lowest relativizable position; WALS does not code
+    Yoruba on F123A. -/
 def relTiGenitive : Marker :=
   { form := "tí + rẹ̀/wọn"
   , npRel := .resumptive
   , bearsCaseMarking := true
-  , rcPosition := .postNominal
-  , positions := [.genitive]
-  , notes := "[awobuluyi-1978] §6.23: genitive qualifier replaced by " ++
-             "rẹ̀ (singular) or wọn (plural). Establishes GEN as the lowest " ++
-             "relativizable AH position (WALS does not code Yoruba on " ++
-             "F123A). [keenan-comrie-1979] ex. 126 confirms " ++
-             "obligatory rẹ retention (`ọkunrin ti mo wọ si ile {rẹ/*0}` — gap is " ++
-             "ungrammatical). Matches K&C 1977 Table 1 p. 79 +case strategy GEN=+." }
+  , placement := .postNominal
+  , positions := {.genitive} }
 
 /-- All Yoruba relative clause markers, anchored to [awobuluyi-1978]
     §6.19–6.23 + [keenan-comrie-1979] ex. 125–128. All four share the

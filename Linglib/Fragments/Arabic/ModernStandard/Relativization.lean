@@ -50,12 +50,9 @@ def relAlladhi : Marker :=
   { form := "alladhī/allatii"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .postNominal
-  , positions := [.subject]
-  , headDefiniteness := some .definite
-  , notes := "Relative pronoun agrees with definite head in number/gender; "
-          ++ "no overt subject in RC (verb agreement only); "
-          ++ "[ryding-2005] §14.2" }
+  , placement := .postNominal
+  , positions := {.subject}
+  , headDefiniteness := some .definite }
 
 /-- Relative pronoun *alladhī/allatii* with a resumptive personal pronoun
     (the *ʿaaʾid*) in the relativized position. Used with definite
@@ -71,11 +68,9 @@ def relResumptive : Marker :=
   { form := "alladhī/allatii + resumptive"
   , npRel := .resumptive
   , bearsCaseMarking := true
-  , rcPosition := .postNominal
-  , positions := [.directObject, .indirectObject, .oblique, .genitive, .objComparison]
-  , headDefiniteness := some .definite
-  , notes := "Resumptive pronoun (ʿaaʾid) in relativized position bears case; "
-          ++ "[ryding-2005] §14.4.1; K&C Table 1 DO–OCOMP" }
+  , placement := .postNominal
+  , positions := {.directObject, .indirectObject, .oblique, .genitive, .objComparison}
+  , headDefiniteness := some .definite }
 
 /-- Indefinite-headed RC, subject relativization. Per [ryding-2005]
     §14.3, "a relative clause may refer to an indefinite noun or noun
@@ -89,12 +84,9 @@ def relAsyndeticGap : Marker :=
   { form := "∅"
   , npRel := .gap
   , bearsCaseMarking := false
-  , rcPosition := .postNominal
-  , positions := [.subject]
-  , headDefiniteness := some .indefinite
-  , notes := "Indefinite-headed RC; no overt relative pronoun; "
-          ++ "subject encoded by RC-verb agreement; "
-          ++ "[ryding-2005] §14.3" }
+  , placement := .postNominal
+  , positions := {.subject}
+  , headDefiniteness := some .indefinite }
 
 /-- Indefinite-headed RC, non-subject relativization. Per [ryding-2005]
     §14.4.2, "indefinite relative clauses do not include relative pronouns,
@@ -116,13 +108,9 @@ def relAsyndeticResumptive : Marker :=
   { form := "∅ + resumptive"
   , npRel := .resumptive
   , bearsCaseMarking := true
-  , rcPosition := .postNominal
-  , positions := [.directObject, .indirectObject, .oblique, .genitive, .objComparison]
-  , headDefiniteness := some .indefinite
-  , notes := "Indefinite-headed RC; no overt relative pronoun; "
-          ++ "resumptive pronoun bears case; "
-          ++ "[ryding-2005] §14.4.2 (DO directly attested; "
-          ++ "non-DO positions per K&C Table 1 + parsimony with definite case)" }
+  , placement := .postNominal
+  , positions := {.directObject, .indirectObject, .oblique, .genitive, .objComparison}
+  , headDefiniteness := some .indefinite }
 
 /-- The full MSA RC marker inventory per [ryding-2005] ch. 14:
     definite-headed pair (`relAlladhi`, `relResumptive`) plus
