@@ -1,6 +1,6 @@
 import Linglib.Syntax.Voice.Alternation
 import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Semantics.Composition.TypeShifting
+import Linglib.Semantics.Composition.Ty
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -191,11 +191,16 @@ theorem passivizable_iff :
   intro v hv
   fin_cases hv <;> decide
 
+/-- The semantic type of a clausal complement: a finite clause denotes a proposition and a
+nonfinite one a property, the type distinction of chapter I. -/
+def complementTy (ct : ComplementType) : Option Semantics.Composition.Ty :=
+  if ct.isClausal then some (if ct.isFinite then .t else .et) else none
+
 /-- Control verbs take property-denoting complements; *believe*, no control verb, takes a finite
 clause denoting a proposition. -/
 theorem control_complements_property :
-    (∀ v ∈ [try_.toVerb, want.toVerb], v.complementType.denotation = some .property) ∧
-      believe.toVerb.complementType.denotation = some .proposition ∧
+    (∀ v ∈ [try_.toVerb, want.toVerb], complementTy v.complementType = some .et) ∧
+      complementTy believe.toVerb.complementType = some .t ∧
       believe.toVerb.controlType = .none := by
   refine ⟨λ v hv => ?_, rfl, rfl⟩
   fin_cases hv <;> rfl

@@ -385,6 +385,12 @@ def individual (a : α) : Quantifier α := fun P => P a
 theorem individual_injective : Function.Injective (individual (α := α)) :=
   fun a b h => (show b = a from (congrFun h (· = a)).mp rfl).symm
 
+/-- The singleton property of an entity, `ident j = {j}`; `individual j` is its lift. -/
+def ident (j : α) : α → Prop := (· = j)
+
+theorem ident_injective : Function.Injective (ident (α := α)) :=
+  fun a _ h => (congrFun h a).mp rfl
+
 /-! ### Mathlib Bridge -/
 
 /-- `ScopeUpwardMono q` is `∀ R, Monotone (q R)` under the Pi-of-Prop

@@ -16,13 +16,15 @@ upward-closed quantifiers that [barwise-cooper-1981] take natural-language
 determiners to denote, the two form a `GaloisCoinsertion`. Sending a quantifier through `BE` and back preserves truth
 conditions exactly when it is a principal ultrafilter: a proper name survives
 the round trip, `every student` does not. `Ty.det` names the determiner type
-⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩, and the shifts relating `Quantifier` to the other noun-phrase
-types are [partee-1987]'s, in `Semantics.Composition.TypeShifting`.
+⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩. The shifts relating `Quantifier` to the other noun-phrase types are
+[partee-1987]'s: the total ones are `individual`, `ident`, `A` and `BE`, with the two faces
+of Partee's triangle `BE_individual_eq_ident` and `A_ident_eq_individual` proved here, and
+the partial ones, `Reference.THE` and `Reference.lower`, are Russellian iotas.
 -/
 
 namespace Quantification
 
-variable {E : Type}
+variable {E : Type*}
 
 /-! ### The continuation identification
 
@@ -54,6 +56,16 @@ def BE (Q : Quantifier E) : E → Prop :=
 def A (domain : List E) (P : E → Prop) : Quantifier E :=
   fun Q => ∃ x ∈ domain, P x ∧ Q x
 
+/-- `BE ∘ individual = ident`, the right face of [partee-1987]'s triangle. -/
+theorem BE_individual_eq_ident (j : E) : BE (individual j) = ident j :=
+  funext fun _ => propext eq_comm
+
+/-- `A ∘ ident = individual` on the domain, the left face of the triangle. -/
+theorem A_ident_eq_individual (domain : List E) (j : E) (hj : j ∈ domain) :
+    A domain (ident j) = individual j := by
+  funext P
+  exact propext ⟨fun ⟨_, _, rfl, hP⟩ => hP, fun hP => ⟨j, hj, rfl, hP⟩⟩
+
 /-! ### `BE` as a bounded-lattice homomorphism -/
 
 /-- `BE(Q₁ ∧ Q₂) = BE(Q₁) ∧ BE(Q₂)` -/
@@ -69,7 +81,7 @@ theorem BE_neg (Q : Quantifier E) :
     BE (fun P => ¬(Q P)) = (fun x => ¬(BE Q x)) := rfl
 
 /-- `BE` preserves meets, joins, `⊤` and `⊥` ([partee-1987]). -/
-def BE_hom (E : Type) : BoundedLatticeHom (Quantifier E) (E → Prop) where
+def BE_hom (E : Type*) : BoundedLatticeHom (Quantifier E) (E → Prop) where
   toFun := BE
   map_sup' _ _ := rfl
   map_inf' _ _ := rfl
@@ -171,7 +183,7 @@ monotonicity constraint is exactly the condition making `A` and `BE` an
 adjunction. -/
 
 /-- Upward-closed (monotone) quantifiers: `Q(P)` and `P ≤ P'` imply `Q(P')`. -/
-def UpwardGQ (E : Type) := { Q : Quantifier E // Monotone Q }
+def UpwardGQ (E : Type*) := { Q : Quantifier E // Monotone Q }
 
 instance : PartialOrder (UpwardGQ E) := Subtype.partialOrder _
 
@@ -243,7 +255,7 @@ def Ty.det : Ty := (.e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t)
 
 /-- Existential closure over a complete finite domain is ⟦some⟧: both compute
     `λR.λS. ∃x. R(x) ∧ S(x)`. -/
-theorem A_eq_some_sem (E : Type) (domain : List E)
+theorem A_eq_some_sem (E : Type*) (domain : List E)
     (hComplete : ∀ x : E, x ∈ domain) :
     A domain = (some_sem : GQ E) := by
   funext R S

@@ -1,4 +1,5 @@
 import Mathlib.Data.Set.Subsingleton
+import Linglib.Semantics.Quantification.Defs
 
 /-!
 # The Russellian iota
@@ -9,9 +10,14 @@ is unique existence (`russellIota_isSome_iff`), which factors into existence and
 the extension (`existsUnique_iff_nonempty_subsingleton`), the two components
 [coppock-beaver-2015] separate into an assertion and a presupposition.
 
+[partee-1987]'s partial type shifts are Russellian iotas: `THE`, the Montague lift of the unique
+member of a property, and `lower`, the entity whose lift a principal ultrafilter is; each inverts
+its total shift (`THE_ident`, `lower_individual`).
+
 ## Main definitions
 
 * `Reference.russellIota`: the unique satisfier of a predicate, or `none`.
+* `Reference.THE`, `Reference.lower`: Partee's partial shifts.
 
 ## Main results
 
@@ -22,6 +28,7 @@ the extension (`existsUnique_iff_nonempty_subsingleton`), the two components
 
 * [russell-1905]
 * [coppock-beaver-2015]
+* [partee-1987]
 -/
 
 variable {α : Type*} {p : α → Prop}
@@ -56,5 +63,30 @@ theorem russellIota_isSome_iff : (russellIota P).isSome ↔ ∃! x, P x := by
 
 theorem russellIota_eq_none_iff : russellIota P = none ↔ ¬ ∃! x, P x := by
   rw [← Option.not_isSome_iff_eq_none, russellIota_isSome_iff]
+
+/-! ### Partee's partial shifts -/
+
+section Partee
+
+open Quantification
+
+variable (j : E)
+
+/-- The presuppositional definite article, the Montague lift of the unique `P`. -/
+noncomputable def THE : Option (Quantifier E) := (russellIota P).map individual
+
+/-- The entity whose Montague lift is `Q`, when `Q` is a principal ultrafilter. -/
+noncomputable def lower (Q : Quantifier E) : Option E := russellIota fun j ↦ Q = individual j
+
+theorem russellIota_ident : russellIota (ident j) = some j :=
+  (russellIota_eq_some_iff _).2 ⟨rfl, fun _ h ↦ h⟩
+
+theorem lower_individual : lower (individual j) = some j :=
+  (russellIota_eq_some_iff _).2 ⟨rfl, fun _ h ↦ (individual_injective h).symm⟩
+
+theorem THE_ident : THE (ident j) = some (individual j) := by
+  rw [THE, russellIota_ident]; rfl
+
+end Partee
 
 end Reference
