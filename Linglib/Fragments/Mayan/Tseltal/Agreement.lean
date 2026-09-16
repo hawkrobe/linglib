@@ -1,7 +1,8 @@
 import Linglib.Fragments.Mayan.Tseltalan
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Syntax.Reflex
-import Linglib.Syntax.Extraction
+import Linglib.Syntax.Reflex
+import Linglib.Syntax.Clause.Relative
 import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
@@ -38,7 +39,6 @@ aspect-conditioned split (in contrast with Cholan; per [polian-2013]): Set A
 indicates A, Set B indicates S and P alike.
 -/
 
-open Extraction (ExtractionTarget ExtractionMarkingStrategy)
 
 namespace Tseltal
 
@@ -106,11 +106,8 @@ namespace Extraction
 
 /-- No Agent Focus morphology is required for A-extraction, consistent
     with Tseltal being LOW-ABS. -/
-def realize : ExtractionTarget → Finset (Reflex Empty) :=
+def realize : RelativeClause.Position → Finset (Reflex Empty) :=
   fun _ ↦ ∅
-
-/-- WALS-style label: extraction is unmarked. -/
-def strategy : ExtractionMarkingStrategy := .unmarked
 
 end Extraction
 

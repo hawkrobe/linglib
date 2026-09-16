@@ -1,5 +1,6 @@
 import Linglib.Syntax.Reflex
-import Linglib.Syntax.Extraction
+import Linglib.Syntax.Reflex
+import Linglib.Syntax.Clause.Relative
 
 /-!
 # Kaqchikel Extraction Morphology (Agent Focus)
@@ -17,8 +18,7 @@ AF, so the marked "subject" is A, not S.
 ## Main declarations
 
 * `Kaqchikel.Extraction.realize`: the overt reflexes of extraction from
-  each target position, with `Kaqchikel.Extraction.strategy` as the
-  WALS-style label.
+  each position of the Accessibility Hierarchy.
 
 ## Implementation notes
 
@@ -30,7 +30,6 @@ analyses live in `Studies/Erlewine2016.lean` and
 `Studies/CoonMateoPedroPreminger2014.lean`.
 -/
 
-open Extraction (ExtractionTarget ExtractionMarkingStrategy)
 
 namespace Kaqchikel
 
@@ -44,12 +43,9 @@ inductive Site where
 /-- Transitive-subject extraction switches the verb to AF (the suffix
     *-ö* or *-n*, with Set A suppressed, [erlewine-2016]); nothing else
     is marked. -/
-def realize : ExtractionTarget → Finset (Reflex Site)
+def realize : RelativeClause.Position → Finset (Reflex Site)
   | .subject => {.morpheme .verb}
   | _ => ∅
-
-/-- WALS-style label: a dedicated morpheme marks extraction. -/
-def strategy : ExtractionMarkingStrategy := .dedicatedMorpheme
 
 end Extraction
 

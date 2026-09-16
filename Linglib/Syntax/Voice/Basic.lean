@@ -1,4 +1,3 @@
-import Linglib.Syntax.Extraction
 
 /-!
 # Voice system typology

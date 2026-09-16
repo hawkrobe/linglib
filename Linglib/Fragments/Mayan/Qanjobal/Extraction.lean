@@ -1,7 +1,8 @@
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Syntax.Reflex
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Extraction
+import Linglib.Syntax.Reflex
+import Linglib.Syntax.Clause.Relative
 import Linglib.Fragments.Mayan.Params
 
 /-!
@@ -28,8 +29,7 @@ with a verb bearing the AF suffix *-on*, the intransitive status suffix
   identical to Agent Focus.
 * `Qanjobal.PersonRestriction` with `.requiresAF`, `.requiresCrazyAP`:
   the 3rd-person restriction on Agent Focus.
-* `Qanjobal.Extraction.realize`: the AF-based extraction marking, with
-  `Qanjobal.Extraction.strategy` as the WALS-style label.
+* `Qanjobal.Extraction.realize`: the AF-based extraction marking.
 
 ## Implementation notes
 
@@ -48,7 +48,6 @@ mechanism. Tables and examples cite [coon-mateo-pedro-preminger-2014]
 tables (13) and (14).
 -/
 
-open Extraction (ExtractionTarget ExtractionMarkingStrategy)
 
 namespace Qanjobal
 
@@ -204,12 +203,9 @@ inductive Site where
 /-- 3rd-person agent (subject) extraction switches the verb to AF (the
     suffix *-on*, [coon-mateo-pedro-preminger-2014]); nothing else is
     marked. -/
-def realize : ExtractionTarget → Finset (Reflex Site)
+def realize : RelativeClause.Position → Finset (Reflex Site)
   | .subject => {.morpheme .verb}
   | _ => ∅
-
-/-- WALS-style label: a dedicated morpheme marks extraction. -/
-def strategy : ExtractionMarkingStrategy := .dedicatedMorpheme
 
 end Extraction
 

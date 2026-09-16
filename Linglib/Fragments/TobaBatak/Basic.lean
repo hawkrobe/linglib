@@ -1,5 +1,6 @@
 import Linglib.Syntax.Reflex
-import Linglib.Syntax.Extraction
+import Linglib.Syntax.Reflex
+import Linglib.Syntax.Clause.Relative
 import Linglib.Syntax.Voice.Basic
 
 /-!
@@ -16,13 +17,11 @@ them, live in the studies that propose them.
 
 * `TobaBatak.Voice`, `Voice.affix`, `Voice.promotes`: the two voices, their prefixes and the
   role each promotes to pivot.
-* `TobaBatak.Extraction.realize`, `Extraction.strategy`: extraction marked by the voice
-  alternation on the verb.
+* `TobaBatak.Extraction.realize`: extraction marked by the voice alternation on the verb.
 * `TobaBatak.VoiceSystem.voices`, `VoiceSystem.symmetry`: the inventory as the voice typology
   reads it.
 -/
 
-open Extraction (ExtractionTarget ExtractionMarkingStrategy)
 open Voice (PivotTarget VoiceEntry VoiceSystemSymmetry)
 
 namespace TobaBatak
@@ -58,12 +57,9 @@ inductive Site where
 
 /-- Only the pivot, the subject, extracts, and the voice form on the verb says which argument
 that is. -/
-def realize : ExtractionTarget → Finset (Reflex Site)
+def realize : RelativeClause.Position → Finset (Reflex Site)
   | .subject => {.morpheme .verb}
   | _ => ∅
-
-/-- The WALS-style label: voice alternation marks extraction. -/
-def strategy : ExtractionMarkingStrategy := .voiceAlternation
 
 end Extraction
 

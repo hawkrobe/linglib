@@ -1,5 +1,5 @@
 import Linglib.Syntax.Reflex
-import Linglib.Syntax.Extraction
+import Linglib.Syntax.Clause.Relative
 
 /-!
 # K'iche' extraction marking
@@ -17,8 +17,6 @@ contrast with Mam =(y)a', is the matter of `Studies/ElkinsTorrenceBrown2026.lean
 * [elkins-torrence-brown-2026]
 -/
 
-open Extraction
-
 namespace Kiche.Extraction
 
 /-- Reflex host of K'iche' extraction marking: the verbal complex. -/
@@ -28,13 +26,10 @@ inductive Site
 
 /-- The two marked cells: subject extraction takes Agent Focus, oblique extraction adds *wi*;
 core-object extraction is unmarked. -/
-def realize : ExtractionTarget → Finset (Reflex Site)
+def realize : RelativeClause.Position → Finset (Reflex Site)
   | .subject => {.morpheme .verb}
   | .oblique => {.morpheme .verb}
   | _ => ∅
-
-/-- WALS-style label: dedicated morphemes mark extraction. -/
-def strategy : ExtractionMarkingStrategy := .dedicatedMorpheme
 
 theorem marks_oblique : (realize .oblique).Nonempty := Finset.singleton_nonempty _
 

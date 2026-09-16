@@ -1,5 +1,5 @@
 import Linglib.Syntax.Reflex
-import Linglib.Syntax.Extraction
+import Linglib.Syntax.Clause.Relative
 
 /-!
 # Mam extraction marking
@@ -20,8 +20,6 @@ of `Studies/ElkinsTorrenceBrown2026.lean`.
 * [aissen-2017]
 -/
 
-open Extraction
-
 namespace Mam.Extraction
 
 /-- Reflex hosts of Mam extraction marking: the verb, and the Voice or directional head hosting
@@ -33,13 +31,10 @@ inductive Site
 
 /-- The two marked cells: subject extraction antipassivizes the verb, oblique extraction places
 =(y)a' on a Voice or directional head; core-object extraction is unmarked. -/
-def realize : ExtractionTarget → Finset (Reflex Site)
+def realize : RelativeClause.Position → Finset (Reflex Site)
   | .subject => {.morpheme .verb}
   | .oblique => {.morpheme .voiceHead}
   | _ => ∅
-
-/-- WALS-style label: dedicated morphemes mark extraction. -/
-def strategy : ExtractionMarkingStrategy := .dedicatedMorpheme
 
 theorem marks_oblique : (realize .oblique).Nonempty := Finset.singleton_nonempty _
 

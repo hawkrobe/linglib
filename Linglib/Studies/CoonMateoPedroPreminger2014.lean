@@ -1,5 +1,4 @@
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Extraction
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.Extraction
 import Linglib.Fragments.Mayan.Chol.Agreement
@@ -87,7 +86,7 @@ are recorded as data without a configuration.
 
 namespace CoonMateoPedroPreminger2014
 
-open Minimalist Minimalist.Voice Mayan Extraction Data.Examples
+open Minimalist Minimalist.Voice Mayan Data.Examples
 
 /-! ### Clauses -/
 

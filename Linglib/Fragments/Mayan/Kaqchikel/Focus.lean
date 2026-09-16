@@ -18,7 +18,7 @@ fronts like A but intransitive verbs have no AF form.
 * `Kaqchikel.af_reflex_iff`: the verb-hosted AF reflex appears exactly
   under transitive-subject (A) focus.
 * `Kaqchikel.marked_subject_is_A_not_S`: the A-focus vs S-focus split
-  that `Extraction.ExtractionTarget` cannot draw.
+  that `RelativeClause.Position` cannot draw.
 
 ## Implementation notes
 
@@ -68,7 +68,7 @@ theorem af_reflex_iff (p : ArgumentRole) :
   cases p <;> decide
 
 /-- The ergative split in focus marking: A-focus switches the verb to AF
-    while S-focus does not, although `Extraction.ExtractionTarget` maps
+    while S-focus does not, although `RelativeClause.Position` maps
     both to `.subject` — the verb reflex of `Extraction.realize .subject`
     (`Extraction.lean`) marks transitive subjects only. -/
 theorem marked_subject_is_A_not_S :
