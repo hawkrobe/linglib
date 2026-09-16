@@ -1,4 +1,4 @@
-import Linglib.Syntax.Category.Particle.Capabilities
+import Linglib.Syntax.Category.Particle.Basic
 import Linglib.Fragments.Slavic.Czech.Particles
 import Linglib.Studies.StankovaSimik2025
 import Linglib.Studies.Simik2024
@@ -34,8 +34,6 @@ like inner negation but non-propositional like FALSUM.
   (`licenses_nciLicensed_iff_licensedAt`).
 * `nahodou_identifies_outer`, `jeste_identifies_inner`,
   `fakt_plus_no_jeste_identifies_medial` — per-particle pinning.
-* `instance Distributed Particle Position` — Table 1 as a licensing
-  axis alongside clause type and embedding.
 * `czech_refines_loNQ` — Czech splits [romero-2024]'s LoNQ into inner
   and medial.
 * `examples_match_table1` — the paper's examples
@@ -179,12 +177,6 @@ def table1 : List (Particle × Diagnostic) :=
 def diagnostic? (p : Particle) : Option Diagnostic :=
   table1.lookup p
 
-/-- Table 1 as a `Distributed` axis: negation position is a licensing
-context like clause type and embedding. -/
-instance : Distributed Particle Position :=
-  ⟨fun p pos => (diagnostic? p).map fun d =>
-    if Licenses pos d then .optional else .excluded⟩
-
 /-- Table 1 compatibility of a particle with a negation position: the position licenses
 the particle's diagnostic, vacuously for a particle outside the table. -/
 def Compatible (p : Particle) (pos : Position) : Prop :=
@@ -192,8 +184,6 @@ def Compatible (p : Particle) (pos : Position) : Prop :=
 
 instance (p : Particle) (pos : Position) : Decidable (Compatible p pos) := by
   unfold Compatible; infer_instance
-
-example : Distributed.LicensedIn nahodou Position.outer := by decide
 
 /-- *náhodou* uniquely identifies outer negation. -/
 theorem nahodou_identifies_outer (pos : Position) : Compatible nahodou pos → pos = .outer := by
