@@ -1,145 +1,127 @@
+import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Set.Insert
+import Linglib.Core.Order.Minimal
+
 /-!
-# Gricean Maxims of Conversation
+# The Gricean maxim of Quantity
 
-[grice-1975]
+[grice-1975]'s maxim of Quantity asks a speaker to make the contribution as informative as
+required and no more. This file states both submaxims for a referring expression, whose
+required information is the identity of its referent. A description `d` with extension
+`ext d` *distinguishes* the referent `r` from a contrast set `C` when it holds of `r` and of
+no member of `C`, the first submaxim; it is not more informative than required when it is
+`Minimal` among the distinguishing descriptions under an order on descriptions that the
+consumer supplies, the second. `quantityViolation` classifies a description as
+under-informative, over-informative or neither.
 
-Logic and Conversation. In P. Cole & J.L. Morgan (eds.), *Syntax and
-Semantics 3: Speech Acts*, 41–58. Academic Press.
+## Implementation notes
 
-## Design
+* The order on descriptions is content, not extension: every distinguishing description of
+  `r` against `C` has the same extension on `insert r C`, so the second submaxim cannot be
+  read off extensions. [dale-reiter-1995] orders attribute–value sets by inclusion and
+  [engelhardt-etal-2006] a bare noun below its modified forms.
+* `Distinguishes.mono` records the coherence a consumer's order should have with the
+  extension: when more content means a smaller extension, adding content to a distinguishing
+  description that still holds of the referent cannot lose it.
 
-The Cooperative Principle and four maxims are formalized as types, not
-as behavioral predictions. Behavioral predictions (e.g., "speakers
-maximize informativity") belong in the implementing frameworks — RSA
-formalizes Quantity via `s1Score`, NeoGricean via the Standard Recipe,
-Dale & Reiter via incremental attribute selection. Study files that
-test the maxims directly (e.g., [engelhardt-etal-2006]) import
-this module.
+## References
 
-Linking theorems connecting maxims to specific frameworks belong in
-`Comparisons/`.
-
-## The Quantity Maxim
-
-Grice's Quantity maxim has two sub-maxims:
-
-1. **Q1**: "Make your contribution as informative as is required
-   (for the current purposes of the exchange)."
-2. **Q2**: "Do not make your contribution more informative than is
-   required."
-
-[engelhardt-etal-2006] showed these behave asymmetrically:
-Q1 violations (under-description) are penalized in both production
-and explicit judgment; Q2 violations (over-description) are produced
-frequently, tolerated explicitly, but detected implicitly via
-processing costs.
+* [grice-1975]
+* [dale-reiter-1995]
+* [engelhardt-etal-2006]
 -/
 
 namespace Pragmatics.GriceanMaxims
 
--- ============================================================================
--- § The Cooperative Principle and Maxims
--- ============================================================================
+variable {D E : Type*}
 
-/-- The four Gricean maxims of conversation. -/
-inductive Maxim where
-  /-- Make your contribution as informative as is required;
-      do not make it more informative than is required. -/
-  | quantity
-  /-- Do not say what you believe to be false;
-      do not say that for which you lack adequate evidence. -/
-  | quality
-  /-- Be relevant. -/
-  | relation
-  /-- Avoid obscurity of expression; avoid ambiguity;
-      be brief; be orderly. -/
-  | manner
-  deriving DecidableEq, Repr
+section Distinguishes
 
--- ============================================================================
--- § Quantity Sub-Maxims
--- ============================================================================
+variable (ext : D → Set E) (C : Finset E) (r : E) (d : D)
 
-/-- The Quantity maxim decomposes into two independent sub-maxims.
-    Grice (1975) states both; [engelhardt-etal-2006] showed
-    empirically that they are independently violable. -/
-inductive QuantitySubmaxim where
-  /-- "Make your contribution as informative as is required
-      (for the current purposes of the exchange)." -/
-  | Q1
-  /-- "Do not make your contribution more informative than is
-      required." -/
-  | Q2
-  deriving DecidableEq, Repr
+/-- `d` distinguishes `r` from the contrast set `C`: it holds of `r` and of no member of
+`C`. -/
+def Distinguishes : Prop := r ∈ ext d ∧ ∀ c ∈ C, c ∉ ext d
 
-/-- Direction of a Quantity violation. -/
-inductive QuantityViolation where
-  /-- Too little information (violates Q1). E.g., "the apple" when
-      two apples are present. -/
+instance [∀ d, DecidablePred (· ∈ ext d)] : Decidable (Distinguishes ext C r d) := by
+  unfold Distinguishes; infer_instance
+
+variable {ext C r d}
+
+theorem distinguishes_iff_disjoint :
+    Distinguishes ext C r d ↔ r ∈ ext d ∧ Disjoint (ext d) C := by
+  simp [Distinguishes, Set.disjoint_right]
+
+/-- Against every other member of a finite domain, a description distinguishes `r` exactly
+when `r` is its whole extension. -/
+theorem distinguishes_univ_erase_iff [Fintype E] [DecidableEq E] :
+    Distinguishes ext (Finset.univ.erase r) r d ↔ ext d = {r} := by
+  simp only [Distinguishes, Finset.mem_erase, Finset.mem_univ, and_true,
+    Set.eq_singleton_iff_unique_mem]
+  exact and_congr_right fun _ ↦ ⟨fun h x hx ↦ by_contra fun hxr ↦ h x hxr hx,
+    fun h c hc hc' ↦ hc (h c hc')⟩
+
+/-- A distinguishing description distinguishes against any smaller contrast set. -/
+theorem Distinguishes.anti (h : Distinguishes ext C r d) {C' : Finset E} (hC : C' ⊆ C) :
+    Distinguishes ext C' r d :=
+  ⟨h.1, fun c hc ↦ h.2 c (hC hc)⟩
+
+/-- When more content means a smaller extension, adding content to a distinguishing
+description that still holds of the referent keeps it distinguishing. -/
+theorem Distinguishes.mono [Preorder D] (hext : Antitone ext) (h : Distinguishes ext C r d)
+    {d' : D} (hd : d ≤ d') (hr : r ∈ ext d') : Distinguishes ext C r d' :=
+  ⟨hr, fun c hc hc' ↦ h.2 c hc (hext hd hc')⟩
+
+end Distinguishes
+
+/-! ### The two submaxims -/
+
+/-- The direction in which a description violates Quantity: too little content to
+distinguish its referent, or more than distinguishing it requires. -/
+inductive QuantityViolation
   | underInformative
-  /-- Too much information (violates Q2). E.g., "the red apple" when
-      only one apple is present. -/
   | overInformative
   deriving DecidableEq, Repr
 
-/-- Which sub-maxim a violation direction targets. -/
-def QuantityViolation.submaxim : QuantityViolation → QuantitySubmaxim
-  | .underInformative => .Q1
-  | .overInformative  => .Q2
+section Violation
 
-/-- The two violation directions target different sub-maxims. -/
-theorem violations_independent :
-    QuantityViolation.underInformative.submaxim ≠
-    QuantityViolation.overInformative.submaxim := by decide
+variable [Preorder D] (ext : D → Set E) (C : Finset E) (r : E) (d : D)
+  [DecidablePred (Distinguishes ext C r)] [DecidablePred (Minimal (Distinguishes ext C r))]
 
--- ============================================================================
--- § The Manner Submaxims
--- ============================================================================
+/-- The Quantity status of `d` as a description of `r` against `C`: under-informative when it
+does not distinguish `r`, over-informative when a briefer description does, and neither when
+it is a minimal distinguishing description. -/
+def quantityViolation : Option QuantityViolation :=
+  if Distinguishes ext C r d then
+    if Minimal (Distinguishes ext C r) d then none else some .overInformative
+  else some .underInformative
 
-/-- The four Manner sub-maxims ([grice-1975] p.46).
-    [martin-schaefer-kastner-2025] show that M2 (avoid ambiguity) and
-    its counterpart (maintain ambiguity) drive the distribution of French
-    anticausative *se*. -/
-inductive MannerSubmaxim where
-  /-- M1: "Avoid obscurity of expression." -/
-  | avoidObscurity
-  /-- M2: "Avoid ambiguity." Formalized as a parse-blocking
-  predicate in `JereticEtAl2025.Blocked`
-  ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
-  eq 37, `Studies/JereticEtAl2025.lean`). -/
-  | avoidAmbiguity
-  /-- M3: "Be brief (avoid unnecessary prolixity)." -/
-  | beBrief
-  /-- M4: "Be orderly." -/
-  | beOrderly
-  deriving DecidableEq, Repr
+variable {ext C r d}
 
-/-- Direction of a Manner violation. -/
-inductive MannerViolation where
-  /-- Unnecessarily obscure expression (violates M1). -/
-  | obscure
-  /-- Ambiguous when an unambiguous alternative exists (violates M2). -/
-  | ambiguous
-  /-- Unnecessarily verbose (violates M3). -/
-  | verbose
-  /-- Disordered presentation (violates M4). -/
-  | disordered
-  deriving DecidableEq, Repr
+theorem quantityViolation_eq_none_iff :
+    quantityViolation ext C r d = none ↔ Minimal (Distinguishes ext C r) d := by
+  unfold quantityViolation
+  split_ifs with h₁ h₂
+  · exact iff_of_true rfl h₂
+  · exact iff_of_false (by simp) h₂
+  · exact iff_of_false (by simp) fun h ↦ h₁ h.prop
 
-/-- Which sub-maxim a Manner violation targets. -/
-def MannerViolation.submaxim : MannerViolation → MannerSubmaxim
-  | .obscure    => .avoidObscurity
-  | .ambiguous  => .avoidAmbiguity
-  | .verbose    => .beBrief
-  | .disordered => .beOrderly
+theorem quantityViolation_eq_under_iff :
+    quantityViolation ext C r d = some .underInformative ↔ ¬ Distinguishes ext C r d := by
+  unfold quantityViolation
+  split_ifs with h₁ h₂ <;> simp [h₁]
 
-/-- The four Manner violation types each target different sub-maxims. -/
-theorem manner_ambiguity_targets_M2 :
-    MannerViolation.ambiguous.submaxim = .avoidAmbiguity := rfl
+/-- A description is over-informative exactly when it distinguishes its referent and so does
+a briefer one. -/
+theorem quantityViolation_eq_over_iff :
+    quantityViolation ext C r d = some .overInformative ↔
+      Distinguishes ext C r d ∧ ∃ d' < d, Distinguishes ext C r d' := by
+  unfold quantityViolation
+  split_ifs with h₁ h₂
+  · exact iff_of_false (by simp) fun ⟨_, _, hd', h'⟩ ↦ h₂.not_prop_of_lt hd' h'
+  · exact iff_of_true rfl ⟨h₁, (not_minimal_iff_exists_lt h₁).mp h₂⟩
+  · exact iff_of_false (by simp) fun h ↦ h₁ h.1
 
-/-- Ambiguity and obscurity target different sub-maxims. -/
-theorem manner_violations_M1_M2_independent :
-    MannerViolation.obscure.submaxim ≠
-    MannerViolation.ambiguous.submaxim := by decide
+end Violation
 
 end Pragmatics.GriceanMaxims

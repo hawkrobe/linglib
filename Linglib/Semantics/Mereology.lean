@@ -4,6 +4,7 @@ import Mathlib.Order.Atoms
 import Mathlib.Order.SupClosed
 import Mathlib.Order.Zorn
 import Linglib.Core.Order.Antichain
+import Linglib.Core.Order.Minimal
 import Linglib.Core.Order.Valuation
 
 /-!
@@ -95,9 +96,6 @@ theorem qua_pullback [PartialOrder β] {d : α → β} (hd : StrictMono d) {P : 
 
 /-- The `P`-atoms ([krifka-1989]): the minimal `P`-elements. -/
 abbrev atomize (P : α → Prop) : α → Prop := Minimal P
-
-instance [Fintype α] [DecidableLE α] [DecidablePred P] (x : α) : Decidable (Minimal P x) :=
-  decidable_of_iff (P x ∧ ∀ y, P y → y ≤ x → x ≤ y) Iff.rfl
 
 theorem atomize_sub {x : α} (h : atomize P x) : P x := h.1
 

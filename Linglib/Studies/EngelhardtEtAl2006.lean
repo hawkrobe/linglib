@@ -1,36 +1,40 @@
 import Linglib.Data.Examples.EngelhardtEtAl2006
 import Linglib.Pragmatics.GriceanMaxims
 import Mathlib.Data.Fin.VecNotation
+import Mathlib.Data.Fintype.Sigma
+import Mathlib.Data.Fintype.Sum
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Engelhardt et al. (2006): Do Speakers and Listeners Observe the Gricean Maxim of Quantity?
 
 This file formalizes [engelhardt-etal-2006]'s reading of the Maxim of Quantity of [grice-1975]
-for referring expressions over a visual world. A description under-describes when it does not let
-the addressee identify the intended referent, and over-describes when it carries a modifier that
-identification does not require: with one apple in the display *the apple* suffices and *the
-apple on the towel* over-describes it, while with two apples *the apple* under-describes. The
-instructions of Table 1 cross a prepositional-phrase modifier on the target with a destination
-that matches the target's current location or differs from it, and their status follows. Over
-the one-referent display, (4) is concise, (5) and (6) over-describe the target, and (3)
-under-describes the destination, since the apple already rests on a towel and only *the other
-towel* singles out the empty one; over the two-referent display the modifier of (6) is required.
-The three experiments ask whether speakers and listeners observe the maxim. The ten speakers of
-Experiment 1 modified the target on 98% of two-referent trials and never left a matching
-destination unmodified, but modified the target on 30% of one-referent trials. The twenty-two
-listeners of Experiment 2 rated (3) lowest of the four instructions and the bare target of the
-two-referent display far below the modified one, and once the destination was modified
-throughout rated over-descriptions no worse than concise instructions. In the visual world of
-Experiment 3, listeners hearing (6) over the one-referent display fixated the empty towel at *on
-the towel* and reached the box later than with (4), the pattern of [tanenhaus-etal-1995] and
-[spivey-etal-2002], and hearing (3) or (5) kept fixating the apple. Under-descriptions are
-avoided and penalized; over-descriptions are produced, as in [deutsch-pechmann-1982], tolerated
-in judgment, and still cost the listener. The paper takes the looks to the empty towel to show
-an initial location parse of *on the towel* that the pragmatics of the instruction cannot drive,
-since speakers never produce (3) in that context, and attributes it to Minimal Attachment or to
-the saturation of *put*'s location argument rather than to the Referential Model; the
-over-descriptions it attributes to the speaker's representation of the apple as an apple on a
-towel, which a concise description would have to edit away.
+for referring expressions over a visual world. A description under-describes when it does not
+let the addressee identify the intended referent, and over-describes when it carries a modifier
+that identification does not require: with one apple in the display *the apple* suffices and
+*the apple on the towel* over-describes it, while with two apples *the apple* under-describes.
+The instructions of Table 1 cross a prepositional-phrase modifier on the target with a
+destination that matches the target's current location or differs from it, and their status
+follows. Over the one-referent display, (4) is concise, (5) and (6) over-describe the target,
+and (3) under-describes the destination, since the apple already rests on a towel and only *the
+other towel* singles out the empty one; over the two-referent display the modifier of (6) is
+required. The three experiments ask whether speakers and listeners observe the maxim. The ten
+speakers of Experiment 1 modified the target on 98% of two-referent trials and almost always
+modified a matching destination, but modified the target on 30% of one-referent trials. The
+twenty-two listeners of Experiment 2 rated (3) lowest of the four instructions and the bare
+target of the two-referent display far below the modified one, and once the destination was
+modified throughout rated over-descriptions no worse than concise instructions. In the visual
+world of Experiment 3, listeners hearing (6) over the one-referent display fixated the empty
+towel at *on the towel* and reached the box later than with (4), the pattern of
+[tanenhaus-etal-1995] and [spivey-etal-2002], and hearing (3) or (5) kept fixating the apple.
+Under-descriptions are avoided and penalized; over-descriptions are produced, as in
+[deutsch-pechmann-1982], tolerated in judgment, and still cost the listener. The paper takes
+the looks to the empty towel to show an initial location parse of *on the towel* that the
+pragmatics of the instruction cannot drive, since speakers never produce (3) in that context,
+and attributes it to Minimal Attachment or to the saturation of *put*'s location argument
+rather than to the Referential Model; the over-descriptions it attributes to the speaker's
+representation of the apple as an apple on a towel, which a concise description would have to
+edit away.
 
 ## Implementation notes
 
@@ -38,8 +42,11 @@ towel, which a concise description would have to edit away.
   is an object, so that *the towel* is ambiguous between it and the empty towel and *the other
   towel* excludes it. The displays are the paper's running example, an apple on a towel, a frog
   or a second apple, an empty towel and an empty box.
-* Over-description is measured against the bare noun, the paper's one contrast of modified with
-  bare target. Production rates, ratings and fixation proportions stay in the prose above.
+* Identification and the two Quantity violations are `Pragmatics.GriceanMaxims` over the
+  extension of a description in a display, against every other object. The paper's order on
+  descriptions puts a bare noun below its modified forms and nothing else, so the second
+  submaxim measures a modified description against its bare noun alone, the paper's one
+  contrast. Production rates, ratings and fixation proportions stay in the prose above.
 * The examples are `Data.Examples.EngelhardtEtAl2006`.
 
 ## References
@@ -62,7 +69,7 @@ inductive Kind
   | frog
   | towel
   | box
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- An object of a display: its kind and the object it rests on or in, if any. -/
 structure Object where
@@ -92,46 +99,68 @@ inductive Description
   | bare (k : Kind)
   | on (k loc : Kind)
   | other (k : Kind)
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
+
+namespace Description
 
 /-- The noun of a description. -/
-def Description.kind : Description → Kind
+def kind : Description → Kind
   | .bare k | .on k _ | .other k => k
 
 /-- The bare noun a description is measured against. -/
-def Description.bareOf (d : Description) : Description := .bare d.kind
+def bareOf (d : Description) : Description := .bare d.kind
 
-/-- The object `i` satisfies the description, *other* read relative to the target `t`. -/
-def Refers (D : Display) (t i : Fin 5) : Description → Prop
-  | .bare k => (D i).kind = k
-  | .on k loc => (D i).kind = k ∧ ∃ j, (D i).support = some j ∧ (D j).kind = loc
-  | .other k => (D i).kind = k ∧ (D t).support ≠ some i
+@[simp] theorem bareOf_bareOf (d : Description) : d.bareOf.bareOf = d.bareOf := rfl
 
-instance (D : Display) (t i : Fin 5) (d : Description) : Decidable (Refers D t i d) := by
-  cases d <;> unfold Refers <;> infer_instance
+/-- The paper's order on descriptions: a bare noun is below its modified forms and nothing
+else is comparable. -/
+instance : Preorder Description where
+  le d₁ d₂ := d₁ = d₂ ∨ d₁ = d₂.bareOf
+  le_refl _ := .inl rfl
+  le_trans := by rintro _ _ _ (rfl | rfl) (rfl | rfl) <;> simp
 
-/-- The description lets the addressee identify the intended referent `r`: it holds of `r` and
-of nothing else in the display. -/
-def Identifies (D : Display) (t r : Fin 5) (d : Description) : Prop :=
-  Refers D t r d ∧ ∀ i, Refers D t i d → i = r
+instance : DecidableLE Description :=
+  fun d₁ d₂ ↦ inferInstanceAs (Decidable (d₁ = d₂ ∨ d₁ = d₂.bareOf))
 
-instance (D : Display) (t r : Fin 5) (d : Description) : Decidable (Identifies D t r d) := by
-  unfold Identifies; infer_instance
+theorem lt_iff {d' d : Description} : d' < d ↔ d' = d.bareOf ∧ d ≠ d.bareOf := by
+  simp only [lt_iff_le_not_ge]
+  change (d' = d ∨ d' = d.bareOf) ∧ ¬ (d = d' ∨ d = d'.bareOf) ↔ _
+  constructor
+  · rintro ⟨rfl | rfl, h⟩
+    · exact absurd (.inl rfl) h
+    · exact ⟨rfl, fun h' ↦ h (.inl h')⟩
+  · rintro ⟨rfl, h⟩
+    exact ⟨.inr rfl, fun h' ↦ h (h'.elim id fun h' ↦ h'.trans (bareOf_bareOf _))⟩
+
+end Description
+
+/-- The objects a description holds of in a display, *other* read relative to the target
+`t`. -/
+def extension (D : Display) (t : Fin 5) : Description → Set (Fin 5)
+  | .bare k => {i | (D i).kind = k}
+  | .on k loc => {i | (D i).kind = k ∧ ∃ j, (D i).support = some j ∧ (D j).kind = loc}
+  | .other k => {i | (D i).kind = k ∧ (D t).support ≠ some i}
+
+instance (D : Display) (t : Fin 5) (d : Description) : DecidablePred (· ∈ extension D t d) :=
+  fun _ ↦ by cases d <;> unfold extension <;> infer_instance
+
+/-- The description lets the addressee identify the intended referent `r` against every other
+object of the display. -/
+abbrev Identifies (D : Display) (t r : Fin 5) (d : Description) : Prop :=
+  Distinguishes (extension D t) (Finset.univ.erase r) r d
 
 /-- The Quantity violation of a description of `r`, if any: an under-description does not
 identify `r`, and an over-description identifies it with a modifier its bare noun does not
 need. -/
-def violation (D : Display) (t r : Fin 5) (d : Description) : Option QuantityViolation :=
-  if ¬ Identifies D t r d then some .underInformative
-  else if d ≠ d.bareOf ∧ Identifies D t r d.bareOf then some .overInformative
-  else none
+abbrev violation (D : Display) (t r : Fin 5) (d : Description) : Option QuantityViolation :=
+  quantityViolation (extension D t) (Finset.univ.erase r) r d
 
 /-- A modified description that identifies its referent over-describes it exactly when the bare
 noun already identifies it. -/
 theorem violation_eq_over_iff {D : Display} {t r : Fin 5} {d : Description}
     (hd : Identifies D t r d) (hb : d ≠ d.bareOf) :
     violation D t r d = some .overInformative ↔ Identifies D t r d.bareOf := by
-  simp [violation, hd, hb]
+  simp [violation, quantityViolation_eq_over_iff, Description.lt_iff, hd, hb]
 
 /-- With one apple, *the apple* identifies it and *the apple on the towel* over-describes it. -/
 theorem oneReferent_target :
