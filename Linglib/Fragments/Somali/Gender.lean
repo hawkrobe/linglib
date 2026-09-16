@@ -51,8 +51,6 @@ def Value.toLabel : Value → Gender
   | .masc => .masculine
   | .fem => .feminine
 
-instance : HasGender Value := ⟨fun g ↦ genderOf g.toLabel⟩
-
 /-- The basic forms of the remote definite article. After a vowel other than *i*, *-kii* is
 *-hii*, and after any vowel *-tii* is *-dii*. -/
 inductive Article where
@@ -95,8 +93,6 @@ structure Noun extends GenderedNoun Value where
   /-- Whether the plural is formed by reduplication and so keeps the singular article. -/
   reduplicatedPlural : Bool
   deriving DecidableEq, Repr
-
-instance : HasGender Noun := ⟨fun n ↦ genderOf n.gender⟩
 
 /-- The article a noun takes in the singular and in the plural. -/
 def Noun.article (n : Noun) (plural : Bool) : Article :=

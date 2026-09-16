@@ -4,10 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Data.UD.Basic
-import Linglib.Syntax.Case.Capabilities
-import Linglib.Syntax.Gender.Capabilities
-import Linglib.Syntax.Number.Capabilities
-import Linglib.Syntax.Person.Capabilities
+import Linglib.Syntax.Case.Basic
+import Linglib.Syntax.Gender.Basic
+import Linglib.Syntax.Number.Basic
+import Linglib.Syntax.Person.Basic
 
 /-!
 # Word tokens
@@ -36,14 +36,6 @@ structure Word where
 /-- The featureless word with the given form and category. -/
 def Word.mk' (form : String) (cat : UD.UPOS) : Word := { form := form, cat := cat }
 
-
-instance : HasNumber Word := ⟨fun w => w.features.number.bind Number.fromUD⟩
-
-instance : HasPerson Word := ⟨fun w => w.features.person.map Person.fromUD⟩
-
-instance : HasCase Word := ⟨fun w => w.features.case_.map Case.fromUD⟩
-
-instance : HasGender Word := ⟨fun w => w.features.gender.map Gender.fromUD⟩
 
 
 /-- Words compare by form and category, ignoring features, so homographs

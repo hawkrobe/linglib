@@ -43,7 +43,7 @@ textbook-consensus genders documented in [butt-benjamin-2019].
 
 namespace Spanish.Gender
 
-/-- Spanish's two controller genders — the carrier of its `Gender.System`
+/-- Spanish's two controller genders — the carrier
     ([corbett-1991]; [kramer-2015]). -/
 inductive Value where
   | masc
@@ -54,8 +54,6 @@ inductive Value where
 def Value.toLabel : Value → Gender
   | .masc => .masculine
   | .fem => .feminine
-
-instance : HasGender Value := ⟨λ g => genderOf g.toLabel⟩
 
 /-- A Spanish noun: its gender, the agreement it takes ([butt-benjamin-2019]),
     and the gender of its referents where it has one — none for
@@ -148,7 +146,7 @@ def sameRootNouns : List SameRootEntry :=
   [soldado, estudiante, artista]
 
 -- ============================================================================
--- § 6: Gender System (`Gender.System` instantiation)
+-- § 6: Concord evidence
 -- ============================================================================
 
 /-- Adjectival concord exponents: the *-o* vs *-a* desinence contrast
@@ -162,14 +160,6 @@ inductive Concord where
 def Value.concord : Value → Concord
   | .masc => .o
   | .fem  => .a
-
-/-- The Spanish gender system over its own carrier: full comparative
-    labelling; masculine is the morphosyntactic default (plain-*n* roots
-    surface masculine — the underspecified determiner of
-    [kramer-2020] (25), at `Kramer2020.determiner_iMasc_eq_plain`). -/
-def system : Gender.System Value where
-  label := λ g => some g.toLabel
-  default := .masc
 
 /-- The carrier is faithful to the adjectival concord evidence: *-o* vs
     *-a* distinguishes the two genders. [corbett-1991]'s

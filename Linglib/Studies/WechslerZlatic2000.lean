@@ -1,8 +1,9 @@
 import Mathlib.Data.Fintype.Powerset
-import Linglib.Syntax.Case.Capabilities
-import Linglib.Syntax.Gender.Capabilities
-import Linglib.Syntax.Number.Capabilities
-import Linglib.Syntax.Person.Capabilities
+import Linglib.Core.Order.Flat
+import Linglib.Syntax.Case.Basic
+import Linglib.Syntax.Gender.Basic
+import Linglib.Syntax.Number.Basic
+import Linglib.Syntax.Person.Basic
 import Linglib.Syntax.Agreement.Target
 import Linglib.Data.Examples.WechslerZlatic2000
 
@@ -259,14 +260,10 @@ theorem predicted_patterns :
 /-- The features of an NP-internal target: contextual case with the noun's concord, a feature
 being absent where the target is unmarked for it. -/
 structure ConcordTarget where
-  case : Option Case
-  number : Option Number
-  gender : Option Gender
+  case : Flat Case
+  number : Flat Number
+  gender : Flat Gender
   deriving DecidableEq, Repr
-
-instance : HasCase ConcordTarget := ⟨ConcordTarget.case⟩
-instance : HasNumber ConcordTarget := ⟨ConcordTarget.number⟩
-instance : HasGender ConcordTarget := ⟨ConcordTarget.gender⟩
 
 /-- The noun's concord bundle at a case value. -/
 def Noun.concordAt (n : Noun) (c : Case) : ConcordTarget :=
@@ -279,18 +276,14 @@ structure IndexTarget where
   gender : Gender
   deriving DecidableEq, Repr
 
-instance : HasPerson IndexTarget := ⟨λ t => some t.person⟩
-instance : HasNumber IndexTarget := ⟨λ t => some t.number⟩
-instance : HasGender IndexTarget := ⟨λ t => some t.gender⟩
-
 /-- The noun's index bundle as a target. -/
 def Noun.indexTarget (n : Noun) : IndexTarget :=
   ⟨n.index.person, n.index.number, n.index.gender⟩
 
 /-- Concord: the target is compatible with the noun's concord in case, number and gender. -/
 def ConcordAgrees (a : ConcordTarget) (n : Noun) (c : Case) : Prop :=
-  HasCase.Compatible a (n.concordAt c) ∧ HasNumber.Compatible a (n.concordAt c) ∧
-    HasGender.Compatible a (n.concordAt c)
+  Compat a.case (n.concordAt c).case ∧ Compat a.number (n.concordAt c).number ∧
+    Compat a.gender (n.concordAt c).gender
 
 instance (a : ConcordTarget) (n : Noun) (c : Case) : Decidable (ConcordAgrees a n c) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
@@ -298,8 +291,8 @@ instance (a : ConcordTarget) (n : Noun) (c : Case) : Decidable (ConcordAgrees a 
 /-- Index agreement: the target is compatible with the noun's index in person, number and
 gender. -/
 def IndexAgrees (p : IndexTarget) (n : Noun) : Prop :=
-  HasPerson.Compatible p n.indexTarget ∧ HasNumber.Compatible p n.indexTarget ∧
-    HasGender.Compatible p n.indexTarget
+  p.person = n.indexTarget.person ∧ p.number = n.indexTarget.number ∧
+    p.gender = n.indexTarget.gender
 
 instance (p : IndexTarget) (n : Noun) : Decidable (IndexAgrees p n) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
@@ -335,8 +328,9 @@ theorem kojih_agrees : ConcordAgrees kojih deca .gen := by decide
 /-- On a noun whose concord and index match, number agreement with the index is number
 agreement with the concord: the single-bundle illusion of regular nouns. -/
 theorem compatible_indexTarget_iff (n : Noun) (hn : ConInd n) (t : IndexTarget) :
-    HasNumber.Compatible t n.indexTarget ↔ HasNumber.Compatible t (n.concordAt .nom) := by
-  simp only [HasNumber.Compatible, Noun.indexTarget, Noun.concordAt, HasNumber.numberOf, hn.1]
+    Compat (t.number : Flat Number) (n.indexTarget.number : Flat Number) ↔
+      Compat (t.number : Flat Number) (n.concordAt .nom).number := by
+  rw [Noun.indexTarget, Noun.concordAt, hn.1]; exact Iff.rfl
 
 /-! ### The Agreement Hierarchy (63) -/
 

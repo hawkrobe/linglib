@@ -21,10 +21,9 @@ structure Noun extends GenderedNoun _root_.Gender where
   human : Bool
   deriving DecidableEq, Repr
 
-instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
-
 def andras : Noun :=
-  { form := "andras", gloss := "man", gender := .masculine, naturalGender := some .masculine, human := true }
+  { form := "andras", gloss := "man", gender := .masculine,
+    naturalGender := some .masculine, human := true }
 def gineka : Noun :=
   { form := "gineka", gloss := "woman", gender := .feminine,
     naturalGender := some .feminine, human := true }
@@ -32,7 +31,8 @@ def petros : Noun :=
   { form := "Petros", gloss := "Petros", gender := .masculine,
     naturalGender := some .masculine, human := true }
 def maria : Noun :=
-  { form := "Maria", gloss := "Maria", gender := .feminine, naturalGender := some .feminine, human := true }
+  { form := "Maria", gloss := "Maria", gender := .feminine,
+    naturalGender := some .feminine, human := true }
 def kleftis : Noun :=
   { form := "kleftis", gloss := "thief", gender := .masculine,
     naturalGender := some .masculine, human := true }

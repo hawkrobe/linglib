@@ -52,8 +52,7 @@ namespace Russian.Gender
 -- § 1: Genders and Declension Classes ([wade-2020])
 -- ============================================================================
 
-/-- Russian's three controller genders — the carrier of its
-    `Gender.System` ([corbett-1991]; [kramer-2015] ch. 7). -/
+/-- Russian's three controller genders, the carrier ([corbett-1991]; [kramer-2015] ch. 7). -/
 inductive Value where
   | masc
   | fem
@@ -65,8 +64,6 @@ def Value.toLabel : Value → Gender
   | .masc => .masculine
   | .fem => .feminine
   | .neut => .neuter
-
-instance : HasGender Value := ⟨λ g => genderOf g.toLabel⟩
 
 /-- Russian declension classes. Gender correlates with class but neither
     fully determines the other ([corbett-1991];
@@ -95,19 +92,22 @@ structure Noun extends GenderedNoun Value where
   declClass : Option DeclClass := none
   deriving DecidableEq, Repr
 
-instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
-
 -- ============================================================================
 -- § 3: Semantic Core ([kramer-2020] ex. 17)
 -- ============================================================================
 
-def otec : Noun := { form := "otec", gloss := "father", gender := .masc, naturalGender := some .masculine }
-def mat' : Noun := { form := "mat'", gloss := "mother", gender := .fem, naturalGender := some .feminine }
-def brat : Noun := { form := "brat", gloss := "brother", gender := .masc, naturalGender := some .masculine }
+def otec : Noun :=
+  { form := "otec", gloss := "father", gender := .masc, naturalGender := some .masculine }
+def mat' : Noun :=
+  { form := "mat'", gloss := "mother", gender := .fem, naturalGender := some .feminine }
+def brat : Noun :=
+  { form := "brat", gloss := "brother", gender := .masc, naturalGender := some .masculine }
 def sestra : Noun :=
   { form := "sestra", gloss := "sister", gender := .fem, naturalGender := some .feminine }
-def byk : Noun := { form := "byk", gloss := "bull", gender := .masc, naturalGender := some .masculine }
-def korova : Noun := { form := "korova", gloss := "cow", gender := .fem, naturalGender := some .feminine }
+def byk : Noun :=
+  { form := "byk", gloss := "bull", gender := .masc, naturalGender := some .masculine }
+def korova : Noun :=
+  { form := "korova", gloss := "cow", gender := .fem, naturalGender := some .feminine }
 /-- *djadja* 'uncle': declension II like most feminines, masculine by its referents ([wade-2020];
     [corbett-1991]). -/
 def djadja : Noun :=
@@ -172,7 +172,7 @@ theorem declClass_ne_gender :
     znamja.declClass = kost'.declClass ∧ znamja.gender ≠ kost'.gender := ⟨rfl, by decide⟩
 
 -- ============================================================================
--- § 9: Gender System (`Gender.System` instantiation)
+-- § 9: Concord evidence
 -- ============================================================================
 
 /-- Past-tense verbal concord exponents: *-∅* / *-a* / *-o*
@@ -208,14 +208,6 @@ def Value.adjEnding : Value → Bool → AdjEnding
 
 /-- The singular ending alone distinguishes the three genders. -/
 theorem faithful_adjEnding : Function.Injective (Value.adjEnding · false) := by decide
-
-/-- The Russian gender system over its own carrier: full comparative
-    labelling; neuter is the morphosyntactic default (the all-others
-    nouns like *vino* of [corbett-1991]'s declension rule surface neuter,
-    at `Kramer2020.declensionGender`). -/
-def system : Gender.System Value where
-  label := λ g => some g.toLabel
-  default := .neut
 
 /-- The carrier is faithful to the past-tense concord evidence:
     *-∅* / *-a* / *-o* distinguishes all three genders on a single

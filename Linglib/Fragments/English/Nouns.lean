@@ -44,8 +44,6 @@ structure Noun extends _root_.Noun where
   irregularPlural : Option String := none
   deriving DecidableEq, Repr
 
-instance : HasGender Noun := ⟨λ n => n.gender⟩
-
 /-- A common count noun; English is the metalanguage, so the gloss is the form. -/
 def Noun.common (form : String) : Noun := { form, gloss := form }
 

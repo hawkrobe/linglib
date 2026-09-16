@@ -157,7 +157,7 @@ def dpFeaturesOf : LicensingOutcome → DPFeatures
 theorem isLicensed_iff_satisfiesCaseFilter (o : LicensingOutcome) :
     o.IsLicensed ↔ satisfiesCaseFilter (dpFeaturesOf o) := by
   cases o <;>
-    simp [satisfiesCaseFilter, dpFeaturesOf, HasCase.caseOf, DPFeatures.withCase,
+    simp [satisfiesCaseFilter, dpFeaturesOf, DPFeatures.case, DPFeatures.withCase,
       DPFeatures.withUnvaluedCase]
 
 /-- A derivation converges under licensing iff its DPs satisfy the Case Filter. -/

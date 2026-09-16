@@ -32,8 +32,6 @@ structure Noun extends GenderedNoun Gender where
   pluralClass : PluralClass
   deriving DecidableEq, Repr
 
-instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
-
 /-- The *-a* plurals. -/
 def aPlurals : List Noun :=
   [⟨⟨⟨"braccio", "arm"⟩, .masculine, none⟩, "braccia", .feminine, .aPlural⟩,

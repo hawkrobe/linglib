@@ -31,8 +31,6 @@ def Value.toLabel : Value → Gender
   | .fem => .feminine
   | .neut => .neuter
 
-instance : HasGender Value := ⟨fun g ↦ genderOf g.toLabel⟩
-
 /-- A Romanian noun with its controller gender, the gender of its referents where it has one,
 and whether it denotes an animate. -/
 structure Noun extends GenderedNoun Value where

@@ -56,11 +56,6 @@ theorem Word.Agree.not_transitive :
        (by decide) (by decide))
     (by decide)
 
-/-- φ-agreement entails number compatibility (`HasNumber.Compatible`). -/
-theorem Word.Agree.hasNumber_compatible {w1 w2 : Word} (h : w1.Agree w2) :
-    HasNumber.Compatible w1 w2 :=
-  UD.MorphFeatures.compatible_hasNumber (f1 := w1.phi) (f2 := w2.phi) h
-
 -- `reflex` is deliberately not an agreement feature: a reflexive-marked token still
 -- agrees with an unmarked one (the φ-projection drops it).
 example : Word.Agree ⟨"sich", .PRON, { reflex := true }⟩ ⟨"Kind", .NOUN, {}⟩ := by decide

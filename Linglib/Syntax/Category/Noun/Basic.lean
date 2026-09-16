@@ -1,4 +1,4 @@
-import Linglib.Syntax.Gender.Capabilities
+import Linglib.Syntax.Gender.Basic
 import Linglib.Morphology.Word.Basic
 
 /-!
@@ -14,8 +14,7 @@ gender of its referents where they have one, the one facet every system with a s
 reads; the facets particular rules read besides, animacy, rationality, declension class or
 accent, are the fields of the fragments' further extensions. A noun's gender is natural when
 it is the gender of its referents. The general concept takes the
-plain name and the specializations extend it, as in mathlib; a gendered noun bears the
-comparative label its carrier does.
+plain name and the specializations extend it, as in mathlib.
 
 ## Implementation notes
 
@@ -28,7 +27,8 @@ comparative label its carrier does.
 * `ProperName` — the entry of a name, with its natural gender and its `Word` token.
 * `GenderedNoun G` — the entry with its controller gender over the carrier `G` and the
   gender of its referents
-* `GenderedNoun.IsNaturalGender` — the gender is the referents'
+* `GenderedNoun.IsNaturalGender` — the gender is the referents', under a labelling of the
+  carrier
 -/
 
 /-- A noun entry: citation form and gloss. -/
@@ -43,10 +43,8 @@ structure Noun where
 with, where it has one. -/
 structure ProperName extends Noun where
   /-- The natural gender, where the name has one. -/
-  gender : Flat Gender := ⊥
+  gender : Option Gender := none
   deriving DecidableEq, Repr
-
-instance : HasGender ProperName := ⟨λ n => n.gender⟩
 
 /-- The name as a word token: a third-person `PROPN` with its gender. -/
 def ProperName.toWord (n : ProperName) : Morphology.Word :=
@@ -62,20 +60,14 @@ structure GenderedNoun (G : Type*) extends Noun where
   naturalGender : Option Gender := none
   deriving DecidableEq, Repr
 
-/-- A gendered noun bears the comparative label of its gender. -/
-instance {G : Type*} [HasGender G] : HasGender (GenderedNoun G) := ⟨fun n ↦ genderOf n.gender⟩
-
 namespace GenderedNoun
 
-variable {G : Type*} [HasGender G] (n : GenderedNoun G)
+variable {G : Type*} (label : G → Gender) (n : GenderedNoun G)
 
-/-- A noun's gender is natural when it is the gender of its referents. -/
-def IsNaturalGender : Prop :=
-  match n.naturalGender with
-  | some g => genderOf n.gender = g
-  | none => False
+/-- A noun's gender is natural when, under the carrier's comparative labelling, it is the
+gender of its referents. -/
+def IsNaturalGender : Prop := n.naturalGender = some (label n.gender)
 
-instance : Decidable n.IsNaturalGender := by
-  unfold IsNaturalGender; split <;> infer_instance
+instance : Decidable (n.IsNaturalGender label) := inferInstanceAs (Decidable (_ = _))
 
 end GenderedNoun

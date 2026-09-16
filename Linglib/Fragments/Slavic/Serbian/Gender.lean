@@ -20,13 +20,12 @@ structure Noun extends GenderedNoun _root_.Gender where
   human : Bool
   deriving DecidableEq, Repr
 
-instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
-
 def muskarac : Noun :=
   { form := "muškarac", gloss := "man", gender := .masculine,
     naturalGender := some .masculine, human := true }
 def zena : Noun :=
-  { form := "žena", gloss := "woman", gender := .feminine, naturalGender := some .feminine, human := true }
+  { form := "žena", gloss := "woman", gender := .feminine,
+    naturalGender := some .feminine, human := true }
 def covek : Noun :=
   { form := "čovek", gloss := "person, man", gender := .masculine,
     naturalGender := some .masculine, human := true }

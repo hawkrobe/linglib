@@ -29,8 +29,6 @@ structure Noun extends GenderedNoun Gender where
   plural : Option String := none
   deriving DecidableEq, Repr
 
-instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
-
 /-! ### Count nouns -/
 
 def chien : Noun := { form := "chien", gloss := "dog", gender := .masculine, plural := "chiens" }

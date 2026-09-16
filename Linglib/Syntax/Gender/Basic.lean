@@ -23,8 +23,6 @@ assignment systems of `Syntax/Gender/Assignment.lean`.
 
 * `Gender`: the comparative labels, with the Universal Dependencies realization
   `Gender.toUD` and ingestion `Gender.fromUD`, a partial inverse.
-* `Gender.System`: a gender system over a carrier, a partial labelling and a morphosyntactic
-  default.
 * `Gender.Faithful`: a carrier is faithful to agreement evidence when the evidence is
   injective.
 
@@ -40,13 +38,13 @@ assignment systems of `Syntax/Gender/Assignment.lean`.
 
 * The carrier is the controller-gender partition: singular and plural of one noun are one
   gender. Classifiers and declension classes trigger no agreement and are not carriers.
-* The system makes no claim about where gender sits in the nominal spine; that is study
-  content. Languages lacking gender, the majority, declare no system.
+* The carrier makes no claim about where gender sits in the nominal spine; that is study
+  content. Languages lacking gender, the majority, declare no carrier.
 * Kramer's two-class minimum is the hypothesis `Nontrivial G` on the consumers that need
   it: one agreement pattern for all nouns is the absence of a system.
 * Assignment systems, feature decompositions of the labels and the agreement classes of
-  nouns are separate modules; fragments' gender enums are carriers, and their label maps
-  the `label` field.
+  nouns are separate modules; fragments' gender enums are carriers, and a fragment's
+  `toLabel` maps its carrier into the comparative labels.
 
 ## References
 
@@ -61,8 +59,8 @@ assignment systems of `Syntax/Gender/Assignment.lean`.
 
     These are the descriptive labels cross-linguistic comparison uses for a
     language's agreement classes — not a universal value inventory. A
-    language's actual genders are the carrier of its `Gender.System`; `label`
-    maps them (partially) into this vocabulary. -/
+    language's actual genders are its own carrier, which a fragment's `toLabel`
+    maps into this vocabulary. -/
 inductive Gender where
   /-- Masculine: male humans/higher animates; default in many sex-based systems. -/
   | masculine
@@ -113,33 +111,15 @@ theorem fromUD_of_toUD_eq_some {g : Gender} {u : UD.Gender} (h : g.toUD = some u
     fromUD u = g :=
   (isPartialInv_fromUD_toUD u g).1 h
 
-/-! ### Gender systems
+/-! ### Carriers
 
-A gender system is language-particular: its values are the language's own
-controller genders, supplied as the carrier type `G` (a fragment's gender
-enum). The comparative labels above enter only through the partial `label`
-field — the carrier itself is not constrained to fit them, which is what
-accommodates Bantu-scale inventories that no label vocabulary covers. -/
+A gender system is language-particular: its values are the language's own controller
+genders, supplied as the carrier type `G`, a fragment's gender enum. The comparative labels
+above enter only through a fragment's partial map into them; the carrier itself is not
+constrained to fit them, which is what accommodates Bantu-scale inventories that no label
+vocabulary covers. -/
 
 variable {G : Type*}
-
-/-- A language's gender system over its own carrier `G` of controller
-    genders ([corbett-1991]; [kramer-2015]).
-
-    The gender count is `Fintype.card G`; the two-class minimum is the
-    hypothesis `Nontrivial G` on consumers that need it. Languages without
-    gender agreement declare no `System`. -/
-structure System (G : Type*) where
-  /-- Partial comparative labeling of the controller genders. Bantu-style
-      classes typically map to `none` outside a human/animate core. -/
-  label : G → Option Gender
-  /-- The morphosyntactic default: the gender realized when there are no
-      gender features to agree with. Per-system data, not derivable
-      ([kramer-2015]: feminine defaults are attested). A language may use
-      distinct defaults in distinct contexts, clausal controllers against
-      indeclinable nouns for instance; the system records the normal case,
-      and a second default is study content. -/
-  default : G
 
 /-! ### Agreement faithfulness
 
