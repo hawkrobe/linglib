@@ -3,17 +3,12 @@ import Linglib.Semantics.Degree.Adjective
 /-!
 # English adjectives
 
-The adjective lexemes of English, typed by `Degree.GradableAdjective`: the
-syntactic `Adjective` (`Syntax/Category/Adjective/Basic.lean`) — surface form,
-scalar `dimension`, `polarity`, comparison morphology, antonym — refined with
-the degree-semantic layer of [kennedy-2007]. An entry stores its form,
-dimension, polarity or `standardOverride`, antonym data and, where the
-comparison paradigm is recorded, the comparative and superlative forms and the
-root pattern over the three grades in its `comparison` facet ([bobaljik-2012]:
-`Paradigm.abb` for *good – better – best*). The scale shape (`scaleType`),
-positive `standard` and Kennedy `adjectiveClass` are derived views, not
-stored: *wet* and *dry* share one closed `.wetness` scale and differ in
-polarity.
+This file lists the English adjective lexemes as `Degree.GradableAdjective`
+entries. An entry records the surface form, the scalar dimension, the
+polarity, the antonym and the comparison paradigm: the comparative and
+superlative forms with their root pattern, `Paradigm.abb` for *good – better –
+best*. The scale shape, the positive standard and the Kennedy class are
+derived from the dimension and the polarity, not stored.
 
 ## References
 
@@ -504,9 +499,9 @@ def quiet : GradableAdjective where
 /-! ## Intelligence and confidence
 
 The confidence adjectives are the gradable attitude adjectives of
-[cariani-santorio-wellwood-2024], on an upper-bounded confidence scale whose
-maximum *certain* names; *doubtful*, *unsure* and *uncertain* are its negative
-pole. -/
+[cariani-santorio-wellwood-2024]. They measure on an upper-bounded confidence
+scale, with *certain* at its maximum and *doubtful*, *unsure* and *uncertain*
+on its negative pole. -/
 
 /-- "smart" — open scale, contrary to "dumb" -/
 def smart : GradableAdjective where
