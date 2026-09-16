@@ -217,9 +217,7 @@ abbrev Paradigm := Fin 6 → Nat
 /-- Caha's Universal Contiguity ([caha-2009] (10), p. 10) on a
     Slavic paradigm. A `Paradigm` is definitionally an n = 6
     `Morphology.Paradigm`, so this is the domain-independent
-    contiguity predicate itself (which
-    `Morphology.Case.Allomorphy.AllomorphyPattern.IsContiguous`
-    specializes at n = 4). -/
+    contiguity predicate itself. -/
 abbrev IsContiguous (p : Paradigm) : Prop :=
   Morphology.IsContiguous p
 

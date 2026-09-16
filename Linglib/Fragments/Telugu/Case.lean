@@ -1,8 +1,5 @@
 import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Case.Order
-import Linglib.Morphology.Paradigm.Case
-open Morphology.Case.Allomorphy
 
 /-!
 # Telugu Case Inventory
@@ -18,17 +15,13 @@ Like Tamil and other Dravidian languages, Telugu shows a robust
 form differs from the form used in all nonnominative contexts
 ([mcfadden-2018]). This split is predicted by the case containment
 hierarchy ([caha-2009]), where all nonnominative cases include
-the ACC feature in their syntactic representation.
-
-See `Studies/Aitha2026.lean` for
-the full analysis of Telugu stem allomorphy patterns.
+the ACC feature in their syntactic representation; see
+`Studies/Aitha2026.lean` for the analysis of Telugu stem allomorphy.
 -/
 
 namespace Telugu.Case
 
--- ============================================================================
--- § 1: Case Inventory
--- ============================================================================
+/-! ### Case inventory -/
 
 /-- Telugu 5-case core inventory.
     ACC, GEN, DAT are inflectional suffixes within the prosodic word;
@@ -39,9 +32,7 @@ def caseInventory : Finset Case :=
 -- Contiguous on Blake's hierarchy (ranks 6 down to 3).
 example : Case.IsValidInventory caseInventory := by decide
 
--- ============================================================================
--- § 2: Containment Properties
--- ============================================================================
+/-! ### Containment properties -/
 
 /-- All nonnominative Telugu cases bear the ACC feature. -/
 theorem acc_nonnom : Case.IsNonnominative .acc := by decide
@@ -50,14 +41,7 @@ theorem dat_nonnom : Case.IsNonnominative .dat := by decide
 theorem loc_nonnom : Case.IsNonnominative .loc := by decide
 theorem nom_not_nonnom : ¬ Case.IsNonnominative .nom := by decide
 
-/-- Telugu's NOM-vs-oblique split is an ABB pattern — contiguous on the
-    containment hierarchy, consistent with case-conditioned VI. -/
-theorem nom_vs_oblique_contiguous :
-    (AllomorphyPattern.mk 0 1 1 1).IsContiguous := by decide
-
--- ============================================================================
--- § 3: Cross-Dravidian Connection
--- ============================================================================
+/-! ### Cross-Dravidian connection -/
 
 /-- Telugu and Tamil share the same core case spine on Blake's hierarchy.
     Both have NOM, ACC, GEN, DAT, LOC (Tamil additionally has ABL, INST, COM). -/

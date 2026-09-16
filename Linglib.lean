@@ -1217,7 +1217,6 @@ import Linglib.Morphology.Morphotactics.Template
 import Linglib.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Morphology.Paradigm.Analogy
 import Linglib.Morphology.Paradigm.Basic
-import Linglib.Morphology.Paradigm.Case
 import Linglib.Morphology.Paradigm.Complexity
 import Linglib.Morphology.Paradigm.Contiguity
 import Linglib.Morphology.Paradigm.Degree

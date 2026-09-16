@@ -1,6 +1,6 @@
 import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Case.Order
-import Linglib.Morphology.Paradigm.Case
+import Linglib.Morphology.Paradigm.Contiguity
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Mathlib.Tactic.DeriveFintype
@@ -38,7 +38,8 @@ theorems are the Word-to-Phrase rerankings of (68).
 
 namespace Aitha2026
 
-open Morphology.Case.Allomorphy DistributedMorphology Prosody Data.Examples
+open DistributedMorphology Prosody Data.Examples
+open scoped Case.Caha
 open Core Constraints OptimalityTheory Core.Optimization Core.Optimization.Evaluation
 
 /-! ### Case -/
@@ -233,22 +234,18 @@ def caseSuffix : TeluguCase → Option Following
   | .dat => some ⟨true, .light⟩
   | .p => some ⟨false, .heavy⟩
 
-/-- The weak paradigm as an allomorphy pattern, short 0 and long 1. -/
-def weakPattern : AllomorphyPattern :=
-  let code (c : TeluguCase) : Nat := if weakN (caseSuffix c) = "am" then 0 else 1
-  ⟨code .nom, code .acc, code .gen, code .dat⟩
+/-- The Telugu cases in containment order, through their core cases. -/
+scoped instance : Preorder TeluguCase := Preorder.lift TeluguCase.toCore
 
-/-- The strong paradigm of *illu* as an allomorphy pattern, nominative 0 and oblique 1. -/
-def strongPattern : AllomorphyPattern :=
-  let code (c : TeluguCase) : Nat := if strongN .house c = strongN .house .nom then 0 else 1
-  ⟨code .nom, code .acc, code .gen, code .dat⟩
+scoped instance : DecidableLE TeluguCase := fun c₁ c₂ ↦
+  inferInstanceAs (Decidable (c₁.toCore ≤ c₂.toCore))
 
-/-- The weak ABAB paradigm violates *ABA: the nominative form resurfaces in the genitive,
+/-- The weak paradigm (8) violates *ABA: the nominative form resurfaces in the genitive,
 which contains [ACC] ([caha-2009]). -/
-theorem weak_violates_aba : weakPattern.ViolatesABA := by decide
+theorem weak_violates_aba : ¬ Morphology.IsContiguous (weakN ∘ caseSuffix) := by decide
 
-/-- The strong ABB paradigm is contiguous on the containment hierarchy. -/
-theorem strong_contiguous : strongPattern.IsContiguous := by decide
+/-- The strong paradigm of *illu* (1) is contiguous on the containment hierarchy. -/
+theorem strong_contiguous : Morphology.IsContiguous (strongN .house) := by decide
 
 /-! ### The singular suffix (§4.2) -/
 

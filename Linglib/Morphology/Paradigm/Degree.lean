@@ -5,9 +5,8 @@ import Linglib.Morphology.Paradigm.Contiguity
 
 Framework-neutral substrate for the three-grade degree hierarchy
 (positive, comparative, superlative) and the *ABA generalization over
-it: the n = 3 specialization of `Morphology.Paradigm`,
-mirroring `Morphology.Case.Allomorphy` for case. `DegreePattern` is the
-ergonomic record form; `DegreePattern.toParadigm` connects it to the
+it: the n = 3 specialization of `Morphology.Paradigm`. `DegreePattern`
+is the ergonomic record form; `DegreePattern.toParadigm` connects it to the
 general substrate, and all predicates are defined through that
 projection, so the generic theory applies by construction.
 
