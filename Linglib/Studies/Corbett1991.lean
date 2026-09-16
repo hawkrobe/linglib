@@ -175,15 +175,14 @@ namespace Tamil
 
 open _root_.Tamil.Gender
 
-/-- What the rules read: rationality, and the natural gender of a sex-differentiable noun. -/
-def sem (n : Tamil.Gender.Noun) : Bool × Option Value :=
-  (n.rational, if n.isNaturalGender then some n.gender else none)
+/-- What the rules read: rationality, and the gender of the referents. -/
+def sem (n : Tamil.Gender.Noun) : Bool × Option Gender := (n.rational, n.naturalGender)
 
 /-- Table 2.1: male rationals masculine, female rationals feminine, the residue neuter. -/
-def system : Gender.AssignmentSystem (Bool × Option Value) Unit Value where
+def system : Gender.AssignmentSystem (Bool × Option Gender) Unit Value where
   semantic
-    | (true, some .masc) => some .masc
-    | (true, some .fem) => some .fem
+    | (true, some .masculine) => some .masc
+    | (true, some .feminine) => some .fem
     | _ => none
   formal _ := none
   residue := .neut
@@ -221,15 +220,17 @@ def declension (n : Russian.Gender.Noun) : Option Declension :=
       | .III => .III
       | .IV => .IV
 
-/-- The natural gender of a sex-differentiable noun. -/
-def sem (n : Russian.Gender.Noun) : Option Value :=
-  if n.isNaturalGender then some n.gender else none
+/-- The gender of the referents. -/
+def sem (n : Russian.Gender.Noun) : Option Gender := n.naturalGender
 
 /-- The rules of §3.1.1 for declinable nouns: males masculine and females feminine; then
 declension I masculine, declensions II and III feminine, the rest neuter. The rules for
 acronyms and indeclinables (Figure 3.4) are not modelled. -/
-def system : Gender.AssignmentSystem (Option Value) (Option Declension) Value where
-  semantic := id
+def system : Gender.AssignmentSystem (Option Gender) (Option Declension) Value where
+  semantic
+    | some .masculine => some .masc
+    | some .feminine => some .fem
+    | _ => none
   formal
     | some .I => some .masc
     | some .II | some .III => some .fem
@@ -297,13 +298,16 @@ namespace Afar
 
 open _root_.Afar.Gender
 
-/-- The natural gender of a sex-differentiable noun. -/
-def sem (n : Afar.Gender.Noun) : Option Value := if n.isNaturalGender then some n.gender else none
+/-- The gender of the referents. -/
+def sem (n : Afar.Gender.Noun) : Option Gender := n.naturalGender
 
-/-- Sex first; then a citation form ending in an accented vowel is feminine, the rest
-masculine. -/
-def system : Gender.AssignmentSystem (Option Value) Bool Value where
-  semantic := id
+/-- The referents' gender first; then a citation form ending in an accented vowel is feminine,
+the rest masculine. -/
+def system : Gender.AssignmentSystem (Option Gender) Bool Value where
+  semantic
+    | some .masculine => some .masc
+    | some .feminine => some .fem
+    | _ => none
   formal acc := if acc then some .fem else none
   residue := .masc
 
@@ -326,10 +330,10 @@ namespace Hausa
 
 open _root_.Hausa
 
-/-- The natural gender of a sex-differentiable noun. -/
-def sem (n : Hausa.Noun) : Option Gender := if n.isNaturalGender then some n.gender else none
+/-- The gender of the referents. -/
+def sem (n : Hausa.Noun) : Option Gender := n.naturalGender
 
-/-- Sex first; then a noun in *-ā* is feminine, the rest masculine. -/
+/-- The referents' gender first; then a noun in *-ā* is feminine, the rest masculine. -/
 def system : Gender.AssignmentSystem (Option Gender) Bool Gender where
   semantic := id
   formal aa := if aa then some .feminine else none
@@ -893,7 +897,7 @@ open _root_.Romanian.Gender
 
 /-- Whether a noun denotes a male animate. -/
 def MaleAnimate (n : Romanian.Gender.Noun) : Prop :=
-  n.animate ∧ n.isNaturalGender ∧ n.gender = .masc
+  n.animate ∧ n.naturalGender = some .masculine
 
 instance : DecidablePred MaleAnimate := λ _ => by unfold MaleAnimate; infer_instance
 

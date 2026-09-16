@@ -23,11 +23,11 @@ structure Noun extends GenderedNoun _root_.Gender where
 instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
 
 def madur : Noun :=
-  { form := "maður", gloss := "man", gender := .masculine, isNaturalGender := true, human := true }
+  { form := "maður", gloss := "man", gender := .masculine, naturalGender := some .masculine, human := true }
 def kona : Noun :=
-  { form := "kona", gloss := "woman", gender := .feminine, isNaturalGender := true, human := true }
+  { form := "kona", gloss := "woman", gender := .feminine, naturalGender := some .feminine, human := true }
 def jon : Noun :=
-  { form := "Jón", gloss := "Jón", gender := .masculine, isNaturalGender := true, human := true }
+  { form := "Jón", gloss := "Jón", gender := .masculine, naturalGender := some .masculine, human := true }
 /-- Fixed-gender human: neuter whatever the referent. -/
 def skald : Noun := { form := "skáld", gloss := "poet", gender := .neuter, human := true }
 def fraegd : Noun := { form := "frægð", gloss := "fame", gender := .feminine, human := false }

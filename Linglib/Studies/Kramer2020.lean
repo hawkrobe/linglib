@@ -122,7 +122,7 @@ def tamil : Remainder Gender := ⟨{.masculine, .feminine}, {.neuter}⟩
 /-- Spanish: the remainder split arbitrarily over both core genders
 (Table 1), read off the Fragment. -/
 def spanish : Remainder Gender :=
-  ofNouns Spanish.Gender.allNouns (·.isNaturalGender) (·.gender.toLabel)
+  ofNouns Spanish.Gender.allNouns (decide ·.IsNaturalGender) (·.gender.toLabel)
 
 /-- Blackfoot: animates animate; inanimates in a novel inanimate gender or
 the recycled animate one. -/
@@ -177,7 +177,7 @@ theorem phonologicalRule_kada : phonologicalRule Hausa.kada ≠ Hausa.kada.gende
 *-ā*: every feminine noun outside the semantic core ends in *-ā*. -/
 theorem feminine_remainder_aa :
     ∀ n ∈ Hausa.allNouns,
-      n.isNaturalGender = false → n.gender = .feminine → n.EndsInAa := by
+      ¬ n.IsNaturalGender → n.gender = .feminine → n.EndsInAa := by
   decide
 
 /-! ### Lexical gender assignment (§3.2) -/
@@ -210,13 +210,13 @@ end LexicalEntry
 nouns (higher animals honoris causa), [female] for the female-denoting
 ones, and a listed [f] for the arbitrarily feminine remainder. -/
 def lexicalEntry (n : Spanish.Gender.Noun) : LexicalEntry :=
-  ⟨n.isNaturalGender, n.isNaturalGender && n.gender == .fem,
-    !n.isNaturalGender && n.gender == .fem⟩
+  ⟨decide n.IsNaturalGender, decide (n.naturalGender = some .feminine),
+    decide (¬ n.IsNaturalGender ∧ n.gender = .fem)⟩
 
 /-- The lexical account recovers the gender of every noun of the Fragment's shape. -/
 theorem lexical_faithful (n : Spanish.Gender.Noun) :
     (lexicalEntry n).humanGender.gender = n.gender.toLabel := by
-  obtain ⟨_, g, b⟩ := n; cases g <;> cases b <;> rfl
+  obtain ⟨_, g, b⟩ := n; cases g <;> rcases b with _ | l <;> (try cases l) <;> rfl
 
 /-- *persona*, listed with [f], stays feminine under Human Cloning. -/
 theorem persona_cloned_feminine :
@@ -232,14 +232,15 @@ def spanishHeads : List Categorizer.Head := [.n_iFem, .n_iMasc, .n_plain, .n_uFe
 nouns, u[+fem] for the arbitrarily feminine remainder — *persona* among
 them — and plain n otherwise. -/
 def nHead (n : Spanish.Gender.Noun) : Categorizer.Head :=
-  match n.gender, n.isNaturalGender with
-  | .fem, true => .n_iFem
-  | .masc, true => .n_iMasc
-  | .fem, false => .n_uFem
+  match n.gender, n.naturalGender with
+  | .fem, some .feminine => .n_iFem
+  | .masc, some .masculine => .n_iMasc
+  | .fem, _ => .n_uFem
   | _, _ => .n_plain
 
 theorem nHead_mem_spanishHeads (n : Spanish.Gender.Noun) : nHead n ∈ spanishHeads := by
-  obtain ⟨_, g, b⟩ := n; cases g <;> cases b <;> simp [nHead, spanishHeads]
+  obtain ⟨_, g, b⟩ := n; cases g <;> rcases b with _ | l <;> (try cases l) <;>
+    simp [nHead, spanishHeads]
 
 /-- The features of a definite determiner: [d], [def], and the gender it
 acquires by agreement. -/
@@ -279,7 +280,8 @@ def expectedDeterminer : Spanish.Gender.Value → String
 /-- The structural account recovers the gender of every noun of the Fragment's shape. -/
 theorem structural_faithful (n : Spanish.Gender.Noun) :
     determiner (nHead n) = some (expectedDeterminer n.gender) := by
-  obtain ⟨_, g, b⟩ := n; cases g <;> cases b <;> dsimp only [nHead, expectedDeterminer] <;> decide
+  obtain ⟨_, g, b⟩ := n; cases g <;> rcases b with _ | l <;> (try cases l) <;>
+    dsimp only [nHead, expectedDeterminer] <;> decide
 
 /-- On Spanish the two accounts agree (§3.3), noun by noun. -/
 theorem lexical_eq_structural (n : Spanish.Gender.Noun) :

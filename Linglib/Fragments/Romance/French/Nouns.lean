@@ -37,25 +37,25 @@ def chien : Noun := { form := "chien", gloss := "dog", gender := .masculine, plu
 def chat : Noun := { form := "chat", gloss := "cat", gender := .masculine, plural := "chats" }
 def livre : Noun := { form := "livre", gloss := "book", gender := .masculine, plural := "livres" }
 def homme : Noun :=
-  { form := "homme", gloss := "man", gender := .masculine, isNaturalGender := true,
+  { form := "homme", gloss := "man", gender := .masculine, naturalGender := some .masculine,
     plural := "hommes" }
 def garcon : Noun :=
-  { form := "garçon", gloss := "boy", gender := .masculine, isNaturalGender := true,
+  { form := "garçon", gloss := "boy", gender := .masculine, naturalGender := some .masculine,
     plural := "garçons" }
 def professeur : Noun :=
   { form := "professeur", gloss := "teacher", gender := .masculine, plural := "professeurs" }
 def etudiant : Noun :=
-  { form := "étudiant", gloss := "student", gender := .masculine, isNaturalGender := true,
+  { form := "étudiant", gloss := "student", gender := .masculine, naturalGender := some .masculine,
     plural := "étudiants" }
 def avocat : Noun :=
   { form := "avocat", gloss := "lawyer", gender := .masculine, plural := "avocats" }
 def cheval : Noun :=
   { form := "cheval", gloss := "horse", gender := .masculine, plural := "chevaux" }
 def fille : Noun :=
-  { form := "fille", gloss := "girl", gender := .feminine, isNaturalGender := true,
+  { form := "fille", gloss := "girl", gender := .feminine, naturalGender := some .feminine,
     plural := "filles" }
 def femme : Noun :=
-  { form := "femme", gloss := "woman", gender := .feminine, isNaturalGender := true,
+  { form := "femme", gloss := "woman", gender := .feminine, naturalGender := some .feminine,
     plural := "femmes" }
 def table : Noun := { form := "table", gloss := "table", gender := .feminine, plural := "tables" }
 def pomme : Noun := { form := "pomme", gloss := "apple", gender := .feminine, plural := "pommes" }

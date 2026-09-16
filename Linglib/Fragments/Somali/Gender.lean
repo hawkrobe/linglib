@@ -103,13 +103,13 @@ def Noun.article (n : Noun) (plural : Bool) : Article :=
   n.gender.article (plural && !n.reduplicatedPlural)
 
 /-- The noun *ìnan* 'boy'. -/
-def inan : Noun := ⟨⟨⟨"ìnan", "boy"⟩, .masc, true⟩, "inammá", false⟩
+def inan : Noun := ⟨⟨⟨"ìnan", "boy"⟩, .masc, some .masculine⟩, "inammá", false⟩
 
 /-- The noun *inán* 'girl'. -/
-def inan' : Noun := ⟨⟨⟨"inán", "girl"⟩, .fem, true⟩, "ináma", false⟩
+def inan' : Noun := ⟨⟨⟨"inán", "girl"⟩, .fem, some .feminine⟩, "ináma", false⟩
 
 /-- The noun *nin* 'man', whose plural *niman* is reduplicated. -/
-def nin : Noun := ⟨⟨⟨"nin", "man"⟩, .masc, true⟩, "niman", true⟩
+def nin : Noun := ⟨⟨⟨"nin", "man"⟩, .masc, some .masculine⟩, "niman", true⟩
 
 /-- The nouns the sources cite. -/
 def allNouns : List Noun := [inan, inan', nin]

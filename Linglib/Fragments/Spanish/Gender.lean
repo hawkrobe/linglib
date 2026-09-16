@@ -18,8 +18,8 @@ of referent.
 
 Each entry is a `GenderedNoun` over the two controller genders: its
 `gender` is the agreement-trigger fact (verified against
-[butt-benjamin-2019] §1.2-1.3), and `isNaturalGender` records whether
-that gender is semantically motivated by the referent's biological sex.
+[butt-benjamin-2019] §1.2-1.3), and `naturalGender` records whether
+that gender is semantically motivated by the referent's gender.
 False for inanimates, for non-natural-gender animals (cf. §1.3.1), and
 for the §1.2.11 fixed-gender common-gender exceptions (*persona*,
 *ángel*).
@@ -58,64 +58,64 @@ def Value.toLabel : Value → Gender
 instance : HasGender Value := ⟨λ g => genderOf g.toLabel⟩
 
 /-- A Spanish noun: its gender, the agreement it takes ([butt-benjamin-2019]),
-    and whether that gender follows the referent's sex — false for
+    and the gender of its referents where it has one — none for
     inanimates, for non-natural-gender animals, and for the §1.2.11
-    common-gender exceptions (*persona* feminine for any sex; *ángel*
-    masculine for any sex). -/
+    common-gender exceptions (*persona* feminine for any referent; *ángel*
+    masculine for any referent). -/
 abbrev Noun := GenderedNoun Value
 
 -- ============================================================================
 -- § 1: Natural-Gender Nouns (Group A, [butt-benjamin-2019] §1.2)
 -- ============================================================================
 
-def hombre : Noun := ⟨⟨"hombre", "man"⟩, .masc, true⟩
-def mujer : Noun := ⟨⟨"mujer", "woman"⟩, .fem, true⟩
-def niño : Noun := ⟨⟨"niño", "boy"⟩, .masc, true⟩
-def niña : Noun := ⟨⟨"niña", "girl"⟩, .fem, true⟩
-def rey : Noun := ⟨⟨"rey", "king"⟩, .masc, true⟩
-def reina : Noun := ⟨⟨"reina", "queen"⟩, .fem, true⟩
-def gato : Noun := ⟨⟨"gato", "cat.M"⟩, .masc, true⟩
-def gata : Noun := ⟨⟨"gata", "cat.F"⟩, .fem, true⟩
+def hombre : Noun := ⟨⟨"hombre", "man"⟩, .masc, some .masculine⟩
+def mujer : Noun := ⟨⟨"mujer", "woman"⟩, .fem, some .feminine⟩
+def niño : Noun := ⟨⟨"niño", "boy"⟩, .masc, some .masculine⟩
+def niña : Noun := ⟨⟨"niña", "girl"⟩, .fem, some .feminine⟩
+def rey : Noun := ⟨⟨"rey", "king"⟩, .masc, some .masculine⟩
+def reina : Noun := ⟨⟨"reina", "queen"⟩, .fem, some .feminine⟩
+def gato : Noun := ⟨⟨"gato", "cat.M"⟩, .masc, some .masculine⟩
+def gata : Noun := ⟨⟨"gata", "cat.F"⟩, .fem, some .feminine⟩
 
 -- ============================================================================
 -- § 2: Arbitrary Feminines (Group B, [butt-benjamin-2019] §1.3)
 -- ============================================================================
 
-def mesa : Noun := ⟨⟨"mesa", "table"⟩, .fem, false⟩
-def silla : Noun := ⟨⟨"silla", "chair"⟩, .fem, false⟩
-def casa : Noun := ⟨⟨"casa", "house"⟩, .fem, false⟩
-def puerta : Noun := ⟨⟨"puerta", "door"⟩, .fem, false⟩
-def ventana : Noun := ⟨⟨"ventana", "window"⟩, .fem, false⟩
-def cama : Noun := ⟨⟨"cama", "bed"⟩, .fem, false⟩
+def mesa : Noun := ⟨⟨"mesa", "table"⟩, .fem, none⟩
+def silla : Noun := ⟨⟨"silla", "chair"⟩, .fem, none⟩
+def casa : Noun := ⟨⟨"casa", "house"⟩, .fem, none⟩
+def puerta : Noun := ⟨⟨"puerta", "door"⟩, .fem, none⟩
+def ventana : Noun := ⟨⟨"ventana", "window"⟩, .fem, none⟩
+def cama : Noun := ⟨⟨"cama", "bed"⟩, .fem, none⟩
 /-- *persona* 'person': common-gender noun ([butt-benjamin-2019]
-    §1.2.11) — feminine regardless of referent's sex. The famous
+    §1.2.11) — feminine regardless of the referent's gender. The famous
     [kramer-2015] §6.2 exception: human-denoting noun with
-    structurally arbitrary feminine gender. `isNaturalGender = false`
-    captures that the gender does NOT come from biological sex (even
+    structurally arbitrary feminine gender. `naturalGender = none`
+    captures that the gender does NOT come from the referent's gender (even
     though referent is human). -/
-def persona : Noun := ⟨⟨"persona", "person"⟩, .fem, false⟩
+def persona : Noun := ⟨⟨"persona", "person"⟩, .fem, none⟩
 
 -- ============================================================================
 -- § 3: Default Masculines (Group B, [butt-benjamin-2019] §1.3)
 -- ============================================================================
 
-def libro : Noun := ⟨⟨"libro", "book"⟩, .masc, false⟩
-def zapato : Noun := ⟨⟨"zapato", "shoe"⟩, .masc, false⟩
-def coche : Noun := ⟨⟨"coche", "car"⟩, .masc, false⟩
-def árbol : Noun := ⟨⟨"árbol", "tree"⟩, .masc, false⟩
-def cielo : Noun := ⟨⟨"cielo", "sky"⟩, .masc, false⟩
-def vaso : Noun := ⟨⟨"vaso", "glass"⟩, .masc, false⟩
+def libro : Noun := ⟨⟨"libro", "book"⟩, .masc, none⟩
+def zapato : Noun := ⟨⟨"zapato", "shoe"⟩, .masc, none⟩
+def coche : Noun := ⟨⟨"coche", "car"⟩, .masc, none⟩
+def árbol : Noun := ⟨⟨"árbol", "tree"⟩, .masc, none⟩
+def cielo : Noun := ⟨⟨"cielo", "sky"⟩, .masc, none⟩
+def vaso : Noun := ⟨⟨"vaso", "glass"⟩, .masc, none⟩
 /-- *ángel* 'angel': common-gender noun ([butt-benjamin-2019]
-    §1.2.11) — masculine for any sex. Companion to *persona*: the
-    masculine fixed-gender exception. `isNaturalGender = false`. -/
-def ángel : Noun := ⟨⟨"ángel", "angel"⟩, .masc, false⟩
+    §1.2.11) — masculine for any referent. Companion to *persona*: the
+    masculine fixed-gender exception. `naturalGender = none`. -/
+def ángel : Noun := ⟨⟨"ángel", "angel"⟩, .masc, none⟩
 
 -- ============================================================================
 -- § 4: Same-Root Nominals ([kramer-2020] §2.2.3)
 -- ============================================================================
 
 /-- Same-root nominals: a single root that surfaces as either masculine
-    or feminine depending on the referent's sex. Empirically polymorphic
+    or feminine depending on the referent's gender. Empirically polymorphic
     in gender (one form, two genders), so a noun entry without a fixed
     gender. The DM analysis (combination with i[+FEM] vs i[−FEM]) lives
     in `Studies/Kramer2020.lean`. -/

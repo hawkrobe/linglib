@@ -24,27 +24,27 @@ structure Noun extends GenderedNoun _root_.Gender where
 instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
 
 def andras : Noun :=
-  { form := "andras", gloss := "man", gender := .masculine, isNaturalGender := true, human := true }
+  { form := "andras", gloss := "man", gender := .masculine, naturalGender := some .masculine, human := true }
 def gineka : Noun :=
   { form := "gineka", gloss := "woman", gender := .feminine,
-    isNaturalGender := true, human := true }
+    naturalGender := some .feminine, human := true }
 def petros : Noun :=
   { form := "Petros", gloss := "Petros", gender := .masculine,
-    isNaturalGender := true, human := true }
+    naturalGender := some .masculine, human := true }
 def maria : Noun :=
-  { form := "Maria", gloss := "Maria", gender := .feminine, isNaturalGender := true, human := true }
+  { form := "Maria", gloss := "Maria", gender := .feminine, naturalGender := some .feminine, human := true }
 def kleftis : Noun :=
   { form := "kleftis", gloss := "thief", gender := .masculine,
-    isNaturalGender := true, human := true }
+    naturalGender := some .masculine, human := true }
 def giorgos : Noun :=
   { form := "Giorgos", gloss := "Giorgos", gender := .masculine,
-    isNaturalGender := true, human := true }
+    naturalGender := some .masculine, human := true }
 def adherfi : Noun :=
   { form := "adherfi", gloss := "sister", gender := .feminine,
-    isNaturalGender := true, human := true }
+    naturalGender := some .feminine, human := true }
 def mitera : Noun :=
   { form := "mitera", gloss := "mother", gender := .feminine,
-    isNaturalGender := true, human := true }
+    naturalGender := some .feminine, human := true }
 /-- Fixed-gender human: feminine whatever the referent. -/
 def megalofiia : Noun :=
   { form := "megalofiia", gloss := "genius", gender := .feminine, human := true }

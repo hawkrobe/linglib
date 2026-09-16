@@ -16,7 +16,7 @@ derivational suffixes deterministically assign gender:
 ## Theory-neutral data layer
 
 The Fragment carries one empirical field per suffix: `assignedGender`,
-the deterministic gender output. No `isNaturalGender` field —
+the deterministic gender output. No `naturalGender` field —
 derivational suffixes always assign arbitrary gender (the suffix is the
 locus of the gender feature, not the root's semantic content). The
 [kramer-2015] structural analysis (each suffix IS a categorizing

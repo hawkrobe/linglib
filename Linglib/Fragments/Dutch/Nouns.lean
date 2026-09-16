@@ -40,11 +40,11 @@ instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
 def boek : Noun :=
   { form := "boek", gloss := "book", gender := .neuter, plural := "boeken", diminutive := "boekje" }
 def mens : Noun :=
-  { form := "mens", gloss := "human", gender := .common, isNaturalGender := true,
+  { form := "mens", gloss := "human", gender := .common, naturalGender := some .common,
     plural := "mensen" }
 def geest : Noun := { form := "geest", gloss := "ghost", gender := .common, plural := "geesten" }
 def student : Noun :=
-  { form := "student", gloss := "student", gender := .common, isNaturalGender := true,
+  { form := "student", gloss := "student", gender := .common, naturalGender := some .common,
     plural := "studenten" }
 def hond : Noun :=
   { form := "hond", gloss := "dog", gender := .common, plural := "honden", diminutive := "hondje" }

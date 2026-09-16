@@ -25,25 +25,25 @@ inductive Value where
   deriving DecidableEq, Repr, Fintype
 
 /-- A Tamil noun with the agreement it takes and the two semantic facts the gender tracks:
-whether the referent is rational, and whether the gender comes from the referent's sex. -/
+whether the referent is rational, and the gender of its referents where it has one. -/
 structure Noun extends GenderedNoun Value where
   /-- Whether the referent is rational: a human or a deity. -/
   rational : Bool
   deriving DecidableEq, Repr
 
-def aaN : Noun := ⟨⟨⟨"aaN", "man"⟩, .masc, true⟩, true⟩
-def civaN : Noun := ⟨⟨⟨"CivaN", "Shiva"⟩, .masc, true⟩, true⟩
-def peN : Noun := ⟨⟨⟨"peN", "woman"⟩, .fem, true⟩, true⟩
-def kaali : Noun := ⟨⟨⟨"kaali", "Kali"⟩, .fem, true⟩, true⟩
-def maram : Noun := ⟨⟨⟨"maram", "tree"⟩, .neut, false⟩, false⟩
-def viiTu : Noun := ⟨⟨⟨"viiTu", "house"⟩, .neut, false⟩, false⟩
-def raaman : Noun := ⟨⟨⟨"raaman", "Raman"⟩, .masc, true⟩, true⟩
-def murukan : Noun := ⟨⟨⟨"murukan", "Murugan"⟩, .masc, true⟩, true⟩
-def akkaa : Noun := ⟨⟨⟨"akkaa", "elder sister"⟩, .fem, true⟩, true⟩
-def tankacci : Noun := ⟨⟨⟨"tankacci", "younger sister"⟩, .fem, true⟩, true⟩
-def annan : Noun := ⟨⟨⟨"annan", "elder brother"⟩, .masc, true⟩, true⟩
-def naay : Noun := ⟨⟨⟨"naay", "dog"⟩, .neut, false⟩, false⟩
-def puune : Noun := ⟨⟨⟨"puune", "cat"⟩, .neut, false⟩, false⟩
+def aaN : Noun := ⟨⟨⟨"aaN", "man"⟩, .masc, some .masculine⟩, true⟩
+def civaN : Noun := ⟨⟨⟨"CivaN", "Shiva"⟩, .masc, some .masculine⟩, true⟩
+def peN : Noun := ⟨⟨⟨"peN", "woman"⟩, .fem, some .feminine⟩, true⟩
+def kaali : Noun := ⟨⟨⟨"kaali", "Kali"⟩, .fem, some .feminine⟩, true⟩
+def maram : Noun := ⟨⟨⟨"maram", "tree"⟩, .neut, none⟩, false⟩
+def viiTu : Noun := ⟨⟨⟨"viiTu", "house"⟩, .neut, none⟩, false⟩
+def raaman : Noun := ⟨⟨⟨"raaman", "Raman"⟩, .masc, some .masculine⟩, true⟩
+def murukan : Noun := ⟨⟨⟨"murukan", "Murugan"⟩, .masc, some .masculine⟩, true⟩
+def akkaa : Noun := ⟨⟨⟨"akkaa", "elder sister"⟩, .fem, some .feminine⟩, true⟩
+def tankacci : Noun := ⟨⟨⟨"tankacci", "younger sister"⟩, .fem, some .feminine⟩, true⟩
+def annan : Noun := ⟨⟨⟨"annan", "elder brother"⟩, .masc, some .masculine⟩, true⟩
+def naay : Noun := ⟨⟨⟨"naay", "dog"⟩, .neut, none⟩, false⟩
+def puune : Noun := ⟨⟨⟨"puune", "cat"⟩, .neut, none⟩, false⟩
 
 def allNouns : List Noun :=
   [aaN, civaN, peN, kaali, maram, viiTu, raaman, murukan, akkaa, tankacci, annan, naay, puune]
