@@ -11,7 +11,7 @@ This file formalizes [hanink-koontz-garboden-2025]'s argument, from Washo, that 
 roots vary in meaning within a language, against [menon-pancheva-2014]'s universal
 quality-denoting root. Washo property concepts are verbs of three shapes (Table 1): a bare root
 inflected like any intransitive, a bound root with the suffix *-iʔ*, and a reduplicated bound
-root flanked by *ʔil-* and *-iʔ*, `Washo.PropertyConcepts.Shape`. The paper reads the morphology
+root flanked by *ʔil-* and *-iʔ*, `Washo.Shape`. The paper reads the morphology
 at face value: *-iʔ* is the possessive light verb of ordinary possession (31), the existential
 closure of Barker's relationalizer at the possessum type, `vHave`, which takes a predicate of
 states (34); so a root that needs it denotes a quality, a predicate of states (33), while a bare
@@ -24,7 +24,7 @@ of types to shapes, `RootType.ofShape`, then derives the morphology of each shap
 well-typed verbalization, `derivation_minimal`, and the bipartite gap for the suffixed roots
 (49), `wellTyped_become_iff`. The change-of-state head is [beavers-koontz-garboden-2020]'s
 inchoative operator, and the resultative entails the result state of its theme (46). The
-seventy stems of the appendix are the rows of `Washo.PropertyConcepts.all`, on which
+seventy stems of the appendix are the rows of `Washo.propertyConcepts`, on which
 [dixon-1982]'s categories predict the shape only for color; the examples are the rows of
 `Data.Examples.HaninkKoontzGarboden2025`.
 
@@ -48,7 +48,7 @@ the substrate's `Verb.CosModel`, whose effector stands for the paper's AGENT.
 
 namespace HaninkKoontzGarboden2025
 
-open Semantics Semantics.Composition Possession Washo.PropertyConcepts
+open Semantics Semantics.Composition Possession Washo
 
 /-! ### The two root meanings, section 4 -/
 
@@ -74,7 +74,7 @@ def RootType.ofShape : Shape → RootType
 /-- The two meanings are distinguished within Washo: the existence proof against a universal
 root meaning (section 7). -/
 theorem exists_rootType_ne :
-    ∃ e₁ ∈ all, ∃ e₂ ∈ all, RootType.ofShape e₁.shape ≠ RootType.ofShape e₂.shape :=
+    ∃ e₁ ∈ propertyConcepts, ∃ e₂ ∈ propertyConcepts, RootType.ofShape e₁.shape ≠ RootType.ofShape e₂.shape :=
   ⟨ihuk, by decide, iyel, by decide, by decide⟩
 
 /-! ### The verbalizing heads and their types -/
@@ -226,21 +226,21 @@ theorem exists_state_of_vCause {P : E → St → Prop} {manner : Event T → Pro
 /-- The semantic root of a stem: one state atom, no core arguments, and the type of its
 meaning; every Washo property concept is a property-concept root of
 [beavers-koontz-garboden-2020]'s typology. -/
-def toRoot (e : Entry) : Root :=
+def toRoot (e : PropertyConcept) : Root :=
   { name := e.stem, entailments := {.state e.gloss}, valency := some ∅,
     denotationType := some (RootType.ofShape e.shape).ty }
 
-theorem toRoot_kinds (e : Entry) : (toRoot e).kinds = Root.Kinds.propertyConcept := by
+theorem toRoot_kinds (e : PropertyConcept) : (toRoot e).kinds = Root.Kinds.propertyConcept := by
   simp [toRoot, Root.kinds, Root.Kinds.propertyConcept, Root.Entailment.kind]
 
 /-- The only category whose members share a shape is color, all of whose stems are prefixed
 (appendix). -/
-theorem color_prefixed : ∀ e ∈ all, e.category = .color → e.shape = .prefixed := by decide
+theorem color_prefixed : ∀ e ∈ propertyConcepts, e.category = .color → e.shape = .prefixed := by decide
 
 /-- [dixon-1982]'s categories do not predict the shape: the antonyms *MiLe* 'old' and *ešlut’*
 'young' differ. -/
 theorem category_not_predictive :
-    ∃ e₁ ∈ all, ∃ e₂ ∈ all, e₁.category = e₂.category ∧ e₁.shape ≠ e₂.shape :=
+    ∃ e₁ ∈ propertyConcepts, ∃ e₂ ∈ propertyConcepts, e₁.category = e₂.category ∧ e₁.shape ≠ e₂.shape :=
   ⟨MiLe, by decide, ešlut, by decide, rfl, by decide⟩
 
 end HaninkKoontzGarboden2025

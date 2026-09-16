@@ -48,8 +48,8 @@ open Modality SimpleGraph
 /-- Washo *-eʔ* varies on both axes, against Nauze's universal, and is the product of two forces
 and two flavors. -/
 theorem washo_modalEq :
-    ¬ SingleAxis Washo.Modals.modalEq.meaning ∧
-      ForceFlavorIndependent Washo.Modals.modalEq.meaning := by
+    ¬ SingleAxis Washo.modalEq.meaning ∧
+      ForceFlavorIndependent Washo.modalEq.meaning := by
   decide
 
 /-- Koryak *ivək* ([mocnik-abramovitz-2019]) satisfies the universal; with its doxastic and

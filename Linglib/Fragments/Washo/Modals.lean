@@ -14,7 +14,7 @@ Despite this, *-eʔ* satisfies the IFF universal
 Cartesian product {necessity, possibility} × {epistemic, deontic}.
 -/
 
-namespace Washo.Modals
+namespace Washo
 
 open Modality (ForceFlavor ModalItem)
 
@@ -29,6 +29,6 @@ private abbrev pd : ForceFlavor := (.possibility, .deontic)
     is {necessity, possibility} × {epistemic, deontic}. -/
 def modalEq : ModalItem := { form := "-eʔ", meaning := {ne, nd, pe, pd} }
 
-def allExpressions : List ModalItem := [modalEq]
+def modals : List ModalItem := [modalEq]
 
-end Washo.Modals
+end Washo

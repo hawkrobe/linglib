@@ -506,8 +506,8 @@ def naturalness (L : List ModalItem) : ℚ :=
 /-- Washo *-eʔ* varies on both axes, against the Single Axis of Variability universal of
 [nauze-2008], and satisfies IFF, its meaning being the full grid of two forces and two flavors. -/
 theorem washo_not_singleAxis_forceFlavorIndependent :
-    ¬ SingleAxis Washo.Modals.modalEq.meaning ∧
-      ForceFlavorIndependent Washo.Modals.modalEq.meaning := by
+    ¬ SingleAxis Washo.modalEq.meaning ∧
+      ForceFlavorIndependent Washo.modalEq.meaning := by
   decide
 
 /-- The meaning the universal rules out, epistemic necessity with circumstantial possibility. -/
@@ -519,7 +519,7 @@ theorem not_forceFlavorIndependent_diagonal :
 three, where the Washo and Koryak inventories are fully natural. -/
 theorem naturalness_greek_washo_koryak :
     naturalness Greek.StandardModern.Modals.allExpressions = 1 / 3 ∧
-      naturalness Washo.Modals.allExpressions = 1 ∧
+      naturalness Washo.modals = 1 ∧
       naturalness Koryak.Modals.allExpressions = 1 := by
   decide +kernel
 
