@@ -3,11 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Data.UD.Basic
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Gender.Basic
-import Linglib.Syntax.Number.Basic
-import Linglib.Syntax.Person.Basic
+import Linglib.Morphology.Word.Features
 
 /-!
 # Word tokens
@@ -22,15 +18,15 @@ token-level engine reads it off the token's own data.
 
 namespace Morphology
 
-/-- A word token is a surface form with its UD category and morphological
-features, as in a CoNLL-U row. -/
+/-- A word token is a surface form with its category, in the Universal Dependencies
+inventory, and its features. -/
 structure Word where
   /-- The surface form. -/
   form : String
-  /-- The UD category. -/
+  /-- The category. -/
   cat : UD.UPOS
-  /-- The UD morphological features. -/
-  features : UD.MorphFeatures := {}
+  /-- The features. -/
+  features : Features := ⊥
   deriving Repr, DecidableEq
 
 /-- The featureless word with the given form and category. -/

@@ -1,6 +1,5 @@
 import Mathlib.Order.Nat
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Data.UD.Basic
 
 /-!
 # Grammatical number — the canonical value space
@@ -8,15 +7,11 @@ import Linglib.Data.UD.Basic
 
 `Number` is the canonical grammatical-number type: [corbett-2000]'s analytical
 inventory of number values, the vocabulary in which systems, agreement,
-resolution, and semantics are stated. The UD tagset (`UD.Number`) is the
-*realization vocabulary* — the surface morphology a value projects to via
-`Number.toUD` (the analogue of `Pronoun.toWord`) and is ingested from via
-`Number.fromUD` at the corpus boundary. Values UD cannot tag (`general`,
-`minimal`, `augmented`, `unitAugmented`) realize as `none`; conversely
-`UD.Number.Inv`/`.Coll`/`.Count` are morphological form-categories that are
-not values of the count-number system, and have no `Number` preimage.
-The quadral is deliberately excluded: [corbett-2000] reanalyzes apparent
-quadrals (Sursurunga, Tangga) as paucals.
+resolution, and semantics are stated; the Universal Dependencies tags corpora annotate
+are the realization vocabulary at the corpus boundary (`Morphology/Word/UD.lean`), which
+lacks the general, minimal, augmented and unit-augmented values and adds the inverse,
+collective and count form-categories. The quadral is deliberately excluded: [corbett-2000]
+reanalyzes apparent quadrals (Sursurunga, Tangga) as paucals.
 
 Values are classified along two orthogonal dimensions ([corbett-2000]):
 
@@ -29,7 +24,6 @@ Values are classified along two orthogonal dimensions ([corbett-2000]):
 ## Main declarations
 
 * `Number` — the analytical value inventory ([corbett-2000] Ch 2).
-* `Number.toUD` / `Number.fromUD` — realization to / ingestion from `UD.Number`.
 * `Number.instPartialOrder` — the markedness order: `a ≤ b` iff every system
   containing `b` also contains `a` (the implicational hierarchy of
   [greenberg-1963] and [corbett-2000] §2.3, derived as a lower-set theorem
@@ -47,9 +41,7 @@ The [harbour-2014] feature decomposition and its lattice grounding live in
 `Syntax/Number/Resolve.lean`.
 -/
 
-/-- Grammatical number: [corbett-2000]'s analytical inventory of number values.
-    The canonical type — `UD.Number` is its surface realization vocabulary
-    (`Number.toUD`/`Number.fromUD`). -/
+/-- Grammatical number: [corbett-2000]'s analytical inventory of number values. -/
 inductive Number where
   /-- Non-committal to cardinality; *outside* the number system
       (Bayso *lúban* 'lion(s)', Japanese *inu* 'dog(s)'). Not to be
@@ -145,52 +137,6 @@ def fromCard : Nat → Number
 theorem fromCard_singular : fromCard 1 = .singular := rfl
 theorem fromCard_dual : fromCard 2 = .dual := rfl
 theorem fromCard_trial : fromCard 3 = .trial := rfl
-
-/-! ### Realization: the UD bridge -/
-
-/-- Realize a number value as a UD morphological tag (general has no UD
-    equivalent; minimal, augmented, and unit augmented cannot be tagged). -/
-def toUD : Number → Option UD.Number
-  | .general        => none
-  | .singular       => some .Sing
-  | .dual           => some .Dual
-  | .trial          => some .Tri
-  | .paucal         => some .Pauc
-  | .plural         => some .Plur
-  | .greaterPaucal  => some .Grpa
-  | .greaterPlural  => some .Grpl
-  | .minimal        => none
-  | .augmented      => none
-  | .unitAugmented  => none
-  | .globalPlural   => none
-
-/-- Ingest a UD morphological tag as a number value (partial).
-
-    Seven core values round-trip cleanly. Three UD tags have no analytical
-    equivalent:
-    - `Inv` (inverse number): marks the *unexpected* number for a given noun —
-      plural for some nouns, singular for others. Not a fixed cardinality.
-    - `Coll` (collective): denotes a group-as-unit (Russian *листва* 'foliage'),
-      distinct from general number, which is non-committal to cardinality.
-    - `Count` (count form): a special form after numerals (Hungarian, Welsh),
-      not equivalent to singular (exactly one). -/
-def fromUD : UD.Number → Option Number
-  | .Sing  => some .singular
-  | .Plur  => some .plural
-  | .Dual  => some .dual
-  | .Tri   => some .trial
-  | .Pauc  => some .paucal
-  | .Grpa  => some .greaterPaucal
-  | .Grpl  => some .greaterPlural
-  | .Inv   => none
-  | .Coll  => none
-  | .Count => none
-
-/-- Round-trip: `fromUD ∘ toUD = id` for all in-system values with a UD tag. -/
-theorem roundtrip_fromUD_toUD :
-    ∀ v ∈ [Number.singular, .dual, .trial, .paucal, .plural,
-           .greaterPaucal, .greaterPlural],
-      v.toUD.bind fromUD = some v := by decide
 
 /-! ### The markedness order
 

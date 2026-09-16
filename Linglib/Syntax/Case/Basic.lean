@@ -3,7 +3,6 @@ import Mathlib.Data.Finset.Union
 import Mathlib.Order.Fin.Basic
 import Mathlib.Order.Interval.Set.OrdConnected
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Data.UD.Basic
 
 /-!
 # Case — the canonical inventory
@@ -16,23 +15,14 @@ theoretical machinery — Blake's hierarchy (here), Caha containment
 (`Morphology.IsContiguous` over that order), grammaticalization clines
 (`Morphology/Grammaticalization/Case.lean`) — operates over this type.
 
-`UD.Case` (`Data/UD/Basic.lean`) is the *realization* vocabulary — what
-corpora annotate — reachable by `toUD`/`fromUD`. The two inventories
-currently coincide cell-for-cell, so both round-trips hold; the
-analytical inventory is where refinements that UD conflates would land
-(e.g. the Latin-type syncretic general ablative and the Finnish
-exterior-source ablative both realize as `Abl`), breaking only
-`fromUD_toUD` — exactly as `Person.fromUD_toUD` degrades to `coarsen`
-under UD's clusivity conflation.
-
-This mirrors the `Person`/`Number`/`Gender` API
-(`Features/{Person,Number,Gender}/Basic.lean`): canonical analytical
-inventory at root namespace, UD demoted to realization.
+The Universal Dependencies tags corpora annotate are the realization vocabulary, reached
+through `Morphology/Word/UD.lean`; the two inventories coincide cell for cell, and the
+analytical one is where refinements the tags conflate would land, such as the Latin
+syncretic ablative beside the Finnish exterior-source ablative.
 
 ## Main declarations
 
 * `Case` — the 28-cell analytical inventory
-* `Case.toUD`/`Case.fromUD` — UD realization round-trip
 * `Case.hierarchyRank` — Blake's implicational hierarchy
   ([blake-1994], `Fin 7`-codomain rank)
 * `Case.Marker` — a case marker, its form and the cases it realizes, with the inventory
@@ -105,82 +95,6 @@ inductive Case where
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 namespace Case
-
-/-! ### UD realization vocabulary -/
-
-/-- Realize as UD annotation. Currently cell-for-cell; analytical
-    refinements that UD conflates collapse here. -/
-def toUD : Case → UD.Case
-  | .nom => .Nom
-  | .acc => .Acc
-  | .gen => .Gen
-  | .dat => .Dat
-  | .inst => .Ins
-  | .loc => .Loc
-  | .voc => .Voc
-  | .abl => .Abl
-  | .erg => .Erg
-  | .abs => .Abs
-  | .part => .Par
-  | .ess => .Ess
-  | .transl => .Tra
-  | .com => .Com
-  | .ade => .Ade
-  | .ine => .Ine
-  | .ill => .Ill
-  | .ela => .Ela
-  | .all => .All
-  | .sub => .Sub
-  | .sup => .Sup
-  | .del => .Del
-  | .ter => .Ter
-  | .tem => .Tem
-  | .caus => .Cau
-  | .ben => .Ben
-  | .perl => .Per
-  | .abess => .Abe
-
-/-- Analytical value of a UD annotation. -/
-def fromUD : UD.Case → Case
-  | .Nom => .nom
-  | .Acc => .acc
-  | .Gen => .gen
-  | .Dat => .dat
-  | .Ins => .inst
-  | .Loc => .loc
-  | .Voc => .voc
-  | .Abl => .abl
-  | .Erg => .erg
-  | .Abs => .abs
-  | .Par => .part
-  | .Ess => .ess
-  | .Tra => .transl
-  | .Com => .com
-  | .Ade => .ade
-  | .Ine => .ine
-  | .Ill => .ill
-  | .Ela => .ela
-  | .All => .all
-  | .Sub => .sub
-  | .Sup => .sup
-  | .Del => .del
-  | .Ter => .ter
-  | .Tem => .tem
-  | .Cau => .caus
-  | .Ben => .ben
-  | .Per => .perl
-  | .Abe => .abess
-
-/-- UD round-trips on its own image. -/
-@[simp] theorem toUD_fromUD (u : UD.Case) : (fromUD u).toUD = u := by
-  cases u <;> rfl
-
-/-- The analytical inventory round-trips through UD — for now. This is
-    the theorem that *degrades* (to a `coarsen` identity, as in
-    `Person.fromUD_toUD`) when an analytical refinement splits a UD
-    cell. -/
-@[simp] theorem fromUD_toUD (c : Case) : fromUD c.toUD = c := by
-  cases c <;> rfl
 
 /-! ### Blake's case hierarchy [blake-1994]
 

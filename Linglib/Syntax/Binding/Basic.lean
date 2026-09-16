@@ -63,7 +63,7 @@ structure SimpleClause where
   subject : Word
   verb : Word
   object : Option Word
-  semanticPl : Bool := subject.features.number == some .Plur
+  semanticPl : Bool := subject.features .number == some .plural
   deriving Repr
 
 /-- The `Word` at a position, if present. -/
@@ -83,8 +83,8 @@ def isNominalCat (cat : UD.UPOS) : Bool :=
     This is the framework- *and* language-neutral default `Binding.BindingSource Word`, replacing
     per-language form-string classifiers ([chomsky-1981]'s A/B/C classes as morphology). -/
 def bindingClassOf : Binding.BindingSource Word := fun w =>
-  if w.features.reflex then some .reflexive
-  else match w.features.pronType with
+  if (w.features .reflex).isSome then some .reflexive
+  else match w.features .pronType with
     | some .Rcp => some .reciprocal
     | _ =>
       if w.cat == .PRON then some .pronoun

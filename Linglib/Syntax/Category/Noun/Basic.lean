@@ -49,7 +49,7 @@ structure ProperName extends Noun where
 /-- The name as a word token: a third-person `PROPN` with its gender. -/
 def ProperName.toWord (n : ProperName) : Morphology.Word :=
   { form := n.form, cat := .PROPN
-    features := { person := some .third, gender := n.gender.bind Gender.toUD } }
+    features := Morphology.Features.of (person := some .third) (gender := n.gender) }
 
 /-- A noun with its controller gender over the carrier `G` and the gender of its referents,
 where they have one. -/

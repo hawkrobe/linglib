@@ -1,7 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Data.Fintype.BigOperators
 import Linglib.Core.Relation.FactorsThroughOn
-import Linglib.Data.UD.Basic
 
 /-!
 # Gender systems
@@ -21,8 +20,8 @@ assignment systems of `Syntax/Gender/Assignment.lean`.
 
 ## Main definitions
 
-* `Gender`: the comparative labels, with the Universal Dependencies realization
-  `Gender.toUD` and ingestion `Gender.fromUD`, a partial inverse.
+* `Gender`: the comparative labels; the Universal Dependencies realization is in
+  `Morphology/Word/UD.lean`.
 * `Gender.Faithful`: a carrier is faithful to agreement evidence when the evidence is
   injective.
 
@@ -77,39 +76,6 @@ inductive Gender where
   deriving DecidableEq, Repr, Fintype
 
 namespace Gender
-
-/-! ### Realization: Universal Dependencies
-
-`UD.Gender` is the surface tagset corpora annotate, not an analytical
-inventory: animacy-based labels have no UD realization. -/
-
-/-- Realize a comparative label as a UD gender tag, where one exists. -/
-def toUD : Gender → Option UD.Gender
-  | .masculine => some .Masc
-  | .feminine  => some .Fem
-  | .neuter    => some .Neut
-  | .common    => some .Com
-  | .animate   => none
-  | .inanimate => none
-
-/-- Ingest a UD gender tag. Total: every UD gender has a comparative label. -/
-def fromUD : UD.Gender → Gender
-  | .Masc => .masculine
-  | .Fem  => .feminine
-  | .Neut => .neuter
-  | .Com  => .common
-
-/-- Realization is a partial inverse of ingestion. -/
-theorem isPartialInv_fromUD_toUD : Function.IsPartialInv fromUD toUD :=
-  λ x y => by cases x <;> cases y <;> decide
-
-@[simp] theorem toUD_fromUD (u : UD.Gender) : (fromUD u).toUD = some u :=
-  isPartialInv_fromUD_toUD.eq u
-
-/-- Labels with a UD realization round-trip. -/
-theorem fromUD_of_toUD_eq_some {g : Gender} {u : UD.Gender} (h : g.toUD = some u) :
-    fromUD u = g :=
-  (isPartialInv_fromUD_toUD u g).1 h
 
 /-! ### Carriers
 

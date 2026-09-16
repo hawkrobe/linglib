@@ -1,4 +1,4 @@
-import Linglib.Data.UD.Basic
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Person — the canonical inventory
@@ -14,16 +14,12 @@ clusivity-marked cells by `coarsen`, exactly as `Number.dual` relates to
 `Number.plural` under coarsening. `zero` is the impersonal person (UD
 `Person=0`; Finnish-type impersonals).
 
-`UD.Person` (`Data/UD/Basic.lean`) is the *realization* vocabulary —
-what corpora annotate — reachable by `toUD`/`fromUD`. UD has no
-clusivity, so `toUD` collapses the quadripartition cells to `.first`
-(`ud_conflates_clusivity`); the analytical values are not recoverable
-from UD alone.
+The Universal Dependencies tags corpora annotate have no clusivity, so realization
+collapses the quadripartition cells to the first person (`Morphology/Word/UD.lean`).
 
 This mirrors the `Number` API (`Syntax/Number/Basic.lean`): canonical
-analytical inventory at root namespace, UD demoted to realization,
-unified resolution (`Syntax/Person/Resolve.lean`), the referential
-categories (`Syntax/Person/Category.lean`), the feature decomposition
+analytical inventory at root namespace, unified resolution (`Syntax/Person/Resolve.lean`),
+the referential categories (`Syntax/Person/Category.lean`), the feature decomposition
 (`Syntax/Person/Features.lean`) and the marking types of the first
 person complex (`Syntax/Person/Clusivity.lean`).
 
@@ -107,36 +103,6 @@ def coarsen : Person → Person
 theorem coarsen_eq_self_iff (p : Person) :
     p.coarsen = p ↔ ¬MarksClusivity p := by
   cases p <;> simp [coarsen, MarksClusivity]
-
-/-! ### UD realization vocabulary -/
-
-/-- Realize as UD annotation: clusivity collapses to `Person=1`. -/
-def toUD : Person → UD.Person
-  | .first | .firstInclusive | .firstExclusive => .first
-  | .second => .second
-  | .third => .third
-  | .zero => .zero
-
-/-- Analytical value of a UD annotation. Total: UD's vocabulary is a
-    coarsening of the analytical inventory. -/
-def fromUD : UD.Person → Person
-  | .first => .first
-  | .second => .second
-  | .third => .third
-  | .zero => .zero
-
-/-- UD round-trips on its own image. -/
-@[simp] theorem toUD_fromUD (u : UD.Person) : (fromUD u).toUD = u := by
-  cases u <;> rfl
-
-/-- The analytical inventory does not round-trip through UD: clusivity
-    has no UD image. `fromUD ∘ toUD` is `coarsen`. -/
-theorem fromUD_toUD (p : Person) : fromUD p.toUD = p.coarsen := by
-  cases p <;> rfl
-
-/-- UD conflates the clusivity values under `Person=1`. -/
-theorem ud_conflates_clusivity :
-    Person.firstInclusive.toUD = Person.firstExclusive.toUD := rfl
 
 /-- The person hierarchy 1 < 2 < 3 ([zwicky-1977b]; resolution in
     coordination, [corbett-2006]). Clusivity-marked firsts share rank 0

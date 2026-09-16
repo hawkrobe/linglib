@@ -8,9 +8,10 @@ import Linglib.Core.Order.Flat
 Universal part-of-speech tags (UPOS), morphological features, and dependency
 relations from UD v2.
 
-These provide theory-neutral lexical categories, morphological annotations,
-and grammatical relations that can be used throughout the library and mapped
-to/from theory-specific categories (CCG.Cat, Minimalism features, DG trees, etc.).
+The categories are the library's word-class vocabulary (`Morphology.Word.cat`); the
+morphological annotation is the treebank record a token's analytical features realize as
+and ingest from (`Morphology/Word/UD.lean`); the relations are read by the dependency
+grammars.
 
 Official site: <https://universaldependencies.org/>
 
@@ -20,13 +21,11 @@ UD is an external annotation standard ([de-marneffe-zeman-2021]); this file is
 the linglib mirror of its v2 surface, and `Data/UD/` is the standard's area —
 treebank data (CoNLL-U) belongs here beside the vocabulary, paralleling
 `Data/WALS/` (schema + datapoints). Its types are the foundational
-substrate every other layer builds on: `Features/` aliases the feature types
-(e.g. `Number.fromUD`/`Number.toUD`, …) and `Morphology/Word.lean` builds the
-ms-word token over the vocabulary.
+substrate every other layer builds on: the analytical inventories realize as its tags in
+`Morphology/Word/UD.lean` and `Morphology/Word/Basic.lean` builds the ms-word token over
+its categories.
 The bare `UD` namespace (no `Data.` prefix) is intentional — UD is its own
-external project. Feature slots are `Flat`-valued (`Core/Order/Flat.lean`);
-subsumption-order theory over `MorphFeatures` lives in
-`Studies/Shieber1986.lean`.
+external project. Feature slots are `Flat`-valued (`Core/Order/Flat.lean`).
 -/
 
 namespace UD
@@ -144,8 +143,8 @@ inductive Gender where
     Battle-tested annotation tagset shared across all UD treebanks. The 28
     constructors below cover the standard UD values. This is the
     *realization* vocabulary; the canonical analytical inventory is the
-    root-namespace `Case` (`Syntax/Case/Basic.lean`), reachable by
-    `Case.toUD`/`Case.fromUD`. -/
+    root-namespace `Case` (`Syntax/Case/Basic.lean`), realized and ingested in
+    `Morphology/Word/UD.lean`. -/
 inductive Case where
   | Nom    -- nominative: subject
   | Acc    -- accusative: direct object
@@ -290,8 +289,7 @@ inductive Polarity where
 
 -- Feature Bundle
 
-/-- A morphological feature bundle (partial assignment).
-    Slots are `Flat`-valued: `⊥` = unspecified. -/
+/-- A morphological annotation record, a tag or `⊥` in each feature. -/
 structure MorphFeatures where
   number   : Flat Number   := ⊥
   gender   : Flat Gender   := ⊥
@@ -299,9 +297,7 @@ structure MorphFeatures where
   definite : Flat Definite := ⊥
   degree   : Flat Degree   := ⊥
   pronType : Flat PronType := ⊥
-  /-- Reflexive (UD `Reflex=Yes`); `false` = feature absent. Distinguishes a reflexive
-      anaphor from a plain personal pronoun; not an agreement feature, so not consulted
-      by `compatible`. -/
+  /-- Reflexive, `Reflex=Yes`; `false` when the feature is absent. -/
   reflex   : Bool          := false
   person   : Flat Person   := ⊥
   verbForm : Flat VerbForm := ⊥
@@ -311,89 +307,6 @@ structure MorphFeatures where
   voice    : Flat Voice    := ⊥
   polarity : Flat Polarity := ⊥
   deriving DecidableEq, Repr, Inhabited
-
-/-- Empty feature bundle -/
-def MorphFeatures.empty : MorphFeatures := {}
-
-/-- Is this bundle wh-marked — an interrogative or relative pro-form? Derived from
-    `pronType` (UD has no standalone wh feature; wh-ness *is* `PronType ∈ {Int, Rel}`). -/
-def MorphFeatures.isWh (f : MorphFeatures) : Bool :=
-  f.pronType == some .Int || f.pronType == some .Rel
-
-/-- Are two feature bundles compatible — bounded above in the subsumption order
-    ([shieber-1986] §3.2.3)? Total over *all* `Flat`-valued fields: a conflict in any
-    committed feature makes unification fail. (`reflex` needs no clause — a `Bool` slot
-    with `false` = absent is always joinable by `||`.) The order-theoretic
-    characterization is proved in `Studies/Shieber1986.lean`. -/
-def MorphFeatures.compatible (f1 f2 : MorphFeatures) : Bool :=
-  (f1.number.isNone   || f2.number.isNone   || f1.number == f2.number) &&
-  (f1.gender.isNone   || f2.gender.isNone   || f1.gender == f2.gender) &&
-  (f1.case_.isNone    || f2.case_.isNone    || f1.case_ == f2.case_) &&
-  (f1.definite.isNone || f2.definite.isNone || f1.definite == f2.definite) &&
-  (f1.degree.isNone   || f2.degree.isNone   || f1.degree == f2.degree) &&
-  (f1.pronType.isNone || f2.pronType.isNone || f1.pronType == f2.pronType) &&
-  (f1.person.isNone   || f2.person.isNone   || f1.person == f2.person) &&
-  (f1.verbForm.isNone || f2.verbForm.isNone || f1.verbForm == f2.verbForm) &&
-  (f1.tense.isNone    || f2.tense.isNone    || f1.tense == f2.tense) &&
-  (f1.aspect.isNone   || f2.aspect.isNone   || f1.aspect == f2.aspect) &&
-  (f1.mood.isNone     || f2.mood.isNone     || f1.mood == f2.mood) &&
-  (f1.voice.isNone    || f2.voice.isNone    || f1.voice == f2.voice) &&
-  (f1.polarity.isNone || f2.polarity.isNone || f1.polarity == f2.polarity)
-
-/-- Feature compatibility is reflexive: every bundle is compatible with itself
-    (each feature matches itself). -/
-@[simp] theorem MorphFeatures.compatible_self (f : MorphFeatures) :
-    f.compatible f = true := by
-  simp only [MorphFeatures.compatible, beq_self_eq_true, Bool.or_true, Bool.and_true]
-
-private theorem MorphFeatures.compatible_clause_comm {α : Type _} [BEq α] [LawfulBEq α]
-    (a b : Flat α) :
-    (a.isNone || b.isNone || a == b) = (b.isNone || a.isNone || b == a) := by
-  cases a with
-  | bot => cases b <;> rfl
-  | coe v =>
-    cases b with
-    | bot => rfl
-    | coe x =>
-      show (v == x) = (x == v)
-      simp [eq_comm]
-
-/-- Feature compatibility is symmetric. -/
-theorem MorphFeatures.compatible_comm (f1 f2 : MorphFeatures) :
-    f1.compatible f2 = f2.compatible f1 := by
-  unfold MorphFeatures.compatible
-  rw [compatible_clause_comm f1.number, compatible_clause_comm f1.gender,
-      compatible_clause_comm f1.case_, compatible_clause_comm f1.definite,
-      compatible_clause_comm f1.degree, compatible_clause_comm f1.pronType,
-      compatible_clause_comm f1.person, compatible_clause_comm f1.verbForm,
-      compatible_clause_comm f1.tense, compatible_clause_comm f1.aspect,
-      compatible_clause_comm f1.mood, compatible_clause_comm f1.voice,
-      compatible_clause_comm f1.polarity]
-
-/-- The information-join of two bundles, field-by-field: keep every committed value
-    (left-biased per field, which on `compatible` inputs is symmetric since doubly
-    committed fields agree). Only meaningful under `compatible`; `unify` adds the guard. -/
-def MorphFeatures.merge (f1 f2 : MorphFeatures) : MorphFeatures where
-  number   := f1.number.or f2.number
-  gender   := f1.gender.or f2.gender
-  case_    := f1.case_.or f2.case_
-  definite := f1.definite.or f2.definite
-  degree   := f1.degree.or f2.degree
-  pronType := f1.pronType.or f2.pronType
-  reflex   := f1.reflex || f2.reflex
-  person   := f1.person.or f2.person
-  verbForm := f1.verbForm.or f2.verbForm
-  tense    := f1.tense.or f2.tense
-  aspect   := f1.aspect.or f2.aspect
-  mood     := f1.mood.or f2.mood
-  voice    := f1.voice.or f2.voice
-  polarity := f1.polarity.or f2.polarity
-
-/-- Unify two feature bundles ([shieber-1986] §3.2.3): the least upper bound in the
-    subsumption order when the bundles are compatible (`Studies/Shieber1986.lean`
-    proves the lub laws), failure (`none`) on conflicting information. -/
-def MorphFeatures.unify (f1 f2 : MorphFeatures) : Option MorphFeatures :=
-  if f1.compatible f2 then some (f1.merge f2) else none
 
 -- ============================================================================
 -- Dependency Relations

@@ -9,20 +9,15 @@ import Linglib.Morphology.Word.Basic
 /-!
 # φ-agreement between word tokens
 
-`Word.phi` is the bundle a word's features ingest as, and two words `Agree` when their
+`Word.phi` is the agreement bundle of a word's features, and two words `Agree` when their
 bundles are compatible, an unspecified dimension acting as a wildcard. The relation is
 reflexive and symmetric but not transitive; `HasPhi.Agree` is its generic form.
-
-## Implementation notes
-
-* A word's number tag with no analytical value, the inverse, collective and count forms,
-  ingests as `⊥`, so such a word agrees in number with anything.
 -/
 
 namespace Morphology
 
-/-- The bundle a word's features ingest as. -/
-def Word.phi (w : Word) : Agreement.Bundle := Agreement.Bundle.ofUD w.features
+/-- The agreement bundle of a word's features. -/
+def Word.phi (w : Word) : Agreement.Bundle := Agreement.Bundle.ofFeatures w.features
 
 instance : HasPhi Word := ⟨Word.phi⟩
 
@@ -47,14 +42,17 @@ theorem Word.Agree.not_transitive :
     ¬ ∀ w1 w2 w3 : Word, Word.Agree w1 w2 → Word.Agree w2 w3 → Word.Agree w1 w3 := by
   intro h
   exact absurd
-    (h ⟨"she", .PRON, { person := some .third, number := some .Sing, gender := some .Fem }⟩
-       ⟨"they", .PRON, { person := some .third }⟩
-       ⟨"he", .PRON, { person := some .third, number := some .Sing, gender := some .Masc }⟩
+    (h ⟨"she", .PRON, Features.of (person := some .third) (number := some .singular)
+          (gender := some .feminine)⟩
+       ⟨"they", .PRON, Features.of (person := some .third)⟩
+       ⟨"he", .PRON, Features.of (person := some .third) (number := some .singular)
+          (gender := some .masculine)⟩
        (by decide) (by decide))
     (by decide)
 
 /-- A reflexive-marked token still agrees with an unmarked one: `reflex` is not an
 agreement feature. -/
-example : Word.Agree ⟨"sich", .PRON, { reflex := true }⟩ ⟨"Kind", .NOUN, {}⟩ := by decide
+example : Word.Agree ⟨"sich", .PRON, Features.of (reflex := true)⟩ ⟨"Kind", .NOUN, ⊥⟩ :=
+  by decide
 
 end Morphology

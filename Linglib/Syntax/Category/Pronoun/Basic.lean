@@ -11,7 +11,7 @@ import Linglib.Morphology.Word.Basic
 import Linglib.Syntax.Agreement.Phi
 import Mathlib.Data.Option.NAry
 
-open Morphology (Word)
+open Morphology (Word Features)
 
 /-!
 # Pronoun
@@ -118,9 +118,7 @@ structure Pronoun where
       `firstInclusive`, *kami* = `firstExclusive`; English *we* = plain
       `first` ([cysouw-2003]). -/
   person : Option Person := none
-  /-- Grammatical number — the canonical analytical inventory (root
-      `Number`); UD realization via `Number.toUD` (partial: the
-      minimal/augmented values have no UD tag). -/
+  /-- Grammatical number, the canonical analytical inventory (root `Number`). -/
   number : Option Number := none
   /-- Grammatical case. -/
   case_ : Option Case := none
@@ -229,15 +227,9 @@ open SocialMeaning.Register (Level)
     surface as adverbs) stay in the relevant fragment. -/
 def toWord (p : Pronoun) : Word :=
   { form := p.form, cat := .PRON,
-    features := { person := p.person.map Person.toUD,
-                  number := p.number.bind Number.toUD,
-                  case_ := p.case_.map Case.toUD,
-                  gender := p.gender.bind (·.toUD),
-                  -- carry the binding-relevant morphology so a projected pro-form's class is
-                  -- read off its own features, not recovered by surface-form lookup
-                  reflex := p.bindingClass == .reflexive,
-                  pronType := if p.bindingClass == .reciprocal then some .Rcp
-                              else p.pronType } }
+    features := Features.of (person := p.person) (number := p.number) (gender := p.gender)
+      (case_ := p.case_) (reflex := p.bindingClass == .reflexive)
+      (pronType := if p.bindingClass == .reciprocal then some .Rcp else p.pronType) }
 
 /-! ### Well-formedness ([cysouw-2003]) -/
 
@@ -271,7 +263,7 @@ theorem bindingClassOf_toWord (p : Pronoun) (h : ¬ p.IsRExpression)
     Binding.bindingClassOf p.toWord = some p.bindingClass := by
   rcases hb : p.bindingClass with _ | _ | _ | _ <;>
       rcases hp : p.pronType with _ | pt <;> (try cases pt) <;>
-    simp_all +decide [Binding.bindingClassOf, Pronoun.toWord,
+    simp_all +decide [Binding.bindingClassOf, Pronoun.toWord, Morphology.Features.of,
       Binding.BindingClass.IsRExpression]
 
 /-- A candidate antecedent of a pronoun is a nominal token that agrees with it in φ-features;

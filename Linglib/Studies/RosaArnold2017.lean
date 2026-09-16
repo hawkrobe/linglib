@@ -79,11 +79,13 @@ def Gender.ofPair (w₁ w₂ : Word) : Gender := if w₁.Agree w₂ then .same e
 
 /-- Lisa, of *Lisa gave the leftover pie to Brendan*. -/
 def lisa : Word :=
-  ⟨"Lisa", .PROPN, { person := some .third, number := some .Sing, gender := some .Fem }⟩
+  ⟨"Lisa", .PROPN,
+    Features.of (person := some .third) (number := some .singular) (gender := some .feminine)⟩
 
 /-- Brendan. -/
 def brendan : Word :=
-  ⟨"Brendan", .PROPN, { person := some .third, number := some .Sing, gender := some .Masc }⟩
+  ⟨"Brendan", .PROPN,
+    Features.of (person := some .third) (number := some .singular) (gender := some .masculine)⟩
 
 /-- The running example is a different-gender item: *she* has Lisa as its only candidate
 antecedent. -/
