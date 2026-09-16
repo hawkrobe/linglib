@@ -98,6 +98,47 @@ theorem bind_revzip_sublists'_assoc {β : Type*} (l : List α)
     rw [ih fun r r' s => K r r' (a :: s), ih fun r r' s => K r (a :: r') s,
       ih fun r r' s => K (a :: r) r' s, add_assoc]
 
+/-- Three nested binds, the outermost two dependent, commute with an independent third. -/
+theorem bind_bind_bind_comm {β γ δ : Type*} (m : Multiset α) (n : α → Multiset β)
+    (o : Multiset γ) (f : α → β → γ → Multiset δ) :
+    (m.bind fun a => (n a).bind fun b => o.bind fun c => f a b c) =
+      o.bind fun c => m.bind fun a => (n a).bind fun b => f a b c :=
+  (Multiset.bind_congr fun a _ => Multiset.bind_bind (n a) o).trans (Multiset.bind_bind m o)
+
+/-- A bucket handed to a chooser `S`, then the rest split: the same triples as splitting first
+and handing the second part's first bucket to `S`. -/
+theorem bind_revzip_sublists'_bind_assoc {β γ : Type*} (l : List α) (S : List α → Multiset β)
+    (F : β → List α → List α → Multiset γ) :
+    (l.sublists'.revzip : Multiset (List α × List α)).bind (fun p => (S p.1).bind fun a =>
+        (p.2.sublists'.revzip : Multiset (List α × List α)).bind fun q => F a q.1 q.2) =
+      (l.sublists'.revzip : Multiset (List α × List α)).bind fun q =>
+        (q.2.sublists'.revzip : Multiset (List α × List α)).bind fun q' =>
+          (S q'.1).bind fun a => F a q.1 q'.2 := by
+  induction l generalizing S F with
+  | nil => simp
+  | cons x l ih =>
+    simp only [List.revzip_sublists'_cons, ← Multiset.coe_add, Multiset.add_bind,
+      ← Multiset.map_coe, Multiset.bind_map, Prod.map_fst, Prod.map_snd, id_eq,
+      Multiset.bind_add]
+    rw [ih S fun a r s => F a r (x :: s), ih S fun a r s => F a (x :: r) s,
+      ih (fun r => S (x :: r)) F, add_right_comm]
+
+/-- `bind_revzip_sublists'_bind_assoc` with the chooser's bucket taken from the first part. -/
+theorem bind_revzip_sublists'_bind_assoc' {β γ : Type*} (l : List α)
+    (S : List α → Multiset β)
+    (F : β → List α → List α → Multiset γ) :
+    (l.sublists'.revzip : Multiset (List α × List α)).bind (fun p => (S p.1).bind fun a =>
+        (p.2.sublists'.revzip : Multiset (List α × List α)).bind fun q => F a q.1 q.2) =
+      (l.sublists'.revzip : Multiset (List α × List α)).bind fun q =>
+        (q.1.sublists'.revzip : Multiset (List α × List α)).bind fun q' =>
+          (S q'.1).bind fun a => F a q'.2 q.2 := by
+  rw [bind_revzip_sublists'_swap l fun x y =>
+      (x.sublists'.revzip : Multiset (List α × List α)).bind fun q' =>
+        (S q'.1).bind fun a => F a q'.2 y,
+    ← bind_revzip_sublists'_bind_assoc l S fun a r s => F a s r]
+  exact Multiset.bind_congr fun p _ => Multiset.bind_congr fun a _ =>
+    bind_revzip_sublists'_swap p.2 fun r s => F a r s
+
 variable [DecidableEq α]
 
 /-- `sublists'.revzip` descends to the powerset paired with complements. -/
