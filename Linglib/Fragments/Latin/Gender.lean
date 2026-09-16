@@ -1,4 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Syntax.Gender.Capabilities
 import Linglib.Syntax.Gender.Basic
 
 /-!
@@ -22,6 +23,14 @@ inductive Value where
   | fem
   | neut
   deriving DecidableEq, Repr, Fintype
+
+/-- The comparative label of each gender. -/
+def Value.toLabel : Value → Gender
+  | .masc => .masculine
+  | .fem => .feminine
+  | .neut => .neuter
+
+instance : HasGender Value := ⟨fun g ↦ genderOf g.toLabel⟩
 
 /-- An adjective by its nominative singular forms. -/
 structure Adjective where

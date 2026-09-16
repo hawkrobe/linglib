@@ -36,34 +36,34 @@ instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
 
 /-- The *-a* plurals. -/
 def aPlurals : List Noun :=
-  [⟨⟨⟨"braccio", "arm"⟩, .masculine, false⟩, "braccia", .feminine, .aPlural⟩,
-    ⟨⟨⟨"budello", "intestine"⟩, .masculine, false⟩, "budella", .feminine, .aPlural⟩,
-    ⟨⟨⟨"cervello", "brain"⟩, .masculine, false⟩, "cervella", .feminine, .aPlural⟩,
-    ⟨⟨⟨"ciglio", "eyelash"⟩, .masculine, false⟩, "ciglia", .feminine, .aPlural⟩,
-    ⟨⟨⟨"corno", "horn"⟩, .masculine, false⟩, "corna", .feminine, .aPlural⟩,
-    ⟨⟨⟨"dito", "finger"⟩, .masculine, false⟩, "dita", .feminine, .aPlural⟩,
-    ⟨⟨⟨"fondamento", "foundation"⟩, .masculine, false⟩, "fondamenta", .feminine, .aPlural⟩,
-    ⟨⟨⟨"ginocchio", "knee"⟩, .masculine, false⟩, "ginocchia", .feminine, .aPlural⟩,
-    ⟨⟨⟨"grido", "shout"⟩, .masculine, false⟩, "grida", .feminine, .aPlural⟩,
-    ⟨⟨⟨"labbro", "lip"⟩, .masculine, false⟩, "labbra", .feminine, .aPlural⟩,
-    ⟨⟨⟨"lenzuolo", "sheet"⟩, .masculine, false⟩, "lenzuola", .feminine, .aPlural⟩,
-    ⟨⟨⟨"membro", "limb"⟩, .masculine, false⟩, "membra", .feminine, .aPlural⟩,
-    ⟨⟨⟨"miglio", "mile"⟩, .masculine, false⟩, "miglia", .feminine, .aPlural⟩,
-    ⟨⟨⟨"muro", "wall"⟩, .masculine, false⟩, "mura", .feminine, .aPlural⟩,
-    ⟨⟨⟨"osso", "bone"⟩, .masculine, false⟩, "ossa", .feminine, .aPlural⟩,
-    ⟨⟨⟨"paio", "pair"⟩, .masculine, false⟩, "paia", .feminine, .aPlural⟩,
-    ⟨⟨⟨"riso", "laugh"⟩, .masculine, false⟩, "risa", .feminine, .aPlural⟩,
-    ⟨⟨⟨"sopracciglio", "eyebrow"⟩, .masculine, false⟩, "sopracciglia", .feminine, .aPlural⟩,
-    ⟨⟨⟨"strido", "shriek"⟩, .masculine, false⟩, "strida", .feminine, .aPlural⟩,
-    ⟨⟨⟨"uovo", "egg"⟩, .masculine, false⟩, "uova", .feminine, .aPlural⟩,
-    ⟨⟨⟨"urlo", "howl"⟩, .masculine, false⟩, "urla", .feminine, .aPlural⟩]
+  [⟨⟨⟨"braccio", "arm"⟩, .masculine, none⟩, "braccia", .feminine, .aPlural⟩,
+    ⟨⟨⟨"budello", "intestine"⟩, .masculine, none⟩, "budella", .feminine, .aPlural⟩,
+    ⟨⟨⟨"cervello", "brain"⟩, .masculine, none⟩, "cervella", .feminine, .aPlural⟩,
+    ⟨⟨⟨"ciglio", "eyelash"⟩, .masculine, none⟩, "ciglia", .feminine, .aPlural⟩,
+    ⟨⟨⟨"corno", "horn"⟩, .masculine, none⟩, "corna", .feminine, .aPlural⟩,
+    ⟨⟨⟨"dito", "finger"⟩, .masculine, none⟩, "dita", .feminine, .aPlural⟩,
+    ⟨⟨⟨"fondamento", "foundation"⟩, .masculine, none⟩, "fondamenta", .feminine, .aPlural⟩,
+    ⟨⟨⟨"ginocchio", "knee"⟩, .masculine, none⟩, "ginocchia", .feminine, .aPlural⟩,
+    ⟨⟨⟨"grido", "shout"⟩, .masculine, none⟩, "grida", .feminine, .aPlural⟩,
+    ⟨⟨⟨"labbro", "lip"⟩, .masculine, none⟩, "labbra", .feminine, .aPlural⟩,
+    ⟨⟨⟨"lenzuolo", "sheet"⟩, .masculine, none⟩, "lenzuola", .feminine, .aPlural⟩,
+    ⟨⟨⟨"membro", "limb"⟩, .masculine, none⟩, "membra", .feminine, .aPlural⟩,
+    ⟨⟨⟨"miglio", "mile"⟩, .masculine, none⟩, "miglia", .feminine, .aPlural⟩,
+    ⟨⟨⟨"muro", "wall"⟩, .masculine, none⟩, "mura", .feminine, .aPlural⟩,
+    ⟨⟨⟨"osso", "bone"⟩, .masculine, none⟩, "ossa", .feminine, .aPlural⟩,
+    ⟨⟨⟨"paio", "pair"⟩, .masculine, none⟩, "paia", .feminine, .aPlural⟩,
+    ⟨⟨⟨"riso", "laugh"⟩, .masculine, none⟩, "risa", .feminine, .aPlural⟩,
+    ⟨⟨⟨"sopracciglio", "eyebrow"⟩, .masculine, none⟩, "sopracciglia", .feminine, .aPlural⟩,
+    ⟨⟨⟨"strido", "shriek"⟩, .masculine, none⟩, "strida", .feminine, .aPlural⟩,
+    ⟨⟨⟨"uovo", "egg"⟩, .masculine, none⟩, "uova", .feminine, .aPlural⟩,
+    ⟨⟨⟨"urlo", "howl"⟩, .masculine, none⟩, "urla", .feminine, .aPlural⟩]
 
 /-- Regular plurals. -/
 def regulars : List Noun :=
-  [⟨⟨⟨"libro", "book"⟩, .masculine, false⟩, "libri", .masculine, .regular⟩,
-    ⟨⟨⟨"ragazzo", "boy"⟩, .masculine, true⟩, "ragazzi", .masculine, .regular⟩,
-    ⟨⟨⟨"casa", "house"⟩, .feminine, false⟩, "case", .feminine, .regular⟩,
-    ⟨⟨⟨"ragazza", "girl"⟩, .feminine, true⟩, "ragazze", .feminine, .regular⟩]
+  [⟨⟨⟨"libro", "book"⟩, .masculine, none⟩, "libri", .masculine, .regular⟩,
+    ⟨⟨⟨"ragazzo", "boy"⟩, .masculine, some .masculine⟩, "ragazzi", .masculine, .regular⟩,
+    ⟨⟨⟨"casa", "house"⟩, .feminine, none⟩, "case", .feminine, .regular⟩,
+    ⟨⟨⟨"ragazza", "girl"⟩, .feminine, some .feminine⟩, "ragazze", .feminine, .regular⟩]
 
 end Italian.NumberGender
 

@@ -36,20 +36,20 @@ instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
 
 def libro : Noun := { form := "libro", gloss := "book", gender := .masculine, plural := "libri" }
 def ragazzo : Noun :=
-  { form := "ragazzo", gloss := "boy", gender := .masculine, isNaturalGender := true,
+  { form := "ragazzo", gloss := "boy", gender := .masculine, naturalGender := some .masculine,
     plural := "ragazzi" }
 def uomo : Noun :=
-  { form := "uomo", gloss := "man", gender := .masculine, isNaturalGender := true,
+  { form := "uomo", gloss := "man", gender := .masculine, naturalGender := some .masculine,
     plural := "uomini" }
 def gatto : Noun := { form := "gatto", gloss := "cat", gender := .masculine, plural := "gatti" }
 def cane : Noun := { form := "cane", gloss := "dog", gender := .masculine, plural := "cani" }
 def tavolo : Noun :=
   { form := "tavolo", gloss := "table", gender := .masculine, plural := "tavoli" }
 def ragazza : Noun :=
-  { form := "ragazza", gloss := "girl", gender := .feminine, isNaturalGender := true,
+  { form := "ragazza", gloss := "girl", gender := .feminine, naturalGender := some .feminine,
     plural := "ragazze" }
 def donna : Noun :=
-  { form := "donna", gloss := "woman", gender := .feminine, isNaturalGender := true,
+  { form := "donna", gloss := "woman", gender := .feminine, naturalGender := some .feminine,
     plural := "donne" }
 def casa : Noun := { form := "casa", gloss := "house", gender := .feminine, plural := "case" }
 

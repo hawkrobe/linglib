@@ -24,12 +24,12 @@ instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
 
 def muskarac : Noun :=
   { form := "muškarac", gloss := "man", gender := .masculine,
-    isNaturalGender := true, human := true }
+    naturalGender := some .masculine, human := true }
 def zena : Noun :=
-  { form := "žena", gloss := "woman", gender := .feminine, isNaturalGender := true, human := true }
+  { form := "žena", gloss := "woman", gender := .feminine, naturalGender := some .feminine, human := true }
 def covek : Noun :=
   { form := "čovek", gloss := "person, man", gender := .masculine,
-    isNaturalGender := true, human := true }
+    naturalGender := some .masculine, human := true }
 def znanje : Noun := { form := "znanje", gloss := "knowledge", gender := .neuter, human := false }
 def intuicija : Noun :=
   { form := "intuicija", gloss := "intuition", gender := .feminine, human := false }

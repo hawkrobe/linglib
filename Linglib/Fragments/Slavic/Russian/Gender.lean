@@ -6,7 +6,7 @@ import Linglib.Syntax.Category.Noun.Basic
 [wade-2020] [corbett-1991] [kramer-2020] [kramer-2015] [corbett-1998]
 
 Russian has three surface genders: masculine, feminine, neuter. Gender
-is partly determined by the referent's biological sex (semantic core)
+is partly determined by the referent's gender (semantic core)
 and partly by morphological declension class.
 
 ## Theory-neutral data layer
@@ -16,8 +16,8 @@ declension class besides:
 
 - `gender : Value` — the agreement-trigger fact (verified against
   [wade-2020]).
-- `isNaturalGender : Bool` — whether the gender comes from the
-  referent's biological sex.
+- `naturalGender : Option Gender` — the gender of the referents, where
+  the noun has one.
 - `declClass : Option DeclClass` — Russian-specific morphological
   classification ([wade-2020]). Optional because semantic-core
   nouns get their gender from the referent, not morphology.
@@ -83,7 +83,7 @@ inductive DeclClass where
 -- ============================================================================
 
 /-- A Russian noun: its gender, whether that gender comes from the
-    referent's sex, and its declension class. No commitment to any
+    referents' gender, and its declension class. No commitment to any
     specific theoretical framework — Kramer's DM categorizing head and
     Corbett's controller-target classification are projections in
     `Studies/`. For *vrač* 'doctor' (hybrid) the morphological gender is
@@ -101,17 +101,17 @@ instance : HasGender Noun := ⟨λ n => genderOf n.gender⟩
 -- § 3: Semantic Core ([kramer-2020] ex. 17)
 -- ============================================================================
 
-def otec : Noun := { form := "otec", gloss := "father", gender := .masc, isNaturalGender := true }
-def mat' : Noun := { form := "mat'", gloss := "mother", gender := .fem, isNaturalGender := true }
-def brat : Noun := { form := "brat", gloss := "brother", gender := .masc, isNaturalGender := true }
+def otec : Noun := { form := "otec", gloss := "father", gender := .masc, naturalGender := some .masculine }
+def mat' : Noun := { form := "mat'", gloss := "mother", gender := .fem, naturalGender := some .feminine }
+def brat : Noun := { form := "brat", gloss := "brother", gender := .masc, naturalGender := some .masculine }
 def sestra : Noun :=
-  { form := "sestra", gloss := "sister", gender := .fem, isNaturalGender := true }
-def byk : Noun := { form := "byk", gloss := "bull", gender := .masc, isNaturalGender := true }
-def korova : Noun := { form := "korova", gloss := "cow", gender := .fem, isNaturalGender := true }
-/-- *djadja* 'uncle': declension II like most feminines, masculine by sex ([wade-2020];
+  { form := "sestra", gloss := "sister", gender := .fem, naturalGender := some .feminine }
+def byk : Noun := { form := "byk", gloss := "bull", gender := .masc, naturalGender := some .masculine }
+def korova : Noun := { form := "korova", gloss := "cow", gender := .fem, naturalGender := some .feminine }
+/-- *djadja* 'uncle': declension II like most feminines, masculine by its referents ([wade-2020];
     [corbett-1991]). -/
 def djadja : Noun :=
-  { form := "djadja", gloss := "uncle", gender := .masc, isNaturalGender := true
+  { form := "djadja", gloss := "uncle", gender := .masc, naturalGender := some .masculine
   , declClass := some .II }
 
 -- ============================================================================

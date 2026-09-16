@@ -9,10 +9,11 @@ language carries. A proper name extends the entry with the natural gender its pr
 with, where it has one, and projects as a third-person `PROPN` token; it is its own type rather
 than a flag on the noun, since a name has no countability or plural and the syntax projects it
 as a different head. A language with gender extends the entry with the controller gender in
-its own carrier, the gender the language's assignment rules give the noun, and with whether
-that gender follows the referent's sex, the one facet every system with a semantic core
+its own carrier, the gender the language's assignment rules give the noun, and with the
+gender of its referents where they have one, the one facet every system with a semantic core
 reads; the facets particular rules read besides, animacy, rationality, declension class or
-accent, are the fields of the fragments' further extensions. The general concept takes the
+accent, are the fields of the fragments' further extensions. A noun's gender is natural when
+it is the gender of its referents. The general concept takes the
 plain name and the specializations extend it, as in mathlib; a gendered noun bears the
 comparative label its carrier does.
 
@@ -25,7 +26,9 @@ comparative label its carrier does.
 
 * `Noun` — the noun entry.
 * `ProperName` — the entry of a name, with its natural gender and its `Word` token.
-* `GenderedNoun G` — the entry with its controller gender over the carrier `G`.
+* `GenderedNoun G` — the entry with its controller gender over the carrier `G` and the
+  gender of its referents
+* `GenderedNoun.IsNaturalGender` — the gender is the referents'
 -/
 
 /-- A noun entry: citation form and gloss. -/
@@ -50,14 +53,29 @@ def ProperName.toWord (n : ProperName) : Morphology.Word :=
   { form := n.form, cat := .PROPN
     features := { person := some .third, gender := n.gender.bind Gender.toUD } }
 
-/-- A noun with its controller gender over the carrier `G`, and whether that gender follows
-the referent's sex. -/
+/-- A noun with its controller gender over the carrier `G` and the gender of its referents,
+where they have one. -/
 structure GenderedNoun (G : Type*) extends Noun where
-  /-- The controller gender: the agreements the noun takes. -/
+  /-- The controller gender, the agreements the noun takes. -/
   gender : G
-  /-- Whether the gender follows the referent's sex. -/
-  isNaturalGender : Bool := false
+  /-- The gender of the referents, where they have one. -/
+  naturalGender : Option Gender := none
   deriving DecidableEq, Repr
 
 /-- A gendered noun bears the comparative label of its gender. -/
-instance {G : Type*} [HasGender G] : HasGender (GenderedNoun G) := ⟨λ n => genderOf n.gender⟩
+instance {G : Type*} [HasGender G] : HasGender (GenderedNoun G) := ⟨fun n ↦ genderOf n.gender⟩
+
+namespace GenderedNoun
+
+variable {G : Type*} [HasGender G] (n : GenderedNoun G)
+
+/-- A noun's gender is natural when it is the gender of its referents. -/
+def IsNaturalGender : Prop :=
+  match n.naturalGender with
+  | some g => genderOf n.gender = g
+  | none => False
+
+instance : Decidable n.IsNaturalGender := by
+  unfold IsNaturalGender; split <;> infer_instance
+
+end GenderedNoun
