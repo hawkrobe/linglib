@@ -44,12 +44,12 @@ theorem equi_requires_reduced :
 predicates. -/
 theorem negative_raising_class_restriction :
     ∀ d ∈ all, d.hasNegativeRaising = true →
-      d.ctpClass = .propAttitude ∨ d.ctpClass = .desiderative ∨ d.ctpClass = .modal := by
+      d.predicateClass = .propAttitude ∨ d.predicateClass = .desiderative ∨ d.predicateClass = .modal := by
   decide
 
 /-- Knowledge predicates never support negative raising. -/
 theorem knowledge_no_negative_raising :
-    ∀ d ∈ all, d.ctpClass = .knowledge → d.hasNegativeRaising = false := by
+    ∀ d ∈ all, d.predicateClass = .knowledge → d.hasNegativeRaising = false := by
   decide
 
 end Noonan2007

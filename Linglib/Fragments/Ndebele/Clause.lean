@@ -41,34 +41,34 @@ def ukuthi : Complementizer where
 /-- An Ndebele complement-taking predicate is a verb entry with its [noonan-2007] class. -/
 structure Verb extends _root_.Verb where
   /-- The [noonan-2007] class. -/
-  ctpClass : CTPClass
+  predicateClass : Complement.PredicateClass
   deriving Repr
 
 /-- *cabanga* 'think', with an indicative complement ((4), (12)). -/
 def cabanga : Verb where
   form := "cabanga"
   frames := [Frame.finiteClause]
-  ctpClass := .propAttitude
+  predicateClass := .propAttitude
   attitude := some (.doxastic .nonVeridical)
 
 /-- *funa* 'want', with a subjunctive complement and plain class-15 objects ((7)). -/
 def funa : Verb where
   form := "funa"
   frames := [[.clausal (coding := some .subjunctive) (force := some .declarative)], Frame.np]
-  ctpClass := .desiderative
+  predicateClass := .desiderative
   attitude := some (.preferential (.degreeComparison .positive))
 
 /-- *zwa* 'hear', attested as a hearsay report ((18)). -/
 def zwa : Verb where
   form := "zwa"
   frames := [Frame.finiteClause]
-  ctpClass := .perception
+  predicateClass := .perception
 
 /-- *khuluma nga* 'talk about', whose clause is the object of the preposition ((20b)). -/
 def khulumaNga : Verb where
   form := "khuluma nga"
   frames := [[.adpositional]]
-  ctpClass := .utterance
+  predicateClass := .utterance
   speechActVerb := true
 
 /-- The predicates with clausal-argument data in the paper. -/

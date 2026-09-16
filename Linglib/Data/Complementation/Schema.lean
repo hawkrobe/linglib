@@ -18,21 +18,14 @@ This is substrate: it imports `Features/Complementation.lean` only. Consumers
 
 namespace Data.Complementation
 
-/-- One row of [noonan-2007]'s CTP sample: a complement-taking predicate in
-    one language, with its CTP class, the complement codings it is attested
-    with, and its equi-deletion / negative-raising behavior.
-
-    `verb` is citation provenance, not identity — rows are identified by
-    their generated def names and grouped into per-language lists.
-
-    Dropped relative to the older `CTPDatum`: `language` (identity is the
-    per-language grouping list), `realityStatus` (derivable as
-    `ctpRealityStatus ctpClass`; the sample has zero overrides, as the old
-    file's own `reality_status_consistent` theorem proved), and `hasRaising`
-    (zero consumers). -/
+/-- One row of [noonan-2007]'s sample: a complement-taking predicate in one language, with
+    its predicate class, the complement codings it is attested with, and its equi-deletion and
+    negative-raising behavior. `verb` is citation provenance, not identity; rows are identified
+    by their generated names and grouped into per-language lists, and a row's reality status is
+    `Complement.PredicateClass.realityStatus` of its class. -/
 structure Datum where
   verb : String
-  ctpClass : CTPClass
+  predicateClass : Complement.PredicateClass
   codings : List Complement.Coding
   hasEquiDeletion : Bool := false
   hasNegativeRaising : Bool := false

@@ -54,7 +54,7 @@ inductive ComplementCase where
 case it assigns to a clausal complement. -/
 structure Verb extends _root_.Verb where
   /-- The [noonan-2007] class, `none` where the data give no clear assignment. -/
-  ctpClass : Option CTPClass
+  predicateClass : Option Complement.PredicateClass
   /-- The case suffix on the clausal complement, `none` for an infinitival complement. -/
   complementCase : Option ComplementCase
   deriving Repr
@@ -64,7 +64,7 @@ and takes plain noun-phrase objects ((96), (98), (102)). -/
 def gwepshesa : Verb where
   form := "gʷəpšəsa"
   frames := [Frame.finiteClause, Frame.np]
-  ctpClass := some .propAttitude
+  predicateClass := some .propAttitude
   attitude := some (.doxastic .nonVeridical)
   complementCase := some .abs
 
@@ -74,7 +74,7 @@ constituent-question complement is a headless relative; it takes plain noun-phra
 def chewepcha : Verb where
   form := "qəč'ewəpč'a"
   frames := [Frame.question, Frame.np]
-  ctpClass := some .utterance
+  predicateClass := some .utterance
   speechActVerb := true
   complementCase := some .obl
 
@@ -83,7 +83,7 @@ declarative and the polar reading ((101)). -/
 def she : Verb where
   form := "ŝe"
   frames := [Frame.finiteClause, Frame.question]
-  ctpClass := some .knowledge
+  predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
   complementCase := some .abs
@@ -93,7 +93,7 @@ without an overt head noun 'news' or 'verity' ((108)–(110)). -/
 def gwereqwe : Verb where
   form := "gʷərəʔʷe"
   frames := [Frame.finiteClause]
-  ctpClass := some .knowledge
+  predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   complementCase := some .abs
 
@@ -101,7 +101,7 @@ def gwereqwe : Verb where
 def qwa : Verb where
   form := "ʔʷa"
   frames := [Frame.finiteClause]
-  ctpClass := some .utterance
+  predicateClass := some .utterance
   speechActVerb := true
   complementCase := some .abs
 
@@ -109,7 +109,7 @@ def qwa : Verb where
 def raqezha : Verb where
   form := "raʔežʼa"
   frames := [Frame.infinitival]
-  ctpClass := some .phasal
+  predicateClass := some .phasal
   complementCase := none
 
 /-- The predicates with per-predicate data in the paper. -/

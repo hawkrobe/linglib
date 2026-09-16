@@ -39,14 +39,14 @@ def ke : Complementizer where
 
 /-- A Nez Perce complement-taking predicate is a verb entry with its [noonan-2007] class. -/
 structure Verb extends _root_.Verb where
-  ctpClass : CTPClass
+  predicateClass : Complement.PredicateClass
   deriving Repr
 
 /-- *lilooy* 'be happy' ((27a), (28a), (33)). -/
 def liloy : Verb where
   form := "lilooy"
   frames := [Frame.finiteClause]
-  ctpClass := .commentative
+  predicateClass := .commentative
   attitude := some (.preferential (.degreeComparison .positive))
   factivity := some .emotive
 
@@ -54,7 +54,7 @@ def liloy : Verb where
 def etqew : Verb where
   form := "’etqew"
   frames := [Frame.finiteClause]
-  ctpClass := .commentative
+  predicateClass := .commentative
   attitude := some (.preferential (.degreeComparison .negative))
   factivity := some .emotive
 
@@ -62,14 +62,14 @@ def etqew : Verb where
 def cicwaay : Verb where
   form := "cicwaay"
   frames := [Frame.finiteClause]
-  ctpClass := .commentative
+  predicateClass := .commentative
   factivity := some .emotive
 
 /-- *’eey’s* 'be joyful', which takes no noun-phrase object ((27e), (41)). -/
 def eeys : Verb where
   form := "’eey’s"
   frames := [Frame.finiteClause]
-  ctpClass := .commentative
+  predicateClass := .commentative
   attitude := some (.preferential (.degreeComparison .positive))
   factivity := some .emotive
 
@@ -77,7 +77,7 @@ def eeys : Verb where
 def qeese : Verb where
   form := "q’eese’"
   frames := [Frame.finiteClause]
-  ctpClass := .commentative
+  predicateClass := .commentative
   attitude := some (.preferential (.degreeComparison .negative))
   factivity := some .emotive
 
@@ -85,7 +85,7 @@ def qeese : Verb where
 def timneneki : Verb where
   form := "tim’neeneki"
   frames := [Frame.finiteClause]
-  ctpClass := .commentative
+  predicateClass := .commentative
   attitude := some (.preferential .uncertaintyBased)
   factivity := some .emotive
 
@@ -93,7 +93,7 @@ def timneneki : Verb where
 def timiipni : Verb where
   form := "timiipni"
   frames := [Frame.finiteClause]
-  ctpClass := .knowledge
+  predicateClass := .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
@@ -101,21 +101,21 @@ def timiipni : Verb where
 def neki : Verb where
   form := "neki"
   frames := [Frame.finiteClause]
-  ctpClass := .propAttitude
+  predicateClass := .propAttitude
   attitude := some (.doxastic .nonVeridical)
 
 /-- *hi* 'say, tell', with an accusative addressee before the clause ((47), (65b)). -/
 def hi : Verb where
   form := "hi"
   frames := [[.nominal, .clausal (coding := some .indicative) (force := some .declarative)]]
-  ctpClass := .utterance
+  predicateClass := .utterance
   speechActVerb := true
 
 /-- *cuukwe* 'know', whose complement projects from a conditional antecedent ((66), (68)). -/
 def cuukwe : Verb where
   form := "cuukwe"
   frames := [Frame.finiteClause]
-  ctpClass := .knowledge
+  predicateClass := .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
