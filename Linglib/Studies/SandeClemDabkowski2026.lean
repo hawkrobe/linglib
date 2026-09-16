@@ -1,4 +1,5 @@
 import Linglib.Fragments.Guebie.ParticleVerbs
+import Linglib.Studies.Casali2003
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Movement.Remnant
@@ -25,7 +26,11 @@ accessible to later movement, as Cyclic Linearization ([fox-pesetsky-2005]) allo
 leftmost element of a phase (`all_clauses_consistent`). The rows are the paper's examples, and
 their particle forms and word orders follow from the two parameters (`harmony_rows`,
 `order_rows`). Wolof relative clauses ([sy-2005], [martinovic-2019]) show the same profile with
-the trigger rather than the target moving (`wolof_rows`, `wolof_profile`).
+the trigger rather than the target moving (`wolof_rows`, `wolof_profile`). Guébie's ten
+vowels make a five-height system in [casali-2003]'s typology, so its System-Dependent [ATR]
+Dominance specifies [+ATR]; the particle's [−ATR] default outside harmony is then the weak
+assimilatory [+ATR] dominance that account predicts, and its surface value is what the
+root-control ranking there derives (`casali_weakAssimilatory`, `surfaceATR_eq_casali`).
 
 ## Implementation notes
 
@@ -38,6 +43,7 @@ paper leaves open are not formalized.
 ## References
 
 * [sande-clem-dabkowski-2026]
+* [casali-2003]
 * [koopman-1997]
 * [fox-pesetsky-2005]
 * [sande-2019]
@@ -53,12 +59,9 @@ open Minimalist.Linearization (Consistent)
 open Constraints (Constraint)
 open OptimalityTheory
 
-/-- The tongue-root feature value. -/
-abbrev ATR := Phonology.TongueRoot.ATR
-
-/-- The particle's lexical value, surfacing when no harmony trigger is local; the model is the
-particle /jɔkʊ/ of the fragment. -/
-def particleDefaultATR : ATR := Guebie.jOkU.atr
+/-- The particle's lexical [ATR] value (`true` = [+ATR]), surfacing when no harmony trigger is
+local; the model is the particle /jɔkʊ/ of the fragment. -/
+def particleDefaultATR : Bool := Guebie.jOkU.atr
 
 /-! ### The two parameters of predicate fronting -/
 
@@ -136,38 +139,55 @@ theorem discontinuous_harmony :
 
 /-- The particle's surface value: the verb root's under harmony, its lexical default
 otherwise. -/
-def surfaceATR (c : ClauseConfig) (vRoot : ATR) : ATR :=
+def surfaceATR (c : ClauseConfig) (vRoot : Bool) : Bool :=
   if c.harmony then vRoot else particleDefaultATR
 
 /-- An output candidate for the particle at vP spell-out: its lexical value, the domain-local
 trigger when the verb is in the domain, and its output value. -/
 structure HarmonyCand where
-  lexical : ATR
-  trigger : Option ATR
-  out : ATR
+  lexical : Bool
+  trigger : Option Bool
+  out : Bool
   deriving DecidableEq, Repr
 
 /-- Faithfulness to the input value. -/
-def identIO : Constraint HarmonyCand := Constraint.binary λ c => c.out ≠ c.lexical
+def identIO : Constraint HarmonyCand := Constraint.binary fun c ↦ c.out ≠ c.lexical
 
 /-- Agreement with a domain-local trigger. -/
-def atrHarm : Constraint HarmonyCand := Constraint.binary λ c => ∃ t ∈ c.trigger, t ≠ c.out
+def atrHarm : Constraint HarmonyCand := Constraint.binary fun c ↦ ∃ t ∈ c.trigger, t ≠ c.out
 
 /-- The domain-local trigger: the verb root's value when the verb is spelled out in vP. -/
-def vPTrigger (c : ClauseConfig) (vRoot : ATR) : Option ATR :=
+def vPTrigger (c : ClauseConfig) (vRoot : Bool) : Option Bool :=
   if c.harmony then some vRoot else none
 
 /-- The vP-domain tableau over the two output values, harmony ranked above faithfulness. -/
-def harmonyTableau (lex : ATR) (trig : Option ATR) : Tableau HarmonyCand 2 :=
-  Tableau.ofRanking [⟨lex, trig, .plus⟩, ⟨lex, trig, .minus⟩] [atrHarm, identIO]
+def harmonyTableau (lex : Bool) (trig : Option Bool) : Tableau HarmonyCand 2 :=
+  Tableau.ofRanking [⟨lex, trig, true⟩, ⟨lex, trig, false⟩] [atrHarm, identIO]
     (List.cons_ne_nil _ _)
 
 /-- The unique winner under the ranking surfaces with exactly the value harmony assigns:
 agreeing when a trigger is local, faithful to the default otherwise. -/
-theorem optimal_eq_surfaceATR (aux fronted : Bool) (vRoot : ATR) :
+theorem optimal_eq_surfaceATR (aux fronted : Bool) (vRoot : Bool) :
     (harmonyTableau particleDefaultATR (vPTrigger ⟨aux, fronted⟩ vRoot)).optimal
       = {⟨particleDefaultATR, vPTrigger ⟨aux, fronted⟩ vRoot,
           surfaceATR ⟨aux, fronted⟩ vRoot⟩} := by
+  cases aux <;> cases fronted <;> cases vRoot <;> decide
+
+/-- Guébie's inventory is a five-height system, whose System-Dependent [ATR] Dominance
+specifies [+ATR]; the particle's [−ATR] default outside harmony is the weak assimilatory
+[+ATR] dominance [casali-2003] predicts for harmonizing affixes in non-harmonic contexts. -/
+theorem casali_weakAssimilatory :
+    Casali2003.inventoryType? Guebie.inventory = some .fiveHeight ∧
+      particleDefaultATR = !Casali2003.InventoryType.fiveHeight.specifiedValue := by
+  decide
+
+/-- The particle's surface value is what [casali-2003]'s root-control ranking derives for a
+five-height language: the root's value under harmony, the unspecified value in isolation
+(`Casali2003.rootControl_optimal`, `Casali2003.isolated_optimal`). -/
+theorem surfaceATR_eq_casali (c : ClauseConfig) (vRoot : Bool) :
+    surfaceATR c vRoot =
+      if c.harmony then vRoot else !Casali2003.InventoryType.fiveHeight.specifiedValue := by
+  obtain ⟨aux, fronted⟩ := c
   cases aux <;> cases fronted <;> cases vRoot <;> decide
 
 /-! ### Predicate fronting is narrow-syntactic movement -/
@@ -204,7 +224,7 @@ private def orders : List (String × WordOrder) :=
 private def verbs : List (String × Guebie.Morpheme) :=
   [("ni", Guebie.ni), ("ngwOsa", Guebie.ngwOsa)]
 
-private def atrs : List (String × ATR) := [("plus", .plus), ("minus", .minus)]
+private def atrs : List (String × Bool) := [("plus", true), ("minus", false)]
 
 private def patterns : List (String × List String) :=
   [("S Aux O Part V", ["S", "Aux", "O", "Part", "V"]), ("S V O Part", ["S", "V", "O", "Part"]),

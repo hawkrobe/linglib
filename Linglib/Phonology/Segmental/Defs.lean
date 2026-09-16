@@ -11,7 +11,8 @@ import Linglib.Core.Order.Bundle
 # Segmental representation: definitions
 
 The distinctive feature and the segment built over it. A **feature** is one of the
-26 binary distinctive features of [hayes-2009]; a **segment** is a partial
+26 binary distinctive features of [hayes-2009]'s chart, or the tongue-root feature
+[ATR] he lists among the vowel features without charting; a **segment** is a partial
 specification of those features — each `+`, `−`, or unspecified — ordered by
 specificity (the unification-grammar subsumption order, inherited as a feature
 bundle), with the unspecified archisegment least and natural-class generalization
@@ -20,6 +21,20 @@ as meet.
 This file collects definitions only — the feature inventory, the segment and its
 valuation/construction/change API, the natural-class predicates, and the sonority
 scales. The theorems about them live in `Phonology/Segmental/Basic.lean`.
+
+## References
+
+* [hayes-2009]
+* [chomsky-halle-1968]
+* [clements-1990]
+* [parker-2002]
+* [keating-1988]
+* [archangeli-1988]
+* [kiparsky-1982]
+* [inkelas-orgun-1995]
+* [steriade-1995]
+* [sen-2015]
+* [afkir-zellou-2025]
 -/
 
 namespace Phonology
@@ -28,7 +43,11 @@ namespace Phonology
 
 /-- A binary distinctive phonological feature, following [hayes-2009]'s segmental
     inventory. (The stress and length features are excluded: [hayes-2009] treats
-    stress as a syllable-level property, not a segmental feature.) -/
+    stress as a syllable-level property, not a segmental feature.) [ATR], the
+    tongue-root feature of the sub-Saharan harmony systems, is the one feature
+    [hayes-2009] names among the vowel features but leaves off his chart, noting
+    that whether it is the same feature as [tense] is unsettled; it is kept
+    distinct here. -/
 inductive Feature where
   -- Manner / root
   | syllabic         -- [+syll] = vowels
@@ -61,6 +80,7 @@ inductive Feature where
   | front            -- tongue body fronted
   | back             -- tongue body backed
   | tense            -- tense vowel quality
+  | atr              -- [+ATR] = advanced tongue root
   deriving DecidableEq, Repr
 
 namespace Feature
@@ -74,7 +94,7 @@ def allFeatures : List Feature :=
    .voice, .spreadGlottis, .constrGlottis,
    .labial, .round, .labiodental,
    .coronal, .anterior, .distributed,
-   .dorsal, .high, .low, .front, .back, .tense]
+   .dorsal, .high, .low, .front, .back, .tense, .atr]
 
 /-- `allFeatures` is the canonical enumeration: completeness is the `Fintype` law,
 not a theorem re-proved beside it. -/
@@ -116,7 +136,7 @@ instance (f : Feature) : Decidable (s.Unspecified f) := inferInstanceAs (Decidab
     unspecified (`none`), giving natural-class semantics: `ofSpecs [(continuant,
     false)]` matches all [-cont] segments. -/
 def ofSpecs (specs : List (Feature × Bool)) : Segment :=
-  fun f => match specs.find? (λ p => p.1 == f) with
+  fun f => match specs.find? (fun p ↦ p.1 == f) with
     | some (_, v) => some v
     | none => none
 

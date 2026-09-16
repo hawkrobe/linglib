@@ -34,9 +34,9 @@ Features of Hayes's inventory absent from (1) are placed by the paper's own arti
 or free criterion (section 1.2): [approximant], [delayed release], [tap], [trill], and [syllabic]
 are articulator-free and go to the root, [labiodental] to Lips, [front] to Tongue Body, and
 [voice], executed by the larynx, to Larynx; [tense] is left unplaced, since the paper's
-tongue-root features are [ATR] and [RTR] and Hayes's [tense] is not identified with them.
-[suction], [rhinal], [ATR], [RTR], [radical], [stiff vocal folds], [slack vocal folds], and
-[glottal] have no counterpart in the inventory, so Tongue Root dominates nothing here.
+tongue-root features are [ATR] and [RTR] and Hayes's [tense] is not identified with them;
+[ATR] goes to Tongue Root. [suction], [rhinal], [RTR], [radical], [stiff vocal folds],
+[slack vocal folds], and [glottal] have no counterpart in the inventory.
 
 ## TODO
 
@@ -97,6 +97,7 @@ def node : Feature → Option Node
   | .dorsal | .high | .low | .back | .front => some .tongueBody
   | .nasal => some .softPalate
   | .voice | .spreadGlottis | .constrGlottis => some .larynx
+  | .atr => some .tongueRoot
   | .tense => none
 
 instance : FeatureGeometry Feature Node where

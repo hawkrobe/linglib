@@ -86,7 +86,7 @@ inductive HarmonyType where
   | palatal
   | labial
   | height
-  /-- [ATR]/[RTR]; see `Phonology/Harmony/TongueRoot.lean`. -/
+  /-- [ATR] (`Phonology.Feature.atr`); the [ATR]/[RTR] alternative is privative. -/
   | tongueRoot
   | tenseLax
   | nasal

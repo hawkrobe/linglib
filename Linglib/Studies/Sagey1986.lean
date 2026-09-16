@@ -116,7 +116,7 @@ def node : Feature → Option Node
   | .coronal | .anterior | .distributed => some .coronal
   | .dorsal | .high | .low | .back => some .dorsal
   | .syllabic | .sonorant | .approximant | .delayedRelease | .strident | .tap | .trill
-  | .labiodental | .front | .tense => none
+  | .labiodental | .front | .tense | .atr => none
 
 instance : FeatureGeometry Feature Node where
   isChain_Iic := by unfold IsChain Set.Pairwise; decide +revert
