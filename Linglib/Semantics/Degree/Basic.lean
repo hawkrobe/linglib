@@ -9,34 +9,19 @@ import Linglib.Semantics.Degree.Antonymy
 # Degree comparison: the point-standard core
 [kennedy-1999] [rett-2026] [schwarzschild-2008] [von-stechow-1984] [hoeksema-1983]
 
-Comparative semantics shared across all degree frameworks: the binary
-`comparativeSem` / `equativeSem`, antonymy as scale reversal, and
-downward-entailingness of *than*-clauses. Both binary comparators are
-measure-pullback predications of the reified `Degree.Comparison`
-(`over` at a point standard, `overSet` at a set standard);
-`comparativeSem_positive_eq_over` makes that an identity. The set-of-degrees
-S-comparative ([hoeksema-1983]) *is* `Comparison.gt.overSet μ` directly — there is
-no separate clausal-comparison definition; its properties are stated about `overSet`
-here (anti-additivity) and reuse the `Comparison.overSet`/`over` API for the rest.
-Framework-specific content for [rett-2026] (fixed-point ambidirectionality) lives in
-`Studies/Rett2026.lean`; [hoeksema-1983]'s polarity-asymmetry consumers in
+Comparative semantics shared across degree frameworks: the binary `comparativeSem` and
+`equativeSem`, and antonymy as scale reversal. Both binary comparators are measure-pullback
+predications of the reified `Degree.Comparison` (`over` at a point standard, `overSet` at a
+set standard); `comparativeSem_positive_eq_over` makes that an identity. The set-of-degrees
+S-comparative of [hoeksema-1983] is `Comparison.gt.overSet μ`, whose properties are in
+`Semantics/Degree/Quantifier`. Framework-specific content for [rett-2026] lives in
+`Studies/Rett2026.lean`, and [hoeksema-1983]'s polarity-asymmetry consumers in
 `Studies/Hoeksema1983.lean`.
 
 ## Main declarations
 
 * `comparativeSem` / `equativeSem` — "A is Adj-er / as-Adj-as B" via a directed
   measure on a scale.
-* `gtOverSet_isAntiAdditive` — the S-comparative `Comparison.gt.overSet μ`
-  ([hoeksema-1983]) is anti-additive in its standard: the algebraic source of
-  *than*-clause NPI licensing.
-* `mem_gtOverSet_iff_subset_Iio` — the set-of-degrees comparative as `Set.Iio`
-  interval inclusion (strict mirror of mathlib's `mem_upperBounds_iff_subset_Iic`),
-  collapsing to the binary comparator at a singleton via `Comparison.overSet_singleton`.
-* `gtOverSet_eq_singleton_of_isGreatest` — a than-clause with a greatest degree
-  reduces to that degree ([bhatt-pancheva-2004], order-theoretic form).
-* `maxComparative` — the max-quantified clausal comparative ([von-stechow-1984],
-  [rullmann-1995]): independent matrix/than witness predicates over `thanDegrees`,
-  with the unique-witness collapse `maxComparative_unique`.
 * `comparativeSem_negative_mul` / `comparativeSem_toDual` / `comparativeSem_smul` — antonymy
   is argument swap under the sign group; polarity is the order dual, and on an additive scale
   the sign of the measure.
