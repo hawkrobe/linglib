@@ -62,6 +62,28 @@ def listChoices {β : Type*} : List β → Nat → List (List β)
     listChoices xs (n + 1) =
       xs.flatMap fun v => (listChoices xs n).map (v :: ·) := rfl
 
+theorem coe_listChoices_succ {β : Type*} (xs : List β) (n : ℕ) :
+    (listChoices xs (n + 1) : Multiset (List β)) =
+      (xs : Multiset β).bind fun v => (listChoices xs n : Multiset (List β)).map (v :: ·) := by
+  rw [listChoices_succ, ← Multiset.coe_bind]
+  rfl
+
+@[simp] theorem listChoices_singleton {β : Type*} (x : β) (n : ℕ) :
+    listChoices [x] n = [List.replicate n x] := by
+  induction n with
+  | zero => rfl
+  | succ n ih => rw [listChoices_succ, ih]; rfl
+
+/-- A choice is a word of the prescribed length over the alphabet. -/
+theorem mem_listChoices {β : Type*} {xs : List β} {n : ℕ} {ch : List β} :
+    ch ∈ listChoices xs n ↔ ch.length = n ∧ ∀ x ∈ ch, x ∈ xs := by
+  induction n generalizing ch with
+  | zero => cases ch <;> simp
+  | succ n ih =>
+    cases ch with
+    | nil => simp
+    | cons x ch => simp [ih, and_left_comm]
+
 /-! ## §2: `insertion` — Foissy 2021 Theorem 5.1 -/
 
 /-- Foissy 2021 Theorem 5.1 multi-graft on a single-tree host. Sum over
@@ -378,33 +400,7 @@ theorem insertion_forall₂_perm_guests (t : RoseTree α)
   -- via List.Forall₂ for the pair (fst eq, snd perm)
   exact multiGraft_perm_pair_Forall₂ t (zip_pair_Forall₂ choice h)
 
-/-! ## §5.5: Validity discharge for `listChoices`-derived pair lists
-
-Every element of a `listChoices`-enumerated choice is a member of the
-alphabet (`mem_of_mem_listChoices`), so a pair list of the canonical
-shape `choice.zip Ts` automatically satisfies the validity hypothesis
-that graft operations require (`forall_zip_isValidPath_of_listChoices`).
-These utilities are consumed by `InsertionNodeDecomp`. -/
-
-/-- Every element of a `choice ∈ listChoices xs n` is a member of `xs`.
-    Lifts membership-in-an-enumerated-choice to membership-in-the-alphabet. -/
-theorem mem_of_mem_listChoices {β : Type*}
-    (xs : List β) (n : Nat) (choice : List β) (h_choice : choice ∈ listChoices xs n)
-    (v : β) (h_v : v ∈ choice) : v ∈ xs := by
-  induction n generalizing choice with
-  | zero =>
-    rw [listChoices_zero, List.mem_singleton] at h_choice
-    subst h_choice
-    cases h_v
-  | succ k ih =>
-    rw [listChoices_succ, List.mem_flatMap] at h_choice
-    obtain ⟨w, hw_mem, h_choice⟩ := h_choice
-    rw [List.mem_map] at h_choice
-    obtain ⟨rest, hrest_mem, rfl⟩ := h_choice
-    rw [List.mem_cons] at h_v
-    rcases h_v with rfl | h_v
-    · exact hw_mem
-    · exact ih rest hrest_mem h_v
+/-! ## §5.5: Validity discharge for `listChoices`-derived pair lists -/
 
 /-- Every path in a `choice.zip Ts` pair list is a valid path in `T`, when
     `choice ∈ listChoices (vertices T) Ts.length`. Discharges the validity
@@ -415,9 +411,7 @@ theorem forall_zip_isValidPath_of_listChoices
     (h_choice : choice ∈ listChoices (vertices T) Ts.length)
     (pair : Path × RoseTree α) (h_pair : pair ∈ choice.zip Ts) :
     IsValidPath pair.fst T := by
-  have h_fst_mem : pair.fst ∈ choice := (List.of_mem_zip h_pair).1
-  exact forall_isValidPath T (mem_of_mem_listChoices (vertices T) Ts.length
-    choice h_choice pair.fst h_fst_mem)
+  exact forall_isValidPath T ((mem_listChoices.mp h_choice).2 _ (List.of_mem_zip h_pair).1)
 
 /-! ## §6: Host invariance via path-swap bijection
 

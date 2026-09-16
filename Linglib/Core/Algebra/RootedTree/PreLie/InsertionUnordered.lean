@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionAddHost
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionNodeDecomp
+import Linglib.Core.Data.List.Zip
 import Linglib.Core.Data.Multiset.Antidiagonal
 import Linglib.Core.Data.RoseTree.DecEq
 import Linglib.Core.Data.UnorderedTree.Basic
@@ -262,59 +263,14 @@ theorem insertionMultiset_singleton_rootValue
 private theorem bind_eq_map_sum {γ δ : Type*} (s : Multiset γ)
     (f : γ → Multiset δ) : s.bind f = (s.map f).sum := rfl
 
-/-- The `true`-bucket of a zip over `Quotient.out` representatives has
-    the nonplanar `true`-bucket as its `mk`-image. -/
-private theorem filterMap_zip_out_mk_t (l : List (UnorderedTree α)) (assn : List Bool) :
-    (((l.map Quotient.out).zip assn).filterMap
-        (fun p => if p.2 then some p.1 else none)).map UnorderedTree.mk =
-      (l.zip assn).filterMap (fun p => if p.2 then some p.1 else none) := by
-  induction l generalizing assn with
-  | nil => rfl
-  | cons x l ih =>
-    cases assn with
-    | nil => rfl
-    | cons b assn =>
-      cases b with
-      | true =>
-        show UnorderedTree.mk (Quotient.out x) ::
-            ((((l.map Quotient.out).zip assn).filterMap _).map UnorderedTree.mk) = _
-        have hx : UnorderedTree.mk (Quotient.out x) = x := Quotient.out_eq x
-        rw [hx, ih]
-        rfl
-      | false => exact ih assn
+/-- **NIM-level keystone**: grafting `B` into the singleton host `{node a A'}` decomposes by
+    which guests are grafted at the root (new children) and which into `A'`'s trees (a
+    recursive NIM).
 
-/-- The `false`-bucket analog of `filterMap_zip_out_mk_t`. -/
-private theorem filterMap_zip_out_mk_f (l : List (UnorderedTree α)) (assn : List Bool) :
-    (((l.map Quotient.out).zip assn).filterMap
-        (fun p => if p.2 then none else some p.1)).map UnorderedTree.mk =
-      (l.zip assn).filterMap (fun p => if p.2 then none else some p.1) := by
-  induction l generalizing assn with
-  | nil => rfl
-  | cons x l ih =>
-    cases assn with
-    | nil => rfl
-    | cons b assn =>
-      cases b with
-      | true => exact ih assn
-      | false =>
-        show UnorderedTree.mk (Quotient.out x) ::
-            ((((l.map Quotient.out).zip assn).filterMap _).map UnorderedTree.mk) = _
-        have hx : UnorderedTree.mk (Quotient.out x) = x := Quotient.out_eq x
-        rw [hx, ih]
-        rfl
-
-/-- **NIM-level keystone**: at the UnorderedTree multi-insertion level, grafting
-    `B` into the singleton host `{node a A'}` decomposes by partitioning
-    B's grafting positions into "at the root vertex" (becomes new
-    children) vs "in A's subtrees" (recursive NIM).
-
-    Descent through the quotient: the singleton host's canonical planar
-    representative is `Perm`-swapped for a visible planar node,
-    `RoseTree.Pathed.insertion_node_split` provides the root-vs-subtree
-    mask decomposition, and the mask enumeration is converted to the
-    powerset bind via `listChoices_bridge_powerset_paired` plus the
-    powerset partition involution (the mask convention has `true` =
-    root guests, while the powerset bind runs over the subtree bucket). -/
+    Descent through the quotient: the host's canonical planar representative is
+    `Perm`-swapped for a visible planar node, `RoseTree.Pathed.insertion_node` splits the
+    planar guests as `sublists'.revzip`, and `Multiset.coe_revzip_sublists'` carries that
+    split to the powerset bind. -/
 theorem insertionMultiset_singleton_node [DecidableEq α]
     (a : α) (A' B : Multiset (UnorderedTree α)) :
     UnorderedTree.insertionMultiset
@@ -363,113 +319,68 @@ theorem insertionMultiset_singleton_node [DecidableEq α]
     rw [Multiset.map_map, Multiset.map_map] at h2
     exact h2
   rw [h_host']
-  -- §4: singleton-forest reduction + the node-split engine.
+  -- §4: singleton-forest reduction + the node split, over `sublists'.revzip` of `B.toList`.
   rw [RoseTree.Pathed.insertionForest_singleton, Multiset.map_map,
-      RoseTree.Pathed.insertion_node_split, Multiset.map_bind]
-  -- §5: convert the RHS powerset bind to the mask enumeration. The mask
-  -- convention has `true` = root guests, so the powerset bind (over the
-  -- subtree bucket B₁) is first flipped by the partition involution.
+    RoseTree.Pathed.insertion_node, Multiset.map_bind, List.sublists'_map, List.revzip_map,
+    ← Multiset.map_coe, Multiset.bind_map]
+  -- §5: the powerset bind as a bind over `sublists'.revzip`, root bucket first.
   have h_rhs : (B.powerset.bind fun B₁ =>
         (UnorderedTree.insertionMultiset A' B₁).map fun F' =>
           ({UnorderedTree.node a (F' + (B - B₁))} : Multiset (UnorderedTree α))) =
-      (Multiset.ofList
-          (RoseTree.Pathed.listChoices [true, false] B.toList.length)).bind
-        (fun assn =>
-          (UnorderedTree.insertionMultiset A'
-              (((B.toList.zip assn).filterMap
-                fun p => if p.2 then none else some p.1 : List (UnorderedTree α)) :
-                Multiset (UnorderedTree α))).map
-            fun F' => ({UnorderedTree.node a (F' +
-              (((B.toList.zip assn).filterMap
-                fun p => if p.2 then some p.1 else none : List (UnorderedTree α)) :
-                Multiset (UnorderedTree α)))} : Multiset (UnorderedTree α))) := by
-    -- Step A: flip the partition so the bind variable is the root bucket.
-    rw [bind_eq_map_sum]
-    rw [Multiset.powerset_partition_swap B
-      (fun B₁ rest => (UnorderedTree.insertionMultiset A' B₁).map fun F' =>
-        ({UnorderedTree.node a (F' + rest)} : Multiset (UnorderedTree α)))]
-    -- Step B: pair form + the powerset↔mask bridge.
-    rw [show (B.powerset.map fun s =>
-          (UnorderedTree.insertionMultiset A' (B - s)).map fun F' =>
-            ({UnorderedTree.node a (F' + s)} : Multiset (UnorderedTree α))) =
-        ((B.powerset.map fun s => (s, B - s)).map
-          fun pr => (UnorderedTree.insertionMultiset A' pr.2).map fun F' =>
-            ({UnorderedTree.node a (F' + pr.1)} : Multiset (UnorderedTree α))) from by
-      rw [Multiset.map_map]
-      rfl]
-    rw [show (B.powerset.map fun s => (s, B - s)) =
-        (Multiset.ofList
-            (RoseTree.Pathed.listChoices [true, false] B.toList.length)).map
-          (fun assn =>
-            ((((B.toList.zip assn).filterMap
-                fun p => if p.2 then some p.1 else none : List (UnorderedTree α)) :
-                Multiset (UnorderedTree α)),
-             (((B.toList.zip assn).filterMap
-                fun p => if p.2 then none else some p.1 : List (UnorderedTree α)) :
-                Multiset (UnorderedTree α)))) from by
-      conv_lhs => rw [show B = (↑(B.toList) : Multiset (UnorderedTree α)) from
-        B.coe_toList.symm]
-      rw [← RoseTree.Pathed.listChoices_bridge_powerset_paired (l := B.toList)]]
-    rw [Multiset.map_map, ← bind_eq_map_sum]
-    rfl
+      (B.toList.sublists'.revzip :
+          Multiset (List (UnorderedTree α) × List (UnorderedTree α))).bind fun p =>
+        (UnorderedTree.insertionMultiset A' ↑p.2).map fun F' =>
+          ({UnorderedTree.node a (F' + ↑p.1)} : Multiset (UnorderedTree α)) := by
+    have h := Multiset.coe_revzip_sublists' B.toList
+    rw [Multiset.coe_toList] at h
+    calc _ = (B.powerset.map fun s => (s, B - s)).bind fun q =>
+            (UnorderedTree.insertionMultiset A' q.2).map fun F' =>
+              ({UnorderedTree.node a (F' + q.1)} : Multiset (UnorderedTree α)) := by
+          rw [Multiset.bind_map, bind_eq_map_sum, bind_eq_map_sum]
+          exact Multiset.powerset_partition_swap B fun B₁ rest =>
+            (UnorderedTree.insertionMultiset A' B₁).map fun F' =>
+              ({UnorderedTree.node a (F' + rest)} : Multiset (UnorderedTree α))
+      _ = _ := by rw [← h, ← Multiset.map_coe, Multiset.bind_map]
   refine Eq.trans ?_ h_rhs.symm
-  -- §6: per-mask congruence. Align mask lengths, then reduce each mask.
-  rw [List.length_map]
-  refine Multiset.bind_congr fun assn h_assn => ?_
-  -- Named buckets: planar (out-rep) and nonplanar (canonical) per side.
-  set gs_t : List (RoseTree α) := ((B.toList.map Quotient.out).zip assn).filterMap
-    (fun p => if p.2 then some p.1 else none) with hgs_t
-  set gs_f : List (RoseTree α) := ((B.toList.map Quotient.out).zip assn).filterMap
-    (fun p => if p.2 then none else some p.1) with hgs_f
-  set s_t : Multiset (UnorderedTree α) := Multiset.ofList
-    ((B.toList.zip assn).filterMap
-      (fun p => if p.2 then some p.1 else none)) with hs_t
-  set s_f : Multiset (UnorderedTree α) := Multiset.ofList
-    ((B.toList.zip assn).filterMap
-      (fun p => if p.2 then none else some p.1)) with hs_f
-  -- mk-image facts for the two planar buckets.
-  have h_t_mk : Multiset.ofList (gs_t.map UnorderedTree.mk) = s_t := by
-    rw [hgs_t, filterMap_zip_out_mk_t, hs_t]
-  have h_f_perm : (gs_f.map UnorderedTree.mk).Perm
-      ((s_f.toList.map Quotient.out).map UnorderedTree.mk) := by
-    apply Multiset.coe_eq_coe.mp
-    rw [hgs_f, filterMap_zip_out_mk_f, List.map_map,
-        show s_f.toList.map (UnorderedTree.mk ∘ Quotient.out) = s_f.toList from
-          (List.map_congr_left fun x _ => Quotient.out_eq x).trans
-            (List.map_id _),
-        Multiset.coe_toList, hs_f]
+  -- §6: per guest split, the planar buckets are `Quotient.out` images of the nonplanar ones.
+  refine Multiset.bind_congr fun (p : List (UnorderedTree α) × List (UnorderedTree α)) _ => ?_
+  dsimp only [Prod.map_fst, Prod.map_snd]
+  have h_out : ∀ l : List (UnorderedTree α), (l.map Quotient.out).map UnorderedTree.mk = l :=
+    fun l => by
+      rw [List.map_map]
+      exact (List.map_congr_left fun x _ => Quotient.out_eq x).trans (List.map_id _)
   have h_guests := RoseTree.Pathed.insertionForest_msform_invariance_guests
-    (A'.toList.map Quotient.out) h_f_perm
-  -- Assemble: fuse post-maps, factor through msform, swap guests, recombine.
+    (A'.toList.map Quotient.out) (gs1 := p.2.map Quotient.out)
+    (gs2 := (↑p.2 : Multiset (UnorderedTree α)).toList.map Quotient.out)
+    (Multiset.coe_eq_coe.mp (by rw [h_out, h_out, Multiset.coe_toList]))
   rw [Multiset.map_map]
-  calc (RoseTree.Pathed.insertionForest (A'.toList.map Quotient.out) gs_f).map
+  calc (RoseTree.Pathed.insertionForest (A'.toList.map Quotient.out) (p.2.map Quotient.out)).map
         ((((fun L => (Multiset.ofList (L.map UnorderedTree.mk) :
             Multiset (UnorderedTree α))) ∘ fun T' => [T']))
-          ∘ (fun cs' => RoseTree.node a (gs_t ++ cs')))
-      = ((RoseTree.Pathed.insertionForest (A'.toList.map Quotient.out) gs_f).map
+          ∘ (fun cs' => RoseTree.node a (p.1.map Quotient.out ++ cs')))
+      = ((RoseTree.Pathed.insertionForest (A'.toList.map Quotient.out)
+            (p.2.map Quotient.out)).map
           (fun L => (Multiset.ofList (L.map UnorderedTree.mk) :
             Multiset (UnorderedTree α)))).map
-        (fun M => ({UnorderedTree.node a (s_t + M)} : Multiset (UnorderedTree α))) := by
+        (fun M => ({UnorderedTree.node a (↑p.1 + M)} : Multiset (UnorderedTree α))) := by
         rw [Multiset.map_map]
         refine Multiset.map_congr rfl fun cs' _ => ?_
-        show ({UnorderedTree.mk (RoseTree.node a (gs_t ++ cs'))} :
+        show ({UnorderedTree.mk (RoseTree.node a (p.1.map Quotient.out ++ cs'))} :
           Multiset (UnorderedTree α)) = _
-        congr 1
-        rw [← UnorderedTree.node_mk_tree_list]
-        congr 1
-        rw [List.map_append, ← Multiset.coe_add, h_t_mk]
+        rw [← UnorderedTree.node_mk_tree_list, List.map_append, ← Multiset.coe_add, h_out]
+        rfl
     _ = ((RoseTree.Pathed.insertionForest (A'.toList.map Quotient.out)
-            (s_f.toList.map Quotient.out)).map
+            ((↑p.2 : Multiset (UnorderedTree α)).toList.map Quotient.out)).map
           (fun L => (Multiset.ofList (L.map UnorderedTree.mk) :
             Multiset (UnorderedTree α)))).map
-        (fun M => ({UnorderedTree.node a (s_t + M)} : Multiset (UnorderedTree α))) := by
+        (fun M => ({UnorderedTree.node a (↑p.1 + M)} : Multiset (UnorderedTree α))) := by
         rw [h_guests]
-    _ = (UnorderedTree.insertionMultiset A' s_f).map
-        (fun F' => ({UnorderedTree.node a (F' + s_t)} : Multiset (UnorderedTree α))) := by
+    _ = (UnorderedTree.insertionMultiset A' ↑p.2).map
+        (fun F' => ({UnorderedTree.node a (F' + ↑p.1)} : Multiset (UnorderedTree α))) := by
         unfold UnorderedTree.insertionMultiset
         rw [Multiset.map_map, Multiset.map_map]
         refine Multiset.map_congr rfl fun L _ => ?_
-        show ({UnorderedTree.node a (s_t + Multiset.ofList (L.map UnorderedTree.mk))} :
+        show ({UnorderedTree.node a (↑p.1 + Multiset.ofList (L.map UnorderedTree.mk))} :
           Multiset (UnorderedTree α)) = _
         rw [add_comm]
         rfl

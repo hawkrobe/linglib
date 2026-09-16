@@ -208,6 +208,65 @@ end
       multiGraft c (pairs.filterMap headChildFilter) ::
         multiGraftChildren cs (pairs.filterMap tailChildFilter) := rfl
 
+/-! ### Filter characterizations
+
+Each pair filter is a `List.filter` on the path followed by a projection, so pair lists can be
+bucketed by a predicate on paths (`bind_listChoices_filter` in `InsertionNodeDecomp.lean`). -/
+
+theorem filterMap_rootPrependFilter (pairs : List (Path × RoseTree α)) :
+    pairs.filterMap rootPrependFilter =
+      (pairs.filter fun p => decide (p.1 = [])).map Prod.snd := by
+  induction pairs with
+  | nil => rfl
+  | cons p pairs ih =>
+    obtain ⟨q, T⟩ := p
+    cases q <;> simp [ih]
+
+theorem filterMap_headChildFilter (pairs : List (Path × RoseTree α)) :
+    pairs.filterMap headChildFilter =
+      (pairs.filter fun p => decide (p.1.head? = some 0)).map (Prod.map List.tail id) := by
+  induction pairs with
+  | nil => rfl
+  | cons p pairs ih =>
+    obtain ⟨q, T⟩ := p
+    rcases q with _ | ⟨_ | k, rest⟩ <;> simp [ih]
+
+theorem filterMap_tailChildFilter (pairs : List (Path × RoseTree α))
+    (h : ∀ p ∈ pairs, p.1 ≠ []) :
+    pairs.filterMap tailChildFilter =
+      (pairs.filter fun p => decide (¬ p.1.head? = some 0)).map
+        (Prod.map (List.modifyHead (· - 1)) id) := by
+  induction pairs with
+  | nil => rfl
+  | cons p pairs ih =>
+    obtain ⟨q, T⟩ := p
+    have ih := ih fun p hp => h p (List.mem_cons_of_mem _ hp)
+    rcases q with _ | ⟨_ | k, rest⟩
+    · exact absurd rfl (h ([], T) List.mem_cons_self)
+    · simp [ih]
+    · simp [ih]
+
+/-- `multiGraftChildren` depends on its pair list only through the two child filters. -/
+theorem multiGraftChildren_congr {cs : List (RoseTree α)}
+    {pairs₁ pairs₂ : List (Path × RoseTree α)}
+    (h₁ : pairs₁.filterMap headChildFilter = pairs₂.filterMap headChildFilter)
+    (h₂ : pairs₁.filterMap tailChildFilter = pairs₂.filterMap tailChildFilter) :
+    multiGraftChildren cs pairs₁ = multiGraftChildren cs pairs₂ := by
+  cases cs with
+  | nil => rfl
+  | cons c cs => rw [multiGraftChildren_cons_cs, multiGraftChildren_cons_cs, h₁, h₂]
+
+/-- Root pairs never reach the children. -/
+theorem multiGraftChildren_filter_ne_nil (cs : List (RoseTree α))
+    (pairs : List (Path × RoseTree α)) :
+    multiGraftChildren cs (pairs.filter fun p => decide (¬ p.1 = [])) =
+      multiGraftChildren cs pairs := by
+  refine multiGraftChildren_congr ?_ ?_ <;>
+  · rw [List.filterMap_filter]
+    refine List.filterMap_congr fun p _ => ?_
+    obtain ⟨q, T⟩ := p
+    cases q <;> simp
+
 /-! ## §3: Nil identity -/
 
 mutual
