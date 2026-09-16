@@ -2660,7 +2660,6 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 import Linglib.Syntax.Minimalist.SyntacticObject.Lift
 import Linglib.Syntax.Minimalist.SyntacticObject.Replace
 import Linglib.Syntax.Minimalist.SyntacticObject.Selection
-import Linglib.Syntax.Minimalist.SyntacticObject.Subterm
 import Linglib.Syntax.Minimalist.Theta.Basic
 import Linglib.Syntax.Minimalist.Theta.Realize
 import Linglib.Syntax.Minimalist.Verbal.Applicative
