@@ -26,9 +26,9 @@ computed.
 * `Strategy.alternation`, `Strategy.defaultValency` — the coding-frame operation
   a predicate-marking strategy realizes ([creissels-2024]'s
   `Voice.reciprocalization`) and the valency it therefore derives.
-* `Indicator`, `ValencyProfile` — the morphosyntactic indicators of valency and
-  what each reports in a construction; `ValencyProfile.Mixed` is
-  [evans-et-al-2007]'s mixed transitivity effect.
+* `Indicator`, `Construction` — the morphosyntactic indicators of valency, and a
+  construction as its exponent together with what each indicator reports;
+  `Construction.Mixed` is [evans-et-al-2007]'s mixed transitivity effect.
 * `Formation` — lexical vs syntactic formation of reciprocal verbs.
 * `Reading`, `Marker`, `ofInventory` — a reciprocal exponent with its polysemy,
   and the WALS Ch 106 value of an inventory.
@@ -42,8 +42,8 @@ alternation, whose derived construction is intransitive. The valency a
 construction actually shows is read off its indicators one at a time, since
 they can disagree: a Kuuk Thaayorre reciprocal keeps ergative on its subject
 with no object slot, a Dalabon one takes intransitive agreement yet incorporates
-the patient ([evans-et-al-2007]). A profile records only the indicators a
-source reports, and languages may override the default throughout (Tonga:
+the patient ([evans-et-al-2007]). A construction records only the indicators
+a source reports, and languages may override the default throughout (Tonga:
 [maslova-2008]). Hurst's Malagasy case, bivalent at f-structure and monovalent
 at c-structure ([hurst-2012]), splits levels rather than indicators and is not
 representable here. A bound reciprocal pronoun
@@ -165,36 +165,6 @@ inductive Indicator where
   | incorporation
   deriving DecidableEq, Fintype, Repr
 
-/-- What each observed indicator reports of a reciprocal construction; `none`
-where the source reports nothing. -/
-abbrev ValencyProfile := Indicator → Option Valency
-
-namespace ValencyProfile
-
-variable (p : ValencyProfile)
-
-/-- Some indicator reports the valency `v`. -/
-def Reads (v : Valency) : Prop := ∃ i, p i = some v
-
-/-- Every reporting indicator agrees on `v`. -/
-def Unanimous (v : Valency) : Prop := ∀ w, p.Reads w → w = v
-
-/-- The indicators disagree: [evans-et-al-2007]'s mixed transitivity effect. -/
-def Mixed : Prop := p.Reads .bivalent ∧ p.Reads .monovalent
-
-instance (v : Valency) : Decidable (p.Reads v) := Fintype.decidableExistsFintype
-instance (v : Valency) : Decidable (p.Unanimous v) := Fintype.decidableForallFintype
-instance : Decidable p.Mixed := instDecidableAnd
-
-/-- The profile reporting `v` on the indicator `i` alone. -/
-def single (i : Indicator) (v : Valency) : ValencyProfile :=
-  Function.update (fun _ ↦ none) i (some v)
-
-theorem not_mixed_of_unanimous {v : Valency} (h : p.Unanimous v) : ¬ p.Mixed :=
-  fun ⟨hb, hm⟩ ↦ absurd ((h _ hb).trans (h _ hm).symm) (by decide)
-
-end ValencyProfile
-
 /-- Formation locus of reciprocal verbs: lexical θ-role bundling vs syntactic
 derivation ([siloni-2008], [siloni-2012]; [reinhart-siloni-2005]'s lex-syn
 parameter). -/
@@ -237,5 +207,40 @@ def ofInventory (inv : List Marker) : ReciprocalType :=
   else if recips.all (fun m ↦ Reading.reflexive ∈ m.readings) then .identicalToReflexive
   else if recips.all (fun m ↦ Reading.reflexive ∉ m.readings) then .distinctFromReflexive
   else .mixed
+
+/-! ### Constructions -/
+
+/-- A reciprocal construction: its exponent, and what each valency indicator a
+description reports says of the clause, `none` where nothing is reported. -/
+structure Construction where
+  /-- The exponent of reciprocity. -/
+  marker : Marker
+  /-- What each reported indicator says of the clause's valency. -/
+  valency : Indicator → Option Valency := fun _ ↦ none
+
+namespace Construction
+
+variable (c : Construction)
+
+/-- The strategy of the construction's exponent. -/
+def strategy : Strategy := c.marker.strategy
+
+/-- Some indicator reports the valency `v`. -/
+def Reads (v : Valency) : Prop := ∃ i, c.valency i = some v
+
+/-- Every reporting indicator agrees on `v`. -/
+def Unanimous (v : Valency) : Prop := ∀ w, c.Reads w → w = v
+
+/-- The indicators disagree: [evans-et-al-2007]'s mixed transitivity effect. -/
+def Mixed : Prop := c.Reads .bivalent ∧ c.Reads .monovalent
+
+instance (v : Valency) : Decidable (c.Reads v) := Fintype.decidableExistsFintype
+instance (v : Valency) : Decidable (c.Unanimous v) := Fintype.decidableForallFintype
+instance : Decidable c.Mixed := instDecidableAnd
+
+theorem not_mixed_of_unanimous {v : Valency} (h : c.Unanimous v) : ¬ c.Mixed :=
+  fun ⟨hb, hm⟩ ↦ absurd ((h _ hb).trans (h _ hm).symm) (by decide)
+
+end Construction
 
 end Reciprocal
