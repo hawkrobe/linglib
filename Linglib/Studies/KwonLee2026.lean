@@ -97,8 +97,8 @@ theorem attenuation_strictMono :
     StrictMono (λ f : KoreanRefForm => f.toAccessibility.attenuation) := by
   intro a b hab; cases a <;> cases b <;> revert hab <;> decide
 
-/-- More accessible forms are no more informative; the scale collapses the overt pronoun and
-the demonstrative NP at one unit of lexical content. -/
+/-- More accessible forms are no more informative; the null and the overt pronoun both carry
+no lexical information. -/
 theorem informativity_antitone :
     Antitone (λ f : KoreanRefForm => f.toAccessibility.informativity) := by
   intro a b hab; cases a <;> cases b <;> revert hab <;> decide
