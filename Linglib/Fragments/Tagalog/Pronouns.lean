@@ -1,11 +1,10 @@
 import Linglib.Syntax.Category.Pronoun.Basic
-import Linglib.Syntax.Category.Pronoun.WALS
 import Linglib.Syntax.Person.Clusivity
 import Linglib.Syntax.Person.Category
 
 /-!
-# Tagalog pronoun profile (WALS Chs 39, 40, 44–48)
-[wals-2013] [himmelmann-2005-tagalog]
+# Tagalog pronouns
+[himmelmann-2005-tagalog] [cysouw-2003]
 
 ## Pronoun paradigm (Himmelmann 2005 Table 12.2, p. 358)
 
@@ -36,9 +35,8 @@ an augmented *tayo* (1+2+others — speaker + addressee + additional
 referents, of any number; [schachter-otanes-1972] p. 89 glosses it
 as "you (singular) and I (and others)" / "you (plural) and I"); the
 exclusive *kami* remains a single category. This is a finer typological
-cut than WALS Ch 39's binary incl/excl coding can express, which is why
-the WALS-derived `Pronoun.inclusiveExclusive "tgl"` underdetermines the
-paradigm.
+cut than the binary inclusive/exclusive coding of the WALS chapter on clusivity
+can express.
 
 The *kitá* / *katá* cell warrants care. [schachter-otanes-1972]
 Chart 7 (p. 88) tabulates the 1du.in NOM as ***kata*** (with *nita*/*kanita*
@@ -62,8 +60,7 @@ namespace Tagalog
     ([schachter-otanes-1972] p. 88) alongside the augmented-inclusive
     *tayo* and the exclusive *kami*. Modern Manila Tagalog has largely
     lost the dual; this field reflects the textbook paradigm, not
-    colloquial usage. Refines the binary WALS Ch 39 value
-    `Pronoun.inclusiveExclusive "tgl"` (derived from `Data.WALS`). -/
+    colloquial usage. -/
 def clusivity : Person.Clusivity := .minimalAugmented
 
 -- ============================================================================
@@ -153,13 +150,5 @@ theorem clusivity_consistent :
 /-- Every Tagalog pronoun is well-formed: clusivity is borne only by the
     first-person dual/plural forms (`Pronoun.WellFormed`). -/
 theorem all_wellFormed : pronouns.all (fun p => decide p.WellFormed) = true := by decide
-
-/-- WALS Ch 39's coding of Tagalog agrees with the image of its Cysouw
-    clusivity system under `fromClusivity`. The WALS value is derived from the
-    `Data.WALS` layer by ISO (no hand-stipulation), so this catches drift
-    between WALS and the clusivity commitment. -/
-theorem wals_clusivity_consistent :
-    Pronoun.inclusiveExclusive "tgl" =
-      some (Pronoun.InclusiveExclusive.fromClusivity clusivity) := by decide
 
 end Tagalog
