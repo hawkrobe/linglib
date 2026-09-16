@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Jenks2018
-import Linglib.Semantics.Definiteness.Interpret
+import Linglib.Semantics.Definiteness.Description
 import Linglib.Semantics.Genericity.MeaningPreservation
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Cantonese.Determiners
@@ -44,7 +44,8 @@ fragments derive, marked-unique being the unattested fourth (`table2`).
 
 namespace Jenks2018
 
-open Data.Examples Definiteness Determiner Semantics.Composition Genericity.MeaningPreservation
+open Data.Examples Definiteness Determiner Semantics Semantics.Composition
+  Genericity.MeaningPreservation
 
 /-! ### Environments and principles -/
 
@@ -190,13 +191,26 @@ theorem rows_agree :
 /-! ### Demonstratives are strict (Section 4.3) -/
 
 /-- A demonstrative description denotes the value of its index in every situation where its
-restrictor holds of it: it cannot covary through the situation pronoun as the bare unique
-definite does, (27) to (30). -/
-theorem interpret_demonstrative_eq_some_iff {E W : Type} (R : Restrictor E W)
-    (δ : Reference.Deixis) (s d : Nat) (g : Assignment E) (gs : SitAssignment W) (x : E) :
-    interpret (.demonstrative R δ s d) g gs = some x ↔ R g gs (g d) ∧ x = g d := by
-  rw [interpret_demonstrative]
-  split_ifs with h <;> simp [h, eq_comm]
+restrictor holds of it, (27) to (30): the demonstrative supplies the index of ι^x, and the
+index, not the situation, fixes the referent. -/
+theorem demonstrative_eq_some_iff {E W : Type} (R : Restrictor E W) (δ : Reference.Deixis)
+    (d : ℕ) (g : Assignment E) (s : W) (x : E) :
+    ⟦Description.demonstrative R δ d⟧ g s = some x ↔ R g s (g d) ∧ x = g d :=
+  Description.denote_anaphoric_eq_some_iff R d g s
+
+/-- A demonstrative cannot covary through the situation pronoun: its referents at any two
+situations coincide. -/
+theorem demonstrative_rigid {E W : Type} (R : Restrictor E W) (δ : Reference.Deixis) (d : ℕ)
+    (g : Assignment E) {s s' : W} {x x' : E} (h : ⟦Description.demonstrative R δ d⟧ g s = some x)
+    (h' : ⟦Description.demonstrative R δ d⟧ g s' = some x') : x = x' :=
+  Description.denote_anaphoric_rigid R d g s h h'
+
+/-- The bare noun's covert ι does covary: over the restrictor true of the situation itself, the
+bare noun denotes each situation at that situation, so distinct situations give distinct
+referents. -/
+theorem bare_covaries {W : Type} (g : Assignment W) (s : W) :
+    ⟦Description.bare fun _ s x ↦ x = s⟧ g s = some s :=
+  (Description.denote_bare_eq_some_iff _ _ _).2 ⟨rfl, fun _ h ↦ h⟩
 
 /-! ### The typology (Table 2) -/
 

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Definiteness.Interpret
+import Linglib.Semantics.Definiteness.Description
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 import Linglib.Data.Examples.Hanink2021
 import Mathlib.Data.Prod.Lex
@@ -11,7 +11,7 @@ head idx below D that Washo pronounces as *gi ~ ge*: in third-person pronouns (1
 demonstratives (2), and at the edge of internally headed relative clauses (3), which are DPs
 over a nominalized CP (40). The index has two meanings (80): as a variable it is the property of
 being the antecedent, so a familiar DP is D's ι over the restriction modified by the index (15),
-which is the substrate's anaphoric description, `interpret_anaphoric_eq_russellIota`, with the
+which is the substrate's anaphoric description, `denote_anaphoric_eq_russellIota`, with the
 deixis of *hádi* and *wídi* a presupposition on D (34); as a binder it turns the open proposition
 of the embedded clause, whose semantic head is a restricted variable (69), into a property
 without movement, the substrate's abstraction `lambdaAbsG`, so that the relative denotes what an
@@ -57,7 +57,7 @@ section 4.4 are recorded as data and prose only.
 
 namespace Hanink2021
 
-open Semantics.Composition Definiteness DistributedMorphology Morphology.Exponence
+open Semantics Semantics.Composition Definiteness DistributedMorphology Morphology.Exponence
 open scoped Assignment
 
 variable {E W : Type}
@@ -75,24 +75,15 @@ abbrev idxBind (n : ℕ) (φ : Assignment E → Prop) : Assignment E → E → P
 /-- (15), (35b), (97), and (106): a familiar DP, D's ι over the restriction modified by the index
 as a variable, is the substrate's anaphoric description: the antecedent, if it satisfies the
 restriction. -/
-theorem interpret_anaphoric_eq_russellIota (R : Restrictor E W) (d : ℕ) (g : Assignment E)
-    (gs : SitAssignment W) :
-    interpret (.anaphoric R d) g gs = russellIota (λ x => R g gs x ∧ idxVar d g x) := by
-  rw [interpret_anaphoric]
-  split_ifs with h
-  · exact ((russellIota_eq_some_iff _ _).mpr ⟨⟨h, rfl⟩, λ _ hx => hx.2⟩).symm
-  · refine (Option.eq_none_iff_forall_ne_some.mpr λ e he => h ?_).symm
-    obtain ⟨⟨hR, rfl⟩, -⟩ := (russellIota_eq_some_iff _ _).mp he
-    exact hR
+theorem denote_anaphoric_eq_russellIota (R : Restrictor E W) (d : ℕ) (g : Assignment E) (s : W) :
+    ⟦Description.anaphoric R d⟧ g s = russellIota (λ x => R g s x ∧ idxVar d g x) := rfl
 
 /-- (34b), (34c): the demonstrative D heads *hádi* and *wídi* add a deictic presupposition and
 otherwise contribute ι, so a demonstrative refers as the anaphoric DP does. -/
-theorem interpret_demonstrative_eq_russellIota (R : Restrictor E W)
-    (deictic : Reference.Deixis) (sIdx d : ℕ) (g : Assignment E) (gs : SitAssignment W) :
-    interpret (.demonstrative R deictic sIdx d) g gs =
-      russellIota (λ x => R g gs x ∧ idxVar d g x) :=
-  (interpret_demonstrative_eq_anaphoric R deictic sIdx d g gs).trans
-    (interpret_anaphoric_eq_russellIota R d g gs)
+theorem denote_demonstrative_eq_russellIota (R : Restrictor E W) (deictic : Reference.Deixis)
+    (d : ℕ) (g : Assignment E) (s : W) :
+    ⟦Description.demonstrative R deictic d⟧ g s = russellIota (λ x => R g s x ∧ idxVar d g x) :=
+  rfl
 
 /-! ### Internally headed relatives, section 4 -/
 

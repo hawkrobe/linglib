@@ -42,6 +42,6 @@ class Denotes (α : Type*) (D : outParam Type*) where
   denote : α → D
 
 /-- `⟦x⟧` is the denotation of `x`. -/
-scoped notation:arg (priority := high) "⟦" x "⟧" => Denotes.denote x
+scoped notation:max (priority := high) "⟦" x "⟧" => Denotes.denote x
 
 end Semantics

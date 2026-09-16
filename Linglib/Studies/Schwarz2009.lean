@@ -1,7 +1,7 @@
 import Linglib.Semantics.Definiteness.Defs
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Definiteness.Description
-import Linglib.Semantics.Definiteness.Interpret
+import Linglib.Semantics.Definiteness.Description
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.German.Determiners
 import Linglib.Fragments.Thai.Determiners
@@ -49,10 +49,10 @@ We verify:
    are not collapsible in `DefPresupType`.
 2. **Constructor split** — `.unique` and `.anaphoric` project to different
    presupposition types (uniqueness vs familiarity).
-3. **Different argument shapes** — `.unique` consults the situation
-   assignment via `interpSitPronoun`; `.anaphoric` consults the entity
-   assignment via the discourse index. The interpreter realizes this
-   difference structurally.
+3. **Different argument shapes** — both articles are evaluated at a
+   resource situation; the strong article additionally takes an anaphoric
+   index, so the weak article's referent covaries with the situation and
+   the strong article's is the antecedent wherever it is defined.
 4. **Morphological correlate** — German (`bipartite`) marks the two types
    with distinct articles; English (`generallyMarked`) syncretizes them.
    The inventory bool `uniqueAnaphoricSyncretism` is the discriminator.
@@ -67,7 +67,7 @@ We verify:
 namespace Schwarz2009
 
 open Definiteness
-open Semantics.Composition
+open Semantics Semantics.Composition
 
 -- ════════════════════════════════════════════════════════════════
 -- §1: The two presupposition types are genuinely distinct
@@ -114,41 +114,29 @@ theorem unique_anaphoric_presup_distinct :
 -- §3: Different argument shapes — situation vs discourse binding
 -- ════════════════════════════════════════════════════════════════
 
-/-! The two articles do not just project different presupposition types —
-they consult different *parts* of the bi-assignment. The weak article
-binds a structural **situation pronoun** (its restrictor is evaluated at
-`interpSitPronoun sIdx gs`); the strong article looks up a **discourse
-referent** in the entity assignment (`g d`). -/
+/-! The two articles do not just project different presupposition types — they take different
+arguments. Both are evaluated at a resource situation; the strong article additionally takes an
+anaphoric index, and its referent is that index's value wherever it is defined, so the weak
+article's referent covaries with the situation (`weak_article_covaries`) and the strong
+article's does not (`strong_article_rigid`). -/
 
-/-- The weak article's restrictor sees the entire situation assignment
-    `gs` (the `unique` constructor passes `gs` to `R`). The situation
-    index `sIdx` is structurally recorded but does not affect the
-    interpretation directly — the restrictor itself is what calls
-    `interpSitPronoun sIdx` to fetch the resource situation. -/
-theorem weak_article_consults_situation_assignment
-    (R : Restrictor E W) (sIdx : Nat)
-    (g : Assignment E) (gs : SitAssignment W) :
-    interpret (.unique R sIdx) g gs =
-      russellIota (fun x => R g gs x) := rfl
+/-- The weak article denotes `x` at a situation iff `x` is the unique satisfier of the
+restrictor there: the situation fixes the referent. -/
+theorem weak_article_referent_iff (R : Restrictor E W) (g : Assignment E) (s : W) (x : E) :
+    ⟦Description.unique R⟧ g s = some x ↔ R g s x ∧ ∀ y, R g s y → y = x :=
+  Description.denote_unique_eq_some_iff R g s
 
-/-- The strong article's referent is the entity at the discourse index
-    `g d`, accepted iff the restrictor holds of it. The situation
-    assignment is consulted only through the restrictor `R` — the
-    constructor itself reads the entity slot. -/
-theorem strong_article_consults_entity_assignment
-    (R : Restrictor E W) (d : Nat)
-    (g : Assignment E) (gs : SitAssignment W) :
-    interpret (.anaphoric R d) g gs =
-      (letI := Classical.dec (R g gs (g d))
-       if R g gs (g d) then some (g d) else none) := rfl
+/-- The strong article denotes `x` at a situation iff `x` is its antecedent `g d` and the
+restrictor holds of the antecedent there: the index fixes the referent. -/
+theorem strong_article_referent_iff (R : Restrictor E W) (d : ℕ) (g : Assignment E) (s : W)
+    (x : E) : ⟦Description.anaphoric R d⟧ g s = some x ↔ R g s (g d) ∧ x = g d :=
+  Description.denote_anaphoric_eq_some_iff R d g s
 
-/-- The classifier `DescriptionKind.UsesSituationPronoun` correctly flags the
-    weak article as a structural binder of the resource situation; the strong
-    article is not. This is the structural correlate of the [schwarz-2009]
-    claim that uniqueness is *situational* and familiarity is *anaphoric*. -/
-theorem situation_binding_classifies_articles :
-    DescriptionKind.unique.UsesSituationPronoun ∧
-    ¬ DescriptionKind.anaphoric.UsesSituationPronoun := by decide
+/-- The strong article's referent does not covary with the resource situation. -/
+theorem strong_article_rigid (R : Restrictor E W) (d : ℕ) (g : Assignment E) {s s' : W}
+    {x x' : E} (h : ⟦Description.anaphoric R d⟧ g s = some x)
+    (h' : ⟦Description.anaphoric R d⟧ g s' = some x') : x = x' :=
+  Description.denote_anaphoric_rigid R d g s h h'
 
 -- ════════════════════════════════════════════════════════════════
 -- §4: Morphological correlate — German bipartite vs English syncretic
@@ -334,50 +322,51 @@ inductive Student where
   | bob
   deriving DecidableEq, Repr
 
-/-- Both students count as students. The restrictor has *two* satisfiers,
+/-- Both students count as students at every situation. The restrictor has *two* satisfiers,
     so the weak (uniqueness) article fails — there is no unique satisfier. -/
-def studentRestr : Restrictor Student Unit := fun _g _gs _x => True
+def studentRestr : Restrictor Student Bool := fun _ _ _ => True
 
 /-- Discourse referent at index 0 is Alice. The strong article
     (`.anaphoric`) reads off this slot. -/
 def gAlice : Assignment Student := fun _ => Student.alice
 
-def gs0 : SitAssignment Unit := fun _ => ()
-
 /-- The weak article fails on a multi-satisfier restrictor — uniqueness
     presupposition violation. -/
-theorem weak_article_fails_on_multi :
-    interpret (E := Student) (W := Unit) (.unique studentRestr 0) gAlice gs0 = none := by
-  classical
-  rw [interpret_unique]
-  have hExU : ¬ ∃! x : Student, studentRestr gAlice gs0 x := by
-    rw [existsUnique_iff_existence_and_uniqueness]
-    rintro ⟨_, h⟩
-    have : Student.alice = Student.bob := h .alice .bob trivial trivial
-    cases this
-  by_contra h
-  exact hExU ((russellIota_isSome_iff_exists_unique _).mp
-    (Option.ne_none_iff_isSome.mp h))
+theorem weak_article_fails_on_multi (s : Bool) :
+    ⟦Description.unique studentRestr⟧ gAlice s = none := by
+  rw [Option.eq_none_iff_forall_ne_some]
+  intro x hx
+  obtain ⟨-, hu⟩ := (Description.denote_unique_eq_some_iff _ _ _).1 hx
+  exact nomatch (hu .alice trivial).trans (hu .bob trivial).symm
 
 /-- The strong article succeeds — it returns the discourse-indexed
     referent (Alice) regardless of how many entities satisfy the
     restrictor. The familiarity presupposition does its work via the
     discourse index, not via uniqueness. -/
-theorem strong_article_picks_indexed_antecedent :
-    interpret (E := Student) (W := Unit) (.anaphoric studentRestr 0) gAlice gs0 =
-      some Student.alice := by
-  classical
-  rw [interpret_anaphoric]
-  simp [studentRestr, gAlice]
+theorem strong_article_picks_indexed_antecedent (s : Bool) :
+    ⟦Description.anaphoric studentRestr 0⟧ gAlice s = some .alice :=
+  (Description.denote_anaphoric_eq_some_iff _ _ _ _).2 ⟨trivial, rfl⟩
 
 /-- The empirical payoff at the Core API: the two articles, given the
-    same restrictor and bi-assignment, can disagree on what they return.
+    same restrictor, assignment and situation, can disagree on what they return.
     This is the semantic counterpart of the German morphological split. -/
-theorem two_articles_can_disagree :
-    interpret (E := Student) (W := Unit) (.unique studentRestr 0) gAlice gs0 ≠
-    interpret (E := Student) (W := Unit) (.anaphoric studentRestr 0) gAlice gs0 := by
+theorem two_articles_can_disagree (s : Bool) :
+    ⟦Description.unique studentRestr⟧ gAlice s ≠
+      ⟦Description.anaphoric studentRestr 0⟧ gAlice s := by
   rw [weak_article_fails_on_multi, strong_article_picks_indexed_antecedent]
-  intro h
-  cases h
+  exact nofun
+
+/-- A restrictor whose unique satisfier differs between two situations — *the mayor* across
+    towns. -/
+def mayorRestr : Restrictor Student Bool := fun _ s x => x = if s then .alice else .bob
+
+/-- The weak article covaries with the resource situation: over `mayorRestr` it picks Alice in
+    one situation and Bob in the other, the covarying larger-situation uses that the strong
+    article lacks (`strong_article_rigid`). -/
+theorem weak_article_covaries :
+    ⟦Description.unique mayorRestr⟧ gAlice true = some .alice ∧
+      ⟦Description.unique mayorRestr⟧ gAlice false = some .bob :=
+  ⟨(Description.denote_unique_eq_some_iff _ _ _).2 ⟨rfl, fun _ h => h⟩,
+    (Description.denote_unique_eq_some_iff _ _ _).2 ⟨rfl, fun _ h => h⟩⟩
 
 end Schwarz2009

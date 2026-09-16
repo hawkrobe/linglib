@@ -80,16 +80,6 @@ def IsAnaphoric : DescriptionKind → Prop
 instance : DecidablePred IsAnaphoric := fun k => by
   cases k <;> unfold IsAnaphoric <;> infer_instance
 
-/-- The kind binds a structural situation pronoun: Coppock–Beaver uniqueness
-and demonstratives do (resource situation for maximality and the deictic
-check); the other kinds do not. -/
-def UsesSituationPronoun : DescriptionKind → Prop
-  | .unique | .demonstrative => True
-  | _ => False
-
-instance : DecidablePred UsesSituationPronoun := fun k => by
-  cases k <;> unfold UsesSituationPronoun <;> infer_instance
-
 /-- The [schwarz-2009]–[schwarz-2013] presupposition type a kind expresses,
 where applicable. Bare and indefinite return `none` because they are not (in
 themselves) definites. -/
