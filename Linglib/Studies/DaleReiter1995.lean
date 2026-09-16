@@ -1,4 +1,5 @@
 import Linglib.Semantics.Degree.PropertyDomain
+import Linglib.Semantics.Reference.Distinguishing
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Fintype.Sum
@@ -65,14 +66,22 @@ def Applies (kb : KB E A V) (x : E) (p : A × V) : Prop := kb x p.1 = some p.2
 instance [DecidableEq V] (kb : KB E A V) (x : E) (p : A × V) : Decidable (Applies kb x p) := by
   unfold Applies; infer_instance
 
+/-- The entities of which every pair of a description holds. -/
+def extension (kb : KB E A V) (L : Description A V) : Set E := {x | ∀ p ∈ L, Applies kb x p}
+
+instance [DecidableEq V] (kb : KB E A V) (L : Description A V) :
+    DecidablePred (· ∈ extension kb L) :=
+  fun _ ↦ by unfold extension; infer_instance
+
 /-- A distinguishing description of `r` against the contrast set `C`, every pair holding of
 `r` and every distractor failing some pair ((3), conditions C1 and C2). -/
-def Distinguishing (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) : Prop :=
-  (∀ p ∈ L, Applies kb r p) ∧ ∀ c ∈ C, ∃ p ∈ L, ¬ Applies kb c p
+abbrev Distinguishing (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) : Prop :=
+  Reference.Distinguishes (extension kb) C r L
 
-instance [DecidableEq V] (kb : KB E A V) (r : E) (C : Finset E) (L : Description A V) :
-    Decidable (Distinguishing kb r C L) := by
-  unfold Distinguishing; infer_instance
+theorem distinguishing_iff {kb : KB E A V} {r : E} {C : Finset E} {L : Description A V} :
+    Distinguishing kb r C L ↔
+      (∀ p ∈ L, Applies kb r p) ∧ ∀ c ∈ C, ∃ p ∈ L, ¬ Applies kb c p := by
+  simp [Reference.Distinguishes, extension]
 
 /-- The members of the contrast set a pair rules out (§2.2). -/
 def rulesOut [DecidableEq V] (kb : KB E A V) (C : Finset E) (p : A × V) : Finset E :=
@@ -84,7 +93,7 @@ theorem distinguishing_iff_biUnion [DecidableEq E] [DecidableEq V] (kb : KB E A 
     (C : Finset E) (L : Description A V) :
     Distinguishing kb r C L ↔
       (∀ p ∈ L, Applies kb r p) ∧ C ⊆ L.biUnion (rulesOut kb C) := by
-  simp only [Distinguishing, rulesOut, subset_iff, mem_biUnion, mem_filter]
+  simp only [distinguishing_iff, rulesOut, subset_iff, mem_biUnion, mem_filter]
   exact and_congr_right λ _ => forall₂_congr λ c hc =>
     exists_congr λ p => and_congr_right λ _ => (and_iff_right hc).symm
 
@@ -130,12 +139,11 @@ variable {kb r C L}
 /-- Reiter's first rule is subset-minimality among distinguishing descriptions. -/
 theorem noUnnecessary_iff_minimal :
     NoUnnecessary kb r C L ↔ Minimal (Distinguishing kb r C) L := by
-  refine ⟨λ h => ⟨h.1, λ L' hL' hle => ?_⟩, λ h => ⟨h.1, λ p hp hd => ?_⟩⟩
+  refine ⟨fun h ↦ ⟨h.1, fun L' hL' hle ↦ ?_⟩, fun h ↦ ⟨h.1, fun p hp hd ↦ ?_⟩⟩
   · by_contra hne
     obtain ⟨p, hp, hp'⟩ := not_subset.mp hne
-    refine h.2 p hp ⟨λ q hq => h.1.1 q (mem_of_mem_erase hq), λ c hc => ?_⟩
-    obtain ⟨q, hq, hcq⟩ := hL'.2 c hc
-    exact ⟨q, mem_erase.mpr ⟨λ h => hp' (h ▸ hq), hle hq⟩, hcq⟩
+    refine h.2 p hp ⟨fun q hq ↦ h.1.1 q (mem_of_mem_erase hq), fun c hc hcL ↦ ?_⟩
+    exact hL'.2 c hc fun q hq ↦ hcL q (mem_erase.mpr ⟨fun h ↦ hp' (h ▸ hq), hle hq⟩)
   · exact notMem_erase p L (h.2 hd (erase_subset p L) hp)
 
 /-- A shortest description has no unnecessary pair, so Full Brevity never includes an
@@ -428,7 +436,7 @@ theorem makeReferringExpression_type {r : E} {C : Finset E} {P : List A}
 theorem flat_distinguishing {kb : KB E A V} {t : A} {r : E} {C : Finset E} {P : List A}
     {L : Description A V} (h : (flat kb t).makeReferringExpression r C P = some L) :
     Distinguishing kb r C L := by
-  refine ⟨λ p hp => ?_, λ c hc => ?_⟩
+  refine distinguishing_iff.mpr ⟨fun p hp ↦ ?_, fun c hc ↦ ?_⟩
   · exact ((flat kb t).makeReferringExpression_mem h p hp).elim
       (flat_userKnows r p.1 p.2).1.mp id
   · obtain ⟨p, hp, hcp⟩ := (flat kb t).makeReferringExpression_rulesOut h c hc
