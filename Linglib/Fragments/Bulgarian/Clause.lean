@@ -1,4 +1,5 @@
 import Linglib.Syntax.Clause.Complementation
+import Linglib.Semantics.Attitudes.Factivity
 
 /-!
 # Bulgarian Clausal Embedding Inventory
@@ -40,20 +41,13 @@ inductive DetoAvailability where
   | excluded
   deriving DecidableEq, Repr
 
-/-- [krapova-2010] §5's two-way factivity split: "true" factives
-    including the emotives ([kiparsky-kiparsky-1970]; Krapova cites the
-    1971 reprint) vs semi-factives ([karttunen-1971]'s term). Class-
-    level assertions — her projection trials ((57)) run on *săžaljavam*
-    and *vinoven săm* only. -/
-inductive Factivity where
-  | trueFactive
-  | semiFactive
-  deriving DecidableEq, Repr
-
 /-- A Bulgarian complement-taking predicate.
 
     - `ctpClass`: [noonan-2007] category; `none` where unclear.
-    - `factivity`, `deto`: the two observed axes ([krapova-2010] §5). -/
+    - `factivity`: [krapova-2010] §5's split of the factives into
+      emotives and semi-factives, the [karttunen-1971] classes; her
+      projection trials ((57)) run on *săžaljavam* and *vinoven săm* only.
+    - `deto`: the observed *deto* axis ([krapova-2010] §5). -/
 structure BulgarianEmbedder where
   form : String
   gloss : String
@@ -72,63 +66,63 @@ structure BulgarianEmbedder where
 def sazhaljavam : BulgarianEmbedder where
   form := "săžaljavam"; gloss := "regret"
   ctpClass := some .commentative
-  factivity := .trueFactive
+  factivity := .emotive
   deto := .alternating
 
 /-- *vinoven săm* 'be one's fault' ((57b), under matrix question). -/
 def vinovenSam : BulgarianEmbedder where
   form := "vinoven săm"; gloss := "be one's fault"
   ctpClass := some .commentative
-  factivity := .trueFactive
+  factivity := .emotive
   deto := .alternating
 
 /-- *jad me e* 'be sorry; regret' ((56b)). -/
 def jadMeE : BulgarianEmbedder where
   form := "jad me e"; gloss := "be sorry; regret"
   ctpClass := some .commentative
-  factivity := .trueFactive
+  factivity := .emotive
   deto := .alternating
 
 /-- *radvam se* 'be happy'. -/
 def radvamSe : BulgarianEmbedder where
   form := "radvam se"; gloss := "be happy"
   ctpClass := some .commentative
-  factivity := .trueFactive
+  factivity := .emotive
   deto := .alternating
 
 /-- *nedovolstvam* 'be dissatisfied'. -/
 def nedovolstvam : BulgarianEmbedder where
   form := "nedovolstvam"; gloss := "be dissatisfied"
   ctpClass := some .commentative
-  factivity := .trueFactive
+  factivity := .emotive
   deto := .alternating
 
 /-- *pritesnjavam se* 'worry'. -/
 def pritesnjavamSe : BulgarianEmbedder where
   form := "pritesnjavam se"; gloss := "worry"
   ctpClass := some .commentative
-  factivity := .trueFactive
+  factivity := .emotive
   deto := .alternating
 
 /-- *žal mi e* 'be sorry'. -/
 def zhalMiE : BulgarianEmbedder where
   form := "žal mi e"; gloss := "be sorry"
   ctpClass := some .commentative
-  factivity := .trueFactive
+  factivity := .emotive
   deto := .alternating
 
 /-- *măčno mi e* 'be sad'. -/
 def machnoMiE : BulgarianEmbedder where
   form := "măčno mi e"; gloss := "be sad"
   ctpClass := some .commentative
-  factivity := .trueFactive
+  factivity := .emotive
   deto := .alternating
 
 /-- *sram me e* 'feel ashamed'. -/
 def sramMeE : BulgarianEmbedder where
   form := "sram me e"; gloss := "feel ashamed"
   ctpClass := some .commentative
-  factivity := .trueFactive
+  factivity := .emotive
   deto := .alternating
 
 /-! ### The *deto*-excluded factives
@@ -142,14 +136,14 @@ factivity does not suffice. -/
 def vazmushtavamSe : BulgarianEmbedder where
   form := "văzmuštavam se"; gloss := "resent"
   ctpClass := some .commentative
-  factivity := .trueFactive
+  factivity := .emotive
   deto := .excluded
 
 /-- *razbiram* 'comprehend'. -/
 def razbiram : BulgarianEmbedder where
   form := "razbiram"; gloss := "comprehend"
   ctpClass := some .knowledge
-  factivity := .trueFactive
+  factivity := .emotive
   deto := .excluded
 
 /-- *vzemam previd* 'take into account' (printed *previd*, beside
@@ -157,21 +151,21 @@ def razbiram : BulgarianEmbedder where
 def vzemamPrevid : BulgarianEmbedder where
   form := "vzemam previd"; gloss := "take into account"
   ctpClass := none
-  factivity := .trueFactive
+  factivity := .emotive
   deto := .excluded
 
 /-- *imam predvid* 'bear in mind'. -/
 def imamPredvid : BulgarianEmbedder where
   form := "imam predvid"; gloss := "bear in mind"
   ctpClass := none
-  factivity := .trueFactive
+  factivity := .emotive
   deto := .excluded
 
 /-- *prenebregvam* 'ignore'. -/
 def prenebregvam : BulgarianEmbedder where
   form := "prenebregvam"; gloss := "ignore"
   ctpClass := none
-  factivity := .trueFactive
+  factivity := .emotive
   deto := .excluded
 
 /-- *griža se* 'take care' (on [krapova-2010]'s reading of the
@@ -179,7 +173,7 @@ def prenebregvam : BulgarianEmbedder where
 def grizhaSe : BulgarianEmbedder where
   form := "griža se"; gloss := "take care"
   ctpClass := none
-  factivity := .trueFactive
+  factivity := .emotive
   deto := .excluded
 
 /-! ### The *deto*-excluded semi-factives ([krapova-2010] p. 1266) -/
@@ -188,42 +182,42 @@ def grizhaSe : BulgarianEmbedder where
 def znaja : BulgarianEmbedder where
   form := "znaja"; gloss := "know"
   ctpClass := some .knowledge
-  factivity := .semiFactive
+  factivity := .semi
   deto := .excluded
 
 /-- *pomnja* 'remember'. -/
 def pomnja : BulgarianEmbedder where
   form := "pomnja"; gloss := "remember"
   ctpClass := some .knowledge
-  factivity := .semiFactive
+  factivity := .semi
   deto := .excluded
 
 /-- *otkrivam* 'find out'. -/
 def otkrivam : BulgarianEmbedder where
   form := "otkrivam"; gloss := "find out"
   ctpClass := some .knowledge
-  factivity := .semiFactive
+  factivity := .semi
   deto := .excluded
 
 /-- *viždam* 'see' (the propositional reading). -/
 def vizhdam : BulgarianEmbedder where
   form := "viždam"; gloss := "see"
   ctpClass := some .perception
-  factivity := .semiFactive
+  factivity := .semi
   deto := .excluded
 
 /-- *čuvam* 'hear' (the propositional reading). -/
 def chuvam : BulgarianEmbedder where
   form := "čuvam"; gloss := "hear"
   ctpClass := some .perception
-  factivity := .semiFactive
+  factivity := .semi
   deto := .excluded
 
 /-- *zabeljazvam* 'notice' (perception/knowledge borderline). -/
 def zabeljazvam : BulgarianEmbedder where
   form := "zabeljazvam"; gloss := "notice"
   ctpClass := none
-  factivity := .semiFactive
+  factivity := .semi
   deto := .excluded
 
 /-! ### Inventories -/
@@ -248,14 +242,14 @@ theorem detoTakers_membership :
                   sramMeE] := by decide
 
 /-- Every *deto*-taker is a "true" (emotive) factive. -/
-theorem detoTakers_all_trueFactive :
-    detoTakers.all (·.factivity == .trueFactive) = true := by decide
+theorem detoTakers_all_emotive :
+    detoTakers.all (·.factivity == .emotive) = true := by decide
 
 /-- Factivity does not suffice for *deto*: "true" factives with *deto*
     excluded exist (*văzmuštavam se* and the transitive class) —
     [krapova-2010]'s dissociation. -/
 theorem factivity_not_sufficient_for_deto :
     ∃ v ∈ allEmbedders,
-      v.factivity = .trueFactive ∧ v.deto = .excluded := by decide
+      v.factivity = .emotive ∧ v.deto = .excluded := by decide
 
 end Bulgarian.Clause
