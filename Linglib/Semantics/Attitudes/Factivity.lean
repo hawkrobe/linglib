@@ -1,96 +1,69 @@
-import Mathlib.Tactic.TypeStar
+import Mathlib.Tactic.DeriveFintype
+import Mathlib.Data.Finset.Basic
 
 /-!
-# Factive and non-factive attitude semantics
+# Belief and complement worlds
 
-The factive/non-factive distinction of [kiparsky-kiparsky-1970] and
-[karttunen-1971b] over Boolean world models: a world type carries
-orthogonal dimensions — `HasComplement` (is the complement true?) and
-`HasBelief` (does the agent believe it?) — and the know-type and
-think-type verbs differ in whether the complement dimension enters the
-lexical semantics:
+The world space of the *know*/*think* projection experiments: a world records whether the
+attitude holder believes the complement and whether the complement is true. *Know* holds at a
+world when both do and *think* when the first does, so *know* entails the complement and
+entails *think*, the factive against non-factive contrast of [kiparsky-kiparsky-1970]. The two
+questions of the experiments ask for the two coordinates, and a speaker assumes the complement
+when it is true throughout an information state.
 
-| Verb form         | Semantics  | Factivity   |
-|-------------------|------------|-------------|
-| "X knows C"       | BEL ∧ C    | factive     |
-| "X doesn't know"  | ¬(BEL ∧ C) | factive     |
-| "X thinks C"      | BEL        | non-factive |
-| "X doesn't think" | ¬BEL       | non-factive |
+## References
 
-Factivity is veridicality of the positive form
-(`factivePos_entails_c`), and know is strictly stronger than think
-(`factive_entails_nonfactive`). `QUD` is the two-question space of the
-projection experiments (BEL? and C?), and `assumesComplement` renders
-"the speaker assumes C" as C holding throughout a belief state.
-
+* [kiparsky-kiparsky-1970]
+* [scontras-tonhauser-2025]
+* [grove-white-2025]
 -/
 
 namespace Factivity
 
-/-- The world type carries a complement dimension: is the complement
-    true at `w`? -/
-class HasComplement (W : Type*) where
-  c : W → Bool
+/-- A world of the projection experiments records whether the attitude holder believes the
+complement and whether it is true, as the pair of the two truth values, so that a prior over
+worlds can be a product measure. -/
+abbrev World := Bool × Bool
 
-/-- The world type carries a belief dimension: does the agent believe
-    the complement at `w`? -/
-class HasBelief (W : Type*) where
-  bel : W → Bool
+/-- The attitude holder believes the complement. -/
+abbrev World.believes (w : World) : Bool := w.1
 
-variable {W : Type*}
+/-- The complement is true. -/
+abbrev World.complement (w : World) : Bool := w.2
 
-/-! ### Lexical semantics -/
+variable {w : World}
 
-/-- Factive positive: "X knows C" is `BEL ∧ C`. -/
-def factivePos [HasBelief W] [HasComplement W] (w : W) : Bool :=
-  HasBelief.bel w && HasComplement.c w
+/-- *X knows C* holds when *X* believes the complement and it is true. -/
+def World.Knows (w : World) : Prop := w.believes ∧ w.complement
 
-/-- Factive negative: "X doesn't know C" is `¬(BEL ∧ C)`. -/
-def factiveNeg [HasBelief W] [HasComplement W] (w : W) : Bool :=
-  !(HasBelief.bel w && HasComplement.c w)
+instance : DecidablePred World.Knows := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Non-factive positive: "X thinks C" is `BEL`. -/
-def nonFactivePos [HasBelief W] (w : W) : Bool :=
-  HasBelief.bel w
+/-- *X thinks C* holds when *X* believes the complement. -/
+def World.Thinks (w : World) : Prop := w.believes
 
-/-- Non-factive negative: "X doesn't think C" is `¬BEL`. -/
-def nonFactiveNeg [HasBelief W] (w : W) : Bool :=
-  !HasBelief.bel w
+instance : DecidablePred World.Thinks := fun _ ↦ inferInstanceAs (Decidable (_ = true))
 
-/-! ### Entailment -/
+/-- *Know* entails its complement, the defining property of a factive. -/
+theorem World.Knows.complement (h : w.Knows) : w.complement = true := h.2
 
-/-- Factive positive entails the complement — the defining property of
-    factivity. -/
-theorem factivePos_entails_c [HasBelief W] [HasComplement W] (w : W)
-    (h : factivePos w = true) : HasComplement.c w = true :=
-  (Bool.and_eq_true _ _ |>.mp h).2
+/-- *Know* entails *think*. -/
+theorem World.Knows.thinks (h : w.Knows) : w.Thinks := h.1
 
-/-- Factive positive entails belief. -/
-theorem factivePos_entails_bel [HasBelief W] [HasComplement W] (w : W)
-    (h : factivePos w = true) : HasBelief.bel w = true :=
-  (Bool.and_eq_true _ _ |>.mp h).1
+/-- The two questions of the experiments, whether *X* believes the complement and whether it is
+true. -/
+inductive Question where
+  | belief
+  | complement
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Know entails think: factivity is strictly stronger than belief. -/
-theorem factive_entails_nonfactive [HasBelief W] [HasComplement W] (w : W)
-    (h : factivePos w = true) : nonFactivePos w = true :=
-  (Bool.and_eq_true _ _ |>.mp h).1
+/-- The answer a world gives to a question. -/
+def Question.answer : Question → World → Bool
+  | .belief, w => w.believes
+  | .complement, w => w.complement
 
-/-! ### Question under discussion -/
+/-- The speaker assumes the complement when it is true throughout the information state. -/
+def AssumesComplement (S : Finset World) : Prop := ∀ w ∈ S, w.complement = true
 
-/-- The two-question space of the projection experiments: BEL? and
-    C? — the orthogonal dimensions of a `HasBelief`/`HasComplement`
-    world. -/
-inductive QUD where
-  /-- "Does X believe C?" -/
-  | bel
-  /-- "Is C true?" -/
-  | c
-  deriving DecidableEq, Repr, Inhabited
-
-/-- The speaker assumes the complement: C holds at every world of the
-    belief state. -/
-def assumesComplement [HasComplement W] (membership : W → Bool)
-    (allWorlds : List W) : Bool :=
-  allWorlds.all fun w => !membership w || HasComplement.c w
+instance : DecidablePred AssumesComplement := fun _ ↦ inferInstanceAs (Decidable (∀ w ∈ _, _))
 
 end Factivity
