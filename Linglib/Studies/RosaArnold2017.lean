@@ -133,11 +133,6 @@ def Model.Fits (M : Model) (r : Cell → ℕ) : Prop :=
 
 /-! ### The findings -/
 
-/-- The first percentage the rows matching the features record under `key`. -/
-def pct (fs : List (String × String)) (key : String) : ℕ :=
-  ((Examples.all.filter λ e => fs.all λ kv => e.feature? kv.1 = some kv.2).filterMap
-    (·.nat? key)).headD 0
-
 /-- The three experiments: in-person event retelling, sentence completion over the story
 materials, and sentence completion with disconnected items. -/
 inductive Experiment where
@@ -146,31 +141,28 @@ inductive Experiment where
   | renamed
   deriving DecidableEq, Repr
 
-def Experiment.tag : Experiment → String
-  | .retelling => "retelling"
-  | .completion => "completion"
-  | .renamed => "renamed"
+/-- The experiment and the cell of the design a row records, read from its features. -/
+def Cell.of? (e : LinguisticExample) : Option (Experiment × Cell) := do
+  let experiment ← e.parse? "experiment"
+    [("retelling", .retelling), ("completion", .completion), ("renamed", .renamed)]
+  let role ← e.parse? "role" [("goal", .goal), ("source", .source)]
+  let gram ← e.parse? "gram" [("subject", .subject), ("nonsubject", .nonsubject)]
+  let gender ← e.parse? "gender" [("same", .same), ("different", .different)]
+  pure (experiment, ⟨role, gram, gender⟩)
 
-def Role.tag : Role → String
-  | .goal => "goal"
-  | .source => "source"
-
-def Gram.tag : Gram → String
-  | .subject => "subject"
-  | .nonsubject => "nonsubject"
-
-def Gender.tag : Gender → String
-  | .same => "same"
-  | .different => "different"
+/-- Every row recording a pronoun rate is read as a cell of an experiment. -/
+theorem cell_of_isSome :
+    ∀ e ∈ Examples.all, (e.feature? "pronouns").isSome → (Cell.of? e).isSome := by
+  decide
 
 /-- The rate of pronoun production in a cell of an experiment (Tables 1, 4, 7), in percent. -/
-def rate (e : Experiment) (c : Cell) : ℕ :=
-  pct [("experiment", e.tag), ("role", c.role.tag), ("gram", c.gram.tag),
-    ("gender", c.gender.tag)] "pronouns"
+def rate (x : Experiment) (c : Cell) : ℕ :=
+  ((Examples.all.filter (Cell.of? · = some (x, c))).filterMap (·.nat? "pronouns")).headD 0
 
-/-- The rating study: the percentage of raters choosing the character named by `key`, the goal
-or the subject, as the one more likely to be talked about next. -/
-def nextMention (key : String) : ℕ := pct [("study", "rating")] key
+/-- The rating study: the percentage of raters choosing the character named by `column`, the
+goal or the subject, as the one more likely to be talked about next. -/
+def nextMention (column : String) : ℕ :=
+  ((Examples.all.find? (·.feature? "study" = some "rating")).bind (·.nat? column)).getD 0
 
 /-- Goals are expected as the next mention above sources, and above subjects. -/
 theorem goal_expected : 50 < nextMention "goal" ∧ nextMention "subject" < nextMention "goal" := by

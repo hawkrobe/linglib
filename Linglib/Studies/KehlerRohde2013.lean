@@ -36,9 +36,11 @@ non-subjects, a gradient the backward-looking center of a grammatical-role Cente
 
 ## Implementation notes
 
-Rates are the paper's percentages, read from the rows with `nat?` and cast to `ℚ`; computed
-quantities are compared through their integer numerators. Relations the paper's coding does not
-record match no row and carry no probability.
+Each row of `Data/Examples/KehlerRohde2013.json` is a cell of one of the paper's tables, located
+by the table and the levels of its factors (`Cell`), and records percentages under the paper's
+column names. Rates are read with `nat?` and cast to `ℚ`; computed quantities are compared
+through their integer numerators. Relations the paper's coding does not record have no cell and
+carry no probability.
 
 ## References
 
@@ -104,29 +106,13 @@ theorem posterior_gt_iff [Fintype R] (pRef pPron : R → ℚ) (r : R) (hr : 0 < 
 
 end Model
 
-/-! ### The data
+/-! ### The data -/
 
-Each row of `Data/Examples/KehlerRohde2013.json` is a cell group of one of the paper's tables,
-located by the table and its conditions. -/
-
-/-- The first percentage the rows matching the features record under `key`. -/
-def pct (fs : List (String × String)) (key : String) : ℕ :=
-  ((Examples.all.filter λ e => fs.all λ kv => e.feature? kv.1 = some kv.2).filterMap
-    (·.nat? key)).headD 0
-
-/-- The paper's names for the coded relations. -/
-def relationTag : Relation → String
-  | .occasion => "occasion"
-  | .elaboration => "elaboration"
-  | .explanation => "explanation"
-  | .violatedExpectation => "violatedExpectation"
-  | .result => "result"
-  | .parallel => "parallel"
-  | .contrast => "contrast"
-  | .exemplification => "exemplification"
-  | .generalization => "generalization"
-  | .exception => "exception"
-  | .denialOfPreventer => "denialOfPreventer"
+/-- The aspect of the context sentence in the aspect experiment. -/
+inductive Aspect where
+  | perfective
+  | imperfective
+  deriving DecidableEq, Repr
 
 /-- The instruction of the instruction manipulation. -/
 inductive Instruction where
@@ -134,19 +120,48 @@ inductive Instruction where
   | why
   deriving DecidableEq, Repr
 
-def Instruction.tag : Instruction → String
-  | .whatNext => "whatNext"
-  | .why => "why"
-
 /-- Whether the prompt supplies a pronoun. -/
 inductive Prompt where
   | pronoun
   | noPronoun
   deriving DecidableEq, Repr
 
-def Prompt.tag : Prompt → String
-  | .pronoun => "pronoun"
-  | .noPronoun => "noPronoun"
+/-- A cell of one of the paper's tables: the table and the levels of the factors locating the
+cell in it. -/
+structure Cell where
+  table : ℕ
+  aspect : Option Aspect := none
+  relation : Option Relation := none
+  instruction : Option Instruction := none
+  prompt : Option Prompt := none
+  voice : Option Voice := none
+  deriving DecidableEq, Repr
+
+/-- The cell a row records, read from its features. -/
+def Cell.of? (e : LinguisticExample) : Option Cell :=
+  (e.nat? "table").map λ table =>
+    { table
+      aspect := e.parse? "aspect" [("perfective", .perfective), ("imperfective", .imperfective)]
+      relation := e.parse? "relation" [("occasion", .occasion), ("elaboration", .elaboration),
+        ("explanation", .explanation), ("violatedExpectation", .violatedExpectation),
+        ("result", .result)]
+      instruction := e.parse? "instruction" [("whatNext", .whatNext), ("why", .why)]
+      prompt := e.parse? "prompt" [("pronoun", .pronoun), ("noPronoun", .noPronoun)]
+      voice := e.parse? "voice" [("active", .Act), ("passive", .Pass)] }
+
+/-- Every factor a row names is read: no level of the paper's coding is dropped. -/
+theorem cell_of_reads_factors :
+    ∀ e ∈ Examples.all, ∀ c ∈ Cell.of? e,
+      ((e.feature? "aspect").isSome → c.aspect.isSome) ∧
+        ((e.feature? "relation").isSome → c.relation.isSome) ∧
+        ((e.feature? "instruction").isSome → c.instruction.isSome) ∧
+        ((e.feature? "prompt").isSome → c.prompt.isSome) ∧
+        ((e.feature? "voice").isSome → c.voice.isSome) := by
+  decide
+
+/-- The percentage a cell records under one of the paper's column names. -/
+def pct (c : Cell) (column : String) : ℕ :=
+  ((Examples.all.filter (Cell.of? · = some c)).filterMap (·.nat? column)).headD 0
 
 /-- A referent by its grammatical position in the context sentence: the subject (the Source of a
 Source–Goal transfer, the causally implicated referent of an active subject-biased verb) or the
@@ -165,29 +180,23 @@ private theorem sum_position (f : Position → ℚ) : ∑ p, f p = f .subject + 
   rw [show (univ : Finset Position) = {.subject, .nonSubject} from by decide,
     sum_pair (by decide)]
 
-def voiceTag : Voice → String
-  | .Act => "active"
-  | .Pass => "passive"
-  | _ => ""
-
 /-! ### Coherence-conditioned biases (Tables 1–5) -/
 
 /-- Table 1: the Source interpretation rate by aspect. -/
-def aspectSource (aspect : String) : ℕ :=
-  pct [("table", "1"), ("aspect", aspect)] "sourceInterpretation"
+def aspectSource (a : Aspect) : ℕ := pct { table := 1, aspect := a } "sourceInterpretation"
 
 /-- The event-structure hypothesis: the imperfective keeps the Source central, the perfective
 focuses the end state, so the imperfective draws more Source interpretations. -/
-theorem imperfective_more_source : aspectSource "perfective" < aspectSource "imperfective" := by
+theorem imperfective_more_source : aspectSource .perfective < aspectSource .imperfective := by
   decide
 
 /-- Table 2: the frequency of a relation in the perfective continuations. -/
 def perfectiveFrequency (c : Relation) : ℕ :=
-  pct [("table", "2"), ("relation", relationTag c)] "frequency"
+  pct { table := 2, aspect := some .perfective, relation := c } "frequency"
 
 /-- Table 2: the Source bias of a relation in the perfective continuations. -/
 def perfectiveSourceGiven (c : Relation) : ℕ :=
-  pct [("table", "2"), ("relation", relationTag c)] "sourceGivenRelation"
+  pct { table := 2, aspect := some .perfective, relation := c } "sourceGivenRelation"
 
 private theorem mixture_div (p b : Relation → ℕ) :
     mixture (λ c => (p c : ℚ) / 100) (λ c => (b c : ℚ) / 100) =
@@ -212,15 +221,15 @@ theorem perfective_mixture_masks_biases :
 
 /-- Table 3: the frequency of a relation under an instruction. -/
 def frequency (i : Instruction) (c : Relation) : ℕ :=
-  pct [("table", "3"), ("instruction", i.tag), ("relation", relationTag c)] "frequency"
+  pct { table := 3, instruction := i, relation := c } "frequency"
 
 /-- Table 4: the Source bias of a relation in the instruction experiment. -/
 def sourceGiven (c : Relation) : ℕ :=
-  pct [("table", "4"), ("relation", relationTag c)] "instructionManipulation"
+  pct { table := 4, relation := c } "instructionManipulation"
 
 /-- Table 5: the observed Source interpretation rate under an instruction. -/
 def observedSource (i : Instruction) : ℕ :=
-  pct [("table", "5"), ("instruction", i.tag)] "sourceInterpretation"
+  pct { table := 5, instruction := i } "sourceInterpretation"
 
 /-- (9) on Tables 3 and 4: the next-mention probability of the Source under an instruction. -/
 def predictedSource (i : Instruction) : ℚ :=
@@ -242,10 +251,10 @@ theorem instruction_mixtures :
 
 /-- Table 6: the frequency of a relation by prompt type. -/
 def promptFrequency (p : Prompt) (c : Relation) : ℕ :=
-  pct [("table", "6"), ("prompt", p.tag), ("relation", relationTag c)] "frequency"
+  pct { table := 6, prompt := p, relation := c } "frequency"
 
 /-- The share of first mentions to the Goal by prompt type. -/
-def goalMention (p : Prompt) : ℕ := pct [("table", "6"), ("prompt", p.tag)] "goalMention"
+def goalMention (p : Prompt) : ℕ := pct { table := 6, prompt := p } "goalMention"
 
 /-- An ambiguous pronoun is not inert: the prompt draws first mentions from the Goal to the
 Source, the overlaid subject bias, and with them the continuations move from the Goal-biased
@@ -262,19 +271,19 @@ theorem prompt_shifts_relations :
 
 /-- Table 7: the rate of next mention of the causally implicated referent by voice and prompt. -/
 def causalMention (v : Voice) (p : Prompt) : ℕ :=
-  pct [("table", "7"), ("voice", voiceTag v), ("prompt", p.tag)] "causalMention"
+  pct { table := 7, voice := v, prompt := p } "causalMention"
 
 /-- Table 8: the rate of Explanation continuations by voice and prompt. -/
 def explanationRate (v : Voice) (p : Prompt) : ℕ :=
-  pct [("table", "8"), ("voice", voiceTag v), ("prompt", p.tag)] "explanation"
+  pct { table := 8, voice := v, prompt := p } "explanation"
 
 /-- Table 9: the pronominalization rate of a position by voice, without a pronoun prompt. -/
 def pronominalized (v : Voice) : Position → ℕ
-  | .subject => pct [("table", "9"), ("voice", voiceTag v)] "subject"
-  | .nonSubject => pct [("table", "9"), ("voice", voiceTag v)] "nonSubject"
+  | .subject => pct { table := 9, voice := v } "subject"
+  | .nonSubject => pct { table := 9, voice := v } "nonSubject"
 
 /-- Table 10: the observed bias of the pronoun toward the subject by voice. -/
-def actualSubject (v : Voice) : ℕ := pct [("table", "10"), ("voice", voiceTag v)] "actual"
+def actualSubject (v : Voice) : ℕ := pct { table := 10, voice := v } "actual"
 
 /-- Table 7 without a pronoun prompt as the next-mention rate of the subject: the causally
 implicated referent is the subject of the active and the by-phrase of the passive. -/
