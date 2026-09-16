@@ -19,7 +19,7 @@ the complex forms fill. On a two-threshold scale this is exactly the observed
 profile — both negated weak forms come apart from their simple antonyms
 (`relative_like`) yet the residues are mirror images (`residues_symmetric`),
 whereas at a single threshold neither distinction exists
-(`Degree.contradictoryDenot_synonymy`).
+(`Degree.AntonymForm.contradictoryDenot_synonymy`).
 
 ## References
 
@@ -44,7 +44,7 @@ theorem relative_like (h : (tp.neg : Bounded max) < tp.pos) :
       ¬ AntonymForm.strengthenedDenot tp .positive d) ∧
     ∃ d, AntonymForm.strengthenedDenot tp .notPositive d ∧
       ¬ AntonymForm.strengthenedDenot tp .negative d := by
-  refine ⟨Degree.strengthenedDenot_breaks_synonymy tp h, ↑tp.neg, ?_, ?_⟩
+  refine ⟨Degree.AntonymForm.strengthenedDenot_breaks_synonymy tp h, ↑tp.neg, ?_, ?_⟩
   · simpa [Degree.positiveMeaning, Degree.Comparison.mem_over, Degree.Comparison.rel]
       using le_of_lt h
   · simp [Degree.negativeMeaning, Degree.Comparison.mem_over, Degree.Comparison.rel]

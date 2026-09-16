@@ -78,6 +78,13 @@ theorem hasGap_iff (c : Cell) : c.HasGap ↔ c ≠ .weakAbsolute := by
 /-- The scale regions each surface form may communicate. -/
 abbrev Ranges := AntonymForm → Finset Region
 
+/-- The interpretation pattern of a negated antonym pair: the negated positive and the negated
+negative forms diverge (asymmetric) or behave in parallel (symmetric). -/
+inductive Asymmetry where
+  | asymmetric
+  | symmetric
+  deriving Repr, DecidableEq, Fintype
+
 /-- Positive and negative forms communicate mirror-image ranges. -/
 def Ranges.Symmetric (r : Ranges) : Prop := ∀ f, r f.flip = (r f).image Region.flip
 

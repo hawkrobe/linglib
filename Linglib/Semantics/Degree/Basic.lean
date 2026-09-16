@@ -3,7 +3,7 @@ import Mathlib.Order.Bounds.Basic
 import Mathlib.Algebra.Order.Module.Defs
 import Linglib.Semantics.Degree.Comparison
 import Linglib.Semantics.Degree.Defs
-import Linglib.Semantics.Degree.Boundedness
+import Linglib.Semantics.Degree.Antonymy
 
 /-!
 # Degree comparison: the point-standard core

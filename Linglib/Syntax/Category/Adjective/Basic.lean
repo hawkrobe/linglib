@@ -1,4 +1,4 @@
-import Linglib.Semantics.Degree.Boundedness
+import Linglib.Semantics.Degree.Antonymy
 import Linglib.Semantics.Degree.Scale
 import Linglib.Morphology.Paradigm.Degree
 
