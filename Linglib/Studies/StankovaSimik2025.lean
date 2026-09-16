@@ -1,6 +1,6 @@
 import Linglib.Fragments.Slavic.Czech.Particles
 import Linglib.Fragments.Slavic.Czech.PolarityItems
-import Linglib.Semantics.Polarity.CzechNegation
+import Linglib.Semantics.Questions.CzechNegation
 import Linglib.Semantics.Questions.Bias
 import Linglib.Logic.Modal.Defs
 import Linglib.Studies.Simik2024
@@ -12,10 +12,12 @@ This file formalizes [stankova-2025]'s analysis of negation in Czech polar quest
 negative prefix moves with the finite verb, so verb position fixes the position of negation:
 a clause-initial verb sits above the canonical negation operator and can only be licensed by
 the commitment operator FALSUM of [repp-2013] (`Simik2024.falsum`), while a verb in situ is licensed
-either by the operator or by FALSUM (`mem_availableReadings_iff`). Inner negation licenses
-negative concord items and is tied to negative contextual evidence; FALSUM allows positive
-polarity items and conveys weak epistemic bias, indifferent to contextual evidence; and
-declarative word order requires contextual evidence ([gunlogson-2002]). Felicity of a
+either by the operator or by FALSUM (`mem_availableReadings_iff`). The canonical operator
+licenses negative concord items and is tied to negative contextual evidence; FALSUM allows
+positive polarity items and conveys weak epistemic bias, indifferent to contextual evidence;
+and declarative word order requires contextual evidence ([gunlogson-2002]). Which reading
+licenses which indefinite is read off the lexical entries' polarity classes (`LicensedAt`),
+so the two indefinites split the readings (`licensedAt_ppi_iff_not_nci`). Felicity of a
 question in a context follows from these three sources (`Felicitous`), which yields the
 predictions the paper's naturalness study tests: in interrogative questions the positive
 polarity item is felicitous in every context and the negative concord item in none
@@ -38,9 +40,9 @@ in interrogative questions, no effect of context there, a preference for negativ
 and for concord items in declarative questions, high naturalness of interrogative questions
 under positive evidence, a main effect of the indefinite for *náhodou* questions, and a
 main effect of context for *copak* questions; these results are stated in prose only. The
-three-way negation of [stankova-2026] supplies the substrate's medial reading, which this
-paper does not distinguish from inner negation; the substrate's evidential bias strengths
-fix the evidence each reading requires.
+three-way negation of [stankova-2026] is the project's canonical reading type, so the verb in
+situ also admits its medial reading, which this paper does not distinguish from inner
+negation; the substrate's evidential bias strengths fix the evidence each reading requires.
 
 ## References
 
@@ -112,11 +114,21 @@ def Indefinite.entry : Indefinite → Polarity.Item
   | .nci => Czech.PolarityItems.zadny
   | .ppi => Czech.PolarityItems.nejaky
 
-/-- The Table 1 diagnostic an indefinite tests, read off its entry's polarity class: a
-positive polarity item tests whether the negation admits it, a concord item whether the
-negation licenses it. -/
-def Indefinite.diagnostic (ind : Indefinite) : Diagnostic :=
-  if ind.entry.isPPI then .ppiOutscoping else .nciLicensed
+/-- A polarity item is licensed at a reading of negation when a positive polarity item
+escapes the canonical operator and a negative one falls under it (the paper's (11) and (12)):
+the canonical operator is inner negation, FALSUM and the medial operator are
+non-propositional. -/
+def LicensedAt (e : Polarity.Item) (pos : Position) : Prop :=
+  (e.isPPI → pos ≠ .inner) ∧ (e.isNPI → pos = .inner)
+
+instance (e : Polarity.Item) (pos : Position) : Decidable (LicensedAt e pos) := by
+  unfold LicensedAt; infer_instance
+
+/-- The two indefinites split the readings: the polarity item is licensed exactly where the
+concord item is not. -/
+theorem licensedAt_ppi_iff_not_nci (pos : Position) :
+    LicensedAt Indefinite.ppi.entry pos ↔ ¬ LicensedAt Indefinite.nci.entry pos := by
+  cases pos <;> decide
 
 /-! ### Bias and felicity -/
 
@@ -146,7 +158,7 @@ instance (wp : VerbPosition) (ctx : ContextualEvidence) :
 available at its verb position licenses the indefinite and admits the context's evidence, and
 the word order admits the evidence. -/
 def Felicitous (wp : VerbPosition) (ind : Indefinite) (ctx : ContextualEvidence) : Prop :=
-  (∃ pos ∈ wp.availableReadings, pos.Licenses ind.diagnostic ∧ readingEvidenceOK pos ctx) ∧
+  (∃ pos ∈ wp.availableReadings, LicensedAt ind.entry pos ∧ readingEvidenceOK pos ctx) ∧
     wordOrderEvidenceOK wp ctx
 
 instance (wp : VerbPosition) (ind : Indefinite) (ctx : ContextualEvidence) :
@@ -196,13 +208,15 @@ theorem falsum_broader_than_english_hiNQ :
 /-- *Náhodou* excludes the concord item at either verb position: the item needs inner
 negation and the particle needs FALSUM (the paper's (17) and (18)). -/
 theorem nahodou_excludes_nci (wp : VerbPosition) :
-    ¬ ∃ pos ∈ wp.availableReadings, pos.Licenses .nciLicensed ∧ NahodouLicensed .negative pos := by
+    ¬ ∃ pos ∈ wp.availableReadings,
+      LicensedAt Indefinite.nci.entry pos ∧ NahodouLicensed .negative pos := by
   cases wp <;> decide
 
 /-- *Náhodou* is felicitous with the polarity item at either verb position, the verb in situ
 being licensed by FALSUM under a contrastive topic. -/
 theorem nahodou_ppi (wp : VerbPosition) :
-    ∃ pos ∈ wp.availableReadings, pos.Licenses .ppiOutscoping ∧ NahodouLicensed .negative pos := by
+    ∃ pos ∈ wp.availableReadings,
+      LicensedAt Indefinite.ppi.entry pos ∧ NahodouLicensed .negative pos := by
   cases wp <;> decide
 
 /-- *Copak* is felicitous exactly when the context's evidence matches the question's

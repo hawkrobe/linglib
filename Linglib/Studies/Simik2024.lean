@@ -2,7 +2,7 @@ import Linglib.Semantics.Questions.Bias
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Semantics.Questions.Exhaustivity
 import Linglib.Semantics.Presupposition.Defs
-import Linglib.Semantics.Polarity.CzechNegation
+import Linglib.Semantics.Questions.CzechNegation
 import Linglib.Discourse.CommonGround
 import Linglib.Logic.Modal.Defs
 import Linglib.Fragments.Slavic.Russian.QuestionParticles
