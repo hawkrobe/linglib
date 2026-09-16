@@ -11,11 +11,10 @@ Closed-class items that don't fit a more specific Fragment file:
 - **Prepositions** (`to_`, `on`, `in_`, `at_`, `by_`, `with_`,
   `from_`, `before`, `after`)
 - **Coordinating conjunctions** (`and_`, `or_`, `but`, `nor`)
-- **Adverbial quantifiers** ([percus-2000]) — `always`, `usually`,
-  `sometimes`, `never`
 
-The auxiliaries (modals + do-support + be + have + modal adverbs +
-infinitival particle) live in `Fragments/English/Auxiliaries.lean`.
+The auxiliaries (modals + do-support + be + have + infinitival particle)
+live in `Fragments/English/Auxiliaries.lean`; the modal adverbs and adverbs
+of quantification in `Fragments/English/Adverbs.lean`.
 The complementizers (`that`, `if`, `whether`, ...) live in
 `Fragments/English/Complementizers.lean`.
 
@@ -71,37 +70,5 @@ def allConjunctions : List ConjEntry := [and_, or_, but, nor]
 
 def ConjEntry.toWord (c : ConjEntry) : Word :=
   { form := c.form, cat := if c.coordinating then .CCONJ else .SCONJ, features := {} }
-
--- ============================================================================
--- Adverbial Quantifiers ([percus-2000])
--- ============================================================================
-
-/-- Quantificational force for adverbial quantifiers. -/
-inductive AdvQuantForce where
-  | universal     -- "always"
-  | existential   -- "sometimes"
-  | proportional  -- "usually"
-  | negative      -- "never"
-  deriving DecidableEq, Repr
-
-/-- An adverbial quantifier entry: a closed-class adverb that quantifies
-    over situations (times, events, occasions).
-
-    In [percus-2000]'s framework, adverbial quantifiers take a situation
-    pronoun that determines their domain and introduce a new λs binder
-    over their nuclear scope. Generalization Y constrains the situation
-    pronoun to be bound by the nearest c-commanding λ. -/
-structure AdvQuantEntry where
-  form : String
-  /-- Quantificational force. -/
-  force : AdvQuantForce
-  deriving Repr, BEq
-
-def always : AdvQuantEntry := { form := "always", force := .universal }
-def usually : AdvQuantEntry := { form := "usually", force := .proportional }
-def sometimes : AdvQuantEntry := { form := "sometimes", force := .existential }
-def never : AdvQuantEntry := { form := "never", force := .negative }
-
-def allAdvQuants : List AdvQuantEntry := [always, usually, sometimes, never]
 
 end English.FunctionWords

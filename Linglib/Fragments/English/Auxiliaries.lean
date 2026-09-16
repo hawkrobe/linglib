@@ -20,9 +20,7 @@ force–flavor meanings and register; and the agreeing forms of do-support,
 in their own right, carrying `Polarity=Neg`, paired with their bases in
 `contractions`; *mayn't* and *amn't* are paradigm gaps.
 
-The modal adverbs (*certainly*, *possibly*, …) and the infinitival marker
-*to* also live here, since they enter the same modal-concord and
-control constructions.
+The infinitival marker *to* also lives here.
 
 ## References
 
@@ -201,77 +199,6 @@ def negative (a : Auxiliary) : Option Auxiliary :=
   (contractions.find? (·.1 == a)).map (·.2)
 
 end Modals
-
--- ============================================================================
--- Modal Adverbs
--- ============================================================================
-
-section ModalAdverbs
-open Modality (ForceFlavor ModalForce ModalFlavor)
-open SocialMeaning.Register (Level)
-
-/-- Modal adverb entry: an adverb expressing modal force and flavor
-    without auxiliary morphology.
-
-    Modal adverbs participate in concord constructions where two modal
-    expressions yield a single-modality reading. -/
-structure ModalAdvEntry where
-  form : String
-  /-- Modal meaning in the force-flavor space. -/
-  modalMeaning : List ForceFlavor
-  /-- Register level. -/
-  register : Level := .neutral
-  deriving Repr, BEq
-
-def ModalAdvEntry.toWord (a : ModalAdvEntry) : Word :=
-  { form := a.form, cat := .ADV, features := {} }
-
-/-- Project to the shared modal item core (form + meaning + register). -/
-def ModalAdvEntry.toModalItem (a : ModalAdvEntry) : Modality.ModalItem where
-  form := a.form
-  meaning := a.modalMeaning.toFinset
-  register := a.register
-
-def certainly : ModalAdvEntry where
-  form := "certainly"
-  modalMeaning := [.necessity] ×ˢ [.epistemic]
-  register := .formal
-
-def definitely : ModalAdvEntry where
-  form := "definitely"
-  modalMeaning := [.necessity] ×ˢ [.epistemic, .deontic]
-
-def necessarily : ModalAdvEntry where
-  form := "necessarily"
-  modalMeaning := [.necessity] ×ˢ [.epistemic, .circumstantial]
-  register := .formal
-
-def possibly : ModalAdvEntry where
-  form := "possibly"
-  modalMeaning := [.possibility] ×ˢ [.epistemic]
-
-def perhaps : ModalAdvEntry where
-  form := "perhaps"
-  modalMeaning := [.possibility] ×ˢ [.epistemic]
-  register := .formal
-
-def maybe : ModalAdvEntry where
-  form := "maybe"
-  modalMeaning := [.possibility] ×ˢ [.epistemic]
-  register := .informal
-
-def probably : ModalAdvEntry where
-  form := "probably"
-  modalMeaning := [.necessity] ×ˢ [.epistemic]
-
-def potentially : ModalAdvEntry where
-  form := "potentially"
-  modalMeaning := [.possibility] ×ˢ [.circumstantial]
-
-def allModalAdverbs : List ModalAdvEntry :=
-  [certainly, definitely, necessarily, possibly, perhaps, maybe, probably, potentially]
-
-end ModalAdverbs
 
 -- ============================================================================
 -- Infinitival Marker
