@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Image
 import Mathlib.Data.Finset.Insert
+import Mathlib.Data.Finset.Max
 import Mathlib.Data.Finset.Prod
 import Linglib.Core.Order.Monotone.Monovary
 
@@ -27,6 +28,8 @@ filter on autosegmental GEN.
 * `IsNonCrossing links`: the link set monovaries (`[Preorder]`-general).
 * `Crosses a b` / `IndexCrosses links p`: two links cross; `p` crosses some link
   already in `links` — the decidable GEN filter.
+* `leftBound links m` / `rightBound links m` / `window links m`: the nearest index linked
+  on either side of an upper node `m`, and the interval between them.
 
 ## Main results
 
@@ -34,6 +37,9 @@ filter on autosegmental GEN.
   crosses nothing (`IsNonCrossing.insert_of_not_indexCrosses` is the GEN direction).
 * `isNonCrossing_image` / `IsNonCrossing.image_monotone`: `IsNonCrossing` commutes
   with `Finset.image`, and survives monotone reindexing of the upper coordinate.
+* `isNonCrossing_insert_iff_mem_window`: a candidate may be added iff its index lies in its
+  node's window; `IsNonCrossing.union_of_leftBound` / `union_of_rightBound`: spreading to the
+  nearest index on one side never crosses.
 -/
 
 namespace Autosegmental
@@ -74,6 +80,13 @@ theorem isNonCrossing_insert_iff [DecidableEq ι] [DecidableEq κ] (p : ι × κ
     IsNonCrossing (insert p links) ↔
       IsNonCrossing links ∧ ∀ q ∈ links, IsNonCrossing {p, q} := by
   simp [IsNonCrossing, monovaryOn_insert]
+
+/-- Non-crossing on a union: each part is, and no link of one crosses a link of the other.
+    The `Set.pairwise_union` shape, via `monovaryOn_union`. -/
+theorem isNonCrossing_union_iff [DecidableEq ι] [DecidableEq κ] {s t : Finset (ι × κ)} :
+    IsNonCrossing (s ∪ t) ↔
+      IsNonCrossing s ∧ IsNonCrossing t ∧ ∀ a ∈ s, ∀ b ∈ t, IsNonCrossing {a, b} := by
+  simp [IsNonCrossing, monovaryOn_union, monovaryOn_insert]
 
 instance [DecidableLT ι] [DecidableLE κ] : Decidable (IsNonCrossing links) :=
   decidable_of_iff _ isNonCrossing_iff.symm
@@ -247,6 +260,131 @@ theorem indexCrosses_iff :
   simp only [IndexCrosses, crosses_iff]
 
 end CandidateLinear
+
+/-! ### The window of a node
+
+For an upper node `m`, `leftIndices` and `rightIndices` are the lower indices linked from
+nodes left and right of `m`. In a non-crossing set every left index lies at or before every
+right index, so the indices `m` may link to without crossing form an interval, its
+**window**, from the nearest left index `leftBound` to the nearest right index `rightBound`:
+`isNonCrossing_insert_iff_mem_window` is the GEN filter as an interval, and
+`IsNonCrossing.union_of_leftBound` / `union_of_rightBound` are local spreading, to the
+nearest linked index on one side, which never crosses. -/
+
+section Window
+variable [Preorder ι] [DecidableLT ι] [LinearOrder κ] (links : Finset (ι × κ)) (m : ι)
+
+/-- The indices linked from nodes left of `m`. -/
+def leftIndices : Finset κ := (links.filter (·.1 < m)).image (·.2)
+
+/-- The indices linked from nodes right of `m`. -/
+def rightIndices : Finset κ := (links.filter (m < ·.1)).image (·.2)
+
+/-- The nearest index linked from a node left of `m`. -/
+def leftBound : WithBot κ := (leftIndices links m).max
+
+/-- The nearest index linked from a node right of `m`. -/
+def rightBound : WithTop κ := (rightIndices links m).min
+
+/-- The indices `m` may link to without crossing. -/
+def window : Set κ := {j | leftBound links m ≤ j ∧ ↑j ≤ rightBound links m}
+
+variable {links m} {j x y : κ}
+
+@[simp] theorem mem_leftIndices : x ∈ leftIndices links m ↔ ∃ n < m, (n, x) ∈ links := by
+  simp [leftIndices, Prod.exists, and_comm]
+
+@[simp] theorem mem_rightIndices :
+    x ∈ rightIndices links m ↔ ∃ n, m < n ∧ (n, x) ∈ links := by
+  simp [rightIndices, Prod.exists, and_comm]
+
+instance : DecidablePred (· ∈ window links m) := fun j ↦
+  inferInstanceAs (Decidable (leftBound links m ≤ j ∧ ↑j ≤ rightBound links m))
+
+theorem mem_window_iff : j ∈ window links m ↔
+    (∀ x ∈ leftIndices links m, x ≤ j) ∧ ∀ x ∈ rightIndices links m, j ≤ x := by
+  simp [window, leftBound, rightBound, Finset.max_le_iff, Finset.le_min_iff]
+
+theorem notMem_window_of_mem_leftIndices (hx : x ∈ leftIndices links m) (h : j < x) :
+    j ∉ window links m := fun hj ↦ absurd h (not_lt.2 ((mem_window_iff.1 hj).1 x hx))
+
+theorem notMem_window_of_mem_rightIndices (hx : x ∈ rightIndices links m) (h : x < j) :
+    j ∉ window links m := fun hj ↦ absurd h (not_lt.2 ((mem_window_iff.1 hj).2 x hx))
+
+/-- The GEN filter is membership in the window. -/
+theorem not_indexCrosses_iff_mem_window [DecidableEq ι] :
+    ¬ IndexCrosses links (m, j) ↔ j ∈ window links m := by
+  simp only [indexCrosses_iff, mem_window_iff, mem_leftIndices, mem_rightIndices, not_exists,
+    not_or, not_and, not_lt, forall_exists_index, and_imp, Prod.forall]
+  grind
+
+theorem isNonCrossing_insert_iff_mem_window [DecidableEq ι] :
+    IsNonCrossing (insert (m, j) links) ↔ IsNonCrossing links ∧ j ∈ window links m := by
+  rw [isNonCrossing_insert_iff_not_indexCrosses, not_indexCrosses_iff_mem_window]
+
+/-- In a non-crossing set the window is an interval: every index linked left of `m` lies at
+    or before every index linked right of it. -/
+theorem IsNonCrossing.left_le_right (h : IsNonCrossing links) (hx : x ∈ leftIndices links m)
+    (hy : y ∈ rightIndices links m) : x ≤ y := by
+  obtain ⟨n, hn, hx⟩ := mem_leftIndices.1 hx
+  obtain ⟨n', hn', hy⟩ := mem_rightIndices.1 hy
+  exact isNonCrossing_iff.1 h _ hx _ hy (hn.trans hn')
+
+/-- The nearest left index lies in the window. -/
+theorem IsNonCrossing.mem_window_of_leftBound_eq (h : IsNonCrossing links)
+    (hj : leftBound links m = j) : j ∈ window links m :=
+  mem_window_iff.2 ⟨fun _ hx ↦ Finset.le_max_of_eq hx hj,
+    fun _ hy ↦ h.left_le_right (Finset.mem_of_max hj) hy⟩
+
+/-- The nearest right index lies in the window. -/
+theorem IsNonCrossing.mem_window_of_rightBound_eq (h : IsNonCrossing links)
+    (hj : rightBound links m = j) : j ∈ window links m :=
+  mem_window_iff.2 ⟨fun _ hx ↦ h.left_le_right hx (Finset.mem_of_min hj),
+    fun _ hy ↦ Finset.min_le_of_eq hy hj⟩
+
+theorem leftIndices_mono : Monotone (leftIndices links) := by
+  intro _ _ hm x hx
+  obtain ⟨n, hn, hx⟩ := mem_leftIndices.1 hx
+  exact mem_leftIndices.2 ⟨n, hn.trans_le hm, hx⟩
+
+theorem rightIndices_anti : Antitone (rightIndices links) := by
+  intro _ _ hm x hx
+  obtain ⟨n, hn, hx⟩ := mem_rightIndices.1 hx
+  exact mem_rightIndices.2 ⟨n, hm.trans_lt hn, hx⟩
+
+theorem leftBound_mono : Monotone (leftBound links) := fun _ _ hm ↦
+  Finset.max_mono (leftIndices_mono hm)
+
+theorem rightBound_mono : Monotone (rightBound links) := fun _ _ hm ↦
+  Finset.min_mono (rightIndices_anti hm)
+
+/-- Local spreading to the left: lines from any nodes to the nearest index linked left of
+    each cross neither one another nor the links of a non-crossing set. -/
+theorem IsNonCrossing.union_of_leftBound [DecidableEq ι] (h : IsNonCrossing links)
+    {s : Finset (ι × κ)}
+    (hs : ∀ p ∈ s, leftBound links p.1 = p.2) : IsNonCrossing (links ∪ s) := by
+  refine isNonCrossing_union_iff.2
+    ⟨h, isNonCrossing_iff.2 fun p hp q hq hpq ↦ ?_, fun a ha b hb ↦ ?_⟩
+  · exact WithBot.coe_le_coe.1
+      ((hs p hp).symm.trans_le ((leftBound_mono hpq.le).trans_eq (hs q hq)))
+  · obtain ⟨hl, hr⟩ := mem_window_iff.1 (h.mem_window_of_leftBound_eq (hs b hb))
+    exact (isNonCrossing_pair a b).2 ⟨fun hab ↦ hl _ (mem_leftIndices.2 ⟨a.1, hab, ha⟩),
+      fun hba ↦ hr _ (mem_rightIndices.2 ⟨a.1, hba, ha⟩)⟩
+
+/-- Local spreading to the right: lines from any nodes to the nearest index linked right of
+    each cross neither one another nor the links of a non-crossing set. -/
+theorem IsNonCrossing.union_of_rightBound [DecidableEq ι] (h : IsNonCrossing links)
+    {s : Finset (ι × κ)}
+    (hs : ∀ p ∈ s, rightBound links p.1 = p.2) : IsNonCrossing (links ∪ s) := by
+  refine isNonCrossing_union_iff.2
+    ⟨h, isNonCrossing_iff.2 fun p hp q hq hpq ↦ ?_, fun a ha b hb ↦ ?_⟩
+  · exact WithTop.coe_le_coe.1
+      ((hs p hp).symm.trans_le ((rightBound_mono hpq.le).trans_eq (hs q hq)))
+  · obtain ⟨hl, hr⟩ := mem_window_iff.1 (h.mem_window_of_rightBound_eq (hs b hb))
+    exact (isNonCrossing_pair a b).2 ⟨fun hab ↦ hl _ (mem_leftIndices.2 ⟨a.1, hab, ha⟩),
+      fun hba ↦ hr _ (mem_rightIndices.2 ⟨a.1, hba, ha⟩)⟩
+
+end Window
 
 /-! ### Link shift (the concatenation offset)
 
