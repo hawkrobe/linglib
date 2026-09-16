@@ -18,10 +18,10 @@ German has extensive syncretism, especially in the definite article:
 namespace German.Case
 
 /-- German 4-case inventory. -/
-def caseInventory : Finset Case :=
+def inventory : Finset Case :=
   {.nom, .acc, .gen, .dat}
 
 -- Contiguous on Blake's hierarchy (ranks 6, 6, 5, 4).
-example : Case.IsValidInventory caseInventory := by decide
+example : Case.IsValidInventory inventory := by decide
 
 end German.Case

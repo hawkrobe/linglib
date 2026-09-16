@@ -13,10 +13,10 @@ Case frames, quirky subjects, verb data, and agreement are in
 namespace Icelandic.Case
 
 /-- Icelandic 4-case inventory ([thrainsson-2007] §4.1). -/
-def caseInventory : Finset Case := {.nom, .acc, .gen, .dat}
+def inventory : Finset Case := {.nom, .acc, .gen, .dat}
 
-example : Case.IsValidInventory caseInventory := by decide
+example : Case.IsValidInventory inventory := by decide
 
-theorem icelandic_has_four_cases : caseInventory.card = 4 := by decide
+theorem icelandic_has_four_cases : inventory.card = 4 := by decide
 
 end Icelandic.Case

@@ -28,7 +28,7 @@ def grammar : CaseGrammar where
 
 /-- The morphological case inventory: nominative, accusative, genitive, dative, ablative,
     instrumental, and comitative. -/
-def caseInventory : Finset Case :=
+def inventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .abl, .inst, .com}
 
 /-- A Mongolian ditransitive: the subject above the direct object, shifted to the clause

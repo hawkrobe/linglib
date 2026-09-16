@@ -112,6 +112,6 @@ def experimentalCases : List Case :=
 
 /-- All experimental cases are in the Turkish case inventory -/
 theorem experimental_cases_valid :
-    ∀ c ∈ experimentalCases, c ∈ Turkish.Case.caseInventory := by decide
+    ∀ c ∈ experimentalCases, c ∈ Turkish.Case.inventory := by decide
 
 end Turkish.Anaphors

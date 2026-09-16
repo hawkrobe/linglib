@@ -14,8 +14,8 @@ the copula)."
 
 Cassubian thus patterns with Polish, Czech, Serbo-Croat, and
 Ukrainian as 7-case with productive (but eroding) VOC.
-`caseInventory` aliases the shared 6-case core; the +VOC form is
-`Slavic.Case.sevenCaseInventory`. The exception clause "but not in the
+`inventory` aliases the shared 6-case core; the +VOC form is
+`Slavic.Case.fullInventory`. The exception clause "but not in the
 complement of the copula" confirms the cross-Slavic generalization
 that bare predicative INST survives — Slovene/Sorbian are the marked
 outliers in losing it.
@@ -23,6 +23,6 @@ outliers in losing it.
 
 namespace Cassubian.Case
 
-abbrev caseInventory : Finset Case := Slavic.Case.coreInventory
+abbrev inventory : Finset Case := Slavic.Case.coreInventory
 
 end Cassubian.Case

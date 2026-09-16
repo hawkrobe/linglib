@@ -122,7 +122,7 @@ theorem slavicCore_respectsCaha :
     encodes Caha's own scope choice ([caha-2009] §1.1 fn. 4,
     p. 9: "Vocatives ... are ignored throughout this dissertation"). -/
 theorem slavicSeven_respectsCaha :
-    RespectsCahaContainment Slavic.Case.sevenCaseInventory := by decide
+    RespectsCahaContainment Slavic.Case.fullInventory := by decide
 
 /-! ## Inventories
 
@@ -133,16 +133,16 @@ Bulgarian and Macedonian having lost noun case entirely. -/
 /-- The conforming Fragment case inventories. -/
 def conformers : List (Finset Case) :=
   [ -- non-Slavic
-    German.Case.caseInventory, Greek.Case.caseInventory, Hindi.Case.caseInventory,
-    Icelandic.Case.caseInventory, Japanese.Case.caseInventory, Korean.Case.caseInventory,
-    Latin.Case.caseInventory, Mongolian.Case.caseInventory, SwissGerman.Case.caseInventory,
-    Tamil.Case.caseInventory, Telugu.Case.caseInventory, Turkish.Case.caseInventory,
-    Yakut.Case.caseInventory,
+    German.Case.inventory, Greek.Case.inventory, Hindi.Case.inventory,
+    Icelandic.Case.inventory, Japanese.Case.inventory, Korean.Case.inventory,
+    Latin.Case.inventory, Mongolian.Case.inventory, SwissGerman.Case.inventory,
+    Tamil.Case.inventory, Telugu.Case.inventory, Turkish.Case.inventory,
+    Yakut.Case.inventory,
     -- Slavic (each aliases Slavic.Case.coreInventory)
-    Belarusian.Case.caseInventory, Cassubian.Case.caseInventory, Czech.Case.caseInventory,
-    Polish.Case.caseInventory, Russian.Case.caseInventory, Serbian.Case.caseInventory,
-    Slovak.Case.caseInventory, Slovenian.Case.caseInventory, Sorbian.Case.caseInventory,
-    Ukrainian.Case.caseInventory ]
+    Belarusian.Case.inventory, Cassubian.Case.inventory, Czech.Case.inventory,
+    Polish.Case.inventory, Russian.Case.inventory, Serbian.Case.inventory,
+    Slovak.Case.inventory, Slovenian.Case.inventory, Sorbian.Case.inventory,
+    Ukrainian.Case.inventory ]
 
 theorem conformers_respectCaha :
     ∀ inv ∈ conformers, RespectsCahaContainment inv := by decide
@@ -154,7 +154,7 @@ theorem conformers_respectCaha :
     Dargwa's `[abs, erg, gen, dat, com, ess]` fails downward closure
     (GEN/DAT present without NOM/ACC). -/
 theorem dargwa_not_respectsCaha :
-    ¬ RespectsCahaContainment Dargwa.Case.caseInventory := by decide
+    ¬ RespectsCahaContainment Dargwa.Case.inventory := by decide
 
 /-- Finnish *respects* nominal Caha containment — vacuously. Under the
     faithful spatial decomposition (`Syntax/Case/Order.lean`), Finnish's
@@ -166,7 +166,7 @@ theorem dargwa_not_respectsCaha :
     gap. (Its allative-for-dative recipient function lives in
     `Finnish.Case.allative_extends_to_dative`.) -/
 theorem finnish_respectsCaha :
-    RespectsCahaContainment Finnish.Case.caseInventory := by decide
+    RespectsCahaContainment Finnish.Case.inventory := by decide
 
 /-- Hungarian has no morphological genitive — both standard reference
     grammars ([kenesei-vago-fenyvesi-1998] §1.10, [rounds-2001]
@@ -182,7 +182,7 @@ theorem finnish_respectsCaha :
     to Caha 2008's (28), which is about suffix-vs-postposition ordering
     and holds vacuously here since Hungarian marks all cases suffixally.) -/
 theorem hungarian_not_respectsCaha :
-    ¬ RespectsCahaContainment Hungarian.Case.caseInventory := by decide
+    ¬ RespectsCahaContainment Hungarian.Case.inventory := by decide
 
 /-! ## § 4: Slavic paradigm-shape syncretism (Caha §§8.3.1-4)
 

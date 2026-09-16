@@ -22,7 +22,7 @@ this with `-uuna` (nom) / `-iina` (gen & acc).
 The MSA case system is largely absent from spoken Arabics (Ryding
 §5 p. 166: "colloquial forms of Arabic do not have case marking").
 This file is therefore MSA-specific; if an Egyptian-Arabic Case
-fragment is added later it should expose `caseInventory := ∅`.
+fragment is added later it should expose `inventory := ∅`.
 -/
 
 namespace Arabic.ModernStandard.Case
@@ -30,8 +30,8 @@ namespace Arabic.ModernStandard.Case
 /-! ## Inventory -/
 
 /-- The three-case core: nominative, accusative, genitive (Ryding §5 p. 166). -/
-abbrev caseInventory : Finset Case := {.nom, .acc, .gen}
+abbrev inventory : Finset Case := {.nom, .acc, .gen}
 
-theorem caseInventory_card : caseInventory.card = 3 := by decide
+theorem inventory_card : inventory.card = 3 := by decide
 
 end Arabic.ModernStandard.Case

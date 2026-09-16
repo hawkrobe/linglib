@@ -18,11 +18,11 @@ WALS Ch. 52).
 namespace Tamil.Case
 
 /-- Tamil 7-case core inventory (excluding VOC). -/
-def caseInventory : Finset Case :=
+def inventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com}
 
 -- Contiguous on Blake's hierarchy (ranks 6 down to 1).
-example : Case.IsValidInventory caseInventory := by decide
+example : Case.IsValidInventory inventory := by decide
 
 theorem com_inst_adjacent :
     Case.HierarchyAdjacent .com .inst := by decide

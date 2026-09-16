@@ -113,12 +113,12 @@ def was : Case → Option String
   | _ => none
 
 /-- *wer* has a form for exactly the German cases. -/
-theorem wer_isSome_iff (c : Case) : (wer c).isSome ↔ c ∈ German.Case.caseInventory := by
+theorem wer_isSome_iff (c : Case) : (wer c).isSome ↔ c ∈ German.Case.inventory := by
   cases c <;> decide
 
 /-- *was* has a form for exactly the German cases other than the dative. -/
 theorem was_isSome_iff (c : Case) :
-    (was c).isSome ↔ c ∈ German.Case.caseInventory.erase .dat := by
+    (was c).isSome ↔ c ∈ German.Case.inventory.erase .dat := by
   cases c <;> decide
 
 end German.Pronouns

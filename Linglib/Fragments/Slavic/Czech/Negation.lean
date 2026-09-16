@@ -1,114 +1,25 @@
 import Linglib.Syntax.Negation
 
 /-!
-# Czech Negation Fragment
-[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
+# Czech negation
 
-Czech expresses standard negation with the verbal prefix *ne-*.
-Negation is **symmetric**: the prefix attaches directly to the verb
-with no structural change — no finiteness restriction, no TAM gaps.
+Czech negates a clause with the verbal prefix *ne-*, attached directly to the finite verb or
+auxiliary (*nejí* 'does not eat', *nebude jíst* 'will not eat') with no change of finiteness
+or tense: symmetric negation in the sense of [miestamo-2005]. Negative concord is obligatory
+and strict ([haspelmath-2013]), every *ni-* item co-occurring with the prefix; the items live
+in the sibling `PolarityItems.lean`.
 
-## Negative concord (Ch 115)
+## References
 
-Czech has obligatory negative concord (WALS: co-occur), following the
-standard Slavic pattern:
-- *Nikdo nepřišel* 'Nobody NEG.came' = 'Nobody came'
-- *Nic neviděl* 'Nothing NEG.saw' = '(He) saw nothing'
-
-N-words of the *ni-* series (*nikdo*, *nic*, *nikdy*, *nikam*) always
-co-occur with the *ne-* prefix on the verb. The lexeme entries live in
-the sibling `Fragments/Czech/PolarityItems.lean` per the operator/
-lexical-reactive split documented in `Core/Lexical/NegMarker.lean`. The
-`NegConcordExample` data below illustrates the marker's interaction with
-the n-word system at the sentence level.
+* [miestamo-2005]
+* [haspelmath-2013]
 -/
 
 namespace Czech.Negation
 
 open Syntax.Negation
 
-/-- *ne-* — Czech's standard negation prefix.
-    Attaches directly to the verb stem: *nepřijde* 'will not come',
-    *neviděl* 'didn't see'. Symmetric across the paradigm. -/
-def ne : Marker :=
-  { morphs := [.pref "ne"] }
-
-/-- A Czech negation example. -/
-structure NegExample where
-  affirmative : String
-  negative : String
-  glossAff : String
-  glossNeg : String
-  tenseLabel : String
-  deriving Repr, BEq
-
-/-- Present tense: *jí* → *nejí*. -/
-def present : NegExample :=
-  { affirmative := "Jí"
-  , negative := "Nejí"
-  , glossAff := "eat.3SG.PRS"
-  , glossNeg := "NEG.eat.3SG.PRS"
-  , tenseLabel := "present" }
-
-/-- Past tense: *jedl* → *nejedl*. -/
-def past : NegExample :=
-  { affirmative := "Jedl"
-  , negative := "Nejedl"
-  , glossAff := "eat.PST.M"
-  , glossNeg := "NEG.eat.PST.M"
-  , tenseLabel := "past" }
-
-/-- Future (periphrastic): *bude jíst* → *nebude jíst*. -/
-def future : NegExample :=
-  { affirmative := "Bude jíst"
-  , negative := "Nebude jíst"
-  , glossAff := "will.3SG eat.INF"
-  , glossNeg := "NEG.will.3SG eat.INF"
-  , tenseLabel := "future" }
-
-/-- Conditional: *jedl by* → *nejedl by*. -/
-def conditional : NegExample :=
-  { affirmative := "Jedl by"
-  , negative := "Nejedl by"
-  , glossAff := "eat.PST.M COND"
-  , glossNeg := "NEG.eat.PST.M COND"
-  , tenseLabel := "conditional" }
-
-def allExamples : List NegExample := [present, past, future, conditional]
-
-/-- A negative concord example. -/
-structure NegConcordExample where
-  sentence : String
-  translation : String
-  nword : String
-  nwordGloss : String
-  deriving Repr, BEq
-
-/-- *Nikdo nepřišel* — obligatory negative concord. -/
-def nikdo : NegConcordExample :=
-  { sentence := "Nikdo nepřišel"
-  , translation := "Nobody came"
-  , nword := "nikdo"
-  , nwordGloss := "nobody" }
-
-/-- *Nic neviděl* — obligatory negative concord. -/
-def nic : NegConcordExample :=
-  { sentence := "Nic neviděl"
-  , translation := "(He) saw nothing"
-  , nword := "nic"
-  , nwordGloss := "nothing" }
-
-/-- *Nikdy nepřišel* — obligatory negative concord. -/
-def nikdy : NegConcordExample :=
-  { sentence := "Nikdy nepřišel"
-  , translation := "(He) never came"
-  , nword := "nikdy"
-  , nwordGloss := "never" }
-
-def allConcordExamples : List NegConcordExample := [nikdo, nic, nikdy]
-
-/-! ## Verification -/
-
-theorem all_examples_count : allExamples.length = 4 := by decide
+/-- *ne-*, the standard negation prefix. -/
+def ne : Marker := { morphs := [.pref "ne"] }
 
 end Czech.Negation

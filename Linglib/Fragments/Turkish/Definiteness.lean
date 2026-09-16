@@ -88,6 +88,6 @@ theorem acc_free : mustBePreverbal .accusative = false := rfl
 
 /-- The accusative case is in the Turkish case inventory. -/
 theorem acc_in_inventory :
-    .acc ∈ Turkish.Case.caseInventory := by decide
+    .acc ∈ Turkish.Case.inventory := by decide
 
 end Turkish.Definiteness

@@ -17,10 +17,10 @@ namespace Turkish.Case
 
 /-- Turkish case inventory: NOM(∅), ACC(-I), GEN(-In), DAT(-A),
     LOC(-DA), ABL(-DAn). -/
-def caseInventory : Finset Case :=
+def inventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .loc, .abl}
 
 -- Perfectly contiguous on Blake's hierarchy (ranks 6, 6, 5, 4, 3, 2).
-example : Case.IsValidInventory caseInventory := by decide
+example : Case.IsValidInventory inventory := by decide
 
 end Turkish.Case

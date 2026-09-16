@@ -12,12 +12,12 @@ friends, the deity and high dignitaries and are essentially formulaic,
 whether familiar, jocular or formal."
 
 Slovak thus patterns with Russian, Slovene, and Belarusian as 6-case
-without productive VOC. `caseInventory` aliases the shared
+without productive VOC. `inventory` aliases the shared
 `Slavic.Case.coreInventory`.
 -/
 
 namespace Slovak.Case
 
-abbrev caseInventory : Finset Case := Slavic.Case.coreInventory
+abbrev inventory : Finset Case := Slavic.Case.coreInventory
 
 end Slovak.Case

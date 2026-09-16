@@ -26,6 +26,6 @@ def grammar : CaseGrammar where
 
 /-- The morphological case inventory: nominative, accusative, genitive, dative, ablative,
     instrumental, comitative and partitive. -/
-def caseInventory : Finset Case := {.nom, .acc, .gen, .dat, .abl, .inst, .com, .part}
+def inventory : Finset Case := {.nom, .acc, .gen, .dat, .abl, .inst, .com, .part}
 
 end Yakut.Case
