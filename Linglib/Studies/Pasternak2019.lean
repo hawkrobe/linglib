@@ -50,8 +50,8 @@ namespace Pasternak2019
 open Degree
 open ArgumentStructure (ThematicFrame)
 
-/-- A mental-state verb: its predicate on eventualities and its intensity measure; thematic
-roles are assigned by a `ThematicFrame` at use sites. -/
+/-- A mental-state verb has a predicate on eventualities and an intensity measure, with thematic
+roles assigned by a `ThematicFrame` at use sites. -/
 structure MentalStateVerb (T D : Type*) [LinearOrder T] where
   /-- The verb's predicate on eventualities. -/
   predicate : Event T → Prop
@@ -65,26 +65,26 @@ variable {Entity T D : Type*} [LinearOrder T] [Preorder D] (v : MentalStateVerb 
 def themed (α x : Entity) (e : Event T) : Prop :=
   frame.experiencer α e ∧ v.predicate e ∧ frame.theme x e
 
-/-- *α V x at degree d*: a themed eventuality of the verb with intensity at least `d`. -/
+/-- *α V x at degree d* holds of a themed eventuality of the verb with intensity at least `d`. -/
 def MentalStateVerb.holdsAtDegree (α x : Entity) (d : D) (e : Event T) : Prop :=
   themed v frame α x e ∧ d ≤ v.μint e
 
-/-- The intensity comparative *α V x more than β V y*: `Degree.maxComparative` with the two
+/-- The intensity comparative *α V x more than β V y* is `Degree.maxComparative` with the two
 sides differing in experiencer and theme, measured by the intensity measure (56a). -/
 def intensityComparative (α β x y : Entity) : Prop :=
   maxComparative (themed v frame α x) (themed v frame β y) v.μint
 
-/-- The states of the verb with theme `x`, whatever their experiencer: the domain of the
+/-- The states of the verb with theme `x`, whatever their experiencer, the domain of the
 monotonicity presupposition. -/
 def statesOf (x : Entity) : Set (Event T) := {e | v.predicate e ∧ frame.theme x e}
 
-/-- The monotonicity presupposition (56b), the paper's (4) on the salient part-whole
-relation: a proper part of a state of the verb with theme `x` is strictly less intense. -/
+/-- The monotonicity presupposition (56b), the paper's (4) on the salient part-whole relation,
+says that a proper part of a state of the verb with theme `x` is strictly less intense. -/
 def Monotonic [Event.Mereology T] (x : Entity) : Prop := StrictMonoOn v.μint (statesOf v frame x)
 
 variable {v frame} {α β x y : Entity}
 
-/-- The positive entailment: the comparative entails the matrix positive. -/
+/-- The positive entailment, that the comparative entails the matrix positive. -/
 theorem intensityComparative.exists_matrix (h : intensityComparative v frame α β x y) :
     ∃ e, themed v frame α x e :=
   let ⟨_, _, e, he, _⟩ := h; ⟨e, he⟩
@@ -96,9 +96,9 @@ theorem intensityComparative_unique {ea eb : Event T} (ha : themed v frame α x 
     intensityComparative v frame α β x y ↔ v.μint eb < v.μint ea :=
   maxComparative_unique ha ha' hb hb'
 
-/-- Under the presupposition on both sides, the comparative compares the maximal states: with
-`ea` Ann's state of hating Bill and `eb` Matt's of hating Jeff, the sentence holds iff `ea`
-is the more intense. -/
+/-- Under the presupposition on both sides the comparative compares the maximal states, so with
+`ea` Ann's state of hating Bill and `eb` Matt's of hating Jeff the sentence holds iff `ea` is
+the more intense. -/
 theorem intensityComparative_of_greatest [Event.Mereology T] {ea eb : Event T}
     (hx : Monotonic v frame x) (hy : Monotonic v frame y)
     (ha : IsGreatest {e | themed v frame α x e} ea)
@@ -111,8 +111,8 @@ section Zero
 
 variable [Zero D] (v frame)
 
-/-- The than-clause degree set with the scale's zero degree added (62): its maximum exists even
-without a than-clause witness. -/
+/-- The than-clause degree set with the scale's zero degree added, whose maximum exists even
+without a than-clause witness (62). -/
 def thanDegreesZero (Pthan : Event T → Prop) : Set D :=
   insert 0 (thanDegrees Pthan v.μint)
 
@@ -123,7 +123,7 @@ def intensityComparativeZero (α β x y : Entity) : Prop :=
 
 variable {v frame}
 
-/-- The than-clause positive is not entailed (63): with no `β`-eventuality of positive
+/-- The than-clause positive is not entailed (63), since with no `β`-eventuality of positive
 intensity the comparative holds of any `α`-eventuality of positive intensity, *Jack admires the
 chairman more than Jill does; in fact, Jill doesn't admire him at all*. -/
 theorem intensityComparativeZero_of_none {e : Event T} (he : themed v frame α x e)
@@ -134,8 +134,8 @@ theorem intensityComparativeZero_of_none {e : Event T} (he : themed v frame α x
 
 end Zero
 
-/-- Mental state homogeneity (55): a predicate closed under parts holds of `e` iff it holds of
-every part of `e`. -/
+/-- Mental state homogeneity (55) says that a predicate closed under parts holds of `e` iff it
+holds of every part of `e`. -/
 theorem div_iff {α : Type*} [Preorder α] {P : α → Prop} (h : Mereology.DIV P) (e : α) :
     P e ↔ ∀ e' ≤ e, P e' :=
   ⟨λ he _ hle => h hle he, λ hall => hall e le_rfl⟩
