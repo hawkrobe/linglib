@@ -24,6 +24,7 @@ German, or neither determines the other, as in Romanian or Lak.
 * `Gender.targetGenders`: the range of the agreement map restricted to one target.
 * `Gender.Parallel`, `Gender.Convergent`, `Gender.Crossed`: the map between the target
   genders of two numbers, as each factors through the other or not.
+* `Gender.Polar`: an exponent of two features whose polar opposites coincide.
 
 ## Main results
 
@@ -35,6 +36,8 @@ German, or neither determines the other, as in Romanian or Lak.
   agreement, the agreement classes are the fibres of the assignment.
 * `Gender.parallel_iff_ker_eq`, `Gender.convergent_iff_ker_lt`: the map between two numbers'
   target genders is the order of their kernels.
+* `Gender.Polar.card_le_two`, `Gender.Polar.parallel`: polarity forces two-valued features
+  and is a parallel system.
 
 ## Implementation notes
 
@@ -53,6 +56,7 @@ German, or neither determines the other, as in Romanian or Lak.
 * [zaliznjak-1964] — agreement classes
 * [greenberg-1963] — Universal 37: the plural never distinguishes more genders than the
   singular
+* [corbett-1998] — polarity
 -/
 
 namespace Gender
@@ -127,5 +131,67 @@ instance : Decidable (Crossed sg pl) := by
   unfold Crossed; infer_instance
 
 end NumberMap
+
+/-! ### Polarity
+
+A fusional exponent of two features, gender and number in the Somali article, is polar when
+changing either value alone changes the form and changing both restores it: the polar
+opposites are identical ([corbett-1991] chapter 7; [corbett-1998]). Polarity is a syncretism
+across the numbers with none within them, so it is a parallel system, and it confines both
+features to two values. -/
+
+section Polar
+
+variable {G : Type*}
+
+/-- An exponent of two features is polar when two cells share a form exactly when they
+differ in both features or in neither. -/
+def Polar (f : G → T → F) : Prop :=
+  ∀ g g' t t', f g t = f g' t' ↔ (g = g' ↔ t = t')
+
+variable {f : G → T → F}
+
+instance [Fintype G] [Fintype T] [DecidableEq G] [DecidableEq T] [DecidableEq F] :
+    Decidable (Polar f) := by
+  unfold Polar; infer_instance
+
+/-- Polarity is symmetric in the two features. -/
+theorem Polar.flip (h : Polar f) : Polar (flip f) :=
+  fun t t' g g' ↦ (h g g' t t').trans Iff.comm
+
+/-- Within one value of the other feature, a polar exponent keeps every distinction. -/
+theorem Polar.injective (h : Polar f) (t : T) : Function.Injective (f · t) :=
+  fun _ _ e ↦ ((h _ _ t t).mp e).mpr rfl
+
+/-- A polar exponent is faithful to its first feature. -/
+theorem Polar.faithful [Nonempty T] (h : Polar f) : Faithful f :=
+  fun _ _ e ↦ h.injective (Classical.arbitrary T) (congrFun e _)
+
+/-- Polarity needs two-valued features: with three values of one feature, two of them would
+share a form. -/
+theorem Polar.card_le_two [Fintype G] [Nontrivial T] (h : Polar f) :
+    Fintype.card G ≤ 2 := by
+  by_contra hc
+  obtain ⟨g₁, g₂, g₃, h₁₂, h₁₃, h₂₃⟩ := Fintype.two_lt_card_iff.mp (not_le.mp hc)
+  obtain ⟨t, t', ht⟩ := exists_pair_ne T
+  have e₁ : f g₁ t = f g₂ t' := (h g₁ g₂ t t').mpr (iff_of_false h₁₂ ht)
+  have e₃ : f g₃ t = f g₂ t' := (h g₃ g₂ t t').mpr (iff_of_false h₂₃.symm ht)
+  exact h₁₃ (h.injective t (e₁.trans e₃.symm))
+
+/-- The other feature likewise. -/
+theorem Polar.card_le_two' [Fintype T] [Nontrivial G] (h : Polar f) : Fintype.card T ≤ 2 :=
+  h.flip.card_le_two
+
+/-- Polar features are two-valued. -/
+theorem Polar.card_eq_two [Fintype G] [Nontrivial G] [Nontrivial T] (h : Polar f) :
+    Fintype.card G = 2 :=
+  le_antisymm h.card_le_two Fintype.one_lt_card
+
+/-- Polarity is syncretism across the numbers and none within them: a parallel system. -/
+theorem Polar.parallel (h : Polar f) (t t' : T) : Parallel (f · t) (f · t') :=
+  ⟨fun _ _ e ↦ congrArg (f · t') (h.injective t e),
+    fun _ _ e ↦ congrArg (f · t) (h.injective t' e)⟩
+
+end Polar
 
 end Gender

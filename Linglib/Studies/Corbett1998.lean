@@ -39,10 +39,9 @@ rather than the resolved one. The chapter's examples are the rows of
   chapter's classification of the five dimensions carried as data; the substrate profile
   records covariance in the wide sense, and what a target agrees in is the covarying
   dimensions whose origin is the controller.
-* Polarity is defined for any exponent of two features and shown to need two-valued
-  features, each of which it keeps fully distinct within the other; Somali's article is
-  polar and its verbal prefix is not, the plural prefix coinciding with the masculine
-  singular's instead.
+* Polarity is the substrate's `Gender.Polar`, which the Somali fragment proves of its
+  article (Table 9.1); the verbal prefix is shown not to be polar, the plural prefix
+  coinciding with the masculine singular's instead.
 * Number-conditioned gender distinctions are the substrate's convergent maps between the
   target genders of two numbers; Chichewa's coordination rules are the substrate's ordered
   resolution rules over fragment nouns, one per target form before the semantic rule.
@@ -173,67 +172,13 @@ theorem profile_verb :
 
 end Russian
 
-section Polar
-
-variable {G N F : Type*}
-
-/-- An exponent of two features is polar when changing either value alone changes the form
-and changing both leaves it unchanged. -/
-def Polar (f : G → N → F) : Prop :=
-  ∀ ⦃g g'⦄ ⦃n n'⦄, g ≠ g' → n ≠ n' → f g n = f g' n' ∧ f g n ≠ f g' n ∧ f g n ≠ f g n'
-
-variable {f : G → N → F}
-
-instance [Fintype G] [Fintype N] [DecidableEq G] [DecidableEq N] [DecidableEq F] :
-    Decidable (Polar f) := by
-  unfold Polar; infer_instance
-
-/-- Polarity is symmetric in the two features. -/
-theorem Polar.flip (h : Polar f) : Polar (flip f) :=
-  λ _ _ _ _ hn hg => (h hg hn).imp_right And.comm.mp
-
-/-- Polarity needs two-valued features: with three values of one feature, two of them would
-share a form. -/
-theorem Polar.card_le_two [Fintype G] [Nontrivial N] (h : Polar f) : Fintype.card G ≤ 2 := by
-  by_contra hc
-  obtain ⟨g₁, g₂, g₃, h₁₂, h₁₃, h₂₃⟩ := Fintype.two_lt_card_iff.mp (not_le.mp hc)
-  obtain ⟨n, n', hn⟩ := exists_pair_ne N
-  exact (h h₁₂ hn).2.1 ((h h₁₃ hn).1.trans (h h₂₃ hn).1.symm)
-
-/-- The other feature likewise. -/
-theorem Polar.card_le_two' [Fintype N] [Nontrivial G] (h : Polar f) : Fintype.card N ≤ 2 :=
-  h.flip.card_le_two
-
-/-- Polar features are two-valued. -/
-theorem Polar.card_eq_two [Fintype G] [Nontrivial G] [Nontrivial N] (h : Polar f) :
-    Fintype.card G = 2 :=
-  le_antisymm h.card_le_two Fintype.one_lt_card
-
-/-- Within one value of the other feature, a polar exponent keeps every distinction. -/
-theorem Polar.injective [Nontrivial N] (h : Polar f) (n : N) : Function.Injective (f · n) :=
-  λ _ _ e => by
-    by_contra hg
-    obtain ⟨n', hn⟩ := exists_ne n
-    exact (h hg hn.symm).2.1 e
-
-/-- Polarity is syncretism across the numbers and none within them: in Corbett's typology, a
-parallel system. -/
-theorem Polar.parallel [Nontrivial N] (h : Polar f) (n n' : N) :
-    Gender.Parallel (f · n) (f · n') :=
-  ⟨λ _ _ e => congrArg (f · n') (h.injective n e), λ _ _ e => congrArg (f · n) (h.injective n' e)⟩
-
-end Polar
-
 namespace Somali
 
 open _root_.Somali.Gender
 
-/-- Table 9.1: the article is polar. -/
-theorem polar_article : Polar Value.article := by decide
-
-/-- The verbal prefix is not, (11)–(14): the plural prefix of either gender is the masculine
-singular's, another syncretism. -/
-theorem not_polar_verbPrefix : ¬ Polar Value.verbPrefix := by decide
+/-- The verbal prefix is not polar, (11)–(14): the plural prefix of either gender is the
+masculine singular's, another syncretism. -/
+theorem not_polar_verbPrefix : ¬ Gender.Polar Value.verbPrefix := by decide
 
 /-- The plural prefix of either gender is the masculine singular's. -/
 theorem verbPrefix_plural (g : Value) : g.verbPrefix true = Value.masc.verbPrefix false := by

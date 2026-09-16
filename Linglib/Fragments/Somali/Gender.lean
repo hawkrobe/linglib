@@ -1,4 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Syntax.Agreement.Classes
 import Linglib.Syntax.Category.Noun.Basic
 
 /-!
@@ -10,11 +11,12 @@ take *-kii*, the feminine singular and the masculine plural *-tii*, so that chan
 or number alone changes the article and changing both restores it. The verbal prefix is not:
 *y-* for the masculine singular and for both plurals, *t-* for the feminine singular alone.
 Masculine nouns with a reduplicated plural, *nin* ~ *niman* 'man', keep the singular article
-in the plural ([saeed-1999]; [corbett-1998]).
+in the plural ([saeed-1999]; [corbett-1991]; [corbett-1998]).
 
 ## References
 
 * [J. Saeed, *Somali* (1999)][saeed-1999]
+* [G. G. Corbett, *Gender* (1991)][corbett-1991]
 * [G. G. Corbett, *Morphology and agreement* (1998)][corbett-1998]
 -/
 
@@ -25,6 +27,13 @@ inductive Value where
   | masc
   | fem
   deriving DecidableEq, Repr, Fintype
+
+/-- The comparative label of each gender. -/
+def Value.toLabel : Value → Gender
+  | .masc => .masculine
+  | .fem => .feminine
+
+instance : HasGender Value := ⟨fun g ↦ genderOf g.toLabel⟩
 
 /-- The basic forms of the remote definite article; after a vowel other than *i*, *-kii* is
 *-hii*, and after any vowel *-tii* is *-dii*. -/
@@ -49,6 +58,16 @@ def Value.verbPrefix : Value → Bool → VerbPrefix
   | .fem, false => .t
   | _, _ => .y
 
+/-- The article is polar: it changes with gender or number alone and is restored when both
+change. -/
+theorem polar_article : Gender.Polar Value.article := by decide
+
+/-- The carrier is faithful to the article, in either number alone. -/
+theorem faithful_article : Gender.Faithful Value.article := polar_article.faithful
+
+/-- And to the verbal prefix, which distinguishes the genders in the singular only. -/
+theorem faithful_verbPrefix : Gender.Faithful Value.verbPrefix := by decide
+
 /-- A Somali noun with its gender, its plural stem, and whether that plural is reduplicated. -/
 structure Noun extends GenderedNoun Value where
   /-- The plural stem. -/
@@ -56,6 +75,8 @@ structure Noun extends GenderedNoun Value where
   /-- Whether the plural is formed by reduplication, keeping the singular article. -/
   reduplicatedPlural : Bool
   deriving DecidableEq, Repr
+
+instance : HasGender Noun := ⟨fun n ↦ genderOf n.gender⟩
 
 /-- The article a noun takes in each number; a reduplicated plural keeps the singular's. -/
 def Noun.article (n : Noun) (plural : Bool) : Article :=
@@ -70,8 +91,5 @@ def nin : Noun := ⟨⟨⟨"nin", "man"⟩, .masc, true⟩, "niman", true⟩
 
 /-- The nouns the sources cite. -/
 def allNouns : List Noun := [inan, inan', nin]
-
-/-- The singular article alone distinguishes the two genders. -/
-theorem faithful_article : Function.Injective (Value.article · false) := by decide
 
 end Somali.Gender
