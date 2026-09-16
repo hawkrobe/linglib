@@ -69,8 +69,4 @@ def copak : Particle where
     | .polar, .matrix => some .optional
     | _, _ => none
 
-/-- All Czech PQ particles indexed in this file. -/
-def allParticles : List Particle :=
-  [nahodou, jeste, fakt, vubec, snad, copak]
-
 end Czech.Particles

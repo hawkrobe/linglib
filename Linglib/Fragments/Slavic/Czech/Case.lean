@@ -1,18 +1,20 @@
 import Linglib.Fragments.Slavic.Case
 
 /-!
-# Czech Case Inventory
-[short-1993-czech] [blake-1994]
+# Czech case inventory
 
-Per [short-1993-czech] (p. 466), the full seven cases survive in
-Czech, with VOC morphologically distinct in roughly half the singular
-noun paradigms (NOM-syncretic in plural, adjectives, pronouns,
-numerals). `caseInventory` aliases the shared 6-case core;
-`Slavic.Case.sevenCaseInventory` carries the +VOC form.
+Czech keeps the full seven cases of Slavic: the six-case core and a vocative that is
+morphologically distinct in roughly half the singular noun paradigms and syncretic with the
+nominative elsewhere ([short-1993-czech]).
+
+## References
+
+* [short-1993-czech]
 -/
 
 namespace Czech.Case
 
-abbrev caseInventory : Finset Case := Slavic.Case.coreInventory
+/-- The Czech cases: the seven-case Slavic inventory. -/
+abbrev caseInventory : Finset Case := Slavic.Case.sevenCaseInventory
 
 end Czech.Case

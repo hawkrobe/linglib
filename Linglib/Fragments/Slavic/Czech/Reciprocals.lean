@@ -1,39 +1,37 @@
-import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Reciprocal
 
 /-!
-# Czech Reciprocal Fragment
-[nordlinger-2023] [siloni-2008] [siloni-2012]
+# Czech reciprocals
 
-Czech uses the reflexive clitic "se" for reciprocal meaning (monovalent),
-syntactically formed per [siloni-2008]/[siloni-2012]: it cannot form
-discontinuous reciprocals ([nordlinger-2023] ex. 29, p. 86).
+Czech marks reciprocity with the reflexive clitic *se*, which also carries the reflexive
+reading and yields a monovalent predicate, and with the bipartite periphrasis
+*jeden druhého* 'one the-other' ([nordlinger-2023], [siloni-2012]). A reciprocal marker
+shared with the reflexive beside a dedicated one is the mixed configuration of
+[maslova-nedjalkov-2013] (`ofInventory_markers`).
 
-Alongside "se", Czech has the periphrastic bipartite "jeden druhého"
-('one the-other'), attested in [siloni-2012]'s Czech examples (comparative
-ellipsis, depictives) — so the reciprocal-reflexive relation is the WALS
-"mixed" configuration (WALS Ch 106 itself has no Czech row).
+## References
+
+* [nordlinger-2023]
+* [siloni-2012]
+* [maslova-nedjalkov-2013]
 -/
 
 namespace Czech.Reciprocals
 
 open Reciprocal
 
-/-- se — reflexive/reciprocal clitic ([nordlinger-2023] ex. 29). -/
+/-- *se*, the reflexive clitic in its reciprocal use. -/
 def se : Marker :=
-  { form := "se", strategy := .recipClitic
-  , readings := {.reciprocal, .reflexive} }
+  { form := "se", strategy := .recipClitic, readings := {.reciprocal, .reflexive} }
 
-/-- jeden druhého — bipartite periphrastic reciprocal 'one the-other'
-    ([siloni-2012]'s Czech examples). -/
-def jedenDruheho : Marker :=
-  { form := "jeden druhého", strategy := .bipartiteNP }
+/-- *jeden druhého* 'one the-other', the bipartite periphrastic reciprocal. -/
+def jedenDruheho : Marker := { form := "jeden druhého", strategy := .bipartiteNP }
 
-/-- The periphrastic reciprocal is distinct from the clitic. -/
-theorem bipartite_distinct_from_clitic :
-    jedenDruheho.form ≠ se.form := by decide
-
-/-- Marker inventory, primary strategy first. -/
+/-- The reciprocal markers, primary strategy first. -/
 def markers : List Marker := [se, jedenDruheho]
+
+/-- Czech is the mixed type of [maslova-nedjalkov-2013]: one reciprocal marker is also
+reflexive, the other is not. -/
+theorem ofInventory_markers : ofInventory markers = .mixed := by decide
 
 end Czech.Reciprocals
