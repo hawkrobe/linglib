@@ -1,5 +1,5 @@
 import Linglib.Fragments.Slavic.Czech.Particles
-import Linglib.Fragments.Slavic.Czech.Determiners
+import Linglib.Fragments.Slavic.Czech.PolarityItems
 import Linglib.Semantics.Polarity.CzechNegation
 import Linglib.Semantics.Questions.Bias
 import Linglib.Logic.Modal.Defs
@@ -56,7 +56,6 @@ fix the evidence each reading requires.
 namespace StankovaSimik2025
 
 open Czech.Particles (nahodou copak)
-open Czech.Determiners (zadny nejaky)
 open Czech.Negation
 open Question
 open Simik2024
@@ -108,25 +107,16 @@ inductive Indefinite
   | ppi
   deriving DecidableEq, Repr, Fintype
 
-/-- The determiner entry realizing each indefinite. -/
-def Indefinite.entry : Indefinite → Czech.Determiners.DetEntry
-  | .nci => zadny
-  | .ppi => nejaky
+/-- The lexical entry realizing each indefinite. -/
+def Indefinite.entry : Indefinite → Polarity.Item
+  | .nci => Czech.PolarityItems.zadny
+  | .ppi => Czech.PolarityItems.nejaky
 
-/-- The licensing diagnostic each indefinite tests. -/
-def Indefinite.diagnostic : Indefinite → Diagnostic
-  | .nci => .nciLicensed
-  | .ppi => .ppiOutscoping
-
-/-- Each indefinite tests the diagnostic its lexical entry carries. -/
-theorem indefinite_diagnostic_matches_lexicon (ind : Indefinite) :
-    ind.entry.diagnostic = some ind.diagnostic := by
-  cases ind <;> rfl
-
-/-- The concord item is licensed by inner negation alone, through Agree with the canonical
-operator ([zeijlstra-2004]). -/
-theorem nci_licensed_iff (pos : Position) : licenses pos .nciLicensed = true ↔ pos = .inner := by
-  cases pos <;> decide
+/-- The Table 1 diagnostic an indefinite tests, read off its entry's polarity class: a
+positive polarity item tests whether the negation admits it, a concord item whether the
+negation licenses it. -/
+def Indefinite.diagnostic (ind : Indefinite) : Diagnostic :=
+  if ind.entry.isPPI then .ppiOutscoping else .nciLicensed
 
 /-! ### Bias and felicity -/
 
@@ -156,8 +146,8 @@ instance (wp : VerbPosition) (ctx : ContextualEvidence) :
 available at its verb position licenses the indefinite and admits the context's evidence, and
 the word order admits the evidence. -/
 def Felicitous (wp : VerbPosition) (ind : Indefinite) (ctx : ContextualEvidence) : Prop :=
-  (∃ pos ∈ wp.availableReadings, licenses pos ind.diagnostic = true ∧
-    readingEvidenceOK pos ctx) ∧ wordOrderEvidenceOK wp ctx
+  (∃ pos ∈ wp.availableReadings, pos.Licenses ind.diagnostic ∧ readingEvidenceOK pos ctx) ∧
+    wordOrderEvidenceOK wp ctx
 
 instance (wp : VerbPosition) (ind : Indefinite) (ctx : ContextualEvidence) :
     Decidable (Felicitous wp ind ctx) := by
@@ -206,15 +196,13 @@ theorem falsum_broader_than_english_hiNQ :
 /-- *Náhodou* excludes the concord item at either verb position: the item needs inner
 negation and the particle needs FALSUM (the paper's (17) and (18)). -/
 theorem nahodou_excludes_nci (wp : VerbPosition) :
-    ¬ ∃ pos ∈ wp.availableReadings, licenses pos .nciLicensed = true ∧
-      NahodouLicensed .negative pos := by
+    ¬ ∃ pos ∈ wp.availableReadings, pos.Licenses .nciLicensed ∧ NahodouLicensed .negative pos := by
   cases wp <;> decide
 
 /-- *Náhodou* is felicitous with the polarity item at either verb position, the verb in situ
 being licensed by FALSUM under a contrastive topic. -/
 theorem nahodou_ppi (wp : VerbPosition) :
-    ∃ pos ∈ wp.availableReadings, licenses pos .ppiOutscoping = true ∧
-      NahodouLicensed .negative pos := by
+    ∃ pos ∈ wp.availableReadings, pos.Licenses .ppiOutscoping ∧ NahodouLicensed .negative pos := by
   cases wp <;> decide
 
 /-- *Copak* is felicitous exactly when the context's evidence matches the question's

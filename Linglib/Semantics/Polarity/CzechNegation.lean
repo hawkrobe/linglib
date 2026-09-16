@@ -1,107 +1,127 @@
-import Mathlib.Order.Nat
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Semantics.Questions.Bias
 
 /-!
-# Czech Three-Way Negation: Core Types
+# Negation positions in Czech polar questions
 
-The three-way negation distinction in Czech polar questions
-([stankova-2026]): the LF positions, the Table 1 diagnostics that
-fingerprint them, and their evidential bias strengths. Kept free of
-lexical entries so that Fragment files can reference these types
-without importing them. NCI licensing by Agree follows [zeijlstra-2004].
+[stankova-2026] distinguishes three LF positions for the negative prefix of a Czech polar
+question, inner (TP), medial (ModP) and outer (PolP), ordered by scope width, and
+fingerprints them by the polarity items and particles each admits (her Table 1). This file
+provides the positions, the diagnostics, the table as the set of diagnostics each position
+licenses, and the evidential bias strength of each position. The lexical entries live in the
+Czech fragments.
+
+## Main declarations
+
+* `Position` — the three negation positions, linearly ordered by scope width.
+* `Diagnostic` — the five Table 1 diagnostics.
+* `Position.licensed`, `Position.Licenses` — Table 1 as the set of diagnostics a position
+  licenses, and its membership predicate.
+* `Position.licensed_injective` — the table fingerprints the positions.
+* `Position.licenses_nciLicensed_iff` and its siblings — each column characterized by scope:
+  the two polarity columns test whether negation is propositional, and are complementary.
+* `Position.biasStrength` — the evidential bias strength of each position.
+
+## References
+
+* [stankova-2026]
+* [zeijlstra-2004]
 -/
 
 namespace Czech.Negation
 
 open Question
 
-/-- The three LF positions for negation in Czech PQs ([stankova-2026], her (16)).
-
-  [CP... [PolP ne- [ModP ne- [TP ne-]]]]
-              OUTER MEDIAL INNER
--/
+/-- The LF positions of negation in a Czech polar question, ordered by scope width: inner
+negation in TP is propositional negation, medial negation in ModP scopes over the evidential
+modal, and outer negation in PolP is the commitment operator FALSUM ([stankova-2026]). -/
 inductive Position where
-  /-- Inner negation: in TP, propositional ¬p. Narrow scope.
-      Licenses NCIs by Agree, licenses NPIs. Standard sentential negation. -/
+  /-- Inner negation: propositional ¬p in TP, licensing negative concord items by Agree
+      ([zeijlstra-2004]). -/
   | inner
-  /-- Medial negation: in ModP, scopes over □_ev. Wide scope but syntactically low.
-      Non-propositional: part of evidential bias presupposition. -/
+  /-- Medial negation: over the evidential modal in ModP, part of the bias presupposition. -/
   | medial
-  /-- Outer negation: in PolP, FALSUM operator. Widest scope.
-      Maps to high negation (VSO word order). Obligatorily focused. -/
+  /-- Outer negation: FALSUM in PolP, high negation with obligatory focus. -/
   | outer
   deriving DecidableEq, Repr, Fintype
 
-/-- Numeric embedding: inner ↦ 0, medial ↦ 1, outer ↦ 2 (by scope width). -/
-def Position.toNat : Position → Nat
-  | .inner  => 0
-  | .medial => 1
-  | .outer  => 2
-
-instance : LinearOrder Position :=
-  LinearOrder.lift' Position.toNat
-    (fun a b h => by cases a <;> cases b <;> simp_all [Position.toNat])
-
-/-- Diagnostics that distinguish the three negation readings (Table 1). -/
+/-- The Table 1 diagnostics of a negation position. -/
 inductive Diagnostic where
-  /-- ne- outscopes a PPI like *nějaký* 'some.DET.PPI' -/
+  /-- The negation admits a positive polarity item like *nějaký* 'some' in its scope. -/
   | ppiOutscoping
-  /-- Negative concord item like *žádný* 'no.DET.NCI' is licensed -/
+  /-- The negation licenses a negative concord item like *žádný* 'no'. -/
   | nciLicensed
-  /-- Particle *náhodou* 'by chance' is compatible -/
+  /-- The particle *náhodou* 'by chance' is compatible. -/
   | nahodou
-  /-- Particle *ještě* 'yet/still' is compatible (with telic predicates + neg) -/
+  /-- The particle *ještě* 'yet, still' is compatible. -/
   | jeste
-  /-- Particle *fakt* 'really' is compatible -/
+  /-- The particle *fakt* 'really' is compatible. -/
   | fakt
   deriving DecidableEq, Repr, Fintype
 
-/-- [stankova-2026]'s Table 1: compatibility of each negation reading
-with polarity items and particles.
+namespace Position
 
-This is the core empirical fingerprint: each negation position has a unique
-Boolean signature across the five diagnostics. -/
-def licenses : Position → Diagnostic → Bool
-  | .outer,  .ppiOutscoping => true
-  | .outer,  .nciLicensed   => false
-  | .outer,  .nahodou       => true
-  | .outer,  .jeste         => false
-  | .outer,  .fakt          => false
-  | .medial, .ppiOutscoping => true
-  | .medial, .nciLicensed   => false
-  | .medial, .nahodou       => false
-  | .medial, .jeste         => false
-  | .medial, .fakt          => true
-  | .inner,  .ppiOutscoping => false
-  | .inner,  .nciLicensed   => true
-  | .inner,  .nahodou       => false
-  | .inner,  .jeste         => true
-  | .inner,  .fakt          => true
+/-- Scope width: inner ↦ 0, medial ↦ 1, outer ↦ 2. -/
+def toNat : Position → ℕ
+  | .inner => 0
+  | .medial => 1
+  | .outer => 2
 
-/-- Each Position has a unique 5-bit diagnostic signature.
-    This is the formal statement that the diagnostic table (Table 1)
-    distinguishes all three negation readings. -/
-theorem licenses_injective :
-    Function.Injective (fun pos => fun d => licenses pos d) := by
-  intro a b h
-  have h1 : licenses a .nciLicensed = licenses b .nciLicensed := congr_fun h _
-  have h2 : licenses a .nahodou = licenses b .nahodou := congr_fun h _
-  have h3 : licenses a .fakt = licenses b .fakt := congr_fun h _
-  cases a <;> cases b <;> simp_all [licenses]
+instance : LinearOrder Position :=
+  LinearOrder.lift' toNat fun a b h => by cases a <;> cases b <;> simp_all [toNat]
 
-/-- Evidential bias strength of a negation position — inner strong,
-medial weak, outer none, FALSUM being epistemic-bias-based
-([stankova-2026] §3.1). -/
-def Position.biasStrength : Position → EvidentialBiasStrength
-  | .inner  => .strong
+/-! ### Table 1 -/
+
+/-- [stankova-2026]'s Table 1: the diagnostics each negation position licenses. -/
+def licensed : Position → Finset Diagnostic
+  | .inner => {.nciLicensed, .jeste, .fakt}
+  | .medial => {.ppiOutscoping, .fakt}
+  | .outer => {.ppiOutscoping, .nahodou}
+
+/-- A cell of Table 1: the position licenses the diagnostic. -/
+abbrev Licenses (pos : Position) (d : Diagnostic) : Prop := d ∈ pos.licensed
+
+/-- Table 1 fingerprints the positions: no two license the same diagnostics. -/
+theorem licensed_injective : Function.Injective licensed := by decide
+
+variable {pos : Position}
+
+/-- Only propositional negation licenses a concord item, by Agree with the operator. -/
+theorem licenses_nciLicensed_iff : pos.Licenses .nciLicensed ↔ pos = .inner := by
+  cases pos <;> decide
+
+/-- Every non-propositional negation admits a positive polarity item. -/
+theorem licenses_ppiOutscoping_iff : pos.Licenses .ppiOutscoping ↔ pos ≠ .inner := by
+  cases pos <;> decide
+
+/-- The two polarity columns are complementary: both test whether negation is
+propositional. -/
+theorem licenses_ppiOutscoping_iff_not_nciLicensed :
+    pos.Licenses .ppiOutscoping ↔ ¬ pos.Licenses .nciLicensed := by
+  rw [licenses_ppiOutscoping_iff, licenses_nciLicensed_iff]
+
+/-- *Náhodou* singles out FALSUM. -/
+theorem licenses_nahodou_iff : pos.Licenses .nahodou ↔ pos = .outer := by
+  cases pos <;> decide
+
+/-- *Ještě* singles out propositional negation. -/
+theorem licenses_jeste_iff : pos.Licenses .jeste ↔ pos = .inner := by
+  cases pos <;> decide
+
+/-- *Fakt* is repelled by FALSUM alone. -/
+theorem licenses_fakt_iff : pos.Licenses .fakt ↔ pos ≠ .outer := by
+  cases pos <;> decide
+
+/-! ### Bias -/
+
+/-- The evidential bias strength of a negation position: inner strong, medial weak, outer
+none, FALSUM conveying epistemic rather than evidential bias ([stankova-2026]). -/
+def biasStrength : Position → EvidentialBiasStrength
+  | .inner => .strong
   | .medial => .weak
-  | .outer  => .none_
+  | .outer => .none_
 
-/-- Scope ordering: inner < medial < outer. -/
-theorem inner_lt_medial : Position.inner < .medial := by decide
-theorem medial_lt_outer : Position.medial < .outer := by decide
-theorem inner_lt_outer : Position.inner < .outer := by decide
+end Position
 
 end Czech.Negation

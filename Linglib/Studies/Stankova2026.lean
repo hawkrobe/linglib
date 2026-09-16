@@ -13,8 +13,8 @@ import Linglib.Data.Examples.StankovaSimik2025
 [stankova-2026] proposes that negation in Czech polar questions occupies
 three LF positions (her (16)) — outer (PolP), medial (ModP), inner (TP)
 — fingerprinted by polarity items and the diagnostic particles
-*náhodou* / *ještě* / *fakt* (her Table 1, encoded as the substrate's
-`licenses`):
+*náhodou* / *ještě* / *fakt* (her Table 1, the substrate's
+`Position.licensed`):
 
 | Position | ne- > PPI | NCI | náhodou | ještě | fakt |
 |----------|-----------|-----|---------|-------|------|
@@ -24,8 +24,8 @@ three LF positions (her (16)) — outer (PolP), medial (ModP), inner (TP)
 
 ## Main results
 
-* `signatures_distinct`, `particle_signatures_distinct` — the Table 1
-  columns jointly fingerprint the three positions.
+* `particle_signatures_distinct` — the three particle columns alone
+  fingerprint the three positions.
 * `nahodou_identifies_outer`, `jeste_identifies_inner`,
   `fakt_plus_no_jeste_identifies_medial` — per-particle pinning.
 * `instance Distributed Particle Position` — Table 1 as a licensing
@@ -44,32 +44,6 @@ three LF positions (her (16)) — outer (PolP), medial (ModP), inner (TP)
 namespace Stankova2026
 
 open Czech.Negation
-
-/-! ### Table 1 fingerprints -/
-
-/-- The Boolean signature of a negation position across the five
-Table 1 diagnostics. -/
-def signature (pos : Position) : List Bool :=
-  [ licenses pos .ppiOutscoping
-  , licenses pos .nciLicensed
-  , licenses pos .nahodou
-  , licenses pos .jeste
-  , licenses pos .fakt ]
-
-/-- Each negation position has a unique diagnostic signature — the
-empirical basis for the three-way distinction. -/
-theorem signatures_distinct :
-    signature .outer ≠ signature .medial ∧
-    signature .outer ≠ signature .inner ∧
-    signature .medial ≠ signature .inner := by
-  refine ⟨?_, ?_, ?_⟩ <;> (unfold signature licenses; decide)
-
-/-- Only inner negation licenses NCIs: the Agree relation with `¬`
-requires LF c-command, and medial and outer negation are too high
-([stankova-2026] (6), (10)). -/
-theorem only_inner_licenses_nci :
-    ∀ p : Position, licenses p .nciLicensed = true → p = .inner := by
-  intro p h; cases p <;> simp_all [licenses]
 
 /-! ### The diagnostic particles ([stankova-2026] §2.2, Table 1)
 
@@ -104,40 +78,36 @@ def diagnostic? (p : Particle) : Option Diagnostic :=
 context like clause type and embedding. -/
 instance : Distributed Particle Position :=
   ⟨fun p pos => (diagnostic? p).map fun d =>
-    if licenses pos d then .optional else .excluded⟩
+    if pos.Licenses d then .optional else .excluded⟩
 
-/-- Table 1 compatibility of a particle with a negation position, when
-the particle carries a diagnostic. -/
-def compatibleWith? (p : Particle) (pos : Position) : Option Bool :=
-  (diagnostic? p).map (licenses pos)
+/-- Table 1 compatibility of a particle with a negation position: the position licenses
+the particle's diagnostic, vacuously for a particle outside the table. -/
+def Compatible (p : Particle) (pos : Position) : Prop :=
+  ∀ d ∈ diagnostic? p, pos.Licenses d
+
+instance (p : Particle) (pos : Position) : Decidable (Compatible p pos) := by
+  unfold Compatible; infer_instance
 
 example : Distributed.LicensedIn nahodou Position.outer := by decide
 
 /-- *náhodou* uniquely identifies outer negation. -/
-theorem nahodou_identifies_outer :
-    ∀ pos : Position, compatibleWith? nahodou pos = some true → pos = .outer := by
-  intro pos; cases pos <;> decide
+theorem nahodou_identifies_outer (pos : Position) : Compatible nahodou pos → pos = .outer := by
+  cases pos <;> decide
 
 /-- *ještě* uniquely identifies inner negation. -/
-theorem jeste_identifies_inner :
-    ∀ pos : Position, compatibleWith? jeste pos = some true → pos = .inner := by
-  intro pos; cases pos <;> decide
+theorem jeste_identifies_inner (pos : Position) : Compatible jeste pos → pos = .inner := by
+  cases pos <;> decide
 
 /-- *fakt* accepted while *ještě* is rejected identifies medial
 negation. -/
-theorem fakt_plus_no_jeste_identifies_medial :
-    ∀ pos : Position,
-      compatibleWith? fakt pos = some true ∧ compatibleWith? jeste pos = some false →
-      pos = .medial := by
-  intro pos; cases pos <;> decide
+theorem fakt_plus_no_jeste_identifies_medial (pos : Position) :
+    Compatible fakt pos ∧ ¬ Compatible jeste pos → pos = .medial := by
+  cases pos <;> decide
 
 /-- The three Table 1 particles jointly fingerprint the three negation
 positions. -/
-theorem particle_signatures_distinct :
-    ∀ pos pos' : Position,
-      (∀ p ∈ [nahodou, jeste, fakt], compatibleWith? p pos = compatibleWith? p pos') →
-      pos = pos' := by
-  intro pos pos' h
+theorem particle_signatures_distinct (pos pos' : Position)
+    (h : ∀ p ∈ [nahodou, jeste, fakt], Compatible p pos ↔ Compatible p pos') : pos = pos' := by
   have h1 := h nahodou (by simp)
   have h2 := h jeste (by simp [jeste])
   have h3 := h fakt (by simp [fakt])
@@ -174,9 +144,12 @@ def Position.toPQForm : Position → PQForm
 
 /-- Only outer negation (FALSUM) is obligatorily focused
 ([stankova-2026] §3.2). -/
-def Position.requiresFocus : Position → Bool
-  | .outer => true
-  | .medial | .inner => false
+def Position.RequiresFocus : Position → Prop
+  | .outer => True
+  | .medial | .inner => False
+
+instance : DecidablePred Position.RequiresFocus := fun pos => by
+  cases pos <;> unfold Position.RequiresFocus <;> infer_instance
 
 /-- Verb position realizing a negation position: outer is V1, inner and
 medial are nonV1. -/
@@ -211,14 +184,13 @@ signatures. -/
 theorem czech_refines_loNQ :
     Position.inner.toPQForm = Position.medial.toPQForm ∧
     Position.inner.biasStrength ≠ Position.medial.biasStrength ∧
-    signature .inner ≠ signature .medial :=
-  ⟨rfl, by decide, by (unfold signature licenses; decide)⟩
+    Position.inner.licensed ≠ Position.medial.licensed :=
+  ⟨rfl, by decide, by decide⟩
 
 /-- Obligatory focus singles out outer negation ([stankova-2026]
 §3.2). -/
-theorem only_outer_requires_focus :
-    ∀ p : Position, p.requiresFocus = true → p = .outer := by
-  intro p h; cases p <;> simp_all [Position.requiresFocus]
+theorem only_outer_requires_focus (p : Position) : p.RequiresFocus → p = .outer := by
+  cases p <;> simp [Position.RequiresFocus]
 
 /-- Czech outer negation is a HiNQ with mandatory original bias for p,
 matching [romero-2024]'s Table 1. -/
@@ -280,8 +252,7 @@ def analyzedExamples : List (LinguisticExample × Position × Diagnostic) :=
 licensed at the example's negation position iff the example is
 acceptable. -/
 theorem examples_match_table1 :
-    analyzedExamples.all (fun (e, pos, d) =>
-      (e.judgment == .acceptable) == licenses pos d) = true := by decide
+    ∀ x ∈ analyzedExamples, x.1.judgment = .acceptable ↔ x.2.1.Licenses x.2.2 := by decide
 
 /-- [stankova-2025]'s positive-evidence stimulus ((14): V1 negative PQ
 after evidence for p) with the bias-profile cell it occupies. -/
@@ -292,8 +263,8 @@ def biasCheckedExamples :
 /-- The bias profile predicts the positive-evidence stimulus — the form
 is felicitous iff it appears in its evidence × original-bias cell. -/
 theorem bias_examples_match_profile :
-    biasCheckedExamples.all (fun (e, ev, ob, f) =>
-      (e.judgment == .acceptable) == decide (f ∈ czechBiasProfile ev ob)) = true := by
+    ∀ x ∈ biasCheckedExamples,
+      x.1.judgment = .acceptable ↔ x.2.2.2 ∈ czechBiasProfile x.2.1 x.2.2.1 := by
   decide
 
 end Stankova2026
