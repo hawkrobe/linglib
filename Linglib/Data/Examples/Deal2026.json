@@ -1,0 +1,1333 @@
+[
+  {
+    "id": "deal2026_28a",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(28a)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "’Aayat hi-llooy-ca-∅ yox̂ ke ma-may’ac hi-pa-paay-n-∅.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "’Aayat",
+        "woman.nom"
+      ],
+      [
+        "hi-llooy-ca-∅",
+        "3subj-be.happy-imperf-pres"
+      ],
+      [
+        "yox̂",
+        "rp.nom"
+      ],
+      [
+        "ke",
+        "CĀ"
+      ],
+      [
+        "ma-may’ac",
+        "pl-child"
+      ],
+      [
+        "hi-pa-paay-n-∅",
+        "3subj-S.pl-arrive-p-pres"
+      ]
+    ],
+    "translation": "The woman is happy that the children arrived.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "’Aayat hi-llooy-ca-∅ ma-may’ac hi-pa-paay-n-∅.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "lilooy"
+      ],
+      [
+        "edge",
+        "yoxKe"
+      ],
+      [
+        "diagnostic",
+        "edge"
+      ]
+    ],
+    "comment": "The relative pronoun and complementizer are obligatory, *(yox̂ ke).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_28b",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(28b)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "pro cicwaay-ca-∅ yox̂ ke pro kuleewit-nix hi-paay-no’.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pro",
+        "1sg"
+      ],
+      [
+        "cicwaay-ca-∅",
+        "be.surprised-imperf-pres"
+      ],
+      [
+        "yox̂",
+        "rp.nom"
+      ],
+      [
+        "ke",
+        "CĀ"
+      ],
+      [
+        "pro",
+        "3sg"
+      ],
+      [
+        "kuleewit-nix",
+        "evening-emph"
+      ],
+      [
+        "hi-paay-no’",
+        "3subj-arrive-prosp"
+      ]
+    ],
+    "translation": "I’m surprised that he/she will arrive very late at night.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "pro cicwaay-ca-∅ pro kuleewit-nix hi-paay-no’.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "cicwaay"
+      ],
+      [
+        "edge",
+        "yoxKe"
+      ],
+      [
+        "diagnostic",
+        "edge"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_27b",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(27b)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "pro hi-’etqew-ce-∅ yox̂ ke-x ’iin wixne-tet’ee-se-∅.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pro",
+        "3sg"
+      ],
+      [
+        "hi-’etqew-ce-∅",
+        "3subj-be.sad-imperf-pres"
+      ],
+      [
+        "yox̂",
+        "rp.nom"
+      ],
+      [
+        "ke-x",
+        "CĀ-1"
+      ],
+      [
+        "’iin",
+        "1sg.nom"
+      ],
+      [
+        "wixne-tet’ee-se-∅",
+        "leave-gonna-imperf-pres"
+      ]
+    ],
+    "translation": "He’s sad that I’m going to leave.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "’etqew"
+      ],
+      [
+        "edge",
+        "yoxKe"
+      ],
+      [
+        "diagnostic",
+        "edge"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_27d",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(27d)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "’Aayat hi-tmiipni-se-∅ yox̂ ke pro hi-pa-paay-n-a.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "’Aayat",
+        "woman.nom"
+      ],
+      [
+        "hi-tmiipni-se-∅",
+        "3subj-remember-imperf-pres"
+      ],
+      [
+        "yox̂",
+        "rp.nom"
+      ],
+      [
+        "ke",
+        "CĀ"
+      ],
+      [
+        "pro",
+        "3pl"
+      ],
+      [
+        "hi-pa-paay-n-a",
+        "3subj-S.pl-arrive-p-rem.past"
+      ]
+    ],
+    "translation": "The woman remembers that they arrived.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "timiipni"
+      ],
+      [
+        "edge",
+        "yoxKe"
+      ],
+      [
+        "diagnostic",
+        "edge"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_27e_eeys",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(27e)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "pro he-’eey’s-ce-∅ yox̂ ke pro hi-pa-paay-n-∅.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pro",
+        "3sg"
+      ],
+      [
+        "he-’eey’s-ce-∅",
+        "3subj-be.joyful-imperf-pres"
+      ],
+      [
+        "yox̂",
+        "rp.nom"
+      ],
+      [
+        "ke",
+        "CĀ"
+      ],
+      [
+        "pro",
+        "3pl"
+      ],
+      [
+        "hi-pa-paay-n-∅",
+        "3subj-S.pl-arrive-p-pres"
+      ]
+    ],
+    "translation": "She’s joyful/bothered/worried that they arrived.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "’eey’s"
+      ],
+      [
+        "edge",
+        "yoxKe"
+      ],
+      [
+        "diagnostic",
+        "edge"
+      ]
+    ],
+    "comment": "One of the three predicates (27e) gives with one embedded clause.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_27e_qeese",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(27e)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "pro hi-q’eese’-ce-∅ yox̂ ke pro hi-pa-paay-n-∅.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pro",
+        "3sg"
+      ],
+      [
+        "hi-q’eese’-ce-∅",
+        "3subj-be.bothered-imperf-pres"
+      ],
+      [
+        "yox̂",
+        "rp.nom"
+      ],
+      [
+        "ke",
+        "CĀ"
+      ],
+      [
+        "pro",
+        "3pl"
+      ],
+      [
+        "hi-pa-paay-n-∅",
+        "3subj-S.pl-arrive-p-pres"
+      ]
+    ],
+    "translation": "She’s joyful/bothered/worried that they arrived.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "q’eese’"
+      ],
+      [
+        "edge",
+        "yoxKe"
+      ],
+      [
+        "diagnostic",
+        "edge"
+      ]
+    ],
+    "comment": "One of the three predicates (27e) gives with one embedded clause.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_27e_timneeneki",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(27e)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "pro hi-tim’neenek-se-∅ yox̂ ke pro hi-pa-paay-n-∅.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pro",
+        "3sg"
+      ],
+      [
+        "hi-tim’neenek-se-∅",
+        "3subj-be.worried-imperf-pres"
+      ],
+      [
+        "yox̂",
+        "rp.nom"
+      ],
+      [
+        "ke",
+        "CĀ"
+      ],
+      [
+        "pro",
+        "3pl"
+      ],
+      [
+        "hi-pa-paay-n-∅",
+        "3subj-S.pl-arrive-p-pres"
+      ]
+    ],
+    "translation": "She’s joyful/bothered/worried that they arrived.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "tim’neeneki"
+      ],
+      [
+        "edge",
+        "yoxKe"
+      ],
+      [
+        "diagnostic",
+        "edge"
+      ]
+    ],
+    "comment": "One of the three predicates (27e) gives with one embedded clause.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_41a",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(41a)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Naaqc-nim qiiwn-e pe-’eey’s-ce-∅.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Naaqc-nim",
+        "one-erg"
+      ],
+      [
+        "qiiwn-e",
+        "old.man-acc"
+      ],
+      [
+        "pe-’eey’s-ce-∅",
+        "3/3-be.joyful-imperf-pres"
+      ]
+    ],
+    "translation": "Someone is joyful about the old man.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "’eey’s"
+      ],
+      [
+        "diagnostic",
+        "nominalComplement"
+      ]
+    ],
+    "comment": "Intended reading; an RE predicate takes no nominal complement.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_41b",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(41b)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "pro he-’eey’s-ce-∅ titwaatit.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pro",
+        "3sg"
+      ],
+      [
+        "he-’eey’s-ce-∅",
+        "3subj-be.joyful-imperf-pres"
+      ],
+      [
+        "titwaatit",
+        "story.nom"
+      ]
+    ],
+    "translation": "S/he is joyful about a story.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "’eey’s"
+      ],
+      [
+        "diagnostic",
+        "nominalComplement"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_42a",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(42a)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Qe’ciyeew’yew’ yox̂ ke-m pro tamtaayn-im pro.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Qe’ciyeew’yew’",
+        "thank.you"
+      ],
+      [
+        "yox̂",
+        "rp.nom"
+      ],
+      [
+        "ke-m",
+        "CĀ-2"
+      ],
+      [
+        "pro",
+        "2sg"
+      ],
+      [
+        "tamtaayn-im",
+        "tell.news-cisloc"
+      ],
+      [
+        "pro",
+        "1sg"
+      ]
+    ],
+    "translation": "Thank you for informing me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "qe’ciyeew’yew’"
+      ],
+      [
+        "edge",
+        "yoxKe"
+      ],
+      [
+        "diagnostic",
+        "edge"
+      ]
+    ],
+    "comment": "An unanalyzable particle, not a verb (fn. 16, §4).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_42b",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(42b)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Qe’ciyeew’yew’ hipt.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Qe’ciyeew’yew’",
+        "thank.you"
+      ],
+      [
+        "hipt",
+        "food.nom"
+      ]
+    ],
+    "translation": "Thank you for the food.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {
+        "form": "Qe’ciyeew’yew’ tamtaayn.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "qe’ciyeew’yew’"
+      ],
+      [
+        "diagnostic",
+        "nominalComplement"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_47a",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(47a)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "pro ’a-w-caa-qa ’in-lawtiwaa-na hi-weeqi-yu’.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pro",
+        "1sg"
+      ],
+      [
+        "’a-w-caa-qa",
+        "3obj-say-imperf-rec.past"
+      ],
+      [
+        "’in-lawtiwaa-na",
+        "1sg-friend-acc"
+      ],
+      [
+        "hi-weeqi-yu’",
+        "3subj-rain-prosp"
+      ]
+    ],
+    "translation": "I told my friend it is going to rain.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "pro ’a-w-caa-qa ’in-lawtiwaa-na yox̂ ke hi-weeqi-yu’.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "hi"
+      ],
+      [
+        "edge",
+        "bare"
+      ],
+      [
+        "diagnostic",
+        "edge"
+      ]
+    ],
+    "comment": "The relative morphology is excluded, (*yox̂ ke); the addressee is accusative.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_47b",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(47b)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "pro ’ew-∅-ce-ne ’in-lawtiwaa-na tamtaay-ki.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pro",
+        "1sg"
+      ],
+      [
+        "’ew-∅-ce-ne",
+        "3obj-say-imperf-rem.past"
+      ],
+      [
+        "’in-lawtiwaa-na",
+        "1sg-friend-acc"
+      ],
+      [
+        "tamtaay-ki",
+        "news-inst"
+      ]
+    ],
+    "translation": "I told my friend about the news.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "hi"
+      ],
+      [
+        "diagnostic",
+        "aboutPP"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_48a",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(48a)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "pro hi-neki-se-∅ hi-waaqi-sa-qa watiisx.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pro",
+        "3sg"
+      ],
+      [
+        "hi-neki-se-∅",
+        "3subj-think-pres"
+      ],
+      [
+        "hi-waaqi-sa-qa",
+        "3subj-rain-imperf-rec.past"
+      ],
+      [
+        "watiisx",
+        "one.day.away"
+      ]
+    ],
+    "translation": "She thinks it was raining yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "pro hi-neki-se-∅ yox̂ ke hi-waaqi-sa-qa watiisx.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "neki"
+      ],
+      [
+        "edge",
+        "bare"
+      ],
+      [
+        "diagnostic",
+        "edge"
+      ]
+    ],
+    "comment": "Repeated as (65a).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_48b",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(48b)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "pro neki-se-∅ kimti tamtaay-ki.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pro",
+        "1sg"
+      ],
+      [
+        "neki-se-∅",
+        "think-imperf-pres"
+      ],
+      [
+        "kimti",
+        "new"
+      ],
+      [
+        "tamtaay-ki",
+        "news-inst"
+      ]
+    ],
+    "translation": "I’m thinking about the latest news.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "neki"
+      ],
+      [
+        "diagnostic",
+        "aboutPP"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_65b",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(65b)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "pro hi-i-caa-qa watiisx hi-weeqi-∅-ye.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "pro",
+        "3sg"
+      ],
+      [
+        "hi-i-caa-qa",
+        "3subj-say-imperf-rec.past"
+      ],
+      [
+        "watiisx",
+        "one.day.away"
+      ],
+      [
+        "hi-weeqi-∅-ye",
+        "3subj-rain-p-rem.past"
+      ]
+    ],
+    "translation": "She said it rained yesterday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "pro hi-i-caa-qa yox̂ ke watiisx hi-weeqi-∅-ye.",
+        "judgment": "ungrammatical"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "hi"
+      ],
+      [
+        "edge",
+        "bare"
+      ],
+      [
+        "diagnostic",
+        "edge"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_66a",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(66a)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Waaqo’ pro hi-cuukwe-ce-∅ hi-weeqi-se-∅.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Waaqo’",
+        "now"
+      ],
+      [
+        "pro",
+        "3sg"
+      ],
+      [
+        "hi-cuukwe-ce-∅",
+        "3subj-know-imperf-pres"
+      ],
+      [
+        "hi-weeqi-se-∅",
+        "3subj-rain-imperf-pres"
+      ]
+    ],
+    "translation": "Now she knows it’s raining.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "cuukwe"
+      ],
+      [
+        "edge",
+        "bare"
+      ],
+      [
+        "diagnostic",
+        "edge"
+      ]
+    ],
+    "comment": "Simplex embedding under ‘know’ is extremely well documented.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_66b",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(66b)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Weet’u pro hi-cuukwe-ce-∅ yox̂ ke hi-weeqi-sa-qa watiisx.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Weet’u",
+        "neg"
+      ],
+      [
+        "pro",
+        "3sg"
+      ],
+      [
+        "hi-cuukwe-ce-∅",
+        "3subj-know-imperf-pres"
+      ],
+      [
+        "yox̂",
+        "rp.nom"
+      ],
+      [
+        "ke",
+        "CĀ"
+      ],
+      [
+        "hi-weeqi-sa-qa",
+        "3subj-rain-imperf-rec.past"
+      ],
+      [
+        "watiisx",
+        "one.day.away"
+      ]
+    ],
+    "translation": "She doesn’t know it was raining yesterday.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "cuukwe"
+      ],
+      [
+        "edge",
+        "yoxKe"
+      ],
+      [
+        "diagnostic",
+        "edge"
+      ],
+      [
+        "diacritic",
+        "%"
+      ]
+    ],
+    "comment": "Marked %: consultants did on rare occasions accept an RE with ‘know’, and once produced one.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_33",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(33)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Weet’u ’in-haama hi-llooy-ca-∅ yox̂ ke Fido hi-ckiliitoq-∅-a.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Weet’u",
+        "neg"
+      ],
+      [
+        "’in-haama",
+        "1sg-husband.nom"
+      ],
+      [
+        "hi-llooy-ca-∅",
+        "3subj-be.happy-imperf-pres"
+      ],
+      [
+        "yox̂",
+        "rp.nom"
+      ],
+      [
+        "ke",
+        "CĀ"
+      ],
+      [
+        "Fido",
+        "Fido.nom"
+      ],
+      [
+        "hi-ckiliitoq-∅-a",
+        "3subj-go.back-p-rem.past"
+      ]
+    ],
+    "translation": "My husband isn’t happy that Fido went back.",
+    "context": "Asked whether the dog went back, the consultant answers yes.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "lilooy"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "negation"
+      ],
+      [
+        "inference",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_34",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(34)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Weet’u ’in-haama hi-tim’neenek-se-∅ yox̂ ke kimti ciq’aamqal hi-wahoo-tato.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Weet’u",
+        "neg"
+      ],
+      [
+        "’in-haama",
+        "1sg-husband.nom"
+      ],
+      [
+        "hi-tim’neenek-se-∅",
+        "3subj-be.worried-imperf-pres"
+      ],
+      [
+        "yox̂",
+        "rp.nom"
+      ],
+      [
+        "ke",
+        "CĀ"
+      ],
+      [
+        "kimti",
+        "new"
+      ],
+      [
+        "ciq’aamqal",
+        "dog.nom"
+      ],
+      [
+        "hi-wahoo-tato",
+        "3subj-howl-hab.pres"
+      ]
+    ],
+    "translation": "My husband isn’t worried that the new dog howls.",
+    "context": "Asked whether the dog is a howler, the consultant answers that it is.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "tim’neeneki"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "negation"
+      ],
+      [
+        "inference",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_35",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(35)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Weet’u pro hi-neki-se-∅ watiisx hi-weeqi-yu’.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Weet’u",
+        "neg"
+      ],
+      [
+        "pro",
+        "3sg"
+      ],
+      [
+        "hi-neki-se-∅",
+        "3subj-think-imperf-pres"
+      ],
+      [
+        "watiisx",
+        "one.day.away"
+      ],
+      [
+        "hi-weeqi-yu’",
+        "3subj-rain-prosp"
+      ]
+    ],
+    "translation": "S/he doesn’t think it’s going to rain tomorrow.",
+    "context": "Asked whether it was going to rain the next day, the consultant answers no.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "neki"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "negation"
+      ],
+      [
+        "inference",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_36",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(36)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "Weet Angel hi-neki-se-∅ hiteemenew’eet hi-pe-kuu-∅-ye Siminikem-x?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Weet",
+        "y.n"
+      ],
+      [
+        "Angel",
+        "Angel.nom"
+      ],
+      [
+        "hi-neki-se-∅",
+        "3subj-think-imperf-pres"
+      ],
+      [
+        "hiteemenew’eet",
+        "student.nom"
+      ],
+      [
+        "hi-pe-kuu-∅-ye",
+        "3subj-S.pl-go-p-rem.past"
+      ],
+      [
+        "Siminikem-x",
+        "Lewiston-to"
+      ]
+    ],
+    "translation": "Does Angel think the students went to Lewiston?",
+    "context": "Asked about the students, the consultant does not know whether they went.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "neki"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "question"
+      ],
+      [
+        "inference",
+        "no"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "deal2026_68",
+    "source": {
+      "bibkey": "deal-2026",
+      "paperLabel": "(68)"
+    },
+    "reportedIn": null,
+    "language": "nezp1238",
+    "primaryText": "C’alawi sepehiteemenew’eet hi-cuukwe-ce-∅ ’iin k’oomay-ca-∅ weet’u pro hi-cewcew-nuu-yu’-kum pro.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "C’alawi",
+        "if"
+      ],
+      [
+        "sepehiteemenew’eet",
+        "teacher.nom"
+      ],
+      [
+        "hi-cuukwe-ce-∅",
+        "3subj-know-imperf-pres"
+      ],
+      [
+        "’iin",
+        "1sg.nom"
+      ],
+      [
+        "k’oomay-ca-∅",
+        "be.sick-imperf-pres"
+      ],
+      [
+        "weet’u",
+        "neg"
+      ],
+      [
+        "pro",
+        "3sg"
+      ],
+      [
+        "hi-cewcew-nuu-yu’-kum",
+        "3subj-call-appl-prosp-cis"
+      ],
+      [
+        "pro",
+        "1sg"
+      ]
+    ],
+    "translation": "If the teacher knows that I am sick, she won’t call me.",
+    "context": "Asked whether that person was ill, the consultant answers that they would think so.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "verb",
+        "cuukwe"
+      ],
+      [
+        "diagnostic",
+        "projection"
+      ],
+      [
+        "environment",
+        "conditional"
+      ],
+      [
+        "inference",
+        "yes"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
