@@ -35,9 +35,9 @@ namespace Lakhota.Determiners
     anaphoric-only definite *k'uŋ*, and the specific indefinite *waŋ*. -/
 def inventory : Determiner.Inventory :=
   [ .article { form := "kiŋ", definiteness := .definite, exponent := .dedicatedMorpheme,
-               uses := [.immediateSituation, .largerSituation, .anaphoric] },
+               uses := {.immediateSituation, .largerSituation, .anaphoric} },
     .article { form := "k'uŋ", definiteness := .definite, exponent := .dedicatedMorpheme,
-               uses := [.anaphoric] },
+               uses := {.anaphoric} },
     .article { form := "waŋ", definiteness := .indefinite, exponent := .dedicatedMorpheme } ]
 
 /-- Lakhota derives the `.generallyMarked` Moroney cell: *kiŋ* syncretically

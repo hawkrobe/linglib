@@ -4,10 +4,11 @@ import Linglib.Syntax.Category.Determiner.Basic
 # ASL quantifier signs
 
 The quantificational signs of American Sign Language attested with locus and height
-modification in [davidson-gagne-2022], as marked `Quantifier` records under the ASL Signbank
-ID glosses: `FS(ALL)` is the fingerspelled universal, `ALL-b` its two-handed form, `NONEsym`
-the symmetrical negative quantifier. Which of them carry a height-marked locus themselves and
-which take a following `IX-arc` is a matter of their phonological form and is classified in the
+modification in [davidson-gagne-2022], as marked `QuantifierDeterminer` records under the ASL
+Signbank ID glosses: `FS(ALL)` is the fingerspelled universal, `ALL-b` its two-handed form,
+`NONEsym` the symmetrical negative quantifier. Which of them carry a height-marked locus
+themselves and which take a following `IX-arc` is a matter of their phonological form and is
+classified in the
 study, not here.
 
 ## References
@@ -19,40 +20,41 @@ study, not here.
 namespace ASL.Determiners
 
 /-- `FS(ALL)`: the fingerspelled universal quantifier. -/
-def fsAll : Quantifier := { form := "FS(ALL)", numberRestriction := some .plural }
+def fsAll : QuantifierDeterminer := { form := "FS(ALL)", numberRestriction := some .plural }
 
 /-- `ALL-b`: the two-handed universal quantifier. -/
-def allB : Quantifier := { form := "ALL-b", numberRestriction := some .plural }
+def allB : QuantifierDeterminer := { form := "ALL-b", numberRestriction := some .plural }
 
 /-- `NONEsym`: the symmetrical negative quantifier. -/
-def noneSym : Quantifier := { form := "NONEsym" }
+def noneSym : QuantifierDeterminer := { form := "NONEsym" }
 
 /-- `SOMEONE`: the existential over persons. -/
-def someone : Quantifier := { form := "SOMEONE", numberRestriction := some .singular }
+def someone : QuantifierDeterminer := { form := "SOMEONE", numberRestriction := some .singular }
 
 /-- `SOMETHING`: the existential over things. -/
-def something : Quantifier := { form := "SOMETHING", numberRestriction := some .singular }
+def something : QuantifierDeterminer :=
+  { form := "SOMETHING", numberRestriction := some .singular }
 
 /-- `ONE` as a quantifier. -/
-def one : Quantifier := { form := "ONE", numberRestriction := some .singular }
+def one : QuantifierDeterminer := { form := "ONE", numberRestriction := some .singular }
 
 /-- `TWO` as a quantifier. -/
-def two : Quantifier := { form := "TWO", numberRestriction := some .plural }
+def two : QuantifierDeterminer := { form := "TWO", numberRestriction := some .plural }
 
 /-- `MANY`. -/
-def many : Quantifier := { form := "MANY", numberRestriction := some .plural }
+def many : QuantifierDeterminer := { form := "MANY", numberRestriction := some .plural }
 
 /-- `FEW`. -/
-def few : Quantifier := { form := "FEW", numberRestriction := some .plural }
+def few : QuantifierDeterminer := { form := "FEW", numberRestriction := some .plural }
 
 /-- `EACH`. -/
-def each : Quantifier := { form := "EACH", numberRestriction := some .singular }
+def each : QuantifierDeterminer := { form := "EACH", numberRestriction := some .singular }
 
 /-- `MOST`. -/
-def most : Quantifier := { form := "MOST", numberRestriction := some .plural }
+def most : QuantifierDeterminer := { form := "MOST", numberRestriction := some .plural }
 
 /-- The quantifier signs attested in the paper. -/
-def all : List Quantifier :=
+def all : List QuantifierDeterminer :=
   [fsAll, allB, noneSym, someone, something, one, two, many, few, each, most]
 
 end ASL.Determiners

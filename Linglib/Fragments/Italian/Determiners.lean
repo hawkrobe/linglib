@@ -5,7 +5,7 @@ import Linglib.Semantics.Quantification.Lexicon
 /-! # Italian Determiners (Quantifiers)
 
 Quantifier lexicon with syntactic and semantic properties. Each entry
-`extends Syntax.Determiner.Quantifier` (the marked-determiner base: `form`,
+`extends QuantifierDeterminer` (the marked-determiner base: `form`,
 `numberRestriction`, `selectsMass`) and adds gender agreement plus the
 typological metadata labels (`qforce`/`monotonicity`/`strength`) from
 `Semantics/Quantification/Lexicon.lean`.
@@ -24,9 +24,9 @@ namespace Italian.Determiners
 
 open Quantification.Lexicon (QForce Monotonicity Strength)
 
-/-- Italian quantifier entry: the marked `Quantifier` base + gender + the
+/-- Italian quantifier entry: the marked `QuantifierDeterminer` base + gender + the
     B&C typological metadata labels. -/
-structure ItalianQuantifierEntry extends Quantifier where
+structure ItalianQuantifierEntry extends QuantifierDeterminer where
   /-- Quantificational force (typological label). -/
   qforce : QForce
   /-- Monotonicity (typological label). -/
@@ -47,7 +47,7 @@ plurals. -/
 /-- The definite article with the given form. -/
 private def definite (form : String) : Article :=
   { form, definiteness := .definite, exponent := .dedicatedMorpheme
-    uses := [.immediateSituation, .largerSituation, .anaphoric, .donkey] }
+    uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} }
 
 /-- The indefinite article with the given form. -/
 private def indefinite (form : String) : Article :=
@@ -180,7 +180,7 @@ def allQuantifiers : List ItalianQuantifierEntry := [
 
 /-- The Italian determiner inventory. -/
 def inventory : Determiner.Inventory :=
-  allArticles.map .article ++ allQuantifiers.map (.quantifier ·.toQuantifier)
+  allArticles.map .article ++ allQuantifiers.map (.quantifier ·.toQuantifierDeterminer)
 
 /-- Italian derives the `.generallyMarked` [moroney-2021] cell. -/
 theorem marking : inventory.markingStrategy = .generallyMarked := by decide

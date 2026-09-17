@@ -11,7 +11,7 @@ English-specific determiner lexicon. Each entry is *marked* like a `Pronoun`
 typed by the standard determiner taxonomy in `Syntax/Category/Determiner/Basic.lean`:
 
 - the genuinely quantificational words (every, some, no, most, few, half, all,
-  each, many, both, neither) are `Syntax.Determiner.Quantifier`;
+  each, many, both, neither) are `QuantifierDeterminer`;
 - the definites/indefinites (the, a, an) are `Article`s and the demonstratives
   (this, that, these, those) are `DemonstrativeDeterminer`s.
 
@@ -47,38 +47,38 @@ export Quantification.Lexicon
 
 /-! ## Quantificational determiners
 
-Marked `Quantifier` records: `form`, the selectional `numberRestriction`
+Marked `QuantifierDeterminer` records: `form`, the selectional `numberRestriction`
 (root `Number`), and `selectsMass`. The meaning leaves these open — *every* and
 *all* can share a denotation yet differ in `numberRestriction`. -/
 
 /-- "none" — negative, accepts mass NPs. -/
-def none_ : Quantifier := { form := "none", selectsMass := true }
+def none_ : QuantifierDeterminer := { form := "none", selectsMass := true }
 
 /-- "few" — proportional, plural. -/
-def few : Quantifier := { form := "few", numberRestriction := some .plural }
+def few : QuantifierDeterminer := { form := "few", numberRestriction := some .plural }
 
 /-- "some" — existential, accepts mass NPs. -/
-def some_ : Quantifier := { form := "some", selectsMass := true }
+def some_ : QuantifierDeterminer := { form := "some", selectsMass := true }
 
 /-- "half" — proportional, accepts mass NPs. -/
-def half : Quantifier := { form := "half", selectsMass := true }
+def half : QuantifierDeterminer := { form := "half", selectsMass := true }
 
 /-- "most" — proportional, plural, accepts mass NPs. -/
-def most : Quantifier :=
+def most : QuantifierDeterminer :=
   { form := "most", numberRestriction := some .plural, selectsMass := true }
 
 /-- "all" — universal, plural, accepts mass NPs. -/
-def all : Quantifier :=
+def all : QuantifierDeterminer :=
   { form := "all", numberRestriction := some .plural, selectsMass := true }
 
 /-- "every" — universal, singular. -/
-def every : Quantifier := { form := "every", numberRestriction := some .singular }
+def every : QuantifierDeterminer := { form := "every", numberRestriction := some .singular }
 
 /-- "each" — universal, distributive, singular. -/
-def each : Quantifier := { form := "each", numberRestriction := some .singular }
+def each : QuantifierDeterminer := { form := "each", numberRestriction := some .singular }
 
 /-- "many" — proportional, plural. -/
-def many : Quantifier := { form := "many", numberRestriction := some .plural }
+def many : QuantifierDeterminer := { form := "many", numberRestriction := some .plural }
 
 /-- "both" — universal dual, presupposes exactly 2.
     K&S (83a): [_Det each of the two] ⇒ both. Compositional denotation
@@ -88,12 +88,12 @@ def many : Quantifier := { form := "many", numberRestriction := some .plural }
     ([harbour-2014] `[−atomic, +minimal]`); the cardinality clause `|R| ≥ 2`
     on the denotation side reflects the Harbour `dualPredOnLattice` reading
     ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]). -/
-def both : Quantifier := { form := "both", numberRestriction := some .dual }
+def both : QuantifierDeterminer := { form := "both", numberRestriction := some .dual }
 
 /-- "neither" — negative dual, presupposes exactly 2.
     K&S (83b): [_Det (not one) of the two] ⇒ neither. Compositional denotation
     `neither_sem` lives in `Quantification.Quantifier`. -/
-def neither : Quantifier := { form := "neither", numberRestriction := some .dual }
+def neither : QuantifierDeterminer := { form := "neither", numberRestriction := some .dual }
 
 /-! ## Articles and demonstratives
 
@@ -103,7 +103,7 @@ denotation is definiteness, not a generalized quantifier. -/
 /-- "the" — definite article, syncretic over both [schwarz-2009] strengths. -/
 def the : Article :=
   { form := "the", definiteness := .definite, exponent := .dedicatedMorpheme
-  , uses := [.immediateSituation, .largerSituation, .anaphoric, .donkey] }
+  , uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} }
 
 /-- "a" — indefinite article, singular. -/
 def a : Article :=
@@ -126,10 +126,10 @@ def these : DemonstrativeDeterminer := { form := "these", deictic := .proximal }
 def those : DemonstrativeDeterminer := { form := "those", deictic := .distal }
 
 /-- "my" — first-person possessive determiner. -/
-def my : Possessive := { form := "my" }
+def my : PossessiveDeterminer := { form := "my" }
 
 /-- "your" — second-person possessive determiner. -/
-def your : Possessive := { form := "your" }
+def your : PossessiveDeterminer := { form := "your" }
 
 /-! ## Numerical Determiners
 [barwise-cooper-1981] [van-de-pol-etal-2023]
@@ -194,7 +194,7 @@ instance : Fintype QuantityWord where
 /-- B&C Table II typological metadata: the textbook-consensus descriptive
     labels (force, monotonicity, weak/strong strength) a quantity word carries.
     A small local record over the `Quantification.Lexicon` enums — *not* the
-    lexical marking (that is `Quantifier`, above) and *not* the denotation
+    lexical marking (that is `QuantifierDeterminer`, above) and *not* the denotation
     (that is `QuantityWord.gqDenotation`). -/
 structure QuantityWord.Metadata where
   /-- Quantificational force. -/
@@ -246,7 +246,7 @@ noncomputable def QuantityWord.gqDenotation (q : QuantityWord)
 /-! ## Lexicon Access -/
 
 /-- All quantificational determiner entries (excluding definites). -/
-def allQuantifiers : List Quantifier := [
+def allQuantifiers : List QuantifierDeterminer := [
   none_, few, some_, half, most, all, every, each, many, both, neither
 ]
 
@@ -257,7 +257,7 @@ def allArticles : List Article := [the, a, an]
 def allDemonstratives : List DemonstrativeDeterminer := [this, that, these, those]
 
 /-- All possessive-determiner entries. -/
-def allPossessives : List Possessive := [my, your]
+def allPossessives : List PossessiveDeterminer := [my, your]
 
 /-- The full inventory as a heterogeneous `Determiner.Inventory`
     (the per-language form a Fragment declares). -/

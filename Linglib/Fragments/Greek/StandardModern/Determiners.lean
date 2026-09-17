@@ -17,7 +17,7 @@ namespace Greek.StandardModern.Determiners
 /-- The definite article with the given form. -/
 private def definite (form : String) : Article :=
   { form, definiteness := .definite, exponent := .dedicatedMorpheme
-    uses := [.immediateSituation, .largerSituation, .anaphoric, .donkey] }
+    uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} }
 
 /-- The indefinite article with the given form. -/
 private def indefinite (form : String) : Article :=

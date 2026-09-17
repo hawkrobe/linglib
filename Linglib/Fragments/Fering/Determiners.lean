@@ -20,9 +20,9 @@ namespace Fering.Determiners
     *di/det*. -/
 def inventory : Determiner.Inventory :=
   [ .article { form := "a", definiteness := .definite, exponent := .dedicatedMorpheme,
-               uses := [.immediateSituation, .largerSituation] },
+               uses := {.immediateSituation, .largerSituation} },
     .article { form := "di", definiteness := .definite, exponent := .dedicatedMorpheme,
-               uses := [.anaphoric, .donkey] } ]
+               uses := {.anaphoric, .donkey} } ]
 
 /-- Fering derives the `.bipartite` Moroney cell. -/
 theorem marking : inventory.markingStrategy = .bipartite := by decide

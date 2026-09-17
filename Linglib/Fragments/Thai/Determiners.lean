@@ -21,7 +21,7 @@ namespace Thai.Determiners
     of anaphoric definites including donkey anaphora, and the possessive
     *khɔ̌ɔng*. -/
 def inventory : Determiner.Inventory :=
-  [ .demonstrative { form := "nan", deictic := .distal, definiteUses := [.anaphoric, .donkey] },
+  [ .demonstrative { form := "nan", deictic := .distal, definiteUses := {.anaphoric, .donkey} },
     .possessive { form := "khong" } ]
 
 /-- Thai derives the `.markedAnaphoric` Moroney cell. -/

@@ -92,7 +92,7 @@ def romaji : String :=
 def force : QForce := particleForce q.particle
 
 /-- The quantifier as a determiner entry. -/
-def toQuantifier : Quantifier := { form := q.romaji }
+def toQuantifier : QuantifierDeterminer := { form := q.romaji }
 
 end Indefinite
 
@@ -112,13 +112,13 @@ def nan_nin_ka : Indefinite := ⟨.nan, Coordination.ka, some "nin"⟩
 def indefinites : List Indefinite := [dare_ka, dare_mo, dono_N_mo, nan_nin_ka]
 
 /-- *subete* 'all'. -/
-def subete : Quantifier := { form := "subete" }
+def subete : QuantifierDeterminer := { form := "subete" }
 
 /-- *hotondo* 'most'. -/
-def hotondo : Quantifier := { form := "hotondo" }
+def hotondo : QuantifierDeterminer := { form := "hotondo" }
 
 /-- *ryōhō* 'both'. -/
-def ryoho : Quantifier := { form := "ryōhō" }
+def ryoho : QuantifierDeterminer := { form := "ryōhō" }
 
 /-- The determiner inventory: quantifiers only, there being no articles. -/
 def inventory : Determiner.Inventory :=

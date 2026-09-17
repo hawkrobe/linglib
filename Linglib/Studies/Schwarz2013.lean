@@ -95,9 +95,9 @@ situationally unique referents ((30), (31)), and *k'uŋ* the anaphoric strong ar
 above-mentioned'. -/
 def lakhotaWeakStrongConstrual : Determiner.Inventory :=
   [ .article { form := "kiŋ", definiteness := .definite, exponent := .dedicatedMorpheme,
-               uses := [.immediateSituation, .largerSituation] },
+               uses := {.immediateSituation, .largerSituation} },
     .article { form := "k'uŋ", definiteness := .definite, exponent := .dedicatedMorpheme,
-               uses := [.anaphoric] } ]
+               uses := {.anaphoric} } ]
 
 /-- Under the tentative construal, Lakhota patterns with German and Fering. -/
 theorem construal_bipartite :

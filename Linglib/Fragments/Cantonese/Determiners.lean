@@ -22,7 +22,7 @@ namespace Cantonese.Determiners
     [jat-Clf-N] indefinite, and the demonstrative paradigm (*nei*). -/
 def inventory : Determiner.Inventory :=
   [ .article { form := "Clf-N", definiteness := .definite, exponent := .classifierPhrase,
-               uses := [.immediateSituation, .largerSituation, .anaphoric, .donkey] },
+               uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} },
     .article { form := "jat-Clf-N", definiteness := .indefinite, exponent := .numeralClassifier },
     .demonstrative { form := "nei", deictic := .proximal } ]
 

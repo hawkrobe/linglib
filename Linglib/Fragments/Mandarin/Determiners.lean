@@ -34,11 +34,11 @@ namespace Mandarin.Determiners
 open English.Determiners (QForce Monotonicity Strength)
 open Mandarin.Classifiers (ge)
 
-/-- Mandarin quantifier entry. `extends Syntax.Determiner.Quantifier` (the
+/-- Mandarin quantifier entry. `extends QuantifierDeterminer` (the
     marked-determiner base — the inherited `form` holds the hànzì surface form)
     and adds classifier requirements (Mandarin-specific morphosyntax) and the
     typological metadata labels (`qforce`/`monotonicity`/`strength`). -/
-structure MandarinQuantEntry extends Quantifier where
+structure MandarinQuantEntry extends QuantifierDeterminer where
   /-- Pīnyīn romanization -/
   pinyin : String
   /-- English gloss -/
@@ -159,7 +159,7 @@ theorem typical_classifier_is_default :
     *nà*, the obligatory exponent of anaphoric definites including donkey
     anaphora, and the possessive *de*. -/
 def inventory : Determiner.Inventory :=
-  [ .demonstrative { form := "na", deictic := .distal, definiteUses := [.anaphoric, .donkey] },
+  [ .demonstrative { form := "na", deictic := .distal, definiteUses := {.anaphoric, .donkey} },
     .possessive { form := "de" } ]
 
 /-- Mandarin derives the `.markedAnaphoric` Moroney cell. -/

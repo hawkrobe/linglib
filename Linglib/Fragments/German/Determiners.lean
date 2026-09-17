@@ -23,9 +23,9 @@ namespace German.Determiners
     *dieser*, and the possessives. -/
 def inventory : Determiner.Inventory :=
   [ .article { form := "im/weak", definiteness := .definite, exponent := .dedicatedMorpheme,
-               uses := [.immediateSituation, .largerSituation] },
+               uses := {.immediateSituation, .largerSituation} },
     .article { form := "dem/strong", definiteness := .definite, exponent := .dedicatedMorpheme,
-               uses := [.anaphoric, .donkey] },
+               uses := {.anaphoric, .donkey} },
     .article { form := "ein", definiteness := .indefinite, exponent := .dedicatedMorpheme },
     .demonstrative { form := "dieser", deictic := .unspecified },
     .possessive { form := "mein" } ]

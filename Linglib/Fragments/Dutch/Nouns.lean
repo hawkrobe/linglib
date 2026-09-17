@@ -1,3 +1,4 @@
+import Linglib.Fragments.Dutch.Determiners
 import Linglib.Syntax.Category.Noun.Basic
 import Linglib.Semantics.Plurality.MassCount
 import Linglib.Semantics.Genericity.NominalMappingParameter
@@ -5,15 +6,18 @@ import Linglib.Semantics.Genericity.NominalMappingParameter
 /-!
 # Dutch nouns
 
-The Dutch noun as a lexical entry: the root `GenderedNoun` over the common and neuter genders
-that *de* and *het* mark, with the mass/count feature and its plural and diminutive where the
-entry records them; names are the root `ProperName`. Dutch is [+arg, +pred] like the other
-Germanic languages ([chierchia-1998]): with *de*, *het* and *een* blocking the covert ι and ∃,
-bare plurals and bare mass nouns are arguments and bare singular count nouns are not. The
-entries are the nouns of [le-bruyn-de-swart-2022]'s scrambling data.
+This file records the Dutch noun as a lexical entry. An entry is the root `GenderedNoun` over
+the two-gender carrier of `Dutch.Gender`, with the mass/count feature and with its plural and
+diminutive where the entry records them; names are the root `ProperName`. The definite article
+a noun takes, `Noun.definiteArticle`, is read off its gender through
+`Dutch.Determiners.singular`. Dutch is [+arg, +pred] like the other Germanic languages
+([chierchia-1998]). Since *de*, *het* and *een* block the covert ι and ∃, bare plurals and
+bare mass nouns are arguments and bare singular count nouns are not. The entries are the nouns
+of [le-bruyn-de-swart-2022]'s scrambling data.
 
 ## References
 
+* [broekhuis-corver-2026b]
 * [chierchia-1998]
 * [le-bruyn-de-swart-2022]
 -/
@@ -22,9 +26,9 @@ namespace Dutch.Nouns
 
 open Genericity
 
-/-- A Dutch noun: the root gendered entry with the mass/count feature and its plural and
+/-- A Dutch noun is the root gendered entry with the mass/count feature and with its plural and
 diminutive where recorded. -/
-structure Noun extends GenderedNoun Gender where
+structure Noun extends GenderedNoun Gender.Value where
   /-- The mass/count feature. -/
   countable : MassCount := .count
   /-- The plural. -/
@@ -32,6 +36,10 @@ structure Noun extends GenderedNoun Gender where
   /-- The diminutive. -/
   diminutive : Option String := none
   deriving DecidableEq, Repr
+
+/-- A noun takes the definite article *het* in the singular when it is neuter and *de* when it
+is of common gender. -/
+def Noun.definiteArticle (n : Noun) : String := Determiners.singular n.gender .definite
 
 /-! ### Count nouns -/
 
