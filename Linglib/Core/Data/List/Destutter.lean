@@ -6,187 +6,137 @@ Authors: Robert Hawkins
 import Mathlib.Data.List.Destutter
 
 /-!
-# Append congruence for `List.destutter`
+# `List.destutter` and `++`
 
-Mathlib's `Mathlib/Data/List/Destutter.lean` has no `destutter`-vs-`append` lemma. These
-fill that gap for the `(· ≠ ·)` relation: collapsing either operand before appending is
-absorbed by an outer `destutter`, so `destutter (· ≠ ·)` is a congruence for `++`. The
-proofs go through `destutter'` boundary scaffolding. Candidates for
-`Mathlib/Data/List/Destutter.lean`.
+`Mathlib/Data/List/Destutter.lean` has no lemma relating `destutter` to `++`. The primitive is
+the append decomposition `List.destutter'_append`: destuttering `l ++ m` from `a` destutters `l`
+from `a` and then `m` from the last element kept. From it, destuttering the left operand first
+changes nothing for any relation, and for `(· ≠ ·)` the same holds on the right, so
+`destutter (· ≠ ·)` is a congruence for `++`. Lemmas specific to `(· ≠ ·)` carry the `_ne` suffix
+as in `List.map_destutter_ne`. [UPSTREAM] candidates for that file.
 
 ## Main results
 
-* `List.destutter_append_left` / `List.destutter_append_right` — collapsing one operand
-  before appending does not change the destuttered result.
-* `List.destutter_append_destutter` — the congruence: `destutter (· ≠ ·)` of an append
-  equals `destutter (· ≠ ·)` of the destuttered operands.
-* `List.destutter_head?` — `destutter` preserves the head.
-* `List.destutter_append_length_clean` — the clean-clean boundary length: two `(· ≠ ·)`
-  chains concatenated and destuttered merge exactly one element iff the seam matches.
-* `List.destutterConcat` — append then destutter; the multiplication of the destutter
-  quotient monoid, with its associativity and unit laws (pure `List` facts).
+* `List.head?_destutter'`, `List.head?_destutter`, `List.destutter'_eq_cons`: the running
+  element stays in front, so `destutter` preserves the head.
+* `List.destutter'_append`: the append decomposition.
+* `List.destutter_append_left`, `List.destutter_append_right_ne`,
+  `List.destutter_append_destutter_ne`: absorbing a `destutter` of either operand, and the
+  `++`-congruence.
+* `List.destutter_replicate`: a constant run fuses to one element when the relation is
+  irreflexive at it.
+* `List.IsChain.length_destutter_ne_append`: two chains concatenated and destuttered lose exactly
+  one element when the seam matches, the numerical core of the autosegmental OCP quotient.
 -/
 
 namespace List
+variable {α : Type*} {R : α → α → Prop} [DecidableRel R] {a b : α} {l m : List α}
 
-variable {α : Type*} [DecidableEq α]
-
-/-- `destutter' (· ≠ ·) a l` always begins with its running element `a`. Holds for any
-`[DecidableRel R]`. -/
-private theorem destutter'_head_cons {α : Type*} {R : α → α → Prop} [DecidableRel R]
-    (a : α) (l : List α) :
-    ∃ t, l.destutter' R a = a :: t := by
+/-- Destuttering from `a` keeps `a` in front. -/
+theorem head?_destutter' (a : α) (l : List α) : (l.destutter' R a).head? = some a := by
   induction l generalizing a with
-  | nil => exact ⟨[], rfl⟩
+  | nil => rfl
+  | cons b l ih => by_cases h : R a b <;> simp [h, ih]
+
+/-- `destutter` preserves the head. -/
+theorem head?_destutter (l : List α) : (l.destutter R).head? = l.head? := by
+  cases l <;> simp [destutter_cons', head?_destutter']
+
+theorem destutter'_eq_cons (a : α) (l : List α) : ∃ t, l.destutter' R a = a :: t :=
+  ⟨_, (cons_head?_tail (head?_destutter' a l)).symm⟩
+
+theorem getLastD_destutter' (a : α) (l : List α) (x y : α) :
+    (l.destutter' R a).getLastD x = (l.destutter' R a).getLastD y := by
+  obtain ⟨t, ht⟩ := destutter'_eq_cons (R := R) a l
+  rw [ht, getLastD_cons, getLastD_cons]
+
+/-- The append decomposition: destuttering `l ++ m` from `a` destutters `l` from `a`, then
+destutters `m` from the last element kept. -/
+theorem destutter'_append (a : α) (l m : List α) :
+    (l ++ m).destutter' R a =
+      l.destutter' R a ++ (m.destutter' R ((l.destutter' R a).getLastD a)).tail := by
+  induction l generalizing a with
+  | nil =>
+    obtain ⟨t, ht⟩ := destutter'_eq_cons (R := R) a m
+    simp [ht]
   | cons b l ih =>
     by_cases h : R a b
-    · exact ⟨l.destutter' R b, by rw [destutter'_cons_pos (h := h)]⟩
-    · rw [destutter'_cons_neg (h := h)]; exact ih a
+    · rw [cons_append, destutter'_cons_pos (h := h), destutter'_cons_pos (h := h), ih b,
+        cons_append, getLastD_cons, getLastD_destutter' b l a b]
+    · rw [cons_append, destutter'_cons_neg (h := h), destutter'_cons_neg (h := h), ih a]
 
-/-- Re-running `destutter' (· ≠ ·)` against its own running element drops the duplicate head. -/
-private theorem destutter'_ne_cons_self (a : α) (l : List α) :
-    (a :: l).destutter' (· ≠ ·) a = l.destutter' (· ≠ ·) a := by
-  rw [destutter'_cons_neg (h := by simp)]
-
-/-- If `destutter' (· ≠ ·) c m = c :: t`, the tail `t` is already fixed by `destutter' c`. -/
-private theorem destutter'_ne_tail_fixed {c : α} {m t : List α}
-    (ht : m.destutter' (· ≠ ·) c = c :: t) : t.destutter' (· ≠ ·) c = c :: t :=
-  destutter'_of_isChain_cons t (· ≠ ·) (ht ▸ isChain_destutter' (· ≠ ·) m c)
-
-/-- `destutter' (· ≠ ·) a` is insensitive to a leading `destutter' (· ≠ ·) a` on its left
-operand (running-element form). -/
-private theorem destutter'_ne_append_left (a : α) (l y : List α) :
-    (l.destutter' (· ≠ ·) a ++ y).destutter' (· ≠ ·) a = (l ++ y).destutter' (· ≠ ·) a := by
-  induction l generalizing a with
-  | nil => simp [destutter'_cons_neg]
-  | cons b l ih =>
-    by_cases h : a ≠ b
-    · obtain ⟨t, ht⟩ := destutter'_head_cons (R := (· ≠ ·)) b l
-      have key := ih b
-      rw [ht, cons_append, destutter'_ne_cons_self] at key
-      rw [destutter'_cons_pos (h := h), cons_append, destutter'_ne_cons_self, cons_append,
-        destutter'_cons_pos (h := h), ht, cons_append, destutter'_cons_pos (h := h), key]
-    · rw [destutter'_cons_neg (h := h), cons_append, destutter'_cons_neg (h := h)]; exact ih a
-
-/-- `destutter' (· ≠ ·) a` is insensitive to a leading `destutter (· ≠ ·)` of its argument. -/
-private theorem destutter'_ne_destutter (a : α) (y : List α) :
-    (y.destutter (· ≠ ·)).destutter' (· ≠ ·) a = y.destutter' (· ≠ ·) a := by
-  cases y with
-  | nil => simp
-  | cons c m =>
-    rw [destutter_cons']
-    obtain ⟨t, ht⟩ := destutter'_head_cons (R := (· ≠ ·)) c m
-    by_cases h : a ≠ c
-    · rw [ht, destutter'_cons_pos (h := h), destutter'_cons_pos (h := h),
-        destutter'_ne_tail_fixed ht, ht]
-    · obtain rfl : a = c := not_not.mp h
-      rw [ht, destutter'_cons_neg (h := h), destutter'_cons_neg (h := h),
-        destutter'_ne_tail_fixed ht, ht]
-
-/-- `destutter' (· ≠ ·) a` is insensitive to a leading `destutter (· ≠ ·)` on its right
-operand (running-element form). -/
-private theorem destutter'_ne_append_right (a : α) (l y : List α) :
-    (l ++ y.destutter (· ≠ ·)).destutter' (· ≠ ·) a = (l ++ y).destutter' (· ≠ ·) a := by
-  induction l generalizing a with
-  | nil => simpa using destutter'_ne_destutter a y
-  | cons b l ih =>
-    by_cases h : a ≠ b
-    · rw [cons_append, cons_append, destutter'_cons_pos (h := h),
-        destutter'_cons_pos (h := h), ih b]
-    · rw [cons_append, cons_append, destutter'_cons_neg (h := h),
-        destutter'_cons_neg (h := h), ih a]
-
-/-- Collapsing the left operand before appending does not change the destuttered result. -/
+/-- Destuttering the left operand before appending does not change the result. -/
 theorem destutter_append_left (l m : List α) :
-    (l.destutter (· ≠ ·) ++ m).destutter (· ≠ ·) = (l ++ m).destutter (· ≠ ·) := by
+    (l.destutter R ++ m).destutter R = (l ++ m).destutter R := by
   cases l with
   | nil => simp
   | cons a l =>
-    obtain ⟨t, ht⟩ := destutter'_head_cons (R := (· ≠ ·)) a l
-    rw [destutter_cons', ht, cons_append, destutter_cons', cons_append, destutter_cons']
-    have key := destutter'_ne_append_left a l m
-    rwa [ht, cons_append, destutter'_ne_cons_self] at key
+    obtain ⟨t, ht⟩ := destutter'_eq_cons (R := R) a l
+    have hc : (a :: t).IsChain R := ht ▸ isChain_destutter' R l a
+    rw [destutter_cons', ht, cons_append, destutter_cons', cons_append, destutter_cons',
+      destutter'_append, destutter'_append, ht, destutter'_of_isChain_cons _ _ hc]
 
-/-- Collapsing the right operand before appending does not change the destuttered result. -/
-theorem destutter_append_right (l m : List α) :
-    (l ++ m.destutter (· ≠ ·)).destutter (· ≠ ·) = (l ++ m).destutter (· ≠ ·) := by
-  cases l with
-  | nil => simpa using destutter_idem m (· ≠ ·)
-  | cons a l =>
-    rw [cons_append, cons_append, destutter_cons', destutter_cons', destutter'_ne_append_right]
-
-/-- The append congruence: `destutter (· ≠ ·)` of an append equals `destutter (· ≠ ·)` of
-the destuttered operands. -/
-theorem destutter_append_destutter (l m : List α) :
-    (l ++ m).destutter (· ≠ ·) =
-      (l.destutter (· ≠ ·) ++ m.destutter (· ≠ ·)).destutter (· ≠ ·) := by
-  rw [destutter_append_left, destutter_append_right]
-
-/-! ### Head and the clean-clean boundary -/
-
-omit [DecidableEq α] in
-theorem destutter'_replicate_self {R : α → α → Prop} [DecidableRel R] {a : α}
-    (h : ¬ R a a) (n : ℕ) : (replicate n a).destutter' R a = [a] := by
+theorem destutter'_replicate (h : ¬ R a a) (n : ℕ) : (replicate n a).destutter' R a = [a] := by
   induction n with
   | zero => rfl
   | succ m ih => rw [replicate_succ, destutter'_cons_neg _ h, ih]
 
-omit [DecidableEq α] in
-/-- `destutter` fuses a constant run whenever the relation is irreflexive at its
-element. -/
-theorem destutter_replicate {R : α → α → Prop} [DecidableRel R] {a : α}
-    (h : ¬ R a a) (n : ℕ) : (replicate (n + 1) a).destutter R = [a] := by
-  rw [replicate_succ, destutter_cons', destutter'_replicate_self h]
+/-- `destutter` fuses a constant run whenever the relation is irreflexive at its element. -/
+theorem destutter_replicate (h : ¬ R a a) (n : ℕ) : (replicate (n + 1) a).destutter R = [a] := by
+  rw [replicate_succ, destutter_cons', destutter'_replicate h]
 
-omit [DecidableEq α] in
-/-- `destutter` preserves the head: the running element is the input's head. -/
-theorem destutter_head? {R : α → α → Prop} [DecidableRel R] (l : List α) :
-    (l.destutter R).head? = l.head? := by
-  cases l with
+variable [DecidableEq α]
+
+/-- Destuttering from `a` is insensitive to a prior `destutter (· ≠ ·)` of the argument: after
+collapsing, `a` either differs from the head or equals it, and both cases agree. -/
+theorem destutter'_destutter_ne (a : α) (m : List α) :
+    (m.destutter (· ≠ ·)).destutter' (· ≠ ·) a = m.destutter' (· ≠ ·) a := by
+  cases m with
   | nil => simp
+  | cons c m =>
+    obtain ⟨t, ht⟩ := destutter'_eq_cons (R := (· ≠ ·)) c m
+    have hc : (c :: t).IsChain (· ≠ ·) := ht ▸ isChain_destutter' _ m c
+    rw [destutter_cons', ht]
+    by_cases h : a ≠ c
+    · rw [destutter'_cons_pos (h := h), destutter'_cons_pos (h := h),
+        destutter'_of_isChain_cons _ _ hc, ht]
+    · obtain rfl : a = c := not_not.mp h
+      rw [destutter'_cons_neg (h := h), destutter'_cons_neg (h := h),
+        destutter'_of_isChain_cons _ _ hc, ht]
+
+/-- Destuttering the right operand before appending does not change the result. Unlike
+`List.destutter_append_left`, this needs `(· ≠ ·)`: a dropped element must behave like the
+running one, which for `(· ≠ ·)` means being equal to it. -/
+theorem destutter_append_right_ne (l m : List α) :
+    (l ++ m.destutter (· ≠ ·)).destutter (· ≠ ·) = (l ++ m).destutter (· ≠ ·) := by
+  cases l with
+  | nil => simpa using destutter_idem m (· ≠ ·)
   | cons a l =>
-    obtain ⟨t, ht⟩ := destutter'_head_cons (R := R) a l
-    rw [destutter_cons', ht]; simp
+    rw [cons_append, cons_append, destutter_cons', destutter_cons', destutter'_append,
+      destutter'_append, destutter'_destutter_ne]
 
-/-- The destutter of a chain `a :: l` appended to anything is `a :: l` followed by the
-right operand destuttered against the chain's last element (with the duplicated head
-dropped). The structural form behind `destutter_append_length_clean`. -/
-private theorem destutter'_append_clean {a : α} {l m : List α}
-    (h1 : (a :: l).IsChain (· ≠ ·)) :
-    (l ++ m).destutter' (· ≠ ·) a =
-      a :: l ++ (m.destutter' (· ≠ ·) ((a :: l).getLast (cons_ne_nil a l))).tail := by
-  induction l generalizing a with
-  | nil =>
-    simp only [nil_append, getLast_singleton]
-    obtain ⟨t, ht⟩ := destutter'_head_cons (R := (· ≠ ·)) a m
-    rw [ht]; rfl
-  | cons b l ih =>
-    have hab : a ≠ b := (isChain_cons_cons.mp h1).1
-    rw [cons_append, destutter'_cons_pos (h := hab), ih (isChain_cons_cons.mp h1).2,
-      getLast_cons (cons_ne_nil b l)]
-    rfl
+/-- `destutter (· ≠ ·)` is a congruence for `++`. -/
+theorem destutter_append_destutter_ne (l m : List α) :
+    (l ++ m).destutter (· ≠ ·) =
+      (l.destutter (· ≠ ·) ++ m.destutter (· ≠ ·)).destutter (· ≠ ·) := by
+  rw [destutter_append_left, destutter_append_right_ne]
 
-/-- For a chain `m`, the tail of `m.destutter' (· ≠ ·) z` has length `m.length` minus one
-when the running element `z` already heads `m` (the seam merge), else `m.length`. -/
-private theorem destutter'_tail_length_clean {z : α} {m : List α} (h2 : m.IsChain (· ≠ ·)) :
-    ((m.destutter' (· ≠ ·) z).tail).length =
-      m.length - (if some z = m.head? then 1 else 0) := by
+/-- For a chain `m`, destuttering it from `z` drops one element exactly when `z` heads `m`. -/
+private theorem length_tail_destutter'_ne_of_isChain {z : α} (h2 : m.IsChain (· ≠ ·)) :
+    ((m.destutter' (· ≠ ·) z).tail).length = m.length - (if some z = m.head? then 1 else 0) := by
   cases m with
   | nil => simp [destutter'_nil]
   | cons b m =>
     have hbm : m.destutter' (· ≠ ·) b = b :: m := destutter'_of_isChain_cons _ _ h2
     by_cases hzb : z ≠ b
     · rw [destutter'_cons_pos (h := hzb), hbm]
-      simp only [tail_cons, length_cons, head?_cons, Option.some.injEq, ite_eq_right hzb, Nat.sub_zero]
+      simp [ite_eq_right hzb]
     · obtain rfl : z = b := not_not.mp hzb
       rw [destutter'_cons_neg (h := by simp), hbm]; simp
 
-/-- **The clean-clean boundary length.** Two chains concatenated and destuttered merge only
-at the seam: the length is the sum of lengths minus one exactly when the last element of `l`
-equals the first of `m`. The numerical core of the autosegmental OCP quotient
-(`Phonology/Autosegmental/Collapse.lean`). -/
-theorem destutter_append_length_clean {l m : List α}
-    (h1 : l.IsChain (· ≠ ·)) (h2 : m.IsChain (· ≠ ·)) :
+/-- Two chains concatenated and destuttered merge only at the seam: the length is the sum of
+lengths minus one exactly when the last element of `l` equals the first of `m`. -/
+theorem IsChain.length_destutter_ne_append (h1 : l.IsChain (· ≠ ·)) (h2 : m.IsChain (· ≠ ·)) :
     ((l ++ m).destutter (· ≠ ·)).length =
       l.length + m.length - (if l.getLast? = m.head? then 1 else 0) := by
   cases l with
@@ -195,43 +145,11 @@ theorem destutter_append_length_clean {l m : List α}
     | nil => simp
     | cons b m => simp [destutter_of_isChain _ _ h2]
   | cons a l =>
-    rw [cons_append, destutter_cons', destutter'_append_clean h1, length_append, length_cons,
-      destutter'_tail_length_clean h2, getLast?_eq_getLast_of_ne_nil (cons_ne_nil a l)]
+    rw [cons_append, destutter_cons', destutter'_append, destutter'_of_isChain_cons _ _ h1,
+      length_append, length_cons, length_tail_destutter'_ne_of_isChain h2,
+      getLastD_eq_getLast?, getLast?_eq_some_getLast (cons_ne_nil a l), Option.getD_some]
     split_ifs with h
     · have := length_pos_of_ne_nil (l := m) (by rintro rfl; simp at h)
       omega
     · omega
-
-/-! ### Append-then-destutter
-
-`destutterConcat` — append, then collapse the single run that may form at the seam — is the
-multiplication of the destutter quotient monoid (built on the free monoid in
-`Mathlib.Algebra.FreeMonoid.Destutter`). Associativity and the unit laws reduce to the
-`++`-congruences above, so they are pure `List` facts and live here. -/
-
-/-- **Append then destutter**: concatenate, then collapse the single run that may form at
-the seam. The multiplication of the destutter quotient monoid. -/
-def destutterConcat (x y : List α) : List α := (x ++ y).destutter (· ≠ ·)
-
-/-- `destutterConcat` outputs are stutter-free. -/
-theorem isChain_destutterConcat (x y : List α) :
-    (destutterConcat x y).IsChain (· ≠ ·) := isChain_destutter (· ≠ ·) (x ++ y)
-
-/-- `destutterConcat` is associative — inherited from `++` through `destutter`. -/
-theorem destutterConcat_assoc (x y z : List α) :
-    destutterConcat (destutterConcat x y) z = destutterConcat x (destutterConcat y z) := by
-  simp only [destutterConcat, destutter_append_left, destutter_append_right, List.append_assoc]
-
-theorem nil_destutterConcat (x : List α) :
-    destutterConcat [] x = x.destutter (· ≠ ·) := rfl
-
-theorem destutterConcat_nil (x : List α) :
-    destutterConcat x [] = x.destutter (· ≠ ·) := by simp [destutterConcat]
-
-/-- `destutter (· ≠ ·)` carries `(List α, ++)` onto `(·, destutterConcat)`. -/
-theorem destutter_append_eq_destutterConcat (x y : List α) :
-    (x ++ y).destutter (· ≠ ·)
-      = destutterConcat (x.destutter (· ≠ ·)) (y.destutter (· ≠ ·)) := by
-  rw [destutterConcat, ← destutter_append_destutter]
-
 end List

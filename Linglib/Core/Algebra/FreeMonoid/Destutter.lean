@@ -28,7 +28,7 @@ presentation with the concrete normal-form model.
 ## Main definitions
 
 * `Monoid {l : List α // l.IsChain (· ≠ ·)}` — the destutter quotient monoid, with
-  multiplication `List.destutterConcat` (from `Core.Data.List.Destutter`).
+  multiplication append-then-destutter.
 * `FreeMonoid.destutterHom` — the quotient map `FreeMonoid α →* {l // l.IsChain (· ≠ ·)}`.
 * `FreeMonoid.destutterRel` — the presentation `⟨α | a · a = a⟩`: each generator is idempotent.
 * `FreeMonoid.destutterQuotientEquiv` — first isomorphism `FreeMonoid α ⧸ ker ≃* {l // …}`.
@@ -43,7 +43,7 @@ presentation with the concrete normal-form model.
 The `destutter`-vs-`++` congruence lemmas live in `Core.Data.List.Destutter` (candidates
 for `Mathlib.Data.List.Destutter`); this file adds the monoid/presentation layer (candidate
 for `Mathlib.Algebra.FreeMonoid`). The monoid multiplication is associative because
-`destutter (· ≠ ·)` is a `++`-congruence (`destutter_append_left`/`_right` from that file);
+`destutter (· ≠ ·)` is a `++`-congruence (`destutter_append_destutter_ne` from that file);
 the presentation is identified with the concrete model by the normalization lemma
 `conGen_destutterRel_destutter`. Nothing here is specific to any application; the phonological
 Obligatory Contour Principle (`Phonology.OCP`) is one consumer, reading the presentation as
@@ -56,26 +56,28 @@ variable {α : Type*} [DecidableEq α]
 
 /-! ### The bundled quotient monoid
 
-The multiplication `List.destutterConcat` (append then destutter) and its `List`-level laws
-live in `Core.Data.List.Destutter`; here they are bundled into the monoid structure. -/
+The multiplication appends and destutters; associativity and the unit laws are the
+`++`-congruences of `Core.Data.List.Destutter`. -/
 
 instance : Mul {l : List α // l.IsChain (· ≠ ·)} :=
-  ⟨fun a b => ⟨destutterConcat a b, isChain_destutterConcat _ _⟩⟩
+  ⟨fun a b ↦ ⟨(a.1 ++ b.1).destutter (· ≠ ·), isChain_destutter _ _⟩⟩
 
 instance : One {l : List α // l.IsChain (· ≠ ·)} := ⟨⟨[], isChain_nil⟩⟩
 
 @[simp] theorem coe_mul (a b : {l : List α // l.IsChain (· ≠ ·)}) :
-    ((a * b : {l : List α // l.IsChain (· ≠ ·)}) : List α) = destutterConcat a b := rfl
+    ((a * b : {l : List α // l.IsChain (· ≠ ·)}) : List α) = (a.1 ++ b.1).destutter (· ≠ ·) :=
+  rfl
 
 omit [DecidableEq α] in
 @[simp] theorem coe_one :
     ((1 : {l : List α // l.IsChain (· ≠ ·)}) : List α) = [] := rfl
 
-/-- The destutter quotient monoid: `destutterConcat` multiplication, `[]` unit. -/
+/-- The destutter quotient monoid: append-then-destutter multiplication, `[]` unit. -/
 instance : Monoid {l : List α // l.IsChain (· ≠ ·)} where
-  mul_assoc a b c := Subtype.ext (destutterConcat_assoc _ _ _)
+  mul_assoc a b c := Subtype.ext <| by
+    simp only [coe_mul, destutter_append_left, destutter_append_right_ne, append_assoc]
   one_mul a := Subtype.ext (destutter_of_isChain _ _ a.2)
-  mul_one a := Subtype.ext <| by simp [destutterConcat_nil, destutter_of_isChain _ _ a.2]
+  mul_one a := Subtype.ext <| by simp [destutter_of_isChain _ _ a.2]
 
 end List
 
@@ -86,12 +88,13 @@ open List
 variable {α : Type*} [DecidableEq α]
 
 /-- The **destutter quotient map**: send a free-monoid word to its `destutter (· ≠ ·)`
-normal form. `List.destutter_append_destutter` is its `map_mul`. -/
+normal form. `List.destutter_append_destutter_ne` is its `map_mul`. -/
 def destutterHom : FreeMonoid α →* {l : List α // l.IsChain (· ≠ ·)} where
   toFun l := ⟨l.toList.destutter (· ≠ ·), isChain_destutter _ _⟩
   map_one' := Subtype.ext (by simp [FreeMonoid.toList_one])
   map_mul' x y := Subtype.ext <| by
-    simp [FreeMonoid.toList_mul, List.destutter_append_eq_destutterConcat]
+    simp only [FreeMonoid.toList_mul, coe_mul]
+    exact destutter_append_destutter_ne _ _
 
 /-- `ofList` of a stutter-free list is a right inverse of `destutterHom`: a chain is its own
 destutter normal form. -/
@@ -203,7 +206,7 @@ def destutterLift (f : α → M) (hf : ∀ a, f a * f a = f a) :
   toFun l := (l.1.map f).prod
   map_one' := rfl
   map_mul' a b := by
-    show ((destutterConcat a.1 b.1).map f).prod = (a.1.map f).prod * (b.1.map f).prod
+    show (((a.1 ++ b.1).destutter (· ≠ ·)).map f).prod = (a.1.map f).prod * (b.1.map f).prod
     rw [← List.prod_append, ← List.map_append]
     exact destutter_map_prod f hf (a.1 ++ b.1)
 
