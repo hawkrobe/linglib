@@ -2,6 +2,7 @@ import Mathlib.Tactic.DeriveFintype
 import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Data.Examples.Benz2025
 import Linglib.Fragments.German.Predicates
+import Linglib.Semantics.ArgumentStructure.Verb
 
 /-!
 # Benz (2025): Structure and interpretation across categories
@@ -448,13 +449,13 @@ def rspRows : List LinguisticExample :=
 /-- The rows' verb-class labels follow the fragment entries of their means predicates. -/
 theorem rsp_verb_classes :
     ∀ e ∈ rspRows, ∀ v ∈ (e.feature? "m_predicate").bind entryOf,
-      (e.feature? "verb_class" = some "unaccusative" ↔ v.unaccusative = true) := by
+      (e.feature? "verb_class" = some "unaccusative" ↔ v.toVerb.IsUnaccusative) := by
   decide
 
 /-- German allows non-unergative means predicates in resultatives ((115e) *frieren*), against
 weak-resultative reanalyses of the whole class. -/
 theorem unaccusative_means :
-    ∃ e ∈ rspRows, ∃ v ∈ (e.feature? "m_predicate").bind entryOf, v.unaccusative = true := by
+    ∃ e ∈ rspRows, ∃ v ∈ (e.feature? "m_predicate").bind entryOf, v.toVerb.IsUnaccusative := by
   decide
 
 /-! ## Prefixes in nominalizations (Ch. 5) -/

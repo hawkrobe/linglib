@@ -37,71 +37,30 @@ Example rows live in `Data/Examples/Storment2026.json` (QI/LI data) and
 diagnostics).
 -/
 
-namespace Verb
-
-open Minimalist Minimalist.Voice
-
-/-! ### Verb ↔ smuggling interface
-
-The bridge from `Verb`'s lexical fields to the smuggling derivation (§4): a verb licenses
-quotative inversion when its Voice is not a phase head, so that the VP can move to
-Spec,VoiceP, and it has a complement to move. Single-consumer substrate carried here with its
-anchoring study. -/
-
-/-- A verb has a syntactic complement: its `complementType` is anything other than `.none`. -/
-def HasComplement (v : Verb) : Prop := v.complementType ≠ .none
-
-instance (v : Verb) : Decidable v.HasComplement := inferInstanceAs (Decidable (_ ≠ _))
-
-/-- The Voice head determined by a verb's derived unaccusativity:
-    non-thematic (anticausative) for unaccusatives, agentive for
-    unergatives ([kratzer-1996]). -/
-def voiceFor (v : Verb) : Head :=
-  if v.IsUnaccusative then anticausative else agentive
-
-/-- The derived prediction: the verb licenses quotative inversion, its Voice being no phase
-    head and its complement there to move (§4). -/
-def DerivesQI (v : Verb) : Prop := ¬ v.voiceFor.IsPhasal ∧ v.HasComplement
-
-instance (v : Verb) : Decidable v.DerivesQI := inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Unaccusative verbs project non-thematic (anticausative) Voice. -/
-theorem voiceFor_of_unaccusative (v : Verb) (h : v.IsUnaccusative) :
-    v.voiceFor = anticausative := by simp [voiceFor, h]
-
-/-- Unergative verbs project agentive Voice. -/
-theorem voiceFor_of_unergative (v : Verb) (h : ¬ v.IsUnaccusative) : v.voiceFor = agentive := by
-  simp [voiceFor, h]
-
-/-- An unaccusative verb with a complement licenses QI. -/
-theorem derivesQI_of_unaccusative_with_complement (v : Verb)
-    (hu : v.IsUnaccusative) (hc : v.HasComplement) : v.DerivesQI :=
-  ⟨by rw [voiceFor_of_unaccusative v hu]; decide, hc⟩
-
-/-- An unergative verb cannot license QI whatever its complement: agentive Voice is a phase
-    head. -/
-theorem not_derivesQI_of_unergative (v : Verb) (hu : ¬ v.IsUnaccusative) :
-    ¬ v.DerivesQI :=
-  λ h => h.1 (by rw [voiceFor_of_unergative v hu]; decide)
-
-end Verb
-
 namespace Storment2026
 
 open ArgumentStructure
 open English hiding Verb
 open Data.Examples
 open ArgumentStructure.AuxiliarySelection (TransitivityClass canonicalSelection)
-open Minimalist.Voice (Flavor Head anticausative agentive)
+open Minimalist Minimalist.Voice
 
-/-! ## §1 + §2. Lexical annotations and QI data
+/-! ## §1 + §2. The paper's classification and the QI data
 
-Per [storment-2026], every MoS verb passes the QI diagnostic and
-is classified unaccusative; the canonical communication verbs `speak`/
-`talk` fail QI and are unergative. Quantified theorems collapse the
-per-verb pattern; specific instances are recoverable by `fin_cases`. -/
+Per [storment-2026], every manner-of-speaking verb passes the QI diagnostic and is classified
+unaccusative, beside the unaccusatives the Fragment records as such; the canonical communication
+verbs *speak* and *talk* fail QI and are unergative. The classification is the paper's, not the
+Fragment's: the Fragment records manner-of-speaking verbs with an external argument. -/
 
-/-- MoS verbs annotated unaccusative on the basis of the QI diagnostic. -/
+/-- The paper's unaccusatives: the manner-of-speaking and nonverbal-expression verbs, on the
+basis of the QI diagnostic, and the verbs unaccusative by their frames. -/
+def Unaccusative (v : English.Verb) : Prop :=
+  v.levinClass = some .mannerOfSpeaking ∨ v.levinClass = some .nonverbalExpression ∨
+    v.toVerb.IsUnaccusative
+
+instance : DecidablePred Unaccusative := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+
+/-- MoS verbs classified unaccusative on the basis of the QI diagnostic. -/
 def mosUnaccusatives : List English.Verb :=
   [whisper, murmur, shout, cry, scream, mumble, mutter,
    shriek, yell, groan, grumble, hiss, sigh, whimper, snap]
@@ -109,16 +68,54 @@ def mosUnaccusatives : List English.Verb :=
 /-- Canonical unergative communication verbs that fail QI. -/
 def communicationUnergatives : List English.Verb := [speak, talk]
 
-theorem mos_unaccusatives_annotated :
-    ∀ v ∈ mosUnaccusatives, v.unaccusative = true := by
-  intro v hv; fin_cases hv <;> rfl
+theorem mos_unaccusatives_classified : ∀ v ∈ mosUnaccusatives, Unaccusative v := by decide
 
-theorem communication_unergatives_annotated :
-    ∀ v ∈ communicationUnergatives, v.unaccusative = false := by
-  intro v hv; fin_cases hv <;> rfl
+theorem communication_unergatives_classified :
+    ∀ v ∈ communicationUnergatives, ¬ Unaccusative v := by decide
 
-theorem seem_unaccusative : seem.unaccusative = true := rfl
-theorem arrive_unaccusative : arrive.unaccusative = true := rfl
+theorem seem_unaccusative : seem.toVerb.IsUnaccusative := by decide
+theorem arrive_unaccusative : arrive.toVerb.IsUnaccusative := by decide
+
+/-! ### Verb ↔ smuggling interface
+
+The bridge from the classification to the smuggling derivation (§4): a verb licenses quotative
+inversion when its Voice is not a phase head, so that the VP can move to Spec,VoiceP, and it has
+a complement to move. -/
+
+/-- A verb has a syntactic complement: its `complementType` is anything other than `.none`. -/
+def HasComplement (v : Verb) : Prop := v.complementType ≠ .none
+
+instance (v : Verb) : Decidable (HasComplement v) := inferInstanceAs (Decidable (_ ≠ _))
+
+/-- The Voice head determined by the classification: non-thematic (anticausative) for
+    unaccusatives, agentive for unergatives ([kratzer-1996]). -/
+def voiceFor (v : English.Verb) : Head :=
+  if Unaccusative v then anticausative else agentive
+
+/-- The derived prediction: the verb licenses quotative inversion, its Voice being no phase
+    head and its complement there to move (§4). -/
+def DerivesQI (v : English.Verb) : Prop := ¬ (voiceFor v).IsPhasal ∧ HasComplement v.toVerb
+
+instance (v : English.Verb) : Decidable (DerivesQI v) := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- Unaccusative verbs project non-thematic (anticausative) Voice. -/
+theorem voiceFor_of_unaccusative (v : English.Verb) (h : Unaccusative v) :
+    voiceFor v = anticausative := by simp [voiceFor, h]
+
+/-- Unergative verbs project agentive Voice. -/
+theorem voiceFor_of_unergative (v : English.Verb) (h : ¬ Unaccusative v) :
+    voiceFor v = agentive := by simp [voiceFor, h]
+
+/-- An unaccusative verb with a complement licenses QI. -/
+theorem derivesQI_of_unaccusative_with_complement (v : English.Verb)
+    (hu : Unaccusative v) (hc : HasComplement v.toVerb) : DerivesQI v :=
+  ⟨by rw [voiceFor_of_unaccusative v hu]; decide, hc⟩
+
+/-- An unergative verb cannot license QI whatever its complement: agentive Voice is a phase
+    head. -/
+theorem not_derivesQI_of_unergative (v : English.Verb) (hu : ¬ Unaccusative v) :
+    ¬ DerivesQI v :=
+  λ h => h.1 (by rw [voiceFor_of_unergative v hu]; decide)
 
 /-! ## §3. TransitivityClass derivation
 
@@ -126,28 +123,24 @@ Maps a `Verb` to the three-way transitivity classification used by
 the auxiliary-selection substrate
 (`Semantics/ArgumentStructure/AuxiliarySelection.lean`). -/
 
-/-- Derive `TransitivityClass` from `Verb` fields. -/
-def deriveTransitivityClass (v : Verb) : TransitivityClass :=
-  if v.unaccusative then .unaccusative
+/-- The transitivity class of a verb under the classification. -/
+def deriveTransitivityClass (v : English.Verb) : TransitivityClass :=
+  if Unaccusative v then .unaccusative
   else match v.complementType with
     | .none => .unergative
     | _ => .transitive
 
 theorem mos_unaccusatives_transitivity :
-    ∀ v ∈ mosUnaccusatives,
-      deriveTransitivityClass v.toVerb = .unaccusative := by
-  intro v hv; fin_cases hv <;> rfl
+    ∀ v ∈ mosUnaccusatives, deriveTransitivityClass v = .unaccusative := by decide
 
 theorem communication_unergatives_transitivity :
-    ∀ v ∈ communicationUnergatives,
-      deriveTransitivityClass v.toVerb = .unergative := by
-  intro v hv; fin_cases hv <;> rfl
+    ∀ v ∈ communicationUnergatives, deriveTransitivityClass v = .unergative := by decide
 
-theorem kick_transitive : deriveTransitivityClass kick.toVerb = .transitive := rfl
+theorem kick_transitive : deriveTransitivityClass kick = .transitive := by decide
 
 /-! ## §4. Voice bridge
 
-`Verb.voiceFor` (defined above)
+`voiceFor` (defined above)
 maps unaccusative→non-thematic Voice and
 unergative→agentive Voice. Per [storment-2026]'s §4.3, the Voice
 head is the smuggling projection (not the external-argument introducer
@@ -155,12 +148,10 @@ of [kratzer-1996]); permitting smuggling is equivalent to being
 non-phase, which is equivalent to not introducing an external argument. -/
 
 theorem mos_unaccusatives_nonThematic_voice :
-    ∀ v ∈ mosUnaccusatives, v.toVerb.voiceFor = anticausative := by
-  intro v hv; fin_cases hv <;> rfl
+    ∀ v ∈ mosUnaccusatives, voiceFor v = anticausative := by decide
 
 theorem communication_unergatives_agentive_voice :
-    ∀ v ∈ communicationUnergatives, v.toVerb.voiceFor = agentive := by
-  intro v hv; fin_cases hv <;> rfl
+    ∀ v ∈ communicationUnergatives, voiceFor v = agentive := by decide
 
 /-! ## §5. Auxiliary selection bridge
 
@@ -168,14 +159,11 @@ In split-auxiliary languages (Italian, French, German), unaccusatives
 select *be* and unergatives select *have*. -/
 
 theorem mos_unaccusatives_select_be :
-    ∀ v ∈ mosUnaccusatives,
-      canonicalSelection (deriveTransitivityClass v.toVerb) = .be := by
-  intro v hv; fin_cases hv <;> rfl
+    ∀ v ∈ mosUnaccusatives, canonicalSelection (deriveTransitivityClass v) = .be := by decide
 
 theorem communication_unergatives_select_have :
     ∀ v ∈ communicationUnergatives,
-      canonicalSelection (deriveTransitivityClass v.toVerb) = .have := by
-  intro v hv; fin_cases hv <;> rfl
+      canonicalSelection (deriveTransitivityClass v) = .have := by decide
 
 /-! ## §6. Levin class membership
 
@@ -186,7 +174,7 @@ theorem speak_levinClass : speak.levinClass = some .talk := rfl
 
 /-! ## §8. Smuggling derivation of QI
 
-`Verb.DerivesQI` (defined above)
+`DerivesQI` (defined above)
 derives QI licensing from two independently
 motivated properties: (1) Voice is non-phase (= unaccusative);
 (2) verb has a complement (the quote).
@@ -197,43 +185,40 @@ predicted to license QI; agentive `speak`/`talk` is correctly predicted
 to block QI; unaccusative `arrive` (no complement) is correctly
 predicted not to license QI (it requires LI, not QI). -/
 
-theorem mos_unaccusatives_derivesQI :
-    ∀ v ∈ mosUnaccusatives, v.toVerb.DerivesQI := by
-  intro v hv; fin_cases hv <;> decide
+theorem mos_unaccusatives_derivesQI : ∀ v ∈ mosUnaccusatives, DerivesQI v := by decide
 
 theorem communication_unergatives_derivesQI :
-    ∀ v ∈ communicationUnergatives, ¬ v.toVerb.DerivesQI := by
-  intro v hv; fin_cases hv <;> decide
+    ∀ v ∈ communicationUnergatives, ¬ DerivesQI v := by decide
 
 /-- `arrive` is unaccusative but has no complement: doesn't license QI.
     This is correct — `*"arrived Mary"` requires a fronted locative
     (LI), not a fronted quote (QI). -/
-theorem arrive_no_qi : ¬ arrive.toVerb.DerivesQI := by decide
+theorem arrive_no_qi : ¬ DerivesQI arrive := by decide
 
 /-- Consistency: each (QI row, verb) pair has its judgment matching
     `DerivesQI`. Pairs the rows of `Data/Examples/Storment2026.json`
     with the smuggling prediction. -/
 theorem qi_data_matches_derivesQI :
-    ∀ p ∈ ([(Examples.qi_whisper,    whisper.toVerb),
-            (Examples.qi_murmur,     murmur.toVerb),
-            (Examples.qi_shout,      shout.toVerb),
-            (Examples.qi_cry,        cry.toVerb),
-            (Examples.qi_scream,     scream.toVerb),
-            (Examples.qi_mumble,     mumble.toVerb),
-            (Examples.qi_mutter,     mutter.toVerb),
-            (Examples.qi_shriek,     shriek.toVerb),
-            (Examples.qi_yell,       yell.toVerb),
-            (Examples.qi_groan,      groan.toVerb),
-            (Examples.qi_grumble,    grumble.toVerb),
-            (Examples.qi_hiss,       hiss.toVerb),
-            (Examples.qi_sigh,       sigh.toVerb),
-            (Examples.qi_whimper,    whimper.toVerb),
-            (Examples.qi_snap,       snap.toVerb),
-            (Examples.qi_speak,      speak.toVerb),
-            (Examples.qi_talk,       talk.toVerb)] :
-            List (LinguisticExample × Verb)),
-      (p.1.judgment = .acceptable) ↔ p.2.DerivesQI := by
-  intro p hp; fin_cases hp <;> decide
+    ∀ p ∈ ([(Examples.qi_whisper,    whisper),
+            (Examples.qi_murmur,     murmur),
+            (Examples.qi_shout,      shout),
+            (Examples.qi_cry,        cry),
+            (Examples.qi_scream,     scream),
+            (Examples.qi_mumble,     mumble),
+            (Examples.qi_mutter,     mutter),
+            (Examples.qi_shriek,     shriek),
+            (Examples.qi_yell,       yell),
+            (Examples.qi_groan,      groan),
+            (Examples.qi_grumble,    grumble),
+            (Examples.qi_hiss,       hiss),
+            (Examples.qi_sigh,       sigh),
+            (Examples.qi_whimper,    whimper),
+            (Examples.qi_snap,       snap),
+            (Examples.qi_speak,      speak),
+            (Examples.qi_talk,       talk)] :
+            List (LinguisticExample × English.Verb)),
+      (p.1.judgment = .acceptable) ↔ DerivesQI p.2 := by
+  decide
 
 /-! ## §9. QI ∥ LI distributional contrasts (Storment §6)
 
@@ -271,9 +256,9 @@ theorem li_blocks_transitive : Examples.li_kick.judgment = .unacceptable := rfl
     arrive projects non-thematic Voice, permitting VP-smuggling — the
     same mechanism that licenses QI. -/
 theorem li_arrive_smuggling_unified :
-    arrive.toVerb.voiceFor = anticausative ∧
+    voiceFor arrive = anticausative ∧
     LevinRappaportHovav1995.Examples.loc_arrive.judgment = .acceptable :=
-  ⟨rfl, rfl⟩
+  ⟨by decide, rfl⟩
 
 /-! ## §11 + §12. The QI derivation (Storment §3 + §4)
 

@@ -140,7 +140,7 @@ structure SayConverbAnalysis where
   /-- 'say' is transitive with an obligatory internal argument
       (39a), (40a), a requirement that persists inside the adjunct
       (41): `*(birnémi-ler-ni) de-p warqiri-di`). -/
-  say_transitive : say.complementType ≠ ComplementType.none ∧ say.implicitObj = none
+  say_transitive : say.complementType ≠ ComplementType.none ∧ ∀ fr ∈ say.frames, ¬ fr.HasImplicit
 
 /-- The complex linker: the say-root's morphs followed by the converb's
 (*de-p*; Sakha *die-n*). -/
@@ -180,7 +180,7 @@ def depAnalysis : SayConverbAnalysis where
   sayRoot_mem := .head _
   converb_mem := .tail _ (.head _)
   converb_conv := rfl
-  say_transitive := ⟨by decide, rfl⟩
+  say_transitive := ⟨by decide, by decide⟩
 
 example : depAnalysis.linker = [.root "de", .suff "(I)p"] := rfl
 

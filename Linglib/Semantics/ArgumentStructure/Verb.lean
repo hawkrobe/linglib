@@ -46,12 +46,12 @@ open Semantics
 /-! ### The theta-grid (derived from the proto-role profiles) -/
 
 /-- The verb is unaccusative when its voice, if recorded, introduces no external argument
-([kratzer-1996]), and otherwise when its citation frame has none
-(`ArgumentFrame.IsUnaccusative`) or the entry's flag says so. -/
+([kratzer-1996]), and otherwise when some frame of its has none (`ArgumentFrame.IsUnaccusative`),
+its sole argument the underlying object. -/
 def Verb.IsUnaccusative (v : Verb) : Prop :=
   match v.voiceType with
   | some vt => ¬ vt.AssignsTheta
-  | none => (∃ fr ∈ v.citationFrame?, fr.IsUnaccusative) ∨ v.unaccusative = true
+  | none => ∃ fr ∈ v.frames, fr.IsUnaccusative
 
 instance : DecidablePred Verb.IsUnaccusative := fun v ↦ by
   unfold Verb.IsUnaccusative; split <;> infer_instance
