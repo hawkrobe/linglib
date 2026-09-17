@@ -1,5 +1,5 @@
 import Linglib.Core.Computability.Definite
-import Linglib.Core.Data.List.Bookend
+import Linglib.Core.Data.List.Sublist
 import Linglib.Phonology.Subregular.Multitier
 import Linglib.Phonology.Subregular.ForbiddenPairs
 import Linglib.Phonology.Subregular.Sibilant
@@ -56,8 +56,7 @@ open Language Subregular List
 
 /-! ### Bookended witnesses
 
-The paper's parameterized witnesses are words `aᵏ ++ mid ++ bᵏ`; the lemmas of
-`Core/Data/List/Bookend.lean` are specialized to the edge projections. -/
+The paper's parameterized witnesses are words `aᵏ ++ mid ++ bᵏ`. -/
 
 section Sandwich
 
@@ -67,49 +66,14 @@ variable {α : Type*}
 private abbrev sandwich (kL : ℕ) (aL : α) (mid : List α) (kR : ℕ) (aR : α) : List α :=
   replicate kL aL ++ mid ++ replicate kR aR
 
-private lemma takeAt_left_sandwich {k kL : ℕ} {aL : α} {mid : List α} {kR : ℕ} {aR : α}
-    (h : k ≤ kL) : Edge.left.takeAt k (sandwich kL aL mid kR aR) = replicate k aL := by
-  show (replicate kL aL ++ mid ++ replicate kR aR).take k = replicate k aL
-  rw [append_assoc, take_replicate_append h]
-
-private lemma takeAt_right_sandwich {k kL : ℕ} {aL : α} {mid : List α} {kR : ℕ} {aR : α}
-    (h : k ≤ kR) : Edge.right.takeAt k (sandwich kL aL mid kR aR) = replicate k aR := by
-  show (replicate kL aL ++ mid ++ replicate kR aR).rtake k = replicate k aR
-  rw [rtake_append_replicate h]
-
-private lemma filter_sandwich_of_pos_pos {T : α → Bool} {aL aR : α} (hL : T aL = true)
-    (hR : T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
-    (sandwich kL aL mid kR aR).filter T = sandwich kL aL (mid.filter T) kR aR := by
+/-- A pattern that can borrow neither bookend's symbol for its head or its last element is a
+sublist of the bookended word exactly when it is a sublist of the middle. -/
+private lemma sublist_sandwich_iff {pat mid : List α} {aL aR : α}
+    (h_first : pat.head? ≠ some aL) (h_last : pat.getLast? ≠ some aR) {kL kR : ℕ} :
+    pat <+ sandwich kL aL mid kR aR ↔ pat <+ mid := by
   unfold sandwich
-  rw [filter_replicate_append_replicate, ite_eq_left hL, ite_eq_left hR]
-
-private lemma filter_sandwich_of_neg_pos {T : α → Bool} {aL aR : α} (hL : ¬ T aL = true)
-    (hR : T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
-    (sandwich kL aL mid kR aR).filter T = mid.filter T ++ replicate kR aR := by
-  unfold sandwich
-  rw [filter_replicate_append_replicate, ite_eq_right hL, ite_eq_left hR, replicate_zero, nil_append]
-
-private lemma filter_sandwich_of_pos_neg {T : α → Bool} {aL aR : α} (hL : T aL = true)
-    (hR : ¬ T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
-    (sandwich kL aL mid kR aR).filter T = replicate kL aL ++ mid.filter T := by
-  unfold sandwich
-  rw [filter_replicate_append_replicate, ite_eq_left hL, ite_eq_right hR, replicate_zero, append_nil]
-
-private lemma filter_sandwich_of_neg_neg {T : α → Bool} {aL aR : α} (hL : ¬ T aL = true)
-    (hR : ¬ T aR = true) {kL : ℕ} {mid : List α} {kR : ℕ} :
-    (sandwich kL aL mid kR aR).filter T = mid.filter T := by
-  unfold sandwich
-  rw [filter_replicate_append_replicate, ite_eq_right hL, ite_eq_right hR, replicate_zero, replicate_zero,
-    nil_append, append_nil]
-
-private lemma sublist_sandwich_of_sublist_mid {pat mid : List α} (h : pat <+ mid)
-    (kL : ℕ) (aL : α) (kR : ℕ) (aR : α) : pat <+ sandwich kL aL mid kR aR :=
-  sublist_replicate_append_replicate h kL aL kR aR
-
-private lemma not_sublist_sandwich {pat mid : List α} {aL aR : α}
-    (h_first : pat.head? ≠ some aL) (h_last : pat.getLast? ≠ some aR)
-    (h_inner : ¬ pat <+ mid) (kL kR : ℕ) : ¬ pat <+ sandwich kL aL mid kR aR :=
-  not_sublist_replicate_append_replicate h_first h_last h_inner kL kR
+  rw [append_assoc, sublist_replicate_append_iff_of_head?_ne h_first,
+    sublist_append_replicate_iff_of_getLast?_ne h_last]
 
 /-- Two members of a list occur in one order or the other as a subsequence, unless equal. -/
 private lemma sublist_pair_of_mem {l : List α} {x y : α} (hx : x ∈ l) (hy : y ∈ l) :
@@ -178,17 +142,12 @@ theorem culminativity_not_isGeneralizedDefinite (k : ℕ) :
   intro h
   have key : sandwich k Syl.unstressed [Syl.stressed] k Syl.unstressed ∈ culminativity ↔
       sandwich k Syl.unstressed [Syl.stressed, Syl.stressed] k Syl.unstressed ∈ culminativity :=
-    isGeneralizedDefinite_iff_edges.mp h
-      (by rw [takeAt_left_sandwich le_rfl, takeAt_left_sandwich le_rfl])
-      (by rw [takeAt_right_sandwich le_rfl, takeAt_right_sandwich le_rfl])
-  have ha : sandwich k Syl.unstressed [Syl.stressed] k Syl.unstressed ∈ culminativity := by
-    show filter Syl.isStressed _ = [] ∨ filter Syl.isStressed _ = [Syl.stressed]
-    rw [filter_sandwich_of_neg_neg (by decide) (by decide)]
-    exact Or.inr rfl
-  refine absurd (key.mp ha) ?_
-  show ¬ (filter Syl.isStressed _ = [] ∨ filter Syl.isStressed _ = [Syl.stressed])
-  rw [filter_sandwich_of_neg_neg (by decide) (by decide)]
-  decide
+    isGeneralizedDefinite_iff_edges.mp h (by simp) (by simp [rtake_eq_reverse_take_reverse])
+  refine absurd (key.mp ?_) ?_
+  · show filter Syl.isStressed _ = [] ∨ filter Syl.isStressed _ = [Syl.stressed]
+    simp [Syl.isStressed]
+  · show ¬ (filter Syl.isStressed _ = [] ∨ filter Syl.isStressed _ = [Syl.stressed])
+    simp [Syl.isStressed]
 
 /-- Culminative stress-final ((13a)): `σ́⋉ ∧ [⋊σ́⋉]_{σ́}`. -/
 def stressFinalCulminative : Language Syl := iban ⊓ tierWord Syl.isStressed [.stressed]
@@ -394,39 +353,8 @@ private lemma tsuutina_tierAffixes (k : ℕ) (T : Sibilant → Bool) :
     Edge.left.takeAt k ((tsuutinaIn k).filter T) = Edge.left.takeAt k ((tsuutinaOut k).filter T) ∧
     Edge.right.takeAt k ((tsuutinaIn k).filter T) =
       Edge.right.takeAt k ((tsuutinaOut k).filter T) := by
-  unfold tsuutinaIn tsuutinaOut
-  match h_post : T .posterior, h_ant : T .anterior with
-  | false, false =>
-    have h_post' : ¬ T .posterior = true := by simp [h_post]
-    have h_ant' : ¬ T .anterior = true := by simp [h_ant]
-    rw [filter_sandwich_of_neg_neg h_post' h_ant', filter_sandwich_of_neg_neg h_post' h_ant']
-    have h_rej : ([Sibilant.anterior, .posterior] : List _).filter T = [] := by
-      simp [filter_cons_of_neg h_ant', filter_cons_of_neg h_post']
-    simp [h_rej]
-  | true, false =>
-    have h_ant' : ¬ T .anterior = true := by simp [h_ant]
-    rw [filter_sandwich_of_pos_neg h_post h_ant', filter_sandwich_of_pos_neg h_post h_ant']
-    have h_rej : ([Sibilant.anterior, .posterior] : List _).filter T = [.posterior] := by
-      simp [filter_cons_of_neg h_ant', filter_cons_of_pos h_post]
-    rw [filter_nil, append_nil, h_rej, ← replicate_succ']
-    exact ⟨rfl, rfl⟩
-  | false, true =>
-    have h_post' : ¬ T .posterior = true := by simp [h_post]
-    rw [filter_sandwich_of_neg_pos h_post' h_ant, filter_sandwich_of_neg_pos h_post' h_ant]
-    have h_rej : ([Sibilant.anterior, .posterior] : List _).filter T = [.anterior] := by
-      simp [filter_cons_of_pos h_ant, filter_cons_of_neg h_post']
-    rw [filter_nil, nil_append, h_rej]
-    show (Sibilant.anterior :: replicate k .anterior).take k =
-        (replicate (k + 1) Sibilant.anterior).take k ∧
-      (Sibilant.anterior :: replicate k .anterior).drop _ =
-        (replicate (k + 1) Sibilant.anterior).drop _
-    rw [← replicate_succ]
-    exact ⟨rfl, rfl⟩
-  | true, true =>
-    rw [filter_sandwich_of_pos_pos h_post h_ant, filter_sandwich_of_pos_pos h_post h_ant,
-      takeAt_left_sandwich (Nat.le_succ k), takeAt_left_sandwich (le_refl k),
-      takeAt_right_sandwich (Nat.le_succ k), takeAt_right_sandwich (le_refl k)]
-    exact ⟨rfl, rfl⟩
+  cases h_post : T .posterior <;> cases h_ant : T .anterior <;>
+    simp [rtake_eq_reverse_take_reverse, h_post, h_ant, ← replicate_succ, take_append_of_le_length]
 
 private lemma tsuutinaIn_mem (k : ℕ) : tsuutinaIn k ∈ tsuutina := by
   show tsuutinaIn k ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden
@@ -570,33 +498,8 @@ private abbrev toneOut (k : ℕ) : List Tone :=
 private lemma tone_tierAffixes (k : ℕ) (T : Tone → Bool) :
     Edge.left.takeAt k ((toneIn k).filter T) = Edge.left.takeAt k ((toneOut k).filter T) ∧
     Edge.right.takeAt k ((toneIn k).filter T) = Edge.right.takeAt k ((toneOut k).filter T) := by
-  unfold toneIn toneOut
-  match h_low : T .low with
-  | true =>
-    rw [filter_sandwich_of_pos_pos h_low h_low, filter_sandwich_of_pos_pos h_low h_low,
-      takeAt_left_sandwich (le_refl k), takeAt_left_sandwich (le_refl k),
-      takeAt_right_sandwich (le_refl k), takeAt_right_sandwich (le_refl k)]
-    exact ⟨rfl, rfl⟩
-  | false =>
-    have h_low' : ¬ T .low = true := by simp [h_low]
-    rw [filter_sandwich_of_neg_neg h_low' h_low', filter_sandwich_of_neg_neg h_low' h_low']
-    match h_high : T .high with
-    | true =>
-      have h_acc : ([Tone.low, .high, .high, .low] : List Tone).filter T = [.high, .high] := by
-        simp [filter_cons_of_neg h_low', filter_cons_of_pos h_high]
-      have h_rej : ([Tone.low, .high, .low, .high, .low] : List Tone).filter T =
-          [.high, .high] := by
-        simp [filter_cons_of_neg h_low', filter_cons_of_pos h_high]
-      rw [h_acc, h_rej]
-      exact ⟨rfl, rfl⟩
-    | false =>
-      have h_high' : ¬ T .high = true := by simp [h_high]
-      have h_acc : ([Tone.low, .high, .high, .low] : List Tone).filter T = [] := by
-        simp [filter_cons_of_neg h_low', filter_cons_of_neg h_high']
-      have h_rej : ([Tone.low, .high, .low, .high, .low] : List Tone).filter T = [] := by
-        simp [filter_cons_of_neg h_low', filter_cons_of_neg h_high']
-      rw [h_acc, h_rej]
-      exact ⟨rfl, rfl⟩
+  cases h_low : T .low <;> cases h_high : T .high <;>
+    simp [rtake_eq_reverse_take_reverse, h_low, h_high]
 
 /-- The tone witnesses are not separated by any multitier generalized definite language. -/
 private lemma tone_indist (k : ℕ) :
@@ -606,9 +509,9 @@ private lemma tone_indist (k : ℕ) :
 /-- Luganda plateauing is not multitier generalized definite (§5.1). -/
 theorem luganda_not_isBTLI (k : ℕ) : ¬ IsBTLI k luganda :=
   not_isBTC_of_indist (tone_indist k)
-    ⟨not_sublist_sandwich (by decide) (by decide) (by decide) k k,
-      Or.inr (sublist_sandwich_of_sublist_mid (by decide) k _ k _)⟩
-    λ h => h.1 (sublist_sandwich_of_sublist_mid (by decide) k _ k _)
+    ⟨(sublist_sandwich_iff (by decide) (by decide)).not.mpr (by decide),
+      Or.inr (sublist_append_of_sublist_left (sublist_append_of_sublist_right (by decide)))⟩
+    fun h ↦ h.1 (sublist_append_of_sublist_left (sublist_append_of_sublist_right (by decide)))
 
 /-- Prinmi ((39), [ding-2006]): one high span of at most two syllables,
 `h ∧ ¬h..ℓ..h ∧ ¬h..h..h`. -/
@@ -624,10 +527,10 @@ theorem prinmi_isPiecewiseTestable : prinmi.IsPiecewiseTestable 3 :=
 /-- Prinmi is not multitier generalized definite (§5.2), by the Luganda witnesses. -/
 theorem prinmi_not_isBTLI (k : ℕ) : ¬ IsBTLI k prinmi :=
   not_isBTC_of_indist (tone_indist k)
-    ⟨⟨sublist_sandwich_of_sublist_mid (by decide) k _ k _,
-      not_sublist_sandwich (by decide) (by decide) (by decide) k k⟩,
-      not_sublist_sandwich (by decide) (by decide) (by decide) k k⟩
-    λ h => h.1.2 (sublist_sandwich_of_sublist_mid (by decide) k _ k _)
+    ⟨⟨sublist_append_of_sublist_left (sublist_append_of_sublist_right (by decide)),
+      (sublist_sandwich_iff (by decide) (by decide)).not.mpr (by decide)⟩,
+      (sublist_sandwich_iff (by decide) (by decide)).not.mpr (by decide)⟩
+    fun h ↦ h.1.2 (sublist_append_of_sublist_left (sublist_append_of_sublist_right (by decide)))
 
 /-- Arigibi ((40), [donohue-1997]): at most one high mora, `¬h..h`. -/
 def arigibi : Language Tone := (shuffleIdeal [.high, .high])ᶜ
