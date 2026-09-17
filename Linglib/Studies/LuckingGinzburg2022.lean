@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.Witness
-import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.NP
 import Linglib.Semantics.Quantification.NumberTree
 import Mathlib.Data.Finset.Powerset
 

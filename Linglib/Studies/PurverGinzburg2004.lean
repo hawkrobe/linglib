@@ -206,7 +206,7 @@ theorem rows_predicted : ∀ r ∈ Examples.all, Predicted r := by decide
 
 /-! ### Witness sets and truth conditions (§2.2.3, §4.4, §5.5) -/
 
-variable {α : Type*} {Q : Quantifier α} {A X : α → Prop}
+variable {α : Type*} {Q : NP α} {A X : α → Prop}
 
 /-- The plain witness representation (85) is vacuous for a quantifier that the empty set
 witnesses, such as *few* or *no*: every predicate contains a witness set. -/

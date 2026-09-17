@@ -34,11 +34,11 @@ namespace Mandarin.Determiners
 open English.Determiners (QForce Monotonicity Strength)
 open Mandarin.Classifiers (ge)
 
-/-- Mandarin quantifier entry. `extends QuantifierDeterminer` (the
+/-- Mandarin quantifier entry. `extends Quantifier` (the
     marked-determiner base — the inherited `form` holds the hànzì surface form)
     and adds classifier requirements (Mandarin-specific morphosyntax) and the
     typological metadata labels (`qforce`/`monotonicity`/`strength`). -/
-structure MandarinQuantEntry extends QuantifierDeterminer where
+structure MandarinQuantEntry extends Quantifier where
   /-- Pīnyīn romanization -/
   pinyin : String
   /-- English gloss -/

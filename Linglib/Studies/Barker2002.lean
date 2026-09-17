@@ -34,7 +34,7 @@ so `saw m j` is *John saw Mary*.
 
 namespace Barker2002
 
-open Quantification (Quantifier individual)
+open Quantification (NP individual)
 
 variable {α β γ E : Type}
 

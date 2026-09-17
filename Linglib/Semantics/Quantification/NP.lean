@@ -9,17 +9,22 @@ import Mathlib.Order.GaloisConnection.Defs
 /-!
 # Type ⟨1⟩ quantifiers
 
-The API for `Quantifier α`, the denotation type of a quantified noun phrase.
-Existential closure `A` turns a property into a quantifier and predicative
-content `BE` turns one back; `BE ∘ A` is the identity, and on the
-upward-closed quantifiers that [barwise-cooper-1981] take natural-language
-determiners to denote, the two form a `GaloisCoinsertion`. Sending a quantifier through `BE` and back preserves truth
-conditions exactly when it is a principal ultrafilter: a proper name survives
-the round trip, `every student` does not. `Ty.det` names the determiner type
-⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩. The shifts relating `Quantifier` to the other noun-phrase types are
-[partee-1987]'s: the total ones are `individual`, `ident`, `A` and `BE`, with the two faces
-of Partee's triangle `BE_individual_eq_ident` and `A_ident_eq_individual` proved here, and
-the partial ones, `Reference.THE` and `Reference.lower`, are Russellian iotas.
+This file is the API of `NP α`, the type ⟨1⟩ quantifier that a noun phrase denotes.
+Existential closure `A` turns a property into a quantifier and predicative content `BE` turns
+one back. `BE ∘ A` is the identity, and on the monotone quantifiers, which are what
+[barwise-cooper-1981] take natural-language determiners to denote, the two form a
+`GaloisCoinsertion`. Sending a quantifier through `BE` and back preserves truth conditions
+exactly when it is a principal ultrafilter, so a proper name survives the round trip and
+*every student* does not. The shifts relating `NP` to the other noun-phrase types are
+[partee-1987]'s. The total ones are `individual`, `ident`, `A` and `BE`, with the two faces of
+Partee's triangle `BE_individual_eq_ident` and `A_ident_eq_individual` proved here, and the
+partial ones, `Reference.THE` and `Reference.lower`, are Russellian iotas.
+
+## References
+
+* [barwise-cooper-1981]
+* [partee-1987]
+* [barker-2002]
 -/
 
 namespace Quantification
@@ -32,9 +37,9 @@ These are `rfl`: the carrier definitionally coincides with the
 continuation monad at answer type `Prop`, first exploited for natural
 language by [barker-2002] (see `Studies/Barker2002.lean`). -/
 
-/-- The quantifier type is the continuation type: a quantifier is a
-computation handed its own scope. -/
-theorem quantifier_eq_cont : Quantifier E = Cont Prop E := rfl
+/-- The quantifier type is the continuation type, since a quantifier is a computation handed
+its own scope. -/
+theorem np_eq_cont : NP E = Cont Prop E := rfl
 
 /-- Montague lift is the continuation monad's unit. -/
 theorem individual_eq_pure (a : E) : individual a = (pure a : Cont Prop E) := rfl
@@ -49,11 +54,11 @@ theorem sInter_individual (a : E) : ⋂₀ (individual a : Set (Set E)) = {a} :=
 /-! ### Predicative content and existential closure -/
 
 /-- Predicative content of a quantifier: `BE(Q) = λx. Q(λy. y = x)`. -/
-def BE (Q : Quantifier E) : E → Prop :=
+def BE (Q : NP E) : E → Prop :=
   fun x => Q (fun y => y = x)
 
 /-- Existential closure: `A(P) = λQ. ∃x ∈ domain. P(x) ∧ Q(x)`. -/
-def A (domain : List E) (P : E → Prop) : Quantifier E :=
+def A (domain : List E) (P : E → Prop) : NP E :=
   fun Q => ∃ x ∈ domain, P x ∧ Q x
 
 /-- `BE ∘ individual = ident`, the right face of [partee-1987]'s triangle. -/
@@ -69,19 +74,19 @@ theorem A_ident_eq_individual (domain : List E) (j : E) (hj : j ∈ domain) :
 /-! ### `BE` as a bounded-lattice homomorphism -/
 
 /-- `BE(Q₁ ∧ Q₂) = BE(Q₁) ∧ BE(Q₂)` -/
-theorem BE_conj (Q₁ Q₂ : Quantifier E) :
+theorem BE_conj (Q₁ Q₂ : NP E) :
     BE (fun P => Q₁ P ∧ Q₂ P) = (fun x => BE Q₁ x ∧ BE Q₂ x) := rfl
 
 /-- `BE(Q₁ ∨ Q₂) = BE(Q₁) ∨ BE(Q₂)` -/
-theorem BE_disj (Q₁ Q₂ : Quantifier E) :
+theorem BE_disj (Q₁ Q₂ : NP E) :
     BE (fun P => Q₁ P ∨ Q₂ P) = (fun x => BE Q₁ x ∨ BE Q₂ x) := rfl
 
 /-- `BE(¬Q) = ¬BE(Q)` -/
-theorem BE_neg (Q : Quantifier E) :
+theorem BE_neg (Q : NP E) :
     BE (fun P => ¬(Q P)) = (fun x => ¬(BE Q x)) := rfl
 
 /-- `BE` preserves meets, joins, `⊤` and `⊥` ([partee-1987]). -/
-def BE_hom (E : Type*) : BoundedLatticeHom (Quantifier E) (E → Prop) where
+def beHom (E : Type*) : BoundedLatticeHom (NP E) (E → Prop) where
   toFun := BE
   map_sup' _ _ := rfl
   map_inf' _ _ := rfl
@@ -100,7 +105,7 @@ is not transparent, both meanings are live interpretive alternatives. -/
 
 /-- A quantifier is a principal ultrafilter when it is some entity's
     Montagovian individual. -/
-def isPrincipalUltrafilter (domain : List E) (Q : Quantifier E) : Prop :=
+def isPrincipalUltrafilter (domain : List E) (Q : NP E) : Prop :=
   ∃ j ∈ domain, Q = individual j
 
 /-- `(∃ x ∈ domain, j = x ∧ P x) ↔ P j` when `j ∈ domain`. -/
@@ -182,35 +187,29 @@ whenever `R(x)`, and monotonicity lifts this to `Q({x}) ≤ Q(R)`. So the
 monotonicity constraint is exactly the condition making `A` and `BE` an
 adjunction. -/
 
-/-- Upward-closed (monotone) quantifiers: `Q(P)` and `P ≤ P'` imply `Q(P')`. -/
-def UpwardGQ (E : Type*) := { Q : Quantifier E // Monotone Q }
-
-instance : PartialOrder (UpwardGQ E) := Subtype.partialOrder _
-
-/-- `A(P)` is always upward-closed. -/
-theorem A_monotone_gq (domain : List E) (P : E → Prop) :
-    Monotone (A domain P) := by
+/-- `A(P)` is always monotone. -/
+theorem A_monotone (domain : List E) (P : E → Prop) : Monotone (A domain P) := by
   intro R R' hRR'
   show (∃ x ∈ domain, P x ∧ R x) → ∃ x ∈ domain, P x ∧ R' x
-  exact fun ⟨x, hx, hPx, hRx⟩ => ⟨x, hx, hPx, hRR' x hRx⟩
+  exact fun ⟨x, hx, hPx, hRx⟩ ↦ ⟨x, hx, hPx, hRR' x hRx⟩
 
-/-- `A` into the `UpwardGQ` subtype. -/
-def A_up (domain : List E) (P : E → Prop) : UpwardGQ E :=
-  ⟨A domain P, A_monotone_gq domain P⟩
+/-- `A` into the monotone quantifiers `(E → Prop) →o Prop`. -/
+def A_up (domain : List E) (P : E → Prop) : (E → Prop) →o Prop :=
+  ⟨A domain P, A_monotone domain P⟩
 
-/-- `BE` out of the `UpwardGQ` subtype. -/
-def BE_up (Q : UpwardGQ E) : E → Prop := BE Q.val
+/-- `BE` out of the monotone quantifiers. -/
+def BE_up (Q : (E → Prop) →o Prop) : E → Prop := BE Q
 
 /-- `A` is monotone as a map from properties to quantifiers. -/
 theorem A_up_mono (domain : List E) : Monotone (A_up domain (E := E)) := by
   intro P P' hPP'; show A domain P ≤ A domain P'; intro R
   show (∃ x ∈ domain, P x ∧ R x) → ∃ x ∈ domain, P' x ∧ R x
-  exact fun ⟨x, hx, hPx, hRx⟩ => ⟨x, hx, hPP' x hPx, hRx⟩
+  exact fun ⟨x, hx, hPx, hRx⟩ ↦ ⟨x, hx, hPP' x hPx, hRx⟩
 
-/-- `BE` is monotone on `UpwardGQ`. -/
+/-- `BE` is monotone on the monotone quantifiers. -/
 theorem BE_up_mono : Monotone (BE_up (E := E)) := by
-  intro Q Q' hQQ'; show BE Q.val ≤ BE Q'.val; intro x
-  exact hQQ' (fun y => y = x)
+  intro Q Q' hQQ'; show BE Q ≤ BE Q'; intro x
+  exact hQQ' (fun y ↦ y = x)
 
 /-- The singleton property `{x}` is below any `R` satisfied by `x`. -/
 private lemma singleton_le_of_mem {x : E} {R : E → Prop} (hRx : R x) :
@@ -220,15 +219,15 @@ private lemma singleton_le_of_mem {x : E} {R : E → Prop} (hRx : R x) :
 /-- **Counit inequality**: `A(BE(Q)) ≤ Q` for upward-closed `Q`. This is what
     fails for non-monotone `Q` such as `λR. ¬R(a)`, where `Q({a})` is false but
     `Q(∅)` is true. -/
-theorem A_BE_le_of_mono (domain : List E) (Q : UpwardGQ E) :
+theorem A_BE_le_of_mono (domain : List E) (Q : (E → Prop) →o Prop) :
     A_up domain (BE_up Q) ≤ Q := by
-  show A domain (BE Q.val) ≤ Q.val
+  show A domain (BE Q) ≤ (Q : (E → Prop) → Prop)
   intro R; simp only [A, BE]
   intro ⟨x, _, hQx, hRx⟩
-  exact Q.property (singleton_le_of_mem hRx) hQx
+  exact Q.monotone (singleton_le_of_mem hRx) hQx
 
-/-- `A` and `BE` form a `GaloisCoinsertion` on the upward-closed quantifiers:
-    `BE ∘ A = id` on properties, and `A(BE(Q)) ≤ Q` for monotone `Q`. -/
+/-- `A` and `BE` form a `GaloisCoinsertion` on the monotone quantifiers, since `BE ∘ A` is the
+identity on properties and `A(BE(Q)) ≤ Q` for monotone `Q`. -/
 def galoisCoinsertion (domain : List E)
     (hcomplete : ∀ x : E, x ∈ domain) :
     GaloisCoinsertion (A_up domain (E := E)) BE_up :=
@@ -244,25 +243,12 @@ theorem gc_A_BE (domain : List E)
     GaloisConnection (A_up domain (E := E)) BE_up :=
   (galoisCoinsertion domain hcomplete).gc
 
-namespace Quantifier
-
-open Semantics.Composition
-
-/-! ### Semantic-type alias -/
-
-/-- The determiner type ⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩. -/
-def Ty.det : Ty := (.e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t)
-
-/-- Existential closure over a complete finite domain is ⟦some⟧: both compute
-    `λR.λS. ∃x. R(x) ∧ S(x)`. -/
-theorem A_eq_some_sem (E : Type*) (domain : List E)
-    (hComplete : ∀ x : E, x ∈ domain) :
+/-- Existential closure over a complete finite domain is ⟦some⟧, since both compute
+`λR.λS. ∃x. R(x) ∧ S(x)`. -/
+theorem A_eq_some_sem (E : Type*) (domain : List E) (hComplete : ∀ x : E, x ∈ domain) :
     A domain = (some_sem : GQ E) := by
   funext R S
   simp only [A, some_sem]
-  exact propext ⟨fun ⟨x, _, hR, hS⟩ => ⟨x, hR, hS⟩,
-                 fun ⟨x, hR, hS⟩ => ⟨x, hComplete x, hR, hS⟩⟩
-
-end Quantifier
+  exact propext ⟨fun ⟨x, _, hR, hS⟩ ↦ ⟨x, hR, hS⟩, fun ⟨x, hR, hS⟩ ↦ ⟨x, hComplete x, hR, hS⟩⟩
 
 end Quantification

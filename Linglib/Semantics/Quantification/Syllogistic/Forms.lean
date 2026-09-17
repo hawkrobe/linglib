@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.Syllogistic.Defs
-import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.NP
 
 /-!
 # Syllogistic forms: modern (FOL) reading

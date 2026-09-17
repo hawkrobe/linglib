@@ -18,11 +18,11 @@ a restrictor and a scope to a proposition. The properties defined here
 are purely logical — they hold at the predicate level and require
 no model infrastructure. Decidability is recovered pointwise via
 `[Fintype α] + [DecidablePred R] + [DecidablePred S]` for the concrete
-denotations defined in `Quantification.Quantifier`.
+denotations defined in `Quantification/Basic.lean`.
 
-The theory-specific module `Quantification.Quantifier` defines
-concrete denotations (`every_sem`, `some_sem`, etc.) and proves they satisfy
-these properties.
+The module `Quantification/Basic.lean` defines the concrete denotations (`every_sem`,
+`some_sem`, etc.) and proves they satisfy these properties; `Quantification/NP.lean` is the
+API of the type ⟨1⟩ quantifier `NP`.
 
 ## Contents
 
@@ -297,9 +297,8 @@ def MU4 (q : GQ α) : Prop := ScopeDownwardMono q → CoSmooth q
     (unary) quantifiers; the extension to binary determiners is due to
     [van-benthem-1984] (building on Lindström 1966).
 
-    The model-specific version in `Quantification.Quantifier.Quantity`
-    uses cardinalities directly, which requires `FiniteModel`. This version
-    captures the same intuition without model infrastructure.
+    A model-specific version would use cardinalities directly on a finite model; this
+    version captures the same intuition without model infrastructure.
 
     [van-benthem-1984] §2: CONSERV + QUANT together reduce Q's behavior to
     pairs (a, b) where a = |A \ B| and b = |A ∩ B|. -/
@@ -359,27 +358,26 @@ def adjRestrict (q : GQ α) (adj : α → Prop) : GQ α :=
 
 /-! #### Type ⟨1⟩ shifts (P&W Ch.2-3) -/
 
-/-- Type ⟨1⟩ quantifier: a property of properties — a quantifier proper
-    in [barwise-cooper-1981]'s sense ("a quantifier is a set of sets";
-    NPs denote quantifiers, determiners denote functions from properties
-    to them). P&W §2.1. Definitionally `Cont Prop α`: quantifiers are
-    the scope-taking continuations. -/
-abbrev Quantifier (α : Type*) := (α → Prop) → Prop
+/-- The type ⟨1⟩ quantifier a noun phrase denotes is a property of properties, a quantifier
+proper in [barwise-cooper-1981]'s sense, where a quantifier is a set of sets and a determiner
+denotes a function from properties to them. It is definitionally `Cont Prop α`, the
+scope-taking continuation. -/
+abbrev NP (α : Type*) := (α → Prop) → Prop
 
 /-- Restriction: given a GQ Q and restrictor A, produce the type ⟨1⟩
     quantifier Q^[A] (P&W §3.2.2). `restrict Q A B = Q A B`. -/
-def restrict (q : GQ α) (A : α → Prop) : Quantifier α := q A
+def restrict (q : GQ α) (A : α → Prop) : NP α := q A
 
 /-- A type ⟨1⟩ quantifier Q "lives on" A iff Q(B) ↔ Q(A ∩ B) for all B.
     P&W §3.2.2: the restricted quantifier depends only on elements of A. -/
-def LivesOn (Q : Quantifier α) (A : α → Prop) : Prop :=
+def LivesOn (Q : NP α) (A : α → Prop) : Prop :=
   ∀ B, Q B ↔ Q (fun x => A x ∧ B x)
 
 /-- Montagovian individual: the type ⟨1⟩ quantifier I_a = {X : a ∈ X}.
     P&W §3.2.3: an entity lifts to the principal ultrafilter it generates.
     This is Montague lift — [partee-1987]'s LIFT and the continuation
     `pure`. -/
-def individual (a : α) : Quantifier α := fun P => P a
+def individual (a : α) : NP α := fun P => P a
 
 /-- The Montague lift is injective: an entity is recovered from its principal ultrafilter. -/
 theorem individual_injective : Function.Injective (individual (α := α)) :=

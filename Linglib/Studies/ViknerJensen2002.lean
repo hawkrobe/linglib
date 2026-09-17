@@ -58,12 +58,12 @@ variable {E S : Type*}
 /-- The genitive clitic (16) applied to a possessor NP and a relational noun, at a situation: the
 possessive quantifier over the whole NP with the Russellian definite as possessee quantifier,
 the possessee class already inside the relation. -/
-def clitic (Q : Quantifier E) (R : E → E → S → Prop) (s : S) : Quantifier E :=
+def clitic (Q : NP E) (R : E → E → S → Prop) (s : S) : NP E :=
   PossNP Q the_sem (λ u x => R u x s) (λ _ => True)
 
 /-- The clitic is the paper's (16): the possessor quantifier over the property of having a unique
 relatum that is `P`, the definite scoping under the possessor. -/
-theorem clitic_apply (Q : Quantifier E) (R : E → E → S → Prop) (s : S) (P : E → Prop) :
+theorem clitic_apply (Q : NP E) (R : E → E → S → Prop) (s : S) (P : E → Prop) :
     clitic Q R s P ↔ Q (λ u => ∃ x, (∀ y, R u y s ↔ y = x) ∧ P x) := by
   simp only [clitic, PossNP, dom, the_sem, true_and]
   refine iff_of_eq (congrArg Q (funext λ a => propext (and_iff_right_of_imp ?_)))
@@ -72,7 +72,7 @@ theorem clitic_apply (Q : Quantifier E) (R : E → E → S → Prop) (s : S) (P 
 
 /-- Over a coerced sortal noun the clitic is the possessive quantifier with the sortal as the
 possessee class and the free relation as the possession relation. -/
-theorem clitic_pi (Q : Quantifier E) (W : E → S → Prop) (R : E → E → S → Prop) (s : S) :
+theorem clitic_pi (Q : NP E) (W : E → S → Prop) (R : E → E → S → Prop) (s : S) :
     clitic Q (π W R) s = PossNP Q the_sem (λ u x => R u x s) (λ x => W x s) := by
   funext P
   simp only [clitic, PossNP, dom, the_sem, π, true_and]
@@ -95,7 +95,7 @@ theorem not_clitic_individual {a : E} {R : E → E → S → Prop} {s : S} (h : 
 
 /-- The Montagovian definite (13) composed outside the genitive phrase: the definite takes wide
 scope over the possessor quantifier. -/
-def wideDefinite (Q : Quantifier E) (R : E → E → S → Prop) (s : S) : Quantifier E :=
+def wideDefinite (Q : NP E) (R : E → E → S → Prop) (s : S) : NP E :=
   the_sem (λ y => Q (λ u => R u y s))
 
 /-- For an individual possessor the two scopings agree. -/
@@ -107,7 +107,7 @@ theorem clitic_individual (a : E) (R : E → E → S → Prop) (s : S) :
 /-- For a quantified possessor they part: with two girls with different teachers, *each girl's
 teacher* is true on the clitic and false on the wide definite, (11b). -/
 theorem exists_clitic_ne_wideDefinite :
-    ∃ (Q : Quantifier (Fin 4)) (R : Fin 4 → Fin 4 → Unit → Prop) (P : Fin 4 → Prop),
+    ∃ (Q : NP (Fin 4)) (R : Fin 4 → Fin 4 → Unit → Prop) (P : Fin 4 → Prop),
       clitic Q R () P ∧ ¬ wideDefinite Q R () P :=
   ⟨every_sem (· < 2), λ u y _ => u = 0 ∧ y = 2 ∨ u = 1 ∧ y = 3, λ _ => True,
     by rw [clitic_apply]; unfold every_sem; decide,

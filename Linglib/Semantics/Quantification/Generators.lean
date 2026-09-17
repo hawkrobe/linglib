@@ -15,7 +15,7 @@ quantification over X as lattice operations.
 
 ## Architecture
 
-`Quantifier α = (α → Prop) → Prop` inherits a full `BooleanAlgebra` from
+`NP α = (α → Prop) → Prop` inherits a full `BooleanAlgebra` from
 Mathlib's Pi instances over `Prop`. All definitions here are stated
 directly in terms of Mathlib's `⊓`/`⊔`/`⊤`/`⊥`/`≤`. The propositional
 characterizations (`conjGQ X P ↔ ∀ x ∈ X, P x`,
@@ -58,7 +58,7 @@ variable {α : Type*}
 
     [xiang-2016]: conjunction GQs range over non-empty subsets of an
     entity domain, generating the "conjunctive" answers to questions. -/
-def conjGQ (X : List α) : Quantifier α :=
+def conjGQ (X : List α) : NP α :=
   X.foldr (fun a acc => individual a ⊓ acc) ⊤
 
 /-- Disjunction GQ: iterated join of individual quantifiers.
@@ -66,7 +66,7 @@ def conjGQ (X : List α) : Quantifier α :=
     ⊔(X) = ⨆_{x ∈ X} individual(x)
 
     [xiang-2016]: disjunction GQs generate "disjunctive" answers. -/
-def disjGQ (X : List α) : Quantifier α :=
+def disjGQ (X : List α) : NP α :=
   X.foldr (fun a acc => individual a ⊔ acc) ⊥
 
 /-! ### Recursive Decomposition -/
@@ -144,7 +144,7 @@ theorem disjGQ_singleton (a : α) :
 
 /-! `conjGQ X` is the greatest lower bound (infimum) and `disjGQ X` the
     least upper bound (supremum) of `{individual a | a ∈ X}` in the Quantifier
-    lattice. These use Mathlib's `≤` on `Quantifier α`, which is pointwise
+    lattice. These use Mathlib's `≤` on `NP α`, which is pointwise
     implication: `f ≤ g ↔ ∀ P, f P → g P` for the Pi-of-Prop ordering. -/
 
 /-- conjGQ X ≤ individual a for every a ∈ X: the iterated meet is below
@@ -156,7 +156,7 @@ theorem conjGQ_le_individual (a : α) (X : List α) (ha : a ∈ X) :
 
 /-- conjGQ X is the greatest lower bound of {individual a | a ∈ X}:
     any Q below every individual in X is below conjGQ X. -/
-theorem le_conjGQ (Q : Quantifier α) (X : List α)
+theorem le_conjGQ (Q : NP α) (X : List α)
     (h : ∀ a ∈ X, Q ≤ individual a) :
     Q ≤ conjGQ X := by
   intro P hQ
@@ -173,7 +173,7 @@ theorem individual_le_disjGQ (a : α) (X : List α) (ha : a ∈ X) :
 
 /-- disjGQ X is the least upper bound of {individual a | a ∈ X}:
     any Q above every individual in X is above disjGQ X. -/
-theorem disjGQ_le (Q : Quantifier α) (X : List α)
+theorem disjGQ_le (Q : NP α) (X : List α)
     (h : ∀ a ∈ X, individual a ≤ Q) :
     disjGQ X ≤ Q := by
   intro P hDisj
@@ -256,7 +256,7 @@ theorem conjGQ_le_individual_iff [DecidableEq α] (a : α) (X : List α) :
       ¬(∃x∈X. P(x)) ↔ ∀x∈X. ¬P(x)
 
     Note: these are distinct from the BooleanAlgebra complement laws
-    on Quantifier α. The lattice complement `(conjGQ X)ᶜ` negates the
+    on NP α. The lattice complement `(conjGQ X)ᶜ` negates the
     *output*; De Morgan negates the *input predicate*. -/
 
 /-- De Morgan for conjunction: negating each argument swaps ∀ to ∃. -/
@@ -331,13 +331,13 @@ def nonemptySubsets (l : List α) : List (List α) :=
     For a domain of n entities, produces 2ⁿ − 1 conjunction GQs,
     one per non-empty subset. Singleton subsets produce individual
     quantifiers; the full set produces the strongest (most conjuncts). -/
-def conjGQs (dom : List α) : List (Quantifier α) :=
+def conjGQs (dom : List α) : List (NP α) :=
   (nonemptySubsets dom).map conjGQ
 
 /-- All disjunction GQs from non-empty subsets of a domain.
 
     disjGQs(dom) = {⊔(X) | ∅ ≠ X ⊆ dom} -/
-def disjGQs (dom : List α) : List (Quantifier α) :=
+def disjGQs (dom : List α) : List (NP α) :=
   (nonemptySubsets dom).map disjGQ
 
 end Quantification

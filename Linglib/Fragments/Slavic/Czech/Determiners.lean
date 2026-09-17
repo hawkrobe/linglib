@@ -21,16 +21,16 @@ namespace Czech.Determiners
 def ten : DemonstrativeDeterminer := { form := "ten", deictic := .unspecified }
 
 /-- *každý* 'every', universal over singular count nouns. -/
-def kazdy : QuantifierDeterminer := { form := "každý", numberRestriction := some .singular }
+def kazdy : Quantifier := { form := "každý", numberRestriction := some .singular }
 
 /-- *žádný* 'no', the negative concord determiner, accepting mass nouns. -/
-def zadny : QuantifierDeterminer := { form := "žádný", selectsMass := true }
+def zadny : Quantifier := { form := "žádný", selectsMass := true }
 
 /-- *nějaký* 'some', the positive polarity determiner, accepting mass nouns. -/
-def nejaky : QuantifierDeterminer := { form := "nějaký", selectsMass := true }
+def nejaky : Quantifier := { form := "nějaký", selectsMass := true }
 
 /-- *některý* 'some, certain', the partitive indefinite determiner. -/
-def nektery : QuantifierDeterminer := { form := "některý" }
+def nektery : Quantifier := { form := "některý" }
 
 /-- The Czech determiners: the demonstrative and the quantifiers, with no article. -/
 def inventory : Determiner.Inventory :=

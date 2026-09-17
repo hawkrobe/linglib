@@ -1,4 +1,4 @@
-import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.NP
 
 /-!
 # Quantifier domain restriction
