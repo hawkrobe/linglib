@@ -499,6 +499,10 @@ theorem crack_template_forces_denote_result {Entity State T : Type*}
 
 open ArgumentStructure
 
+-- The classes are finite, so the comparison quantifies over all of them; the instance stays
+-- here since it slows `decide` proofs elsewhere that enumerate class-valued rows.
+deriving instance Fintype for LevinClass
+
 /-- A class Part II of [levin-1993] tests for the causative alternation and whose root
 signature is recorded. -/
 def TestedForCausative (c : LevinClass) : Prop :=

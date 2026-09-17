@@ -179,7 +179,7 @@ inductive LevinClass where
   | aspectual          -- 55: begin, start, finish, ...
   -- Weather Verbs (§ 57)
   | weather            -- 57: rain, snow, ...
-  deriving DecidableEq, Repr, Fintype
+  deriving DecidableEq, Repr
 
 namespace LevinClass
 
