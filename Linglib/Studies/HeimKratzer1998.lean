@@ -29,11 +29,13 @@ two scope readings of `Quantifier.Polyadic`, which differ in the toy model
 (`scope_ambiguity_computed`) and are nested (`inverse_entails_surface`). The trees also
 compile to first-order formulas, so the engine's truth conditions are model-theoretic
 realization (`interp_eq_realize`) and first-order consequence transfers
-(`conj_entails_first`). The book's composition principles are also transcribed as reference
-relations, the extensional rules of Chapters 3 to 5 (`Denotes`) and their revision for
-partial denotations in Chapter 4 (`Partial.Denotes`), which the engines extend, and Chapter 4's
-Fregean definite article makes *the student* a presupposition failure and *the pizza* a
-defined value in the toy model.
+(`conj_entails_first`). The book's in-situ alternative, the object-position entries its
+lexical rule derives for the quantifier words, composes the flat tree to the same
+surface-scope reading by Functional Application alone. The book's composition principles are
+also transcribed as reference relations, the extensional rules of Chapters 3 to 5 (`Denotes`)
+and their revision for partial denotations in Chapter 4 (`Partial.Denotes`), which the engines
+extend, and Chapter 4's Fregean definite article makes *the student* a presupposition failure
+and *the pizza* a defined value in the toy model.
 
 ## Implementation notes
 
@@ -203,6 +205,62 @@ theorem scope_ambiguity_computed :
   intro h
   have : surfaceScopeProp = inverseScopeProp := by injection h with h'; injection h'
   exact scope_readings_differ this
+
+/-! ### Repairing the mismatch in situ
+
+Section 7.2.1's alternative to movement leaves the object quantifier in place and lets the
+quantifier words be multiply ambiguous. The object-position entry takes a two-place predicate
+and the subject and quantifies over the object, and the book's lexical rule derives it for
+every determiner from its basic entry of the determiner type (`Denotation.objectShift?`). The
+flat tree with the object entry then composes by Functional Application alone to the
+surface-scope reading, the value the QR derivation computes, while an object entry in subject
+position, or a basic entry in object position, leaves its mother uninterpretable, so the
+syntax need not say where each entry may occur. -/
+
+section InSitu
+
+/-- A leaf of an in-situ tree, a quantifier word with the book's subscript, the basic entry
+or the object-position entry, or a toy-fragment word. -/
+inductive Leaf
+  | basic (w : QuantityWord)
+  | object (w : QuantityWord)
+  | word (s : String)
+
+/-- The leaf interpretation, the basic entries being the readings, the object-position entries
+their images under the lexical rule, and the words the toy lexicon's. -/
+def lexInSitu : Leaf → Option (Denotation ToyEntity Unit)
+  | .basic w => quantifierReading w
+  | .object w => (quantifierReading w).bind Denotation.objectShift?
+  | .word s => toyLexicon s
+
+/-- The book's in-situ tree on the toy fragment, `[S [DP every₁ person] [VP sees [DP some₂
+person]]]`. -/
+def tree_inSitu : Tree Unit Leaf :=
+  .bin (.bin (.leaf (.basic .every)) (.leaf (.word "person")))
+    (.bin (.leaf (.word "sees")) (.bin (.leaf (.object .some_)) (.leaf (.word "person"))))
+
+/-- The in-situ tree composes by Functional Application alone to the surface-scope reading. -/
+theorem interp_computes_inSitu :
+    interp lexInSitu g₀ tree_inSitu = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
+
+/-- The in-situ and QR derivations compute the same reading. -/
+theorem inSitu_eq_surface : interp lexInSitu g₀ tree_inSitu = interp lex g₀ tree_surface :=
+  interp_computes_inSitu.trans interp_computes_surface.symm
+
+/-- An object-position entry in subject position leaves its mother uninterpretable, `[S [DP
+some₂ person] [VP sleeps]]`. -/
+theorem object_entry_in_subject_uninterpretable :
+    interp lexInSitu g₀ (.bin (.bin (.leaf (.object .some_)) (.leaf (.word "person")))
+      (.leaf (.word "sleeps"))) = none := rfl
+
+/-- A basic entry in object position is the type mismatch of §7.1 the rule repairs, `[S John
+[VP sees [DP some₁ person]]]`. -/
+theorem basic_entry_in_object_uninterpretable :
+    interp lexInSitu g₀ (.bin (.leaf (.word "John"))
+      (.bin (.leaf (.word "sees")) (.bin (.leaf (.basic .some_)) (.leaf (.word "person"))))) =
+      none := rfl
+
+end InSitu
 
 /-! ### Unified tree: the same sentence with UD categories
 
