@@ -27,8 +27,8 @@ The monadic reading of the pair is in `Collapse.lean`.
 * `CCP.IsEliminative`, `CCP.IsTest`, `CCP.IsDistributive`,
   `CCP.IsClassical`: the classification of transformers.
 * `CCP.up`, `CCP.down`: the content–update coercions.
-* `lift`, `lower`: the bridge between the two forms.
-* `supportOf`, `contentOf`, `updateFromSat`, `dynamicEntailsOf`: the layer a
+* `Update.lift`, `CCP.lower`: the bridge between the two forms.
+* `supportOf`, `contentOf`, `CCP.updateFromSat`, `dynamicEntailsOf`: the layer a
   satisfaction relation induces.
 
 ## Main results
@@ -37,9 +37,9 @@ The monadic reading of the pair is in `Collapse.lean`.
   tests are its subidentities (`Update.isTest_iff_le_one`).
 * `Update.IsTest.eq_test_closure`, `CCP.IsTest.eq_guard`: a test is the test
   of its truth condition, a guard of its acceptance condition.
-* `lower_lift`, `lift_lower`: `lift` and `lower` are mutually inverse on
+* `Update.lower_lift`, `CCP.lift_lower`: `lift` and `lower` are mutually inverse on
   distributive transformers.
-* `CCP.isClassical_iff_up_down_eq`, `exists_eq_lift_test_iff`: the classical
+* `CCP.isClassical_iff_up_down_eq`, `CCP.exists_eq_lift_test_iff`: the classical
   transformers are exactly the static ones — `up` of their own content, the
   lifted test filters; `CCP.might_not_isDistributive` separates.
 * `support_iff_update_eq`: support is being a fixed point of the update.
@@ -47,7 +47,7 @@ The monadic reading of the pair is in `Collapse.lean`.
 ## Implementation notes
 
 The algebraic instances are scoped: `Update S` and `CCP S` abbreviate
-function types. `updateFromSat` is the literal filter rather than
+function types. `CCP.updateFromSat` is the literal filter rather than
 `lift (test _)` so that instantiating frameworks connect to it by `rfl`.
 `Update.neg` does not validate double-negation elimination and `CCP.negTest`
 is not `CCP.neg`; the framework-specific repairs and comparisons live in the
@@ -326,61 +326,61 @@ open Update
 
 /-- The relational image: `lift R σ` collects the `R`-outputs of the elements
 of `σ` — the strongest postcondition of [muskens-van-benthem-visser-2011]. -/
-def lift (R : Update S) : CCP S := λ σ => { j | ∃ i ∈ σ, R i j }
+def Update.lift (R : Update S) : CCP S := λ σ => { j | ∃ i ∈ σ, R i j }
 
 /-- `lower φ i j` holds iff `j` is an output of `φ` on the singleton `{i}`. -/
-def lower (φ : CCP S) : Update S := λ i j => j ∈ φ {i}
+def CCP.lower (φ : CCP S) : Update S := λ i j => j ∈ φ {i}
 
-theorem mem_lift : j ∈ lift R σ ↔ ∃ i ∈ σ, R i j := Iff.rfl
+theorem Update.mem_lift : j ∈ lift R σ ↔ ∃ i ∈ σ, R i j := Iff.rfl
 
 /-- `lift` sends sequencing to composition. -/
-theorem lift_seq (R₁ R₂ : Update S) :
+theorem Update.lift_seq (R₁ R₂ : Update S) :
     lift (seq R₁ R₂) = CCP.seq (lift R₁) (lift R₂) :=
   funext λ _ => Set.ext λ _ => ⟨λ ⟨i, m, j, a, b⟩ => ⟨j, ⟨i, m, a⟩, b⟩,
     λ ⟨j, ⟨i, m, a⟩, b⟩ => ⟨i, m, j, a, b⟩⟩
 
 /-- `lift (test C)` is the filter by `C`. -/
-theorem lift_test (C : Condition S) :
+theorem Update.lift_test (C : Condition S) :
     lift (test C) = λ σ => { i ∈ σ | C i } :=
   funext λ _ => Set.ext λ j => ⟨λ ⟨_, m, e, c⟩ => ⟨e ▸ m, c⟩, λ ⟨m, c⟩ => ⟨j, m, rfl, c⟩⟩
 
 /-- Lifted transformers are distributive. -/
-theorem lift_isDistributive (R : Update S) : CCP.IsDistributive (lift R) :=
+theorem Update.lift_isDistributive (R : Update S) : CCP.IsDistributive (lift R) :=
   λ _ => Set.ext λ _ => ⟨λ ⟨i, m, r⟩ => ⟨i, m, i, rfl, r⟩, λ ⟨i, m, _, e, r⟩ => ⟨i, m, e ▸ r⟩⟩
 
 /-- `lower` is a left inverse of `lift`: the relational face loses nothing. -/
-theorem lower_lift (R : Update S) : lower (lift R) = R :=
+theorem Update.lower_lift (R : Update S) : CCP.lower (lift R) = R :=
   funext₂ λ i _ => propext ⟨λ ⟨_, e, r⟩ => e ▸ r, λ r => ⟨i, rfl, r⟩⟩
 
 /-- `lift` is a right inverse of `lower` on distributive transformers. -/
-theorem lift_lower (φ : CCP S) (hd : CCP.IsDistributive φ) :
+theorem CCP.lift_lower (φ : CCP S) (hd : CCP.IsDistributive φ) :
     lift (lower φ) = φ :=
   funext λ σ => (hd σ).symm
 
 /-- `lift` reflects (and preserves) the pointwise order. -/
-theorem lift_le_lift_iff : lift R ≤ lift R' ↔ R ≤ R' :=
+theorem Update.lift_le_lift_iff : lift R ≤ lift R' ↔ R ≤ R' :=
   ⟨λ h i _ r => match h {i} ⟨i, rfl, r⟩ with | ⟨_, e, r'⟩ => e ▸ r',
    λ h _ j ⟨i, m, r⟩ => ⟨i, m, h i j r⟩⟩
 
 /-! ### Test filters -/
 
-@[simp] theorem mem_lift_test : i ∈ lift (test C) σ ↔ i ∈ σ ∧ C i := by
+@[simp] theorem Update.mem_lift_test : i ∈ lift (test C) σ ↔ i ∈ σ ∧ C i := by
   rw [lift_test]; exact Iff.rfl
 
 /-- `lift (test C)` is eliminative: it only removes elements. -/
-theorem lift_test_isEliminative (C : Condition S) :
+theorem Update.lift_test_isEliminative (C : Condition S) :
     CCP.IsEliminative (lift (test C)) := by
   rw [lift_test]; intro σ j ⟨hj, _⟩; exact hj
 
 /-- Composing test filters conjoins the conditions. -/
-theorem lift_test_lift_test (C₁ C₂ : Condition S) (σ : Set S) :
+theorem Update.lift_test_lift_test (C₁ C₂ : Condition S) (σ : Set S) :
     lift (test C₂) (lift (test C₁) σ) = lift (test fun i => C₁ i ∧ C₂ i) σ :=
   Set.ext fun i => by
     simp only [mem_lift_test]
     exact and_assoc
 
 /-- Test filters are idempotent. -/
-theorem lift_test_idem (C : Condition S) (σ : Set S) :
+theorem Update.lift_test_idem (C : Condition S) (σ : Set S) :
     lift (test C) (lift (test C) σ) = lift (test C) σ := by
   rw [lift_test_lift_test]
   exact Set.ext fun i => by simp only [mem_lift_test, and_self]
@@ -394,11 +394,11 @@ break distributivity; DPL's random reassignment does the reverse
 ([groenendijk-stokhof-1990], §4). -/
 
 /-- `up` of a condition's extension is its lifted test filter. -/
-theorem up_eq_lift_test (C : Condition S) : CCP.up {i | C i} = lift (test C) :=
+theorem CCP.up_eq_lift_test (C : Condition S) : CCP.up {i | C i} = lift (test C) :=
   (lift_test C).symm
 
 /-- A transformer is a lifted test filter iff it is classical. -/
-theorem exists_eq_lift_test_iff {φ : CCP S} :
+theorem CCP.exists_eq_lift_test_iff {φ : CCP S} :
     (∃ C : Condition S, φ = lift (test C)) ↔ CCP.IsClassical φ := by
   refine ⟨λ ⟨C, hC⟩ => hC ▸ ⟨lift_test_isEliminative C, lift_isDistributive _⟩,
     λ ⟨he, hd⟩ => ⟨λ i => i ∈ φ {i}, funext λ s => ?_⟩⟩
@@ -430,7 +430,7 @@ section Satisfaction
 
 variable {S φ : Type*}
 
-open Update (test)
+open Update
 
 /-- The content of a formula: all possibilities satisfying it. -/
 def contentOf (sat : S → φ → Prop) (ψ : φ) : Set S := { p | sat p ψ }
@@ -468,37 +468,37 @@ theorem sep_eliminative (pred : S → Prop) :
 
 /-- The update a satisfaction relation induces: filter to the satisfying
 possibilities (see the implementation notes on the choice of body). -/
-def updateFromSat (sat : S → φ → Prop) (ψ : φ) : CCP S :=
+def CCP.updateFromSat (sat : S → φ → Prop) (ψ : φ) : CCP S :=
   λ s => { p ∈ s | sat p ψ }
 
-@[simp] theorem mem_updateFromSat {sat : S → φ → Prop} {ψ : φ}
+@[simp] theorem CCP.mem_updateFromSat {sat : S → φ → Prop} {ψ : φ}
     {s : Set S} {p : S} :
     p ∈ updateFromSat sat ψ s ↔ p ∈ s ∧ sat p ψ := Iff.rfl
 
 /-- Induced updates are eliminative. -/
-theorem updateFromSat_eliminative (sat : S → φ → Prop) (ψ : φ) :
+theorem CCP.updateFromSat_eliminative (sat : S → φ → Prop) (ψ : φ) :
     CCP.IsEliminative (updateFromSat sat ψ) :=
   λ _ => Set.inter_subset_left
 
 /-- `updateFromSat` is monotone in the state argument. -/
-theorem updateFromSat_monotone (sat : S → φ → Prop) (ψ : φ) :
+theorem CCP.updateFromSat_monotone (sat : S → φ → Prop) (ψ : φ) :
     Monotone (updateFromSat sat ψ) :=
   λ _ _ h => Set.inter_subset_inter_left _ h
 
 /-- Updating is intersecting with the content. -/
-theorem updateFromSat_eq_inter_content (sat : S → φ → Prop)
+theorem CCP.updateFromSat_eq_inter_content (sat : S → φ → Prop)
     (ψ : φ) (s : Set S) :
     updateFromSat sat ψ s = s ∩ contentOf sat ψ :=
   rfl
 
 /-- The induced update is the lift of the satisfaction test. -/
-theorem updateFromSat_eq_lift_test (sat : S → φ → Prop) (ψ : φ) :
+theorem CCP.updateFromSat_eq_lift_test (sat : S → φ → Prop) (ψ : φ) :
     updateFromSat sat ψ = lift (test (λ p => sat p ψ)) :=
   funext λ _ => Set.ext λ p =>
     ⟨λ ⟨hp, hs⟩ => ⟨p, hp, rfl, hs⟩, λ ⟨_, hi, hip, hs⟩ => ⟨hip ▸ hi, hs⟩⟩
 
 /-- Induced updates are distributive. -/
-theorem updateFromSat_isDistributive (sat : S → φ → Prop) (ψ : φ) :
+theorem CCP.updateFromSat_isDistributive (sat : S → φ → Prop) (ψ : φ) :
     CCP.IsDistributive (updateFromSat sat ψ) :=
   updateFromSat_eq_lift_test sat ψ ▸ lift_isDistributive _
 
@@ -506,13 +506,13 @@ theorem updateFromSat_isDistributive (sat : S → φ → Prop) (ψ : φ) :
 Support). -/
 theorem support_iff_update_eq (sat : S → φ → Prop)
     (ψ : φ) (s : Set S) :
-    supportOf sat s ψ ↔ updateFromSat sat ψ s = s :=
+    supportOf sat s ψ ↔ CCP.updateFromSat sat ψ s = s :=
   Set.inter_eq_left.symm
 
 /-- Dynamic entailment: updating with `ψ₁` always yields a state supporting
 `ψ₂`. -/
 def dynamicEntailsOf (sat : S → φ → Prop) (ψ₁ ψ₂ : φ) : Prop :=
-  ∀ s : Set S, supportOf sat (updateFromSat sat ψ₁ s) ψ₂
+  ∀ s : Set S, supportOf sat (CCP.updateFromSat sat ψ₁ s) ψ₂
 
 /-- Dynamic entailment is content inclusion — the layer's consequence
 relation is classical entailment on contents. -/
@@ -523,8 +523,8 @@ theorem dynamicEntailsOf_iff_content_subset (sat : S → φ → Prop) (ψ₁ ψ�
 /-- Dynamic entailment is acceptance consequence of the induced updates. -/
 theorem dynamicEntailsOf_iff_entails (sat : S → φ → Prop) (ψ₁ ψ₂ : φ) :
     dynamicEntailsOf sat ψ₁ ψ₂ ↔
-      CCP.entails (updateFromSat sat ψ₁) (updateFromSat sat ψ₂) :=
-  forall_congr' fun s => support_iff_update_eq sat ψ₂ (updateFromSat sat ψ₁ s)
+      CCP.entails (CCP.updateFromSat sat ψ₁) (CCP.updateFromSat sat ψ₂) :=
+  forall_congr' fun s => support_iff_update_eq sat ψ₂ (CCP.updateFromSat sat ψ₁ s)
 
 /-- Dynamic entailment is reflexive. -/
 theorem dynamicEntails_refl (sat : S → φ → Prop) (ψ : φ) :

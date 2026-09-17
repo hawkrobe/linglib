@@ -22,9 +22,10 @@ as coordinates of a function type: `RegisterStructure V (V → E) E`.
 ## Main definitions
 
 - `Dref S E`: discourse referents, Muskens' type `se`.
-- `RegisterStructure` with `randomAssign`, `dexists`, `dforall`, and the
-  canonical instance at `V → E`.
-- `atom1`, `atom2`, `eq'`: atomic conditions from predicates and drefs.
+- `RegisterStructure` with its canonical instance at `V → E`, and the
+  updates it supports, `Update.randomAssign`, `Update.dexists`, `Update.dforall`.
+- `Condition.atom1`, `Condition.atom2`, `Condition.eq`: atomic conditions
+  from predicates and drefs.
 - `CDRT.State`, `CDRT.DProp`, `CDRT.SProp` and the box connectives:
   the concrete CDRT instance at `State E := Assignment E`, with
   `DProp.new n` agreeing with the register structure's random assignment
@@ -68,14 +69,14 @@ instance {V E : Type*} [DecidableEq V] : RegisterStructure V (V → E) E where
   val_extend_self _ _ _ := Function.update_self ..
   val_extend_of_ne _ _ _ _ h := Function.update_of_ne h ..
 
-namespace RegisterStructure
+namespace Update
 
 variable {R S E : Type*} [RegisterStructure R S E]
 
 /-- Random assignment: `[r]` introduces the register `r` with an
 arbitrary value. -/
 def randomAssign (r : R) : Update S :=
-  fun i j => ∃ e : E, j = extend i r e
+  fun i j => ∃ e : E, j = RegisterStructure.extend i r e
 
 /-- Existential update: `∃r(D) = [r]; D`. -/
 def dexists (r : R) (D : Update S) : Update S :=
@@ -85,22 +86,22 @@ def dexists (r : R) (D : Update S) : Update S :=
 def dforall (r : R) (D : Update S) : Condition S :=
   neg (dexists r (test (neg D)))
 
-end RegisterStructure
+end Update
 
 section Atomic
 
 variable {S E : Type*}
 
 /-- Atomic condition from a one-place predicate and a dref. -/
-def atom1 (P : E → Prop) (u : Dref S E) : Condition S :=
+def Condition.atom1 (P : E → Prop) (u : Dref S E) : Condition S :=
   fun i => P (u i)
 
 /-- Atomic condition from a two-place predicate and two drefs. -/
-def atom2 (P : E → E → Prop) (u v : Dref S E) : Condition S :=
+def Condition.atom2 (P : E → E → Prop) (u v : Dref S E) : Condition S :=
   fun i => P (u i) (v i)
 
 /-- Equality condition on two drefs. -/
-def eq' (u v : Dref S E) : Condition S :=
+def Condition.eq (u v : Dref S E) : Condition S :=
   fun i => u i = v i
 
 end Atomic
@@ -142,9 +143,9 @@ def DProp.new {E : Type*} (n : Nat) : DProp E :=
 /-- `DProp.new` is the register structure's random assignment at the
 canonical instance. -/
 theorem DProp.new_eq_randomAssign {E : Type*} (n : Nat) :
-    DProp.new (E := E) n = RegisterStructure.randomAssign n := by
+    DProp.new (E := E) n = randomAssign n := by
   funext i o
-  simp only [DProp.new, RegisterStructure.randomAssign, eq_iff_iff]
+  simp only [DProp.new, randomAssign, eq_iff_iff]
   exact exists_congr fun e => by
     constructor <;> (rintro rfl; funext m; simp [RegisterStructure.extend,
       Function.update_apply])

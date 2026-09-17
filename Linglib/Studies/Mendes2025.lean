@@ -36,7 +36,6 @@ table of main-clause tenses off the entries.
 namespace Mendes2025
 
 open Reference HistoricalAlternatives DynamicSemantics DynamicSemantics.Update
-  DynamicSemantics.RegisterStructure
 open CDRT (DProp dref)
 
 variable {W T : Type*}
@@ -56,7 +55,7 @@ abbrev Radical (W T : Type*) := Sit W T → DProp (Index W T)
 abbrev Tensed (W T : Type*) := Sit W T → Sit W T → DProp (Index W T)
 
 /-- The radical of a situation predicate, `λs.[ | P(s)]`. -/
-def radical (P : Index W T → Prop) : Radical W T := fun s => test (atom1 P s)
+def radical (P : Index W T → Prop) : Radical W T := fun s => test (Condition.atom1 P s)
 
 /-! ### Lexical entries -/
 
