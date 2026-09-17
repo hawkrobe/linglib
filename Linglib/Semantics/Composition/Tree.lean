@@ -16,7 +16,8 @@ Heim & Kratzer engine is the `M = Id` instance (`Denotation`, `interp`
 at a pure `Lexicon`) — true by construction, not by a bridge theorem.
 
 Composition principles:
-1. Terminal Nodes (TN): lexical lookup
+1. Terminal Nodes (TN): lexical lookup, over any leaf type: a `String` in a `Lexicon`, or a
+   fragment carrier through its readings
 2. Non-Branching Nodes (NN): identity
 3. Functional Application (FA): `⟦α⟧ = ⟦β⟧(⟦γ⟧)` when types match
 4. Intensional Functional Application (IFA): `⟦α⟧ = ⟦β⟧(^⟦γ⟧)` when
@@ -65,10 +66,10 @@ def canApply (funTy argTy : Ty) : Option Ty :=
   | .fn σ τ => if σ = argTy then some τ else none
   | _ => none
 
-/-- TN: lexical lookup. -/
-def interpTerminal (E W : Type) {M : Type → Type} {D : Type} (lex : Lexicon E W M D)
-    (word : String) : Option (Denotation E W M D) :=
-  lex word
+/-- TN: lexical lookup of a leaf, of any type, in its leaf interpretation. -/
+def interpTerminal (E W : Type) {M : Type → Type} {D : Type} {L : Type*}
+    (lex : L → Option (Denotation E W M D)) (w : L) : Option (Denotation E W M D) :=
+  lex w
 
 /-- NN: identity. -/
 def interpNonBranching {E W D : Type} {M : Type → Type}
@@ -210,8 +211,8 @@ is type-driven, not category-driven. This means the same function works
 for `Tree Cat String` (UD-grounded), `Tree Unit String` (category-free),
 or any other category system. -/
 def interp (E W : Type) {M : Type → Type} [Applicative M] {D : Type} [PredAbs M E W D]
-    (lex : Lexicon E W M D) (g : Assignment E)
-    : Tree C String → Option (Denotation E W M D)
+    {L : Type*} (lex : L → Option (Denotation E W M D)) (g : Assignment E)
+    : Tree C L → Option (Denotation E W M D)
   | .terminal _ w => interpTerminal E W lex w
   | .node _ (t :: []) => (interp E W lex g t).map interpNonBranching
   | .node _ (t1 :: t2 :: []) => do
@@ -231,8 +232,8 @@ def interp (E W : Type) {M : Type → Type} [Applicative M] {D : Type} [PredAbs 
 /-- Extract truth value from (pure) tree interpretation. Effectful roots
 discharge through per-effect handlers instead (`handleScope` and kin in
 `Studies/BumfordCharlow2024.lean`). -/
-def evalTree {E W D : Type} [∀ (p : Ty.Domain E W .t D), Decidable p]
-    (lex : Lexicon E W Id D) (g : Assignment E) (t : Tree C String)
+def evalTree {E W D : Type} [∀ (p : Ty.Domain E W .t D), Decidable p] {L : Type*}
+    (lex : L → Option (Denotation E W Id D)) (g : Assignment E) (t : Tree C L)
     : Option Bool :=
   match interp E W lex g t with
   | some ⟨.t, b⟩ => some (decide b)
@@ -244,8 +245,8 @@ def evalTree {E W D : Type} [∀ (p : Ty.Domain E W .t D), Decidable p]
     rather than a bare truth value — e.g., trees containing EXH
     or other propositional operators. Evaluate the result at a
     specific world to get a truth value. -/
-def evalTreeProp {E W D : Type} [∀ (p : Ty.Domain E W .t D), Decidable p]
-    (lex : Lexicon E W Id D) (g : Assignment E) (t : Tree C String)
+def evalTreeProp {E W D : Type} [∀ (p : Ty.Domain E W .t D), Decidable p] {L : Type*}
+    (lex : L → Option (Denotation E W Id D)) (g : Assignment E) (t : Tree C L)
     : Option (W → Bool) :=
   match interp E W lex g t with
   | some ⟨.intens .t, p⟩ => some (λ w => decide (p w))

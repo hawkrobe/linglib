@@ -6,6 +6,8 @@ import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Composition.Lexicon
 import Linglib.Semantics.Quantification.NP
 import Linglib.Semantics.Quantification.Polyadic
+import Linglib.Semantics.Quantification.Terminal
+import Linglib.Fragments.English.Determiners
 import Linglib.Data.Examples.HeimKratzer1998
 
 /-!
@@ -16,8 +18,10 @@ quantificational DP in object position creates a type mismatch (§7.1) that Quan
 Raising repairs by movement (§7.3), leaving a trace interpreted by the Traces and Pronouns
 Rule (Ch. 5 (9)) and a binder index interpreted by Predicate Abstraction (§5.2.3, as revised
 in Chapter 7), so that the raised quantifier takes the abstracted predicate as its scope.
-The substrate's composition engine implements those rules; here it is fed QR trees over the
-toy fragment and its output is checked: "every student sleeps" and "some student sleeps"
+The substrate's composition engine implements those rules; here it is fed QR trees whose
+quantifier leaves are the English fragment's words, read through the terminals of their
+available readings, and whose other leaves are the toy fragment's, and its output is checked:
+"every student sleeps" and "some student sleeps"
 compose to the expected truth conditions, and the two QR derivations of a doubly
 quantified sentence, the book's (2) "Some publisher offended every linguist", compute the
 two scope readings of `Quantifier.Polyadic`, which differ in the toy model
@@ -49,19 +53,28 @@ open Semantics.Composition.Tree
 open Quantifier Quantifier.GQ
 open Quantifier.Polyadic (surfaceScope inverseScope iterate_every_some_of_some_every)
 open Semantics.Montague.ToyLexicon (student_sem person_sem)
+open English.Determiners (QuantityWord)
+open scoped Semantics
 
 /-! ### Model and lexicon -/
 
-def quantLex : Lexicon ToyEntity Unit := λ word =>
-  match word with
-  | "every" => some ⟨Ty.det, (every_sem : Ty.Domain ToyEntity Unit Ty.det)⟩
-  | "some" => some ⟨Ty.det, (some_sem : Ty.Domain ToyEntity Unit Ty.det)⟩
-  | "student" => some ⟨.e ⇒ .t, student_sem⟩
-  | "person" => some ⟨.e ⇒ .t, person_sem⟩
-  | "sleeps" => some ⟨.e ⇒ .t, ToyLexicon.sleeps_sem⟩
-  | "laughs" => some ⟨.e ⇒ .t, ToyLexicon.laughs_sem⟩
-  | "sees" => some ⟨.e ⇒ .e ⇒ .t, ToyLexicon.sees_sem⟩
+/-- The study's stand on the quantifier words: the one reading each of *every* and *some* makes
+available, as a terminal on the toy domain. -/
+def quantifierReading : QuantityWord → Option (Denotation ToyEntity Unit)
+  | .every => some (Family.every.toDenotation ToyEntity Unit)
+  | .some_ => some (Family.some.toDenotation ToyEntity Unit)
   | _ => none
+
+/-- Each chosen terminal is among the terminals of the word's available readings. -/
+theorem quantifierReading_mem {w : QuantityWord} {d : Denotation ToyEntity Unit}
+    (h : quantifierReading w = some d) : d ∈ terminals ⟦w⟧ ToyEntity Unit := by
+  cases w <;> simp only [quantifierReading, Option.some.injEq, reduceCtorEq] at h <;> subst h <;>
+    exact toDenotation_mem_terminals (Set.mem_singleton _) _ _
+
+/-- The leaf interpretation: the quantifier words through their readings, and the toy
+fragment's nouns and verbs through the toy lexicon. -/
+def lex : QuantityWord ⊕ String → Option (Denotation ToyEntity Unit) :=
+  Sum.elim quantifierReading toyLexicon
 
 def g₀ : Assignment ToyEntity := λ _ => .john
 
@@ -99,28 +112,28 @@ which quantifier occupies the higher position. -/
 [S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees t₂]]]]]]
 ```
 ∀x[person(x) → ∃y[person(y) ∧ sees(x,y)]] -/
-def tree_surface : Tree Unit String :=
+def tree_surface : Tree Unit (QuantityWord ⊕ String) :=
   .bin
-    (.bin (.leaf "every") (.leaf "person"))
+    (.bin (.leaf (.inl .every)) (.leaf (.inr "person")))
     (.binder 1
       (.bin
-        (.bin (.leaf "some") (.leaf "person"))
+        (.bin (.leaf (.inl .some_)) (.leaf (.inr "person")))
         (.binder 2
-          (.bin (.tr 1) (.bin (.leaf "sees") (.tr 2))))))
+          (.bin (.tr 1) (.bin (.leaf (.inr "sees")) (.tr 2))))))
 
 /-- Inverse scope (∃>∀):
 ```
 [S [DP some person] [2 [S [DP every person] [1 [S t₁ [VP sees t₂]]]]]]
 ```
 ∃y[person(y) ∧ ∀x[person(x) → sees(x,y)]] -/
-def tree_inverse : Tree Unit String :=
+def tree_inverse : Tree Unit (QuantityWord ⊕ String) :=
   .bin
-    (.bin (.leaf "some") (.leaf "person"))
+    (.bin (.leaf (.inl .some_)) (.leaf (.inr "person")))
     (.binder 2
       (.bin
-        (.bin (.leaf "every") (.leaf "person"))
+        (.bin (.leaf (.inl .every)) (.leaf (.inr "person")))
         (.binder 1
-          (.bin (.tr 1) (.bin (.leaf "sees") (.tr 2))))))
+          (.bin (.tr 1) (.bin (.leaf (.inr "sees")) (.tr 2))))))
 
 /-- The surface-scope reading, `∀ > ∃`: `every` over `some`, with `x sees y`. -/
 abbrev surfaceScopeProp : Prop :=
@@ -170,17 +183,17 @@ re-implementation alongside it. -/
 
 /-- Surface scope: the engine computes the hand-written reading. -/
 theorem interp_computes_surface :
-    interp ToyEntity Unit quantLex g₀ tree_surface = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
+    interp ToyEntity Unit lex g₀ tree_surface = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
 
 /-- Inverse scope: likewise. -/
 theorem interp_computes_inverse :
-    interp ToyEntity Unit quantLex g₀ tree_inverse = some ⟨Ty.t, inverseScopeProp⟩ := rfl
+    interp ToyEntity Unit lex g₀ tree_inverse = some ⟨Ty.t, inverseScopeProp⟩ := rfl
 
 /-- Scope ambiguity, stated about the engine: the two QR derivations interpret to
 genuinely different meanings. -/
 theorem scope_ambiguity_computed :
-    interp ToyEntity Unit quantLex g₀ tree_surface ≠
-      interp ToyEntity Unit quantLex g₀ tree_inverse := by
+    interp ToyEntity Unit lex g₀ tree_surface ≠
+      interp ToyEntity Unit lex g₀ tree_inverse := by
   rw [interp_computes_surface, interp_computes_inverse]
   intro h
   have : surfaceScopeProp = inverseScopeProp := by injection h with h'; injection h'
