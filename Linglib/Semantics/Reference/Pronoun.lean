@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Semantics.Denotation
 import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Semantics.Composition.Assignment
@@ -70,6 +71,15 @@ defined under a total assignment, and the intrinsic presupposition is that the r
 def denote : Nominal (Assignment E) W E where
   presup g _ := g i ∈ e.phiDom c
   selector g _ := some (Semantics.Composition.interpPronoun i g)
+
+universe u
+
+/-- A personal pronoun denotes on every model, the index and the context being the Reader
+arguments of its domain. -/
+instance : Semantics.Denotes PersonalPronoun
+    (∀ (E W P T : Type u) [PartialOrder E] [Gendered E], ℕ → Context W E P T →
+      Nominal (Assignment E) W E) :=
+  ⟨fun e _ _ _ _ _ _ ↦ e.denote⟩
 
 @[simp] theorem denote_presup (g : Assignment E) (w : W) :
     (e.denote i c).presup g w = (g i ∈ e.phiDom c) :=

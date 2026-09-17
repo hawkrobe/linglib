@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Semantics.Degree.Comparison
+import Linglib.Semantics.Denotation
 import Linglib.Semantics.Exhaustification.Chain
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Quantification.NP
@@ -397,6 +398,14 @@ cardinal, theory-parameterized reading) is in Section 3. -/
 def _root_.Numeral.Entry.denote {E α : Type*} [LinearOrder α]
     (e : Numeral.Entry) (μ : E → α) (m : α) : E → Prop :=
   e.comparison.over μ m
+
+universe u
+
+/-- A numeral entry denotes on every model, the measure and the magnitude being the Reader
+arguments of its domain. -/
+instance : Semantics.Denotes Numeral.Entry
+    (∀ (E α : Type u) [LinearOrder α], (E → α) → α → E → Prop) :=
+  ⟨fun e _ _ _ ↦ e.denote⟩
 
 /-- Bare cardinal denotation: count with `μ = id` and the entry's own argument. -/
 def _root_.Numeral.Entry.denoteCard (e : Numeral.Entry) : Nat → Prop :=

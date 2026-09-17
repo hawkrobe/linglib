@@ -18,9 +18,11 @@ the model, context, index and assignment of [montague-1973] and [kaplan-1989], a
 the class but Reader arguments of the domain `D`, in that order, so a Kaplanian expression
 denotes a `Reference.Character`, an assignment-sensitive one an `Assignment E → _`, and an
 intension a `W → _`. Instance resolution requires every type parameter of `D` to be fixed by
-`α`; an object interpreted relative to data its type does not mention, a tree relative to a
-lexicon, keeps an explicit interpretation function (`Composition.Tree.interp`, mathlib's
-`Term.realize`) and gains an instance once its type is indexed by that data, as
+`α`. An object interpreted relative to data its type does not mention denotes the family over
+that data, `D` quantifying over the model's types with the model's data as Reader arguments, as
+a lexical quantifier denotes a `Quantifier.GQ.Family` and an article its readings on every model;
+a tree relative to a lexicon keeps an explicit interpretation function (`Composition.Tree.interp`,
+mathlib's `Term.realize`) and gains an instance once its type is indexed by that data, as
 `Conditional.Conditional W cond` is by its operator.
 
 ## Main definitions

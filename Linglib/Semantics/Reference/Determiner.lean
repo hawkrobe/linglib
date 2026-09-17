@@ -97,6 +97,13 @@ noncomputable def _root_.DemonstrativeDeterminer.denote (dem : DemonstrativeDete
   presup g _ := dem.deixisPresup proximal medial distal (g d)
   selector := ⟦Description.demonstrative R dem.deictic d⟧
 
+/-- A demonstrative determiner denotes on every model, the restrictor, the index and the
+proximity predicates being the Reader arguments of its domain. -/
+noncomputable instance : Denotes DemonstrativeDeterminer
+    (∀ (E W : Type), Restrictor E W → ℕ → (E → Prop) → (E → Prop) → (E → Prop) →
+      Nominal (Assignment E) W E) :=
+  ⟨fun dem _ _ ↦ dem.denote⟩
+
 /-- Deixis filters, it does not select: a demonstrative determiner's selector
 is exactly the strong article's selector. The API-level form of
 `Description.denote_demonstrative_eq_anaphoric` — the deictic content lives entirely
@@ -139,6 +146,12 @@ def _root_.Article.denotations (a : Article) (R : Restrictor E W) (idx : ℕ) :
     Set (Nominal (Assignment E) W E) :=
   Description.toNominal '' a.toDescriptions R idx
 
+/-- An article denotes the set of its readings on every model, the restrictor and the index
+being the Reader arguments of its domain. -/
+noncomputable instance : Denotes Article
+    (∀ (E W : Type), Restrictor E W → ℕ → Set (Nominal (Assignment E) W E)) :=
+  ⟨fun a _ _ ↦ a.denotations⟩
+
 /-- Every denotation of an article arises from a description whose kind the article realizes. -/
 theorem _root_.Article.denotations_realized (a : Article) (idx : ℕ)
     (nd : Nominal (Assignment E) W E) (h : nd ∈ a.denotations R idx) :
@@ -162,6 +175,13 @@ cat") is `Possession.PossNP` — `(individual a)` of
 noncomputable def _root_.PossessiveDeterminer.denote (_p : PossessiveDeterminer) :
     Nominal (Assignment E) W E :=
   (Description.possessive R possessor rel).toNominal
+
+/-- A possessive determiner denotes on every model, the restrictor, the possessor and the
+possession relation being the Reader arguments of its domain. -/
+noncomputable instance : Denotes PossessiveDeterminer
+    (∀ (E W : Type), Restrictor E W → (Assignment E → W → E) →
+      (Assignment E → W → E → E → Prop) → Nominal (Assignment E) W E) :=
+  ⟨fun p _ _ ↦ p.denote⟩
 
 /-- A possessive determiner's selector is the possessive description's
 selector — the determiner picks the unique possessee related to the
