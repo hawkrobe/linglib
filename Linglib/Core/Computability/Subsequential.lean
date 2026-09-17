@@ -11,7 +11,7 @@ import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Data.List.DropRight
-import Linglib.Core.Data.List.EqOn
+import Linglib.Core.Data.List.DependsOn
 import Linglib.Core.Computability.ScanDirection
 
 /-!

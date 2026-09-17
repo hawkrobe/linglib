@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.List.Basic
 import Linglib.Core.Computability.Bimachine
 import Linglib.Core.Computability.Subsequential
-import Linglib.Core.Data.List.EqOn
+import Linglib.Core.Data.List.DependsOn
 
 /-!
 # Side dependence for string functions
