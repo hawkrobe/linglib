@@ -47,7 +47,7 @@ inductive InfComplementizer where
 structure ItalianVerbEntry extends Verb where
   /-- Which infinitival complementizers the verb selects -/
   infComplements : List InfComplementizer := []
-  deriving Repr, BEq
+  deriving BEq
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Verb Data
@@ -94,7 +94,6 @@ def volere : ItalianVerbEntry :=
     passivizable := false
     opaqueContext := true
     attitude := some (.preferential (.degreeComparison .positive))
-    levinClass := some .want
     infComplements := [.di] }
 
 /-- *sperare* 'hope' — cross-linguistically variable mood selection.
@@ -128,7 +127,6 @@ def intendere : ItalianVerbEntry :=
     passivizable := false
     opaqueContext := true
     attitude := some (.preferential (.degreeComparison .positive))
-    levinClass := some .want
     infComplements := [.di] }
 
 /-- *fare* 'make' — causative verb, robustly rejects indicative.
@@ -147,26 +145,5 @@ def fare_caus : ItalianVerbEntry :=
 -- ════════════════════════════════════════════════════════════════
 -- § 5. Mood Choice Bridge Theorems ([grano-2024])
 -- ════════════════════════════════════════════════════════════════
-
-/-- *volere* has Levin want-class (core desiderative). -/
-theorem volere_is_want_class :
-    volere.levinClass = some .want := rfl
-
-/-- *sperare* does NOT have Levin want-class (explains mood variation). -/
-theorem sperare_not_want_class :
-    sperare.levinClass ≠ some .want := by decide
-
-/-- *intendere* has Levin want-class (patterns with *volere* on mood). -/
-theorem intendere_is_want_class :
-    intendere.levinClass = some .want := rfl
-
-/-- *volere* and *intendere* share want-class; *sperare* does not.
-    This predicts the mood choice asymmetry: *volere*/*intendere* robustly
-    reject indicative, while *sperare* varies ([grano-2024], Table 1). -/
-theorem mood_asymmetry_predicted :
-    volere.levinClass = some .want ∧
-    intendere.levinClass = some .want ∧
-    sperare.levinClass ≠ some .want := by
-  exact ⟨rfl, rfl, by decide⟩
 
 end Italian.Predicates

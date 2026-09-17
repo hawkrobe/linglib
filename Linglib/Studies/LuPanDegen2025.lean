@@ -174,7 +174,7 @@ structure MatrixPredicate where
 /-- Whether the verb's Levin class specifies manner, the manner-of-speaking class of
 [levin-1993] (`MeaningComponents.mannerSpec`). -/
 def MatrixPredicate.lexicalManner (p : MatrixPredicate) : Bool :=
-  (p.verb.levinClass.map λ lc => lc.meaningComponents.mannerSpec).getD false
+  decide (∃ c ∈ p.verb.levinClasses, c.meaningComponents.mannerSpec = true)
 
 /-- The predicate carries manner, lexically or by a manner adverb. -/
 def MatrixPredicate.HasManner (p : MatrixPredicate) : Prop :=
@@ -183,12 +183,13 @@ def MatrixPredicate.HasManner (p : MatrixPredicate) : Prop :=
 instance : DecidablePred MatrixPredicate.HasManner := λ _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- A verb of the manner-of-speaking class carries manner however it is modified. -/
-theorem hasManner_of_mannerOfSpeaking {v : English.Verb} (h : v.levinClass = some .mannerOfSpeaking)
+theorem hasManner_of_mannerOfSpeaking {v : English.Verb}
+    (h : .mannerOfSpeaking ∈ v.levinClasses)
     (b : Bool) : MatrixPredicate.HasManner ⟨v, b⟩ :=
-  Or.inl (by simp [MatrixPredicate.lexicalManner, h, LevinClass.meaningComponents])
+  Or.inl (decide_eq_true ⟨.mannerOfSpeaking, h, rfl⟩)
 
 /-- A verb of the *say* class carries manner only by an adverb. -/
-theorem hasManner_say_iff {v : English.Verb} (h : v.levinClass = some .say) (b : Bool) :
+theorem hasManner_say_iff {v : English.Verb} (h : v.levinClasses = {.say}) (b : Bool) :
     MatrixPredicate.HasManner ⟨v, b⟩ ↔ b = true := by
   simp [MatrixPredicate.HasManner, MatrixPredicate.lexicalManner, h, LevinClass.meaningComponents]
 
@@ -263,7 +264,7 @@ theorem unaffectedByNegation_iff_island (p : MatrixPredicate) (f : Bool) :
 
 /-- *John whispered that Mary met with the lawyer*: an island by the verb's class. -/
 theorem island_whisper : Island ⟨whisper, false⟩ false :=
-  island_of_hasManner (hasManner_of_mannerOfSpeaking rfl false)
+  island_of_hasManner (hasManner_of_mannerOfSpeaking (by decide) false)
 
 /-- *John said that Mary met with the lawyer*: no island. -/
 theorem not_island_say (f : Bool) : ¬ Island ⟨say, false⟩ f :=

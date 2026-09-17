@@ -22,7 +22,7 @@ structure TurkishVerbEntry extends Verb where
   formEvidential : String
   /-- Participle form (-an, -en) -/
   formParticiple : String
-  deriving Repr, BEq
+  deriving BEq
 
 /-- "kork-" — fear (Class 2: C-distributive, negative). -/
 def kork : TurkishVerbEntry where

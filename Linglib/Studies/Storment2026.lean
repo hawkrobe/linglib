@@ -55,7 +55,7 @@ Fragment's: the Fragment records manner-of-speaking verbs with an external argum
 /-- The paper's unaccusatives: the manner-of-speaking and nonverbal-expression verbs, on the
 basis of the QI diagnostic, and the verbs unaccusative by their frames. -/
 def Unaccusative (v : English.Verb) : Prop :=
-  v.levinClass = some .mannerOfSpeaking ∨ v.levinClass = some .nonverbalExpression ∨
+  LevinClass.mannerOfSpeaking ∈ v.levinClasses ∨ .nonverbalExpression ∈ v.levinClasses ∨
     v.toVerb.IsUnaccusative
 
 instance : DecidablePred Unaccusative := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
@@ -170,8 +170,8 @@ theorem communication_unergatives_select_have :
 
 *whisper* is a §37.3 manner-of-speaking verb and *speak* a §37.5 talk verb in [levin-1993]. -/
 
-theorem whisper_levinClass : whisper.levinClass = some .mannerOfSpeaking := rfl
-theorem speak_levinClass : speak.levinClass = some .talk := rfl
+theorem whisper_mannerOfSpeaking : LevinClass.mannerOfSpeaking ∈ whisper.levinClasses := by decide
+theorem speak_talk : LevinClass.talk ∈ speak.levinClasses := by decide
 
 /-! ## §8. Smuggling derivation of QI
 

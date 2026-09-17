@@ -106,9 +106,9 @@ theorem all_classes_no_cos_no_causation :
   decide
 
 /-- Fragment verb entries confirm the classification. -/
-theorem push_is_pushPull : push.levinClass = some .pushPull := rfl
-theorem pull_is_pushPull : pull.levinClass = some .pushPull := rfl
-theorem kick_is_hit : kick.levinClass = some .hit := rfl
+theorem push_is_pushPull : LevinClass.pushPull ∈ push.levinClasses := by decide
+theorem pull_is_pushPull : LevinClass.pushPull ∈ pull.levinClasses := by decide
+theorem kick_is_hit : LevinClass.hit ∈ kick.levinClasses := by decide
 
 /-! ### Construction-dependent alternation ([goldberg-1995])
 

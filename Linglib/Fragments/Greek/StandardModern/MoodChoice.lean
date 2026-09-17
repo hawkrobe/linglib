@@ -32,7 +32,6 @@ def thelo : Verb where
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
-  levinClass := some .want
 
 /-- *elpízo* (ελπίζω) 'hope' — accepts both *na* (SBJV) and *oti* (IND).
     [grano-2024], (13): both complementizers accepted.
@@ -53,7 +52,6 @@ def protithete : Verb where
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
-  levinClass := some .want
 
 /-- *vázo* (βάζω) 'put/make' — causative, subjunctive-selecting via *na*.
     [grano-2024], (45): *na* (SBJV) required, *oti* (IND) rejected.
@@ -67,15 +65,6 @@ def vazo : Verb where
 -- ════════════════════════════════════════════════════════════════
 -- Bridge Theorems
 -- ════════════════════════════════════════════════════════════════
-
-theorem thelo_is_want_class :
-    thelo.levinClass = some .want := rfl
-
-theorem elpizo_not_want_class :
-    elpizo.levinClass ≠ some .want := by decide
-
-theorem protithete_is_want_class :
-    protithete.levinClass = some .want := rfl
 
 theorem vazo_is_causative :
     vazo.causative.isSome = true := rfl

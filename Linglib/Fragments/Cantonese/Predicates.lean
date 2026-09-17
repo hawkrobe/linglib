@@ -29,7 +29,6 @@ structure Verb extends _root_.Verb where
   hanzi : String
   /-- The complement-taking predicate class. -/
   predicateClass : Complement.PredicateClass
-  deriving Repr
 
 /-- *soeng* 想 'want'. -/
 def soeng : Verb :=

@@ -58,7 +58,6 @@ def zadeto : Complementizer where
 structure Verb extends _root_.Verb where
   /-- The [noonan-2007] class, `none` where the data give no clear assignment. -/
   predicateClass : Option Complement.PredicateClass
-  deriving Repr
 
 /-- The frames of an emotive factive, a finite clause or a *za* phrase (59). -/
 private def emotiveFrames : List ArgumentFrame := [ArgumentFrame.finiteClause, ArgumentFrame.pp]

@@ -181,17 +181,12 @@ where
       correspondence := [(external, external), (complement 0, complement 1),
         (complement 1, complement 0)] }
 
-/-- Every fragment verb of a class has frames refining both frames of each schema its class
-attests. -/
-theorem frames_cover_profile :
-    ∀ v ∈ English.verbs, ∀ c ∈ v.levinClass, ∀ a ∈ c.alternations, ∀ σ ∈ schema? a,
-      v.toVerb.Alternates σ := by
-  decide +kernel
-
-/-- No fragment verb alternates by a schema its class stars. -/
-theorem frames_respect_starred :
-    ∀ v ∈ English.verbs, ∀ c ∈ v.levinClass, ∀ a ∈ c.starredAlternations, ∀ σ ∈ schema? a,
-      ¬ v.toVerb.Alternates σ := by
+/-- Every fragment verb Levin lists has a listed class whose profile its frames realize: frames
+refining both frames of each schema the class attests, and none for a schema it stars. -/
+theorem frames_realize_class :
+    ∀ v ∈ English.verbs, v.levinClasses.Nonempty → ∃ c ∈ v.levinClasses,
+      (∀ a ∈ c.alternations, ∀ σ ∈ schema? a, v.toVerb.Alternates σ) ∧
+        ∀ a ∈ c.starredAlternations, ∀ σ ∈ schema? a, ¬ v.toVerb.Alternates σ := by
   decide +kernel
 
 /-- The book's opening quadruple: *break*, *cut*, *hit*, and *touch* take pairwise distinct

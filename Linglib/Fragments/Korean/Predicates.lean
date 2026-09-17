@@ -28,7 +28,7 @@ open ArgumentStructure
 
 /-- A Korean verb, the root entry with its citation form in *-ta*. -/
 structure Verb extends _root_.Verb where
-  deriving Repr, BEq
+  deriving BEq
 
 /-- *wus-ke ha-ta* 'cause to smile', the periphrastic causative. -/
 def wus_ke_ha : Verb where

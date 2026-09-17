@@ -30,7 +30,6 @@ def querer : Verb where
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
-  levinClass := some .want
 
 /-- *esperar* 'hope' — subjunctive in Spanish (unlike Portuguese/French).
     [grano-2024], (9): SBJV required, IND rejected. -/
@@ -52,7 +51,6 @@ def tener_la_intencion : Verb where
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
-  levinClass := some .want
 
 /-- *hacer* 'make' — causative, robustly subjunctive-selecting.
     [grano-2024], (40): SBJV required, IND rejected.
@@ -78,26 +76,7 @@ def convencer : Verb where
 -- Bridge Theorems
 -- ════════════════════════════════════════════════════════════════
 
-theorem querer_is_want_class :
-    querer.levinClass = some .want := rfl
-
-theorem esperar_not_want_class :
-    esperar.levinClass ≠ some .want := by decide
-
-theorem tener_la_intencion_is_want_class :
-    tener_la_intencion.levinClass = some .want := rfl
-
 theorem hacer_is_causative :
     hacer.causative.isSome = true := rfl
-
-/-- Spanish mood asymmetry: querer and tener la intención share want-class;
-    esperar does not. Unlike Portuguese/French/Italian, Spanish 'hope' ALSO
-    robustly rejects IND (Table 1), so the asymmetry is structural, not
-    empirically visible in mood choice. -/
-theorem spanish_mood_asymmetry :
-    querer.levinClass = some .want ∧
-    tener_la_intencion.levinClass = some .want ∧
-    esperar.levinClass ≠ some .want := by
-  exact ⟨rfl, rfl, by decide⟩
 
 end Spanish.MoodChoice

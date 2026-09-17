@@ -40,7 +40,6 @@ def ke : Complementizer where
 /-- A Nez Perce complement-taking predicate is a verb entry with its [noonan-2007] class. -/
 structure Verb extends _root_.Verb where
   predicateClass : Complement.PredicateClass
-  deriving Repr
 
 /-- *lilooy* 'be happy' ((27a), (28a), (33)). -/
 def liloy : Verb where

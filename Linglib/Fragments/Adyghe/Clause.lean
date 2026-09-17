@@ -57,7 +57,6 @@ structure Verb extends _root_.Verb where
   predicateClass : Option Complement.PredicateClass
   /-- The case suffix on the clausal complement, `none` for an infinitival complement. -/
   complementCase : Option ComplementCase
-  deriving Repr
 
 /-- *gʷəpšəsa* 'think', which rejects a bare finite complement, takes the relative-shaped one,
 and takes plain noun-phrase objects ((96), (98), (102)). -/

@@ -173,7 +173,7 @@ structure IndonesianVerbEntry extends Verb where
   incorporatedNPs : List String := []
   /-- Whether *diri* 'self' can incorporate to force reflexive reading. -/
   incorporatesDiri : Bool := false
-  deriving Repr, BEq
+  deriving BEq
 
 -- ============================================================================
 -- § 3: Verb Entries from Beavers & Udayana 2022
@@ -310,8 +310,7 @@ def pecah : IndonesianVerbEntry :=
   , formTer := some "ter-pecah"
   , terClass := some .stative
   , formDi := some "di-pecah"
-  , rootClass := .causerUnspecified
-  , levinClass := some .break_ }
+  , rootClass := .causerUnspecified }
 
 -- § 3d: Stative ter- ([sneddon-1996] §1.266)
 
@@ -460,13 +459,6 @@ theorem dandan_predicted_reading :
     dandan.rootClass.defaultReading = .coreferent := rfl
 theorem cukur_predicted_reading :
     cukur.rootClass.defaultReading = .coreferent := rfl
-
--- § 5e: Levin class bridge
-
-/-- *pecah* is a break-class verb → participates in middle alternation
-    (change-of-state) and causative/inchoative alternation. -/
-theorem pecah_levin_class :
-    pecah.toVerb.levinClass = some .break_ := rfl
 
 -- § 5f: ter- class verification ([sneddon-1996] §1.265–1.275)
 

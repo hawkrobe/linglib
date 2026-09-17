@@ -30,7 +30,7 @@ open ArgumentStructure
 
 /-- A Japanese verb: the root entry, its `form` the romanized citation form. -/
 structure Verb extends _root_.Verb where
-  deriving Repr, BEq
+  deriving BEq
 
 /-! ### Preferential attitudes -/
 

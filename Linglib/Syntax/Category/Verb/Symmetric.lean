@@ -26,7 +26,7 @@ open Plurality
 structure Verb.Symmetric extends Verb where
   /-- The transitive alternate, when one exists. -/
   base : Option Verb := none
-  deriving Repr, BEq
+  deriving BEq
 
 section Denotation
 

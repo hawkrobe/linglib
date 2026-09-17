@@ -79,7 +79,6 @@ structure ThickThinEntry where
   omissionSubjects : Bool
   /-- Thick/thin classification from theory -/
   thickThinClass : ThickThinClass := if thick then .thickManner else .thin
-  deriving Repr
 
 /-! ## Table 3 data (representative subset)
 
@@ -197,11 +196,11 @@ theorem kill_verb : kill.verb.form = "kill" := rfl
 theorem destroy_verb : destroy.verb.form = "destroy" := rfl
 
 -- Levin classes are inherited from Fragment entries
-theorem break_levin : break_.verb.levinClass = some .break_ := rfl
-theorem kill_levin : kill.verb.levinClass = some .murder := rfl
-theorem destroy_levin : destroy.verb.levinClass = some .destroy := rfl
-theorem cut_levin : cut.verb.levinClass = some .cut := rfl
-theorem burn_levin : burn.verb.levinClass = some .otherCoS := rfl
+theorem break_levin : LevinClass.break_ ∈ break_.verb.levinClasses := by decide
+theorem kill_levin : LevinClass.murder ∈ kill.verb.levinClasses := by decide
+theorem destroy_levin : LevinClass.destroy ∈ destroy.verb.levinClasses := by decide
+theorem cut_levin : LevinClass.cut ∈ cut.verb.levinClasses := by decide
+theorem burn_levin : LevinClass.otherCoS ∈ burn.verb.levinClasses := by decide
 
 /-! ## Bridge to ThickThinClass
 

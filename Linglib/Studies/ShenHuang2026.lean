@@ -265,10 +265,10 @@ theorem binding_consistent :
 /-! ### Verbs of creation in the Fragment -/
 
 /-- A Fragment verb is a verb of creation when its Levin class is a class of creation. -/
-def IsVerbOfCreation (v : English.Verb) : Prop := ∃ c ∈ v.levinClass, c.IsVerbOfCreation
+def IsVerbOfCreation (v : English.Verb) : Prop := ∃ c ∈ v.levinClasses, c.IsVerbOfCreation
 
 instance : DecidablePred IsVerbOfCreation := fun v ↦
-  inferInstanceAs (Decidable (∃ c ∈ v.levinClass, c.IsVerbOfCreation))
+  inferInstanceAs (Decidable (∃ c ∈ v.levinClasses, c.IsVerbOfCreation))
 
 /-- The configuration of an item whose main verb is a Fragment entry. -/
 def Config.ofVerb (d : Dependency) (o : Definiteness) (v : English.Verb) : Config :=
