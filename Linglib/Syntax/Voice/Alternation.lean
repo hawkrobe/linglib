@@ -1,825 +1,370 @@
-import Linglib.Semantics.Reference.Prominence
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
-import Linglib.Syntax.Clause.ArgumentRole
+import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 
 /-!
-# Valency Alternation Typology
+# Valency alternations
 
-[comrie-1989] [dixon-1994] [dixon-aikhenvald-2000] [song-1996]
-[creissels-2024] [levin-1993]
+A valency alternation relates two argument frames of one predicate,
+the initial and the derived construction, by a correspondence between
+their slots: which slot of the derived frame each participant of the
+initial frame occupies. Everything [creissels-2024] reads off an
+alternation is derived from the pair: the fate of an initial core term
+(`ValencyAlternation.fate`), the participant the derived construction
+introduces (`newParticipant`), whether the alternation nucleativizes or
+denucleativizes, and so whether it increases or decreases valency. The
+main types of §8.3 are constants: `causativization`,
+`decausativization`, `passivization`, `antipassivization`, the
+applicativizations and the rest. Whether an alternation is coded by
+verbal morphology, and so a *voice* alternation rather than
+flexivalency, is its `marking`.
 
-A framework-neutral vocabulary for describing valency alternations
-cross-linguistically. The underlying typology of valency-changing operations —
-causative, anticausative/decausative, passive, antipassive, applicative,
-reflexive/reciprocal, and the increase or decrease of core arguments — is the
-cross-framework consensus of [comrie-1989], [dixon-1994] on
-ergativity and A/S/P, [dixon-aikhenvald-2000]'s *Changing Valency*, and
-[song-1996] on causatives. [creissels-2024] provides the modern
-synthesis and the nucleativization/denucleativization terminology used here;
-[levin-1993] supplies the English diathesis-alternation inventory bridged
-in the final section.
+## Main definitions
 
-This file is substrate: it defines the alternation *types*. Per-paper data and
-cross-linguistic distributions live in the consuming study files (e.g.
-`Studies/Creissels2024.lean`).
+* `Voice.TermRole` — the transitivity-related roles S, A, P and X
+* `Voice.ParticipantFate` — what an alternation does to an initial core
+  term
+* `Voice.AlternationMarking` — coded or uncoded
+* `Voice.ValencyAlternation` — the initial and derived frames with their
+  slot correspondence
+* `ValencyAlternation.image`, `fate`, `fateOfRole`, `introduced`,
+  `newParticipant` — the derived participant bookkeeping
+* `ValencyAlternation.Nucleativizes`, `Denucleativizes`,
+  `IsValencyIncreasing`, `IsValencyDecreasing`, `Cumulates` — the
+  derived classification
+* `Voice.causativization`, …, `Voice.portativeDerivation` — the types of
+  [creissels-2024] §8.3
+* `Voice.Alignment`, `Voice.AmbitransitivityType` — alignment and
+  uncoded transitivity alternation
 
-Within `Syntax/Voice/` this file owns the **valency axis** (what happens to
-the coding frame); `Basic.lean` owns the **pivot axis** (which argument is
-the privileged one — orthogonal to valency, as Austronesian symmetrical
-voice shows); `Middle.lean` is the interaction case. "Voice" in
-[creissels-2024]'s sense is the *coded* subset of the alternations here
-(`AlternationMarking.isVoice`); the Voice functional head of Minimalist
-syntax projects onto these operations via
-`Voice.Flavor.alternation` (`Syntax/Minimalist/Verbal/Voice.lean`).
+## Main results
 
-## TR-roles
+* `Voice.passivization_vs_decausativization` — passivization keeps the
+  initial A in participant structure, decausativization suppresses it
+* `Voice.as_nucleativization_neutral` — nucleativization is not valency
+  increase
 
-[creissels-2024] §1.3.3 defines Transitivity-Related roles (A, P, S, X)
-as *constructional* properties of nominal terms, not semantic roles: A is
-the nominal term of a transitive clause coded like the agent of a
-prototypical transitive verb — defined by coding (flagging, indexation,
-order), anchored to semantic prototypes. These are already captured by `ArgumentRole`
-(S, A, P, R, T). This file adds X (oblique) as a `TermRole` classifying
-`ArgumentRole` with the non-core case.
+## Implementation notes
 
-## Nucleativization and Denucleativization
+A slot of the initial frame with no correspondent is suppressed from
+participant structure; one whose correspondent is an implicit or an
+adpositional position is denucleativized but maintained; two initial
+core terms with one correspondent are cumulated. The derived frame of a
+passive records the demoted agent as implicit, the canonical short
+passive; a long passive refines it. Coding is a per-language property,
+so the constants are uncoded and a fragment sets `marking` when it
+instantiates one. Within `Syntax/Voice/` this file owns the valency
+axis; `Basic.lean` owns the pivot axis.
 
-The two fundamental operations on coding frames (§8.1.3):
-- **Nucleativization**: a non-nuclear participant becomes a core term
-  (A, P, or S) in the derived construction.
-- **Denucleativization**: a core term of the initial construction
-  becomes oblique or unexpressed in the derived construction.
+## References
 
-All voice alternations are defined by specifying which participants are
-nucleativized or denucleativized, and what TR-roles they acquire.
-
-## Unification with Levin alternations
-
-[levin-1993]'s `DiathesisAlternation` captures English-specific
-alternation patterns. Each maps to a `ValencyAlternation` that specifies
-the structural effect. The key distinction: Levin alternations are often
-*uncoded* (flexivalency — no verbal morphology marks the alternation),
-while [creissels-2024]'s voice alternations are *coded* (marked by
-verbal morphology). The `marking` field captures this.
+* [comrie-1989]
+* [creissels-2024]
+* [dixon-1994]
+* [dixon-aikhenvald-2000]
+* [song-1996]
 -/
 
 namespace Voice
 
-open ArgumentStructure (DiathesisAlternation)
+/-! ### Transitivity-related roles (§1.3.3) -/
 
--- ════════════════════════════════════════════════════
--- § 1. Nominal-term roles (§1.3.3)
--- ════════════════════════════════════════════════════
-
-/-- Role of a nominal term of a verbal clause in [creissels-2024]'s binary
-    core-term system: the core roles S, A, P, plus X for obliques.
-    §1.3.3: "OBLIQUE NOMINAL TERMS (or simply OBLIQUES),
-    symbolized as X, are defined as nominal terms of verbal clauses that do
-    not meet the definition of either A, P, or S." -/
+/-- The role of a nominal term in [creissels-2024]'s binary core-term system: the core
+roles S, A and P, and X for obliques. -/
 inductive TermRole where
-  | S    -- sole core term of intransitive clause
-  | A    -- agent-like core term of transitive clause
-  | P    -- patient-like core term of transitive clause
-  | X    -- oblique (non-core term)
+  /-- The sole core term of an intransitive clause. -/
+  | S
+  /-- The agent-like core term of a transitive clause. -/
+  | A
+  /-- The patient-like core term of a transitive clause. -/
+  | P
+  /-- An oblique. -/
+  | X
   deriving DecidableEq, Repr
 
-/-- Convert `ArgumentRole` to `TermRole`. R and T map to P (both are
-    P-like in Creissels' binary core-term system). -/
+/-- The transitivity-related role of a comparative coding role: recipients and themes are
+P-like core terms. -/
 def TermRole.ofArgumentRole : ArgumentRole → TermRole
   | .S => .S
   | .A => .A
-  | .P => .P
-  | .R => .P  -- recipients behave as P-like core terms
-  | .T => .P  -- themes behave as P-like core terms
+  | .P | .R | .T => .P
 
--- ════════════════════════════════════════════════════
--- § 2. Participant Fate in an Alternation
--- ════════════════════════════════════════════════════
+/-! ### Participant fate -/
 
-/-- What happens to a participant's coding in a valency alternation.
-
-    Each alternation is defined by specifying the fate of each participant
-    in the initial construction. -/
+/-- What an alternation does to a core term of the initial construction. -/
 inductive ParticipantFate where
-  /-- Participant is nucleativized: becomes a core term in the derived
-      construction. The `target` specifies which TR-role it acquires. -/
-  | nucleativized (target : TermRole)
-  /-- Participant is denucleativized: demoted from core term to oblique or
-      unexpressed, but MAINTAINED IN PARTICIPANT STRUCTURE. The participant
-      is still semantically present and may appear as an oblique phrase.
-      §8.3.2.1: "the referent of the initial A is
-      denucleativized ... but is maintained in participant structure." -/
+  /-- Not a core term of the derived construction, but maintained in participant structure
+      as an oblique or an implied participant. -/
   | denucleativized
-  /-- Participant is suppressed: REMOVED FROM PARTICIPANT STRUCTURE entirely.
-      The participant has no syntactic realization in the derived construction
-      and is not semantically implied.
-      §8.3.1.2: "Decausativization suppresses the
-      referent of the initial A from participant structure." -/
+  /-- Removed from participant structure. -/
   | suppressed
-  /-- Participant's coding is maintained unchanged. -/
+  /-- A core term of the derived construction. -/
   | maintained
-  /-- Two participants are cumulated into a single participant
-      (reflexivization/reciprocalization). -/
+  /-- One core term of the derived construction with another initial core term. -/
   | cumulated
-  /-- Not applicable (participant does not exist in initial construction). -/
+  /-- Not a core term of the initial construction. -/
   | na
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 3. Alternation Marking
--- ════════════════════════════════════════════════════
+/-- The fate removes the participant from core-term status. -/
+def ParticipantFate.RemovesFromCoreStatus : ParticipantFate → Prop
+  | .denucleativized | .suppressed => True
+  | _ => False
 
-/-- Whether and how a valency alternation is morphologically coded.
+instance : DecidablePred ParticipantFate.RemovesFromCoreStatus := fun f ↦ by
+  cases f <;> unfold ParticipantFate.RemovesFromCoreStatus <;> infer_instance
 
-    §1.1.3: voice = coded alternation; flexivalency
-    = uncoded alternation. The distinction is fundamental to his framework:
-    same structural alternation, different morphosyntactic status. -/
+/-! ### Marking -/
+
+/-- How a valency alternation is coded: by verbal morphology, an analytic construction,
+equipollent marking, or not at all, flexivalency ([creissels-2024] §1.1.3). -/
 inductive AlternationMarking where
-  /-- Coded by verbal morphology (affix, ablaut, tone, etc.) — this is
-      VOICE in terminology. -/
   | synthetic
-  /-- Coded by an analytic construction (auxiliary + nonfinite form). -/
   | analytic
-  /-- Coded by equipollent marking (both forms equally complex). -/
   | equipollent
-  /-- Uncoded — no morphological marking (FLEXIVALENCY). -/
   | uncoded
   deriving DecidableEq, Repr
 
-/-- Is this alternation an instance of voice (coded by verbal morphology)? -/
-def AlternationMarking.isVoice : AlternationMarking → Bool
-  | .synthetic | .analytic | .equipollent => true
-  | .uncoded => false
+/-- A coded alternation is a voice alternation. -/
+def AlternationMarking.IsVoice (m : AlternationMarking) : Prop := m ≠ .uncoded
 
--- ════════════════════════════════════════════════════
--- § 4. Valency Alternation
--- ════════════════════════════════════════════════════
+instance : DecidablePred AlternationMarking.IsVoice := fun m ↦
+  inferInstanceAs (Decidable (m ≠ _))
 
-/-- A valency alternation defined by its structural effect on participants.
+/-! ### Valency alternations -/
 
-    This is the unified type subsuming both [levin-1993]'s English-specific
-    diathesis alternations and cross-linguistic voice
-    alternation types. Each alternation specifies:
-    - What happens to each participant of the initial construction
-    - Whether a new participant is introduced
-    - How (if at all) the alternation is morphologically marked -/
+/-- A valency alternation: the initial and the derived argument frame, and the slot of the
+derived frame each slot of the initial frame's participant occupies. -/
 structure ValencyAlternation where
-  /-- Descriptive name -/
-  name : String
-  /-- What happens to the initial A (if the initial construction is transitive) -/
-  fateOfA : ParticipantFate
-  /-- What happens to the initial P (if the initial construction is transitive) -/
-  fateOfP : ParticipantFate
-  /-- What happens to the initial S (if the initial construction is intransitive) -/
-  fateOfS : ParticipantFate
-  /-- Is a new participant introduced in the derived construction?
-      If so, which TR-role does it receive? -/
-  newParticipant : Option TermRole
-  /-- Is the initial construction transitive, intransitive, or either? -/
-  initialTransitive : Option Bool
-  /-- Is the derived construction transitive? -/
-  derivedTransitive : Option Bool
-  /-- Morphological coding of the alternation (voice vs. flexivalency).
-      Defaults to `.uncoded`, the morphologically unmarked baseline. Coding is
-      a *per-language* property: the same structural alternation may be coded
-      (voice) in one language and uncoded (flexivalency) in another — e.g.
-      Tswana decausative (synthetic) vs. English *break/break* (uncoded). Set
-      `marking` when instantiating an alternation for a specific language. -/
+  /-- The initial construction. -/
+  source : ArgumentFrame
+  /-- The derived construction. -/
+  target : ArgumentFrame
+  /-- The derived slot each initial slot's participant occupies; an initial slot without an
+      entry is suppressed from participant structure. -/
+  correspondence : List (ArgumentFrame.Slot × ArgumentFrame.Slot)
+  /-- The coding of the alternation, a per-language property. -/
   marking : AlternationMarking := .uncoded
-  deriving Repr, BEq
+  deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 5. Creissels' Voice Alternation Typology (§8.3)
--- ════════════════════════════════════════════════════
+namespace ValencyAlternation
 
-/-- Causativization (§8.3.1.1): nucleativization of a
-    causer in A role. Initial construction is intransitive; initial S becomes
-    P in the derived transitive construction. -/
+open ArgumentFrame (Slot)
+
+variable (α : ValencyAlternation)
+
+/-- The derived slot an initial slot's participant occupies. -/
+def image (s : Slot) : Option Slot := α.correspondence.lookup s
+
+/-- The initial slots whose participant occupies a derived slot. -/
+def preimages (t : Slot) : List Slot :=
+  α.source.slots.filter fun s ↦ α.image s == some t
+
+/-- The transitivity-related role of a derived slot: the coding role of a core slot, X for an
+expressed oblique, none for an implicit or expletive position. -/
+def targetRole (t : Slot) : Option TermRole :=
+  match α.target.codingRole t, α.target.get? t with
+  | some r, _ => some (TermRole.ofArgumentRole r)
+  | none, some p => if p.IsAdpositional ∨ p.IsClausal then some .X else none
+  | none, none => none
+
+/-- The fate of an initial slot: suppressed without a correspondent; cumulated when another
+initial core term shares its derived core slot; maintained in a derived core slot;
+denucleativized otherwise; not applicable to a non-core initial slot. -/
+def fate (s : Slot) : ParticipantFate :=
+  if s ∈ α.source.coreSlots then
+    match α.image s with
+    | none => .suppressed
+    | some t =>
+      if t ∈ α.target.coreSlots then
+        if (α.preimages t).any (fun s' ↦ s' != s && s' ∈ α.source.coreSlots) then .cumulated
+        else .maintained
+      else .denucleativized
+  else .na
+
+/-- The fate of the initial core term with a transitivity-related role. -/
+def fateOfRole (r : TermRole) : ParticipantFate :=
+  match α.source.coreSlots.find? fun s ↦
+      (α.source.codingRole s).map TermRole.ofArgumentRole == some r with
+  | some s => α.fate s
+  | none => .na
+
+/-- The derived slots the derived construction introduces: expressed slots whose participant
+was not a core term of the initial construction, either new to it or nucleativized from a
+non-core slot. -/
+def introduced : List Slot :=
+  α.target.slots.filter fun t ↦
+    (α.targetRole t).isSome &&
+      (α.preimages t).all fun s ↦ s ∉ α.source.coreSlots && t ∈ α.target.coreSlots
+
+/-- The role of the participant the derived construction introduces, if one. -/
+def newParticipant : Option TermRole := α.introduced.head?.bind α.targetRole
+
+/-- Some participant becomes a core term. -/
+def Nucleativizes : Prop := ∃ t ∈ α.introduced, t ∈ α.target.coreSlots
+
+/-- Some initial core term ceases to be one. -/
+def Denucleativizes : Prop :=
+  ∃ s ∈ α.source.coreSlots, (α.fate s).RemovesFromCoreStatus
+
+/-- Two initial core terms are cumulated. -/
+def Cumulates : Prop := ∃ s ∈ α.source.coreSlots, α.fate s = .cumulated
+
+/-- Valency-increasing: nucleativizes without denucleativizing. -/
+def IsValencyIncreasing : Prop := α.Nucleativizes ∧ ¬ α.Denucleativizes
+
+/-- Valency-decreasing: denucleativizes without nucleativizing. -/
+def IsValencyDecreasing : Prop := α.Denucleativizes ∧ ¬ α.Nucleativizes
+
+instance : Decidable α.Nucleativizes := inferInstanceAs (Decidable (∃ _ ∈ _, _))
+instance : Decidable α.Denucleativizes := inferInstanceAs (Decidable (∃ _ ∈ _, _))
+instance : Decidable α.Cumulates := inferInstanceAs (Decidable (∃ _ ∈ _, _))
+instance : Decidable α.IsValencyIncreasing := inferInstanceAs (Decidable (_ ∧ _))
+instance : Decidable α.IsValencyDecreasing := inferInstanceAs (Decidable (_ ∧ _))
+
+end ValencyAlternation
+
+/-! ### The types of [creissels-2024] §8.3 -/
+
+open ArgumentFrame.Slot
+
+/-- Causativization (§8.3.1.1): a causer is nucleativized as the A of a transitive
+construction whose P is the initial S. -/
 def causativization : ValencyAlternation :=
-  { name := "causativization"
-  , fateOfA := .na
-  , fateOfP := .na
-  , fateOfS := .maintained  -- S becomes P by the derived construction being transitive
-  , newParticipant := some .A
-  , initialTransitive := some false
-  , derivedTransitive := some true }
+  { source := .intransitive, target := .np, correspondence := [(external, complement 0)] }
 
-/-- Decausativization (§8.3.1.2): the initial A is
-    SUPPRESSED FROM PARTICIPANT STRUCTURE; initial P becomes S of an
-    intransitive construction. Called "anticausative" in most other
-    frameworks; Creissels prefers "decausative" because the prefix *de-*
-    transparently marks the removal of causation.
-
-    The critical difference from passivization: in decausativization, A is
-    entirely removed from participant structure (`.suppressed`), whereas in
-    passivization, A is denucleativized but remains in participant structure
-    (`.denucleativized`). -/
+/-- Decausativization (§8.3.1.2): the initial A is suppressed from participant structure and
+the initial P is the S of an intransitive construction. Called anticausative elsewhere. -/
 def decausativization : ValencyAlternation :=
-  { name := "decausativization"
-  , fateOfA := .suppressed
-  , fateOfP := .maintained  -- P becomes S
-  , fateOfS := .na
-  , newParticipant := none
-  , initialTransitive := some true
-  , derivedTransitive := some false }
+  { source := .np, target := .unaccusative, correspondence := [(complement 0, complement 0)] }
 
-/-- Passivization (§8.3.2.1): A is denucleativized
-    (oblique or unexpressed) but maintained in participant structure.
-    No participant is nucleativized. P becomes S.
-
-    The key difference from decausativization: in passivization, the initial
-    A is still semantically present (can appear as an oblique agent phrase).
-    In decausativization, the initial A is removed from participant structure. -/
+/-- Passivization (§8.3.2.1): the initial A is denucleativized but maintained in participant
+structure, implied here and expressed as an oblique in a long passive, and the initial P is
+the S. -/
 def passivization : ValencyAlternation :=
-  { name := "passivization"
-  , fateOfA := .denucleativized
-  , fateOfP := .maintained  -- P becomes S
-  , fateOfS := .na
-  , newParticipant := none
-  , initialTransitive := some true
-  , derivedTransitive := some false }
+  { source := .np, target := ⟨none, [.nominal, .implicit]⟩,
+    correspondence := [(external, complement 1), (complement 0, complement 0)] }
 
-/-- I-passivization (§8.3.2.2): impersonal variant
-    of passivization. A is denucleativized, but P's coding is unchanged —
-    the derived construction is impersonal (no S). -/
-def iPassivization : ValencyAlternation :=
-  { name := "I-passivization"
-  , fateOfA := .denucleativized
-  , fateOfP := .maintained
-  , fateOfS := .na
-  , newParticipant := none
-  , initialTransitive := some true
-  , derivedTransitive := none }
+/-- The impersonal variant of passivization (§8.3.2.2): the initial P keeps its coding, so
+the derived construction has no S; at the level of frames it is passivization. -/
+def iPassivization : ValencyAlternation := passivization
 
-/-- Antipassivization (§8.3.2.3): P is denucleativized
-    (oblique or unexpressed); A becomes S of an intransitive construction. -/
+/-- Antipassivization (§8.3.2.3): the initial P is denucleativized and the initial A is the
+S of an intransitive construction. -/
 def antipassivization : ValencyAlternation :=
-  { name := "antipassivization"
-  , fateOfA := .maintained  -- A becomes S
-  , fateOfP := .denucleativized
-  , fateOfS := .na
-  , newParticipant := none
-  , initialTransitive := some true
-  , derivedTransitive := some false }
+  { source := .np, target := .pp,
+    correspondence := [(external, external), (complement 0, complement 0)] }
 
-/-- S-denucleativization (§8.3.2.4): S of an
-    intransitive construction is denucleativized, yielding an impersonal
-    construction. -/
+/-- S-denucleativization (§8.3.2.4): the S of an intransitive construction is
+denucleativized, yielding an impersonal construction. -/
 def sDenucleativization : ValencyAlternation :=
-  { name := "S-denucleativization"
-  , fateOfA := .na
-  , fateOfP := .na
-  , fateOfS := .denucleativized
-  , newParticipant := none
-  , initialTransitive := some false
-  , derivedTransitive := none }
+  { source := .intransitive, target := ⟨none, [.implicit]⟩,
+    correspondence := [(external, complement 0)] }
 
-/-- Reflexivization (§8.3.3): A and P are cumulated
-    into S — a single participant fills both roles. -/
+/-- Reflexivization (§8.3.3): the initial A and P are cumulated in one S. -/
 def reflexivization : ValencyAlternation :=
-  { name := "reflexivization"
-  , fateOfA := .cumulated
-  , fateOfP := .cumulated
-  , fateOfS := .na
-  , newParticipant := none
-  , initialTransitive := some true
-  , derivedTransitive := some false }
+  { source := .np, target := .intransitive,
+    correspondence := [(external, external), (complement 0, external)] }
 
-/-- Reciprocalization (§8.3.3): like reflexivization
-    but with a group reading — participants mutually fill both roles. -/
-def reciprocalization : ValencyAlternation :=
-  { name := "reciprocalization"
-  , fateOfA := .cumulated
-  , fateOfP := .cumulated
-  , fateOfS := .na
-  , newParticipant := none
-  , initialTransitive := some true
-  , derivedTransitive := some false }
+/-- Reciprocalization (§8.3.3): reflexivization with a group reading. -/
+def reciprocalization : ValencyAlternation := reflexivization
 
-/-- P-applicativization (§8.3.5, §14.1.1): a
-    non-nuclear participant is nucleativized as P. The initial P may be
-    denucleativized (demoted to oblique) or maintained in double-P
-    constructions. -/
+/-- P-applicativization (§8.3.5): an applied participant is nucleativized as a second P
+beside the initial A and P. -/
 def pApplicativization : ValencyAlternation :=
-  { name := "P-applicativization"
-  , fateOfA := .maintained
-  , fateOfP := .maintained  -- may be denucleativized in some languages
-  , fateOfS := .na
-  , newParticipant := some .P
-  , initialTransitive := some true
-  , derivedTransitive := some true }
+  { source := .np, target := .np_np,
+    correspondence := [(external, external), (complement 0, complement 0)] }
 
-/-- D-applicativization (§14.1.3): a non-nuclear
-    participant is nucleativized as a dative oblique (a special oblique
-    type with core-term-like properties in many languages); the initial A or S
-    is maintained whether the base is transitive or intransitive. -/
+/-- D-applicativization (§14.1.3): an applied participant is expressed as a dative oblique,
+the initial A and P unchanged. -/
 def dApplicativization : ValencyAlternation :=
-  { name := "D-applicativization"
-  , fateOfA := .maintained
-  , fateOfP := .maintained
-  , fateOfS := .maintained
-  , newParticipant := some .X
-  , initialTransitive := none
-  , derivedTransitive := none }
+  { source := .np, target := .np_pp,
+    correspondence := [(external, external), (complement 0, complement 0)] }
 
-/-- X-applicativization (§14.1.4): a non-nuclear
-    participant is nucleativized as an ordinary oblique; the initial A or S is
-    maintained whether the base is transitive or intransitive. -/
+/-- X-applicativization (§14.1.4): an applied participant is expressed as an ordinary
+oblique, the initial S unchanged. -/
 def xApplicativization : ValencyAlternation :=
-  { name := "X-applicativization"
-  , fateOfA := .maintained
-  , fateOfP := .maintained
-  , fateOfS := .maintained
-  , newParticipant := some .X
-  , initialTransitive := none
-  , derivedTransitive := none }
+  { source := .intransitive, target := .pp, correspondence := [(external, external)] }
 
-/-- A/S-nucleativization of obliques (§8.3.4.1):
-    an oblique participant (e.g., an instrument) takes over the A or S role
-    in the derived construction, and the initial A cannot be expressed,
-    understood as non-specific. The nucleativized participant does NOT
-    outrank the initial A/S in agentivity (distinguishing this from
-    causativization).
-
-    Example: Laalaa (Cangin) *Fetal-aa ap-ah-an paloom*
-    'The gun will be used to kill antelopes' — instrument nucleativized as A. -/
+/-- A/S-nucleativization of an oblique (§8.3.4.1): an oblique participant, an instrument,
+takes over the role of A and the initial A is denucleativized, understood as non-specific. -/
 def asNucleativizationOfObliques : ValencyAlternation :=
-  { name := "A/S-nucleativization of obliques"
-  , fateOfA := .denucleativized  -- the initial A loses A coding but stays implied
-  , fateOfP := .maintained
-  , fateOfS := .na
-  , newParticipant := some .A  -- oblique promoted to A
-  , initialTransitive := some true
-  , derivedTransitive := some true }
+  { source := .np_pp, target := ⟨some .nominal, [.nominal, .implicit]⟩,
+    correspondence :=
+      [(external, complement 1), (complement 0, complement 0), (complement 1, external)] }
 
-/-- Concernativization (§8.3.4.2): nucleativization
-    of a concernee (external possessor / adversely affected party) into
-    the A role. The initial construction may be transitive or intransitive.
+/-- Concernativization (§8.3.4.2): a concernee is nucleativized as A and the initial S is
+the P; at the level of frames it is causativization, the difference lying in the new
+participant's relation to the event. -/
+def concernativization : ValencyAlternation := causativization
 
-    When initial is intransitive: S is converted into P, concernee
-    becomes A, derived construction is transitive.
-    When initial is transitive: the initial A is converted into P or
-    denucleativized and the concernee takes over the role of A.
-
-    Example: Central Alaskan Yupik *Kit'-i-aqa kicaq*
-    'I had the anchor sunk (me negatively affected)' — concernee as A. -/
-def concernativization : ValencyAlternation :=
-  { name := "concernativization"
-  , fateOfA := .na
-  , fateOfP := .na
-  , fateOfS := .maintained  -- S maintained (becomes P in derived transitive)
-  , newParticipant := some .A  -- concernee nucleativized as A
-  , initialTransitive := some false  -- prototypical case is intransitive
-  , derivedTransitive := some true }
-
-/-- Portative derivation (§8.3.7): converts a motion
-    verb into a transitive 'A moves carrying P'. Distinguished from both
-    causativization and applicativization. -/
+/-- Portative derivation (§8.3.7): an intransitive motion verb becomes transitive, its S the
+A and a carried entity the P. -/
 def portativeDerivation : ValencyAlternation :=
-  { name := "portative derivation"
-  , fateOfA := .na
-  , fateOfP := .na
-  , fateOfS := .maintained  -- S of motion verb becomes A-like
-  , newParticipant := some .P
-  , initialTransitive := some false
-  , derivedTransitive := some true }
+  { source := .intransitive, target := .np, correspondence := [(external, external)] }
 
--- ════════════════════════════════════════════════════
--- § 6. Alignment (§1.3.4)
--- ════════════════════════════════════════════════════
+/-! ### Properties of the types -/
 
-/-- Alignment between core terms of transitive and intransitive clauses.
+theorem causativization_increases : causativization.IsValencyIncreasing := by decide
 
-    §1.3.4.2: the central typological parameter is
-    whether S patterns with A (A-alignment, traditionally "accusative") or
-    with P (P-alignment, traditionally "ergative"). Creissels avoids the
-    traditional case-based labels because A-alignment can occur without
-    accusative case, and P-alignment without ergative case. -/
+theorem decausativization_decreases : decausativization.IsValencyDecreasing := by decide
+
+theorem passivization_decreases : passivization.IsValencyDecreasing := by decide
+
+/-- Passivization maintains the initial A in participant structure; decausativization
+suppresses it (§8.3.2.1). -/
+theorem passivization_vs_decausativization :
+    passivization.fateOfRole .A = .denucleativized ∧
+      decausativization.fateOfRole .A = .suppressed := by decide
+
+theorem antipassivization_decreases : antipassivization.IsValencyDecreasing := by decide
+
+theorem reflexivization_cumulates : reflexivization.Cumulates := by decide
+
+theorem pApplicativization_increases : pApplicativization.IsValencyIncreasing := by decide
+
+/-- A/S-nucleativization of an oblique nucleativizes the oblique and denucleativizes the
+initial A: neither valency-increasing nor valency-decreasing. -/
+theorem as_nucleativization_neutral :
+    asNucleativizationOfObliques.Nucleativizes ∧ asNucleativizationOfObliques.Denucleativizes ∧
+      ¬ asNucleativizationOfObliques.IsValencyIncreasing ∧
+      ¬ asNucleativizationOfObliques.IsValencyDecreasing := by decide
+
+/-- Portative derivation is valency-increasing, like causativization and applicativization,
+but reduces to neither (§8.3.7). -/
+theorem portative_increases : portativeDerivation.IsValencyIncreasing := by decide
+
+/-! ### Alignment (§1.3.4) -/
+
+/-- The alignment of the core terms of transitive and intransitive clauses: S coded like A,
+or like P. -/
 inductive Alignment where
-  /-- S is coded like A — traditionally "nominative-accusative" -/
+  /-- S is coded like A, traditionally accusative. -/
   | A_alignment
-  /-- S is coded like P — traditionally "absolutive-ergative" -/
+  /-- S is coded like P, traditionally ergative. -/
   | P_alignment
   deriving DecidableEq, Repr
 
-/-- The Obligatory Coding Principle (§1.3.4.4):
-    in most languages, every verb assigns a particular type of participant
-    coding to one of its participants, and this type coincides with either
-    A coding or P coding. A language that fully complies has either
-    obligatory A-coding or obligatory P-coding.
+/-! ### Ambitransitivity (chapter 15) -/
 
-    This is a reformulation of the accusative/ergative typology: obligatory
-    A-coding = consistently accusative; obligatory P-coding = consistently
-    ergative. -/
-structure ObligatoryCodingProfile where
-  language : String
-  /-- Default alignment -/
-  defaultAlignment : Alignment
-  /-- Whether violations of the Obligatory Coding Principle exist -/
-  violationsExist : Bool := false
-  /-- Whether the language is split-S (different S classes align differently) -/
-  splitS : Bool := false
-  deriving Repr, BEq
-
--- ════════════════════════════════════════════════════
--- § 7. Voice Marker Polysemy (§8.2)
--- ════════════════════════════════════════════════════
-
-/-- A voice marker and the alternation types it can mark.
-
-    §8.2: cross-linguistically, voice markers are
-    polysemous — the same morpheme may mark multiple voice alternation types.
-    For example, Russian *-sja* marks reflexivization, reciprocalization,
-    passivization, and antipassivization (§1.1.3, ex. 8). -/
-structure VoiceMarkerProfile where
-  /-- Language name -/
-  language : String
-  /-- Morpheme form -/
-  marker : String
-  /-- Which alternation types this marker can encode -/
-  alternations : List ValencyAlternation
-  deriving Repr, BEq
-
--- ════════════════════════════════════════════════════
--- § 9. Properties
--- ════════════════════════════════════════════════════
-
-/-- Look up what this alternation does to a given TR-role. -/
-def ValencyAlternation.fateOfRole (va : ValencyAlternation) : TermRole → ParticipantFate
-  | .A => va.fateOfA
-  | .P => va.fateOfP
-  | .S => va.fateOfS
-  | .X => .na
-
-/-- Does this fate remove the participant from core-term status?
-    True for denucleativization (demoted to oblique) and suppression
-    (removed from participant structure entirely). -/
-def ParticipantFate.removesFromCoreStatus : ParticipantFate → Bool
-  | .denucleativized => true
-  | .suppressed      => true
-  | _                => false
-
-/-- Does this alternation involve nucleativization (adding a new core term)? -/
-def ValencyAlternation.involvesNucleativization (va : ValencyAlternation) : Bool :=
-  va.newParticipant.isSome
-
-/-- Does this alternation involve denucleativization or suppression
-    (removing a participant from core-term status)? -/
-def ValencyAlternation.involvesDenucleativization (va : ValencyAlternation) : Bool :=
-  va.fateOfA == .denucleativized || va.fateOfA == .suppressed ||
-  va.fateOfP == .denucleativized || va.fateOfP == .suppressed ||
-  va.fateOfS == .denucleativized || va.fateOfS == .suppressed
-
-/-- Is this a valency-increasing alternation? -/
-def ValencyAlternation.isValencyIncreasing (va : ValencyAlternation) : Bool :=
-  va.involvesNucleativization && !va.involvesDenucleativization
-
-/-- Is this a valency-decreasing alternation? -/
-def ValencyAlternation.isValencyDecreasing (va : ValencyAlternation) : Bool :=
-  va.involvesDenucleativization && !va.involvesNucleativization
-
-/-- Does this alternation involve cumulation (reflexivization/reciprocalization)? -/
-def ValencyAlternation.involvesCumulation (va : ValencyAlternation) : Bool :=
-  va.fateOfA == .cumulated || va.fateOfP == .cumulated
-
--- ════════════════════════════════════════════════════
--- § 10. Property Theorems
--- ════════════════════════════════════════════════════
-
-theorem causativization_increases :
-    causativization.isValencyIncreasing = true := rfl
-
-theorem decausativization_decreases :
-    decausativization.isValencyDecreasing = true := rfl
-
-theorem passivization_decreases :
-    passivization.isValencyDecreasing = true := rfl
-
-/-- The central distinction of §8.3.2.1:
-    passivization MAINTAINS A in participant structure (`.denucleativized`),
-    while decausativization SUPPRESSES A from participant structure
-    (`.suppressed`). These are structurally distinct operations. -/
-theorem passivization_vs_decausativization :
-    passivization.fateOfA = .denucleativized ∧
-    decausativization.fateOfA = .suppressed :=
-  ⟨rfl, rfl⟩
-
-theorem antipassivization_decreases :
-    antipassivization.isValencyDecreasing = true := rfl
-
-theorem reflexivization_cumulates :
-    reflexivization.involvesCumulation = true := rfl
-
-theorem reciprocalization_cumulates :
-    reciprocalization.involvesCumulation = true := rfl
-
-theorem pApplicativization_increases :
-    pApplicativization.isValencyIncreasing = true := rfl
-
-/-- A/S-nucleativization of obliques nucleativizes the oblique and denucleativizes the
-    initial A, so it is neither valency-increasing nor valency-decreasing. -/
-theorem as_nucleativization_neutral :
-    asNucleativizationOfObliques.involvesNucleativization = true ∧
-    asNucleativizationOfObliques.involvesDenucleativization = true ∧
-    asNucleativizationOfObliques.isValencyIncreasing = false ∧
-    asNucleativizationOfObliques.isValencyDecreasing = false := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Portative derivation is valency-increasing, like causativization and
-    applicativization, but cannot be reduced to either (§8.3.7). -/
-theorem portative_increases :
-    portativeDerivation.isValencyIncreasing = true := rfl
-
--- ════════════════════════════════════════════════════
--- § 11. Bridge: Levin DiathesisAlternation → ValencyAlternation
--- ════════════════════════════════════════════════════
-
-/-- Map [levin-1993]'s English-specific diathesis alternations to
-    cross-linguistic valency alternation types.
-
-    Key insight: most Levin alternations are UNCODED (flexivalency) in
-    English — the structural effect is the same as the corresponding coded
-    voice alternation, but without morphological marking. For example,
-    English *break* (tr)/*break* (intr) has the same structural effect as
-    Tswana *-eχ* decausativization, but English uses no verbal morphology. -/
-def toValencyAlternation : DiathesisAlternation → ValencyAlternation
-  | .causativeInchoative => decausativization  -- the intransitive direction
-  | .inducedAction => causativization  -- intransitive → transitive causative
-  | .middle =>
-    { name := "middle"
-    , fateOfA := .denucleativized
-    , fateOfP := .maintained
-    , fateOfS := .na
-    , newParticipant := none
-    , initialTransitive := some true
-    , derivedTransitive := some false }
-  | .conative =>
-    { name := "conative"
-    , fateOfA := .maintained
-    , fateOfP := .denucleativized
-    , fateOfS := .na
-    , newParticipant := none
-    , initialTransitive := some true
-    , derivedTransitive := some false }
-  | .bodyPartPossessorAscension =>
-    { name := "body-part possessor ascension"
-    , fateOfA := .maintained
-    , fateOfP := .maintained
-    , fateOfS := .na
-    , newParticipant := some .P  -- possessor promoted to P-like
-    , initialTransitive := some true
-    , derivedTransitive := some true }
-  | .dative =>
-    { name := "dative"
-    , fateOfA := .maintained
-    , fateOfP := .maintained
-    , fateOfS := .na
-    , newParticipant := none  -- no new participant; P↔X alternation
-    , initialTransitive := some true
-    , derivedTransitive := some true }
-  | .benefactive =>
-    { name := "benefactive"
-    , fateOfA := .maintained
-    , fateOfP := .maintained
-    , fateOfS := .na
-    , newParticipant := none  -- beneficiary alternates between PP and NP2
-    , initialTransitive := some true
-    , derivedTransitive := some true }
-  | .locative =>
-    { name := "locative"
-    , fateOfA := .maintained
-    , fateOfP := .maintained
-    , fateOfS := .na
-    , newParticipant := none  -- no new participant; P↔X alternation
-    , initialTransitive := some true
-    , derivedTransitive := some true }
-  | .substanceSource =>
-    { name := "substance/source"
-    , fateOfA := .na
-    , fateOfP := .maintained  -- substance alternates between S and P
-    , fateOfS := .maintained
-    , newParticipant := none
-    , initialTransitive := none  -- both forms exist
-    , derivedTransitive := none }
-  | .materialProduct =>
-    { name := "material/product"
-    , fateOfA := .maintained
-    , fateOfP := .maintained  -- material↔product alternate as direct object
-    , fateOfS := .na
-    , newParticipant := none
-    , initialTransitive := some true
-    , derivedTransitive := some true }
-  | .unspecifiedObject =>
-    { name := "unspecified object"
-    , fateOfA := .maintained  -- A becomes S
-    , fateOfP := .suppressed  -- object unexpressed
-    , fateOfS := .na
-    , newParticipant := none
-    , initialTransitive := some true
-    , derivedTransitive := some false }
-  | .understoodBodyPartObject =>
-    { name := "understood body-part object"
-    , fateOfA := .maintained  -- A becomes S
-    , fateOfP := .suppressed  -- body-part object unexpressed
-    , fateOfS := .na
-    , newParticipant := none
-    , initialTransitive := some true
-    , derivedTransitive := some false }
-  | .understoodReflexiveObject =>
-    { name := "understood reflexive object"
-    , fateOfA := .cumulated   -- A and P collapse (self-directed)
-    , fateOfP := .cumulated
-    , fateOfS := .na
-    , newParticipant := none
-    , initialTransitive := some true
-    , derivedTransitive := some false }
-  | .understoodReciprocalObject =>
-    { name := "understood reciprocal object"
-    , fateOfA := .cumulated   -- A and P merged into plural S
-    , fateOfP := .cumulated
-    , fateOfS := .na
-    , newParticipant := none
-    , initialTransitive := some true
-    , derivedTransitive := some false }
-  | .swarm =>
-    { name := "swarm"
-    , fateOfA := .na
-    , fateOfP := .na
-    , fateOfS := .maintained  -- S maintained, locative becomes S
-    , newParticipant := none
-    , initialTransitive := some false
-    , derivedTransitive := some false }
-  | .totalTransformation =>
-    { name := "total transformation"
-    , fateOfA := .maintained
-    , fateOfP := .maintained  -- P undergoes complete change
-    , fateOfS := .na
-    , newParticipant := none
-    , initialTransitive := some true
-    , derivedTransitive := some true }
-  | .thereInsertion =>
-    { name := "there-insertion"
-    , fateOfA := .na
-    , fateOfP := .na
-    , fateOfS := .maintained  -- S moves to postverbal position
-    , newParticipant := none
-    , initialTransitive := some false
-    , derivedTransitive := some false }
-  | .locativeInversion =>
-    { name := "locative inversion"
-    , fateOfA := .na
-    , fateOfP := .na
-    , fateOfS := .maintained  -- S moves to postverbal position
-    , newParticipant := none
-    , initialTransitive := some false
-    , derivedTransitive := some false }
-  | .instrumentSubject =>
-    { name := "instrument subject"
-    , fateOfA := .denucleativized  -- agent optionally suppressed
-    , fateOfP := .maintained
-    , fateOfS := .na
-    , newParticipant := some .A  -- instrument promoted to A
-    , initialTransitive := some true
-    , derivedTransitive := some true }
-  | .verbalPassive => passivization  -- fundamental voice alternation
-  | .prepositionalPassive =>
-    { name := "prepositional passive"
-    , fateOfA := .na
-    , fateOfP := .na
-    , fateOfS := .denucleativized  -- S demoted, oblique promoted
-    , newParticipant := none
-    , initialTransitive := some false
-    , derivedTransitive := some false }
-  | .cognateObject =>
-    { name := "cognate object"
-    , fateOfA := .na
-    , fateOfP := .na
-    , fateOfS := .maintained  -- S becomes A
-    , newParticipant := some .P  -- cognate NP added
-    , initialTransitive := some false
-    , derivedTransitive := some true }
-  | .wayConstruction =>
-    { name := "way construction"
-    , fateOfA := .na
-    , fateOfP := .na
-    , fateOfS := .maintained  -- S becomes A
-    , newParticipant := some .P  -- reflexive possessive NP added
-    , initialTransitive := some false
-    , derivedTransitive := some true }
-  | .resultative =>
-    { name := "resultative"
-    , fateOfA := .maintained
-    , fateOfP := .maintained
-    , fateOfS := .na
-    , newParticipant := none
-    , initialTransitive := some true
-    , derivedTransitive := some true }
-  | .directionalPhrase =>
-    { name := "directional phrase"
-    , fateOfA := .na
-    , fateOfP := .na
-    , fateOfS := .maintained  -- S maintained, directional PP added
-    , newParticipant := none
-    , initialTransitive := some false
-    , derivedTransitive := some false }
-
-/-- The causative/inchoative alternation maps to decausativization
-    (viewed from the transitive direction, the intransitive variant removes
-    the causer). -/
-theorem causativeInchoative_is_decausativization :
-    toValencyAlternation .causativeInchoative =
-    decausativization := rfl
-
-/-- The conative alternation is structurally an antipassivization:
-    A is maintained, P is denucleativized (demoted to oblique with *at*). -/
-theorem conative_is_antipassive_like :
-    (toValencyAlternation .conative).involvesDenucleativization = true ∧
-    (toValencyAlternation .conative).fateOfA = .maintained := ⟨rfl, rfl⟩
-
-/-- Body-part possessor ascension is structurally a nucleativization
-    (like applicativization): a possessor is promoted to core-term status. -/
-theorem bppa_is_applicative_like :
-    (toValencyAlternation .bodyPartPossessorAscension).involvesNucleativization = true := rfl
-
-/-- The understood reciprocal object alternation involves cumulation,
-    just like reflexivization and reciprocalization in. -/
-theorem understoodReciprocal_cumulates :
-    (toValencyAlternation .understoodReciprocalObject).involvesCumulation = true := rfl
-
-/-- The unspecified object alternation is valency-decreasing:
-    P is suppressed (removed from participant structure). -/
-theorem unspecifiedObject_decreases :
-    (toValencyAlternation .unspecifiedObject).isValencyDecreasing = true := rfl
-
-/-- The instrument subject alternation involves both nucleativization (instrument → A)
-    and denucleativization (original A demoted), so it is neither strictly
-    valency-increasing nor valency-decreasing — it is a restructuring. -/
-theorem instrumentSubject_restructures :
-    (toValencyAlternation .instrumentSubject).involvesNucleativization = true
-    ∧ (toValencyAlternation .instrumentSubject).involvesDenucleativization = true
-    ∧ (toValencyAlternation .instrumentSubject).isValencyIncreasing = false
-    ∧ (toValencyAlternation .instrumentSubject).isValencyDecreasing = false := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- The induced action alternation maps to causativization:
-    *Bill ran* → *Bill ran the horse* (intransitive S becomes P,
-    new causer becomes A). -/
-theorem inducedAction_is_causativization :
-    toValencyAlternation .inducedAction = causativization := rfl
-
-/-- The verbal passive maps to passivization. -/
-theorem verbalPassive_is_passivization :
-    toValencyAlternation .verbalPassive = passivization := rfl
-
-/-- The understood reflexive object alternation involves cumulation,
-    like reflexivization in. -/
-theorem understoodReflexive_cumulates :
-    (toValencyAlternation .understoodReflexiveObject).involvesCumulation = true := rfl
-
-/-- The cognate object alternation is valency-increasing:
-    adds a P to an intransitive verb (*she laughed* → *she laughed a bitter laugh*). -/
-theorem cognateObject_increases :
-    (toValencyAlternation .cognateObject).isValencyIncreasing = true := rfl
-
-/-- The way construction is valency-increasing:
-    adds a possessive P (*she elbowed* → *she elbowed her way through*). -/
-theorem wayConstruction_increases :
-    (toValencyAlternation .wayConstruction).isValencyIncreasing = true := rfl
-
-/-- The understood body-part object alternation is valency-decreasing:
-    P is suppressed (*Bill waved his hand* → *Bill waved*). -/
-theorem understoodBodyPartObject_decreases :
-    (toValencyAlternation .understoodBodyPartObject).isValencyDecreasing = true := rfl
-
--- ════════════════════════════════════════════════════
--- § 12. Flexivalency / Ambitransitivity (Ch 15)
--- ════════════════════════════════════════════════════
-
-/-- Types of ambitransitivity (uncoded transitivity alternation).
-
-    §15.2: a verb is ambitransitive when it can
-    appear in both transitive and intransitive constructions without
-    morphological marking. The five subtypes differ in what happens to the
-    participants. -/
+/-- The types of uncoded transitivity alternation (§15.2). -/
 inductive AmbitransitivityType where
-  /-- S of intransitive = P of transitive. *The glass broke.* / *She broke the glass.*
-      Traditionally "anticausative" or "unaccusative" ambitransitivity. -/
+  /-- The S of the intransitive is the P of the transitive, *the glass broke*. -/
   | P_ambitransitivity
-  /-- S of intransitive = A of transitive. *She ate.* / *She ate the cake.*
-      Traditionally "unergative" ambitransitivity. -/
+  /-- The S of the intransitive is the A of the transitive, *she ate*. -/
   | A_ambitransitivity
-  /-- The intransitive is reflexive (A = P). *She washed.* = *She washed herself.* -/
+  /-- The intransitive is reflexive, *she washed*. -/
   | reflexive
-  /-- The intransitive is reciprocal (A = P, group). *They kissed.* -/
+  /-- The intransitive is reciprocal, *they kissed*. -/
   | reciprocal
-  /-- Ambiguous or underspecified. -/
+  /-- Underspecified. -/
   | unspecified
   deriving DecidableEq, Repr
 
-/-- P-ambitransitivity corresponds to uncoded decausativization. -/
+/-- P-ambitransitivity is uncoded decausativization. -/
 theorem p_ambi_is_uncoded_decausativization :
-    decausativization.involvesDenucleativization = true := rfl
+    decausativization.Denucleativizes ∧ decausativization.marking = .uncoded := by decide
 
-/-- A-ambitransitivity corresponds to uncoded antipassivization. -/
+/-- A-ambitransitivity is uncoded antipassivization. -/
 theorem a_ambi_is_uncoded_antipassivization :
-    antipassivization.involvesDenucleativization = true := rfl
+    antipassivization.Denucleativizes ∧ antipassivization.marking = .uncoded := by decide
 
 end Voice

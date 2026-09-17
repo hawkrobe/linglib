@@ -139,7 +139,7 @@ def controllerRole : ControlType → Option TermRole
 /-- The Control Principle blocks a valency alternation that removes the controller from
 core-term status. -/
 def Blocks (ct : ControlType) (va : ValencyAlternation) : Prop :=
-  ∃ role ∈ controllerRole ct, (va.fateOfRole role).removesFromCoreStatus = true
+  ∃ role ∈ controllerRole ct, (va.fateOfRole role).RemovesFromCoreStatus
 
 instance (ct : ControlType) (va : ValencyAlternation) : Decidable (Blocks ct va) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))

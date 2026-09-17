@@ -140,11 +140,7 @@ theorem linking_derives_incompletive :
 the base's S is maintained, surfacing as the A of the derived transitive clause. Creissels'
 P-applicativization, over an intransitive base. -/
 def applicativeLinking : ValencyAlternation :=
-  { pApplicativization with
-      name := "Yukatek applicative"
-      fateOfA := .na
-      fateOfS := .maintained
-      initialTransitive := some false }
+  { source := .intransitive, target := .np, correspondence := [(.external, .external)] }
 
 /-- Rule (27): transitivizing an externally-caused base nucleativizes an instigator as A, the
 base's S surfacing as P — Creissels' causativization unchanged. -/
@@ -159,26 +155,19 @@ def predictLinking : InternalExternalCause → ValencyAlternation
 def verbLinking (v : YukatekVerb) : ValencyAlternation :=
   predictLinking v.causationType
 
-/-- The other core term role of a transitive clause. -/
-def otherRole : TermRole → TermRole
-  | .A => .P
-  | .P => .A
-  | r => r
-
 /-- The role the added participant receives, read off the alternation. -/
 def addedRole (va : ValencyAlternation) : Option TermRole := va.newParticipant
 
-/-- The role the base's S receives: a transitive clause has two core terms, so it is whichever the
-added participant did not take. -/
+/-- The role the base's S receives: that of the derived slot its participant occupies. -/
 def originalRole (va : ValencyAlternation) : Option TermRole :=
-  va.newParticipant.map otherRole
+  (va.image .external).bind va.targetRole
 
 /-- Applicative and causative linking are mirror images, and not by stipulation: each alternation
 adds a participant in the role the other leaves to the base's S, so the marker one assigns to the
 added argument is the marker the other assigns to the original S. -/
 theorem linking_patterns_swap_roles :
     addedRole applicativeLinking = originalRole causativeLinking ∧
-    originalRole applicativeLinking = addedRole causativeLinking := ⟨rfl, rfl⟩
+    originalRole applicativeLinking = addedRole causativeLinking := by decide
 
 /-- The marker each participant receives follows from its role by `markerOf`: the applicative adds
 a set-B argument and keeps the base's S as set A, the causative the reverse. -/
@@ -186,13 +175,12 @@ theorem linking_markers :
     (addedRole applicativeLinking).bind markerOf = some .setB ∧
     (originalRole applicativeLinking).bind markerOf = some .setA ∧
     (addedRole causativeLinking).bind markerOf = some .setA ∧
-    (originalRole causativeLinking).bind markerOf = some .setB := ⟨rfl, rfl, rfl, rfl⟩
+    (originalRole causativeLinking).bind markerOf = some .setB := by decide
 
 /-- Both transitivizations are valency-increasing, which the detransitivizations of (28)–(30) are
 not — the two halves of the system are one mechanism read in two directions. -/
 theorem transitivizations_increase_valency :
-    applicativeLinking.isValencyIncreasing = true ∧
-    causativeLinking.isValencyIncreasing = true := ⟨rfl, rfl⟩
+    applicativeLinking.IsValencyIncreasing ∧ causativeLinking.IsValencyIncreasing := by decide
 
 /-- The role a verb's added participant takes: P under applicative linking, A under causative. -/
 def addedTermRole (v : YukatekVerb) : Option TermRole := addedRole (verbLinking v)
@@ -334,19 +322,18 @@ def DetransitivizationType.toAlternation : DetransitivizationType → ValencyAlt
     ex. (12): p'eh "chip" → antipassive p'èeh, passive p'e'h-el,
     anticausative p'éeh-el. -/
 theorem detransitivizations_decrease_valency :
-    (DetransitivizationType.toAlternation .antipassive).isValencyDecreasing = true ∧
-    (DetransitivizationType.toAlternation .anticausative).isValencyDecreasing = true ∧
-    (DetransitivizationType.toAlternation .passive).isValencyDecreasing = true :=
-  ⟨rfl, rfl, rfl⟩
+    (DetransitivizationType.toAlternation .antipassive).IsValencyDecreasing ∧
+    (DetransitivizationType.toAlternation .anticausative).IsValencyDecreasing ∧
+    (DetransitivizationType.toAlternation .passive).IsValencyDecreasing := by decide
 
 /-- The fate of the initial A separates passive from anticausative — the
     distinction the coarser intransitivization typology collapses: passive
     denucleativizes A (kept in participant structure), anticausative suppresses
     it (removed). -/
 theorem passive_anticausative_distinct_by_A_fate :
-    (DetransitivizationType.toAlternation .passive).fateOfA = .denucleativized ∧
-    (DetransitivizationType.toAlternation .anticausative).fateOfA = .suppressed :=
-  ⟨rfl, rfl⟩
+    (DetransitivizationType.toAlternation .passive).fateOfRole .A = .denucleativized ∧
+    (DetransitivizationType.toAlternation .anticausative).fateOfRole .A = .suppressed := by
+  decide
 
 /-! ### Template-level detransitivization -/
 

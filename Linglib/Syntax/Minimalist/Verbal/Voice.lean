@@ -534,8 +534,8 @@ theorem defaultPhasal_eq_baselinePhasal (f : Flavor)
 /-- The antipassive anomaly, machine-checked: antipassive occupies a
     phasal cell of the grid ([+D, +λx arg]) yet is non-phasal by default —
     phasehood tracks v* transitivity ([chomsky-2001]), and antipassive
-    detransitivizes (its `alternation` has `derivedTransitive = some
-    false`), though reflexive and reciprocal show the residue is not fully
+    detransitivizes (its `alternation` has an intransitive derived
+    frame), though reflexive and reciprocal show the residue is not fully
     derivable from the alternation either. -/
 theorem antipassive_anomaly :
     Flavor.antipassive.defaultPhasal = false ∧
