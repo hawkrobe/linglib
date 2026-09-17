@@ -165,7 +165,6 @@ def rasgar : SpanishVerbEntry :=
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true,
-    levinClasses := {LevinClass.break_},
     root := { content := {
       force := {.low, .moderate}
       direction := {.unidirectional}

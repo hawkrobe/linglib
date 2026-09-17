@@ -24,7 +24,7 @@ structure Verb.Reciprocal where
   formation : _root_.Reciprocal.Formation
   /-- The transitive alternate; `none` for frozen entries. -/
   base : Option Verb := none
-  deriving Repr, BEq
+  deriving BEq
 
 namespace Verb.Reciprocal
 

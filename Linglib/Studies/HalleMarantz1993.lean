@@ -123,7 +123,7 @@ structure Cell where
   verb : Verb
   part : Part
   suffix : String
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 def Verb.ofString : String → Option Verb
   | "beat" => some .beat | "put" => some .put | "dwell" => some .dwell | "play" => some .play
