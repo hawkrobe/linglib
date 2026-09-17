@@ -213,6 +213,105 @@ def synTree_everyStudentSleeps : Tree Cat String :=
      .bind 1 .S
        (.node .S (.trace 1 .NP :: .node .VP (.terminal .V "sleeps" :: []) :: [])) :: [])
 
+/-! ### The book's rules as a reference
+
+[heim-kratzer-1998]'s composition principles for the extensional fragment, transcribed as an
+interpretation relation with one constructor per rule: Terminal Nodes, Non-Branching Nodes,
+Functional Application with either daughter the function, Predicate Modification, the Traces
+and Pronouns Rule, and Predicate Abstraction, which asks the body to denote under every
+modification of the assignment. The engine at `M = Id` extends the relation
+(`interp_of_denotes`): where the book assigns a denotation, the engine computes it, and the
+engine also interprets the event-identification configurations the book leaves undefined. The
+relation is therefore functional (`Denotes.unique`), and the surface-scope reading is a
+derivation in the book's own rules (`denotes_surface`). -/
+
+section Reference
+
+variable {C L E W : Type}
+
+/-- The book's interpretation relation, relative to a leaf interpretation and an assignment. -/
+inductive Denotes (lex : L → Option (Denotation E W)) :
+    Assignment E → Tree C L → Denotation E W → Prop
+  /-- Terminal Nodes: a leaf denotes what the lexicon gives it. -/
+  | tn {g : Assignment E} {c : C} {w : L} {d : Denotation E W} (h : lex w = some d) :
+      Denotes lex g (.terminal c w) d
+  /-- Non-Branching Nodes: a node denotes what its only daughter does. -/
+  | nn {g : Assignment E} {c : C} {t : Tree C L} {d : Denotation E W} (h : Denotes lex g t d) :
+      Denotes lex g (.node c (t :: [])) d
+  /-- Functional Application, the left daughter the function. -/
+  | faLeft {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {σ τ : Ty} {f : Ty.Domain E W (σ ⇒ τ)}
+      {a : Ty.Domain E W σ} (h₁ : Denotes lex g t₁ ⟨σ ⇒ τ, f⟩) (h₂ : Denotes lex g t₂ ⟨σ, a⟩) :
+      Denotes lex g (.node c (t₁ :: t₂ :: [])) ⟨τ, f a⟩
+  /-- Functional Application, the right daughter the function. -/
+  | faRight {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {σ τ : Ty} {a : Ty.Domain E W σ}
+      {f : Ty.Domain E W (σ ⇒ τ)} (h₁ : Denotes lex g t₁ ⟨σ, a⟩)
+      (h₂ : Denotes lex g t₂ ⟨σ ⇒ τ, f⟩) :
+      Denotes lex g (.node c (t₁ :: t₂ :: [])) ⟨τ, f a⟩
+  /-- Predicate Modification: two predicates conjoin. -/
+  | pm {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {P Q : Ty.Domain E W (.e ⇒ .t)}
+      (h₁ : Denotes lex g t₁ ⟨.e ⇒ .t, P⟩) (h₂ : Denotes lex g t₂ ⟨.e ⇒ .t, Q⟩) :
+      Denotes lex g (.node c (t₁ :: t₂ :: [])) ⟨.e ⇒ .t, fun x ↦ P x ∧ Q x⟩
+  /-- The Traces and Pronouns Rule: a trace denotes the value of its index. -/
+  | trace {g : Assignment E} {n : ℕ} {c : C} : Denotes lex g (.trace n c) ⟨.e, g n⟩
+  /-- Predicate Abstraction: a binder abstracts over its index in the body. -/
+  | pa {g : Assignment E} {n : ℕ} {c : C} {body : Tree C L} {τ : Ty} {F : E → Ty.Domain E W τ}
+      (h : ∀ x, Denotes lex (g[n ↦ x]) body ⟨τ, F x⟩) : Denotes lex g (.bind n c body) ⟨.e ⇒ τ, F⟩
+
+/-- Where the book assigns a denotation, the engine at `M = Id` computes it; the book's
+standing assumption that the domain of individuals is nonempty is the hypothesis. -/
+theorem interp_of_denotes [Nonempty E] {lex : L → Option (Denotation E W)} {g : Assignment E}
+    {t : Tree C L} {d : Denotation E W} (h : Denotes lex g t d) : interp lex g t = some d := by
+  induction h with
+  | tn h => exact h
+  | nn _ ih => exact ih
+  | faLeft _ _ ih₁ ih₂ =>
+    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some, interpBinary, tryFA_forward]; rfl
+  | faRight _ _ ih₁ ih₂ =>
+    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some, interpBinary, tryFA_backward]; rfl
+  | pm _ _ ih₁ ih₂ =>
+    simp only [interp_node_binary, ih₁, ih₂, Option.bind_some, interpBinary_pm]; rfl
+  | trace => rfl
+  | @pa g n c body τ F h ih =>
+    obtain ⟨x₀⟩ := ‹Nonempty E›
+    have hty := interp_map_fst_congr lex g (g[n ↦ x₀]) body
+    rw [ih x₀] at hty
+    obtain ⟨v, hv⟩ : ∃ v, interp lex g body = some ⟨τ, v⟩ := by
+      rcases hg : interp lex g body with _ | ⟨τ', v⟩
+      · simp [hg] at hty
+      · simp only [hg, Option.map_some, Option.some.injEq] at hty; subst hty; exact ⟨v, rfl⟩
+    simp only [interp_bind, hv, Option.bind_some]
+    show (some ⟨.e ⇒ τ, fun x ↦ valueAt τ v (interp lex (g[n ↦ x]) body)⟩ :
+      Option (Denotation E W)) = _
+    congr 2
+    funext x
+    rw [ih x]
+    simp [valueAt]
+
+/-- The book's rules are deterministic. -/
+theorem Denotes.unique [Nonempty E] {lex : L → Option (Denotation E W)} {g : Assignment E}
+    {t : Tree C L} {d d' : Denotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') :
+    d = d' :=
+  Option.some.inj ((interp_of_denotes h).symm.trans (interp_of_denotes h'))
+
+/-- The surface-scope reading is a derivation in the book's rules: Functional Application
+around two Predicate Abstractions, with the quantifier words as terminals. -/
+theorem denotes_surface : Denotes lex g₀ tree_surface ⟨Ty.t, surfaceScopeProp⟩ := by
+  show Denotes lex g₀ tree_surface
+    ⟨Ty.t, every_sem person_sem fun x ↦ some_sem person_sem fun y ↦ ToyLexicon.sees_sem y x⟩
+  refine .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := .t) (f := every_sem person_sem) ?_
+    (.pa (τ := .t) fun x ↦ ?_)
+  · exact .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := (.e ⇒ .t) ⇒ .t) (f := every_sem)
+      (a := person_sem) (.tn rfl) (.tn rfl)
+  · refine .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := .t) (f := some_sem person_sem) ?_
+      (.pa (τ := .t) fun y ↦ ?_)
+    · exact .faLeft (lex := lex) (σ := .e ⇒ .t) (τ := (.e ⇒ .t) ⇒ .t) (f := some_sem)
+        (a := person_sem) (.tn rfl) (.tn rfl)
+    · exact .faRight (lex := lex) (σ := .e) (τ := .t) (a := x) (f := ToyLexicon.sees_sem y) .trace
+        (.faLeft (lex := lex) (σ := .e) (τ := .e ⇒ .t) (f := ToyLexicon.sees_sem) (a := y)
+          (.tn rfl) .trace)
+
+end Reference
+
 /-! ### First-order reduction
 
 The textbook trees are in the compiled FO fragment
