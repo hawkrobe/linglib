@@ -7,16 +7,53 @@ import Mathlib.Data.List.Basic
 import Mathlib.Data.List.Nodup
 
 /-!
-# Pair sublists as positional order
+# Sublists across a block of one symbol, and pair sublists as positional order
 
-`List.pair_sublist_iff_idxOf_lt`: on a `Nodup` list, `[a, b] <+ l` says exactly that
-`a` and `b` are members with `a` at a strictly earlier index — the pair-sublist
-relation is the strict linear order a duplicate-free list carries.
+Two additions to the `List.Sublist` API.
+
+* Stripping an unmatched edge. A list whose head is not `a` is a sublist of `a :: r` exactly when
+  it is a sublist of `r` (`List.sublist_cons_iff_of_head?_ne`, the `Iff` form of
+  `List.Sublist.of_cons_of_ne`), hence also across a left block `replicate m a` or a right block
+  `replicate n b` (`List.sublist_replicate_append_iff_of_head?_ne`,
+  `List.sublist_append_replicate_iff_of_getLast?_ne`). [UPSTREAM] candidates beside
+  `List.sublist_cons_iff`.
+* Pair sublists as positional order. On a `Nodup` list, `[a, b] <+ l` says exactly that `a` and
+  `b` are members with `a` at a strictly earlier index (`List.pair_sublist_iff_idxOf_lt`): the
+  pair-sublist relation is the strict linear order a duplicate-free list carries.
 -/
 
 namespace List
 
-variable {α : Type*} [DecidableEq α] {a b : α} {l : List α}
+variable {α : Type*} {a b : α} {l : List α}
+
+section Replicate
+
+variable {r : List α} {m n : ℕ}
+
+/-- A list whose head is not `a` is a sublist of `a :: r` exactly when it is a sublist of `r`:
+the `Iff` form of `List.Sublist.of_cons_of_ne`. -/
+theorem sublist_cons_iff_of_head?_ne (h : l.head? ≠ some a) : l <+ a :: r ↔ l <+ r := by
+  rw [sublist_cons_iff]
+  exact ⟨fun h' ↦ h'.resolve_right fun ⟨t, ht, _⟩ ↦ h (by simp [ht]), Or.inl⟩
+
+/-- A list whose head is not `a` is a sublist of `replicate m a ++ r` exactly when it is a
+sublist of `r`. -/
+theorem sublist_replicate_append_iff_of_head?_ne (h : l.head? ≠ some a) :
+    l <+ replicate m a ++ r ↔ l <+ r := by
+  induction m with
+  | zero => simp
+  | succ m ih => rw [replicate_succ, cons_append, sublist_cons_iff_of_head?_ne h, ih]
+
+/-- A list whose last element is not `b` is a sublist of `r ++ replicate n b` exactly when it is
+a sublist of `r`. -/
+theorem sublist_append_replicate_iff_of_getLast?_ne (h : l.getLast? ≠ some b) :
+    l <+ r ++ replicate n b ↔ l <+ r := by
+  rw [← reverse_sublist, reverse_append, reverse_replicate,
+    sublist_replicate_append_iff_of_head?_ne (by simpa), reverse_sublist]
+
+end Replicate
+
+variable [DecidableEq α]
 
 theorem pair_sublist_of_idxOf_lt (ha : a ∈ l) (hb : b ∈ l)
     (h : l.idxOf a < l.idxOf b) : [a, b] <+ l := by
