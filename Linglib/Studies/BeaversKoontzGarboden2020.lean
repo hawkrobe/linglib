@@ -433,10 +433,10 @@ follows from the signature. √crack (`+cause+result`) entails a result state in
 any model; √jog (pure manner) does not — the *break*/*hit* contrast. -/
 
 /-- `crack` the change-of-state verb (`Mary cracked the vase`). -/
-def crackV : Verb := { form := "crack", frames := [Frame.np], root := crack }
+def crackV : Verb := { form := "crack", frames := [ArgumentFrame.np], root := crack }
 
 /-- `jog` the pure-manner activity verb (`Mary jogged`). -/
-def jogV : Verb := { form := "jog", frames := [Frame.intransitive], root := jog }
+def jogV : Verb := { form := "jog", frames := [ArgumentFrame.intransitive], root := jog }
 
 /-- √crack carries `.result`, so in **any** model its denotation entails the
     result state — the non-cancelable result of [beavers-koontz-garboden-2020]

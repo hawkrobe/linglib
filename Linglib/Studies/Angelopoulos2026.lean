@@ -1,7 +1,7 @@
 import Linglib.Studies.Bondarenko2022
 import Linglib.Studies.Roussou2010
 import Linglib.Fragments.Greek.StandardModern.Complementizers
-import Linglib.Syntax.Category.Verb.Complement.Takes
+import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 import Linglib.Semantics.Attitudes.Anchor
 import Linglib.Data.Examples.Angelopoulos2026
 

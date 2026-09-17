@@ -5,7 +5,7 @@ import Linglib.Fragments.NezPerce.Clause
 import Linglib.Data.Examples.Deal2026
 import Linglib.Data.Examples.Krapova2010
 import Linglib.Studies.BochnakHanink2021
-import Linglib.Syntax.Category.Verb.Complement.Takes
+import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 import Linglib.Semantics.Presupposition.Environment
 import Linglib.Studies.Karttunen1971b
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine

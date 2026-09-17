@@ -80,7 +80,7 @@ structure Verb extends _root_.Verb where
     Usage:
     ```
     def kick : Verb := .mkRegular {
-      form := "kick", frames := [Frame.np] }
+      form := "kick", frames := [ArgumentFrame.np] }
     ``` -/
 def Verb.mkRegular (core : _root_.Verb) : Verb :=
   { toVerb := core
@@ -128,7 +128,7 @@ def sleep : Verb where
   formPast := "slept"
   formPastPart := "slept"
   formPresPart := "sleeping"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .state
 
@@ -139,7 +139,7 @@ def run : Verb where
   formPast := "ran"
   formPastPart := "run"
   formPresPart := "running"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   subjectEntailments := some activitySubjectProfile
   passivizable := false
   vendlerClass := some .activity
@@ -152,7 +152,7 @@ def run : Verb where
 /-- "arrive" — unaccusative intransitive -/
 def arrive : Verb := .mkRegular {
   form := "arrive"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   subjectEntailments := some achievementSubjectProfile
   unaccusative := true
   passivizable := false
@@ -166,7 +166,7 @@ def come : Verb where
   formPast := "came"
   formPastPart := "come"
   formPresPart := "coming"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   unaccusative := true
   passivizable := false
   vendlerClass := some .achievement
@@ -179,7 +179,7 @@ def eat : Verb where
   formPast := "ate"
   formPastPart := "eaten"
   formPresPart := "eating"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   subjectEntailments := some accomplishmentSubjectProfile
   objectEntailments := some consumptionObject
   implicitObj := some .indef
@@ -194,7 +194,7 @@ def eat : Verb where
 /-- "kick" — transitive -/
 def kick : Verb := .mkRegular {
   form := "kick"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   subjectEntailments := some accomplishmentSubjectProfile
   objectEntailments := some contactObject
   vendlerClass := some .activity
@@ -214,7 +214,7 @@ def give : Verb where
   formPast := "gave"
   formPastPart := "given"
   formPresPart := "giving"
-  frames := [Frame.np_np, Frame.np_pp]
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .accomplishment
@@ -227,28 +227,28 @@ def put : Verb where
   formPast := "put"
   formPastPart := "put"
   formPresPart := "putting"
-  frames := [Frame.np_pp]
+  frames := [ArgumentFrame.np_pp]
   vendlerClass := some .achievement
   levinClass := some .put
 
 /-- "weigh" — measure predicate selecting for mass/weight. -/
 def weigh : Verb := .mkRegular {
   form := "weigh"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   levinClass := some .measure }
 
 /-- "cover" — motion/extent predicate selecting for distance. -/
 def cover : Verb := .mkRegular {
   form := "cover"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc }
 
 /-- "measure" — general measurement predicate. -/
 def measure : Verb := .mkRegular {
   form := "measure"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   levinClass := some .measure }
 
@@ -259,7 +259,7 @@ def buy : Verb where
   formPast := "bought"
   formPastPart := "bought"
   formPresPart := "buying"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   subjectEntailments := some possessionTransfer.subjectProfile
   vendlerClass := some .accomplishment
   levinClass := some .getObtain
@@ -271,7 +271,7 @@ def meet : Verb where
   formPast := "met"
   formPastPart := "met"
   formPresPart := "meeting"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .achievement
 
 /-- "set" — irregular; the base, past and past participle forms coincide. -/
@@ -281,7 +281,7 @@ def set_ : Verb where
   formPast := "set"
   formPastPart := "set"
   formPresPart := "setting"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .achievement
 
 /-- "clarify" — regular transitive. -/
@@ -291,7 +291,7 @@ def clarify : Verb where
   formPast := "clarified"
   formPastPart := "clarified"
   formPresPart := "clarifying"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- "sell" — change of possession, alternates DOC/PP.
     Implicit DO is definite; implicit goal is indefinite. -/
@@ -301,7 +301,7 @@ def sell : Verb where
   formPast := "sold"
   formPastPart := "sold"
   formPresPart := "selling"
-  frames := [Frame.np, Frame.np_pp]
+  frames := [ArgumentFrame.np, ArgumentFrame.np_pp]
   subjectEntailments := some possessionTransfer.subjectProfile
   implicitObj := some .def
   implicitGoal := some .indef
@@ -315,7 +315,7 @@ def leave : Verb where
   formPast := "left"
   formPastPart := "left"
   formPresPart := "leaving"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .achievement
   levinClass := some .leave
 
@@ -326,7 +326,7 @@ def see : Verb where
   formPast := "saw"
   formPastPart := "seen"
   formPresPart := "seeing"
-  frames := [Frame.np, Frame.finiteClause]
+  frames := [ArgumentFrame.np, ArgumentFrame.finiteClause]
   subjectEntailments := some perception.subjectProfile
   vendlerClass := some .state
   attitude := some (.doxastic .veridical)
@@ -342,7 +342,7 @@ def know : Verb where
   formPast := "knew"
   formPastPart := "known"
   formPresPart := "knowing"
-  frames := [Frame.finiteClause, Frame.question]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.question]
   vendlerClass := some .state
   passivizable := false
   projectionBehavior := some .hole
@@ -357,7 +357,7 @@ def regret : Verb where
   formPast := "regretted"
   formPastPart := "regretted"
   formPresPart := "regretting"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   projectionBehavior := some .hole
@@ -367,7 +367,7 @@ def regret : Verb where
 /-- "realize" — factive, presupposes complement is true -/
 def realize : Verb := .mkRegular {
   form := "realize"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .achievement
   passivizable := false
   projectionBehavior := some .hole
@@ -377,7 +377,7 @@ def realize : Verb := .mkRegular {
 /-- "discover" — semi-factive, weaker projection -/
 def discover : Verb := .mkRegular {
   form := "discover"
-  frames := [Frame.finiteClause, Frame.question]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.question]
   vendlerClass := some .achievement
   passivizable := false
   projectionBehavior := some .hole
@@ -387,7 +387,7 @@ def discover : Verb := .mkRegular {
 /-- "notice" — semi-factive -/
 def notice : Verb := .mkRegular {
   form := "notice"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .achievement
   passivizable := false
   projectionBehavior := some .hole
@@ -403,8 +403,8 @@ def stop : Verb where
   formPast := "stopped"
   formPastPart := "stopped"
   formPresPart := "stopping"
-  frames := [Frame.gerund]
-  readings := [{ frame := Frame.gerund, control := some .subjectControl }]
+  frames := [ArgumentFrame.gerund]
+  readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
   projectionBehavior := some .hole
@@ -418,8 +418,8 @@ def quit : Verb where
   formPast := "quit"
   formPastPart := "quit"
   formPresPart := "quitting"
-  frames := [Frame.gerund]
-  readings := [{ frame := Frame.gerund, control := some .subjectControl }]
+  frames := [ArgumentFrame.gerund]
+  readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
   cosType := some .cessation
@@ -428,8 +428,8 @@ def quit : Verb where
 /-- "start" — CoS inception, presupposes activity wasn't happening -/
 def start : Verb := .mkRegular {
   form := "start"
-  frames := [Frame.gerund]
-  readings := [{ frame := Frame.gerund, control := some .subjectControl }]
+  frames := [ArgumentFrame.gerund]
+  readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
   cosType := some .inception
@@ -442,8 +442,8 @@ def begin_ : Verb where
   formPast := "began"
   formPastPart := "begun"
   formPresPart := "beginning"
-  frames := [Frame.gerund]
-  readings := [{ frame := Frame.gerund, control := some .subjectControl }]
+  frames := [ArgumentFrame.gerund]
+  readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
   cosType := some .inception
@@ -452,8 +452,8 @@ def begin_ : Verb where
 /-- "continue" — CoS continuation, presupposes activity was happening -/
 def continue_ : Verb := .mkRegular {
   form := "continue"
-  frames := [Frame.gerund]
-  readings := [{ frame := Frame.gerund, control := some .subjectControl }]
+  frames := [ArgumentFrame.gerund]
+  readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false
   cosType := some .continuation
@@ -466,8 +466,8 @@ def keep : Verb where
   formPast := "kept"
   formPastPart := "kept"
   formPresPart := "keeping"
-  frames := [Frame.gerund]
-  readings := [{ frame := Frame.gerund, control := some .subjectControl }]
+  frames := [ArgumentFrame.gerund]
+  readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false
   cosType := some .continuation
@@ -480,8 +480,8 @@ def keep : Verb where
     -/
 def manage : Verb := .mkRegular {
   form := "manage"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
   projectionBehavior := some .hole
@@ -490,8 +490,8 @@ def manage : Verb := .mkRegular {
 /-- "fail" — negative implicative: "failed to VP" entails "not VP" -/
 def fail : Verb := .mkRegular {
   form := "fail"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
   implicative := some .negative }
@@ -503,8 +503,8 @@ def try_ : Verb where
   formPast := "tried"
   formPastPart := "tried"
   formPresPart := "trying"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false
 
@@ -513,8 +513,8 @@ def try_ : Verb where
     Projects AUTHOR coordinate → obligatory *de se* ([landau-2015] table (36)). -/
 def persuade : Verb := .mkRegular {
   form := "persuade"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive)) }
@@ -524,8 +524,8 @@ def persuade : Verb := .mkRegular {
     [landau-2015] (5c) classifies it as desiderative → logophoric control. -/
 def promise : Verb := .mkRegular {
   form := "promise"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   projectionBehavior := some .plug
   opaqueContext := true
@@ -534,8 +534,8 @@ def promise : Verb := .mkRegular {
 /-- "remember" — implicative with infinitival ("remember to call") -/
 def remember : Verb := .mkRegular {
   form := "remember"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
   implicative := some .positive }
@@ -547,8 +547,8 @@ def forget : Verb where
   formPast := "forgot"
   formPastPart := "forgotten"
   formPresPart := "forgetting"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
   implicative := some .negative
@@ -558,8 +558,8 @@ def forget : Verb where
     entails not locking it. -/
 def neglect : Verb := .mkRegular {
   form := "neglect"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
   implicative := some .negative }
@@ -569,7 +569,7 @@ def neglect : Verb := .mkRegular {
 /-- "believe" — doxastic attitude verb, creates opaque context -/
 def believe : Verb := .mkRegular {
   form := "believe"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   projectionBehavior := some .hole
@@ -584,7 +584,7 @@ def think : Verb where
   formPast := "thought"
   formPastPart := "thought"
   formPresPart := "thinking"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -596,8 +596,8 @@ def think : Verb where
 /-- "want" — preferential attitude verb with infinitival complement -/
 def want : Verb := .mkRegular {
   form := "want"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -612,8 +612,8 @@ def want : Verb := .mkRegular {
     the complement's event argument). -/
 def intend : Verb := .mkRegular {
   form := "intend"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -626,8 +626,8 @@ def intend : Verb := .mkRegular {
     ([fusco-sgrizzi-2026]). -/
 def decide_ : Verb := .mkRegular {
   form := "decide"
-  frames := [Frame.infinitival, Frame.finiteClause]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival, ArgumentFrame.finiteClause]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive)) }
@@ -637,8 +637,8 @@ def decide_ : Verb := .mkRegular {
     Alternate frame: infinitival with subject control ("hope to leave"). -/
 def hope : Verb := .mkRegular {
   form := "hope"
-  frames := [Frame.finiteClause, Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -651,8 +651,8 @@ def hope : Verb := .mkRegular {
     Alternate frame: infinitival with subject control ("pray to be saved"). -/
 def pray : Verb := .mkRegular {
   form := "pray"
-  frames := [Frame.finiteClause, Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -661,7 +661,7 @@ def pray : Verb := .mkRegular {
 /-- "expect" — preferential attitude verb -/
 def expect : Verb := .mkRegular {
   form := "expect"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -674,7 +674,7 @@ def wish : Verb where
   formPast := "wished"
   formPastPart := "wished"
   formPresPart := "wishing"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -684,7 +684,7 @@ def wish : Verb where
 /-- "fear" — preferential attitude verb (Class 2: takes questions) -/
 def fear : Verb := .mkRegular {
   form := "fear"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -694,7 +694,7 @@ def fear : Verb := .mkRegular {
 /-- "dread" — preferential attitude verb (Class 2: takes questions) -/
 def dread : Verb := .mkRegular {
   form := "dread"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -708,7 +708,7 @@ def worry : Verb where
   formPast := "worried"
   formPastPart := "worried"
   formPresPart := "worrying"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -719,8 +719,8 @@ def worry : Verb where
 /-- "seem" — raising verb (no theta role for subject, unaccusative) -/
 def seem : Verb := .mkRegular {
   form := "seem"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .raising }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .raising }]
   vendlerClass := some .state
   passivizable := false
   unaccusative := true }
@@ -730,8 +730,8 @@ def seem : Verb := .mkRegular {
 /-- "cause" — counterfactual dependence (necessity semantics) -/
 def cause : Verb := .mkRegular {
   form := "cause"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
   causative := some .cause
   levinClass := some .engender }
@@ -743,8 +743,8 @@ def make : Verb where
   formPast := "made"
   formPastPart := "made"
   formPresPart := "making"
-  frames := [Frame.smallClause]
-  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
+  frames := [ArgumentFrame.smallClause]
+  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   vendlerClass := some .accomplishment
   causative := some .make
 
@@ -755,8 +755,8 @@ def let_ : Verb where
   formPast := "let"
   formPastPart := "let"
   formPresPart := "letting"
-  frames := [Frame.smallClause]
-  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
+  frames := [ArgumentFrame.smallClause]
+  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   vendlerClass := some .achievement
   causative := some .enable
 
@@ -767,8 +767,8 @@ def have_caus : Verb where
   formPast := "had"
   formPastPart := "had"
   formPresPart := "having"
-  frames := [Frame.smallClause]
-  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
+  frames := [ArgumentFrame.smallClause]
+  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   vendlerClass := some .achievement
   causative := some .make
   senseTag := .causative
@@ -780,8 +780,8 @@ def get_caus : Verb where
   formPast := "got"
   formPastPart := "gotten"
   formPresPart := "getting"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
   causative := some .make
   senseTag := .causative
@@ -789,8 +789,8 @@ def get_caus : Verb where
 /-- "force" — coercive causative (overcome resistance) -/
 def force : Verb := .mkRegular {
   form := "force"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
   projectionBehavior := some .hole
   causative := some .force }
@@ -802,8 +802,8 @@ def force : Verb := .mkRegular {
     [nadathur-lauer-2020] give *cause*. -/
 def prevent : Verb := .mkRegular {
   form := "prevent"
-  frames := [Frame.gerund]
-  readings := [{ frame := Frame.gerund, control := some .objectControl }]
+  frames := [ArgumentFrame.gerund]
+  readings := [{ frame := ArgumentFrame.gerund, control := some .objectControl }]
   vendlerClass := some .accomplishment
   projectionBehavior := some .hole
   causative := some .prevent }
@@ -813,7 +813,7 @@ def prevent : Verb := .mkRegular {
 /-- "kill" — thin lexical causative (kill = cause-to-die, COMPACT type). -/
 def kill : Verb := .mkRegular {
   form := "kill"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causative := some .make
   levinClass := some .murder
@@ -831,7 +831,7 @@ def break_ : Verb where
   formPast := "broke"
   formPastPart := "broken"
   formPresPart := "breaking"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   unaccusative := false
   vendlerClass := some .accomplishment
   causative := some .make
@@ -860,7 +860,7 @@ def tear_ : Verb where
   formPast := "tore"
   formPastPart := "torn"
   formPresPart := "tearing"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   unaccusative := false
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
@@ -886,7 +886,7 @@ def tear_ : Verb where
     does not reduce to scale boundedness alone. -/
 def crack : Verb := .mkRegular {
   form := "crack"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   unaccusative := true
   vendlerClass := some .achievement
   degreeAchievementScale := some {
@@ -900,7 +900,7 @@ def crack : Verb := .mkRegular {
     dented*, *badly dented*. -/
 def dent : Verb := .mkRegular {
   form := "dent"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   unaccusative := true
   vendlerClass := some .achievement
   degreeAchievementScale := some {
@@ -915,7 +915,7 @@ def dent : Verb := .mkRegular {
     (§10.4.1) and the swat verbs (§18.2) on its manner readings. -/
 def scratch : Verb := .mkRegular {
   form := "scratch"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   unaccusative := true
   vendlerClass := some .achievement
   degreeAchievementScale := some {
@@ -929,7 +929,7 @@ def scratch : Verb := .mkRegular {
     #*shatter for two minutes*, ??*more shattered* ([tham-2025] (12)). -/
 def shatter : Verb := .mkRegular {
   form := "shatter"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   unaccusative := true
   vendlerClass := some .achievement
   causative := some .make
@@ -938,7 +938,7 @@ def shatter : Verb := .mkRegular {
 /-- "burn" — thick lexical causative (manner = by fire/heat). -/
 def burn : Verb := .mkRegular {
   form := "burn"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   causative := some .make
@@ -953,7 +953,7 @@ def burn : Verb := .mkRegular {
 /-- "destroy" — thin lexical causative (result-only, no manner). -/
 def destroy : Verb := .mkRegular {
   form := "destroy"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causative := some .make
   levinClass := some .destroy
@@ -967,7 +967,7 @@ def destroy : Verb := .mkRegular {
     Implicit obj is indefinite ("the ice cream melted" / "we're melting"). -/
 def melt : Verb := .mkRegular {
   form := "melt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   implicitObj := some .indef
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
@@ -989,35 +989,35 @@ def melt : Verb := .mkRegular {
 /-- "activate" — thin causative, CoS without manner. -/
 def activate : Verb := .mkRegular {
   form := "activate"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
  }
 
 /-- "affect" — thin causative, general effect; Levin 31.1 Amuse verbs. -/
 def affect : Verb := .mkRegular {
   form := "affect"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClass := some .amuse }
 
 /-- "change" — thin causative, transformation (§26.6). -/
 def change : Verb := .mkRegular {
   form := "change"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .turn }
 
 /-- "damage" — thin causative, partial destruction. -/
 def damage : Verb := .mkRegular {
   form := "damage"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
  }
 
 /-- "eliminate" — thin causative, removal; Levin 42.1 Murder verbs. -/
 def eliminate : Verb := .mkRegular {
   form := "eliminate"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .murder }
 
@@ -1028,21 +1028,21 @@ def hurt : Verb where
   formPast := "hurt"
   formPastPart := "hurt"
   formPresPart := "hurting"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .hurt
 
 /-- "restore" — thin causative, Levin 13.2 Contribute verbs. -/
 def restore : Verb := .mkRegular {
   form := "restore"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .contribute }
 
 /-- "trigger" — thin causative, engender class (§27). -/
 def trigger : Verb := .mkRegular {
   form := "trigger"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .achievement
   levinClass := some .engender }
 
@@ -1050,14 +1050,14 @@ def trigger : Verb := .mkRegular {
     Levin's concealment class (§16) does not list *bury*. -/
 def bury : Verb := .mkRegular {
   form := "bury"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
  }
 
 /-- "drop" — thick causative, Levin 45.6 calibratable change-of-state verbs. -/
 def drop : Verb := .mkRegular {
   form := "drop"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .calibratableCoS }
 
@@ -1065,7 +1065,7 @@ def drop : Verb := .mkRegular {
     direction. -/
 def lift : Verb := .mkRegular {
   form := "lift"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .putDirection }
 
@@ -1073,7 +1073,7 @@ def lift : Verb := .mkRegular {
     Levin lists *lock* only among the tape verbs (§22.4). -/
 def lock : Verb := .mkRegular {
   form := "lock"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
  }
 
@@ -1084,7 +1084,7 @@ def shut : Verb where
   formPast := "shut"
   formPastPart := "shut"
   formPresPart := "shutting"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .otherCoS
 
@@ -1095,14 +1095,14 @@ def spread : Verb where
   formPast := "spread"
   formPastPart := "spread"
   formPresPart := "spreading"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .sprayLoad
 
 /-- "stretch" — thick causative, Levin 45.4 other change-of-state verbs. -/
 def stretch : Verb := .mkRegular {
   form := "stretch"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .otherCoS }
 
@@ -1110,7 +1110,7 @@ def stretch : Verb := .mkRegular {
     Levin's change-of-state lists do not include *switch*. -/
 def switch : Verb := .mkRegular {
   form := "switch"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
  }
 
@@ -1119,7 +1119,7 @@ def switch : Verb := .mkRegular {
 /-- "devour" — transitive, no presupposition -/
 def devour : Verb := .mkRegular {
   form := "devour"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .devour
@@ -1135,7 +1135,7 @@ def drink : Verb where
   formPast := "drank"
   formPastPart := "drunk"
   formPresPart := "drinking"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   implicitObj := some .indef
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
@@ -1148,7 +1148,7 @@ def read : Verb where
   formPast := "read"
   formPastPart := "read"
   formPresPart := "reading"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .inc
 
@@ -1160,7 +1160,7 @@ def build : Verb where
   formPast := "built"
   formPastPart := "built"
   formPresPart := "building"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   subjectEntailments := some accomplishmentSubjectProfile
   objectEntailments := some creationObject
   implicitObj := some .indef
@@ -1178,7 +1178,7 @@ def write : Verb where
   formPast := "wrote"
   formPastPart := "written"
   formPresPart := "writing"
-  frames := [Frame.np, Frame.np_pp]
+  frames := [ArgumentFrame.np, ArgumentFrame.np_pp]
   implicitObj := some .indef
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
@@ -1191,7 +1191,7 @@ def sweep : Verb where
   formPast := "swept"
   formPastPart := "swept"
   formPresPart := "sweeping"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   subjectEntailments := some wipeManner.subjectProfile
   passivizable := true
@@ -1209,7 +1209,7 @@ def sweep_instr : Verb where
   formPast := "swept"
   formPastPart := "swept"
   formPresPart := "sweeping"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   subjectEntailments := some wipeInstrument.subjectProfile
   passivizable := true
@@ -1231,7 +1231,7 @@ def say : Verb where
   formPastPart := "said"
   formPresPart := "saying"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .achievement
   projectionBehavior := some .plug
   levinClass := some .say
@@ -1246,7 +1246,7 @@ def tell : Verb where
   formPastPart := "told"
   formPresPart := "telling"
   speechActVerb := true
-  frames := [Frame.finiteClause, Frame.np_np]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.np_np]
   implicitObj := some .def
   implicitGoal := some .indef
   vendlerClass := some .achievement
@@ -1257,7 +1257,7 @@ def tell : Verb where
 def claim : Verb := .mkRegular {
   form := "claim"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .achievement
   projectionBehavior := some .plug
   levinClass := some .say }
@@ -1271,7 +1271,7 @@ def claim : Verb := .mkRegular {
 /-- "reveal" — factive communication verb ([degen-tonhauser-2022]: canonically factive) -/
 def reveal : Verb := .mkRegular {
   form := "reveal"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   speechActVerb := true
   vendlerClass := some .achievement
   attitude := some (.doxastic .veridical)
@@ -1282,7 +1282,7 @@ def reveal : Verb := .mkRegular {
     Levin lists *acknowledge* only among the appoint verbs (§29.1), a different frame. -/
 def acknowledge : Verb := .mkRegular {
   form := "acknowledge"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   speechActVerb := true
   vendlerClass := some .achievement
  }
@@ -1295,14 +1295,14 @@ def admit : Verb where
   formPast := "admitted"
   formPastPart := "admitted"
   formPresPart := "admitting"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   speechActVerb := true
   vendlerClass := some .achievement
 
 /-- "announce" — communication verb -/
 def announce : Verb := .mkRegular {
   form := "announce"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   speechActVerb := true
   vendlerClass := some .achievement
   levinClass := some .say }
@@ -1310,7 +1310,7 @@ def announce : Verb := .mkRegular {
 /-- "confess" — optionally factive communication verb -/
 def confess : Verb := .mkRegular {
   form := "confess"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   speechActVerb := true
   vendlerClass := some .achievement
   levinClass := some .say }
@@ -1318,14 +1318,14 @@ def confess : Verb := .mkRegular {
 /-- "inform" — optionally factive communication verb with recipient -/
 def inform : Verb := .mkRegular {
   form := "inform"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   speechActVerb := true
   vendlerClass := some .achievement }
 
 /-- "suggest" — non-factive communication verb -/
 def suggest : Verb := .mkRegular {
   form := "suggest"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   speechActVerb := true
   vendlerClass := some .achievement
   levinClass := some .say }
@@ -1333,32 +1333,32 @@ def suggest : Verb := .mkRegular {
 /-- "pretend" — anti-veridical attitude verb -/
 def pretend : Verb := .mkRegular {
   form := "pretend"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   opaqueContext := true }
 
 /-- "confirm" — evidential verb -/
 def confirm : Verb := .mkRegular {
   form := "confirm"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .achievement }
 
 /-- "demonstrate" — evidential verb -/
 def demonstrate : Verb := .mkRegular {
   form := "demonstrate"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .achievement }
 
 /-- "establish" — evidential verb -/
 def establish : Verb := .mkRegular {
   form := "establish"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .achievement }
 
 /-- "prove" — evidential verb -/
 def prove : Verb := .mkRegular {
   form := "prove"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .achievement }
 
 /-! ### Manner of Speaking (Levin 37.3) -/
@@ -1373,7 +1373,7 @@ def prove : Verb := .mkRegular {
 def whisper : Verb := .mkRegular {
   form := "whisper"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1382,7 +1382,7 @@ def whisper : Verb := .mkRegular {
 def murmur : Verb := .mkRegular {
   form := "murmur"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1391,7 +1391,7 @@ def murmur : Verb := .mkRegular {
 def shout : Verb := .mkRegular {
   form := "shout"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1400,7 +1400,7 @@ def shout : Verb := .mkRegular {
 def cry : Verb := .mkRegular {
   form := "cry"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1409,7 +1409,7 @@ def cry : Verb := .mkRegular {
 def scream : Verb := .mkRegular {
   form := "scream"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1418,7 +1418,7 @@ def scream : Verb := .mkRegular {
 def mumble : Verb := .mkRegular {
   form := "mumble"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1427,7 +1427,7 @@ def mumble : Verb := .mkRegular {
 def mutter : Verb := .mkRegular {
   form := "mutter"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1436,7 +1436,7 @@ def mutter : Verb := .mkRegular {
 def shriek : Verb := .mkRegular {
   form := "shriek"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1445,7 +1445,7 @@ def shriek : Verb := .mkRegular {
 def yell : Verb := .mkRegular {
   form := "yell"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1454,7 +1454,7 @@ def yell : Verb := .mkRegular {
 def groan : Verb := .mkRegular {
   form := "groan"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1463,7 +1463,7 @@ def groan : Verb := .mkRegular {
 def grumble : Verb := .mkRegular {
   form := "grumble"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1472,7 +1472,7 @@ def grumble : Verb := .mkRegular {
 def hiss : Verb := .mkRegular {
   form := "hiss"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1482,7 +1482,7 @@ def hiss : Verb := .mkRegular {
 def sigh : Verb := .mkRegular {
   form := "sigh"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .nonverbalExpression }
@@ -1491,7 +1491,7 @@ def sigh : Verb := .mkRegular {
 def whimper : Verb := .mkRegular {
   form := "whimper"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1500,7 +1500,7 @@ def whimper : Verb := .mkRegular {
 def snap : Verb := .mkRegular {
   form := "snap"
   speechActVerb := true
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1514,7 +1514,7 @@ def speak : Verb where
   formPastPart := "spoken"
   formPresPart := "speaking"
   speechActVerb := true
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   vendlerClass := some .activity
   passivizable := false
   levinClass := some .talk
@@ -1524,7 +1524,7 @@ def speak : Verb where
 def talk : Verb := .mkRegular {
   form := "talk"
   speechActVerb := true
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   vendlerClass := some .activity
   passivizable := false
   levinClass := some .talk }
@@ -1534,7 +1534,7 @@ def talk : Verb := .mkRegular {
 /-- "wonder" — embeds questions only -/
 def wonder : Verb := .mkRegular {
   form := "wonder"
-  frames := [Frame.question]
+  frames := [ArgumentFrame.question]
   vendlerClass := some .state
   opaqueContext := true }
 
@@ -1542,13 +1542,13 @@ def wonder : Verb := .mkRegular {
 def ask : Verb := .mkRegular {
   form := "ask"
   speechActVerb := true
-  frames := [Frame.question]
+  frames := [ArgumentFrame.question]
   vendlerClass := some .achievement }
 
 /-- "investigate" — rogative, embeds interrogatives only -/
 def investigate : Verb := .mkRegular {
   form := "investigate"
-  frames := [Frame.question]
+  frames := [ArgumentFrame.question]
   vendlerClass := some .activity
   levinClass := some .search }
 
@@ -1559,13 +1559,13 @@ def depend_on : Verb where
   formPast := "depended on"
   formPastPart := "depended on"
   formPresPart := "depending on"
-  frames := [Frame.question]
+  frames := [ArgumentFrame.question]
   vendlerClass := some .state
 
 /-- "remember" in factive/question-embedding sense. -/
 def remember_rog : Verb := .mkRegular {
   form := "remember"
-  frames := [Frame.finiteClause, Frame.question]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.question]
   vendlerClass := some .state
   passivizable := false
   attitude := some (.doxastic .veridical)
@@ -1579,7 +1579,7 @@ def forget_rog : Verb where
   formPast := "forgot"
   formPastPart := "forgotten"
   formPresPart := "forgetting"
-  frames := [Frame.finiteClause, Frame.question]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.question]
   vendlerClass := some .state
   passivizable := false
   attitude := some (.doxastic .veridical)
@@ -1599,8 +1599,8 @@ occasioning eventuality in a parallel way the authors draw and then set apart. -
     realization ([nadathur-2023-implicatives] §5.2, ex. 3–4, 26). -/
 def dare : Verb := .mkRegular {
   form := "dare"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
   implicative := some .positive }
@@ -1611,8 +1611,8 @@ def dare : Verb := .mkRegular {
     ([nadathur-2023-implicatives] §2, ex. 10, 28). -/
 def bother : Verb := .mkRegular {
   form := "bother"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
   implicative := some .positive }
@@ -1625,8 +1625,8 @@ def bother : Verb := .mkRegular {
     ([nadathur-2023-implicatives] §6.4, ex. 45–47). -/
 def hesitate : Verb := .mkRegular {
   form := "hesitate"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false
   implicative := some .negative }
@@ -1635,8 +1635,8 @@ def hesitate : Verb := .mkRegular {
     predicates: venturing to speak entails speaking. -/
 def venture : Verb := .mkRegular {
   form := "venture"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
   implicative := some .positive }
@@ -1645,8 +1645,8 @@ def venture : Verb := .mkRegular {
     predicates: condescending to help entails helping. -/
 def condescend : Verb := .mkRegular {
   form := "condescend"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
   implicative := some .positive }
@@ -1656,8 +1656,8 @@ def condescend : Verb := .mkRegular {
     Raising: "It happened to rain" — no theta role for matrix subject. -/
 def happen : Verb := .mkRegular {
   form := "happen"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .raising }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .raising }]
   passivizable := false
   implicative := some .positive }
 
@@ -1669,35 +1669,35 @@ def happen : Verb := .mkRegular {
 /-- "enjoy" — AgExp verb (experiencer-subject) -/
 def enjoy : Verb := .mkRegular {
   form := "enjoy"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "like" — AgExp verb (experiencer-subject) -/
 def like : Verb := .mkRegular {
   form := "like"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "love" — AgExp verb (experiencer-subject) -/
 def love : Verb := .mkRegular {
   form := "love"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "hate" — AgExp verb (experiencer-subject) -/
 def hate : Verb := .mkRegular {
   form := "hate"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "admire" — AgExp verb (experiencer-subject) -/
 def admire : Verb := .mkRegular {
   form := "admire"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
@@ -1706,7 +1706,7 @@ def admire : Verb := .mkRegular {
     definite (familiar). Implicit second obj is indefinite. -/
 def envy : Verb := .mkRegular {
   form := "envy"
-  frames := [Frame.np, Frame.np_np]
+  frames := [ArgumentFrame.np, ArgumentFrame.np_np]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .state
@@ -1715,14 +1715,14 @@ def envy : Verb := .mkRegular {
 /-- "respect" — AgExp verb (experiencer-subject) -/
 def respect : Verb := .mkRegular {
   form := "respect"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "value" — AgExp verb (experiencer-subject) -/
 def value : Verb := .mkRegular {
   form := "value"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
@@ -1731,7 +1731,7 @@ def value : Verb := .mkRegular {
     Note: `fear` (attitude verb, clausal complement) is defined separately. -/
 def fear_np : Verb := .mkRegular {
   form := "fear"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
@@ -1739,7 +1739,7 @@ def fear_np : Verb := .mkRegular {
     "John dreads exams." Note: `dread` (attitude, clausal) defined separately. -/
 def dread_np : Verb := .mkRegular {
   form := "dread"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   levinClass := some .admire }
 
@@ -1751,7 +1751,7 @@ def dread_np : Verb := .mkRegular {
 /-- "frighten" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def frighten : Verb := .mkRegular {
   form := "frighten"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1759,7 +1759,7 @@ def frighten : Verb := .mkRegular {
 /-- "amuse" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def amuse : Verb := .mkRegular {
   form := "amuse"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1767,7 +1767,7 @@ def amuse : Verb := .mkRegular {
 /-- "fascinate" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def fascinate : Verb := .mkRegular {
   form := "fascinate"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1775,7 +1775,7 @@ def fascinate : Verb := .mkRegular {
 /-- "irritate" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def irritate : Verb := .mkRegular {
   form := "irritate"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1783,7 +1783,7 @@ def irritate : Verb := .mkRegular {
 /-- "annoy" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def annoy : Verb := .mkRegular {
   form := "annoy"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1791,7 +1791,7 @@ def annoy : Verb := .mkRegular {
 /-- "bore" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def bore : Verb := .mkRegular {
   form := "bore"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1799,7 +1799,7 @@ def bore : Verb := .mkRegular {
 /-- "charm" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def charm : Verb := .mkRegular {
   form := "charm"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1807,7 +1807,7 @@ def charm : Verb := .mkRegular {
 /-- "impress" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def impress : Verb := .mkRegular {
   form := "impress"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1815,7 +1815,7 @@ def impress : Verb := .mkRegular {
 /-- "concern" — stative Class II psych verb ([kim-2024] UPH, internal cause) -/
 def concern : Verb := .mkRegular {
   form := "concern"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   causalSource := some .internal
   opaqueContext := true
@@ -1824,7 +1824,7 @@ def concern : Verb := .mkRegular {
 /-- "interest" — stative Class II psych verb ([kim-2024] UPH, internal cause) -/
 def interest : Verb := .mkRegular {
   form := "interest"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   causalSource := some .internal
   opaqueContext := true
@@ -1833,7 +1833,7 @@ def interest : Verb := .mkRegular {
 /-- "surprise" — eventive Class II (Levin 31.1). "The news surprised John." -/
 def surprise : Verb := .mkRegular {
   form := "surprise"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1841,7 +1841,7 @@ def surprise : Verb := .mkRegular {
 /-- "scare" — eventive Class II (Levin 31.1). "The noise scared John." -/
 def scare : Verb := .mkRegular {
   form := "scare"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1849,7 +1849,7 @@ def scare : Verb := .mkRegular {
 /-- "delight" — eventive Class II (Levin 31.1). "The gift delighted Mary." -/
 def delight : Verb := .mkRegular {
   form := "delight"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1857,7 +1857,7 @@ def delight : Verb := .mkRegular {
 /-- "embarrass" — eventive Class II (Levin 31.1). "The remark embarrassed John." -/
 def embarrass : Verb := .mkRegular {
   form := "embarrass"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1865,7 +1865,7 @@ def embarrass : Verb := .mkRegular {
 /-- "upset" — eventive Class II (Levin 31.1). "The news upset Mary." -/
 def upset_psych : Verb := .mkRegular {
   form := "upset"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1873,7 +1873,7 @@ def upset_psych : Verb := .mkRegular {
 /-- "disgust" — eventive Class II (Levin 31.1). "The smell disgusted John." -/
 def disgust : Verb := .mkRegular {
   form := "disgust"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1881,7 +1881,7 @@ def disgust : Verb := .mkRegular {
 /-- "shock" — eventive Class II (Levin 31.1). "The revelation shocked everyone." -/
 def shock : Verb := .mkRegular {
   form := "shock"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1889,7 +1889,7 @@ def shock : Verb := .mkRegular {
 /-- "confuse" — eventive Class II (Levin 31.1). "The instructions confused John." -/
 def confuse : Verb := .mkRegular {
   form := "confuse"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1897,7 +1897,7 @@ def confuse : Verb := .mkRegular {
 /-- "disappoint" — eventive Class II (Levin 31.1). "The result disappointed Mary." -/
 def disappoint : Verb := .mkRegular {
   form := "disappoint"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1906,7 +1906,7 @@ def disappoint : Verb := .mkRegular {
     Note: `worry` (attitude, clausal) defined separately. -/
 def worry_eventive : Verb := .mkRegular {
   form := "worry"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causalSource := some .external
   levinClass := some .amuse }
@@ -1915,7 +1915,7 @@ def worry_eventive : Verb := .mkRegular {
     [kim-2024] UPH: same theta grid as worry_eventive, different causal source. -/
 def worry_stative : Verb := .mkRegular {
   form := "worry"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   causalSource := some .internal
   opaqueContext := true
@@ -1925,7 +1925,7 @@ def worry_stative : Verb := .mkRegular {
     "The idea pleases John." Related to B&R Class III It. *piacere*. -/
 def please_psych : Verb := .mkRegular {
   form := "please"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   causalSource := some .internal
   opaqueContext := true
@@ -1935,7 +1935,7 @@ def please_psych : Verb := .mkRegular {
     "The thought troubles John." -/
 def trouble : Verb := .mkRegular {
   form := "trouble"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   causalSource := some .internal
   opaqueContext := true
@@ -1945,7 +1945,7 @@ def trouble : Verb := .mkRegular {
     "The problem puzzles John." -/
 def puzzle : Verb := .mkRegular {
   form := "puzzle"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   causalSource := some .internal
   opaqueContext := true
@@ -1959,7 +1959,7 @@ def puzzle : Verb := .mkRegular {
 /-- "chase" — AgPat verb (Levin 51.6) -/
 def chase : Verb := .mkRegular {
   form := "chase"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .chase }
@@ -1971,14 +1971,14 @@ def hit : Verb where
   formPast := "hit"
   formPastPart := "hit"
   formPresPart := "hitting"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClass := some .hit
 
 /-- "push" — AgPat verb (Levin 12) -/
 def push : Verb := .mkRegular {
   form := "push"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .pushPull }
@@ -1986,7 +1986,7 @@ def push : Verb := .mkRegular {
 /-- "pull" — AgPat verb (Levin 12) -/
 def pull : Verb := .mkRegular {
   form := "pull"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .pushPull }
@@ -1994,7 +1994,7 @@ def pull : Verb := .mkRegular {
 /-- "shove" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def shove : Verb := .mkRegular {
   form := "shove"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClass := some .pushPull }
 
@@ -2005,21 +2005,21 @@ def tug : Verb where
   formPast := "tugged"
   formPastPart := "tugged"
   formPresPart := "tugging"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClass := some .pushPull
 
 /-- "yank" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def yank : Verb := .mkRegular {
   form := "yank"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClass := some .pushPull }
 
 /-- "jerk" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def jerk : Verb := .mkRegular {
   form := "jerk"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClass := some .pushPull }
 
@@ -2027,7 +2027,7 @@ def jerk : Verb := .mkRegular {
     members of Levin's §12. -/
 def wrench : Verb := .mkRegular {
   form := "wrench"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
  }
 
@@ -2039,7 +2039,7 @@ def fling : Verb where
   formPast := "flung"
   formPastPart := "flung"
   formPresPart := "flinging"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
 
 /-- "slam" — Levin 17.1 Throw verbs; a hitting verb for [levin-2026] (32a).
@@ -2050,14 +2050,14 @@ def slam : Verb where
   formPast := "slammed"
   formPastPart := "slammed"
   formPresPart := "slamming"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClass := some .throw
 
 /-- "punch" — Levin 18.2 Swat verbs; a hitting verb for [levin-2026] (32a). -/
 def punch : Verb := .mkRegular {
   form := "punch"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClass := some .swat }
 
@@ -2065,7 +2065,7 @@ def punch : Verb := .mkRegular {
     [levin-2026] (32a)) -/
 def smack : Verb := .mkRegular {
   form := "smack"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClass := some .hit }
 
@@ -2073,7 +2073,7 @@ def smack : Verb := .mkRegular {
     [levin-2026] (32a)) -/
 def thump : Verb := .mkRegular {
   form := "thump"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClass := some .hit }
 
@@ -2081,21 +2081,21 @@ def thump : Verb := .mkRegular {
     [levin-2026] (32a)) -/
 def bang : Verb := .mkRegular {
   form := "bang"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClass := some .hit }
 
 /-- "thrash" — Levin 18.3 Spank verbs; a hitting verb for [levin-2026] (32a). -/
 def thrash : Verb := .mkRegular {
   form := "thrash"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClass := some .spank }
 
 /-- "hammer" — Levin 18.1 Hit verbs. -/
 def hammer : Verb := .mkRegular {
   form := "hammer"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClass := some .hit }
 
@@ -2104,14 +2104,14 @@ def hammer : Verb := .mkRegular {
     surface-contact sense, not removing sense. -/
 def scrape : Verb := .mkRegular {
   form := "scrape"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClass := some .wipe }
 
 /-- "wipe" — Levin 10.4 Wipe verbs, manner subclass. -/
 def wipe : Verb := .mkRegular {
   form := "wipe"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClass := some .wipe }
 
@@ -2122,7 +2122,7 @@ def carry : Verb where
   formPast := "carried"
   formPastPart := "carried"
   formPresPart := "carrying"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .carry
@@ -2134,7 +2134,7 @@ def drag : Verb where
   formPast := "dragged"
   formPastPart := "dragged"
   formPresPart := "dragging"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .carry
@@ -2142,7 +2142,7 @@ def drag : Verb where
 /-- "call" — AgPat verb (communication + agent-patient frame) -/
 def call : Verb := .mkRegular {
   form := "call"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity }
 
 /-! ### Putting (§ 9) -/
@@ -2150,20 +2150,20 @@ def call : Verb := .mkRegular {
 /-- "place" — Levin 9.1 Put verbs. Instantaneous placement. -/
 def place : Verb := .mkRegular {
   form := "place"
-  frames := [Frame.np_pp]
+  frames := [ArgumentFrame.np_pp]
   vendlerClass := some .achievement
   levinClass := some .put }
 
 /-- "water" — Levin 9.9 Butter verbs (denominal putting). -/
 def water : Verb := .mkRegular {
   form := "water"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity }
 
 /-- "pour" — Levin 9.5 Pour verbs. Manner of caused motion. -/
 def pour : Verb := .mkRegular {
   form := "pour"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .pour }
@@ -2171,7 +2171,7 @@ def pour : Verb := .mkRegular {
 /-- "spray" — Levin 9.7 Spray/Load verbs. Locative alternation. -/
 def spray : Verb := .mkRegular {
   form := "spray"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .sprayLoad }
@@ -2179,7 +2179,7 @@ def spray : Verb := .mkRegular {
 /-- "load" — Levin 9.7 Spray/Load verbs. Locative alternation. -/
 def load : Verb := .mkRegular {
   form := "load"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .sprayLoad }
@@ -2189,7 +2189,7 @@ def load : Verb := .mkRegular {
 /-- "remove" — Levin 10.1 Remove verbs. -/
 def remove : Verb := .mkRegular {
   form := "remove"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .remove }
 
@@ -2197,7 +2197,7 @@ def remove : Verb := .mkRegular {
     Also a degree achievement: closed scale (maximally clean). -/
 def clean : Verb := .mkRegular {
   form := "clean"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
     dimension := .cleanliness,
@@ -2212,7 +2212,7 @@ def steal : Verb where
   formPast := "stole"
   formPastPart := "stolen"
   formPresPart := "stealing"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .steal
 
@@ -2226,7 +2226,7 @@ def send : Verb where
   formPast := "sent"
   formPastPart := "sent"
   formPresPart := "sending"
-  frames := [Frame.np, Frame.np_np]
+  frames := [ArgumentFrame.np, ArgumentFrame.np_np]
   implicitGoal := some .def
   vendlerClass := some .accomplishment
   levinClass := some .send
@@ -2238,7 +2238,7 @@ def drive : Verb where
   formPast := "drove"
   formPastPart := "driven"
   formPresPart := "driving"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .drive
@@ -2248,21 +2248,21 @@ def drive : Verb where
 /-- "donate" — Levin 13.2 Contribute verbs. -/
 def donate : Verb := .mkRegular {
   form := "donate"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .contribute }
 
 /-- "obtain" — Levin 13.5.2 Obtain verbs. -/
 def obtain : Verb := .mkRegular {
   form := "obtain"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .getObtain }
 
 /-- "trade" — Levin 13.6 Exchange verbs. -/
 def trade : Verb := .mkRegular {
   form := "trade"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .achievement
   levinClass := some .exchange }
 
@@ -2271,7 +2271,7 @@ def trade : Verb := .mkRegular {
 /-- "learn" — Levin 14 Learn verbs. -/
 def learn : Verb := .mkRegular {
   form := "learn"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .learn }
 
@@ -2282,7 +2282,7 @@ def hold : Verb where
   formPast := "held"
   formPastPart := "held"
   formPresPart := "holding"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   levinClass := some .hold
 
@@ -2293,7 +2293,7 @@ def hide : Verb where
   formPast := "hid"
   formPastPart := "hidden"
   formPresPart := "hiding"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .conceal
 
@@ -2307,7 +2307,7 @@ def throw : Verb where
   formPast := "threw"
   formPastPart := "thrown"
   formPresPart := "throwing"
-  frames := [Frame.np, Frame.np_np]
+  frames := [ArgumentFrame.np, ArgumentFrame.np_np]
   implicitObj := some .def
   implicitGoal := some .indef
   vendlerClass := some .achievement
@@ -2318,14 +2318,14 @@ def throw : Verb where
 /-- "poke" — Levin 19 Poke verbs. Punctual contact. -/
 def poke : Verb := .mkRegular {
   form := "poke"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .achievement
   levinClass := some .poke }
 
 /-- "touch" — Levin 20 Touch verbs. Surface contact. -/
 def touch : Verb := .mkRegular {
   form := "touch"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .achievement
   levinClass := some .touch }
 
@@ -2340,7 +2340,7 @@ def cut : Verb where
   formPast := "cut"
   formPastPart := "cut"
   formPresPart := "cutting"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .cut
@@ -2356,7 +2356,7 @@ def chop : Verb where
   formPast := "chopped"
   formPastPart := "chopped"
   formPresPart := "chopping"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .carve
@@ -2366,7 +2366,7 @@ def chop : Verb where
 /-- "mix" — Levin 22.1 Mix verbs. Incremental by proportion combined. -/
 def mix : Verb := .mkRegular {
   form := "mix"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .mix }
@@ -2374,7 +2374,7 @@ def mix : Verb := .mkRegular {
 /-- "separate" — Levin 23.1 Separate verbs. -/
 def separate : Verb := .mkRegular {
   form := "separate"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .separate }
 
@@ -2383,7 +2383,7 @@ def separate : Verb := .mkRegular {
 /-- "paint" — Levin 24 Color verbs. Incremental by surface area. -/
 def paint : Verb := .mkRegular {
   form := "paint"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .color }
@@ -2395,7 +2395,7 @@ def draw : Verb where
   formPast := "drew"
   formPastPart := "drawn"
   formPresPart := "drawing"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .imageCreation
@@ -2405,7 +2405,7 @@ def draw : Verb where
 /-- "create" — Levin 26.4 Create verbs. -/
 def create : Verb := .mkRegular {
   form := "create"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .create }
 
@@ -2416,7 +2416,7 @@ def weave : Verb where
   formPast := "wove"
   formPastPart := "woven"
   formPresPart := "weaving"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .build
 
@@ -2427,7 +2427,7 @@ def grow : Verb where
   formPast := "grew"
   formPastPart := "grown"
   formPresPart := "growing"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .grow
@@ -2435,7 +2435,7 @@ def grow : Verb where
 /-- "perform" — Levin 26.7 Performance verbs. -/
 def perform : Verb := .mkRegular {
   form := "perform"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .performance }
 
@@ -2444,7 +2444,7 @@ def perform : Verb := .mkRegular {
 /-- "appoint" — Levin 29.1 Appoint verbs. -/
 def appoint : Verb := .mkRegular {
   form := "appoint"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .achievement
   levinClass := some .appoint }
 
@@ -2458,7 +2458,7 @@ def hear : Verb where
   formPast := "heard"
   formPastPart := "heard"
   formPresPart := "hearing"
-  frames := [Frame.np, Frame.finiteClause]
+  frames := [ArgumentFrame.np, ArgumentFrame.finiteClause]
   vendlerClass := some .state
   levinClass := some .see
 
@@ -2468,7 +2468,7 @@ def hear : Verb where
     and named only for the blame alternation (§2.10). -/
 def blame : Verb := .mkRegular {
   form := "blame"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
  }
@@ -2476,7 +2476,7 @@ def blame : Verb := .mkRegular {
 /-- "evaluate" — Levin 34 Assessment verbs. -/
 def evaluate : Verb := .mkRegular {
   form := "evaluate"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   verbIncClass := some .cumOnly
   levinClass := some .assessment }
@@ -2490,7 +2490,7 @@ def marry : Verb where
   formPast := "married"
   formPastPart := "married"
   formPresPart := "marrying"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .achievement
   levinClass := some .socialInteraction
 
@@ -2499,7 +2499,7 @@ def marry : Verb where
 /-- "bark" — Levin 38 Animal Sound verbs. -/
 def bark : Verb := .mkRegular {
   form := "bark"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .animalSound }
@@ -2509,7 +2509,7 @@ def bark : Verb := .mkRegular {
 /-- "breathe" — Levin 40.1 Body Process verbs. -/
 def breathe : Verb := .mkRegular {
   form := "breathe"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .bodyProcess }
@@ -2517,7 +2517,7 @@ def breathe : Verb := .mkRegular {
 /-- "laugh" — Levin 40.2 Nonverbal Expression verbs. -/
 def laugh : Verb := .mkRegular {
   form := "laugh"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .activity }
 
@@ -2525,7 +2525,7 @@ def laugh : Verb := .mkRegular {
     Semelfactive: single involuntary event, no result state ([smith-1997] §2.4.3). -/
 def cough : Verb := .mkRegular {
   form := "cough"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .bodyProcess }
@@ -2534,7 +2534,7 @@ def cough : Verb := .mkRegular {
     Semelfactive: single involuntary body event ([smith-1997] §2.4.3). -/
 def hiccup : Verb := .mkRegular {
   form := "hiccup"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .bodyProcess }
@@ -2544,7 +2544,7 @@ def hiccup : Verb := .mkRegular {
     and *blink* among the light-emission verbs (§43.1). -/
 def blink : Verb := .mkRegular {
   form := "blink"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .semelfactive
  }
@@ -2554,7 +2554,7 @@ def blink : Verb := .mkRegular {
     example of the class. -/
 def knock : Verb := .mkRegular {
   form := "knock"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .hit }
@@ -2563,7 +2563,7 @@ def knock : Verb := .mkRegular {
     Semelfactive: single light percussive contact event ([smith-1997] §2.4.3). -/
 def tap : Verb := .mkRegular {
   form := "tap"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .hit }
@@ -2573,7 +2573,7 @@ def tap : Verb := .mkRegular {
     characterization of the class. -/
 def flash : Verb := .mkRegular {
   form := "flash"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .lightEmission }
@@ -2581,7 +2581,7 @@ def flash : Verb := .mkRegular {
 /-- "flinch" — Levin 40.5 Flinch verbs. Involuntary reaction. -/
 def flinch : Verb := .mkRegular {
   form := "flinch"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .achievement
   levinClass := some .flinch }
@@ -2589,7 +2589,7 @@ def flinch : Verb := .mkRegular {
 /-- "dress" — Levin 41.1 Dress verbs. -/
 def dress : Verb := .mkRegular {
   form := "dress"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClass := some .dress }
 
@@ -2598,7 +2598,7 @@ def dress : Verb := .mkRegular {
 /-- "drown" — Levin 42.2 Poison verbs. Manner-of-killing. -/
 def drown : Verb := .mkRegular {
   form := "drown"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causative := some .make
   levinClass := some .poison }
@@ -2608,7 +2608,7 @@ def drown : Verb := .mkRegular {
 /-- "glow" — Levin 43.1 Light Emission verbs. -/
 def glow : Verb := .mkRegular {
   form := "glow"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .state
   unaccusative := true
@@ -2617,7 +2617,7 @@ def glow : Verb := .mkRegular {
 /-- "buzz" — Levin 43.2 Sound Emission verbs. -/
 def buzz : Verb := .mkRegular {
   form := "buzz"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   unaccusative := true
@@ -2626,7 +2626,7 @@ def buzz : Verb := .mkRegular {
 /-- "rumble" — Levin 43.2 Sound Emission verbs. -/
 def rumble : Verb := .mkRegular {
   form := "rumble"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   unaccusative := true
@@ -2639,7 +2639,7 @@ def bleed : Verb where
   formPast := "bled"
   formPastPart := "bled"
   formPresPart := "bleeding"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   unaccusative := true
@@ -2654,7 +2654,7 @@ def freeze : Verb where
   formPast := "froze"
   formPastPart := "frozen"
   formPresPart := "freezing"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causative := some .make
   levinClass := some .otherCoS
@@ -2662,7 +2662,7 @@ def freeze : Verb where
 /-- "heat" — Levin 45.4 Other Change of State verbs. Causative/inchoative alternation. -/
 def heat : Verb := .mkRegular {
   form := "heat"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   causative := some .make
   levinClass := some .otherCoS }
@@ -2675,7 +2675,7 @@ def bend : Verb where
   formPast := "bent"
   formPastPart := "bent"
   formPresPart := "bending"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
     dimension := .curvature }
@@ -2686,7 +2686,7 @@ def bend : Verb where
     Degree achievement: closed scale (reaches boiling point). -/
 def boil : Verb := .mkRegular {
   form := "boil"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
     dimension := .boiling,
@@ -2698,7 +2698,7 @@ def boil : Verb := .mkRegular {
     Degree achievement: open scale (no maximum rustedness). -/
 def rust : Verb := .mkRegular {
   form := "rust"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   unaccusative := true
   vendlerClass := some .activity
@@ -2710,7 +2710,7 @@ def rust : Verb := .mkRegular {
     Degree achievement: open scale (no maximum quantity). -/
 def increase : Verb := .mkRegular {
   form := "increase"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   degreeAchievementScale := some {
     dimension := .quantity }
@@ -2722,7 +2722,7 @@ def increase : Verb := .mkRegular {
     Accomplishment: "straightened the wire in 10 seconds." -/
 def straighten : Verb := .mkRegular {
   form := "straighten"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
     dimension := .straightness,
@@ -2733,7 +2733,7 @@ def straighten : Verb := .mkRegular {
     Accomplishment: "flattened the dough in 2 minutes." -/
 def flatten : Verb := .mkRegular {
   form := "flatten"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
     dimension := .flatness,
@@ -2744,7 +2744,7 @@ def flatten : Verb := .mkRegular {
     Accomplishment: "opened the door in 3 seconds." -/
 def open_ : Verb := .mkRegular {
   form := "open"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
     dimension := .openness,
@@ -2755,7 +2755,7 @@ def open_ : Verb := .mkRegular {
     Activity: "lengthened the rope for hours." -/
 def lengthen : Verb := .mkRegular {
   form := "lengthen"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   degreeAchievementScale := some {
     dimension := .length,
@@ -2766,7 +2766,7 @@ def lengthen : Verb := .mkRegular {
     Activity: "widened the road for months." -/
 def widen : Verb := .mkRegular {
   form := "widen"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   degreeAchievementScale := some {
     dimension := .width,
@@ -2777,7 +2777,7 @@ def widen : Verb := .mkRegular {
     Activity: "cooled for an hour." -/
 def cool : Verb := .mkRegular {
   form := "cool"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   degreeAchievementScale := some {
     dimension := .temperature,
@@ -2788,7 +2788,7 @@ def cool : Verb := .mkRegular {
     Activity: "warmed for an hour." -/
 def warm : Verb := .mkRegular {
   form := "warm"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   degreeAchievementScale := some {
     dimension := .temperature,
@@ -2800,7 +2800,7 @@ def warm : Verb := .mkRegular {
 /-- "exist" — Levin 47.1 Exist verbs. Pure state. -/
 def exist : Verb := .mkRegular {
   form := "exist"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .state
   unaccusative := true
@@ -2809,7 +2809,7 @@ def exist : Verb := .mkRegular {
 /-- "appear" — Levin 48.1 Appear verbs. Punctual emergence. -/
 def appear : Verb := .mkRegular {
   form := "appear"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .achievement
   unaccusative := true
@@ -2818,7 +2818,7 @@ def appear : Verb := .mkRegular {
 /-- "fidget" — Levin 49 Body-Internal Motion verbs. -/
 def fidget : Verb := .mkRegular {
   form := "fidget"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .bodyInternalMotion }
@@ -2830,7 +2830,7 @@ def sit : Verb where
   formPast := "sat"
   formPastPart := "sat"
   formPresPart := "sitting"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .state
   levinClass := some .assumePosition
@@ -2842,7 +2842,7 @@ def stand : Verb where
   formPast := "stood"
   formPastPart := "stood"
   formPresPart := "standing"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .state
   levinClass := some .assumePosition
@@ -2852,7 +2852,7 @@ def stand : Verb where
 /-- "walk" — Levin 51.3 Manner of Motion verbs. -/
 def walk : Verb := .mkRegular {
   form := "walk"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .mannerOfMotion }
@@ -2864,7 +2864,7 @@ def swim : Verb where
   formPast := "swam"
   formPastPart := "swum"
   formPresPart := "swimming"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .mannerOfMotion
@@ -2876,7 +2876,7 @@ def fly : Verb where
   formPast := "flew"
   formPastPart := "flown"
   formPresPart := "flying"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .vehicleMotion
@@ -2884,7 +2884,7 @@ def fly : Verb where
 /-- "roll" — Levin 51.3.1 Roll verbs (manner of motion). -/
 def roll : Verb := .mkRegular {
   form := "roll"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .mannerOfMotion }
@@ -2892,7 +2892,7 @@ def roll : Verb := .mkRegular {
 /-- "float" — Levin 51.3.1 Roll verbs (manner of motion). -/
 def float : Verb := .mkRegular {
   form := "float"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .mannerOfMotion }
@@ -2902,14 +2902,14 @@ def float : Verb := .mkRegular {
 /-- "avoid" — Levin 52 Avoid verbs. Stative. -/
 def avoid : Verb := .mkRegular {
   form := "avoid"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .state
   levinClass := some .avoid }
 
 /-- "linger" — Levin 53.1 Linger verbs. -/
 def linger : Verb := .mkRegular {
   form := "linger"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .linger }
@@ -2917,7 +2917,7 @@ def linger : Verb := .mkRegular {
 /-- "rush" — Levin 53.2 Rush verbs. -/
 def rush : Verb := .mkRegular {
   form := "rush"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .rush }
@@ -2927,7 +2927,7 @@ def rush : Verb := .mkRegular {
 /-- "rain" — Levin 57 Weather verbs. Expletive subject. -/
 def rain : Verb := .mkRegular {
   form := "rain"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .weather }
@@ -2944,7 +2944,7 @@ def rain : Verb := .mkRegular {
 /-- "charge" — DOC-only. Implicit second obj indef, implicit goal def (addressee). -/
 def charge : Verb := .mkRegular {
   form := "charge"
-  frames := [Frame.np_np]
+  frames := [ArgumentFrame.np_np]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
@@ -2952,7 +2952,7 @@ def charge : Verb := .mkRegular {
 /-- "cost" — DOC-only. Implicit second obj indef, implicit goal def. -/
 def cost : Verb := .mkRegular {
   form := "cost"
-  frames := [Frame.np_np]
+  frames := [ArgumentFrame.np_np]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .state }
@@ -2960,7 +2960,7 @@ def cost : Verb := .mkRegular {
 /-- "fine" — DOC-only. Implicit second obj indef, implicit goal def. -/
 def fine : Verb := .mkRegular {
   form := "fine"
-  frames := [Frame.np_np]
+  frames := [ArgumentFrame.np_np]
   implicitObj := some .indef
   vendlerClass := some .accomplishment }
 
@@ -2971,7 +2971,7 @@ def tip : Verb where
   formPast := "tipped"
   formPastPart := "tipped"
   formPresPart := "tipping"
-  frames := [Frame.np_np]
+  frames := [ArgumentFrame.np_np]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .accomplishment
@@ -2983,7 +2983,7 @@ def pay : Verb where
   formPast := "paid"
   formPastPart := "paid"
   formPresPart := "paying"
-  frames := [Frame.np_np]
+  frames := [ArgumentFrame.np_np]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .accomplishment
@@ -2995,7 +2995,7 @@ def strike_ : Verb where
   formPast := "struck"
   formPastPart := "struck"
   formPresPart := "striking"
-  frames := [Frame.np_np]
+  frames := [ArgumentFrame.np_np]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .achievement
@@ -3008,7 +3008,7 @@ def forgive : Verb where
   formPast := "forgave"
   formPastPart := "forgiven"
   formPresPart := "forgiving"
-  frames := [Frame.np_np]
+  frames := [ArgumentFrame.np_np]
   implicitObj := some .def
   implicitGoal := some .def
   vendlerClass := some .accomplishment
@@ -3016,7 +3016,7 @@ def forgive : Verb where
 /-- "spare" — DOC-only. Implicit second obj def, no implicit goal. -/
 def spare : Verb := .mkRegular {
   form := "spare"
-  frames := [Frame.np_np]
+  frames := [ArgumentFrame.np_np]
   implicitObj := some .def
   vendlerClass := some .accomplishment }
 
@@ -3028,7 +3028,7 @@ def deny : Verb where
   formPast := "denied"
   formPastPart := "denied"
   formPresPart := "denying"
-  frames := [Frame.np_np]
+  frames := [ArgumentFrame.np_np]
   implicitGoal := some .def
   vendlerClass := some .accomplishment
 
@@ -3040,7 +3040,7 @@ def permit : Verb where
   formPast := "permitted"
   formPastPart := "permitted"
   formPresPart := "permitting"
-  frames := [Frame.np_np]
+  frames := [ArgumentFrame.np_np]
   implicitGoal := some .def
   vendlerClass := some .accomplishment
 
@@ -3048,7 +3048,7 @@ def permit : Verb where
     object is obligatory, Pesetsky's observation as [bruening-2021] report it. -/
 def assign : Verb := .mkRegular {
   form := "assign"
-  frames := [Frame.np_np, Frame.np_pp]
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
 
@@ -3057,7 +3057,7 @@ def assign : Verb := .mkRegular {
 /-- "begrudge" — DOC-only. Neither object implicit. -/
 def begrudge : Verb := .mkRegular {
   form := "begrudge"
-  frames := [Frame.np_np]
+  frames := [ArgumentFrame.np_np]
   vendlerClass := some .state }
 
 /-- "bet" — DOC-only. Neither object implicit. -/
@@ -3067,7 +3067,7 @@ def bet : Verb where
   formPast := "bet"
   formPastPart := "bet"
   formPresPart := "betting"
-  frames := [Frame.np_np]
+  frames := [ArgumentFrame.np_np]
   vendlerClass := some .accomplishment
 
 -- Alternating verbs (both DOC and PP frame)
@@ -3076,7 +3076,7 @@ def bet : Verb where
     Implicit goal def (PP). -/
 def serve : Verb := .mkRegular {
   form := "serve"
-  frames := [Frame.np_np, Frame.np_pp]
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
   implicitObj := some .indef
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
@@ -3089,7 +3089,7 @@ def teach : Verb where
   formPast := "taught"
   formPastPart := "taught"
   formPresPart := "teaching"
-  frames := [Frame.np_np, Frame.np_pp]
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
   implicitObj := some .indef
   implicitGoal := some .indef
   vendlerClass := some .activity
@@ -3102,7 +3102,7 @@ def feed : Verb where
   formPast := "fed"
   formPastPart := "fed"
   formPresPart := "feeding"
-  frames := [Frame.np_np, Frame.np_pp]
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
   implicitObj := some .indef
   vendlerClass := some .activity
 
@@ -3113,49 +3113,49 @@ def show_ : Verb where
   formPast := "showed"
   formPastPart := "shown"
   formPresPart := "showing"
-  frames := [Frame.np_np, Frame.np_pp]
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
   implicitObj := some .def
   vendlerClass := some .accomplishment
 
 /-- "award" — alternates DOC/PP. Implicit goal def (PP). -/
 def award : Verb := .mkRegular {
   form := "award"
-  frames := [Frame.np_np, Frame.np_pp]
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
 
 /-- "forward" — alternates DOC/PP. Implicit goal def (PP). -/
 def forward_ : Verb := .mkRegular {
   form := "forward"
-  frames := [Frame.np_np, Frame.np_pp]
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
 
 /-- "grant" — alternates DOC/PP. Implicit goal def (PP). -/
 def grant : Verb := .mkRegular {
   form := "grant"
-  frames := [Frame.np_np, Frame.np_pp]
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
 
 /-- "offer" — alternates DOC/PP. Implicit goal def (PP). -/
 def offer : Verb := .mkRegular {
   form := "offer"
-  frames := [Frame.np_np, Frame.np_pp]
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
 
 /-- "reserve" — alternates DOC/PP. Implicit goal def (PP). -/
 def reserve : Verb := .mkRegular {
   form := "reserve"
-  frames := [Frame.np_np, Frame.np_pp]
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
   implicitGoal := some .def
   vendlerClass := some .accomplishment }
 
 /-- "pass" — alternates DOC/PP. Implicit DO def in PP frame only. -/
 def pass : Verb := .mkRegular {
   form := "pass"
-  frames := [Frame.np, Frame.np_pp]
+  frames := [ArgumentFrame.np, ArgumentFrame.np_pp]
   implicitObj := some .def
   implicitGoal := some .indef
   vendlerClass := some .accomplishment
@@ -3167,7 +3167,7 @@ def pass : Verb := .mkRegular {
     implicit. -/
 def hand : Verb := .mkRegular {
   form := "hand"
-  frames := [Frame.np_np, Frame.np_pp]
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
   vendlerClass := some .accomplishment
   levinClass := some .send }
 
@@ -3178,7 +3178,7 @@ def lend : Verb where
   formPast := "lent"
   formPastPart := "lent"
   formPresPart := "lending"
-  frames := [Frame.np_np, Frame.np_pp]
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
   vendlerClass := some .accomplishment
   levinClass := some .give
 

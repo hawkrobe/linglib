@@ -6,7 +6,7 @@ import Linglib.Syntax.Category.Complementizer.Basic
 
 The hom between the `Verb` and `Complementizer` entry APIs: which
 clause-typers a predicate takes. A complement position and a clause-typer
-each record a bundle of partial axis values (`Frame.Position.Axes`) in the
+each record a bundle of partial axis values (`ArgumentFrame.Position.Axes`) in the
 flat order, and a position takes a typer when the two bundles unify
 (`Compat`) with some axis actually agreeing (a non-`⊥` meet). One
 relation, lifted twice: a frame or verb takes a typer when some
@@ -18,19 +18,19 @@ and the subject-requirement axis is object-side and never matched.
 ## Main definitions
 
 - `Complementizer.axes` — the typer's bundle
-- `Frame.Position.Takes`, `Frame.Takes`, `Verb.takes` — the relation
+- `ArgumentFrame.Position.Takes`, `ArgumentFrame.Takes`, `Verb.takes` — the relation
   and its lifts
 - `Verb.typers` — the typers of a verb within an inventory
 
 ## Main results
 
-- `Frame.Position.takes_iff` — the relation axis by axis
-- `Frame.Position.not_takes_of_blank`, `Frame.Position.blank_not_takes`,
-  `Frame.Position.not_takes_of_not_clausal` — matching needs positive
+- `ArgumentFrame.Position.takes_iff` — the relation axis by axis
+- `ArgumentFrame.Position.not_takes_of_blank`, `ArgumentFrame.Position.blank_not_takes`,
+  `ArgumentFrame.Position.not_takes_of_not_clausal` — matching needs positive
   evidence on both sides
-- `Frame.smallClause_not_takes` — small clauses take no typer
-- `Frame.finiteClause_takes` — the positive witness
-- `Frame.Takes.mono` — monotone under frame extension
+- `ArgumentFrame.smallClause_not_takes` — small clauses take no typer
+- `ArgumentFrame.finiteClause_takes` — the positive witness
+- `ArgumentFrame.Takes.mono` — monotone under frame extension
 
 Consistency checks against Fragment data live in Studies
 (e.g. `Bondarenko2022.hanaxa_typers`).
@@ -38,12 +38,12 @@ Consistency checks against Fragment data live in Studies
 
 /-- The axes a clause-typer records: its coding and force; the other
     axes are a complement position's alone. -/
-def Complementizer.axes (z : Complementizer) : Frame.Position.Axes
+def Complementizer.axes (z : Complementizer) : ArgumentFrame.Position.Axes
   | .coding => z.coding
   | .force => z.force
   | .embeddedSubject | .relation | .adposition | .interp => ⊥
 
-namespace Frame.Position
+namespace ArgumentFrame.Position
 
 variable {p : Position} {z : Complementizer}
 
@@ -84,42 +84,42 @@ theorem not_takes_of_not_clausal (h : ¬ p.IsClausal) : ¬ p.Takes z := by
   cases p <;> cases a <;>
     simp [kind, axes, coding?, force?, Complementizer.axes, Flat.none_eq_bot] at h ha
 
-end Frame.Position
+end ArgumentFrame.Position
 
 /-- The frame takes `z`: some complement does. -/
-def Frame.Takes (fr : Frame) (z : Complementizer) : Prop :=
+def ArgumentFrame.Takes (fr : ArgumentFrame) (z : Complementizer) : Prop :=
   ∃ p ∈ fr.complements, p.Takes z
 
-instance (fr : Frame) (z : Complementizer) : Decidable (fr.Takes z) :=
+instance (fr : ArgumentFrame) (z : Complementizer) : Decidable (fr.Takes z) :=
   inferInstanceAs (Decidable (∃ p ∈ fr.complements, _))
 
 /-- Taking is monotone under complement extension. -/
-theorem Frame.Takes.mono {fr fr' : Frame} {z : Complementizer}
+theorem ArgumentFrame.Takes.mono {fr fr' : ArgumentFrame} {z : Complementizer}
     (h : fr.Takes z) (hsub : fr.complements ⊆ fr'.complements) : fr'.Takes z :=
   let ⟨p, hp, ht⟩ := h
   ⟨p, hsub hp, ht⟩
 
 /-- Small clauses take no clause-typer. -/
-theorem Frame.smallClause_not_takes (z : Complementizer) :
-    ¬ Frame.smallClause.Takes z := by
+theorem ArgumentFrame.smallClause_not_takes (z : Complementizer) :
+    ¬ ArgumentFrame.smallClause.Takes z := by
   rintro ⟨p, hp, ht⟩
   rw [List.mem_singleton.1 hp] at ht
-  exact Frame.Position.blank_not_takes ht
+  exact ArgumentFrame.Position.blank_not_takes ht
 
 /-- An indicative typer with declarative or unrecorded force takes the
     finite-clause frame. -/
-theorem Frame.finiteClause_takes {z : Complementizer}
+theorem ArgumentFrame.finiteClause_takes {z : Complementizer}
     (hc : z.coding = some .indicative)
     (hf : z.force = none ∨ z.force = some .declarative) :
-    Frame.finiteClause.Takes z := by
+    ArgumentFrame.finiteClause.Takes z := by
   refine ⟨_, List.mem_singleton_self _,
-    Frame.Position.takes_iff.mpr ⟨fun a ↦ ?_, .coding, ?_⟩⟩
+    Position.takes_iff.mpr ⟨fun a ↦ ?_, .coding, ?_⟩⟩
   · rcases hf with hf | hf <;> cases a <;>
-      simp only [Frame.Position.axes, Complementizer.axes, Frame.Position.coding?,
-        Frame.Position.force?, Frame.Position.embeddedSubject?, Frame.Position.relation?,
-        Frame.Position.adposition?, Frame.Position.interp?, hc, hf, Flat.none_eq_bot] <;>
+      simp only [Position.axes, Complementizer.axes, Position.coding?, Position.force?,
+        Position.embeddedSubject?, Position.relation?, Position.adposition?, Position.interp?,
+        hc, hf, Flat.none_eq_bot] <;>
       first | exact compat_self _ | exact compat_bot _
-  · simp [Frame.Position.axes, Complementizer.axes, Frame.Position.coding?, hc,
+  · simp [Position.axes, Complementizer.axes, Position.coding?, hc,
       Flat.some_eq_coe]
 
 /-- The verb takes `z`: some frame does. -/

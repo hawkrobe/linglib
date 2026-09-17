@@ -71,9 +71,9 @@ clause-embedding verbs). -/
 
 /-- The nominalized complement frame of the ex. 35–36 alternation:
 [noonan-2007]-nominalized coding with an overt genitive embedded subject
-(§4.3.1). Richer than the bare `Frame.gerund` cell: it records the
+(§4.3.1). Richer than the bare `ArgumentFrame.gerund` cell: it records the
 embedded-subject case. -/
-def nominalizedFrame : Frame :=
+def nominalizedFrame : ArgumentFrame :=
   { complements := [.clausal (coding := some .nominalized)
       (embeddedSubject := some (.overt (some .gen)))] }
 
@@ -83,9 +83,9 @@ think~remember alternation — nonveridical/opaque on the bare CP,
 veridical/transparent on the nominalized frame. -/
 def hanaxa : Verb where
   form := "hanaxa"
-  frames := [Frame.finiteClause, nominalizedFrame]
+  frames := [ArgumentFrame.finiteClause, nominalizedFrame]
   readings := [
-    { frame := Frame.finiteClause, attitude := some (.doxastic .nonVeridical),
+    { frame := ArgumentFrame.finiteClause, attitude := some (.doxastic .nonVeridical),
       opaqueContext := some true },
     { frame := nominalizedFrame, attitude := some (.doxastic .veridical),
       opaqueContext := some false }]
@@ -94,7 +94,7 @@ def hanaxa : Verb where
 questions (ex. 3). -/
 def medexe : Verb where
   form := "mɘdɘxɘ"
-  frames := [Frame.finiteClause, Frame.gerund, Frame.question]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.gerund, ArgumentFrame.question]
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
@@ -102,13 +102,13 @@ def medexe : Verb where
 are existence-entailing (ex. 51; speaker variation per fn. 30). -/
 def xelexe : Verb where
   form := "xɘlɘxɘ"
-  frames := [Frame.finiteClause, Frame.gerund]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.gerund]
   speechActVerb := true
 
 /-- *duːlaxa* 'hear' — non-factive with bare CPs, existence-entailing
 with nominalized complements (ex. 50). -/
 def duulaxa : Verb where
   form := "duːlaxa"
-  frames := [Frame.finiteClause, Frame.gerund]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.gerund]
 
 end Buryat

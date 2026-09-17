@@ -17,48 +17,48 @@ namespace Spanish.Predicates
     ([palmieri-2024], Appendix A). -/
 def abrazar : Verb where
   form := "abrazar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *acurrucar* 'cuddle' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def acurrucar : Verb where
   form := "acurrucar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *besar* 'kiss' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def besar : Verb where
   form := "besar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *casar* 'marry' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def casar : Verb where
   form := "casar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *consultar* 'consult/confer' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def consultar : Verb where
   form := "consultar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *cruzar* 'run into, meet accidentally' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def cruzar : Verb where
   form := "cruzar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *dejar* 'leave/break up' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def dejar : Verb where
   form := "dejar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *encontrar* 'find/meet' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def encontrar : Verb where
   form := "encontrar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 end Spanish.Predicates

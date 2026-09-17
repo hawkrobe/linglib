@@ -31,7 +31,7 @@ def kork : TurkishVerbEntry where
   formPast := "korktu"
   formEvidential := "korkmuş"
   formParticiple := "korkan"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .negative))
@@ -43,7 +43,7 @@ def um : TurkishVerbEntry where
   formPast := "umdu"
   formEvidential := "ummuş"
   formParticiple := "uman"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -55,7 +55,7 @@ def merakEt : TurkishVerbEntry where
   formPast := "merak etti"
   formEvidential := "merak etmiş"
   formParticiple := "merak eden"
-  frames := [Frame.question]
+  frames := [ArgumentFrame.question]
   passivizable := false
   opaqueContext := true
 
@@ -66,7 +66,7 @@ def endiselen : TurkishVerbEntry where
   formPast := "endişelendi"
   formEvidential := "endişelenmiş"
   formParticiple := "endişelenen"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .uncertaintyBased)
@@ -84,7 +84,7 @@ def ol_dur : TurkishVerbEntry where
   formPast := "öldürdü"
   formEvidential := "öldürmüş"
   formParticiple := "öldüren"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   causative := some .make
 
 /-- yap-tır-mak — do-CAUS = "to make (someone) do" (productive causative). -/
@@ -94,8 +94,8 @@ def yap_tir : TurkishVerbEntry where
   formPast := "yaptırdı"
   formEvidential := "yaptırmış"
   formParticiple := "yaptıran"
-  frames := [Frame.smallClause]
-  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
+  frames := [ArgumentFrame.smallClause]
+  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   causative := some .make
 
 /-- Turkish causative *-dür* uses `.make` builder. -/

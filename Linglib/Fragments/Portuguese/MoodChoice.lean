@@ -25,8 +25,8 @@ open ArgumentStructure
     [grano-2024], (3a): SBJV required. -/
 def querer : Verb where
   form := "querer"
-  frames := [Frame.finiteClause, Frame.infinitival]
-  readings := [{ frame := Frame.finiteClause, control := some .subjectControl }]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.finiteClause, control := some .subjectControl }]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -36,8 +36,8 @@ def querer : Verb where
     [grano-2024], (11): both IND and SBJV accepted. -/
 def esperar : Verb where
   form := "esperar"
-  frames := [Frame.finiteClause, Frame.infinitival]
-  readings := [{ frame := Frame.finiteClause, control := some .subjectControl }]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.finiteClause, control := some .subjectControl }]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -46,8 +46,8 @@ def esperar : Verb where
     [grano-2024], (26): SBJV required, IND rejected. -/
 def pretender : Verb where
   form := "pretender"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -57,8 +57,8 @@ def pretender : Verb where
     [grano-2024], (41): SBJV required via *com que*, IND rejected. -/
 def fazer : Verb where
   form := "fazer"
-  frames := [Frame.infinitival, Frame.finiteClause]
-  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
+  frames := [ArgumentFrame.infinitival, ArgumentFrame.finiteClause]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   causative := some .make
 
 -- ════════════════════════════════════════════════════════════════

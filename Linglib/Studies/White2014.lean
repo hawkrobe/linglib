@@ -1,5 +1,5 @@
 import Mathlib.Order.Lattice
-import Linglib.Syntax.Category.Verb.Complement.Basic
+import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 import Linglib.Data.Examples.White2014
 
 /-!

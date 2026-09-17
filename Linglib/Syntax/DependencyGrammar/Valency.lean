@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Syntax.DependencyGrammar.Basic
-import Linglib.Syntax.Category.Verb.Complement.Basic
+import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 
 /-!
 # Valency frames
@@ -105,7 +105,7 @@ def _root_.ComplementType.valency : ComplementType → Option Valency
   | .np_np => some .ditransitive
   | _ => none
 
-/-! ### Frame satisfaction -/
+/-! ### Argument-frame satisfaction -/
 
 section Satisfaction
 

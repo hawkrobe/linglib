@@ -33,21 +33,21 @@ structure Verb extends _root_.Verb where
 /-- *wus-ke ha-ta* 'cause to smile', the periphrastic causative. -/
 def wus_ke_ha : Verb where
   form := "wus-ke ha-ta"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   causative := some .cause
 
 /-- *ilk-ke ha-ta* 'cause to read', the periphrastic causative. -/
 def ilk_ke_ha : Verb where
   form := "ilk-ke ha-ta"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   causative := some .cause
 
 /-- *cwuk-i-ta* 'kill', the morphological causative of *cwuk-ta* 'die'. -/
 def cwuk_i : Verb where
   form := "cwuk-i-ta"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   causative := some .make
 
 /-- The inventory. -/

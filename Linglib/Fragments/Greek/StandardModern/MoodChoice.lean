@@ -28,7 +28,7 @@ open ArgumentStructure
     Cited from [giannakidou-mari-2021]. -/
 def thelo : Verb where
   form := "thélo"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -39,7 +39,7 @@ def thelo : Verb where
     Cited from [giannakidou-mari-2021]. -/
 def elpizo : Verb where
   form := "elpízo"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -49,7 +49,7 @@ def elpizo : Verb where
     Cited from [giannakidou-mari-2021]. -/
 def protithete : Verb where
   form := "protíthete"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -60,8 +60,8 @@ def protithete : Verb where
     Past tense form *évala* used in the paper's examples. -/
 def vazo : Verb where
   form := "vázo"
-  frames := [Frame.finiteClause]
-  readings := [{ frame := Frame.finiteClause, control := some .objectControl }]
+  frames := [ArgumentFrame.finiteClause]
+  readings := [{ frame := ArgumentFrame.finiteClause, control := some .objectControl }]
   causative := some .make
 
 -- ════════════════════════════════════════════════════════════════

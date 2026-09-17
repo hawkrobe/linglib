@@ -16,35 +16,35 @@ the [noonan-2007] coding, illocutionary force and subject requirement of
 a clausal one, the interpretation of an implicit one. Positions and
 frames are partially ordered by refinement, so a schematic frame lies
 below every frame instantiating it. The flat `ComplementType` enum
-survives as a classification of frames (`Frame.complementType?`) with
+survives as a classification of frames (`ArgumentFrame.complementType?`) with
 `ComplementType.toFrame` as its section.
 
 ## Main definitions
 
 * `ImplicitInterp` — the interpretation of an unexpressed argument
-* `Frame.Position` — one argument position, with its selectional axes
-* `Frame.Position.Kind`, `Position.kind`, `IsNominal`, `IsAdpositional`,
+* `ArgumentFrame.Position` — one argument position, with its selectional axes
+* `ArgumentFrame.Position.Kind`, `Position.kind`, `IsNominal`, `IsAdpositional`,
   `IsClausal` — the category of a position
-* `Frame.Position.Axis`, `Axes`, `Position.axes` — the axes a position
+* `ArgumentFrame.Position.Axis`, `Axes`, `Position.axes` — the axes a position
   records, as a bundle of partial values in the flat order
-* `Frame` — external argument and complements, with the refinement order
-* `Frame.Slot`, `Frame.get?`, `Frame.slots`, `Frame.coreSlots`,
-  `Frame.valency`, `Frame.codingRole` — the argument slots of a frame and
-  their comparative S/A/P/R/T classification
-* `Frame.IsIntransitive`, `Frame.IsUnaccusative`, `Frame.HasNominal`,
-  `Frame.HasAdpositional`, `Frame.HasClausal` — shape predicates
-* `Frame.intransitive`, `Frame.np`, `Frame.finiteClause`, … — smart
+* `ArgumentFrame` — external argument and complements, with the refinement order
+* `ArgumentFrame.Slot`, `ArgumentFrame.get?`, `ArgumentFrame.slots`, `ArgumentFrame.coreSlots`,
+  `ArgumentFrame.valency`, `ArgumentFrame.IsTransitive`, `ArgumentFrame.codingRole` — the
+  argument slots of a frame and their comparative S/A/P/R/T classification
+* `ArgumentFrame.IsIntransitive`, `ArgumentFrame.IsUnaccusative`, `ArgumentFrame.HasNominal`,
+  `ArgumentFrame.HasAdpositional`, `ArgumentFrame.HasClausal` — shape predicates
+* `ArgumentFrame.intransitive`, `ArgumentFrame.np`, `ArgumentFrame.finiteClause`, … — smart
   constructors, the flat enum cells among them
-* `ComplementType` + `toFrame` / `Frame.complementType?` — the flat enum,
+* `ComplementType` + `toFrame` / `ArgumentFrame.complementType?` — the flat enum,
   its cell frames, and the classification of a frame by its complements
   (`none` on shapes outside the enum)
 
 ## Main results
 
-* `Frame.Position.le_def`, `Frame.le_def` — the refinement orders
-* `Frame.complementType?_toFrame`, `ComplementType.toFrame_injective` —
+* `ArgumentFrame.Position.le_def`, `ArgumentFrame.le_def` — the refinement orders
+* `ArgumentFrame.complementType?_toFrame`, `ComplementType.toFrame_injective` —
   the flat enum embeds in the typed frames
-* `Frame.hasClausal_toFrame`, `Frame.hasNominal_toFrame`,
+* `ArgumentFrame.hasClausal_toFrame`, `ArgumentFrame.hasNominal_toFrame`,
   `ComplementType.codings_toFrame` — the enum view and the typed frames
   agree
 
@@ -55,13 +55,13 @@ one kind and every axis `p` records, `q` records with the same value. A
 frame's order fixes the external argument and refines the complements
 pointwise (`List.Forall₂`). The external argument is an `Option`: `none`
 is the unaccusative and impersonal case. Role labels are derived from
-the frame (`Frame.codingRole`), never stored. Complement-taking is
+the frame (`ArgumentFrame.codingRole`), never stored. Complement-taking is
 cross-categorial ([noonan-2007]'s CTPs include adjectives and nouns),
-so `Frame` is not under `Verb`. Frame-conditioned readings (attitude,
+so `ArgumentFrame` is not under `Verb`. Frame-conditioned readings (attitude,
 opacity, control) live on `Verb.Reading`
 (`Syntax/Category/Verb/Defs.lean`); the selection relation between
 frames and clause-typers (`Verb.takes`) in
-`Syntax/Category/Verb/Complement/Takes.lean`. [deal-2026]'s CP-external
+`Syntax/Category/Verb/ArgumentFrame/Takes.lean`. [deal-2026]'s CP-external
 shell inventory lives with its consumer in `Studies/Deal2026.lean`.
 
 ## References
@@ -88,7 +88,7 @@ inductive ImplicitInterp where
   | bodyPart
   deriving DecidableEq, Repr
 
-namespace Frame
+namespace ArgumentFrame
 
 /-- One argument position of a frame: nominal; adpositional, recording the
     relation and the adposition selected; clausal, recording the
@@ -240,32 +240,32 @@ instance : DecidableLE Position := fun p q ↦
 
 end Position
 
-end Frame
+end ArgumentFrame
 
 /-- An argument frame: the external argument, if any, and the complement
     positions in order. -/
 @[ext]
-structure Frame where
+structure ArgumentFrame where
   /-- The external argument; `none` for an unaccusative or impersonal frame. -/
-  external : Option Frame.Position := some .nominal
+  external : Option ArgumentFrame.Position := some .nominal
   /-- The complement positions in order. -/
-  complements : List Frame.Position
+  complements : List ArgumentFrame.Position
   deriving DecidableEq, Repr
 
-namespace Frame
+namespace ArgumentFrame
 
 /-- Refinement: the same external argument, the complements refined
     pointwise. -/
-instance : PartialOrder Frame where
+instance : PartialOrder ArgumentFrame where
   le f g := f.external = g.external ∧ List.Forall₂ (· ≤ ·) f.complements g.complements
   le_refl _ := ⟨rfl, List.forall₂_refl _⟩
   le_trans _ _ _ h₁ h₂ := ⟨h₁.1.trans h₂.1, h₁.2.trans h₂.2⟩
-  le_antisymm _ _ h₁ h₂ := Frame.ext h₁.1 (h₁.2.antisymm h₂.2)
+  le_antisymm _ _ h₁ h₂ := ArgumentFrame.ext h₁.1 (h₁.2.antisymm h₂.2)
 
-theorem le_def {f g : Frame} : f ≤ g ↔
+theorem le_def {f g : ArgumentFrame} : f ≤ g ↔
     f.external = g.external ∧ List.Forall₂ (· ≤ ·) f.complements g.complements := Iff.rfl
 
-instance : DecidableLE Frame := fun f g ↦
+instance : DecidableLE ArgumentFrame := fun f g ↦
   inferInstanceAs (Decidable (f.external = g.external ∧ List.Forall₂ _ _ _))
 
 /-! ### Slots -/
@@ -277,7 +277,7 @@ inductive Slot where
   | complement (i : ℕ)
   deriving DecidableEq, Repr
 
-variable (fr : Frame)
+variable (fr : ArgumentFrame)
 
 /-- The position at a slot. -/
 def get? : Slot → Option Position
@@ -295,6 +295,11 @@ def coreSlots : List Slot :=
 
 /-- The number of core arguments. -/
 def valency : ℕ := fr.coreSlots.length
+
+/-- Transitive: two or more core arguments. -/
+def IsTransitive : Prop := 2 ≤ fr.valency
+
+instance : Decidable fr.IsTransitive := inferInstanceAs (Decidable (_ ≤ _))
 
 /-- The comparative classification of a core slot ([comrie-1978]): the
     sole core argument of a one-place frame is S; a two-place frame has A
@@ -356,61 +361,62 @@ instance (f : Mood.Illocutionary) : Decidable (fr.hasForce f) :=
 /-! ### Smart constructors -/
 
 /-- Intransitive: an external argument and no complement. -/
-def intransitive : Frame := ⟨some .nominal, []⟩
+def intransitive : ArgumentFrame := ⟨some .nominal, []⟩
 
 /-- Unaccusative: a single nominal argument, internal. -/
-def unaccusative : Frame := ⟨none, [.nominal]⟩
+def unaccusative : ArgumentFrame := ⟨none, [.nominal]⟩
 
 /-- Impersonal: an expletive subject and no complement. -/
-def impersonal : Frame := ⟨some .expletive, []⟩
+def impersonal : ArgumentFrame := ⟨some .expletive, []⟩
 
 /-- Object drop: the object unexpressed, with interpretation `i`. -/
-def objectDrop (i : Option ImplicitInterp := none) : Frame := ⟨some .nominal, [.implicit i]⟩
+def objectDrop (i : Option ImplicitInterp := none) : ArgumentFrame :=
+  ⟨some .nominal, [.implicit i]⟩
 
 /-- Transitive: one nominal complement. -/
-def np : Frame := ⟨some .nominal, [.nominal]⟩
+def np : ArgumentFrame := ⟨some .nominal, [.nominal]⟩
 
 /-- Double object: two nominal complements. -/
-def np_np : Frame := ⟨some .nominal, [.nominal, .nominal]⟩
+def np_np : ArgumentFrame := ⟨some .nominal, [.nominal, .nominal]⟩
 
 /-- PP: one adpositional complement, selecting `p` when given. -/
-def pp (p : Option Adposition := none) : Frame :=
+def pp (p : Option Adposition := none) : ArgumentFrame :=
   ⟨some .nominal, [.adpositional (p.map (·.relation)) p]⟩
 
 /-- NP + PP: a nominal plus an adpositional complement, selecting `p` when
     given. -/
-def np_pp (p : Option Adposition := none) : Frame :=
+def np_pp (p : Option Adposition := none) : ArgumentFrame :=
   ⟨some .nominal, [.nominal, .adpositional (p.map (·.relation)) p]⟩
 
 /-- Finite declarative clause. -/
-def finiteClause : Frame :=
+def finiteClause : ArgumentFrame :=
   ⟨some .nominal, [.clausal (coding := some .indicative) (force := some .declarative)]⟩
 
 /-- Infinitival clause. The embedded-subject requirement varies by verb
     (equi-deletion, raising, or adposition-marked overt subjects,
     [noonan-2007] §1.3.4), so it lives on the verb's reading, not here. -/
-def infinitival : Frame := ⟨some .nominal, [.clausal (coding := some .infinitive)]⟩
+def infinitival : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .infinitive)]⟩
 
 /-- Gerund / nominalized clause. -/
-def gerund : Frame := ⟨some .nominal, [.clausal (coding := some .nominalized)]⟩
+def gerund : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .nominalized)]⟩
 
 /-- Small clause (*consider X happy*; causative *make X leave*). Outside
     [noonan-2007]'s coding inventory, which classifies complements by
     the part of speech of their predicate, so the position records
     nothing. -/
-def smallClause : Frame := ⟨some .nominal, [.clausal]⟩
+def smallClause : ArgumentFrame := ⟨some .nominal, [.clausal]⟩
 
 /-- Embedded question. Interrogativity is a force distinction
     orthogonal to [noonan-2007] coding, so `coding` stays `none`. -/
-def question : Frame := ⟨some .nominal, [.clausal (force := some .interrogative)]⟩
+def question : ArgumentFrame := ⟨some .nominal, [.clausal (force := some .interrogative)]⟩
 
-end Frame
+end ArgumentFrame
 
 /-! ### The flat enum view -/
 
 /--
 Complement type that the verb selects — the flat view over the typed
-`Frame`.
+`ArgumentFrame`.
 
 - Finite: "that" clauses ("John knows that Mary left")
 - Infinitival: "to" complements ("John managed to leave")
@@ -458,17 +464,18 @@ def ComplementType.isClausal : ComplementType → Bool
   | .finiteClause | .infinitival | .gerund | .smallClause | .question => true
   | _ => false
 
-/-- The `Frame` cell of a flat `ComplementType` (`.none` ↦ `Frame.intransitive`). -/
-def ComplementType.toFrame : ComplementType → Frame
-  | .none => Frame.intransitive
-  | .np => Frame.np
-  | .np_np => Frame.np_np
-  | .np_pp => Frame.np_pp
-  | .finiteClause => Frame.finiteClause
-  | .infinitival => Frame.infinitival
-  | .gerund => Frame.gerund
-  | .smallClause => Frame.smallClause
-  | .question => Frame.question
+/-- The `ArgumentFrame` cell of a flat `ComplementType`, `ArgumentFrame.intransitive` for
+`.none`. -/
+def ComplementType.toFrame : ComplementType → ArgumentFrame
+  | .none => ArgumentFrame.intransitive
+  | .np => ArgumentFrame.np
+  | .np_np => ArgumentFrame.np_np
+  | .np_pp => ArgumentFrame.np_pp
+  | .finiteClause => ArgumentFrame.finiteClause
+  | .infinitival => ArgumentFrame.infinitival
+  | .gerund => ArgumentFrame.gerund
+  | .smallClause => ArgumentFrame.smallClause
+  | .question => ArgumentFrame.question
 
 /-- The clausal cell a clausal position with axes `c`, `f` instantiates:
     interrogative force is an embedded question, otherwise the coding
@@ -486,7 +493,7 @@ private def clausalCell (c : Option Complement.Coding) (f : Option Mood.Illocuti
     unaccusative's sole nominal surfaces as subject, an implicit
     complement not at all — by their shapes, a single clausal complement
     by its axes, and `none` on the shapes the enum has no cell for. -/
-def Frame.complementType? : Frame → Option ComplementType
+def ArgumentFrame.complementType? : ArgumentFrame → Option ComplementType
   | ⟨none, [.nominal]⟩ => some .none
   | ⟨_, []⟩ | ⟨_, [.implicit _]⟩ => some .none
   | ⟨_, [.nominal]⟩ => some .np
@@ -497,22 +504,22 @@ def Frame.complementType? : Frame → Option ComplementType
 
 /-- `ComplementType.toFrame` is a section of the classification. -/
 @[simp]
-theorem Frame.complementType?_toFrame (ct : ComplementType) :
+theorem ArgumentFrame.complementType?_toFrame (ct : ComplementType) :
     ct.toFrame.complementType? = some ct := by cases ct <;> rfl
 
 theorem ComplementType.toFrame_injective :
     Function.Injective ComplementType.toFrame := fun a b h =>
   Option.some_injective _
-    (by rw [← Frame.complementType?_toFrame, h, Frame.complementType?_toFrame])
+    (by rw [← ArgumentFrame.complementType?_toFrame, h, ArgumentFrame.complementType?_toFrame])
 
 /-- A cell's frame has a clausal complement exactly when the cell is clausal. -/
 @[simp]
-theorem Frame.hasClausal_toFrame (ct : ComplementType) :
+theorem ArgumentFrame.hasClausal_toFrame (ct : ComplementType) :
     ct.toFrame.HasClausal ↔ ct.isClausal = true := by cases ct <;> decide
 
 /-- A cell's frame has a nominal complement exactly when the cell is nominal. -/
 @[simp]
-theorem Frame.hasNominal_toFrame (ct : ComplementType) :
+theorem ArgumentFrame.hasNominal_toFrame (ct : ComplementType) :
     ct.toFrame.HasNominal ↔ ct.isNominal = true := by cases ct <;> decide
 
 /-- The [noonan-2007] coding of a complement frame: `none` for

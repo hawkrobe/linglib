@@ -1,6 +1,6 @@
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Category.Complementizer.Basic
-import Linglib.Syntax.Category.Verb.Complement.Takes
+import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 
 /-!
 # Ndebele clausal embedding
@@ -47,28 +47,29 @@ structure Verb extends _root_.Verb where
 /-- *cabanga* 'think', with an indicative complement ((4), (12)). -/
 def cabanga : Verb where
   form := "cabanga"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   predicateClass := .propAttitude
   attitude := some (.doxastic .nonVeridical)
 
 /-- *funa* 'want', with a subjunctive complement and plain class-15 objects ((7)). -/
 def funa : Verb where
   form := "funa"
-  frames := [{ complements := [.clausal (coding := some .subjunctive) (force := some .declarative)] },
-    Frame.np]
+  frames :=
+    [{ complements := [.clausal (coding := some .subjunctive) (force := some .declarative)] },
+      ArgumentFrame.np]
   predicateClass := .desiderative
   attitude := some (.preferential (.degreeComparison .positive))
 
 /-- *zwa* 'hear', attested as a hearsay report ((18)). -/
 def zwa : Verb where
   form := "zwa"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   predicateClass := .perception
 
 /-- *khuluma nga* 'talk about', whose clause is the object of the preposition ((20b)). -/
 def khulumaNga : Verb where
   form := "khuluma nga"
-  frames := [Frame.pp]
+  frames := [ArgumentFrame.pp]
   predicateClass := .utterance
   speechActVerb := true
 
@@ -76,7 +77,8 @@ def khulumaNga : Verb where
 def verbs : List Verb := [cabanga, funa, zwa, khulumaNga]
 
 /-- Every clausal frame takes *ukuthi*, the one complementizer for both moods. -/
-theorem takes_ukuthi : ∀ v ∈ verbs, ∀ fr ∈ v.frames, fr.HasClausal → Frame.Takes fr ukuthi := by
+theorem takes_ukuthi :
+    ∀ v ∈ verbs, ∀ fr ∈ v.frames, fr.HasClausal → ArgumentFrame.Takes fr ukuthi := by
   decide
 
 end Ndebele

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Category.Complementizer.Basic
-import Linglib.Syntax.Category.Verb.Complement.Basic
+import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 
 /-!
 # Gã fragment
@@ -13,7 +13,7 @@ import Linglib.Syntax.Category.Verb.Complement.Basic
 This file records the Gã (ISO 639-3 `gaa`; Kwa, Ghana) data of [allotey-2021]:
 the pronoun paradigm of Table 3 as `PersonalPronoun` entries, the three
 complementizers as `Complementizer` entries, the three-way embedded clause
-typology they head together with the complement `Frame` each type records, and
+typology they head together with the complement `ArgumentFrame` each type records, and
 the pro-drop profile. The complement-taking verbs are in
 `Fragments/Ga/Predicates`.
 
@@ -100,14 +100,14 @@ def complementizers : List Complementizer := [ake, keji, ni]
 /-! ### Embedded clause typology -/
 
 /-- The finite interrogative frame `kɛji` types. -/
-def kejiFrame : Frame :=
+def kejiFrame : ArgumentFrame :=
   { complements := [.clausal (coding := some .indicative) (force := some .interrogative)] }
 
 /-- The controlled irrealis frame `ni` types: [noonan-2007]-infinitival, the
     paper's own term, with a subject that is an overt proclitic in the
     subjective (nominative) form of Table 3 — never null and never a lexical DP
     (exx 40–42). -/
-def niFrame : Frame :=
+def niFrame : ArgumentFrame :=
   { complements :=
     [.clausal (coding := some .infinitive) (embeddedSubject := some (.overt (some .nom)))] }
 
@@ -132,8 +132,8 @@ def complementizer : EmbeddedClauseType → Complementizer
 
 /-- The complement frame a verb selecting the clause type records; `akɛ` types
     the generic finite declarative. -/
-def frame : EmbeddedClauseType → Frame
-  | ake => Frame.finiteClause
+def frame : EmbeddedClauseType → ArgumentFrame
+  | ake => ArgumentFrame.finiteClause
   | keji => kejiFrame
   | ni => niFrame
 

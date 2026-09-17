@@ -37,7 +37,7 @@ structure Verb extends _root_.Verb where
 /-- *tanoshimi* 'look forward to', a positive preference relative to relevance. -/
 def tanosimi : Verb where
   form := "tanosimi"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.relevanceBased .positive))
@@ -45,7 +45,7 @@ def tanosimi : Verb where
 /-- *osore* 'fear', a negative preference by comparison of degrees. -/
 def osore : Verb where
   form := "osore"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .negative))
@@ -53,7 +53,7 @@ def osore : Verb where
 /-- *kitai* 'expect, hope', a positive preference by comparison of degrees. -/
 def kitai : Verb where
   form := "kitai"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -61,7 +61,7 @@ def kitai : Verb where
 /-- *nozomu* 'hope', a positive preference by comparison of degrees. -/
 def nozomu : Verb where
   form := "nozomu"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -69,7 +69,7 @@ def nozomu : Verb where
 /-- *shinpai* 'worry', a preference relative to uncertainty. -/
 def shinpai : Verb where
   form := "shinpai"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .uncertaintyBased)
@@ -79,15 +79,15 @@ def shinpai : Verb where
 /-- *ik-ase-ru* 'make go', the causative of *iku* with an accusative causee. -/
 def ik_ase : Verb where
   form := "ik-ase-ru"
-  frames := [Frame.smallClause]
-  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
+  frames := [ArgumentFrame.smallClause]
+  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   causative := some .make
 
 /-- *tabe-sase-ru* 'make eat', the causative of *taberu* with an accusative causee. -/
 def tabe_sase : Verb where
   form := "tabe-sase-ru"
-  frames := [Frame.smallClause]
-  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
+  frames := [ArgumentFrame.smallClause]
+  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   causative := some .make
 
 /-! ### Departure verbs -/
@@ -96,7 +96,7 @@ def tabe_sase : Verb where
 thematic Voice. -/
 def hanareru : Verb where
   form := "hanareru"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   unaccusative := true
   voiceType := some .nonThematic
   passivizable := false
@@ -105,7 +105,7 @@ def hanareru : Verb where
 Voice. -/
 def deru : Verb where
   form := "deru"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   unaccusative := true
   voiceType := some .nonThematic
   passivizable := false

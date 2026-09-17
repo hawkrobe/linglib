@@ -270,7 +270,7 @@ def lexicon : List HausaVerb :=
     canonicity — making the empirical claim "gr1 has an intransitive
     sub-use" *visible* in the type system rather than buried in prose. -/
 def gangara : HausaVerb :=
-  { mkVerb "gangarā" gr1 with frames := [Frame.intransitive] }
+  { mkVerb "gangarā" gr1 with frames := [ArgumentFrame.intransitive] }
 
 -- ============================================================================
 -- § 6: Universal Theorems About the Grade System

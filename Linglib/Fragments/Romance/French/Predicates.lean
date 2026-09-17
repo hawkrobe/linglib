@@ -39,8 +39,8 @@ def faire : FrenchVerbEntry where
   formPasse := "fit"
   formPartPasse := "fait"
   formPartPres := "faisant"
-  frames := [Frame.smallClause]
-  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
+  frames := [ArgumentFrame.smallClause]
+  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   causative := some .make
 
 /-- laisser — permissive causative ("let"). -/
@@ -50,8 +50,8 @@ def laisser : FrenchVerbEntry where
   formPasse := "laissa"
   formPartPasse := "laissé"
   formPartPres := "laissant"
-  frames := [Frame.smallClause]
-  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
+  frames := [ArgumentFrame.smallClause]
+  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   causative := some .enable
 
 /-- French *faire* uses `.make` builder. -/
@@ -90,35 +90,35 @@ def cosSubjectProfile : EntailmentProfile where
 def brunir : FrenchVerbEntry where
   form := "brunir"; form3sg := "brunit"; formPasse := "brunit"
   formPartPasse := "bruni"; formPartPres := "brunissant"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   subjectEntailments := some cosSubjectProfile
 
 /-- noircir — 'blacken, darken'. Limited-control ±se AC-verb. -/
 def noircir : FrenchVerbEntry where
   form := "noircir"; form3sg := "noircit"; formPasse := "noircit"
   formPartPasse := "noirci"; formPartPres := "noircissant"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   subjectEntailments := some cosSubjectProfile
 
 /-- pâlir — 'get pale'. Limited-control ±se AC-verb. -/
 def palir : FrenchVerbEntry where
   form := "pâlir"; form3sg := "pâlit"; formPasse := "pâlit"
   formPartPasse := "pâli"; formPartPres := "pâlissant"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   subjectEntailments := some cosSubjectProfile
 
 /-- rajeunir — 'get young(er), rejuvenate'. Limited-control ±se AC-verb. -/
 def rajeunir : FrenchVerbEntry where
   form := "rajeunir"; form3sg := "rajeunit"; formPasse := "rajeunit"
   formPartPasse := "rajeuni"; formPartPres := "rajeunissant"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   subjectEntailments := some cosSubjectProfile
 
 /-- rougir — 'redden, blush'. Limited-control ±se AC-verb. -/
 def rougir : FrenchVerbEntry where
   form := "rougir"; form3sg := "rougit"; formPasse := "rougit"
   formPartPasse := "rougi"; formPartPres := "rougissant"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   subjectEntailments := some cosSubjectProfile
 
 -- ============================================================================
@@ -143,35 +143,35 @@ def motionCosSubjectProfile : EntailmentProfile where
 def approcher : FrenchVerbEntry where
   form := "approcher"; form3sg := "approche"; formPasse := "approcha"
   formPartPasse := "approché"; formPartPres := "approchant"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   subjectEntailments := some motionCosSubjectProfile
 
 /-- durcir — 'harden'. In-control ±se AC-verb (property-change). -/
 def durcir : FrenchVerbEntry where
   form := "durcir"; form3sg := "durcit"; formPasse := "durcit"
   formPartPasse := "durci"; formPartPres := "durcissant"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   subjectEntailments := some cosSubjectProfile
 
 /-- plier — 'bend, fold'. In-control ±se AC-verb (motion). -/
 def plier : FrenchVerbEntry where
   form := "plier"; form3sg := "plie"; formPasse := "plia"
   formPartPasse := "plié"; formPartPres := "pliant"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   subjectEntailments := some motionCosSubjectProfile
 
 /-- radoucir — 'get soft(er)'. In-control ±se AC-verb (property-change). -/
 def radoucir : FrenchVerbEntry where
   form := "radoucir"; form3sg := "radoucit"; formPasse := "radoucit"
   formPartPasse := "radouci"; formPartPres := "radoucissant"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   subjectEntailments := some cosSubjectProfile
 
 /-- refroidir — 'get cold(er)'. In-control ±se AC-verb (property-change). -/
 def refroidir : FrenchVerbEntry where
   form := "refroidir"; form3sg := "refroidit"; formPasse := "refroidit"
   formPartPasse := "refroidi"; formPartPres := "refroidissant"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   subjectEntailments := some cosSubjectProfile
 
 -- ============================================================================
@@ -244,7 +244,7 @@ def accompanySubjectProfile : EntailmentProfile where
 def laver : FrenchVerbEntry where
   form := "laver"; form3sg := "lave"; formPasse := "lava"
   formPartPasse := "lavé"; formPartPres := "lavant"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   subjectEntailments := some protoTransSubjectProfile
   objectEntailments := some protoTransObjectProfile
   vendlerClass := some .accomplishment
@@ -253,7 +253,7 @@ def laver : FrenchVerbEntry where
 def ecrire : FrenchVerbEntry where
   form := "écrire"; form3sg := "écrit"; formPasse := "écrivit"
   formPartPasse := "écrit"; formPartPres := "écrivant"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   subjectEntailments := some protoTransSubjectProfile
   objectEntailments := some { protoTransObjectProfile with
     incrementalTheme := true, dependentExistence := true }
@@ -263,7 +263,7 @@ def ecrire : FrenchVerbEntry where
 def construire : FrenchVerbEntry where
   form := "construire"; form3sg := "construit"; formPasse := "construisit"
   formPartPasse := "construit"; formPartPres := "construisant"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   subjectEntailments := some protoTransSubjectProfile
   objectEntailments := some { protoTransObjectProfile with
     incrementalTheme := true, dependentExistence := true }
@@ -273,7 +273,7 @@ def construire : FrenchVerbEntry where
 def tuer : FrenchVerbEntry where
   form := "tuer"; form3sg := "tue"; formPasse := "tua"
   formPartPasse := "tué"; formPartPres := "tuant"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   subjectEntailments := some protoTransSubjectProfile
   objectEntailments := some { protoTransObjectProfile with
     dependentExistence := true }
@@ -283,7 +283,7 @@ def tuer : FrenchVerbEntry where
 def aimer : FrenchVerbEntry where
   form := "aimer"; form3sg := "aime"; formPasse := "aima"
   formPartPasse := "aimé"; formPartPres := "aimant"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   subjectEntailments := some experiencerSubjectProfile
   objectEntailments := some minimalParticipantProfile
   vendlerClass := some .state
@@ -292,7 +292,7 @@ def aimer : FrenchVerbEntry where
 def adorer : FrenchVerbEntry where
   form := "adorer"; form3sg := "adore"; formPasse := "adora"
   formPartPasse := "adoré"; formPartPres := "adorant"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   subjectEntailments := some experiencerSubjectProfile
   objectEntailments := some minimalParticipantProfile
   vendlerClass := some .state
@@ -301,7 +301,7 @@ def adorer : FrenchVerbEntry where
 def respecter : FrenchVerbEntry where
   form := "respecter"; form3sg := "respecte"; formPasse := "respecta"
   formPartPasse := "respecté"; formPartPres := "respectant"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   subjectEntailments := some experiencerSubjectProfile
   objectEntailments := some minimalParticipantProfile
   vendlerClass := some .state
@@ -310,7 +310,7 @@ def respecter : FrenchVerbEntry where
 def accompagner : FrenchVerbEntry where
   form := "accompagner"; form3sg := "accompagne"; formPasse := "accompagna"
   formPartPasse := "accompagné"; formPartPres := "accompagnant"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   subjectEntailments := some accompanySubjectProfile
   objectEntailments := some minimalParticipantProfile
   vendlerClass := some .activity
@@ -319,7 +319,7 @@ def accompagner : FrenchVerbEntry where
 def suivreDyn : FrenchVerbEntry where
   form := "suivre"; form3sg := "suit"; formPasse := "suivit"
   formPartPasse := "suivi"; formPartPres := "suivant"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .default
   subjectEntailments := some dynamicFollowSubjectProfile
   objectEntailments := some minimalParticipantProfile
@@ -329,7 +329,7 @@ def suivreDyn : FrenchVerbEntry where
 def suivreStat : FrenchVerbEntry where
   form := "suivre"; form3sg := "suit"; formPasse := "suivit"
   formPartPasse := "suivi"; formPartPres := "suivant"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .stative
   subjectEntailments := some stativePositionalSubjectProfile
   objectEntailments := some minimalParticipantProfile
@@ -339,7 +339,7 @@ def suivreStat : FrenchVerbEntry where
 def preceder : FrenchVerbEntry where
   form := "précéder"; form3sg := "précède"; formPasse := "précéda"
   formPartPasse := "précédé"; formPartPres := "précédant"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   subjectEntailments := some stativePositionalSubjectProfile
   objectEntailments := some minimalParticipantProfile
   vendlerClass := some .state
@@ -357,7 +357,7 @@ def neglectSubjectProfile : EntailmentProfile where
 def abandonner : FrenchVerbEntry where
   form := "abandonner"; form3sg := "abandonne"; formPasse := "abandonna"
   formPartPasse := "abandonné"; formPartPres := "abandonnant"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   subjectEntailments := some protoTransSubjectProfile
   objectEntailments := some protoTransObjectProfile
   vendlerClass := some .accomplishment
@@ -366,7 +366,7 @@ def abandonner : FrenchVerbEntry where
 def abandonnerStat : FrenchVerbEntry where
   form := "abandonner"; form3sg := "abandonne"; formPasse := "abandonna"
   formPartPasse := "abandonné"; formPartPres := "abandonnant"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .stative
   subjectEntailments := some neglectSubjectProfile
   objectEntailments := some minimalParticipantProfile
@@ -376,7 +376,7 @@ def abandonnerStat : FrenchVerbEntry where
 def delaisser : FrenchVerbEntry where
   form := "délaisser"; form3sg := "délaisse"; formPasse := "délaissa"
   formPartPasse := "délaissé"; formPartPres := "délaissant"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   subjectEntailments := some protoTransSubjectProfile
   objectEntailments := some protoTransObjectProfile
   vendlerClass := some .accomplishment
@@ -385,7 +385,7 @@ def delaisser : FrenchVerbEntry where
 def delaisserStat : FrenchVerbEntry where
   form := "délaisser"; form3sg := "délaisse"; formPasse := "délaissa"
   formPartPasse := "délaissé"; formPartPres := "délaissant"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .stative
   subjectEntailments := some neglectSubjectProfile
   objectEntailments := some minimalParticipantProfile
