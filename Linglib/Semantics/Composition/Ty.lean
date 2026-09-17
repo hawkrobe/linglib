@@ -63,6 +63,8 @@ abbrev Ty.et : Ty := .e ⇒ .t
 abbrev Ty.eet : Ty := .e ⇒ .e ⇒ .t
 /-- `⟨⟨e,t⟩,t⟩`, generalized quantifiers. -/
 abbrev Ty.ett : Ty := (.e ⇒ .t) ⇒ .t
+/-- `⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩`, determiners. -/
+abbrev Ty.det : Ty := (.e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t)
 
 /-- Denotation domains: `e` denotes in `E`, `t` in `Prop`, `d` in the scale `D`, `n` in
 `ℕ`, `⟨a,b⟩` in `Ty.Domain a → Ty.Domain b` and `⟨s,a⟩` in `W → Ty.Domain a`. The eventuality sorts

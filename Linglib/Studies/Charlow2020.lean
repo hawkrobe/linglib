@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Functor
 import Linglib.Studies.Charlow2018
 import Linglib.Semantics.Composition.Cont
-import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.NP
 
 /-!
 # Charlow 2020: the scope of alternatives

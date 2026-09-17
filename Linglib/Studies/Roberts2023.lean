@@ -223,10 +223,10 @@ end Scoreboard
 /-! ### Imperative subjects -/
 
 /-- The second-person pronoun (66), overt or null: application to an addressee. -/
-def pro (x : E) : Quantifier E := λ Q => Q x
+def pro (x : E) : NP E := λ Q => Q x
 
 /-- *Nobody* restricted to the addressees (68). -/
-def nobody (addr : E → Prop) : Quantifier E := λ Q => ∀ x, addr x → ¬ Q x
+def nobody (addr : E → Prop) : NP E := λ Q => ∀ x, addr x → ¬ Q x
 
 /-- An addressee's pronoun satisfies the conservativity presupposition (65): it lives on the
 set of addressees. -/

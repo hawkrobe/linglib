@@ -1,5 +1,5 @@
 import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.NP
 import Linglib.Semantics.Quantification.Lexicon
 
 /-!
@@ -11,7 +11,7 @@ English-specific determiner lexicon. Each entry is *marked* like a `Pronoun`
 typed by the standard determiner taxonomy in `Syntax/Category/Determiner/Basic.lean`:
 
 - the genuinely quantificational words (every, some, no, most, few, half, all,
-  each, many, both, neither) are `QuantifierDeterminer`;
+  each, many, both, neither) are `Quantifier`;
 - the definites/indefinites (the, a, an) are `Article`s and the demonstratives
   (this, that, these, those) are `DemonstrativeDeterminer`s.
 
@@ -47,53 +47,53 @@ export Quantification.Lexicon
 
 /-! ## Quantificational determiners
 
-Marked `QuantifierDeterminer` records: `form`, the selectional `numberRestriction`
+Marked `Quantifier` records: `form`, the selectional `numberRestriction`
 (root `Number`), and `selectsMass`. The meaning leaves these open — *every* and
 *all* can share a denotation yet differ in `numberRestriction`. -/
 
 /-- "none" — negative, accepts mass NPs. -/
-def none_ : QuantifierDeterminer := { form := "none", selectsMass := true }
+def none_ : Quantifier := { form := "none", selectsMass := true }
 
 /-- "few" — proportional, plural. -/
-def few : QuantifierDeterminer := { form := "few", numberRestriction := some .plural }
+def few : Quantifier := { form := "few", numberRestriction := some .plural }
 
 /-- "some" — existential, accepts mass NPs. -/
-def some_ : QuantifierDeterminer := { form := "some", selectsMass := true }
+def some_ : Quantifier := { form := "some", selectsMass := true }
 
 /-- "half" — proportional, accepts mass NPs. -/
-def half : QuantifierDeterminer := { form := "half", selectsMass := true }
+def half : Quantifier := { form := "half", selectsMass := true }
 
 /-- "most" — proportional, plural, accepts mass NPs. -/
-def most : QuantifierDeterminer :=
+def most : Quantifier :=
   { form := "most", numberRestriction := some .plural, selectsMass := true }
 
 /-- "all" — universal, plural, accepts mass NPs. -/
-def all : QuantifierDeterminer :=
+def all : Quantifier :=
   { form := "all", numberRestriction := some .plural, selectsMass := true }
 
 /-- "every" — universal, singular. -/
-def every : QuantifierDeterminer := { form := "every", numberRestriction := some .singular }
+def every : Quantifier := { form := "every", numberRestriction := some .singular }
 
 /-- "each" — universal, distributive, singular. -/
-def each : QuantifierDeterminer := { form := "each", numberRestriction := some .singular }
+def each : Quantifier := { form := "each", numberRestriction := some .singular }
 
 /-- "many" — proportional, plural. -/
-def many : QuantifierDeterminer := { form := "many", numberRestriction := some .plural }
+def many : Quantifier := { form := "many", numberRestriction := some .plural }
 
 /-- "both" — universal dual, presupposes exactly 2.
     K&S (83a): [_Det each of the two] ⇒ both. Compositional denotation
-    `both_sem` lives in `Quantification.Quantifier`.
+    `both_sem` lives in `Quantification/Counting.lean`.
 
     `numberRestriction := some .dual` carries the dual core concept
     ([harbour-2014] `[−atomic, +minimal]`); the cardinality clause `|R| ≥ 2`
     on the denotation side reflects the Harbour `dualPredOnLattice` reading
     ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]). -/
-def both : QuantifierDeterminer := { form := "both", numberRestriction := some .dual }
+def both : Quantifier := { form := "both", numberRestriction := some .dual }
 
 /-- "neither" — negative dual, presupposes exactly 2.
     K&S (83b): [_Det (not one) of the two] ⇒ neither. Compositional denotation
-    `neither_sem` lives in `Quantification.Quantifier`. -/
-def neither : QuantifierDeterminer := { form := "neither", numberRestriction := some .dual }
+    `neither_sem` lives in `Quantification/Counting.lean`. -/
+def neither : Quantifier := { form := "neither", numberRestriction := some .dual }
 
 /-! ## Articles and demonstratives
 
@@ -194,7 +194,7 @@ instance : Fintype QuantityWord where
 /-- B&C Table II typological metadata: the textbook-consensus descriptive
     labels (force, monotonicity, weak/strong strength) a quantity word carries.
     A small local record over the `Quantification.Lexicon` enums — *not* the
-    lexical marking (that is `QuantifierDeterminer`, above) and *not* the denotation
+    lexical marking (that is `Quantifier`, above) and *not* the denotation
     (that is `QuantityWord.gqDenotation`). -/
 structure QuantityWord.Metadata where
   /-- Quantificational force. -/
@@ -231,7 +231,7 @@ def QuantityWord.toList : List QuantityWord :=
 
 /-- Canonical model-theoretic generalized-quantifier denotation
     (B&C-style), built on `every_sem`/`some_sem`/`no_sem`/etc. from
-    `Quantification.Quantifier`. -/
+    `Quantification/Basic.lean` and `Quantification/Counting.lean`. -/
 noncomputable def QuantityWord.gqDenotation (q : QuantityWord)
     {α : Type*} [Fintype α] : Quantification.GQ α :=
   open Quantification in
@@ -246,7 +246,7 @@ noncomputable def QuantityWord.gqDenotation (q : QuantityWord)
 /-! ## Lexicon Access -/
 
 /-- All quantificational determiner entries (excluding definites). -/
-def allQuantifiers : List QuantifierDeterminer := [
+def allQuantifiers : List Quantifier := [
   none_, few, some_, half, most, all, every, each, many, both, neither
 ]
 

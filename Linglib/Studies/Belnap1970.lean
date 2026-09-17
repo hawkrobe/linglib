@@ -1,6 +1,6 @@
 import Linglib.Semantics.Presupposition.Trivalent
 import Linglib.Logic.Aristotelian.Square
-import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.NP
 import Linglib.Fragments.English.Toy
 import Linglib.Data.Examples.Belnap1970
 import Mathlib.Data.Fintype.Basic

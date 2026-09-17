@@ -77,10 +77,10 @@ open Quantification
 variable (j : E)
 
 /-- The presuppositional definite article, the Montague lift of the unique `P`. -/
-noncomputable def THE : Option (Quantifier E) := (russellIota P).map individual
+noncomputable def THE : Option (NP E) := (russellIota P).map individual
 
 /-- The entity whose Montague lift is `Q`, when `Q` is a principal ultrafilter. -/
-noncomputable def lower (Q : Quantifier E) : Option E := russellIota fun j ↦ Q = individual j
+noncomputable def lower (Q : NP E) : Option E := russellIota fun j ↦ Q = individual j
 
 theorem russellIota_ident : russellIota (ident j) = some j :=
   (russellIota_eq_some_iff _).2 ⟨rfl, fun _ h ↦ h⟩

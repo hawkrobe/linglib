@@ -1,4 +1,4 @@
-import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.NP
 import Linglib.Semantics.Reference.Iota
 import Mathlib.Data.Finset.Lattice.Fold
 
@@ -19,7 +19,7 @@ of *the king* is `BE(THE(king'))`, so that the three readings of Figure 2 cohere
 one king, which is why the article can be dropped in *John is (the) president*
 (`THE_eq_lift_iota`, `lower_THE`, `BE_THE`, `BE_THE_eq_of_unique`). The functor `BE`,
 Montague's translation of *be* reconceived as a type shifter, is a homomorphism of the Boolean
-structures, Fact 1 of §3.3, the substrate's `Quantification.BE_hom`, and the unique
+structures, Fact 1 of §3.3, the substrate's `Quantification.beHom`, and the unique
 homomorphism making Figure 3 commute, `BE(lift(j)) = ident(j)`, Fact 2 (`BE_lift`,
 `BE_natural`); the indefinite article `A` is natural as its inverse, `BE(A(P)) = P`, so *be a
 man* comes out as *man* (`BE_A`). English *be* itself is then predicate application, the
@@ -91,14 +91,14 @@ theorem BE_lift : BE (individual j) = ident j :=
   BE_individual_eq_ident j
 
 /-- Fact 2: `BE` is the unique Boolean homomorphism making Figure 3 commute; Fact 1, that it
-is one, is `Quantification.BE_hom`. -/
-theorem BE_natural [Fintype E] [DecidableEq E] (f : BoundedLatticeHom (Quantifier E) (E → Prop))
-    (hcomm : ∀ j : E, f (individual j) = ident j) (Q : Quantifier E) : f Q = BE Q := by
+is one, is `Quantification.beHom`. -/
+theorem BE_natural [Fintype E] [DecidableEq E] (f : BoundedLatticeHom (NP E) (E → Prop))
+    (hcomm : ∀ j : E, f (individual j) = ident j) (Q : NP E) : f Q = BE Q := by
   funext x
   show f Q x = Q (ident x)
   -- the atom of the quantifier algebra at `{x}`, as a meet of literals
-  let lit : E → Quantifier E := λ j => if j = x then individual j else (individual j)ᶜ
-  let atom : Quantifier E := Finset.univ.inf lit
+  let lit : E → NP E := λ j => if j = x then individual j else (individual j)ᶜ
+  let atom : NP E := Finset.univ.inf lit
   have hf_lit : ∀ j, f (lit j) = if j = x then ident j else (ident j)ᶜ := λ j => by
     simp only [lit]; split
     · exact hcomm j
@@ -116,7 +116,7 @@ theorem BE_natural [Fintype E] [DecidableEq E] (f : BoundedLatticeHom (Quantifie
     simp only [lit] at hj; split at hj
     · exact propext ⟨λ _ => ‹j = x›, λ _ => hj⟩
     · exact propext ⟨λ hr => absurd hr hj, λ e => absurd e ‹¬ j = x›⟩
-  have hatom_le : ∀ S : Quantifier E, S (ident x) → atom ≤ S :=
+  have hatom_le : ∀ S : NP E, S (ident x) → atom ≤ S :=
     λ S hS R hR => hatom_point R hR ▸ hS
   by_cases hQ : Q (ident x)
   · exact propext ⟨λ _ => hQ, λ _ => OrderHomClass.mono f (hatom_le Q hQ) x hf_atom⟩

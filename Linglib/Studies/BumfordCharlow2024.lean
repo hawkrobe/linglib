@@ -4,7 +4,7 @@ import Mathlib.Data.Set.Functor
 import Linglib.Semantics.Composition.Tree
 import Linglib.Studies.HeimKratzer1998
 import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.NP
 import Linglib.Semantics.Composition.Binding
 import Linglib.Semantics.Composition.Ty
 import Linglib.Semantics.Composition.Assignment
