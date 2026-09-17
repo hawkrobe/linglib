@@ -67,6 +67,12 @@ causative alternation (they lexicalize CoS). These verbs enter the
 construction because only their force-application component is
 relevant, not the removal result. -/
 
+/-- The paper's characterization of the core classes: contact and motion without a change
+of state or causation, the components of *hit* in [levin-1993]'s Introduction. -/
+def components : LevinClass → MeaningComponents
+  | .pushPull | .hit => MeaningComponents.hit
+  | _ => .none
+
 /-- The core Levin classes for intr-*push open* verbs.
     Verbs of exerting force (§12 = pushPull) and verbs of surface
     contact, hitting subtype (§18.1 = hit). Wipe verbs (§10.4) also
@@ -100,7 +106,7 @@ theorem all_classes_pure_manner :
     ([fillmore-1970]): no scalar change is lexicalized. -/
 theorem all_classes_no_cos_no_causation :
     intrPushOpenClasses.all (λ c =>
-      let mc := c.meaningComponents
+      let mc := (components c)
       mc.contact && mc.motion && !mc.changeOfState && !mc.causation
     ) = true := by
   decide
@@ -127,7 +133,7 @@ intr-*push open* resultatives." -/
 
 /-- PushPull alone: no causative alternation. -/
 theorem pushPull_alone_no_alternation :
-    LevinClass.pushPull.meaningComponents.predictedAlternation
+    (components .pushPull).predictedAlternation
       .causativeInchoative = false := by decide
 
 /-- PushPull in the resultative: causative alternation predicted.
@@ -135,25 +141,25 @@ theorem pushPull_alone_no_alternation :
     has `changeOfState && causation`, which is the precondition. -/
 theorem pushPull_alternates_in_resultative :
     predictedAlternationInConstruction
-      LevinClass.pushPull.meaningComponents
+      (components .pushPull)
       resultative .causativeInchoative = true := by decide
 
 /-- Hit alone: no causative alternation. -/
 theorem hit_alone_no_alternation :
-    LevinClass.hit.meaningComponents.predictedAlternation
+    (components .hit).predictedAlternation
       .causativeInchoative = false := by decide
 
 /-- Hit in the resultative: causative alternation predicted. -/
 theorem hit_alternates_in_resultative :
     predictedAlternationInConstruction
-      LevinClass.hit.meaningComponents
+      (components .hit)
       resultative .causativeInchoative = true := by decide
 
 /-- All core intr-push-open classes alternate in the resultative. -/
 theorem all_classes_alternate_in_resultative :
     intrPushOpenClasses.all (λ c =>
       predictedAlternationInConstruction
-        c.meaningComponents resultative .causativeInchoative
+        (components c) resultative .causativeInchoative
     ) = true := by decide
 
 /-! ### Event structure shift (bridge to `EventStructure`)
@@ -167,34 +173,34 @@ open ArgumentStructure.EventStructure
 
 /-- PushPull alone is an activity (no CoS, no CAUSE). -/
 theorem pushPull_is_activity :
-    LevinClass.pushPull.eventTemplate = .activity := rfl
+    (components .pushPull).predictedTemplate = .activity := rfl
 
 /-- PushPull in the resultative shifts to accomplishment (the construction
     adds [CAUSE [BECOME [STATE]]]). -/
 theorem pushPull_accomplishment_in_resultative :
-    (LevinClass.pushPull.meaningComponents.fuse
+    ((components .pushPull).fuse
       resultative.meaning).predictedTemplate = .accomplishment := by
   exact fuse_cos_caus_yields_accomplishment _ _ rfl rfl
 
 /-- Hit alone is an activity. -/
 theorem hit_is_activity' :
-    LevinClass.hit.eventTemplate = .activity := rfl
+    (components .hit).predictedTemplate = .activity := rfl
 
 /-- Hit in the resultative shifts to accomplishment. -/
 theorem hit_accomplishment_in_resultative :
-    (LevinClass.hit.meaningComponents.fuse
+    ((components .hit).fuse
       resultative.meaning).predictedTemplate = .accomplishment := by
   exact fuse_cos_caus_yields_accomplishment _ _ rfl rfl
 
 /-- Full dual prediction for pushPull in the resultative: template shift
     AND alternation AND intransitive variant, all from one fusion. -/
 theorem pushPull_dual_in_resultative :
-    (LevinClass.pushPull.meaningComponents.fuse
+    ((components .pushPull).fuse
       resultative.meaning).predictedTemplate = .accomplishment ∧
-    (LevinClass.pushPull.meaningComponents.fuse
+    ((components .pushPull).fuse
       resultative.meaning).predictedAlternation
         .causativeInchoative = true ∧
-    (LevinClass.pushPull.meaningComponents.fuse
+    ((components .pushPull).fuse
       resultative.meaning).predictedTemplate.intransitiveVariant
         = some .achievement := by
   exact fuse_dual_prediction _ _ rfl rfl rfl rfl
@@ -202,8 +208,8 @@ theorem pushPull_dual_in_resultative :
 /-- Vendler class shift: pushPull goes from atelic activity to telic
     accomplishment inside the resultative. -/
 theorem pushPull_vendler_shift :
-    LevinClass.pushPull.eventTemplate.vendlerClass = .activity ∧
-    (LevinClass.pushPull.meaningComponents.fuse
+    (components .pushPull).predictedTemplate.vendlerClass = .activity ∧
+    ((components .pushPull).fuse
       resultative.meaning).predictedTemplate.vendlerClass
         = .accomplishment :=
   ⟨rfl, fuse_vendler_class_shift _ _ rfl rfl⟩
@@ -218,14 +224,14 @@ which comes from the resultative construction, not the verb. -/
 
 /-- Hit-class verbs (including *pound*) cannot enter the middle alone. -/
 theorem hit_no_middle_alone :
-    LevinClass.hit.meaningComponents.predictedAlternation .middle = false := by
+    (components .hit).predictedAlternation .middle = false := by
   decide
 
 /-- Hit-class verbs CAN enter the middle inside the resultative.
     This derives the paper's observation (18b) from the same mechanism. -/
 theorem hit_middle_in_resultative :
     predictedAlternationInConstruction
-      LevinClass.hit.meaningComponents resultative .middle = true := by
+      (components .hit) resultative .middle = true := by
   decide
 
 /-! ## Adjective inventory
@@ -381,7 +387,7 @@ theorem per_pair_alternation_core :
     (alternationPairs.filter (intrPushOpenClasses.contains ·.verbClass)).all (λ p =>
       !decide (p.verbClass.Participates .causativeInchoative) &&
       predictedAlternationInConstruction
-        p.verbClass.meaningComponents resultative .causativeInchoative
+        (components p.verbClass) resultative .causativeInchoative
     ) = true := by decide
 
 /-- Each pair's `adjType` agrees with the Fragment entry's `spatialConfigType`. -/
@@ -711,7 +717,7 @@ theorem end_to_end_push_open :
     LevinClass.rootEntailments .pushPull == some Root.Kinds.pureManner ∧
     -- Step 3: fusion — construction adds CoS + causation → alternation predicted
     predictedAlternationInConstruction
-      LevinClass.pushPull.meaningComponents
+      (components .pushPull)
       resultative .causativeInchoative = true ∧
     -- Step 5: BECOME = inception
     resultativeBECOME == .inception ∧
@@ -752,7 +758,7 @@ structure FilledResultative where
       causative alternation for the composed meaning. -/
   alternationPredicted :
     predictedAlternationInConstruction
-      verbClass.meaningComponents construction .causativeInchoative = true
+      (components verbClass) construction .causativeInchoative = true
   /-- The adjective describes a spatially instantiated state. -/
   adjSpatial : adjective.spatialConfigType.isSome = true
 
@@ -845,7 +851,7 @@ The remaining conditions (discourse, theme) are runtime parameters. -/
 theorem pushOpen_filled_covers_core :
     -- From alternationPredicted: steps 1-3 (verb blocked alone → construction enables)
     predictedAlternationInConstruction
-      pushOpen_filled.verbClass.meaningComponents
+      (components pushOpen_filled.verbClass)
       pushOpen_filled.construction .causativeInchoative = true ∧
     -- From adjSpatial: step 2 (adjective spatial)
     pushOpen_filled.adjective.spatialConfigType.isSome = true := by

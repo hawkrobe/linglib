@@ -1,59 +1,21 @@
 /-!
-# ArgumentStructure.MeaningComponents
-[levin-1993] [beavers-koontz-garboden-2020]
+# Meaning components
 
-Binary meaning-component features that define [levin-1993] verb classes
-diagnostically (via diathesis alternation participation), with the `fuse`
-operator for componentwise composition.
+The decomposition of verb meaning that [levin-1993]'s Introduction diagnoses by diathesis
+alternations: a change of state (the middle and causative/inchoative alternations), contact
+(body-part possessor ascension), motion (the conative alternation, with contact) and causation
+(the causative/inchoative alternation, with a change of state), on which *break*, *cut*, *hit*
+and *touch* take four distinct vectors. `instrumentSpec` records the instrument *cut* verbs
+specify and `mannerSpec` a lexicalized manner; `fuse` is the library's componentwise
+composition of a verb's components with a construction's, an approximation and not
+[goldberg-1995]'s unification. Root-level entailments, which [beavers-koontz-garboden-2020]
+distinguish from these surface components, are `Root.Kinds`.
 
-## Provenance
+## References
 
-Moved from `Core/Lexical/VerbClass.lean` in the cleanup that dissolved
-`Core/Lexical/`. Lives at `Semantics/Lexical/` (sibling of
-`LevinTheory.lean`, `RoleList.lean`, `Semantics/ArgumentStructure/LevinClass.lean`,
-`DiathesisAlternation.lean`) because it encodes Levin's specific
-diagnostic apparatus (CoS / contact / motion / causation as the 4
-canonical features) — paper-anchored framework content, not consensus
-substrate.
-
-## Framework commitment
-
-The 4-feature decomposition is [levin-1993]'s diagnostic apparatus.
-[beavers-koontz-garboden-2020] argue these are SURFACE behaviors,
-not root-level entailments — root-level structural features live in
-`Semantics/Root/Kinds.lean::Root.Kinds`
-(state/manner/result/cause). The two carve-ups are NOT equivalent:
-e.g., `causation` here is what diathesis alternations diagnose, while
-B&KG's `cause` is a root entailment.
-
-The `instrumentSpec` and `mannerSpec` features supplement the 4-feature
-core for finer-grained subclass distinctions in Part II.
-
-## Note on `fuse`
-
-`fuse a b` is componentwise OR — the formaliser's design choice for
-modeling how a construction augments a verb's inherent semantics.
-Originally attributed to [goldberg-1995] in source comments, but
-Goldberg's actual constructional unification is *not* componentwise
-boolean OR (it involves semantic frame unification with role-fusion
-constraints, far more structured than disjunctive feature OR). The
-substrate's `fuse` is a useful approximation but should not be cited
-as Goldberg's operation directly.
-
-## Alternative frameworks not formalized at parallel substrate granularity
-
-The Levin-style alternation-diagnosed feature decomposition competes
-with other lexical-semantic frameworks worth formalizing as siblings:
-- **Generative Lexicon** ([pustejovsky-1995]): qualia structure
-  (formal/constitutive/telic/agentive) as the primitive decomposition.
-- **Frame semantics** ([fillmore-1982],
-  [fillmore-kay-oconnor-1988]): semantic frames as primitive,
-  alternations as surface reflexes.
-- **Lexical Conceptual Structure** ([jackendoff-1996]): primitive
-  predicates GO/STAY/CAUSE compose into LCS templates.
-- **Configurational lexical semantics** ([hale-keyser-1987]):
-  verb meaning derives from syntactic configuration, not feature
-  decomposition.
+* [levin-1993]
+* [beavers-koontz-garboden-2020]
+* [goldberg-1995]
 -/
 
 namespace ArgumentStructure
@@ -95,12 +57,12 @@ structure MeaningComponents where
 
 namespace MeaningComponents
 
+/-- The Introduction's vectors for *break*, *cut*, *hit* and *touch*. -/
 def break_ : MeaningComponents := ⟨true, false, false, true, false, false⟩
 def cut : MeaningComponents := ⟨true, true, true, true, true, false⟩
 def hit : MeaningComponents := ⟨false, true, true, false, false, false⟩
 def touch : MeaningComponents := ⟨false, true, false, false, false, false⟩
-def destroy : MeaningComponents := ⟨true, false, false, true, false, false⟩
-def bend : MeaningComponents := ⟨true, false, false, true, false, false⟩
+/-- No components, the identity of `fuse`. -/
 def none : MeaningComponents := ⟨false, false, false, false, false, false⟩
 
 /-- Componentwise OR. The formaliser's chosen approximation of

@@ -334,88 +334,9 @@ def MeaningComponents.predictedTemplate : MeaningComponents → ArgumentStructur
     else if !mc.motion && !mc.contact then .state
     else .activity
 
-/-- Predicted template for a Levin class. -/
-def LevinClass.eventTemplate : LevinClass → ArgumentStructure.EventStructure.Template
-  | c => c.meaningComponents.predictedTemplate
-
 end ArgumentStructure
 
 namespace ArgumentStructure.EventStructure
-
-/-! ### Verification: canonical quadruple -/
-
-/-- Break → accomplishment (CoS + causation → [ACT CAUSE BECOME]). -/
-theorem break_is_accomplishment :
-    LevinClass.break_.eventTemplate = .accomplishment := rfl
-
-/-- Hit → activity (contact + motion, no CoS → [ACT]). -/
-theorem hit_is_activity :
-    LevinClass.hit.eventTemplate = .activity := rfl
-
-/-- Touch → activity (contact only, no CoS). -/
-theorem touch_is_activity :
-    LevinClass.touch.eventTemplate = .activity := rfl
-
-/-- Cut → accomplishment (CoS + causation). -/
-theorem cut_is_accomplishment :
-    LevinClass.cut.eventTemplate = .accomplishment := rfl
-
-/-! ### Change-of-state classes → accomplishment -/
-
-/-- All §45 CoS classes map to accomplishment. -/
-theorem cos_classes_accomplishment :
-    LevinClass.break_.eventTemplate = .accomplishment
-    ∧ LevinClass.bend.eventTemplate = .accomplishment
-    ∧ LevinClass.cooking.eventTemplate = .accomplishment
-    ∧ LevinClass.otherChangeOfState.eventTemplate = .accomplishment
-    ∧ LevinClass.destroy.eventTemplate = .accomplishment := ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-/-! ### Motion classes → activity -/
-
-/-- Motion verbs are activities (no CoS, have motion). -/
-theorem motion_is_activity :
-    LevinClass.run.eventTemplate = .activity
-    ∧ LevinClass.inherentlyDirectedMotion.eventTemplate = .activity := ⟨rfl, rfl⟩
-
-/-! ### Stative classes → state -/
-
-/-- Perception/psych statives map to state template. -/
-theorem stative_classes_state :
-    LevinClass.exist.eventTemplate = .state
-    ∧ LevinClass.admire.eventTemplate = .state
-    ∧ LevinClass.want.eventTemplate = .state := ⟨rfl, rfl, rfl⟩
-
-/-! ### Achievement classes -/
-
-/-- Appear (CoS without causation) → achievement. -/
-theorem appear_is_achievement :
-    LevinClass.appear.eventTemplate = .achievement := rfl
-
-/-- Calve (CoS without causation) → achievement. -/
-theorem calve_is_achievement :
-    LevinClass.calve.eventTemplate = .achievement := rfl
-
-/-! ### Wiping verbs (Levin 10.4) -/
-
-/-- Wipe class → accomplishment (changeOfState + causation per
-its MeaningComponents). The two-predicate (motion + sustained contact)
-substructure is at `Studies/RappaportHovavLevin2024.lean`. -/
-theorem wipe_is_accomplishment :
-    LevinClass.wipeManner.eventTemplate = .accomplishment := rfl
-
-/-! ### Template → aspectual class consistency -/
-
-/-- Accomplishment classes (break, cut) are predicted telic. -/
-theorem break_telic :
-    LevinClass.break_.eventTemplate.vendlerClass = .accomplishment := rfl
-
-/-- Activity classes (hit, run) are predicted atelic. -/
-theorem hit_atelic :
-    LevinClass.hit.eventTemplate.vendlerClass = .activity := rfl
-
-/-- State classes (exist, admire) are predicted stative. -/
-theorem exist_stative :
-    LevinClass.exist.eventTemplate.vendlerClass = .state := rfl
 
 /-! ### Bridge: Event Structure ↔ Diathesis Alternation
 
@@ -444,18 +365,6 @@ theorem ci_alternation_iff_template_alternates (mc : MeaningComponents)
   cases cos <;> cases con <;> cases mot <;> cases caus <;>
     simp_all [MeaningComponents.predictedAlternation, MeaningComponents.predictedTemplate,
               Template.intransitiveVariant]
-
-/-- instrumentSpec breaks the template↔alternation correspondence: cut verbs have
-    accomplishment template (they cause state change) but cannot undergo
-    causative/inchoative alternation (instrument specification requires an agent).
-
-    This is why `ci_alternation_iff_template_alternates` requires
-    `instrumentSpec = false` — the hypothesis is necessary, not just sufficient. -/
-theorem instrumentSpec_breaks_correspondence :
-    LevinClass.cut.eventTemplate = .accomplishment ∧
-    LevinClass.cut.eventTemplate.intransitiveVariant = some .achievement ∧
-    LevinClass.cut.meaningComponents.predictedAlternation .causativeInchoative = false :=
-  ⟨rfl, rfl, rfl⟩
 
 /-- Fusion with CoS + causation yields accomplishment template regardless of
     the verb's original template. The resultative construction adds

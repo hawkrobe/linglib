@@ -236,14 +236,16 @@ The thick/thin distinction cross-cuts Levin classes: verbs in the same
 general domain (change of state, causation) can be thick or thin. The
 difference is whether the verb specifies manner of causing. -/
 
+/-- The paper's reading of *destroy* and *kill* in [levin-1993]'s components: a caused change
+of state with no contact or motion, the vector of *break*. -/
+def thinComponents : MeaningComponents := MeaningComponents.break_
+
 /-- Break (thick) and destroy (thin) both have CoS + causation in their
-    Levin meaning components. The thick/thin split is orthogonal to
+    meaning components. The thick/thin split is orthogonal to
     the basic meaning component profile. -/
 theorem break_destroy_same_components :
-    (LevinClass.break_.meaningComponents.changeOfState =
-     LevinClass.destroy.meaningComponents.changeOfState)
-    ∧ (LevinClass.break_.meaningComponents.causation =
-       LevinClass.destroy.meaningComponents.causation) := ⟨rfl, rfl⟩
+    MeaningComponents.break_.changeOfState = thinComponents.changeOfState
+    ∧ MeaningComponents.break_.causation = thinComponents.causation := ⟨rfl, rfl⟩
 
 /-- Thick manner verbs belong to Levin classes that predict the
     causative alternation. -/
@@ -262,14 +264,14 @@ theorem cut_class_rich_alternation :
     page stars the alternation and the paper's row agrees: the component prediction
     overshoots. -/
 theorem destroy_class_vs_empirical :
-    LevinClass.destroy.meaningComponents.predictedAlternation .causativeInchoative = true
+    thinComponents.predictedAlternation .causativeInchoative = true
     ∧ LevinClass.destroy.Stars .causativeInchoative
     ∧ MartinRoseNichols2025.ThickThin.destroy.alternating = false := by decide
 
 /-- Kill (thin, murder class) is predicted to alternate by its meaning components, but
     Levin's class page stars the alternation and the paper's row agrees. -/
 theorem kill_class_vs_empirical :
-    LevinClass.murder.meaningComponents.predictedAlternation .causativeInchoative = true
+    thinComponents.predictedAlternation .causativeInchoative = true
     ∧ LevinClass.murder.Stars .causativeInchoative
     ∧ kill.alternating = false := by decide
 
