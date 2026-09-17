@@ -22,11 +22,18 @@ determiners are the agreement evidence for the two-gender carrier of `Dutch.Gend
 * `Dutch.Determiners.inventory` and `Dutch.Determiners.marking`: the inventory, whose citation
   forms are the plural forms, and its derived [moroney-2021] cell.
 
+## Implementation notes
+
+The `uses` of *de* are the [schwarz-2009] use types. The generic and proper-name uses of the
+definite article, on which [schmuck-2020]'s micro-typology places Dutch between English and
+German, are not `DefiniteUse` cells and so are not recorded.
+
 ## References
 
 * [broekhuis-dendikken-2012]
 * [schwarz-2009]
 * [moroney-2021]
+* [schmuck-2020]
 -/
 
 namespace Dutch.Determiners

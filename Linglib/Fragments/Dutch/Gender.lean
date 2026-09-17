@@ -6,11 +6,14 @@ import Linglib.Syntax.Gender.Basic
 Dutch has two controller genders: the common gender of the *de*-words, the merger of the
 historical masculine and feminine, which Broekhuis and den Dikken's grammar calls non-neuter,
 and the neuter of the *het*-words. The definite article and the demonstratives distinguish them
-in the singular only; that evidence is `Dutch.Determiners.singular`.
+in the singular only; that evidence is `Dutch.Determiners.singular`. The carrier is read off
+the determiners rather than the pronouns, whose agreement is partly semantic, by the
+individuation of the referent ([kraaikamp-2012]).
 
 ## References
 
 * [broekhuis-dendikken-2012]
+* [kraaikamp-2012]
 -/
 
 namespace Dutch.Gender
