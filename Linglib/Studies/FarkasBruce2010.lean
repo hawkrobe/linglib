@@ -11,19 +11,20 @@ discourse commitments, the common ground, and the Table, whose items project the
 grounds that would settle them. A default assertion commits its author, places the declarative
 on the Table and projects confirmation alone (9); a default polar question places the
 interrogative on the Table and projects both resolutions (12). So an assertion leaves the
-common ground as it was, against [stalnaker-1978] (`Table.assert_cg`, `assert_not_narrowing`);
+common ground as it was, unlike [stalnaker-1978]'s update (`Table.cg_assert`,
+`assert_not_narrowing`);
 the two moves differ in whether the author is committed and in whether the projected set is
 inquisitive (`projectedSet_assert`, `projectedSet_polarQuestion`), and agree in deciding the
 sentence radical in every projected common ground (`Table.mem_of_mem_projectedSet_assert`,
 `Table.mem_or_compl_mem_of_mem_projectedSet_polarQuestion`). Confirmation (16) followed by the
 common-ground increase `M'` (17) settles an assertion (`shared_assert_confirm`,
-`isStable_increaseCG_assert`, `mem_cg_increaseCG`); a total denial (22) leaves nothing
+`isStable_settle_assert`, `mem_cg_settle`); a total denial (22) leaves nothing
 consistent projected and the conversation in crisis (21, `Table.inCrisis_assert_compl`), from
 which agreeing to disagree (23) recovers with the commitments intact
 (`not_inCrisis_agreeToDisagree`, `dc_agreeToDisagree`). A reverse answer to a polar question
 (28) is no crisis (`not_inCrisis_polarQuestion_assert_compl`), a confirming answer (24)
 projects the single common ground with the answer (`projectedSet_polarQuestion_assert`), and
-the questioner's confirmation of it settles the question (`isStable_increaseCG_polarQuestion`).
+the questioner's confirmation of it settles the question (`isStable_settle_polarQuestion`).
 
 §4.3 and §5 classify responding assertions by two features: the relative polarity [same] or
 [reverse] of the response to the sentence radical on the Table (31) and the absolute polarity
@@ -45,7 +46,7 @@ for the marked combination [reverse, +].
   question raises the same issue as its positive counterpart (15), `Question.polar_compl`, and
   the relative polarity of a response is computed from the sentences of the exchange rather
   than read off the Table.
-* `M'` is `Table.increaseCG`, which strips the shared proposition from the individual
+* `M'` is `Table.settle`, which strips the shared proposition from the individual
   commitment lists as (17) prescribes; the projected set is derived from the Table rather than
   stored, as the paper notes it can be.
 * Rows record the polarities of the initiating and responding sentences; since a responding
@@ -56,13 +57,13 @@ for the marked combination [reverse, +].
 
 * (5) accepts a bare *nu* denial of a positive assertion that (42) stars, so §5.2's claim that
   *ba* is required in a [reverse, −] denial is left as the weaker `ba_denial`.
+* Example and section numbers follow the 2009 preprint; UNVERIFIED against the numbering of
+  the journal version.
 
 ## References
 
 * [farkas-bruce-2010]
 * [stalnaker-1978]
-* [gunlogson-2001]
-* [karttunen-1977]
 -/
 
 namespace FarkasBruce2010
@@ -70,12 +71,6 @@ namespace FarkasBruce2010
 open Commitment Filter Data.Examples
 
 variable {W : Type*} (K : Table Discourse.Role W) (p : Set W)
-
-private theorem ne_empty_of_inf_ne_bot {f : Filter W} (h : f ⊓ 𝓟 p ≠ ⊥) : p ≠ ∅ :=
-  fun e ↦ h (by simp [e])
-
-private theorem ne_univ_of_inf_compl_ne_bot {f : Filter W} (h : f ⊓ 𝓟 pᶜ ≠ ⊥) : p ≠ Set.univ :=
-  fun e ↦ h (by simp [e])
 
 /-! ### Default assertions and default polar questions -/
 
@@ -90,56 +85,51 @@ theorem assert_not_narrowing :
 categorical bias towards confirmation. -/
 theorem projectedSet_assert (a : Discourse.Role) (hK : K.IsStable) (hp : K.cg ⊓ 𝓟 p ≠ ⊥) :
     (K.assert a p).projectedSet = {K.cg ⊓ 𝓟 p} := by
-  rw [Table.projectedSet_assert, Table.projectedSet_of_isStable _ hK, Table.project,
-    Set.image2_singleton_left, Question.alt_ofSet, Set.image_singleton,
-    Set.sdiff_singleton_eq_self (Set.notMem_singleton_iff.2 hp.symm)]
+  rw [Table.projectedSet_assert, Table.projectedSet_of_isStable hK,
+    Table.project_singleton_ofSet hp]
 
 /-- (11): from a stable context a polar question projects both resolutions, an inquisitive
 context. -/
 theorem projectedSet_polarQuestion (hK : K.IsStable) (hp : K.cg ⊓ 𝓟 p ≠ ⊥)
     (hnp : K.cg ⊓ 𝓟 pᶜ ≠ ⊥) :
     (K.polarQuestion p).projectedSet = {K.cg ⊓ 𝓟 p, K.cg ⊓ 𝓟 pᶜ} := by
-  rw [Table.projectedSet_push, Table.projectedSet_of_isStable _ hK, Table.project,
-    Set.image2_singleton_left, Question.alt_polar_of_nontrivial (ne_empty_of_inf_ne_bot p hp)
-      (ne_univ_of_inf_compl_ne_bot p hnp), Set.image_pair,
-    Set.sdiff_singleton_eq_self (by simp [hp.symm, hnp.symm])]
+  rw [Table.projectedSet_polarQuestion, Table.projectedSet_of_isStable hK,
+    Table.project_singleton_polar hp hnp]
 
 /-! ### Confirmation, denial, and agreeing to disagree -/
 
 /-- (16): after the addressee confirms, the asserted proposition is on every commitment
 list. -/
-theorem shared_assert_confirm : ((K.assert .speaker p).confirm .addressee p).Shared p := by
+theorem shared_assert_confirm : ((K.assert .speaker p).commit .addressee p).Shared p := by
   intro a
   cases a
-  · rw [Table.dc_commit_of_ne _ _ _ _ _ (by decide)]
+  · rw [Table.dc_commit_of_ne (by decide)]
     exact Table.mem_dc_assert _ _ _
   · exact Table.mem_dc_commit_self _ _ _ _ _
 
 /-- (17): the shared proposition enters the common ground. -/
-theorem mem_cg_increaseCG : p ∈ (K.increaseCG p).cg := mem_inf_of_right (mem_principal_self p)
+theorem mem_cg_settle : p ∈ (K.settle p).cg := mem_inf_of_right (mem_principal_self p)
 
 /-- (17): the settled assertion is popped, and from a stable context the Table is empty
 again. -/
-theorem isStable_increaseCG_assert (hK : K.IsStable) :
-    (((K.assert .speaker p).confirm .addressee p).increaseCG p).IsStable := by
-  rw [Table.confirm, Table.increaseCG_commit_self, Table.assert,
-    Table.increaseCG_push_of_settledBy, Table.increaseCG_commit_self]
-  · exact Table.isStable_increaseCG_of_isStable K p hK
-  · exact Question.settledBy_ofSet.2 (mem_inf_of_right (mem_principal_self p))
+theorem isStable_settle_assert (hK : K.IsStable) :
+    (((K.assert .speaker p).commit .addressee p).settle p).IsStable := by
+  rw [Table.settle_commit_self, Table.settle_assert_self]
+  exact Table.isStable_settle_of_isStable p hK
 
 /-- (23): agreeing to disagree removes the contradictory pair from the Table, and with a
 consistent common ground the crisis is over. -/
 theorem not_inCrisis_agreeToDisagree (hK : K.IsStable) (hcg : K.cg ≠ ⊥) :
     ¬ ((K.assert .speaker p).assert .addressee pᶜ).agreeToDisagree.InCrisis := by
-  have hs : ((K.assert .speaker p).assert .addressee pᶜ).agreeToDisagree.IsStable := hK
-  rw [Table.inCrisis_iff, Table.projectedSet_of_isStable _ hs]
+  rw [Table.inCrisis_agreeToDisagree_assert_assert, Table.inCrisis_iff,
+    Table.projectedSet_of_isStable hK]
   exact fun h ↦ hcg (h _ rfl)
 
 /-- (23): each participant stays committed to what they asserted. -/
 theorem dc_agreeToDisagree :
     p ∈ ((K.assert .speaker p).assert .addressee pᶜ).agreeToDisagree.dc .speaker ∧
       pᶜ ∈ ((K.assert .speaker p).assert .addressee pᶜ).agreeToDisagree.dc .addressee := by
-  rw [Table.dc_agreeToDisagree, Table.dc_assert_of_ne _ _ _ (by decide)]
+  rw [Table.dc_agreeToDisagree, Table.dc_assert_of_ne (by decide)]
   exact ⟨Table.mem_dc_assert _ _ _, Table.mem_dc_assert _ _ _⟩
 
 /-! ### Reacting to a polar question -/
@@ -149,7 +139,8 @@ the projected resolution inconsistent with it is discarded. -/
 theorem projectedSet_polarQuestion_assert (hK : K.IsStable) (b : Discourse.Role) {q : Set W}
     (hq : q ∈ ({p, pᶜ} : Set (Set W))) (hc : K.cg ⊓ 𝓟 q ≠ ⊥) :
     ((K.polarQuestion p).assert b q).projectedSet = {K.cg ⊓ 𝓟 q} := by
-  rw [Table.projectedSet_assert, Table.projectedSet_push, Table.projectedSet_of_isStable _ hK]
+  rw [Table.projectedSet_assert, Table.projectedSet_polarQuestion,
+    Table.projectedSet_of_isStable hK]
   ext f
   simp only [Table.mem_project, Question.alt_ofSet, Set.mem_singleton_iff, exists_eq_left]
   constructor
@@ -168,11 +159,11 @@ theorem projectedSet_polarQuestion_assert (hK : K.IsStable) (b : Discourse.Role)
     · by_cases hu : q = Set.univ
       · exact (Question.alt_polar_iff _ _).2 (Or.inl ⟨Or.inr hu, hu⟩)
       · exact (Question.alt_polar_iff _ _).2
-          (Or.inr ⟨ne_empty_of_inf_ne_bot q hc, hu, Or.inl rfl⟩)
+          (Or.inr ⟨fun e ↦ hc (by simp [e]), hu, Or.inl rfl⟩)
     · by_cases he : p = ∅
       · exact (Question.alt_polar_iff _ _).2 (Or.inl ⟨Or.inl he, by simp [he]⟩)
       · exact (Question.alt_polar_iff _ _).2
-          (Or.inr ⟨he, ne_univ_of_inf_compl_ne_bot p hc, Or.inr rfl⟩)
+          (Or.inr ⟨he, fun e ↦ hc (by simp [e]), Or.inr rfl⟩)
 
 /-- (27): a reverse answer is no crisis, since the question projected both resolutions. -/
 theorem not_inCrisis_polarQuestion_assert_compl (hK : K.IsStable) (b : Discourse.Role)
@@ -181,15 +172,11 @@ theorem not_inCrisis_polarQuestion_assert_compl (hK : K.IsStable) (b : Discourse
   exact fun h ↦ hnp (h _ rfl)
 
 /-- (24) then (16): the questioner's confirmation of the answer settles the question. -/
-theorem isStable_increaseCG_polarQuestion (hK : K.IsStable) :
-    ((((K.polarQuestion p).assert .addressee p).confirm .speaker p).increaseCG p).IsStable := by
-  have hp : p ∈ K.cg ⊓ 𝓟 p := mem_inf_of_right (mem_principal_self p)
-  rw [Table.confirm, Table.increaseCG_commit_self, Table.assert,
-    Table.increaseCG_push_of_settledBy, Table.increaseCG_commit_self, Table.polarQuestion,
-    Table.increaseCG_push_of_settledBy]
-  · exact Table.isStable_increaseCG_of_isStable K p hK
-  · exact Question.settledBy_polar.2 (Or.inl hp)
-  · exact Question.settledBy_ofSet.2 hp
+theorem isStable_settle_polarQuestion (hK : K.IsStable) :
+    ((((K.polarQuestion p).assert .addressee p).commit .speaker p).settle p).IsStable := by
+  rw [Table.settle_commit_self, Table.settle_assert_self,
+    Table.settle_polarQuestion_self]
+  exact Table.isStable_settle_of_isStable p hK
 
 /-! ### Responding assertions and polarity features -/
 

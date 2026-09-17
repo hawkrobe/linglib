@@ -187,7 +187,7 @@ theorem Performance.asking_iff : ∀ u : Performance W, u.Asking ↔ u.material.
   | ⟨.utterance ⟨.declarative, p, false⟩, _⟩ =>
     iff_of_false (λ h => by
       obtain ⟨i, hi, hq⟩ := h Table.empty
-      simp only [Performance.update, Sentence.update, Table.assert_stack, Table.empty_stack,
+      simp only [Performance.update, Sentence.update, Table.stack_assert, Table.stack_empty,
         List.cons.injEq, and_true] at hi
       subst hi
       have h₁ : p ∈ (Table.empty.assert Discourse.Role.speaker p).dc .speaker :=

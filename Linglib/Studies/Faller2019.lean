@@ -39,14 +39,14 @@ dependently (`present_reportative_dependent`).
 
 * Goffman's author plays no part in the operators, which take the animator and the principal
   as participants; the paper treats the principal as a free variable that need not be a
-  participant, and the acceptance of Figure 2 commits the addressee with the other-generated
-  provenance of `Table.confirm`, the substrate's record of the same Gunlogson distinction.
+  participant, and the acceptance of Figure 2 is the addressee's `Table.commit`, with the
+  Gunlogson distinction carried by the evidential commitments rather than by the Table.
 * The Collaborative Principle is pragmatic, so Figure 6 is the animator performing `accept` on
   her own reportative presentation rather than an operator of its own.
 * The denial is the animator's best-possible-grounds presentation of `φᶜ`; the Table then
   carries `φᶜ` above `φ` where the paper's tableau shows `φ` replaced.
 * Acceptance keeps `φ` in the truth commitments when it enters the common ground, as the
-  paper's tableaux do, rather than stripping it as `Table.increaseCG` does.
+  paper's tableaux do, rather than stripping it as `Table.settle` does.
 
 ## References
 
@@ -102,7 +102,7 @@ def reportative : DS A W := K.present φ a p .reportative
 with reportative evidence, `φ` leaves the Table and enters the common ground. -/
 def accept : DS A W :=
   { K.addEvid φ b .reportative with
-    toTable := { (K.toTable.confirm b φ).pop with cg := K.cg ⊓ 𝓟 φ } }
+    toTable := { (K.toTable.commit b φ).pop with cg := K.cg ⊓ 𝓟 φ } }
 
 /-- A dependent truth commitment ([gunlogson-2008]): `φ` in `TC_a ∩ RepC_a` (§6.3). -/
 def Dependent : Prop := φ ∈ K.dc a ∧ φ ∈ K.evid .reportative a
@@ -125,7 +125,7 @@ theorem addEvid_evid_of_ne_type {e' : EvidenceType} (h : e' ≠ e) :
 @[simp] theorem present_toTable : (K.present φ a p e).toTable = K.toTable.assert p φ := rfl
 @[simp] theorem present_evid : (K.present φ a p e).evid = (K.addEvid φ a e).evid := rfl
 @[simp] theorem accept_toTable :
-    (K.accept φ b).toTable = { (K.toTable.confirm b φ).pop with cg := K.cg ⊓ 𝓟 φ } := rfl
+    (K.accept φ b).toTable = { (K.toTable.commit b φ).pop with cg := K.cg ⊓ 𝓟 φ } := rfl
 @[simp] theorem accept_evid : (K.accept φ b).evid = (K.addEvid φ b .reportative).evid := rfl
 
 /-! ### Figures 1 and 2: default assertion and its acceptance -/
@@ -144,8 +144,8 @@ theorem accept_dc_speaker : φ ∈ ((K.assert φ a).accept φ b).dc a := by
   rcases eq_or_ne a b with rfl | h
   · exact accept_dc K φ a a
   · rw [show ((K.assert φ a).accept φ b).dc a =
-      ((K.assert φ a).toTable.confirm b φ).dc a from rfl, Table.confirm,
-      Table.dc_commit_of_ne _ _ _ _ _ h]
+      ((K.assert φ a).toTable.commit b φ).dc a from rfl,
+      Table.dc_commit_of_ne h]
     exact assert_dc K φ a
 
 theorem accept_evid_addressee : φ ∈ ((K.assert φ a).accept φ b).evid .reportative b := by
@@ -166,7 +166,7 @@ theorem reportative_evid : φ ∈ (K.reportative φ a p).evid .reportative a := 
 /-- Absence of Commitment: with a distinct principal the animator's truth commitments are
 untouched. -/
 theorem reportative_dc_animator (h : a ≠ p) : (K.reportative φ a p).dc a = K.dc a :=
-  Table.dc_commit_of_ne _ _ _ _ _ h
+  Table.dc_commit_of_ne h
 
 /-- (35i) overrides (34iii): no adequate-evidence commitment is added. -/
 theorem reportative_evid_adequate : (K.reportative φ a p).evid .adequate = K.evid .adequate :=
@@ -186,7 +186,7 @@ theorem denial_dc (h : a ≠ p) :
     φ ∈ (K.denial φ a p).dc p ∧ φᶜ ∈ (K.denial φ a p).dc a :=
   ⟨by
     rw [show (K.denial φ a p).dc p = ((K.reportative φ a p).toTable.assert a φᶜ).dc p from rfl,
-      Table.assert, Table.dc_push, Table.dc_commit_of_ne _ _ _ _ _ h.symm]
+      Table.assert, Table.dc_push, Table.dc_commit_of_ne h.symm]
     exact reportative_dc_principal K φ a p,
    Table.mem_dc_assert _ _ _⟩
 
@@ -214,15 +214,15 @@ theorem figure6_dc (h : a ≠ p) : φ ∈ ((K.reportative φ a p).accept φ a).d
     φ ∈ ((K.reportative φ a p).accept φ a).dc p :=
   ⟨Table.mem_dc_commit_self _ _ _ _ _, by
     rw [show ((K.reportative φ a p).accept φ a).dc p =
-      ((K.reportative φ a p).toTable.confirm a φ).dc p from rfl, Table.confirm,
-      Table.dc_commit_of_ne _ _ _ _ _ h.symm]
+      ((K.reportative φ a p).toTable.commit a φ).dc p from rfl,
+      Table.dc_commit_of_ne h.symm]
     exact reportative_dc_principal K φ a p⟩
 
 /-- The animator's truth commitments are those of an assertion of `φ`. -/
 theorem figure6_dc_eq_assert (h : a ≠ p) :
     ((K.reportative φ a p).accept φ a).dc a = (K.assert φ a).dc a := by
   rw [show ((K.reportative φ a p).accept φ a).dc a =
-    ((K.reportative φ a p).toTable.confirm a φ).dc a from rfl, Table.confirm,
+    ((K.reportative φ a p).toTable.commit a φ).dc a from rfl,
     Table.dc_commit_self, reportative_dc_animator _ _ _ _ h]
   exact (Table.dc_assert _ _ _).symm
 
