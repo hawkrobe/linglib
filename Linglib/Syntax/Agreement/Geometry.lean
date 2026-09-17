@@ -1,7 +1,7 @@
 import Linglib.Core.Order.UpperLower.Finset
+import Linglib.Phonology.FeatureGeometry
 import Linglib.Syntax.Person.Basic
 import Linglib.Syntax.Number.Basic
-import Mathlib.Logic.Relation
 import Mathlib.Order.Interval.Finset.Defs
 import Mathlib.Tactic.DeriveFintype
 
@@ -18,13 +18,16 @@ feature content of a pronoun is a lower set of the dominance order; markedness
 is node count; and an organizing node with no dependent receives its default
 daughter — Speaker, Minimal, Inanimate — by rule. Person and number cells are
 assigned their geometries, the contrastive Minimal node being present only in
-inventories that activate it. The tree is of the same formal type as the
-phonological feature geometries of [clements-1985] and [sagey-1986].
+inventories that activate it. The tree is a feature geometry in the sense of
+[clements-1985] and [sagey-1986], `Phonology.FeatureGeometry`, whose nodes are
+the features themselves: a rooted tree in mathlib's terms, dominance the partial
+order, the root `⊥` and the parent `Order.pred`.
 
 ## Main definitions
 
 * `Node`, `Node.ancestors` and `Node.parent`, and dominance `≤`, a `PartialOrder` with the
-  root as `⊥`; `Node.below` is the content a node brings with it.
+  root as `⊥` and the parent as `Order.pred`; `Node.below` is the content a node brings
+  with it.
 * `Node.defaultDependent?`, `fillDefaults`: the default daughters and their fill-in.
 * `personNodes`, `numberNodes`, `cell`: the geometries of person, of number, and of
   a person–number cell, relative to an active inventory.
@@ -32,7 +35,6 @@ phonological feature geometries of [clements-1985] and [sagey-1986].
 
 ## Main results
 
-* `le_iff_reflTransGen`: dominance is the reflexive transitive closure of direct dependence.
 * `cell_isLowerSet`: every assigned geometry is a lower set.
 * `fillDefaults_isLowerSet`: default fill-in preserves lower sets.
 
@@ -101,14 +103,6 @@ def ancestors : Node → List Node
 /-- The node a node depends on directly; the root alone has none. -/
 def parent (n : Node) : Option Node := n.ancestors.head?
 
-/-- The paths cohere: a node's ancestors are its parent followed by the parent's. -/
-theorem ancestors_eq_cons : ∀ {n p : Node}, n.parent = some p → n.ancestors = p :: p.ancestors := by
-  decide
-
-theorem mem_ancestors_trans : ∀ {a b c : Node}, a ∈ b.ancestors → b ∈ c.ancestors →
-    a ∈ c.ancestors := by
-  decide
-
 /-- Dominance: `a` is `b` or one of the nodes `b` depends on. -/
 def Dominates (a b : Node) : Prop := a = b ∨ a ∈ b.ancestors
 
@@ -127,43 +121,21 @@ instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (Dominates
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
 
-/-- Dominance is the reflexive transitive closure of direct dependence. -/
-theorem le_iff_reflTransGen (a b : Node) :
-    a ≤ b ↔ Relation.ReflTransGen (fun x y ↦ x.parent = some y) b a := by
-  constructor
-  · rintro (rfl | h)
-    · exact .refl
-    · suffices key : ∀ k, ∀ b : Node, b.ancestors.length ≤ k → a ∈ b.ancestors →
-          Relation.ReflTransGen (fun x y ↦ x.parent = some y) b a from
-        key _ b le_rfl h
-      intro k
-      induction k with
-      | zero => intro b hb ha; simp [List.length_eq_zero_iff.1 (Nat.le_zero.1 hb)] at ha
-      | succ k ih =>
-        intro b hb ha
-        obtain ⟨p, hp⟩ : ∃ p, b.parent = some p :=
-          Option.ne_none_iff_exists'.1 fun h ↦ by
-            rw [parent, List.head?_eq_none_iff] at h; simp [h] at ha
-        rw [ancestors_eq_cons hp] at ha hb
-        rcases List.mem_cons.1 ha with rfl | ha
-        · exact .single hp
-        · exact (ih p (Nat.le_of_succ_le_succ hb) ha).head hp
-  · intro h
-    induction h with
-    | refl => exact .inl rfl
-    | @tail c d _ hcd ih =>
-      refine .inr ?_
-      have hmem : d ∈ c.ancestors := by rw [ancestors_eq_cons hcd]; exact List.mem_cons_self
-      exact ih.elim (fun h ↦ h ▸ hmem) fun h ↦ mem_ancestors_trans hmem h
-
 /-- The root dominates every node. -/
 instance : OrderBot Node where
   bot := .referringExpression
   bot_le := by decide
 
-instance : LocallyFiniteOrder Node := Fintype.toLocallyFiniteOrder
+/-- The parent as the predecessor, the root fixed: the tree in mathlib's terms, with
+archimedean descent from finiteness. -/
+instance : PredOrder Node where
+  pred n := n.parent.getD n
+  pred_le := by decide
+  min_of_le_pred {a} h := fun ⦃b⦄ hb ↦
+    (by decide : ∀ a : Node, a ≤ a.parent.getD a → ∀ b, b ≤ a → a ≤ b) a h b hb
+  le_pred_of_lt {a b} h := (by decide : ∀ a b : Node, a < b → a ≤ b.parent.getD b) a b h
 
-theorem lt_of_parent : ∀ {a b : Node}, b.parent = some a → a < b := by decide
+instance : LocallyFiniteOrder Node := Fintype.toLocallyFiniteOrder
 
 /-- The nodes a node depends on, itself included and the root excluded, from the root down:
 the content a privative feature brings with it. -/
@@ -184,6 +156,10 @@ def defaultDependent? : Node → Option Node
   | _ => none
 
 end Node
+
+/-- The nodes are the features: a feature geometry whose natural classes are the principal
+upper sets. -/
+instance : Phonology.FeatureGeometry Node Node := ⟨some⟩
 
 /-! ### Default fill-in -/
 

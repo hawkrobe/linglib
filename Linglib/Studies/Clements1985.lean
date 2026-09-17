@@ -124,6 +124,16 @@ instance : OrderBot Node where
   bot := .root
   bot_le := by decide
 
+/-- The parent as the predecessor, the root fixed: the tree in mathlib's terms, with
+archimedean descent from finiteness. -/
+instance : PredOrder Node where
+  pred n := (parent n).getD n
+  pred_le := by decide
+  min_of_le_pred {a} h := fun ⦃b⦄ hb ↦
+    (by decide : ∀ a : Node, a ≤ a.parent.getD a → ∀ b, b ≤ a → a ≤ b) a h b hb
+  le_pred_of_lt {a b} h :=
+    (by decide : ∀ a b : Node, a ≤ b → a ≠ b → a ≤ b.parent.getD b) a b h.le h.ne
+
 end Node
 
 /-! ### Terminal features (§4) -/
@@ -138,9 +148,7 @@ def classNode? : Feature → Option Node
   | .labial | .coronal | .anterior | .distributed | .high | .back | .round => some .place
   | _ => none
 
-instance : FeatureGeometry Feature Node where
-  isChain_Iic := by unfold IsChain Set.Pairwise; decide +revert
-  node := classNode?
+instance : FeatureGeometry Feature Node := ⟨classNode?⟩
 
 /-- The two sets of place features: P, distinguishing place in consonants, and S,
 distinguishing place in vowels (§4). -/

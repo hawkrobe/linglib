@@ -86,6 +86,16 @@ instance : OrderBot Node where
   bot := .root
   bot_le := by decide
 
+/-- The parent as the predecessor, the root fixed: the tree in mathlib's terms, with
+archimedean descent from finiteness. -/
+instance : PredOrder Node where
+  pred n := (parent n).getD n
+  pred_le := by decide
+  min_of_le_pred {a} h := fun ⦃b⦄ hb ↦
+    (by decide : ∀ a : Node, a ≤ a.parent.getD a → ∀ b, b ≤ a → a ≤ b) a h b hb
+  le_pred_of_lt {a b} h :=
+    (by decide : ∀ a b : Node, a ≤ b → a ≠ b → a ≤ b.parent.getD b) a b h.le h.ne
+
 /-- The class feature of an articulator node, present exactly when the articulator is active
 in the segment. -/
 def feature? : Node → Option Feature
@@ -118,9 +128,7 @@ def node : Feature → Option Node
   | .syllabic | .sonorant | .approximant | .delayedRelease | .strident | .tap | .trill
   | .labiodental | .front | .tense | .atr => none
 
-instance : FeatureGeometry Feature Node where
-  isChain_Iic := by unfold IsChain Set.Pairwise; decide +revert
-  node := node
+instance : FeatureGeometry Feature Node := ⟨node⟩
 
 /-! ### Natural classes -/
 
