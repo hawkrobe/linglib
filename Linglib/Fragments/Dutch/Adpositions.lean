@@ -11,7 +11,7 @@ the path each directional reading describes.
 
 ## References
 
-* [broekhuis-corver-2026]
+* [broekhuis-corver-2026a]
 * [dendikken-2010]
 -/
 

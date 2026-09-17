@@ -4,11 +4,11 @@ import Linglib.Syntax.Category.Determiner.Basic
 /-!
 # Dutch determiners
 
-The Dutch articles and demonstratives after Broekhuis and den Dikken's grammar. The definite
+The Dutch articles and demonstratives after Broekhuis and Corver's grammar. The definite
 article is *de* with common-gender singulars and every plural and *het* with neuter singulars,
 one syncretic definite over the [schwarz-2009] use types; the indefinite article *een* occurs
 with singular count nouns only, the indefinite plural and mass noun phrases being bare; the
-negative article *geen* occurs with all three. The proximate demonstrative *deze* ~ *dit* and
+negative article *geen*, a quantifier by the grammar's own argument, occurs with all three. The proximate demonstrative *deze* ~ *dit* and
 the distal *die* ~ *dat* agree exactly as the definite article does. The three agreeing
 determiners are the agreement evidence for the two-gender carrier of `Dutch.Gender`.
 
@@ -30,7 +30,7 @@ German, are not `DefiniteUse` cells and so are not recorded.
 
 ## References
 
-* [broekhuis-dendikken-2012]
+* [broekhuis-corver-2026b]
 * [schwarz-2009]
 * [moroney-2021]
 * [schmuck-2020]
@@ -80,7 +80,8 @@ def de : Article :=
 phrases are bare. -/
 def een : Article := { form := "een", definiteness := .indefinite, exponent := .dedicatedMorpheme }
 
-/-- The negative article *geen*, of singular, plural and mass nouns alike. -/
+/-- The negative article *geen*, of singular, plural and mass nouns alike, which the grammar
+argues is a quantifier rather than an article. -/
 def geen : Quantifier := { form := "geen", selectsMass := true }
 
 /-- The proximate demonstrative *deze* ~ *dit*. -/

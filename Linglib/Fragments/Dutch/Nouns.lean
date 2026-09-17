@@ -16,7 +16,7 @@ entries are the nouns of [le-bruyn-de-swart-2022]'s scrambling data.
 
 ## References
 
-* [broekhuis-dendikken-2012]
+* [broekhuis-corver-2026b]
 * [chierchia-1998]
 * [le-bruyn-de-swart-2022]
 -/

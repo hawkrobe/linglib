@@ -41,7 +41,7 @@ R-pronominalization.
 
 ## References
 
-* [broekhuis-corver-2026]
+* [broekhuis-corver-2026a]
 * [sorace-2000]
 -/
 
