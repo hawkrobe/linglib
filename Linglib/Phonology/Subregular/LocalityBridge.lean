@@ -40,27 +40,10 @@ private theorem Transduction.emitAt_local [DecidableEq α] {r : ℕ} {T : Transd
   · rw [List.length_rtake, List.length_take]; omega
   · intro j hj
     have hlen : (input.take (p + 1)).length = p + 1 := by rw [List.length_take]; omega
-    rw [show (input.take (p + 1)).rtake (r + 1)
-          = (input.take (p + 1)).drop ((input.take (p + 1)).length - (r + 1)) from rfl,
-        List.getElem?_drop, hlen, List.getElem?_take, ite_eq_left (by omega)]
+    rw [List.getElem?_rtake, hlen, List.getElem?_take, ite_eq_left (by omega)]
     congr 1
     omega
   · intro j hj; omega
-
-/-- Two nested tail-takes collapse to one: `(l.rtake m).rtake n = l.rtake (min n m)`. -/
-private theorem rtake_rtake {γ : Type*} (l : List γ) (m n : ℕ) :
-    (l.rtake m).rtake n = l.rtake (min n m) := by
-  simp only [List.rtake_eq_reverse_take_reverse, List.reverse_reverse, List.take_take]
-
-/-- Tail-taking a length-`r` window extended by one symbol re-takes the underlying list extended by
-that symbol — the step that keeps the threaded ISL window equal to the bounded left context. -/
-private theorem rtake_concat_rtake {γ : Type*} (l : List γ) (x : γ) (r : ℕ) :
-    (l.rtake r ++ [x]).rtake r = (l ++ [x]).rtake r := by
-  cases r with
-  | zero => simp [List.rtake_zero]
-  | succ r' =>
-    rw [List.rtake_concat_succ, List.rtake_concat_succ, rtake_rtake,
-        Nat.min_eq_left (Nat.le_succ r')]
 
 /-- `toISLRule`'s window output is, by definition, `emitAt` on the window plus the current symbol. -/
 private theorem Transduction.windowOutput_toISLRule [DecidableEq α] {r : ℕ} (T : Transduction α β)
@@ -91,7 +74,7 @@ private theorem Transduction.applyAux_toISLRule_eq [DecidableEq α] {r : ℕ} {T
     have hpx : input.take (p + 1) = input.take p ++ [x] := by
       rw [List.take_add_one, hx]; rfl
     have hwin : ((input.take p).rtake r ++ [x]).rtake r = (input.take (p + 1)).rtake r := by
-      rw [rtake_concat_rtake, hpx]
+      rw [List.rtake_append_rtake, hpx]
     have hw2 : (input.take (p + 1)).rtake (r + 1) = (input.take p).rtake r ++ [x] := by
       rw [hpx, List.rtake_concat_succ]
     have hlen : ((input.take p).rtake r).length = min r p := by

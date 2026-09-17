@@ -83,7 +83,7 @@ lemma takeAt_left_append_of_le_length {k : ℕ} (p rest : List α) (h : k ≤ p.
 /-- The right-`k`-suffix of `x ++ rest` is that of `rest`, when `k ≤ rest.length`. -/
 lemma takeAt_right_append_of_le_length {k : ℕ} (x rest : List α) (h : k ≤ rest.length) :
     Edge.right.takeAt k (x ++ rest) = Edge.right.takeAt k rest :=
-  List.rtake_append_of_le_length x rest h
+  List.rtake_append_of_le_length h
 
 /-- `takeAt k` is idempotent: its output already has length `≤ k`. -/
 lemma takeAt_idem : e.takeAt k (e.takeAt k xs) = e.takeAt k xs :=
@@ -92,7 +92,7 @@ lemma takeAt_idem : e.takeAt k (e.takeAt k xs) = e.takeAt k xs :=
 /-- A shorter edge substring of a longer one is the shorter edge substring. -/
 lemma takeAt_takeAt_of_le {k k' : ℕ} (h : k ≤ k') (xs : List α) :
     e.takeAt k (e.takeAt k' xs) = e.takeAt k xs := by
-  cases e <;> simp [List.rtake_eq_reverse_take_reverse, List.take_take, h]
+  cases e <;> simp [List.take_take, List.rtake_rtake, h]
 
 end Edge
 
@@ -107,7 +107,7 @@ private lemma takeAt_right_eq_of_bridge {k k' : ℕ} {w₁ w₂ : List α}
     (hw₁ : k ≤ w₁.length) (_hw₂ : k' ≤ w₂.length) :
     Edge.right.takeAt k (w₂.take k' ++ w₁.rtake k) = Edge.right.takeAt k w₁ := by
   have hk : k ≤ (w₁.rtake k).length := by rw [List.length_rtake]; omega
-  rw [Edge.takeAt_right, Edge.takeAt_right, List.rtake_append_of_le_length _ _ hk,
+  rw [Edge.takeAt_right, Edge.takeAt_right, List.rtake_append_of_le_length hk,
     List.rtake_of_length_le (by rw [List.length_rtake]; omega)]
 
 /-- The same bridge shares `w₂`'s length-`k'` prefix. -/

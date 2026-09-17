@@ -6,90 +6,95 @@ Authors: Robert Hawkins
 import Mathlib.Data.List.DropRight
 
 /-!
-# Length, saturation, and decomposition for `List.rtake`
+# Lemmas about `List.rtake` and `List.rdrop`
 
-A handful of facts about `List.rtake` (take from the tail) and `List.rdrop`
-(drop from the tail) that mathlib's `Mathlib/Data/List/DropRight.lean` defines but
-leaves without an API: the length of a tail-take, when it saturates to the whole
-list, how it absorbs a left append, and the `rdrop`/`rtake` decomposition. Each is
-the tail mirror of a front-end `take` lemma and is proved by reducing to it through
-`List.rtake_eq_reverse_take_reverse` — reverse, then `take`. These flesh out an
-under-developed corner of mathlib and are candidates for
-`Mathlib/Data/List/DropRight.lean`.
+`Mathlib/Data/List/DropRight.lean` defines `List.rtake l n` and `List.rdrop l n`, the last `n`
+elements of `l` and `l` without them, and proves only their `nil`, `zero`, `concat`, and reverse
+characterizations, plus a few `rdrop`-of-append facts. This file supplies the tail mirrors of the
+`List.take` and `List.drop` API in `Init/Data/List/Nat/TakeDrop.lean`, each proved by reducing to
+its front counterpart through `List.rtake_eq_reverse_take_reverse` or
+`List.rdrop_eq_reverse_drop_reverse`. [UPSTREAM] candidates for `Mathlib/Data/List/DropRight.lean`.
 
 ## Main results
 
-* `List.length_rtake` — `(l.rtake n).length = min n l.length`.
-* `List.length_rtake_le` — `(l.rtake n).length ≤ n`.
-* `List.rtake_of_length_le` — a short list is its own tail-take.
-* `List.rtake_append_of_le_length` — a tail-take long enough to fit in the right
-  summand ignores the left one.
-* `List.rdrop_append_rtake` — `l.rdrop n ++ l.rtake n = l`, the tail analog of
-  `List.take_append_drop`.
+* `List.length_rtake`, `List.length_rtake_le`, `List.rtake_of_length_le`, and their `rdrop`
+  twins `List.length_rdrop` and `List.rdrop_of_length_le`: lengths and saturation on a short
+  list, mirroring `List.length_take`, `List.length_take_le`, `List.take_of_length_le`,
+  `List.length_drop`, and `List.drop_of_length_le`.
+* `List.getElem?_rtake`, `List.getElem?_rdrop`, `List.getLast?_rtake`: indexing into a tail-take
+  or tail-drop, mirroring `List.getElem?_drop`, `List.getElem?_take`, and `List.head?_take`.
+* `List.rtake_rtake`, `List.rtake_append`, `List.rdrop_append`: nested tail-takes and the
+  tail-take or tail-drop of an append, mirroring `List.take_take`, `List.take_append`, and
+  `List.drop_append`. `List.rtake_append_of_le_length`, `List.rtake_append_length`, and
+  `List.rtake_append_length_add` are the corollaries mirroring `List.take_append_of_le_length`
+  and mathlib's `List.rdrop_append_length` and `List.rdrop_append_length_add`.
+* `List.rdrop_append_rtake`: the tail analog of `List.take_append_drop`.
+* `List.rtake_append_rtake` and `List.rtake_append_append_of_le_length`: the last `n` elements
+  are a sufficient state, so truncating before appending, or prepending anything to a block of
+  length at least `n`, leaves the tail-take unchanged.
 -/
 
 namespace List
 
-variable {α : Type*}
+variable {α : Type*} {l l₁ l₂ : List α} {m n : ℕ}
 
-/-- A tail-take has length `min n l.length` — the tail analog of `List.length_take`. -/
-@[simp] theorem length_rtake (l : List α) (n : ℕ) :
-    (l.rtake n).length = min n l.length := by
+@[simp] theorem length_rtake : (l.rtake n).length = min n l.length := by
   simp [rtake_eq_reverse_take_reverse]
 
-/-- A tail-take has length at most `n` — the tail analog of `List.length_take_le`. -/
-theorem length_rtake_le (l : List α) (n : ℕ) : (l.rtake n).length ≤ n := by
-  rw [length_rtake]; exact min_le_left _ _
+theorem length_rtake_le (n : ℕ) (l : List α) : (l.rtake n).length ≤ n := by simp
 
-/-- A list no longer than `n` is its own tail-take — the tail analog of
-`List.take_of_length_le`. -/
-theorem rtake_of_length_le {l : List α} {n : ℕ} (h : l.length ≤ n) : l.rtake n = l := by
-  rw [rtake_eq_reverse_take_reverse, take_of_length_le (by rwa [length_reverse]),
-    reverse_reverse]
+@[simp] theorem length_rdrop : (l.rdrop n).length = l.length - n := by
+  simp [rdrop_eq_reverse_drop_reverse]
 
-/-- A tail-take that fits inside the right summand ignores the left one — the tail
-analog of `List.take_append_of_le_length`. -/
-theorem rtake_append_of_le_length {n : ℕ} (l₁ l₂ : List α) (h : n ≤ l₂.length) :
-    (l₁ ++ l₂).rtake n = l₂.rtake n := by
-  rw [rtake_eq_reverse_take_reverse, reverse_append,
-    take_append_of_le_length (by rwa [length_reverse]), ← rtake_eq_reverse_take_reverse]
+theorem rtake_of_length_le (h : l.length ≤ n) : l.rtake n = l := by
+  rw [rtake_eq_reverse_take_reverse, take_of_length_le (by rwa [length_reverse]), reverse_reverse]
 
-/-- Splitting a list at its last `n` symbols — the tail analog of
-`List.take_append_drop`. -/
-@[simp] theorem rdrop_append_rtake (l : List α) (n : ℕ) : l.rdrop n ++ l.rtake n = l := by
+theorem rdrop_of_length_le (h : l.length ≤ n) : l.rdrop n = [] := by
+  simp [rdrop, Nat.sub_eq_zero_of_le h]
+
+theorem getElem?_rtake {i : ℕ} : (l.rtake n)[i]? = l[l.length - n + i]? :=
+  getElem?_drop
+
+theorem getElem?_rdrop {i : ℕ} : (l.rdrop n)[i]? = if i < l.length - n then l[i]? else none := by
+  rw [rdrop, getElem?_take]
+
+theorem getLast?_rtake : (l.rtake n).getLast? = if n = 0 then none else l.getLast? := by
+  rw [rtake_eq_reverse_take_reverse, getLast?_reverse, head?_take, head?_reverse]
+
+theorem rtake_rtake : (l.rtake n).rtake m = l.rtake (min m n) := by
+  simp [rtake_eq_reverse_take_reverse, take_take]
+
+theorem rtake_append : (l₁ ++ l₂).rtake n = l₁.rtake (n - l₂.length) ++ l₂.rtake n := by
+  simp [rtake_eq_reverse_take_reverse, take_append]
+
+theorem rtake_append_of_le_length (h : n ≤ l₂.length) : (l₁ ++ l₂).rtake n = l₂.rtake n := by
+  simp [rtake_append, Nat.sub_eq_zero_of_le h]
+
+@[simp] theorem rtake_append_length : (l₁ ++ l₂).rtake l₂.length = l₂ := by
+  simp [rtake_append, rtake_of_length_le]
+
+@[simp] theorem rtake_append_length_add (k : ℕ) :
+    (l₁ ++ l₂).rtake (l₂.length + k) = l₁.rtake k ++ l₂ := by
+  simp [rtake_append, rtake_of_length_le]
+
+theorem rdrop_append : (l₁ ++ l₂).rdrop n = l₁.rdrop (n - l₂.length) ++ l₂.rdrop n := by
+  simp [rdrop_eq_reverse_drop_reverse, drop_append]
+
+@[simp] theorem rdrop_append_rtake (n : ℕ) (l : List α) : l.rdrop n ++ l.rtake n = l := by
   rw [rdrop_eq_reverse_drop_reverse, rtake_eq_reverse_take_reverse, ← reverse_append,
     take_append_drop, reverse_reverse]
 
-/-- A nonempty right window ends where the list ends. -/
-theorem getLast?_rtake (l : List α) {n : ℕ} (h : 1 ≤ n) : (l.rtake n).getLast? = l.getLast? := by
-  rw [List.rtake_eq_reverse_take_reverse, List.getLast?_reverse, List.head?_take,
-    ite_eq_right (by omega), List.head?_reverse]
-
-/-- Taking a suffix of a suffix takes the shorter of the two. -/
-theorem rtake_rtake (m n : ℕ) (l : List α) : (l.rtake n).rtake m = l.rtake (min m n) := by
-  simp [rtake_eq_reverse_take_reverse, take_take]
-
-/-- A suffix long enough to swallow `l₂` splits as a suffix of `l₁` followed by `l₂`. -/
-theorem rtake_append_of_length_le {n : ℕ} (l₁ l₂ : List α) (h : l₂.length ≤ n) :
-    (l₁ ++ l₂).rtake n = l₁.rtake (n - l₂.length) ++ l₂ := by
-  simp [rtake_eq_reverse_take_reverse, take_append, take_of_length_le, h]
-
-/-- Truncating to a suffix window before appending is the same as truncating after: the
-last `n` symbols are enough state to compute the next window. -/
+/-- Truncating to the last `n` elements before appending is the same as truncating after: the
+last `n` elements are enough state to compute the next window. -/
 theorem rtake_append_rtake (n : ℕ) (l₁ l₂ : List α) :
     (l₁.rtake n ++ l₂).rtake n = (l₁ ++ l₂).rtake n := by
-  rcases le_or_gt n l₂.length with h | h
-  · rw [rtake_append_of_le_length _ _ h, rtake_append_of_le_length _ _ h]
-  · rw [rtake_append_of_length_le _ _ h.le, rtake_append_of_length_le _ _ h.le, rtake_rtake,
-      min_eq_left (Nat.sub_le _ _)]
+  rw [rtake_append, rtake_append, rtake_rtake, Nat.min_eq_left (Nat.sub_le _ _)]
 
-/-- A middle block of length `≥ n` screens off everything to its left: the last `n` symbols
-of `a ++ u ++ y` do not depend on `a`. -/
-theorem rtake_append_append_of_le_length {n : ℕ} (a u y : List α) (h : n ≤ u.length) :
+/-- A middle block of length at least `n` screens off everything to its left: the last `n`
+elements of `a ++ u ++ y` do not depend on `a`. -/
+theorem rtake_append_append_of_le_length (a u y : List α) (h : n ≤ u.length) :
     (a ++ u ++ y).rtake n = (u ++ y).rtake n := by
-  rcases le_or_gt n y.length with hy | hy
-  · rw [rtake_append_of_le_length (a ++ u) y hy, rtake_append_of_le_length u y hy]
-  · rw [rtake_append_of_length_le _ _ hy.le, rtake_append_of_length_le _ _ hy.le,
-      rtake_append_of_le_length a u (show n - y.length ≤ u.length by omega)]
+  rw [rtake_append, rtake_append, rtake_append,
+    Nat.sub_eq_zero_of_le (Nat.le_trans (Nat.sub_le _ _) h), rtake_zero, nil_append]
 
 end List

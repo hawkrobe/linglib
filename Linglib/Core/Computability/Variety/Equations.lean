@@ -97,7 +97,7 @@ private lemma syntacticClass_eq_takeAt (h : kDefiniteEquation L k) (w : List α)
     have base := syntacticClass_of_kDefiniteEquation h
       (w.take (w.length - k)) (Edge.right.takeAt k w) hlen
     have decomp : w = w.take (w.length - k) ++ Edge.right.takeAt k w :=
-      (List.rdrop_append_rtake w k).symm
+      (List.rdrop_append_rtake k w).symm
     rwa [← decomp] at base
 
 /-- Reverse: the `𝒟` equation forces `k`-definiteness. -/

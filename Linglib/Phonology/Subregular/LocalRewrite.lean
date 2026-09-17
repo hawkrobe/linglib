@@ -136,7 +136,7 @@ theorem Effect.apply_rtake (e : Effect) {n : ℕ} (h : e.leftReach ≤ n) (w : L
   | copyRight _ => rfl
   | copyLeft C =>
     have h1 : 1 ≤ n := by simpa [Effect.leftReach] using h
-    simp only [Effect.apply, List.getLast?_rtake _ h1]
+    simp only [Effect.apply, List.getLast?_rtake, ite_eq_right (Nat.ne_of_gt h1)]
 
 /-- An effect reads at most `rightReach` symbols of the suffix. -/
 theorem Effect.apply_append (e : Effect) (w : List Segment) (s : Segment) (d d' : List Segment)
