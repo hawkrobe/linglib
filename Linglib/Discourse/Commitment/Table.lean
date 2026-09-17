@@ -13,7 +13,8 @@ alternatives, `Question.alt`, the interrogative denotation of [karttunen-1977], 
 ground decides an issue when it entails one of them. Each issue on the Table projects the common
 grounds that would decide it, and the projected set is derived from the common ground and the
 stack. The moves of the paper are functions on the structure, and the file proves what each does
-to the projected set, the commitment lists, and the Table.
+to the projected set, the commitment lists, and the Table. Parenthesized numbers are the paper's
+example and definition numbers.
 
 A Table is a discourse state in both projections: its common ground is the `cg` coordinate
 (`HasCommonGround`) and its current issue is the top of the stack (`Discourse.HasIssue`). It is
@@ -26,9 +27,9 @@ moves only the projected set.
 * `Commitment.Table A W`: the context structure, with `Table.dc a` the propositions `a` has
   publicly committed to and `Table.projectedSet` the projected set, the fold of the paper's
   `ps ∪ P` over the stack.
-* `Table.IsStable`, `Table.InCrisis`, `Table.Shared`: an empty Table; an inconsistent common
-  ground or no consistent projected common ground; a proposition every participant is
-  committed to.
+* `Table.IsStable`: the Table is empty.
+* `Table.InCrisis`: the common ground is inconsistent or no projected common ground is.
+* `Table.Shared`: every participant is committed to the proposition.
 * `Table.assert`, `Table.polarQuestion`, `Table.settle`, `Table.agreeToDisagree`: the
   default assertion (9), which commits its author as in [gunlogson-2001], the default polar
   question (12), the common-ground increasing operation M' (17), and agreeing to disagree (23).
@@ -37,12 +38,12 @@ moves only the projected set.
 
 ## Main results
 
-* `Table.le_cg_of_mem_projectedSet`, `Table.decidedBy_of_mem_projectedSet`: a projected common
-  ground refines the current one and decides every issue on the Table.
+* `Table.le_cg_of_mem_projectedSet`, `Table.decidedBy_of_mem_projectedSet_of_mem_stack`: a
+  projected common ground refines the current one and decides every issue on the Table.
 * `Table.inCrisis_iff`: with the projected set derived, crisis is having no consistent
   projected common ground; the inconsistent-common-ground clause is subsumed.
-* `Table.projectedSet_assert_compl`, `Table.inCrisis_assert_compl`: a denied assertion projects
-  nothing consistent (21) and leaves the conversation in crisis.
+* `Table.projectedSet_assert_assert_compl`, `Table.inCrisis_assert_assert_compl`: a denied
+  assertion projects nothing consistent (21) and leaves the conversation in crisis.
 * `Table.settle_push_of_decidedBy`, `Table.settle_assert_self`,
   `Table.dc_settle`: M' pops the issues the new common ground decides and strips the
   shared proposition from every commitment list.
@@ -95,8 +96,7 @@ theorem DecidedBy.mono (h : f ≤ g) : P.DecidedBy g → P.DecidedBy f :=
 /-- A common ground deciding an issue has a context set resolving it. -/
 theorem DecidedBy.ker_mem (h : P.DecidedBy f) : f.ker ∈ P :=
   let ⟨q, hq, hf⟩ := h
-  P.downward_closed q (mem_of_mem_alt hq) _ (ker_mono (le_principal_iff.2 hf) |>.trans_eq
-    (ker_principal q))
+  P.downward_closed q (mem_of_mem_alt hq) _ (Set.sInter_subset_of_mem hf)
 
 /-- The trivial issue is decided by every common ground. -/
 @[simp] theorem decidedBy_top : (⊤ : Question W).DecidedBy f := ⟨_, by simp, univ_mem⟩
@@ -126,7 +126,50 @@ structure Table (A W : Type*) where
 
 namespace Table
 
-variable {A W : Type*} (K : Table A W) (a : A) (p : Set W) (P : Question W)
+variable {A W : Type*}
+
+/-! ### Projecting an issue -/
+
+/-- `ps ∪ P`: add each complete answer of `P` to each projected common ground, discarding the
+inconsistent results. -/
+def project (ps : Set (Filter W)) (P : Question W) : Set (Filter W) :=
+  Set.image2 (fun f q ↦ f ⊓ 𝓟 q) ps (alt P) \ {⊥}
+
+section Project
+
+variable {ps : Set (Filter W)} {f : Filter W} {p : Set W} {P : Question W}
+
+
+@[simp] theorem mem_project :
+    f ∈ project ps P ↔ (∃ g ∈ ps, ∃ q ∈ alt P, g ⊓ 𝓟 q = f) ∧ f ≠ ⊥ :=
+  Iff.rfl
+
+theorem ne_bot_of_mem_project (h : f ∈ project ps P) : f ≠ ⊥ := h.2
+
+theorem exists_le_of_mem_project (h : f ∈ project ps P) : ∃ g ∈ ps, f ≤ g :=
+  let ⟨g, hg, _, _, e⟩ := h.1
+  ⟨g, hg, e ▸ inf_le_left⟩
+
+/-- Every projected common ground decides the issue it was projected from. -/
+theorem decidedBy_of_mem_project (h : f ∈ project ps P) : P.DecidedBy f :=
+  let ⟨_, _, q, hq, e⟩ := h.1
+  ⟨q, hq, e ▸ mem_inf_of_right (mem_principal_self q)⟩
+
+/-- A single common ground consistent with `p` projects the one common ground with `p`. -/
+theorem project_singleton_ofSet (h : f ⊓ 𝓟 p ≠ ⊥) : project {f} (ofSet p) = {f ⊓ 𝓟 p} := by
+  rw [project, Set.image2_singleton_left, alt_ofSet, Set.image_singleton,
+    Set.sdiff_singleton_eq_self (Set.notMem_singleton_iff.2 h.symm)]
+
+/-- A single common ground consistent with `p` and with `¬p` projects both resolutions. -/
+theorem project_singleton_polar (hp : f ⊓ 𝓟 p ≠ ⊥) (hnp : f ⊓ 𝓟 pᶜ ≠ ⊥) :
+    project {f} (polar p) = {f ⊓ 𝓟 p, f ⊓ 𝓟 pᶜ} := by
+  rw [project, Set.image2_singleton_left,
+    alt_polar_of_nontrivial (fun e ↦ hp (by simp [e])) (fun e ↦ hnp (by simp [e])),
+    Set.image_pair, Set.sdiff_singleton_eq_self (by simp [hp.symm, hnp.symm])]
+
+end Project
+
+variable (K : Table A W) (a : A) (p : Set W) (P : Question W)
 
 /-- The initial context: nothing on the Table, no commitments, the trivial common ground. -/
 def empty : Table A W := ⟨[], ∅, ⊤⟩
@@ -149,11 +192,6 @@ def Shared : Prop := ∀ a : A, p ∈ K.dc a
 
 /-! ### The projected set -/
 
-/-- `ps ∪ P`: add each complete answer of `P` to each projected common ground, discarding the
-inconsistent results. -/
-def project (ps : Set (Filter W)) (P : Question W) : Set (Filter W) :=
-  Set.image2 (fun f q ↦ f ⊓ 𝓟 q) ps (alt P) \ {⊥}
-
 /-- The projected set, rebuilt from the common ground by the issues on the Table, oldest first:
 the common grounds that canonically settle what is at issue. -/
 def projectedSet : Set (Filter W) := K.stack.foldr (fun P ps ↦ project ps P) {K.cg}
@@ -171,8 +209,7 @@ def push : Table A W := { K with stack := P :: K.stack }
 def pop : Table A W := { K with stack := K.stack.tail }
 
 /-- Commit `a` to `p`. -/
-def commit (force : Commitment.Force := .doxastic) (source : Commitment.Source := .selfGenerated) :
-    Table A W :=
+def commit (force : Force := .doxastic) (source : Source := .selfGenerated) : Table A W :=
   { K with commitments := insert (Commitment.commit a p force source) K.commitments }
 
 /-- Default assertion (9): `a` commits to `p` and places the declarative's issue on the Table. -/
@@ -205,10 +242,11 @@ def agreeToDisagree : Table A W := K.pop.pop
 @[simp] theorem stack_pop : K.pop.stack = K.stack.tail := rfl
 @[simp] theorem commitments_pop : K.pop.commitments = K.commitments := rfl
 @[simp] theorem cg_pop : K.pop.cg = K.cg := rfl
-@[simp] theorem stack_commit (f s) : (K.commit a p f s).stack = K.stack := rfl
-@[simp] theorem commitments_commit (f s) :
-    (K.commit a p f s).commitments = insert (Commitment.commit a p f s) K.commitments := rfl
-@[simp] theorem cg_commit (f s) : (K.commit a p f s).cg = K.cg := rfl
+@[simp] theorem stack_commit (force source) : (K.commit a p force source).stack = K.stack := rfl
+@[simp] theorem commitments_commit (force source) :
+    (K.commit a p force source).commitments =
+      insert (Commitment.commit a p force source) K.commitments := rfl
+@[simp] theorem cg_commit (force source) : (K.commit a p force source).cg = K.cg := rfl
 @[simp] theorem stack_assert : (K.assert a p).stack = ofSet p :: K.stack := rfl
 @[simp] theorem commitments_assert :
     (K.assert a p).commitments = insert (Commitment.commit a p) K.commitments := rfl
@@ -230,11 +268,11 @@ open scoped Classical in
   rfl
 @[simp] theorem cg_agreeToDisagree : K.agreeToDisagree.cg = K.cg := rfl
 
-@[simp] theorem commonGround_eq : HasCommonGround.commonGround K = K.cg := rfl
+@[simp] theorem commonGround_eq_cg : HasCommonGround.commonGround K = K.cg := rfl
 @[simp] theorem toIssue_empty : Discourse.HasIssue.toIssue (empty : Table A W) = ⊤ := rfl
 @[simp] theorem toIssue_push : Discourse.HasIssue.toIssue (K.push P) = P := rfl
-@[simp] theorem toIssue_commit (f s) :
-    Discourse.HasIssue.toIssue (K.commit a p f s) = Discourse.HasIssue.toIssue K := rfl
+@[simp] theorem toIssue_commit (force source) :
+    Discourse.HasIssue.toIssue (K.commit a p force source) = Discourse.HasIssue.toIssue K := rfl
 @[simp] theorem toIssue_assert : Discourse.HasIssue.toIssue (K.assert a p) = ofSet p := rfl
 @[simp] theorem toIssue_polarQuestion :
     Discourse.HasIssue.toIssue (K.polarQuestion p) = polar p := rfl
@@ -247,41 +285,42 @@ theorem not_isStable_push : ¬ (K.push P).IsStable := List.cons_ne_nil _ _
 
 variable {K} in
 /-- A stable conversation has no issue. -/
-theorem toIssue_of_isStable (h : K.IsStable) : Discourse.HasIssue.toIssue K = ⊤ := by
-  change K.stack.headD ⊤ = ⊤
-  rw [show K.stack = [] from h, List.headD_nil]
+theorem toIssue_eq_top_of_isStable (h : K.IsStable) : Discourse.HasIssue.toIssue K = ⊤ :=
+  congrArg (List.headD · ⊤) h
 
 variable {K} in
-theorem isStable_settle_of_isStable (h : K.IsStable) : (K.settle p).IsStable := by
-  show (K.settle p).stack = []
-  rw [stack_settle, show K.stack = [] from h, List.dropWhile_nil]
+theorem isStable_settle_of_isStable (h : K.IsStable) : (K.settle p).IsStable :=
+  congrArg (List.dropWhile _) h
 
 /-! ### Discourse commitments -/
 
 @[simp] theorem dc_empty : (empty : Table A W).dc a = ∅ := by
   simp [dc, ofCommitter, contents]
 
-@[simp] theorem dc_push : (K.push P).dc = K.dc := rfl
-@[simp] theorem dc_pop : K.pop.dc = K.dc := rfl
-@[simp] theorem dc_polarQuestion : (K.polarQuestion p).dc = K.dc := rfl
-@[simp] theorem dc_agreeToDisagree : K.agreeToDisagree.dc = K.dc := rfl
+@[simp] theorem dc_push : (K.push P).dc a = K.dc a := rfl
+@[simp] theorem dc_pop : K.pop.dc a = K.dc a := rfl
+@[simp] theorem dc_polarQuestion : (K.polarQuestion p).dc a = K.dc a := rfl
+@[simp] theorem dc_agreeToDisagree : K.agreeToDisagree.dc a = K.dc a := rfl
 
-@[simp] theorem dc_commit_self (f s) : (K.commit a p f s).dc a = insert p (K.dc a) := by
-  rw [dc, dc, commitments_commit, ofCommitter_insert_of_eq _ _ _ (commit_committer a p f s),
-    contents_insert_of_commit (commit_polarity a p f s), commit_content]
+@[simp] theorem dc_commit_self (force source) :
+    (K.commit a p force source).dc a = insert p (K.dc a) := by
+  rw [dc, dc, commitments_commit,
+    ofCommitter_insert_of_eq _ _ _ (commit_committer a p force source),
+    contents_insert_of_commit (commit_polarity a p force source), commit_content]
 
 variable {K a p} in
-theorem dc_commit_of_ne {f s} {b : A} (h : b ≠ a) : (K.commit a p f s).dc b = K.dc b := by
+theorem dc_commit_of_ne {force source} {b : A} (h : b ≠ a) :
+    (K.commit a p force source).dc b = K.dc b := by
   rw [dc, dc, commitments_commit,
-    ofCommitter_insert_of_ne _ _ _ ((commit_committer a p f s).trans_ne h.symm)]
+    ofCommitter_insert_of_ne _ _ _ ((commit_committer a p force source).trans_ne h.symm)]
 
-theorem mem_dc_commit_iff (f s) {b : A} {q : Set W} :
-    q ∈ (K.commit a p f s).dc b ↔ (b = a ∧ q = p) ∨ q ∈ K.dc b := by
+theorem mem_dc_commit_iff (force source) {b : A} {q : Set W} :
+    q ∈ (K.commit a p force source).dc b ↔ (b = a ∧ q = p) ∨ q ∈ K.dc b := by
   by_cases hb : b = a
   · subst hb; simp
   · simp [dc_commit_of_ne hb, hb]
 
-theorem mem_dc_commit_self (f s) : p ∈ (K.commit a p f s).dc a := by simp
+theorem mem_dc_commit_self (force source) : p ∈ (K.commit a p force source).dc a := by simp
 
 @[simp] theorem dc_assert : (K.assert a p).dc a = insert p (K.dc a) := dc_commit_self K a p _ _
 
@@ -318,11 +357,8 @@ theorem stack_settle_push_of_not_decidedBy (h : ¬ P.DecidedBy (K.cg ⊓ 𝓟 p)
   simp [h]
 
 /-- The commitment that triggers M' is stripped along with the rest. -/
-theorem settle_commit_self (f s) : (K.commit a p f s).settle p = K.settle p :=
-  Table.ext rfl
-    (Set.ext fun c ↦ ⟨fun ⟨h, hp⟩ ↦ ⟨h.resolve_left fun e ↦ hp (by rw [e]; rfl), hp⟩,
-      fun ⟨h, hp⟩ ↦ ⟨.inr h, hp⟩⟩)
-    rfl
+theorem settle_commit_self (force source) : (K.commit a p force source).settle p = K.settle p :=
+  Table.ext rfl (Set.insert_inter_of_notMem (not_not.2 rfl)) rfl
 
 /-- M' with the asserted proposition pops the assertion and strips its commitment. -/
 theorem settle_assert_self : (K.assert a p).settle p = K.settle p :=
@@ -345,34 +381,9 @@ theorem inCrisis_agreeToDisagree_assert_assert (b : A) (q : Set W) :
 
 /-! ### Projected common grounds -/
 
-variable {K a p P} {ps : Set (Filter W)} {f : Filter W}
+section
 
-theorem mem_project :
-    f ∈ project ps P ↔ (∃ g ∈ ps, ∃ q ∈ alt P, g ⊓ 𝓟 q = f) ∧ f ≠ ⊥ :=
-  Iff.rfl
-
-theorem ne_bot_of_mem_project (h : f ∈ project ps P) : f ≠ ⊥ := h.2
-
-theorem exists_le_of_mem_project (h : f ∈ project ps P) : ∃ g ∈ ps, f ≤ g :=
-  let ⟨g, hg, _, _, e⟩ := h.1
-  ⟨g, hg, e ▸ inf_le_left⟩
-
-/-- Every projected common ground decides the issue it was projected from. -/
-theorem decidedBy_of_mem_project (h : f ∈ project ps P) : P.DecidedBy f :=
-  let ⟨_, _, q, hq, e⟩ := h.1
-  ⟨q, hq, e ▸ mem_inf_of_right (mem_principal_self q)⟩
-
-/-- A single common ground consistent with `p` projects the one common ground with `p`. -/
-theorem project_singleton_ofSet (h : f ⊓ 𝓟 p ≠ ⊥) : project {f} (ofSet p) = {f ⊓ 𝓟 p} := by
-  rw [project, Set.image2_singleton_left, alt_ofSet, Set.image_singleton,
-    Set.sdiff_singleton_eq_self (Set.notMem_singleton_iff.2 h.symm)]
-
-/-- A single common ground consistent with `p` and with `¬p` projects both resolutions. -/
-theorem project_singleton_polar (hp : f ⊓ 𝓟 p ≠ ⊥) (hnp : f ⊓ 𝓟 pᶜ ≠ ⊥) :
-    project {f} (polar p) = {f ⊓ 𝓟 p, f ⊓ 𝓟 pᶜ} := by
-  rw [project, Set.image2_singleton_left,
-    alt_polar_of_nontrivial (fun e ↦ hp (by simp [e])) (fun e ↦ hnp (by simp [e])),
-    Set.image_pair, Set.sdiff_singleton_eq_self (by simp [hp.symm, hnp.symm])]
+variable {K a p P} {f : Filter W}
 
 /-- A stable conversation projects only its common ground. -/
 theorem projectedSet_of_isStable (h : K.IsStable) : K.projectedSet = {K.cg} := by
@@ -388,7 +399,7 @@ theorem le_cg_of_mem_projectedSet (h : f ∈ K.projectedSet) : f ≤ K.cg := by
     exact hfg.trans (ih hg)
 
 /-- Every projected common ground decides every issue on the Table. -/
-theorem decidedBy_of_mem_projectedSet (hf : f ∈ K.projectedSet) (hP : P ∈ K.stack) :
+theorem decidedBy_of_mem_projectedSet_of_mem_stack (hf : f ∈ K.projectedSet) (hP : P ∈ K.stack) :
     P.DecidedBy f := by
   obtain ⟨T, C, cg⟩ := K
   induction T generalizing f with
@@ -406,7 +417,7 @@ theorem settles_of_mem_projectedSet (hf : f ∈ K.projectedSet) :
   cases h : K.stack with
   | nil => exact mem_top
   | cons P T =>
-    exact (decidedBy_of_mem_projectedSet (P := P) hf (h ▸ List.mem_cons_self)).ker_mem
+    exact (decidedBy_of_mem_projectedSet_of_mem_stack (P := P) hf (h ▸ List.mem_cons_self)).ker_mem
 
 /-- The asserted proposition holds in every projected common ground. -/
 theorem mem_of_mem_projectedSet_assert (h : f ∈ (K.assert a p).projectedSet) : p ∈ f :=
@@ -417,11 +428,14 @@ theorem mem_or_compl_mem_of_mem_projectedSet_polarQuestion
     (h : f ∈ (K.polarQuestion p).projectedSet) : p ∈ f ∨ pᶜ ∈ f :=
   decidedBy_polar.1 (decidedBy_of_mem_project h)
 
-variable (K a p P)
+end
+
+@[simp] theorem projectedSet_empty : (empty : Table A W).projectedSet = {⊤} := rfl
 
 @[simp] theorem projectedSet_push : (K.push P).projectedSet = project K.projectedSet P := rfl
 
-@[simp] theorem projectedSet_commit (f s) : (K.commit a p f s).projectedSet = K.projectedSet :=
+@[simp] theorem projectedSet_commit (force source) :
+    (K.commit a p force source).projectedSet = K.projectedSet :=
   rfl
 
 /-- An assertion projects confirmation: its content is added to each projected common ground. -/
@@ -436,11 +450,10 @@ ground. -/
 /-- With the projected set derived, a conversation is in crisis exactly when no projected common
 ground is consistent. -/
 theorem inCrisis_iff : K.InCrisis ↔ ∀ f ∈ K.projectedSet, f = ⊥ :=
-  ⟨fun h ↦ h.elim
-    (fun hcg _ hf ↦ le_bot_iff.1 ((le_cg_of_mem_projectedSet hf).trans_eq hcg)) id, Or.inr⟩
+  or_iff_right_of_imp fun hcg _ hf ↦ le_bot_iff.1 ((le_cg_of_mem_projectedSet hf).trans_eq hcg)
 
 /-- After an assertion has been denied, nothing consistent is projected (21). -/
-theorem projectedSet_assert_compl (b : A) : ((K.assert a p).assert b pᶜ).projectedSet = ∅ :=
+theorem projectedSet_assert_assert_compl (b : A) : ((K.assert a p).assert b pᶜ).projectedSet = ∅ :=
   Set.eq_empty_of_forall_notMem fun f hf ↦ by
     rw [projectedSet_assert, mem_project, alt_ofSet] at hf
     obtain ⟨⟨g, hg, q, rfl, rfl⟩, hne⟩ := hf
@@ -449,9 +462,9 @@ theorem projectedSet_assert_compl (b : A) : ((K.assert a p).assert b pᶜ).proje
     exact mem_of_mem_projectedSet_assert hg
 
 /-- A denied assertion leaves the conversation in crisis. -/
-theorem inCrisis_assert_compl (b : A) : ((K.assert a p).assert b pᶜ).InCrisis :=
+theorem inCrisis_assert_assert_compl (b : A) : ((K.assert a p).assert b pᶜ).InCrisis :=
   (inCrisis_iff _).2 fun f hf ↦
-    absurd (projectedSet_assert_compl K a p b ▸ hf) (Set.notMem_empty f)
+    absurd (projectedSet_assert_assert_compl K a p b ▸ hf) (Set.notMem_empty f)
 
 end Table
 
