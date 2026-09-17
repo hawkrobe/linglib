@@ -1,4 +1,7 @@
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Syntax.Voice.Alternation
+import Linglib.Fragments.English.Predicates
+import Linglib.Fragments.English.Adposition
 import Linglib.Data.Examples.Levin1993
 
 /-!
@@ -11,7 +14,10 @@ opening quadruple *break*, *cut*, *hit*, *touch* takes four distinct profiles ac
 causative/inchoative, middle, conative, and body-part possessor ascension alternations, one
 class each (`quadruple_profiles_distinct`), and every categorical alternation judgment among
 the book's examples in `Data/Examples/Levin1993.json` agrees with the profile of the verb's
-class (`participation_matches_profile`).
+class (`participation_matches_profile`). The alternations that pair two argument frames are
+frame-pair schemas (`schema?`), and the English fragment's verbs have the frames of their
+class's attested alternations and none instantiating a starred one
+(`frames_cover_profile`, `frames_respect_starred`).
 
 ## Implementation notes
 
@@ -110,6 +116,83 @@ theorem participation_matches_profile :
     ∀ e ∈ Examples.all, ∀ c ∈ classOf e, ∀ a ∈ alternationOf e, ∀ b ∈ observed e,
       a ∈ c.alternations ∪ c.starredAlternations → decide (c.Participates a) = b := by
   decide
+
+/-! ### Frame-pair schemas of the alternations
+
+The alternations of Part One as pairs of English argument frames with a slot correspondence,
+the preposition fixed where the alternation's definition fixes it: *to* for the dative, *for*
+for the benefactive, *at* for the conative, *with* for the *with* variant of the locative and
+swarm alternations and for the instrument, *from* for the substance/source alternation, *out
+of* and *into* for the material/product and total transformation alternations, *on* for
+body-part possessor ascension. The locative variants of the locative and swarm alternations
+fix only that the phrase is spatial. The middle, the passives, the postverbal-subject
+alternations and the constructions of chapter 7 are not pairs of frames and have no schema. -/
+
+open Voice English.Adpositions ArgumentFrame.Slot in
+/-- The frame-pair schema of an alternation, where it has one. -/
+def schema? : DiathesisAlternation → Option ValencyAlternation
+  | .causativeInchoative => some decausativization
+  | .inducedAction => some causativization
+  | .conative => some { antipassivization with target := .pp (some at_) }
+  | .substanceSource => some
+      { source := .pp (some from_), target := .np,
+        correspondence := [(external, complement 0), (complement 0, external)] }
+  | .unspecifiedObject => some (objectDrop .indef)
+  | .understoodBodyPartObject => some (objectDrop .bodyPart)
+  | .understoodReflexiveObject => some (objectDrop .reflexive)
+  | .understoodReciprocalObject => some (objectDrop .reciprocal)
+  | .dative => some (toDoubleObject to_)
+  | .benefactive => some (toDoubleObject for_)
+  | .locative => some
+      { source := ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩,
+        target := .np_pp (some with_),
+        correspondence := [(external, external), (complement 0, complement 1),
+          (complement 1, complement 0)] }
+  | .bodyPartPossessorAscension => some
+      { source := .np, target := .np_pp (some on),
+        correspondence := [(external, external), (complement 0, complement 1)] }
+  | .swarm => some
+      { source := .pp none, target := .np_pp (some with_),
+        correspondence := [(external, complement 1), (complement 0, external)] }
+  | .materialProduct => some
+      { source := .np_pp (some outOf), target := .np_pp (some into),
+        correspondence := [(external, external), (complement 0, complement 1),
+          (complement 1, complement 0)] }
+  | .totalTransformation => some
+      { source := .np_pp (some into),
+        target := ⟨some .nominal,
+          [.nominal, .adpositional (some .spatial) (some from_),
+            .adpositional (some .spatial) (some into)]⟩,
+        correspondence := [(external, external), (complement 0, complement 0),
+          (complement 1, complement 2)] }
+  | .instrumentSubject => some
+      { source := .np_pp (some with_), target := .np,
+        correspondence := [(complement 0, complement 0), (complement 1, external)] }
+  | .middle | .verbalPassive | .prepositionalPassive | .thereInsertion | .locativeInversion
+  | .cognateObject | .wayConstruction | .resultative | .directionalPhrase => none
+where
+  /-- The unexpressed object alternations: the object dropped with interpretation `i`. -/
+  objectDrop (i : ImplicitInterp) : ValencyAlternation :=
+    { source := .np, target := .objectDrop (some i),
+      correspondence := [(external, external), (complement 0, complement 0)] }
+  /-- The dative and benefactive alternations: the *p* phrase becomes the first object. -/
+  toDoubleObject (p : Adposition) : ValencyAlternation :=
+    { source := .np_pp (some p), target := .np_np,
+      correspondence := [(external, external), (complement 0, complement 1),
+        (complement 1, complement 0)] }
+
+/-- Every fragment verb of a class has frames refining both frames of each schema its class
+attests. -/
+theorem frames_cover_profile :
+    ∀ v ∈ English.verbs, ∀ c ∈ v.levinClass, ∀ a ∈ c.alternations, ∀ σ ∈ schema? a,
+      v.toVerb.Alternates σ := by
+  decide +kernel
+
+/-- No fragment verb alternates by a schema its class stars. -/
+theorem frames_respect_starred :
+    ∀ v ∈ English.verbs, ∀ c ∈ v.levinClass, ∀ a ∈ c.starredAlternations, ∀ σ ∈ schema? a,
+      ¬ v.toVerb.Alternates σ := by
+  decide +kernel
 
 /-- The book's opening quadruple: *break*, *cut*, *hit*, and *touch* take pairwise distinct
 profiles across the causative/inchoative, middle, conative, and body-part possessor ascension

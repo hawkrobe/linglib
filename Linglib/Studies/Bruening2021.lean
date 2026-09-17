@@ -165,8 +165,10 @@ an implicit object does NOT allow it when used in the DOC.
 
 The encoded consequent: *melt* and *build* (Bruening p. 1025 ex. (7)–(8))
 have `complementType = .np` (transitive) with an object-drop frame, AND
-have no `.np_np` frame — so the Fragment itself blocks the spurious
-"implicit-second-obj-in-DOC" reading for these verbs.
+no double object or PP frame with an implicit second object — so the
+Fragment itself blocks the spurious "implicit-second-obj-in-DOC" reading for
+these verbs, *build* having the benefactive double object frame but not that
+one.
 
 (Bruening's prototypical example *bake* is not in the English fragment.) -/
 
@@ -176,7 +178,8 @@ theorem g3_base_transitive_constraint :
     baseTransitivesWithImplicit.all (fun v =>
       decide (v.complementType = .np)
       && v.frames.any (fun fr => decide fr.HasImplicit)
-      && decide (ArgumentFrame.np_np ∉ v.frames)) = true := by decide
+      && decide (implicitSecondObject (v, .firstObject) = none)
+      && decide (implicitSecondObject (v, .pp) = none)) = true := by decide
 
 /-! ### G1 and G4
 
