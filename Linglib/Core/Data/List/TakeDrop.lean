@@ -12,7 +12,8 @@ The `getElem?` forms of `List.mem_take_iff_getElem` and `List.mem_drop_iff_getEl
 element of a prefix or suffix is an entry of the original list at an index on that side of
 the cut. Alongside, the extensionality lemmas `List.ext_take_getElem?` and
 `List.ext_drop_getElem?`: two lists agreeing at every index below `n` have the same `take n`,
-and agreeing from `n` on have the same `drop n`. [UPSTREAM] candidates for
+and agreeing from `n` on have the same `drop n`; and `List.take_append_take`, truncating the
+right operand before taking a prefix is a no-op. [UPSTREAM] candidates for
 `Init/Data/List/Nat/TakeDrop.lean`, beside their `getElem` counterparts and `List.ext_getElem?`.
 -/
 
@@ -41,6 +42,12 @@ theorem ext_take_getElem? (h : ∀ k < n, l₁[k]? = l₂[k]?) : l₁.take n = l
 /-- Lists agreeing at every index from `n` on have the same suffix from `n`. -/
 theorem ext_drop_getElem? (h : ∀ k, n ≤ k → l₁[k]? = l₂[k]?) : l₁.drop n = l₂.drop n :=
   ext_getElem? fun k ↦ by simpa only [getElem?_drop] using h (n + k) (Nat.le_add_right n k)
+
+/-- Truncating the right operand to length `n` before taking the length-`n` prefix of an append
+is a no-op. -/
+theorem take_append_take (n : ℕ) (l₁ l₂ : List α) :
+    (l₁ ++ l₂.take n).take n = (l₁ ++ l₂).take n := by
+  simp [take_append, take_take]
 
 /-- A nonempty suffix starts inside the list. -/
 theorem lt_length_of_mem_drop (h : a ∈ l.drop n) : n < l.length :=
