@@ -25,6 +25,7 @@ partial ones, `Reference.THE` and `Reference.lower`, are Russellian iotas.
 * [barwise-cooper-1981]
 * [partee-1987]
 * [barker-2002]
+* [heim-kratzer-1998]
 -/
 
 namespace Quantifier.NP
@@ -252,5 +253,26 @@ theorem A_eq_some_sem (E : Type*) (domain : List E) (hComplete : ∀ x : E, x �
   funext R S
   simp only [A, some_sem]
   exact propext ⟨fun ⟨x, _, hR, hS⟩ ↦ ⟨x, hR, hS⟩, fun ⟨x, hR, hS⟩ ↦ ⟨x, hComplete x, hR, hS⟩⟩
+
+/-! ### The object-position shift
+
+[heim-kratzer-1998] repair the type mismatch of a quantifier in object position in situ by
+letting the quantifier take the two-place predicate and the subject, quantifying over the
+object, and derive that entry for every determiner from its basic one by a lexical rule. -/
+
+/-- The object-position reading of a quantifier, which takes an object-first two-place
+predicate and the subject. -/
+def objectShift (Q : NP E) : (E → E → Prop) → E → Prop := fun R x ↦ Q fun y ↦ R y x
+
+@[simp] theorem objectShift_apply (Q : NP E) (R : E → E → Prop) (x : E) :
+    objectShift Q R x = Q fun y ↦ R y x := rfl
+
+/-- The object-position reading of a determiner, [heim-kratzer-1998]'s lexical rule deriving
+it from the basic entry. -/
+def _root_.Quantifier.GQ.objectShift (D : GQ E) : (E → Prop) → (E → E → Prop) → E → Prop :=
+  fun P ↦ NP.objectShift (D P)
+
+@[simp] theorem _root_.Quantifier.GQ.objectShift_apply (D : GQ E) (P : E → Prop)
+    (R : E → E → Prop) (x : E) : GQ.objectShift D P R x = D P fun y ↦ R y x := rfl
 
 end Quantifier.NP
