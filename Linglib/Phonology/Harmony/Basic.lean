@@ -28,6 +28,12 @@ cannot express parasitic harmony ((8b)) or configuration-dependent blocking
 * `Pattern.harmonic_insert_transparent`: transparency interrupts harmlessly.
 * `Pattern.harmonic_iff_agreeOn`: with all segments participating, the chain
   and pairwise formulations coincide.
+
+## References
+
+* [ritter-vanderhulst-2024-themes]
+* [aksenova-rawski-graf-heinz-2024]
+* [jurgec-2011]
 -/
 
 namespace Phonology.Harmony

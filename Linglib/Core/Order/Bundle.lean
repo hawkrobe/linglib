@@ -49,6 +49,10 @@ theory is proved once at the Pi level and inherited by every choice of
 * `Bundle F V` — the canonical extensional carrier, a partial
   assignment `(t : F) → Option (V t)`, carrying the subsumption
   `PartialOrder` with `⊥` the everywhere-underspecified bundle
+* `Bundle.single`, `Bundle.ofList` — the bundle specifying one feature,
+  and the bundle read off an association list; `single_le_iff` and
+  `ofList_le_iff` characterize lying below a bundle by the values it
+  carries
 * `BundleLike.subsumptionPreorder` — any representation pulls the
   subsumption order back along `val`, as a `Core.Order.PullbackPreorder`
 
@@ -270,6 +274,60 @@ def delete [DecidableEq F] (t : F) (b : Bundle F V) : Bundle F V :=
 leaving every other feature untouched. -/
 def assimilate [DecidableEq F] (t : F) (src tgt : Bundle F V) : Bundle F V :=
   Function.update tgt t (src t)
+
+/-! ### Association lists and the single-feature bundles -/
+
+section OfList
+
+variable [DecidableEq F] {β : Type*}
+
+/-- The bundle over a constant slot family read off an association list: a feature's value
+is its first entry, and an unlisted feature is unspecified. -/
+def ofList (l : List (F × β)) : Bundle F fun _ ↦ β := fun t ↦ l.lookup t
+
+@[simp] theorem ofList_apply (l : List (F × β)) (t : F) : ofList l t = l.lookup t := rfl
+
+/-- A single-feature bundle lies below a bundle exactly when that bundle carries the value. -/
+theorem single_le_iff {t : F} {v : V t} {b : Bundle F V} : single t v ≤ b ↔ b t = ↑v := by
+  refine ⟨fun h ↦ ?_, fun h u ↦ ?_⟩
+  · have := h t
+    rw [single, Function.update_self] at this
+    exact Flat.coe_le_iff.1 this
+  · by_cases hu : u = t
+    · subst hu
+      rw [single, Function.update_self]
+      exact Flat.coe_le_iff.2 h
+    · rw [single, Function.update_of_ne hu]
+      exact bot_le
+
+/-- An association list lies below a bundle exactly when the bundle carries every value the
+list looks up. -/
+theorem ofList_le_iff {l : List (F × β)} {b : Bundle F fun _ ↦ β} :
+    ofList l ≤ b ↔ ∀ t v, l.lookup t = some v → b t = ↑v := by
+  refine ⟨fun h t v hv ↦ ?_, fun h t ↦ ?_⟩
+  · have := h t
+    rw [ofList_apply, hv] at this
+    exact Flat.coe_le_iff.1 this
+  · rw [ofList_apply]
+    cases hf : l.lookup t with
+    | none => exact bot_le
+    | some v => exact Flat.coe_le_iff.2 (h t v hf)
+
+/-- With distinct features, an association list lies below a bundle exactly when the bundle
+carries each listed value. -/
+theorem ofList_le_iff_forall_mem {l : List (F × β)} (h : (l.map Prod.fst).Nodup)
+    {b : Bundle F fun _ ↦ β} : ofList l ≤ b ↔ ∀ p ∈ l, b p.1 = ↑p.2 := by
+  rw [ofList_le_iff]
+  refine ⟨fun H p hp ↦ H p.1 p.2 ?_, fun H t v hv ↦ ?_⟩
+  · obtain ⟨l₁, l₂, rfl⟩ := List.append_of_mem hp
+    refine List.lookup_eq_some_iff.2 ⟨l₁, l₂, rfl, fun q hq ↦ bne_iff_ne.2 fun hpq ↦ ?_⟩
+    rw [List.map_append, List.map_cons] at h
+    exact (List.nodup_append'.1 h).2.2 (List.mem_map.2 ⟨q, hq, rfl⟩)
+      (by rw [← hpq]; exact List.mem_cons_self)
+  · obtain ⟨l₁, l₂, rfl, -⟩ := List.lookup_eq_some_iff.1 hv
+    exact H (t, v) (List.mem_append_right _ List.mem_cons_self)
+
+end OfList
 
 end Bundle
 

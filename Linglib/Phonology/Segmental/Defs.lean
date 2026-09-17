@@ -111,7 +111,7 @@ end Feature
     one refines another when it agrees on every feature the other commits to, and
     possibly more. The fully unspecified segment is least; the most specific class
     common to two segments is their meet. -/
-abbrev Segment := Feature → Flat Bool
+abbrev Segment := Bundle Feature fun _ ↦ Bool
 
 namespace Segment
 
@@ -132,13 +132,10 @@ instance (f : Feature) : Decidable (s.Unspecified f) := inferInstanceAs (Decidab
 
 /-! ### Construction -/
 
-/-- Build a segment from a list of (feature, value) pairs. Unmentioned features are
-    unspecified (`none`), giving natural-class semantics: `ofSpecs [(continuant,
-    false)]` matches all [-cont] segments. -/
-def ofSpecs (specs : List (Feature × Bool)) : Segment :=
-  fun f => match specs.find? (fun p ↦ p.1 == f) with
-    | some (_, v) => some v
-    | none => none
+/-- The segment read off a list of (feature, value) pairs, the `Bundle.ofList` of Hayes's
+    inventory. Unmentioned features are unspecified, giving natural-class semantics:
+    `ofSpecs [(continuant, false)]` lies below every [−cont] segment. -/
+def ofSpecs (specs : List (Feature × Bool)) : Segment := Bundle.ofList specs
 
 /-- Vowel height — the (±high, ±low) tongue-body axis, with the contradictory
 [+high, +low] combination unrepresentable. -/

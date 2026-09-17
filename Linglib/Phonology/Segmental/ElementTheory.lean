@@ -35,6 +35,16 @@ the multiple-heads variant of [backley-2017]. The inventory is Standard ET's, no
 Conservative or Progressive ET ([backley-2012]): elements are shared — |L| for
 nasality/voicing/low tone, |U| for labials/velars, |H| for
 frication/voicelessness/high tone.
+
+## References
+
+* [backley-2011]
+* [backley-2012]
+* [backley-2017]
+* [breit-2013]
+* [harris-1994]
+* [kaye-lowenstamm-vergnaud-1985]
+* [cavirani-vandenwyngaerd-2026]
 -/
 
 namespace ElementTheory
