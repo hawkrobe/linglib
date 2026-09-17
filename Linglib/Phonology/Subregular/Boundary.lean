@@ -121,7 +121,7 @@ lemma getElem?_boundary_eq_config {q : ℕ} (h : q < w.length + 2 * (k - 1)) :
     (boundary k w)[q]? = some (w.config ((q : ℤ) - (k - 1 : ℕ))) := by
   rw [getElem?_boundary]
   split_ifs with h1 h2
-  · rw [List.config_neg (by omega)]
+  · rw [List.config_of_neg (by omega)]
   · have hlt : q - (k - 1) < w.length := by omega
     rw [show ((q : ℤ) - (k - 1 : ℕ)) = ((q - (k - 1) : ℕ) : ℤ) by omega,
       List.config_natCast, List.getElem?_eq_getElem hlt, Option.map_some]
