@@ -5,10 +5,10 @@ import Mathlib.Data.Fintype.Sum
 /-!
 # Clause constructions
 
-[haspelmath-2025-nonverbal]
+[haspelmath-2025a]
 
 `Clause.Construction`: what kind of predication a clause instantiates —
-headed by a typical verb, or one of [haspelmath-2025-nonverbal]'s eight
+headed by a typical verb, or one of [haspelmath-2025a]'s eight
 nonverbal clause constructions (his Table 1). The nonverbal region is
 structured by coordinates the paper itself exhibits: the four
 locopossessional types are the product of domain × pivot definiteness
@@ -37,7 +37,7 @@ dimension.
 
 namespace Clause
 
-/-- The two locopossessional domains ([haspelmath-2025-nonverbal] (22)):
+/-- The two locopossessional domains ([haspelmath-2025a] (22)):
     clauses about location vs about possession. -/
 inductive LocPossDomain where
   | locational
@@ -45,7 +45,7 @@ inductive LocPossDomain where
   deriving DecidableEq, Repr, Fintype
 
 /-- The predication a clause instantiates: headed by a typical verb, or
-    one of [haspelmath-2025-nonverbal]'s nonverbal construction blocks:
+    one of [haspelmath-2025a]'s nonverbal construction blocks:
 
     - `duonominal`: two nominal expressions (§2); the second nominal's
       definiteness splits classificational (indefinite, nonreferential
@@ -111,7 +111,7 @@ def pivotDefinite? : Construction → Option Bool
 
 /-! ### Super-types, as fibers -/
 
-/-- Lacks a typical verb — [haspelmath-2025-nonverbal]'s cover
+/-- Lacks a typical verb — [haspelmath-2025a]'s cover
     concept. -/
 def Nonverbal : Prop := t ≠ verbal
 
@@ -176,7 +176,7 @@ theorem locopossessional_iff :
 /-- The clause has a topic-comment (subject-predicate) division: an
     element that is a predicate rather than a referring expression.
     Verbal clauses predicate; among the nonverbal types
-    ([haspelmath-2025-nonverbal] §6), a duonominal predicates iff its
+    ([haspelmath-2025a] §6), a duonominal predicates iff its
     second nominal is a nonreferential classificatory nominal,
     attributionals predicate, a locopossessional predicates iff its
     pivot is definite (the locative or appertentive phrase is then the
@@ -209,7 +209,7 @@ positions of an equational, ascriptive or locational clause; existives
 (Spanish *hay*) are copulas restricted to existential and
 predpossessive clauses (§7, §11). Form-based strategies (copula vs
 verbless clause, existives, transpossessives, …;
-[haspelmath-2025-nonverbal] §§5, 11; [aikhenvald-2015-art] §11.1.2)
+[haspelmath-2025a] §§5, 11; [aikhenvald-2015-art] §11.1.2)
 enter with the per-language fragments that instantiate them. -/
 
 /-- The construction admits a copula (§7): equational, ascriptive, or

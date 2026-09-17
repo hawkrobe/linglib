@@ -217,20 +217,20 @@ and containing N₉ because conjoined class-9 singulars allow class-10 agreement
 
 /-- The Xhosa singular entries: bare classifiers. -/
 def xhosaSg : Xhosa.Gender → TreeLexEntry NCFeature String
-  | .genderA => ⟨sgTree 1, "m", .prefix⟩
-  | .genderB => ⟨sgTree 3, "m", .prefix⟩
-  | .genderC => ⟨sgTree 5, "li", .prefix⟩
-  | .genderD => ⟨sgTree 7, "si", .prefix⟩
-  | .genderE => ⟨sgTree 9, "n", .prefix⟩
+  | .genderA => ⟨sgTree 1, "m", .before⟩
+  | .genderB => ⟨sgTree 3, "m", .before⟩
+  | .genderC => ⟨sgTree 5, "li", .before⟩
+  | .genderD => ⟨sgTree 7, "si", .before⟩
+  | .genderE => ⟨sgTree 9, "n", .before⟩
 
 /-- The Xhosa plural entries: genders A, D and E share their N with the singular, B and C contain
 distinct Ns, the finding of section 2. -/
 def xhosaPl : Xhosa.Gender → TreeLexEntry NCFeature String
-  | .genderA => ⟨plTree 1, "ba", .prefix⟩
-  | .genderB => ⟨plTree 4, "mi", .prefix⟩
-  | .genderC => ⟨plTree 6, "ma", .prefix⟩
-  | .genderD => ⟨plTree 7, "zi", .prefix⟩
-  | .genderE => ⟨plTree 9, "zi", .prefix⟩
+  | .genderA => ⟨plTree 1, "ba", .before⟩
+  | .genderB => ⟨plTree 4, "mi", .before⟩
+  | .genderC => ⟨plTree 6, "ma", .before⟩
+  | .genderD => ⟨plTree 7, "zi", .before⟩
+  | .genderE => ⟨plTree 9, "zi", .before⟩
 
 /-- The five Xhosa genders. -/
 def xhosaGenders : List Xhosa.Gender := [.genderA, .genderB, .genderC, .genderD, .genderE]
@@ -266,19 +266,19 @@ inductive RhongaGender where
 
 /-- The singular entries (76), (79a), (80a). -/
 def rhongaSg : RhongaGender → TreeLexEntry NCFeature String
-  | .gA => ⟨sgTree 1, "mu", .prefix⟩
-  | .gB => ⟨sgTree 3, "mu", .prefix⟩
-  | .gC => ⟨sgTree 5, "rhi", .prefix⟩
-  | .gD => ⟨sgTree 7, "xi", .prefix⟩
-  | .gE => ⟨sgTree 9, "yi", .prefix⟩
+  | .gA => ⟨sgTree 1, "mu", .before⟩
+  | .gB => ⟨sgTree 3, "mu", .before⟩
+  | .gC => ⟨sgTree 5, "rhi", .before⟩
+  | .gD => ⟨sgTree 7, "xi", .before⟩
+  | .gE => ⟨sgTree 9, "yi", .before⟩
 
 /-- The plural entries (77), (79b), (80b). -/
 def rhongaPl : RhongaGender → TreeLexEntry NCFeature String
-  | .gA => ⟨plTree 1, "va", .prefix⟩
-  | .gB => ⟨plTree 4, "mi", .prefix⟩
-  | .gC => ⟨plTree 6, "ma", .prefix⟩
-  | .gD => ⟨plTree 7, "swi", .prefix⟩
-  | .gE => ⟨plTree 10, "ti", .prefix⟩
+  | .gA => ⟨plTree 1, "va", .before⟩
+  | .gB => ⟨plTree 4, "mi", .before⟩
+  | .gC => ⟨plTree 6, "ma", .before⟩
+  | .gD => ⟨plTree 7, "swi", .before⟩
+  | .gE => ⟨plTree 10, "ti", .before⟩
 
 /-- The singular's classifier, first merged with the root. -/
 def rhongaBaseN : RhongaGender → ℕ
@@ -343,13 +343,13 @@ theorem xhosa_rhonga_contrast :
 
 /-- Shona *mi* on the bare `[N₄]` (89) and *ma* on `[# N₆]`. -/
 def shonaPrefixes : List (TreeLexEntry NCFeature String) :=
-  [⟨sgTree 4, "mi", .prefix⟩, ⟨plTree 6, "ma", .prefix⟩]
+  [⟨sgTree 4, "mi", .before⟩, ⟨plTree 6, "ma", .before⟩]
 
 /-- The double plural *ma-mi-sha* 'groups of villages' (84), (88) is derived from the entry (89),
 and would be underivable, *mi* spelling out `[# N₄]` directly, from the entry (87). -/
 theorem shona_double_plural :
     derivePlural shonaPrefixes 4 6 = some (.stacked "ma" "mi") ∧
-      derivePlural [⟨plTree 4, "mi", .prefix⟩, ⟨plTree 6, "ma", .prefix⟩] 4 6 =
+      derivePlural [⟨plTree 4, "mi", .before⟩, ⟨plTree 6, "ma", .before⟩] 4 6 =
         some (.direct "mi") := by
   decide
 
