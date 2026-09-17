@@ -99,8 +99,8 @@ theorem rows_coherence :
 
 /-- The verb argument that fuses with the construction's undergoer: the object of a causative,
 the subject of a noncausative. -/
-def Row.fusedArgument (r : Row) : Option Verb.Argument :=
-  r.verb.arguments[if r.subconstruction.isCausative then 1 else 0]?
+def Row.fusedSlot (r : Row) : Option Frame.Slot :=
+  r.verb.coreSlots[if r.subconstruction.isCausative then 1 else 0]?
 
 /-- The paper's subject roles for the noncausatives are the unaccusativity predictions of the
 verbs' Levin classes ([levin-hovav-1995]): *bleed* emits substance, *yell* and *cry* are manner
@@ -113,7 +113,7 @@ theorem rows_verbRole_unaccusative :
 /-- Where the fragment's citation frame derives a role label for the fusing argument, it is the
 paper's: the object of *wipe* is construable as a patient. -/
 theorem rows_verbRole_thetaLabel :
-    ∀ r ∈ rows, ∀ ρ ∈ r.verbRole, ∀ a ∈ r.fusedArgument, ∀ ρ' ∈ a.thetaLabel, ρ' = ρ := by
+    ∀ r ∈ rows, ∀ ρ ∈ r.verbRole, ∀ s ∈ r.fusedSlot, ∀ ρ' ∈ r.verb.thetaLabel s, ρ' = ρ := by
   decide
 
 end GoldbergJackendoff2004

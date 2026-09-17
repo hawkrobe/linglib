@@ -62,7 +62,7 @@ def valency (c : Arguments α) : Valency := Finset.univ.filter fun p => (c p).is
 /-- The comparative classification of a filled position — the *clause*
     takes the classification: the sole argument of a one-place clause is S;
     in a two-place clause the external argument is A and the internal P.
-    `Verb.codingRoles` is the special case classifying a verb entry's
+    `Verb.codingRole` is the special case classifying a verb entry's
     citation clause. -/
 def codingRole (c : Arguments α) : ArgPosition → Option ArgumentRole
   | .external => (c .external).map fun _ => if (c .internal).isSome then .A else .S

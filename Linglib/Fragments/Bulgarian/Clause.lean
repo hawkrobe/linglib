@@ -61,7 +61,7 @@ structure Verb extends _root_.Verb where
   deriving Repr
 
 /-- The frames of an emotive factive, a finite clause or a *za* phrase (59). -/
-private def emotiveFrames : List Frame := [Frame.finiteClause, [.adpositional]]
+private def emotiveFrames : List Frame := [Frame.finiteClause, Frame.pp]
 
 /-- *săžaljavam* 'regret', the predicate of the projection trials (57). -/
 def sazhaljavam : Verb where

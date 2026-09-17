@@ -101,14 +101,15 @@ def complementizers : List Complementizer := [ake, keji, ni]
 
 /-- The finite interrogative frame `kɛji` types. -/
 def kejiFrame : Frame :=
-  [.clausal (coding := some .indicative) (force := some .interrogative)]
+  { complements := [.clausal (coding := some .indicative) (force := some .interrogative)] }
 
 /-- The controlled irrealis frame `ni` types: [noonan-2007]-infinitival, the
     paper's own term, with a subject that is an overt proclitic in the
     subjective (nominative) form of Table 3 — never null and never a lexical DP
     (exx 40–42). -/
 def niFrame : Frame :=
-  [.clausal (coding := some .infinitive) (embeddedSubject := some (.overt (some .nom)))]
+  { complements :=
+    [.clausal (coding := some .infinitive) (embeddedSubject := some (.overt (some .nom)))] }
 
 /-- The three embedded clause types of [allotey-2021], named by the
     complementizer heading them (§5.5.1). The `ni` type is the controlled

@@ -403,7 +403,7 @@ def frieren : GermanVerbEntry where
   form3sg := "friert"
   formPast := "fror"
   formPastPart := "gefroren"
-  frames := []
+  frames := [Frame.intransitive]
   unaccusative := true
   vendlerClass := some .achievement
   rootType := some .propertyConcept

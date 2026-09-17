@@ -16,30 +16,36 @@ namespace Indonesian.Complementation
 open Morphology
 
 /-- A bare complement whose subject is controlled by a matrix argument. -/
-def controlled : Complement.Position :=
+def controlled : Frame.Position :=
   .clausal (coding := some .infinitive) (embeddedSubject := some .obligatorilyNull)
+
+/-- The frame of a controlled complement alone. -/
+def controlledFrame : Frame := { complements := [controlled] }
+
+/-- The frame of an object and a complement it controls. -/
+def objectControlledFrame : Frame := { complements := [.nominal, controlled] }
 
 /-- *ingin* 'want': a controlled complement, *Mereka ingin datang besok*. -/
 def ingin : Verb :=
-  { form := "ingin", frames := [[controlled]],
-    readings := [{ frame := [controlled], control := some .subjectControl }] }
+  { form := "ingin", frames := [controlledFrame],
+    readings := [{ frame := controlledFrame, control := some .subjectControl }] }
 
 /-- *belajar* 'learn, study': a controlled complement, *Saya belajar menembak*. -/
 def belajar : Verb :=
-  { form := "belajar", frames := [[controlled]],
-    readings := [{ frame := [controlled], control := some .subjectControl }] }
+  { form := "belajar", frames := [controlledFrame],
+    readings := [{ frame := controlledFrame, control := some .subjectControl }] }
 
 /-- *menyuruh* 'order, ask': an object and a complement it controls, *Saya menyuruh dia
 makan*. -/
 def menyuruh : Verb :=
-  { form := "menyuruh", frames := [[.nominal, controlled]],
-    readings := [{ frame := [.nominal, controlled], control := some .objectControl }] }
+  { form := "menyuruh", frames := [objectControlledFrame],
+    readings := [{ frame := objectControlledFrame, control := some .objectControl }] }
 
 /-- *mendorong* 'push': an object and a resultative complement it controls, *Orang itu
 mendorong saya jatuh*. -/
 def mendorong : Verb :=
-  { form := "mendorong", frames := [[.nominal, controlled]],
-    readings := [{ frame := [.nominal, controlled], control := some .objectControl }] }
+  { form := "mendorong", frames := [objectControlledFrame],
+    readings := [{ frame := objectControlledFrame, control := some .objectControl }] }
 
 /-- *tahu* 'know': a finite *bahwa* clause, *Saya tahu bahwa mereka akan datang*. -/
 def tahu : Verb := { form := "tahu", frames := [Frame.finiteClause] }

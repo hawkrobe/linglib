@@ -241,7 +241,7 @@ def anarotjeme : Verb where
 /-- *thélo* (θέλω) 'want' — volitional, taking only a *na*-clause ([roussou-2010]). -/
 def thelo : Verb where
   form := "thélo"
-  frames := [[.clausal (coding := some .subjunctive)]]
+  frames := [{ complements := [.clausal (coding := some .subjunctive)] }]
   attitude := some (.preferential (.degreeComparison .positive))
   vendlerClass := some .state
 
@@ -253,7 +253,7 @@ def thelo : Verb where
     ([angelopoulos-2026] fn. 14). -/
 def simveni : Verb where
   form := "simvéni"
-  frames := [[.clausal (coding := some .subjunctive)]]
+  frames := [{ complements := [.clausal (coding := some .subjunctive)] }]
   vendlerClass := some .achievement
   unaccusative := true
 

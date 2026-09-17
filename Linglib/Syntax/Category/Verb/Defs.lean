@@ -20,7 +20,7 @@ import Linglib.Semantics.Root.Defs
 /-! # Verb entry — core type
 
 The framework-neutral verb entry: the selectional and inflectional enums (`VoiceType`,
-`SenseTag`, `ImplicitInterp`) and the `Verb` structure, whose fields are grouped into the
+`SenseTag`) and the `Verb` structure, whose fields are grouped into the
 facets `Verb.ArgStructure`, `Verb.Aspect`, `Verb.Presupposition`, `Verb.Causation` and
 `Verb.Attitude` and shared by every language's fragment. Complement selection is a list of
 typed frames, and a frame-conditioned attitude, opacity or control lives on a `Verb.Reading`
@@ -91,15 +91,6 @@ inductive SenseTag where
   | stative
   deriving DecidableEq, Repr
 
-/-- The interpretation of an unexpressed argument, pragmatically recoverable or unspecified
-([fillmore-1986], [bruening-2021]). -/
-inductive ImplicitInterp where
-  /-- Existentially bound: an unspecified someone or something. -/
-  | indef
-  /-- A pragmatically recoverable definite. -/
-  | def
-  deriving DecidableEq, Repr
-
 /-! ### Field facets
 
 Each facet groups a concern's fields; `Verb` composes them via `extends`,
@@ -110,10 +101,9 @@ namespace Verb
 /-- Argument structure and realization: complement selection, control,
     proto-role entailments, voice, and implicit arguments. -/
 structure ArgStructure where
-  /-- Complement frames, citation frame first. `[]` for intransitives.
-      The flat `ComplementType` cells are the `Frame.np`,
-      `Frame.finiteClause`, … smart constructors
-      (`Syntax/Category/Verb/Complement/Basic.lean`). -/
+  /-- Argument frames, citation frame first: `Frame.intransitive`, `Frame.np`,
+      `Frame.finiteClause`, … (`Syntax/Category/Verb/Complement/Basic.lean`). `[]` records
+      no frame. -/
   frames : List Frame
   /-- Proto-role entailment profile for the subject (external argument).
       The authoritative representation of argument semantics
@@ -189,7 +179,8 @@ structure Causation where
     attitude and opacity (`none` = inherit `Verb.attitude` /
     `Verb.opaqueContext`), and the frame's control type. -/
 structure Reading where
-  /-- The frame this reading is conditioned on, one of the verb's frames. -/
+  /-- The frame this reading is conditioned on: it applies to every frame of the verb
+      refining it, in the refinement order on `Frame`. -/
   frame : Frame
   /-- Frame-conditioned attitude override. -/
   attitude : Option _root_.Attitude := none
@@ -259,10 +250,23 @@ Flat readers over `Verb.frames`/`Verb.readings`, preserving the flat
 enum-based call syntax: the citation frame's complement/control type and
 the alternate frame's, when present. -/
 
-/-- The citation (first) frame's flat `ComplementType` cell; `.none` for an
+/-- The citation frame, the first of the entry's frames. -/
+def Verb.citationFrame? (v : Verb) : Option Frame := v.frames.head?
+
+/-- The reading keyed to frame `fr`: the first whose frame `fr` refines. -/
+def Verb.reading? (v : Verb) (fr : Frame) : Option Verb.Reading :=
+  v.readings.find? fun r ↦ decide (r.frame ≤ fr)
+
+/-- The citation frame's flat `ComplementType` cell; `.none` for an
     intransitive and for a frame shape the enum has no cell for. -/
 def Verb.complementType (v : Verb) : ComplementType :=
-  (v.frames.head?.bind Frame.complementType?).getD .none
+  (v.citationFrame?.bind Frame.complementType?).getD .none
+
+/-- Every frame of the verb is intransitive. -/
+def Verb.IsIntransitive (v : Verb) : Prop := ∀ fr ∈ v.frames, fr.IsIntransitive
+
+instance (v : Verb) : Decidable v.IsIntransitive :=
+  inferInstanceAs (Decidable (∀ fr ∈ v.frames, _))
 
 /-- The alternate (second) frame's flat `ComplementType` cell, `none` when
     there is no second frame or it has a shape outside the enum. -/
@@ -271,19 +275,16 @@ def Verb.altComplementType (v : Verb) : Option ComplementType :=
 
 /-- The control type of the reading keyed to the citation frame. -/
 def Verb.controlType (v : Verb) : ControlType :=
-  (v.frames.head?.bind fun fr =>
-    (v.readings.find? (·.frame == fr)).bind (·.control)).getD .none
+  (v.citationFrame?.bind fun fr ↦ (v.reading? fr).bind (·.control)).getD .none
 
 /-- The control type of the reading keyed to the alternate frame. -/
 def Verb.altControlType (v : Verb) : ControlType :=
-  (v.frames[1]?.bind fun fr =>
-    (v.readings.find? (·.frame == fr)).bind (·.control)).getD .none
+  (v.frames[1]?.bind fun fr ↦ (v.reading? fr).bind (·.control)).getD .none
 
 /-- The effective attitude on frame `fr`: reading override, else lexeme
     default. -/
 def Verb.attitudeOn (v : Verb) (fr : Frame) : Option _root_.Attitude :=
-  ((v.readings.find? (·.frame == fr)).bind (·.attitude)).orElse
-    fun _ => v.attitude
+  ((v.reading? fr).bind (·.attitude)).orElse fun _ ↦ v.attitude
 
 /-- All [noonan-2007] codings across the verb's frames. -/
 def Verb.codings (v : Verb) : List Complement.Coding :=

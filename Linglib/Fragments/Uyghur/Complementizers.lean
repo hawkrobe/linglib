@@ -99,7 +99,7 @@ def oyla : Verb where
 coerced into a verb of speech (his 38; §3.1). -/
 def warqira : Verb where
   form := "warqira-"
-  frames := []
+  frames := [Frame.intransitive]
   voiceType := some .agentive
 
 end Uyghur

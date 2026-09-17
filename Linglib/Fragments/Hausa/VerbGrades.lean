@@ -270,7 +270,7 @@ def lexicon : List HausaVerb :=
     canonicity — making the empirical claim "gr1 has an intransitive
     sub-use" *visible* in the type system rather than buried in prose. -/
 def gangara : HausaVerb :=
-  { mkVerb "gangarā" gr1 with frames := [] }
+  { mkVerb "gangarā" gr1 with frames := [Frame.intransitive] }
 
 -- ============================================================================
 -- § 6: Universal Theorems About the Grade System
@@ -330,7 +330,7 @@ theorem gr7_nonThematic (v : HausaVerb)
 theorem mkVerb_is_canonical (form : String) (g : StemTemplate)
     (lexTones : List TRN := []) :
     (mkVerb form g lexTones).canonical :=
-  ⟨by simp [mkVerb, Verb.complementType], rfl⟩
+  ⟨by simp [mkVerb, Verb.complementType, Verb.citationFrame?], rfl⟩
 
 /-- **Grades 5 and 6 introduce an external argument.** The two H–H
     grades are both agentive at the `Verb` level. -/
