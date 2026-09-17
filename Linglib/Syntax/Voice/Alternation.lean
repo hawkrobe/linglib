@@ -28,8 +28,10 @@ flexivalency, is its `marking`.
 * `ValencyAlternation.image`, `fate`, `fateOfRole`, `introduced`,
   `newParticipant` — the derived participant bookkeeping
 * `ValencyAlternation.Nucleativizes`, `Denucleativizes`,
-  `IsValencyIncreasing`, `IsValencyDecreasing`, `Cumulates` — the
-  derived classification
+  `IsValencyIncreasing`, `IsValencyDecreasing`, `Cumulates`,
+  `IsSymmetrical` — the derived classification
+* `ValencyAlternation.refl` — the trivial alternation of a frame with
+  itself
 * `Voice.causativization`, …, `Voice.portativeDerivation` — the types of
   [creissels-2024] §8.3
 * `Verb.Alternates` — a verb has frames refining both frames of an
@@ -43,6 +45,8 @@ flexivalency, is its `marking`.
   initial A in participant structure, decausativization suppresses it
 * `Voice.as_nucleativization_neutral` — nucleativization is not valency
   increase
+* `ValencyAlternation.isSymmetrical_refl` — the trivial alternation
+  neither nucleativizes nor denucleativizes
 
 ## Implementation notes
 
@@ -54,7 +58,7 @@ passive records the demoted agent as implicit, the canonical short
 passive; a long passive refines it. Coding is a per-language property,
 so the constants are uncoded and a fragment sets `marking` when it
 instantiates one. Within `Syntax/Voice/` this file owns the valency
-axis; `Basic.lean` owns the pivot axis.
+axis; `Pivot.lean` owns the pivot axis.
 
 ## References
 
@@ -216,11 +220,70 @@ def IsValencyIncreasing : Prop := α.Nucleativizes ∧ ¬ α.Denucleativizes
 /-- Valency-decreasing: denucleativizes without nucleativizing. -/
 def IsValencyDecreasing : Prop := α.Denucleativizes ∧ ¬ α.Nucleativizes
 
+/-- Symmetrical: the alternation neither nucleativizes nor denucleativizes, so it does not
+affect the transitivity of the construction ([creissels-2024] §8.1.7). -/
+def IsSymmetrical : Prop := ¬ α.Nucleativizes ∧ ¬ α.Denucleativizes
+
 instance : Decidable α.Nucleativizes := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 instance : Decidable α.Denucleativizes := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 instance : Decidable α.Cumulates := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 instance : Decidable α.IsValencyIncreasing := inferInstanceAs (Decidable (_ ∧ _))
 instance : Decidable α.IsValencyDecreasing := inferInstanceAs (Decidable (_ ∧ _))
+instance : Decidable α.IsSymmetrical := inferInstanceAs (Decidable (_ ∧ _))
+
+variable {α}
+
+theorem IsValencyIncreasing.not_isSymmetrical (h : α.IsValencyIncreasing) :
+    ¬ α.IsSymmetrical := fun h' ↦ h'.1 h.1
+
+theorem IsValencyDecreasing.not_isSymmetrical (h : α.IsValencyDecreasing) :
+    ¬ α.IsSymmetrical := fun h' ↦ h'.2 h.1
+
+/-! ### The trivial alternation -/
+
+/-- The trivial alternation of a frame with itself: the initial construction of a voice
+system, read as the voice that changes nothing. -/
+def refl (fr : ArgumentFrame) : ValencyAlternation :=
+  ⟨fr, fr, fr.slots.map fun s ↦ (s, s), .uncoded⟩
+
+private theorem lookup_map_diag {β : Type*} [DecidableEq β] {l : List β} {a : β} (h : a ∈ l) :
+    (l.map fun x ↦ (x, x)).lookup a = some a := by
+  induction l with
+  | nil => simp at h
+  | cons x l ih =>
+    simp only [List.map_cons, List.lookup_cons]
+    rcases List.mem_cons.mp h with rfl | h
+    · simp
+    · split
+      · rename_i hx; rw [beq_iff_eq] at hx; subst hx; rfl
+      · exact ih h
+
+@[simp] theorem source_refl (fr : ArgumentFrame) : (refl fr).source = fr := rfl
+
+@[simp] theorem target_refl (fr : ArgumentFrame) : (refl fr).target = fr := rfl
+
+theorem image_refl {fr : ArgumentFrame} {s : Slot} (h : s ∈ fr.slots) :
+    (refl fr).image s = some s :=
+  lookup_map_diag h
+
+theorem image_refl_eq_some_iff {fr : ArgumentFrame} {s t : Slot} (h : s ∈ fr.slots) :
+    (refl fr).image s = some t ↔ s = t := by
+  rw [image_refl h, Option.some.injEq]
+
+/-- The trivial alternation is symmetrical. -/
+theorem isSymmetrical_refl (fr : ArgumentFrame) : (refl fr).IsSymmetrical := by
+  refine ⟨fun ⟨t, ht, htc⟩ ↦ ?_, fun ⟨s, hs, hf⟩ ↦ ?_⟩
+  · simp only [introduced, List.mem_filter, Bool.and_eq_true, List.all_eq_true,
+      decide_eq_true_eq] at ht
+    have ht₁ : t ∈ fr.slots := ht.1
+    have hp : t ∈ (refl fr).preimages t := by
+      simp only [preimages, List.mem_filter, image_refl ht₁, beq_self_eq_true, and_true]
+      exact ht₁
+    exact (ht.2.2 t hp).1 htc
+  · have hsl : s ∈ fr.slots := List.mem_of_mem_filter hs
+    have hs' : s ∈ fr.coreSlots := hs
+    simp only [fate, source_refl, target_refl, hs', image_refl hsl, ite_true] at hf
+    split at hf <;> simp [ParticipantFate.RemovesFromCoreStatus] at hf
 
 end ValencyAlternation
 

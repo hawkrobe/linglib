@@ -1,16 +1,15 @@
-import Linglib.Syntax.Voice.Basic
-
 /-!
-# Voice: middle constructions
+# Middle constructions
 
-[beavers-udayana-2022]
-
-The middle/diathesis axis of the unified `Voice` substrate: the two orthogonal
-dimensions of [beavers-udayana-2022]'s Indonesian middle typology — how a
+The two dimensions of [beavers-udayana-2022]'s Indonesian middle typology: how a
 suppressed argument is interpreted, and how the base object is realized. The
-2×2 of constructions is the literal product `ObjectRealization × SuppressedVarReading`
-(no bundling record). Which argument surfaces as pivot is derived from object
-realization via `ObjectRealization.pivot`.
+2×2 of constructions is the product `ObjectRealization × SuppressedVarReading`,
+and which base argument surfaces as subject is read off object realization
+(`ObjectRealization.agentSurfaces`).
+
+## References
+
+* [beavers-udayana-2022]
 -/
 
 namespace Voice
@@ -29,14 +28,8 @@ inductive ObjectRealization where
   | noIncorporation
   deriving DecidableEq, Repr
 
-/-- The pivot a middle promotes, derived from object realization: incorporation
-    leaves the agent surfacing, no-incorporation leaves the patient
-    ([beavers-udayana-2022]). -/
-def ObjectRealization.pivot : ObjectRealization → PivotTarget
-  | .incorporation   => .agent
-  | .noIncorporation => .patient
-
-/-- Does the agent surface as subject? (Equivalently, the object is incorporated.) -/
+/-- The agent surfaces as subject: the object is incorporated, so the agent is the sole DP;
+without incorporation the patient surfaces ([beavers-udayana-2022]). -/
 def ObjectRealization.agentSurfaces (o : ObjectRealization) : Prop :=
   o = .incorporation
 

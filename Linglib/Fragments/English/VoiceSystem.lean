@@ -1,25 +1,27 @@
-import Linglib.Syntax.Voice.Basic
+import Linglib.Syntax.Voice.Alternation
 
 /-!
-# English voice system
+# English voice
 
-Two voices, active and passive, the active basic and the passive derived (*be* + past
-participle, the agent demoted to an optional *by*-phrase and the patient promoted to subject):
-a canonical asymmetrical system as the voice typology of `Syntax/Voice/Basic.lean` reads it.
+Two voices, the active basic and the passive derived by *be* and the past participle, the
+agent demoted to an optional *by*-phrase and the patient promoted to subject: the passivization
+of the valency typology, analytically coded.
 -/
 
-namespace English.VoiceSystem
+open Voice
 
-/-- The two voices and the role each promotes to pivot. -/
-def voices : List Voice.VoiceEntry := [⟨"Active", .agent⟩, ⟨"Passive", .patient⟩]
+namespace English
 
-/-- The passive is derived from the active. -/
-def symmetry : Voice.VoiceSystemSymmetry := .asymmetrical
+/-- The two voices. -/
+inductive Voice where
+  | active
+  | passive
+  deriving DecidableEq, Repr
 
-theorem symmetry_asymmetrical : symmetry = .asymmetrical := rfl
+/-- What each voice does to the transitive construction: the active nothing, the passive the
+analytically coded passivization. -/
+def Voice.alternation : Voice → ValencyAlternation
+  | .active => .refl .np
+  | .passive => { passivization with marking := .analytic }
 
-theorem voiceCount_eq_two : Voice.voiceCount voices = 2 := rfl
-
-theorem isActivePassive : Voice.isActivePassive voices := by decide
-
-end English.VoiceSystem
+end English

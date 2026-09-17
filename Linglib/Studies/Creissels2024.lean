@@ -5,7 +5,7 @@ import Mathlib.Logic.Equiv.Basic
 import Mathlib.Logic.Relation
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Voice.Alternation
-import Linglib.Syntax.Voice.Basic
+import Linglib.Syntax.Voice.Pivot
 import Linglib.Data.Examples.Creissels2024
 
 /-!
@@ -64,6 +64,9 @@ P-coding, which split-S languages violate. The book's examples are the rows of
   are those computed from the constructions, and the book's defining example of each type
   is shown to be described by the corresponding frame pair.
 * Stacking is composition of relations, and valency is the number of nuclear participants.
+* The symmetrical systems of §8.5 are families of the substrate's pivot selections, an
+  alternation with the slot it makes the pivot, and the book's criterion for symmetry, the
+  transitivity of the construction unaffected, is the substrate's `Voice.Symmetrical`.
 * Alignment and the Obligatory Coding Principle are stated over the flagging of S in the
   book's intransitive examples; the book's principle ranges over every verb's coding frame,
   and its examples also show indexation.
@@ -768,20 +771,44 @@ theorem portative_rows :
 
 /-! ### Symmetrical voice systems (§8.5) -/
 
-/-- Balinese (47): a binary symmetrical system, agent voice and patient voice. -/
-def balineseVoices : List VoiceEntry :=
-  [⟨"agent voice", .agent⟩, ⟨"patient voice", .patient⟩]
+/-- The voices of Balinese (47). -/
+inductive BalineseVoice where
+  | agent
+  | patient
+  deriving DecidableEq, Repr, Fintype
 
-/-- Tagalog (48): a multiple symmetrical system whose locative, conveyance and instrumental
-voices select an oblique as pivot; the substrate has no conveyance pivot, so the conveyance
-voice, whose pivot is a beneficiary or a displaced theme, is entered as benefactive. -/
-def tagalogVoices : List VoiceEntry :=
-  [⟨"agent voice", .agent⟩, ⟨"patient voice", .patient⟩, ⟨"locative voice", .locative⟩,
-    ⟨"conveyance voice", .benefactive⟩, ⟨"instrumental voice", .instrumental⟩]
+/-- Balinese (47): a binary symmetrical system, the patient voice bare and initial, the agent
+voice derived by prefixing a nasal, both keeping the taker and the shirt core terms. -/
+def balinese : BalineseVoice → PivotSelection
+  | .patient => { ValencyAlternation.refl .np with pivot := .complement 0 }
+  | .agent => { ValencyAlternation.refl .np with marking := .synthetic, pivot := .external }
 
-/-- Only the multiple system lets an oblique be the pivot. -/
-theorem multiple_distinguishesObliques :
-    ¬ distinguishesObliques balineseVoices ∧ distinguishesObliques tagalogVoices := by
+/-- The voices of Tagalog (48). -/
+inductive TagalogVoice where
+  | agent
+  | patient
+  | locative
+  | conveyance
+  | instrumental
+  deriving DecidableEq, Repr, Fintype
+
+/-- Tagalog (48): a multiple symmetrical system, every voice marked and the pivot flagged by
+*ang* in place of its own flag; the locative, conveyance and instrumental voices select an
+oblique as pivot, the store, the child and the money, without changing its status. -/
+def tagalog : TagalogVoice → PivotSelection
+  | .agent => { ValencyAlternation.refl .np_pp with pivot := .external }
+  | .patient =>
+    { ValencyAlternation.refl .np_pp with marking := .synthetic, pivot := .complement 0 }
+  | .locative | .conveyance | .instrumental =>
+    { ValencyAlternation.refl .np_pp with marking := .synthetic, pivot := .complement 1 }
+
+/-- Balinese is symmetrical and binary although morphologically oriented, so symmetry in the
+book's sense does not require equipollent marking (§8.1.7, §8.5.1). -/
+theorem balinese_binary :
+    Voice.Symmetrical balinese ∧ ¬ Multiple balinese ∧ ¬ Equipollent balinese := by
   decide
+
+/-- Tagalog is symmetrical and multiple: an oblique may be the pivot (§8.5.2). -/
+theorem tagalog_multiple : Voice.Symmetrical tagalog ∧ Multiple tagalog := by decide
 
 end Creissels2024

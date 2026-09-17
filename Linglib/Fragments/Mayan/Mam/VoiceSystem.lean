@@ -1,58 +1,43 @@
-import Linglib.Syntax.Voice.Basic
+import Linglib.Syntax.Voice.Alternation
 
 /-!
-# Mam Voice System Profile
+# Mam voice
 
-Theory-neutral typological profile of the Mam voice system: a voice
-inventory any framework can consume via the `Voice.*` queries. Unlike
-Toba Batak's symmetrical pivot system, Mam is three-way asymmetrical —
-agentive voice is basic (a phase head, overt agent), while passive and
-antipassive are derived (non-phase, implicit agent); the antipassive
-demotes the object to oblique and the subject takes ABS ([scott-2023]).
-Voice does not determine the pivot for extraction; instead it carries
-[uOblique], which conditions the extraction morphology =(y)a'.
+Mam (Mamean Mayan) has an agentive voice, the basic transitive construction with an overt
+agent, a passive, whose agent is implicit, and an antipassive, which demotes the object to an
+oblique and marks the subject absolutive ([scott-2023]). Voice does not select a pivot for
+extraction; the extraction morphology =(y)a' and the Minimalist Voice head that conditions it
+are [elkins-torrence-brown-2026]'s and live in that study. San Juan Ostuncalco Mam
+([elkins-torrence-brown-2026]) and San Juan Atitán Mam ([scott-2023]) are distinct varieties;
+the inventory abstracts over the distinction.
 
-## Main declarations
+## Main definitions
 
-* `Mam.VoiceSystem.voices`: the agentive, passive, and antipassive
-  voice entries.
-* `Mam.VoiceSystem.symmetry`: the asymmetrical classification.
+* `Mam.Voice`, `Voice.alternation`: the three voices and what each does to the transitive
+  construction.
 
-## Implementation notes
+## References
 
-The Minimalist Voice head of the =(y)a' analysis is paper-specific apparatus and lives in
-`Studies/ElkinsTorrenceBrown2026.lean`. SJO Mam (San Juan Ostuncalco,
-[elkins-torrence-brown-2026]) and SJA Mam (San Juan Atitán, [scott-2023]) are distinct
-varieties; this profile abstracts over the distinction.
+* [elkins-torrence-brown-2026]
+* [scott-2023]
 -/
+
+open Voice
 
 namespace Mam
 
-namespace VoiceSystem
+/-- The three voices. -/
+inductive Voice where
+  | agentive
+  | passive
+  | antipassive
+  deriving DecidableEq, Repr
 
-/-! ### Voice inventory -/
-
-/-- The voices of Mam: agentive (basic), passive, antipassive. -/
-def voices : List Voice.VoiceEntry :=
-  [ ⟨"Agentive Voice", .agent⟩, ⟨"Passive Voice", .patient⟩,
-    ⟨"Antipassive Voice", .agent⟩ ]
-
-/-- Mam is asymmetrical — agentive is the basic voice. -/
-def symmetry : Voice.VoiceSystemSymmetry := .asymmetrical
-
-end VoiceSystem
-
-theorem mam_voice_system_asymmetrical :
-    Mam.VoiceSystem.symmetry = .asymmetrical := rfl
-
-theorem mam_voice_count :
-    Voice.voiceCount Mam.VoiceSystem.voices = 3 := rfl
-
-/-- Mam is not a simple active/passive system — it also has antipassive. -/
-theorem mam_not_simple_active_passive :
-    ¬ Voice.isActivePassive Mam.VoiceSystem.voices := by decide
-
-theorem mam_no_oblique_pivots :
-    ¬ Voice.distinguishesObliques Mam.VoiceSystem.voices := by decide
+/-- What each voice does to the transitive construction: the agentive nothing, the passive
+passivization, the antipassive antipassivization, both synthetically coded. -/
+def Voice.alternation : Voice → ValencyAlternation
+  | .agentive => .refl .np
+  | .passive => { passivization with marking := .synthetic }
+  | .antipassive => { antipassivization with marking := .synthetic }
 
 end Mam
