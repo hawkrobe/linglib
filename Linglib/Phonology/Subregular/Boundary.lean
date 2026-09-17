@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Data.List.Chain
-import Linglib.Core.Data.List.Config
+import Mathlib.Data.List.OfFn
+import Linglib.Core.Data.List.GetElem
 import Linglib.Core.Data.List.Factors
 
 /-!
@@ -64,13 +65,28 @@ lemma length_boundary : (boundary k w).length = w.length + 2 * (k - 1) := by
 
 end Boundary
 
-/-! ### Position discrimination and the configuration bridge
+/-! ### Position discrimination and windows
 
-Entries of `boundary k y` are values of the word's two-sided configuration
-(`List.config`), shifted by the pad width; consequently the `k`-factors of the
-augmented word are exactly its windows (`List.window`). -/
+Entries of `boundary k y` are integer-indexed entries of the word (`w[i]?` with `i : ℤ`, blank
+outside `[0, w.length)`), shifted by the pad width; consequently the `k`-factors of the augmented
+word are exactly its windows (`window`). -/
 
 section Pinning
+
+/-- The width-`k` window of `w` at `i`: its integer-indexed entries on `[i, i + k)`. -/
+def window (k : ℕ) (w : List α) (i : ℤ) : List (Option α) :=
+  List.ofFn fun j : Fin k ↦ w[i + (j : ℕ)]?
+
+@[simp] lemma length_window {k : ℕ} {w : List α} {i : ℤ} : (window k w i).length = k := by
+  simp [window]
+
+lemma getElem?_window {k j : ℕ} {w : List α} {i : ℤ} (h : j < k) :
+    (window k w i)[j]? = some w[i + j]? := by
+  simp [window, h]
+
+lemma window_eq_window_iff {k : ℕ} {w y : List α} {i q : ℤ} :
+    window k w i = window k y q ↔ ∀ j : ℕ, j < k → w[i + j]? = y[q + j]? := by
+  simp [window, List.ofFn_inj, funext_iff, Fin.forall_iff]
 
 variable {k : ℕ} {w y l : List α}
 
@@ -117,21 +133,21 @@ lemma of_getElem?_boundary_eq_none {j : ℕ}
   · exact .inr (by omega)
 
 /-- Boundary entries are configuration values, shifted by the pad width. -/
-lemma getElem?_boundary_eq_config {q : ℕ} (h : q < w.length + 2 * (k - 1)) :
-    (boundary k w)[q]? = some (w.config ((q : ℤ) - (k - 1 : ℕ))) := by
+lemma getElem?_boundary_eq_getElem?_int {q : ℕ} (h : q < w.length + 2 * (k - 1)) :
+    (boundary k w)[q]? = some (w[(q : ℤ) - (k - 1 : ℕ)]?) := by
   rw [getElem?_boundary]
   split_ifs with h1 h2
-  · rw [List.config_of_neg (by omega)]
+  · rw [List.getElem?_int_of_neg (by omega)]
   · have hlt : q - (k - 1) < w.length := by omega
     rw [show ((q : ℤ) - (k - 1 : ℕ)) = ((q - (k - 1) : ℕ) : ℤ) by omega,
-      List.config_natCast, List.getElem?_eq_getElem hlt, Option.map_some]
-  · rw [List.config_eq_none_iff.mpr (.inr (by omega))]
+      List.getElem?_natCast, List.getElem?_eq_getElem hlt, Option.map_some]
+  · rw [List.getElem?_int_eq_none_iff.mpr (.inr (by omega))]
 
 /-- The `k`-factors of the augmented word are exactly its windows over
 `[1 - k, w.length)`. -/
 lemma mem_kFactors_boundary_iff {f : List (Option α)} (hk : 1 ≤ k) :
     f ∈ List.kFactors k (boundary k y) ↔
-      ∃ i : ℤ, 1 - k ≤ i ∧ i < y.length ∧ f = List.window k y i := by
+      ∃ i : ℤ, 1 - k ≤ i ∧ i < y.length ∧ f = window k y i := by
   rw [List.mem_kFactors]
   constructor
   · rintro ⟨hinf, hlen⟩
@@ -147,18 +163,18 @@ lemma mem_kFactors_boundary_iff {f : List (Option α)} (hk : 1 ≤ k) :
     apply List.ext_getElem?
     intro j
     rcases lt_or_ge j k with hj | hj
-    · rw [List.getElem?_window hj]
+    · rw [getElem?_window hj]
       have h1 := (hδ j (by omega)).symm
-      rw [getElem?_boundary_eq_config (q := j + δ) (by omega)] at h1
+      rw [getElem?_boundary_eq_getElem?_int (q := j + δ) (by omega)] at h1
       rw [h1, show ((j + δ : ℕ) : ℤ) - ((k - 1 : ℕ) : ℤ) = (δ : ℤ) - (k - 1 : ℕ) + (j : ℕ)
         by omega]
     · rw [List.getElem?_eq_none (by omega), List.getElem?_eq_none (by simpa using hj)]
   · rintro ⟨i, h1, h2, rfl⟩
     refine ⟨(List.isInfix_iff_exists_offset _ _).mpr
       ⟨(i + (k - 1 : ℕ)).toNat, fun j hj => ?_⟩, by simp⟩
-    rw [List.length_window] at hj
-    rw [List.getElem?_window hj,
-      getElem?_boundary_eq_config (q := j + (i + (k - 1 : ℕ)).toNat) (by omega),
+    rw [length_window] at hj
+    rw [getElem?_window hj,
+      getElem?_boundary_eq_getElem?_int (q := j + (i + (k - 1 : ℕ)).toNat) (by omega),
       show ((j + (i + (k - 1 : ℕ)).toNat : ℕ) : ℤ) - ((k - 1 : ℕ) : ℤ) = i + (j : ℕ)
         by omega]
 

@@ -66,7 +66,7 @@ def ofForbidden (forbidden : Set (Augmented α)) : StrictlyLocalGrammar α := fo
 /-- Membership in an SL language, position-indexed: every window over
 `[1 - k, w.length)` is permitted. -/
 theorem mem_language_iff_window {k : ℕ} {G : StrictlyLocalGrammar α} {w : List α} (hk : 1 ≤ k) :
-    w ∈ G.language k ↔ ∀ i : ℤ, 1 - k ≤ i → i < w.length → List.window k w i ∈ G := by
+    w ∈ G.language k ↔ ∀ i : ℤ, 1 - k ≤ i → i < w.length → window k w i ∈ G := by
   rw [mem_language]
   constructor
   · intro h i h1 h2
@@ -172,24 +172,24 @@ theorem SuffixSubstitutionClosed.isStrictlyLocal {L : Language α} {k : ℕ} (hk
     ⟨w, hw, (mem_kFactors_boundary_iff (by omega)).mpr ⟨i, h1, h2, rfl⟩⟩⟩
   have hwin : ∀ i : ℤ, 1 - (k : ℤ) ≤ i → i < w.length →
       ∃ y ∈ L, ∃ q : ℤ, 1 - (k : ℤ) ≤ q ∧ q < y.length ∧
-        ∀ j : ℕ, j < k → y.config (q + j) = w.config (i + j) := by
+        ∀ j : ℕ, j < k → y[q + j]? = w[i + j]? := by
     intro i hi1 hi2
     obtain ⟨y, hy, hf⟩ := hw i hi1 hi2
     obtain ⟨q, hq1, hq2, hq3⟩ := (mem_kFactors_boundary_iff (by omega)).mp hf
-    exact ⟨y, hy, q, hq1, hq2, fun j hj => (List.window_eq_window_iff.mp hq3 j hj).symm⟩
+    exact ⟨y, hy, q, hq1, hq2, fun j hj => (window_eq_window_iff.mp hq3 j hj).symm⟩
   clear hw
   rcases eq_or_ne w [] with rfl | hne
   · -- the empty word: any witness for its all-blank window is itself empty
     obtain ⟨y, hy, q, hq1, hq2, hmatch⟩ := hwin (1 - k) le_rfl (by simp; omega)
-    have hall : ∀ j : ℕ, j < k → y.config (q + j) = none := fun j hj => by
-      rw [hmatch j hj, List.config_nil]
+    have hall : ∀ j : ℕ, j < k → y[q + j]? = none := fun j hj => by
+      rw [hmatch j hj, List.getElem?_int_nil]
     have hnil : y = [] := by
       rcases lt_or_ge q 0 with hq0 | hq0
       · have h0 := hall (-q).toNat (by omega)
         rw [show q + (((-q).toNat : ℕ) : ℤ) = 0 by omega] at h0
-        have hc := List.config_eq_none_iff.mp h0
+        have hc := List.getElem?_int_eq_none_iff.mp h0
         exact List.length_eq_zero_iff.mp (by omega)
-      · have hc := List.config_eq_none_iff.mp (by simpa using hall 0 (by omega))
+      · have hc := List.getElem?_int_eq_none_iff.mp (by simpa using hall 0 (by omega))
         exact List.length_eq_zero_iff.mp (by omega)
     exact hnil ▸ hy
   have hn1 : 0 < w.length := List.length_pos_of_ne_nil hne
@@ -198,60 +198,60 @@ theorem SuffixSubstitutionClosed.isStrictlyLocal {L : Language α} {k : ℕ} (hk
     -- witness to the whole word
     obtain ⟨y, hy, q, hq1, hq2, hmatch⟩ := hwin ((w.length : ℤ) + 1 - k)
       (by omega) (by omega)
-    have hnone : y.config (q + ((k - 2 - w.length : ℕ) : ℤ)) = none := by
+    have hnone : y[q + ((k - 2 - w.length : ℕ) : ℤ)]? = none := by
       rw [hmatch _ (by omega),
         show ((w.length : ℤ) + 1 - k) + ((k - 2 - w.length : ℕ) : ℤ) = -1 by omega,
-        List.config_of_neg (show (-1 : ℤ) < 0 by omega)]
-    have hsome : y.config (q + ((k - 1 - w.length : ℕ) : ℤ)) = w.config 0 := by
+        List.getElem?_int_of_neg (show (-1 : ℤ) < 0 by omega)]
+    have hsome : y[q + ((k - 1 - w.length : ℕ) : ℤ)]? = w[(0 : ℤ)]? := by
       rw [hmatch _ (by omega),
         show ((w.length : ℤ) + 1 - k) + ((k - 1 - w.length : ℕ) : ℤ) = 0 by omega]
-    obtain ⟨a, ha⟩ : ∃ a, w.config 0 = some a := by
-      rw [List.config_of_nonneg le_rfl]
+    obtain ⟨a, ha⟩ : ∃ a, w[(0 : ℤ)]? = some a := by
+      rw [List.getElem?_int_of_nonneg le_rfl]
       exact ⟨_, List.getElem?_eq_getElem (by omega)⟩
-    obtain ⟨hb1, hb2⟩ := List.bounds_of_config_eq_some (hsome.trans ha)
+    obtain ⟨hb1, hb2⟩ := (getElem?_eq_some_iff.mp (hsome.trans ha)).1
     have hpin : q = (w.length : ℤ) + 1 - k := by
-      rcases List.config_eq_none_iff.mp hnone with hc | hc <;> omega
+      rcases List.getElem?_int_eq_none_iff.mp hnone with hc | hc <;> omega
     suffices hyw : y = w by exact hyw ▸ hy
-    apply List.eq_of_config_agree
+    apply List.ext_getElem?_int
     intro j hj
     rcases lt_or_ge j ((w.length : ℤ) + 1 - k) with hji | hji
-    · rw [List.config_of_neg (by omega), List.config_of_neg (by omega)]
+    · rw [List.getElem?_int_of_neg (by omega), List.getElem?_int_of_neg (by omega)]
     · have hjw : ((j - ((w.length : ℤ) + 1 - k)).toNat) < k := by omega
       have hmt := hmatch _ hjw
       rwa [hpin, show ((w.length : ℤ) + 1 - k)
           + (((j - ((w.length : ℤ) + 1 - k)).toNat : ℕ) : ℤ) = j by omega] at hmt
   · -- long word: march a member along the word, then cut its tail
     have march : ∀ c : ℕ, c ≤ w.length →
-        ∃ z ∈ L, ∀ j : ℤ, j < (c : ℤ) → z.config j = w.config j := by
+        ∃ z ∈ L, ∀ j : ℤ, j < (c : ℤ) → z[j]? = w[j]? := by
       intro c
       induction c with
       | zero =>
         intro _
         obtain ⟨y, hy, -⟩ := hwin (1 - k) le_rfl (by omega)
         exact ⟨y, hy, fun j hj => by
-          rw [List.config_of_neg (by omega), List.config_of_neg (by omega)]⟩
+          rw [List.getElem?_int_of_neg (by omega), List.getElem?_int_of_neg (by omega)]⟩
       | succ c ih =>
         intro hc1
         obtain ⟨y, hy, q, hq1, hq2, hmatch⟩ := hwin ((c : ℤ) + 1 - k)
           (by omega) (by omega)
         rcases lt_or_ge c (k - 1) with hcA | hcB
         · -- pin phase: the window shows the left edge, so the match is aligned
-          have hnone : y.config (q + ((k - 2 - c : ℕ) : ℤ)) = none := by
+          have hnone : y[q + ((k - 2 - c : ℕ) : ℤ)]? = none := by
             rw [hmatch _ (by omega),
               show ((c : ℤ) + 1 - k) + ((k - 2 - c : ℕ) : ℤ) = -1 by omega,
-              List.config_of_neg (show (-1 : ℤ) < 0 by omega)]
-          have hsome : y.config (q + ((k - 1 - c : ℕ) : ℤ)) = w.config 0 := by
+              List.getElem?_int_of_neg (show (-1 : ℤ) < 0 by omega)]
+          have hsome : y[q + ((k - 1 - c : ℕ) : ℤ)]? = w[(0 : ℤ)]? := by
             rw [hmatch _ (by omega),
               show ((c : ℤ) + 1 - k) + ((k - 1 - c : ℕ) : ℤ) = 0 by omega]
-          obtain ⟨a, ha⟩ : ∃ a, w.config 0 = some a := by
-            rw [List.config_of_nonneg le_rfl]
+          obtain ⟨a, ha⟩ : ∃ a, w[(0 : ℤ)]? = some a := by
+            rw [List.getElem?_int_of_nonneg le_rfl]
             exact ⟨_, List.getElem?_eq_getElem (by omega)⟩
-          obtain ⟨hb1, hb2⟩ := List.bounds_of_config_eq_some (hsome.trans ha)
+          obtain ⟨hb1, hb2⟩ := (getElem?_eq_some_iff.mp (hsome.trans ha)).1
           have hpin : q = (c : ℤ) + 1 - k := by
-            rcases List.config_eq_none_iff.mp hnone with hc0 | hc0 <;> omega
+            rcases List.getElem?_int_eq_none_iff.mp hnone with hc0 | hc0 <;> omega
           refine ⟨y, hy, fun j hj => ?_⟩
           rcases lt_or_ge j ((c : ℤ) + 1 - k) with hji | hji
-          · rw [List.config_of_neg (by omega), List.config_of_neg (by omega)]
+          · rw [List.getElem?_int_of_neg (by omega), List.getElem?_int_of_neg (by omega)]
           · have hjw : ((j - ((c : ℤ) + 1 - k)).toNat) < k := by omega
             have hmt := hmatch _ hjw
             rwa [hpin, show ((c : ℤ) + 1 - k)
@@ -261,15 +261,15 @@ theorem SuffixSubstitutionClosed.isStrictlyLocal {L : Language α} {k : ℕ} (hk
           obtain ⟨z, hz, hzag⟩ := ih (by omega)
           have hq0 : 0 ≤ q := by
             have h0 := hmatch 0 (by omega)
-            rw [List.config_of_nonneg (w := w) (by omega)] at h0
+            rw [List.getElem?_int_of_nonneg (w := w) (by omega)] at h0
             have h3 := h0.trans (List.getElem?_eq_getElem (by omega))
-            have := (List.bounds_of_config_eq_some h3).1
+            have := ((getElem?_eq_some_iff.mp h3).1).1
             omega
           have hqtop : q + k ≤ y.length := by
             have hlast := hmatch (k - 1) (by omega)
-            rw [List.config_of_nonneg (w := w) (by omega)] at hlast
+            rw [List.getElem?_int_of_nonneg (w := w) (by omega)] at hlast
             have h3 := hlast.trans (List.getElem?_eq_getElem (by omega))
-            have := (List.bounds_of_config_eq_some h3).2
+            have := ((getElem?_eq_some_iff.mp h3).1).2
             omega
           have hmid : (y.drop q.toNat).take k = (w.drop (c + 1 - k)).take k := by
             apply List.ext_getElem?
@@ -280,7 +280,7 @@ theorem SuffixSubstitutionClosed.isStrictlyLocal {L : Language α} {k : ℕ} (hk
               have hmt := hmatch t ht
               rwa [show q + (t : ℕ) = ((q.toNat + t : ℕ) : ℤ) by omega,
                 show ((c : ℤ) + 1 - k) + (t : ℕ) = ((c + 1 - k + t : ℕ) : ℤ) by omega,
-                List.config_natCast, List.config_natCast] at hmt
+                List.getElem?_natCast, List.getElem?_natCast] at hmt
             · rw [List.getElem?_take_eq_none ht, List.getElem?_take_eq_none ht]
           have hwmid : (w.drop (c + 1 - k)).take (k - 1) ++ [w[c]'(by omega)]
               = (w.drop (c + 1 - k)).take k := by
@@ -298,7 +298,7 @@ theorem SuffixSubstitutionClosed.isStrictlyLocal {L : Language α} {k : ℕ} (hk
           have hzsplit : z = (w.take (c + 1 - k) ++ (w.drop (c + 1 - k)).take (k - 1))
               ++ z.drop c := by
             conv_lhs => rw [← List.take_append_drop c z]
-            rw [List.take_eq_of_config_agree hzag,
+            rw [List.ext_take_getElem?_int hzag,
               show w.take c = w.take (c + 1 - k) ++ (w.drop (c + 1 - k)).take (k - 1)
                 from by rw [← List.take_add, show (c + 1 - k) + (k - 1) = c by omega]]
           have hxlen : ((w.drop (c + 1 - k)).take (k - 1)).length = k - 1 := by
@@ -326,30 +326,32 @@ theorem SuffixSubstitutionClosed.isStrictlyLocal {L : Language α} {k : ℕ} (hk
             exact heq ▸ hnew
           refine ⟨w.take (c + 1) ++ y.drop (q.toNat + k), hz', fun j hj => ?_⟩
           rcases lt_or_ge j 0 with hj0 | hj0
-          · rw [List.config_of_neg hj0, List.config_of_neg hj0]
-          · rw [List.config_append_left (by simp; omega), List.config_take (by omega)]
+          · rw [List.getElem?_int_of_neg hj0, List.getElem?_int_of_neg hj0]
+          · rw [List.getElem?_int_append_left (by simp; omega),
+              List.getElem?_int_take_of_lt (by omega)]
     -- cut the marched member's tail with the final window
     obtain ⟨z, hz, hzag⟩ := march w.length le_rfl
     obtain ⟨y, hy, q, hq1, hq2, hmatch⟩ := hwin ((w.length : ℤ) + 1 - k)
       (by omega) (by omega)
     have hq0 : 0 ≤ q := by
       have h0 := hmatch 0 (by omega)
-      rw [List.config_of_nonneg (w := w) (by omega)] at h0
+      rw [List.getElem?_int_of_nonneg (w := w) (by omega)] at h0
       have h3 := h0.trans (List.getElem?_eq_getElem (by omega))
-      have := (List.bounds_of_config_eq_some h3).1
+      have := ((getElem?_eq_some_iff.mp h3).1).1
       omega
-    have hnone : y.config (q + ((k - 1 : ℕ) : ℤ)) = none := by
-      rw [hmatch _ (by omega), List.config_of_nonneg (by omega), List.getElem?_eq_none (by omega)]
-    have hsome : y.config (q + ((k - 2 : ℕ) : ℤ)) = w.config ((w.length - 1 : ℕ) : ℤ) := by
+    have hnone : y[q + ((k - 1 : ℕ) : ℤ)]? = none := by
+      rw [hmatch _ (by omega), List.getElem?_int_of_nonneg (by omega),
+        List.getElem?_eq_none (by omega)]
+    have hsome : y[q + ((k - 2 : ℕ) : ℤ)]? = w[((w.length - 1 : ℕ) : ℤ)]? := by
       rw [hmatch _ (by omega),
         show ((w.length : ℤ) + 1 - k) + ((k - 2 : ℕ) : ℤ) = ((w.length - 1 : ℕ) : ℤ)
           by omega]
-    obtain ⟨a, ha⟩ : ∃ a, w.config ((w.length - 1 : ℕ) : ℤ) = some a := by
-      rw [List.config_natCast]
+    obtain ⟨a, ha⟩ : ∃ a, w[((w.length - 1 : ℕ) : ℤ)]? = some a := by
+      rw [List.getElem?_natCast]
       exact ⟨_, List.getElem?_eq_getElem (by omega)⟩
-    obtain ⟨hb1, hb2⟩ := List.bounds_of_config_eq_some (hsome.trans ha)
+    obtain ⟨hb1, hb2⟩ := (getElem?_eq_some_iff.mp (hsome.trans ha)).1
     have hylen : (y.length : ℤ) = q + k - 1 := by
-      rcases List.config_eq_none_iff.mp hnone with hc | hc <;> omega
+      rcases List.getElem?_int_eq_none_iff.mp hnone with hc | hc <;> omega
     have hyfin : y = y.take q.toNat ++ w.drop (w.length + 1 - k) := by
       conv_lhs => rw [← List.take_append_drop q.toNat y]
       congr 1
@@ -360,11 +362,11 @@ theorem SuffixSubstitutionClosed.isStrictlyLocal {L : Language α} {k : ℕ} (hk
         have hmt := hmatch t (by omega)
         rwa [show q + (t : ℕ) = ((q.toNat + t : ℕ) : ℤ) by omega,
           show ((w.length : ℤ) + 1 - k) + (t : ℕ) = ((w.length + 1 - k + t : ℕ) : ℤ)
-            by omega, List.config_natCast, List.config_natCast] at hmt
+            by omega, List.getElem?_natCast, List.getElem?_natCast] at hmt
       · rw [List.getElem?_eq_none (by simp; omega), List.getElem?_eq_none (by simp; omega)]
     have hzw : z = w ++ z.drop w.length := by
       conv_lhs => rw [← List.take_append_drop w.length z]
-      rw [List.take_eq_of_config_agree hzag, List.take_length]
+      rw [List.ext_take_getElem?_int hzag, List.take_length]
     have hxlen : (w.drop (w.length + 1 - k)).length = k - 1 := by
       simp
       omega
