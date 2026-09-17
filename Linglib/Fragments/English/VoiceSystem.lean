@@ -1,25 +1,16 @@
 import Linglib.Syntax.Voice.Basic
 
 /-!
-# English voice system
+# English voice
 
-Two voices, active and passive, the active basic and the passive derived (*be* + past
-participle, the agent demoted to an optional *by*-phrase and the patient promoted to subject):
-a canonical asymmetrical system as the voice typology of `Syntax/Voice/Basic.lean` reads it.
+Two voices, the active and the passive; the passive is periphrastic, *be* with the past
+participle, the agent demoted to an optional *by*-phrase and the patient the subject.
 -/
 
-namespace English.VoiceSystem
+namespace English
 
-/-- The two voices and the role each promotes to pivot. -/
-def voices : List Voice.VoiceEntry := [⟨"Active", .agent⟩, ⟨"Passive", .patient⟩]
+/-- The active and the passive, the passive marked by the auxiliary *be* and the past
+participle rather than by an affix. -/
+def voices : Finset Voice := {.active, Voice.passive.analytic}
 
-/-- The passive is derived from the active. -/
-def symmetry : Voice.VoiceSystemSymmetry := .asymmetrical
-
-theorem symmetry_asymmetrical : symmetry = .asymmetrical := rfl
-
-theorem voiceCount_eq_two : Voice.voiceCount voices = 2 := rfl
-
-theorem isActivePassive : Voice.isActivePassive voices := by decide
-
-end English.VoiceSystem
+end English

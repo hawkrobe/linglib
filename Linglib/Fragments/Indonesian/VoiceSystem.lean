@@ -1,4 +1,4 @@
-import Linglib.Syntax.Voice.Basic
+import Linglib.Syntax.Voice.System
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
@@ -15,9 +15,8 @@ Indonesian distinguishes three productive voice prefixes on verbs:
   dispositional/passive, anticausative, and incorporation readings
   ([beavers-udayana-2022]).
 
-There is also an unmarked object voice (OV) where the agent is a
-preverbal pronoun/DP and the patient follows the bare root, but we
-focus on the prefixed forms here.
+The bare object voice, with the agent a preverbal pronoun or proclitic
+and the patient the pivot, is Sneddon's passive type two.
 
 ## Passive types ([sneddon-1996] §3.27–3.32)
 
@@ -45,40 +44,55 @@ agent is the surface subject) and expletive-like behavior
 (dispositional middles, where the patient is the surface subject).
 -/
 
+open Voice
+
 namespace Indonesian.VoiceSystem
 
-open Voice (VoiceEntry PivotTarget VoiceSystemSymmetry)
 open Minimalist.Voice (Params ExternalArgSemantics Flavor)
 
--- ============================================================================
--- § 1: Voice Entries (descriptive, theory-neutral)
--- ============================================================================
+/-! ### Voices
 
-/-- Agent voice *meN-*: promotes agent to subject (pivot). -/
-def menVoice : VoiceEntry :=
-  { name := "meN-", promotes := .agent }
+The subject voice *meN-*, the bare object voice with a preverbal agent pronoun or
+proclitic, and *di-* with a postverbal agent, bare or flagged by *oleh* 'by'
+([sneddon-1996] §3.27–3.28; [erlewine-levin-van-urk-2017] §16.3.1). *di-* is ambiguous
+between the patient voice of a binary symmetrical system, when its agent is bare, and a
+passive, when its agent is an *oleh*-oblique ([creissels-2024] §8.5.4). The middle *ber-* is
+not a pivot voice; its two dimensions are `Syntax/Voice/Middle.lean`. -/
 
-/-- Patient voice *di-*: promotes patient to subject. -/
-def diVoice : VoiceEntry :=
-  { name := "di-", promotes := .patient }
+/-- The three pivot voices. -/
+inductive Voice where
+  /-- *meN-*: the agent is the pivot. -/
+  | meN
+  /-- The bare object voice: the patient is the pivot, the agent a preverbal pronoun. -/
+  | ov
+  /-- *di-*: the patient is the pivot, the agent postverbal. -/
+  | di
+  deriving DecidableEq, Repr, Fintype
 
-/-- Middle voice *ber-*: promotes patient to subject in dispositional/
-    passive/anticausative readings; promotes agent in incorporation
-    readings. Default pivot target is patient (the more common case). -/
-def berVoice : VoiceEntry :=
-  { name := "ber-", promotes := .patient }
+/-- The two readings of *di-*: a patient voice whose bare postverbal agent remains a core
+term, or a passive whose agent is demoted to the *oleh*-phrase ([creissels-2024] §8.5.4). -/
+inductive DiReading where
+  | patientVoice
+  | passive
+  deriving DecidableEq, Repr, Fintype
 
-/-! ### Indonesian voice system profile
+/-- The voice of the typology each voice is, under a reading of *di-*: *meN-* the agent
+voice; the object voice the patient voice; *di-* the patient voice or the passive. -/
+def Voice.toVoice (r : DiReading) : Voice → _root_.Voice
+  | .meN => agentVoice.synthetic
+  | .ov => patientVoice.synthetic
+  | .di =>
+    match r with
+    | .patientVoice => patientVoice.synthetic
+    | .passive => passive.synthetic
 
-Three-way asymmetrical system: *meN-* is the unmarked active; *di-* and
-*ber-* are marked. [sneddon-1996] §1.167–177 (ber-), §1.265–275 (ter-),
-§3.26–40 (voice); Arka 2003. OV (unmarked object voice) omitted. -/
+/-- The voices under a reading of *di-*. -/
+def voices (r : DiReading) : Finset _root_.Voice := Finset.univ.image (Voice.toVoice r)
 
-/-- The three productive voices of Indonesian. -/
-def voices : List VoiceEntry := [menVoice, diVoice, berVoice]
-
-/-- Indonesian is asymmetrical — *meN-* is the unmarked active. -/
-def symmetry : VoiceSystemSymmetry := .asymmetrical
+/-- Read as a patient voice, *di-* makes Indonesian a binary symmetrical system; read as a
+passive it does not ([creissels-2024] §8.5.4). -/
+theorem symmetrical_iff (r : DiReading) : Symmetrical (voices r) ↔ r = .patientVoice := by
+  cases r <;> decide
 
 -- ============================================================================
 -- § 2: Parametric Decomposition (Minimalist analysis)
@@ -118,13 +132,6 @@ def berParams : Params :=
 -- ============================================================================
 -- § 3: Verification
 -- ============================================================================
-
-/-- The Indonesian voice system has exactly three voices. -/
-theorem voice_count : Voice.voiceCount voices = 3 := rfl
-
-/-- The system promotes both agent and patient roles. -/
-theorem promotes_agent : Voice.promotesRole voices .agent := by decide
-theorem promotes_patient : Voice.promotesRole voices .patient := by decide
 
 /-- *meN-* is fully specified; *ber-* is not. -/
 theorem men_fully_specified : menParams.isFullySpecified = true := rfl

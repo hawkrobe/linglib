@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 import Linglib.Semantics.ArgumentStructure.LevinClass.Members
-import Linglib.Syntax.Voice.Alternation
+import Linglib.Syntax.Voice.Basic
 import Linglib.Fragments.English.Predicates
 import Linglib.Fragments.English.Adposition
 import Linglib.Data.Examples.Levin1993
@@ -105,10 +105,10 @@ alternations and the constructions of chapter 7 are not pairs of frames and have
 
 open Voice English.Adpositions ArgumentFrame.Slot in
 /-- The frame-pair schema of an alternation, where it has one. -/
-def schema? : DiathesisAlternation → Option ValencyAlternation
-  | .causativeInchoative => some decausativization
-  | .inducedAction => some causativization
-  | .conative => some { antipassivization with target := .pp (some at_) }
+def schema? : DiathesisAlternation → Option Voice
+  | .causativeInchoative => some anticausative
+  | .inducedAction => some causative
+  | .conative => some { antipassive with target := .pp (some at_) }
   | .substanceSource => some
       { source := .pp (some from_), target := .np,
         correspondence := [(external, complement 0), (complement 0, external)] }
@@ -148,11 +148,11 @@ def schema? : DiathesisAlternation → Option ValencyAlternation
   | _ => none
 where
   /-- The unexpressed object alternations: the object dropped with interpretation `i`. -/
-  objectDrop (i : ImplicitInterp) : ValencyAlternation :=
+  objectDrop (i : ImplicitInterp) : Voice :=
     { source := .np, target := .objectDrop (some i),
       correspondence := [(external, external), (complement 0, complement 0)] }
   /-- The dative and benefactive alternations: the *p* phrase becomes the first object. -/
-  toDoubleObject (p : Adposition) : ValencyAlternation :=
+  toDoubleObject (p : Adposition) : Voice :=
     { source := .np_pp (some p), target := .np_np,
       correspondence := [(external, external), (complement 0, complement 1),
         (complement 1, complement 0)] }

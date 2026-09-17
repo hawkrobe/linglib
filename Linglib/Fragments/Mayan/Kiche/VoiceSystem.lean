@@ -13,13 +13,15 @@ particle *wi*.
 
 ## Main declarations
 
-* `Kiche.KicheVoice`, `Kiche.allVoices`: the five transitive voices.
+* `Kiche.Voice`, `Voice.toVoice`: the five transitive voices and the voice of the typology
+  each is.
 * `Kiche.dtvVoiceMarker`, `Kiche.rtvVoiceMarker`: voice-marker exponents
   for derived vs radical transitive verbs.
 * `Kiche.ActiveVerbForm`, `Kiche.PassiveVerbForm`,
   `Kiche.AntipassiveVerbForm`: morphological templates per voice.
-* `Kiche.KicheVoice.RealizesAgent`, `.RealizesPatient`,
-  `.ConjugatesIntransitively`: argument-realization predicates per voice.
+* `Kiche.Voice.isSymmetrical_iff`, `Voice.intransitive_iff`: agent focus alone keeps both
+  core terms core, and the passives and the absolutive antipassive derive an intransitive
+  construction.
 * `Kiche.subjectExtractionVoice`: Agent Focus as the subject-extraction
   voice.
 * `Kiche.Negation`, `Kiche.negNonverbal`, `Kiche.negVerbal`: the
@@ -42,6 +44,8 @@ conjugation contrast [mondloch-2017] draws (Lesson 9) is paper-specific
 apparatus that nothing here consumes.
 -/
 
+open Voice
+
 namespace Kiche
 
 /-! ### Verb classes -/
@@ -58,23 +62,18 @@ inductive TransVerbClass where
 
 /-- The five transitive voices of K'iche' ([mondloch-2017]
     Lessons 15–22, 26–30). -/
-inductive KicheVoice where
+inductive Voice where
   /-- Active Voice: A and P both expressed. -/
   | active
-  /-- Simple Passive: P promoted to subject, A demoted to oblique. -/
+  /-- Simple Passive: P promoted to subject, A an optional third-person *-umaal* oblique. -/
   | simplePassive
-  /-- Absolutive Antipassive: A is subject, P suppressed. -/
+  /-- Absolutive Antipassive: A is subject, P excluded or expressed indirectly with *ch-ee*. -/
   | absolutiveAntipassive
-  /-- Agent-Focus Antipassive: A is focused/extracted. -/
+  /-- Agent-Focus Antipassive: A is focused, subject and object both present. -/
   | agentFocus
-  /-- Completed Passive (distinct morphology from Simple Passive in
-      completed aspect). -/
+  /-- Completed Passive: the state of the object, with its own marker. -/
   | completedPassive
   deriving DecidableEq, Repr
-
-/-- All five voices. -/
-def allVoices : List KicheVoice :=
-  [.active, .simplePassive, .absolutiveAntipassive, .agentFocus, .completedPassive]
 
 /-! ### Voice markers -/
 
@@ -82,7 +81,7 @@ def allVoices : List KicheVoice :=
     [mondloch-2017]: active *-j* (Lesson 15), simple passive *-x*
     (Lesson 19), antipassive *-n* (Lesson 21), Agent Focus *-n*
     (Lesson 22), completed passive *-taaj* (Lesson 20). -/
-def dtvVoiceMarker : KicheVoice → String
+def dtvVoiceMarker : Voice → String
   | .active                 => "-j"
   | .simplePassive          => "-x"
   | .absolutiveAntipassive  => "-n"
@@ -92,7 +91,7 @@ def dtvVoiceMarker : KicheVoice → String
 /-- Voice-marker suffix for radical transitive verbs (RTVs), per
     [mondloch-2017]: active Ø (Lesson 26), simple passive *-Vtaj*
     (Lesson 28, V copying the root vowel), Agent Focus *-Vk* (Lesson 30). -/
-def rtvVoiceMarker : KicheVoice → String
+def rtvVoiceMarker : Voice → String
   | .active                 => "Ø"
   | .simplePassive          => "-Vtaj"
   | .absolutiveAntipassive  => "-n"
@@ -146,42 +145,29 @@ structure AntipassiveVerbForm where
 
 /-! ### Argument realization per voice -/
 
-/-- Does this voice realize A (the transitive agent) as a full
-    agreement-bearing argument? In Active and Agent Focus, yes. In
-    passives and Absolutive Antipassive, A is either demoted (oblique)
-    or absent. -/
-def KicheVoice.RealizesAgent : KicheVoice → Prop
-  | .active      => True
-  | .agentFocus  => True   -- A is focused, realized as separated pronoun
-  | _            => False
+/-- The voice of the typology each voice is ([mondloch-2017] Lessons 19–22): the simple and
+completed passives are passives, the agent expressible only as a third-person *-umaal*
+oblique; the absolutive antipassive is the antipassive, the object excluded or expressed
+indirectly with *ch-ee*; agent focus keeps subject, verb and object and privileges the agent,
+the agent voice. All synthetically coded but the active. -/
+def Voice.toVoice : Voice → _root_.Voice
+  | .active => .active
+  | .simplePassive | .completedPassive => passive.synthetic
+  | .absolutiveAntipassive => antipassive.synthetic
+  | .agentFocus => agentVoice.synthetic
 
-instance : DecidablePred KicheVoice.RealizesAgent := fun v => by
-  cases v <;> unfold KicheVoice.RealizesAgent <;> infer_instance
+/-- Agent focus is the one voice beside the active that keeps both core terms core
+([mondloch-2017] Lesson 22). -/
+theorem Voice.isSymmetrical_iff (v : Voice) :
+    v.toVoice.IsSymmetrical ↔ v = .active ∨ v = .agentFocus := by
+  cases v <;> decide
 
-/-- Does this voice realize P (the transitive patient) as a full
-    agreement-bearing argument? In Active and passives, yes. In
-    antipassives, P is suppressed or demoted. -/
-def KicheVoice.RealizesPatient : KicheVoice → Prop
-  | .active          => True
-  | .simplePassive   => True   -- P is promoted to subject
-  | .completedPassive => True
-  | _                => False
-
-instance : DecidablePred KicheVoice.RealizesPatient := fun v => by
-  cases v <;> unfold KicheVoice.RealizesPatient <;> infer_instance
-
-/-- Is the verb in this voice conjugated like an intransitive
-    (only Set B agreement, no Set A)?
-    Passives and antipassives both conjugate intransitively.
-    [mondloch-2017] Lesson 19 (passive = "like intransitive"),
-    Lesson 21 (antipassive = "exactly as Simple Intransitive Verbs"). -/
-def KicheVoice.ConjugatesIntransitively : KicheVoice → Prop
-  | .active     => False  -- Set A + Set B
-  | .agentFocus => False  -- separated pronoun + Set B
-  | _           => True   -- passives, antipassive: Set B only
-
-instance : DecidablePred KicheVoice.ConjugatesIntransitively := fun v => by
-  cases v <;> unfold KicheVoice.ConjugatesIntransitively <;> infer_instance
+/-- The passives and the absolutive antipassive derive an intransitive construction, and the
+verb conjugates as a simple intransitive ([mondloch-2017] Lessons 19, 21). -/
+theorem Voice.intransitive_iff (v : Voice) :
+    ¬ v.toVoice.target.IsTransitive ↔
+      v = .simplePassive ∨ v = .completedPassive ∨ v = .absolutiveAntipassive := by
+  cases v <;> decide
 
 /-! ### Agent Focus and subject extraction -/
 
@@ -189,7 +175,7 @@ instance : DecidablePred KicheVoice.ConjugatesIntransitively := fun v => by
     questions targeting the agent take AF, not Active, which is why *wi* is
     not licensed for subject extraction ([mondloch-2017] Lesson 22;
     [mendes-ranero-2021] §2). -/
-def subjectExtractionVoice : KicheVoice := .agentFocus
+def subjectExtractionVoice : Voice := .agentFocus
 
 /-- Agent Focus and Absolutive Antipassive share the DTV marker *-n* but
     differ in function — [mondloch-2017] Lesson 22: "In spite of the
@@ -203,37 +189,6 @@ theorem af_marker_eq_antip_marker :
 theorem rtv_af_marker_neq_antip :
     rtvVoiceMarker .agentFocus ≠ rtvVoiceMarker .absolutiveAntipassive := by
   decide
-
-/-! ### Voice system profile -/
-
-namespace VoiceSystem
-
-/-- The five voices of K'iche'. -/
-def voices : List Voice.VoiceEntry :=
-  [ ⟨"Active Voice", .agent⟩
-  , ⟨"Simple Passive", .patient⟩
-  , ⟨"Completive Passive", .patient⟩
-  , ⟨"Absolutive Antipassive", .agent⟩
-  , ⟨"Agent Focus Antipassive", .agent⟩ ]
-
-/-- K'iche' is asymmetrical — Active is the basic voice. -/
-def symmetry : Voice.VoiceSystemSymmetry := .asymmetrical
-
-end VoiceSystem
-
-/-! ### Voice system theorems -/
-
-/-- K'iche' has 5 voices. -/
-theorem kiche_voice_count : Voice.voiceCount Kiche.VoiceSystem.voices = 5 := rfl
-
-/-- K'iche' voice system is asymmetrical (Active is basic). -/
-theorem kiche_asymmetrical :
-    Kiche.VoiceSystem.symmetry = .asymmetrical := rfl
-
-/-- K'iche' is NOT a simple active/passive system (it has 5 voices,
-    not 2). -/
-theorem kiche_not_simple_active_passive :
-    ¬ Voice.isActivePassive Kiche.VoiceSystem.voices := by decide
 
 /-! ### DTV voice-marker verification -/
 

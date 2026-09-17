@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.Finset.Insert
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Voice.Alternation
+import Linglib.Syntax.Voice.Basic
 import Linglib.Data.WALS.Features.F106A
 
 /-!
@@ -23,9 +23,8 @@ computed.
 
 * `Strategy`, `CodingSite`, `Strategy.codingSite`, `Strategy.IsNominal` — the
   strategy and the site it marks.
-* `Strategy.alternation`, `Strategy.defaultValency` — the coding-frame operation
-  a predicate-marking strategy realizes ([creissels-2024]'s
-  `Voice.reciprocalization`) and the valency it therefore derives.
+* `Strategy.voice`, `Strategy.defaultValency` — the voice a predicate-marking
+  strategy realizes (`Voice.reciprocal`) and the valency it therefore derives.
 * `Indicator`, `Construction` — the morphosyntactic indicators of valency, and a
   construction as its exponent together with what each indicator reports;
   `Construction.Mixed` is [evans-et-al-2007]'s mixed transitivity effect.
@@ -37,7 +36,7 @@ computed.
 
 The strategy fixes the coding site, and the default valency follows from the
 site: argument strategies leave the base verb's frame intact, while predicate
-and multipredicate strategies realize the denucleativizing reciprocalization
+and multipredicate strategies realize the denucleativizing reciprocal voice
 alternation, whose derived construction is intransitive. The valency a
 construction actually shows is read off its indicators one at a time, since
 they can disagree: a Kuuk Thaayorre reciprocal keeps ergative on its subject
@@ -126,16 +125,16 @@ inductive Valency where
   deriving DecidableEq, Fintype, Repr
 
 open Voice in
-/-- The coding-frame operation a strategy realizes: every strategy marking the
-predicate or a multipredicate structure applies [creissels-2024]'s
-denucleativizing `reciprocalization`; argument strategies leave the frame intact. -/
-def Strategy.alternation (s : Strategy) : Option ValencyAlternation :=
-  if s.IsNominal then none else some reciprocalization
+/-- The voice a strategy realizes: every strategy marking the predicate or a
+multipredicate structure applies the denucleativizing `Voice.reciprocal`; argument
+strategies leave the frame intact. -/
+def Strategy.voice (s : Strategy) : Option Voice :=
+  if s.IsNominal then none else some reciprocal
 
-/-- Default valency, derived from the transitivity of the realized alternation's derived
-frame; a tendency that languages may override ([maslova-2008], [hurst-2012]). -/
+/-- Default valency, derived from the transitivity of the realized voice's derived frame; a
+tendency that languages may override ([maslova-2008], [hurst-2012]). -/
 def Strategy.defaultValency (s : Strategy) : Valency :=
-  match s.alternation with
+  match s.voice with
   | some a => if a.target.IsTransitive then .bivalent else .monovalent
   | none => .bivalent
 

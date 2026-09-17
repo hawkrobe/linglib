@@ -137,34 +137,17 @@ theorem verb_types_distinct :
     tulla.verbType ≠ haluta.verbType := by
   exact ⟨by decide, by decide, by decide⟩
 
--- ============================================================================
--- § 5: Voice System Profile
--- ============================================================================
+/-! ### Voice
 
-/-! ### Finnish voice system
+The active and the passive, the fourth person of the verb: the action is performed by an
+unspecified human agent, the form has no grammatical subject expressed as an independent
+phrase, and there is no correspondent to an Indo-European *by*-agent ([karlsson-2017]
+§21.1). It is the impersonal passive of the typology, marked by the suffix *-tA-* and its
+variants, the object keeping its coding; the inventory lists the voices projecting
+transitive clauses. -/
 
-    Two-way asymmetrical (active/impersonal). Finnish lacks a true
-    passive — what is traditionally called the passive is an impersonal
-    construction where the agent is demoted to an implicit generic human
-    referent, not promoted to a by-phrase ([karlsson-2017] Ch. 11).
-    Active is the basic form. Not a true passive; impersonal with
-    implicit generic agent (Karlsson 2018). -/
-namespace VoiceSystem
-
-def voices : List Voice.VoiceEntry := [ ⟨"Active", .agent⟩, ⟨"Impersonal", .patient⟩ ]
-
-def symmetry : Voice.VoiceSystemSymmetry := .asymmetrical
-
-end VoiceSystem
-
-theorem finnish_voice_system_asymmetrical :
-    VoiceSystem.symmetry = .asymmetrical := rfl
-
-theorem finnish_voice_count :
-    Voice.voiceCount VoiceSystem.voices = 2 := rfl
-
-theorem finnish_is_active_passive :
-    Voice.isActivePassive VoiceSystem.voices := by decide
+/-- The active and the impersonal passive, the passive marked by a suffix. -/
+def voices : Finset Voice := {.active, Voice.impersonalPassive.synthetic}
 
 -- ============================================================================
 -- § 6: Finnish Implicative Verbs ([nadathur-2023-implicatives])

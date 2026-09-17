@@ -1,4 +1,4 @@
-import Linglib.Syntax.Voice.Alternation
+import Linglib.Syntax.Voice.Basic
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Composition.Ty
 import Linglib.Fragments.English.Predicates
@@ -138,33 +138,33 @@ def controllerRole : ControlType → Option TermRole
 
 /-- The Control Principle blocks a valency alternation that removes the controller from
 core-term status. -/
-def Blocks (ct : ControlType) (va : ValencyAlternation) : Prop :=
+def Blocks (ct : ControlType) (va : Voice) : Prop :=
   ∃ role ∈ controllerRole ct, (va.fateOfRole role).RemovesFromCoreStatus
 
-instance (ct : ControlType) (va : ValencyAlternation) : Decidable (Blocks ct va) :=
+instance (ct : ControlType) (va : Voice) : Decidable (Blocks ct va) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- A control type passivizes when the postulate does not block passivization. -/
-def Passivizable (ct : ControlType) : Prop := ¬ Blocks ct passivization
+def Passivizable (ct : ControlType) : Prop := ¬ Blocks ct passive
 
 instance : DecidablePred Passivizable := λ ct => inferInstanceAs (Decidable (¬ Blocks ct _))
 
 /-- Visser's generalization at the level of alternations: passivization demotes the agent-like
 term, which subject control needs. -/
-theorem subjectControl_blocks_passivization : Blocks .subjectControl passivization := by decide
+theorem subjectControl_blocks_passive : Blocks .subjectControl passive := by decide
 
 /-- Passivization keeps the patient-like term, so object control survives it. -/
 theorem objectControl_passivizable : Passivizable .objectControl := by decide
 
 /-- Bach's generalization at the level of alternations: antipassivization demotes the
 patient-like term, which object control needs. -/
-theorem objectControl_blocks_antipassivization : Blocks .objectControl antipassivization := by
+theorem objectControl_blocks_antipassive : Blocks .objectControl antipassive := by
   decide
 
 /-- Antipassivization keeps the agent-like term, so subject control survives it, *promise to
 come* beside *promise Bill to come*. -/
-theorem subjectControl_not_blocks_antipassivization :
-    ¬ Blocks .subjectControl antipassivization := by
+theorem subjectControl_not_blocks_antipassive :
+    ¬ Blocks .subjectControl antipassive := by
   decide
 
 /-! ### The Fragment's control verbs -/

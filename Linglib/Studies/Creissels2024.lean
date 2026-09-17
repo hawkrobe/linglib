@@ -4,8 +4,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Logic.Equiv.Basic
 import Mathlib.Logic.Relation
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Syntax.Voice.Alternation
-import Linglib.Syntax.Voice.Basic
+import Linglib.Syntax.Voice.System
 import Linglib.Data.Examples.Creissels2024
 
 /-!
@@ -58,12 +57,16 @@ P-coding, which split-S languages violate. The book's examples are the rows of
   conditions that separate causativization from the A-nucleativization of an instrument or
   a concernee, or reflexivization from reciprocalization, are not modelled: the three
   A-nucleativizations are one predicate and the rows carry the book's label.
-* The substrate's alternation types, pairs of argument frames with a slot correspondence,
-  are not redefined: a type describes a pair of constructions when the fates of the initial
-  A, P and S, the introduced participant and the transitivity derived from the frame pair
-  are those computed from the constructions, and the book's defining example of each type
-  is shown to be described by the corresponding frame pair.
+* The substrate's voices, pairs of argument frames with a slot correspondence, are not
+  redefined: a voice describes a pair of constructions when the fates of the initial A, P
+  and S, the introduced participant, impersonality and the transitivity derived from the
+  frame pair are those computed from the constructions, and the book's defining example of
+  each type is shown to be described by the corresponding voice.
 * Stacking is composition of relations, and valency is the number of nuclear participants.
+* The symmetrical systems of §8.5 are sets of the substrate's voices, each with the slot it
+  makes the pivot, and the book's criterion for symmetry, the transitivity of the
+  construction unaffected, is the substrate's `Voice.Symmetrical`. The five types whose only
+  record is the book's defining example are defined here.
 * Alignment and the Obligatory Coding Principle are stated over the flagging of S in the
   book's intransitive examples; the book's principle ranges over every verb's coding frame,
   and its examples also show indexation.
@@ -237,7 +240,7 @@ def Passivization (c d : Construction ι) : Prop :=
 
 /-- The impersonal variant of passivization: the initial P keeps its coding, so the derived
 construction has neither A nor S. -/
-def IPassivization (c d : Construction ι) : Prop := Passivization c d ∧ d.Impersonal
+def ImpersonalPassivization (c d : Construction ι) : Prop := Passivization c d ∧ d.Impersonal
 
 /-- Antipassivization: the initial construction is transitive, participant structure is
 unchanged, a P is demoted, and the initial A becomes the S of an intransitive construction,
@@ -314,8 +317,8 @@ instance (c d : Construction ι) (i : ι) : Decidable (Demoted c d i) := by
   unfold Demoted; infer_instance
 instance (c d : Construction ι) : Decidable (Passivization c d) := by
   unfold Passivization; infer_instance
-instance (c d : Construction ι) : Decidable (IPassivization c d) := by
-  unfold IPassivization; infer_instance
+instance (c d : Construction ι) : Decidable (ImpersonalPassivization c d) := by
+  unfold ImpersonalPassivization; infer_instance
 instance (c d : Construction ι) : Decidable (Antipassivization c d) := by
   unfold Antipassivization; infer_instance
 instance (c d : Construction ι) : Decidable (SDenucleativization c d) := by
@@ -416,7 +419,7 @@ def fate (c d : Construction ι) (i : ι) : ParticipantFate :=
 derives for the initial A, P and S are those of the pair, a role its initial frame lacks is
 absent, the participant it introduces is the one the derived construction introduces, and
 its two frames are transitive exactly when the constructions are. -/
-def Describes (va : ValencyAlternation) (c d : Construction ι) : Prop :=
+def Describes (va : Voice) (c d : Construction ι) : Prop :=
   (∀ i, c i = .term .A → fate c d i = va.fateOfRole .A) ∧
   (∀ i, c i = .term .P → fate c d i = va.fateOfRole .P) ∧
   (∀ i, c i = .term .S → fate c d i = va.fateOfRole .S) ∧
@@ -426,9 +429,10 @@ def Describes (va : ValencyAlternation) (c d : Construction ι) : Prop :=
   (match va.newParticipant with
     | some r => ∃ i, Introduced c d i ∧ (d i).role = some r
     | none => ¬ ∃ i, Introduced c d i) ∧
+  (va.IsImpersonal ↔ d.Impersonal) ∧
   (c.Transitive ↔ va.source.IsTransitive) ∧ (d.Transitive ↔ va.target.IsTransitive)
 
-instance (va : ValencyAlternation) (c d : Construction ι) : Decidable (Describes va c d) := by
+instance (va : Voice) (c d : Construction ι) : Decidable (Describes va c d) := by
   unfold Describes
   cases va.newParticipant <;> infer_instance
 
@@ -524,7 +528,7 @@ theorem SplitS.not_obligatoryPCoding {t : Coding} {ss : List Flag} (h : SplitS t
 /-- The types of voice alternation the book names, symmetrical voices included. -/
 inductive Kind where
   | passivization
-  | iPassivization
+  | impersonalPassivization
   | antipassivization
   | sDenucleativization
   | decausativization
@@ -544,7 +548,7 @@ inductive Kind where
 out; the three A-nucleativizations and the two cumulations share their structure. -/
 def Kind.Realize (c d : Construction ι) : Kind → Option ι → Prop
   | .passivization, _ => Passivization c d
-  | .iPassivization, _ => IPassivization c d
+  | .impersonalPassivization, _ => ImpersonalPassivization c d
   | .antipassivization, _ => Antipassivization c d
   | .sDenucleativization, _ => SDenucleativization c d
   | .decausativization, _ => Decausativization c d
@@ -586,7 +590,7 @@ theorem bahrtShare_extremes : ∀ k : Kind, ∀ x ∈ k.bahrtShare,
 
 /-- The types by name. -/
 def kindNames : List (String × Kind) :=
-  [("passivization", .passivization), ("iPassivization", .iPassivization),
+  [("passivization", .passivization), ("impersonalPassivization", .impersonalPassivization),
     ("antipassivization", .antipassivization), ("sDenucleativization", .sDenucleativization),
     ("decausativization", .decausativization), ("causativization", .causativization),
     ("concernativization", .concernativization), ("aNucleativization", .aNucleativization),
@@ -607,8 +611,17 @@ def slotNames : List (String × Fin 5) := [("p1", 0), ("p2", 1), ("p3", 2), ("p4
 def flagNames : List (String × Flag) :=
   [("zero", .zero), ("accusative", .accusative), ("ergative", .ergative)]
 
+/-- How a row's alternation is coded: the book's §1.1.3 labels, equipollent marking a label
+of the pair rather than of a voice. -/
+inductive Marking where
+  | synthetic
+  | analytic
+  | equipollent
+  | uncoded
+  deriving DecidableEq, Repr
+
 /-- The markings by name. -/
-def markingNames : List (String × AlternationMarking) :=
+def markingNames : List (String × Marking) :=
   [("synthetic", .synthetic), ("analytic", .analytic), ("equipollent", .equipollent),
     ("uncoded", .uncoded)]
 
@@ -671,18 +684,63 @@ theorem symmetrical_rows : ∀ row ∈ all, row.parse? "alternation" kindNames =
     ∃ q ∈ init.parse? "pivot" slotNames, p ≠ q ∧ (construction row p).Expressed := by
   decide +kernel
 
-/-- Each substrate record with the book's initial and derived example of its type. -/
-def definingExamples : List (ValencyAlternation × LinguisticExample × LinguisticExample) :=
-  [(passivization, ex_8_1a, ex_8_1b), (iPassivization, ex_8_14a, ex_8_14c),
-    (sDenucleativization, ex_8_14d, ex_8_14e), (antipassivization, ex_8_21a, ex_8_21b),
-    (decausativization, ex_8_19a, ex_8_19b), (causativization, ex_8_18a, ex_8_18b),
-    (reflexivization, ex_8_23a, ex_8_23b), (reciprocalization, ex_8_24a, ex_8_24b),
-    (asNucleativizationOfObliques, ex_8_13a, ex_8_13b),
-    (concernativization, ex_8_27a, ex_8_27b), (pApplicativization, ex_8_6a, ex_8_6b),
-    (dApplicativization, ex_8_5a, ex_8_5b), (xApplicativization, ex_8_28a, ex_8_28b),
-    (portativeDerivation, ex_8_33a, ex_8_33b)]
+/-! ### The book's own types -/
 
-/-- The book's defining example of each type is described by the substrate's record of it. -/
+open ArgumentFrame.Slot in
+/-- A/S-nucleativization of an oblique (§8.3.4.1): an oblique participant, an instrument,
+takes over the role of A and the initial A is denucleativized, understood as non-specific. -/
+def instrumentNucleativization : Voice :=
+  { source := .np_pp, target := ⟨some .nominal, [.nominal, .implicit]⟩,
+    correspondence :=
+      [(external, complement 1), (complement 0, complement 0), (complement 1, external)] }
+
+/-- Concernativization (§8.3.4.2): a concernee is nucleativized as A and the initial S is
+the P; at the level of frames it is the causative, the difference lying in the new
+participant's relation to the event. -/
+def concernative : Voice := causative
+
+open ArgumentFrame.Slot in
+/-- D-applicativization (§14.1.3): an applied participant is expressed as a dative oblique,
+the initial A and P unchanged. -/
+def dativeApplicative : Voice :=
+  { source := .np, target := .np_pp,
+    correspondence := [(external, external), (complement 0, complement 0)] }
+
+open ArgumentFrame.Slot in
+/-- X-applicativization (§14.1.4): an applied participant is expressed as an ordinary
+oblique, the initial S unchanged. -/
+def obliqueApplicative : Voice :=
+  { source := .intransitive, target := .pp, correspondence := [(external, external)] }
+
+open ArgumentFrame.Slot in
+/-- Portative derivation (§8.3.7): an intransitive motion verb becomes transitive, its S the
+A and a carried entity the P. -/
+def portative : Voice :=
+  { source := .intransitive, target := .np, correspondence := [(external, external)] }
+
+/-- A/S-nucleativization of an oblique nucleativizes the oblique and denucleativizes the
+initial A: neither valency-increasing nor valency-decreasing. -/
+theorem instrumentNucleativization_neutral :
+    instrumentNucleativization.Nucleativizes ∧ instrumentNucleativization.Denucleativizes ∧
+      ¬ instrumentNucleativization.IsValencyIncreasing ∧
+      ¬ instrumentNucleativization.IsValencyDecreasing := by
+  decide
+
+/-- Portative derivation is valency-increasing, like the causative and the applicative, but
+reduces to neither (§8.3.7). -/
+theorem portative_isValencyIncreasing : portative.IsValencyIncreasing := by decide
+
+/-- Each voice with the book's initial and derived example of its type. -/
+def definingExamples : List (Voice × LinguisticExample × LinguisticExample) :=
+  [(passive, ex_8_1a, ex_8_1b), (impersonalPassive, ex_8_14a, ex_8_14c),
+    (impersonalPassive .intransitive, ex_8_14d, ex_8_14e), (antipassive, ex_8_21a, ex_8_21b),
+    (anticausative, ex_8_19a, ex_8_19b), (causative, ex_8_18a, ex_8_18b),
+    (reflexive, ex_8_23a, ex_8_23b), (reciprocal, ex_8_24a, ex_8_24b),
+    (instrumentNucleativization, ex_8_13a, ex_8_13b), (concernative, ex_8_27a, ex_8_27b),
+    (applicative, ex_8_6a, ex_8_6b), (dativeApplicative, ex_8_5a, ex_8_5b),
+    (obliqueApplicative, ex_8_28a, ex_8_28b), (portative, ex_8_33a, ex_8_33b)]
+
+/-- The book's defining example of each type is described by the voice recorded for it. -/
 theorem records_described :
     ∀ e ∈ definingExamples, Describes e.1 (construction e.2.1) (construction e.2.2) := by
   decide +kernel
@@ -721,7 +779,8 @@ theorem ambitransitivity_rows : ∀ row ∈ all,
 oblique; Tswana *-is* codes causativization and, in chapter 12, portative derivation; Diré
 Songhay *-ndi* codes causativization and passivization. -/
 theorem coexpression :
-    [Kind.passivization, .iPassivization, .sDenucleativization] ⊆ coExpressed "tswa1253" "-w" ∧
+    [Kind.passivization, .impersonalPassivization, .sDenucleativization] ⊆
+      coExpressed "tswa1253" "-w" ∧
     [Kind.pApplicativization, .xApplicativization, .aNucleativization] ⊆
       coExpressed "tswa1253" "-ɛl" ∧
     [Kind.causativization, .portative] ⊆ coExpressed "tswa1253" "-is" ∧
@@ -768,20 +827,37 @@ theorem portative_rows :
 
 /-! ### Symmetrical voice systems (§8.5) -/
 
-/-- Balinese (47): a binary symmetrical system, agent voice and patient voice. -/
-def balineseVoices : List VoiceEntry :=
-  [⟨"agent voice", .agent⟩, ⟨"patient voice", .patient⟩]
+/-- Balinese (47): a binary symmetrical system, the patient voice bare and initial, the agent
+voice by a nasal prefix, both keeping the taker and the shirt core terms. -/
+def balinese : Finset Voice := {patientVoice, agentVoice.synthetic}
 
-/-- Tagalog (48): a multiple symmetrical system whose locative, conveyance and instrumental
-voices select an oblique as pivot; the substrate has no conveyance pivot, so the conveyance
-voice, whose pivot is a beneficiary or a displaced theme, is entered as benefactive. -/
-def tagalogVoices : List VoiceEntry :=
-  [⟨"agent voice", .agent⟩, ⟨"patient voice", .patient⟩, ⟨"locative voice", .locative⟩,
-    ⟨"conveyance voice", .benefactive⟩, ⟨"instrumental voice", .instrumental⟩]
+/-- The voices of Tagalog (48). -/
+inductive TagalogVoice where
+  | agent
+  | patient
+  | locative
+  | conveyance
+  | instrumental
+  deriving DecidableEq, Repr, Fintype
 
-/-- Only the multiple system lets an oblique be the pivot. -/
-theorem multiple_distinguishesObliques :
-    ¬ distinguishesObliques balineseVoices ∧ distinguishesObliques tagalogVoices := by
+/-- Tagalog (48): a multiple symmetrical system, every voice marked and the pivot flagged by
+*ang* in place of its own flag; the locative voice selects the store, a spatial oblique, the
+conveyance and instrumental voices the child and the money. -/
+def tagalog : TagalogVoice → Voice
+  | .agent => agentVoice.synthetic
+  | .patient => patientVoice.synthetic
+  | .locative => locativeVoice.synthetic
+  | .conveyance | .instrumental => (obliqueVoice .grammatical).synthetic
+
+/-- Balinese is symmetrical and binary although morphologically oriented, so symmetry in the
+book's sense does not require equipollent marking (§8.1.7, §8.5.1). -/
+theorem balinese_binary :
+    Voice.Symmetrical balinese ∧ ¬ Multiple balinese ∧ ¬ Equipollent balinese := by
+  decide
+
+/-- Tagalog is symmetrical and multiple: an oblique may be the pivot (§8.5.2). -/
+theorem tagalog_multiple :
+    Voice.Symmetrical (Finset.univ.image tagalog) ∧ Multiple (Finset.univ.image tagalog) := by
   decide
 
 end Creissels2024
