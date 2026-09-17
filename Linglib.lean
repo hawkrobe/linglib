@@ -100,7 +100,6 @@ import Linglib.Core.Data.Fintype.Sets
 import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Data.List.Chain
 import Linglib.Core.Data.List.Destutter
-import Linglib.Core.Data.List.EqOn
 import Linglib.Core.Data.List.DropRight
 import Linglib.Core.Data.List.Factors
 import Linglib.Core.Data.List.Perm

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Subregular.QF
-import Linglib.Core.Data.List.EqOn
+import Linglib.Core.Data.List.DependsOn
 import Mathlib.Data.Finset.Basic
 
 /-!

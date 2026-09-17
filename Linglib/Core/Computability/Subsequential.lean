@@ -11,7 +11,7 @@ import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Data.List.DropRight
-import Linglib.Core.Data.List.EqOn
+import Linglib.Core.Data.List.DependsOn
 import Linglib.Core.Computability.ScanDirection
 
 /-!
@@ -468,9 +468,10 @@ margin of each output coordinate: the delay bound of `exists_getElem?_append_eq`
 far to the right an output coordinate can look. -/
 theorem IsLeftSubsequential.exists_dependsOn_Iic
     (hlen : ∀ w, (f w).length = w.length) (hf : IsLeftSubsequential f) :
-    ∃ N, ∀ i, List.DependsOn (fun u => (f u)[i]?) (Set.Iic (i + N)) := by
+    ∃ N, ∀ i n, DependsOn (fun x : Fin n → α ↦ (f (List.ofFn x))[i]?)
+      (Fin.val ⁻¹' Set.Iic (i + N)) := by
   obtain ⟨N, hN⟩ := hf.exists_getElem?_append_eq
-  refine ⟨N, fun i u v _ hag => ?_⟩
+  refine ⟨N, fun i ↦ (List.forall_dependsOn_ofFn_iff fun u ↦ (f u)[i]?).mpr fun u v _ hag ↦ ?_⟩
   show (f u)[i]? = (f v)[i]?
   have key : ∀ w : List α, (f (w.take (i + N + 1)))[i]? = (f w)[i]? := fun w => by
     rcases lt_or_ge w.length (i + N + 1) with h | h

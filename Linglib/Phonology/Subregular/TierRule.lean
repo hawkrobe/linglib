@@ -349,11 +349,12 @@ theorem applyToString_getElem? (r : TierRule α) (u : List α) (i : ℕ) :
 /-- `applyToString` is **prefix-determined**: its `i`-th output is fixed by the input's
 strict prefix `{k | k < i}`. -/
 theorem applyToString_prefixDetermined (r : TierRule α) (i : ℕ) :
-    List.DependsOn (fun w => (r.applyToString w)[i]?) (Set.Iio i) := by
-  intro u v hlen hag
-  show (r.applyToString u)[i]? = (r.applyToString v)[i]?
-  rw [applyToString_getElem?, applyToString_getElem?, hlen,
-    List.take_eq_of_agree fun k hk => hag.getElem?_eq (Set.mem_Iio.mpr hk)]
+    ∀ n, DependsOn (fun x : Fin n → α ↦ (r.applyToString (List.ofFn x))[i]?)
+      (Fin.val ⁻¹' Set.Iio i) :=
+  (List.forall_dependsOn_ofFn_iff fun w ↦ (r.applyToString w)[i]?).mpr fun u v hlen hag ↦ by
+    show (r.applyToString u)[i]? = (r.applyToString v)[i]?
+    rw [applyToString_getElem?, applyToString_getElem?, hlen,
+      List.ext_take_getElem? fun k hk => hag.getElem?_eq (Set.mem_Iio.mpr hk)]
 
 /-- **The tier-rule prediction mechanism is right-myopic** — it has no look-ahead.
 Consequently no tier-rule-based prediction (the formal core of a `Harmony.System`) can

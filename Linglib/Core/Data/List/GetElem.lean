@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Int.Notation
+import Linglib.Core.Data.List.TakeDrop
 
 /-!
 # Integer indexing into lists
@@ -73,12 +74,8 @@ theorem ext_getElem?_int (h : ∀ j : ℤ, j ≤ (w.length : ℤ) → y[j]? = w[
 
 /-- Agreement of integer-indexed entries below `c` transfers prefixes of length `c`. -/
 theorem ext_take_getElem?_int {c : ℕ} (h : ∀ j : ℤ, j < (c : ℤ) → y[j]? = w[j]?) :
-    y.take c = w.take c := by
-  refine ext_getElem? fun n ↦ ?_
-  rcases Nat.lt_or_ge n c with hn | hn
-  · rw [getElem?_take_of_lt hn, getElem?_take_of_lt hn]
-    simpa using h n (by omega)
-  · rw [getElem?_take_eq_none hn, getElem?_take_eq_none hn]
+    y.take c = w.take c :=
+  ext_take_getElem? fun n hn ↦ by simpa using h n (by omega)
 
 theorem getElem?_int_append_left (h : i < (u.length : ℤ)) : (u ++ v)[i]? = u[i]? := by
   by_cases h0 : 0 ≤ i
