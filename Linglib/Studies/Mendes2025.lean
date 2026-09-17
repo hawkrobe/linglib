@@ -1,784 +1,227 @@
-import Linglib.Semantics.Tense.Dynamic
-import Linglib.Semantics.Mood.Dynamic
+import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Modality.HistoricalAlternatives
+import Linglib.Semantics.Mood.Situation
+import Linglib.Semantics.Tense.Defs
 
 /-!
-# Mendes (2025): The Subordinate Future
+# Mendes (2025): Indefiniteness in future reference
 
-This file formalizes the analysis of the Portuguese subordinate future, a subjunctive with
-future morphology, in [mendes-2025]. The form enables modal donkey anaphora, the
-subjunctive binding situation variables across clause boundaries as an indefinite binds a
-donkey pronoun; it weakens the existential presupposition of strong quantifiers in its
-restrictor, a modal displacement; and its future orientation is parasitic on the modal
-anaphora rather than contributed by a temporal operator, following the observation the
-paper adopts that a subordinate future in a conditional is evaluated after the antecedent
-event. The operator is the composition of the dynamic subjunctive and the dynamic future
-(`subordinateFuture`), the future shift is derived from the modal component, and the
-compositional derivation of *Se Maria estiver em casa, ela vai atender* runs end to end in
-compositional discourse representation theory.
+This file formalizes the analysis of the Subordinate Future, a subjunctive combined with a
+forward-shifting temporal morpheme, in [mendes-2025]. The subjunctive is an indefinite over
+situations, introducing a situation dref among the historical alternatives of its anchor, and
+the indicative is the definite that retrieves it, so that a main clause is evaluated in the
+future situation its subordinate clause introduced (modal donkey anaphora) and a strong
+quantifier whose restrictor carries the form has its existence presupposition satisfied in a
+historical alternative rather than at the anchor (modal displacement). The lexical entries are
+the paper's, in the compositional discourse representation theory of [muskens-1996] at
+`Semantics/Dynamic/CDRT` over situation drefs: `temporal` tests the running times of two
+situations against a tense cell of `Semantics/Tense/Defs`, `subj` and `ind` are the moods, and
+`sfForm_true_at` unpacks the paper's two derivations, the conditional *If Ivan leaves the room
+smiling, the interview went well* and the relative clause *every candidate who delivers a good
+job talk*, to their truth conditions, and `temporal_shift` reads the orderings of the paper's
+table of main-clause tenses off the entries.
 
 ## Implementation notes
 
-The dynamic mood and tense operators are `Semantics/Mood/Dynamic` and
-`Semantics/Tense/Dynamic` over the situation carrier of `Semantics/Dynamic/Situation`.
+* The carrier registers situation drefs only: individual drefs are saturated in the radicals
+  (*Ivan leaves the room* is a situation predicate), so the quantifying-in of the relative clause
+  reduces to the implication of its restrictor and nuclear scope.
+* A situation is a world–time `Index`, and *s₂ is part of the world of s₁* is world identity,
+  `Mood.sameWorld`.
 
 ## References
 
 * [mendes-2025]
+* [muskens-1996]
 -/
 
 namespace Mendes2025
 
-open Reference
-open HistoricalAlternatives
-open DynamicSemantics
-open DynamicSemantics.CCP (IsEliminative)
-open Tense
-open Mood
-
-/--
-Subordinate Future (SF) analysis.
-
-The SF in Portuguese conditionals:
-  "Se Maria estiver em casa, ela vai atender."
-  "If Maria be.SF at home, she will answer."
-
-Structure ([mendes-2025] §3.2):
-1. SF = SUBJ^{s₁}_{s₀} + FUT
-2. SUBJ introduces s₁ ∈ hist(s₀)
-3. FUT constrains τ(s₁) > τ(s₀)
-4. Main clause is anchored to τ(s₁)
-
-This is the compositional derivation:
-⟦SF⟧ = ⟦SUBJ⟧ ∘ ⟦FUT⟧
--/
-def subordinateFuture {W T : Type*} [LinearOrder T]
-    (history : HistoricalAlternatives W T)
-    (newSitVar : ℕ)   -- Fresh variable for introduced situation
-    (refSitVar : ℕ)   -- Variable for reference situation
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  -- First apply SUBJ to introduce s₁
-  let c' := dynSUBJ history newSitVar c
-  -- Then constrain τ(s₁) > τ(s₀)
-  dynFUT newSitVar refSitVar c'
-
-/--
-Conditional with SF antecedent (dynamic version).
-
-"Se Maria estiver em casa, ela vai atender."
-
-1. Antecedent: SF introduces s₁ ∈ hist(s₀) with τ(s₁) > τ(s₀)
-2. Antecedent predicate evaluated at s₁
-3. Consequent: temporally anchored to s₁ (future relative to s₀)
--/
-def conditionalWithSF {W T : Type*} [LinearOrder T]
-    (history : HistoricalAlternatives W T)
-    (antecedentVar : ℕ)  -- Situation introduced by SF
-    (speechVar : ℕ)      -- Speech time situation
-    (antecedent : Set (Index.Possibility W T) → Set (Index.Possibility W T))  -- "Maria is home"
-    (consequent : Set (Index.Possibility W T) → Set (Index.Possibility W T))  -- "she answers"
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  -- Apply SF to introduce antecedent situation
-  let c₁ := subordinateFuture history antecedentVar speechVar c
-  -- Filter by antecedent
-  let c₂ := antecedent c₁
-  -- Apply consequent (anchored to antecedentVar's time)
-  consequent c₂
-
-/--
-Relative clause with SF in restrictor.
-
-"Cada menino [que estiver acordado] vai receber um biscoito."
-"Every boy [who is.SF awake] will get a cookie."
-
-Structure:
-1. SF in relative clause introduces situation s₁ ∈ hist(s₀)
-2. Restrictor (boy ∧ awake) evaluated at s₁
-3. Nuclear scope (get cookie) evaluated with temporal anchor from s₁
--/
-def relativeClauseSF {W T : Type*} [LinearOrder T]
-    (history : HistoricalAlternatives W T)
-    (rcVar : ℕ)           -- Situation variable for relative clause
-    (speechVar : ℕ)       -- Speech time situation
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  subordinateFuture history rcVar speechVar c
-
-/--
-Strong quantifier with SF restrictor.
-
-"Todo livro [que Maria ler.SF] será interessante"
-"Every book [that Maria reads.SF] will be interesting"
-
-The SF in the restrictor:
-1. Introduces s₁ ∈ hist(s₀) for the relative clause
-2. Quantification over books is relativized to s₁
-3. Nuclear scope inherits temporal anchor from s₁
--/
-def everyWithSFRestrictor {W T : Type*} [LinearOrder T]
-    (history : HistoricalAlternatives W T)
-    (rcVar speechVar : ℕ)
-    (restrictor : Set (Index.Possibility W T) → Set (Index.Possibility W T))  -- "book that M reads"
-    (nuclear : Set (Index.Possibility W T) → Set (Index.Possibility W T))     -- "is interesting"
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  -- First: SF introduces situation for restrictor
-  let c₁ := subordinateFuture history rcVar speechVar c
-  -- Then: Filter by restrictor content
-  let c₂ := restrictor c₁
-  -- Finally: Apply nuclear scope (inherits temporal anchor)
-  nuclear c₂
-
-/--
-SF introduces a future situation.
-
-The subordinate future always introduces a situation with time ≥ current.
--/
-theorem sf_introduces_future {W T : Type*} [LinearOrder T]
-    (history : HistoricalAlternatives W T)
-    (newVar refVar : ℕ)
-    (c : Set (Index.Possibility W T))
-    (gs : Index.Possibility W T)
-    (h : gs ∈ subordinateFuture history newVar refVar c) :
-    (gs.assignment newVar).time ≥ (gs.assignment refVar).time := by
-  -- The subordinateFuture composes SUBJ and FUT
-  -- FUT requires the new situation to be after the reference
-  unfold subordinateFuture at h
-  obtain ⟨-, h_gt⟩ := DynamicSemantics.mem_lift_test.mp h
-  exact le_of_lt ((Tense.compare_mem_future _ _).mp h_gt)
-
-/--
-Temporal shift is parasitic on modal donkey anaphora.
-
-[mendes-2025] §3.2: the future-oriented interpretation of SF is not due
-to an independent temporal operator. Instead, it follows from:
-
-1. SUBJ introduces s₁ ∈ hist(s₀) - modal component
-2. hist(s₀) includes situations with τ(s₁) ≥ τ(s₀) - temporal consequence
-3. Main clause is evaluated at τ(s₁) via modal anaphora - binding
-
-The temporal shift is *derived* from the modal semantics, not stipulated.
-
-Modal donkey anaphora explains
-why subjunctive mood enables future reference in subordinate clauses.
--/
-theorem temporal_shift_parasitic_on_modal {W T : Type*} [LinearOrder T]
-    (history : HistoricalAlternatives W T)
-    (sfVar speechVar : ℕ)
-    (c : Set (Index.Possibility W T))
-    -- For any situation in the output of SF application...
-    (gs : Index.Possibility W T)
-    (h : gs ∈ subordinateFuture history sfVar speechVar c)
-    -- ...there exists an original speech situation...
-    : ∃ (g₀ : Assignment (Index W T)) (s₀ : Index W T),
-        -- ...that was in the input context...
-        (⟨s₀, g₀⟩ : Index.Possibility W T) ∈ c ∧
-        -- ...and the temporal shift comes from SUBJ's modal component:
-        -- 1. The bound situation s₁ is in the historical base of s₀
-        (gs.assignment sfVar) ∈ historicalBase history s₀ ∧
-        -- 2. The temporal ordering τ(s₁) ≥ τ(s₀) follows from hist definition
-        (gs.assignment sfVar).time ≥ s₀.time ∧
-        -- 3. The strict future τ(s₁) > τ(s₀) comes from FUT constraint
-        (gs.assignment sfVar).time > (gs.assignment speechVar).time := by
-  -- subordinateFuture = dynSUBJ ∘ dynFUT
-  unfold subordinateFuture at h
-  -- After dynFUT, we have the strict ordering
-  obtain ⟨h_in_subj, h_gt⟩ := DynamicSemantics.mem_lift_test.mp h
-  -- After dynSUBJ, we have the historical base membership
-  unfold dynSUBJ Mood.dynIntroduce at h_in_subj
-  obtain ⟨g, s₀, s₁, hc, h_hist, h_upd, h_eq⟩ := h_in_subj
-  use g, s₀
-  -- Helper: gs.assignment sfVar = s₁
-  have h_sit : gs.assignment sfVar = s₁ := by
-    rw [h_upd]; simp only [Function.update_self]
-  refine ⟨hc, ?_, ?_, ?_⟩
-  -- 1. gs.assignment sfVar = s₁ ∈ historicalBase history s₀
-  · rw [h_sit]
-    exact h_hist
-  -- 2. τ(s₁) ≥ τ(s₀) from historicalBase definition
-  · rw [h_sit]
-    unfold historicalBase at h_hist
-    simp only [Set.mem_ofPred_eq] at h_hist
-    exact h_hist.2
-  -- 3. The FUT constraint gives us the strict ordering
-  · exact (Tense.compare_mem_future _ _).mp h_gt
-
-/--
-SF in restrictor enables future reference for strong quantifiers.
-
-With SF in the relative clause, "every" can quantify over future entities.
-
-Restrictor and nuclear must be context filters (`IsEliminative`).
-Linguistically, predicates filter contexts without modifying assignments.
--/
-theorem sf_restrictor_future_reference {W T : Type*} [LinearOrder T]
-    (history : HistoricalAlternatives W T)
-    (rcVar speechVar : ℕ)
-    (restrictor nuclear : Set (Index.Possibility W T) → Set (Index.Possibility W T))
-    (c : Set (Index.Possibility W T))
-    (gs : Index.Possibility W T)
-    (h : gs ∈ everyWithSFRestrictor history rcVar speechVar restrictor nuclear c)
-    (hR : IsEliminative restrictor) (hN : IsEliminative nuclear) :
-    -- The restrictor situation can be future relative to speech time
-    (gs.assignment rcVar).time > (gs.assignment speechVar).time := by
-  -- Track through the filter chain
-  unfold everyWithSFRestrictor at h
-  have h_sf : gs ∈ subordinateFuture history rcVar speechVar c :=
-    Set.Subset.trans (hN _) (hR _) h
-  -- subordinateFuture guarantees the future ordering via dynFUT
-  unfold subordinateFuture at h_sf
-  exact (Tense.compare_mem_future _ _).mp (DynamicSemantics.mem_lift_test.mp h_sf).2
-
-variable {W T E : Type*} [LinearOrder T]
-variable (history : HistoricalAlternatives W T)
-
-/--
-Maria — proper name.
-`⟦Maria⟧ = λP.P(maria)`
--/
-def lexMaria (maria : E)
-    (P : E → Set (Index.Possibility W T) → Set (Index.Possibility W T))
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  P maria c
-
-/--
-estar em casa — "be at home".
-`⟦estar em casa⟧ = λxλsλc. [| at-home(x)(s)]; c`
--/
-def lexAtHome
-    (atHomeRel : E → Index W T → Prop)
-    (x : E)
-    (sitVar : ℕ)
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  { gs ∈ c | atHomeRel x (gs.assignment sitVar) }
-
-/--
-atender — "answer (the door)".
-`⟦atender⟧ = λxλsλc. [| answer(x)(s)]; c`
--/
-def lexAnswer
-    (answerRel : E → Index W T → Prop)
-    (x : E)
-    (sitVar : ℕ)
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  { gs ∈ c | answerRel x (gs.assignment sitVar) }
-
-/--
-SF (Subordinate Future).
-`⟦SF⟧ = SUBJ ∘ FUT`
--/
-def lexSF := @subordinateFuture W T _
-
-/--
-ela — "she" (pronoun bound to Maria).
-`⟦ela⟧ = λP.P(maria)`
--/
-def lexShe (maria : E)
-    (P : E → Set (Index.Possibility W T) → Set (Index.Possibility W T))
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  P maria c
-
-/--
-vai — future auxiliary "will".
-`⟦vai⟧ = λVPλsλc. VP(s)(c)` — transparent; future comes from SF
-via modal anaphora.
--/
-def lexWill
-    (VP : ℕ → Set (Index.Possibility W T) → Set (Index.Possibility W T))
-    (sitVar : ℕ)
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  VP sitVar c
-
-/--
-Sequential context update: feeds antecedent output into consequent.
-
-Note: the paper's `⟦if⟧` is dynamic implication (a test: `[| P ⇒ Q]`),
-but the derivation theorems here require extracting properties from the
-output context, which a test semantics cannot provide (tests preserve input
-unchanged). Sequential composition is appropriate because the universal
-force comes from SUBJ's quantification over historical alternatives, not
-from the conditional operator itself.
--/
-def seqUpdate
-    (antecedent consequent : Set (Index.Possibility W T) → Set (Index.Possibility W T))
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  consequent (antecedent c)
-
-/--
-Antecedent derivation:
-`⟦Maria estiver em casa⟧ = SUBJ^{s₁}_{s₀}[FUT; [| at-home(maria)(s₁)]]`
-
-Introduces s₁ ∈ hist(s₀), constrains τ(s₁) > τ(s₀), asserts Maria at home.
--/
-def deriveAntecedent
-    (maria : E)
-    (atHomeRel : E → Index W T → Prop)
-    (sfVar speechVar : ℕ)
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  let c₁ := lexSF history sfVar speechVar c
-  lexAtHome atHomeRel maria sfVar c₁
-
-/--
-Consequent derivation:
-`⟦ela vai atender⟧ = [| answer(maria)(s₁)]` — s₁ retrieved via IND.
--/
-def deriveConsequent
-    (maria : E)
-    (answerRel : E → Index W T → Prop)
-    (sfVar : ℕ)
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  let c₁ := dynIND sfVar c
-  lexAnswer answerRel maria sfVar c₁
-
-/--
-Full sentence derivation:
-`⟦Se Maria estiver em casa, ela vai atender⟧`
--/
-def deriveFullSentence
-    (maria : E)
-    (atHomeRel answerRel : E → Index W T → Prop)
-    (sfVar speechVar : ℕ)
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  let antecedent := deriveAntecedent history maria atHomeRel sfVar speechVar
-  let consequent := deriveConsequent maria answerRel sfVar
-  seqUpdate antecedent consequent c
-
-/--
-The situation introduced by SF is in the historical alternatives.
--/
-theorem derivation_in_historical_base
-    (maria : E)
-    (atHomeRel answerRel : E → Index W T → Prop)
-    (sfVar speechVar : ℕ)
-    (c : Set (Index.Possibility W T))
-    (gs : Index.Possibility W T)
-    (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
-    ∃ s₀, (∃ g₀, (⟨s₀, g₀⟩ : Index.Possibility W T) ∈ c) ∧
-          (gs.assignment sfVar) ∈ historicalBase history s₀ := by
-  unfold deriveFullSentence seqUpdate at h
-  unfold deriveConsequent lexAnswer at h
-  simp only [Set.mem_ofPred_eq] at h
-  obtain ⟨h_ind, _⟩ := h
-  obtain ⟨h_ant, _⟩ := DynamicSemantics.mem_lift_test.mp h_ind
-  unfold deriveAntecedent lexAtHome at h_ant
-  simp only [Set.mem_ofPred_eq] at h_ant
-  obtain ⟨h_sf, _⟩ := h_ant
-  unfold lexSF subordinateFuture at h_sf
-  obtain ⟨h_subj, _⟩ := DynamicSemantics.mem_lift_test.mp h_sf
-  unfold dynSUBJ Mood.dynIntroduce at h_subj
-  obtain ⟨g, s₀, s₁, hc, h_hist, h_upd, _⟩ := h_subj
-  use s₀
-  constructor
-  · exact ⟨g, hc⟩
-  · have h_sit : gs.assignment sfVar = s₁ := by
-      rw [h_upd]; simp only [Function.update_self]
-    rw [h_sit]
-    exact h_hist
-
-/--
-The derivation enforces future ordering: τ(s₁) > τ(s₀).
--/
-theorem derivation_future_ordering
-    (maria : E)
-    (atHomeRel answerRel : E → Index W T → Prop)
-    (sfVar speechVar : ℕ)
-    (c : Set (Index.Possibility W T))
-    (gs : Index.Possibility W T)
-    (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
-    (gs.assignment sfVar).time > (gs.assignment speechVar).time := by
-  unfold deriveFullSentence seqUpdate at h
-  unfold deriveConsequent lexAnswer at h
-  simp only [Set.mem_ofPred_eq] at h
-  obtain ⟨h_ind, _⟩ := h
-  obtain ⟨h_ant, _⟩ := DynamicSemantics.mem_lift_test.mp h_ind
-  unfold deriveAntecedent lexAtHome at h_ant
-  simp only [Set.mem_ofPred_eq] at h_ant
-  obtain ⟨h_sf, _⟩ := h_ant
-  unfold lexSF subordinateFuture at h_sf
-  exact (Tense.compare_mem_future _ _).mp (DynamicSemantics.mem_lift_test.mp h_sf).2
-
-/--
-If Maria is at home at s₁, she answers at s₁.
--/
-theorem derivation_conditional_holds
-    (maria : E)
-    (atHomeRel answerRel : E → Index W T → Prop)
-    (sfVar speechVar : ℕ)
-    (c : Set (Index.Possibility W T))
-    (gs : Index.Possibility W T)
-    (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
-    atHomeRel maria (gs.assignment sfVar) → answerRel maria (gs.assignment sfVar) := by
-  intro _
-  unfold deriveFullSentence seqUpdate at h
-  unfold deriveConsequent lexAnswer at h
-  simp only [Set.mem_ofPred_eq] at h
-  exact h.2
-
-/--
-Counterfactual conditional (for comparison).
-"Se Maria estivesse em casa, ela atenderia."
-Uses SUBJ without FUT — allows past/present alternatives.
--/
-def deriveCounterfactual
-    (maria : E)
-    (atHomeRel answerRel : E → Index W T → Prop)
-    (cfVar : ℕ)
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  let c₁ := dynSUBJ history cfVar c
-  let c₂ := lexAtHome atHomeRel maria cfVar c₁
-  let c₃ := dynIND cfVar c₂
-  lexAnswer answerRel maria cfVar c₃
-
-/--
-SF constrains to future; counterfactual allows past/present.
--/
-theorem sf_vs_counterfactual_temporal {W T : Type*} [LinearOrder T]
-    (history : HistoricalAlternatives W T)
-    {E : Type*}
-    (maria : E)
-    (atHomeRel answerRel : E → Index W T → Prop)
-    (sitVar speechVar : ℕ)
-    (c : Set (Index.Possibility W T)) :
-    ∀ gs ∈ deriveFullSentence history maria atHomeRel answerRel sitVar speechVar c,
-      (gs.assignment sitVar).time > (gs.assignment speechVar).time :=
-  derivation_future_ordering history maria atHomeRel answerRel sitVar speechVar c
-
-/-!
-### Key data (Portuguese)
-
-With indicative, strong quantifiers presuppose existence:
-  (17) #Cada/todo livro que a Maria ler será interessante.
-       "Every book that Maria reads.IND will be interesting"
-       → Presupposes Maria will read books (fails if uncertain)
-
-With SF, the presupposition is weakened:
-  (18) Cada/todo livro que a Maria ler será interessante.
-       "Every book that Maria reads.SF will be interesting"
-       → No existence presupposition (felicitous even if uncertain)
--/
-
-/-- Existential presupposition: the restrictor is non-empty. -/
-def existentialPresup {W E : Type*}
-    (restrictor : E → W → Prop) : W → Prop :=
-  λ w => ∃ x, restrictor x w
-
-/--
-Indicative restrictor: evaluates at the actual world.
-"Every book that Maria reads.IND..." → presupposes books exist that Maria reads.
--/
-def indicativeRestrictor {W T E : Type*}
-    (restrictor : E → Index W T → Prop)
-    (s : Index W T) : E → Prop :=
-  λ x => restrictor x s
-
-/--
-SF restrictor: quantifies over historical alternatives.
-"Every book that Maria reads.SF..." → no categorical existence presupposition.
--/
-def sfRestrictor {W T E : Type*} [LE T]
-    (history : HistoricalAlternatives W T)
-    (restrictor : E → Index W T → Prop)
-    (s₀ : Index W T) : E → Prop :=
-  λ x => ∃ s₁ ∈ historicalBase history s₀, restrictor x s₁
-
-/-- Indicative preserves existential presupposition. -/
-theorem indicative_preserves_presup {W T E : Type*}
-    (restrictor : E → Index W T → Prop)
-    (s : Index W T)
-    (h_presup : ∃ x, indicativeRestrictor restrictor s x) :
-    ∃ x, restrictor x s := by
-  obtain ⟨x, hx⟩ := h_presup
-  exact ⟨x, hx⟩
-
-/--
-SF weakens existential presupposition: even without actual existence at s₀,
-the SF restrictor can be satisfied in alternative situations.
--/
-theorem sf_weakens_presup {W T E : Type*} [LE T]
-    (history : HistoricalAlternatives W T)
-    (restrictor : E → Index W T → Prop)
-    (s₀ : Index W T)
-    (h_possible : ∃ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁) :
-    ∃ x, sfRestrictor history restrictor s₀ x := by
-  obtain ⟨s₁, h_s₁, x, hx⟩ := h_possible
-  use x
-  unfold sfRestrictor
-  exact ⟨s₁, h_s₁, hx⟩
-
-/--
-SF makes strong quantifiers felicitous under uncertainty.
--/
-theorem sf_felicitous_under_uncertainty {W T E : Type*} [LE T]
-    (history : HistoricalAlternatives W T)
-    (restrictor : E → Index W T → Prop)
-    (s₀ : Index W T)
-    (h_uncertainty : (∃ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁) ∧
-                     (∃ s₂ ∈ historicalBase history s₀, ¬∃ x, restrictor x s₂)) :
-    (∃ x, sfRestrictor history restrictor s₀ x) ∧
-    (∃ s ∈ historicalBase history s₀, ¬∃ x, restrictor x s) := by
-  constructor
-  · obtain ⟨⟨s₁, h_s₁, x, hx⟩, _⟩ := h_uncertainty
-    use x
-    unfold sfRestrictor
-    exact ⟨s₁, h_s₁, hx⟩
-  · exact h_uncertainty.2
-
-/--
-Relative clause with SF weakens strong quantifier presupposition.
-This is the formal version of the indicative-vs-SF contrast in restrictors.
--/
-def relClauseSF {W T E : Type*} [LE T]
-    (history : HistoricalAlternatives W T)
-    (noun : E → Index W T → Prop)
-    (relClause : E → Index W T → Prop)
-    (s₀ : Index W T) : E → Prop :=
-  λ x => ∃ s₁ ∈ historicalBase history s₀, noun x s₁ ∧ relClause x s₁
-
-theorem relClause_sf_weakens_quantifier {W T E : Type*} [LE T]
-    (history : HistoricalAlternatives W T)
-    (noun relClause : E → Index W T → Prop)
-    (s₀ : Index W T)
-    (h_some_possible : ∃ s₁ ∈ historicalBase history s₀, ∃ x, noun x s₁ ∧ relClause x s₁) :
-    ∃ x, relClauseSF history noun relClause s₀ x := by
-  obtain ⟨s₁, h_s₁, x, hx⟩ := h_some_possible
-  use x
-  unfold relClauseSF
-  exact ⟨s₁, h_s₁, hx⟩
-
-/--
-Modal displacement: SF introduces quantification over situations,
-"displacing" the existential presupposition to be local within each situation.
--/
-def modalDisplacement {W T E : Type*} [LE T]
-    (history : HistoricalAlternatives W T)
-    (restrictor nuclear : E → Index W T → Prop)
-    (s₀ : Index W T) : Prop :=
-  ∀ s₁ ∈ historicalBase history s₀,
-    (∃ x, restrictor x s₁) →
-    ∀ x, restrictor x s₁ → nuclear x s₁
-
-/--
-SF semantics is equivalent to modal displacement.
--/
-theorem sf_is_modal_displacement {W T E : Type*} [LE T]
-    (history : HistoricalAlternatives W T)
-    (restrictor nuclear : E → Index W T → Prop)
-    (s₀ : Index W T) :
-    modalDisplacement history restrictor nuclear s₀ ↔
-    ∀ s₁ ∈ historicalBase history s₀,
-      ∀ x, restrictor x s₁ → nuclear x s₁ := by
-  unfold modalDisplacement
-  constructor
-  · intro h s₁ hs₁ x hx
-    by_cases h_ex : ∃ x, restrictor x s₁
-    · exact h s₁ hs₁ h_ex x hx
-    · exfalso; exact h_ex ⟨x, hx⟩
-  · intro h s₁ hs₁ _ x hx
-    exact h s₁ hs₁ x hx
-
-/--
-Modal displacement is weaker than global accommodation.
--/
-theorem modal_displacement_weaker_than_accommodation {W T E : Type*} [LE T]
-    (history : HistoricalAlternatives W T)
-    (restrictor : E → Index W T → Prop)
-    (s₀ : Index W T)
-    (h_global : ∀ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁)
-    (h_nonempty : ∃ s, s ∈ historicalBase history s₀) :
-    ∃ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁ := by
-  obtain ⟨s₁, h_s₁⟩ := h_nonempty
-  exact ⟨s₁, h_s₁, h_global s₁ h_s₁⟩
-
-/-!
-The central theoretical insight of [mendes-2025] §3.1: SF enables
-modal donkey anaphora — subjunctive binds situation variables across
-clause boundaries, just like indefinites bind individual variables in
-classic donkey sentences.
-
-Classic donkey anaphora:
-  "If a farmer owns a donkey, he beats it."
-  - "a donkey" introduces individual dref x
-  - "it" retrieves x outside the syntactic scope of "a"
-
-Modal donkey anaphora:
-  "Se Maria estiver em casa, ela vai atender."
-  - SF introduces situation dref s₁
-  - Main clause retrieves s₁ for temporal anchoring
-
-Correspondence with the dynamic primitives in
-`Semantics/Mood/Dynamic.lean`:
-- SUBJ introduces: `dynSUBJ history v = dynIntroduce (historicalBase history) v`
-- IND retrieves: `dynIND v = dynRelationOn (·.2) (·.1 v) sameWorld`
--/
-
-/--
-Cross-clausal situation binding: a situation introduced in one clause
-can be retrieved in another clause via modal donkey anaphora.
-
-Example:
-  "Se Maria estiver em casa, ela vai atender."
-       ↑ SUBJ introduces s₁ ↑ IND retrieves s₁
--/
-def crossClausalBinding {W T : Type*} [LE T]
-    (history : HistoricalAlternatives W T)
-    (antecedentVar _consequentVar : ℕ)
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  dynIND antecedentVar (dynSUBJ history antecedentVar c)
-
-/--
-Cross-clausal binding preserves world identity: when a situation is
-introduced in the antecedent and retrieved in the consequent, the two
-clauses are evaluated at the same world.
--/
-theorem cross_clausal_same_world {W T : Type*} [LE T]
-    (history : HistoricalAlternatives W T)
-    (v : ℕ)
-    (c : Set (Index.Possibility W T))
-    (gs : Index.Possibility W T)
-    (h : gs ∈ crossClausalBinding history v v c) :
-    gs.world.world = (gs.assignment v).world := by
-  unfold crossClausalBinding at h
-  exact (DynamicSemantics.mem_lift_test.mp h).2
-
-/--
-The SUBJ-IND anaphoric chain: SUBJ introduces `s₁`, the antecedent
-predicate filters at `s₁`, IND retrieves `s₁` (same-world check), and
-the consequent inherits the temporal anchor from `s₁`.
--/
-def subjIndChain {W T : Type*} [LE T]
-    (history : HistoricalAlternatives W T)
-    (v : ℕ)
-    (antecedentPred : Set (Index.Possibility W T) → Set (Index.Possibility W T))
-    (consequentPred : Set (Index.Possibility W T) → Set (Index.Possibility W T))
-    (c : Set (Index.Possibility W T)) : Set (Index.Possibility W T) :=
-  consequentPred (dynIND v (antecedentPred (dynSUBJ history v c)))
-
-/--
-The SUBJ-IND chain establishes modal donkey anaphora: the consequent
-is evaluated at a world that agrees with the bound situation's world.
-
-`Q` must be a context filter — predicates filter contexts without
-modifying assignments.
--/
-theorem subj_ind_chain_modal_donkey {W T : Type*} [LE T]
-    (history : HistoricalAlternatives W T)
-    (v : ℕ)
-    (P Q : Set (Index.Possibility W T) → Set (Index.Possibility W T))
-    (c : Set (Index.Possibility W T))
-    (gs : Index.Possibility W T)
-    (h : gs ∈ subjIndChain history v P Q c)
-    (hQ : IsEliminative Q) :
-    gs.world.world = (gs.assignment v).world := by
-  unfold subjIndChain at h
-  have h_in_ind : gs ∈ dynIND v (P (dynSUBJ history v c)) := hQ _ h
-  exact (DynamicSemantics.mem_lift_test.mp h_in_ind).2
-
-/--
-Unselective binding gives universal force. When SUBJ introduces a
-situation in a conditional antecedent, the conditional quantifies
-universally over situations satisfying the antecedent — the modal
-analog of donkey universals.
--/
-theorem unselective_universal_force {W T : Type*} [LE T]
-    (history : HistoricalAlternatives W T)
-    (v : ℕ)
-    (antecedent consequent : Index W T → Prop)
-    (c : Set (Index.Possibility W T)) :
-    ∀ gs ∈ subjIndChain history v
-      (λ c' => { gs' ∈ c' | antecedent gs'.world })
-      (λ c' => { gs' ∈ c' | consequent gs'.world })
-      c,
-      antecedent gs.world → consequent gs.world := by
-  intro gs h_mem _
-  unfold subjIndChain at h_mem
-  simp only [Set.mem_ofPred_eq] at h_mem
-  exact h_mem.2
-
-/-!
-### Pipeline characterization
-
-The full pipeline `SUBJ → filter(P) → IND → filter(Q)` on a singleton
-context is equivalent to a static existential conjunction over
-historical alternatives. The dynamic pipeline gives *conjunction*
-(`P ∧ Q`), not *implication* (`P → Q`); sequential composition gives
-the stronger conjunctive reading, while the static `conditionalSF`
-uses implication.
--/
-
-/--
-The SUBJ-IND chain with predication filters on a singleton context
-characterizes the static existential conjunction
-`∃ s₁ ∈ historicalBase(s₀), P(s₁) ∧ Q(s₁)`.
--/
-theorem subjIndChain_singleton {W T : Type*} [LE T]
-    (history : HistoricalAlternatives W T)
-    (v : ℕ)
-    (g : Assignment (Index W T))
-    (s₀ : Index W T)
-    (P Q : Index W T → Prop) :
-    (∃ gs, gs ∈ subjIndChain history v
-      (λ c => { gs ∈ c | P gs.world })
-      (λ c => { gs ∈ c | Q gs.world })
-      ({⟨s₀, g⟩} : Set (Index.Possibility W T))) ↔
-    (∃ s₁ ∈ historicalBase history s₀, P s₁ ∧ Q s₁) := by
-  unfold subjIndChain
-  constructor
-  · rintro ⟨gs, hQmem⟩
-    obtain ⟨hInd, hQ⟩ := hQmem
-    obtain ⟨hPmem, -⟩ := DynamicSemantics.mem_lift_test.mp hInd
-    obtain ⟨hSubj, hP⟩ := hPmem
-    unfold dynSUBJ Mood.dynIntroduce at hSubj
-    obtain ⟨g', s₀', s₁, h_ctx, h_hist, -, h_eq⟩ := hSubj
-    have h₁ := Set.mem_singleton_iff.mp h_ctx
-    obtain rfl : s₀' = s₀ := congrArg DynamicSemantics.Possibility.world h₁
-    exact ⟨s₁, h_hist, h_eq ▸ hP, h_eq ▸ hQ⟩
-  · rintro ⟨s₁, h_hist, hP, hQ⟩
-    refine ⟨⟨s₁, Function.update g v s₁⟩,
-      ⟨DynamicSemantics.mem_lift_test.mpr
-        ⟨⟨⟨g, s₀, s₁, rfl, h_hist, rfl, rfl⟩, hP⟩, ?_⟩, hQ⟩⟩
-    show sameWorld s₁ (Function.update g v s₁ v)
-    simp only [Function.update_self]
-
-/--
-The dynamic pipeline entails the static conditional (`conditionalSF`).
-Conjunction is stronger than implication: if the dynamic pipeline finds
-an `s₁` satisfying both `P` and `Q`, then `P(s₁) → Q(s₁)` holds trivially.
--/
-theorem subjIndChain_entails_conditionalSF {W T : Type*} [LE T]
-    (history : HistoricalAlternatives W T)
-    (v : ℕ)
-    (g : Assignment (Index W T))
-    (s₀ : Index W T)
-    (P : Index W T → Prop)
-    (Q : Index W T → Index W T → Prop)
-    (h : ∃ gs, gs ∈ subjIndChain history v
-      (λ c => { gs ∈ c | P gs.world })
-      (λ c => { gs ∈ c | Q gs.world gs.world })
-      ({⟨s₀, g⟩} : Set (Index.Possibility W T))) :
-    conditionalSF history P (λ s₁ _ => Q s₁ s₁) s₀ := by
-  unfold conditionalSF SUBJ
-  obtain ⟨s₁, h_hist, hP, hQ⟩ :=
-    (subjIndChain_singleton history v g s₀ P (λ s => Q s s)).mp h
-  exact ⟨s₁, h_hist, λ _ => hQ⟩
-
-/-!
-### Bridge to Hofmann (2025) accessibility
-
-The same-world constraint enforced by `dynIND` (via the `sameWorld`
-kernel in `Mood/Situation.lean`) parallels [hofmann-2025]'s
-veridicality-based accessibility for individual drefs:
-
-- **Situation level** (this file, [mendes-2025]): `dynIND`
-  retrieves `s₁` via `s₂.world = s₁.world`. Governs cross-clausal
-  situation binding (modal donkey anaphora).
-- **Propositional dref level** (`Studies/Hofmann2025.lean`,
-  [hofmann-2025]): a dref is accessible iff it has a referent in
-  all worlds of the local context, plus a discourse-consistency
-  condition. Governs individual dref accessibility across negation,
-  disjunction, and attitude contexts.
-
-Both enforce the structural pattern that the retrieval context must be
-compatible with the introduction context. For situations, this is
-world identity; for individual drefs, this is the subset-plus-
-existence condition (Hofmann 2025 Definition 39).
--/
+open Reference HistoricalAlternatives DynamicSemantics DynamicSemantics.Update
+  DynamicSemantics.RegisterStructure
+open CDRT (DProp dref)
+
+variable {W T : Type*}
+
+/-! ### Types -/
+
+/-- A state assigns situations to drefs. -/
+abbrev State (W T : Type*) := CDRT.State (Index W T)
+
+/-- A situation dref, the type `s`. -/
+abbrev Sit (W T : Type*) := Dref (State W T) (Index W T)
+
+/-- A sentence radical, the type `st`: a situation dref to an update. -/
+abbrev Radical (W T : Type*) := Sit W T → DProp (Index W T)
+
+/-- A tensed radical, the type `(s, st)`, the argument of a mood morpheme. -/
+abbrev Tensed (W T : Type*) := Sit W T → Sit W T → DProp (Index W T)
+
+/-- The radical of a situation predicate, `λs.[ | P(s)]`. -/
+def radical (P : Index W T → Prop) : Radical W T := fun s => test (atom1 P s)
+
+/-! ### Lexical entries -/
+
+/-- The indicative, `ind^{s₂,s₁} ⇝ λℙ.[ | s₂ ≤ w_{s₁}]; ℙ(s₂)(s₁)`: a definite over situations,
+testing that `s₂` is part of the world of `s₁`. -/
+def ind (s₂ s₁ : Sit W T) (ℙ : Tensed W T) : DProp (Index W T) :=
+  seq (test fun i => Mood.sameWorld (s₂ i) (s₁ i)) (ℙ s₂ s₁)
+
+variable {ℙ : Tensed W T} {s s' : Sit W T} {i o : State W T}
+
+theorem ind_apply :
+    ind s s' ℙ i o ↔ (s i).world = (s' i).world ∧ ℙ s s' i o := by
+  simp [ind, seq, Relation.Comp, test]
+
+private theorem randomAssign_apply {n : ℕ} :
+    randomAssign (S := State W T) n i o ↔ ∃ e, o = Function.update i n e :=
+  Iff.rfl
+
+variable [LinearOrder T] (history : HistoricalAlternatives W T)
+
+/-- A temporal morpheme, `λ𝒫.λs.λs'.[ | τ(s) ⋈ τ(s')]; 𝒫(s)`: it tests that the running times
+of `s` and `s'` compare within the cell, then runs the radical at `s`. -/
+def temporal (cell : Finset Ordering) (P : Radical W T) (s s' : Sit W T) :
+    DProp (Index W T) :=
+  seq (test fun i => compare (s i).time (s' i).time ∈ cell) (P s)
+
+/-- `fut` places the event situation after the evaluation situation. -/
+abbrev fut : Radical W T → Sit W T → Sit W T → DProp (Index W T) := temporal Tense.future
+
+/-- `pres` places the event situation at the evaluation situation. -/
+abbrev pres : Radical W T → Sit W T → Sit W T → DProp (Index W T) := temporal Tense.present
+
+/-- `past` places the event situation before the evaluation situation. -/
+abbrev past : Radical W T → Sit W T → Sit W T → DProp (Index W T) := temporal Tense.past
+
+/-- The subjunctive, `subj^{s₁}_{s₀} ⇝ λℙ.[s₁ | s₁ ∈ hist s₀]; ℙ(s₁)(s₀)`: an indefinite over
+situations, introducing `s₁` among the historical alternatives of the anchor `s₀`. -/
+def subj (s₁ : ℕ) (s₀ : Sit W T) (ℙ : Tensed W T) : DProp (Index W T) :=
+  seq (dexists s₁ (test fun i => dref s₁ i ∈ historicalBase history (s₀ i))) (ℙ (dref s₁) s₀)
+
+/-! ### Unpacking the entries -/
+
+variable {cell : Finset Ordering} {P : Index W T → Prop} {s₁ : ℕ}
+
+theorem temporal_radical_apply :
+    temporal cell (radical P) s s' i o ↔
+      i = o ∧ compare (s o).time (s' o).time ∈ cell ∧ P (s o) := by
+  rw [temporal, radical, test_seq_test]; exact Iff.rfl
+
+/-- A temporal morpheme over a radical is a test: it neither introduces nor retrieves drefs. -/
+theorem isTest_temporal_radical : IsTest (temporal cell (radical P) s s') :=
+  (isTest_test _).seq (isTest_test _)
+
+theorem subj_apply :
+    subj history s₁ s ℙ i o ↔
+      ∃ e, e ∈ historicalBase history (s (Function.update i s₁ e)) ∧
+        ℙ (dref s₁) s (Function.update i s₁ e) o := by
+  simp [subj, dexists, randomAssign_apply, seq, Relation.Comp, test, dref]
+
+/-! ### The Subordinate Future
+
+The forms `SF(A); tense(C)` of the paper's table of main-clause tenses: a conditional
+antecedent or a relative clause carrying the Subordinate Future, `subj^{s₁}_{s₀}(fut(A))`, and
+a main clause `ind^{s₂,s₁}(tense(C))` whose evaluation situation is the introduced `s₁`. The
+anchor `s₀` is the dref `0`, the introduced situation the dref `1`, the main-clause situation
+the dref `2`. -/
+
+variable (A C : Index W T → Prop)
+
+/-- A subordinate clause carrying the Subordinate Future and a main clause with the tense
+`cell`, as a dynamic implication: the conditional and the relative-clause quantification of the
+paper's derivations. -/
+def sfForm (cell : Finset Ordering) : DProp (Index W T) :=
+  DProp.impl (subj history 1 (dref 0) (fut (radical A)))
+    (ind (dref 2) (dref 1) (temporal cell (radical C)))
+
+/-- *If Ivan leaves the room smiling, the interview went well*: the Subordinate Future in the
+antecedent, the past in the consequent. -/
+abbrev conditional (leaves wentWell : Index W T → Prop) : DProp (Index W T) :=
+  sfForm history leaves wentWell Tense.past
+
+/-- *Every candidate who delivers a good job talk has an equal chance of being hired*: the
+Subordinate Future in the restrictor, the present in the nuclear scope. -/
+abbrev relativeClause (delivers chance : Index W T → Prop) : DProp (Index W T) :=
+  sfForm history delivers chance Tense.present
+
+/-- The truth conditions of the paper's derivations: the form is a test, true at a state iff
+every historical alternative `e` of the anchor after it where `A` holds has the main-clause
+situation in its world, timed by the cell relative to `e`, satisfying `C`. -/
+theorem sfForm_true_at :
+    DProp.true_at (sfForm history A C cell) i ↔
+      ∀ e ∈ historicalBase history (i 0), (i 0).time < e.time → A e →
+        (i 2).world = e.world ∧ compare (i 2).time e.time ∈ cell ∧ C (i 2) := by
+  rw [sfForm, DProp.impl_true_at]
+  simp only [DProp.true_at, closure, subj_apply, temporal_radical_apply, ind_apply, dref,
+    forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, exists_and_left, exists_eq_left']
+  simp
+
+/-- *If Ivan leaves the room smiling, the interview went well* is true iff in every later
+historical alternative of the anchor where Ivan leaves, the interview situation lies in its world,
+earlier, and went well. -/
+theorem conditional_true_at (leaves wentWell : Index W T → Prop) :
+    DProp.true_at (conditional history leaves wentWell) i ↔
+      ∀ e ∈ historicalBase history (i 0), (i 0).time < e.time → leaves e →
+        (i 2).world = e.world ∧ (i 2).time < e.time ∧ wentWell (i 2) := by
+  simp only [conditional, sfForm_true_at, Tense.compare_mem_past]
+
+/-- *Every candidate who delivers a good job talk has an equal chance of being hired* is true
+iff in every later historical alternative of the anchor where the talk is delivered, the
+hiring situation lies in its world, at its time, and gives an equal chance. -/
+theorem relativeClause_true_at (delivers chance : Index W T → Prop) :
+    DProp.true_at (relativeClause history delivers chance) i ↔
+      ∀ e ∈ historicalBase history (i 0), (i 0).time < e.time → delivers e →
+        (i 2).world = e.world ∧ (i 2).time = e.time ∧ chance (i 2) := by
+  simp only [relativeClause, sfForm_true_at, Tense.compare_mem_present]
+
+variable {k l : State W T}
+
+/-- Temporal shift: the Subordinate Future places the situation it introduces after the anchor,
+and the main clause is timed by its tense relative to that situation, not the anchor. The rows
+of the paper's table of main-clause tenses are the cells `future`, `present` and `past`. -/
+theorem temporal_shift (hk : subj history 1 (dref 0) (fut (radical A)) i k)
+    (hl : ind (dref 2) (dref 1) (temporal cell (radical C)) k l) :
+    (l 0).time < (l 1).time ∧ compare (l 2).time (l 1).time ∈ cell := by
+  obtain ⟨e, -, hk⟩ := (subj_apply history).mp hk
+  obtain ⟨rfl, ht, -⟩ := temporal_radical_apply.mp hk
+  obtain ⟨-, hl⟩ := ind_apply.mp hl
+  obtain ⟨rfl, hc, -⟩ := temporal_radical_apply.mp hl
+  exact ⟨by simpa [dref] using ht, hc⟩
+
+/-- Modal donkey anaphora: the indicative retrieves the situation the subjunctive introduced,
+so the main clause is evaluated in a historical alternative of the anchor. -/
+theorem modal_donkey_anaphora (hk : subj history 1 (dref 0) (fut (radical A)) i k)
+    (hl : ind (dref 2) (dref 1) (temporal cell (radical C)) k l) :
+    (l 2).world ∈ history (l 0) := by
+  obtain ⟨e, he, hk⟩ := (subj_apply history).mp hk
+  obtain ⟨rfl, -, -⟩ := temporal_radical_apply.mp hk
+  obtain ⟨hw, hl⟩ := ind_apply.mp hl
+  obtain ⟨rfl, -, -⟩ := temporal_radical_apply.mp hl
+  have h₁ := he.1
+  simp [dref] at hw h₁ ⊢
+  rwa [hw]
+
+/-! ### Modal displacement
+
+A restrictor carrying the Subordinate Future is true at a state iff some historical alternative
+of the anchor, after it, satisfies it: the existence presupposition of a strong quantifier is
+satisfied in a historical alternative, not at the anchor, which is why the continuation *I doubt
+anyone will come at all* is felicitous. Under the indicative it must be satisfied in the
+anchor's world. -/
+
+/-- The Subordinate Future restrictor is true iff the anchor has a later historical alternative
+satisfying `A`. -/
+theorem subj_fut_true_at :
+    DProp.true_at (subj history 1 (dref 0) (fut (radical A))) i ↔
+      ∃ e ∈ historicalBase history (i 0), (i 0).time < e.time ∧ A e := by
+  simp [DProp.true_at, closure, subj_apply, temporal_radical_apply, dref]
+
+/-- The indicative restrictor is true iff its situation lies in the anchor's world, after the
+anchor, and satisfies `A`. -/
+theorem ind_fut_true_at :
+    DProp.true_at (ind (dref 2) (dref 0) (fut (radical A))) i ↔
+      (i 2).world = (i 0).world ∧ (i 0).time < (i 2).time ∧ A (i 2) := by
+  simp [DProp.true_at, closure, ind_apply, temporal_radical_apply, dref]
 
 end Mendes2025

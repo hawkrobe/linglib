@@ -1580,7 +1580,6 @@ import Linglib.Semantics.Modification.Classification
 import Linglib.Semantics.Modification.Coercion
 import Linglib.Semantics.Modification.RelativeClause
 import Linglib.Semantics.Mood.Defs
-import Linglib.Semantics.Mood.Dynamic
 import Linglib.Semantics.Mood.Eventuality
 import Linglib.Semantics.Mood.Situation
 import Linglib.Semantics.Mood.SpeechEvent
@@ -1668,7 +1667,6 @@ import Linglib.Semantics.Tense.Compositional
 import Linglib.Semantics.Tense.Decomposition
 import Linglib.Semantics.Tense.DeRe
 import Linglib.Semantics.Tense.Defs
-import Linglib.Semantics.Tense.Dynamic
 import Linglib.Semantics.Tense.Embedding
 import Linglib.Semantics.Tense.Licensing
 import Linglib.Semantics.Tense.Evidential
