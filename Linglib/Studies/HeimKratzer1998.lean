@@ -3,6 +3,7 @@ import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Composition.Assignment
 import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.Reduction
+import Linglib.Semantics.Composition.Partial
 import Linglib.Semantics.Composition.Lexicon
 import Linglib.Semantics.Quantification.NP
 import Linglib.Semantics.Quantification.Polyadic
@@ -262,5 +263,49 @@ theorem conj_entails_first (g : Assignment ToyEntity) :
       exact (FirstOrder.Language.Formula.realize_inf.mp h).1) g
 
 end Reduction
+
+/-! ### The definite article and partiality
+
+The book's Fregean entry for the definite article is `Partial.the`, and the partial engine
+`Partial.interp` composes it with the toy fragment's predicates lifted to partial functions.
+The toy model has two students and one pizza, so *the student* is a presupposition failure in
+the sense of §4.4.4, a denotation that is undefined, while *the pizza* denotes the pizza, and
+*the John*, the article applied to an individual, is uninterpretable, which the types alone
+decide. -/
+
+section DefiniteArticle
+
+open Partial
+
+/-- The toy lexicon for the partial engine, which pairs the definite article with the fragment's
+nouns and names lifted to partial denotations. -/
+noncomputable def partialLex : String → Option (PDenotation ToyEntity Unit)
+  | "the" => some ⟨(.e ⇒ .t) ⇒ .e, Part.some the⟩
+  | "student" => some ⟨.e ⇒ .t, Part.some (PFun.lift student_sem)⟩
+  | "pizza" => some ⟨.e ⇒ .t, Part.some (PFun.lift ToyLexicon.pizza_sem)⟩
+  | "John" => some ⟨.e, Part.some .john⟩
+  | _ => none
+
+/-- *The student* is a presupposition failure in the toy model, which has two students. -/
+theorem the_student_fails :
+    PresupFailure partialLex g₀ (.bin (.leaf "the") (.leaf "student")) := by
+  refine ⟨_, binary_some_some the (PFun.lift student_sem), fun ⟨x, _, huniq⟩ ↦ ?_⟩
+  have hj := huniq .john ((holds_lift _ _).mpr trivial)
+  have hm := huniq .mary ((holds_lift _ _).mpr trivial)
+  exact ToyEntity.noConfusion (hj.trans hm.symm)
+
+/-- *The pizza* denotes the pizza, the toy model's unique one. -/
+theorem the_pizza : interp partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) =
+    some ⟨.e, Part.some .pizza⟩ := by
+  refine (binary_some_some the (PFun.lift ToyLexicon.pizza_sem)).trans ?_
+  rw [the_lift_eq_some fun x ↦ ?_]
+  cases x <;> exact ⟨fun h ↦ by first | rfl | exact h.elim, fun h ↦ by trivial⟩
+
+/-- *The John*, the article applied to an individual rather than a predicate, is
+uninterpretable, and the types alone decide it. -/
+theorem the_john_uninterpretable :
+    Uninterpretable partialLex g₀ (.bin (.leaf "the") (.leaf "John")) := rfl
+
+end DefiniteArticle
 
 end HeimKratzer1998
