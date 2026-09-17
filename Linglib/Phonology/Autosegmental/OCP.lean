@@ -36,7 +36,7 @@ link pushforward is the `SimpleGraph.map`/`Quiver.Push` idiom
 ARs that descends to a quotient of the concat monoid `AR α β`. The key congruence is
 `collapseAR_concat` — the AR shadow of `OCP.collapse_append`, whose links half reduces to
 `runIdx` commuting with the collapse-collapse seam (`runIdx_append_collapse_left/right`,
-in turn the boundary-length lemma `List.destutter_append_length_clean`). It bundles as
+in turn the boundary-length lemma `List.IsChain.length_destutter_ne_append`). It bundles as
 `collapseARHom : AR α β →* {A // IsCleanAR A}`, whose mathlib quotient
 (`ocpARQuotientEquiv`) is the concrete OCP-clean model.
 

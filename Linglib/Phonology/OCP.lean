@@ -129,7 +129,7 @@ theorem mem_collapse {a : α} {xs : List α} (ha : a ∈ collapse xs) : a ∈ xs
 
 `collapse` descends to a homomorphism on the OCP quotient of `(List α, ++)`: collapsing
 each operand before appending is harmless. This is what makes the OCP-clean tiers under
-fusion-concatenation (`List.destutterConcat`) the quotient `(List α, ++)/OCP` — bundled on
+fusion-concatenation (append-then-destutter) the quotient `(List α, ++)/OCP` — bundled on
 the `Core.Algebra.FreeMonoid.Destutter` substrate as `FreeMonoid.destutterHom`. -/
 
 /-- Collapsing the left operand before appending does not change the result. -/
@@ -140,18 +140,18 @@ theorem collapse_append_left (x y : List α) :
 /-- Collapsing the right operand before appending does not change the result. -/
 theorem collapse_append_right (x y : List α) :
     collapse (x ++ collapse y) = collapse (x ++ y) :=
-  List.destutter_append_right x y
+  List.destutter_append_right_ne x y
 
 /-- **The OCP congruence.** `collapse` is a `++`→quotient homomorphism: collapsing each
 operand first is harmless. Thus `collapse` descends to the OCP quotient of `(List α, ++)`. -/
 theorem collapse_append (x y : List α) :
     collapse (x ++ y) = collapse (collapse x ++ collapse y) :=
-  List.destutter_append_destutter x y
+  List.destutter_append_destutter_ne x y
 
 /-! ### The blocking repair
 
 The substrate provides the OCP quotient monoid (OCP-clean tiers under fusion-concatenation,
-`List.destutterConcat`) and its identification with the monoid presented by idempotent
+append-then-destutter) and its identification with the monoid presented by idempotent
 autosegments `⟨α | a · a = a⟩`
 (`Core.Algebra.FreeMonoid.Destutter`). The autosegmental reading of that quotient — the
 decategorification square against the categorical representation, contrasting the OCP (a
@@ -235,7 +235,7 @@ collapse-collapse seam (`runIdx_append_collapse_left/right`). On the A-block the
 run-index is untouched (`runIdx_append_left`, plus `runIdx_clean` re-reading a clean tier
 as the identity); on the B-block the seam merges exactly when `collapse xs` ends in the
 element heading `ys` (`runIdx_append_right`, the AR shadow of
-`List.destutter_append_length_clean`). -/
+`List.IsChain.length_destutter_ne_append`). -/
 
 /-- The prefix run-index is unaffected by a right append. -/
 theorem runIdx_append_left {xs ys : List α} {k : ℕ} (h : k < xs.length) :
@@ -266,12 +266,12 @@ theorem collapse_take_succ_length {xs : List α} {m : ℕ} (hm : m < xs.length) 
 /-- The collapse of a prefix has the same head as the whole tier. -/
 theorem collapse_take_head? {xs : List α} {m : ℕ} :
     (collapse (xs.take (m + 1))).head? = xs.head? := by
-  rw [collapse, List.destutter_head?]
+  rw [collapse, List.head?_destutter]
   cases xs <;> simp
 
 /-- **The B-part seam identity.** Reading a suffix position through the collapse of an
 append: the run-index is the left collapse's length plus the suffix's own run-index, minus
-one exactly when the seam merges (`List.destutter_append_length_clean`). -/
+one exactly when the seam merges (`List.IsChain.length_destutter_ne_append`). -/
 theorem runIdx_append_right {xs ys : List α} {a : ℕ} (ha : a < ys.length) :
     runIdx (xs ++ ys) (xs.length + a) =
       (collapse xs).length + runIdx ys a -
@@ -279,7 +279,7 @@ theorem runIdx_append_right {xs ys : List α} {a : ℕ} (ha : a < ys.length) :
   unfold runIdx
   rw [show xs.length + a + 1 = xs.length + (a + 1) by omega, List.take_length_add_append,
     collapse_append, collapse_eq_destutter,
-    List.destutter_append_length_clean (collapse_clean _) (collapse_clean _),
+    (collapse_clean _).length_destutter_ne_append (collapse_clean _),
     collapse_take_succ_length ha, collapse_take_head?]
   split_ifs with h
   · have : 0 < (collapse ys).length := Nat.zero_lt_of_lt (runIdx_lt_collapse_length ys ha)
@@ -298,7 +298,7 @@ theorem runIdx_append_collapse_right {xs ys : List α} {a : ℕ} (ha : a < ys.le
       runIdx (collapse xs ++ collapse ys) ((collapse xs).length + runIdx ys a) := by
   rw [runIdx_append_right ha, runIdx_append_right (runIdx_lt_collapse_length ys ha),
     collapse_idempotent, runIdx_clean (collapse_clean _) (runIdx_lt_collapse_length ys ha),
-    collapse_eq_destutter ys, List.destutter_head?]
+    collapse_eq_destutter ys, List.head?_destutter]
 
 end RunIndex
 
