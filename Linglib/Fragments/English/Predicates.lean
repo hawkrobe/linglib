@@ -1148,7 +1148,8 @@ def drink : Verb where
   verbIncClass := some .sinc
   levinClass := some .eat
 
-/-- "read" — transitive, no presupposition -/
+/-- "read" — Levin 14 Learn verbs, with learn and study; also listed among the verbs of
+    transfer of a message (37.1) and the register verbs (54.1). -/
 def read : Verb where
   form := "read"
   form3sg := "reads"
@@ -1158,6 +1159,7 @@ def read : Verb where
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   verbIncClass := some .inc
+  levinClass := some .learn
 
 /-- "build" — creation verb, strictly incremental theme.
     Base transitive that productively takes DOC ("build us a house"). -/
