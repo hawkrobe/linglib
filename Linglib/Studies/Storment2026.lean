@@ -1,372 +1,192 @@
 import Linglib.Data.Examples.Storment2026
-import Linglib.Fragments.English.Predicates
-import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Minimalist.Movement.InverseVoice
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
-import Linglib.Semantics.ArgumentStructure.Verb
 
 /-!
-# Quotative Inversion as Smuggling
-[storment-2026]
+# Storment (2026): Quotative Inversion as Smuggling
 
-Formalizes [storment-2026]: the smuggling derivation of quotative
-inversion in English and Setswana.
+This file formalizes [storment-2026]'s analysis of quotative inversion in English and Setswana,
+the order in which a quote precedes the verb and the agent follows it, as smuggling: the VP
+moves to Spec,VoiceP over the agent, which stays in Spec,vP, and the quotative theme A-moves on
+to Spec,TP (`qiSmuggling`, (122)). The paper's four arguments are theorems over its examples
+(`Data/Examples/Storment2026.json`): VP complements precede the agent and vP adjuncts follow
+it, in both languages (§2, `order_predicted`); the agent is in situ, since Setswana agreement
+is the default class 17, English agreement tracks the agent by defective circumvention, the
+theme licenses no parasitic gap, raises, and the disjoint form is excluded (§3); the
+transitivity constraint follows from T⁰ licensing at most one smuggled DP, so a goal DP blocks
+inversion and a PP or adjunct goal does not (§5, `transitivity_predicted`); and locative
+inversion shares the mechanism and the constraint (§6). The paper places quotative inversion
+in a family of inverse voice constructions (§4.3, `InverseVoiceKind`).
 
-## Storment's central claims
+## Implementation notes
 
-- **§2 + §3**: In QI clauses (`"Hello," said Mary`), the VP containing
-  the quote moves to a position above the agentive AGENT, which remains
-  in-situ in Spec,vP. Evidence: agreement, parasitic gaps, raising,
-  conjoint/disjoint marking in Setswana.
-- **§4**: This is **smuggling** ([collins-2005]): the VP moves to
-  Spec,VoiceP, making the theme accessible to T⁰ for Case licensing.
-  The smuggling projection is identified as VoiceP, which is *not* the
-  external-argument-introducing head (departing from
-  [kratzer-1996]/Pylkkänen).
-- **§5**: The transitivity constraint — QI is blocked when multiple DPs
-  compete for Case licensing — falls out from the Case-licensing
-  configuration after smuggling.
-- **§6**: Locative inversion shares the same mechanism. QI and LI are
-  both nonactive inverse-voice constructions.
+* The Voice head of the paper is the smuggling projection and not the introducer of the
+  external argument (§4.3); nothing here classifies the verbs of quotative inversion as
+  unaccusative, which the paper does not do.
+* Heavy NP shift (14) lets an adjunct precede the agent; the row is data and outside the
+  ordering theorem.
 
-Example rows live in `Data/Examples/Storment2026.json`.
+## References
+
+* [storment-2026]
+* [roberts-2010]
+* [storment-2025]
 -/
 
 namespace Storment2026
 
-open ArgumentStructure
-open English hiding Verb
 open Data.Examples
-open ArgumentStructure.AuxiliarySelection (TransitivityClass canonicalSelection)
-open Minimalist Minimalist.Voice
 
-/-! ## §1 + §2. The paper's classification and the QI data
+/-! ### The derivation (§4) -/
 
-Per [storment-2026], every manner-of-speaking verb passes the QI diagnostic and is classified
-unaccusative, beside the unaccusatives the Fragment records as such; the canonical communication
-verbs *speak* and *talk* fail QI and are unergative. The classification is the paper's, not the
-Fragment's: the Fragment records manner-of-speaking verbs with an external argument. -/
-
-/-- The paper's unaccusatives: the manner-of-speaking and nonverbal-expression verbs, on the
-basis of the QI diagnostic, and the verbs unaccusative by their frames. -/
-def Unaccusative (v : English.Verb) : Prop :=
-  LevinClass.mannerOfSpeaking ∈ v.levinClasses ∨ .nonverbalExpression ∈ v.levinClasses ∨
-    v.toVerb.IsUnaccusative
-
-instance : DecidablePred Unaccusative := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
-
-/-- MoS verbs classified unaccusative on the basis of the QI diagnostic. -/
-def mosUnaccusatives : List English.Verb :=
-  [whisper, murmur, shout, cry, scream, mumble, mutter,
-   shriek, yell, groan, grumble, hiss, sigh, whimper, snap]
-
-/-- Canonical unergative communication verbs that fail QI. -/
-def communicationUnergatives : List English.Verb := [speak, talk]
-
-theorem mos_unaccusatives_classified : ∀ v ∈ mosUnaccusatives, Unaccusative v := by decide
-
-theorem communication_unergatives_classified :
-    ∀ v ∈ communicationUnergatives, ¬ Unaccusative v := by decide
-
-theorem seem_unaccusative : seem.toVerb.IsUnaccusative := by decide
-theorem arrive_unaccusative : arrive.toVerb.IsUnaccusative := by decide
-
-/-! ### Verb ↔ smuggling interface
-
-The bridge from the classification to the smuggling derivation (§4): a verb licenses quotative
-inversion when its Voice is not a phase head, so that the VP can move to Spec,VoiceP, and it has
-a complement to move. -/
-
-/-- A verb has a syntactic complement: its citation frame has a complement beyond the
-underlying subject of an unaccusative. -/
-def HasComplement (v : Verb) : Prop :=
-  ∃ fr ∈ v.citationFrame?, ¬ fr.IsIntransitive ∧ ¬ fr.IsUnaccusative
-
-instance (v : Verb) : Decidable (HasComplement v) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-/-- The Voice head determined by the classification: non-thematic (anticausative) for
-    unaccusatives, agentive for unergatives ([kratzer-1996]). -/
-def voiceFor (v : English.Verb) : Head :=
-  if Unaccusative v then anticausative else agentive
-
-/-- The derived prediction: the verb licenses quotative inversion, its Voice being no phase
-    head and its complement there to move (§4). -/
-def DerivesQI (v : English.Verb) : Prop := ¬ (voiceFor v).IsPhasal ∧ HasComplement v.toVerb
-
-instance (v : English.Verb) : Decidable (DerivesQI v) := inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Unaccusative verbs project non-thematic (anticausative) Voice. -/
-theorem voiceFor_of_unaccusative (v : English.Verb) (h : Unaccusative v) :
-    voiceFor v = anticausative := by simp [voiceFor, h]
-
-/-- Unergative verbs project agentive Voice. -/
-theorem voiceFor_of_unergative (v : English.Verb) (h : ¬ Unaccusative v) :
-    voiceFor v = agentive := by simp [voiceFor, h]
-
-/-- An unaccusative verb with a complement licenses QI. -/
-theorem derivesQI_of_unaccusative_with_complement (v : English.Verb)
-    (hu : Unaccusative v) (hc : HasComplement v.toVerb) : DerivesQI v :=
-  ⟨by rw [voiceFor_of_unaccusative v hu]; decide, hc⟩
-
-/-- An unergative verb cannot license QI whatever its complement: agentive Voice is a phase
-    head. -/
-theorem not_derivesQI_of_unergative (v : English.Verb) (hu : ¬ Unaccusative v) :
-    ¬ DerivesQI v :=
-  λ h => h.1 (by rw [voiceFor_of_unergative v hu]; decide)
-
-/-! ## §3. TransitivityClass derivation
-
-Maps a `Verb` to the three-way transitivity classification used by
-the auxiliary-selection substrate
-(`Semantics/ArgumentStructure/AuxiliarySelection.lean`). -/
-
-/-- The transitivity class of a verb under the classification. -/
-def deriveTransitivityClass (v : English.Verb) : TransitivityClass :=
-  if Unaccusative v then .unaccusative
-  else if HasComplement v.toVerb then .transitive
-  else .unergative
-
-theorem mos_unaccusatives_transitivity :
-    ∀ v ∈ mosUnaccusatives, deriveTransitivityClass v = .unaccusative := by decide
-
-theorem communication_unergatives_transitivity :
-    ∀ v ∈ communicationUnergatives, deriveTransitivityClass v = .unergative := by decide
-
-theorem kick_transitive : deriveTransitivityClass kick = .transitive := by decide
-
-/-! ## §4. Voice bridge
-
-`voiceFor` (defined above)
-maps unaccusative→non-thematic Voice and
-unergative→agentive Voice. Per [storment-2026]'s §4.3, the Voice
-head is the smuggling projection (not the external-argument introducer
-of [kratzer-1996]); permitting smuggling is equivalent to being
-non-phase, which is equivalent to not introducing an external argument. -/
-
-theorem mos_unaccusatives_nonThematic_voice :
-    ∀ v ∈ mosUnaccusatives, voiceFor v = anticausative := by decide
-
-theorem communication_unergatives_agentive_voice :
-    ∀ v ∈ communicationUnergatives, voiceFor v = agentive := by decide
-
-/-! ## §5. Auxiliary selection bridge
-
-In split-auxiliary languages (Italian, French, German), unaccusatives
-select *be* and unergatives select *have*. -/
-
-theorem mos_unaccusatives_select_be :
-    ∀ v ∈ mosUnaccusatives, canonicalSelection (deriveTransitivityClass v) = .be := by decide
-
-theorem communication_unergatives_select_have :
-    ∀ v ∈ communicationUnergatives,
-      canonicalSelection (deriveTransitivityClass v) = .have := by decide
-
-/-! ## §6. Levin class membership
-
-*whisper* is a §37.3 manner-of-speaking verb and *speak* a §37.5 talk verb in [levin-1993]. -/
-
-theorem whisper_mannerOfSpeaking : LevinClass.mannerOfSpeaking ∈ whisper.levinClasses := by decide
-theorem speak_talk : LevinClass.talk ∈ speak.levinClasses := by decide
-
-/-! ## §8. Smuggling derivation of QI
-
-`DerivesQI` (defined above)
-derives QI licensing from two independently
-motivated properties: (1) Voice is non-phase (= unaccusative);
-(2) verb has a complement (the quote).
-
-These two properties are then verified against the empirical QI
-diagnostic data: every MoS unaccusative with a complement is correctly
-predicted to license QI; agentive `speak`/`talk` is correctly predicted
-to block QI; unaccusative `arrive` (no complement) is correctly
-predicted not to license QI (it requires LI, not QI). -/
-
-theorem mos_unaccusatives_derivesQI : ∀ v ∈ mosUnaccusatives, DerivesQI v := by decide
-
-theorem communication_unergatives_derivesQI :
-    ∀ v ∈ communicationUnergatives, ¬ DerivesQI v := by decide
-
-/-- `arrive` is unaccusative but has no complement: doesn't license QI.
-    This is correct — `*"arrived Mary"` requires a fronted locative
-    (LI), not a fronted quote (QI). -/
-theorem arrive_no_qi : ¬ DerivesQI arrive := by decide
-
-/-- Consistency: each (QI row, verb) pair has its judgment matching
-    `DerivesQI`. Pairs the rows of `Data/Examples/Storment2026.json`
-    with the smuggling prediction. -/
-theorem qi_data_matches_derivesQI :
-    ∀ p ∈ ([(Examples.qi_whisper,    whisper),
-            (Examples.qi_murmur,     murmur),
-            (Examples.qi_shout,      shout),
-            (Examples.qi_cry,        cry),
-            (Examples.qi_scream,     scream),
-            (Examples.qi_mumble,     mumble),
-            (Examples.qi_mutter,     mutter),
-            (Examples.qi_shriek,     shriek),
-            (Examples.qi_yell,       yell),
-            (Examples.qi_groan,      groan),
-            (Examples.qi_grumble,    grumble),
-            (Examples.qi_hiss,       hiss),
-            (Examples.qi_sigh,       sigh),
-            (Examples.qi_whimper,    whimper),
-            (Examples.qi_snap,       snap),
-            (Examples.qi_speak,      speak),
-            (Examples.qi_talk,       talk)] :
-            List (LinguisticExample × English.Verb)),
-      (p.1.judgment = .acceptable) ↔ DerivesQI p.2 := by
-  decide
-
-/-! ## §9. QI ∥ LI distributional contrasts (Storment §6)
-
-Storment §6: QI and LI share the smuggling mechanism but differ in
-their inputs (quote vs. locative PP) and distribution. Both are subject
-to the transitivity constraint (§5). The shared inverse-voice family
-membership is captured by `Minimalist.qiCanonical` and `liCanonical` in
-`Syntax/Minimalism/Movement/InverseVoice.lean`. -/
-
-/-- Quotative inversion with a manner-of-speaking verb and locative inversion with an
-unergative verb of motion (136a) are both acceptable: English allows both inversions with
-unergative verbs, so neither rests on unaccusativity (§6). -/
-theorem qi_li_unergative :
-    Examples.qi_whisper.judgment = .acceptable ∧ Examples.li_leapt.judgment = .acceptable :=
-  ⟨rfl, rfl⟩
-
-/-- The transitivity constraint (§5): QI is blocked with multiple DP
-    arguments (using `warn` per Storment eq. 125, naturally
-    ditransitive); QI is fine with a quote + PP goal. -/
-theorem qi_transitivity_constraint :
-    Examples.qi_warn_double_obj.judgment = .unacceptable ∧
-    Examples.qi_whisper_transitive.judgment = .acceptable :=
-  ⟨rfl, rfl⟩
-
-/-- LI categorically blocks pronominal subjects; QI merely degrades them. -/
-theorem li_vs_qi_pronouns :
-    Examples.li_arrive_pronoun.judgment = .unacceptable ∧
-    Examples.qi_whisper_pronoun.judgment = .marginal :=
-  ⟨rfl, rfl⟩
-
-/-- LI blocks transitive verbs, just as QI does. -/
-theorem li_blocks_transitive : Examples.li_kick.judgment = .unacceptable := rfl
-
-/-- Unified smuggling analysis (§6): locative inversion with *arrive*, as in the Setswana (55),
-works because arrive projects non-thematic Voice, permitting VP-smuggling, the same mechanism
-that licenses QI. -/
-theorem li_arrive_smuggling_unified :
-    voiceFor arrive = anticausative ∧ Examples.li_train.judgment = .acceptable :=
-  ⟨by decide, rfl⟩
-
-/-! ## §11 + §12. The QI derivation (Storment §3 + §4)
-
-The smuggling derivation assigns each major constituent to a structural
-position. Each position predicts observable consequences tested against
-the §3 structural-evidence data.
-
-**Quote vs. quotative operator** (Storment §3.5, eq. 103). The quote
-itself is *not* in the syntactic derivation — it may be totally absent
-from QI clauses (`Says me!`). What sits in Spec,TP is a *null quotative
-operator* (the THEME), bound by a `Discourse⁰[QUOT]` head in DiscourseP.
-The fields below distinguish the operator's landing site (Spec,TP) from
-the quote's binding head (DiscourseP). -/
-
-/-- Structural position in the QI derivation. -/
-inductive QIPosition where
-  | specTP       -- A-movement landing site (theme/operator)
-  | specVoiceP   -- VP's smuggling landing site
-  | specvP       -- Agent's in-situ position
-  | discourseQUOT -- DiscourseP head bearing [QUOT] feature (binds operator)
+/-- The structural positions of the smuggling derivation (122). -/
+inductive QIPosition
+  /-- The A-movement landing site of the quotative theme. -/
+  | specTP
+  /-- The landing site of the smuggled VP. -/
+  | specVoiceP
+  /-- The in-situ position of the agent. -/
+  | specvP
+  /-- The discourse head bearing the quotation feature that binds the theme. -/
+  | discourseQUOT
   deriving DecidableEq, Repr
 
-/-- The QI derivation assigns four major constituents to structural
-    positions. Note that `quoteBinder` is the binding *head* in
-    DiscourseP, not the quote itself (which is not in the syntax —
-    Storment §3.5). -/
+/-- The positions of the theme, the agent, the VP and the quote's binder (§3.5, §4). -/
 structure QIDerivation where
-  themePosition : QIPosition          -- null quotative operator's landing site
-  agentPosition : QIPosition          -- in-situ
-  vpPosition : QIPosition             -- smuggled-to position
-  quoteBinder : QIPosition            -- binding head, not the quote itself
-  deriving Repr, BEq
+  themePosition : QIPosition
+  agentPosition : QIPosition
+  vpPosition : QIPosition
+  quoteBinder : QIPosition
+  deriving DecidableEq, Repr
 
-/-- Storment's smuggling derivation of QI. -/
-def qiSmuggling : QIDerivation where
-  themePosition := .specTP
-  agentPosition := .specvP
-  vpPosition := .specVoiceP
-  quoteBinder := .discourseQUOT
+/-- The paper's derivation of quotative inversion (122). -/
+def qiSmuggling : QIDerivation :=
+  ⟨.specTP, .specvP, .specVoiceP, .discourseQUOT⟩
 
-/-! Each structural position predicts an observable property. We verify
-each prediction against the §3 rows. The bridge theorems below pair
-the position assignment (Storment's claim) with the empirical observation
-(also Storment's claim). -/
+/-! ### VP movement over the agent (§2)
 
-/-- Theme-as-operator in Spec,TP → agreement can track agent via
-    defective circumvention (§3.1). -/
-theorem theme_specTP_agreement :
-    qiSmuggling.themePosition = .specTP ∧
-    Examples.qi_agreement_english.judgment = .acceptable :=
-  ⟨rfl, rfl⟩
+Material inside the VP moves with it above the agent; material adjoined to vP stays below. -/
 
-/-- Theme-as-operator is phi-deficient → Setswana SM surfaces as
-    default SM17 (§3.1). -/
-theorem theme_specTP_setswana_sm17 :
-    qiSmuggling.themePosition = .specTP ∧
-    Examples.qi_agreement_setswana.judgment = .acceptable :=
-  ⟨rfl, rfl⟩
+/-- Where a constituent sits relative to the VP. -/
+inductive Material
+  | vpComplement | vpAdjunct
+  deriving DecidableEq, Repr
 
-/-- Theme-as-operator A-moves → cannot license parasitic gaps, unlike
-    the A-bar-moved preposed quote of the non-QI baseline (§3.2). -/
-theorem theme_specTP_no_parasitic_gap :
-    qiSmuggling.themePosition = .specTP ∧
-    Examples.qi_parasitic_gap_blocked.judgment = .unacceptable ∧
-    Examples.qi_parasitic_gap_baseline.judgment = .acceptable :=
-  ⟨rfl, rfl, rfl⟩
+/-- Where a constituent surfaces relative to the agent. -/
+inductive Position
+  | beforeAgent | afterAgent
+  deriving DecidableEq, Repr
 
-/-- Theme-as-operator A-moves → compatible with subject-to-subject
-    raising (§3.3). -/
-theorem theme_specTP_raising :
-    qiSmuggling.themePosition = .specTP ∧
-    Examples.qi_raising.judgment = .acceptable :=
-  ⟨rfl, rfl⟩
+/-- The order the derivation predicts: a VP complement is smuggled to Spec,VoiceP above the
+agent, a vP adjunct is not. -/
+def predictedPosition (d : QIDerivation) : Material → Position
+  | .vpComplement => if d.vpPosition = .specVoiceP ∧ d.agentPosition = .specvP then .beforeAgent
+      else .afterAgent
+  | .vpAdjunct => .afterAgent
 
-/-- Agent in Spec,vP → Setswana disjoint morpheme blocked (§3.4). -/
-theorem agent_specvP_conjoint :
-    qiSmuggling.agentPosition = .specvP ∧
-    Examples.qi_conjoint_disjoint.judgment = .unacceptable :=
-  ⟨rfl, rfl⟩
+/-- The material and position a row records. -/
+def orderOf (ex : LinguisticExample) : Option (Material × Position) := do
+  let m ← ex.parse? "material" [("vpComplement", Material.vpComplement), ("vpAdjunct", .vpAdjunct)]
+  let p ← ex.parse? "position" [("beforeAgent", Position.beforeAgent), ("afterAgent", .afterAgent)]
+  pure (m, p)
 
-/-- Quote (separately from operator) bound by Discourse⁰[QUOT] → can
-    split around verb + agent, need not be grammatical (§3.5). -/
-theorem quote_discourseQUOT_split :
-    qiSmuggling.quoteBinder = .discourseQUOT ∧
-    Examples.qi_quote_split.judgment = .acceptable ∧
-    Examples.qi_quote_nongrammatical.judgment = .acceptable :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- VP smuggling predicts: VP-internal material (complements) precedes
-    Agent; vP-external material (adjuncts) follows Agent (§2). -/
-theorem vp_smuggling_ordering :
-    qiSmuggling.vpPosition = .specVoiceP ∧
-    Examples.qi_ordering_complement.judgment = .acceptable ∧
-    Examples.qi_ordering_depictive.judgment = .acceptable ∧
-    Examples.qi_ordering_manner.judgment = .acceptable ∧
-    Examples.qi_ordering_purpose.judgment = .acceptable :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-/-! ## §13. Inverse-voice family membership
-
-QI is one instance of the inverse-voice family (§4.3 + §6 + §7). The
-canonical instance lives in `Syntax/Minimalism/Movement/
-InverseVoice.lean`; here we just affirm membership. -/
-
-theorem qi_is_inverse_voice :
-    Minimalist.qiCanonical.kind = .quotativeInversion ∧ Minimalist.qiCanonical.Licensed := by
+/-- (10)–(31): a quotative inversion is acceptable exactly when its constituent surfaces where
+the smuggling derivation puts it, complements before the agent and adjuncts after. -/
+theorem order_predicted :
+    ∀ ex ∈ Examples.all, ex.feature? "heavyNPShift" = none → ∀ o ∈ orderOf ex,
+      (ex.judgment = .acceptable ↔ o.2 = predictedPosition qiSmuggling o.1) := by
   decide
 
-theorem qi_li_share_voice :
-    Minimalist.qiCanonical.voice = Minimalist.liCanonical.voice :=
-  rfl
+/-! ### The agent in situ (§3)
+
+Each position of the derivation predicts a diagnostic. -/
+
+/-- The theme A-moves to Spec,TP, so Setswana agreement is the default class 17 and never the
+agent's class (36), (38), whereas a preposed quote without inversion leaves the agent in
+Spec,TP and its agreement (65). -/
+theorem theme_specTP_setswana_agreement :
+    qiSmuggling.themePosition = .specTP ∧
+      Examples.ex36.judgment = .acceptable ∧ Examples.ex36_sm10.judgment = .ungrammatical ∧
+      Examples.ex38.judgment = .acceptable ∧ Examples.ex38_ke.judgment = .ungrammatical ∧
+      Examples.ex65.judgment = .acceptable ∧ Examples.ex65_ga.judgment = .ungrammatical := by
+  decide
+
+/-- English agreement tracks the postverbal agent (40), by re-probing past the defective
+theme (`defectiveCircumvention`), as it must without inversion (64). -/
+theorem theme_specTP_english_agreement :
+    qiSmuggling.themePosition = .specTP ∧
+      Examples.ex40.judgment = .acceptable ∧ Examples.ex40_sg.judgment = .ungrammatical ∧
+      Examples.ex64.judgment = .acceptable ∧ Examples.ex64_sg.judgment = .ungrammatical := by
+  decide
+
+/-- The A-moved theme licenses no parasitic gap (62a); the Ā-moved preposed quote does
+(62b). -/
+theorem theme_specTP_no_parasitic_gap :
+    qiSmuggling.themePosition = .specTP ∧
+      Examples.ex62a.judgment = .ungrammatical ∧ Examples.ex62b.judgment = .acceptable := by
+  decide
+
+/-- The theme raises (67a), (77), as the Ā-moved preposed quote cannot (69a). -/
+theorem theme_specTP_raising :
+    qiSmuggling.themePosition = .specTP ∧
+      Examples.ex67a.judgment = .acceptable ∧ Examples.ex69a.judgment = .ungrammatical ∧
+      Examples.ex77.judgment = .acceptable := by
+  decide
+
+/-- The agent stays in the vP, so the disjoint form, which needs an empty vP, is excluded
+(87). -/
+theorem agent_specvP_conjoint :
+    qiSmuggling.agentPosition = .specvP ∧
+      Examples.ex87.judgment = .acceptable ∧ Examples.ex87_disj.judgment = .ungrammatical := by
+  decide
+
+/-- The quote is bound by the discourse head rather than moved: it may stay postverbal (88),
+(89), split around the verb and the agent (90), (92), and need not be a constituent or
+grammatical (96a), (97a), unlike the fronted phrase of locative inversion (93a). -/
+theorem quote_discourseQUOT :
+    qiSmuggling.quoteBinder = .discourseQUOT ∧
+      Examples.ex88.judgment = .acceptable ∧ Examples.ex89.judgment = .acceptable ∧
+      Examples.ex90.judgment = .acceptable ∧ Examples.ex92.judgment = .acceptable ∧
+      Examples.ex96a.judgment = .acceptable ∧ Examples.ex97a.judgment = .acceptable ∧
+      Examples.ex93a.judgment = .ungrammatical := by
+  decide
+
+/-! ### The transitivity constraint (§5)
+
+A smuggled DP is licensed by T⁰, which licenses one argument; Voice⁰ licenses the agent
+(133). -/
+
+/-- The smuggled constituent is licensed when it carries at most one DP for T⁰. -/
+def Licensed (smuggledDPs : ℕ) : Prop := smuggledDPs ≤ 1
+
+instance (n : ℕ) : Decidable (Licensed n) := inferInstanceAs (Decidable (_ ≤ _))
+
+/-- (125)–(135): an inversion is acceptable exactly when the smuggled constituent carries at
+most one DP, a goal DP blocking it and a PP or adjunct goal not, in quotative and locative
+inversion alike. -/
+theorem transitivity_predicted :
+    ∀ ex ∈ Examples.all, ∀ n ∈ ex.parse? "smuggledDPs" [("1", 1), ("2", 2)],
+      (ex.judgment = .acceptable ↔ Licensed n) := by
+  decide
+
+/-! ### Inverse voice (§4.3, §6)
+
+Quotative inversion joins the constructions the paper analyses as smuggling through VoiceP, and
+locative inversion shows the same in-situ agent, raising and transitivity constraint. -/
+
+/-- The constructions the paper groups as inverse voice, analysed as smuggling (§4.3). -/
+inductive InverseVoiceKind
+  | passive | dativeShift | causative | middle | inverseVoice | quotativeInversion
+  | locativeInversion
+  deriving DecidableEq, Repr
+
+/-- Locative inversion parallels quotative inversion: it is acceptable with an unergative verb
+of motion (136a) and with *arrive* in Setswana (55), raises the same way (138), and obeys the
+transitivity constraint (134a), (135). -/
+theorem locative_inversion_parallel :
+    Examples.ex136a.judgment = .acceptable ∧ Examples.ex55.judgment = .acceptable ∧
+      Examples.ex138.judgment = .acceptable ∧ Examples.ex134a.judgment = .ungrammatical ∧
+      Examples.ex135.judgment = .ungrammatical := by
+  decide
 
 /-! ## §14. Defective circumvention derives the agreement contrast
 

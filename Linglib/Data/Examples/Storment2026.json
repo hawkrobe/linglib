@@ -1,849 +1,2151 @@
 [
   {
-    "id": "storment2026_qi_whisper",
+    "id": "storment2026_ex1a",
     "source": {
       "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"
+      "paperLabel": "(1a)"
     },
     "language": "stan1293",
-    "primaryText": "\"I'm tired,\" whispered Mary.",
-    "glossedTokens": [],
-    "translation": "\"I'm tired,\" whispered Mary.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "whisper"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_whisper. Manner-of-speaking verb licenses quotative inversion."
-  },
-  {
-    "id": "storment2026_qi_murmur",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"It's cold,\" murmured the child.",
-    "glossedTokens": [],
-    "translation": "\"It's cold,\" murmured the child.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "murmur"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_murmur."
-  },
-  {
-    "id": "storment2026_qi_shout",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"Watch out!\" shouted the guard.",
-    "glossedTokens": [],
-    "translation": "\"Watch out!\" shouted the guard.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "shout"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_shout."
-  },
-  {
-    "id": "storment2026_qi_cry",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"Help!\" cried the sailor.",
-    "glossedTokens": [],
-    "translation": "\"Help!\" cried the sailor.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "cry"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_cry."
-  },
-  {
-    "id": "storment2026_qi_scream",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"No!\" screamed the witness.",
-    "glossedTokens": [],
-    "translation": "\"No!\" screamed the witness.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "scream"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_scream."
-  },
-  {
-    "id": "storment2026_qi_mumble",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"I don't know,\" mumbled the boy.",
-    "glossedTokens": [],
-    "translation": "\"I don't know,\" mumbled the boy.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "mumble"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_mumble."
-  },
-  {
-    "id": "storment2026_qi_mutter",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"This is ridiculous,\" muttered the clerk.",
-    "glossedTokens": [],
-    "translation": "\"This is ridiculous,\" muttered the clerk.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "mutter"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_mutter."
-  },
-  {
-    "id": "storment2026_qi_shriek",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"A spider!\" shrieked the child.",
-    "glossedTokens": [],
-    "translation": "\"A spider!\" shrieked the child.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "shriek"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_shriek."
-  },
-  {
-    "id": "storment2026_qi_yell",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"Get down!\" yelled the sergeant.",
-    "glossedTokens": [],
-    "translation": "\"Get down!\" yelled the sergeant.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "yell"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_yell."
-  },
-  {
-    "id": "storment2026_qi_groan",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"Not again,\" groaned the student.",
-    "glossedTokens": [],
-    "translation": "\"Not again,\" groaned the student.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "groan"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_groan."
-  },
-  {
-    "id": "storment2026_qi_grumble",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"It's too early,\" grumbled the worker.",
-    "glossedTokens": [],
-    "translation": "\"It's too early,\" grumbled the worker.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "grumble"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_grumble."
-  },
-  {
-    "id": "storment2026_qi_hiss",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"Be quiet,\" hissed the librarian.",
-    "glossedTokens": [],
-    "translation": "\"Be quiet,\" hissed the librarian.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "hiss"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_hiss."
-  },
-  {
-    "id": "storment2026_qi_sigh",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"If only,\" sighed the old woman.",
-    "glossedTokens": [],
-    "translation": "\"If only,\" sighed the old woman.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "sigh"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_sigh."
-  },
-  {
-    "id": "storment2026_qi_whimper",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"It hurts,\" whimpered the child.",
-    "glossedTokens": [],
-    "translation": "\"It hurts,\" whimpered the child.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "whimper"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_whimper."
-  },
-  {
-    "id": "storment2026_qi_snap",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED MoS quotative inversion (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"Enough!\" snapped the teacher.",
-    "glossedTokens": [],
-    "translation": "\"Enough!\" snapped the teacher.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "snap"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_snap."
-  },
-  {
-    "id": "storment2026_qi_speak",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED unergative communication verb blocks QI (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"Hello,\" spoke Mary.",
-    "glossedTokens": [],
-    "translation": "\"Hello,\" spoke Mary.",
-    "context": "",
-    "judgment": "unacceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "speak"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_speak. Canonical communication verb fails quotative inversion."
-  },
-  {
-    "id": "storment2026_qi_talk",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED unergative communication verb blocks QI (no example number recorded)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"Hello,\" talked Mary.",
-    "glossedTokens": [],
-    "translation": "\"Hello,\" talked Mary.",
-    "context": "",
-    "judgment": "unacceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "talk"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_talk. Canonical communication verb fails quotative inversion."
-  },
-  {
-    "id": "storment2026_qi_whisper_transitive",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED §5"
-    },
-    "language": "stan1293",
-    "primaryText": "\"I know the answer,\" whispered the student to the teacher.",
-    "glossedTokens": [],
-    "translation": "\"I know the answer,\" whispered the student to the teacher.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "whisper"
-      ],
-      [
-        "argument_frame",
-        "quote_pp_goal"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_whisper_transitive. Quote + PP goal: the PP does not compete for Case licensing, so QI remains grammatical (Storment 2026, section 5)."
-  },
-  {
-    "id": "storment2026_qi_whisper_pronoun",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED §3"
-    },
-    "language": "stan1293",
-    "primaryText": "\"I'm tired,\" whispered she.",
-    "glossedTokens": [],
-    "translation": "\"I'm tired,\" whispered she.",
-    "context": "",
-    "judgment": "marginal",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "whisper"
-      ],
-      [
-        "subject_type",
-        "pronoun"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_whisper_pronoun. Pronominal subjects degrade QI — full DPs are preferred postverbally (Storment 2026, section 3)."
-  },
-  {
-    "id": "storment2026_qi_warn_double_obj",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED §5 eq. (125)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"There is danger ahead,\" warned Mary John.",
-    "glossedTokens": [],
-    "translation": "\"There is danger ahead,\" warned Mary John.",
-    "context": "",
-    "judgment": "unacceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "quotative_inversion"
-      ],
-      [
-        "verb",
-        "warn"
-      ],
-      [
-        "argument_frame",
-        "quote_dp_dp"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_warn_double_obj. QI blocked with two DP arguments — the transitivity constraint from Case licensing: T0 can license only one DP. 'Warn' is naturally ditransitive, so the failure isolates the transitivity constraint rather than confounding it with verb subcategorization."
-  },
-  {
-    "id": "storment2026_li_kick",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED §5"
-    },
-    "language": "stan1293",
-    "primaryText": "Into the room kicked the ball the player.",
-    "glossedTokens": [],
-    "translation": "Into the room kicked the ball the player.",
-    "context": "",
-    "judgment": "unacceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "locative_inversion"
-      ],
-      [
-        "verb",
-        "kick"
-      ],
-      [
-        "argument_frame",
-        "transitive"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean li_kick. LI blocked with a transitive verb — both QI and LI show the transitivity constraint (Storment 2026, section 5)."
-  },
-  {
-    "id": "storment2026_li_arrive_pronoun",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED §3"
-    },
-    "language": "stan1293",
-    "primaryText": "Into the room arrived she.",
-    "glossedTokens": [],
-    "translation": "Into the room arrived she.",
-    "context": "",
-    "judgment": "unacceptable",
-    "paperFeatures": [
-      [
-        "diagnostic",
-        "locative_inversion"
-      ],
-      [
-        "verb",
-        "arrive"
-      ],
-      [
-        "subject_type",
-        "pronoun"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean li_arrive_pronoun. LI categorically blocks pronominal subjects (cf. QI, which merely degrades them, section 3)."
-  },
-  {
-    "id": "storment2026_qi_agreement_english",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED (40)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"Avoid beef,\" advise all the New Age dieticians.",
-    "glossedTokens": [],
-    "translation": "\"Avoid beef,\" advise all the New Age dieticians.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "structural_test",
-        "agreement"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_agreement_english. The verb 'advise' (plural) agrees with the postverbal agent 'dieticians' (plural), not with the quote (Storment 2026, section 3.1)."
-  },
-  {
-    "id": "storment2026_qi_agreement_setswana",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED (77)-(80)"
-    },
-    "language": "tswa1253",
-    "primaryText": "'Dumela,' go bua nna.",
-    "glossedTokens": [],
-    "translation": "'Hello,' say I.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "structural_test",
-        "agreement"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_agreement_setswana. The subject marker surfaces as default class-17 'go' instead of first-singular 'ke' — default agreement; the agent is not in Spec,TP (Storment 2026, section 3.1)."
-  },
-  {
-    "id": "storment2026_qi_parasitic_gap_blocked",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED (62a)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"We should leave,\" thought Max without actually saying __.",
-    "glossedTokens": [],
-    "translation": "\"We should leave,\" thought Max without actually saying __.",
-    "context": "",
-    "judgment": "unacceptable",
-    "paperFeatures": [
-      [
-        "structural_test",
-        "parasitic_gap"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_parasitic_gap_blocked. Parasitic gap blocked in QI: the theme undergoes A-movement (smuggling), which cannot license parasitic gaps (Storment 2026, section 3.2)."
-  },
-  {
-    "id": "storment2026_qi_parasitic_gap_baseline",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED (62b)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"We should leave,\" Max thought without actually saying __.",
-    "glossedTokens": [],
-    "translation": "\"We should leave,\" Max thought without actually saying __.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "structural_test",
-        "parasitic_gap"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_parasitic_gap_baseline. Non-QI preposed quote licenses the parasitic gap: the quote undergoes A-bar movement (topicalization)."
-  },
-  {
-    "id": "storment2026_qi_raising",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED (67a)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"Where did the wheat go?\" seemed to say the heron.",
-    "glossedTokens": [],
-    "translation": "\"Where did the wheat go?\" seemed to say the heron.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "structural_test",
-        "subject_raising"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_raising. The quotative theme raises from embedded to matrix Spec,TP — an A-movement chain (Storment 2026, section 3.3)."
-  },
-  {
-    "id": "storment2026_qi_conjoint_disjoint",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED (87)"
-    },
-    "language": "tswa1253",
-    "primaryText": "'Dumela,' go a bua Seabelo.",
-    "glossedTokens": [],
-    "translation": "'Hello,' says Seabelo (with disjoint marker).",
-    "context": "",
-    "judgment": "unacceptable",
-    "alternatives": [
-      {
-        "form": "'Dumela,' go bua Seabelo.",
-        "judgment": "acceptable"
-      }
-    ],
-    "paperFeatures": [
-      [
-        "structural_test",
-        "conjoint_disjoint"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_conjoint_disjoint. The disjoint morpheme 'a' is blocked in QI: the agent remains vP-internal, in the conjoint domain (Storment 2026, section 3.4)."
-  },
-  {
-    "id": "storment2026_qi_quote_split",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED (90)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"But,\" said Frodo, \"that is a long way off.\"",
-    "glossedTokens": [],
-    "translation": "\"But,\" said Frodo, \"that is a long way off.\"",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "structural_test",
-        "quote_category"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_quote_split. The quote can split around verb + agent: it sits in DiscourseP, not as a single constituent in Spec,TP (Storment 2026, section 3.5)."
-  },
-  {
-    "id": "storment2026_qi_quote_nongrammatical",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED (96a)"
-    },
-    "language": "stan1293",
-    "primaryText": "\"Pop!\" goes the weasel.",
-    "glossedTokens": [],
-    "translation": "\"Pop!\" goes the weasel.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "structural_test",
-        "quote_category"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_quote_nongrammatical. 'Pop!' is not a grammatical sentence — the quote is clause-external (Storment 2026, section 3.5)."
-  },
-  {
-    "id": "storment2026_qi_ordering_depictive",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED (11)"
-    },
-    "language": "tswa1253",
-    "primaryText": "'Dumela!' go bua Seabelo a tagilwe.",
-    "glossedTokens": [],
-    "translation": "'Hello!' says Seabelo drunk.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "structural_test",
-        "constituent_ordering"
-      ],
-      [
-        "constituent",
-        "depictive"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_ordering_depictive. The depictive 'a tagilwe' (drunk) follows the agent — depictives are vP-external adjuncts and stay in situ when the VP smuggles."
-  },
-  {
-    "id": "storment2026_qi_ordering_manner",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED (21)"
-    },
-    "language": "tswa1253",
-    "primaryText": "'Titi o molato,' go bua kgosi kapela.",
-    "glossedTokens": [],
-    "translation": "'Titi is guilty,' says the chief quickly.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "structural_test",
-        "constituent_ordering"
-      ],
-      [
-        "constituent",
-        "manner_adverb"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_ordering_manner. The manner adverb 'kapela' (quickly) follows the agent — manner adverbs are vP-external and stay in situ."
-  },
-  {
-    "id": "storment2026_qi_ordering_purpose",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED (17)"
-    },
-    "language": "tswa1253",
-    "primaryText": "'Molelo!' go go-ile Seabelo go kopa thuso.",
-    "glossedTokens": [],
-    "translation": "'Fire!' went Seabelo to call for help.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "structural_test",
-        "constituent_ordering"
-      ],
-      [
-        "constituent",
-        "purpose_clause"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_ordering_purpose. The purpose clause 'go kopa thuso' (to call for help) follows the agent — purpose clauses are vP-external adjuncts."
-  },
-  {
-    "id": "storment2026_qi_ordering_complement",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "UNVERIFIED (27)"
-    },
-    "language": "tswa1253",
-    "primaryText": "'Ke a go rata,' go batla go bua Seabelo.",
-    "glossedTokens": [],
-    "translation": "'I love you,' wants to say Seabelo.",
-    "context": "",
-    "judgment": "acceptable",
-    "paperFeatures": [
-      [
-        "structural_test",
-        "constituent_ordering"
-      ],
-      [
-        "constituent",
-        "restructuring_complement"
-      ]
-    ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean qi_ordering_complement. The control complement 'batla go bua' (want to say) precedes the agent — VP-internal material moves with the VP via smuggling."
-  },
-  {
-    "id": "storment2026_li_leapt",
-    "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "(136a)"
-    },
-    "language": "stan1293",
-    "primaryText": "Down from the wall leapt Gimli.",
+    "primaryText": "‘Peace!’ said Saruman.",
+    "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
       [
         "construction",
-        "locativeInversion"
-      ],
-      [
-        "verb",
-        "leap"
+        "qi"
       ]
     ],
-    "comment": "English locative inversion, the paper's parallel to quotative inversion; the paper notes English allows the construction with unergative as well as unaccusative verbs.",
-    "discourseSegments": [],
-    "alternatives": [],
-    "readings": []
+    "comment": "Quotative inversion: the quote precedes the verb and the agent follows it."
   },
   {
-    "id": "storment2026_li_train",
+    "id": "storment2026_ex4",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(4)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Le kae? ga botsa Seabelo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Le kae?",
+        "and where?"
+      ],
+      [
+        "ga",
+        "SM17.PST"
+      ],
+      [
+        "botsa",
+        "ask"
+      ],
+      [
+        "Seabelo",
+        "Seabelo"
+      ]
+    ],
+    "translation": "‘How are you?’ asks Seabelo.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex7",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(7)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Sméagol has to take what’s given to him,’ Gollum answered.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "preposedQuote"
+      ]
+    ],
+    "comment": "A preposed quote without inversion: the agent stays preverbal."
+  },
+  {
+    "id": "storment2026_ex10",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(10)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘D’oh!’ said the man drunk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpAdjunct"
+      ],
+      [
+        "position",
+        "afterAgent"
+      ]
+    ],
+    "comment": "An agent-oriented depictive follows the agent."
+  },
+  {
+    "id": "storment2026_ex12",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(12)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘D’oh!’ said drunk the man.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpAdjunct"
+      ],
+      [
+        "position",
+        "beforeAgent"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex14",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(14)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘D’oh!’ shouted drunk the man I’ve never met before.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpAdjunct"
+      ],
+      [
+        "heavyNPShift",
+        "yes"
+      ]
+    ],
+    "comment": "Heavy NP shift of the agent lets the depictive precede it."
+  },
+  {
+    "id": "storment2026_ex15",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(15)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Fire!’ cried Cecil to get the crowd’s attention.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpAdjunct"
+      ],
+      [
+        "position",
+        "afterAgent"
+      ]
+    ],
+    "comment": "A purpose clause follows the agent."
+  },
+  {
+    "id": "storment2026_ex16",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(16)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Fire!’ cried to get the crowd’s attention Cecil.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpAdjunct"
+      ],
+      [
+        "position",
+        "beforeAgent"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex19",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(19)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Nothing, nothing,’ said Gollum softly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpAdjunct"
+      ],
+      [
+        "position",
+        "afterAgent"
+      ]
+    ],
+    "comment": "A manner adverb follows the agent."
+  },
+  {
+    "id": "storment2026_ex20",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(20)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Nothing, nothing,’ said softly Gollum.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpAdjunct"
+      ],
+      [
+        "position",
+        "beforeAgent"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex25a",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(25a)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Nothing, nothing,’ said Gollum, muttering all about.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpAdjunct"
+      ],
+      [
+        "position",
+        "afterAgent"
+      ]
+    ],
+    "comment": "An adverbial participial clause follows the agent."
+  },
+  {
+    "id": "storment2026_ex25b",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(25b)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Nothing, nothing,’ said muttering all about Gollum.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpAdjunct"
+      ],
+      [
+        "position",
+        "beforeAgent"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex26a",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(26a)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Help!’ tried to yell Alex.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpComplement"
+      ],
+      [
+        "position",
+        "beforeAgent"
+      ]
+    ],
+    "comment": "A control complement precedes the agent."
+  },
+  {
+    "id": "storment2026_ex26b",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(26b)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Help!’ tried Alex to yell.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpComplement"
+      ],
+      [
+        "position",
+        "afterAgent"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex29a",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(29a)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Where are you going?’ called out John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpComplement"
+      ],
+      [
+        "position",
+        "beforeAgent"
+      ]
+    ],
+    "comment": "A particle precedes the agent; the paper takes (29)–(31) from Collins (2003:4)."
+  },
+  {
+    "id": "storment2026_ex29b",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(29b)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Where are you going?’ called John out.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpComplement"
+      ],
+      [
+        "position",
+        "afterAgent"
+      ]
+    ],
+    "comment": "The paper takes (29)–(31) from Collins (2003:4)."
+  },
+  {
+    "id": "storment2026_ex11",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(11)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Dumela! go bua Seabelo a tagilwe.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dumela!",
+        "hello!"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "bua",
+        "said"
+      ],
+      [
+        "Seabelo",
+        "Seabelo"
+      ],
+      [
+        "a",
+        "SM1"
+      ],
+      [
+        "tagilwe",
+        "drunk"
+      ]
+    ],
+    "translation": "‘Hello!’ said Seabelo drunk.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpAdjunct"
+      ],
+      [
+        "position",
+        "afterAgent"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex13",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(13)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Dumela! go bua a tagilwe Seabelo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dumela!",
+        "hello!"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "bua",
+        "said"
+      ],
+      [
+        "a",
+        "SM1"
+      ],
+      [
+        "tagilwe",
+        "drunk"
+      ],
+      [
+        "Seabelo",
+        "Seabelo"
+      ]
+    ],
+    "translation": "‘Hello!’ said drunk Seabelo.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpAdjunct"
+      ],
+      [
+        "position",
+        "beforeAgent"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex17",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(17)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Molelo! go go-ile Seabelo go kopa thuso.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Molelo!",
+        "fire!"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "go-ile",
+        "yell-PRF"
+      ],
+      [
+        "Seabelo",
+        "Seabelo"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "kopa",
+        "plead"
+      ],
+      [
+        "thuso",
+        "help"
+      ]
+    ],
+    "translation": "‘Fire!’ has yelled Seabelo to call for help.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpAdjunct"
+      ],
+      [
+        "position",
+        "afterAgent"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex18",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(18)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Molelo! go go-ile go kopa thuso Seabelo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Molelo!",
+        "fire!"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "go-ile",
+        "yell-PRF"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "kopa",
+        "plead"
+      ],
+      [
+        "thuso",
+        "help"
+      ],
+      [
+        "Seabelo",
+        "Seabelo"
+      ]
+    ],
+    "translation": "‘Fire!’ has yelled to call for help Seabelo.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpAdjunct"
+      ],
+      [
+        "position",
+        "beforeAgent"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex21",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(21)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Titi o molato, go bua kgosi kapela.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Titi",
+        "Titi"
+      ],
+      [
+        "o",
+        "SM.3SG"
+      ],
+      [
+        "molato",
+        "guilty"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "bua",
+        "say"
+      ],
+      [
+        "kgosi",
+        "chief"
+      ],
+      [
+        "kapela",
+        "quick"
+      ]
+    ],
+    "translation": "‘Titi is guilty,’ said the chief quickly.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpAdjunct"
+      ],
+      [
+        "position",
+        "afterAgent"
+      ]
+    ],
+    "comment": "The paper takes (21)–(22) from Collins (1997:2)."
+  },
+  {
+    "id": "storment2026_ex22",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(22)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Titi o molato, go bua kapela kgosi.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Titi",
+        "Titi"
+      ],
+      [
+        "o",
+        "SM.3SG"
+      ],
+      [
+        "molato",
+        "guilty"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "bua",
+        "say"
+      ],
+      [
+        "kapela",
+        "quick"
+      ],
+      [
+        "kgosi",
+        "chief"
+      ]
+    ],
+    "translation": "‘Titi is guilty,’ said quickly the chief.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpAdjunct"
+      ],
+      [
+        "position",
+        "beforeAgent"
+      ]
+    ],
+    "comment": "The paper takes (21)–(22) from Collins (1997:2)."
+  },
+  {
+    "id": "storment2026_ex27",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(27)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Ke a go rata, go batla go bua Seabelo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ke",
+        "1SG"
+      ],
+      [
+        "a",
+        "DISJ"
+      ],
+      [
+        "go",
+        "2SG"
+      ],
+      [
+        "rata",
+        "like"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "batla",
+        "want"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "bua",
+        "say"
+      ],
+      [
+        "Seabelo",
+        "Seabelo"
+      ]
+    ],
+    "translation": "‘I love you’ wants to say Seabelo.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpComplement"
+      ],
+      [
+        "position",
+        "beforeAgent"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex28",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(28)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Ke a go rata, go batla Seabelo go bua.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ke",
+        "1SG"
+      ],
+      [
+        "a",
+        "DISJ"
+      ],
+      [
+        "go",
+        "2SG"
+      ],
+      [
+        "rata",
+        "like"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "batla",
+        "want"
+      ],
+      [
+        "Seabelo",
+        "Seabelo"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "bua",
+        "say"
+      ]
+    ],
+    "translation": "‘I love you’ wants Seabelo to say.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "material",
+        "vpComplement"
+      ],
+      [
+        "position",
+        "afterAgent"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex36",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(36)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Mmuu, go bua dikgomo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mmuu",
+        "moo"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "bua",
+        "say"
+      ],
+      [
+        "dikgomo",
+        "cows"
+      ]
+    ],
+    "translation": "‘Moo,’ says the cows.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "agreement"
+      ],
+      [
+        "subjectMarker",
+        "SM17"
+      ]
+    ],
+    "comment": "The subject marker is the default class 17, not class 10 of the agent."
+  },
+  {
+    "id": "storment2026_ex36_sm10",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(36)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Mmuu, di bua dikgomo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mmuu",
+        "moo"
+      ],
+      [
+        "di",
+        "SM10"
+      ],
+      [
+        "bua",
+        "say"
+      ],
+      [
+        "dikgomo",
+        "cows"
+      ]
+    ],
+    "translation": "‘Moo,’ says the cows.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "agreement"
+      ],
+      [
+        "subjectMarker",
+        "SM10"
+      ]
+    ],
+    "comment": "The starred alternative of (36): the agent’s class 10 marker."
+  },
+  {
+    "id": "storment2026_ex38",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(38)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Dumela, go bua nna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dumela",
+        "hello"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "bua",
+        "say"
+      ],
+      [
+        "nna",
+        "I"
+      ]
+    ],
+    "translation": "‘Hello,’ says I.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "agreement"
+      ],
+      [
+        "subjectMarker",
+        "SM17"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex38_ke",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(38)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Dumela, ke bua nna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dumela",
+        "hello"
+      ],
+      [
+        "ke",
+        "SM.1SG"
+      ],
+      [
+        "bua",
+        "say"
+      ],
+      [
+        "nna",
+        "I"
+      ]
+    ],
+    "translation": "‘Hello,’ says I.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "agreement"
+      ],
+      [
+        "subjectMarker",
+        "SM.1SG"
+      ]
+    ],
+    "comment": "The starred alternative of (38): first person agreement with the agent."
+  },
+  {
+    "id": "storment2026_ex40",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(40)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Avoid beef,’ advise all the New Age dieticians.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "agreement"
+      ],
+      [
+        "agreement",
+        "plural"
+      ]
+    ],
+    "comment": "English agreement tracks the postverbal agent; the paper takes the judgments from Collins and Branigan (1997)."
+  },
+  {
+    "id": "storment2026_ex40_sg",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(40)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Avoid beef,’ advises all the New Age dieticians.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "agreement"
+      ],
+      [
+        "agreement",
+        "singular"
+      ]
+    ],
+    "comment": "The starred alternative of (40)."
+  },
+  {
+    "id": "storment2026_ex62a",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(62a)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘We should leave,’ thought Max without actually saying __.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "parasiticGap"
+      ]
+    ],
+    "comment": "The A-moved quotative theme licenses no parasitic gap; the paper takes (62a) from Murphy (2022:4)."
+  },
+  {
+    "id": "storment2026_ex62b",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(62b)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘We should leave,’ Max thought without actually saying __.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "preposedQuote"
+      ],
+      [
+        "diagnostic",
+        "parasiticGap"
+      ]
+    ],
+    "comment": "The Ā-moved preposed quote of a noninverted clause licenses the gap."
+  },
+  {
+    "id": "storment2026_ex64",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(64)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Sméagol has to take what’s given to him,’ the Hobbits answer.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "preposedQuote"
+      ],
+      [
+        "diagnostic",
+        "agreement"
+      ],
+      [
+        "agreement",
+        "plural"
+      ]
+    ],
+    "comment": "Without inversion, agreement must track the agent."
+  },
+  {
+    "id": "storment2026_ex64_sg",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(64)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Sméagol has to take what’s given to him,’ the Hobbits answers.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "preposedQuote"
+      ],
+      [
+        "diagnostic",
+        "agreement"
+      ],
+      [
+        "agreement",
+        "singular"
+      ]
+    ],
+    "comment": "The starred alternative of (64)."
+  },
+  {
+    "id": "storment2026_ex65",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(65)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Le kae? Seabelo a botsa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Le kae?",
+        "and where?"
+      ],
+      [
+        "Seabelo",
+        "Seabelo"
+      ],
+      [
+        "a",
+        "SM.3SG.PST"
+      ],
+      [
+        "botsa",
+        "ask"
+      ]
+    ],
+    "translation": "‘How are you?’ Seabelo asked.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "preposedQuote"
+      ],
+      [
+        "diagnostic",
+        "agreement"
+      ],
+      [
+        "subjectMarker",
+        "SM.3SG.PST"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex65_ga",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(65)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Le kae? Seabelo ga botsa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Le kae?",
+        "and where?"
+      ],
+      [
+        "Seabelo",
+        "Seabelo"
+      ],
+      [
+        "ga",
+        "SM17.PST"
+      ],
+      [
+        "botsa",
+        "ask"
+      ]
+    ],
+    "translation": "‘How are you?’ Seabelo asked.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "preposedQuote"
+      ],
+      [
+        "diagnostic",
+        "agreement"
+      ],
+      [
+        "subjectMarker",
+        "SM17.PST"
+      ]
+    ],
+    "comment": "The starred alternative of (65): default agreement without inversion."
+  },
+  {
+    "id": "storment2026_ex67a",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(67a)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Where did the wheat go?’ seemed to say the heron.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "raising"
+      ]
+    ],
+    "comment": "Subject-to-subject raising of the quotative theme; a corpus example (Flickr) the paper cites from Storment (2025:138)."
+  },
+  {
+    "id": "storment2026_ex69a",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(69a)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Where did the wheat go?’ seemed the heron to say.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "preposedQuote"
+      ],
+      [
+        "diagnostic",
+        "raising"
+      ]
+    ],
+    "comment": "Raising is incompatible with the Ā-moved preposed quote."
+  },
+  {
+    "id": "storment2026_ex77",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(77)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Dumela, go nna go bua nna.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dumela",
+        "hello"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "nna",
+        "stay"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "bua",
+        "say"
+      ],
+      [
+        "nna",
+        "I"
+      ]
+    ],
+    "translation": "‘Hello,’ habitually says I.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "raising"
+      ],
+      [
+        "subjectMarker",
+        "SM17"
+      ]
+    ],
+    "comment": "Aspectual auxiliary raising: both subject markers are the default class 17."
+  },
+  {
+    "id": "storment2026_ex87",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(87)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Dumela, go bua Seabelo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dumela",
+        "hello"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "bua",
+        "say"
+      ],
+      [
+        "Seabelo",
+        "Seabelo"
+      ]
+    ],
+    "translation": "‘Hello,’ says Seabelo.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "conjointDisjoint"
+      ],
+      [
+        "verbForm",
+        "conjoint"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex87_disj",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(87)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Dumela, go a bua Seabelo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dumela",
+        "hello"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "a",
+        "DISJ"
+      ],
+      [
+        "bua",
+        "say"
+      ],
+      [
+        "Seabelo",
+        "Seabelo"
+      ]
+    ],
+    "translation": "‘Hello,’ says Seabelo.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "conjointDisjoint"
+      ],
+      [
+        "verbForm",
+        "disjoint"
+      ]
+    ],
+    "comment": "The disjoint morpheme is excluded: the agent stays inside the vP."
+  },
+  {
+    "id": "storment2026_ex88",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(88)"
+    },
+    "language": "stan1293",
+    "primaryText": "Said the night wind to the little lamb, ‘Do you hear what I hear?’",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "quoteCategory"
+      ]
+    ],
+    "comment": "The quote itself need not be preverbal: the verb–agent order survives."
+  },
+  {
+    "id": "storment2026_ex89",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(89)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Ga botsa Seabelo, Le kae?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Ga",
+        "SM17.PST"
+      ],
+      [
+        "botsa",
+        "ask"
+      ],
+      [
+        "Seabelo",
+        "Seabelo"
+      ],
+      [
+        "Le kae?",
+        "and where?"
+      ]
+    ],
+    "translation": "Asked Seabelo, ‘How are you?’",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "quoteCategory"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex90",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(90)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘But,’ said Frodo, ‘That is a long way off.’",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "quoteCategory"
+      ]
+    ],
+    "comment": "The quote may split around the verb and the agent."
+  },
+  {
+    "id": "storment2026_ex92",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(92)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘I think that you…’ said Mary, ‘…should go to the store tomorrow.’",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "quoteCategory"
+      ]
+    ],
+    "comment": "The split need not fall at a constituent boundary of the quote."
+  },
+  {
+    "id": "storment2026_ex93a",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(93a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Walked John into the room.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "li"
+      ],
+      [
+        "diagnostic",
+        "quoteCategory"
+      ]
+    ],
+    "comment": "Locative inversion, unlike QI, requires the fronted phrase preverbally."
+  },
+  {
+    "id": "storment2026_ex96a",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(96a)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Pop!’ goes the weasel.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "quoteCategory"
+      ]
+    ],
+    "comment": "A quote need not have internal grammatical structure."
+  },
+  {
+    "id": "storment2026_ex97a",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(97a)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Who did a picture of hang on the wall?’ said the professor of linguistics.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "diagnostic",
+        "quoteCategory"
+      ]
+    ],
+    "comment": "A quote need not be grammatical."
+  },
+  {
+    "id": "storment2026_ex123",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(123)"
+    },
+    "language": "stan1293",
+    "primaryText": "John warned Mary, ‘There is danger ahead.’",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "canonical"
+      ]
+    ],
+    "comment": "The noninverted clause with a goal DP."
+  },
+  {
+    "id": "storment2026_ex125",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(125)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘There is danger ahead,’ warned Mary John.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "smuggledDPs",
+        "2"
+      ]
+    ],
+    "comment": "A goal DP and the quotative theme cannot both be smuggled."
+  },
+  {
+    "id": "storment2026_ex127",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(127)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘There is danger ahead,’ warned John Mary.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "smuggledDPs",
+        "2"
+      ]
+    ],
+    "comment": "Reversing agent and goal does not help."
+  },
+  {
+    "id": "storment2026_ex129",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(129)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘There is danger ahead,’ warned John to Mary.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "smuggledDPs",
+        "1"
+      ]
+    ],
+    "comment": "A PP goal is licensed inside the PP."
+  },
+  {
+    "id": "storment2026_ex126",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(126)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Go na le mathaithai kwa pele, go tlhagisitse Neo Thabo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Go na le mathaithai kwa pele",
+        "SM17 be with puzzles 17LOC ahead"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "tlhagisitse",
+        "warn"
+      ],
+      [
+        "Neo",
+        "Neo"
+      ],
+      [
+        "Thabo",
+        "Thabo"
+      ]
+    ],
+    "translation": "‘There is danger ahead,’ warns to Neo Thabo.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "smuggledDPs",
+        "2"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "storment2026_ex130",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(130)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Go na le mathaithai kwa pele, go tlhagisitse Thabo a tlhagisa Neo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Go na le mathaithai kwa pele",
+        "SM17 be with puzzles 17LOC ahead"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "tlhagisitse",
+        "warn"
+      ],
+      [
+        "Thabo",
+        "Thabo"
+      ],
+      [
+        "a",
+        "SM.3SG.PST"
+      ],
+      [
+        "tlhagisa",
+        "warn"
+      ],
+      [
+        "Neo",
+        "Neo"
+      ]
+    ],
+    "translation": "‘There is danger ahead,’ warned Thabo, warning Neo.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "smuggledDPs",
+        "1"
+      ]
+    ],
+    "comment": "The goal is expressed in an adjunct clause."
+  },
+  {
+    "id": "storment2026_ex134a",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(134a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Into the room walked Mary her dog.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "li"
+      ],
+      [
+        "smuggledDPs",
+        "2"
+      ]
+    ],
+    "comment": "The transitivity constraint holds of locative inversion too."
+  },
+  {
+    "id": "storment2026_ex135",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(135)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Go et-ela basimane koko.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Go",
+        "SM17"
+      ],
+      [
+        "et-ela",
+        "visit-APPL"
+      ],
+      [
+        "basimane",
+        "boys"
+      ],
+      [
+        "koko",
+        "grandmother"
+      ]
+    ],
+    "translation": "There are boys visiting the grandmother.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "li"
+      ],
+      [
+        "smuggledDPs",
+        "2"
+      ]
+    ],
+    "comment": "The paper takes (135) from Demuth and Mmusi (1997:14)."
+  },
+  {
+    "id": "storment2026_ex55",
     "source": {
       "bibkey": "storment-2026",
       "paperLabel": "(55)"
     },
     "language": "tswa1253",
     "primaryText": "Kwa maemelong a diterena ga goroga terena.",
+    "discourseSegments": [],
     "glossedTokens": [
       [
         "Kwa",
@@ -877,19 +2179,97 @@
     "translation": "At the station arrived a train.",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
       [
         "construction",
-        "locativeInversion"
-      ],
-      [
-        "verb",
-        "goroga"
+        "li"
       ]
     ],
-    "comment": "Setswana locative inversion with a class 17 locative subject marker.",
+    "comment": "Setswana locative inversion with a class 17 locative subject marker."
+  },
+  {
+    "id": "storment2026_ex136a",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(136a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Down from the wall leapt Gimli.",
     "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
     "alternatives": [],
-    "readings": []
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "li"
+      ]
+    ],
+    "comment": "English locative inversion, the paper’s parallel to quotative inversion."
+  },
+  {
+    "id": "storment2026_ex138",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(138)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Mo kamoreng go setse go tsene Seabelo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mo",
+        "18LOC"
+      ],
+      [
+        "kamoreng",
+        "room-LOC"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "setse",
+        "already"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "tsene",
+        "walk"
+      ],
+      [
+        "Seabelo",
+        "Seabelo"
+      ]
+    ],
+    "translation": "Into the room already walked Seabelo.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "li"
+      ],
+      [
+        "diagnostic",
+        "raising"
+      ],
+      [
+        "subjectMarker",
+        "SM17"
+      ]
+    ],
+    "comment": "Aspectual auxiliary raising in locative inversion, as in QI."
   }
 ]
