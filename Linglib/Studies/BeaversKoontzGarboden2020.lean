@@ -1,6 +1,7 @@
 import Linglib.Semantics.Root.Defs
 import Linglib.Semantics.ArgumentStructure.Verb
 import Linglib.Semantics.ArgumentStructure.EventStructure
+import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Data.Examples.BeaversKoontzGarboden2020
 
 /-!
@@ -31,6 +32,12 @@ Manner/Result Complementarity; they differ only in root position
 (adjoined vs complement), the contrast carrying the book's account of
 which root types are attested.
 
+The root hypothesis for the causative alternation, that a root entailing a caused change and
+no manner has an inchoative variant unless it entails its causer
+(`LevinClass.RootPredictsCausative`), is measured against the class pages of [levin-1993]:
+it agrees with Part II on every tested class outside a named residue
+(`rootHypothesis_matches_profile`, `rootHypothesisResidue`).
+
 ## Main declarations
 
 * `Root.Kinds.ViolatesBifurcation`, `Root.HasMannerAndResult` and
@@ -42,6 +49,9 @@ which root types are attested.
   their exhaustiveness
 * `Root.Kinds.attestedCells`, `cells_attested` — the filled cells of (12)
 * `Verb.CosModel.again` and the (25)–(27) reading hierarchy
+* `rootHypothesisResidue`, `rootHypothesis_matches_profile`,
+  `rootHypothesisResidue_disagrees` — the root hypothesis against Levin's
+  class profiles
 
 The thesis predicates and the sublexical *again* operator are carried
 here as single-consumer apparatus (this study is their only consumer);
@@ -50,6 +60,7 @@ they graduate back to the theory layer when a second study lands.
 ## References
 
 * [beavers-koontz-garboden-2020]: The Roots of Verbal Meaning.
+* [levin-1993]: English Verb Classes and Alternations.
 * [embick-2009]: Roots, states, and stative passives.
 * [arad-2005]: Roots and Patterns: Hebrew Morpho-syntax.
 * [rappaport-hovav-levin-2010]: Reflections on manner/result
@@ -483,5 +494,44 @@ theorem crack_template_forces_denote_result {Entity State T : Type*}
     (e : Event T) (h : M.denote crackV y x e) :
     ∃ e' s, M.become s e' ∧ M.rootState crackV x s :=
   M.denote_result_from_template crackV crack_template_hasResultState y x e h
+
+/-! ### The root hypothesis against Levin's class profiles -/
+
+open ArgumentStructure
+
+-- The classes are finite, so the comparison quantifies over all of them; the instance stays
+-- here since it slows `decide` proofs elsewhere that enumerate class-valued rows.
+deriving instance Fintype for LevinClass
+
+/-- A class Part II of [levin-1993] tests for the causative alternation and whose root
+signature is recorded. -/
+def TestedForCausative (c : LevinClass) : Prop :=
+  c.rootEntailments.isSome ∧
+    DiathesisAlternation.causativeInchoative ∈ c.alternations ∪ c.starredAlternations
+
+instance : DecidablePred TestedForCausative := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The tested classes on which the root hypothesis and the class pages disagree: the verbs
+of creation and the psych causatives, whose causative-result roots the hypothesis predicts to
+alternate although the pages star the alternation; and the classes whose pages attest it
+without a manner-free causative root: the manner-and-result roots, the internally caused
+results, the pure-manner roots with causative uses, and the property-concept roots of the
+emission classes. -/
+def rootHypothesisResidue : Finset LevinClass :=
+  {LevinClass.build, .create, .engender, .amuse,
+    .split, .knead, .cooking, .grow, .calibratableCoS, .pour, .coil, .mannerOfMotion, .rush,
+    .lightEmission, .soundEmission, .substanceEmission}
+
+/-- Outside the residue, the root hypothesis agrees with every tested class page. -/
+theorem rootHypothesis_matches_profile :
+    ∀ c : LevinClass, TestedForCausative c → c ∉ rootHypothesisResidue →
+      (c.RootPredictsCausative ↔ c.Participates .causativeInchoative) := by
+  decide
+
+/-- The residue is exactly the tested classes on which they disagree. -/
+theorem rootHypothesisResidue_disagrees :
+    ∀ c ∈ rootHypothesisResidue, TestedForCausative c ∧
+      ¬ (c.RootPredictsCausative ↔ c.Participates .causativeInchoative) := by
+  decide
 
 end BeaversKoontzGarboden2020
