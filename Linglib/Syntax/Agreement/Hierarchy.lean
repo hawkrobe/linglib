@@ -1,27 +1,27 @@
 import Mathlib.Order.Monotone.Defs
-import Linglib.Syntax.Agreement.Target
+import Linglib.Syntax.Agreement.Position
 
 /-!
 # Semantic agreement along a hierarchy
 
 This file defines the availability of semantic agreement at a position of the Agreement
 Hierarchy, the hybrid nouns whose availability varies from position to position, and what it
-is for a profile along a hierarchy to respect it.
+is for a map along a hierarchy to respect it.
 
 A target agrees syntactically when its form follows the feature value the controller is
 assigned, and semantically when it follows the controller's meaning. A hybrid noun, such as
 Russian *vrač* 'doctor' denoting a woman or British English *committee*, admits both at some
 positions, and the Agreement Hierarchy predicts that the likelihood of semantic agreement
-never decreases from the attributive towards the personal pronoun. The positions of
-`Agreement.Target` are ordered with the attributive on top, so a profile respects the
-hierarchy when it is antitone on the positions where it is recorded.
+never decreases from the attributive towards the personal pronoun. `Agreement.Position` is
+ordered with the attributive on top, so a map respects the hierarchy when it is antitone on
+the positions where it is recorded.
 
 ## Main definitions
 
 * `Agreement.Kind`: syntactic or semantic agreement.
 * `Agreement.Availability`: the five degrees of availability of semantic agreement, from
   syntactic only to semantic only, linearly ordered.
-* `Agreement.RespectsHierarchy`: a profile recorded at some positions of a hierarchy is
+* `Agreement.RespectsHierarchy`: a map recorded at some positions of a hierarchy is
   antitone where it is recorded.
 * `Agreement.Hybrid`: a hybrid noun, the availability of semantic agreement at the
   positions of a hierarchy for which there are data.
@@ -29,7 +29,7 @@ hierarchy when it is antitone on the positions where it is recorded.
 ## Implementation notes
 
 `RespectsHierarchy` takes any preorder of positions and any preorder of values, so that it
-serves the Agreement Hierarchy on `Target`, the Predicate Hierarchy on the sub-positions of
+serves the Agreement Hierarchy on `Position`, the Predicate Hierarchy on the sub-positions of
 the predicate, and refinements of the attributive position alike, and corpus proportions of
 semantic agreement as well as availabilities. A position carrying no value is skipped: values
 are compared only across comparable positions that both carry one.
@@ -91,7 +91,7 @@ section Hierarchy
 
 variable {ι α : Type*} [Preorder ι] [Preorder α]
 
-/-- A profile recording a value at some positions of a hierarchy respects it when the value
+/-- A map recording a value at some positions of a hierarchy respects it when the value
 never decreases down the hierarchy: of two comparable positions that both carry a value, the
 lower carries the larger. -/
 def RespectsHierarchy (f : ι → Option α) : Prop :=
@@ -101,8 +101,7 @@ instance [Fintype ι] [DecidableLE ι] [DecidableLE α] (f : ι → Option α) :
     Decidable (RespectsHierarchy f) := by
   unfold RespectsHierarchy; infer_instance
 
-/-- A profile recorded at every position respects the hierarchy exactly when it is
-antitone. -/
+/-- A map recorded at every position respects the hierarchy exactly when it is antitone. -/
 theorem respectsHierarchy_some_comp_iff_antitone {g : ι → α} :
     RespectsHierarchy (some ∘ g) ↔ Antitone g := by
   simp [RespectsHierarchy, Antitone]

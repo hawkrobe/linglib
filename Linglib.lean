@@ -2510,8 +2510,6 @@ import Linglib.Studies.ZwickyPullum1983
 import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Syntax.Agreement.PersonCaseConstraint
-import Linglib.Syntax.Agreement.Profile
-import Linglib.Syntax.Agreement.Target
 import Linglib.Syntax.Anaphora.Basic
 import Linglib.Syntax.Anaphora.Diagnostic
 import Linglib.Syntax.Binding.Basic

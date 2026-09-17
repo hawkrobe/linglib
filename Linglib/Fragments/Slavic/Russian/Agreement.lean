@@ -1,28 +1,77 @@
-import Linglib.Syntax.Agreement.Profile
+import Linglib.Syntax.Agreement.Bundle
+import Linglib.Syntax.Agreement.Position
+import Linglib.Fragments.Slavic.Russian.Gender
 
 /-!
-# Russian Agreement Profile
-[wade-2020] [corbett-1998]
+# Russian agreement targets
 
-Per-target agreement facts for Russian ([wade-2020]; [corbett-1998]'s
-running examples): attributive and long-form predicative adjectives covary
-in number, gender, and case; relative *kotoryj* covaries in number and
-gender, with case assigned clause-internally; personal pronouns covary with
-their antecedent in number and gender; finite verbs covary in person/number
-(nonpast) and gender/number (past), unioned here per the
-`Agreement.Profile` convention.
+Russian adjectives have a long form, declined for gender, number and case and used both
+attributively and predicatively, and a short form, marked for gender and number and used
+predicatively alone. Finite verbs express person and number in the nonpast tenses and gender
+and number in the past tense. Each target's forms are tabulated in Wade's grammar.
+
+## Implementation notes
+
+Whether an inflected value is copied from a controller is a question about a position and is
+left to the studies: a predicative long form is inflected for case, but its case is fixed by
+the copula, nominative or instrumental, rather than shared with the subject. The witness
+theorems read the inflection off the paradigms of `Fragments/Slavic/Russian/Gender.lean`.
+
+## TODO
+
+* The long adjective's full declension and the nonpast conjugation are not recorded, so the
+  case and person dimensions have no witness theorem.
+
+## References
+
+* [wade-2020] — the adjective and the verb
+* [corbett-1998] — Russian as the running example
 -/
 
 namespace Russian.Agreement
 
 open _root_.Agreement
 
-/-- Dimensions covarying on each target category ([wade-2020]). -/
-def profile : Profile
-  | .attributive     => {.number, .gender, .case}
-  | .predicate       => {.number, .gender, .case}
-  | .relativePronoun => {.number, .gender}
-  | .personalPronoun => {.number, .gender}
-  | .verb            => {.person, .number, .gender}
+/-- An agreement target of Russian whose forms a grammar tabulates: the long and the short
+adjective, and the nonpast and the past finite verb ([wade-2020]). -/
+inductive Target where
+  | longAdjective
+  | shortAdjective
+  | nonpastVerb
+  | pastVerb
+  deriving DecidableEq, Repr, Fintype
+
+namespace Target
+
+/-- The positions of the Agreement Hierarchy a target's forms occupy: the long adjective is
+attributive and predicative, the short adjective and the finite verb predicative only. -/
+def positions : Target → Finset Position
+  | .longAdjective => {.attributive, .predicate}
+  | _ => {.predicate}
+
+/-- The dimensions a target's forms are inflected for: the long adjective declines for
+gender, number and case, the short adjective for gender and number; the nonpast verb
+expresses person and number, the past tense gender and number. -/
+def features : Target → Finset Dimension
+  | .longAdjective => {.gender, .number, .case}
+  | .shortAdjective | .pastVerb => {.gender, .number}
+  | .nonpastVerb => {.person, .number}
+
+/-- The long adjective's nominative ending does not factor through its number: gender is
+inflected. -/
+theorem longAdjective_gender :
+    ¬ Function.FactorsThrough (fun p : Gender.Value × Bool ↦ p.1.adjEnding p.2) Prod.snd := by
+  decide
+
+/-- Nor through its gender: number is inflected. -/
+theorem longAdjective_number :
+    ¬ Function.FactorsThrough (fun p : Gender.Value × Bool ↦ p.1.adjEnding p.2) Prod.fst := by
+  decide
+
+/-- The past-tense concord is not constant: gender is inflected. -/
+theorem pastVerb_gender : ¬ Function.FactorsThrough Gender.Value.pastConcord (fun _ ↦ ()) := by
+  decide
+
+end Target
 
 end Russian.Agreement

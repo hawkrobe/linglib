@@ -16,16 +16,17 @@ covers every nominal feature, or its attributivizer is morphophonologically
 independent of the adjective.
 
 Both conditions are derived here from the paper's analysis: direct modification
-is available only to adjectives whose agreement profile (`Agreement.Profile`,
-the Fragments' target-by-dimension record) is shared across the predicative and
-attributive targets and covers every feature of the DP, case included
-(`marking`); every other language needs an attributivizer, which forces
-adjacency exactly when it is an adjectival affix, overt or null, under the
-Input Correspondence Principle (`AttrStatus.Adjacent`). The resulting
-`Possible` encodes the decision trees and agrees with the sample of Table 3 on
-every language the paper profiles. The example rows carry only their lexical
-anchors (adjective, noun, dependent); the linear orders are computed from token
-positions (`orderOf`) and checked against the profiles and the judgments.
+is available only to adjectives that are φ/κ-complete, some form of theirs being
+used both attributively and predicatively with an overt marker specified for
+every feature of the DP, case included (`Language.PhiKappaComplete`); every
+other language needs an attributivizer, which forces adjacency exactly when it
+is an adjectival affix, overt or null, under the Input Correspondence Principle
+(`AttrStatus.Adjacent`). Russian's forms are the long and short adjectives of
+the Fragment. The resulting `Language.Possible` encodes the decision trees and
+agrees with the sample of Table 3 on every language the paper discusses. The
+example rows carry only their lexical anchors (adjective, noun, dependent); the
+linear orders are computed from token positions (`orderOf`) and checked against
+the languages and the judgments.
 
 ## References
 
@@ -42,25 +43,15 @@ open Data.Examples
 
 /-! ### Agreement marking -/
 
-/-- How an adjective is marked: no overt agreement; agreement on attributive forms
-    that predicative forms lack (an agreeing attributivizer, or the
-    definiteness-sensitive forms of Icelandic); a shared marker missing some
-    nominal feature; a shared marker covering them all. -/
-inductive Marking
-  | unmarked
-  | distinct
-  | incomplete
-  | complete
+/-- An adjectival form: the positions it is used at and the features its agreement marker
+is specified for, a bare form being specified for none. -/
+structure Form where
+  uses : Finset Agreement.Position
+  features : Finset Agreement.Dimension
   deriving DecidableEq
 
-/-- Read the marking off an agreement profile and the features available in the DP.
-    Case is present on every DP whether or not it is realized, so completeness
-    demands overt case on the adjective. -/
-def marking (agr : Agreement.Profile) (dp : Finset Agreement.Dimension) : Marking :=
-  if agr .attributive = ∅ then .unmarked
-  else if agr .predicate ≠ agr .attributive then .distinct
-  else if dp ⊆ agr .attributive ∧ .case ∈ agr .attributive then .complete
-  else .incomplete
+/-- An adjectival target of the Russian fragment as a form. -/
+private def form (t : Russian.Agreement.Target) : Form := ⟨t.positions, t.features⟩
 
 /-! ### Attributivizers -/
 
@@ -80,7 +71,7 @@ def AttrStatus.Adjacent : AttrStatus → Prop
   | .adjectivalAffix | .null => True
   | _ => False
 
-instance : DecidablePred AttrStatus.Adjacent := λ s ↦ by
+instance : DecidablePred AttrStatus.Adjacent := fun s ↦ by
   cases s <;> simp [AttrStatus.Adjacent] <;> infer_instance
 
 /-- The Zwicky–Pullum cline the paper appeals to for the affix/clitic distinction. -/
@@ -89,146 +80,115 @@ def AttrStatus.ofMorphStatus : Morphology.Diagnostics.MorphStatus → AttrStatus
   | .simpleClitic | .specialClitic => .clitic
   | .inflAffix | .derivAffix => .adjectivalAffix
 
-/-! ### Profiles and the generalization -/
+/-! ### The languages of the paper -/
 
 /-- Side of the noun an attributive adjective occupies. -/
-inductive Position
+inductive Side
   | prenominal
   | postnominal
   deriving DecidableEq
 
 /-- The AP-internal order that puts the dependent between adjective and noun. -/
-def Position.intervening : Position → HeadDirection
+def Side.intervening : Side → HeadDirection
   | .prenominal => .headInitial
   | .postnominal => .headFinal
 
-/-- What the generalization needs to know about a language: where its adjectives
-    stand, which AP-internal orders its predicative adjectives allow, how they
-    agree, which features its DP carries, and what attributivizer they take. A
-    language whose adjectives are not φ/κ-complete must have an attributivizer. -/
-structure Profile where
-  positions : Finset Position
-  apOrders : Finset HeadDirection
-  agreement : Agreement.Profile
-  dp : Finset Agreement.Dimension
-  attributivizer : Option AttrStatus
-  attr_of_incomplete : marking agreement dp ≠ .complete → attributivizer ≠ none
+/-- A language the paper discusses. -/
+inductive Language
+  | greek | russian | latin | kalaallisut | italian | german | dutch | english | icelandic
+  | serboCroatian | mandarin | tagalog | farsi | atong | basque | japanese
+  deriving DecidableEq, Repr, Fintype
 
-def Profile.marking (p : Profile) : Marking := AlexeyenkoZeijlstra2025.marking p.agreement p.dp
+namespace Language
 
-/-- An XP may separate the adjective from the noun on the given side: the AP order
-    creates the configuration and either the adjective modifies directly or its
-    attributivizer does not need to be adjacent to it. -/
-def Possible (p : Profile) (pos : Position) : Prop :=
-  pos.intervening ∈ p.apOrders ∧
-    (p.marking = .complete ∨ ∃ s ∈ p.attributivizer, ¬ s.Adjacent)
+/-- The sides of the noun a language's attributive adjectives occupy. -/
+def sides : Language → Finset Side
+  | .italian => {.prenominal, .postnominal}
+  | .kalaallisut | .farsi | .atong | .basque => {.postnominal}
+  | _ => {.prenominal}
 
-instance (p : Profile) (pos : Position) : Decidable (Possible p pos) :=
-  inferInstanceAs (Decidable (_ ∧ (_ ∨ ∃ s ∈ _, _)))
+/-- The AP-internal orders a language's predicative adjectives allow; Japanese APs are
+strictly head-final, so the filter is obeyed trivially. -/
+def apOrders : Language → Finset HeadDirection
+  | .german | .dutch | .icelandic | .mandarin => {.headInitial, .headFinal}
+  | .kalaallisut | .farsi | .atong | .basque | .japanese => {.headFinal}
+  | _ => {.headInitial}
 
-/-- The Modifier-Noun Adjacency Generalization: intervention only under a complete
-    shared agreement marker or an independent attributivizer. -/
-theorem mag (p : Profile) (pos : Position) (h : Possible p pos) :
-    p.marking = .complete ∨ ∃ s ∈ p.attributivizer, ¬ s.Adjacent :=
-  h.2
-
-/-! ### The languages the paper profiles -/
-
-/-- An adjectival agreement profile from its attributive and predicative targets. -/
-private def adj (attr pred : Finset Agreement.Dimension) : Agreement.Profile
-  | .attributive => attr
-  | .predicate => pred
-  | _ => ∅
-
-/-- Gender, number and case on the adjective. -/
+/-- Gender, number and case. -/
 private def φκ : Finset Agreement.Dimension := {.number, .gender, .case}
 
-/-- Greek: one form, inflected for gender, number and case in both uses. -/
-def greek : Profile := ⟨{.prenominal}, {.headInitial}, adj φκ φκ, φκ, none, by decide +kernel⟩
+/-- A language's adjectival forms. Greek and Latin adjectives have one form, inflected for
+gender, number and case in both uses, and Kalaallisut's affixal number and case agreement is
+likewise shared; Russian's are the Fragment's long and short adjectives; Italian's one form
+agrees in gender and number but never case. German and Dutch predicative adjectives are
+bare, the attributive forms carrying gender, number and case or, in Dutch, a schwa sensitive
+to gender, number and definiteness; Icelandic and Serbo-Croatian attributive forms add
+definiteness to what the predicative forms carry. The rest have one uninflected form. -/
+def forms : Language → Finset Form
+  | .greek | .latin => {⟨{.attributive, .predicate}, φκ⟩}
+  | .russian => {form .longAdjective, form .shortAdjective}
+  | .kalaallisut => {⟨{.attributive, .predicate}, {.number, .case}⟩}
+  | .italian => {⟨{.attributive, .predicate}, {.number, .gender}⟩}
+  | .german => {⟨{.attributive}, φκ⟩, ⟨{.predicate}, ∅⟩}
+  | .dutch => {⟨{.attributive}, {.number, .gender, .definiteness}⟩, ⟨{.predicate}, ∅⟩}
+  | .icelandic | .serboCroatian => {⟨{.attributive}, insert .definiteness φκ⟩, ⟨{.predicate}, φκ⟩}
+  | _ => {⟨{.attributive, .predicate}, ∅⟩}
 
-/-- Russian long forms, the only attributive forms, carry number, gender and case in
-    both uses (the Fragment's profile); the caseless short forms are predicative
-    only and never at issue. -/
-def russian : Profile :=
-  ⟨{.prenominal}, {.headInitial}, Russian.Agreement.profile, φκ, none, by decide +kernel⟩
+/-- The φ-features of a language's DP. Case is not among them: the paper takes it to be
+present in every DP whether or not it is realized. -/
+def phi : Language → Finset Agreement.Dimension
+  | .greek | .russian | .latin | .italian | .german => {.number, .gender}
+  | .kalaallisut | .english => {.number}
+  | .dutch | .icelandic | .serboCroatian => {.number, .gender, .definiteness}
+  | _ => ∅
 
-/-- Latin adjectives are marked for gender, number and case in both uses. -/
-def latin : Profile := ⟨{.prenominal}, {.headInitial}, adj φκ φκ, φκ, none, by decide +kernel⟩
+/-- The attributivizer a language's adjectives take: none, a null or overt adjectival affix,
+or a clitic such as Mandarin *de*, the Tagalog linker or the Farsi ezafe. -/
+def attributivizer : Language → Option AttrStatus
+  | .greek | .russian | .latin | .kalaallisut => none
+  | .italian | .english | .basque | .japanese => some .null
+  | .german | .dutch | .icelandic | .serboCroatian => some .adjectivalAffix
+  | .mandarin | .tagalog | .farsi | .atong => some .clitic
 
-/-- Kalaallisut: affixal number and case agreement shared by predicative and
-    attributive forms. -/
-def kalaallisut : Profile :=
-  ⟨{.postnominal}, {.headFinal}, adj {.number, .case} {.number, .case}, {.number, .case}, none,
-    by decide +kernel⟩
+/-- A language's adjectives are φ/κ-complete, (34a): some form is used both attributively
+and predicatively, and its overt marker is specified for every feature of the DP, case
+included. -/
+def PhiKappaComplete (l : Language) : Prop :=
+  ∃ f ∈ l.forms, {.attributive, .predicate} ⊆ f.uses ∧ insert .case l.phi ⊆ f.features
 
-/-- Italian adjectives agree in gender and number but never case; the DP carries
-    case regardless. -/
-def italian : Profile :=
-  ⟨{.prenominal, .postnominal}, {.headInitial}, adj {.number, .gender} {.number, .gender},
-    {.number, .gender}, some .null, by decide +kernel⟩
+instance (l : Language) : Decidable l.PhiKappaComplete := by
+  unfold PhiKappaComplete; infer_instance
 
-/-- German predicative adjectives are bare; attributive forms carry gender, number
-    and case. -/
-def german : Profile :=
-  ⟨{.prenominal}, {.headInitial, .headFinal}, adj φκ ∅, φκ, some .adjectivalAffix,
-    by decide +kernel⟩
+/-- Greek, Russian, Latin and Kalaallisut alone are φ/κ-complete: Italian lacks case,
+German, Dutch, Icelandic and Serbo-Croatian share no form between the two uses, and the
+rest are uninflected. -/
+theorem phiKappaComplete_iff (l : Language) :
+    l.PhiKappaComplete ↔ l = .greek ∨ l = .russian ∨ l = .latin ∨ l = .kalaallisut := by
+  cases l <;> decide
 
-/-- Dutch predicative adjectives are bare; the attributive schwa is sensitive to
-    gender, number and definiteness. -/
-def dutch : Profile :=
-  ⟨{.prenominal}, {.headInitial, .headFinal}, adj {.number, .gender, .definiteness} ∅,
-    {.number, .gender, .definiteness}, some .adjectivalAffix, by decide +kernel⟩
+/-- A language whose adjectives are not φ/κ-complete has an attributivizer. -/
+theorem attributivizer_ne_none (l : Language) (h : ¬ l.PhiKappaComplete) :
+    l.attributivizer ≠ none := by
+  revert h; cases l <;> decide
 
-/-- English adjectives carry no agreement at all. -/
-def english : Profile :=
-  ⟨{.prenominal}, {.headInitial}, adj ∅ ∅, {.number}, some .null, by decide +kernel⟩
+/-- An XP may separate the adjective from the noun on the given side: the AP order creates
+the configuration, and either the adjectives are φ/κ-complete or the attributivizer does
+not need to be adjacent to the adjective. -/
+def Possible (l : Language) (s : Side) : Prop :=
+  s.intervening ∈ l.apOrders ∧ (l.PhiKappaComplete ∨ ∃ a ∈ l.attributivizer, ¬ a.Adjacent)
 
-/-- Icelandic strong forms appear predicatively; attributive forms additionally
-    encode definiteness through the strong/weak choice. -/
-def icelandic : Profile :=
-  ⟨{.prenominal}, {.headInitial, .headFinal}, adj (φκ ∪ {.definiteness}) φκ,
-    φκ ∪ {.definiteness}, some .adjectivalAffix, by decide +kernel⟩
+instance (l : Language) (s : Side) : Decidable (l.Possible s) :=
+  inferInstanceAs (Decidable (_ ∧ (_ ∨ ∃ a ∈ _, _)))
 
-/-- Serbo-Croatian short forms are predicative; attributive long forms add
-    definiteness or specificity. -/
-def serboCroatian : Profile :=
-  ⟨{.prenominal}, {.headInitial}, adj (φκ ∪ {.definiteness}) φκ, φκ ∪ {.definiteness},
-    some .adjectivalAffix, by decide +kernel⟩
+/-- The Modifier-Noun Adjacency Generalization: intervention only under φ/κ-complete
+adjectives or an independent attributivizer. -/
+theorem mag (l : Language) (s : Side) (h : l.Possible s) :
+    l.PhiKappaComplete ∨ ∃ a ∈ l.attributivizer, ¬ a.Adjacent :=
+  h.2
 
-/-- Mandarin: no agreement; the attributivizer *de* cliticizes to the AP. -/
-def mandarin : Profile :=
-  ⟨{.prenominal}, {.headInitial, .headFinal}, adj ∅ ∅, ∅, some .clitic, by decide +kernel⟩
+theorem japanese_trivial : ¬ japanese.Possible .prenominal := by decide
 
-/-- Tagalog: no agreement; the linker is a clitic. -/
-def tagalog : Profile :=
-  ⟨{.prenominal}, {.headInitial}, adj ∅ ∅, ∅, some .clitic, by decide +kernel⟩
-
-/-- Farsi: no agreement; the ezafe cliticizes to the noun phrase. -/
-def farsi : Profile :=
-  ⟨{.postnominal}, {.headFinal}, adj ∅ ∅, ∅, some .clitic, by decide +kernel⟩
-
-/-- Atong: no agreement; clitic attributivizer. -/
-def atong : Profile :=
-  ⟨{.postnominal}, {.headFinal}, adj ∅ ∅, ∅, some .clitic, by decide +kernel⟩
-
-/-- Basque: the decision tree places it under a null attributivizer with adjectives
-    that are not φ/κ-complete. -/
-def basque : Profile :=
-  ⟨{.postnominal}, {.headFinal}, adj ∅ ∅, ∅, some .null, by decide +kernel⟩
-
-/-- Japanese: strictly head-final APs, so the filter is obeyed trivially. -/
-def japanese : Profile :=
-  ⟨{.prenominal}, {.headFinal}, adj ∅ ∅, ∅, some .null, by decide +kernel⟩
-
-theorem japanese_trivial : ¬ Possible japanese .prenominal := by decide +kernel
-
-/-- The marking types the paper motivates are what the profiles yield. -/
-theorem marking_profiled :
-    greek.marking = .complete ∧ russian.marking = .complete ∧ latin.marking = .complete ∧
-    kalaallisut.marking = .complete ∧ italian.marking = .incomplete ∧
-    german.marking = .distinct ∧ dutch.marking = .distinct ∧ icelandic.marking = .distinct ∧
-    serboCroatian.marking = .distinct ∧ english.marking = .unmarked := by
-  decide +kernel
+end Language
 
 /-! ### Table 3 -/
 
@@ -237,7 +197,7 @@ theorem marking_profiled :
 structure Sample where
   name : String
   glottocode : String
-  position : Position
+  side : Side
   intervention : Bool
 
 /-- The sample of Table 3. -/
@@ -260,27 +220,28 @@ def table3 : List Sample :=
     ⟨"Basque", "basq1248", .postnominal, false⟩, ⟨"Chácobo", "chac1251", .postnominal, false⟩,
     ⟨"Eastern Oromo", "east2652", .postnominal, false⟩ ]
 
-/-- The profile the paper's discussion supports, by glottocode. -/
-def profileOf : String → Option Profile
-  | "mode1248" => some greek | "russ1263" => some russian | "lati1261" => some latin
-  | "ital1282" => some italian | "stan1295" => some german | "dutc1256" => some dutch
-  | "stan1293" => some english | "icel1247" => some icelandic | "sout1528" => some serboCroatian
-  | "mand1415" => some mandarin | "taga1270" => some tagalog | "west2369" => some farsi
-  | "aton1241" => some atong | "kala1399" => some kalaallisut | "basq1248" => some basque
+/-- The languages the paper discusses, by glottocode. -/
+def languageOf : String → Option Language
+  | "mode1248" => some .greek | "russ1263" => some .russian | "lati1261" => some .latin
+  | "ital1282" => some .italian | "stan1295" => some .german | "dutc1256" => some .dutch
+  | "stan1293" => some .english | "icel1247" => some .icelandic
+  | "sout1528" => some .serboCroatian | "mand1415" => some .mandarin
+  | "taga1270" => some .tagalog | "west2369" => some .farsi | "aton1241" => some .atong
+  | "kala1399" => some .kalaallisut | "basq1248" => some .basque
   | _ => none
 
-/-- On every profiled language the generalization returns Table 3's verdict. -/
+/-- On every language the paper discusses the generalization returns Table 3's verdict. -/
 theorem table3_predicted :
-    ∀ s ∈ table3, ∀ p ∈ profileOf s.glottocode, (Possible p s.position ↔ s.intervention) := by
+    ∀ s ∈ table3, ∀ l ∈ languageOf s.glottocode, (l.Possible s.side ↔ s.intervention) := by
   decide +kernel
 
 /-- The side of the noun alone decides nothing: each block of the table holds both
-    verdicts, so no filter stated on position — the Head-Final Filter or its mirror —
+    verdicts, so no filter stated on the side — the Head-Final Filter or its mirror —
     fits the sample. -/
-theorem position_insufficient (pos : Position) :
-    ∃ s ∈ table3, ∃ t ∈ table3, s.position = pos ∧ t.position = pos ∧ s.intervention ∧
+theorem side_insufficient (side : Side) :
+    ∃ s ∈ table3, ∃ t ∈ table3, s.side = side ∧ t.side = side ∧ s.intervention ∧
       ¬ t.intervention := by
-  cases pos <;> decide
+  cases side <;> decide
 
 /-! ### The *enough* exception -/
 
@@ -298,7 +259,7 @@ def AttrStatus.MayHost : AttrStatus → Host → Prop
   | .adjectivalAffix, .degreeWord => False
   | _, _ => True
 
-instance : DecidableRel AttrStatus.MayHost := λ s h ↦ by
+instance : DecidableRel AttrStatus.MayHost := fun s h ↦ by
   cases s <;> cases h <;> simp [AttrStatus.MayHost] <;> infer_instance
 
 /-! ### Rows -/
@@ -327,7 +288,7 @@ def tokens (row : LinguisticExample) : List (List Char) :=
 
 /-- Position of the token a feature names. -/
 def anchor (row : LinguisticExample) (key : String) : Option ℕ :=
-  (row.feature? key).bind λ t ↦ (tokens row).findIdx? (· = t.toList)
+  (row.feature? key).bind fun t ↦ (tokens row).findIdx? (· = t.toList)
 
 /-- Linear order of adjective, dependent and noun, read off token positions. -/
 inductive Order
@@ -366,19 +327,19 @@ example : orderOf Examples.az2025_36b = some .nAXp := by decide +kernel
 example : orderOf Examples.az2025_41b = some .xpAN := by decide +kernel
 example : orderOf Examples.az2025_71c = some .aDegN := by decide +kernel
 
-/-- Every attributive row stands on a side of the noun the profile allows, every
-    predicative order attested is in the profile, and every judgment on an
+/-- Every attributive row stands on a side of the noun the language allows, every
+    predicative order attested is in the language's AP orders, and every judgment on an
     intervening order is the generalization's; relative-clause paraphrases are
     outside the generalization. -/
 theorem rows_agree :
-    ∀ row ∈ Examples.all, ∀ p ∈ profileOf row.language, row.feature? "construction" = none →
+    ∀ row ∈ Examples.all, ∀ l ∈ languageOf row.language, row.feature? "construction" = none →
       ∀ o ∈ orderOf row,
-        (o ∈ [.aN, .aXpN, .xpAN, .aDegN] → .prenominal ∈ p.positions) ∧
-        (o ∈ [.nA, .nAXp, .nXpA] → .postnominal ∈ p.positions) ∧
-        (o = .aXp → row.judgment = .acceptable → .headInitial ∈ p.apOrders) ∧
-        (o = .xpA → row.judgment = .acceptable → .headFinal ∈ p.apOrders) ∧
-        (o = .aXpN → (row.judgment = .acceptable ↔ Possible p .prenominal)) ∧
-        (o = .nXpA → (row.judgment = .acceptable ↔ Possible p .postnominal)) := by
+        (o ∈ [.aN, .aXpN, .xpAN, .aDegN] → .prenominal ∈ l.sides) ∧
+        (o ∈ [.nA, .nAXp, .nXpA] → .postnominal ∈ l.sides) ∧
+        (o = .aXp → row.judgment = .acceptable → .headInitial ∈ l.apOrders) ∧
+        (o = .xpA → row.judgment = .acceptable → .headFinal ∈ l.apOrders) ∧
+        (o = .aXpN → (row.judgment = .acceptable ↔ l.Possible .prenominal)) ∧
+        (o = .nXpA → (row.judgment = .acceptable ↔ l.Possible .postnominal)) := by
   decide +kernel
 
 /-- A degree word between adjective and noun is tolerated exactly by a null

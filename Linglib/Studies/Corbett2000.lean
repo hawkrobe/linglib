@@ -628,14 +628,14 @@ theorem bayso_concord_not_injective :
 
 /-- British English *committee*: syntactic agreement only in attributive position, either
 agreement elsewhere, (19) to (22). -/
-def britishCommittee : Hybrid Target :=
-  λ | .attributive => some .syntacticOnly | .predicate | .relativePronoun => some .both
-      | .personalPronoun => some .both | .verb => none
+def britishCommittee : Hybrid Position :=
+  fun | .attributive => some .syntacticOnly | .predicate | .relativePronoun => some .both
+      | .personalPronoun => some .both
 
 /-- American English *committee*: plural agreement rare in the predicate, admitted in the
 personal pronoun. -/
-def americanCommittee : Hybrid Target :=
-  λ | .attributive => some .syntacticOnly | .predicate => some .mostlySyntactic
+def americanCommittee : Hybrid Position :=
+  fun | .attributive => some .syntacticOnly | .predicate => some .mostlySyntactic
       | .personalPronoun => some .both | _ => none
 
 theorem committee_respectHierarchy :
@@ -643,7 +643,7 @@ theorem committee_respectHierarchy :
 
 /-- Nixon's corpus: the percentage of plural agreement with corporate nouns, by target, the
 pronouns pooling the possessive with the personal. -/
-def nixon : Target → Option ℚ
+def nixon : Position → Option ℚ
   | .attributive => some 0
   | .predicate => some (122 / 10)
   | .personalPronoun => some (274 / 10)
@@ -770,12 +770,11 @@ theorem resolveNumber_eq_resolve :
 
 /-- Table 6.12: the percentage of number resolution with Russian conjoined noun phrases, by
 target. -/
-def russianConjoined : Target → Option ℚ
+def russianConjoined : Position → Option ℚ
   | .attributive => some 12
   | .predicate => some 70
   | .relativePronoun => some 100
   | .personalPronoun => some 100
-  | .verb => none
 
 /-- Resolved forms increase monotonically along the Agreement Hierarchy. -/
 theorem russianConjoined_respectsHierarchy : RespectsHierarchy russianConjoined := by decide
@@ -906,7 +905,7 @@ theorem macedonian_rows : ∀ row ∈ Examples.all, row.language = "mace1250" �
 
 /-- British *committee*, (19) to (22): the agreement each target allows. -/
 theorem committee_rows : ∀ row ∈ Examples.all, row.language = "stan1293" →
-    ∀ t ∈ row.parse? "target" targetNames, ∀ k ∈ row.parse? "agreement" kindNames,
+    ∀ t ∈ row.parse? "target" positionNames, ∀ k ∈ row.parse? "agreement" kindNames,
     ∀ a ∈ britishCommittee t, (row.judgment = .acceptable ↔ a.Allows k) := by
   decide +kernel
 
