@@ -19,7 +19,7 @@ namespace MauritianCreole.Determiners
     *la*. -/
 def inventory : Determiner.Inventory :=
   [ .article { form := "la", definiteness := .definite, exponent := .dedicatedMorpheme,
-               uses := [.anaphoric, .donkey] } ]
+               uses := {.anaphoric, .donkey} } ]
 
 /-- Mauritian Creole derives the `.markedAnaphoric` Moroney cell. -/
 theorem marking : inventory.markingStrategy = .markedAnaphoric := by decide

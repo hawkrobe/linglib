@@ -159,7 +159,7 @@ theorem typical_classifier_is_default :
     *nà*, the obligatory exponent of anaphoric definites including donkey
     anaphora, and the possessive *de*. -/
 def inventory : Determiner.Inventory :=
-  [ .demonstrative { form := "na", deictic := .distal, definiteUses := [.anaphoric, .donkey] },
+  [ .demonstrative { form := "na", deictic := .distal, definiteUses := {.anaphoric, .donkey} },
     .possessive { form := "de" } ]
 
 /-- Mandarin derives the `.markedAnaphoric` Moroney cell. -/

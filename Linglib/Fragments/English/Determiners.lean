@@ -103,7 +103,7 @@ denotation is definiteness, not a generalized quantifier. -/
 /-- "the" — definite article, syncretic over both [schwarz-2009] strengths. -/
 def the : Article :=
   { form := "the", definiteness := .definite, exponent := .dedicatedMorpheme
-  , uses := [.immediateSituation, .largerSituation, .anaphoric, .donkey] }
+  , uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} }
 
 /-- "a" — indefinite article, singular. -/
 def a : Article :=

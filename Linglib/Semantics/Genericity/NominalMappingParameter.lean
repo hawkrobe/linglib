@@ -123,9 +123,9 @@ the inventory lexicalizes it. A definite article is ι and an indefinite article
 that obligatorily expones anaphoric definiteness is ι^x ([moroney-2021]); no determiner is ∩. -/
 def Blocks (ds : Inventory) : CovertShift → Prop
   | .down => False
-  | .iota => ∃ e ∈ ds, e.IsDefiniteArticle
+  | .iota => ∃ e ∈ ds, e.kind = .article .definite
   | .iotaAnaphoric => ds.Marks .familiarity
-  | .exists => ∃ e ∈ ds, e.IsIndefiniteArticle
+  | .exists => ∃ e ∈ ds, e.kind = .article .indefinite
 
 instance (ds : Inventory) : DecidablePred ds.Blocks := λ τ => by
   cases τ <;> unfold Blocks <;> infer_instance

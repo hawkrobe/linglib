@@ -44,9 +44,9 @@ namespace Hausa.Determiners
     *ɗîn*, and the marked indefinite *wani* (feminine *wata*, plural *wasu*). -/
 def inventory : Determiner.Inventory :=
   [ .article { form := "-n", definiteness := .definite, exponent := .dedicatedMorpheme,
-               uses := [.largerSituation] },
+               uses := {.largerSituation} },
     .article { form := "ɗîn", definiteness := .definite, exponent := .dedicatedMorpheme,
-               uses := [.anaphoric] },
+               uses := {.anaphoric} },
     .article { form := "wani", definiteness := .indefinite, exponent := .dedicatedMorpheme } ]
 
 /-- Hausa derives the `.bipartite` Moroney cell. -/

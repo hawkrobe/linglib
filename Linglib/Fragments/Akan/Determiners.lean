@@ -36,7 +36,7 @@ namespace Akan.Determiners
     indefinite *bí*; uniqueness definites are bare. -/
 def inventory : Determiner.Inventory :=
   [ .article { form := "nó", definiteness := .definite, exponent := .dedicatedMorpheme,
-               uses := [.anaphoric] },
+               uses := {.anaphoric} },
     .article { form := "bí", definiteness := .indefinite, exponent := .dedicatedMorpheme } ]
 
 /-- Akan derives the `.markedAnaphoric` Moroney cell. -/

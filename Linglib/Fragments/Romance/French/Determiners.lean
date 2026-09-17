@@ -75,7 +75,7 @@ def les : Article :=
   { form := "les"
   , definiteness := .definite
   , exponent := .dedicatedMorpheme
-  , uses := [.immediateSituation, .largerSituation, .anaphoric, .donkey] }
+  , uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} }
 
 /-- *toujours* — universal temporal ('always'). Parallel to English
 `always` (which decomposes as *all*+*ways*); JereticEtAl2025 §5.4

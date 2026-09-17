@@ -114,40 +114,35 @@ theorem DemonstrativeDeterminer.denote_selector_congr (dem₁ dem₂ : Demonstra
 
 /-! ### The article's descriptions and denotations -/
 
-/-- An article's possible (definite-description) denotations: the image of its
-admissible [schwarz-2009] strengths (`Article.strengths`) under
-`Description.ofStrength`. A syncretic article (English *the*) denotes both
-the weak and the strong description, not a single one. -/
+/-- The descriptions an article can denote are the images of its admissible [schwarz-2009]
+strengths under `Description.ofStrength`. A syncretic article such as English *the* denotes both
+the weak and the strong description. -/
 def _root_.Article.toDescriptions (a : Article) (R : Restrictor E W) (idx : ℕ) :
-    List (Description E W) :=
-  a.strengths.map (Description.ofStrength · R idx)
+    Set (Description E W) :=
+  (Description.ofStrength · R idx) '' a.strengths
 
-/-- An article realizes the kind of each of its own possible descriptions:
-the denotation pipeline (`ofStrength`) and the inventory pipeline
-(`Determiner.Inventory.Realizes`) coincide through `kind_ofStrength` and
-`realizes_toKind`. -/
+/-- An article realizes the kind of each of its own descriptions, so the denotation pipeline
+through `Description.ofStrength` and the inventory pipeline through
+`Determiner.Inventory.Realizes` coincide. -/
 theorem _root_.Article.realizes_of_mem_toDescriptions (a : Article) (idx : ℕ)
     (k : Description E W) (hk : k ∈ a.toDescriptions R idx) :
     Determiner.Inventory.Realizes [.article a] k.kind := by
-  obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hk
-  rw [Description.kind_ofStrength, Determiner.Inventory.realizes_toKind]
+  obtain ⟨p, hp, rfl⟩ := hk
+  rw [Description.kind_ofStrength, Determiner.Inventory.realizes_toKind,
+    Determiner.Inventory.marks_singleton]
   exact (Article.mem_strengths_iff_marks a p).mp hp
 
-/-- An article's possible denotations: the `Nominal`s of its admissible
-descriptions (`Article.toDescriptions`). A syncretic article (English *the*)
-denotes both the weak and the strong description; a German weak or strong
-article denotes exactly one. -/
-noncomputable def _root_.Article.denotations (a : Article) (R : Restrictor E W) (idx : ℕ) :
-    List (Nominal (Assignment E) W E) :=
-  (a.toDescriptions R idx).map Description.toNominal
+/-- The `Nominal`s an article can denote are those of its descriptions. -/
+def _root_.Article.denotations (a : Article) (R : Restrictor E W) (idx : ℕ) :
+    Set (Nominal (Assignment E) W E) :=
+  Description.toNominal '' a.toDescriptions R idx
 
-/-- Every denotation of an article arises from a description whose kind the
-article realizes — the denotational pipeline and the inventory pipeline agree. -/
+/-- Every denotation of an article arises from a description whose kind the article realizes. -/
 theorem Article.denotations_realized (a : Article) (idx : ℕ) (nd : Nominal (Assignment E) W E)
     (h : nd ∈ a.denotations R idx) :
     ∃ k : Description E W,
       Determiner.Inventory.Realizes [.article a] k.kind ∧ nd = k.toNominal := by
-  obtain ⟨k, hk, rfl⟩ := List.mem_map.mp h
+  obtain ⟨k, hk, rfl⟩ := h
   exact ⟨k, Article.realizes_of_mem_toDescriptions R a idx k hk, rfl⟩
 
 /-! ### The possessive determiner's denotation -/
@@ -177,7 +172,7 @@ denotational pipeline and the inventory pipeline agree, parallel to
 `Article.denotations_realized`. -/
 theorem Possessive.denote_realized (p : Possessive) :
     Determiner.Inventory.Realizes [.possessive p] (Description.possessive R possessor rel).kind :=
-  ⟨.possessive p, List.mem_singleton_self _, trivial⟩
+  ⟨.possessive p, List.mem_singleton_self _, rfl⟩
 
 /-! ### Unification with the possessive description
 

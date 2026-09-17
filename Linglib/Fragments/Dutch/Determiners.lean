@@ -77,7 +77,7 @@ theorem faithful : Gender.Faithful singular :=
 types. -/
 def de : Article :=
   { form := plural .definite, definiteness := .definite, exponent := .dedicatedMorpheme
-    uses := [.immediateSituation, .largerSituation, .anaphoric, .donkey] }
+    uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} }
 
 /-- The indefinite article *een* occurs with singular count nouns, since indefinite plural and
 mass noun phrases are bare. -/

@@ -1,333 +1,283 @@
+import Mathlib.Data.Finset.Image
 import Linglib.Semantics.Reference.Definiteness
 import Linglib.Semantics.Reference.Deixis
 import Linglib.Syntax.Number.Basic
 import Linglib.Morphology.Word.Basic
 
 /-!
-# Determiner
+# Determiners
 
-The determiner (D head) as a lexical object, following the standard determiner
-taxonomy: `Article`, `DemonstrativeDeterminer`, `Quantifier`, and `Possessive` each
-`extends` the base `Determiner`. The base carries only what is universal to all
-determiners — a surface `form`; each specialization adds its own structure.
-
-A language's determiner inventory is a `Determiner.Inventory` (a heterogeneous
-list of the four kinds) declared in its Fragment as `{Lang}.Determiners.inventory`.
-The [moroney-2021] definiteness-marking typology (`MarkingStrategy`) is *derived*
-from the inventory by `Inventory.markingStrategy`, not stipulated. A language's
-Moroney cell is a theorem about its declared determiners, checked by `decide`.
-
-Because `Article` records its `exponent`, a classifier-phrase definite and a
-dedicated-article definite are both `Article`s differing only there, so a
-classifier language declares a definite *and* an indefinite `Article`
-symmetrically — the contested "is [Clf-N] a definite marker" question is
-localized to a single declaration.
+This file defines the determiner as a lexical object and the determiner inventory of a
+language. The base `Determiner` carries only a surface form, and the four specializations
+`Article`, `DemonstrativeDeterminer`, `Quantifier` and `Possessive` extend it. An inventory is
+a list of `Determiner.Entry` occurrences, and the typologies of definiteness marking are
+derived from it rather than declared. An entry marks an article strength when one of the
+definite uses it obligatorily expones calls for that strength, and a language's [moroney-2021]
+cell and [schwarz-2009] article system are theorems about its inventory, discharged by
+`decide`.
 
 ## Main declarations
 
-* `Determiner` — the base D-head record (just `form`).
-* `Article`, `DemonstrativeDeterminer`, `Quantifier`, `Possessive` — the four
+* `Determiner` is the base record, and `Determiner.toWord` realizes it as a word.
+* `Article` records definiteness, the exponent and the definite uses the article obligatorily
+  expones; `DemonstrativeDeterminer`, `Quantifier` and `Possessive` are the other
   specializations.
-* `Determiner.Entry` — a determiner occurrence in a language's inventory.
-* `Determiner.Inventory` — a language's declared determiner inventory; the
-  carrier of the inventory operations.
-* `Determiner.Inventory.markingStrategy` — derives the [moroney-2021] 4-cell
-  typology from a declared inventory.
-* `Determiner.Inventory.Realizes` — morphological realization: the declared
-  inventory carries a form for a given `Description.Kind`.
+* `Determiner.Entry` is an occurrence of one of the four kinds in an inventory, `Entry.kind`
+  is its kind together with an article's definiteness, and `Entry.Marks` says which strengths
+  it marks.
+* `Determiner.Inventory` is a language's declared inventory. `Inventory.Marks` and
+  `Inventory.IsSyncretic` lift the entry predicates, and `Inventory.markingStrategy` and
+  `Inventory.articleType` derive the typological cells, each characterized by an `_iff` lemma.
+* `Determiner.Inventory.Realizes` says that the inventory carries a form for a kind of nominal
+  description.
+* `Article.strengths` is the set of strengths an article admits.
 
 ## Implementation notes
 
-An `Article`'s admissible [schwarz-2009] strengths are `Article.strengths`
-(Frame-free, read off `uses`); its denotation is `Article.toDescriptions`
-(`Semantics/Reference/Determiner.lean`, Frame-aware) — the set of `Description`s
-those strengths admit via `Description.ofStrength`, so a syncretic article like
-English *the* denotes *both* the weak and the strong description. The possessive
-denotation is `Possessive.denote` (same file); the `Quantifier` generalized-quantifier
-denotation (`Semantics/Quantification`) is supplied externally by its consumers.
-This file stays the Frame-free lexical/typological layer.
+This file is the Frame-free lexical layer. The denotations of articles, demonstratives and
+possessives are in `Semantics/Reference/Determiner.lean`, and the generalized-quantifier
+denotation of a `Quantifier` is supplied by its consumers. `Inventory` is a `def` rather than
+an `abbrev` so that its operations resolve by dot notation; its membership is the list's, and
+facts about one-entry inventories go through `Inventory.marks_singleton`. `Realizes` is
+inventory data and neither licensing nor felicity. A kind can be expressed without a determiner
+realizing it, as Shan anaphoric definites are by bare nouns ([moroney-2021]), and which form a
+context selects is pragmatics ([jenks-2018]).
+
+## References
+
+* [schwarz-2009]
+* [moroney-2021]
+* [jenks-2018]
 -/
 
 open Reference
 
+/-- A determiner is a D head with a surface form, a representative morpheme or a construction
+label. The specializations extend it. -/
+structure Determiner where
+  /-- The surface form. -/
+  form : String
+  deriving DecidableEq, Repr
+
 namespace Determiner
 
-/-- How an article is morphosyntactically realized. Analysis-neutral: the
-distinction between a dedicated article morpheme and a classifier/numeral/
-demonstrative construction is recorded here, not used to decide whether the form
-"counts" as marking definiteness — that is the `uses` field's job. -/
+/-- A determiner is realized as a bare word of category `DET`. -/
+def toWord (d : Determiner) : Morphology.Word := { form := d.form, cat := .DET }
+
+/-- An article is exponed by a dedicated morpheme, a classifier construction, a demonstrative
+form or a bare noun. Whether the form marks definiteness is a matter of the uses it expones,
+not of its exponent. -/
 inductive Exponent where
-  /-- A dedicated article morpheme (English *the*/*a*, German *der*/*ein*). -/
+  /-- A dedicated article morpheme, as English *the* and German *der*. -/
   | dedicatedMorpheme
-  /-- A bare classifier phrase (Cantonese [Clf-N] definite). -/
+  /-- A bare classifier phrase, as the Cantonese definite [Clf-N]. -/
   | classifierPhrase
-  /-- A numeral-classifier phrase (Cantonese [jat-Clf-N] indefinite). -/
+  /-- A numeral-classifier phrase, as the Cantonese indefinite [jat-Clf-N]. -/
   | numeralClassifier
-  /-- A demonstrative form doing definite duty (Mandarin *na* anaphoric). -/
+  /-- A demonstrative form, as Mandarin anaphoric *na*. -/
   | demonstrativeForm
-  /-- A bare noun whose reading is fixed by covert type-shift. -/
+  /-- A bare noun whose reading a covert type shift fixes. -/
   | bareNoun
   deriving DecidableEq, Repr
 
 end Determiner
 
-/-- The base determiner (D head): only what is universal to every determiner —
-a surface form. Specializations (`Article`, `DemonstrativeDeterminer`, `Quantifier`,
-`Possessive`) `extends` this. -/
-structure Determiner where
-  /-- Surface form (a representative morpheme or construction label). -/
-  form : String
-  deriving DecidableEq, Repr
-
-/-- The determiner realized as a `Word`: a bare `.DET`-category token. Shared by
-    every `Determiner` extension via parent projection (`the.toWord`,
-    `this.toWord`); the `Pronoun.toWord` analogue for D-heads. -/
-def Determiner.toWord (d : Determiner) : Morphology.Word :=
-  { form := d.form, cat := .DET }
-
-/-- An article: the definite/indefinite determiner. `uses` is the definite
-use-types it obligatorily expones (empty for indefinites). -/
+/-- An article is the definite or indefinite determiner. Its `uses` are the definite uses it
+obligatorily expones, and they are empty for an indefinite. -/
 structure Article extends Determiner where
-  /-- Definite or indefinite. -/
+  /-- The article is definite or indefinite. -/
   definiteness : Definiteness
-  /-- How the article is realized. -/
+  /-- The exponent of the article. -/
   exponent : Determiner.Exponent
-  /-- The definite use-types this article obligatorily expones. -/
-  uses : List DefiniteUse := []
-  deriving DecidableEq, Repr
+  /-- The definite uses the article obligatorily expones. -/
+  uses : Finset DefiniteUse := ∅
+  deriving DecidableEq
 
-/-- A demonstrative determiner (*this*/*that* book). `definiteUses` is nonempty iff the
-demonstrative is the *obligatory* exponent of some definite use (Mandarin anaphoric); for a
-plain demonstrative that merely *can* be used deictically it is empty. The determiner carrier of
-the word-class-neutral `Demonstrative` deixis capability, sharing it with `DemonstrativePronoun`. -/
+/-- A demonstrative determiner carries a deictic feature. Its `definiteUses` are the definite
+uses it obligatorily expones, as Mandarin *na* expones the anaphoric use, and they are empty for
+a demonstrative that merely can be used anaphorically. -/
 structure DemonstrativeDeterminer extends Determiner where
-  /-- Deictic feature (proximal/medial/distal/unspecified). -/
+  /-- The deictic feature. -/
   deictic : Reference.Deixis
-  /-- Definite use-types this demonstrative obligatorily expones. -/
-  definiteUses : List DefiniteUse := []
-  deriving DecidableEq, Repr
+  /-- The definite uses the demonstrative obligatorily expones. -/
+  definiteUses : Finset DefiniteUse := ∅
+  deriving DecidableEq
 
-/-- The demonstrative determiner exposes its `deictic` field as the `Demonstrative` capability,
-    shared word-class-neutrally with `DemonstrativePronoun`. -/
+/-- The demonstrative determiner shares the `Demonstrative` capability with the demonstrative
+pronoun. -/
 instance : Demonstrative DemonstrativeDeterminer := ⟨DemonstrativeDeterminer.deictic⟩
 
-/-- A quantificational determiner (every/some/most/no), marked like a `Pronoun`: a
-decidable lexical record carrying only what the *meaning leaves open* — the morphosyntactic
-idiosyncrasies on which synonymous determiners diverge. Its denotation is a generalized
-quantifier (`Semantics/Quantification`) supplied *externally* (the entry carries no `GQ`,
-exactly as `Pronoun` carries no referent); everything the meaning *fixes* — force, class,
-monotonicity, strength, conservativity — is a theorem about that denotation, not a field. -/
+/-- A quantificational determiner records only what its generalized-quantifier denotation
+leaves open, the grammatical number it selects and whether it selects mass nouns, since
+synonymous determiners such as *every* and *all* differ there. Everything the denotation fixes,
+its force, monotonicity, strength and conservativity, is a theorem about the denotation, which
+the consumers supply. -/
 structure Quantifier extends Determiner where
-  /-- Selectional number: the grammatical number the determiner combines with
-      (*every* → singular, *all*/*most* → plural; `none` = number-neutral). Not fixed by the
-      GQ — *every* and *all* can share a denotation yet differ here. -/
+  /-- The grammatical number the determiner selects, or none when it is number-neutral. -/
   numberRestriction : Option Number := none
-  /-- Selects mass NPs? (*much*/*all* do; *every*/*both* don't.) Likewise not fixed by the GQ. -/
+  /-- The determiner selects mass nouns. -/
   selectsMass : Bool := false
   deriving DecidableEq, Repr
 
-/-- A possessive determiner (my/your/the boy's). Its denotation is definiteness
-via a possession relation — `Possessive.denote` in
-`Semantics/Reference/Determiner.lean`. -/
+/-- A possessive determiner denotes a definite through a possession relation. -/
 structure Possessive extends Determiner
   deriving DecidableEq, Repr
 
 namespace Determiner
 
-/-- A determiner occurrence in a language's inventory: one of the four kinds,
-carrying its typed payload. -/
+/-! ### Entries -/
+
+/-- An entry of an inventory is an occurrence of one of the four kinds of determiner. -/
 inductive Entry where
   | article (a : Article)
   | demonstrative (d : DemonstrativeDeterminer)
   | quantifier (q : Quantifier)
   | possessive (p : Possessive)
+  deriving DecidableEq
+
+namespace Entry
+
+/-- The kind of an entry records an article's definiteness and nothing else. -/
+inductive Kind where
+  | article (d : Definiteness)
+  | demonstrative
+  | quantifier
+  | possessive
   deriving DecidableEq, Repr
 
-/-- The definite use-types a determiner occurrence obligatorily expones — the
-declared `uses`/`definiteUses` field for articles and demonstratives; quantifiers
-and possessives expone none. (That indefinite articles declare empty `uses` is a
-data convention of `Article.uses`, not enforced here.) -/
-def Entry.definiteUses : Entry → List DefiniteUse
-  | .article a      => a.uses
+/-- The kind of an entry. -/
+def kind : Entry → Kind
+  | .article a => .article a.definiteness
+  | .demonstrative _ => .demonstrative
+  | .quantifier _ => .quantifier
+  | .possessive _ => .possessive
+
+/-- The definite uses an entry obligatorily expones are an article's `uses` and a
+demonstrative's `definiteUses`; a quantifier or possessive expones none. -/
+def definiteUses : Entry → Finset DefiniteUse
+  | .article a => a.uses
   | .demonstrative d => d.definiteUses
-  | .quantifier _   => []
-  | .possessive _   => []
+  | .quantifier _ | .possessive _ => ∅
 
-/-- A language's declared determiner inventory — the per-language object a
-Fragment declares (`{Lang}.Determiners.inventory`) and the carrier of the
-inventory operations (`markingStrategy`, `Realizes`, …), which hang off it via
-dot notation. A `def` (not `abbrev`) so the operations resolve through the
-`Inventory` head constant. -/
+variable (e : Entry)
+
+/-- An entry marks an article strength when some definite use it expones calls for it. -/
+def Marks (p : Description.Strength) : Prop := ∃ u ∈ e.definiteUses, u.strength = p
+
+instance (p : Description.Strength) : Decidable (e.Marks p) := by unfold Marks; infer_instance
+
+/-- An entry is syncretic when it marks both strengths, as English *the* does. -/
+def IsSyncretic : Prop := e.Marks .uniqueness ∧ e.Marks .familiarity
+
+instance : Decidable e.IsSyncretic := by unfold IsSyncretic; infer_instance
+
+end Entry
+
+/-! ### Inventories -/
+
+/-- A language's declared determiner inventory is a list of entries. It is a `def` so that the
+operations below resolve by dot notation. -/
 def Inventory := List Entry
-
-instance : Membership Entry Inventory := inferInstanceAs (Membership Entry (List Entry))
-instance : DecidableEq Inventory := inferInstanceAs (DecidableEq (List Entry))
-instance (ds : Inventory) (p : Entry → Prop) [DecidablePred p] :
-    Decidable (∃ e ∈ ds, p e) :=
-  List.decidableBEx p ds
 
 namespace Inventory
 
-/-! ### Deriving the Moroney typology from a declared determiner set -/
+instance : Membership Entry Inventory := inferInstanceAs (Membership Entry (List Entry))
+instance : DecidableEq Inventory := inferInstanceAs (DecidableEq (List Entry))
+instance (ds : Inventory) (p : Entry → Prop) [DecidablePred p] : Decidable (∃ e ∈ ds, p e) :=
+  List.decidableBEx p ds
 
-/-- The declared inventory obligatorily marks article strength `p` — some determiner expones
-a definite use calling for `p`. -/
-def Marks (ds : Inventory) (p : Description.Strength) : Prop :=
-  ∃ e ∈ ds, ∃ u ∈ e.definiteUses, u.strength = p
+variable (ds : Inventory)
 
-instance (ds : Inventory) (p : Description.Strength) : Decidable (ds.Marks p) := by
-  unfold Marks; infer_instance
+/-- An inventory marks an article strength when some entry marks it. -/
+def Marks (p : Description.Strength) : Prop := ∃ e ∈ ds, e.Marks p
 
-/-- A one-determiner inventory marks a strength iff that determiner expones a use calling for
-it. -/
-theorem marks_singleton (e : Entry) (p : Description.Strength) :
-    Marks [e] p ↔ ∃ u ∈ e.definiteUses, u.strength = p :=
+instance (p : Description.Strength) : Decidable (ds.Marks p) := by unfold Marks; infer_instance
+
+/-- A one-entry inventory marks a strength iff the entry marks it. -/
+theorem marks_singleton (e : Entry) (p : Description.Strength) : Marks [e] p ↔ e.Marks p :=
   ⟨fun ⟨_, he, h⟩ ↦ List.mem_singleton.mp he ▸ h, fun h ↦ ⟨e, List.mem_singleton_self e, h⟩⟩
 
-/-- Some single determiner is the exponent of *both* presupposition types
-(English *the*). Distinguishes `.generallyMarked` (one form covers both) from
-`.bipartite` (German weak vs strong). -/
-def IsSyncretic (ds : Inventory) : Prop :=
-  ∃ e ∈ ds, (∃ u ∈ e.definiteUses, u.strength = .uniqueness)
-          ∧ (∃ u ∈ e.definiteUses, u.strength = .familiarity)
+/-- An inventory is syncretic when a single entry marks both strengths, which separates the
+generally marked cell from the bipartite one. -/
+def IsSyncretic : Prop := ∃ e ∈ ds, e.IsSyncretic
 
-instance (ds : Inventory) : Decidable ds.IsSyncretic := by
-  unfold IsSyncretic; infer_instance
+instance : Decidable ds.IsSyncretic := by unfold IsSyncretic; infer_instance
 
-/-- Derive the [moroney-2021] four-cell definiteness-marking typology from a
-declared determiner inventory. The typology is stored nowhere, since a language's
-cell is a theorem about its `Determiner.Inventory`, and each cell is characterized
-by its `markingStrategy_eq_*_iff` lemma. The cells are as follows.
+/-! ### The marking typology
 
-- If uniqueness and familiarity are both marked by one form, the cell is `.generallyMarked`.
-- If they are marked by distinct forms, the cell is `.bipartite`.
-- If uniqueness is marked and familiarity is not, the cell is `.generallyMarked`.
-- If familiarity is marked, for instance by a demonstrative, and uniqueness is not, the cell
-  is `.markedAnaphoric`.
-- If neither is marked, the cell is `.unmarked`.
--/
-def markingStrategy (ds : Inventory) : MarkingStrategy :=
-  if Marks ds .uniqueness then
-    if Marks ds .familiarity then
-      if IsSyncretic ds then .generallyMarked else .bipartite
+A language's [moroney-2021] cell is a theorem about its inventory, and each cell is
+characterized by its `markingStrategy_eq_*_iff` lemma. If uniqueness and familiarity are both
+marked by one form, or uniqueness alone is marked, the cell is `.generallyMarked`; if they are
+marked by distinct forms, it is `.bipartite`; if familiarity alone is marked, for instance by a
+demonstrative, it is `.markedAnaphoric`; and if neither is marked, it is `.unmarked`. -/
+
+/-- The [moroney-2021] definiteness-marking cell derived from an inventory. -/
+def markingStrategy : MarkingStrategy :=
+  if ds.Marks .uniqueness then
+    if ds.Marks .familiarity then
+      if ds.IsSyncretic then .generallyMarked else .bipartite
     else .generallyMarked
-  else if Marks ds .familiarity then .markedAnaphoric else .unmarked
+  else if ds.Marks .familiarity then .markedAnaphoric else .unmarked
 
-/-! Each cell of the derivation, characterized by its row of the decision table. -/
+section
 
-theorem markingStrategy_eq_generallyMarked_iff {ds : Inventory} :
+variable {ds}
+
+theorem markingStrategy_eq_generallyMarked_iff :
     ds.markingStrategy = .generallyMarked ↔
       ds.Marks .uniqueness ∧ (ds.IsSyncretic ∨ ¬ds.Marks .familiarity) := by
   unfold markingStrategy; split_ifs <;> simp_all
 
-theorem markingStrategy_eq_bipartite_iff {ds : Inventory} :
+theorem markingStrategy_eq_bipartite_iff :
     ds.markingStrategy = .bipartite ↔
       ds.Marks .uniqueness ∧ ds.Marks .familiarity ∧ ¬ds.IsSyncretic := by
   unfold markingStrategy; split_ifs <;> simp_all
 
-theorem markingStrategy_eq_markedAnaphoric_iff {ds : Inventory} :
-    ds.markingStrategy = .markedAnaphoric ↔
-      ¬ds.Marks .uniqueness ∧ ds.Marks .familiarity := by
+theorem markingStrategy_eq_markedAnaphoric_iff :
+    ds.markingStrategy = .markedAnaphoric ↔ ¬ds.Marks .uniqueness ∧ ds.Marks .familiarity := by
   unfold markingStrategy; split_ifs <;> simp_all
 
-theorem markingStrategy_eq_unmarked_iff {ds : Inventory} :
-    ds.markingStrategy = .unmarked ↔
-      ¬ds.Marks .uniqueness ∧ ¬ds.Marks .familiarity := by
+theorem markingStrategy_eq_unmarked_iff :
+    ds.markingStrategy = .unmarked ↔ ¬ds.Marks .uniqueness ∧ ¬ds.Marks .familiarity := by
   unfold markingStrategy; split_ifs <;> simp_all
 
-/-- The derived [schwarz-2009] three-cell article system, the coarsening
-`MarkingStrategy.articleType` of the marking strategy. -/
-def articleType (ds : Inventory) : ArticleType := (markingStrategy ds).articleType
+end
 
-end Inventory
+/-- The [schwarz-2009] article system of an inventory is the coarsening
+`MarkingStrategy.articleType` of its marking cell. -/
+def articleType : ArticleType := ds.markingStrategy.articleType
 
-/-! ### Kind predicates over an inventory (for realization) -/
+/-! ### Realization -/
 
-/-- The occurrence is a definite article. -/
-def Entry.IsDefiniteArticle : Entry → Prop
-  | .article a => a.definiteness = .definite
-  | _          => False
+/-- An inventory realizes a kind of nominal description when it carries a form for it. A bare
+nominal needs no determiner, a unique or anaphoric definite needs an entry marking its
+strength, and an indefinite, demonstrative or possessive needs an entry of that kind. -/
+def Realizes : Description.Kind → Prop
+  | .bare => True
+  | .indefinite => ∃ e ∈ ds, e.kind = .article .indefinite
+  | .unique => ds.Marks .uniqueness
+  | .anaphoric => ds.Marks .familiarity
+  | .demonstrative => ∃ e ∈ ds, e.kind = .demonstrative
+  | .possessive => ∃ e ∈ ds, e.kind = .possessive
 
-instance : DecidablePred Entry.IsDefiniteArticle := fun e => by
-  cases e <;> unfold Entry.IsDefiniteArticle <;> infer_instance
+instance : DecidablePred ds.Realizes := fun k ↦ by cases k <;> unfold Realizes <;> infer_instance
 
-/-- The occurrence is an indefinite article. -/
-def Entry.IsIndefiniteArticle : Entry → Prop
-  | .article a => a.definiteness = .indefinite
-  | _          => False
-
-instance : DecidablePred Entry.IsIndefiniteArticle := fun e => by
-  cases e <;> unfold Entry.IsIndefiniteArticle <;> infer_instance
-
-/-- The occurrence is a demonstrative. -/
-def Entry.IsDemonstrative : Entry → Prop
-  | .demonstrative _ => True
-  | _                => False
-
-instance : DecidablePred Entry.IsDemonstrative := fun e => by
-  cases e <;> unfold Entry.IsDemonstrative <;> infer_instance
-
-/-- The occurrence is a possessive. -/
-def Entry.IsPossessive : Entry → Prop
-  | .possessive _ => True
-  | _             => False
-
-instance : DecidablePred Entry.IsPossessive := fun e => by
-  cases e <;> unfold Entry.IsPossessive <;> infer_instance
-
-/-! ### Realization: which description kinds the inventory has forms for -/
-
-namespace Inventory
-
-/-- Morphological realization: the declared determiner inventory contains a
-form for the given kind of nominal description. Bare nominals need no
-determiner, so `.bare` is vacuously realized; unique and anaphoric definites
-need a determiner marking the corresponding strength
-(`Marks`); indefinite/demonstrative/possessive need a determiner of that
-kind.
-
-This is inventory data, not syntactic licensing — no structural relation
-between a licensor and licensee is modeled — and not expressibility or
-felicity: a kind can be *expressed* without a determiner realizing it (Shan
-anaphoric definites surface as bare nouns, [moroney-2021]), and which realized
-form a context *selects* (type-shift blocking, Index!, Maximize Presupposition)
-is downstream pragmatics ([jenks-2018], `Studies/Jenks2018.lean`). -/
-def Realizes (ds : Inventory) : Description.Kind → Prop
-  | .bare          => True
-  | .indefinite    => ∃ e ∈ ds, e.IsIndefiniteArticle
-  | .unique        => Marks ds .uniqueness
-  | .anaphoric     => Marks ds .familiarity
-  | .demonstrative => ∃ e ∈ ds, e.IsDemonstrative
-  | .possessive    => ∃ e ∈ ds, e.IsPossessive
-
-instance (ds : Inventory) : DecidablePred ds.Realizes := fun k => by
-  cases k <;> unfold Realizes <;> infer_instance
-
-/-- Realizing an article strength's kind is exactly marking that strength: the
-description-kind pipeline (`Description.Strength.toKind`) and the inventory pipeline
-(`Marks`) coincide by construction. -/
-theorem realizes_toKind (ds : Inventory) (p : Description.Strength) :
-    ds.Realizes p.toKind ↔ ds.Marks p := by
+/-- An inventory realizes the kind of an article strength iff it marks that strength. -/
+theorem realizes_toKind (p : Description.Strength) : ds.Realizes p.toKind ↔ ds.Marks p := by
   cases p <;> exact Iff.rfl
 
 end Inventory
 
 end Determiner
 
-/-! ### Admissible article strengths
+/-! ### Article strengths -/
 
-The [schwarz-2009] presupposition types an article *can* express — its
-admissible readings, read off `uses`. A syncretic article (English *the*) admits
-both; a weak- or strong-only article admits one. The image of these under
-`Description.ofStrength` is the article's set of possible denotations
-(`Article.toDescriptions`, in `Reference/Determiner.lean`). -/
+/-- The strengths an article admits are those its uses call for. A syncretic article such as
+English *the* admits both, and a weak or strong article admits one. -/
+def Article.strengths (a : Article) : Finset Description.Strength :=
+  a.uses.image DefiniteUse.strength
 
-/-- The [schwarz-2009] strengths an article admits, read off its `uses`. -/
-def Article.strengths (a : Article) : List Description.Strength :=
-  a.uses.map DefiniteUse.strength
-
-/-- An article admits strength `p` iff a one-article inventory containing it marks `p`, the
-single-article case of `Determiner.Inventory.Marks`. -/
+/-- An article admits a strength iff, as an entry, it marks that strength. -/
 theorem Article.mem_strengths_iff_marks (a : Article) (p : Description.Strength) :
-    p ∈ a.strengths ↔ Determiner.Inventory.Marks [.article a] p := by
-  simp [Article.strengths, Determiner.Inventory.marks_singleton, Determiner.Entry.definiteUses]
+    p ∈ a.strengths ↔ (Determiner.Entry.article a).Marks p :=
+  Finset.mem_image
