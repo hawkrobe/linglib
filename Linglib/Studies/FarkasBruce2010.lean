@@ -19,7 +19,7 @@ sentence radical in every projected common ground (`Table.mem_of_mem_projectedSe
 `Table.mem_or_compl_mem_of_mem_projectedSet_polarQuestion`). Confirmation (16) followed by the
 common-ground increase `M'` (17) settles an assertion (`shared_assert_confirm`,
 `isStable_settle_assert`, `mem_cg_settle`); a total denial (22) leaves nothing
-consistent projected and the conversation in crisis (21, `Table.inCrisis_assert_compl`), from
+consistent projected and the conversation in crisis (21, `Table.inCrisis_assert_assert_compl`), from
 which agreeing to disagree (23) recovers with the commitments intact
 (`not_inCrisis_agreeToDisagree`, `dc_agreeToDisagree`). A reverse answer to a polar question
 (28) is no crisis (`not_inCrisis_polarQuestion_assert_compl`), a confirming answer (24)
@@ -212,7 +212,7 @@ theorem Confirming.iff_eq_negative [Nonempty W] {s t : Sentence W} (h : t.radica
 theorem inCrisis_reversing_assert {s t : Sentence W} (h : Reversing s t) (a b : Discourse.Role) :
     ((K.assert a s.prop).assert b t.prop).InCrisis := by
   rw [h]
-  exact K.inCrisis_assert_compl a s.prop b
+  exact K.inCrisis_assert_assert_compl a s.prop b
 
 /-- The same [reverse] response to the polar question is a reverse answer: no crisis. -/
 theorem not_inCrisis_reversing_polarQuestion {s t : Sentence W} (h : Reversing s t)
