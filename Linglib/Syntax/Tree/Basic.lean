@@ -30,7 +30,7 @@ to `Tree` at the interface).
 ## `Syntax.Tree C W`
 
 N-ary branching with categories on every node. Read by both interfaces:
-- **Compositional interpretation** (LF): `interp`/`evalTree`
+- **Compositional interpretation** (LF): `interp`
   in `Semantics/Composition/Tree.lean` — type-driven, ignores categories
 - **Structural operations** (PF): [katzir-2007] `StructOp` (substitution,
   deletion, contraction) in `Semantics/Alternatives/Structural.lean` —

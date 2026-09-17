@@ -9,7 +9,7 @@ import Linglib.Semantics.Composition.Lexicon
 
 Covert operators (Gen, DIST, Hab, DPP) are semantically contentful LF nodes
 with no overt realization. This module packages them as `Denotation` values
-that compose via FA in `evalTree`.
+that compose via FA in `Tree.interp`.
 
 The *semantics* these wrap is the canonical generalized-quantifier substrate
 in `Quantification/Counting.lean` (`everyOn`, `mostOn`, `thresholdOn`,
