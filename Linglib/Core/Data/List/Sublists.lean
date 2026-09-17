@@ -9,10 +9,14 @@ import Mathlib.Data.List.Sublists
 # Sublists paired with their complements
 
 `l.sublists'.revzip` pairs each sublist of `l` with the complementary sublist
-(`List.revzip_sublists'`). This file gives its head recursion: a sublist of `a :: l` either
-omits `a` (so `a` joins the complement) or starts with `a`.
+(`List.revzip_sublists'`). This file gives its head recursion, the `revzip` companion of
+`List.sublists'_cons`: a sublist of `a :: l` either omits `a`, so `a` joins the complement, or
+starts with `a`. [UPSTREAM] candidate for `Mathlib/Data/List/Sublists.lean`.
 
-`[UPSTREAM]` candidate; eventual mathlib home `Mathlib.Data.List.Sublists`.
+## Main results
+
+* `List.revzip_sublists'_cons`: the head recursion of `sublists'.revzip`.
+* `List.revzip_singleton`: the base case.
 -/
 
 namespace List
