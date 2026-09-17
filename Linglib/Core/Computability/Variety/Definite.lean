@@ -105,7 +105,7 @@ theorem IsDefinite.syntacticEquiv_of_rtake_eq (h : L.IsDefinite k) {u v : List �
     simpa only [List.length_rtake] using congrArg List.length huv
   rcases le_or_gt k u.length with hu | hu
   · have key : ∀ w : List α, k ≤ w.length → L.SyntacticEquiv w (w.rtake k) := fun w hw => by
-      conv_lhs => rw [← List.rdrop_append_rtake w k]
+      conv_lhs => rw [← List.rdrop_append_rtake k w]
       exact h.syntacticEquiv_append_left (by rw [List.length_rtake]; omega) _
     exact ((key u hu).trans (huv ▸ .refl _)).trans (key v (by omega)).symm
   · rw [List.rtake_of_length_le hu.le, List.rtake_of_length_le (by omega)] at huv
