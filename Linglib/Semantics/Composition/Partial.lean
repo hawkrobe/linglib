@@ -27,6 +27,11 @@ difference between the engine returning no denotation and returning an undefined
 * `Partial.Uninterpretable` and `Partial.PresupFailure` are the two ways of lacking a value, and
   `Partial.interp_map_fst_congr` shows the first depends on the leaves' types alone.
 * `Partial.the` is the definite article, with `Partial.the_dom` its definedness condition.
+* `Ty.Lifts` and `Denotation.Lifts` relate a total denotation to a partial one lifting it, and
+  `Partial.interp_lifts` shows that on a lexicon lifting a total one the partial engine's
+  defined values lift the pure engine's, so such a lexicon has no presupposition failure
+  (`Partial.not_presupFailure_of_lifts`). `Ty.Domain.toPartial` is the lift at a first-order
+  type.
 
 ## References
 
@@ -140,12 +145,42 @@ theorem applyForward_some_some {σ τ : Ty} (f : Ty.PDomain E W (σ ⇒ τ) D)
       some ⟨τ, f a⟩ := by
   simp [applyForward]
 
+/-- Backward application of a defined function to a defined argument evaluates the function. -/
+theorem applyBackward_some_some {σ τ : Ty} (a : Ty.PDomain E W σ D)
+    (f : Ty.PDomain E W (σ ⇒ τ) D) :
+    applyBackward (⟨σ, Part.some a⟩ : PDenotation E W D) ⟨σ ⇒ τ, Part.some f⟩ =
+      some ⟨τ, f a⟩ := by
+  simp [applyBackward]
+
+/-- Predicate modification of two defined predicates conjoins them pointwise. -/
+theorem pm_some_some (P Q : Ty.PDomain E W (.e ⇒ .t) D) :
+    pm (⟨.e ⇒ .t, Part.some P⟩ : PDenotation E W D) ⟨.e ⇒ .t, Part.some Q⟩ =
+      some ⟨.e ⇒ .t, Part.some fun x ↦ (P x).bind fun a ↦ (Q x).map fun b ↦ a ∧ b⟩ := by
+  simp [pm]
+
 /-- A binary node whose left daughter is a defined function over the right daughter's type
 applies it forward. -/
-theorem binary_some_some {σ τ : Ty} (f : Ty.PDomain E W (σ ⇒ τ) D)
-    (a : Ty.PDomain E W σ D) :
+theorem binary_forward {σ τ : Ty} (f : Ty.PDomain E W (σ ⇒ τ) D) (a : Ty.PDomain E W σ D) :
     binary (⟨σ ⇒ τ, Part.some f⟩ : PDenotation E W D) ⟨σ, Part.some a⟩ = some ⟨τ, f a⟩ := by
   rw [binary, applyForward_some_some]; rfl
+
+/-- A binary node whose right daughter is a defined function over the left daughter's type
+applies it backward, forward application failing since no type is its own argument type. -/
+theorem binary_backward {σ τ : Ty} (a : Ty.PDomain E W σ D) (f : Ty.PDomain E W (σ ⇒ τ) D) :
+    binary (⟨σ, Part.some a⟩ : PDenotation E W D) ⟨σ ⇒ τ, Part.some f⟩ = some ⟨τ, f a⟩ := by
+  have h : applyForward (⟨σ, Part.some a⟩ : PDenotation E W D) ⟨σ ⇒ τ, Part.some f⟩ = none :=
+    Option.map_eq_none_iff.mp (by rw [applyForward_map_fst]; exact tyForward_fn_self σ τ)
+  rw [binary, h, applyBackward_some_some]; rfl
+
+/-- Two defined predicates compose by predicate modification, application failing on them. -/
+theorem binary_pm (P Q : Ty.PDomain E W (.e ⇒ .t) D) :
+    binary (⟨.e ⇒ .t, Part.some P⟩ : PDenotation E W D) ⟨.e ⇒ .t, Part.some Q⟩ =
+      some ⟨.e ⇒ .t, Part.some fun x ↦ (P x).bind fun a ↦ (Q x).map fun b ↦ a ∧ b⟩ := by
+  have h₁ : applyForward (⟨.e ⇒ .t, Part.some P⟩ : PDenotation E W D) ⟨.e ⇒ .t, Part.some Q⟩ =
+      none := Option.map_eq_none_iff.mp (by rw [applyForward_map_fst]; rfl)
+  have h₂ : applyBackward (⟨.e ⇒ .t, Part.some P⟩ : PDenotation E W D) ⟨.e ⇒ .t, Part.some Q⟩ =
+      none := Option.map_eq_none_iff.mp (by rw [applyBackward_map_fst]; rfl)
+  rw [binary, h₁, h₂, pm_some_some]; rfl
 
 /-! ### Tree interpretation -/
 
@@ -261,5 +296,252 @@ theorem the_lift_eq_some {P : E → Prop} {a : E} (h : ∀ x, P x ↔ x = a) :
   exact Part.eq_some_iff.mpr ⟨hu, (h _).mp ((holds_lift P _).mp (Classical.choose_spec hu).1)⟩
 
 end Partial
+
+/-! ### Total lexica
+
+A partial denotation lifts a total one when it agrees with it at a base type and, at a function
+type, is defined on every lift of an argument with a value lifting the total function's value.
+On a lexicon whose entries lift a total lexicon, every defined value of the partial engine lifts
+the pure engine's value at the same node, so a total lexicon has no presupposition failures. The
+converse fails, since the pure engine also has intensional application and event
+identification. -/
+
+section Total
+
+open Syntax Tree
+open scoped Assignment
+
+variable {E W D : Type}
+
+/-- The lifting relation between a total denotation and a partial one of the same type. -/
+def Ty.Lifts : (ty : Ty) → Ty.Domain E W ty D → Ty.PDomain E W ty D → Prop
+  | .e, x, y => x = y
+  | .t, x, y => x = y
+  | .d, x, y => x = y
+  | .n, x, y => x = y
+  | .v, x, y => x = y
+  | .s, x, y => x = y
+  | .fn a b, f, f' => ∀ x y, Ty.Lifts a x y → ∃ z, f' y = Part.some z ∧ Ty.Lifts b (f x) z
+  | .intens a, f, f' => ∀ w, ∃ z, f' w = Part.some z ∧ Ty.Lifts a (f w) z
+
+@[simp] theorem Ty.lifts_e {x y : E} : Ty.Lifts (E := E) (W := W) (D := D) .e x y ↔ x = y :=
+  Iff.rfl
+
+@[simp] theorem Ty.lifts_t {x y : Prop} : Ty.Lifts (E := E) (W := W) (D := D) .t x y ↔ x = y :=
+  Iff.rfl
+
+theorem Ty.lifts_fn {a b : Ty} {f : Ty.Domain E W (a ⇒ b) D} {f' : Ty.PDomain E W (a ⇒ b) D} :
+    Ty.Lifts (a ⇒ b) f f' ↔
+      ∀ x y, Ty.Lifts a x y → ∃ z, f' y = Part.some z ∧ Ty.Lifts b (f x) z :=
+  Iff.rfl
+
+/-- A total function of individuals lifts to the everywhere-defined partial function whose
+values lift its values. -/
+theorem Ty.lifts_lift {b : Ty} {f : E → Ty.Domain E W b D} {f' : E → Ty.PDomain E W b D}
+    (h : ∀ x, Ty.Lifts b (f x) (f' x)) : Ty.Lifts (.e ⇒ b) f (PFun.lift f') :=
+  fun x _ hxy ↦ ⟨f' x, hxy ▸ rfl, h x⟩
+
+/-- A partial denotation lifts a total one when it has the same type and a defined value that
+lifts the total value. -/
+inductive Denotation.Lifts : Denotation E W Id D → PDenotation E W D → Prop
+  | mk {ty : Ty} {x : Ty.Domain E W ty D} {y : Ty.PDomain E W ty D} (h : Ty.Lifts ty x y) :
+      Denotation.Lifts ⟨ty, x⟩ ⟨ty, Part.some y⟩
+
+theorem Denotation.Lifts.fst {d : Denotation E W Id D} {d' : PDenotation E W D}
+    (h : d.Lifts d') : d.1 = d'.1 := by cases h; rfl
+
+/-- The types whose functions take only individuals as arguments, which the extensional
+lexicon of [heim-kratzer-1998] has: individuals, truth values, degrees, cardinalities,
+eventualities, functions from individuals, and intensions. -/
+inductive Ty.FirstOrder : Ty → Prop
+  | e : FirstOrder .e
+  | t : FirstOrder .t
+  | d : FirstOrder .d
+  | n : FirstOrder .n
+  | v : FirstOrder .v
+  | s : FirstOrder .s
+  | fn {b : Ty} : FirstOrder b → FirstOrder (.e ⇒ b)
+  | intens {a : Ty} : FirstOrder a → FirstOrder (.intens a)
+
+/-- The partial denotation a total one lifts to, defined everywhere on individual arguments
+and nowhere on a function argument. -/
+def Ty.Domain.toPartial : (ty : Ty) → Ty.Domain E W ty D → Ty.PDomain E W ty D
+  | .e, x => x
+  | .t, x => x
+  | .d, x => x
+  | .n, x => x
+  | .v, x => x
+  | .s, x => x
+  | .fn .e b, f => PFun.lift fun x ↦ toPartial b (f x)
+  | .fn _ _, _ => fun _ ↦ Part.none
+  | .intens a, f => PFun.lift fun w ↦ toPartial a (f w)
+
+/-- At a first-order type, the lift of a total denotation lifts it. -/
+theorem Ty.lifts_toPartial {ty : Ty} (h : ty.FirstOrder) (x : Ty.Domain E W ty D) :
+    Ty.Lifts ty x (Ty.Domain.toPartial ty x) := by
+  induction h with
+  | fn _ ih => exact Ty.lifts_lift fun x ↦ ih _
+  | intens _ ih => exact fun w ↦ ⟨_, rfl, ih _⟩
+  | _ => rfl
+
+/-- The partial denotation a total one lifts to. -/
+def Denotation.toPartial (d : Denotation E W Id D) : PDenotation E W D :=
+  ⟨d.1, Part.some (Ty.Domain.toPartial d.1 d.2)⟩
+
+/-- A first-order total denotation is lifted by its partial counterpart. -/
+theorem Denotation.lifts_toPartial {d : Denotation E W Id D} (h : d.1.FirstOrder) :
+    d.Lifts d.toPartial := by
+  obtain ⟨ty, x⟩ := d
+  exact .mk (Ty.lifts_toPartial h x)
+
+namespace Partial
+
+variable {d₁ d₂ : Denotation E W Id D} {d₁' d₂' d' : PDenotation E W D}
+
+theorem applyForward_lifts (h₁ : d₁.Lifts d₁') (h₂ : d₂.Lifts d₂')
+    (h : applyForward d₁' d₂' = some d') :
+    ∃ d, Tree.applyForward d₁ d₂ = some d ∧ d.Lifts d' := by
+  cases h₁ with | @mk ty₁ x₁ y₁ hl₁ => ?_
+  cases h₂ with | @mk ty₂ x₂ y₂ hl₂ => ?_
+  cases ty₁
+  case fn σ τ =>
+    by_cases hσ : σ = ty₂
+    · subst hσ
+      rw [applyForward_some_some, Option.some.injEq] at h
+      subst h
+      obtain ⟨z, hz, hl⟩ := hl₁ x₂ y₂ hl₂
+      exact ⟨⟨τ, x₁ x₂⟩, by rw [Tree.applyForward_fn]; rfl, hz ▸ .mk hl⟩
+    · have hty := applyForward_map_fst (⟨σ ⇒ τ, Part.some y₁⟩ : PDenotation E W D)
+        ⟨ty₂, Part.some y₂⟩
+      rw [h] at hty
+      simp [tyForward, hσ] at hty
+  all_goals simp [applyForward] at h
+
+theorem applyBackward_lifts (h₁ : d₁.Lifts d₁') (h₂ : d₂.Lifts d₂')
+    (h : applyBackward d₁' d₂' = some d') :
+    ∃ d, Tree.applyBackward d₁ d₂ = some d ∧ d.Lifts d' := by
+  cases h₁ with | @mk ty₁ x₁ y₁ hl₁ => ?_
+  cases h₂ with | @mk ty₂ x₂ y₂ hl₂ => ?_
+  cases ty₂
+  case fn σ τ =>
+    by_cases hσ : σ = ty₁
+    · subst hσ
+      rw [applyBackward_some_some, Option.some.injEq] at h
+      subst h
+      obtain ⟨z, hz, hl⟩ := hl₂ x₁ y₁ hl₁
+      exact ⟨⟨τ, x₂ x₁⟩, by rw [Tree.applyBackward_fn]; rfl, hz ▸ .mk hl⟩
+    · have hty := applyBackward_map_fst (⟨ty₁, Part.some y₁⟩ : PDenotation E W D)
+        ⟨σ ⇒ τ, Part.some y₂⟩
+      rw [h] at hty
+      simp [tyForward, hσ] at hty
+  all_goals simp [applyBackward] at h
+
+theorem pm_lifts (h₁ : d₁.Lifts d₁') (h₂ : d₂.Lifts d₂') (h : pm d₁' d₂' = some d') :
+    ∃ d, Tree.interpBinary d₁ d₂ = some d ∧ d.Lifts d' := by
+  cases h₁ with | @mk ty₁ x₁ y₁ hl₁ => ?_
+  cases h₂ with | @mk ty₂ x₂ y₂ hl₂ => ?_
+  have hty := pm_map_fst (⟨ty₁, Part.some y₁⟩ : PDenotation E W D) ⟨ty₂, Part.some y₂⟩
+  rw [h] at hty
+  dsimp only at hty
+  unfold tyPM at hty
+  split at hty
+  · rw [pm_some_some, Option.some.injEq] at h
+    subst h
+    refine ⟨_, Tree.interpBinary_pm (M := Id) x₁ x₂, .mk (Ty.lifts_fn.mpr fun x _ hxy ↦ ?_)⟩
+    obtain rfl : x = _ := hxy
+    obtain ⟨a, ha, hla⟩ := hl₁ x x rfl
+    obtain ⟨b, hb, hlb⟩ := hl₂ x x rfl
+    rw [Ty.lifts_t] at hla hlb
+    subst hla hlb
+    exact ⟨x₁ x ∧ x₂ x, by simp [ha, hb], rfl⟩
+  · simp at hty
+
+theorem binary_lifts (h₁ : d₁.Lifts d₁') (h₂ : d₂.Lifts d₂') (h : binary d₁' d₂' = some d') :
+    ∃ d, Tree.interpBinary d₁ d₂ = some d ∧ d.Lifts d' := by
+  simp only [binary, Option.orElse_eq_orElse, Option.orElse_eq_or, Option.or_eq_some_iff] at h
+  rcases h with h | ⟨hf, h | ⟨hb, h⟩⟩
+  · obtain ⟨d, hd, hl⟩ := applyForward_lifts h₁ h₂ h
+    exact ⟨d, by simp only [Tree.interpBinary, Tree.tryFA, Option.orElse_eq_orElse,
+      Option.orElse_eq_or, hd, Option.some_or], hl⟩
+  · obtain ⟨d, hd, hl⟩ := applyBackward_lifts h₁ h₂ h
+    have hf' : Tree.applyForward d₁ d₂ = none := Option.map_eq_none_iff.mp <| by
+      rw [Tree.applyForward_map_fst, h₁.fst, h₂.fst, ← applyForward_map_fst, hf]; rfl
+    exact ⟨d, by simp only [Tree.interpBinary, Tree.tryFA, Option.orElse_eq_orElse,
+      Option.orElse_eq_or, hf', hd, Option.none_or, Option.some_or], hl⟩
+  · exact pm_lifts h₁ h₂ h
+
+variable {C : Type} {L : Type*} {lex : L → Option (Denotation E W Id D)}
+  {lex' : L → Option (PDenotation E W D)}
+
+/-- On a lexicon lifting a total one, every defined value of the partial engine lifts the pure
+engine's value at that node. -/
+theorem interp_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w = some d ∧ d.Lifts d')
+    (g : Assignment E) (t : Tree C L) (h : interp lex' g t = some d') :
+    ∃ d, Tree.interp lex g t = some d ∧ d.Lifts d' := by
+  induction t using Tree.recAux generalizing g d' with
+  | terminal c w => exact hlex w d' h
+  | node c cs ih =>
+    match cs with
+    | [] => exact absurd h (by simp [interp])
+    | [t] => exact ih t (by simp) g h
+    | [t₁, t₂] =>
+      rw [interp_node_binary] at h
+      obtain ⟨d₁', h₁', h⟩ := Option.bind_eq_some_iff.mp h
+      obtain ⟨d₂', h₂', h⟩ := Option.bind_eq_some_iff.mp h
+      obtain ⟨d₁, hd₁, hl₁⟩ := ih t₁ (by simp) g h₁'
+      obtain ⟨d₂, hd₂, hl₂⟩ := ih t₂ (by simp) g h₂'
+      obtain ⟨d, hd, hl⟩ := binary_lifts hl₁ hl₂ h
+      exact ⟨d, by rw [Tree.interp_node_binary, hd₁, hd₂, Option.bind_some, Option.bind_some,
+        hd], hl⟩
+    | _ :: _ :: _ :: _ => exact absurd h (by simp [interp])
+  | trace n c =>
+    rw [interp_trace, Option.some.injEq] at h
+    subst h
+    exact ⟨⟨.e, g n⟩, rfl, .mk rfl⟩
+  | bind n c body ih =>
+    rw [interp_bind, Option.map_eq_some_iff] at h
+    obtain ⟨⟨τ, v⟩, hb, rfl⟩ := h
+    obtain ⟨d, hd, hl⟩ := ih g hb
+    cases hl with | @mk _ x₀ y₀ _ => ?_
+    refine ⟨⟨.e ⇒ τ, fun x ↦ Tree.valueAt τ x₀ (Tree.interp lex (g[n ↦ x]) body)⟩, ?_, .mk ?_⟩
+    · rw [Tree.interp_bind, hd]; rfl
+    · intro x _ hxy
+      obtain rfl : x = _ := hxy
+      have hty := interp_map_fst_congr lex' lex' g (g[n ↦ x]) (fun _ ↦ rfl) body
+      rw [hb] at hty
+      obtain ⟨v', hv'⟩ : ∃ v', interp lex' (g[n ↦ x]) body = some ⟨τ, v'⟩ := by
+        rcases hg : interp lex' (g[n ↦ x]) body with _ | ⟨τ', v'⟩
+        · simp [hg] at hty
+        · simp only [hg, Option.map_some, Option.some.injEq] at hty; subst hty; exact ⟨v', rfl⟩
+      obtain ⟨d', hd', hl'⟩ := ih (g[n ↦ x]) hv'
+      cases hl' with | @mk _ x' y' hl' => ?_
+      refine ⟨y', by simp [valueAt, hv'], ?_⟩
+      simpa [Tree.valueAt, hd'] using hl'
+
+/-- A lexicon lifting a total one has no presupposition failures. -/
+theorem not_presupFailure_of_lifts
+    (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w = some d ∧ d.Lifts d') (g : Assignment E)
+    (t : Tree C L) : ¬ PresupFailure lex' g t := by
+  rintro ⟨d', hd', hdom⟩
+  obtain ⟨d, -, hl⟩ := interp_lifts hlex g t hd'
+  cases hl
+  exact hdom trivial
+
+/-- The entrywise lift of a first-order lexicon lifts it. -/
+theorem lifts_map_toPartial (h : ∀ w d, lex w = some d → d.1.FirstOrder) (w : L)
+    (d' : PDenotation E W D) (h' : (lex w).map Denotation.toPartial = some d') :
+    ∃ d, lex w = some d ∧ d.Lifts d' := by
+  obtain ⟨d, hd, rfl⟩ := Option.map_eq_some_iff.mp h'
+  exact ⟨d, hd, Denotation.lifts_toPartial (h w d hd)⟩
+
+/-- The entrywise lift of a first-order lexicon has no presupposition failures. -/
+theorem not_presupFailure_map_toPartial (h : ∀ w d, lex w = some d → d.1.FirstOrder)
+    (g : Assignment E) (t : Tree C L) :
+    ¬ PresupFailure (fun w ↦ (lex w).map Denotation.toPartial) g t :=
+  not_presupFailure_of_lifts (lifts_map_toPartial h) g t
+
+end Partial
+
+end Total
 
 end Semantics.Composition

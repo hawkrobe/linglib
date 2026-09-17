@@ -121,6 +121,14 @@ def Model.lexiconAt (m : Model L) (nm : LexNaming L) (w : m.W) : Lexicon m.E m.W
     (nm.preds₁ s).map (fun R => ⟨.e ⇒ .t, m.pred₁ext R w⟩) <|>
     (nm.preds₂ s).map (fun R => ⟨.e ⇒ .e ⇒ .t, m.pred₂ext R w⟩)
 
+/-- A naming-map lexicon has entries of the three extensional lexical types only. -/
+theorem Model.lexiconAt_fst {m : Model L} {nm : LexNaming L} {w : m.W} {s : String}
+    {d : Denotation m.E m.W} (h : m.lexiconAt nm w s = some d) :
+    d.1 = .e ∨ d.1 = (.e ⇒ .t) ∨ d.1 = (.e ⇒ .e ⇒ .t) := by
+  simp only [Model.lexiconAt, Option.orElse_eq_orElse, Option.orElse_eq_or, Option.or_eq_some_iff,
+    Option.map_eq_some_iff] at h
+  rcases h with ⟨_, -, rfl⟩ | ⟨-, ⟨_, -, rfl⟩ | ⟨-, _, -, rfl⟩⟩ <;> simp
+
 /-! ### Engine integration: the real `Tree.interp` composes a model-sourced lexicon -/
 
 /-- A minimal model-sourced lexicon: `"subj"` denotes `subj`, and the intransitive verb `"V"`
