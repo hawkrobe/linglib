@@ -144,13 +144,20 @@ theorem factorEmbeds_iff_bounded :
 theorem factorEmbeds_iff_infix_of_link_free (hF : ∀ i j p q, ¬ F.link i j p q) :
     F.FactorEmbeds X ↔ ∀ i, F.tierWord i <:+: X.tierWord i := by
   constructor
-  · rintro ⟨o, hw, -⟩ i
-    exact (List.isInfix_iff_exists_offset _ _).mpr
-      ⟨o i, fun p hp => hw i p (by simpa using hp)⟩
+  · rintro ⟨o, h⟩ i
+    rcases Nat.eq_zero_or_pos (F.tierWord i).length with h0 | hpos
+    · rw [List.length_eq_zero_iff.mp h0]; exact List.nil_infix
+    refine List.infix_iff_getElem?.mpr ⟨o i, ?_, fun p hp ↦ ?_⟩
+    · have hlast := (h.window i _ (by simpa using Nat.sub_lt hpos Nat.one_pos)).trans
+        (List.getElem?_eq_getElem (Nat.sub_lt hpos Nat.one_pos))
+      have := (List.getElem?_eq_some_iff.mp hlast).1
+      omega
+    · exact (h.window i p (by simpa using hp)).trans (List.getElem?_eq_getElem hp)
   · intro h
-    choose o ho using fun i => (List.isInfix_iff_exists_offset _ _).mp (h i)
-    exact ⟨o, fun i p hp => ho i p (by simpa using hp),
-      fun i j p q hl => absurd hl (hF i j p q)⟩
+    choose o ho using fun i ↦ List.infix_iff_getElem?.mp (h i)
+    exact ⟨o, fun i p hp ↦ ((ho i).2 p (by simpa using hp)).trans
+        (List.getElem?_eq_getElem (by simpa using hp)).symm,
+      fun i j p q hl ↦ absurd hl (hF i j p q)⟩
 
 end AR
 

@@ -151,28 +151,22 @@ lemma mem_kFactors_boundary_iff {f : List (Option α)} (hk : 1 ≤ k) :
   rw [List.mem_kFactors]
   constructor
   · rintro ⟨hinf, hlen⟩
-    obtain ⟨δ, hδ⟩ := (List.isInfix_iff_exists_offset _ _).mp hinf
-    have hbound : δ + k ≤ y.length + 2 * (k - 1) := by
-      by_contra hc
-      have h1 := hδ (k - 1) (by omega)
-      rw [List.getElem?_eq_none
-        (show (boundary k y).length ≤ k - 1 + δ by rw [length_boundary]; omega)] at h1
-      have h2 := List.getElem?_eq_none_iff.mp h1.symm
-      omega
+    obtain ⟨δ, hbound, hδ⟩ := List.infix_iff_getElem?.mp hinf
+    rw [length_boundary] at hbound
     refine ⟨(δ : ℤ) - (k - 1 : ℕ), by omega, by omega, ?_⟩
     apply List.ext_getElem?
     intro j
     rcases lt_or_ge j k with hj | hj
-    · rw [getElem?_window hj]
+    · rw [getElem?_window hj, List.getElem?_eq_getElem (show j < f.length by omega)]
       have h1 := (hδ j (by omega)).symm
       rw [getElem?_boundary_eq_getElem?_int (q := j + δ) (by omega)] at h1
       rw [h1, show ((j + δ : ℕ) : ℤ) - ((k - 1 : ℕ) : ℤ) = (δ : ℤ) - (k - 1 : ℕ) + (j : ℕ)
         by omega]
     · rw [List.getElem?_eq_none (by omega), List.getElem?_eq_none (by simpa using hj)]
   · rintro ⟨i, h1, h2, rfl⟩
-    refine ⟨(List.isInfix_iff_exists_offset _ _).mpr
-      ⟨(i + (k - 1 : ℕ)).toNat, fun j hj => ?_⟩, by simp⟩
-    rw [length_window] at hj
+    refine ⟨List.infix_iff_getElem?.mpr ⟨(i + (k - 1 : ℕ)).toNat,
+      by rw [length_window, length_boundary]; omega, fun j hj ↦ ?_⟩, by simp⟩
+    rw [← List.getElem?_eq_getElem hj, length_window] at *
     rw [getElem?_window hj,
       getElem?_boundary_eq_getElem?_int (q := j + (i + (k - 1 : ℕ)).toNat) (by omega),
       show ((j + (i + (k - 1 : ℕ)).toNat : ℕ) : ℤ) - ((k - 1 : ℕ) : ℤ) = i + (j : ℕ)
