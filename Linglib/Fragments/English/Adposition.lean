@@ -6,9 +6,10 @@ import Linglib.Syntax.Category.Adposition.Order
 
 WALS-derived adposition order for English (ISO `eng`), a pass-through of
 `Adposition.AdpositionOrder.ofWALS "eng"`, WALS Ch 85 classifying English as prepositional; and
-the closed-class adpositions as `Adposition` entries: the spatial *to*, *on*, *in*, *at*, *from*
-and the particle *out*, the grammatical *by* and *with*, and the adpositions that take a measure
-phrase, *for three hours*, *in three hours* and the postposition *three days ago*. Which interval
+the closed-class adpositions as `Adposition` entries: the spatial *to*, *on*, *in*, *into*, *at*,
+*from*, *out of* and the particle *out*, the grammatical *by*, *with* and *for*, and the
+adpositions that take a measure phrase, *for three hours*, *in three hours* and the postposition
+*three days ago*. Which interval
 a measure applies to, the runtime of an atelic or telic eventuality ([dowty-1979]'s *for* and *in*
 tests, `Aspect.forXPrediction` and `Aspect.inXPrediction`), the offset from the utterance time, or
 under negation and the perfect the gap since the last event, is not lexical and is left to the
@@ -58,9 +59,19 @@ def with_ : Adposition :=
   { form := .simple "with", relation := .grammatical, complement := [.np],
     linearization := [.pre] }
 
-/-- *for*, with a measure phrase: *Mary was sick for three hours*. -/
+/-- *for*: the benefactive *Martha carved a toy for the baby*, and with a measure phrase *Mary
+was sick for three hours*. -/
 def for_ : Adposition :=
-  { form := .simple "for", relation := .temporal, complement := [.measure],
+  { form := .simple "for", relation := .grammatical, complement := [.np, .measure],
+    linearization := [.pre] }
+
+/-- *into*: *the witch turned him into a frog*. -/
+def into : Adposition :=
+  { form := .simple "into", relation := .spatial, complement := [.np], linearization := [.pre] }
+
+/-- *out of*: *Martha carved a toy out of the wood*. -/
+def outOf : Adposition :=
+  { form := .complex ["out", "of"], relation := .spatial, complement := [.np],
     linearization := [.pre] }
 
 /-- *in*: *the trash in the kitchen*, and with a measure phrase *Mary wrote a paper in three

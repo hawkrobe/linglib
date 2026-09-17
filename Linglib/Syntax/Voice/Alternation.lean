@@ -1,4 +1,4 @@
-import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
+import Linglib.Syntax.Category.Verb.Defs
 
 /-!
 # Valency alternations
@@ -32,6 +32,8 @@ flexivalency, is its `marking`.
   derived classification
 * `Voice.causativization`, …, `Voice.portativeDerivation` — the types of
   [creissels-2024] §8.3
+* `Verb.Alternates` — a verb has frames refining both frames of an
+  alternation
 * `Voice.Alignment`, `Voice.AmbitransitivityType` — alignment and
   uncoded transitivity alternation
 
@@ -331,6 +333,17 @@ theorem as_nucleativization_neutral :
 /-- Portative derivation is valency-increasing, like causativization and applicativization,
 but reduces to neither (§8.3.7). -/
 theorem portative_increases : portativeDerivation.IsValencyIncreasing := by decide
+
+/-! ### Alternating verbs -/
+
+/-- The verb alternates by `α`: some frame of its refines the initial frame and some the
+derived frame. Necessary for the alternation, not sufficient, since the two frames need not be
+related by it. -/
+def _root_.Verb.Alternates (v : Verb) (α : ValencyAlternation) : Prop :=
+  (∃ fr ∈ v.frames, α.source ≤ fr) ∧ ∃ fr ∈ v.frames, α.target ≤ fr
+
+instance (v : Verb) (α : ValencyAlternation) : Decidable (v.Alternates α) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-! ### Alignment (§1.3.4) -/
 
