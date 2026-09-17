@@ -142,10 +142,11 @@ theorem verb_types_distinct :
 The active and the passive, the fourth person of the verb: the action is performed by an
 unspecified human agent, the form has no grammatical subject expressed as an independent
 phrase, and there is no correspondent to an Indo-European *by*-agent ([karlsson-2017]
-§21.1). It is the impersonal passive of the typology, synthetically coded, the object
-keeping its coding; the inventory lists the voices projecting transitive clauses. -/
+§21.1). It is the impersonal passive of the typology, marked by the suffix *-tA-* and its
+variants, the object keeping its coding; the inventory lists the voices projecting
+transitive clauses. -/
 
-/-- The active and the impersonal passive. -/
+/-- The active and the impersonal passive, the passive marked by a suffix. -/
 def voices : Finset Voice := {.active, Voice.impersonalPassive.synthetic}
 
 -- ============================================================================

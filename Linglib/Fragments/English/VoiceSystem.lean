@@ -9,7 +9,8 @@ participle, the agent demoted to an optional *by*-phrase and the patient the sub
 
 namespace English
 
-/-- The active and the passive, the passive analytically coded. -/
+/-- The active and the passive, the passive marked by the auxiliary *be* and the past
+participle rather than by an affix. -/
 def voices : Finset Voice := {.active, Voice.passive.analytic}
 
 end English
