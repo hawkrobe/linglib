@@ -169,11 +169,9 @@ open Word in
 /-- (27a): the wh-phrase stops at the edge of the embedded CP, so the order fixed there is
 preserved at the matrix Spell-out and the derivation linearizes. -/
 theorem edge_stop_consistent :
-    Consistent [[what, mary, would, eat], [what, «do», you, think, mary, would, eat]] := by
-  refine consistent_of_forall_sublist (q := [what, «do», you, think, mary, would, eat])
-    (λ p hp => ?_) (by decide)
-  simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
-  rcases hp with rfl | rfl <;> decide
+    Consistent [[what, mary, would, eat], [what, «do», you, think, mary, would, eat]] :=
+  consistent_of_forall_sublist (l := [what, «do», you, think, mary, would, eat]) (by decide)
+    (by decide)
 
 open Word in
 /-- (27b): the wh-phrase stays in situ when the embedded CP is spelled out, so it follows
@@ -181,15 +179,14 @@ open Word in
 cyclic-linearization content of the PIC on movement. -/
 theorem phase_skip_inconsistent :
     ¬ Consistent [[mary, would, eat, what], [what, «do», you, think, mary, would, eat]] :=
-  not_consistent_of_pair (p := [mary, would, eat, what])
-    (q := [what, «do», you, think, mary, would, eat]) (a := mary) (b := what)
-    (List.mem_cons_self ..) (by simp) (by decide) (by decide)
+  not_consistent_of_pair mary what ⟨[mary, would, eat, what], by simp, by decide⟩
+    ⟨[what, «do», you, think, mary, would, eat], by simp, by decide⟩
 
 /-- Binding adds no precedence statement: an empty Spell-out snapshot leaves the induced order
 unchanged, so a dependency established by binding cannot run into the ordering contradiction
 that enforces the PIC on movement. -/
 theorem binding_no_new_precedences {α : Type*} (phases : List (List α)) :
-    spelloutOrder (phases ++ [[]]) = spelloutOrder phases := by
+    SpelloutOrder (phases ++ [[]]) = SpelloutOrder phases := by
   funext a b
   refine propext ⟨λ h => Relation.TransGen.mono ?_ a b h,
     λ h => Relation.TransGen.mono ?_ a b h⟩ <;>

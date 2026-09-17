@@ -377,8 +377,8 @@ theorem overt_voice_paradox (d : Derivation) (hv : d.voiceExp.isSome = true)
     unfold Derivation.moved
     rcases d.extracted with _ | ⟨_⟩ | _ <;> rcases d.subject with _ | _ <;> simp
   have hagent : Term.dp .agent ∈ d.moved := by simp [Derivation.moved, hs]
-  refine not_consistent_of_pair (p := d.voicePSpellout) (q := d.cpSpellout) (a := .voice)
-    (b := .dp .agent) List.mem_cons_self (by simp) ?_ ?_
+  refine not_consistent_of_pair Term.voice (.dp .agent)
+    ⟨d.voicePSpellout, List.mem_cons_self, ?_⟩ ⟨d.cpSpellout, by simp, ?_⟩
   · unfold Derivation.voicePSpellout
     rw [ite_eq_left hv, ite_eq_left hi]
     exact (((List.sublist_append_right _ [Term.voice]).append_right [Term.dp .agent]).trans
@@ -396,8 +396,8 @@ theorem bare_passive_agent_paradox (d : Derivation) (ha : d.agentProjected = tru
   have hi : d.agentInSitu = true := by simp [Derivation.agentInSitu, ha, hsp]
   have hm : d.moved = [.dp .agent, .dp .theme] := by
     unfold Derivation.moved; rw [he, hs]; decide
-  refine not_consistent_of_pair (p := d.voicePSpellout) (q := d.cpSpellout) (a := .dp .theme)
-    (b := .dp .agent) List.mem_cons_self (by simp) ?_ ?_
+  refine not_consistent_of_pair (Term.dp .theme) (.dp .agent)
+    ⟨d.voicePSpellout, List.mem_cons_self, ?_⟩ ⟨d.cpSpellout, by simp, ?_⟩
   · unfold Derivation.voicePSpellout
     rw [ite_eq_left hi, ite_eq_left hsp, hsp]
     exact ((((List.sublist_append_right _ [Term.dp .theme]).trans
