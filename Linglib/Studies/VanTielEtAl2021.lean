@@ -198,11 +198,11 @@ theorem speakerPrag_real_lt_of_card_lt (dir : M → Direction) (θ : M → ℕ) 
 
 open English.Determiners
 
-/-- The threshold direction of the canonical quantity words, *half* counted as increasing as
-the participants of Experiment 2 classified every word in the sample as monotone. -/
-def direction : QuantityWord → Direction
-  | .none_ | .few => .decreasing
-  | .some_ | .half | .most | .all => .increasing
+/-- The threshold direction of a quantity word is its monotonicity, with *half* counted as
+increasing since the participants of Experiment 2 classified every word in the sample as
+monotone. -/
+def direction (w : QuantityWord) : Direction :=
+  if w.entry.monotonicity = .decreasing then .decreasing else .increasing
 
 /-- *Some* and *few* compete without entailment for any thresholds inside the range. -/
 theorem some_few_no_entailment (θ : QuantityWord → ℕ) (hs : 1 ≤ θ .some_) (hs' : θ .some_ ≤ n)

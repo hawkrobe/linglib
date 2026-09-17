@@ -1,43 +1,47 @@
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Semantics.Quantification.NP
 import Linglib.Semantics.Quantification.Lexicon
+import Linglib.Semantics.Denotation
 
 /-!
-# English Determiners
-[horn-1972] [barwise-cooper-1981]
+# English determiners
 
-English-specific determiner lexicon. Each entry is *marked* like a `Pronoun`
-(a decidable record carrying only the morphosyntax synonyms diverge on) and
-typed by the standard determiner taxonomy in `Syntax/Category/Determiner/Basic.lean`:
+This file records the English determiner lexicon. The quantificational determiners with a
+fixed generalized-quantifier denotation are the carrier `QuantityWord`. A word projects to its
+`Quantifier` record by `QuantityWord.toQuantifier`, which carries only what the denotation
+leaves open, the selected number and whether mass nouns are selected, and denotes a
+`Quantifier.GQ` on every finite domain through the `Denotes` instance, so `⟦QuantityWord.all⟧`
+is `every_sem`. Everything the denotation fixes, force, monotonicity, strength and
+conservativity, is a theorem about `⟦w⟧` (`Studies/BarwiseCooper1981.lean`), and the textbook
+labels of [barwise-cooper-1981]'s Table II are the metadata `QuantityWord.entry` for the studies
+that want the descriptive classification. *Many* is the record `many` outside the carrier,
+since [barwise-cooper-1981] leave its standard to context. The articles, demonstratives and
+possessives are the other determiner kinds, and the numerical determiners of
+[van-de-pol-etal-2023] are parameterized by their threshold.
 
-- the genuinely quantificational words (every, some, no, most, few, half, all,
-  each, many, both, neither) are `Quantifier`;
-- the definites/indefinites (the, a, an) are `Article`s and the demonstratives
-  (this, that, these, those) are `DemonstrativeDeterminer`s.
+## Main declarations
 
-A determiner's **denotation** is a generalized quantifier supplied externally —
-the marked record carries no `GQ`, exactly as `Pronoun` carries no referent.
-For the six-word quantity scale the form↦`GQ` map is `QuantityWord.gqDenotation`
-(`Semantics/Quantification`); everything a meaning *fixes* (force, monotonicity,
-strength, conservativity) is a theorem about that denotation, not a stored field
-(see `Studies/BarwiseCooper1981.lean`).
+* `QuantityWord` is the carrier of the denoting quantificational determiners, with the six-word
+  scale `QuantityWord.scale` of [van-tiel-franke-sauerland-2021] inside it;
+  `QuantityWord.form`, `QuantityWord.numberRestriction` and `QuantityWord.selectsMass` are its
+  lexical data and `QuantityWord.toQuantifier` its record.
+* The `Denotes` instance gives each word its generalized quantifier from
+  `Quantification/Basic.lean` and `Quantification/Counting.lean`.
+* `QuantityWord.entry` is the [barwise-cooper-1981] Table II classification.
+* `inventory` is the English determiner inventory, and `marking` derives its [moroney-2021]
+  cell.
 
-The cross-paper typological labels (B&C Table II strength/monotonicity, K&S
-force) are kept as the textbook-consensus `QuantityWord.entry : QuantityWord.Metadata`
-metadata table (a small local record over the `Quantifier.Lexicon` enums),
-consumed by GQT and exceptive studies that need the descriptive classification
-rather than the denotation.
+## References
 
-## Scope
-
-This file carries descriptive lexical data, its projection to GQ denotations,
-and the typological metadata table. Per-paper model parameters (GQT thresholds,
-prototype-theory prototypes/spreads) and theory-bridge theorems live elsewhere:
-
-- Compositional GQ denotations (`every_sem`, `both_sem`, `neither_sem`, …):
-  `Semantics/Quantification/Quantifier.lean`.
-- GQT/PT meaning operators consuming numerical parameters:
-  `Studies/VanTielEtAl2021.lean` (`gq` and `pt`).
+* [barwise-cooper-1981]
+* [horn-1972]
+* [van-de-pol-etal-2023]
+* [van-tiel-franke-sauerland-2021]
+* [von-fintel-1993]
+* [harbour-2014]
+* [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
+* [schwarz-2009]
+* [moroney-2021]
 -/
 
 namespace English.Determiners
@@ -45,55 +49,109 @@ namespace English.Determiners
 export Quantifier.Lexicon
   (QForce Monotonicity Strength)
 
-/-! ## Quantificational determiners
+/-! ## Quantificational determiners -/
 
-Marked `Quantifier` records: `form`, the selectional `numberRestriction`
-(root `Number`), and `selectsMass`. The meaning leaves these open — *every* and
-*all* can share a denotation yet differ in `numberRestriction`. -/
+/-- The quantificational determiners of English with a fixed generalized-quantifier denotation:
+the six-word quantity scale *none*, *few*, *some*, *half*, *most* and *all*, and *every*,
+*each*, *both* and *neither*. -/
+inductive QuantityWord where
+  | none_ | few | some_ | half | most | all | every | each | both | neither
+  deriving DecidableEq, Repr, Fintype
 
-/-- "none" — negative, accepts mass NPs. -/
-def none_ : Quantifier := { form := "none", selectsMass := true }
+namespace QuantityWord
 
-/-- "few" — proportional, plural. -/
-def few : Quantifier := { form := "few", numberRestriction := some .plural }
+/-- The surface form. -/
+def form : QuantityWord → String
+  | .none_ => "none"
+  | .few => "few"
+  | .some_ => "some"
+  | .half => "half"
+  | .most => "most"
+  | .all => "all"
+  | .every => "every"
+  | .each => "each"
+  | .both => "both"
+  | .neither => "neither"
 
-/-- "some" — existential, accepts mass NPs. -/
-def some_ : Quantifier := { form := "some", selectsMass := true }
+/-- The grammatical number a word selects, which the denotation leaves open: *every* and *all*
+share a denotation and differ here. *Both* and *neither* select the dual, the core concept
+`[−atomic, +minimal]` of [harbour-2014], whose cardinality clause the denotation reflects
+([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]). -/
+def numberRestriction : QuantityWord → Option Number
+  | .few | .most | .all => some .plural
+  | .every | .each => some .singular
+  | .both | .neither => some .dual
+  | .none_ | .some_ | .half => none
 
-/-- "half" — proportional, accepts mass NPs. -/
-def half : Quantifier := { form := "half", selectsMass := true }
+/-- Whether a word selects mass nouns, which the denotation likewise leaves open. -/
+def selectsMass : QuantityWord → Bool
+  | .none_ | .some_ | .half | .most | .all => true
+  | .few | .every | .each | .both | .neither => false
 
-/-- "most" — proportional, plural, accepts mass NPs. -/
-def most : Quantifier :=
-  { form := "most", numberRestriction := some .plural, selectsMass := true }
+/-- The word as a determiner record. -/
+def toQuantifier (w : QuantityWord) : Quantifier :=
+  { form := w.form, numberRestriction := w.numberRestriction, selectsMass := w.selectsMass }
 
-/-- "all" — universal, plural, accepts mass NPs. -/
-def all : Quantifier :=
-  { form := "all", numberRestriction := some .plural, selectsMass := true }
+/-- The six-word quantity scale of [van-tiel-franke-sauerland-2021], the cross-paper scale on
+which quantifier theories are evaluated ([barwise-cooper-1981], [von-fintel-1993]). -/
+def scale : List QuantityWord := [.none_, .few, .some_, .half, .most, .all]
 
-/-- "every" — universal, singular. -/
-def every : Quantifier := { form := "every", numberRestriction := some .singular }
+/-- All the words. -/
+def toList : List QuantityWord :=
+  [.none_, .few, .some_, .half, .most, .all, .every, .each, .both, .neither]
 
-/-- "each" — universal, distributive, singular. -/
-def each : Quantifier := { form := "each", numberRestriction := some .singular }
+theorem mem_toList (w : QuantityWord) : w ∈ toList := by cases w <;> decide
 
-/-- "many" — proportional, plural. -/
+/-! ### Denotation -/
+
+universe u
+
+/-- A word denotes its generalized quantifier on every finite domain: *none* is `no_sem`, *some*
+`some_sem`, *all*, *every* and *each* `every_sem`, *most* `most_sem`, *few* `few_sem`, *half*
+`half_sem`, *both* `both_sem` and *neither* `neither_sem`. -/
+noncomputable instance : Semantics.Denotes QuantityWord
+    (∀ (α : Type u) [Fintype α], Quantifier.GQ α) where
+  denote
+    | .none_ => fun _ _ ↦ Quantifier.GQ.no_sem
+    | .some_ => fun _ _ ↦ Quantifier.GQ.some_sem
+    | .all | .every | .each => fun _ _ ↦ Quantifier.GQ.every_sem
+    | .most => fun _ _ ↦ Quantifier.GQ.most_sem
+    | .few => fun _ _ ↦ Quantifier.GQ.few_sem
+    | .half => fun _ _ ↦ Quantifier.GQ.half_sem
+    | .both => fun _ _ ↦ Quantifier.GQ.both_sem
+    | .neither => fun _ _ ↦ Quantifier.GQ.neither_sem
+
+/-! ### The Table II classification -/
+
+/-- The textbook labels a word carries, its force, its monotonicity and its weak or strong
+strength, which are not the denotation but the descriptive classification the GQT model
+([van-tiel-franke-sauerland-2021]) and the exceptive-licensing bridge ([von-fintel-1993])
+consume. -/
+structure Metadata where
+  /-- The quantificational force. -/
+  qforce : QForce
+  /-- The monotonicity. -/
+  monotonicity : Monotonicity := .increasing
+  /-- The weak or strong strength. -/
+  strength : Strength := .weak
+  deriving Repr, DecidableEq
+
+/-- The [barwise-cooper-1981] Table II classification of each word, with *half* after
+[van-de-pol-etal-2023]. -/
+def entry : QuantityWord → Metadata
+  | .none_ => { qforce := .negative, monotonicity := .decreasing }
+  | .few => { qforce := .proportional, monotonicity := .decreasing }
+  | .some_ => { qforce := .existential }
+  | .half => { qforce := .proportional, monotonicity := .nonMonotone }
+  | .most => { qforce := .proportional, strength := .strong }
+  | .all | .every | .each => { qforce := .universal, strength := .strong }
+  | .both => { qforce := .universal, strength := .strong }
+  | .neither => { qforce := .negative, monotonicity := .decreasing, strength := .strong }
+
+end QuantityWord
+
+/-- *Many*, whose standard [barwise-cooper-1981] leave to context, so it denotes nothing here. -/
 def many : Quantifier := { form := "many", numberRestriction := some .plural }
-
-/-- "both" — universal dual, presupposes exactly 2.
-    K&S (83a): [_Det each of the two] ⇒ both. Compositional denotation
-    `both_sem` lives in `Quantification/Counting.lean`.
-
-    `numberRestriction := some .dual` carries the dual core concept
-    ([harbour-2014] `[−atomic, +minimal]`); the cardinality clause `|R| ≥ 2`
-    on the denotation side reflects the Harbour `dualPredOnLattice` reading
-    ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]). -/
-def both : Quantifier := { form := "both", numberRestriction := some .dual }
-
-/-- "neither" — negative dual, presupposes exactly 2.
-    K&S (83b): [_Det (not one) of the two] ⇒ neither. Compositional denotation
-    `neither_sem` lives in `Quantification/Counting.lean`. -/
-def neither : Quantifier := { form := "neither", numberRestriction := some .dual }
 
 /-! ## Articles and demonstratives
 
@@ -173,82 +231,10 @@ def fewerThan (n : Nat) : NumericalDetEntry :=
   { form := s!"fewer than {n}", qforce := .proportional
   , monotonicity := .decreasing, threshold := n }
 
-/-! ## The Canonical Quantity Scale
-[barwise-cooper-1981] [van-tiel-franke-sauerland-2021]
-
-The 6-element ⟨none, few, some, half, most, all⟩ scale used cross-paper
-to evaluate quantifier theories — empirical implicature studies
-([van-tiel-franke-sauerland-2021]), GQ universals ([barwise-cooper-1981]),
-and polarity bridges ([von-fintel-1993]).
--/
-
-/-- The canonical 6-element quantity scale. -/
-inductive QuantityWord where
-  | none_ | few | some_ | half | most | all
-  deriving Repr, DecidableEq, Inhabited
-
-instance : Fintype QuantityWord where
-  elems := {.none_, .few, .some_, .half, .most, .all}
-  complete := fun x => by cases x <;> simp
-
-/-- B&C Table II typological metadata: the textbook-consensus descriptive
-    labels (force, monotonicity, weak/strong strength) a quantity word carries.
-    A small local record over the `Quantifier.Lexicon` enums — *not* the
-    lexical marking (that is `Quantifier`, above) and *not* the denotation
-    (that is `QuantityWord.gqDenotation`). -/
-structure QuantityWord.Metadata where
-  /-- Quantificational force. -/
-  qforce : QForce
-  /-- Monotonicity (typological label). -/
-  monotonicity : Monotonicity := .increasing
-  /-- Weak/strong (B&C Table II). -/
-  strength : Strength := .weak
-  deriving Repr, BEq, DecidableEq
-
-/-- B&C Table II typological metadata for each quantity word: force,
-    monotonicity, and weak/strong strength. This is the textbook-consensus
-    descriptive classification ([barwise-cooper-1981] Table II,
-    [van-de-pol-etal-2023] for *half*), *not* the denotation — the denotation
-    is `QuantityWord.gqDenotation`, and the properties this table labels are
-    theorems about it (`Studies/BarwiseCooper1981.lean`). Consumed by the GQT
-    model ([van-tiel-franke-sauerland-2021]) and the exceptive-licensing bridge
-    ([von-fintel-1993]) that want the descriptive label. -/
-def QuantityWord.entry : QuantityWord → QuantityWord.Metadata
-  | .none_ => { qforce := .negative, monotonicity := .decreasing, strength := .weak }
-  | .few   => { qforce := .proportional, monotonicity := .decreasing, strength := .weak }
-  | .some_ => { qforce := .existential, monotonicity := .increasing, strength := .weak }
-  | .half  => { qforce := .proportional, monotonicity := .nonMonotone, strength := .weak }
-  | .most  => { qforce := .proportional, monotonicity := .increasing, strength := .strong }
-  | .all   => { qforce := .universal, monotonicity := .increasing, strength := .strong }
-
-/-- Convenience accessor. -/
-def QuantityWord.monotonicity (q : QuantityWord) : Monotonicity :=
-  q.entry.monotonicity
-
-/-- All quantity words as a list. -/
-def QuantityWord.toList : List QuantityWord :=
-  [.none_, .few, .some_, .half, .most, .all]
-
-/-- Canonical model-theoretic generalized-quantifier denotation
-    (B&C-style), built on `every_sem`/`some_sem`/`no_sem`/etc. from
-    `Quantification/Basic.lean` and `Quantification/Counting.lean`. -/
-noncomputable def QuantityWord.gqDenotation (q : QuantityWord)
-    {α : Type*} [Fintype α] : Quantifier.GQ α :=
-  open Quantifier Quantifier.GQ in
-  match q with
-  | .none_ => no_sem
-  | .some_ => some_sem
-  | .all   => every_sem
-  | .most  => most_sem
-  | .few   => few_sem
-  | .half  => half_sem
-
 /-! ## Lexicon Access -/
 
-/-- All quantificational determiner entries (excluding definites). -/
-def allQuantifiers : List Quantifier := [
-  none_, few, some_, half, most, all, every, each, many, both, neither
-]
+/-- All quantificational determiner entries, the denoting words and *many*. -/
+def allQuantifiers : List Quantifier := QuantityWord.toList.map QuantityWord.toQuantifier ++ [many]
 
 /-- All article entries. -/
 def allArticles : List Article := [the, a, an]

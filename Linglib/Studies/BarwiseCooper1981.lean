@@ -255,11 +255,12 @@ end Determiner
 section English
 
 open English.Determiners (QuantityWord)
+open scoped Semantics
 
 variable [Fintype α]
 
 /-- *every/all* is positive strong (Table II). -/
-theorem all_positiveStrong : PositiveStrong (QuantityWord.all.gqDenotation (α := α)) :=
+theorem all_positiveStrong : PositiveStrong (⟦QuantityWord.all⟧ α) :=
   every_positive_strong
 
 open Classical in
@@ -267,7 +268,7 @@ open Classical in
 N are N* whenever there are `N`s. On the empty restrictor the proportional reading fails,
 which is B&C's Table I column: *most N* can denote the empty quantifier. -/
 theorem most_apply_self (A : α → Prop) (h : ∃ x, A x) :
-    QuantityWord.most.gqDenotation (α := α) A A := by
+    ⟦QuantityWord.most⟧ α A A := by
   obtain ⟨x, hx⟩ := h
   show most_sem A A
   unfold most_sem
