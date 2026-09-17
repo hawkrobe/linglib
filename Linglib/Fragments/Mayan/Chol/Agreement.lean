@@ -1,7 +1,6 @@
 import Linglib.Syntax.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Syntax.Reflex
-import Linglib.Syntax.Clause.Relative
 import Linglib.Fragments.Mayan.Params
 import Linglib.Syntax.Clause.ArgumentRole
 
@@ -103,6 +102,18 @@ Sa/So/fluid-S into one intransitive subject category — sufficient
 for the perfective↔non-perfective split formalization but undermodels
 the agentive split. Future refinement: split into `intranSAgentive` /
 `intranSPatientive` / `intranSFluid`.
+
+## References
+
+* [arcos-lopez-2009]
+* [coon-2013]
+* [coon-mateo-pedro-preminger-2014]
+* [dixon-1994]
+* [imanishi-2020]
+* [kaufman-norman-1984]
+* [martinez-cruz-2007]
+* [scott-2023]
+* [vazquez-alvarez-2011]
 -/
 
 
@@ -129,7 +140,7 @@ namespace Extraction
     3rd person follows from the absent AF marking:
     `Maxki₁ tyi y-il-ä (___₁) jiñi wiñik (___₁)?`
     'Who saw the man?' / 'Who did the man see?' -/
-def realize : RelativeClause.Position → Finset (Reflex Empty) :=
+def realize : ArgumentRole → Finset (Reflex Empty) :=
   fun _ ↦ ∅
 
 end Extraction

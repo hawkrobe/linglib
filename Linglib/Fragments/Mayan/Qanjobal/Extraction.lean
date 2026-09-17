@@ -1,7 +1,5 @@
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Syntax.Reflex
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Clause.Relative
 import Linglib.Fragments.Mayan.Params
 
 /-!
@@ -45,12 +43,15 @@ Antipassive reuses the same *-on* morpheme in non-finite embedded
 transitives (where Infl⁰ is absent), analyzed as the same case-assigning
 mechanism. Tables and examples cite [coon-mateo-pedro-preminger-2014]
 tables (13) and (14).
+
+## References
+
+* [coon-mateo-pedro-preminger-2014]
 -/
 
 
 namespace Qanjobal
 
-open Minimalist
 
 /-! ### Status suffixes -/
 
@@ -65,8 +66,7 @@ def StatusSuffix.form : StatusSuffix → String
   | .tv  => "-V'"
 
 -- The substantive claim "A-extraction is banned without AF" is expressed
--- as `(Extraction.realize .subject).Nonempty` (the agent's position in the
--- basic transitive clause).
+-- as `(Extraction.realize .A).Nonempty`.
 
 /-! ### Agent Focus construction -/
 
@@ -194,16 +194,16 @@ theorem crazy_ap_all_persons :
 
 namespace Extraction
 
-/-- Reflex hosts for Q'anjob'al extraction marking. -/
-inductive Site where
+/-- The host of Q'anjob'al extraction reflexes. -/
+inductive Host where
   | verb
   deriving DecidableEq, Repr
 
-/-- 3rd-person agent (subject) extraction switches the verb to AF (the
-    suffix *-on*, [coon-mateo-pedro-preminger-2014]); nothing else is
-    marked. -/
-def realize : RelativeClause.Position → Finset (Reflex Site)
-  | .subject => {.morpheme .verb}
+/-- Transitive-subject extraction switches the verb to AF (the suffix
+*-on*, [coon-mateo-pedro-preminger-2014]), under the third-person
+restriction recorded above; nothing else is marked. -/
+def realize : ArgumentRole → Finset (Reflex Host)
+  | .A => {.morpheme .verb}
   | _ => ∅
 
 end Extraction

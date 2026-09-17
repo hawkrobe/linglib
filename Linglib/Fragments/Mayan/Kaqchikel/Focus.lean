@@ -1,5 +1,4 @@
-import Linglib.Fragments.Mayan.Kaqchikel.Agreement
-import Linglib.Syntax.Reflex
+import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 
 /-!
 # Kaqchikel Focus Fragment
@@ -14,11 +13,10 @@ fronts like A but intransitive verbs have no AF form.
 ## Main declarations
 
 * `Kaqchikel.focusRealize`: focus realization by focused argument
-  position, as a `Reflex` set.
+  role, the extraction reflexes plus the fronting and *ja*.
 * `Kaqchikel.af_reflex_iff`: the verb-hosted AF reflex appears exactly
   under transitive-subject (A) focus.
-* `Kaqchikel.marked_subject_is_A_not_S`: the A-focus vs S-focus split
-  that `RelativeClause.Position` cannot draw.
+* `Kaqchikel.marked_subject_is_A_not_S`: the A-focus vs S-focus split.
 
 ## Implementation notes
 
@@ -30,48 +28,39 @@ focus (no *ja*, no AF). Across Mayan, information focus stays in situ
 and unmarked except for the transitive subject, which in AF-languages
 must front and trigger AF ([aissen-2017]); Kaqchikel-specific in-situ
 data are not in the sources here, so `focusRealize` covers the fronted
-construction only and no `EveryTargetOvert` claim is made.
+construction only, and no claim that every focus is overtly marked is made.
+
+## References
+
+* [aissen-2017]
+* [erlewine-2016]
 -/
 
 namespace Kaqchikel
 
-open Reflex
-
-/-! ### Sites -/
-
-/-- The constituents a Kaqchikel focus reflex attaches to: the fronted
-    focus phrase itself (hosting *ja* and the fronting) or the verbal
-    complex (hosting the AF morpheme). -/
-inductive FocusSite where
-  | focusPhrase
-  | verb
-  deriving DecidableEq, Repr
-
 /-! ### Realization -/
 
-/-- Focus realization by focused argument position ([erlewine-2016]
-    §2.2): every focused argument fronts (VOS base order, so fronting is
-    never string-vacuous) and hosts *ja*; a focused transitive subject
-    (A) additionally switches the verb to AF — the ergative split, since
-    S fronts like A but intransitive verbs have no AF form. Ditransitive
-    R/T focus is unattested in the source and falls to the A-less
-    default. -/
-def focusRealize : ArgumentRole → Finset (Reflex FocusSite)
-  | .A => {.displacement .focusPhrase, .morpheme .focusPhrase, .morpheme .verb}
-  | _  => {.displacement .focusPhrase, .morpheme .focusPhrase}
+/-- Focus realization by focused argument role ([erlewine-2016]): every
+focused argument fronts (VOS base order, so fronting is never
+string-vacuous) and hosts *ja*, on top of whatever extraction from its
+role licenses — for a transitive subject (A), Agent Focus on the verb.
+Recipients and themes of ditransitives are relational-noun phrases
+outside the core roles, the dative cell of `Extraction.realize`, so the
+R and T cells here are vacuous; adjunct focus is outside this
+function's domain. -/
+def focusRealize (r : ArgumentRole) : Finset (Reflex Extraction.Host) :=
+  Extraction.realize (.core r) ∪ {.displacement .phrase, .morpheme .phrase}
 
 /-- The verb-hosted reflex (AF) appears under transitive-subject focus
     only. -/
 theorem af_reflex_iff (p : ArgumentRole) :
-    Reflex.morpheme FocusSite.verb ∈ focusRealize p ↔ p = .A := by
+    Reflex.morpheme Extraction.Host.verb ∈ focusRealize p ↔ p = .A := by
   cases p <;> decide
 
 /-- The ergative split in focus marking: A-focus switches the verb to AF
-    while S-focus does not, although `RelativeClause.Position` maps
-    both to `.subject` — the verb reflex of `Extraction.realize .subject`
-    (`Extraction.lean`) marks transitive subjects only. -/
+while S-focus does not. -/
 theorem marked_subject_is_A_not_S :
-    Reflex.morpheme FocusSite.verb ∈ focusRealize .A ∧
-    Reflex.morpheme FocusSite.verb ∉ focusRealize .S := by decide
+    Reflex.morpheme Extraction.Host.verb ∈ focusRealize .A ∧
+    Reflex.morpheme Extraction.Host.verb ∉ focusRealize .S := by decide
 
 end Kaqchikel

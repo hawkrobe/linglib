@@ -1,3 +1,4 @@
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Data.UD.Features
@@ -39,6 +40,8 @@ syntactic ergativity while LOW-ABS languages do not.
   `Mayan.caseKiche`, `Mayan.caseMam`, `Mayan.caseTseltalan`: per-branch
   aspect-driven case assignment, with `erg…`/`acc…` aspect projections.
 * `Mayan.VerbForm`: transitive vs Agent Focus, and its agreement slots.
+* `Mayan.Adjunct`, `Mayan.ExtractionSite`: the sites of Ā-extraction the extraction
+  morphology distinguishes, indexing the fragments' `Extraction.realize`.
 * `Mayan.ExponentTable`, `Mayan.ExponentTable.IsThirdSgZero`: agreement
   paradigms over φ-cells and the null-3sg predicate.
 * `Mayan.MarkerLinearity`: prefixal / suffixal / either marker linearity.
@@ -53,6 +56,33 @@ ABS=NOM (HIGH-ABS) has Infl⁰ assign nominative, ABS=DEF (LOW-ABS) has v⁰
 assign accusative, with "absolutive" a cover term either way
 ([legate-2008]). Both types assign ergative uniformly (via transitive
 v⁰) and nominative to intransitive subjects (via Infl⁰).
+
+## References
+
+* [aissen-england-zavala-2017]
+* [aissen-polian-2025]
+* [coon-2013]
+* [coon-mateo-pedro-preminger-2014]
+* [corbett-1998]
+* [elkins-torrence-brown-2026]
+* [erlewine-2016]
+* [garcia-matzar-rodriguez-guajan-1997]
+* [hofling-2017]
+* [imanishi-2014]
+* [imanishi-2020]
+* [kaufman-norman-1984]
+* [koizumi-2023]
+* [legate-2008]
+* [mateo-toledo-2008]
+* [mendes-ranero-2021]
+* [mondloch-2017]
+* [polian-2013]
+* [polian-2017]
+* [preminger-2014]
+* [scott-2023]
+* [tada-1993]
+* [vazquez-alvarez-2011]
+* [zavala-maldonado-2017]
 -/
 
 /-- The Mayan languages with consolidated Fragment files. -/
@@ -264,10 +294,10 @@ The pan-Mayan person/number agreement paradigm is keyed by the canonical
 
 /-! ### Verb form (transitive vs Agent Focus) -/
 
-/-- The two verb forms relevant to Mayan agreement morphology.
-    Used by HIGH-ABS languages with an Agent Focus alternation
-    (Q'anjob'al, Kaqchikel) and trivially by LOW-ABS languages
-    (where `.agentFocus` is unattested). -/
+/-- The two verb forms relevant to Mayan agreement morphology. The Agent Focus form marks
+transitive-subject extraction wherever a language has it: obligatorily in the languages with
+the Ergative Extraction Constraint (Q'anjob'al, Kaqchikel, K'iche'), optionally in Tsotsil; in
+a language without it `.agentFocus` is unattested. -/
 inductive VerbForm where
   | transitive   -- canonical transitive
   | agentFocus   -- AF construction (HIGH-ABS A-extraction)
@@ -418,5 +448,24 @@ def template : Mayan → Morphology.AffixTemplate VerbSlot
     fragments' analytical `absPosition` values. -/
 def templateABSPosition (l : Mayan) : ABSPosition :=
   if .setB ∈ (template l).prefixSlots then .high else .low
+
+/-! ### Extraction sites -/
+
+/-- The semantic classes of non-core arguments and adjuncts that Mayan extraction morphology
+distinguishes: instruments, benefactives, datives, locatives, reasons, purposes, manners and
+temporals. Comitatives, which the K'ichean fronting particle also tracks, are not carried. -/
+inductive Adjunct where
+  | instrument | benefactive | dative | locative | reason | purpose | manner | temporal
+  deriving DecidableEq, Repr, Fintype
+
+/-- The site of an Ā-extraction at the granularity Mayan extraction morphology distinguishes: a
+core argument by its comparative role, or an adjunct by its class. A fragment's
+`Extraction.realize` records for each site the reflexes extraction from it licenses; whether a
+reflex is obligatory, optional or conditioned is stated in the fragment's prose. A fragment
+whose sources document core-argument extraction only indexes `realize` by `ArgumentRole`. -/
+inductive ExtractionSite where
+  | core (r : ArgumentRole)
+  | adjunct (a : Adjunct)
+  deriving DecidableEq, Repr
 
 end Mayan

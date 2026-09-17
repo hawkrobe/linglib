@@ -358,13 +358,13 @@ theorem absPosition_matches_template (lang : Mayan) :
 /-- Whether a registered fragment marks transitive-subject extraction on the verb; the Yukatek
 fragment records no extraction reflexes. -/
 def MarksSubjectExtraction : Mayan → Prop
-  | .Chol => (Chol.Extraction.realize .subject).Nonempty
-  | .Qanjobal => (Qanjobal.Extraction.realize .subject).Nonempty
-  | .Kaqchikel => (Kaqchikel.Extraction.realize .subject).Nonempty
-  | .Tseltal => (Tseltal.Extraction.realize .subject).Nonempty
-  | .Tsotsil => (Tsotsil.Extraction.realize .subject).Nonempty
-  | .Mam => (Mam.Extraction.realize .subject).Nonempty
-  | .Kiche => (Kiche.Extraction.realize .subject).Nonempty
+  | .Chol => (Chol.Extraction.realize .A).Nonempty
+  | .Qanjobal => (Qanjobal.Extraction.realize .A).Nonempty
+  | .Kaqchikel => (Kaqchikel.Extraction.realize (.core .A)).Nonempty
+  | .Tseltal => (Tseltal.Extraction.realize .A).Nonempty
+  | .Tsotsil => (Tsotsil.Extraction.realize .A).Nonempty
+  | .Mam => (Mam.Extraction.realize (.core .A)).Nonempty
+  | .Kiche => (Kiche.Extraction.realize (.core .A)).Nonempty
   | .Yukatek => False
 
 instance : ∀ lang : Mayan, Decidable (MarksSubjectExtraction lang)

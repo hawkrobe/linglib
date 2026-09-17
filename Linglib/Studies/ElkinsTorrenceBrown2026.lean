@@ -1,16 +1,18 @@
 import Linglib.Data.Examples.ElkinsTorrenceBrown2026
+import Linglib.Fragments.Mayan.Mam.Extraction
+import Linglib.Fragments.Mayan.Kiche.Extraction
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.FeatureBundle
 
 /-!
-# Elkins, Torrence and Brown (2026): Wh-movement paths and oblique extraction in Mam
+# Elkins, Torrence and Brown (2026): Wh-movement paths and adjunct extraction in Mam
 
 This file formalizes [elkins-torrence-brown-2026]'s analysis of the movement enclitic =(y)a' of
 San Juan Ostuncalco Mam (Mayan), which optionally appears on the predicate, and on any directional
 auxiliary, when an instrument, benefactive, dative, locative, reason, purpose or manner adjunct is
-extracted, but not with absolutive or ergative arguments ([aissen-2017]'s Ergative Extraction
+extracted, but not with absolutive or ergative arguments ([aissen-2017b]'s Ergative Extraction
 Constraint sends the agent through an antipassive) or with temporals. The enclitic may occur once
 per Voice⁰ and Dir⁰ of a clause and, in long-distance extraction, once per clause along the
 dependency: in the embedded clause exactly when that clause is at least VoiceP-sized, so on both
@@ -45,9 +47,10 @@ in K'ichean, and temporals trigger neither.
   independent optionality of each site, `patterns`.
 * [obl] on the movers is the article's featural hypothesis (§1.3, §4.2, §5.3): relational nouns
   assign it, the locative and manner wh-words are assumed to acquire it, temporals lack it.
-* The examples are `Data.Examples.ElkinsTorrenceBrown2026`; the K'iche' rows are
-  [mendes-ranero-2021]'s as reported there. The variety is SJO Mam; [scott-2023]'s San Juan
-  Atitán Mam is a distinct variety.
+* The examples are `Data.Examples.ElkinsTorrenceBrown2026`; the K'ichean rows are
+  [mendes-ranero-2021]'s as reported there, and the article's (64), headed K'iche' in the
+  preprint, is Patzún Kaqchikel (Mendes and Ranero's (14a), as the article's own (68) records).
+  The variety is SJO Mam; [scott-2023]'s San Juan Atitán Mam is a distinct variety.
 
 ## References
 
@@ -59,7 +62,7 @@ in K'ichean, and temporals trigger neither.
 * [van-urk-2018]
 * [scott-2023]
 * [england-1989]
-* [aissen-2017]
+* [aissen-2017b]
 -/
 
 namespace ElkinsTorrenceBrown2026
@@ -81,7 +84,7 @@ abbrev Spine := List Head
 /-- A clause of the given size with `n` directionals above Voice (8). Nonfinite clauses, which lack
 Voice, lack directionals (§3.4). -/
 def spine (s : ClauseSpine) (n : ℕ) : Spine :=
-  s.projectedHeads.flatMap λ c =>
+  s.projectedHeads.flatMap fun c ↦
     if c = .Voice then .cat .Voice :: List.replicate n .dir else [.cat c]
 
 /-- The reduced K'ichean complement of [mendes-ranero-2021], an AspP without a CP layer (§5.1). -/
@@ -90,13 +93,13 @@ def aspP : ClauseSpine := ⟨[.V, .Appl, .v, .Voice, .Asp], by decide⟩
 /-- The feature bearers of [Ā], (41) and (44): C⁰, Voice⁰ and Dir⁰. -/
 def BearsA (h : Head) : Prop := h = .cat .C ∨ h = .cat .Voice ∨ h = .dir
 
-instance : DecidablePred BearsA := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+instance : DecidablePred BearsA := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
 /-- The heads that copy the mover's [obl] and host the reflex, (45)–(46): Voice⁰ and Dir⁰. C⁰
 attracts by [Ā] alone, so there is no C-domain reflex. -/
 def HostsReflex (h : Head) : Prop := h = .cat .Voice ∨ h = .dir
 
-instance : DecidablePred HostsReflex := λ _ => inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred HostsReflex := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 theorem HostsReflex.bearsA {h : Head} (hh : HostsReflex h) : BearsA h := Or.inr hh
 
@@ -109,12 +112,12 @@ abbrev Dependency := List Spine
 /-- The movement path, (43): the [Ā]-bearing heads of the clauses crossed, bottom-up and tagged by
 clause. By Attract Closest (39) the mover stops in the specifier of each. -/
 def path (d : Dependency) : List (ℕ × Head) :=
-  (List.range d.length).flatMap λ i =>
-    ((d.getD i []).filter λ h => decide (BearsA h)).map (i, ·)
+  (List.range d.length).flatMap fun i ↦
+    ((d.getD i []).filter fun h ↦ decide (BearsA h)).map (i, ·)
 
 /-- The sites of the reflex: the Agree relations with Voice⁰ or Dir⁰ along the path (§4.2). -/
 def sites (d : Dependency) : List (ℕ × Head) :=
-  (path d).filter λ p => decide (HostsReflex p.2)
+  (path d).filter fun p ↦ decide (HostsReflex p.2)
 
 /-- =(y)a' is licensed in clause `i` of the dependency when the path has a site there. -/
 def Licensed (d : Dependency) (i : ℕ) : Prop := i ∈ (sites d).map Prod.fst
@@ -220,7 +223,7 @@ theorem fpg (e m : Spine) : CopyLicensed [e, m] 1 ↔ .cat .C ∈ e := by
 Ā-agreement gives one per Voice⁰ and Dir⁰ (§3.1, §5.1). -/
 theorem copy_single_site (n : ℕ) : (∀ i, CopyLicensed [spine .cP n] i → i = 0) ∧
     (sites [spine .cP n]).length = n + 1 :=
-  ⟨λ i h => h.elim id λ h' => by
+  ⟨fun i h ↦ h.elim id fun h' ↦ by
     have h1 := h'.1
     have h2 := h'.2.1
     simp only [List.length_singleton] at h2
@@ -253,52 +256,50 @@ theorem origin_only_fails : Licensed [spine .cP 0, spine .cP 0] 1 ∧ (1 : ℕ) 
 
 /-! ### Which movers trigger the reflex (§2, §5.3) -/
 
-/-- The adjunct classes of §2.2. -/
-inductive Adjunct
-  | instrument
-  | benefactive
-  | dative
-  | locative
-  | reason
-  | purpose
-  | manner
-  | temporal
-  deriving DecidableEq, Fintype
-
 /-- The article's featural hypothesis (9), footnotes 3 and 12, §5.3: every adjunct class but the
 temporals bears the [obl] Case feature that Voice⁰ and Dir⁰ copy. -/
-def Adjunct.BearsObl (a : Adjunct) : Prop := a ≠ .temporal
+def BearsObl (a : Mayan.Adjunct) : Prop := a ≠ .temporal
 
-instance : DecidablePred Adjunct.BearsObl := λ _ => inferInstanceAs (Decidable (_ ≠ _))
+instance : DecidablePred BearsObl := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
 
 /-- [mendes-ranero-2021]'s low adjuncts, merged in Spec,ApplP with [appl], which alone trigger
 *wi* (§5.3). -/
-def Adjunct.IsLow (a : Adjunct) : Prop :=
+def IsLow (a : Mayan.Adjunct) : Prop :=
   a = .instrument ∨ a = .benefactive ∨ a = .dative ∨ a = .locative
 
-instance : DecidablePred Adjunct.IsLow := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _))
+instance : DecidablePred IsLow := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _))
 
 /-- Table 4: the Mam and K'ichean triggers differ exactly at reasons, purposes and manners. -/
-theorem table4 (a : Adjunct) :
-    ¬ (a.BearsObl ↔ a.IsLow) ↔ a = .reason ∨ a = .purpose ∨ a = .manner := by
+theorem table4 (a : Mayan.Adjunct) :
+    ¬ (BearsObl a ↔ IsLow a) ↔ a = .reason ∨ a = .purpose ∨ a = .manner := by
   revert a
   decide
+
+/-- The Mam fragment licenses the enclitic for exactly the [obl]-bearing classes. -/
+theorem mam_realize_nonempty_iff_bearsObl (a : Mayan.Adjunct) :
+    (Mam.Extraction.realize (.adjunct a)).Nonempty ↔ BearsObl a :=
+  Mam.Extraction.realize_adjunct_nonempty_iff a
+
+/-- The K'iche' fragment licenses *wi* for exactly the low classes. -/
+theorem kiche_realize_nonempty_iff_isLow (a : Mayan.Adjunct) :
+    (Kiche.Extraction.realize (.adjunct a)).Nonempty ↔ IsLow a :=
+  Kiche.Extraction.realize_adjunct_nonempty_iff a
 
 /-- What is extracted, if anything: an absolutive argument, an ergative argument, or an adjunct. -/
 inductive Mover
   | none
   | absolutive
   | ergative
-  | adjunct (a : Adjunct)
+  | adjunct (a : Mayan.Adjunct)
   deriving DecidableEq
 
 /-- Only an adjunct with [obl] feeds the reflex: absolutives and ergatives lack it (§4.2). -/
 def Mover.BearsObl : Mover → Prop
-  | .adjunct a => a.BearsObl
+  | .adjunct a => ElkinsTorrenceBrown2026.BearsObl a
   | _ => False
 
 instance : ∀ m : Mover, Decidable m.BearsObl
-  | .adjunct a => inferInstanceAs (Decidable a.BearsObl)
+  | .adjunct a => inferInstanceAs (Decidable (BearsObl a))
   | .none => inferInstanceAs (Decidable False)
   | .absolutive => inferInstanceAs (Decidable False)
   | .ergative => inferInstanceAs (Decidable False)
@@ -345,16 +346,18 @@ def reflexTable : List (String × Bool) := [("licensed", true), ("blocked", fals
 /-- The monoclausal Mam rows of §2 and §3.5–3.6: the enclitic is licensed exactly for the movers
 bearing [obl]. -/
 theorem mamRows_realizable :
-    ∀ e ∈ [ex_10b, ex_11b, ex_12b, ex_13a, ex_13b, ex_14b, ex_15b, ex_16b, ex_17b, ex_18b, ex_19b,
-        ex_20b, ex_21b, ex_35c, ex_37, ex_65],
-      ∀ m, e.parse? "mover" moverTable = some m → ∀ b, e.parse? "reflex" reflexTable = some b →
+    ∀ e ∈ [ex_10b, ex_11b, ex_12b, ex_13a, ex_13b, ex_14b, ex_15b, ex_16b, ex_17b, ex_18b,
+        ex_19b, ex_20b, ex_21b, ex_35c, ex_37, ex_65],
+      ∀ m, e.parse? "mover" moverTable = some m →
+        ∀ b, e.parse? "reflex" reflexTable = some b →
         (b = true ↔ Realizable m [spine .cP 0] 0) := by
   decide
 
-/-- The K'iche' rows (51) and (64): *wi* is licensed exactly for the low adjuncts. -/
-theorem kicheRows_low :
+/-- The K'ichean rows (51), K'iche', and (64), Patzún Kaqchikel: *wi* is licensed exactly for
+the low adjuncts. -/
+theorem kicheanRows_low :
     ∀ e ∈ [ex_51, ex_64], ∀ a, e.parse? "mover" moverTable = some (.adjunct a) →
-      ∀ b, e.parse? "reflex" reflexTable = some b → (b = true ↔ a.IsLow) := by
+      ∀ b, e.parse? "reflex" reflexTable = some b → (b = true ↔ IsLow a) := by
   decide
 
 /-- The rows with directionals, (22) and (63): one host per Voice⁰ and directional. -/
@@ -370,7 +373,7 @@ def sizeTable : List (String × ClauseSpine) :=
 /-- The dependency of a long-distance row: the embedded clause and, when the wh-expression lands
 in the matrix clause, the full-CP matrix clause above it. -/
 def dependencyOf (e : LinguisticExample) : Option Dependency :=
-  (e.parse? "embeddedSize" sizeTable).bind λ s =>
+  (e.parse? "embeddedSize" sizeTable).bind fun s ↦
     e.parse? "landing" [("embedded", [spine s 0]), ("matrix", [spine s 0, spine .cP 0])]
 
 /-- The long-distance Mam rows (24), (26), (31) and (34), Table 3: the reflex in each clause
@@ -384,8 +387,10 @@ theorem mamLD_licensed :
 /-- The long-distance K'iche' rows (52) and (53) follow from copy spellout. -/
 theorem kicheLD_copy :
     ∀ e ∈ [ex_52, ex_53], ∀ d, dependencyOf e = some d →
-      (∀ b, e.parse? "embeddedReflex" reflexTable = some b → (b = true ↔ CopyLicensed d 0)) ∧
-        ∀ b, e.parse? "matrixReflex" reflexTable = some b → (b = true ↔ CopyLicensed d 1) := by
+      (∀ b, e.parse? "embeddedReflex" reflexTable = some b →
+          (b = true ↔ CopyLicensed d 0)) ∧
+        ∀ b, e.parse? "matrixReflex" reflexTable = some b →
+          (b = true ↔ CopyLicensed d 1) := by
   decide
 
 end ElkinsTorrenceBrown2026
