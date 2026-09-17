@@ -3,6 +3,7 @@ import Linglib.Fragments.English.Predicates
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Phase.Domain
 import Linglib.Data.Examples.ShenHuang2026
+import Linglib.Data.Examples.DaviesDubinsky2003
 import Mathlib.Data.Finset.Card
 
 /-!
@@ -222,6 +223,16 @@ def Config.ofExample (ex : LinguisticExample) : Option Config := do
   let v ← ex.parse? "creation" [("yes", true), ("no", false)]
   pure ⟨d, o, v⟩
 
+/-- The verb-of-creation contrasts of [davies-dubinsky-2003], (52)–(54), which the paper's
+Experiment 1 revisits: under the combined account, a non-creation verb with a definite object
+violates one constraint more than a creation verb, and the row is judged no better. -/
+theorem stacking_daviesDubinsky :
+    ∀ ex₁ ∈ DaviesDubinsky2003.Examples.all, ∀ ex₂ ∈ DaviesDubinsky2003.Examples.all,
+      ∀ c₁ ∈ Config.ofExample ex₁, ∀ c₂ ∈ Config.ofExample ex₂,
+        violations combined c₁ < violations combined c₂ →
+          ex₂.judgment.rank ≤ ex₁.judgment.rank := by
+  decide
+
 /-- Constraint stacking on the paper's cited judgments: within a language, an example violating
 strictly more constraints of the combined account is judged no better. -/
 theorem stacking : ∀ ex₁ ∈ Examples.all, ∀ ex₂ ∈ Examples.all, ex₁.language = ex₂.language →
@@ -264,11 +275,11 @@ theorem binding_consistent :
 
 /-! ### Verbs of creation in the Fragment -/
 
-/-- The verbs of creation the paper names, after [davies-dubinsky-2003]'s characterization of a
-causative verb whose object denotes its result: *compose* (3), *tell* a joke (20b), *direct*
-(23), *shoot*, *make* and *compose* a video or song (footnote 12), and *write* (25b). The
-notion is the paper's per verb, not a Levin class: *tell* and *shoot* belong to no class of
-creation in [levin-1993]. -/
+/-- The verbs of creation the paper names, after [davies-dubinsky-2003]'s verbs of creation
+selecting a result nominal, *write* for a book, *tell* for a joke, *paint* for a portrait:
+*compose* (3), *tell* a joke (20b), *direct* (23), *shoot*, *make* and *compose* a video or
+song (footnote 12), and *write* (25b). The notion is per verb, not a Levin class: *tell* and
+*shoot* belong to no class of creation in [levin-1993]. -/
 def IsVerbOfCreation (v : English.Verb) : Prop :=
   v.form ∈ ["compose", "direct", "make", "shoot", "tell", "write"]
 

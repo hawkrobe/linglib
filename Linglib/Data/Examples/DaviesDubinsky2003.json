@@ -1,0 +1,422 @@
+[
+  {
+    "id": "daviesdubinsky2003_ex52a_write",
+    "source": {
+      "bibkey": "davies-dubinsky-2003",
+      "paperLabel": "(52a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did you write those essays about?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dependency",
+        "movement"
+      ],
+      [
+        "verb",
+        "write"
+      ],
+      [
+        "creation",
+        "yes"
+      ],
+      [
+        "object",
+        "definite"
+      ]
+    ],
+    "comment": "A verb of creation licenses extraction from a definite result nominal."
+  },
+  {
+    "id": "daviesdubinsky2003_ex52a_read",
+    "source": {
+      "bibkey": "davies-dubinsky-2003",
+      "paperLabel": "(52a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did you read those essays about?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dependency",
+        "movement"
+      ],
+      [
+        "verb",
+        "read"
+      ],
+      [
+        "creation",
+        "no"
+      ],
+      [
+        "object",
+        "definite"
+      ]
+    ],
+    "comment": "Marked ?? in the paper."
+  },
+  {
+    "id": "daviesdubinsky2003_ex52b_write",
+    "source": {
+      "bibkey": "davies-dubinsky-2003",
+      "paperLabel": "(52b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did you write essays about?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dependency",
+        "movement"
+      ],
+      [
+        "verb",
+        "write"
+      ],
+      [
+        "creation",
+        "yes"
+      ],
+      [
+        "object",
+        "indefinite"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "daviesdubinsky2003_ex52b_read",
+    "source": {
+      "bibkey": "davies-dubinsky-2003",
+      "paperLabel": "(52b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did you read essays about?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dependency",
+        "movement"
+      ],
+      [
+        "verb",
+        "read"
+      ],
+      [
+        "creation",
+        "no"
+      ],
+      [
+        "object",
+        "indefinite"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "daviesdubinsky2003_ex53a_tell",
+    "source": {
+      "bibkey": "davies-dubinsky-2003",
+      "paperLabel": "(53a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did you tell those jokes about?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dependency",
+        "movement"
+      ],
+      [
+        "verb",
+        "tell"
+      ],
+      [
+        "creation",
+        "yes"
+      ],
+      [
+        "object",
+        "definite"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "daviesdubinsky2003_ex53a_hear",
+    "source": {
+      "bibkey": "davies-dubinsky-2003",
+      "paperLabel": "(53a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did you hear those jokes about?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dependency",
+        "movement"
+      ],
+      [
+        "verb",
+        "hear"
+      ],
+      [
+        "creation",
+        "no"
+      ],
+      [
+        "object",
+        "definite"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "daviesdubinsky2003_ex53b_tell",
+    "source": {
+      "bibkey": "davies-dubinsky-2003",
+      "paperLabel": "(53b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did you tell jokes about?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dependency",
+        "movement"
+      ],
+      [
+        "verb",
+        "tell"
+      ],
+      [
+        "creation",
+        "yes"
+      ],
+      [
+        "object",
+        "indefinite"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "daviesdubinsky2003_ex53b_hear",
+    "source": {
+      "bibkey": "davies-dubinsky-2003",
+      "paperLabel": "(53b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did you hear jokes about?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dependency",
+        "movement"
+      ],
+      [
+        "verb",
+        "hear"
+      ],
+      [
+        "creation",
+        "no"
+      ],
+      [
+        "object",
+        "indefinite"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "daviesdubinsky2003_ex54a_paint",
+    "source": {
+      "bibkey": "davies-dubinsky-2003",
+      "paperLabel": "(54a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did you paint that portrait of?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dependency",
+        "movement"
+      ],
+      [
+        "verb",
+        "paint"
+      ],
+      [
+        "creation",
+        "yes"
+      ],
+      [
+        "object",
+        "definite"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "daviesdubinsky2003_ex54a_see",
+    "source": {
+      "bibkey": "davies-dubinsky-2003",
+      "paperLabel": "(54a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did you see that portrait of?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dependency",
+        "movement"
+      ],
+      [
+        "verb",
+        "see"
+      ],
+      [
+        "creation",
+        "no"
+      ],
+      [
+        "object",
+        "definite"
+      ]
+    ],
+    "comment": "Marked ?? in the paper."
+  },
+  {
+    "id": "daviesdubinsky2003_ex54b_paint",
+    "source": {
+      "bibkey": "davies-dubinsky-2003",
+      "paperLabel": "(54b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did you paint a portrait of?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dependency",
+        "movement"
+      ],
+      [
+        "verb",
+        "paint"
+      ],
+      [
+        "creation",
+        "yes"
+      ],
+      [
+        "object",
+        "indefinite"
+      ]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "daviesdubinsky2003_ex54b_see",
+    "source": {
+      "bibkey": "davies-dubinsky-2003",
+      "paperLabel": "(54b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Who did you see a portrait of?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "dependency",
+        "movement"
+      ],
+      [
+        "verb",
+        "see"
+      ],
+      [
+        "creation",
+        "no"
+      ],
+      [
+        "object",
+        "indefinite"
+      ]
+    ],
+    "comment": ""
+  }
+]
