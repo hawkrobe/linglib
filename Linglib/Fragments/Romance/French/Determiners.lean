@@ -1,68 +1,81 @@
 import Linglib.Syntax.Category.Determiner.Basic
+import Linglib.Semantics.Quantification.Counting
+import Linglib.Semantics.Denotation
 
 /-!
-# French Determiners and Quantifiers
-[jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
+# French determiners
 
-A small lexicon of French determiners and quantifiers, structured to
-parallel `English.Determiners` so that the two can be compared directly
-in cross-linguistic studies. The genuinely quantificational words are
-`Quantifier` records (marked like a `Pronoun`, carrying
-only the morphosyntax synonyms diverge on); the definite/indefinite
-articles (*les*, *un*) are `Article`s. Only `form` and language-specific
-feature combinations differ from English.
+This file records the French determiners the studies consume. The quantificational determiners
+are the carrier `QuantityWord`, whose members project to a `Quantifier` record by
+`QuantityWord.toQuantifier` and denote the readings the literature makes available for them,
+so `⟦QuantityWord.tous⟧` is `{every_sem}`. French has no lexical dual universal, and *les deux*
+is the expression that serves as its indirect alternative
+([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]), marked with the dual number it
+realizes; *toujours* is the adverbial universal the same paper sets beside English *always*, and
+has no determiner reading. The articles *un* and *les* are `Article`s.
 
-This fragment is the minimum needed by `Studies/JereticEtAl2025.lean`. The
-notable gap relative to English: French has no lexical dual universal
-quantifier (no counterpart of `both`). The expression *les deux* is the
-nearest equivalent and is encoded here as a `Quantifier` with
-`numberRestriction := some .dual`, marking that — unlike *tous*, which is
-plural-restricted — it realizes the dual core concept
-(`JereticEtAl2025.CoreConcept.Id.dual`).
+## References
+
+* [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
+* [chemla-2007]
 -/
 
 namespace French.Determiners
 
-/-! ## Quantificational determiners
+/-! ## Quantificational determiners -/
 
-Marked `Quantifier` records: `form`, the selectional `numberRestriction`
-(root `Number`), and `selectsMass`. -/
+/-- The quantificational determiners: *tous*, *chaque*, *aucun*, *les deux*, *quelques* and the
+adverb *toujours*. -/
+inductive QuantityWord where
+  | tous | chaque | aucun | les_deux | quelques | toujours
+  deriving DecidableEq, Repr, Fintype
 
-/-- *tous* — universal, plural. The French universal of [chemla-2007]'s
-puzzle: anti-dual despite the lack of any French *both*. The paper's
-analysis: anti-duality is implicated via competition with the indirect
-alternative *les deux* (`les_deux`). -/
-def tous : Quantifier :=
-  { form := "tous"
-  , numberRestriction := some .plural
-  , selectsMass := true }
+namespace QuantityWord
 
-/-- *chaque* — universal, singular distributive (≈ English *each*). -/
-def chaque : Quantifier :=
-  { form := "chaque"
-  , numberRestriction := some .singular }
+/-- The surface form. -/
+def form : QuantityWord → String
+  | .tous => "tous"
+  | .chaque => "chaque"
+  | .aucun => "aucun"
+  | .les_deux => "les deux"
+  | .quelques => "quelques"
+  | .toujours => "toujours"
 
-/-- *aucun* — negative, singular. NOT anti-dual: French has no
-expression simple enough to act as an indirect alternative
-(*aucun des deux* and *ni l'un ni l'autre* are both more complex).
-See JereticEtAl2025 §5.2. -/
-def aucun : Quantifier :=
-  { form := "aucun"
-  , numberRestriction := some .singular }
+/-- The grammatical number a word selects: *tous*, *quelques* and *toujours* the plural,
+*chaque* and *aucun* the singular, and *les deux* the dual, the core concept it realizes. -/
+def numberRestriction : QuantityWord → Option Number
+  | .tous | .quelques | .toujours => some .plural
+  | .chaque | .aucun => some .singular
+  | .les_deux => some .dual
 
-/-- *les deux* — definite dual ('the two'). The pronounceable
-expression that serves as an indirect alternative for the unpronounceable
-*tous les NP.dual* (paper Fig. 1 + §4.1). Restricted to dual domains;
-marked here as a `Quantifier` so its dual `numberRestriction` is
-readable (the dual core-concept witness), paralleling English *both*. -/
-def les_deux : Quantifier :=
-  { form := "les deux"
-  , numberRestriction := some .dual }
+/-- Whether a word selects mass nouns, which only *tous* does. -/
+def selectsMass : QuantityWord → Bool
+  | .tous => true
+  | _ => false
 
-/-- *quelques* — existential, plural. -/
-def quelques : Quantifier :=
-  { form := "quelques"
-  , numberRestriction := some .plural }
+/-- The word as a determiner record. -/
+def toQuantifier (w : QuantityWord) : Quantifier :=
+  { form := w.form, numberRestriction := w.numberRestriction, selectsMass := w.selectsMass }
+
+/-- All the words. -/
+def toList : List QuantityWord := [.tous, .chaque, .aucun, .les_deux, .quelques, .toujours]
+
+universe u
+
+/-- The readings the literature makes available for a word. *Tous* and *chaque* read as
+`every_sem`, *aucun* as `no_sem`, *quelques* as `some_sem` and *les deux* as `both_sem`;
+*toujours* has no determiner reading. -/
+noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
+  denote
+    | .tous | .chaque => {Quantifier.GQ.Family.every}
+    | .aucun => {Quantifier.GQ.Family.no}
+    | .quelques => {Quantifier.GQ.Family.some}
+    | .les_deux => {Quantifier.GQ.Family.both}
+    | .toujours => ∅
+
+end QuantityWord
+
+/-! ## Articles -/
 
 /-- *un* — indefinite article, singular. -/
 def un : Article :=
@@ -77,19 +90,8 @@ def les : Article :=
   , exponent := .dedicatedMorpheme
   , uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} }
 
-/-- *toujours* — universal temporal ('always'). Parallel to English
-`always` (which decomposes as *all*+*ways*); JereticEtAl2025 §5.4
-contrasts: English *always* is anti-dual via competition with
-*both times*; French *toujours*, despite morphological decomposition
-*tous*+*jours*, is NOT anti-dual because *les deux fois* ('the two
-times') is more complex than *toujours*. -/
-def toujours : Quantifier :=
-  { form := "toujours"
-  , numberRestriction := some .plural }
-
-/-- All French quantifier entries (definite articles *les*/*un* excluded). -/
-def allQuantifiers : List Quantifier :=
-  [tous, chaque, aucun, les_deux, quelques, toujours]
+/-- All French quantifier entries. -/
+def allQuantifiers : List Quantifier := QuantityWord.toList.map QuantityWord.toQuantifier
 
 /-- All French article entries. -/
 def allArticles : List Article := [un, les]

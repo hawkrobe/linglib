@@ -1062,4 +1062,36 @@ theorem mostOn_univ_proportional :
     funext R S; exact propext (mostOn_univ R S)
   rw [h]; exact most_proportional
 
+/-! ### The families of the canonical denotations
+
+Each canonical denotation given on every finite domain, the readings a lexicon entry draws
+on. -/
+
+universe u
+
+namespace Family
+
+/-- `every_sem` on every finite domain. -/
+def every : Family.{u} := fun _ _ ↦ every_sem
+/-- `some_sem` on every finite domain. -/
+def some : Family.{u} := fun _ _ ↦ some_sem
+/-- `no_sem` on every finite domain. -/
+def no : Family.{u} := fun _ _ ↦ no_sem
+/-- `most_sem` on every finite domain. -/
+noncomputable def most : Family.{u} := fun α inst ↦ @most_sem α inst
+/-- `few_sem` on every finite domain. -/
+noncomputable def few : Family.{u} := fun α inst ↦ @few_sem α inst
+/-- `half_sem` on every finite domain. -/
+noncomputable def half : Family.{u} := fun α inst ↦ @half_sem α inst
+/-- `both_sem` on every finite domain. -/
+noncomputable def both : Family.{u} := fun α inst ↦ @both_sem α inst
+/-- `neither_sem` on every finite domain. -/
+noncomputable def neither : Family.{u} := fun α inst ↦ @neither_sem α inst
+/-- `at_least_n_sem n` on every finite domain. -/
+noncomputable def atLeast (n : ℕ) : Family.{u} := fun α inst ↦ @at_least_n_sem α inst n
+/-- `exactly_n_sem n` on every finite domain. -/
+noncomputable def exactly (n : ℕ) : Family.{u} := fun α inst ↦ @exactly_n_sem α inst n
+
+end Family
+
 end Quantifier.GQ

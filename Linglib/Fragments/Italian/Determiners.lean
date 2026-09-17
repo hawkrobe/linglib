@@ -1,41 +1,27 @@
-import Linglib.Syntax.Gender.Basic
 import Linglib.Syntax.Category.Determiner.Basic
-import Linglib.Semantics.Quantification.Lexicon
+import Linglib.Semantics.Quantification.Counting
+import Linglib.Semantics.Denotation
 
-/-! # Italian Determiners (Quantifiers)
+/-!
+# Italian determiners
 
-Quantifier lexicon with syntactic and semantic properties. Each entry
-`extends Quantifier` (the marked-determiner base: `form`,
-`numberRestriction`, `selectsMass`) and adds gender agreement plus the
-typological metadata labels (`qforce`/`monotonicity`/`strength`) from
-`Semantics/Quantification/Lexicon.lean`.
+This file records the Italian determiner lexicon. The quantificational determiners are the
+carrier `QuantityWord`, whose masculine and feminine forms are `QuantityWord.form` and
+`QuantityWord.feminine`, the invariant *ogni* and *qualche* having one form, and whose members
+project to a `Quantifier` record and denote the readings the literature makes available for
+them, so `⟦QuantityWord.tutti⟧` is `{every_sem}` and *molti*, like English *many*, denotes
+`∅`. The definite article *il*, *lo*, *la* and plural *i*, *gli*, *le* is one syncretic definite
+over the [schwarz-2009] use types, the indefinite is *un*, *uno*, *una*, and the partitive *del*,
+*dello*, *della* and plural *dei*, *degli*, *delle* is the indefinite of mass nouns and plurals.
 
-Italian quantifiers agree in gender and/or number with their NP:
-- *ogni* (every): invariant, singular
-- *qualche* (some): invariant, singular
-- *nessuno/nessuna* (no): gender-variable, singular, negative concord
-- *tutti/tutte* (all): gender-variable, plural
-- *alcuni/alcune* (some): gender-variable, plural
-- *molti/molte* (many): gender-variable, plural
-- *pochi/poche* (few): gender-variable, plural
+## References
+
+* [schwarz-2009]
+* [moroney-2021]
+* [chierchia-1998]
 -/
 
 namespace Italian.Determiners
-
-open Quantifier.Lexicon (QForce Monotonicity Strength)
-
-/-- Italian quantifier entry: the marked `Quantifier` base + gender + the
-    B&C typological metadata labels. -/
-structure ItalianQuantifierEntry extends Quantifier where
-  /-- Quantificational force (typological label). -/
-  qforce : QForce
-  /-- Monotonicity (typological label). -/
-  monotonicity : Monotonicity := .increasing
-  /-- Weak/strong (B&C Table II). -/
-  strength : Strength := .weak
-  /-- Gender agreement (none = invariant) -/
-  gender : Option Gender := none
-  deriving Repr
 
 /-! ## Articles
 
@@ -75,157 +61,73 @@ def allArticles : List Article :=
 
 /-! ## Quantificational determiners -/
 
-/-- *ogni* — every (invariant, singular, universal). -/
-def ogni : ItalianQuantifierEntry :=
-  { form := "ogni"
-  , qforce := .universal
-  , monotonicity := .increasing
-  , strength := .strong
-  , numberRestriction := some .singular }
+/-- The quantificational determiners: *ogni* 'every', *qualche* 'some', *nessuno* 'no', *tutti*
+'all', *alcuni* 'some', *molti* 'many' and *pochi* 'few'. -/
+inductive QuantityWord where
+  | ogni | qualche | nessuno | tutti | alcuni | molti | pochi
+  deriving DecidableEq, Repr, Fintype
 
-/-- *qualche* — some (invariant, singular, existential). -/
-def qualche : ItalianQuantifierEntry :=
-  { form := "qualche"
-  , qforce := .existential
-  , monotonicity := .increasing
-  , numberRestriction := some .singular }
+namespace QuantityWord
 
-/-- *nessuno* — no one (masculine, singular, negative concord). -/
-def nessuno : ItalianQuantifierEntry :=
-  { form := "nessuno"
-  , qforce := .negative
-  , monotonicity := .decreasing
-  , numberRestriction := some .singular
-  , gender := some .masculine }
+/-- The masculine form, which is the citation form. -/
+def form : QuantityWord → String
+  | .ogni => "ogni"
+  | .qualche => "qualche"
+  | .nessuno => "nessuno"
+  | .tutti => "tutti"
+  | .alcuni => "alcuni"
+  | .molti => "molti"
+  | .pochi => "pochi"
 
-/-- *nessuna* — no one (feminine, singular, negative concord). -/
-def nessuna : ItalianQuantifierEntry :=
-  { form := "nessuna"
-  , qforce := .negative
-  , monotonicity := .decreasing
-  , numberRestriction := some .singular
-  , gender := some .feminine }
+/-- The feminine form, which for the invariant *ogni* and *qualche* is the citation form. -/
+def feminine : QuantityWord → String
+  | .ogni => "ogni"
+  | .qualche => "qualche"
+  | .nessuno => "nessuna"
+  | .tutti => "tutte"
+  | .alcuni => "alcune"
+  | .molti => "molte"
+  | .pochi => "poche"
 
-/-- *tutti* — all (masculine, plural, universal). -/
-def tutti : ItalianQuantifierEntry :=
-  { form := "tutti"
-  , qforce := .universal
-  , monotonicity := .increasing
-  , strength := .strong
-  , numberRestriction := some .plural
-  , gender := some .masculine }
+/-- The grammatical number a word selects: the singular for *ogni*, *qualche* and *nessuno*,
+the plural for the rest. -/
+def numberRestriction : QuantityWord → Option Number
+  | .ogni | .qualche | .nessuno => some .singular
+  | .tutti | .alcuni | .molti | .pochi => some .plural
 
-/-- *tutte* — all (feminine, plural, universal). -/
-def tutte : ItalianQuantifierEntry :=
-  { form := "tutte"
-  , qforce := .universal
-  , monotonicity := .increasing
-  , strength := .strong
-  , numberRestriction := some .plural
-  , gender := some .feminine }
+/-- The word as a determiner record. -/
+def toQuantifier (w : QuantityWord) : Quantifier :=
+  { form := w.form, numberRestriction := w.numberRestriction }
 
-/-- *alcuni* — some (masculine, plural, existential). -/
-def alcuni : ItalianQuantifierEntry :=
-  { form := "alcuni"
-  , qforce := .existential
-  , monotonicity := .increasing
-  , numberRestriction := some .plural
-  , gender := some .masculine }
+/-- All the words. -/
+def toList : List QuantityWord :=
+  [.ogni, .qualche, .nessuno, .tutti, .alcuni, .molti, .pochi]
 
-/-- *alcune* — some (feminine, plural, existential). -/
-def alcune : ItalianQuantifierEntry :=
-  { form := "alcune"
-  , qforce := .existential
-  , monotonicity := .increasing
-  , numberRestriction := some .plural
-  , gender := some .feminine }
+/-- Every word distinguishes its two forms or has one for both genders. -/
+theorem feminine_eq_form_iff (w : QuantityWord) :
+    w.feminine = w.form ↔ w = .ogni ∨ w = .qualche := by
+  cases w <;> decide
 
-/-- *molti* — many (masculine, plural, proportional). -/
-def molti : ItalianQuantifierEntry :=
-  { form := "molti"
-  , qforce := .proportional
-  , monotonicity := .increasing
-  , numberRestriction := some .plural
-  , gender := some .masculine }
+universe u
 
-/-- *molte* — many (feminine, plural, proportional). -/
-def molte : ItalianQuantifierEntry :=
-  { form := "molte"
-  , qforce := .proportional
-  , monotonicity := .increasing
-  , numberRestriction := some .plural
-  , gender := some .feminine }
+/-- The readings available for a word. *Ogni* and *tutti* read as `every_sem`, *qualche* and
+*alcuni* as `some_sem`, *nessuno* as `no_sem` and *pochi* as `few_sem`; *molti* has no reading,
+its standard being contextual like that of English *many*. -/
+noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
+  denote
+    | .ogni | .tutti => {Quantifier.GQ.Family.every}
+    | .qualche | .alcuni => {Quantifier.GQ.Family.some}
+    | .nessuno => {Quantifier.GQ.Family.no}
+    | .pochi => {Quantifier.GQ.Family.few}
+    | .molti => ∅
 
-/-- *pochi* — few (masculine, plural, proportional, decreasing). -/
-def pochi : ItalianQuantifierEntry :=
-  { form := "pochi"
-  , qforce := .proportional
-  , monotonicity := .decreasing
-  , numberRestriction := some .plural
-  , gender := some .masculine }
-
-/-- *poche* — few (feminine, plural, proportional, decreasing). -/
-def poche : ItalianQuantifierEntry :=
-  { form := "poche"
-  , qforce := .proportional
-  , monotonicity := .decreasing
-  , numberRestriction := some .plural
-  , gender := some .feminine }
-
-/-- All Italian quantifier entries. -/
-def allQuantifiers : List ItalianQuantifierEntry := [
-  ogni, qualche, nessuno, nessuna, tutti, tutte,
-  alcuni, alcune, molti, molte, pochi, poche
-]
+end QuantityWord
 
 /-- The Italian determiner inventory. -/
 def inventory : Determiner.Inventory :=
-  allArticles.map .article ++ allQuantifiers.map (.quantifier ·.toQuantifier)
+  allArticles.map .article ++ QuantityWord.toList.map (.quantifier ·.toQuantifier)
 
 /-- Italian derives the `.generallyMarked` [moroney-2021] cell. -/
 theorem marking : inventory.markingStrategy = .generallyMarked := by decide
-
-/-- Lookup by form. -/
-def lookup (form : String) : Option ItalianQuantifierEntry :=
-  allQuantifiers.find? λ q => q.form == form
-
-/-- *ogni* is universal, increasing, and strong. -/
-theorem ogni_universal :
-    ogni.qforce = .universal ∧
-    ogni.monotonicity = .increasing ∧
-    ogni.strength = .strong := ⟨rfl, rfl, rfl⟩
-
-/-- *nessuno* is negative and decreasing. -/
-theorem nessuno_negative :
-    nessuno.qforce = .negative ∧
-    nessuno.monotonicity = .decreasing := ⟨rfl, rfl⟩
-
-/-- *tutti* is universal, increasing, and strong. -/
-theorem tutti_universal :
-    tutti.qforce = .universal ∧
-    tutti.monotonicity = .increasing ∧
-    tutti.strength = .strong := ⟨rfl, rfl, rfl⟩
-
-/-- *qualche* is existential and increasing. -/
-theorem qualche_existential :
-    qualche.qforce = .existential ∧
-    qualche.monotonicity = .increasing := ⟨rfl, rfl⟩
-
-/-- *pochi* is proportional and decreasing. -/
-theorem pochi_decreasing :
-    pochi.qforce = .proportional ∧
-    pochi.monotonicity = .decreasing := ⟨rfl, rfl⟩
-
-/-- Gender agreement: nessuno/nessuna are masculine/feminine forms of the same quantifier. -/
-theorem nessuno_nessuna_gender :
-    nessuno.gender = some .masculine ∧
-    nessuna.gender = some .feminine ∧
-    nessuno.qforce = nessuna.qforce := ⟨rfl, rfl, rfl⟩
-
-/-- Gender agreement: tutti/tutte are masculine/feminine forms of the same quantifier. -/
-theorem tutti_tutte_gender :
-    tutti.gender = some .masculine ∧
-    tutte.gender = some .feminine ∧
-    tutti.qforce = tutte.qforce := ⟨rfl, rfl, rfl⟩
 
 end Italian.Determiners
