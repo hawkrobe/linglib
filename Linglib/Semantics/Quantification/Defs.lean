@@ -2,6 +2,7 @@ import Mathlib.Order.Lattice
 import Mathlib.Order.Monotone.Defs
 import Mathlib.Order.Sublattice
 import Mathlib.Order.BooleanAlgebra.Basic
+import Mathlib.Data.Fintype.Defs
 import Linglib.Logic.Natural.Basic
 import Linglib.Core.Data.Trivalent
 
@@ -38,6 +39,12 @@ namespace Quantifier
     Under the Pi-of-Prop ordering (`α → Prop` ordered by pointwise
     implication), a GQ is just a binary relation between predicates. -/
 abbrev GQ (α : Type*) := (α → Prop) → (α → Prop) → Prop
+
+universe u
+
+/-- A determiner denotation given on every finite domain, the object from which a lexicon
+entry's available readings are drawn. -/
+abbrev GQ.Family : Type (u + 1) := ∀ (α : Type u) [Fintype α], GQ α
 
 /-- The type ⟨1⟩ quantifier a noun phrase denotes is a property of properties, a quantifier
 proper in [barwise-cooper-1981]'s sense, where a quantifier is a set of sets and a determiner

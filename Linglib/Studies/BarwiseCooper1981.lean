@@ -259,16 +259,19 @@ open scoped Semantics
 
 variable [Fintype α]
 
-/-- *every/all* is positive strong (Table II). -/
-theorem all_positiveStrong : PositiveStrong (⟦QuantityWord.all⟧ α) :=
-  every_positive_strong
+/-- Every available reading of *all* is positive strong (Table II). -/
+theorem all_positiveStrong {d : GQ.Family} (h : d ∈ ⟦QuantityWord.all⟧) :
+    PositiveStrong (d α) := by
+  obtain rfl : d = GQ.Family.every := h
+  exact every_positive_strong
 
 open Classical in
 /-- *most* is positive strong on nonempty restrictors (Table II; Appendix B's SP1): *most
 N are N* whenever there are `N`s. On the empty restrictor the proportional reading fails,
 which is B&C's Table I column: *most N* can denote the empty quantifier. -/
-theorem most_apply_self (A : α → Prop) (h : ∃ x, A x) :
-    ⟦QuantityWord.most⟧ α A A := by
+theorem most_apply_self {d : GQ.Family} (hd : d ∈ ⟦QuantityWord.most⟧) (A : α → Prop)
+    (h : ∃ x, A x) : d α A A := by
+  obtain rfl : d = GQ.Family.most := hd
   obtain ⟨x, hx⟩ := h
   show most_sem A A
   unfold most_sem

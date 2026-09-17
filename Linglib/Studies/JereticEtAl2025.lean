@@ -129,7 +129,7 @@ def typology : Language → QSlot → Option Slot
   | .english, .one => some ⟨"one", 1, [⟨"one of the two", false, 4⟩]⟩
   | .english, .always => some ⟨"always", 2, [⟨"both times", false, 2⟩]⟩
   | .french, .universal =>
-    some ⟨"tous les", 3, [⟨French.Determiners.les_deux.form, false, 3⟩]⟩
+    some ⟨"tous les", 3, [⟨French.Determiners.QuantityWord.les_deux.form, false, 3⟩]⟩
   | .french, .negative =>
     some ⟨"aucun", 1, [⟨"aucun des deux", false, 3⟩, ⟨"ni l'un ni l'autre", false, 5⟩]⟩
   | .french, .which => some ⟨"quel", 1, []⟩

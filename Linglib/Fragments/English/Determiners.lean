@@ -6,26 +6,27 @@ import Linglib.Semantics.Denotation
 /-!
 # English determiners
 
-This file records the English determiner lexicon. The quantificational determiners with a
-fixed generalized-quantifier denotation are the carrier `QuantityWord`. A word projects to its
-`Quantifier` record by `QuantityWord.toQuantifier`, which carries only what the denotation
-leaves open, the selected number and whether mass nouns are selected, and denotes a
-`Quantifier.GQ` on every finite domain through the `Denotes` instance, so `⟦QuantityWord.all⟧`
-is `every_sem`. Everything the denotation fixes, force, monotonicity, strength and
-conservativity, is a theorem about `⟦w⟧` (`Studies/BarwiseCooper1981.lean`), and the textbook
-labels of [barwise-cooper-1981]'s Table II are the metadata `QuantityWord.entry` for the studies
-that want the descriptive classification. *Many* is the record `many` outside the carrier,
-since [barwise-cooper-1981] leave its standard to context. The articles, demonstratives and
-possessives are the other determiner kinds, and the numerical determiners of
-[van-de-pol-etal-2023] are parameterized by their threshold.
+This file records the English determiner lexicon. The quantificational determiners are the
+carrier `QuantityWord`. A word projects to its `Quantifier` record by
+`QuantityWord.toQuantifier`, which carries only what the readings leave open, the selected
+number and whether mass nouns are selected, and denotes the set of readings the literature makes
+available for it through the `Denotes` instance, each a `Quantifier.GQ.Family`. A word with one
+consensus reading denotes a singleton, so `⟦QuantityWord.all⟧` is `{every_sem}`, and *many*,
+whose standard [barwise-cooper-1981] leave to context, denotes `∅` until the theory hub has a
+reading for it. A study takes a stand by membership, and everything a reading fixes, force,
+monotonicity, strength and conservativity, is a theorem about the member chosen
+(`Studies/BarwiseCooper1981.lean`). The textbook labels of [barwise-cooper-1981]'s Table II are
+the metadata `QuantityWord.entry` for the studies that want the descriptive classification. The
+articles, demonstratives and possessives are the other determiner kinds, and the numerical
+determiners of [van-de-pol-etal-2023] are parameterized by their threshold.
 
 ## Main declarations
 
-* `QuantityWord` is the carrier of the denoting quantificational determiners, with the six-word
-  scale `QuantityWord.scale` of [van-tiel-franke-sauerland-2021] inside it;
+* `QuantityWord` is the carrier of the quantificational determiners, with the six-word scale
+  `QuantityWord.scale` of [van-tiel-franke-sauerland-2021] inside it;
   `QuantityWord.form`, `QuantityWord.numberRestriction` and `QuantityWord.selectsMass` are its
   lexical data and `QuantityWord.toQuantifier` its record.
-* The `Denotes` instance gives each word its generalized quantifier from
+* The `Denotes` instance gives each word its available readings from
   `Quantification/Basic.lean` and `Quantification/Counting.lean`.
 * `QuantityWord.entry` is the [barwise-cooper-1981] Table II classification.
 * `inventory` is the English determiner inventory, and `marking` derives its [moroney-2021]
@@ -51,11 +52,10 @@ export Quantifier.Lexicon
 
 /-! ## Quantificational determiners -/
 
-/-- The quantificational determiners of English with a fixed generalized-quantifier denotation:
-the six-word quantity scale *none*, *few*, *some*, *half*, *most* and *all*, and *every*,
-*each*, *both* and *neither*. -/
+/-- The quantificational determiners of English: the six-word quantity scale *none*, *few*,
+*some*, *half*, *most* and *all*, and *every*, *each*, *many*, *both* and *neither*. -/
 inductive QuantityWord where
-  | none_ | few | some_ | half | most | all | every | each | both | neither
+  | none_ | few | some_ | half | most | all | every | each | many | both | neither
   deriving DecidableEq, Repr, Fintype
 
 namespace QuantityWord
@@ -70,6 +70,7 @@ def form : QuantityWord → String
   | .all => "all"
   | .every => "every"
   | .each => "each"
+  | .many => "many"
   | .both => "both"
   | .neither => "neither"
 
@@ -78,7 +79,7 @@ share a denotation and differ here. *Both* and *neither* select the dual, the co
 `[−atomic, +minimal]` of [harbour-2014], whose cardinality clause the denotation reflects
 ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]). -/
 def numberRestriction : QuantityWord → Option Number
-  | .few | .most | .all => some .plural
+  | .few | .most | .all | .many => some .plural
   | .every | .each => some .singular
   | .both | .neither => some .dual
   | .none_ | .some_ | .half => none
@@ -86,7 +87,7 @@ def numberRestriction : QuantityWord → Option Number
 /-- Whether a word selects mass nouns, which the denotation likewise leaves open. -/
 def selectsMass : QuantityWord → Bool
   | .none_ | .some_ | .half | .most | .all => true
-  | .few | .every | .each | .both | .neither => false
+  | .few | .every | .each | .many | .both | .neither => false
 
 /-- The word as a determiner record. -/
 def toQuantifier (w : QuantityWord) : Quantifier :=
@@ -98,28 +99,30 @@ def scale : List QuantityWord := [.none_, .few, .some_, .half, .most, .all]
 
 /-- All the words. -/
 def toList : List QuantityWord :=
-  [.none_, .few, .some_, .half, .most, .all, .every, .each, .both, .neither]
+  [.none_, .few, .some_, .half, .most, .all, .every, .each, .many, .both, .neither]
 
 theorem mem_toList (w : QuantityWord) : w ∈ toList := by cases w <;> decide
 
-/-! ### Denotation -/
+/-! ### The available readings -/
 
 universe u
 
-/-- A word denotes its generalized quantifier on every finite domain: *none* is `no_sem`, *some*
-`some_sem`, *all*, *every* and *each* `every_sem`, *most* `most_sem`, *few* `few_sem`, *half*
-`half_sem`, *both* `both_sem` and *neither* `neither_sem`. -/
-noncomputable instance : Semantics.Denotes QuantityWord
-    (∀ (α : Type u) [Fintype α], Quantifier.GQ α) where
+/-- The readings the literature makes available for a word, as generalized quantifiers on every
+finite domain. *None* reads as `no_sem`, *some* as `some_sem`, *all*, *every* and *each* as
+`every_sem`, *most* as `most_sem`, *few* as `few_sem`, *half* as `half_sem`, *both* as
+`both_sem` and *neither* as `neither_sem`; *many* has no reading, since
+[barwise-cooper-1981] leave its standard to context. -/
+noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote
-    | .none_ => fun _ _ ↦ Quantifier.GQ.no_sem
-    | .some_ => fun _ _ ↦ Quantifier.GQ.some_sem
-    | .all | .every | .each => fun _ _ ↦ Quantifier.GQ.every_sem
-    | .most => fun _ _ ↦ Quantifier.GQ.most_sem
-    | .few => fun _ _ ↦ Quantifier.GQ.few_sem
-    | .half => fun _ _ ↦ Quantifier.GQ.half_sem
-    | .both => fun _ _ ↦ Quantifier.GQ.both_sem
-    | .neither => fun _ _ ↦ Quantifier.GQ.neither_sem
+    | .none_ => {Quantifier.GQ.Family.no}
+    | .some_ => {Quantifier.GQ.Family.some}
+    | .all | .every | .each => {Quantifier.GQ.Family.every}
+    | .most => {Quantifier.GQ.Family.most}
+    | .few => {Quantifier.GQ.Family.few}
+    | .half => {Quantifier.GQ.Family.half}
+    | .both => {Quantifier.GQ.Family.both}
+    | .neither => {Quantifier.GQ.Family.neither}
+    | .many => ∅
 
 /-! ### The Table II classification -/
 
@@ -145,13 +148,11 @@ def entry : QuantityWord → Metadata
   | .half => { qforce := .proportional, monotonicity := .nonMonotone }
   | .most => { qforce := .proportional, strength := .strong }
   | .all | .every | .each => { qforce := .universal, strength := .strong }
+  | .many => { qforce := .proportional }
   | .both => { qforce := .universal, strength := .strong }
   | .neither => { qforce := .negative, monotonicity := .decreasing, strength := .strong }
 
 end QuantityWord
-
-/-- *Many*, whose standard [barwise-cooper-1981] leave to context, so it denotes nothing here. -/
-def many : Quantifier := { form := "many", numberRestriction := some .plural }
 
 /-! ## Articles and demonstratives
 
@@ -233,8 +234,8 @@ def fewerThan (n : Nat) : NumericalDetEntry :=
 
 /-! ## Lexicon Access -/
 
-/-- All quantificational determiner entries, the denoting words and *many*. -/
-def allQuantifiers : List Quantifier := QuantityWord.toList.map QuantityWord.toQuantifier ++ [many]
+/-- All quantificational determiner entries. -/
+def allQuantifiers : List Quantifier := QuantityWord.toList.map QuantityWord.toQuantifier
 
 /-- All article entries. -/
 def allArticles : List Article := [the, a, an]

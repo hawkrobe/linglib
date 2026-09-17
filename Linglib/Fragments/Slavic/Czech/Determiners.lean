@@ -1,14 +1,17 @@
 import Linglib.Syntax.Category.Determiner.Basic
+import Linglib.Semantics.Quantification.Counting
+import Linglib.Semantics.Denotation
 
 /-!
 # Czech determiner inventory
 
-Czech has no articles: definiteness goes unmarked, and the demonstrative *ten* is not the
+Czech has no articles, so definiteness goes unmarked, and the demonstrative *ten* is not the
 obligatory exponent of any definite use. The inventory holds the demonstrative and the
-quantificational determiners, among them the concord item *žádný* 'no' and the positive
-polarity item *nějaký* 'some', whose polarity behaviour is recorded on their
-`Polarity.Item` entries in `PolarityItems.lean` and used by [stankova-2025] to diagnose
-the position of negation in polar questions.
+quantificational determiners, the carrier `QuantityWord`, whose members project to a
+`Quantifier` record and denote the readings available for them. Among them are the concord
+item *žádný* 'no' and the positive polarity item *nějaký* 'some', whose polarity behaviour is
+recorded on their `Polarity.Item` entries in `PolarityItems.lean` and used by [stankova-2025]
+to diagnose the position of negation in polar questions.
 
 ## References
 
@@ -20,22 +23,54 @@ namespace Czech.Determiners
 /-- *ten* 'that, the', the distance-neutral demonstrative. -/
 def ten : DemonstrativeDeterminer := { form := "ten", deictic := .unspecified }
 
-/-- *každý* 'every', universal over singular count nouns. -/
-def kazdy : Quantifier := { form := "každý", numberRestriction := some .singular }
+/-- The quantificational determiners: *každý* 'every', *žádný* 'no', *nějaký* 'some' and
+*některý* 'some, certain'. -/
+inductive QuantityWord where
+  | kazdy | zadny | nejaky | nektery
+  deriving DecidableEq, Repr, Fintype
 
-/-- *žádný* 'no', the negative concord determiner, accepting mass nouns. -/
-def zadny : Quantifier := { form := "žádný", selectsMass := true }
+namespace QuantityWord
 
-/-- *nějaký* 'some', the positive polarity determiner, accepting mass nouns. -/
-def nejaky : Quantifier := { form := "nějaký", selectsMass := true }
+/-- The surface form. -/
+def form : QuantityWord → String
+  | .kazdy => "každý"
+  | .zadny => "žádný"
+  | .nejaky => "nějaký"
+  | .nektery => "některý"
 
-/-- *některý* 'some, certain', the partitive indefinite determiner. -/
-def nektery : Quantifier := { form := "některý" }
+/-- The grammatical number a word selects, which only *každý* fixes, to the singular. -/
+def numberRestriction : QuantityWord → Option Number
+  | .kazdy => some .singular
+  | _ => none
+
+/-- Whether a word selects mass nouns, which *žádný* and *nějaký* do. -/
+def selectsMass : QuantityWord → Bool
+  | .zadny | .nejaky => true
+  | .kazdy | .nektery => false
+
+/-- The word as a determiner record. -/
+def toQuantifier (w : QuantityWord) : Quantifier :=
+  { form := w.form, numberRestriction := w.numberRestriction, selectsMass := w.selectsMass }
+
+/-- All the words. -/
+def toList : List QuantityWord := [.kazdy, .zadny, .nejaky, .nektery]
+
+universe u
+
+/-- The readings available for a word. *Každý* reads as `every_sem`, *žádný* as `no_sem`, and
+*nějaký* and *některý* as `some_sem`, the partitive specificity of *některý* being no part of
+its truth conditions. -/
+instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
+  denote
+    | .kazdy => {Quantifier.GQ.Family.every}
+    | .zadny => {Quantifier.GQ.Family.no}
+    | .nejaky | .nektery => {Quantifier.GQ.Family.some}
+
+end QuantityWord
 
 /-- The Czech determiners: the demonstrative and the quantifiers, with no article. -/
 def inventory : Determiner.Inventory :=
-  [ .demonstrative ten, .quantifier kazdy, .quantifier zadny, .quantifier nejaky,
-    .quantifier nektery ]
+  .demonstrative ten :: QuantityWord.toList.map (.quantifier ·.toQuantifier)
 
 /-- Czech derives the `.unmarked` Moroney cell. -/
 theorem marking : inventory.markingStrategy = .unmarked := by decide

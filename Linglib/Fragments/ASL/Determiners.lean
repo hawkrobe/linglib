@@ -1,15 +1,18 @@
 import Linglib.Syntax.Category.Determiner.Basic
+import Linglib.Semantics.Quantification.Counting
+import Linglib.Semantics.Denotation
 
 /-!
 # ASL quantifier signs
 
-The quantificational signs of American Sign Language attested with locus and height
-modification in [davidson-gagne-2022], as marked `Quantifier` records under the ASL
-Signbank ID glosses: `FS(ALL)` is the fingerspelled universal, `ALL-b` its two-handed form,
-`NONEsym` the symmetrical negative quantifier. Which of them carry a height-marked locus
+This file records the quantificational signs of American Sign Language attested with locus and
+height modification in [davidson-gagne-2022], under their ASL Signbank ID glosses, as the
+carrier `Sign`. A sign projects to a `Quantifier` record and denotes the readings the
+literature makes available for its gloss: `FS(ALL)` is the fingerspelled universal, `ALL-b` its
+two-handed form, `NONEsym` the symmetrical negative quantifier, and the numerals `ONE` and `TWO`
+carry both the at-least and the exactly reading. Which signs carry a height-marked locus
 themselves and which take a following `IX-arc` is a matter of their phonological form and is
-classified in the
-study, not here.
+classified in the study, not here.
 
 ## References
 
@@ -19,42 +22,58 @@ study, not here.
 
 namespace ASL.Determiners
 
-/-- `FS(ALL)`: the fingerspelled universal quantifier. -/
-def fsAll : Quantifier := { form := "FS(ALL)", numberRestriction := some .plural }
-
-/-- `ALL-b`: the two-handed universal quantifier. -/
-def allB : Quantifier := { form := "ALL-b", numberRestriction := some .plural }
-
-/-- `NONEsym`: the symmetrical negative quantifier. -/
-def noneSym : Quantifier := { form := "NONEsym" }
-
-/-- `SOMEONE`: the existential over persons. -/
-def someone : Quantifier := { form := "SOMEONE", numberRestriction := some .singular }
-
-/-- `SOMETHING`: the existential over things. -/
-def something : Quantifier :=
-  { form := "SOMETHING", numberRestriction := some .singular }
-
-/-- `ONE` as a quantifier. -/
-def one : Quantifier := { form := "ONE", numberRestriction := some .singular }
-
-/-- `TWO` as a quantifier. -/
-def two : Quantifier := { form := "TWO", numberRestriction := some .plural }
-
-/-- `MANY`. -/
-def many : Quantifier := { form := "MANY", numberRestriction := some .plural }
-
-/-- `FEW`. -/
-def few : Quantifier := { form := "FEW", numberRestriction := some .plural }
-
-/-- `EACH`. -/
-def each : Quantifier := { form := "EACH", numberRestriction := some .singular }
-
-/-- `MOST`. -/
-def most : Quantifier := { form := "MOST", numberRestriction := some .plural }
-
 /-- The quantifier signs attested in the paper. -/
-def all : List Quantifier :=
-  [fsAll, allB, noneSym, someone, something, one, two, many, few, each, most]
+inductive Sign where
+  | fsAll | allB | noneSym | someone | something | one | two | many | few | each | most
+  deriving DecidableEq, Repr, Fintype
+
+namespace Sign
+
+/-- The ASL Signbank ID gloss. -/
+def form : Sign → String
+  | .fsAll => "FS(ALL)"
+  | .allB => "ALL-b"
+  | .noneSym => "NONEsym"
+  | .someone => "SOMEONE"
+  | .something => "SOMETHING"
+  | .one => "ONE"
+  | .two => "TWO"
+  | .many => "MANY"
+  | .few => "FEW"
+  | .each => "EACH"
+  | .most => "MOST"
+
+/-- The grammatical number a sign selects. -/
+def numberRestriction : Sign → Option Number
+  | .fsAll | .allB | .two | .many | .few | .most => some .plural
+  | .someone | .something | .one | .each => some .singular
+  | .noneSym => none
+
+/-- The sign as a determiner record. -/
+def toQuantifier (s : Sign) : Quantifier :=
+  { form := s.form, numberRestriction := s.numberRestriction }
+
+/-- All the signs. -/
+def toList : List Sign :=
+  [.fsAll, .allB, .noneSym, .someone, .something, .one, .two, .many, .few, .each, .most]
+
+universe u
+
+/-- The readings available for a sign, those of its gloss: the universals and `EACH` read as
+`every_sem`, `NONEsym` as `no_sem`, the existentials as `some_sem`, `FEW` as `few_sem`, `MOST` as
+`most_sem`, and the numerals as `at_least_n_sem` or `exactly_n_sem`; `MANY` has no reading, its
+standard being contextual. -/
+noncomputable instance : Semantics.Denotes Sign (Set Quantifier.GQ.Family.{u}) where
+  denote
+    | .fsAll | .allB | .each => {Quantifier.GQ.Family.every}
+    | .noneSym => {Quantifier.GQ.Family.no}
+    | .someone | .something => {Quantifier.GQ.Family.some}
+    | .one => {Quantifier.GQ.Family.atLeast 1, Quantifier.GQ.Family.exactly 1}
+    | .two => {Quantifier.GQ.Family.atLeast 2, Quantifier.GQ.Family.exactly 2}
+    | .few => {Quantifier.GQ.Family.few}
+    | .most => {Quantifier.GQ.Family.most}
+    | .many => ∅
+
+end Sign
 
 end ASL.Determiners

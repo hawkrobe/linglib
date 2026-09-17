@@ -163,15 +163,15 @@ theorem not_strengthening {x x' w : E} (hw : w ≤ x') (hwx : ¬ w ≤ x) :
 
 /-- The quantifier signs that incorporate the pronoun and carry the height themselves
 ((32)–(36), (39)). -/
-def incorporating : List Quantifier := [fsAll, noneSym, someone, something, one, two]
+def incorporating : List Sign := [.fsAll, .noneSym, .someone, .something, .one, .two]
 
 /-- The quantifier signs whose phonology holds them in place, so that the height-marked
 `IX-arc` follows them ((37), (39)). -/
-def sequential : List Quantifier := [few, each, most, allB, many]
+def sequential : List Sign := [.few, .each, .most, .allB, .many]
 
 /-- Each quantifier row realises height as its sign's class predicts. -/
 theorem realization_rows :
-    ∀ e ∈ Examples.all, ∀ q ∈ ASL.Determiners.all, e.feature? "quantifier" = some q.form →
+    ∀ e ∈ Examples.all, ∀ q ∈ Sign.toList, e.feature? "quantifier" = some q.form →
       (e.feature? "realization" = some "simultaneous" → q ∈ incorporating) ∧
       (e.feature? "realization" = some "sequential" → q ∈ sequential) := by
   decide
