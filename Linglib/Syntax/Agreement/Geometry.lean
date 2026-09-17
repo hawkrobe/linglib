@@ -157,9 +157,10 @@ def defaultDependent? : Node → Option Node
 
 end Node
 
-/-- The nodes are the features: a feature geometry whose natural classes are the principal
-upper sets. -/
-instance : Phonology.FeatureGeometry Node Node := ⟨some⟩
+/-- A feature geometry whose features are its own nodes: each feature hangs from itself, so
+the natural class of a node is the set of nodes it dominates. -/
+instance : Phonology.FeatureGeometry Node Node where
+  node n := some n
 
 /-! ### Default fill-in -/
 
