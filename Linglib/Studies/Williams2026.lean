@@ -74,7 +74,7 @@ inductive PresupContent where
     entailment that Williams (fn 1) brackets. -/
 structure ForgetJudgment where
   /-- Complement frame being tested. -/
-  frame : ComplementType
+  frame : ArgumentFrame
   /-- Example sentence (Williams uses *John* throughout §1–§3.1). -/
   sentence : String
   /-- Paraphrase of what is presupposed. -/
@@ -157,22 +157,20 @@ SMINC generalization (§3.1.3, (15)): Mod heads the complement of
 below records the temporal-profile outcome per complement type; the
 event-semantic LB(τ) comparisons are the deferred deep form. -/
 
-/-- The complement type's temporal profile inherently satisfies the
+/-- The complement frame's temporal profile inherently satisfies the
     pre-existence presupposition: finite CPs (tense) and gerunds
     (aspect) locate the embedded event no later than matrix time; plain
     infinitives and the rest are forward-oriented. -/
-def SatisfiesPreExistence : ComplementType → Prop
-  | .finiteClause => True
-  | .gerund => True
-  | _ => False
+def SatisfiesPreExistence (fr : ArgumentFrame) : Prop :=
+  ∃ p ∈ fr.complements, p.IsFinite ∨ p.coding? = some .nominalized
 
-instance : DecidablePred SatisfiesPreExistence := fun ct => by
-  cases ct <;> simp only [SatisfiesPreExistence] <;> infer_instance
+instance : DecidablePred SatisfiesPreExistence := fun _ ↦
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- SMINC: covert Mod is inserted iff the complement does not
     inherently satisfy pre-existence. -/
-def NeedsModalInsertion (ct : ComplementType) : Prop :=
-  ¬ SatisfiesPreExistence ct
+def NeedsModalInsertion (fr : ArgumentFrame) : Prop :=
+  ¬ SatisfiesPreExistence fr
 
 instance : DecidablePred NeedsModalInsertion := fun _ =>
   inferInstanceAs (Decidable ¬ _)

@@ -68,9 +68,9 @@ private abbrev run_ := English.run.toWord .base
 /-! ### Valency frames from the Fragment (sixth chapter) -/
 
 /-- The frame of a tree whose verb at position `i` is the fragment entry `v`: the valency its
-complement type determines. -/
+citation frame determines. -/
 private def frameOf {n : ℕ} (v : English.Verb) (i : Fin n) : Frames n :=
-  .ofList [(i, (v.complementType.valency).getD [])]
+  .ofList [(i, (v.citationFrame?.bind Valency.ofFrame).getD [])]
 
 def intransTree : Graph 2 := .ofArcs [john, sleeps] 1 [(1, 0, .nsubj)]
 
@@ -101,7 +101,7 @@ example : ¬ transNoObj.SatisfiesFrames (frameOf English.devour 1) := by
 /-- The lexical entry of *kicked*, its valency from the fragment. -/
 private def lexKicked : LexEntry :=
   { form := kicked.form, cat := .VERB, features := kicked.features
-    valency := (English.kick.complementType.valency).getD [] }
+    valency := (English.kick.citationFrame?.bind Valency.ofFrame).getD [] }
 
 /-- The passive rule applies to *kicked* and yields the passive valency. -/
 theorem passive_valency :

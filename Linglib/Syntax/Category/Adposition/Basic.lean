@@ -66,7 +66,7 @@ inductive Linearization where
   deriving DecidableEq, Repr, Fintype
 
 /-- What an adposition governs (criterion 1) — P-specific complement types
-    (NOT the verb-argument `Features.Complementation.ComplementType`, which
+    (not the verb's `ArgumentFrame`, which
     carries ditransitive frames an adposition never selects). -/
 inductive Complement where
   | np

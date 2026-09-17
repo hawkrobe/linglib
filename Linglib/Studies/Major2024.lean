@@ -140,7 +140,8 @@ structure SayConverbAnalysis where
   /-- 'say' is transitive with an obligatory internal argument
       (39a), (40a), a requirement that persists inside the adjunct
       (41): `*(birnémi-ler-ni) de-p warqiri-di`). -/
-  say_transitive : say.complementType ≠ ComplementType.none ∧ ∀ fr ∈ say.frames, ¬ fr.HasImplicit
+  say_transitive : (∃ fr ∈ say.citationFrame?, ¬ fr.IsIntransitive) ∧
+    ∀ fr ∈ say.frames, ¬ fr.HasImplicit
 
 /-- The complex linker: the say-root's morphs followed by the converb's
 (*de-p*; Sakha *die-n*). -/
@@ -225,8 +226,8 @@ content sits in the obligatory complement of *de-* inside the
 VP-adjoined say-clause, which "coerces it into a verb of speech"
 (§3.1). No hidden frame of 'scream' is needed. -/
 theorem coerced_speech_reading :
-    Uyghur.warqira.complementType = .none ∧
-    Uyghur.deVerb.complementType ≠ .none ∧
+    Uyghur.warqira.citationFrame? = some .intransitive ∧
+    (∃ fr ∈ Uyghur.deVerb.citationFrame?, ¬ fr.IsIntransitive) ∧
     licensedIn Uyghur.ip .vpAdjunct :=
   ⟨rfl, depAnalysis.say_transitive.1, dep_adjoins_vp_and_tp.1⟩
 

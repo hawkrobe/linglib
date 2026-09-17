@@ -56,7 +56,7 @@ open ArgumentStructure in
 def ClauseEmbeddingAdjective.toVerb
     (a : ClauseEmbeddingAdjective) : Verb where
   form := "be " ++ a.form
-  frames := [a.complementType.toFrame]
+  frames := [a.frame]
   factivity := a.factivity
   attitude := a.attitude
   opaqueContext := a.opaqueContext

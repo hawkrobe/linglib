@@ -13,8 +13,7 @@ complement-taking-predicate classes (`Complement.PredicateClass`) with their def
 reality status (`RealityStatus`, `Complement.PredicateClass.realityStatus`), plus the control
 enum for infinitival complements (`ControlType`).
 
-The typed complement-frame object, the flat `ComplementType` view, and
-the adapter (`ComplementType.toCoding`) live in
+The argument frames live in
 `Syntax/Category/Verb/ArgumentFrame/Basic.lean`; the verb–complementizer
 compatibility relation in `Syntax/Category/Verb/ArgumentFrame/Takes.lean`.
 `Data/Complementation/Schema.lean` types its rows with these enums —
@@ -56,6 +55,14 @@ inductive Coding where
   | nominalized    -- Gerund / action nominal
   | participle     -- Participial complement
   deriving DecidableEq, Repr, BEq
+
+/-- The coding is finite: an indicative, subjunctive or paratactic clause. -/
+def Coding.IsFinite : Coding → Prop
+  | .indicative | .subjunctive | .paratactic => True
+  | .infinitive | .nominalized | .participle => False
+
+instance : DecidablePred Coding.IsFinite := fun c ↦ by
+  cases c <;> unfold Coding.IsFinite <;> infer_instance
 
 /-- Is this coding non-finite (infinitive, nominalized, participial)? -/
 def Coding.isReduced : Coding → Bool

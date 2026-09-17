@@ -193,17 +193,17 @@ theorem passivizable_iff :
 
 /-- The semantic type of a clausal complement: a finite clause denotes a proposition and a
 nonfinite one a property, the type distinction of chapter I. -/
-def complementTy (ct : ComplementType) : Option Semantics.Composition.Ty :=
-  if ct.isClausal then some (if ct.isFinite then .t else .et) else none
+def complementTy (fr : ArgumentFrame) : Option Semantics.Composition.Ty :=
+  if fr.HasClausal then some (if fr.HasFinite then .t else .et) else none
 
 /-- Control verbs take property-denoting complements; *believe*, no control verb, takes a finite
 clause denoting a proposition. -/
 theorem control_complements_property :
-    (∀ v ∈ [try_.toVerb, want.toVerb], complementTy v.complementType = some .et) ∧
-      complementTy believe.toVerb.complementType = some .t ∧
+    (∀ v ∈ [try_.toVerb, want.toVerb], v.citationFrame?.bind complementTy = some .et) ∧
+      believe.toVerb.citationFrame?.bind complementTy = some .t ∧
       believe.toVerb.controlType = .none := by
-  refine ⟨λ v hv => ?_, rfl, rfl⟩
-  fin_cases hv <;> rfl
+  refine ⟨fun v hv ↦ ?_, by decide, rfl⟩
+  fin_cases hv <;> decide
 
 end Fragment
 

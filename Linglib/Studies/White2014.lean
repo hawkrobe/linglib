@@ -46,9 +46,9 @@ namespace White2014
 /-! ### The modal complementizer -/
 
 /-- Which complements are headed by the modal complementizer: the nonfinite ones. -/
-def Modalized (ct : ComplementType) : Prop := ct.isFinite = false
+def Modalized (fr : ArgumentFrame) : Prop := ¬ fr.HasFinite
 
-instance : DecidablePred Modalized := λ _ => inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred Modalized := fun _ ↦ inferInstanceAs (Decidable (¬ _))
 
 /-- The control infinitive of (1b) is modalized, the finite clause of (1a) not. -/
 theorem modalized_infinitival_not_finite :

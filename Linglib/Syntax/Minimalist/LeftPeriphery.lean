@@ -58,14 +58,18 @@ non-veridical doxastic attitudes uninterrogative, question-taking speech-act
 verbs select SAP, opaque question-taking verbs PerspP, other question-taking
 verbs CP. -/
 def deriveSelectionClass (v : English.Verb) : SelectionClass :=
-  if v.complementType ≠ .question ∧ ¬ v.TakesQuestion then .uninterrogative
+  if ¬ v.TakesQuestion then .uninterrogative
   else if v.IsFactive then .responsive
   else match v.attitude with
   | some (.doxastic .nonVeridical) => .uninterrogative
   | _ =>
-    if v.speechActVerb && v.complementType == .question then .rogativeSAP
-    else if v.opaqueContext && v.complementType == .question then .rogativePerspP
-    else if v.complementType == .question then .rogativeCP
+    if v.speechActVerb && citationQuestion v then .rogativeSAP
+    else if v.opaqueContext && citationQuestion v then .rogativePerspP
+    else if citationQuestion v then .rogativeCP
     else .uninterrogative
+where
+  /-- The citation frame is an embedded question. -/
+  citationQuestion (v : English.Verb) : Bool :=
+    decide (∃ fr ∈ v.citationFrame?, fr.hasForce .interrogative)
 
 end Minimalist

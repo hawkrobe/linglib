@@ -82,10 +82,12 @@ The bridge from the classification to the smuggling derivation (§4): a verb lic
 inversion when its Voice is not a phase head, so that the VP can move to Spec,VoiceP, and it has
 a complement to move. -/
 
-/-- A verb has a syntactic complement: its `complementType` is anything other than `.none`. -/
-def HasComplement (v : Verb) : Prop := v.complementType ≠ .none
+/-- A verb has a syntactic complement: its citation frame has a complement beyond the
+underlying subject of an unaccusative. -/
+def HasComplement (v : Verb) : Prop :=
+  ∃ fr ∈ v.citationFrame?, ¬ fr.IsIntransitive ∧ ¬ fr.IsUnaccusative
 
-instance (v : Verb) : Decidable (HasComplement v) := inferInstanceAs (Decidable (_ ≠ _))
+instance (v : Verb) : Decidable (HasComplement v) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The Voice head determined by the classification: non-thematic (anticausative) for
     unaccusatives, agentive for unergatives ([kratzer-1996]). -/
@@ -126,9 +128,8 @@ the auxiliary-selection substrate
 /-- The transitivity class of a verb under the classification. -/
 def deriveTransitivityClass (v : English.Verb) : TransitivityClass :=
   if Unaccusative v then .unaccusative
-  else match v.complementType with
-    | .none => .unergative
-    | _ => .transitive
+  else if HasComplement v.toVerb then .transitive
+  else .unergative
 
 theorem mos_unaccusatives_transitivity :
     ∀ v ∈ mosUnaccusatives, deriveTransitivityClass v = .unaccusative := by decide

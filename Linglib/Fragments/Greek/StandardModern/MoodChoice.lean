@@ -83,9 +83,9 @@ theorem vazo_is_causative :
 /-- Greek mood is via complementizer (*na* vs *oti*), not verb morphology.
     All four predicates take finite clause complements (no infinitivals). -/
 theorem greek_all_finite :
-    thelo.complementType = .finiteClause ∧
-    elpizo.complementType = .finiteClause ∧
-    protithete.complementType = .finiteClause ∧
-    vazo.complementType = .finiteClause := ⟨rfl, rfl, rfl, rfl⟩
+    thelo.citationFrame? = some ArgumentFrame.finiteClause ∧
+    elpizo.citationFrame? = some ArgumentFrame.finiteClause ∧
+    protithete.citationFrame? = some ArgumentFrame.finiteClause ∧
+    vazo.citationFrame? = some ArgumentFrame.finiteClause := ⟨rfl, rfl, rfl, rfl⟩
 
 end Greek.StandardModern.MoodChoice
