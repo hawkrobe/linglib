@@ -252,6 +252,29 @@ theorem interpBinary_map_fst (d₁ d₂ : Denotation E W M D) :
     Option.map_or, Option.or_assoc, applyForward_map_fst, applyBackward_map_fst, tryIFA_map_fst,
     tryPM_map_fst, tryEI_map_fst]
 
+/-- No type is its own argument type, so forward application never applies when backward
+does. -/
+theorem tyForward_fn_self (σ τ : Ty) : tyForward σ (.fn σ τ) = none := by
+  cases σ with
+  | fn a b =>
+    simp only [tyForward]
+    split_ifs with h
+    · have := congrArg sizeOf h
+      simp only [Ty.fn.sizeOf_spec] at this
+      omega
+    · rfl
+  | _ => rfl
+
+/-- Intensional application never applies to extensional types. -/
+theorem tyIFA_eq_none {σ τ : Ty} (h₁ : σ.Extensional) (h₂ : τ.Extensional) :
+    tyIFA σ τ = none := by
+  rcases h₁ with _ | _ | ⟨ha, _⟩ <;> rcases h₂ with _ | _ | ⟨ha', _⟩ <;>
+    (try rcases ha with _ | _ | _) <;> (try rcases ha' with _ | _ | _) <;> rfl
+
+theorem tryIFA_eq_none {d₁ d₂ : Denotation E W M D} (h₁ : d₁.1.Extensional)
+    (h₂ : d₂.1.Extensional) : tryIFA d₁ d₂ = none :=
+  Option.map_eq_none_iff.mp (by rw [tryIFA_map_fst]; exact tyIFA_eq_none h₁ h₂)
+
 end Typing
 
 /-! ### Tree interpretation -/
@@ -332,6 +355,32 @@ omit [PredAbs M E W D] in
     (x : M (Ty.Domain E W σ D)) :
     tryFA (⟨σ ⇒ τ, f⟩ : Denotation E W M D) ⟨σ, x⟩ = some ⟨τ, f <*> x⟩ := by
   simp only [tryFA, applyForward_fn]; rfl
+
+omit [PredAbs M E W D] in
+@[simp] theorem applyBackward_fn {σ τ : Ty} (x : M (Ty.Domain E W σ D))
+    (f : M (Ty.Domain E W (σ ⇒ τ) D)) :
+    applyBackward (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ =
+      some ⟨τ, (fun x g ↦ g x) <$> x <*> f⟩ := by
+  simp only [applyBackward, ↓reduceDIte]
+
+omit [PredAbs M E W D] in
+/-- Backward application reduces at any types too, since forward cannot apply to an argument
+of the function's own argument type. -/
+@[simp] theorem tryFA_backward {σ τ : Ty} (x : M (Ty.Domain E W σ D))
+    (f : M (Ty.Domain E W (σ ⇒ τ) D)) :
+    tryFA (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ = some ⟨τ, (fun x g ↦ g x) <$> x <*> f⟩ := by
+  have h : applyForward (⟨σ, x⟩ : Denotation E W M D) ⟨σ ⇒ τ, f⟩ = none :=
+    Option.map_eq_none_iff.mp (by rw [applyForward_map_fst]; exact tyForward_fn_self σ τ)
+  simp only [tryFA, h, applyBackward_fn]; rfl
+
+omit [PredAbs M E W D] in
+/-- Two predicates compose by predicate modification, application failing on them. -/
+@[simp] theorem interpBinary_pm (P Q : M (Ty.Domain E W (.e ⇒ .t) D)) :
+    interpBinary (⟨.e ⇒ .t, P⟩ : Denotation E W M D) ⟨.e ⇒ .t, Q⟩ =
+      some ⟨.e ⇒ .t, Modifier.intersective <$> P <*> Q⟩ := by
+  have h : tryIFA (⟨.e ⇒ .t, P⟩ : Denotation E W M D) ⟨.e ⇒ .t, Q⟩ = none :=
+    tryIFA_eq_none (.fn .e .t) (.fn .e .t)
+  simp [interpBinary, tryFA, applyForward, applyBackward, h, tryPM]
 
 end Reduction
 

@@ -66,6 +66,13 @@ abbrev Ty.ett : Ty := (.e ⇒ .t) ⇒ .t
 /-- `⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩`, determiners. -/
 abbrev Ty.det : Ty := (.e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t)
 
+/-- The types of [heim-kratzer-1998]'s extensional fragment, built from `e`, `t` and
+functions. -/
+inductive Ty.Extensional : Ty → Prop
+  | e : Extensional .e
+  | t : Extensional .t
+  | fn {a b : Ty} : Extensional a → Extensional b → Extensional (.fn a b)
+
 /-- Denotation domains: `e` denotes in `E`, `t` in `Prop`, `d` in the scale `D`, `n` in
 `ℕ`, `⟨a,b⟩` in `Ty.Domain a → Ty.Domain b` and `⟨s,a⟩` in `W → Ty.Domain a`. The eventuality sorts
 have the empty domain: nothing here constructs event-typed denotations. -/
