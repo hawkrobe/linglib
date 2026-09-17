@@ -1,6 +1,5 @@
 import Linglib.Semantics.Reference.Context.Tower
 import Linglib.Semantics.Reference.Context.Shifts
-import Linglib.Semantics.Mood.Situation
 
 /-!
 # Exclusion features and X/O-marking strategies
@@ -33,8 +32,8 @@ This maps onto the `ContextTower`'s `origin` / `innermost` distinction —
 Utterance υ (= `tower.innermost`): `ExclF dim tower` holds iff the
 relevant coordinate of `tower.innermost` differs from that of
 `tower.origin`. At a root tower the two coincide, so no `ExclF` holds;
-a subjunctive shift produces the modal feature and a temporal shift the
-temporal one (`subjShift_produces_modal_exclF`,
+a world shift produces the modal feature and a temporal shift the
+temporal one (`worldShift_produces_modal_exclF`,
 `temporalShift_produces_temporal_exclF`).
 
 The **X-marking / O-marking** distinction ([von-fintel-iatridou-2023])
@@ -47,7 +46,6 @@ distinguish live from non-live possibilities.
 namespace Modality.Exclusion
 
 open Reference
-open Mood (subjShift)
 
 /-! ### ExclF: the exclusion feature -/
 
@@ -80,15 +78,15 @@ def ExclF (dim : ExclDimension) (tower : ContextTower (Context W E P T)) : Prop 
 
 /-! ### Shifts produce ExclF -/
 
-/-- `subjShift` changes world → produces modal ExclF.
+/-- `worldShift` changes world → produces modal ExclF.
 
 When a subjunctive clause introduces a new world that differs from the
 origin, the resulting tower has modal ExclF. This is the tower-level
 formalization of [iatridou-2000]'s claim that counterfactual
 morphology signals world exclusion. -/
-theorem subjShift_produces_modal_exclF (c : Context W E P T) (w' : W) (t' : T)
+theorem worldShift_produces_modal_exclF (c : Context W E P T) (w' : W)
     (h : w' ≠ c.world) :
-    ExclF .modal ((ContextTower.root c).push (subjShift w' t')) :=
+    ExclF .modal ((ContextTower.root c).push (worldShift w')) :=
   h
 
 /-- `temporalShift` changes time → produces temporal ExclF.
@@ -103,10 +101,10 @@ theorem temporalShift_produces_temporal_exclF (c : Context W E P T) (t' : T)
 /-- Two shifts → both ExclFs: a subjunctive (world) shift followed by a
 temporal one yields modal and temporal exclusion together — the PastCF
 configuration of [iatridou-2000] (two past layers). -/
-theorem two_shifts_two_exclFs (c : Context W E P T) (w' : W) (t' t'' : T)
-    (hw : w' ≠ c.world) (ht : t'' ≠ c.time) :
-    ExclF .modal (((ContextTower.root c).push (subjShift w' t')).push (temporalShift t'')) ∧
-      ExclF .temporal (((ContextTower.root c).push (subjShift w' t')).push (temporalShift t'')) :=
+theorem two_shifts_two_exclFs (c : Context W E P T) (w' : W) (t' : T)
+    (hw : w' ≠ c.world) (ht : t' ≠ c.time) :
+    ExclF .modal (((ContextTower.root c).push (worldShift w')).push (temporalShift t')) ∧
+      ExclF .temporal (((ContextTower.root c).push (worldShift w')).push (temporalShift t')) :=
   ⟨hw, ht⟩
 
 /-! ### X-marking / O-marking typology ([von-fintel-iatridou-2023]) -/

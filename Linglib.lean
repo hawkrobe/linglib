@@ -1581,7 +1581,6 @@ import Linglib.Semantics.Modification.Coercion
 import Linglib.Semantics.Modification.RelativeClause
 import Linglib.Semantics.Mood.Defs
 import Linglib.Semantics.Mood.Eventuality
-import Linglib.Semantics.Mood.Situation
 import Linglib.Semantics.Mood.SpeechEvent
 import Linglib.Semantics.Mood.State
 import Linglib.Semantics.Mood.Verbal

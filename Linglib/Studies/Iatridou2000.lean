@@ -41,7 +41,6 @@ namespace Iatridou2000
 
 open Modality.Exclusion
 open Reference
-open Mood (subjShift)
 
 /-! ### The exclusion feature -/
 
@@ -147,21 +146,20 @@ theorem readings_slStative : readings .slStative = {.flv, .presCF} := by decide
 theorem pastCF_notMem_readings (a : Aktionsart) : .pastCF ∉ readings a := by
   cases a <;> decide
 
-/-- The one-feature conditionals: a subjunctive shift alone excludes on worlds and, keeping
-the time, not on times. -/
+/-- The one-feature conditionals: a world shift alone excludes on worlds and, keeping the
+time, not on times. -/
 theorem one_feature {W E P T : Type*} (c : Context W E P T) {w' : W} (hw : w' ≠ c.world) :
-    ExclF .modal ((ContextTower.root c).push (subjShift w' c.time)) ∧
-      ¬ ExclF .temporal ((ContextTower.root c).push (subjShift w' c.time)) :=
-  ⟨subjShift_produces_modal_exclF c w' c.time hw, λ h => h rfl⟩
+    ExclF .modal ((ContextTower.root c).push (worldShift w')) ∧
+      ¬ ExclF .temporal ((ContextTower.root c).push (worldShift w')) :=
+  ⟨worldShift_produces_modal_exclF c w' hw, fun h ↦ h rfl⟩
 
-/-- The pluperfect's two layers: a subjunctive shift and a temporal shift exclude on both
+/-- The pluperfect's two layers: a world shift and a temporal shift exclude on both
 dimensions, the past counterfactual. -/
 theorem two_features {W E P T : Type*} (c : Context W E P T) {w' : W} {t' : T}
     (hw : w' ≠ c.world) (ht : t' ≠ c.time) :
-    ExclF .modal (((ContextTower.root c).push (subjShift w' c.time)).push (temporalShift t')) ∧
-      ExclF .temporal
-        (((ContextTower.root c).push (subjShift w' c.time)).push (temporalShift t')) :=
-  two_shifts_two_exclFs c w' c.time t' hw ht
+    ExclF .modal (((ContextTower.root c).push (worldShift w')).push (temporalShift t')) ∧
+      ExclF .temporal (((ContextTower.root c).push (worldShift w')).push (temporalShift t')) :=
+  two_shifts_two_exclFs c w' t' hw ht
 
 /-! ### Aspect and mood -/
 

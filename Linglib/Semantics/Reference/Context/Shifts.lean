@@ -9,15 +9,18 @@ import Linglib.Semantics.Reference.Context.Tower
 # Standard context shifts
 
 The shifts of `Context` that embedding operators push: an attitude verb makes the holder the
-agent and an accessible world the world (`attitudeShift`, [schlenker-2003]), and a
+agent and an accessible world the world (`attitudeShift`, [schlenker-2003]), a
 sequence-of-tense embedding moves the time to the matrix event time (`temporalShift`,
-[von-stechow-2009]); a Kaplan-compliant English attitude verb pushes the identity `1`. The
-lemmas record which coordinates each shift changes and which it preserves.
+[von-stechow-2009]), and a counterfactual or subjunctive embedding moves the world alone
+(`worldShift`, the modal exclusion of [iatridou-2000]); a Kaplan-compliant English attitude
+verb pushes the identity `1`. The lemmas record which coordinates each shift changes and which
+it preserves.
 
 ## References
 
 * [schlenker-2003]
 * [von-stechow-2009]
+* [iatridou-2000]
 -/
 
 namespace Reference
@@ -27,11 +30,15 @@ variable {W E P T : Type*} (c : Context W E P T)
 /-- The attitude shift: the holder becomes the agent and the attitude world the world;
 addressee, time and position are preserved. -/
 def attitudeShift (holder : E) (attWorld : W) : Function.End (Context W E P T) :=
-  λ c => { c with agent := holder, world := attWorld }
+  fun c ↦ { c with agent := holder, world := attWorld }
 
 /-- The temporal shift: the time moves to `newTime`; every other coordinate is preserved. -/
 def temporalShift (newTime : T) : Function.End (Context W E P T) :=
-  λ c => { c with time := newTime }
+  fun c ↦ { c with time := newTime }
+
+/-- The world shift: the world moves to `newWorld`; every other coordinate is preserved. -/
+def worldShift (newWorld : W) : Function.End (Context W E P T) :=
+  fun c ↦ { c with world := newWorld }
 
 section attitudeShift
 
@@ -66,5 +73,22 @@ variable (newTime : T)
     (temporalShift (W := W) (E := E) (P := P) newTime c).position = c.position := rfl
 
 end temporalShift
+
+section worldShift
+
+variable (newWorld : W)
+
+@[simp] theorem worldShift_world :
+    (worldShift (E := E) (P := P) (T := T) newWorld c).world = newWorld := rfl
+@[simp] theorem worldShift_agent :
+    (worldShift (E := E) (P := P) (T := T) newWorld c).agent = c.agent := rfl
+@[simp] theorem worldShift_addressee :
+    (worldShift (E := E) (P := P) (T := T) newWorld c).addressee = c.addressee := rfl
+@[simp] theorem worldShift_time :
+    (worldShift (E := E) (P := P) (T := T) newWorld c).time = c.time := rfl
+@[simp] theorem worldShift_position :
+    (worldShift (E := E) (P := P) (T := T) newWorld c).position = c.position := rfl
+
+end worldShift
 
 end Reference
