@@ -20,14 +20,19 @@ semantics of evidentials. `accept` is assertion acceptance (§4.3, Figure 2): th
 commits on the strength of the assertion, so with reportative evidence, `φ` leaves the Table
 and enters the common ground.
 
-The theorems are the paper's tableaux. Default assertion is Figure 1 (`assert_dc`,
-`assert_evid`) and its acceptance Figure 2 (`accept_dc`, `accept_evid_addressee`, `mem_cg_accept`,
+The theorems are the paper's tableaux. Default assertion is Figure 1 (`assert_discourseCommitments`,
+`assert_evid`) and its acceptance Figure 2 (`accept_discourseCommitments`, `accept_evid_addressee`,
+  `mem_commonGround_accept`,
 `accept_stack`). A reportative presentation is Figure 4: the principal is committed and the
-animator has reportative evidence (`reportative_dc_principal`, `reportative_evid`), and
-Absence of Commitment is `reportative_dc_animator`, the animator's truth commitments being
+animator has reportative evidence (`reportative_discourseCommitments_principal`,
+  `reportative_evid`), and
+Absence of Commitment is `reportative_discourseCommitments_animator`,
+  the animator's truth commitments being
 untouched, with `reportative_evid_adequate` the override of the adequate-evidence default. The
-animator's denial (37) is Figure 5 (`denial_dc`, `denial_evid`), and her acceptance under the
-Collaborative Principle ([walker-1996]) Figure 6 (`figure6_dc`, `figure6_dc_eq_assert`). §6.3
+animator's denial (37) is Figure 5 (`denial_discourseCommitments`, `denial_evid`),
+  and her acceptance under the
+Collaborative Principle ([walker-1996]) Figure 6 (`figure6_discourseCommitments`,
+  `figure6_discourseCommitments_eq_assert`). §6.3
 draws the upshot with [gunlogson-2008]'s distinction: a truth commitment is `Dependent` when
 backed by reportative evidence and `IsSource` when backed by adequate evidence or best possible
 grounds, so the animator of Figure 6 is committed as after an assertion but only dependently
@@ -102,13 +107,13 @@ def reportative : DS A W := K.present φ a p .reportative
 with reportative evidence, `φ` leaves the Table and enters the common ground. -/
 def accept : DS A W :=
   { K.addEvid φ b .reportative with
-    toTable := { (K.toTable.commit b φ).pop with cg := K.cg ⊓ 𝓟 φ } }
+    toTable := { (K.toTable.commit b φ).pop with commonGround := K.commonGround ⊓ 𝓟 φ } }
 
 /-- A dependent truth commitment ([gunlogson-2008]): `φ` in `TC_a ∩ RepC_a` (§6.3). -/
-def Dependent : Prop := φ ∈ K.dc a ∧ φ ∈ K.evid .reportative a
+def Dependent : Prop := φ ∈ K.discourseCommitments a ∧ φ ∈ K.evid .reportative a
 
 /-- A source commitment: `φ` in `TC_a ∩ AeC_a` or in `TC_a ∩ BpgC_a` (§6.3). -/
-def IsSource : Prop := φ ∈ K.dc a ∧ (φ ∈ K.evid .adequate a ∨ φ ∈ K.evid .bpg a)
+def IsSource : Prop := φ ∈ K.discourseCommitments a ∧ (φ ∈ K.evid .adequate a ∨ φ ∈ K.evid .bpg a)
 
 @[simp] theorem addEvid_toTable : (K.addEvid φ a e).toTable = K.toTable := rfl
 
@@ -125,33 +130,38 @@ theorem addEvid_evid_of_ne_type {e' : EvidenceType} (h : e' ≠ e) :
 @[simp] theorem present_toTable : (K.present φ a p e).toTable = K.toTable.assert p φ := rfl
 @[simp] theorem present_evid : (K.present φ a p e).evid = (K.addEvid φ a e).evid := rfl
 @[simp] theorem accept_toTable :
-    (K.accept φ b).toTable = { (K.toTable.commit b φ).pop with cg := K.cg ⊓ 𝓟 φ } := rfl
+    (K.accept φ b).toTable =
+      { (K.toTable.commit b φ).pop with commonGround := K.commonGround ⊓ 𝓟 φ } := rfl
 @[simp] theorem accept_evid : (K.accept φ b).evid = (K.addEvid φ b .reportative).evid := rfl
 
 /-! ### Figures 1 and 2: default assertion and its acceptance -/
 
-theorem assert_dc : φ ∈ (K.assert φ a).dc a := Table.mem_dc_assert _ _ _
+theorem assert_discourseCommitments :
+    φ ∈ (K.assert φ a).discourseCommitments a := Table.mem_discourseCommitments_assert _ _ _
 
 theorem assert_evid : φ ∈ (K.assert φ a).evid .adequate a := by simp [assert]
 
 theorem assert_stack : (K.assert φ a).stack = Question.ofSet φ :: K.stack := rfl
 
-theorem assert_cg : (K.assert φ a).cg = K.cg := rfl
+theorem assert_commonGround : (K.assert φ a).commonGround = K.commonGround := rfl
 
-theorem accept_dc : φ ∈ ((K.assert φ a).accept φ b).dc b := Table.mem_dc_commit_self _ _ _ _ _
+theorem accept_discourseCommitments :
+    φ ∈ ((K.assert φ a).accept φ b).discourseCommitments b :=
+  Table.mem_discourseCommitments_commit_self _ _ _ _ _
 
-theorem accept_dc_speaker : φ ∈ ((K.assert φ a).accept φ b).dc a := by
+theorem accept_discourseCommitments_speaker :
+    φ ∈ ((K.assert φ a).accept φ b).discourseCommitments a := by
   rcases eq_or_ne a b with rfl | h
-  · exact accept_dc K φ a a
-  · rw [show ((K.assert φ a).accept φ b).dc a =
-      ((K.assert φ a).toTable.commit b φ).dc a from rfl,
-      Table.dc_commit_of_ne h]
-    exact assert_dc K φ a
+  · exact accept_discourseCommitments K φ a a
+  · rw [show ((K.assert φ a).accept φ b).discourseCommitments a =
+      ((K.assert φ a).toTable.commit b φ).discourseCommitments a from rfl,
+      Table.discourseCommitments_commit_of_ne h]
+    exact assert_discourseCommitments K φ a
 
 theorem accept_evid_addressee : φ ∈ ((K.assert φ a).accept φ b).evid .reportative b := by
   simp [accept]
 
-theorem mem_cg_accept : φ ∈ ((K.assert φ a).accept φ b).cg :=
+theorem mem_commonGround_accept : φ ∈ ((K.assert φ a).accept φ b).commonGround :=
   mem_inf_of_right (mem_principal_self φ)
 
 /-- Acceptance resolves the issue: the Table is as before the assertion. -/
@@ -159,14 +169,16 @@ theorem accept_stack : ((K.assert φ a).accept φ b).stack = K.stack := rfl
 
 /-! ### Figure 4: reportative presentation and Absence of Commitment -/
 
-theorem reportative_dc_principal : φ ∈ (K.reportative φ a p).dc p := Table.mem_dc_assert _ _ _
+theorem reportative_discourseCommitments_principal :
+    φ ∈ (K.reportative φ a p).discourseCommitments p := Table.mem_discourseCommitments_assert _ _ _
 
 theorem reportative_evid : φ ∈ (K.reportative φ a p).evid .reportative a := by simp [reportative]
 
 /-- Absence of Commitment: with a distinct principal the animator's truth commitments are
 untouched. -/
-theorem reportative_dc_animator (h : a ≠ p) : (K.reportative φ a p).dc a = K.dc a :=
-  Table.dc_commit_of_ne h
+theorem reportative_discourseCommitments_animator (h : a ≠ p) :
+    (K.reportative φ a p).discourseCommitments a = K.discourseCommitments a :=
+  Table.discourseCommitments_commit_of_ne h
 
 /-- (35i) overrides (34iii): no adequate-evidence commitment is added. -/
 theorem reportative_evid_adequate : (K.reportative φ a p).evid .adequate = K.evid .adequate :=
@@ -174,26 +186,30 @@ theorem reportative_evid_adequate : (K.reportative φ a p).evid .adequate = K.ev
 
 theorem reportative_stack : (K.reportative φ a p).stack = Question.ofSet φ :: K.stack := rfl
 
-theorem not_dc_reportative_empty (h : a ≠ p) : φ ∉ ((empty : DS A W).reportative φ a p).dc a := by
-  rw [reportative_dc_animator _ _ _ _ h]; simp [empty]
+theorem not_discourseCommitments_reportative_empty (h : a ≠ p) :
+    φ ∉ ((empty : DS A W).reportative φ a p).discourseCommitments a := by
+  rw [reportative_discourseCommitments_animator _ _ _ _ h]; simp [empty]
 
 /-! ### Figure 5: the animator's denial -/
 
 /-- The denial (37): the animator presents `φᶜ` on best possible grounds. -/
 def denial : DS A W := (K.reportative φ a p).present φᶜ a a .bpg
 
-theorem denial_dc (h : a ≠ p) :
-    φ ∈ (K.denial φ a p).dc p ∧ φᶜ ∈ (K.denial φ a p).dc a :=
+theorem denial_discourseCommitments (h : a ≠ p) :
+    φ ∈ (K.denial φ a p).discourseCommitments p ∧ φᶜ ∈ (K.denial φ a p).discourseCommitments a :=
   ⟨by
-    rw [show (K.denial φ a p).dc p = ((K.reportative φ a p).toTable.assert a φᶜ).dc p from rfl,
-      Table.assert, Table.dc_push, Table.dc_commit_of_ne h.symm]
-    exact reportative_dc_principal K φ a p,
-   Table.mem_dc_assert _ _ _⟩
+    rw [show (K.denial φ a p).discourseCommitments p =
+      ((K.reportative φ a p).toTable.assert a φᶜ).discourseCommitments p from rfl,
+      Table.assert, Table.discourseCommitments_push, Table.discourseCommitments_commit_of_ne h.symm]
+    exact reportative_discourseCommitments_principal K φ a p,
+   Table.mem_discourseCommitments_assert _ _ _⟩
 
 /-- `φ` stays out of the animator's truth commitments; only `φᶜ` enters. -/
-theorem denial_dc_animator (h : a ≠ p) : (K.denial φ a p).dc a = insert φᶜ (K.dc a) := by
-  rw [show (K.denial φ a p).dc a = ((K.reportative φ a p).toTable.assert a φᶜ).dc a from rfl,
-    Table.dc_assert, reportative_dc_animator _ _ _ _ h]
+theorem denial_discourseCommitments_animator (h : a ≠ p) :
+    (K.denial φ a p).discourseCommitments a = insert φᶜ (K.discourseCommitments a) := by
+  rw [show (K.denial φ a p).discourseCommitments a =
+    ((K.reportative φ a p).toTable.assert a φᶜ).discourseCommitments a from rfl,
+    Table.discourseCommitments_assert, reportative_discourseCommitments_animator _ _ _ _ h]
 
 theorem denial_stack :
     (K.denial φ a p).stack = Question.ofSet φᶜ :: Question.ofSet φ :: K.stack := rfl
@@ -206,28 +222,30 @@ theorem denial_evid : φ ∈ (K.denial φ a p).evid .reportative a ∧
   exact reportative_evid K φ a p
 
 theorem denial_isSource : (K.denial φ a p).IsSource φᶜ a :=
-  ⟨Table.mem_dc_assert _ _ _, Or.inr (by simp [denial, present])⟩
+  ⟨Table.mem_discourseCommitments_assert _ _ _, Or.inr (by simp [denial, present])⟩
 
 /-! ### Figure 6: the animator's acceptance under the Collaborative Principle -/
 
-theorem figure6_dc (h : a ≠ p) : φ ∈ ((K.reportative φ a p).accept φ a).dc a ∧
-    φ ∈ ((K.reportative φ a p).accept φ a).dc p :=
-  ⟨Table.mem_dc_commit_self _ _ _ _ _, by
-    rw [show ((K.reportative φ a p).accept φ a).dc p =
-      ((K.reportative φ a p).toTable.commit a φ).dc p from rfl,
-      Table.dc_commit_of_ne h.symm]
-    exact reportative_dc_principal K φ a p⟩
+theorem figure6_discourseCommitments (h : a ≠ p) :
+    φ ∈ ((K.reportative φ a p).accept φ a).discourseCommitments a ∧
+    φ ∈ ((K.reportative φ a p).accept φ a).discourseCommitments p :=
+  ⟨Table.mem_discourseCommitments_commit_self _ _ _ _ _, by
+    rw [show ((K.reportative φ a p).accept φ a).discourseCommitments p =
+      ((K.reportative φ a p).toTable.commit a φ).discourseCommitments p from rfl,
+      Table.discourseCommitments_commit_of_ne h.symm]
+    exact reportative_discourseCommitments_principal K φ a p⟩
 
 /-- The animator's truth commitments are those of an assertion of `φ`. -/
-theorem figure6_dc_eq_assert (h : a ≠ p) :
-    ((K.reportative φ a p).accept φ a).dc a = (K.assert φ a).dc a := by
-  rw [show ((K.reportative φ a p).accept φ a).dc a =
-    ((K.reportative φ a p).toTable.commit a φ).dc a from rfl,
-    Table.dc_commit_self, reportative_dc_animator _ _ _ _ h]
-  exact (Table.dc_assert _ _ _).symm
+theorem figure6_discourseCommitments_eq_assert (h : a ≠ p) :
+    ((K.reportative φ a p).accept φ a).discourseCommitments a =
+      (K.assert φ a).discourseCommitments a := by
+  rw [show ((K.reportative φ a p).accept φ a).discourseCommitments a =
+    ((K.reportative φ a p).toTable.commit a φ).discourseCommitments a from rfl,
+    Table.discourseCommitments_commit_self, reportative_discourseCommitments_animator _ _ _ _ h]
+  exact (Table.discourseCommitments_assert _ _ _).symm
 
 theorem figure6_dependent : ((K.reportative φ a p).accept φ a).Dependent φ a :=
-  ⟨Table.mem_dc_commit_self _ _ _ _ _, by simp [accept]⟩
+  ⟨Table.mem_discourseCommitments_commit_self _ _ _ _ _, by simp [accept]⟩
 
 /-- Weaker than an assertion: the animator is not committed as a source unless she already had
 adequate evidence or best possible grounds for `φ`. -/
@@ -238,12 +256,12 @@ theorem figure6_not_isSource (h1 : φ ∉ K.evid .adequate a) (h2 : φ ∉ K.evi
   · exact h2 (by simpa [accept, reportative, present, addEvid_evid_of_ne_type] using h)
 
 theorem assert_isSource : (K.assert φ a).IsSource φ a :=
-  ⟨assert_dc K φ a, Or.inl (assert_evid K φ a)⟩
+  ⟨assert_discourseCommitments K φ a, Or.inl (assert_evid K φ a)⟩
 
 /-- The English *Juan has a tractor, I hear*: an animator who is her own principal but
 specifies reportative evidence commits dependently. -/
 theorem present_reportative_dependent : (K.present φ a a .reportative).Dependent φ a :=
-  ⟨Table.mem_dc_assert _ _ _, by simp [present]⟩
+  ⟨Table.mem_discourseCommitments_assert _ _ _, by simp [present]⟩
 
 end DS
 

@@ -162,13 +162,14 @@ def Performance.update : Performance W → Table Discourse.Role W → Table Disc
 its speaker to any alternative of that issue. -/
 def Performance.Asking (u : Performance W) : Prop :=
   ∀ K : Table Discourse.Role W, ∃ i, (u.update K).stack = i :: K.stack ∧
-    ∀ q ∈ Question.alt i, q ∈ (u.update K).dc .speaker → q ∈ K.dc .speaker
+    ∀ q ∈ Question.alt i,
+      q ∈ (u.update K).discourseCommitments .speaker → q ∈ K.discourseCommitments .speaker
 
 /-- A performance is an assertion when in every context it raises an issue with a single
 alternative and commits its speaker to it. -/
 def Performance.Assertion (u : Performance W) : Prop :=
   ∀ K : Table Discourse.Role W, ∃ q, (u.update K).stack = Question.ofSet q :: K.stack ∧
-    q ∈ (u.update K).dc .speaker
+    q ∈ (u.update K).discourseCommitments .speaker
 
 /-- A performance that leaves the Table as it is raises no issue. -/
 private theorem not_asking_of_stack {u : Performance W}
@@ -190,8 +191,8 @@ theorem Performance.asking_iff : ∀ u : Performance W, u.Asking ↔ u.material.
       simp only [Performance.update, Sentence.update, Table.stack_assert, Table.stack_empty,
         List.cons.injEq, and_true] at hi
       subst hi
-      have h₁ : p ∈ (Table.empty.assert Discourse.Role.speaker p).dc .speaker :=
-        Table.mem_dc_assert _ _ _
+      have h₁ : p ∈ (Table.empty.assert Discourse.Role.speaker p).discourseCommitments .speaker :=
+        Table.mem_discourseCommitments_assert _ _ _
       simpa using hq p (by simp) h₁)
       (by simp [Material.Resp])
   | ⟨.utterance ⟨.declarative, p, true⟩, _⟩ =>
@@ -206,7 +207,7 @@ theorem Performance.asking_iff : ∀ u : Performance W, u.Asking ↔ u.material.
 theorem Performance.assertion_iff : ∀ u : Performance W, u.Assertion ↔ u.material.Assertive
   | ⟨.none, _⟩ | ⟨.inarticulate, _⟩ => iff_of_false (not_assertion_of_stack λ _ => rfl) id
   | ⟨.utterance ⟨.declarative, p, false⟩, _⟩ =>
-    iff_of_true (λ K => ⟨p, rfl, Table.mem_dc_assert K .speaker p⟩)
+    iff_of_true (λ K => ⟨p, rfl, Table.mem_discourseCommitments_assert K .speaker p⟩)
       ⟨rfl, rfl⟩
   | ⟨.utterance ⟨.declarative, _, true⟩, _⟩ =>
     iff_of_false (λ h => by
