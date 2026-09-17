@@ -164,7 +164,7 @@ Bruening's G3 (§2.3.1, summary point 3): a simple transitive that allows
 an implicit object does NOT allow it when used in the DOC.
 
 The encoded consequent: *melt* and *build* (Bruening p. 1025 ex. (7)–(8))
-have `complementType = .np` (transitive) with an object-drop frame, AND
+have the citation frame `np` (transitive) with an object-drop frame, AND
 no double object or PP frame with an implicit second object — so the
 Fragment itself blocks the spurious "implicit-second-obj-in-DOC" reading for
 these verbs, *build* having the benefactive double object frame but not that
@@ -176,7 +176,7 @@ def baseTransitivesWithImplicit : List English.Verb := [melt, build]
 
 theorem g3_base_transitive_constraint :
     baseTransitivesWithImplicit.all (fun v =>
-      decide (v.complementType = .np)
+      decide (v.citationFrame? = some ArgumentFrame.np)
       && v.frames.any (fun fr => decide fr.HasImplicit)
       && decide (implicitSecondObject (v, .firstObject) = none)
       && decide (implicitSecondObject (v, .pp) = none)) = true := by decide

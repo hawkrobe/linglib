@@ -15,9 +15,7 @@ selects for: the relation and adposition of an adpositional position,
 the [noonan-2007] coding, illocutionary force and subject requirement of
 a clausal one, the interpretation of an implicit one. Positions and
 frames are partially ordered by refinement, so a schematic frame lies
-below every frame instantiating it. The flat `ComplementType` enum
-survives as a classification of frames (`ArgumentFrame.complementType?`) with
-`ComplementType.toFrame` as its section.
+below every frame instantiating it.
 
 ## Main definitions
 
@@ -32,22 +30,14 @@ survives as a classification of frames (`ArgumentFrame.complementType?`) with
   `ArgumentFrame.valency`, `ArgumentFrame.IsTransitive`, `ArgumentFrame.codingRole` — the
   argument slots of a frame and their comparative S/A/P/R/T classification
 * `ArgumentFrame.IsIntransitive`, `ArgumentFrame.IsUnaccusative`, `ArgumentFrame.HasNominal`,
-  `ArgumentFrame.HasAdpositional`, `ArgumentFrame.HasClausal`, `ArgumentFrame.HasImplicit` — shape
-  predicates
+  `ArgumentFrame.HasAdpositional`, `ArgumentFrame.HasClausal`, `ArgumentFrame.HasFinite`,
+  `ArgumentFrame.HasImplicit` — shape predicates
 * `ArgumentFrame.intransitive`, `ArgumentFrame.np`, `ArgumentFrame.finiteClause`, … — smart
-  constructors, the flat enum cells among them
-* `ComplementType` + `toFrame` / `ArgumentFrame.complementType?` — the flat enum,
-  its cell frames, and the classification of a frame by its complements
-  (`none` on shapes outside the enum)
+  constructors
 
 ## Main results
 
 * `ArgumentFrame.Position.le_def`, `ArgumentFrame.le_def` — the refinement orders
-* `ArgumentFrame.complementType?_toFrame`, `ComplementType.toFrame_injective` —
-  the flat enum embeds in the typed frames
-* `ArgumentFrame.hasClausal_toFrame`, `ArgumentFrame.hasNominal_toFrame`,
-  `ComplementType.codings_toFrame` — the enum view and the typed frames
-  agree
 
 ## Implementation notes
 
@@ -172,6 +162,11 @@ abbrev IsClausal (p : Position) : Prop := p.kind = .clausal
 
 /-- The position is expressed: nominal, adpositional or clausal. -/
 abbrev IsExpressed (p : Position) : Prop := p.IsNominal ∨ p.IsAdpositional ∨ p.IsClausal
+
+/-- The position is a finite clause: its coding is finite. -/
+def IsFinite (p : Position) : Prop := ∃ c ∈ p.coding?, c.IsFinite
+
+instance : DecidablePred IsFinite := fun p ↦ inferInstanceAs (Decidable (∃ c ∈ p.coding?, _))
 
 /-! ### Axes and the refinement order -/
 
@@ -347,6 +342,11 @@ def HasClausal : Prop := ∃ p ∈ fr.complements, p.IsClausal
 
 instance : Decidable fr.HasClausal := inferInstanceAs (Decidable (∃ p ∈ _, _))
 
+/-- Some complement of the frame is a finite clause. -/
+def HasFinite : Prop := ∃ p ∈ fr.complements, p.IsFinite
+
+instance : Decidable fr.HasFinite := inferInstanceAs (Decidable (∃ p ∈ _, _))
+
 /-- Some complement of the frame is implicit: an argument left unexpressed. -/
 def HasImplicit : Prop := ∃ p ∈ fr.complements, p.kind = .implicit
 
@@ -423,133 +423,3 @@ def smallClause : ArgumentFrame := ⟨some .nominal, [.clausal]⟩
 def question : ArgumentFrame := ⟨some .nominal, [.clausal (force := some .interrogative)]⟩
 
 end ArgumentFrame
-
-/-! ### The flat enum view -/
-
-/--
-Complement type that the verb selects — the flat view over the typed
-`ArgumentFrame`.
-
-- Finite: "that" clauses ("John knows that Mary left")
-- Infinitival: "to" complements ("John managed to leave")
-- Gerund: "-ing" complements ("John stopped smoking")
-- NP: Direct object ("John kicked the ball")
-- None: Intransitive ("John slept")
--/
-inductive ComplementType where
-  | none            -- Intransitive
-  | np              -- Transitive with NP object
-  | np_np           -- Ditransitive: "give X Y"
-  | np_pp           -- NP + PP: "put X on Y"
-  | finiteClause    -- "that" clause
-  | infinitival     -- "to" VP
-  | gerund          -- "-ing" VP
-  | smallClause     -- "consider X happy"
-  | question        -- Embedded question "wonder who"
-  deriving DecidableEq, Repr
-
-/-- Is this complement type finite (i.e., does it contain a tense head)?
-
-    Finite complements (.finiteClause,.question) have independent tense
-    morphology; non-finite complements (.infinitival,.gerund,.smallClause)
-    do not. -/
-def ComplementType.isFinite : ComplementType → Bool
-  | .finiteClause | .question => true
-  | _ => false
-
-/-- Is this complement type a nominal (DP) argument?
-
-    Nominal complements project DP: the verb selects a noun phrase
-    in object position. Relevant to c-selection in coordination:
-    a verb that only selects nominal complements cannot independently
-    license a CP conjunct ([schwarzer-2026]). -/
-def ComplementType.isNominal : ComplementType → Bool
-  | .np | .np_np | .np_pp => true
-  | _ => false
-
-/-- Is this complement type a clausal (CP) argument?
-
-    Clausal complements project CP or reduced clausal structure.
-    This covers finite clauses (*dass*-clauses), infinitivals,
-    gerunds, small clauses, and embedded questions. -/
-def ComplementType.isClausal : ComplementType → Bool
-  | .finiteClause | .infinitival | .gerund | .smallClause | .question => true
-  | _ => false
-
-/-- The `ArgumentFrame` cell of a flat `ComplementType`, `ArgumentFrame.intransitive` for
-`.none`. -/
-def ComplementType.toFrame : ComplementType → ArgumentFrame
-  | .none => ArgumentFrame.intransitive
-  | .np => ArgumentFrame.np
-  | .np_np => ArgumentFrame.np_np
-  | .np_pp => ArgumentFrame.np_pp
-  | .finiteClause => ArgumentFrame.finiteClause
-  | .infinitival => ArgumentFrame.infinitival
-  | .gerund => ArgumentFrame.gerund
-  | .smallClause => ArgumentFrame.smallClause
-  | .question => ArgumentFrame.question
-
-/-- The clausal cell a clausal position with axes `c`, `f` instantiates:
-    interrogative force is an embedded question, otherwise the coding
-    decides, and a position recording no axis is a small clause. -/
-private def clausalCell (c : Option Complement.Coding) (f : Option Mood.Illocutionary) :
-    ComplementType :=
-  if f = some .interrogative then .question
-  else match c with
-    | some .indicative | some .subjunctive | some .paratactic => .finiteClause
-    | some .infinitive => .infinitival
-    | some .nominalized | some .participle => .gerund
-    | none => .smallClause
-
-/-- The flat enum cell a frame instantiates: the surface complements — an
-    unaccusative's sole nominal surfaces as subject, an implicit
-    complement not at all — by their shapes, a single clausal complement
-    by its axes, and `none` on the shapes the enum has no cell for. -/
-def ArgumentFrame.complementType? : ArgumentFrame → Option ComplementType
-  | ⟨none, [.nominal]⟩ => some .none
-  | ⟨_, []⟩ | ⟨_, [.implicit _]⟩ => some .none
-  | ⟨_, [.nominal]⟩ => some .np
-  | ⟨_, [.nominal, .nominal]⟩ => some .np_np
-  | ⟨_, [.nominal, .adpositional _ _]⟩ => some .np_pp
-  | ⟨_, [.clausal c f _]⟩ => some (clausalCell c f)
-  | _ => none
-
-/-- `ComplementType.toFrame` is a section of the classification. -/
-@[simp]
-theorem ArgumentFrame.complementType?_toFrame (ct : ComplementType) :
-    ct.toFrame.complementType? = some ct := by cases ct <;> rfl
-
-theorem ComplementType.toFrame_injective :
-    Function.Injective ComplementType.toFrame := fun a b h =>
-  Option.some_injective _
-    (by rw [← ArgumentFrame.complementType?_toFrame, h, ArgumentFrame.complementType?_toFrame])
-
-/-- A cell's frame has a clausal complement exactly when the cell is clausal. -/
-@[simp]
-theorem ArgumentFrame.hasClausal_toFrame (ct : ComplementType) :
-    ct.toFrame.HasClausal ↔ ct.isClausal = true := by cases ct <;> decide
-
-/-- A cell's frame has a nominal complement exactly when the cell is nominal. -/
-@[simp]
-theorem ArgumentFrame.hasNominal_toFrame (ct : ComplementType) :
-    ct.toFrame.HasNominal ↔ ct.isNominal = true := by cases ct <;> decide
-
-/-- The [noonan-2007] coding of a complement frame: `none` for
-non-clausal frames, for small clauses (outside the coding inventory),
-and for embedded questions (interrogativity is a clause-form axis, not
-a coding). -/
-def ComplementType.toCoding : ComplementType → Option Complement.Coding
-  | .finiteClause => some .indicative
-  | .infinitival => some .infinitive
-  | .gerund => some .nominalized
-  | .smallClause => Option.none
-  | .none => Option.none
-  | .np => Option.none
-  | .np_np => Option.none
-  | .np_pp => Option.none
-  | .question => Option.none
-
-/-- The enum view and the typed frames record the same coding: a cell's
-    frame carries exactly the codings `toCoding` assigns it. -/
-theorem ComplementType.codings_toFrame (ct : ComplementType) :
-    ct.toFrame.codings = ct.toCoding.toList := by cases ct <;> rfl

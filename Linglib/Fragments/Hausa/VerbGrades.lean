@@ -96,10 +96,9 @@ inductive GradeFunction where
   | efferential | ventive | sustentative
   deriving DecidableEq, Repr
 
-/-- Default `Verb.complementType` predicted by the grade's primary
-    function. -/
-def GradeFunction.defaultCT : GradeFunction → ComplementType
-  | .intransitive | .sustentative => .none
+/-- The citation frame predicted by the grade's primary function. -/
+def GradeFunction.defaultFrame : GradeFunction → ArgumentFrame
+  | .intransitive | .sustentative => .intransitive
   | _                              => .np
 
 /-- Default `Verb.voiceType` predicted by the grade's primary
@@ -125,9 +124,9 @@ structure StemTemplate where
   /-- Primary derivational function. -/
   function : GradeFunction
 
-/-- Predicted complement type from the template's function. -/
-def StemTemplate.defaultCT (t : StemTemplate) : ComplementType :=
-  t.function.defaultCT
+/-- The citation frame predicted by the template's function. -/
+def StemTemplate.defaultFrame (t : StemTemplate) : ArgumentFrame :=
+  t.function.defaultFrame
 
 /-- Predicted voice type from the template's function. -/
 def StemTemplate.defaultVoice (t : StemTemplate) : VoiceType :=
@@ -217,7 +216,7 @@ def HausaVerb.fv (v : HausaVerb) (f : SynForm) : FinalVowel :=
     fields agree with the defaults predicted by its grade. Per-verb
     overrides break canonicity (and become explicit empirical claims). -/
 def HausaVerb.canonical (v : HausaVerb) : Prop :=
-  v.complementType = v.grade.defaultCT ∧
+  v.citationFrame? = some v.grade.defaultFrame ∧
   v.voiceType = some v.grade.defaultVoice
 
 instance (v : HausaVerb) : Decidable v.canonical :=
@@ -230,7 +229,7 @@ instance (v : HausaVerb) : Decidable v.canonical :=
 def mkVerb (form : String) (g : StemTemplate)
     (lexTones : List TRN := []) : HausaVerb where
   form           := form
-  frames := [g.defaultCT.toFrame]
+  frames := [g.defaultFrame]
   voiceType      := some g.defaultVoice
   grade          := g
   lexTones       := lexTones
@@ -266,7 +265,7 @@ def lexicon : List HausaVerb :=
 /-- **Override demonstration.** Some gr1 verbs have an *actor-intransitive*
     sub-use ([newman-2000] §74.4): morphologically gr1 (H–L, -ā)
     but syntactically intransitive. We model this by overriding
-    `complementType` while keeping the gr1 grade. The override breaks
+    citation frame while keeping the gr1 grade. The override breaks
     canonicity — making the empirical claim "gr1 has an intransitive
     sub-use" *visible* in the type system rather than buried in prose. -/
 def gangara : HausaVerb :=
@@ -308,13 +307,13 @@ theorem hh_minimal_pair :
   ⟨rfl, by decide, by decide⟩
 
 /-- **gr3 is intransitive by template.** Any verb whose grade is gr3
-    and which is canonical has empty complement type. This is the
-    universal claim that grade choice constrains argument structure;
-    the per-verb verification (`fita.complementType = .none`) is
-    demoted to an `example` below. -/
+    and which is canonical has the intransitive citation frame. This is
+    the universal claim that grade choice constrains argument structure;
+    the per-verb verification (`fita.citationFrame? = some .intransitive`)
+    is demoted to an `example` below. -/
 theorem gr3_intransitive (v : HausaVerb)
     (hg : v.grade = gr3) (hc : v.canonical) :
-    v.complementType = .none := by
+    v.citationFrame? = some .intransitive := by
   rw [hc.1, hg]; rfl
 
 /-- **gr7 suppresses the external argument.** Any canonical gr7 verb
@@ -330,7 +329,7 @@ theorem gr7_nonThematic (v : HausaVerb)
 theorem mkVerb_is_canonical (form : String) (g : StemTemplate)
     (lexTones : List TRN := []) :
     (mkVerb form g lexTones).canonical :=
-  ⟨by simp [mkVerb, Verb.complementType, Verb.citationFrame?], rfl⟩
+  ⟨rfl, rfl⟩
 
 /-- **Grades 5 and 6 introduce an external argument.** The two H–H
     grades are both agentive at the `Verb` level. -/
@@ -343,7 +342,7 @@ theorem hh_grades_agentive :
 -- ============================================================================
 
 /-- Per-cell facts that follow from the grade-system theorems above. -/
-example : fita.complementType = .none :=
+example : fita.citationFrame? = some .intransitive :=
   gr3_intransitive fita rfl (mkVerb_is_canonical _ _)
 
 example : taaru.voiceType = some .nonThematic :=
@@ -358,8 +357,8 @@ example : sayar.tones = [.H, .H] := rfl
     `mkVerb_is_canonical` since `lexicon` is built from `mkVerb`). -/
 example : ∀ v ∈ lexicon, v.canonical := by decide
 
-/-- The override `gangara` is *not* canonical: its `complementType` no
-    longer matches `gr1.defaultCT`. The empirical override registers
+/-- The override `gangara` is *not* canonical: its citation frame no
+    longer matches `gr1.defaultFrame`. The empirical override registers
     as a structural deviation. -/
 example : ¬ gangara.canonical := by decide
 

@@ -145,11 +145,8 @@ def toPredicateCore : Predicate → Verb
 /-- Every predicate takes a finite clause complement, as the polar questions of the stimuli
 require. -/
 theorem all_predicates_take_clause_complement (p : Predicate) :
-    (toPredicateCore p).complementType = .finiteClause ∨
-      (toPredicateCore p).altComplementType = some .finiteClause := by
-  cases p <;>
-    simp [toPredicateCore, ClauseEmbeddingAdjective.toVerb, beAnnoyed, beRight] <;>
-    first | left; rfl | right; rfl
+    ∃ fr ∈ (toPredicateCore p).frames, fr.HasFinite := by
+  cases p <;> decide
 
 end Fragment
 

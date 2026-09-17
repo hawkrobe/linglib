@@ -25,8 +25,8 @@ open NaturalLogic (Signature)
     clausal-selection spine shared with clause-embedding verbs, but no
     verbal morphology. -/
 structure ClauseEmbeddingAdjective extends Adjective where
-  /-- What kind of clause the adjective embeds. -/
-  complementType : ComplementType := .finiteClause
+  /-- The frame of the clause the adjective embeds. -/
+  frame : ArgumentFrame := .finiteClause
   /-- The [karttunen-1971b] factivity class, if the adjective is factive. -/
   factivity : Option Presupposition.Factivity := none
   /-- Attitude semantics, if applicable. -/

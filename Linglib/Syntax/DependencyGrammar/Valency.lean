@@ -11,7 +11,7 @@ import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 
 This file defines valency frames over dependency graphs: slot data,
 standard frame schemas for the basic valences, the map from a verb's
-lexical `ComplementType` into them, and satisfaction of a frame by a
+lexical `ArgumentFrame` into them, and satisfaction of a frame by a
 position's dependents.
 
 ## Main definitions
@@ -28,7 +28,7 @@ position's dependents.
 Frames are a side table (`Frames n`), not part of the graph carrier: the
 frame is framework apparatus (like HPSG's ARG-ST), supplied alongside the
 graph by the consumers that reason about valency and populated from the
-lexical carrier (a verb's `complementType.valency`).
+lexical carrier (`Valency.ofFrame` of a verb's citation frame).
 
 ## References
 
@@ -96,13 +96,13 @@ def Valency.ditransitive : Valency :=
 /-- Passive transitive: subject left (was patient), optional by-phrase right. -/
 def Valency.passiveTransitive : Valency := [⟨.nsubj, .left, true⟩, ⟨.obl, .right, false⟩]
 
-/-- A verb's lexical complement type as a standard valency. Returns `none`
-    for frames without a standard schema: clause-embedding types take
-    xcomp/ccomp, not obj, and `.np_pp` has no fixture here. -/
-def _root_.ComplementType.valency : ComplementType → Option Valency
-  | .none => some .intransitive
-  | .np => some .transitive
-  | .np_np => some .ditransitive
+/-- A verb's argument frame as a standard valency. Returns `none` for
+    frames without a standard schema: clause-embedding frames take
+    xcomp/ccomp, not obj, and the NP + PP frame has no fixture here. -/
+def Valency.ofFrame : ArgumentFrame → Option Valency
+  | ⟨_, []⟩ => some .intransitive
+  | ⟨_, [.nominal]⟩ => some .transitive
+  | ⟨_, [.nominal, .nominal]⟩ => some .ditransitive
   | _ => none
 
 /-! ### Argument-frame satisfaction -/
@@ -127,7 +127,7 @@ instance (g : Graph n) (v : Fin n) (val : Valency) :
 
 /-- Core argument relations governed by lexical frames. Deliberately the
     nominal core only — UD's clausal core relations (csubj, ccomp, xcomp)
-    are licensed by clause-embedding frames, which `ComplementType.valency`
+    are licensed by clause-embedding frames, which `Valency.ofFrame`
     does not schematize. -/
 private def coreArgRels : List UD.DepRel := [.nsubj, .obj, .iobj]
 

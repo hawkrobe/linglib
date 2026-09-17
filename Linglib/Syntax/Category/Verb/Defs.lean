@@ -94,7 +94,7 @@ inductive SenseTag where
 /-! ### Field facets
 
 Each facet groups a concern's fields; `Verb` composes them via `extends`,
-so flat access (`v.complementType`) is preserved. -/
+so flat access (`v.frames`) is preserved. -/
 
 namespace Verb
 
@@ -247,21 +247,11 @@ def Verb.citationFrame? (v : Verb) : Option ArgumentFrame := v.frames.head?
 def Verb.reading? (v : Verb) (fr : ArgumentFrame) : Option Verb.Reading :=
   v.readings.find? fun r ↦ decide (r.frame ≤ fr)
 
-/-- The citation frame's flat `ComplementType` cell; `.none` for an
-    intransitive and for a frame shape the enum has no cell for. -/
-def Verb.complementType (v : Verb) : ComplementType :=
-  (v.citationFrame?.bind ArgumentFrame.complementType?).getD .none
-
 /-- Every frame of the verb is intransitive. -/
 def Verb.IsIntransitive (v : Verb) : Prop := ∀ fr ∈ v.frames, fr.IsIntransitive
 
 instance (v : Verb) : Decidable v.IsIntransitive :=
   inferInstanceAs (Decidable (∀ fr ∈ v.frames, _))
-
-/-- The alternate (second) frame's flat `ComplementType` cell, `none` when
-    there is no second frame or it has a shape outside the enum. -/
-def Verb.altComplementType (v : Verb) : Option ComplementType :=
-  v.frames[1]?.bind ArgumentFrame.complementType?
 
 /-- The control type of the reading keyed to the citation frame. -/
 def Verb.controlType (v : Verb) : ControlType :=

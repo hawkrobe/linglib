@@ -25,16 +25,25 @@ namespace Chomsky1995
 
 open Minimalist SyntacticObject
 
-/-- Map a verb's complement type to its selectional stack: each c-selected argument is one
-    `Cat` feature consumed by complement Merge; nominal arguments are `.D` (the DP hypothesis).
+/-- The category a complement position c-selects: a nominal is `.D` (the DP hypothesis), a
+    finite or interrogative clause `.C`, an infinitive `.T`, a nominalized or participial
+    clause `.V`, a small clause `.D`; an adpositional or implicit position selects nothing. -/
+def positionCat : ArgumentFrame.Position → Option Cat
+  | .nominal => some .D
+  | .clausal (some c) _ _ =>
+    some (if c.IsFinite then .C else if c = .infinitive then .T else .V)
+  | .clausal none (some .interrogative) _ => some .C
+  | .clausal none _ _ => some .D
+  | _ => none
+
+/-- Map a verb's citation frame to its selectional stack: each c-selected argument is one
+    `Cat` feature consumed by complement Merge.
     Folded in from the former `Syntax/Minimalist/FromFragments.lean` (its only consumer). -/
 def verbToSelStack (v : English.Verb) : SelStack :=
-  match v.complementType with
-  | .none => [] | .np => [.D] | .np_np => [.D, .D] | .np_pp => [.D]
-  | .finiteClause => [.C] | .infinitival => [.T] | .gerund => [.V]
-  | .smallClause => [.D] | .question => [.C]
+  (v.citationFrame?.map fun fr ↦ fr.complements.filterMap positionCat).getD []
 
-/-- A `English.Verb` as a `SyntacticObject` leaf (`Cat = .V`, selStack from `complementType`). -/
+/-- A `English.Verb` as a `SyntacticObject` leaf (`Cat = .V`, selStack from the citation
+frame). -/
 def verbToSO (v : English.Verb) (id : Nat) : SyntacticObject :=
   mkLeafPhon .V (verbToSelStack v) v.form3sg id
 
