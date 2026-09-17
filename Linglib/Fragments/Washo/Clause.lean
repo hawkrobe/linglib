@@ -1,3 +1,4 @@
+import Linglib.Morphology.Word.Tree
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Category.Complementizer.Basic
 
@@ -30,7 +31,7 @@ against modification is `Studies/BochnakHanink2021.lean`.
 
 namespace Washo
 
-open Morphology (Morph)
+open Morphology (Morph Word)
 
 /-! ### Clause-typers -/
 
@@ -66,6 +67,11 @@ def es : Morph := .suff "e:s"
 /-- The reflexive prefix *gum-*. -/
 def gum : Morph := .pref "gum"
 
+/-- The citation form of a root with an affix attached on a side, read off the word tree in
+boundary notation. -/
+private def affixed (root : String) (side : Morph.Side) (afx : Morph) : String :=
+  String.join (((Word.Tree.root (Morph.root root)).attach side afx).toList.map toString)
+
 /-- *hamup'ay* 'forget' (1). -/
 def hamupay : Verb where
   form := "hamup'ay"
@@ -74,11 +80,11 @@ def hamupay : Verb where
   typer := ge
 
 /-- *hamup'ay-e:s* 'remember', negated 'forget' (8). -/
-def hamupayEs : Verb := { hamupay with form := hamupay.form ++ toString es }
+def hamupayEs : Verb := { hamupay with form := affixed hamupay.form .after es }
 
 /-- *ašaš-e:s* 'know', negated 'not know'; it also takes a plain DP ((6), (79)). -/
 def ashashEs : Verb where
-  form := "ašaš" ++ toString es
+  form := affixed "ašaš" .after es
   frames := [ArgumentFrame.finiteClause, ArgumentFrame.np]
   predicateClass := some .knowledge
   typer := ge
@@ -116,7 +122,7 @@ def iid : Verb where
 
 /-- *mɨtgi:bɨl-e:s* 'believe', negated 'disbelieve' (16). -/
 def metgiibilEs : Verb where
-  form := "mɨtgi:bɨl" ++ toString es
+  form := affixed "mɨtgi:bɨl" .after es
   frames := [ArgumentFrame.intransitive]
   predicateClass := some .propAttitude
   typer := aq
@@ -133,7 +139,7 @@ def suus : Verb where
 *that*-clause ((15), (52), (54)). -/
 def gumsuus : Verb :=
   { suus with
-    form := toString gum ++ suus.form
+    form := affixed suus.form .before gum
     voiceType := some .reflexive
     frames := [ArgumentFrame.intransitive]
     typer := aq }
