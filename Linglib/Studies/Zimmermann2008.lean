@@ -42,7 +42,7 @@ universal under either negation, (91) (`neg_duk_iff`).
 
 namespace Zimmermann2008
 
-open Hausa.Determiners Quantification
+open Hausa.Determiners Quantifier Quantifier.GQ
 
 variable {α E : Type*}
 

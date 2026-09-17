@@ -22,7 +22,7 @@ on Dutch data.
 
 namespace Dutch.Binominals
 
-open Quantification.Binominal
+open Quantifier.Binominal
 
 /-- A Dutch binominal N₁ noun entry. -/
 structure BinominalN₁Entry where

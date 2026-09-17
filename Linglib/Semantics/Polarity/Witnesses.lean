@@ -37,7 +37,7 @@ operator really holds the strength the item requires.
 namespace Polarity
 
 open NaturalLogic
-open Quantification
+open Quantifier Quantifier.GQ Quantifier.NP
 
 /-- A model-theoretic witness for a licensing-context row: an operator
 (with its definedness/presupposition function) realizing the row's

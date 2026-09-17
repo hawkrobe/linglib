@@ -8,7 +8,7 @@ import Linglib.Core.Order.Aristotelian
 
 The propositional GQs `every_sem`, `some_sem`, `no_sem` and the Russellian `the_sem`, with
 the property proofs that don't need `Fintype`. Counting GQs (`most_sem`, `few_sem`, etc.) and
-their proofs live in `Quantification.Counting`.
+their proofs live in `Quantification/Counting.lean`.
 
 ## Main declarations
 
@@ -17,7 +17,7 @@ their proofs live in `Quantification.Counting`.
 * Conservativity/monotonicity/symmetry/intersectivity/duality/etc. proofs.
 -/
 
-namespace Quantification
+namespace Quantifier.GQ
 
 /-! ### Denotations -/
 
@@ -397,4 +397,4 @@ theorem every_satisfiesUniversals : SatisfiesUniversals ⟦every⟧ :=
 theorem no_satisfiesUniversals : SatisfiesUniversals ⟦no⟧ :=
   ⟨no_conservative, Or.inr no_scope_down⟩
 
-end Quantification
+end Quantifier.GQ

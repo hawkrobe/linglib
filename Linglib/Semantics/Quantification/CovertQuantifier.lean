@@ -14,9 +14,9 @@ that compose via FA in `evalTree`.
 The *semantics* these wrap is the canonical generalized-quantifier substrate
 in `Quantification/Counting.lean` (`everyOn`, `mostOn`, `thresholdOn`,
 `prevalenceOn`, …). GEN's threshold reading is `genThreshold`, whose
-denotation is `Quantification.thresholdOn` over the atom domain; the
+denotation is `Quantifier.GQ.thresholdOn` over the atom domain; the
 universal reading is `Genericity.traditionalGEN`, grounded on
-`Quantification.everyOn`. Earlier versions of this file re-implemented those
+`Quantifier.GQ.everyOn`. Earlier versions of this file re-implemented those
 quantifiers in an inferior `Bool`/`List`/ℚ representation
 (`covertQ`/`measure`/`thresholdQ`); those clones are retired in favour of the
 `Counting.lean` API.
@@ -24,7 +24,7 @@ quantifiers in an inferior `Bool`/`List`/ℚ representation
 ## Usage
 
 ```
-open Quantification.CovertQuantifier (genThreshold dist dpp)
+open Quantifier.Covert (genThreshold dist dpp)
 
 def myLex : Lexicon E W := fun s => match s with
   | "Gen"  => some (genThreshold E W atoms 2 3)
@@ -33,8 +33,10 @@ def myLex : Lexicon E W := fun s => match s with
 ```
 -/
 
-namespace Quantification.CovertQuantifier
+namespace Quantifier.Covert
 
+
+open Quantifier.GQ
 /-! ### Montague-Typed Constructors -/
 
 section Compositional
@@ -46,7 +48,7 @@ open Semantics.Composition
     `generally` encodes the truth conditions — different theories
     instantiate it differently (threshold, normalcy, probabilistic).
     `traditionalGEN` (in `Genericity/Basic.lean`, grounded on
-    `Quantification.everyOn`) and `Quantification.thresholdOn` are specific
+    `Quantifier.GQ.everyOn`) and `Quantifier.GQ.thresholdOn` are specific
     instantiations. -/
 def gen (E W : Type)
     (generally : (E → Prop) → (E → Prop) → Prop)
@@ -56,13 +58,13 @@ def gen (E W : Type)
 open Classical in
 /-- Gen with threshold: true iff ≥ `num/denom` of restrictor-satisfying
     atoms also satisfy scope. Montague-typed wrapper whose denotation is the
-    canonical `Quantification.thresholdOn` (cross-multiplied `Nat`, `≥`-form)
+    canonical `Quantifier.GQ.thresholdOn` (cross-multiplied `Nat`, `≥`-form)
     over the atom domain. Noncomputable only because the Montague denotations
     `restr`/`scope` are arbitrary `Prop`-predicates (decided classically). -/
 noncomputable def genThreshold (E W : Type) [DecidableEq E] (atoms : List E)
     (num denom : Nat) : Denotation E W :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun restr scope =>
-    Quantification.thresholdOn atoms.toFinset restr scope num denom⟩
+    Quantifier.GQ.thresholdOn atoms.toFinset restr scope num denom⟩
 
 /-- DIST: `(e→t) → (e→t)`. Distributive operator.
 
@@ -102,4 +104,4 @@ def exh (E W : Type) (exhOp : (W → Prop) → (W → Prop))
 
 end Compositional
 
-end Quantification.CovertQuantifier
+end Quantifier.Covert

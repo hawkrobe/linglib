@@ -29,7 +29,7 @@ theorems), `LeftAntiAdditive`/`RightAntiAdditive`
   profiles.
 -/
 
-namespace Quantification
+namespace Quantifier.GQ
 
 open NaturalLogic
 
@@ -110,4 +110,4 @@ example : Signature₂.SoundFor ⟨.antiAddMult * .anti, .antiAddMult * .mono⟩
     (fun R S => ¬ every_sem (α := α) R S) :=
   not_soundFor_antiAddMult.comp₂ every_sem_soundFor
 
-end Quantification
+end Quantifier.GQ

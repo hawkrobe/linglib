@@ -46,7 +46,7 @@ entailment (`IsIntolerant`).
 
 namespace Gajewski2011
 
-open NaturalLogic Presupposition Quantification Data.Examples
+open NaturalLogic Presupposition Quantifier Quantifier.GQ Data.Examples
 
 variable {α : Type*}
 

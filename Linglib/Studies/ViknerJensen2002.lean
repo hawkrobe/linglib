@@ -49,7 +49,7 @@ formalized.
 
 namespace ViknerJensen2002
 
-open Possession Quantification
+open Possession Quantifier Quantifier.GQ Quantifier.NP
 
 variable {E S : Type*}
 

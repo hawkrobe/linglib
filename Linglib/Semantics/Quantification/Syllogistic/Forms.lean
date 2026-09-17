@@ -35,10 +35,9 @@ as a sortal restriction to states with non-empty restrictor — see that file
 for the full opposition diagram in the Demey–Smessaert sense.
 -/
 
-namespace Quantification.Syllogistic
+namespace Quantifier.Syllogistic
 
-open Quantification
-  (every_sem some_sem no_sem subalternation_a_i)
+open Quantifier.GQ (every_sem some_sem no_sem subalternation_a_i)
 
 /-! ### Syllogistic forms (modern reading, no existential import) -/
 
@@ -229,4 +228,4 @@ theorem allAB_allCB_premises_underdetermine_allAC :
      concMeaning .allAC state_AB_BC = false) := by
   decide
 
-end Quantification.Syllogistic
+end Quantifier.Syllogistic

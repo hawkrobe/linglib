@@ -53,7 +53,7 @@ and [pancheva-2003]'s final-subinterval perfect.
 
 namespace BonehDoron2013
 
-open Quantification
+open Quantifier Quantifier.GQ Quantifier.NP
 open Genericity (Situation traditionalGEN)
 open Aspect (Perfectivity IntervalPred IMPF)
 open Modality.Kratzer (ModalBase accessibleWorlds)

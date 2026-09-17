@@ -122,14 +122,14 @@ theorem mu_kind_differs :
 
 /-! ### The decomposition -/
 
-open Quantification (individual) in
+open Quantifier.NP (individual) in
 /-- The decomposition — singleton shift, subset, intersection — is the meet of the raised
 conjuncts, so *DP₁ and DP₂ VP* comes out as `VP(DP₁) ∧ VP(DP₂)` (Figure 2). -/
 theorem ms_decomposition_eq_coord {E : Type} (e1 e2 : E) (p : E → Prop) :
     (individual e1 ⊓ individual e2) p = (p e1 ∧ p e2) :=
   rfl
 
-open Quantification (individual) in
+open Quantifier.NP (individual) in
 open Plurality in
 open Plurality.Distributivity in
 /-- The decomposition is distributive predication over the pair of conjuncts. -/

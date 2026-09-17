@@ -44,7 +44,7 @@ account", an existential — is the parameter the definiteness debate turns on
 
 namespace Possession
 
-open Quantification
+open Quantifier Quantifier.GQ Quantifier.NP
 
 variable {α : Type*}
 

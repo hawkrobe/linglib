@@ -10,11 +10,11 @@ This module formalizes the traditional covert GEN operator posited for
 generic sentences like "Dogs bark", "Birds fly", etc.
 
 GEN is grounded on the canonical generalized-quantifier substrate in
-`Quantification/Counting.lean`: `traditionalGEN` is `Quantification.everyOn`
+`Quantification/Counting.lean`: `traditionalGEN` is `Quantifier.GQ.everyOn`
 over the situation domain with restriction `normal ∧ restrictor` and nuclear
 scope `scope` (true by construction — see the definition). The prevalence-based alternative is the
-ℚ view `Quantification.prevalenceOn` (`prevalence`), with the threshold
-reading `Quantification.thresholdGtOn` (`thresholdGeneric`).
+ℚ view `Quantifier.GQ.prevalenceOn` (`prevalence`), with the threshold
+reading `Quantifier.GQ.thresholdGtOn` (`thresholdGeneric`).
 
 ## The Traditional Account
 
@@ -35,7 +35,7 @@ Example: "Dogs bark"
 The `normal` parameter does all the explanatory work but is (1) not observable
 (covert), (2) context-dependent (varies by property), and (3) essentially
 circular (stipulated to give right results). The threshold-based alternative
-below (`thresholdGeneric`, grounded on `Quantification.thresholdGtOn`)
+below (`thresholdGeneric`, grounded on `Quantifier.GQ.thresholdGtOn`)
 eliminates it.
 
 ## Descriptive vs Definitional ([krifka-2013])
@@ -97,7 +97,7 @@ Traditional GEN as a quantifier over situations.
     This is essentially a restricted universal quantifier:
       ∀s. (normal(s) ∧ restrictor(s)) → scope(s)
 
-    Equivalently, `Quantification.everyOn situations.toFinset
+    Equivalently, `Quantifier.GQ.everyOn situations.toFinset
     (λ s => normal s && restrictor s) scope`, where the restriction is the
     conjunction of normalcy and restrictor — the canonical relativized
     restricted universal.
@@ -117,7 +117,7 @@ Traditional GEN as a quantifier over situations.
     (restrictor : Restrictor)
     (scope : Scope)
     : Prop :=
-  Quantification.everyOn situations.toFinset
+  Quantifier.GQ.everyOn situations.toFinset
     (fun s => (normal s && restrictor s) = true) (fun s => scope s = true)
 
 /--
@@ -131,7 +131,7 @@ def traditionalGEN_existential
     (restrictor : Restrictor)
     (scope : Scope)
     : Prop :=
-  ¬ Quantification.someOn situations.toFinset
+  ¬ Quantifier.GQ.someOn situations.toFinset
       (fun s => (normal s && restrictor s) = true) (fun s => scope s ≠ true)
 
 /-- The two formulations are equivalent: the relativized restricted universal
@@ -143,7 +143,7 @@ theorem gen_formulations_equiv
     (scope : Scope)
     : traditionalGEN situations normal restrictor scope ↔
       traditionalGEN_existential situations normal restrictor scope := by
-  unfold traditionalGEN traditionalGEN_existential Quantification.everyOn Quantification.someOn
+  unfold traditionalGEN traditionalGEN_existential Quantifier.GQ.everyOn Quantifier.GQ.someOn
   push Not
   rfl
 
@@ -155,14 +155,14 @@ Prevalence: the proportion of restrictor-satisfying cases where scope holds.
 Polymorphic over the domain type — works for situation-based models
 ([cohen-1999a], [tessler-goodman-2019]) and entity-based models
 ([nickel-2009]) alike. The genericity-named view of the canonical
-`Quantification.prevalenceOn` (the ℚ analogue of `Rel.edgeDensity`).
+`Quantifier.GQ.prevalenceOn` (the ℚ analogue of `Rel.edgeDensity`).
 -/
 def prevalence {D : Type} [DecidableEq D]
     (domain : List D)
     (restrictor : D → Bool)
     (scope : D → Bool)
     : ℚ :=
-  Quantification.prevalenceOn domain.toFinset
+  Quantifier.GQ.prevalenceOn domain.toFinset
     (fun d => restrictor d = true) (fun d => scope d = true)
 
 /--
@@ -170,7 +170,7 @@ Threshold-based generic (a la [tessler-goodman-2019]).
 
 The generic is true iff prevalence exceeds the threshold `num/denom`.
 This replaces the hidden "normalcy" with observable prevalence. The canonical
-cross-multiplied `Quantification.thresholdGtOn` (division-free `Nat`
+cross-multiplied `Quantifier.GQ.thresholdGtOn` (division-free `Nat`
 comparison) so the truth value is kernel-`decide`-able.
 -/
 @[reducible] def thresholdGeneric {D : Type} [DecidableEq D]
@@ -179,7 +179,7 @@ comparison) so the truth value is kernel-`decide`-able.
     (scope : D → Bool)
     (num denom : Nat)
     : Prop :=
-  Quantification.thresholdGtOn domain.toFinset
+  Quantifier.GQ.thresholdGtOn domain.toFinset
     (fun d => restrictor d = true) (fun d => scope d = true) num denom
 
 /-!
@@ -224,11 +224,11 @@ example : traditionalGEN dogSituations normalDogSituation isDogSituation dogBark
     kernel-`decide`-able). -/
 theorem dogBarks_prevalence :
     prevalence dogSituations isDogSituation dogBarks = 4/5 := by
-  have hR : Quantification.countOn dogSituations.toFinset
+  have hR : Quantifier.GQ.countOn dogSituations.toFinset
       (fun d => isDogSituation d = true) = 5 := by decide
-  have hRS : Quantification.countOn dogSituations.toFinset
+  have hRS : Quantifier.GQ.countOn dogSituations.toFinset
       (fun d => (isDogSituation d = true) ∧ (dogBarks d = true)) = 4 := by decide
-  unfold prevalence Quantification.prevalenceOn
+  unfold prevalence Quantifier.GQ.prevalenceOn
   rw [hR, hRS]; norm_num
 
 /-- On the threshold reading the generic holds at θ = 1/2: prevalence 4/5
@@ -268,9 +268,9 @@ def genHomogeneityPresup
     (restrictor : Restrictor)
     (scope : Scope)
     : Prop :=
-  Quantification.everyOn situations.toFinset
+  Quantifier.GQ.everyOn situations.toFinset
       (fun s => restrictor s = true) (fun s => scope s = true) ∨
-  Quantification.noOn situations.toFinset
+  Quantifier.GQ.noOn situations.toFinset
       (fun s => restrictor s = true) (fun s => scope s = true)
 
 /-- Homogeneity holds when ALL restrictor-situations satisfy scope
@@ -279,7 +279,7 @@ theorem homogeneity_yes
     (situations : List Situation)
     (restrictor : Restrictor)
     (scope : Scope)
-    (h : Quantification.everyOn situations.toFinset
+    (h : Quantifier.GQ.everyOn situations.toFinset
       (fun s => restrictor s = true) (fun s => scope s = true)) :
     genHomogeneityPresup situations restrictor scope :=
   Or.inl h
@@ -290,7 +290,7 @@ theorem homogeneity_no
     (situations : List Situation)
     (restrictor : Restrictor)
     (scope : Scope)
-    (h : Quantification.noOn situations.toFinset
+    (h : Quantifier.GQ.noOn situations.toFinset
       (fun s => restrictor s = true) (fun s => scope s = true)) :
     genHomogeneityPresup situations restrictor scope :=
   Or.inr h

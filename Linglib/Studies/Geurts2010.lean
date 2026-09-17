@@ -22,7 +22,7 @@ reverses a scale, so that *not all* blocks the local inference, is the negated c
 
 namespace Geurts2010
 
-open Quantification GeurtsPouscoulous2009
+open Quantifier Quantifier.GQ GeurtsPouscoulous2009
 
 /-- *Exactly two* is not upward entailing in its scope: two of three squares connected with some
 circle, all three with some circle or other. -/

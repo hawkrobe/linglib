@@ -207,7 +207,7 @@ handle indefinites compositionally. -/
 
 section LiftDecomposition
 
-open Quantification (individual A ident A_ident_eq_individual)
+open Quantifier.NP (individual A ident A_ident_eq_individual)
 
 variable {E W : Type}
 

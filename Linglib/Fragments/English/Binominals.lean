@@ -24,16 +24,16 @@ a grammaticalization cline:
 ## Integration
 
 - Evaluative and quantizing-bridge semantics live in
-  `Quantification.Binominal` (cross-linguistic theory)
+  `Quantifier.Binominal` (cross-linguistic theory)
 - The constructional network uses `ConstructionGrammar.Constructicon`
 - The three-way `BinominalType` is shared with Spanish binominals
-  via `Quantification.Binominal`
+  via `Quantifier.Binominal`
 -/
 
 namespace English.Binominals
 
-open Quantification.Binominal
-open Quantification.Binominal (ebnpSemantics quantizingToOfBinominal)
+open Quantifier.Binominal
+open Quantifier.Binominal (ebnpSemantics quantizingToOfBinominal)
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 1: N₁ Noun Semantic Class

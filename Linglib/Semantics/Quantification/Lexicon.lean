@@ -26,7 +26,7 @@ parameter type of the GQT `gqtMeaning` operator.
 -/
 
 
-namespace Quantification.Lexicon
+namespace Quantifier.Lexicon
 
 
 inductive QForce where
@@ -60,4 +60,4 @@ structure Adverb where
   force : QForce
   deriving DecidableEq, Repr
 
-end Quantification.Lexicon
+end Quantifier.Lexicon

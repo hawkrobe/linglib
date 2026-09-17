@@ -52,7 +52,7 @@ end ModalAdverbs
 
 section AdverbsOfQuantification
 
-open Quantification.Lexicon
+open Quantifier.Lexicon
 
 def always : Adverb := { form := "always", force := .universal }
 def usually : Adverb := { form := "usually", force := .proportional }

@@ -140,7 +140,7 @@ where the kind meets the predicate, so negation always scopes outside it whether
 plural has moved: `chierchia_position_invariant`. The position-sensitive shift that
 `Studies/LeBruynDeSwart2022.lean` reads into [krifka-2003] reuses the same `existsClose`, so
 the two accounts share one closure and differ only in where negation sits. `existsClose` is
-Partee's existential closure in plain extensional form; `Quantification.A` is the same operator
+Partee's existential closure in plain extensional form; `Quantifier.NP.A` is the same operator
 in the deep embedding. -/
 
 section DKPDerivation

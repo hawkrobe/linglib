@@ -44,7 +44,7 @@ questions of §1.7 are not formalized.
 
 namespace VonFintel1993
 
-open Quantification Quantification.Exceptive
+open Quantifier Quantifier.GQ Quantifier.NP Quantifier.Exceptive
 
 variable {α : Type*} {Q : GQ α} {A C B : α → Prop}
 

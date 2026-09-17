@@ -51,18 +51,18 @@ variable {W T : Type*} [LinearOrder T]
 def evalPres (p : PointPred W T) (tc : T) (w : W) : Prop :=
   p ⟨w, tc⟩
 
-/-- Existential tense evaluation: the GQ `some` (`Quantification.some_sem`)
+/-- Existential tense evaluation: the GQ `some` (`Quantifier.GQ.some_sem`)
     over times `rel`-related to the evaluation time `tc`, scope `p` at `⟨w, ·⟩`.
     `evalPast`/`evalFut` are the `<`/`>` instances. -/
 def evalRel (rel : T → T → Prop) (p : PointPred W T) (tc : T) (w : W) : Prop :=
-  Quantification.some_sem (fun t => rel t tc) (fun t => p ⟨w, t⟩)
+  Quantifier.GQ.some_sem (fun t => rel t tc) (fun t => p ⟨w, t⟩)
 
 omit [LinearOrder T] in
 /-- Monotone in the body predicate — inherited from `some_scope_up`, not reproved. -/
 theorem evalRel_mono {rel : T → T → Prop} {p q : PointPred W T}
     (h : ∀ x, p x → q x) {tc : T} {w : W} :
     evalRel rel p tc w → evalRel rel q tc w :=
-  Quantification.some_scope_up _ _ _ fun _ hp => h _ hp
+  Quantifier.GQ.some_scope_up _ _ _ fun _ hp => h _ hp
 
 /-- Evaluate a point predicate with existential past (PAST): `∃ t < tc, p(w)(t)`. -/
 def evalPast (p : PointPred W T) (tc : T) (w : W) : Prop :=

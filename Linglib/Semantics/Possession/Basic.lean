@@ -47,7 +47,7 @@ def Description.possesseePred (d : Description E S) : E → S → Prop :=
 /-- Possessive as a type ⟨1⟩ quantifier ([barker-2011]): `⟦John's⟧ = fun P ↦ ∃ y, R possessor y ∧
 P y`. Not isomorphism-invariant: it depends on the identity of the possessor, not just on
 cardinalities. -/
-def asNPQ (possessor : E) (R : E → E → Prop) : Quantification.NP E :=
+def asNPQ (possessor : E) (R : E → E → Prop) : Quantifier.NP E :=
   fun P => ∃ y, R possessor y ∧ P y
 
 end Possession

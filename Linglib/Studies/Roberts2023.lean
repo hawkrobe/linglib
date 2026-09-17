@@ -51,7 +51,7 @@ embedded imperatives are discussed in the paper without a proposal formalized he
 
 namespace Roberts2023
 
-open Reference HistoricalAlternatives Modality.Kratzer Quantification
+open Reference HistoricalAlternatives Modality.Kratzer Quantifier Quantifier.GQ Quantifier.NP
 
 variable {W T E : Type*}
 

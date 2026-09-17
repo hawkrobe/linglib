@@ -69,7 +69,7 @@ derived as the absence of a true reading among the available ones.
 
 namespace Cohen2013
 
-open Quantification
+open Quantifier Quantifier.GQ
 
 /-! ### The two reinterpretation devices (§13.3) -/
 

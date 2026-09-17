@@ -1,5 +1,5 @@
 /-!
-# Quantification.Binominal — Defs
+# Binominal quantification, definitions
 [saab-2026] [ten-wolde-2023]
 
 Cross-linguistic types for binominal (N₁-of-N₂) constructions: the
@@ -50,7 +50,7 @@ UNVERIFIED: All ten-Wolde Table/§ references (`Table 4.2`, `§4.3.4`,
 treating as authoritative.
 -/
 
-namespace Quantification.Binominal
+namespace Quantifier.Binominal
 
 /-! ### : Three-Way Classification (Spanish, cross-linguistic) -/
 
@@ -384,4 +384,4 @@ theorem quantifying_is_n₂_headed (b : BinominalType) :
     b.toOfBinominalType.head = .n₂ := by
   intro h; cases h with | inl h | inr h => subst h; rfl
 
-end Quantification.Binominal
+end Quantifier.Binominal

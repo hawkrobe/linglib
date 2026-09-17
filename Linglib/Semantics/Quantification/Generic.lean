@@ -4,13 +4,13 @@ import Linglib.Semantics.Quantification.Counting
 # Generic quantifiers as generalized-quantifier schemas
 
 Rival semantics for the silent generic operator Gen, expressed as instances of the
-existing `Quantification.GQ α` generalized-quantifier interface rather than as bespoke
+existing `Quantifier.GQ α` generalized-quantifier interface rather than as bespoke
 per-paper types. The competing theories then differ by a property of the `GQ`, not by an
 incompatible signature: all are `Conservative`, and only the majority schema is
 `Proportional`. The traditional schema is a normalcy-restricted universal — the kind's
 normal members satisfy the scope; Nickel's replaces the single normalcy predicate by ways
 of being normal, some one of which makes all of its normal members satisfy the scope. The
-third schema, Cohen's majority reading, is the existing `Quantification.most_sem`, and
+third schema, Cohen's majority reading, is the existing `Quantifier.GQ.most_sem`, and
 `most_proportional` records that it alone is proportional — its truth is a function of the
 |R ∩ S| : |R ∖ S| ratio. That is the precise "generics as majority quantification"
 characterization the later genericity literature rejects as a theory of generics; it is
@@ -54,7 +54,7 @@ decidable cardinality example rather than a `Proportional` counterexample.
 * [S.-J. Leslie, *Generics: Cognition and Acquisition* (2008)][leslie-2008]
 -/
 
-namespace Quantification
+namespace Quantifier.GQ
 
 variable {α : Type*} [Fintype α]
 
@@ -110,4 +110,4 @@ theorem genNormalcy_not_ratio_determined :
     ¬ genNormalcy (α := Fin 2) (· = 0) (fun _ => True) (· = 1) := by
   refine ⟨?_, ?_⟩ <;> simp only [genNormalcy, everyOn] <;> decide
 
-end Quantification
+end Quantifier.GQ

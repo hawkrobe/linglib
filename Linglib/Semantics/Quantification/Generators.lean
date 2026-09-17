@@ -40,7 +40,9 @@ characterizations (`conjGQ X P ↔ ∀ x ∈ X, P x`,
 - `conjGQ_append` / `disjGQ_append` — compositionality
 -/
 
-namespace Quantification
+namespace Quantifier.NP
+
+open Quantifier.GQ
 
 variable {α : Type*}
 
@@ -340,4 +342,4 @@ def conjGQs (dom : List α) : List (NP α) :=
 def disjGQs (dom : List α) : List (NP α) :=
   (nonemptySubsets dom).map disjGQ
 
-end Quantification
+end Quantifier.NP

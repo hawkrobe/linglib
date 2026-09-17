@@ -24,7 +24,7 @@ strength, conservativity) is a theorem about that denotation, not a stored field
 
 The cross-paper typological labels (B&C Table II strength/monotonicity, K&S
 force) are kept as the textbook-consensus `QuantityWord.entry : QuantityWord.Metadata`
-metadata table (a small local record over the `Quantification.Lexicon` enums),
+metadata table (a small local record over the `Quantifier.Lexicon` enums),
 consumed by GQT and exceptive studies that need the descriptive classification
 rather than the denotation.
 
@@ -42,7 +42,7 @@ prototype-theory prototypes/spreads) and theory-bridge theorems live elsewhere:
 
 namespace English.Determiners
 
-export Quantification.Lexicon
+export Quantifier.Lexicon
   (QForce Monotonicity Strength)
 
 /-! ## Quantificational determiners
@@ -193,7 +193,7 @@ instance : Fintype QuantityWord where
 
 /-- B&C Table II typological metadata: the textbook-consensus descriptive
     labels (force, monotonicity, weak/strong strength) a quantity word carries.
-    A small local record over the `Quantification.Lexicon` enums — *not* the
+    A small local record over the `Quantifier.Lexicon` enums — *not* the
     lexical marking (that is `Quantifier`, above) and *not* the denotation
     (that is `QuantityWord.gqDenotation`). -/
 structure QuantityWord.Metadata where
@@ -233,8 +233,8 @@ def QuantityWord.toList : List QuantityWord :=
     (B&C-style), built on `every_sem`/`some_sem`/`no_sem`/etc. from
     `Quantification/Basic.lean` and `Quantification/Counting.lean`. -/
 noncomputable def QuantityWord.gqDenotation (q : QuantityWord)
-    {α : Type*} [Fintype α] : Quantification.GQ α :=
-  open Quantification in
+    {α : Type*} [Fintype α] : Quantifier.GQ α :=
+  open Quantifier Quantifier.GQ in
   match q with
   | .none_ => no_sem
   | .some_ => some_sem

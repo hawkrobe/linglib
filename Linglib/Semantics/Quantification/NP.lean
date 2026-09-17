@@ -27,7 +27,9 @@ partial ones, `Reference.THE` and `Reference.lower`, are Russellian iotas.
 * [barker-2002]
 -/
 
-namespace Quantification
+namespace Quantifier.NP
+
+open Quantifier.GQ
 
 variable {E : Type*}
 
@@ -251,4 +253,4 @@ theorem A_eq_some_sem (E : Type*) (domain : List E) (hComplete : ∀ x : E, x �
   simp only [A, some_sem]
   exact propext ⟨fun ⟨x, _, hR, hS⟩ ↦ ⟨x, hR, hS⟩, fun ⟨x, hR, hS⟩ ↦ ⟨x, hComplete x, hR, hS⟩⟩
 
-end Quantification
+end Quantifier.NP

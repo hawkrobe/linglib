@@ -44,7 +44,7 @@ interactions of Class B modifiers with root modals (Section 4.2) are not formali
 
 namespace Kennedy2015
 
-open Degree Numerals NeoGricean Quantification Set
+open Degree Numerals NeoGricean Quantifier Quantifier.GQ Set
 
 /-! ### The de-Fregean semantics (Section 3)
 

@@ -23,7 +23,7 @@ import Linglib.Semantics.Quantification.NP
 namespace Semantics.Scope
 
 open Semantics.Composition
-open Quantification
+open Quantifier Quantifier.GQ
 
 /-! ### Scope readings -/
 

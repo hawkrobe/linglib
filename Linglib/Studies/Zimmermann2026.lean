@@ -69,7 +69,7 @@ end Hausa.Determiners.Indefinite
 
 namespace Zimmermann2026
 
-open Quantification
+open Quantifier Quantifier.GQ
 
 /-- (13): under the ∃-analysis (16b), the two scopings of *wani* under
 negation are truth-conditionally distinct — on [zimmermann-2008]'s

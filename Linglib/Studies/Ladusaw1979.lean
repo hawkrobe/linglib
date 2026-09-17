@@ -38,7 +38,7 @@ converse of the generalization is not stated.
 
 namespace Ladusaw1979
 
-open Polarity Quantification
+open Polarity Quantifier Quantifier.GQ
 open Semantics.Montague (ToyEntity)
 
 /-- An environment is downward entailing when its recorded entailment signature reverses

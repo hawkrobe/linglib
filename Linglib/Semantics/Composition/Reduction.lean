@@ -42,7 +42,7 @@ namespace Semantics.Composition
 open FirstOrder Language
 open FirstOrder.Language.Formula (all₁ ex₁)
 open Semantics.Composition
-open Quantification (every_sem some_sem no_sem)
+open Quantifier.GQ (every_sem some_sem no_sem)
 open Semantics.Montague (Lexicon)
 open Semantics.Composition.Tree
 open Syntax (Tree)
@@ -499,7 +499,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
           (FOWords.lexicon_every m.E m.W)) hN hbind]
       refine some_t_congr ?_
       rw [m.realizeAt_all₁ w g]
-      simp only [Quantification.every_sem, m.realizeAt_imp]
+      simp only [Quantifier.GQ.every_sem, m.realizeAt_imp]
       exact forall_congr' fun x =>
         imp_congr (hrestr x).symm (by rw [hquant x])
     · rw [ite_eq_right hq1] at hq
@@ -513,7 +513,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
             (FOWords.lexicon_some m.E m.W hnd)) hN hbind]
         refine some_t_congr ?_
         rw [m.realizeAt_ex₁ w g]
-        simp only [Quantification.some_sem, m.realizeAt_inf]
+        simp only [Quantifier.GQ.some_sem, m.realizeAt_inf]
         exact exists_congr fun x =>
           and_congr (hrestr x).symm (by rw [hquant x])
       · rw [ite_eq_right hq2] at hq
@@ -527,7 +527,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
               (FOWords.lexicon_no m.E m.W hnd)) hN hbind]
           refine some_t_congr ?_
           rw [m.realizeAt_all₁ w g]
-          simp only [Quantification.no_sem, m.realizeAt_imp,
+          simp only [Quantifier.GQ.no_sem, m.realizeAt_imp,
             m.realizeAt_not]
           exact forall_congr' fun x =>
             imp_congr (hrestr x).symm (by rw [hquant x])

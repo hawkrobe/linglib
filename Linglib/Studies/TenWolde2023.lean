@@ -31,7 +31,7 @@ substrate's and unverified, and the diagnostic profiles are the substrate's tabl
 
 namespace TenWolde2023
 
-open Quantification.Binominal
+open Quantifier.Binominal
 open Degree (exampleIdiot)
 open English.Binominals
 
@@ -43,7 +43,7 @@ open English.Binominals
 
 The three evaluative constructions differ on multiple diagnostics.
 These theorems verify the Table 4.2 claims against the formalized
-diagnostic functions in `Quantification.Binominal`. -/
+diagnostic functions in `Quantifier.Binominal`. -/
 
 /-- EBNP: N₁ allows plural, Det₂ marks number, of replaceable by copula. -/
 theorem ebnp_profile :

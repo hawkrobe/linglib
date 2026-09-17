@@ -12,7 +12,7 @@ the extension (`existsUnique_iff_nonempty_subsingleton`), the two components
 
 [partee-1987]'s partial type shifts are Russellian iotas: `THE`, the Montague lift of the unique
 member of a property, and `lower`, the entity whose lift a principal ultrafilter is; each inverts
-its total shift (`THE_ident`, `lower_individual`). The determiner `Quantification.the_sem` is the
+its total shift (`THE_ident`, `lower_individual`). The determiner `Quantifier.GQ.the_sem` is the
 same object at the third type: it asserts its scope of the Russellian referent, and it is `THE`
 applied to the scope (`the_sem_iff_russellIota`, `the_sem_iff_THE`).
 
@@ -72,7 +72,7 @@ theorem russellIota_eq_none_iff : russellIota P = none ↔ ¬ ∃! x, P x := by
 
 section Partee
 
-open Quantification
+open Quantifier Quantifier.GQ Quantifier.NP
 
 variable (j : E)
 

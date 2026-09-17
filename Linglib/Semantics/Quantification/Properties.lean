@@ -9,8 +9,10 @@ left monotonicity and smoothness, Boolean closure, type ⟨1⟩ theorems,
 van Benthem characterization, and entailment-signature bridge.
 -/
 
-namespace Quantification
+namespace Quantifier.GQ
 
+
+open Quantifier.NP
 variable {α : Type*}
 
 /-! ### Duality Theorems -/
@@ -946,4 +948,4 @@ def notEverySignature : Signature × Signature := (.additive, .antiMult)
 #guard Signature.toContextPolarity noSignature.1 == .downward
 #guard Signature.toContextPolarity notEverySignature.1 == .upward
 
-end Quantification
+end Quantifier.GQ

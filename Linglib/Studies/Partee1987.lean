@@ -8,7 +8,7 @@ import Mathlib.Data.Finset.Lattice.Fold
 This file formalizes the type-shifting principles of [partee-1987]. A noun phrase may denote
 an entity, a predicate, or a generalized quantifier as its environment demands, and the
 mappings between the three types come in inverse pairs, the paper's Figure 1: `lift`, the
-substrate's `Quantification.individual`, and `lower`, the total injection of an entity into
+substrate's `Quantifier.NP.individual`, and `lower`, the total injection of an entity into
 its principal ultrafilter and its partial inverse; `ident` and `iota`, the singleton property
 of an entity and the unique member of a property; and `nom` and `pred`, the correlates of
 properties and entities after [chierchia-1984] (`lower_lift`, `iota_ident`). The definite
@@ -19,7 +19,7 @@ of *the king* is `BE(THE(king'))`, so that the three readings of Figure 2 cohere
 one king, which is why the article can be dropped in *John is (the) president*
 (`THE_eq_lift_iota`, `lower_THE`, `BE_THE`, `BE_THE_eq_of_unique`). The functor `BE`,
 Montague's translation of *be* reconceived as a type shifter, is a homomorphism of the Boolean
-structures, Fact 1 of §3.3, the substrate's `Quantification.beHom`, and the unique
+structures, Fact 1 of §3.3, the substrate's `Quantifier.NP.beHom`, and the unique
 homomorphism making Figure 3 commute, `BE(lift(j)) = ident(j)`, Fact 2 (`BE_lift`,
 `BE_natural`); the indefinite article `A` is natural as its inverse, `BE(A(P)) = P`, so *be a
 man* comes out as *man* (`BE_A`). English *be* itself is then predicate application, the
@@ -44,7 +44,7 @@ formalized.
 
 namespace Partee1987
 
-open Quantification Reference
+open Quantifier Quantifier.GQ Quantifier.NP Reference
 
 variable {E : Type*} (j : E) (P : E → Prop)
 
@@ -91,7 +91,7 @@ theorem BE_lift : BE (individual j) = ident j :=
   BE_individual_eq_ident j
 
 /-- Fact 2: `BE` is the unique Boolean homomorphism making Figure 3 commute; Fact 1, that it
-is one, is `Quantification.beHom`. -/
+is one, is `Quantifier.NP.beHom`. -/
 theorem BE_natural [Fintype E] [DecidableEq E] (f : BoundedLatticeHom (NP E) (E → Prop))
     (hcomm : ∀ j : E, f (individual j) = ident j) (Q : NP E) : f Q = BE Q := by
   funext x

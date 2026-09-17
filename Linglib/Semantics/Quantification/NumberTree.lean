@@ -9,11 +9,13 @@ Under CONSERV + QUANT, a quantifier's truth value depends only on
 `a = |A ∩ B|` and `b = |A \ B|`, yielding a function `ℕ → ℕ → Bool`.
 
 Includes impossibility theorems (§10), the Square of Opposition
-uniqueness theorem (§10e), the GQ→NumberTreeGQ bridge (§10f),
+uniqueness theorem (§10e), the GQ→NumberTree bridge (§10f),
 and counting quantifiers (§11).
 -/
 
-namespace Quantification
+namespace Quantifier
+
+open Quantifier.GQ
 
 variable {α : Type*}
 
@@ -24,12 +26,12 @@ variable {α : Type*}
     `a = |A ∩ B|` and `b = |A \ B|` (§2, "tree of numbers").
     This is inherently cross-domain: any `(a, b)` pair is realizable in some
     universe of size ≥ a + b. -/
-abbrev NumberTreeGQ := Nat → Nat → Bool
+abbrev NumberTree := Nat → Nat → Bool
 
-namespace NumberTreeGQ
+namespace NumberTree
 
 /-- Variety for number-tree quantifiers: Q is non-trivial. -/
-def Variety (q : NumberTreeGQ) : Prop :=
+def Variety (q : NumberTree) : Prop :=
   (∃ a b, q a b = true) ∧ (∃ a b, q a b = false)
 
 /-- Thm 3.2.1: No asymmetric CONSERV+QUANT quantifiers exist.
@@ -40,7 +42,7 @@ def Variety (q : NumberTreeGQ) : Prop :=
 
     Proof: Set `c = b`. Then `q(a, b) → ¬q(a, b)`, so `q` is identically
     false. Contradicts Variety. -/
-theorem no_asymmetric (q : NumberTreeGQ) (hVar : q.Variety)
+theorem no_asymmetric (q : NumberTree) (hVar : q.Variety)
     (hAsym : ∀ a b c, q a b = true → q a c = false) : False := by
   obtain ⟨⟨a, b, hab⟩, _⟩ := hVar
   exact absurd hab (Bool.eq_false_iff.mp (hAsym a b b hab))
@@ -54,7 +56,7 @@ theorem no_asymmetric (q : NumberTreeGQ) (hVar : q.Variety)
     Proof: From transitivity, `q(a, b) → q(a, c) → q(a+b, 0)`.
     From irreflexivity, `q(a+b, 0) = false`. So `q(a, b) → q(a, c) = false`
     — number-tree asymmetry. Apply `no_asymmetric`. -/
-theorem no_strict_partial_order (q : NumberTreeGQ) (hVar : q.Variety)
+theorem no_strict_partial_order (q : NumberTree) (hVar : q.Variety)
     (hIrrefl : ∀ n, q n 0 = false)
     (hTrans : ∀ a b c, q a b = true → q a c = true → q (a + b) 0 = true) :
     False := by
@@ -81,7 +83,7 @@ theorem no_strict_partial_order (q : NumberTreeGQ) (hVar : q.Variety)
     3. `q(0, α)` (from step 2) and `q(α, 0)` (from step 1) with
        `p=0, q_=0, r=α, s=0`: get `q(t, u)` for all `t, u`.
     4. Contradicts Variety. -/
-theorem no_euclidean (q : NumberTreeGQ) (hVar : q.Variety)
+theorem no_euclidean (q : NumberTree) (hVar : q.Variety)
     (hEuc : ∀ p q_ r s t u,
       q (p + q_) (r + s) = true → q (p + r) (q_ + s) = true →
       q (p + t) (q_ + u) = true) : False := by
@@ -129,16 +131,16 @@ theorem no_euclidean (q : NumberTreeGQ) (hVar : q.Variety)
 /-! ### Number-tree representations of the Square of Opposition -/
 
 /-- "all" on the number tree: Q(A,B) iff A ⊆ B iff |A\B| = 0. -/
-def allNT : NumberTreeGQ := λ _ b => b == 0
+def allNT : NumberTree := λ _ b => b == 0
 
 /-- "some" on the number tree: Q(A,B) iff A∩B ≠ ∅ iff |A∩B| ≥ 1. -/
-def someNT : NumberTreeGQ := λ a _ => decide (a ≥ 1)
+def someNT : NumberTree := λ a _ => decide (a ≥ 1)
 
 /-- "no" on the number tree: Q(A,B) iff A∩B = ∅ iff |A∩B| = 0. -/
-def noNT : NumberTreeGQ := λ a _ => a == 0
+def noNT : NumberTree := λ a _ => a == 0
 
 /-- "not all" on the number tree: Q(A,B) iff A ⊄ B iff |A\B| ≥ 1. -/
-def notAllNT : NumberTreeGQ := λ _ b => decide (b ≥ 1)
+def notAllNT : NumberTree := λ _ b => decide (b ≥ 1)
 
 /-! ### Additivity (§5.2, p.460) -/
 
@@ -146,7 +148,7 @@ def notAllNT : NumberTreeGQ := λ _ b => decide (b ≥ 1)
     p.460: all, some, no, not all are additive.
     Additivity means Q's truth set is closed under componentwise addition
     in the number tree. -/
-def Additive (q : NumberTreeGQ) : Prop :=
+def Additive (q : NumberTree) : Prop :=
   ∀ a b a' b', q a b = true → q a' b' = true → q (a + a') (b + b') = true
 
 theorem allNT_additive : Additive allNT := by
@@ -171,7 +173,7 @@ theorem notAllNT_additive : Additive notAllNT := by
     the true points form a contiguous interval.
     §4.3: all right-monotone quantifiers are
     continuous. "precisely one" is continuous but non-monotone. -/
-def RightCont (q : NumberTreeGQ) : Prop :=
+def RightCont (q : NumberTree) : Prop :=
   ∀ n a₁ a₂ a, a₁ ≤ a → a ≤ a₂ → a₂ ≤ n →
     q a₁ (n - a₁) = true → q a₂ (n - a₂) = true →
     q a (n - a) = true
@@ -179,7 +181,7 @@ def RightCont (q : NumberTreeGQ) : Prop :=
 /-- Left continuity on the number tree: on each diagonal, the false
     points (absence) also form a contiguous interval.
     §4.3: equivalent to right continuity of ¬Q. -/
-def LeftCont (q : NumberTreeGQ) : Prop :=
+def LeftCont (q : NumberTree) : Prop :=
   ∀ n a₁ a₂ a, a₁ ≤ a → a ≤ a₂ → a₂ ≤ n →
     q a₁ (n - a₁) = false → q a₂ (n - a₂) = false →
     q a (n - a) = false
@@ -189,7 +191,7 @@ def LeftCont (q : NumberTreeGQ) : Prop :=
     be extensible in at least one direction.
     - For + positions: q(a+1,b) or q(a,b+1) is true.
     - For − positions: q(a+1,b) or q(a,b+1) is false. -/
-def Plus (q : NumberTreeGQ) : Prop :=
+def Plus (q : NumberTree) : Prop :=
   (∀ a b, q a b = true → q (a + 1) b = true ∨ q a (b + 1) = true) ∧
   (∀ a b, q a b = false → q (a + 1) b = false ∨ q a (b + 1) = false)
 
@@ -198,7 +200,7 @@ def Plus (q : NumberTreeGQ) : Prop :=
     pattern for positions of the same truth value. The experiment
     result depends only on whether Q holds, not on *where* in the
     tree we are. -/
-def Uniform (q : NumberTreeGQ) : Prop :=
+def Uniform (q : NumberTree) : Prop :=
   (∀ a₁ b₁ a₂ b₂, q a₁ b₁ = true → q a₂ b₂ = true →
     q (a₁ + 1) b₁ = q (a₂ + 1) b₂ ∧ q a₁ (b₁ + 1) = q a₂ (b₂ + 1)) ∧
   (∀ a₁ b₁ a₂ b₂, q a₁ b₁ = false → q a₂ b₂ = false →
@@ -309,7 +311,7 @@ private theorem grid_ext (f g : ℕ → ℕ → Bool)
 
 /-- The six postulates that §7 uses to characterize
     the Square of Opposition. -/
-structure SixPostulates (q : NumberTreeGQ) : Prop where
+structure SixPostulates (q : NumberTree) : Prop where
   variety : q.Variety
   cont    : q.RightCont
   lcont   : q.LeftCont
@@ -326,7 +328,7 @@ structure SixPostulates (q : NumberTreeGQ) : Prop where
     16 combinations; CONT and VAR eliminate 2 more (via path
     inconsistencies). The 4 survivors each determine exactly one
     quantifier, proved via `grid_ext`. -/
-theorem square_uniqueness (q : NumberTreeGQ) (h : SixPostulates q) :
+theorem square_uniqueness (q : NumberTree) (h : SixPostulates q) :
     q = allNT ∨ q = someNT ∨ q = noNT ∨ q = notAllNT := by
   obtain ⟨⟨at_, bt, habt⟩, ⟨af, bf, habf⟩⟩ := h.variety
   -- UNIF: every cell's step is determined by four experiment booleans
@@ -511,9 +513,9 @@ theorem square_uniqueness (q : NumberTreeGQ) (h : SixPostulates q) :
               · rw [hTU a b hqa, htu]; exact (heq.symm.trans hqa).symm)
         · exact (var_not_all_false hv hfr hfu).elim
 
-end NumberTreeGQ
+end NumberTree
 
-/-! ### GQ → NumberTreeGQ Bridge -/
+/-! ### GQ → NumberTree Bridge -/
 
 section NumberTreeBridge
 open Classical Finset
@@ -669,7 +671,7 @@ open Classical
 
     For (a,b) realizable in the domain (a + b ≤ |α|), the value is
     determined by any witness; for unrealizable pairs, we default to false. -/
-noncomputable def toNumberTree [Fintype α] (q : GQ α) : NumberTreeGQ :=
+noncomputable def toNumberTree [Fintype α] (q : GQ α) : NumberTree :=
   λ a b =>
     if h : ∃ (A B : α → Bool),
       (Finset.univ.filter (λ x => A x && B x)).card = a ∧
@@ -725,4 +727,4 @@ def conservativeQuantifierCount (n : Nat) : Nat :=
 #guard conservativeQuantifierCount 4 == 32768
 
 
-end Quantification
+end Quantifier
