@@ -32,6 +32,10 @@ by Predicate Abstraction, which is a capability of the effect (`PredAbs`) rather
   binding: interpretability and the composed type never depend on the assignment
   (`interp_map_fst_congr`), and a tree's denotation depends on it only at the traces free in
   the tree.
+* `readings` composes a lexicon of sets of readings, the values the engine computes over the
+  tree's resolutions; the engine on an unambiguous lexicon is the special case
+  (`readings_eq_of_choice`) and a binary node's readings compose pointwise
+  (`mem_readings_node_binary`).
 
 ## Implementation notes
 
@@ -494,5 +498,143 @@ theorem interp_congr_of_closed {t : Tree C L} (h : t.Closed) (g g' : Assignment 
   interp_congr_of_agree lex fun i hi ↦ absurd (h ▸ hi) (Finset.notMem_empty i)
 
 end FreeVariables
+
+/-! ### Readings of an ambiguous lexicon
+
+A word may have several available readings. A resolution of a tree chooses one reading for
+each occurrence of a word, and the readings of the tree are the values the engine computes
+over its resolutions. The engine on a lexicon with one reading per word is the special case
+(`readings_eq_of_choice`), and a binary node's readings are the pointwise compositions of its
+daughters' (`mem_readings_node_binary`). -/
+
+section Readings
+
+variable {C : Type} {L : Type*} {E W D : Type} {M : Type → Type} [Applicative M]
+  [PredAbs M E W D]
+
+/-- Interpretation commutes with relabelling the leaves. -/
+theorem interp_map {L' : Type*} (lex : L' → Option (Denotation E W M D)) (f : L → L')
+    (g : Assignment E) (t : Tree C L) : interp lex g (t.map f) = interp (lex ∘ f) g t := by
+  induction t using Tree.recAux generalizing g with
+  | terminal c w => rfl
+  | node c cs ih =>
+    match cs with
+    | [] => rfl
+    | [t] => exact ih t (by simp) g
+    | [t₁, t₂] =>
+      simp only [Tree.map_node, List.map, interp_node_binary, ih t₁ (by simp), ih t₂ (by simp)]
+    | _ :: _ :: _ :: _ => rfl
+  | trace n c => rfl
+  | bind n c body ih => simp only [Tree.map_bind, interp_bind, ih]
+
+variable (lex : L → Set (Denotation E W M D)) (g : Assignment E)
+
+/-- The readings of a tree under a leaf interpretation giving each word a set of readings, the
+values the engine computes over the resolutions of the tree, each occurrence of a word resolved
+to one of its readings. -/
+def readings (t : Tree C L) : Set (Denotation E W M D) :=
+  {d | ∃ r : Tree C {p : L × Denotation E W M D // p.2 ∈ lex p.1},
+    r.map (·.1.1) = t ∧ interp (fun p ↦ some p.1.2) g r = some d}
+
+variable {lex g}
+
+/-- A value the engine computes under a choice of readings is the value of a resolved tree. -/
+theorem exists_resolution_of_interp {choice : L → Option (Denotation E W M D)} {t : Tree C L}
+    {d : Denotation E W M D} (h : interp choice g t = some d) :
+    ∃ r : Tree C {p : L × Denotation E W M D // choice p.1 = some p.2},
+      r.map (·.1.1) = t ∧ interp (fun p ↦ some p.1.2) g r = some d := by
+  induction t using Tree.recAux generalizing g d with
+  | terminal c w => exact ⟨.terminal c ⟨(w, d), h⟩, rfl, rfl⟩
+  | node c cs ih =>
+    match cs with
+    | [] => exact absurd h (by simp [interp])
+    | [t] =>
+      obtain ⟨r, hr, hd⟩ := ih t (by simp) h
+      exact ⟨.node c (r :: []), by simp [hr], hd⟩
+    | [t₁, t₂] =>
+      rw [interp_node_binary] at h
+      obtain ⟨d₁, h₁, h⟩ := Option.bind_eq_some_iff.mp h
+      obtain ⟨d₂, h₂, h⟩ := Option.bind_eq_some_iff.mp h
+      obtain ⟨r₁, hr₁, hd₁⟩ := ih t₁ (by simp) h₁
+      obtain ⟨r₂, hr₂, hd₂⟩ := ih t₂ (by simp) h₂
+      exact ⟨.node c (r₁ :: r₂ :: []), by simp [hr₁, hr₂],
+        by rw [interp_node_binary, hd₁, hd₂, Option.bind_some, Option.bind_some, h]⟩
+    | _ :: _ :: _ :: _ => exact absurd h (by simp [interp])
+  | trace n c => exact ⟨.trace n c, rfl, h⟩
+  | bind n c body ih =>
+    rw [interp_bind] at h
+    obtain ⟨dist, hdist, h⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨⟨τ, probe⟩, hb, h⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨r, hr, hd⟩ := ih hb
+    have hres : ∀ g', interp choice g' body = interp (fun p ↦ some p.1.2) g' r := fun g' ↦ by
+      rw [← hr, interp_map]
+      exact congrFun (congrFun (congrArg _ (funext fun p ↦ p.2)) g') r
+    refine ⟨.bind n c r, by simp [hr], ?_⟩
+    rw [interp_bind, hdist, Option.bind_some, hd, Option.bind_some]
+    simpa only [hres] using h
+
+/-- A value the engine computes under a choice among the readings is a reading. -/
+theorem interp_mem_readings {choice : L → Option (Denotation E W M D)}
+    (hc : ∀ w d, choice w = some d → d ∈ lex w) {t : Tree C L} {d : Denotation E W M D}
+    (h : interp choice g t = some d) : d ∈ readings lex g t := by
+  obtain ⟨r, hr, hd⟩ := exists_resolution_of_interp h
+  refine ⟨r.map fun p ↦ ⟨p.1, hc _ _ p.2⟩, ?_, ?_⟩
+  · rw [Tree.map_map]; exact hr
+  · rw [interp_map]; exact hd
+
+/-- On a lexicon with one reading per word, the readings are the engine's values. -/
+theorem readings_eq_of_choice (choice : L → Option (Denotation E W M D)) (t : Tree C L) :
+    readings (fun w ↦ {d | choice w = some d}) g t = {d | interp choice g t = some d} := by
+  ext d
+  refine ⟨fun ⟨r, hr, hd⟩ ↦ ?_, fun h ↦ interp_mem_readings (fun _ _ h ↦ h) h⟩
+  show interp choice g t = some d
+  rw [← hr, interp_map]
+  exact (congrFun (congrFun (congrArg _ (funext fun p ↦ p.2)) g) r).trans hd
+
+@[simp] theorem readings_terminal (c : C) (w : L) : readings lex g (.terminal c w) = lex w := by
+  ext d
+  refine ⟨fun ⟨r, hr, hd⟩ ↦ ?_, fun h ↦ ⟨.terminal c ⟨(w, d), h⟩, rfl, rfl⟩⟩
+  cases r with
+  | terminal c' p =>
+    simp only [Tree.map_terminal, Tree.terminal.injEq] at hr
+    obtain ⟨rfl, rfl⟩ := hr
+    cases Option.some.inj hd
+    exact p.2
+  | _ => simp at hr
+
+@[simp] theorem readings_trace (n : ℕ) (c : C) :
+    readings lex g (.trace n c) = {⟨.e, pure (g n)⟩} := by
+  ext d
+  refine ⟨fun ⟨r, hr, hd⟩ ↦ ?_, fun h ↦ ⟨.trace n c, rfl, h ▸ rfl⟩⟩
+  cases r with
+  | trace n' c' =>
+    simp only [Tree.map_trace, Tree.trace.injEq] at hr
+    obtain ⟨rfl, rfl⟩ := hr
+    exact (Option.some.inj hd).symm
+  | _ => simp at hr
+
+/-- A binary node's readings are the pointwise compositions of its daughters'. -/
+theorem mem_readings_node_binary {c : C} {t₁ t₂ : Tree C L} {d : Denotation E W M D} :
+    d ∈ readings lex g (.node c (t₁ :: t₂ :: [])) ↔
+      ∃ d₁ ∈ readings lex g t₁, ∃ d₂ ∈ readings lex g t₂, interpBinary d₁ d₂ = some d := by
+  constructor
+  · rintro ⟨r, hr, hd⟩
+    cases r with
+    | node c' cs =>
+      simp only [Tree.map_node, Tree.node.injEq] at hr
+      obtain ⟨rfl, hcs⟩ := hr
+      obtain ⟨r₁, cs₁, rfl, rfl, hcs₁⟩ := List.map_eq_cons_iff.mp hcs
+      obtain ⟨r₂, cs₂, rfl, rfl, hcs₂⟩ := List.map_eq_cons_iff.mp hcs₁
+      obtain rfl := List.map_eq_nil_iff.mp hcs₂
+      rw [interp_node_binary] at hd
+      obtain ⟨d₁, h₁, hd⟩ := Option.bind_eq_some_iff.mp hd
+      obtain ⟨d₂, h₂, hd⟩ := Option.bind_eq_some_iff.mp hd
+      exact ⟨d₁, ⟨r₁, rfl, h₁⟩, d₂, ⟨r₂, rfl, h₂⟩, hd⟩
+    | _ => simp at hr
+  · rintro ⟨d₁, ⟨r₁, hr₁, hd₁⟩, d₂, ⟨r₂, hr₂, hd₂⟩, h⟩
+    exact ⟨.node c (r₁ :: r₂ :: []), by simp [hr₁, hr₂],
+      by rw [interp_node_binary, hd₁, hd₂, Option.bind_some, Option.bind_some, h]⟩
+
+end Readings
 
 end Semantics.Composition.Tree

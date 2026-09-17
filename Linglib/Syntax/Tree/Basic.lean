@@ -217,6 +217,41 @@ where
   | [] => 0
   | t :: ts => leafCount t + leafCountList ts
 
+/-! ### Relabelling leaves -/
+
+section Map
+
+variable {W' W'' : Type*}
+
+/-- Relabel the leaves of a tree, keeping its shape. -/
+def map (f : W → W') : Tree C W → Tree C W'
+  | .terminal c w => .terminal c (f w)
+  | .node c cs => .node c (mapList cs)
+  | .trace n c => .trace n c
+  | .bind n c body => .bind n c (map f body)
+where
+  mapList : List (Tree C W) → List (Tree C W')
+  | [] => []
+  | t :: ts => map f t :: mapList ts
+
+theorem map.mapList_eq (f : W → W') (cs : List (Tree C W)) : map.mapList f cs = cs.map (map f) := by
+  induction cs with
+  | nil => rfl
+  | cons t ts ih => rw [map.mapList, ih, List.map_cons]
+
+@[simp] theorem map_terminal (f : W → W') (c : C) (w : W) :
+    map f (.terminal c w) = .terminal c (f w) := rfl
+
+@[simp] theorem map_node (f : W → W') (c : C) (cs : List (Tree C W)) :
+    map f (.node c cs) = .node c (cs.map (map f)) := by rw [map, map.mapList_eq]
+
+@[simp] theorem map_trace (f : W → W') (n : ℕ) (c : C) : map f (.trace n c) = .trace n c := rfl
+
+@[simp] theorem map_bind (f : W → W') (n : ℕ) (c : C) (body : Tree C W) :
+    map f (.bind n c body) = .bind n c (map f body) := rfl
+
+end Map
+
 /-! ### Induction principle -/
 
 /-- Membership-based recursor/induction principle for `Tree`. The default
@@ -240,6 +275,19 @@ def recAux {motive : Tree C W → Sort*}
     · rename_i ht; have := List.sizeOf_lt_of_mem ht
       simp only [Tree.node.sizeOf_spec]; omega
     · simp only [Tree.bind.sizeOf_spec]; omega
+
+@[simp] theorem map_id (t : Tree C W) : t.map id = t := by
+  induction t using recAux with
+  | node c cs ih => rw [map_node, List.map_congr_left ih, List.map_id']
+  | bind n c body ih => rw [map_bind, ih]
+  | _ => rfl
+
+@[simp] theorem map_map {W' W'' : Type*} (g : W' → W'') (f : W → W') (t : Tree C W) :
+    (t.map f).map g = t.map (g ∘ f) := by
+  induction t using recAux with
+  | node c cs ih => simp only [map_node, List.map_map]; exact congrArg _ (List.map_congr_left ih)
+  | bind n c body ih => rw [map_bind, map_bind, map_bind, ih]
+  | _ => rfl
 
 /-! ### Free variables
 
