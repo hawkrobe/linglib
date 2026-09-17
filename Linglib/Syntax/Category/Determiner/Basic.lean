@@ -12,11 +12,10 @@ taxonomy: `Article`, `DemonstrativeDeterminer`, `Quantifier`, and `Possessive` e
 determiners — a surface `form`; each specialization adds its own structure.
 
 A language's determiner inventory is a `Determiner.Inventory` (a heterogeneous
-list of the four kinds) declared in its Fragment as `{Lang}.Determiners.inventory`
-— there is no per-language wrapper record. The [moroney-2021] definiteness-marking
-typology (`MarkingStrategy`) is *derived* from the inventory by
-`Inventory.markingStrategy`, not stipulated: a language's Moroney cell is a
-theorem about its declared determiners, checked by `decide`.
+list of the four kinds) declared in its Fragment as `{Lang}.Determiners.inventory`.
+The [moroney-2021] definiteness-marking typology (`MarkingStrategy`) is *derived*
+from the inventory by `Inventory.markingStrategy`, not stipulated: a language's
+Moroney cell is a theorem about its declared determiners, checked by `decide`.
 
 Because `Article` records its `exponent`, a classifier-phrase definite and a
 dedicated-article definite are both `Article`s differing only there, so a
@@ -179,6 +178,12 @@ def Marks (ds : Inventory) (p : Description.Strength) : Prop :=
 instance (ds : Inventory) (p : Description.Strength) : Decidable (ds.Marks p) := by
   unfold Marks; infer_instance
 
+/-- A one-determiner inventory marks a strength iff that determiner expones a use calling for
+it. -/
+theorem marks_singleton (e : Entry) (p : Description.Strength) :
+    Marks [e] p ↔ ∃ u ∈ e.definiteUses, u.strength = p :=
+  ⟨fun ⟨_, he, h⟩ ↦ List.mem_singleton.mp he ▸ h, fun h ↦ ⟨e, List.mem_singleton_self e, h⟩⟩
+
 /-- Some single determiner is the exponent of *both* presupposition types
 (English *the*). Distinguishes `.generallyMarked` (one form covers both) from
 `.bipartite` (German weak vs strong). -/
@@ -191,9 +196,8 @@ instance (ds : Inventory) : Decidable ds.IsSyncretic := by
 
 /-- Derive the [moroney-2021] four-cell definiteness-marking typology from a
 declared determiner inventory. Stored nowhere — a language's cell is a theorem
-about its `Determiner.Inventory`. Reproduces the decision table of the former
-boolean article inventory (each cell characterized by
-`markingStrategy_eq_*_iff`):
+about its `Determiner.Inventory`, and each cell is characterized by its
+`markingStrategy_eq_*_iff` lemma:
 
 - uniqueness marked, familiarity marked, by one form → `.generallyMarked`
 - uniqueness marked, familiarity marked, by distinct forms → `.bipartite`
@@ -307,48 +311,6 @@ theorem realizes_toKind (ds : Inventory) (p : Description.Strength) :
 
 end Inventory
 
-/-! ### Cell coverage: the derivation reproduces all four Moroney cells -/
-
-/-- English: one definite article covering both presupposition types + an
-indefinite article → `.generallyMarked`. -/
-example : Inventory.markingStrategy
-    [ .article { form := "the", definiteness := .definite, exponent := .dedicatedMorpheme,
-                 uses := [.immediateSituation, .largerSituation, .anaphoric, .donkey] },
-      .article { form := "a", definiteness := .indefinite, exponent := .dedicatedMorpheme } ]
-    = .generallyMarked := by decide
-
-/-- German: distinct weak (uniqueness) and strong (familiarity) definite
-articles → `.bipartite`. -/
-example : Inventory.markingStrategy
-    [ .article { form := "der/weak", definiteness := .definite, exponent := .dedicatedMorpheme,
-                 uses := [.immediateSituation, .largerSituation] },
-      .article { form := "der/strong", definiteness := .definite, exponent := .dedicatedMorpheme,
-                 uses := [.anaphoric, .donkey] },
-      .article { form := "ein", definiteness := .indefinite, exponent := .dedicatedMorpheme } ]
-    = .bipartite := by decide
-
-/-- Mandarin: the demonstrative expones anaphoric definites; uniqueness is bare
-(no determiner) → `.markedAnaphoric`. -/
-example : Inventory.markingStrategy
-    [ .demonstrative { form := "na", deictic := .distal, definiteUses := [.anaphoric] } ]
-    = .markedAnaphoric := by decide
-
-/-- Cantonese: one classifier-phrase definite article covering both uses + a
-numeral-classifier indefinite article → `.generallyMarked`. The indefinite is a
-first-class `Article`, so the old `hasIndefinite := False` asymmetry is gone. -/
-example : Inventory.markingStrategy
-    [ .article { form := "Clf-N", definiteness := .definite, exponent := .classifierPhrase,
-                 uses := [.immediateSituation, .largerSituation, .anaphoric, .donkey] },
-      .article { form := "jat-Clf-N", definiteness := .indefinite, exponent := .numeralClassifier } ]
-    = .generallyMarked := by decide
-
-/-- Shan: the demonstrative is optional — it expones nothing obligatorily →
-`.unmarked`. (Contrast Mandarin, where it obligatorily expones the anaphoric
-use.) -/
-example : Inventory.markingStrategy
-    [ .demonstrative { form := "naaj/nan", deictic := .proximal, definiteUses := [] } ]
-    = .unmarked := by decide
-
 end Determiner
 
 /-! ### Admissible article strengths
@@ -367,7 +329,4 @@ def Article.strengths (a : Article) : List Description.Strength :=
 single-article case of `Determiner.Inventory.Marks`. -/
 theorem Article.mem_strengths_iff_marks (a : Article) (p : Description.Strength) :
     p ∈ a.strengths ↔ Determiner.Inventory.Marks [.article a] p := by
-  unfold Article.strengths Determiner.Inventory.Marks
-  rw [List.mem_map]
-  exact ⟨fun ⟨u, hu, h⟩ => ⟨_, List.mem_singleton_self _, u, hu, h⟩,
-    fun ⟨e, he, u, hu, h⟩ => by obtain rfl := List.mem_singleton.mp he; exact ⟨u, hu, h⟩⟩
+  simp [Article.strengths, Determiner.Inventory.marks_singleton, Determiner.Entry.definiteUses]
