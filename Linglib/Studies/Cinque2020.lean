@@ -26,12 +26,11 @@ non-reduction and verb-coding.
 Head, the strategy realizing it, the relativized position and the clause's position;
 `RC.overtHead` and `RC.Reconstructs` follow from the derivation, and `RC.WellFormed` is deletion
 under identity, from which `bigger_head_no_gap_deletion` derives the wh-pronoun or resumptive for
-a Head bigger than `dP`. `RC.realization` projects the structure onto the substrate's
-`RelativeClause.Realization`, and the three worked examples — English *that* on an object,
-English *to whom* on an oblique and Hebrew *she-* with a resumptive on a genitive — project
-onto realizations the English and Hebrew Fragments' markers attest. The tree geometry of
-Spec,CP and the `dP`/DP cartography is not modelled, and PRO and verb-coding are approximated in
-the substrate's inventory of NP_rel types.
+a Head bigger than `dP`. The three worked examples — English *that* on an object, English *to
+whom* on an oblique and Hebrew *she-* with a resumptive on a genitive — relativize a position
+the English and Hebrew Fragments' markers cover, with the NP_rel type the marker records. The
+tree geometry of Spec,CP and the `dP`/DP cartography is not modelled, and PRO and verb-coding
+are approximated in the substrate's inventory of NP_rel types.
 
 ## References
 
@@ -159,9 +158,6 @@ def RC.WellFormed (r : RC) : Prop :=
 instance (r : RC) : Decidable r.WellFormed := by
   unfold RC.WellFormed; infer_instance
 
-/-- The framework-neutral realization the derivation projects onto. -/
-def RC.realization (r : RC) : Realization := ⟨r.position, r.strategy.toNPRel⟩
-
 /-- An internal Head bigger than the external `dP` is categorially distinct from it and cannot be
 deleted, so it is a wh-pronoun or a resumptive. -/
 theorem bigger_head_no_gap_deletion (r : RC) (h : r.WellFormed)
@@ -178,8 +174,8 @@ def englishThatObject : RC :=
 /-- Its realization, a direct-object gap, is what the English Fragment's *that* attests. -/
 theorem englishThatObject_attested :
     englishThatObject.WellFormed ∧ ¬ englishThatObject.Reconstructs ∧
-      English.relThat.Covers englishThatObject.realization.position ∧
-      englishThatObject.realization.npRel = English.relThat.npRel := by
+      englishThatObject.position ∈ English.relThat.positions ∧
+      englishThatObject.strategy.toNPRel = English.relThat.npRel := by
   decide
 
 /-- *The man to whom I spoke*: the internal Head, a DP inside a PP, is bigger than `dP`, so it is
@@ -191,8 +187,8 @@ def englishWhomOblique : RC :=
 attests. -/
 theorem englishWhomOblique_attested :
     englishWhomOblique.WellFormed ∧
-      English.relWhom.Covers englishWhomOblique.realization.position ∧
-      englishWhomOblique.realization.npRel = English.relWhom.npRel := by
+      englishWhomOblique.position ∈ English.relWhom.positions ∧
+      englishWhomOblique.strategy.toNPRel = English.relWhom.npRel := by
   decide
 
 /-- Hebrew *she-* with a resumptive at the genitive: the internal Head, a DP inside a DP, is
@@ -204,8 +200,8 @@ def hebrewResumptiveGenitive : RC :=
 attests. -/
 theorem hebrewResumptiveGenitive_attested :
     hebrewResumptiveGenitive.WellFormed ∧
-      Hebrew.relSheResumptive.Covers hebrewResumptiveGenitive.realization.position ∧
-      hebrewResumptiveGenitive.realization.npRel = Hebrew.relSheResumptive.npRel := by
+      hebrewResumptiveGenitive.position ∈ Hebrew.relSheResumptive.positions ∧
+      hebrewResumptiveGenitive.strategy.toNPRel = Hebrew.relSheResumptive.npRel := by
   decide
 
 end Cinque2020

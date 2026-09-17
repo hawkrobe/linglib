@@ -14,7 +14,7 @@ fronts like A but intransitive verbs have no AF form.
 ## Main declarations
 
 * `Kaqchikel.focusRealize`: focus realization by focused argument
-  position, as a `Reflex.Marking`.
+  position, as a `Reflex` set.
 * `Kaqchikel.af_reflex_iff`: the verb-hosted AF reflex appears exactly
   under transitive-subject (A) focus.
 * `Kaqchikel.marked_subject_is_A_not_S`: the A-focus vs S-focus split
@@ -56,15 +56,14 @@ inductive FocusSite where
     S fronts like A but intransitive verbs have no AF form. Ditransitive
     R/T focus is unattested in the source and falls to the A-less
     default. -/
-def focusRealize : ArgumentRole → Marking FocusSite
-  | .A => ⟨.focusPhrase,
-           {.displacement .focusPhrase, .morpheme .focusPhrase, .morpheme .verb}⟩
-  | _  => ⟨.focusPhrase, {.displacement .focusPhrase, .morpheme .focusPhrase}⟩
+def focusRealize : ArgumentRole → Finset (Reflex FocusSite)
+  | .A => {.displacement .focusPhrase, .morpheme .focusPhrase, .morpheme .verb}
+  | _  => {.displacement .focusPhrase, .morpheme .focusPhrase}
 
 /-- The verb-hosted reflex (AF) appears under transitive-subject focus
     only. -/
 theorem af_reflex_iff (p : ArgumentRole) :
-    Reflex.morpheme FocusSite.verb ∈ (focusRealize p).reflexes ↔ p = .A := by
+    Reflex.morpheme FocusSite.verb ∈ focusRealize p ↔ p = .A := by
   cases p <;> decide
 
 /-- The ergative split in focus marking: A-focus switches the verb to AF
@@ -72,7 +71,7 @@ theorem af_reflex_iff (p : ArgumentRole) :
     both to `.subject` — the verb reflex of `Extraction.realize .subject`
     (`Extraction.lean`) marks transitive subjects only. -/
 theorem marked_subject_is_A_not_S :
-    Reflex.morpheme FocusSite.verb ∈ (focusRealize .A).reflexes ∧
-    Reflex.morpheme FocusSite.verb ∉ (focusRealize .S).reflexes := by decide
+    Reflex.morpheme FocusSite.verb ∈ focusRealize .A ∧
+    Reflex.morpheme FocusSite.verb ∉ focusRealize .S := by decide
 
 end Kaqchikel

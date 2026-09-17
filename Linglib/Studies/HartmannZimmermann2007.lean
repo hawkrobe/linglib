@@ -267,19 +267,17 @@ theorem exSitu_subject_subjunctive_IsHausaLicensed :
 
 /-! ## Universalist Basic Focus Rule (§5, §6.2) -/
 
-/-- The overt reflexes of a focus utterance in the shared `Reflex.Marking` vocabulary:
-non-vacuous fronting (subjects front string-vacuously), Relative-form morphology, and the
-stabilizer. -/
-def FocusUtterance.marking (u : FocusUtterance) : Marking Focused :=
-  ⟨u.focused,
-    (if u.focused = .nonSubject ∧ u.cfg.strategy = .exSitu then {.displacement u.focused}
-      else ∅) ∪
-    (if u.cfg.pac.mode = .relative then {.morpheme u.focused} else ∅) ∪
-    (if u.cfg.hasStab then {.morpheme u.focused} else ∅)⟩
+/-- The overt reflexes of a focus utterance in the shared `Reflex` vocabulary: non-vacuous
+fronting (subjects front string-vacuously), Relative-form morphology, and the stabilizer. -/
+def FocusUtterance.reflexes (u : FocusUtterance) : Finset (Reflex Focused) :=
+  (if u.focused = .nonSubject ∧ u.cfg.strategy = .exSitu then {.displacement u.focused}
+    else ∅) ∪
+  (if u.cfg.pac.mode = .relative then {.morpheme u.focused} else ∅) ∪
+  (if u.cfg.hasStab then {.morpheme u.focused} else ∅)
 
 /-- A morphosyntactic reflex of focus: some reflex outside the phonological channel. -/
 def FocusUtterance.HasMorphosyntacticReflex (u : FocusUtterance) : Prop :=
-  ∃ ρ ∈ u.marking.reflexes, ρ.modality.channel ≠ .phonological
+  ∃ ρ ∈ u.reflexes, ρ.modality.channel ≠ .phonological
 
 instance (u : FocusUtterance) : Decidable u.HasMorphosyntacticReflex :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -303,9 +301,9 @@ theorem exSitu_subject_subjunctive_no_reflex :
 /-- Every Hausa focus reflex is morphosyntactic, so a morphosyntactic reflex is just an overt
 one. -/
 theorem hasMorphosyntacticReflex_iff (u : FocusUtterance) :
-    u.HasMorphosyntacticReflex ↔ u.marking.IsOvert := by
+    u.HasMorphosyntacticReflex ↔ u.reflexes.Nonempty := by
   refine ⟨fun ⟨ρ, hρ, _⟩ ↦ ⟨ρ, hρ⟩, fun ⟨ρ, hρ⟩ ↦ ⟨ρ, hρ, ?_⟩⟩
-  simp only [FocusUtterance.marking, Finset.mem_union] at hρ
+  simp only [FocusUtterance.reflexes, Finset.mem_union] at hρ
   split_ifs at hρ <;> simp only [Finset.mem_singleton, Finset.notMem_empty, or_false, false_or,
     or_assoc, or_self] at hρ <;> rcases hρ with rfl | rfl <;> nofun
 
@@ -314,7 +312,7 @@ receives an overt reflex — the same `EveryTargetOvert` shape
 Tangale refutes in `HartmannZimmermann2004.lean`. -/
 theorem hausa_refutes_perceptibility :
     ¬ Reflex.EveryTargetOvert
-        (fun u : {u : FocusUtterance // u.IsHausaLicensed} ↦ u.1.marking) :=
+        (fun u : {u : FocusUtterance // u.IsHausaLicensed} ↦ u.1.reflexes) :=
   fun h ↦ absurd
     ((hasMorphosyntacticReflex_iff inSitu_newInfo).mpr (h ⟨inSitu_newInfo, by decide⟩))
     (by decide)

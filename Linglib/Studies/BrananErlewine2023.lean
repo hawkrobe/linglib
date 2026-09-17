@@ -13,7 +13,7 @@ from the position of its semantic contribution. This file formalizes
 the introductory paradigm (1)–(8): Japanese *mo* placement and
 Hungarian focus movement each attest exact targeting, pied-piping, and
 anti-pied-piping, stated over the host–focus containment relations of
-`Syntax/Reflex.lean`.
+`Syntax/Reflex.lean`, with the focus named in each claim.
 
 ## Main declarations
 
@@ -73,50 +73,50 @@ all three host–focus configurations. -/
 
 /-- (2): Hanako-wa [hon]F*-mo* katta — *mo* on the focused object
 itself. -/
-def moExact : Marking Node := ⟨.obj, {.morpheme .obj}⟩
+def moExact : Finset (Reflex Node) := {.morpheme .obj}
 
 /-- (4): Hanako-wa [[hon]F-o kai]*-mo* — *mo* on the VP properly
 containing the focused object (Kuroda's pied-piping datum). -/
-def moPiedPiped : Marking Node := ⟨.obj, {.morpheme .vp}⟩
+def moPiedPiped : Finset (Reflex Node) := {.morpheme .vp}
 
 /-- (8): [[Ame]*-mo* furu]F — sentence focus with *mo* on the
 subject properly contained in it (Nagano's anti-pied-piping datum). -/
-def moAntiPiedPiped : Marking Node := ⟨.s, {.morpheme .sbj}⟩
+def moAntiPiedPiped : Finset (Reflex Node) := {.morpheme .sbj}
 
 /-- (1): Hungarian movement of exactly the focused argument to
 the immediately preverbal focus position. -/
-def movementExact : Marking Node := ⟨.obj, {.displacement .obj}⟩
+def movementExact : Finset (Reflex Node) := {.displacement .obj}
 
 /-- (3): [a [használt]F autót] adta el — the whole object DP moves
 for a focus on the attributive adjective (Kenesei's pied-piping
 datum). -/
-def movementPiedPiped : Marking Node := ⟨.att, {.displacement .obj}⟩
+def movementPiedPiped : Finset (Reflex Node) := {.displacement .obj}
 
 /-- (7): Péter [a Hamletet] [olvasta fel _ a kertben]F — predicate
 focus with movement of the object properly contained in it (Kenesei's
 anti-pied-piping datum). -/
-def movementAntiPiedPiped : Marking Node := ⟨.vp, {.displacement .obj}⟩
+def movementAntiPiedPiped : Finset (Reflex Node) := {.displacement .obj}
 
 /-! ### All three relations, in both processes -/
 
 /-- Japanese *mo* placement attests all three host–focus relations
 (2)/(4)/(8). -/
 theorem mo_attests_all_relations :
-    moExact.ExactlyTargets ∧ moPiedPiped.PiedPipes ∧
-    moAntiPiedPiped.AntiPiedPipes := by decide
+    ExactlyTargets moExact .obj ∧ PiedPipes moPiedPiped .obj ∧
+    AntiPiedPipes moAntiPiedPiped .s := by decide
 
 /-- Hungarian focus movement attests all three host–focus relations
 (1)/(3)/(7). -/
 theorem movement_attests_all_relations :
-    movementExact.ExactlyTargets ∧ movementPiedPiped.PiedPipes ∧
-    movementAntiPiedPiped.AntiPiedPipes := by decide
+    ExactlyTargets movementExact .obj ∧ PiedPipes movementPiedPiped .att ∧
+    AntiPiedPipes movementAntiPiedPiped .vp := by decide
 
 /-- Neither particle placement nor focus movement strictly targets the
 F-marked constituent: each tolerates mismatches in both directions. -/
 theorem msf_tolerates_mismatches :
-    ¬ moPiedPiped.ExactlyTargets ∧ ¬ moAntiPiedPiped.ExactlyTargets ∧
-    ¬ movementPiedPiped.ExactlyTargets ∧
-    ¬ movementAntiPiedPiped.ExactlyTargets :=
+    ¬ ExactlyTargets moPiedPiped .obj ∧ ¬ ExactlyTargets moAntiPiedPiped .s ∧
+    ¬ ExactlyTargets movementPiedPiped .att ∧
+    ¬ ExactlyTargets movementAntiPiedPiped .vp :=
   ⟨mo_attests_all_relations.2.1.not_exactlyTargets,
    mo_attests_all_relations.2.2.not_exactlyTargets,
    movement_attests_all_relations.2.1.not_exactlyTargets,

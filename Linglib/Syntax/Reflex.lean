@@ -12,16 +12,16 @@ A grammar leaves perceptible traces of a constituent's designated status: a focu
 ([hartmann-zimmermann-2004] on Tangale, [hartmann-zimmermann-2007] on Hausa,
 [branan-erlewine-2023]), an A′-extraction site (the Mayan fragments, whose `Extraction.realize`
 records the reflexes of extracting each `RelativeClause.Position`), an intermediate landing
-site of successive-cyclic movement ([mccloskey-2002], [georgi-2017]). A `Reflex` is a marking `Reflex.Modality` at a host constituent, and a
-`Reflex.Marking` pairs a target with the set of reflexes marking it. Modalities classify by
-`Reflex.Channel`, the literature's phonological vs morphological vs syntactic cut. Like
+site of successive-cyclic movement ([mccloskey-2002], [georgi-2017]). A `Reflex` is a marking
+`Reflex.Modality` at a host constituent; a marking system assigns each designated target its
+finite set of reflexes. Modalities classify by `Reflex.Channel`, the phonological vs
+morphological vs syntactic cut. Like
 `Data.Examples.Judgment` for acceptability, this is a prediction-target vocabulary: studies
 translate theory-native predictions into it, and no theory consumes it as machinery.
 
 ## Main declarations
 
-* `Reflex.Marking.IsOvert`: some reflex surfaces.
-* `Reflex.Marking.PiedPipes`, `Reflex.Marking.AntiPiedPipes`, `Reflex.Marking.ExactlyTargets`:
+* `Reflex.PiedPipes`, `Reflex.AntiPiedPipes`, `Reflex.ExactlyTargets`:
   [branan-erlewine-2023]'s three host–target configurations in the containment order.
 * `Reflex.EveryTargetOvert`: the universalist claim that every designated target is overtly
   marked, which Tangale and Hausa focus refute.
@@ -39,8 +39,10 @@ in their studies.
 With constituents ordered by containment, a host is the target itself, properly contains it
 (pied-piping), is properly contained in it (anti-pied-piping), or is incomparable to it
 (`IncompRel (· ≤ ·)`: external hosting, such as the verb-hosted extraction morphology of the
-Mayan Agent Focus configuration). The marking predicates are stated in the order vocabulary
-directly rather than through a four-way classification.
+Mayan Agent Focus configuration). The predicates are stated in the order vocabulary directly
+rather than through a four-way classification, over a reflex set and an explicit target, so a
+study asserts the target in the claim rather than storing it beside the data. Overt marking of
+a target is `Finset.Nonempty` of its reflex set.
 
 ## TODO
 
@@ -105,18 +107,6 @@ def boundary (edge : C) : Reflex C := ⟨.boundary, edge⟩
 /-- Metrical prominence on a host constituent. -/
 def prominence (host : C) : Reflex C := ⟨.prominence, host⟩
 
-/-- A marking: the designated target constituent and the reflexes marking it. -/
-structure Marking (C : Type*) where
-  target : C
-  reflexes : Finset (Reflex C)
-
-namespace Marking
-
-/-- Some reflex surfaces. -/
-def IsOvert (m : Marking C) : Prop := m.reflexes.Nonempty
-
-instance (m : Marking C) : Decidable m.IsOvert := Finset.decidableNonempty
-
 /-! ### Host–target containment
 
 With constituents ordered by containment, [branan-erlewine-2023] distinguish exact targeting,
@@ -125,42 +115,42 @@ contained in the target, attested in over sixty languages). -/
 
 section Containment
 
-variable [Preorder C] (m : Marking C)
+variable [Preorder C] (s : Finset (Reflex C)) (target : C)
 
 /-- Some reflex is hosted by a constituent properly containing the target: Ross's pied-piping,
 generalized from movement to all marking morphosyntax by [branan-erlewine-2023]. -/
-def PiedPipes : Prop := ∃ ρ ∈ m.reflexes, m.target < ρ.host
+def PiedPipes : Prop := ∃ ρ ∈ s, target < ρ.host
 
 /-- Some reflex is hosted by a proper subconstituent of the target:
 [branan-erlewine-2023]'s anti-pied-piping. -/
-def AntiPiedPipes : Prop := ∃ ρ ∈ m.reflexes, ρ.host < m.target
+def AntiPiedPipes : Prop := ∃ ρ ∈ s, ρ.host < target
 
 /-- Every reflex is hosted by the designated constituent itself. -/
-def ExactlyTargets : Prop := ∀ ρ ∈ m.reflexes, ρ.host = m.target
+def ExactlyTargets : Prop := ∀ ρ ∈ s, ρ.host = target
 
-variable {m}
+variable {s target}
 
-/-- A pied-piping marking does not exactly target its designee. -/
-theorem PiedPipes.not_exactlyTargets (h : m.PiedPipes) : ¬ m.ExactlyTargets :=
+/-- A pied-piping reflex set does not exactly target its designee. -/
+theorem PiedPipes.not_exactlyTargets (h : PiedPipes s target) : ¬ ExactlyTargets s target :=
   fun he ↦ let ⟨ρ, hρ, hlt⟩ := h; (he ρ hρ ▸ hlt).false
 
-/-- An anti-pied-piping marking does not exactly target its designee. -/
-theorem AntiPiedPipes.not_exactlyTargets (h : m.AntiPiedPipes) : ¬ m.ExactlyTargets :=
+/-- An anti-pied-piping reflex set does not exactly target its designee. -/
+theorem AntiPiedPipes.not_exactlyTargets (h : AntiPiedPipes s target) :
+    ¬ ExactlyTargets s target :=
   fun he ↦ let ⟨ρ, hρ, hlt⟩ := h; (he ρ hρ ▸ hlt).false
 
-variable (m) [DecidableLT C] [DecidableEq C]
+variable (s target) [DecidableLT C] [DecidableEq C]
 
-instance : Decidable m.PiedPipes := inferInstanceAs (Decidable (∃ _ ∈ _, _))
-instance : Decidable m.AntiPiedPipes := inferInstanceAs (Decidable (∃ _ ∈ _, _))
-instance : Decidable m.ExactlyTargets := inferInstanceAs (Decidable (∀ _ ∈ _, _))
+instance : Decidable (PiedPipes s target) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
+instance : Decidable (AntiPiedPipes s target) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
+instance : Decidable (ExactlyTargets s target) := inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 end Containment
-
-end Marking
 
 /-- The universalist claim over a marking system `realize`: every designated target receives an
 overt reflex. Tangale and Hausa focus each refute their instance ([hartmann-zimmermann-2004],
 [hartmann-zimmermann-2007]). -/
-def EveryTargetOvert {I : Type*} (realize : I → Marking C) : Prop := ∀ i, (realize i).IsOvert
+def EveryTargetOvert {I : Type*} (realize : I → Finset (Reflex C)) : Prop :=
+  ∀ i, (realize i).Nonempty
 
 end Reflex
