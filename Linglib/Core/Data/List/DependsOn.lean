@@ -10,58 +10,33 @@ import Mathlib.Order.Interval.Set.Basic
 import Linglib.Core.Data.List.TakeDrop
 
 /-!
-# Functions on lists determined by a set of positions
+# `DependsOn` for functions on lists
 
-`List.DependsOn g K` says that `g : List α → γ` is determined by the entries at the positions
-in `K`: equal-length inputs whose `getElem?` functions are `Set.EqOn` on `K` have equal images.
-It is the length-stratified form of mathlib's `DependsOn` on `Π i, α i`:
-`List.dependsOn_iff_forall_dependsOn_ofFn` identifies it with `DependsOn` of `g ∘ List.ofFn`
-on every fibre `Fin n → α`, and `List.dependsOn_iff_factorsThrough` is the factor-through
-characterization of `dependsOn_iff_factorsThrough`. [UPSTREAM] candidate for
-`Mathlib/Data/List/DependsOn.lean`.
-
-## Main definitions
-
-* `List.DependsOn`: `g` depends only on the positions in `K`.
-* `List.DependsAt`: the pointwise form at one input, so that `DependsOn g K` is definitionally
-  `∀ w, DependsAt g K w`.
+mathlib's `DependsOn f s` says a function on `Π i, α i` is determined by the coordinates in
+`s`. A function `g : List α → γ` is not on a Π-type, but on each fibre `Fin n → α` the
+composite `g ∘ List.ofFn` is, so "`g` depends only on the positions in `K`" is
+`∀ n, DependsOn (g ∘ List.ofFn) (Fin.val ⁻¹' K)`. `List.forall_dependsOn_ofFn_iff` unpacks that
+into the word-pair form consumers use: equal-length lists whose `getElem?` functions are
+`Set.EqOn` on `K` have equal images. [UPSTREAM] candidate for
+`Mathlib/Logic/Function/DependsOn.lean`.
 
 ## Main results
 
-* `List.dependsOn_iff_forall_dependsOn_ofFn`, `List.dependsOn_iff_factorsThrough`,
-  `List.DependsOn.mono`: the two characterizations and monotonicity in the position set.
+* `List.forall_dependsOn_ofFn_iff`: the word-pair form of fibrewise `DependsOn`.
 * `Set.EqOn.take_eq`, `Set.EqOn.drop_eq`, `Set.EqOn.getElem?_eq`: agreement of `getElem?` on
   `Set.Iic j` or `Set.Ici j` transports prefixes and suffixes, in dot-notation form.
 -/
 
 namespace List
 
-variable {α γ : Type*} {g : List α → γ} {K K' : Set ℕ}
+variable {α γ : Type*} {K : Set ℕ}
 
-/-- `g` is determined by the input positions in `K`: equal-length inputs agreeing on `K` have
-equal images. -/
-def DependsOn (g : List α → γ) (K : Set ℕ) : Prop :=
-  ∀ ⦃u v : List α⦄, u.length = v.length → Set.EqOn (u[·]?) (v[·]?) K → g u = g v
-
-theorem DependsOn.mono (hKK' : K ⊆ K') (h : DependsOn g K) : DependsOn g K' :=
-  fun _ _ hl hag ↦ h hl (hag.mono hKK')
-
-/-- `g` is determined at `w` by the positions in `K`: any equal-length list agreeing with `w`
-on `K` has the same image. `DependsOn g K` is definitionally `∀ w, DependsAt g K w`. -/
-def DependsAt (g : List α → γ) (K : Set ℕ) (w : List α) : Prop :=
-  ∀ ⦃v : List α⦄, w.length = v.length → Set.EqOn (w[·]?) (v[·]?) K → g w = g v
-
-/-- `List.DependsOn` is mathlib's `DependsOn` of `g ∘ List.ofFn` on every fibre `Fin n → α`. -/
-theorem dependsOn_iff_forall_dependsOn_ofFn :
-    DependsOn g K ↔
-      ∀ n, _root_.DependsOn (fun f : Fin n → α ↦ g (ofFn f)) {i | (i : ℕ) ∈ K} := by
+/-- `g ∘ List.ofFn` depends on the positions in `K` on every fibre exactly when equal-length
+lists agreeing on `K` have equal images under `g`. -/
+theorem forall_dependsOn_ofFn_iff (g : List α → γ) :
+    (∀ n, DependsOn (fun x : Fin n → α ↦ g (ofFn x)) (Fin.val ⁻¹' K)) ↔
+      ∀ ⦃u v : List α⦄, u.length = v.length → Set.EqOn (u[·]?) (v[·]?) K → g u = g v := by
   constructor
-  · intro h n f f' hff'
-    refine h (by simp) fun k hk ↦ ?_
-    simp only [List.getElem?_ofFn]
-    split_ifs with hkn
-    · exact congrArg some (hff' ⟨k, hkn⟩ hk)
-    · rfl
   · intro h u v hlen hag
     have hu : u = ofFn fun i : Fin u.length ↦ u[i] := ofFn_getElem.symm
     have hv : v = ofFn fun i : Fin u.length ↦ v[i]'(hlen ▸ i.2) := by
@@ -72,17 +47,12 @@ theorem dependsOn_iff_forall_dependsOn_ofFn :
     have hi' : u[(i : ℕ)]? = v[(i : ℕ)]? := hag hi
     rw [getElem?_eq_getElem i.2, getElem?_eq_getElem (show (i : ℕ) < v.length by omega)] at hi'
     exact Option.some_injective _ hi'
-
-/-- `g` factors through the input's length and its restriction to `K`. -/
-theorem dependsOn_iff_factorsThrough :
-    DependsOn g K ↔
-      Function.FactorsThrough g (fun u : List α ↦ (u.length, K.domRestrict (u[·]?))) := by
-  constructor
-  · intro h u v huv
-    rw [Prod.mk.injEq] at huv
-    exact h huv.1 fun k hk ↦ congrFun huv.2 ⟨k, hk⟩
-  · intro h u v hlen hag
-    exact h (Prod.ext hlen (funext fun k ↦ hag k.2))
+  · intro h n f f' hff'
+    refine h (by simp) fun k hk ↦ ?_
+    simp only [List.getElem?_ofFn]
+    split_ifs with hkn
+    · exact congrArg some (hff' ⟨k, hkn⟩ hk)
+    · rfl
 
 end List
 

@@ -11,7 +11,8 @@ import Linglib.Core.Data.List.DependsOn
 /-!
 # Side dependence for string functions
 
-A lattice of side-dependence predicates over `List.DependsOn`: `BoundedDependence f s` says a
+A lattice of side-dependence predicates over mathlib's `DependsOn`, taken on each fibre
+`Fin n → α` through `List.ofFn`: `BoundedDependence f s` says a
 single margin caps the influence of side `s` at every output coordinate,
 `TwoSidedUnboundedDependence` places one target under the influence of both sides,
 and `RequiresBothSides` demands both sides at once. `flankWord` is the witness family
@@ -59,7 +60,7 @@ separation theorems.
 The coordinate predicates index the output coordinate and the input window
 separately, which is informative for length-preserving functions; for block-emitting
 transducers the two drift apart. `BoundedDependence` is the positive primitive; `unboundedDependence_iff` recovers
-the margin-indexed witness form, and unpacking `¬ List.DependsOn` yields word-pair
+the margin-indexed witness form, and unpacking the negated dependence yields word-pair
 witnesses. The forms are margin-indexed rather than fixed-index because a fixed
 target has only finitely many positions to its left.
 The predicates place no in-range guard on target coordinates: for length-preserving
@@ -74,7 +75,7 @@ variable {α β : Type*} {f : List α → List β}
 
 /-- Output coordinate `i` is fixed by the prefix `Set.Iic i`. -/
 def LeftDetermined (f : List α → List β) (i : ℕ) : Prop :=
-  List.DependsOn (fun u => (f u)[i]?) (Iic i)
+  ∀ n, DependsOn (fun x : Fin n → α ↦ (f (List.ofFn x))[i]?) (Fin.val ⁻¹' Iic i)
 
 /-- An equal-length variant of `base` differing only beyond the `d`-margin of target
 `i` on side `s`. -/
@@ -84,7 +85,7 @@ def IsFarPerturbation (base u : List α) (i d : ℕ) (s : ScanDirection) : Prop 
 /-- `f` depends boundedly on side `s`: a single margin caps, at every output
 coordinate, how far input on side `s` can matter. -/
 def BoundedDependence (f : List α → List β) (s : ScanDirection) : Prop :=
-  ∃ N, ∀ i, List.DependsOn (fun u => (f u)[i]?) (s.window i N)
+  ∃ N, ∀ i n, DependsOn (fun x : Fin n → α ↦ (f (List.ofFn x))[i]?) (Fin.val ⁻¹' s.window i N)
 
 /-- `f` depends unboundedly on side `s`. -/
 def UnboundedDependence (f : List α → List β) (s : ScanDirection) : Prop :=
@@ -99,8 +100,9 @@ bounded. -/
 coordinate. -/
 theorem unboundedDependence_iff {s : ScanDirection} :
     UnboundedDependence f s ↔
-      ∀ N, ∃ i, ¬ List.DependsOn (fun u => (f u)[i]?) (s.window i N) := by
-  simp [UnboundedDependence, BoundedDependence]
+      ∀ N, ∃ i, ¬ ∀ n, DependsOn (fun x : Fin n → α ↦ (f (List.ofFn x))[i]?)
+        (Fin.val ⁻¹' s.window i N) := by
+  simp only [UnboundedDependence, BoundedDependence, not_exists, not_forall]
 
 /-- A map whose every output coordinate is fixed by its prefix `Set.Iic i` depends
 boundedly on the right. -/
@@ -110,8 +112,10 @@ theorem BoundedDependence.right_of_leftDetermined (h : ∀ i, LeftDetermined f i
 /-- A map whose every output coordinate is fixed by the input's strict prefix
 `Set.Iio i` depends boundedly on the right. -/
 theorem BoundedDependence.right_of_prefixDetermined
-    (h : ∀ i, List.DependsOn (fun u => (f u)[i]?) (Iio i)) : BoundedDependence f .right :=
-  BoundedDependence.right_of_leftDetermined fun i => (h i).mono Iio_subset_Iic_self
+    (h : ∀ i n, DependsOn (fun x : Fin n → α ↦ (f (List.ofFn x))[i]?) (Fin.val ⁻¹' Iio i)) :
+    BoundedDependence f .right :=
+  BoundedDependence.right_of_leftDetermined fun i n ↦
+    (h i n).mono (Set.preimage_mono Iio_subset_Iic_self)
 
 /-- For every `d`, one base word carries a target whose output flips under a far
 perturbation on either side. -/
@@ -125,7 +129,7 @@ theorem TwoSidedUnboundedDependence.unboundedDependence
   unboundedDependence_iff.mpr fun N =>
     have ⟨_, i, _, hw⟩ := h N
     have ⟨_, ⟨hlen, hag⟩, hne⟩ := hw s
-    ⟨i, fun hOD => hne (hOD hlen.symm hag)⟩
+    ⟨i, fun hOD ↦ hne ((List.forall_dependsOn_ofFn_iff fun u ↦ (f u)[i]?).mp hOD hlen.symm hag)⟩
 
 /-- `f` requires both sides when some target changes under `f` yet perturbing either
 far side reverts it to the identity. -/
@@ -137,7 +141,8 @@ def RequiresBothSides (f : List α → List α) : Prop :=
 side may vary from cell to cell. -/
 def OneSidedChanges (f : List α → List α) : Prop :=
   ∀ (w : List α) (i : ℕ), (f w)[i]? ≠ w[i]? →
-    ∃ s : ScanDirection, List.DependsAt (fun u => (f u)[i]?) (s.window i 0) w
+    ∃ s : ScanDirection, ∀ ⦃u : List α⦄, w.length = u.length →
+      EqOn (w[·]?) (u[·]?) (s.window i 0) → (f w)[i]? = (f u)[i]?
 
 /-- A map that requires both sides has a change no single side determines. -/
 theorem RequiresBothSides.not_oneSidedChanges {f : List α → List α}
