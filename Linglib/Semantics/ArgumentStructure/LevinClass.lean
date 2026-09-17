@@ -8,17 +8,15 @@ import Mathlib.Tactic.DeriveFintype
 # The verb classes of Levin 1993
 
 The verb classes of [levin-1993] Part II as an enumeration, one constructor per class page
-with a member list, with the page's section number and title; the unaccusativity
-[levin-hovav-1995] predict for a class and whether it is a class of creation verbs
-([davies-dubinsky-2003]) are the library's readings of those papers, not Levin's. The classes'
-property tables are in `LevinClass/Properties.lean`, their member lists in
+with a member list, with the page's section number and title; whether a class is a class of
+creation verbs ([davies-dubinsky-2003]) is the library's reading of that paper, not Levin's.
+The classes' property tables are in `LevinClass/Properties.lean`, their member lists in
 `LevinClass/Members.lean`, their root entailments in `LevinTheory.lean`, and the
 `levinClasses` field of a `Verb` entry carries the classes listing it.
 
 ## References
 
 * [levin-1993]
-* [levin-hovav-1995]
 * [davies-dubinsky-2003]
 -/
 
@@ -861,31 +859,6 @@ def chapter (c : LevinClass) : ℕ := c.number.headD 0
 end LevinClass
 
 namespace LevinClass
-
-/-- Predicted unaccusativity from Levin class membership.
-
-    Based on [levin-hovav-1995]: unaccusativity correlates with internally
-    caused change of state or directed change, while unergativity correlates
-    with agentive activity. -/
-def PredictsUnaccusative : LevinClass → Prop
-  | .break_ | .bend | .cooking | .otherChangeOfState
-  | .entitySpecificChangeOfState | .calibratableChangeOfState => True
-  | .destroy => True
-  | .mix | .amalgamate => True
-  | .separate | .split => True
-  | .appear | .reflexiveAppearance => True
-  | .disappearance => True
-  | .exist => True
-  | .calve => True
-  | .inherentlyDirectedMotion => True
-  | .leave => True
-  | .lightEmission | .soundEmission | .substanceEmission => True
-  | .weather => True
-  | .putDirection | .spank | .long | .hurt | .talk | .nonverbalExpression => False
-  | _ => False
-
-instance : DecidablePred LevinClass.PredictsUnaccusative := fun c => by
-  cases c <;> unfold LevinClass.PredictsUnaccusative <;> infer_instance
 
 /-- The class denotes the creation of its object ([davies-dubinsky-2003]). -/
 def IsVerbOfCreation : LevinClass → Prop

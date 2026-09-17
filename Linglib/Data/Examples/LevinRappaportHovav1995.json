@@ -1,34 +1,344 @@
 [
   {
-    "id": "levinrappaporthovav1995_loc_arrive",
-    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "UNVERIFIED locative inversion of an unaccusative (no example number recorded)"},
+    "id": "levinrappaporthovav1995_ex6_1",
+    "source": {
+      "bibkey": "levin-hovav-1995",
+      "paperLabel": "(1) of chapter 6"
+    },
     "language": "stan1293",
-    "primaryText": "Into the room arrived a messenger.",
+    "primaryText": "In the distance appeared the towers and spires of a town which greatly resembled Oxford.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Into the room arrived a messenger.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
-      ["diagnostic", "locative_inversion"],
-      ["verb", "arrive"],
-      ["verb_class", "unaccusative"]
+      [
+        "diagnostic",
+        "locativeInversion"
+      ],
+      [
+        "verb",
+        "appear"
+      ],
+      [
+        "class",
+        "48.1.1"
+      ]
     ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean loc_arrive. Attribution follows the dissolved file's header citation [levin-hovav-1995]; locative inversion of unaccusatives is their flagship diagnostic. Consumed by Studies/Storment2026.lean for the unified smuggling analysis of LI."
+    "comment": "A corpus locative inversion, from Bromfield, The Farm, with a verb of appearance."
   },
   {
-    "id": "levinrappaporthovav1995_loc_whisper",
-    "source": {"bibkey": "levin-hovav-1995", "paperLabel": "UNVERIFIED locative inversion of a manner-of-speaking verb (no example number recorded)"},
+    "id": "levinrappaporthovav1995_ex6_4a",
+    "source": {
+      "bibkey": "levin-hovav-1995",
+      "paperLabel": "(4a) of chapter 6"
+    },
     "language": "stan1293",
-    "primaryText": "From the back of the room whispered a voice.",
+    "primaryText": "In the distance there appeared the towers and spires of a town which greatly resembled Oxford.",
+    "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "From the back of the room whispered a voice.",
+    "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
     "paperFeatures": [
-      ["diagnostic", "locative_inversion"],
-      ["verb", "whisper"],
-      ["verb_class", "manner_of_speaking"]
+      [
+        "diagnostic",
+        "thereInsertion"
+      ],
+      [
+        "verb",
+        "appear"
+      ],
+      [
+        "class",
+        "48.1.1"
+      ]
     ],
-    "comment": "Migrated from Phenomena/ArgumentStructure/Unaccusativity/Data.lean loc_whisper. Manner-of-speaking verbs show variable acceptability in locative inversion. Attribution follows the dissolved file's header citation [levin-hovav-1995]."
+    "comment": "The there-insertion counterpart of (1)."
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_31a",
+    "source": {
+      "bibkey": "levin-hovav-1995",
+      "paperLabel": "(31a) of chapter 4"
+    },
+    "language": "stan1293",
+    "primaryText": "She arrived a glamorous arrival.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "diagnostic",
+        "cognateObject"
+      ],
+      [
+        "verb",
+        "arrive"
+      ],
+      [
+        "class",
+        "51.1"
+      ],
+      [
+        "agentive",
+        "yes"
+      ]
+    ],
+    "comment": "A verb of inherently directed motion rejects a cognate object, consistent with an unaccusative classification."
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_32c",
+    "source": {
+      "bibkey": "levin-hovav-1995",
+      "paperLabel": "(32c) of chapter 4"
+    },
+    "language": "stan1293",
+    "primaryText": "She arrived her way to the front of the line.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "diagnostic",
+        "wayConstruction"
+      ],
+      [
+        "verb",
+        "arrive"
+      ],
+      [
+        "class",
+        "51.1"
+      ],
+      [
+        "agentive",
+        "yes"
+      ]
+    ],
+    "comment": "A verb of inherently directed motion rejects the X's way construction."
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_50a",
+    "source": {
+      "bibkey": "levin-hovav-1995",
+      "paperLabel": "(50a) of chapter 4"
+    },
+    "language": "stan1293",
+    "primaryText": "The jogger ran his soles thin.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "diagnostic",
+        "resultativeUnergativePattern"
+      ],
+      [
+        "verb",
+        "run"
+      ],
+      [
+        "class",
+        "51.3.2"
+      ],
+      [
+        "agentive",
+        "yes"
+      ]
+    ],
+    "comment": "A run verb in the unergative resultative pattern, the result phrase predicated of a nonsubcategorized object."
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_51a",
+    "source": {
+      "bibkey": "levin-hovav-1995",
+      "paperLabel": "(51a) of chapter 4"
+    },
+    "language": "stan1293",
+    "primaryText": "The jogger ran sore.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "diagnostic",
+        "resultativeUnaccusativePattern"
+      ],
+      [
+        "verb",
+        "run"
+      ],
+      [
+        "class",
+        "51.3.2"
+      ],
+      [
+        "agentive",
+        "yes"
+      ]
+    ],
+    "comment": "A run verb rejects the unaccusative resultative pattern."
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_52a",
+    "source": {
+      "bibkey": "levin-hovav-1995",
+      "paperLabel": "(52a) of chapter 4"
+    },
+    "language": "stan1293",
+    "primaryText": "The door rolled open.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "diagnostic",
+        "resultativeUnaccusativePattern"
+      ],
+      [
+        "verb",
+        "roll"
+      ],
+      [
+        "class",
+        "51.3.1"
+      ],
+      [
+        "agentive",
+        "no"
+      ]
+    ],
+    "comment": "A roll verb in the unaccusative resultative pattern, the result phrase predicated of the subject."
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_53a",
+    "source": {
+      "bibkey": "levin-hovav-1995",
+      "paperLabel": "(53a) of chapter 4"
+    },
+    "language": "stan1293",
+    "primaryText": "The door rolled itself open.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "diagnostic",
+        "resultativeUnergativePattern"
+      ],
+      [
+        "verb",
+        "roll"
+      ],
+      [
+        "class",
+        "51.3.1"
+      ],
+      [
+        "agentive",
+        "no"
+      ]
+    ],
+    "comment": "A roll verb rejects the unergative resultative pattern with a fake reflexive."
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_54a",
+    "source": {
+      "bibkey": "levin-hovav-1995",
+      "paperLabel": "(54a) of chapter 4"
+    },
+    "language": "stan1293",
+    "primaryText": "The jogger ran his way to better health.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "diagnostic",
+        "wayConstruction"
+      ],
+      [
+        "verb",
+        "run"
+      ],
+      [
+        "class",
+        "51.3.2"
+      ],
+      [
+        "agentive",
+        "yes"
+      ]
+    ],
+    "comment": "A run verb in the X's way construction."
+  },
+  {
+    "id": "levinrappaporthovav1995_ex4_55a",
+    "source": {
+      "bibkey": "levin-hovav-1995",
+      "paperLabel": "(55a) of chapter 4"
+    },
+    "language": "stan1293",
+    "primaryText": "The pebbles rolled their way into the stream.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "diagnostic",
+        "wayConstruction"
+      ],
+      [
+        "verb",
+        "roll"
+      ],
+      [
+        "class",
+        "51.3.1"
+      ],
+      [
+        "agentive",
+        "no"
+      ]
+    ],
+    "comment": "A roll verb rejects the X's way construction."
   }
 ]

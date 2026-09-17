@@ -601,10 +601,6 @@
       [
         "verbRole",
         "agent"
-      ],
-      [
-        "levinClass",
-        "mannerOfSpeaking"
       ]
     ],
     "comment": "Semantic coherence violation: the agent subject of yell cannot be construed as the patient of BECOME."
@@ -640,10 +636,6 @@
       [
         "verbRole",
         "agent"
-      ],
-      [
-        "levinClass",
-        "mannerOfSpeaking"
       ]
     ],
     "comment": "Semantic coherence violation: the agent subject of cry cannot be construed as the patient of BECOME."
@@ -679,10 +671,6 @@
       [
         "verbRole",
         "patient"
-      ],
-      [
-        "levinClass",
-        "substanceEmission"
       ]
     ],
     "comment": "Noncausal property resultative: something happens to the bleeder, a patient, so the roles cohere."

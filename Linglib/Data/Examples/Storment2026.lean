@@ -625,6 +625,42 @@ def qi_ordering_complement : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
-def all : List LinguisticExample := [qi_whisper, qi_murmur, qi_shout, qi_cry, qi_scream, qi_mumble, qi_mutter, qi_shriek, qi_yell, qi_groan, qi_grumble, qi_hiss, qi_sigh, qi_whimper, qi_snap, qi_speak, qi_talk, qi_whisper_transitive, qi_whisper_pronoun, qi_warn_double_obj, li_kick, li_arrive_pronoun, qi_agreement_english, qi_agreement_setswana, qi_parasitic_gap_blocked, qi_parasitic_gap_baseline, qi_raising, qi_conjoint_disjoint, qi_quote_split, qi_quote_nongrammatical, qi_ordering_depictive, qi_ordering_manner, qi_ordering_purpose, qi_ordering_complement]
+def li_leapt : LinguisticExample :=
+  { id := "storment2026_li_leapt"
+    source := ⟨"storment-2026", "(136a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Down from the wall leapt Gimli."
+    discourseSegments := []
+    glossedTokens := []
+    translation := ""
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "locativeInversion"), ("verb", "leap")]
+    comment := "English locative inversion, the paper's parallel to quotative inversion; the paper notes English allows the construction with unergative as well as unaccusative verbs."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def li_train : LinguisticExample :=
+  { id := "storment2026_li_train"
+    source := ⟨"storment-2026", "(55)"⟩
+    reportedIn := none
+    language := "tswa1253"
+    primaryText := "Kwa maemelong a diterena ga goroga terena."
+    discourseSegments := []
+    glossedTokens := [("Kwa", "17LOC"), ("maemelong", "station"), ("a", "of"), ("diterena", "trains"), ("ga", "SM17.PST"), ("goroga", "arrive"), ("terena", "train")]
+    translation := "At the station arrived a train."
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "locativeInversion"), ("verb", "goroga")]
+    comment := "Setswana locative inversion with a class 17 locative subject marker."
+    metaLanguage := "stan1293"
+    lgrConformance := "" }
+
+def all : List LinguisticExample := [qi_whisper, qi_murmur, qi_shout, qi_cry, qi_scream, qi_mumble, qi_mutter, qi_shriek, qi_yell, qi_groan, qi_grumble, qi_hiss, qi_sigh, qi_whimper, qi_snap, qi_speak, qi_talk, qi_whisper_transitive, qi_whisper_pronoun, qi_warn_double_obj, li_kick, li_arrive_pronoun, qi_agreement_english, qi_agreement_setswana, qi_parasitic_gap_blocked, qi_parasitic_gap_baseline, qi_raising, qi_conjoint_disjoint, qi_quote_split, qi_quote_nongrammatical, qi_ordering_depictive, qi_ordering_manner, qi_ordering_purpose, qi_ordering_complement, li_leapt, li_train]
 
 end Storment2026.Examples
