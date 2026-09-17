@@ -1,6 +1,5 @@
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Syntax.Reflex
-import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Mayan.Params
 
 /-!
@@ -53,7 +52,6 @@ tables (13) and (14).
 
 namespace Qanjobal
 
-open Minimalist
 
 /-! ### Status suffixes -/
 

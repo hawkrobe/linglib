@@ -44,8 +44,10 @@ namespace Kaqchikel
 focused argument fronts (VOS base order, so fronting is never
 string-vacuous) and hosts *ja*, on top of whatever extraction from its
 role licenses — for a transitive subject (A), Agent Focus on the verb.
-Ditransitive R/T focus is unattested in the source and falls to the
-A-less default. -/
+Recipients and themes of ditransitives are relational-noun phrases
+outside the core roles, the dative cell of `Extraction.realize`, so the
+R and T cells here are vacuous; adjunct focus is outside this
+function's domain. -/
 def focusRealize (r : ArgumentRole) : Finset (Reflex Extraction.Host) :=
   Extraction.realize (.core r) ∪ {.displacement .phrase, .morpheme .phrase}
 

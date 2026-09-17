@@ -5,12 +5,13 @@ import Linglib.Syntax.Voice.Basic
 
 Toba Batak (Austronesian; Lake Toba, Sumatra) is predicate-initial and has two voices, the actor
 voice in *mang-* and the object voice in *di-*, each making one argument the pivot, the
-clause-peripheral subject. Only the pivot can be extracted ([schachter-1984]; [cole-hermon-2008];
-[erlewine-2018]): the restriction is the subject-only gap relativizer of `Relativization.lean`,
-and the voice inventory says which argument the pivot is. The voice prefix surfaces in every
-clause, so it is not a reflex of extraction. Neither voice is morphologically basic. Analyses of
-the extraction restriction, and the examples that support them, live in the studies that propose
-them.
+clause-peripheral subject. Among the core arguments only the pivot can be extracted, while
+obliques extract under either voice ([cole-hermon-2008]; the voice system is described by
+[schachter-1984] and analysed by [erlewine-2018]): the restriction is the subject-only gap
+relativizer of `Relativization.lean`, and the voice inventory says which argument the pivot is.
+The voice prefix surfaces in every clause, so it is not a reflex of extraction. Neither voice is
+morphologically basic. Analyses of the extraction restriction, and the examples that support
+them, live in the studies that propose them.
 
 ## Main definitions
 

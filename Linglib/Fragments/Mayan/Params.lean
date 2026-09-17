@@ -294,10 +294,10 @@ The pan-Mayan person/number agreement paradigm is keyed by the canonical
 
 /-! ### Verb form (transitive vs Agent Focus) -/
 
-/-- The two verb forms relevant to Mayan agreement morphology.
-    Used by HIGH-ABS languages with an Agent Focus alternation
-    (Q'anjob'al, Kaqchikel) and trivially by LOW-ABS languages
-    (where `.agentFocus` is unattested). -/
+/-- The two verb forms relevant to Mayan agreement morphology. The Agent Focus form marks
+transitive-subject extraction wherever a language has it: obligatorily in the languages with
+the Ergative Extraction Constraint (Q'anjob'al, Kaqchikel, K'iche'), optionally in Tsotsil; in
+a language without it `.agentFocus` is unattested. -/
 inductive VerbForm where
   | transitive   -- canonical transitive
   | agentFocus   -- AF construction (HIGH-ABS A-extraction)
@@ -451,10 +451,9 @@ def templateABSPosition (l : Mayan) : ABSPosition :=
 
 /-! ### Extraction sites -/
 
-/-- The classes of non-core arguments and adjuncts whose Ā-extraction Mayan extraction
-morphology distinguishes: the eight classes [elkins-torrence-brown-2026] survey for Mam, among
-them [mendes-ranero-2021]'s low adjuncts (instruments, benefactives, datives, locatives), which
-alone trigger the K'ichean fronting particle *wi*. -/
+/-- The semantic classes of non-core arguments and adjuncts that Mayan extraction morphology
+distinguishes: instruments, benefactives, datives, locatives, reasons, purposes, manners and
+temporals. Comitatives, which the K'ichean fronting particle also tracks, are not carried. -/
 inductive Adjunct where
   | instrument | benefactive | dative | locative | reason | purpose | manner | temporal
   deriving DecidableEq, Repr, Fintype

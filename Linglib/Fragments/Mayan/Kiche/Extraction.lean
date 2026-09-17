@@ -5,18 +5,21 @@ import Linglib.Fragments.Mayan.Params
 # K'iche' extraction marking
 
 The extraction marking of K'iche' (K'ichean Mayan) as reflex cells: transitive-subject
-extraction switches the verb to Agent Focus, the voice marker *-n* ([mondloch-2017]), and the
-extraction of a low adjunct (locatives, instruments, datives and benefactives, comitatives)
-obligatorily adds the fronting particle *wi* to the verbal complex, while clausal adjuncts such
-as reasons and temporals never do ([mendes-ranero-2021]); core-object extraction is unmarked.
-The distribution of *wi* across clause sizes, and its contrast with Mam =(y)a', is the matter of
-`Studies/ElkinsTorrenceBrown2026.lean`.
+extraction switches the verb to its Agent Focus form ([mondloch-2017]), and the extraction of a
+locative, instrument, dative or benefactive phrase (comitatives too) adds the fronting particle
+*wi* to the verbal complex, obligatorily in the varieties [mendes-ranero-2021] describe and
+absent or optional in others; reasons, purposes, manners and temporals never license it.
+Absolutive extraction is unmarked ([coon-mateo-pedro-preminger-2014]). The benefactive cell
+records [elkins-torrence-brown-2026]'s summary of the K'ichean pattern, which they note varies
+by variety between datives and benefactives. The distribution of *wi* across clause sizes, and
+its contrast with Mam =(y)a', is the matter of `Studies/ElkinsTorrenceBrown2026.lean`.
 
 ## References
 
+* [coon-mateo-pedro-preminger-2014]
+* [elkins-torrence-brown-2026]
 * [mendes-ranero-2021]
 * [mondloch-2017]
-* [elkins-torrence-brown-2026]
 -/
 
 namespace Kiche.Extraction

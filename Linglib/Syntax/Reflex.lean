@@ -11,7 +11,7 @@ import Mathlib.Data.Finset.Basic
 A grammar leaves perceptible traces of a constituent's designated status: a focus
 ([hartmann-zimmermann-2004] on Tangale, [hartmann-zimmermann-2007] on Hausa,
 [branan-erlewine-2023]), an A′-extraction site (the Mayan fragments, whose `Extraction.realize`
-records the reflexes each `Mayan.ExtractionSite` licenses), an intermediate landing site of
+records the reflexes each extraction site licenses), an intermediate landing site of
 successive-cyclic movement ([mccloskey-2002], [georgi-2017]). A `Reflex` is a marking
 `Reflex.Modality` at a host constituent; a marking system assigns each designated target its
 finite set of reflexes. Modalities classify by `Reflex.Channel`, the phonological vs

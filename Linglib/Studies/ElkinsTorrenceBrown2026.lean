@@ -7,12 +7,12 @@ import Linglib.Syntax.Minimalist.Agree.Basic
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.FeatureBundle
 
 /-!
-# Elkins, Torrence and Brown (2026): Wh-movement paths and oblique extraction in Mam
+# Elkins, Torrence and Brown (2026): Wh-movement paths and adjunct extraction in Mam
 
 This file formalizes [elkins-torrence-brown-2026]'s analysis of the movement enclitic =(y)a' of
 San Juan Ostuncalco Mam (Mayan), which optionally appears on the predicate, and on any directional
 auxiliary, when an instrument, benefactive, dative, locative, reason, purpose or manner adjunct is
-extracted, but not with absolutive or ergative arguments ([aissen-2017]'s Ergative Extraction
+extracted, but not with absolutive or ergative arguments ([aissen-2017b]'s Ergative Extraction
 Constraint sends the agent through an antipassive) or with temporals. The enclitic may occur once
 per Voice⁰ and Dir⁰ of a clause and, in long-distance extraction, once per clause along the
 dependency: in the embedded clause exactly when that clause is at least VoiceP-sized, so on both
@@ -47,9 +47,10 @@ in K'ichean, and temporals trigger neither.
   independent optionality of each site, `patterns`.
 * [obl] on the movers is the article's featural hypothesis (§1.3, §4.2, §5.3): relational nouns
   assign it, the locative and manner wh-words are assumed to acquire it, temporals lack it.
-* The examples are `Data.Examples.ElkinsTorrenceBrown2026`; the K'iche' rows are
-  [mendes-ranero-2021]'s as reported there. The variety is SJO Mam; [scott-2023]'s San Juan
-  Atitán Mam is a distinct variety.
+* The examples are `Data.Examples.ElkinsTorrenceBrown2026`; the K'ichean rows are
+  [mendes-ranero-2021]'s as reported there, and the article's (64), headed K'iche' in the
+  preprint, is Patzún Kaqchikel (Mendes and Ranero's (14a), as the article's own (68) records).
+  The variety is SJO Mam; [scott-2023]'s San Juan Atitán Mam is a distinct variety.
 
 ## References
 
@@ -61,7 +62,7 @@ in K'ichean, and temporals trigger neither.
 * [van-urk-2018]
 * [scott-2023]
 * [england-1989]
-* [aissen-2017]
+* [aissen-2017b]
 -/
 
 namespace ElkinsTorrenceBrown2026
@@ -352,8 +353,9 @@ theorem mamRows_realizable :
         (b = true ↔ Realizable m [spine .cP 0] 0) := by
   decide
 
-/-- The K'iche' rows (51) and (64): *wi* is licensed exactly for the low adjuncts. -/
-theorem kicheRows_low :
+/-- The K'ichean rows (51), K'iche', and (64), Patzún Kaqchikel: *wi* is licensed exactly for
+the low adjuncts. -/
+theorem kicheanRows_low :
     ∀ e ∈ [ex_51, ex_64], ∀ a, e.parse? "mover" moverTable = some (.adjunct a) →
       ∀ b, e.parse? "reflex" reflexTable = some b → (b = true ↔ IsLow a) := by
   decide

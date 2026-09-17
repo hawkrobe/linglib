@@ -4,27 +4,26 @@ import Linglib.Fragments.Mayan.Params
 /-!
 # Mam extraction marking
 
-The extraction marking of Mam (Mayan, Western Highlands of Guatemala) as reflex cells:
-transitive-subject (ergative) extraction switches the verb to an antipassive, the Mam repair for
-the Ergative Extraction Constraint ([aissen-2017]; the San Juan Atitán forms in [scott-2023]);
-extraction of a non-core argument or adjunct of every class but the temporals licenses the
-movement enclitic =(y)a', optionally, on the verbal complex and on a directional auxiliary when
-one is present ([england-1989], [elkins-torrence-brown-2026]); absolutive extraction is
-unmarked. The distribution of the enclitic across clause sizes and movement paths is the matter
-of `Studies/ElkinsTorrenceBrown2026.lean`.
+The extraction marking of San Juan Ostuncalco Mam (Mayan, Western Highlands of Guatemala) as
+reflex cells, after [elkins-torrence-brown-2026]: transitive-subject (ergative) extraction
+switches the verb to an antipassive, the Mam repair for the Ergative Extraction Constraint
+([aissen-2017b]); extraction of a non-core argument or adjunct of every class but the temporals
+licenses the movement enclitic =(y)a', optionally, on the verbal complex and on a directional
+auxiliary when one is present; absolutive extraction is unmarked. The distribution of the
+enclitic across clause sizes and movement paths is the matter of
+`Studies/ElkinsTorrenceBrown2026.lean`.
 
 ## References
 
+* [aissen-2017b]
 * [elkins-torrence-brown-2026]
-* [england-1989]
-* [scott-2023]
-* [aissen-2017]
 -/
 
 namespace Mam.Extraction
 
-/-- The hosts of Mam extraction reflexes: the verb stem, the verbal complex the enclitic =(y)a'
-attaches to, and a directional auxiliary. -/
+/-- The hosts of Mam extraction reflexes: the verb stem, whose antipassive suffix is a stem
+alternation; the verbal complex, the word the enclitic =(y)a' attaches to after the stem's
+suffixes; and a directional auxiliary. -/
 inductive Host where
   | verb
   | verbalComplex
