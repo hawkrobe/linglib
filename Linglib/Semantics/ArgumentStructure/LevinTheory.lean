@@ -1,4 +1,5 @@
 import Linglib.Semantics.ArgumentStructure.LevinClass
+import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.Root.Kinds
 
 /-!
@@ -6,12 +7,15 @@ import Linglib.Semantics.Root.Kinds
 
 The root-entailment signature of [beavers-koontz-garboden-2020] that each class of
 [levin-1993] realizes, for the classes the literature has analysed; `none` for the rest.
-`LevinClass.RootEntails` reads a single entailment off the signature.
+`LevinClass.RootEntails` reads a single entailment off the signature, and
+`LevinClass.RootPredictsCausative` is the root hypothesis for the causative alternation, read
+off the signature's template.
 
 ## References
 
 * [beavers-koontz-garboden-2020]
 * [levin-1993]
+* [rappaport-hovav-levin-1998]
 -/
 
 namespace ArgumentStructure
@@ -179,5 +183,24 @@ instance (c : LevinClass) (k : Root.Kind) : Decidable (c.RootEntails k) := by
 theorem LevinClass.rootEntailments_wellFormed (c : LevinClass) (s : Root.Kinds)
     (h : c.rootEntailments = some s) : s.WellFormed := by
   cases c <;> cases h <;> decide
+
+/-! ### The root hypothesis for the causative alternation -/
+
+/-- The classes whose root entails its causer, so that no inchoative variant exists although
+the root entails a caused change: the destroy and murder verbs of
+[beavers-koontz-garboden-2020]. -/
+def LevinClass.causativeExceptions : Finset LevinClass := {.destroy, .murder}
+
+/-- The root hypothesis: a class alternates between causative and inchoative when its root
+entails a caused change and no manner, so that its template is an accomplishment with an
+intransitive variant ([rappaport-hovav-levin-1998]), unless the root entails its causer
+(`causativeExceptions`). A hypothesis to be measured against Part II of [levin-1993], not
+data. -/
+def LevinClass.RootPredictsCausative (c : LevinClass) : Prop :=
+  (∃ s ∈ c.rootEntailments, (EventStructure.Template.ofKinds s).intransitiveVariant.isSome ∧
+      Root.Kind.manner ∉ s) ∧ c ∉ LevinClass.causativeExceptions
+
+instance (c : LevinClass) : Decidable c.RootPredictsCausative :=
+  inferInstanceAs (Decidable ((∃ s ∈ _, _ ∧ _) ∧ _))
 
 end ArgumentStructure
