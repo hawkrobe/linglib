@@ -446,18 +446,21 @@ Manner-of-motion verbs (`⟨false, false, true, false, false, true⟩`) have mot
 but no CoS or causation. In the resultative, they acquire both — unlocking
 causativeInchoative, middle, instrumentSubject, and resultative. -/
 
+/-- The components of a manner-of-motion verb: motion and a lexicalized manner. -/
+private def mannerOfMotion : MeaningComponents := ⟨false, false, true, false, false, true⟩
+
 /-- Manner-of-motion verbs alone: no CI, no middle, no instrumentSubject. -/
 theorem mannerOfMotion_blocked_alone :
-    (LevinClass.run.meaningComponents).predictedAlternation .causativeInchoative = false
-    ∧ (LevinClass.run.meaningComponents).predictedAlternation .middle = false
-    ∧ (LevinClass.run.meaningComponents).predictedAlternation .instrumentSubject = false := by
+    mannerOfMotion.predictedAlternation .causativeInchoative = false
+    ∧ mannerOfMotion.predictedAlternation .middle = false
+    ∧ mannerOfMotion.predictedAlternation .instrumentSubject = false := by
   exact ⟨rfl, rfl, rfl⟩
 
 /-- Manner-of-motion + resultative: CI, middle, and instrumentSubject all flip. -/
 theorem mannerOfMotion_resultative_flips :
-    predictedAlternationInConstruction (LevinClass.run.meaningComponents) resultative .causativeInchoative = true
-    ∧ predictedAlternationInConstruction (LevinClass.run.meaningComponents) resultative .middle = true
-    ∧ predictedAlternationInConstruction (LevinClass.run.meaningComponents) resultative .instrumentSubject = true := by
+    predictedAlternationInConstruction mannerOfMotion resultative .causativeInchoative = true
+    ∧ predictedAlternationInConstruction mannerOfMotion resultative .middle = true
+    ∧ predictedAlternationInConstruction mannerOfMotion resultative .instrumentSubject = true := by
   exact ⟨rfl, rfl, rfl⟩
 
 /-! ### Constructional augmentation summary

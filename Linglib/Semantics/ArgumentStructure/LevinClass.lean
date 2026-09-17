@@ -1,4 +1,3 @@
-import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.Events.Path
 import Linglib.Semantics.Aspect.Basic
@@ -8,18 +7,13 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # The verb classes of Levin 1993
 
-The verb classes of [levin-1993] Part II as an enumeration, each with its meaning components,
-the unaccusativity [levin-hovav-1995] predict for it, and whether it is a class of
-creation verbs. The classes' alternation profiles are in `DiathesisAlternation.lean`, their
-root entailments in `LevinTheory.lean`, and the `levinClasses` field of a `Verb` entry carries
-the classes listing it.
-
-## Implementation notes
-
-The taxonomy is at the grain of Levin's top-level classes, so a constructor such as `search`
-covers §35.1–35.6. Section numbers and example members were checked against the monograph.
-The meaning components are Levin's semantic characterizations; the alternations diagnose
-them only on the Introduction's quadruple, which `DiathesisAlternation.lean` records.
+The verb classes of [levin-1993] Part II as an enumeration, one constructor per class page
+with a member list, with the page's section number and title; the unaccusativity
+[levin-hovav-1995] predict for a class and whether it is a class of creation verbs
+([davies-dubinsky-2003]) are the library's readings of those papers, not Levin's. The classes'
+property tables are in `LevinClass/Properties.lean`, their member lists in
+`LevinClass/Members.lean`, their root entailments in `LevinTheory.lean`, and the
+`levinClasses` field of a `Verb` entry carries the classes listing it.
 
 ## References
 
@@ -867,116 +861,6 @@ def chapter (c : LevinClass) : ℕ := c.number.headD 0
 end LevinClass
 
 namespace LevinClass
-
-/-- The meaning components of a class: the Introduction's characterization for *break*,
-    *cut*, *hit* and *touch*, a reading of the Part II class descriptions for the classes the
-    library's studies use, and no components for the rest.
-    How the components predict alternations, and where the prediction fails against the
-    class profiles, is `MeaningComponents.predictedAlternation` in
-    `DiathesisAlternation.lean`. -/
-def meaningComponents : LevinClass → MeaningComponents
-  | .put => ⟨false, false, true, true, false, false⟩
-  | .putDirection => ⟨false, false, true, true, false, false⟩
-  | .funnel => ⟨false, false, true, true, false, true⟩
-  | .pour => ⟨false, false, true, true, false, true⟩
-  | .coil => ⟨false, false, true, true, false, true⟩
-  | .sprayLoad => ⟨false, false, true, true, false, false⟩
-  | .remove => ⟨false, false, true, true, false, false⟩
-  | .clear => ⟨true, false, true, true, false, false⟩
-  | .wipeManner | .wipeInstrument => ⟨true, true, true, true, false, true⟩
-  | .steal => ⟨false, false, false, true, false, false⟩
-  | .send => ⟨false, false, true, true, false, false⟩
-  | .carry => ⟨false, true, true, true, false, true⟩
-  | .drive => ⟨false, false, true, true, false, true⟩
-  | .pushPull => ⟨false, true, true, false, false, false⟩
-  | .give => ⟨false, false, false, true, false, false⟩
-  | .contribute => ⟨false, false, false, true, false, false⟩
-  | .get | .obtain => ⟨false, false, false, false, false, false⟩
-  | .exchange => ⟨false, false, false, false, false, false⟩
-  | .learn => ⟨false, false, false, false, false, false⟩
-  | .hold => ⟨false, true, false, false, false, false⟩
-  | .conceal => ⟨true, false, false, true, false, false⟩
-  | .throw => ⟨false, true, true, true, false, false⟩
-  | .hit => MeaningComponents.hit
-  | .swat => ⟨false, true, true, false, false, false⟩
-  | .spank => ⟨false, true, true, false, false, false⟩
-  | .poke => ⟨false, true, true, false, true, false⟩
-  | .touch => MeaningComponents.touch
-  | .cut => MeaningComponents.cut
-  | .carve => ⟨true, true, true, true, true, false⟩
-  | .mix => ⟨true, false, false, true, false, false⟩
-  | .amalgamate => ⟨true, false, false, true, false, false⟩
-  | .separate => ⟨true, false, false, true, false, false⟩
-  | .split => ⟨true, true, false, true, true, false⟩
-  | .color => ⟨true, true, false, true, false, false⟩
-  | .imageImpression | .scribble | .illustrate | .transcribe =>
-    ⟨true, true, false, true, true, false⟩
-  | .build => ⟨true, false, false, true, false, false⟩
-  | .grow => ⟨true, false, false, true, false, false⟩
-  | .create => ⟨true, false, false, true, false, false⟩
-  | .knead => ⟨true, true, false, true, false, true⟩
-  | .turn => ⟨true, false, false, true, false, false⟩
-  | .performance => ⟨false, false, false, false, false, true⟩
-  | .engender => ⟨true, false, false, true, false, false⟩
-  | .calve => ⟨true, false, false, false, false, false⟩
-  | .appoint => ⟨true, false, false, true, false, false⟩
-  | .characterize => ⟨false, false, false, false, false, false⟩
-  | .declare => ⟨true, false, false, true, false, false⟩
-  | .see => ⟨false, false, false, false, false, false⟩
-  | .sight => ⟨false, false, false, false, false, false⟩
-  | .amuse => ⟨true, false, false, true, false, false⟩
-  | .admire => ⟨false, false, false, false, false, false⟩
-  | .marvel => ⟨false, false, false, false, false, false⟩
-  | .want => ⟨false, false, false, false, false, false⟩
-  | .long => ⟨false, false, false, false, false, false⟩
-  | .judgment => ⟨false, false, false, false, false, false⟩
-  | .assessment => ⟨false, false, false, false, false, false⟩
-  | .hunt | .search | .stalk | .investigate | .rummage | .ferret =>
-    ⟨false, false, true, false, false, false⟩
-  | .correspond | .marry | .meet => ⟨false, false, false, false, false, false⟩
-  | .say => ⟨false, false, false, false, false, false⟩
-  | .tell => ⟨false, false, false, false, false, false⟩
-  | .mannerOfSpeaking => ⟨false, false, false, false, false, true⟩
-  | .talk => ⟨false, false, false, false, false, false⟩
-  | .animalSound => ⟨false, false, false, false, false, true⟩
-  | .eat => ⟨true, true, false, false, false, false⟩
-  | .devour => ⟨true, true, false, false, false, true⟩
-  | .dine => ⟨false, false, false, false, false, true⟩
-  | .hiccup | .breathe | .exhale => ⟨false, false, false, false, false, false⟩
-  | .nonverbalExpression => ⟨false, false, false, false, false, false⟩
-  | .flinch => ⟨false, false, true, false, false, false⟩
-  | .hurt => ⟨true, true, false, true, false, false⟩
-  | .dress => ⟨true, true, false, true, false, false⟩
-  | .murder => ⟨true, false, false, true, false, false⟩
-  | .poison => ⟨true, false, false, true, true, false⟩
-  | .lightEmission => ⟨false, false, false, false, false, false⟩
-  | .soundEmission => ⟨false, false, false, false, false, false⟩
-  | .substanceEmission => ⟨false, false, false, false, false, false⟩
-  | .destroy => MeaningComponents.destroy
-  | .break_ => MeaningComponents.break_
-  | .bend => MeaningComponents.bend
-  | .cooking => ⟨true, false, false, true, false, true⟩
-  | .otherChangeOfState => ⟨true, false, false, true, false, false⟩
-  | .entitySpecificChangeOfState => ⟨true, false, false, false, false, false⟩
-  | .calibratableChangeOfState => ⟨true, false, false, true, false, false⟩
-  | .lodge => ⟨false, false, true, false, false, false⟩
-  | .exist => ⟨false, false, false, false, false, false⟩
-  | .appear | .reflexiveAppearance => ⟨true, false, false, false, false, false⟩
-  | .disappearance => ⟨true, false, false, false, false, false⟩
-  | .bodyInternalMotion => ⟨false, false, true, false, false, false⟩
-  | .assumePosition => ⟨true, false, true, false, false, false⟩
-  | .inherentlyDirectedMotion => ⟨false, false, true, false, false, false⟩
-  | .leave => ⟨false, false, true, false, false, false⟩
-  | .roll | .run => ⟨false, false, true, false, false, true⟩
-  | .vehicleName | .nonVehicleName => ⟨false, false, true, false, false, true⟩
-  | .chase => ⟨false, false, true, false, false, false⟩
-  | .avoid => ⟨false, false, false, false, false, false⟩
-  | .linger => ⟨false, false, false, false, false, true⟩
-  | .rush => ⟨false, false, true, false, false, true⟩
-  | .register | .cost | .fit | .price | .bill => ⟨false, false, false, false, false, false⟩
-  | .begin | .complete => ⟨true, false, false, true, false, false⟩
-  | .weather => ⟨false, false, false, false, false, false⟩
-  | _ => .none
 
 /-- Predicted unaccusativity from Levin class membership.
 

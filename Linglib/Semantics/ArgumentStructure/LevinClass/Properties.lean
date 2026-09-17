@@ -1,5 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.MeaningComponents
 
 /-!
 # The property tables of the Levin classes
@@ -20,7 +21,7 @@ The tables are transcribed from the class pages mechanically; a property Levin p
 denial ("Unintentional interpretation not available", "Coreferential interpretation of
 pronouns not possible") is the corresponding alternation starred. The Introduction's component
 prediction agrees with Part II on the quadruple *break*, *cut*, *hit*, *touch*
-(`quadruple_prediction_matches`) and overshoots elsewhere (`prediction_not_sound`).
+(`quadruple_prediction_matches`).
 
 ## References
 
@@ -837,18 +838,12 @@ theorem quadruple_profiles_distinct :
       diagnosticAlternations.map fun a ↦ decide (c.Participates a)).Pairwise (· ≠ ·) := by
   decide +kernel
 
-/-- On the quadruple, the component prediction matches Part II for every diagnostic
-alternation. -/
+/-- On the quadruple, the Introduction's component prediction matches Part II for every
+diagnostic alternation. -/
 theorem quadruple_prediction_matches :
-    ∀ c ∈ [LevinClass.break_, .cut, .hit, .touch], ∀ a ∈ diagnosticAlternations,
-      c.meaningComponents.predictedAlternation a = decide (c.Participates a) := by
-  decide +kernel
-
-/-- The prediction is not sound in general: destroy verbs are change-of-state causatives that
-Part II stars for the causative alternations. -/
-theorem prediction_not_sound :
-    LevinClass.destroy.meaningComponents.predictedAlternation .causativeInchoative = true ∧
-      LevinClass.destroy.Stars .causativeInchoative := by
+    ∀ p ∈ [(LevinClass.break_, MeaningComponents.break_), (.cut, .cut), (.hit, .hit),
+      (.touch, .touch)], ∀ a ∈ diagnosticAlternations,
+      p.2.predictedAlternation a = decide (p.1.Participates a) := by
   decide +kernel
 
 end ArgumentStructure

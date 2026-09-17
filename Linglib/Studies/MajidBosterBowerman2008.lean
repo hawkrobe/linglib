@@ -435,7 +435,7 @@ theorem cut_specifies_manner_break_does_not :
     is about manner/predictability (root-level), not about event
     structure (template-level). -/
 theorem cut_break_same_template :
-    LevinClass.cut.eventTemplate = LevinClass.break_.eventTemplate :=
+    MeaningComponents.cut.predictedTemplate = MeaningComponents.break_.predictedTemplate :=
   rfl
 
 /-! Rather than defining inline profiles, we derive them from the actual

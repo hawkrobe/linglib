@@ -171,10 +171,10 @@ structure MatrixPredicate where
   verb : English.Verb
   mannerAdverb : Bool
 
-/-- Whether the verb's Levin class specifies manner, the manner-of-speaking class of
-[levin-1993] (`MeaningComponents.mannerSpec`). -/
+/-- Whether the verb lexicalizes a manner: it is a manner-of-speaking verb of
+[levin-1993]. -/
 def MatrixPredicate.lexicalManner (p : MatrixPredicate) : Bool :=
-  decide (∃ c ∈ p.verb.levinClasses, c.meaningComponents.mannerSpec = true)
+  decide (.mannerOfSpeaking ∈ p.verb.levinClasses)
 
 /-- The predicate carries manner, lexically or by a manner adverb. -/
 def MatrixPredicate.HasManner (p : MatrixPredicate) : Prop :=
@@ -186,13 +186,12 @@ instance : DecidablePred MatrixPredicate.HasManner := λ _ => inferInstanceAs (D
 theorem hasManner_of_mannerOfSpeaking {v : English.Verb}
     (h : .mannerOfSpeaking ∈ v.levinClasses)
     (b : Bool) : MatrixPredicate.HasManner ⟨v, b⟩ :=
-  Or.inl (decide_eq_true ⟨.mannerOfSpeaking, h, rfl⟩)
+  Or.inl (decide_eq_true h)
 
 /-- A verb of the *say* class carries manner only by an adverb. -/
 theorem hasManner_say_iff {v : English.Verb} (h : v.levinClasses = {.say}) (b : Bool) :
     MatrixPredicate.HasManner ⟨v, b⟩ ↔ b = true := by
   simp [MatrixPredicate.HasManner, MatrixPredicate.lexicalManner, h]
-  exact fun h ↦ absurd h (by decide)
 
 /-- The dimension the active question addresses. -/
 inductive Dimension where
