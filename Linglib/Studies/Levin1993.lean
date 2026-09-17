@@ -6,7 +6,7 @@ import Linglib.Data.Examples.Levin1993
 
 This file formalizes the diagnostic of [levin-1993]: a verb's participation in diathesis
 alternations follows from its meaning, so verbs fall into semantically coherent classes that
-share an alternation profile (`ArgumentStructure.LevinClass.participatesIn`). The book's
+share an alternation profile (`ArgumentStructure.LevinClass.Participates`). The book's
 opening quadruple *break*, *cut*, *hit*, *touch* takes four distinct profiles across the
 causative/inchoative, middle, conative, and body-part possessor ascension alternations, one
 class each (`quadruple_profiles_distinct`), and every categorical alternation judgment among
@@ -102,21 +102,22 @@ def observed (e : LinguisticExample) : Option Bool :=
   | some "false" => some false
   | _ => none
 
-/-- Every categorical row with a representable class and alternation agrees with the class's
-profile; in particular an inherently specified instrument requires an agent, which keeps
-*cut* out of the inchoative. -/
+/-- Every categorical row whose alternation the class's Part II page tests agrees with the
+page: attested rows are in the class's profile and starred rows outside it. The passive, the
+*way* construction, directional phrases and the swarm alternation are presented in Part One by
+verb list and not tested on the class pages, so those rows fall outside the check. -/
 theorem participation_matches_profile :
     ∀ e ∈ Examples.all, ∀ c ∈ classOf e, ∀ a ∈ alternationOf e, ∀ b ∈ observed e,
-      c.participatesIn a = b := by
+      a ∈ c.alternations ∪ c.starredAlternations → decide (c.Participates a) = b := by
   decide
 
 /-- The book's opening quadruple: *break*, *cut*, *hit*, and *touch* take pairwise distinct
 profiles across the causative/inchoative, middle, conative, and body-part possessor ascension
 alternations, so they instantiate four verb classes. -/
 theorem quadruple_profiles_distinct :
-    ([LevinClass.break_, .cut, .hit, .touch].map λ c =>
+    ([LevinClass.break_, .cut, .hit, .touch].map fun c ↦
       [DiathesisAlternation.causativeInchoative, .middle, .conative,
-        .bodyPartPossessorAscension].map c.participatesIn).Pairwise (· ≠ ·) := by
+        .bodyPartPossessorAscension].map fun a ↦ decide (c.Participates a)).Pairwise (· ≠ ·) := by
   decide
 
 end Levin1993

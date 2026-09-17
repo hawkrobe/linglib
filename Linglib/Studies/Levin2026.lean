@@ -78,7 +78,7 @@ def intrPushOpenClasses : List LevinClass := [.pushPull, .hit]
     alternate, so the construction must license the alternation. -/
 theorem all_classes_no_causative_alternation :
     intrPushOpenClasses.all
-      (! ·.participatesIn .causativeInchoative) = true := by
+      (fun c ↦ !decide (c.Participates .causativeInchoative)) = true := by
   decide
 
 /-- Cross-reference: [levin-1993]'s judgment rows already record that *hit*
@@ -92,7 +92,7 @@ theorem agrees_with_diathesis_data :
     no causation. The result and causation come from the construction. -/
 theorem all_classes_pure_manner :
     intrPushOpenClasses.all
-      (·.rootEntailments == Root.Kinds.pureManner) = true := by
+      (·.rootEntailments == some Root.Kinds.pureManner) = true := by
   decide
 
 /-- All core classes encode contact and motion but NOT change of state
@@ -379,7 +379,7 @@ theorem all_verbs_from_predicted_classes :
     their surface-contact sense, not their removing sense. -/
 theorem per_pair_alternation_core :
     (alternationPairs.filter (intrPushOpenClasses.contains ·.verbClass)).all (λ p =>
-      !p.verbClass.participatesIn .causativeInchoative &&
+      !decide (p.verbClass.Participates .causativeInchoative) &&
       predictedAlternationInConstruction
         p.verbClass.meaningComponents resultative .causativeInchoative
     ) = true := by decide
@@ -466,8 +466,8 @@ from `Causation.CCSelection`. -/
     while *push open* must be an anticausative licensed by the
     construction. -/
 theorem freeze_alternates_push_does_not :
-    LevinClass.otherCoS.participatesIn .causativeInchoative = true ∧
-    LevinClass.pushPull.participatesIn .causativeInchoative = false := ⟨rfl, rfl⟩
+    LevinClass.otherCoS.Participates .causativeInchoative ∧
+    ¬ LevinClass.pushPull.Participates .causativeInchoative := by decide
 
 /-! ## PCC and the independent-source analysis
 
@@ -707,8 +707,8 @@ theorem blocked_wrong_adjective :
 
 theorem end_to_end_push_open :
     -- Step 1-2: verb class blocks alternation alone
-    LevinClass.pushPull.participatesIn .causativeInchoative = false ∧
-    LevinClass.rootEntailments .pushPull == Root.Kinds.pureManner ∧
+    ¬ LevinClass.pushPull.Participates .causativeInchoative ∧
+    LevinClass.rootEntailments .pushPull == some Root.Kinds.pureManner ∧
     -- Step 3: fusion — construction adds CoS + causation → alternation predicted
     predictedAlternationInConstruction
       LevinClass.pushPull.meaningComponents
@@ -721,7 +721,7 @@ theorem end_to_end_push_open :
     anticausativeLicensed .recoverableInContext = true ∧
     -- Step 8-9: theme is projectile → autonomous motion OK
     canBeIntrPushOpenSubject .projectile = true := by
-  refine ⟨rfl, ?_, ?_, rfl, rfl, rfl, rfl⟩ <;> decide
+  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl⟩ <;> decide
 
 /-! ## FilledResultative: bundling lexical material with the construction
 

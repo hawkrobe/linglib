@@ -214,14 +214,14 @@ open English hiding Verb in
 /-- The configuration of an experimental item whose main verb is a Fragment entry: a verb of
 creation is one whose Levin class is a class of creation. -/
 def Config.ofVerb (d : Dependency) (o : Definiteness) (v : English.Verb) : Config :=
-  ⟨d, o, v.levinClass.any LevinClass.isVerbOfCreation⟩
+  ⟨d, o, v.levinClass.any (decide <| LevinClass.IsVerbOfCreation ·)⟩
 
 open English hiding Verb in
 /-- The predicted English contrast within a sentence frame (23): subextraction from a definite
 object costs one violation more under the non-creation verb than under the creation verb. -/
 theorem violations_ofVerb {v u : English.Verb}
-    (hv : v.levinClass.any LevinClass.isVerbOfCreation = true)
-    (hu : u.levinClass.any LevinClass.isVerbOfCreation = false) :
+    (hv : v.levinClass.any (decide <| LevinClass.IsVerbOfCreation ·) = true)
+    (hu : u.levinClass.any (decide <| LevinClass.IsVerbOfCreation ·) = false) :
     violations combined (Config.ofVerb .movement .definite u) =
       violations combined (Config.ofVerb .movement .definite v) + 1 := by
   simp only [Config.ofVerb, hv, hu]

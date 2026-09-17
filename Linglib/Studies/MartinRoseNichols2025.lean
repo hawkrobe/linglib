@@ -249,28 +249,30 @@ theorem break_destroy_same_components :
 /-- Thick manner verbs belong to Levin classes that predict the
     causative alternation. -/
 theorem break_class_predicts_alternation :
-    LevinClass.break_.participatesIn .causativeInchoative = true := rfl
+    LevinClass.break_.Participates .causativeInchoative := by decide
 
 /-- Cut (thick) is in a class that predicts conative and BPPA alternations.
     Unlike break, cut does NOT participate in causative/inchoative because
     instrument specification blocks the inchoative. -/
 theorem cut_class_rich_alternation :
-    LevinClass.cut.participatesIn .causativeInchoative = false
-    ∧ LevinClass.cut.participatesIn .conative = true
-    ∧ LevinClass.cut.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl, rfl⟩
+    ¬ LevinClass.cut.Participates .causativeInchoative
+    ∧ LevinClass.cut.Participates .conative
+    ∧ LevinClass.cut.Participates .bodyPartPossessorAscension := by decide
 
-/-- Destroy (thin) is also predicted to participate in causative alternation
-    by its meaning components, but empirically it does not alternate.
-    This shows the limits of meaning-component prediction. -/
+/-- Destroy (thin) is predicted to alternate by its meaning components, but Levin's class
+    page stars the alternation and the paper's row agrees: the component prediction
+    overshoots. -/
 theorem destroy_class_vs_empirical :
-    LevinClass.destroy.participatesIn .causativeInchoative = true
-    ∧ MartinRoseNichols2025.ThickThin.destroy.alternating = false := ⟨rfl, rfl⟩
+    LevinClass.destroy.meaningComponents.predictedAlternation .causativeInchoative = true
+    ∧ DiathesisAlternation.causativeInchoative ∈ LevinClass.destroy.starredAlternations
+    ∧ MartinRoseNichols2025.ThickThin.destroy.alternating = false := by decide
 
-/-- Kill (thin, murder class) is predicted to participate in causative
-    alternation but empirically does not alternate. -/
+/-- Kill (thin, murder class) is predicted to alternate by its meaning components, but
+    Levin's class page stars the alternation and the paper's row agrees. -/
 theorem kill_class_vs_empirical :
-    LevinClass.murder.participatesIn .causativeInchoative = true
-    ∧ kill.alternating = false := ⟨rfl, rfl⟩
+    LevinClass.murder.meaningComponents.predictedAlternation .causativeInchoative = true
+    ∧ DiathesisAlternation.causativeInchoative ∈ LevinClass.murder.starredAlternations
+    ∧ kill.alternating = false := by decide
 
 /-- All ThickThin verb entries (for aggregate bridge theorems). -/
 def allEntries : List ThickThinEntry :=

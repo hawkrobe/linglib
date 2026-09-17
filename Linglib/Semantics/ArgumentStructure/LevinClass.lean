@@ -4,86 +4,33 @@ import Linglib.Semantics.Events.Path
 import Linglib.Semantics.Aspect.Basic
 
 /-!
-# Verb classes: the [levin-1993] taxonomy
-[levin-1993] [levin-rappaport-hovav-2005]
+# The verb classes of Levin 1993
 
-The 49-class verb taxonomy from [levin-1993] Part II, with
-per-class meaning-component profiles, unaccusativity prediction, and
-verb-of-creation flag.
+The verb classes of [levin-1993] Part II as an enumeration, each with its meaning components,
+the unaccusativity [levin-hovav-1995] predict for it, and whether it is a class of
+creation verbs. The classes' alternation profiles are in `DiathesisAlternation.lean`, their
+root entailments in `LevinTheory.lean`, and the `levinClass` field of a `Verb` entry carries
+its class.
 
-## Provenance
+## Implementation notes
 
-Lives at `Semantics/ArgumentStructure/LevinClass.lean` as the verb
-word-class's classification API — `Verb` entries carry a `levinClass`
-field and derive their default argument profiles through
-`LevinClass.roleList`. Root derivations live in the sibling
-`LevinTheory.lean`, the diagnostic features in `MeaningComponents.lean`.
+The taxonomy is at the grain of Levin's top-level classes, so a constructor such as `search`
+covers §35.1–35.6. Section numbers and example members were checked against the monograph.
+The meaning components are Levin's semantic characterizations; the alternations diagnose
+them only on the Introduction's quadruple, which `DiathesisAlternation.lean` records.
 
-## Framework commitment
+## References
 
-[levin-1993]'s 49 classes are the most widely-cited reference for
-English verb classification, but they are **not** the only such taxonomy.
-Sibling theory-named slots are intentionally unfilled in this restructure:
-
-- `ArgumentStructure/VerbNet.lean` — Kipper-Schuler 2005
-  formally extends Levin to ~270 classes with thematic role hierarchies
-- `ArgumentStructure/FrameNet.lean` — Fillmore/Baker/Sato semantic
-  frames as an alternative to alternation-based classification
-- `ArgumentStructure/PropBank.lean` — Palmer/Gildea/Kingsbury 2005
-  verb-specific argument frames
-- `Studies/Faulhaber2011.lean` — *Verb Valency Patterns*
-  empirical critique of meaning-based predictions about alternation
-  participation; the principal disconfirming reference
-
-Future formalisations of these alternatives should land as siblings
-here, with refutation theorems showing where they diverge from Levin
-on attested verbs.
-
-## Citation hygiene notes
-
-- The per-class section numbers in `LevinClass.levinSection` and the
-  example members beside each constructor were checked against the
-  monograph's table of contents and Part II member lists.
-- The `meaningComponents` per-class assignments in [levin-1993]'s
-  Part II text are similarly UNVERIFIED in detail; the canonical
-  *break*/*cut*/*hit*/*touch* assignments from the Introduction are
-  the most reliably-cited.
-- `isVerbOfCreation .cooking := true` is debatable per [dowty-1979]
-  *bake*-polysemy: *bake a cake* (creation) vs *bake the potato* (CoS).
-  Levin §45.3 cooking verbs exhibit causative-inchoative alternation
-  grouping them with CoS verbs; the substrate's classification reflects
-  the creation reading, but downstream consumers should be aware of the
-  polysemy.
-
-## Alternative frameworks not formalized in linglib
-
-The Levin-style alternation-diagnosed classification competes with
-other lexical-semantic frameworks that may be worth formalizing as
-sibling theories:
-- **Generative Lexicon** ([pustejovsky-1995]): qualia structure
-  (formal/constitutive/telic/agentive) as the primitive decomposition,
-  with verbs deriving meaning from interaction with NP qualia.
-- **Frame semantics** ([fillmore-1982], [fillmore-kay-oconnor-1988]):
-  semantic frames as the primitive, alternations as surface reflexes.
-- **Configurational lexical semantics** ([hale-keyser-1987]):
-  verb meaning derives from syntactic configuration, not feature decomposition.
-- **Lexical Conceptual Structure** ([jackendoff-1996]): primitive
-  predicates GO/STAY/CAUSE compose into LCS templates.
+* [levin-1993]
+* [levin-hovav-1995]
+* [davies-dubinsky-2003]
 -/
 
 namespace ArgumentStructure
 
-/-- Verb class taxonomy from [levin-1993] Part II.
-
-    Section numbers follow the book. Class names are Levin's labels.
-    49 top-level classes covering the English verb lexicon.
-
-    Not all subclasses are listed here — the taxonomy is intentionally
-    at the top-level class grain, with subclass distinctions handled by
-    `MeaningComponents` and `RootProfile`.
-
-    The example members beside each constructor are drawn from the
-    class's member list in Part II. -/
+/-- The verb classes of [levin-1993] Part II, named by Levin's labels, with the section
+    number and example members from each class's member list. Some constructors sit at a
+    parent grain (`search` for §35.1–35.6, `mannerOfMotion` for §51.3.1–51.3.2). -/
 inductive LevinClass where
   -- Verbs of Putting (§ 9)
   | put                -- 9.1: put, place, set, position, ...
@@ -236,73 +183,11 @@ inductive LevinClass where
 
 namespace LevinClass
 
-/-- Section number in [levin-1993] for each class. The bare name
-    `section` would clash with Lean's reserved keyword; we use
-    `levinSection` as the canonical accessor.
-
-    Section numbers checked against the monograph's table of contents;
-    the classes are at Levin's top-level grain, so `search` covers
-    §35.1–35.6 and `mannerOfMotion` §51.3.1–51.3.2. -/
-def levinSection : LevinClass → String
-  | .put => "9.1" | .funnel => "9.3" | .putDirection => "9.4" | .pour => "9.5"
-  | .coil => "9.6" | .sprayLoad => "9.7"
-  | .remove => "10.1" | .clear => "10.3" | .wipe => "10.4"
-  | .steal => "10.5"
-  | .send => "11.1" | .carry => "11.4" | .drive => "11.5"
-  | .pushPull => "12"
-  | .give => "13.1" | .contribute => "13.2"
-  | .getObtain => "13.5" | .exchange => "13.6"
-  | .learn => "14" | .hold => "15.1" | .conceal => "16"
-  | .throw => "17.1" | .hit => "18.1" | .swat => "18.2" | .spank => "18.3"
-  | .poke => "19" | .touch => "20"
-  | .cut => "21.1" | .carve => "21.2"
-  | .mix => "22.1" | .amalgamate => "22.2"
-  | .separate => "23.1" | .split => "23.2"
-  | .color => "24" | .imageCreation => "25"
-  | .build => "26.1" | .grow => "26.2" | .create => "26.4"
-  | .knead => "26.5" | .turn => "26.6" | .performance => "26.7"
-  | .engender => "27" | .calve => "28"
-  | .appoint => "29.1" | .characterize => "29.2" | .declare => "29.4"
-  | .see => "30.1" | .sight => "30.2"
-  | .amuse => "31.1" | .admire => "31.2" | .marvel => "31.3"
-  | .want => "32.1" | .long => "32.2" | .judgment => "33" | .assessment => "34"
-  | .search => "35" | .socialInteraction => "36"
-  | .say => "37.7" | .tell => "37.2" | .mannerOfSpeaking => "37.3" | .talk => "37.5"
-  | .animalSound => "38"
-  | .eat => "39.1" | .devour => "39.4" | .dine => "39.5"
-  | .bodyProcess => "40.1" | .nonverbalExpression => "40.2" | .flinch => "40.5"
-  | .hurt => "40.8.3" | .dress => "41.1.1"
-  | .murder => "42.1" | .poison => "42.2"
-  | .lightEmission => "43.1" | .soundEmission => "43.2"
-  | .substanceEmission => "43.4"
-  | .destroy => "44"
-  | .break_ => "45.1" | .bend => "45.2" | .cooking => "45.3"
-  | .otherCoS => "45.4" | .entitySpecificCoS => "45.5"
-  | .calibratableCoS => "45.6"
-  | .lodge => "46" | .exist => "47.1" | .appear => "48.1"
-  | .disappearance => "48.2"
-  | .bodyInternalMotion => "49" | .assumePosition => "50"
-  | .inherentlyDirectedMotion => "51.1" | .leave => "51.2"
-  | .mannerOfMotion => "51.3" | .vehicleMotion => "51.4"
-  | .chase => "51.6"
-  | .avoid => "52" | .linger => "53.1" | .rush => "53.2"
-  | .measure => "54" | .aspectual => "55" | .weather => "57"
-
-/-- Meaning components associated with each Levin class.
-
-    Profiles are assigned using the diagnostic criteria from [levin-1993]:
-    - `changeOfState`: middle alternation
-    - `contact`: body-part possessor ascension
-    - `motion`: conative alternation requires motion + contact
-    - `causation`: causative/inchoative alternation
-    - `instrumentSpec`: verb specifies instrument/means
-    - `mannerSpec`: verb specifies manner of action
-
-    UNVERIFIED: Per-class meaning-component assignments are summary
-    judgments; the canonical *break*/*cut*/*hit*/*touch* from Levin's
-    Introduction are the most reliably cited; per-class assignments
-    for the other 45 classes are the formaliser's interpretation of
-    Part II text and should be cross-checked. -/
+/-- The meaning components of each class: the Introduction's characterization for *break*,
+    *cut*, *hit* and *touch*, and a reading of the Part II class descriptions for the rest.
+    How the components predict alternations, and where the prediction fails against the
+    class profiles, is `MeaningComponents.predictedAlternation` in
+    `DiathesisAlternation.lean`. -/
 def meaningComponents : LevinClass → MeaningComponents
   | .put => ⟨false, false, true, true, false, false⟩
   | .putDirection => ⟨false, false, true, true, false, false⟩
@@ -384,7 +269,7 @@ def meaningComponents : LevinClass → MeaningComponents
   | .bend => MeaningComponents.bend
   | .cooking => ⟨true, false, false, true, false, true⟩
   | .otherCoS => ⟨true, false, false, true, false, false⟩
-  | .entitySpecificCoS => ⟨true, false, false, true, false, false⟩
+  | .entitySpecificCoS => ⟨true, false, false, false, false, false⟩
   | .calibratableCoS => ⟨true, false, false, true, false, false⟩
   | .lodge => ⟨false, false, true, false, false, false⟩
   | .exist => ⟨false, false, false, false, false, false⟩
@@ -423,36 +308,19 @@ def PredictsUnaccusative : LevinClass → Prop
   | .leave => True
   | .lightEmission | .soundEmission | .substanceEmission => True
   | .weather => True
+  | .putDirection | .spank | .long | .hurt | .talk | .nonverbalExpression => False
   | _ => False
 
 instance : DecidablePred LevinClass.PredictsUnaccusative := fun c => by
   cases c <;> unfold LevinClass.PredictsUnaccusative <;> infer_instance
 
-/-- Whether a Levin class denotes creation of the object referent.
-    [davies-dubinsky-2003]: VOCs produce their direct object
-    as a result of the event. -/
-def isVerbOfCreation : LevinClass → Bool
-  | .imageCreation => true
-  | .build         => true
-  | .grow          => true
-  | .create        => true
-  | .knead         => true
-  | .performance   => true
-  | .cooking       => true
-  | _              => false
+/-- The class denotes the creation of its object ([davies-dubinsky-2003]). -/
+def IsVerbOfCreation : LevinClass → Prop
+  | .imageCreation | .build | .grow | .create | .knead | .performance | .cooking => True
+  | _ => False
 
-/-- Whether a verb class inherently specifies a path shape.
-    Inherently directed motion verbs (Levin 51.1: arrive, come, go)
-    lexicalize a bounded path. Manner-of-motion verbs (51.3: run, walk)
-    are path-neutral — the path comes from a PP complement.
-    [talmy-2000]: verb-framed vs. satellite-framed distinction. -/
-def pathSpec : LevinClass → Option (Spatial.Path.Directionality × Aspect.Telicity)
-  | .inherentlyDirectedMotion => some (.goal, .telic)
-  | .leave => some (.source, .telic)
-  | .mannerOfMotion => none    -- path from PP
-  | .vehicleMotion => none     -- path from PP/context
-  | .chase => none             -- path from complement
-  | _ => none                  -- non-motion verbs
+instance : DecidablePred LevinClass.IsVerbOfCreation := fun c => by
+  cases c <;> unfold LevinClass.IsVerbOfCreation <;> infer_instance
 
 end LevinClass
 
