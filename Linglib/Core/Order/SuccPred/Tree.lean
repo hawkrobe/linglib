@@ -5,18 +5,35 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Order.SuccPred.Archimedean
 import Mathlib.Order.BoundedOrder.Basic
+import Mathlib.Order.Comparable
 import Mathlib.Data.Nat.Find
 
 /-!
-# Meets in bounded pred-archimedean orders
+# Rooted trees
 
-`[UPSTREAM]` candidate for `Mathlib/Order/SuccPred/Tree.lean`: in a
-partial order with a bottom, predecessors, and archimedean descent —
-the unbundled data of a rooted tree — binary meets exist: `a ⊓ b` is
-the first `pred`-iterate of `a` that lies below `b`. `RootedTree`
-currently asks for `SemilatticeInf` as a field; on orders with
-decidable `≤` it is derivable.
+`[UPSTREAM]` candidate for `Mathlib/Order/SuccPred/Tree.lean`, which represents a rooted tree
+by its ancestorship order: a partial order with a bottom, predecessors, and archimedean
+descent. This file adds two facts about such orders.
+
+Subtrees: the elements above incomparable nodes are disjoint, `disjoint_Ici_of_incompRel`,
+since the elements below any node form a chain (`le_total_of_directed`); `RootedTree` states
+this for the subtrees under atoms alone.
+
+Meets: with a bottom, binary meets exist, `a ⊓ b` being the first `pred`-iterate of `a` that
+lies below `b`. `RootedTree` asks for `SemilatticeInf` as a field; on orders with decidable `≤`
+it is derivable.
 -/
+
+section Subtrees
+
+variable {α : Type*} [Preorder α] [PredOrder α] [IsPredArchimedean α]
+
+/-- The subtrees under incomparable nodes are disjoint. -/
+theorem disjoint_Ici_of_incompRel {a b : α} (h : IncompRel (· ≤ ·) a b) :
+    Disjoint (Set.Ici a) (Set.Ici b) :=
+  Set.disjoint_left.2 fun _ ha hb ↦ (le_total_of_directed ha hb).elim h.2 h.1
+
+end Subtrees
 
 namespace IsPredArchimedean
 
@@ -26,7 +43,7 @@ variable {α : Type*} [PartialOrder α] [PredOrder α] [IsPredArchimedean α]
 /-- Some `pred`-iterate of `a` lies below `b`: descend all the way
     to `⊥`. -/
 theorem exists_pred_iterate_le (a b : α) : ∃ i, Order.pred^[i] a ≤ b :=
-  ((bot_le (a := a)).exists_pred_iterate).imp λ _ h => (le_of_eq h).trans bot_le
+  ((bot_le (a := a)).exists_pred_iterate).imp fun _ h ↦ (le_of_eq h).trans bot_le
 
 /-- Binary meets from archimedean descent: `a ⊓ b` is the first
     `pred`-iterate of `a` below `b`. Not an instance: a type may
