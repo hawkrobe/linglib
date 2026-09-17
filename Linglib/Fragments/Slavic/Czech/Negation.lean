@@ -20,6 +20,6 @@ namespace Czech.Negation
 open Syntax.Negation
 
 /-- *ne-*, the standard negation prefix. -/
-def ne : Marker := { morphs := [.pref "ne"] }
+def ne : Marker := { pieces := [[.pref "ne"]] }
 
 end Czech.Negation

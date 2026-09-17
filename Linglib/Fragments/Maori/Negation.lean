@@ -35,7 +35,7 @@ open Syntax.Negation
     morphology, *kāhore* could be analyzed as a verb or a particle.
     Functions as a quasi-auxiliary that takes the TAM-particle position. -/
 def kahore : Marker :=
-  { morphs := [.free "kāhore"] }
+  { pieces := [[.free "kāhore"]] }
 
 /-- A Maori negation example. -/
 structure NegExample where

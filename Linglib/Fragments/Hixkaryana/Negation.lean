@@ -28,7 +28,7 @@ open Syntax.Negation
     Deverbalizes the lexical verb (A/Fin asymmetry); a copula then takes
     over as the finite element. -/
 def hira : Marker :=
-  { morphs := [.suff "hira"] }
+  { pieces := [[.suff "hira"]] }
 
 /-- A Hixkaryana negation example. -/
 structure NegExample where

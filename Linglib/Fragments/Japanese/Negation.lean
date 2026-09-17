@@ -32,7 +32,7 @@ open Morphology (MorphCategory)
 open Syntax.Negation
 
 /-- The negative suffix *-nai*. -/
-def negSuffix : Marker := { morphs := [.suff "nai"] }
+def negSuffix : Marker := { pieces := [[.suff "nai"]] }
 
 /-- The forms of the verb paradigm. -/
 inductive Form where

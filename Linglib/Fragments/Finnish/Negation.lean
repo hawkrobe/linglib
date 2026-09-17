@@ -45,7 +45,7 @@ open Syntax.Negation
     buy' loses the tense marking *osta-n* 'I buy' carries). The 6 surface
     forms (en/et/ei/emme/ette/eivät) are accessible via `negParadigm`. -/
 def ei : Marker :=
-  { morphs := [.free "ei"] }
+  { pieces := [[.free "ei"]] }
 
 /-! ### Negative auxiliary paradigm -/
 

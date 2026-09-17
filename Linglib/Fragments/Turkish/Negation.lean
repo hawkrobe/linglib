@@ -40,7 +40,7 @@ open Syntax.Negation
     abstract citation form; the harmony-conditioned alternants are
     captured by the language's morphology layer, not the marker entry. -/
 def negSuffix : Marker :=
-  { morphs := [.suff "mA"] }
+  { pieces := [[.suff "mA"]] }
 
 /-- A Turkish negation paradigm entry. -/
 structure NegParadigmEntry where

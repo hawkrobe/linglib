@@ -52,7 +52,7 @@ open Syntax.Negation
     classes (see § 2 below); Januubi shows no negator-trigger covariation
     unlike French and Mandarin. -/
 def maa : Marker :=
-  { morphs := [.free "maa"] }
+  { pieces := [[.free "maa"]] }
 
 /-- The standard sentential negation marker in Januubi Arabic. -/
 def standardNeg : String := maa.form

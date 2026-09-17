@@ -60,17 +60,17 @@ open Morphology (Morph)
 
 /-- A standard sentential negation marker. -/
 structure Marker where
-  /-- The exponent, in surface order; a bipartite marker lists both
-      pieces (Burmese *ma-…-bu*). Affixal alternants are recorded by an
-      abstract citation form (Turkish *-mA-* for *-ma-* ~ *-me-*). -/
-  morphs : List Morph
+  /-- The exponent as contiguous pieces in surface order; a bipartite
+      marker has two (Burmese *ma-…-bu*). Affixal alternants are recorded by
+      an abstract citation form (Turkish *-mA-* for *-ma-* ~ *-me-*). -/
+  pieces : List (List Morph)
   /-- Standard interlinear gloss. -/
   gloss : String := "NEG"
   deriving Repr
 
-/-- The surface form of a marker: its morphs with boundary notation,
-discontinuous pieces separated by `…`. -/
-def Marker.form (m : Marker) : String := String.intercalate "…" (m.morphs.map toString)
+/-- The surface form of a marker: its pieces in boundary notation, separated
+by `…`. -/
+def Marker.form (m : Marker) : String := String.intercalate "…" (m.pieces.map Morph.surface)
 
 /-! ### Per-language WALS values -/
 
