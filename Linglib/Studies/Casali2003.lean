@@ -3,7 +3,8 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Segmental.Basic
+import Linglib.Fragments.Akan.Phonology
+import Linglib.Fragments.Yoruba.Phonology
 import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
@@ -19,8 +20,13 @@ where high vowels contrast and [−ATR] dominant where only mid vowels do, again
 Independence Hypothesis shared by the Universal [+ATR] Dominance and Variable [ATR] Dominance
 theories; the correlation is its hypothesis (20) (`InventoryType.specifiedValue`,
 `SystemDependent`), with Kimatuumbi and Legbo the two survey languages it leaves
-unexplained. Section 7 derives the correlation from lexical specification: only the specified
-value is present underlyingly, MAX([ATR]) preserves it and *[ATR] penalizes it. Ranked
+unexplained. Its two poles are Akan, the nine-vowel 5Ht system whose [+ATR] spreads across word
+boundaries and in compounds and lends /a/ a [+ATR] allophone (Table 2), and Standard Yoruba,
+the seven-vowel 4Ht(M) system with [−ATR] spreading in compounds (Table 4); both types derive
+from the fragments' inventories and both languages conform, while a [+ATR]-dominant Yoruba, its
+Yoruba⁺, would not (`akan_conforms`, `yoruba_conforms`, `yoruba_plus_violates`). Section 7
+derives the correlation from lexical specification: only the specified value is present
+underlyingly, MAX([ATR]) preserves it and *[ATR] penalizes it. Ranked
 HARMONY, MAX([ATR])root ≫ *[ATR] ≫ MAX([ATR]), affixes take the root's value whatever the
 inputs, its tableaux (21) and (22) (`rootControl_optimal`); promoting MAX([ATR]) above *[ATR]
 lets the specified value win from either position, the classic dominant pattern
@@ -139,6 +145,30 @@ def InventoryType.specifiedValue : InventoryType → Bool
 inventory type's specified value as its systematically dominant value. -/
 def SystemDependent (dominant : Bool) : Prop :=
   ∀ T ∈ inventoryType? I, dominant = T.specifiedValue
+
+instance (dominant : Bool) : Decidable (SystemDependent I dominant) := by
+  unfold SystemDependent; infer_instance
+
+/-! ### Two survey languages -/
+
+/-- Akan's nine vowels form a 5Ht system, and its [+ATR] dominance (Table 2) conforms to
+(20); the [−ATR] spreading from a dominant affix it also shows (Table 5) is the indirect
+kind. -/
+theorem akan_conforms :
+    inventoryType? Akan.Phonology.inventory = some .fiveHeight ∧
+      SystemDependent Akan.Phonology.inventory true := by
+  decide
+
+/-- Standard Yoruba's seven vowels form a 4Ht(M) system, and its [−ATR] dominance
+(Table 4) conforms to (20). -/
+theorem yoruba_conforms :
+    inventoryType? Yoruba.inventory = some .fourHeightMid ∧
+      SystemDependent Yoruba.inventory false := by
+  decide
+
+/-- Yoruba⁺, a 4Ht(M) language with [+ATR] dominance, would violate (20): the typological
+gap the survey finds nearly empty. -/
+theorem yoruba_plus_violates : ¬ SystemDependent Yoruba.inventory true := by decide
 
 /-! ### Section 7: dominance from inventory-dependent specification
 

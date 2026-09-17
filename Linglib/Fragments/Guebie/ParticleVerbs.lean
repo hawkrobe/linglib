@@ -3,22 +3,19 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Segmental.Basic
+import Linglib.Fragments.Guebie.Phonology
 
 /-!
-# Guébie: vowels, ATR, and particle verbs
+# Guébie particle verbs
 
-Lexical substrate for Guébie (Kru; Côte d'Ivoire): the ten-vowel ±ATR inventory
-([sande-2022] §3.2, [sande-clem-dabkowski-2026] (1)) and the particle-verb
-lexicon ([sande-clem-dabkowski-2026] (10)–(12)). Particle verbs are phrasal
+The particle-verb lexicon of Guébie ([sande-clem-dabkowski-2026] (10)–(12)) over the
+vowels of `Fragments/Guebie/Phonology.lean`. Particle verbs are phrasal
 idioms — a prefixing particle plus a verb, with noncompositional meaning; the
 particle harmonizes with the verb root in ATR when both are spelled out in the
 same phase, and carries its lexical value otherwise.
 
 ## Main definitions
 
-* `Guebie.Vowel`, `Guebie.Vowel.segment`, `Guebie.inventory`: the ten vowels, their
-  segments, and the inventory; `Vowel.atr` is the ±ATR split.
 * `Guebie.Morpheme`: a transcription with vowel skeleton; `Morpheme.atr` is its
   lexical ATR value (morpheme-internal vowels agree, `Morpheme.ATRUniform`).
 * `Guebie.ParticleVerb`, `Guebie.particleVerbs`: the (10) inventory plus the
@@ -27,41 +24,6 @@ same phase, and carries its lexical value otherwise.
 -/
 
 namespace Guebie
-
-open Phonology
-
-/-- The ten Guébie vowels ([sande-2022] §3.2). Constructor names ASCII-ize the
-    IPA (capital = lax −ATR counterpart): `schwa` = ə, `I` = ɪ, `E` = ɛ,
-    `O` = ɔ, `U` = ʊ. -/
-inductive Vowel where
-  | i | e | schwa | o | u
-  | I | E | a | O | U
-  deriving DecidableEq, Repr, Fintype
-
-/-- A vowel of the given height and backness, rounded or not, with its [ATR] value. -/
-private def vowel (ht : Segment.Height) (bk : Segment.Backness) (round atr : Bool) :
-    Segment :=
-  ((Segment.vowel ht bk).setFeature .round round).setFeature .atr atr
-
-/-- Each vowel's segment: the ±ATR pairs /i ɪ/, /e ɛ/, /o ɔ/, /u ʊ/ and /ə a/
-    ([sande-clem-dabkowski-2026] (1)). -/
-def Vowel.segment : Vowel → Segment
-  | .i => vowel .high .front false true
-  | .e => vowel .mid .front false true
-  | .schwa => vowel .mid .central false true
-  | .o => vowel .mid .back true true
-  | .u => vowel .high .back true true
-  | .I => vowel .high .front false false
-  | .E => vowel .mid .front false false
-  | .a => vowel .low .central false false
-  | .O => vowel .mid .back true false
-  | .U => vowel .high .back true false
-
-/-- The vowel inventory. -/
-def inventory : Finset Segment := Finset.univ.image Vowel.segment
-
-/-- The ±ATR split, read off the segment. -/
-def Vowel.atr (v : Vowel) : Bool := decide (v.segment.HasValue .atr true)
 
 /-- A Guébie morpheme: transcription, vowel skeleton, optional gloss. -/
 structure Morpheme where

@@ -7,8 +7,8 @@ Registered here, separately from the lemmas it tags: Lean cannot use an attribut
 in the same file where it is declared (the same split as mathlib's
 `Mathlib/Tactic/Attr/Register.lean`).
 
-The partition-cancelling RSA decomposition lemmas in `RSA/Operators.lean` and
-`RSA/Canonical.lean` are tagged `@[rsa]`. `simp [rsa]` rewrites an `S1`/`L1`
+The partition-cancelling RSA decomposition lemmas in `RSA/Operators.lean` are
+tagged `@[rsa]`. `simp [rsa]` rewrites an `S1`/`L1`
 *preference* goal (`S1 x < S1 y`, `(L1 …).fst w₁ < …`) to its structural
 score/posterior comparison — the normalisation factor cancels by rewriting, not by
 evaluating a state-space sum. This is the migration API that replaced the
