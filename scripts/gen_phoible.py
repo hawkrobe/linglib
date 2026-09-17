@@ -42,8 +42,7 @@ DEFAULT_ISOS = [
 
 # ── PHOIBLE feature columns (in CSV order, matching Schema.lean) ───────────
 
-# Special: "tone" and "stress" come right after Source; the 35 distinctive
-# features begin at "syllabic". Order MUST match FeatureMatrix's field order.
+# The distinctive-feature columns, with "tone" and "stress" appended when emitting.
 FEATURE_COLS = [
     "syllabic", "short", "long", "consonantal", "sonorant", "continuant",
     "delayedRelease", "approximant", "tap", "trill", "nasal", "lateral",
@@ -55,23 +54,31 @@ FEATURE_COLS = [
 ]
 # Plus tone + stress at the end.
 
-# Lean reserved-word renames in FeatureMatrix.
-COL_TO_FIELD = {
-    "short": "short_",
-    "long": "long_",
-    "round": "round_",
-}
+# Column-to-constructor renames in `Data.PHOIBLE.Feature` (none at present).
+COL_TO_FIELD = {}
 
 # ── Helpers ────────────────────────────────────────────────────────────────
 
-def feature_value(s: str) -> str:
-    """Map a CSV cell value to a `FeatureValue` Lean constructor."""
+def feature_value(s: str):
+    """Map a CSV cell value to a Lean `Bool`, or `None` for PHOIBLE's `0`."""
     s = s.strip()
-    if s == "+": return ".plus"
-    if s == "-": return ".minus"
-    if s == "0": return ".zero"
-    # PHOIBLE sometimes uses "+,-" or "-,+" for variable values; treat as zero.
-    return ".zero"
+    if s == "+": return "true"
+    if s == "-": return "false"
+    # "0" (not applicable), and the variable values "+,-" / "-,+", are unspecified.
+    return None
+
+def format_features(pairs, indent="        "):
+    """Emit `Bundle.ofList [...]` over the specified (feature, value) pairs."""
+    items = [f"(.{f}, {v})" for f, v in pairs]
+    lines = []; cur = indent
+    for it in items:
+        piece = (it if cur.strip() == "" else ", " + it)
+        if len(cur) + len(piece) + 1 > 96:
+            lines.append(cur + ","); cur = indent + it
+        else:
+            cur += piece if cur.strip() else it
+    lines.append(cur)
+    return "Bundle.ofList [" + chr(10) + chr(10).join(lines) + "]"
 
 def segment_class(s: str) -> str:
     s = s.strip().strip('"')
@@ -125,16 +132,13 @@ def lang_module_name(lang_name: str, iso: str) -> str:
 
 def emit_phoneme(row: dict) -> str:
     """Emit one Lean `Phoneme` literal."""
-    # Build feature-matrix field assignments.
-    feature_lines = []
-    for col in FEATURE_COLS:
-        field = COL_TO_FIELD.get(col, col)
+    # Build the feature bundle from the specified columns.
+    pairs = []
+    for col in FEATURE_COLS + ["tone", "stress"]:
         val = feature_value(row.get(col, "0"))
-        feature_lines.append(f"        {field} := {val}")
-    # tone + stress
-    feature_lines.append(f"        tone := {feature_value(row.get('tone', '0'))}")
-    feature_lines.append(f"        stress := {feature_value(row.get('stress', '0'))}")
-    feature_block = ",\n".join(feature_lines)
+        if val is not None:
+            pairs.append((COL_TO_FIELD.get(col, col), val))
+    feature_block = format_features(pairs)
 
     glyph = row.get("Phoneme", "").strip().strip('"')
     glyph_id = row.get("GlyphID", "").strip().strip('"')
@@ -149,8 +153,7 @@ def emit_phoneme(row: dict) -> str:
       allophones := {allo_str},
       marginal := {str(marginal).lower()},
       segmentClass := {seg_cls},
-      features := {{
-{feature_block} }} }}"""
+      features := {feature_block} }}"""
 
 def emit_inventory(rows: list, var_name: str) -> str:
     """Emit one Lean `Inventory` literal for a list of CSV rows."""

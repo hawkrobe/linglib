@@ -9,17 +9,31 @@ import Linglib.Phonology.Segmental.Defs
 # Basic theory of segments
 
 This file develops the theory of the segments defined in
-`Phonology/Segmental/Defs.lean`. Natural-class membership is just the bundle order
-— a pattern `p` matches `s` exactly when `p ≤ s` ([shieber-1986]; [carpenter-1992])
-— so the results here are about the feature-change operations and the injectivity
-of the Parker sonority ranking.
+`Phonology/Segmental/Defs.lean`. Natural-class membership is the bundle order: a
+specification matches a segment exactly when it lies below it in the subsumption order
+of Shieber and Carpenter, so having a value is lying above the bundle specifying that
+value alone, matching a specification list is having each listed value, and each
+conjunctive natural class is the segments above its specification. The remaining
+results concern the feature-change operations and the Parker sonority ranking.
 
 ## Main results
 
-* `Segment.setFeature_hasValue` &c. — the feature-change operations act as specified.
-* `Sonority.Class.parkerRank_injective` — the Parker scale ranks classes distinctly.
-* `Sonority.Class.toSonority_ofSegment` — the Parker classification coarsens to the
+* `Segment.hasValue_iff_single_le`: having a value is lying above the single-feature
+  bundle.
+* `Segment.ofSpecs_le_iff`: a specification list lies below a segment iff the segment has
+  every listed value.
+* `Segment.isVowel_iff_le`: a natural class is the segments above its specification, and
+  likewise for consonants, stops, fricatives, nasals and glides.
+* `Segment.setFeature_hasValue`: the feature-change operations act as specified.
+* `Sonority.Class.parkerRank_injective`: the Parker scale ranks classes distinctly.
+* `Sonority.Class.toSonority_ofSegment`: the Parker classification coarsens to the
   six-level one.
+
+## References
+
+* [shieber-1986]
+* [carpenter-1992]
+* [parker-2002]
 -/
 
 namespace Phonology
@@ -28,12 +42,66 @@ namespace Segment
 
 variable (s : Segment)
 
+/-! ### Natural classes are the bundle order -/
+
+/-- Having a value is lying above the bundle that specifies that value alone. -/
+theorem hasValue_iff_single_le (f : Feature) (v : Bool) :
+    s.HasValue f v ↔ Bundle.single f v ≤ s :=
+  Bundle.single_le_iff.symm
+
+@[simp] theorem ofSpecs_apply (specs : List (Feature × Bool)) (f : Feature) :
+    ofSpecs specs f = specs.lookup f := rfl
+
+/-- A specification list lies below a segment exactly when the segment has every value the
+list looks up. -/
+theorem ofSpecs_le_iff (specs : List (Feature × Bool)) :
+    ofSpecs specs ≤ s ↔ ∀ f v, specs.lookup f = some v → s.HasValue f v :=
+  Bundle.ofList_le_iff
+
+/-- With distinct features, a specification list lies below a segment exactly when the
+segment has each listed value. -/
+theorem ofSpecs_le_iff_forall_mem {specs : List (Feature × Bool)}
+    (h : (specs.map Prod.fst).Nodup) :
+    ofSpecs specs ≤ s ↔ ∀ p ∈ specs, s.HasValue p.1 p.2 :=
+  Bundle.ofList_le_iff_forall_mem h
+
+/-- The vowels are the segments above `[+syllabic]`. -/
+theorem isVowel_iff_le : s.IsVowel ↔ ofSpecs [(.syllabic, true)] ≤ s := by
+  rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsVowel]
+
+/-- The consonants are the segments above `[+consonantal]`. -/
+theorem isConsonant_iff_le : s.IsConsonant ↔ ofSpecs [(.consonantal, true)] ≤ s := by
+  rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsConsonant]
+
+/-- The stops are the segments above `[+cons, −son, −cont]`. -/
+theorem isStop_iff_le :
+    s.IsStop ↔
+      ofSpecs [(.consonantal, true), (.sonorant, false), (.continuant, false)] ≤ s := by
+  rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsStop]
+
+/-- The fricatives are the segments above `[+cons, −son, +cont]`. -/
+theorem isFricative_iff_le :
+    s.IsFricative ↔
+      ofSpecs [(.consonantal, true), (.sonorant, false), (.continuant, true)] ≤ s := by
+  rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsFricative]
+
+/-- The nasals are the segments above `[+nasal]`. -/
+theorem isNasal_iff_le : s.IsNasal ↔ ofSpecs [(.nasal, true)] ≤ s := by
+  rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsNasal]
+
+/-- The glides are the segments above `[−cons, −syll, +approx]`. -/
+theorem isGlide_iff_le :
+    s.IsGlide ↔
+      ofSpecs [(.consonantal, false), (.syllabic, false), (.approximant, true)] ≤ s := by
+  rw [ofSpecs_le_iff_forall_mem s (by decide)]; simp [IsGlide]
+
 /-! ### Effect on the modified feature -/
 
 @[simp] theorem setFeature_hasValue (f : Feature) (v : Bool) : (s.setFeature f v).HasValue f v :=
   Function.update_self _ _ _
 
-theorem fillFromContext_apply_self_of_unspecified {f : Feature} (h : s.Unspecified f) (ctx : Segment) :
+theorem fillFromContext_apply_self_of_unspecified {f : Feature} (h : s.Unspecified f)
+    (ctx : Segment) :
     (s.fillFromContext f ctx) f = ctx f := by
   simp only [Segment.fillFromContext, Bundle.merge,
     show s f = none from h, Function.update_self]
