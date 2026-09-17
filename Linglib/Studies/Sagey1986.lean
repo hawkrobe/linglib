@@ -140,7 +140,8 @@ theorem degreeOfClosure_mem_naturalClass_iff :
 
 /-- Nasality is in the classes of the soft palate node and its ancestors alone: place
 assimilation leaves it, and spreading the supralaryngeal node carries it, as in Klamath. -/
-theorem nasal_mem_naturalClass_iff (a : Node) : .nasal ∈ naturalClass node a ↔ a ≤ .softPalate := by
+theorem nasal_mem_naturalClass_iff (a : Node) :
+    .nasal ∈ naturalClass node a ↔ a ≤ .softPalate := by
   revert a; decide
 
 /-- Distinct articulators have disjoint classes: a feature of one, such as rounding, can depend

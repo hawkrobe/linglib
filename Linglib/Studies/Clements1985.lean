@@ -309,8 +309,10 @@ takes the preceding vowel's, so the output shares every supralaryngeal feature w
 vowel and keeps only the stop's laryngeal features `[+spread, −voiced]` — an [h]. Klamath
 (9a) and Sierra Popoluca (16) spread the same node from a lateral and from a nasal. -/
 theorem preaspiration (v c : Segment) :
-    Set.EqOn ((Spreading.node .supralaryngeal).apply v c) v ↑(naturalClass classNode? Node.supralaryngeal) ∧
-      Set.EqOn ((Spreading.node .supralaryngeal).apply v c) c ↑(naturalClass classNode? Node.laryngeal) :=
+    Set.EqOn ((Spreading.node .supralaryngeal).apply v c) v
+        ↑(naturalClass classNode? Node.supralaryngeal) ∧
+      Set.EqOn ((Spreading.node .supralaryngeal).apply v c) c
+        ↑(naturalClass classNode? Node.laryngeal) :=
   ⟨Spreading.apply_eqOn _ v c, eqOn_piecewise_of_incompRel v c ⟨by decide, by decide⟩⟩
 
 /-! ### Primary and secondary place features (§4) -/
