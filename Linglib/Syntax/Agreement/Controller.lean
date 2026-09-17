@@ -2,12 +2,12 @@
 # Agreement Controller — Grammatical Role of the Controlling NP
 [corbett-2006] ch 2 §2.1, ch 6 §6.6
 
-While `Syntax/Agreement/Target.lean` enumerates WHERE agreement morphology
+While `Syntax/Agreement/Hierarchy.lean` enumerates WHERE agreement morphology
 surfaces (Corbett 1991 Agreement Hierarchy), this file enumerates WHICH
 GRAMMATICAL ROLE the controlling NP plays. The two axes are orthogonal:
 a language can have subject-controlled verb agreement
-(`Controller.subj` × `Target.verb`) and possessor-controlled
-attributive agreement (`Controller.poss` × `Target.attributive`).
+(`Controller.subj` × `Position.predicate`) and possessor-controlled
+attributive agreement (`Controller.poss` × `Position.attributive`).
 
 ## Typological labels
 

@@ -1,6 +1,6 @@
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Syntax.Agreement.Bundle
-import Linglib.Syntax.Agreement.Target
+import Linglib.Syntax.Agreement.Hierarchy
 import Linglib.Data.Examples.WechslerZlatic2000
 
 /-!
@@ -327,14 +327,13 @@ theorem compat_number_indexTarget_iff (n : Noun) (hn : ConInd n) (t : Bundle) :
 
 open _root_.Agreement
 
-/-- Whether a target reads INDEX, given how the open predicate position resolves:
-attributives lack indices, pronouns and verbs have them. -/
-def readsIndex (predicate : Bool) : Target → Prop
+/-- Whether a position reads INDEX, given how the open predicate position resolves:
+attributives lack indices, pronouns have them. -/
+def readsIndex (predicate : Bool) : Position → Prop
   | .attributive => False
   | .predicate => predicate
   | .relativePronoun => True
   | .personalPronoun => True
-  | .verb => True
 
 instance (p : Bool) : DecidablePred (readsIndex p) := λ t => by
   cases t <;> simp only [readsIndex] <;> infer_instance

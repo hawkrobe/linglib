@@ -57,7 +57,7 @@ never less semantic than its assignment. The judgments the book reports are the 
   `Gender.Convergent` and `Gender.Crossed`. Subgenders, inquorate genders and consistent
   agreement patterns are described in the book's prose and not formalised.
 * A hybrid noun is an `Agreement.Hybrid`, its availability profile over the positions of
-  `Agreement.Target`, or over `FinePosition` where the book divides the attributive; it
+  `Agreement.Position`, or over `FinePosition` where the book divides the attributive; it
   respects the hierarchy when the profile is antitone on the positions where it is recorded,
   and the same predicate serves the corpus proportions.
 * Resolution rules are the substrate's `Agreement.ResolutionRule`, applied in order to a
@@ -521,63 +521,57 @@ end Tamil
 /-! ### Hybrid nouns and the Agreement Hierarchy (chapter 8) -/
 
 /-- Table 8.1, with the English boat nouns of §6.4.5 and the Bantu hybrids of §8.3. -/
-def frenchTitles : Hybrid Target := λ
+def frenchTitles : Hybrid Position := fun
   | .attributive | .predicate | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .mostlySyntactic
-  | .verb => none
 
-def madchen : Hybrid Target := λ
+def madchen : Hybrid Position := fun
   | .attributive | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .both
-  | .predicate | .verb => none
+  | .predicate => none
 
-def lajdaki : Hybrid Target := λ
+def lajdaki : Hybrid Position := fun
   | .attributive | .predicate | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .semanticOnly
-  | .verb => none
 
-def spanishTitles : Hybrid Target := λ
+def spanishTitles : Hybrid Position := fun
   | .attributive => some .syntacticOnly
   | .predicate | .relativePronoun | .personalPronoun => some .semanticOnly
-  | .verb => none
 
-def konkani : Hybrid Target := λ
+def konkani : Hybrid Position := fun
   | .attributive => some .syntacticOnly
   | .predicate | .personalPronoun => some .semanticOnly
-  | .relativePronoun | .verb => none
+  | .relativePronoun => none
 
-def vrac : Hybrid Target := λ
+def vrac : Hybrid Position := fun
   | .attributive => some .mostlySyntactic
   | .predicate => some .both
   | .relativePronoun | .personalPronoun => some .mostlySemantic
-  | .verb => none
 
-def gazde : Hybrid Target := λ
+def gazde : Hybrid Position := fun
   | .attributive => some .mostlySyntactic
   | .predicate => some .both
   | .relativePronoun => some .mostlySemantic
   | .personalPronoun => some .semanticOnly
-  | .verb => none
 
-def boat : Hybrid Target := λ
+def boat : Hybrid Position := fun
   | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .both
   | _ => none
 
 /-- *kamwana*: gender 12/13 forms normally, gender 1/2 also possible for a personal pronoun
 sufficiently removed from the controller. -/
-def kamwana : Hybrid Target := λ
+def kamwana : Hybrid Position := fun
   | .attributive | .predicate | .relativePronoun => some .syntacticOnly
   | .personalPronoun => some .mostlySyntactic
-  | .verb => none
 
-def kilumba : Hybrid Target := λ
+def kilumba : Hybrid Position := fun
   | .attributive => some .syntacticOnly
   | .predicate => some .both
   | _ => none
 
 /-- The hybrids of Table 8.1 by the names the rows use. -/
-def hybridNames : List (String × Hybrid Target) :=
+def hybridNames : List (String × Hybrid Position) :=
   [("frenchTitles", frenchTitles),
     ("mädchen", madchen),
     ("łajdaki", lajdaki),
@@ -594,7 +588,7 @@ theorem hybrids_respectHierarchy : ∀ h ∈ hybridNames, RespectsHierarchy h.2 
 
 /-- The corpus-level claim on *vrač*: Panov's respondents favouring feminine agreement, 16.9
 per cent of 3,835 for the attributive and 51.7 per cent of 3,806 for the predicate. -/
-def vracFeminine : Target → Option ℚ
+def vracFeminine : Position → Option ℚ
   | .attributive => some (169 / 1000)
   | .predicate => some (517 / 1000)
   | _ => none
@@ -640,14 +634,14 @@ theorem rank_injective : Function.Injective rank := by decide
 instance : LinearOrder FinePosition := LinearOrder.lift' rank rank_injective
 
 /-- The position of the hierarchy a fine position divides. -/
-def toTarget : FinePosition → Target
+def toPosition : FinePosition → Position
   | .possessive | .attributive => .attributive
   | .predicate => .predicate
   | .relativePronoun => .relativePronoun
   | .personalPronoun => .personalPronoun
 
 /-- The finer division refines the hierarchy. -/
-theorem toTarget_monotone : Monotone toTarget := by decide
+theorem toPosition_monotone : Monotone toPosition := by decide
 
 end FinePosition
 
@@ -685,7 +679,7 @@ the agreement; a row with `near` and `far` features is a pair of stacked targets
 hybrids are listed by the names the rows use. -/
 
 /-- The positions of the hierarchy by the names the rows use. -/
-def targetNames : List (String × Target) :=
+def positionNames : List (String × Position) :=
   [("attributive", .attributive), ("predicate", .predicate),
     ("relativePronoun", .relativePronoun), ("personalPronoun", .personalPronoun)]
 
@@ -699,7 +693,7 @@ def finePositionNames : List (String × FinePosition) :=
 def kindNames : List (String × Kind) := [("syntactic", .syntactic), ("semantic", .semantic)]
 
 theorem hybrid_rows : ∀ row ∈ Examples.all, ∀ h ∈ hybridNames, row.feature? "hybrid" = some h.1 →
-    ∀ t ∈ row.parse? "target" targetNames, ∀ k ∈ row.parse? "agreement" kindNames,
+    ∀ t ∈ row.parse? "target" positionNames, ∀ k ∈ row.parse? "agreement" kindNames,
       (row.judgment = .acceptable ↔ ∃ a ∈ h.2 t, a.Allows k) := by
   decide +kernel
 
