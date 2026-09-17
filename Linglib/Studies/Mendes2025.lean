@@ -1,6 +1,5 @@
 import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Mood.Situation
 import Linglib.Semantics.Tense.Defs
 
 /-!
@@ -26,8 +25,7 @@ table of main-clause tenses off the entries.
 * The carrier registers situation drefs only: individual drefs are saturated in the radicals
   (*Ivan leaves the room* is a situation predicate), so the quantifying-in of the relative clause
   reduces to the implication of its restrictor and nuclear scope.
-* A situation is a world–time `Index`, and *s₂ is part of the world of s₁* is world identity,
-  `Mood.sameWorld`.
+* A situation is a world–time `Index`, and *s₂ is part of the world of s₁* is world identity.
 
 ## References
 
@@ -65,7 +63,7 @@ def radical (P : Index W T → Prop) : Radical W T := fun s => test (atom1 P s)
 /-- The indicative, `ind^{s₂,s₁} ⇝ λℙ.[ | s₂ ≤ w_{s₁}]; ℙ(s₂)(s₁)`: a definite over situations,
 testing that `s₂` is part of the world of `s₁`. -/
 def ind (s₂ s₁ : Sit W T) (ℙ : Tensed W T) : DProp (Index W T) :=
-  seq (test fun i => Mood.sameWorld (s₂ i) (s₁ i)) (ℙ s₂ s₁)
+  seq (test fun i => (s₂ i).world = (s₁ i).world) (ℙ s₂ s₁)
 
 variable {ℙ : Tensed W T} {s s' : Sit W T} {i o : State W T}
 
