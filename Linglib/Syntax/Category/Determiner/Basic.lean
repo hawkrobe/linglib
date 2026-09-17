@@ -14,7 +14,7 @@ determiners — a surface `form`; each specialization adds its own structure.
 A language's determiner inventory is a `Determiner.Inventory` (a heterogeneous
 list of the four kinds) declared in its Fragment as `{Lang}.Determiners.inventory`.
 The [moroney-2021] definiteness-marking typology (`MarkingStrategy`) is *derived*
-from the inventory by `Inventory.markingStrategy`, not stipulated: a language's
+from the inventory by `Inventory.markingStrategy`, not stipulated. A language's
 Moroney cell is a theorem about its declared determiners, checked by `decide`.
 
 Because `Article` records its `exponent`, a classifier-phrase definite and a
@@ -195,15 +195,16 @@ instance (ds : Inventory) : Decidable ds.IsSyncretic := by
   unfold IsSyncretic; infer_instance
 
 /-- Derive the [moroney-2021] four-cell definiteness-marking typology from a
-declared determiner inventory. Stored nowhere — a language's cell is a theorem
-about its `Determiner.Inventory`, and each cell is characterized by its
-`markingStrategy_eq_*_iff` lemma:
+declared determiner inventory. The typology is stored nowhere, since a language's
+cell is a theorem about its `Determiner.Inventory`, and each cell is characterized
+by its `markingStrategy_eq_*_iff` lemma. The cells are as follows.
 
-- uniqueness marked, familiarity marked, by one form → `.generallyMarked`
-- uniqueness marked, familiarity marked, by distinct forms → `.bipartite`
-- uniqueness marked, familiarity unmarked → `.generallyMarked`
-- uniqueness unmarked, familiarity marked (e.g. via demonstrative) → `.markedAnaphoric`
-- neither marked → `.unmarked`
+- If uniqueness and familiarity are both marked by one form, the cell is `.generallyMarked`.
+- If they are marked by distinct forms, the cell is `.bipartite`.
+- If uniqueness is marked and familiarity is not, the cell is `.generallyMarked`.
+- If familiarity is marked, for instance by a demonstrative, and uniqueness is not, the cell
+  is `.markedAnaphoric`.
+- If neither is marked, the cell is `.unmarked`.
 -/
 def markingStrategy (ds : Inventory) : MarkingStrategy :=
   if Marks ds .uniqueness then
