@@ -713,7 +713,7 @@ theorem insertionForest_msform_invariance_guests [DecidableEq α]
         (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
       (insertionForest host gs2).map
         (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) := by
-  obtain ⟨gs_mid, hperm, hF⟩ := List.exists_perm_forall₂_of_map_perm UnorderedTree.mk h
+  obtain ⟨gs_mid, hperm, hF⟩ := List.exists_perm_forall₂_of_map_perm h
   have h_forall : List.Forall₂ RoseTree.Perm gs_mid gs2 :=
     hF.imp fun a b (h : UnorderedTree.mk a = UnorderedTree.mk b) => UnorderedTree.mk_eq_mk_iff.mp h
   have hwrap : ∀ s : Multiset (List (RoseTree α)),

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Algebra.Group.Hom.Defs
-import Linglib.Core.Data.List.Perm
+import Mathlib.Data.List.Perm.Basic
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 
 /-!
@@ -16,7 +16,7 @@ morphisms agreeing on the leaves are equal (`hom_ext`). The zero absorbs the
 off-carrier arities, so one total algebra (`mergeAlgebra`) drives the fold, the
 quotient descent, and the subtype restriction once and for all: consumers supply a
 lexical-leaf value and a trace value, and inherit `Perm`-invariance from
-`mul_comm` via `List.Perm.congr_arity₂` — no bespoke step induction.
+`mul_comm` via a private permutation-invariance lemma — no bespoke step induction.
 
 ## Main declarations
 
@@ -61,6 +61,28 @@ private theorem mergeAlgebra_big [Mul β] [Zero β] {ℓ : LIToken → β} {τ :
   | _ :: _ :: _ :: _ => rfl
   | [] | [_] | [_, _] => simp at h
 
+/-- A list function symmetric on pairs and constant above length two is `Perm`-invariant:
+lengths at most one are rigid under permutation, pairs by the symmetry, longer lists by the
+constancy. -/
+private theorem perm_congr_arity₂ {β γ : Type*} {g : List β → γ} {c : γ}
+    (hswap : ∀ x y, g [x, y] = g [y, x])
+    (hbig : ∀ l : List β, 2 < l.length → g l = c)
+    {l₁ l₂ : List β} (h : l₁.Perm l₂) : g l₁ = g l₂ := by
+  induction h with
+  | nil => rfl
+  | @cons x l₁ l₂ h _ih =>
+    match l₁, l₂, h with
+    | [], l₂, h => rw [show l₂ = [] from h.symm.eq_nil]
+    | [y], l₂, h => rw [show l₂ = [y] from List.perm_singleton.mp h.symm]
+    | _ :: _ :: _, l₂, h =>
+      have hl := h.length_eq
+      rw [hbig _ (by simp +arith), hbig _ (by simp only [List.length_cons] at hl ⊢; omega)]
+  | swap x y l =>
+    match l with
+    | [] => exact hswap y x
+    | _ :: _ => rw [hbig _ (by simp +arith), hbig _ (by simp +arith)]
+  | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
 /-- `mergeAlgebra` is invariant under permutation of the daughter values: only the
     binary shape is order-sensitive, and there `mul_comm` applies. -/
 theorem mergeAlgebra_perm [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) (a : Vertex)
@@ -69,7 +91,8 @@ theorem mergeAlgebra_perm [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : 
   | inl tok => rfl
   | inr u =>
     cases u with
-    | none => exact h.congr_arity₂ (fun x y => _root_.mul_comm x y) fun _ h => mergeAlgebra_big h
+    | none =>
+      exact perm_congr_arity₂ (fun x y => _root_.mul_comm x y) (fun _ h => mergeAlgebra_big h) h
     | some tok =>
       simp only [mergeAlgebra_some, List.isEmpty_iff_length_eq_zero, h.length_eq]
 
