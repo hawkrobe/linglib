@@ -33,20 +33,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "verbToC",
-        "yes"
-      ],
-      [
-        "aux",
-        "no"
+        "sketch",
+        "verbToC"
       ],
       [
         "intervener",
         "none"
-      ],
-      [
-        "intervenerMoved",
-        "no"
       ]
     ],
     "comment": "Verb-second: the finite verb moves to C and the pronoun shifts."
@@ -89,20 +81,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "verbToC",
-        "no"
-      ],
-      [
-        "aux",
-        "no"
+        "sketch",
+        "embedded"
       ],
       [
         "intervener",
         "none"
-      ],
-      [
-        "intervenerMoved",
-        "no"
       ]
     ],
     "comment": "Embedded clause: the complementizer blocks verb movement."
@@ -145,20 +129,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "verbToC",
-        "no"
-      ],
-      [
-        "aux",
-        "yes"
+        "sketch",
+        "auxiliary"
       ],
       [
         "intervener",
         "none"
-      ],
-      [
-        "intervenerMoved",
-        "no"
       ]
     ],
     "comment": "The auxiliary moves to C and the participle stays in VP."
@@ -201,20 +177,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "verbToC",
-        "yes"
-      ],
-      [
-        "aux",
-        "no"
+        "sketch",
+        "intervener"
       ],
       [
         "intervener",
         "firstObject"
-      ],
-      [
-        "intervenerMoved",
-        "no"
       ]
     ],
     "comment": "The first object precedes the shifted object in VP."
@@ -257,20 +225,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "verbToC",
-        "yes"
-      ],
-      [
-        "aux",
-        "no"
+        "sketch",
+        "intervener"
       ],
       [
         "intervener",
         "particle"
-      ],
-      [
-        "intervenerMoved",
-        "no"
       ]
     ],
     "comment": "The particle precedes the shifted object in VP."
@@ -313,20 +273,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "verbToC",
-        "yes"
-      ],
-      [
-        "aux",
-        "no"
+        "sketch",
+        "intervenerFronted"
       ],
       [
         "intervener",
         "firstObject"
-      ],
-      [
-        "intervenerMoved",
-        "yes"
       ]
     ],
     "comment": "The first object is wh-moved through the VP edge."
@@ -369,20 +321,12 @@
     "readings": [],
     "paperFeatures": [
       [
-        "verbToC",
-        "yes"
-      ],
-      [
-        "aux",
-        "no"
+        "sketch",
+        "intervenerFronted"
       ],
       [
         "intervener",
         "particle"
-      ],
-      [
-        "intervenerMoved",
-        "yes"
       ]
     ],
     "comment": "The particle is topicalized through the VP edge."
