@@ -1,4 +1,5 @@
 import Mathlib.Data.List.Infix
+import Mathlib.Data.Finset.Basic
 import Mathlib.Algebra.Free
 import Linglib.Core.Order.Branching
 
@@ -239,6 +240,41 @@ def recAux {motive : Tree C W → Sort*}
     · rename_i ht; have := List.sizeOf_lt_of_mem ht
       simp only [Tree.node.sizeOf_spec]; omega
     · simp only [Tree.bind.sizeOf_spec]; omega
+
+/-! ### Free variables
+
+A trace is free in a tree when no binder with its index dominates it. That is the syntactic
+side of [heim-kratzer-1998]'s semantic notion, and by their characterization of binding, an
+occurrence is bound exactly when a co-indexed binder c-commands it with no closer co-indexed
+binder between, the two coincide. -/
+
+/-- The indices of the traces free in a tree, every trace index less those a dominating binder
+with the same index binds. -/
+def freeIndices : Tree C W → Finset ℕ
+  | .terminal _ _ => ∅
+  | .node _ cs => freeIndicesList cs
+  | .trace n _ => {n}
+  | .bind n _ body => (freeIndices body).erase n
+where
+  freeIndicesList : List (Tree C W) → Finset ℕ
+  | [] => ∅
+  | t :: ts => freeIndices t ∪ freeIndicesList ts
+
+@[simp] theorem freeIndices_terminal (c : C) (w : W) : (terminal c w).freeIndices = ∅ := rfl
+@[simp] theorem freeIndices_trace (n : ℕ) (c : C) : (trace n c : Tree C W).freeIndices = {n} := rfl
+@[simp] theorem freeIndices_bind (n : ℕ) (c : C) (b : Tree C W) :
+    (bind n c b).freeIndices = b.freeIndices.erase n := rfl
+@[simp] theorem freeIndices_node (c : C) (cs : List (Tree C W)) :
+    (node c cs).freeIndices = freeIndices.freeIndicesList cs := rfl
+
+theorem mem_freeIndicesList {i : ℕ} {cs : List (Tree C W)} :
+    i ∈ freeIndices.freeIndicesList cs ↔ ∃ t ∈ cs, i ∈ t.freeIndices := by
+  induction cs with
+  | nil => simp [freeIndices.freeIndicesList]
+  | cons t ts ih => simp [freeIndices.freeIndicesList, ih]
+
+/-- A tree is closed when no trace is free in it. -/
+def Closed (t : Tree C W) : Prop := t.freeIndices = ∅
 
 /-! ### Subtrees -/
 
