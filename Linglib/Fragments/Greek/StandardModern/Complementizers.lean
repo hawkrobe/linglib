@@ -67,7 +67,7 @@ Verbs of saying / belief / knowledge / understanding
     ex. 1a. Speech-act verb, eventive (activity). -/
 def leo : Verb where
   form := "léo"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   speechActVerb := true
   vendlerClass := some .activity
 
@@ -75,7 +75,7 @@ def leo : Verb where
     passive *pistévetai oti* is standard. -/
 def pistevo : Verb where
   form := "pistévo"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   attitude := some (.doxastic .nonVeridical)
   vendlerClass := some .state
   opaqueContext := true
@@ -84,7 +84,7 @@ def pistevo : Verb where
     stative. Rejects manner adverbs ([angelopoulos-2026] ex. 21a). -/
 def ksero : Verb where
   form := "kséro"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   attitude := some (.doxastic .veridical)
   factivity := some .semi
   vendlerClass := some .state
@@ -94,7 +94,7 @@ def ksero : Verb where
     factive doxastic. -/
 def katalaveno : Verb where
   form := "katalavéno"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   attitude := some (.doxastic .veridical)
   factivity := some .semi
   vendlerClass := some .achievement
@@ -103,7 +103,7 @@ def katalaveno : Verb where
     factive doxastic ([angelopoulos-2026] ex. 21b). -/
 def sinidhitopio : Verb where
   form := "sinidhitopió"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   attitude := some (.doxastic .veridical)
   factivity := some .semi
   vendlerClass := some .achievement
@@ -112,7 +112,7 @@ def sinidhitopio : Verb where
     yielding *explanans* reading ([angelopoulos-2026] ex. 4a). -/
 def eksigo : Verb where
   form := "eksigó"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .accomplishment
 
 /-! ### Matrix verbs selecting *pu*
@@ -124,7 +124,7 @@ stativity restriction. -/
     valence), stative. [angelopoulos-2026] ex. 1b, 20. -/
 def metaniono : Verb where
   form := "metanióno"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   attitude := some (.preferential (.degreeComparison .negative))
   vendlerClass := some .state
 
@@ -132,7 +132,7 @@ def metaniono : Verb where
     stative ([angelopoulos-2026] ex. 13, 14; [landau-2010]). -/
 def areso : Verb where
   form := "aréso"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   attitude := some (.preferential (.degreeComparison .positive))
   vendlerClass := some .state
   unaccusative := true
@@ -141,7 +141,7 @@ def areso : Verb where
     stative. -/
 def xerome : Verb where
   form := "xérome"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   attitude := some (.preferential (.degreeComparison .positive))
   vendlerClass := some .state
 
@@ -158,7 +158,7 @@ polysemy rides on sense-tagged entry pairs (`SenseTag.stative`, the
     is `thimameStat`. -/
 def thimame : Verb where
   form := "thimáme"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   attitude := some (.doxastic .veridical)
   factivity := some .semi
   vendlerClass := some .achievement
@@ -169,7 +169,7 @@ def thimame : Verb where
     presupposition). -/
 def thimameStat : Verb where
   form := "thimáme"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   senseTag := .stative
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -180,7 +180,7 @@ def thimameStat : Verb where
     ([angelopoulos-2026] ex. 19, 23). -/
 def thimono : Verb where
   form := "thimóno"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   attitude := some (.preferential (.degreeComparison .negative))
   vendlerClass := some .achievement
 
@@ -188,7 +188,7 @@ def thimono : Verb where
     ([angelopoulos-2026] ex. 19, 23). -/
 def thimonoStat : Verb where
   form := "thimóno"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   senseTag := .stative
   attitude := some (.preferential (.degreeComparison .negative))
   vendlerClass := some .state
@@ -197,7 +197,7 @@ def thimonoStat : Verb where
     under matrix negation or question ([roussou-2010]). -/
 def nomizo : Verb where
   form := "nomízo"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   attitude := some (.doxastic .nonVeridical)
   vendlerClass := some .state
   opaqueContext := true
@@ -206,7 +206,7 @@ def nomizo : Verb where
     *pu* ([roussou-2010]). -/
 def paradhexome : Verb where
   form := "paradhéxome"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   speechActVerb := true
   attitude := some (.doxastic .veridical)
   vendlerClass := some .achievement
@@ -215,7 +215,7 @@ def paradhexome : Verb where
     and not *pu* ([roussou-2010]). -/
 def antilamvanome : Verb where
   form := "antilamvánome"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   attitude := some (.doxastic .veridical)
   factivity := some .semi
   vendlerClass := some .achievement
@@ -224,7 +224,7 @@ def antilamvanome : Verb where
     stative; takes *pu* on the factive reading and *oti* otherwise ([roussou-2010]). -/
 def anisixo : Verb where
   form := "anisixó"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   attitude := some (.preferential (.degreeComparison .negative))
   vendlerClass := some .state
 
@@ -234,7 +234,7 @@ def anisixo : Verb where
     complementizer *an* ([roussou-2010]). -/
 def anarotjeme : Verb where
   form := "anarotjéme"
-  frames := [Frame.question]
+  frames := [ArgumentFrame.question]
   vendlerClass := some .state
   senseTag := .rogative
 

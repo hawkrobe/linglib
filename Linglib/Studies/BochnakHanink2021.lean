@@ -1,5 +1,5 @@
 import Linglib.Fragments.Washo.Clause
-import Linglib.Syntax.Category.Verb.Complement.Takes
+import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 import Linglib.Studies.Hanink2021
 import Linglib.Syntax.Minimalist.ExtendedProjection.ClauseSpine
 

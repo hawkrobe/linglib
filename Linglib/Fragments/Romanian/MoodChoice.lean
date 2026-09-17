@@ -29,7 +29,7 @@ open ArgumentStructure
     [grano-2024], (6): *să* (SBJV) required, *că* (IND) rejected. -/
 def a_vrea : Verb where
   form := "a vrea"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -39,7 +39,7 @@ def a_vrea : Verb where
     [grano-2024], (14): both *să* (SBJV) and *că* (IND) accepted. -/
 def a_spera : Verb where
   form := "a spera"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -48,7 +48,7 @@ def a_spera : Verb where
     [grano-2024], (23): *să* (SBJV) required, *că* (IND) rejected. -/
 def a_intentiona : Verb where
   form := "a intenționa"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -58,8 +58,8 @@ def a_intentiona : Verb where
     [grano-2024], (46): *să* (SBJV) required, *că* (IND) rejected. -/
 def a_face : Verb where
   form := "a face"
-  frames := [Frame.finiteClause]
-  readings := [{ frame := Frame.finiteClause, control := some .objectControl }]
+  frames := [ArgumentFrame.finiteClause]
+  readings := [{ frame := ArgumentFrame.finiteClause, control := some .objectControl }]
   causative := some .make
 
 -- ════════════════════════════════════════════════════════════════

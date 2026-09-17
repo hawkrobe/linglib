@@ -132,11 +132,11 @@ denucleativizing `reciprocalization`; argument strategies leave the frame intact
 def Strategy.alternation (s : Strategy) : Option ValencyAlternation :=
   if s.IsNominal then none else some reciprocalization
 
-/-- Default valency, derived from the realized alternation's `derivedTransitive`
-field; a tendency that languages may override ([maslova-2008], [hurst-2012]). -/
+/-- Default valency, derived from the transitivity of the realized alternation's derived
+frame; a tendency that languages may override ([maslova-2008], [hurst-2012]). -/
 def Strategy.defaultValency (s : Strategy) : Valency :=
   match s.alternation with
-  | some a => if a.derivedTransitive = some false then .monovalent else .bivalent
+  | some a => if a.target.IsTransitive then .bivalent else .monovalent
   | none => .bivalent
 
 /-- Nominal strategies preserve valency by default. -/

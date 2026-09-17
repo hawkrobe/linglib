@@ -58,10 +58,11 @@ P-coding, which split-S languages violate. The book's examples are the rows of
   conditions that separate causativization from the A-nucleativization of an instrument or
   a concernee, or reflexivization from reciprocalization, are not modelled: the three
   A-nucleativizations are one predicate and the rows carry the book's label.
-* The substrate's summary records of the alternation types, indexed by the fate of the
-  initial A, P and S, are not redefined: a record describes a pair of constructions when the
-  fates computed from the pair agree with its fields, and the book's defining example of
-  each type is shown to be described by the corresponding record.
+* The substrate's alternation types, pairs of argument frames with a slot correspondence,
+  are not redefined: a type describes a pair of constructions when the fates of the initial
+  A, P and S, the introduced participant and the transitivity derived from the frame pair
+  are those computed from the constructions, and the book's defining example of each type
+  is shown to be described by the corresponding frame pair.
 * Stacking is composition of relations, and valency is the number of nuclear participants.
 * Alignment and the Obligatory Coding Principle are stated over the flagging of S in the
   book's intransitive examples; the book's principle ranges over every verb's coding frame,
@@ -74,10 +75,10 @@ P-coding, which split-S languages violate. The book's examples are the rows of
 * The potential-participant condition on nucleativization, which excludes the Yupik
   believer derivation from voice; inflectional and equipollent voice systems; the
   non-compositional readings of stacked markers; and the diachronic scenarios are prose.
-* The substrate's records fix an intransitive base for causativization and an intransitive
-  derived construction for passivization and antipassivization, which the Balinese
-  causative (51), the Tswana passive (38f) and the Nahuatl antipassive (39c) do not have;
-  the records describe the defining examples only.
+* The substrate's frame pairs fix an intransitive base for causativization and an
+  intransitive derived construction for passivization and antipassivization, which the
+  Balinese causative (51), the Tswana passive (38f) and the Nahuatl antipassive (39c) do not
+  have; the frame pairs describe the defining examples only.
 
 ## References
 
@@ -395,7 +396,7 @@ theorem Symmetrical.not_aNucleativization {c d : Construction ι} (h : Symmetric
     (i : ι) : ¬ ANucleativization c d i :=
   λ hc => h.not_nucleativization ⟨i, hc.1⟩
 
-/-! ### The substrate's summary records -/
+/-! ### The substrate's alternation types -/
 
 section
 variable [Fintype ι] [DecidableEq ι]
@@ -411,21 +412,21 @@ def fate (c d : Construction ι) (i : ι) : ParticipantFate :=
     else .denucleativized
   else .na
 
-/-- A summary record of the substrate describes a pair of constructions when the fates it
-records are those of the initial A, P and S, a role it records as absent is absent, the
-participant it introduces is the one the derived construction introduces, and the
-transitivity it fixes is the constructions'. -/
+/-- An alternation type of the substrate describes a pair of constructions when the fates it
+derives for the initial A, P and S are those of the pair, a role its initial frame lacks is
+absent, the participant it introduces is the one the derived construction introduces, and
+its two frames are transitive exactly when the constructions are. -/
 def Describes (va : ValencyAlternation) (c d : Construction ι) : Prop :=
-  (∀ i, c i = .term .A → fate c d i = va.fateOfA) ∧
-  (∀ i, c i = .term .P → fate c d i = va.fateOfP) ∧
-  (∀ i, c i = .term .S → fate c d i = va.fateOfS) ∧
-  (va.fateOfA = .na → ¬ ∃ i, c i = .term .A) ∧ (va.fateOfP = .na → ¬ ∃ i, c i = .term .P) ∧
-  (va.fateOfS = .na → ¬ ∃ i, c i = .term .S) ∧
+  (∀ i, c i = .term .A → fate c d i = va.fateOfRole .A) ∧
+  (∀ i, c i = .term .P → fate c d i = va.fateOfRole .P) ∧
+  (∀ i, c i = .term .S → fate c d i = va.fateOfRole .S) ∧
+  (va.fateOfRole .A = .na → ¬ ∃ i, c i = .term .A) ∧
+  (va.fateOfRole .P = .na → ¬ ∃ i, c i = .term .P) ∧
+  (va.fateOfRole .S = .na → ¬ ∃ i, c i = .term .S) ∧
   (match va.newParticipant with
     | some r => ∃ i, Introduced c d i ∧ (d i).role = some r
     | none => ¬ ∃ i, Introduced c d i) ∧
-  (∀ b, va.initialTransitive = some b → (c.Transitive ↔ b = true)) ∧
-  ∀ b, va.derivedTransitive = some b → (d.Transitive ↔ b = true)
+  (c.Transitive ↔ va.source.IsTransitive) ∧ (d.Transitive ↔ va.target.IsTransitive)
 
 instance (va : ValencyAlternation) (c d : Construction ι) : Decidable (Describes va c d) := by
   unfold Describes

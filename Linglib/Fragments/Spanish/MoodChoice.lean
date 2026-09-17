@@ -25,8 +25,8 @@ open ArgumentStructure
     [grano-2024], (1a): SBJV required, IND rejected. -/
 def querer : Verb where
   form := "querer"
-  frames := [Frame.finiteClause, Frame.infinitival]
-  readings := [{ frame := Frame.finiteClause, control := some .subjectControl }]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.finiteClause, control := some .subjectControl }]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -36,8 +36,8 @@ def querer : Verb where
     [grano-2024], (9): SBJV required, IND rejected. -/
 def esperar : Verb where
   form := "esperar"
-  frames := [Frame.finiteClause, Frame.infinitival]
-  readings := [{ frame := Frame.finiteClause, control := some .subjectControl }]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.finiteClause, control := some .subjectControl }]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -47,8 +47,8 @@ def esperar : Verb where
     Periphrastic form (nominal predicate). -/
 def tener_la_intencion : Verb where
   form := "tener la intención"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -59,8 +59,8 @@ def tener_la_intencion : Verb where
     Infinitival complements with object control. -/
 def hacer : Verb where
   form := "hacer"
-  frames := [Frame.infinitival, Frame.finiteClause]
-  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
+  frames := [ArgumentFrame.infinitival, ArgumentFrame.finiteClause]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   causative := some .make
 
 /-- *convencer* 'convince' — hybrid predicate (§6.2, (102)–(103)).
@@ -70,8 +70,8 @@ def hacer : Verb where
       diciendo la verdad" (IND) -/
 def convencer : Verb where
   form := "convencer"
-  frames := [Frame.infinitival, Frame.finiteClause]
-  readings := [{ frame := Frame.infinitival, control := some .objectControl }]
+  frames := [ArgumentFrame.infinitival, ArgumentFrame.finiteClause]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   opaqueContext := true
 
 -- ════════════════════════════════════════════════════════════════

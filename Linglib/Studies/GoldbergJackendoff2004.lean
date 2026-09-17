@@ -99,7 +99,7 @@ theorem rows_coherence :
 
 /-- The verb argument that fuses with the construction's undergoer: the object of a causative,
 the subject of a noncausative. -/
-def Row.fusedSlot (r : Row) : Option Frame.Slot :=
+def Row.fusedSlot (r : Row) : Option ArgumentFrame.Slot :=
   r.verb.coreSlots[if r.subconstruction.isCausative then 1 else 0]?
 
 /-- The paper's subject roles for the noncausatives are the unaccusativity predictions of the

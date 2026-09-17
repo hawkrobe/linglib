@@ -2553,8 +2553,6 @@ import Linglib.Syntax.Category.Pronoun.Logophoric
 import Linglib.Syntax.Category.Pronoun.Reciprocal
 import Linglib.Syntax.Category.Verb.Argument
 import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Category.Verb.Complement.Basic
-import Linglib.Syntax.Category.Verb.Complement.Takes
 import Linglib.Syntax.Category.Verb.Defs
 import Linglib.Syntax.Category.Verb.Reciprocal
 import Linglib.Syntax.Category.Verb.Stem

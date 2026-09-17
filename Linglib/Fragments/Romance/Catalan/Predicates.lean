@@ -17,36 +17,36 @@ namespace Catalan.Predicates
     ([palmieri-2024], Appendix A). -/
 def abracar : Verb where
   form := "abraçar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *casar* 'marry' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def casar : Verb where
   form := "casar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *deixar* 'leave/break up' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def deixar : Verb where
   form := "deixar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *petonejar* 'kiss' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def petonejar : Verb where
   form := "petonejar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *topar* 'run into, meet accidentally' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def topar : Verb where
   form := "topar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *trobar* 'find/meet' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def trobar : Verb where
   form := "trobar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 end Catalan.Predicates

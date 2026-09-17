@@ -62,7 +62,7 @@ structure SpanishVerbEntry extends Verb where
     EFFECTOR causer: admits agents, instruments, natural forces
     ([koontz-garboden-2009] exx. 47–49). -/
 def abrir : SpanishVerbEntry :=
-  { form := "abrir", frames := [Frame.np],
+  { form := "abrir", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true,
@@ -73,7 +73,7 @@ def abrir : SpanishVerbEntry :=
     EFFECTOR causer: agents, instruments, natural forces, events
     ([koontz-garboden-2009] exx. 13–17). -/
 def romper : SpanishVerbEntry :=
-  { form := "romper", frames := [Frame.np],
+  { form := "romper", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true,
@@ -83,7 +83,7 @@ def romper : SpanishVerbEntry :=
 /-- *hundir* "sink" — marked anticausative, licenses stylistic LE.
     EFFECTOR causer ([koontz-garboden-2009] ex. 46). -/
 def hundir : SpanishVerbEntry :=
-  { form := "hundir", frames := [Frame.np],
+  { form := "hundir", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true,
@@ -93,7 +93,7 @@ def hundir : SpanishVerbEntry :=
 /-- *caer* "fall" — marked anticausative, licenses stylistic LE.
     (ex. 9, unaccusative) -/
 def caer : SpanishVerbEntry :=
-  { form := "caer", frames := [Frame.intransitive],
+  { form := "caer", frames := [ArgumentFrame.intransitive],
     unaccusative := true,
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
@@ -102,7 +102,7 @@ def caer : SpanishVerbEntry :=
 /-- *morir* "die" — marked anticausative, licenses stylistic LE.
     (ex. 10) -/
 def morir : SpanishVerbEntry :=
-  { form := "morir", frames := [Frame.intransitive],
+  { form := "morir", frames := [ArgumentFrame.intransitive],
     unaccusative := true,
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
@@ -112,7 +112,7 @@ def morir : SpanishVerbEntry :=
     in [munoz-perez-2026] exx. 15–19 (*me/te le cerró la ventana* OK,
     *le/nos/les le cerró la ventana* unacceptable). -/
 def cerrar : SpanishVerbEntry :=
-  { form := "cerrar", frames := [Frame.np],
+  { form := "cerrar", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
@@ -120,7 +120,7 @@ def cerrar : SpanishVerbEntry :=
 /-- *quebrar* "crack" — marked anticausative, licenses stylistic LE.
     (exx. 38–39) -/
 def quebrar : SpanishVerbEntry :=
-  { form := "quebrar", frames := [Frame.np],
+  { form := "quebrar", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
@@ -128,7 +128,7 @@ def quebrar : SpanishVerbEntry :=
 /-- *hervir* "boil" — optional SE marking, but still licenses stylistic LE.
     (exx. 41–44) -/
 def hervir : SpanishVerbEntry :=
-  { form := "hervir", frames := [Frame.np],
+  { form := "hervir", frames := [ArgumentFrame.np],
     anticausativeMarking := .optional,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
@@ -136,7 +136,7 @@ def hervir : SpanishVerbEntry :=
 /-- *olvidar* "forget" — marked anticausative, licenses stylistic LE.
     (ex. 11, psych verb) -/
 def olvidar : SpanishVerbEntry :=
-  { form := "olvidar", frames := [Frame.np],
+  { form := "olvidar", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
@@ -144,7 +144,7 @@ def olvidar : SpanishVerbEntry :=
 /-- *ocurrir* "occur" — marked anticausative, licenses stylistic LE.
     (ex. 12) -/
 def ocurrir : SpanishVerbEntry :=
-  { form := "ocurrir", frames := [Frame.intransitive],
+  { form := "ocurrir", frames := [ArgumentFrame.intransitive],
     unaccusative := true,
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
@@ -153,7 +153,7 @@ def ocurrir : SpanishVerbEntry :=
 /-- *mejorar* "improve" — UNMARKED anticausative, does NOT license stylistic LE.
     (ex. 40b *Me le mejoró el sueldo) -/
 def mejorar : SpanishVerbEntry :=
-  { form := "mejorar", frames := [Frame.np],
+  { form := "mejorar", frames := [ArgumentFrame.np],
     anticausativeMarking := .unmarked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := false }
@@ -163,7 +163,7 @@ def mejorar : SpanishVerbEntry :=
     implies unidirectional (linear, gash-like) separation. Incompatible with
     careful controlled action. [spalek-mcnally-2026] (§3.2). -/
 def rasgar : SpanishVerbEntry :=
-  { form := "rasgar", frames := [Frame.np],
+  { form := "rasgar", frames := [ArgumentFrame.np],
     causative := some .make,
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
@@ -181,7 +181,7 @@ def rasgar : SpanishVerbEntry :=
     Reflexivization yields reflexive reading only (*El senador se asesinó*
     = 'The senator killed himself'). [koontz-garboden-2009] exx. 24–29. -/
 def asesinar : SpanishVerbEntry :=
-  { form := "asesinar", frames := [Frame.np],
+  { form := "asesinar", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := false,
@@ -190,7 +190,7 @@ def asesinar : SpanishVerbEntry :=
 /-- *cortar* "cut" — AGENT causer required. No anticausative.
     [koontz-garboden-2009] ex. 26. -/
 def cortar : SpanishVerbEntry :=
-  { form := "cortar", frames := [Frame.np],
+  { form := "cortar", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := false,
@@ -200,7 +200,7 @@ def cortar : SpanishVerbEntry :=
     are typical. Alternates: *ahogarse* is a derived inchoative.
     [koontz-garboden-2009] exx. 50–52. -/
 def ahogar : SpanishVerbEntry :=
-  { form := "ahogar", frames := [Frame.np],
+  { form := "ahogar", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := false,
@@ -210,7 +210,7 @@ def ahogar : SpanishVerbEntry :=
 /-- *empeorar* "worsen" — internally caused COS verb. No CAUSE in LSR.
     Rejects *por sí solo*. [koontz-garboden-2009] ex. 65a. -/
 def empeorar : SpanishVerbEntry :=
-  { form := "empeorar", frames := [Frame.np],
+  { form := "empeorar", frames := [ArgumentFrame.np],
     anticausativeMarking := .unmarked,
     causativeAlternation := true, verbHead := [.vGO, .vBE],
     licensesStylLE := false }
@@ -218,7 +218,7 @@ def empeorar : SpanishVerbEntry :=
 /-- *crecer* "grow" — internally caused COS verb. No CAUSE in LSR.
     Rejects *por sí solo*. [koontz-garboden-2009] ex. 65c. -/
 def crecer : SpanishVerbEntry :=
-  { form := "crecer", frames := [Frame.intransitive],
+  { form := "crecer", frames := [ArgumentFrame.intransitive],
     unaccusative := true,
     anticausativeMarking := .unmarked,
     causativeAlternation := false, verbHead := [.vGO, .vBE],

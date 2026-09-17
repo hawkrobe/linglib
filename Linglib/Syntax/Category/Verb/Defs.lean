@@ -1,5 +1,5 @@
 import Linglib.Syntax.Clause.Complementation
-import Linglib.Syntax.Category.Verb.Complement.Basic
+import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Presupposition.TriggerTypology
@@ -101,10 +101,10 @@ namespace Verb
 /-- Argument structure and realization: complement selection, control,
     proto-role entailments, voice, and implicit arguments. -/
 structure ArgStructure where
-  /-- Argument frames, citation frame first: `Frame.intransitive`, `Frame.np`,
-      `Frame.finiteClause`, … (`Syntax/Category/Verb/Complement/Basic.lean`). `[]` records
-      no frame. -/
-  frames : List Frame
+  /-- Argument frames, citation frame first: `ArgumentFrame.intransitive`, `ArgumentFrame.np`,
+      `ArgumentFrame.finiteClause`, … (`Syntax/Category/Verb/ArgumentFrame/Basic.lean`). `[]`
+      records no frame. -/
+  frames : List ArgumentFrame
   /-- Proto-role entailment profile for the subject (external argument).
       The authoritative representation of argument semantics
       ([dowty-1991], [grimm-2011], [levin-2019]).
@@ -180,8 +180,8 @@ structure Causation where
     `Verb.opaqueContext`), and the frame's control type. -/
 structure Reading where
   /-- The frame this reading is conditioned on: it applies to every frame of the verb
-      refining it, in the refinement order on `Frame`. -/
-  frame : Frame
+      refining it, in the refinement order on `ArgumentFrame`. -/
+  frame : ArgumentFrame
   /-- Frame-conditioned attitude override. -/
   attitude : Option _root_.Attitude := none
   /-- Frame-conditioned opacity override. -/
@@ -244,23 +244,23 @@ structure Verb extends
   senseTag : SenseTag := .default
   deriving Repr, BEq
 
-/-! ### Frame accessors
+/-! ### ArgumentFrame accessors
 
 Flat readers over `Verb.frames`/`Verb.readings`, preserving the flat
 enum-based call syntax: the citation frame's complement/control type and
 the alternate frame's, when present. -/
 
 /-- The citation frame, the first of the entry's frames. -/
-def Verb.citationFrame? (v : Verb) : Option Frame := v.frames.head?
+def Verb.citationFrame? (v : Verb) : Option ArgumentFrame := v.frames.head?
 
 /-- The reading keyed to frame `fr`: the first whose frame `fr` refines. -/
-def Verb.reading? (v : Verb) (fr : Frame) : Option Verb.Reading :=
+def Verb.reading? (v : Verb) (fr : ArgumentFrame) : Option Verb.Reading :=
   v.readings.find? fun r ↦ decide (r.frame ≤ fr)
 
 /-- The citation frame's flat `ComplementType` cell; `.none` for an
     intransitive and for a frame shape the enum has no cell for. -/
 def Verb.complementType (v : Verb) : ComplementType :=
-  (v.citationFrame?.bind Frame.complementType?).getD .none
+  (v.citationFrame?.bind ArgumentFrame.complementType?).getD .none
 
 /-- Every frame of the verb is intransitive. -/
 def Verb.IsIntransitive (v : Verb) : Prop := ∀ fr ∈ v.frames, fr.IsIntransitive
@@ -271,7 +271,7 @@ instance (v : Verb) : Decidable v.IsIntransitive :=
 /-- The alternate (second) frame's flat `ComplementType` cell, `none` when
     there is no second frame or it has a shape outside the enum. -/
 def Verb.altComplementType (v : Verb) : Option ComplementType :=
-  v.frames[1]?.bind Frame.complementType?
+  v.frames[1]?.bind ArgumentFrame.complementType?
 
 /-- The control type of the reading keyed to the citation frame. -/
 def Verb.controlType (v : Verb) : ControlType :=
@@ -283,12 +283,12 @@ def Verb.altControlType (v : Verb) : ControlType :=
 
 /-- The effective attitude on frame `fr`: reading override, else lexeme
     default. -/
-def Verb.attitudeOn (v : Verb) (fr : Frame) : Option _root_.Attitude :=
+def Verb.attitudeOn (v : Verb) (fr : ArgumentFrame) : Option _root_.Attitude :=
   ((v.reading? fr).bind (·.attitude)).orElse fun _ ↦ v.attitude
 
 /-- All [noonan-2007] codings across the verb's frames. -/
 def Verb.codings (v : Verb) : List Complement.Coding :=
-  v.frames.flatMap Frame.codings
+  v.frames.flatMap ArgumentFrame.codings
 
 /-- Some frame of the verb records force `f`. -/
 def Verb.TakesForce (v : Verb) (f : Mood.Illocutionary) : Prop :=

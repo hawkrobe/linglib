@@ -11,7 +11,7 @@ complementation and particle APIs.
 ## Main definitions
 
 * `Clause.EmbeddedSubject` — the subject-requirement axis complement
-  frames record (`Syntax/Category/Verb/Complement/Basic.lean`)
+  frames record (`Syntax/Category/Verb/ArgumentFrame/Basic.lean`)
 * `Clause.EmbeddingContext` — where a clause token occurs, the
   [bhatt-dayal-2020] embedding cells
 * `Clause.Size` — the semantic sort of a complement clause and the minimal

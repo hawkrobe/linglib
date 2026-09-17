@@ -235,18 +235,15 @@ def causativeAlternation : Voice.ValencyAlternation :=
   Voice.causativization
 
 /-- The antipassive is valency-decreasing (P is denucleativized). -/
-theorem antipassive_decreases :
-    antipassive.isValencyDecreasing = true := rfl
+theorem antipassive_decreases : antipassive.IsValencyDecreasing := by decide
 
 /-- The causative is valency-increasing (new A is introduced). -/
-theorem causative_increases :
-    causativeAlternation.isValencyIncreasing = true := rfl
+theorem causative_increases : causativeAlternation.IsValencyIncreasing := by decide
 
 /-- The antipassive and causative are structural inverses: one removes
     a core term, the other adds one. -/
 theorem antipassive_causative_inverse :
-    antipassive.isValencyDecreasing = true ∧
-    causativeAlternation.isValencyIncreasing = true := ⟨rfl, rfl⟩
+    antipassive.IsValencyDecreasing ∧ causativeAlternation.IsValencyIncreasing := by decide
 
 -- ============================================================================
 -- § 6: Light Verb Verification

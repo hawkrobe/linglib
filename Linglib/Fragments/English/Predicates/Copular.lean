@@ -39,8 +39,8 @@ def beRight : ClauseEmbeddingAdjective where
     `controlType`. Constructed as a direct `Verb` instead. -/
 def beAble : Verb where
   form := "be able"
-  frames := [Frame.infinitival]
-  readings := [{ frame := Frame.infinitival, control := some .subjectControl }]
+  frames := [ArgumentFrame.infinitival]
+  readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
 
 end English.Predicates.Copular
 

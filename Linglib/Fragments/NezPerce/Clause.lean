@@ -45,7 +45,7 @@ structure Verb extends _root_.Verb where
 /-- *lilooy* 'be happy' ((27a), (28a), (33)). -/
 def liloy : Verb where
   form := "lilooy"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   predicateClass := .commentative
   attitude := some (.preferential (.degreeComparison .positive))
   factivity := some .full
@@ -53,7 +53,7 @@ def liloy : Verb where
 /-- *’etqew* 'be sad' (27b). -/
 def etqew : Verb where
   form := "’etqew"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   predicateClass := .commentative
   attitude := some (.preferential (.degreeComparison .negative))
   factivity := some .full
@@ -61,14 +61,14 @@ def etqew : Verb where
 /-- *cicwaay* 'be surprised' ((27c), (28b)). -/
 def cicwaay : Verb where
   form := "cicwaay"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   predicateClass := .commentative
   factivity := some .full
 
 /-- *’eey’s* 'be joyful', which takes no noun-phrase object ((27e), (41)). -/
 def eeys : Verb where
   form := "’eey’s"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   predicateClass := .commentative
   attitude := some (.preferential (.degreeComparison .positive))
   factivity := some .full
@@ -76,7 +76,7 @@ def eeys : Verb where
 /-- *q’eese’* 'be bothered, unhappy' (27e). -/
 def qeese : Verb where
   form := "q’eese’"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   predicateClass := .commentative
   attitude := some (.preferential (.degreeComparison .negative))
   factivity := some .full
@@ -84,7 +84,7 @@ def qeese : Verb where
 /-- *tim’neeneki* 'be worried', whose complement projects under negation ((27e), (34)). -/
 def timneneki : Verb where
   form := "tim’neeneki"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   predicateClass := .commentative
   attitude := some (.preferential .uncertaintyBased)
   factivity := some .full
@@ -92,7 +92,7 @@ def timneneki : Verb where
 /-- *timiipni* 'remember', a cognitive factive with the relative edge (27d). -/
 def timiipni : Verb where
   form := "timiipni"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   predicateClass := .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -100,7 +100,7 @@ def timiipni : Verb where
 /-- *neki* 'think', whose complement does not project ((35), (36), (48)). -/
 def neki : Verb where
   form := "neki"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   predicateClass := .propAttitude
   attitude := some (.doxastic .nonVeridical)
 
@@ -115,7 +115,7 @@ def hi : Verb where
 /-- *cuukwe* 'know', whose complement projects from a conditional antecedent ((66), (68)). -/
 def cuukwe : Verb where
   form := "cuukwe"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   predicateClass := .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi

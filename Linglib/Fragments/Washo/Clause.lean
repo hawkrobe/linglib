@@ -70,7 +70,7 @@ def gum : Morph := .pref "gum"
 /-- *hamup'ay* 'forget' (1). -/
 def hamupay : Verb where
   form := "hamup'ay"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   predicateClass := some .knowledge
   typer := ge
 
@@ -80,7 +80,7 @@ def hamupayEs : Verb := { hamupay with form := hamupay.form ++ toString es }
 /-- *ašaš-e:s* 'know', negated 'not know'; it also takes a plain DP ((6), (79)). -/
 def ashashEs : Verb where
   form := "ašaš" ++ toString es
-  frames := [Frame.finiteClause, Frame.np]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.np]
   predicateClass := some .knowledge
   typer := ge
 
@@ -88,7 +88,7 @@ def ashashEs : Verb where
 (89)). -/
 def iigi : Verb where
   form := "i:gi"
-  frames := [Frame.finiteClause, Frame.np]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.np]
   predicateClass := some .perception
   typer := ge
 
@@ -96,21 +96,21 @@ def iigi : Verb where
 no FPROP shift ((11), (84)). -/
 def damal : Verb where
   form := "damal"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   predicateClass := some .perception
   typer := ge
 
 /-- *hamu* 'think', intransitive, questioned with *how* rather than *what* ((2), (49)). -/
 def hamu : Verb where
   form := "hamu"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   predicateClass := some .propAttitude
   typer := aq
 
 /-- *i:d* 'say', intransitive ((14), (50)). -/
 def iid : Verb where
   form := "i:d"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   predicateClass := some .utterance
   typer := aq
   speechActVerb := true
@@ -118,7 +118,7 @@ def iid : Verb where
 /-- *mɨtgi:bɨl-e:s* 'believe', negated 'disbelieve' (16). -/
 def metgiibilEs : Verb where
   form := "mɨtgi:bɨl" ++ toString es
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   predicateClass := some .propAttitude
   typer := aq
 
@@ -126,7 +126,7 @@ def metgiibilEs : Verb where
 headed relative ((53), (55)). -/
 def suus : Verb where
   form := "suʔuʔuš"
-  frames := [Frame.np, Frame.finiteClause]
+  frames := [ArgumentFrame.np, ArgumentFrame.finiteClause]
   predicateClass := none
   typer := ge
 
@@ -136,7 +136,7 @@ def gumsuus : Verb :=
   { suus with
     form := toString gum ++ suus.form
     voiceType := some .reflexive
-    frames := [Frame.intransitive]
+    frames := [ArgumentFrame.intransitive]
     typer := aq }
 
 /-- The predicates with per-predicate data in the paper. -/

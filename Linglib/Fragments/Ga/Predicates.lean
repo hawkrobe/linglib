@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Fragments.Ga.Basic
-import Linglib.Syntax.Category.Verb.Complement.Takes
+import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 
 /-!
 # Gã complement-taking verbs
@@ -45,7 +45,7 @@ def niReading (c : ControlType) (size : Option Clause.Size := none) : Verb.Readi
   { frame := niFrame, control := some c, size }
 
 /-- The reading of a finite `akɛ`-frame: a proposition. -/
-def akeReading : Verb.Reading := { frame := Frame.finiteClause, size := some .proposition }
+def akeReading : Verb.Reading := { frame := ArgumentFrame.finiteClause, size := some .proposition }
 
 /-! ### Subject control -/
 
@@ -98,7 +98,7 @@ def miamihie : Verb where
     keeps it (ex 117a). -/
 def kai : Verb where
   form := "kai"
-  frames := [niFrame, Frame.finiteClause]
+  frames := [niFrame, ArgumentFrame.finiteClause]
   readings := [niReading .subjectControl]
   implicative := some .positive
 
@@ -117,7 +117,7 @@ def nye : Verb where
     complement, 'agree that' (ex 105: *Osa kplɛnɔ ni/akɛ Taki á-tsɛ́ Momo*). -/
 def kpleno : Verb where
   form := "kplɛnɔ"
-  frames := [niFrame, Frame.finiteClause]
+  frames := [niFrame, ArgumentFrame.finiteClause]
   readings := [niReading .subjectControl]
 
 /-- *kpaŋ* 'plan, decide' — subject control; only `ni` introduces the complement
@@ -141,7 +141,7 @@ def kpagbe : Verb where
     subject (ex 112: 'Aku thought to buy a book'). -/
 def dweng : Verb where
   form := "dwɛŋ"
-  frames := [Frame.finiteClause, niFrame]
+  frames := [ArgumentFrame.finiteClause, niFrame]
   readings := [akeReading, niReading .subjectControl]
   attitude := some (.doxastic .nonVeridical)
 
@@ -189,7 +189,7 @@ def bi : Verb where
     ni é he noko-noko* 'John didn't tell Mary to buy anything'). -/
 def kee : Verb where
   form := "kɛɛ"
-  frames := [Frame.finiteClause, niFrame]
+  frames := [ArgumentFrame.finiteClause, niFrame]
   readings := [akeReading, niReading .objectControl]
   speechActVerb := true
 

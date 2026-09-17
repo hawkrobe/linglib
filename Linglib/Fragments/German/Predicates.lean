@@ -53,8 +53,8 @@ def lassen : GermanVerbEntry where
   form3sg := "lässt"
   formPast := "ließ"
   formPastPart := "gelassen"
-  frames := [Frame.smallClause]
-  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
+  frames := [ArgumentFrame.smallClause]
+  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   causative := some .enable
 
 /-- *machen* — productive analytic causative.
@@ -64,8 +64,8 @@ def machen : GermanVerbEntry where
   form3sg := "macht"
   formPast := "machte"
   formPastPart := "gemacht"
-  frames := [Frame.smallClause]
-  readings := [{ frame := Frame.smallClause, control := some .objectControl }]
+  frames := [ArgumentFrame.smallClause]
+  readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   causative := some .make
 
 /-- *töten* — lexical COMPACT causative ("kill" = tot + -en).
@@ -75,7 +75,7 @@ def toeten : GermanVerbEntry where
   form3sg := "tötet"
   formPast := "tötete"
   formPastPart := "getötet"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   causative := some .make
 
 /-- *zerbrechen* — lexical COMPACT causative ("break").
@@ -85,7 +85,7 @@ def zerbrechen : GermanVerbEntry where
   form3sg := "zerbricht"
   formPast := "zerbrach"
   formPastPart := "zerbrochen"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   causative := some .make
 
 -- ============================================================================
@@ -98,7 +98,7 @@ def hoffen : GermanVerbEntry where
   form3sg := "hofft"
   formPast := "hoffte"
   formPastPart := "gehofft"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -109,7 +109,7 @@ def fuerchten : GermanVerbEntry where
   form3sg := "fürchtet"
   formPast := "fürchtete"
   formPastPart := "gefürchtet"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .negative))
@@ -120,7 +120,7 @@ def befuerchten : GermanVerbEntry where
   form3sg := "befürchtet"
   formPast := "befürchtete"
   formPastPart := "befürchtet"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .negative))
@@ -131,7 +131,7 @@ def wuenschen : GermanVerbEntry where
   form3sg := "wünscht"
   formPast := "wünschte"
   formPastPart := "gewünscht"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
@@ -142,7 +142,7 @@ def sorgen : GermanVerbEntry where
   form3sg := "sorgt sich"
   formPast := "sorgte sich"
   formPastPart := "sich gesorgt"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .uncertaintyBased)
@@ -164,7 +164,7 @@ def bestrafen : GermanVerbEntry where
   form3sg := "bestraft"
   formPast := "bestrafte"
   formPastPart := "bestraft"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 /-- *belohnen* — "reward": presupposes the object did something praiseworthy -/
@@ -173,7 +173,7 @@ def belohnen : GermanVerbEntry where
   form3sg := "belohnt"
   formPast := "belohnte"
   formPastPart := "belohnt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 /-- *loben* — "praise": presupposes praiseworthy behavior by the object -/
@@ -182,7 +182,7 @@ def loben : GermanVerbEntry where
   form3sg := "lobt"
   formPast := "lobte"
   formPastPart := "gelobt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 /-- *kritisieren* — "criticise": presupposes the object did something wrong -/
@@ -191,7 +191,7 @@ def kritisieren : GermanVerbEntry where
   form3sg := "kritisiert"
   formPast := "kritisierte"
   formPastPart := "kritisiert"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 /-- *danken* — "thank": presupposes the object did something helpful -/
@@ -200,7 +200,7 @@ def danken : GermanVerbEntry where
   form3sg := "dankt"
   formPast := "dankte"
   formPastPart := "gedankt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 /-- *verklagen* — "sue": presupposes the object caused harm -/
@@ -209,7 +209,7 @@ def verklagen : GermanVerbEntry where
   form3sg := "verklagt"
   formPast := "verklagte"
   formPastPart := "verklagt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 /-- *gratulieren* — "congratulate": presupposes the object achieved something -/
@@ -218,7 +218,7 @@ def gratulieren : GermanVerbEntry where
   form3sg := "gratuliert"
   formPast := "gratulierte"
   formPastPart := "gratuliert"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 /-- *zurechtweisen* — "rebuke": presupposes the object misbehaved -/
@@ -227,7 +227,7 @@ def zurechtweisen : GermanVerbEntry where
   form3sg := "weist zurecht"
   formPast := "wies zurecht"
   formPastPart := "zurechtgewiesen"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 /-- *anzeigen* — "report (to authorities)": presupposes the object did something illegal -/
@@ -236,7 +236,7 @@ def anzeigen : GermanVerbEntry where
   form3sg := "zeigt an"
   formPast := "zeigte an"
   formPastPart := "angezeigt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 /-- *auszeichnen* — "award/honor": presupposes the object did something meritorious -/
@@ -245,7 +245,7 @@ def auszeichnen : GermanVerbEntry where
   form3sg := "zeichnet aus"
   formPast := "zeichnete aus"
   formPastPart := "ausgezeichnet"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 /-- *belangen* — "prosecute": presupposes the object committed an offense -/
@@ -254,7 +254,7 @@ def belangen : GermanVerbEntry where
   form3sg := "belangt"
   formPast := "belangte"
   formPastPart := "belangt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 /-- *ehren* — "honor": presupposes the object did something worthy of honor -/
@@ -263,7 +263,7 @@ def ehren : GermanVerbEntry where
   form3sg := "ehrt"
   formPast := "ehrte"
   formPastPart := "geehrt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 /-- *entlassen* — "dismiss/fire": presupposes the object did something
@@ -273,7 +273,7 @@ def entlassen : GermanVerbEntry where
   form3sg := "entlässt"
   formPast := "entließ"
   formPastPart := "entlassen"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 /-- *sich rächen an* — "take revenge on": presupposes the object
@@ -283,7 +283,7 @@ def raechen : GermanVerbEntry where
   form3sg := "rächt sich"
   formPast := "rächte sich"
   formPastPart := "sich gerächt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 /-- *sich revanchieren bei* — "reciprocate/repay": presupposes the
@@ -293,7 +293,7 @@ def revanchieren : GermanVerbEntry where
   form3sg := "revanchiert sich"
   formPast := "revanchierte sich"
   formPastPart := "sich revanchiert"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 /-- *zur Verantwortung ziehen* — "hold accountable": presupposes
@@ -303,7 +303,7 @@ def zurVerantwortungZiehen : GermanVerbEntry where
   form3sg := "zieht zur Verantwortung"
   formPast := "zog zur Verantwortung"
   formPastPart := "zur Verantwortung gezogen"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   senseTag := .occasion
 
 -- ============================================================================
@@ -323,7 +323,7 @@ def haemmern : GermanVerbEntry where
   form3sg := "hämmert"
   formPast := "hämmerte"
   formPastPart := "gehämmert"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
 
 /-- *malen* — "paint": activity. Contrast: **Mal-ung* vs *Be-mal-ung* ✓.
@@ -333,7 +333,7 @@ def malen : GermanVerbEntry where
   form3sg := "malt"
   formPast := "malte"
   formPastPart := "gemalt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
 
 /-- *bemalen* — "paint (all over)" (*be-* prefix): accomplishment. The
@@ -345,7 +345,7 @@ def bemalen : GermanVerbEntry where
   form3sg := "bemalt"
   formPast := "bemalte"
   formPastPart := "bemalt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
 
 /-- *küssen* — "kiss": activity. Used in RSP examples (*wach-küssen*). -/
@@ -354,7 +354,7 @@ def kuessen : GermanVerbEntry where
   form3sg := "küsst"
   formPast := "küsste"
   formPastPart := "geküsst"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
 
 /-- *führen* — "lead": activity. Base for *ein-führen* (introduce).
@@ -365,7 +365,7 @@ def fuehren : GermanVerbEntry where
   form3sg := "führt"
   formPast := "führte"
   formPastPart := "geführt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
 
 /-- *rauben* — "rob": activity. Contrast: **arm be-raubt* (RSP + prefix = blocked)
@@ -375,7 +375,7 @@ def rauben : GermanVerbEntry where
   form3sg := "raubt"
   formPast := "raubte"
   formPastPart := "geraubt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .activity
 
 /-! ### Change-of-state verbs
@@ -391,7 +391,7 @@ def brechen : GermanVerbEntry where
   form3sg := "bricht"
   formPast := "brach"
   formPastPart := "gebrochen"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .achievement
   rootType := some .result
 
@@ -403,7 +403,7 @@ def frieren : GermanVerbEntry where
   form3sg := "friert"
   formPast := "fror"
   formPastPart := "gefroren"
-  frames := [Frame.intransitive]
+  frames := [ArgumentFrame.intransitive]
   unaccusative := true
   vendlerClass := some .achievement
   rootType := some .propertyConcept
@@ -422,7 +422,7 @@ def beobachten : GermanVerbEntry where
   form3sg := "beobachtet"
   formPast := "beobachtete"
   formPastPart := "beobachtet"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
 
 /-- *einführen* — "introduce" (*ein-* particle): accomplishment.
@@ -434,7 +434,7 @@ def einfuehren : GermanVerbEntry where
   form3sg := "führt ein"
   formPast := "führte ein"
   formPastPart := "eingeführt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
 
 /-- *verbinden* — "connect" (*ver-* prefix): accomplishment.
@@ -444,7 +444,7 @@ def verbinden : GermanVerbEntry where
   form3sg := "verbindet"
   formPast := "verband"
   formPastPart := "verbunden"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
 
 -- ============================================================================
@@ -470,7 +470,7 @@ def beenden : GermanVerbEntry where
   form3sg := "beendet"
   formPast := "beendete"
   formPastPart := "beendet"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
 
 /-- *streichen* — "cancel/delete": takes only DP complement.
@@ -481,7 +481,7 @@ def streichen : GermanVerbEntry where
   form3sg := "streicht"
   formPast := "strich"
   formPastPart := "gestrichen"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
 
 /-- *übereilen* — "(not) rush": takes only DP complement.
@@ -491,7 +491,7 @@ def uebereilen : GermanVerbEntry where
   form3sg := "übereilt"
   formPast := "übereilte"
   formPastPart := "übereilt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *entwickeln* — "develop": takes only DP complement.
     "Die Stadt entwickelt [DP ein neues Konzept]." -/
@@ -500,7 +500,7 @@ def entwickeln : GermanVerbEntry where
   form3sg := "entwickelt"
   formPast := "entwickelte"
   formPastPart := "entwickelt"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
 
 end NonCPSelecting
@@ -515,7 +515,7 @@ def veranlassen : GermanVerbEntry where
   form3sg := "veranlasst"
   formPast := "veranlasste"
   formPastPart := "veranlasst"
-  frames := [Frame.np, Frame.finiteClause]
+  frames := [ArgumentFrame.np, ArgumentFrame.finiteClause]
 
 /-- *vergessen* — "forget": takes DP or *dass*-clause.
     "Ich vergesse [DP den Termin]."
@@ -525,7 +525,7 @@ def vergessen : GermanVerbEntry where
   form3sg := "vergisst"
   formPast := "vergaß"
   formPastPart := "vergessen"
-  frames := [Frame.np, Frame.finiteClause]
+  frames := [ArgumentFrame.np, ArgumentFrame.finiteClause]
   opaqueContext := true
 
 /-- *erwarten* — "expect": takes DP or *dass*-clause.
@@ -536,7 +536,7 @@ def erwarten : GermanVerbEntry where
   form3sg := "erwartet"
   formPast := "erwartete"
   formPastPart := "erwartet"
-  frames := [Frame.np, Frame.finiteClause]
+  frames := [ArgumentFrame.np, ArgumentFrame.finiteClause]
   opaqueContext := true
 
 /-- *beschließen* — "decide": takes DP or *dass*-clause.
@@ -547,7 +547,7 @@ def beschliessen : GermanVerbEntry where
   form3sg := "beschließt"
   formPast := "beschloss"
   formPastPart := "beschlossen"
-  frames := [Frame.np, Frame.finiteClause]
+  frames := [ArgumentFrame.np, ArgumentFrame.finiteClause]
 
 end CPAndDPSelecting
 
@@ -662,14 +662,14 @@ theorem sorgen_is_uncertainty :
 -- ============================================================================
 
 /-- Non-CP-selecting verbs cannot take clausal complements.
-    Their only frame is `Frame.np`. -/
+    Their only frame is `ArgumentFrame.np`. -/
 theorem nonCPSelecting_profile :
     ¬ beenden.toVerb.TakesClausal ∧ ¬ streichen.toVerb.TakesClausal ∧
     ¬ uebereilen.toVerb.TakesClausal ∧ ¬ entwickeln.toVerb.TakesClausal := by
   decide
 
 /-- CP-and-DP-selecting verbs can take clausal complements.
-    Their `frames` include a `Frame.finiteClause` alternate. -/
+    Their `frames` include a `ArgumentFrame.finiteClause` alternate. -/
 theorem cpSelecting_profile :
     veranlassen.toVerb.TakesClausal ∧ vergessen.toVerb.TakesClausal ∧
     erwarten.toVerb.TakesClausal ∧ beschliessen.toVerb.TakesClausal := by

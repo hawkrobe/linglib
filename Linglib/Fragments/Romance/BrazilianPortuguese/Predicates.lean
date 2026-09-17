@@ -17,42 +17,42 @@ namespace BrazilianPortuguese.Predicates
     ([palmieri-2024], Appendix A). -/
 def abracar : Verb where
   form := "abraçar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *beijar* 'kiss' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def beijar : Verb where
   form := "beijar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *casar* 'marry' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def casar : Verb where
   form := "casar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *consultar* 'consult/confer' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def consultar : Verb where
   form := "consultar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *cumprimentar* 'greet' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def cumprimentar : Verb where
   form := "cumprimentar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *encontrar* 'meet' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def encontrar : Verb where
   form := "encontrar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 /-- *namorar* 'date, be partners' — transitive, with a lexical reciprocal entry
     ([palmieri-2024], Appendix A). -/
 def namorar : Verb where
   form := "namorar"
-  frames := [Frame.np]
+  frames := [ArgumentFrame.np]
 
 end BrazilianPortuguese.Predicates

@@ -2,7 +2,7 @@ import Linglib.Semantics.Attitudes.Anchor
 import Linglib.Semantics.Truthmaker.Inexact
 import Linglib.Fragments.Buryat.Complementizers
 import Linglib.Fragments.Korean.Complementizers
-import Linglib.Syntax.Category.Verb.Complement.Takes
+import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 import Linglib.Data.Examples.Bondarenko2022
 
 /-!
@@ -371,7 +371,7 @@ theorem content_iff_contExponent_mem :
 *-žA* on the bare frame, participial *-Aːša* on the nominalized one — and
 the say-root takes neither. -/
 theorem hanaxa_typers :
-    (Frame.finiteClause.Takes zha ∧ ¬ Frame.finiteClause.Takes aasha) ∧
+    (ArgumentFrame.finiteClause.Takes zha ∧ ¬ ArgumentFrame.finiteClause.Takes aasha) ∧
       (nominalizedFrame.Takes aasha ∧ ¬ nominalizedFrame.Takes zha) ∧
       hanaxa.typers complementizers = [aasha, zha] := by
   decide
@@ -379,7 +379,7 @@ theorem hanaxa_typers :
 /-- *hanaxa* think ~ remember: nonveridical on the bare frame, veridical on
 the nominalized one. -/
 theorem hanaxa_frame_conditioned_attitude :
-    hanaxa.attitudeOn Frame.finiteClause = some (.doxastic .nonVeridical) ∧
+    hanaxa.attitudeOn ArgumentFrame.finiteClause = some (.doxastic .nonVeridical) ∧
       hanaxa.attitudeOn nominalizedFrame = some (.doxastic .veridical) := by
   decide
 

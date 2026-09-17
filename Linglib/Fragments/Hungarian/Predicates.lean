@@ -63,7 +63,7 @@ def lat : HungarianVerbEntry where
   formPresIndef := "lát"
   formPastDef := "látta"
   formPastIndef := "látott"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   levinClass := some .see
 
 /-- *hall* 'hear' — perception verb ([egressy-2026], exx. (5), (13), (17)).
@@ -76,7 +76,7 @@ def hall : HungarianVerbEntry where
   formPresIndef := "hall"
   formPastDef := "hallotta"
   formPastIndef := "hallott"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   levinClass := some .see
 
 /-- *álmodik* 'dream' — perception-in-a-dream ([egressy-2026], exx. (6), (10)).
@@ -84,7 +84,7 @@ def hall : HungarianVerbEntry where
 def almodik : HungarianVerbEntry where
   form := "álmodik"
   gloss := "dream"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -99,7 +99,7 @@ def gondol : HungarianVerbEntry where
   formPresIndef := "gondol"
   formPastDef := "gondolta"
   formPastIndef := "gondolt"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   attitude := some (.doxastic .nonVeridical)
   complementSig := some .mono
 
@@ -112,7 +112,7 @@ def hisz : HungarianVerbEntry where
   formPresIndef := "hisz"
   formPastDef := "hitte"
   formPastIndef := "hitt"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.doxastic .nonVeridical)
   complementSig := some .mono
@@ -125,7 +125,7 @@ def tud : HungarianVerbEntry where
   formPresIndef := "tud"
   formPastDef := "tudta"
   formPastIndef := "tudott"
-  frames := [Frame.finiteClause, Frame.question]
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.question]
   factivity := some .semi
   attitude := some (.doxastic .veridical)
   complementSig := some .mono
@@ -135,7 +135,7 @@ def tud : HungarianVerbEntry where
 def aggaszt : HungarianVerbEntry where
   form := "aggaszt"
   gloss := "worry"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -150,7 +150,7 @@ def mond : HungarianVerbEntry where
   formPresIndef := "mond"
   formPastDef := "mondta"
   formPastIndef := "mondott"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   speechActVerb := true
   levinClass := some .say
 
@@ -158,7 +158,7 @@ def mond : HungarianVerbEntry where
 def rikolt : HungarianVerbEntry where
   form := "rikolt"
   gloss := "shout"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   speechActVerb := true
   levinClass := some .mannerOfSpeaking
 
@@ -168,7 +168,7 @@ def rikolt : HungarianVerbEntry where
 def morog : HungarianVerbEntry where
   form := "morog"
   gloss := "growl"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   speechActVerb := true
   levinClass := some .mannerOfSpeaking
 

@@ -33,7 +33,7 @@ structure Verb extends _root_.Verb where
 /-- 期待 "qidai" — look forward to (Class 1: positive, non-C-distributive, takes questions). -/
 def qidai : Verb := {
   form := "qidai"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.relevanceBased .positive)) }
@@ -41,7 +41,7 @@ def qidai : Verb := {
 /-- 担心 "danxin" — worry (Class 1: negative, non-C-distributive). -/
 def danxin : Verb := {
   form := "danxin"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .uncertaintyBased) }
@@ -49,7 +49,7 @@ def danxin : Verb := {
 /-- 希望 "xiwang" — hope (Class 3: positive, C-distributive, anti-rogative). -/
 def xiwang : Verb := {
   form := "xiwang"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive)) }
@@ -57,7 +57,7 @@ def xiwang : Verb := {
 /-- 害怕 "haipa" — fear (Class 2: negative, C-distributive, takes questions). -/
 def haipa : Verb := {
   form := "haipa"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .negative)) }
@@ -69,7 +69,7 @@ contrafactive postsupposition (◇¬p, not derivable from veridicality alone);
 that paper-specific apparatus lives in `Glass2025`, not on this entry. -/
 def yiwei : Verb := {
   form := "yiwei"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.doxastic .nonVeridical) }
@@ -77,7 +77,7 @@ def yiwei : Verb := {
 /-- 认为 "rènwéi" — think, hold the view that: the neutral nonveridical doxastic verb. -/
 def renwei : Verb := {
   form := "renwei"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.doxastic .nonVeridical) }
@@ -91,7 +91,7 @@ in `Studies/LiuYip2026.lean`. -/
 /-- 想 *xiang* 'want' — desiderative; nonfinite-taking. [liu-yip-2026]. -/
 def xiang : Verb := {
   form := "xiang"
-  frames := [Frame.infinitival]
+  frames := [ArgumentFrame.infinitival]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive)) }
@@ -99,7 +99,7 @@ def xiang : Verb := {
 /-- 让 *rang* 'let' — manipulative; nonfinite-taking. [liu-yip-2026]. -/
 def rang : Verb := {
   form := "rang"
-  frames := [Frame.infinitival]
+  frames := [ArgumentFrame.infinitival]
   passivizable := false
   opaqueContext := false }
 
@@ -107,7 +107,7 @@ def rang : Verb := {
     (CP-only). [liu-yip-2026]. -/
 def xiangxin : Verb := {
   form := "xiangxin"
-  frames := [Frame.finiteClause]
+  frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.doxastic .veridical) }
@@ -115,21 +115,21 @@ def xiangxin : Verb := {
 /-- 劝 *quan* 'urge' — manipulative; nonfinite-taking. [liu-yip-2026]. -/
 def quan : Verb := {
   form := "quan"
-  frames := [Frame.infinitival]
+  frames := [ArgumentFrame.infinitival]
   passivizable := true
   opaqueContext := false }
 
 /-- 逼 *bi* 'force' — manipulative; nonfinite-taking [liu-yip-2026]. -/
 def bi : Verb := {
   form := "bi"
-  frames := [Frame.infinitival]
+  frames := [ArgumentFrame.infinitival]
   passivizable := true
   opaqueContext := false }
 
 /-- 打算 *dasuan* 'plan' — desiderative; nonfinite-taking [liu-yip-2026]. -/
 def dasuan : Verb := {
   form := "dasuan"
-  frames := [Frame.infinitival]
+  frames := [ArgumentFrame.infinitival]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive)) }
@@ -137,7 +137,7 @@ def dasuan : Verb := {
 /-- 设法 *shefa* 'try' — achievement; nonfinite-taking [liu-yip-2026]. -/
 def shefa : Verb := {
   form := "shefa"
-  frames := [Frame.infinitival]
+  frames := [ArgumentFrame.infinitival]
   passivizable := false
   opaqueContext := false }
 
