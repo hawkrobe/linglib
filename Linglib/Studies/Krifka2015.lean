@@ -74,7 +74,7 @@ theorem assert_root :
 it was (p. 331). -/
 theorem assert_contextSet_vs_farkasBruce_cg :
     contextSet (C₀.assert .speaker raining).root = raining ∧
-      ((Table.empty : Table Discourse.Role Weather).assert .speaker raining).cg = ⊤ :=
+      ((Table.empty : Table Discourse.Role Weather).assert .speaker raining).commonGround = ⊤ :=
   ⟨by rw [contextSet_assert_root, show C₀.root = ∅ from rfl, contextSet_empty, Set.inter_univ],
     rfl⟩
 
