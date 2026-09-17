@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Syntax.ConstructionGrammar.Inheritance
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Data.UD.UPOS
 
 /-!
@@ -447,16 +448,16 @@ causativeInchoative, middle, instrumentSubject, and resultative. -/
 
 /-- Manner-of-motion verbs alone: no CI, no middle, no instrumentSubject. -/
 theorem mannerOfMotion_blocked_alone :
-    (LevinClass.mannerOfMotion.meaningComponents).predictedAlternation .causativeInchoative = false
-    ∧ (LevinClass.mannerOfMotion.meaningComponents).predictedAlternation .middle = false
-    ∧ (LevinClass.mannerOfMotion.meaningComponents).predictedAlternation .instrumentSubject = false := by
+    (LevinClass.run.meaningComponents).predictedAlternation .causativeInchoative = false
+    ∧ (LevinClass.run.meaningComponents).predictedAlternation .middle = false
+    ∧ (LevinClass.run.meaningComponents).predictedAlternation .instrumentSubject = false := by
   exact ⟨rfl, rfl, rfl⟩
 
 /-- Manner-of-motion + resultative: CI, middle, and instrumentSubject all flip. -/
 theorem mannerOfMotion_resultative_flips :
-    predictedAlternationInConstruction (LevinClass.mannerOfMotion.meaningComponents) resultative .causativeInchoative = true
-    ∧ predictedAlternationInConstruction (LevinClass.mannerOfMotion.meaningComponents) resultative .middle = true
-    ∧ predictedAlternationInConstruction (LevinClass.mannerOfMotion.meaningComponents) resultative .instrumentSubject = true := by
+    predictedAlternationInConstruction (LevinClass.run.meaningComponents) resultative .causativeInchoative = true
+    ∧ predictedAlternationInConstruction (LevinClass.run.meaningComponents) resultative .middle = true
+    ∧ predictedAlternationInConstruction (LevinClass.run.meaningComponents) resultative .instrumentSubject = true := by
   exact ⟨rfl, rfl, rfl⟩
 
 /-! ### Constructional augmentation summary

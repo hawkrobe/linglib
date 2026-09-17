@@ -1,23 +1,18 @@
-import Mathlib.Data.Finset.Basic
-import Linglib.Semantics.ArgumentStructure.LevinClass
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Tactic.DeriveFintype
+import Linglib.Semantics.ArgumentStructure.MeaningComponents
 
 /-!
 # Diathesis alternations
 
-Twenty-five of the alternations of [levin-1993] Part One, grouped by the chapter that presents
-them, the Introduction's prediction of an alternation from a class's meaning components, and
-each class's alternation profile as Part II records it: the alternations the class page
-attests (`LevinClass.alternations`) and the ones it stars (`LevinClass.starredAlternations`),
-with `LevinClass.Participates` as the attested relation.
-
-## Implementation notes
-
-The 25 alternations are the ones that discriminate the major classes; the remaining ones of
-Part One are not encoded. `MeaningComponents.predictedAlternation` is a hypothesis, not data:
-it agrees with Part II on the Introduction's quadruple (`quadruple_prediction_matches`) and
-overshoots elsewhere (`prediction_not_sound`), which the studies that rely on it state
-explicitly. The profiles are read off the class pages' property lists, a starred example
-denying the alternation and an unstarred one attesting it.
+The alternations and constructions of [levin-1993] Part One, one constructor per numbered
+section, with the section number (`DiathesisAlternation.number`) and Levin's title
+(`DiathesisAlternation.name`); a section that groups subsections, such as the causative
+alternations or the locative alternation, is a constructor too, since the class pages of
+Part II name it. The chapter of Part One that presents an alternation is its family
+(`DiathesisAlternation.family`), and `MeaningComponents.predictedAlternation` is the
+Introduction's prediction of an alternation from a class's meaning components, a hypothesis
+whose standing against Part II is stated in `LevinClass/Properties.lean`.
 
 ## References
 
@@ -26,159 +21,487 @@ denying the alternation and an unstarred one attesting it.
 
 namespace ArgumentStructure
 
-/-! ### Alternation Families -/
-
-/-- Classification of diathesis alternations by the chapter of
-    [levin-1993] Part One where they are primarily discussed.
-
-    -/
+/-- The chapter of [levin-1993] Part One that presents an alternation. -/
 inductive AlternationFamily where
-  /-- Ch 1: Transitivity alternations — changes in the number of arguments
-      (causative/inchoative, induced action, middle, conative, object drop). -/
+  /-- Chapter 1, transitivity alternations. -/
   | transitivity
-  /-- Ch 2: Alternations involving arguments within the VP — rearrangement
-      of internal arguments (dative, benefactive, locative, swarm, etc.). -/
+  /-- Chapter 2, alternations involving arguments within the VP. -/
   | vpInternal
-  /-- Ch 3: Oblique subject alternations — non-agent subjects
-      (instrument subject). -/
+  /-- Chapter 3, oblique subject alternations. -/
   | obliqueSubject
-  /-- Ch 5: Passive — verbal and prepositional passives. -/
+  /-- Chapter 4, reflexive diathesis alternations. -/
+  | reflexive
+  /-- Chapter 5, passive. -/
   | passive
-  /-- Ch 6: Alternations involving postverbal subjects — there-insertion,
-      locative inversion (unaccusative diagnostics). -/
+  /-- Chapter 6, alternations involving postverbal subjects. -/
   | postverbalSubject
-  /-- Ch 7: Other constructions — way construction, cognate object,
-      resultative, directional phrase. -/
+  /-- Chapter 7, other constructions. -/
   | otherConstructions
+  /-- Chapter 8, verbs requiring special diatheses. -/
+  | specialDiathesis
   deriving DecidableEq, Repr
 
-/-! ### Diathesis Alternation Diagnostics -/
-
-/-- Curated diathesis alternations from [levin-1993] Part One.
-
-    The first four (causativeInchoative / inducedAction / middle / conative)
-    are the canonical diagnostics from the Introduction; others are from
-    specific chapters. Each is classified by `AlternationFamily`.
-
-    UNVERIFIED: Per-constructor section numbers cited from memory. -/
+set_option maxRecDepth 2000 in
+/-- The numbered sections of [levin-1993] Part One. -/
 inductive DiathesisAlternation where
-  -- Transitivity alternations (Ch 1)
-  /-- *she broke the vase* / *the vase broke*. Diagnoses causation + CoS. -/
-  | causativeInchoative
-  /-- *The scientist ran the rats through the maze* ([levin-1993] §1.1.2.2).
-      Causative use of intransitive manner-of-motion verbs. -/
-  | inducedAction
-  /-- *the bread cuts easily*. Diagnoses change of state. -/
+  /-- §1.1, Object of Transitive = Subject of Intransitive Alternations. -/
+  | objectOfTransitiveSubjectOfIntransitive
+  /-- §1.1.1, Middle Alternation. -/
   | middle
-  /-- *I cut at the bread*. Diagnoses contact + motion. -/
-  | conative
-  /-- *heat radiates from the sun* / *the sun radiates heat*.
-      Substance emission verbs. -/
+  /-- §1.1.2, Causative Alternations. -/
+  | causative
+  /-- §1.1.2.1, Causative/Inchoative Alternation. -/
+  | causativeInchoative
+  /-- §1.1.2.2, Induced Action Alternation. -/
+  | inducedAction
+  /-- §1.1.2.3, Other Instances of Causative Alternations. -/
+  | otherCausative
+  /-- §1.1.3, Substance/Source Alternation. -/
   | substanceSource
-  /-- *Mike ate the cake* / *Mike ate*. Activity verbs (eat, read, cook, ...).
-      The intransitive has an unexpressed but understood indefinite object. -/
+  /-- §1.2, Unexpre ed Object Alternations. -/
+  | unexpressedObject
+  /-- §1.2.1, Unspecified Object Alternation. -/
   | unspecifiedObject
-  /-- *Bill waved his hand* / *Bill waved*. Body-part verbs
-      where the object names the moved body part. -/
+  /-- §1.2.2, Understood Body-Part Object Alternation. -/
   | understoodBodyPartObject
-  /-- *Bill washed himself* / *Bill washed*. Grooming/body-care verbs
-      where the reflexive object can be dropped. -/
+  /-- §1.2.3, Understood Reflexive Object Alternation. -/
   | understoodReflexiveObject
-  /-- *Anne met Cathy* / *Anne and Cathy met*. Social interaction verbs.
-      Intransitive paraphrasable as transitive with *each other*. -/
+  /-- §1.2.4, Understood Reciprocal Object Alternation. -/
   | understoodReciprocalObject
-  -- VP-internal alternations (Ch 2)
-  /-- *give NP NP* / *give NP to NP*. Give/send class. -/
+  /-- §1.2.5, PRO-arb Object Alternation. -/
+  | proArbObject
+  /-- §1.2.6, Characteristic      Property Alternations. -/
+  | characteristicProperty
+  /-- §1.2.6.1, Characteristic Property of Agent Alternation. -/
+  | characteristicPropertyOfAgent
+  /-- §1.2.6.2, Characteristic Property of Instrument Alternation. -/
+  | characteristicPropertyOfInstrument
+  /-- §1.2.7, Way Object Alternation. -/
+  | wayObject
+  /-- §1.2.8, Instructional Imperative. -/
+  | instructionalImperative
+  /-- §1.3, Conative Alternation. -/
+  | conative
+  /-- §1.4, Preposition Drop Alternations. -/
+  | prepositionDrop
+  /-- §1.4.1, Locative Preposition Drop Alternation. -/
+  | locativePrepositionDrop
+  /-- §1.4.2, With Preposition Drop Alternation. -/
+  | withPrepositionDrop
+  /-- §2.1, Dative Alternation. -/
   | dative
-  /-- *Martha carved a toy for the baby* / *Martha carved the baby a toy*.
-      Verbs of obtaining and creation. -/
+  /-- §2.2, Benefactive Alternation. -/
   | benefactive
-  /-- *spray paint on wall* / *spray wall with paint*. Spray/load class. -/
+  /-- §2.3, Locative Alternation. -/
   | locative
-  /-- *I hit him on the arm* / *I hit his arm*. Diagnoses contact. -/
-  | bodyPartPossessorAscension
-  /-- *Bees swarmed in the garden* / *The garden swarmed with bees*.
-      Intransitive locative alternation for verbs of spatial configuration. -/
+  /-- §2.3.1, Spray/Load Alternation. -/
+  | sprayLoad
+  /-- §2.3.2, Clear Alternation (transitive). -/
+  | clearTransitive
+  /-- §2.3.3, Wipe Alternation. -/
+  | wipe
+  /-- §2.3.4, Swarm Alternation. -/
   | swarm
-  /-- *Martha carved a toy out of wood* / *Martha carved the wood into a toy*.
-      Build/creation verbs. -/
+  /-- §2.3.5, Clear Alternation (intransitive). -/
+  | clearIntransitive
+  /-- §2.4, Creation and Transformation Alternations. -/
+  | creationAndTransformation
+  /-- §2.4.1, Material/Product Alternation (transitive). -/
   | materialProduct
-  /-- *the witch turned the prince into a frog*.
-      Complete change of entity type. Turn/convert verbs. -/
+  /-- §2.4.2, Material/Product Alternation (intransitive). -/
+  | materialProductIntransitive
+  /-- §2.4.3, Total Transformation Alternation (transitive). -/
   | totalTransformation
-  -- Oblique subject alternations (Ch 3)
-  /-- *David broke the window with a hammer* / *the hammer broke the window*.
-      Intermediary instruments can become subjects with externally caused verbs. -/
+  /-- §2.4.4, Total Transformation Alternation (intransitive). -/
+  | totalTransformationIntransitive
+  /-- §2.5, Reciprocal Alternations. -/
+  | reciprocal
+  /-- §2.5.1, Simple Reciprocal Alternation (transitive). -/
+  | simpleReciprocal
+  /-- §2.5.2, Together Reciprocal Alternation (transitive). -/
+  | togetherReciprocal
+  /-- §2.5.3, Apart Reciprocal Alternation (transitive). -/
+  | apartReciprocal
+  /-- §2.5.4, Simple Reciprocal Alternation (intransitive). -/
+  | simpleReciprocalIntransitive
+  /-- §2.5.5, Together Reciprocal Alternation (intransitive). -/
+  | togetherReciprocalIntransitive
+  /-- §2.5.6, Apart Reciprocal Alternation (intransitive). -/
+  | apartReciprocalIntransitive
+  /-- §2.6, Fulfilling Alternation. -/
+  | fulfilling
+  /-- §2.7, Image Impression Alternation. -/
+  | imageImpression
+  /-- §2.8, With/Against Alternation. -/
+  | withAgainst
+  /-- §2.9, Through/With Alternation. -/
+  | throughWith
+  /-- §2.10, Blame Alternation. -/
+  | blame
+  /-- §2.11, Search Alternations. -/
+  | search
+  /-- §2.12, Body-Part Possessor Ascension Alternation. -/
+  | bodyPartPossessorAscension
+  /-- §2.13, Possessor-Attribute Factoring Alternations. -/
+  | possessorAttributeFactoring
+  /-- §2.13.1, Possessor Object. -/
+  | possessorObject
+  /-- §2.13.2, Attribute Object. -/
+  | attributeObject
+  /-- §2.13.3, Possessor and Attribute Alternation. -/
+  | possessorAndAttribute
+  /-- §2.13.4, Possessor Subject (transitive). -/
+  | possessorSubject
+  /-- §2.13.5, Possessor Subject (intransitive). -/
+  | possessorSubjectIntransitive
+  /-- §2.14, As Alternation. -/
+  | as
+  /-- §3.1, Time Subject Alternation. -/
+  | timeSubject
+  /-- §3.2, Natural Force Subject Alternation. -/
+  | naturalForceSubject
+  /-- §3.3, Instrument Subject Alternation. -/
   | instrumentSubject
-  -- Passive (Ch 5)
-  /-- *the window was broken (by the boy)*.
-      Fundamental voice alternation for transitive verbs. -/
+  /-- §3.4, Abstract Cause Subject Alternation. -/
+  | abstractCauseSubject
+  /-- §3.5, Locatum Subject Alternation. -/
+  | locatumSubject
+  /-- §3.6, Location Subject Alternation. -/
+  | locationSubject
+  /-- §3.7, Container Subject Alternation. -/
+  | containerSubject
+  /-- §3.8, Raw Material Subject Alternation. -/
+  | rawMaterialSubject
+  /-- §3.9, Sum of Money Subject Alternation. -/
+  | sumOfMoneySubject
+  /-- §3.10, Source Subject Alternation. -/
+  | sourceSubject
+  /-- §4.1, Virtual Reflexive Alternation. -/
+  | virtualReflexive
+  /-- §4.2, Reflexive of Appearance Alternation. -/
+  | reflexiveOfAppearance
+  /-- §5.1, Verbal Passive. -/
   | verbalPassive
-  /-- *the bed was slept in*. Passive of intransitive + PP,
-      diagnostic for unergative verbs. -/
+  /-- §5.2, Prepositional Passive. -/
   | prepositionalPassive
-  -- Postverbal subject alternations (Ch 6)
-  /-- *a problem developed* / *there developed a problem*.
-      Unaccusative diagnostic: existence/appearance verbs. -/
+  /-- §5.3, Adjectival Passive (transitive verbs). -/
+  | adjectivalPassive
+  /-- §5.4, Adjectival Perfect Participles (intransitive verbs). -/
+  | adjectivalPerfectParticiple
+  /-- §6.1, There-Insertion. -/
   | thereInsertion
-  /-- *an old woman lives in the woods* / *in the woods lives an old woman*.
-      Unaccusative diagnostic: existence/spatial configuration verbs. -/
+  /-- §6.2, Locative Inversion. -/
   | locativeInversion
-  -- Other constructions (Ch 7)
-  /-- *Paul laughed a cheerful laugh* ([levin-1993] §40.2). Unergative
-      diagnostic: some agentive intransitives take cognate objects. -/
+  /-- §7.1, Cognate Object Construction. -/
   | cognateObject
-  /-- *The boy pushed his way through the crowd* ([levin-1993] §7.4).
-      Unergative and transitive verbs. -/
+  /-- §7.2, Cognate Prepositional Phrase Construction. -/
+  | cognatePrepositionalPhrase
+  /-- §7.3, Reaction Object Construction. -/
+  | reactionObject
+  /-- §7.4, X’s Way Construction. -/
   | wayConstruction
-  /-- *hammer the metal flat*. Available to manner verbs. -/
+  /-- §7.5, Resultative Construction. -/
   | resultative
-  /-- *she ran to the store*. Manner-of-motion verbs with
-      directional PPs (Talmy's satellite-framing). -/
+  /-- §7.6, Unintentional Interpretation of Object. -/
+  | unintentionalInterpretation
+  /-- §7.6.1, Unintentional Interpretation with Reflexive Object. -/
+  | unintentionalInterpretationReflexive
+  /-- §7.6.2, Unintentional Interpretation with Body-Part Object. -/
+  | unintentionalInterpretationBodyPart
+  /-- §7.7, Bound Nonreflexive Anaphor as Prepositional Object. -/
+  | boundNonreflexiveAnaphor
+  /-- §7.8, Directional Phrases with Nondirected Motion Verbs. -/
   | directionalPhrase
-  deriving DecidableEq, Repr
+  /-- §8.1, Obligatory Passive. -/
+  | obligatoryPassive
+  deriving DecidableEq, Repr, Fintype
 
-/-- Which family of [levin-1993] Part One each alternation belongs to.
-    Classifies the 25 curated alternations into 6 families matching
-    the chapter structure of Part One. -/
-def DiathesisAlternation.family : DiathesisAlternation → AlternationFamily
-  -- Ch 1: Transitivity alternations
-  | .causativeInchoative | .inducedAction | .middle | .conative
-  | .substanceSource | .unspecifiedObject | .understoodBodyPartObject
-  | .understoodReflexiveObject | .understoodReciprocalObject => .transitivity
-  -- Ch 2: VP-internal alternations
-  | .dative | .benefactive | .locative | .bodyPartPossessorAscension
-  | .swarm | .materialProduct | .totalTransformation => .vpInternal
-  -- Ch 3: Oblique subject alternations
-  | .instrumentSubject => .obliqueSubject
-  -- Ch 5: Passive
-  | .verbalPassive | .prepositionalPassive => .passive
-  -- Ch 6: Postverbal subject alternations
-  | .thereInsertion | .locativeInversion => .postverbalSubject
-  -- Ch 7: Other constructions
-  | .cognateObject | .wayConstruction | .resultative
-  | .directionalPhrase => .otherConstructions
+namespace DiathesisAlternation
 
-/-! ### Component-Derived Alternation Prediction -/
+/-- The section number in Part One. -/
+def number : DiathesisAlternation → List ℕ
+  | .objectOfTransitiveSubjectOfIntransitive => [1, 1]
+  | .middle => [1, 1, 1]
+  | .causative => [1, 1, 2]
+  | .causativeInchoative => [1, 1, 2, 1]
+  | .inducedAction => [1, 1, 2, 2]
+  | .otherCausative => [1, 1, 2, 3]
+  | .substanceSource => [1, 1, 3]
+  | .unexpressedObject => [1, 2]
+  | .unspecifiedObject => [1, 2, 1]
+  | .understoodBodyPartObject => [1, 2, 2]
+  | .understoodReflexiveObject => [1, 2, 3]
+  | .understoodReciprocalObject => [1, 2, 4]
+  | .proArbObject => [1, 2, 5]
+  | .characteristicProperty => [1, 2, 6]
+  | .characteristicPropertyOfAgent => [1, 2, 6, 1]
+  | .characteristicPropertyOfInstrument => [1, 2, 6, 2]
+  | .wayObject => [1, 2, 7]
+  | .instructionalImperative => [1, 2, 8]
+  | .conative => [1, 3]
+  | .prepositionDrop => [1, 4]
+  | .locativePrepositionDrop => [1, 4, 1]
+  | .withPrepositionDrop => [1, 4, 2]
+  | .dative => [2, 1]
+  | .benefactive => [2, 2]
+  | .locative => [2, 3]
+  | .sprayLoad => [2, 3, 1]
+  | .clearTransitive => [2, 3, 2]
+  | .wipe => [2, 3, 3]
+  | .swarm => [2, 3, 4]
+  | .clearIntransitive => [2, 3, 5]
+  | .creationAndTransformation => [2, 4]
+  | .materialProduct => [2, 4, 1]
+  | .materialProductIntransitive => [2, 4, 2]
+  | .totalTransformation => [2, 4, 3]
+  | .totalTransformationIntransitive => [2, 4, 4]
+  | .reciprocal => [2, 5]
+  | .simpleReciprocal => [2, 5, 1]
+  | .togetherReciprocal => [2, 5, 2]
+  | .apartReciprocal => [2, 5, 3]
+  | .simpleReciprocalIntransitive => [2, 5, 4]
+  | .togetherReciprocalIntransitive => [2, 5, 5]
+  | .apartReciprocalIntransitive => [2, 5, 6]
+  | .fulfilling => [2, 6]
+  | .imageImpression => [2, 7]
+  | .withAgainst => [2, 8]
+  | .throughWith => [2, 9]
+  | .blame => [2, 10]
+  | .search => [2, 11]
+  | .bodyPartPossessorAscension => [2, 12]
+  | .possessorAttributeFactoring => [2, 13]
+  | .possessorObject => [2, 13, 1]
+  | .attributeObject => [2, 13, 2]
+  | .possessorAndAttribute => [2, 13, 3]
+  | .possessorSubject => [2, 13, 4]
+  | .possessorSubjectIntransitive => [2, 13, 5]
+  | .as => [2, 14]
+  | .timeSubject => [3, 1]
+  | .naturalForceSubject => [3, 2]
+  | .instrumentSubject => [3, 3]
+  | .abstractCauseSubject => [3, 4]
+  | .locatumSubject => [3, 5]
+  | .locationSubject => [3, 6]
+  | .containerSubject => [3, 7]
+  | .rawMaterialSubject => [3, 8]
+  | .sumOfMoneySubject => [3, 9]
+  | .sourceSubject => [3, 10]
+  | .virtualReflexive => [4, 1]
+  | .reflexiveOfAppearance => [4, 2]
+  | .verbalPassive => [5, 1]
+  | .prepositionalPassive => [5, 2]
+  | .adjectivalPassive => [5, 3]
+  | .adjectivalPerfectParticiple => [5, 4]
+  | .thereInsertion => [6, 1]
+  | .locativeInversion => [6, 2]
+  | .cognateObject => [7, 1]
+  | .cognatePrepositionalPhrase => [7, 2]
+  | .reactionObject => [7, 3]
+  | .wayConstruction => [7, 4]
+  | .resultative => [7, 5]
+  | .unintentionalInterpretation => [7, 6]
+  | .unintentionalInterpretationReflexive => [7, 6, 1]
+  | .unintentionalInterpretationBodyPart => [7, 6, 2]
+  | .boundNonreflexiveAnaphor => [7, 7]
+  | .directionalPhrase => [7, 8]
+  | .obligatoryPassive => [8, 1]
 
-/-- Predicted alternation participation derived from meaning components.
+/-- The section title in Part One. -/
+def name : DiathesisAlternation → String
+  | .objectOfTransitiveSubjectOfIntransitive =>
+    "Object of Transitive = Subject of Intransitive Alternations"
+  | .middle => "Middle Alternation"
+  | .causative => "Causative Alternations"
+  | .causativeInchoative => "Causative/Inchoative Alternation"
+  | .inducedAction => "Induced Action Alternation"
+  | .otherCausative => "Other Instances of Causative Alternations"
+  | .substanceSource => "Substance/Source Alternation"
+  | .unexpressedObject => "Unexpre ed Object Alternations"
+  | .unspecifiedObject => "Unspecified Object Alternation"
+  | .understoodBodyPartObject => "Understood Body-Part Object Alternation"
+  | .understoodReflexiveObject => "Understood Reflexive Object Alternation"
+  | .understoodReciprocalObject => "Understood Reciprocal Object Alternation"
+  | .proArbObject => "PRO-arb Object Alternation"
+  | .characteristicProperty => "Characteristic      Property Alternations"
+  | .characteristicPropertyOfAgent => "Characteristic Property of Agent Alternation"
+  | .characteristicPropertyOfInstrument => "Characteristic Property of Instrument Alternation"
+  | .wayObject => "Way Object Alternation"
+  | .instructionalImperative => "Instructional Imperative"
+  | .conative => "Conative Alternation"
+  | .prepositionDrop => "Preposition Drop Alternations"
+  | .locativePrepositionDrop => "Locative Preposition Drop Alternation"
+  | .withPrepositionDrop => "With Preposition Drop Alternation"
+  | .dative => "Dative Alternation"
+  | .benefactive => "Benefactive Alternation"
+  | .locative => "Locative Alternation"
+  | .sprayLoad => "Spray/Load Alternation"
+  | .clearTransitive => "Clear Alternation (transitive)"
+  | .wipe => "Wipe Alternation"
+  | .swarm => "Swarm Alternation"
+  | .clearIntransitive => "Clear Alternation (intransitive)"
+  | .creationAndTransformation => "Creation and Transformation Alternations"
+  | .materialProduct => "Material/Product Alternation (transitive)"
+  | .materialProductIntransitive => "Material/Product Alternation (intransitive)"
+  | .totalTransformation => "Total Transformation Alternation (transitive)"
+  | .totalTransformationIntransitive => "Total Transformation Alternation (intransitive)"
+  | .reciprocal => "Reciprocal Alternations"
+  | .simpleReciprocal => "Simple Reciprocal Alternation (transitive)"
+  | .togetherReciprocal => "Together Reciprocal Alternation (transitive)"
+  | .apartReciprocal => "Apart Reciprocal Alternation (transitive)"
+  | .simpleReciprocalIntransitive => "Simple Reciprocal Alternation (intransitive)"
+  | .togetherReciprocalIntransitive => "Together Reciprocal Alternation (intransitive)"
+  | .apartReciprocalIntransitive => "Apart Reciprocal Alternation (intransitive)"
+  | .fulfilling => "Fulfilling Alternation"
+  | .imageImpression => "Image Impression Alternation"
+  | .withAgainst => "With/Against Alternation"
+  | .throughWith => "Through/With Alternation"
+  | .blame => "Blame Alternation"
+  | .search => "Search Alternations"
+  | .bodyPartPossessorAscension => "Body-Part Possessor Ascension Alternation"
+  | .possessorAttributeFactoring => "Possessor-Attribute Factoring Alternations"
+  | .possessorObject => "Possessor Object"
+  | .attributeObject => "Attribute Object"
+  | .possessorAndAttribute => "Possessor and Attribute Alternation"
+  | .possessorSubject => "Possessor Subject (transitive)"
+  | .possessorSubjectIntransitive => "Possessor Subject (intransitive)"
+  | .as => "As Alternation"
+  | .timeSubject => "Time Subject Alternation"
+  | .naturalForceSubject => "Natural Force Subject Alternation"
+  | .instrumentSubject => "Instrument Subject Alternation"
+  | .abstractCauseSubject => "Abstract Cause Subject Alternation"
+  | .locatumSubject => "Locatum Subject Alternation"
+  | .locationSubject => "Location Subject Alternation"
+  | .containerSubject => "Container Subject Alternation"
+  | .rawMaterialSubject => "Raw Material Subject Alternation"
+  | .sumOfMoneySubject => "Sum of Money Subject Alternation"
+  | .sourceSubject => "Source Subject Alternation"
+  | .virtualReflexive => "Virtual Reflexive Alternation"
+  | .reflexiveOfAppearance => "Reflexive of Appearance Alternation"
+  | .verbalPassive => "Verbal Passive"
+  | .prepositionalPassive => "Prepositional Passive"
+  | .adjectivalPassive => "Adjectival Passive (transitive verbs)"
+  | .adjectivalPerfectParticiple => "Adjectival Perfect Participles (intransitive verbs)"
+  | .thereInsertion => "There-Insertion"
+  | .locativeInversion => "Locative Inversion"
+  | .cognateObject => "Cognate Object Construction"
+  | .cognatePrepositionalPhrase => "Cognate Prepositional Phrase Construction"
+  | .reactionObject => "Reaction Object Construction"
+  | .wayConstruction => "X’s Way Construction"
+  | .resultative => "Resultative Construction"
+  | .unintentionalInterpretation => "Unintentional Interpretation of Object"
+  | .unintentionalInterpretationReflexive => "Unintentional Interpretation with Reflexive Object"
+  | .unintentionalInterpretationBodyPart => "Unintentional Interpretation with Body-Part Object"
+  | .boundNonreflexiveAnaphor => "Bound Nonreflexive Anaphor as Prepositional Object"
+  | .directionalPhrase => "Directional Phrases with Nondirected Motion Verbs"
+  | .obligatoryPassive => "Obligatory Passive"
 
-    The core claim of [levin-1993]: meaning components — diagnosed by
-    alternation participation — form the bridge between verb semantics and
-    verb syntax. Each diagnostic alternation corresponds to a specific
-    configuration of meaning components:
+/-- The chapter of Part One. -/
+def chapter (a : DiathesisAlternation) : ℕ := a.number.headD 0
 
-    | Alternation | Required components |
-    |---|---|
-    | Causative/inchoative | changeOfState ∧ causation ∧ ¬instrumentSpec |
-    | Middle | changeOfState |
-    | Conative | contact ∧ motion |
-    | Body-part possessor ascension | contact |
-    | Instrument subject | causation ∧ ¬instrumentSpec |
-    | Resultative | changeOfState ∧ ¬instrumentSpec (manner verbs) |
+/-- The section that groups this one, if any. -/
+def parent? : DiathesisAlternation → Option DiathesisAlternation
+  | .objectOfTransitiveSubjectOfIntransitive => none
+  | .middle => some .objectOfTransitiveSubjectOfIntransitive
+  | .causative => some .objectOfTransitiveSubjectOfIntransitive
+  | .causativeInchoative => some .causative
+  | .inducedAction => some .causative
+  | .otherCausative => some .causative
+  | .substanceSource => some .objectOfTransitiveSubjectOfIntransitive
+  | .unexpressedObject => none
+  | .unspecifiedObject => some .unexpressedObject
+  | .understoodBodyPartObject => some .unexpressedObject
+  | .understoodReflexiveObject => some .unexpressedObject
+  | .understoodReciprocalObject => some .unexpressedObject
+  | .proArbObject => some .unexpressedObject
+  | .characteristicProperty => some .unexpressedObject
+  | .characteristicPropertyOfAgent => some .characteristicProperty
+  | .characteristicPropertyOfInstrument => some .characteristicProperty
+  | .wayObject => some .unexpressedObject
+  | .instructionalImperative => some .unexpressedObject
+  | .conative => none
+  | .prepositionDrop => none
+  | .locativePrepositionDrop => some .prepositionDrop
+  | .withPrepositionDrop => some .prepositionDrop
+  | .dative => none
+  | .benefactive => none
+  | .locative => none
+  | .sprayLoad => some .locative
+  | .clearTransitive => some .locative
+  | .wipe => some .locative
+  | .swarm => some .locative
+  | .clearIntransitive => some .locative
+  | .creationAndTransformation => none
+  | .materialProduct => some .creationAndTransformation
+  | .materialProductIntransitive => some .creationAndTransformation
+  | .totalTransformation => some .creationAndTransformation
+  | .totalTransformationIntransitive => some .creationAndTransformation
+  | .reciprocal => none
+  | .simpleReciprocal => some .reciprocal
+  | .togetherReciprocal => some .reciprocal
+  | .apartReciprocal => some .reciprocal
+  | .simpleReciprocalIntransitive => some .reciprocal
+  | .togetherReciprocalIntransitive => some .reciprocal
+  | .apartReciprocalIntransitive => some .reciprocal
+  | .fulfilling => none
+  | .imageImpression => none
+  | .withAgainst => none
+  | .throughWith => none
+  | .blame => none
+  | .search => none
+  | .bodyPartPossessorAscension => none
+  | .possessorAttributeFactoring => none
+  | .possessorObject => some .possessorAttributeFactoring
+  | .attributeObject => some .possessorAttributeFactoring
+  | .possessorAndAttribute => some .possessorAttributeFactoring
+  | .possessorSubject => some .possessorAttributeFactoring
+  | .possessorSubjectIntransitive => some .possessorAttributeFactoring
+  | .as => none
+  | .timeSubject => none
+  | .naturalForceSubject => none
+  | .instrumentSubject => none
+  | .abstractCauseSubject => none
+  | .locatumSubject => none
+  | .locationSubject => none
+  | .containerSubject => none
+  | .rawMaterialSubject => none
+  | .sumOfMoneySubject => none
+  | .sourceSubject => none
+  | .virtualReflexive => none
+  | .reflexiveOfAppearance => none
+  | .verbalPassive => none
+  | .prepositionalPassive => none
+  | .adjectivalPassive => none
+  | .adjectivalPerfectParticiple => none
+  | .thereInsertion => none
+  | .locativeInversion => none
+  | .cognateObject => none
+  | .cognatePrepositionalPhrase => none
+  | .reactionObject => none
+  | .wayConstruction => none
+  | .resultative => none
+  | .unintentionalInterpretation => none
+  | .unintentionalInterpretationReflexive => some .unintentionalInterpretation
+  | .unintentionalInterpretationBodyPart => some .unintentionalInterpretation
+  | .boundNonreflexiveAnaphor => none
+  | .directionalPhrase => none
+  | .obligatoryPassive => none
 
-    The remaining alternations are class-specific rather than
-    component-derived. -/
+/-- The family by chapter. -/
+def family (a : DiathesisAlternation) : AlternationFamily :=
+  match a.chapter with
+  | 1 => .transitivity | 2 => .vpInternal | 3 => .obliqueSubject | 4 => .reflexive
+  | 5 => .passive | 6 => .postverbalSubject | 7 => .otherConstructions | _ => .specialDiathesis
+
+end DiathesisAlternation
+
+/-! ### Component-derived alternation prediction -/
+
+/-- The Introduction's prediction of an alternation from meaning components, for the
+alternations it discusses: the causative/inchoative alternation needs a change of state and
+causation without instrument specificity, the middle a change of state, the conative contact
+and motion, body-part possessor ascension contact, an instrument subject causation without
+instrument specificity, and a resultative a change of state without instrument specificity.
+Every other alternation is class-specific rather than component-derived. -/
 def MeaningComponents.predictedAlternation : MeaningComponents → DiathesisAlternation → Bool
   | mc, .causativeInchoative => mc.changeOfState && mc.causation && !mc.instrumentSpec
   | mc, .middle => mc.changeOfState
@@ -186,26 +509,7 @@ def MeaningComponents.predictedAlternation : MeaningComponents → DiathesisAlte
   | mc, .bodyPartPossessorAscension => mc.contact
   | mc, .instrumentSubject => mc.causation && !mc.instrumentSpec
   | mc, .resultative => mc.changeOfState && !mc.instrumentSpec
-  -- All remaining alternations are class-specific, not component-derived
-  | _, .inducedAction => false
-  | _, .substanceSource => false
-  | _, .unspecifiedObject => false
-  | _, .understoodBodyPartObject => false
-  | _, .understoodReflexiveObject => false
-  | _, .understoodReciprocalObject => false
-  | _, .dative => false
-  | _, .benefactive => false
-  | _, .locative => false
-  | _, .swarm => false
-  | _, .materialProduct => false
-  | _, .totalTransformation => false
-  | _, .verbalPassive => false
-  | _, .prepositionalPassive => false
-  | _, .thereInsertion => false
-  | _, .locativeInversion => false
-  | _, .cognateObject => false
-  | _, .wayConstruction => false
-  | _, .directionalPhrase => false
+  | _, _ => false
 
 /-! ### Structural properties of fusion + alternation prediction -/
 
@@ -313,258 +617,5 @@ lists the alternations tested, an unstarred example attesting the alternation an
 one denying it. Classes at a parent grain (`search`, `mannerOfMotion`, `bodyProcess`,
 `imageCreation`, `getObtain`) take the union over their subsections. Alternations a page does
 not test are in neither set. -/
-
-/-- The alternations [levin-1993] Part II attests for the class. -/
-def LevinClass.alternations : LevinClass → Finset DiathesisAlternation
-  | .put => ∅
-  | .funnel => ∅
-  | .putDirection => ∅
-  | .pour => {DiathesisAlternation.causativeInchoative}
-  | .coil => {DiathesisAlternation.causativeInchoative, .middle}
-  | .sprayLoad => {DiathesisAlternation.causativeInchoative, .conative, .locative}
-  | .remove => ∅
-  | .clear => {DiathesisAlternation.causativeInchoative, .locative}
-  | .wipe => {DiathesisAlternation.conative, .unspecifiedObject, .locative, .resultative}
-  | .steal => ∅
-  | .send => {DiathesisAlternation.dative}
-  | .carry => {DiathesisAlternation.dative}
-  | .drive => ∅
-  | .pushPull => {DiathesisAlternation.conative, .resultative}
-  | .give => {DiathesisAlternation.dative}
-  | .contribute => ∅
-  | .getObtain => {DiathesisAlternation.benefactive}
-  | .exchange => ∅
-  | .learn => ∅
-  | .hold => {DiathesisAlternation.bodyPartPossessorAscension}
-  | .conceal => ∅
-  | .throw => {DiathesisAlternation.dative, .directionalPhrase}
-  | .hit => {DiathesisAlternation.conative, .bodyPartPossessorAscension, .instrumentSubject,
-      .resultative}
-  | .swat => {DiathesisAlternation.conative, .bodyPartPossessorAscension, .resultative}
-  | .spank => {DiathesisAlternation.bodyPartPossessorAscension}
-  | .poke => {DiathesisAlternation.conative, .bodyPartPossessorAscension, .instrumentSubject}
-  | .touch => {DiathesisAlternation.bodyPartPossessorAscension, .instrumentSubject}
-  | .cut => {DiathesisAlternation.middle, .conative, .bodyPartPossessorAscension,
-      .instrumentSubject, .resultative}
-  | .carve => {DiathesisAlternation.middle, .instrumentSubject}
-  | .mix => {DiathesisAlternation.causativeInchoative, .middle}
-  | .amalgamate => {DiathesisAlternation.causativeInchoative, .middle}
-  | .separate => {DiathesisAlternation.causativeInchoative, .middle}
-  | .split => {DiathesisAlternation.causativeInchoative, .middle}
-  | .color => ∅
-  | .imageCreation => {DiathesisAlternation.unspecifiedObject}
-  | .build => {DiathesisAlternation.unspecifiedObject, .benefactive, .materialProduct}
-  | .grow => {DiathesisAlternation.causativeInchoative, .materialProduct}
-  | .create => ∅
-  | .knead => {DiathesisAlternation.causativeInchoative}
-  | .turn => {DiathesisAlternation.causativeInchoative, .totalTransformation}
-  | .performance => {DiathesisAlternation.unspecifiedObject, .dative, .benefactive}
-  | .engender => ∅
-  | .calve => ∅
-  | .appoint => ∅
-  | .characterize => ∅
-  | .declare => ∅
-  | .see => ∅
-  | .sight => ∅
-  | .amuse => {DiathesisAlternation.middle, .resultative}
-  | .admire => ∅
-  | .marvel => ∅
-  | .want => ∅
-  | .long => ∅
-  | .judgment => ∅
-  | .assessment => ∅
-  | .search => {DiathesisAlternation.unspecifiedObject}
-  | .socialInteraction => {DiathesisAlternation.understoodReciprocalObject}
-  | .say => ∅
-  | .tell => {DiathesisAlternation.dative}
-  | .mannerOfSpeaking => ∅
-  | .talk => ∅
-  | .animalSound => {DiathesisAlternation.resultative}
-  | .eat => {DiathesisAlternation.conative, .unspecifiedObject}
-  | .devour => ∅
-  | .dine => ∅
-  | .bodyProcess => ∅
-  | .nonverbalExpression => {DiathesisAlternation.resultative}
-  | .flinch => ∅
-  | .hurt => ∅
-  | .dress => {DiathesisAlternation.causativeInchoative, .understoodReflexiveObject}
-  | .murder => ∅
-  | .poison => {DiathesisAlternation.resultative}
-  | .lightEmission => {DiathesisAlternation.causativeInchoative, .locative, .thereInsertion,
-      .locativeInversion}
-  | .soundEmission => {DiathesisAlternation.causativeInchoative, .locative, .thereInsertion,
-      .locativeInversion, .directionalPhrase}
-  | .substanceEmission => {DiathesisAlternation.causativeInchoative, .substanceSource, .locative,
-      .thereInsertion, .locativeInversion}
-  | .destroy => {DiathesisAlternation.instrumentSubject}
-  | .break_ => {DiathesisAlternation.causativeInchoative, .middle, .instrumentSubject, .resultative}
-  | .bend => {DiathesisAlternation.causativeInchoative, .middle, .instrumentSubject, .resultative}
-  | .cooking => {DiathesisAlternation.causativeInchoative, .instrumentSubject, .resultative}
-  | .otherCoS => {DiathesisAlternation.causativeInchoative, .middle, .instrumentSubject,
-      .resultative}
-  | .entitySpecificCoS => ∅
-  | .calibratableCoS => {DiathesisAlternation.causativeInchoative}
-  | .lodge => {DiathesisAlternation.causativeInchoative}
-  | .exist => {DiathesisAlternation.thereInsertion, .locativeInversion}
-  | .appear => {DiathesisAlternation.thereInsertion, .locativeInversion}
-  | .disappearance => ∅
-  | .bodyInternalMotion => {DiathesisAlternation.resultative, .directionalPhrase}
-  | .assumePosition => ∅
-  | .inherentlyDirectedMotion => ∅
-  | .leave => ∅
-  | .mannerOfMotion => {DiathesisAlternation.causativeInchoative, .inducedAction, .thereInsertion,
-      .locativeInversion, .resultative}
-  | .vehicleMotion => {DiathesisAlternation.inducedAction, .resultative}
-  | .chase => ∅
-  | .avoid => ∅
-  | .linger => ∅
-  | .rush => {DiathesisAlternation.causativeInchoative}
-  | .measure => ∅
-  | .aspectual => {DiathesisAlternation.causativeInchoative}
-  | .weather => ∅
-
-/-- The alternations [levin-1993] Part II stars for the class. -/
-def LevinClass.starredAlternations : LevinClass → Finset DiathesisAlternation
-  | .put => {DiathesisAlternation.causativeInchoative, .middle, .locative}
-  | .funnel => {DiathesisAlternation.causativeInchoative, .middle, .locative}
-  | .putDirection => {DiathesisAlternation.causativeInchoative, .middle, .dative, .locative}
-  | .pour => {DiathesisAlternation.middle, .conative, .locative}
-  | .coil => {DiathesisAlternation.conative, .locative}
-  | .sprayLoad => ∅
-  | .remove => {DiathesisAlternation.causativeInchoative, .conative, .locative}
-  | .clear => {DiathesisAlternation.conative, .resultative}
-  | .wipe => {DiathesisAlternation.causativeInchoative}
-  | .steal => {DiathesisAlternation.causativeInchoative, .conative, .benefactive, .locative}
-  | .send => {DiathesisAlternation.causativeInchoative, .middle, .conative}
-  | .carry => {DiathesisAlternation.causativeInchoative, .middle, .conative}
-  | .drive => {DiathesisAlternation.causativeInchoative, .middle, .conative}
-  | .pushPull => {DiathesisAlternation.causativeInchoative}
-  | .give => {DiathesisAlternation.causativeInchoative}
-  | .contribute => {DiathesisAlternation.causativeInchoative, .dative}
-  | .getObtain => {DiathesisAlternation.dative, .locative}
-  | .exchange => {DiathesisAlternation.dative, .benefactive}
-  | .learn => ∅
-  | .hold => {DiathesisAlternation.middle, .conative}
-  | .conceal => {DiathesisAlternation.locative}
-  | .throw => {DiathesisAlternation.causativeInchoative, .middle, .conative}
-  | .hit => {DiathesisAlternation.causativeInchoative, .middle}
-  | .swat => {DiathesisAlternation.causativeInchoative, .middle, .instrumentSubject}
-  | .spank => {DiathesisAlternation.causativeInchoative, .middle, .conative, .instrumentSubject}
-  | .poke => {DiathesisAlternation.causativeInchoative, .middle}
-  | .touch => {DiathesisAlternation.causativeInchoative, .middle, .conative, .resultative}
-  | .cut => {DiathesisAlternation.causativeInchoative}
-  | .carve => {DiathesisAlternation.causativeInchoative, .conative, .bodyPartPossessorAscension}
-  | .mix => ∅
-  | .amalgamate => ∅
-  | .separate => {DiathesisAlternation.locative}
-  | .split => ∅
-  | .color => ∅
-  | .imageCreation => ∅
-  | .build => {DiathesisAlternation.causativeInchoative, .totalTransformation}
-  | .grow => {DiathesisAlternation.totalTransformation}
-  | .create => {DiathesisAlternation.causativeInchoative, .benefactive}
-  | .knead => {DiathesisAlternation.materialProduct, .totalTransformation}
-  | .turn => {DiathesisAlternation.materialProduct}
-  | .performance => {DiathesisAlternation.causativeInchoative}
-  | .engender => {DiathesisAlternation.causativeInchoative}
-  | .calve => ∅
-  | .appoint => {DiathesisAlternation.dative}
-  | .characterize => ∅
-  | .declare => {DiathesisAlternation.dative}
-  | .see => {DiathesisAlternation.middle}
-  | .sight => {DiathesisAlternation.middle}
-  | .amuse => {DiathesisAlternation.causativeInchoative}
-  | .admire => {DiathesisAlternation.middle}
-  | .marvel => ∅
-  | .want => ∅
-  | .long => ∅
-  | .judgment => {DiathesisAlternation.middle}
-  | .assessment => ∅
-  | .search => ∅
-  | .socialInteraction => ∅
-  | .say => {DiathesisAlternation.dative}
-  | .tell => ∅
-  | .mannerOfSpeaking => {DiathesisAlternation.dative}
-  | .talk => ∅
-  | .animalSound => {DiathesisAlternation.directionalPhrase}
-  | .eat => {DiathesisAlternation.instrumentSubject}
-  | .devour => {DiathesisAlternation.conative, .unspecifiedObject}
-  | .dine => {DiathesisAlternation.conative, .unspecifiedObject}
-  | .bodyProcess => {DiathesisAlternation.resultative}
-  | .nonverbalExpression => ∅
-  | .flinch => {DiathesisAlternation.causativeInchoative}
-  | .hurt => ∅
-  | .dress => ∅
-  | .murder => {DiathesisAlternation.causativeInchoative, .middle, .instrumentSubject, .resultative}
-  | .poison => {DiathesisAlternation.causativeInchoative, .middle}
-  | .lightEmission => ∅
-  | .soundEmission => ∅
-  | .substanceEmission => ∅
-  | .destroy => {DiathesisAlternation.causativeInchoative, .middle, .conative, .materialProduct,
-      .totalTransformation, .resultative}
-  | .break_ => {DiathesisAlternation.conative, .bodyPartPossessorAscension}
-  | .bend => {DiathesisAlternation.conative, .bodyPartPossessorAscension}
-  | .cooking => {DiathesisAlternation.conative}
-  | .otherCoS => {DiathesisAlternation.conative, .locative, .thereInsertion, .locativeInversion}
-  | .entitySpecificCoS => {DiathesisAlternation.causativeInchoative}
-  | .calibratableCoS => {DiathesisAlternation.thereInsertion, .locativeInversion}
-  | .lodge => {DiathesisAlternation.locative, .thereInsertion, .locativeInversion}
-  | .exist => {DiathesisAlternation.causativeInchoative, .locative}
-  | .appear => {DiathesisAlternation.causativeInchoative}
-  | .disappearance => {DiathesisAlternation.causativeInchoative}
-  | .bodyInternalMotion => {DiathesisAlternation.causativeInchoative}
-  | .assumePosition => {DiathesisAlternation.thereInsertion, .locativeInversion}
-  | .inherentlyDirectedMotion => {DiathesisAlternation.causativeInchoative, .resultative}
-  | .leave => ∅
-  | .mannerOfMotion => ∅
-  | .vehicleMotion => ∅
-  | .chase => {DiathesisAlternation.causativeInchoative}
-  | .avoid => ∅
-  | .linger => {DiathesisAlternation.causativeInchoative}
-  | .rush => ∅
-  | .measure => {DiathesisAlternation.causativeInchoative, .dative}
-  | .aspectual => ∅
-  | .weather => ∅
-
-/-- The class shows the alternation in [levin-1993] Part II. -/
-def LevinClass.Participates (c : LevinClass) (a : DiathesisAlternation) : Prop :=
-  a ∈ c.alternations
-
-instance (c : LevinClass) (a : DiathesisAlternation) : Decidable (c.Participates a) :=
-  inferInstanceAs (Decidable (_ ∈ _))
-
-/-- No class both shows and lacks an alternation. -/
-theorem LevinClass.disjoint_alternations_starredAlternations (c : LevinClass) :
-    Disjoint c.alternations c.starredAlternations := by
-  cases c <;> decide
-
-/-! ### The Introduction's quadruple
-
-*break*, *cut*, *hit* and *touch* are told apart by the four diagnostic alternations, and on
-these four classes the component prediction agrees with Part II. -/
-
-/-- The four diagnostic alternations of the Introduction. -/
-def diagnosticAlternations : List DiathesisAlternation :=
-  [.causativeInchoative, .middle, .conative, .bodyPartPossessorAscension]
-
-/-- The quadruple takes four distinct profiles over the diagnostic alternations. -/
-theorem quadruple_profiles_distinct :
-    ([LevinClass.break_, .cut, .hit, .touch].map fun c ↦
-      diagnosticAlternations.map fun a ↦ decide (c.Participates a)).Pairwise (· ≠ ·) := by
-  decide
-
-/-- On the quadruple, the component prediction matches Part II for every diagnostic
-alternation. -/
-theorem quadruple_prediction_matches :
-    ∀ c ∈ [LevinClass.break_, .cut, .hit, .touch], ∀ a ∈ diagnosticAlternations,
-      c.meaningComponents.predictedAlternation a = decide (c.Participates a) := by
-  decide
-
-/-- The prediction is not sound in general: destroy verbs are change-of-state causatives that
-Part II stars for the causative/inchoative alternation. -/
-theorem prediction_not_sound :
-    LevinClass.destroy.meaningComponents.predictedAlternation .causativeInchoative = true ∧
-      DiathesisAlternation.causativeInchoative ∈ LevinClass.destroy.starredAlternations := by
-  decide
 
 end ArgumentStructure

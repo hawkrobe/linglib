@@ -1,4 +1,5 @@
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
+import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 import Linglib.Syntax.Voice.Alternation
 import Linglib.Fragments.English.Predicates
 import Linglib.Fragments.English.Adposition
@@ -22,10 +23,8 @@ class's attested alternations and none instantiating a starred one
 ## Implementation notes
 
 Rows record the verb's class by the book's section number and the alternation by name;
-`classOf` and `alternationOf` read them into the substrate's enumerations, collapsing
-subclasses to their representatives and leaving classes outside the enumerations' grain
-unrepresented, on which the transfer theorem is vacuous. Marginal judgments carry no
-categorical participation value.
+`classOf` and `alternationOf` read them into the substrate's enumerations. Marginal judgments
+carry no categorical participation value.
 
 ## References
 
@@ -36,33 +35,9 @@ namespace Levin1993
 
 open Data.Examples ArgumentStructure
 
-/-- The class named by a section number of the book, subclasses collapsing to their
-representatives. -/
-def classOfString : String → Option LevinClass
-  | "45.1" => some .break_
-  | "21.1" => some .cut
-  | "18.1" => some .hit
-  | "20" => some .touch
-  | "12" => some .pushPull
-  | "9.7" => some .sprayLoad
-  | "13.1" => some .give
-  | "11.1" => some .send
-  | "26.1" => some .build
-  | "26.6" => some .turn
-  | "43.4" => some .substanceEmission
-  | "39.1" => some .eat
-  | "39.4" => some .devour
-  | "36.3" => some .socialInteraction
-  | "48.1.1" => some .appear
-  | "47.1" => some .exist
-  | "47.5.1" => some .exist
-  | "51.3" => some .mannerOfMotion
-  | "51.3.2" => some .mannerOfMotion
-  | "41.1.1" => some .dress
-  | "37.3" => some .mannerOfSpeaking
-  | "30.1" => some .see
-  | "54.1" => some .measure
-  | _ => none
+/-- The class named by a section number of the book. -/
+def classOfString (s : String) : Option LevinClass :=
+  LevinClass.enumList.find? fun c ↦ c.numberString = s
 
 /-- The alternation named by a row's tag. -/
 def alternationOfString : String → Option DiathesisAlternation
@@ -114,8 +89,8 @@ page: attested rows are in the class's profile and starred rows outside it. The 
 verb list and not tested on the class pages, so those rows fall outside the check. -/
 theorem participation_matches_profile :
     ∀ e ∈ Examples.all, ∀ c ∈ classOf e, ∀ a ∈ alternationOf e, ∀ b ∈ observed e,
-      a ∈ c.alternations ∪ c.starredAlternations → decide (c.Participates a) = b := by
-  decide
+      c.Tests a → decide (c.Participates a) = b := by
+  decide +kernel
 
 /-! ### Frame-pair schemas of the alternations
 
@@ -170,6 +145,7 @@ def schema? : DiathesisAlternation → Option ValencyAlternation
         correspondence := [(complement 0, complement 0), (complement 1, external)] }
   | .middle | .verbalPassive | .prepositionalPassive | .thereInsertion | .locativeInversion
   | .cognateObject | .wayConstruction | .resultative | .directionalPhrase => none
+  | _ => none
 where
   /-- The unexpressed object alternations: the object dropped with interpretation `i`. -/
   objectDrop (i : ImplicitInterp) : ValencyAlternation :=
@@ -181,12 +157,14 @@ where
       correspondence := [(external, external), (complement 0, complement 1),
         (complement 1, complement 0)] }
 
-/-- Every fragment verb Levin lists has a listed class whose profile its frames realize: frames
-refining both frames of each schema the class attests, and none for a schema it stars. -/
+/-- Every fragment verb Levin lists has a listed class whose page its frames realize: frames
+refining both frames of each schema the page attests for the whole class, and none for a
+schema it stars. -/
 theorem frames_realize_class :
     ∀ v ∈ English.verbs, v.levinClasses.Nonempty → ∃ c ∈ v.levinClasses,
-      (∀ a ∈ c.alternations, ∀ σ ∈ schema? a, v.toVerb.Alternates σ) ∧
-        ∀ a ∈ c.starredAlternations, ∀ σ ∈ schema? a, ¬ v.toVerb.Alternates σ := by
+      ∀ p ∈ c.properties, ∀ a ∈ p.property.alternation?, ∀ σ ∈ schema? a,
+        (p.attestation = .attested → p.scope = .all → v.toVerb.Alternates σ) ∧
+          (p.attestation = .starred → ¬ v.toVerb.Alternates σ) := by
   decide +kernel
 
 /-- The book's opening quadruple: *break*, *cut*, *hit*, and *touch* take pairwise distinct
@@ -196,6 +174,6 @@ theorem quadruple_profiles_distinct :
     ([LevinClass.break_, .cut, .hit, .touch].map fun c ↦
       [DiathesisAlternation.causativeInchoative, .middle, .conative,
         .bodyPartPossessorAscension].map fun a ↦ decide (c.Participates a)).Pairwise (· ≠ ·) := by
-  decide
+  decide +kernel
 
 end Levin1993
