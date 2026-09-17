@@ -2,7 +2,7 @@ import Linglib.Fragments.Mayan.Yukatek.VerbClasses
 import Linglib.Semantics.Causation.Chain
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Studies.Lucy1994
-import Linglib.Syntax.Voice.Alternation
+import Linglib.Syntax.Voice.Basic
 
 /-!
 # Bohnemeyer 2004: split intransitivity, linking, and lexical representation
@@ -30,7 +30,7 @@ recorded here.
 * `CausalChainPosition`, `Outranks`, `linkingDefault`, `sMarkerFromViewpoint` — the thematic
   hierarchy of (31) and the linking-by-viewpoint rule of (32)
 * `applicativeLinking`, `causativeLinking`, `verbLinking`, `addedTermRole` — the two
-  transitivizations as `ValencyAlternation`s, and the role their added participant takes
+  transitivizations as `Voice`s, and the role their added participant takes
 * `TransitivizerSuffix`, `transitivizerSuffix` — the overt suffix, kept apart from the linking
 * `DetransitivizationType` — the antipassive, anticausative and passive of (28)–(30)
 
@@ -139,27 +139,27 @@ theorem linking_derives_incompletive :
 /-- Rule (26): transitivizing an internally-caused base nucleativizes an applied object as P while
 the base's S is maintained, surfacing as the A of the derived transitive clause. Creissels'
 P-applicativization, over an intransitive base. -/
-def applicativeLinking : ValencyAlternation :=
+def applicativeLinking : Voice :=
   { source := .intransitive, target := .np, correspondence := [(.external, .external)] }
 
 /-- Rule (27): transitivizing an externally-caused base nucleativizes an instigator as A, the
-base's S surfacing as P — Creissels' causativization unchanged. -/
-def causativeLinking : ValencyAlternation := causativization
+base's S surfacing as P: the causative unchanged. -/
+def causativeLinking : Voice := causative
 
 /-- The causation type of the intransitive base selects the alternation (rules 26–27). -/
-def predictLinking : InternalExternalCause → ValencyAlternation
+def predictLinking : InternalExternalCause → Voice
   | .internal => applicativeLinking
   | .external => causativeLinking
 
 /-- The alternation a Yukatek verb undergoes under transitivization. -/
-def verbLinking (v : YukatekVerb) : ValencyAlternation :=
+def verbLinking (v : YukatekVerb) : Voice :=
   predictLinking v.causationType
 
 /-- The role the added participant receives, read off the alternation. -/
-def addedRole (va : ValencyAlternation) : Option TermRole := va.newParticipant
+def addedRole (va : Voice) : Option TermRole := va.newParticipant
 
 /-- The role the base's S receives: that of the derived slot its participant occupies. -/
-def originalRole (va : ValencyAlternation) : Option TermRole :=
+def originalRole (va : Voice) : Option TermRole :=
   (va.image .external).bind va.targetRole
 
 /-- Applicative and causative linking are mirror images, and not by stipulation: each alternation
@@ -311,28 +311,28 @@ inductive DetransitivizationType where
 
 /-- Map each Yukatek detransitivization to its cross-linguistic valency
     alternation: antipassive → antipassivization (P denucleativized, A → S),
-    anticausative → decausativization (A suppressed, P → S), passive →
-    passivization (A denucleativized but retained, P → S). -/
-def DetransitivizationType.toAlternation : DetransitivizationType → ValencyAlternation
-  | .antipassive => antipassivization
-  | .anticausative => decausativization
-  | .passive => passivization
+    the anticausative suppresses A and makes P the S, the passive
+    denucleativizes A but retains it and makes P the S. -/
+def DetransitivizationType.toVoice : DetransitivizationType → Voice
+  | .antipassive => Voice.antipassive
+  | .anticausative => Voice.anticausative
+  | .passive => Voice.passive
 
 /-- All three detransitivizations are valency-decreasing.
     ex. (12): p'eh "chip" → antipassive p'èeh, passive p'e'h-el,
     anticausative p'éeh-el. -/
 theorem detransitivizations_decrease_valency :
-    (DetransitivizationType.toAlternation .antipassive).IsValencyDecreasing ∧
-    (DetransitivizationType.toAlternation .anticausative).IsValencyDecreasing ∧
-    (DetransitivizationType.toAlternation .passive).IsValencyDecreasing := by decide
+    (DetransitivizationType.toVoice .antipassive).IsValencyDecreasing ∧
+    (DetransitivizationType.toVoice .anticausative).IsValencyDecreasing ∧
+    (DetransitivizationType.toVoice .passive).IsValencyDecreasing := by decide
 
 /-- The fate of the initial A separates passive from anticausative — the
     distinction the coarser intransitivization typology collapses: passive
     denucleativizes A (kept in participant structure), anticausative suppresses
     it (removed). -/
 theorem passive_anticausative_distinct_by_A_fate :
-    (DetransitivizationType.toAlternation .passive).fateOfRole .A = .denucleativized ∧
-    (DetransitivizationType.toAlternation .anticausative).fateOfRole .A = .suppressed := by
+    (DetransitivizationType.toVoice .passive).fateOfRole .A = .denucleativized ∧
+    (DetransitivizationType.toVoice .anticausative).fateOfRole .A = .suppressed := by
   decide
 
 /-! ### Template-level detransitivization -/

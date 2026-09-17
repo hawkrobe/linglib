@@ -1,4 +1,4 @@
-import Linglib.Syntax.Voice.Pivot
+import Linglib.Syntax.Voice.System
 import Linglib.Syntax.Minimalist.Verbal.Voice
 
 /-!
@@ -76,22 +76,22 @@ inductive DiReading where
   | passive
   deriving DecidableEq, Repr, Fintype
 
-/-- What each voice does to the transitive construction and selects as pivot, under a
-reading of *di-*: *meN-* nothing, the agent the pivot; the object voice nothing, the patient
-the pivot; *di-* the same as the object voice, or passivization. -/
-def Voice.selection (r : DiReading) : Voice → PivotSelection
-  | .meN => { ValencyAlternation.refl .np with pivot := .external }
-  | .ov => { ValencyAlternation.refl .np with marking := .synthetic, pivot := .complement 0 }
+/-- The voice of the typology each voice is, under a reading of *di-*: *meN-* the agent
+voice; the object voice the patient voice; *di-* the patient voice or the passive. -/
+def Voice.toVoice (r : DiReading) : Voice → _root_.Voice
+  | .meN => agentVoice.synthetic
+  | .ov => patientVoice.synthetic
   | .di =>
     match r with
-    | .patientVoice =>
-      { ValencyAlternation.refl .np with marking := .synthetic, pivot := .complement 0 }
-    | .passive => { passivization with marking := .synthetic, pivot := .complement 0 }
+    | .patientVoice => patientVoice.synthetic
+    | .passive => passive.synthetic
+
+/-- The voices under a reading of *di-*. -/
+def voices (r : DiReading) : Finset _root_.Voice := Finset.univ.image (Voice.toVoice r)
 
 /-- Read as a patient voice, *di-* makes Indonesian a binary symmetrical system; read as a
 passive it does not ([creissels-2024] §8.5.4). -/
-theorem symmetrical_iff (r : DiReading) :
-    Symmetrical (Voice.selection r) ↔ r = .patientVoice := by
+theorem symmetrical_iff (r : DiReading) : Symmetrical (voices r) ↔ r = .patientVoice := by
   cases r <;> decide
 
 -- ============================================================================

@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Voice.Alternation
+import Linglib.Syntax.Voice.Basic
 import Linglib.Semantics.Causation.Implicative
 
 /-!
@@ -24,8 +24,6 @@ Finnish verbs illustrate two phenomena that exercise linglib's infrastructure:
    classification is lexical.
 
 -/
-
-open Voice
 
 namespace Finnish.Predicates
 
@@ -141,13 +139,14 @@ theorem verb_types_distinct :
 
 /-! ### Voice
 
-The passive verb form is a fourth person: the action is performed by an unspecified human
-agent, the form has no grammatical subject expressed as an independent phrase, and there is no
-correspondent to an Indo-European *by*-agent ([karlsson-2017] §21.1). It is the impersonal
-variant of passivization, synthetically coded, the object keeping its coding. -/
+The active and the passive, the fourth person of the verb: the action is performed by an
+unspecified human agent, the form has no grammatical subject expressed as an independent
+phrase, and there is no correspondent to an Indo-European *by*-agent ([karlsson-2017]
+§21.1). It is the impersonal passive of the typology, synthetically coded, the object
+keeping its coding; the inventory lists the voices projecting transitive clauses. -/
 
-/-- The passive: synthetically coded impersonal passivization. -/
-def passive : ValencyAlternation := { impersonalPassivization with marking := .synthetic }
+/-- The active and the impersonal passive. -/
+def voices : Finset Voice := {.active, Voice.impersonalPassive.synthetic}
 
 -- ============================================================================
 -- § 6: Finnish Implicative Verbs ([nadathur-2023-implicatives])

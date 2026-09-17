@@ -2651,7 +2651,6 @@ import Linglib.Syntax.Reciprocal
 import Linglib.Syntax.Tree.Basic
 import Linglib.Syntax.Tree.Cat
 import Linglib.Syntax.Tree.Command
-import Linglib.Syntax.Voice.Alternation
 import Linglib.Syntax.Voice.Middle
 import Linglib.Syntax.WordGrammar.Inheritance.Basic
 import Linglib.Syntax.WordGrammar.Inheritance.Choice

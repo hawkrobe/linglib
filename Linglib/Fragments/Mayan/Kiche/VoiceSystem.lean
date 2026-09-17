@@ -1,4 +1,4 @@
-import Linglib.Syntax.Voice.Alternation
+import Linglib.Syntax.Voice.Basic
 import Linglib.Fragments.Mayan.Kiche.Agreement
 
 /-!
@@ -13,8 +13,8 @@ particle *wi*.
 
 ## Main declarations
 
-* `Kiche.Voice`, `Voice.alternation`: the five transitive voices and what each does to the
-  transitive construction.
+* `Kiche.Voice`, `Voice.toVoice`: the five transitive voices and the voice of the typology
+  each is.
 * `Kiche.dtvVoiceMarker`, `Kiche.rtvVoiceMarker`: voice-marker exponents
   for derived vs radical transitive verbs.
 * `Kiche.ActiveVerbForm`, `Kiche.PassiveVerbForm`,
@@ -145,27 +145,27 @@ structure AntipassiveVerbForm where
 
 /-! ### Argument realization per voice -/
 
-/-- What each voice does to the transitive construction ([mondloch-2017] Lessons 19–22): the
-active nothing; the simple and completed passives passivization, the agent expressible only
-as a third-person *-umaal* oblique; the absolutive antipassive antipassivization, the object
-excluded or expressed indirectly with *ch-ee*; agent focus nothing, subject, verb and object
-all obligatorily present. All synthetically coded but the active. -/
-def Voice.alternation : Voice → ValencyAlternation
-  | .active => .refl .np
-  | .simplePassive | .completedPassive => { passivization with marking := .synthetic }
-  | .absolutiveAntipassive => { antipassivization with marking := .synthetic }
-  | .agentFocus => { ValencyAlternation.refl .np with marking := .synthetic }
+/-- The voice of the typology each voice is ([mondloch-2017] Lessons 19–22): the simple and
+completed passives are passives, the agent expressible only as a third-person *-umaal*
+oblique; the absolutive antipassive is the antipassive, the object excluded or expressed
+indirectly with *ch-ee*; agent focus keeps subject, verb and object and privileges the agent,
+the agent voice. All synthetically coded but the active. -/
+def Voice.toVoice : Voice → _root_.Voice
+  | .active => .active
+  | .simplePassive | .completedPassive => passive.synthetic
+  | .absolutiveAntipassive => antipassive.synthetic
+  | .agentFocus => agentVoice.synthetic
 
 /-- Agent focus is the one voice beside the active that keeps both core terms core
 ([mondloch-2017] Lesson 22). -/
 theorem Voice.isSymmetrical_iff (v : Voice) :
-    v.alternation.IsSymmetrical ↔ v = .active ∨ v = .agentFocus := by
+    v.toVoice.IsSymmetrical ↔ v = .active ∨ v = .agentFocus := by
   cases v <;> decide
 
 /-- The passives and the absolutive antipassive derive an intransitive construction, and the
 verb conjugates as a simple intransitive ([mondloch-2017] Lessons 19, 21). -/
 theorem Voice.intransitive_iff (v : Voice) :
-    ¬ v.alternation.target.IsTransitive ↔
+    ¬ v.toVoice.target.IsTransitive ↔
       v = .simplePassive ∨ v = .completedPassive ∨ v = .absolutiveAntipassive := by
   cases v <;> decide
 

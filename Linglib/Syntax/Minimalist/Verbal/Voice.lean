@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Semantics.ArgumentStructure.Linking
-import Linglib.Syntax.Voice.Alternation
+import Linglib.Syntax.Voice.Basic
 import Linglib.Syntax.Reciprocal
 
 /-!
@@ -16,8 +16,8 @@ Voice heads introduce (or fail to introduce) external arguments
 ## Main definitions
 
 * `Flavor` — the guise typology (after [schaefer-2008]), with projections
-  onto neighboring substrates: `alternation` ([creissels-2024] coding-frame
-  operation), `thetaRole`, `defaultPhasal`, `recipFormation` ([siloni-2012]).
+  onto neighboring substrates: `voice` (the [creissels-2024] voice
+  it realizes), `thetaRole`, `defaultPhasal`, `recipFormation` ([siloni-2012]).
 * `Head` — a flavor plus featural and per-construction properties, with the
   predicate API `IsPhasal`/`AssignsTheta`/`HasSemantics`/`IntroducesExternal`/
   `ExternalImplicit`.
@@ -72,17 +72,16 @@ inductive Flavor where
 
 /-! ### Flavor projections -/
 
-/-- The [creissels-2024] valency alternation each flavor realizes; `none`
-    when the coding frame is untouched or the effect is not a valency
-    operation. -/
-def Flavor.alternation : Flavor → Option _root_.Voice.ValencyAlternation
-  | .causer      => some _root_.Voice.causativization
-  | .nonThematic => some _root_.Voice.decausativization
-  | .impersonal  => some _root_.Voice.impersonalPassivization
-  | .passive     => some _root_.Voice.passivization
-  | .antipassive => some _root_.Voice.antipassivization
-  | .reflexive   => some _root_.Voice.reflexivization
-  | .reciprocal  => some _root_.Voice.reciprocalization
+/-- The [creissels-2024] voice each flavor realizes; `none` when the coding frame is
+    untouched or the effect is not a valency operation. -/
+def Flavor.voice : Flavor → Option _root_.Voice
+  | .causer      => some .causative
+  | .nonThematic => some .anticausative
+  | .impersonal  => some .impersonalPassive
+  | .passive     => some .passive
+  | .antipassive => some .antipassive
+  | .reflexive   => some .reflexive
+  | .reciprocal  => some .reciprocal
   | .agentive | .expletive | .experiencer => none
 
 /-- The external θ-role a flavor assigns ([kratzer-1996] severing).
@@ -534,9 +533,9 @@ theorem defaultPhasal_eq_baselinePhasal (f : Flavor)
 /-- The antipassive anomaly, machine-checked: antipassive occupies a
     phasal cell of the grid ([+D, +λx arg]) yet is non-phasal by default —
     phasehood tracks v* transitivity ([chomsky-2001]), and antipassive
-    detransitivizes (its `alternation` has an intransitive derived
+    detransitivizes (its `voice` has an intransitive derived
     frame), though reflexive and reciprocal show the residue is not fully
-    derivable from the alternation either. -/
+    derivable from the voice either. -/
 theorem antipassive_anomaly :
     Flavor.antipassive.defaultPhasal = false ∧
     Flavor.antipassive.toParams.baselinePhasal = true := ⟨rfl, rfl⟩

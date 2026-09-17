@@ -1,4 +1,4 @@
-import Linglib.Syntax.Voice.Alternation
+import Linglib.Syntax.Voice.Basic
 
 /-!
 # Chuj voice
@@ -16,8 +16,7 @@ into these suffixes and *-aj* is the study's.
 
 ## Main definitions
 
-* `Chuj.VoiceSuffix`, `VoiceSuffix.alternation`: the four suffixes and what each does to the
-  transitive construction.
+* `Chuj.VoiceSuffix`, `VoiceSuffix.toVoice`: the four suffixes and the voice each forms.
 
 ## Main results
 
@@ -51,23 +50,22 @@ inductive VoiceSuffix where
   | w
   deriving DecidableEq, Repr
 
-/-- What each suffix does to the transitive construction: Ø nothing; *-ch* passivization, the
-agent implicit; *-j* decausativization, the agent suppressed; *-w* the denucleativization of the
-object to an incorporated bare NP. All synthetically coded. -/
-def VoiceSuffix.alternation : VoiceSuffix → ValencyAlternation
-  | .null => .refl .np
-  | .ch => { passivization with marking := .synthetic }
-  | .j => { decausativization with marking := .synthetic }
-  | .w => { source := .np, target := ⟨some .nominal, [.implicit]⟩,
-            correspondence := [(.external, .external), (.complement 0, .complement 0)],
-            marking := .synthetic }
+/-- The voice each suffix forms from the transitive construction: Ø the active; *-ch* the
+passive, the agent implicit; *-j* the anticausative, the agent suppressed; *-w* the
+denucleativization of the object to an incorporated bare NP. All synthetically coded. -/
+def VoiceSuffix.toVoice : VoiceSuffix → Voice
+  | .null => .active
+  | .ch => passive.synthetic
+  | .j => anticausative.synthetic
+  | .w => { source := .np, target := .objectDrop, coding := .synthetic,
+            correspondence := [(.external, .external), (.complement 0, .complement 0)] }
 
 /-- The three intransitivizing suffixes differ in the fate of the agent: kept by *-w*,
 demoted but present under *-ch*, absent under *-j* ([coon-2019] §3.2, §4.1). -/
 theorem VoiceSuffix.agentFate :
-    (alternation .w).fateOfRole .A = .maintained ∧
-      (alternation .ch).fateOfRole .A = .denucleativized ∧
-      (alternation .j).fateOfRole .A = .suppressed := by
+    (toVoice .w).fateOfRole .A = .maintained ∧
+      (toVoice .ch).fateOfRole .A = .denucleativized ∧
+      (toVoice .j).fateOfRole .A = .suppressed := by
   decide
 
 end Chuj

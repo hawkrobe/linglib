@@ -1,4 +1,4 @@
-import Linglib.Syntax.Voice.Pivot
+import Linglib.Syntax.Voice.System
 
 /-!
 # Toba Batak: voice
@@ -16,13 +16,13 @@ propose them.
 
 ## Main definitions
 
-* `TobaBatak.Voice`, `Voice.affix`, `Voice.selection`: the two voices, their prefixes, and
-  what each does to the transitive construction and selects as pivot.
+* `TobaBatak.Voice`, `Voice.affix`, `Voice.toVoice`: the two voices, their prefixes, and
+  the voice of the typology each is.
 
 ## Main results
 
-* `TobaBatak.Voice.symmetrical`, `Voice.not_multiple`, `Voice.equipollent`: a binary
-  symmetrical system with equipollent marking.
+* `TobaBatak.voices`, `symmetrical`, `not_multiple`, `equipollent`: a binary symmetrical
+  system with equipollent marking.
 
 ## References
 
@@ -48,17 +48,19 @@ def Voice.affix : Voice → String
   | .av => "mang-"
   | .ov => "di-"
 
-/-- Each voice keeps the agent and the patient core terms of the transitive construction and
-selects one as pivot, the actor voice the agent and the object voice the patient; the two
-prefixes are equipollent. -/
-def Voice.selection : Voice → PivotSelection
-  | .av => { ValencyAlternation.refl .np with pivot := .external }
-  | .ov => { ValencyAlternation.refl .np with marking := .equipollent, pivot := .complement 0 }
+/-- The actor voice is the agent voice and the object voice the patient voice, each keeping
+both core terms and selecting one as pivot; both prefixes are overt. -/
+def Voice.toVoice : Voice → _root_.Voice
+  | .av => agentVoice.synthetic
+  | .ov => patientVoice.synthetic
 
-theorem Voice.symmetrical : Symmetrical Voice.selection := by decide
+/-- The two voices as the typology reads them. -/
+def voices : Finset _root_.Voice := Finset.univ.image Voice.toVoice
 
-theorem Voice.not_multiple : ¬ Multiple Voice.selection := by decide
+theorem symmetrical : Symmetrical voices := by decide
 
-theorem Voice.equipollent : Equipollent Voice.selection := by decide
+theorem not_multiple : ¬ Multiple voices := by decide
+
+theorem equipollent : Equipollent voices := by decide
 
 end TobaBatak

@@ -1,4 +1,4 @@
-import Linglib.Syntax.Voice.Alternation
+import Linglib.Syntax.Voice.Basic
 import Linglib.Semantics.Root.Defs
 
 /-!
@@ -212,10 +212,9 @@ theorem tr_causative_elat_causee :
     never controls person or gender agreement). Only available in
     imperfective forms. Affective verbs are excluded.
 
-    This maps to [creissels-2024]'s `antipassivization`: A is
-    maintained (becomes S), P is denucleativized. -/
-def antipassive : Voice.ValencyAlternation :=
-  Voice.antipassivization
+    The antipassive of the typology, uncoded: A is maintained as S, P is
+    denucleativized. -/
+def antipassive : Voice := .antipassive
 
 /-- Dargwa P-lability: many transitive verbs can be used intransitively
     without morphological marking ([sumbatova-2021] §4.7.3, ex. 87).
@@ -223,16 +222,13 @@ def antipassive : Voice.ValencyAlternation :=
     This is characteristic of verbs denoting situations that can occur with
     or without an agent (break, open, fill).
 
-    Maps to [creissels-2024]'s `P_ambitransitivity`: uncoded
-    decausativization where S = initial P. -/
-def pLability : Voice.AmbitransitivityType :=
-  .P_ambitransitivity
+    The uncoded anticausative, [creissels-2024]'s P-ambitransitivity: S is the
+    initial P. -/
+def pLability : Voice := .anticausative
 
-/-- Dargwa causative (-aq) applied to intransitive bases maps to
-    Creissels' causativization: S is maintained as P, a new A (causer)
-    is introduced. -/
-def causativeAlternation : Voice.ValencyAlternation :=
-  Voice.causativization
+/-- Dargwa causative (-aq) applied to intransitive bases: the synthetically coded
+    causative, S maintained as P and a new A, the causer, introduced. -/
+def causativeAlternation : Voice := Voice.causative.synthetic
 
 /-- The antipassive is valency-decreasing (P is denucleativized). -/
 theorem antipassive_decreases : antipassive.IsValencyDecreasing := by decide
