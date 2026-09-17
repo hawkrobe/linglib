@@ -41,11 +41,9 @@ on attested verbs.
 
 ## Citation hygiene notes
 
-- The 49 per-class section numbers (`§ 9.1`, `§ 9.3`, etc.) cited in
-  `LevinClass.levinSection` are flagged `UNVERIFIED:` per CLAUDE.md ("Never
-  cite specific equation, table, or section numbers from memory").
-  They are preserved as comments since they're useful for navigation
-  but should be cross-checked against the published [levin-1993].
+- The per-class section numbers in `LevinClass.levinSection` and the
+  example members beside each constructor were checked against the
+  monograph's table of contents and Part II member lists.
 - The `meaningComponents` per-class assignments in [levin-1993]'s
   Part II text are similarly UNVERIFIED in detail; the canonical
   *break*/*cut*/*hit*/*touch* assignments from the Introduction are
@@ -84,12 +82,13 @@ namespace ArgumentStructure
     at the top-level class grain, with subclass distinctions handled by
     `MeaningComponents` and `RootProfile`.
 
-    UNVERIFIED: Per-class section numbers (e.g., `§ 9.1` for `.put`)
-    cited from memory — verify against the published monograph. -/
+    The example members beside each constructor are drawn from the
+    class's member list in Part II. -/
 inductive LevinClass where
   -- Verbs of Putting (§ 9)
-  | put                -- 9.1: put, place, set, lay, ...
+  | put                -- 9.1: put, place, set, position, ...
   | funnel             -- 9.3: funnel, channel, siphon, ...
+  | putDirection       -- 9.4: drop, hoist, lift, lower, raise
   | pour               -- 9.5: pour, drip, dribble, ...
   | coil               -- 9.6: coil, spin, twist, ...
   | sprayLoad          -- 9.7: spray, load, pack, ...
@@ -101,7 +100,7 @@ inductive LevinClass where
   -- Verbs of Sending and Carrying (§ 11)
   | send               -- 11.1: send, ship, mail, ...
   | carry              -- 11.4: carry, haul, lug, ...
-  | drive              -- 11.5: drive, fly, sail, ...
+  | drive              -- 11.5: drive, fly, ferry, ...
   -- Verbs of Exerting Force (§ 12)
   | pushPull           -- 12: push, pull, press, tug, ...
   -- Verbs of Change of Possession (§ 13)
@@ -114,12 +113,13 @@ inductive LevinClass where
   -- Hold and Keep Verbs (§ 15)
   | hold               -- 15.1: hold, grasp, clutch, ...
   -- Verbs of Concealment (§ 16)
-  | conceal            -- 16: conceal, hide, cover, ...
+  | conceal            -- 16: conceal, hide, shelter, ...
   -- Verbs of Throwing (§ 17)
   | throw              -- 17.1: throw, toss, fling, ...
   -- Verbs of Contact by Impact (§ 18)
   | hit                -- 18.1: hit, bash, kick, ...
-  | swat               -- 18.2: swat, slap, whack, ...
+  | swat               -- 18.2: swat, punch, stab, bite, ...
+  | spank              -- 18.3: spank, thrash, whip, flog, ...
   -- Poke Verbs (§ 19)
   | poke               -- 19: poke, jab, pierce, ...
   -- Verbs of Contact: Touch (§ 20)
@@ -139,9 +139,9 @@ inductive LevinClass where
   | imageCreation      -- 25: draw, etch, engrave, ...
   -- Verbs of Creation and Transformation (§ 26)
   | build              -- 26.1: build, assemble, bake, carve, ...
-  | grow               -- 26.2: grow, cultivate, ...
+  | grow               -- 26.2: grow, develop, hatch, ...
   | create             -- 26.4: create, design, invent, ...
-  | knead              -- 26.5: knead, mold, shape, ...
+  | knead              -- 26.5: knead, squeeze, twist, ...
   | turn               -- 26.6: turn, convert, transform, ...
   | performance        -- 26.7: perform, play, sing, ...
   -- Engender Verbs (§ 27)
@@ -149,7 +149,7 @@ inductive LevinClass where
   -- Calve Verbs (§ 28)
   | calve              -- 28: calve, foal, lamb, ...
   -- Verbs with Predicative Complements (§ 29)
-  | appoint            -- 29.1: appoint, name, elect, ...
+  | appoint            -- 29.1: appoint, elect, nominate, ...
   | characterize       -- 29.2: characterize, classify, ...
   | declare            -- 29.4: declare, certify, ...
   -- Verbs of Perception (§ 30)
@@ -161,8 +161,9 @@ inductive LevinClass where
   | marvel             -- 31.3: marvel, grieve, ...
   -- Verbs of Desire (§ 32)
   | want               -- 32.1: want, need, desire, ...
+  | long               -- 32.2: long, wish, yearn, hope, ...
   -- Judgment Verbs (§ 33)
-  | judgment           -- 33: judge, blame, praise, ...
+  | judgment           -- 33: praise, thank, criticize, ...
   -- Verbs of Assessment (§ 34)
   | assessment         -- 34: assess, evaluate, ...
   -- Verbs of Searching (§ 35)
@@ -171,8 +172,9 @@ inductive LevinClass where
   | socialInteraction  -- 36: correspond, marry, meet, ...
   -- Verbs of Communication (§ 37)
   | say                -- 37.7: say, report, announce, ...
-  | tell               -- 37.2: tell, inform, notify, ...
+  | tell               -- 37.2: tell (the only member)
   | mannerOfSpeaking   -- 37.3: whisper, shout, mumble, ...
+  | talk               -- 37.5: speak, talk
   -- Verbs of Sounds Made by Animals (§ 38)
   | animalSound        -- 38: bark, moo, roar, ...
   -- Verbs of Ingesting (§ 39)
@@ -181,9 +183,11 @@ inductive LevinClass where
   | dine               -- 39.5: dine, feast, ...
   -- Verbs Involving the Body (§ 40)
   | bodyProcess        -- 40.1: hiccup, breathe, cough, ...
+  | nonverbalExpression -- 40.2: sigh, laugh, cry, smile, ...
   | flinch             -- 40.5: flinch, cringe, wince, ...
+  | hurt               -- 40.8.3: hurt, injure, bruise, sprain, ...
   -- Verbs of Grooming and Bodily Care (§ 41)
-  | dress              -- 41.1: dress, clothe, ...
+  | dress              -- 41.1.1: dress, bathe, shave, ...
   -- Verbs of Killing (§ 42)
   | murder             -- 42.1: murder, assassinate, ...
   | poison             -- 42.2: poison, drown, ...
@@ -213,12 +217,12 @@ inductive LevinClass where
   | assumePosition     -- 50: sit, stand, lie, ...
   -- Verbs of Motion (§ 51)
   | inherentlyDirectedMotion -- 51.1: arrive, come, go, ...
-  | leave              -- 51.2: leave, depart, ...
+  | leave              -- 51.2: leave, abandon, desert
   | mannerOfMotion     -- 51.3: run, walk, swim, ...
-  | vehicleMotion      -- 51.4: drive, fly, sail, ...
+  | vehicleMotion      -- 51.4: bicycle, fly, sail, ...
   | chase              -- 51.6: chase, pursue, ...
   -- Avoid Verbs (§ 52)
-  | avoid              -- 52: avoid, escape, ...
+  | avoid              -- 52: avoid, evade, shun, ...
   -- Verbs of Lingering and Rushing (§ 53)
   | linger             -- 53.1: linger, loiter, ...
   | rush               -- 53.2: rush, hurry, ...
@@ -236,10 +240,11 @@ namespace LevinClass
     `section` would clash with Lean's reserved keyword; we use
     `levinSection` as the canonical accessor.
 
-    UNVERIFIED: Per-class section numbers cited from memory; verify
-    against the published monograph. -/
+    Section numbers checked against the monograph's table of contents;
+    the classes are at Levin's top-level grain, so `search` covers
+    §35.1–35.6 and `mannerOfMotion` §51.3.1–51.3.2. -/
 def levinSection : LevinClass → String
-  | .put => "9.1" | .funnel => "9.3" | .pour => "9.5"
+  | .put => "9.1" | .funnel => "9.3" | .putDirection => "9.4" | .pour => "9.5"
   | .coil => "9.6" | .sprayLoad => "9.7"
   | .remove => "10.1" | .clear => "10.3" | .wipe => "10.4"
   | .steal => "10.5"
@@ -248,7 +253,7 @@ def levinSection : LevinClass → String
   | .give => "13.1" | .contribute => "13.2"
   | .getObtain => "13.5" | .exchange => "13.6"
   | .learn => "14" | .hold => "15.1" | .conceal => "16"
-  | .throw => "17.1" | .hit => "18.1" | .swat => "18.2"
+  | .throw => "17.1" | .hit => "18.1" | .swat => "18.2" | .spank => "18.3"
   | .poke => "19" | .touch => "20"
   | .cut => "21.1" | .carve => "21.2"
   | .mix => "22.1" | .amalgamate => "22.2"
@@ -260,12 +265,13 @@ def levinSection : LevinClass → String
   | .appoint => "29.1" | .characterize => "29.2" | .declare => "29.4"
   | .see => "30.1" | .sight => "30.2"
   | .amuse => "31.1" | .admire => "31.2" | .marvel => "31.3"
-  | .want => "32.1" | .judgment => "33" | .assessment => "34"
+  | .want => "32.1" | .long => "32.2" | .judgment => "33" | .assessment => "34"
   | .search => "35" | .socialInteraction => "36"
-  | .say => "37.7" | .tell => "37.2" | .mannerOfSpeaking => "37.3"
+  | .say => "37.7" | .tell => "37.2" | .mannerOfSpeaking => "37.3" | .talk => "37.5"
   | .animalSound => "38"
   | .eat => "39.1" | .devour => "39.4" | .dine => "39.5"
-  | .bodyProcess => "40.1" | .flinch => "40.5" | .dress => "41.1"
+  | .bodyProcess => "40.1" | .nonverbalExpression => "40.2" | .flinch => "40.5"
+  | .hurt => "40.8.3" | .dress => "41.1.1"
   | .murder => "42.1" | .poison => "42.2"
   | .lightEmission => "43.1" | .soundEmission => "43.2"
   | .substanceEmission => "43.4"
@@ -299,6 +305,7 @@ def levinSection : LevinClass → String
     Part II text and should be cross-checked. -/
 def meaningComponents : LevinClass → MeaningComponents
   | .put => ⟨false, false, true, true, false, false⟩
+  | .putDirection => ⟨false, false, true, true, false, false⟩
   | .funnel => ⟨false, false, true, true, false, true⟩
   | .pour => ⟨false, false, true, true, false, true⟩
   | .coil => ⟨false, false, true, true, false, true⟩
@@ -321,6 +328,7 @@ def meaningComponents : LevinClass → MeaningComponents
   | .throw => ⟨false, true, true, true, false, false⟩
   | .hit => MeaningComponents.hit
   | .swat => ⟨false, true, true, false, false, false⟩
+  | .spank => ⟨false, true, true, false, false, false⟩
   | .poke => ⟨false, true, true, false, true, false⟩
   | .touch => MeaningComponents.touch
   | .cut => MeaningComponents.cut
@@ -348,6 +356,7 @@ def meaningComponents : LevinClass → MeaningComponents
   | .admire => ⟨false, false, false, false, false, false⟩
   | .marvel => ⟨false, false, false, false, false, false⟩
   | .want => ⟨false, false, false, false, false, false⟩
+  | .long => ⟨false, false, false, false, false, false⟩
   | .judgment => ⟨false, false, false, false, false, false⟩
   | .assessment => ⟨false, false, false, false, false, false⟩
   | .search => ⟨false, false, true, false, false, false⟩
@@ -355,12 +364,15 @@ def meaningComponents : LevinClass → MeaningComponents
   | .say => ⟨false, false, false, false, false, false⟩
   | .tell => ⟨false, false, false, false, false, false⟩
   | .mannerOfSpeaking => ⟨false, false, false, false, false, true⟩
+  | .talk => ⟨false, false, false, false, false, false⟩
   | .animalSound => ⟨false, false, false, false, false, true⟩
   | .eat => ⟨true, true, false, false, false, false⟩
   | .devour => ⟨true, true, false, false, false, true⟩
   | .dine => ⟨false, false, false, false, false, true⟩
   | .bodyProcess => ⟨false, false, false, false, false, false⟩
+  | .nonverbalExpression => ⟨false, false, false, false, false, false⟩
   | .flinch => ⟨false, false, true, false, false, false⟩
+  | .hurt => ⟨true, true, false, true, false, false⟩
   | .dress => ⟨true, true, false, true, false, false⟩
   | .murder => ⟨true, false, false, true, false, false⟩
   | .poison => ⟨true, false, false, true, true, false⟩
@@ -455,7 +467,7 @@ default argument profiles from its `levinClass` field. -/
     Returns `none` for classes whose profiles haven't been determined yet. -/
 def LevinClass.roleList : LevinClass → Option RoleList
   -- § 18: Contact by Impact — manner verbs, no CoS entailment
-  | .hit | .swat              => some mannerContact
+  | .hit | .swat | .spank      => some mannerContact
   -- § 20: Contact: Touch — like hit but lighter force
   | .touch                    => some mannerContact
   -- § 21: Cutting — manner + result (CoS entailed)
@@ -488,7 +500,7 @@ def LevinClass.roleList : LevinClass → Option RoleList
   -- § 31.2: Admire-class psych verbs (experiencer subject)
   | .admire                   => some psychState
   -- § 32.1: Want verbs (desire states)
-  | .want                     => some desire
+  | .want | .long              => some desire
   -- § 13.1 / § 13.5: Change of possession (give / obtain)
   | .give | .getObtain        => some possessionTransfer
   -- § 10.4: Wipe verbs (manner-subclass default; instrument-sense

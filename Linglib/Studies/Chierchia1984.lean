@@ -1,7 +1,7 @@
 import Linglib.Syntax.Voice.Alternation
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Composition.Ty
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 
 /-!
 # Chierchia (1984): Topics in the syntax and semantics of infinitives and gerunds
@@ -171,7 +171,7 @@ theorem subjectControl_not_blocks_antipassivization :
 
 section Fragment
 
-open English.Predicates.Verbal
+open English hiding Verb
 
 /-- Every control verb of the Fragment, the attitude verbs *want*, *hope* and *promise* included,
 is a control verb in the dissertation's sense, with a fixed controller whether subject or

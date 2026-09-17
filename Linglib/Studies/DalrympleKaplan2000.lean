@@ -1,7 +1,7 @@
 import Linglib.Data.Examples.DalrympleKaplan2000
 import Linglib.Syntax.Person.Resolve
 import Linglib.Fragments.Chichewa.Gender
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Fragments.German.Pronouns
 import Linglib.Fragments.German.Verbs
 import Linglib.Fragments.Slavic.Polish.Pronouns
@@ -210,24 +210,26 @@ theorem polish_coordination :
         (Case.acc ∈ formCells co (some "co") ∧ Case.gen ∈ formCells co (some "co")) := by
   decide
 
-open English.Predicates.Verbal in
-/-- The cells *set* realizes are the base, the past and the past participle; the paper's VFORM
-    value lists the two nonfinite ones, the past being a TENSE value ((50)). -/
+open English hiding Verb in
+/-- The cells *set* realizes are the base with its present plural, the past and the past
+    participle; the paper's VFORM value lists the two nonfinite ones, the past being a TENSE
+    value ((50)). -/
 theorem set_cells :
-    formCells set_.realize "set" = {VerbEntry.Cell.base, .past, .pastParticiple} := by
+    formCells set_.realize "set" =
+      {English.Verb.Cell.base, .presentPlural, .past, .pastParticiple} := by
   decide
 
-open English.Predicates.Verbal in
+open English hiding Verb in
 /-- *will* requires the base form and *have* the past participle of the shared verb; *set*
     realizes both cells ((49), (50)) and neither form of *clarify* does ((47), (48)). -/
 theorem will_and_have :
-    AcceptableIff Examples.ex_49 (VerbEntry.Cell.base ∈ formCells set_.realize "set" ∧
-        VerbEntry.Cell.pastParticiple ∈ formCells set_.realize "set") ∧
-      AcceptableIff Examples.ex_47 (VerbEntry.Cell.base ∈ formCells clarify.realize "clarify" ∧
-        VerbEntry.Cell.pastParticiple ∈ formCells clarify.realize "clarify") ∧
+    AcceptableIff Examples.ex_49 (English.Verb.Cell.base ∈ formCells set_.realize "set" ∧
+        English.Verb.Cell.pastParticiple ∈ formCells set_.realize "set") ∧
+      AcceptableIff Examples.ex_47 (English.Verb.Cell.base ∈ formCells clarify.realize "clarify" ∧
+        English.Verb.Cell.pastParticiple ∈ formCells clarify.realize "clarify") ∧
       AcceptableIff Examples.ex_48
-        (VerbEntry.Cell.base ∈ formCells clarify.realize "clarified" ∧
-          VerbEntry.Cell.pastParticiple ∈ formCells clarify.realize "clarified") := by
+        (English.Verb.Cell.base ∈ formCells clarify.realize "clarified" ∧
+          English.Verb.Cell.pastParticiple ∈ formCells clarify.realize "clarified") := by
   decide
 
 /-- The subject genders an indeterminate Xhosa verb such as *zibomvu* 'are red' agrees with are

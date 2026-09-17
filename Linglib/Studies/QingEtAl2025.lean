@@ -1,6 +1,6 @@
 import Linglib.Studies.UegakiSudo2019
 import Linglib.Semantics.Modality.Kratzer.Ordering
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Turkish.Predicates
@@ -181,9 +181,9 @@ theorem trivial_iff_class [Inhabited E] (k : Strategy)
 /-- The attitude a predicate name denotes: the Fragment entry for English, Mandarin, Japanese,
 and Turkish, and the paper's classification for Spanish. -/
 def attitude? : String → Option Attitude
-  | "hope" => English.Predicates.Verbal.hope.attitude
-  | "fear" => English.Predicates.Verbal.fear.attitude
-  | "worry" => English.Predicates.Verbal.worry.attitude
+  | "hope" => English.hope.attitude
+  | "fear" => English.fear.attitude
+  | "worry" => English.worry.attitude
   | "qidai" => Mandarin.qidai.attitude
   | "danxin" => Mandarin.danxin.attitude
   | "xiwang" => Mandarin.xiwang.attitude

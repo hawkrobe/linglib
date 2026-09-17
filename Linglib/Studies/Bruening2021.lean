@@ -1,4 +1,4 @@
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Studies.Larson1988
 import Linglib.Studies.Pylkkanen2008
 
@@ -55,7 +55,7 @@ Of the roughly 43 verbs of (56), the 32 whose Fragment encoding is unambiguous a
 
 namespace Bruening2021
 
-open English.Predicates.Verbal
+open English hiding Verb
 open ArgumentStructure
 
 /-! ### Table (56) as a grid
@@ -75,7 +75,7 @@ inductive GoalPosition where
 
 /-- The position of each verb's goal in (56), for the verbs whose Fragment encoding is
 unambiguous. -/
-def classification : List (VerbEntry × GoalPosition) := [
+def classification : List (English.Verb × GoalPosition) := [
   (forgive, .firstObject), (spare, .firstObject), (show_, .firstObject),
   (tell, .pp), (pass, .pp), (throw, .pp), (sell, .pp),
   (charge, .firstObject), (cost, .firstObject), (envy, .firstObject), (fine, .firstObject),
@@ -90,17 +90,17 @@ def classification : List (VerbEntry × GoalPosition) := [
 
 /-- The cell a verb occupies: its second object's interpretation, its goal's position, and the
 goal's interpretation — the first and third read off the Fragment. -/
-def cell (vp : VerbEntry × GoalPosition) :
+def cell (vp : English.Verb × GoalPosition) :
     Option ImplicitInterp × GoalPosition × Option ImplicitInterp :=
   (vp.1.implicitObj, vp.2, vp.1.implicitGoal)
 
 /-! ### Derived verb subsets -/
 
 /-- The ditransitive verbs of (56). -/
-def ditransitiveVerbs : List VerbEntry := classification.map (·.1)
+def ditransitiveVerbs : List English.Verb := classification.map (·.1)
 
 /-- Verbs whose goal argument is a first object. -/
-def docOnlyVerbs : List VerbEntry :=
+def docOnlyVerbs : List English.Verb :=
   (classification.filter (fun vp => vp.2 == .firstObject)).map (·.1)
 
 /-! ### G2: the empty cell
@@ -153,7 +153,7 @@ have no `.np_np` alt — so the Fragment itself blocks the spurious
 
 (Bruening's prototypical example *bake* is not in the English fragment.) -/
 
-def baseTransitivesWithImplicit : List VerbEntry := [melt, build]
+def baseTransitivesWithImplicit : List English.Verb := [melt, build]
 
 theorem g3_base_transitive_constraint :
     baseTransitivesWithImplicit.all (fun v =>

@@ -1,4 +1,4 @@
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Semantics.Presupposition.Environment
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Data.Examples.Karttunen1971b
@@ -36,7 +36,8 @@ not the presupposition holds (`negExt_no_inference`).
 
 namespace Karttunen1971b
 
-open Presupposition Data.Examples English.Predicates.Verbal
+open Presupposition Data.Examples
+open English hiding Verb
 
 /-! ### The meaning postulates -/
 

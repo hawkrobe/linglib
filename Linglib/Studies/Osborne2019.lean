@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.English.Adposition
 import Linglib.Syntax.WordGrammar.LexicalRules
@@ -54,22 +54,22 @@ private abbrev the_ := English.Determiners.the.toWord
 private abbrev was_ := English.Auxiliaries.was.toWord
 private abbrev by_ := English.Adpositions.by_.toWord
 private abbrev to_ := English.Adpositions.to_.toWord
-private abbrev sleeps := English.Predicates.Verbal.sleep.toWord3sg
-private abbrev devours := English.Predicates.Verbal.devour.toWord3sg
-private abbrev gives := English.Predicates.Verbal.give.toWord3sg
-private abbrev kicked := English.Predicates.Verbal.kick.toWordPast
-private abbrev kickedPass := English.Predicates.Verbal.kick.toWordPassive
-private abbrev manages := English.Predicates.Verbal.manage.toWord3sg
-private abbrev persuaded := English.Predicates.Verbal.persuade.toWordPast
-private abbrev seems := English.Predicates.Verbal.seem.toWord3sg
-private abbrev sleep_ := English.Predicates.Verbal.sleep.toWordBase
-private abbrev run_ := English.Predicates.Verbal.run.toWordBase
+private abbrev sleeps := English.sleep.toWord .thirdSg
+private abbrev devours := English.devour.toWord .thirdSg
+private abbrev gives := English.give.toWord .thirdSg
+private abbrev kicked := English.kick.toWord .past
+private abbrev kickedPass := English.kick.passiveParticiple
+private abbrev manages := English.manage.toWord .thirdSg
+private abbrev persuaded := English.persuade.toWord .past
+private abbrev seems := English.seem.toWord .thirdSg
+private abbrev sleep_ := English.sleep.toWord .base
+private abbrev run_ := English.run.toWord .base
 
 /-! ### Valency frames from the Fragment (sixth chapter) -/
 
 /-- The frame of a tree whose verb at position `i` is the fragment entry `v`: the valency its
 complement type determines. -/
-private def frameOf {n : ℕ} (v : English.Predicates.Verbal.VerbEntry) (i : Fin n) : Frames n :=
+private def frameOf {n : ℕ} (v : English.Verb) (i : Fin n) : Frames n :=
   .ofList [(i, (v.complementType.valency).getD [])]
 
 def intransTree : Graph 2 := .ofArcs [john, sleeps] 1 [(1, 0, .nsubj)]
@@ -80,9 +80,9 @@ def transTree : Graph 3 :=
 def ditransTree : Graph 4 :=
   .ofArcs [john, gives, mary, book] 1 [(1, 0, .nsubj), (1, 2, .iobj), (1, 3, .obj)]
 
-example : intransTree.SatisfiesFrames (frameOf English.Predicates.Verbal.sleep 1) := by decide
-example : transTree.SatisfiesFrames (frameOf English.Predicates.Verbal.devour 1) := by decide
-example : ditransTree.SatisfiesFrames (frameOf English.Predicates.Verbal.give 1) := by decide
+example : intransTree.SatisfiesFrames (frameOf English.sleep 1) := by decide
+example : transTree.SatisfiesFrames (frameOf English.devour 1) := by decide
+example : ditransTree.SatisfiesFrames (frameOf English.give 1) := by decide
 
 /-- *John sleeps book: an intransitive with a spurious object. -/
 def intransWithObj : Graph 3 :=
@@ -91,9 +91,9 @@ def intransWithObj : Graph 3 :=
 /-- *John devours: a transitive missing its object. -/
 def transNoObj : Graph 2 := .ofArcs [john, devours] 1 [(1, 0, .nsubj)]
 
-example : ¬ intransWithObj.SatisfiesFrames (frameOf English.Predicates.Verbal.sleep 1) := by
+example : ¬ intransWithObj.SatisfiesFrames (frameOf English.sleep 1) := by
   decide
-example : ¬ transNoObj.SatisfiesFrames (frameOf English.Predicates.Verbal.devour 1) := by
+example : ¬ transNoObj.SatisfiesFrames (frameOf English.devour 1) := by
   decide
 
 /-! ### The passive valency is rule-derived (§6.6) -/
@@ -101,7 +101,7 @@ example : ¬ transNoObj.SatisfiesFrames (frameOf English.Predicates.Verbal.devou
 /-- The lexical entry of *kicked*, its valency from the fragment. -/
 private def lexKicked : LexEntry :=
   { form := kicked.form, cat := .VERB, features := kicked.features
-    valency := (English.Predicates.Verbal.kick.complementType.valency).getD [] }
+    valency := (English.kick.complementType.valency).getD [] }
 
 /-- The passive rule applies to *kicked* and yields the passive valency. -/
 theorem passive_valency :

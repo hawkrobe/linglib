@@ -1,7 +1,7 @@
 import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Semantics.Focus.ExtractionClash
 import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Data.Examples.LuPanDegen2025
 
 /-!
@@ -50,7 +50,7 @@ manner-of-speaking complements (16).
 
 namespace LuPanDegen2025
 
-open Focus Discourse Reference Focus.ExtractionClash ArgumentStructure English.Predicates.Verbal
+open Focus Discourse Reference Focus.ExtractionClash ArgumentStructure English
 open Data.Examples
 
 /-! ### Foreground and background (Definition 1) -/
@@ -168,7 +168,7 @@ end Questions
 
 /-- The matrix predicate: a verb of the fragment, and whether a manner adverb modifies it. -/
 structure MatrixPredicate where
-  verb : VerbEntry
+  verb : English.Verb
   mannerAdverb : Bool
 
 /-- Whether the verb's Levin class specifies manner, the manner-of-speaking class of
@@ -183,12 +183,12 @@ def MatrixPredicate.HasManner (p : MatrixPredicate) : Prop :=
 instance : DecidablePred MatrixPredicate.HasManner := λ _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- A verb of the manner-of-speaking class carries manner however it is modified. -/
-theorem hasManner_of_mannerOfSpeaking {v : VerbEntry} (h : v.levinClass = some .mannerOfSpeaking)
+theorem hasManner_of_mannerOfSpeaking {v : English.Verb} (h : v.levinClass = some .mannerOfSpeaking)
     (b : Bool) : MatrixPredicate.HasManner ⟨v, b⟩ :=
   Or.inl (by simp [MatrixPredicate.lexicalManner, h, LevinClass.meaningComponents])
 
 /-- A verb of the *say* class carries manner only by an adverb. -/
-theorem hasManner_say_iff {v : VerbEntry} (h : v.levinClass = some .say) (b : Bool) :
+theorem hasManner_say_iff {v : English.Verb} (h : v.levinClass = some .say) (b : Bool) :
     MatrixPredicate.HasManner ⟨v, b⟩ ↔ b = true := by
   simp [MatrixPredicate.HasManner, MatrixPredicate.lexicalManner, h, LevinClass.meaningComponents]
 
@@ -237,7 +237,7 @@ theorem not_island_of_focus (p : MatrixPredicate) : ¬ Island p true :=
   λ h => Bool.noConfusion ((island_iff p true).1 h).2
 
 /-- A manner adverb makes any verb's complement an island, Experiment 3a. -/
-theorem island_adverb (v : VerbEntry) : Island ⟨v, true⟩ false :=
+theorem island_adverb (v : English.Verb) : Island ⟨v, true⟩ false :=
   island_of_hasManner (Or.inr rfl)
 
 /-! ### The negation test (4) -/

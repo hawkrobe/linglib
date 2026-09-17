@@ -1,5 +1,5 @@
 import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Syntax.Reciprocal
 
 /-!
@@ -32,9 +32,9 @@ def eachOther : Marker :=
     strategy marks predicates, not forms. Lexicon-formed per
     [siloni-2012], though *kiss*/*hug* resist the discontinuous
     construction (fn. 32). Entries beyond *meet* pending in
-    `Predicates/Verbal.lean`. -/
-def lexicalReciprocals : List Predicates.Verbal.VerbEntry :=
-  [Predicates.Verbal.meet]
+    `Predicates.lean`. -/
+def lexicalReciprocals : List English.Verb :=
+  [English.meet]
 
 /-- Marker inventory. -/
 def markers : List Marker := [eachOther]

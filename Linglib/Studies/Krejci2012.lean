@@ -1,5 +1,5 @@
 import Linglib.Studies.KoontzGarboden2009
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Core.Order.UpperLower.Finset
 import Mathlib.Tactic.DeriveFintype
 
@@ -144,7 +144,7 @@ private def w₁ : Event ℤ := ev 0 2
 private def w₂ : Event ℤ := ev 3 4
 private def e₁ : Event ℤ := ev 4 5
 
-private def eatV : Verb := English.Predicates.Verbal.eat.toVerb
+private def eatV : Verb := English.eat.toVerb
 
 /-- A model in which the events `causing` lists bring John to potential digestion, with `eff`
 the effectors of events. -/

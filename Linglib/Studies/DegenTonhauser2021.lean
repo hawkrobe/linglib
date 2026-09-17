@@ -1,4 +1,4 @@
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Fragments.English.Predicates.Copular
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.DeriveFintype
@@ -116,7 +116,8 @@ theorem prior_modulates_projection (p : Predicate) :
 
 section Fragment
 
-open English.Predicates.Verbal English.Predicates.Copular
+open English hiding Verb
+open English.Predicates.Copular
 
 /-- The verb of a predicate, the semantic spine the verbal and copular entries share. -/
 def toPredicateCore : Predicate → Verb

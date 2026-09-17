@@ -4,7 +4,7 @@ import Linglib.Studies.Karttunen1974
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Conditionals.Basic
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Semantics.Attitudes.Verb
 
 /-!
@@ -131,7 +131,7 @@ theorem negative_implicative_is_en_trigger {v : Verb} (h : v.implicative = some 
 theorem prevent_is_en_trigger {v : Verb} (h : v.causative = some .prevent) :
     IsExpletiveNegationTrigger v := Or.inr (Or.inr h)
 
-open English.Predicates.Verbal in
+open English hiding Verb in
 /-- The English fragment's *fear*, *dread*, *worry*, *forget* and *prevent* are triggers. -/
 theorem english_triggers :
     IsExpletiveNegationTrigger fear.toVerb ∧ IsExpletiveNegationTrigger dread.toVerb ∧

@@ -1,6 +1,6 @@
 import Linglib.Syntax.ConstructionGrammar.Resultatives
 import Linglib.Syntax.Category.Verb.Argument
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Data.Examples.GoldbergJackendoff2004
 
 /-!
@@ -39,14 +39,14 @@ derives a label only where the citation frame carries an entailment profile.
 namespace GoldbergJackendoff2004
 
 open ConstructionGrammar.Resultatives ArgumentStructure Data.Examples
-open English.Predicates.Verbal
+open English hiding Verb
 
 /-- An example row: the verb, the subconstruction, how its subevents relate, the object
 selection of a transitive, the end-boundedness of the result phrase where the paper tests it,
 the paper's role for the verb argument that fuses with the construction's undergoer, and the
 judgment. -/
 structure Row where
-  verb : VerbEntry
+  verb : English.Verb
   subconstruction : ResultativeSubconstruction
   relation : SubeventRelation
   selection : Option ObjectSelection
@@ -55,7 +55,7 @@ structure Row where
   judgment : Judgment
 
 /-- The paper's verbs, by citation form. -/
-private def verbs : List (String × VerbEntry) :=
+private def verbs : List (String × English.Verb) :=
   [("hammer", hammer), ("laugh", laugh), ("freeze", freeze), ("roll", roll), ("water", water),
    ("break", break_), ("drink", drink), ("talk", talk), ("yell", yell), ("heat", heat),
    ("weave", weave), ("float", float), ("push", push), ("cry", cry), ("bleed", bleed),

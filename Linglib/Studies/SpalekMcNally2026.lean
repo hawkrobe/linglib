@@ -1,4 +1,4 @@
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Fragments.Spanish.Predicates
 
 /-!
@@ -48,7 +48,7 @@ for the foil, robustness and force for the silence, force for the rough.
 
 namespace SpalekMcNally2026
 
-open Semantics.Root Semantics.Root.Content English.Predicates.Verbal Spanish.Predicates
+open Semantics.Root Semantics.Root.Content English Spanish.Predicates
 
 /-! ### Situations and admission -/
 

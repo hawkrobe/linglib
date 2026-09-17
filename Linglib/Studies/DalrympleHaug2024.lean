@@ -241,7 +241,7 @@ def pro (exhaustive collective matrixPlural : Bool) : Antecedent :=
   { grain := if collective then some .plurality else if exhaustive then some .individual else none
     matrixPlural }
 
-open English.Predicates.Verbal Landau2015 in
+open English Landau2015 in
 /-- Landau's tiers on the paper's control verbs: *want* of (13) and (15) selects an attitude
     complement and admits partial control, *try* and *manage* of (16) force exhaustive control,
     and *intend* of (17) and *decide* of (14) fall with *want*, although the paper's argument

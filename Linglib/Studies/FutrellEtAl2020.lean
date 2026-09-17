@@ -1,5 +1,5 @@
 import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Adposition
@@ -42,7 +42,7 @@ namespace FutrellEtAl2020
 
 open DependencyGrammar
 open Morphology (Word)
-open English.Nouns English.Predicates.Verbal English.Pronouns English.Determiners
+open English.Nouns English English.Pronouns English.Determiners
   English.Adpositions English.Auxiliaries
 
 -- `this` is a Lean keyword, so the demonstrative needs a qualified alias.
@@ -63,8 +63,8 @@ context-freeness only mildly. -/
 /-- Example (3): "I think a woman arrived who you know". -/
 def extraposition : Graph 8 :=
   .ofArcs
-    [i.toWord, think.toWordBase, a.toWord, woman.toWordSg, arrive.toWordPast,
-     who.toWord, you.toWord, know.toWordBase]
+    [i.toWord, think.toWord .base, a.toWord, woman.toWordSg, arrive.toWord .past,
+     who.toWord, you.toWord, know.toWord .base]
     1
     [(1, 0, .nsubj), (1, 4, .ccomp), (4, 3, .nsubj), (3, 2, .det),
      (3, 7, .acl), (7, 5, .obj), (7, 6, .nsubj)]
@@ -72,7 +72,7 @@ def extraposition : Graph 8 :=
 /-- Example (4): "I know what he thinks you did yesterday". -/
 def whMovement : Graph 8 :=
   .ofArcs
-    [i.toWord, know.toWordBase, what.toWord, he.toWord, think.toWord3sg,
+    [i.toWord, know.toWord .base, what.toWord, he.toWord, think.toWord .thirdSg,
      you.toWord, did.toWord, Word.mk' "yesterday" .ADV]
     1
     [(1, 0, .nsubj), (1, 4, .ccomp), (4, 3, .nsubj), (4, 6, .ccomp),
@@ -155,19 +155,19 @@ deriving the weight-sensitivity of heavy NP shift (cf. example (6)). -/
 
 /-- (11a) "John threw out the trash", total dependency length 6. -/
 def lightParticleEarly : Graph 5 :=
-  .ofArcs [john.toWord, throw.toWordPast, out.toWord, the.toWord, trash.toWordSg]
+  .ofArcs [john.toWord, throw.toWord .past, out.toWord, the.toWord, trash.toWordSg]
     1 [(1, 0, .nsubj), (1, 2, .compound), (1, 4, .obj), (4, 3, .det)]
 
 /-- (11b) "John threw the trash out", total dependency length 7. -/
 def lightParticleLate : Graph 5 :=
-  .ofArcs [john.toWord, throw.toWordPast, the.toWord, trash.toWordSg, out.toWord]
+  .ofArcs [john.toWord, throw.toWord .past, the.toWord, trash.toWordSg, out.toWord]
     1 [(1, 0, .nsubj), (1, 3, .obj), (3, 2, .det), (1, 4, .compound)]
 
 /-- (11c) "John threw out the trash sitting in the kitchen", total 11. -/
 def heavyParticleEarly : Graph 9 :=
   .ofArcs
-    [john.toWord, throw.toWordPast, out.toWord, the.toWord, trash.toWordSg,
-     sit.toWordPresPart, in_.toWord, the.toWord, kitchen.toWordSg]
+    [john.toWord, throw.toWord .past, out.toWord, the.toWord, trash.toWordSg,
+     sit.toWord .presentParticiple, in_.toWord, the.toWord, kitchen.toWordSg]
     1
     [(1, 0, .nsubj), (1, 2, .compound), (1, 4, .obj), (4, 3, .det),
      (4, 5, .acl), (5, 6, .obl), (6, 8, .obl), (8, 7, .det)]
@@ -175,8 +175,8 @@ def heavyParticleEarly : Graph 9 :=
 /-- (11d) "John threw the trash sitting in the kitchen out", total 16. -/
 def heavyParticleLate : Graph 9 :=
   .ofArcs
-    [john.toWord, throw.toWordPast, the.toWord, trash.toWordSg,
-     sit.toWordPresPart, in_.toWord, the.toWord, kitchen.toWordSg, out.toWord]
+    [john.toWord, throw.toWord .past, the.toWord, trash.toWordSg,
+     sit.toWord .presentParticiple, in_.toWord, the.toWord, kitchen.toWordSg, out.toWord]
     1
     [(1, 0, .nsubj), (1, 3, .obj), (3, 2, .det), (3, 4, .acl),
      (4, 5, .obl), (5, 7, .obl), (7, 6, .det), (1, 8, .compound)]
@@ -201,7 +201,7 @@ what the paper's random-baseline methodology asserts. -/
 
 /-- (13a) "this story comes from the AP", the attested order, total 6. -/
 def attestedOrder : Graph 6 :=
-  .ofArcs [this_, story.toWordSg, come.toWord3sg, from_.toWord, the.toWord, ap]
+  .ofArcs [this_, story.toWordSg, come.toWord .thirdSg, from_.toWord, the.toWord, ap]
     2 [(1, 0, .det), (2, 1, .nsubj), (2, 3, .obl), (3, 5, .obl), (5, 4, .det)]
 
 /-- The position permutation taking the attested order to the paper's

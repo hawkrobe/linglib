@@ -3,7 +3,7 @@ import Mathlib.Algebra.Order.Group.Defs
 import Mathlib.Algebra.Order.Field.Rat
 import Linglib.Semantics.Degree.Measure.Temporal
 import Linglib.Semantics.Aspect.DegreeAchievement
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Data.Examples.HayKennedyLevin1999
 
 /-!
@@ -51,7 +51,7 @@ component of transitive degree achievements (footnote 2) are not modelled.
 namespace HayKennedyLevin1999
 
 open Data.Examples Degree
-open English.Predicates.Verbal
+open English hiding Verb
 
 /-! ### The difference value (§2) -/
 
@@ -264,7 +264,7 @@ def openRange : List String := ["long", "wide", "short"]
     adjective is closed-range has a scale with a maximum, and one whose base is open-range has
     not. -/
 theorem fragment_range :
-    ∀ v ∈ allVerbs, ∀ s ∈ v.degreeAchievementScale, ∀ a ∈ s.baseAdjective,
+    ∀ v ∈ verbs, ∀ s ∈ v.degreeAchievementScale, ∀ a ∈ s.baseAdjective,
       (a ∈ closedRange → s.scaleBoundedness.HasMax) ∧
         (a ∈ openRange → ¬ s.scaleBoundedness.HasMax) := by
   decide +kernel

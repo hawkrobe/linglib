@@ -1,7 +1,7 @@
 import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Causation.PsychLink
 import Linglib.Studies.Pesetsky1995
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 
 /-!
 # Kim (2024): On the Argument Structure of Object Experiencer Verbs
@@ -41,33 +41,33 @@ stored one.
 
 namespace Kim2024
 
-open Causation.Psych Causation.PsychLink English.Predicates.Verbal Pesetsky1995
+open Causation.Psych Causation.PsychLink English Pesetsky1995
 
 /-! ### Class II verbs and their causal source -/
 
 /-- A Class II entry is consistent with the hypothesis when the opacity of its subject position
 is what its causal source predicts. -/
-def classII_consistent (v : VerbEntry) : Prop :=
+def classII_consistent (v : English.Verb) : Prop :=
   v.causalSource.map subjectIntensional = some v.opaqueContext
 
 /-- A Class I entry has no causal source: the distinction is Class-II-specific. -/
-def classI_consistent (v : VerbEntry) : Prop := v.causalSource = none
+def classI_consistent (v : English.Verb) : Prop := v.causalSource = none
 
-instance (v : VerbEntry) : Decidable (classII_consistent v) :=
+instance (v : English.Verb) : Decidable (classII_consistent v) :=
   inferInstanceAs (Decidable (_ = _))
 
-instance (v : VerbEntry) : Decidable (classI_consistent v) :=
+instance (v : English.Verb) : Decidable (classI_consistent v) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- The fragment's Class II verbs: the eventive ones with an external source, the stative ones
 with an internal source, and *worry* on both readings. -/
-def classII : List VerbEntry :=
+def classII : List English.Verb :=
   [frighten, amuse, fascinate, irritate, annoy, bore, charm, impress, surprise, scare, delight,
    embarrass, upset_psych, disgust, shock, confuse, disappoint, worry_eventive,
    concern, interest, worry_stative, please_psych, trouble, puzzle]
 
 /-- The fragment's Class I verbs. -/
-def classI : List VerbEntry := [enjoy, like, love, hate, fear_np, dread_np]
+def classI : List English.Verb := [enjoy, like, love, hate, fear_np, dread_np]
 
 theorem classII_consistent_all : ∀ v ∈ classII, classII_consistent v := by decide
 
@@ -75,12 +75,12 @@ theorem classI_consistent_all : ∀ v ∈ classI, classI_consistent v := by deci
 
 /-- Opacity follows from an internal source: the subject's referent is a representation of the
 experiencer's, so co-referential terms need not substitute. -/
-theorem internal_implies_opaque {v : VerbEntry} (h : classII_consistent v)
+theorem internal_implies_opaque {v : English.Verb} (h : classII_consistent v)
     (hs : v.causalSource = some .internal) : v.opaqueContext = true := by
   simpa [classII_consistent, hs, subjectIntensional] using h.symm
 
 /-- Transparency follows from an external source. -/
-theorem external_implies_transparent {v : VerbEntry} (h : classII_consistent v)
+theorem external_implies_transparent {v : English.Verb} (h : classII_consistent v)
     (hs : v.causalSource = some .external) : v.opaqueContext = false := by
   simpa [classII_consistent, hs, subjectIntensional] using h.symm
 
@@ -100,19 +100,19 @@ theorem transition_iff_external {T : Type*} [LinearOrder T] (cs : CausalSource) 
   cases cs <;> simp [CausalSource.toLink, eventiveLink, maintenanceLink]
 
 /-- A verb's stimulus subtype is derived from its causal source. -/
-def derivedStimulusType (v : VerbEntry) : Option StimulusType :=
+def derivedStimulusType (v : English.Verb) : Option StimulusType :=
   v.causalSource.map CausalSource.toStimulusType
 
 /-- An external source makes the stimulus a Target, which does not compete with an overt
 Cause. -/
-theorem external_derives_target {v : VerbEntry} (hs : v.causalSource = some .external) :
+theorem external_derives_target {v : English.Verb} (hs : v.causalSource = some .external) :
     derivedStimulusType v = some .target ∧ StimulusType.target.conflictsWithCause = false :=
   ⟨by simp [derivedStimulusType, hs, CausalSource.toStimulusType], rfl⟩
 
 /-- An internal source makes the stimulus the Subject Matter, which maps to the onset of the
 causal chain and so conflicts with an overt Cause: the T/SM restriction from the Onset
 Condition. -/
-theorem internal_derives_sm {v : VerbEntry} (hs : v.causalSource = some .internal) :
+theorem internal_derives_sm {v : English.Verb} (hs : v.causalSource = some .internal) :
     derivedStimulusType v = some .subjectMatter ∧
       StimulusType.subjectMatter.conflictsWithCause = true ∧ onsetCondition .onset = true :=
   ⟨by simp [derivedStimulusType, hs, CausalSource.toStimulusType], rfl, rfl⟩

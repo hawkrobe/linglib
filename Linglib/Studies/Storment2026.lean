@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.Storment2026
 import Linglib.Data.Examples.LevinRappaportHovav1995
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Minimalist.Movement.InverseVoice
@@ -89,7 +89,7 @@ end Verb
 namespace Storment2026
 
 open ArgumentStructure
-open English.Predicates.Verbal
+open English hiding Verb
 open Data.Examples
 open ArgumentStructure.AuxiliarySelection (TransitivityClass canonicalSelection)
 open Minimalist.Voice (Flavor Head anticausative agentive)
@@ -102,12 +102,12 @@ is classified unaccusative; the canonical communication verbs `speak`/
 per-verb pattern; specific instances are recoverable by `fin_cases`. -/
 
 /-- MoS verbs annotated unaccusative on the basis of the QI diagnostic. -/
-def mosUnaccusatives : List VerbEntry :=
+def mosUnaccusatives : List English.Verb :=
   [whisper, murmur, shout, cry, scream, mumble, mutter,
    shriek, yell, groan, grumble, hiss, sigh, whimper, snap]
 
 /-- Canonical unergative communication verbs that fail QI. -/
-def communicationUnergatives : List VerbEntry := [speak, talk]
+def communicationUnergatives : List English.Verb := [speak, talk]
 
 theorem mos_unaccusatives_annotated :
     ∀ v ∈ mosUnaccusatives, v.unaccusative = true := by
@@ -177,13 +177,12 @@ theorem communication_unergatives_select_have :
       canonicalSelection (deriveTransitivityClass v.toVerb) = .have := by
   intro v hv; fin_cases hv <;> rfl
 
-/-! ## §6. Levin §37.3 mannerOfSpeaking class membership
+/-! ## §6. Levin class membership
 
-Pure data — the divergence and within-class split analysis lives in
-`../Unaccusativity/VerbClasses.lean`. -/
+*whisper* is a §37.3 manner-of-speaking verb and *speak* a §37.5 talk verb in [levin-1993]. -/
 
 theorem whisper_levinClass : whisper.levinClass = some .mannerOfSpeaking := rfl
-theorem speak_levinClass : speak.levinClass = some .mannerOfSpeaking := rfl
+theorem speak_levinClass : speak.levinClass = some .talk := rfl
 
 /-! ## §8. Smuggling derivation of QI
 

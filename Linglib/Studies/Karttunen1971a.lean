@@ -1,5 +1,6 @@
 import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.Presupposition.Basic
+import Linglib.Fragments.English.Predicates
 
 /-!
 # Karttunen (1971): Implicative Verbs
@@ -150,5 +151,30 @@ theorem ofProp_not_entails :
       ∃ (v S : Unit → Prop), (PartialProp.neg (PartialProp.ofProp v)).holds () ∧ S () :=
   ⟨⟨λ _ => True, λ _ => False, ⟨trivial, trivial⟩, id⟩,
    ⟨λ _ => False, λ _ => True, ⟨trivial, id⟩, trivial⟩⟩
+
+/-! ### The English lexicon
+
+The implicative annotations of the English fragment. -/
+
+/-! The implicative annotations, with their semantic-dispatch versions below. -/
+
+/-- "manage" is a positive implicative: success entails the complement
+    (`Implicative.manageSem`). -/
+theorem manage_positive_implicative :
+    English.manage.toVerb.implicative = some .positive := rfl
+
+/-- "fail" is a negative implicative: success entails the complement's
+    negation (`Implicative.failSem`). -/
+theorem fail_negative_implicative :
+    English.fail.toVerb.implicative = some .negative := rfl
+
+/-- "remember" is a positive implicative: success entails the complement. -/
+theorem remember_positive_implicative :
+    English.remember.toVerb.implicative = some .positive := rfl
+
+/-- "forget" is a negative implicative: success entails the complement's
+    negation. -/
+theorem forget_negative_implicative :
+    English.forget.toVerb.implicative = some .negative := rfl
 
 end Karttunen1971a

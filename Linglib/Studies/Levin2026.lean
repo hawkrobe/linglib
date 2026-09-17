@@ -3,7 +3,7 @@ import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Semantics.Causation.Resultatives
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Fragments.English.Adjectives
 import Linglib.Fragments.Mandarin.Resultatives
 import Linglib.Data.Examples.Levin1993
@@ -46,7 +46,7 @@ open Reference
 
 open ArgumentStructure
 open LevinClass (pushPull hit wipe)
-open English.Predicates.Verbal (push pull kick)
+open English (push pull kick)
 open English.Adjectives
 open Causation.Resultatives (resultativeCausativeBuilder)
 open Aspect (CoSType)
@@ -872,7 +872,7 @@ theorem mandarin_tui_kai_is_cognate :
 -- § Fragment–Theory Bridge
 -- ════════════════════════════════════════════════════
 
-open English.Predicates.Verbal (make cause)
+open English (make cause)
 open Causation.Resultatives (resultativeCausativeBuilder)
 
 /-- Resultative CAUSE matches the Fragment entry for "make". -/

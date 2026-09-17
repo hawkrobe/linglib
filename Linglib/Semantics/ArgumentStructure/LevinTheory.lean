@@ -58,6 +58,7 @@ namespace ArgumentStructure
 def LevinClass.rootEntailments : LevinClass → Root.Kinds
   -- §9 Putting: template provides CAUSE+BECOME; root content varies
   | .put => ∅                -- (default)
+  | .putDirection => ∅       -- (default)
   | .funnel => pureManner          -- manner of channeling
   | .pour => pureManner            -- manner of pouring
   | .coil => pureManner            -- manner of arranging
@@ -87,6 +88,7 @@ def LevinClass.rootEntailments : LevinClass → Root.Kinds
   -- §18 Contact by Impact
   | .hit => pureManner             -- (B&KG Ch.4) impact manner, no state entailed
   | .swat => pureManner            -- like hit
+  | .spank => pureManner           -- like hit
   -- §19 Poking
   | .poke => pureManner            -- manner of contact
   -- §20 Contact: Touch
@@ -127,6 +129,7 @@ def LevinClass.rootEntailments : LevinClass → Root.Kinds
   | .marvel => propertyConcept     -- psychological state
   -- §32–34
   | .want => propertyConcept       -- desiderative state
+  | .long => propertyConcept       -- desiderative state
   | .judgment => ∅           -- (default)
   | .assessment => ∅         -- (default)
   -- §35 Searching
@@ -137,6 +140,7 @@ def LevinClass.rootEntailments : LevinClass → Root.Kinds
   | .say => ∅                -- (default)
   | .tell => ∅               -- (default)
   | .mannerOfSpeaking => pureManner -- manner of speaking
+  | .talk => ∅               -- (default)
   -- §38 Animal Sounds
   | .animalSound => pureManner     -- specific sound manner
   -- §39 Ingesting
@@ -145,7 +149,9 @@ def LevinClass.rootEntailments : LevinClass → Root.Kinds
   | .dine => pureManner            -- social activity manner
   -- §40 Body
   | .bodyProcess => ∅        -- (default)
+  | .nonverbalExpression => ∅ -- (default)
   | .flinch => ∅             -- (default)
+  | .hurt => causativeResult       -- externally caused injury
   -- §41 Grooming
   | .dress => causativeResult      -- externally caused dressed state
   -- §42 Killing
