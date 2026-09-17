@@ -1,5 +1,4 @@
 import Linglib.Data.Examples.Storment2026
-import Linglib.Data.Examples.LevinRappaportHovav1995
 import Linglib.Fragments.English.Predicates
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Syntax.Minimalist.Verbal.Voice
@@ -32,9 +31,7 @@ inversion in English and Setswana.
 - **§6**: Locative inversion shares the same mechanism. QI and LI are
   both nonactive inverse-voice constructions.
 
-Example rows live in `Data/Examples/Storment2026.json` (QI/LI data) and
-`Data/Examples/LevinRappaportHovav1995.json` (classic locative-inversion
-diagnostics).
+Example rows live in `Data/Examples/Storment2026.json`.
 -/
 
 namespace Storment2026
@@ -229,11 +226,11 @@ to the transitivity constraint (§5). The shared inverse-voice family
 membership is captured by `Minimalist.qiCanonical` and `liCanonical` in
 `Syntax/Minimalism/Movement/InverseVoice.lean`. -/
 
-/-- whisper passes QI but is only marginal in LI — same mechanism
-    (smuggling), different inputs. -/
-theorem qi_li_diverge_on_whisper :
-    Examples.qi_whisper.judgment = .acceptable ∧
-    LevinRappaportHovav1995.Examples.loc_whisper.judgment = .marginal :=
+/-- Quotative inversion with a manner-of-speaking verb and locative inversion with an
+unergative verb of motion (136a) are both acceptable: English allows both inversions with
+unergative verbs, so neither rests on unaccusativity (§6). -/
+theorem qi_li_unergative :
+    Examples.qi_whisper.judgment = .acceptable ∧ Examples.li_leapt.judgment = .acceptable :=
   ⟨rfl, rfl⟩
 
 /-- The transitivity constraint (§5): QI is blocked with multiple DP
@@ -253,12 +250,11 @@ theorem li_vs_qi_pronouns :
 /-- LI blocks transitive verbs, just as QI does. -/
 theorem li_blocks_transitive : Examples.li_kick.judgment = .unacceptable := rfl
 
-/-- Unified smuggling analysis (§6): LI with `arrive` works because
-    arrive projects non-thematic Voice, permitting VP-smuggling — the
-    same mechanism that licenses QI. -/
+/-- Unified smuggling analysis (§6): locative inversion with *arrive*, as in the Setswana (55),
+works because arrive projects non-thematic Voice, permitting VP-smuggling, the same mechanism
+that licenses QI. -/
 theorem li_arrive_smuggling_unified :
-    voiceFor arrive = anticausative ∧
-    LevinRappaportHovav1995.Examples.loc_arrive.judgment = .acceptable :=
+    voiceFor arrive = anticausative ∧ Examples.li_train.judgment = .acceptable :=
   ⟨by decide, rfl⟩
 
 /-! ## §11 + §12. The QI derivation (Storment §3 + §4)
