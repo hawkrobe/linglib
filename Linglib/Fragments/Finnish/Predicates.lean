@@ -141,24 +141,13 @@ theorem verb_types_distinct :
 
 /-! ### Voice
 
-Active and passive. The passive verb form is a fourth person: the action is performed by an
-unspecified human agent, the form has no grammatical subject expressed as an independent
-phrase, and there is no correspondent to an Indo-European *by*-agent ([karlsson-2017] §21.1).
-It is the impersonal variant of passivization, synthetically coded, the object keeping its
-coding. -/
+The passive verb form is a fourth person: the action is performed by an unspecified human
+agent, the form has no grammatical subject expressed as an independent phrase, and there is no
+correspondent to an Indo-European *by*-agent ([karlsson-2017] §21.1). It is the impersonal
+variant of passivization, synthetically coded, the object keeping its coding. -/
 
-/-- The two voices. -/
-inductive Voice where
-  | active
-  /-- The impersonal passive, the fourth person. -/
-  | passive
-  deriving DecidableEq, Repr
-
-/-- What each voice does to the transitive construction: the active nothing, the passive the
-synthetically coded impersonal passivization. -/
-def Voice.alternation : Voice → ValencyAlternation
-  | .active => .refl .np
-  | .passive => { iPassivization with marking := .synthetic }
+/-- The passive: synthetically coded impersonal passivization. -/
+def passive : ValencyAlternation := { impersonalPassivization with marking := .synthetic }
 
 -- ============================================================================
 -- § 6: Finnish Implicative Verbs ([nadathur-2023-implicatives])

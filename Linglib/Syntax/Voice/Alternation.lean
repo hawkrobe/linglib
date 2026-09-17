@@ -310,7 +310,7 @@ def passivization : ValencyAlternation :=
 
 /-- The impersonal variant of passivization (§8.3.2.2): the initial P keeps its coding, so
 the derived construction has no S; at the level of frames it is passivization. -/
-def iPassivization : ValencyAlternation := passivization
+def impersonalPassivization : ValencyAlternation := passivization
 
 /-- Antipassivization (§8.3.2.3): the initial P is denucleativized and the initial A is the
 S of an intransitive construction. -/

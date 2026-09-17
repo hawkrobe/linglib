@@ -78,7 +78,7 @@ inductive Flavor where
 def Flavor.alternation : Flavor → Option _root_.Voice.ValencyAlternation
   | .causer      => some _root_.Voice.causativization
   | .nonThematic => some _root_.Voice.decausativization
-  | .impersonal  => some _root_.Voice.iPassivization
+  | .impersonal  => some _root_.Voice.impersonalPassivization
   | .passive     => some _root_.Voice.passivization
   | .antipassive => some _root_.Voice.antipassivization
   | .reflexive   => some _root_.Voice.reflexivization

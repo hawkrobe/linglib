@@ -240,7 +240,7 @@ def Passivization (c d : Construction ι) : Prop :=
 
 /-- The impersonal variant of passivization: the initial P keeps its coding, so the derived
 construction has neither A nor S. -/
-def IPassivization (c d : Construction ι) : Prop := Passivization c d ∧ d.Impersonal
+def ImpersonalPassivization (c d : Construction ι) : Prop := Passivization c d ∧ d.Impersonal
 
 /-- Antipassivization: the initial construction is transitive, participant structure is
 unchanged, a P is demoted, and the initial A becomes the S of an intransitive construction,
@@ -317,8 +317,8 @@ instance (c d : Construction ι) (i : ι) : Decidable (Demoted c d i) := by
   unfold Demoted; infer_instance
 instance (c d : Construction ι) : Decidable (Passivization c d) := by
   unfold Passivization; infer_instance
-instance (c d : Construction ι) : Decidable (IPassivization c d) := by
-  unfold IPassivization; infer_instance
+instance (c d : Construction ι) : Decidable (ImpersonalPassivization c d) := by
+  unfold ImpersonalPassivization; infer_instance
 instance (c d : Construction ι) : Decidable (Antipassivization c d) := by
   unfold Antipassivization; infer_instance
 instance (c d : Construction ι) : Decidable (SDenucleativization c d) := by
@@ -527,7 +527,7 @@ theorem SplitS.not_obligatoryPCoding {t : Coding} {ss : List Flag} (h : SplitS t
 /-- The types of voice alternation the book names, symmetrical voices included. -/
 inductive Kind where
   | passivization
-  | iPassivization
+  | impersonalPassivization
   | antipassivization
   | sDenucleativization
   | decausativization
@@ -547,7 +547,7 @@ inductive Kind where
 out; the three A-nucleativizations and the two cumulations share their structure. -/
 def Kind.Realize (c d : Construction ι) : Kind → Option ι → Prop
   | .passivization, _ => Passivization c d
-  | .iPassivization, _ => IPassivization c d
+  | .impersonalPassivization, _ => ImpersonalPassivization c d
   | .antipassivization, _ => Antipassivization c d
   | .sDenucleativization, _ => SDenucleativization c d
   | .decausativization, _ => Decausativization c d
@@ -589,7 +589,7 @@ theorem bahrtShare_extremes : ∀ k : Kind, ∀ x ∈ k.bahrtShare,
 
 /-- The types by name. -/
 def kindNames : List (String × Kind) :=
-  [("passivization", .passivization), ("iPassivization", .iPassivization),
+  [("passivization", .passivization), ("impersonalPassivization", .impersonalPassivization),
     ("antipassivization", .antipassivization), ("sDenucleativization", .sDenucleativization),
     ("decausativization", .decausativization), ("causativization", .causativization),
     ("concernativization", .concernativization), ("aNucleativization", .aNucleativization),
@@ -676,7 +676,7 @@ theorem symmetrical_rows : ∀ row ∈ all, row.parse? "alternation" kindNames =
 
 /-- Each substrate record with the book's initial and derived example of its type. -/
 def definingExamples : List (ValencyAlternation × LinguisticExample × LinguisticExample) :=
-  [(passivization, ex_8_1a, ex_8_1b), (iPassivization, ex_8_14a, ex_8_14c),
+  [(passivization, ex_8_1a, ex_8_1b), (impersonalPassivization, ex_8_14a, ex_8_14c),
     (sDenucleativization, ex_8_14d, ex_8_14e), (antipassivization, ex_8_21a, ex_8_21b),
     (decausativization, ex_8_19a, ex_8_19b), (causativization, ex_8_18a, ex_8_18b),
     (reflexivization, ex_8_23a, ex_8_23b), (reciprocalization, ex_8_24a, ex_8_24b),
@@ -724,7 +724,8 @@ theorem ambitransitivity_rows : ∀ row ∈ all,
 oblique; Tswana *-is* codes causativization and, in chapter 12, portative derivation; Diré
 Songhay *-ndi* codes causativization and passivization. -/
 theorem coexpression :
-    [Kind.passivization, .iPassivization, .sDenucleativization] ⊆ coExpressed "tswa1253" "-w" ∧
+    [Kind.passivization, .impersonalPassivization, .sDenucleativization] ⊆
+      coExpressed "tswa1253" "-w" ∧
     [Kind.pApplicativization, .xApplicativization, .aNucleativization] ⊆
       coExpressed "tswa1253" "-ɛl" ∧
     [Kind.causativization, .portative] ⊆ coExpressed "tswa1253" "-is" ∧
