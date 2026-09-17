@@ -41,7 +41,7 @@ are not formalized.
 
 namespace KeenanStavi1986
 
-open Quantification BooleanSubalgebra
+open Quantifier Quantifier.GQ Quantifier.NP BooleanSubalgebra
 
 variable {α : Type*}
 

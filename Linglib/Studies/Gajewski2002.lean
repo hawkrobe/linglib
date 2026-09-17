@@ -53,7 +53,7 @@ principle predicts each (`rows_predicted`).
 
 namespace Gajewski2002
 
-open Quantification Quantification.Exceptive Data.Examples
+open Quantifier Quantifier.GQ Quantifier.Exceptive Data.Examples
 
 /-- A logical skeleton (24): typed slots, one per maximal constituent without logical items, and
 the denotation the skeleton receives under an assignment (27). -/

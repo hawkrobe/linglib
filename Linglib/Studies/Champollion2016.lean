@@ -45,7 +45,7 @@ intersective entry correctly makes it false.
 
 namespace Champollion2016
 
-open Quantification (individual)
+open Quantifier.NP (individual)
 open Plurality.Algebra
 
 /-! ### The type-shift `⊔ ↦ ⊓` is guarded to distributive predicates

@@ -33,7 +33,7 @@ the polarity behaviour of *zero* argues it should ([bylinina-nouwen-2018]).
 * `MAX_individual`, `maxIn_singleton_lt_individual`: `MAX` takes the lower-bound quantifier to the
   exactly-reading one, which is strictly stronger.
 * `maxIn_singleton_injective`: the exactly-reading quantifier determines the numeral, as the
-  lower-bound one does by `Quantification.individual_injective`.
+  lower-bound one does by `Quantifier.NP.individual_injective`.
 
 ## Implementation notes
 
@@ -52,7 +52,7 @@ atoms to exist, which the survey's unbounded domain supplies and a finite one do
 -/
 namespace BylininaNouwen2020
 
-open Reference Degree Quantification Set
+open Reference Degree Quantifier Quantifier.GQ Quantifier.NP Set
 
 variable {α : Type*}
 

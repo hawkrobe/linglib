@@ -49,7 +49,7 @@ their own §4.8 discussion of *many* and *few* already marks as unstable. Partia
 * [mostowski-1957]
 -/
 
-open Quantification
+open Quantifier Quantifier.GQ Quantifier.NP
 
 namespace BarwiseCooper1981
 
@@ -336,7 +336,7 @@ open Classical in
 /-- U6 for *exactly half* (§4.8's "not monotone" example): the non-monotone determiner is
 the conjunction of an increasing and a decreasing one, as the monotonicity constraint
 requires of simple NPs. `exactly n` decomposes likewise
-(`Quantification.exactly_eq_meet_at_least_at_most`). -/
+(`Quantifier.GQ.exactly_eq_meet_at_least_at_most`). -/
 theorem half_eq_meet : (half_sem : GQ α) = gqMeet atLeastHalf atMostHalf := by
   funext R S
   simp only [half_sem, gqMeet_apply, atLeastHalf, atMostHalf, eq_comm]
@@ -389,7 +389,7 @@ namespace BarwiseCooper1981
 
 open FirstOrder Language
 
-open Quantification (L_UV uRel vRel structOfAB)
+open Quantifier.Lindstrom (L_UV uRel vRel structOfAB)
 
 /-- Quantifier count of a formula (`c(φ)` minus the free-variable count in
 B&C's notation). -/
@@ -703,7 +703,7 @@ automorphism argument"), reducing to C12's models. -/
 namespace BarwiseCooper1981
 
 open FirstOrder Language
-open Quantification (L_UV uRel vRel)
+open Quantifier.Lindstrom (L_UV uRel vRel)
 
 /-- Formulas of B&C's `L(Q)`: the monadic language of C12 (atoms `U`, `V`,
 equality) plus the unrelativized majority quantifier `Qx[·]`. De Bruijn
@@ -1130,8 +1130,8 @@ theorem more_than_half_not_Q_definable :
 
 private theorem count_eq_ncard {M : Type} [Fintype M] (P : M → Prop)
     [DecidablePred P] :
-    Quantification.count P = Set.ncard {x | P x} := by
-  rw [Quantification.count, Quantification.countOn, Set.ncard_eq_toFinset_card']
+    Quantifier.GQ.count P = Set.ncard {x | P x} := by
+  rw [Quantifier.GQ.count, Quantifier.GQ.countOn, Set.ncard_eq_toFinset_card']
   congr 1
   ext x
   simp
@@ -1140,9 +1140,9 @@ private theorem count_eq_ncard {M : Type} [Fintype M] (P : M → Prop)
 theorems are about the denotation the rest of the codebase attributes to
 *most*, not a local re-implementation. -/
 theorem mostUV_iff_most_sem {M : Type} [Fintype M] (U V : M → Prop) :
-    MostUV U V ↔ Quantification.most_sem V U := by
+    MostUV U V ↔ Quantifier.GQ.most_sem V U := by
   classical
-  unfold MostUV Quantification.most_sem
+  unfold MostUV Quantifier.GQ.most_sem
   rw [count_eq_ncard, count_eq_ncard]
   have hcomm : {x | U x ∧ V x} = {x | V x ∧ U x} := by
     ext x
@@ -1163,7 +1163,7 @@ theorem most_sem_not_definable :
     ¬ ∃ φ : L_UV.Sentence, ∀ (M : Type) [Fintype M] [Nonempty M]
       (S : L_UV.Structure M),
       (@Sentence.Realize L_UV M S φ ↔
-        Quantification.most_sem (fun x => S.RelMap vRel ![x])
+        Quantifier.GQ.most_sem (fun x => S.RelMap vRel ![x])
           (fun x => S.RelMap uRel ![x])) := by
   rintro ⟨φ, hφ⟩
   exact more_than_half_not_definable ⟨φ, fun M _ _ S =>
@@ -1187,7 +1187,7 @@ theorem no_tree_means_most (fw : FOWords) (nm : LexNaming L_UV)
         (g : Assignment M),
         HoldsAt (Model.ofStructure M S)
           ((Model.ofStructure M S).lexiconFO fw nm ()) g t ↔
-          Quantification.most_sem (fun x => S.RelMap vRel ![x])
+          Quantifier.GQ.most_sem (fun x => S.RelMap vRel ![x])
             (fun x => S.RelMap uRel ![x]) := by
   rintro ⟨t, φ, h, hcl, htree⟩
   refine most_sem_not_definable ⟨φ.toSentence hcl, ?_⟩

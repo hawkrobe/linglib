@@ -163,7 +163,7 @@ restrictor, but the two analyses are not equivalent: the existential reading ass
 existence of a witness, the choice function commits to one, and distinct correct functions
 commit differently. -/
 
-open Quantification
+open Quantifier Quantifier.GQ Quantifier.NP
 
 /-- A correct choice function whose output satisfies the predicate witnesses the existential
 reading. -/

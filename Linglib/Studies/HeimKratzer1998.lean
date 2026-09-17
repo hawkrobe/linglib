@@ -20,7 +20,7 @@ The substrate's composition engine implements those rules; here it is fed QR tre
 toy fragment and its output is checked: "every student sleeps" and "some student sleeps"
 compose to the expected truth conditions, and the two QR derivations of a doubly
 quantified sentence, the book's (2) "Some publisher offended every linguist", compute the
-two scope readings of `Quantification.Polyadic`, which differ in the toy model
+two scope readings of `Quantifier.Polyadic`, which differ in the toy model
 (`scope_ambiguity_computed`) and are nested (`inverse_entails_surface`). The trees also
 compile to first-order formulas, so the engine's truth conditions are model-theoretic
 realization (`interp_eq_realize`) and first-order consequence transfers
@@ -29,7 +29,7 @@ realization (`interp_eq_realize`) and first-order consequence transfers
 ## Implementation notes
 
 The toy fragment's "every person sees some person" stands in for the book's (2); the
-readings are the surface and inverse iterations of `Quantification.Polyadic`. With
+readings are the surface and inverse iterations of `Quantifier.Polyadic`. With
 `interpTy .t = Prop` the engine produces `Prop`-valued truth conditions, verified at the
 `Prop` level rather than by evaluation. The categorised tree `synTree_everyStudentSleeps`
 carries UD categories that the engine ignores.
@@ -46,8 +46,8 @@ open scoped Assignment
 open Semantics.Montague
 open Syntax
 open Semantics.Composition.Tree
-open Quantification
-open Quantification.Polyadic (surfaceScope inverseScope iterate_every_some_of_some_every)
+open Quantifier Quantifier.GQ
+open Quantifier.Polyadic (surfaceScope inverseScope iterate_every_some_of_some_every)
 open Semantics.Montague.ToyLexicon (student_sem person_sem)
 
 /-! ### Model and lexicon -/

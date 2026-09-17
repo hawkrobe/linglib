@@ -65,7 +65,7 @@ mapping would be wrong for at least one consumer.
   `Studies/KrizChemla2015.lean`, restricted to the paper's tested cells.
 * Pool a second paper's rows (JSON-ify the [augurzky-etal-2023]
   acceptance data) to close the ≥ 2-papers admission prong.
-* Add a denotation hook `EmbeddingOperator → ∀ α, Quantification.GQ α`
+* Add a denotation hook `EmbeddingOperator → ∀ α, Quantifier.GQ α`
   once accounts derive predictions structurally rather than dispatch on
   label (per [peters-westerstahl-2006] discipline).
 -/

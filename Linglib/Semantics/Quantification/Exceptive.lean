@@ -35,9 +35,9 @@ generalization.
 * [peters-westerstahl-2006]
 -/
 
-namespace Quantification.Exceptive
+namespace Quantifier.Exceptive
 
-open Quantification
+open Quantifier Quantifier.GQ
 
 variable {α : Type*}
 
@@ -169,4 +169,4 @@ def ExcSNeg (Q₁ : GQ α) (C A B : α → Prop) : Prop :=
   (∃ x, A x ∧ C x) ∧
   (∀ x, A x → C x → IsExceptionNeg x A B)
 
-end Quantification.Exceptive
+end Quantifier.Exceptive

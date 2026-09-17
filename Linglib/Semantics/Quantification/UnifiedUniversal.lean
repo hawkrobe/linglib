@@ -33,7 +33,7 @@ to the tolerance-based `distMaximal` (in `Distributivity.lean`) is
 established via bridge theorems, not by replacement.
 -/
 
-namespace Quantification.UnifiedUniversal
+namespace Quantifier.UnifiedUniversal
 
 open _root_.Mereology
 
@@ -214,4 +214,4 @@ def QForallDec (P : α → Bool) (Q : α → Bool) : Bool :=
 
 end Decidable
 
-end Quantification.UnifiedUniversal
+end Quantifier.UnifiedUniversal

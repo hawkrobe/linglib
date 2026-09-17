@@ -49,7 +49,7 @@ comparative `maxComparative` compares a matrix witness with its maximum.
 
 namespace Degree
 
-open NaturalLogic Quantification Set
+open NaturalLogic Quantifier Quantifier.GQ Set
 
 variable {α D : Type*}
 

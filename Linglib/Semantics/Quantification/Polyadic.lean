@@ -16,9 +16,9 @@ model-theoretic level, complementing linglib's syntactic scope mechanisms
 in `Semantics/Composition/Scope.lean` and `Studies/HeimKratzer1998.lean`.
 -/
 
-namespace Quantification.Polyadic
+namespace Quantifier.Polyadic
 
-open Quantification
+open Quantifier Quantifier.GQ
 
 variable {α : Type*}
 
@@ -108,4 +108,4 @@ theorem resume_mono_in_R (Q : GQ α) (A : α → Prop)
   unfold resume at *
   exact hUp A _ _ hR hRes
 
-end Quantification.Polyadic
+end Quantifier.Polyadic

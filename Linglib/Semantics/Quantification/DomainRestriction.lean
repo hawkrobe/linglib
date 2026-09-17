@@ -19,8 +19,10 @@ conservative ([barwise-cooper-1981]), `conservative_domain_restricted`.
   (1981)][barwise-cooper-1981]
 -/
 
-namespace Quantification.DomainRestriction
+namespace Quantifier.DomainRestriction
 
+
+open Quantifier.GQ
 /-! ### Domain-restricted quantifiers -/
 
 /-- A domain restrictor is a predicate selecting contextually relevant entities. -/
@@ -127,7 +129,7 @@ theorem every_restricted_spectator {α : Type*}
   · intro h1 x ⟨hC, hR⟩; exact (h x hC hR).mp (h1 x ⟨hC, hR⟩)
   · intro h1 x ⟨hC, hR⟩; exact (h x hC hR).mpr (h1 x ⟨hC, hR⟩)
 
-open Quantification (Conservative GQ) in
+open Quantifier.GQ (Conservative) in
 /-- Conservativity is preserved under domain restriction: if Q is conservative,
     then Q restricted by any domain predicate C is also conservative.
     Generalizes `every_restricted_conservative` from `every_sem` to any
@@ -146,4 +148,4 @@ theorem conservative_domain_restricted {E : Type*}
                              fun ⟨⟨hc, hr⟩, hs⟩ => ⟨⟨hc, hr⟩, hr, hs⟩⟩
   rw [h1, h2, heq]
 
-end Quantification.DomainRestriction
+end Quantifier.DomainRestriction

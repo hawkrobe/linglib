@@ -54,7 +54,7 @@ namespace AghaJeretic2022
 
 open Trivalent (Prop3 dist dist_eq_true_iff dist_eq_false_iff dist_eq_indet_iff
   dist_not_of_nonempty)
-open Homogeneity Quantification Data.Examples
+open Homogeneity Quantifier Quantifier.GQ Data.Examples
 open Generalizations.HomogeneityGap (GapDatum GapScenario fromExample)
 
 variable {W : Type*} (D : W → Finset W) (p : W → Prop) [DecidablePred p]

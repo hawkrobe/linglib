@@ -25,8 +25,10 @@ Naming follows mathlib idiom: theorems describe what they prove rather
 than the EFCI-literature label, so non-EFCI consumers can find them.
 -/
 
-namespace Quantification
+namespace Quantifier.GQ
 
+
+open Quantifier.GQ
 variable {D : Type*}
 
 /-- **Pairwise inconsistency of exclusive alternatives**: two distinct
@@ -74,4 +76,4 @@ theorem uniqueness_precludes_universality {a b : D} (hab : a ≠ b)
   intro hall
   exact hab ((huniq a (hall a)).trans (huniq b (hall b)).symm)
 
-end Quantification
+end Quantifier.GQ

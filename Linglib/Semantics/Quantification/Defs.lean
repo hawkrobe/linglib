@@ -31,7 +31,7 @@ API of the type ⟨1⟩ quantifier `NP`.
 - **§3 Mathlib bridge**: connection to `Monotone`/`Antitone`
 -/
 
-namespace Quantification
+namespace Quantifier
 
 /-- Generalized quantifier denotation: restrictor → scope → proposition.
 
@@ -39,7 +39,15 @@ namespace Quantification
     implication), a GQ is just a binary relation between predicates. -/
 abbrev GQ (α : Type*) := (α → Prop) → (α → Prop) → Prop
 
+/-- The type ⟨1⟩ quantifier a noun phrase denotes is a property of properties, a quantifier
+proper in [barwise-cooper-1981]'s sense, where a quantifier is a set of sets and a determiner
+denotes a function from properties to them. It is definitionally `Cont Prop α`, the
+scope-taking continuation. -/
+abbrev NP (α : Type*) := (α → Prop) → Prop
+
 variable {α : Type*}
+
+namespace GQ
 
 /-! ### Property Definitions -/
 
@@ -356,38 +364,10 @@ abbrev gqJoin (f g : GQ α) : GQ α := f ⊔ g
 def adjRestrict (q : GQ α) (adj : α → Prop) : GQ α :=
   fun R S => q (fun x => R x ∧ adj x) S
 
-/-! #### Type ⟨1⟩ shifts (P&W Ch.2-3) -/
-
-/-- The type ⟨1⟩ quantifier a noun phrase denotes is a property of properties, a quantifier
-proper in [barwise-cooper-1981]'s sense, where a quantifier is a set of sets and a determiner
-denotes a function from properties to them. It is definitionally `Cont Prop α`, the
-scope-taking continuation. -/
-abbrev NP (α : Type*) := (α → Prop) → Prop
 
 /-- Restriction: given a GQ Q and restrictor A, produce the type ⟨1⟩
     quantifier Q^[A] (P&W §3.2.2). `restrict Q A B = Q A B`. -/
 def restrict (q : GQ α) (A : α → Prop) : NP α := q A
-
-/-- A type ⟨1⟩ quantifier Q "lives on" A iff Q(B) ↔ Q(A ∩ B) for all B.
-    P&W §3.2.2: the restricted quantifier depends only on elements of A. -/
-def LivesOn (Q : NP α) (A : α → Prop) : Prop :=
-  ∀ B, Q B ↔ Q (fun x => A x ∧ B x)
-
-/-- Montagovian individual: the type ⟨1⟩ quantifier I_a = {X : a ∈ X}.
-    P&W §3.2.3: an entity lifts to the principal ultrafilter it generates.
-    This is Montague lift — [partee-1987]'s LIFT and the continuation
-    `pure`. -/
-def individual (a : α) : NP α := fun P => P a
-
-/-- The Montague lift is injective: an entity is recovered from its principal ultrafilter. -/
-theorem individual_injective : Function.Injective (individual (α := α)) :=
-  fun a b h => (show b = a from (congrFun h (· = a)).mp rfl).symm
-
-/-- The singleton property of an entity, `ident j = {j}`; `individual j` is its lift. -/
-def ident (j : α) : α → Prop := (· = j)
-
-theorem ident_injective : Function.Injective (ident (α := α)) :=
-  fun a _ h => (congrFun h a).mp rfl
 
 /-! ### Mathlib Bridge -/
 
@@ -426,4 +406,33 @@ theorem restrictorDownMono_iff_antitone (q : GQ α) :
   exact ⟨fun h S _ _ hle hq => h _ _ S hle hq,
          fun h _ _ S hle hq => h S hle hq⟩
 
-end Quantification
+end GQ
+
+/-! ### Type ⟨1⟩ shifts -/
+
+namespace NP
+
+/-- A type ⟨1⟩ quantifier Q "lives on" A iff Q(B) ↔ Q(A ∩ B) for all B.
+    P&W §3.2.2: the restricted quantifier depends only on elements of A. -/
+def LivesOn (Q : NP α) (A : α → Prop) : Prop :=
+  ∀ B, Q B ↔ Q (fun x => A x ∧ B x)
+
+/-- Montagovian individual: the type ⟨1⟩ quantifier I_a = {X : a ∈ X}.
+    P&W §3.2.3: an entity lifts to the principal ultrafilter it generates.
+    This is Montague lift — [partee-1987]'s LIFT and the continuation
+    `pure`. -/
+def individual (a : α) : NP α := fun P => P a
+
+/-- The Montague lift is injective: an entity is recovered from its principal ultrafilter. -/
+theorem individual_injective : Function.Injective (individual (α := α)) :=
+  fun a b h => (show b = a from (congrFun h (· = a)).mp rfl).symm
+
+/-- The singleton property of an entity, `ident j = {j}`; `individual j` is its lift. -/
+def ident (j : α) : α → Prop := (· = j)
+
+theorem ident_injective : Function.Injective (ident (α := α)) :=
+  fun a _ h => (congrFun h a).mp rfl
+
+end NP
+
+end Quantifier

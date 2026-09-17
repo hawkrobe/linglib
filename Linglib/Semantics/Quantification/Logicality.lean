@@ -16,9 +16,9 @@ Key result: INJ ≡ ISOM + EXT ([peters-westerstahl-2006] Ch 9 Prop 3).
 Since EXT is trivial for `GQ α`, INJ ↔ ISOM in our setting.
 -/
 
-namespace Quantification.Logicality
+namespace Quantifier.Logicality
 
-open Quantification
+open Quantifier Quantifier.GQ
 
 variable {α β : Type*}
 
@@ -84,4 +84,4 @@ theorem quantityInvariant_is_isom (q : GQ α) :
       (q A B ↔ q A' B')) :=
   Iff.rfl
 
-end Quantification.Logicality
+end Quantifier.Logicality

@@ -11,7 +11,7 @@ Farsi singular *what* interrogatives, bare (*chi*) and complex (*che ketab-i*), 
 singular and plural answers (20), (23); with the differential object marker *-ro* only the
 bare ones do (26)–(27). The paper derives this from three assumptions: interrogatives range
 over the conjunctions and disjunctions of nonempty subdomains (29), built with the
-`Quantification.conjGQ`/`disjGQ` generators (`hamblin`, `mem_conjProp`); singular marking on
+`Quantifier.NP.conjGQ`/`disjGQ` generators (`hamblin`, `mem_conjProp`); singular marking on
 bare interrogatives is a default over atoms and pluralities (37), while SING on complex
 interrogatives keeps atoms only (42) (`neutral`, `atoms`); and *-ro* restricts the subset
 selection function to singletons (52), the `IsSingleton` functions of
@@ -44,7 +44,7 @@ removes (`modal_gq`, (58)–(63)); collective predicates need pluralities in the
 
 namespace AlonsoOvalleMoghiseh2025b
 
-open Quantification Question Data.Examples Finset
+open Quantifier Quantifier.GQ Quantifier.NP Question Data.Examples Finset
 
 /-! ### Entities, worlds, and answers -/
 

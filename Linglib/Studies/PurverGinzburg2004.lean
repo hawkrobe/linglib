@@ -45,7 +45,7 @@ formalized.
 
 namespace PurverGinzburg2004
 
-open Data.Examples Examples Quantification
+open Data.Examples Examples Quantifier Quantifier.GQ Quantifier.NP
 
 /-! ### Signs and the Definiteness Principle (§2.1, §4.5) -/
 

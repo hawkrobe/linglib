@@ -65,7 +65,7 @@ open Semantics.Composition
 open scoped Assignment
 open Semantics.Composition.Tree
 open Pragmatics.Expressives
-open Quantification
+open Quantifier Quantifier.GQ Quantifier.NP
 open Semantics.Composition
 open Semantics.Montague
 open Semantics.Montague.ToyLexicon (student_sem person_sem)

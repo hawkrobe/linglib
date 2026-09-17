@@ -20,10 +20,10 @@ The ONE_AT atomicity presupposition explains why *each ten minutes*
 is ungrammatical: intervals are not atoms, so ONE_AT fails.
 -/
 
-namespace Quantification.ONEModifiers
+namespace Quantifier.ONEModifiers
 
 open _root_.Mereology
-open Quantification.UnifiedUniversal
+open Quantifier.UnifiedUniversal
 
 /-! ### ONE Presuppositional Modifiers -/
 
@@ -121,4 +121,4 @@ theorem ONE_AT_of_isAtomicDomain {α : Type*} [PartialOrder α] [IsAtomicDomain 
   has_two := h2
   all_atomic := fun x hx => IsAtomicDomain.all_atoms x (hP0 x hx)
 
-end Quantification.ONEModifiers
+end Quantifier.ONEModifiers

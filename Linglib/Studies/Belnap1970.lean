@@ -46,7 +46,7 @@ namespace Belnap1970
 
 open Presupposition
 open Aristotelian (Square SquareRelations)
-open Quantification
+open Quantifier Quantifier.GQ Quantifier.NP
 
 /-! ### Belnap's functors in the `PartialProp` substrate ((3), (6)–(10))
 

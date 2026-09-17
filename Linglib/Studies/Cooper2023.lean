@@ -82,7 +82,7 @@ the substrate derives for each quantifier are checked.
 
 namespace Cooper2023
 
-open Quantification
+open Quantifier Quantifier.GQ Quantifier.NP
 
 variable {E : Type}
 

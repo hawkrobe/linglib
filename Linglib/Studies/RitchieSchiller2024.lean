@@ -43,7 +43,7 @@ formalized.
 
 namespace RitchieSchiller2024
 
-open Quantification.DomainRestriction Data.Examples
+open Quantifier.DomainRestriction Data.Examples
 
 /-! ### Cognitive heuristics -/
 

@@ -21,7 +21,7 @@ the Latin source for both French and English evaluative BNPs.
 
 namespace Italian.Binominals
 
-open Quantification.Binominal
+open Quantifier.Binominal
 
 /-- An Italian binominal N₁ noun entry. -/
 structure BinominalN₁Entry where

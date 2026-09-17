@@ -22,7 +22,7 @@ mechanism from rigidification: reference fixed by contact with the object before
 description is deployed is the constant character, and it diverges from `dthat` of the
 description whenever the description misfits (`const_ne_dthat_of_ne`). The Russell–Partee–
 Kaplan challenge is the type gap between referential and quantificational subjects: the
-Montague lift `Quantification.individual` is injective (`Quantification.individual_injective`)
+Montague lift `Quantifier.NP.individual` is injective (`Quantifier.NP.individual_injective`)
 but the universal quantifier is not in its image (`not_exists_individual_eq_forall`), so a
 subject of type `E` cannot serve *every philosopher*.
 
@@ -93,7 +93,7 @@ theorem const_ne_dthat_of_ne {intended : E} (h : desc c ≠ intended) :
 /-- The universal quantifier is not the lift of an individual: no subject of type `E` serves
 *every φ*. -/
 theorem not_exists_individual_eq_forall (a b : E) (hab : a ≠ b) :
-    ¬ ∃ e : E, Quantification.individual e = λ P => ∀ x, P x := by
+    ¬ ∃ e : E, Quantifier.NP.individual e = λ P => ∀ x, P x := by
   rintro ⟨e, he⟩
   have h : ∀ x, x = e := (congrFun he (· = e)).mp rfl
   exact hab ((h a).trans (h b).symm)

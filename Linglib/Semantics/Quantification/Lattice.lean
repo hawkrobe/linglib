@@ -22,7 +22,7 @@ is conservative because conservativity is an equivalence at every restrictor and
 * [elliott-2025]
 -/
 
-namespace Quantification
+namespace Quantifier.GQ
 
 variable {α : Type*}
 
@@ -66,4 +66,4 @@ theorem inf_eq_gqMeet (q₁ q₂ : ConsGQ α) : (q₁ ⊓ q₂).1 = gqMeet q₁.
 
 end ConsGQ
 
-end Quantification
+end Quantifier.GQ

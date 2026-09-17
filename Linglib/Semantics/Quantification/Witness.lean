@@ -68,8 +68,10 @@ refset/compset/maxset framework).
   against the book's examples.
 -/
 
-namespace Quantification
+namespace Quantifier.GQ
 
+
+open Quantifier.NP
 /-! ### Extension of a predicate as a `Finset` -/
 
 /-- The extension `[↓P]` of a predicate `P` as a `Finset`. -/
@@ -466,4 +468,4 @@ theorem not_existsUnique_isMinimalWitness_inter_nonempty {D : Finset E} (h : 1 <
 
 end Minimal
 
-end Quantification
+end Quantifier.GQ

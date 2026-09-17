@@ -103,7 +103,7 @@ theorem derivation_eq_comparativeTruth {Measured : Type*} (role : Ent → α →
         matrixClause role P (λ e => μ (extract e)) a δ) ↔
       comparativeTruth role P extract μ a b := by
   simp only [comparativeTruth, maxComparative, Degree.thanDegrees, Degree.scopeDegrees,
-    Quantification.some_sem, thanClause, matrixClause,
+    Quantifier.GQ.some_sem, thanClause, matrixClause,
     matrixDegP, absDegP, and_assoc]
 
 end Derivation

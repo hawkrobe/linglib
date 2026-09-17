@@ -34,7 +34,7 @@ the book's resolution of the perspective paradox.
 
 namespace Barker1995
 
-open Quantification Possession
+open Quantifier Quantifier.GQ Quantifier.NP Possession
 
 /-! ### Decidability for the toy models -/
 

@@ -45,7 +45,7 @@ proposition types are not formalized.
 
 namespace Saab2026
 
-open Quantification.Binominal Spanish.Binominals Data.Examples
+open Quantifier.Binominal Spanish.Binominals Data.Examples
 
 /-! ### Structures -/
 

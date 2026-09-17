@@ -21,7 +21,7 @@ in the paper. The examples of §4 are theorems about `translate`.
 * Under the meaning postulates for ordinary nouns and extensional verbs, the simple
   sentences translate to their first-order forms over the `*`-counterparts, and the two
   analysis trees of *a woman loves every man* translate to the two linear readings of
-  `Quantification.Polyadic`, one entailing the other but not conversely: ambiguity
+  `Quantifier.Polyadic`, one entailing the other but not conversely: ambiguity
   "simply because quantifying terms may be introduced in more than one order".
 * Partee's temperature puzzle: *the temperature is ninety* and *the temperature rises* are
   true while *ninety rises* is false, because *the temperature* denotes an individual
@@ -43,8 +43,8 @@ namespace Montague1973
 
 open Semantics.Composition
 open Reference (IsRigid isRigid_const)
-open Quantification (every_sem some_sem)
-open Quantification.Polyadic (iterate surfaceScope inverseScope)
+open Quantifier.GQ (every_sem some_sem)
+open Quantifier.Polyadic (iterate surfaceScope inverseScope)
 
 /-! ### Categories and the category-to-type map -/
 
@@ -413,7 +413,7 @@ theorem translate_quantifiedIn :
 theorem translate_quantifiedIn_of_direct (H : translate M aWomanLovesEveryMan.direct g i) :
     translate M aWomanLovesEveryMan.quantifiedIn g i :=
   (translate_quantifiedIn h g i).2 <|
-    Quantification.Polyadic.iterate_every_some_of_some_every _ _ _ ((translate_direct h g i).1 H)
+    Quantifier.Polyadic.iterate_every_some_of_some_every _ _ _ ((translate_direct h g i).1 H)
 
 end Scope
 

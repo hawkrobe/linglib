@@ -30,7 +30,7 @@ clausemate negation is the negative indefinite of `Fragments/Japanese/PolarityIt
 
 namespace Japanese.Determiners
 
-open Quantification.Lexicon
+open Quantifier.Lexicon
 
 /-- The indeterminate pronouns. -/
 inductive Indeterminate where

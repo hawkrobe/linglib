@@ -41,7 +41,7 @@ clarification-request diagnostics, and the type-theoretic encoding are not repre
 
 namespace LuckingGinzburg2022
 
-open Quantification
+open Quantifier Quantifier.GQ Quantifier.NP
 
 variable {α : Type} [DecidableEq α]
 

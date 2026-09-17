@@ -20,7 +20,7 @@ the maximum redefined as the greatest lower bound of the false degrees collapses
 
 ## Implementation notes
 
-* Quantifiers over individuals and over worlds are the same `Quantification.NP`, so
+* Quantifiers over individuals and over worlds are the same `Quantifier.NP`, so
   the intensional cases of Sections 2.1 and 2.3 are the theorems at a type of worlds.
 * A high-scope truth condition carries the definedness presupposition of the maximum as an
   existence conjunct; the paper's undefined maxima are the negations of those conjuncts.
@@ -37,7 +37,7 @@ the maximum redefined as the greatest lower bound of the false degrees collapses
 
 namespace Heim2001
 
-open Degree Quantification Set
+open Degree Quantifier Quantifier.GQ Set
 
 variable {Entity W D : Type*} [LinearOrder D]
 

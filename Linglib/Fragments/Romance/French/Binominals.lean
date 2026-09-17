@@ -21,7 +21,7 @@ The evaluative BNP may have entered English from French or Latin
 
 namespace French.Binominals
 
-open Quantification.Binominal
+open Quantifier.Binominal
 
 /-- A French binominal N₁ noun entry. -/
 structure BinominalN₁Entry where

@@ -19,7 +19,7 @@ and thereby the availability of NP-ellipsis.
 
 namespace Spanish.Binominals
 
-open Quantification.Binominal
+open Quantifier.Binominal
 open DistributedMorphology
 open DistributedMorphology.Categorizer (Head)
 

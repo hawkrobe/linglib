@@ -36,7 +36,7 @@ dissertation that renames its independent and dependent readings absolute and re
 The alternative set enters the truth conditions only through its extensional disjunction
 and the relative threshold, so it is carried as a single predicate. A conditional
 probability with an empty reference class is undefined in the paper (p. 37, §5.6) and is
-the junk value `0` of `Quantification.prevalenceOn` here; theorems carry the non-emptiness
+the junk value `0` of `Quantifier.GQ.prevalenceOn` here; theorems carry the non-emptiness
 hypothesis, and a salient cell with an empty reference class imposes no condition.
 
 ## TODO
@@ -59,7 +59,7 @@ hypothesis, and a salient cell with an empty reference class imposes no conditio
 
 namespace Cohen1999
 
-open Quantification
+open Quantifier Quantifier.GQ
 
 variable {α : Type*} (domain : Finset α) (ψ alt φ : α → Prop)
 variable [DecidablePred ψ] [DecidablePred alt] [DecidablePred φ]
@@ -140,10 +140,10 @@ The relativized readings are exactly what departs from this. -/
 /-- With trivial alternatives over the whole carrier, gen is `most`. -/
 theorem gen_univ_eq_most_sem {β : Type*} [Fintype β] (R S : β → Prop)
     [DecidablePred R] [DecidablePred S] (hR : 0 < countOn Finset.univ R) :
-    gen Finset.univ R (fun _ => True) S ↔ Quantification.most_sem R S := by
+    gen Finset.univ R (fun _ => True) S ↔ Quantifier.GQ.most_sem R S := by
   have hR' : 0 < countOn Finset.univ (fun x => R x ∧ True) := by
     rwa [countOn_congr (P := fun x => R x ∧ True) (Q := R) fun x _ => by simp]
-  rw [gen_iff_mostOn _ _ _ _ hR', ← Quantification.mostOn_univ]
+  rw [gen_iff_mostOn _ _ _ _ hR', ← Quantifier.GQ.mostOn_univ]
   unfold mostOn
   rw [countOn_congr (P := fun x => (R x ∧ True) ∧ S x) (Q := fun x => R x ∧ S x)
       fun x _ => by tauto,
@@ -163,7 +163,7 @@ theorem gen_proportional {β : Type*} [Fintype β] :
   have hR2 : 0 < countOn Finset.univ R₂ := by
     show 0 < count (fun x => R₂ x); rw [count_decompose R₂ S₂]; exact h2
   rw [gen_univ_eq_most_sem R₁ S₁ hR1, gen_univ_eq_most_sem R₂ S₂ hR2,
-    ← Quantification.mostOn_univ, ← Quantification.mostOn_univ]
+    ← Quantifier.GQ.mostOn_univ, ← Quantifier.GQ.mostOn_univ]
   exact mostOn_univ_proportional R₁ S₁ R₂ S₂ h1 h2 hcross
 
 /-! ### Homogeneity is degenerate unrestricted (definition 4, p. 82) -/

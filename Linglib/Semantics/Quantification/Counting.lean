@@ -26,7 +26,7 @@ and the bridge to model-agnostic `QuantityInvariant`.
 * `Proportional` — truth-value depends only on the ratio |A∩B|/|A\B|.
 -/
 
-namespace Quantification
+namespace Quantifier.GQ
 
 /-! ### Relativized counting (the maximal-generality primitive)
 
@@ -1062,4 +1062,4 @@ theorem mostOn_univ_proportional :
     funext R S; exact propext (mostOn_univ R S)
   rw [h]; exact most_proportional
 
-end Quantification
+end Quantifier.GQ

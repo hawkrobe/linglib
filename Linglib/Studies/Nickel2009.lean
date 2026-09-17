@@ -33,7 +33,7 @@ over one shared toy model, with the habitats as the alternative set.
 
 namespace Nickel2009
 
-open Quantification (everyOn countOn thresholdGtOn)
+open Quantifier.GQ (everyOn countOn thresholdGtOn)
 
 /-! ### Ways of Being Normal -/
 
@@ -52,7 +52,7 @@ structure Entity where
 /-! ### Nickel's GEN
 
 GEN as `everyOn` (the relativized restricted universal) under an existential over
-normality ways — `Quantification.everyOn` is the canonical generalized quantifier,
+normality ways — `Quantifier.GQ.everyOn` is the canonical generalized quantifier,
 so the only Nickel-specific apparatus is the `∃`-over-ways wrapper. -/
 
 /-- Nickel's GEN with way-indexed normality: there is a way of being normal such
@@ -222,13 +222,13 @@ theorem nickel_single_way_is_everyOn {α : Type*} (entities : Finset α)
 /-! ### Generic-quantifier interface -/
 
 /-- Nickel's `nickelGEN` over the whole carrier is exactly the ways-of-normality
-    generalized quantifier `Quantification.genWays` — its `GQ`-interface form,
-    the [nickel-2009] instance of the shared schema in `Quantification.Generic`. -/
+    generalized quantifier `Quantifier.GQ.genWays` — its `GQ`-interface form,
+    the [nickel-2009] instance of the shared schema in `Quantifier.Generic`. -/
 theorem nickelGEN_univ_eq_genWays {α : Type*} [Fintype α]
     (normalIn : α → NormalcyWay → Prop) (ways : Finset NormalcyWay) (R S : α → Prop)
     [DecidablePred R] [DecidablePred S] [∀ w, DecidablePred (λ e => normalIn e w)] :
-    nickelGEN Finset.univ normalIn ways R S ↔ Quantification.genWays normalIn ways R S := by
-  simp only [nickelGEN, Quantification.genWays, everyOn, and_comm]
+    nickelGEN Finset.univ normalIn ways R S ↔ Quantifier.GQ.genWays normalIn ways R S := by
+  simp only [nickelGEN, Quantifier.GQ.genWays, everyOn, and_comm]
 
 /-!
 ## Summary: Three Views of Normality

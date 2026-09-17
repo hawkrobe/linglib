@@ -35,7 +35,7 @@ speaker can never prefer a quantified conclusion to *nothing follows*, `literalS
 
 The paper takes existential import on *all* alone (section 2.1): `tesslerAll` conjoins the
 modern `syllAll` with the existence of a populated restrictor region, and the other three
-forms are the modern ones of `Quantification.Syllogistic`. Semantic noise follows the paper's
+forms are the modern ones of `Quantifier.Syllogistic`. Semantic noise follows the paper's
 prose and released model code: with probability `φ` the listener disregards an utterance, so
 a false utterance carries weight `φ` and a true one weight `1`, and the two premises are
 disregarded independently. The released code implements the literal and state-communication
@@ -56,7 +56,7 @@ comparison with mReasoner and the Probability Heuristics Model are not formalize
 
 namespace TesslerTenenbaumGoodman2022
 
-open MeasureTheory ProbabilityTheory InformationTheory RSA Quantification.Syllogistic
+open MeasureTheory ProbabilityTheory InformationTheory RSA Quantifier.Syllogistic
 open scoped ENNReal
 
 instance : MeasurableSpace Syllogism := ⊤

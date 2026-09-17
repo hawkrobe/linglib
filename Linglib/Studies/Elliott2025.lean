@@ -42,7 +42,7 @@ they show no exceptional scope ([reinhart-1997], [charlow-2014]), whereas *exact
   conditions (29), (30), (34), (45) follow.
 * The maps (40) and (44) are `Det.ofGQ` and `Det.toGQ`; their composite is `Q R (R ∩ S)`, so the
   Birkhoff-style isomorphism is between predicates and the conservative sublattice
-  `Quantification.ConsGQ`. The counts of §4.3 are stated for Boolean-valued predicates on
+  `Quantifier.GQ.ConsGQ`. The counts of §4.3 are stated for Boolean-valued predicates on
   `Fin n`.
 * The examples are `Data.Examples.Elliott2025`.
 
@@ -64,7 +64,7 @@ they show no exceptional scope ([reinhart-1997], [charlow-2014]), whereas *exact
 
 namespace Elliott2025
 
-open Quantification Data.Examples Elliott2025.Examples
+open Quantifier Quantifier.GQ Quantifier.NP Data.Examples Elliott2025.Examples
 
 /-! ### The classical predicative theory of numerals (§2) -/
 

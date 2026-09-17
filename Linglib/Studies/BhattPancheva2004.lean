@@ -214,7 +214,7 @@ theorem erSem_inter_contradictory (A B : Set D) : ¬ erSem A (A ∩ B) :=
 
 /-- (82) against (86): a conservative quantifier is unaffected by the intersection, and `-er` is
 not conservative. -/
-theorem erSem_not_conservative [Nonempty D] : ¬ Quantification.Conservative (erSem (D := D)) :=
+theorem erSem_not_conservative [Nonempty D] : ¬ Quantifier.GQ.Conservative (erSem (D := D)) :=
   λ h => erSem_inter_contradictory ∅ univ ((h (∅ : Set D) univ).1 (empty_ssubset.2 univ_nonempty))
 
 end BhattPancheva2004

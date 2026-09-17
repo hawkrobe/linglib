@@ -35,8 +35,12 @@ existential import (`∃R`); the sortal-restricted Aristotelian variant where th
 Square holds is the natural follow-up (TODO).
 -/
 
-namespace Quantification.Syllogistic
+namespace Quantifier.Syllogistic
 
+
+
+open Quantifier.GQ
+open Quantifier.NP
 open Aristotelian (Diagram IsContradictory isContradictory_iff_forall)
 
 /-! ### Corner indexing -/
@@ -119,4 +123,4 @@ theorem aieoSquare_EI_contradictory (X Y : Region → Bool) :
     IsContradictory ((aieoSquare X Y).φ .E) ((aieoSquare X Y).φ .I) :=
   syllNone_contradictory_syllSome X Y
 
-end Quantification.Syllogistic
+end Quantifier.Syllogistic

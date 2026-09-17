@@ -43,7 +43,7 @@ maximality; this one separates it from number.
 
 namespace HaslingerHienEtAl2025
 
-open Quantification.UnifiedUniversal Quantification.ONEModifiers Mereology
+open Quantifier.UnifiedUniversal Quantifier.ONEModifiers Mereology
 
 /-! ### The survey (Tables 1 and 2) -/
 
@@ -172,7 +172,7 @@ theorem each_ten_minutes_blocked {α : Type*} [PartialOrder α] {P : α → Prop
 individual is the canonical universal generalized quantifier. -/
 theorem QForall_eq_every_sem {α : Type*} [PartialOrder α] [IsAtomicDomain α]
     {P Q : α → Prop} (hP0 : ∀ x, P x → ¬ IsBot x) :
-    QForall P Q ↔ Quantification.every_sem P Q :=
+    QForall P Q ↔ Quantifier.GQ.every_sem P Q :=
   QForall_eq_standardGQ (λ x hx => IsAtomicDomain.all_atoms x (hP0 x hx))
     (λ _ _ _ _ h => IsAtomicDomain.eq_of_overlap h)
 
