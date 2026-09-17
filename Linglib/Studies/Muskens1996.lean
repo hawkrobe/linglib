@@ -50,34 +50,34 @@ abbrev DynQuant (S E : Type*) := DynPred S E → Update S
 
 /-- Common noun: `farmer ↝ λv[|farmer v]`. Type `[π]`. -/
 def cn (P : E → Prop) : DynPred S E :=
-  λ u => test (atom1 P u)
+  λ u => test (Condition.atom1 P u)
 
 /-- Intransitive verb: `stink ↝ λv[|stinks v]`. Type `[π]`. -/
 def iv (P : E → Prop) : DynPred S E :=
-  λ u => test (atom1 P u)
+  λ u => test (Condition.atom1 P u)
 
 /-- Transitive verb: `love ↝ λQλv(Q(λv'[|v loves v']))`.
 Type `[[π]] → [π]`: takes an NP (object) and produces a VP. -/
 def tv (R : E → E → Prop) : DynQuant S E → DynPred S E :=
-  λ Q u => Q (λ v => test (atom2 R u v))
+  λ Q u => Q (λ v => test (Condition.atom2 R u v))
 
 /-- Indefinite determiner: `aⁿ ↝ λP'λP([uₙ]; P'(uₙ); P(uₙ))`.
 Type `[π] → [[π]]`; introduces discourse referent `u`. -/
 def detA [RegisterStructure R S E] (u : R) : DynPred S E → DynQuant S E :=
-  λ noun vp => seq (RegisterStructure.randomAssign u)
+  λ noun vp => seq (randomAssign u)
     (seq (noun (RegisterStructure.val u)) (vp (RegisterStructure.val u)))
 
 /-- Universal determiner: `everyⁿ ↝ λP'λP(([uₙ]; P'(uₙ)) ⇒ P(uₙ))`.
 Dynamic implication gives universal force. -/
 def detEvery [RegisterStructure R S E] (u : R) : DynPred S E → DynQuant S E :=
   λ noun vp =>
-    test (impl (seq (RegisterStructure.randomAssign u) (noun (RegisterStructure.val u)))
+    test (impl (seq (randomAssign u) (noun (RegisterStructure.val u)))
       (vp (RegisterStructure.val u)))
 
 /-- Negative determiner: `noⁿ ↝ λP'λP[|not([uₙ]; P'(uₙ); P(uₙ))]`. -/
 def detNo [RegisterStructure R S E] (u : R) : DynPred S E → DynQuant S E :=
   λ noun vp =>
-    test (neg (seq (RegisterStructure.randomAssign u)
+    test (neg (seq (randomAssign u)
       (seq (noun (RegisterStructure.val u)) (vp (RegisterStructure.val u)))))
 
 /-- Proper name NP: `Maryⁿ ↝ λP.P(Mary)`. Type `[[π]]`. -/
@@ -149,7 +149,7 @@ def exampleText (man woman : E → Prop) (adores abhors : E → E → Prop) : Up
 def donkeySentence
     (farmer donkey_ : E → Prop) (owns beats : E → E → Prop) : Update S :=
   detEvery u₁
-    (λ v => seq (cn farmer v) (detA u₂ (cn donkey_) (λ w => test (atom2 owns v w))))
+    (λ v => seq (cn farmer v) (detA u₂ (cn donkey_) (λ w => test (Condition.atom2 owns v w))))
     (tv beats (pro (RegisterStructure.val u₂)))
 
 /-- "A² cat catches a¹ fish and eats it₁." — the paper's (52), decorated as
@@ -197,19 +197,19 @@ theorem wp_seq (D₁ D₂ : Update S) (χ : Condition S) :
 /-- WP of random assignment (the ∃ clause of WP_{[]}): introducing a dref
 existentially quantifies over its values. -/
 theorem wp_randomAssign [RegisterStructure R S E] (u : R) (χ : Condition S) :
-    wp (RegisterStructure.randomAssign u) χ =
+    wp (randomAssign u) χ =
     λ i => ∃ e : E, χ (RegisterStructure.extend i u e) := by
   ext i
-  simp only [wp, RegisterStructure.randomAssign]
+  simp only [wp, randomAssign]
   constructor
   · rintro ⟨j, ⟨e, rfl⟩, hχ⟩; exact ⟨e, hχ⟩
   · rintro ⟨e, hχ⟩; exact ⟨_, ⟨e, rfl⟩, hχ⟩
 
 /-- WP of existential `Update`: `wp (∃u. D) χ = ∃e, wp D χ (extend i u e)`. -/
 theorem wp_dexists [RegisterStructure R S E] (u : R) (D : Update S) (χ : Condition S) :
-    wp (RegisterStructure.dexists u D) χ =
+    wp (dexists u D) χ =
     λ i => ∃ e : E, wp D χ (RegisterStructure.extend i u e) := by
-  simp only [RegisterStructure.dexists]
+  simp only [dexists]
   rw [wp_seq, wp_randomAssign]
 
 /-- Proposition 2: `wp(K, ⊤)` is the existential closure `∃j K(i)(j)` —
@@ -321,8 +321,8 @@ theorem cdrt_new_seq_eq_cylindrify {E : Type*} (n : Nat) (φ : DProp E) :
 
 /-- CDRT equality condition on drefs = diagonal element. -/
 theorem cdrt_eq_dref_eq_diagonal {E : Type*} (i j : Nat) :
-    eq' (dref i : Dref (State E) E) (dref j) = @diagonal E i j := by
-  ext g; simp only [eq', dref, diagonal]
+    Condition.eq (dref i : Dref (State E) E) (dref j) = @diagonal E i j := by
+  ext g; simp only [Condition.eq, dref, diagonal]
 
 end CylindricAlgebra
 

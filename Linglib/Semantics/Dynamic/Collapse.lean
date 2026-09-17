@@ -191,10 +191,10 @@ fragment of the transformer algebra: `lift`/`lower` as an equivalence
 onto `sSupHom`. -/
 def liftEquiv : Update S ≃ sSupHom (Set S) (Set S) where
   toFun R := ⟨lift R, (isDistributive_iff_map_sSup _).mp (lift_isDistributive R)⟩
-  invFun f := lower f
+  invFun f := CCP.lower f
   left_inv := lower_lift
   right_inv f := sSupHom.ext fun σ =>
-    congrFun (lift_lower _ ((isDistributive_iff_map_sSup _).mpr f.map_sSup')) σ
+    congrFun (CCP.lift_lower _ ((isDistributive_iff_map_sSup _).mpr f.map_sSup')) σ
 
 /-- The equivalence sends sequencing to composition (diagrammatic order):
 the transformer monoid restricts to the relational one. -/
