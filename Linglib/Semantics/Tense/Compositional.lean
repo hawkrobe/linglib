@@ -10,8 +10,8 @@ when the cell `s` relates the event situation's time to the evaluation
 situation's time and the payload `P` holds at the event situation.
 Following [partee-1973], the event situation is retrieved (an argument),
 not quantified over. `PAST`/`PRES`/`FUT` name the three atomic cells'
-operators; the dynamic counterparts in `Tense/Dynamic.lean` are the same
-cells behind the update spine's test filter.
+operators; the dynamic entries of [mendes-2025] are the same cells behind
+the update spine's test, in `Studies/Mendes2025.lean`.
 -/
 
 namespace Tense

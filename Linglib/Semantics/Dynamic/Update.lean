@@ -146,6 +146,22 @@ def IsTest (D : Update S) : Prop := ∀ ⦃i j⦄, D i j → i = j
 theorem isTest_test (C : Condition S) : IsTest (test C) :=
   fun _ _ h => h.1
 
+/-- Tests are closed under sequencing. -/
+theorem IsTest.seq {D₁ D₂ : Update S} (h₁ : IsTest D₁) (h₂ : IsTest D₂) :
+    IsTest (seq D₁ D₂) :=
+  fun _ _ ⟨_, a, b⟩ => (h₁ a).trans (h₂ b)
+
+/-- Sequenced tests test the conjunction. -/
+theorem test_seq_test (C₁ C₂ : Condition S) :
+    seq (test C₁) (test C₂) = test fun i => C₁ i ∧ C₂ i := by
+  ext i o
+  exact ⟨fun ⟨_, ⟨h, h₁⟩, h', h₂⟩ => ⟨h.trans h', h' ▸ h₁, h₂⟩,
+    fun ⟨h, h₁, h₂⟩ => ⟨o, ⟨h, h₁⟩, rfl, h₂⟩⟩
+
+/-- A test's closure is its condition. -/
+@[simp] theorem closure_test (C : Condition S) : closure (test C) = C :=
+  funext fun i => propext ⟨fun ⟨_, rfl, h⟩ => h, fun h => ⟨i, rfl, h⟩⟩
+
 /-- Tests are the subidentities of the update monoid: the coreflexives `D ≤ 1`. -/
 theorem isTest_iff_le_one : D.IsTest ↔ D ≤ 1 :=
   ⟨fun h _ _ hij => ⟨h hij, trivial⟩, fun h _ _ hij => (h _ _ hij).1⟩
@@ -368,27 +384,6 @@ theorem lift_test_idem (C : Condition S) (σ : Set S) :
     lift (test C) (lift (test C) σ) = lift (test C) σ := by
   rw [lift_test_lift_test]
   exact Set.ext fun i => by simp only [mem_lift_test, and_self]
-
-/-- Contradictory test filters compose to the empty state. -/
-theorem lift_test_disjoint (C₁ C₂ : Condition S)
-    (h : ∀ i, C₁ i → C₂ i → False) (σ : Set S) :
-    lift (test C₂) (lift (test C₁) σ) = ∅ := by
-  rw [lift_test_lift_test]
-  exact Set.eq_empty_of_forall_notMem fun i hi =>
-    h i (mem_lift_test.mp hi).2.1 (mem_lift_test.mp hi).2.2
-
-/-- Covering test filters partition the state. -/
-theorem lift_test_cover₃ (C₁ C₂ C₃ : Condition S)
-    (h : ∀ i, C₁ i ∨ C₂ i ∨ C₃ i) (σ : Set S) :
-    lift (test C₁) σ ∪ lift (test C₂) σ ∪ lift (test C₃) σ = σ :=
-  Set.ext fun i => by
-    simp only [Set.mem_union, mem_lift_test]
-    refine ⟨fun hi => ?_, fun hi => ?_⟩
-    · rcases hi with (⟨h', -⟩ | ⟨h', -⟩) | ⟨h', -⟩ <;> exact h'
-    · rcases h i with h' | h' | h'
-      · exact Or.inl (Or.inl ⟨hi, h'⟩)
-      · exact Or.inl (Or.inr ⟨hi, h'⟩)
-      · exact Or.inr ⟨hi, h'⟩
 
 /-! ### The static fragment
 
