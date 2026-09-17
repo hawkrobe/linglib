@@ -81,11 +81,12 @@ def de : Article :=
 
 /-- The indefinite article *een* occurs with singular count nouns, since indefinite plural and
 mass noun phrases are bare. -/
-def een : Article := { form := "een", definiteness := .indefinite, exponent := .dedicatedMorpheme }
+def een : Article :=
+  { form := "een", definiteness := .indefinite, exponent := .dedicatedMorpheme }
 
 /-- The negative article *geen* occurs with singular, plural and mass nouns alike, and the
 grammar argues that it is a quantifier rather than an article. -/
-def geen : Quantifier := { form := "geen", selectsMass := true }
+def geen : QuantifierDeterminer := { form := "geen", selectsMass := true }
 
 /-- The proximate demonstrative is *deze* ~ *dit*. -/
 def deze : DemonstrativeDeterminer := { form := plural .proximate, deictic := .proximal }

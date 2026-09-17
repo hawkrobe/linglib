@@ -9,7 +9,8 @@ import Linglib.Morphology.Word.Basic
 
 This file defines the determiner as a lexical object and the determiner inventory of a
 language. The base `Determiner` carries only a surface form, and the four specializations
-`Article`, `DemonstrativeDeterminer`, `Quantifier` and `Possessive` extend it. An inventory is
+`Article`, `DemonstrativeDeterminer`, `QuantifierDeterminer` and `PossessiveDeterminer` extend
+it. An inventory is
 a list of `Determiner.Entry` occurrences, and the typologies of definiteness marking are
 derived from it rather than declared. An entry marks an article strength when one of the
 definite uses it obligatorily expones calls for that strength, and a language's [moroney-2021]
@@ -20,8 +21,8 @@ cell and [schwarz-2009] article system are theorems about its inventory, dischar
 
 * `Determiner` is the base record, and `Determiner.toWord` realizes it as a word.
 * `Article` records definiteness, the exponent and the definite uses the article obligatorily
-  expones; `DemonstrativeDeterminer`, `Quantifier` and `Possessive` are the other
-  specializations.
+  expones; `DemonstrativeDeterminer`, `QuantifierDeterminer` and `PossessiveDeterminer` are the
+  other specializations.
 * `Determiner.Entry` is an occurrence of one of the four kinds in an inventory, `Entry.kind`
   is its kind together with an article's definiteness, and `Entry.Marks` says which strengths
   it marks.
@@ -36,9 +37,10 @@ cell and [schwarz-2009] article system are theorems about its inventory, dischar
 
 This file is the Frame-free lexical layer. The denotations of articles, demonstratives and
 possessives are in `Semantics/Reference/Determiner.lean`, and the generalized-quantifier
-denotation of a `Quantifier` is supplied by its consumers. `Inventory` is a `def` rather than
-an `abbrev` so that its operations resolve by dot notation; its membership is the list's, and
-facts about one-entry inventories go through `Inventory.marks_singleton`. `Realizes` is
+denotation of a `QuantifierDeterminer` is supplied by its consumers. `Inventory` is a `def`
+rather than an `abbrev` so that its operations resolve by dot notation; its membership is the
+list's, and facts about one-entry inventories go through `Inventory.marks_singleton`.
+`Realizes` is
 inventory data and neither licensing nor felicity. A kind can be expressed without a determiner
 realizing it, as Shan anaphoric definites are by bare nouns ([moroney-2021]), and which form a
 context selects is pragmatics ([jenks-2018]).
@@ -82,6 +84,8 @@ inductive Exponent where
 
 end Determiner
 
+/-! ### The specializations -/
+
 /-- An article is the definite or indefinite determiner. Its `uses` are the definite uses it
 obligatorily expones, and they are empty for an indefinite. -/
 structure Article extends Determiner where
@@ -112,7 +116,7 @@ leaves open, the grammatical number it selects and whether it selects mass nouns
 synonymous determiners such as *every* and *all* differ there. Everything the denotation fixes,
 its force, monotonicity, strength and conservativity, is a theorem about the denotation, which
 the consumers supply. -/
-structure Quantifier extends Determiner where
+structure QuantifierDeterminer extends Determiner where
   /-- The grammatical number the determiner selects, or none when it is number-neutral. -/
   numberRestriction : Option Number := none
   /-- The determiner selects mass nouns. -/
@@ -120,7 +124,7 @@ structure Quantifier extends Determiner where
   deriving DecidableEq, Repr
 
 /-- A possessive determiner denotes a definite through a possession relation. -/
-structure Possessive extends Determiner
+structure PossessiveDeterminer extends Determiner
   deriving DecidableEq, Repr
 
 namespace Determiner
@@ -131,8 +135,8 @@ namespace Determiner
 inductive Entry where
   | article (a : Article)
   | demonstrative (d : DemonstrativeDeterminer)
-  | quantifier (q : Quantifier)
-  | possessive (p : Possessive)
+  | quantifier (q : QuantifierDeterminer)
+  | possessive (p : PossessiveDeterminer)
   deriving DecidableEq
 
 namespace Entry
