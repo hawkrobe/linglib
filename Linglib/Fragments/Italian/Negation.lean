@@ -42,7 +42,7 @@ open Syntax.Negation
     `Non ho visto nessuno` 'NEG have seen nobody' = "I didn't see anyone".
     A free word, not a clitic; syntactically immediately preverbal. -/
 def non : Marker :=
-  { morphs := [.free "non"] }
+  { pieces := [[.free "non"]] }
 
 /-! ## Expletive Negation
 [jin-koenig-2021]

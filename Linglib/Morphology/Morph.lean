@@ -27,13 +27,16 @@ discontinuous.
   a bound kind.
 * `Morph.Side.attach` — attachment of an element on a side of a sequence, the
   linear shadow of attachment on a word tree.
+* `Morph.surface` — the surface form of a contiguous sequence of morphs in
+  boundary notation.
 
 ## Implementation notes
 
 `ToString` renders a morph in Leipzig boundary notation, `un-`, `-able`, `l=`,
-`=s`. A sequence of morphs has no canonical rendering, since a segmented word
-and a discontinuous exponent join their morphs differently, so each consumer
-states its own.
+`=s`, and `Morph.surface` joins a contiguous sequence, `un-do-able`. A
+discontinuous exponent is a sequence of such pieces (a circumfix is a prefix
+and a suffix, [haspelmath-2020]), which its owner renders with `…` between the
+pieces.
 
 ## References
 
@@ -200,6 +203,10 @@ instance : ToString Morph :=
     | .bound .before .clitic => m.form ++ "="
     | .bound .after .clitic => "=" ++ m.form
     | .root | .free => m.form⟩
+
+/-- The surface form of a contiguous sequence of morphs: each in boundary
+notation, joined. -/
+def surface (ms : List Morph) : String := String.join (ms.map toString)
 
 end Morph
 

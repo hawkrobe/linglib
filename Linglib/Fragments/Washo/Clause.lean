@@ -67,10 +67,9 @@ def es : Morph := .suff "e:s"
 /-- The reflexive prefix *gum-*. -/
 def gum : Morph := .pref "gum"
 
-/-- The citation form of a root with an affix attached on a side, read off the word tree in
-boundary notation. -/
+/-- The citation form of a root with an affix attached on a side, read off the word tree. -/
 private def affixed (root : String) (side : Morph.Side) (afx : Morph) : String :=
-  String.join (((Word.Tree.root (Morph.root root)).attach side afx).toList.map toString)
+  Morph.surface ((Word.Tree.root (Morph.root root)).attach side afx).toList
 
 /-- *hamup'ay* 'forget' (1). -/
 def hamupay : Verb where

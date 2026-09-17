@@ -47,16 +47,16 @@ open Syntax.Negation
 /-- *si* — imperfective negation marker. Aspect-conditioned alternation
     with perfective *mana*/*batu*. Parallel to Mandarin's bù/méi split. -/
 def si : Marker :=
-  { morphs := [.free "si"] }
+  { pieces := [[.free "si"]] }
 
 /-- *mana* — perfective negation marker (one of two variants). -/
 def mana : Marker :=
-  { morphs := [.free "mana"] }
+  { pieces := [[.free "mana"]] }
 
 /-- *batu* — perfective negation marker (second variant; also surfaces
     as a verb 'wait/delay'). -/
 def batu : Marker :=
-  { morphs := [.free "batu"] }
+  { pieces := [[.free "batu"]] }
 
 /-- Legacy String accessors (used by `enNegatorForAspect` in this file). -/
 def ipfvNeg : String := si.form

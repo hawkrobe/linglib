@@ -34,6 +34,6 @@ def n : Morph := .suff "n"
 
 /-- *ʔaj-…-(ɨ)n* — the standard-negation circumfix. -/
 def circumfix : Marker where
-  morphs := [aj, n]
+  pieces := [[aj], [n]]
 
 end Tigrinya.Negation

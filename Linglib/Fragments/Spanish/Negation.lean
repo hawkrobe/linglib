@@ -42,7 +42,7 @@ open Syntax.Negation
     A free word, syntactically immediately preverbal:
     *Juan **no** come* 'Juan doesn't eat'. -/
 def no : Marker :=
-  { morphs := [.free "no"] }
+  { pieces := [[.free "no"]] }
 
 /-- A Spanish negation example. -/
 structure NegExample where

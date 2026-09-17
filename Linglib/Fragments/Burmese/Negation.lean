@@ -44,7 +44,7 @@ def negSuffix : String := "-bu"
     *-laimeh*), neutralizing TAM distinctions. WALS classifies Burmese
     as `.doubleNegation` (Ch 112A). -/
 def circumfix : Marker :=
-  { morphs := [.pref "ma", .suff "bu"] }
+  { pieces := [[.pref "ma"], [.suff "bu"]] }
 
 /-- A Burmese negation paradigm entry showing TAM neutralization. -/
 structure NegParadigmEntry where

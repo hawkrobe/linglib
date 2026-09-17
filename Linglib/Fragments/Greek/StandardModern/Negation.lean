@@ -17,9 +17,9 @@ in that study.
 namespace Greek.StandardModern.Negation
 
 /-- *dhen* (δεν), the negator of indicative clauses. -/
-def dhen : Syntax.Negation.Marker := { morphs := [.free "dhen"] }
+def dhen : Syntax.Negation.Marker := { pieces := [[.free "dhen"]] }
 
 /-- *min* (μην), the negator of imperatives and subjunctive clauses. -/
-def min : Syntax.Negation.Marker := { morphs := [.free "min"] }
+def min : Syntax.Negation.Marker := { pieces := [[.free "min"]] }
 
 end Greek.StandardModern.Negation

@@ -36,7 +36,7 @@ open Syntax.Negation
     German as `.type1Type2` (mixed NegV / VNeg) rather than a single
     position. -/
 def nicht : Marker :=
-  { morphs := [.free "nicht"] }
+  { pieces := [[.free "nicht"]] }
 
 /-- *kein* — negative determiner (fuses negation + indefinite article).
     Lives here as a lexical fact about German negation morphology;

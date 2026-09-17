@@ -32,7 +32,7 @@ open Syntax.Negation
     of that allomorph. With lexical verbs, *do*-support is required:
     *He does not eat*, not **He not eats*. -/
 def not : Marker :=
-  { morphs := [.free "not"] }
+  { pieces := [[.free "not"]] }
 
 /-- The contracted form *n't*. Phonologically a clitic on the auxiliary;
     syntactically the same negation marker as *not*. Listed for the

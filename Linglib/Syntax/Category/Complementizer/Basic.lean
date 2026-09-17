@@ -80,7 +80,7 @@ structure Complementizer where
 namespace Complementizer
 
 /-- The surface form: the morphs' forms with their boundary notation. -/
-def form (c : Complementizer) : String := String.join (c.morphs.map toString)
+def form (c : Complementizer) : String := Morph.surface c.morphs
 
 /-- Bound: no morph of the exponent is a free form. -/
 def IsBound (c : Complementizer) : Prop := ∀ m ∈ c.morphs, m.kind ≠ .free
