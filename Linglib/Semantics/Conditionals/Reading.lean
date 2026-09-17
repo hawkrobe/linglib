@@ -107,7 +107,7 @@ variable {A W : Type*} (K : Table A W) (p : Set W)
 hypothetical conditional leaves `p` undecided in the common ground, a premise conditional needs
 `p` echoed, committed to by some participant or already common ground. -/
 def Felicitous : Reading → Prop
-  | .hypothetical => ¬ K.Decided p
+  | .hypothetical => ¬ (Question.polar p).SettledBy K.cg
   | .premise => (∃ a, p ∈ K.dc a) ∨ p ∈ K.cg
 
 variable {K p}
@@ -119,12 +119,13 @@ theorem premise_felicitous_of_shared [Nonempty A] (h : K.Shared p) : premise.Fel
 
 theorem not_hypothetical_felicitous_of_mem_cg (h : p ∈ K.cg) :
     ¬ hypothetical.Felicitous K p :=
-  λ h' => h' (.inl h)
+  fun h' ↦ h' (Question.settledBy_polar.2 (.inl h))
 
 /-- In a context whose common ground entails the antecedent, the premise reading's
 presupposition is satisfied on the context set. -/
 theorem presupSatisfied_denote_premise_of_mem_cg (cond : Set W → Set W → Set W) (q : Set W)
-    (h : p ∈ K.cg) : Context.presupSatisfied K.contextSet (premise.denote cond p q) :=
+    (h : p ∈ K.cg) :
+    Context.presupSatisfied (HasCommonGround.contextSet K) (premise.denote cond p q) :=
   λ _ hw => Filter.mem_ker.1 hw p h
 
 end Felicity
