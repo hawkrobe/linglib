@@ -1,3 +1,4 @@
+import Linglib.Core.Order.SuccPred.Tree
 import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.Segmental.FeatureClass
 import Linglib.Data.Examples.HalleVauxWolfe2000
@@ -66,34 +67,23 @@ inductive Node where
 
 namespace Node
 
-/-- The node immediately dominating each node; the root alone has none. -/
-def parent : Node → Option Node
-  | .root => none
-  | .place | .softPalate | .guttural => some .root
-  | .lips | .tongueBlade | .tongueBody => some .place
-  | .tongueRoot | .larynx => some .guttural
+/-- The node immediately dominating each node, the root fixed. -/
+def pred : Node → Node
+  | .root => .root
+  | .place | .softPalate | .guttural => .root
+  | .lips | .tongueBlade | .tongueBody => .place
+  | .tongueRoot | .larynx => .guttural
 
-/-- A node and its ancestors; the tree has depth two. -/
-def up (n : Node) : Finset Node :=
-  ((List.range 3).filterMap λ i => (· >>= parent)^[i] (some n)).toFinset
+/-- Every node reaches the root in as many steps as there are nodes. -/
+theorem pred_iterate_card : ∀ n : Node, pred^[Fintype.card Node] n = .root := by decide
 
-instance : PartialOrder Node := PartialOrder.lift up (by decide)
+instance : PartialOrder Node := .ofPred pred_iterate_card
 
-instance : DecidableLE Node := λ a b => inferInstanceAs (Decidable (up a ⊆ up b))
+instance : OrderBot Node := .ofPred pred_iterate_card
 
-instance : OrderBot Node where
-  bot := .root
-  bot_le := by decide
+instance : PredOrder Node := .ofPred pred_iterate_card
 
-/-- The parent as the predecessor, the root fixed: the tree in mathlib's terms, with
-archimedean descent from finiteness. -/
-instance : PredOrder Node where
-  pred n := (parent n).getD n
-  pred_le := by decide
-  min_of_le_pred {a} h := fun ⦃b⦄ hb ↦
-    (by decide : ∀ a : Node, a ≤ a.parent.getD a → ∀ b, b ≤ a → a ≤ b) a h b hb
-  le_pred_of_lt {a b} h :=
-    (by decide : ∀ a b : Node, a ≤ b → a ≠ b → a ≤ b.parent.getD b) a b h.le h.ne
+instance : DecidableLE Node := .ofPred pred_iterate_card
 
 end Node
 
@@ -110,7 +100,8 @@ def node : Feature → Option Node
   | .atr => some .tongueRoot
   | .tense => none
 
-instance : FeatureGeometry Feature Node := ⟨node⟩
+instance : FeatureGeometry Feature Node where
+  node := node
 
 /-! ### Articulator-free features and Place -/
 
@@ -162,9 +153,10 @@ theorem placeAssimilation_eqOn_tongueBody :
   eqOn_piecewise_of_le src tgt (by decide)
 
 /-- Soft Palate is a sister of Place, so Place assimilation leaves [nasal] where it was: the
-assimilated nasal is still a nasal, `eqOn_piecewise_of_not_le`. -/
+assimilated nasal is still a nasal, `eqOn_piecewise_of_incompRel`. -/
 theorem placeAssimilation_nasal : placeAssimilation src tgt .nasal = tgt .nasal :=
-  eqOn_piecewise_of_not_le (a := Node.place) (b := Node.softPalate) src tgt (by decide) (by decide)
+  eqOn_piecewise_of_incompRel (a := Node.place) (b := Node.softPalate) src tgt
+    ⟨by decide, by decide⟩
     (by decide : Feature.nasal ∈ naturalClass (F := Feature) Node.softPalate)
 
 /-- Irish Dorsal Assimilation (44) spreads the designated articulator alone: the terminal

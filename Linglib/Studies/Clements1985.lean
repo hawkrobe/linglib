@@ -1,4 +1,6 @@
 import Linglib.Fragments.English.Phonology
+import Linglib.Core.Data.Fintype.Sets
+import Linglib.Core.Order.SuccPred.Tree
 import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.Subregular.LocalRewrite
 
@@ -25,7 +27,7 @@ flags as possibly superfluous, is dropped by the later geometries formalized her
 
 ## Main definitions
 
-* `Node`, `Node.parent`, `classNode?` — the five class nodes of (3), the tree, and the class
+* `Node`, `Node.pred`, `classNode?` — the five class nodes of (3), the tree, and the class
   node each terminal feature hangs from (§4); together the `FeatureGeometry` instance.
 * `PlaceSet`, `placeSet?`, `PlaceSet.features` — the primary/secondary split of the place
   features (§4).
@@ -106,33 +108,22 @@ inductive Node where
 
 namespace Node
 
-/-- The node immediately dominating each node; the root alone has none. -/
-def parent : Node → Option Node
-  | .root => none
-  | .laryngeal | .supralaryngeal => some .root
-  | .manner | .place => some .supralaryngeal
+/-- The node immediately dominating each node, the root fixed. -/
+def pred : Node → Node
+  | .root => .root
+  | .laryngeal | .supralaryngeal => .root
+  | .manner | .place => .supralaryngeal
 
-/-- A node and its ancestors; the tree has depth two. -/
-def up (n : Node) : Finset Node :=
-  ((List.range 3).filterMap λ i => (· >>= parent)^[i] (some n)).toFinset
+/-- Every node reaches the root in as many steps as there are nodes. -/
+theorem pred_iterate_card : ∀ n : Node, pred^[Fintype.card Node] n = .root := by decide
 
-instance : PartialOrder Node := PartialOrder.lift up (by decide)
+instance : PartialOrder Node := .ofPred pred_iterate_card
 
-instance : DecidableLE Node := λ a b => inferInstanceAs (Decidable (up a ⊆ up b))
+instance : OrderBot Node := .ofPred pred_iterate_card
 
-instance : OrderBot Node where
-  bot := .root
-  bot_le := by decide
+instance : PredOrder Node := .ofPred pred_iterate_card
 
-/-- The parent as the predecessor, the root fixed: the tree in mathlib's terms, with
-archimedean descent from finiteness. -/
-instance : PredOrder Node where
-  pred n := (parent n).getD n
-  pred_le := by decide
-  min_of_le_pred {a} h := fun ⦃b⦄ hb ↦
-    (by decide : ∀ a : Node, a ≤ a.parent.getD a → ∀ b, b ≤ a → a ≤ b) a h b hb
-  le_pred_of_lt {a b} h :=
-    (by decide : ∀ a b : Node, a ≤ b → a ≠ b → a ≤ b.parent.getD b) a b h.le h.ne
+instance : DecidableLE Node := .ofPred pred_iterate_card
 
 end Node
 
@@ -148,7 +139,8 @@ def classNode? : Feature → Option Node
   | .labial | .coronal | .anterior | .distributed | .high | .back | .round => some .place
   | _ => none
 
-instance : FeatureGeometry Feature Node := ⟨classNode?⟩
+instance : FeatureGeometry Feature Node where
+  node := classNode?
 
 /-- The two sets of place features: P, distinguishing place in consonants, and S,
 distinguishing place in vowels (§4). -/
@@ -312,7 +304,7 @@ vowel and keeps only the stop's laryngeal features `[+spread, −voiced]` — an
 theorem preaspiration (v c : Segment) :
     Set.EqOn ((Spreading.node .supralaryngeal).apply v c) v ↑(naturalClass Node.supralaryngeal) ∧
       Set.EqOn ((Spreading.node .supralaryngeal).apply v c) c ↑(naturalClass Node.laryngeal) :=
-  ⟨Spreading.apply_eqOn _ v c, eqOn_piecewise_of_not_le v c (by decide) (by decide)⟩
+  ⟨Spreading.apply_eqOn _ v c, eqOn_piecewise_of_incompRel v c ⟨by decide, by decide⟩⟩
 
 /-! ### Primary and secondary place features (§4) -/
 

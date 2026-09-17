@@ -1,59 +1,38 @@
-import Linglib.Core.Data.Fintype.Sets
 import Mathlib.Data.Finset.Piecewise
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Fintype.EquivFin
+import Mathlib.Order.Comparable
 import Mathlib.Order.SuccPred.Archimedean
-import Mathlib.Order.Interval.Set.Defs
 
 /-!
 # Feature geometry
 
-A feature geometry over a feature type `F` is a rooted tree of class nodes with each feature
-attached below at most one node: dominance is `≤`, the root is `⊥`, the parent is `Order.pred`
-and every node descends to the root in finitely many steps, so the nodes dominating a node
-are linearly ordered. The natural class of a node is the finite set of features it
-dominates, so natural classes are nested along dominance and disjoint across incomparable
-nodes. The class-node idea and the thesis that assimilation spreads one node are
-Clements's; Halle, Vaux and Wolfe record that no consensus exists among the later
-revisions and lets rules spread any set of terminals, and Padgett drops constituency
-altogether and lets constraints refer to classes as sets, which is how current analyses use
-them (Brown and Meyer's AGREE[place]). The class-set is therefore the primitive: spreading
-a class from `src` onto `tgt` is `Finset.piecewise`, agreement on a class is `Set.EqOn`, and a
-geometry is an instance naming which sets are natural. The feature type is a parameter, so an
-instance may range over a binary inventory, over feature tokens indexed by position as in
-Vowel-Place Theory, over privative elements, or over tone features; the flat segmental
-classes are `Phonology/Segmental/FeatureClass.lean`, the trees of Clements, Sagey
-and Halle, Vaux and Wolfe are instances in their studies, and the person and number
-geometry of Harley and Ritter is the instance `Syntax/Agreement/Geometry.lean`.
+A feature geometry over a feature type `F` places each feature below at most one node of a
+rooted tree of class nodes, and the natural class of a node is the set of features placed at
+or below it. The tree is mathlib's, a partial order with a bottom, a predecessor and archimedean
+descent, so natural classes are the preimages of principal upper sets: they shrink along
+dominance and are disjoint across incomparable nodes. Spreading a class from one segment onto
+another is `Finset.piecewise` on it, and agreement on a class is `Set.EqOn`. The trees of
+Clements, Sagey and Halle, Vaux and Wolfe are instances in their studies, as is the person and
+number geometry of Harley and Ritter, whose nodes are its features.
 
 ## Main definitions
 
-* `FeatureGeometry` — the class: `node`, each feature's class node, if the geometry places
-  it.
-* `FeatureGeometry.naturalClass` — the features a node dominates.
+* `FeatureGeometry` — the placement of features below the nodes of a tree.
+* `FeatureGeometry.naturalClass` — the features placed at or below a node.
 
 ## Main results
 
-* `naturalClass_anti`, `disjoint_naturalClass` — natural classes shrink along dominance and
-  are disjoint across incomparable nodes.
-* `eqOn_piecewise_of_le`, `eqOn_piecewise_of_not_le` — spreading a node carries every class it
-  dominates and leaves every incomparable class untouched.
-* `mem_naturalClass_bot` — the root's class is every attached feature: total assimilation.
+* `antitone_naturalClass`, `disjoint_naturalClass` — natural classes shrink along dominance
+  and are disjoint across incomparable nodes.
+* `eqOn_piecewise_of_le`, `eqOn_piecewise_of_incompRel` — spreading a node carries every
+  class it dominates and leaves every incomparable class untouched.
 
 ## Implementation notes
 
-The tree is mathlib's: a `PartialOrder` with an `OrderBot`, a `PredOrder` whose predecessor
-is the parent, and `IsPredArchimedean`, the unbundled data of `RootedTree`, so that
-`le_total_of_directed` is the linearity of ancestry. Instances build dominance from a parent
-function: `up n` is `n` with its ancestors, `PartialOrder.lift up` is dominance, the root is
-`⊥`, `Order.pred` is the parent with the root fixed, and archimedean descent follows from
-finiteness. The feature type is an `outParam`: a node type determines its features. `node` is
-`Option`-valued so a geometry may leave features unplaced. Spreading an arbitrary set of
-terminals (Halle, Vaux and Wolfe's partial spreading, Padgett's partial class behaviour) is
-`Finset.piecewise` on that set with no further apparatus, and single-feature spreading is
-`Bundle.assimilate` (`Finset.piecewise_singleton`). The linking of a spread node to
-several anchors is the tier-association object `AR` (`Autosegmental/AR.lean`), not recorded
-on feature bundles.
+The placement is `Option`-valued so that a geometry may leave features of the inventory
+unplaced. A finite tree is built from its parent map by `PartialOrder.ofPred` and its
+companions in `Core/Order/SuccPred/Tree.lean`. Spreading any set of terminals, Halle, Vaux and
+Wolfe's partial spreading, is `Finset.piecewise` on that set, and single-feature spreading is
+`Bundle.assimilate`.
 
 ## References
 
@@ -68,10 +47,10 @@ on feature bundles.
 
 namespace Phonology
 
-/-- A feature geometry over the features `F`: each feature attached below at most one node of
-a rooted tree of class nodes, dominance `≤`, root `⊥` and parent `Order.pred`. -/
+/-- A feature geometry over the features `F`: each feature placed below at most one node of a
+rooted tree of class nodes. -/
 class FeatureGeometry (F : outParam (Type*)) (N : Type*) where
-  /-- The class node a feature hangs from, if the geometry places it. -/
+  /-- The node a feature is placed below, if the geometry places it. -/
   node : F → Option N
 
 namespace FeatureGeometry
@@ -80,7 +59,7 @@ variable {F N : Type*} [PartialOrder N] [FeatureGeometry F N] [DecidableLE N] [F
 
 /-! ### Natural classes -/
 
-/-- The natural class of a node: the features attached at or below it. -/
+/-- The natural class of a node: the features placed at or below it. -/
 def naturalClass (a : N) : Finset F :=
   Finset.univ.filter fun f ↦ ∃ m ∈ (node f : Option N), a ≤ m
 
@@ -89,21 +68,22 @@ variable {a b : N} {f : F}
 theorem mem_naturalClass : f ∈ naturalClass a ↔ ∃ m ∈ (node f : Option N), a ≤ m := by
   simp [naturalClass]
 
-/-- The root's class is every attached feature: spreading it is total assimilation. -/
+/-- The root's class is every placed feature: spreading it is total assimilation. -/
 theorem mem_naturalClass_bot [OrderBot N] :
     f ∈ naturalClass (⊥ : N) ↔ (node f : Option N).isSome := by
   simp [mem_naturalClass, Option.isSome_iff_exists]
 
 /-- Natural classes shrink along dominance. -/
-theorem naturalClass_anti (h : a ≤ b) : naturalClass b ⊆ naturalClass a := fun g hg ↦ by
-  rw [mem_naturalClass] at hg ⊢
-  obtain ⟨m, hm, hbm⟩ := hg
-  exact ⟨m, hm, h.trans hbm⟩
+theorem antitone_naturalClass : Antitone (naturalClass : N → Finset F) :=
+  fun _ _ h _ hg ↦ by
+    rw [mem_naturalClass] at hg ⊢
+    obtain ⟨m, hm, hbm⟩ := hg
+    exact ⟨m, hm, h.trans hbm⟩
 
 /-- Incomparable nodes have disjoint natural classes: the nodes dominating a feature's node
 are linearly ordered. -/
-theorem disjoint_naturalClass [PredOrder N] [IsPredArchimedean N] (h₁ : ¬ a ≤ b)
-    (h₂ : ¬ b ≤ a) : Disjoint (naturalClass a) (naturalClass b) := by
+theorem disjoint_naturalClass [PredOrder N] [IsPredArchimedean N] (h : IncompRel (· ≤ ·) a b) :
+    Disjoint (naturalClass a) (naturalClass b) := by
   rw [Finset.disjoint_left]
   intro g hga hgb
   rw [mem_naturalClass] at hga hgb
@@ -112,7 +92,7 @@ theorem disjoint_naturalClass [PredOrder N] [IsPredArchimedean N] (h₁ : ¬ a �
   rw [Option.mem_def] at hm hm'
   rw [hm, Option.some.injEq] at hm'
   subst hm'
-  exact (le_total_of_directed ham hbm).elim h₂ h₁
+  exact (le_total_of_directed ham hbm).elim h.2 h.1
 
 /-! ### Spreading -/
 
@@ -121,16 +101,14 @@ variable [DecidableEq F] {β : Type*} (src tgt : F → β)
 /-- Spreading node `a` from `src` onto `tgt` carries every class `a` dominates. -/
 theorem eqOn_piecewise_of_le (h : a ≤ b) :
     Set.EqOn ((naturalClass a).piecewise src tgt) src ↑(naturalClass b) :=
-  fun _ hg ↦ Finset.piecewise_eq_of_mem _ _ _ (naturalClass_anti h hg)
+  fun _ hg ↦ Finset.piecewise_eq_of_mem _ _ _ (antitone_naturalClass h hg)
 
 /-- Spreading node `a` leaves every class incomparable with `a` untouched. -/
-theorem eqOn_piecewise_of_not_le [PredOrder N] [IsPredArchimedean N] (h₁ : ¬ a ≤ b)
-    (h₂ : ¬ b ≤ a) : Set.EqOn ((naturalClass a).piecewise src tgt) tgt ↑(naturalClass b) :=
+theorem eqOn_piecewise_of_incompRel [PredOrder N] [IsPredArchimedean N]
+    (h : IncompRel (· ≤ ·) a b) :
+    Set.EqOn ((naturalClass a).piecewise src tgt) tgt ↑(naturalClass b) :=
   fun _ hg ↦
-    Finset.piecewise_eq_of_notMem _ _ _ (Finset.disjoint_right.1 (disjoint_naturalClass h₁ h₂) hg)
-
-instance [DecidableEq β] (s₁ s₂ : F → β) (a : N) : Decidable (Set.EqOn s₁ s₂ ↑(naturalClass a)) :=
-  Set.decidableEqOnOfFintype _ _ _
+    Finset.piecewise_eq_of_notMem _ _ _ (Finset.disjoint_right.1 (disjoint_naturalClass h) hg)
 
 end FeatureGeometry
 

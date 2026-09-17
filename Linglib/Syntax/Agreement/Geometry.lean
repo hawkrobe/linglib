@@ -1,3 +1,4 @@
+import Linglib.Core.Order.SuccPred.Tree
 import Linglib.Core.Order.UpperLower.Finset
 import Linglib.Phonology.FeatureGeometry
 import Linglib.Syntax.Person.Basic
@@ -25,9 +26,8 @@ order, the root `⊥` and the parent `Order.pred`.
 
 ## Main definitions
 
-* `Node`, `Node.ancestors` and `Node.parent`, and dominance `≤`, a `PartialOrder` with the
-  root as `⊥` and the parent as `Order.pred`; `Node.below` is the content a node brings
-  with it.
+* `Node`, `Node.ancestors` and `Node.pred`, and dominance `≤`, the tree of the parent map
+  with the root as `⊥`; `Node.below` is the content a node brings with it.
 * `Node.defaultDependent?`, `fillDefaults`: the default daughters and their fill-in.
 * `personNodes`, `numberNodes`, `cell`: the geometries of person, of number, and of
   a person–number cell, relative to an active inventory.
@@ -100,42 +100,28 @@ def ancestors : Node → List Node
   | .animate | .inanimate => [.nounClass, .individuation, .referringExpression]
   | .feminine | .masculine => [.animate, .nounClass, .individuation, .referringExpression]
 
-/-- The node a node depends on directly; the root alone has none. -/
-def parent (n : Node) : Option Node := n.ancestors.head?
+/-- The node a node depends on directly, the root fixed. -/
+def pred (n : Node) : Node := n.ancestors.head?.getD n
 
-/-- Dominance: `a` is `b` or one of the nodes `b` depends on. -/
-def Dominates (a b : Node) : Prop := a = b ∨ a ∈ b.ancestors
+/-- Every node reaches the root in as many steps as there are nodes. -/
+theorem pred_iterate_card :
+    ∀ n : Node, pred^[Fintype.card Node] n = .referringExpression := by decide
 
-instance : DecidableRel Dominates := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+/-- Dominance, the tree of the parent map: `a ≤ b` when `b` depends on `a`. -/
+instance : PartialOrder Node := .ofPred pred_iterate_card
 
-/-- The dominance order: `a ≤ b` when `b` depends on `a`. -/
-instance : PartialOrder Node where
-  le := Dominates
-  le_refl _ := .inl rfl
-  le_trans := by decide
-  le_antisymm := by decide
+instance : OrderBot Node := .ofPred pred_iterate_card
 
-theorem le_iff (a b : Node) : a ≤ b ↔ a = b ∨ a ∈ b.ancestors := Iff.rfl
+instance : PredOrder Node := .ofPred pred_iterate_card
 
-instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (Dominates a b))
+instance : DecidableLE Node := .ofPred pred_iterate_card
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
 
-/-- The root dominates every node. -/
-instance : OrderBot Node where
-  bot := .referringExpression
-  bot_le := by decide
-
-/-- The parent as the predecessor, the root fixed: the tree in mathlib's terms, with
-archimedean descent from finiteness. -/
-instance : PredOrder Node where
-  pred n := n.parent.getD n
-  pred_le := by decide
-  min_of_le_pred {a} h := fun ⦃b⦄ hb ↦
-    (by decide : ∀ a : Node, a ≤ a.parent.getD a → ∀ b, b ≤ a → a ≤ b) a h b hb
-  le_pred_of_lt {a b} h := (by decide : ∀ a b : Node, a < b → a ≤ b.parent.getD b) a b h
-
 instance : LocallyFiniteOrder Node := Fintype.toLocallyFiniteOrder
+
+/-- Dominance is dependence: `a ≤ b` when `a` is `b` or a node `b` depends on. -/
+theorem le_iff : ∀ a b : Node, a ≤ b ↔ a = b ∨ a ∈ b.ancestors := by decide
 
 /-- The nodes a node depends on, itself included and the root excluded, from the root down:
 the content a privative feature brings with it. -/
