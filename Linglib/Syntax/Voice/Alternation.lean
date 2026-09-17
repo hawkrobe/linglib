@@ -163,7 +163,7 @@ expressed oblique, none for an implicit or expletive position. -/
 def targetRole (t : Slot) : Option TermRole :=
   match α.target.codingRole t, α.target.get? t with
   | some r, _ => some (TermRole.ofArgumentRole r)
-  | none, some p => if p.IsAdpositional ∨ p.IsClausal then some .X else none
+  | none, some p => if p.IsExpressed then some .X else none
   | none, none => none
 
 /-- The fate of an initial slot: suppressed without a correspondent; cumulated when another

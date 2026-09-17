@@ -93,8 +93,7 @@ def hundir : SpanishVerbEntry :=
 /-- *caer* "fall" — marked anticausative, licenses stylistic LE.
     (ex. 9, unaccusative) -/
 def caer : SpanishVerbEntry :=
-  { form := "caer", frames := [ArgumentFrame.intransitive],
-    unaccusative := true,
+  { form := "caer", frames := [ArgumentFrame.unaccusative],
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
@@ -102,8 +101,7 @@ def caer : SpanishVerbEntry :=
 /-- *morir* "die" — marked anticausative, licenses stylistic LE.
     (ex. 10) -/
 def morir : SpanishVerbEntry :=
-  { form := "morir", frames := [ArgumentFrame.intransitive],
-    unaccusative := true,
+  { form := "morir", frames := [ArgumentFrame.unaccusative],
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
@@ -144,8 +142,7 @@ def olvidar : SpanishVerbEntry :=
 /-- *ocurrir* "occur" — marked anticausative, licenses stylistic LE.
     (ex. 12) -/
 def ocurrir : SpanishVerbEntry :=
-  { form := "ocurrir", frames := [ArgumentFrame.intransitive],
-    unaccusative := true,
+  { form := "ocurrir", frames := [ArgumentFrame.unaccusative],
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
@@ -218,8 +215,7 @@ def empeorar : SpanishVerbEntry :=
 /-- *crecer* "grow" — internally caused COS verb. No CAUSE in LSR.
     Rejects *por sí solo*. [koontz-garboden-2009] ex. 65c. -/
 def crecer : SpanishVerbEntry :=
-  { form := "crecer", frames := [ArgumentFrame.intransitive],
-    unaccusative := true,
+  { form := "crecer", frames := [ArgumentFrame.unaccusative],
     anticausativeMarking := .unmarked,
     causativeAlternation := false, verbHead := [.vGO, .vBE],
     licensesStylLE := false }

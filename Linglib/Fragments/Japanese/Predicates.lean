@@ -97,7 +97,6 @@ thematic Voice. -/
 def hanareru : Verb where
   form := "hanareru"
   frames := [ArgumentFrame.np]
-  unaccusative := true
   voiceType := some .nonThematic
   passivizable := false
 
@@ -106,7 +105,6 @@ Voice. -/
 def deru : Verb where
   form := "deru"
   frames := [ArgumentFrame.np]
-  unaccusative := true
   voiceType := some .nonThematic
   passivizable := false
 

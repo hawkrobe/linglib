@@ -24,7 +24,7 @@ survives as a classification of frames (`ArgumentFrame.complementType?`) with
 * `ImplicitInterp` — the interpretation of an unexpressed argument
 * `ArgumentFrame.Position` — one argument position, with its selectional axes
 * `ArgumentFrame.Position.Kind`, `Position.kind`, `IsNominal`, `IsAdpositional`,
-  `IsClausal` — the category of a position
+  `IsClausal`, `IsExpressed` — the category of a position
 * `ArgumentFrame.Position.Axis`, `Axes`, `Position.axes` — the axes a position
   records, as a bundle of partial values in the flat order
 * `ArgumentFrame` — external argument and complements, with the refinement order
@@ -32,7 +32,8 @@ survives as a classification of frames (`ArgumentFrame.complementType?`) with
   `ArgumentFrame.valency`, `ArgumentFrame.IsTransitive`, `ArgumentFrame.codingRole` — the
   argument slots of a frame and their comparative S/A/P/R/T classification
 * `ArgumentFrame.IsIntransitive`, `ArgumentFrame.IsUnaccusative`, `ArgumentFrame.HasNominal`,
-  `ArgumentFrame.HasAdpositional`, `ArgumentFrame.HasClausal` — shape predicates
+  `ArgumentFrame.HasAdpositional`, `ArgumentFrame.HasClausal`, `ArgumentFrame.HasImplicit` — shape
+  predicates
 * `ArgumentFrame.intransitive`, `ArgumentFrame.np`, `ArgumentFrame.finiteClause`, … — smart
   constructors, the flat enum cells among them
 * `ComplementType` + `toFrame` / `ArgumentFrame.complementType?` — the flat enum,
@@ -168,6 +169,9 @@ abbrev IsAdpositional (p : Position) : Prop := p.kind = .adpositional
 
 /-- The position is clausal. -/
 abbrev IsClausal (p : Position) : Prop := p.kind = .clausal
+
+/-- The position is expressed: nominal, adpositional or clausal. -/
+abbrev IsExpressed (p : Position) : Prop := p.IsNominal ∨ p.IsAdpositional ∨ p.IsClausal
 
 /-! ### Axes and the refinement order -/
 
@@ -343,11 +347,16 @@ def HasClausal : Prop := ∃ p ∈ fr.complements, p.IsClausal
 
 instance : Decidable fr.HasClausal := inferInstanceAs (Decidable (∃ p ∈ _, _))
 
-/-- Unaccusative: no external argument and a nominal complement, the
-    underlying object that surfaces as subject. -/
-def IsUnaccusative : Prop := fr.external = none ∧ fr.HasNominal
+/-- Some complement of the frame is implicit: an argument left unexpressed. -/
+def HasImplicit : Prop := ∃ p ∈ fr.complements, p.kind = .implicit
 
-instance : Decidable fr.IsUnaccusative := inferInstanceAs (Decidable (_ ∧ _))
+instance : Decidable fr.HasImplicit := inferInstanceAs (Decidable (∃ p ∈ _, _))
+
+/-- Unaccusative: no external argument and an expressed complement, the
+    underlying object or clause that surfaces as subject. -/
+def IsUnaccusative : Prop := fr.external = none ∧ ∃ p ∈ fr.complements, p.IsExpressed
+
+instance : Decidable fr.IsUnaccusative := inferInstanceAs (Decidable (_ ∧ ∃ p ∈ _, _))
 
 /-- The [noonan-2007] codings recorded across the frame's complements. -/
 def codings : List Complement.Coding := fr.complements.filterMap (·.coding?)
@@ -396,6 +405,9 @@ def finiteClause : ArgumentFrame :=
     (equi-deletion, raising, or adposition-marked overt subjects,
     [noonan-2007] §1.3.4), so it lives on the verb's reading, not here. -/
 def infinitival : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .infinitive)]⟩
+
+/-- Infinitival clause and no external argument: the raising frame. -/
+def raising : ArgumentFrame := ⟨none, [.clausal (coding := some .infinitive)]⟩
 
 /-- Gerund / nominalized clause. -/
 def gerund : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .nominalized)]⟩

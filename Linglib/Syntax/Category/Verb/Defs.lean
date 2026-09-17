@@ -98,8 +98,9 @@ so flat access (`v.complementType`) is preserved. -/
 
 namespace Verb
 
-/-- Argument structure and realization: complement selection, control,
-    proto-role entailments, voice, and implicit arguments. -/
+/-- Argument structure and realization: the argument frames, proto-role entailments and
+    voice. Unaccusativity and implicit arguments are frame shapes (`ArgumentFrame.unaccusative`,
+    `ArgumentFrame.objectDrop`). -/
 structure ArgStructure where
   /-- Argument frames, citation frame first: `ArgumentFrame.intransitive`, `ArgumentFrame.np`,
       `ArgumentFrame.finiteClause`, … (`Syntax/Category/Verb/ArgumentFrame/Basic.lean`). `[]`
@@ -112,21 +113,10 @@ structure ArgStructure where
   subjectEntailments : Option EntailmentProfile := none
   /-- Proto-role entailment profile for the first object (internal argument). -/
   objectEntailments : Option EntailmentProfile := none
-  /-- The verb is unaccusative, its subject an underlying object; `Verb.IsUnaccusative` reads
-      the voice type first when one is recorded ([kratzer-1996]). -/
-  unaccusative : Bool := false
   /-- The voice type, which fixes whether an external argument is introduced. -/
   voiceType : Option VoiceType := none
   /-- Can the verb passivize? -/
   passivizable : Bool := true
-  /-- Can the direct object (theme/patient) be left unexpressed?
-      Applies to monotransitives (*eat* vs *devour*) and the theme of
-      ditransitives. `none` = object always required. [bruening-2021] -/
-  implicitObj : Option ImplicitInterp := none
-  /-- Can the goal/recipient argument be left unexpressed?
-      Applies to the IO of double object constructions and the PP
-      of dative frames. `none` = goal always required. -/
-  implicitGoal : Option ImplicitInterp := none
   deriving Repr, BEq
 
 /-- Aspectual class: Vendler class, degree-achievement scale, incrementality,

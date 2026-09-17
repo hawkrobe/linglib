@@ -152,9 +152,8 @@ def run : Verb where
 /-- "arrive" — unaccusative intransitive -/
 def arrive : Verb := .mkRegular {
   form := "arrive"
-  frames := [ArgumentFrame.intransitive]
+  frames := [ArgumentFrame.unaccusative]
   subjectEntailments := some achievementSubjectProfile
-  unaccusative := true
   passivizable := false
   vendlerClass := some .achievement
   levinClass := some .inherentlyDirectedMotion }
@@ -166,8 +165,7 @@ def come : Verb where
   formPast := "came"
   formPastPart := "come"
   formPresPart := "coming"
-  frames := [ArgumentFrame.intransitive]
-  unaccusative := true
+  frames := [ArgumentFrame.unaccusative]
   passivizable := false
   vendlerClass := some .achievement
   levinClass := some .inherentlyDirectedMotion
@@ -179,10 +177,9 @@ def eat : Verb where
   formPast := "ate"
   formPastPart := "eaten"
   formPresPart := "eating"
-  frames := [ArgumentFrame.np]
+  frames := [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef)]
   subjectEntailments := some accomplishmentSubjectProfile
   objectEntailments := some consumptionObject
-  implicitObj := some .indef
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .eat
@@ -214,9 +211,9 @@ def give : Verb where
   formPast := "gave"
   formPastPart := "given"
   formPresPart := "giving"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
-  implicitObj := some .indef
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
+    ⟨some .nominal, [.implicit (some .indef), .adpositional]⟩,
+    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
   vendlerClass := some .accomplishment
   levinClass := some .give
 
@@ -301,10 +298,10 @@ def sell : Verb where
   formPast := "sold"
   formPastPart := "sold"
   formPresPart := "selling"
-  frames := [ArgumentFrame.np, ArgumentFrame.np_pp]
+  frames := [ArgumentFrame.np, ArgumentFrame.np_pp,
+    ⟨some .nominal, [.implicit (some .def), .adpositional]⟩,
+    ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩]
   subjectEntailments := some possessionTransfer.subjectProfile
-  implicitObj := some .def
-  implicitGoal := some .indef
   vendlerClass := some .accomplishment
   levinClass := some .give
 
@@ -719,11 +716,10 @@ def worry : Verb where
 /-- "seem" — raising verb (no theta role for subject, unaccusative) -/
 def seem : Verb := .mkRegular {
   form := "seem"
-  frames := [ArgumentFrame.infinitival]
-  readings := [{ frame := ArgumentFrame.infinitival, control := some .raising }]
+  frames := [ArgumentFrame.raising]
+  readings := [{ frame := ArgumentFrame.raising, control := some .raising }]
   vendlerClass := some .state
-  passivizable := false
-  unaccusative := true }
+  passivizable := false }
 
 /-! ### Causative (Periphrastic) -/
 
@@ -832,7 +828,6 @@ def break_ : Verb where
   formPastPart := "broken"
   formPresPart := "breaking"
   frames := [ArgumentFrame.np]
-  unaccusative := false
   vendlerClass := some .accomplishment
   causative := some .make
   levinClass := some .break_
@@ -861,7 +856,6 @@ def tear_ : Verb where
   formPastPart := "torn"
   formPresPart := "tearing"
   frames := [ArgumentFrame.np]
-  unaccusative := false
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   causative := some .make
@@ -886,8 +880,7 @@ def tear_ : Verb where
     does not reduce to scale boundedness alone. -/
 def crack : Verb := .mkRegular {
   form := "crack"
-  frames := [ArgumentFrame.np]
-  unaccusative := true
+  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
   vendlerClass := some .achievement
   degreeAchievementScale := some {
     dimension := .cracking,
@@ -900,8 +893,7 @@ def crack : Verb := .mkRegular {
     dented*, *badly dented*. -/
 def dent : Verb := .mkRegular {
   form := "dent"
-  frames := [ArgumentFrame.np]
-  unaccusative := true
+  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
   vendlerClass := some .achievement
   degreeAchievementScale := some {
     dimension := .denting,
@@ -915,8 +907,7 @@ def dent : Verb := .mkRegular {
     (§10.4.1) and the swat verbs (§18.2) on its manner readings. -/
 def scratch : Verb := .mkRegular {
   form := "scratch"
-  frames := [ArgumentFrame.np]
-  unaccusative := true
+  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
   vendlerClass := some .achievement
   degreeAchievementScale := some {
     dimension := .scratching,
@@ -929,8 +920,7 @@ def scratch : Verb := .mkRegular {
     #*shatter for two minutes*, ??*more shattered* ([tham-2025] (12)). -/
 def shatter : Verb := .mkRegular {
   form := "shatter"
-  frames := [ArgumentFrame.np]
-  unaccusative := true
+  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
   vendlerClass := some .achievement
   causative := some .make
   levinClass := some .break_ }
@@ -967,8 +957,7 @@ def destroy : Verb := .mkRegular {
     Implicit obj is indefinite ("the ice cream melted" / "we're melting"). -/
 def melt : Verb := .mkRegular {
   form := "melt"
-  frames := [ArgumentFrame.np]
-  implicitObj := some .indef
+  frames := [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef)]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   causative := some .make
@@ -1135,8 +1124,7 @@ def drink : Verb where
   formPast := "drank"
   formPastPart := "drunk"
   formPresPart := "drinking"
-  frames := [ArgumentFrame.np]
-  implicitObj := some .indef
+  frames := [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef)]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .eat
@@ -1160,10 +1148,9 @@ def build : Verb where
   formPast := "built"
   formPastPart := "built"
   formPresPart := "building"
-  frames := [ArgumentFrame.np]
+  frames := [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef)]
   subjectEntailments := some accomplishmentSubjectProfile
   objectEntailments := some creationObject
-  implicitObj := some .indef
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .build
@@ -1178,8 +1165,8 @@ def write : Verb where
   formPast := "wrote"
   formPastPart := "written"
   formPresPart := "writing"
-  frames := [ArgumentFrame.np, ArgumentFrame.np_pp]
-  implicitObj := some .indef
+  frames := [ArgumentFrame.np, ArgumentFrame.np_pp,
+    ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩]
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .imageCreation
@@ -1246,9 +1233,9 @@ def tell : Verb where
   formPastPart := "told"
   formPresPart := "telling"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.np_np]
-  implicitObj := some .def
-  implicitGoal := some .indef
+  frames := [ArgumentFrame.finiteClause, ArgumentFrame.np_np,
+    ⟨some .nominal, [.implicit (some .def), .adpositional]⟩,
+    ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩]
   vendlerClass := some .achievement
   projectionBehavior := some .plug
   levinClass := some .tell
@@ -1369,140 +1356,124 @@ def prove : Verb := .mkRegular {
       cry, scream, shriek, yell, groan, grumble, hiss, sigh, whimper, snap
     - **Non-QI** (unergative): speak, talk -/
 
-/-- "whisper" — MoS verb, permits quotative inversion (unaccusative) -/
+/-- "whisper" — Levin 37.3 Manner of Speaking verbs. -/
 def whisper : Verb := .mkRegular {
   form := "whisper"
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .mannerOfSpeaking }
 
-/-- "murmur" — MoS verb, permits quotative inversion (unaccusative) -/
+/-- "murmur" — Levin 37.3 Manner of Speaking verbs. -/
 def murmur : Verb := .mkRegular {
   form := "murmur"
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .mannerOfSpeaking }
 
-/-- "shout" — MoS verb, permits quotative inversion (unaccusative) -/
+/-- "shout" — Levin 37.3 Manner of Speaking verbs. -/
 def shout : Verb := .mkRegular {
   form := "shout"
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .mannerOfSpeaking }
 
-/-- "cry" — MoS verb, permits quotative inversion (unaccusative) -/
+/-- "cry" — Levin 37.3 Manner of Speaking verbs. -/
 def cry : Verb := .mkRegular {
   form := "cry"
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .mannerOfSpeaking }
 
-/-- "scream" — MoS verb, permits quotative inversion (unaccusative) -/
+/-- "scream" — Levin 37.3 Manner of Speaking verbs. -/
 def scream : Verb := .mkRegular {
   form := "scream"
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .mannerOfSpeaking }
 
-/-- "mumble" — MoS verb, permits quotative inversion (unaccusative) -/
+/-- "mumble" — Levin 37.3 Manner of Speaking verbs. -/
 def mumble : Verb := .mkRegular {
   form := "mumble"
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .mannerOfSpeaking }
 
-/-- "mutter" — MoS verb, permits quotative inversion (unaccusative) -/
+/-- "mutter" — Levin 37.3 Manner of Speaking verbs. -/
 def mutter : Verb := .mkRegular {
   form := "mutter"
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .mannerOfSpeaking }
 
-/-- "shriek" — MoS verb, permits quotative inversion (unaccusative) -/
+/-- "shriek" — Levin 37.3 Manner of Speaking verbs. -/
 def shriek : Verb := .mkRegular {
   form := "shriek"
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .mannerOfSpeaking }
 
-/-- "yell" — MoS verb, permits quotative inversion (unaccusative) -/
+/-- "yell" — Levin 37.3 Manner of Speaking verbs. -/
 def yell : Verb := .mkRegular {
   form := "yell"
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .mannerOfSpeaking }
 
-/-- "groan" — MoS verb, permits quotative inversion (unaccusative) -/
+/-- "groan" — Levin 37.3 Manner of Speaking verbs. -/
 def groan : Verb := .mkRegular {
   form := "groan"
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .mannerOfSpeaking }
 
-/-- "grumble" — MoS verb, permits quotative inversion (unaccusative) -/
+/-- "grumble" — Levin 37.3 Manner of Speaking verbs. -/
 def grumble : Verb := .mkRegular {
   form := "grumble"
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .mannerOfSpeaking }
 
-/-- "hiss" — MoS verb, permits quotative inversion (unaccusative) -/
+/-- "hiss" — Levin 37.3 Manner of Speaking verbs. -/
 def hiss : Verb := .mkRegular {
   form := "hiss"
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .mannerOfSpeaking }
 
-/-- "sigh" — a manner-of-speaking-like verb, permits quotative inversion (unaccusative)
-    Levin 40.2 verbs of nonverbal expression. -/
+/-- "sigh" — Levin 40.2 Nonverbal Expression verbs. -/
 def sigh : Verb := .mkRegular {
   form := "sigh"
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .nonverbalExpression }
 
-/-- "whimper" — MoS verb, permits quotative inversion (unaccusative) -/
+/-- "whimper" — Levin 37.3 Manner of Speaking verbs. -/
 def whimper : Verb := .mkRegular {
   form := "whimper"
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .mannerOfSpeaking }
 
-/-- "snap" — MoS verb, permits quotative inversion (unaccusative) -/
+/-- "snap" — Levin 37.3 Manner of Speaking verbs. -/
 def snap : Verb := .mkRegular {
   form := "snap"
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .mannerOfSpeaking }
 
 /-- "speak" — agentive communication verb, blocks quotative inversion (unergative)
@@ -1706,9 +1677,9 @@ def admire : Verb := .mkRegular {
     definite (familiar). Implicit second obj is indefinite. -/
 def envy : Verb := .mkRegular {
   form := "envy"
-  frames := [ArgumentFrame.np, ArgumentFrame.np_np]
-  implicitObj := some .indef
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np, ArgumentFrame.np_np,
+    ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩,
+    ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
   vendlerClass := some .state
   levinClass := some .admire }
 
@@ -2226,8 +2197,8 @@ def send : Verb where
   formPast := "sent"
   formPastPart := "sent"
   formPresPart := "sending"
-  frames := [ArgumentFrame.np, ArgumentFrame.np_np]
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np, ArgumentFrame.np_np,
+    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
   vendlerClass := some .accomplishment
   levinClass := some .send
 
@@ -2307,9 +2278,9 @@ def throw : Verb where
   formPast := "threw"
   formPastPart := "thrown"
   formPresPart := "throwing"
-  frames := [ArgumentFrame.np, ArgumentFrame.np_np]
-  implicitObj := some .def
-  implicitGoal := some .indef
+  frames := [ArgumentFrame.np, ArgumentFrame.np_np,
+    ⟨some .nominal, [.implicit (some .def), .adpositional]⟩,
+    ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩]
   vendlerClass := some .achievement
   levinClass := some .throw
 
@@ -2608,28 +2579,25 @@ def drown : Verb := .mkRegular {
 /-- "glow" — Levin 43.1 Light Emission verbs. -/
 def glow : Verb := .mkRegular {
   form := "glow"
-  frames := [ArgumentFrame.intransitive]
+  frames := [ArgumentFrame.unaccusative]
   passivizable := false
   vendlerClass := some .state
-  unaccusative := true
   levinClass := some .lightEmission }
 
 /-- "buzz" — Levin 43.2 Sound Emission verbs. -/
 def buzz : Verb := .mkRegular {
   form := "buzz"
-  frames := [ArgumentFrame.intransitive]
+  frames := [ArgumentFrame.unaccusative]
   passivizable := false
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .soundEmission }
 
 /-- "rumble" — Levin 43.2 Sound Emission verbs. -/
 def rumble : Verb := .mkRegular {
   form := "rumble"
-  frames := [ArgumentFrame.intransitive]
+  frames := [ArgumentFrame.unaccusative]
   passivizable := false
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .soundEmission }
 
 /-- "bleed" — Levin 43.4 Substance Emission verbs. -/
@@ -2639,10 +2607,9 @@ def bleed : Verb where
   formPast := "bled"
   formPastPart := "bled"
   formPresPart := "bleeding"
-  frames := [ArgumentFrame.intransitive]
+  frames := [ArgumentFrame.unaccusative]
   passivizable := false
   vendlerClass := some .activity
-  unaccusative := true
   levinClass := some .substanceEmission
 
 /-! ### Change of State (§ 45) -/
@@ -2698,9 +2665,8 @@ def boil : Verb := .mkRegular {
     Degree achievement: open scale (no maximum rustedness). -/
 def rust : Verb := .mkRegular {
   form := "rust"
-  frames := [ArgumentFrame.intransitive]
+  frames := [ArgumentFrame.unaccusative]
   passivizable := false
-  unaccusative := true
   vendlerClass := some .activity
   degreeAchievementScale := some {
     dimension := .corrosion }
@@ -2800,19 +2766,17 @@ def warm : Verb := .mkRegular {
 /-- "exist" — Levin 47.1 Exist verbs. Pure state. -/
 def exist : Verb := .mkRegular {
   form := "exist"
-  frames := [ArgumentFrame.intransitive]
+  frames := [ArgumentFrame.unaccusative]
   passivizable := false
   vendlerClass := some .state
-  unaccusative := true
   levinClass := some .exist }
 
 /-- "appear" — Levin 48.1 Appear verbs. Punctual emergence. -/
 def appear : Verb := .mkRegular {
   form := "appear"
-  frames := [ArgumentFrame.intransitive]
+  frames := [ArgumentFrame.unaccusative]
   passivizable := false
   vendlerClass := some .achievement
-  unaccusative := true
   levinClass := some .appear }
 
 /-- "fidget" — Levin 49 Body-Internal Motion verbs. -/
@@ -2944,24 +2908,21 @@ def rain : Verb := .mkRegular {
 /-- "charge" — DOC-only. Implicit second obj indef, implicit goal def (addressee). -/
 def charge : Verb := .mkRegular {
   form := "charge"
-  frames := [ArgumentFrame.np_np]
-  implicitObj := some .indef
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩,
+    ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
   vendlerClass := some .accomplishment }
 
 /-- "cost" — DOC-only. Implicit second obj indef, implicit goal def. -/
 def cost : Verb := .mkRegular {
   form := "cost"
-  frames := [ArgumentFrame.np_np]
-  implicitObj := some .indef
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩,
+    ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
   vendlerClass := some .state }
 
 /-- "fine" — DOC-only. Implicit second obj indef, implicit goal def. -/
 def fine : Verb := .mkRegular {
   form := "fine"
-  frames := [ArgumentFrame.np_np]
-  implicitObj := some .indef
+  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩]
   vendlerClass := some .accomplishment }
 
 /-- "tip" — DOC-only. Implicit second obj indef, implicit goal def (unique). -/
@@ -2971,9 +2932,8 @@ def tip : Verb where
   formPast := "tipped"
   formPastPart := "tipped"
   formPresPart := "tipping"
-  frames := [ArgumentFrame.np_np]
-  implicitObj := some .indef
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩,
+    ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
   vendlerClass := some .accomplishment
 
 /-- "pay" — DOC-only. Implicit second obj indef, implicit goal def. -/
@@ -2983,9 +2943,8 @@ def pay : Verb where
   formPast := "paid"
   formPastPart := "paid"
   formPresPart := "paying"
-  frames := [ArgumentFrame.np_np]
-  implicitObj := some .indef
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩,
+    ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
   vendlerClass := some .accomplishment
 
 /-- "strike" — DOC-only. Implicit second obj indef, implicit goal def (familiar). -/
@@ -2995,9 +2954,8 @@ def strike_ : Verb where
   formPast := "struck"
   formPastPart := "struck"
   formPresPart := "striking"
-  frames := [ArgumentFrame.np_np]
-  implicitObj := some .indef
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩,
+    ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
   vendlerClass := some .achievement
   senseTag := .default
 
@@ -3008,16 +2966,14 @@ def forgive : Verb where
   formPast := "forgave"
   formPastPart := "forgiven"
   formPresPart := "forgiving"
-  frames := [ArgumentFrame.np_np]
-  implicitObj := some .def
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .def)]⟩,
+    ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
   vendlerClass := some .accomplishment
 
 /-- "spare" — DOC-only. Implicit second obj def, no implicit goal. -/
 def spare : Verb := .mkRegular {
   form := "spare"
-  frames := [ArgumentFrame.np_np]
-  implicitObj := some .def
+  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
   vendlerClass := some .accomplishment }
 
 /-- "deny" — DOC-only. Implicit goal def; second object obligatory
@@ -3028,8 +2984,7 @@ def deny : Verb where
   formPast := "denied"
   formPastPart := "denied"
   formPresPart := "denying"
-  frames := [ArgumentFrame.np_np]
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
   vendlerClass := some .accomplishment
 
 /-- "permit" — DOC-only. Implicit goal def (addressee); second object
@@ -3040,16 +2995,15 @@ def permit : Verb where
   formPast := "permitted"
   formPastPart := "permitted"
   formPresPart := "permitting"
-  frames := [ArgumentFrame.np_np]
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
   vendlerClass := some .accomplishment
 
 /-- "assign" — alternating (DOC + PP). Implicit goal definite; the second
     object is obligatory, Pesetsky's observation as [bruening-2021] report it. -/
 def assign : Verb := .mkRegular {
   form := "assign"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
+    ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
   vendlerClass := some .accomplishment }
 
 -- DOC-only verbs with no implicit arguments
@@ -3076,9 +3030,9 @@ def bet : Verb where
     Implicit goal def (PP). -/
 def serve : Verb := .mkRegular {
   form := "serve"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
-  implicitObj := some .indef
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
+    ⟨some .nominal, [.implicit (some .indef), .adpositional]⟩,
+    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
   vendlerClass := some .accomplishment }
 
 /-- "teach" — alternates DOC/PP. Implicit goal indef (PP).
@@ -3089,9 +3043,9 @@ def teach : Verb where
   formPast := "taught"
   formPastPart := "taught"
   formPresPart := "teaching"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
-  implicitObj := some .indef
-  implicitGoal := some .indef
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
+    ⟨some .nominal, [.implicit (some .indef), .adpositional]⟩,
+    ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩]
   vendlerClass := some .activity
 
 /-- "feed" — alternates DOC/PP. Implicit second obj indef (DOC).
@@ -3102,8 +3056,8 @@ def feed : Verb where
   formPast := "fed"
   formPastPart := "fed"
   formPresPart := "feeding"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
-  implicitObj := some .indef
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
+    ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩]
   vendlerClass := some .activity
 
 /-- "show" — alternates DOC/PP. Implicit second obj def. No implicit goal. -/
@@ -3113,51 +3067,51 @@ def show_ : Verb where
   formPast := "showed"
   formPastPart := "shown"
   formPresPart := "showing"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
-  implicitObj := some .def
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
+    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
   vendlerClass := some .accomplishment
 
 /-- "award" — alternates DOC/PP. Implicit goal def (PP). -/
 def award : Verb := .mkRegular {
   form := "award"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
+    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
   vendlerClass := some .accomplishment }
 
 /-- "forward" — alternates DOC/PP. Implicit goal def (PP). -/
 def forward_ : Verb := .mkRegular {
   form := "forward"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
+    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
   vendlerClass := some .accomplishment }
 
 /-- "grant" — alternates DOC/PP. Implicit goal def (PP). -/
 def grant : Verb := .mkRegular {
   form := "grant"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
+    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
   vendlerClass := some .accomplishment }
 
 /-- "offer" — alternates DOC/PP. Implicit goal def (PP). -/
 def offer : Verb := .mkRegular {
   form := "offer"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
+    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
   vendlerClass := some .accomplishment }
 
 /-- "reserve" — alternates DOC/PP. Implicit goal def (PP). -/
 def reserve : Verb := .mkRegular {
   form := "reserve"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp]
-  implicitGoal := some .def
+  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
+    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
   vendlerClass := some .accomplishment }
 
 /-- "pass" — alternates DOC/PP. Implicit DO def in PP frame only. -/
 def pass : Verb := .mkRegular {
   form := "pass"
-  frames := [ArgumentFrame.np, ArgumentFrame.np_pp]
-  implicitObj := some .def
-  implicitGoal := some .indef
+  frames := [ArgumentFrame.np, ArgumentFrame.np_pp,
+    ⟨some .nominal, [.implicit (some .def), .adpositional]⟩,
+    ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩]
   vendlerClass := some .accomplishment
   levinClass := some .give }
 

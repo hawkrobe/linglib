@@ -8,9 +8,11 @@ import Linglib.Studies.Pylkkanen2008
 This file formalizes the second of the four asymmetries [bruening-2021] draws between the arguments
 of an English ditransitive. Table (56) classifies the verbs on three coordinates: how an implicit
 second object is interpreted, whether the goal argument is a first object or a PP, and how that
-goal is interpreted when implicit. Two of the three are Fragment fields, so what this file supplies
-is the goal's position, and the grid's shape is then read off the Fragment: one combination —
-an indefinite implicit first object — is systematically missing, and every other is attested.
+goal is interpreted when implicit. Two of the three are read off the Fragment's frames, whose
+implicit positions record the interpretation of an unexpressed argument, so what this file
+supplies is the goal's position, and the grid's shape is then read off the Fragment: one
+combination — an indefinite implicit first object — is systematically missing, and every other is
+attested.
 
 That gap is the argument against treating both objects as selected arguments of V, since on
 [pesetsky-1995]'s and [larson-1988]'s accounts the two objects should be interpreted alike. In
@@ -21,9 +23,8 @@ only the ι route is available to the first object. He rejects the small-clause 
 [pylkkanen-2008]'s low applicative, and Landau's null-NP view of implicit arguments.
 
 The sluicing asymmetry (G1) is formalized in `Studies/Bruening2021Sluicing.lean`. Frame-conditioned
-licensing (G4) is not: the Fragment records `implicitObj` globally rather than per frame, so the
-contrast between *show*, licensed only in the double object frame, and *pass*, licensed only in the
-PP frame, needs a field indexed by complement type.
+licensing (G4), the contrast between *show*, licensed only in the double object frame, and *pass*,
+licensed only in the PP frame, is expressible over the frames but not yet formalized.
 
 Of the roughly 43 verbs of (56), the 32 whose Fragment encoding is unambiguous are classified here;
 *ask*, *promise*, *wish*, *leave*, *afford*, *lose*, *guarantee*, *rent*, *save*, *email/text* and
@@ -32,7 +33,8 @@ Of the roughly 43 verbs of (56), the 32 whose Fragment encoding is unambiguous a
 ## Main definitions
 
 * `GoalPosition`, `classification` — where each verb's goal argument sits in (56)
-* `cell` — a verb's grid coordinates, the interpretations read off the Fragment
+* `implicitSecondObject`, `implicitGoal`, `cell` — a verb's grid coordinates, the
+  interpretations read off the Fragment's frames
 
 ## Main results
 
@@ -62,9 +64,9 @@ open ArgumentStructure
 
 Bruening's table is a grid: a verb's cell is fixed by how its implicit second object is
 interpreted, whether its goal argument is a first object or a PP, and how that goal is interpreted
-when implicit. Two of those three coordinates are already Fragment fields, so all this file adds is
-the goal's position — the classification below is the table's content that the Fragment does not
-carry, and every claim about interpretation is read off the Fragment itself. -/
+when implicit. Two of those three coordinates are read off the Fragment's frames, so all this file
+adds is the goal's position — the classification below is the table's content that the Fragment
+does not carry, and every claim about interpretation is read off the Fragment itself. -/
 
 /-- Where a verb's goal argument sits. Bruening files alternating verbs whose arguments cannot be
 implicit under "PP" as well, so this classifies the goal, not the verb's frame inventory. -/
@@ -88,20 +90,35 @@ def classification : List (English.Verb × GoalPosition) := [
   (hand, .pp), (lend, .pp)
 ]
 
+/-- The interpretation of the verb's implicit second object: for a first-object goal, the
+implicit position after the first object; for a PP goal, the implicit theme before the PP. -/
+def implicitSecondObject (vp : English.Verb × GoalPosition) : Option ImplicitInterp :=
+  vp.1.frames.findSome? fun fr ↦
+    match vp.2, fr.complements with
+    | .firstObject, [.nominal, .implicit i] => i
+    | .pp, [.implicit i, .adpositional _ _] => i
+    | _, _ => none
+
+/-- The interpretation of the verb's implicit goal: the implicit first object, or the implicit
+PP after the theme. -/
+def implicitGoal (vp : English.Verb × GoalPosition) : Option ImplicitInterp :=
+  vp.1.frames.findSome? fun fr ↦
+    match vp.2, fr.complements with
+    | .firstObject, [.implicit i, .nominal] => i
+    | .pp, [.nominal, .implicit i] => i
+    | _, _ => none
+
 /-- The cell a verb occupies: its second object's interpretation, its goal's position, and the
-goal's interpretation — the first and third read off the Fragment. -/
+goal's interpretation. -/
 def cell (vp : English.Verb × GoalPosition) :
     Option ImplicitInterp × GoalPosition × Option ImplicitInterp :=
-  (vp.1.implicitObj, vp.2, vp.1.implicitGoal)
+  (implicitSecondObject vp, vp.2, implicitGoal vp)
 
 /-! ### Derived verb subsets -/
 
-/-- The ditransitive verbs of (56). -/
-def ditransitiveVerbs : List English.Verb := classification.map (·.1)
-
-/-- Verbs whose goal argument is a first object. -/
-def docOnlyVerbs : List English.Verb :=
-  (classification.filter (fun vp => vp.2 == .firstObject)).map (·.1)
+/-- The verbs of (56) whose goal argument is a first object. -/
+def docOnlyVerbs : List (English.Verb × GoalPosition) :=
+  classification.filter fun vp ↦ vp.2 == .firstObject
 
 /-! ### G2: the empty cell
 
@@ -120,7 +137,7 @@ the gaps on that side. -/
 /-- The empty cell: no verb leaves a first object implicit and indefinite. -/
 theorem no_indefinite_implicit_first_object :
     classification.all (fun vp =>
-      vp.2 != .firstObject || vp.1.implicitGoal != some .indef) = true := by decide
+      vp.2 != .firstObject || implicitGoal vp != some .indef) = true := by decide
 
 /-- Every other combination is attested, so the gap is not a sampling accident. -/
 theorem other_combinations_attested :
@@ -135,10 +152,10 @@ theorem other_combinations_attested :
 /-- The asymmetry stated over the two positions: a first-object goal is never implicit and
 indefinite, while both interpretations occur for second objects and for PP goals. -/
 theorem g2_asymmetry :
-    docOnlyVerbs.all (fun v => v.implicitGoal != some .indef) = true ∧
-      ditransitiveVerbs.any (fun v => v.implicitObj == some .def) = true ∧
-      ditransitiveVerbs.any (fun v => v.implicitObj == some .indef) = true ∧
-      ditransitiveVerbs.any (fun v => v.implicitGoal == some .indef) = true := by
+    docOnlyVerbs.all (fun vp => implicitGoal vp != some .indef) = true ∧
+      classification.any (fun vp => implicitSecondObject vp == some .def) = true ∧
+      classification.any (fun vp => implicitSecondObject vp == some .indef) = true ∧
+      classification.any (fun vp => implicitGoal vp == some .indef) = true := by
   refine ⟨by decide, by decide, by decide, by decide⟩
 
 /-! ### G3: base-transitivity constraint
@@ -147,8 +164,8 @@ Bruening's G3 (§2.3.1, summary point 3): a simple transitive that allows
 an implicit object does NOT allow it when used in the DOC.
 
 The encoded consequent: *melt* and *build* (Bruening p. 1025 ex. (7)–(8))
-have `complementType = .np` (transitive) with `implicitObj.isSome`, AND
-have no `.np_np` alt — so the Fragment itself blocks the spurious
+have `complementType = .np` (transitive) with an object-drop frame, AND
+have no `.np_np` frame — so the Fragment itself blocks the spurious
 "implicit-second-obj-in-DOC" reading for these verbs.
 
 (Bruening's prototypical example *bake* is not in the English fragment.) -/
@@ -158,8 +175,8 @@ def baseTransitivesWithImplicit : List English.Verb := [melt, build]
 theorem g3_base_transitive_constraint :
     baseTransitivesWithImplicit.all (fun v =>
       decide (v.complementType = .np)
-      && v.implicitObj.isSome
-      && decide (v.altComplementType ≠ some .np_np)) = true := by decide
+      && v.frames.any (fun fr => decide fr.HasImplicit)
+      && decide (ArgumentFrame.np_np ∉ v.frames)) = true := by decide
 
 /-! ### G1 and G4
 
@@ -196,7 +213,7 @@ Bruening explicitly *rejects* Pylkkänen 2008's analysis as a "variety of
 small clause analysis" (fn. 10 p. 1042). -/
 theorem bruening_vs_pylkkanen_low_recipient :
     Pylkkanen2008.Construction.englishDOC.head = Minimalist.ApplType.lowRecipient
-    ∧ docOnlyVerbs.all (fun v => v.implicitGoal != some .indef) = true := by
+    ∧ docOnlyVerbs.all (fun vp => implicitGoal vp != some .indef) = true := by
   refine ⟨rfl, ?_⟩; decide
 
 /-- Bruening vs Larson 1988.
@@ -211,10 +228,9 @@ object (`some .indef`) but def-implicit first object (`some .def`). The
 asymmetry is the load-bearing argument against Larson (§3.1 p. 1041),
 and against [pesetsky-1995]'s "both selected by V" view. -/
 theorem bruening_vs_larson_implicit_first_obj :
-    pay.implicitObj = some .indef
-    ∧ pay.implicitGoal = some .def
-    ∧ pay.implicitObj ≠ pay.implicitGoal := by
-  refine ⟨rfl, rfl, ?_⟩
+    implicitSecondObject (pay, .firstObject) = some .indef
+    ∧ implicitGoal (pay, .firstObject) = some .def
+    ∧ implicitSecondObject (pay, .firstObject) ≠ implicitGoal (pay, .firstObject) := by
   decide
 
 end Bruening2021

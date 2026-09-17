@@ -132,10 +132,9 @@ def metaniono : Verb where
     stative ([angelopoulos-2026] ex. 13, 14; [landau-2010]). -/
 def areso : Verb where
   form := "aréso"
-  frames := [ArgumentFrame.finiteClause]
+  frames := [{ ArgumentFrame.finiteClause with external := none }]
   attitude := some (.preferential (.degreeComparison .positive))
   vendlerClass := some .state
-  unaccusative := true
 
 /-- *xérome* (χαίρομαι) 'be happy/glad' — preferential positive,
     stative. -/
@@ -253,8 +252,7 @@ def thelo : Verb where
     ([angelopoulos-2026] fn. 14). -/
 def simveni : Verb where
   form := "simvéni"
-  frames := [{ complements := [.clausal (coding := some .subjunctive)] }]
+  frames := [{ external := none, complements := [.clausal (coding := some .subjunctive)] }]
   vendlerClass := some .achievement
-  unaccusative := true
 
 end Greek.StandardModern.Complementizers
