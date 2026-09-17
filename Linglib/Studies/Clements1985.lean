@@ -1,6 +1,7 @@
 import Linglib.Fragments.English.Phonology
 import Linglib.Core.Data.Fintype.Sets
-import Linglib.Core.Order.SuccPred.Tree
+import Linglib.Core.Data.Fintype.Order
+import Mathlib.Data.Fintype.Card
 import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.Subregular.LocalRewrite
 
@@ -114,16 +115,25 @@ def pred : Node → Node
   | .laryngeal | .supralaryngeal => .root
   | .manner | .place => .supralaryngeal
 
-/-- Every node reaches the root in as many steps as there are nodes. -/
-theorem pred_iterate_card : ∀ n : Node, pred^[Fintype.card Node] n = .root := by decide
+/-- A node with its ancestors: the iterates of `pred`. -/
+def up (n : Node) : Finset Node := (Finset.range (Fintype.card Node)).image (pred^[·] n)
 
-instance : PartialOrder Node := .ofPred pred_iterate_card
+instance : PartialOrder Node := PartialOrder.lift up (by decide)
 
-instance : OrderBot Node := .ofPred pred_iterate_card
+instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (up a ⊆ up b))
 
-instance : PredOrder Node := .ofPred pred_iterate_card
+instance : DecidableLT Node := decidableLTOfDecidableLE
 
-instance : DecidableLE Node := .ofPred pred_iterate_card
+instance : OrderBot Node where
+  bot := .root
+  bot_le := by decide
+
+/-- The parent as the predecessor. -/
+instance : PredOrder Node where
+  pred := pred
+  pred_le := by decide
+  min_of_le_pred := by decide
+  le_pred_of_lt := by decide
 
 end Node
 
@@ -138,9 +148,6 @@ def classNode? : Feature → Option Node
   | .consonantal | .sonorant | .continuant | .lateral | .strident | .nasal => some .manner
   | .labial | .coronal | .anterior | .distributed | .high | .back | .round => some .place
   | _ => none
-
-instance : FeatureGeometry Feature Node where
-  node := classNode?
 
 /-- The two sets of place features: P, distinguishing place in consonants, and S,
 distinguishing place in vowels (§4). -/
@@ -161,7 +168,7 @@ def PlaceSet.features (π : PlaceSet) : Finset Feature :=
 
 /-- The place features are exactly P ∪ S. -/
 theorem mem_place_naturalClass_iff (f : Feature) :
-    f ∈ naturalClass Node.place ↔ (placeSet? f).isSome := by
+    f ∈ naturalClass classNode? Node.place ↔ (placeSet? f).isSome := by
   cases f <;> decide
 
 /-! ### Assimilation as spreading ((5)) -/
@@ -180,7 +187,7 @@ variable (σ : Spreading) (src tgt : Segment)
 
 /-- The features a spreading carries. -/
 def features : Spreading → Finset Feature
-  | .node a => naturalClass a
+  | .node a => naturalClass classNode? a
   | .feature f => {f}
 
 /-- Spread from `src` onto `tgt`: the carried features take `src`'s values, specified or
@@ -204,23 +211,23 @@ variable (σ : Spreading) (src tgt : Segment)
 /-- Place spreading carries `[anterior]` and `[distributed]` together and leaves `[nasal]`
 alone, so (12) is a single-node rule while its `[αnasal]` variant of (14) is not. -/
 theorem anterior_distributed_subset_place :
-    {Feature.anterior, Feature.distributed} ⊆ naturalClass Node.place := by
+    {Feature.anterior, Feature.distributed} ⊆ naturalClass classNode? Node.place := by
   decide
 
-theorem nasal_notMem_place : Feature.nasal ∉ naturalClass Node.place := by decide
+theorem nasal_notMem_place : Feature.nasal ∉ naturalClass classNode? Node.place := by decide
 
 /-- No spreading reaches both `[nasal]`, a manner feature, and `[distributed]`, a place
 feature, without carrying the whole supralaryngeal class (§3). -/
 theorem supralaryngeal_subset_of_nasal_of_distributed (h₁ : Feature.nasal ∈ σ.features)
     (h₂ : Feature.distributed ∈ σ.features) :
-    naturalClass Node.supralaryngeal ⊆ σ.features := by
+    naturalClass classNode? Node.supralaryngeal ⊆ σ.features := by
   revert σ; decide
 
 /-- A rule assimilating `[nasal]` and `[distributed]` at once is total supralaryngeal
 assimilation. -/
 theorem apply_eqOn_supralaryngeal_of_nasal_of_distributed (h₁ : Feature.nasal ∈ σ.features)
     (h₂ : Feature.distributed ∈ σ.features) :
-    Set.EqOn (σ.apply src tgt) src ↑(naturalClass Node.supralaryngeal) :=
+    Set.EqOn (σ.apply src tgt) src ↑(naturalClass classNode? Node.supralaryngeal) :=
   (σ.apply_eqOn src tgt).mono
     (Finset.coe_subset.2 (supralaryngeal_subset_of_nasal_of_distributed σ h₁ h₂))
 
@@ -236,7 +243,7 @@ one spreading doing both is supralaryngeal, so the paper decomposes it into spir
 and place assimilation. -/
 theorem supralaryngeal_subset_of_anterior_of_continuant (h₁ : Feature.anterior ∈ σ.features)
     (h₂ : Feature.continuant ∈ σ.features) :
-    naturalClass Node.supralaryngeal ⊆ σ.features := by
+    naturalClass classNode? Node.supralaryngeal ⊆ σ.features := by
   revert σ; decide
 
 /-! ### English coronal place assimilation ((10)–(14)) -/
@@ -245,7 +252,7 @@ theorem supralaryngeal_subset_of_anterior_of_continuant (h₁ : Feature.anterior
 /t d n/, takes the place node of a following `[+consonantal, +coronal]` segment. -/
 def rule12 : Rule where
   target := Segment.ofSpecs [(.continuant, false), (.coronal, true), (.anterior, true)]
-  effect := .copyRight (naturalClass Node.place)
+  effect := .copyRight (naturalClass classNode? Node.place)
   rightContext := [.seg (Segment.ofSpecs [(.consonantal, true), (.coronal, true)])]
 
 /-- The SPE statement (14): the same target before a `[+coronal]` segment copies that
@@ -302,8 +309,8 @@ takes the preceding vowel's, so the output shares every supralaryngeal feature w
 vowel and keeps only the stop's laryngeal features `[+spread, −voiced]` — an [h]. Klamath
 (9a) and Sierra Popoluca (16) spread the same node from a lateral and from a nasal. -/
 theorem preaspiration (v c : Segment) :
-    Set.EqOn ((Spreading.node .supralaryngeal).apply v c) v ↑(naturalClass Node.supralaryngeal) ∧
-      Set.EqOn ((Spreading.node .supralaryngeal).apply v c) c ↑(naturalClass Node.laryngeal) :=
+    Set.EqOn ((Spreading.node .supralaryngeal).apply v c) v ↑(naturalClass classNode? Node.supralaryngeal) ∧
+      Set.EqOn ((Spreading.node .supralaryngeal).apply v c) c ↑(naturalClass classNode? Node.laryngeal) :=
   ⟨Spreading.apply_eqOn _ v c, eqOn_piecewise_of_incompRel v c ⟨by decide, by decide⟩⟩
 
 /-! ### Primary and secondary place features (§4) -/

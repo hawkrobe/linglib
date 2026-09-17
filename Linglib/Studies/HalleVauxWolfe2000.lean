@@ -1,4 +1,6 @@
-import Linglib.Core.Order.SuccPred.Tree
+import Linglib.Core.Data.Fintype.Order
+import Mathlib.Data.Fintype.Card
+import Mathlib.Data.Fintype.EquivFin
 import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.Segmental.FeatureClass
 import Linglib.Data.Examples.HalleVauxWolfe2000
@@ -74,16 +76,25 @@ def pred : Node → Node
   | .lips | .tongueBlade | .tongueBody => .place
   | .tongueRoot | .larynx => .guttural
 
-/-- Every node reaches the root in as many steps as there are nodes. -/
-theorem pred_iterate_card : ∀ n : Node, pred^[Fintype.card Node] n = .root := by decide
+/-- A node with its ancestors: the iterates of `pred`. -/
+def up (n : Node) : Finset Node := (Finset.range (Fintype.card Node)).image (pred^[·] n)
 
-instance : PartialOrder Node := .ofPred pred_iterate_card
+instance : PartialOrder Node := PartialOrder.lift up (by decide)
 
-instance : OrderBot Node := .ofPred pred_iterate_card
+instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (up a ⊆ up b))
 
-instance : PredOrder Node := .ofPred pred_iterate_card
+instance : DecidableLT Node := decidableLTOfDecidableLE
 
-instance : DecidableLE Node := .ofPred pred_iterate_card
+instance : OrderBot Node where
+  bot := .root
+  bot_le := by decide
+
+/-- The parent as the predecessor. -/
+instance : PredOrder Node where
+  pred := pred
+  pred_le := by decide
+  min_of_le_pred := by decide
+  le_pred_of_lt := by decide
 
 end Node
 
@@ -100,25 +111,23 @@ def node : Feature → Option Node
   | .atr => some .tongueRoot
   | .tense => none
 
-instance : FeatureGeometry Feature Node where
-  node := node
-
 /-! ### Articulator-free features and Place -/
 
 /-- The articulator-free features and the root features belong to the root's class alone: no
 articulator node dominates them. -/
 theorem articulatorFree_mem_naturalClass_iff :
     ∀ f ∈ ({.consonantal, .sonorant, .continuant, .strident, .lateral} : Finset Feature),
-      ∀ a : Node, f ∈ naturalClass a ↔ a = ⊥ := by
+      ∀ a : Node, f ∈ naturalClass node a ↔ a = ⊥ := by
   decide
 
 /-- Soft Palate is a sister of Place, not under it. -/
-theorem nasal_notMem_place : Feature.nasal ∉ naturalClass Node.place := by decide
+theorem nasal_notMem_place : Feature.nasal ∉ naturalClass node Node.place := by decide
 
 /-- Place dominates exactly the three oral articulators. -/
 theorem place_eq_union :
-    naturalClass Node.place =
-      naturalClass Node.lips ∪ naturalClass Node.tongueBlade ∪ naturalClass Node.tongueBody := by
+    naturalClass node Node.place =
+      naturalClass node Node.lips ∪ naturalClass node Node.tongueBlade ∪
+        naturalClass node Node.tongueBody := by
   decide
 
 /-! ### Designated articulators (p. 435) -/
@@ -144,12 +153,12 @@ variable (src tgt : Segment)
 
 /-- Irish Nasal Place Assimilation spreads the terminal features under Place from `src` onto
 `tgt`, the substrate's `Finset.piecewise` on the Place class. -/
-def placeAssimilation : Segment := (naturalClass (F := Feature) Node.place).piecewise src tgt
+def placeAssimilation : Segment := (naturalClass node Node.place).piecewise src tgt
 
 /-- Spreading Place carries the whole Tongue Body class, `eqOn_piecewise_of_le`; in the same way
 the Lips and Tongue Blade classes. -/
 theorem placeAssimilation_eqOn_tongueBody :
-    Set.EqOn (placeAssimilation src tgt) src ↑(naturalClass (F := Feature) Node.tongueBody) :=
+    Set.EqOn (placeAssimilation src tgt) src ↑(naturalClass node Node.tongueBody) :=
   eqOn_piecewise_of_le src tgt (by decide)
 
 /-- Soft Palate is a sister of Place, so Place assimilation leaves [nasal] where it was: the
@@ -157,7 +166,7 @@ assimilated nasal is still a nasal, `eqOn_piecewise_of_incompRel`. -/
 theorem placeAssimilation_nasal : placeAssimilation src tgt .nasal = tgt .nasal :=
   eqOn_piecewise_of_incompRel (a := Node.place) (b := Node.softPalate) src tgt
     ⟨by decide, by decide⟩
-    (by decide : Feature.nasal ∈ naturalClass (F := Feature) Node.softPalate)
+    (by decide : Feature.nasal ∈ naturalClass node Node.softPalate)
 
 /-- Irish Dorsal Assimilation (44) spreads the designated articulator alone: the terminal
 feature [dorsal], not the Tongue Body node. -/
@@ -172,7 +181,7 @@ theorem dorsalAssimilation_back : dorsalAssimilation src tgt .back = tgt .back :
 /-- (45): spreading the Tongue Body node instead would carry [back] along with [dorsal], the
 prediction of a Place-node analysis of (44) that the data refute. -/
 theorem tongueBody_spread_back :
-    (naturalClass (F := Feature) Node.tongueBody).piecewise src tgt .back = src .back :=
+    (naturalClass node Node.tongueBody).piecewise src tgt .back = src .back :=
   Finset.piecewise_eq_of_mem _ _ _ (by decide)
 
 end HalleVauxWolfe2000

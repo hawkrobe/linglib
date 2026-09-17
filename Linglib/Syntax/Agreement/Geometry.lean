@@ -1,6 +1,7 @@
-import Linglib.Core.Order.SuccPred.Tree
+import Linglib.Core.Data.Fintype.Order
+import Mathlib.Data.Fintype.Card
+import Mathlib.Order.SuccPred.Basic
 import Linglib.Core.Order.UpperLower.Finset
-import Linglib.Phonology.FeatureGeometry
 import Linglib.Syntax.Person.Basic
 import Linglib.Syntax.Number.Basic
 import Mathlib.Order.Interval.Finset.Defs
@@ -20,9 +21,9 @@ is node count; and an organizing node with no dependent receives its default
 daughter — Speaker, Minimal, Inanimate — by rule. Person and number cells are
 assigned their geometries, the contrastive Minimal node being present only in
 inventories that activate it. The tree is a feature geometry in the sense of
-[clements-1985] and [sagey-1986], `Phonology.FeatureGeometry`, whose nodes are
-the features themselves: a rooted tree in mathlib's terms, dominance the partial
-order, the root `⊥` and the parent `Order.pred`.
+[clements-1985] and [sagey-1986] whose nodes are the features themselves, a
+rooted tree in mathlib's terms: dominance the partial order, the root `⊥` and
+the parent `Order.pred`.
 
 ## Main definitions
 
@@ -103,20 +104,27 @@ def ancestors : Node → List Node
 /-- The node a node depends on directly, the root fixed. -/
 def pred (n : Node) : Node := n.ancestors.head?.getD n
 
-/-- Every node reaches the root in as many steps as there are nodes. -/
-theorem pred_iterate_card :
-    ∀ n : Node, pred^[Fintype.card Node] n = .referringExpression := by decide
+/-- A node with its ancestors: the iterates of `pred`. -/
+def up (n : Node) : Finset Node := (Finset.range (Fintype.card Node)).image (pred^[·] n)
 
-/-- Dominance, the tree of the parent map: `a ≤ b` when `b` depends on `a`. -/
-instance : PartialOrder Node := .ofPred pred_iterate_card
+/-- Dominance: `a ≤ b` when `b` depends on `a`. -/
+instance : PartialOrder Node := PartialOrder.lift up (by decide)
 
-instance : OrderBot Node := .ofPred pred_iterate_card
-
-instance : PredOrder Node := .ofPred pred_iterate_card
-
-instance : DecidableLE Node := .ofPred pred_iterate_card
+instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (up a ⊆ up b))
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
+
+/-- The root dominates every node. -/
+instance : OrderBot Node where
+  bot := .referringExpression
+  bot_le := by decide
+
+/-- The parent as the predecessor. -/
+instance : PredOrder Node where
+  pred := pred
+  pred_le := by decide
+  min_of_le_pred := by decide
+  le_pred_of_lt := by decide
 
 instance : LocallyFiniteOrder Node := Fintype.toLocallyFiniteOrder
 
@@ -142,11 +150,6 @@ def defaultDependent? : Node → Option Node
   | _ => none
 
 end Node
-
-/-- A feature geometry whose features are its own nodes: each feature hangs from itself, so
-the natural class of a node is the set of nodes it dominates. -/
-instance : Phonology.FeatureGeometry Node Node where
-  node n := some n
 
 /-! ### Default fill-in -/
 

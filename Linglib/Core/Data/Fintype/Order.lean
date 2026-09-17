@@ -7,14 +7,27 @@ import Mathlib.Data.Fintype.Defs
 import Mathlib.Order.Basic
 
 /-!
-# Decidable strict order on finite Pi types
+# Decidable order predicates on finite types
 
 The pointwise order on `∀ i, α i` is decidable when the index type is finite and each
 coordinate order is (mathlib's `DecidableLE (∀ a, β a)` instance in `Data/Fintype/Defs`); the
 strict order follows as for any preorder with a decidable `≤`, as `Finsupp.decidableLT` does.
+Minimality and maximality of an element are decidable on a finite type with a decidable `≤`.
 
 `[UPSTREAM]` candidate for `Mathlib/Data/Fintype/Defs.lean`, beside the `DecidableLE` instance.
 -/
+
+namespace Fintype
+
+variable {α : Type*} [Fintype α] [LE α] [DecidableLE α]
+
+instance decidableIsMin (a : α) : Decidable (IsMin a) :=
+  decidable_of_iff (∀ b, b ≤ a → a ≤ b) ⟨fun h _ hb ↦ h _ hb, fun h _ hb ↦ h hb⟩
+
+instance decidableIsMax (a : α) : Decidable (IsMax a) :=
+  decidable_of_iff (∀ b, a ≤ b → b ≤ a) ⟨fun h _ hb ↦ h _ hb, fun h _ hb ↦ h hb⟩
+
+end Fintype
 
 namespace Pi
 

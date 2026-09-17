@@ -1,4 +1,6 @@
-import Linglib.Core.Order.SuccPred.Tree
+import Linglib.Core.Data.Fintype.Order
+import Mathlib.Data.Fintype.Card
+import Mathlib.Data.Fintype.EquivFin
 import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.Segmental.FeatureClass
 import Linglib.Phonology.Autosegmental.NonCrossing
@@ -75,16 +77,25 @@ def pred : Node → Node
   | .softPalate | .place => .supralaryngeal
   | .labial | .coronal | .dorsal => .place
 
-/-- Every node reaches the root in as many steps as there are nodes. -/
-theorem pred_iterate_card : ∀ n : Node, pred^[Fintype.card Node] n = .root := by decide
+/-- A node with its ancestors: the iterates of `pred`. -/
+def up (n : Node) : Finset Node := (Finset.range (Fintype.card Node)).image (pred^[·] n)
 
-instance : PartialOrder Node := .ofPred pred_iterate_card
+instance : PartialOrder Node := PartialOrder.lift up (by decide)
 
-instance : OrderBot Node := .ofPred pred_iterate_card
+instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (up a ⊆ up b))
 
-instance : PredOrder Node := .ofPred pred_iterate_card
+instance : DecidableLT Node := decidableLTOfDecidableLE
 
-instance : DecidableLE Node := .ofPred pred_iterate_card
+instance : OrderBot Node where
+  bot := .root
+  bot_le := by decide
+
+/-- The parent as the predecessor. -/
+instance : PredOrder Node where
+  pred := pred
+  pred_le := by decide
+  min_of_le_pred := by decide
+  le_pred_of_lt := by decide
 
 /-- The class feature of an articulator node, present exactly when the articulator is active
 in the segment. -/
@@ -118,28 +129,25 @@ def node : Feature → Option Node
   | .syllabic | .sonorant | .approximant | .delayedRelease | .strident | .tap | .trill
   | .labiodental | .front | .tense | .atr => none
 
-instance : FeatureGeometry Feature Node where
-  node := node
-
 /-! ### Natural classes -/
 
 /-- The degree-of-closure features belong to the root's class alone: spreading any class node
 below the root, as place assimilation does, leaves the degree of closure untouched. -/
 theorem degreeOfClosure_mem_naturalClass_iff :
     ∀ f ∈ ({.continuant, .consonantal} : Finset Feature), ∀ a : Node,
-      f ∈ naturalClass a ↔ a = ⊥ := by
+      f ∈ naturalClass node a ↔ a = ⊥ := by
   decide
 
 /-- Nasality is in the classes of the soft palate node and its ancestors alone: place
 assimilation leaves it, and spreading the supralaryngeal node carries it, as in Klamath. -/
-theorem nasal_mem_naturalClass_iff (a : Node) : .nasal ∈ naturalClass a ↔ a ≤ .softPalate := by
+theorem nasal_mem_naturalClass_iff (a : Node) : .nasal ∈ naturalClass node a ↔ a ≤ .softPalate := by
   revert a; decide
 
 /-- Distinct articulators have disjoint classes: a feature of one, such as rounding, can depend
 on no node of another, such as height. -/
 theorem disjoint_naturalClass_of_articulators {a b : Node} (ha : a ∈ Node.articulators)
     (hb : b ∈ Node.articulators) (hab : a ≠ b) :
-    Disjoint (naturalClass a : Finset Feature) (naturalClass b) :=
+    Disjoint (naturalClass node a : Finset Feature) (naturalClass node b) :=
   disjoint_naturalClass ⟨Node.not_le_of_mem_articulators ha hb hab,
     Node.not_le_of_mem_articulators hb ha hab.symm⟩
 
