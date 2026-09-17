@@ -31,11 +31,13 @@ compile to first-order formulas, so the engine's truth conditions are model-theo
 realization (`interp_eq_realize`) and first-order consequence transfers
 (`conj_entails_first`). The book's in-situ alternative, the object-position entries its
 lexical rule derives for the quantifier words, composes the flat tree to the same
-surface-scope reading by Functional Application alone. The book's composition principles are
-also transcribed as reference relations, the extensional rules of Chapters 3 to 5 (`Denotes`)
-and their revision for partial denotations in Chapter 4 (`Partial.Denotes`), which the engines
-extend, and Chapter 4's Fregean definite article makes *the student* a presupposition failure
-and *the pizza* a defined value in the toy model.
+surface-scope reading by Functional Application alone. The words' available readings compose
+as sets through `Tree.readings`, and the surface-scope reading is among the readings of the
+surface tree. The book's composition principles are also transcribed as reference relations,
+the extensional rules of Chapters 3 to 5 (`Denotes`) and their revision for partial
+denotations in Chapter 4 (`Partial.Denotes`), which the engines extend, and Chapter 4's
+Fregean definite article makes *the student* a presupposition failure and *the pizza* a
+defined value in the toy model.
 
 ## Implementation notes
 
@@ -275,6 +277,33 @@ def synTree_everyStudentSleeps : Tree Cat String :=
     (.node .DP (.terminal .Det "every" :: .terminal .N "student" :: []) ::
      .bind 1 .S
        (.node .S (.trace 1 .NP :: .node .VP (.terminal .V "sleeps" :: []) :: [])) :: [])
+
+/-! ### Readings of the ambiguous lexicon
+
+The fragment's words make sets of readings available, and `Tree.readings` composes them, each
+occurrence resolved to one reading. The study's leaf interpretation is one choice among them,
+so the surface-scope reading is among the readings of the surface tree. -/
+
+section Readings
+
+/-- The words' available readings, the quantifier words through the terminals of theirs and
+the toy fragment's words through the toy lexicon. -/
+def lexReadings : QuantityWord ⊕ String → Set (Denotation ToyEntity Unit) :=
+  Sum.elim (fun w ↦ terminals ⟦w⟧ ToyEntity Unit) fun s ↦ {d | toyLexicon s = some d}
+
+/-- The study's leaf interpretation chooses among the available readings. -/
+theorem lex_mem_lexReadings (w : QuantityWord ⊕ String) (d : Denotation ToyEntity Unit)
+    (h : lex w = some d) : d ∈ lexReadings w := by
+  cases w with
+  | inl w => exact quantifierReading_mem h
+  | inr s => exact h
+
+/-- The surface-scope reading is among the readings of the surface tree. -/
+theorem surfaceScopeProp_mem_readings :
+    ⟨Ty.t, surfaceScopeProp⟩ ∈ Tree.readings lexReadings g₀ tree_surface :=
+  Tree.interp_mem_readings lex_mem_lexReadings interp_computes_surface
+
+end Readings
 
 /-! ### The book's rules as a reference
 
