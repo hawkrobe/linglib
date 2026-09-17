@@ -4,7 +4,7 @@ import Linglib.Syntax.Minimalist.Verbal.Applicative
 import Linglib.Syntax.Minimalist.Verbal.Decomposition
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Fragments.English.Predicates
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 
 /-!
 # Martin, Rose and Nichols (2025): Burning Facts: Thick and Thin Causatives
@@ -200,7 +200,7 @@ theorem break_levin : LevinClass.break_ ∈ break_.verb.levinClasses := by decid
 theorem kill_levin : LevinClass.murder ∈ kill.verb.levinClasses := by decide
 theorem destroy_levin : LevinClass.destroy ∈ destroy.verb.levinClasses := by decide
 theorem cut_levin : LevinClass.cut ∈ cut.verb.levinClasses := by decide
-theorem burn_levin : LevinClass.otherCoS ∈ burn.verb.levinClasses := by decide
+theorem burn_levin : LevinClass.otherChangeOfState ∈ burn.verb.levinClasses := by decide
 
 /-! ## Bridge to ThickThinClass
 
@@ -263,14 +263,14 @@ theorem cut_class_rich_alternation :
     overshoots. -/
 theorem destroy_class_vs_empirical :
     LevinClass.destroy.meaningComponents.predictedAlternation .causativeInchoative = true
-    ∧ DiathesisAlternation.causativeInchoative ∈ LevinClass.destroy.starredAlternations
+    ∧ LevinClass.destroy.Stars .causativeInchoative
     ∧ MartinRoseNichols2025.ThickThin.destroy.alternating = false := by decide
 
 /-- Kill (thin, murder class) is predicted to alternate by its meaning components, but
     Levin's class page stars the alternation and the paper's row agrees. -/
 theorem kill_class_vs_empirical :
     LevinClass.murder.meaningComponents.predictedAlternation .causativeInchoative = true
-    ∧ DiathesisAlternation.causativeInchoative ∈ LevinClass.murder.starredAlternations
+    ∧ LevinClass.murder.Stars .causativeInchoative
     ∧ kill.alternating = false := by decide
 
 /-- All ThickThin verb entries (for aggregate bridge theorems). -/

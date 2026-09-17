@@ -1,6 +1,7 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.Root.Defs
 
 /-!
@@ -366,14 +367,14 @@ theorem cos_classes_accomplishment :
     LevinClass.break_.eventTemplate = .accomplishment
     ∧ LevinClass.bend.eventTemplate = .accomplishment
     ∧ LevinClass.cooking.eventTemplate = .accomplishment
-    ∧ LevinClass.otherCoS.eventTemplate = .accomplishment
+    ∧ LevinClass.otherChangeOfState.eventTemplate = .accomplishment
     ∧ LevinClass.destroy.eventTemplate = .accomplishment := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 /-! ### Motion classes → activity -/
 
 /-- Motion verbs are activities (no CoS, have motion). -/
 theorem motion_is_activity :
-    LevinClass.mannerOfMotion.eventTemplate = .activity
+    LevinClass.run.eventTemplate = .activity
     ∧ LevinClass.inherentlyDirectedMotion.eventTemplate = .activity := ⟨rfl, rfl⟩
 
 /-! ### Stative classes → state -/
@@ -400,7 +401,7 @@ theorem calve_is_achievement :
 its MeaningComponents). The two-predicate (motion + sustained contact)
 substructure is at `Studies/RappaportHovavLevin2024.lean`. -/
 theorem wipe_is_accomplishment :
-    LevinClass.wipe.eventTemplate = .accomplishment := rfl
+    LevinClass.wipeManner.eventTemplate = .accomplishment := rfl
 
 /-! ### Template → aspectual class consistency -/
 

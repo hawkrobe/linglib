@@ -37,7 +37,7 @@ def LevinClass.rootEntailments : LevinClass → Option Root.Kinds
   -- §10 Removing
   | .remove => none
   | .clear => some causativeResult      -- externally caused cleared state
-  | .wipe => some pureManner            -- manner of surface action
+  | .wipeManner | .wipeInstrument => some pureManner            -- manner of surface action
   | .steal => none
   -- §11 Sending and Carrying
   | .send => none
@@ -48,7 +48,7 @@ def LevinClass.rootEntailments : LevinClass → Option Root.Kinds
   -- §13 Change of Possession
   | .give => some fullSpec              -- (B&KG Ch.3) √HAND: manner + caused possession change
   | .contribute => none
-  | .getObtain => none
+  | .get | .obtain => none
   | .exchange => none
   -- §14–16
   | .learn => none
@@ -76,7 +76,8 @@ def LevinClass.rootEntailments : LevinClass → Option Root.Kinds
   -- §24 Coloring
   | .color => some causativeResult      -- externally caused colored state
   -- §25 Image Creation
-  | .imageCreation => some fullSpec     -- etching manner + caused image
+  | .imageImpression | .scribble | .illustrate | .transcribe =>
+    some fullSpec
   -- §26 Creation and Transformation
   | .build => some causativeResult      -- externally caused creation
   | .grow => some pureResult            -- internally caused growth
@@ -104,9 +105,10 @@ def LevinClass.rootEntailments : LevinClass → Option Root.Kinds
   | .judgment => none
   | .assessment => none
   -- §35 Searching
-  | .search => some pureManner          -- searching manner
+  | .hunt | .search | .stalk | .investigate | .rummage | .ferret =>
+    some pureManner
   -- §36 Social Interaction
-  | .socialInteraction => none
+  | .correspond | .marry | .meet => none
   -- §37 Communication
   | .say => none
   | .tell => none
@@ -119,7 +121,7 @@ def LevinClass.rootEntailments : LevinClass → Option Root.Kinds
   | .devour => some fullSpec            -- vigorous manner + caused consumption
   | .dine => some pureManner            -- social activity manner
   -- §40 Body
-  | .bodyProcess => none
+  | .hiccup | .breathe | .exhale => none
   | .nonverbalExpression => none
   | .flinch => none
   | .hurt => some causativeResult       -- externally caused injury
@@ -138,15 +140,15 @@ def LevinClass.rootEntailments : LevinClass → Option Root.Kinds
   | .break_ => some causativeResult     -- (B&KG Ch.2,5) √CRACK: externally caused CoS
   | .bend => some causativeResult       -- externally caused shape change
   | .cooking => some fullSpec           -- (B&KG) cooking manner + caused CoS
-  | .otherCoS => some causativeResult   -- √MELT/√FREEZE: externally caused CoS
-  | .entitySpecificCoS => some pureResult -- √BLOSSOM/√RUST: internally caused
-  | .calibratableCoS => some pureResult -- internally driven scalar change
+  | .otherChangeOfState => some causativeResult   -- √MELT/√FREEZE: externally caused CoS
+  | .entitySpecificChangeOfState => some pureResult -- √BLOSSOM/√RUST: internally caused
+  | .calibratableChangeOfState => some pureResult -- internally driven scalar change
   -- §46 Lodge
   | .lodge => none
   -- §47 Existence
   | .exist => some ∅              -- (B&KG) pure stative, no root content
   -- §48 Appearance, Disappearance
-  | .appear => some pureResult          -- internally caused appearance
+  | .appear | .reflexiveAppearance => some pureResult          -- internally caused appearance
   | .disappearance => some pureResult   -- internally caused going out of existence
   -- §49 Body-Internal Motion
   | .bodyInternalMotion => some pureManner -- fidgeting manner
@@ -155,8 +157,8 @@ def LevinClass.rootEntailments : LevinClass → Option Root.Kinds
   -- §51 Motion
   | .inherentlyDirectedMotion => some pureResult -- internally caused directed motion
   | .leave => some pureResult           -- internally caused departure
-  | .mannerOfMotion => some pureManner  -- (B&KG) √JOG: motion manner
-  | .vehicleMotion => some pureManner   -- vehicle manner
+  | .roll | .run => some pureManner  -- (B&KG) √JOG: motion manner
+  | .vehicleName | .nonVehicleName => some pureManner   -- vehicle manner
   | .chase => some pureManner           -- chasing manner
   -- §52 Avoid
   | .avoid => none
@@ -164,11 +166,12 @@ def LevinClass.rootEntailments : LevinClass → Option Root.Kinds
   | .linger => some pureManner          -- temporal manner
   | .rush => some pureManner            -- temporal manner
   -- §54 Measure
-  | .measure => some propertyConcept    -- measurement state
+  | .register | .cost | .fit | .price | .bill => some propertyConcept    -- measurement state
   -- §55 Aspectual
-  | .aspectual => none
+  | .begin | .complete => none
   -- §57 Weather
   | .weather => none
+  | _ => none
 
 /-- The class's root carries the entailment. -/
 def LevinClass.RootEntails (c : LevinClass) (k : Root.Kind) : Prop :=

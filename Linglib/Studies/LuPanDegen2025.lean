@@ -191,7 +191,8 @@ theorem hasManner_of_mannerOfSpeaking {v : English.Verb}
 /-- A verb of the *say* class carries manner only by an adverb. -/
 theorem hasManner_say_iff {v : English.Verb} (h : v.levinClasses = {.say}) (b : Bool) :
     MatrixPredicate.HasManner ⟨v, b⟩ ↔ b = true := by
-  simp [MatrixPredicate.HasManner, MatrixPredicate.lexicalManner, h, LevinClass.meaningComponents]
+  simp [MatrixPredicate.HasManner, MatrixPredicate.lexicalManner, h]
+  exact fun h ↦ absurd h (by decide)
 
 /-- The dimension the active question addresses. -/
 inductive Dimension where
@@ -264,11 +265,13 @@ theorem unaffectedByNegation_iff_island (p : MatrixPredicate) (f : Bool) :
 
 /-- *John whispered that Mary met with the lawyer*: an island by the verb's class. -/
 theorem island_whisper : Island ⟨whisper, false⟩ false :=
-  island_of_hasManner (hasManner_of_mannerOfSpeaking (by decide) false)
+  island_of_hasManner
+    (hasManner_of_mannerOfSpeaking (by decide) false)
 
 /-- *John said that Mary met with the lawyer*: no island. -/
 theorem not_island_say (f : Bool) : ¬ Island ⟨say, false⟩ f :=
-  not_island_of_not_hasManner (λ h => Bool.noConfusion ((hasManner_say_iff rfl false).1 h)) f
+  not_island_of_not_hasManner
+    (fun h ↦ Bool.noConfusion ((hasManner_say_iff (by decide) false).1 h)) f
 
 /-- *John said softly that Mary met with the lawyer*: an island by the adverb. -/
 theorem island_say_softly : Island ⟨say, true⟩ false :=

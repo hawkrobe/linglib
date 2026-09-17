@@ -2,6 +2,7 @@ import Linglib.Semantics.Root.Defs
 import Linglib.Semantics.ArgumentStructure.Verb
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.LevinTheory
+import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 import Linglib.Data.Examples.BeaversKoontzGarboden2020
 
 /-!
@@ -499,15 +500,10 @@ theorem crack_template_forces_denote_result {Entity State T : Type*}
 
 open ArgumentStructure
 
--- The classes are finite, so the comparison quantifies over all of them; the instance stays
--- here since it slows `decide` proofs elsewhere that enumerate class-valued rows.
-deriving instance Fintype for LevinClass
-
 /-- A class Part II of [levin-1993] tests for the causative alternation and whose root
 signature is recorded. -/
 def TestedForCausative (c : LevinClass) : Prop :=
-  c.rootEntailments.isSome ∧
-    DiathesisAlternation.causativeInchoative ∈ c.alternations ∪ c.starredAlternations
+  c.rootEntailments.isSome ∧ c.Tests .causativeInchoative
 
 instance : DecidablePred TestedForCausative := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
@@ -519,19 +515,19 @@ results, the pure-manner roots with causative uses, and the property-concept roo
 emission classes. -/
 def rootHypothesisResidue : Finset LevinClass :=
   {LevinClass.build, .create, .engender, .amuse,
-    .split, .knead, .cooking, .grow, .calibratableCoS, .pour, .coil, .mannerOfMotion, .rush,
+    .split, .knead, .cooking, .grow, .calibratableChangeOfState, .pour, .coil, .roll, .rush,
     .lightEmission, .soundEmission, .substanceEmission}
 
 /-- Outside the residue, the root hypothesis agrees with every tested class page. -/
 theorem rootHypothesis_matches_profile :
     ∀ c : LevinClass, TestedForCausative c → c ∉ rootHypothesisResidue →
       (c.RootPredictsCausative ↔ c.Participates .causativeInchoative) := by
-  decide
+  decide +kernel
 
 /-- The residue is exactly the tested classes on which they disagree. -/
 theorem rootHypothesisResidue_disagrees :
     ∀ c ∈ rootHypothesisResidue, TestedForCausative c ∧
       ¬ (c.RootPredictsCausative ↔ c.Participates .causativeInchoative) := by
-  decide
+  decide +kernel
 
 end BeaversKoontzGarboden2020

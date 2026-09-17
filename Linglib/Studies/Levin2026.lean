@@ -1,5 +1,5 @@
 import Linglib.Semantics.Causation.SEM.Counterfactual
-import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Semantics.Causation.Resultatives
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
@@ -45,7 +45,7 @@ open Semantics
 open Reference
 
 open ArgumentStructure
-open LevinClass (pushPull hit wipe)
+open LevinClass (pushPull hit wipeManner)
 open English (push pull kick)
 open English.Adjectives
 open Causation.Resultatives (resultativeCausativeBuilder)
@@ -342,7 +342,7 @@ def scrape_free : AlternationPair :=
   , transitive := "She scraped the plane's door free."
   , intransitive := "The door scraped free of its frame."
   , bareIntransitive := "*The door scraped."
-  , verbClass := .wipe, adjType := .unattachment }
+  , verbClass := .wipeManner, adjType := .unattachment }
 
 /-- Smack–flat (intransitive from example 48; transitive implied). -/
 def smack_flat : AlternationPair :=
@@ -369,7 +369,7 @@ def alternationPairs : List AlternationPair :=
 theorem all_verbs_from_predicted_classes :
     alternationPairs.all (λ d =>
       intrPushOpenClasses.contains d.verbClass ||
-      d.verbClass == .wipe) = true := by
+      d.verbClass == .wipeManner) = true := by
   decide
 
 /-- Each core-class pair (pushPull, hit) is blocked alone but gains the
@@ -466,7 +466,7 @@ from `Causation.CCSelection`. -/
     while *push open* must be an anticausative licensed by the
     construction. -/
 theorem freeze_alternates_push_does_not :
-    LevinClass.otherCoS.Participates .causativeInchoative ∧
+    LevinClass.otherChangeOfState.Participates .causativeInchoative ∧
     ¬ LevinClass.pushPull.Participates .causativeInchoative := by decide
 
 /-! ## PCC and the independent-source analysis

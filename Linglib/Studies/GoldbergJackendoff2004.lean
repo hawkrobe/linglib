@@ -112,7 +112,7 @@ under: *bleed* emits substance, *yell* and *cry* are manner of speaking. -/
 theorem rows_verbRole_unaccusative :
     ∀ r ∈ rows, r.subconstruction.isCausative = false → ∀ ρ ∈ r.verbRole, ∀ c ∈ r.levinClass,
       c ∈ r.verb.levinClasses ∧ (ρ = .patient ↔ c.PredictsUnaccusative) := by
-  decide
+  decide +kernel
 
 /-- Where the fragment's citation frame derives a role label for the fusing argument, it is the
 paper's: the object of *wipe* is construable as a patient. -/
