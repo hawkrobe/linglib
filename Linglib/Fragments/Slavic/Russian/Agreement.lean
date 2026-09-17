@@ -1,5 +1,5 @@
 import Linglib.Syntax.Agreement.Bundle
-import Linglib.Syntax.Agreement.Position
+import Linglib.Syntax.Agreement.Hierarchy
 import Linglib.Fragments.Slavic.Russian.Gender
 
 /-!

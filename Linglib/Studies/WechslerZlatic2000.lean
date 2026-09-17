@@ -1,6 +1,6 @@
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Syntax.Agreement.Bundle
-import Linglib.Syntax.Agreement.Position
+import Linglib.Syntax.Agreement.Hierarchy
 import Linglib.Data.Examples.WechslerZlatic2000
 
 /-!

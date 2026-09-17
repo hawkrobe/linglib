@@ -1,23 +1,28 @@
+import Mathlib.Order.Basic
 import Mathlib.Order.Monotone.Defs
-import Linglib.Syntax.Agreement.Position
+import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Semantic agreement along a hierarchy
+# The Agreement Hierarchy
 
-This file defines the availability of semantic agreement at a position of the Agreement
-Hierarchy, the hybrid nouns whose availability varies from position to position, and what it
-is for a map along a hierarchy to respect it.
+This file defines the four positions of Corbett's Agreement Hierarchy, the attributive
+modifier, the predicate, the relative pronoun and the personal pronoun, as a chain with the
+attributive on top; the availability of semantic agreement at a position; the hybrid nouns
+whose availability varies from position to position; and what it is for a map along a
+hierarchy to respect it.
 
 A target agrees syntactically when its form follows the feature value the controller is
 assigned, and semantically when it follows the controller's meaning. A hybrid noun, such as
 Russian *vrač* 'doctor' denoting a woman or British English *committee*, admits both at some
 positions, and the Agreement Hierarchy predicts that the likelihood of semantic agreement
-never decreases from the attributive towards the personal pronoun. `Agreement.Position` is
-ordered with the attributive on top, so a map respects the hierarchy when it is antitone on
-the positions where it is recorded.
+never decreases from the attributive towards the personal pronoun, so a map respects the
+hierarchy when it is antitone on the positions where it is recorded. A finite verb agrees at
+the predicate position; Comrie's Predicate Hierarchy, which grades the verb, participle,
+adjective and noun within the predicate, is `Corbett2000.PredicateTarget`.
 
 ## Main definitions
 
+* `Agreement.Position`: the four positions, a chain lifted along `Position.rank`.
 * `Agreement.Kind`: syntactic or semantic agreement.
 * `Agreement.Availability`: the five degrees of availability of semantic agreement, from
   syntactic only to semantic only, linearly ordered.
@@ -43,6 +48,35 @@ are compared only across comparable positions that both carry one.
 -/
 
 namespace Agreement
+
+/-- A position of the Agreement Hierarchy ([corbett-1979]). -/
+inductive Position where
+  /-- The attributive modifier (French *un bon livre*). -/
+  | attributive
+  /-- The predicate, a finite verb or a predicate adjective (Russian *kniga interesna*). -/
+  | predicate
+  /-- The relative pronoun (German *der ~ die ~ das*). -/
+  | relativePronoun
+  /-- The personal pronoun (English *he ~ she ~ it*). -/
+  | personalPronoun
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+namespace Position
+
+/-- The place of a position in the chain, the attributive highest. -/
+def rank : Position → ℕ
+  | .attributive => 3
+  | .predicate => 2
+  | .relativePronoun => 1
+  | .personalPronoun => 0
+
+theorem rank_injective : Function.Injective rank := by decide
+
+/-- The Agreement Hierarchy as a chain:
+`personalPronoun < relativePronoun < predicate < attributive`. -/
+instance : LinearOrder Position := LinearOrder.lift' rank rank_injective
+
+end Position
 
 /-- Whether an agreement form follows the feature value the controller is assigned or the
 controller's meaning. -/
