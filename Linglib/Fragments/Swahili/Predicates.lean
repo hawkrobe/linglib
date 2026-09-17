@@ -19,47 +19,47 @@ namespace Swahili.Predicates
 /-- *achana* 'break up, divorce' — lexical reciprocal ([palmieri-2024], Appendix C). -/
 def achana : Verb where
   form := "achana"
-  frames := []
+  frames := [Frame.intransitive]
 
 /-- *gawana* 'share' — lexical reciprocal ([palmieri-2024], Appendix C). -/
 def gawana : Verb where
   form := "gawana"
-  frames := []
+  frames := [Frame.intransitive]
 
 /-- *gombana* 'quarrel' — lexical reciprocal ([palmieri-2024], Appendix C). -/
 def gombana : Verb where
   form := "gombana"
-  frames := []
+  frames := [Frame.intransitive]
 
 /-- *gongana* 'collide' — lexical reciprocal ([palmieri-2024], Appendix C). -/
 def gongana : Verb where
   form := "gongana"
-  frames := []
+  frames := [Frame.intransitive]
 
 /-- *jibizana* 'discuss, talk, dialogue' — lexical reciprocal ([palmieri-2024], Appendix C). -/
 def jibizana : Verb where
   form := "jibizana"
-  frames := []
+  frames := [Frame.intransitive]
 
 /-- *pambana* 'fight, be in conflict' — lexical reciprocal ([palmieri-2024], Appendix C). -/
 def pambana : Verb where
   form := "pambana"
-  frames := []
+  frames := [Frame.intransitive]
 
 /-- *patana* 'agree' — lexical reciprocal ([palmieri-2024], Appendix C). -/
 def patana : Verb where
   form := "patana"
-  frames := []
+  frames := [Frame.intransitive]
 
 /-- *pigana* 'fight' — lexical reciprocal ([palmieri-2024], Appendix C). -/
 def pigana : Verb where
   form := "pigana"
-  frames := []
+  frames := [Frame.intransitive]
 
 /-- *shindana* 'compete' — lexical reciprocal ([palmieri-2024], Appendix C). -/
 def shindana : Verb where
   form := "shindana"
-  frames := []
+  frames := [Frame.intransitive]
 
 /-! ### Binary bases -/
 

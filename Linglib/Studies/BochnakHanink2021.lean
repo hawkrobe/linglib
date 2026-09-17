@@ -49,9 +49,9 @@ open Washo Minimalist Semantics Semantics.Composition Reference
 /-! ### Selection -/
 
 /-- A predicate selects if it has an internal-argument frame (§3.2.2). -/
-def Selects (v : Washo.Verb) : Prop := v.frames ≠ []
+def Selects (v : Washo.Verb) : Prop := ¬ v.toVerb.IsIntransitive
 
-instance : DecidablePred Selects := fun v ↦ inferInstanceAs (Decidable (v.frames ≠ []))
+instance : DecidablePred Selects := fun v ↦ inferInstanceAs (Decidable (¬ v.toVerb.IsIntransitive))
 
 /-- A predicate selects iff it takes the nominalizer as clause-typer. -/
 theorem selects_iff_takes_ge : ∀ v ∈ verbs, Selects v ↔ v.toVerb.takes ge := by

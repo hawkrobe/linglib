@@ -93,7 +93,7 @@ def hundir : SpanishVerbEntry :=
 /-- *caer* "fall" — marked anticausative, licenses stylistic LE.
     (ex. 9, unaccusative) -/
 def caer : SpanishVerbEntry :=
-  { form := "caer", frames := [],
+  { form := "caer", frames := [Frame.intransitive],
     unaccusative := true,
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
@@ -102,7 +102,7 @@ def caer : SpanishVerbEntry :=
 /-- *morir* "die" — marked anticausative, licenses stylistic LE.
     (ex. 10) -/
 def morir : SpanishVerbEntry :=
-  { form := "morir", frames := [],
+  { form := "morir", frames := [Frame.intransitive],
     unaccusative := true,
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
@@ -144,7 +144,7 @@ def olvidar : SpanishVerbEntry :=
 /-- *ocurrir* "occur" — marked anticausative, licenses stylistic LE.
     (ex. 12) -/
 def ocurrir : SpanishVerbEntry :=
-  { form := "ocurrir", frames := [],
+  { form := "ocurrir", frames := [Frame.intransitive],
     unaccusative := true,
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
@@ -218,7 +218,7 @@ def empeorar : SpanishVerbEntry :=
 /-- *crecer* "grow" — internally caused COS verb. No CAUSE in LSR.
     Rejects *por sí solo*. [koontz-garboden-2009] ex. 65c. -/
 def crecer : SpanishVerbEntry :=
-  { form := "crecer", frames := [],
+  { form := "crecer", frames := [Frame.intransitive],
     unaccusative := true,
     anticausativeMarking := .unmarked,
     causativeAlternation := false, verbHead := [.vGO, .vBE],

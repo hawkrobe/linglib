@@ -54,7 +54,8 @@ def cabanga : Verb where
 /-- *funa* 'want', with a subjunctive complement and plain class-15 objects ((7)). -/
 def funa : Verb where
   form := "funa"
-  frames := [[.clausal (coding := some .subjunctive) (force := some .declarative)], Frame.np]
+  frames := [{ complements := [.clausal (coding := some .subjunctive) (force := some .declarative)] },
+    Frame.np]
   predicateClass := .desiderative
   attitude := some (.preferential (.degreeComparison .positive))
 
@@ -67,7 +68,7 @@ def zwa : Verb where
 /-- *khuluma nga* 'talk about', whose clause is the object of the preposition ((20b)). -/
 def khulumaNga : Verb where
   form := "khuluma nga"
-  frames := [[.adpositional]]
+  frames := [Frame.pp]
   predicateClass := .utterance
   speechActVerb := true
 

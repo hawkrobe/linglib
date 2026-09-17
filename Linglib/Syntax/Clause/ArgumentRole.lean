@@ -5,7 +5,7 @@
 neutral between case and agreement. The *clause* takes the classification
 — a passive clause's sole argument is S whatever the predicate calls it —
 so the label set lives with the clause vocabulary; `Clause.Arguments.codingRole`
-classifies clause tokens and `Verb.codingRoles` the citation clause.
+classifies clause tokens and `Verb.codingRole` the citation clause.
 `ArgumentRole.core` is the monotransitive core that alignment partitions
 quantify over; `IsHighDefault`/`IsLowDefault` classify the roles by their
 usual referential prominence (the role-reference association).

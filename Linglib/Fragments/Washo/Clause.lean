@@ -103,14 +103,14 @@ def damal : Verb where
 /-- *hamu* 'think', intransitive, questioned with *how* rather than *what* ((2), (49)). -/
 def hamu : Verb where
   form := "hamu"
-  frames := []
+  frames := [Frame.intransitive]
   predicateClass := some .propAttitude
   typer := aq
 
 /-- *i:d* 'say', intransitive ((14), (50)). -/
 def iid : Verb where
   form := "i:d"
-  frames := []
+  frames := [Frame.intransitive]
   predicateClass := some .utterance
   typer := aq
   speechActVerb := true
@@ -118,7 +118,7 @@ def iid : Verb where
 /-- *mɨtgi:bɨl-e:s* 'believe', negated 'disbelieve' (16). -/
 def metgiibilEs : Verb where
   form := "mɨtgi:bɨl" ++ toString es
-  frames := []
+  frames := [Frame.intransitive]
   predicateClass := some .propAttitude
   typer := aq
 
@@ -136,7 +136,7 @@ def gumsuus : Verb :=
   { suus with
     form := toString gum ++ suus.form
     voiceType := some .reflexive
-    frames := []
+    frames := [Frame.intransitive]
     typer := aq }
 
 /-- The predicates with per-predicate data in the paper. -/
@@ -145,7 +145,7 @@ def verbs : List Verb :=
 
 /-- An intransitive predicate embeds a dependent-mood clause and a transitive one a nominalized
 clause (Table 1). -/
-theorem typer_eq : ∀ v ∈ verbs, v.typer = if v.frames = [] then aq else ge := by
+theorem typer_eq : ∀ v ∈ verbs, v.typer = if v.toVerb.IsIntransitive then aq else ge := by
   decide
 
 end Washo

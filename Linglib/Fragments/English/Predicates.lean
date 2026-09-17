@@ -128,7 +128,7 @@ def sleep : Verb where
   formPast := "slept"
   formPastPart := "slept"
   formPresPart := "sleeping"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .state
 
@@ -139,7 +139,7 @@ def run : Verb where
   formPast := "ran"
   formPastPart := "run"
   formPresPart := "running"
-  frames := []
+  frames := [Frame.intransitive]
   subjectEntailments := some activitySubjectProfile
   passivizable := false
   vendlerClass := some .activity
@@ -152,7 +152,7 @@ def run : Verb where
 /-- "arrive" — unaccusative intransitive -/
 def arrive : Verb := .mkRegular {
   form := "arrive"
-  frames := []
+  frames := [Frame.intransitive]
   subjectEntailments := some achievementSubjectProfile
   unaccusative := true
   passivizable := false
@@ -166,7 +166,7 @@ def come : Verb where
   formPast := "came"
   formPastPart := "come"
   formPresPart := "coming"
-  frames := []
+  frames := [Frame.intransitive]
   unaccusative := true
   passivizable := false
   vendlerClass := some .achievement
@@ -1514,7 +1514,7 @@ def speak : Verb where
   formPastPart := "spoken"
   formPresPart := "speaking"
   speechActVerb := true
-  frames := []
+  frames := [Frame.intransitive]
   vendlerClass := some .activity
   passivizable := false
   levinClass := some .talk
@@ -1524,7 +1524,7 @@ def speak : Verb where
 def talk : Verb := .mkRegular {
   form := "talk"
   speechActVerb := true
-  frames := []
+  frames := [Frame.intransitive]
   vendlerClass := some .activity
   passivizable := false
   levinClass := some .talk }
@@ -2499,7 +2499,7 @@ def marry : Verb where
 /-- "bark" — Levin 38 Animal Sound verbs. -/
 def bark : Verb := .mkRegular {
   form := "bark"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .animalSound }
@@ -2509,7 +2509,7 @@ def bark : Verb := .mkRegular {
 /-- "breathe" — Levin 40.1 Body Process verbs. -/
 def breathe : Verb := .mkRegular {
   form := "breathe"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .bodyProcess }
@@ -2517,7 +2517,7 @@ def breathe : Verb := .mkRegular {
 /-- "laugh" — Levin 40.2 Nonverbal Expression verbs. -/
 def laugh : Verb := .mkRegular {
   form := "laugh"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .activity }
 
@@ -2525,7 +2525,7 @@ def laugh : Verb := .mkRegular {
     Semelfactive: single involuntary event, no result state ([smith-1997] §2.4.3). -/
 def cough : Verb := .mkRegular {
   form := "cough"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .bodyProcess }
@@ -2534,7 +2534,7 @@ def cough : Verb := .mkRegular {
     Semelfactive: single involuntary body event ([smith-1997] §2.4.3). -/
 def hiccup : Verb := .mkRegular {
   form := "hiccup"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .bodyProcess }
@@ -2544,7 +2544,7 @@ def hiccup : Verb := .mkRegular {
     and *blink* among the light-emission verbs (§43.1). -/
 def blink : Verb := .mkRegular {
   form := "blink"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .semelfactive
  }
@@ -2554,7 +2554,7 @@ def blink : Verb := .mkRegular {
     example of the class. -/
 def knock : Verb := .mkRegular {
   form := "knock"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .hit }
@@ -2563,7 +2563,7 @@ def knock : Verb := .mkRegular {
     Semelfactive: single light percussive contact event ([smith-1997] §2.4.3). -/
 def tap : Verb := .mkRegular {
   form := "tap"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .hit }
@@ -2573,7 +2573,7 @@ def tap : Verb := .mkRegular {
     characterization of the class. -/
 def flash : Verb := .mkRegular {
   form := "flash"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClass := some .lightEmission }
@@ -2581,7 +2581,7 @@ def flash : Verb := .mkRegular {
 /-- "flinch" — Levin 40.5 Flinch verbs. Involuntary reaction. -/
 def flinch : Verb := .mkRegular {
   form := "flinch"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .achievement
   levinClass := some .flinch }
@@ -2608,7 +2608,7 @@ def drown : Verb := .mkRegular {
 /-- "glow" — Levin 43.1 Light Emission verbs. -/
 def glow : Verb := .mkRegular {
   form := "glow"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .state
   unaccusative := true
@@ -2617,7 +2617,7 @@ def glow : Verb := .mkRegular {
 /-- "buzz" — Levin 43.2 Sound Emission verbs. -/
 def buzz : Verb := .mkRegular {
   form := "buzz"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   unaccusative := true
@@ -2626,7 +2626,7 @@ def buzz : Verb := .mkRegular {
 /-- "rumble" — Levin 43.2 Sound Emission verbs. -/
 def rumble : Verb := .mkRegular {
   form := "rumble"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   unaccusative := true
@@ -2639,7 +2639,7 @@ def bleed : Verb where
   formPast := "bled"
   formPastPart := "bled"
   formPresPart := "bleeding"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   unaccusative := true
@@ -2698,7 +2698,7 @@ def boil : Verb := .mkRegular {
     Degree achievement: open scale (no maximum rustedness). -/
 def rust : Verb := .mkRegular {
   form := "rust"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   unaccusative := true
   vendlerClass := some .activity
@@ -2800,7 +2800,7 @@ def warm : Verb := .mkRegular {
 /-- "exist" — Levin 47.1 Exist verbs. Pure state. -/
 def exist : Verb := .mkRegular {
   form := "exist"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .state
   unaccusative := true
@@ -2809,7 +2809,7 @@ def exist : Verb := .mkRegular {
 /-- "appear" — Levin 48.1 Appear verbs. Punctual emergence. -/
 def appear : Verb := .mkRegular {
   form := "appear"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .achievement
   unaccusative := true
@@ -2818,7 +2818,7 @@ def appear : Verb := .mkRegular {
 /-- "fidget" — Levin 49 Body-Internal Motion verbs. -/
 def fidget : Verb := .mkRegular {
   form := "fidget"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .bodyInternalMotion }
@@ -2830,7 +2830,7 @@ def sit : Verb where
   formPast := "sat"
   formPastPart := "sat"
   formPresPart := "sitting"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .state
   levinClass := some .assumePosition
@@ -2842,7 +2842,7 @@ def stand : Verb where
   formPast := "stood"
   formPastPart := "stood"
   formPresPart := "standing"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .state
   levinClass := some .assumePosition
@@ -2852,7 +2852,7 @@ def stand : Verb where
 /-- "walk" — Levin 51.3 Manner of Motion verbs. -/
 def walk : Verb := .mkRegular {
   form := "walk"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .mannerOfMotion }
@@ -2864,7 +2864,7 @@ def swim : Verb where
   formPast := "swam"
   formPastPart := "swum"
   formPresPart := "swimming"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .mannerOfMotion
@@ -2876,7 +2876,7 @@ def fly : Verb where
   formPast := "flew"
   formPastPart := "flown"
   formPresPart := "flying"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .vehicleMotion
@@ -2884,7 +2884,7 @@ def fly : Verb where
 /-- "roll" — Levin 51.3.1 Roll verbs (manner of motion). -/
 def roll : Verb := .mkRegular {
   form := "roll"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .mannerOfMotion }
@@ -2892,7 +2892,7 @@ def roll : Verb := .mkRegular {
 /-- "float" — Levin 51.3.1 Roll verbs (manner of motion). -/
 def float : Verb := .mkRegular {
   form := "float"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .mannerOfMotion }
@@ -2909,7 +2909,7 @@ def avoid : Verb := .mkRegular {
 /-- "linger" — Levin 53.1 Linger verbs. -/
 def linger : Verb := .mkRegular {
   form := "linger"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .linger }
@@ -2917,7 +2917,7 @@ def linger : Verb := .mkRegular {
 /-- "rush" — Levin 53.2 Rush verbs. -/
 def rush : Verb := .mkRegular {
   form := "rush"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .rush }
@@ -2927,7 +2927,7 @@ def rush : Verb := .mkRegular {
 /-- "rain" — Levin 57 Weather verbs. Expletive subject. -/
 def rain : Verb := .mkRegular {
   form := "rain"
-  frames := []
+  frames := [Frame.intransitive]
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .weather }

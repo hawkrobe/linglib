@@ -107,7 +107,8 @@ def neki : Verb where
 /-- *hi* 'say, tell', with an accusative addressee before the clause ((47), (65b)). -/
 def hi : Verb where
   form := "hi"
-  frames := [[.nominal, .clausal (coding := some .indicative) (force := some .declarative)]]
+  frames := [{ complements :=
+    [.nominal, .clausal (coding := some .indicative) (force := some .declarative)] }]
   predicateClass := .utterance
   speechActVerb := true
 

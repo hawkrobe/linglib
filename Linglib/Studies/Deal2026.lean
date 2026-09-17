@@ -150,7 +150,7 @@ complement of a predicate that is an emotive factive, a factive preferential att
 takes a *za* phrase. -/
 def DetoComplement (v : Bulgarian.Verb) : Prop :=
   v.toVerb.IsPreferential ∧ v.toVerb.IsFactive ∧
-    ∃ fr ∈ v.frames, Complement.Position.adpositional ∈ fr
+    ∃ fr ∈ v.frames, fr.HasAdpositional
 
 instance (v : Bulgarian.Verb) : Decidable (DetoComplement v) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ ∃ fr ∈ v.frames, _))
@@ -177,7 +177,7 @@ of the Fragment's emotive factives. -/
 theorem zaPhrase_rows :
     ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "zaPhrase" →
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
-        (row.judgment = .acceptable ↔ ∃ fr ∈ v.frames, Complement.Position.adpositional ∈ fr) ∧
+        (row.judgment = .acceptable ↔ ∃ fr ∈ v.frames, fr.HasAdpositional) ∧
           ∀ a ∈ row.alternatives, a.2 = .ungrammatical := by
   decide
 
