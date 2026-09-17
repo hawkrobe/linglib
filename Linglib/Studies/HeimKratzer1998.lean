@@ -29,7 +29,11 @@ two scope readings of `Quantifier.Polyadic`, which differ in the toy model
 (`scope_ambiguity_computed`) and are nested (`inverse_entails_surface`). The trees also
 compile to first-order formulas, so the engine's truth conditions are model-theoretic
 realization (`interp_eq_realize`) and first-order consequence transfers
-(`conj_entails_first`).
+(`conj_entails_first`). The book's composition principles are also transcribed as reference
+relations, the extensional rules of Chapters 3 to 5 (`Denotes`) and their revision for
+partial denotations in Chapter 4 (`Partial.Denotes`), which the engines extend, and Chapter 4's
+Fregean definite article makes *the student* a presupposition failure and *the pizza* a
+defined value in the toy model.
 
 ## Implementation notes
 
@@ -388,7 +392,7 @@ noncomputable def partialLex : String → Option (PDenotation ToyEntity Unit)
 /-- *The student* is a presupposition failure in the toy model, which has two students. -/
 theorem the_student_fails :
     PresupFailure partialLex g₀ (.bin (.leaf "the") (.leaf "student")) := by
-  refine ⟨_, binary_some_some the (PFun.lift student_sem), fun ⟨x, _, huniq⟩ ↦ ?_⟩
+  refine ⟨_, binary_forward the (PFun.lift student_sem), fun ⟨x, _, huniq⟩ ↦ ?_⟩
   have hj := huniq .john ((holds_lift _ _).mpr trivial)
   have hm := huniq .mary ((holds_lift _ _).mpr trivial)
   exact ToyEntity.noConfusion (hj.trans hm.symm)
@@ -396,7 +400,7 @@ theorem the_student_fails :
 /-- *The pizza* denotes the pizza, the toy model's unique one. -/
 theorem the_pizza : interp partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) =
     some ⟨.e, Part.some .pizza⟩ := by
-  refine (binary_some_some the (PFun.lift ToyLexicon.pizza_sem)).trans ?_
+  refine (binary_forward the (PFun.lift ToyLexicon.pizza_sem)).trans ?_
   rw [the_lift_eq_some fun x ↦ ?_]
   cases x <;> exact ⟨fun h ↦ by first | rfl | exact h.elim, fun h ↦ by trivial⟩
 
@@ -406,5 +410,123 @@ theorem the_john_uninterpretable :
     Uninterpretable partialLex g₀ (.bin (.leaf "the") (.leaf "John")) := rfl
 
 end DefiniteArticle
+
+/-! ### The book's partial rules as a reference
+
+Chapter 4 revises the composition principles for partial denotations. A branching node is in
+the domain of the interpretation function when both daughters are and, for Functional
+Application, the function's domain contains the argument. `Partial.Denotes` transcribes the revised
+rules with semantic values in `Part`, so that a node the rules assign an undefined value is a
+node outside the domain of the interpretation function, and its premises ask the daughters to
+have defined values as the book's rules do. The partial engine extends the relation
+(`Partial.interp_of_denotes`), so *the pizza* is a derivation in the book's own rules and *the
+student* has no defined value under them. The lifted toy lexicon, whose entries are all first
+order, never fails. -/
+
+section PartialReference
+
+namespace Partial
+
+variable {C L E W : Type}
+
+/-- The book's revised interpretation relation, relative to a leaf interpretation and an
+assignment. -/
+inductive Denotes (lex : L → Option (PDenotation E W)) :
+    Assignment E → Tree C L → PDenotation E W → Prop
+  /-- Terminal Nodes: a leaf denotes what the lexicon gives it. -/
+  | tn {g : Assignment E} {c : C} {w : L} {d : PDenotation E W} (h : lex w = some d) :
+      Denotes lex g (.terminal c w) d
+  /-- Non-Branching Nodes: a node denotes what its only daughter does. -/
+  | nn {g : Assignment E} {c : C} {t : Tree C L} {d : PDenotation E W}
+      (h : Denotes lex g t d) : Denotes lex g (.node c (t :: [])) d
+  /-- Functional Application, the left daughter the function, defined at the argument or not. -/
+  | faLeft {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {σ τ : Ty}
+      {f : Ty.PDomain E W (σ ⇒ τ)} {a : Ty.PDomain E W σ}
+      (h₁ : Denotes lex g t₁ ⟨σ ⇒ τ, Part.some f⟩) (h₂ : Denotes lex g t₂ ⟨σ, Part.some a⟩) :
+      Denotes lex g (.node c (t₁ :: t₂ :: [])) ⟨τ, f a⟩
+  /-- Functional Application, the right daughter the function. -/
+  | faRight {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {σ τ : Ty} {a : Ty.PDomain E W σ}
+      {f : Ty.PDomain E W (σ ⇒ τ)} (h₁ : Denotes lex g t₁ ⟨σ, Part.some a⟩)
+      (h₂ : Denotes lex g t₂ ⟨σ ⇒ τ, Part.some f⟩) :
+      Denotes lex g (.node c (t₁ :: t₂ :: [])) ⟨τ, f a⟩
+  /-- Predicate Modification: two predicates conjoin where both are defined. -/
+  | pm {g : Assignment E} {c : C} {t₁ t₂ : Tree C L} {P Q : Ty.PDomain E W (.e ⇒ .t)}
+      (h₁ : Denotes lex g t₁ ⟨.e ⇒ .t, Part.some P⟩)
+      (h₂ : Denotes lex g t₂ ⟨.e ⇒ .t, Part.some Q⟩) :
+      Denotes lex g (.node c (t₁ :: t₂ :: []))
+        ⟨.e ⇒ .t, Part.some fun x ↦ (P x).bind fun a ↦ (Q x).map fun b ↦ a ∧ b⟩
+  /-- The Traces and Pronouns Rule: a trace denotes the value of its index. -/
+  | trace {g : Assignment E} {n : ℕ} {c : C} : Denotes lex g (.trace n c) ⟨.e, Part.some (g n)⟩
+  /-- Predicate Abstraction: a binder abstracts over its index in the body, the abstract
+  defined at an individual where the body has a defined value under the modified assignment. -/
+  | pa {g : Assignment E} {n : ℕ} {c : C} {body : Tree C L} {τ : Ty}
+      {F : E → Part (Ty.PDomain E W τ)} (h : ∀ x, Denotes lex (g[n ↦ x]) body ⟨τ, F x⟩) :
+      Denotes lex g (.bind n c body) ⟨.e ⇒ τ, Part.some F⟩
+
+/-- Where the book's revised rules assign a value, the partial engine computes it. -/
+theorem interp_of_denotes [Nonempty E] {lex : L → Option (PDenotation E W)} {g : Assignment E}
+    {t : Tree C L} {d : PDenotation E W} (h : Denotes lex g t d) :
+    Partial.interp lex g t = some d := by
+  induction h with
+  | tn h => exact h
+  | nn _ ih => exact ih
+  | faLeft _ _ ih₁ ih₂ =>
+    rw [Partial.interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
+      Partial.binary_forward]
+  | faRight _ _ ih₁ ih₂ =>
+    rw [Partial.interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
+      Partial.binary_backward]
+  | pm _ _ ih₁ ih₂ =>
+    rw [Partial.interp_node_binary, ih₁, ih₂, Option.bind_some, Option.bind_some,
+      Partial.binary_pm]
+  | trace => rfl
+  | @pa g n c body τ F h ih =>
+    obtain ⟨x₀⟩ := ‹Nonempty E›
+    have hty := Partial.interp_map_fst_congr lex lex g (g[n ↦ x₀]) (fun _ ↦ rfl) body
+    rw [ih x₀] at hty
+    obtain ⟨v, hv⟩ : ∃ v, Partial.interp lex g body = some ⟨τ, v⟩ := by
+      rcases hg : Partial.interp lex g body with _ | ⟨τ', v⟩
+      · simp [hg] at hty
+      · simp only [hg, Option.map_some, Option.some.injEq] at hty; subst hty; exact ⟨v, rfl⟩
+    rw [Partial.interp_bind, hv, Option.map_some]
+    congr 3
+    funext x
+    rw [ih x]
+    simp [Partial.valueAt]
+
+/-- The book's revised rules are deterministic. -/
+theorem Denotes.unique [Nonempty E] {lex : L → Option (PDenotation E W)} {g : Assignment E}
+    {t : Tree C L} {d d' : PDenotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') :
+    d = d' :=
+  Option.some.inj ((interp_of_denotes h).symm.trans (interp_of_denotes h'))
+
+/-- *The pizza* denotes the pizza by the book's own rules. -/
+theorem denotes_the_pizza :
+    Denotes partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) ⟨.e, Part.some .pizza⟩ := by
+  have h : Denotes partialLex g₀ (.bin (.leaf "the") (.leaf "pizza"))
+      ⟨.e, Partial.the (PFun.lift ToyLexicon.pizza_sem)⟩ :=
+    .faLeft (σ := .e ⇒ .t) (τ := .e) (f := Partial.the) (a := PFun.lift ToyLexicon.pizza_sem)
+      (.tn rfl) (.tn rfl)
+  rwa [Partial.the_lift_eq_some fun x ↦ ?_] at h
+  cases x <;> exact ⟨fun h ↦ by first | rfl | exact h.elim, fun h ↦ by trivial⟩
+
+/-- Whatever value the book's rules assign *the student* is undefined. -/
+theorem denotes_the_student {v : Part ToyEntity}
+    (h : Denotes partialLex g₀ (.bin (.leaf "the") (.leaf "student")) ⟨.e, v⟩) : ¬ v.Dom := by
+  obtain ⟨d, hd, hdom⟩ := the_student_fails
+  have : Nonempty ToyEntity := ⟨.john⟩
+  have := (interp_of_denotes h).symm.trans hd
+  cases Option.some.inj this
+  exact hdom
+
+/-- The toy lexicon lifted entrywise never fails, since its entries are first order. -/
+theorem toyLexicon_toPartial_noFailure (g : Assignment ToyEntity) (t : Tree Unit String) :
+    ¬ Partial.PresupFailure (fun w ↦ (toyLexicon w).map Denotation.toPartial) g t :=
+  Partial.not_presupFailure_map_toPartial (fun _ _ h ↦ by
+    rcases Model.lexiconAt_fst h with h | h | h <;> rw [h] <;> repeat constructor) g t
+
+end Partial
+
+end PartialReference
 
 end HeimKratzer1998
