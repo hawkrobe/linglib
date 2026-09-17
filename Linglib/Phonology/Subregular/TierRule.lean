@@ -354,7 +354,7 @@ theorem applyToString_prefixDetermined (r : TierRule α) (i : ℕ) :
   (List.forall_dependsOn_ofFn_iff fun w ↦ (r.applyToString w)[i]?).mpr fun u v hlen hag ↦ by
     show (r.applyToString u)[i]? = (r.applyToString v)[i]?
     rw [applyToString_getElem?, applyToString_getElem?, hlen,
-      List.ext_take_getElem? fun k hk => hag.getElem?_eq (Set.mem_Iio.mpr hk)]
+      List.ext_take_getElem? fun k hk ↦ hag k (Set.mem_Iio.mpr hk)]
 
 /-- **The tier-rule prediction mechanism is right-myopic** — it has no look-ahead.
 Consequently no tier-rule-based prediction (the formal core of a `Harmony.System`) can

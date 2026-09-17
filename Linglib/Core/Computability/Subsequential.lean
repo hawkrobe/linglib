@@ -11,7 +11,9 @@ import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Data.List.DropRight
-import Linglib.Core.Data.List.DependsOn
+import Mathlib.Order.Interval.Set.Basic
+import Linglib.Core.Data.List.OfFn
+import Linglib.Core.Data.List.TakeDrop
 import Linglib.Core.Computability.ScanDirection
 
 /-!
@@ -478,7 +480,8 @@ theorem IsLeftSubsequential.exists_dependsOn_Iic
     · rw [List.take_of_length_le h.le]
     · conv_rhs => rw [← List.take_append_drop (i + N + 1) w]
       exact hN _ _ i (by rw [hlen, List.length_take]; omega)
-  rw [← key u, ← key v, hag.take_eq (by omega)]
+  rw [← key u, ← key v,
+    List.ext_take_getElem? (n := i + N + 1) fun k hk ↦ hag k (Set.mem_Iic.mpr (by omega))]
 
 /-- `f` is not left-subsequential if for every `N` some images `f u` and `f (u ++ v)`
 disagree more than `N` positions before the end of `f u` — the contrapositive of

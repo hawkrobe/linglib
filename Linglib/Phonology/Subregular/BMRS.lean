@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Subregular.QF
-import Linglib.Core.Data.List.DependsOn
+import Mathlib.Data.Set.Function
+import Mathlib.Order.Interval.Set.Basic
+import Linglib.Core.Data.List.OfFn
 import Mathlib.Data.Finset.Basic
 
 /-!
@@ -344,10 +346,10 @@ theorem Eval.congr_eqOn_Iic (hP : P.Backward) (hlen : w.length = w'.length)
     exact fun _ _ => Eval.final_false ((Term.eval_congr hlen _).symm.trans h) (hlen ▸ hv)
   | label_true h hl has =>
     exact fun he hag => Eval.label_true ((Term.eval_congr hlen _).symm.trans h)
-      (hag.getElem?_eq (mem_Iic.mpr (Term.eval_le_of_backward he h)) ▸ hl) has
+      ((hag (mem_Iic.mpr (Term.eval_le_of_backward he h))).symm.trans hl) has
   | label_false h hl has =>
     exact fun he hag => Eval.label_false ((Term.eval_congr hlen _).symm.trans h)
-      (hag.getElem?_eq (mem_Iic.mpr (Term.eval_le_of_backward he h)) ▸ hl) has
+      ((hag (mem_Iic.mpr (Term.eval_le_of_backward he h))).symm.trans hl) has
   | call h he' ih =>
     exact fun he hag => Eval.call ((Term.eval_congr hlen _).symm.trans h)
       (ih (hP _) (hag.mono (Set.Iic_subset_Iic.mpr (Term.eval_le_of_backward he h))))
@@ -374,10 +376,10 @@ theorem Eval.congr_eqOn_Ici (hP : P.Forward) (hlen : w.length = w'.length)
     exact fun _ _ => Eval.final_false ((Term.eval_congr hlen _).symm.trans h) (hlen ▸ hv)
   | label_true h hl has =>
     exact fun he hag => Eval.label_true ((Term.eval_congr hlen _).symm.trans h)
-      (hag.getElem?_eq (mem_Ici.mpr (Term.le_eval_of_forward he h)) ▸ hl) has
+      ((hag (mem_Ici.mpr (Term.le_eval_of_forward he h))).symm.trans hl) has
   | label_false h hl has =>
     exact fun he hag => Eval.label_false ((Term.eval_congr hlen _).symm.trans h)
-      (hag.getElem?_eq (mem_Ici.mpr (Term.le_eval_of_forward he h)) ▸ hl) has
+      ((hag (mem_Ici.mpr (Term.le_eval_of_forward he h))).symm.trans hl) has
   | call h he' ih =>
     exact fun he hag => Eval.call ((Term.eval_congr hlen _).symm.trans h)
       (ih (hP _) (hag.mono (Set.Ici_subset_Ici.mpr (Term.le_eval_of_forward he h))))

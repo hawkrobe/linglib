@@ -8,7 +8,9 @@ import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.List.Basic
 import Mathlib.Logic.Equiv.Defs
 import Linglib.Core.Data.Fintype.Transfer
-import Linglib.Core.Data.List.DependsOn
+import Mathlib.Order.Interval.Set.Basic
+import Linglib.Core.Data.List.OfFn
+import Linglib.Core.Data.List.TakeDrop
 
 /-!
 # Mealy machines
@@ -348,8 +350,8 @@ theorem Mealy.dependsOn_run_Iic {σ : Type*} (T : Mealy σ α β) (i : ℕ) :
     ∀ n, DependsOn (fun x : Fin n → α ↦ (T.run (List.ofFn x))[i]?) (Fin.val ⁻¹' Set.Iic i) :=
   (List.forall_dependsOn_ofFn_iff fun u ↦ (T.run u)[i]?).mpr fun u v _ hag ↦ by
     show (T.run u)[i]? = (T.run v)[i]?
-    rw [T.getElem?_run u, T.getElem?_run v, hag.getElem?_eq (Set.mem_Iic.mpr le_rfl),
-      List.ext_take_getElem? fun k hk => hag.getElem?_eq (Set.mem_Iic.mpr hk.le)]
+    rw [T.getElem?_run u, T.getElem?_run v, hag i (Set.mem_Iic.mpr le_rfl),
+      List.ext_take_getElem? fun k hk ↦ hag k (Set.mem_Iic.mpr hk.le)]
 
 /-- A Mealy-computable map's output coordinate `i` depends only on the input prefix
 `Set.Iic i`. -/

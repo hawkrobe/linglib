@@ -6,7 +6,9 @@ Authors: Robert Hawkins
 import Mathlib.Data.List.Basic
 import Linglib.Core.Computability.Bimachine
 import Linglib.Core.Computability.Subsequential
-import Linglib.Core.Data.List.DependsOn
+import Mathlib.Order.Interval.Set.Basic
+import Linglib.Core.Data.List.OfFn
+import Linglib.Core.Data.List.TakeDrop
 
 /-!
 # Side dependence for string functions
@@ -80,7 +82,7 @@ def LeftDetermined (f : List α → List β) (i : ℕ) : Prop :=
 /-- An equal-length variant of `base` differing only beyond the `d`-margin of target
 `i` on side `s`. -/
 def IsFarPerturbation (base u : List α) (i d : ℕ) (s : ScanDirection) : Prop :=
-  u.length = base.length ∧ EqOn (base[·]?) (u[·]?) (s.window i d)
+  u.length = base.length ∧ ∀ k ∈ s.window i d, base[k]? = u[k]?
 
 /-- `f` depends boundedly on side `s`: a single margin caps, at every output
 coordinate, how far input on side `s` can matter. -/
@@ -142,7 +144,7 @@ side may vary from cell to cell. -/
 def OneSidedChanges (f : List α → List α) : Prop :=
   ∀ (w : List α) (i : ℕ), (f w)[i]? ≠ w[i]? →
     ∃ s : ScanDirection, ∀ ⦃u : List α⦄, w.length = u.length →
-      EqOn (w[·]?) (u[·]?) (s.window i 0) → (f w)[i]? = (f u)[i]?
+      (∀ k ∈ s.window i 0, w[k]? = u[k]?) → (f w)[i]? = (f u)[i]?
 
 /-- A map that requires both sides has a change no single side determines. -/
 theorem RequiresBothSides.not_oneSidedChanges {f : List α → List α}
@@ -516,8 +518,11 @@ theorem RequiresBothSides.not_isNonInteractingBimachineComputable [DecidableEq �
   choose u hpert hsym hrev using hw
   have hbase : base[i]? = some base[i] := List.getElem?_eq_getElem hi
   apply hchange
-  rw [w.getElem?_run_eq_iff hbase, (hpert .right).2.take_eq (by omega),
-    (hpert .left).2.drop_eq (by omega)]
+  rw [w.getElem?_run_eq_iff hbase,
+    List.ext_take_getElem? (n := i) fun k hk ↦
+      (hpert .right).2 k (show k ∈ Set.Iic (i + 0) from Set.mem_Iic.mpr (by omega)),
+    List.ext_drop_getElem? (n := i + 1) fun k hk ↦
+      (hpert .left).2 k (show k ∈ Set.Ici (i - 0) from Set.mem_Ici.mpr (by omega))]
   exact ⟨((w.getElem?_run_eq_iff ((hsym .right).trans hbase)).mp (hrev .right)).1,
     ((w.getElem?_run_eq_iff ((hsym .left).trans hbase)).mp (hrev .left)).2⟩
 
@@ -565,15 +570,19 @@ theorem IsNonInteractingBimachineComputable.oneSidedChanges [DecidableEq α]
         ≠ [xs[i]] := by rw [w.output_eq]; simpa using hcell
     rcases hni.oneSidedAt_of_change hout with hR | hL
     · refine ⟨.right, fun v hlen hag => ?_⟩
-      have hv : v[i]? = some xs[i] := (hag.getElem?_eq (by simp)).symm.trans ha
+      have hv : v[i]? = some xs[i] := (hag i (by simp)).symm.trans ha
       show (B.run xs)[i]? = (B.run v)[i]?
       rw [w.getElem?_run, w.getElem?_run, ha, hv, Option.map_some, Option.map_some,
-        ← hag.take_eq (by omega), w.cell_inj.mpr (hR (B.rState (v.drop (i + 1))))]
+        ← List.ext_take_getElem? (n := i) fun k hk ↦
+          hag k (show k ∈ Set.Iic (i + 0) from Set.mem_Iic.mpr (by omega)),
+        w.cell_inj.mpr (hR (B.rState (v.drop (i + 1))))]
     · refine ⟨.left, fun v hlen hag => ?_⟩
-      have hv : v[i]? = some xs[i] := (hag.getElem?_eq (by simp)).symm.trans ha
+      have hv : v[i]? = some xs[i] := (hag i (by simp)).symm.trans ha
       show (B.run xs)[i]? = (B.run v)[i]?
       rw [w.getElem?_run, w.getElem?_run, ha, hv, Option.map_some, Option.map_some,
-        ← hag.drop_eq (by omega), w.cell_inj.mpr (hL (B.lState (v.take i)))]
+        ← List.ext_drop_getElem? (n := i + 1) fun k hk ↦
+          hag k (show k ∈ Set.Ici (i - 0) from Set.mem_Ici.mpr (by omega)),
+        w.cell_inj.mpr (hL (B.lState (v.take i)))]
   · exact absurd (by rw [List.getElem?_eq_none (by simpa [w.length_run] using hi),
       List.getElem?_eq_none hi]) hchange
 
