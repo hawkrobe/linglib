@@ -151,8 +151,7 @@ lemma language_antitone_R {R R' : α → α → Prop} (h : ∀ a b, R a b → R'
     (TierStrictlyLocalGrammar.ofForbiddenPairs (fun _ _ : α => False) p).language = Set.univ := by
   ext w
   rw [mem_ofForbiddenPairs_language_iff_filter_isChain]
-  exact ⟨fun _ => Set.mem_univ _, fun _ =>
-    (List.isChain_top _).imp (fun _ _ _ h => h.elim)⟩
+  exact ⟨fun _ ↦ Set.mem_univ _, fun _ ↦ List.isChain_of_forall fun _ _ h ↦ h.elim⟩
 
 /-- If no symbol is on the tier (`p = ⊥`), the language is universal. -/
 @[simp] lemma lang_p_bot :

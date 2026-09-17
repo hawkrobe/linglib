@@ -182,8 +182,7 @@ variable {R : Option α → Option α → Prop}
 lemma isChain_boundary_two_iff (hR : IsBoundaryVacuous R) (ys : List α) :
     (boundary 2 ys).IsChain R ↔ (ys.map some).IsChain R := by
   show (none :: (ys.map some ++ [none])).IsChain R ↔ _
-  rw [List.isChain_cons_iff_of_forall_rel hR.none_left,
-      List.isChain_append_singleton_iff_of_forall_rel hR.none_right]
+  simp [List.isChain_cons, List.isChain_append, hR.none_left, hR.none_right]
 
 end IsBoundaryVacuous
 
