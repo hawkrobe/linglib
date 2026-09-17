@@ -59,7 +59,6 @@ structure Verb extends _root_.Verb where
   predicateClass : Option Complement.PredicateClass
   /-- The clause-typer on the embedded clause (Table 1). -/
   typer : Complementizer
-  deriving Repr
 
 /-- The negative suffix *-e:s*. -/
 def es : Morph := .suff "e:s"

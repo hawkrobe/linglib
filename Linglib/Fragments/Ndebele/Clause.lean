@@ -42,7 +42,6 @@ def ukuthi : Complementizer where
 structure Verb extends _root_.Verb where
   /-- The [noonan-2007] class. -/
   predicateClass : Complement.PredicateClass
-  deriving Repr
 
 /-- *cabanga* 'think', with an indicative complement ((4), (12)). -/
 def cabanga : Verb where

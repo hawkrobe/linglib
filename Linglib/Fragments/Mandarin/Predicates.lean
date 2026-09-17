@@ -28,7 +28,7 @@ open ArgumentStructure
 /-- A Mandarin verb: the cross-linguistic core with no inflectional fields, Mandarin being
 isolating. -/
 structure Verb extends _root_.Verb where
-  deriving Repr, BEq
+  deriving BEq
 
 /-- 期待 "qidai" — look forward to (Class 1: positive, non-C-distributive, takes questions). -/
 def qidai : Verb := {

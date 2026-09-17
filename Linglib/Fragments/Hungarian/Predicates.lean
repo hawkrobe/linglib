@@ -47,7 +47,7 @@ structure HungarianVerbEntry extends Verb where
   formPastDef : String := ""
   /-- 3sg past indefinite conjugation -/
   formPastIndef : String := ""
-  deriving Repr, BEq
+  deriving BEq
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -64,7 +64,7 @@ def lat : HungarianVerbEntry where
   formPastDef := "látta"
   formPastIndef := "látott"
   frames := [ArgumentFrame.finiteClause]
-  levinClass := some .see
+  levinClasses := {LevinClass.see}
 
 /-- *hall* 'hear' — perception verb ([egressy-2026], exx. (5), (13), (17)).
     Takes a non-speech-reporting complement (perceiving an event) *or* a
@@ -77,7 +77,7 @@ def hall : HungarianVerbEntry where
   formPastDef := "hallotta"
   formPastIndef := "hallott"
   frames := [ArgumentFrame.finiteClause]
-  levinClass := some .see
+  levinClasses := {LevinClass.see}
 
 /-- *álmodik* 'dream' — perception-in-a-dream ([egressy-2026], exx. (6), (10)).
     Non-speech-reporting complement. -/
@@ -152,7 +152,7 @@ def mond : HungarianVerbEntry where
   formPastIndef := "mondott"
   frames := [ArgumentFrame.finiteClause]
   speechActVerb := true
-  levinClass := some .say
+  levinClasses := {LevinClass.say}
 
 /-- *rikolt* 'shout' — manner-of-speaking verb ([egressy-2026], ex. (11)). -/
 def rikolt : HungarianVerbEntry where
@@ -160,7 +160,7 @@ def rikolt : HungarianVerbEntry where
   gloss := "shout"
   frames := [ArgumentFrame.finiteClause]
   speechActVerb := true
-  levinClass := some .mannerOfSpeaking
+  levinClasses := {LevinClass.mannerOfSpeaking}
 
 /-- *morog* 'growl' — manner-of-speaking verb ([egressy-2026], exx. (9), (11)).
     With a speech-reporting complement it reports the words growled; with a
@@ -170,7 +170,7 @@ def morog : HungarianVerbEntry where
   gloss := "growl"
   frames := [ArgumentFrame.finiteClause]
   speechActVerb := true
-  levinClass := some .mannerOfSpeaking
+  levinClasses := {LevinClass.mannerOfSpeaking}
 
 
 -- ════════════════════════════════════════════════════════════════

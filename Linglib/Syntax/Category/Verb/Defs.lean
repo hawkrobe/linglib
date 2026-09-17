@@ -217,10 +217,12 @@ morphological fields appropriate to their inflectional system.
 structure Verb extends
     Verb.ArgStructure, Verb.Aspect, Verb.Presupposition,
     Verb.Causation, Verb.Attitude where
-  /-- [levin-1993] verb class (§§ 9–57). -/
-  levinClass : Option LevinClass := none
+  /-- The [levin-1993] classes (§§ 9–57) whose member lists carry the verb, restricted to the
+      classes the library names; a verb Levin cross-lists carries every class, and a study
+      chooses a sense by membership. -/
+  levinClasses : Finset LevinClass := ∅
   /-- The verb's lexical root, from which its kind signature and change type are
-      read rather than from the `levinClass` table. The default `{}` is the
+      read rather than from its Levin classes. The default `{}` is the
       unannotated root. -/
   root : Semantics.Root := {}
   /-- Citation form (cross-linguistic) -/
@@ -232,7 +234,7 @@ structure Verb extends
   /-- Disambiguates entries that share a citation form.
       Most verbs use `.default`; polysemous entries use descriptive tags. -/
   senseTag : SenseTag := .default
-  deriving Repr, BEq
+  deriving BEq
 
 /-! ### ArgumentFrame accessors
 

@@ -21,14 +21,15 @@ open ArgumentStructure
 
 namespace Verb
 
-/-- The subject's entailment profile, the entry's own or else its Levin class's ([levin-1993],
-[dowty-1991]). -/
+/-- The subject's entailment profile, the entry's own or else the one its Levin classes agree
+on ([levin-1993], [dowty-1991]). -/
 def subjectProfile? (v : Verb) : Option EntailmentProfile :=
-  v.subjectEntailments <|> v.levinClass.bind (·.subjectProfile)
+  v.subjectEntailments <|> LevinClass.commonProfile LevinClass.subjectProfile v.levinClasses
 
-/-- The object's entailment profile, the entry's own or else its Levin class's. -/
+/-- The object's entailment profile, the entry's own or else the one its Levin classes agree
+on. -/
 def objectProfile? (v : Verb) : Option EntailmentProfile :=
-  v.objectEntailments <|> v.levinClass.bind (·.objectProfile)
+  v.objectEntailments <|> LevinClass.commonProfile LevinClass.objectProfile v.levinClasses
 
 /-- The verb's within-class root content ([spalek-mcnally-2026]). -/
 def rootContent (v : Verb) : Semantics.Root.Content := v.root.content

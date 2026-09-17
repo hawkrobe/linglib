@@ -40,7 +40,7 @@ structure GermanVerbEntry extends Verb where
   /-- Root type ([beavers-etal-2021]): result vs property concept.
       Only set for change-of-state verbs where the distinction is applicable. -/
   rootType : Option Semantics.Root.ChangeType := none
-  deriving Repr, BEq
+  deriving BEq
 
 -- ============================================================================
 -- § 1: Causative Verbs

@@ -30,7 +30,7 @@ def querer : Verb where
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
-  levinClass := some .want
+  levinClasses := {LevinClass.want}
 
 /-- *esperar* 'hope' — cross-linguistically variable (IND/SBJV).
     [grano-2024], (11): both IND and SBJV accepted. -/
@@ -51,7 +51,7 @@ def pretender : Verb where
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
-  levinClass := some .want
+  levinClasses := {LevinClass.want}
 
 /-- *fazer* 'make' — causative, rejects indicative.
     [grano-2024], (41): SBJV required via *com que*, IND rejected. -/
@@ -66,13 +66,13 @@ def fazer : Verb where
 -- ════════════════════════════════════════════════════════════════
 
 theorem querer_is_want_class :
-    querer.levinClass = some .want := rfl
+    LevinClass.want ∈ querer.levinClasses := by decide
 
 theorem esperar_not_want_class :
-    esperar.levinClass ≠ some .want := by decide
+    LevinClass.want ∉ esperar.levinClasses := by decide
 
 theorem pretender_is_want_class :
-    pretender.levinClass = some .want := rfl
+    LevinClass.want ∈ pretender.levinClasses := by decide
 
 theorem fazer_is_causative :
     fazer.causative.isSome = true := rfl

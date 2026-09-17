@@ -2,6 +2,7 @@ import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.ArgumentStructure.RoleList
 import Linglib.Semantics.Events.Path
 import Linglib.Semantics.Aspect.Basic
+import Mathlib.Data.Finset.Fold
 
 /-!
 # The verb classes of Levin 1993
@@ -9,8 +10,8 @@ import Linglib.Semantics.Aspect.Basic
 The verb classes of [levin-1993] Part II as an enumeration, each with its meaning components,
 the unaccusativity [levin-hovav-1995] predict for it, and whether it is a class of
 creation verbs. The classes' alternation profiles are in `DiathesisAlternation.lean`, their
-root entailments in `LevinTheory.lean`, and the `levinClass` field of a `Verb` entry carries
-its class.
+root entailments in `LevinTheory.lean`, and the `levinClasses` field of a `Verb` entry carries
+the classes listing it.
 
 ## Implementation notes
 
@@ -329,7 +330,7 @@ end LevinClass
 The argument-structure template each class realizes
 (`ArgumentStructure.Template`); `none` for classes whose profiles haven't
 been determined yet. Consumed by `Verb.Basic` to derive a verb entry's
-default argument profiles from its `levinClass` field. -/
+default argument profiles from its Levin classes. -/
 
 /-- Map a Levin class to its argument structure template.
     Returns `none` for classes whose profiles haven't been determined yet. -/
@@ -390,6 +391,29 @@ def LevinClass.subjectProfile (c : LevinClass) : Option EntailmentProfile :=
 /-- Object entailment profile for a Levin class. -/
 def LevinClass.objectProfile (c : LevinClass) : Option EntailmentProfile :=
   c.roleList.bind (·.objectProfile)
+
+/-- Agreement between two votes on a profile: `none` abstains, `some none` records a
+disagreement. -/
+private def agree :
+    Option (Option EntailmentProfile) → Option (Option EntailmentProfile) →
+      Option (Option EntailmentProfile)
+  | none, b => b
+  | a, none => a
+  | some x, some y => if x = y then some x else some none
+
+private instance : Std.Commutative agree :=
+  ⟨fun a b ↦ by
+    rcases a with _ | a <;> rcases b with _ | b <;> simp [agree]; split_ifs <;> simp_all⟩
+
+private instance : Std.Associative agree :=
+  ⟨fun a b c ↦ by
+    rcases a with _ | a <;> rcases b with _ | b <;> rcases c with _ | c <;> simp [agree] <;>
+      split_ifs <;> simp_all⟩
+
+/-- The profile the classes assigning one agree on, `none` when none does or they disagree. -/
+def LevinClass.commonProfile (f : LevinClass → Option EntailmentProfile)
+    (s : Finset LevinClass) : Option EntailmentProfile :=
+  (s.fold agree none fun c ↦ (f c).map some).bind id
 
 /-- **The stored linking is never ASP-reversed** ([dowty-1991] via
     [levin-rappaport-hovav-2005] ch. 2): in no class does the object

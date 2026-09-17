@@ -52,7 +52,7 @@ structure SpanishVerbEntry extends Verb where
   verbHead : List VerbHead
   /-- Empirical: does this verb license stylistic LE? -/
   licensesStylLE : Bool
-  deriving Repr, BEq
+  deriving BEq
 
 -- ============================================================================
 -- § 3: Verb Data (Muñoz [munoz-perez-2026])
@@ -165,7 +165,7 @@ def rasgar : SpanishVerbEntry :=
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true,
-    levinClass := some .break_,
+    levinClasses := {LevinClass.break_},
     root := { content := {
       force := {.low, .moderate}
       direction := {.unidirectional}

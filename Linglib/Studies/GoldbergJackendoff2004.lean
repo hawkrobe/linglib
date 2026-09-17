@@ -52,6 +52,8 @@ structure Row where
   selection : Option ObjectSelection
   boundedness : Option Boundedness
   verbRole : Option ThetaRole
+  /-- The Levin class the paper's analysis assigns the verb. -/
+  levinClass : Option LevinClass
   judgment : Judgment
 
 /-- The paper's verbs, by citation form. -/
@@ -73,6 +75,8 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
             ("fake reflexive", .fakeReflexive)]
          boundedness := ex.parse? "endBounded" [("true", .bounded), ("false", .unbounded)]
          verbRole := ex.parse? "verbRole" [("agent", .agent), ("patient", .patient)]
+         levinClass := ex.parse? "levinClass"
+           [("mannerOfSpeaking", .mannerOfSpeaking), ("substanceEmission", .substanceEmission)]
          judgment := ex.judgment }
 
 /-- The paper's examples (5)–(9), (23)–(24), (45), (97c), and *wipe the table clean*. -/
@@ -103,11 +107,11 @@ def Row.fusedSlot (r : Row) : Option ArgumentFrame.Slot :=
   r.verb.coreSlots[if r.subconstruction.isCausative then 1 else 0]?
 
 /-- The paper's subject roles for the noncausatives are the unaccusativity predictions of the
-verbs' Levin classes ([levin-hovav-1995]): *bleed* emits substance, *yell* and *cry* are manner
-of speaking. -/
+Levin classes it assigns the verbs ([levin-hovav-1995]), each a class Levin lists the verb
+under: *bleed* emits substance, *yell* and *cry* are manner of speaking. -/
 theorem rows_verbRole_unaccusative :
-    ∀ r ∈ rows, r.subconstruction.isCausative = false →
-      ∀ ρ ∈ r.verbRole, ∀ c ∈ r.verb.levinClass, (ρ = .patient ↔ c.PredictsUnaccusative) := by
+    ∀ r ∈ rows, r.subconstruction.isCausative = false → ∀ ρ ∈ r.verbRole, ∀ c ∈ r.levinClass,
+      c ∈ r.verb.levinClasses ∧ (ρ = .patient ↔ c.PredictsUnaccusative) := by
   decide
 
 /-- Where the fragment's citation frame derives a role label for the fusing argument, it is the

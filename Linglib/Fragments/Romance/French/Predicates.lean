@@ -30,7 +30,7 @@ structure FrenchVerbEntry extends Verb where
   formPartPasse : String
   /-- Participe présent -/
   formPartPres : String
-  deriving Repr, BEq
+  deriving BEq
 
 /-- faire — COMPACT causative (free morpheme). -/
 def faire : FrenchVerbEntry where

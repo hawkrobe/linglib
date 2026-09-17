@@ -33,7 +33,7 @@ def a_vrea : Verb where
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
-  levinClass := some .want
+  levinClasses := {LevinClass.want}
 
 /-- *a spera* 'hope' — cross-linguistically variable (IND/SBJV).
     [grano-2024], (14): both *să* (SBJV) and *că* (IND) accepted. -/
@@ -52,7 +52,7 @@ def a_intentiona : Verb where
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
-  levinClass := some .want
+  levinClasses := {LevinClass.want}
 
 /-- *a face* 'make' — causative, subjunctive-selecting via *să*.
     [grano-2024], (46): *să* (SBJV) required, *că* (IND) rejected. -/
@@ -67,13 +67,13 @@ def a_face : Verb where
 -- ════════════════════════════════════════════════════════════════
 
 theorem a_vrea_is_want_class :
-    a_vrea.levinClass = some .want := rfl
+    LevinClass.want ∈ a_vrea.levinClasses := by decide
 
 theorem a_spera_not_want_class :
-    a_spera.levinClass ≠ some .want := by decide
+    LevinClass.want ∉ a_spera.levinClasses := by decide
 
 theorem a_intentiona_is_want_class :
-    a_intentiona.levinClass = some .want := rfl
+    LevinClass.want ∈ a_intentiona.levinClasses := by decide
 
 theorem a_face_is_causative :
     a_face.causative.isSome = true := rfl
