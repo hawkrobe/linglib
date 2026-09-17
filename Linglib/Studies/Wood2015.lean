@@ -196,7 +196,7 @@ theorem rootLocal_voice (r : Root) (ka hasD : Bool) :
     rintro ⟨_ | _ | x, hx⟩ ⟨-, h₂⟩
     · rfl
     · simp [verb, Head.Cyclic] at h₂
-    · simp [verb] at hx; omega
+    · simp [verb] at hx
   refine Finset.card_le_one.mpr λ a ha b hb => Fin.ext ?_
   simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha hb
   rw [key a ha, key b hb]
