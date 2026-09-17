@@ -8,16 +8,13 @@ import Mathlib.Tactic.DeriveFintype
 # The verb classes of Levin 1993
 
 The verb classes of [levin-1993] Part II as an enumeration, one constructor per class page
-with a member list, with the page's section number and title; whether a class is a class of
-creation verbs ([davies-dubinsky-2003]) is the library's reading of that paper, not Levin's.
-The classes' property tables are in `LevinClass/Properties.lean`, their member lists in
+with a member list, with the page's section number and title. The classes' property tables are in `LevinClass/Properties.lean`, their member lists in
 `LevinClass/Members.lean`, their root entailments in `LevinTheory.lean`, and the
 `levinClasses` field of a `Verb` entry carries the classes listing it.
 
 ## References
 
 * [levin-1993]
-* [davies-dubinsky-2003]
 -/
 
 namespace ArgumentStructure
@@ -855,19 +852,6 @@ def name : LevinClass → String
 
 /-- The chapter of Part II, its top-level class. -/
 def chapter (c : LevinClass) : ℕ := c.number.headD 0
-
-end LevinClass
-
-namespace LevinClass
-
-/-- The class denotes the creation of its object ([davies-dubinsky-2003]). -/
-def IsVerbOfCreation : LevinClass → Prop
-  | .imageImpression | .scribble | .illustrate | .transcribe | .build | .grow | .create | .knead
-  | .performance | .cooking => True
-  | _ => False
-
-instance : DecidablePred LevinClass.IsVerbOfCreation := fun c => by
-  cases c <;> unfold LevinClass.IsVerbOfCreation <;> infer_instance
 
 end LevinClass
 
