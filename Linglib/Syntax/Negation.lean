@@ -70,7 +70,7 @@ structure Marker where
 
 /-- The surface form of a marker: its morphs with boundary notation,
 discontinuous pieces separated by `…`. -/
-def Marker.form (m : Marker) : String := toString m.morphs
+def Marker.form (m : Marker) : String := String.intercalate "…" (m.morphs.map toString)
 
 /-! ### Per-language WALS values -/
 

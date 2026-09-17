@@ -19,7 +19,7 @@ opaque lexeme realized at a cell ([stump-2001], [bonami-stump-2016]);
 [spencer-2013]'s lexemic index. [beard-1995]'s Separation Hypothesis grounds
 the form-side separation; the meaning-side separation is DM's List-3 move.
 `Realization` fixes that object; sign-based lexicalism, Construction
-Morphology, and [haspelmath-2025-root]'s morph-based comparative root are
+Morphology, and [haspelmath-2025b]'s morph-based comparative root are
 rival ontologies its parameters measure, not instances of it (survey:
 [lohndal-2020]). The interface is agnostic about whether indices are listed
 or constructed ([blevins-2016]).

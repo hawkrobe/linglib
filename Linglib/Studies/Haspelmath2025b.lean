@@ -9,7 +9,7 @@ import Linglib.Morphology.Root.Consonantal
 # Haspelmath (2025): Roots and root classes in comparative grammar
 
 This file formalizes the definition of the root as a comparative concept in
-[haspelmath-2025-root]. `IsRootIn` is definition (1): a contentful form (`Form`, a morph
+[haspelmath-2025b]. `IsRootIn` is definition (1): a contentful form (`Form`, a morph
 with its meaning class) that occurs in a free form with no other contentful form, relative
 to a fragment's free-form inventory. The qualifying clause separates roots from contentful
 affixes (the Japanese causative `-ase`) and neoclassical combining forms (`geo-`), which
@@ -37,11 +37,11 @@ description over shared variables read through two subscriptings,
 
 ## References
 
-* [haspelmath-2025-root]
+* [haspelmath-2025b]
 * [jackendoff-audring-2020]
 -/
 
-namespace Haspelmath2025Root
+namespace Haspelmath2025b
 
 open Morphology
 
@@ -115,9 +115,9 @@ def shapes (w : List Form) : List Morph := w.map Form.shape
 can be combined with an affix. -/
 def IsStemIn (words freeForms : List (List Form)) (s : List Form) : Prop :=
   (∃ f ∈ s, IsRootIn freeForms f) ∧
-    (∀ f ∈ s, IsRootIn freeForms f ∨ f.shape.attachment? = some .affix) ∧
+    (∀ f ∈ s, IsRootIn freeForms f ∨ f.shape.kind.attachment? = some .affix) ∧
     ∃ w ∈ words, ∃ a ∈ w,
-      a.shape.attachment? = some .affix ∧ (w = s ++ [a] ∨ w = a :: s)
+      a.shape.kind.attachment? = some .affix ∧ (w = s ++ [a] ∨ w = a :: s)
 
 instance (words freeForms : List (List Form)) (s : List Form) :
     Decidable (IsStemIn words freeForms s) :=
@@ -367,4 +367,4 @@ theorem hammer_dance_not_sisters :
     simpa [hammerNoun, danceVerb] using
       (ConstructionMorphology.Schema.instantiatesAt_elim_iff.1 h).2.2.2.2 .phonology .phonology rfl
 
-end Haspelmath2025Root
+end Haspelmath2025b

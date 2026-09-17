@@ -15,8 +15,8 @@ and free-form inventories ([bloomfield-1933], the base definition of
 free form as a proper part. The definition is deliberately inclusive
 (meaning-free cores like *-fer* qualify; so do free function words);
 `Studies/Qin2025.lean` grades instances by canonicity, and
-[haspelmath-2025-root]'s contentfulness-gated alternative is
-`Studies/Haspelmath2025Root.lean`. Consonantal skeletons are
+[haspelmath-2025b]'s contentfulness-gated alternative is
+`Studies/Haspelmath2025b.lean`. Consonantal skeletons are
 `ConsonantalRoot`; DM's acategorial root is `DistributedMorphology.Root`
 (`Morphology/DistributedMorphology/Defs.lean`).
 

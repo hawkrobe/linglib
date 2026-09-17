@@ -1,5 +1,6 @@
 import Linglib.Core.Order.Branching
 import Linglib.Morphology.Exponence.Select
+import Linglib.Morphology.Morph
 import Mathlib.Data.List.MinMax
 
 /-!
@@ -35,14 +36,6 @@ uses containment as the simpler equivalent formulation.
 -/
 
 namespace Morphology.Nanosyntax
-
-/-- Morphological type of an exponent derived from nanosyntactic
-spellout. Suffixes arise from spellout-driven movement (roll-up, unary
-foot); prefixes arise from subderivation (binary foot) — [dekier-2021]
-for this diagnostic on indefinite markers. -/
-inductive MorphType where
-  | suffix | prefix
-  deriving DecidableEq, Repr
 
 /-! ### NanoTree -/
 
@@ -248,8 +241,10 @@ structure TreeLexEntry (F : Type*) (α : Type*) where
   tree : NanoTree F
   /-- The exponent. -/
   exponent : α
-  /-- Morphological type (suffix or prefix). -/
-  morphType : MorphType := .suffix
+  /-- The side of its host the exponent attaches on: suffixes arise from
+  spellout-driven movement (roll-up, unary foot), prefixes from subderivation
+  (binary foot), [dekier-2021]'s diagnostic on indefinite markers. -/
+  side : Morph.Side := .after
   deriving Repr
 
 variable {F : Type*} {α : Type*}

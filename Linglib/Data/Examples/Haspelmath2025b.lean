@@ -1,21 +1,21 @@
 import Linglib.Data.Examples.Schema
 
 /-!
-# `Haspelmath2025Root` — typed example data
+# `Haspelmath2025b` — typed example data
 
-Auto-generated from `Linglib/Data/Examples/Haspelmath2025Root.json` by
+Auto-generated from `Linglib/Data/Examples/Haspelmath2025b.json` by
 `scripts/gen_examples.py`. Do not edit by hand; edit the JSON and re-run
 the generator. Consumers (the paper's study file, test-suite hubs) import
-this module; declarations live in `namespace Haspelmath2025Root.Examples`.
+this module; declarations live in `namespace Haspelmath2025b.Examples`.
 -/
 
-namespace Haspelmath2025Root.Examples
+namespace Haspelmath2025b.Examples
 
 open Data.Examples
 
 def yomaseru : LinguisticExample :=
-  { id := "haspelmath2025root_yomaseru"
-    source := ⟨"haspelmath-2025-root", "§2"⟩
+  { id := "haspelmath2025b_yomaseru"
+    source := ⟨"haspelmath-2025b", "§2"⟩
     reportedIn := none
     language := "nucl1643"
     primaryText := "yom-ase(ru)"
@@ -32,8 +32,8 @@ def yomaseru : LinguisticExample :=
     lgrConformance := "" }
 
 def geology : LinguisticExample :=
-  { id := "haspelmath2025root_geology"
-    source := ⟨"haspelmath-2025-root", "§2"⟩
+  { id := "haspelmath2025b_geology"
+    source := ⟨"haspelmath-2025b", "§2"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "geo-logy"
@@ -50,8 +50,8 @@ def geology : LinguisticExample :=
     lgrConformance := "" }
 
 def hello : LinguisticExample :=
-  { id := "haspelmath2025root_hello"
-    source := ⟨"haspelmath-2025-root", "fn. 10"⟩
+  { id := "haspelmath2025b_hello"
+    source := ⟨"haspelmath-2025b", "fn. 10"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "hello"
@@ -68,8 +68,8 @@ def hello : LinguisticExample :=
     lgrConformance := "" }
 
 def zona : LinguisticExample :=
-  { id := "haspelmath2025root_zona"
-    source := ⟨"haspelmath-2025-root", "§3"⟩
+  { id := "haspelmath2025b_zona"
+    source := ⟨"haspelmath-2025b", "§3"⟩
     reportedIn := none
     language := "uppe1395"
     primaryText := "žon-a"
@@ -86,8 +86,8 @@ def zona : LinguisticExample :=
     lgrConformance := "" }
 
 def zony : LinguisticExample :=
-  { id := "haspelmath2025root_zony"
-    source := ⟨"haspelmath-2025-root", "§3"⟩
+  { id := "haspelmath2025b_zony"
+    source := ⟨"haspelmath-2025b", "§3"⟩
     reportedIn := none
     language := "uppe1395"
     primaryText := "žon-y"
@@ -104,8 +104,8 @@ def zony : LinguisticExample :=
     lgrConformance := "" }
 
 def zonu : LinguisticExample :=
-  { id := "haspelmath2025root_zonu"
-    source := ⟨"haspelmath-2025-root", "§3"⟩
+  { id := "haspelmath2025b_zonu"
+    source := ⟨"haspelmath-2025b", "§3"⟩
     reportedIn := none
     language := "uppe1395"
     primaryText := "žon-u"
@@ -122,8 +122,8 @@ def zonu : LinguisticExample :=
     lgrConformance := "" }
 
 def ex5a : LinguisticExample :=
-  { id := "haspelmath2025root_ex5a"
-    source := ⟨"haspelmath-2025-root", "(5)"⟩
+  { id := "haspelmath2025b_ex5a"
+    source := ⟨"haspelmath-2025b", "(5)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "ich lauf-e"
@@ -140,8 +140,8 @@ def ex5a : LinguisticExample :=
     lgrConformance := "" }
 
 def ex5b : LinguisticExample :=
-  { id := "haspelmath2025root_ex5b"
-    source := ⟨"haspelmath-2025-root", "(5)"⟩
+  { id := "haspelmath2025b_ex5b"
+    source := ⟨"haspelmath-2025b", "(5)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "wir lauf-en"
@@ -158,8 +158,8 @@ def ex5b : LinguisticExample :=
     lgrConformance := "" }
 
 def ex5c : LinguisticExample :=
-  { id := "haspelmath2025root_ex5c"
-    source := ⟨"haspelmath-2025-root", "(5)"⟩
+  { id := "haspelmath2025b_ex5c"
+    source := ⟨"haspelmath-2025b", "(5)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "lauf!"
@@ -176,8 +176,8 @@ def ex5c : LinguisticExample :=
     lgrConformance := "" }
 
 def ex5d : LinguisticExample :=
-  { id := "haspelmath2025root_ex5d"
-    source := ⟨"haspelmath-2025-root", "(5)"⟩
+  { id := "haspelmath2025b_ex5d"
+    source := ⟨"haspelmath-2025b", "(5)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "ich bin ge-lauf-en"
@@ -194,8 +194,8 @@ def ex5d : LinguisticExample :=
     lgrConformance := "" }
 
 def ex5e : LinguisticExample :=
-  { id := "haspelmath2025root_ex5e"
-    source := ⟨"haspelmath-2025-root", "(5)"⟩
+  { id := "haspelmath2025b_ex5e"
+    source := ⟨"haspelmath-2025b", "(5)"⟩
     reportedIn := none
     language := "stan1295"
     primaryText := "sie lief"
@@ -212,8 +212,8 @@ def ex5e : LinguisticExample :=
     lgrConformance := "" }
 
 def ex6a : LinguisticExample :=
-  { id := "haspelmath2025root_ex6a"
-    source := ⟨"haspelmath-2025-root", "(6)"⟩
+  { id := "haspelmath2025b_ex6a"
+    source := ⟨"haspelmath-2025b", "(6)"⟩
     reportedIn := none
     language := "stan1318"
     primaryText := "katab-naa"
@@ -230,8 +230,8 @@ def ex6a : LinguisticExample :=
     lgrConformance := "" }
 
 def ex6b : LinguisticExample :=
-  { id := "haspelmath2025root_ex6b"
-    source := ⟨"haspelmath-2025-root", "(6)"⟩
+  { id := "haspelmath2025b_ex6b"
+    source := ⟨"haspelmath-2025b", "(6)"⟩
     reportedIn := none
     language := "stan1318"
     primaryText := "na-ktub-u"
@@ -248,8 +248,8 @@ def ex6b : LinguisticExample :=
     lgrConformance := "" }
 
 def ex6c : LinguisticExample :=
-  { id := "haspelmath2025root_ex6c"
-    source := ⟨"haspelmath-2025-root", "(6)"⟩
+  { id := "haspelmath2025b_ex6c"
+    source := ⟨"haspelmath-2025b", "(6)"⟩
     reportedIn := none
     language := "stan1318"
     primaryText := "kaatib"
@@ -266,8 +266,8 @@ def ex6c : LinguisticExample :=
     lgrConformance := "" }
 
 def ex6d : LinguisticExample :=
-  { id := "haspelmath2025root_ex6d"
-    source := ⟨"haspelmath-2025-root", "(6)"⟩
+  { id := "haspelmath2025b_ex6d"
+    source := ⟨"haspelmath-2025b", "(6)"⟩
     reportedIn := none
     language := "stan1318"
     primaryText := "kitaab"
@@ -284,8 +284,8 @@ def ex6d : LinguisticExample :=
     lgrConformance := "" }
 
 def ex8a1 : LinguisticExample :=
-  { id := "haspelmath2025root_ex8a1"
-    source := ⟨"haspelmath-2025-root", "(8)"⟩
+  { id := "haspelmath2025b_ex8a1"
+    source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
     language := "malt1254"
     primaryText := "kanta"
@@ -302,8 +302,8 @@ def ex8a1 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex8a2 : LinguisticExample :=
-  { id := "haspelmath2025root_ex8a2"
-    source := ⟨"haspelmath-2025-root", "(8)"⟩
+  { id := "haspelmath2025b_ex8a2"
+    source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
     language := "malt1254"
     primaryText := "fetaħ"
@@ -320,8 +320,8 @@ def ex8a2 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex8a3 : LinguisticExample :=
-  { id := "haspelmath2025root_ex8a3"
-    source := ⟨"haspelmath-2025-root", "(8)"⟩
+  { id := "haspelmath2025b_ex8a3"
+    source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
     language := "malt1254"
     primaryText := "ħataf"
@@ -338,8 +338,8 @@ def ex8a3 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex8b1 : LinguisticExample :=
-  { id := "haspelmath2025root_ex8b1"
-    source := ⟨"haspelmath-2025-root", "(8)"⟩
+  { id := "haspelmath2025b_ex8b1"
+    source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
     language := "malt1254"
     primaryText := "siġra"
@@ -356,8 +356,8 @@ def ex8b1 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex8b2 : LinguisticExample :=
-  { id := "haspelmath2025root_ex8b2"
-    source := ⟨"haspelmath-2025-root", "(8)"⟩
+  { id := "haspelmath2025b_ex8b2"
+    source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
     language := "malt1254"
     primaryText := "għasfur"
@@ -374,8 +374,8 @@ def ex8b2 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex8b3 : LinguisticExample :=
-  { id := "haspelmath2025root_ex8b3"
-    source := ⟨"haspelmath-2025-root", "(8)"⟩
+  { id := "haspelmath2025b_ex8b3"
+    source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
     language := "malt1254"
     primaryText := "borża"
@@ -392,8 +392,8 @@ def ex8b3 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex8c1 : LinguisticExample :=
-  { id := "haspelmath2025root_ex8c1"
-    source := ⟨"haspelmath-2025-root", "(8)"⟩
+  { id := "haspelmath2025b_ex8c1"
+    source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
     language := "malt1254"
     primaryText := "tajjeb"
@@ -410,8 +410,8 @@ def ex8c1 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex8c2 : LinguisticExample :=
-  { id := "haspelmath2025root_ex8c2"
-    source := ⟨"haspelmath-2025-root", "(8)"⟩
+  { id := "haspelmath2025b_ex8c2"
+    source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
     language := "malt1254"
     primaryText := "żgħir"
@@ -428,8 +428,8 @@ def ex8c2 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex8c3 : LinguisticExample :=
-  { id := "haspelmath2025root_ex8c3"
-    source := ⟨"haspelmath-2025-root", "(8)"⟩
+  { id := "haspelmath2025b_ex8c3"
+    source := ⟨"haspelmath-2025b", "(8)"⟩
     reportedIn := none
     language := "malt1254"
     primaryText := "għani"
@@ -446,8 +446,8 @@ def ex8c3 : LinguisticExample :=
     lgrConformance := "" }
 
 def ex12a : LinguisticExample :=
-  { id := "haspelmath2025root_ex12a"
-    source := ⟨"haspelmath-2025-root", "(12a)"⟩
+  { id := "haspelmath2025b_ex12a"
+    source := ⟨"haspelmath-2025b", "(12a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "hammer"
@@ -464,8 +464,8 @@ def ex12a : LinguisticExample :=
     lgrConformance := "" }
 
 def ex12b : LinguisticExample :=
-  { id := "haspelmath2025root_ex12b"
-    source := ⟨"haspelmath-2025-root", "(12b)"⟩
+  { id := "haspelmath2025b_ex12b"
+    source := ⟨"haspelmath-2025b", "(12b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "hammer"
@@ -482,8 +482,8 @@ def ex12b : LinguisticExample :=
     lgrConformance := "" }
 
 def ex13a : LinguisticExample :=
-  { id := "haspelmath2025root_ex13a"
-    source := ⟨"haspelmath-2025-root", "(13a)"⟩
+  { id := "haspelmath2025b_ex13a"
+    source := ⟨"haspelmath-2025b", "(13a)"⟩
     reportedIn := none
     language := "ital1282"
     primaryText := "strega"
@@ -500,8 +500,8 @@ def ex13a : LinguisticExample :=
     lgrConformance := "" }
 
 def ex13b : LinguisticExample :=
-  { id := "haspelmath2025root_ex13b"
-    source := ⟨"haspelmath-2025-root", "(13b)"⟩
+  { id := "haspelmath2025b_ex13b"
+    source := ⟨"haspelmath-2025b", "(13b)"⟩
     reportedIn := none
     language := "ital1282"
     primaryText := "strega(-re)"
@@ -518,8 +518,8 @@ def ex13b : LinguisticExample :=
     lgrConformance := "" }
 
 def ex14a : LinguisticExample :=
-  { id := "haspelmath2025root_ex14a"
-    source := ⟨"haspelmath-2025-root", "(14a)"⟩
+  { id := "haspelmath2025b_ex14a"
+    source := ⟨"haspelmath-2025b", "(14a)"⟩
     reportedIn := none
     language := "stan1290"
     primaryText := "combat"
@@ -536,8 +536,8 @@ def ex14a : LinguisticExample :=
     lgrConformance := "" }
 
 def ex14b : LinguisticExample :=
-  { id := "haspelmath2025root_ex14b"
-    source := ⟨"haspelmath-2025-root", "(14b)"⟩
+  { id := "haspelmath2025b_ex14b"
+    source := ⟨"haspelmath-2025b", "(14b)"⟩
     reportedIn := none
     language := "stan1290"
     primaryText := "combatt(-re)"
@@ -554,8 +554,8 @@ def ex14b : LinguisticExample :=
     lgrConformance := "" }
 
 def ex15a : LinguisticExample :=
-  { id := "haspelmath2025root_ex15a"
-    source := ⟨"haspelmath-2025-root", "(15a)"⟩
+  { id := "haspelmath2025b_ex15a"
+    source := ⟨"haspelmath-2025b", "(15a)"⟩
     reportedIn := none
     language := "russ1263"
     primaryText := "rabota"
@@ -572,8 +572,8 @@ def ex15a : LinguisticExample :=
     lgrConformance := "" }
 
 def ex15b : LinguisticExample :=
-  { id := "haspelmath2025root_ex15b"
-    source := ⟨"haspelmath-2025-root", "(15b)"⟩
+  { id := "haspelmath2025b_ex15b"
+    source := ⟨"haspelmath-2025b", "(15b)"⟩
     reportedIn := none
     language := "russ1263"
     primaryText := "rabota(-t')"
@@ -590,8 +590,8 @@ def ex15b : LinguisticExample :=
     lgrConformance := "" }
 
 def ex18a : LinguisticExample :=
-  { id := "haspelmath2025root_ex18a"
-    source := ⟨"haspelmath-2025-root", "(18a)"⟩
+  { id := "haspelmath2025b_ex18a"
+    source := ⟨"haspelmath-2025b", "(18a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "ambition"
@@ -608,8 +608,8 @@ def ex18a : LinguisticExample :=
     lgrConformance := "" }
 
 def ex18b : LinguisticExample :=
-  { id := "haspelmath2025root_ex18b"
-    source := ⟨"haspelmath-2025-root", "(18b)"⟩
+  { id := "haspelmath2025b_ex18b"
+    source := ⟨"haspelmath-2025b", "(18b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "ambitious"
@@ -626,8 +626,8 @@ def ex18b : LinguisticExample :=
     lgrConformance := "" }
 
 def laudab : LinguisticExample :=
-  { id := "haspelmath2025root_laudab"
-    source := ⟨"haspelmath-2025-root", "fn. 6"⟩
+  { id := "haspelmath2025b_laudab"
+    source := ⟨"haspelmath-2025b", "fn. 6"⟩
     reportedIn := none
     language := "lati1261"
     primaryText := "laud-ab-"
@@ -645,4 +645,4 @@ def laudab : LinguisticExample :=
 
 def all : List LinguisticExample := [yomaseru, geology, hello, zona, zony, zonu, ex5a, ex5b, ex5c, ex5d, ex5e, ex6a, ex6b, ex6c, ex6d, ex8a1, ex8a2, ex8a3, ex8b1, ex8b2, ex8b3, ex8c1, ex8c2, ex8c3, ex12a, ex12b, ex13a, ex13b, ex14a, ex14b, ex15a, ex15b, ex18a, ex18b, laudab]
 
-end Haspelmath2025Root.Examples
+end Haspelmath2025b.Examples
