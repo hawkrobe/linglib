@@ -1,60 +1,37 @@
+import Mathlib.Data.Finset.Basic
 import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Semantics.ArgumentStructure.MeaningComponents
 
 /-!
-# Diathesis Alternations
-[levin-1993]
+# Diathesis alternations
 
-Twenty-five curated diathesis alternations from [levin-1993] Part One,
-the prediction map from `MeaningComponents`, the per-class participation
-profile, and structural theorems characterising how alternation
-participation interacts with `MeaningComponents.fuse`.
+Twenty-five of the alternations of [levin-1993] Part One, grouped by the chapter that presents
+them, the Introduction's prediction of an alternation from a class's meaning components, and
+each class's alternation profile as Part II records it: the alternations the class page
+attests (`LevinClass.alternations`) and the ones it stars (`LevinClass.starredAlternations`),
+with `LevinClass.Participates` as the attested relation.
 
-## Provenance
+## Implementation notes
 
-Moved from `Core/Lexical/DiathesisAlternation.lean` in the cleanup that
-dissolved `Core/Lexical/`. Sibling of `LevinClass.lean`, `MeaningComponents.lean`,
-`LevinTheory.lean`, `RoleList.lean` — all paper-anchored on
-[levin-1993] and not theory-neutral substrate.
+The 25 alternations are the ones that discriminate the major classes; the remaining ones of
+Part One are not encoded. `MeaningComponents.predictedAlternation` is a hypothesis, not data:
+it agrees with Part II on the Introduction's quadruple (`quadruple_prediction_matches`) and
+overshoots elsewhere (`prediction_not_sound`), which the studies that rely on it state
+explicitly. The profiles are read off the class pages' property lists, a starred example
+denying the alternation and an unstarred one attesting it.
 
-## Selection caveat
+## References
 
-The 25 alternations chosen here are **the formaliser's selection** of
-"diagnostically active" alternations from Levin's ~79 in Part One.
-Levin's monograph lists many narrower alternations as data/prose; the
-selection here covers what's needed to discriminate the major verb
-classes per Levin's Introduction. This is NOT Levin's own claim about
-which alternations are diagnostically active — verify the curation
-against the empirical needs of any downstream consumer.
-
-UNVERIFIED: Per-alternation section numbers (e.g., `§1.1.2.1`, `§2.1`,
-`§7.4`) cited from memory throughout. Verify against published
-[levin-1993] before treating as authoritative.
-
-## Sections
-
-- §1a `AlternationFamily` — 6 chapter-anchored families
-- §1b `DiathesisAlternation` — 25 alternation types + family classifier
-- §2 `MeaningComponents.predictedAlternation` — feature-derived predictions
-- §3 Structural theorems on `fuse` × `predictedAlternation`
-- §4 `LevinClass.participatesIn` — full participation profile (component-derived + class-specific overrides)
-- §5 Canonical diagnostic theorems (*break*/*cut*/*hit*/*touch* + cross-class predictions)
+* [levin-1993]
 -/
 
 namespace ArgumentStructure
 
--- ════════════════════════════════════════════════════
--- § 1a. Alternation Families
--- ════════════════════════════════════════════════════
+/-! ### Alternation Families -/
 
 /-- Classification of diathesis alternations by the chapter of
     [levin-1993] Part One where they are primarily discussed.
 
-    Organizational grouping for the curated 25-alternation enum;
-    the remaining ~50 narrow alternations from Part One are documented
-    as data/prose, not as enum constructors.
-
-    UNVERIFIED: Chapter assignments cited from memory. -/
+    -/
 inductive AlternationFamily where
   /-- Ch 1: Transitivity alternations — changes in the number of arguments
       (causative/inchoative, induced action, middle, conative, object drop). -/
@@ -75,9 +52,7 @@ inductive AlternationFamily where
   | otherConstructions
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 1b. Diathesis Alternation Diagnostics
--- ════════════════════════════════════════════════════
+/-! ### Diathesis Alternation Diagnostics -/
 
 /-- Curated diathesis alternations from [levin-1993] Part One.
 
@@ -184,9 +159,7 @@ def DiathesisAlternation.family : DiathesisAlternation → AlternationFamily
   | .cognateObject | .wayConstruction | .resultative
   | .directionalPhrase => .otherConstructions
 
--- ════════════════════════════════════════════════════
--- § 2. Component-Derived Alternation Prediction
--- ════════════════════════════════════════════════════
+/-! ### Component-Derived Alternation Prediction -/
 
 /-- Predicted alternation participation derived from meaning components.
 
@@ -234,9 +207,7 @@ def MeaningComponents.predictedAlternation : MeaningComponents → DiathesisAlte
   | _, .wayConstruction => false
   | _, .directionalPhrase => false
 
--- ════════════════════════════════════════════════════
--- § 3. Structural properties of fusion + alternation prediction
--- ════════════════════════════════════════════════════
+/-! ### Structural properties of fusion + alternation prediction -/
 
 /-! These theorems characterize how `MeaningComponents.fuse` (componentwise OR)
 interacts with `predictedAlternation`. They are stated purely over
@@ -335,363 +306,265 @@ theorem fuse_blocks_only_via_instrumentSpec (v c : MeaningComponents)
   rcases c with ⟨cos', con', mot', caus', inst', man'⟩
   cases alt <;> simp_all [MeaningComponents.predictedAlternation, MeaningComponents.fuse]
 
--- ════════════════════════════════════════════════════
--- § 4. Per-Class Participation Profile
--- ════════════════════════════════════════════════════
+/-! ### Class profiles
 
-/-- Full alternation profile for a Levin class, combining component-derived
-    predictions with class-specific overrides.
+The alternation profile of each class as [levin-1993] Part II records it: every class page
+lists the alternations tested, an unstarred example attesting the alternation and a starred
+one denying it. Classes at a parent grain (`search`, `mannerOfMotion`, `bodyProcess`,
+`imageCreation`, `getObtain`) take the union over their subsections. Alternations a page does
+not test are in neither set. -/
 
-    Component-derived: causativeInchoative, middle, conative,
-    bodyPartPossessorAscension, instrumentSubject, resultative.
+/-- The alternations [levin-1993] Part II attests for the class. -/
+def LevinClass.alternations : LevinClass → Finset DiathesisAlternation
+  | .put => ∅
+  | .funnel => ∅
+  | .putDirection => ∅
+  | .pour => {DiathesisAlternation.causativeInchoative}
+  | .coil => {DiathesisAlternation.causativeInchoative, .middle}
+  | .sprayLoad => {DiathesisAlternation.causativeInchoative, .conative, .locative}
+  | .remove => ∅
+  | .clear => {DiathesisAlternation.causativeInchoative, .locative}
+  | .wipe => {DiathesisAlternation.conative, .unspecifiedObject, .locative, .resultative}
+  | .steal => ∅
+  | .send => {DiathesisAlternation.dative}
+  | .carry => {DiathesisAlternation.dative}
+  | .drive => ∅
+  | .pushPull => {DiathesisAlternation.conative, .resultative}
+  | .give => {DiathesisAlternation.dative}
+  | .contribute => ∅
+  | .getObtain => {DiathesisAlternation.benefactive}
+  | .exchange => ∅
+  | .learn => ∅
+  | .hold => {DiathesisAlternation.bodyPartPossessorAscension}
+  | .conceal => ∅
+  | .throw => {DiathesisAlternation.dative, .directionalPhrase}
+  | .hit => {DiathesisAlternation.conative, .bodyPartPossessorAscension, .instrumentSubject,
+      .resultative}
+  | .swat => {DiathesisAlternation.conative, .bodyPartPossessorAscension, .resultative}
+  | .spank => {DiathesisAlternation.bodyPartPossessorAscension}
+  | .poke => {DiathesisAlternation.conative, .bodyPartPossessorAscension, .instrumentSubject}
+  | .touch => {DiathesisAlternation.bodyPartPossessorAscension, .instrumentSubject}
+  | .cut => {DiathesisAlternation.middle, .conative, .bodyPartPossessorAscension,
+      .instrumentSubject, .resultative}
+  | .carve => {DiathesisAlternation.middle, .instrumentSubject}
+  | .mix => {DiathesisAlternation.causativeInchoative, .middle}
+  | .amalgamate => {DiathesisAlternation.causativeInchoative, .middle}
+  | .separate => {DiathesisAlternation.causativeInchoative, .middle}
+  | .split => {DiathesisAlternation.causativeInchoative, .middle}
+  | .color => ∅
+  | .imageCreation => {DiathesisAlternation.unspecifiedObject}
+  | .build => {DiathesisAlternation.unspecifiedObject, .benefactive, .materialProduct}
+  | .grow => {DiathesisAlternation.causativeInchoative, .materialProduct}
+  | .create => ∅
+  | .knead => {DiathesisAlternation.causativeInchoative}
+  | .turn => {DiathesisAlternation.causativeInchoative, .totalTransformation}
+  | .performance => {DiathesisAlternation.unspecifiedObject, .dative, .benefactive}
+  | .engender => ∅
+  | .calve => ∅
+  | .appoint => ∅
+  | .characterize => ∅
+  | .declare => ∅
+  | .see => ∅
+  | .sight => ∅
+  | .amuse => {DiathesisAlternation.middle, .resultative}
+  | .admire => ∅
+  | .marvel => ∅
+  | .want => ∅
+  | .long => ∅
+  | .judgment => ∅
+  | .assessment => ∅
+  | .search => {DiathesisAlternation.unspecifiedObject}
+  | .socialInteraction => {DiathesisAlternation.understoodReciprocalObject}
+  | .say => ∅
+  | .tell => {DiathesisAlternation.dative}
+  | .mannerOfSpeaking => ∅
+  | .talk => ∅
+  | .animalSound => {DiathesisAlternation.resultative}
+  | .eat => {DiathesisAlternation.conative, .unspecifiedObject}
+  | .devour => ∅
+  | .dine => ∅
+  | .bodyProcess => ∅
+  | .nonverbalExpression => {DiathesisAlternation.resultative}
+  | .flinch => ∅
+  | .hurt => ∅
+  | .dress => {DiathesisAlternation.causativeInchoative, .understoodReflexiveObject}
+  | .murder => ∅
+  | .poison => {DiathesisAlternation.resultative}
+  | .lightEmission => {DiathesisAlternation.causativeInchoative, .locative, .thereInsertion,
+      .locativeInversion}
+  | .soundEmission => {DiathesisAlternation.causativeInchoative, .locative, .thereInsertion,
+      .locativeInversion, .directionalPhrase}
+  | .substanceEmission => {DiathesisAlternation.causativeInchoative, .substanceSource, .locative,
+      .thereInsertion, .locativeInversion}
+  | .destroy => {DiathesisAlternation.instrumentSubject}
+  | .break_ => {DiathesisAlternation.causativeInchoative, .middle, .instrumentSubject, .resultative}
+  | .bend => {DiathesisAlternation.causativeInchoative, .middle, .instrumentSubject, .resultative}
+  | .cooking => {DiathesisAlternation.causativeInchoative, .instrumentSubject, .resultative}
+  | .otherCoS => {DiathesisAlternation.causativeInchoative, .middle, .instrumentSubject,
+      .resultative}
+  | .entitySpecificCoS => ∅
+  | .calibratableCoS => {DiathesisAlternation.causativeInchoative}
+  | .lodge => {DiathesisAlternation.causativeInchoative}
+  | .exist => {DiathesisAlternation.thereInsertion, .locativeInversion}
+  | .appear => {DiathesisAlternation.thereInsertion, .locativeInversion}
+  | .disappearance => ∅
+  | .bodyInternalMotion => {DiathesisAlternation.resultative, .directionalPhrase}
+  | .assumePosition => ∅
+  | .inherentlyDirectedMotion => ∅
+  | .leave => ∅
+  | .mannerOfMotion => {DiathesisAlternation.causativeInchoative, .inducedAction, .thereInsertion,
+      .locativeInversion, .resultative}
+  | .vehicleMotion => {DiathesisAlternation.inducedAction, .resultative}
+  | .chase => ∅
+  | .avoid => ∅
+  | .linger => ∅
+  | .rush => {DiathesisAlternation.causativeInchoative}
+  | .measure => ∅
+  | .aspectual => {DiathesisAlternation.causativeInchoative}
+  | .weather => ∅
 
-    Class-specific overrides below; these are the formaliser's reading of
-    [levin-1993] Part I verb lists and Part II class descriptions.
-    UNVERIFIED: Per-class participation rows cited from memory; verify
-    against the published monograph. -/
-def LevinClass.participatesIn (c : LevinClass) (alt : DiathesisAlternation) : Bool :=
-  c.meaningComponents.predictedAlternation alt ||
-  match c, alt with
-  -- Induced action: manner-of-motion causativization
-  | .mannerOfMotion, .inducedAction | .vehicleMotion, .inducedAction
-  | .rush, .inducedAction => true
-  -- Substance/source: substance emission verbs
-  | .substanceEmission, .substanceSource => true
-  -- Unspecified object: activity verbs
-  | .eat, .unspecifiedObject | .cut, .unspecifiedObject
-  | .cooking, .unspecifiedObject | .wipe, .unspecifiedObject
-  | .hit, .unspecifiedObject | .mannerOfSpeaking, .unspecifiedObject
-  | .build, .unspecifiedObject | .imageCreation, .unspecifiedObject => true
-  -- Understood body-part object: body verbs
-  | .bodyProcess, .understoodBodyPartObject
-  | .bodyInternalMotion, .understoodBodyPartObject => true
-  -- Understood reflexive object: grooming verbs
-  | .dress, .understoodReflexiveObject => true
-  -- Understood reciprocal: social interaction verbs
-  | .socialInteraction, .understoodReciprocalObject => true
-  -- Dative: give/send/tell classes
-  | .give, .dative | .send, .dative | .tell, .dative => true
-  -- Benefactive: build/create/obtain verbs
-  | .build, .benefactive | .create, .benefactive
-  | .knead, .benefactive | .performance, .benefactive
-  | .getObtain, .benefactive | .steal, .benefactive => true
-  -- Locative: spray/load
-  | .sprayLoad, .locative => true
-  -- Material/product: build verbs
-  | .build, .materialProduct | .knead, .materialProduct
-  | .turn, .materialProduct => true
-  -- Swarm: intransitive locative alternation
-  | .exist, .swarm | .mannerOfMotion, .swarm
-  | .bodyInternalMotion, .swarm => true
-  -- Total transformation: turn/convert verbs
-  | .turn, .totalTransformation => true
-  -- Verbal passive: available to most transitive verbs
-  -- CoS / causative classes
-  | .break_, .verbalPassive | .bend, .verbalPassive
-  | .cooking, .verbalPassive | .otherCoS, .verbalPassive
-  | .destroy, .verbalPassive => true
-  -- Contact / cutting
-  | .hit, .verbalPassive | .swat, .verbalPassive
-  | .poke, .verbalPassive | .touch, .verbalPassive
-  | .cut, .verbalPassive | .carve, .verbalPassive => true
-  -- Putting / removing / sending
-  | .put, .verbalPassive | .sprayLoad, .verbalPassive
-  | .remove, .verbalPassive | .clear, .verbalPassive
-  | .wipe, .verbalPassive | .steal, .verbalPassive
-  | .send, .verbalPassive | .carry, .verbalPassive => true
-  -- Transfer / ingesting
-  | .give, .verbalPassive | .eat, .verbalPassive
-  | .devour, .verbalPassive => true
-  -- Creation / transformation
-  | .build, .verbalPassive | .create, .verbalPassive
-  | .knead, .verbalPassive | .turn, .verbalPassive => true
-  -- Killing
-  | .murder, .verbalPassive | .poison, .verbalPassive => true
-  -- Perception / psych
-  | .see, .verbalPassive | .amuse, .verbalPassive
-  | .admire, .verbalPassive => true
-  -- Communication
-  | .tell, .verbalPassive | .say, .verbalPassive => true
-  -- Combining / separating
-  | .mix, .verbalPassive | .separate, .verbalPassive => true
-  -- Other transitive classes
-  | .throw, .verbalPassive | .conceal, .verbalPassive
-  | .color, .verbalPassive | .imageCreation, .verbalPassive
-  | .hold, .verbalPassive | .pushPull, .verbalPassive
-  | .appoint, .verbalPassive | .dress, .verbalPassive => true
-  -- Prepositional passive: unergative diagnostic
-  | .mannerOfMotion, .prepositionalPassive
-  | .exist, .prepositionalPassive
-  | .assumePosition, .prepositionalPassive
-  | .bodyProcess, .prepositionalPassive
-  | .mannerOfSpeaking, .prepositionalPassive => true
-  -- There-insertion: existence/appearance verbs
-  | .exist, .thereInsertion | .appear, .thereInsertion
-  | .soundEmission, .thereInsertion | .lightEmission, .thereInsertion
-  | .calibratableCoS, .thereInsertion => true
-  -- Locative inversion: same core classes
-  | .exist, .locativeInversion | .appear, .locativeInversion
-  | .soundEmission, .locativeInversion | .lightEmission, .locativeInversion
-  | .mannerOfMotion, .locativeInversion
-  | .assumePosition, .locativeInversion => true
-  -- Cognate object: unergative verbs. NOT manner of motion: run verbs
-  -- have zero-related nominals but do not take cognate objects
-  -- ([levin-1993] §51.3.2, ex. 998: *The horse jumped a high jump).
-  | .mannerOfSpeaking, .cognateObject
-  | .bodyProcess, .cognateObject | .dine, .cognateObject => true
-  -- Way construction: manner verbs
-  | .mannerOfMotion, .wayConstruction
-  | .bodyInternalMotion, .wayConstruction
-  | .rush, .wayConstruction => true
-  -- Directional phrase: manner-of-motion verbs
-  | .mannerOfMotion, .directionalPhrase
-  | .vehicleMotion, .directionalPhrase
-  | .rush, .directionalPhrase
-  | .bodyInternalMotion, .directionalPhrase => true
-  | _, _ => false
+/-- The alternations [levin-1993] Part II stars for the class. -/
+def LevinClass.starredAlternations : LevinClass → Finset DiathesisAlternation
+  | .put => {DiathesisAlternation.causativeInchoative, .middle, .locative}
+  | .funnel => {DiathesisAlternation.causativeInchoative, .middle, .locative}
+  | .putDirection => {DiathesisAlternation.causativeInchoative, .middle, .dative, .locative}
+  | .pour => {DiathesisAlternation.middle, .conative, .locative}
+  | .coil => {DiathesisAlternation.conative, .locative}
+  | .sprayLoad => ∅
+  | .remove => {DiathesisAlternation.causativeInchoative, .conative, .locative}
+  | .clear => {DiathesisAlternation.conative, .resultative}
+  | .wipe => {DiathesisAlternation.causativeInchoative}
+  | .steal => {DiathesisAlternation.causativeInchoative, .conative, .benefactive, .locative}
+  | .send => {DiathesisAlternation.causativeInchoative, .middle, .conative}
+  | .carry => {DiathesisAlternation.causativeInchoative, .middle, .conative}
+  | .drive => {DiathesisAlternation.causativeInchoative, .middle, .conative}
+  | .pushPull => {DiathesisAlternation.causativeInchoative}
+  | .give => {DiathesisAlternation.causativeInchoative}
+  | .contribute => {DiathesisAlternation.causativeInchoative, .dative}
+  | .getObtain => {DiathesisAlternation.dative, .locative}
+  | .exchange => {DiathesisAlternation.dative, .benefactive}
+  | .learn => ∅
+  | .hold => {DiathesisAlternation.middle, .conative}
+  | .conceal => {DiathesisAlternation.locative}
+  | .throw => {DiathesisAlternation.causativeInchoative, .middle, .conative}
+  | .hit => {DiathesisAlternation.causativeInchoative, .middle}
+  | .swat => {DiathesisAlternation.causativeInchoative, .middle, .instrumentSubject}
+  | .spank => {DiathesisAlternation.causativeInchoative, .middle, .conative, .instrumentSubject}
+  | .poke => {DiathesisAlternation.causativeInchoative, .middle}
+  | .touch => {DiathesisAlternation.causativeInchoative, .middle, .conative, .resultative}
+  | .cut => {DiathesisAlternation.causativeInchoative}
+  | .carve => {DiathesisAlternation.causativeInchoative, .conative, .bodyPartPossessorAscension}
+  | .mix => ∅
+  | .amalgamate => ∅
+  | .separate => {DiathesisAlternation.locative}
+  | .split => ∅
+  | .color => ∅
+  | .imageCreation => ∅
+  | .build => {DiathesisAlternation.causativeInchoative, .totalTransformation}
+  | .grow => {DiathesisAlternation.totalTransformation}
+  | .create => {DiathesisAlternation.causativeInchoative, .benefactive}
+  | .knead => {DiathesisAlternation.materialProduct, .totalTransformation}
+  | .turn => {DiathesisAlternation.materialProduct}
+  | .performance => {DiathesisAlternation.causativeInchoative}
+  | .engender => {DiathesisAlternation.causativeInchoative}
+  | .calve => ∅
+  | .appoint => {DiathesisAlternation.dative}
+  | .characterize => ∅
+  | .declare => {DiathesisAlternation.dative}
+  | .see => {DiathesisAlternation.middle}
+  | .sight => {DiathesisAlternation.middle}
+  | .amuse => {DiathesisAlternation.causativeInchoative}
+  | .admire => {DiathesisAlternation.middle}
+  | .marvel => ∅
+  | .want => ∅
+  | .long => ∅
+  | .judgment => {DiathesisAlternation.middle}
+  | .assessment => ∅
+  | .search => ∅
+  | .socialInteraction => ∅
+  | .say => {DiathesisAlternation.dative}
+  | .tell => ∅
+  | .mannerOfSpeaking => {DiathesisAlternation.dative}
+  | .talk => ∅
+  | .animalSound => {DiathesisAlternation.directionalPhrase}
+  | .eat => {DiathesisAlternation.instrumentSubject}
+  | .devour => {DiathesisAlternation.conative, .unspecifiedObject}
+  | .dine => {DiathesisAlternation.conative, .unspecifiedObject}
+  | .bodyProcess => {DiathesisAlternation.resultative}
+  | .nonverbalExpression => ∅
+  | .flinch => {DiathesisAlternation.causativeInchoative}
+  | .hurt => ∅
+  | .dress => ∅
+  | .murder => {DiathesisAlternation.causativeInchoative, .middle, .instrumentSubject, .resultative}
+  | .poison => {DiathesisAlternation.causativeInchoative, .middle}
+  | .lightEmission => ∅
+  | .soundEmission => ∅
+  | .substanceEmission => ∅
+  | .destroy => {DiathesisAlternation.causativeInchoative, .middle, .conative, .materialProduct,
+      .totalTransformation, .resultative}
+  | .break_ => {DiathesisAlternation.conative, .bodyPartPossessorAscension}
+  | .bend => {DiathesisAlternation.conative, .bodyPartPossessorAscension}
+  | .cooking => {DiathesisAlternation.conative}
+  | .otherCoS => {DiathesisAlternation.conative, .locative, .thereInsertion, .locativeInversion}
+  | .entitySpecificCoS => {DiathesisAlternation.causativeInchoative}
+  | .calibratableCoS => {DiathesisAlternation.thereInsertion, .locativeInversion}
+  | .lodge => {DiathesisAlternation.locative, .thereInsertion, .locativeInversion}
+  | .exist => {DiathesisAlternation.causativeInchoative, .locative}
+  | .appear => {DiathesisAlternation.causativeInchoative}
+  | .disappearance => {DiathesisAlternation.causativeInchoative}
+  | .bodyInternalMotion => {DiathesisAlternation.causativeInchoative}
+  | .assumePosition => {DiathesisAlternation.thereInsertion, .locativeInversion}
+  | .inherentlyDirectedMotion => {DiathesisAlternation.causativeInchoative, .resultative}
+  | .leave => ∅
+  | .mannerOfMotion => ∅
+  | .vehicleMotion => ∅
+  | .chase => {DiathesisAlternation.causativeInchoative}
+  | .avoid => ∅
+  | .linger => {DiathesisAlternation.causativeInchoative}
+  | .rush => ∅
+  | .measure => {DiathesisAlternation.causativeInchoative, .dative}
+  | .aspectual => ∅
+  | .weather => ∅
 
--- ════════════════════════════════════════════════════
--- § 5. Canonical diagnostic theorems
--- ════════════════════════════════════════════════════
+/-- The class shows the alternation in [levin-1993] Part II. -/
+def LevinClass.Participates (c : LevinClass) (a : DiathesisAlternation) : Prop :=
+  a ∈ c.alternations
 
-/-! The four verbs *break*, *cut*, *hit*, *touch* are distinguished by exactly
-their pattern of alternation participation (per [levin-1993] Introduction). -/
+instance (c : LevinClass) (a : DiathesisAlternation) : Decidable (c.Participates a) :=
+  inferInstanceAs (Decidable (_ ∈ _))
 
-/-- Break participates in causative/inchoative and middle (CoS + causation). -/
-theorem break_alternations :
-    LevinClass.break_.participatesIn .causativeInchoative = true
-    ∧ LevinClass.break_.participatesIn .middle = true
-    ∧ LevinClass.break_.participatesIn .conative = false
-    ∧ LevinClass.break_.participatesIn .bodyPartPossessorAscension = false := ⟨rfl, rfl, rfl, rfl⟩
+/-- No class both shows and lacks an alternation. -/
+theorem LevinClass.disjoint_alternations_starredAlternations (c : LevinClass) :
+    Disjoint c.alternations c.starredAlternations := by
+  cases c <;> decide
 
-/-- Cut participates in middle, conative, and BPPA but NOT causative/inchoative.
-    Instrument specification blocks the inchoative ("*The string cut").
-    Because *cut* inherently specifies an instrument, it requires an agent. -/
-theorem cut_alternations :
-    LevinClass.cut.participatesIn .causativeInchoative = false
-    ∧ LevinClass.cut.participatesIn .middle = true
-    ∧ LevinClass.cut.participatesIn .conative = true
-    ∧ LevinClass.cut.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl, rfl, rfl⟩
+/-! ### The Introduction's quadruple
 
-/-- Hit participates in conative and body-part ascension (contact + motion, no CoS). -/
-theorem hit_alternations :
-    LevinClass.hit.participatesIn .causativeInchoative = false
-    ∧ LevinClass.hit.participatesIn .middle = false
-    ∧ LevinClass.hit.participatesIn .conative = true
-    ∧ LevinClass.hit.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl, rfl, rfl⟩
+*break*, *cut*, *hit* and *touch* are told apart by the four diagnostic alternations, and on
+these four classes the component prediction agrees with Part II. -/
 
-/-- Touch participates only in body-part ascension (contact only). -/
-theorem touch_alternations :
-    LevinClass.touch.participatesIn .causativeInchoative = false
-    ∧ LevinClass.touch.participatesIn .middle = false
-    ∧ LevinClass.touch.participatesIn .conative = false
-    ∧ LevinClass.touch.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl, rfl, rfl⟩
+/-- The four diagnostic alternations of the Introduction. -/
+def diagnosticAlternations : List DiathesisAlternation :=
+  [.causativeInchoative, .middle, .conative, .bodyPartPossessorAscension]
 
-/-- Instrument specification blocks the causative/inchoative alternation. -/
-theorem MeaningComponents.instrumentSpec_blocks_ci (mc : MeaningComponents)
-    (h : mc.instrumentSpec = true) :
-    mc.predictedAlternation .causativeInchoative = false := by
-  simp only [predictedAlternation, h, Bool.not_true, Bool.and_false]
+/-- The quadruple takes four distinct profiles over the diagnostic alternations. -/
+theorem quadruple_profiles_distinct :
+    ([LevinClass.break_, .cut, .hit, .touch].map fun c ↦
+      diagnosticAlternations.map fun a ↦ decide (c.Participates a)).Pairwise (· ≠ ·) := by
+  decide
 
-/-- Corollary: instrument specification also blocks the resultative. -/
-theorem MeaningComponents.instrumentSpec_blocks_resultative (mc : MeaningComponents)
-    (h : mc.instrumentSpec = true) :
-    mc.predictedAlternation .resultative = false := by
-  simp only [predictedAlternation, h, Bool.not_true, Bool.and_false]
+/-- On the quadruple, the component prediction matches Part II for every diagnostic
+alternation. -/
+theorem quadruple_prediction_matches :
+    ∀ c ∈ [LevinClass.break_, .cut, .hit, .touch], ∀ a ∈ diagnosticAlternations,
+      c.meaningComponents.predictedAlternation a = decide (c.Participates a) := by
+  decide
 
-/-! ### Cross-class predictions -/
-
-/-- All CoS classes participate in the causative/inchoative alternation. -/
-theorem cos_classes_causative :
-    LevinClass.break_.participatesIn .causativeInchoative = true
-    ∧ LevinClass.bend.participatesIn .causativeInchoative = true
-    ∧ LevinClass.cooking.participatesIn .causativeInchoative = true
-    ∧ LevinClass.otherCoS.participatesIn .causativeInchoative = true := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Spray/load participates in the locative alternation. -/
-theorem sprayLoad_locative :
-    LevinClass.sprayLoad.participatesIn .locative = true := rfl
-
-/-- Give class participates in the dative alternation. -/
-theorem give_dative :
-    LevinClass.give.participatesIn .dative = true := rfl
-
-/-- Motion verbs don't participate in causative alternation (no causation component). -/
-theorem motion_no_causative :
-    LevinClass.mannerOfMotion.participatesIn .causativeInchoative = false
-    ∧ LevinClass.inherentlyDirectedMotion.participatesIn .causativeInchoative = false := ⟨rfl, rfl⟩
-
-/-- Contact verbs predict conative alternation participation. -/
-theorem contact_motion_conative :
-    LevinClass.hit.participatesIn .conative = true
-    ∧ LevinClass.swat.participatesIn .conative = true
-    ∧ LevinClass.poke.participatesIn .conative = true
-    ∧ LevinClass.cut.participatesIn .conative = true := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Touch verbs lack motion → no conative despite having contact. -/
-theorem touch_no_conative :
-    LevinClass.touch.participatesIn .conative = false := rfl
-
-/-- Cut blocked from resultative; break participates (no instrumentSpec). -/
-theorem cut_no_resultative_break_resultative :
-    LevinClass.cut.participatesIn .resultative = false
-    ∧ LevinClass.break_.participatesIn .resultative = true := ⟨rfl, rfl⟩
-
-/-- The causative/inchoative alternation implies the existence of an
-    unaccusative variant. -/
-theorem causativeInchoative_implies_unaccusative :
-    LevinClass.break_.participatesIn .causativeInchoative = true
-    ∧ LevinClass.PredictsUnaccusative .break_
-    ∧ LevinClass.otherCoS.participatesIn .causativeInchoative = true
-    ∧ LevinClass.PredictsUnaccusative .otherCoS := ⟨rfl, trivial, rfl, trivial⟩
-
-/-! ### Family classification theorems -/
-
-/-- The canonical diagnostics all belong to the transitivity or VP-internal families. -/
-theorem canonical_diagnostics_families :
-    DiathesisAlternation.causativeInchoative.family = .transitivity
-    ∧ DiathesisAlternation.middle.family = .transitivity
-    ∧ DiathesisAlternation.conative.family = .transitivity
-    ∧ DiathesisAlternation.bodyPartPossessorAscension.family = .vpInternal := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Passive alternations form their own family. -/
-theorem passive_family :
-    DiathesisAlternation.verbalPassive.family = .passive
-    ∧ DiathesisAlternation.prepositionalPassive.family = .passive := ⟨rfl, rfl⟩
-
-/-! ### Class-specific alternation predictions -/
-
-/-- Build verbs participate in both benefactive and material/product alternations. -/
-theorem build_benefactive_materialProduct :
-    LevinClass.build.participatesIn .benefactive = true
-    ∧ LevinClass.build.participatesIn .materialProduct = true := ⟨rfl, rfl⟩
-
-/-- Substance emission verbs participate in the substance/source alternation. -/
-theorem substanceEmission_substanceSource :
-    LevinClass.substanceEmission.participatesIn .substanceSource = true := rfl
-
-/-- Eat verbs participate in the unspecified object alternation.
-    Devour verbs do NOT — they require an expressed object. -/
-theorem eat_unspecifiedObject_devour_blocked :
-    LevinClass.eat.participatesIn .unspecifiedObject = true
-    ∧ LevinClass.devour.participatesIn .unspecifiedObject = false := ⟨rfl, rfl⟩
-
-/-- Social interaction verbs show the understood reciprocal object alternation. -/
-theorem socialInteraction_reciprocal :
-    LevinClass.socialInteraction.participatesIn .understoodReciprocalObject = true := rfl
-
-/-- Existence and appearance verbs participate in there-insertion. -/
-theorem existence_thereInsertion :
-    LevinClass.exist.participatesIn .thereInsertion = true
-    ∧ LevinClass.appear.participatesIn .thereInsertion = true := ⟨rfl, rfl⟩
-
-/-- Existence and manner-of-motion verbs participate in locative inversion. -/
-theorem existence_locativeInversion :
-    LevinClass.exist.participatesIn .locativeInversion = true
-    ∧ LevinClass.mannerOfMotion.participatesIn .locativeInversion = true := ⟨rfl, rfl⟩
-
-/-- There-insertion and locative inversion align with unaccusativity. -/
-theorem unaccusative_diagnostics_align :
-    LevinClass.PredictsUnaccusative .exist
-    ∧ LevinClass.exist.participatesIn .thereInsertion = true
-    ∧ LevinClass.exist.participatesIn .locativeInversion = true
-    ∧ LevinClass.PredictsUnaccusative .appear
-    ∧ LevinClass.appear.participatesIn .thereInsertion = true
-    ∧ LevinClass.appear.participatesIn .locativeInversion = true :=
-  ⟨trivial, rfl, rfl, trivial, rfl, rfl⟩
-
-/-- Instrument subject alternation is predicted by external causation. -/
-theorem break_instrumentSubject_cut_blocked :
-    LevinClass.break_.participatesIn .instrumentSubject = true
-    ∧ LevinClass.cut.participatesIn .instrumentSubject = false := ⟨rfl, rfl⟩
-
-/-- Instrument specification blocks both causative/inchoative and instrument
-    subject alternations. -/
-theorem instrumentSpec_blocks_ci_and_instrumentSubject (mc : MeaningComponents)
-    (h : mc.instrumentSpec = true) :
-    mc.predictedAlternation .causativeInchoative = false
-    ∧ mc.predictedAlternation .instrumentSubject = false := by
-  constructor <;> simp only [MeaningComponents.predictedAlternation, h, Bool.not_true,
-    Bool.and_false]
-
-/-! ### Per-alternation predictions -/
-
-/-- Manner-of-motion verbs participate in the induced action alternation. -/
-theorem mannerOfMotion_inducedAction :
-    LevinClass.mannerOfMotion.participatesIn .inducedAction = true := rfl
-
-/-- Grooming verbs participate in the understood reflexive object alternation. -/
-theorem dress_understoodReflexive :
-    LevinClass.dress.participatesIn .understoodReflexiveObject = true := rfl
-
-/-- Body process verbs participate in the understood body-part object alternation. -/
-theorem bodyProcess_understoodBodyPart :
-    LevinClass.bodyProcess.participatesIn .understoodBodyPartObject = true := rfl
-
-/-- Turn/convert verbs participate in the total transformation alternation. -/
-theorem turn_totalTransformation :
-    LevinClass.turn.participatesIn .totalTransformation = true := rfl
-
-/-- Manner-of-motion verbs participate in the way construction. -/
-theorem mannerOfMotion_wayConstruction :
-    LevinClass.mannerOfMotion.participatesIn .wayConstruction = true := rfl
-
-/-- Manner-of-motion verbs participate in the directional phrase alternation. -/
-theorem mannerOfMotion_directionalPhrase :
-    LevinClass.mannerOfMotion.participatesIn .directionalPhrase = true := rfl
-
-/-- Unergative diagnostics dissociate for manner-of-motion verbs: they take
-    the prepositional passive but reject cognate objects, despite having
-    zero-related nominals ([levin-1993] §51.3.2, ex. 998). -/
-theorem unergative_diagnostics :
-    LevinClass.mannerOfMotion.participatesIn .cognateObject = false
-    ∧ LevinClass.mannerOfMotion.participatesIn .prepositionalPassive = true := ⟨rfl, rfl⟩
-
-/-- Manner-of-motion verbs are diagnostic workhorses: 5 alternations
-    from 4 different families. -/
-theorem mannerOfMotion_breadth :
-    LevinClass.mannerOfMotion.participatesIn .inducedAction = true
-    ∧ LevinClass.mannerOfMotion.participatesIn .wayConstruction = true
-    ∧ LevinClass.mannerOfMotion.participatesIn .directionalPhrase = true
-    ∧ LevinClass.mannerOfMotion.participatesIn .prepositionalPassive = true
-    ∧ LevinClass.mannerOfMotion.participatesIn .locativeInversion = true :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-/-! ### Verbal passive coverage -/
-
-/-- Verbal passive is available across all major transitive class families. -/
-theorem verbalPassive_coverage :
-    LevinClass.break_.participatesIn .verbalPassive = true
-    ∧ LevinClass.hit.participatesIn .verbalPassive = true
-    ∧ LevinClass.put.participatesIn .verbalPassive = true
-    ∧ LevinClass.give.participatesIn .verbalPassive = true
-    ∧ LevinClass.build.participatesIn .verbalPassive = true
-    ∧ LevinClass.murder.participatesIn .verbalPassive = true
-    ∧ LevinClass.see.participatesIn .verbalPassive = true
-    ∧ LevinClass.amuse.participatesIn .verbalPassive = true :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Measure verbs do NOT participate in verbal passive. -/
-theorem measure_no_verbalPassive :
-    LevinClass.measure.participatesIn .verbalPassive = false := rfl
-
-/-- Weather verbs do NOT participate in verbal passive (no object to promote). -/
-theorem weather_no_verbalPassive :
-    LevinClass.weather.participatesIn .verbalPassive = false := rfl
-
-/-! ### Prepositional passive and swarm coverage -/
-
-/-- Prepositional passive aligns with unergativity. -/
-theorem prepositionalPassive_unergatives :
-    LevinClass.mannerOfMotion.participatesIn .prepositionalPassive = true
-    ∧ LevinClass.bodyProcess.participatesIn .prepositionalPassive = true
-    ∧ LevinClass.mannerOfSpeaking.participatesIn .prepositionalPassive = true
-    ∧ LevinClass.assumePosition.participatesIn .prepositionalPassive = true := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- The swarm alternation applies to existence and manner-of-motion verbs. -/
-theorem swarm_classes :
-    LevinClass.exist.participatesIn .swarm = true
-    ∧ LevinClass.mannerOfMotion.participatesIn .swarm = true
-    ∧ LevinClass.bodyInternalMotion.participatesIn .swarm = true := ⟨rfl, rfl, rfl⟩
+/-- The prediction is not sound in general: destroy verbs are change-of-state causatives that
+Part II stars for the causative/inchoative alternation. -/
+theorem prediction_not_sound :
+    LevinClass.destroy.meaningComponents.predictedAlternation .causativeInchoative = true ∧
+      DiathesisAlternation.causativeInchoative ∈ LevinClass.destroy.starredAlternations := by
+  decide
 
 end ArgumentStructure

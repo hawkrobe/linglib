@@ -315,10 +315,8 @@ theorem bkg_bifurcation_fails_all_dimensions :
 
 /-- Multiple Levin classes witness the stronger bifurcation failure. -/
 theorem bkg_bifurcation_multiple_witnesses :
-    Root.Kind.result ∈ LevinClass.rootEntailments .cut ∧
-    Root.Kind.manner ∈ LevinClass.rootEntailments .cut ∧
-    Root.Kind.cause ∈ LevinClass.rootEntailments .give ∧
-    Root.Kind.manner ∈ LevinClass.rootEntailments .give := by decide
+    LevinClass.cut.RootEntails .result ∧ LevinClass.cut.RootEntails .manner ∧
+    LevinClass.give.RootEntails .cause ∧ LevinClass.give.RootEntails .manner := by decide
 
 /-! ### Default realization ((44), §8) -/
 
