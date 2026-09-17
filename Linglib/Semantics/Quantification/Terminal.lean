@@ -17,7 +17,8 @@ word's available readings, and the string lexicon shrinks to the words no carrie
 * `Quantifier.GQ.terminals` is the set of terminals of a set of readings, the image of a word's
   `⟦w⟧`.
 * `Denotation.objectShift?` is [heim-kratzer-1998]'s lexical rule on terminals, the
-  object-position entry of a terminal of the determiner type.
+  object-position entry of a terminal of the determiner type, and `Denotation.objectShifts`
+  the entries it derives from a set of readings.
 
 ## References
 
@@ -55,5 +56,15 @@ theorem Family.objectShift?_toDenotation (d : Family.{0}) (E W : Type) [Fintype 
     Denotation.objectShift? (d.toDenotation E W) =
       Option.some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .e ⇒ .t) ⇒ .e ⇒ .t, GQ.objectShift (d E)⟩ :=
   rfl
+
+/-- The object-position entries the lexical rule derives from a set of readings. -/
+def _root_.Semantics.Composition.Denotation.objectShifts {E W : Type} (s : Set (Denotation E W)) :
+    Set (Denotation E W) :=
+  {d | ∃ d₁ ∈ s, Denotation.objectShift? d₁ = some d}
+
+theorem _root_.Semantics.Composition.Denotation.objectShift?_mem_objectShifts {E W : Type}
+    {s : Set (Denotation E W)} {d₁ d : Denotation E W} (h₁ : d₁ ∈ s)
+    (h : Denotation.objectShift? d₁ = some d) : d ∈ Denotation.objectShifts s :=
+  ⟨d₁, h₁, h⟩
 
 end Quantifier.GQ
