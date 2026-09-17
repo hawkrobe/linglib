@@ -1,7 +1,7 @@
 import Linglib.Syntax.Control.Defs
 import Linglib.Syntax.Control.Head
 import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Semantics.Presupposition.Verb
 import Linglib.Semantics.Causation.Verb
 
@@ -196,7 +196,7 @@ def derivedControlTier (v : Verb) : Option Tier :=
 
 section Verbs
 
-open English.Predicates.Verbal
+open English hiding Verb
 
 /-- The fragment's exhaustive-control verbs: aspectual and implicative. -/
 def exhaustiveControlVerbs : List Verb :=

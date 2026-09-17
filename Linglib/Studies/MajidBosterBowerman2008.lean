@@ -4,7 +4,7 @@ import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Semantics.ArgumentStructure.MeaningComponents
 import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 
 /-!
 # Majid, Boster and Bowerman (2008): The Cross-Linguistic Categorization of Everyday Events
@@ -439,15 +439,15 @@ theorem cut_break_same_template :
   rfl
 
 /-! Rather than defining inline profiles, we derive them from the actual
-    Fragment entries in `English.Predicates.Verbal`. This
+    Fragment entries in `English.Predicates`. This
     ensures that compatibility theorems test the real lexical data. -/
 
-open English.Predicates.Verbal in
+open English hiding Verb in
 /-- Extract the root profile from a Fragment verb entry. -/
-private def fragmentContent (v : VerbEntry) : Root.Content :=
+private def fragmentContent (v : English.Verb) : Root.Content :=
   v.rootContent
 
-open English.Predicates.Verbal
+open English hiding Verb
 
 /-- The tear cloth event is compatible with the Fragment *tear* entry. -/
 theorem tearCloth_compatible_tear :

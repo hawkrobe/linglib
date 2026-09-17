@@ -1,5 +1,5 @@
 import Linglib.Semantics.Questions.QParticleLayer
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Semantics.Presupposition.Verb
 
 /-!
@@ -52,12 +52,12 @@ def SelectionClass.layer : SelectionClass → Option Question.QParticleLayer
   | .rogativeSAP => some .sap
   | .responsive => some .perspP
 
-open English.Predicates.Verbal in
+open English hiding Verb in
 /-- A lexical entry's selection class: question-taking factives are responsive,
 non-veridical doxastic attitudes uninterrogative, question-taking speech-act
 verbs select SAP, opaque question-taking verbs PerspP, other question-taking
 verbs CP. -/
-def deriveSelectionClass (v : VerbEntry) : SelectionClass :=
+def deriveSelectionClass (v : English.Verb) : SelectionClass :=
   if v.complementType ≠ .question ∧ ¬ v.TakesQuestion then .uninterrogative
   else if v.IsFactive then .responsive
   else match v.attitude with

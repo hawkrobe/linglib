@@ -1,6 +1,9 @@
 import Linglib.Semantics.Causation.Necessity
 import Linglib.Semantics.Causation.Sufficiency
 import Linglib.Studies.Karttunen1971a
+import Linglib.Fragments.English.Predicates
+import Linglib.Semantics.Causation.Interpretation
+import Linglib.Semantics.Causation.Verb
 
 /-!
 # Nadathur and Lauer (2020): Causal Necessity, Causal Sufficiency, and Causative Verbs
@@ -727,5 +730,116 @@ theorem cause_make_same_cell_different_mechanism :
     Causative.cause ≠ .make := ⟨rfl, by decide⟩
 
 end KarttunenCells
+
+/-! ### The English lexicon -/
+
+
+/-! The causative annotations are consistent with the formal semantics in
+`Causation`; the semantic-dispatch versions over an arbitrary `SEM V α` follow. -/
+
+/-- "make" asserts sufficiency — derived from its builder. -/
+theorem make_asserts_sufficiency : English.make.toVerb.AssertsSufficiency := by decide
+
+/-- "cause" does NOT assert sufficiency. -/
+theorem cause_not_sufficiency : ¬ English.cause.toVerb.AssertsSufficiency := by decide
+
+/-- make-type verbs (make, have, get) share the `.make` builder. -/
+theorem make_type_verbs_share_semantics :
+    English.make.causative = English.have_caus.causative ∧
+    English.make.causative = English.get_caus.causative := ⟨rfl, rfl⟩
+
+/-- "prevent" asserts neither sufficiency nor necessity —
+    it uses the dual `preventSem` (blocking). -/
+theorem prevent_not_sufficiency :
+    ¬ English.prevent.toVerb.AssertsSufficiency := by decide
+
+/-- make, force, and let have different builders despite shared truth conditions. -/
+theorem causative_builders_distinguished :
+    English.make.causative ≠ English.force.causative ∧
+    English.make.causative ≠ English.let_.causative ∧
+    English.force.causative ≠ English.let_.causative := by
+  refine ⟨by decide, by decide, by decide⟩
+
+/-! ## Lexical causative theorems -/
+
+/-- All lexical causatives use the `.make` builder. -/
+theorem lexical_causatives_use_make :
+    English.kill.causative = some .make ∧
+    English.break_.causative = some .make ∧
+    English.burn.causative = some .make ∧
+    English.destroy.causative = some .make ∧
+    English.melt.causative = some .make := ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Lexical causatives all assert sufficiency — like periphrastic "make". -/
+theorem lexical_causatives_assert_sufficiency :
+    English.kill.toVerb.AssertsSufficiency ∧
+    English.break_.toVerb.AssertsSufficiency ∧
+    English.burn.toVerb.AssertsSufficiency ∧
+    English.destroy.toVerb.AssertsSufficiency ∧
+    English.melt.toVerb.AssertsSufficiency := by
+  refine ⟨by decide, by decide, by decide,
+          by decide, by decide⟩
+
+/-- Lexical causatives differ from periphrastic "cause" in truth conditions. -/
+theorem lexical_causatives_differ_from_cause :
+    English.kill.causative ≠ English.cause.causative ∧
+    English.break_.causative ≠ English.cause.causative := by
+  constructor <;> decide
+
+/-! ### Semantic dispatch
+
+Each statement is parameterized by an arbitrary deterministic acyclic SEM `M`;
+`Causative.toSemantics M` dispatches to `Sufficiency.makeSem`, `Necessity.causeSem` and
+`Prevention.preventSem`. -/
+
+variable {V : Type*} {α : V → Type*}
+  [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+  (M : SEM V α) [CausalGraph.IsDAG M.graph] [SEM.IsDeterministic M]
+
+/-- "make" → `Sufficiency.makeSem` (polymorphic). -/
+theorem make_semantics :
+    English.make.causative.map (Causative.toSemantics M) =
+    some (Causation.Sufficiency.makeSem M) := rfl
+
+/-- "cause" → `Necessity.causeSem` (polymorphic). -/
+theorem cause_semantics :
+    English.cause.causative.map (Causative.toSemantics M) =
+    some (Causation.Necessity.causeSem M) := rfl
+
+/-- "prevent" → `Prevention.preventSem` (polymorphic). -/
+theorem prevent_semantics :
+    English.prevent.causative.map (Causative.toSemantics M) =
+    some (Causation.Prevention.preventSem M) := rfl
+
+/-- make/force/let/have/get share `Sufficiency.makeSem` truth conditions. -/
+theorem sufficiency_verbs_share_truth_conditions :
+    English.make.causative.map (Causative.toSemantics M) =
+      English.force.causative.map (Causative.toSemantics M) ∧
+    English.make.causative.map (Causative.toSemantics M) =
+      English.let_.causative.map (Causative.toSemantics M) ∧
+    English.make.causative.map (Causative.toSemantics M) =
+      English.have_caus.causative.map (Causative.toSemantics M) ∧
+    English.make.causative.map (Causative.toSemantics M) =
+      English.get_caus.causative.map (Causative.toSemantics M) :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- lexical causatives (kill, break) share truth conditions with periphrastic "make". -/
+theorem lexical_causatives_match_make :
+    English.kill.causative.map (Causative.toSemantics M) =
+      English.make.causative.map (Causative.toSemantics M) ∧
+    English.break_.causative.map (Causative.toSemantics M) =
+      English.make.causative.map (Causative.toSemantics M) := ⟨rfl, rfl⟩
+
+omit [∀ v, Fintype (α v)] in
+/-- "manage" → polymorphic `Implicative.manageSem`. -/
+theorem manage_semantics_implicative :
+    English.manage.implicative.map (Implicative.toSemantics M) =
+    some (Implicative.manageSem M) := rfl
+
+omit [∀ v, Fintype (α v)] in
+/-- "fail" → polymorphic `Implicative.failSem`. -/
+theorem fail_semantics_implicative :
+    English.fail.implicative.map (Implicative.toSemantics M) =
+    some (Implicative.failSem M) := rfl
 
 end NadathurLauer2020

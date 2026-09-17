@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.Linearization.Replay
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Fragments.English.Nouns
 
 /-!
@@ -24,19 +24,18 @@ off its complement type.
 namespace Chomsky1995
 
 open Minimalist SyntacticObject
-open English.Predicates.Verbal (VerbEntry)
 
 /-- Map a verb's complement type to its selectional stack: each c-selected argument is one
     `Cat` feature consumed by complement Merge; nominal arguments are `.D` (the DP hypothesis).
     Folded in from the former `Syntax/Minimalist/FromFragments.lean` (its only consumer). -/
-def verbToSelStack (v : VerbEntry) : SelStack :=
+def verbToSelStack (v : English.Verb) : SelStack :=
   match v.complementType with
   | .none => [] | .np => [.D] | .np_np => [.D, .D] | .np_pp => [.D]
   | .finiteClause => [.C] | .infinitival => [.T] | .gerund => [.V]
   | .smallClause => [.D] | .question => [.C]
 
-/-- A `VerbEntry` as a `SyntacticObject` leaf (`Cat = .V`, selStack from `complementType`). -/
-def verbToSO (v : VerbEntry) (id : Nat) : SyntacticObject :=
+/-- A `English.Verb` as a `SyntacticObject` leaf (`Cat = .V`, selStack from `complementType`). -/
+def verbToSO (v : English.Verb) (id : Nat) : SyntacticObject :=
   mkLeafPhon .V (verbToSelStack v) v.form3sg id
 
 /-- A proper name as a leaf, projecting as `.D`. -/
@@ -45,7 +44,7 @@ def nameToSO (n : ProperName) (id : Nat) : SyntacticObject := mkLeafPhon .D [] n
 /-- "John sees Mary" as a Minimalist Merge derivation: *see*'s complement
     is *Mary* (`em .right`), then *John* is added as specifier (`em .left`). -/
 def john_sees_mary : Derivation :=
-  { initial := verbToSO English.Predicates.Verbal.see 31
+  { initial := verbToSO English.see 31
     steps   := [.em .right (nameToSO English.Nouns.mary 11),
                 .em .left (nameToSO English.Nouns.john 10)] }
 

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Tense.Embedding
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Data.Examples.Klecha2016
 
 /-!
@@ -38,7 +38,7 @@ verdicts (`rows_readings`).
 
 namespace Klecha2016
 
-open Tense HistoricalAlternatives Reference English.Predicates.Verbal
+open Tense HistoricalAlternatives Reference English
 
 variable {W T : Type*}
 
@@ -141,7 +141,7 @@ theorem matrix_nonpast_present : ModalBase.dox.orientations ∩ nonpast = presen
 /-! ### The data, (1)–(3) -/
 
 /-- The attitude verb of a row, from the fragment. -/
-def verbOf : String → Option VerbEntry
+def verbOf : String → Option English.Verb
   | "think" => some think
   | "hope" => some hope
   | "pray" => some pray

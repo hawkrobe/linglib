@@ -66,7 +66,7 @@ lacks. Question particles sit at the layer their embedding distribution shows.
 namespace Dayal2025
 
 open Minimalist Question Data.Examples Clause
-open English.Predicates.Verbal English.QuestionParticles HindiUrdu.Particles Japanese.Particles
+open English English.QuestionParticles HindiUrdu.Particles Japanese.Particles
 
 /-! ### The three layers (7), (20) -/
 
@@ -260,7 +260,7 @@ theorem ya_nahi_obligatory_iff :
 /-! ### The paper's judgments -/
 
 /-- The English predicates of the paper, from the fragment. -/
-def verbs : List VerbEntry :=
+def verbs : List English.Verb :=
   [know, believe, wonder, ask, investigate, depend_on, remember_rog, forget_rog]
 
 /-- The embedding context a row's `embedding` feature names. -/

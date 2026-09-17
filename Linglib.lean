@@ -747,7 +747,6 @@ import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.English.PolarityMarking
 import Linglib.Fragments.English.Predicates
 import Linglib.Fragments.English.Predicates.Copular
-import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.PropositionalLexemes
 import Linglib.Fragments.English.QuestionParticles

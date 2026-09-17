@@ -1,7 +1,7 @@
 import Linglib.Semantics.Aspect.Stratified
 import Linglib.Semantics.ArgumentStructure.Verb
 import Linglib.Semantics.Plurality.Algebra
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Studies.Krifka1998
 
 /-!
@@ -87,7 +87,7 @@ end Verb
 
 namespace Champollion2017
 
-open English.Predicates.Verbal
+open English hiding Verb
 open _root_.Mereology
 open Aspect
 

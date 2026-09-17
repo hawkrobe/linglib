@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.SyntacticObject.Term
 import Linglib.Syntax.Binding.Basic
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Fragments.English.Coordination
 import Linglib.Processing.Acceptability.MinimalPairs
 
@@ -70,9 +70,9 @@ private abbrev himself := English.Pronouns.himself.toWord
 private abbrev herself := English.Pronouns.herself.toWord
 private abbrev themselves := English.Pronouns.themselves.toWord
 private abbrev eachOther := English.Pronouns.eachOther.toWord
-private abbrev sees := English.Predicates.Verbal.see.toWord3sg
-private abbrev see := English.Predicates.Verbal.see.toWordPl
-private abbrev saw := English.Predicates.Verbal.see.toWordPast
+private abbrev sees := English.see.toWord .thirdSg
+private abbrev see := English.see.toWord .presentPlural
+private abbrev saw := English.see.toWord .past
 private abbrev and_ := English.Coordination.and_.toWord
 
 /-! ### Coreference / binding (relocated from Minimalist/Coreference.lean)

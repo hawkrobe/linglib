@@ -1,6 +1,6 @@
 import Linglib.Semantics.Reference.Definiteness
 import Linglib.Semantics.ArgumentStructure.LevinClass
-import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Mathlib.Data.Finset.Card
 
@@ -210,16 +210,16 @@ theorem binding_preserves_consistency {α : Type*} (phases : List (List α))
 
 /-! ### Verbs of creation in the Fragment -/
 
-open English.Predicates.Verbal in
+open English hiding Verb in
 /-- The configuration of an experimental item whose main verb is a Fragment entry: a verb of
 creation is one whose Levin class is a class of creation. -/
-def Config.ofVerb (d : Dependency) (o : Definiteness) (v : VerbEntry) : Config :=
+def Config.ofVerb (d : Dependency) (o : Definiteness) (v : English.Verb) : Config :=
   ⟨d, o, v.levinClass.any LevinClass.isVerbOfCreation⟩
 
-open English.Predicates.Verbal in
+open English hiding Verb in
 /-- The predicted English contrast within a sentence frame (23): subextraction from a definite
 object costs one violation more under the non-creation verb than under the creation verb. -/
-theorem violations_ofVerb {v u : VerbEntry}
+theorem violations_ofVerb {v u : English.Verb}
     (hv : v.levinClass.any LevinClass.isVerbOfCreation = true)
     (hu : u.levinClass.any LevinClass.isVerbOfCreation = false) :
     violations combined (Config.ofVerb .movement .definite u) =
