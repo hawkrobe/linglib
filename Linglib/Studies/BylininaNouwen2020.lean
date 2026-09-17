@@ -1,6 +1,6 @@
 import Linglib.Semantics.Reference.Iota
 import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.NP
 import Mathlib.Data.Fintype.EquivFin
 
 /-!

@@ -4,7 +4,7 @@ import Linglib.Semantics.Composition.Assignment
 import Linglib.Fragments.English.Toy
 import Linglib.Semantics.Composition.Reduction
 import Linglib.Semantics.Composition.Lexicon
-import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.NP
 import Linglib.Semantics.Quantification.Polyadic
 import Linglib.Data.Examples.HeimKratzer1998
 
@@ -46,7 +46,6 @@ open scoped Assignment
 open Semantics.Montague
 open Syntax
 open Semantics.Composition.Tree
-open Quantification.Quantifier
 open Quantification
 open Quantification.Polyadic (surfaceScope inverseScope iterate_every_some_of_some_every)
 open Semantics.Montague.ToyLexicon (student_sem person_sem)

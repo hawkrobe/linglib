@@ -67,7 +67,7 @@ variable {W : Type*} (R : W → Prop) (count : W → ℕ) (m : ℕ)
 
 /-- (33a), (34a): under a modal the bare numeral keeps its two-sided content in each accessible
 world. -/
-theorem narrow_scope_two_sided (Q : Quantifier W) :
+theorem narrow_scope_two_sided (Q : NP W) :
     lowScope (maxIn {m}) Q count ↔ Q λ w => count w = m :=
   lowScope_maxIn
 

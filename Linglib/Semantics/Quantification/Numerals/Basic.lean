@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Semantics.Degree.Comparison
 import Linglib.Semantics.Exhaustification.Chain
 import Linglib.Semantics.Degree.Predicate
-import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.NP
 import Linglib.Syntax.Category.Numeral.Basic
 import Mathlib.Order.Interval.Set.Basic
 

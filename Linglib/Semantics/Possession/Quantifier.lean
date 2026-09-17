@@ -70,7 +70,7 @@ students'*, where the restrictor is not recoverable from `Q`):
 `PossNP Q Q₂ R A B = Q (dom A R ∩ {a | Q₂ (A ∩ Rₐ) B})`. The narrowing conjunct sits in the scope,
 so *John's dogs bark* requires John to own a dog. Their (7.45), p. 260 — the form of (7.44) for
 extensional `Q` and conservative, extensional `Q₂`. -/
-def PossNP (Q : Quantifier α) (Q₂ : GQ α) (R : α → α → Prop) : GQ α :=
+def PossNP (Q : NP α) (Q₂ : GQ α) (R : α → α → Prop) : GQ α :=
   fun A B => Q (fun a => dom A R a ∧ Q₂ (fun y => A y ∧ R a y) B)
 
 /-! ### Conservativity -/
@@ -84,7 +84,7 @@ theorem poss_conservative {Q₁ Q₂ : GQ α} (C : α → Prop) (R : α → α �
     (Conservative.congr_scope h₂ fun _ hy => (and_iff_right hy.1).symm)))
 
 /-- Conservativity inheritance for the type ⟨1⟩ variant (their remark after (7.44)). -/
-theorem possNP_conservative {Q : Quantifier α} {Q₂ : GQ α} (R : α → α → Prop)
+theorem possNP_conservative {Q : NP α} {Q₂ : GQ α} (R : α → α → Prop)
     (h₂ : Conservative Q₂) : Conservative (PossNP Q Q₂ R) := fun _ _ =>
   iff_of_eq (congrArg Q (funext fun _ => propext (and_congr_right fun _ =>
     Conservative.congr_scope h₂ fun _ hy => (and_iff_right hy.1).symm)))

@@ -48,7 +48,7 @@ a demonstrative's deictic feature projects: deixis filters the referent but neve
 ## Implementation notes
 
 Context is the entity assignment `Assignment E` and the world coordinate is the resource
-situation `W`, exactly as for `PersonalPronoun.denote`. `QuantifierDeterminer` (a generalized
+situation `W`, exactly as for `PersonalPronoun.denote`. `Quantifier` (a generalized
 quantifier, not an individual denotation — it has no `Nominal`) remains deferred.
 -/
 

@@ -56,7 +56,7 @@ variable {α D : Type*}
 /-! ### Degree quantifiers and their scope -/
 
 section Preorder
-variable [Preorder D] {Q : Quantifier α} {μ : α → D} {d : D}
+variable [Preorder D] {Q : NP α} {μ : α → D} {d : D}
 
 /-- The greatest element of `P` lies in `U`. These are the degree quantifiers of [heim-2001],
 *-er than `t`* at `U = Ioi t`, *less than `t`* at `Iio t`, *exactly `δ` -er than `t`* at
@@ -67,16 +67,16 @@ theorem maxIn_singleton {P : Set D} {a : D} : maxIn {a} P ↔ IsGreatest P a := 
 
 /-- The degrees at which `Q` holds of the entities reaching them, the degree predicate abstracted
 over the scope of `Q`. Membership at `d` is `Q (Comparison.ge.over μ d)`. -/
-def scopeDegrees (Q : Quantifier α) (μ : α → D) : Set D := {d | Q λ x => d ≤ μ x}
+def scopeDegrees (Q : NP α) (μ : α → D) : Set D := {d | Q λ x => d ≤ μ x}
 
 theorem mem_scopeDegrees : d ∈ scopeDegrees Q μ ↔ Q λ x => d ≤ μ x := Iff.rfl
 
 /-- A degree quantifier `𝒟` scoping under `Q`, applied to each entity's own degrees. -/
-def lowScope (𝒟 : Set D → Prop) (Q : Quantifier α) (μ : α → D) : Prop :=
+def lowScope (𝒟 : Set D → Prop) (Q : NP α) (μ : α → D) : Prop :=
   Q λ x => 𝒟 (Iic (μ x))
 
 /-- A degree quantifier `𝒟` scoping over `Q`. -/
-def highScope (𝒟 : Set D → Prop) (Q : Quantifier α) (μ : α → D) : Prop :=
+def highScope (𝒟 : Set D → Prop) (Q : NP α) (μ : α → D) : Prop :=
   𝒟 (scopeDegrees Q μ)
 
 /-- The than-clause degree set, the degrees reached by some `P`-witness. -/
@@ -123,7 +123,7 @@ theorem scopeDegrees_eq_Iic (hQ : Monotone Q) {m : D} (hm : IsGreatest (scopeDeg
 end Preorder
 
 section PartialOrder
-variable [PartialOrder D] {U P : Set D} {Q : Quantifier α} {μ : α → D}
+variable [PartialOrder D] {U P : Set D} {Q : NP α} {μ : α → D}
 
 theorem maxIn_Iic {a : D} : maxIn U (Iic a) ↔ a ∈ U :=
   ⟨λ ⟨_, hm, h⟩ => h.unique isGreatest_Iic ▸ hm, λ h => ⟨a, h, isGreatest_Iic⟩⟩
@@ -183,7 +183,7 @@ theorem lowScope_some_of_highScope {R : α → Prop} (h : highScope (maxIn U) (s
 end PartialOrder
 
 section LinearOrder
-variable [LinearOrder D] {U : Set D} {Q Q' : Quantifier α} {μ : α → D}
+variable [LinearOrder D] {U : Set D} {Q Q' : NP α} {μ : α → D}
 
 /-- On a finite domain the degree set of a monotone quantifier that fails on the empty
 predicate has a maximum as soon as it is nonempty, attained by an entity, the shortest girl

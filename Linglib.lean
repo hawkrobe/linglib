@@ -1635,7 +1635,6 @@ import Linglib.Semantics.Quantification.Numerals.Roundness
 import Linglib.Semantics.Quantification.ONEModifiers
 import Linglib.Semantics.Quantification.Polyadic
 import Linglib.Semantics.Quantification.Properties
-import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Quantification.Witness
 import Linglib.Semantics.Quantification.Syllogistic.Defs
 import Linglib.Semantics.Quantification.Syllogistic.Forms

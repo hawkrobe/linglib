@@ -18,7 +18,7 @@ This module provides:
 
 -/
 
-import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.NP
 
 namespace Semantics.Scope
 
