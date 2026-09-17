@@ -120,7 +120,7 @@ theorem anClause_not_informative (p : Set W) : ¬ (anClause p).isInformative :=
 /-- An outside merger takes a proposition, and a *na*-clause, its subject position reopened,
 is a property: application is undefined whatever the merger returns. -/
 theorem comp_over_na_type_clash (b : Semantics.Composition.Ty) :
-    canApply (.fn .t b) (.fn .e .t) = none := rfl
+    tyForward (.fn .t b) (.fn .e .t) = none := rfl
 
 /-! ### Selection -/
 

@@ -106,29 +106,29 @@ def cholTree : Tree Unit String := .bin cholNumClf (.leaf "ts'i'")
 
 /-- The Ch'ol root is the measure-modified noun `λx. dogs x ∧ μ# x = 2` ((51)). -/
 theorem cholTree_interp :
-    interp (Finset α) Unit cholLex g cholTree = some ⟨.e ⇒ .t, clfForNum dogs Finset.card 2⟩ :=
+    interp cholLex g cholTree = some ⟨.e ⇒ .t, clfForNum dogs Finset.card 2⟩ :=
   rfl
 
 /-- Numeral and classifier compose without a noun, into the measure phrase
 `λP λx. P x ∧ μ# x = 2` ((45)–(46), Prediction 4). -/
 theorem chol_numClf_composes :
-    interp (Finset α) Unit cholLex g cholNumClf =
+    interp cholLex g cholNumClf =
       some ⟨(.e ⇒ .t) ⇒ .e ⇒ .t, λ P => clfForNum P Finset.card 2⟩ :=
   rfl
 
 /-- The classifier, a measure of type `⟨e,n⟩`, cannot compose with the noun
 without the numeral ((43a)). -/
 theorem chol_clfNoun_fails :
-    interp (Finset α) Unit cholLex g (.bin (.leaf Chol.Classifiers.kojty.form) (.leaf "ts'i'")) =
+    interp cholLex g (.bin (.leaf Chol.Classifiers.kojty.form) (.leaf "ts'i'")) =
       none :=
   rfl
 
 /-- *ocho* composes with the noun directly and rejects the classifier
 ((33)–(34), Prediction 1). -/
 theorem chol_ocho :
-    interp (Finset α) Unit cholLex g (.bin (.leaf "ocho") (.leaf "ts'i'")) =
+    interp cholLex g (.bin (.leaf "ocho") (.leaf "ts'i'")) =
         some ⟨.e ⇒ .t, clfForNum dogs Finset.card 8⟩ ∧
-      interp (Finset α) Unit cholLex g (.bin (.leaf "ocho") (.leaf Chol.Classifiers.kojty.form)) =
+      interp cholLex g (.bin (.leaf "ocho") (.leaf Chol.Classifiers.kojty.form)) =
         none :=
   ⟨rfl, rfl⟩
 
@@ -157,20 +157,20 @@ def shanTree : Tree Unit String := .bin (.leaf "sɔ̌ŋ") shanClfNoun
 
 /-- The Shan root is the partition numeral over the atomized noun ((52)). -/
 theorem shanTree_interp :
-    interp (Finset α) Unit shanLex g shanTree = some ⟨.e ⇒ .t, cardMod 2 (clfForNoun dogs)⟩ :=
+    interp shanLex g shanTree = some ⟨.e ⇒ .t, cardMod 2 (clfForNoun dogs)⟩ :=
   rfl
 
 /-- Classifier and noun compose without a numeral, yielding the atoms
 ((42), Prediction 3). -/
 theorem shan_clfNoun_composes :
-    interp (Finset α) Unit shanLex g shanClfNoun =
+    interp shanLex g shanClfNoun =
       some ⟨.e ⇒ .t, (clfForNoun dogs : Finset α → Prop)⟩ :=
   rfl
 
 /-- Numeral and classifier, both `⟨⟨e,t⟩,⟨e,t⟩⟩`, do not compose without the
 noun ((48)–(49)). -/
 theorem shan_numClf_fails :
-    interp (Finset α) Unit shanLex g (.bin (.leaf "sɔ̌ŋ") (.leaf Shan.Classifiers.to.form)) =
+    interp shanLex g (.bin (.leaf "sɔ̌ŋ") (.leaf Shan.Classifiers.to.form)) =
       none :=
   rfl
 

@@ -495,14 +495,14 @@ inverse-scope QR derivation that `interp` computes at `M = Id`
 reordering the binds derives is unreachable by movement and abstraction
 under the scope effect: Cont and QR are not notational variants. -/
 theorem cont_blocks_qr :
-    interp ToyEntity Unit (M := Cont Prop)
+    interp (M := Cont Prop)
       (Lexicon.lift (Cont Prop) lex) g₀ tree_inverse = none := rfl
 
 open HeimKratzer1998 in
 /-- Surface-scope QR fails equally: any PA (`.bind`) node is stuck under
 `Cont`. Scope under the effect comes only from the order of binds, never from movement. -/
 theorem cont_blocks_qr_surface :
-    interp ToyEntity Unit (M := Cont Prop)
+    interp (M := Cont Prop)
       (Lexicon.lift (Cont Prop) lex) g₀ tree_surface = none := rfl
 
 /-! The engine's FA mode applies the function daughter to the argument through

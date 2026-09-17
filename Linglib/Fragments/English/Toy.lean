@@ -267,7 +267,7 @@ end ToyLexicon
 /-- Engine smoke test: "John sleeps" composes (via the real `Tree.interp`, over the
 naming-map-induced lexicon) to the model's fact. -/
 example :
-    Tree.interp ToyEntity Unit toyLexicon (fun _ => ToyEntity.john)
+    Tree.interp toyLexicon (fun _ => ToyEntity.john)
       (.node () [.terminal () "John", .terminal () "sleeps"] : Syntax.Tree Unit String)
       = some ⟨.t, ToyLexicon.sleeps_sem ToyLexicon.john_sem⟩ := rfl
 

@@ -328,7 +328,7 @@ variable {E W : Type}
 /-- Forward FA at `Id`, with the applicative collapsed. -/
 private theorem interpBinary_fa {σ τ : Ty} (f : Ty.Domain E W (σ ⇒ τ)) (x : Ty.Domain E W σ) :
     interpBinary (M := Id) ⟨σ ⇒ τ, f⟩ ⟨σ, x⟩ = some ⟨τ, f x⟩ := by
-  rw [interpBinary_eq, tryFA_forward]
+  rw [interpBinary, tryFA_forward]
   rfl
 
 /-- Backward FA at `Id`: entity subject, unary predicate. -/
@@ -353,11 +353,11 @@ assignment: it denotes an entity predicate agreeing pointwise with the body
 at updated assignments. -/
 private theorem interp_bind_exists (lex : Lexicon E W) (g : Assignment E)
     (k : ℕ) (c : Unit) (body : Tree Unit String) {p : Ty.Domain E W .t}
-    (hbody : Tree.interp E W lex g body = some ⟨.t, p⟩) :
+    (hbody : Tree.interp lex g body = some ⟨.t, p⟩) :
     ∃ F : Ty.Domain E W (.e ⇒ .t),
-      Tree.interp E W lex g (.bind k c body) = some ⟨.fn .e .t, F⟩ ∧
+      Tree.interp lex g (.bind k c body) = some ⟨.fn .e .t, F⟩ ∧
       ∀ (x : E) (px : Ty.Domain E W .t),
-        Tree.interp E W lex (Function.update g k x) body = some ⟨.t, px⟩ →
+        Tree.interp lex (Function.update g k x) body = some ⟨.t, px⟩ →
         F x = px := by
   refine ⟨?_, ?_, ?_⟩
   rotate_left
@@ -380,12 +380,12 @@ variable (m : Model L) (fw : FOWords) (nm : LexNaming L) (w : m.W)
 realization over the model. -/
 theorem interp_compileTerm (g : Assignment m.E) :
     ∀ {t : Tree Unit String} {τ : L.Term ℕ}, compileTerm nm t = some τ →
-      Tree.interp m.E m.W (m.lexiconFO fw nm w) g t
+      Tree.interp (m.lexiconFO fw nm w) g t
         = some ⟨.e, m.termAt w τ g⟩
   | .terminal _ s, τ, h => by
       simp only [compileTerm, Option.map_eq_some_iff] at h
       obtain ⟨c, hc, rfl⟩ := h
-      rw [interp_terminal, interpTerminal_lookup, m.lexiconFO_names fw nm w hc,
+      rw [interp_terminal, m.lexiconFO_names fw nm w hc,
         m.termAt_const]
   | .trace k _, τ, h => by
       simp only [compileTerm, Option.some.injEq] at h
@@ -399,13 +399,13 @@ theorem interp_compilePred (hdj : nm.Disjoint) (g : Assignment m.E)
     (hsubj : compileTerm nm subj = some τ) :
     ∀ {r : Tree Unit String} {φ : L.Formula ℕ}, compilePred nm τ r = some φ →
       ∀ c : Unit,
-        Tree.interp m.E m.W (m.lexiconFO fw nm w) g (.node c [subj, r])
+        Tree.interp (m.lexiconFO fw nm w) g (.node c [subj, r])
           = some ⟨.t, m.realizeAt w φ g⟩
   | .terminal _ v, φ, h, c => by
       simp only [compilePred, Option.map_eq_some_iff] at h
       obtain ⟨R, hR, rfl⟩ := h
       rw [interp_node_binary, interp_compileTerm m fw nm w g hsubj, Option.bind_some,
-        interp_terminal, interpTerminal_lookup,
+        interp_terminal,
         m.lexiconFO_preds₁ fw nm w hR (hdj.names_of_preds₁ v R hR),
         Option.bind_some, interpBinary_e_et]
       exact some_t_congr (m.realizeAt_formula₁ w g R τ).symm
@@ -413,7 +413,7 @@ theorem interp_compilePred (hdj : nm.Disjoint) (g : Assignment m.E)
       simp only [compilePred, Option.bind_eq_some_iff, Option.map_eq_some_iff] at h
       obtain ⟨R, hR, τₒ, hobj, rfl⟩ := h
       rw [interp_node_binary, interp_compileTerm m fw nm w g hsubj, Option.bind_some,
-        interp_node_binary, interp_terminal, interpTerminal_lookup,
+        interp_node_binary, interp_terminal,
         m.lexiconFO_preds₂ fw nm w hR (hdj.names_of_preds₂ v R hR)
           (hdj.preds₁_of_preds₂ v R hR),
         Option.bind_some,
@@ -430,14 +430,13 @@ private theorem interp_quantClause {g : Assignment m.E} {q nw : String}
     {a a₁ a₂ a₃ a₄ : Unit}
     (hQ : m.lexiconFO fw nm w q = some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, Q⟩)
     (hN : m.lexiconFO fw nm w nw = some ⟨.e ⇒ .t, N⟩)
-    (hbind : Tree.interp m.E m.W (m.lexiconFO fw nm w) g (.bind k a₄ body)
+    (hbind : Tree.interp (m.lexiconFO fw nm w) g (.bind k a₄ body)
       = some ⟨.fn .e .t, F⟩) :
-    Tree.interp m.E m.W (m.lexiconFO fw nm w) g
+    Tree.interp (m.lexiconFO fw nm w) g
         (.node a [.node a₁ [.terminal a₂ q, .terminal a₃ nw], .bind k a₄ body])
       = some ⟨.t, Q N F⟩ := by
-  rw [interp_node_binary, interp_node_binary, interp_terminal,
-    interpTerminal_lookup, hQ, Option.bind_some,
-    interp_terminal, interpTerminal_lookup, hN,
+  rw [interp_node_binary, interp_node_binary, interp_terminal, hQ, Option.bind_some,
+    interp_terminal, hN,
     Option.bind_some, interpBinary_fa, Option.bind_some, hbind,
     Option.bind_some, interpBinary_fa]
 
@@ -447,7 +446,7 @@ model at `w` — the DRT triangle for type-driven composition. -/
 theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     (hdj : nm.Disjoint) (t : Tree Unit String) :
     ∀ {φ : L.Formula ℕ} (g : Assignment m.E), compileFO fw nm t = some φ →
-      Tree.interp m.E m.W (m.lexiconFO fw nm w) g t
+      Tree.interp (m.lexiconFO fw nm w) g t
         = some ⟨.t, m.realizeAt w φ g⟩ := by
   induction t using compileFO.induct fw with
   | case1 a a₁ r ih =>
@@ -456,7 +455,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     simp only [compileFO, ↓reduceIte, Option.map_eq_some_iff] at h
     obtain ⟨ψ, hψ, rfl⟩ := h
     have hfr₁ := hfr.at (s := fw.not_) (by simp)
-    rw [interp_node_binary, interp_terminal, interpTerminal_lookup,
+    rw [interp_node_binary, interp_terminal,
       m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2,
       FOWords.lexicon_not m.E m.W hnd, Option.bind_some,
       ih g hψ, Option.bind_some, interpBinary_fa]
@@ -541,7 +540,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     obtain ⟨φ₁, h₁, φ₂, h₂, rfl⟩ := h
     have hfr₁ := hfr.at (s := fw.and_) (by simp)
     rw [interp_node_binary, ihl g h₁, Option.bind_some, interp_node_binary,
-      interp_terminal, interpTerminal_lookup,
+      interp_terminal,
       m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2,
       FOWords.lexicon_and m.E m.W hnd, Option.bind_some,
       iht g h₂, Option.bind_some, interpBinary_fa, Option.bind_some,
@@ -556,7 +555,7 @@ theorem interp_compileFO (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     obtain ⟨φ₁, h₁, φ₂, h₂, rfl⟩ := h
     have hfr₁ := hfr.at (s := fw.or_) (by simp)
     rw [interp_node_binary, ihl g h₁, Option.bind_some, interp_node_binary,
-      interp_terminal, interpTerminal_lookup,
+      interp_terminal,
       m.lexiconFO_fresh fw nm w hfr₁.1 hfr₁.2.1 hfr₁.2.2,
       FOWords.lexicon_or m.E m.W hnd, Option.bind_some,
       iht g h₂, Option.bind_some, interpBinary_fa, Option.bind_some,
@@ -591,7 +590,7 @@ variable (m : Model L) (fw : FOWords) (nm : LexNaming L) (w : m.W)
 true truth value. -/
 def HoldsAt (lex : Lexicon m.E m.W) (g : Assignment m.E)
     (t : Tree Unit String) : Prop :=
-  ∃ p, Tree.interp m.E m.W lex g t = some ⟨.t, p⟩ ∧ p
+  ∃ p, Tree.interp lex g t = some ⟨.t, p⟩ ∧ p
 
 theorem holdsAt_iff_realize (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
     (hdj : nm.Disjoint) {t : Tree Unit String} {φ : L.Formula ℕ}

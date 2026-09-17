@@ -183,17 +183,17 @@ re-implementation alongside it. -/
 
 /-- Surface scope: the engine computes the hand-written reading. -/
 theorem interp_computes_surface :
-    interp ToyEntity Unit lex g₀ tree_surface = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
+    interp lex g₀ tree_surface = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
 
 /-- Inverse scope: likewise. -/
 theorem interp_computes_inverse :
-    interp ToyEntity Unit lex g₀ tree_inverse = some ⟨Ty.t, inverseScopeProp⟩ := rfl
+    interp lex g₀ tree_inverse = some ⟨Ty.t, inverseScopeProp⟩ := rfl
 
 /-- Scope ambiguity, stated about the engine: the two QR derivations interpret to
 genuinely different meanings. -/
 theorem scope_ambiguity_computed :
-    interp ToyEntity Unit lex g₀ tree_surface ≠
-      interp ToyEntity Unit lex g₀ tree_inverse := by
+    interp lex g₀ tree_surface ≠
+      interp lex g₀ tree_inverse := by
   rw [interp_computes_surface, interp_computes_inverse]
   intro h
   have : surfaceScopeProp = inverseScopeProp := by injection h with h'; injection h'
@@ -232,7 +232,7 @@ example : (compileFO {} toyNaming tree_someStudentSleeps).isSome = true := rfl
 fragment, engine truth conditions are `Realize` of the compiled formula. -/
 theorem interp_eq_realize {t : Tree Unit String} {φ : toyLang.Formula ℕ}
     (h : compileFO {} toyNaming t = some φ) (g : Assignment ToyEntity) :
-    Tree.interp ToyEntity Unit (toyModel.lexiconFO {} toyNaming ()) g t
+    Tree.interp (toyModel.lexiconFO {} toyNaming ()) g t
       = some ⟨.t, toyModel.realizeAt () φ g⟩ :=
   interp_compileFO toyModel {} toyNaming () FOWords.nodup_default
     toyNaming_freshFor toyNaming_disjoint t g h
