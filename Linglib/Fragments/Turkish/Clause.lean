@@ -9,47 +9,20 @@ import Linglib.Syntax.Clause.Chaining
 # Turkish converbs
 
 Turkish chains clauses with converbial suffixes on the verb of each medial clause before a
-single final verb. There is no switch-reference: each converb encodes the relation between
-its clause and the next, and the subjects of the two clauses are in general free to differ,
-though *-(y)Ip* and the manner converbs seldom take a subject of their own. The
-subordinating suffixes are nominalizing and any verb form containing one is non-finite; the
-converbial suffixes proper combine with no person markers, except that *-(y)ken* optionally
-takes the third-person plural *-lAr* and *-mIşçAsInA* may take a person marker. Eight of them
-attach to a single verb. *-(y)Ip* conjoins clauses of equal status in place of the tense,
-aspect and modality suffixes, *koşup al-* 'run and get', and *-(y)ArAk* 'by doing, doing' is
-used the same way beside its manner and means readings, *koşarak* 'running'. *-(y)IncA*
-'when' sequences two events, *kalkmayınca* 'when [s.o.] doesn't get up'. *-(y)ken* 'while,
-as, when' contains the copula and so attaches not to the stem but to a position-3
-tense, aspect or modality marker or to a nominal, *bakarken* 'while watching', *çocukken*
-'as a child', the converb's temporal value coming from what precedes it. *-(y)AlI* 'since',
-colloquial, marks the starting point of the main situation, *geleli* 'since arriving'.
-*-mAdAn* 'without doing, before doing' contains the negative *-mA* and is stressed on the
-syllable before it, *bağırmadan* 'without shouting'. *-cAsInA* 'as if' attaches to the aorist
-or to *-mIş*, *hissedercesine* 'as if feeling'. *-DIkçA* marks proportionality, *çikolata
-yedikçe* 'the more chocolate you eat'. Two further converbial subordinators are added to a
-doubled verb: the positive and negative aorist stems *-(A/I)r … -mAz* 'as soon as', *su
-kaynar kaynamaz* 'as soon as the water boils', and *-(y)A … -(y)A*, emphatic continuous
-manner, *ağlaya ağlaya* 'weeping continually'. The negative *-mA* precedes the converbs that
-attach to the stem, and the aorist negative *-mAz* the ones that attach to a tensed stem,
-*-mAzdAn önce* 'before'.
-
-## Main definitions
-
-* `Turkish.Converb` — the eight converbs, with their morphs (`morphs`, `form`), gloss, the
-  relations they encode (`relations`), the last slot of the finite verb they follow
-  (`follows`), whether an exponent of a slot may precede them (`Admits`), from which whether
-  they take a tense marker (`Tensed`) and a negative (`Negatable`) follow, whether they are
-  inherently negative (`InherentlyNegative`) or may carry a person marker (`PersonMarked`),
-  and their verb form (`verbForm`); they are an instance of `Clause.Chaining.MedialForm`
-* `Turkish.arMaz`, `Turkish.aA` — the two converbial subordinators on a doubled verb
+single final verb, without switch-reference. *-(y)Ip* conjoins clauses of equal status in place
+of the tense, aspect and modality suffixes, *-(y)ArAk* gives the manner or means, *-(y)IncA*
+'when' sequences two events, *-(y)AlI* 'since' marks a starting point, *-mAdAn* 'without doing'
+contains the negative, *-DIkçA* marks proportionality, and *-(y)ken* 'while' and *-cAsInA* 'as
+if' attach not to the stem but to a tensed one, *-(y)ken* being the copula on a position-3
+marker or a nominal. The converbs take no person marker, except the third-person plural on
+*-(y)ken* and a person marker on *-mIşçAsInA*. Two more converbial subordinators go on a
+doubled verb: *-(A/I)r … -mAz* 'as soon as' and *-(y)A … -(y)A*, continuous manner.
 
 ## Implementation notes
 
-The slot a converb follows is read against the finite verb's template in
-`Turkish.Verb.system`, so that a converb takes tense when a position-3 marker may precede
-it and a negative when the negation slot may. The clause-chaining typology over the
-converbs is in `Studies/SarvasyAikhenvald2025.lean`; the proportional converb encodes a
-relation the inventory of interclausal relations does not name.
+* Whether a converb takes a tense marker or the negative is read off the finite verb's slot
+  order in `Turkish.Verb.system` from the slot the converb follows.
+* The clause-chaining typology over the converbs is in `Studies/SarvasyAikhenvald2025.lean`.
 
 ## References
 

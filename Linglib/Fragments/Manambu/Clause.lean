@@ -5,49 +5,20 @@ import Linglib.Syntax.Clause.Chaining
 /-!
 # Manambu medial clauses
 
-Manambu (Ndu family, East Sepik Province, Papua New Guinea) chains dependent medial clauses
-before a single main clause and marks the predicate of each medial clause with one of nine
-suffixes, most of them sensitive to switch-reference. The completive pair *-ku* (same
-subject) and *-k* (different subject) means 'after' and is read as reason as well, and a *-k*
-clause also as a real condition; *-ta:y* 'while' is cotemporaneous and *-taka* marks immediate
-sequence, both with a same-subject form only; *-kǝb* 'as soon as', with a possible short
-temporal overlap, takes a different subject, and *-ta:y-kǝb*, the one bimorphemic marker,
-the same subject, its action starting before that of the following clause and overlapping with
-it; *-ga:y* 'if' marks an unlikely condition with a same-subject form. Two markers are not
-sensitive to switch-reference: *-lǝk* 'because', which grammaticalized from the dative of the
-distal demonstrative, and the versatile *-n*, read as simultaneous, preceding or concomitant
-action or manner and offered by speakers as the citation form of a verb. The verb before
-*-ku*, *-ta:y*, *-taka*, *-ta:y-kǝb*, *-ga:y* and *-n* is uninflected; before *-k* and *-kǝb*
-it carries the non-tensed subject cross-referencing markers, and before *-lǝk* the tensed ones
-of a main clause, so that a causal clause alone may carry habitual aspect and action focus.
-After a light CV root *-taka* and *-kǝb* appear as *-tataka* and *-kǝkǝb*. Medial clauses
-express relative tense through their markers and neither mood nor imperative, and are
-negated with the dependent-clause negator *-ma:r-*, except that a *-ga:y* clause cannot be
-negated and instead repeats its verb in the next clause. The *-n*, *-ta:y* and *-kǝb* forms
-can head the predicate of a verbless clause, and all markers but *-ta:y-kǝb*, *-lǝk* and
-*-ga:y* combine with the completive auxiliary *napa-*. The same-subject completive clause
-and the *-n* clause occur on their own, as stern commands and, in conversation, with a
-resultative sense. Chains are bridged by recapitulative linkage, which repeats the last verb of
-the preceding chain, and by summary linkage, a same-subject completive clause of *tǝ-*
-'stay' summing up the preceding clauses.
-
-## Main definitions
-
-* `Manambu.MedialInflection` — the inflection the medial verb carries before its marker:
-  none, non-tensed subject cross-referencing, or the tensed cross-referencing of a main
-  clause
-* `Manambu.MedialMarker` — the nine markers, with their morphs (`morphs`, `form`), the
-  switch-reference value they carry (`sr`), the relations they encode (`relations`), the
-  inflection of the verb (`inflection`, `IndexesSubject`), which make them an instance of
-  `Clause.Chaining.MedialForm`, and whether they head a predicate
-  (`HeadsPredicate`), are negated (`Negatable`), combine with the completive auxiliary
-  (`WithCompletive`) and occur on their own (`StandsAlone`)
-* `Manambu.dependentNegator`, `Manambu.completive` — the negator of dependent clauses
-  and the completive auxiliary
+Manambu (Ndu, East Sepik Province, Papua New Guinea) chains medial clauses before a single
+main clause and marks the medial predicate with one of nine suffixes. Six are sensitive to
+switch-reference: the completive pair *-ku* (same subject) and *-k* (different subject)
+'after', *-ta:y* 'while' and *-taka* 'as soon as' with same-subject forms only, and *-kǝb*
+(different subject) and *-ta:y-kǝb* (same subject) for a brief temporal overlap; *-ga:y* 'if'
+marks an unlikely condition with the same subject, and *-lǝk* 'because' and the versatile *-n*
+are neutral. The verb is bare before the same-subject markers and *-n*, carries subject
+cross-referencing before *-k* and *-kǝb*, and the tensed cross-referencing of a main clause
+before *-lǝk*. Medial clauses are negated with *-ma:r-*, except after *-ga:y*, and the
+same-subject completive and *-n* clauses occur on their own.
 
 ## Implementation notes
 
-The clause-chaining typology over these forms is in `Studies/SarvasyAikhenvald2025.lean`.
+* The clause-chaining typology over the markers is in `Studies/SarvasyAikhenvald2025.lean`.
 
 ## References
 
