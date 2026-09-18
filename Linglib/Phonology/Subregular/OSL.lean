@@ -32,7 +32,7 @@ ISL ⊊ OSL ⊊ Subsequential.
 * `isRightOutputStrictlyLocal_iff_left_reverse`: Right-OSL is the
   reverse-conjugate of Left-OSL.
 * `isLeftOutputStrictlyLocal_left_subsequential`: Left-OSL ⊆
-  Left-Subsequential, via `OSLRule.toFinSubsequentialTransducer`.
+  Left-Subsequential, as a window recursion over the output.
 
 ## Implementation notes
 
@@ -71,16 +71,12 @@ namespace OSLRule
 
 variable {k : ℕ}
 
-/-- Apply the rule, threading a window of accumulated output symbols.
-At each input position, emit `r.windowOutput outputWindow x`, then
-extend the output window with the just-emitted block (truncated to keep
-at most `k − 1` symbols). -/
-def applyAux (r : OSLRule k α β) :
-    (outputWindow : List β) → (rest : List α) → List β
-  | _, [] => []
-  | outputWindow, x :: xs =>
-    r.windowOutput outputWindow x
-      ++ applyAux r ((outputWindow ++ r.windowOutput outputWindow x).rtake (k - 1)) xs
+/-- Apply the rule, threading a window of accumulated output symbols: the window
+recursion `SubsequentialTransducer.windowRun` accumulating what the rule emits, so each
+step extends the output window with the just-emitted block, truncated to at most
+`k − 1` symbols. -/
+def applyAux (r : OSLRule k α β) : (outputWindow : List β) → (rest : List α) → List β :=
+  SubsequentialTransducer.windowRun (k - 1) r.windowOutput r.windowOutput
 
 /-- Apply a k-OSL rule to an input string, scanning left-to-right. -/
 def apply (r : OSLRule k α β) (input : List α) : List β :=
@@ -206,36 +202,9 @@ theorem isRightOutputStrictlyLocal_iff_left_reverse {k : ℕ}
 
 /-! ### OSL ⊆ Subsequential
 
-`OSLRule.toFinSubsequentialTransducer` projects an OSL rule into the sliding-window
-transducer `SubsequentialTransducer.ofWindow`, with the bounded *output* window
-(length ≤ k − 1) as state. Co-located on the source side because the dependency
-direction (the transducer lives in `Subsequential.lean`; OSL projects into it) forces
-both construction and cast into this file.
-
-The output alphabet `[Fintype β]` constraint matches [mohri-1997]'s
-finite-alphabet assumption — the state space (a bounded output window)
-is finite precisely when the output alphabet is. -/
-
-/-- Every Left-OSL rule induces a window transducer tracking the last `k − 1` *output*
-symbols (the window accumulates what `windowOutput` emits), with empty `finalOutput`. -/
-def OSLRule.toFinSubsequentialTransducer {k : ℕ} (r : OSLRule k α β) :
-    SubsequentialTransducer {l : List β // l.length ≤ k - 1} α β :=
-  .ofWindow (k - 1) r.windowOutput r.windowOutput
-
-/-- `OSLRule.applyAux` is the canonical window recursion accumulating the output. -/
-theorem OSLRule.applyAux_eq_windowRun {k : ℕ} (r : OSLRule k α β) :
-    r.applyAux = SubsequentialTransducer.windowRun (k - 1) r.windowOutput r.windowOutput := by
-  funext w xs
-  induction xs generalizing w with
-  | nil => rfl
-  | cons x xs ih =>
-    rw [OSLRule.applyAux_cons, SubsequentialTransducer.windowRun]
-    exact congrArg _ (ih _)
-
-/-- The window transducer induced by an OSL rule computes the same string function. -/
-theorem OSLRule.toFinSubsequentialTransducer_run_eq_apply {k : ℕ} (r : OSLRule k α β) :
-    r.toFinSubsequentialTransducer.run = r.apply :=
-  SubsequentialTransducer.run_ofWindow.trans (congrFun r.applyAux_eq_windowRun []).symm
+An OSL rule is a window recursion accumulating its own output, so over a finite output
+alphabet the bounded *output* window (length ≤ k − 1) is a finite state space
+(`isLeftSubsequential_windowRun`). -/
 
 /-- **Left-OSL ⊆ Left-Subsequential** (over a finite output alphabet).
 The `[Fintype β]` matches [mohri-1997]'s finite-alphabet assumption
@@ -243,18 +212,14 @@ and lets the bounded output window serve as a finite state space. -/
 theorem isLeftOutputStrictlyLocal_left_subsequential {k : ℕ} [Fintype β]
     {f : List α → List β} (h : IsLeftOutputStrictlyLocal k f) :
     IsLeftSubsequential f := by
-  obtain ⟨r, hr⟩ := h
-  have heq : r.toFinSubsequentialTransducer.run = f :=
-    r.toFinSubsequentialTransducer_run_eq_apply.trans hr
-  exact heq ▸ r.toFinSubsequentialTransducer.isLeftSubsequential
+  obtain ⟨r, rfl⟩ := h
+  exact isLeftSubsequential_windowRun _ _ _
 
 /-- A single-symbol left-OSL rule is Mealy-computable, with the bounded output window as
 the synchronous state. -/
 theorem isMealyComputable_of_OSLRule {k : ℕ} [Fintype β] (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
-  r.toFinSubsequentialTransducer_run_eq_apply ▸
-    (SubsequentialTransducer.LetterToLetter.ofLength fun w x => hs w.val x).isMealyComputable
-      fun _ => rfl
+  isMealyComputable_windowRun _ _ _ hs
 
 /-- **Right-OSL ⊆ Right-Subsequential**: the left inclusion at the reverse-conjugate,
 since both right classes are the `List.revConj`-images of their left classes. -/

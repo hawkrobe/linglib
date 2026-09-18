@@ -157,7 +157,7 @@ theorem collapse_isISL [DecidableEq α] :
       a :: r.applyAux [a] rest = List.destutter' (· ≠ ·) a rest := by
     intro a rest
     induction rest generalizing a with
-    | nil => simp [ISLRule.applyAux, List.destutter'_nil]
+    | nil => simp
     | cons b l ih =>
       rw [ISLRule.applyAux_cons]
       have hwin : ([a] ++ [b]).rtake (2 - 1) = [b] := by
