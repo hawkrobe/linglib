@@ -1,213 +1,125 @@
-import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Syntax.Reflex
+import Linglib.Syntax.Person.Basic
 import Linglib.Fragments.Mayan.Extraction
 
 /-!
-# Q'anjob'al Agent Focus and Extraction Fragment
+# Q'anjob'al Agent Focus and extraction marking
 
-Morphological data on Q'anjob'al (Q'anjob'alan, Mayan) extraction
-asymmetries, Agent Focus, and the Crazy Antipassive, following
-[coon-mateo-pedro-preminger-2014]. Q'anjob'al shows an extraction
-asymmetry: the intransitive subject (S) and transitive object (P)
-extract freely, but the transitive subject (A) cannot be extracted
-without Agent Focus. Agent Focus replaces the regular transitive form
-with a verb bearing the AF suffix *-on*, the intransitive status suffix
-*-i* (not transitive *-V'*), and no Set A agreement — used for
-*wh*-questions, focus, and relativization targeting the agent.
+Q'anjob'al (Q'anjob'alan Mayan) extracts an intransitive subject or a transitive object
+freely, but a transitive subject only through the Agent Focus form of the verb, which adds the
+suffix *-on* to the stem, drops Set A, and takes the intransitive status suffix *-i* in place
+of the transitive *-V'*; either status suffix surfaces only when the verb is phrase-final.
+Agent Focus is confined to third-person agents, and a first- or second-person agent focuses
+with the regular transitive verb. The same form, under no restriction on person, is the verb
+of every non-finite embedded transitive clause, the construction Kaufman named the Crazy
+Antipassive and which is found in the Q'anjob'alan branch alone.
 
 ## Main declarations
 
-* `Qanjobal.StatusSuffix` with `.morph`: the ITV and TV status suffixes.
-* `Qanjobal.agentFocusSuffix`: the Agent Focus suffix *-on*.
-* `Qanjobal.VerbMorphology` with `regularTransitive`, `agentFocusForm`:
-  the AF-suffix, status-suffix, and Set A properties of a verb form, and
-  `.marker`, the suffixes a form carries.
-* `Qanjobal.VerbMorphology.toMayanVerbForm`: projection to the pan-Mayan
-  `Mayan.VerbForm` for cross-Mayan typology.
-* `Qanjobal.crazyAntipassiveForm`: the Crazy Antipassive, morphologically
-  identical to Agent Focus.
-* `Qanjobal.PersonRestriction` with `.requiresAF`, `.requiresCrazyAP`:
-  the 3rd-person restriction on Agent Focus.
-* `Qanjobal.Extraction.realize`: the AF-based extraction marking.
+* `Qanjobal.StatusSuffix`: the intransitive and transitive status suffixes, each a morph.
+* `Qanjobal.agentFocusSuffix`: the suffix *-on*.
+* `Qanjobal.VerbForm.statusSuffix`, `Qanjobal.VerbForm.marker`: the status suffix and the
+  suffixes of each `Mayan.VerbForm`.
+* `Qanjobal.verbForm`: the form of a transitive verb by the finiteness of its clause, the
+  argument extracted from it and the person of its agent.
+* `Qanjobal.Extraction.realize`: the reflexes extraction from each argument role licenses
+  with an agent of each person, the Agent Focus form where it replaces the transitive.
 
-## Implementation notes
+## Main results
 
-Q'anjob'al head-marks two agreement paradigms on the predicate: Set A
-(ERG) prefixes with pre-consonantal and pre-vocalic allomorphs, and Set
-B (ABS) suffixes with null 3rd person (∅); the tables live in
-`Qanjobal/Agreement.lean`. The verb stem's final suffix encodes
-transitivity (intransitive ITV *-i*, transitive TV *-V'*) and surfaces
-only phrase-finally. Morpheme order is ASP-ABS-ERG-ROOT-(DERIV)-SUFFIX,
-with the absolutive immediately after the aspect marker (pre-stem),
-confirming Q'anjob'al as HIGH-ABS. In Agent Focus, absolutive agreement
-co-indexes the notional object rather than the subject. The Crazy
-Antipassive reuses the same *-on* morpheme in non-finite embedded
-transitives (where Infl⁰ is absent), analyzed as the same case-assigning
-mechanism. Tables and examples cite [coon-mateo-pedro-preminger-2014]
-tables (13) and (14).
+* `Qanjobal.VerbForm.statusSuffix_eq_itv_iff`: the intransitive status suffix goes with the
+  absence of Set A.
+* `Qanjobal.verbForm_eq_agentFocus_iff`: Agent Focus is the form of every non-finite
+  transitive and of a finite one whose third-person subject is extracted.
+* `Qanjobal.Extraction.mem_realize_iff`: the Agent Focus reflex appears exactly under the
+  extraction of a third-person transitive subject.
 
 ## References
 
 * [coon-mateo-pedro-preminger-2014]
 -/
 
-
 namespace Qanjobal
 
-
-/-! ### Status suffixes -/
-
-/-- Verb status suffixes encode transitivity. Surface only phrase-finally. -/
+/-- A verb stem ends in a status suffix, intransitive or transitive, which surfaces only
+phrase-finally. -/
 inductive StatusSuffix where
-  | itv   -- intransitive: *-i*
-  | tv    -- transitive: *-V'*
+  | itv
+  | tv
   deriving DecidableEq, Repr
 
-/-- The status suffix as a morph. -/
+/-- The status suffix as a morph: *-i* intransitive, *-V'* transitive. -/
 def StatusSuffix.morph : StatusSuffix → Morphology.Morph
   | .itv => .suff "i"
-  | .tv  => .suff "V'"
+  | .tv => .suff "V'"
 
 /-- The Agent Focus suffix *-on*. -/
 def agentFocusSuffix : Morphology.Morph := .suff "on"
 
--- The substantive claim "A-extraction is banned without AF" is expressed
--- as `(Extraction.realize .A).Nonempty`.
+/-- The regular transitive takes the transitive status suffix and the Agent Focus form the
+intransitive one. -/
+def VerbForm.statusSuffix : Mayan.VerbForm → StatusSuffix
+  | .transitive => .tv
+  | .agentFocus => .itv
 
-/-! ### Agent Focus construction -/
+/-- The suffixes of a form: the status suffix alone on the regular transitive, *-on* before
+it on the Agent Focus form. -/
+def VerbForm.marker : Mayan.VerbForm → List Morphology.Morph
+  | .transitive => [StatusSuffix.tv.morph]
+  | .agentFocus => [agentFocusSuffix, StatusSuffix.itv.morph]
 
-/-- Morphological properties of a Q'anjob'al verb form. -/
-structure VerbMorphology where
-  /-- Does the verb bear the AF suffix *-on*? -/
-  hasAFSuffix : Bool
-  /-- Which status suffix: ITV or TV? -/
-  statusSuffix : StatusSuffix
-  /-- Does the verb bear Set A (ergative) agreement? -/
-  hasSetA : Bool
-  deriving DecidableEq, Repr
+/-- A form takes the intransitive status suffix exactly when it lacks Set A. -/
+theorem VerbForm.statusSuffix_eq_itv_iff (f : Mayan.VerbForm) :
+    VerbForm.statusSuffix f = .itv ↔ ¬ f.HasSetA := by
+  decide +revert
 
-/-- Regular transitive verb form. -/
-def regularTransitive : VerbMorphology :=
-  { hasAFSuffix := false
-  , statusSuffix := .tv
-  , hasSetA := true }
+/-- The form of a transitive verb: Agent Focus in a non-finite clause and in a finite clause
+whose third-person subject is extracted, the regular transitive otherwise. -/
+def verbForm (finite : Bool) (extracted : Option ArgumentRole) (agent : Person) :
+    Mayan.VerbForm :=
+  if finite = false ∨ (extracted = some .A ∧ ¬ agent.IsSAP) then .agentFocus else .transitive
 
-/-- Agent Focus verb form. -/
-def agentFocusForm : VerbMorphology :=
-  { hasAFSuffix := true
-  , statusSuffix := .itv    -- intransitive status suffix!
-  , hasSetA := false }       -- no Set A agreement
+theorem verbForm_eq_agentFocus_iff (finite : Bool) (extracted : Option ArgumentRole)
+    (agent : Person) :
+    verbForm finite extracted agent = .agentFocus ↔
+      finite = false ∨ (extracted = some .A ∧ ¬ agent.IsSAP) := by
+  unfold verbForm
+  split_ifs with h <;> simp [h]
 
-/-- AF carries the intransitive status suffix *-i*, not *-V'*. This is
-    the morphological reflex of AF Voice being non-phasal (intransitive v⁰).
-    Despite the clause having two non-oblique core arguments, the verb's
-    status suffix signals intransitivity. -/
-theorem af_has_itv_suffix :
-    agentFocusForm.statusSuffix = .itv := rfl
+/-- A non-finite transitive takes the Agent Focus form whoever its agent is. -/
+theorem verbForm_false (extracted : Option ArgumentRole) (agent : Person) :
+    verbForm false extracted agent = .agentFocus := rfl
 
-/-- AF lacks Set A (ergative) agreement. -/
-theorem af_no_set_a : agentFocusForm.hasSetA = false := rfl
-
-/-- Regular transitives have Set A agreement. -/
-theorem trans_has_set_a : regularTransitive.hasSetA = true := rfl
-
-/-- A verb form carries the Agent Focus suffix when it bears one, then its status suffix. -/
-def VerbMorphology.marker (v : VerbMorphology) : List Morphology.Morph :=
-  (if v.hasAFSuffix then [agentFocusSuffix] else []) ++ [v.statusSuffix.morph]
-
-/-- Can the agent be extracted with this verb form? -/
-def VerbMorphology.permitsAgentExtraction (v : VerbMorphology) : Bool :=
-  v.hasAFSuffix
-
-/-- AF permits agent extraction; regular transitive does not. -/
-theorem af_permits_extraction :
-    agentFocusForm.permitsAgentExtraction = true ∧
-    regularTransitive.permitsAgentExtraction = false := ⟨rfl, rfl⟩
-
-/-- Project `VerbMorphology` down to the pan-Mayan `Mayan.VerbForm` for
-    cross-Mayan typology; the `hasAFSuffix` flag discriminates AF form
-    from transitive. -/
-def VerbMorphology.toMayanVerbForm (v : VerbMorphology) : Mayan.VerbForm :=
-  if v.hasAFSuffix then .agentFocus else .transitive
-
-/-- AF morphology projects to `.agentFocus`; regular transitive to
-    `.transitive`. -/
-theorem toMayanVerbForm_canonical :
-    agentFocusForm.toMayanVerbForm = .agentFocus ∧
-    regularTransitive.toMayanVerbForm = .transitive := ⟨rfl, rfl⟩
-
-/-! ### Crazy Antipassive -/
-
-/-- The Crazy Antipassive uses the same *-on* morpheme as AF, but in
-    non-finite embedded transitives rather than extraction contexts. Both
-    carry the intransitive status suffix *-i*.
-
-    `Chi uj [hin y-il-on-i] ix Malin` 'Maria can see me.'
-    `Lanan [hach hin-laq'-on-i]` 'I am hugging you.' -/
-def crazyAntipassiveForm : VerbMorphology :=
-  { hasAFSuffix := true
-  , statusSuffix := .itv
-  , hasSetA := false }
-
-/-- The Crazy Antipassive is morphologically identical to AF. -/
-theorem crazy_ap_is_af_form :
-    crazyAntipassiveForm = agentFocusForm := rfl
-
-/-! ### Person restriction on Agent Focus -/
-
-/-- In Q'anjob'al, AF is restricted to clauses with **3rd person** agents.
-    1st and 2nd person agents use the regular transitive form even when
-    focused or extracted. Compare (72a-b) of [coon-mateo-pedro-preminger-2014]:
-
-    - 3rd person: `A Juan max maq'-on[-i] no tx'i'.` (AF required)
-    - 1st person: `Ay-in max hin-maq'[-a'] no tx'i'.` (regular transitive)
-
-    The tentative account: 1st/2nd person agents may be base-generated in
-    a high clausal position (Spec,CP), so no extraction through the vP phase
-    edge is needed — the trapping problem never arises. -/
-inductive PersonRestriction where
-  | first | second | third
-  deriving DecidableEq, Repr
-
-/-- Does AF apply for this person of agent? Only 3rd person. -/
-def PersonRestriction.requiresAF : PersonRestriction → Bool
-  | .first  => false
-  | .second => false
-  | .third  => true
-
-theorem af_only_third_person :
-    PersonRestriction.third.requiresAF = true ∧
-    PersonRestriction.first.requiresAF = false ∧
-    PersonRestriction.second.requiresAF = false := ⟨rfl, rfl, rfl⟩
-
-/-- The Crazy Antipassive does NOT have this person restriction:
-    it appears with all persons in non-finite embedded transitives.
-    This is expected because the Crazy Antipassive is triggered by
-    the absence of Infl⁰ (a property of the embedded clause), not by
-    extraction through a phase edge. -/
-def PersonRestriction.requiresCrazyAP (_p : PersonRestriction) : Bool := true
-
-theorem crazy_ap_all_persons :
-    PersonRestriction.first.requiresCrazyAP = true ∧
-    PersonRestriction.second.requiresCrazyAP = true ∧
-    PersonRestriction.third.requiresCrazyAP = true := ⟨rfl, rfl, rfl⟩
-
-/-! ### Extraction marking -/
+/-- A speech-act-participant agent never takes the Agent Focus form in a finite clause. -/
+theorem verbForm_true_of_isSAP {agent : Person} (h : agent.IsSAP)
+    (extracted : Option ArgumentRole) : verbForm true extracted agent = .transitive := by
+  simp [verbForm, h]
 
 namespace Extraction
 
-/-- The host of Q'anjob'al extraction reflexes. -/
+/-- The one host of the Q'anjob'al extraction reflex is the verb. -/
 inductive Host where
   | verb
   deriving DecidableEq, Repr
 
-/-- Transitive-subject extraction switches the verb to the Agent Focus
-form, its suffixes *-on* and *-i* ([coon-mateo-pedro-preminger-2014]),
-under the third-person restriction recorded above; nothing else is
-marked. -/
-def realize : ArgumentRole → Finset (Reflex Host)
-  | .A => {.morpheme .verb agentFocusForm.marker}
-  | _ => ∅
+/-- Extraction is marked when it changes the form of a finite verb, by the suffixes of the
+form it selects; with an agent of the given person, only a third-person transitive subject
+switches the verb to Agent Focus. -/
+def realize (agent : Person) (r : ArgumentRole) : Finset (Reflex Host) :=
+  if verbForm true (some r) agent = verbForm true none agent then ∅
+  else {.morpheme .verb (VerbForm.marker (verbForm true (some r) agent))}
+
+/-- The Agent Focus reflex appears exactly under the extraction of a third-person transitive
+subject. -/
+theorem mem_realize_iff (agent : Person) (r : ArgumentRole) :
+    Reflex.morpheme Host.verb (VerbForm.marker .agentFocus) ∈ realize agent r ↔
+      r = .A ∧ ¬ agent.IsSAP := by
+  decide +revert
+
+/-- Extraction by a speech-act-participant agent is unmarked. -/
+theorem realize_of_isSAP {agent : Person} (h : agent.IsSAP) (r : ArgumentRole) :
+    realize agent r = ∅ := by
+  simp [realize, verbForm_true_of_isSAP h]
 
 end Extraction
 
