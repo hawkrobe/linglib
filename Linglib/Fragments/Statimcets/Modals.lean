@@ -70,9 +70,9 @@ def forceAnalysis : ModalItem → ForceAnalysis
 /-! ## Information source and deniability -/
 
 /-- The information source an evidential modal requires; `none` for the non-evidentials. -/
-def source (m : ModalItem) : Option Evidential.CoarseSource :=
-  if m = kaInfer then some .inference else if m = ku7 then some .hearsay
-  else if m = lakw7a then some .direct else none
+def source (m : ModalItem) : Option Evidential.EvidenceType :=
+  if m = kaInfer then some .inferring else if m = ku7 then some .reported
+  else if m = lakw7a then some .attested else none
 
 /-- A modal is deniable when it is compatible with the speaker's disbelief of the prejacent,
 which holds of *lákw7a* alone ([matthewson-2016] (25)–(28)). -/

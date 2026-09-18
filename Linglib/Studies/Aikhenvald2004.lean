@@ -78,16 +78,17 @@ def Term.of (e : Evidential) : Option Term :=
   else if e.IsNonfirsthand then some .nonfirsthand
   else none
 
-/-- Willett's domain of a term; a non-firsthand term spans two. -/
-def Term.coarse : Term → Option CoarseSource
-  | .visual | .sensory => some .direct
-  | .inferred | .assumed => some .inference
-  | .reported | .quotative => some .hearsay
+/-- Willett's type of evidence of a term; a non-firsthand term spans two. -/
+def Term.evidenceType? : Term → Option EvidenceType
+  | .visual | .sensory => some .attested
+  | .inferred | .assumed => some .inferring
+  | .reported | .quotative => some .reported
   | .nonfirsthand => none
 
-/-- The domain of an evidential's term is its coarse source. -/
-theorem Term.coarse_of (e : Evidential) : (Term.of e).bind Term.coarse = e.toCoarseSource := by
-  unfold Term.of Evidential.toCoarseSource
+/-- The evidence type of an evidential's term is the evidential's. -/
+theorem Term.evidenceType?_of (e : Evidential) :
+    (Term.of e).bind Term.evidenceType? = e.evidenceType? := by
+  unfold Term.of Evidential.evidenceType?
   split_ifs <;> rfl
 
 private theorem mem_of_subset_pair {α : Type*} [DecidableEq α] {s : Finset α} {a b : α}
@@ -183,9 +184,10 @@ theorem eq_D1_of_choices (k : Kind) (h : k.choices = 5) : k = .D1 := by
 /-- Distinct kinds distinguish distinct terms. -/
 theorem terms_injective : Function.Injective terms := by decide
 
-/-- B1 groups the parameters into Willett's three domains: direct, inference and report. -/
+/-- B1 groups the parameters into Willett's three types of evidence. -/
 theorem B1_willett :
-    Kind.B1.terms.image Term.coarse = {some .direct, some .inference, some .hearsay} := by
+    Kind.B1.terms.image Term.evidenceType? =
+      {some .attested, some .inferring, some .reported} := by
   decide
 
 end Kind

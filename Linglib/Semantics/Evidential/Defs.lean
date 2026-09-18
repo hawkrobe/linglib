@@ -9,8 +9,8 @@ information sources it covers. Following Aikhenvald, information source is carve
 recurrent semantic parameters — visual, non-visual sensory, inference, assumption, hearsay and
 quotative — and an evidential covers a set of them: a firsthand term covers visual and sensory
 evidence together, a non-firsthand term covers inference, assumption and hearsay, a visual
-term covers visual evidence alone. Willett's coarser tripartition into attested, reported and
-inferring evidence groups the six parameters in pairs. A language's inventory is a
+term covers visual evidence alone. Willett's three types of evidence, attested, reported and
+inferring, group the six parameters in pairs. A language's inventory is a
 `List Evidential` declared in its Fragment; it is well formed when its terms are pairwise
 disjoint, so that they partition the parameters the language expresses
 (`Semantics/Evidential/Basic.lean`).
@@ -18,7 +18,7 @@ disjoint, so that they partition the parameters the language expresses
 ## Main definitions
 
 * `Evidential.Parameter` — the six semantic parameters of information source.
-* `Evidential.CoarseSource` — Willett's tripartition of information source.
+* `Evidential.EvidenceType` — Willett's three types of evidence.
 * `Evidential.Exponent` — how an evidential is realized.
 * `Evidential` — the lexical entry; `Evidential.covers` its information sources.
 * `Evidential.IsDirect`, `IsInferential`, `IsReportative`, `IsNonfirsthand` — the coarse
@@ -49,15 +49,14 @@ inductive Parameter where
   | quotative
   deriving DecidableEq, Repr, Fintype
 
-/-- Willett's three-way classification of information source into attested, reported and
-inferring evidence; `hearsay` covers reported evidence, hearsay proper and quotation alike. -/
-inductive CoarseSource where
-  /-- Direct sensory observation of the event. -/
-  | direct
-  /-- Reported evidence about the event. -/
-  | hearsay
-  /-- Inference from observable effects of the event. -/
-  | inference
+/-- Willett's three types of evidence. -/
+inductive EvidenceType where
+  /-- Evidence attested by the speaker's own senses. -/
+  | attested
+  /-- Evidence reported to the speaker, at second or third hand or as folklore. -/
+  | reported
+  /-- Evidence inferred from results or by reasoning. -/
+  | inferring
   deriving DecidableEq, Repr, Inhabited
 
 /-- How an evidential is morphosyntactically realized. -/

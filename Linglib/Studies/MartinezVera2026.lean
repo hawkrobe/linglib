@@ -169,52 +169,52 @@ inductive IllocutionaryFlavour where
   | presentFlavour
   deriving DecidableEq, Repr, Inhabited
 
-def IllocutionaryFlavour.ofCoarseSource :
-    CoarseSource → IllocutionaryFlavour
-  | .direct => .assertFlavour
-  | .hearsay => .presentFlavour
-  | .inference => .presentFlavour
+def IllocutionaryFlavour.ofEvidenceType :
+    EvidenceType → IllocutionaryFlavour
+  | .attested => .assertFlavour
+  | .reported => .presentFlavour
+  | .inferring => .presentFlavour
 
-@[simp] theorem flavour_direct :
-    IllocutionaryFlavour.ofCoarseSource .direct = .assertFlavour := rfl
-@[simp] theorem flavour_hearsay :
-    IllocutionaryFlavour.ofCoarseSource .hearsay = .presentFlavour := rfl
-@[simp] theorem flavour_inference :
-    IllocutionaryFlavour.ofCoarseSource .inference = .presentFlavour := rfl
+@[simp] theorem flavour_attested :
+    IllocutionaryFlavour.ofEvidenceType .attested = .assertFlavour := rfl
+@[simp] theorem flavour_reported :
+    IllocutionaryFlavour.ofEvidenceType .reported = .presentFlavour := rfl
+@[simp] theorem flavour_inferring :
+    IllocutionaryFlavour.ofEvidenceType .inferring = .presentFlavour := rfl
 
 /-- Partial collapse of [faller-2019a]'s commitment-grounds evidence types
-    onto the coarse source taxonomy: reportative evidence carries a source;
+    onto Willett's: reportative evidence is reported evidence;
     adequate evidence and best possible grounds are commitment-strength
-    grades that cross-cut the source taxonomy. -/
-def fallerCoarseSource : Faller2019.EvidenceType → Option CoarseSource
-  | .reportative => some .hearsay
+    grades that cross-cut Willett's types. -/
+def fallerEvidenceType? : Faller2019.EvidenceType → Option EvidenceType
+  | .reportative => some .reported
   | .adequate => none
   | .bpg => none
 
 /-- [faller-2019a]'s Cuzco Quechua reportative and the SK reportative
-    `-shka` land on the same coarse source, hence license the same
+    `-shka` land on the same evidence type, hence license the same
     illocutionary flavour: `present`, not `assert`. -/
 theorem faller_reportative_flavour :
-    (fallerCoarseSource .reportative).map IllocutionaryFlavour.ofCoarseSource
+    (fallerEvidenceType? .reportative).map IllocutionaryFlavour.ofEvidenceType
       = some .presentFlavour := rfl
 
-def applyDefault (src : CoarseSource) (s a : Discourse.Role) (β : BiLayered W) :
+def applyDefault (src : EvidenceType) (s a : Discourse.Role) (β : BiLayered W) :
     EvidentialAct W :=
-  match IllocutionaryFlavour.ofCoarseSource src with
+  match IllocutionaryFlavour.ofEvidenceType src with
   | .assertFlavour => assert s a β
   | .presentFlavour => present s a β
 
-@[simp] theorem applyDefault_direct (s a : Discourse.Role) (β : BiLayered W) :
-    applyDefault .direct s a β = assert s a β := rfl
-@[simp] theorem applyDefault_hearsay (s a : Discourse.Role) (β : BiLayered W) :
-    applyDefault .hearsay s a β = present s a β := rfl
-@[simp] theorem applyDefault_inference (s a : Discourse.Role) (β : BiLayered W) :
-    applyDefault .inference s a β = present s a β := rfl
+@[simp] theorem applyDefault_attested (s a : Discourse.Role) (β : BiLayered W) :
+    applyDefault .attested s a β = assert s a β := rfl
+@[simp] theorem applyDefault_reported (s a : Discourse.Role) (β : BiLayered W) :
+    applyDefault .reported s a β = present s a β := rfl
+@[simp] theorem applyDefault_inferring (s a : Discourse.Role) (β : BiLayered W) :
+    applyDefault .inferring s a β = present s a β := rfl
 
-theorem direct_commits_indirect_does_not (s a : Discourse.Role) (β : BiLayered W) :
-    (applyDefault .direct s a β).commitsToScope = true ∧
-    (applyDefault .hearsay s a β).commitsToScope = false ∧
-    (applyDefault .inference s a β).commitsToScope = false :=
+theorem attested_commits_indirect_does_not (s a : Discourse.Role) (β : BiLayered W) :
+    (applyDefault .attested s a β).commitsToScope = true ∧
+    (applyDefault .reported s a β).commitsToScope = false ∧
+    (applyDefault .inferring s a β).commitsToScope = false :=
   ⟨rfl, rfl, rfl⟩
 
 /-! ### § 1. The =mi denotation (paper eq. 37, polar reduction) -/
