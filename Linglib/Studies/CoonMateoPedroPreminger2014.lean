@@ -405,7 +405,7 @@ instance (L : Language) : Decidable L.IsErgativePerfective :=
 no extraction reflexes. -/
 def MarksSubjectExtraction : Language → Prop
   | .chol => (Chol.Extraction.realize .A).Nonempty
-  | .qanjobal => (Qanjobal.Extraction.realize .A).Nonempty
+  | .qanjobal => ∃ p, (Qanjobal.Extraction.realize p .A).Nonempty
   | .kaqchikel => ∀ c, (Kaqchikel.Extraction.realize c (.core .A)).Nonempty
   | .tseltal => (Tseltal.Extraction.realize .A).Nonempty
   | .tsotsil => (Tsotsil.Extraction.realize .A).Nonempty
@@ -414,7 +414,8 @@ def MarksSubjectExtraction : Language → Prop
   | .yukatek => False
 
 instance : ∀ L : Language, Decidable L.MarksSubjectExtraction
-  | .chol | .qanjobal | .tseltal | .tsotsil | .mam => Finset.decidableNonempty
+  | .chol | .tseltal | .tsotsil | .mam => Finset.decidableNonempty
+  | .qanjobal => Fintype.decidableExistsFintype
   | .kaqchikel | .kiche => Fintype.decidableForallFintype
   | .yukatek => inferInstanceAs (Decidable False)
 
