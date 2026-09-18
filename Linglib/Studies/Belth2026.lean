@@ -1,140 +1,408 @@
-import Linglib.Phonology.Subregular.TierRule
-import Linglib.Phonology.Constraints.Basic
-import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Phonology.Subregular.OCP
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Linglib.Phonology.Subregular.Harmony
+import Linglib.Fragments.Finnish.VowelHarmony
+import Linglib.Fragments.Turkish.VowelHarmony
 import Linglib.Studies.Yang2016
-import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
-import Linglib.Phonology.Subregular.TierStrictlyLocal
-import Linglib.Phonology.Subregular.Multitier
 import Linglib.Data.Examples.Belth2026
 
 /-!
 # Belth (2026): A Learning-Based Account of Phonological Tiers
 
-D2L (Distant-to-Local) is an iterative learner that constructs phonological
-tiers as a *byproduct* of trying to express alternations as adjacent
-dependencies. Given underlying-form / surface-form pairs, D2L starts by
-projecting all segments and tries to predict the alternating segment from
-its linear neighbours. When the resulting rule fails Yang's Tolerance
-Principle [yang-2016], D2L deletes the offending segments from the
-tier and tries again, until either a tolerated rule is found or no further
-deletion helps.
+This file formalizes D2L, the learner of [belth-2026], and the paper's own runs of it. D2L
+receives pairs of underlying and surface forms, an alternating class, and a feature, and
+constructs the tier rule `Rel(A, F) / C __ ∘ proj(·, T)` (`Subregular.TierRule`) from
+adjacent dependencies alone: starting from the whole alphabet as the tier, it builds the
+left- and right-context rules whose contexts are the segments tier-adjacent to the targets,
+counts the applications and correct applications of the more accurate one, accepts it under
+Yang's Tolerance Principle ([yang-2016], `Yang2016.tolerates`) with the Elsewhere default the
+untouched targets show, and otherwise deletes from the tier the smallest natural class
+containing the contexts that produced errors (`D2L.iterate`, `D2L.learn`). On the paper's toy
+vocabulary (20) the learner runs exactly as its trace (21), (30), (32) and (33) says: three
+iterations with the tiers Σ, [+cons] and [+sib], accuracies 1/8, 4/8 and 7/7, and the rule
+`Agree({S}, {ant}) / [+sib] __ ∘ proj(·, [+sib])` with default [s] (`Toy.iterations`,
+`Toy.learn`). The rules D2L converges to on natural language data are run on the paper's
+examples: Latin liquid dissimilation (54) on (53), with the *lunaris* row it mispredicts
+(`latin_rows`, `lunaris_mispredicted`); Finnish backness harmony (52), which is the
+fragment's `Finnish.VowelHarmony.finnishHarmony`, on (51) (`finnish_rows`); and Turkish
+vowel harmony (49a) on (46) and (47) through the fragment's two harmonies (`turkish_rows`).
 
-The output of D2L is a tier-based alternation rule, modelled here by the
-canonical `Subregular.TierRule` schema (in
-`Phonology/Subregular/TierRule.lean`); the closely-related SPE
-non-tier `Subregular.LocalRewrite.Rule` schema in
-`Phonology/Subregular/LocalRewrite.lean` is the right substrate
-when the alternation does not factor through a tier projection.
-The function-level subregular classification of D2L outputs lives in
-the subregular function classes: tier-mediated dissimilation
-rules of the form Belth converges to are Tier-Subsequential
-([aksenova-rawski-graf-heinz-2020]). For Latin -alis / -aris
-allomorphy ([belth-2026] §5.3, rule 54), the rule D2L converges
-to is
+## Implementation notes
 
-  `Disagree([?lat], {lat}) / [+cons] __ ∘ proj(·, [+cons])`,
+A target with no tier-adjacent segment on the rule's side is an underextension on either
+side; the paper writes the right word boundary into the right-context set, which changes
+only that rule's application count, never the choice between the two rules on the paper's
+data. A context that is itself alternating is never added to the deletion set, since the
+alternating segments must stay on the tier ((19), step 8); on this reading of (28) the
+second iteration deletes exactly {n, k, g}. A trigger unspecified for the feature counts as
+an incorrect application, as the paper counts it. Ties in accuracy go to the left-context
+rule. Belth's Turkish rule (49a) transmits backness and rounding as one feature set; the
+fragment factors it into the two harmonies of [goksel-kerslake-2005], applied in turn. The
+predictions of section 4 need Finley's and McMullin and Hansson's full stimulus lists, which
+the paper does not print, so the learned rules (40) and (44) are not run here.
 
-i.e. dissimilation of the underspecified affix-initial liquid `/L/` from
-the immediately preceding `[+cons]` tier segment. [belth-2026] reports
-0.97 average test accuracy over thirty 80/20 splits of the 121-word
-Perseus dataset (Table 7); the residual errors are *tolerated* by Yang's
-Tolerance Principle, so D2L converges to this rule rather than memorizing
-the lexicon.
+## References
 
-This study formalizes:
-
-- the rule (`latinDissimRule`), applied as a string function to six
-  worked underlying forms (Belth ex. 5/53): *navalis*, *popularis*,
-  *pluvialis*, *floralis*, *legalis*, *lunaris* — including the
-  (53c)/(53d) blocking cases, where `/r/` and the non-coronal blockers
-  sit on the tier and hide the stem lateral;
-- the genuine empirical limit: *lunaris* surfaces with `[r]`, but the
-  `[+cons]`-tier rule predicts `[l]` (the immediately preceding tier
-  segment is the nasal `/n/`, which is `[−lat]`, so `Disagree` outputs
-  `[+lat]`). The paper does not name its residual errors; *lunaris* is
-  derived here as one, absorbed by the Tolerance Principle;
-- a Tolerance-Principle certificate
-  (`latinDissimRule_tolerated_on_examples`) showing the 1-of-6 exception
-  count on this corpus is well under Yang's threshold;
-- a Subregular bridge (`consTier_apply_eq_tierProject`) grounding the
-  consonant tier in the [lambert-2022]/[heinz-rawal-tanner-2011]
-  TSL formalism;
-- an OCP-on-tier OT constraint (`latinOCP`, via
-  `Constraints.mkOCPOnTier`) and an OT tableau bridge: each
-  empirical contrast becomes a winner-loser pair, `tableauERC` extracts
-  the Elementary Ranking Condition ([merchant-riggle-2016]), and
-  the OT analysis is shown to track the rule-based analysis exactly,
-  including the same lunaris failure (the lunaris ERC is contradictory
-  on the two-constraint inventory ⟨OCP, *r⟩, which is the OT-side
-  analogue of the rule's underextension).
-
-D2L's Turkish (Belth §5.1) and Finnish (§5.2) rules are sketched in §10
-below. They require multi-feature dependencies and explicit Elsewhere
-defaults; both extensions are admittable on demand.
-
-**On verification scope.** D2L itself — the *learning* algorithm — is not
-run inside Lean. Belth's empirical claim is that, given a corpus, D2L
-*converges* to specific rules. Verifying that claim end-to-end would
-require running D2L on naturalistic datasets (CHILDES, MorphoChallenge,
-Perseus), which is out of scope for a Lean formalization. We instead
-formalize the *learned rules* and verify their predictions on
-representative examples, plus the Tolerance Principle inequality that
-licenses convergence.
+* [belth-2026]
+* [yang-2016]
+* [goksel-kerslake-2005]
 -/
 
 namespace Belth2026
 
-open Core
-open Subregular
+open Subregular Data.Examples
 
-/-! ### A Minimal Latin Alphabet -/
+/-! ### D2L -/
 
-/-- A minimal Latin segment alphabet sufficient for the -alis / -aris
-    contrast. The unspecified affix-initial liquid is `L`; surface
-    allomorphs are `l` and `r`. -/
+namespace D2L
+
+variable {α : Type*} [DecidableEq α]
+
+/-- A learning problem consists of the alphabet, the alternating segments `A`, the feature
+`F` read and written on them, the natural classes a tier may lose, and the vocabulary of
+underlying and surface forms. -/
+structure Problem (α : Type*) [DecidableEq α] where
+  alphabet : List α
+  targets : List α
+  value : α → Option Bool
+  write : Bool → α → α
+  value_write : ∀ v s, s ∈ targets → value (write v s) = some v
+  write_value : ∀ v s, s ∈ targets → value s = some v → write v s = s
+  classes : List (List α)
+  vocabulary : List (List α × List α)
+
+/-- The applications `n` and correct applications `c` of a rule over the vocabulary, the
+contexts of its incorrect applications, and the surface segments of the targets it leaves
+untouched. -/
+structure Summary (α : Type*) where
+  n : ℕ
+  c : ℕ
+  errors : List α
+  untouched : List α
+  deriving DecidableEq, Repr
+
+/-- One iteration of D2L records the tier, the two context classes and summaries, the side
+chosen, the default the chosen rule infers, and the deletion set. -/
+structure Iteration (α : Type*) where
+  tier : List α
+  contextsL : List α
+  contextsR : List α
+  left : Summary α
+  right : Summary α
+  chosen : ScanDirection
+  default : Option (Option Bool)
+  deletion : List α
+  deriving DecidableEq, Repr
+
+/-- The summary of the side an iteration chose. -/
+def Iteration.summary (it : Iteration α) : Summary α :=
+  match it.chosen with
+  | .left => it.left
+  | .right => it.right
+
+/-- The contexts of the side an iteration chose. -/
+def Iteration.contexts (it : Iteration α) : List α :=
+  match it.chosen with
+  | .left => it.contextsL
+  | .right => it.contextsR
+
+/-- Whether the left summary is at least as accurate as the right one. -/
+def better (l r : Summary α) : Bool :=
+  if l.n = 0 then r.c = 0 else if r.n = 0 then true else r.c * l.n ≤ l.c * r.n
+
+/-- For each target on the tier of a form, read in the direction of `g`, the underlying
+segment tier-adjacent to it if `g` applied, the segment `g` output, and the surface segment.
+The rule applies when the output segment preceding the target on the tier is a trigger. -/
+def trace (g : TierRule α) : List α → List α → Option α → Option α → List (Option α × α × α)
+  | x :: xs, y :: ys, last, lastUR =>
+    if g.tier x then
+      let out := g.emit (last.bind g.transmits) x
+      let ctx := if (last.filter fun c => decide (g.IsTrigger c)).isSome then lastUR else none
+      (if g.IsTarget x then [(ctx, out, y)] else []) ++ trace g xs ys (some out) (some x)
+    else trace g xs ys last lastUR
+  | _, _, _, _ => []
+
+/-- The trace of `g` over a pair of forms, in the direction of `g`. -/
+def applications (g : TierRule α) (p : List α × List α) : List (Option α × α × α) :=
+  match g.direction with
+  | .left => trace g p.1 p.2 none none
+  | .right => trace g p.1.reverse p.2.reverse none none
+
+namespace Problem
+
+variable (P : Problem α)
+
+/-- The segments tier-adjacent before the targets of a form on the tier `T`. -/
+def precedingContexts (T : List α) : List α → Option α → List α
+  | [], _ => []
+  | x :: xs, last =>
+    if x ∈ T then
+      (if x ∈ P.targets then last.toList else []) ++ precedingContexts T xs (some x)
+    else precedingContexts T xs last
+
+/-- The context class `C` of the rule on side `d` over the tier `T`, every segment
+tier-adjacent to a target on that side in some underlying form. -/
+def contexts (T : List α) (d : ScanDirection) : List α :=
+  (P.vocabulary.flatMap fun p =>
+    P.precedingContexts T (match d with | .left => p.1 | .right => p.1.reverse) none).dedup
+
+/-- The candidate rule over the tier `T` with the contexts `C`. -/
+def candidate (T C : List α) (rel : Relation) (d : ScanDirection)
+    (default : Option Bool := none) : TierRule α where
+  tier s := s ∈ T
+  IsTrigger s := s ∈ C
+  IsTarget s := s ∈ P.targets
+  relation := rel
+  value := P.value
+  write := P.write
+  value_write := P.value_write
+  write_value := P.write_value
+  default := default
+  direction := d
+
+/-- The summary of `g` over the vocabulary. -/
+def summary (g : TierRule α) : Summary α :=
+  let apps := P.vocabulary.flatMap (applications g)
+  let applied := apps.filterMap fun t => t.1.map fun c => (c, decide (t.2.1 = t.2.2))
+  { n := applied.length
+    c := (applied.filter (·.2)).length
+    errors := (((applied.filter fun a => !a.2).map (·.1)).filter (· ∉ P.targets)).dedup
+    untouched := apps.filterMap fun t => if t.1.isNone then some t.2.2 else none }
+
+/-- The Elsewhere default the untouched targets determine; `none` when their surface forms
+disagree, which rejects the rule. -/
+def inferDefault (untouched : List α) : Option (Option Bool) :=
+  match (untouched.map P.value).dedup with
+  | [] => some none
+  | [v] => some v
+  | _ => none
+
+/-- The iteration over the tier `T` with the deletion set `D`. -/
+def step (rel : Relation) (T D : List α) : Iteration α :=
+  let CL := P.contexts T .left
+  let CR := P.contexts T .right
+  let sL := P.summary (P.candidate T CL rel .left)
+  let sR := P.summary (P.candidate T CR rel .right)
+  let chosen : ScanDirection := if better sL sR then .left else .right
+  { tier := T, contextsL := CL, contextsR := CR, left := sL, right := sR, chosen := chosen
+    default := P.inferDefault (match chosen with | .left => sL | .right => sR).untouched
+    deletion := (D ++ sL.errors ++ sR.errors).dedup }
+
+/-- The smallest natural class containing `D` and no target. -/
+def deletionClass (D : List α) : Option (List α) :=
+  (P.classes.filter fun N => D.all (· ∈ N) && P.targets.all (· ∉ N)).foldl
+    (fun acc N => match acc with
+      | none => some N
+      | some M => if N.length < M.length then some N else some M) none
+
+/-- The tier after deleting the class of `D`, or `D` itself when no class contains it. -/
+def nextTier (T D : List α) : List α :=
+  match P.deletionClass D with
+  | some N => T.filter (· ∉ N)
+  | none => T.filter (· ∉ D)
+
+/-- The iterations of D2L from the tier `T` with the deletion set `D`, until the tier is
+empty or stops shrinking. -/
+def iterate (rel : Relation) : ℕ → List α → List α → List (Iteration α)
+  | 0, _, _ => []
+  | fuel + 1, T, D =>
+    if T = [] then [] else
+    let it := P.step rel T D
+    let T' : List α := P.nextTier T it.deletion
+    it :: (if T'.length < T.length then iterate rel fuel T' it.deletion else [])
+
+/-- The rule an iteration proposes, the chosen side's candidate with its inferred default. -/
+def rule (rel : Relation) (it : Iteration α) : Option (TierRule α) :=
+  it.default.map fun d => P.candidate it.tier it.contexts rel it.chosen d
+
+/-- D2L returns the rule of the first iteration the criterion `sat` accepts on its
+applications and exceptions. -/
+def learn (rel : Relation) (sat : ℕ → ℕ → Prop) [DecidableRel sat] : Option (TierRule α) :=
+  ((P.iterate rel P.alphabet.length P.alphabet []).find? fun it =>
+    it.default.isSome && decide (sat it.summary.n (it.summary.n - it.summary.c))).bind (P.rule rel)
+
+end Problem
+
+end D2L
+
+/-! ### The toy vocabulary (20) -/
+
+namespace Toy
+
+/-- The segments of the toy vocabulary, with `sh` for ʃ and `S` the sibilant unspecified for
+anteriority. -/
+inductive Seg where
+  | sh | o | k | u | S | i | a | p | n | s | g | t
+  deriving DecidableEq, Repr
+
+/-- Consonantality. -/
+def Seg.cons : Seg → Bool
+  | .o | .u | .i | .a => false
+  | _ => true
+
+/-- Sibilance. -/
+def Seg.sib : Seg → Bool
+  | .sh | .S | .s => true
+  | _ => false
+
+/-- Anteriority, unspecified on `S` and on the vowels. -/
+def Seg.ant : Seg → Option Bool
+  | .s | .n | .p | .t => some true
+  | .sh | .k | .g => some false
+  | _ => none
+
+def alphabet : List Seg := [.sh, .o, .k, .u, .S, .i, .a, .p, .n, .s, .g, .t]
+
+/-- The natural classes describable by one feature. -/
+def classes : List (List Seg) :=
+  [alphabet.filter Seg.cons, alphabet.filter (!Seg.cons ·), alphabet.filter Seg.sib,
+    alphabet.filter (!Seg.sib ·), alphabet.filter (·.ant = some true),
+    alphabet.filter (·.ant = some false)]
+
+/-- The pairs of (20a). -/
+def vocabulary : List (List Seg × List Seg) :=
+  [([.sh, .o, .k, .u, .S, .i, .S], [.sh, .o, .k, .u, .sh, .i, .sh]),
+   ([.a, .p, .sh, .a, .S], [.a, .p, .sh, .a, .sh]),
+   ([.sh, .u, .n, .i, .S], [.sh, .u, .n, .i, .sh]),
+   ([.s, .o, .k, .i, .S], [.s, .o, .k, .i, .s]),
+   ([.s, .i, .g, .o, .S, .i, .S], [.s, .i, .g, .o, .s, .i, .s]),
+   ([.u, .t, .S], [.u, .t, .s])]
+
+/-- The problem of (20), with `A = {S}` and `F = {ant}`. -/
+def problem : D2L.Problem Seg where
+  alphabet := alphabet
+  targets := [.S]
+  value := Seg.ant
+  write v _ := if v then .s else .sh
+  value_write := fun v _ _ => by cases v <;> rfl
+  write_value := fun _ seg h hv => by
+    simp only [List.mem_singleton] at h; subst h; simp [Seg.ant] at hv
+  classes := classes
+  vocabulary := vocabulary
+
+/-- The consonant tier of the second iteration. -/
+def consTier : List Seg := alphabet.filter Seg.cons
+
+/-- The sibilant tier of the third iteration. -/
+def sibTier : List Seg := alphabet.filter Seg.sib
+
+/-- The surface sibilants the right-context rules leave untouched. -/
+def rightUntouched : List Seg := [.sh, .sh, .sh, .s, .s, .s]
+
+/-- The paper's trace (21), (30), (32) and (33) is three iterations over the tiers Σ, [+cons]
+and [+sib], the left rule chosen each time with 1, 4 and 7 correct applications out of 8, 8
+and 7, the second iteration deleting `n`, `k` and `g`, and the third leaving only *ut-S*
+untouched, whose [s] is the default. -/
+theorem iterations : problem.iterate .agree problem.alphabet.length problem.alphabet [] =
+    [{ tier := alphabet, contextsL := [.u, .a, .o, .i, .t], contextsR := [.i],
+       left := ⟨8, 1, [.u, .a, .o, .i], []⟩, right := ⟨2, 0, [.i], rightUntouched⟩,
+       chosen := .left, default := some none, deletion := [.u, .a, .o, .i] },
+     { tier := consTier, contextsL := [.sh, .n, .k, .g, .S, .t], contextsR := [.S],
+       left := ⟨8, 4, [.n, .k, .g], []⟩, right := ⟨2, 0, [], rightUntouched⟩,
+       chosen := .left, default := some none, deletion := [.u, .a, .o, .i, .n, .k, .g] },
+     { tier := sibTier, contextsL := [.sh, .s, .S], contextsR := [.S],
+       left := ⟨7, 7, [], [.s]⟩, right := ⟨2, 0, [], rightUntouched⟩,
+       chosen := .left, default := some (some true),
+       deletion := [.u, .a, .o, .i, .n, .k, .g] }] := by
+  decide
+
+/-- Rule (33a) with its default, `Agree({S}, {ant}) / [+sib] __ ∘ proj(·, [+sib])` and [s]
+elsewhere. -/
+def rule33 : TierRule Seg := problem.candidate sibTier [.sh, .s, .S] .agree .left (some true)
+
+/-- D2L accepts the third iteration and no earlier one under any criterion that rejects
+seven exceptions in eight and four in eight and accepts none in seven. -/
+theorem learn (sat : ℕ → ℕ → Prop) [DecidableRel sat] (h1 : ¬ sat 8 7) (h2 : ¬ sat 8 4)
+    (h3 : sat 7 0) : problem.learn .agree sat = some rule33 := by
+  simp [D2L.Problem.learn, iterations, D2L.Problem.rule, D2L.Iteration.summary,
+    D2L.Iteration.contexts, h1, h2, h3, rule33]
+
+/-- The parallel search for a dissimilatory rule ends with the tiers Σ, [+sib] and {S}. -/
+theorem iterations_disagree :
+    problem.iterate .disagree problem.alphabet.length problem.alphabet [] =
+    [{ tier := alphabet, contextsL := [.u, .a, .o, .i, .t], contextsR := [.i],
+       left := ⟨8, 0, [.u, .a, .o, .i, .t], []⟩, right := ⟨2, 0, [.i], rightUntouched⟩,
+       chosen := .left, default := some none, deletion := [.u, .a, .o, .t, .i] },
+     { tier := sibTier, contextsL := [.sh, .s, .S], contextsR := [.S],
+       left := ⟨7, 2, [.sh, .s], [.s]⟩, right := ⟨2, 0, [], rightUntouched⟩,
+       chosen := .left, default := some (some true),
+       deletion := [.u, .a, .o, .t, .i, .sh, .s] },
+     { tier := [.S], contextsL := [.S], contextsR := [.S],
+       left := ⟨2, 0, [], rightUntouched⟩, right := ⟨2, 0, [], rightUntouched⟩,
+       chosen := .left, default := none, deletion := [.u, .a, .o, .t, .i, .sh, .s] }] := by
+  decide
+
+/-- The dissimilatory search finds no rule under any criterion that rejects eight
+exceptions in eight and five in seven. -/
+theorem learn_disagree (sat : ℕ → ℕ → Prop) [DecidableRel sat] (h1 : ¬ sat 8 8)
+    (h2 : ¬ sat 7 5) : problem.learn .disagree sat = none := by
+  simp [D2L.Problem.learn, iterations_disagree, D2L.Iteration.summary, h1, h2]
+
+end Toy
+
+/-! ### Tolerance at the toy's iterations -/
+
+/-- Seven exceptions among eight applications are not tolerated, since `7 > 8 / ln 8`. -/
+theorem not_tolerates_8_7 : ¬ Yang2016.tolerates 8 7 := by
+  unfold Yang2016.tolerates Yang2016.threshold
+  have h8 : Real.log ((8 : ℕ) : ℝ) = 3 * Real.log 2 := by
+    rw [show ((8 : ℕ) : ℝ) = 2 ^ 3 by norm_num, Real.log_pow]; norm_num
+  rw [h8, not_le, div_lt_iff₀ (by linarith [Real.log_two_gt_d9])]
+  push_cast
+  linarith [Real.log_two_gt_d9]
+
+/-- Four exceptions among eight applications are not tolerated, since `4 > 8 / ln 8`. -/
+theorem not_tolerates_8_4 : ¬ Yang2016.tolerates 8 4 := by
+  unfold Yang2016.tolerates Yang2016.threshold
+  have h8 : Real.log ((8 : ℕ) : ℝ) = 3 * Real.log 2 := by
+    rw [show ((8 : ℕ) : ℝ) = 2 ^ 3 by norm_num, Real.log_pow]; norm_num
+  rw [h8, not_le, div_lt_iff₀ (by linarith [Real.log_two_gt_d9])]
+  push_cast
+  linarith [Real.log_two_gt_d9]
+
+/-- With Yang's Tolerance Principle as the criterion, D2L learns rule (33a) from (20). -/
+theorem Toy.learn_tolerates :
+    @D2L.Problem.learn _ _ Toy.problem .agree Yang2016.tolerates
+      (fun _ _ => Classical.propDecidable _) = some Toy.rule33 :=
+  @Toy.learn Yang2016.tolerates (fun _ _ => Classical.propDecidable _) not_tolerates_8_7
+    not_tolerates_8_4 (Yang2016.tolerates_zero 7)
+
+/-! ### Latin liquid dissimilation (54) -/
+
+/-- The segments of the paper's Latin transcriptions; `L` is the affix liquid unspecified for
+laterality, `v` the semivowel. -/
 inductive LatSeg where
-  | a | e | i | o | u   -- vowels
-  | l | r               -- liquids (surface)
-  | L                   -- /L/, the unspecified affix-initial liquid
-  | n | v | s | g | f | p | b   -- consonants from the worked examples
+  | a | e | i | o | u
+  | l | r | L
+  | n | v | s | g | f | p | b
   deriving DecidableEq, Repr
 
 namespace LatSeg
 
-/-- Tier membership for the learned `[+cons]` tier: every non-vowel
-    projects. The orthographic ⟨v⟩ is Belth's semivowel `[w]`, and it
-    stays on the tier — the paper's §5.3.2 point is that `/r/` and the
-    non-coronal consonants, [cser-2010]'s blockers, "are preserved on
-    the tier"; `[w]` is the blocker in *pluvi-alis* (53d). `L` is also
-    on the tier — the underspecified `/L/` projects even though its
-    `[lat]` value is not yet fixed. -/
+/-- The `[+cons]` tier, every segment but the vowels, `L` included. -/
 def IsCons : LatSeg → Prop
   | .a | .e | .i | .o | .u => False
   | _ => True
 
-instance : DecidablePred IsCons := fun seg => by
-  cases seg <;> unfold IsCons <;> infer_instance
+instance : DecidablePred IsCons := fun seg => by cases seg <;> unfold IsCons <;> infer_instance
 
-/-- `[+lat]` per [cser-2010]: only `l` is lateral, and `L` is
-    *underspecified* for `[lat]`. Returning `Option Bool` rather than
-    `Bool` here avoids the older "junk default" pattern where `L` had
-    to fake some concrete value — `none` is the honest answer. -/
+/-- Laterality, on which `l` alone is `[+lat]` and `L` is unspecified. -/
 def isLat : LatSeg → Option Bool
   | .l => some true
   | .L => none
   | _ => some false
 
-/-- The consonantal tier (Belth's learned tier for Latin, rule 54).
-    Every `[+cons]` segment projects. -/
-def consTier : TierProjection LatSeg LatSeg := TierProjection.byClass IsCons
+/-- A letter of the transcription. -/
+def ofChar : Char → Option LatSeg
+  | 'a' => some .a | 'e' => some .e | 'i' => some .i | 'o' => some .o | 'u' => some .u
+  | 'l' => some .l | 'r' => some .r | 'L' => some .L
+  | 'n' => some .n | 'v' => some .v | 's' => some .s | 'g' => some .g | 'f' => some .f
+  | 'p' => some .p | 'b' => some .b
+  | _ => none
 
 end LatSeg
 
-/-! ### The Learned Rule -/
-
-/-- The rule D2L learns under the `[+cons]` tier ([belth-2026] rule 54),
-`Disagree([?lat], {lat}) / [+cons] __ ∘ proj(·, [+cons])`: the liquid `L` takes the opposite
+/-- The rule D2L learns under the `[+cons]` tier, rule (54):
+`Disagree([?lat], {lat}) / [+cons] __ ∘ proj(·, [+cons])`, the liquid `L` taking the opposite
 laterality of the tier-adjacent consonant. -/
 def latinDissimRule : TierRule LatSeg where
   tier := LatSeg.IsCons
@@ -146,407 +414,115 @@ def latinDissimRule : TierRule LatSeg where
   value_write := fun v _ _ => by cases v <;> rfl
   write_value := fun _ seg h hv => by subst h; simp [LatSeg.isLat] at hv
 
-/-- The rule is subsequential ([aksenova-rawski-graf-heinz-2020]'s tier-subsequential
-class), as every tier rule is. -/
+/-- The rule is subsequential, as every tier rule is. -/
 theorem latinDissimRule_isSubsequential : IsSubsequential .left latinDissimRule.apply :=
   latinDissimRule.apply_isSubsequential
 
-/-! ### Worked Examples ([belth-2026] §5.3, ex. 5 / 53) -/
+/-- The segments of a transcription, the morpheme boundary dropped. -/
+def latinSegments (s : String) : List LatSeg := s.toList.filterMap LatSeg.ofChar
 
-/-- Underlying form of *navalis* 'naval': /nav-aLis/. -/
-def navalis_ur : List LatSeg := [.n, .a, .v, .a, .L, .i, .s]
+/-- The stem of a transcription, before the morpheme boundary. -/
+def stem (s : String) : List Char := s.toList.takeWhile (· ≠ '-')
 
-/-- Underlying form of *popularis* 'popular': /popul-aLis/. -/
-def popularis_ur : List LatSeg := [.p, .o, .p, .u, .l, .a, .L, .i, .s]
+/-- The underlying form of a row, its stem with the affix -aLis. -/
+def latinUR (e : LinguisticExample) : List LatSeg :=
+  (stem e.primaryText).filterMap LatSeg.ofChar ++ [.a, .L, .i, .s]
 
-/-- Underlying form of *pluvialis* 'rainy': /pluvi-aLis/. The `[w]`
-    (⟨v⟩) on the tier hides the stem `/l/` from the suffix liquid — the
-    (53d) non-coronal blocking case. -/
-def pluvialis_ur : List LatSeg := [.p, .l, .u, .v, .i, .a, .L, .i, .s]
+/-- The surface form of a row. -/
+def latinSR (e : LinguisticExample) : List LatSeg := latinSegments e.primaryText
 
-/-- Underlying form of *floralis* 'floral': /flor-aLis/. -/
-def floralis_ur : List LatSeg := [.f, .l, .o, .r, .a, .L, .i, .s]
+/-- The Latin rows, (53). -/
+def latinRows : List LinguisticExample := Examples.all.filter (·.language = "lati1261")
 
-/-- Underlying form of *legalis* 'legal': /leg-aLis/. -/
-def legalis_ur : List LatSeg := [.l, .e, .g, .a, .L, .i, .s]
-
-/-- Underlying form of *lunaris* 'lunar': /lun-aLis/. The empirical
-    counterexample: surface is `[r]`, but the rule predicts `[l]`
-    because the immediately preceding `[+cons]` segment in `/lun-a/` is
-    the nasal `/n/` (`[−lat]`), and `Disagree` outputs `[+lat]`. -/
-def lunaris_ur : List LatSeg := [.l, .u, .n, .a, .L, .i, .s]
-
-/-- Substitute `val` for every `L` in a candidate string. The two
-    surface candidates for an underlying form are `substL .l ur` and
-    `substL .r ur`. -/
-def substL (val : LatSeg) : List LatSeg → List LatSeg :=
-  List.map (fun seg => if seg = LatSeg.L then val else seg)
-
-/-! ### Stimulus-Contrast Theorems -/
-
-/-- *navalis*: the tier-preceding segment of `/nav-a/` is the `[−lat]`
-    `[w]`. Disagree outputs `[+lat]` = `l`. ✓ -/
-theorem navalis_surfaces_l : latinDissimRule.apply navalis_ur = substL .l navalis_ur := by
+/-- Rule (54) derives every form of (53) but *lunaris*, with dissimilation from a
+tier-adjacent stem `l` (53b) and its blocking by an intervening `r` (53c) or non-coronal
+consonant (53d). -/
+theorem latin_rows : ∀ e ∈ latinRows, e.id ≠ "belth2026_53b2" →
+    latinDissimRule.apply (latinUR e) = latinSR e := by
   decide
 
-/-- *popularis*: tier-preceding consonant is `/l/` (`[+lat]`). Disagree
-    outputs `[−lat]` = `r`. ✓ -/
-theorem popularis_surfaces_r :
-    latinDissimRule.apply popularis_ur = substL .r popularis_ur := by
+/-- In *lunaris* the tier-adjacent consonant is the nasal `n`, so the rule predicts `[l]`,
+and the form is one of the exceptions the Tolerance Principle absorbs. -/
+theorem lunaris_mispredicted :
+    latinDissimRule.apply (latinUR Examples.ex_53b2) ≠ latinSR Examples.ex_53b2 ∧
+      latinDissimRule.apply (latinUR Examples.ex_53b2) = latinSegments "lunalis" := by
   decide
 
-/-- *pluvialis*: the tier-preceding consonant of `/pluvi-a/` is the
-    `[−lat]` `[w]`, so Disagree outputs `[+lat]` = `l` — the stem `/l/`
-    is hidden by the non-coronal blocker on the tier (53d). ✓ -/
-theorem pluvialis_surfaces_l :
-    latinDissimRule.apply pluvialis_ur = substL .l pluvialis_ur := by
+/-! ### Finnish backness harmony (52) -/
+
+/-- The forms of a row listing several, its glossed tokens. -/
+def forms (e : LinguisticExample) : List String := e.glossedTokens.map (·.1)
+
+/-- The morphemes of a transcription, split at the boundaries. -/
+def morphemes : List Char → List (List Char)
+  | [] => [[]]
+  | '-' :: cs => [] :: morphemes cs
+  | c :: cs =>
+    match morphemes cs with
+    | w :: ws => (c :: w) :: ws
+    | [] => [[c]]
+
+namespace Finnish
+
+open _root_.Finnish.VowelHarmony Phonology
+
+/-- A letter of Finnish orthography. -/
+def ofChar : Char → Option Segment
+  | 'a' => some a_vowel | 'ä' => some ä_vowel | 'o' => some o_vowel | 'ö' => some ö_vowel
+  | 'u' => some u_vowel | 'y' => some y_vowel | 'e' => some e_vowel | 'i' => some i_vowel
+  | 'p' => some p | 't' => some t | 'k' => some k | 'n' => some n | 'v' => some v
+  | 'l' => some l | 'j' => some j | 'A' => some A
+  | _ => none
+
+/-- The segments of a form, the morpheme boundary dropped. -/
+def segments (s : String) : List Segment := s.toList.filterMap ofChar
+
+/-- The underlying form of a stem with the essive -nA. -/
+def ur (form : String) : List Segment :=
+  (stem form).filterMap ofChar ++ [n, A]
+
+/-- Rule (52) is the fragment's harmony, whose tier excludes consonants and the neutral
+vowels and whose Elsewhere default is `[−back]`; it derives the four forms of (51). -/
+theorem rows : ∀ f ∈ forms Examples.ex_51, finnishHarmony.apply (ur f) = segments f := by
   decide
 
-/-- *floralis*: tier-preceding consonant is `/r/` (`[−lat]`). The
-    intervening `/r/` blocks the dissimilation that *popularis*'s
-    preceding `/l/` would have triggered — exactly the long-distance
-    pattern Belth's tier-projection is designed to capture. ✓ -/
-theorem floralis_surfaces_l : latinDissimRule.apply floralis_ur = substL .l floralis_ur := by
+end Finnish
+
+/-! ### Turkish vowel harmony (49) -/
+
+namespace Turkish
+
+open _root_.Turkish.Phonology Phonology
+
+/-- A letter of the paper's Turkish transcription. -/
+def ofChar : Char → Option Segment
+  | 'a' => some a | 'e' => some e | 'ı' => some ı | 'i' => some i | 'o' => some o
+  | 'ö' => some ö | 'u' => some u | 'ü' => some ü
+  | 'd' => some d | 'l' => some l | 'r' => some r | 'n' => some n | 'j' | 'y' => some y
+  | 'p' => some p | 'z' => some z | 'k' => some k | 'b' => some b
+  | _ => none
+
+/-- A letter of an affix, its vowel the archiphoneme unspecified for the harmonic features. -/
+def ofAffixChar : Char → Option Segment
+  | 'a' | 'e' => some A
+  | 'ı' | 'i' | 'u' | 'ü' => some I
+  | c => ofChar c
+
+/-- The segments of a form, the morpheme boundaries dropped. -/
+def segments (s : String) : List Segment := s.toList.filterMap ofChar
+
+/-- The underlying form of a stem with its affixes, whose vowels are archiphonemes. -/
+def ur (form : String) : List Segment :=
+  match morphemes form.toList with
+  | [] => []
+  | stem :: affixes => stem.filterMap ofChar ++ affixes.flatMap (·.filterMap ofAffixChar)
+
+/-- Rule (49a), backness and rounding from the tier-preceding vowel, is the fragment's two
+harmonies applied in turn; they derive the forms of (46) and (47). -/
+theorem rows : ∀ e ∈ [Examples.ex_46, Examples.ex_47], ∀ f ∈ forms e,
+    surface (ur f) = segments f := by
   decide
 
-/-- *legalis*: tier-preceding consonant is `/g/` (`[−lat]`). The
-    stem-initial `/l/` is hidden from `/L/` by the intervening `/g/`
-    on the consonant tier. ✓ -/
-theorem legalis_surfaces_l : latinDissimRule.apply legalis_ur = substL .l legalis_ur := by
-  decide
-
-/-! ### The Empirical Limit — *lunaris* -/
-
-/-- *lunaris*: the rule predicts `[l]` (the last `[+cons]` segment in
-    `/lun-a/` is the nasal `/n/`, which is `[−lat]`, so Disagree
-    outputs `[+lat]`). This is the wrong prediction — the surface form
-    is `[r]`. [belth-2026] reports this as one of the ~3% of
-    errors the Tolerance Principle tolerates; D2L does not refine the
-    tier further on this dataset. -/
-theorem lunaris_predicts_l_INCORRECT :
-    latinDissimRule.apply lunaris_ur = substL .l lunaris_ur := by
-  decide
-
-/-! ### Per-Datum Coverage Rollup -/
-
-/-- The worked examples as pairs of underlying and surface form. -/
-def latinData : List (List LatSeg × List LatSeg) :=
-  [(navalis_ur,   substL .l navalis_ur),
-   (popularis_ur, substL .r popularis_ur),
-   (pluvialis_ur, substL .l pluvialis_ur),
-   (floralis_ur,  substL .l floralis_ur),
-   (legalis_ur,   substL .l legalis_ur),
-   (lunaris_ur,   substL .r lunaris_ur)]
-
-/-- The learned rule misses exactly one datum out of six (*lunaris*) —
-    a 5/6 ≈ 83% match on this minimal corpus, the same single-error
-    rate Belth reports at the corpus scale (~3%). -/
-theorem latinDissimRule_misses_lunaris :
-    (latinData.filter (fun (ur, sr) => !(latinDissimRule.apply ur == sr))).length = 1 := by
-  decide
-
-/-! ### Tolerance Principle Certificate ([yang-2016]) -/
-
-/-! Yang's Tolerance Principle is the productivity gate inside D2L: a
-rule with `n` items in scope and `e` exceptions is *tolerated* iff
-`e ≤ n / ln n`. For our six worked examples with one exception
-(*lunaris*), `1 ≤ 6 / ln 6 ≈ 3.35` — the rule is comfortably under the
-threshold, matching [belth-2026]'s 4-of-121 (~3%) result on the
-full Perseus corpus. -/
-
-open Yang2016 in
-/-- The threshold inequality for the six-example demo: 1 exception ≤ 6/ln 6. -/
-theorem tolerates_six_one : tolerates 6 1 := by
-  unfold tolerates threshold
-  push_cast
-  have hpos : (0 : ℝ) < Real.log 6 := Real.log_pos (by norm_num)
-  have hle : Real.log (6 : ℝ) ≤ 6 - 1 := Real.log_le_sub_one_of_pos (by norm_num)
-  rw [le_div_iff₀ hpos]
-  linarith
-
-open Yang2016 in
-/-- The learned rule passes Yang's Tolerance Principle on the worked
-    examples: its exception count (1, *lunaris*) fits under the threshold
-    `latinData.length / ln latinData.length`. This is the productivity
-    certificate that licenses D2L's convergence to `latinDissimRule`
-    rather than memorizing each form. -/
-theorem latinDissimRule_tolerated_on_examples :
-    tolerates latinData.length
-      (latinData.filter (fun (ur, sr) => !(latinDissimRule.apply ur == sr))).length := by
-  show tolerates 6 1
-  exact tolerates_six_one
-
-/-! ### Subregular Bridge ([lambert-2022], [heinz-rawal-tanner-2011]) -/
-
-/-- The consonant tier projection equals the canonical
-    `tierProject` from the TSL formalism in the subregular layer.
-    By construction both reduce to `List.filter` on the `[+cons]` predicate,
-    so the autosegmental and language-theoretic tiers coincide. This
-    grounds Belth's tier in the TSL_k subregular hierarchy. -/
-theorem consTier_apply_eq_tierProject (xs : List LatSeg) :
-    LatSeg.consTier.apply xs =
-      Subregular.tierProject LatSeg.IsCons xs := by
-  show TierProjection.apply (TierProjection.byClass LatSeg.IsCons) xs = _
-  rw [TierProjection.apply_byClass, Subregular.tierProject_eq_filter]
-
-/-- The TSL_2 grammar witnessing the Latin allomorphy pattern as a
-    tier-based subregular language: project to the `[+cons]` tier, then
-    forbid adjacent identical symbols. Lambert's [lambert-2022]
-    TSL_k schema, instantiated with `IsCons` as the tier predicate and
-    the OCP forbidden 2-factor `[some x, some x]`. -/
-def latinTSLGrammar : Subregular.TierStrictlyLocalGrammar 2 LatSeg :=
-  Subregular.TierStrictlyLocalGrammar.ocp LatSeg.IsCons
-
-/-! ### OCP-on-Tier Bridge and OT Tableau ([goldsmith-1976]) -/
-
-/-- Belth's tier-based dissimilation has a natural OCP twin: surface
-    forms produced by the rule should not contain adjacent `[+lat]`
-    segments on the consonant tier. We expose this connection via
-    `Constraints.mkOCPOnTier`, which already accepts a generic
-    `Tier`. A tier-adjacent pair of identical liquids contributes
-    one violation. -/
-def latinOCP : Constraints.Constraint (List LatSeg) :=
-  Constraints.mkOCPOnTier LatSeg.consTier id
-
-/-- The OCP-on-tier evaluation of `latinOCP` on a candidate is zero iff
-    that candidate is in `latinTSLGrammar.language`. Specialization of
-    `Subregular.mkOCPOnTier_zero_iff_in_ocp_language` to the Latin
-    grammar. The two perspectives — markedness constraint with zero
-    violations and TSL_2 grammar membership — coincide. -/
-theorem latinOCP_zero_iff_in_TSL (c : List LatSeg) :
-    latinOCP c = 0 ↔ c ∈ latinTSLGrammar.language :=
-  Subregular.mkOCPOnTier_zero_iff_in_ocp_language
-    LatSeg.IsCons id c
-
-/-! The OT analysis uses a minimal two-constraint inventory:
-
-  1. `latinOCP` (markedness): no adjacent laterals on the `[+cons]` tier.
-  2. `latinStarR` (markedness): the default-`[l]` preference, penalizing
-     each surface `[r]`.
-
-  On this inventory, *popularis* and *pluvalis* each force OCP ≫ \*r;
-  *navalis*, *floralis*, *legalis* are vacuously satisfied. *lunaris*
-  is unrankable — its ERC is contradictory (no W, one L), recapitulating
-  the rule's empirical limit. -/
-
-open Constraints OptimalityTheory
-
-/-- Markedness constraint penalizing each surface `[r]`: the
-    default-`[l]` preference. -/
-def latinStarR : Constraint (List LatSeg) :=
-  (fun c => (c.filter (· = LatSeg.r)).length)
-
-/-- The Latin ranking implied by allomorphy: OCP/[+cons] dominates \*r. -/
-def latinRanking : List (Constraint (List LatSeg)) :=
-  [latinOCP, latinStarR]
-
-/-- The two surface candidates for an underlying form. -/
-def latCands (ur : List LatSeg) : List (List LatSeg) :=
-  [substL .l ur, substL .r ur]
-
--- ---- TSL_2 membership witnesses (the empirical payoff of the bridge) ------
-
-/-- Membership in `latinTSLGrammar.language` is decidable: the bridge to the
-    integer-valued OCP score (`latinOCP_zero_iff_in_TSL`) transports the
-    `Decidable (latinOCP c = 0)` instance to language membership. -/
-instance (c : List LatSeg) : Decidable (c ∈ latinTSLGrammar.language) :=
-  decidable_of_iff _ (latinOCP_zero_iff_in_TSL c)
-
-/-- The empirically expected TSL_2 membership table for the Belth Latin
-    inventory: each row pairs a candidate with whether the OCP-on-tier
-    grammar should admit it. *floralis* is the liquid-discriminating
-    case (the [r]-candidate excluded for its tier-adjacent (r, r));
-    *popularis* is excluded on both candidates — the identity-featured
-    OCP also fires on its (p, p) pair, a way the constraint is stricter
-    than the liquid pattern; *navalis* and *pluvialis* admit both (the
-    blocker separates the liquids on the tier); *lunaris* admits both
-    (the OCP-on-tier grammar's empirical limit — dissimilation fires
-    even though no tier-laterals are adjacent). -/
-def latinTSLExpected : List (List LatSeg × Bool) :=
-  [(substL .r popularis_ur, false), (substL .l popularis_ur, false),
-   (substL .l floralis_ur, true), (substL .r floralis_ur, false),
-   (substL .l navalis_ur,  true), (substL .r navalis_ur,  true),
-   (substL .l pluvialis_ur, true), (substL .r pluvialis_ur, true),
-   (substL .l lunaris_ur,  true), (substL .r lunaris_ur,  true)]
-
-/-- The OCP-on-tier TSL_2 grammar agrees with the expected membership table
-    on every row of `latinTSLExpected`: the empirical payoff of the
-    `latinOCP_zero_iff_in_TSL` bridge in one shot. -/
-theorem latinTSL_correct :
-    ∀ p ∈ latinTSLExpected, (p.1 ∈ latinTSLGrammar.language) = p.2 := by decide
-
-/-- *popularis*: OCP fires once on `[p,o,p,u,l,a,l,i,s]` (the tier-adjacent
-    `(l, l)`). Only \*r-once on the [r]-candidate — but OCP outranks, so
-    [r] wins. -/
-theorem popularis_optimal_is_r :
-    substL .r popularis_ur ∈
-      (Tableau.ofRanking (latCands popularis_ur) latinRanking).optimal := by decide
-
-theorem popularis_loser_is_l :
-    substL .l popularis_ur ∉
-      (Tableau.ofRanking (latCands popularis_ur) latinRanking).optimal := by decide
-
-/-- *pluvialis*: both candidates are OCP-clean — the `[w]` on the tier
-    separates the liquids — so \*r picks the empirically correct [l]
-    (53d): OT blocking through tier membership, same as the rule. -/
-theorem pluvialis_optimal_is_l :
-    substL .l pluvialis_ur ∈
-      (Tableau.ofRanking (latCands pluvialis_ur) latinRanking).optimal := by decide
-
-/-- *navalis*, *floralis*, *legalis*: the [l]-candidate has OCP=0 (no
-    tier-adjacent laterals) and \*r=0; the [r]-candidate has \*r=1.
-    \*r breaks the tie in favour of [l]. -/
-theorem navalis_optimal_is_l :
-    substL .l navalis_ur ∈
-      (Tableau.ofRanking (latCands navalis_ur) latinRanking).optimal := by decide
-
-theorem floralis_optimal_is_l :
-    substL .l floralis_ur ∈
-      (Tableau.ofRanking (latCands floralis_ur) latinRanking).optimal := by decide
-
-theorem legalis_optimal_is_l :
-    substL .l legalis_ur ∈
-      (Tableau.ofRanking (latCands legalis_ur) latinRanking).optimal := by decide
-
-/-- *lunaris*: the OT analysis selects [l], not the empirical [r] —
-    the same error the rule makes (§5). Both candidates have OCP=0
-    on the consonant tier (the intervening `/n/` separates the laterals
-    in `/lun-a-l-is/` so they are *not* tier-adjacent), so \*r picks the
-    [l]-candidate. -/
-theorem lunaris_optimal_is_l_INCORRECT :
-    substL .l lunaris_ur ∈
-      (Tableau.ofRanking (latCands lunaris_ur) latinRanking).optimal := by decide
-
--- ---- ERC analysis ----------------------------------------------------------
-
-/-- The ERC induced by *popularis* (winner [r], loser [l]): OCP prefers
-    the winner (W on constraint 0); \*r prefers the loser (L on constraint
-    1). The full vector is ⟨W, L⟩ = `simpleERC 0 1`. -/
-def popularisERC : ERC 2 :=
-  tableauERC (Tableau.ofRanking (latCands popularis_ur) latinRanking)
-    (substL .r popularis_ur) (substL .l popularis_ur)
-
-/-- The ERC induced by *pluvialis* (winner [l], loser [r]): OCP
-    indifferent, \*r prefers the winner — trivial. -/
-def pluvialisERC : ERC 2 :=
-  tableauERC (Tableau.ofRanking (latCands pluvialis_ur) latinRanking)
-    (substL .l pluvialis_ur) (substL .r pluvialis_ur)
-
-/-- The ERC induced by *navalis* (winner [l], loser [r]): OCP indifferent,
-    \*r prefers the winner. ⟨e, W⟩ — trivial (no L). -/
-def navalisERC : ERC 2 :=
-  tableauERC (Tableau.ofRanking (latCands navalis_ur) latinRanking)
-    (substL .l navalis_ur) (substL .r navalis_ur)
-
-/-- The ERC induced by *floralis*. -/
-def floralisERC : ERC 2 :=
-  tableauERC (Tableau.ofRanking (latCands floralis_ur) latinRanking)
-    (substL .l floralis_ur) (substL .r floralis_ur)
-
-/-- The ERC induced by *legalis*. -/
-def legalisERC : ERC 2 :=
-  tableauERC (Tableau.ofRanking (latCands legalis_ur) latinRanking)
-    (substL .l legalis_ur) (substL .r legalis_ur)
-
-/-- The ERC induced by *lunaris* (taking the empirical [r] as the winner):
-    OCP indifferent (no laterals are tier-adjacent on either candidate),
-    \*r prefers the loser [l]. ⟨e, L⟩ — **contradictory** (no W, one L).
-    No ranking on the inventory ⟨OCP, \*r⟩ can satisfy this; the OT
-    formulation thus reproduces exactly the rule's empirical limit. -/
-def lunarisERC : ERC 2 :=
-  tableauERC (Tableau.ofRanking (latCands lunaris_ur) latinRanking)
-    (substL .r lunaris_ur) (substL .l lunaris_ur)
-
-theorem popularisERC_is_simple :
-    popularisERC = simpleERC (n := 2) 0 1 := by decide
-
-theorem pluvialisERC_isTrivial : pluvialisERC.IsTrivial := by decide
-
-theorem navalisERC_isTrivial : navalisERC.IsTrivial := by decide
-theorem floralisERC_isTrivial : floralisERC.IsTrivial := by decide
-theorem legalisERC_isTrivial : legalisERC.IsTrivial := by decide
-
-theorem lunarisERC_isContradictory : lunarisERC.IsContradictory := by decide
-
-/-- The five non-lunaris contrasts form a **consistent** ERC set: the
-    identity ranking (OCP at position 0, \*r at position 1) satisfies
-    every word's ranking requirements. One informative ERC (popularis)
-    reduces to `simpleERC 0 1`; the other four are trivial. -/
-theorem latinERCs_consistent_without_lunaris :
-    (ERC.linearExtensions
-      {popularisERC, pluvialisERC, navalisERC, floralisERC, legalisERC}).Nonempty :=
-  ⟨Ranking.id 2, by decide⟩
-
-/-- Bridge to the dominance characterisation: under any ranking
-    satisfying the empirical ERC set (sans lunaris), OCP dominates \*r. -/
-theorem latin_OCP_dominates_starR (r : Ranking 2)
-    (hr : ∀ α ∈ ({popularisERC, pluvialisERC, navalisERC, floralisERC,
-      legalisERC} : Finset (ERC 2)), α.SatisfiedBy r) :
-    r.Dominates 0 1 := by
-  have hpop : popularisERC.SatisfiedBy r :=
-    hr popularisERC (Finset.mem_insert_self _ _)
-  have : (simpleERC (n := 2) 0 1).SatisfiedBy r := by
-    rw [← popularisERC_is_simple]; exact hpop
-  exact (simpleERC_satisfiedBy_iff (by decide) r).mp this
-
-/-! ### D2L's Other Learned Rules (documentation only) -/
-
-/- ### Turkish ([belth-2026] §5.1)
-
-D2L converges to two rules on Turkish CHILDES + MorphoChallenge data:
-
-- (a) `Agree([?back], {back, round}) / [−cons] __ ∘ proj(·, [−cons])`
-  — vowel harmony: an unspecified vowel takes its `[back]` value (and
-  `[round]` value, if also unspecified) from the immediately
-  tier-preceding vowel on the vocalic tier.
-- (b) `Agree([?voice], {voice}) / [*] __`
-  — voicing assimilation: the projection component is the *trivial*
-  identity tier (every segment projects), on which the rule is
-  strictly local.
-
-D2L's reported test accuracy on the two corpora exceeds 0.98, beating
-[hayes-wilson-2008] generative phonotactic learners and LSTM
-baselines (Belth Table 5).
-
-### Finnish ([belth-2026] §5.2)
-
-- (a) `Agree([?back], {back}) / [−cons] __ ∘ proj(·, [−cons] ∖ {i, e})`
-  — backness harmony skipping the neutral vowels `{i, e}`. D2L learns
-  that the neutral vowels must be deleted from the tier, matching the
-  descriptive analysis in [ringen-heinamaki-1999].
-- (b) `Elsewhere [−back]` — the default-value rule for stems containing
-  only neutral vowels. In our schema, this corresponds to
-  `default := some false` on the corresponding `TierRule`.
-
-These rules instantiate the same `TierRule` schema used above for
-Latin, with two extensions deferred:
-
-  1. *Multi-feature dependencies* — Turkish back/round harmony agrees
-     on the *combined* `[back, round]` feature set, requiring a
-     generalisation of `featureValue : α → Option Bool` to `α → List
-     (Option Bool)` plus a parasitic condition (round only spreads if
-     back agrees).
-  2. *Default values* — already supported by the `default` field on
-     `TierRule`; only the multi-feature wrinkle blocks a full Finnish
-     formalization here.
-
-Both extensions are admittable on demand. The Latin case above
-suffices to demonstrate the schema, the empirical-limit pattern
-(*lunaris*), the Tolerance Principle bridge, and the OCP-tier OT bridge.
--/
-
-/-- **TSL_2 witness**: Latin liquid dissimilation is tier-strictly-local
-at window-size 2. -/
-theorem latinTSLGrammar_lang_isTSL2 :
-    Language.IsTierStrictlyLocal 2 latinTSLGrammar.language :=
-  ⟨latinTSLGrammar, rfl⟩
-
-/-- **BTSL_2 corollary** (via `IsTierStrictlyLocal.toIsBTSL` in
-`Subregular.Multitier`): Latin liquid dissimilation
-is in the multitier closure of strictly local languages, hence consumed
-by the [lambert-2026] BTC framework. -/
-theorem latinTSLGrammar_lang_isBTSL2 :
-    Language.IsBTSL 2 latinTSLGrammar.language :=
-  latinTSLGrammar_lang_isTSL2.toIsBTSL
+end Turkish
 
 end Belth2026

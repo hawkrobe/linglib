@@ -71,6 +71,8 @@ def I : Segment :=
 private def consonant (specs : List (Phonology.Feature × Bool)) : Segment :=
   Segment.ofSpecs ((.syllabic, false) :: specs)
 
+def p : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, false),
+  (.labial, true), (.voice, false)]
 def b : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, false),
   (.labial, true), (.voice, true)]
 def t : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, false),
