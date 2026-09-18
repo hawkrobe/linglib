@@ -6,8 +6,8 @@ import Linglib.Fragments.Turkish.Comparison
 import Linglib.Fragments.HindiUrdu.Comparison
 import Linglib.Fragments.Mandarin.Comparison
 import Linglib.Fragments.English.Comparison
-import Linglib.Fragments.Korean.MedialVerbs
-import Linglib.Fragments.Turkish.MedialVerbs
+import Linglib.Fragments.Korean.Clause
+import Linglib.Fragments.Turkish.Clause
 
 /-!
 # Stassen (1985): Comparison and Universal Grammar
@@ -31,8 +31,8 @@ consequences: derived-case comparatives arise from balancing and fixed-case comp
 deranking (`universal1`), exceed comparatives from conditional and adverbial comparatives
 from absolute deranking (`universal2`), the three spatial types from anterior, posterior and
 simultaneous absolute deranking (`universal3`), and conjoined comparatives from balanced
-simultaneous chains (`universal4`). Over the fragments, the balancing/deranking cut of a
-clause-chaining system is read off the finiteness of its medial verb (`strategy`), and
+simultaneous chains (`universal4`). Over the fragments, the balancing/deranking cut is read off the
+finiteness of a language's medial verb form (`strategy`), and
 Korean and Turkish, whose comparison and clause-chaining fragments both exist, have
 separative comparatives and deranked chains, as the thesis requires (`korean_consistent`,
 `turkish_consistent`).
@@ -182,14 +182,15 @@ def Absolute : ChainType → Prop
   | .anteriorDeranked | .posteriorDeranked | .simultaneousDeranked => True
   | _ => False
 
-instance : DecidablePred Absolute := λ ct => by cases ct <;> simp only [Absolute] <;> infer_instance
+instance : DecidablePred Absolute := fun ct ↦ by
+  cases ct <;> simp only [Absolute] <;> infer_instance
 
 /-- A chain type is simultaneous rather than consecutive. -/
 def Simultaneous : ChainType → Prop
   | .balancedSimultaneous | .simultaneousDeranked => True
   | _ => False
 
-instance : DecidablePred Simultaneous := λ ct => by
+instance : DecidablePred Simultaneous := fun ct ↦ by
   cases ct <;> simp only [Simultaneous] <;> infer_instance
 
 end ChainType
@@ -245,9 +246,10 @@ theorem universal4 : ∀ ct t, Models ct t → t = .conjoined → ct = .balanced
 
 /-! ### The fragments -/
 
-/-- The strategy of a clause-chaining system: deranking when its medial verb is non-finite. -/
-def strategy (s : System) : Strategy :=
-  if s.medialVerbForm = .Fin then .balancing else .deranking
+/-- The strategy a medial verb form shows, balancing when finite and deranking otherwise. -/
+def strategy : UD.VerbForm → Strategy
+  | .Fin => .balancing
+  | _ => .deranking
 
 /-- The separative constructions of the fragments: the ablative standards of Japanese, Korean,
 Turkish and Hindi-Urdu. -/
@@ -263,12 +265,14 @@ theorem english_particle : type1985 English.Comparison.than = some .particle := 
 /-- Korean has a separative comparative and deranked chains: the chain type its comparative is
 modelled on has the strategy its clause-chaining fragment shows. -/
 theorem korean_consistent :
-    ∀ ct, Models ct .separative → ct.strategy = strategy Korean.chaining := by
+    ∀ ct, Models ct .separative →
+      ∀ c : Korean.Converb, ct.strategy = strategy c.verbForm := by
   decide
 
 /-- Turkish likewise. -/
 theorem turkish_consistent :
-    ∀ ct, Models ct .separative → ct.strategy = strategy Turkish.MedialVerbs.chaining := by
+    ∀ ct, Models ct .separative →
+      ∀ c : Turkish.Converb, ct.strategy = strategy c.verbForm := by
   decide
 
 end Stassen1985
