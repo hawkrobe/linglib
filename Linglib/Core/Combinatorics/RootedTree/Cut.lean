@@ -1437,7 +1437,7 @@ private theorem sum_map_numNodes_sub_one_add_card {γ : Type*}
 theorem cutSummandsCN_numEdges (τ : UnorderedTree (α ⊕ β) → β)
     (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T,
-      Forest.numEdges p.1 + p.2.numNodes = T.numNodes := by
+      (p.1.map UnorderedTree.numEdges).sum + p.2.numNodes = T.numNodes := by
   obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
     ⟨T.out, (Quotient.out_eq T).symm⟩
   intro p hp
@@ -1462,10 +1462,10 @@ theorem cutSummandsCN_numEdges (τ : UnorderedTree (α ⊕ β) → β)
         exact absurd h (by simp)
   have h := cutSummandsG_numNodes _ hext T₀ q hq
   have hsub := sum_map_numNodes_sub_one_add_card q.1
-  show Forest.numEdges (q.1.map UnorderedTree.mk) +
+  show ((q.1.map UnorderedTree.mk).map UnorderedTree.numEdges).sum +
       (UnorderedTree.mk q.2).numNodes = (UnorderedTree.mk T₀).numNodes
   rw [UnorderedTree.numNodes_mk, UnorderedTree.numNodes_mk]
-  rw [show Forest.numEdges (q.1.map UnorderedTree.mk) =
+  rw [show ((q.1.map UnorderedTree.mk).map UnorderedTree.numEdges).sum =
       ((q.1.map (fun t => RoseTree.numNodes t - 1)).sum) from by
     show ((q.1.map UnorderedTree.mk).map
         (fun T => UnorderedTree.numNodes T - 1)).sum = _

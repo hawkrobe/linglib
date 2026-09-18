@@ -11,11 +11,10 @@ import Linglib.Core.Data.UnorderedTree.Leaves
 ## Main definitions
 
 * `UnorderedTree.numEdges`: the edge count `numNodes - 1` of a rooted tree.
-* `Forest.numNodes`, `Forest.numEdges`: the forest totals.
 
 ## Main results
 
-* `Forest.numNodes_eq_card_add_numEdges`: Euler's relation `#V = b₀ + #E` for forests, with
+* `UnorderedTree.sum_map_numNodes`: Euler's relation `#V = b₀ + #E` for forests, with
   `Multiset.card` the component count.
 * `UnorderedTree.countP_leaves_le_numEdges`: counted leaves are among the non-root vertices
   whenever some vertex is uncounted.
@@ -63,51 +62,14 @@ theorem countP_leaves_le_numEdges (p : α → Prop) [DecidablePred p] (t : Unord
     (h : t.leaves.countP p < t.numNodes) : t.leaves.countP p ≤ t.numEdges :=
   Nat.le_sub_one_of_lt h
 
-end UnorderedTree
-
-/-! ### Forest measures -/
-
-namespace Forest
-
-variable {α : Type*}
-
-/-- The total vertex count of a forest. -/
-def numNodes (F : Multiset (UnorderedTree α)) : ℕ := (F.map UnorderedTree.numNodes).sum
-
-@[simp] theorem numNodes_zero : numNodes (0 : Multiset (UnorderedTree α)) = 0 := rfl
-@[simp] theorem numNodes_cons (T : UnorderedTree α) (F : Multiset (UnorderedTree α)) :
-    numNodes (T ::ₘ F) = T.numNodes + numNodes F := by
-  simp only [numNodes, Multiset.map_cons, Multiset.sum_cons]
-@[simp] theorem numNodes_singleton (T : UnorderedTree α) :
-    numNodes ({T} : Multiset (UnorderedTree α)) = T.numNodes := by
-  simp only [numNodes, Multiset.map_singleton, Multiset.sum_singleton]
-@[simp] theorem numNodes_add (F G : Multiset (UnorderedTree α)) :
-    numNodes (F + G) = numNodes F + numNodes G := by
-  simp only [numNodes, Multiset.map_add, Multiset.sum_add]
-
-/-- The total edge count of a forest. -/
-def numEdges (F : Multiset (UnorderedTree α)) : ℕ := (F.map UnorderedTree.numEdges).sum
-
-@[simp] theorem numEdges_zero : numEdges (0 : Multiset (UnorderedTree α)) = 0 := rfl
-@[simp] theorem numEdges_cons (T : UnorderedTree α) (F : Multiset (UnorderedTree α)) :
-    numEdges (T ::ₘ F) = T.numEdges + numEdges F := by
-  simp only [numEdges, Multiset.map_cons, Multiset.sum_cons]
-@[simp] theorem numEdges_singleton (T : UnorderedTree α) :
-    numEdges ({T} : Multiset (UnorderedTree α)) = T.numEdges := by
-  simp only [numEdges, Multiset.map_singleton, Multiset.sum_singleton]
-@[simp] theorem numEdges_add (F G : Multiset (UnorderedTree α)) :
-    numEdges (F + G) = numEdges F + numEdges G := by
-  simp only [numEdges, Multiset.map_add, Multiset.sum_add]
-
 /-- Euler's relation for forests: `#V = b₀ + #E`, with `Multiset.card` the number of
     component trees. -/
-theorem numNodes_eq_card_add_numEdges (F : Multiset (UnorderedTree α)) :
-    numNodes F = Multiset.card F + numEdges F := by
+theorem sum_map_numNodes (F : Multiset (UnorderedTree α)) :
+    (F.map numNodes).sum = Multiset.card F + (F.map numEdges).sum := by
   induction F using Multiset.induction with
   | empty => rfl
   | cons T F ih =>
-    simp only [numNodes_cons, numEdges_cons, Multiset.card_cons, ih,
-      ← UnorderedTree.numEdges_add_one T]
+    simp only [Multiset.map_cons, Multiset.sum_cons, Multiset.card_cons, ih, ← numEdges_add_one T]
     omega
 
-end Forest
+end UnorderedTree

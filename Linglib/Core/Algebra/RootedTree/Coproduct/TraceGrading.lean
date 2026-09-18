@@ -12,7 +12,7 @@ open RoseTree UnorderedTree
 [marcolli-chomsky-berwick-2025]
 
 The graded subspaces of `ConnesKreimer R (UnorderedTree (α ⊕ β))` under the
-edge-count grading (`Forest.numEdges`, `Core/Data/RoseTree/UnorderedTree.lean`),
+edge-count grading (the summed `UnorderedTree.numEdges` of a forest),
 with the coproduct half of the grading compatibility
 (`comulCAlgHomN_of'_mem_gradedSpan`) — the graded content of Lemma 1.2.10.
 
@@ -41,7 +41,7 @@ Per [marcolli-chomsky-berwick-2025] p. 37, Lemma 1.2.10:
 This file defines the graded subspaces and proves the coproduct half of
 the grading compatibility (`comulCAlgHomN_of'_mem_gradedSpan`); the
 product half is edge-count additivity over disjoint union
-(`Forest.numEdges_add`), and edge conservation through the trace cut
+(`Multiset.map_add, Multiset.sum_add`), and edge conservation through the trace cut
 machinery is `cutSummandsCN_numEdges`
 (`Core/Combinatorics/RootedTree/Cut.lean`). -/
 
@@ -51,7 +51,7 @@ noncomputable def gradedPiece (X : Type*) (n : ℕ) :
     Submodule R (ConnesKreimer R (UnorderedTree X)) :=
   Submodule.span R
     {x | ∃ F : Forest (UnorderedTree X),
-      Forest.numEdges F = n ∧ x = ConnesKreimer.of' F}
+      (F.map UnorderedTree.numEdges).sum = n ∧ x = ConnesKreimer.of' F}
 
 /-! ### Homogeneous tensor span at fixed total edge degree -/
 
@@ -62,7 +62,7 @@ private noncomputable def gradedTensorSpan (n : ℕ) :
     Submodule R (ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
       ConnesKreimer R (UnorderedTree (α ⊕ β))) :=
   Submodule.span R {y | ∃ F₁ F₂ : Forest (UnorderedTree (α ⊕ β)),
-    Forest.numEdges F₁ + Forest.numEdges F₂ = n ∧
+    (F₁.map UnorderedTree.numEdges).sum + (F₂.map UnorderedTree.numEdges).sum = n ∧
     y = ConnesKreimer.of' F₁ ⊗ₜ[R] ConnesKreimer.of' F₂}
 
 /-- Multiplicativity of the graded tensor spans: degrees add. -/
@@ -79,7 +79,7 @@ private theorem gradedTensorSpan_mul {m k : ℕ}
     refine Submodule.span_le.mpr ?_
     rintro w ⟨a, ⟨F₁, F₂, hab, rfl⟩, b, ⟨G₁, G₂, hgk, rfl⟩, rfl⟩
     refine Submodule.subset_span ⟨F₁ + G₁, F₂ + G₂, ?_, ?_⟩
-    · rw [Forest.numEdges_add, Forest.numEdges_add]
+    · rw [Multiset.map_add, Multiset.sum_add, Multiset.map_add, Multiset.sum_add]
       omega
     · show (ConnesKreimer.of' F₁ ⊗ₜ[R] ConnesKreimer.of' F₂) *
         (ConnesKreimer.of' G₁ ⊗ₜ[R] ConnesKreimer.of' G₂) =
@@ -97,8 +97,8 @@ private theorem comulCTreeN_mem (τ : UnorderedTree (α ⊕ β) → β)
   unfold comulCTreeN comulTreeNG
   refine Submodule.add_mem _ ?_ ?_
   · refine Submodule.subset_span ⟨{T}, 0, ?_, ?_⟩
-    · rw [Forest.numEdges_singleton]
-      show T.numNodes - 1 + Forest.numEdges (0 : Forest (UnorderedTree (α ⊕ β))) =
+    · rw [Multiset.map_singleton, Multiset.sum_singleton]
+      show T.numNodes - 1 + ((0 : Forest (UnorderedTree (α ⊕ β))).map UnorderedTree.numEdges).sum =
         T.numNodes - 1
       show T.numNodes - 1 + 0 = T.numNodes - 1
       omega
@@ -110,7 +110,7 @@ private theorem comulCTreeN_mem (τ : UnorderedTree (α ⊕ β) → β)
     have hcons := cutSummandsCN_numEdges τ T p hp
     have hpos := UnorderedTree.numNodes_pos p.2
     refine Submodule.subset_span ⟨p.1, {p.2}, ?_, rfl⟩
-    rw [Forest.numEdges_singleton, UnorderedTree.numEdges_eq_numNodes_sub_one]
+    rw [Multiset.map_singleton, Multiset.sum_singleton, UnorderedTree.numEdges_eq_numNodes_sub_one]
     omega
 
 /-- Forest-level membership: `Δ^c` of a forest is homogeneous of degree
@@ -118,7 +118,7 @@ private theorem comulCTreeN_mem (τ : UnorderedTree (α ⊕ β) → β)
 private theorem comulCForestN_mem (τ : UnorderedTree (α ⊕ β) → β)
     (F : Forest (UnorderedTree (α ⊕ β))) :
     comulCForestN (R := R) τ F ∈
-      gradedTensorSpan (R := R) (α := α) (β := β) (Forest.numEdges F) := by
+      gradedTensorSpan (R := R) (α := α) (β := β) ((F.map UnorderedTree.numEdges).sum) := by
   induction F using Multiset.induction_on with
   | empty =>
     rw [comulCForestN_zero]
@@ -128,7 +128,7 @@ private theorem comulCForestN_mem (τ : UnorderedTree (α ⊕ β) → β)
     rw [show comulCForestN (R := R) τ (T ::ₘ F) =
           comulCTreeN (R := R) τ T * comulCForestN (R := R) τ F from
         comulForestNG_cons _ T F,
-        Forest.numEdges_cons]
+        Multiset.map_cons, Multiset.sum_cons]
     exact gradedTensorSpan_mul (comulCTreeN_mem τ T) ih
 
 /-- Δ^c preserves the edge-count grading ([marcolli-chomsky-berwick-2025]
@@ -140,7 +140,7 @@ private theorem comulCForestN_mem (τ : UnorderedTree (α ⊕ β) → β)
 theorem comulCAlgHomN_of'_mem_gradedSpan
     (τ : UnorderedTree (α ⊕ β) → β) (F : Forest (UnorderedTree (α ⊕ β))) :
     comulCAlgHomN (R := R) τ (ConnesKreimer.of' F) ∈
-      Submodule.span R {y | ∃ (i j : ℕ) (_hi : i + j = Forest.numEdges F)
+      Submodule.span R {y | ∃ (i j : ℕ) (_hi : i + j = (F.map UnorderedTree.numEdges).sum)
         (xi yi : ConnesKreimer R (UnorderedTree (α ⊕ β))),
         xi ∈ gradedPiece (α ⊕ β) i ∧
         yi ∈ gradedPiece (α ⊕ β) j ∧
@@ -153,7 +153,7 @@ theorem comulCAlgHomN_of'_mem_gradedSpan
     (comulCForestN_mem (R := R) τ F)
   rintro y ⟨F₁, F₂, hsum, rfl⟩
   exact Submodule.subset_span
-    ⟨Forest.numEdges F₁, Forest.numEdges F₂, hsum,
+    ⟨(F₁.map UnorderedTree.numEdges).sum, (F₂.map UnorderedTree.numEdges).sum, hsum,
       ConnesKreimer.of' F₁, ConnesKreimer.of' F₂,
       Submodule.subset_span ⟨F₁, rfl, rfl⟩,
       Submodule.subset_span ⟨F₂, rfl, rfl⟩, rfl⟩
