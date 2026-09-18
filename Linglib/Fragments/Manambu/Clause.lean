@@ -38,7 +38,8 @@ the preceding chain, and by summary linkage, a same-subject completive clause of
   clause
 * `Manambu.MedialMarker` — the nine markers, with their morphs (`morphs`, `form`), the
   switch-reference value they carry (`sr`), the relations they encode (`relations`), the
-  inflection of the verb (`inflection`, `IndexesSubject`), and whether they head a predicate
+  inflection of the verb (`inflection`, `IndexesSubject`), which make them an instance of
+  `Clause.Chaining.MedialForm`, and whether they head a predicate
   (`HeadsPredicate`), are negated (`Negatable`), combine with the completive auxiliary
   (`WithCompletive`) and occur on their own (`StandsAlone`)
 * `Manambu.dependentNegator`, `Manambu.completive` — the negator of dependent clauses
@@ -46,7 +47,7 @@ the preceding chain, and by summary linkage, a same-subject completive clause of
 
 ## Implementation notes
 
-The clause-chaining system read off these markers is `SarvasyAikhenvald2025.manambu`.
+The clause-chaining typology over these forms is in `Studies/SarvasyAikhenvald2025.lean`.
 
 ## References
 
@@ -160,6 +161,11 @@ sense. -/
 def StandsAlone (m : MedialMarker) : Prop := m = ku ∨ m = n
 
 instance : DecidablePred StandsAlone := fun _ => inferInstanceAs (Decidable (_ ∨ _))
+
+instance : Clause.Chaining.MedialForm MedialMarker where
+  sr := sr
+  relations := relations
+  IndexesSubject := IndexesSubject
 
 end MedialMarker
 

@@ -1,166 +1,100 @@
+import Mathlib.Data.Finset.Union
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Data.UD.Features
-import Linglib.Syntax.WordOrder
 
 /-!
 # Clause chaining
 
-[sarvasy-aikhenvald-2025]
-
-Typology of clause chaining: multi-clause constructions in which one or
-more **medial** clauses (dependent, morphologically reduced) combine
-with a single **final** clause (independent, fully inflected) that
-supplies tense, mood, and often agreement for the whole chain. Chaining
-is the prototypical *cosubordinate* combining scheme
-(`Clause.CombiningScheme`): the medial clause is dependent but not
-embedded ([foley-r-d-van-valin-1984]; [longacre-2007]). Anchors:
-[sarvasy-aikhenvald-2025] and [de-vries-2025]; per-language bundles live in
-the language fragments (`Fragments/<Language>/Clause.lean`) and the
-systems read off them in `Studies/SarvasyAikhenvald2025.lean`.
+A clause chain is a sequence of medial clauses, dependent and morphologically reduced, closed
+by one final clause that supplies tense, mood and often agreement for the whole chain; it is
+the prototypical cosubordinate combination of clauses, dependent but not embedded
+([foley-r-d-van-valin-1984]; [longacre-2007]). This file provides the vocabulary in which a
+language's inventory of medial forms is described and the notions a typology of chaining reads
+off it ([sarvasy-aikhenvald-2025]; [de-vries-2025]). A fragment's carrier of medial forms is
+an instance of `MedialForm`, which records for each form the switch-reference value it marks,
+the interclausal relations it encodes and whether it indexes the subject of its clause; the
+switch-reference and agreement properties of the language are definitions over the instance.
+How far medial verbs retain an inflectional category is a `CategoryRetention`, and a language's
+profile over the five categories is a point of the product order `MedialMorphProfile`, whose
+top is the profile of a finite verb.
 
 ## Main definitions
 
-* `Clause.CombiningScheme` (+ `Embedded`, `Dependent`) — the
-  [scancarelli-2003] combination schemes
-* `ClauseStatus`, `ChainDirection` — medial/final and chain order
-* `CategoryRetention`, `MedialMorphProfile` — the medial verb's
-  per-category finiteness profile; `CategoryRetention.ofPred` reads a
-  category's retention off which of a language's medial forms admit it
-* `SwitchReference` — the same-subject or different-subject value a
-  medial form marks
-* `SRSystem`, `SRTarget`, `SRMarkedness` — switch-reference
-* `InterclauseRelation` — marked interclausal semantic relations
-* `BridgingType` — discourse bridging across chain boundaries
-* `System` — a language's clause-chaining system, read off a
-  fragment's inventory of medial forms in the study that classifies it
+* `CategoryRetention` — the scale `absent < restricted < full` on which a medial verb retains
+  a category, a bounded linear order; `CategoryRetention.ofPred` reads a category's retention
+  off which of a language's medial forms admit it, fully when all do, restrictedly when some
+  do, not at all when none does
+* `InflectionalCategory`, `MedialMorphProfile` — the five categories and a profile over them,
+  ordered pointwise; `MedialMorphProfile.udVerbForm` is the finite verb form at the top of the
+  order and the converb everywhere else
+* `SwitchReference`, `InterclauseRelation`, `BridgingType` — the same-subject or
+  different-subject value a form marks, the relations a form can encode, of which
+  `InterclauseRelation.Temporal` are the two temporal ones, and the two bridging
+  constructions across chains
+* `MedialForm` — the class of a language's medial forms, with `MedialForm.HasSR`,
+  `MedialForm.SRObligatory` and `MedialForm.SSUnmarked` for its switch-reference system,
+  `MedialForm.agreement` for the retention of subject agreement and
+  `MedialForm.relationsMarked` for the relations some form encodes
+
+## References
+
+* [sarvasy-aikhenvald-2025]
+* [de-vries-2025]
+* [foley-r-d-van-valin-1984]
+* [longacre-2007]
 -/
 
-namespace Clause
+namespace Clause.Chaining
 
-/-! ### Combining schemes -/
+/-! ### Retention of inflectional categories -/
 
-/-- How a clause combines with its neighbors into a larger structure
-    ([scancarelli-2003]): relatively independent conjuncts, dependence
-    on a main clause, chained cosubordination (dependent but not
-    embedded, [foley-r-d-van-valin-1984]), or serialization with the
-    relationship left unmarked. Languages differ in which schemes they
-    use at all. -/
-inductive CombiningScheme where
-  | coordinate
-  | subordinate
-  | cosubordinate
-  | serial
-  deriving DecidableEq, Repr
-
-namespace CombiningScheme
-
-/-- The dependent clause is embedded as a syntactic constituent of the
-    other. -/
-def Embedded (s : CombiningScheme) : Prop := s = subordinate
-
-instance : DecidablePred Embedded := fun _ =>
-  inferInstanceAs (Decidable (_ = _))
-
-/-- The dependent clause is morphologically reduced (cannot stand
-    alone). -/
-def Dependent (s : CombiningScheme) : Prop :=
-  s = subordinate ∨ s = cosubordinate
-
-instance : DecidablePred Dependent := fun _ =>
-  inferInstanceAs (Decidable (_ ∨ _))
-
-end CombiningScheme
-
-namespace Chaining
-
-/-- Clause chaining is cosubordination — dependent but not embedded
-    ([foley-r-d-van-valin-1984]). -/
-def scheme : CombiningScheme := .cosubordinate
-
-/-! ### Clause status and chain direction -/
-
-/-- Structural status of a clause within a chain. -/
-inductive ClauseStatus where
-  /-- Dependent clause with reduced morphology. Typically carries
-      converbal or participial marking (UD `VerbForm.Conv`); may encode
-      switch-reference and interclausal relations but lacks full
-      tense/agreement. -/
-  | medial
-  /-- Independent clause with full inflection. Supplies tense, mood,
-      and often agreement for the entire chain; exactly one per
-      chain. -/
-  | final
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Linear order of medial and final clauses
-    ([sarvasy-aikhenvald-2025] §1.2). -/
-inductive ChainDirection where
-  /-- Medial clauses precede the final clause — by far the most common,
-      strongly correlated with verb-final word order (Nungon, Turkish,
-      Korean, Manambu, Ku Waru). -/
-  | medialFinal
-  /-- An initial independent clause precedes medial dependent clauses —
-      rare, attested in some verb-initial languages (Barai). -/
-  | initialMedial
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Predicted head direction: the final verb determines the chain's TAM
-    and patterns as its head, so chain direction mirrors the language's
-    head direction ([dryer-1992]-style correlation;
-    [sarvasy-aikhenvald-2025] §1.2). -/
-def ChainDirection.predictedHeadDirection : ChainDirection → HeadDirection
-  | .medialFinal => .headFinal
-  | .initialMedial => .headInitial
-
-/-! ### Medial-verb morphology -/
-
-/-- How much of a morphological category a medial verb retains relative
-    to independent verbs — the three-point scale `absent < restricted <
-    full` ([sarvasy-aikhenvald-2025] §§1.3–1.5; [de-vries-2025] §2). -/
+/-- How much of an inflectional category a medial verb retains relative to an independent
+verb: none, the value coming from the final verb; fewer values than an independent verb; or
+the same range of values. -/
 inductive CategoryRetention where
-  /-- Unmarked on medial verbs; the value is inherited from the final
-      verb (Nungon medial verbs lack tense entirely). -/
+  /-- Unmarked on medial verbs; the value is inherited from the final verb. -/
   | absent
-  /-- Fewer values than independent verbs (e.g. binary realis/irrealis
-      rather than a full mood paradigm). -/
+  /-- Fewer values than independent verbs, such as relative tense or a binary realis/irrealis
+  split. -/
   | restricted
-  /-- The same range of values as independent verbs (Turkish converbs
-      retain aspect). -/
+  /-- The same range of values as independent verbs. -/
   | full
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Position on the retention scale. -/
-def CategoryRetention.rank : CategoryRetention → Nat
-  | .absent => 0
-  | .restricted => 1
-  | .full => 2
-
-/-- The retention scale as a linear order: `absent < restricted <
-    full`. -/
-instance : LinearOrder CategoryRetention :=
-  .lift' CategoryRetention.rank fun a b => by
-    cases a <;> cases b <;> simp [CategoryRetention.rank]
-
-/-- `absent` is the bottom of the retention scale. -/
-theorem CategoryRetention.absent_le (r : CategoryRetention) :
-    absent ≤ r := by cases r <;> decide
+  deriving DecidableEq, Repr, Fintype
 
 namespace CategoryRetention
 
+/-- Position on the retention scale. -/
+def rank : CategoryRetention → ℕ
+  | absent => 0
+  | restricted => 1
+  | full => 2
+
+/-- The retention scale `absent < restricted < full`. -/
+instance : LinearOrder CategoryRetention := .lift' rank (by decide)
+
+instance : BoundedOrder CategoryRetention where
+  top := full
+  le_top := by decide
+  bot := absent
+  bot_le := by decide
+
+@[simp] theorem top_eq_full : (⊤ : CategoryRetention) = full := rfl
+
+@[simp] theorem bot_eq_absent : (⊥ : CategoryRetention) = absent := rfl
+
 variable {ι : Type*} [Fintype ι] (p : ι → Prop) [DecidablePred p]
 
-/-- How far a language's medial forms retain a category, given which of
-    them admit it: fully when every form does, restrictedly when some
-    do, not at all when none does. -/
+/-- How far a language's medial forms retain a category, given which of them admit it, fully
+when every form does, restrictedly when some do, and not at all when none does. -/
 def ofPred : CategoryRetention :=
   if ∀ i, p i then full else if ∃ i, p i then restricted else absent
 
 theorem ofPred_eq_full_iff : ofPred p = full ↔ ∀ i, p i := by
   unfold ofPred; split_ifs <;> simp_all
 
-theorem ofPred_eq_restricted_iff :
-    ofPred p = restricted ↔ (∃ i, p i) ∧ ∃ i, ¬ p i := by
+theorem ofPred_eq_restricted_iff : ofPred p = restricted ↔ (∃ i, p i) ∧ ∃ i, ¬ p i := by
   unfold ofPred; split_ifs <;> simp_all
 
 theorem ofPred_eq_absent_iff [Nonempty ι] : ofPred p = absent ↔ ∀ i, ¬ p i := by
@@ -168,59 +102,39 @@ theorem ofPred_eq_absent_iff [Nonempty ι] : ofPred p = absent ↔ ∀ i, ¬ p i
 
 end CategoryRetention
 
-/-- Morphological profile of medial verbs along five TAM dimensions —
-    a per-category finiteness vector, of which the binary
-    finite/non-finite cut is a coarsening. -/
-structure MedialMorphProfile where
-  /-- Tense (absent in Nungon and Ku Waru; restricted in Manambu; full
-      in some Turkic and Caucasian languages). -/
-  tense : CategoryRetention
-  /-- Subject agreement (often inherited from the final verb under
-      same-subject marking). -/
-  agreement : CategoryRetention
-  /-- Mood (typically at most a binary realis/irrealis split). -/
-  mood : CategoryRetention
-  /-- Independent negation of the medial clause (some languages
-      restrict negation to the final clause, so polarity scopes over
-      the chain). -/
-  polarity : CategoryRetention
-  /-- Aspect (some languages retain perfective/imperfective to
-      distinguish completed vs ongoing subevents). -/
-  aspect : CategoryRetention
-  deriving Repr, DecidableEq
+/-- The inflectional categories along which a medial verb is reduced. -/
+inductive InflectionalCategory where
+  /-- Tense. -/
+  | tense
+  /-- Subject agreement. -/
+  | agreement
+  /-- Mood. -/
+  | mood
+  /-- Independent negation of the medial clause. -/
+  | polarity
+  /-- Aspect. -/
+  | aspect
+  deriving DecidableEq, Repr, Fintype
+
+/-- A medial verb's retention of each inflectional category, ordered pointwise; the top is the
+profile of an independent verb and the bottom a bare converb. -/
+abbrev MedialMorphProfile := InflectionalCategory → CategoryRetention
 
 namespace MedialMorphProfile
 
-variable (p : MedialMorphProfile)
+/-- The UD verb form of a medial verb with a profile, finite when every category is fully
+retained and a converb otherwise. -/
+def udVerbForm (p : MedialMorphProfile) : UD.VerbForm := if p = ⊤ then .Fin else .Conv
 
-/-- Every category is absent: a bare converb. -/
-def MaximallyReduced : Prop :=
-  p.tense = .absent ∧ p.agreement = .absent ∧ p.mood = .absent ∧
-    p.polarity = .absent ∧ p.aspect = .absent
-
-instance : DecidablePred MaximallyReduced := fun _ =>
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Every category is full: the profile of an independent verb (though
-    a medial verb still lacks illocutionary force). -/
-def FullyRetained : Prop :=
-  p.tense = .full ∧ p.agreement = .full ∧ p.mood = .full ∧
-    p.polarity = .full ∧ p.aspect = .full
-
-instance : DecidablePred FullyRetained := fun _ =>
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Expected UD verb form for a medial verb with this profile: converb
-    unless fully retained. -/
-def udVerbForm : UD.VerbForm :=
-  if p.FullyRetained then .Fin else .Conv
+theorem udVerbForm_eq_fin_iff (p : MedialMorphProfile) : p.udVerbForm = .Fin ↔ p = ⊤ := by
+  unfold udVerbForm; split_ifs <;> simp_all
 
 end MedialMorphProfile
 
-/-! ### Switch-reference -/
+/-! ### Switch-reference, relations and bridging -/
 
-/-- The switch-reference value a medial form marks: the subject of its
-    clause is the same as that of the reference clause, or different. -/
+/-- The switch-reference value a medial form marks: the subject of its clause is the same as
+that of the reference clause, or different. -/
 inductive SwitchReference where
   /-- Same subject. -/
   | ss
@@ -228,57 +142,8 @@ inductive SwitchReference where
   | ds
   deriving DecidableEq, Repr, Fintype
 
-/-- Type of switch-reference system: morphology on medial verbs
-    tracking referential continuity across clause boundaries —
-    orthogonal to binding theory, which constrains intra-clausal
-    coreference configurationally ([sarvasy-aikhenvald-2025] §§1.4–1.5,
-    §3; [de-vries-2025] §§3–4). -/
-inductive SRSystem where
-  /-- No SR morphology; the language may still chain (Korean, Turkish,
-      Japanese). -/
-  | none
-  /-- Binary same-subject vs different-subject marking — the canonical
-      system (Nungon, Ku Waru, many Papuan and Amerindian languages). -/
-  | ssDs
-  /-- SS/DS fused with temporal relation: SS-sequential,
-      SS-simultaneous, DS-sequential, DS-simultaneous as distinct forms
-      (Yopno, Amele, many Trans-New Guinea languages). -/
-  | ssDsTemporal
-  /-- Tracks more than one argument (e.g. subject and object) — rare
-      (Panoan). -/
-  | multiTrack
-  deriving DecidableEq, Repr, Inhabited
-
-/-- What the SR system tracks. -/
-inductive SRTarget where
-  /-- Syntactic subject only — the canonical pattern. -/
-  | subjectOnly
-  /-- Subject and object — rare (some Panoan languages). -/
-  | subjectAndObject
-  /-- The topical participant, determined by discourse prominence
-      rather than grammatical function (Greater Awyu,
-      [de-vries-2025] §4.4). -/
-  | topicBased
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Markedness asymmetry between the SS and DS forms. Subject
-    continuity is the discourse default, so SS is usually the unmarked
-    member. -/
-inductive SRMarkedness where
-  /-- SS shorter, zero, or suffix-only; DS overtly marked — the
-      dominant pattern. -/
-  | ssUnmarked
-  /-- DS unmarked — rare. -/
-  | dsUnmarked
-  /-- Both overtly marked with comparable weight. -/
-  | symmetric
-  deriving DecidableEq, Repr, Inhabited
-
-/-! ### Interclausal relations and bridging -/
-
-/-- Semantic relation between a medial clause and the next clause,
-    encoded on the medial verb, inferred, or signaled by the SR system
-    ([sarvasy-aikhenvald-2025] §1.4; [longacre-2007]). -/
+/-- A semantic relation between a medial clause and the next clause that a medial form can
+encode ([sarvasy-aikhenvald-2025]; [longacre-2007]). -/
 inductive InterclauseRelation where
   /-- The medial event precedes the next event, in iconic order. -/
   | sequential
@@ -298,81 +163,93 @@ inductive InterclauseRelation where
   | additive
   /-- The medial event is the purpose of the next event. -/
   | purpose
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Fintype
 
-/-- The temporal relations — exactly the ones SR morphology can encode
-    without additional marking (`SRSystem.ssDsTemporal`). -/
+/-- The temporal relations, sequence and simultaneity. -/
 def InterclauseRelation.Temporal (r : InterclauseRelation) : Prop :=
   r = .sequential ∨ r = .simultaneous
 
 instance : DecidablePred InterclauseRelation.Temporal :=
   fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
-/-- Discourse bridging constructions spanning chain boundaries,
-    characteristic of oral narrative ([sarvasy-aikhenvald-2025] §1.6,
-    §3.3). -/
+/-- The bridging constructions spanning chain boundaries in oral narrative. -/
 inductive BridgingType where
-  /-- Recapitulative (tail-head) linkage: the first medial clause of a
-      new chain repeats the final clause of the preceding one (Nungon,
-      Ku Waru). -/
+  /-- Recapitulative (tail-head) linkage: the first medial clause of a new chain repeats the
+  final clause of the preceding one. -/
   | recapitulative
-  /-- Summary linkage: a generic verb ('do', 'say') summarizes the
-      preceding episode (Ku Waru, Manambu). -/
+  /-- Summary linkage: a generic verb such as 'do' or 'be' summarizes the preceding chain. -/
   | summary
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Fintype
 
-/-! ### The per-language bundle -/
+/-! ### A language's medial forms -/
 
-/-- A language's clause-chaining system: chain structure,
-    switch-reference, medial morphology, marked relations, and
-    bridging, read off a fragment's inventory of medial forms in the
-    study that classifies the language. -/
-structure System where
-  /-- Linear order of medial and final clauses. -/
-  direction : ChainDirection
-  /-- Type of switch-reference system, if any. -/
-  srSystem : SRSystem
-  /-- What SR tracks, when present. -/
-  srTarget : Option SRTarget
-  /-- Whether SR marking is obligatory on every medial verb. -/
-  srObligatory : Bool
-  /-- Markedness asymmetry of the SR system, when recorded. -/
-  srMarkedness : Option SRMarkedness
-  /-- Morphological profile of medial verbs. -/
-  medialMorph : MedialMorphProfile
-  /-- Interclausal relations grammatically marked on medial verbs. -/
-  relationsMarked : Finset InterclauseRelation
-  /-- Recapitulative (tail-head) linkage attested. -/
-  hasRecapLinkage : Bool
-  /-- Summary linkage attested. -/
-  hasSummaryLinkage : Bool
-  /-- Medial clauses can stand without a final clause — the
-      non-canonical stand-alone medial ([sarvasy-2015]). -/
-  medialCanStandAlone : Bool
-  deriving DecidableEq
+/-- A language's medial forms, each with the switch-reference value it marks, the
+interclausal relations it encodes, and whether it indexes the subject of its clause. -/
+class MedialForm (M : Type*) where
+  /-- The switch-reference value a form marks, `none` for a form neutral to it. -/
+  sr : M → Option SwitchReference
+  /-- The interclausal relations a form encodes. -/
+  relations : M → Finset InterclauseRelation
+  /-- The form carries subject cross-referencing. -/
+  IndexesSubject : M → Prop
+  [decidableIndexesSubject : DecidablePred IndexesSubject]
 
-namespace System
+namespace MedialForm
 
-variable (p : System)
+attribute [instance_reducible] decidableIndexesSubject
+attribute [instance] decidableIndexesSubject
 
-/-- The language has an SR system. -/
-def hasSR : Bool := p.srSystem != .none
+section
 
-/-- Medial tense is inherited from the final verb (no medial tense
-    marking). -/
-def tenseFromFinalVerb : Bool := p.medialMorph.tense == .absent
+variable (M : Type*) [MedialForm M]
 
-/-- Some discourse bridging construction is attested. -/
-def hasBridging : Bool := p.hasRecapLinkage || p.hasSummaryLinkage
+/-- Some medial form marks switch-reference. -/
+def HasSR : Prop := ∃ m : M, sr m ≠ none
 
-/-- Temporal relations are encoded by the SR morphology itself. -/
-def temporalViaSR : Bool := p.srSystem == .ssDsTemporal
+/-- Every medial form marks switch-reference. -/
+def SRObligatory : Prop := ∀ m : M, sr m ≠ none
 
-/-- Expected UD verb form for this language's medial verbs. -/
-def medialVerbForm : UD.VerbForm := p.medialMorph.udVerbForm
+/-- The same-subject forms leave the subject unindexed and the different-subject forms index
+it, the dominant markedness pattern of switch-reference. -/
+def SSUnmarked : Prop :=
+  (∀ m : M, sr m = some .ss → ¬ IndexesSubject m) ∧ ∀ m : M, sr m = some .ds → IndexesSubject m
 
-end System
+end
 
-end Chaining
+section
 
-end Clause
+variable (M : Type*) [MedialForm M] [Fintype M]
+
+instance : Decidable (HasSR M) := inferInstanceAs (Decidable (∃ m : M, sr m ≠ none))
+
+instance : Decidable (SRObligatory M) := inferInstanceAs (Decidable (∀ m : M, sr m ≠ none))
+
+instance : Decidable (SSUnmarked M) := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- How far the medial verbs retain subject agreement. -/
+def agreement : CategoryRetention := .ofPred (IndexesSubject (M := M))
+
+/-- The relations some medial form encodes. -/
+def relationsMarked : Finset InterclauseRelation := (Finset.univ : Finset M).biUnion relations
+
+end
+
+theorem SRObligatory.hasSR {M : Type*} [MedialForm M] [Nonempty M] (h : SRObligatory M) :
+    HasSR M :=
+  ⟨Classical.arbitrary M, h _⟩
+
+@[simp] theorem mem_relationsMarked {M : Type*} [MedialForm M] [Fintype M]
+    {r : InterclauseRelation} : r ∈ relationsMarked M ↔ ∃ m : M, r ∈ relations m := by
+  simp [relationsMarked]
+
+theorem agreement_eq_absent_iff {M : Type*} [MedialForm M] [Fintype M] [Nonempty M] :
+    agreement M = .absent ↔ ∀ m : M, ¬ IndexesSubject m :=
+  CategoryRetention.ofPred_eq_absent_iff _
+
+theorem agreement_eq_full_iff {M : Type*} [MedialForm M] [Fintype M] :
+    agreement M = .full ↔ ∀ m : M, IndexesSubject m :=
+  CategoryRetention.ofPred_eq_full_iff _
+
+end MedialForm
+
+end Clause.Chaining

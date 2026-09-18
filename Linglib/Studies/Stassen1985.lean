@@ -1,5 +1,5 @@
 import Linglib.Syntax.Comparative
-import Linglib.Syntax.Clause.Chaining
+import Linglib.Data.UD.Features
 import Linglib.Fragments.Japanese.Comparison
 import Linglib.Fragments.Korean.Comparison
 import Linglib.Fragments.Turkish.Comparison
@@ -55,7 +55,7 @@ from a negated conjunction to a comparative are described in the book and not fo
 
 namespace Stassen1985
 
-open Comparative Clause.Chaining
+open Comparative
 
 /-! ### The six comparative types -/
 
