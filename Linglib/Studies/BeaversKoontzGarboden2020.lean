@@ -1,6 +1,6 @@
 import Linglib.Semantics.Root.Defs
 import Linglib.Semantics.ArgumentStructure.Verb
-import Linglib.Semantics.ArgumentStructure.ChangeOfState
+import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
@@ -167,7 +167,7 @@ eventualities as its relation. The hierarchy of the readings and the collapse of
 restitutive reading for result roots follow from the change-of-state entailments by the
 monotonicity of the presupposition. -/
 
-variable {Entity State Event : Type*} (M : ChangeOfStateModel Entity State Event)
+variable {Entity State Event : Type*} (M : EventStructure.Interpretation Entity State Event)
   {ltS : State → State → Prop} {ltE : Event → Event → Prop} {P : Entity → State → Prop}
   {x y : Entity}
 
@@ -195,7 +195,7 @@ theorem againRepetitiveCause_presup_entails_become {w : Event}
     (h : (againRepetitiveCause M ltE P y x).presup w) :
     ∃ w', ltE w' w ∧ ∃ e, M.vBecome P x e :=
   again_presup_mono (Q := fun _ ↦ ∃ e, M.vBecome P x e)
-    (fun _ ↦ ChangeOfStateModel.exists_of_vCause) w h
+    (fun _ ↦ EventStructure.Interpretation.exists_of_vCause) w h
 
 /-- In the lower step of the hierarchy, the presupposition of the repetitive reading over the
 change gives an earlier root state, since a change brings one about. -/
@@ -210,7 +210,7 @@ theorem againRepetitiveCause_presup_entails_state {w : Event}
     (h : (againRepetitiveCause M ltE P y x).presup w) :
     ∃ w', ltE w' w ∧ ∃ e s, M.become s e ∧ P x s :=
   again_presup_mono (Q := fun _ ↦ ∃ e s, M.become s e ∧ P x s)
-    (fun _ ↦ ChangeOfStateModel.exists_of_vCause) w h
+    (fun _ ↦ EventStructure.Interpretation.exists_of_vCause) w h
 
 /-- For a state predicate that entails change, even the restitutive attachment of *again*
 presupposes a change, so result roots never admit a truly restitutive reading. -/
@@ -375,15 +375,15 @@ theorem crack_respectsMannerResultComplementarity :
 /-! ### The entailments of the roots in a model
 
 The kinds of a root are meaning postulates on its state predicate
-(`ChangeOfStateModel.Respects`). In a model that respects the signature of √crack, a cracked
-state arises from a caused change whatever template the root occurs in, while a model that
-respects the signature of √flat may have a flat state that no change gave rise to. -/
+(`EventStructure.Interpretation.Respects`). In an interpretation that respects the signature of
+√crack, a cracked state arises from a caused change whatever template the root occurs in, while
+one that respects the signature of √flat may have a flat state that no change gave rise to. -/
 
 section Model
 
 open ArgumentStructure
 
-variable {Entity State Event : Type*} {M : ChangeOfStateModel Entity State Event}
+variable {Entity State Event : Type*} {M : EventStructure.Interpretation Entity State Event}
   {P : Entity → State → Prop} {Q : Event → Prop} {x : Entity} {s : State}
 
 /-- In a model that respects the signature of √crack, a cracked state arises from a change
@@ -401,13 +401,13 @@ theorem drown_entails_manner (h : M.Respects P Q drown.kinds) (hs : P x s) :
 end Model
 
 /-- A model without changes. -/
-def unchanging : ArgumentStructure.ChangeOfStateModel Unit Unit Unit where
+def unchanging : ArgumentStructure.EventStructure.Interpretation Unit Unit Unit where
   become _ _ := False
   cause _ _ := False
   effector _ _ := False
 
 /-- A model in which every state arises from a caused change. -/
-def changing : ArgumentStructure.ChangeOfStateModel Unit Unit Unit where
+def changing : ArgumentStructure.EventStructure.Interpretation Unit Unit Unit where
   become _ _ := True
   cause _ _ := True
   effector _ _ := True

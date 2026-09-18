@@ -1,24 +1,24 @@
 import Linglib.Semantics.ArgumentStructure.Verb
-import Linglib.Semantics.ArgumentStructure.ChangeOfState
+import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 import Linglib.Fragments.Spanish.Predicates
 
 /-!
 # Koontz-Garboden (2009): Anticausativization
 
 This file formalizes the reflexivization analysis of anticausativization, the derivation of an
-inchoative verb from its causative counterpart as in Spanish *romper* 'break (tr.)' ~
-*romperse* 'break (intr.)'. The reflexive clitic denotes the operator `λℜλx[ℜ(x,x)]`
-([chierchia-2004]), so a derived inchoative is its causative restricted to the diagonal and
-keeps the CAUSE operator. Stated on the library's change-of-state decomposition
-(`ChangeOfStateModel`), the analysis yields the paper's predictions as theorems. The single argument
-of a derived inchoative is the causer of its own change, so a verb whose causer must be an
-agent (*asesinar* 'assassinate') reflexivizes only to a reflexive-type reading, while a verb
+inchoative verb from its causative counterpart as in Spanish *romper* 'break (tr.)' ~ *romperse*
+'break (intr.)'. The reflexive clitic denotes the operator `λℜλx[ℜ(x,x)]` ([chierchia-2004]), so a
+derived inchoative is its causative restricted to the diagonal and keeps the CAUSE operator. Stated
+on the library's interpretations of the event-structure primitives
+(`EventStructure.Interpretation`), the analysis yields the paper's predictions as theorems. The
+single argument of a derived inchoative is the causer of its own change, so a verb whose causer must
+be an agent (*asesinar* 'assassinate') reflexivizes only to a reflexive-type reading, while a verb
 whose causer is an underspecified EFFECTOR ([van-valin-wilkins-1996]; *romper*) also has the
-anticausative reading. The causative does not entail the derived inchoative, although the
-inchoative entails the causative with the undergoer as its own causer. And *por sí solo* 'by
-itself', whose antecedent must be the effector of a causing subevent, is licensed by derived
-inchoatives but not by passives or by the CAUSE-less representation of internally caused
-verbs like *empeorar* 'worsen' ([rappaport-hovav-levin-1998]).
+anticausative reading. The causative does not entail the derived inchoative, although the inchoative
+entails the causative with the undergoer as its own causer. And *por sí solo* 'by itself', whose
+antecedent must be the effector of a causing subevent, is licensed by derived inchoatives but not by
+passives or by the CAUSE-less representation of internally caused verbs like *empeorar* 'worsen'
+([rappaport-hovav-levin-1998]).
 
 The paper's second claim concerns the Monotonicity Hypothesis, that word formation
 operations never remove operators from lexical semantic representations. On the event
@@ -33,7 +33,7 @@ The paper's representations take the change-of-state event as the verb's event a
 existentially close the causing event; `causative` follows that convention, and
 `exists_causative_iff` shows that its existential closure agrees with the library's causative
 head `vCause`, whose event argument is the causing event. Agent entailments are an explicit
-relation on the model, since `ChangeOfStateModel` has only the underspecified `effector`.
+relation on the model, since `EventStructure.Interpretation` has only the underspecified `effector`.
 A Spanish verb's causer specification is derived from the proto-role subject profile the
 fragment states for it ([dowty-1991]): a causer that must be an agent entails volition. The
 reflexive/anticausative syncretism in the survey of [haspelmath-1990] that the paper
@@ -62,7 +62,7 @@ def reflexivize {α β : Type*} (R : α → α → β) : α → β := fun x ↦ 
 section Model
 
 variable {Entity State T : Type*} [LinearOrder T]
-  (M : ArgumentStructure.ChangeOfStateModel Entity State (Event T))
+  (M : ArgumentStructure.EventStructure.Interpretation Entity State (Event T))
   (θ agent : Entity → Event T → Prop) (P : Entity → State → Prop)
 
 /-- A causative change-of-state verb ((10b), (17), (29)): an event `e` in which `x` comes to
@@ -146,7 +146,7 @@ inductive Participant
 /-- In the model where Juan breaks the glass, `eff` says who counts as an effector of the
 causing event, and every event gives rise to the glass's broken state. -/
 def breaking (eff : Participant → Prop) :
-    ArgumentStructure.ChangeOfStateModel Participant Unit (Event ℤ) where
+    ArgumentStructure.EventStructure.Interpretation Participant Unit (Event ℤ) where
   become _ _ := True
   cause _ _ := True
   effector y _ := eff y
@@ -158,11 +158,11 @@ def broken (x : Participant) (_ : Unit) : Prop := x = .vaso
 def juanAgent (y : Participant) (_ : Event ℤ) : Prop := y = .juan
 
 /-- In the first model Juan, not the glass, is the effector. -/
-def breakingByJuan : ArgumentStructure.ChangeOfStateModel Participant Unit (Event ℤ) :=
+def breakingByJuan : ArgumentStructure.EventStructure.Interpretation Participant Unit (Event ℤ) :=
   breaking (· = .juan)
 
 /-- In the second model the glass and Juan are both effectors. -/
-def breakingByBoth : ArgumentStructure.ChangeOfStateModel Participant Unit (Event ℤ) :=
+def breakingByBoth : ArgumentStructure.EventStructure.Interpretation Participant Unit (Event ℤ) :=
   breaking fun _ ↦ True
 
 /-- An event of the models. -/
