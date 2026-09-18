@@ -1,5 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Reflex
+import Linglib.Fragments.Japanese.Coordination
 
 /-!
 # Branan and Erlewine 2023: Anti-pied-piping
@@ -71,20 +72,17 @@ instance : DecidableLT Node := fun a b =>
 (1)–(8): Japanese additive *mo* and Hungarian focus movement in
 all three host–focus configurations. -/
 
-/-- The additive particle *mo*. -/
-def mo : Morphology.Morph := .encl "mo"
-
 /-- (2): Hanako-wa [hon]F*-mo* katta — *mo* on the focused object
 itself. -/
-def moExact : Finset (Reflex Node) := {.morpheme .obj [mo]}
+def moExact : Finset (Reflex Node) := {.morpheme .obj [Japanese.Coordination.mo.morph]}
 
 /-- (4): Hanako-wa [[hon]F-o kai]*-mo* — *mo* on the VP properly
 containing the focused object (Kuroda's pied-piping datum). -/
-def moPiedPiped : Finset (Reflex Node) := {.morpheme .vp [mo]}
+def moPiedPiped : Finset (Reflex Node) := {.morpheme .vp [Japanese.Coordination.mo.morph]}
 
 /-- (8): [[Ame]*-mo* furu]F — sentence focus with *mo* on the
 subject properly contained in it (Nagano's anti-pied-piping datum). -/
-def moAntiPiedPiped : Finset (Reflex Node) := {.morpheme .sbj [mo]}
+def moAntiPiedPiped : Finset (Reflex Node) := {.morpheme .sbj [Japanese.Coordination.mo.morph]}
 
 /-- (1), (3), (7): Hungarian movement of the object DP to the
 immediately preverbal focus position, one reflex serving a focus on
