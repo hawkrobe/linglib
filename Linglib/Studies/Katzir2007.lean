@@ -99,7 +99,7 @@ theorem some_all_equalComplexity :
 
 /-- No item of the substitution source of (25a) contains a conjunction phrase. -/
 theorem source_lacks_conjP :
-    ∀ t ∈ substitutionSource lexicon someSentence, ¬ t.ContainsCat Cat.ConjP :=
+    ∀ t ∈ substitutionSource lexicon someSentence, Cat.ConjP ∉ t.cats :=
   forall_mem_substitutionSource.2 ⟨by decide, by decide⟩
 
 /-- The symmetric alternative is no structural alternative: the operations never introduce

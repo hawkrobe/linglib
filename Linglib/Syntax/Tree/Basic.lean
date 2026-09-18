@@ -1,517 +1,420 @@
-import Mathlib.Data.List.Infix
 import Mathlib.Data.Finset.Basic
-import Mathlib.Algebra.Free
 import Linglib.Core.Order.Branching
 
 /-!
-# Constituency Trees
+# Constituency trees
 
-The **constituency tree and LF interface format** of the Syntax layer:
-one tree type, parameterized by node labels (`C`) and terminal content
-(`W`), shared by the frameworks whose structures *are* constituency
-trees — not by all of syntax. The library has two structural hubs:
+A **constituency tree** over a category type `C` and a word type `W`: a terminal carries a
+category and a word, an internal node a category and an ordered list of daughters, and the
+two nodes of Heim and Kratzer's trace theory of movement, an indexed trace and an indexed
+binder over a body, carry a category each. Type-driven interpretation reads the tree with
+`C = Unit`; structural operations on parse trees read it with a category system such as
+`Syntax.Cat`.
 
-1. **`Syntax.Tree` (this file)** — for constituency: H&K composition
-   reads it (LF), Katzir structural operations transform it (PF),
-   Minimalist derivations project *down* to it at Spell-Out.
-2. **`Core.Order.TreeOrder` + the B&P command library** — the genuinely
-   framework-agnostic layer, where non-constituency frameworks connect
-   via their own node types (HPSG signs, DG word-indices, Minimalist
-   syntactic objects), each with its own dominance order.
+## Main declarations
 
-Frameworks whose structures are **not** trees do not and cannot
-instantiate this type: CCG derivations are proof trees (nodes are rule
-applications); HPSG signs are reentrant feature structures (structure
-sharing has no tree representation); dependency structures are
-head-indexed graphs; multidominance objects are nonplanar (which is why
-`Syntax/Minimalist/` keeps its own `SyntacticObject` and only projects
-to `Tree` at the interface).
+* `Syntax.Tree`: the tree, with `leaf`, `bin`, `tr` and `binder` building category-free trees.
+* `Syntax.Tree.fold`: the catamorphism; `map`, `numNodes`, `terminals`, `yield`, `cats`,
+  `freeIndices` and `leafSubst` are its specializations, each reducing at every constructor.
+* `Syntax.Tree.rec'`: structural induction with a membership hypothesis at a node.
+* `Syntax.Tree.subtrees`: the subtrees in pre-order.
+* `Syntax.Tree.freeIndices` and `Syntax.Tree.Closed`: the indices of the traces no binder
+  binds, and the trees with none.
+* The `Core.Order.Branching` instance, through which a tree takes Gorn addresses, the
+  dominance order on its positions and the command relations.
 
-## `Syntax.Tree C W`
+## Implementation notes
 
-N-ary branching with categories on every node. Read by both interfaces:
-- **Compositional interpretation** (LF): `interp`
-  in `Semantics/Composition/Tree.lean` — type-driven, ignores categories
-- **Structural operations** (PF): [katzir-2007] `StructOp` (substitution,
-  deletion, contraction) in `Semantics/Alternatives/Structural.lean` —
-  category-aware
+Daughters are a `List`, so a node is binary or n-ary by its list and sibling order is linear
+precedence. Only the trace theory of movement is expressible: a copy or a multidominance
+representation is not a tree over these constructors. That each binder binds a trace of its
+index is a property of a tree, not a guarantee of the type, and interpretation does not read
+the category on a binder. `deriving DecidableEq` does not fire through the nested `List`, so
+the instance is built by mutual recursion with the daughter list.
 
-The generic core is `terminal`/`node` with the pluggable category
-parameter `C` (UD tags, feature bundles, `Unit` for unlabeled, ...).
-The `trace` and `bind` constructors encode the **trace-theoretic / QR**
-analysis of movement specifically ([heim-kratzer-1998] Ch. 5): indexed
-traces plus λ-binders. Rival representations of movement are *not*
-expressible on this type — copy theory needs a side-car chain relation
-over `TreePath`s, and multidominance needs the nonplanar
-`SyntacticObject` (`Syntax/Minimalist/Multidominance.lean`). Frameworks
-without movement simply never construct these cases. Binder–trace
-well-formedness (each `bind n` binding a matching `trace n`) is a
-predicate to be imposed, not a type guarantee; `bind`'s category label
-is recorded for uniformity but is not consulted by `interp` or
-`StructOp`.
+## References
 
-### Instantiations
-
-- `Tree Unit String` — category-free, for H&K composition. Use convenience
-  constructors `.leaf`, `.bin`, `.un`, `.tr`, `.binder`.
-- `Tree Cat String` — UD-grounded categories (`Syntax/Tree/Cat.lean`),
-  for Katzir structural alternatives.
-- `Tree Unit LIToken` — bare phrase structure projected from Minimalist
-  syntax at Spell-Out via `FreeMagma.toTree` (categories inside the
-  token, not on nodes).
-
-## Positions and dominance
-
-`Tree` is an instance of `Core.Order.Branching` (the rose-tree
-interface), so all position machinery is inherited rather than
-re-stipulated: Gorn addresses (`Core.Order.TreePath`), the dominance
-order with mathlib's rooted-tree stack (root `⊥`, parent `Order.pred`,
-least common ancestor `⊓`), and the forgetful map
-`Core.Order.Branching.toTreeOrder` into the B&P command-relation
-library (`Linglib.Core.Order.Command`, [barker-pullum-1990]).
+* [heim-kratzer-1998]
+* [katzir-2007]
+* [barker-pullum-1990]
 -/
 
 namespace Syntax
 
-/-! ### The tree type -/
-
-/-- Constituency tree, parameterized by node label type `C` and terminal
-word type `W`.
-
-- `terminal c w` — leaf carrying category `c` and word `w`
-- `node c cs` — internal node with category `c` and children `cs`
-- `trace n c` — movement trace with index `n` and category `c`
-- `bind n c body` — λ-abstraction with index `n`, category `c`, scope `body`
-
-The `node` constructor takes a `List` of children, subsuming both
-binary branching (for Heim & Kratzer composition) and n-ary structure
-(for Katzir's deletion operation). Binary nodes are `node c [l, r]`.
-
-`trace` and `bind` support Quantifier Raising and variable binding.
-Frameworks without movement (CCG, HPSG) simply never construct these.
-
-For category-free trees (`C = Unit`), use the convenience constructors
-`leaf`, `bin`, `un`, `tr`, `binder` which hide the `Unit` parameter. -/
-inductive Tree (C : Type*) (W : Type*) where
+/-- A constituency tree: `terminal c w` is the word `w` under category `c`, `node c cs` the
+category `c` over daughters `cs`, `trace n c` a trace of index `n` and `bind n c t` a binder
+of index `n` over `t`. -/
+inductive Tree (C W : Type*) where
   | terminal : C → W → Tree C W
-  | node     : C → List (Tree C W) → Tree C W
-  | trace    : Nat → C → Tree C W
-  | bind     : Nat → C → Tree C W → Tree C W
+  | node : C → List (Tree C W) → Tree C W
+  | trace : ℕ → C → Tree C W
+  | bind : ℕ → C → Tree C W → Tree C W
   deriving Repr
 
 namespace Tree
 
 variable {C W : Type*}
 
--- ── Convenience constructors for C = Unit ─────────────────────────
--- Category-free trees (for H&K composition, Minimalism, etc.) use
--- these to avoid writing `()` everywhere.
+/-! ### Trees without categories -/
 
 @[match_pattern] abbrev leaf (w : W) : Tree Unit W := .terminal () w
-@[match_pattern] abbrev un (t : Tree Unit W) : Tree Unit W := .node () (t :: [])
-@[match_pattern] abbrev bin (t1 t2 : Tree Unit W) : Tree Unit W := .node () (t1 :: t2 :: [])
-@[match_pattern] abbrev tr (n : Nat) : Tree Unit W := .trace n ()
-@[match_pattern] abbrev binder (n : Nat) (body : Tree Unit W) : Tree Unit W := .bind n () body
+@[match_pattern] abbrev bin (t₁ t₂ : Tree Unit W) : Tree Unit W := .node () [t₁, t₂]
+@[match_pattern] abbrev tr (n : ℕ) : Tree Unit W := .trace n ()
+@[match_pattern] abbrev binder (n : ℕ) (t : Tree Unit W) : Tree Unit W := .bind n () t
 
-/-! ### Basic accessors -/
+/-- The category at the root. -/
+@[simp] def cat : Tree C W → C
+  | terminal c _ => c
+  | node c _ => c
+  | trace _ c => c
+  | bind _ c _ => c
 
-/-- Category label of the root node. Total: every constructor carries
-a category (including `bind`, where it labels the result of PA). -/
-def cat : Tree C W → C
-  | .terminal c _ => c
-  | .node c _ => c
-  | .trace _ c => c
-  | .bind _ c _ => c
+/-! ### Decidable equality -/
 
-/-! ### Decidable equality
-
-`DecidableEq` is the single source of truth for tree equality; `BEq` and
-`LawfulBEq (Tree C W)` come for free (and coherently) from the global
-`instBEqOfDecidableEq`. A hand-rolled `beq`/`BEq` instance used to shadow
-this — it left `LawfulBEq (Tree C W)` unsynthesizable and was a second,
-unproven-coherent notion of tree equality, so it was removed. -/
-
--- ── Manual `decEq` (nested-inductive `deriving DecidableEq` fails: Lean
--- core's `mkDecEq` bails on nested inductives, `isNested → return false`) ──
+section DecidableEq
+variable [DecidableEq C] [DecidableEq W]
 
 mutual
-  /-- Decidable equality on `Tree C W`, mutually recursive with the
-  list-of-trees case. Required because `deriving DecidableEq` does not
-  handle the nested `List (Tree C W)` in `node`. -/
-  def decEq [DecidableEq C] [DecidableEq W] :
-      (a b : Tree C W) → Decidable (a = b)
-    | .terminal c₁ w₁, .terminal c₂ w₂ =>
-      if hc : c₁ = c₂ then
-        if hw : w₁ = w₂ then isTrue (by rw [hc, hw])
-        else isFalse fun h => by cases h; exact hw rfl
-      else isFalse fun h => by cases h; exact hc rfl
-    | .node c₁ cs₁, .node c₂ cs₂ =>
-      if hc : c₁ = c₂ then
-        match decEqList cs₁ cs₂ with
-        | isTrue hcs => isTrue (by rw [hc, hcs])
-        | isFalse hcs => isFalse fun h => by cases h; exact hcs rfl
-      else isFalse fun h => by cases h; exact hc rfl
-    | .trace n₁ c₁, .trace n₂ c₂ =>
-      if hn : n₁ = n₂ then
-        if hc : c₁ = c₂ then isTrue (by rw [hn, hc])
-        else isFalse fun h => by cases h; exact hc rfl
-      else isFalse fun h => by cases h; exact hn rfl
-    | .bind n₁ c₁ b₁, .bind n₂ c₂ b₂ =>
-      if hn : n₁ = n₂ then
-        if hc : c₁ = c₂ then
-          match decEq b₁ b₂ with
-          | isTrue hb => isTrue (by rw [hn, hc, hb])
-          | isFalse hb => isFalse fun h => by cases h; exact hb rfl
-        else isFalse fun h => by cases h; exact hc rfl
-      else isFalse fun h => by cases h; exact hn rfl
-    | .terminal _ _, .node _ _ => isFalse fun h => by cases h
-    | .terminal _ _, .trace _ _ => isFalse fun h => by cases h
-    | .terminal _ _, .bind _ _ _ => isFalse fun h => by cases h
-    | .node _ _, .terminal _ _ => isFalse fun h => by cases h
-    | .node _ _, .trace _ _ => isFalse fun h => by cases h
-    | .node _ _, .bind _ _ _ => isFalse fun h => by cases h
-    | .trace _ _, .terminal _ _ => isFalse fun h => by cases h
-    | .trace _ _, .node _ _ => isFalse fun h => by cases h
-    | .trace _ _, .bind _ _ _ => isFalse fun h => by cases h
-    | .bind _ _ _, .terminal _ _ => isFalse fun h => by cases h
-    | .bind _ _ _, .node _ _ => isFalse fun h => by cases h
-    | .bind _ _ _, .trace _ _ => isFalse fun h => by cases h
-
-  /-- Helper: decidable equality for list of trees. -/
-  def decEqList [DecidableEq C] [DecidableEq W] :
-      (as bs : List (Tree C W)) → Decidable (as = bs)
-    | [], [] => isTrue rfl
-    | [], _ :: _ => isFalse fun h => by cases h
-    | _ :: _, [] => isFalse fun h => by cases h
-    | a :: as, b :: bs =>
-      match decEq a b, decEqList as bs with
-      | isTrue ha, isTrue has => isTrue (by rw [ha, has])
-      | isFalse ha, _ => isFalse fun h => by cases h; exact ha rfl
-      | _, isFalse has => isFalse fun h => by cases h; exact has rfl
+/-- Decidable equality on trees, mutually with the daughter list. -/
+protected def decEq : (t s : Tree C W) → Decidable (t = s)
+  | terminal c w, terminal c' w' => decidable_of_iff (c = c' ∧ w = w') (by simp)
+  | node c cs, node c' cs' =>
+    match Tree.decEqList cs cs' with
+    | isTrue h => decidable_of_iff (c = c') (by simp [h])
+    | isFalse h => isFalse (by simp [h])
+  | trace n c, trace n' c' => decidable_of_iff (n = n' ∧ c = c') (by simp)
+  | bind n c t, bind n' c' t' =>
+    match Tree.decEq t t' with
+    | isTrue h => decidable_of_iff (n = n' ∧ c = c') (by simp [h])
+    | isFalse h => isFalse (by simp [h])
+  | terminal _ _, node _ _ | terminal _ _, trace _ _ | terminal _ _, bind _ _ _
+  | node _ _, terminal _ _ | node _ _, trace _ _ | node _ _, bind _ _ _
+  | trace _ _, terminal _ _ | trace _ _, node _ _ | trace _ _, bind _ _ _
+  | bind _ _ _, terminal _ _ | bind _ _ _, node _ _ | bind _ _ _, trace _ _ =>
+    isFalse (by simp)
+/-- Decidable equality on daughter lists. -/
+protected def decEqList : (ts ss : List (Tree C W)) → Decidable (ts = ss)
+  | [], [] => isTrue rfl
+  | [], _ :: _ | _ :: _, [] => isFalse (by simp)
+  | t :: ts, s :: ss =>
+    match Tree.decEq t s, Tree.decEqList ts ss with
+    | isTrue h, isTrue hs => isTrue (by rw [h, hs])
+    | isFalse h, _ => isFalse (by simp [h])
+    | _, isFalse hs => isFalse (by simp [hs])
 end
 
-instance instDecidableEq [DecidableEq C] [DecidableEq W] : DecidableEq (Tree C W) := decEq
+instance instDecidableEq : DecidableEq (Tree C W) := Tree.decEq
 
-/-! ### Size -/
+end DecidableEq
 
-/-- Number of nodes in the tree. -/
-def size : Tree C W → Nat
-  | .terminal _ _ => 1
-  | .node _ cs => 1 + sizeList cs
-  | .trace _ _ => 1
-  | .bind _ _ body => 1 + size body
-where
-  sizeList : List (Tree C W) → Nat
-  | [] => 0
-  | t :: ts => size t + sizeList ts
+/-! ### The recursion principle -/
 
-/-- Number of word-bearing terminals (leaves) in the tree.
-    Traces and binders contribute 0; internal nodes recurse. -/
-def leafCount : Tree C W → Nat
-  | .terminal _ _ => 1
-  | .node _ cs => leafCountList cs
-  | .trace _ _ => 0
-  | .bind _ _ body => leafCount body
-where
-  leafCountList : List (Tree C W) → Nat
-  | [] => 0
-  | t :: ts => leafCount t + leafCountList ts
+/-- A daughter is smaller than its node in the auto-generated `SizeOf`. -/
+theorem sizeOf_lt_of_mem [SizeOf C] [SizeOf W] {c : C} {cs : List (Tree C W)} {t : Tree C W}
+    (h : t ∈ cs) : sizeOf t < sizeOf (node c cs) := by
+  have := List.sizeOf_lt_of_mem h
+  simp only [node.sizeOf_spec]
+  omega
 
-/-! ### Relabelling leaves -/
+/-- **Structural induction** for `Tree`: the node case has the motive at every daughter. -/
+@[elab_as_elim, induction_eliminator]
+def rec' {motive : Tree C W → Sort*} (terminal : ∀ c w, motive (terminal c w))
+    (node : ∀ c cs, (∀ t ∈ cs, motive t) → motive (node c cs))
+    (trace : ∀ n c, motive (trace n c))
+    (bind : ∀ n c t, motive t → motive (bind n c t)) : ∀ t, motive t
+  | .terminal c w => terminal c w
+  | .node c cs => node c cs fun t _ht => rec' terminal node trace bind t
+  | .trace n c => trace n c
+  | .bind n c t => bind n c t (rec' terminal node trace bind t)
+termination_by t => sizeOf t
+decreasing_by
+  · exact sizeOf_lt_of_mem _ht
+  · simp only [bind.sizeOf_spec]; omega
+
+/-! ### Catamorphism
+
+`fold` replaces each constructor by an operation on the folded daughters; the structural
+operations below are its specializations, and their reduction lemmas follow from `fold_node`.
+-/
+
+section Fold
+
+variable {β : Type*} (terminal : C → W → β) (node : C → List β → β)
+  (trace : ℕ → C → β) (bind : ℕ → C → β → β)
+
+mutual
+/-- Replace each constructor by the corresponding operation. -/
+def fold : Tree C W → β
+  | .terminal c w => terminal c w
+  | .node c cs => node c (foldList cs)
+  | .trace n c => trace n c
+  | .bind n c t => bind n c (fold t)
+/-- `fold` across a daughter list. -/
+def foldList : List (Tree C W) → List β
+  | [] => []
+  | t :: ts => fold t :: foldList ts
+end
+
+theorem foldList_eq (cs : List (Tree C W)) :
+    foldList terminal node trace bind cs = cs.map (fold terminal node trace bind) := by
+  induction cs with
+  | nil => rfl
+  | cons t ts ih => rw [foldList, ih, List.map_cons]
+
+@[simp] theorem fold_terminal (c : C) (w : W) :
+    fold terminal node trace bind (.terminal c w) = terminal c w := rfl
+
+@[simp] theorem fold_node (c : C) (cs : List (Tree C W)) :
+    fold terminal node trace bind (.node c cs)
+      = node c (cs.map (fold terminal node trace bind)) := by
+  rw [fold, foldList_eq]
+
+@[simp] theorem fold_trace (n : ℕ) (c : C) :
+    fold terminal node trace bind (.trace n c) = trace n c := rfl
+
+@[simp] theorem fold_bind (n : ℕ) (c : C) (t : Tree C W) :
+    fold terminal node trace bind (.bind n c t) = bind n c (fold terminal node trace bind t) :=
+  rfl
+
+end Fold
+
+/-! ### Relabelling the words -/
 
 section Map
 
 variable {W' W'' : Type*}
 
-/-- Relabel the leaves of a tree, keeping its shape. -/
-def map (f : W → W') : Tree C W → Tree C W'
-  | .terminal c w => .terminal c (f w)
-  | .node c cs => .node c (mapList cs)
-  | .trace n c => .trace n c
-  | .bind n c body => .bind n c (map f body)
-where
-  mapList : List (Tree C W) → List (Tree C W')
-  | [] => []
-  | t :: ts => map f t :: mapList ts
-
-theorem map.mapList_eq (f : W → W') (cs : List (Tree C W)) : map.mapList f cs = cs.map (map f) := by
-  induction cs with
-  | nil => rfl
-  | cons t ts ih => rw [map.mapList, ih, List.map_cons]
+/-- Relabel the words, keeping the shape. -/
+def map (f : W → W') : Tree C W → Tree C W' :=
+  fold (fun c w => .terminal c (f w)) .node .trace .bind
 
 @[simp] theorem map_terminal (f : W → W') (c : C) (w : W) :
     map f (.terminal c w) = .terminal c (f w) := rfl
 
 @[simp] theorem map_node (f : W → W') (c : C) (cs : List (Tree C W)) :
-    map f (.node c cs) = .node c (cs.map (map f)) := by rw [map, map.mapList_eq]
+    map f (.node c cs) = .node c (cs.map (map f)) := by
+  simp only [map, fold_node]
 
 @[simp] theorem map_trace (f : W → W') (n : ℕ) (c : C) : map f (.trace n c) = .trace n c := rfl
 
-@[simp] theorem map_bind (f : W → W') (n : ℕ) (c : C) (body : Tree C W) :
-    map f (.bind n c body) = .bind n c (map f body) := rfl
+@[simp] theorem map_bind (f : W → W') (n : ℕ) (c : C) (t : Tree C W) :
+    map f (.bind n c t) = .bind n c (map f t) := rfl
+
+@[simp] theorem map_id (t : Tree C W) : t.map id = t := by
+  induction t with
+  | node c cs ih => rw [map_node, List.map_congr_left ih, List.map_id']
+  | bind n c t ih => rw [map_bind, ih]
+  | _ => rfl
+
+@[simp] theorem map_map (g : W' → W'') (f : W → W') (t : Tree C W) :
+    (t.map f).map g = t.map (g ∘ f) := by
+  induction t with
+  | node c cs ih => simp only [map_node, List.map_map]; exact congrArg _ (List.map_congr_left ih)
+  | bind n c t ih => rw [map_bind, map_bind, map_bind, ih]
+  | _ => rfl
+
+@[simp] theorem cat_map (f : W → W') (t : Tree C W) : (t.map f).cat = t.cat := by
+  cases t <;> rfl
 
 end Map
 
-/-! ### Induction principle -/
+/-! ### Counting -/
 
-/-- Membership-based recursor/induction principle for `Tree`. The default
-`induction` tactic refuses nested inductives, and the raw two-motive
-`Tree.rec` forces a parallel `List` motive; this principle hands the
-`node` case the hypothesis proofs actually want — `∀ t ∈ cs, motive t` —
-so structural inductions read directly. With `@[elab_as_elim]`, used as
-`induction t using Tree.recAux with | terminal … | node c cs ih | trace … | bind …`. -/
-@[elab_as_elim]
-def recAux {motive : Tree C W → Sort*}
-    (terminal : ∀ c w, motive (.terminal c w))
-    (node : ∀ c cs, (∀ t ∈ cs, motive t) → motive (.node c cs))
-    (trace : ∀ n c, motive (.trace n c))
-    (bind : ∀ n c b, motive b → motive (.bind n c b)) : ∀ t, motive t
-  | .terminal c w => terminal c w
-  | .node c cs    => node c cs (fun t _ => recAux terminal node trace bind t)
-  | .trace n c    => trace n c
-  | .bind n c b   => bind n c b (recAux terminal node trace bind b)
-  termination_by t => sizeOf t
-  decreasing_by
-    · rename_i ht; have := List.sizeOf_lt_of_mem ht
-      simp only [Tree.node.sizeOf_spec]; omega
-    · simp only [Tree.bind.sizeOf_spec]; omega
+/-- The number of nodes. -/
+def numNodes : Tree C W → ℕ :=
+  fold (fun _ _ => 1) (fun _ ns => ns.sum + 1) (fun _ _ => 1) fun _ _ n => n + 1
 
-@[simp] theorem map_id (t : Tree C W) : t.map id = t := by
-  induction t using recAux with
-  | node c cs ih => rw [map_node, List.map_congr_left ih, List.map_id']
-  | bind n c body ih => rw [map_bind, ih]
-  | _ => rfl
+@[simp] theorem numNodes_terminal (c : C) (w : W) : (terminal c w).numNodes = 1 := rfl
 
-@[simp] theorem map_map {W' W'' : Type*} (g : W' → W'') (f : W → W') (t : Tree C W) :
-    (t.map f).map g = t.map (g ∘ f) := by
-  induction t using recAux with
-  | node c cs ih => simp only [map_node, List.map_map]; exact congrArg _ (List.map_congr_left ih)
-  | bind n c body ih => rw [map_bind, map_bind, map_bind, ih]
-  | _ => rfl
+@[simp] theorem numNodes_node (c : C) (cs : List (Tree C W)) :
+    (node c cs).numNodes = (cs.map numNodes).sum + 1 := by
+  simp only [numNodes, fold_node]
 
-/-! ### Free variables
+@[simp] theorem numNodes_trace (n : ℕ) (c : C) : (trace n c : Tree C W).numNodes = 1 := rfl
 
-A trace is free in a tree when no binder with its index dominates it. That is the syntactic
-side of [heim-kratzer-1998]'s semantic notion, and by their characterization of binding, an
-occurrence is bound exactly when a co-indexed binder c-commands it with no closer co-indexed
-binder between, the two coincide. -/
+@[simp] theorem numNodes_bind (n : ℕ) (c : C) (t : Tree C W) :
+    (bind n c t).numNodes = t.numNodes + 1 := rfl
 
-/-- The indices of the traces free in a tree, every trace index less those a dominating binder
-with the same index binds. -/
-def freeIndices : Tree C W → Finset ℕ
-  | .terminal _ _ => ∅
-  | .node _ cs => freeIndicesList cs
-  | .trace n _ => {n}
-  | .bind n _ body => (freeIndices body).erase n
-where
-  freeIndicesList : List (Tree C W) → Finset ℕ
-  | [] => ∅
-  | t :: ts => freeIndices t ∪ freeIndicesList ts
+/-! ### The frontier -/
 
-@[simp] theorem freeIndices_terminal (c : C) (w : W) : (terminal c w).freeIndices = ∅ := rfl
-@[simp] theorem freeIndices_trace (n : ℕ) (c : C) : (trace n c : Tree C W).freeIndices = {n} := rfl
-@[simp] theorem freeIndices_bind (n : ℕ) (c : C) (b : Tree C W) :
-    (bind n c b).freeIndices = b.freeIndices.erase n := rfl
-@[simp] theorem freeIndices_node (c : C) (cs : List (Tree C W)) :
-    (node c cs).freeIndices = freeIndices.freeIndicesList cs := rfl
+/-- The terminals, left to right, each with its category. -/
+def terminals : Tree C W → List (C × W) :=
+  fold (fun c w => [(c, w)]) (fun _ => List.flatten) (fun _ _ => []) fun _ _ ws => ws
 
-theorem mem_freeIndicesList {i : ℕ} {cs : List (Tree C W)} :
-    i ∈ freeIndices.freeIndicesList cs ↔ ∃ t ∈ cs, i ∈ t.freeIndices := by
-  induction cs with
-  | nil => simp [freeIndices.freeIndicesList]
-  | cons t ts ih => simp [freeIndices.freeIndicesList, ih]
+/-- The yield: the words at the terminals, left to right. -/
+def yield (t : Tree C W) : List W := t.terminals.map Prod.snd
 
-/-- A tree is closed when no trace is free in it. -/
-def Closed (t : Tree C W) : Prop := t.freeIndices = ∅
+@[simp] theorem terminals_terminal (c : C) (w : W) : (terminal c w).terminals = [(c, w)] := rfl
 
-/-! ### Subtrees -/
+@[simp] theorem terminals_node (c : C) (cs : List (Tree C W)) :
+    (node c cs).terminals = cs.flatMap terminals := by
+  simp only [terminals, fold_node, List.flatMap_def]
 
-/-- All subtrees including self (pre-order traversal). -/
+@[simp] theorem terminals_trace (n : ℕ) (c : C) : (trace n c : Tree C W).terminals = [] := rfl
+
+@[simp] theorem terminals_bind (n : ℕ) (c : C) (t : Tree C W) :
+    (bind n c t).terminals = t.terminals := rfl
+
+@[simp] theorem yield_terminal (c : C) (w : W) : (terminal c w).yield = [w] := rfl
+
+@[simp] theorem yield_node (c : C) (cs : List (Tree C W)) :
+    (node c cs).yield = cs.flatMap yield := by
+  simp only [yield, terminals_node, List.map_flatMap]; rfl
+
+@[simp] theorem yield_trace (n : ℕ) (c : C) : (trace n c : Tree C W).yield = [] := rfl
+
+@[simp] theorem yield_bind (n : ℕ) (c : C) (t : Tree C W) : (bind n c t).yield = t.yield := rfl
+
+/-! ### Categories and subtrees -/
+
+/-- The categories at the nodes, in pre-order. -/
+def cats : Tree C W → List C :=
+  fold (fun c _ => [c]) (fun c css => c :: css.flatten) (fun _ c => [c]) fun _ c cs => c :: cs
+
+@[simp] theorem cats_terminal (c : C) (w : W) : (terminal c w).cats = [c] := rfl
+
+@[simp] theorem cats_node (c : C) (cs : List (Tree C W)) :
+    (node c cs).cats = c :: cs.flatMap cats := by
+  simp only [cats, fold_node, List.flatMap_def]
+
+@[simp] theorem cats_trace (n : ℕ) (c : C) : (trace n c : Tree C W).cats = [c] := rfl
+
+@[simp] theorem cats_bind (n : ℕ) (c : C) (t : Tree C W) : (bind n c t).cats = c :: t.cats := rfl
+
+theorem mem_cats_node {c' c : C} {cs : List (Tree C W)} :
+    c' ∈ (node c cs).cats ↔ c' = c ∨ ∃ t ∈ cs, c' ∈ t.cats := by
+  simp
+
+theorem mem_cats_bind {c' : C} {n : ℕ} {c : C} {t : Tree C W} :
+    c' ∈ (bind n c t).cats ↔ c' = c ∨ c' ∈ t.cats := by
+  simp
+
+mutual
+/-- The subtrees, the tree itself first, in pre-order. -/
 def subtrees : Tree C W → List (Tree C W)
   | t@(.terminal _ _) => [t]
   | t@(.node _ cs) => t :: subtreesList cs
   | t@(.trace _ _) => [t]
-  | t@(.bind _ _ body) => t :: subtrees body
-where
-  subtreesList : List (Tree C W) → List (Tree C W)
+  | t@(.bind _ _ s) => t :: subtrees s
+/-- `subtrees` across a daughter list. -/
+def subtreesList : List (Tree C W) → List (Tree C W)
   | [] => []
   | t :: ts => subtrees t ++ subtreesList ts
+end
 
-theorem subtreesList_eq_flatMap (cs : List (Tree C W)) :
-    subtrees.subtreesList cs = cs.flatMap subtrees := by
+theorem subtreesList_eq (cs : List (Tree C W)) : subtreesList cs = cs.flatMap subtrees := by
   induction cs with
   | nil => rfl
-  | cons t ts ih => simp [subtrees.subtreesList, ih, List.flatMap_cons]
+  | cons t ts ih => rw [subtreesList, ih, List.flatMap_cons]
 
-theorem subtrees_node (cat : C) (cs : List (Tree C W)) :
-    subtrees (.node cat cs) = .node cat cs :: cs.flatMap subtrees := by
-  rw [subtrees, subtreesList_eq_flatMap]
+@[simp] theorem subtrees_terminal (c : C) (w : W) : (terminal c w).subtrees = [terminal c w] :=
+  rfl
 
-/-! ### Category queries -/
+@[simp] theorem subtrees_node (c : C) (cs : List (Tree C W)) :
+    (node c cs).subtrees = node c cs :: cs.flatMap subtrees := by
+  rw [subtrees, subtreesList_eq]
 
-/-- `ContainsCat target t` holds when category `target` appears on some
-subtree of `t`. A `Prop` predicate (with a kernel-reducible `Decidable`
-instance from `List` membership, so `decide` closes concrete goals) over
-the file's own structurally-recursive `subtrees` — not a `Bool` function. -/
-def ContainsCat [DecidableEq C] (target : C) (t : Tree C W) : Prop :=
-  target ∈ (subtrees t).map cat
+@[simp] theorem subtrees_trace (n : ℕ) (c : C) : (trace n c : Tree C W).subtrees = [trace n c] :=
+  rfl
 
-instance [DecidableEq C] (target : C) (t : Tree C W) :
-    Decidable (ContainsCat target t) :=
-  inferInstanceAs (Decidable (_ ∈ _))
+@[simp] theorem subtrees_bind (n : ℕ) (c : C) (t : Tree C W) :
+    (bind n c t).subtrees = bind n c t :: t.subtrees := rfl
 
-/-- `ContainsCat` at a node: it is the node's own category, or appears in
-some child. -/
-theorem containsCat_node_iff [DecidableEq C] (target cat : C)
-    (cs : List (Tree C W)) :
-    ContainsCat target (.node cat cs) ↔
-      target = cat ∨ ∃ t ∈ cs, ContainsCat target t := by
-  simp only [ContainsCat, subtrees_node, List.map_cons, List.mem_cons, List.mem_map,
-    List.mem_flatMap, Tree.cat]
-  constructor
-  · rintro (h | ⟨s, ⟨t, ht, hts⟩, rfl⟩)
-    · exact Or.inl h
-    · exact Or.inr ⟨t, ht, s, hts, rfl⟩
-  · rintro (rfl | ⟨t, ht, s, hs, rfl⟩)
-    · exact Or.inl rfl
-    · exact Or.inr ⟨s, ⟨t, ht, hs⟩, rfl⟩
+theorem self_mem_subtrees (t : Tree C W) : t ∈ t.subtrees := by
+  cases t <;> simp
 
-/-- `ContainsCat` at a binder: the binder's category, or inside the body. -/
-theorem containsCat_bind_iff [DecidableEq C] (target c : C) (n : Nat)
-    (body : Tree C W) :
-    ContainsCat target (.bind n c body) ↔ target = c ∨ ContainsCat target body := by
-  simp only [ContainsCat, subtrees, List.map_cons, List.mem_cons, Tree.cat]
+/-- The categories are those at the roots of the subtrees. -/
+theorem map_cat_subtrees (t : Tree C W) : t.subtrees.map cat = t.cats := by
+  induction t with
+  | node c cs ih =>
+    simp only [subtrees_node, List.map_cons, cat, cats_node, List.flatMap_def, List.map_flatten,
+      List.map_map]
+    exact congrArg _ (congrArg _ (List.map_congr_left ih))
+  | bind n c t ih => rw [subtrees_bind, List.map_cons, cat, ih, cats_bind]
+  | _ => rfl
 
-/-! ### Leaf substitution -/
+/-! ### Free traces -/
 
-/-- Substitute all terminals of category `c` carrying word `target`
-with `replacement`. This is the most common structural operation:
-replacing one scalar item with another of the same category. -/
-def leafSubst [BEq C] [BEq W] (target replacement : W) (c : C) :
-    Tree C W → Tree C W
-  | .terminal c' w =>
-    if c == c' && w == target then .terminal c' replacement
-    else .terminal c' w
-  | .node c' cs => .node c' (leafSubstList target replacement c cs)
-  | .trace n c' => .trace n c'
-  | .bind n c' body => .bind n c' (leafSubst target replacement c body)
-where
-  leafSubstList (target replacement : W) (c : C) :
-      List (Tree C W) → List (Tree C W)
-  | [] => []
-  | t :: ts => leafSubst target replacement c t ::
-               leafSubstList target replacement c ts
+/-- The indices of the traces free in a tree: every trace index, less those a dominating binder
+of the same index binds. -/
+def freeIndices : Tree C W → Finset ℕ :=
+  fold (fun _ _ => ∅) (fun _ => List.foldr (· ∪ ·) ∅) (fun n _ => {n}) fun n _ s => s.erase n
 
-end Tree
+@[simp] theorem freeIndices_terminal (c : C) (w : W) : (terminal c w).freeIndices = ∅ := rfl
 
-/-! ### `Branching` instance: positions, dominance, command relations
+theorem freeIndices_node (c : C) (cs : List (Tree C W)) :
+    (node c cs).freeIndices = (cs.map freeIndices).foldr (· ∪ ·) ∅ := by
+  simp only [freeIndices, fold_node]
 
-The path machinery (Gorn addresses, `Core.Order.TreePath`, the
-dominance order, the B&P command-relation bridge) is generic over
-`Core.Order.Branching`; `Tree` participates through the instance
-below. `Branching.subtreeAt` at this instance behaves as before: for
-`node c cs` the next index selects `cs[i]?`; for `bind` only index `0`
-is valid (binders have a single body); terminals and traces have no
-children. Positions inherit mathlib's rooted-tree order stack from
-`TreePath`: root `⊥`, parent `Order.pred`, least common ancestor `⊓`. -/
+@[simp] theorem freeIndices_trace (n : ℕ) (c : C) : (trace n c : Tree C W).freeIndices = {n} :=
+  rfl
 
-instance {C W : Type*} : Core.Order.Branching (Tree C W) where
+@[simp] theorem freeIndices_bind (n : ℕ) (c : C) (t : Tree C W) :
+    (bind n c t).freeIndices = t.freeIndices.erase n := rfl
+
+@[simp] theorem mem_freeIndices_node {i : ℕ} {c : C} {cs : List (Tree C W)} :
+    i ∈ (node c cs).freeIndices ↔ ∃ t ∈ cs, i ∈ t.freeIndices := by
+  rw [freeIndices_node]
+  induction cs with
+  | nil => simp
+  | cons t ts ih => simp [ih]
+
+/-- A tree is closed when no trace is free in it. -/
+def Closed (t : Tree C W) : Prop := t.freeIndices = ∅
+
+instance (t : Tree C W) : Decidable t.Closed := inferInstanceAs (Decidable (_ = _))
+
+/-! ### Word substitution -/
+
+/-- Replace the word `w` by `w'` at every terminal of category `c`. -/
+def leafSubst [DecidableEq C] [DecidableEq W] (w w' : W) (c : C) : Tree C W → Tree C W :=
+  fold (fun c' v => .terminal c' (if c = c' ∧ v = w then w' else v)) .node .trace .bind
+
+section LeafSubst
+
+variable [DecidableEq C] [DecidableEq W] (w w' : W) (c : C)
+
+@[simp] theorem leafSubst_terminal (c' : C) (v : W) :
+    leafSubst w w' c (.terminal c' v) = .terminal c' (if c = c' ∧ v = w then w' else v) := rfl
+
+@[simp] theorem leafSubst_node (c' : C) (cs : List (Tree C W)) :
+    leafSubst w w' c (.node c' cs) = .node c' (cs.map (leafSubst w w' c)) := by
+  simp only [leafSubst, fold_node]
+
+@[simp] theorem leafSubst_trace (n : ℕ) (c' : C) :
+    leafSubst w w' c (.trace n c') = .trace n c' := rfl
+
+@[simp] theorem leafSubst_bind (n : ℕ) (c' : C) (t : Tree C W) :
+    leafSubst w w' c (.bind n c' t) = .bind n c' (leafSubst w w' c t) := rfl
+
+end LeafSubst
+
+/-! ### Positions
+
+Through the `Branching` instance a tree takes Gorn addresses (`Branching.subtreeAt`), the
+dominance order on its positions (`Branching.toTreeOrder`) and the command relations over it.
+-/
+
+open Core.Order
+
+instance : Branching (Tree C W) where
   children
     | .terminal _ _ => []
     | .node _ cs => cs
     | .trace _ _ => []
-    | .bind _ _ body => [body]
+    | .bind _ _ t => [t]
 
-/-- Children strictly decrease the `sizeOf` measure, unlocking the
-generic recursion API (`Branching.size`, `subtrees`, `yield`,
-`inductionOn`). `noncomputable` because the `measure` field stores
-`sizeOf`, whose nested-`List` IR the LCNF boxing pass cannot compile;
-the measure is only a termination witness, and `yield`/`size` reduce
-symbolically via their `_def` lemmas. -/
-instance {C W : Type*} : Core.Order.IsFiniteBranching (Tree C W) :=
-  .ofMeasure sizeOf fun {c t} hc => by
-    cases t with
-    | terminal _ _ => simp [Core.Order.Branching.children] at hc
-    | node _ cs =>
-      simp only [Core.Order.Branching.children] at hc
-      have := List.sizeOf_lt_of_mem hc
-      simp only [Tree.node.sizeOf_spec]
-      omega
-    | trace _ _ => simp [Core.Order.Branching.children] at hc
-    | bind _ _ body =>
-      simp only [Core.Order.Branching.children, List.mem_singleton] at hc
-      subst hc
-      simp only [Tree.bind.sizeOf_spec]
-      omega
+@[simp] theorem children_terminal (c : C) (w : W) : Branching.children (terminal c w) = [] := rfl
 
-/-- Terminal content: the word at a `terminal`; traces, binders, and
-internal nodes are contentless, so `Branching.yield` computes the
-frontier string. -/
-instance {C W : Type*} : Core.Order.HasContent (Tree C W) W where
-  content?
-    | .terminal _ w => some w
-    | _ => none
+@[simp] theorem children_node (c : C) (cs : List (Tree C W)) :
+    Branching.children (node c cs) = cs := rfl
 
-/-! ### `Branching.yield`-instance simp lemmas
+@[simp] theorem children_trace (n : ℕ) (c : C) : Branching.children (trace n c : Tree C W) = [] :=
+  rfl
 
-Make the generic `Branching.yield` reduce by `simp`/`decide` at
-concrete `Tree` constructors — the prerequisite for consumers (Studies
-files) to replace bespoke yield computations with the generic API. -/
+@[simp] theorem children_bind (n : ℕ) (c : C) (t : Tree C W) :
+    Branching.children (bind n c t) = [t] := rfl
 
-@[simp] theorem branching_content_terminal {C W : Type*} (c : C) (w : W) :
-    Core.Order.HasContent.content? (Tree.terminal c w) = some w := rfl
-
-@[simp] theorem branching_content_node {C W : Type*} (c : C)
-    (cs : List (Tree C W)) :
-    Core.Order.HasContent.content? (Tree.node c cs) = (none : Option W) := rfl
-
-@[simp] theorem branching_content_trace {C W : Type*} (n : Nat) (c : C) :
-    Core.Order.HasContent.content? (Tree.trace (W := W) n c) = none := rfl
-
-@[simp] theorem branching_content_bind {C W : Type*} (n : Nat) (c : C)
-    (body : Tree C W) :
-    Core.Order.HasContent.content? (Tree.bind n c body) = none := rfl
-
-@[simp] theorem branching_yield_terminal {C W : Type*} (c : C) (w : W) :
-    Core.Order.Branching.yield (Tree.terminal c w) = [w] := by
-  rw [Core.Order.Branching.yield_def]; rfl
-
-@[simp] theorem branching_yield_node {C W : Type*} (c : C) (cs : List (Tree C W)) :
-    Core.Order.Branching.yield (W := W) (Tree.node c cs) = cs.flatMap Core.Order.Branching.yield := by
-  rw [Core.Order.Branching.yield_def]; rfl
-
-@[simp] theorem branching_yield_trace {C W : Type*} (n : Nat) (c : C) :
-    Core.Order.Branching.yield (Tree.trace (W := W) n c) = [] := by
-  rw [Core.Order.Branching.yield_def]; rfl
-
-@[simp] theorem branching_yield_bind {C W : Type*} (n : Nat) (c : C)
-    (body : Tree C W) :
-    Core.Order.Branching.yield (W := W) (Tree.bind n c body)
-      = Core.Order.Branching.yield body := by
-  rw [Core.Order.Branching.yield_def]
-  show ([] : List W) ++ ([body].flatMap Core.Order.Branching.yield) = _
-  simp
+end Tree
 
 end Syntax
-
-/-! ### FreeMagma → Tree forgetful map -/
-
-namespace FreeMagma
-
-/-- Forgetful map from a free magma to a binary `Syntax.Tree Unit α`.
-
-The image lives in a strict subset of `Tree Unit α`: only `.terminal ()`
-(from `.of`) and the binary `.node () [_, _]` (from `.mul`) are produced;
-the n-ary `.node`, `.trace`, and `.bind` constructors are never used.
-
-By composition with `Core.Order.Branching.toTreeOrder`, every
-`FreeMagma α` inherits a `Core.Order.TreeOrder Core.Order.TreePath`,
-making B&P's framework-agnostic command-relation library
-(`Linglib.Core.Order.Command`) directly applicable.
-
-Universe-polymorphic in `α`, matching `Syntax.Tree`. -/
-def toTree {α : Type*} : FreeMagma α → Syntax.Tree Unit α
-  | .of a => .terminal () a
-  | .mul l r => .node () [l.toTree, r.toTree]
-
-end FreeMagma

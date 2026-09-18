@@ -23,10 +23,9 @@ instantiates mathlib's order-theoretic rooted-tree stack
 concrete tree's valid positions form a prefix-closed subset (see
 `Core/Order/Branching.lean`), which inherits the stack.
 
-Moved here from `Syntax/Tree/Basic.lean`: positions are pure
-combinatorics, instantiable by any rose-tree carrier (CFG derivation
-trees via Gorn addresses, Hopf-algebra rooted trees, constituency
-trees) without importing linguistic theory.
+Positions are pure combinatorics, instantiable by any rose-tree
+carrier (CFG derivation trees via Gorn addresses, Hopf-algebra rooted
+trees, constituency trees) without importing linguistic theory.
 -/
 
 /-! ### Generic list API: longest common prefix

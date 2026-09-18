@@ -247,8 +247,8 @@ theorem not_appropriate_negatedC_singleton [Nonempty W] (p : Set W) :
 
 /-! ### The non-segmental introduction of VERUM (97) -/
 
-/-- Phonologically empty: no word-bearing terminal. -/
-def PhonEmpty (t : Tree Node String) : Prop := t.leafCount = 0
+/-- Phonologically empty: an empty yield. -/
+def PhonEmpty (t : Tree Node String) : Prop := t.yield = []
 
 instance (t : Tree Node String) : Decidable (PhonEmpty t) := by unfold PhonEmpty; infer_instance
 

@@ -415,7 +415,7 @@ theorem valueAt_of_map_fst {τ : Ty} {v v' : M (Ty.Domain E W τ D)}
 /-- Whether a tree is interpretable, and at which type, does not depend on the assignment. -/
 theorem interp_map_fst_congr (g g' : Assignment E) (t : Tree C L) :
     (interp lex g t).map (·.1) = (interp lex g' t).map (·.1) := by
-  induction t using Tree.recAux generalizing g g' with
+  induction t using Tree.rec' generalizing g g' with
   | terminal c w => rfl
   | node c cs ih =>
     match cs with
@@ -444,11 +444,11 @@ theorem interp_map_fst_congr (g g' : Assignment E) (t : Tree C L) :
 same denotation ([heim-kratzer-1998] §5.4.2). -/
 theorem interp_congr_of_agree {g g' : Assignment E} {t : Tree C L}
     (h : ∀ i ∈ t.freeIndices, g i = g' i) : interp lex g t = interp lex g' t := by
-  induction t using Tree.recAux generalizing g g' with
+  induction t using Tree.rec' generalizing g g' with
   | terminal c w => rfl
   | node c cs ih =>
     have hm : ∀ t ∈ cs, ∀ i ∈ t.freeIndices, g i = g' i := fun t ht i hi =>
-      h i (by rw [Tree.freeIndices_node, Tree.mem_freeIndicesList]; exact ⟨t, ht, hi⟩)
+      h i (Tree.mem_freeIndices_node.2 ⟨t, ht, hi⟩)
     match cs with
     | [] => rfl
     | [t] => simp only [interp_node_unary]; exact ih t (by simp) (hm t (by simp))
@@ -515,7 +515,7 @@ variable {C : Type} {L : Type*} {E W D : Type} {M : Type → Type} [Applicative 
 /-- Interpretation commutes with relabelling the leaves. -/
 theorem interp_map {L' : Type*} (lex : L' → Option (Denotation E W M D)) (f : L → L')
     (g : Assignment E) (t : Tree C L) : interp lex g (t.map f) = interp (lex ∘ f) g t := by
-  induction t using Tree.recAux generalizing g with
+  induction t using Tree.rec' generalizing g with
   | terminal c w => rfl
   | node c cs ih =>
     match cs with
@@ -543,7 +543,7 @@ theorem exists_resolution_of_interp {choice : L → Option (Denotation E W M D)}
     {d : Denotation E W M D} (h : interp choice g t = some d) :
     ∃ r : Tree C {p : L × Denotation E W M D // choice p.1 = some p.2},
       r.map (·.1.1) = t ∧ interp (fun p ↦ some p.1.2) g r = some d := by
-  induction t using Tree.recAux generalizing g d with
+  induction t using Tree.rec' generalizing g d with
   | terminal c w => exact ⟨.terminal c ⟨(w, d), h⟩, rfl, rfl⟩
   | node c cs ih =>
     match cs with

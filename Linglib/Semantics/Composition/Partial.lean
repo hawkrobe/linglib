@@ -241,7 +241,7 @@ def PresupFailure (t : Tree C L) : Prop := ∃ d, interp lex g t = some d ∧ ¬
 leaves, [heim-kratzer-1998]'s characterization of uninterpretability. -/
 theorem interp_map_fst_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1)) (t : Tree C L) :
     (interp lex g t).map (·.1) = (interp lex' g' t).map (·.1) := by
-  induction t using Tree.recAux generalizing g g' with
+  induction t using Tree.rec' generalizing g g' with
   | terminal c w => exact h w
   | node c cs ih =>
     match cs with
@@ -478,7 +478,7 @@ engine's value at that node. -/
 theorem interp_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w = some d ∧ d.Lifts d')
     (g : Assignment E) (t : Tree C L) (h : interp lex' g t = some d') :
     ∃ d, Tree.interp lex g t = some d ∧ d.Lifts d' := by
-  induction t using Tree.recAux generalizing g d' with
+  induction t using Tree.rec' generalizing g d' with
   | terminal c w => exact hlex w d' h
   | node c cs ih =>
     match cs with

@@ -304,7 +304,7 @@ def strParses : Str → List (Tree Cat String)
   | .lesDeuxV => [lesDeuxVerres]
 
 /-- String complexity: the maximal node count over the string's parses, uniform here. -/
-def strSize (s : Str) : Nat := ((strParses s).map Tree.size).foldr max 0
+def strSize (s : Str) : Nat := ((strParses s).map Syntax.Tree.numNodes).foldr max 0
 
 /-- The dual parse of *tous les verres* is blocked by (37), witnessed by *les deux verres*. -/
 theorem tousDual_blocked : Blocked strParses meaning strSize .tousV tousDualVerres := by
@@ -330,9 +330,9 @@ presupposition. -/
 def assertionFn : Tree Cat String → WorldEx → Prop := λ _ _ => True
 
 /-- The indirect-alternative source (43): Katzir alternatives filtered by pronounceability and
-meaning-equivalence to a silent witness, complexity measured by `Tree.size`. -/
+meaning-equivalence to a silent witness, complexity measured by `Syntax.Tree.numNodes`. -/
 def frenchIndirectSrc : Tree Cat String → Set (Tree Cat String) :=
-  indirectFrom (structuralAlternatives frenchLex) frenchPron meaning Tree.size
+  indirectFrom (structuralAlternatives frenchLex) frenchPron meaning Syntax.Tree.numNodes
 
 /-- *tous_DUAL V* is a Katzir alternative of *tous V*, by substituting the dual determiner. -/
 theorem tousDual_katzir_alt : tousDualVerres ∈ structuralAlternatives frenchLex tousVerres := by
