@@ -1,96 +1,28 @@
 import Linglib.Syntax.Negation
 
 /-!
-# Imbabura Quechua Negation Fragment
-[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
+# Imbabura Quechua negation
 
-Imbabura Quechua expresses standard negation with the preverbal particle
-*mana*, optionally reinforced by the suffix *-chu* on the verb.
+Imbabura Quechua negates a clause with the particle *mana* before the verb together with the
+enclitic *-chu* on a constituent of the clause, and both are obligatory: *ñuka wawki mana jatun
+wasi-ta chari-n-chu* 'my brother does not have a big house'. The enclitic is not itself
+negative. It also marks polar questions, *kan-paj wawki jatun wasi-ta chari-n-chu* 'does your
+brother have a big house?', and does not occur in affirmative declaratives, so a negative
+without *mana* is a question. The examples are those of [miestamo-2005], from Cole's grammar.
 
-## SymAsy: Symmetric and Asymmetric (A/NonReal)
+## References
 
-WALS classifies Imbabura Quechua as **both symmetric and asymmetric**:
-
-- **Symmetric**: in some constructions, *mana* simply negates without
-  further structural change.
-
-- **Asymmetric (A/NonReal)**: in other constructions, negation triggers
-  obligatory *-chu* marking on the verb. *-chu* is a **validator** enclitic
-  that also appears in polar interrogatives; it expresses assertion
-  authority and certainty ([miestamo-2005] p. 158). Its use in
-  negatives introduces a non-realized category absent from affirmatives.
-
-The A/NonReal asymmetry is **paradigmatic**: the negative paradigm
-obligatorily includes a validator category (*-chu*) that the affirmative
-lacks. The clause structure itself does not change (no constructional
-asymmetry).
+* [miestamo-2005]
 -/
 
 namespace Quechua.Negation
 
 open Syntax.Negation
 
-/-- *mana* — Imbabura Quechua's standard preverbal negation particle.
-    The load-bearing element of the negation construction; the *-chu*
-    enclitic is a separate validator (also used in polar interrogatives)
-    whose obligatory appearance under negation drives the WALS A/NonReal
-    asymmetry classification. -/
-def mana : Marker :=
-  { pieces := [[.free "mana"]] }
+/-- *mana … -chu*, the standard negator: the particle with the enclitic it requires. -/
+def manaChu : Marker := { pieces := [[.free "mana"], [.encl "chu"]] }
 
-/-- The validator enclitic *-chu*, triggered in negative and interrogative
-    contexts. Glossed as VAL (validator); shared with polar questions.
-    Not a negation marker — its appearance under negation is what
-    distinguishes the asymmetric Quechua negative paradigm
-    ([miestamo-2005] p. 158). -/
-def chuSuffix : String := "-chu"
-
-/-- An Imbabura Quechua negation example. -/
-structure NegExample where
-  affirmative : String
-  negative : String
-  glossAff : String
-  glossNeg : String
-  /-- Does this construction require -chu? -/
-  requiresChu : Bool
-  /-- Is this construction symmetric? -/
-  symmetric : Bool
-  deriving Repr, BEq
-
-/-- Simple present: asymmetric (requires -chu, A/NonReal). -/
-def present : NegExample :=
-  { affirmative := "shamuni", negative := "mana shamu-ni-chu"
-  , glossAff := "come-1SG", glossNeg := "NEG come-1SG-VAL"
-  , requiresChu := true, symmetric := false }
-
-/-- Progressive: symmetric (mana alone suffices). -/
-def progressive : NegExample :=
-  { affirmative := "shamucuni", negative := "mana shamucuni"
-  , glossAff := "come-PROG-1SG", glossNeg := "NEG come-PROG-1SG"
-  , requiresChu := false, symmetric := true }
-
-/-- Past: asymmetric (requires -chu). -/
-def past : NegExample :=
-  { affirmative := "shamurca", negative := "mana shamurca-chu"
-  , glossAff := "come-PST", glossNeg := "NEG come-PST-VAL"
-  , requiresChu := true, symmetric := false }
-
-def allExamples : List NegExample :=
-  [present, progressive, past]
-
-/-! ## Verification -/
-
-theorem example_count : allExamples.length = 3 := by decide
-
-/-- Mixed: some symmetric, some asymmetric = SymAsy. -/
-theorem symasy_distribution :
-    (allExamples.filter (·.symmetric)).length = 1 ∧
-    (allExamples.filter (fun e => !e.symmetric)).length = 2 := by
-  exact ⟨by decide, by decide⟩
-
-/-- Asymmetric constructions are exactly those requiring -chu. -/
-theorem asymmetric_iff_chu :
-    allExamples.all (fun e => e.symmetric == !e.requiresChu) = true := by
-  decide
+/-- *-chu*, the enclitic of negatives and polar questions. -/
+def chu : Morphology.Morph := .encl "chu"
 
 end Quechua.Negation

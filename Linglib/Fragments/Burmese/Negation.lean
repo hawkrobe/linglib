@@ -1,105 +1,30 @@
 import Linglib.Syntax.Negation
 
 /-!
-# Burmese Negation Fragment
-[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
+# Burmese negation
 
-Burmese expresses standard negation with a circumfix: prefix *ma-* on
-the verb and suffix *-bu* replacing the TAM markers of the affirmative.
+Burmese negates a verb with a discontinuous marker: the prefix *ma-* and a suffix, *-bû* in
+*ma-θwâ-bû* '(he) does not go', which stands in the slot of the postverbal markers of the
+affirmative. Those markers distinguish the actual *θwâ-dé* '(he) goes, went', the potential
+*θwâ-mé* '(he) will go' and the perfect *θwâ-bí* '(he) has gone', and the one negative form
+answers to all three. The examples are those of [miestamo-2005], from Cornyn's grammar.
 
-## Always asymmetric (A/Cat)
+## References
 
-Burmese negation is always **asymmetric**: the negative suffix *-bu*
-replaces the TAM (tense-aspect-mood) markers used in the affirmative,
-neutralizing TAM distinctions. This is **paradigmatic asymmetry**: the
-negative paradigm has fewer formal distinctions than the affirmative.
-
-## Paradigm (*sa* 'eat')
-
-| Construction | Affirmative | Negative |
-|-------------|-------------|----------|
-| Realis | *sa-deh* | *ma-sa-bu* |
-| Irrealis | *sa-meh* | *ma-sa-bu* |
-| Future | *sa-laimeh* | *ma-sa-bu* |
-
-The affirmative distinguishes realis (*-deh*), irrealis (*-meh*), and
-future (*-laimeh*), but the negative collapses all three to *ma-...-bu*.
+* [miestamo-2005]
 -/
 
 namespace Burmese.Negation
 
-open Syntax.Negation
+open Syntax.Negation Morphology
 
-/-- The Burmese negative prefix. Component of the bipartite *ma-...-bu*
-    circumfix; see `circumfix` for the substrate-typed entry. -/
-def negPrefix : String := "ma-"
+/-- The discontinuous negator *ma-…-bû*, whose suffix [miestamo-2005] cites as *-phû*. -/
+def maBu : Marker := { pieces := [[.pref "ma"], [.suff "bû"]] }
 
-/-- The Burmese negative suffix (replaces TAM markers). Component of the
-    bipartite *ma-...-bu* circumfix. -/
-def negSuffix : String := "-bu"
-
-/-- *ma-...-bu* — Burmese's bipartite negation circumfix.
-    The prefix attaches to the verb stem; the suffix replaces the
-    affirmative TAM markers (realis *-deh*, irrealis *-meh*, future
-    *-laimeh*), neutralizing TAM distinctions. WALS classifies Burmese
-    as `.doubleNegation` (Ch 112A). -/
-def circumfix : Marker :=
-  { pieces := [[.pref "ma"], [.suff "bu"]] }
-
-/-- A Burmese negation paradigm entry showing TAM neutralization. -/
-structure NegParadigmEntry where
-  tamLabel : String
-  affirmative : String
-  negative : String
-  glossAff : String
-  glossNeg : String
-  deriving Repr, BEq
-
-/-- Paradigm for *sa* 'eat'. -/
-def saParadigm : List NegParadigmEntry :=
-  [ { tamLabel := "realis"
-    , affirmative := "sa-deh", negative := "ma-sa-bu"
-    , glossAff := "eat-REAL", glossNeg := "NEG-eat-NEG" }
-  , { tamLabel := "irrealis"
-    , affirmative := "sa-meh", negative := "ma-sa-bu"
-    , glossAff := "eat-IRR", glossNeg := "NEG-eat-NEG" }
-  , { tamLabel := "future"
-    , affirmative := "sa-laimeh", negative := "ma-sa-bu"
-    , glossAff := "eat-FUT", glossNeg := "NEG-eat-NEG" }
-  ]
-
-/-- Which TAM categories are available in affirmative vs negative. -/
-structure TAMAvailability where
-  /-- TAM distinctions available in affirmative -/
-  affirmativeTAM : List String
-  /-- TAM distinctions available in negative -/
-  negativeTAM : List String
-  deriving Repr, BEq
-
-def burmeseTAM : TAMAvailability :=
-  { affirmativeTAM := ["realis", "irrealis", "future"]
-  , negativeTAM := ["general negative"] }
-
-/-! ## Verification -/
-
-theorem sa_paradigm_size : saParadigm.length = 3 := by decide
-
-/-- All negative forms are identical: TAM is neutralized. -/
-theorem tam_neutralized :
-    let negForms := saParadigm.map (·.negative)
-    negForms.all (· == "ma-sa-bu") = true := by
-  decide
-
-/-- The affirmative has 3 distinct TAM forms; the negative has 1. -/
-theorem paradigmatic_asymmetry :
-    burmeseTAM.affirmativeTAM.length = 3 ∧
-    burmeseTAM.negativeTAM.length = 1 := by
-  exact ⟨rfl, rfl⟩
-
-/-- All affirmative forms are distinct (3 TAM contrasts). -/
-theorem affirmative_forms_distinct :
-    let affForms := saParadigm.map (·.affirmative)
-    affForms.length = 3 ∧ affForms.eraseDups.length = 3 := by
-  exact ⟨rfl, by decide⟩
+/-- The actual, potential and perfect of *θwâ* 'go', with their common negative. -/
+def goParadigm : List Pair :=
+  [⟨[.root "θwâ", .suff "dé"], [.pref "ma", .root "θwâ", .suff "bû"]⟩,
+   ⟨[.root "θwâ", .suff "mé"], [.pref "ma", .root "θwâ", .suff "bû"]⟩,
+   ⟨[.root "θwâ", .suff "bí"], [.pref "ma", .root "θwâ", .suff "bû"]⟩]
 
 end Burmese.Negation

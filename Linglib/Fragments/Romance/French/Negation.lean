@@ -1,171 +1,35 @@
 import Linglib.Syntax.Negation
 
 /-!
-# French Negation Fragment
-[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
-[zanuttini-1997] [cinque-1999]
+# French negation
 
-French uses bipartite negation *ne...pas*, with the preverbal clitic *ne*
-and the postverbal reinforcer *pas*. In colloquial speech, *ne* is
-frequently dropped (Jespersen cycle stage II→III).
+French negates a clause with the proclitic *ne* before the finite verb and *pas* after it:
+*jean vient* 'Jean comes', *jean ne vient pas* 'Jean does not come'. Nothing else in the clause
+changes. *Ne* is regularly dropped in colloquial speech, leaving *pas* as the only negator. On
+its own, without *pas*, *ne* occurs expletively under *avoir peur* 'fear', *avant que* 'before',
+*à moins que* 'unless' and other triggers; the examples of [jin-koenig-2021] are the rows of
+`Data.Examples.JinKoenig2021`. The pairs below are those of [miestamo-2005].
 
-## Symmetric negation
+## References
 
-WALS classifies French negation as **symmetric**: adding *ne...pas* does
-not change the clause structure, verb form, or paradigm. All TAM
-distinctions are available under negation.
-
-## Jespersen cycle
-
-French is a textbook case of the Jespersen cycle:
-1. Latin *non* (preverbal only)
-2. Old French *ne...pas* (bipartite, *pas* = reinforcer from 'step')
-3. Colloquial French *pas* (postverbal only, *ne* dropped)
-
-The *ne*-drop is sociolinguistically conditioned: near-categorical in
-informal speech, variable in formal registers.
+* [miestamo-2005]
+* [jin-koenig-2021]
 -/
 
 namespace French.Negation
 
-open Syntax.Negation
+open Syntax.Negation Morphology
 
-/-- The French preverbal negative clitic. Phonologically a clitic on the
-    finite verb (or auxiliary); syntactically the head of NegP per
-    [zanuttini-1997]'s cartography. Near-categorically dropped in
-    spoken French (Jespersen cycle stage III), categorically present in
-    formal written French. -/
-def neClitic : String := "ne"
+/-- *ne … pas*, the standard negator. -/
+def nePas : Marker := { pieces := [[.procl "ne"], [.free "pas"]] }
 
-/-- The French postverbal negative reinforcer *pas*. Originally a noun
-    'step' grammaticalized via the Jespersen cycle into the load-bearing
-    negation marker of modern French. Sits in the specifier of NegP per
-    [zanuttini-1997]. -/
-def pasReinforcer : String := "pas"
+/-- *ne* alone, the expletive negator. -/
+def ne : Marker := { pieces := [[.procl "ne"]] }
 
-/-- *(ne) pas* — French's bipartite standard negation.
-    The two morphemes flank the finite verb: *Je **ne** mange **pas***
-    (formal), *Je mange **pas*** (colloquial, *ne*-drop). Encoded as a
-    single `Marker` with discontinuous position because *ne* and
-    *pas* together constitute one logical negation construction (one
-    WALS Ch 112A value, one Ch 143A value). The constituent forms
-    `neClitic` and `pasReinforcer` are exposed separately for downstream
-    consumers that need them (JinKoenig2021 uses *ne* alone as the EN
-    marker; Miestamo2005 lists both as `negMarkers`). -/
-def bipartite : Marker :=
-  { pieces := [[.procl "ne"], [.free "pas"]] }
-
-/-- A French negation example. -/
-structure NegExample where
-  affirmative : String
-  negativeFormal : String
-  negativeColloquial : String
-  gloss : String
-  tenseLabel : String
-  deriving Repr, BEq
-
-/-- Present tense. -/
-def present : NegExample :=
-  { affirmative := "Je mange"
-  , negativeFormal := "Je ne mange pas"
-  , negativeColloquial := "Je mange pas"
-  , gloss := "I eat / I NEG eat NEG / I eat NEG"
-  , tenseLabel := "present" }
-
-/-- Passé composé (compound past). -/
-def passeCompose : NegExample :=
-  { affirmative := "Il a mangé"
-  , negativeFormal := "Il n'a pas mangé"
-  , negativeColloquial := "Il a pas mangé"
-  , gloss := "He has eaten / He NEG'has NEG eaten / He has NEG eaten"
-  , tenseLabel := "passé composé" }
-
-/-- Imparfait (imperfect). -/
-def imparfait : NegExample :=
-  { affirmative := "Elle chantait"
-  , negativeFormal := "Elle ne chantait pas"
-  , negativeColloquial := "Elle chantait pas"
-  , gloss := "She sang.IMPF / She NEG sang.IMPF NEG"
-  , tenseLabel := "imparfait" }
-
-/-- Futur simple (simple future). -/
-def futurSimple : NegExample :=
-  { affirmative := "Nous partirons"
-  , negativeFormal := "Nous ne partirons pas"
-  , negativeColloquial := "Nous partirons pas"
-  , gloss := "We will.leave / We NEG will.leave NEG"
-  , tenseLabel := "futur simple" }
-
-/-- Subjonctif (subjunctive). -/
-def subjonctif : NegExample :=
-  { affirmative := "qu'il mange"
-  , negativeFormal := "qu'il ne mange pas"
-  , negativeColloquial := "qu'il mange pas"
-  , gloss := "that.he eat.SUBJ / that.he NEG eat.SUBJ NEG"
-  , tenseLabel := "subjonctif" }
-
-def allExamples : List NegExample :=
-  [present, passeCompose, imparfait, futurSimple, subjonctif]
-
-/-! ## Verification -/
-
-/-- All tenses are available under negation (no paradigmatic gaps). -/
-theorem all_tenses_available : allExamples.length = 5 := by decide
-
-/-! ## Expletive Negation
-[jin-koenig-2021]
-
-French has a **dedicated** expletive negation marker: the preverbal clitic
-*ne* used alone (without *pas*). This is the grammaticalized form of EN,
-distinct from standard *ne...pas*. In a few low-entrenchment contexts
-(REGRET, FORGET), the full *ne...pas* appears instead.
-
-| Trigger class | EN negator | Entrenchment |
-|---------------|------------|--------------|
-| FEAR          | ne         | high         |
-| BEFORE        | ne         | high         |
-| UNLESS        | ne         | high         |
-| DENY          | ne         | high (requires negation/question) |
-| REGRET        | ne (pas)   | low          |
-| FORGET        | ne pas     | low          |
-| COMPARATIVES  | ne         | high         |
-
-The distinction between *ne* (EN) and *ne...pas* (standard) makes
-French uniquely transparent: the grammaticalization of EN is visible
-in the form of the negator itself.
--/
-
-/-- *ne* alone is the dedicated EN marker (grammaticalized). -/
-def enMarker : String := neClitic
-
-/-- EN trigger-negator pairings from [jin-koenig-2021], Table 5
-    and §6.1–6.4. -/
-def enTriggerNegators : List ExpletiveTrigger :=
-  [ { triggerClass := .fear, triggerForm := "avoir peur"
-    , negatorForm := "ne", highEntrenchment := some true }
-  , { triggerClass := .avoid, triggerForm := "éviter"
-    , negatorForm := "ne", highEntrenchment := some true }
-  , { triggerClass := .before, triggerForm := "avant que"
-    , negatorForm := "ne", highEntrenchment := some true }
-  , { triggerClass := .unless, triggerForm := "à moins que"
-    , negatorForm := "ne", highEntrenchment := some true }
-  , { triggerClass := .deny, triggerForm := "nier"
-    , negatorForm := "ne", highEntrenchment := some true }
-  , { triggerClass := .moreThan, triggerForm := "que (than)"
-    , negatorForm := "ne", highEntrenchment := some true }
-  , { triggerClass := .regret, triggerForm := "regretter"
-    , negatorForm := "ne (pas)", highEntrenchment := some false }
-  , { triggerClass := .forget, triggerForm := "oublier"
-    , negatorForm := "ne pas", highEntrenchment := some false } ]
-
-/-- High-entrenchment EN uses the dedicated *ne* alone;
-    low-entrenchment EN uses *ne...pas* (the standard negator). -/
-theorem high_entrenchment_uses_ne_alone :
-    (enTriggerNegators.filter (·.highEntrenchment == some true)).all
-      (·.negatorForm == "ne") = true := by decide
-
-/-- French EN marker = preverbal *ne* = same clitic as in standard
-    *ne...pas*, but without the reinforcer. -/
-theorem en_marker_is_ne_clitic : enMarker = neClitic := rfl
+/-- The present and the compound past of *venir* 'come'. -/
+def pairs : List Pair :=
+  [⟨[.free "jean", .free "vient"], [.free "jean", .procl "ne", .free "vient", .free "pas"]⟩,
+   ⟨[.free "jean", .free "est", .root "ven", .suff "u"],
+    [.free "jean", .procl "ne", .free "est", .free "pas", .root "ven", .suff "u"]⟩]
 
 end French.Negation

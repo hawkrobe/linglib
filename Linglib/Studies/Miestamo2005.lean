@@ -7,38 +7,46 @@ import Linglib.Fragments.Mandarin.Negation
 import Linglib.Fragments.English.Negation
 import Linglib.Fragments.Maori.Negation
 import Linglib.Fragments.Hixkaryana.Negation
+import Linglib.Fragments.German.Negation
+import Linglib.Fragments.Italian.Negation
+import Linglib.Fragments.Romance.French.Negation
+import Linglib.Fragments.Slavic.Russian.Negation
+import Linglib.Fragments.Spanish.Negation
 
 /-!
 # Miestamo (2005): Standard Negation
 
 This file formalizes the typology of [miestamo-2005]. The negation of a declarative verbal
-main clause is symmetric when the negative merely adds a marker to the affirmative and
-asymmetric when further structural changes accompany it, and the distinction applies to
-constructions and to paradigms separately: a paradigm is symmetric when its affirmative and
-negative members correspond one to one (`IsSymmetricParadigm`) and neutralizes when
-distinct affirmative forms share a negative counterpart (`Neutralizes`). A language is of
-type Sym when neither its constructions nor its paradigms show asymmetry, of type Asy when
-every construction is asymmetric, and of type SymAsy otherwise (`languageType`), so the
-definitional cells of the book's fourth table follow (`languageType_eq_symmetric_iff`,
-`languageType_eq_asymmetric_iff`). The subtypes of asymmetry (`AsymmetrySubtype`) are
-instantiated on the fragments: the Finnish negative auxiliary inflects for every
-person–number cell and is the finite element, the Japanese lexical verb loses its tense
-marking, Mandarin and Turkish mix symmetric and asymmetric constructions, Maori and
-Hixkaryana negate only asymmetrically, Burmese neutralizes its three postverbal
-tense–aspect markers into one negative form, and English, whose auxiliary construction is
-symmetric with the emphatic affirmative, neutralizes the emphatic distinction of the
-simple tenses in the paradigm.
+main clause is symmetric when the negative differs from the affirmative only by the presence
+of the negative marker and asymmetric when further structural differences accompany it
+(`IsSymmetric`): removing the marker from the negative leaves the affirmative, differences of
+phonological shape apart. The distinction applies to constructions and to paradigms
+separately: a paradigm is symmetric when its affirmative and negative members correspond one
+to one (`IsSymmetricParadigm`) and neutralizes when distinct affirmative forms share a negative
+counterpart (`Neutralizes`). A language is of type Sym when neither its constructions nor its
+paradigms show asymmetry, of type Asy when every construction is asymmetric, and of type SymAsy
+otherwise (`languageType`), so the definitional cells of the book's fourth table follow
+(`languageType_eq_symmetric_iff`, `languageType_eq_asymmetric_iff`). The types are
+instantiated on the book's own examples, entered in the fragments. Spanish, German, Italian,
+French and Russian are of type Sym. The Finnish negative auxiliary takes the ending of the
+finite verb and leaves the lexical verb without it; the Japanese negative inflects as an
+adjective, so tense leaves the verb; Maori negates with an initial negative verb, and
+Hixkaryana deverbalizes the lexical verb under an added copula: finiteness asymmetries, and
+type Asy. Mandarin and Turkish mix symmetric and asymmetric constructions. Burmese replaces its
+three postverbal tense–aspect markers with one negative suffix, asymmetric in construction and
+neutralizing in paradigm. The English negative is symmetric with the emphatic affirmative, not
+with the plain one, to which it adds *do*, and the paradigm loses the emphatic distinction of
+the simple tenses.
 
 ## Implementation notes
 
-A construction's symmetry is a judgment recorded on the fragment entries, except for Mandarin,
-where it is derived from what the negator adds and excludes (`IsSymmetricNegator`); elsewhere the
-derived content is the paradigmatic level and the language type. The English fragment codes the
-do-support constructions as asymmetric, the atlas's reading; the book compares the
-simple-tense negatives with the emphatic affirmatives and locates the asymmetry in the
-paradigm, and `englishSimpleTenses` follows the book. The representative sample, its
-frequency tables, and the further subtypes of the finiteness and category asymmetries are
-not represented.
+A pair cites each morph in one form across its two members, which is how phonologically
+conditioned differences are set aside, as the book sets them aside for the Turkish future.
+The Mandarin constructions are compared through what each negator adds and excludes, the book
+giving no minimal pairs for them. The subtypes of asymmetry (`AsymmetrySubtype`) are not
+derived: `Adds` identifies an added element, the mark of the finite-element constructions, but
+which category a lost or changed marker belongs to is not represented in a pair. The
+representative sample and its frequency tables are not represented.
 
 ## References
 
@@ -46,6 +54,8 @@ not represented.
 -/
 
 namespace Miestamo2005
+
+open Syntax.Negation
 
 variable {α β : Type*}
 
@@ -57,6 +67,32 @@ inductive AsymmetrySubtype where
   | emph
   | cat
   deriving DecidableEq
+
+/-! ### Constructions -/
+
+/-- A construction is symmetric when the negative is the affirmative with the negative marker
+added: removing the marker's morphs from the negative leaves the affirmative. -/
+def IsSymmetric (m : Marker) (p : Pair) : Prop :=
+  p.negative.filter (· ∉ m.morphs) = p.affirmative
+
+instance (m : Marker) : DecidablePred (IsSymmetric m) := fun p ↦
+  inferInstanceAs (Decidable (p.negative.filter (· ∉ m.morphs) = p.affirmative))
+
+/-- The negative contains an element, other than the marker, that the affirmative lacks: the
+finite element of the constructions that add one. -/
+def Adds (m : Marker) (p : Pair) : Prop :=
+  ∃ x ∈ p.negative, x ∉ m.morphs ∧ x ∉ p.affirmative
+
+instance (m : Marker) : DecidablePred (Adds m) := fun p ↦
+  inferInstanceAs (Decidable (∃ x ∈ p.negative, x ∉ m.morphs ∧ x ∉ p.affirmative))
+
+/-- A construction that adds an element is asymmetric. -/
+theorem not_isSymmetric_of_adds {m : Marker} {p : Pair} (h : Adds m p) : ¬ IsSymmetric m p := by
+  obtain ⟨x, hx, hm, ha⟩ := h
+  intro hs
+  exact ha (hs ▸ List.mem_filter.2 ⟨hx, by simpa using hm⟩)
+
+/-! ### Paradigms -/
 
 /-- A paradigm of affirmative–negative pairs is symmetric when its members correspond one to
 one: distinct affirmative forms have distinct negative counterparts. -/
@@ -78,51 +114,92 @@ theorem neutralizes_iff_not_isSymmetricParadigm (p : List α) (aff neg : α → 
     Neutralizes p aff neg ↔ ¬ IsSymmetricParadigm p aff neg := by
   unfold Neutralizes IsSymmetricParadigm
   push Not
-  exact ⟨λ ⟨e₁, h₁, e₂, h₂, ha, hn⟩ => ⟨e₁, h₁, e₂, h₂, hn, ha⟩,
-    λ ⟨e₁, h₁, e₂, h₂, hn, ha⟩ => ⟨e₁, h₁, e₂, h₂, ha, hn⟩⟩
+  exact ⟨fun ⟨e₁, h₁, e₂, h₂, ha, hn⟩ ↦ ⟨e₁, h₁, e₂, h₂, hn, ha⟩,
+    fun ⟨e₁, h₁, e₂, h₂, hn, ha⟩ ↦ ⟨e₁, h₁, e₂, h₂, ha, hn⟩⟩
+
+/-! ### Language types -/
 
 /-- The three types of language, from the symmetry of each construction and whether some
 paradigm is asymmetric: symmetric negation when no asymmetry is found, asymmetric when every
 construction is asymmetric, and both otherwise. -/
-def languageType (constructions : List Bool) (paradigmAsymmetric : Prop)
+def languageType (cs : List α) (sym : α → Prop) [DecidablePred sym] (paradigmAsymmetric : Prop)
     [Decidable paradigmAsymmetric] : Data.WALS.F113A.NegationSymmetry :=
-  if constructions.all id ∧ ¬ paradigmAsymmetric then .symmetric
-  else if constructions.all (!·) then .asymmetric
+  if (∀ c ∈ cs, sym c) ∧ ¬ paradigmAsymmetric then .symmetric
+  else if ∀ c ∈ cs, ¬ sym c then .asymmetric
   else .both
 
 section LanguageType
 
-variable (cs : List Bool) (P : Prop) [Decidable P]
+variable (cs : List α) (sym : α → Prop) [DecidablePred sym] (P : Prop) [Decidable P]
 
 theorem languageType_eq_symmetric_iff :
-    languageType cs P = .symmetric ↔ (∀ c ∈ cs, c = true) ∧ ¬ P := by
+    languageType cs sym P = .symmetric ↔ (∀ c ∈ cs, sym c) ∧ ¬ P := by
   unfold languageType
-  split_ifs with h₁ h₂ <;> simp_all [List.all_eq_true]
+  split_ifs <;> simp_all
 
 /-- A language with only asymmetric constructions is of type Asy whatever its paradigms. -/
 theorem languageType_eq_asymmetric_iff (hne : cs ≠ []) :
-    languageType cs P = .asymmetric ↔ ∀ c ∈ cs, c = false := by
-  unfold languageType
+    languageType cs sym P = .asymmetric ↔ ∀ c ∈ cs, ¬ sym c := by
   obtain ⟨c, cs, rfl⟩ := List.exists_cons_of_ne_nil hne
-  split_ifs with h₁ h₂ <;> simp_all [List.all_eq_true]
+  unfold languageType
+  split_ifs with h₁ h₂
+  · exact iff_of_false (by simp) fun h ↦ h c List.mem_cons_self (h₁.1 c List.mem_cons_self)
+  · exact iff_of_true rfl h₂
+  · exact iff_of_false (by simp) h₂
 
 /-- Type SymAsy has a symmetric construction by definition, together with some asymmetry. -/
 theorem languageType_eq_both_iff :
-    languageType cs P = .both ↔ (∃ c ∈ cs, c = true) ∧ ((∃ c ∈ cs, c = false) ∨ P) := by
+    languageType cs sym P = .both ↔ (∃ c ∈ cs, sym c) ∧ ((∃ c ∈ cs, ¬ sym c) ∨ P) := by
   unfold languageType
-  split_ifs with h₁ h₂ <;> simp_all [List.all_eq_true]
-  exact (em (false ∈ cs)).elim Or.inl (λ hf => Or.inr (h₁ hf))
+  split_ifs with h₁ h₂
+  · exact iff_of_false (by simp) fun ⟨_, h⟩ ↦
+      h.elim (fun ⟨c, hc, hn⟩ ↦ hn (h₁.1 c hc)) h₁.2
+  · exact iff_of_false (by simp) fun ⟨⟨c, hc, hs⟩, _⟩ ↦ h₂ c hc hs
+  · refine iff_of_true rfl ⟨by simpa using h₂, ?_⟩
+    by_contra h
+    push Not at h
+    exact h₁ ⟨h.1, h.2⟩
 
 end LanguageType
 
+/-! ### Symmetric negation: Spanish, German, Italian, French, Russian -/
+
+theorem spanish_symmetric :
+    languageType Spanish.Negation.pairs (IsSymmetric Spanish.Negation.no) False = .symmetric := by
+  decide
+
+theorem german_symmetric :
+    languageType German.Negation.pairs (IsSymmetric German.Negation.nicht) False =
+      .symmetric := by
+  decide
+
+theorem italian_symmetric :
+    languageType Italian.Negation.pairs (IsSymmetric Italian.Negation.non) False =
+      .symmetric := by
+  decide
+
+/-- Both members of the French double marker are removed. -/
+theorem french_symmetric :
+    languageType French.Negation.pairs (IsSymmetric French.Negation.nePas) False =
+      .symmetric := by
+  decide
+
+theorem russian_symmetric :
+    languageType Russian.Negation.pairs (IsSymmetric Russian.Negation.ne) False = .symmetric := by
+  decide
+
 /-! ### Finiteness asymmetry: Finnish, Japanese, Maori, Hixkaryana -/
 
-/-- The Finnish negative auxiliary inflects for every person–number cell, so it is the finite
-element of the negative clause and the lexical verb is nonfinite, the negative-verb variety of
-the finiteness asymmetry. -/
+/-- The Finnish negative auxiliary has an ending for every person and number, and in the
+negative of a stem with its ending the auxiliary takes the ending and the stem follows bare:
+the negative verb is the finite element of the clause, and the language is of type Asy. -/
 theorem finnish_negVerb :
-    ∀ p ∈ [1, 2, 3], ∀ n ∈ ["sg", "pl"],
-      ∃ f ∈ Finnish.Negation.negParadigm, f.person = p ∧ f.number = n := by
+    (∀ p ∈ [Person.first, .second, .third], ∀ n ∈ [Number.singular, .plural],
+      (Finnish.Negation.ending p n).isSome) ∧
+    (∀ p ∈ Finnish.Negation.present,
+      p.negative = Finnish.Negation.e.morphs ++ p.affirmative.reverse) ∧
+    languageType Finnish.Negation.present (IsSymmetric Finnish.Negation.e) False =
+      .asymmetric := by
   decide
 
 /-- Under negation the Japanese lexical verb loses its tense marking to the adjectival negative
@@ -132,21 +209,29 @@ theorem japanese_tense_leaves_stem :
       .tense ∉ Japanese.Negation.japaneseNegDistribution.negativeOnStem := by
   decide
 
-/-- The asymmetry is constructional only: the Japanese paradigm is symmetric. -/
-theorem japanese_paradigm_symmetric :
-    IsSymmetricParadigm Japanese.Negation.taberuParadigm (·.affirmative) (·.negative) := by
+/-- The plain and the polite negatives are asymmetric, the polite past adding the copula, while
+the paradigm stays one to one. -/
+theorem japanese_asymmetric :
+    (∀ p ∈ Japanese.Negation.plain, ¬ IsSymmetric Japanese.Negation.na p) ∧
+    (∀ p ∈ Japanese.Negation.polite, ¬ IsSymmetric Japanese.Negation.en p) ∧
+    (∃ p ∈ Japanese.Negation.polite, Adds Japanese.Negation.en p) ∧
+    IsSymmetricParadigm (Japanese.Negation.plain ++ Japanese.Negation.polite)
+      (·.affirmative) (·.negative) := by
   decide
 
-/-- Maori negates only with the finite negative verb, so it is of type Asy. -/
+/-- Maori negates only with the initial negative verb, after which the subject precedes the
+tense particle and the verb, so it is of type Asy. -/
 theorem maori_asymmetric :
-    languageType (Maori.Negation.allExamples.map (·.symmetric)) False = .asymmetric := by
+    languageType Maori.Negation.pairs (IsSymmetric Maori.Negation.kaore) False =
+      .asymmetric := by
   decide
 
-/-- Hixkaryana negates only by deverbalizing the lexical verb under a copula that carries the
-finite inflection, so it is of type Asy. -/
+/-- Hixkaryana negates only by deverbalizing the lexical verb under an added copula, so it is
+of type Asy. -/
 theorem hixkaryana_asymmetric :
-    languageType (Hixkaryana.Negation.allExamples.map (·.symmetric)) False = .asymmetric ∧
-      ∀ e ∈ Hixkaryana.Negation.allExamples, e.copulaFinite = true := by
+    (∀ p ∈ Hixkaryana.Negation.pairs, Adds Hixkaryana.Negation.hira p) ∧
+    languageType Hixkaryana.Negation.pairs (IsSymmetric Hixkaryana.Negation.hira) False =
+      .asymmetric := by
   decide
 
 /-! ### Mixed languages: Mandarin and Turkish -/
@@ -164,38 +249,45 @@ the negative existential verb, and loses the perfective *le*: a finiteness asymm
 language is of type SymAsy. -/
 theorem mandarin_both :
     IsSymmetricNegator Mandarin.Negation.bu ∧ ¬ IsSymmetricNegator Mandarin.Negation.mei ∧
-      languageType (Mandarin.Negation.negators.map (decide <| IsSymmetricNegator ·)) False =
-        .both := by
+      languageType Mandarin.Negation.negators IsSymmetricNegator False = .both := by
   decide
 
 /-- Turkish negation is symmetric except in the aorist, whose marker changes or drops in the
 negative, a category asymmetry; the paradigm stays one to one. -/
 theorem turkish_both :
-    languageType (Turkish.Negation.gelParadigm.map (·.symmetric))
-      (Neutralizes Turkish.Negation.gelParadigm (·.affirmative) (·.negative)) = .both := by
+    (∀ p ∈ Turkish.Negation.nonAorist, IsSymmetric Turkish.Negation.mA p) ∧
+    (∀ p ∈ Turkish.Negation.aorist, ¬ IsSymmetric Turkish.Negation.mA p) ∧
+    languageType (Turkish.Negation.nonAorist ++ Turkish.Negation.aorist)
+      (IsSymmetric Turkish.Negation.mA)
+      (Neutralizes (Turkish.Negation.nonAorist ++ Turkish.Negation.aorist)
+        (·.affirmative) (·.negative)) = .both := by
   decide
 
 /-! ### Paradigmatic neutralization: Burmese and English -/
 
-/-- The Burmese negative suffix replaces the postverbal tense–aspect markers, so one negative
-form corresponds to three affirmative forms. -/
+/-- The Burmese negative suffix replaces the postverbal tense–aspect markers, so the
+construction is asymmetric and one negative form corresponds to three affirmative forms. -/
 theorem burmese_neutralizes :
-    Neutralizes Burmese.Negation.saParadigm (·.affirmative) (·.negative) := by
+    Neutralizes Burmese.Negation.goParadigm (·.affirmative) (·.negative) ∧
+    languageType Burmese.Negation.goParadigm (IsSymmetric Burmese.Negation.maBu)
+      (Neutralizes Burmese.Negation.goParadigm (·.affirmative) (·.negative)) = .asymmetric := by
   decide
 
-/-- The English simple tenses with their emphatic periphrastic affirmatives: the negative is
-symmetric with the emphatic affirmative, and the paradigm loses the emphatic distinction. -/
-def englishSimpleTenses : List (String × String) :=
-  [(English.Negation.lexicalPresent.affirmative, English.Negation.lexicalPresent.negative),
-   ("he does eat", English.Negation.lexicalPresent.negative),
-   (English.Negation.lexicalPast.affirmative, English.Negation.lexicalPast.negative),
-   ("he did eat", English.Negation.lexicalPast.negative)]
+/-- The English negative is symmetric with the compound tenses and with the emphatic
+affirmatives of the simple tenses; to the plain simple tenses it adds *do*. -/
+theorem english_symmetric_with_emphatic :
+    (∀ p ∈ English.Negation.compoundTenses ++ English.Negation.emphaticTenses,
+      IsSymmetric English.Negation.not p) ∧
+    ∀ p ∈ English.Negation.simpleTenses, Adds English.Negation.not p := by
+  decide
 
-/-- English negation is symmetric in construction and asymmetric in paradigm, of the emphasis
-subtype, so it is of type SymAsy. -/
+/-- English negation is symmetric in construction and asymmetric in paradigm, the plain and the
+emphatic affirmative of a simple tense sharing one negative, so it is of type SymAsy. -/
 theorem english_both :
-    Neutralizes englishSimpleTenses Prod.fst Prod.snd ∧
-      languageType [true] (Neutralizes englishSimpleTenses Prod.fst Prod.snd) = .both := by
+    languageType (English.Negation.compoundTenses ++ English.Negation.emphaticTenses)
+      (IsSymmetric English.Negation.not)
+      (Neutralizes (English.Negation.simpleTenses ++ English.Negation.emphaticTenses)
+        (·.affirmative) (·.negative)) = .both := by
   decide
 
 end Miestamo2005

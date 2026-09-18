@@ -1,85 +1,40 @@
 import Linglib.Syntax.Negation
 
 /-!
-# Turkish Negation Fragment
-[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
+# Turkish negation
 
-Turkish expresses standard negation with the verbal suffix *-mA-*
-(*-ma-* ~ *-me-* by vowel harmony). The suffix is inserted between the
-verb stem and the TAM suffix.
+Turkish negates a verb with the suffix *-mA-*, *-ma-* or *-me-* by vowel harmony, between the
+stem and the tense suffix: *gel-di* 'came', *gel-me-di* 'did not come'. The aorist is the one
+tense whose marking changes under negation: the aorist suffix *-ir* of *gel-ir* 'comes' is *-z*
+in the negative of the second and third persons, *gel-me-z*, and is absent in the first person,
+*gel-me-m* beside *gel-ir-im*. The examples are those of [miestamo-2005].
 
-## SymAsy: Symmetric and Asymmetric
+## Implementation notes
 
-Most constructions are **symmetric**: *-mA-* inserts without further change.
-But the **aorist** is asymmetric (A/Cat): the affirmative aorist marker
-*-(I)r* is replaced by *-z* in the negative.
+The negative suffix is cited as *-mA-* and the future suffix as *-ecek* in both members of a
+pair; the glide of *gel-me-yecek* is phonological.
 
-| Construction | Affirmative | Negative | Symmetric? |
-|-------------|-------------|----------|------------|
-| Progressive | *gel-iyor* | *gel-m-iyor* | Yes |
-| Past definite | *gel-di* | *gel-me-di* | Yes |
-| Future | *gel-ecek* | *gel-me-yecek* | Yes |
-| Evidential | *gel-miş* | *gel-me-miş* | Yes |
-| **Aorist** | *gel-ir* | *gel-me-z* | **No** |
+## References
 
-The aorist asymmetry is a paradigmatic change: a different morphological
-marker appears, not just insertion of the negative morpheme. It is
-sharpest outside 3sg: the negative aorist drops the marker entirely in
-1sg *gelmem* and 1pl *gelmeyiz*, retaining *-z* only in the second and
-third persons.
+* [miestamo-2005]
 -/
 
 namespace Turkish.Negation
 
-open Syntax.Negation
+open Syntax.Negation Morphology
 
-/-- *-mA-* — Turkish's negative verbal suffix (underlying form).
-    Surfaces as *-ma-* (back-vowel stems) or *-me-* (front-vowel stems)
-    by vowel harmony. Inserted between the verb stem and the TAM suffix:
-    *gel-iyor* → *gel-m-iyor* (come-NEG-PROG). The form here is the
-    abstract citation form; the harmony-conditioned alternants are
-    captured by the language's morphology layer, not the marker entry. -/
-def negSuffix : Marker :=
-  { pieces := [[.suff "mA"]] }
+/-- The negative suffix *-mA-*. -/
+def mA : Marker := { pieces := [[.suff "mA"]] }
 
-/-- A Turkish negation paradigm entry. -/
-structure NegParadigmEntry where
-  formLabel : String
-  affirmative : String
-  negative : String
-  glossAff : String
-  glossNeg : String
-  /-- Is this construction symmetric (neg = aff + neg marker, no other change)? -/
-  symmetric : Bool
-  deriving Repr
+/-- The past and the future of *gel-* 'come'. -/
+def nonAorist : List Pair :=
+  [⟨[.root "gel", .suff "di"], [.root "gel", .suff "mA", .suff "di"]⟩,
+   ⟨[.root "gel", .suff "ecek"], [.root "gel", .suff "mA", .suff "ecek"]⟩]
 
-/-- Paradigm for *gelmek* 'come' (3sg forms). -/
-def gelParadigm : List NegParadigmEntry :=
-  [ { formLabel := "progressive"
-    , affirmative := "geliyor", negative := "gelmiyor"
-    , glossAff := "come.PROG", glossNeg := "come.NEG.PROG"
-    , symmetric := true }
-  , { formLabel := "past definite"
-    , affirmative := "geldi", negative := "gelmedi"
-    , glossAff := "come.PST", glossNeg := "come.NEG.PST"
-    , symmetric := true }
-  , { formLabel := "future"
-    , affirmative := "gelecek", negative := "gelmeyecek"
-    , glossAff := "come.FUT", glossNeg := "come.NEG.FUT"
-    , symmetric := true }
-  , { formLabel := "evidential"
-    , affirmative := "gelmiş", negative := "gelmemiş"
-    , glossAff := "come.EVID", glossNeg := "come.NEG.EVID"
-    , symmetric := true }
-  , { formLabel := "aorist"
-    , affirmative := "gelir", negative := "gelmez"
-    , glossAff := "come.AOR", glossNeg := "come.NEG.AOR"
-    , symmetric := false }
-  ]
-
-/-- The aorist is the only asymmetric construction in the paradigm. -/
-theorem aorist_asymmetric :
-    (gelParadigm.filter (fun e => !e.symmetric)).map (·.formLabel)
-      = ["aorist"] := rfl
+/-- The aorist of *gel-* 'come': third singular, first singular and third plural. -/
+def aorist : List Pair :=
+  [⟨[.root "gel", .suff "ir"], [.root "gel", .suff "mA", .suff "z"]⟩,
+   ⟨[.root "gel", .suff "ir", .suff "im"], [.root "gel", .suff "mA", .suff "m"]⟩,
+   ⟨[.root "gel", .suff "ir", .suff "ler"], [.root "gel", .suff "mA", .suff "z", .suff "ler"]⟩]
 
 end Turkish.Negation

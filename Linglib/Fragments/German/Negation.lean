@@ -1,98 +1,29 @@
 import Linglib.Syntax.Negation
 
 /-!
-# German Negation Fragment
-[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
+# German negation
 
-German expresses standard negation with the particle *nicht*, which
-appears after the finite verb in main clauses and before the non-finite
-verb at clause end. Negation is **symmetric**: adding *nicht* introduces
-no structural changes beyond the negation marker itself.
+German negates a clause with the particle *nicht*, which follows the finite verb of a main
+clause: *ich singe* 'I sing', *ich singe nicht* 'I do not sing'. Nothing else in the clause
+changes, in any person or tense. The examples are those of [miestamo-2005].
 
-## Examples
+## References
 
-| Affirmative | Negative |
-|-------------|----------|
-| *Ich singe* 'I sing' | *Ich singe nicht* 'I don't sing' |
-| *Er hat gelesen* 'He has read' | *Er hat nicht gelesen* 'He hasn't read' |
-
-## Key properties
-
-- No finiteness change: finite verb stays finite
-- No TAM restrictions: all tenses/moods available under negation
-- No paradigmatic gaps: the full inflectional paradigm is maintained
-- Constituent negation *nicht* can also negate sub-constituents
+* [miestamo-2005]
 -/
 
 namespace German.Negation
 
-open Syntax.Negation
+open Syntax.Negation Morphology
 
-/-- *nicht* — German's standard negation particle.
-    Attaches to the VP at clause-final position; surfaces after the
-    finite verb in V2 main clauses (*Ich singe nicht*) and before the
-    non-finite verb in periphrastic constructions (*Er hat nicht
-    gelesen*). The V2/SOV alternation is why WALS Ch 143A classifies
-    German as `.type1Type2` (mixed NegV / VNeg) rather than a single
-    position. -/
-def nicht : Marker :=
-  { pieces := [[.free "nicht"]] }
+/-- *nicht*, the standard negator. -/
+def nicht : Marker := { pieces := [[.free "nicht"]] }
 
-/-- *kein* — negative determiner (fuses negation + indefinite article).
-    Lives here as a lexical fact about German negation morphology;
-    the morphosyntactic analysis of NQ-type negative quantifiers in
-    non-NC languages is a separate axis from the operator. -/
-def negDeterminer : String := "kein"
+private def words (ws : List String) : List Morph := ws.map .free
 
-/-- A negation example showing symmetric structure. -/
-structure NegExample where
-  affirmative : String
-  negative : String
-  gloss : String
-  tenseLabel : String
-  deriving Repr, BEq
-
-/-- Present tense: *Ich singe* / *Ich singe nicht*. -/
-def present : NegExample :=
-  { affirmative := "Ich singe"
-  , negative := "Ich singe nicht"
-  , gloss := "I sing / I sing NEG"
-  , tenseLabel := "present" }
-
-/-- Present perfect: *Er hat gelesen* / *Er hat nicht gelesen*. -/
-def presentPerfect : NegExample :=
-  { affirmative := "Er hat gelesen"
-  , negative := "Er hat nicht gelesen"
-  , gloss := "He has read / He has NEG read"
-  , tenseLabel := "present perfect" }
-
-/-- Preterite: *Sie kam* / *Sie kam nicht*. -/
-def preterite : NegExample :=
-  { affirmative := "Sie kam"
-  , negative := "Sie kam nicht"
-  , gloss := "She came / She came NEG"
-  , tenseLabel := "preterite" }
-
-/-- Subjunctive II: *Er käme* / *Er käme nicht*. -/
-def subjunctiveII : NegExample :=
-  { affirmative := "Er käme"
-  , negative := "Er käme nicht"
-  , gloss := "He would.come / He would.come NEG"
-  , tenseLabel := "subjunctive II" }
-
-/-- Future: *Sie wird singen* / *Sie wird nicht singen*. -/
-def future : NegExample :=
-  { affirmative := "Sie wird singen"
-  , negative := "Sie wird nicht singen"
-  , gloss := "She will sing / She will NEG sing"
-  , tenseLabel := "future" }
-
-def allExamples : List NegExample :=
-  [present, presentPerfect, preterite, subjunctiveII, future]
-
-/-! ## Verification -/
-
-/-- All five tenses are available under negation (no paradigmatic gaps). -/
-theorem all_tenses_available : allExamples.length = 5 := by decide
+/-- The first person singular present and past of *singen* 'sing'. -/
+def pairs : List Pair :=
+  [⟨words ["ich", "singe"], words ["ich", "singe", "nicht"]⟩,
+   ⟨words ["ich", "sang"], words ["ich", "sang", "nicht"]⟩]
 
 end German.Negation
