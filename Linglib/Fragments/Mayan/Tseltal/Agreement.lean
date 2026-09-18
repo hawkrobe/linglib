@@ -13,10 +13,8 @@ syntactic properties relevant to possessor extraction ([aissen-polian-2025];
 
 ## Main declarations
 
-* Case assignment over `ArgumentRole` via `Mayan.caseTseltalan`
-  (ergative-absolutive, no aspect split).
-* `Tseltal.setALinearity`, `Tseltal.setBLinearity`: prefixal Set A,
-  consistently suffixal Set B.
+* `Tseltal.template`, `Tseltal.assignCase`: the verbal complex, with Set B
+  after the stem, and ergative-absolutive case in every aspect.
 * `Tseltal.setAExponent`, `Tseltal.setBExponent`: Oxchuc Tseltal exponent
   tables ([polian-2013]).
 * `Tseltal.Extraction.realize`: unmarked extraction (no Agent Focus).
@@ -46,30 +44,21 @@ indicates A, Set B indicates S and P alike.
 
 namespace Tseltal
 
-open Mayan (MarkerSet MarkerLinearity ExponentTable)
+open Mayan (MarkerSet ExponentTable)
 open Agreement
 
 -- Re-export shared Tseltalan types
 export Mayan.Tseltalan (GrammaticalFunction)
 
-/-! ### Argument positions -/
+/-! ### The verbal complex -/
 
-/-! ### Absolutive position (LOW-ABS) -/
+/-- The position classes of the Tseltal verbal complex: the aspect marker and Set A before
+the stem, Set B, consistently suffixal, after it ([aissen-polian-2025]). -/
+def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setA], [.setB]⟩
 
-/-- Tseltal's absolutive morphemes appear in low (post-stem) position,
-    consistent with Tseltalan being LOW-ABS. -/
-def absPosition : Mayan.ABSPosition := .low
-
-/-! ### Agreement marker linearity -/
-
-/-- Set A markers in Tseltal are prefixal (per [aissen-polian-2025]
-    Table 1; pan-Mayan invariant). -/
-def setALinearity : MarkerLinearity := .prefixal
-
-/-- Set B markers in Tseltal are consistently suffixal, contrasting with
-    Tsotsil (prefixal or suffixal by context; [aissen-polian-2025] Table 1,
-    footnote 9). -/
-def setBLinearity : MarkerLinearity := .suffixal
+/-- Tseltal is ergative-absolutive in every aspect, with no aspect-conditioned split
+([polian-2013]). -/
+def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.ergative.assignCase
 
 /-! ### Set A/B exponents (Oxchuc Tseltal) -/
 
@@ -95,14 +84,9 @@ def setBExponent : ExponentTable :=
    (.pn .third .singular, []), (.pn .first .plural, [.suff "otik"]),
    (.pn .second .plural, [.suff "ex"]), (.pn .third .plural, [.suff "ik"])]
 
-/-- 3rd person absolutive is null — invariant across the standard
-    Mayan branches per [kaufman-norman-1984] Table 8. **Not**
-    pan-Mayan: see Mam exception via `Mayan.isStandard`. -/
+/-- Third person singular Set B is null, as across the Mayan branches with an ergative
+perfective ([kaufman-norman-1984]); San Juan Atitán Mam's default Set B surfaces there. -/
 theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] := rfl
-
-/-- Tseltal Set B differs from Tsotsil in linearity (suffixal vs
-    prefixal-or-suffixal); the marker set assignment is identical. -/
-theorem setB_is_suffixal : setBLinearity = .suffixal := rfl
 
 /-! ### Extraction marking -/
 

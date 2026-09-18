@@ -1,5 +1,7 @@
 import Linglib.Syntax.Case.Alignment
-import Linglib.Fragments.Mayan.Params
+import Linglib.Fragments.Mayan.Kaqchikel.Agreement
+import Linglib.Fragments.Mayan.Chol.Agreement
+import Linglib.Fragments.Mayan.Qanjobal.Agreement
 
 /-!
 # Imanishi (2014): Default Ergative
@@ -90,15 +92,16 @@ def caseOf : ArgumentRole → Option Case
   | .P => if L.VerbAssignsAbs then some .abs else L.phaseHead .P
   | .R | .T => none
 
-/-- Kaqchikel: the requirement holds, high absolutive, no suffix. -/
-def kaqchikel : Nominalization := ⟨.required, .high, False⟩
+/-- Kaqchikel: the requirement holds, high absolutive as its verbal complex has it, no
+suffix. -/
+def kaqchikel : Nominalization := ⟨.required, Mayan.absPosition Kaqchikel.template, False⟩
 
 /-- Chol: the requirement need not apply, low absolutive. -/
-def chol : Nominalization := ⟨.optional, .low, False⟩
+def chol : Nominalization := ⟨.optional, Mayan.absPosition Chol.template, False⟩
 
 /-- Q'anjob'al: the requirement need not apply, high absolutive, the suffix *-on* supplying
 object Case. -/
-def qanjobal : Nominalization := ⟨.optional, .high, True⟩
+def qanjobal : Nominalization := ⟨.optional, Mayan.absPosition Qanjobal.template, True⟩
 
 /-- Tojolabal, (178): low absolutive but subject to the requirement, so Kaqchikel-type. -/
 def tojolabal : Nominalization := ⟨.required, .low, False⟩
@@ -128,7 +131,7 @@ theorem caseOf_tojolabal :
 
 /-- The fragment's progressive entries are the mechanism's outputs. -/
 theorem caseKaqchikel_prog (r : ArgumentRole) (h : r ∈ [ArgumentRole.A, .S, .P]) :
-    kaqchikel.caseOf r = some (Mayan.caseKaqchikel .Prog r) :=
+    kaqchikel.caseOf r = some (Kaqchikel.assignCase .Prog r) :=
   caseOf_kaqchikel r h
 
 /-- (178): the subject is absolutive exactly when the requirement holds. -/

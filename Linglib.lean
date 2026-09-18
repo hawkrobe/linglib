@@ -964,7 +964,6 @@ import Linglib.Fragments.Mayan.Kiche.WordOrder
 import Linglib.Fragments.Mayan.Mam.Agreement
 import Linglib.Fragments.Mayan.Mam.Extraction
 import Linglib.Fragments.Mayan.Mam.Pronouns
-import Linglib.Fragments.Mayan.Params
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.Extraction
 import Linglib.Fragments.Mayan.Tseltal.Agreement

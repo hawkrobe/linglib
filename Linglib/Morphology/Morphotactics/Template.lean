@@ -22,7 +22,7 @@ once, as Fragment data, and study files derive their checks from it rather
 than re-typing the template. Instantiating at `MorphCategory`
 (`Morphology/RelevanceHierarchy.lean`) gives a language's slot order in
 relevance-hierarchy vocabulary; a language-specific slot type carries
-finer position classes: `Mayan.template` uses `Mayan.VerbSlot`, with the
+finer position classes: the Mayan fragments' `template`s use `Mayan.VerbSlot`, with the
 prefix/suffix split encoding a morpheme's position relative to the verb stem.
 
 ## Main definitions

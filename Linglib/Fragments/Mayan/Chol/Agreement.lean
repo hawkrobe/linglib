@@ -1,7 +1,7 @@
 import Linglib.Syntax.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Syntax.Reflex
-import Linglib.Fragments.Mayan.Params
+import Linglib.Fragments.Mayan.Agreement
 import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
@@ -17,10 +17,8 @@ intransitive subjects in non-perfective. The formal-syntactic analyses of
 
 ## Main declarations
 
-* Case assignment over `ArgumentRole` via `(Mayan.caseChol .Perf)`
-  (perfective, ergative) and `(Mayan.caseChol .Imp)` (non-perfective,
-  extended-ergative).
-* `Chol.absPosition`: LOW-ABS morpheme placement.
+* `Chol.template`, `Chol.assignCase`: the verbal complex, with Set B after the stem, and
+  case ergative in the perfective and extended-ergative in the non-perfective aspects.
 * `Chol.setAExponent`, `Chol.setBExponent`: the Set A (ERG/GEN) and Set B
   (ABS) exponent tables ([vazquez-alvarez-2011] Table 10).
 * `Chol.Extraction.realize`, `Chol.absObjectInNonFinite`,
@@ -121,13 +119,18 @@ namespace Chol
 
 open Mayan (ExponentTable)
 
-/-! ### Argument positions -/
+/-! ### The verbal complex -/
 
-/-! ### Absolutive position (LOW-ABS) -/
+/-- The position classes of the Chol verbal complex: the aspect marker and Set A before the
+stem, the status suffix and then Set B after it ([vazquez-alvarez-2011]). -/
+def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setA], [.status, .setB]⟩
 
-/-- Chol's absolutive morphemes appear in low (post-stem) position, from
-    the morpheme order ASP-ERG-ROOT-(DERIV)-SUFFIX-ABS. -/
-def absPosition : Mayan.ABSPosition := .low
+/-- Chol splits its alignment by aspect: ergative in the perfective, and in every
+non-perfective aspect the pattern the descriptive grammar calls nominative-accusative, Set A on
+all subjects, here the extended-ergative alignment ([vazquez-alvarez-2011], [coon-2013]). -/
+def assignCase : UD.Aspect → ArgumentRole → Case
+  | .Perf => Alignment.ergative.assignCase
+  | .Imp | .Prog | .Prosp | .Hab | .Iter => Alignment.extendedErgative.assignCase
 
 /-! ### Extraction marking -/
 
@@ -200,13 +203,9 @@ def setBExponent : ExponentTable :=
    (.pn .second .plural, [.suff "ety", .encl "la"]),
    (.pn .third .plural, [.suff "ob"])]
 
-/-- 3rd person absolutive is null — invariant across the standard
-    Mayan branches (Cholan, Q'anjob'alan, Tseltalan, K'ichean) per
-    [kaufman-norman-1984] Table 8 reconstruction. **Not** universally
-    pan-Mayan: Mam's default Set B `tz'=` surfaces in the 3sg slot
-    ([scott-2023]), and `Mayan.isStandard` excludes Mam from the
-    cross-Mayan theorem
-    (`CoonMateoPedroPreminger2014.mayan_p3sg_abs_null`). -/
+/-- Third person singular Set B is null, as across the Mayan branches with an ergative
+perfective ([kaufman-norman-1984]); San Juan Atitán Mam's default Set B *tz'=* surfaces there
+([scott-2023]). -/
 theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] := rfl
 
 /-- 3rd person Set A allomorphy: pre-consonantal `i-` vs pre-vocalic

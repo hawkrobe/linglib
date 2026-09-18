@@ -1,5 +1,5 @@
 import Linglib.Syntax.Reflex
-import Linglib.Fragments.Mayan.Params
+import Linglib.Fragments.Mayan.Extraction
 
 /-!
 # Kaqchikel Extraction Morphology (Agent Focus)
@@ -27,7 +27,7 @@ manners and purposes are unattested with it ([elkins-torrence-brown-2026]).
 ## Implementation notes
 
 The verb form AF alternates on is the pan-Mayan `Mayan.VerbForm`
-(`Fragments/Mayan/Params.lean`); the AF agreement paradigm is in
+(`Fragments/Mayan/Extraction.lean`); the AF agreement paradigm is in
 `Agreement.lean`; the focus construction's realization, with AF as its
 verb-hosted reflex, is in `Focus.lean`; the interpreting OT and Voice
 analyses live in `Studies/Erlewine2016.lean` and

@@ -1,7 +1,7 @@
 import Linglib.Syntax.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Semantics.Reference.Prominence
-import Linglib.Fragments.Mayan.Params
+import Linglib.Fragments.Mayan.Agreement
 import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
@@ -23,10 +23,9 @@ burying me', [hofling-2017] Table 24.15): Yucatec is LOW-ABS.
 
 * `Yukatek.setAExponent`, `Yukatek.setBExponent`: the Set A and Set B
   exponent tables ([hofling-2017] Tables 24.8, 24.12).
-* `Yukatek.absPosition`: LOW-ABS morpheme placement.
-* Case assignment over `ArgumentRole` via `(Mayan.caseYukatek .Perf)`
-  (completive, ergative) and `(Mayan.caseYukatek .Imp)` (incompletive,
-  extended-ergative).
+* `Yukatek.template`, `Yukatek.assignCase`: the verbal complex, with Set B after
+  the status suffix, and case ergative in the completive and extended-ergative
+  in the incompletive.
 
 ## Implementation notes
 
@@ -34,8 +33,8 @@ The six-cell tables use the exclusive base for 1PL (*k-* Set A, *-o'on*
 Set B; the inclusives add *-e'ex*) and the table's parenthesized
 prevocalic allomorphs (*inw-*, *aw-*, *uy-*). Plural 2nd/3rd Set A
 combine the singular prefix with *-e'ex* and *-o'ob'*. Set B 3SG is
-written `-∅` per the family convention (`-Ø` in the source). Case wiring
-reuses `Mayan.caseYukatek`; the AF construction (marked by the absence
+written `-∅` per the family convention (`-Ø` in the source). The AF construction (marked by
+the absence
 of expected morphology, [aissen-2017] rather than a dedicated morpheme)
 is not yet encoded.
 -/
@@ -44,10 +43,17 @@ namespace Yukatek
 
 open Mayan (ExponentTable)
 
-/-! ### ABS position (LOW-ABS) -/
+/-! ### The verbal complex -/
 
-/-- LOW-ABS: the Set B suffixes follow the stem and status suffix. -/
-def absPosition : Mayan.ABSPosition := .low
+/-- The position classes of the Yucatec verbal complex: the aspect marker and Set A before the
+stem, the status suffix and then Set B after it ([hofling-2017]). -/
+def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setA], [.status, .setB]⟩
+
+/-- Yucatec is ergative in the completive, the perfective, and puts Set A on every subject in
+the incompletive aspects ([hofling-2017]). -/
+def assignCase : UD.Aspect → ArgumentRole → Case
+  | .Perf => Alignment.ergative.assignCase
+  | .Imp | .Prog | .Prosp | .Hab | .Iter => Alignment.extendedErgative.assignCase
 
 /-! ### Set A exponents -/
 
@@ -78,7 +84,5 @@ def setBExponent : ExponentTable :=
 /-- 3rd person absolutive is null, as across the standard Mayan
     branches ([kaufman-norman-1984] Table 8). -/
 theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] := rfl
-
-/-! ### Argument positions -/
 
 end Yukatek

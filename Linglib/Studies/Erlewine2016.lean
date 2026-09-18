@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.Erlewine2016
 import Linglib.Syntax.Person.Basic
-import Linglib.Fragments.Mayan.Params
+import Linglib.Fragments.Mayan.Extraction
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Mathlib.Order.Interval.Finset.Nat
 
@@ -224,7 +224,7 @@ def Candidate.form (args : List Arg) (c : Candidate) : Mayan.VerbForm :=
 /-- Among the candidates of a transitive clause, the AF form is exactly the absence of the Set
 A probe: the derivation that skips Spec,TP loses Set A and gains the suffix. -/
 theorem form_hasSetA (o : Bool) :
-    ∀ c ∈ candidatesOf true o, (c.form (argsOf true)).hasSetA = c.aProbe := by
+    ∀ c ∈ candidatesOf true o, ((c.form (argsOf true)).HasSetA ↔ c.aProbe = true) := by
   cases o <;> decide
 
 /-! ### The rows -/

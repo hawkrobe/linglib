@@ -1,9 +1,9 @@
-import Linglib.Fragments.Mayan.Params
+import Linglib.Fragments.Mayan.Agreement
 import Linglib.Semantics.Reference.Prominence
 import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
-# Shared Tseltalan Infrastructure
+# Tseltalan grammatical functions
 
 Descriptive types shared across the Tseltalan subgroup, Tsotsil and Tseltal
 ([aissen-polian-2025]; [polian-2013]). Both languages share agreement
@@ -16,7 +16,6 @@ Tseltal consistently suffixal).
 * `Mayan.Tseltalan.GrammaticalFunction` with `.markerSet` and `.toArgumentRole?`:
   the shared Split-S grammatical functions, their Set A / Set B assignment,
   and projection to the canonical `ArgumentRole`.
-* `Mayan.Tseltalan.absPosition`: the subgroup-level LOW-ABS constant.
 
 ## Implementation notes
 
@@ -70,15 +69,6 @@ theorem abs_uniform :
     GrammaticalFunction.S_O.markerSet = .setB ∧
     GrammaticalFunction.O.markerSet = .setB ∧
     GrammaticalFunction.G.markerSet = .setB := ⟨rfl, rfl, rfl, rfl⟩
-
-/-! ### Absolutive position (LOW-ABS) -/
-
-/-- Tseltalan absolutive morphemes appear in low (post-stem) position; both
-    Tsotsil and Tseltal inherit this LOW-ABS constant. LOW-ABS refers to the
-    structural position of the licensing head, not the linear position of
-    every Set B exponent (which varies by language and context).
-    [aissen-polian-2025] p. 97; [polian-2013]. -/
-def absPosition : Mayan.ABSPosition := .low
 
 /-! ### Projection to canonical ArgumentRole -/
 

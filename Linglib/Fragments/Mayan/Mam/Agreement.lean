@@ -1,7 +1,7 @@
 import Linglib.Syntax.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Fragments.Mayan.Mam.Pronouns
-import Linglib.Fragments.Mayan.Params
+import Linglib.Fragments.Mayan.Agreement
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Syntax.Clause.ArgumentRole
 import Linglib.Syntax.Person.Basic
@@ -16,8 +16,8 @@ subject (Table 2.8, `Mam.setAExponent`), and Set B markers on Infl for the intra
 co-occur with the default Set B marker *tz'=* (`Mam.defaultSetB`) and are full pronouns, though
 some speakers accept agreeing Set B for objects as a more formal variant (ch. 3, ex. 156). The
 underlying case system is tripartite, ERG from Voice, ACC from Voice and ABS from Infl, visible
-only through agreement (`Mam.caseInventory`); Set B sits pre-stem on Infl, the high-absolutive
-placement (`Mam.absPosition`).
+only through agreement (`Mam.caseInventory`); Set B precedes the stem in the verbal complex, the
+high-absolutive placement (`Mam.template`).
 
 ## Implementation notes
 
@@ -25,14 +25,15 @@ This fragment records SJA Mam specifically. Other Mam dialects, notably Ixtahuac
 (England 1983b, used by [zavala-maldonado-2017] §4–5), are characterized as ergative with a
 neutral pattern in aspectless dependent clauses; per [scott-2023] §1.2.4 and Table 1.2, Mam
 dialects vary substantially. The tripartite case function is `Alignment.tripartite.assignCase`
-via `Mayan.caseMam`. Person-number cells are the canonical φ-cells `Agreement.Bundle`; the
+in every aspect (`Mam.assignCase`). Person-number cells are the canonical φ-cells
+`Agreement.Bundle`; the
 pronoun lexicon and its feature values live in `Fragments/Mayan/Mam/Pronouns.lean`, and the
 derivation of the paradigms from a Vocabulary in `Studies/Scott2023.lean`.
 -/
 
 namespace Mam
 
-open Mayan (MarkerLinearity ExponentTable)
+open Mayan (ExponentTable)
 open Agreement
 
 /-! ### Agreement marker paradigms -/
@@ -72,6 +73,17 @@ def setBSpecificCells : List Bundle :=
     probe is blocked and for 2/3SG intransitive S. -/
 def defaultSetB : List Morphology.Morph := [.procl "tz'"]
 
+/-! ### The verbal complex -/
+
+/-- The position classes of the SJA Mam verbal complex: the aspect marker, Set B and Set A
+before the stem, and no status suffix ([scott-2023]). -/
+def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setB, .setA], []⟩
+
+/-- SJA Mam assigns case tripartitely in every aspect, with no aspect-conditioned split
+([scott-2023]): ergative to the transitive subject, accusative to the object and absolutive
+to the intransitive subject, visible only through agreement. -/
+def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.tripartite.assignCase
+
 /-! ### Case -/
 
 -- The per-position case facts are the tripartite-alignment facts
@@ -80,53 +92,34 @@ def defaultSetB : List Morphology.Morph := [.procl "tz'"]
 -- is a re-export of the substrate lemma.
 
 /-- Agent gets ERG (inherent, from Voice). -/
-theorem A_case : (Mayan.caseMam .Perf) .A = .erg := Alignment.tripartite.assignCase_A
+theorem A_case : (assignCase .Perf) .A = .erg := Alignment.tripartite.assignCase_A
 
 /-- Patient gets ACC (structural, from Voice). -/
-theorem P_case : (Mayan.caseMam .Perf) .P = .acc := Alignment.tripartite.assignCase_P
+theorem P_case : (assignCase .Perf) .P = .acc := Alignment.tripartite.assignCase_P
 
 /-- Intransitive S gets ABS (structural, from Infl). -/
-theorem S_case : (Mayan.caseMam .Perf) .S = .abs := Alignment.tripartite.assignCase_S
+theorem S_case : (assignCase .Perf) .S = .abs := Alignment.tripartite.assignCase_S
 
 /-- Three distinct underlying cases (morphologically tripartite),
     inherited from `Alignment.tripartite_distinguishes_all`. -/
 theorem tripartite_alignment :
-    (Mayan.caseMam .Perf) .A ≠ (Mayan.caseMam .Perf) .P ∧
-    (Mayan.caseMam .Perf) .A ≠ (Mayan.caseMam .Perf) .S ∧
-    (Mayan.caseMam .Perf) .P ≠ (Mayan.caseMam .Perf) .S :=
+    (assignCase .Perf) .A ≠ (assignCase .Perf) .P ∧
+    (assignCase .Perf) .A ≠ (assignCase .Perf) .S ∧
+    (assignCase .Perf) .P ≠ (assignCase .Perf) .S :=
   Alignment.tripartite_distinguishes_all
 
 /-! ### Case inventory ([blake-1994]) -/
 
 /-- The case inventory realized by the core positions: {ERG, ACC, ABS}. -/
-def caseInventory : Finset Case := (ArgumentRole.core.map (Mayan.caseMam .Perf)).toFinset
+def caseInventory : Finset Case := (ArgumentRole.core.map (assignCase .Perf)).toFinset
 
 /-- The inventory covers all argument positions. -/
 theorem inventory_covers_positions :
-    ∀ p ∈ ArgumentRole.core, (Mayan.caseMam .Perf) p ∈ caseInventory := by decide
+    ∀ p ∈ ArgumentRole.core, (assignCase .Perf) p ∈ caseInventory := by decide
 
 -- Mam's {ERG, ACC, ABS} inventory is valid per Blake's case hierarchy
 -- (all are core cases at rank 6, trivially no gaps).
 example : Case.IsValidInventory caseInventory := by decide
-
-/-! ### Mayan absolutive parameter -/
-
-/-- HIGH-ABS: Set B (absolutive) markers sit pre-stem on Infl, right
-    after the aspect marker — template ASP-**ABS**-ERG-ROOT-SUFFIX
-    ([scott-2023] §2.5.1). -/
-def absPosition : Mayan.ABSPosition := .high
-
-/-- HIGH-ABS yields ABS=NOM case locus: Infl assigns case to the
-    absolutive argument ([scott-2023], §3.3). -/
-theorem mam_case_locus :
-    Mayan.toCaseLocus absPosition = .absNom := rfl
-
-/-- Set A linearity: prefixal (per [scott-2023] ch. 2; pan-Mayan). -/
-def setALinearity : MarkerLinearity := .prefixal
-
-/-- Set B linearity: prefixal (HIGH-ABS Mam morphology; pre-stem on Infl,
-    per [scott-2023] §2.5.1). -/
-def setBLinearity : MarkerLinearity := .prefixal
 
 /-! ### Marker verification -/
 
