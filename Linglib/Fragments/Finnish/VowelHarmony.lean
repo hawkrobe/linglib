@@ -96,6 +96,31 @@ def i_vowel : Segment := Segment.ofSpecs
 -- § 2: Vowel Classification
 -- ============================================================================
 
+/-- The vowel of the alternating suffixes, unspecified for [back]: the A of the essive
+-nA and the partitive -A. -/
+def A : Segment := Segment.ofSpecs
+  [(Feature.syllabic, true), (Feature.dorsal, true),
+   (Feature.low, true), (Feature.high, false), (Feature.round, false)]
+
+/-- A consonant of the given specifications. -/
+private def consonant (specs : List (Feature × Bool)) : Segment :=
+  Segment.ofSpecs ((.syllabic, false) :: specs)
+
+def p : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, false),
+  (.labial, true), (.voice, false)]
+def t : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, false),
+  (.coronal, true), (.voice, false)]
+def k : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, false),
+  (.dorsal, true), (.voice, false)]
+def n : Segment := consonant [(.consonantal, true), (.sonorant, true), (.nasal, true),
+  (.coronal, true), (.voice, true)]
+def v : Segment := consonant [(.consonantal, true), (.sonorant, false), (.continuant, true),
+  (.labial, true), (.voice, true)]
+def l : Segment := consonant [(.consonantal, true), (.sonorant, true), (.lateral, true),
+  (.coronal, true), (.voice, true)]
+def j : Segment := consonant [(.consonantal, false), (.sonorant, true), (.approximant, true),
+  (.continuant, true), (.voice, true)]
+
 /-- Is a segment a back vowel? [+syll, +back]. -/
 def isBackVowel (s : Segment) : Bool :=
   s.HasValue .syllabic true && s.HasValue .back true
