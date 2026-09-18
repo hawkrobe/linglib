@@ -8,20 +8,21 @@ import Mathlib.Data.Fintype.Basic
 This file formalizes the argument of Beavers and colleagues that some roots entail change. A
 property-concept root, such as that of *bright*, describes a state that need not have come
 about. A result root, such as that of *shatter*, describes a state that always arises from a
-change (`Verb.Model.EntailsChange`). This contradicts the Bifurcation Thesis, on which change
-is introduced by the verbal template and never by a root.
+change (`ChangeOfStateModel.EntailsChange`). This contradicts the Bifurcation Thesis, on which
+change is introduced by the verbal template and never by a root.
 
 A root entails change exactly when its stative cannot be conjoined with a denial of change
 (`entailsChange_iff_forall_not_deniesChange`), and with such a root restitutive *again*
-presupposes an earlier change (`change_of_againRestitutive_presup`). The morphology follows
+presupposes an earlier change. The morphology follows
 from a default realization rule: a verb is unmarked iff its root entails change, and a stative
-is unmarked iff its complement does not. A language that spells out the unmarked form only when
-it spells out the marked one belongs to one of the three attested types
-(`Exponence.trichotomy`).
+is unmarked iff its complement does not, and in a model that respects a root's signature the
+rule agrees with the semantics (`entailsChange_of_verbRealization_eq_unmarked`). A language that
+spells out the unmarked form only when it spells out the marked one belongs to one of the three
+attested types (`Exponence.trichotomy`).
 
 ## Implementation notes
 
-* The semantics is stated on `Verb.Model`, the change-of-state model of Beavers and
+* The semantics is stated on `ChangeOfStateModel`, the change-of-state model of Beavers and
   Koontz-Garboden's book, and *again* is `Presupposition.again`.
 * The realization rule reads whether a root entails change off its kind signature.
 * The tables of the typological survey are not represented. Its coding of markedness is
@@ -40,46 +41,41 @@ namespace BeaversEtAl2021
 
 open Semantics Presupposition
 
-/-! ### Roots that entail change -/
+/-! ### State predicates that entail change -/
 
 section Model
 
-variable {Entity State Event : Type*} (M : Verb.Model Entity State Event)
-  {ltS : State → State → Prop} {ltE : Event → Event → Prop} {v : Verb} {x : Entity}
-  {s : State}
+open ArgumentStructure BeaversKoontzGarboden2020
 
-/-- The deverbal stative holds of the states of the root's property that a change gave rise
-to. -/
-def resultStative (v : Verb) (x : Entity) (s : State) : Prop :=
-  M.rootState v x s ∧ ∃ e, M.become s e
+variable {Entity State Event : Type*} (M : ChangeOfStateModel Entity State Event)
+  {ltS : State → State → Prop} {ltE : Event → Event → Prop} {P : Entity → State → Prop}
+  {x : Entity} {s : State}
+
+/-- The deverbal stative of `P` holds of the states of which `P` holds and that a change gave
+rise to. -/
+def resultStative (P : Entity → State → Prop) (x : Entity) (s : State) : Prop :=
+  P x s ∧ ∃ e, M.become s e
 
 /-- The stative description `P` holds of `x` in the state `s`, and no change gave rise to `s`. -/
 def DeniesChange (P : Entity → State → Prop) (x : Entity) (s : State) : Prop :=
   P x s ∧ ¬ ∃ e, M.become s e
 
 /-- A deverbal stative never survives the denial of change, whatever its root. -/
-theorem not_deniesChange_resultStative : ¬ DeniesChange M (resultStative M v) x s :=
+theorem not_deniesChange_resultStative : ¬ DeniesChange M (resultStative M P) x s :=
   fun h ↦ h.2 h.1.2
 
-/-- A root entails change iff its basic stative never survives the denial of change. -/
+/-- A state predicate entails change iff it never survives the denial of change. -/
 theorem entailsChange_iff_forall_not_deniesChange :
-    M.EntailsChange v ↔ ∀ x s, ¬ DeniesChange M (M.rootState v) x s :=
+    M.EntailsChange P ↔ ∀ x s, ¬ DeniesChange M P x s :=
   forall₂_congr fun _ _ ↦ by simp [DeniesChange]
 
-/-- With a root that entails change the basic and the deverbal stative coincide. -/
-theorem resultStative_iff_rootState (h : M.EntailsChange v) :
-    resultStative M v x s ↔ M.rootState v x s :=
+/-- For a state predicate that entails change the basic and the deverbal stative coincide. -/
+theorem resultStative_iff (h : M.EntailsChange P) : resultStative M P x s ↔ P x s :=
   and_iff_left_of_imp (h x s)
-
-/-- With a root that entails change, *again* attached to the root presupposes an earlier
-change, so the restitutive reading is lost. -/
-theorem change_of_againRestitutive_presup (h : M.EntailsChange v)
-    (hp : (M.againRestitutive ltS v x).presup s) : ∃ s', ltS s' s ∧ ∃ e, M.become s' e :=
-  M.againRestitutive_presup_entails_change (h x) hp
 
 /-- *Again* attached to `vbecome` presupposes an earlier change with every root. -/
 theorem change_of_againRepetitiveBecome_presup {e : Event}
-    (hp : (M.againRepetitiveBecome ltE v x).presup e) :
+    (hp : (againRepetitiveBecome M ltE P x).presup e) :
     ∃ e', ltE e' e ∧ ∃ s, M.become s e' :=
   let ⟨e', hlt, s, hb, _⟩ := hp; ⟨e', hlt, s, hb⟩
 
@@ -89,27 +85,26 @@ end Model
 
 /-- A knife forged sharp is sharp in its first state `false`, and in its later state `true`,
 which a sharpening gave rise to. -/
-def forged : Verb.Model Unit Bool Unit where
-  rootState _ _ _ := True
+def forged : ArgumentStructure.ChangeOfStateModel Unit Bool Unit where
   become s _ := s = true
   cause _ _ := False
   effector _ _ := False
-  manner _ _ := False
 
-variable {v : Verb}
+/-- The knife is sharp in both of its states. -/
+def sharp (_ : Unit) (_ : Bool) : Prop := True
 
 /-- The forged state of the knife survives the denial of change. -/
-theorem forged_deniesChange : DeniesChange forged (forged.rootState v) () false :=
+theorem forged_deniesChange : DeniesChange forged sharp () false :=
   ⟨trivial, fun ⟨_, h⟩ ↦ Bool.false_ne_true h⟩
 
-/-- The root of the knife's property does not entail change. -/
-theorem not_entailsChange_forged : ¬ forged.EntailsChange v :=
+/-- Being sharp does not entail change. -/
+theorem not_entailsChange_sharp : ¬ forged.EntailsChange sharp :=
   fun h ↦ (entailsChange_iff_forall_not_deniesChange forged).1 h () false forged_deniesChange
 
 /-- The restitutive presupposition holds at the later state of the knife although no change gave
 rise to an earlier one. -/
 theorem forged_restitutive :
-    (forged.againRestitutive (· < ·) v ()).presup true ∧
+    (BeaversKoontzGarboden2020.againRestitutive (· < ·) sharp ()).presup true ∧
       ¬ ∃ s', s' < true ∧ ∃ e, forged.become s' e :=
   ⟨⟨false, Bool.false_lt_true, trivial⟩, fun ⟨_, hlt, _, h⟩ ↦ absurd (h ▸ hlt) (lt_irrefl _)⟩
 
@@ -152,6 +147,14 @@ roots lack one. -/
 theorem stativeRealization_eq_unmarked_iff {a : AdjectivalStructure} :
     stativeRealization r a = .unmarked ↔ a = .basic ∧ Root.Kind.result ∉ r.closedKinds := by
   cases a <;> simp [stativeRealization]
+
+/-- The realization rule and the semantics agree. In a model that respects the signature of a
+root for its state predicate, a root whose verb is realized unmarked entails change. -/
+theorem entailsChange_of_verbRealization_eq_unmarked {Entity State Event : Type*}
+    {M : ArgumentStructure.ChangeOfStateModel Entity State Event} {P : Entity → State → Prop}
+    {Q : Event → Prop} (h : M.Respects P Q r.kinds) (hr : verbRealization r = .unmarked) :
+    M.EntailsChange P :=
+  h.entailsChange (by unfold verbRealization at hr; split_ifs at hr with hk; exact hk)
 
 /-- A language's spell-out of the two realizations, in which the unmarked one is overt only if
 the marked one is. -/
