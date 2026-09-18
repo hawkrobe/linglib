@@ -32,7 +32,7 @@ function-level subregular hierarchy.
 * `isRightInputStrictlyLocal_iff_left_reverse`: the right class is the
   reverse-conjugate of the left class.
 * `isLeftInputStrictlyLocal_left_subsequential`: every Left-ISL
-  function is Left-Subsequential, witnessed by `ISLRule.toFinSubsequentialTransducer`.
+  function is Left-Subsequential, as a window recursion over the input.
 * `flatMap_isLeftInputStrictlyLocal_one`,
   `filterMap_isLeftInputStrictlyLocal_one` — letterwise homomorphisms and
   erasing (tier) projections are the `k = 1` specialisation.
@@ -72,14 +72,11 @@ namespace ISLRule
 
 variable {k : ℕ}
 
-/-- Apply the rule, threading a window of accumulated input symbols.
-Tail-recursive on the remaining input. The window grows from `[]` and
-is truncated to keep at most `k − 1` symbols at each step. -/
-def applyAux (r : ISLRule k α β) :
-    (window : List α) → (rest : List α) → List β
-  | _, [] => []
-  | window, x :: xs =>
-    r.windowOutput window x ++ applyAux r ((window ++ [x]).rtake (k - 1)) xs
+/-- Apply the rule, threading a window of accumulated input symbols: the window
+recursion `SubsequentialTransducer.windowRun` accumulating the input, so the window grows
+from `[]` and is truncated to at most `k − 1` symbols at each step. -/
+def applyAux (r : ISLRule k α β) : (window : List α) → (rest : List α) → List β :=
+  SubsequentialTransducer.windowRun (k - 1) r.windowOutput fun _ x => [x]
 
 /-- Apply a k-ISL rule to an input string. Scans left-to-right; at each
 position emits `r.windowOutput window x` where `window` is the (last
@@ -149,17 +146,11 @@ theorem isRightInputStrictlyLocal_iff_left_reverse {k : ℕ}
 emits `[]` regardless of window or current symbol. -/
 lemma isLeftInputStrictlyLocal_const_nil (k : ℕ) :
     IsLeftInputStrictlyLocal (α := α) (β := β) k (fun _ => []) := by
-  refine ⟨⟨fun _ _ => []⟩, ?_⟩
-  funext input
-  show (⟨fun _ _ => []⟩ : ISLRule k α β).apply input = []
+  refine ⟨⟨fun _ _ => []⟩, funext fun input => ?_⟩
   suffices h : ∀ window : List α,
       (⟨fun _ _ => []⟩ : ISLRule k α β).applyAux window input = [] from h []
   intro window
-  induction input generalizing window with
-  | nil => rfl
-  | cons x xs ih =>
-    show ([] : List β) ++ _ = []
-    rw [List.nil_append, ih]
+  induction input generalizing window <;> simp [*]
 
 /-! ### Letterwise homomorphisms / Tier as the `k = 1` specialisation
 
@@ -222,34 +213,9 @@ theorem filterMap_isLeftInputStrictlyLocal_one (g : α → Option β) :
 
 /-! ### ISL ⊆ Subsequential
 
-`ISLRule.toFinSubsequentialTransducer` projects an ISL rule into the sliding-window
-transducer `SubsequentialTransducer.ofWindow`, with the bounded *input* window
-`{l : List α // l.length ≤ k - 1}` as state. Co-located on the source side because the
-dependency direction (the transducer lives in `Subsequential.lean`; ISL projects into
-it) forces both construction and cast into this file. -/
-
-/-- Every ISL rule induces a window transducer tracking the last `k - 1` *input*
-symbols, with empty `finalOutput`. Finite-state over a finite alphabet
-(`List.fintypeSubtypeLengthLE`), witnessing ISL ⊆ Subsequential under the source
-literature's finite-state assumption [mohri-1997]. -/
-def ISLRule.toFinSubsequentialTransducer {k : ℕ} (r : ISLRule k α β) :
-    SubsequentialTransducer {l : List α // l.length ≤ k - 1} α β :=
-  .ofWindow (k - 1) r.windowOutput fun _ x => [x]
-
-/-- `ISLRule.applyAux` is the canonical window recursion accumulating the input. -/
-theorem ISLRule.applyAux_eq_windowRun {k : ℕ} (r : ISLRule k α β) :
-    r.applyAux = SubsequentialTransducer.windowRun (k - 1) r.windowOutput fun _ x => [x] := by
-  funext w xs
-  induction xs generalizing w with
-  | nil => rfl
-  | cons x xs ih =>
-    rw [ISLRule.applyAux_cons, SubsequentialTransducer.windowRun]
-    exact congrArg _ (ih _)
-
-/-- The window transducer induced by an ISL rule computes the same string function. -/
-theorem ISLRule.toFinSubsequentialTransducer_run_eq_apply {k : ℕ} (r : ISLRule k α β) :
-    r.toFinSubsequentialTransducer.run = r.apply :=
-  SubsequentialTransducer.run_ofWindow.trans (congrFun r.applyAux_eq_windowRun []).symm
+An ISL rule is a window recursion accumulating the input, so over a finite input alphabet
+the bounded *input* window `{l : List α // l.length ≤ k - 1}` is a finite state space
+(`isLeftSubsequential_windowRun`). -/
 
 /-- **Left-ISL ⊆ Left-Subsequential** (over a finite input alphabet).
 The `[Fintype α]` matches [mohri-1997]'s finite-alphabet assumption
@@ -257,18 +223,14 @@ and lets the bounded input window serve as a finite state space. -/
 theorem isLeftInputStrictlyLocal_left_subsequential {k : ℕ} [Fintype α]
     {f : List α → List β} (h : IsLeftInputStrictlyLocal k f) :
     IsLeftSubsequential f := by
-  obtain ⟨r, hr⟩ := h
-  have heq : r.toFinSubsequentialTransducer.run = f :=
-    r.toFinSubsequentialTransducer_run_eq_apply.trans hr
-  exact heq ▸ r.toFinSubsequentialTransducer.isLeftSubsequential
+  obtain ⟨r, rfl⟩ := h
+  exact isLeftSubsequential_windowRun _ _ _
 
-/-- A single-symbol left-ISL rule is Mealy-computable. The bounded input window that makes
-`ISLRule.toFinSubsequentialTransducer` finite-state is already the synchronous state. -/
+/-- A single-symbol left-ISL rule is Mealy-computable: the bounded input window is
+already the synchronous state. -/
 theorem isMealyComputable_of_ISLRule {k : ℕ} [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
-  r.toFinSubsequentialTransducer_run_eq_apply ▸
-    (SubsequentialTransducer.LetterToLetter.ofLength fun w x => hs w.val x).isMealyComputable
-      fun _ => rfl
+  isMealyComputable_windowRun _ _ _ hs
 
 /-- **Right-ISL ⊆ Right-Subsequential**: the left inclusion at the reverse-conjugate,
 since both right classes are the `List.revConj`-images of their left classes. -/

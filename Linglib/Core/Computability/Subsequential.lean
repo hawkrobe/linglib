@@ -9,6 +9,7 @@ import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.ScanDirection
+import Linglib.Core.Data.Fintype.List
 import Linglib.Core.Data.Fintype.Transfer
 import Linglib.Core.Data.List.DropRight
 import Linglib.Core.Data.List.DependsOn
@@ -47,6 +48,8 @@ classification predicates require a `Fintype` instance.
   characterizations
 * `IsLeftSubsequential.comp`, `IsRightSubsequential.comp`: closure under composition
 * `IsMealyComputable.isLeftSubsequential`: Mealy-computable functions are
+  left-subsequential
+* `isLeftSubsequential_windowRun`: a window recursion over a finite window alphabet is
   left-subsequential
 * `IsLeftSubsequential.isRegular_preimage`: left-subsequential functions pull back
   regular languages
@@ -492,6 +495,29 @@ theorem isSubsequential_id (d : ScanDirection) :
   match d with
   | .left => isLeftSubsequential_id
   | .right => isRightSubsequential_id
+
+/-! ### Window functions -/
+
+section WindowRun
+
+open SubsequentialTransducer
+
+variable {δ : Type*} [Fintype δ] (n : ℕ) (out : List δ → α → List β)
+  (upd : List δ → α → List δ)
+
+/-- A window recursion over a finite window alphabet is left-subsequential: the bounded
+window is the state of `SubsequentialTransducer.ofWindow`. -/
+theorem isLeftSubsequential_windowRun : IsLeftSubsequential (windowRun n out upd []) :=
+  run_ofWindow (n := n) (out := out) (upd := upd) ▸ (ofWindow n out upd).isLeftSubsequential
+
+/-- A window recursion emitting exactly one symbol per step is Mealy-computable, with
+the bounded window as the synchronous state. -/
+theorem isMealyComputable_windowRun (hs : ∀ w x, (out w x).length = 1) :
+    IsMealyComputable (windowRun n out upd []) :=
+  run_ofWindow (n := n) (out := out) (upd := upd) ▸
+    (LetterToLetter.ofLength fun w x => hs w.val x).isMealyComputable fun _ => rfl
+
+end WindowRun
 
 /-! ### Closure under composition -/
 
