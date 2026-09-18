@@ -3,7 +3,6 @@ import Linglib.Data.WALS.Features.F114A
 import Linglib.Syntax.Category.Auxiliary.Constructions
 import Linglib.Morphology.Grammaticalization.Verbal
 import Linglib.Morphology.Morph
-import Linglib.Semantics.Polarity.ExpletiveNegation
 
 /-!
 # Standard negation
@@ -23,11 +22,10 @@ classifying them, with per-ISO access to the WALS negation chapters.
 ## Main declarations
 
 * `Marker`: a standard negation marker, as the morphs exponing it.
+* `Pair`: an affirmative and its negative counterpart, as morphs.
 * `Strategy`: negative verb, affix, or particle — the grain at which
   negation meets auxiliary-verb constructions and the
   grammaticalization cline.
-* `ExpletiveTrigger`: a lexical trigger of expletive negation with the
-  negator it licenses.
 * `asymmetrySubtypeOfISO`: a language's WALS Ch 114A value.
 
 ## Implementation notes
@@ -72,6 +70,20 @@ structure Marker where
 by `…`. -/
 def Marker.form (m : Marker) : String := String.intercalate "…" (m.pieces.map Morph.surface)
 
+/-- The morphs of a marker, across its pieces. -/
+def Marker.morphs (m : Marker) : List Morph := m.pieces.flatten
+
+/-- An affirmative clause or verb form paired with its negative counterpart, each as its morphs
+in surface order. Morphs are cited in one form across the pair, so that a phonologically
+conditioned alternation, such as the buffer glide of Turkish *gel-me-yecek* beside *gel-ecek*,
+does not distinguish them. -/
+structure Pair where
+  /-- The affirmative. -/
+  affirmative : List Morph
+  /-- The negative. -/
+  negative : List Morph
+  deriving DecidableEq, Repr
+
 /-! ### Per-language WALS values -/
 
 /-- WALS Ch 114A: which domain the language's asymmetric negation
@@ -79,23 +91,6 @@ affects. -/
 def asymmetrySubtypeOfISO (iso : String) :
     Option Data.WALS.F114A.AsymmetricNegationSubtype :=
   (Data.WALS.F114A.lookupISO iso).map (·.value)
-
-/-! ### Expletive negation -/
-
-/-- A lexical trigger of expletive negation together with the negator it
-licenses: Italian *prima che … non*, Mandarin *pà … bié*. -/
-structure ExpletiveTrigger where
-  /-- The trigger's concept in [jin-koenig-2021]'s taxonomy. -/
-  triggerClass : _root_.Negation.ENConcept
-  /-- The triggering lexical item. -/
-  triggerForm : String
-  /-- The negator appearing under the trigger. -/
-  negatorForm : String
-  /-- Gloss for that negator, when it differs from standard negation. -/
-  negatorGloss : Option String := none
-  /-- Whether the use is entrenched, when the source classifies it. -/
-  highEntrenchment : Option Bool := none
-  deriving Repr, BEq, DecidableEq
 
 /-! ### Negation strategy
 

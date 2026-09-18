@@ -1,70 +1,29 @@
 import Linglib.Syntax.Negation
 
 /-!
-# Hixkaryana Negation Fragment
-[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
+# Hixkaryana negation
 
-Hixkaryana (Carib; Brazil) expresses standard negation with the suffix
-*-hira* on the verb. Negation is **asymmetric (A/Fin)**: the negative
-suffix deverbalizes the lexical verb, and a non-negative copula takes
-over as the finite element.
+Hixkaryana, a Cariban language of Brazil, negates a verb with the suffix *-hɨra*, also *-hra*,
+which deverbalizes it. The negated verb is the complement of the copula, and the
+copula carries the person, tense, aspect, number and mood marking that the verb carries in the
+affirmative: *kɨ-amryekɨ-no* 'I went hunting', *amryekɨ-hɨra w-ah-ko* 'I did not go hunting'.
+The examples are those of [miestamo-2005], from Derbyshire's grammar.
 
-## Example
+## References
 
-| | Affirmative | Negative |
-|---|---|---|
-| Immediate past | *amryeki* 'I hunted' | *amryeki-hira w-ah-ko* 'hunt-NEG 1SUBJ-be-IMM.PST' |
-
-The deverbalization + copula pattern is a clear case of A/Fin asymmetry:
-the lexical verb loses its finiteness under negation, and a copula verb
-becomes the finite element carrying person/tense marking.
+* [miestamo-2005]
 -/
 
 namespace Hixkaryana.Negation
 
-open Syntax.Negation
+open Syntax.Negation Morphology
 
-/-- *-hira* — Hixkaryana's standard negation suffix.
-    Deverbalizes the lexical verb (A/Fin asymmetry); a copula then takes
-    over as the finite element. -/
-def hira : Marker :=
-  { pieces := [[.suff "hira"]] }
+/-- The deverbalizing negative suffix *-hɨra*. -/
+def hira : Marker := { pieces := [[.suff "hɨra"]] }
 
-/-- A Hixkaryana negation example. -/
-structure NegExample where
-  affirmative : String
-  negative : String
-  glossAff : String
-  glossNeg : String
-  /-- Does this construction use a copula as the finite element? -/
-  copulaFinite : Bool
-  /-- Is this construction symmetric? -/
-  symmetric : Bool
-  deriving Repr, BEq
-
-/-- Immediate past: deverbalization + copula. -/
-def immPast : NegExample :=
-  { affirmative := "amryeki"
-  , negative := "amryeki-hira w-ah-ko"
-  , glossAff := "hunt.1SG.IMM.PST"
-  , glossNeg := "hunt-NEG 1SUBJ-be-IMM.PST"
-  , copulaFinite := true
-  , symmetric := false }
-
-def allExamples : List NegExample := [immPast]
-
-/-! ## Verification -/
-
-theorem all_examples_count : allExamples.length = 1 := by decide
-
-/-- All constructions are asymmetric. -/
-theorem all_asymmetric :
-    allExamples.all (fun e => !e.symmetric) = true := by
-  decide
-
-/-- Negation introduces a copula as the finite element. -/
-theorem copula_as_finite :
-    allExamples.all (·.copulaFinite) = true := by
-  decide
+/-- The immediate past of *amryekɨ* 'hunt', first person subject. -/
+def pairs : List Pair :=
+  [⟨[.pref "kɨ", .root "amryekɨ", .suff "no"],
+    [.root "amryekɨ", .suff "hɨra", .pref "w", .root "ah", .suff "ko"]⟩]
 
 end Hixkaryana.Negation

@@ -1,81 +1,42 @@
-import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 import Linglib.Syntax.Negation
+import Linglib.Syntax.Person.Basic
+import Linglib.Syntax.Number.Basic
 
 /-!
-# Finnish Negation: The Negative Auxiliary *ei* [karlsson-2017]
-[bybee-1985] [miestamo-2005] [haspelmath-2013]
+# Finnish negation
 
-Finnish expresses sentential negation through a **conjugated negative
-auxiliary verb** *ei*. The negative verb inflects
-for person and number, while the lexical verb appears in a nonfinite
-**connegative** form that lacks tense/agreement marking.
+Finnish negates a clause with the negative auxiliary *e-*, cited in the third person singular
+as *ei*. The auxiliary takes the person and number endings of the finite verb, and the lexical
+verb stands in the connegative, a form without them: *nuku-n* 'I am sleeping', *e-n nuku* 'I am
+not sleeping'. In the past the lexical verb is a participle, *en laulanut* 'I did not sing'.
+The examples are those of [miestamo-2005].
 
-## Paradigm (present indicative)
+## References
 
-| Person | Sg      | Pl       |
-|--------|---------|----------|
-| 1      | e-n     | e-mme    |
-| 2      | e-t     | e-tte    |
-| 3      | e-i     | e-ivät   |
-
-## Key structural property
-
-The negative auxiliary bears the inflection that the main verb would
-otherwise carry. This splits the [bybee-1985] relevance hierarchy:
-negation (rank 7) hosts agreement (rank 8) and tense, while the
-main verb retains only the stem and aspect. This is a counter-example
-to strict stem-outward ordering within a single word — the ordering
-principle holds across the analytical construction (neg aux + main verb)
-rather than within a synthetic word.
-
+* [miestamo-2005]
 -/
 
 namespace Finnish.Negation
 
-open Morphology (MorphCategory)
-open Syntax.Negation
+open Syntax.Negation Morphology
 
-/-! ### Marker and system -/
+/-- The negative auxiliary *e-*. -/
+def e : Marker := { pieces := [[.root "e"]] }
 
-/-- *ei* — Finnish's negative auxiliary verb, cited in 3sg form.
-    Genuine auxiliary: inflects for person and number (`negParadigm` below
-    has the 6 present-tense forms) and bears the agreement and tense
-    markers that the lexical verb would otherwise carry. The lexical verb
-    appears in the connegative form (tense-stripped: *e-n osta* 'I don't
-    buy' loses the tense marking *osta-n* 'I buy' carries). The 6 surface
-    forms (en/et/ei/emme/ette/eivät) are accessible via `negParadigm`. -/
-def ei : Marker :=
-  { pieces := [[.free "ei"]] }
+/-- The person and number endings of the negative auxiliary in the present: *en*, *et*, *ei*,
+*emme*, *ette*, *eivät*. -/
+def ending : Person → Number → Option Morph
+  | .first, .singular => some (.suff "n")
+  | .second, .singular => some (.suff "t")
+  | .third, .singular => some (.suff "i")
+  | .first, .plural => some (.suff "mme")
+  | .second, .plural => some (.suff "tte")
+  | .third, .plural => some (.suff "ivät")
+  | _, _ => none
 
-/-! ### Negative auxiliary paradigm -/
-
-/-- Person–number features for the Finnish negative auxiliary. -/
-structure NegForm where
-  person : Nat  -- 1, 2, or 3
-  number : String  -- "sg" or "pl"
-  form : String  -- the surface form
-  deriving Repr, BEq
-
-/-- Full present-tense paradigm of the negative auxiliary *ei*. -/
-def negParadigm : List NegForm :=
-  [ ⟨1, "sg", "en"⟩
-  , ⟨2, "sg", "et"⟩
-  , ⟨3, "sg", "ei"⟩
-  , ⟨1, "pl", "emme"⟩
-  , ⟨2, "pl", "ette"⟩
-  , ⟨3, "pl", "eivät"⟩ ]
-
-/-! ### Connegative formation -/
-
-/-! ### Inflection distribution -/
-
-
-/-! ### Verification -/
-
-/-- The paradigm has exactly 6 forms (3 persons × 2 numbers). -/
-theorem paradigm_size : negParadigm.length = 6 := by decide
-
-theorem neg_aux_respects_bybee :
-    MorphCategory.RelevanceLT .negation (.agreement .subj) := by decide
+/-- First person singular presents with their negatives. -/
+def present : List Pair :=
+  [⟨[.root "nuku", .suff "n"], [.root "e", .suff "n", .root "nuku"]⟩,
+   ⟨[.root "juokse", .suff "n"], [.root "e", .suff "n", .root "juokse"]⟩]
 
 end Finnish.Negation

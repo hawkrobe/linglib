@@ -1,108 +1,47 @@
 import Linglib.Syntax.Negation
 
 /-!
-# English Negation Fragment
-[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
+# English negation
 
-English expresses standard negation with the particle *not* (contracted *n't*).
-WALS classifies English as **both symmetric and asymmetric** (SymAsy):
+English negates a declarative verbal clause with the particle *not*, contracted *n't*, placed
+after the first auxiliary: *chris is not dancing*. A clause in a simple tense has no auxiliary,
+and its negative is built on *do*, which carries the tense and agreement while the lexical verb
+is bare: *chris does not dance*. The same periphrasis serves in the affirmative for emphasis,
+*chris does dance*, so a simple tense has two affirmatives, plain and emphatic, and one negative.
+The examples are those of [miestamo-2005].
 
-- **Symmetric**: with modals, *be*, and *have*, negation simply adds *not*
-  with no structural change: *He can swim* → *He cannot swim*.
+## References
 
-- **Asymmetric (A/Cat)**: with lexical verbs, negation introduces auxiliary
-  *do* (do-support): *He eats* → *He does not eat*. This is a category-level
-  change — the finite verb becomes an auxiliary, and the lexical verb appears
-  as a bare infinitive.
-
-## Negative indefinites (Ch 115)
-
-WALS classifies English as **mixed**:
-- *nobody*, *nothing* preclude predicate negation: *Nobody came* / **Nobody didn't come*
-- *anything*, *ever* require predicate negation: *I didn't see anything* / **I saw anything*
+* [miestamo-2005]
 -/
 
 namespace English.Negation
 
-open Syntax.Negation
+open Syntax.Negation Morphology
 
-/-- *not* — English's standard negation particle.
-    The contracted form *n't* attaches as a clitic to auxiliaries
-    (*isn't*, *don't*, *won't*); see `negContracted` for the citation form
-    of that allomorph. With lexical verbs, *do*-support is required:
-    *He does not eat*, not **He not eats*. -/
-def not : Marker :=
-  { pieces := [[.free "not"]] }
+/-- *not*, the standard negator. -/
+def not : Marker := { pieces := [[.free "not"]] }
 
-/-- The contracted form *n't*. Phonologically a clitic on the auxiliary;
-    syntactically the same negation marker as *not*. Listed for the
-    completeness of the citation forms; downstream consumers should
-    treat *not* as the canonical entry. -/
-def negContracted : String := "n't"
+/-- *n't*, the contracted negator, an enclitic on the auxiliary. -/
+def nt : Marker := { pieces := [[.encl "n't"]] }
 
-/-- An English negation example. -/
-structure NegExample where
-  affirmative : String
-  negative : String
-  glossAff : String
-  glossNeg : String
-  /-- Does this construction require do-support? -/
-  doSupport : Bool
-  /-- Is this construction symmetric (neg = aff + neg marker, no other change)? -/
-  symmetric : Bool
-  deriving Repr, BEq
+private def words (ws : List String) : List Morph := ws.map .free
 
-/-- Modal *can*: symmetric (no do-support). -/
-def modal : NegExample :=
-  { affirmative := "he can swim", negative := "he cannot swim"
-  , glossAff := "3SG can swim", glossNeg := "3SG can.NEG swim"
-  , doSupport := false, symmetric := true }
+/-- The compound tenses, whose negative places *not* after the auxiliary. -/
+def compoundTenses : List Pair :=
+  [⟨words ["chris", "is", "dancing"], words ["chris", "is", "not", "dancing"]⟩,
+   ⟨words ["chris", "will", "dance"], words ["chris", "will", "not", "dance"]⟩,
+   ⟨words ["chris", "has", "danced"], words ["chris", "has", "not", "danced"]⟩,
+   ⟨words ["chris", "had", "danced"], words ["chris", "had", "not", "danced"]⟩]
 
-/-- Copula *be*: symmetric (no do-support). -/
-def copula : NegExample :=
-  { affirmative := "she is tall", negative := "she is not tall"
-  , glossAff := "3SG be tall", glossNeg := "3SG be NEG tall"
-  , doSupport := false, symmetric := true }
+/-- The plain simple tenses with their negatives, built on *do*. -/
+def simpleTenses : List Pair :=
+  [⟨words ["chris", "dances"], words ["chris", "does", "not", "dance"]⟩,
+   ⟨words ["chris", "danced"], words ["chris", "did", "not", "dance"]⟩]
 
-/-- Auxiliary *have*: symmetric (no do-support). -/
-def auxHave : NegExample :=
-  { affirmative := "they have eaten", negative := "they have not eaten"
-  , glossAff := "3PL have eaten", glossNeg := "3PL have NEG eaten"
-  , doSupport := false, symmetric := true }
-
-/-- Lexical verb, present: asymmetric (do-support required). -/
-def lexicalPresent : NegExample :=
-  { affirmative := "he eats", negative := "he does not eat"
-  , glossAff := "3SG eat.3SG", glossNeg := "3SG do.3SG NEG eat"
-  , doSupport := true, symmetric := false }
-
-/-- Lexical verb, past: asymmetric (do-support required). -/
-def lexicalPast : NegExample :=
-  { affirmative := "he ate", negative := "he did not eat"
-  , glossAff := "3SG eat.PST", glossNeg := "3SG do.PST NEG eat"
-  , doSupport := true, symmetric := false }
-
-def allExamples : List NegExample :=
-  [modal, copula, auxHave, lexicalPresent, lexicalPast]
-
-/-! ## Verification -/
-
-theorem all_examples_count : allExamples.length = 5 := by decide
-
-/-- 3 symmetric + 2 asymmetric = SymAsy. -/
-theorem symasy_distribution :
-    (allExamples.filter (·.symmetric)).length = 3 ∧
-    (allExamples.filter (fun e => !e.symmetric)).length = 2 := by
-  exact ⟨by decide, by decide⟩
-
-/-- Asymmetric constructions all involve do-support. -/
-theorem asymmetric_iff_dosupport :
-    allExamples.all (fun e => e.symmetric == !e.doSupport) = true := by
-  decide
-
-/-- Symmetric constructions do not involve do-support. -/
-theorem symmetric_no_dosupport :
-    (allExamples.filter (·.symmetric)).all (fun e => !e.doSupport) = true := by
-  decide
+/-- The emphatic simple tenses, built on *do* like their negatives. -/
+def emphaticTenses : List Pair :=
+  [⟨words ["chris", "does", "dance"], words ["chris", "does", "not", "dance"]⟩,
+   ⟨words ["chris", "did", "dance"], words ["chris", "did", "not", "dance"]⟩]
 
 end English.Negation

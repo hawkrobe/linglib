@@ -27,14 +27,15 @@ degree of one entity and denies it of the other (`comparative_dual`). The verbal
 the negative-valence, negative-implicative and preventive verbs of the English fragment
 (`negative_valence_is_en_trigger` and its siblings). The rows carry Section 6's negator facts:
 Mandarin's imperative negator under *fear* and deontic negator under the *regret* class, French
-*ne* alone in its entrenched uses, and Januubi's standard negator throughout (`mandarin_negators`,
-`french_ne_of_entrenched`, `januubi_standard`).
+*ne* alone in its entrenched uses, and Januubi's standard negator in the exemplified classes
+(`mandarin_negators`, `french_ne_of_entrenched`, `januubi_standard`); under *fear* the paper
+reports the Januubi prohibitive *laa*, without an example.
 
 ## Implementation notes
 
 * The survey tables, Tables 1 to 4, are counts over a convenience sample that the paper itself
   declines to draw inferences from; they are not encoded. The per-language blocking of a class,
-  Section 7, is typed by `Negation.ENBlockingReason` in the fragments.
+  Sections 6.4 and 7, is `blocking`.
 * The propositional-attitude condition is not derived from the preferential semantics, whose
   valence is a label; the paper's production model is not formalized.
 
@@ -63,7 +64,7 @@ of *p*, (13b). -/
 theorem before_dual {T : Type*} [LinearOrder T] {A B : RunTimes T}
     (h : Anscombe.beforeEver A B) (hB : (timeTrace B).Nonempty) :
     DualInference (· ∈ timeTrace B) :=
-  ⟨hB, let ⟨t, _, ht⟩ := h; ⟨t, λ hmem => lt_irrefl t (ht t hmem)⟩⟩
+  ⟨hB, let ⟨t, _, ht⟩ := h; ⟨t, fun hmem ↦ lt_irrefl t (ht t hmem)⟩⟩
 
 /-! ### Logical operators (Section 6.3) -/
 
@@ -71,7 +72,7 @@ open Modality.Kratzer in
 /-- *impossible p* is the necessity of `¬p`: `p` fails at the best worlds and, if it holds
 anywhere, the meaning activates both, (13c). -/
 theorem impossible_dual {W : Type*} (f : ModalBase W) (g : OrderingSource W) (p : W → Prop)
-    (w : W) (h : necessity f g (λ w' => ¬ p w') w) (hb : (bestWorlds f g w).Nonempty)
+    (w : W) (h : necessity f g (fun w' ↦ ¬ p w') w) (hb : (bestWorlds f g w).Nonempty)
     (hp : ∃ x, p x) : DualInference p :=
   let ⟨w', hw'⟩ := hb
   ⟨hp, w', (necessity_iff_all f g _ w).1 h w' hw'⟩
@@ -79,11 +80,11 @@ theorem impossible_dual {W : Type*} (f : ModalBase W) (g : OrderingSource W) (p 
 open Modality.Kratzer in
 /-- The negation of *impossible p* is the possibility of `p`. -/
 theorem possibility_of_not_impossible {W : Type*} (f : ModalBase W) (g : OrderingSource W)
-    (p : W → Prop) (w : W) (h : ¬ necessity f g (λ w' => ¬ p w') w) : possibility f g p w := by
+    (p : W → Prop) (w : W) (h : ¬ necessity f g (fun w' ↦ ¬ p w') w) : possibility f g p w := by
   rw [necessity_iff_all] at h
   rw [possibility_iff_any]
   by_contra hne
-  exact h λ w' hw' => λ hp => hne ⟨w', hw', hp⟩
+  exact h fun w' hw' ↦ fun hp ↦ hne ⟨w', hw', hp⟩
 
 /-- *q without p*: `q ∧ ¬p`, the negation in the meaning, (13c). -/
 def withoutSem {W : Type*} (q p : Set W) : Set W := q ∩ pᶜ
@@ -104,7 +105,7 @@ open Degree in
 /-- *Y is more Q than Z*: `Y` has `Q` to its own degree and `Z` does not, the two predications of
 (13d) over distinct entities. -/
 theorem comparative_dual {Entity α : Type*} [LinearOrder α] (μ : Entity → α) (y z : Entity)
-    (h : comparativeSem μ y z .positive) : DualInference λ e => μ y ≤ μ e :=
+    (h : comparativeSem μ y z .positive) : DualInference fun e ↦ μ y ≤ μ e :=
   ⟨⟨y, le_rfl⟩, ⟨z, not_le.2 h⟩⟩
 
 /-! ### Verbal triggers -/
@@ -231,7 +232,23 @@ theorem french_ne_of_entrenched :
     ∀ r ∈ rows, r.language = .french → r.entrenched = some true → r.negator = "ne" := by
   decide
 
-/-- Januubi uses its standard negator throughout, Section 6. -/
+/-- Januubi's exemplified triggers, *barely* and *before*, take its standard negator *maa*. -/
 theorem januubi_standard : ∀ r ∈ rows, r.language = .januubi → r.kind = .standard := by decide
+
+/-! ### Blocked classes (Sections 6.4 and 7) -/
+
+/-- Why a concept fails to trigger expletive negation in a language: Januubi admits only noun
+phrases as complements of comparatives and disprefers the modal that the *regret* class needs;
+Januubi, Mandarin and Zarma-Sonrai express *too … to* as 'too … so that … not', and Mandarin and
+Zarma-Sonrai express *without* as 'q not p', where the negation is part of the meaning. -/
+def blocking : Language → ENConcept → Option ENBlockingReason
+  | .januubi, .moreThan | .januubi, .lessThan => some .npOnlyComplement
+  | .januubi, .regret => some .modalRestriction
+  | .januubi, .tooTo | .mandarin, .tooTo | .zarmaSonrai, .tooTo => some .analyticNegation
+  | .mandarin, .without | .zarmaSonrai, .without => some .analyticNegation
+  | _, _ => none
+
+/-- No row exemplifies a class the paper reports as blocked. -/
+theorem blocking_eq_none_of_mem : ∀ r ∈ rows, blocking r.language r.concept = none := by decide
 
 end JinKoenig2021

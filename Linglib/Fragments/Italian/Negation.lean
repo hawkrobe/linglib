@@ -1,89 +1,34 @@
 import Linglib.Syntax.Negation
 
-/-! # Italian Negation Fragment
-[haspelmath-2013] [dryer-2013-wals] [zanuttini-1997] [cinque-1999]
+/-!
+# Italian negation
 
-Italian sentential negation: the standard preverbal negation particle *non*,
-a free particle in preverbal position; WALS Ch 143A classifies Italian as `.negv`.
-Italian object clitics attach between *non* and the verb (*non lo vedo*,
-not **lo non vedo*) — the canonical syntactic analysis is
-[zanuttini-1997]'s NegP cartography, refined by [cinque-1999]'s
-adverb hierarchy.
+Italian negates a clause with the preverbal particle *non*, and nothing else in the clause
+changes, in any person or tense: *canto* 'I sing', *non canto* 'I do not sing'. Object clitics
+stand between *non* and the verb. The same *non* occurs expletively, contributing no negation,
+under *prima che* 'before', *dubitare* 'doubt', *appena* 'hardly', *per poco* 'nearly', *di
+quanto* 'than', *a meno che* 'unless', *finché* 'until' and *senza che* 'without', the triggers
+[jin-koenig-2021] record for the language. N-words and the other polarity-sensitive items are
+entered in `Fragments/Italian/PolarityItems.lean`. The examples are those of [miestamo-2005].
 
-## Sibling files
+## References
 
-Italian negation is distributed across three coordinated files. This file
-holds the operator (the marker + system) and the EN trigger inventory.
-The other axes:
-
-- `Fragments/Italian/PolarityItems.lean` — lexical reactives: n-words
-  (*nessuno*, *niente*, *mai*, *neanche/nemmeno/neppure*), the formal NPI
-  *alcuno*, the emphatic reinforcer *mica*, the FCIs *qualsiasi/qualunque*.
-  The operator/lexical-reactive split is documented in
-  `Core/Lexical/NegMarker.lean`.
-- the EN trigger inventory (this file, below) — the eight [jin-koenig-2021]
-  trigger classes attested for Italian, with their lexical triggers.
-  Distinct axis from standard sentential negation. The finer
-  construction-level weak/strong classification of Italian EN
-  environments ([greco-2020] Tables 1–2) lives in `Studies/Greco2020.lean`.
-- `Fragments/Italian/PolarityMarking.lean` — sentence-level polarity
-  strategies (emphatic affirmation, focus particles).
-
-Bias-conditioned *non₂* (the non-truth-functional comparative *non* of
-[napoli-nespor-1976]) surfaces obliquely via the `pur` and `affatto`
-entries in `PolarityItems.lean`.
+* [miestamo-2005]
+* [jin-koenig-2021]
 -/
 
 namespace Italian.Negation
 
-open Syntax.Negation
+open Syntax.Negation Morphology
 
-/-- *non* — Italian's standard preverbal negation particle.
-    `Non ho visto nessuno` 'NEG have seen nobody' = "I didn't see anyone".
-    A free word, not a clitic; syntactically immediately preverbal. -/
-def non : Marker :=
-  { pieces := [[.free "non"]] }
+/-- *non*, the standard negator. -/
+def non : Marker := { pieces := [[.free "non"]] }
 
-/-! ## Expletive Negation
-[jin-koenig-2021]
+private def words (ws : List String) : List Morph := ws.map .free
 
-The eight EN trigger classes attested for Italian in [jin-koenig-2021]'s
-722-language survey (Table 3, Italic row), each with its lexical trigger.
-Unlike French — whose grammaticalized EN marker is bare *ne*, distinct
-from standard *ne...pas* — Italian uses the standard negator *non* for
-every EN environment, so EN and standard negation are string-identical
-([greco-2020] exploits exactly this ambiguity for Snegs).
-
-Note the cross-Romance contrast visible in the survey: Italian's row has
-DOUBT (*dubitare*) but, unlike French, no FEAR class.
--/
-
-/-- EN trigger-negator pairings from [jin-koenig-2021] Table 3
-    (Italic section). -/
-def enTriggerNegators : List ExpletiveTrigger :=
-  [ { triggerClass := .before, triggerForm := "prima che"
-    , negatorForm := "non" }
-  , { triggerClass := .deny, triggerForm := "dubitare"
-    , negatorForm := "non" }
-  , { triggerClass := .barely, triggerForm := "appena"
-    , negatorForm := "non" }
-  , { triggerClass := .almost, triggerForm := "per poco"
-    , negatorForm := "non" }
-  , { triggerClass := .moreThan, triggerForm := "di quanto"
-    , negatorForm := "non" }
-  , { triggerClass := .unless, triggerForm := "a meno che"
-    , negatorForm := "non" }
-  , { triggerClass := .before, triggerForm := "finché, fino a"
-    , negatorForm := "non" }
-    -- J&K Table 3 prints the WITHOUT trigger as "senza que" (a typo
-    -- carried from their source, per their fn. 5); *senza che* is the
-    -- Italian form.
-  , { triggerClass := .without, triggerForm := "senza che"
-    , negatorForm := "non" } ]
-
-/-- Every Italian EN environment uses the standard negator: the EN
-    negator form coincides with the `non` marker entry. -/
-theorem en_negator_is_standard :
-    enTriggerNegators.all (·.negatorForm == non.form) = true := by decide
+/-- The first person singular present and future of *cantare* 'sing'. -/
+def pairs : List Pair :=
+  [⟨words ["canto"], words ["non", "canto"]⟩,
+   ⟨words ["canterò"], words ["non", "canterò"]⟩]
 
 end Italian.Negation

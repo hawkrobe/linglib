@@ -1,181 +1,31 @@
 import Linglib.Syntax.Negation
-import Linglib.Semantics.Polarity.ExpletiveNegation
 
 /-!
-# Zarma-Sonrai: Negation and Expletive Negation Markers
-[jin-koenig-2021]
+# Zarma-Sonrai negation
 
-Zarma-Sonrai (ISO 639-3: dje) is a Songhay language mainly spoken in
-the southwestern border area of Niger. It had not been documented for
-expletive negation (EN) prior to [jin-koenig-2021].
+Zarma-Sonrai is a Songhay language spoken mainly in southwestern Niger. Its standard negators
+are chosen by aspect, *si* in the imperfective and *mana* in the perfective, and possession is
+negated by *sinda* 'not have'. All three occur expletively, contributing no negation: *a batu a
+mana graduate manang* 'he delayed graduating last year', *ey si batu a ma si ka* 'I cannot wait
+for him to come'. The description follows [jin-koenig-2021], whose examples are the rows of
+`Data.Examples.JinKoenig2021`.
 
-## Standard Negation
+## References
 
-Zarma-Sonrai distinguishes two standard negation markers by aspect:
-- **si** : imperfective negation (IPFV.NEG)
-- **mana** / **batu** : perfective negation (PFV.NEG)
-
-## Expletive Negation
-
-EN negators vary by trigger class, mirroring the aspect-based split:
-
-| Trigger class | EN negator | Gloss     | Aspect    |
-|---------------|------------|-----------|-----------|
-| FEAR          | si         | IPFV.NEG  | imperfective |
-| AVOID         | si         | IPFV.NEG  | imperfective |
-| DENY          | si         | IPFV.NEG  | imperfective |
-| DELAY         | batu       | PFV.NEG   | perfective   |
-| BEFORE        | mana       | PFV.NEG   | perfective   |
-| CANNOT WAIT   | si + batu  | IPFV+PFV  | mixed        |
-
-The choice of EN negator correlates with the aspectual properties of
-the complement clause, not with the trigger class itself.
-
-## Notable Absences
-
-- WITHOUT: expressed as "q not p" (analytic, not triggering EN)
-- TOO…TO: expressed as "too…so that…not" (collocation, not EN)
-- MORE THAN: attested (with *da* 'than'), but EN data limited
+* [jin-koenig-2021]
 -/
 
 namespace ZarmaSonrai.Negation
 
 open Syntax.Negation
 
-/-! ### Standard negation -/
+/-- *si*, the imperfective negator. -/
+def si : Marker := { pieces := [[.free "si"]], gloss := "IPFV.NEG" }
 
-/-- *si* — imperfective negation marker. Aspect-conditioned alternation
-    with perfective *mana*/*batu*. Parallel to Mandarin's bù/méi split. -/
-def si : Marker :=
-  { pieces := [[.free "si"]] }
+/-- *mana*, the perfective negator. -/
+def mana : Marker := { pieces := [[.free "mana"]], gloss := "PFV.NEG" }
 
-/-- *mana* — perfective negation marker (one of two variants). -/
-def mana : Marker :=
-  { pieces := [[.free "mana"]] }
-
-/-- *batu* — perfective negation marker (second variant; also surfaces
-    as a verb 'wait/delay'). -/
-def batu : Marker :=
-  { pieces := [[.free "batu"]] }
-
-/-- Legacy String accessors (used by `enNegatorForAspect` in this file). -/
-def ipfvNeg : String := si.form
-def pfvNeg : String := mana.form
-def pfvNeg2 : String := batu.form
-
-/-- Aspect governs expletive negation marker choice. -/
-inductive ENAspect where
-  | ipfv   -- imperfective complement → si
-  | pfv    -- perfective complement → mana/batu
-  deriving DecidableEq, Repr
-
-/-! ### Expletive negation markers -/
-
-/-- An expletive negation marker used in a specific trigger context. -/
-structure ENNegator where
-  /-- The negator form -/
-  form : String
-  /-- Aspectual context -/
-  aspect : ENAspect
-  /-- Whether this is a standard negation marker -/
-  isStandardNeg : Bool
-  deriving Repr, DecidableEq
-
-/-- Imperfective EN negator: *si*. -/
-def enIpfv : ENNegator where
-  form := "si"
-  aspect := .ipfv
-  isStandardNeg := true
-
-/-- Perfective EN negator: *batu*. -/
-def enPfv : ENNegator where
-  form := "batu"
-  aspect := .pfv
-  isStandardNeg := true
-
-/-- Both EN negators are standard negation markers — Zarma-Sonrai does
-    not have a dedicated expletive negator (unlike French *ne*). -/
-theorem en_negators_are_standard :
-    enIpfv.isStandardNeg = true ∧ enPfv.isStandardNeg = true := ⟨rfl, rfl⟩
-
-/-! ### Trigger-specific examples -/
-
-/-- A glossed EN example from Zarma-Sonrai. -/
-structure ENExample where
-  triggerClass : _root_.Negation.ENConcept
-  triggerForm : String
-  triggerGloss : String
-  sentence : String
-  gloss : String
-  translation : String
-  enNegator : String
-  enAspect : ENAspect
-  deriving Repr
-
-/-- DELAY trigger: *batu* 'delay' ([jin-koenig-2021], ex. 22). -/
-def delayExample : ENExample where
-  triggerClass := .delay
-  triggerForm := "batu"
-  triggerGloss := "delay"
-  sentence := "a batu a mana graduate manang"
-  gloss := "he delay he PFV.NEG graduate last.year"
-  translation := "He delayed graduating last year."
-  enNegator := "mana"
-  enAspect := .pfv
-
-/-- CANNOT WAIT trigger: *si batu* 'cannot wait'
-    ([jin-koenig-2021], Table 5, ex. 25). -/
-def cannotWaitExample : ENExample where
-  triggerClass := .cannotWait
-  triggerForm := "si batu"
-  triggerGloss := "IPFV.NEG wait"
-  sentence := "ey si batu a ma si ka"
-  gloss := "I IPFV.NEG wait he SBJV IPFV.NEG come"
-  translation := "I cannot wait for him to come."
-  enNegator := "si"
-  enAspect := .ipfv
-
-/-- HIDE trigger: *tugu* 'hide'. Zarma-Sonrai example
-    ([jin-koenig-2021], §6.1.3, ex. 20).
-
-    N.B. The negator *sinda* ('not.have') is a copular/possessive negative,
-    not the imperfective marker *si* or perfective *mana*/*batu*. It falls
-    outside the aspect-based EN negator selection system formalized in
-    `enNegatorForAspect`. The `.ipfv` classification here is approximate. -/
-def hideExample : ENExample where
-  triggerClass := .hide
-  triggerForm := "tugu"
-  triggerGloss := "hide"
-  sentence := "a tugu ey se kang a sinda sida"
-  gloss := "she hide I DAT that she not.have HIV"
-  translation := "She hid from me that she was HIV positive."
-  enNegator := "sinda"
-  enAspect := .ipfv
-
-def allExamples : List ENExample :=
-  [delayExample, cannotWaitExample, hideExample]
-
-/-! ### Aspect-based negator selection -/
-
-/-- The EN negator is determined by the aspectual properties of the
-    complement clause, not by the trigger class. This is a general
-    property of Zarma-Sonrai negation, not specific to EN. -/
-def enNegatorForAspect : ENAspect → String
-  | .ipfv => ipfvNeg
-  | .pfv  => pfvNeg2
-
-theorem fear_uses_ipfv_neg : enNegatorForAspect .ipfv = "si" := rfl
-theorem delay_uses_pfv_neg : enNegatorForAspect .pfv = "batu" := rfl
-
-open _root_.Negation (ENBlockingReason)
-
-/-- Why WITHOUT and TOO…TO do not trigger EN in Zarma-Sonrai.
-
-    WITHOUT is expressed analytically as "q not p" and TOO…TO as
-    "too…so that…not" — in both cases, the negation is a necessary
-    part of the meaning, not expletive ([jin-koenig-2021], §7). -/
-
-def withoutBlocked : ENBlockingReason := .analyticNegation
-def tooToBlocked : ENBlockingReason := .analyticNegation
+/-- *sinda* 'not have', the negative possessive verb. -/
+def sinda : Marker := { pieces := [[.free "sinda"]], gloss := "not.have" }
 
 end ZarmaSonrai.Negation

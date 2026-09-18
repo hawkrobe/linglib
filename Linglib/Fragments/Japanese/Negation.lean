@@ -4,25 +4,25 @@ import Linglib.Syntax.Negation
 /-!
 # Japanese negation
 
-Japanese negates a verb with the suffix *-nai* on its stem, and *-nai* inflects as an
-adjective in *-i*: the past of *tabe-nai* 'does not eat' is *tabe-nakatta*, with the
-adjectival past, not the verbal *-ta* of *tabe-ta* 'ate'. Tense, mood and politeness thus
-leave the verb stem for the negative suffix, the asymmetry of finiteness and of category in
-Miestamo's typology, while the paradigm itself is symmetric, each affirmative form having its
-own negative counterpart.
+Japanese negates a plain verb with the suffix *-na-* on its stem, and the negative inflects as
+an adjective: *tabe-ru* 'eats' has the negative *tabe-na-i* and *tabe-ta* 'ate' the negative
+*tabe-na-katta*, with the adjectival endings *-i* and *-katta*, not the verbal *-ru* and *-ta*.
+In the polite style the negative *-en* stands in place of the nonpast ending, *tabe-mas-u* and
+*tabe-mas-en*, and the past negative adds the past of the polite copula, *tabe-mas-en deshita*
+beside *tabe-mashi-ta*, where *-mashi-* is the form of *-mas-* before *-ta*.
+Tense thus leaves the verb under negation, while each affirmative form keeps its own negative.
+The examples are those of [miestamo-2005], from Hinds's grammar.
 
 ## Main definitions
 
-* `Japanese.Negation.negSuffix` — the negative suffix
-* `Japanese.Negation.taberuParadigm`, `Japanese.Negation.yomuParadigm` — the affirmative and
-  negative forms of a vowel-stem and a consonant-stem verb
-* `Japanese.Negation.japaneseNegDistribution` — the categories marked on the stem and on the
+* `Japanese.Negation.na`, `Japanese.Negation.en`: the plain and the polite negative suffix
+* `Japanese.Negation.plain`, `Japanese.Negation.polite`: the nonpast and past of *tabe-* 'eat'
+  with their negatives
+* `Japanese.Negation.japaneseNegDistribution`: the categories marked on the stem and on the
   suffix in the affirmative and the negative
 
 ## References
 
-* [dryer-haspelmath-2013]
-* [haspelmath-2013]
 * [miestamo-2005]
 -/
 
@@ -31,40 +31,22 @@ namespace Japanese.Negation
 open Morphology (MorphCategory)
 open Syntax.Negation
 
-/-- The negative suffix *-nai*. -/
-def negSuffix : Marker := { pieces := [[.suff "nai"]] }
+/-- The plain negative suffix *-na-*, inflected as an adjective. -/
+def na : Marker := { pieces := [[.suff "na"]] }
 
-/-- The forms of the verb paradigm. -/
-inductive Form where
-  | nonpast
-  | past
-  | gerund
-  | conditional
-  | volitional
-  deriving DecidableEq, Repr
+/-- The polite negative suffix *-en*. -/
+def en : Marker := { pieces := [[.suff "en"]] }
 
-/-- A cell of a negation paradigm: a form's affirmative and negative. -/
-structure Cell where
-  /-- The form. -/
-  form : Form
-  /-- The affirmative. -/
-  affirmative : String
-  /-- The negative. -/
-  negative : String
-  deriving DecidableEq, Repr
+/-- The plain nonpast and past of *tabe-* 'eat'. -/
+def plain : List Pair :=
+  [⟨[.root "tabe", .suff "ru"], [.root "tabe", .suff "na", .suff "i"]⟩,
+   ⟨[.root "tabe", .suff "ta"], [.root "tabe", .suff "na", .suff "katta"]⟩]
 
-/-- The paradigm of the vowel-stem verb *taberu* 'eat'. -/
-def taberuParadigm : List Cell :=
-  [ ⟨.nonpast, "taberu", "tabenai"⟩,
-    ⟨.past, "tabeta", "tabenakatta"⟩,
-    ⟨.gerund, "tabete", "tabenakute"⟩,
-    ⟨.conditional, "tabereba", "tabenakereba"⟩,
-    ⟨.volitional, "tabeyō", "tabenai darō"⟩ ]
-
-/-- The paradigm of the consonant-stem verb *yomu* 'read'. -/
-def yomuParadigm : List Cell :=
-  [ ⟨.nonpast, "yomu", "yomanai"⟩,
-    ⟨.past, "yonda", "yomanakatta"⟩ ]
+/-- The polite nonpast and past of *tabe-* 'eat'. -/
+def polite : List Pair :=
+  [⟨[.root "tabe", .suff "mas", .suff "u"], [.root "tabe", .suff "mas", .suff "en"]⟩,
+   ⟨[.root "tabe", .suff "mas", .suff "ta"],
+    [.root "tabe", .suff "mas", .suff "en", .free "deshita"]⟩]
 
 /-- Where the inflectional categories are marked: on the stem in the affirmative, and in the
 negative on the negative suffix. -/
