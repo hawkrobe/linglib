@@ -1,4 +1,4 @@
-import Linglib.Phonology.Subregular.Harmony
+import Linglib.Phonology.Harmony.System
 
 /-!
 # Turkish vowel harmony
@@ -15,8 +15,8 @@ except that the palatal l of loans such as *gol* carries [−back] and fronts th
 suffix (§3.4, [clements-sezer-1982]). The suffix-initial D of -DI and -DA copies
 [voice] from the preceding segment (§6.1.2).
 
-The alternations are `Subregular.Harmony.System`s over `Phonology.Segment`; a
-suffixed word's surface form is their `TierRule.apply`. The grammar's examples
+The alternations are `Phonology.Harmony.System`s over `Phonology.Segment`; a
+suffixed word's surface form is their `SearchCopy.apply`. The grammar's examples
 are derived in `Studies/GokselKerslake2005.lean`.
 
 ## Main definitions
@@ -33,7 +33,7 @@ are derived in `Studies/GokselKerslake2005.lean`.
 -/
 
 open Phonology (Segment)
-open Subregular.Harmony (System)
+open Phonology.Harmony (System)
 
 namespace Turkish.Phonology
 

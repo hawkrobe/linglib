@@ -1,5 +1,5 @@
 import Linglib.Phonology.Segmental.Basic
-import Linglib.Phonology.Subregular.Harmony
+import Linglib.Phonology.Harmony.System
 
 /-!
 # Hungarian vowel harmony
@@ -29,7 +29,7 @@ substrate's `Harmony.System`.
 namespace Hungarian.VowelHarmony
 
 open Phonology (Segment Feature)
-open Subregular.Harmony (System)
+open Phonology.Harmony (System)
 
 /-! ### The vowel inventory -/
 

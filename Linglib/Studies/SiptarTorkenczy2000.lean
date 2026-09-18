@@ -50,7 +50,7 @@ by prelinking (`triggerValue_agrees`, `triggerValue_viz`, `triggerValue_hid`,
 
 namespace SiptarTorkenczy2000
 
-open Autosegmental Hungarian.VowelHarmony Subregular.Harmony
+open Autosegmental Hungarian.VowelHarmony Phonology.Harmony
 
 /-- The unary place features of the vowels, (1) of the chapter. -/
 inductive Place

@@ -1,7 +1,7 @@
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Segmental.FeatureClass
 import Linglib.Phonology.Subregular.LocalRewrite
-import Linglib.Phonology.Subregular.Harmony
+import Linglib.Phonology.Harmony.System
 
 /-!
 # Finnish Vowel Harmony [karlsson-2017]
@@ -38,7 +38,7 @@ with no harmonic vowel takes front suffixes by default.
 namespace Finnish.VowelHarmony
 
 open Phonology (Segment Feature FeatureClass)
-open Subregular.Harmony (System)
+open Phonology.Harmony (System)
 
 -- ============================================================================
 -- § 1: Vowel Segments

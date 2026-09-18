@@ -1256,7 +1256,6 @@ import Linglib.Phonology.Subregular.ContainsFactor
 import Linglib.Phonology.Subregular.Dependence
 import Linglib.Phonology.Subregular.ForbidPairs
 import Linglib.Phonology.Subregular.ForbiddenPairs
-import Linglib.Phonology.Subregular.Harmony
 import Linglib.Phonology.Subregular.ISL
 import Linglib.Phonology.Subregular.LocalRewrite
 import Linglib.Phonology.Subregular.LocalityBridge
@@ -1269,7 +1268,6 @@ import Linglib.Phonology.Subregular.Sibilant
 import Linglib.Phonology.Subregular.StrictlyLocal
 import Linglib.Phonology.Subregular.StrictlyPiecewise
 import Linglib.Phonology.Subregular.TierProjection
-import Linglib.Phonology.Subregular.TierRule
 import Linglib.Phonology.Subregular.TierStrictlyLocal
 import Linglib.Phonology.Subregular.Transduction
 import Linglib.Phonology.Segmental.Basic

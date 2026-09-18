@@ -1,6 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Phonology.Harmony.Basic
-import Linglib.Phonology.Subregular.Harmony
+import Linglib.Phonology.Harmony.System
 import Linglib.Data.Examples.AksenovaEtAl2024
 
 /-!

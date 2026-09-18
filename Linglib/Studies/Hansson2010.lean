@@ -1,7 +1,7 @@
 import Linglib.Phonology.Subregular.Sibilant
 import Linglib.Phonology.Subregular.Agree
 import Linglib.Phonology.Subregular.Multitier
-import Linglib.Phonology.Subregular.Harmony
+import Linglib.Phonology.Harmony.System
 import Linglib.Data.Examples.Hansson2010
 
 /-!
@@ -43,7 +43,7 @@ typological survey (chapter 2), and its speech-error account (chapter 6) are not
 
 namespace Hansson2010
 
-open Subregular Subregular.Harmony Phonology.Harmony Data.Examples
+open Subregular Phonology Phonology.Harmony Data.Examples
 
 /-! ### Transcriptions and the tier alphabet -/
 
@@ -245,8 +245,8 @@ def write (v : Bool) (_ : Sibilant) : Sibilant := if v then .anterior else .post
 undergo, all else is transparent, nothing blocks, and the direction is leftward. -/
 def navajo : System Sibilant where
   tier := Sibilant.onTier
-  IsTrigger := Sibilant.onTier
   IsTarget := Sibilant.onTier
+  IsSource _ := Sibilant.onTier
   value := value
   write := write
   value_write := fun v _ _ => by cases v <;> rfl
@@ -257,12 +257,12 @@ def navajo : System Sibilant where
 theorem pattern_tier (w : List Sibilant) : navajo.pattern.tier w = sibilants w := by
   rw [System.pattern_tier, sibilants, tierProject_eq_filter]; rfl
 
-/-- Every sibilant triggers and undergoes. -/
+/-- Every sibilant is a target and a source. -/
 theorem saturated : navajo.Saturated := fun s _ => by
-  cases s <;> simp_all [navajo, TierRule.transmits, value, Sibilant.onTier]
+  cases s <;> simp_all [navajo, value, Sibilant.onTier]
 
-theorem transmits_write (v : Bool) (s : Sibilant) : navajo.transmits (write v s) = some v := by
-  cases v <;> rfl
+theorem tier_write (v : Bool) (s : Sibilant) (_ : navajo.tier s) : navajo.tier (write v s) := by
+  cases v <;> trivial
 
 /-- The leftmost sibilant of a word. -/
 def first (w : List Sibilant) : Option Sibilant := (sibilants w).head?
@@ -270,7 +270,7 @@ def first (w : List Sibilant) : Option Sibilant := (sibilants w).head?
 /-- The substrate's progressive harmony over the Navajo system gives every sibilant the class
 of the leftmost one. -/
 theorem scan_eq (w : List Sibilant) : navajo.scan w = w.map (harmonize (first w)) := by
-  rw [navajo.scan_eq_map saturated transmits_write rfl, pattern_tier]
+  rw [navajo.scan_eq_map saturated tier_write rfl, pattern_tier]
   refine List.map_congr_left fun s _ => ?_
   rcases hf : first w with _ | x
   · rw [first] at hf
@@ -278,7 +278,7 @@ theorem scan_eq (w : List Sibilant) : navajo.scan w = w.map (harmonize (first w)
   · rw [first] at hf
     have hx : x.onTier := mem_sibilants_onTier (List.mem_of_mem_head? hf)
     simp only [hf, Option.bind_some, harmonize]
-    cases x <;> cases s <;> simp_all [TierRule.transmits, navajo, value, write, Sibilant.onTier]
+    cases x <;> cases s <;> simp_all [navajo, value, write, Sibilant.onTier]
 
 /-- Anticipatory harmony is the substrate's harmony system run in its direction. -/
 theorem anticipatory_eq_apply (w : List Sibilant) : anticipatory w = navajo.apply w := by
