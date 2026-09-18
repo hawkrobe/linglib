@@ -92,7 +92,7 @@ theorem At.mono (hQ : Q.IsEventuality) (h : r ≤ r') (hr : At r w Q) : At r' w 
 /-- On a bounded interval, eventive instantiation is the perfective viewpoint. -/
 theorem at_eventive_withTop_iff_prfv {i : NonemptyInterval T} :
     At ↑i.withTop w (.eventive P) ↔ PRFV P w i := by
-  simp [At, PRFV, and_comm]
+  simp [At, prfv_iff, and_comm]
 
 /-- The imperfective viewpoint entails stative instantiation: proper inclusion of the interval
 in the runtime gives overlap. -/

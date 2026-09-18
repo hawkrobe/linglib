@@ -132,6 +132,12 @@ instance [LinearOrder T] (tp : TensePronoun) (g : TemporalAssignment T) :
     Decidable (tp.fullPresupposition g) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
+/-- In a context with a single salient time, the assignment sending every variable there, a
+tense pronoun is defined iff its cell admits coincidence with the evaluation time. -/
+@[simp] theorem fullPresupposition_const [LinearOrder T] (tp : TensePronoun) (t₀ : T) :
+    tp.fullPresupposition (Function.const ℕ t₀) ↔ .eq ∈ tp.constraint := by
+  simp [fullPresupposition, resolve, evalTime, interpTense]
+
 def isIndexical (tp : TensePronoun) : Prop := tp.mode = .indexical
 instance (tp : TensePronoun) : Decidable tp.isIndexical :=
   inferInstanceAs (Decidable (tp.mode = .indexical))

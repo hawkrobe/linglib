@@ -28,29 +28,33 @@ contrast between *Borromini built this church* and its two German renderings.
 
 ## Main declarations
 
-* `ReferenceTime`, `Aspect` — the two indexical tenses and the three aspects, the axes of the
-  closing tables, with their tense pronouns and their operators.
-* `denote` — the truth conditions of a tense with an aspect.
-* `Aspect.IsAnterior`, `ReferenceTime.IsDefinedOutOfTheBlue` — the two semantic properties the
-  argument turns on, each characterized by a theorem.
-* `Variety` — a variety's tense forms with the table that spells them out; `english`,
-  `standardGerman` and `southGerman` are the paper's.
-* `Variety.DescribesPastOutOfTheBlue` — a form spells out a combination that is defined out of
-  the blue and anterior; `describesPastOutOfTheBlue_iff` reduces it to one cell of the table.
-* `standardGerman_transparent`, `not_english_transparent` — the Standard German table can be
-  read off the make-up of the forms, and the English one cannot.
+* `tense`, `zeroTense`: the indexical tense with a given cell, and the zero tense, as pronouns.
+* `AspectHead`, `AspectHead.rel`, `AspectHead.denote`: the three aspects, each a relation
+  between the reference time and the event time, and its operator.
+* `denote`: the truth conditions of a tense with an aspect.
+* `AspectHead.IsAnterior`: the aspect places the event before the reference time, which holds
+  of the perfect alone (`AspectHead.isAnterior_iff`).
+* `Variety`, `Variety.SpellsOut`: a variety's table, relating tense forms to the tenses and
+  aspects they spell out; `english`, `standardGerman` and `southGerman` are the paper's.
+* `Variety.DescribesPastOutOfTheBlue`: a form spells out a tense defined out of the blue with
+  an anterior aspect; `describesPastOutOfTheBlue_iff` reduces it to the present perfect cell.
+* `Variety.IsTenseFaithful`, `Variety.IsPerfectCompositional`: the two ways a table can be read
+  off the make-up of the forms. Standard German has both, South German only the second, and
+  English neither.
 
 ## Implementation notes
 
 An out-of-the-blue context is the temporal assignment sending every variable to the
 utterance time, so the definedness of a tense pronoun there is its presupposition under the
-library's `TensePronoun.fullPresupposition`. The aspect operators take a reference interval; a
-tense supplies a point, embedded as `NonemptyInterval.pure`. The imperfective and the
-perfective are the library's `Aspect.UNBOUNDED` and `Aspect.PRFV`; the perfect, with strict
-precedence, is stronger than the relation of `Aspect.ViewpointType.perfect`, which admits an
-event abutting the reference time (`perfect_ttTSitRelation`). The zero-pronoun typology of
-§2–§3 and the locality argument from switch reference are prose. The French table is not
-entered, since the library has no French tense forms.
+library's `TensePronoun.fullPresupposition`, which holds iff the tense's cell admits
+coincidence. The aspect operators take a reference interval; a tense supplies a point, embedded
+as `NonemptyInterval.pure`. The aspects are instances of the library's `IntervalPred.ofRel`.
+The imperfective and the perfective are the library's `Aspect.UNBOUNDED` and `Aspect.PRFV`, and
+the perfect, with strict precedence, is stronger than the perfect viewpoint of
+`Aspect.ViewpointType`, which admits an event abutting the reference time
+(`perfect_viewpointType`). The zero-pronoun typology of §2–§3 and the locality argument from
+switch reference are prose. The French table is not entered, since the library has no French
+tense forms.
 
 ## References
 
@@ -64,32 +68,17 @@ entered, since the library has no French tense forms.
 namespace Kratzer1998
 
 open Tense Data.Examples
-open _root_.Aspect (IntervalPred UNBOUNDED PRFV)
+open Aspect (IntervalPred UNBOUNDED PRFV ViewpointType)
 
 /-! ### The tenses (§4–§5) -/
 
-/-- A reference time is present or past. These are the two indexical tenses, the columns of the
-closing tables. -/
-inductive ReferenceTime where
-  | present
-  | past
-  deriving DecidableEq, Repr, Fintype
-
-namespace ReferenceTime
-
-/-- The cell of a tense is the position it presupposes of its reference relative to the
-utterance time. -/
-def cell : ReferenceTime → Finset Ordering
-  | .present => Tense.present
-  | .past => Tense.past
-
-/-- The pronoun of a tense is the variable `n` presupposing the tense's position. -/
-def pronoun (t : ReferenceTime) (n : ℕ) : TensePronoun where
+/-- The indexical tense with cell `C` is the variable `n` presupposing that its reference stands
+to the utterance time in a position of `C`. The present and the past are the tenses of the
+cells `present` and `past`. -/
+def tense (C : Finset Ordering) (n : ℕ) : TensePronoun where
   varIndex := n
-  constraint := t.cell
+  constraint := C
   mode := .indexical
-
-end ReferenceTime
 
 /-- The zero tense is a variable with no presupposition, bound by the next tense up. -/
 def zeroTense (n : ℕ) : TensePronoun where
@@ -105,13 +94,11 @@ variable {T : Type*}
 variable resolves to it. -/
 def outOfTheBlue (t₀ : T) : TemporalAssignment T := Function.const ℕ t₀
 
-/-- Out of the blue the present is defined, the utterance time including itself, and the past
-is not, no provided interval preceding the utterance time. -/
-theorem pronoun_outOfTheBlue_iff [LinearOrder T] (t : ReferenceTime) (n : ℕ) (t₀ : T) :
-    (t.pronoun n).fullPresupposition (outOfTheBlue t₀) ↔ t = .present := by
-  cases t <;>
-    simp [TensePronoun.fullPresupposition, TensePronoun.resolve, TensePronoun.evalTime,
-      ReferenceTime.pronoun, ReferenceTime.cell, outOfTheBlue, present, past]
+/-- Out of the blue a tense is defined iff its cell admits coincidence with the utterance time,
+as the present does and the past does not. -/
+theorem tense_outOfTheBlue_iff [LinearOrder T] (C : Finset Ordering) (n : ℕ) (t₀ : T) :
+    (tense C n).fullPresupposition (outOfTheBlue t₀) ↔ .eq ∈ C :=
+  TensePronoun.fullPresupposition_const _ t₀
 
 /-- The zero tense has no presupposition. -/
 theorem zeroTense_fullPresupposition [LinearOrder T] (n : ℕ) (g : TemporalAssignment T) :
@@ -126,25 +113,24 @@ theorem zeroTense_abstract (n : ℕ) (P : T → Prop) (g : TemporalAssignment T)
 /-- An indexical tense cannot be abstracted over by another index. The binder leaves the clause
 a proposition about the tense's own reference, which is why an attitude verb forces a zero
 tense. -/
-theorem pronoun_not_abstracted (r : ReferenceTime) {m n : ℕ} (hn : n ≠ m) (P : T → Prop)
+theorem tense_not_abstracted (C : Finset Ordering) {m n : ℕ} (hn : n ≠ m) (P : T → Prop)
     (g : TemporalAssignment T) (t : T) :
-    temporalLambdaAbs m (fun g ↦ P ((r.pronoun n).resolve g)) g t ↔ P (g n) := by
-  simp [temporalLambdaAbs, TensePronoun.resolve, interpTense, ReferenceTime.pronoun,
-    Function.update_of_ne hn]
+    temporalLambdaAbs m (fun g ↦ P ((tense C n).resolve g)) g t ↔ P (g n) := by
+  simp [temporalLambdaAbs, TensePronoun.resolve, interpTense, tense, Function.update_of_ne hn]
 
 end Tenses
 
 /-! ### The aspects (§6–§7) -/
 
-/-- An aspect is imperfective, perfective or perfect. These are the rows of the closing
+/-- An aspect head is imperfective, perfective or perfect. These are the rows of the closing
 tables. -/
-inductive Aspect where
+inductive AspectHead where
   | imperfective
   | perfective
   | perfect
   deriving DecidableEq, Repr, Fintype
 
-section Aspect
+section Aspects
 
 variable {T W : Type*} [LinearOrder T]
 
@@ -159,181 +145,201 @@ world. -/
 theorem star_congr (P : IntervalPred W T) (e : Event T) (w w' : W) :
     star P w e ↔ star P w' e := Iff.rfl
 
-/-- The aspects map properties of events to properties of times. The imperfective includes the
-reference time in the event time, the perfective includes the event time in the reference
-time, and the perfect has the event over by the reference time. -/
-def Aspect.denote : Aspect → (W → Event T → Prop) → IntervalPred W T
-  | .imperfective => UNBOUNDED
-  | .perfective => PRFV
-  | .perfect => fun P w r ↦ ∃ e : Event T, e.τ.precedes r ∧ P w e
+/-- The relation of an aspect between the reference time `r` and the event time `s`. The
+imperfective includes the reference time in the event time, the perfective includes the event
+time in the reference time, and the perfect has the event over by the reference time. -/
+def AspectHead.rel : AspectHead → NonemptyInterval T → NonemptyInterval T → Prop
+  | .imperfective, r, s => r ≤ s
+  | .perfective, r, s => s ≤ r
+  | .perfect, r, s => s.precedes r
+
+/-- An aspect maps a property of events to the property of times that stand in the aspect's
+relation to the time of some such event. -/
+def AspectHead.denote (a : AspectHead) (P : W → Event T → Prop) : IntervalPred W T :=
+  IntervalPred.ofRel a.rel P
+
+theorem denote_imperfective (P : W → Event T → Prop) :
+    AspectHead.imperfective.denote P = UNBOUNDED P := rfl
+
+theorem denote_perfective (P : W → Event T → Prop) : AspectHead.perfective.denote P = PRFV P := rfl
 
 /-- The perfect entails the perfect viewpoint of the library, whose relation also admits an
 event that ends exactly when the reference time begins. -/
-theorem perfect_ttTSitRelation {P : W → Event T → Prop} {w : W} {r : NonemptyInterval T}
-    (h : Aspect.perfect.denote P w r) :
-    ∃ e, _root_.Aspect.ViewpointType.perfect.ttTSitRelation r e.τ ∧ P w e :=
+theorem perfect_viewpointType {P : W → Event T → Prop} {w : W} {r : NonemptyInterval T} :
+    AspectHead.perfect.denote P w r → ViewpointType.perfect.denote P w r :=
+  IntervalPred.ofRel_mono fun _ _ h ↦ le_of_lt h
+
+variable (T) in
+/-- An anterior aspect places the event time before the reference time. -/
+def AspectHead.IsAnterior (a : AspectHead) : Prop :=
+  ∀ r s : NonemptyInterval T, a.rel r s → s.precedes r
+
+/-- Only the perfect is anterior, since the imperfective and the perfective relate a time to
+itself. -/
+theorem AspectHead.isAnterior_iff [Nonempty T] (a : AspectHead) :
+    a.IsAnterior T ↔ a = .perfect := by
+  obtain ⟨t⟩ := ‹Nonempty T›
+  refine ⟨fun h ↦ ?_, fun h ↦ h ▸ fun _ _ h ↦ h⟩
+  cases a
+  · exact absurd (h (.pure t) (.pure t) le_rfl) (NonemptyInterval.precedes_irrefl _)
+  · exact absurd (h (.pure t) (.pure t) le_rfl) (NonemptyInterval.precedes_irrefl _)
+  · rfl
+
+/-- An anterior aspect describes an event that is over by the reference time. -/
+theorem AspectHead.IsAnterior.precedes {a : AspectHead} (ha : a.IsAnterior T)
+    {P : W → Event T → Prop} {w : W} {r : NonemptyInterval T} (h : a.denote P w r) :
+    ∃ e : Event T, e.τ.precedes r ∧ P w e :=
   let ⟨e, he, hP⟩ := h
-  ⟨e, le_of_lt he, hP⟩
+  ⟨e, ha _ _ he, hP⟩
 
-/-- Tense `t` on the variable `n` with aspect `a` is true of an event property when the tense is
+/-- Tense `C` on the variable `n` with aspect `a` is true of an event property when the tense is
 defined and the aspect holds of the property at the tense's reference. -/
-def denote (t : ReferenceTime) (a : Aspect) (n : ℕ) (P : W → Event T → Prop)
+def denote (C : Finset Ordering) (a : AspectHead) (n : ℕ) (P : W → Event T → Prop)
     (g : TemporalAssignment T) (w : W) : Prop :=
-  (t.pronoun n).fullPresupposition g ∧ a.denote P w (.pure ((t.pronoun n).resolve g))
+  (tense C n).fullPresupposition g ∧ a.denote P w (.pure ((tense C n).resolve g))
 
-/-- Out of the blue a tense with an aspect is true iff the tense is the present and the aspect
-holds at the utterance time. -/
-theorem denote_outOfTheBlue_iff (t : ReferenceTime) (a : Aspect) (n : ℕ)
+/-- Out of the blue a tense with an aspect is true iff the tense admits coincidence with the
+utterance time and the aspect holds there. -/
+theorem denote_outOfTheBlue_iff (C : Finset Ordering) (a : AspectHead) (n : ℕ)
     (P : W → Event T → Prop) (t₀ : T) (w : W) :
-    denote t a n P (outOfTheBlue t₀) w ↔ t = .present ∧ a.denote P w (.pure t₀) := by
-  rw [denote, pronoun_outOfTheBlue_iff]; rfl
+    denote C a n P (outOfTheBlue t₀) w ↔ .eq ∈ C ∧ a.denote P w (.pure t₀) := by
+  rw [denote, tense_outOfTheBlue_iff]; rfl
 
 /-- Present tense with perfect aspect describes an event over by the utterance time, so a past
 event can be described with no past tense. -/
 theorem denote_present_perfect_outOfTheBlue_iff (n : ℕ) (P : W → Event T → Prop) (t₀ : T)
     (w : W) :
-    denote .present .perfect n P (outOfTheBlue t₀) w ↔ ∃ e : Event T, e.τ.snd < t₀ ∧ P w e := by
-  simp [denote_outOfTheBlue_iff, Aspect.denote, NonemptyInterval.precedes]
+    denote present .perfect n P (outOfTheBlue t₀) w ↔ ∃ e : Event T, e.τ.snd < t₀ ∧ P w e := by
+  simp [denote_outOfTheBlue_iff, AspectHead.denote, AspectHead.rel, NonemptyInterval.precedes,
+    present]
 
-end Aspect
-
-/-- An anterior aspect places its event before the reference time, whatever the times, the
-worlds and the event property. -/
-def Aspect.IsAnterior (a : Aspect) : Prop :=
-  ∀ {T W : Type} [LinearOrder T] (P : W → Event T → Prop) (w : W) (r : NonemptyInterval T),
-    a.denote P w r → ∃ e : Event T, e.τ.precedes r ∧ P w e
-
-/-- A tense is defined out of the blue when its presupposition holds in every such context. -/
-def ReferenceTime.IsDefinedOutOfTheBlue (t : ReferenceTime) : Prop :=
-  ∀ {T : Type} [LinearOrder T] (n : ℕ) (t₀ : T), (t.pronoun n).fullPresupposition (outOfTheBlue t₀)
-
-/-- Only the perfect is anterior, since an event whose time is the reference time satisfies the
-imperfective and the perfective. -/
-theorem Aspect.isAnterior_iff (a : Aspect) : a.IsAnterior ↔ a = .perfect := by
-  refine ⟨fun h ↦ ?_, fun h ↦ h ▸ fun _ _ _ h ↦ h⟩
-  by_contra ha
-  have key : a.denote (fun (_ : Unit) (_ : Event Unit) ↦ True) () (.pure ()) := by
-    cases a
-    · exact ⟨⟨.pure (), .action⟩, le_rfl, trivial⟩
-    · exact ⟨⟨.pure (), .action⟩, le_rfl, trivial⟩
-    · exact absurd rfl ha
-  obtain ⟨e, he, -⟩ := h _ _ _ key
-  exact absurd he (by simp [NonemptyInterval.precedes])
-
-/-- Only the present is defined out of the blue. -/
-theorem ReferenceTime.isDefinedOutOfTheBlue_iff (t : ReferenceTime) :
-    t.IsDefinedOutOfTheBlue ↔ t = .present :=
-  ⟨fun h ↦ (pronoun_outOfTheBlue_iff t 0 ()).1 (h 0 ()),
-    fun h _ _ n t₀ ↦ (pronoun_outOfTheBlue_iff t n t₀).2 h⟩
-
-instance : DecidablePred Aspect.IsAnterior :=
-  fun a ↦ decidable_of_iff _ a.isAnterior_iff.symm
-
-instance : DecidablePred ReferenceTime.IsDefinedOutOfTheBlue :=
-  fun t ↦ decidable_of_iff _ t.isDefinedOutOfTheBlue_iff.symm
+end Aspects
 
 /-! ### What the tense forms spell out (§7) -/
 
-/-- A variety of a language, as the closing tables describe it, consists of its tense forms and,
-for each reference time and aspect, the forms that spell the combination out. -/
+/-- A variety of a language, as the closing tables describe it, is a table of the tense forms
+with the tenses and aspects they spell out. -/
 structure Variety where
-  /-- The tense forms of the variety. -/
-  forms : List Tense.Form
-  /-- The forms that spell out a reference time with an aspect. -/
-  spellOut : ReferenceTime → Aspect → List Tense.Form
+  /-- The entries of the table. -/
+  table : List (Tense.Form × Finset Ordering × AspectHead)
 
-open English in
 /-- In English the progressive forms spell out the imperfective and the simple forms the
 perfective, and the simple past also spells out the perfect, of the present as of the past. -/
 def english : Variety where
-  forms := tenseForms
-  spellOut
-    | .present, .imperfective => [presentProgressive]
-    | .past, .imperfective => [pastProgressive]
-    | .present, .perfective => [simplePresent]
-    | .past, .perfective => [simplePast]
-    | .present, .perfect => [simplePast]
-    | .past, .perfect => [simplePast, pastPerfect]
+  table :=
+    [(.presentProgressive, present, .imperfective), (.pastProgressive, past, .imperfective),
+      (.simplePresent, present, .perfective), (.simplePast, past, .perfective),
+      (.simplePast, present, .perfect), (.simplePast, past, .perfect),
+      (.pastPerfect, past, .perfect)]
 
-open German in
 /-- In Standard German the synthetic forms spell out the imperfective and the perfective, and
-the forms with a participle the perfect. -/
+their perfects the perfect. -/
 def standardGerman : Variety where
-  forms := tenseForms
-  spellOut
-    | .present, .imperfective | .present, .perfective => [praesens]
-    | .past, .imperfective | .past, .perfective => [praeteritum]
-    | .present, .perfect => [perfekt]
-    | .past, .perfect => [plusquamperfekt]
+  table :=
+    [(.simplePresent, present, .imperfective), (.simplePresent, present, .perfective),
+      (.simplePast, past, .imperfective), (.simplePast, past, .perfective),
+      (.presentPerfect, present, .perfect), (.pastPerfect, past, .perfect)]
 
-open German in
-/-- In South German, with the *Präteritum* gone, the *Perfekt* also spells out the past with the
-imperfective and the perfective, and the double perfect the past with the perfect. -/
+/-- In South German, with the simple past gone, the present perfect also spells out the past
+with the imperfective and the perfective, and the double perfect the past with the perfect. -/
 def southGerman : Variety where
-  forms := southernTenseForms
-  spellOut
-    | .present, .imperfective | .present, .perfective => [praesens]
-    | .past, .imperfective | .past, .perfective => [perfekt]
-    | .present, .perfect => [perfekt]
-    | .past, .perfect => [doppelperfekt]
+  table :=
+    [(.simplePresent, present, .imperfective), (.simplePresent, present, .perfective),
+      (.presentPerfect, past, .imperfective), (.presentPerfect, past, .perfective),
+      (.presentPerfect, present, .perfect), (.doublePerfect, past, .perfect)]
+
+/-- The tables use the tense forms of the Fragments. -/
+theorem table_forms :
+    (∀ x ∈ english.table, x.1 ∈ English.tenseForms) ∧
+      (∀ x ∈ standardGerman.table, x.1 ∈ German.tenseForms) ∧
+      ∀ x ∈ southGerman.table, x.1 ∈ German.southernTenseForms := by
+  decide
 
 namespace Variety
 
+variable (v : Variety)
+
+/-- The form `f` spells out tense `C` with aspect `a`. -/
+def SpellsOut (f : Tense.Form) (C : Finset Ordering) (a : AspectHead) : Prop := (f, C, a) ∈ v.table
+
+instance (f : Tense.Form) (C : Finset Ordering) (a : AspectHead) : Decidable (v.SpellsOut f C a) :=
+  inferInstanceAs (Decidable (_ ∈ _))
+
+variable (T : Type*) [LinearOrder T] in
 /-- A form can describe a past event out of the blue when it spells out a tense defined out of
 the blue with an anterior aspect. -/
-def DescribesPastOutOfTheBlue (v : Variety) (f : Tense.Form) : Prop :=
-  ∃ t a, f ∈ v.spellOut t a ∧ t.IsDefinedOutOfTheBlue ∧ a.IsAnterior
+def DescribesPastOutOfTheBlue (f : Tense.Form) : Prop :=
+  ∃ C a, v.SpellsOut f C a ∧ (∀ t₀ : T, (tense C 0).fullPresupposition (outOfTheBlue t₀)) ∧
+    a.IsAnterior T
 
-/-- A form can describe a past event out of the blue iff it spells out the present with the
-perfect. -/
-theorem describesPastOutOfTheBlue_iff (v : Variety) (f : Tense.Form) :
-    v.DescribesPastOutOfTheBlue f ↔ f ∈ v.spellOut .present .perfect := by
-  simp [DescribesPastOutOfTheBlue, ReferenceTime.isDefinedOutOfTheBlue_iff,
-    Aspect.isAnterior_iff]
+/-- A form can describe a past event out of the blue iff it spells out, with the perfect, a
+tense that admits coincidence with the utterance time. -/
+theorem describesPastOutOfTheBlue_iff (T : Type*) [LinearOrder T] [Nonempty T] (f : Tense.Form) :
+    v.DescribesPastOutOfTheBlue T f ↔ ∃ x ∈ v.table, x.1 = f ∧ .eq ∈ x.2.1 ∧ x.2.2 = .perfect := by
+  simp only [DescribesPastOutOfTheBlue, tense_outOfTheBlue_iff, forall_const,
+    AspectHead.isAnterior_iff, SpellsOut]
+  exact ⟨fun ⟨C, a, h, hC, ha⟩ ↦ ⟨_, h, rfl, hC, ha⟩,
+    fun ⟨⟨_, C, a⟩, h, hf, hC, ha⟩ ↦ ⟨C, a, hf ▸ h, hC, ha⟩⟩
 
-instance (v : Variety) : DecidablePred v.DescribesPastOutOfTheBlue :=
-  fun f ↦ decidable_of_iff _ (v.describesPastOutOfTheBlue_iff f).symm
+instance (T : Type*) [LinearOrder T] [Nonempty T] :
+    DecidablePred (v.DescribesPastOutOfTheBlue T) :=
+  fun f ↦ decidable_of_iff _ (v.describesPastOutOfTheBlue_iff T f).symm
 
-/-- A variety is transparent when its table can be read off the make-up of its forms, a form
-spelling out the reference time its finite verb is inflected for, and the perfect just in case
-it has a past participle. -/
-def IsTransparent (v : Variety) : Prop :=
-  ∀ f ∈ v.forms, ∀ t a, f ∈ v.spellOut t a ↔
-    (f.finite = .Pres ↔ t = .present) ∧ (.pastParticiple ∈ f.nonfinite ↔ a = .perfect)
+/-- A table is tense-faithful when a form spells out only the tense its finite verb is
+inflected for. -/
+def IsTenseFaithful : Prop :=
+  ∀ x ∈ v.table, x.1.finite = .Pres ∧ x.2.1 = present ∨ x.1.finite = .Past ∧ x.2.1 = past
 
-instance (v : Variety) : Decidable v.IsTransparent :=
-  by unfold IsTransparent; infer_instance
+/-- A table is perfect-compositional when the forms that spell out the perfect of a tense are
+the perfects of the forms that spell out that tense with another aspect. -/
+def IsPerfectCompositional : Prop :=
+  (∀ x ∈ v.table, x.2.2 = .perfect →
+      ∃ y ∈ v.table, x.1 = y.1.perfect ∧ x.2.1 = y.2.1 ∧ y.2.2 ≠ .perfect) ∧
+    ∀ y ∈ v.table, y.2.2 ≠ .perfect → (y.1.perfect, y.2.1, .perfect) ∈ v.table
+
+instance : Decidable v.IsTenseFaithful := by unfold IsTenseFaithful; infer_instance
+
+instance : Decidable v.IsPerfectCompositional := by unfold IsPerfectCompositional; infer_instance
 
 end Variety
 
-/-- Standard German is transparent. -/
-theorem standardGerman_transparent : standardGerman.IsTransparent := by decide +kernel
+/-- The Standard German table can be read off the make-up of the forms. -/
+theorem standardGerman_transparent :
+    standardGerman.IsTenseFaithful ∧ standardGerman.IsPerfectCompositional := by decide +kernel
 
-/-- English is not transparent, since the simple past, a past inflection with no participle,
-spells out the present with the perfect. -/
-theorem not_english_transparent : ¬ english.IsTransparent := by decide +kernel
+/-- South German builds its perfects compositionally, the double perfect on the present perfect
+as a past, but its present perfect, a present inflection, spells out the past. -/
+theorem southGerman_transparent :
+    ¬ southGerman.IsTenseFaithful ∧ southGerman.IsPerfectCompositional := by decide +kernel
 
-/-- South German is not transparent, since the *Perfekt*, a present inflection, spells out the
-past. -/
-theorem not_southGerman_transparent : ¬ southGerman.IsTransparent := by decide +kernel
+/-- English is neither, since the simple past, a past inflection that is the perfect of no
+form, spells out the present with the perfect. -/
+theorem english_transparent :
+    ¬ english.IsTenseFaithful ∧ ¬ english.IsPerfectCompositional := by decide +kernel
 
 /-- The backward-shifted reading of a past under a past, (42), is the past with the perfect,
-which the English simple past spells out and the *Präteritum* does not, so that Standard German
-needs the *Plusquamperfekt*. -/
+which the English simple past spells out and the German one does not, so that Standard German
+needs the past perfect. -/
 theorem backwardShifted :
-    English.simplePast ∈ english.spellOut .past .perfect ∧
-      ∀ f, f ∈ standardGerman.spellOut .past .perfect ↔ f = German.plusquamperfekt := by
-  simp [english, standardGerman]
+    english.SpellsOut .simplePast past .perfect ∧
+      ¬ standardGerman.SpellsOut .simplePast past .perfect ∧
+      standardGerman.SpellsOut .pastPerfect past .perfect := by
+  decide
 
 /-- The language codes of the example rows name these varieties. -/
 def varieties : List (String × Variety) := [("stan1293", english), ("stan1295", standardGerman)]
 
+/-- The rows name these tense forms. -/
+def forms : List (String × Tense.Form) :=
+  [("simple past", .simplePast), ("Präteritum", .simplePast), ("Perfekt", .presentPerfect)]
+
 /-- In (40) and (41) a form is acceptable out of the blue iff it can describe a past event
-there. The English simple past and the German *Perfekt* can, and the *Präteritum* cannot. -/
+there. The English simple past and the German present perfect can, and the German simple past
+cannot. -/
 theorem rows_outOfTheBlue :
     ∀ r ∈ Examples.all, r.feature? "context" = some "out of the blue" →
-      ∀ v ∈ varieties.lookup r.language, ∀ f ∈ v.forms, r.feature? "form" = some f.name →
-        (r.judgment = .acceptable ↔ v.DescribesPastOutOfTheBlue f) := by
+      ∀ v ∈ varieties.lookup r.language, ∀ f ∈ r.parse? "form" forms,
+        (r.judgment = .acceptable ↔ v.DescribesPastOutOfTheBlue ℤ f) := by
   decide +kernel
 
 end Kratzer1998

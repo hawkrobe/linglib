@@ -13,8 +13,11 @@ features telicity, duration and dynamicity (`Telicity`, `Duration`, `Dynamicity`
 and its siblings) and the adverbial and progressive diagnostics of [dowty-1979] derived from the
 features (`forXPrediction`, `inXPrediction`, `progressivePrediction`). Viewpoint aspect follows
 [klein-1994]: a viewpoint relates the topic time to the situation time (`ViewpointType`,
-`ViewpointType.ttTSitRelation`), and the compositional operators of [knick-sharf-2026] take an
-event predicate to an interval predicate (`IMPF`, `PRFV`, `PROSP`), an interval predicate to a
+`ViewpointType.ttTSitRelation`). A relation between the reference time and the run time of an
+event gives an operator from event predicates to interval predicates (`IntervalPred.ofRel`),
+monotone in the relation; the operator of a viewpoint is that of its relation
+(`ViewpointType.denote`). The compositional operators of [knick-sharf-2026] are instances
+(`IMPF`, `PRFV`, `PROSP`), and the perfect takes an interval predicate to a
 point predicate through the perfect time span (`PERF`, `PERF_XN`), and on to tense. The perfect
 time span of [iatridou-anagnostopoulou-izvorski-2001] admits the spans a perfect-level adverbial
 allows (`PERF_ADV`), of which the plain and extended-now perfects are the two instances.
@@ -253,28 +256,59 @@ instance {T : Type*} [LinearOrder T] (v : ViewpointType) (tt tsit : NonemptyInte
 
 variable {T : Type*} [LinearOrder T] {W : Type*}
 
+/-- The aspect operator of a relation `R` between the reference time and the run time of an
+event: the reference time stands in `R` to the run time of some event of the predicate. -/
+def IntervalPred.ofRel (R : NonemptyInterval T → NonemptyInterval T → Prop)
+    (P : W → Event T → Prop) : IntervalPred W T :=
+  fun w t ↦ ∃ e : Event T, R t e.τ ∧ P w e
+
+@[simp] theorem IntervalPred.ofRel_apply {R : NonemptyInterval T → NonemptyInterval T → Prop}
+    {P : W → Event T → Prop} {w : W} {t : NonemptyInterval T} :
+    IntervalPred.ofRel R P w t ↔ ∃ e : Event T, R t e.τ ∧ P w e := Iff.rfl
+
+/-- The operator is monotone in the relation. -/
+theorem IntervalPred.ofRel_mono {R S : NonemptyInterval T → NonemptyInterval T → Prop}
+    (h : ∀ t s, R t s → S t s) {P : W → Event T → Prop} {w : W} {t : NonemptyInterval T} :
+    IntervalPred.ofRel R P w t → IntervalPred.ofRel S P w t :=
+  fun ⟨e, hR, hP⟩ ↦ ⟨e, h _ _ hR, hP⟩
+
+/-- The operator of a viewpoint is the operator of its relation between the topic time and the
+situation time. -/
+def ViewpointType.denote (v : ViewpointType) (P : W → Event T → Prop) : IntervalPred W T :=
+  IntervalPred.ofRel v.ttTSitRelation P
+
 /-- The imperfective, (25): the reference time is properly contained in the run time of an
 event of the predicate. -/
 def IMPF (P : W → Event T → Prop) : IntervalPred W T :=
-  λ w t => ∃ e : Event T, t < e.τ ∧ P w e
+  ViewpointType.imperfective.denote P
 
 /-- The perfective, (28): the run time of an event of the predicate is contained in the
 reference time. -/
 def PRFV (P : W → Event T → Prop) : IntervalPred W T :=
-  λ w t => ∃ e : Event T, e.τ ≤ t ∧ P w e
+  ViewpointType.perfective.denote P
 
 /-- The prospective: the reference time precedes an event of the predicate. -/
 def PROSP (P : W → Event T → Prop) : IntervalPred W T :=
-  λ w t => ∃ e : Event T, t.isBefore e.τ ∧ P w e
+  ViewpointType.prospective.denote P
 
 /-- The non-strict imperfective of [pancheva-2003], (7b): the reference time is contained,
 not necessarily properly, in the run time of an event of the predicate. -/
 def UNBOUNDED (P : W → Event T → Prop) : IntervalPred W T :=
-  λ w t => ∃ e : Event T, t ≤ e.τ ∧ P w e
+  IntervalPred.ofRel (· ≤ ·) P
+
+variable {P : W → Event T → Prop} {w : W} {t : NonemptyInterval T}
+
+theorem impf_iff : IMPF P w t ↔ ∃ e : Event T, t < e.τ ∧ P w e := Iff.rfl
+
+theorem prfv_iff : PRFV P w t ↔ ∃ e : Event T, e.τ ≤ t ∧ P w e := Iff.rfl
+
+theorem prosp_iff : PROSP P w t ↔ ∃ e : Event T, t.isBefore e.τ ∧ P w e := Iff.rfl
+
+theorem unbounded_iff : UNBOUNDED P w t ↔ ∃ e : Event T, t ≤ e.τ ∧ P w e := Iff.rfl
 
 theorem impf_entails_unbounded (P : W → Event T → Prop) (w : W) (t : NonemptyInterval T) :
     IMPF P w t → UNBOUNDED P w t :=
-  λ ⟨e, hSub, hP⟩ => ⟨e, hSub.1, hP⟩
+  IntervalPred.ofRel_mono (R := (· < ·)) (S := (· ≤ ·)) fun _ _ ↦ le_of_lt
 
 /-- The right boundary of a perfect time span is the reference time, (22a). -/
 def RB (pts : NonemptyInterval T) (t : T) : Prop := pts.snd = t
