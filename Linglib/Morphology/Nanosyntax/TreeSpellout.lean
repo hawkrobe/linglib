@@ -424,13 +424,7 @@ theorem chain_contains_iff_le (feat : Nat → F) (re r : Nat) :
 
 end Morphology.Nanosyntax
 
-/-! ### Rose-tree interface instances
-
-`NanoTree` joins the `Core.Order.Branching` tower. The structural
-`size`/`decEq`/`decContains` above remain the kernel-computable
-specializations ([file-level generality discipline]: WF-derived
-generics do not kernel-reduce, so `decide`-style spell-out evaluations
-need the structural forms). -/
+/-! ### The rose-tree interface -/
 
 namespace Morphology.Nanosyntax.NanoTree
 
@@ -445,15 +439,5 @@ instance {F : Type*} : Core.Order.Branching (NanoTree F) where
 @[simp] theorem branching_children_node {F : Type*} (f : F)
     (cs : List (NanoTree F)) :
     Core.Order.Branching.children (NanoTree.node f cs) = cs := rfl
-
-instance {F : Type*} : Core.Order.IsFiniteBranching (NanoTree F) :=
-  .ofMeasure sizeOf fun {c t} hc => by
-    cases t with
-    | leaf _ => simp at hc
-    | node f cs =>
-      simp only [branching_children_node] at hc
-      have := List.sizeOf_lt_of_mem hc
-      simp only [NanoTree.node.sizeOf_spec]
-      omega
 
 end Morphology.Nanosyntax.NanoTree

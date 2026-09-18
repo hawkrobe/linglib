@@ -9,9 +9,12 @@ parameter `C`, grounded in Universal Dependencies UPOS
 ([de-marneffe-zeman-2021]). Word-level categories via `head : UPOS → Cat`,
 phrasal via `proj : UPOS → Cat`, plus `S` and `CP`.
 
-Split from `Syntax/Tree/Basic.lean` so that category-generic consumers
-(e.g. the type-driven composition engine, which ignores categories) do
-not carry the UD dataset in their transitive imports.
+Category-generic consumers of `Syntax.Tree` import `Syntax/Tree/Basic.lean` alone and do not
+carry the UD dataset.
+
+## References
+
+* [de-marneffe-zeman-2021]
 -/
 
 namespace Syntax
@@ -39,19 +42,14 @@ inductive Cat where
 
 instance : Inhabited Cat := ⟨.S⟩
 
-instance : BEq Cat := ⟨λ a b => decide (a = b)⟩
+/-! ### Traditional names
 
-instance : LawfulBEq Cat where
-  eq_of_beq h := of_decide_eq_true h
-  rfl := decide_eq_true rfl
-
--- ── Abbreviations ──────────────────────────────────────────────────
--- Short names matching traditional notation. Each abbreviation is
--- marked @[match_pattern] so it can be used in pattern position.
+Each abbreviation is a `match_pattern`, so it can be used in pattern position. -/
 
 namespace Cat
 
--- Word-level (heads / terminals)
+/-! #### Word-level categories -/
+
 @[match_pattern] abbrev N     : Cat := .head .NOUN
 @[match_pattern] abbrev V     : Cat := .head .VERB
 @[match_pattern] abbrev Det   : Cat := .head .DET
@@ -65,7 +63,8 @@ namespace Cat
 @[match_pattern] abbrev Pron  : Cat := .head .PRON
 @[match_pattern] abbrev Aux   : Cat := .head .AUX
 
--- Phrasal (maximal projections)
+/-! #### Maximal projections -/
+
 @[match_pattern] abbrev NP    : Cat := .proj .NOUN
 @[match_pattern] abbrev VP    : Cat := .proj .VERB
 @[match_pattern] abbrev DP    : Cat := .proj .DET

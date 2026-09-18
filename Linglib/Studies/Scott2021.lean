@@ -77,20 +77,9 @@ def terminalFeature : DPCat → String → Option FeatureVal
   | .n, "anim" => some (.phi (.gender 1))
   | _, _ => none
 
-mutual
-/-- The features at a tree's terminals, in depth-first order. -/
-def featureList : Tree DPCat String → List GramFeature
-  | .terminal c w => match terminalFeature c w with
-    | some fv => [.valued fv]
-    | none => []
-  | .node _ children => featureListAll children
-  | .trace _ _ => []
-  | .bind _ _ body => featureList body
-
-private def featureListAll : List (Tree DPCat String) → List GramFeature
-  | [] => []
-  | t :: ts => featureList t ++ featureListAll ts
-end
+/-- The features at a tree's terminals, left to right. -/
+def featureList (t : Tree DPCat String) : List GramFeature :=
+  t.terminals.filterMap fun (c, w) ↦ (terminalFeature c w).map .valued
 
 /-! ### Vocabulary Insertion (§3.4) -/
 

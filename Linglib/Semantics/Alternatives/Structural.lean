@@ -133,41 +133,33 @@ theorem self_mem_structuralAlternatives (lex : Finset (Tree C W)) (φ : Tree C W
 
 /-! ### Category and subtree preservation -/
 
-private theorem structOp_preserves_no_cat [DecidableEq C]
-    (source : Set (Tree C W)) (c : C)
-    (φ ψ : Tree C W)
-    (h_source : ∀ s ∈ source, ¬ ContainsCat c s)
-    (h_φ : ¬ ContainsCat c φ)
-    (h_step : StructOp source φ ψ) :
-    ¬ ContainsCat c ψ := by
+private theorem structOp_preserves_no_cat (source : Set (Tree C W)) (c : C) (φ ψ : Tree C W)
+    (h_source : ∀ s ∈ source, c ∉ s.cats) (h_φ : c ∉ φ.cats) (h_step : StructOp source φ ψ) :
+    c ∉ ψ.cats := by
   induction h_step with
   | subst _ h_src => exact h_source _ h_src
   | @delete cat cs i =>
-    rw [Tree.containsCat_node_iff] at h_φ ⊢; push Not at h_φ ⊢
-    exact ⟨h_φ.1, λ t ht => h_φ.2 t ((List.eraseIdx_sublist cs i).subset ht)⟩
+    rw [Tree.mem_cats_node] at h_φ ⊢; push Not at h_φ ⊢
+    exact ⟨h_φ.1, fun t ht ↦ h_φ.2 t ((List.eraseIdx_sublist cs i).subset ht)⟩
   | @contract cat cs child h_mem _ =>
-    rw [Tree.containsCat_node_iff] at h_φ; push Not at h_φ; exact h_φ.2 child h_mem
+    rw [Tree.mem_cats_node] at h_φ; push Not at h_φ; exact h_φ.2 child h_mem
   | @inChild cat cs i ψ_child _ ih =>
-    rw [Tree.containsCat_node_iff] at h_φ ⊢; push Not at h_φ ⊢
+    rw [Tree.mem_cats_node] at h_φ ⊢; push Not at h_φ ⊢
     have hih := ih (h_φ.2 (cs.get i) (List.get_mem cs i))
-    refine ⟨h_φ.1, λ t ht => ?_⟩
+    refine ⟨h_φ.1, fun t ht ↦ ?_⟩
     rcases List.mem_or_eq_of_mem_set ht with ht' | rfl
     · exact h_φ.2 t ht'
     · exact hih
   | @inBind n cat body body' _ ih =>
-    rw [Tree.containsCat_bind_iff] at h_φ ⊢; push Not at h_φ ⊢
+    rw [Tree.mem_cats_bind] at h_φ ⊢; push Not at h_φ ⊢
     exact ⟨h_φ.1, ih h_φ.2⟩
 
 /-- No tree reachable by structural operations contains a category absent from the source
 and the host: substitution introduces only source material, deletion removes material, and
 contraction promotes a subtree. -/
-theorem category_preservation [DecidableEq C]
-    (source : Set (Tree C W)) (c : C)
-    (φ ψ : Tree C W)
-    (h_source : ∀ s ∈ source, ¬ ContainsCat c s)
-    (h_φ : ¬ ContainsCat c φ)
-    (h_reach : atMostAsComplex source ψ φ) :
-    ¬ ContainsCat c ψ := by
+theorem category_preservation (source : Set (Tree C W)) (c : C) (φ ψ : Tree C W)
+    (h_source : ∀ s ∈ source, c ∉ s.cats) (h_φ : c ∉ φ.cats)
+    (h_reach : atMostAsComplex source ψ φ) : c ∉ ψ.cats := by
   unfold atMostAsComplex at h_reach
   induction h_reach with
   | refl => exact h_φ
@@ -265,17 +257,6 @@ private theorem lift_bind {source : Set (Tree C W)}
   Relation.ReflTransGen.lift (λ t => Tree.bind n cat t)
     (λ _ _ h => StructOp.inBind h) body body' h
 
-/-- leafSubstList is just List.map. -/
-private theorem leafSubstList_eq_map [BEq C] [BEq W]
-    (α β : W) (c : C) (cs : List (Tree C W)) :
-    Tree.leafSubst.leafSubstList α β c cs =
-    cs.map (·.leafSubst α β c) := by
-  induction cs with
-  | nil => rfl
-  | cons t ts ih =>
-    simp only [Tree.leafSubst.leafSubstList, List.map_cons]
-    exact congrArg _ ih
-
 /-- Children reachable one by one make the node reachable: with `cs'` pointwise reachable from
 `cs`, `node cat cs` reaches `node cat cs'` by operations inside successive children. -/
 private theorem pointwise_reachable {source : Set (Tree C W)} {cat : C}
@@ -333,50 +314,26 @@ private theorem mapChildren_reachable {source : Set (Tree C W)}
 
 /-- Leaf substitution is reachable via structural operations for any
 source containing `.terminal c β`. -/
-private theorem leafSubst_reachable [BEq C] [LawfulBEq C] [BEq W]
-    {source : Set (Tree C W)} (α β : W) (c : C)
-    (h_β : Tree.terminal c β ∈ source)
-    (φ : Tree C W) :
+private theorem leafSubst_reachable [DecidableEq C] [DecidableEq W] {source : Set (Tree C W)}
+    (α β : W) (c : C) (h_β : Tree.terminal c β ∈ source) (φ : Tree C W) :
     Relation.ReflTransGen (StructOp source) φ (φ.leafSubst α β c) := by
-  refine Tree.rec
-    (motive_1 := λ φ => Relation.ReflTransGen (StructOp source) φ (φ.leafSubst α β c))
-    (motive_2 := λ cs => ∀ (i : Nat) (hi : i < cs.length),
-      Relation.ReflTransGen (StructOp source) cs[i] ((cs[i]).leafSubst α β c))
-    ?_ ?_ ?_ ?_ ?_ ?_ φ
-  · -- terminal case
-    intro c' w
-    simp only [Tree.leafSubst]
-    split
-    · rename_i h
-      rw [Bool.and_eq_true] at h
-      have hc : c = c' := eq_of_beq h.1
-      subst hc
-      exact Relation.ReflTransGen.single (StructOp.subst rfl h_β)
-    · exact Relation.ReflTransGen.refl
-  · -- node case
-    intro c' cs ih_cs
-    show Relation.ReflTransGen (StructOp source) (.node c' cs)
-      (.node c' (Tree.leafSubst.leafSubstList α β c cs))
-    rw [leafSubstList_eq_map]
-    exact mapChildren_reachable ih_cs
-  · -- trace case
-    intro n c'
-    exact Relation.ReflTransGen.refl
-  · -- bind case
-    intro n c' body ih_body
-    exact lift_bind ih_body
-  · -- nil case
-    intro i hi; exact absurd hi (by simp)
-  · -- cons case
-    intro head tail ih_head ih_tail i hi
-    match i, hi with
-    | 0, _ => exact ih_head
-    | i+1, hi => exact ih_tail i (by simp [List.length_cons] at hi; omega)
+  induction φ with
+  | terminal c' w =>
+    rw [Tree.leafSubst_terminal]
+    split_ifs with h
+    · obtain ⟨rfl, rfl⟩ := h
+      exact .single (StructOp.subst rfl h_β)
+    · exact .refl
+  | node c' cs ih =>
+    rw [Tree.leafSubst_node]
+    exact mapChildren_reachable fun i hi ↦ ih _ (List.getElem_mem hi)
+  | trace n c' => exact .refl
+  | bind n c' body ih => exact lift_bind ih
 
 /-- Leaf substitution of a same-category lexical item throughout a tree is a structural
 alternative, so Horn-scale alternatives are a special case of structural ones. -/
-theorem horn_alternatives_are_structural [BEq C] [LawfulBEq C] [BEq W] (lex : Finset (Tree C W))
-    (φ : Tree C W) (α β : W) (c : C) (h_β : Tree.terminal c β ∈ lex) :
+theorem horn_alternatives_are_structural [DecidableEq C] [DecidableEq W]
+    (lex : Finset (Tree C W)) (φ : Tree C W) (α β : W) (c : C) (h_β : Tree.terminal c β ∈ lex) :
     φ.leafSubst α β c ∈ structuralAlternatives lex φ :=
   leafSubst_reachable α β c (Set.mem_union_left _ (Finset.mem_coe.2 h_β)) φ
 

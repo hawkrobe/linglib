@@ -132,8 +132,7 @@ def noLevelRec (p : Constituent → Bool) : Tree → Bool := go where
 
 Each `where`-aux `goList` is the matching `List` combinator over its `go`
 (`flatMap`/`any`/`all`), proved once below so every projection lemma is a single
-`Branching.inductionOn` over the carrier (the principle `Tree` already rides,
-`Core/Order/Branching.lean`) plus standard `List` reasoning. -/
+induction over the carrier plus standard `List` reasoning. -/
 
 private theorem maximalProjections.goList_eq (p : Constituent → Bool) (under : Bool)
     (cs : List Tree) :
