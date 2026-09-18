@@ -196,6 +196,64 @@ theorem lt_def {i₁ i₂ : NonemptyInterval α} :
   rw [lt_iff_le_not_ge]
   exact and_congr_right' (by rw [le_def, not_and_or, not_le, not_le])
 
+/-- An interval containing an overlapping interval overlaps. -/
+theorem overlaps.mono_left {i₁ i₁' i₂ : NonemptyInterval α} (h : i₁.overlaps i₂)
+    (hle : i₁ ≤ i₁') : i₁'.overlaps i₂ :=
+  ⟨(le_def.1 hle).1.trans h.1, h.2.trans (le_def.1 hle).2⟩
+
+/-- In a linear order two intervals overlap exactly when neither precedes the other. -/
+theorem overlaps_iff_not_precedes {i₁ i₂ : NonemptyInterval α} :
+    i₁.overlaps i₂ ↔ ¬ i₁.precedes i₂ ∧ ¬ i₂.precedes i₁ := by
+  simp only [overlaps, precedes, not_lt, and_comm]
+
+/-! ### Relative position
+
+In a linear order two intervals stand in exactly one of three positions: the first precedes the
+second, the second precedes the first, or they overlap. `position` records which as an
+`Ordering`, so that a set of admissible positions is a `Finset Ordering`, as a set of admissible
+comparisons of points is; on point intervals it is `compare`. -/
+
+/-- The position of `i₁` relative to `i₂`: `lt` when `i₁` precedes `i₂`, `gt` when `i₂` precedes
+`i₁`, and `eq` when the two overlap. -/
+def position (i₁ i₂ : NonemptyInterval α) : Ordering :=
+  if i₁.precedes i₂ then .lt else if i₂.precedes i₁ then .gt else .eq
+
+variable {i₁ i₂ : NonemptyInterval α} {a b : α}
+
+@[simp] theorem position_eq_lt : i₁.position i₂ = .lt ↔ i₁.precedes i₂ := by
+  unfold position; split_ifs <;> simp [*]
+
+@[simp] theorem position_eq_gt : i₁.position i₂ = .gt ↔ i₂.precedes i₁ := by
+  unfold position
+  split_ifs with h h'
+  · simp [precedes_asymm h]
+  · simp [h']
+  · simp [h']
+
+@[simp] theorem position_eq_eq : i₁.position i₂ = .eq ↔ i₁.overlaps i₂ := by
+  rw [overlaps_iff_not_precedes]; unfold position; split_ifs <;> simp [*]
+
+@[simp] theorem position_self (i : NonemptyInterval α) : i.position i = .eq :=
+  position_eq_eq.2 (overlaps_refl i)
+
+theorem swap_position (i₁ i₂ : NonemptyInterval α) : (i₁.position i₂).swap = i₂.position i₁ := by
+  rcases h : i₂.position i₁ with _ | _ | _
+  · rw [Ordering.swap_eq_lt, position_eq_gt, ← position_eq_lt, h]
+  · rw [Ordering.swap_eq_eq, position_eq_eq, overlaps_comm, ← position_eq_eq, h]
+  · rw [Ordering.swap_eq_gt, position_eq_lt, ← position_eq_gt, h]
+
+/-- On point intervals the position is the comparison of the points. -/
+@[simp] theorem position_pure (a b : α) : (pure a).position (pure b) = compare a b := by
+  rcases lt_trichotomy a b with h | rfl | h
+  · rw [position_eq_lt.2 (by exact h), compare_lt_iff_lt.2 h]
+  · rw [position_self, compare_eq_iff_eq.2 rfl]
+  · rw [position_eq_gt.2 (by exact h), compare_gt_iff_gt.2 h]
+
+/-- An interval containing one that overlaps `i₂` overlaps `i₂`. -/
+theorem position_eq_eq_of_le {i₁' : NonemptyInterval α} (h : i₁.position i₂ = .eq)
+    (hle : i₁ ≤ i₁') : i₁'.position i₂ = .eq :=
+  position_eq_eq.2 ((position_eq_eq.1 h).mono_left hle)
+
 /-- Overlap is NOT transitive: [0,1] overlaps [1,2] and [1,2] overlaps [2,3],
     but [0,1] does not overlap [2,3].
 

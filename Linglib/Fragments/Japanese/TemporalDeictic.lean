@@ -3,20 +3,20 @@ import Linglib.Semantics.Tense.Perspective
 /-!
 # Japanese temporal deictic adverbs
 
-Lexical entry for Japanese 当時 *tōji* 'at that time', typed by
-`Tense.Perspective.ThenAdverb` — the Japanese member of the ⌈then⌉ class
-of temporal pronouns presupposing disjointness from the perspective time π
-([zhao-2025], [tsilia-zhao-2026]). *tōji* is restricted to past-oriented
-contexts ([tsilia-zhao-2026], the rows of `Data.Examples.TsiliaZhao2026`).
+Japanese *tooji* 'then, at that time' refers to a time before the deictic centre. Unlike English
+*then* it is used only of past times: for a future meeting one says *sonotoki ai-mashou* 'see you
+then', not *tooji ai-mashou*. The description and examples follow [tsilia-zhao-2026].
+
+## References
+
+* [tsilia-zhao-2026]
 -/
 
 namespace Japanese.TemporalDeictic
 
-open Tense.Perspective
+open Tense
 
-/-- Japanese 当時 *tōji* 'at that time' -/
-def tooji : ThenAdverb where
-  form := "当時"
-  gloss := "at that time"
+/-- *tooji* (当時) 'then', a time before the deictic centre. -/
+def tooji : DeicticAdverb := { form := "tooji", cell := past }
 
 end Japanese.TemporalDeictic

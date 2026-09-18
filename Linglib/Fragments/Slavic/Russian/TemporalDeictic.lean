@@ -3,18 +3,26 @@ import Linglib.Semantics.Tense.Perspective
 /-!
 # Russian temporal deictic adverbs
 
-Lexical entry for Russian тогда *togda* 'then', typed by
-`Tense.Perspective.ThenAdverb` — [tsilia-zhao-2026]'s ⌈then⌉ class of
-temporal pronouns presupposing disjointness from the perspective time π.
+Russian locates a time relative to the deictic centre with the adverbs *togda* 'then' and
+*sejčas* 'now'. *Togda* is distal, referring to a past or future time away from the centre;
+*sejčas* refers to a time that includes the centre. The examples are those of
+[tsilia-zhao-2026].
+
+## References
+
+* [tsilia-zhao-2026]
 -/
 
 namespace Russian.TemporalDeictic
 
-open Tense.Perspective
+open Tense
 
-/-- Russian тогда *togda* 'then' -/
-def togda : ThenAdverb where
-  form := "тогда"
-  gloss := "then"
+/-- *togda* (тогда) 'then', a time before or after the deictic centre: *V 2016 godu Tanja
+skazala, čto togda Putin byl prezidentom Rossii* 'In 2016 Tanja said that Putin was president of
+Russia then'. -/
+def togda : DeicticAdverb := { form := "togda", cell := presentᶜ }
+
+/-- *sejčas* (сейчас) 'now', a time including the deictic centre. -/
+def sejchas : DeicticAdverb := { form := "sejčas", cell := present }
 
 end Russian.TemporalDeictic
