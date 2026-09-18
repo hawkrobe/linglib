@@ -18,7 +18,9 @@ rooted-tree order stack from `TreePath`:
 This makes the per-tree position type a rooted tree in mathlib's
 order-theoretic sense (`Mathlib.Order.SuccPred.Tree`), with parent,
 LCA, and the lattice lemma library available on any `Branching`
-carrier's positions.
+carrier's positions; covering in it is covering in `TreePath`
+(`Positions.covBy_iff`), so the daughters of a position are its valid
+daughters.
 -/
 
 namespace Core.Order
@@ -92,6 +94,21 @@ instance : IsPredArchimedean (Positions t) where
     obtain ⟨n, hn⟩ :=
       IsPredArchimedean.exists_pred_iterate_of_le (α := TreePath) h
     exact ⟨n, Subtype.ext (by rw [pred_iterate_val]; exact hn)⟩
+
+/-- Covering in the positions of `t` is covering in `TreePath`: the daughters of a position
+are its valid daughters. -/
+theorem covBy_iff {p q : Positions t} : p ⋖ q ↔ p.val ⋖ q.val := by
+  constructor
+  · intro h
+    have hpred : q.val.parent = p.val := congrArg Subtype.val (Order.pred_eq_of_covBy h)
+    have hc : Order.pred q.val ⋖ q.val :=
+      Order.pred_covBy_of_not_isMin (not_isMin_of_lt (Subtype.coe_lt_coe.mpr h.lt))
+    rwa [TreePath.pred_eq_parent, hpred] at hc
+  · intro h
+    have hpred : Order.pred q = p := Subtype.ext (by rw [pred_val]; exact Order.pred_eq_of_covBy h)
+    have hpq : p < q := Subtype.coe_lt_coe.mp h.lt
+    have hc : Order.pred q ⋖ q := Order.pred_covBy_of_not_isMin (not_isMin_of_lt hpq)
+    rwa [hpred] at hc
 
 end Positions
 

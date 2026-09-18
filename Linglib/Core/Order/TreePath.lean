@@ -229,6 +229,24 @@ instance : PredOrder TreePath where
 
 @[simp] theorem pred_eq_parent (p : TreePath) : Order.pred p = p.parent := rfl
 
+/-- A position covers exactly its daughters: `q` covers `p` iff `q` extends `p` by one index. -/
+theorem covBy_iff {p q : TreePath} : p ⋖ q ↔ ∃ i, q.toList = p.toList ++ [i] := by
+  constructor
+  · intro h
+    have hq : q.toList ≠ [] := fun hnil => ne_bot_of_gt h.lt (by cases q; cases hnil; rfl)
+    refine ⟨q.toList.getLast hq, ?_⟩
+    rw [← Order.pred_eq_of_covBy h, pred_eq_parent, parent_toList, List.dropLast_concat_getLast]
+  · rintro ⟨i, hi⟩
+    have hpq : p < q := by
+      refine lt_of_le_of_ne (le_def.mpr (hi ▸ List.prefix_append _ _)) fun h => ?_
+      have := congrArg (List.length ∘ toList) h
+      simp [hi] at this
+    have hparent : q.parent = p := by
+      cases p; cases q
+      simp only [parent] at hi ⊢
+      simp [hi]
+    simpa [hparent] using Order.pred_covBy_of_not_isMin (not_isMin_of_lt hpq)
+
 /-! ### Finite depth: `IsPredArchimedean` -/
 
 instance : IsPredArchimedean TreePath where
