@@ -3,10 +3,10 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Centering theory: ranking by grammatical role
+# Ranking centers by grammatical role
 
-The ranking of forward-looking centers that centering theory assumes for English: the subject
-outranks the object, which outranks every other role. Kameyama argued for grammatical role over
+The ranking of forward-looking centers that centering theory assumes for English, on which the
+subject outranks the object, which outranks every other role. Kameyama argued for grammatical role over
 Sidner's focus-based ranking, Grosz, Joshi, and Weinstein adopt it in their examples, and Gordon,
 Grosz, and Gilliom's repeated-name penalty experiments support it.
 
@@ -24,7 +24,8 @@ Grosz, and Gilliom's repeated-name penalty experiments support it.
 
 namespace Discourse.Centering
 
-/-- A grammatical role ranking the forward-looking centers: subject over object over the rest. -/
+/-- A grammatical role ranking the forward-looking centers, the subject over the object over the
+rest. -/
 inductive GrammaticalRole where
   | subject
   | object

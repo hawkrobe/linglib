@@ -2,7 +2,7 @@ import Mathlib.Data.List.Sort
 import Mathlib.Order.RelClasses
 
 /-!
-# Centering theory: centers and the pronominalization rule
+# Forward- and backward-looking centers
 
 Grosz, Joshi, and Weinstein's centering theory tracks the entities an utterance is about. An
 utterance realizes entities in grammatical roles; its forward-looking centers are those entities
@@ -86,7 +86,7 @@ section Cf
 
 variable [LinearOrder R] (u : Utterance E R) {e : E}
 
-/-- The realizations of `u` in rank order: descending by role, ties in surface order. -/
+/-- The realizations of `u` in rank order, descending by role with ties in surface order. -/
 def ranked : List (Realization E R) := u.realizations.insertionSort fun a b ↦ b.role ≤ a.role
 
 theorem ranked_perm : u.ranked.Perm u.realizations := List.perm_insertionSort _ _
@@ -99,10 +99,10 @@ theorem ranked_pairwise : u.ranked.Pairwise fun a b ↦ b.role ≤ a.role :=
   @List.pairwise_insertionSort _ _ _ (Order.Preimage.instTotal (r := (· ≥ ·)))
     (Order.Preimage.instIsTrans (r := (· ≥ ·))) _
 
-/-- The forward-looking centers of `u`: its entities in rank order. -/
+/-- The forward-looking centers of `u` are its entities in rank order. -/
 def cf : List E := u.ranked.map (·.entity)
 
-/-- The preferred center of `u`: its highest-ranked forward-looking center. -/
+/-- The preferred center of `u` is its highest-ranked forward-looking center. -/
 def cp : Option E := u.cf.head?
 
 @[simp] theorem cf_mk_nil : (⟨[]⟩ : Utterance E R).cf = [] := rfl
@@ -126,8 +126,8 @@ section Cb
 
 variable [LinearOrder R] {U : Type*} [Membership E U] [∀ (u : U) (e : E), Decidable (e ∈ u)]
 
-/-- The backward-looking center of `cur` after `prev`: the highest-ranked forward-looking center
-of `prev` that `cur` realizes, if any. -/
+/-- The backward-looking center of `cur` after `prev` is the highest-ranked forward-looking
+center of `prev` that `cur` realizes, if any. -/
 def cb (prev : Utterance E R) (cur : U) : Option E := prev.cf.find? (· ∈ cur)
 
 variable {prev : Utterance E R} {cur : U} {e : E}
@@ -152,8 +152,8 @@ of `prev`. -/
 theorem cb_eq_none_iff : cb prev cur = none ↔ ∀ e ∈ prev.cf, e ∉ cur := by
   simp [cb, List.find?_eq_none]
 
-/-- No forward-looking center of `prev` realized in `cur` outranks the backward-looking center:
-every realization in `prev` of an entity realized in `cur` is ranked at or below some
+/-- No forward-looking center of `prev` realized in `cur` outranks the backward-looking center,
+so every realization in `prev` of an entity realized in `cur` is ranked at or below some
 realization of the center. -/
 theorem role_le_of_cb (h : cb prev cur = some e) {r : Realization E R}
     (hr : r ∈ prev.realizations) (hcur : r.entity ∈ cur) :
@@ -179,15 +179,16 @@ section Rule1
 
 variable [DecidableEq E] [LinearOrder R] (prev cur : Utterance E R)
 
-/-- The backward-looking center of `cur` after `prev`, if any, is pronominalized: Gordon, Grosz,
-and Gilliom's unconditional strengthening of Rule 1, motivated by the repeated-name penalty. -/
+/-- The backward-looking center of `cur` after `prev`, if any, is pronominalized. This is Gordon,
+Grosz, and Gilliom's unconditional strengthening of Rule 1, motivated by the repeated-name
+penalty. -/
 def CbPronominalized : Prop := ∀ c ∈ cb prev cur, cur.Pronominalizes c
 
 instance : Decidable (CbPronominalized prev cur) :=
   inferInstanceAs (Decidable (∀ c ∈ cb prev cur, cur.Pronominalizes c))
 
-/-- Rule 1 of [grosz-joshi-weinstein-1995]: if `cur` pronominalizes any forward-looking center of
-`prev`, it pronominalizes its backward-looking center. -/
+/-- Rule 1 of [grosz-joshi-weinstein-1995] says that if `cur` pronominalizes any forward-looking
+center of `prev`, it pronominalizes its backward-looking center. -/
 def PronominalizationConstraint : Prop :=
   (∃ e ∈ prev.cf, cur.Pronominalizes e) → CbPronominalized prev cur
 

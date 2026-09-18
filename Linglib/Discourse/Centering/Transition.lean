@@ -2,11 +2,11 @@ import Linglib.Discourse.Centering.Basic
 import Mathlib.Data.List.Defs
 
 /-!
-# Centering theory: transitions
+# Centering transitions
 
 Grosz, Joshi, and Weinstein classify the move from one utterance to the next by whether the
-backward-looking center is kept and, if so, whether it is the preferred center: continuation,
-retaining, or shifting. Rule 2 orders the three, continuation first, and prefers sequences of
+backward-looking center is kept and, if so, whether it is the preferred center, giving
+continuation, retaining, or shifting. Rule 2 orders the three, continuation first, and prefers sequences of
 earlier transitions to sequences of later ones. This file classifies a pair of utterances from
 its centers, scans a discourse for the centers and transitions of each utterance after the
 first, and carries Rule 2's order as the `LinearOrder` on `Transition`.
@@ -24,9 +24,9 @@ first, and carries Rule 2's order as the `LinearOrder` on `Transition`.
 
 The paper's definitions presuppose a prior backward-looking center. When there is none, as for
 the second utterance of a segment, the center counts as kept, so the utterance continues or
-retains according to whether its center is its preferred center: the proposal of Walker, Iida,
-and Cote that [poesio-stevenson-eugenio-hitzeman-2004] reports, on which the first utterance's
-center is underspecified until the second is processed. An utterance with no backward-looking
+retains according to whether its center is its preferred center. This is the proposal of Walker,
+Iida, and Cote that [poesio-stevenson-eugenio-hitzeman-2004] reports, on which the first
+utterance's center is underspecified until the second is processed. An utterance with no backward-looking
 center shifts, as the paper's shifting clause reads when the center is undefined.
 
 Rule 2 prefers sequences of continuations to sequences of retentions and those to sequences of
@@ -42,7 +42,7 @@ pointwise.
 
 namespace Discourse.Centering
 
-/-- The transition into an utterance: its backward-looking center is kept and is its preferred
+/-- The transition into an utterance, whose backward-looking center is kept and is its preferred
 center, kept but not preferred, or changed. -/
 inductive Transition where
   | continuation
@@ -52,7 +52,7 @@ inductive Transition where
 
 namespace Transition
 
-/-- Rule 2's rank: continuation over retaining over shifting. -/
+/-- The rank of a transition under Rule 2, continuation over retaining over shifting. -/
 @[simp] def rank : Transition → ℕ
   | .continuation => 2
   | .retaining => 1

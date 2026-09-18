@@ -19,7 +19,7 @@ forward-looking centers, how the centers are ranked, and which pronouns Rule 1 g
 setting is an instantiation of the theory, and the paper's corpus study finds that different
 instantiations make different claims true.
 
-The instantiations are the substrate's parameters: the realization relation is the `Membership`
+The instantiations are the substrate's parameters. The realization relation is the `Membership`
 instance, the ranking is the `LinearOrder` on roles, the CF filter is `cfFilter`, the utterance
 unit is `merge`, and the previous utterance is the argument of `cb`. The paper's illustrations
 of each parameter are worked as such: the associative reference of (5) is a `Bridged`
@@ -63,8 +63,8 @@ section Constraint1
 variable [DecidableEq E] [LinearOrder R] {U : Type*} [Membership E U]
   [∀ (u : U) (e : E), Decidable (e ∈ u)]
 
-/-- The backward-looking centers of `cur` after `prev` under a partial ranking: the entities of
-the highest-ranked realizations in `prev` that `cur` realizes, each once. Under a ranking that
+/-- The backward-looking centers of `cur` after `prev` under a partial ranking are the entities
+of the highest-ranked realizations in `prev` that `cur` realizes, each once. Under a ranking that
 separates the realizations there is at most one. -/
 def cbAll (prev : Utterance E R) (cur : U) : List E :=
   let realized := prev.realizations.filter (·.entity ∈ cur)
