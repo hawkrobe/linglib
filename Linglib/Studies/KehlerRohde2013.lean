@@ -2,8 +2,8 @@ import Linglib.Data.Examples.KehlerRohde2013
 import Linglib.Data.UD.UPOS
 import Linglib.Data.UD.Features
 import Linglib.Discourse.Coherence
-import Linglib.Discourse.Centering.Pronominalization
-import Linglib.Discourse.Centering.Instances.GrammaticalRole
+import Linglib.Discourse.Centering.Basic
+import Linglib.Discourse.Centering.GrammaticalRole
 import Linglib.Fragments.English.Pronouns
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.Field.Basic

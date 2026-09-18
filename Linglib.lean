@@ -647,9 +647,6 @@ import Linglib.Data.WALS.Features.F99A
 import Linglib.Data.WALS.Features.F9A
 import Linglib.Data.WALS.Languages
 import Linglib.Discourse.Centering.Basic
-import Linglib.Discourse.Centering.Defs
-import Linglib.Discourse.Centering.Instances.GrammaticalRole
-import Linglib.Discourse.Centering.Pronominalization
 import Linglib.Discourse.Centering.Transition
 import Linglib.Discourse.Coherence
 import Linglib.Discourse.Commitment.Basic

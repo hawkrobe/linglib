@@ -1,8 +1,10 @@
 import Linglib.Discourse.Centering.Transition
-import Linglib.Discourse.Centering.Pronominalization
-import Linglib.Discourse.Centering.Instances.GrammaticalRole
+import Linglib.Discourse.Centering.GrammaticalRole
 import Linglib.Data.Examples.PoesioEtAl2004
 import Mathlib.Data.Finset.Card
+import Mathlib.Data.List.MinMax
+import Mathlib.Data.List.Dedup
+import Mathlib.Data.Prod.Lex
 
 /-!
 # Poesio, Stevenson, Di Eugenio and Hitzeman (2004): Centering: A Parametric Theory and Its Instantiations
@@ -17,8 +19,8 @@ forward-looking centers, how the centers are ranked, and which pronouns Rule 1 g
 setting is an instantiation of the theory, and the paper's corpus study finds that different
 instantiations make different claims true.
 
-The instantiations are the substrate's plug-ins: the realization relation is the `Realizes`
-instance, the ranking is the `CfRankerOf` instance, the CF filter is `cfFilter`, the utterance
+The instantiations are the substrate's parameters: the realization relation is the `Membership`
+instance, the ranking is the `LinearOrder` on roles, the CF filter is `cfFilter`, the utterance
 unit is `merge`, and the previous utterance is the argument of `cb`. The paper's illustrations
 of each parameter are worked as such: the associative reference of (5) is a `Bridged`
 realization (`ex5`), the second-person pronoun of (7) a filtered forward-looking center (`ex7`),
@@ -58,7 +60,17 @@ variable {E R : Type*}
 
 section Constraint1
 
-variable [DecidableEq E] [CfRankerOf E R] {U : Type*} [Realizes U E]
+variable [DecidableEq E] [LinearOrder R] {U : Type*} [Membership E U]
+  [∀ (u : U) (e : E), Decidable (e ∈ u)]
+
+/-- The backward-looking centers of `cur` after `prev` under a partial ranking: the entities of
+the highest-ranked realizations in `prev` that `cur` realizes, each once. Under a ranking that
+separates the realizations there is at most one. -/
+def cbAll (prev : Utterance E R) (cur : U) : List E :=
+  let realized := prev.realizations.filter (·.entity ∈ cur)
+  match realized.argmax (·.role) with
+  | none => []
+  | some top => ((realized.filter (·.role = top.role)).map (·.entity)).dedup
 
 /-- CB uniqueness: at most one backward-looking center, the weak form of Constraint 1. -/
 def CBUniqueness (prev : Utterance E R) (cur : U) : Prop := (cbAll prev cur).length ≤ 1
@@ -89,7 +101,7 @@ utterance, which a partial ranking such as grammatical function becomes once a d
 factor such as linear order is added. -/
 theorem cbAll_length_le_one (prev : Utterance E R) (cur : U)
     (h : ∀ r₁ ∈ prev.realizations, ∀ r₂ ∈ prev.realizations,
-      CfRankerOf.rank r₁ = CfRankerOf.rank r₂ → r₁.entity = r₂.entity) :
+      r₁.role = r₂.role → r₁.entity = r₂.entity) :
     (cbAll prev cur).length ≤ 1 := by
   dsimp only [cbAll]
   split
@@ -98,7 +110,7 @@ theorem cbAll_length_le_one (prev : Utterance E R) (cur : U)
     have htop : top ∈ prev.realizations :=
       List.mem_of_mem_filter (List.argmax_mem (Option.mem_def.2 hm))
     rw [← List.card_toFinset]
-    refine (Finset.card_le_card λ e he => Finset.mem_singleton.2 ?_).trans
+    refine (Finset.card_le_card fun e he ↦ Finset.mem_singleton.2 ?_).trans
       (Finset.card_singleton top.entity).le
     obtain ⟨r, hr, rfl⟩ := List.mem_map.1 (List.mem_toFinset.1 he)
     obtain ⟨hr₁, hr₂⟩ := List.mem_filter.1 hr
@@ -110,18 +122,18 @@ end Constraint1
 
 section Rule1
 
-variable [CfRankerOf E R] {U : Type*} [Realizes U E] [Pronominalizes U E]
+variable [DecidableEq E] [LinearOrder R]
 
 /-- Rule 1 in its original form: a backward-looking center kept from the previous utterance is
 pronominalized. The form of [grosz-joshi-weinstein-1995] is `PronominalizationConstraint`, and
 the unconditional form is `CbPronominalized`. -/
-def Rule1Original (prev : Utterance E R) (cur : U) (prevCb : Option E) : Prop :=
+def Rule1Original (prev cur : Utterance E R) (prevCb : Option E) : Prop :=
   (∃ c, cb prev cur = some c ∧ prevCb = some c) → CbPronominalized prev cur
 
 /-- The unconditional form implies the original one, as it implies the 1995 form. -/
-theorem CbPronominalized.rule1Original {prev : Utterance E R} {cur : U} (prevCb : Option E)
+theorem CbPronominalized.rule1Original {prev cur : Utterance E R} (prevCb : Option E)
     (h : CbPronominalized prev cur) : Rule1Original prev cur prevCb :=
-  λ _ => h
+  fun _ ↦ h
 
 end Rule1
 
@@ -159,14 +171,13 @@ theorem toTransition_mono {t₁ t₂ : BFPTransition} (h : t₁ ≤ t₂) :
 
 section Transitions
 
-variable [DecidableEq E] [CfRankerOf E R]
+variable [DecidableEq E] [LinearOrder R]
 
 /-- The four-way classification of an utterance after an utterance with center `prevCb`, `none`
 for an utterance with no center. -/
 def bfp (prev cur : Utterance E R) (prevCb : Option E) : Option BFPTransition :=
-  (cb prev cur).map λ c =>
-    if prevCb = some c ∨ prevCb = none then
-      if cur.cp = some c then .continue else .retain
+  (cb prev cur).map fun c ↦
+    if ∀ p ∈ prevCb, p = c then if cur.cp = some c then .continue else .retain
     else if cur.cp = some c then .smoothShift else .roughShift
 
 /-- An utterance is unclassified exactly when it has no backward-looking center: the null and
@@ -178,18 +189,15 @@ theorem bfp_eq_none_iff (prev cur : Utterance E R) (prevCb : Option E) :
 /-- The four-way classification refines the three-way one. -/
 theorem bfp_toTransition {prev cur : Utterance E R} {prevCb : Option E} {t : BFPTransition}
     (h : bfp prev cur prevCb = some t) :
-    t.toTransition = classifyTransitionExtended prev cur prevCb := by
-  unfold bfp classifyTransitionExtended at *
+    t.toTransition = transition prevCb prev cur := by
+  unfold bfp transition at *
   rcases hc : cb prev cur with _ | c
   · simp [hc] at h
   · rw [hc] at h
     simp only [Option.map_some, Option.some.injEq] at h
     subst h
-    rcases prevCb with _ | p
-    · by_cases hcp : cur.cp = some c <;>
-        simp [hcp, Transition.ofCenters, BFPTransition.toTransition]
-    · by_cases hp : p = c <;> by_cases hcp : cur.cp = some c <;>
-        simp [hp, hcp, Transition.ofCenters, BFPTransition.toTransition]
+    rw [Transition.ofCenters_some]
+    split_ifs <;> rfl
 
 end Transitions
 
@@ -198,7 +206,7 @@ end Transitions
 /-- The CF filter: only the entities satisfying `p` introduce forward-looking centers, as when
 first- and second-person pronouns or predicative noun phrases are excluded. -/
 def cfFilter (p : E → Bool) (u : Utterance E R) : Utterance E R :=
-  ⟨u.realizations.filter λ r => p r.entity⟩
+  ⟨u.realizations.filter fun r ↦ p r.entity⟩
 
 /-- The utterance unit: clauses merged into one sentence-sized utterance. -/
 def merge (us : List (Utterance E R)) : Utterance E R := ⟨(us.map (·.realizations)).flatten⟩
@@ -210,16 +218,20 @@ structure Bridged (E R : Type*) where
   anchors : List (E × E)
 
 /-- Indirect realization: an entity is realized when mentioned or when anchored by a mention. -/
-instance [DecidableEq E] : Realizes (Bridged E R) E where
-  Rel b e := realizes b.utt e ∨ ∃ a ∈ b.anchors, a.2 = e ∧ realizes b.utt a.1
-  decRel _ _ := inferInstance
+instance : Membership E (Bridged E R) :=
+  ⟨fun b e ↦ e ∈ b.utt ∨ ∃ a ∈ b.anchors, a.2 = e ∧ a.1 ∈ b.utt⟩
+
+instance [DecidableEq E] (b : Bridged E R) (e : E) : Decidable (e ∈ b) :=
+  inferInstanceAs (Decidable (e ∈ b.utt ∨ ∃ a ∈ b.anchors, a.2 = e ∧ a.1 ∈ b.utt))
 
 /-- Grammatical function with linear-order disambiguation: the role together with the surface
 position, an earlier mention outranking a later one of the same function. -/
-abbrev GFLin (n : ℕ) := GrammaticalRole × Fin n
+abbrev GFLin (n : ℕ) := Lex (GrammaticalRole × (Fin n)ᵒᵈ)
 
-instance (n : ℕ) : CfRanker (GFLin n) where
-  rank r := r.1.rank * n + (n - 1 - r.2)
+/-- A realization by a name in role `r` at surface position `i`. -/
+def GFLin.name {E : Type*} {n : ℕ} (e : E) (r : GrammaticalRole) (i : Fin n) :
+    Realization E (GFLin n) :=
+  ⟨e, toLex (r, OrderDual.toDual i), false⟩
 
 /-- The three tiers of information status of [strube-hahn-1999], the ranking of §4.4.3. -/
 inductive InfoStatus where
@@ -234,8 +246,7 @@ def InfoStatus.rank : InfoStatus → ℕ
   | .mediated => 1
   | .hearerNew => 0
 
-instance : CfRanker InfoStatus where
-  rank := InfoStatus.rank
+instance : LinearOrder InfoStatus := LinearOrder.lift' InfoStatus.rank (by decide)
 
 /-! ### The illustrations -/
 
@@ -328,11 +339,11 @@ theorem ex10 :
       ⟨[⟨.dubois, .subject, false⟩, ⟨.dealer, .other, false⟩, ⟨.cupboard, .object, false⟩,
         ⟨.branicki, .other, false⟩]⟩
     let v227 : Utterance Ent10 (GFLin 4) :=
-      ⟨[⟨.drawing, (.subject, 0), false⟩, ⟨.cupboard, (.other, 1), false⟩,
-        ⟨.branicki, (.other, 2), false⟩]⟩
+      ⟨[GFLin.name .drawing .subject 0, GFLin.name .cupboard .other 1,
+        GFLin.name .branicki .other 2]⟩
     let v229 : Utterance Ent10 (GFLin 4) :=
-      ⟨[⟨.dubois, (.subject, 0), false⟩, ⟨.dealer, (.other, 1), false⟩,
-        ⟨.cupboard, (.object, 2), false⟩, ⟨.branicki, (.other, 3), false⟩]⟩
+      ⟨[GFLin.name .dubois .subject 0, GFLin.name .dealer .other 1,
+        GFLin.name .cupboard .object 2, GFLin.name .branicki .other 3]⟩
     (cbAll u227 u229).length = 2 ∧ ¬ CBUniqueness u227 u229 ∧ EntityContinuity u227 u229 ∧
       cbAll v227 v229 = [.cupboard] := by
   decide

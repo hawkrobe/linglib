@@ -1,6 +1,6 @@
 import Linglib.Discourse.Centering.Basic
-import Linglib.Discourse.Centering.Pronominalization
-import Linglib.Discourse.Centering.Instances.GrammaticalRole
+import Linglib.Discourse.Centering.Basic
+import Linglib.Discourse.Centering.GrammaticalRole
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.OptimalityTheory.Tableau
 import Linglib.Data.Examples.Beaver2004
@@ -82,7 +82,7 @@ def disjoint : Constraint (Candidate E R) :=
 via the unconditional `CbPronominalized` ([gordon-grosz-gilliom-1993]).
 With no pronoun in the sentence every candidate violates PRO-TOP alike
 (p. 16), so the conditional Rule-1 form would be the wrong primitive. -/
-def proTop [DecidableEq E] [CfRankerOf E R]
+def proTop [DecidableEq E] [LinearOrder R]
     (prev : Utterance E R) : Constraint (Candidate E R) :=
   Constraint.binary (fun c => ¬ CbPronominalized prev c.utt)
 
@@ -93,7 +93,7 @@ def famDef : Constraint (Candidate E R) :=
 /-- COHERE: the topic of the current sentence is the topic of the previous
 one — satisfied only when both are defined and equal (p. 17); an undefined
 topic counts as a violation. -/
-def cohere [DecidableEq E] [CfRankerOf E R]
+def cohere [DecidableEq E] [LinearOrder R]
     (prev : Utterance E R) (priorTopic : Option E) :
     Constraint (Candidate E R) :=
   Constraint.binary (fun c =>
@@ -102,20 +102,20 @@ def cohere [DecidableEq E] [CfRankerOf E R]
 /-- ALIGN: the topic is in subject position — for canonical sentences, the
 topic is the preferred center (p. 18); an undefined topic counts as a
 violation. -/
-def align [DecidableEq E] [CfRankerOf E R]
+def align [DecidableEq E] [LinearOrder R]
     (prev : Utterance E R) : Constraint (Candidate E R) :=
   Constraint.binary (fun c =>
     ¬ ((cb prev c.utt).isSome ∧ cb prev c.utt = c.utt.cp))
 
 /-- The COT ranking (4): AGREE > DISJOINT > PRO-TOP > FAM-DEF > COHERE >
 ALIGN. -/
-def cotRanking [DecidableEq E] [CfRankerOf E R]
+def cotRanking [DecidableEq E] [LinearOrder R]
     (prev : Utterance E R) (priorTopic : Option E) :
     List (Constraint (Candidate E R)) :=
   [agree, disjoint, proTop prev, famDef, cohere prev priorTopic, align prev]
 
 /-- The §4.1 reranking: PRO-TOP demoted below FAM-DEF. -/
-def cotRankingDemoted [DecidableEq E] [CfRankerOf E R]
+def cotRankingDemoted [DecidableEq E] [LinearOrder R]
     (prev : Utterance E R) (priorTopic : Option E) :
     List (Constraint (Candidate E R)) :=
   [agree, disjoint, famDef, proTop prev, cohere prev priorTopic, align prev]
@@ -123,14 +123,14 @@ def cotRankingDemoted [DecidableEq E] [CfRankerOf E R]
 /-! ### COHERE and ALIGN factor through `cb` (and `cp`) -/
 
 /-- COHERE cannot distinguish candidates whose `cb` agrees. -/
-theorem cohere_factors_through_cb [DecidableEq E] [CfRankerOf E R]
+theorem cohere_factors_through_cb [DecidableEq E] [LinearOrder R]
     (prev : Utterance E R) (priorTopic : Option E)
     (c1 c2 : Candidate E R) (h : cb prev c1.utt = cb prev c2.utt) :
     (cohere prev priorTopic) c1 = (cohere prev priorTopic) c2 := by
   simp only [cohere, Constraint.binary_apply, h]
 
 /-- ALIGN cannot distinguish candidates whose `cb` and `cp` both agree. -/
-theorem align_factors_through_cb_and_cp [DecidableEq E] [CfRankerOf E R]
+theorem align_factors_through_cb_and_cp [DecidableEq E] [LinearOrder R]
     (prev : Utterance E R)
     (c1 c2 : Candidate E R)
     (h_cb : cb prev c1.utt = cb prev c2.utt)
@@ -159,7 +159,7 @@ def BFPTransition.rank : BFPTransition → ℕ
 verdicts: topic kept and aligned is a continuation, kept but unaligned a
 retain, changed but aligned a smooth shift, changed and unaligned a rough
 shift. -/
-def bfpTransition [DecidableEq E] [CfRankerOf E R] (prev : Utterance E R)
+def bfpTransition [DecidableEq E] [LinearOrder R] (prev : Utterance E R)
     (priorTopic : Option E) (c : Candidate E R) : BFPTransition :=
   if (cohere prev priorTopic) c = 0 then
     if (align prev) c = 0 then .continue_ else .retain
@@ -195,7 +195,7 @@ private theorem profile_lt_iff_last_two {p q : ViolationProfile 6}
 PRO-TOP and FAM-DEF, the COT profile comparison under the canonical ranking
 coincides with the BFP preference between the transitions they realize —
 the core of the equivalence Theorem (20). -/
-theorem cot_iff_bfp [DecidableEq E] [CfRankerOf E R]
+theorem cot_iff_bfp [DecidableEq E] [LinearOrder R]
     (prev : Utterance E R) (priorTopic : Option E) (c1 c2 : Candidate E R)
     (h : ∀ i : Fin 6, i.val < 4 →
       buildViolationProfile (cotRanking prev priorTopic).get c1 i =
@@ -329,8 +329,8 @@ theorem d2_demoted_picks_bound :
 
 /-- ALIGN is satisfied exactly when the topic is defined and is the current
 preferred center — the within-utterance analogue of [strube-1998]'s cheap
-transitions (`isCheap` tests the same shape against the *previous* Cp). -/
-theorem align_eq_zero_iff [DecidableEq E] [CfRankerOf E R]
+transitions, which test the same shape against the *previous* Cp. -/
+theorem align_eq_zero_iff [DecidableEq E] [LinearOrder R]
     (prev : Utterance E R) (c : Candidate E R) :
     (align prev) c = 0 ↔
       ((cb prev c.utt).isSome ∧ cb prev c.utt = c.utt.cp) := by
