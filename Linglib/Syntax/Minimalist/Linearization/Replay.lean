@@ -275,9 +275,9 @@ end SyntacticObject.Derivation
 
 private theorem SyntacticObject.merge_ne_trace (l r : SyntacticObject) : merge l r ≠ trace := by
   intro heq
-  have ha : (merge l r).val.rootChildren = trace.val.rootChildren := by rw [heq]
-  rw [merge_val, UnorderedTree.rootChildren_node] at ha
-  simp only [trace, UnorderedTree.leaf_def, UnorderedTree.rootChildren_mk,
+  have ha : (merge l r).val.children = trace.val.children := by rw [heq]
+  rw [merge_val, UnorderedTree.children_node] at ha
+  simp only [trace, UnorderedTree.children_mk,
     RoseTree.children, Multiset.insert_eq_cons] at ha
   exact Multiset.cons_ne_zero ha
 

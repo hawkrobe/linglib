@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Data.List.Zip
 import Linglib.Core.Data.Multiset.Antidiagonal
-import Linglib.Core.Data.RoseTree.DecEq
+import Linglib.Core.Data.UnorderedTree.DecEq
 import Linglib.Core.Data.UnorderedTree.Basic
 import Mathlib.Data.Multiset.Basic
 
@@ -181,8 +181,8 @@ theorem insertionMultiset_card_eq {α : Type*} (A B : Multiset (UnorderedTree α
 /-! ## §3: Root-value preservation for singleton hosts
 
 When the host forest is a single tree `{T}`, every output forest of
-`insertionMultiset {T} B` is a singleton `{T'}` and `T'.rootValue =
-T.rootValue`: grafting guests into a tree only modifies its subtrees,
+`insertionMultiset {T} B` is a singleton `{T'}` and `T'.value =
+T.value`: grafting guests into a tree only modifies its subtrees,
 never its root value.
 
 The proof descends through the tree substrate using
@@ -199,14 +199,14 @@ private theorem _root_.RoseTree.value_multiGraft
   | node a cs => rw [RoseTree.Pathed.multiGraft_node, RoseTree.value_node, RoseTree.value_node]
 
 /-- **Singleton-host root preservation**: every forest in
-    `insertionMultiset {T} B` is a singleton `{T'}` and `T'.rootValue =
-    T.rootValue`. Descends through `insertionForest_singleton` +
+    `insertionMultiset {T} B` is a singleton `{T'}` and `T'.value =
+    T.value`. Descends through `insertionForest_singleton` +
     `RoseTree.value_multiGraft`. -/
-theorem insertionMultiset_singleton_rootValue
+theorem insertionMultiset_singleton_value
     (T : UnorderedTree α) (B : Multiset (UnorderedTree α))
     {F' : Multiset (UnorderedTree α)} (hF' : F' ∈ insertionMultiset {T} B) :
     ∃ T' : UnorderedTree α, F' = ({T'} : Multiset (UnorderedTree α)) ∧
-      T'.rootValue = T.rootValue := by
+      T'.value = T.value := by
   unfold insertionMultiset at hF'
   rw [Multiset.mem_map] at hF'
   obtain ⟨L, hL_mem, hL_eq⟩ := hF'
@@ -220,7 +220,7 @@ theorem insertionMultiset_singleton_rootValue
   rw [Multiset.mem_map] at hL_mem
   obtain ⟨T'_tr, hT'_tr_mem, hT'_tr_eq⟩ := hL_mem
   -- T'_tr ∈ insertion (Q.out T) gs, so T'_tr = multiGraft (Q.out T) (choice.zip gs)
-  -- for some choice. Hence value T'_tr = value (Q.out T) = T.rootValue.
+  -- for some choice. Hence value T'_tr = value (Q.out T) = T.value.
   refine ⟨UnorderedTree.mk T'_tr, ?_, ?_⟩
   · -- F' = {UnorderedTree.mk T'_tr}: L = [T'_tr], so F' = ofList [mk T'_tr] = {mk T'_tr}.
     rw [← hL_eq, ← hT'_tr_eq]
@@ -229,21 +229,21 @@ theorem insertionMultiset_singleton_rootValue
     rfl
   · -- Root value preservation through the tree substrate.
     -- T'_tr ∈ insertion T.out (...): T'_tr = multiGraft T.out pairs for some pairs.
-    rw [UnorderedTree.rootValue_mk]
+    rw [UnorderedTree.value_mk]
     -- Unfold `insertion` to extract the choice and reduce value-equality.
     rw [RoseTree.Pathed.insertion_def, Multiset.mem_coe, List.mem_map] at hT'_tr_mem
     obtain ⟨choice, _hchoice_mem, hchoice_eq⟩ := hT'_tr_mem
     rw [← hchoice_eq]
-    -- Now: value (multiGraft T.out (choice.zip ...)) = T.rootValue
+    -- Now: value (multiGraft T.out (choice.zip ...)) = T.value
     rw [RoseTree.value_multiGraft]
-    -- value T.out = rootValue T via `rootValue_mk T.out_eq`.
-    -- (Quotient.out T).value = (mk (Quotient.out T)).rootValue by `rootValue_mk`;
+    -- value T.out = value T via `value_mk T.out_eq`.
+    -- (Quotient.out T).value = (mk (Quotient.out T)).value by `value_mk`;
     -- mk (Quotient.out T) = T by `T.out_eq`.
-    show (Quotient.out T).value = T.rootValue
+    show (Quotient.out T).value = T.value
     have h_eq : UnorderedTree.mk (Quotient.out T) = T := T.out_eq
     calc (Quotient.out T).value
-        = (UnorderedTree.mk (Quotient.out T)).rootValue := (UnorderedTree.rootValue_mk _).symm
-      _ = T.rootValue := by rw [h_eq]
+        = (UnorderedTree.mk (Quotient.out T)).value := (UnorderedTree.value_mk _).symm
+      _ = T.value := by rw [h_eq]
 
 
 /-! ### Insertion into a singleton node host -/

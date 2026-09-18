@@ -111,13 +111,9 @@ import Linglib.Core.Data.Multiset.Powerset
 import Linglib.Core.Data.Multiset.Rel
 import Linglib.Core.Data.Part
 import Linglib.Core.Data.RoseTree.Basic
-import Linglib.Core.Data.RoseTree.Count
-import Linglib.Core.Data.RoseTree.DecEq
 import Linglib.Core.Data.RoseTree.Get
 import Linglib.Core.Data.RoseTree.Leaves
 import Linglib.Core.Data.RoseTree.Perm
-import Linglib.Core.Data.RoseTree.Replace
-import Linglib.Core.Data.RoseTree.Subtree
 import Linglib.Core.Data.RoseTree.FilterMap
 import Linglib.Core.Data.RoseTree.Traversable
 import Linglib.Core.Data.Setoid.Basic

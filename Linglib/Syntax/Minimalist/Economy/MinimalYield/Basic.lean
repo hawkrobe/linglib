@@ -178,7 +178,7 @@ theorem im_pair_size_deltas_contraction_of_cut (lbl a₀ : α)
     (cutSummandsCN_crown_traceLeafCount_lt_numNodes τ _ p hp β_t
       (by rw [hcard]; exact Multiset.mem_singleton_self β_t))
     (UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl p.2 a₀
-      ((cutSummandsCN_trunk_rootValue τ _ p hp).trans (by rw [UnorderedTree.rootValue_node])))
+      ((cutSummandsCN_trunk_value τ _ p hp).trans (by rw [UnorderedTree.value_node])))
     (cutSummandsCN_accessibleCount_single τ _ a₀ F₀ rfl p hp β_t hcard)
 
 /-! ### Sideward Merge -/

@@ -226,7 +226,7 @@ theorem ruleAt?_eq_some {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)
 does the address itself when the subtree there has children. -/
 theorem ValidFor.exists_subtreeAt_take {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
     (ht : ValidFor g t) {p : List ℕ} {s : RoseTree (Symbol T g.NT)} (hs : t.subtreeAt p = some s)
-    (hh : 0 < s.height) {k : ℕ} (hk : k ≤ p.length) :
+    (hh : 1 < s.height) {k : ℕ} (hk : k ≤ p.length) :
     ∃ A cs, t.subtreeAt (p.take k) = some (node (.nonterminal A) cs) := by
   obtain ⟨u, hu⟩ := Option.isSome_iff_exists.mp (subtreeAt_take_isSome hs k)
   obtain ⟨s₀, cs, rfl⟩ : ∃ s₀ cs, u = node s₀ cs := by cases u; exact ⟨_, _, rfl⟩
@@ -247,7 +247,7 @@ theorem ValidFor.exists_subtreeAt_take {g : ContextFreeGrammar T} {t : RoseTree 
 ending at a node with children, passes two nodes with the same nonterminal. -/
 theorem ValidFor.exists_repeat {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
     (ht : ValidFor g t) {p : List ℕ} {s : RoseTree (Symbol T g.NT)} (hs : t.subtreeAt p = some s)
-    (hh : 0 < s.height) (hlen : g.rules.card ≤ p.length) :
+    (hh : 1 < s.height) (hlen : g.rules.card ≤ p.length) :
     ∃ i j, i < j ∧ j ≤ p.length ∧ ∃ A csᵢ csⱼ,
       t.subtreeAt (p.take i) = some (node (.nonterminal A) csᵢ) ∧
       t.subtreeAt (p.take j) = some (node (.nonterminal A) csⱼ) := by

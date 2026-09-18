@@ -1,10 +1,11 @@
 /-
-Copyright (c) 2026 The Linglib Authors. All rights reserved.
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Linglib contributors
+Authors: Robert Hawkins
 -/
-import Mathlib.Data.List.Basic
 import Mathlib.Algebra.BigOperators.Group.List.Basic
+import Mathlib.Data.List.MinMax
+import Mathlib.Order.Nat
 
 /-!
 # N-ary rooted trees (rose trees)
@@ -27,15 +28,9 @@ data-structure layer.
 The type is nested through `List`, so the auto-generated recursor hands a
 per-`List` motive rather than a `∀ c ∈ children, motive c` hypothesis. The
 `RoseTree.rec'` eliminator (registered `@[induction_eliminator]`) packages the
-`(tree, list-of-trees)` shape once, so downstream `map`/`depth`/`numNodes`
+`(tree, list-of-trees)` shape once, so downstream `map`/`height`/`numNodes`
 recurse and prove with a single `List`-shaped induction hypothesis instead of a
 hand-written `mutual` block per operation.
-
-## Upstreaming
-
-Intended shape for the reserved `Mathlib.Data.Tree` n-ary `Tree` slot (freed by
-mathlib's `Tree → BinaryTree` rename). Self-contained: no linguistics, no order/command
-imports. Dependency-light, `sorry`-free, no `noncomputable`.
 -/
 
 
@@ -67,9 +62,7 @@ def children : RoseTree α → List (RoseTree α)
     (node a cs).children = cs := rfl
 
 /-- A **leaf**: a root with no children. -/
-def leaf (a : α) : RoseTree α := .node a []
-
-@[simp] theorem children_leaf (a : α) : (leaf a).children = [] := rfl
+abbrev leaf (a : α) : RoseTree α := .node a []
 
 /-! ### Decidable equality
 
@@ -250,10 +243,10 @@ end Traverse
 
 /-- The total number of nodes (vertices). A leaf counts as `1`. -/
 def numNodes : RoseTree α → ℕ :=
-  fold fun _ ns => 1 + ns.sum
+  fold fun _ ns => ns.sum + 1
 
 @[simp] theorem numNodes_node (a : α) (cs : List (RoseTree α)) :
-    numNodes (node a cs) = 1 + (cs.map numNodes).sum := by
+    numNodes (node a cs) = (cs.map numNodes).sum + 1 := by
   simp only [numNodes, fold_node]
 
 theorem numNodes_pos (t : RoseTree α) : 0 < numNodes t := by
@@ -276,18 +269,27 @@ theorem length_values (t : RoseTree α) : t.values.length = t.numNodes := by
       List.map_map, Function.comp_def]
     rw [show (cs.map fun c => c.values.length) = cs.map numNodes from
       List.map_congr_left ih]
-    omega
 
+mutual
 /-- The value at each node paired with the values of its children, in preorder: the local
 branching structure of the tree, one entry per node. -/
 def offspring : RoseTree α → List (α × List α)
-  | .node a cs => (a, cs.map value) :: (cs.map fun c => offspring c).flatten
-termination_by t => sizeOf t
-decreasing_by exact sizeOf_lt_of_mem ‹_›
+  | .node a cs => (a, cs.map value) :: offspringList cs
+/-- Auxiliary: the offspring entries of a list of trees, concatenated. -/
+def offspringList : List (RoseTree α) → List (α × List α)
+  | [] => []
+  | c :: cs => offspring c ++ offspringList cs
+end
+
+theorem offspringList_eq (cs : List (RoseTree α)) :
+    offspringList cs = (cs.map offspring).flatten := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => rw [offspringList, ih, List.map_cons, List.flatten_cons]
 
 @[simp] theorem offspring_node (a : α) (cs : List (RoseTree α)) :
     offspring (node a cs) = (a, cs.map value) :: (cs.map offspring).flatten := by
-  rw [offspring]
+  rw [offspring, offspringList_eq]
 
 theorem length_offspring (t : RoseTree α) : t.offspring.length = t.numNodes := by
   induction t with
@@ -296,7 +298,6 @@ theorem length_offspring (t : RoseTree α) : t.offspring.length = t.numNodes := 
       List.map_map, Function.comp_def]
     rw [show (cs.map fun c => c.offspring.length) = cs.map numNodes from
       List.map_congr_left ih]
-    omega
 
 /-- The leaf values from left to right: the ordered frontier. -/
 def leafList : RoseTree α → List α :=
@@ -334,8 +335,7 @@ def numLeaves : RoseTree α → ℕ :=
     numLeaves (node a cs) = max 1 (cs.map numLeaves).sum := by
   simp only [numLeaves, fold_node]
 
-@[simp] theorem numLeaves_leaf (a : α) : numLeaves (leaf a) = 1 := by
-  rw [leaf, numLeaves_node]; simp
+@[simp] theorem numLeaves_leaf (a : α) : numLeaves (leaf a) = 1 := by simp
 
 theorem numLeaves_pos (t : RoseTree α) : 0 < numLeaves t := by
   cases t with
@@ -343,28 +343,29 @@ theorem numLeaves_pos (t : RoseTree α) : 0 < numLeaves t := by
     rw [numLeaves_node]
     exact Nat.lt_of_lt_of_le Nat.one_pos (Nat.le_max_left _ _)
 
-/-- The `(offset, size)` leaf-spans of the nodes satisfying `p`, in
-left-to-right traversal order: the offset counts leaves strictly to
-the node's left, the size its own leaves. -/
-def spansOf (p : α → Bool) (t : RoseTree α) : List (ℕ × ℕ) := go 0 t where
-  go (off : ℕ) : RoseTree α → List (ℕ × ℕ)
-    | .node a cs =>
-        (if p a then [(off, numLeaves (node a cs))] else []) ++ goList off cs
-  goList (off : ℕ) : List (RoseTree α) → List (ℕ × ℕ)
-    | [] => []
-    | c :: cs => go off c ++ goList (off + numLeaves c) cs
+/-! ### Height -/
 
-
-/-- The **height** (length of the longest root-to-leaf path in edges): a leaf has
-height `0`, an internal node is one more than the maximum child height. -/
+/-- The **height**: the number of vertices on a longest root-to-leaf path, so a leaf has
+height `1`. This is the convention of `BinaryTree.height`, where `nil` has height `0`. -/
 def height : RoseTree α → ℕ :=
-  fold fun _ ds => (ds.map (· + 1)).foldr max 0
+  fold fun _ hs => hs.foldr max 0 + 1
 
 @[simp] theorem height_node (a : α) (cs : List (RoseTree α)) :
-    height (node a cs) = ((cs.map height).map (· + 1)).foldr max 0 := by
+    height (node a cs) = (cs.map height).foldr max 0 + 1 := by
   simp only [height, fold_node]
 
-/-! ### Arity and the leaf test -/
+theorem height_pos (t : RoseTree α) : 0 < t.height := by
+  cases t with
+  | node a cs => rw [height_node]; exact Nat.succ_pos _
+
+theorem height_lt_of_mem {t c : RoseTree α} (h : c ∈ t.children) : c.height < t.height := by
+  cases t with
+  | node a cs =>
+    rw [children_node] at h
+    rw [height_node]
+    exact Nat.lt_succ_of_le (List.le_max_of_le (l := cs.map height) (List.mem_map_of_mem h) le_rfl)
+
+/-! ### Arity -/
 
 /-- The arity of the root: its number of children. A leaf has arity `0`. -/
 def arity (t : RoseTree α) : ℕ := t.children.length
@@ -375,80 +376,15 @@ def arity (t : RoseTree α) : ℕ := t.children.length
   cases t with
   | node a cs => simp [arity, map_node]
 
-/-- Whether the root is a leaf (has no children). -/
-def isLeaf (t : RoseTree α) : Bool := t.children.isEmpty
-
-@[simp] theorem isLeaf_node_nil (a : α) : isLeaf (node a []) = true := rfl
-
-@[simp] theorem isLeaf_node_cons (a : α) (c : RoseTree α) (cs : List (RoseTree α)) :
-    isLeaf (node a (c :: cs)) = false := rfl
-
-@[simp] theorem isLeaf_map (f : α → β) (t : RoseTree α) : (map f t).isLeaf = t.isLeaf := by
-  cases t with
-  | node a cs => cases cs <;> simp [isLeaf, map_node]
-
-/-! ### Smart constructors -/
-
-/-- A **unary** node: a single child. -/
-def unary (a : α) (c : RoseTree α) : RoseTree α := node a [c]
-/-- A **binary** node: two ordered children. -/
-def binary (a : α) (l r : RoseTree α) : RoseTree α := node a [l, r]
-/-- An **n-ary** node: a list of children. -/
-def nary (a : α) (cs : List (RoseTree α)) : RoseTree α := node a cs
-
-@[simp] theorem leaf_def (a : α) : leaf a = node a [] := rfl
-@[simp] theorem unary_def (a : α) (c : RoseTree α) : unary a c = node a [c] := rfl
-@[simp] theorem binary_def (a : α) (l r : RoseTree α) : binary a l r = node a [l, r] := rfl
-@[simp] theorem nary_def (a : α) (cs : List (RoseTree α)) : nary a cs = node a cs := rfl
-
-/-! ### `depth` — longest root-to-leaf path in vertices
-
-`depth = height + 1`: a leaf has depth `1` (`height` counts edges, `depth`
-counts the vertices on the longest path). -/
-
-def depth : RoseTree α → ℕ :=
-  fold fun _ ds => 1 + ds.foldr max 0
-
-@[simp] theorem depth_node (a : α) (cs : List (RoseTree α)) :
-    depth (node a cs) = 1 + (cs.map depth).foldr max 0 := by
-  simp only [depth, fold_node]
-
-@[simp] theorem depth_map (f : α → β) (t : RoseTree α) : (map f t).depth = t.depth := by
-  induction t with
-  | node a cs ih =>
-    simp only [map_node, depth_node, List.map_map]
-    exact congrArg (1 + ·) (congrArg (List.foldr max 0) (List.map_congr_left ih))
-
-/-- Each child's depth is at most the children's max depth. -/
-theorem depth_le_foldr_max {c : RoseTree α} {cs : List (RoseTree α)} (h : c ∈ cs) :
-    c.depth ≤ (cs.map depth).foldr max 0 := by
-  induction cs with
-  | nil => cases h
-  | cons a as ih =>
-    simp only [List.map_cons, List.foldr_cons]
-    rcases List.mem_cons.mp h with rfl | h
-    · exact Nat.le_max_left _ _
-    · exact Nat.le_trans (ih h) (Nat.le_max_right _ _)
-
-/-- The children's max depth is at most any common bound on the children. -/
-theorem foldr_max_depth_le {cs : List (RoseTree α)} {n : ℕ} (h : ∀ c ∈ cs, c.depth ≤ n) :
-    (cs.map depth).foldr max 0 ≤ n := by
-  induction cs with
-  | nil => exact Nat.zero_le n
-  | cons a as ih =>
-    simp only [List.map_cons, List.foldr_cons]
-    exact Nat.max_le.mpr ⟨h a (List.mem_cons_self ..),
-      ih fun c hc => h c (List.mem_cons_of_mem _ hc)⟩
-
 /-! ### `map` preserves the counts -/
 
-theorem map_leaf (f : α → β) (a : α) : map f (leaf a) = leaf (f a) := rfl
+@[simp] theorem map_leaf (f : α → β) (a : α) : map f (leaf a) = leaf (f a) := rfl
 
 @[simp] theorem numNodes_map (f : α → β) (t : RoseTree α) : (map f t).numNodes = t.numNodes := by
   induction t with
   | node a cs ih =>
     simp only [map_node, numNodes_node, List.map_map]
-    exact congrArg (1 + ·) (congrArg List.sum (List.map_congr_left ih))
+    exact congrArg (· + 1) (congrArg List.sum (List.map_congr_left ih))
 
 @[simp] theorem numLeaves_map (f : α → β) (t : RoseTree α) : (map f t).numLeaves = t.numLeaves := by
   induction t with
@@ -460,7 +396,7 @@ theorem map_leaf (f : α → β) (a : α) : map f (leaf a) = leaf (f a) := rfl
   induction t with
   | node a cs ih =>
     simp only [map_node, height_node, List.map_map]
-    exact congrArg (List.foldr max 0) (List.map_congr_left fun c hc => congrArg (· + 1) (ih c hc))
+    exact congrArg (· + 1) (congrArg (List.foldr max 0) (List.map_congr_left ih))
 
 @[simp] theorem offspring_map (f : α → β) (t : RoseTree α) :
     (map f t).offspring = t.offspring.map fun p => (f p.1, p.2.map f) := by
@@ -484,19 +420,6 @@ theorem map_leaf (f : α → β) (a : α) : map f (leaf a) = leaf (f a) := rfl
 /-! ### Instances -/
 
 instance [Inhabited α] : Inhabited (RoseTree α) := ⟨leaf default⟩
-
-/-! ### Sanity checks -/
-
-example : numNodes (leaf 0 : RoseTree ℕ) = 1 := by simp [leaf]
-example : numNodes (node 0 [leaf 1, leaf 2] : RoseTree ℕ) = 3 := by simp [leaf]
-example : numLeaves (node 0 [leaf 1, node 2 [leaf 3, leaf 4]] : RoseTree ℕ) = 3 := by simp [leaf]
-example : height (leaf 0 : RoseTree ℕ) = 0 := by simp [leaf]
-example : height (node 0 [leaf 1, leaf 2] : RoseTree ℕ) = 1 := by simp [leaf]
-example : height (node 0 [node 1 [leaf 2]] : RoseTree ℕ) = 2 := by simp [leaf]
-example : map (· + 1) (node 0 [leaf 1] : RoseTree ℕ) = node 1 [leaf 2] := by simp [leaf]
-example : traverse (m := Id) (· + 1) (node 0 [leaf 1] : RoseTree ℕ) = node 1 [leaf 2] := rfl
-example : (node 0 [leaf 1] : RoseTree ℕ) = node 0 [leaf 1] := by decide
-example : (node 0 [leaf 1] : RoseTree ℕ) ≠ node 0 [leaf 2] := by decide
 
 end RoseTree
 

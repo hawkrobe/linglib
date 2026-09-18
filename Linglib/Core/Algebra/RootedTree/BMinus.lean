@@ -57,12 +57,12 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     ([foissy-typed-decorated-rooted-trees-2018]). -/
 noncomputable def bMinusTree (a : α) (T : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) :=
-  if T.rootValue = a then of' (R := R) T.rootChildren else 0
+  if T.value = a then of' (R := R) T.children else 0
 
 @[simp] theorem bMinusTree_node (a : α) (F : Forest (UnorderedTree α)) :
     bMinusTree (R := R) a (UnorderedTree.node a F) = of' F := by
-  rw [bMinusTree, UnorderedTree.rootValue_node, ite_eq_left rfl,
-      UnorderedTree.rootChildren_node]
+  rw [bMinusTree, UnorderedTree.value_node, ite_eq_left rfl,
+      UnorderedTree.children_node]
 
 /-- The B-_a operator on basis forests: `bMinusTree` on singletons, `0`
     otherwise. Stated via `card`/`map`/`sum`, which carry the descent to
@@ -91,7 +91,7 @@ theorem bMinusBasis_eq_zero_of_not_singleton_a (a : α)
   · obtain ⟨T, rfl⟩ := Multiset.card_eq_one.mp hcard
     rw [Multiset.map_singleton, Multiset.sum_singleton, bMinusTree, ite_eq_right]
     intro hlab
-    exact h ⟨T.rootChildren, by rw [← hlab, UnorderedTree.node_eta]⟩
+    exact h ⟨T.children, by rw [← hlab, UnorderedTree.node_eta]⟩
   · rfl
 
 /-! ### `bMinusLin a` — linear extension -/
@@ -133,7 +133,7 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
       rw [ite_eq_left rfl, ite_eq_left rfl, UnorderedTree.forestAutCard_singleton,
           UnorderedTree.autCard_node]
     · rw [ite_eq_right hG, ite_eq_right fun h => hG (by
-        simpa using congrArg UnorderedTree.rootChildren (Multiset.singleton_inj.mp h))]
+        simpa using congrArg UnorderedTree.children (Multiset.singleton_inj.mp h))]
   · rw [bMinusBasis_eq_zero_of_not_singleton_a a F hF,
         ite_eq_right fun h => hF ⟨G, h⟩, pairing_zero_left]
 
@@ -512,7 +512,7 @@ private lemma sum_powerset_diff_zero_indicator
     * If `|A| = 1, |B - B₁| = 0`: `F'` is a singleton, but its root label
       equals `A`'s root label (which is ≠ a since `A` is not singleton-a-rooted),
       so still not of form `{node a G}`. Uses
-      `UnorderedTree.insertionMultiset_singleton_rootValue`. -/
+      `UnorderedTree.insertionMultiset_singleton_value`. -/
 private theorem bMinusBasis_nim_add_eq_zero (a : α)
     (A B₁ B' F' : Forest (UnorderedTree α))
     (hA_ne : A ≠ 0)
@@ -538,32 +538,32 @@ private theorem bMinusBasis_nim_add_eq_zero (a : α)
   subst hB'
   -- F' + 0 = F', and F' has card 1, F' = {T'} with T' = node a G.
   rw [add_zero] at hG
-  -- Now F' ∈ NIM A B₁ with A.card = 1; A = {T} for some T with T.rootValue ≠ a.
+  -- Now F' ∈ NIM A B₁ with A.card = 1; A = {T} for some T with T.value ≠ a.
   -- Goal: derive contradiction from F' = {node a G} via root preservation.
   have hF'_card : F'.card = 1 := by rw [hcard_F', hA_card]
   -- A is a singleton (card 1): A = {T_A} for some T_A.
   obtain ⟨T_A, hT_A⟩ : ∃ T_A : UnorderedTree α, A = {T_A} := by
     rcases Multiset.card_eq_one.mp hA_card with ⟨T_A, hT_A⟩
     exact ⟨T_A, hT_A⟩
-  -- T_A.rootValue ≠ a (otherwise A = {node a (rootChildren T_A)} via node_eta).
-  have hT_A_lab : T_A.rootValue ≠ a := by
+  -- T_A.value ≠ a (otherwise A = {node a (children T_A)} via node_eta).
+  have hT_A_lab : T_A.value ≠ a := by
     intro h_lab
     apply hA
-    refine ⟨UnorderedTree.rootChildren T_A, ?_⟩
+    refine ⟨UnorderedTree.children T_A, ?_⟩
     rw [hT_A]
     congr 1
     rw [← h_lab, UnorderedTree.node_eta]
   -- Apply NIM singleton root preservation.
   subst hT_A
   obtain ⟨T', hF'_eq, hT'_lab⟩ :=
-    UnorderedTree.insertionMultiset_singleton_rootValue T_A B₁ hF'
-  -- F' = {T'} with T'.rootValue = T_A.rootValue ≠ a.
+    UnorderedTree.insertionMultiset_singleton_value T_A B₁ hF'
+  -- F' = {T'} with T'.value = T_A.value ≠ a.
   -- But hG says F' = {node a G}, so T' = node a G.
   rw [hF'_eq] at hG
   have hT'_eq_node : T' = UnorderedTree.node a G := Multiset.singleton_inj.mp hG
-  -- Then T'.rootValue = a, contradicting hT'_lab + hT_A_lab.
-  have hT'_lab_a : T'.rootValue = a := by
-    rw [hT'_eq_node, UnorderedTree.rootValue_node]
+  -- Then T'.value = a, contradicting hT'_lab + hT_A_lab.
+  have hT'_lab_a : T'.value = a := by
+    rw [hT'_eq_node, UnorderedTree.value_node]
   rw [hT'_lab_a] at hT'_lab
   exact hT_A_lab hT'_lab.symm
 

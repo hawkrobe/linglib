@@ -47,18 +47,19 @@ def accessibleCount (t : UnorderedTree (α ⊕ β)) : ℕ := t.numEdges - t.trac
 @[simp] theorem accessibleCount_leaf_inr (b : β) :
     (leaf (Sum.inr b) : UnorderedTree (α ⊕ β)).accessibleCount = 0 := rfl
 
-private theorem numEdges_sub_leafCountP_node_pair (p : α → Prop) [DecidablePred p] (a : α)
+private theorem numEdges_sub_countP_leaves_node_pair (p : α → Prop) [DecidablePred p] (a : α)
     (l r : UnorderedTree α) (hpa : ¬p a)
-    (hl : l.leafCountP p < l.numNodes) (hr : r.leafCountP p < r.numNodes) :
-    (UnorderedTree.node a {l, r}).numEdges - (UnorderedTree.node a {l, r}).leafCountP p
-      = (l.numEdges - l.leafCountP p) + (r.numEdges - r.leafCountP p) + 2 := by
+    (hl : l.leaves.countP p < l.numNodes) (hr : r.leaves.countP p < r.numNodes) :
+    (UnorderedTree.node a {l, r}).numEdges - (UnorderedTree.node a {l, r}).leaves.countP p
+      = (l.numEdges - l.leaves.countP p) + (r.numEdges - r.leaves.countP p) + 2 := by
   have hw := numEdges_node_pair a l r
-  have htl : (UnorderedTree.node a {l, r}).leafCountP p = l.leafCountP p + r.leafCountP p := by
-    rw [leafCountP_node_of_not p a _ hpa]
+  have htl : (UnorderedTree.node a {l, r}).leaves.countP p
+      = l.leaves.countP p + r.leaves.countP p := by
+    rw [countP_leaves_node_of_not p a _ hpa]
     simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.sum_cons,
       Multiset.map_singleton, Multiset.sum_singleton]
-  have hbl := leafCountP_le_numEdges p l hl
-  have hbr := leafCountP_le_numEdges p r hr
+  have hbl := countP_leaves_le_numEdges p l hl
+  have hbr := countP_leaves_le_numEdges p r hr
   simp only [htl, hw]
   omega
 
@@ -67,7 +68,7 @@ theorem accessibleCount_merge (a : α) (l r : UnorderedTree (α ⊕ β))
     (hl : l.traceLeafCount < l.numNodes) (hr : r.traceLeafCount < r.numNodes) :
     (UnorderedTree.node (Sum.inl a) {l, r}).accessibleCount
       = l.accessibleCount + r.accessibleCount + 2 :=
-  numEdges_sub_leafCountP_node_pair _ _ l r (by simp) hl hr
+  numEdges_sub_countP_leaves_node_pair (fun x : α ⊕ β => x.isRight = true) _ l r (by simp) hl hr
 
 end UnorderedTree
 
@@ -129,13 +130,13 @@ theorem cutSummandsCN_accessibleCount_single (τ : UnorderedTree (α ⊕ β) →
   have hTv_lt : Tv.traceLeafCount < Tv.numNodes :=
     cutSummandsCN_crown_traceLeafCount_lt_numNodes τ T p hp Tv
       (by rw [hcard]; exact Multiset.mem_singleton_self Tv)
-  have hT_root : T.rootValue = Sum.inl a₀ := by
-    rw [hT, UnorderedTree.rootValue_node]
+  have hT_root : T.value = Sum.inl a₀ := by
+    rw [hT, UnorderedTree.value_node]
   have hT_lt : T.traceLeafCount < T.numNodes :=
     UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl T a₀ hT_root
   have hp2_lt : p.2.traceLeafCount < p.2.numNodes :=
     UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl p.2 a₀
-      ((cutSummandsCN_trunk_rootValue τ T p hp).trans hT_root)
+      ((cutSummandsCN_trunk_value τ T p hp).trans hT_root)
   rw [hcard] at hw hl
   simp only [Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_singleton] at hw hl
   simp only [UnorderedTree.accessibleCount, UnorderedTree.numEdges]
@@ -157,13 +158,13 @@ theorem cutSummandsCN_accessibleCount_pair (τ : UnorderedTree (α ⊕ β) → �
   have hTw_lt : Tw.traceLeafCount < Tw.numNodes :=
     cutSummandsCN_crown_traceLeafCount_lt_numNodes τ T p hp Tw
       (by rw [hcard]; exact Multiset.mem_cons_of_mem (Multiset.mem_singleton_self Tw))
-  have hT_root : T.rootValue = Sum.inl a₀ := by
-    rw [hT, UnorderedTree.rootValue_node]
+  have hT_root : T.value = Sum.inl a₀ := by
+    rw [hT, UnorderedTree.value_node]
   have hT_lt : T.traceLeafCount < T.numNodes :=
     UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl T a₀ hT_root
   have hp2_lt : p.2.traceLeafCount < p.2.numNodes :=
     UnorderedTree.traceLeafCount_lt_numNodes_of_rootInl p.2 a₀
-      ((cutSummandsCN_trunk_rootValue τ T p hp).trans hT_root)
+      ((cutSummandsCN_trunk_value τ T p hp).trans hT_root)
   rw [hcard] at hw hl
   simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.sum_cons,
     Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_cons,

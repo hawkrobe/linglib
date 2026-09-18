@@ -39,8 +39,8 @@ file is a candidate factoring of Foissy's specific recursion.
 
 ## Architecture
 
-- **Auxiliary depth lemma** (`cutSummandsN_subtree_depth_lt`): every tree
-  appearing in a cut forest of `T` has strictly smaller depth than `T`.
+- **Auxiliary height lemma** (`cutSummandsN_subtree_height_lt`): every tree
+  appearing in a cut forest of `T` has strictly smaller height than `T`.
   Lifted from a tree-level mutual structural-induction proof.
 - **Auxiliary weight lemma** (`cutSummandsN_rem_numNodes_lt`): for nontrivial
   cuts, the remainder has strictly smaller weight than the source. Substrate
@@ -51,7 +51,7 @@ file is a candidate factoring of Foissy's specific recursion.
   `multiset_filter_product` helper. Substrate for the right-antipode
   cancellation.
 - **Antipode on a tree** (`antipodeTreeN`): well-founded recursion on
-  `UnorderedTree.depth`, using the closed form
+  `UnorderedTree.height`, using the closed form
   `S(T) = -Σ over cutSummandsN T of (Π S(Tᵢ)) · ofTree rem`.
 - **Right antipode** (`antipodeRightTreeN`): well-founded recursion on
   `UnorderedTree.numNodes`, using the dual form `R(T) = -ofTree T - Σ_{cf ≠ 0}
@@ -76,10 +76,10 @@ open scoped TensorProduct
 
 variable {R : Type*} [CommRing R] {α : Type*}
 
-/-! ## §1: Subtree depth bound on cut summands
+/-! ## §1: Subtree height bound on cut summands
 
-Substrate for the well-founded antipode definition. The depth of any tree
-appearing in a cut forest of `T` is strictly less than `T.depth`. Proved
+Substrate for the well-founded antipode definition. The height of any tree
+appearing in a cut forest of `T` is strictly less than `T.height`. Proved
 mutually on the tree-level substrate, then descended via the tree-level
 representation. -/
 
@@ -87,11 +87,11 @@ representation. -/
 
 mutual
 
-/-- For any `(cf, rem) ∈ cutSummandsP T`, every tree `T_i ∈ cf` has depth
-    bounded by `T.depth`. Mutual with `cutListSummandsP_subtree_depth_le`. -/
-private theorem cutSummandsP_subtree_depth_le :
+/-- For any `(cf, rem) ∈ cutSummandsP T`, every tree `T_i ∈ cf` has height
+    bounded by `T.height`. Mutual with `cutListSummandsP_subtree_height_le`. -/
+private theorem cutSummandsP_subtree_height_le :
     ∀ (T : RoseTree α) (cf : Forest (RoseTree α)) (rem : RoseTree α),
-      (cf, rem) ∈ cutSummandsP T → ∀ T_i ∈ cf, T_i.depth ≤ T.depth
+      (cf, rem) ∈ cutSummandsP T → ∀ T_i ∈ cf, T_i.height ≤ T.height
   | .node a cs₀, cf, rem, h_mem, T_i, h_T_i => by
     rw [cutSummandsP_node, Multiset.mem_map] at h_mem
     obtain ⟨⟨cf', rem'⟩, h_mem', h_eq⟩ := h_mem
@@ -99,18 +99,18 @@ private theorem cutSummandsP_subtree_depth_le :
     have h_cf : cf' = cf := congrArg Prod.fst h_eq
     rw [← h_cf] at h_T_i
     -- (cf', rem') ∈ cutListSummandsP cs₀, T_i ∈ cf'.
-    have hbd : T_i.depth ≤ (cs₀.map RoseTree.depth).foldr max 0 :=
-      cutListSummandsP_subtree_depth_le cs₀ cf' rem' h_mem' T_i h_T_i
-    rw [RoseTree.depth_node]
+    have hbd : T_i.height ≤ (cs₀.map RoseTree.height).foldr max 0 :=
+      cutListSummandsP_subtree_height_le cs₀ cf' rem' h_mem' T_i h_T_i
+    rw [RoseTree.height_node]
     omega
 
 /-- For any `(cf, rem_list) ∈ cutListSummandsP cs`, every tree `T_i ∈ cf`
-    has depth bounded by the cs₀'s max depth. Mutual with
-    `cutSummandsP_subtree_depth_le`. -/
-private theorem cutListSummandsP_subtree_depth_le :
+    has height bounded by the cs₀'s max height. Mutual with
+    `cutSummandsP_subtree_height_le`. -/
+private theorem cutListSummandsP_subtree_height_le :
     ∀ (cs : List (RoseTree α)) (cf : Forest (RoseTree α)) (rem_list : List (RoseTree α)),
       (cf, rem_list) ∈ cutListSummandsP cs → ∀ T_i ∈ cf,
-        T_i.depth ≤ (cs.map RoseTree.depth).foldr max 0
+        T_i.height ≤ (cs.map RoseTree.height).foldr max 0
   | [], cf, rem_list, h_mem, T_i, h_T_i => by
     rw [cutListSummandsP_nil, Multiset.mem_singleton] at h_mem
     -- h_mem : (cf, rem_list) = (0, [])
@@ -131,7 +131,7 @@ private theorem cutListSummandsP_subtree_depth_le :
         exact (congrArg Prod.fst h_eq).symm
     rw [h_cf_eq, Multiset.mem_add] at h_T_i
     -- T_i ∈ aug_F or T_i ∈ cf_cs'.
-    show T_i.depth ≤ max c.depth ((cs'.map RoseTree.depth).foldr max 0)
+    show T_i.height ≤ max c.height ((cs'.map RoseTree.height).foldr max 0)
     rcases h_T_i with h_in_aug | h_in_cf_cs'
     · -- T_i ∈ aug_F. Either aug_F = {c} (extract whole) or aug_F = s.1 for s ∈ cutSummandsP c.
       rw [augActionP_eq, Multiset.mem_cons] at h_aug
@@ -147,10 +147,10 @@ private theorem cutListSummandsP_subtree_depth_le :
         have h_aug_F : s.1 = aug_F := congrArg Prod.fst h_s_eq
         rw [← h_aug_F] at h_in_aug
         -- T_i ∈ s.1 where (s.1, s.2) ∈ cutSummandsP c. Use IH on c.
-        have := cutSummandsP_subtree_depth_le c s.1 s.2 h_s_mem T_i h_in_aug
+        have := cutSummandsP_subtree_height_le c s.1 s.2 h_s_mem T_i h_in_aug
         exact this.trans (le_max_left _ _)
     · -- T_i ∈ cf_cs'. By IH on cs'.
-      have := cutListSummandsP_subtree_depth_le cs' cf_cs' rem_cs' h_cf_cs' T_i h_in_cf_cs'
+      have := cutListSummandsP_subtree_height_le cs' cf_cs' rem_cs' h_cf_cs' T_i h_in_cf_cs'
       exact this.trans (le_max_right _ _)
 
 end
@@ -158,14 +158,14 @@ end
 /-! ### UnorderedTree version (descent via tree-level rep) -/
 
 /-- For any `(cf, rem) ∈ cutSummandsN T` (any tree `T : UnorderedTree α`), every
-    tree `T_i ∈ cf` has strictly smaller depth than `T`. The strict bound
+    tree `T_i ∈ cf` has strictly smaller height than `T`. The strict bound
     comes from the fact that `cf`'s trees are subtrees of cs₀ of `T`
-    (whose depth is `T.depth - 1`), and via the empty-cut term `(0, T)`'s
+    (whose height is `T.height - 1`), and via the empty-cut term `(0, T)`'s
     `cf = 0` (no `T_i` to consider). -/
-theorem cutSummandsN_subtree_depth_lt (T : UnorderedTree α)
+theorem cutSummandsN_subtree_height_lt (T : UnorderedTree α)
     (cf : Forest (UnorderedTree α)) (rem : UnorderedTree α)
     (h_mem : (cf, rem) ∈ cutSummandsN T)
-    (T_i : UnorderedTree α) (h_T_i : T_i ∈ cf) : T_i.depth < T.depth := by
+    (T_i : UnorderedTree α) (h_T_i : T_i ∈ cf) : T_i.height < T.height := by
   -- Pick a tree-level rep T = mk T₀.
   obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = UnorderedTree.mk T₀ :=
     ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
@@ -174,25 +174,25 @@ theorem cutSummandsN_subtree_depth_lt (T : UnorderedTree α)
   -- h_proj : projSummand ⟨cf_p, rem_p⟩ = (cf, rem) reduces to (cf_p.map mk, mk rem_p) = (cf, rem).
   -- Extract first component via congrArg.
   have h_cf : cf_p.map UnorderedTree.mk = cf := congrArg Prod.fst h_proj
-  show T_i.depth < (UnorderedTree.mk T₀).depth
-  rw [UnorderedTree.depth_mk]
+  show T_i.height < (UnorderedTree.mk T₀).height
+  rw [UnorderedTree.height_mk]
   rw [← h_cf, Multiset.mem_map] at h_T_i
   obtain ⟨T_i_p, h_T_i_p_mem, rfl⟩ := h_T_i
-  show (UnorderedTree.mk T_i_p).depth < T₀.depth
-  rw [UnorderedTree.depth_mk]
-  -- Use tree-level lemma: T_i_p.depth ≤ T₀.depth - 1.
+  show (UnorderedTree.mk T_i_p).height < T₀.height
+  rw [UnorderedTree.height_mk]
+  -- Use tree-level lemma: T_i_p.height ≤ T₀.height - 1.
   -- Strategy: T₀ = .node a cs₀ for some a, cs₀. cf_p ∈ cutListSummandsP cs₀.
-  -- T_i_p ∈ cf_p means T_i_p.depth ≤ (cs₀'s max depth) = T₀.depth - 1.
+  -- T_i_p ∈ cf_p means T_i_p.height ≤ (cs₀'s max height) = T₀.height - 1.
   match T₀, h_mem_p with
   | .node a cs₀, h_mem_p =>
     rw [cutSummandsP_node, Multiset.mem_map] at h_mem_p
     obtain ⟨⟨cf_p', rem_p'⟩, h_mem_p', h_eq⟩ := h_mem_p
     have h_cf_eq : cf_p' = cf_p := congrArg Prod.fst h_eq
     rw [← h_cf_eq] at h_T_i_p_mem
-    have hbd : T_i_p.depth ≤ (cs₀.map RoseTree.depth).foldr max 0 :=
-      cutListSummandsP_subtree_depth_le cs₀ cf_p' rem_p' h_mem_p' T_i_p h_T_i_p_mem
-    show T_i_p.depth < (RoseTree.node a cs₀).depth
-    rw [RoseTree.depth_node]
+    have hbd : T_i_p.height ≤ (cs₀.map RoseTree.height).foldr max 0 :=
+      cutListSummandsP_subtree_height_le cs₀ cf_p' rem_p' h_mem_p' T_i_p h_T_i_p_mem
+    show T_i_p.height < (RoseTree.node a cs₀).height
+    rw [RoseTree.height_node]
     omega
 
 /-! ### Weight conservation for cuts
@@ -352,13 +352,13 @@ lemma cutSummandsN_filter_card_zero (T : UnorderedTree α) :
 
 /-! ## §2: Antipode definition
 
-Recursive on tree depth via Lean's well-founded recursion. The closed form
+Recursive on tree height via Lean's well-founded recursion. The closed form
 
   S(T) = -Σ_{(cf, rem) ∈ cutSummandsN T} (Π_{Tᵢ ∈ cf} S(Tᵢ)) · ofTree rem
 
 includes the empty cut `(0, T)` (contributing `1 · ofTree T = ofTree T`) so
 that the negation cleanly gives `-ofTree T - Σ_{nontrivial} ...`. The
-recursive call on `Tᵢ ∈ cf` is well-founded by `cutSummandsN_subtree_depth_lt`. -/
+recursive call on `Tᵢ ∈ cf` is well-founded by `cutSummandsN_subtree_height_lt`. -/
 
 set_option linter.unusedVariables false in
 /-- The **antipode on a single nonplanar tree**, via Foissy's recursive
@@ -369,9 +369,9 @@ noncomputable def antipodeTreeN (T : UnorderedTree α) : ConnesKreimer R (Unorde
   - ((cutSummandsN T).attach.map (fun ⟨pf, h_mem⟩ =>
       (pf.1.attach.map (fun ⟨T_i, h_T_i⟩ =>
         antipodeTreeN T_i)).prod * ofTree pf.2)).sum
-termination_by T.depth
+termination_by T.height
 decreasing_by
-  exact cutSummandsN_subtree_depth_lt T pf.1 pf.2 h_mem T_i h_T_i
+  exact cutSummandsN_subtree_height_lt T pf.1 pf.2 h_mem T_i h_T_i
 
 /-! ### Multiplicative extension to forests -/
 
@@ -568,7 +568,7 @@ private lemma R_if_sum_eq_filter_sum (T : UnorderedTree α) :
   rw [Multiset.mem_filter] at h_p_mem
   simp [h_p_mem.2]
 
-/-! ## §3: Antipode axiom on trees (depth-induction-free!)
+/-! ## §3: Antipode axiom on trees (height-induction-free!)
 
 The Foissy recursion was set up so that the antipode axiom on a single tree
 follows directly from `antipodeTreeN_unfold` — no further induction is

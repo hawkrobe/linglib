@@ -87,6 +87,7 @@ theorem numNodes_contractUnary_add_numUnary (t : RoseTree α) :
   | node a cs ih =>
     rw [numUnary_node, numNodes_node, ← List.map_congr_left ih, List.sum_map_add,
       ← Nat.add_assoc, numNodes_contractUnary_node, Nat.add_assoc]
+    omega
 
 /-! ### `contractUnary` normalizes: no unary vertices remain -/
 

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Combinatorics.RootedTree.Cut
-import Linglib.Core.Data.RoseTree.FilterMap
+import Linglib.Core.Data.UnorderedTree.FilterMap
 
 open RoseTree
 

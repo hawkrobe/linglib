@@ -282,26 +282,18 @@ theorem fold_perm {β : Type*} {g : α → List β → β}
 
 /-- `numNodes` is a `Perm`-invariant (`List.Perm.sum_eq`). -/
 theorem numNodes_perm {t s : RoseTree α} (h : Perm t s) : t.numNodes = s.numNodes :=
-  fold_perm (fun _ _ _ h' => congrArg (1 + ·) h'.sum_eq) h
+  fold_perm (fun _ _ _ h' => congrArg (· + 1) h'.sum_eq) h
 
 /-- `numLeaves` is a `Perm`-invariant. -/
 theorem numLeaves_perm {t s : RoseTree α} (h : Perm t s) : t.numLeaves = s.numLeaves :=
   fold_perm (fun _ _ _ h' => congrArg (max 1) h'.sum_eq) h
 
-/-- `depth` is a `Perm`-invariant (`List.Perm.foldr_eq`, `max` being commutative). -/
-theorem depth_perm {t s : RoseTree α} (h : Perm t s) : t.depth = s.depth :=
-  fold_perm (fun _ _ _ h' => congrArg (1 + ·) (h'.foldr_eq 0)) h
+/-- `height` is a `Perm`-invariant (`List.Perm.foldr_eq`, `max` being commutative). -/
+theorem height_perm {t s : RoseTree α} (h : Perm t s) : t.height = s.height :=
+  fold_perm (fun _ _ _ h' => congrArg (· + 1) (h'.foldr_eq 0)) h
 
 /-- Arity (root child count) is a `Perm`-invariant. -/
 theorem arity_perm {t s : RoseTree α} (h : Perm t s) : t.arity = s.arity := by
   simpa [arity] using Multiset.card_eq_card_of_rel h.children_rel
-
-/-- Leaf-ness is a `Perm`-invariant. -/
-theorem isLeaf_perm {t s : RoseTree α} (h : Perm t s) : t.isLeaf = s.isLeaf := by
-  have harity := arity_perm h
-  rw [Bool.eq_iff_iff]
-  simp only [isLeaf, List.isEmpty_iff_length_eq_zero]
-  unfold arity at harity
-  omega
 
 end RoseTree

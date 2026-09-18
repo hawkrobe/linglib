@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
-import Linglib.Core.Data.RoseTree.DecEq
+import Linglib.Core.Data.UnorderedTree.DecEq
 import Linglib.Syntax.Minimalist.Defs
 
 /-!

@@ -108,7 +108,7 @@ def mkLeafPhon (cat : Cat) (sel : SelStack) (phon : String) (id : Nat) : Syntact
 
 /-- The lexical token at the root, if the root is a lexical leaf. -/
 def getLIToken (s : SyntacticObject) : Option LIToken :=
-  match UnorderedTree.rootValue s.val with
+  match UnorderedTree.value s.val with
   | .inl tok => some tok
   | .inr _ => none
 
@@ -134,15 +134,15 @@ instance (c : Cat) : DecidablePred (isLeafOf c) := λ _ => inferInstanceAs (Deci
 theorem traceOf_ne_trace (tok : LIToken) : traceOf tok ≠ trace := by
   intro h
   have h' : (Sum.inr (some tok) : Vertex) = Sum.inr none :=
-    congrArg (fun s : SyntacticObject => UnorderedTree.rootValue s.val) h
+    congrArg (fun s : SyntacticObject => UnorderedTree.value s.val) h
   simp at h'
 
 @[simp] theorem getLIToken_merge (l r : SyntacticObject) : (merge l r).getLIToken = none := by
-  rw [getLIToken, merge_val, UnorderedTree.rootValue_node]
+  rw [getLIToken, merge_val, UnorderedTree.value_node]
 
 /-- A trace leaf, bare or indexed. -/
 def isTrace (s : SyntacticObject) : Prop :=
-  (UnorderedTree.rootValue s.val).isRight = true ∧ UnorderedTree.numNodes s.val = 1
+  (UnorderedTree.value s.val).isRight = true ∧ UnorderedTree.numNodes s.val = 1
 
 instance (s : SyntacticObject) : Decidable (isTrace s) := inferInstanceAs (Decidable (_ ∧ _))
 

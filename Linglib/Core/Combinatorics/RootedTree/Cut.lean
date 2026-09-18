@@ -1,5 +1,6 @@
 import Linglib.Core.Data.UnorderedTree.Basic
-import Linglib.Core.Data.RoseTree.DecEq
+import Linglib.Core.Data.UnorderedTree.Count
+import Linglib.Core.Data.UnorderedTree.DecEq
 import Mathlib.Data.Multiset.Bind
 import Linglib.Core.Data.RoseTree.Basic
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
@@ -1433,10 +1434,10 @@ private theorem sum_map_numNodes_sub_one_add_card {γ : Type*}
     the cut subtree by a unit-weight leaf, so crown edges plus trunk
     weight recover the tree weight exactly. Descends
     `cutSummandsG_numNodes` through `UnorderedTree.mk`. -/
-theorem cutSummandsCN_edgeCount (τ : UnorderedTree (α ⊕ β) → β)
+theorem cutSummandsCN_numEdges (τ : UnorderedTree (α ⊕ β) → β)
     (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T,
-      Forest.edgeCount p.1 + p.2.numNodes = T.numNodes := by
+      Forest.numEdges p.1 + p.2.numNodes = T.numNodes := by
   obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
     ⟨T.out, (Quotient.out_eq T).symm⟩
   intro p hp
@@ -1461,10 +1462,10 @@ theorem cutSummandsCN_edgeCount (τ : UnorderedTree (α ⊕ β) → β)
         exact absurd h (by simp)
   have h := cutSummandsG_numNodes _ hext T₀ q hq
   have hsub := sum_map_numNodes_sub_one_add_card q.1
-  show Forest.edgeCount (q.1.map UnorderedTree.mk) +
+  show Forest.numEdges (q.1.map UnorderedTree.mk) +
       (UnorderedTree.mk q.2).numNodes = (UnorderedTree.mk T₀).numNodes
   rw [UnorderedTree.numNodes_mk, UnorderedTree.numNodes_mk]
-  rw [show Forest.edgeCount (q.1.map UnorderedTree.mk) =
+  rw [show Forest.numEdges (q.1.map UnorderedTree.mk) =
       ((q.1.map (fun t => RoseTree.numNodes t - 1)).sum) from by
     show ((q.1.map UnorderedTree.mk).map
         (fun T => UnorderedTree.numNodes T - 1)).sum = _

@@ -215,7 +215,7 @@ theorem comulAlgHomN_bPlusLin_cocycle (a : α) (F : Forest (UnorderedTree α)) :
 
 `(ε ⊗ id) ∘ Δ^ρ = lid⁻¹` and `(id ⊗ ε) ∘ Δ^ρ = rid⁻¹`: reduce to `of' F`
 via `ConnesKreimer.algHom_ext`, then close the tree case by strong induction
-on depth through the cocycle `comulTreeN_node_cocycle`.
+on height through the cocycle `comulTreeN_node_cocycle`.
 
 Coassociativity (`comulRhoN_coassoc`, Foissy's subalgebra argument) and
 the `Bialgebra` instance follow below. -/
@@ -242,10 +242,10 @@ private theorem counit_rTensor_lTensor_bPlus_apply (a : α)
         LinearMap.lTensor_tmul]
   | add z₁ z₂ ih₁ ih₂ => rw [map_add, map_add, ih₁, ih₂, map_add, map_add]
 
-/-! ### Tree-level counit law (depth induction)
+/-! ### Tree-level counit law (height induction)
 
 `(counit ⊗ id)(Δ T) = 1 ⊗ T` for every nonplanar tree `T`. Strong induction
-on `T.depth`: present `T` as `UnorderedTree.node a F` via a planar rep, then the
+on `T.height`: present `T` as `UnorderedTree.node a F` via a planar rep, then the
 cocycle `comulTreeN_node_cocycle`, the commutation
 `counit_rTensor_lTensor_bPlus_apply`, and the forest law on the strictly
 shallower children close the goal. -/
@@ -296,12 +296,12 @@ private theorem comulTreeN_counit_rTensor (T : UnorderedTree α) :
     (Algebra.TensorProduct.map (counit (R := R))
         (AlgHom.id R (ConnesKreimer R (UnorderedTree α))))
       (comulTreeN T) = (1 : R) ⊗ₜ ofTree T := by
-  -- Strong induction on T.depth.
-  suffices aux : ∀ n : ℕ, ∀ T : UnorderedTree α, T.depth = n →
+  -- Strong induction on T.height.
+  suffices aux : ∀ n : ℕ, ∀ T : UnorderedTree α, T.height = n →
       (Algebra.TensorProduct.map (counit (R := R))
           (AlgHom.id R (ConnesKreimer R (UnorderedTree α))))
         (comulTreeN T) = (1 : R) ⊗ₜ ofTree T by
-    exact aux T.depth T rfl
+    exact aux T.height T rfl
   intro n
   induction n using Nat.strong_induction_on with
   | _ n IH =>
@@ -327,8 +327,8 @@ private theorem comulTreeN_counit_rTensor (T : UnorderedTree α) :
         comulForestN_counit_rTensor (R := R)
           (Multiset.ofList (children.map UnorderedTree.mk))
           (fun T' hT' => by
-            apply IH T'.depth ?_ T' rfl
-            have hlt := UnorderedTree.depth_lt_of_mem T' _ hT' a
+            apply IH T'.height ?_ T' rfl
+            have hlt := UnorderedTree.height_lt_of_mem T' _ hT' a
             rw [show (UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk)) :
                   UnorderedTree α) =
                 UnorderedTree.mk (RoseTree.node a children) from
@@ -440,7 +440,7 @@ Foissy's clean proof ([foissy-introduction-hopf-algebras-trees]; for the
 connected-graded-bialgebra framing see [grinberg-reiner-2020]): the set
 `A := {x | (id ⊗ Δ)(Δ x) = assoc ((Δ ⊗ id)(Δ x))}` is a subalgebra, closed
 under `B+_a` by the Hochschild cocycle, and contains every `ofTree T` by
-depth induction — hence `A = ⊤`. Works over any `CommSemiring`, with no
+height induction — hence `A = ⊤`. Works over any `CommSemiring`, with no
 pairing or nondegeneracy input. -/
 
 /-- The "compute coassociativity left-hand side" algebra hom:
@@ -707,15 +707,15 @@ private theorem of'_mem_coassocSubalg_of_trees (F : Forest (UnorderedTree α))
     exact mul_mem hT ih'
 
 /-- Every UnorderedTree tree's `ofTree` lies in `coassocSubalg`. By strong
-    induction on tree depth: leaves are `B+_a 1` (closed under `B+_a` from `1`);
-    nodes are `B+_a (of' F)` where `of' F` is a product of `ofTree` of smaller-depth
+    induction on tree height: leaves are `B+_a 1` (closed under `B+_a` from `1`);
+    nodes are `B+_a (of' F)` where `of' F` is a product of `ofTree` of smaller-height
     trees. -/
 theorem ofTree_mem_coassocSubalg (T : UnorderedTree α) :
     ofTree T ∈ coassocSubalg (R := R) (α := α) := by
-  -- Strong induction on T.depth.
-  suffices aux : ∀ n : ℕ, ∀ T : UnorderedTree α, T.depth = n →
+  -- Strong induction on T.height.
+  suffices aux : ∀ n : ℕ, ∀ T : UnorderedTree α, T.height = n →
       ofTree T ∈ coassocSubalg (R := R) (α := α) by
-    exact aux T.depth T rfl
+    exact aux T.height T rfl
   intro n
   induction n using Nat.strong_induction_on with
   | _ n IH =>
@@ -736,16 +736,16 @@ theorem ofTree_mem_coassocSubalg (T : UnorderedTree α) :
     -- of' F ∈ coassocSubalg, where F = Multiset.ofList (children.map mk).
     apply of'_mem_coassocSubalg_of_trees
     intro T' hT'
-    -- T' ∈ Multiset.ofList (children.map mk). Use IH on T'.depth < (mk (.node a children)).depth.
-    have hT'_depth : T'.depth < (UnorderedTree.mk (RoseTree.node a children)).depth := by
-      have := UnorderedTree.depth_lt_of_mem T'
+    -- T' ∈ Multiset.ofList (children.map mk). Use IH on T'.height < (mk (.node a children)).height.
+    have hT'_depth : T'.height < (UnorderedTree.mk (RoseTree.node a children)).height := by
+      have := UnorderedTree.height_lt_of_mem T'
         (Multiset.ofList (children.map UnorderedTree.mk)) hT' a
       rw [show (UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk)) : UnorderedTree α) =
           UnorderedTree.mk (RoseTree.node a children) from
           UnorderedTree.node_mk_tree_list a children] at this
       exact this
     rw [hT] at hT'_depth
-    exact IH T'.depth hT'_depth T' rfl
+    exact IH T'.height hT'_depth T' rfl
 
 /-! ### `coassocSubalg = ⊤`
 
