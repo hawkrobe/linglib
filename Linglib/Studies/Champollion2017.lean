@@ -75,11 +75,9 @@ denotation, not a feature it carries. -/
 variable {Entity State T : Type*} [LinearOrder T] [PartialOrder Entity]
   [SemilatticeSup (Event T)]
 
-/-- A verb **stratifies over** the atomic fillers of role `R`: for every
-    argument assignment `(y, x)`, the verb's `CosModel` denotation has
-    relational Stratified Distributive Reference along `R`
-    (`RelationalDistributiveReference`). -/
-def StratifiesOver (v : Verb) (M : CosModel Entity State T)
+/-- A verb stratifies over the atomic fillers of role `R` when, for every argument assignment,
+its `Verb.Model` denotation has relational stratified distributive reference along `R`. -/
+def StratifiesOver (v : Verb) (M : Verb.Model Entity State (Event T))
     (R : Entity → Event T → Prop) : Prop :=
   ∀ y x, RelationalDistributiveReferenceUniv R (M.denote v y x)
 
@@ -95,8 +93,8 @@ open Aspect
 
 section ThematicRolesAndCumulativity
 
-/-- Champollion §2.7.2: lexical cumulativity of a predicate — `AlgClosure P = P`
-    extensionally (`P` a fixed point of the `*`-operator). -/
+/-- A predicate is lexically cumulative when it is a fixed point of the algebraic closure
+operator. -/
 def LexicallyCumulative {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
   ∀ x, AlgClosure P x ↔ P x
 
@@ -118,9 +116,9 @@ variable {Entity State T : Type*} [LinearOrder T] [PartialOrder Entity]
   [SemilatticeSup (Event T)]
 
 /-- The verb-distributivity postulates of [champollion-2017] Ch 4, over the Fragment verbs'
-`CosModel` denotations and the model's agent and theme roles: *see* distributes on both, *kill*
+`Verb.Model` denotations and the model's agent and theme roles: *see* distributes on both, *kill*
 on its theme only — a member of the posse need not have killed anyone — and *meet* on neither. -/
-structure ChampollionPostulates (M : Verb.CosModel Entity State T)
+structure ChampollionPostulates (M : Verb.Model Entity State (Event T))
     (agentRole themeRole : Entity → Event T → Prop) : Prop where
   see_distributes_agent : see.toVerb.StratifiesOver M agentRole
   see_distributes_theme : see.toVerb.StratifiesOver M themeRole
@@ -132,9 +130,9 @@ end Distributivity
 
 /-! ### Atelicity as a Schwarzschild cover (§5.4) -/
 
-/-- §5.4: a predicate `P` has stratified subinterval reference at `e` iff `e` is the sum of a
-finite Schwarzschild cover into proper-subinterval `P`-parts, the book's Theorem 14 at the
-runtime dimension. -/
+/-- A predicate `P` has stratified subinterval reference at `e` iff `e` is the sum of a finite
+Schwarzschild cover into proper-subinterval `P`-parts, the book's theorem at the runtime
+dimension. -/
 theorem subintervalReference_iff_cover {T : Type*} [LinearOrder T]
     [SemilatticeSup (Event T)] {P : Event T → Prop} {e : Event T} :
     SubintervalReference P e ↔
@@ -168,20 +166,20 @@ theorem stratifiedReference_of_divisiveness (hτ : Monotone τ) {a b : α}
     (hdiv : ∀ e', IsTemporalPart τ e' (a ⊔ b) → P e') :
     StratifiedReference τ (· < ·) P (a ⊔ b) :=
   .sum (.base ⟨hdiv a ⟨le_sup_left, b, le_sup_right, hov⟩, lt_of_le_of_ne (hτ le_sup_left)
-      λ h => hov ⟨τ b, hb, h ▸ hτ le_sup_right, le_rfl⟩⟩)
-    (.base ⟨hdiv b ⟨le_sup_right, a, le_sup_left, λ o => hov o.symm⟩,
-      lt_of_le_of_ne (hτ le_sup_right) λ h => hov ⟨τ a, ha, le_rfl, h ▸ hτ le_sup_left⟩⟩)
+      fun h ↦ hov ⟨τ b, hb, h ▸ hτ le_sup_right, le_rfl⟩⟩)
+    (.base ⟨hdiv b ⟨le_sup_right, a, le_sup_left, fun o ↦ hov o.symm⟩,
+      lt_of_le_of_ne (hτ le_sup_right) fun h ↦ hov ⟨τ a, ha, le_rfl, h ▸ hτ le_sup_left⟩⟩)
 
-/-- The Back and forth scenario of Figure 6.2: four trips of two legs each, a leg at each
-instant, the even legs from the lot halfway to the store and the odd legs on to the store. An
-event is a set of legs and its runtime the set of their instants. -/
+/-- The back-and-forth scenario has four trips of two legs each, a leg at each instant, the even
+legs from the lot halfway to the store and the odd legs on to the store. An event is a set of
+legs and its runtime the set of their instants. -/
 abbrev Leg := Fin 8
 
 /-- *push carts all the way to the store* holds of a nonempty event whose path reaches the
 store, that is, one containing a leg on to the store. -/
 def PushCartsToStore (e : Finset Leg) : Prop := e.Nonempty ∧ ∃ k ∈ e, k.val % 2 = 1
 
-instance : DecidablePred PushCartsToStore := λ _ => by unfold PushCartsToStore; infer_instance
+instance : DecidablePred PushCartsToStore := fun _ ↦ by unfold PushCartsToStore; infer_instance
 
 /-- The fifty-minute event divides along time into its four trips, each of which reaches the
 store within a proper part of the runtime: the strata-based account admits the *for*-adverbial
@@ -194,9 +192,9 @@ theorem pushCarts_stratified :
 /-- The halfway legs form a temporal part of the event that does not reach the store, the
 offending event of §6.4.1, so the subregion presupposition fails (Figure 6.2b). -/
 theorem pushCarts_not_subregion :
-    ¬ SubregionPresup id PushCartsToStore (Finset.univ : Finset Leg) := λ ⟨_, hdiv⟩ =>
+    ¬ SubregionPresup id PushCartsToStore (Finset.univ : Finset Leg) := fun ⟨_, hdiv⟩ ↦
   absurd (hdiv {0, 2, 4, 6} ⟨by decide, {1, 3, 5, 7}, by decide,
-    λ h => overlap_iff_not_disjoint.1 h (by decide)⟩) (by decide)
+    fun h ↦ overlap_iff_not_disjoint.1 h (by decide)⟩) (by decide)
 
 end Subregion
 

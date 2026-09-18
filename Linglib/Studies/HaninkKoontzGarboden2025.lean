@@ -1,6 +1,6 @@
 import Linglib.Semantics.Root.Defs
 import Linglib.Semantics.Possession.Relationalizer
-import Linglib.Semantics.ArgumentStructure.Verb
+import Linglib.Semantics.ArgumentStructure.ChangeOfState
 import Linglib.Fragments.Washo.PropertyConcepts
 import Linglib.Data.Examples.HaninkKoontzGarboden2025
 
@@ -34,7 +34,8 @@ Types are the substrate's `Ty` with `.s` for the paper's state sort, and the com
 claims are stated at the type level, since Lean's own typing enforces them in the semantic
 definitions. Possession relates a possessor to a possessum of any type, so ordinary possession
 (67) and the possession of a state (35) are one operator. The model of causation and change is
-the substrate's `Verb.CosModel`, whose effector stands for the paper's AGENT.
+the substrate's `ChangeOfStateModel`, whose heads `vBecome` and `vCause` are the paper's (43)
+and whose effector stands for the paper's AGENT.
 
 ## References
 
@@ -52,8 +53,8 @@ open Semantics Semantics.Composition Possession Washo
 
 /-! ### The two root meanings, section 4 -/
 
-/-- The meanings a property concept root can have: a relation between individuals and states
-(27), or a predicate of states alone, [francez-koontz-garboden-2017]'s quality (33). -/
+/-- A property concept root means either a relation between individuals and states or a
+predicate of states alone, a quality. -/
 inductive RootType where
   | relation
   | quality
@@ -64,15 +65,14 @@ def RootType.ty : RootType → Ty
   | .relation => .e ⇒ .s ⇒ .t
   | .quality => .s ⇒ .t
 
-/-- The analysis (sections 4 and 5): bare and prefixed roots denote relations, suffixed roots
-qualities. -/
+/-- On the analysis bare and prefixed roots denote relations and suffixed roots qualities. -/
 def RootType.ofShape : Shape → RootType
   | .bare => .relation
   | .suffixed => .quality
   | .prefixed => .relation
 
-/-- The two meanings are distinguished within Washo: the existence proof against a universal
-root meaning (section 7). -/
+/-- The two meanings are distinguished within Washo, the existence proof against a universal
+root meaning. -/
 theorem exists_rootType_ne :
     ∃ e₁ ∈ propertyConcepts, ∃ e₂ ∈ propertyConcepts,
       RootType.ofShape e₁.shape ≠ RootType.ofShape e₂.shape :=
@@ -80,10 +80,10 @@ theorem exists_rootType_ne :
 
 /-! ### The verbalizing heads and their types -/
 
-/-- The heads that build a verb from a root: zero categorization, which keeps a relation
-(section 4.1); the possessive light verb *-iʔ*, which takes a predicate of states (34); the
-prefix *ʔil-*, which takes a relation to a predicate of states (57); and the change-of-state head
-of a bipartite verb, which takes a relation (43a). -/
+/-- The heads that build a verb from a root are zero categorization, which keeps a relation,
+the possessive light verb *-iʔ*, which takes a predicate of states, the prefix *ʔil-*, which
+takes a relation to a predicate of states, and the change-of-state head of a bipartite verb,
+which takes a relation. -/
 inductive Head where
   | zero
   | possess
@@ -98,7 +98,7 @@ def Head.input : Head → Ty
   | .attr => .e ⇒ .s ⇒ .t
   | .become => .e ⇒ .s ⇒ .t
 
-/-- The type a head returns: a predicate of individuals and states for the verbalizers, a
+/-- The type a head returns is a predicate of individuals and states for the verbalizers, a
 predicate of states for *ʔil-*, and a relation to events of change for the bipartite head. -/
 def Head.output : Head → Ty
   | .zero => .e ⇒ .s ⇒ .t
@@ -122,8 +122,8 @@ def output (τ : Ty) : List Head → Ty
   | [] => τ
   | h :: hs => output h.output hs
 
-/-- A verbalization of a root: at least one head, well-typed, returning a stative predicate,
-with zero categorization open only to a free root (section 5.2). -/
+/-- A verbalization of a root is a sequence of at least one head that is well-typed and returns
+a stative predicate, with zero categorization open only to a free root. -/
 def Verbalizes (sh : Shape) (hs : List Head) : Prop :=
   hs ≠ [] ∧ WellTyped (RootType.ofShape sh).ty hs ∧
     output (RootType.ofShape sh).ty hs = (.e ⇒ .s ⇒ .t) ∧ (Head.zero ∈ hs → sh = .bare)
@@ -131,8 +131,8 @@ def Verbalizes (sh : Shape) (hs : List Head) : Prop :=
 instance (sh : Shape) (hs : List Head) : Decidable (Verbalizes sh hs) := by
   unfold Verbalizes; infer_instance
 
-/-- The morphology of each shape (Table 1): the bare root, the root with *-iʔ*, and the root
-with *ʔil-* and then *-iʔ*. -/
+/-- The morphology of each shape is the bare root, the root with *-iʔ*, or the root with *ʔil-*
+and then *-iʔ*. -/
 def derivation : Shape → List Head
   | .bare => [.zero]
   | .suffixed => [.possess]
@@ -140,21 +140,20 @@ def derivation : Shape → List Head
 
 theorem derivation_verbalizes : ∀ sh, Verbalizes sh (derivation sh) := by decide
 
-/-- (36), (56): *-iʔ* composes directly with a root only if the root is a suffixed one, whose
-meaning is a quality. -/
+/-- *-iʔ* composes directly with a root only if the root is a suffixed one, whose meaning is a
+quality. -/
 theorem wellTyped_possess_iff (sh : Shape) :
     WellTyped (RootType.ofShape sh).ty [.possess] ↔ sh = .suffixed := by
   cases sh <;> decide
 
-/-- (49): the change-of-state head of a bipartite verb composes with a root iff the root is not a
+/-- The change-of-state head of a bipartite verb composes with a root iff the root is not a
 suffixed one, the gap in the resultative bipartite verbs. -/
 theorem wellTyped_become_iff (sh : Shape) :
     WellTyped (RootType.ofShape sh).ty [.become] ↔ sh ≠ .suffixed := by
   cases sh <;> decide
 
-/-- Each shape's morphology is a shortest verbalization of its root: the prefixed roots need
-two heads, being bound relations that neither zero categorization nor *-iʔ* alone can take
-(section 5.2). -/
+/-- Each shape's morphology is a shortest verbalization of its root. The prefixed roots need
+two heads, being bound relations that neither zero categorization nor *-iʔ* alone can take. -/
 theorem derivation_minimal (sh : Shape) (hs : List Head) (h : Verbalizes sh hs) :
     (derivation sh).length ≤ hs.length := by
   cases sh
@@ -171,9 +170,9 @@ theorem derivation_minimal (sh : Shape) (hs : List Head) (h : Verbalizes sh hs) 
 
 variable {E Y St S : Type*}
 
-/-- (34): the possessive light verb *-iʔ*, the existential closure of Barker's relationalizer:
-the possessor `x` stands in `R` to some possessum satisfying `P`, ordinary possession when the
-possessum is an entity (67) and the possession of a state when it is a quality (35). -/
+/-- The possessive light verb *-iʔ* is the existential closure of Barker's relationalizer. The
+possessor `x` stands in `R` to some possessum satisfying `P`, which is ordinary possession when
+the possessum is an entity and the possession of a state when it is a quality. -/
 def vHave (P : Y → S → Prop) (R : E → Y → S → Prop) : E → S → Prop :=
   Ex (π P R)
 
@@ -181,12 +180,12 @@ theorem vHave_apply (P : Y → S → Prop) (R : E → Y → S → Prop) (x : E) 
     vHave P R x s ↔ ∃ y, P y s ∧ R x y s :=
   Iff.rfl
 
-/-- (57): the prefix *ʔil-*, the range of a relation: the states some individual bears it to. -/
-def nabla (P : E → St → Prop) : St → Prop := λ s => ∃ x, P x s
+/-- The prefix *ʔil-* takes the range of a relation, the states some individual bears it to. -/
+def nabla (P : E → St → Prop) : St → Prop := fun s ↦ ∃ x, P x s
 
-/-- (60): the prefixed root under *-iʔ*, the possession of a state in the relation's range. -/
+/-- The prefixed root under *-iʔ* is the possession of a state in the relation's range. -/
 theorem vHave_nabla_apply (P : E → St → Prop) (R : E → St → S → Prop) (x : E) (s : S) :
-    vHave (λ y _ => nabla P y) R x s ↔ ∃ y, (∃ x', P x' y) ∧ R x y s :=
+    vHave (fun y _ ↦ nabla P y) R x s ↔ ∃ y, (∃ x', P x' y) ∧ R x y s :=
   Iff.rfl
 
 /-- The Duke-of-York derivation of section 5.2: when possessing a state is holding it, the
@@ -194,39 +193,27 @@ prefixed root under *ʔil-* and *-iʔ* predicates what the bare relation does (2
 its bipartite uses show it to have. -/
 theorem vHave_nabla_iff (P : E → St → Prop) (R : E → St → S → Prop)
     (h : ∀ x y s, R x y s ↔ P x y) (x : E) (s : S) :
-    vHave (λ y _ => nabla P y) R x s ↔ ∃ y, P x y := by
+    vHave (fun y _ ↦ nabla P y) R x s ↔ ∃ y, P x y := by
   simp only [vHave_nabla_apply, h]
-  exact ⟨λ ⟨y, _, hxy⟩ => ⟨y, hxy⟩, λ ⟨y, hy⟩ => ⟨y, ⟨x, hy⟩, hy⟩⟩
+  exact ⟨fun ⟨y, _, hxy⟩ ↦ ⟨y, hxy⟩, fun ⟨y, hy⟩ ↦ ⟨y, ⟨x, hy⟩, hy⟩⟩
 
 /-! ### Resultative bipartite verbs, section 5.1 -/
 
-variable {T : Type*} [LinearOrder T] (M : Verb.CosModel E St T)
+variable {Event : Type*} (M : ArgumentStructure.ChangeOfStateModel E St Event)
 
-/-- (43a): the change-of-state head over a relation root, an event of change into a state the
-theme bears the relation to. -/
-def vBecome (P : E → St → Prop) : E → Event T → Prop :=
-  λ x e => ∃ s, M.become s e ∧ P x s
-
-/-- (43b): the causative head, with the initial's manner on the caused event. -/
-def vCause (Q : Event T → Prop) : E → Event T → Prop :=
-  λ y v => ∃ e, M.effector y v ∧ M.cause v e ∧ Q e
-
-/-- The change-of-state head over a verb's root is [beavers-koontz-garboden-2020]'s inchoative
-operator. -/
-theorem vBecome_rootState (r : Verb) : vBecome M (M.rootState r) = M.inchoative r := rfl
-
-/-- (46): a resultative bipartite verb entails the result state of its theme, the bare
-predication (28) of the final's root. -/
-theorem exists_state_of_vCause {P : E → St → Prop} {manner : Event T → Prop} {x y : E}
-    {v : Event T} (h : vCause M (λ e => manner e ∧ vBecome M P x e) y v) : ∃ s, P x s :=
+/-- A resultative bipartite verb, the causative head over the initial's manner and the
+change-of-state head over the final's root, entails the result state of its theme, the bare
+predication of the final's root. -/
+theorem exists_state_of_vCause {P : E → St → Prop} {manner : Event → Prop} {x y : E}
+    {v : Event} (h : M.vCause (fun e ↦ manner e ∧ M.vBecome P x e) y v) : ∃ s, P x s :=
   let ⟨_, _, _, _, s, _, hs⟩ := h
   ⟨s, hs⟩
 
 /-! ### The stems of the appendix -/
 
-/-- The semantic root of a stem: one state atom, no core arguments, and the type of its
-meaning; every Washo property concept is a property-concept root of
-[beavers-koontz-garboden-2020]'s typology. -/
+/-- The semantic root of a stem has one state atom, no core arguments and the type of its
+meaning, so every Washo property concept is a property-concept root of the typology of Beavers
+and Koontz-Garboden. -/
 def toRoot (e : PropertyConcept) : Root :=
   { name := e.stem, entailments := {.state e.gloss}, valency := some ∅,
     denotationType := some (RootType.ofShape e.shape).ty }
