@@ -26,7 +26,7 @@ a fuller fragment when a second Poko paper arrives.
 * `Poko.Syll.melody` — each stem's lexical melody: tones, TBU, and
   pre-linking ([rolle-2018] §2.1; the floating H of `/M^H/` stems is
   the unlinked element).
-* `Poko.Form` — autosegmental forms (`FloatingForm Syll TRN Morph`).
+* `Poko.Form` — autosegmental forms (`Form Syll TRN Morph`).
 -/
 
 namespace Poko
@@ -76,7 +76,7 @@ def Syll.morpheme : Syll → Morph
 /-- Each stem's lexical melody ([mcpherson-lamont-2026] ex. 3): tones
     over the stem's single TBU, with the lexical pre-linking — the H of
     an `/M^H/` stem is the sole unlinked (floating) element. -/
-def Syll.melody (s : Syll) : FloatingForm Syll TRN Morph :=
+def Syll.melody (s : Syll) : Form Syll TRN Morph :=
   match s with
   | .kak => .melody s.morpheme [.M, .H] [s] {(0, 0)}          -- /M^H/
   | .ri  => .melody s.morpheme [.M, .H] [s] {(0, 0)}          -- /M^H/
@@ -87,12 +87,12 @@ def Syll.melody (s : Syll) : FloatingForm Syll TRN Morph :=
   | .ili => .melody s.morpheme [.L, .H] [s] {(0, 0), (1, 0)}  -- /LH/, both linked
   | .ne  => .melody s.morpheme [] [s] ∅                       -- toneless
 
-/-- The underlying form of a stem sequence: melodies concatenated
-    left-to-right. -/
-def word (ss : List Syll) : FloatingForm Syll TRN Morph :=
-  .concatInputs (ss.map Syll.melody)
+/-- The underlying form of a stem sequence is the product of its melodies, left to right,
+    in the concatenation monoid. -/
+def word (ss : List Syll) : Form Syll TRN Morph := (ss.map Syll.melody).prod
 
-/-- Poko autosegmental forms: syllable backbone, `TRN` tone tier, morpheme sponsor. -/
-abbrev Form := FloatingForm Syll TRN Morph
+/-- Poko autosegmental forms have a syllable backbone, a `TRN` tone tier, and morpheme
+    sponsors. -/
+abbrev Form := Autosegmental.Form Syll TRN Morph
 
 end Poko

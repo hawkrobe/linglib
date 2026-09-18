@@ -15,7 +15,7 @@ to the adjacent node, iterating left to right; and a node still placeless is cor
 default. Throughout, DOR may join any node without COR, COR only a placeless node, and LAB any
 node without DOR that is not low (`MayLink`, `linkDor`, `linkPlace`, `spreadDor`,
 `spreadPlace`, `derive`). The rules only add association lines and never put COR and DOR on
-one node (`surfaceLinks_subset_derive`, `derive_sound`). The eleven stem representations of
+one node (`links_subset_derive`, `derive_sound`). The eleven stem representations of
 the chapter's Table 18 with the four suffixes of its (2) yield the forty-four suffixed forms of
 its (13) to (23) (`derivations`), transparency, antiharmony and opacity following from the
 prelinking alone, and the vacillating stem of section 3.2.3.1 has two representations deriving
@@ -28,11 +28,11 @@ by prelinking (`sourceValue_agrees`, `sourceValue_viz`, `sourceValue_hid`,
 
 ## Implementation notes
 
-* Forms are the substrate's `FloatingForm` with vocalic nodes for the backbone, place features
-  for the tier and the stem and suffix as sponsors; a rule inserts association lines, and the
-  derivation composes the rules in the chapter's order. Default COR is read at the surface, a
-  placeless node counting as coronal. Where the chapter has COR and LAB spread together onto
-  one node, COR spreads first and LAB joins it.
+* Words are the substrate's `Form` with vocalic nodes for the backbone, place features for the tier
+  and the stem and suffix as sponsors, and the rules act on its `Candidate`s; a rule inserts
+  association lines, and the derivation composes the rules in the chapter's order. Default COR is
+  read at the surface, a placeless node counting as coronal. Where the chapter has COR and LAB
+  spread together onto one node, COR spreads first and LAB joins it.
 * A word is a stem and one suffix; the chapter's stems have at most two vowels and its
   suffixes one, and a prelinked feature is one tier element per node it is linked to.
   Apertures are read from the vowel letters and matter only through the constraint against a
@@ -75,69 +75,71 @@ inductive Morph
   | stem | suffix
   deriving DecidableEq
 
-/-- A phonological word as an autosegmental form over vocalic nodes and place features. -/
-abbrev Word := FloatingForm VNode Place Morph
+/-- A phonological word is an autosegmental form over vocalic nodes and place features. -/
+abbrev Word := Form VNode Place Morph
 
 /-! ### The rules -/
 
-variable (f : Word)
+variable {w : Word} (c : Candidate w)
 
 /-- The place features linked to the `i`-th node. -/
-def places (i : ℕ) : List Place := f.tierValues i
+def places (i : Fin w.lower.len) : List Place := c.tierValues i
 
 /-- Whether the `i`-th node is low. -/
-def isLow (i : ℕ) : Bool := ((f.lower.get? i).map (·.value.open1)).getD false
+def isLow (i : Fin w.lower.len) : Bool := (w.lower.label i).value.open1
 
 /-- The value of the `k`-th tier element. -/
-def valueAt (k : ℕ) : Option Place := (f.upper.get? k).map (·.value)
+def valueAt (k : Fin w.upper.len) : Place := (w.upper.label k).value
 
 /-- Where a place feature may associate, principles (7c) and (7d) under constraints (6a) and
 (6b): DOR to any node without COR, COR to a placeless node, LAB to a node without DOR that is
 not low. -/
-def MayLink (p : Place) (i : ℕ) : Prop :=
-  i < f.lower.len ∧ (p = .dor → .cor ∉ places f i) ∧ (p = .cor → places f i = []) ∧
-    (p = .lab → .dor ∉ places f i ∧ isLow f i = false)
+def MayLink (p : Place) (i : Fin w.lower.len) : Prop :=
+  (p = .dor → .cor ∉ places c i) ∧ (p = .cor → places c i = []) ∧
+    (p = .lab → .dor ∉ places c i ∧ isLow i = false)
 
-instance (p : Place) (i : ℕ) : Decidable (MayLink f p i) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
+instance (p : Place) (i : Fin w.lower.len) : Decidable (MayLink c p i) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-- Associate tier element `k`, bearing `p`, to every node it may link to. -/
-def linkAll (k : ℕ) (p : Place) : Word :=
-  (List.range f.lower.len).foldl (λ g i => if MayLink g p i then g.insertLink k i else g) f
+def linkAll (k : Fin w.upper.len) (p : Place) : Candidate w :=
+  (List.finRange w.lower.len).foldl (fun g i ↦ if MayLink g p i then g.insertLink k i else g) c
 
 /-- The floating tier elements bearing `p`. -/
-def floating (p : Place) : List ℕ :=
-  (List.range f.upper.len).filter λ k => decide (f.IsFloating k ∧ valueAt f k = some p)
+def floating (p : Place) : List (Fin w.upper.len) :=
+  (List.finRange w.upper.len).filter fun k ↦ decide (c.IsFloating k ∧ valueAt k = p)
 
 /-- Link DOR (3b): every floating DOR associates to every node without COR. -/
-def linkDor : Word := (floating f .dor).foldl (λ g k => linkAll g k .dor) f
+def linkDor : Candidate w := (floating c .dor).foldl (fun g k ↦ linkAll g k .dor) c
 
 /-- Link Place (3a): every floating place feature associates to every node it may link to. -/
-def linkPlace : Word :=
-  (List.range f.upper.len).foldl (λ g k =>
-    match valueAt g k with
-    | some p => if g.IsFloating k then linkAll g k p else g
-    | none => g) f
+def linkPlace : Candidate w :=
+  (List.finRange w.upper.len).foldl
+    (fun g k ↦ if g.IsFloating k then linkAll g k (valueAt k) else g) c
 
 /-- The tier element bearing `p` anchored on node `i`. -/
-def anchored (p : Place) (i : ℕ) : Option ℕ := (f.linksTo i).find? λ k => valueAt f k = some p
+def anchored (p : Place) (i : Fin w.lower.len) : Option (Fin w.upper.len) :=
+  (c.linksTo i).find? fun k ↦ valueAt k = p
 
 /-- Spread `p` from node `i` to the next node when it is anchored on `i` and may link there. -/
-def spreadAt (p : Place) (i : ℕ) : Word :=
-  match anchored f p i with
-  | some k => if MayLink f p (i + 1) then f.insertLink k (i + 1) else f
-  | none => f
+def spreadAt (p : Place) (i : Fin w.lower.len) : Candidate w :=
+  match anchored c p i with
+  | some k =>
+    if h : i.val + 1 < w.lower.len then
+      if MayLink c p ⟨i.val + 1, h⟩ then c.insertLink k ⟨i.val + 1, h⟩ else c
+    else c
+  | none => c
 
 /-- Spread DOR (4b): iterating left to right, an anchored DOR extends to the next node. -/
-def spreadDor : Word := (List.range f.lower.len).foldl (λ g i => spreadAt g .dor i) f
+def spreadDor : Candidate w := (List.finRange w.lower.len).foldl (fun g i ↦ spreadAt g .dor i) c
 
 /-- Spread Place (4a): iterating left to right, an anchored COR extends to the next node when
 it is placeless, and an anchored LAB when it bears no DOR and is not low. -/
-def spreadPlace : Word :=
-  (List.range f.lower.len).foldl (λ g i => spreadAt (spreadAt g .cor i) .lab i) f
+def spreadPlace : Candidate w :=
+  (List.finRange w.lower.len).foldl (fun g i ↦ spreadAt (spreadAt g .cor i) .lab i) c
 
 /-- The derivation: the linking rules, the DOR rule first, then the spreading rules. -/
-def derive : Word := spreadPlace (spreadDor (linkPlace (linkDor f)))
+def derive : Candidate w := spreadPlace (spreadDor (linkPlace (linkDor c)))
 
 /-- The harmonic quality a node surfaces with: back with DOR, front rounded with LAB alone,
 and front unrounded with COR or, by Default COR (5), placeless. -/
@@ -151,103 +153,97 @@ def quality (ps : List Place) : Quality :=
 
 /-! ### Structural properties -/
 
-variable {f}
+variable {c}
 
 /-- Constraint (6a): no node bears both COR and DOR. -/
-def Sound (g : Word) : Prop := ∀ i, ¬ (.cor ∈ places g i ∧ .dor ∈ places g i)
+def Sound (g : Candidate w) : Prop := ∀ i, ¬ (.cor ∈ places g i ∧ .dor ∈ places g i)
 
-theorem mem_places_insertLink {p : Place} {k i j : ℕ} :
-    p ∈ places (f.insertLink k i) j ↔ p ∈ places f j ∨ (j = i ∧ valueAt f k = some p) := by
-  simp only [places, valueAt, FloatingForm.mem_tierValues, FloatingForm.insertLink_surfaceLinks,
-    FloatingForm.insertLink_upper, Finset.mem_insert, Prod.mk.injEq]
+theorem mem_places_insertLink {p : Place} {k : Fin w.upper.len} {i j : Fin w.lower.len} :
+    p ∈ places (c.insertLink k i) j ↔ p ∈ places c j ∨ (j = i ∧ valueAt k = p) := by
+  simp only [places, valueAt, Candidate.mem_tierValues, Candidate.insertLink_links,
+    Finset.mem_insert, Prod.mk.injEq]
   aesop
 
 /-- Inserting a line admitted by `MayLink` keeps the form sound. -/
-theorem Sound.insertLink {p : Place} {k i : ℕ} (hs : Sound f) (hv : valueAt f k = some p)
-    (hm : MayLink f p i) : Sound (f.insertLink k i) := by
+theorem Sound.insertLink {p : Place} {k : Fin w.upper.len} {i : Fin w.lower.len} (hs : Sound c)
+    (hv : valueAt k = p) (hm : MayLink c p i) : Sound (c.insertLink k i) := by
   intro j ⟨hc, hd⟩
   rw [mem_places_insertLink] at hc hd
   rcases hc with hc | ⟨hji, hc⟩ <;> rcases hd with hd | ⟨hji', hd⟩
   · exact hs j ⟨hc, hd⟩
-  · exact hm.2.1 (Option.some.inj (hv.symm.trans hd)) (hji' ▸ hc)
-  · exact List.ne_nil_of_mem (hji ▸ hd) (hm.2.2.1 (Option.some.inj (hv.symm.trans hc)))
-  · exact Place.noConfusion (Option.some.inj (hc.symm.trans hd))
+  · exact hm.1 (hv.symm.trans hd) (hji' ▸ hc)
+  · exact List.ne_nil_of_mem (hji ▸ hd) (hm.2.1 (hv.symm.trans hc))
+  · exact Place.noConfusion (hc.symm.trans hd)
 
-/-- What every rule preserves: the association lines, the tier, and soundness. -/
-structure Preserves (f g : Word) : Prop where
-  subset : f.surfaceLinks ⊆ g.surfaceLinks
-  upper : g.upper = f.upper
+/-- What every rule preserves: the association lines and soundness. -/
+structure Preserves (f g : Candidate w) : Prop where
+  subset : f.links ⊆ g.links
   sound : Sound f → Sound g
 
-theorem Preserves.refl : Preserves f f := ⟨subset_rfl, rfl, id⟩
+theorem Preserves.refl : Preserves c c := ⟨subset_rfl, id⟩
 
-theorem Preserves.trans {g h : Word} (h₁ : Preserves f g) (h₂ : Preserves g h) : Preserves f h :=
-  ⟨h₁.subset.trans h₂.subset, h₂.upper.trans h₁.upper, h₂.sound ∘ h₁.sound⟩
+theorem Preserves.trans {g h : Candidate w} (h₁ : Preserves c g) (h₂ : Preserves g h) :
+    Preserves c h :=
+  ⟨h₁.subset.trans h₂.subset, h₂.sound ∘ h₁.sound⟩
 
-theorem Preserves.insertLink {p : Place} {k i : ℕ} (hv : valueAt f k = some p)
-    (hm : MayLink f p i) : Preserves f (f.insertLink k i) :=
-  ⟨Finset.subset_insert _ _, rfl, λ hs => hs.insertLink hv hm⟩
+theorem Preserves.insertLink {p : Place} {k : Fin w.upper.len} {i : Fin w.lower.len}
+    (hv : valueAt k = p) (hm : MayLink c p i) : Preserves c (c.insertLink k i) :=
+  ⟨Finset.subset_insert _ _, fun hs ↦ hs.insertLink hv hm⟩
 
-theorem Preserves.valueAt {g : Word} (h : Preserves f g) (k : ℕ) : valueAt g k = valueAt f k := by
-  simp [SiptarTorkenczy2000.valueAt, h.upper]
-
-private theorem foldl_preserves {α : Type*} {step : Word → α → Word} (l : List α)
-    (h : ∀ a ∈ l, ∀ g, Preserves f g → Preserves g (step g a)) :
-    ∀ g, Preserves f g → Preserves f (l.foldl step g) := by
+private theorem foldl_preserves {α : Type*} {step : Candidate w → α → Candidate w} (l : List α)
+    (h : ∀ a ∈ l, ∀ g, Preserves c g → Preserves g (step g a)) :
+    ∀ g, Preserves c g → Preserves c (l.foldl step g) := by
   induction l with
-  | nil => exact λ _ hg => hg
+  | nil => exact fun _ hg ↦ hg
   | cons a l ih =>
-    exact λ g hg => ih (λ b hb => h b (List.mem_cons_of_mem a hb)) _
+    exact fun g hg ↦ ih (fun b hb ↦ h b (List.mem_cons_of_mem a hb)) _
       (hg.trans (h a (List.mem_cons_self ..) g hg))
 
-theorem preserves_linkAll {k : ℕ} {p : Place} (hv : valueAt f k = some p) :
-    Preserves f (linkAll f k p) :=
-  foldl_preserves _ (λ i _ g hg => by
+theorem preserves_linkAll {k : Fin w.upper.len} {p : Place} (hv : valueAt k = p) :
+    Preserves c (linkAll c k p) :=
+  foldl_preserves _ (fun i _ g _ ↦ by
     split_ifs with hm
-    · exact Preserves.insertLink ((hg.valueAt k).trans hv) hm
-    · exact .refl) f .refl
+    · exact Preserves.insertLink hv hm
+    · exact .refl) c .refl
 
-theorem preserves_linkDor : Preserves f (linkDor f) :=
-  foldl_preserves _ (λ k hk g hg => by
-    have hv : valueAt f k = some .dor := (of_decide_eq_true (List.mem_filter.1 hk).2).2
-    exact preserves_linkAll ((hg.valueAt k).trans hv)) f .refl
+theorem preserves_linkDor : Preserves c (linkDor c) :=
+  foldl_preserves _ (fun k hk g _ ↦ by
+    have hv : valueAt k = .dor := (of_decide_eq_true (List.mem_filter.1 hk).2).2
+    exact preserves_linkAll hv) c .refl
 
-theorem preserves_linkPlace : Preserves f (linkPlace f) :=
-  foldl_preserves _ (λ k _ g _ => by
-    split
-    · split_ifs
-      · exact preserves_linkAll ‹_›
-      · exact .refl
-    · exact .refl) f .refl
+theorem preserves_linkPlace : Preserves c (linkPlace c) :=
+  foldl_preserves _ (fun k _ g _ ↦ by
+    split_ifs
+    · exact preserves_linkAll rfl
+    · exact .refl) c .refl
 
-theorem preserves_spreadAt (p : Place) (i : ℕ) : Preserves f (spreadAt f p i) := by
+theorem preserves_spreadAt (p : Place) (i : Fin w.lower.len) : Preserves c (spreadAt c p i) := by
   unfold spreadAt
   split
   · next k hk =>
-    split_ifs with hm
+    split_ifs with _ hm
     · simp only [anchored] at hk
-      have := List.find?_some hk
-      exact Preserves.insertLink (of_decide_eq_true this) hm
+      exact Preserves.insertLink (by simpa using List.find?_some hk) hm
+    · exact .refl
     · exact .refl
   · exact .refl
 
-theorem preserves_spreadDor : Preserves f (spreadDor f) :=
-  foldl_preserves _ (λ i _ _ _ => preserves_spreadAt .dor i) f .refl
+theorem preserves_spreadDor : Preserves c (spreadDor c) :=
+  foldl_preserves _ (fun i _ _ _ ↦ preserves_spreadAt .dor i) c .refl
 
-theorem preserves_spreadPlace : Preserves f (spreadPlace f) :=
-  foldl_preserves _ (λ i _ _ _ => (preserves_spreadAt .cor i).trans (preserves_spreadAt .lab i))
-    f .refl
+theorem preserves_spreadPlace : Preserves c (spreadPlace c) :=
+  foldl_preserves _ (fun i _ _ _ ↦ (preserves_spreadAt .cor i).trans (preserves_spreadAt .lab i))
+    c .refl
 
-theorem preserves_derive : Preserves f (derive f) :=
+theorem preserves_derive : Preserves c (derive c) :=
   preserves_linkDor.trans (preserves_linkPlace.trans
     (preserves_spreadDor.trans preserves_spreadPlace))
 
 /-- The rules only add association lines. -/
-theorem surfaceLinks_subset_derive : f.surfaceLinks ⊆ (derive f).surfaceLinks :=
-  preserves_derive.subset
+theorem links_subset_derive : c.links ⊆ (derive c).links := preserves_derive.subset
 
 /-- The rules never put COR and DOR on one node. -/
-theorem derive_sound (hs : Sound f) : Sound (derive f) := preserves_derive.sound hs
+theorem derive_sound (hs : Sound c) : Sound (derive c) := preserves_derive.sound hs
 
 /-! ### Stems and suffixes -/
 
@@ -300,18 +296,22 @@ node when the suffix has one. -/
 def word (s : Stem) (x : Suffix) : Word :=
   let prelinked : List (Place × ℕ) := s.nodes.zipIdx.flatMap fun (v, i) ↦ v.2.map (·, i)
   let n := s.floating.length
-  (FloatingForm.melody .stem (s.floating ++ prelinked.map (·.1)) (s.nodes.map (·.1))
-      (prelinked.zipIdx.map fun ((q, j) : (Place × ℕ) × ℕ) ↦ (n + j, q.2)).toFinset).concat
-    (.melody .suffix (if x.hasLab then [.lab] else []) [x.node]
-      (if x.hasLab then {(0, 0)} else ∅))
+  Form.melody .stem (s.floating ++ prelinked.map (·.1)) (s.nodes.map (·.1))
+      (prelinked.zipIdx.map fun ((q, j) : (Place × ℕ) × ℕ) ↦ (n + j, q.2)).toFinset *
+    Form.melody .suffix (if x.hasLab then [.lab] else []) [x.node]
+      (if x.hasLab then {(0, 0)} else ∅)
+
+/-- The slot of the suffix node, the last node of the word. -/
+def suffixSlot (s : Stem) (x : Suffix) : Fin (word s x).lower.len :=
+  ⟨s.nodes.length, by simp [word]⟩
 
 /-- The suffix segments the derivation yields. -/
 def derived (s : Stem) (x : Suffix) : Option (List String) :=
-  x.segments (quality (places (derive (word s x)) s.nodes.length))
+  x.segments (quality (places (derive (.input (word s x))) (suffixSlot s x)))
 
 /-- Whether the derivation gives a stem back suffixes. -/
 def Stem.isBack (s : Stem) : Bool :=
-  decide (quality (places (derive (word s .dat)) s.nodes.length) = .back)
+  decide (quality (places (derive (.input (word s .dat))) (suffixSlot s .dat)) = .back)
 
 /-! ### The representations of Table 18 -/
 
@@ -386,7 +386,7 @@ def derivationTable : List (Data.Forms.Form × Stem × Suffix × Data.Forms.Form
 opacity follow from the prelinking of Table 18 by the same rules. -/
 theorem derivations : ∀ t ∈ derivationTable,
     derived t.2.1 t.2.2.1 = some (t.2.2.2.segments.drop t.1.segments.length) := by
-  decide
+  decide +kernel
 
 /-- The vacillating stem of section 3.2.3.1 derives its back form from the transparent
 representation and its front form from the opaque one. -/
@@ -411,7 +411,7 @@ def regular : List (Data.Forms.Form × Stem) :=
 /-- On the regular stems the surface generalization and the derivations agree. -/
 theorem sourceValue_agrees : ∀ t ∈ regular,
     hungarianPalatalHarmony.searchCopy.sourceValue (vowelsOf t.1.segments) = some t.2.isBack := by
-  decide
+  decide +kernel
 
 /-- A pure COR stem has no harmonic vowel to read, and its floating COR derives front
 suffixes. -/

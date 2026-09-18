@@ -176,17 +176,18 @@ theorem weighted_HG_inadequate :
 /-! ### Shared fig. 2 ranking -/
 
 /-- Non-float tail of the fig. 2 ranking, in (60) column order. -/
-private def rankingTail : List (Constraint Form) :=
+private def rankingTail {u : Form} : List (Constraint (Candidate u)) :=
   [ starCrowd 2, starTautDock,
     maxTone TRN.H, starFall, depLinkTone TRN.H, maxTone TRN.M, maxLinkTone TRN.M ]
 
 /-- The fig. 2 ranking (fig. 3 subset); only `*FLOAT^→` is directional. -/
-def stdRanking (n : ℕ) : List (Constraint Form) := haveTone :: starFloatBlock n ++ rankingTail
+def stdRanking {u : Form} : List (Constraint (Candidate u)) :=
+  haveTone :: starFloatBlock ++ rankingTail
 
 /-- Left-to-right directional HS over `stdRanking` — the paper's positive analysis. -/
-def lrDerivation (input : Form) : HSDerivation Form where
-  gen := FloatingForm.gen
-  ranking := stdRanking input.upper.len
+def lrDerivation (input : Form) : HSDerivation (Candidate input) where
+  gen := Candidate.gen
+  ranking := stdRanking
 
 /-! ### Fig. 3: LR vs RL over `/kāk^H + rī^H + dō^H/` -/
 
@@ -195,24 +196,30 @@ namespace Fig3
 /-- Fig. 3 input `/kāk^H + rī^H + dō^H/`: each M linked, each H floating. -/
 def fig3Input : Form := word [.kak, .ri, .do]
 
+instance : NeZero fig3Input.upper.len := ⟨by decide⟩
+instance : NeZero fig3Input.lower.len := ⟨by decide⟩
+
+/-- The faithful candidate of the input. -/
+def fig3 : Candidate fig3Input := .input _
+
 /-- Directional-LR derivation (`*FLOAT^→`). -/
-def derivationLR : HSDerivation Form := lrDerivation fig3Input
+def derivationLR : HSDerivation (Candidate fig3Input) := lrDerivation fig3Input
 
 /-- Mirror under `*FLOAT^←` (`starFloatBlockRev`) — the wrong-form counterexample. -/
-def derivationRL : HSDerivation Form where
-  gen := FloatingForm.gen
-  ranking := haveTone :: starFloatBlockRev fig3Input.upper.len ++ rankingTail
+def derivationRL : HSDerivation (Candidate fig3Input) where
+  gen := Candidate.gen
+  ranking := haveTone :: starFloatBlockRev ++ rankingTail
 
 /-- The LR final form `[kāk rī dō]`: all floating Hs deleted (fig. 3 thick line). -/
-def attestedForm : Form :=
-  fig3Input
+def attestedForm : Candidate fig3Input :=
+  fig3
     |>.deleteTierElem 1   -- delete H-kak
     |>.deleteTierElem 3   -- delete H-ri
     |>.deleteTierElem 5   -- delete H-do
 
 /-- The RL final form `*[kāk rī dó]` (fig. 3; RL evaluation as in the two-stem eq. 61). -/
-def starredForm : Form :=
-  fig3Input
+def starredForm : Candidate fig3Input :=
+  fig3
     |>.deleteTierElem 5    -- step 1: delete H-do
     |>.insertLink 3 2  -- step 2: dock H-ri to do (TBU 2)
     |>.deleteTierElem 1    -- step 3: delete H-kak
@@ -222,39 +229,39 @@ def starredForm : Form :=
 
 /-- LR step 1: H-kāk deletes — *TAUTDOCK and *CROWD block its dockings (60b). -/
 theorem fig3_LR_step1 :
-    derivationLR.stepOptimum fig3Input = {fig3Input.deleteTierElem 1} := by decide
+    derivationLR.stepOptimum fig3 = {fig3.deleteTierElem 1} := by decide
 
 /-- LR step 2: H-rī deletes — *CROWD (right), no-crossing (left), *TAUTDOCK (own). -/
 theorem fig3_LR_step2 :
-    derivationLR.stepOptimum (fig3Input.deleteTierElem 1) =
-      {(fig3Input.deleteTierElem 1).deleteTierElem 3} := by decide
+    derivationLR.stepOptimum (fig3.deleteTierElem 1) =
+      {(fig3.deleteTierElem 1).deleteTierElem 3} := by decide
 
 /-- LR step 3: H-dō deletes. -/
 theorem fig3_LR_step3 :
-    derivationLR.stepOptimum ((fig3Input.deleteTierElem 1).deleteTierElem 3) =
-      {((fig3Input.deleteTierElem 1).deleteTierElem 3).deleteTierElem 5} := by decide
+    derivationLR.stepOptimum ((fig3.deleteTierElem 1).deleteTierElem 3) =
+      {((fig3.deleteTierElem 1).deleteTierElem 3).deleteTierElem 5} := by decide
 
 /-- LR converges on `attestedForm`. -/
 theorem fig3_LR_converged : derivationLR.Converged attestedForm := by decide
 
 /-- RL step 1: the rightmost floating H (H-dō) deletes. -/
 theorem fig3_RL_step1 :
-    derivationRL.stepOptimum fig3Input = {fig3Input.deleteTierElem 5} := by decide
+    derivationRL.stepOptimum fig3 = {fig3.deleteTierElem 5} := by decide +kernel
 
 /-- RL step 2 — the wrong-form seed: H-rī docks onto the now-uncrowded dō. -/
 theorem fig3_RL_step2 :
-    derivationRL.stepOptimum (fig3Input.deleteTierElem 5) =
-      {(fig3Input.deleteTierElem 5).insertLink 3 2} := by decide
+    derivationRL.stepOptimum (fig3.deleteTierElem 5) =
+      {(fig3.deleteTierElem 5).insertLink 3 2} := by decide +kernel
 
 /-- RL step 3: H-kāk deletes. -/
 theorem fig3_RL_step3 :
-    derivationRL.stepOptimum ((fig3Input.deleteTierElem 5).insertLink 3 2) =
-      {((fig3Input.deleteTierElem 5).insertLink 3 2).deleteTierElem 1} := by decide
+    derivationRL.stepOptimum ((fig3.deleteTierElem 5).insertLink 3 2) =
+      {((fig3.deleteTierElem 5).insertLink 3 2).deleteTierElem 1} := by decide
 
 /-- RL step 4: *FALL repairs dō's HM contour; MAX(H) ≫ MAX(M) deletes the M. -/
 theorem fig3_RL_step4 :
-    derivationRL.stepOptimum (((fig3Input.deleteTierElem 5).insertLink 3 2).deleteTierElem 1) =
-      {(((fig3Input.deleteTierElem 5).insertLink 3 2).deleteTierElem 1).deleteTierElem 4} := by
+    derivationRL.stepOptimum (((fig3.deleteTierElem 5).insertLink 3 2).deleteTierElem 1) =
+      {(((fig3.deleteTierElem 5).insertLink 3 2).deleteTierElem 1).deleteTierElem 4} := by
   decide
 
 /-- RL converges on `starredForm`. -/
@@ -263,34 +270,34 @@ theorem fig3_RL_converged : derivationRL.Converged starredForm := by decide
 /-- **The empirical asymmetry**: LR and RL converge to distinct surface forms. -/
 theorem fig3_attested_neq_starred : attestedForm ≠ starredForm := by
   intro h
-  exact absurd (congrArg FloatingForm.deleted h) (by decide)
+  exact absurd (congrArg Candidate.deleted h) (by decide)
 
 /-! ### Regular HS: the divergent tie (eq. 62) -/
 
 /-- Regular-HS derivation: same ranking with count-based `starFloatCount` for `*FLOAT`. -/
-def derivationParallel : HSDerivation Form where
-  gen := FloatingForm.gen
+def derivationParallel : HSDerivation (Candidate fig3Input) where
+  gen := Candidate.gen
   ranking := haveTone :: starFloatCount :: rankingTail
 
 /-- The divergent tie ([pruitt-2009]): the three single-deletion candidates all tie.
     (The paper's "no tie-breaker whatsoever helps" strengthening stays editorial.) -/
 theorem parallel_optimum_three_way_tie :
-    derivationParallel.stepOptimum fig3Input =
-      {fig3Input.deleteTierElem 1, fig3Input.deleteTierElem 3, fig3Input.deleteTierElem 5} := by
+    derivationParallel.stepOptimum fig3 =
+      {fig3.deleteTierElem 1, fig3.deleteTierElem 3, fig3.deleteTierElem 5} := by
   decide
 
 /-- The regular-HS optimum has three elements. -/
 theorem parallel_optimum_card_three :
-    (derivationParallel.stepOptimum fig3Input).card = 3 := by decide
+    (derivationParallel.stepOptimum fig3).card = 3 := by decide
 
 /-- The directional-LR optimum is a singleton. -/
 theorem directional_LR_optimum_card_one :
-    (derivationLR.stepOptimum fig3Input).card = 1 := by decide
+    (derivationLR.stepOptimum fig3).card = 1 := by decide
 
 /-- **Headline**: regular HS strictly underdetermines the step that directional HS decides. -/
 theorem only_directional_disambiguates_fig3 :
-    (derivationLR.stepOptimum fig3Input).card <
-      (derivationParallel.stepOptimum fig3Input).card := by decide
+    (derivationLR.stepOptimum fig3).card <
+      (derivationParallel.stepOptimum fig3).card := by decide +kernel
 
 end Fig3
 
@@ -301,23 +308,29 @@ namespace Eq24
 /-- Eq. (24) input `/nãn + rī^H + nã/`; H-rī is the only floating tone. -/
 def eq24Input : Form := word [.nan, .ri, .na]
 
+instance : NeZero eq24Input.upper.len := ⟨by decide⟩
+instance : NeZero eq24Input.lower.len := ⟨by decide⟩
+
+/-- The faithful candidate of the input. -/
+def eq24 : Candidate eq24Input := .input _
+
 /-- Directional-LR derivation over `stdRanking`. -/
-def derivationLR : HSDerivation Form := lrDerivation eq24Input
+def derivationLR : HSDerivation (Candidate eq24Input) := lrDerivation eq24Input
 
 /-- Attested `[nãn rī ná]`: H-rī docks onto nã, then *FALL repair deletes M-nã. -/
-def attestedForm : Form :=
-  eq24Input
+def attestedForm : Candidate eq24Input :=
+  eq24
     |>.insertLink 2 2      -- dock H-rī rightward to nã
     |>.deleteTierElem 3    -- delete M-nã (repair HM contour)
 
 /-- Step 1: H-rī docks rightward onto nã (24d). -/
 theorem eq24_step1 :
-    derivationLR.stepOptimum eq24Input = {eq24Input.insertLink 2 2} := by decide
+    derivationLR.stepOptimum eq24 = {eq24.insertLink 2 2} := by decide
 
 /-- Step 2: *FALL repair — M-nã deletes, MAX(H) ≫ MAX(M) (24g). -/
 theorem eq24_step2 :
-    derivationLR.stepOptimum (eq24Input.insertLink 2 2) =
-      {(eq24Input.insertLink 2 2).deleteTierElem 3} := by decide
+    derivationLR.stepOptimum (eq24.insertLink 2 2) =
+      {(eq24.insertLink 2 2).deleteTierElem 3} := by decide
 
 /-- LR converges on `attestedForm`. -/
 theorem eq24_converged : derivationLR.Converged attestedForm := by decide
@@ -331,15 +344,21 @@ namespace Eq21
 /-- Eq. (21) input `/nãn + rī^H/` (phrase-final): no rightward landing site. -/
 def eq21Input : Form := word [.nan, .ri]
 
+instance : NeZero eq21Input.upper.len := ⟨by decide⟩
+instance : NeZero eq21Input.lower.len := ⟨by decide⟩
+
+/-- The faithful candidate of the input. -/
+def eq21 : Candidate eq21Input := .input _
+
 /-- Directional-LR derivation; eq. (20)'s `*FLOAT, *TAUTDOCK ≫ MAX(H)` is a sub-ranking. -/
-def derivationLR : HSDerivation Form := lrDerivation eq21Input
+def derivationLR : HSDerivation (Candidate eq21Input) := lrDerivation eq21Input
 
 /-- Attested `[nãn rī]`: the floating H deletes. -/
-def attestedForm : Form := eq21Input.deleteTierElem 2
+def attestedForm : Candidate eq21Input := eq21.deleteTierElem 2
 
 /-- Step 1: H-rī deletes (21b). -/
 theorem eq21_step1 :
-    derivationLR.stepOptimum eq21Input = {eq21Input.deleteTierElem 2} := by decide
+    derivationLR.stepOptimum eq21 = {eq21.deleteTierElem 2} := by decide
 
 /-- LR converges on `attestedForm` (21d). -/
 theorem eq21_converged : derivationLR.Converged attestedForm := by decide
@@ -353,15 +372,21 @@ namespace Eq27
 /-- Eq. (27) input `/kāk^H + kǎ/`; kǎ carries a linked MH contour. -/
 def eq27Input : Form := word [.kak, .ka]
 
+instance : NeZero eq27Input.upper.len := ⟨by decide⟩
+instance : NeZero eq27Input.lower.len := ⟨by decide⟩
+
+/-- The faithful candidate of the input. -/
+def eq27 : Candidate eq27Input := .input _
+
 /-- Directional-LR derivation over `stdRanking`. -/
-def derivationLR : HSDerivation Form := lrDerivation eq27Input
+def derivationLR : HSDerivation (Candidate eq27Input) := lrDerivation eq27Input
 
 /-- Attested `[kāk kǎ]`: H-kāk deletes; the MH contour survives. -/
-def attestedForm : Form := eq27Input.deleteTierElem 1
+def attestedForm : Candidate eq27Input := eq27.deleteTierElem 1
 
 /-- Step 1: H-kāk deletes — *CROWD blocks docking onto the two-tone kǎ (27b). -/
 theorem eq27_step1 :
-    derivationLR.stepOptimum eq27Input = {eq27Input.deleteTierElem 1} := by decide
+    derivationLR.stepOptimum eq27 = {eq27.deleteTierElem 1} := by decide
 
 /-- LR converges on `attestedForm` (27e). -/
 theorem eq27_converged : derivationLR.Converged attestedForm := by decide
@@ -375,24 +400,30 @@ namespace Eq30
 /-- Eq. (30) input `/kāk^H + ìlí/`; ìlí carries a linked LH contour (L% omitted). -/
 def eq30Input : Form := word [.kak, .ili]
 
+instance : NeZero eq30Input.upper.len := ⟨by decide⟩
+instance : NeZero eq30Input.lower.len := ⟨by decide⟩
+
+/-- The faithful candidate of the input. -/
+def eq30 : Candidate eq30Input := .input _
+
 /-- Eq. (30) ranking: `stdRanking` plus `*M◁L` above *TAUTDOCK — the inversion that
     licenses tautomorphemic docking (30c). -/
-def eq30Ranking : List (Constraint Form) :=
-  haveTone :: starMlessL :: starFloatBlock eq30Input.upper.len ++
+def eq30Ranking : List (Constraint (Candidate eq30Input)) :=
+  haveTone :: starMlessL :: starFloatBlock ++
     [ starCrowd 2, starTautDock,
       maxTone TRN.H, starFall, depLinkTone TRN.H,
       maxTone TRN.M, maxTone TRN.L, maxLinkTone TRN.M ]
 
-def derivationLR : HSDerivation Form where
-  gen := FloatingForm.gen
+def derivationLR : HSDerivation (Candidate eq30Input) where
+  gen := Candidate.gen
   ranking := eq30Ranking
 
 /-- Attested `[kǎk ìlí]`: H-kāk docks onto its own TBU, making an MH contour. -/
-def attestedForm : Form := eq30Input.insertLink 1 0
+def attestedForm : Candidate eq30Input := eq30.insertLink 1 0
 
 /-- Step 1: tautomorphemic dock — deletion would create M◁L tier adjacency (30c). -/
 theorem eq30_step1 :
-    derivationLR.stepOptimum eq30Input = {eq30Input.insertLink 1 0} := by decide
+    derivationLR.stepOptimum eq30 = {eq30.insertLink 1 0} := by decide
 
 /-- LR converges despite the standing *TAUTDOCK violation (30e). -/
 theorem eq30_converged : derivationLR.Converged attestedForm := by decide
@@ -406,15 +437,21 @@ namespace Eq22
 /-- Eq. (22a) input `/nãn + rī^H + ne/`; ne is toneless. -/
 def eq22Input : Form := word [.nan, .ri, .ne]
 
+instance : NeZero eq22Input.upper.len := ⟨by decide⟩
+instance : NeZero eq22Input.lower.len := ⟨by decide⟩
+
+/-- The faithful candidate of the input. -/
+def eq22 : Candidate eq22Input := .input _
+
 /-- Directional-LR derivation over `stdRanking`. -/
-def derivationLR : HSDerivation Form := lrDerivation eq22Input
+def derivationLR : HSDerivation (Candidate eq22Input) := lrDerivation eq22Input
 
 /-- Attested `[nãn rī né]`: H-rī docks onto toneless ne. -/
-def attestedForm : Form := eq22Input.insertLink 2 2
+def attestedForm : Candidate eq22Input := eq22.insertLink 2 2
 
 /-- Step 1: H-rī docks onto ne — HAVETONE prefers docking over deletion. -/
 theorem eq22_step1 :
-    derivationLR.stepOptimum eq22Input = {eq22Input.insertLink 2 2} := by decide
+    derivationLR.stepOptimum eq22 = {eq22.insertLink 2 2} := by decide
 
 /-- LR converges on `attestedForm`. -/
 theorem eq22_converged : derivationLR.Converged attestedForm := by decide
@@ -425,34 +462,42 @@ end Eq22
 
 end McPhersonLamont2026
 
-/-! ### `FloatingForm` strictly extends the [rolle-2018] overwrite encoding -/
+/-! ### `Candidate` strictly extends the [rolle-2018] overwrite encoding -/
 
 namespace Autosegmental
 
 open Tone (TBU TRN)
 open Morphology (Morph)
 
-/-- Embed a `tonalOverwrite` output into `FloatingForm`: one morpheme `m`, links `(i, i)`. -/
-def FloatingForm.ofTBUList {S : Type*} (host : List (TBU S)) (m : Morph) :
-    FloatingForm S TRN Morph :=
+/-- Embed a `tonalOverwrite` output as a form with one morpheme `m` and links `(i, i)`. -/
+def Form.ofTBUList {S : Type*} (host : List (TBU S)) (m : Morph) : Form S TRN Morph :=
   .melody m (host.map TBU.tone) (host.map TBU.seg)
     ((List.range host.length).map fun i ↦ (i, i)).toFinset
 
-/-- Embedded forms carry at most one surface tone per TBU. -/
-theorem FloatingForm.ofTBUList_linksTo_subsingleton {S : Type*}
-    (host : List (TBU S)) (m : Morph) (i : ℕ) :
-    ((FloatingForm.ofTBUList host m).linksTo i).length ≤ 1 := by
-  have h_all : ∀ k ∈ (FloatingForm.ofTBUList host m).linksTo i, k = i := fun k hk ↦ by
-    simp [FloatingForm.ofTBUList] at hk
+/-- The faithful candidate of an embedded form carries at most one surface tone per TBU. -/
+theorem Form.ofTBUList_linksTo_subsingleton {S : Type*} (host : List (TBU S)) (m : Morph)
+    (i : Fin (Form.ofTBUList host m).lower.len) :
+    ((Candidate.input (Form.ofTBUList host m)).linksTo i).length ≤ 1 := by
+  have h_all : ∀ n ∈ ((Candidate.input (Form.ofTBUList host m)).linksTo i).map Fin.val,
+      n = i.val := fun n hn ↦ by
+    obtain ⟨k, hk, rfl⟩ := List.mem_map.1 hn
+    have := Candidate.mem_linksTo.1 hk
+    rw [Candidate.input_links] at this
+    obtain ⟨a, -, ha⟩ := List.mem_map.1 (List.mem_toFinset.1 (Form.mem_links_melody.1 this))
+    simp only [Prod.mk.injEq] at ha
     omega
-  have h_count_eq := List.count_eq_length.mpr fun b hb ↦ (h_all b hb).symm
-  have := List.nodup_iff_count_le_one.mp ((FloatingForm.ofTBUList host m).nodup_linksTo i) i
+  have h_count := List.count_eq_length.mpr fun b hb ↦ (h_all b hb).symm
+  have := List.nodup_iff_count_le_one.mp
+    (((Candidate.input (Form.ofTBUList host m)).nodup_linksTo i).map Fin.val_injective) i.val
+  rw [List.length_map] at h_count
   omega
 
-/-- A `FloatingForm` with two surface tones on one TBU — unreachable by `ofTBUList`. -/
-theorem FloatingForm.exists_multi_tone_TBU :
-    ∃ f : FloatingForm Unit TRN Morph, ∃ i : ℕ, 2 ≤ (f.linksTo i).length :=
-  ⟨(FloatingForm.melody (Morph.root "m") [.H, .L] [()] ∅).insertLink 0 0 |>.insertLink 1 0, 0,
-    by decide⟩
+/-- A candidate with two surface tones on one TBU, which no faithful candidate of an
+    `ofTBUList` form has. -/
+theorem Candidate.exists_multi_tone_TBU :
+    ∃ u : Form Unit TRN Morph, ∃ c : Candidate u, ∃ i, 2 ≤ (c.linksTo i).length :=
+  ⟨.melody (Morph.root "m") [.H, .L] [()] ∅,
+    (Candidate.input _).insertLink ⟨0, by decide⟩ ⟨0, by decide⟩
+      |>.insertLink ⟨1, by decide⟩ ⟨0, by decide⟩, ⟨0, by decide⟩, by decide⟩
 
 end Autosegmental
