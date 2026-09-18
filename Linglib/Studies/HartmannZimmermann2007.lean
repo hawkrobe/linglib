@@ -272,8 +272,10 @@ fronting (subjects front string-vacuously), Relative-form morphology, and the st
 def FocusUtterance.reflexes (u : FocusUtterance) : Finset (Reflex Focused) :=
   (if u.focused = .nonSubject ∧ u.cfg.strategy = .exSitu then {.displacement u.focused}
     else ∅) ∪
-  (if u.cfg.pac.mode = .relative then {.morpheme u.focused} else ∅) ∪
-  (if u.cfg.hasStab then {.morpheme u.focused} else ∅)
+  (if u.cfg.pac.mode = .relative then {.morpheme u.focused [.free u.cfg.pac.form]} else ∅) ∪
+  (if u.cfg.hasStab then
+    {.morpheme u.focused [.free (Hausa.stabilizerFor u.cfg.focusG u.cfg.focusSG).form]}
+  else ∅)
 
 /-- A morphosyntactic reflex of focus: some reflex outside the phonological channel. -/
 def FocusUtterance.HasMorphosyntacticReflex (u : FocusUtterance) : Prop :=
@@ -305,7 +307,7 @@ theorem hasMorphosyntacticReflex_iff (u : FocusUtterance) :
   refine ⟨fun ⟨ρ, hρ, _⟩ ↦ ⟨ρ, hρ⟩, fun ⟨ρ, hρ⟩ ↦ ⟨ρ, hρ, ?_⟩⟩
   simp only [FocusUtterance.reflexes, Finset.mem_union] at hρ
   split_ifs at hρ <;> simp only [Finset.mem_singleton, Finset.notMem_empty, or_false, false_or,
-    or_assoc, or_self] at hρ <;> rcases hρ with rfl | rfl <;> nofun
+    or_assoc, or_self] at hρ <;> rcases hρ with rfl | rfl | rfl <;> nofun
 
 /-- Hausa refutes the universalist claim that every (licensed) focus
 receives an overt reflex — the same shape Tangale refutes in

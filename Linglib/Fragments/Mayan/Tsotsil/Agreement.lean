@@ -104,12 +104,15 @@ inductive Host where
   | verb
   deriving DecidableEq, Repr
 
+/-- The Agent Focus suffix *-on* ([aissen-1999a]). -/
+def agentFocusSuffix : Morphology.Morph := .suff "on"
+
 /-- Transitive-subject extraction may switch the verb to the Agent Focus form. The form is
 not obligatory, agents extracting from transitive and Agent Focus clauses alike, and it is used
 when the patient outranks the agent in obviation ([aissen-1999a]); no other extraction is
 marked. -/
 def realize : ArgumentRole → Finset (Reflex Host)
-  | .A => {.morpheme .verb}
+  | .A => {.morpheme .verb [agentFocusSuffix]}
   | _ => ∅
 
 end Extraction

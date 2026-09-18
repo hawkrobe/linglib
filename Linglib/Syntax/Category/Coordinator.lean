@@ -93,3 +93,6 @@ structure Coordinator where
 
 /-- The coordinator as a word, UD category `CCONJ`. -/
 def Coordinator.toWord (c : Coordinator) : Morphology.Word := { form := c.form, cat := .CCONJ }
+
+/-- The coordinator as a morph, its form with its attachment kind. -/
+def Coordinator.morph (c : Coordinator) : Morphology.Morph := ⟨c.kind, c.form⟩

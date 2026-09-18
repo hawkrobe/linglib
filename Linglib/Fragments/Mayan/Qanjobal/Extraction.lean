@@ -17,9 +17,11 @@ with a verb bearing the AF suffix *-on*, the intransitive status suffix
 
 ## Main declarations
 
-* `Qanjobal.StatusSuffix` with `.form`: the ITV and TV status suffixes.
+* `Qanjobal.StatusSuffix` with `.morph`: the ITV and TV status suffixes.
+* `Qanjobal.agentFocusSuffix`: the Agent Focus suffix *-on*.
 * `Qanjobal.VerbMorphology` with `regularTransitive`, `agentFocusForm`:
-  the AF-suffix, status-suffix, and Set A properties of a verb form.
+  the AF-suffix, status-suffix, and Set A properties of a verb form, and
+  `.marker`, the suffixes a form carries.
 * `Qanjobal.VerbMorphology.toMayanVerbForm`: projection to the pan-Mayan
   `Mayan.VerbForm` for cross-Mayan typology.
 * `Qanjobal.crazyAntipassiveForm`: the Crazy Antipassive, morphologically
@@ -61,9 +63,13 @@ inductive StatusSuffix where
   | tv    -- transitive: *-V'*
   deriving DecidableEq, Repr
 
-def StatusSuffix.form : StatusSuffix → String
-  | .itv => "-i"
-  | .tv  => "-V'"
+/-- The status suffix as a morph. -/
+def StatusSuffix.morph : StatusSuffix → Morphology.Morph
+  | .itv => .suff "i"
+  | .tv  => .suff "V'"
+
+/-- The Agent Focus suffix *-on*. -/
+def agentFocusSuffix : Morphology.Morph := .suff "on"
 
 -- The substantive claim "A-extraction is banned without AF" is expressed
 -- as `(Extraction.realize .A).Nonempty`.
@@ -104,6 +110,10 @@ theorem af_no_set_a : agentFocusForm.hasSetA = false := rfl
 
 /-- Regular transitives have Set A agreement. -/
 theorem trans_has_set_a : regularTransitive.hasSetA = true := rfl
+
+/-- A verb form carries the Agent Focus suffix when it bears one, then its status suffix. -/
+def VerbMorphology.marker (v : VerbMorphology) : List Morphology.Morph :=
+  (if v.hasAFSuffix then [agentFocusSuffix] else []) ++ [v.statusSuffix.morph]
 
 /-- Can the agent be extracted with this verb form? -/
 def VerbMorphology.permitsAgentExtraction (v : VerbMorphology) : Bool :=
@@ -191,11 +201,12 @@ inductive Host where
   | verb
   deriving DecidableEq, Repr
 
-/-- Transitive-subject extraction switches the verb to AF (the suffix
-*-on*, [coon-mateo-pedro-preminger-2014]), under the third-person
-restriction recorded above; nothing else is marked. -/
+/-- Transitive-subject extraction switches the verb to the Agent Focus
+form, its suffixes *-on* and *-i* ([coon-mateo-pedro-preminger-2014]),
+under the third-person restriction recorded above; nothing else is
+marked. -/
 def realize : ArgumentRole → Finset (Reflex Host)
-  | .A => {.morpheme .verb}
+  | .A => {.morpheme .verb agentFocusForm.marker}
   | _ => ∅
 
 end Extraction

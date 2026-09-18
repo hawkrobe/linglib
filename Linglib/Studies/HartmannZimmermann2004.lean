@@ -11,6 +11,7 @@ import Linglib.Semantics.Exhaustification.Excluder
 import Linglib.Semantics.Focus.Control
 import Linglib.Syntax.Reflex
 import Linglib.Fragments.Tangale.TAM
+import Linglib.Fragments.Tangale.Focus
 import Linglib.Fragments.Tangale.Phonology
 import Linglib.Data.Examples.HartmannZimmermann2004
 
@@ -96,7 +97,7 @@ receive nothing ((31)/(32a–c)). Untested frames fall to the unmarked
 default, guarded by `Config.WF`. -/
 def realize : Config → Finset (Reflex Focused)
   | ⟨.subject, _, _⟩        => {.displacement .subject}
-  | ⟨f, .perfective, false⟩ => {.morpheme f}
+  | ⟨f, .perfective, false⟩ => {.morpheme f [Tangale.focusSuffix]}
   | ⟨_, .perfective, true⟩  => {.boundary .verb}
   | _                       => ∅
 

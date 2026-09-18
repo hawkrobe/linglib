@@ -40,6 +40,9 @@ namespace Kaqchikel
 
 /-! ### Realization -/
 
+/-- The focus particle *ja*. -/
+def ja : Morphology.Morph := .free "ja"
+
 /-- Focus realization by focused argument role ([erlewine-2016]): every
 focused argument fronts (VOS base order, so fronting is never
 string-vacuous) and hosts *ja*, on top of whatever extraction from its
@@ -48,19 +51,21 @@ Recipients and themes of ditransitives are relational-noun phrases
 outside the core roles, the dative cell of `Extraction.realize`, so the
 R and T cells here are vacuous; adjunct focus is outside this
 function's domain. -/
-def focusRealize (r : ArgumentRole) : Finset (Reflex Extraction.Host) :=
-  Extraction.realize (.core r) ∪ {.displacement .phrase, .morpheme .phrase}
+def focusRealize (c : Mayan.VerbClass) (r : ArgumentRole) : Finset (Reflex Extraction.Host) :=
+  Extraction.realize c (.core r) ∪ {.displacement .phrase, .morpheme .phrase [ja]}
 
 /-- The verb-hosted reflex (AF) appears under transitive-subject focus
     only. -/
-theorem af_reflex_iff (p : ArgumentRole) :
-    Reflex.morpheme Extraction.Host.verb ∈ focusRealize p ↔ p = .A := by
+theorem af_reflex_iff (c : Mayan.VerbClass) (p : ArgumentRole) :
+    Reflex.morpheme Extraction.Host.verb [Extraction.agentFocusSuffix c] ∈ focusRealize c p ↔
+      p = .A := by
   decide +revert
 
-/-- The ergative split in focus marking: A-focus switches the verb to AF
-while S-focus does not. -/
-theorem marked_subject_is_A_not_S :
-    Reflex.morpheme Extraction.Host.verb ∈ focusRealize .A ∧
-    Reflex.morpheme Extraction.Host.verb ∉ focusRealize .S := by decide
+/-- A-focus switches the verb to AF while S-focus does not, the ergative
+split in focus marking. -/
+theorem marked_subject_is_A_not_S (c : Mayan.VerbClass) :
+    Reflex.morpheme Extraction.Host.verb [Extraction.agentFocusSuffix c] ∈ focusRealize c .A ∧
+    Reflex.morpheme Extraction.Host.verb [Extraction.agentFocusSuffix c] ∉ focusRealize c .S := by
+  decide +revert
 
 end Kaqchikel

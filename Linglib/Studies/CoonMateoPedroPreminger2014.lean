@@ -406,16 +406,16 @@ no extraction reflexes. -/
 def MarksSubjectExtraction : Language → Prop
   | .chol => (Chol.Extraction.realize .A).Nonempty
   | .qanjobal => (Qanjobal.Extraction.realize .A).Nonempty
-  | .kaqchikel => (Kaqchikel.Extraction.realize (.core .A)).Nonempty
+  | .kaqchikel => ∀ c, (Kaqchikel.Extraction.realize c (.core .A)).Nonempty
   | .tseltal => (Tseltal.Extraction.realize .A).Nonempty
   | .tsotsil => (Tsotsil.Extraction.realize .A).Nonempty
   | .mam => (Mam.Extraction.realize (.core .A)).Nonempty
-  | .kiche => (Kiche.Extraction.realize (.core .A)).Nonempty
+  | .kiche => ∀ c, (Kiche.Extraction.realize c (.core .A)).Nonempty
   | .yukatek => False
 
 instance : ∀ L : Language, Decidable L.MarksSubjectExtraction
-  | .chol | .qanjobal | .kaqchikel | .tseltal | .tsotsil | .mam | .kiche =>
-      Finset.decidableNonempty
+  | .chol | .qanjobal | .tseltal | .tsotsil | .mam => Finset.decidableNonempty
+  | .kaqchikel | .kiche => Fintype.decidableForallFintype
   | .yukatek => inferInstanceAs (Decidable False)
 
 end Language

@@ -1,5 +1,6 @@
 import Linglib.Syntax.Reflex
 import Linglib.Fragments.Mayan.Extraction
+import Linglib.Fragments.Mayan.Verb
 
 /-!
 # Kaqchikel Extraction Morphology (Agent Focus)
@@ -7,7 +8,8 @@ import Linglib.Fragments.Mayan.Extraction
 Theory-neutral extraction-marking data for Kaqchikel (K'ichean, Mayan),
 from the Patzún variety described by [erlewine-2016]. Agent Focus (AF)
 is the dedicated verb form marking local Ā-extraction of the transitive
-subject, with no Set A slot. Patient extraction
+subject, with no Set A slot, its suffix *-o* on a radical transitive and
+*-Vn* on a derived one ([heaton-deen-ogrady-2016]). Patient extraction
 never triggers it, long-distance subject extraction triggers it on the
 embedded verb only, intervening preverbal material obviates it, and
 when both arguments are 1st/2nd person the full-agreement transitive
@@ -21,8 +23,10 @@ manners and purposes are unattested with it ([elkins-torrence-brown-2026]).
 
 ## Main declarations
 
+* `Kaqchikel.Extraction.agentFocusSuffix`, `Kaqchikel.Extraction.wi`: the
+  Agent Focus suffix of each verb class and the fronting particle.
 * `Kaqchikel.Extraction.realize`: the reflexes extraction from each
-  `Mayan.ExtractionSite` licenses.
+  `Mayan.ExtractionSite` licenses on a verb of each class.
 
 ## Implementation notes
 
@@ -37,6 +41,7 @@ analyses live in `Studies/Erlewine2016.lean` and
 
 * [elkins-torrence-brown-2026]
 * [erlewine-2016]
+* [heaton-deen-ogrady-2016]
 * [mendes-ranero-2021]
 -/
 
@@ -45,8 +50,8 @@ namespace Kaqchikel
 
 namespace Extraction
 
-/-- The hosts of Kaqchikel reflexes: the verb stem, the verbal complex
-the enclitic *wi* attaches to, and the extracted phrase itself, which
+/-- A Kaqchikel reflex is hosted by the verb stem, by the verbal complex
+the particle *wi* attaches to, or by the extracted phrase itself, which
 the focus construction marks. -/
 inductive Host where
   | verb
@@ -54,14 +59,23 @@ inductive Host where
   | phrase
   deriving DecidableEq, Repr
 
+/-- The Agent Focus suffix is *-o* on a radical transitive and *-Vn*, with a copy vowel, on
+a derived one ([heaton-deen-ogrady-2016]). -/
+def agentFocusSuffix : Mayan.VerbClass → Morphology.Morph
+  | .radical => .suff "o"
+  | .derived => .suff "Vn"
+
+/-- The fronting particle *wi*. -/
+def wi : Morphology.Morph := .free "wi"
+
 /-- Transitive-subject extraction switches the verb to AF (the Agent
 Focus suffix, with Set A suppressed, [erlewine-2016]); extraction of a
 locative, instrument, dative or benefactive phrase licenses *wi* on the
 verbal complex ([mendes-ranero-2021]); nothing else is marked. -/
-def realize : Mayan.ExtractionSite → Finset (Reflex Host)
-  | .core .A => {.morpheme .verb}
+def realize (c : Mayan.VerbClass) : Mayan.ExtractionSite → Finset (Reflex Host)
+  | .core .A => {.morpheme .verb [agentFocusSuffix c]}
   | .adjunct .instrument | .adjunct .benefactive | .adjunct .dative | .adjunct .locative =>
-      {.morpheme .verbalComplex}
+      {.morpheme .verbalComplex [wi]}
   | _ => ∅
 
 end Extraction
