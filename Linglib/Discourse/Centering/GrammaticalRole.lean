@@ -1,6 +1,7 @@
 import Mathlib.Order.Basic
-import Mathlib.Data.Fintype.Basic
+import Mathlib.Order.Monotone.Defs
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Syntax.GrammaticalRelation
 
 /-!
 # Centering theory: ranking by grammatical role
@@ -14,6 +15,8 @@ Grosz, and Gilliom's repeated-name penalty experiments support it.
 
 * `Discourse.Centering.GrammaticalRole`: subject, object, and other, linearly ordered in that
   order of prominence.
+* `GrammaticalRole.ofRelation`: the role of a grammatical relation, a monotone coarsening of
+  the relational hierarchy of `Syntax.GrammaticalRelation` that keeps its two top cuts.
 
 ## References
 
@@ -44,6 +47,22 @@ instance : LinearOrder GrammaticalRole := LinearOrder.lift' rank (by decide)
 theorem object_lt_subject : object < subject := by decide
 
 theorem other_lt_object : other < object := by decide
+
+/-- The role of a grammatical relation. The subject is the subject, the direct and indirect
+objects are objects, and the rest are other. -/
+def ofRelation : Syntax.GrammaticalRelation → GrammaticalRole
+  | .subject => .subject
+  | .directObject | .indirectObject => .object
+  | _ => .other
+
+/-- The ranking of centers by role coarsens the relational hierarchy without reordering it. -/
+theorem ofRelation_monotone : Monotone ofRelation := by
+  intro a b; cases a <;> cases b <;> decide
+
+theorem ofRelation_surjective : Function.Surjective ofRelation
+  | .subject => ⟨.subject, rfl⟩
+  | .object => ⟨.directObject, rfl⟩
+  | .other => ⟨.oblique, rfl⟩
 
 end GrammaticalRole
 

@@ -136,7 +136,7 @@ structure RC where
   derivation : Derivation
   internalHead : Head
   strategy : Strategy
-  position : Position
+  position : Syntax.GrammaticalRelation
   placement : Placement
   deriving Repr
 

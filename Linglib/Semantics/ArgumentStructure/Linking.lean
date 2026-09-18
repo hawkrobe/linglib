@@ -1,4 +1,5 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Syntax.GrammaticalRelation
 
 /-!
 # Linking Theory Interface
@@ -239,23 +240,7 @@ theorem canonical_profiles_wellformed (r : ThetaRole) :
     WellFormedInternal r.canonicalProfile := by
   cases r <;> decide
 
--- ════════════════════════════════════════════════════════════════════════
--- § 5. Argument position
--- ════════════════════════════════════════════════════════════════════════
-
 namespace ArgumentStructure.Linking
-
-/-- The grammatical function a linking theory's output targets.
-    Theory-neutral: expressed as grammatical functions, not structural
-    positions (Spec-vP, Comp-VP, etc.), so that theories with different
-    structural vocabularies can all target the same output. -/
-inductive GrammaticalFunction where
-  | subject         -- Grammatical subject (external or raised)
-  | directObject    -- Direct object
-  | indirectObject  -- Indirect object / dative
-  | oblique         -- Oblique / PP complement
-  | applied         -- Applied argument ([pylkkanen-2008])
-  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 6. LinkingTheory
@@ -290,7 +275,7 @@ structure LinkingTheory (Verb Ctx : Type) where
   compatible : Verb → List Ctx
   /-- Predict each argument's theta role in a given context.
       Returns `none` for positions the theory is silent about. -/
-  predict : Verb → Ctx → GrammaticalFunction → Option ThetaRole
+  predict : Verb → Ctx → Syntax.GrammaticalRelation → Option ThetaRole
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 7. Testing predictions against fragment data
@@ -303,7 +288,7 @@ structure LinkingTheory (Verb Ctx : Type) where
     if ANY context produces the correct prediction — the fragment entry
     records one use of the verb, not all possible uses. -/
 def LinkingTheory.matchesAt {Verb Ctx : Type} [BEq Ctx]
-    (th : LinkingTheory Verb Ctx) (v : Verb) (pos : GrammaticalFunction)
+    (th : LinkingTheory Verb Ctx) (v : Verb) (pos : Syntax.GrammaticalRelation)
     (actual : Option ThetaRole) : Bool :=
   (th.compatible v).any fun ctx => th.predict v ctx pos == actual
 

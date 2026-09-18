@@ -2,19 +2,19 @@ import Mathlib.Tactic.DeriveFintype
 import Mathlib.Order.Interval.Finset.Defs
 import Linglib.Core.Order.OrdConnected
 import Linglib.Semantics.Reference.Definiteness
+import Linglib.Syntax.GrammaticalRelation
 
 /-!
 # Relative clauses: structural core
 
-Theory-neutral types for cross-linguistic relative-clause data: the relativizable positions of
-[keenan-comrie-1977]'s Accessibility Hierarchy as a bounded linear order, the placement of the
-clause relative to its head, what occupies the relativized position (NP_rel), and the `Marker`
-schema the fragments instantiate for a language's relative-clause markers.
+Theory-neutral types for cross-linguistic relative-clause data: the placement of the clause
+relative to its head, what occupies the relativized position (NP_rel), and the `Marker` schema
+the fragments instantiate for a language's relative-clause markers. The relativizable positions
+are the grammatical relations of `Syntax.GrammaticalRelation`, whose order is
+[keenan-comrie-1977]'s Accessibility Hierarchy.
 
 ## Main declarations
 
-* `RelativeClause.Position` — the relativizable positions, linearly ordered by accessibility
-  with the subject on top: the Accessibility Hierarchy.
 * `RelativeClause.Placement` — the clause's placement relative to the head noun.
 * `RelativeClause.NPRel` — what occupies the relativized position.
 * `RelativeClause.Marker` — a relative-clause marker with the positions it relativizes, its
@@ -22,10 +22,10 @@ schema the fragments instantiate for a language's relative-clause markers.
 
 ## Implementation notes
 
-The accessibility order is lifted from `Position.rank`, so a strategy's contiguity (Keenan and
-Comrie's second Hierarchy Constraint) is order-connectedness of the set it covers, and the
-Primary Relativization Constraint is `Finset.eq_Icc_top_of_ordConnected_coe` on that set. The
-positions a marker covers are a `Finset`, since only membership matters.
+The accessibility order is that of `Syntax.GrammaticalRelation`, so a strategy's contiguity
+(Keenan and Comrie's second Hierarchy Constraint) is order-connectedness of the set it covers,
+and the Primary Relativization Constraint is `Finset.eq_Icc_top_of_ordConnected_coe` on that
+set. The positions a marker covers are a `Finset`, since only membership matters.
 
 ## References
 
@@ -36,48 +36,7 @@ positions a marker covers are a `Finset`, since only membership matters.
 
 namespace RelativeClause
 
-/-! ### The Accessibility Hierarchy -/
-
-/-- The relativizable positions of [keenan-comrie-1977]'s Accessibility Hierarchy,
-subject > direct object > indirect object > oblique > genitive > object of comparison. A higher
-position is relativizable in more languages and by lighter strategies. -/
-inductive Position where
-  | subject
-  | directObject
-  | indirectObject
-  | oblique
-  | genitive
-  /-- The object of comparison, "the person [that I am taller than _]". -/
-  | objComparison
-  deriving DecidableEq, Repr, Fintype
-
-namespace Position
-
-/-- The rank of a position, higher for the more accessible. -/
-def rank : Position → ℕ
-  | .subject        => 5
-  | .directObject   => 4
-  | .indirectObject => 3
-  | .oblique        => 2
-  | .genitive       => 1
-  | .objComparison  => 0
-
-theorem rank_injective : Function.Injective rank := by
-  intro a b h; cases a <;> cases b <;> simp_all [rank]
-
-/-- The accessibility order: `p ≤ q` iff `p` is no more accessible than `q`. -/
-instance : LinearOrder Position := LinearOrder.lift' rank rank_injective
-
-/-- The subject is the top of the hierarchy, the object of comparison its bottom. -/
-instance : BoundedOrder Position where
-  top := .subject
-  le_top := by decide
-  bot := .objComparison
-  bot_le := by decide
-
-instance : LocallyFiniteOrder Position := Fintype.toLocallyFiniteOrder
-
-end Position
+open Syntax
 
 /-! ### Placement of the clause -/
 
@@ -132,7 +91,7 @@ structure Marker where
   /-- The clause's placement relative to the head. -/
   placement : Placement
   /-- The positions the marker relativizes. -/
-  positions : Finset Position
+  positions : Finset GrammaticalRelation
   /-- The head-noun definiteness the marker is attested with, when the language distinguishes
   markers by it: Modern Standard Arabic *alladhī* with definite heads against the asyndetic
   relative with indefinite heads ([ryding-2005]). A marker attested with both is recorded as two
@@ -146,10 +105,10 @@ variable (m : Marker)
 
 /-- The positions the marker covers form a contiguous segment of the hierarchy,
 [keenan-comrie-1977]'s second Hierarchy Constraint: the covered set is order-connected. -/
-def IsContinuous : Prop := (m.positions : Set Position).OrdConnected
+def IsContinuous : Prop := (m.positions : Set GrammaticalRelation).OrdConnected
 
 instance : Decidable m.IsContinuous :=
-  inferInstanceAs (Decidable (m.positions : Set Position).OrdConnected)
+  inferInstanceAs (Decidable (m.positions : Set GrammaticalRelation).OrdConnected)
 
 /-- The marker is primary in [keenan-comrie-1977]'s sense: it relativizes subjects. -/
 def IsPrimary : Prop := ⊤ ∈ m.positions

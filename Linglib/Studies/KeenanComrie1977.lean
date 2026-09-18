@@ -40,7 +40,8 @@ stated per strategy rather than per language (`toba_batak_do_gap`).
 
 ## Implementation notes
 
-The hierarchy order is the substrate's `Position` bounded linear order, the subject its top; a
+The hierarchy order is the substrate's `Syntax.GrammaticalRelation` bounded linear order, the
+subject its top; a
 strategy is a fragment `Marker` with the positions it covers, and its continuity is
 `Marker.IsContinuous`, order-connectedness of the covered set. Modern Standard Arabic
 contributes the two markers Table 1 records rather than the fragment's full inventory, and the
@@ -72,7 +73,7 @@ instance (markers : List Marker) : Decidable (SatisfiesHC2 markers) :=
 /-- The Primary Relativization Constraint: a primary strategy covers an upper set of the
 hierarchy, every position above one it reaches. -/
 def SatisfiesPRC (markers : List Marker) : Prop :=
-  ∀ m ∈ markers, m.IsPrimary → IsUpperSet (m.positions : Set Position)
+  ∀ m ∈ markers, m.IsPrimary → IsUpperSet (m.positions : Set Syntax.GrammaticalRelation)
 
 /-- The Primary Relativization Constraint follows from HC₂ and the definition of primary, as
 the paper derives it: a continuous strategy that relativizes subjects covers an upper set. -/
@@ -135,7 +136,7 @@ sample, which covers exactly the interval from there up to the subject: the Sect
 that each point of the hierarchy is a possible cut-off. The paper's witnesses for the object of
 comparison are not among the fragments. -/
 theorem each_upper_cutoff_attested :
-    ∀ p ∈ [Position.subject, .directObject, .indirectObject, .oblique, .genitive],
+    ∀ p ∈ [Syntax.GrammaticalRelation.subject, .directObject, .indirectObject, .oblique, .genitive],
       ∃ markers ∈ sample, ∃ m ∈ markers, m.positions = Icc p ⊤ := by
   decide
 
