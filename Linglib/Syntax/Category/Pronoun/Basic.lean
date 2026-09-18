@@ -104,15 +104,12 @@ theorem le_strong (s : Strength) : s ≤ .strong := by cases s <;> decide
 
 end Pronoun.Strength
 
-/-- The general pronoun object: the morphosyntactic core shared by every pronoun
-    type (personal, indefinite, demonstrative, interrogative, …). Carries what is true
-    of *all* pronouns — surface form, agreement φ-features, and a binding-theoretic
-    `bindingClass` (the Principle A/B/C role every pronoun has, a pronominal unless
-    the entry or its kind declares otherwise) — and has no denotation of its own; each
-    specialization (`PersonalPronoun` for personal/referential pronouns, and future
-    `IndefinitePronoun` etc.) `extends` this and
-    supplies its own meaning. Coexists with `namespace Pronoun` (a type and a
-    namespace may share a name, cf. `List`). -/
+/-- The general pronoun object: the morphosyntactic core shared by every pronoun kind, its
+surface form and agreement φ-features. It has no denotation, pronoun type or binding class of
+its own: each kind (`PersonalPronoun`, `ReflexivePronoun`, `ReciprocalPronoun`,
+`DemonstrativePronoun`, `InterrogativePronoun`, `IndefinitePronoun`) `extends` it, and the kind
+fixes those. Coexists with `namespace Pronoun` (a type and a namespace may share a name, cf.
+`List`). -/
 structure Pronoun where
   /-- Surface form (romanization or orthographic). -/
   form : String
@@ -131,18 +128,6 @@ structure Pronoun where
   gender : Option Gender := none
   /-- Native script form (hangul, kanji, Devanagari, …). -/
   script : Option String := none
-  /-- Pronoun type (UD `PronType`): the pro-form's lexical kind — personal (`Prs`),
-      interrogative (`Int`), relative (`Rel`), demonstrative (`Dem`), … Real UD morphology,
-      threaded onto the projected word by `toWord`. Reciprocal (`Rcp`) is *not* stored:
-      `toWord` derives it from `bindingClass = .reciprocal`. `none` where unspecified. -/
-  pronType : Option UD.PronType := none
-  /-- The binding class this pro-form declares — its `Binding.BindingSource Pronoun` value:
-      Principle A anaphor (`.reflexive`/`.reciprocal`), B pronominal (`.pronoun`), or C
-      R-expression. *One* source of an expression's binding class — the lexical declaration
-      ([chomsky-1981]'s GB classes); the binding engine is polymorphic over `BindingSource`, so
-      a theory may instead source the class structurally or from context. A pronominal,
-      [chomsky-1981]'s elsewhere case, unless declared otherwise. -/
-  bindingClass : Binding.BindingClass := .pronoun
   /-- [cardinaletti-starke-1999] deficiency class of the form-*series* this entry
       represents, when the series is homogeneous (an Italian object clitic
       `some .clitic`, French *lui* `some .strong`). `none` = unrecorded, or no
@@ -173,8 +158,6 @@ instance : HasPhi Pronoun := ⟨Pronoun.phi⟩
 pronouns. Covers personal pronouns across all Fragment languages;
 any language-specific refinements remain in their respective Fragment files. -/
 structure PersonalPronoun extends Pronoun where
-  /-- Personal pronouns are UD `PronType=Prs`; the *type* fixes the morphology. -/
-  pronType := some UD.PronType.Prs
   /-- Register level (formality/honorifics). Binary T/V systems use
       `.informal`/`.formal`; ternary honorific systems (Hindi, Magahi,
       Maithili, Korean) use all three levels. -/
@@ -240,15 +223,31 @@ open SocialMeaning.Register (Level)
 
 /-! ### Realization as a `Word` -/
 
-/-- The pronoun realized as a `Word`: a `.PRON`-category lexical item carrying the
-    entry's φ-features (`person`/`number`/`case_`). The cross-linguistic realization
-    every pronoun shares; language-specific refinements (e.g. English wh-words that
-    surface as adverbs) stay in the relevant fragment. -/
-def toWord (p : Pronoun) : Word :=
+/-- The pronoun realized as a `Word`: a `.PRON` token with the entry's φ-features, and the
+pronoun type and reflexive marking its kind supplies. Each kind's own `toWord` fixes the two. -/
+def toWord (p : Pronoun) (pronType : Option UD.PronType := none) (reflex : Bool := false) :
+    Word :=
   { form := p.form, cat := .PRON,
     features := Features.of (person := p.person) (number := p.number) (gender := p.gender)
-      (case_ := p.case_) (reflex := p.bindingClass == .reflexive)
-      (pronType := if p.bindingClass == .reciprocal then some .Rcp else p.pronType) }
+      (case_ := p.case_) (reflex := reflex) (pronType := pronType) }
+
+/-- A word marked reflexive classifies as a reflexive anaphor. -/
+@[simp]
+theorem bindingClassOf_toWord_reflex (p : Pronoun) (t : Option UD.PronType) :
+    Binding.bindingClassOf (p.toWord t true) = some .reflexive := by
+  simp [Binding.bindingClassOf, toWord, Morphology.Features.of]
+
+/-- A word of reciprocal pronoun type classifies as a reciprocal anaphor. -/
+@[simp]
+theorem bindingClassOf_toWord_rcp (p : Pronoun) :
+    Binding.bindingClassOf (p.toWord (some .Rcp)) = some .reciprocal := by
+  simp [Binding.bindingClassOf, toWord, Morphology.Features.of]
+
+/-- Any other pronoun word classifies as a pronominal, [chomsky-1981]'s elsewhere case. -/
+theorem bindingClassOf_toWord {t : Option UD.PronType} (p : Pronoun) (ht : t ≠ some .Rcp) :
+    Binding.bindingClassOf (p.toWord t) = some .pronoun := by
+  rcases t with _ | t <;> (try cases t) <;>
+    simp_all +decide [Binding.bindingClassOf, toWord, Morphology.Features.of]
 
 /-! ### Well-formedness ([cysouw-2003]) -/
 
@@ -267,30 +266,6 @@ instance (p : Pronoun) : Decidable p.WellFormed := by
 
 /-! ### Lexical entry schemas ([alok-bhalla-2026]) -/
 
-/-- A pronoun is a Principle-A anaphor when its binding class is. -/
-abbrev IsAnaphor (p : Pronoun) : Prop := p.bindingClass.IsAnaphor
-
-/-- A pronoun is a Principle-B pronominal when its binding class is. -/
-abbrev IsPronominal (p : Pronoun) : Prop := p.bindingClass.IsPronominal
-
-/-- A pronoun is a Principle-C referring expression when its binding class is. -/
-abbrev IsRExpression (p : Pronoun) : Prop := p.bindingClass.IsRExpression
-
-/-- A pronoun's projected word classifies as the class the pronoun declares. -/
-theorem bindingClassOf_toWord (p : Pronoun) (h : ¬ p.IsRExpression)
-    (hr : p.pronType = some .Rcp → p.bindingClass = .reciprocal) :
-    Binding.bindingClassOf p.toWord = some p.bindingClass := by
-  rcases hb : p.bindingClass with _ | _ | _ | _ <;>
-      rcases hp : p.pronType with _ | pt <;> (try cases pt) <;>
-    simp_all +decide [Binding.bindingClassOf, Pronoun.toWord, Morphology.Features.of,
-      Binding.BindingClass.IsRExpression]
-
-/-- An interrogative or relative pronoun projects a wh-marked word. -/
-theorem isWh_toWord (p : Pronoun) (hb : p.bindingClass ≠ .reciprocal)
-    (h : p.pronType = some .Int ∨ p.pronType = some .Rel) : p.toWord.features.IsWh := by
-  rcases hc : p.bindingClass with _ | _ | _ | _ <;> rcases h with h | h <;>
-    simp_all +decide [toWord, Features.IsWh, Morphology.Features.of]
-
 /-- A candidate antecedent of a pronoun is a nominal token that agrees with it in φ-features;
 a pro-form takes its antecedents from a fixed form-class ([bloomfield-1933]). -/
 def CandidateAntecedent (p : Pronoun) (w : Morphology.Word) : Prop :=
@@ -300,6 +275,15 @@ instance (p : Pronoun) (w : Morphology.Word) : Decidable (p.CandidateAntecedent 
   inferInstanceAs (Decidable (_ ∧ _))
 
 instance : HasPhi PersonalPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
+
+/-- A personal pronoun's word is of UD pronoun type `Prs`. -/
+def _root_.PersonalPronoun.toWord (p : PersonalPronoun) : Word := p.toPronoun.toWord (some .Prs)
+
+/-- A personal pronoun is a pronominal. -/
+@[simp]
+theorem _root_.PersonalPronoun.bindingClassOf_toWord (p : PersonalPronoun) :
+    Binding.bindingClassOf p.toWord = some .pronoun :=
+  Pronoun.bindingClassOf_toWord _ (by decide)
 
 /-- Cross-linguistic allocutive marker entry.
 

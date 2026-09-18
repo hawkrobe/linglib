@@ -1,5 +1,7 @@
 import Linglib.Syntax.Category.Pronoun.Demonstrative
+import Linglib.Syntax.Category.Pronoun.Interrogative
 import Linglib.Syntax.Category.Pronoun.Reciprocal
+import Linglib.Syntax.Category.Pronoun.Reflexive
 
 /-!
 # English pronouns
@@ -13,8 +15,8 @@ and *we* makes no clusivity distinction. *They* and *them* serve a single refere
 several; singular *they* bears no gender feature, where *he*, *she* and *it* each bear one. Every
 personal pronoun has a reflexive in *-self* or *-selves*, singular *they* having *themself*
 beside *themselves*. The reciprocals *each other* and *one another* are two-part noun phrases
-rather than dedicated pronouns. The demonstratives contrast a proximal with a distal form in
-each number.
+rather than dedicated pronouns. The interrogatives ask about a person, a thing, a place, a time
+or a manner. The demonstratives contrast a proximal with a distal form in each number.
 
 ## Main definitions
 
@@ -30,9 +32,6 @@ each number.
   addressees or clusivity, and the plural third person forms also serve a single referent
 * `English.Pronouns.exists_reflexive` — every personal pronoun has a reflexive with its person,
   number and gender
-* `English.Pronouns.bindingClassOf_pronouns`, `English.Pronouns.bindingClassOf_reflexives`,
-  `English.Pronouns.bindingClassOf_reciprocals` — the binding class of each series, read off the
-  morphology of its words
 
 ## References
 
@@ -137,38 +136,38 @@ theorem paradigm_others_subset : paradigm pronouns .others ⊆ paradigm pronouns
 /-! ### Reflexive pronouns -/
 
 /-- The reflexive of a personal pronoun, with its person, number and gender. -/
-private def reflexive (p : PersonalPronoun) (form : String) : Pronoun :=
-  { form, person := p.person, number := p.number, gender := p.gender, bindingClass := .reflexive }
+private def reflexive (p : PersonalPronoun) (form : String) : ReflexivePronoun :=
+  { form, person := p.person, number := p.number, gender := p.gender }
 
 /-- The first person singular reflexive *myself*. -/
-def myself : Pronoun := reflexive me "myself"
+def myself : ReflexivePronoun := reflexive me "myself"
 
 /-- The second person singular reflexive *yourself*. -/
-def yourself : Pronoun := reflexive you "yourself"
+def yourself : ReflexivePronoun := reflexive you "yourself"
 
 /-- The third person singular masculine reflexive *himself*. -/
-def himself : Pronoun := reflexive him "himself"
+def himself : ReflexivePronoun := reflexive him "himself"
 
 /-- The third person singular feminine reflexive *herself*. -/
-def herself : Pronoun := reflexive her "herself"
+def herself : ReflexivePronoun := reflexive her "herself"
 
 /-- The third person singular neuter reflexive *itself*. -/
-def itself : Pronoun := reflexive it "itself"
+def itself : ReflexivePronoun := reflexive it "itself"
 
 /-- The first person plural reflexive *ourselves*. -/
-def ourselves : Pronoun := reflexive us "ourselves"
+def ourselves : ReflexivePronoun := reflexive us "ourselves"
 
 /-- The second person plural reflexive *yourselves*. -/
-def yourselves : Pronoun := reflexive you_pl "yourselves"
+def yourselves : ReflexivePronoun := reflexive you_pl "yourselves"
 
 /-- The third person plural reflexive *themselves*. -/
-def themselves : Pronoun := reflexive them "themselves"
+def themselves : ReflexivePronoun := reflexive them "themselves"
 
 /-- The reflexive *themself* of singular *they*. -/
-def themself : Pronoun := reflexive them_sg "themself"
+def themself : ReflexivePronoun := reflexive them_sg "themself"
 
 /-- The reflexive pronoun inventory. -/
-def reflexives : Finset Pronoun :=
+def reflexives : Finset ReflexivePronoun :=
   {myself, yourself, himself, herself, itself, ourselves, yourselves, themselves, themself}
 
 /-- Every personal pronoun has a reflexive with its person, number and gender. -/
@@ -188,45 +187,28 @@ def oneAnother : ReciprocalPronoun := { form := "one another", strategy := .bipa
 /-- The reciprocal pronoun inventory. -/
 def reciprocals : Finset ReciprocalPronoun := {eachOther, oneAnother}
 
-/-! ### Binding classes
-
-Each series declares its binding class, and `Pronoun.toWord` carries the declaration into the
-morphology of the word, where `Binding.bindingClassOf` reads it back. -/
-
-/-- The personal pronouns are pronominals. -/
-theorem bindingClassOf_pronouns :
-    ∀ p ∈ pronouns, Binding.bindingClassOf p.toWord = some .pronoun := by
-  decide
-
-/-- The reflexives are reflexive anaphors. -/
-theorem bindingClassOf_reflexives :
-    ∀ p ∈ reflexives, Binding.bindingClassOf p.toWord = some .reflexive := by
-  decide
-
-/-- The reciprocals are reciprocal anaphors. -/
-theorem bindingClassOf_reciprocals :
-    ∀ p ∈ reciprocals, Binding.bindingClassOf p.toWord = some .reciprocal := by
-  decide
-
 /-! ### Interrogative pronouns -/
 
 /-- The interrogative *who*, for persons. -/
-def who : Pronoun := { form := "who", pronType := some .Int }
+def who : InterrogativePronoun := { form := "who", ontology := .person }
 
 /-- The accusative *whom* of *who*. -/
-def whom : Pronoun := { form := "whom", case_ := some .acc, pronType := some .Int }
+def whom : InterrogativePronoun := { form := "whom", case_ := some .acc, ontology := .person }
 
-/-- The interrogative *what*, for non-persons. -/
-def what : Pronoun := { form := "what", pronType := some .Int }
+/-- The interrogative *what*, for things. -/
+def what : InterrogativePronoun := { form := "what", ontology := .thing }
 
-/-- The interrogative *which*, for a choice from a given set. -/
-def which : Pronoun := { form := "which", pronType := some .Int }
+/-- The interrogative *where*, for places. -/
+def where_ : InterrogativePronoun := { form := "where", ontology := .place }
+
+/-- The interrogative *when*, for times. -/
+def when_ : InterrogativePronoun := { form := "when", ontology := .time }
+
+/-- The interrogative *how*, for manners. -/
+def how : InterrogativePronoun := { form := "how", ontology := .manner }
 
 /-- The interrogative pronoun inventory. -/
-def interrogatives : Finset Pronoun := {who, whom, what, which}
-
-/-- The interrogative pronouns project wh-marked words. -/
-theorem isWh_interrogatives : ∀ p ∈ interrogatives, p.toWord.features.IsWh := by decide
+def interrogatives : Finset InterrogativePronoun := {who, whom, what, where_, when_, how}
 
 /-! ### Demonstrative pronouns -/
 

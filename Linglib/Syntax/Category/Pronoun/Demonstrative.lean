@@ -34,14 +34,15 @@ assignment keeps them apart by construction.
     for a distance-neutral demonstrative like German *dieser*). Carries no separate denotation here;
     its meaning is the deictic `Reference.Description.demonstrative` over its restrictor. -/
 structure DemonstrativePronoun extends Pronoun where
-  /-- Demonstratives are UD `PronType=Dem`; the *type* fixes the morphology. -/
-  pronType := some UD.PronType.Dem
   /-- The deictic feature (proximal/medial/distal, or `unspecified`). -/
   deixis : Reference.Deixis
   deriving Repr, DecidableEq
 
 /-- A demonstrative pronoun bears φ via its `Pronoun` core. -/
 instance : HasPhi DemonstrativePronoun := ⟨fun d ↦ d.toPronoun.phi⟩
+
+/-- A demonstrative's word is of UD pronoun type `Dem`. -/
+def DemonstrativePronoun.toWord (d : DemonstrativePronoun) : Word := d.toPronoun.toWord (some .Dem)
 
 /-- The demonstrative pronoun is a carrier of the `Demonstrative` (deictic-contrast) capability. -/
 instance : Demonstrative DemonstrativePronoun := ⟨DemonstrativePronoun.deixis⟩

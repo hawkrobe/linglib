@@ -6,7 +6,7 @@ import Linglib.Syntax.Reciprocal
 
 The pronoun member of the reciprocal series: `ReciprocalPronoun` extends the general `Pronoun`
 with the marker data of `Syntax/Reciprocal.lean`, the nominal strategy it realizes and the
-readings it covers, and fixes the Principle-A reciprocal binding class. A fragment writes the
+readings it covers; the kind fixes the Principle-A reciprocal binding class. A fragment writes the
 pronoun once and derives its `Reciprocal.Marker` entry with `toMarker`; Hungarian *egymás*,
 Japanese *otagai* and Wan *ɔ̄ŋ̄* are such objects. Verbal and clitic reciprocal strategies are
 not pronouns and stay bare markers.
@@ -22,7 +22,6 @@ not pronouns and stay bare markers.
     exponent of reciprocity, with the strategy it realizes and the readings it covers. The
     kind fixes the Principle-A reciprocal binding class, so entries need not restate it. -/
 structure ReciprocalPronoun extends Pronoun where
-  bindingClass := .reciprocal
   /-- The nominal strategy: a dedicated pronoun (*egymás*, *otagai*) or a bipartite quantifier
       NP (*each other*). -/
   strategy : Reciprocal.Strategy := .recipPronoun
@@ -36,4 +35,14 @@ def ReciprocalPronoun.toMarker (p : ReciprocalPronoun) : Reciprocal.Marker :=
 
 /-- A reciprocal pronoun bears φ via its `Pronoun` core. -/
 instance : HasPhi ReciprocalPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
+
+/-- A reciprocal's word is of UD pronoun type `Rcp`. -/
+def ReciprocalPronoun.toWord (p : ReciprocalPronoun) : Morphology.Word :=
+  p.toPronoun.toWord (some .Rcp)
+
+/-- A reciprocal pronoun is a reciprocal anaphor. -/
+@[simp]
+theorem ReciprocalPronoun.bindingClassOf_toWord (p : ReciprocalPronoun) :
+    Binding.bindingClassOf p.toWord = some .reciprocal :=
+  Pronoun.bindingClassOf_toWord_rcp _
 

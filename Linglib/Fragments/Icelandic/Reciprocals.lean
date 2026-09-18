@@ -1,4 +1,4 @@
-import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Reflexive
 import Linglib.Syntax.Reciprocal
 
 /-!
@@ -27,7 +27,9 @@ def hvorAnnad : Marker :=
   { form := "hvort annað", strategy := .bipartiteNP }
 
 /-- sig — reflexive pronoun (for contrast). -/
-def sig : PersonalPronoun :=
+-- UNVERIFIED: *sig* is also bound at a distance out of subjunctive clauses; the role that
+-- licenses it there is not recorded.
+def sig : ReflexivePronoun :=
   { form := "sig", person := some .third }
 
 /-- Icelandic reciprocal is formally distinct from reflexive. -/

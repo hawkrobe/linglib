@@ -108,6 +108,10 @@ structure Antecedent where
 /-- A pronoun of number `n` as local antecedent. -/
 def Antecedent.ofNumber (n : Option Number) : Antecedent := { grain := n.bind Grain.ofNumber? }
 
+/-- A logophoric pronoun as local antecedent: its number, interpreted inside the report. -/
+def Antecedent.ofLogophor (p : LogophoricPronoun) : Antecedent :=
+  { Antecedent.ofNumber p.number with logophoric := true }
+
 /-- An analysis of reciprocal scope, by what it commits the local antecedent to under each
     reading. -/
 structure Analysis where
@@ -385,8 +389,7 @@ theorem corpus_distributors :
 
 /-- The Wan plural logophor *mɔ̄* as local antecedent, which can itself be bound, as (31)
     shows, but cannot leave the report with the reciprocal ((28)). -/
-def logophor : Antecedent :=
-  { Antecedent.ofNumber Wan.Reciprocals.logPl.number with logophoric := true }
+def logophor : Antecedent := .ofLogophor Wan.Reciprocals.logPl
 
 /-- The ordinary plural pronoun *à̰* as local antecedent ((32)). -/
 def ordinary : Antecedent := .ofNumber Wan.Reciprocals.ordinaryPl.number
