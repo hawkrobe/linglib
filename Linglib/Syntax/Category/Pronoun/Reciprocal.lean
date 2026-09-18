@@ -2,28 +2,31 @@ import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Reciprocal
 
 /-!
-# Reciprocal pronouns — the pronominal exponent of reciprocity
+# Reciprocal pronouns
 
-The pronoun member of the reciprocal series: `ReciprocalPronoun` extends the general `Pronoun`
-with the marker data of `Syntax/Reciprocal.lean`, the nominal strategy it realizes and the
-readings it covers; the kind fixes the Principle-A reciprocal binding class. A fragment writes the
-pronoun once and derives its `Reciprocal.Marker` entry with `toMarker`; Hungarian *egymás*,
-Japanese *otagai* and Wan *ɔ̄ŋ̄* are such objects. Verbal and clitic reciprocal strategies are
-not pronouns and stay bare markers.
+A reciprocal pronoun is a pronoun that is the nominal exponent of reciprocity: it carries the
+marker data of `Syntax/Reciprocal.lean`, the nominal strategy it realizes and the readings it
+covers, and its kind fixes the reciprocal binding class. A fragment writes the pronoun once and
+derives its `Reciprocal.Marker` with `toMarker`; Hungarian *egymás*, Japanese *otagai* and Wan
+*ɔ̄ŋ̄* are such objects. Verbal and clitic reciprocal strategies are not pronouns and stay bare
+markers.
 
 ## Main declarations
 
-* `ReciprocalPronoun` — the lexical object (`extends Pronoun` + `strategy` + `readings`).
-* `ReciprocalPronoun.toMarker` — its entry in a marker inventory.
-* `HasPhi` instance routing the object through the Pronoun API.
+* `ReciprocalPronoun` — a pronoun with its reciprocal strategy and readings
+* `ReciprocalPronoun.toMarker` — its entry in a marker inventory
+* `ReciprocalPronoun.bindingClassOf_toWord` — its token classifies as a reciprocal anaphor
+
+## References
+
+* [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
 -/
 
-/-- A reciprocal pronoun: the general `Pronoun` (surface `form` + φ-features) as the nominal
-    exponent of reciprocity, with the strategy it realizes and the readings it covers. The
-    kind fixes the Principle-A reciprocal binding class, so entries need not restate it. -/
+/-- A reciprocal pronoun: the general `Pronoun` as the nominal exponent of reciprocity, with the
+strategy it realizes and the readings it covers. -/
 structure ReciprocalPronoun extends Pronoun where
-  /-- The nominal strategy: a dedicated pronoun (*egymás*, *otagai*) or a bipartite quantifier
-      NP (*each other*). -/
+  /-- The nominal strategy: a dedicated pronoun (*egymás*, *otagai*) or a two-part quantifier
+  noun phrase (*each other*). -/
   strategy : Reciprocal.Strategy := .recipPronoun
   /-- The readings the form covers. -/
   readings : Finset Reciprocal.Reading := {.reciprocal}
@@ -33,7 +36,6 @@ structure ReciprocalPronoun extends Pronoun where
 def ReciprocalPronoun.toMarker (p : ReciprocalPronoun) : Reciprocal.Marker :=
   { form := p.form, script := p.script, strategy := p.strategy, readings := p.readings }
 
-/-- A reciprocal pronoun bears φ via its `Pronoun` core. -/
 instance : HasPhi ReciprocalPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
 
 /-- A reciprocal's word is of UD pronoun type `Rcp`. -/

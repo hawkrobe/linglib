@@ -64,13 +64,13 @@ def function : Fin 3 → HaspelmathFunction := ![.irrealis, .specificUnknown, .s
 
 /-- The form of a paradigm at a function, when one series covers it: `none` at a gap or where
 series overlap. -/
-def formAt (p : IndefiniteParadigm) (f : HaspelmathFunction) : Option String :=
+def formAt (p : List IndefinitePronoun) (f : HaspelmathFunction) : Option String :=
   match p.filter (f ∈ ·.functions) with
   | [e] => some e.form
   | _ => none
 
 /-- A paradigm's forms over the three layers, the triple the syncretism patterns classify. -/
-def pattern (p : IndefiniteParadigm) : Paradigm 3 (Option String) :=
+def pattern (p : List IndefinitePronoun) : Paradigm 3 (Option String) :=
   fun g ↦ formAt p (function g)
 
 /-- The layers a series covers. -/
@@ -79,7 +79,7 @@ def layers (e : IndefinitePronoun) : Finset (Fin 3) :=
 
 /-- The nanosyntactic lexicon of a paradigm: each form stores the largest layer it covers, the
 Superset and Elsewhere Principles deriving the rest of its coverage. -/
-def lexicon (p : IndefiniteParadigm) : List (SpanRule 3 String) :=
+def lexicon (p : List IndefinitePronoun) : List (SpanRule 3 String) :=
   p.filterMap fun e ↦ (layers e).max.map (⟨e.form, ·, none⟩)
 
 /-! ### Syncretism and its absence -/

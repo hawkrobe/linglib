@@ -170,7 +170,7 @@ private def series (form : String) (basis : MorphologicalBasis)
   { form, ontology, basis, functions }
 
 /-- English (A.3, §4.3.1): *some-* 12345, *any-* 456789, *no-* 7. -/
-def english : IndefiniteParadigm :=
+def english : List IndefinitePronoun :=
   [ series "some-" .genericNoun
       {.specificKnown, .specificUnknown, .irrealis, .question, .conditional},
     series "any-" .genericNoun
@@ -180,7 +180,7 @@ def english : IndefiniteParadigm :=
 /-- Russian (A.16): *koe-* 1, *-to* 2, *-nibud'* 345, *-libo* 34568, *by to ni bylo* 568,
 *ni-* 7, *ugodno* 9; the *-to*-series is mainly specific, and *-libo* replaces *-nibud'* under
 indirect negation and in comparatives. -/
-def russian : IndefiniteParadigm :=
+def russian : List IndefinitePronoun :=
   [ series "koe-kto" .interrogative {.specificKnown},
     series "kto-to" .interrogative {.specificUnknown},
     series "kto-nibud'" .interrogative {.irrealis, .question, .conditional},
@@ -191,7 +191,7 @@ def russian : IndefiniteParadigm :=
     series "kto ugodno" .interrogative {.freeChoice} ]
 
 /-- German (A.1): *etwas* 123456, *irgend-* 2345689, temporal *je* 4568, *jeder* 689, *n-* 7. -/
-def german : IndefiniteParadigm :=
+def german : List IndefinitePronoun :=
   [ series "jemand" .genericNoun
       {.specificKnown, .specificUnknown, .irrealis, .question, .conditional, .indirectNeg},
     series "irgendwer" .special
@@ -202,7 +202,7 @@ def german : IndefiniteParadigm :=
     series "niemand" .genericNoun {.directNeg} ]
 
 /-- Japanese (A.38): *-ka* 12345, *-mo* 678, *-demo* 9. -/
-def japanese : IndefiniteParadigm :=
+def japanese : List IndefinitePronoun :=
   [ series "dare-ka" .interrogative
       {.specificKnown, .specificUnknown, .irrealis, .question, .conditional},
     series "dare-mo" .interrogative {.indirectNeg, .directNeg, .comparative},
@@ -211,7 +211,7 @@ def japanese : IndefiniteParadigm :=
 /-- Mandarin Chinese (A.36): generic nouns 12, the bare interrogatives in all non-specific
 non-emphatic functions 34567 (with no data for indirect negation), *dōu*/*yě* 7, the determiner
 *rènhé* 6789. -/
-def mandarin : IndefiniteParadigm :=
+def mandarin : List IndefinitePronoun :=
   [ series "rén" .genericNoun {.specificKnown, .specificUnknown},
     series "shéi" .interrogative
       {.irrealis, .question, .conditional, .indirectNeg, .directNeg},
@@ -220,7 +220,7 @@ def mandarin : IndefiniteParadigm :=
       .determiner ]
 
 /-- Turkish (A.23): *bir-* 1234567, *hiç* 467, *herhangi* 23456789. -/
-def turkish : IndefiniteParadigm :=
+def turkish : List IndefinitePronoun :=
   [ series "biri(si)" .genericNoun
       {.specificKnown, .specificUnknown, .irrealis, .question, .conditional, .indirectNeg,
         .directNeg},
@@ -230,7 +230,7 @@ def turkish : IndefiniteParadigm :=
         .comparative, .freeChoice} ]
 
 /-- Hindi/Urdu (A.22): *koii* 1234567, *koii bhii* 3456789. -/
-def hindi : IndefiniteParadigm :=
+def hindi : List IndefinitePronoun :=
   [ series "koii" .special
       {.specificKnown, .specificUnknown, .irrealis, .question, .conditional, .indirectNeg,
         .directNeg},
@@ -240,7 +240,7 @@ def hindi : IndefiniteParadigm :=
 
 /-- Italian (A.10): *qualche-* 123456, *nessuno* 467 (questions but not conditionals),
 *-unque* 89. -/
-def italian : IndefiniteParadigm :=
+def italian : List IndefinitePronoun :=
   [ series "qualcuno" .special
       {.specificKnown, .specificUnknown, .irrealis, .question, .conditional, .indirectNeg},
     series "nessuno" .special {.question, .indirectNeg, .directNeg},
@@ -248,7 +248,7 @@ def italian : IndefiniteParadigm :=
 
 /-- Finnish (A.27): *eräs* 1, *-kin* 2345, *-kaan* 4678, *hyvänsä* 589 with the comparative
 only as an equative standard. -/
-def finnish : IndefiniteParadigm :=
+def finnish : List IndefinitePronoun :=
   [ series "eräs" .special {.specificKnown},
     series "joku" .special {.specificUnknown, .irrealis, .question, .conditional},
     series "kukaan" .interrogative {.question, .indirectNeg, .directNeg, .comparative},
@@ -256,7 +256,7 @@ def finnish : IndefiniteParadigm :=
 
 /-- Korean (A.39): the bare interrogatives and *-nka* 123456 alike, *-to* 678, *-na* and
 *-tunci* 9. -/
-def korean : IndefiniteParadigm :=
+def korean : List IndefinitePronoun :=
   [ series "nwukwu / nwukwu-nka" .interrogative
       {.specificKnown, .specificUnknown, .irrealis, .question, .conditional, .indirectNeg},
     series "nwukwu-to / amu-to" .interrogative {.indirectNeg, .directNeg, .comparative},
@@ -264,7 +264,7 @@ def korean : IndefiniteParadigm :=
 
 /-- Hungarian (A.26): *vala-* 123456, *sem-* 7, *akár-* and *bár-* 5689, excluded from
 questions. -/
-def hungarian : IndefiniteParadigm :=
+def hungarian : List IndefinitePronoun :=
   [ series "valaki" .interrogative
       {.specificKnown, .specificUnknown, .irrealis, .question, .conditional, .indirectNeg},
     series "senki" .interrogative {.directNeg},
@@ -273,7 +273,7 @@ def hungarian : IndefiniteParadigm :=
 
 /-- Georgian (A.34): *-yac* 12, *-me* 34568, *ara-* 7; free choice is expressed by the adjective
 *nebismieri*, not an indefinite pronoun. -/
-def georgian : IndefiniteParadigm :=
+def georgian : List IndefinitePronoun :=
   [ series "vi-yac" .interrogative {.specificKnown, .specificUnknown},
     series "vin-me" .interrogative
       {.irrealis, .question, .conditional, .indirectNeg, .comparative},
@@ -281,14 +281,14 @@ def georgian : IndefiniteParadigm :=
 
 /-- Ancash Quechua (A.37): the bare interrogatives for the specific functions, which the map of
 the language does not distinguish, and *-pis* 3456789. -/
-def quechua : IndefiniteParadigm :=
+def quechua : List IndefinitePronoun :=
   [ series "pi" .interrogative {.specificKnown, .specificUnknown},
     series "pi-pis" .interrogative
       {.irrealis, .question, .conditional, .indirectNeg, .directNeg, .comparative,
         .freeChoice} ]
 
 /-- Swahili (A.33): generic nouns 1234567, CL-o CL-ote 456789 with the comparative predicted. -/
-def swahili : IndefiniteParadigm :=
+def swahili : List IndefinitePronoun :=
   [ series "mtu" .genericNoun
       {.specificKnown, .specificUnknown, .irrealis, .question, .conditional, .indirectNeg,
         .directNeg},
@@ -296,7 +296,7 @@ def swahili : IndefiniteParadigm :=
       {.question, .conditional, .indirectNeg, .directNeg, .comparative, .freeChoice} ]
 
 /-- The fourteen languages. -/
-def sample : List IndefiniteParadigm :=
+def sample : List (List IndefinitePronoun) :=
   [ english, russian, german, japanese, mandarin, turkish, hindi, italian, finnish, korean,
     hungarian, georgian, quechua, swahili ]
 

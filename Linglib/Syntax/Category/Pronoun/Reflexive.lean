@@ -22,14 +22,12 @@ where no role is recorded.
 * [P. Sells, *Aspects of Logophoricity* (1987)][sells-1987]
 -/
 
-open Reference (LogophoricRole)
-
 /-- A reflexive pronoun: the general `Pronoun` with the least perspectival role an antecedent
 outside the local domain must fill, `none` when the form is only locally bound or no role is
 recorded. -/
 structure ReflexivePronoun extends Pronoun where
   /-- The least [sells-1987] role that licenses the form at a distance. -/
-  requiredRole : Option LogophoricRole := none
+  requiredRole : Option Reference.LogophoricRole := none
   deriving DecidableEq, Repr
 
 namespace ReflexivePronoun
@@ -40,19 +38,19 @@ instance : HasPhi ReflexivePronoun := ⟨fun p ↦ p.toPronoun.phi⟩
 
 /-- The form is licensed at a distance by an antecedent filling the role `r`: it has a required
 role and `r` reaches it. -/
-def LicensedBy (r : LogophoricRole) : Prop := ∃ q ∈ p.requiredRole, q ≤ r
+def LicensedBy (r : Reference.LogophoricRole) : Prop := ∃ q ∈ p.requiredRole, q ≤ r
 
-instance (r : LogophoricRole) : Decidable (p.LicensedBy r) :=
+instance (r : Reference.LogophoricRole) : Decidable (p.LicensedBy r) :=
   inferInstanceAs (Decidable (∃ q ∈ p.requiredRole, q ≤ r))
 
 /-- A reflexive with no required role is licensed at a distance by no antecedent. -/
-theorem not_licensedBy_of_eq_none (h : p.requiredRole = none) (r : LogophoricRole) :
+theorem not_licensedBy_of_eq_none (h : p.requiredRole = none) (r : Reference.LogophoricRole) :
     ¬ p.LicensedBy r := by
   simp [LicensedBy, h]
 
 variable {p} in
 /-- Licensing is monotone in the antecedent's role. -/
-theorem LicensedBy.mono {r r' : LogophoricRole} (h : p.LicensedBy r) (hr : r ≤ r') :
+theorem LicensedBy.mono {r r' : Reference.LogophoricRole} (h : p.LicensedBy r) (hr : r ≤ r') :
     p.LicensedBy r' :=
   let ⟨q, hq, hqr⟩ := h
   ⟨q, hq, hqr.trans hr⟩

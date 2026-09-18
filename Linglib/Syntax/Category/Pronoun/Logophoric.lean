@@ -14,27 +14,25 @@ is a reflexive; its role lives on `ReflexivePronoun`.
 ## Main declarations
 
 * `LogophoricPronoun` — a personal pronoun with the role its antecedent must fill
-* `instance : Logophoric LogophoricPronoun` — the pronoun carrier of the capability
+* `instance : Reference.Logophoric LogophoricPronoun` — the pronoun carrier of the capability
 
 ## References
 
 * [P. Sells, *Aspects of Logophoricity* (1987)][sells-1987]
 -/
 
-open Reference (LogophoricRole Logophoric)
-
 /-- A logophoric pronoun: a `PersonalPronoun` with the least [sells-1987] role its antecedent
 must fill. It is a pronominal, and what licenses it is the role, not a binding configuration. -/
 structure LogophoricPronoun extends PersonalPronoun where
   /-- The least [sells-1987] role an antecedent must fill to license the form. -/
-  requiredRole : LogophoricRole
+  requiredRole : Reference.LogophoricRole
   deriving DecidableEq
 
 instance : HasPhi LogophoricPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
 
-instance : Logophoric LogophoricPronoun := ⟨LogophoricPronoun.requiredRole⟩
+instance : Reference.Logophoric LogophoricPronoun := ⟨LogophoricPronoun.requiredRole⟩
 
 /-- Every logophoric pronoun is licensed by a source, the top of the role hierarchy. -/
 theorem LogophoricPronoun.licensedBy_source (p : LogophoricPronoun) :
-    Logophoric.LicensedBy p .source :=
-  Logophoric.source_licenses p
+    Reference.Logophoric.LicensedBy p .source :=
+  Reference.Logophoric.source_licenses p

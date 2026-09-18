@@ -46,6 +46,6 @@ def koeEntry : IndefinitePronoun where
   functions := {.specificKnown}
 
 /-- The Russian paradigm: three series for the three specific functions. -/
-def paradigm : IndefiniteParadigm := [nibudEntry, toEntry, koeEntry]
+def paradigm : List IndefinitePronoun := [nibudEntry, toEntry, koeEntry]
 
 end Russian.Indefinites

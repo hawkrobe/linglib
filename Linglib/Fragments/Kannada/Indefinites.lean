@@ -35,6 +35,6 @@ def aadaruuEntry : IndefinitePronoun where
   functions := {.irrealis}
 
 /-- The Kannada paradigm: no series for a referent the speaker has in mind. -/
-def paradigm : IndefiniteParadigm := [ooEntry, aadaruuEntry]
+def paradigm : List IndefinitePronoun := [ooEntry, aadaruuEntry]
 
 end Kannada.Indefinites

@@ -6,37 +6,36 @@ import Linglib.Syntax.Category.Pronoun.Basic
 
 An indefinite pronoun is a pronoun with a place in an indefinite series: the region of
 [haspelmath-1997]'s implicational map its series covers, the ontological category it belongs to
-and the morphological basis it is built from. A language's paradigm is the list of its series;
-the adjacency requirement on each series and the syncretism of a paradigm across the specific
-functions are the matter of `Studies/Haspelmath1997.lean` and `Studies/Dekier2021.lean`.
+and the morphological basis it is built from. A language's paradigm is the list of its series,
+a `List IndefinitePronoun`; the adjacency requirement on each series and the syncretism of a
+paradigm across the specific functions are the matter of `Studies/Haspelmath1997.lean` and
+`Studies/Dekier2021.lean`.
 
 ## Main declarations
 
-* `Indefinite.IndefinitePronoun`: a pronoun with its series data, `extends Pronoun`.
-* `Indefinite.IndefiniteParadigm`: a language's indefinite series.
+* `IndefinitePronoun` — a pronoun with the ontological category, morphological basis and
+  functions of its series
+* `IndefinitePronoun.toWord` — its token, of UD pronoun type `Ind`
 
 ## References
 
-* [haspelmath-1997]
+* [M. Haspelmath, *Indefinite Pronouns* (1997)][haspelmath-1997]
 -/
-
-namespace Indefinite
 
 /-- An indefinite pronoun: its surface form and φ-features as a `Pronoun`, with the ontological
 category and morphological basis of its series and the functions of the map the series covers.
 The functions are the series' attested distribution, which a paradigm mate may narrow. -/
 structure IndefinitePronoun extends Pronoun where
   /-- The ontological category of the series. -/
-  ontology : OntologicalCategory
+  ontology : Indefinite.OntologicalCategory
   /-- The morphological basis the series is built from. -/
-  basis : MorphologicalBasis
+  basis : Indefinite.MorphologicalBasis
   /-- The functions of the map the series covers. -/
-  functions : Finset HaspelmathFunction
+  functions : Finset Indefinite.HaspelmathFunction
   deriving DecidableEq
 
 instance : HasPhi IndefinitePronoun := ⟨fun e ↦ e.toPronoun.phi⟩
 
-/-- A language's indefinite paradigm: its series. -/
-abbrev IndefiniteParadigm := List IndefinitePronoun
-
-end Indefinite
+/-- An indefinite's token is of UD pronoun type `Ind`. -/
+def IndefinitePronoun.toWord (p : IndefinitePronoun) : Morphology.Word :=
+  p.toPronoun.toWord (some .Ind)

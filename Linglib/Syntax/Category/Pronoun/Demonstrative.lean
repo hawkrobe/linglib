@@ -1,48 +1,40 @@
 import Linglib.Semantics.Reference.Deixis
 import Linglib.Syntax.Category.Pronoun.Basic
 
-open Morphology (Word)
-
-
 /-!
-# Demonstrative pronouns — the genuinely deictic carrier
-[patel-grosz-grosz-2017] [moroney-2021]
+# Demonstrative pronouns
 
-The *deictic* demonstrative pronoun (*this*/*that*, German *dieser*, Japanese *kore/sore/are*):
-`DemonstrativePronoun` `extends` the general `Pronoun` with a `Reference.Deixis` — the
-spatial contrast (proximal/medial/distal) that makes it a demonstrative. One carrier of the
-word-class-neutral `Demonstrative` capability; an adnominal demonstrative determiner (*this* book)
-or pro-adverb (*here*) would be sibling carriers.
-
-The membership criterion is the **deictic feature, not the morphological label**. This is the point
-of [patel-grosz-grosz-2017]: German *der/die/das*, traditionally called "demonstrative pronouns",
-are strong-article *personal* pronouns with no deixis (their footnote 1) — they are
-`PersonalPronoun`s, not `DemonstrativePronoun`s (see `Studies/PatelGroszGrosz2017.lean`). The
-genuine German demonstrative is *dieser*. So the PER/DEM(German) distinction is article strength
-(a `Schwarz` semantic axis), *orthogonal* to demonstrativehood (a deictic axis); the type
-assignment keeps them apart by construction.
+A demonstrative pronoun is a pronoun with the deictic contrast it encodes: proximal, medial or
+distal, or none for a distance-neutral form such as German *dieser*. What makes a form a
+demonstrative is that deictic feature and not its traditional label. [patel-grosz-grosz-2017]
+argue that German *der*, *die*, *das*, traditionally called demonstrative pronouns, are personal
+pronouns built on the strong article and encode no deixis, so they are `PersonalPronoun`s here
+(`Studies/PatelGroszGrosz2017.lean`). `DemonstrativePronoun` is one carrier of the
+`Demonstrative` capability; a demonstrative determiner or pro-adverb would be a sibling carrier.
 
 ## Main declarations
 
-* `DemonstrativePronoun` — the deictic demonstrative pronoun (`extends Pronoun` + `deixis`).
-* `instance : Demonstrative DemonstrativePronoun` — its deictic-contrast capability.
-* `HasPhi` instance routing it through the Pronoun API.
+* `DemonstrativePronoun` — a pronoun with its deictic contrast
+* `DemonstrativePronoun.toWord` — its token, of UD pronoun type `Dem`
+
+## References
+
+* [P. Patel-Grosz and P. G. Grosz, *Revisiting Pronominal Typology*
+  (2017)][patel-grosz-grosz-2017]
 -/
 
-/-- A deictic demonstrative pronoun: the general `Pronoun` (form + φ) plus the
-    `Reference.Deixis` it encodes — its proximal/medial/distal contrast (or `unspecified`
-    for a distance-neutral demonstrative like German *dieser*). Carries no separate denotation here;
-    its meaning is the deictic `Reference.Description.demonstrative` over its restrictor. -/
+/-- A demonstrative pronoun: the general `Pronoun` with the deictic contrast it encodes,
+`unspecified` for a distance-neutral form. Its meaning is the deictic
+`Reference.Description.demonstrative` over its restrictor. -/
 structure DemonstrativePronoun extends Pronoun where
-  /-- The deictic feature (proximal/medial/distal, or `unspecified`). -/
+  /-- The deictic contrast the form encodes. -/
   deixis : Reference.Deixis
   deriving Repr, DecidableEq
 
-/-- A demonstrative pronoun bears φ via its `Pronoun` core. -/
 instance : HasPhi DemonstrativePronoun := ⟨fun d ↦ d.toPronoun.phi⟩
 
-/-- A demonstrative's word is of UD pronoun type `Dem`. -/
-def DemonstrativePronoun.toWord (d : DemonstrativePronoun) : Word := d.toPronoun.toWord (some .Dem)
+/-- A demonstrative's token is of UD pronoun type `Dem`. -/
+def DemonstrativePronoun.toWord (d : DemonstrativePronoun) : Morphology.Word :=
+  d.toPronoun.toWord (some .Dem)
 
-/-- The demonstrative pronoun is a carrier of the `Demonstrative` (deictic-contrast) capability. -/
 instance : Demonstrative DemonstrativePronoun := ⟨DemonstrativePronoun.deixis⟩

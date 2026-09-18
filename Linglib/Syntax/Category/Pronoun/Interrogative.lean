@@ -19,13 +19,11 @@ in the pro-forms for place, time and manner, which surface as adverbs.
 * [M. Haspelmath, *Indefinite Pronouns* (1997)][haspelmath-1997]
 -/
 
-open Indefinite (OntologicalCategory)
-
 /-- An interrogative pronoun: the general `Pronoun` with the ontological category it asks
 about. -/
 structure InterrogativePronoun extends Pronoun where
   /-- The ontological category the form asks about. -/
-  ontology : OntologicalCategory
+  ontology : Indefinite.OntologicalCategory
   deriving DecidableEq, Repr
 
 namespace InterrogativePronoun
