@@ -101,6 +101,19 @@ theorem validPaths_prefix_closed {t : T} {p q : TreePath}
   rw [← hs, subtreeAt_append] at hq
   exact Option.isSome_of_isSome_bind hq
 
+theorem isLowerSet_validPaths (t : T) : IsLowerSet (validPaths t) :=
+  fun _ _ hpq hq => validPaths_prefix_closed hq hpq
+
+/-- The daughters of a position are its extensions by an index below the arity of its
+subtree. -/
+theorem mem_validPaths_append_singleton_iff {t : T} {p : List Nat} {i : Nat} :
+    (⟨p ++ [i]⟩ : TreePath) ∈ validPaths t ↔
+      ∃ s, subtreeAt t p = some s ∧ i < (children s).length := by
+  simp only [validPaths, Set.mem_ofPred_eq, subtreeAt_append, subtreeAt_cons, subtreeAt_nil]
+  cases subtreeAt t p with
+  | none => simp
+  | some s => simp
+
 end Branching
 
 /-! ### Instance: `FreeMagma`
