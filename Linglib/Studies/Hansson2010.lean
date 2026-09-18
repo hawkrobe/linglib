@@ -17,7 +17,7 @@ words of the tier-based strictly 2-local agree language, `mem_language_iff_antic
 it leaves the trigger and everything off the tier in place and neutralizes the contrast in the
 sibilants it targets, the three characteristics the book draws from (4). It is the substrate's
 harmony `System`, [rose-walker-2011]'s decomposition shared with the vowel harmonies of the
-fragments, run from the right, `anticipatory_eq_transduceWord`. The book's own qualification
+fragments, run from the right, `anticipatory_eq_harmonize`. The book's own qualification
 (section 3.1.2) is the perseveratory assimilation of the first-person subject prefix after the
 s-perfective and s-destruct prefixes (12), (14), which the anticipatory map mispredicts,
 `perseveratory_rows`, while harmony from the root still overrides it (15). The examples are
@@ -241,70 +241,53 @@ def value : Sibilant → Option Bool
 /-- Write an anteriority value. -/
 def write (v : Bool) (_ : Sibilant) : Sibilant := if v then .anterior else .posterior
 
-/-- Navajo sibilant harmony as a harmony `System`: both sibilant series participate, all
-else is transparent, nothing blocks, and the direction is leftward. -/
+/-- Navajo sibilant harmony as a harmony `System`, in which both sibilant series trigger and
+undergo, all else is transparent, nothing blocks, and the direction is leftward. -/
 def navajo : System Sibilant where
   pattern :=
     { value := value
-      participation := λ s => if s.onTier then .participating else .transparent
+      participation := fun s => if s.onTier then .participating else .transparent
       direction := .leftward }
-  targetIsContext := Sibilant.onTier
-  isTarget := Sibilant.onTier
+  IsTrigger := Sibilant.onTier
+  IsTarget := Sibilant.onTier
   write := write
-  value_write := λ v _ => by cases v <;> rfl
+  value_write := fun v _ => by cases v <;> rfl
+  write_value := fun v s h => by cases s <;> cases v <;> simp_all [value, write]
 
 theorem pattern_onTier_iff (s : Sibilant) : navajo.pattern.OnTier s ↔ s.onTier := by
   cases s <;> simp [navajo, Pattern.OnTier]
 
+theorem pattern_tier (w : List Sibilant) : navajo.pattern.tier w = sibilants w := by
+  rw [sibilants, tierProject_eq_filter]
+  exact List.filter_congr fun s _ => by simp [pattern_onTier_iff]
+
+/-- Every sibilant triggers and undergoes. -/
+theorem saturated : navajo.Saturated := fun s _ => by
+  cases s <;> simp_all [navajo, Pattern.OnTier, System.transmits, value, Sibilant.onTier]
+
+theorem transmits_write (v : Bool) (s : Sibilant) : navajo.transmits (write v s) = some v := by
+  cases v <;> rfl
+
 /-- The leftmost sibilant of a word. -/
 def first (w : List Sibilant) : Option Sibilant := (sibilants w).head?
 
-theorem windowOutput_nil (x : Sibilant) : navajo.spreadRule.windowOutput [] x = [x] := by
-  simp [System.spreadRule, System.isBlocker, navajo]
+/-- The substrate's progressive harmony over the Navajo system gives every sibilant the class
+of the leftmost one. -/
+theorem transduce_eq (w : List Sibilant) : navajo.transduce w = w.map (harmonize (first w)) := by
+  rw [navajo.transduce_eq_map saturated transmits_write, pattern_tier]
+  refine List.map_congr_left fun s _ => ?_
+  rcases hf : first w with _ | x
+  · rw [first] at hf
+    simp [hf, harmonize]
+  · rw [first] at hf
+    have hx : x.onTier := mem_sibilants_onTier (List.mem_of_mem_head? hf)
+    simp only [pattern_onTier_iff, hf, Option.bind_some, harmonize]
+    cases x <;> cases s <;> simp_all [System.transmits, navajo, value, write, Sibilant.onTier]
 
-theorem windowOutput_singleton {t : Sibilant} (ht : t.onTier) {x : Sibilant} (hx : x.onTier) :
-    navajo.spreadRule.windowOutput [t] x = [t] := by
-  cases t <;> cases x <;> simp_all [System.spreadRule, System.isBlocker, navajo, value, write]
-
-theorem applyOnTierAux_eq (t : Option Sibilant) (ht : ∀ s ∈ t, s.onTier) (xs : List Sibilant) :
-    navajo.spreadRule.applyOnTierAux navajo.pattern.OnTier t.toList xs =
-      xs.map (harmonize (t.or (first xs))) := by
-  induction xs generalizing t with
-  | nil => rfl
-  | cons x xs ih =>
-    by_cases hx : x.onTier
-    · rw [OSLRule.applyOnTierAux, ite_eq_left ((pattern_onTier_iff x).mpr hx)]
-      have hfirst : first (x :: xs) = some x := by
-        simp [first, sibilants, tierProject_eq_filter, List.filter_cons_of_pos, hx]
-      cases t with
-      | none =>
-        have := ih (some x) (λ s hs => Option.mem_some_iff.mp hs ▸ hx)
-        simp only [Option.toList] at this
-        simp only [Option.toList, List.nil_append, windowOutput_nil, List.rtake,
-          List.length_singleton, Nat.reduceSub, Nat.sub_self, List.drop_zero, this, hfirst]
-        simp [Option.or, harmonize_some_of_onTier hx]
-      | some t =>
-        have := ih (some t) ht
-        simp only [Option.toList] at this
-        simp only [Option.toList, windowOutput_singleton (ht t rfl) hx, List.rtake,
-          List.singleton_append, List.length_cons, List.length_nil, Nat.reduceAdd,
-          Nat.reduceSub, List.drop_succ_cons, List.drop_zero, this]
-        simp [Option.or, harmonize_some_of_onTier hx]
-    · rw [OSLRule.applyOnTierAux, ite_eq_right ((pattern_onTier_iff x).not.mpr hx), ih t ht]
-      simp [first, sibilants, tierProject_eq_filter, List.filter_cons_of_neg, hx,
-        harmonize_of_not_onTier hx]
-
-/-- The substrate's progressive harmony over the Navajo system: every sibilant takes the
-class of the leftmost one. -/
-theorem transduceWord_eq (w : List Sibilant) :
-    navajo.transduceWord w = w.map (harmonize (first w)) := by
-  simpa [System.transduceWord, OSLRule.applyOnTier, Option.or] using
-    applyOnTierAux_eq none (by simp) w
-
-/-- Anticipatory harmony is the substrate's harmony system run from the right. -/
-theorem anticipatory_eq_transduceWord (w : List Sibilant) :
-    anticipatory w = (navajo.transduceWord w.reverse).reverse := by
-  rw [transduceWord_eq, List.map_reverse, List.reverse_reverse, anticipatory]
+/-- Anticipatory harmony is the substrate's harmony system run in its direction. -/
+theorem anticipatory_eq_harmonize (w : List Sibilant) : anticipatory w = navajo.harmonize w := by
+  show anticipatory w = (navajo.transduce w.reverse).reverse
+  rw [transduce_eq, List.map_reverse, List.reverse_reverse, anticipatory]
   congr 1
   simp [first, trigger, sibilants, tierProject_eq_filter, List.filter_reverse,
     List.head?_reverse]

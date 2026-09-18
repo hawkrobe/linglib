@@ -419,27 +419,27 @@ def regular : List (Data.Forms.Form × Stem) :=
 
 /-- On the regular stems the surface generalization and the derivations agree. -/
 theorem triggerValue_agrees : ∀ t ∈ regular,
-    triggerValue hungarianPalatalHarmony (vowelsOf t.1.segments) = some t.2.isBack := by
+    hungarianPalatalHarmony.triggerValue (vowelsOf t.1.segments) = some t.2.isBack := by
   decide
 
 /-- A pure COR stem has no harmonic vowel to read, and its floating COR derives front
 suffixes. -/
 theorem triggerValue_viz :
-    triggerValue hungarianPalatalHarmony (vowelsOf Forms.viz.segments) = none ∧
+    hungarianPalatalHarmony.triggerValue (vowelsOf Forms.viz.segments) = none ∧
       Stem.viz.isBack = false := by
   decide
 
 /-- An antiharmonic stem has no harmonic vowel to read either; its floating DOR derives back
 suffixes. -/
 theorem triggerValue_hid :
-    triggerValue hungarianPalatalHarmony (vowelsOf Forms.hid.segments) = none ∧
+    hungarianPalatalHarmony.triggerValue (vowelsOf Forms.hid.segments) = none ∧
       Stem.hid.isBack = true := by
   decide
 
 /-- An opaque stem's last harmonic vowel is back, yet its linked DOR cannot reach the suffix
 and its linked COR derives front suffixes. -/
 theorem triggerValue_kodex :
-    triggerValue hungarianPalatalHarmony (vowelsOf Forms.kodex.segments) = some true ∧
+    hungarianPalatalHarmony.triggerValue (vowelsOf Forms.kodex.segments) = some true ∧
       Stem.kodex.isBack = false := by
   decide
 

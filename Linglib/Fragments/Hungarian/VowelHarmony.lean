@@ -97,23 +97,23 @@ def isBackHarmonic (s : Segment) : Bool := s.HasValue .syllabic true && s.HasVal
 
 /-! ### The harmony systems -/
 
-/-- Palatal harmony: the backness of the last harmonic stem vowel spreads rightward to the
-harmonic suffix vowels, the neutral vowels being transparent. -/
+/-- Palatal harmony spreads the backness of the last harmonic stem vowel rightward to the
+suffix vowels unspecified for it, consonants and the neutral vowels being off the tier. -/
 def hungarianPalatalHarmony : System Segment :=
   System.mk' (feature := .back)
-    (isTrigger := λ s => s.HasValue .syllabic true && !isNeutral s)
-    (isTarget := λ s => s.HasValue .syllabic true && !isNeutral s)
-    (isTransparent := isNeutral)
+    (isTrigger := fun s => s.HasValue .syllabic true && !isNeutral s)
+    (isTarget := fun s => s.HasValue .syllabic true && (s .back).isNone)
+    (isTransparent := fun s => !s.HasValue .syllabic true || isNeutral s)
     (direction := .rightward)
 
-/-- Rounding harmony: the rounding of the last stem vowel, with no transparent vowels, which
-matters only for front stems since a back stem takes the back alternant of a three-way
-suffix. -/
+/-- Rounding harmony spreads the rounding of the last stem vowel to the suffix vowels
+unspecified for it, with no transparent vowels; it matters only for front stems, since a
+back stem takes the back alternant of a three-way suffix. -/
 def hungarianLabialHarmony : System Segment :=
   System.mk' (feature := .round)
     (isTrigger := (·.HasValue .syllabic true))
-    (isTarget := (·.HasValue .syllabic true))
-    (isTransparent := λ _ => false)
+    (isTarget := fun s => s.HasValue .syllabic true && (s .round).isNone)
+    (isTransparent := fun s => !s.HasValue .syllabic true)
     (direction := .rightward)
 
 end Hungarian.VowelHarmony
