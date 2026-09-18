@@ -56,6 +56,8 @@ size-insensitive Sequence of Tense of English in its CP complements sitting insi
 
 namespace Egressy2026
 
+open Semantics
+
 open Minimalist Tense Data.Examples Hungarian.Predicates Egressy2026.Examples
 
 /-! ### The two clause types and their size (§2, §3.1) -/
@@ -285,7 +287,7 @@ theorem clauseType_not_of_verb :
 
 /-- An embedded clause: its morphological tense and its size. -/
 structure Clause where
-  /-- The clause's tense as a comparison cell, `Tense.past` or `Tense.future`. -/
+  /-- The clause's tense as a comparison cell, `⟦Tense.past⟧` or `⟦Tense.future⟧`. -/
   tense : Finset Ordering
   /-- The clause's size. -/
   size : ComplementSize
@@ -296,7 +298,7 @@ backshifted only, since the rule needs an agreeing PAST above; a non-past clause
 past-under-past reading. -/
 def linkReadings (a : Attachment) (matrix : Finset Ordering) (c : Clause) :
     List EmbeddedTenseReading :=
-  if c.tense = past then (if matrix = past then readings a c.size else [.shifted]) else []
+  if c.tense = ⟦past⟧ then (if matrix = ⟦past⟧ then readings a c.size else [.shifted]) else []
 
 /-- The readings at each level of a chain of embedded clauses under a matrix tense, matrix first.
 Each clause is read against the clause immediately containing it: by (41) every clause attaches
@@ -307,19 +309,19 @@ def profile (a : Attachment) : Finset Ordering → List Clause → List (List Em
   | m, c :: rest => linkReadings a m c :: profile a c.tense rest
 
 /-- The chain of a two-level Hungarian row, from its two clause-type features. -/
-def chain (ct₁ ct₂ : ClauseType) : List Clause := [⟨past, ct₁.size⟩, ⟨past, ct₂.size⟩]
+def chain (ct₁ ct₂ : ClauseType) : List Clause := [⟨⟦past⟧, ct₁.size⟩, ⟨⟦past⟧, ct₂.size⟩]
 
 /-- (16): shout > see > be. The speech-reporting intermediate clause is backshifted; the
 non-speech-reporting deepest clause is simultaneous with it. -/
 theorem ex16_profile :
-    profile .sizeDependent past (chain .speechReporting .nonSpeechReporting) =
+    profile .sizeDependent ⟦past⟧ (chain .speechReporting .nonSpeechReporting) =
       [[.shifted], [.shifted, .simultaneous]] := by
   decide
 
 /-- (17): hear > shout > be, the mirror image of (16): only adjacent clauses interact, and a
 speech-reporting clause is backshifted whatever contains it. -/
 theorem ex17_profile :
-    profile .sizeDependent past (chain .nonSpeechReporting .speechReporting) =
+    profile .sizeDependent ⟦past⟧ (chain .nonSpeechReporting .speechReporting) =
       [[.shifted, .simultaneous], [.shifted]] := by
   decide
 
@@ -329,16 +331,16 @@ theorem doubleRows_predicted : ∀ e ∈ [ex_10, ex_15, ex_16, ex_17], ∀ ct₁
     e.parse? "intermediateClauseType" clauseTypeTable = some ct₁ →
     e.parse? "deepestClauseType" clauseTypeTable = some ct₂ →
       Agrees e "intermediate " (observed (DirectPerceptionAt e "intermediateDirectPerception")
-          ((profile .sizeDependent past (chain ct₁ ct₂)).getD 0 [])) ∧
+          ((profile .sizeDependent ⟦past⟧ (chain ct₁ ct₂)).getD 0 [])) ∧
         Agrees e "deepest " (observed (DirectPerceptionAt e "deepestDirectPerception")
-          ((profile .sizeDependent past (chain ct₁ ct₂)).getD 1 [])) := by
+          ((profile .sizeDependent ⟦past⟧ (chain ct₁ ct₂)).getD 1 [])) := by
   decide
 
 /-- (18), [ogihara-1996]: English past under *will* under past. The deepest past has no
 simultaneous reading, the tense immediately above it being a future rather than an agreeing
 past, although English complements attach inside the VP and are otherwise deleted freely. -/
 theorem ex18_profile :
-    profile .vpInternal past [⟨future, .cP⟩, ⟨past, .cP⟩] = [[], [.shifted]] := by
+    profile .vpInternal ⟦past⟧ [⟨⟦future⟧, .cP⟩, ⟨⟦past⟧, .cP⟩] = [[], [.shifted]] := by
   decide
 
 theorem ex18_predicted : Agrees ex_18 "deepest " [.shifted] := by decide

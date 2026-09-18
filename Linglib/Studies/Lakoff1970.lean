@@ -33,6 +33,8 @@ under sequence of tense, (11b).
 
 namespace Lakoff1970
 
+open Semantics
+
 open Tense
 
 variable {T : Type*}
@@ -88,12 +90,12 @@ instance [LinearOrder T] (f : Perspective T) : Decidable (WillDeletion f) :=
 
 /-- A false past is a false use of the past cell. -/
 theorem falsePast_not_trueUse [LinearOrder T] {f : Perspective T} (h : FalsePast f) :
-    ¬ IsTrueUse past f := by
+    ¬ IsTrueUse ⟦past⟧ f := by
   simp only [IsTrueUse, compare_mem_past, h.1, lt_self_iff_false, not_false_eq_true]
 
 /-- Will-deletion is a false use of the present cell. -/
 theorem willDeletion_not_trueUse [LinearOrder T] {f : Perspective T} (h : WillDeletion f) :
-    ¬ IsTrueUse present f := by
+    ¬ IsTrueUse ⟦present⟧ f := by
   simp only [IsTrueUse, compare_mem_present]; exact h.1.ne'
 
 /-! ### Forms and judgments -/
@@ -111,16 +113,16 @@ structure TenseForm where
   form : Form
 
 /-- The simple past. -/
-def simplePast : TenseForm := ⟨past, .synthetic⟩
+def simplePast : TenseForm := ⟨⟦past⟧, .synthetic⟩
 
 /-- The simple present. -/
-def simplePresent : TenseForm := ⟨present, .synthetic⟩
+def simplePresent : TenseForm := ⟨⟦present⟧, .synthetic⟩
 
 /-- The future with *will*. -/
-def will : TenseForm := ⟨future, .synthetic⟩
+def will : TenseForm := ⟨⟦future⟧, .synthetic⟩
 
 /-- The periphrastic past *used to*. -/
-def usedTo : TenseForm := ⟨past, .periphrastic⟩
+def usedTo : TenseForm := ⟨⟦past⟧, .periphrastic⟩
 
 /-- A frame at speech time zero with the event at `e`. -/
 private def frame (e : ℤ) (Salient : Prop) [Decidable Salient] : Perspective ℤ :=
@@ -138,7 +140,8 @@ in one of the false uses the paper describes: a false past, or will-deletion. -/
 def Judgment.Predicted (j : Judgment) : Prop :=
   IsTrueUse j.form.cell j.frame ∨
     (j.form.form = .synthetic ∧
-      ((j.form.cell = past ∧ FalsePast j.frame) ∨ (j.form.cell = present ∧ WillDeletion j.frame)))
+      ((j.form.cell = ⟦past⟧ ∧ FalsePast j.frame) ∨
+        (j.form.cell = ⟦present⟧ ∧ WillDeletion j.frame)))
 
 instance (j : Judgment) : Decidable j.Predicted := by
   unfold Judgment.Predicted; infer_instance

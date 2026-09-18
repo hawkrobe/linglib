@@ -67,6 +67,8 @@ not state.
 
 namespace TsiliaZhao2026
 
+open Semantics
+
 open Tense Tense.Perspective
 
 variable {T : Type*} [LinearOrder T] {C : Finset Ordering} {r th π : NonemptyInterval T}
@@ -83,7 +85,7 @@ def Restricted (tense adv : Finset Ordering) (r th π : NonemptyInterval T) : Pr
 modified by a distal adverb is contradictory whatever the perspective: the root case (75), the
 shifted case (78) and the future cases (81)–(82) alike. -/
 theorem not_restricted_present {a : DeicticAdverb} (ha : a.IsDistal)
-    (r th π : NonemptyInterval T) : ¬ Restricted present a.cell r th π :=
+    (r th π : NonemptyInterval T) : ¬ Restricted ⟦present⟧ a.cell r th π :=
   fun ⟨hr, hle, hth⟩ ↦ not_presup_of_presup_present ha hr hle hth
 
 /-- The ⌈then⌉ adverbs of the paper's sample. -/
@@ -94,20 +96,20 @@ def thenAdverbs : List DeicticAdverb :=
 /-- (12), the ⌈then⌉-present puzzle: every adverb of the sample is distal, Japanese *tooji*
 because a past reference is in particular a disjoint one, so none restricts a present tense. -/
 theorem not_restricted_present_of_mem {a : DeicticAdverb} (ha : a ∈ thenAdverbs)
-    (r th π : NonemptyInterval T) : ¬ Restricted present a.cell r th π :=
+    (r th π : NonemptyInterval T) : ¬ Restricted ⟦present⟧ a.cell r th π :=
   not_restricted_present ((by decide : ∀ a ∈ thenAdverbs, a.IsDistal) a ha) r th π
 
 /-- The clash is the adverb's doing: Russian *sejčas* 'now', with the presupposition of PRES,
 (115), restricts a present tense. -/
 theorem restricted_present_sejchas (r : NonemptyInterval T) :
-    Restricted present Russian.TemporalDeictic.sejchas.cell r r r :=
+    Restricted ⟦present⟧ Russian.TemporalDeictic.sejchas.cell r r r :=
   ⟨presup_present.2 (NonemptyInterval.overlaps_refl r), le_rfl,
     presup_present.2 (NonemptyInterval.overlaps_refl r)⟩
 
 /-- (36): with pronominal anchors, PRES and ⌈then⌉ could be anchored to different times and
 the clause would be coherent, which is why the anchor is a parameter. -/
 theorem exists_split_anchor {π₁ π₂ : NonemptyInterval T} (h : ¬ π₁.overlaps π₂) :
-    ∃ r th, Presup present π₁ r ∧ r ≤ th ∧ Presup presentᶜ π₂ th :=
+    ∃ r th, Presup ⟦present⟧ π₁ r ∧ r ≤ th ∧ Presup ⟦present⟧ᶜ π₂ th :=
   ⟨π₁, π₁, presup_present.2 (NonemptyInterval.overlaps_refl π₁), le_rfl,
     presup_compl_present.2 h⟩
 
@@ -115,7 +117,7 @@ theorem exists_split_anchor {π₁ π₂ : NonemptyInterval T} (h : ¬ π₁.ove
 
 /-- (38), (39), (44): a PAST admits at its own reference any adverb whose cell admits
 precedence, ⌈then⌉ and *tooji* alike. -/
-theorem restricted_past_self (hC : .lt ∈ C) (h : Presup past π r) : Restricted past C r r π :=
+theorem restricted_past_self (hC : .lt ∈ C) (h : Presup ⟦past⟧ π r) : Restricted ⟦past⟧ C r r π :=
   ⟨h, le_rfl, h.mono (Finset.singleton_subset_iff.2 hC)⟩
 
 /-- (32): *tooji* is used only of past times, so unlike English *then* it cannot refer to a time
@@ -132,7 +134,7 @@ theorem restricted_top_iff : Restricted ⊤ C r th π ↔ r ≤ th ∧ Presup C 
 
 /-- (89a): with no OP_π the perspective stays the utterance time, from which the reported
 meeting is disjoint, and ⌈then⌉ restricts the deleted past. -/
-theorem restricted_top_of_not_overlaps (h : ¬ r.overlaps π) : Restricted ⊤ presentᶜ r r π :=
+theorem restricted_top_of_not_overlaps (h : ¬ r.overlaps π) : Restricted ⊤ ⟦present⟧ᶜ r r π :=
   restricted_top_iff.2 ⟨le_rfl, presup_compl_present.2 h⟩
 
 /-- (89b): with OP_π shifting the perspective onto the time of the reported speech, within
@@ -145,14 +147,14 @@ theorem not_restricted_top_of_le (hC : .eq ∉ C) (hr : r ≤ π) : ¬ Restricte
 
 /-- (112), (114)–(115): a past reference cannot be restricted by a *sejčas* whose reference
 lies within the perspective. -/
-theorem not_restricted_past_of_le (hth : th ≤ π) : ¬ Restricted past C r th π :=
+theorem not_restricted_past_of_le (hth : th ≤ π) : ¬ Restricted ⟦past⟧ C r th π :=
   fun ⟨hr, hle, _⟩ ↦ NonemptyInterval.precedes_not_overlaps (presup_past.1 hr)
     (NonemptyInterval.overlaps_of_le (hle.trans hth))
 
 /-- The presuppositions (114) and (115) alone do not exclude a past under *sejčas*: a time that
 precedes the perspective can lie within one that overlaps it. -/
 theorem exists_restricted_past_present {a b : T} (hab : a < b) :
-    ∃ r th π : NonemptyInterval T, Restricted past present r th π :=
+    ∃ r th π : NonemptyInterval T, Restricted ⟦past⟧ ⟦present⟧ r th π :=
   ⟨.pure a, ⟨(a, b), hab.le⟩, .pure b, presup_past.2 (by exact hab),
     NonemptyInterval.le_def.2 ⟨le_rfl, hab.le⟩,
     presup_present.2 ⟨hab.le, le_rfl⟩⟩

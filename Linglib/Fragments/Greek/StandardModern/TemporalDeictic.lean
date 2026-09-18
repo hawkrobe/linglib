@@ -15,10 +15,12 @@ anaphoric expression *ekino ton kero* 'at that time'. The examples are those of
 
 namespace Greek.StandardModern.TemporalDeictic
 
+open Semantics
+
 open Tense
 
 /-- *tote* (τότε) 'then', a time before or after the deictic centre: *To 2000, o Yanis ithele i
 Maria na mini egkios tote* 'In 2000, Yanis wanted Maria to get pregnant then'. -/
-def tote : DeicticAdverb := { form := "tote", cell := presentᶜ }
+def tote : DeicticAdverb := { form := "tote", cell := ⟦present⟧ᶜ }
 
 end Greek.StandardModern.TemporalDeictic

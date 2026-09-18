@@ -14,9 +14,11 @@ then', not *tooji ai-mashou*. The description and examples follow [tsilia-zhao-2
 
 namespace Japanese.TemporalDeictic
 
+open Semantics
+
 open Tense
 
 /-- *tooji* (当時) 'then', a time before the deictic centre. -/
-def tooji : DeicticAdverb := { form := "tooji", cell := past }
+def tooji : DeicticAdverb := { form := "tooji", cell := ⟦past⟧ }
 
 end Japanese.TemporalDeictic

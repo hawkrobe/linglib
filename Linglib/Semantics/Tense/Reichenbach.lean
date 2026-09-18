@@ -19,6 +19,8 @@ Tense relates R to P; Aspect relates E to R.
 
 namespace Tense
 
+open Semantics
+
 /--
 Reichenbach's temporal parameters for tense/aspect analysis,
 extended with [kiparsky-2002]'s perspective time P.
@@ -47,19 +49,19 @@ namespace ReichenbachFrame
 variable {T : Type*} [LinearOrder T]
 
 /-- PAST: R < P (reference time precedes perspective time) — membership of `compare R P` in the
-    `Tense.past` cell. [kiparsky-2002]: tense locates R relative to P, not S. -/
+    `⟦Tense.past⟧` cell. [kiparsky-2002]: tense locates R relative to P, not S. -/
 def isPast (f : ReichenbachFrame T) : Prop :=
-  compare f.referenceTime f.perspectiveTime ∈ Tense.past
+  compare f.referenceTime f.perspectiveTime ∈ ⟦Tense.past⟧
 
 /-- PRESENT: R = P (reference time equals perspective time). Present is the one tense that
     needs no ordering, so it stays the bare equality (frame predicates over unordered time keep
-    typechecking); it is equivalent to membership in `Tense.present` (`compare_mem_present`). -/
+    typechecking); it is equivalent to membership in `⟦Tense.present⟧` (`compare_mem_present`). -/
 def isPresent (f : ReichenbachFrame T) : Prop :=
   f.referenceTime = f.perspectiveTime
 
 /-- FUTURE: P < R (perspective time precedes reference time). -/
 def isFuture (f : ReichenbachFrame T) : Prop :=
-  compare f.referenceTime f.perspectiveTime ∈ Tense.future
+  compare f.referenceTime f.perspectiveTime ∈ ⟦Tense.future⟧
 
 /-- NONPAST: P ≤ R (present or future) ([klecha-2016]) — membership in `Tense.nonpast`.
     Completes the four-way relation on frames. -/

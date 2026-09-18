@@ -43,6 +43,8 @@ future; only the moment is, which is why settledness carries the felicity facts.
 
 namespace BranchingTime
 
+open Semantics
+
 variable {M : Type*}
 
 /-! ### The frame -/
@@ -164,19 +166,19 @@ theorem isInevitable_iff_oSupervaluation_oFut [PartialOrder M] (φ : MProp M) (m
 /-! ### Grounding in the library's tense cells
 
 The Ockhamist past and future operators land in the same comparison cells as the rest of the
-library's tense (`Tense.past`, `Tense.future`): `oPast`'s witness compares into `Tense.past`
-against the evaluation moment and `oFut`'s into `Tense.future`. These are the linear-frame
+library's tense (`⟦Tense.past⟧`, `⟦Tense.future⟧`): `oPast`'s witness compares into `⟦Tense.past⟧`
+against the evaluation moment and `oFut`'s into `⟦Tense.future⟧`. These are the linear-frame
 reductions; on a genuinely branching frame the comparison lives on each history's chain order
 (`oFut_oAtom_holds_on_hist`). -/
 
 @[simp] theorem oPast_oAtom_iff_holds {M : Type*} [LinearOrder M]
     (φ : MProp M) (m : M) (h : Flag M) :
-    oPast (oAtom φ) m h ↔ ∃ m', compare m' m ∈ Tense.past ∧ φ m' := by
+    oPast (oAtom φ) m h ↔ ∃ m', compare m' m ∈ ⟦Tense.past⟧ ∧ φ m' := by
   simp only [oPast, oAtom, Tense.compare_mem_past]
 
 @[simp] theorem oFut_oAtom_iff_holds {M : Type*} [LinearOrder M]
     (φ : MProp M) (m : M) (h : Flag M) :
-    oFut (oAtom φ) m h ↔ ∃ m' ∈ h, compare m' m ∈ Tense.future ∧ φ m' := by
+    oFut (oAtom φ) m h ↔ ∃ m' ∈ h, compare m' m ∈ ⟦Tense.future⟧ ∧ φ m' := by
   simp only [oFut, oAtom, Tense.compare_mem_future]
 
 /-- The Ockhamist future along a history is the tense-cell future over the history's own chain
@@ -184,7 +186,7 @@ order, mathlib's `LinearOrder ↥h` for a maximal chain. -/
 theorem oFut_oAtom_holds_on_hist {M : Type*} [PartialOrder M]
     [DecidableEq M] [DecidableRel (· ≤ · : M → M → Prop)] [DecidableLT M]
     (φ : MProp M) {m : M} {h : Flag M} (hm : m ∈ h) :
-    oFut (oAtom φ) m h ↔ ∃ x : ↥h, compare x ⟨m, hm⟩ ∈ Tense.future ∧ φ (x : M) := by
+    oFut (oAtom φ) m h ↔ ∃ x : ↥h, compare x ⟨m, hm⟩ ∈ ⟦Tense.future⟧ ∧ φ (x : M) := by
   simp only [oFut, oAtom, Tense.compare_mem_future]
   constructor
   · rintro ⟨m', hm', hlt, hφ⟩

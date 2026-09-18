@@ -45,6 +45,8 @@ examples are the rows of `Data.Examples.VonStechow2009`.
 
 namespace VonStechow2009
 
+open Semantics
+
 variable {T : Type*} {s t : T} {P Q : T → Prop}
 
 /-! ### Tenses and auxiliaries (§5) -/
@@ -64,7 +66,7 @@ def future (t : T) (P : T → Prop) : Prop := ∃ t', t < t' ∧ P t'
 def be (t : T) (P : T → Prop) : Prop := P t
 
 /-- The Past is the past cell of `Tense` quantified existentially. -/
-theorem past_iff_cell : past t P ↔ ∃ t', compare t' t ∈ Tense.past ∧ P t' := by
+theorem past_iff_cell : past t P ↔ ∃ t', compare t' t ∈ ⟦Tense.past⟧ ∧ P t' := by
   simp only [past, Tense.compare_mem_past]
 
 /-- The pluperfect (27), *John had called*: a past time before a past time. -/

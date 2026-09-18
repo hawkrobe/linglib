@@ -22,6 +22,8 @@ open Reference
 
 namespace Tense
 
+open Semantics
+
 /-- [partee-1973]'s three-way interpretive classification of a referential expression,
 uniform across pronouns (entity variables) and tenses (temporal variables): anchored to the
 utterance context (*I*, the deictic present), resolved by discourse salience (*he*, the
@@ -171,7 +173,7 @@ theorem bound_resolve_eq_binder (tp : TensePronoun)
 /-- An indexical present tense presupposes resolution to speech time. -/
 theorem indexical_present_at_speech [LinearOrder T]
     (tp : TensePronoun) (resolvedTime speechTime : T)
-    (hPres : tp.constraint = present)
+    (hPres : tp.constraint = ⟦present⟧)
     (hPresup : tp.presupposition resolvedTime speechTime) :
     resolvedTime = speechTime := by
   simp only [presupposition, hPres, compare_mem_present] at hPresup
