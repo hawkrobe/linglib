@@ -25,8 +25,8 @@ switch-reference markers each encode a temporal or logical relation whereas Nung
 subject continuity alone, the temporal relation coming from a switch-reference-neutral
 construction (`relations_fused_with_sr`), that the chain's tense comes from the final verb in
 the two Papuan languages while Korean admits tense before some medial suffixes
-(`tense_from_final_verb`), that Korean and Turkish negate medial clauses individually
-(`negated_individually`), that their medial verbs are converbs (`converb_form`), and that in
+(`tense_from_final_verb`), that Turkish negates medial clauses individually
+(`negated_individually`), that the medial verbs of both are converbs (`converb_form`), and that in
 the sample switch-reference goes with the loss or reduction of medial tense (`sr_and_tense`).
 
 ## Implementation notes
@@ -44,7 +44,7 @@ latter's switch-reference system was misrecorded as tracking several arguments.
 * [sarvasy-2017]
 * [aikhenvald-2025]
 * [aikhenvald-2008]
-* [sohn-1999]
+* [sohn-1994]
 * [goksel-kerslake-2005]
 -/
 
@@ -98,12 +98,12 @@ def mood : Language → CategoryRetention
   | korean => .restricted
   | turkish => .ofPred Turkish.Converb.Tensed
 
-/-- Independent negation of the medial clause, which in Manambu, Korean and Turkish is as far
-as the forms admit it. -/
+/-- Independent negation of the medial clause, which in Manambu and Turkish is as far as the
+forms admit it, in Korean the negative adverbs and negative verb of a medial clause, and in
+Nungon the earlier formalization's value. -/
 def polarity : Language → CategoryRetention
-  | nungon => .full
+  | nungon | korean => .full
   | manambu => .ofPred Manambu.MedialMarker.Negatable
-  | korean => .ofPred Korean.Converb.AllowsNegation
   | turkish => .ofPred Turkish.Converb.Negatable
 
 /-- The aspect medial verbs retain, which is none in Nungon, in Manambu aspect only before the
@@ -170,11 +170,9 @@ theorem tense_from_final_verb :
       Language.tense .korean = .restricted := by
   decide
 
-/-- Korean and Turkish negate medial clauses individually, since every Korean suffix admits
-negation and every Turkish converb admits the negative before it or is negative itself. -/
-theorem negated_individually :
-    Language.polarity .korean = .full ∧ Language.polarity .turkish = .full := by
-  decide
+/-- Turkish negates medial clauses individually, since every converb admits the negative
+before it or is negative itself. -/
+theorem negated_individually : Language.polarity .turkish = .full := by decide
 
 /-- The medial verbs of the languages without switch-reference are converbs, as their
 fragments record them. -/
