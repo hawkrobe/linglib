@@ -7,13 +7,15 @@ Bulgarian marks non-firsthand information with the *l*-form, fused with tense an
 which covers inference and report and carries epistemic overtones of distance; the aorist is
 the unmarked counterpart. Aikhenvald classes the system as possibly A2, while noting that
 Balkan Slavic has been drifting toward an A1 system in which the unmarked form comes to signal
-firsthand information. The [cumming-2026] tense-evidential paradigm data are in
-`Fragments/Slavic/Bulgarian/Evidentials.lean`.
+firsthand information. Koev's and Cumming's tense-evidential paradigm of the *l*-form is in
+`Studies/Cumming2026.lean`.
 
 ## References
 
 * [aikhenvald-2004], §2.1, §4.8
 * [de-haan-2013]
+* [koev-2017]
+* [cumming-2026]
 -/
 
 namespace Bulgarian.Evidentiality
