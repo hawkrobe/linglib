@@ -153,7 +153,7 @@ section Again
 
 open Presupposition
 
-namespace Verb.CosModel
+namespace Verb.Model
 
 /-! ### Sublexical *again* and the hierarchy of its readings, (25)–(27)
 
@@ -164,10 +164,10 @@ the change, that it had flattened, and the repetitive one over the causation, th
 flattened it. The entry (26) is `Presupposition.again`, with `≪` the precedence between
 eventualities. The hierarchy of the readings, (25c) entailing (25b) entailing (25a), and the
 collapse of the restitutive reading for result roots, (43) and (45), follow from the
-change-of-state entailments of `Verb.CosModel` by the monotonicity of the presupposition. -/
+change-of-state entailments of `Verb.Model` by the monotonicity of the presupposition. -/
 
-variable {Entity State T : Type*} [LinearOrder T] (M : CosModel Entity State T)
-  {ltS : State → State → Prop} {ltE : Event T → Event T → Prop} {v : Verb} {x y : Entity}
+variable {Entity State Event : Type*} (M : Verb.Model Entity State Event)
+  {ltS : State → State → Prop} {ltE : Event → Event → Prop} {v : Verb} {x y : Entity}
 
 /-- In (27a) *again* attaches low, to the root, and modifies the root state, which is the
 restitutive reading. -/
@@ -175,38 +175,38 @@ def againRestitutive (ltS : State → State → Prop) (v : Verb) (x : Entity) : 
   again ltS (M.rootState v x)
 
 /-- In (27b) *again* attaches to `vbecomeP`, which is the repetitive reading over the change. -/
-def againRepetitiveBecome (ltE : Event T → Event T → Prop) (v : Verb) (x : Entity) :
-    PartialProp (Event T) :=
+def againRepetitiveBecome (ltE : Event → Event → Prop) (v : Verb) (x : Entity) :
+    PartialProp (Event) :=
   again ltE (M.inchoative v x)
 
 /-- In (27c) *again* attaches high, to `vcauseP`, which is the repetitive reading over the
 causation. -/
-def againRepetitiveCause (ltE : Event T → Event T → Prop) (v : Verb) (y x : Entity) :
-    PartialProp (Event T) :=
+def againRepetitiveCause (ltE : Event → Event → Prop) (v : Verb) (y x : Entity) :
+    PartialProp (Event) :=
   again ltE (M.causative v y x)
 
 /-- In the upper step of the hierarchy in (25), the presupposition of the repetitive reading
 over the causation gives an earlier change, since a causing event brings one about. -/
-theorem againRepetitiveCause_presup_entails_become {w : Event T}
+theorem againRepetitiveCause_presup_entails_become {w : Event}
     (h : (M.againRepetitiveCause ltE v y x).presup w) :
     ∃ w', ltE w' w ∧ ∃ e, M.inchoative v x e :=
   again_presup_mono (Q := fun _ ↦ ∃ e, M.inchoative v x e)
-    (fun w' ↦ M.causative_entails_inchoative v y x w') w h
+    (fun _ ↦ exists_inchoative_of_causative) w h
 
 /-- In the lower step of the hierarchy in (25), the presupposition of the repetitive reading
 over the change gives an earlier root state, since a change brings one about. -/
-theorem againRepetitiveBecome_presup_entails_state {e : Event T}
+theorem againRepetitiveBecome_presup_entails_state {e : Event}
     (h : (M.againRepetitiveBecome ltE v x).presup e) :
     ∃ e', ltE e' e ∧ ∃ s, M.become s e' ∧ M.rootState v x s :=
   h
 
 /-- End to end, the hierarchy in (25) says that Mary's having flattened the rug before entails
 that it had been flat before. -/
-theorem againRepetitiveCause_presup_entails_state {w : Event T}
+theorem againRepetitiveCause_presup_entails_state {w : Event}
     (h : (M.againRepetitiveCause ltE v y x).presup w) :
     ∃ w', ltE w' w ∧ ∃ e s, M.become s e ∧ M.rootState v x s :=
   again_presup_mono (Q := fun _ ↦ ∃ e s, M.become s e ∧ M.rootState v x s)
-    (fun w' ↦ M.causative_entails_resultState v y x w') w h
+    (fun _ ↦ exists_rootState_of_causative) w h
 
 /-- For a result root the root state itself entails a prior change, so even the restitutive
 attachment of *again* presupposes a change, (45): result roots never admit a truly restitutive
@@ -216,7 +216,7 @@ theorem againRestitutive_presup_entails_change {s : State}
     (h : (M.againRestitutive ltS v x).presup s) : ∃ s', ltS s' s ∧ ∃ e, M.become s' e :=
   again_presup_mono (Q := fun s' ↦ ∃ e, M.become s' e) hres s h
 
-end Verb.CosModel
+end Verb.Model
 
 end Again
 
@@ -371,7 +371,7 @@ theorem crack_respectsMannerResultComplementarity :
 
 /-! ### The roots cash out denotationally ([beavers-koontz-garboden-2020] §1.3.2)
 
-Threading the roots through the change-of-state denotation (`Verb.CosModel`): a
+Threading the roots through the change-of-state denotation (`Verb.Model`): a
 verb's denotation is dispatched on its root's `kinds`, so the kinds
 proven above *select the event template* and the result entailment of (6)
 follows from the signature. √crack (`+cause+result`) entails a result state in
@@ -385,17 +385,17 @@ def jogV : Verb := { form := "jog", frames := [ArgumentFrame.intransitive], root
 
 /-- √crack carries `.result`, so in any model its denotation entails the result state. The
 non-cancelable result is derived from the signature of the root rather than stipulated. -/
-theorem crack_denote_entails_result {Entity State T : Type*} [LinearOrder T]
-    (M : Verb.CosModel Entity State T) (y x : Entity) (e : Event T)
+theorem crack_denote_entails_result {Entity State Event : Type*}
+    (M : Verb.Model Entity State Event) (y x : Entity) (e : Event)
     (h : M.denote crackV y x e) : ∃ e' s, M.become s e' ∧ M.rootState crackV x s :=
-  M.denote_result_entails_resultState crackV y x e (by decide) h
+  Verb.Model.exists_rootState_of_denote (by decide) h
 
 /-- √jog has neither `.result` nor `.cause`, so its denotation is the bare manner core, with no
 `become` and no result state. -/
-theorem jog_denote_eq_manner {Entity State T : Type*} [LinearOrder T]
-    (M : Verb.CosModel Entity State T) (y x : Entity) :
+theorem jog_denote_eq_manner {Entity State Event : Type*}
+    (M : Verb.Model Entity State Event) (y x : Entity) :
     M.denote jogV y x = M.manner jogV := by
-  unfold Verb.CosModel.denote
+  unfold Verb.Model.denote
   rw [ite_eq_right (by decide), ite_eq_right (by decide)]
 
 /-! ### The same contrast at the template level ([rappaport-hovav-levin-1998])
@@ -420,11 +420,11 @@ theorem jog_template_no_resultState : ¬ jog.template.HasResultState := by decid
 /-- The template of √crack embeds a result state, so its denotation entails the result state in
 any model. The template diagnostic and the denotational entailment are one fact about the kinds
 of the root. -/
-theorem crack_template_forces_denote_result {Entity State T : Type*}
-    [LinearOrder T] (M : Verb.CosModel Entity State T) (y x : Entity)
-    (e : Event T) (h : M.denote crackV y x e) :
+theorem crack_template_forces_denote_result {Entity State Event : Type*}
+    (M : Verb.Model Entity State Event) (y x : Entity)
+    (e : Event) (h : M.denote crackV y x e) :
     ∃ e' s, M.become s e' ∧ M.rootState crackV x s :=
-  M.denote_result_from_template crackV crack_template_hasResultState y x e h
+  Verb.Model.exists_rootState_of_denote_of_hasResultState crack_template_hasResultState h
 
 /-! ### The root hypothesis against Levin's class profiles -/
 

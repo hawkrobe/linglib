@@ -2,42 +2,35 @@ import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Semantics.ArgumentStructure.ThematicRole
 import Linglib.Semantics.ArgumentStructure.ThetaRole
 import Linglib.Semantics.ArgumentStructure.EventStructure
+import Linglib.Semantics.ArgumentStructure.ChangeOfState
 
 /-!
-# Verb denotation — what a verb *does*
+# The denotation of a verb
 
-A verb is, first of all, an **operation**: applied to its arguments it builds an
-event predicate. This file is that operation — the DO layer of the Verb API —
-parallel to how the φ substrate models person features as *operations* rather
-than predicates.
-
-For a change-of-state verb the operation is the [beavers-koontz-garboden-2020]
-§1.3.2 decomposition (`Verb.CosModel`): a root denotes a state predicate and the
-event predicate is built by `become'`/`cause'`, dispatched on the root's `kinds`.
-The proto-role theta-grid (`Verb.subjectRole`/`objectRole`, derived from the
-effective `EntailmentProfile`s via `EntailmentProfile.toRole`) supplies the
-participant roles.
+This file defines the theta roles of a verb's subject and object, read off their entailment
+profiles, and the event predicate that a change-of-state verb denotes. Following Beavers and
+Koontz-Garboden, the root of such a verb denotes a state predicate, and the verbal heads of a
+`ChangeOfStateModel` build the event predicate from it: the inchoative is the change-of-state
+head over the root's state, and the causative is the causative head over the inchoative. Which
+of them a verb denotes is chosen by the kind signature of its root (`Verb.Model.denote`).
 
 ## Main definitions
 
-* `Verb.subjectRole` / `Verb.objectRole` — the theta-grid from the proto-role
-  profiles
-* `Verb.CosModel` + `inchoative`/`causative`/`denote` — the change-of-state
-  denotation, dispatched on the root's `kinds`
+* `Verb.subjectRole`, `Verb.objectRole`: the theta roles of the subject and the object.
+* `Verb.Model`: a change-of-state model with an interpretation of the verbs' roots.
+* `Verb.Model.inchoative`, `Verb.Model.causative`, `Verb.Model.denote`: the denotations.
 
 ## Main results
 
-* `CosModel.causative_entails_inchoative`, `denote_result_entails_resultState` —
-  the [beavers-koontz-garboden-2020] entailments, *derived* from the root signature
-
-The sublexical *again* operator and its reading hierarchy live with their
-anchoring study, `Studies/BeaversKoontzGarboden2020.lean`.
+* `Verb.Model.exists_inchoative_of_causative`: the causative entails the inchoative.
+* `Verb.Model.exists_rootState_of_denote`: a verb whose root has a result entails the result
+  state.
 
 ## References
 
-* [davidson-1967], [parsons-1990] (neo-Davidsonian composition)
-* [beavers-koontz-garboden-2020] (the change-of-state decomposition)
-* [dowty-1991] (the proto-role profiles that drive the theta-grid)
+* [beavers-koontz-garboden-2020]
+* [dowty-1991]
+* [kratzer-1996]
 -/
 
 open ArgumentStructure
@@ -64,115 +57,62 @@ def Verb.subjectRole (v : Verb) : Option ThetaRole :=
 def Verb.objectRole (v : Verb) : Option ThetaRole :=
   v.objectProfile?.bind (·.toRole)
 
-/-! ### Change-of-state decomposition ([beavers-koontz-garboden-2020] §1.3.2)
+/-! ### The denotation of a change-of-state verb -/
 
-For a change-of-state verb the opaque lexical core unpacks into the
-event-structural decomposition of [beavers-koontz-garboden-2020] (22)–(24): a
-root denotes a *state* predicate `⟦√V⟧(x,s)`, and the verb's event predicate is
-built by the templatic operators `become'` and `cause'`. The root's
-`kinds` selects which operators apply — `.result` → `become`,
-`.cause` → `cause`/`effector` — so the decomposition is the denotational payoff
-of the root's kinds. -/
-
-/-- The change-of-state model ([beavers-koontz-garboden-2020] (22)): the
-    templatic primitives a COS verb's denotation is built from. `become`/`cause`/
-    `effector` are model primitives here (BKG refine their truth conditions in
-    their §1.6); a Study instantiates them. -/
-structure Verb.CosModel (Entity State T : Type*) [LinearOrder T] where
-  /-- `⟦√V⟧(x,s)` (BKG (22a)): a state `s` of the root's lexical property holds of
-      `x` (e.g. `flat'(x,s)`). The root denotes a state predicate. -/
+/-- A model in which verbs are interpreted is a change-of-state model together with the state
+predicate that each verb's root denotes and the manner predicate of a root without a change. A
+verb stands in for its root, which most entries leave anonymous. -/
+structure Verb.Model (Entity State Event : Type*) extends
+    ChangeOfStateModel Entity State Event where
+  /-- A state of the property of the verb's root holds of the individual. -/
   rootState : Verb → Entity → State → Prop
-  /-- `become'(s,e)` (BKG (22b)): event `e` gives rise to state `s`. -/
-  become : State → Event T → Prop
-  /-- `cause'(v,e)` (BKG (22c)): event `v` causes event `e`. -/
-  cause : Event T → Event T → Prop
-  /-- `effector'(y,v)` (BKG (22c)): `y` is the effector of event `v`. -/
-  effector : Entity → Event T → Prop
-  /-- The bare manner/activity core `⟦√V⟧(e)` of a pure-manner root (no change),
-      e.g. `jog`/`run`'s action specification. -/
-  manner : Verb → Event T → Prop
+  /-- The manner that the verb's root specifies holds of the event. -/
+  manner : Verb → Event → Prop
 
-namespace Verb.CosModel
+namespace Verb.Model
 
-variable {Entity State T : Type*} [LinearOrder T]
+variable {Entity State Event : Type*} (M : Verb.Model Entity State Event) {v : Verb}
+  {x y : Entity} {e : Event}
 
-/-- The inchoative denotation ([beavers-koontz-garboden-2020] (23c)):
-    `λxλe. ∃s. become'(s,e) ∧ ⟦√V⟧(x,s)` — an event of change giving rise to a
-    state of the root's property holding of the patient `x`. -/
-def inchoative (M : CosModel Entity State T) (v : Verb) (x : Entity) :
-    Event T → Prop :=
-  fun e => ∃ s, M.become s e ∧ M.rootState v x s
+/-- The inchoative denotation of the verb is the change-of-state head over the state predicate
+of its root. -/
+def inchoative (v : Verb) : Entity → Event → Prop := M.vBecome (M.rootState v)
 
-/-- The causative denotation ([beavers-koontz-garboden-2020] (24c)): the
-    inchoative embedded under an effector and a causing event —
-    `λyλxλw. ∃e. effector'(y,w) ∧ cause'(w,e) ∧ inchoative(x)(e)`. -/
-def causative (M : CosModel Entity State T) (v : Verb) (y x : Entity) :
-    Event T → Prop :=
-  fun w => ∃ e, M.effector y w ∧ M.cause w e ∧ M.inchoative v x e
+/-- The causative denotation of the verb is the causative head over its inchoative. -/
+def causative (v : Verb) (y x : Entity) : Event → Prop := M.vCause (M.inchoative v x) y
 
-/-- BKG's first prediction ([beavers-koontz-garboden-2020] p. 16): the causative
-    **entails** the inchoative — there is an event satisfying the inchoative,
-    "by simple virtue of" the embedding (∃-projection over the caused event).
-    Holds by construction, not stipulation. -/
-theorem causative_entails_inchoative (M : CosModel Entity State T)
-    (v : Verb) (y x : Entity) (w : Event T) (h : M.causative v y x w) :
-    ∃ e, M.inchoative v x e := by
-  obtain ⟨e, _, _, hinch⟩ := h
-  exact ⟨e, hinch⟩
-
-/-- The result-state entailment: the inchoative entails the patient reaches a
-    state of the root's property — `∃s. become'(s,e) ∧ ⟦√V⟧(x,s)`. The
-    non-cancelable result of a change-of-state root (the *break* vs *hit*
-    contrast, [beavers-koontz-garboden-2020] (6)); definitional, hence immediate. -/
-theorem inchoative_entails_resultState (M : CosModel Entity State T)
-    (v : Verb) (x : Entity) (e : Event T) (h : M.inchoative v x e) :
-    ∃ s, M.become s e ∧ M.rootState v x s := h
-
-/-- Composing the two predictions: a caused change reaches the root state —
-    the causative entails the full result-state condition. -/
-theorem causative_entails_resultState (M : CosModel Entity State T)
-    (v : Verb) (y x : Entity) (w : Event T) (h : M.causative v y x w) :
-    ∃ e s, M.become s e ∧ M.rootState v x s := by
-  obtain ⟨e, hinch⟩ := M.causative_entails_inchoative v y x w h
-  exact ⟨e, hinch⟩
-
-/-- The verb's change-of-state denotation, dispatched on its root's
-    `kinds` (cf. [beavers-koontz-garboden-2020] (18)–(19)): `.cause` →
-    causative, else `.result` → inchoative, else the bare manner core. The root's
-    kinds *select the event template* — the denotational payoff of the signature. -/
-def denote (M : CosModel Entity State T) (v : Verb) (y x : Entity) :
-    Event T → Prop :=
+/-- The denotation of the verb is chosen by the closed kind signature of its root. It is the
+causative for a root with a cause, the inchoative for another root with a result, and the manner
+otherwise. -/
+def denote (v : Verb) (y x : Entity) : Event → Prop :=
   if Root.Kind.cause ∈ v.root.closedKinds then M.causative v y x
   else if Root.Kind.result ∈ v.root.closedKinds then M.inchoative v x
   else M.manner v
 
-/-- The denotational payoff of a `.result` root: any verb whose root signature
-    carries `result` has a denotation entailing the result state — whether the
-    root is causative (`.cause`) or inchoative. The
-    [beavers-koontz-garboden-2020] non-cancelable result, *derived from the
-    signature* rather than stipulated (and absent for a pure-manner root, whose
-    `denote` is the manner core). -/
-theorem denote_result_entails_resultState (M : CosModel Entity State T)
-    (v : Verb) (y x : Entity) (e : Event T)
-    (hres : Root.Kind.result ∈ v.root.closedKinds)
+variable {M}
+
+/-- The causative entails the inchoative. -/
+theorem exists_inchoative_of_causative (h : M.causative v y x e) : ∃ e', M.inchoative v x e' :=
+  ChangeOfStateModel.exists_of_vCause h
+
+/-- The causative entails that a change gives rise to a state of the root's property. -/
+theorem exists_rootState_of_causative (h : M.causative v y x e) :
+    ∃ e' s, M.become s e' ∧ M.rootState v x s :=
+  exists_inchoative_of_causative h
+
+/-- The denotation of a verb whose root has a result entails that a change gives rise to a
+state of the root's property. -/
+theorem exists_rootState_of_denote (hres : Root.Kind.result ∈ v.root.closedKinds)
     (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s := by
   unfold denote at h
-  by_cases hc : Root.Kind.cause ∈ v.root.closedKinds
-  · rw [ite_eq_left hc] at h
-    exact M.causative_entails_resultState v y x e h
-  · rw [ite_eq_right hc, ite_eq_left hres] at h
-    exact ⟨e, M.inchoative_entails_resultState v x e h⟩
+  split_ifs at h
+  · exact exists_rootState_of_causative h
+  · exact ⟨e, h⟩
 
-/-- The denotational result entailment **is** the template diagnostic: a verb
-    whose root's `EventStructure.Template` embeds a result state has a denotation
-    entailing that result state — `denote_result_entails_resultState` and
-    `Template.HasResultState` are one fact, through the closed kind signature
-    ([beavers-koontz-garboden-2020]; [rappaport-hovav-levin-1998]). -/
-theorem denote_result_from_template (M : CosModel Entity State T)
-    (v : Verb) (ht : v.root.template.HasResultState) (y x : Entity) (e : Event T)
-    (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s := by
-  refine M.denote_result_entails_resultState v y x e ?_ h
-  show Root.Kind.result ∈ v.root.closedKinds
-  exact (Semantics.Root.template_hasResultState_iff v.root).mp ht
+/-- The denotation of a verb whose template embeds a result state entails that a change gives
+rise to a state of the root's property. -/
+theorem exists_rootState_of_denote_of_hasResultState (ht : v.root.template.HasResultState)
+    (h : M.denote v y x e) : ∃ e' s, M.become s e' ∧ M.rootState v x s :=
+  exists_rootState_of_denote ((Semantics.Root.template_hasResultState_iff v.root).mp ht) h
 
-end Verb.CosModel
+end Verb.Model

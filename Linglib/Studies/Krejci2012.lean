@@ -55,7 +55,7 @@ open KoontzGarboden2009 ArgumentStructure
 
 section Model
 
-variable {Entity State T : Type*} [LinearOrder T] (M : Verb.CosModel Entity State T)
+variable {Entity State T : Type*} [LinearOrder T] (M : Verb.Model Entity State (Event T))
   (manip : Entity → Event T → Prop) (v : Verb)
 
 /-- In the lexical causative (38a) the causer's manipulation of food brings the causee to the
@@ -156,7 +156,7 @@ private def eatV : Verb := English.eat.toVerb
 /-- A model in which the events `causing` lists bring John to potential digestion, with `eff`
 the effectors of events. -/
 def eating (causing : Event ℤ → Event ℤ → Prop) (eff : Participant → Event ℤ → Prop) :
-    Verb.CosModel Participant Unit ℤ where
+    Verb.Model Participant Unit (Event ℤ) where
   rootState _ x _ := x = .john
   become _ e := ∃ w, causing w e
   cause := causing
@@ -167,7 +167,7 @@ def eating (causing : Event ℤ → Event ℤ → Prop) (eff : Participant → E
 def spoonManip (y : Participant) (w : Event ℤ) : Prop := y = .mary ∧ At w 0 1
 
 /-- In spoon feeding ((44a)) Mary's manipulation of the food causes John's change. -/
-def spoonFeeding : Verb.CosModel Participant Unit ℤ :=
+def spoonFeeding : Verb.Model Participant Unit (Event ℤ) :=
   eating (fun w e ↦ At w 0 1 ∧ At e 1 2) spoonManip
 
 /-- John manipulates the food. -/
@@ -175,7 +175,7 @@ def supManip (y : Participant) (w : Event ℤ) : Prop := y = .john ∧ At w 0 1
 
 /-- Under supervision ((48)) John's manipulation of the food and Mary's supervising action both
 cause John's change. -/
-def supervising : Verb.CosModel Participant Unit ℤ :=
+def supervising : Verb.Model Participant Unit (Event ℤ) :=
   eating (fun w e ↦ (At w 0 1 ∨ At w 0 2) ∧ At e 1 2)
     (fun y w ↦ (y = .john ∧ At w 0 1) ∨ (y = .mary ∧ At w 0 2))
 
@@ -184,7 +184,7 @@ def twoManip (y : Participant) (w : Event ℤ) : Prop :=
   (y = .mary ∧ At w 0 1) ∨ (y = .john ∧ At w 3 4)
 
 /-- In the model of two meals Mary feeds John, and later John eats. -/
-def twoMeals : Verb.CosModel Participant Unit ℤ :=
+def twoMeals : Verb.Model Participant Unit (Event ℤ) :=
   eating (fun w e ↦ (At w 0 1 ∧ At e 1 2) ∨ (At w 3 4 ∧ At e 4 5)) twoManip
 
 /-- *I didn't eat pie; you fed pie to me* ((92), (106)) is consistent, since John, fed by Mary,

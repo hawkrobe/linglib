@@ -21,7 +21,7 @@ it spells out the marked one belongs to one of the three attested types
 
 ## Implementation notes
 
-* The semantics is stated on `Verb.CosModel`, the change-of-state model of Beavers and
+* The semantics is stated on `Verb.Model`, the change-of-state model of Beavers and
   Koontz-Garboden's book, and *again* is `Presupposition.again`.
 * The realization rule reads whether a root entails change off its kind signature.
 * The tables of the typological survey are not represented. Its coding of markedness is
@@ -44,8 +44,8 @@ open Semantics Presupposition
 
 section Model
 
-variable {Entity State T : Type*} [LinearOrder T] (M : Verb.CosModel Entity State T)
-  {ltS : State → State → Prop} {ltE : Event T → Event T → Prop} {v : Verb} {x : Entity}
+variable {Entity State Event : Type*} (M : Verb.Model Entity State Event)
+  {ltS : State → State → Prop} {ltE : Event → Event → Prop} {v : Verb} {x : Entity}
   {s : State}
 
 /-- The root of `v` entails change when every state of its property arises from a change. -/
@@ -81,7 +81,7 @@ theorem change_of_againRestitutive_presup (h : EntailsChange M v)
   M.againRestitutive_presup_entails_change (h x) hp
 
 /-- *Again* attached to `vbecome` presupposes an earlier change with every root. -/
-theorem change_of_againRepetitiveBecome_presup {e : Event T}
+theorem change_of_againRepetitiveBecome_presup {e : Event}
     (hp : (M.againRepetitiveBecome ltE v x).presup e) :
     ∃ e', ltE e' e ∧ ∃ s, M.become s e' :=
   let ⟨e', hlt, s, hb, _⟩ := hp; ⟨e', hlt, s, hb⟩
@@ -92,7 +92,7 @@ end Model
 
 /-- A knife forged sharp is sharp in its first state `false`, and in its later state `true`,
 which a sharpening gave rise to. -/
-def forged : Verb.CosModel Unit Bool ℕ where
+def forged : Verb.Model Unit Bool Unit where
   rootState _ _ _ := True
   become s _ := s = true
   cause _ _ := False
