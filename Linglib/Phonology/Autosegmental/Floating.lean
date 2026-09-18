@@ -5,375 +5,474 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Phonology.Autosegmental.NonCrossing
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Image
-import Mathlib.Data.Finset.Insert
-import Mathlib.Data.Finset.Prod
 
 /-!
-# Floating autosegmental form (Goldsmith)
+# Floating autosegmental forms
 
-Goldsmith-style autosegmental representation: tier elements (tones,
-floating segments, features) sit on a tier above the segmental backbone,
-connected by **association lines** (links). Multiple tier elements can
-associate to one backbone position (forming contours); a tier element
-with no associations is **floating**. Generic over both backbone type
-`S` (the lower tier) and tier-value type `T` (the upper tier); tonal use
-instantiates `T := TRN`, while non-tonal autosegmental work
-([laoide-kemp-2026]'s floating consonants, [lieber-1983]'s floating
-features, [zimmermann-2017]'s floating moras and prosodic nodes)
-chooses other `T` values.
+This file defines two-tier autosegmental forms in position coordinates, with the surface
+bookkeeping of a serial optimality-theoretic derivation, and the one-step GEN over them.
+
+A floating form has an upper tier of autosegments over a lower tier of slots, each element
+sponsored by a morpheme of an opaque type, and a set of underlying association lines between
+positions of the two tiers. Its surface state consists of the autosegments deleted so far and
+the current surface lines. GEN edits the surface state and never the underlying one, so that
+faithfulness constraints can compare the two. An autosegment that is neither deleted nor
+linked on the surface is floating. Several autosegments may share one slot, so contours are
+representable.
+
+An input form is one whose surface state is its underlying state. Input forms are closed
+under concatenation, which juxtaposes the tiers and shifts the right factor's lines past the
+left factor's, and they form a monoid under it.
 
 ## Main definitions
 
-* `Link` — an autosegmental link `(tier-index, backbone-index)`.
-* `TierSpec T M`, `SegSpec S M` — tier and backbone elements carrying
-  membership in a **sponsor** of opaque type `M` — the morpheme
-  identity, kept abstract so the phonology imports nothing from the
-  morphology (Morphology instantiates `M := Morpheme` at its call sites).
-* `FloatingForm S T M` — autosegmental form with underlying/surface
-  split.
-* `FloatingForm.IsAlive`, `IsLinked`, `IsFloating`, `IsTautomorphemic`,
-  `Crosses` — decidable predicates on tier elements and links.
-* `FloatingForm.deleteTierElem`, `insertLink`, `deleteLink` — atomic
-  GEN operations (paper subset).
-* `FloatingForm.gen` — one-step GEN as a `Finset` of candidate forms.
-* `FloatingForm.floatIndicator`, `linksTo`, `tierValues` — indicator
-  vectors for constraint evaluation.
+* `Sponsored α M`: a tier element with the morpheme that sponsors it.
+* `FloatingForm S T M`: an autosegmental form with slots in `S`, autosegments in `T`, and
+  sponsors in `M`.
+* `FloatingForm.input`: the form of an underlying representation, whose surface state is
+  its underlying state; `FloatingForm.IsInput` recognises such forms.
+* `FloatingForm.concat`: the concatenation of two underlying forms; `FloatingForm.concatInputs`
+  concatenates a list.
+* `FloatingForm.IsFloating`, `FloatingForm.IsLinked`, `FloatingForm.IsLinkedLower`,
+  `FloatingForm.IsTautomorphemic`: the surface predicates on autosegments, slots, and lines.
+* `FloatingForm.insertedLinks`, `FloatingForm.deletedLinks`: the lines GEN has added or
+  removed, which the `DEP` and `MAX` constraints count.
+* `FloatingForm.deleteTierElem`, `FloatingForm.insertLink`, `FloatingForm.deleteLink`: the
+  atomic GEN operations.
+* `FloatingForm.gen`: the one-step GEN, filtered by the No-Crossing Constraint.
+* `FloatingForm.linksTo`, `FloatingForm.tierValues`, `FloatingForm.aliveTierIdxs`,
+  `FloatingForm.lowerOfMorpheme`: readings of the surface in tier order.
 
 ## Main results
 
-* `FloatingForm.gen_preserves_isPlanar` — GEN is closed on the no-crossing WFC
-  ([goldsmith-1976] / [pulleyblank-1986]): every one-step candidate of a planar
-  surface graph is itself planar.
+* `FloatingForm.mem_gen`: the candidates of one GEN step.
+* `FloatingForm.upper_of_mem_gen`, `FloatingForm.lower_of_mem_gen`,
+  `FloatingForm.links_of_mem_gen`: GEN edits only the surface.
+* `FloatingForm.isNonCrossing_surfaceLinks_of_mem_gen`: GEN is closed on the No-Crossing
+  Constraint.
+* `FloatingForm.concat_assoc`, `FloatingForm.empty_concat`, `FloatingForm.concat_empty`:
+  input forms form a monoid under concatenation.
+* `FloatingForm.links_concat_subset`, `FloatingForm.isNonCrossing_links_concat`:
+  concatenation keeps the lines in bounds and non-crossing.
 
 ## Implementation notes
 
-A `FloatingForm` carries an immutable **underlying** state (the inherited
-`Graph`: `lower`, `upper`, `links`) and a mutable **surface** state
-(`deletedTier`, `surfaceLinks`); GEN modifies only the surface. A tier element
-is **floating** iff it is alive (not deleted) and no surface link references it.
-This multi-element-per-position encoding (vs. the prior `tonalOverwrite`) is what
-[mcpherson-lamont-2026]'s `*CROWD` / `*FALL` constraints require.
+Positions are natural numbers rather than elements of `Fin`, so that concatenation shifts
+lines arithmetically and the studies' tableaux reduce under `decide`. An out-of-range line is
+harmless, since every reading is guarded by a tier length, and `links_concat_subset` tracks
+the bound. The readings of the surface are `List.range` filters, because `Finset.sort` does
+not unfold structurally.
 
-`gen` is a paper-subset (delete tier element, insert/delete link; no
-insert-and-associate or shift), filtered for no-crossing ([goldsmith-1976]). A
-link is **tautomorphemic** when its tier element and backbone share a morpheme
-(`*TAUTDOCK`, after [wolf-2007]).
+## References
+
+* [goldsmith-1976]
+* [pulleyblank-1986]
+* [wolf-2007]
+* [mccarthy-mullin-smith-2012]
+* [mcpherson-lamont-2026]
+* [lieber-1983]
+* [laoide-kemp-2026]
+* [zimmermann-2017]
+* [jardine-heinz-2015]
 -/
 
 namespace Autosegmental
 
-/-! ### Tier and link primitives -/
-
-/-- Index into the upper tier. -/
-abbrev TierIdx := ℕ
-
-/-- Index into the lower tier. -/
-abbrev SegIdx := ℕ
-
-/-- An autosegmental link: tier element `fst` is associated to
-    backbone-position `snd`. -/
-abbrev Link := TierIdx × SegIdx
-
-/-- An autosegmental tier element: a value of type `T` plus its
-    sponsoring morpheme identity `M`. Generalises [goldsmith-1976]'s
-    tonal-tier element to arbitrary tier-value types (tones, segments,
-    features) and an opaque sponsor. -/
-structure TierSpec (T M : Type*) where
-  /-- The tier value (tone, segment, feature, ...). -/
-  value : T
-  /-- The sponsoring morpheme identity (opaque). -/
+/-- A `Sponsored α M` is a tier element of type `α` together with the morpheme of type `M`
+    that sponsors it. On the upper tier the element is an autosegment, on the lower tier a
+    slot. -/
+structure Sponsored (α M : Type*) where
+  /-- The autosegment or slot. -/
+  value : α
+  /-- The sponsoring morpheme. -/
   morpheme : M
   deriving DecidableEq, Repr
 
-/-- A segmental backbone element: segment plus its sponsoring morpheme
-    identity. Generic over the segment type `S` and sponsor type `M`. -/
-structure SegSpec (S M : Type*) where
-  seg : S
-  /-- The sponsoring morpheme identity (opaque). -/
-  morpheme : M
-  deriving DecidableEq, Repr
-
-/-! ### `FloatingForm`
-
-`FloatingForm S T M` is an autosegmental form with segmental backbone
-of type `S`, tier-value type `T`, and sponsor type `M`. Tonal use chooses `T := TRN`;
-non-tonal autosegmental work chooses other `T` values
-([laoide-kemp-2026], [lieber-1983]). The OT-style
-bookkeeping (`deletedTier`, `surfaceLinks` vs underlying `links`) is
-language-independent.
--/
-
-/-- An autosegmental form: an underlying two-tier presentation (tones over
-    segments, with association links) plus OT-style surface bookkeeping —
-    `deletedTier` and `surfaceLinks` track the surface state separately. -/
+/-- A `FloatingForm S T M` is a two-tier autosegmental form with slots in `S`, autosegments
+    in `T`, and sponsors in `M`, together with the surface state of a serial derivation. The
+    tiers and the underlying lines are fixed, and GEN edits `deleted` and `surfaceLinks`. -/
+@[ext]
 structure FloatingForm (S T M : Type*) where
-  /-- The tonal tier (underlying). -/
-  upper : LabeledTuple (TierSpec T M)
-  /-- The segmental backbone (underlying). -/
-  lower : LabeledTuple (SegSpec S M)
-  /-- The underlying association links. -/
-  links : Finset Link
-  /-- SURFACE deletion set on the upper tier (current state). -/
-  deletedTier : Finset TierIdx
-  /-- SURFACE association lines (current state). May differ from
-      the inherited `links` (the underlying associations). -/
-  surfaceLinks : Finset Link
+  /-- The upper tier, of autosegments in tier order. -/
+  upper : LabeledTuple (Sponsored T M)
+  /-- The lower tier, of slots in tier order. -/
+  lower : LabeledTuple (Sponsored S M)
+  /-- The underlying association lines, each from an autosegment to a slot. -/
+  links : Finset (ℕ × ℕ)
+  /-- The autosegments deleted on the surface. -/
+  deleted : Finset ℕ
+  /-- The surface association lines. -/
+  surfaceLinks : Finset (ℕ × ℕ)
   deriving DecidableEq
-
-
-/-- Hides the `Finset` fields (mathlib's `Finset.Repr` is `unsafe`) and
-    prints only segments and underlying tier elements; debug-only. -/
-instance {S T M : Type*} [Repr S] [Repr T] [Repr M] : Repr (FloatingForm S T M) where
-  reprPrec f _ :=
-    f!"⟨lower={repr (f.lower.toList.map SegSpec.seg)}, upper={repr f.upper.toList}⟩"
 
 namespace FloatingForm
 
-section
+variable {S T M : Type*}
 
-variable {S T M : Type*} [DecidableEq M] (f : FloatingForm S T M)
+section Basic
 
-/-! ### Surface graph (derived view) -/
+variable (f : FloatingForm S T M) {k i : ℕ} {l : ℕ × ℕ}
 
-/-- The **surface state is planar**: the surface links satisfy the
-    per-pair No-Crossing Constraint. -/
-abbrev SurfaceIsPlanar : Prop := IsNonCrossing f.surfaceLinks
+/-! ### Morphemes -/
 
-/-! ### Construction -/
+/-- `upperMorpheme? f k` is the sponsor of autosegment `k`, or `none` when `k` is out of
+    range. -/
+def upperMorpheme? (k : ℕ) : Option M := (f.upper.get? k).map Sponsored.morpheme
 
-/-- Construct an input form: surface state mirrors underlying state,
-    nothing deleted, all underlying links intact. -/
-def mkInput (lower : List (SegSpec S M)) (upper : List (TierSpec T M))
-    (links : Finset Link) : FloatingForm S T M :=
-  { lower := .ofList lower
-    upper := .ofList upper
-    links := links
-    deletedTier := ∅
-    surfaceLinks := links }
+/-- `lowerMorpheme? f i` is the sponsor of slot `i`, or `none` when `i` is out of range. -/
+def lowerMorpheme? (i : ℕ) : Option M := (f.lower.get? i).map Sponsored.morpheme
 
-/-! ### Morphemic structure -/
+/-- `morphemes f` is the set of morphemes sponsoring an element of either tier. -/
+def morphemes [DecidableEq M] : Finset M :=
+  (f.lower.toList.map Sponsored.morpheme).toFinset ∪
+    (f.upper.toList.map Sponsored.morpheme).toFinset
 
-/-- The morpheme of the `k`-th upper-tier element, or `none` if out of range. -/
-def upperMorpheme? (k : TierIdx) : Option M := (f.upper.get? (k)).map TierSpec.morpheme
+/-- `lowerOfMorpheme f m` lists the slots sponsored by `m` in tier order. -/
+def lowerOfMorpheme [DecidableEq M] (m : M) : List ℕ :=
+  (List.range f.lower.len).filter fun i ↦ f.lowerMorpheme? i = some m
 
-/-- The morpheme of the `i`-th lower-tier element, or `none` if out of range. -/
-def lowerMorpheme? (i : SegIdx) : Option M := (f.lower.get? (i)).map SegSpec.morpheme
+@[simp] theorem mem_lowerOfMorpheme [DecidableEq M] {m : M} :
+    i ∈ f.lowerOfMorpheme m ↔ i < f.lower.len ∧ f.lowerMorpheme? i = some m := by
+  simp [lowerOfMorpheme]
 
-/-- Every morpheme occurring on either tier. -/
-def morphemes : Finset M :=
-  (f.lower.toList.map SegSpec.morpheme).toFinset ∪ (f.upper.toList.map TierSpec.morpheme).toFinset
+/-! ### Surface predicates -/
 
-/-! ### Predicates on tier elements and links -/
+/-- Autosegment `k` is linked when it bears a surface line. -/
+def IsLinked (k : ℕ) : Prop := ∃ l ∈ f.surfaceLinks, l.1 = k
 
-/-- The upper-tier element at index `k` is alive (not deleted). The structural
-    primitive; `IsDeleted` is its negation. -/
-abbrev IsAlive (k : TierIdx) : Prop := k ∉ f.deletedTier
+/-- Slot `i` is linked when it bears a surface line. -/
+def IsLinkedLower (i : ℕ) : Prop := ∃ l ∈ f.surfaceLinks, l.2 = i
 
-/-- The upper-tier element at index `k` is deleted. Sugar for `¬ IsAlive`. -/
-abbrev IsDeleted (k : TierIdx) : Prop := ¬ f.IsAlive k
+/-- Autosegment `k` is floating when it lies on the tier, is not deleted, and bears no surface
+    line. -/
+def IsFloating (k : ℕ) : Prop := k < f.upper.len ∧ k ∉ f.deleted ∧ ¬ f.IsLinked k
 
-/-- The upper-tier element at index `k` is linked to a backbone position
-    on the surface. -/
-abbrev IsLinked (k : TierIdx) : Prop := ∃ l ∈ f.surfaceLinks, l.fst = k
+/-- A line is tautomorphemic when its autosegment and its slot have the same sponsor. Such
+    lines are the ones `*TAUTDOCK` penalises. -/
+def IsTautomorphemic (l : ℕ × ℕ) : Prop :=
+  ∃ m, f.upperMorpheme? l.1 = some m ∧ f.lowerMorpheme? l.2 = some m
 
-/-- The upper-tier element at index `k` is floating: in-bounds, alive (not
-    deleted), and unlinked. The in-bounds guard mirrors the substrate's
-    `Graph.IsFloatingUpper`, so out-of-range indices are not spuriously
-    floating. -/
-abbrev IsFloating (k : TierIdx) : Prop := k < f.upper.len ∧ f.IsAlive k ∧ ¬ f.IsLinked k
+/-- `insertedLinks f` is the set of surface lines absent from the underlying form, which GEN
+    has inserted and `DEP` counts. -/
+def insertedLinks : Finset (ℕ × ℕ) := f.surfaceLinks \ f.links
 
-/-- A surface link `(k, i)` is **tautomorphemic** iff its upper- and lower-tier
-    endpoints share a morpheme. Out-of-range indices on either side make this
-    false. -/
-abbrev IsTautomorphemic (l : Link) : Prop :=
-  f.upperMorpheme? l.fst = f.lowerMorpheme? l.snd ∧ (f.upper.get? (l.fst)).isSome
+/-- `deletedLinks f` is the set of underlying lines absent from the surface, which GEN has
+    deleted and `MAX` counts. -/
+def deletedLinks : Finset (ℕ × ℕ) := f.links \ f.surfaceLinks
 
-/-! ### Faithfulness: surface vs underlying -/
+instance : Decidable (f.IsLinked k) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- A surface link absent underlyingly — inserted by GEN (`DEP` / `*TAUTDOCK` source). -/
-abbrev IsInsertedLink (l : Link) : Prop := l ∈ f.surfaceLinks ∧ l ∉ f.links
+instance : Decidable (f.IsLinkedLower i) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- An underlying link absent on the surface — deleted by GEN (`MAX` source). -/
-abbrev IsDeletedLink (l : Link) : Prop := l ∈ f.links ∧ l ∉ f.surfaceLinks
+instance : Decidable (f.IsFloating k) := inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-/-- The lower-tier slot `i` is linked on the surface. -/
-abbrev SurfaceLinkedLower (i : SegIdx) : Prop := ∃ l ∈ f.surfaceLinks, l.snd = i
+instance [DecidableEq M] : Decidable (f.IsTautomorphemic l) :=
+  decidable_of_iff ((f.upperMorpheme? l.1).isSome ∧ f.upperMorpheme? l.1 = f.lowerMorpheme? l.2)
+    (by cases h : f.upperMorpheme? l.1 <;> simp [IsTautomorphemic, h, eq_comm])
 
-end
+theorem isLinked_iff : f.IsLinked k ↔ ∃ i, (k, i) ∈ f.surfaceLinks :=
+  ⟨fun ⟨⟨_, i⟩, h, rfl⟩ ↦ ⟨i, h⟩, fun ⟨_, h⟩ ↦ ⟨_, h, rfl⟩⟩
 
-section
+theorem isLinkedLower_iff : f.IsLinkedLower i ↔ ∃ k, (k, i) ∈ f.surfaceLinks :=
+  ⟨fun ⟨⟨k, _⟩, h, rfl⟩ ↦ ⟨k, h⟩, fun ⟨_, h⟩ ↦ ⟨_, h, rfl⟩⟩
 
-variable {S T M : Type*} (f : FloatingForm S T M)
+@[simp] theorem mem_insertedLinks : l ∈ f.insertedLinks ↔ l ∈ f.surfaceLinks ∧ l ∉ f.links :=
+  Finset.mem_sdiff
 
-/-- The presentation is in bounds: every link's endpoints index into the
-    tiers. -/
-def InBounds : Prop := ∀ p ∈ f.links, p.1 < f.upper.len ∧ p.2 < f.lower.len
+@[simp] theorem mem_deletedLinks : l ∈ f.deletedLinks ↔ l ∈ f.links ∧ l ∉ f.surfaceLinks :=
+  Finset.mem_sdiff
 
-instance : Decidable f.InBounds :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+/-! ### Reading the surface
 
-/-! ### Input concatenation -/
+The readings of the surface are lists over `List.range` in tier order, which reduce under
+kernel `decide`. -/
 
-/-- Concatenation of underlying input states ([jardine-heinz-2015]): tier
-    juxtaposition with index-shifted links, surface mirroring underlying. -/
-def hconcat (g : FloatingForm S T M) : FloatingForm S T M :=
-  let ls := f.links ∪ g.links.image (shiftLink f.upper.len f.lower.len)
-  { upper := f.upper.concat g.upper
-    lower := f.lower.concat g.lower
-    links := ls
-    deletedTier := ∅
-    surfaceLinks := ls }
+/-- `linksTo f i` lists the autosegments linked to slot `i` on the surface, in tier order. -/
+def linksTo (i : ℕ) : List ℕ :=
+  (List.range f.upper.len).filter fun k ↦ (k, i) ∈ f.surfaceLinks
 
-@[simp] theorem hconcat_upper (g : FloatingForm S T M) :
-    (f.hconcat g).upper = f.upper.concat g.upper := rfl
+/-- `tierValues f i` lists the values of the autosegments linked to slot `i` on the surface,
+    in tier order. -/
+def tierValues (i : ℕ) : List T :=
+  (f.linksTo i).filterMap fun k ↦ (f.upper.get? k).map Sponsored.value
 
-@[simp] theorem hconcat_lower (g : FloatingForm S T M) :
-    (f.hconcat g).lower = f.lower.concat g.lower := rfl
+/-- `aliveTierIdxs f` lists the undeleted autosegments in tier order. -/
+def aliveTierIdxs : List ℕ := (List.range f.upper.len).filter (· ∉ f.deleted)
 
-@[simp] theorem hconcat_links (g : FloatingForm S T M) :
-    (f.hconcat g).links = f.links ∪ g.links.image (shiftLink f.upper.len f.lower.len) := rfl
+@[simp] theorem mem_linksTo : k ∈ f.linksTo i ↔ k < f.upper.len ∧ (k, i) ∈ f.surfaceLinks := by
+  simp [linksTo]
 
-@[simp] theorem hconcat_surfaceLinks (g : FloatingForm S T M) :
-    (f.hconcat g).surfaceLinks
-      = f.links ∪ g.links.image (shiftLink f.upper.len f.lower.len) := rfl
+theorem nodup_linksTo (i : ℕ) : (f.linksTo i).Nodup := List.nodup_range.filter _
 
-@[simp] theorem hconcat_deletedTier (g : FloatingForm S T M) :
-    (f.hconcat g).deletedTier = ∅ := rfl
+@[simp] theorem mem_tierValues {t : T} : t ∈ f.tierValues i ↔
+    ∃ k, (k, i) ∈ f.surfaceLinks ∧ (f.upper.get? k).map Sponsored.value = some t := by
+  simp only [tierValues, List.mem_filterMap, mem_linksTo]
+  constructor
+  · rintro ⟨k, ⟨-, hk⟩, ht⟩
+    exact ⟨k, hk, ht⟩
+  · rintro ⟨k, hk, ht⟩
+    refine ⟨k, ⟨?_, hk⟩, ht⟩
+    by_contra h
+    simp [LabeledTuple.get?, h] at ht
 
-end
+@[simp] theorem mem_aliveTierIdxs : k ∈ f.aliveTierIdxs ↔ k < f.upper.len ∧ k ∉ f.deleted := by
+  simp [aliveTierIdxs]
 
-section
+/-! ### The atomic GEN operations -/
 
-variable {S T M : Type*} [DecidableEq M] (f : FloatingForm S T M)
+/-- `deleteTierElem f k` deletes autosegment `k` on the surface, together with every surface
+    line it bears. -/
+@[simps] def deleteTierElem (k : ℕ) : FloatingForm S T M :=
+  { f with deleted := insert k f.deleted, surfaceLinks := f.surfaceLinks.filter (·.1 ≠ k) }
 
-/-! ### Atomic GEN operations -/
-
-/-- Delete the underlying upper-tier element at index `k`. Cascades to remove
-    any surface link referencing it. -/
-def deleteTierElem (k : TierIdx) : FloatingForm S T M :=
-  { f with
-    deletedTier := insert k f.deletedTier
-    surfaceLinks := f.surfaceLinks.filter (λ l => l.fst ≠ k) }
-
-/-- Insert a surface link `(k, i)`. -/
-def insertLink (k : TierIdx) (i : SegIdx) : FloatingForm S T M :=
+/-- `insertLink f k i` inserts the surface line from autosegment `k` to slot `i`. -/
+@[simps] def insertLink (k i : ℕ) : FloatingForm S T M :=
   { f with surfaceLinks := insert (k, i) f.surfaceLinks }
 
-/-- Delete the surface link `(k, i)`. -/
-def deleteLink (k : TierIdx) (i : SegIdx) : FloatingForm S T M :=
+/-- `deleteLink f k i` deletes the surface line from autosegment `k` to slot `i`. -/
+@[simps] def deleteLink (k i : ℕ) : FloatingForm S T M :=
   { f with surfaceLinks := f.surfaceLinks.erase (k, i) }
 
-/-! ### Well-formedness: no crossing lines -/
+variable {f} {j : ℕ}
 
-/-- A candidate link `(k, i)` would **cross** an existing surface link.
-    Wraps the substrate `IndexCrosses` on the candidate link `(k, i)`;
-    `IsNonCrossing` (via mathlib's `MonovaryOn`) provides the set-level
-    NCC and inherits mathlib's lemma library. -/
-abbrev Crosses (k : TierIdx) (i : SegIdx) : Prop :=
-  IndexCrosses f.surfaceLinks (k, i)
+@[simp] theorem isLinked_deleteTierElem :
+    (f.deleteTierElem k).IsLinked j ↔ j ≠ k ∧ f.IsLinked j := by
+  simp only [isLinked_iff, deleteTierElem_surfaceLinks, Finset.mem_filter]
+  aesop
 
-/-! ### GEN: one-step candidate generation -/
+@[simp] theorem isLinked_insertLink : (f.insertLink k i).IsLinked j ↔ j = k ∨ f.IsLinked j := by
+  simp only [isLinked_iff, insertLink_surfaceLinks, Finset.mem_insert, Prod.mk.injEq]
+  aesop
 
-end
+@[simp] theorem isLinkedLower_insertLink :
+    (f.insertLink k i).IsLinkedLower j ↔ j = i ∨ f.IsLinkedLower j := by
+  simp only [isLinkedLower_iff, insertLink_surfaceLinks, Finset.mem_insert, Prod.mk.injEq]
+  aesop
+
+@[simp] theorem isFloating_deleteTierElem :
+    (f.deleteTierElem k).IsFloating j ↔ j ≠ k ∧ f.IsFloating j := by
+  simp only [IsFloating, deleteTierElem_upper, deleteTierElem_deleted, Finset.mem_insert,
+    isLinked_deleteTierElem]
+  tauto
+
+@[simp] theorem isFloating_insertLink :
+    (f.insertLink k i).IsFloating j ↔ j ≠ k ∧ f.IsFloating j := by
+  simp only [IsFloating, insertLink_upper, insertLink_deleted, isLinked_insertLink]
+  tauto
+
+theorem surfaceLinks_deleteTierElem_subset : (f.deleteTierElem k).surfaceLinks ⊆ f.surfaceLinks :=
+  Finset.filter_subset _ _
+
+theorem surfaceLinks_subset_insertLink : f.surfaceLinks ⊆ (f.insertLink k i).surfaceLinks :=
+  Finset.subset_insert _ _
+
+end Basic
+
+/-! ### One-step GEN -/
 
 section Gen
 
-variable {S T M : Type*} [DecidableEq S] [DecidableEq T] [DecidableEq M]
-  (f : FloatingForm S T M)
+variable [DecidableEq S] [DecidableEq T] [DecidableEq M] (f : FloatingForm S T M)
+  {g : FloatingForm S T M} {k i : ℕ}
 
-/-- One-step GEN: the faithful candidate, deleting each alive tone, and (for
-    each FLOATING tone) inserting a link to each TBU that doesn't cross an
-    existing link. One operation per step, after [mccarthy-mullin-smith-2012];
-    a subset of [mcpherson-lamont-2026]'s operation set (omits
-    insert-and-associate and shift). The no-crossing filter ([goldsmith-1976])
-    enforces well-formedness: without it a floating tone could dock across an
-    intervening linked tone. -/
+/-- `gen f` is the one-step GEN of harmonic serialism. It contains `f` itself, the deletion of
+    each undeleted autosegment, and each line from a floating autosegment to a slot that
+    crosses no surface line; insert-and-associate and shift are omitted. -/
 def gen : Finset (FloatingForm S T M) :=
-  let aliveIdxs := (Finset.range f.upper.len).filter (λ k => f.IsAlive k)
-  let floatIdxs := aliveIdxs.filter (λ k => ¬ f.IsLinked k)
-  let segIdxs := Finset.range f.lower.len
-  let deleteOps := aliveIdxs.image (λ k => f.deleteTierElem k)
-  let insertOps := ((floatIdxs ×ˢ segIdxs).filter
-    (λ ⟨k, i⟩ => ¬ f.Crosses k i)).image (λ ⟨k, i⟩ => f.insertLink k i)
-  insert f (deleteOps ∪ insertOps)
+  insert f <|
+    ((Finset.range f.upper.len).filter (· ∉ f.deleted)).image f.deleteTierElem ∪
+      ((((Finset.range f.upper.len).filter f.IsFloating) ×ˢ Finset.range f.lower.len).filter
+        fun p ↦ ¬ IndexCrosses f.surfaceLinks p).image fun p ↦ f.insertLink p.1 p.2
 
-/-- **GEN preserves the no-crossing WFC** ([goldsmith-1976] / [pulleyblank-1986]).
-    If the surface graph is planar, every one-step GEN candidate is too: deletes
-    shrink the surface link set (`IsNonCrossing.subset`), and each inserted link
-    passed the `¬ Crosses` filter (`IsNonCrossing.insert_of_not_indexCrosses`).
-    So `gen` is closed on the structural well-formedness condition. -/
-theorem gen_preserves_isPlanar (h : f.SurfaceIsPlanar) :
-    ∀ g ∈ f.gen, g.SurfaceIsPlanar := by
-  have h' : IsNonCrossing f.surfaceLinks := h
-  intro g hg
-  show IsNonCrossing g.surfaceLinks
+variable {f}
+
+theorem mem_gen : g ∈ f.gen ↔ g = f ∨
+    (∃ k < f.upper.len, k ∉ f.deleted ∧ g = f.deleteTierElem k) ∨
+      ∃ k i, f.IsFloating k ∧ i < f.lower.len ∧ ¬ IndexCrosses f.surfaceLinks (k, i) ∧
+        g = f.insertLink k i := by
   simp only [gen, Finset.mem_insert, Finset.mem_union, Finset.mem_image, Finset.mem_filter,
-    Finset.mem_product] at hg
-  rcases hg with rfl | ⟨k, _, rfl⟩ | ⟨⟨k, i⟩, ⟨_, hnx⟩, rfl⟩
-  · exact h'
-  · exact IsNonCrossing.subset (Finset.filter_subset _ _) h'
-  · exact IsNonCrossing.insert_of_not_indexCrosses h' hnx
+    Finset.mem_range, Finset.mem_product, Prod.exists, eq_comm (a := g)]
+  refine or_congr_right (or_congr (exists_congr fun k ↦ by tauto) ⟨?_, ?_⟩)
+  · rintro ⟨k, i, ⟨⟨⟨-, hf⟩, hi⟩, hx⟩, rfl⟩
+    exact ⟨k, i, hf, hi, hx, rfl⟩
+  · rintro ⟨k, i, hf, hi, hx, rfl⟩
+    exact ⟨k, i, ⟨⟨⟨hf.1, hf⟩, hi⟩, hx⟩, rfl⟩
 
-/-! ### Indicator vectors for constraint evaluation -/
+@[simp] theorem self_mem_gen : f ∈ f.gen := Finset.mem_insert_self _ _
+
+theorem deleteTierElem_mem_gen (hk : k < f.upper.len) (hd : k ∉ f.deleted) :
+    f.deleteTierElem k ∈ f.gen :=
+  mem_gen.2 (.inr (.inl ⟨k, hk, hd, rfl⟩))
+
+theorem insertLink_mem_gen (hk : f.IsFloating k) (hi : i < f.lower.len)
+    (hx : ¬ IndexCrosses f.surfaceLinks (k, i)) : f.insertLink k i ∈ f.gen :=
+  mem_gen.2 (.inr (.inr ⟨k, i, hk, hi, hx, rfl⟩))
+
+theorem upper_of_mem_gen (hg : g ∈ f.gen) : g.upper = f.upper := by
+  rcases mem_gen.1 hg with rfl | ⟨_, -, -, rfl⟩ | ⟨_, _, -, -, -, rfl⟩ <;> rfl
+
+theorem lower_of_mem_gen (hg : g ∈ f.gen) : g.lower = f.lower := by
+  rcases mem_gen.1 hg with rfl | ⟨_, -, -, rfl⟩ | ⟨_, _, -, -, -, rfl⟩ <;> rfl
+
+theorem links_of_mem_gen (hg : g ∈ f.gen) : g.links = f.links := by
+  rcases mem_gen.1 hg with rfl | ⟨_, -, -, rfl⟩ | ⟨_, _, -, -, -, rfl⟩ <;> rfl
+
+/-- GEN never resurrects a deleted autosegment. -/
+theorem deleted_subset_of_mem_gen (hg : g ∈ f.gen) : f.deleted ⊆ g.deleted := by
+  rcases mem_gen.1 hg with rfl | ⟨_, -, -, rfl⟩ | ⟨_, _, -, -, -, rfl⟩
+  exacts [subset_rfl, Finset.subset_insert _ _, subset_rfl]
+
+/-- GEN is closed on the No-Crossing Constraint, since deletion shrinks the surface lines and
+    each inserted line passed the crossing filter. -/
+theorem isNonCrossing_surfaceLinks_of_mem_gen (h : IsNonCrossing f.surfaceLinks)
+    (hg : g ∈ f.gen) : IsNonCrossing g.surfaceLinks := by
+  rcases mem_gen.1 hg with rfl | ⟨_, -, -, rfl⟩ | ⟨_, _, -, -, hx, rfl⟩
+  exacts [h, h.subset surfaceLinks_deleteTierElem_subset, h.insert_of_not_indexCrosses hx]
+
+/-- GEN keeps the surface lines in bounds, since it inserts lines only between positions on
+    the tiers. -/
+theorem surfaceLinks_subset_of_mem_gen
+    (h : f.surfaceLinks ⊆ Finset.range f.upper.len ×ˢ Finset.range f.lower.len) (hg : g ∈ f.gen) :
+    g.surfaceLinks ⊆ Finset.range g.upper.len ×ˢ Finset.range g.lower.len := by
+  rcases mem_gen.1 hg with rfl | ⟨_, -, -, rfl⟩ | ⟨_, _, ⟨hk, -⟩, hi, -, rfl⟩
+  · exact h
+  · exact surfaceLinks_deleteTierElem_subset.trans h
+  · simp only [insertLink_surfaceLinks, insertLink_upper, insertLink_lower]
+    exact Finset.insert_subset (by simp [hk, hi]) h
 
 end Gen
 
-section
+/-! ### Input forms and concatenation
 
-variable {S T M : Type*} [DecidableEq M] (f : FloatingForm S T M)
+An input form is one whose surface state is its underlying state. Input forms are closed
+under concatenation, which juxtaposes the tiers and shifts the right factor's lines past the
+left factor's, and they form a monoid under it. -/
 
-/-- Indicator vector of floating upper-tier elements, in tier order: entry `k`
-    is `1` iff `upper[k]` is currently floating, else `0`. Drives directional
-    floating constraints (e.g. `*FLOAT`). -/
-def floatIndicator : List ℕ :=
-  (List.range f.upper.len).map λ k => if f.IsFloating k then 1 else 0
+section Input
 
-/-- Upper-tier elements surface-linked to backbone position `i`, in tier order
-    (smallest index first). `List.range`-based so the result is naturally sorted
-    and reduces under kernel `decide` (avoiding `Finset.sort`, which doesn't
-    unfold structurally). -/
-def linksTo (i : SegIdx) : List TierIdx :=
-  (List.range f.upper.len).filter λ k => (k, i) ∈ f.surfaceLinks
+variable {f g : FloatingForm S T M}
 
-/-- Sequence of tier values linked to backbone position `i`, in tier
-    order. -/
-def tierValues (i : SegIdx) : List T :=
-  (f.linksTo i).filterMap λ k => (f.upper.get? k).map TierSpec.value
+/-- `input upper lower links` is the form of an underlying representation, with nothing
+    deleted and the underlying lines as its surface lines. -/
+@[simps] def input (upper : LabeledTuple (Sponsored T M)) (lower : LabeledTuple (Sponsored S M))
+    (links : Finset (ℕ × ℕ)) : FloatingForm S T M :=
+  ⟨upper, lower, links, ∅, links⟩
 
-/-! ### Tier and morpheme subsequences -/
+/-- The empty form has empty tiers and no lines. -/
+def empty : FloatingForm S T M := input .empty .empty ∅
 
-/-- Indices of alive (non-deleted) underlying upper-tier elements, in tier
-    order; `List.range`-based so it reduces under kernel `decide`. -/
-def aliveTierIdxs : List TierIdx :=
-  (List.range f.upper.len).filter (λ k => f.IsAlive k)
+/-- A form is an input when its surface state is its underlying state. -/
+def IsInput (f : FloatingForm S T M) : Prop := f.deleted = ∅ ∧ f.surfaceLinks = f.links
 
-/-- Lower-tier (backbone) indices belonging to morpheme `m`, in order.
-    Out-of-range indices are excluded by construction. -/
-def segsOfMorpheme (m : M) : List SegIdx :=
-  (List.range f.lower.len).filter (λ i => f.lowerMorpheme? i = some m)
+instance : Decidable f.IsInput := inferInstanceAs (Decidable (_ ∧ _))
 
-/-! ### Position counts -/
+theorem isInput_iff : f.IsInput ↔ f = input f.upper f.lower f.links := by
+  constructor
+  · rintro ⟨h₁, h₂⟩
+    exact FloatingForm.ext rfl rfl rfl h₁ h₂
+  · intro h
+    exact ⟨congrArg deleted h, congrArg surfaceLinks h⟩
 
-/-- Count upper-tier positions satisfying decidable `p`. `List.range`-based so it
-    reduces under kernel `decide` (avoiding `Finset` pipelines). -/
-def countUpper (p : TierIdx → Prop) [DecidablePred p] : ℕ :=
-  (List.range f.upper.len).countP (λ k => decide (p k))
+@[simp] theorem isInput_input (upper lower links) :
+    (input (S := S) (T := T) (M := M) upper lower links).IsInput := ⟨rfl, rfl⟩
 
-/-- Count lower-tier (backbone) positions satisfying decidable `p`. -/
-def countLower (p : SegIdx → Prop) [DecidablePred p] : ℕ :=
-  (List.range f.lower.len).countP (λ i => decide (p i))
+@[simp] theorem isInput_empty : (empty : FloatingForm S T M).IsInput := ⟨rfl, rfl⟩
 
-/-- The empty input. -/
-def emptyInput : FloatingForm S T M :=
-  { upper := .empty, lower := .empty, links := ∅, deletedTier := ∅, surfaceLinks := ∅ }
+/-- An input has no inserted line. -/
+@[simp] theorem IsInput.insertedLinks_eq_empty (h : f.IsInput) : f.insertedLinks = ∅ := by
+  simp [insertedLinks, h.2]
 
-/-- Left-to-right concatenation of a list of input states. -/
-def concatInputs (gs : List (FloatingForm S T M)) : FloatingForm S T M :=
-  gs.foldr hconcat emptyInput
+/-- An input has no deleted line. -/
+@[simp] theorem IsInput.deletedLinks_eq_empty (h : f.IsInput) : f.deletedLinks = ∅ := by
+  simp [deletedLinks, h.2]
 
-end
+variable (f) (g)
+
+/-- `concat f g` juxtaposes the tiers of `f` and `g` and shifts the lines of `g` past the tiers
+    of `f`, as an input form. -/
+def concat : FloatingForm S T M :=
+  input (f.upper.concat g.upper) (f.lower.concat g.lower)
+    (f.links ∪ g.links.image (shiftLink f.upper.len f.lower.len))
+
+@[simp] theorem concat_upper : (f.concat g).upper = f.upper.concat g.upper := rfl
+
+@[simp] theorem concat_lower : (f.concat g).lower = f.lower.concat g.lower := rfl
+
+@[simp] theorem concat_links :
+    (f.concat g).links = f.links ∪ g.links.image (shiftLink f.upper.len f.lower.len) := rfl
+
+@[simp] theorem concat_deleted : (f.concat g).deleted = ∅ := rfl
+
+@[simp] theorem concat_surfaceLinks : (f.concat g).surfaceLinks = (f.concat g).links := rfl
+
+@[simp] theorem isInput_concat : (f.concat g).IsInput := ⟨rfl, rfl⟩
+
+theorem concat_assoc (h : FloatingForm S T M) : (f.concat g).concat h = f.concat (g.concat h) := by
+  refine FloatingForm.ext (LabeledTuple.concat_assoc ..) (LabeledTuple.concat_assoc ..) ?_ rfl ?_
+  all_goals simp [Finset.image_union, Finset.image_image, shiftLink_comp, Finset.union_assoc]
+
+variable {f g}
+
+theorem empty_concat (h : g.IsInput) : empty.concat g = g := by
+  rw [isInput_iff.1 h]
+  exact FloatingForm.ext (LabeledTuple.empty_concat _) (LabeledTuple.empty_concat _)
+    (by simp [empty]) rfl (by simp [empty])
+
+theorem concat_empty (h : f.IsInput) : f.concat empty = f := by
+  rw [isInput_iff.1 h]
+  exact FloatingForm.ext (LabeledTuple.concat_empty _) (LabeledTuple.concat_empty _)
+    (by simp [empty]) rfl (by simp [empty])
+
+/-- Concatenation keeps the lines in bounds. -/
+theorem links_concat_subset
+    (hf : f.links ⊆ Finset.range f.upper.len ×ˢ Finset.range f.lower.len)
+    (hg : g.links ⊆ Finset.range g.upper.len ×ˢ Finset.range g.lower.len) :
+    (f.concat g).links ⊆
+      Finset.range (f.concat g).upper.len ×ˢ Finset.range (f.concat g).lower.len := by
+  simp only [concat_links, concat_upper, concat_lower, LabeledTuple.concat_len,
+    Finset.union_subset_iff, Finset.image_subset_iff]
+  refine ⟨hf.trans (Finset.product_subset_product (Finset.range_mono (Nat.le_add_right _ _))
+    (Finset.range_mono (Nat.le_add_right _ _))), fun p hp ↦ ?_⟩
+  have := hg hp
+  simp only [Finset.mem_product, Finset.mem_range] at this ⊢
+  simp only [shiftLink_apply]
+  omega
+
+/-- Concatenation preserves the No-Crossing Constraint when the left factor's lines are in
+    bounds, since every left line then precedes every shifted right line on both tiers. -/
+theorem isNonCrossing_links_concat
+    (hf : f.links ⊆ Finset.range f.upper.len ×ˢ Finset.range f.lower.len)
+    (h₁ : IsNonCrossing f.links) (h₂ : IsNonCrossing g.links) :
+    IsNonCrossing (f.concat g).links := by
+  rw [concat_links, isNonCrossing_union_iff]
+  refine ⟨h₁, (isNonCrossing_image_shiftLink _ _ _).2 h₂, fun a ha b hb ↦ ?_⟩
+  obtain ⟨b, -, rfl⟩ := Finset.mem_image.1 hb
+  have := hf ha
+  simp only [Finset.mem_product, Finset.mem_range] at this
+  rw [isNonCrossing_pair]
+  simp only [shiftLink_apply]
+  omega
+
+/-- `concatInputs gs` concatenates the forms in `gs` from left to right. -/
+def concatInputs (gs : List (FloatingForm S T M)) : FloatingForm S T M := gs.foldr concat empty
+
+@[simp] theorem concatInputs_nil : concatInputs ([] : List (FloatingForm S T M)) = empty := rfl
+
+@[simp] theorem concatInputs_cons (g : FloatingForm S T M) (gs : List (FloatingForm S T M)) :
+    concatInputs (g :: gs) = g.concat (concatInputs gs) := rfl
+
+theorem isInput_concatInputs (gs : List (FloatingForm S T M)) : (concatInputs gs).IsInput := by
+  cases gs <;> simp
+
+/-- Input forms form a monoid under concatenation, with the empty form as unit. -/
+instance instMonoidSubtypeIsInput : Monoid {f : FloatingForm S T M // f.IsInput} where
+  mul f g := ⟨f.1.concat g.1, isInput_concat _ _⟩
+  one := ⟨empty, isInput_empty⟩
+  mul_assoc _ _ _ := Subtype.ext (concat_assoc ..)
+  one_mul f := Subtype.ext (empty_concat f.2)
+  mul_one f := Subtype.ext (concat_empty f.2)
+
+end Input
 
 end FloatingForm
 

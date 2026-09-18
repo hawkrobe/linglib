@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Phonology.Autosegmental.Floating
+import Linglib.Phonology.Autosegmental.Melody
 import Linglib.Morphology.Word.Tree
 
 /-!
@@ -114,19 +114,11 @@ A stem is a floating form whose upper tier is the melody, whose lower tier is th
 and whose association lines `(k, j)` link melody element `k` to skeletal slot `j`; on input the
 surface state is the underlying one. -/
 
-/-- A melodic tier element bearing morpheme `m`. -/
-private def mel (s : Segment) (m : Morph) : TierSpec Segment Morph := ⟨s, m⟩
-
-/-- A skeletal backbone slot bearing morpheme `m`. -/
-private def slot (c : CVKind) (m : Morph) : SegSpec CVKind Morph := ⟨c, m⟩
-
 /-- Build a single-morpheme verb stem from its CV skeleton, melody,
     and association lines. -/
-private def stemForm (name : String) (skeleton : List CVKind)
-    (melody : List Segment) (links : Finset (Nat × Nat)) :
-    FloatingForm CVKind Segment Morph :=
-  let m := mStem name
-  FloatingForm.mkInput (skeleton.map (slot · m)) (melody.map (mel · m)) links
+private def stemForm (name : String) (skeleton : List CVKind) (mel : List Segment)
+    (links : Finset (Nat × Nat)) : FloatingForm CVKind Segment Morph :=
+  FloatingForm.melody (mStem name) mel skeleton links
 
 /-- *bog* 'move', consonant-initial (Figure 1a). -/
 def bog : FloatingForm CVKind Segment Morph :=
@@ -148,28 +140,18 @@ prefixed to a stem by concatenation, which shifts the stem's association lines b
 tier lengths. -/
 
 /-- The historic-tense exponent ((18)): a floating `(d)`, no skeleton, no associations. -/
-def historicExponent : FloatingForm CVKind Segment Morph where
-  upper := .ofList [mel .dPrime mHist]
-  lower := .empty
-  links := ∅
-  deletedTier := ∅
-  surfaceLinks := ∅
+def historicExponent : FloatingForm CVKind Segment Morph := .melody mHist [.dPrime] [] ∅
 
 /-- The past-tense impersonal exponent (§6.2, Figure 5): an empty CV unit, no melody. -/
-def impersonalExponent : FloatingForm CVKind Segment Morph where
-  upper := .empty
-  lower := .ofList [slot .C mImpers, slot .V mImpers]
-  links := ∅
-  deletedTier := ∅
-  surfaceLinks := ∅
+def impersonalExponent : FloatingForm CVKind Segment Morph := .melody mImpers [] [.C, .V] ∅
 
 /-- The historic-tense form of a stem: `(d)` becomes melody element 0. -/
 def withHist (stem : FloatingForm CVKind Segment Morph) : FloatingForm CVKind Segment Morph :=
-  historicExponent.hconcat stem
+  historicExponent.concat stem
 
 /-- The past-tense impersonal of a stem: an empty CV unit at the left edge. -/
 def withImpers (stem : FloatingForm CVKind Segment Morph) : FloatingForm CVKind Segment Morph :=
-  impersonalExponent.hconcat stem
+  impersonalExponent.concat stem
 
 /-! ### Lenition
 
@@ -188,7 +170,7 @@ def initialConsonantIdx (f : FloatingForm CVKind Segment Morph) : Option Nat :=
 content on the surface, leaving the slot empty. -/
 def lenite (f : FloatingForm CVKind Segment Morph) : FloatingForm CVKind Segment Morph :=
   match initialConsonantIdx f with
-  | some k => if (f.upper.get? k).map TierSpec.value = some .f then f.deleteTierElem k else f
+  | some k => if (f.upper.get? k).map Sponsored.value = some .f then f.deleteTierElem k else f
   | none   => f
 
 /-! ### Docking
@@ -198,14 +180,14 @@ followed by a filled V-slot (§4.1). -/
 
 /-- Skeleton position `j` is a C-slot. -/
 def isCSlot (f : FloatingForm CVKind Segment Morph) (j : Nat) : Prop :=
-  (f.lower.get? j).map SegSpec.seg = some .C
+  (f.lower.get? j).map Sponsored.value = some .C
 
 instance (f : FloatingForm CVKind Segment Morph) (j : Nat) : Decidable (isCSlot f j) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- Skeleton position `j` is a V-slot. -/
 def isVSlot (f : FloatingForm CVKind Segment Morph) (j : Nat) : Prop :=
-  (f.lower.get? j).map SegSpec.seg = some .V
+  (f.lower.get? j).map Sponsored.value = some .V
 
 instance (f : FloatingForm CVKind Segment Morph) (j : Nat) : Decidable (isVSlot f j) :=
   inferInstanceAs (Decidable (_ = _))
@@ -213,8 +195,7 @@ instance (f : FloatingForm CVKind Segment Morph) (j : Nat) : Decidable (isVSlot 
 /-- The configuration that licenses the docking of `(d)`, on the surface form: slot 0 an empty
 C-slot, slot 1 a filled V-slot (§4.1). -/
 def dDockable (f : FloatingForm CVKind Segment Morph) : Prop :=
-  isCSlot f 0 ∧ ¬ f.SurfaceLinkedLower 0 ∧
-    isVSlot f 1 ∧ f.SurfaceLinkedLower 1
+  isCSlot f 0 ∧ ¬ f.IsLinkedLower 0 ∧ isVSlot f 1 ∧ f.IsLinkedLower 1
 
 instance (f : FloatingForm CVKind Segment Morph) : Decidable (dDockable f) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
