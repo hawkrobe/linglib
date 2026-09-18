@@ -78,6 +78,16 @@ theorem subtreeAt_append (t : T) (p q : List Nat) :
     · rfl
     · exact ih c
 
+theorem subtreeAt_cons_eq_some_iff {t s : T} {i : Nat} {p : List Nat} :
+    subtreeAt t (i :: p) = some s ↔ ∃ c, (children t)[i]? = some c ∧ subtreeAt c p = some s := by
+  simp [Option.bind_eq_some_iff]
+
+/-- Every prefix of an address inside the tree is inside the tree. -/
+theorem subtreeAt_take_isSome {t s : T} {p : List Nat} (h : subtreeAt t p = some s) (k : Nat) :
+    (subtreeAt t (p.take k)).isSome := by
+  rw [← List.take_append_drop k p, subtreeAt_append] at h
+  exact Option.isSome_of_isSome_bind (by rw [h]; rfl)
+
 /-- Membership characterization for non-root positions: descend one
 child, then recurse. -/
 theorem mem_validPaths_cons {t : T} {i : Nat} {rest : List Nat} :

@@ -48,7 +48,7 @@ once.
 
 namespace Minimalist
 
-open RoseTree RoseTree.Pathed SyntacticObject
+open RoseTree RoseTree.Pathed SyntacticObject Core.Order.Branching
 open Syntax.Question (MWFParameter PhaseEdge)
 
 /-! ### Occurrences and chains -/
@@ -82,7 +82,7 @@ def occurrences (tok : LIToken) : List Path :=
 def tokens : Finset LIToken := ((tokenList t.val).map (·.2)).toFinset
 
 /-- The terms of `t`: its subtrees, a shared constituent's once. -/
-def terms : Finset (RoseTree Vertex) := ((vertices t.val).filterMap t.val.subtreeAt).toFinset
+def terms : Finset (RoseTree Vertex) := ((vertices t.val).filterMap (subtreeAt t.val)).toFinset
 
 /-- `tok` is shared, dominated by two mothers: it occurs twice. -/
 def IsShared (tok : LIToken) : Prop := 2 ≤ (occurrences t tok).length
@@ -119,7 +119,7 @@ def eHeads : List Path :=
 a shared head over one shared complement applies once, over two complements twice. -/
 def elidedDomains : List Path :=
   ((eHeads t).map complementPath).foldl
-    (λ acc p => if acc.any (λ q => t.val.subtreeAt q = t.val.subtreeAt p) then acc else acc ++ [p])
+    (λ acc p => if acc.any (λ q => subtreeAt t.val q = subtreeAt t.val p) then acc else acc ++ [p])
       []
 
 /-- `tok` is silenced: one of its occurrences lies in an elided domain. -/
@@ -185,7 +185,7 @@ instance (s : RoseTree Vertex) : Decidable (IsWhSpecifier s) :=
 
 /-- The phase at `p`, a `v` or `C` projection: its edge, specifiers and head. -/
 def phaseAt (p : Path) : Option (PhaseEdge × List (RoseTree Vertex) × LIToken) :=
-  (t.val.subtreeAt p).bind λ s =>
+  (subtreeAt t.val p).bind λ s =>
     ((projection .v s).map λ x => (PhaseEdge.vP, x)).or
       ((projection .C s).map λ x => (PhaseEdge.CP, x))
 
