@@ -1,86 +1,56 @@
-import Linglib.Semantics.Tense.Decomposition
+import Linglib.Syntax.Category.Verb.Tense
 
 /-!
-# German Tense Fragment
-[heim-kratzer-1998] [kratzer-1998]
+# German tense forms
 
-German tense paradigm entries following [heim-kratzer-1998]'s decomposition.
-The key contrast with English: German Preterit is a genuine PAST pronoun
-(anaphoric — requires discourse antecedent), while English "simple past"
-has a covert PRESENT tense head.
+This file lists the tense forms of German. The German verb has two synthetic tense forms, the
+*Präsens* and the *Präteritum*, and builds the rest with auxiliaries. The *Perfekt* puts the past
+participle under the present of *haben* or *sein*, as in *Borromini hat diese Kirche gebaut*
+'Borromini built this church', and the *Plusquamperfekt* puts it under their *Präteritum*, as in
+*den er selber gefangen hatte* 'that he had caught himself'. South German dialects have given up
+the *Präteritum* except with a few stative verbs and use the *Perfekt* in its place; their form
+for the past of the past is the double perfect, a perfect of the perfect auxiliary. The forms and
+the dialect split follow the description in Kratzer's paper on pronouns and tenses. Which of
+*haben* and *sein* a verb selects is the matter of
+`Semantics/ArgumentStructure/AuxiliarySelection.lean`.
 
-## The Preterit Restriction
+## TODO
 
-Modern German Preterit (Präteritum) cannot be used "out of the blue"
-in most dialects; it requires a narrative context supplying a temporal
-antecedent. This follows from the tense head being PAST (anaphoric).
+The future forms with *werden* are not entered.
 
-  #"Ich schaltete den Herd nicht aus." (out of the blue — marginal)
-  "Ich habe den Herd nicht ausgeschaltet." (present perfect — fine)
+## References
 
-The present perfect (Perfekt) has replaced the Preterit in spoken German
-for out-of-the-blue past reference, matching the prediction: Perfekt
-has a PRESENT tense head (indexical-compatible).
-
+* [kratzer-1998]
 -/
-
-open Tense
-open Tense
 
 namespace German.Tense
 
-open _root_.Tense
-open _root_.Tense.Decomposition
+/-- The *Präsens* is the synthetic present, as *baut* 'builds'. -/
+def praesens : Tense.Form := { name := "Präsens", finite := .Pres }
 
--- ════════════════════════════════════════════════════
--- § 1. Surface Tense Entries
--- ════════════════════════════════════════════════════
+/-- The *Präteritum* is the synthetic past, as *baute* 'built'. -/
+def praeteritum : Tense.Form := { name := "Präteritum", finite := .Past }
 
-/-- German Preterit (Präteritum): genuine PAST pronoun.
-    Anaphoric — requires a discourse-established temporal antecedent.
-    No PERF aspect head intervenes; the pastness is in the tense itself. -/
-def preteritSurface : SurfaceTense where
-  tensePronoun := anaphoricPast 1
-  hasPerfect := false
+/-- The *Perfekt* puts the past participle under present *haben* or *sein*, as *hat gebaut*. -/
+def perfekt : Tense.Form := { name := "Perfekt", finite := .Pres, nonfinite := [.pastParticiple] }
 
-/-- German Perfekt (present perfect): PRESENT tense + PERFECT aspect.
-    Parallel structure to English simple past. Can be used deictically
-    because the tense head is present (indexical). -/
-def perfektSurface : SurfaceTense where
-  tensePronoun := indexicalPresent
-  hasPerfect := true
+/-- The *Plusquamperfekt* puts the past participle under the *Präteritum* of *haben* or *sein*,
+as *hatte gebaut*. -/
+def plusquamperfekt : Tense.Form :=
+  { name := "Plusquamperfekt", finite := .Past, nonfinite := [.pastParticiple] }
 
--- ════════════════════════════════════════════════════
--- § 2. Verification
--- ════════════════════════════════════════════════════
+-- UNVERIFIED: the paper names the South German double perfect without an example; the make-up
+-- entered here, the participle of the auxiliary over the participle of the verb, is the
+-- traditional description of the form.
+/-- The double perfect of the South German dialects is the perfect of the perfect auxiliary. -/
+def doppelperfekt : Tense.Form :=
+  { name := "Doppelperfekt", finite := .Pres, nonfinite := [.pastParticiple, .pastParticiple] }
 
-/-- German Preterit cannot be deictic. -/
-theorem preterit_not_deictic :
-    ¬ preteritSurface.canBeDeictic := by decide
+/-- Standard German has these tense forms. -/
+def standard : List Tense.Form := [praesens, praeteritum, perfekt, plusquamperfekt]
 
-/-- German Perfekt CAN be deictic. -/
-theorem perfekt_deictic :
-    perfektSurface.canBeDeictic := by decide
-
-/-- The Preterit–Perfekt contrast: different underlying tense heads.
-    Preterit has a PAST head (anaphoric); Perfekt has PRESENT + PERF (indexical).
-    Both can refer to past events, but only Perfekt is deictic-compatible.
-    This explains why Perfekt has largely replaced Preterit in spoken German. -/
-theorem preterit_perfekt_contrast :
-    preteritSurface.tensePronoun.constraint = Tense.past ∧
-    perfektSurface.tensePronoun.constraint = Tense.present ∧
-    ¬ preteritSurface.canBeDeictic ∧
-    perfektSurface.canBeDeictic := by
-  refine ⟨rfl, rfl, ?_, ?_⟩ <;> decide
-
-/-- German Preterit is always overt (anaphoric = free). -/
-theorem preterit_always_overt (localDomain : Bool) :
-    preteritSurface.tenseOvertness localDomain = .overt := by
-  cases localDomain <;> rfl
-
-/-- German Perfekt tense head is always overt (indexical = free). -/
-theorem perfekt_always_overt (localDomain : Bool) :
-    perfektSurface.tenseOvertness localDomain = .overt := by
-  cases localDomain <;> rfl
+/-- The South German dialects have these tense forms, lacking the *Präteritum* and with it the
+*Plusquamperfekt*. -/
+def southern : List Tense.Form := [praesens, perfekt, doppelperfekt]
 
 end German.Tense

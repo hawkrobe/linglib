@@ -1,6 +1,6 @@
 import Linglib.Semantics.Tense.TenseAspectComposition
 import Linglib.Studies.BeaverCondoravdi2003
-import Linglib.Semantics.Tense.Decomposition
+import Linglib.Semantics.Tense.Embedding
 
 /-!
 # [sharvit-2014]: On the universal principles of tense embedding
@@ -21,8 +21,7 @@ the pronominal/quantificational apparatus ((30)) is defined below.
   the present's shiftability, and the *past* tense's lexical type (`Option LexicalType`,
   no-mixing structural; `none` = tenseless / out of scope).
 * The derived predicates (`wellFormedPastUnderPastBefore`, …) are grounded in the substrate, not
-  re-stipulated: well-formedness routes through `triggersIPFInBefore`, SOT-deletion through
-  `Decomposition.sotDeletionApplicable`.
+  re-stipulated: well-formedness routes through `triggersIPFInBefore`.
 * `eq99a`/`eq99b`/`eq99c` — Sharvit's three universal predictions ((99), p. 301).
 
 ## Scope
@@ -36,7 +35,6 @@ no-tenseless assumption (§6.1, p. 299).
 
 namespace Sharvit2014
 
-open Tense.Decomposition (sotDeletionApplicable)
 open Tense.TenseAspectComposition (evalPast evalRel)
 open Aspect (PointPred)
 
@@ -215,14 +213,8 @@ def hasFullyShiftablePresent (L : LanguageTenseProfile) : Bool :=
 /-! ### Derived empirical predicates
 
 These are not independent stipulations: the *before*-well-formedness predicate routes through the
-IPF dispatch `triggersIPFInBefore`, and the SOT-derived predicates through Kratzer's deletion
-condition `Decomposition.sotDeletionApplicable`. -/
-
-/-- SOT-deletion of an agreeing past-under-past applies when the language has the SOT rule, routed
-    through `Decomposition.sotDeletionApplicable` (Kratzer's morphological-identity condition, here
-    `.past`/`.past`). -/
-def sotAppliesPastUnderPast (L : LanguageTenseProfile) : Bool :=
-  L.hasSOT && sotDeletionApplicable Tense.past Tense.past
+IPF dispatch `triggersIPFInBefore`, and deletion of a past under an agreeing past applies just in
+case the language has the SOT rule. -/
 
 /-- PAST-under-PAST in *before* is well-formed iff the past does not trigger IPF — the
     technical core `ipf_quantificationalPast`. The body calls the IPF dispatch
@@ -243,7 +235,7 @@ def wellFormedPresentUnderPastBefore (L : LanguageTenseProfile) : Bool :=
     pronominal and SOT-deletion applies. This is the *SOT-derived* reading; Japanese's distinct
     (present-tense) simultaneous reading ((47), p. 280) is a different mechanism, not this. -/
 def simultaneousAttitudeReading (L : LanguageTenseProfile) : Bool :=
-  L.isPronominal && L.sotAppliesPastUnderPast
+  L.isPronominal && L.hasSOT
 
 /-- **Bare** *before*-clause p-shiftability ((51), p. 281): the embedded past can refer to a
     future time. Requires a quantificational past (Japanese); absent in English/Polish. -/
@@ -253,7 +245,7 @@ def pShiftabilityBare (L : LanguageTenseProfile) : Bool := L.isQuantificational
     even pronominal-past languages acquire p-shiftability via SOT-deletion of the matrix past.
     (Hedged in the paper — "for many speakers".) -/
 def pShiftabilityEmbedded (L : LanguageTenseProfile) : Bool :=
-  L.isQuantificational || (L.isPronominal && L.sotAppliesPastUnderPast)
+  L.isQuantificational || (L.isPronominal && L.hasSOT)
 
 /-- [sharvit-2014]'s Embeddability Principle (Sharvit 2003, restated p. 299): every language has
     at least one mechanism for embedding a "now"-thought (SOT, a shiftable present, or a
@@ -392,7 +384,7 @@ example : english.pShiftabilityBare = false := rfl
 example : polish.wellFormedPresentUnderPastBefore = false := rfl
 example : japanese.wellFormedPresentUnderPastBefore = true := rfl
 
-/-! ### Cross-paper bridge to [kratzer-1998]
+/-! ### The simultaneous reading
 
 The Sharvit ↔ [klecha-2016] comparison (same simultaneous-reading prediction, different
 mechanisms) lives in the later paper's study file, `Studies/Klecha2016.lean §F1`. -/
@@ -400,11 +392,5 @@ mechanisms) lives in the later paper's study file, `Studies/Klecha2016.lean §F1
 /-- [sharvit-2014]'s prediction for English: SOT + pronominal past yields the simultaneous reading
     of past-under-past in attitudes. -/
 theorem english_predicts_simultaneous : english.simultaneousAttitudeReading = true := rfl
-
-/-- Bridge to [kratzer-1998]: English's SOT rule realizes Kratzer's deletion of an agreeing
-    past-under-past — `english.hasSOT` and Kratzer's morphological-identity condition
-    (`Decomposition.sotDeletionApplicable .past .past`) jointly license the "null" embedded past. -/
-theorem english_sot_realizes_kratzer_deletion :
-    english.sotAppliesPastUnderPast = true := rfl
 
 end Sharvit2014
