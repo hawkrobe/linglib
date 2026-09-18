@@ -894,7 +894,6 @@ import Linglib.Fragments.Korean.Comparison
 import Linglib.Fragments.Korean.Complementizers
 import Linglib.Fragments.Korean.Coordination
 import Linglib.Fragments.Korean.Evidentiality
-import Linglib.Fragments.Korean.MedialVerbs
 import Linglib.Fragments.Korean.Modals
 import Linglib.Fragments.Korean.Phonology
 import Linglib.Fragments.Korean.PolarityItems
@@ -916,7 +915,6 @@ import Linglib.Fragments.Latvian.IndeterminatePronouns
 import Linglib.Fragments.Magahi.Pronouns
 import Linglib.Fragments.Maithili.Pronouns
 import Linglib.Fragments.Malagasy.Relativization
-import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Mandarin.Adposition
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Comparison
@@ -970,7 +968,6 @@ import Linglib.Fragments.Niuean.Modals
 import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.Norwegian.VerbParticles
 import Linglib.Fragments.Numee.Prosody
-import Linglib.Fragments.Nungon.MedialVerbs
 import Linglib.Fragments.Poko.Tone
 import Linglib.Fragments.Portuguese.Modals
 import Linglib.Fragments.Portuguese.MoodChoice
@@ -1107,7 +1104,6 @@ import Linglib.Fragments.Turkish.Comparison
 import Linglib.Fragments.Turkish.Coordination
 import Linglib.Fragments.Turkish.Definiteness
 import Linglib.Fragments.Turkish.Evidentiality
-import Linglib.Fragments.Turkish.MedialVerbs
 import Linglib.Fragments.Turkish.Morphotactics
 import Linglib.Fragments.Turkish.Negation
 import Linglib.Fragments.Turkish.PolarityItems

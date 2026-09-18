@@ -1,3 +1,5 @@
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Data.UD.Features
 import Linglib.Syntax.WordOrder
 
@@ -14,8 +16,8 @@ is the prototypical *cosubordinate* combining scheme
 (`Clause.CombiningScheme`): the medial clause is dependent but not
 embedded ([foley-r-d-van-valin-1984]; [longacre-2007]). Anchors:
 [sarvasy-aikhenvald-2025] and [de-vries-2025]; per-language bundles live in
-the language fragments (`Fragments/<Language>/MedialVerbs.lean`) and the
-generalizations over them in `Studies/SarvasyAikhenvald2025.lean`.
+the language fragments (`Fragments/<Language>/Clause.lean`) and the
+systems read off them in `Studies/SarvasyAikhenvald2025.lean`.
 
 ## Main definitions
 
@@ -23,12 +25,15 @@ generalizations over them in `Studies/SarvasyAikhenvald2025.lean`.
   [scancarelli-2003] combination schemes
 * `ClauseStatus`, `ChainDirection` — medial/final and chain order
 * `CategoryRetention`, `MedialMorphProfile` — the medial verb's
-  per-category finiteness profile
+  per-category finiteness profile; `CategoryRetention.ofPred` reads a
+  category's retention off which of a language's medial forms admit it
+* `SwitchReference` — the same-subject or different-subject value a
+  medial form marks
 * `SRSystem`, `SRTarget`, `SRMarkedness` — switch-reference
 * `InterclauseRelation` — marked interclausal semantic relations
 * `BridgingType` — discourse bridging across chain boundaries
-* `System` — a language's clause-chaining system; per-language
-  instances live in the language fragments
+* `System` — a language's clause-chaining system, read off a
+  fragment's inventory of medial forms in the study that classifies it
 -/
 
 namespace Clause
@@ -141,6 +146,28 @@ instance : LinearOrder CategoryRetention :=
 theorem CategoryRetention.absent_le (r : CategoryRetention) :
     absent ≤ r := by cases r <;> decide
 
+namespace CategoryRetention
+
+variable {ι : Type*} [Fintype ι] (p : ι → Prop) [DecidablePred p]
+
+/-- How far a language's medial forms retain a category, given which of
+    them admit it: fully when every form does, restrictedly when some
+    do, not at all when none does. -/
+def ofPred : CategoryRetention :=
+  if ∀ i, p i then full else if ∃ i, p i then restricted else absent
+
+theorem ofPred_eq_full_iff : ofPred p = full ↔ ∀ i, p i := by
+  unfold ofPred; split_ifs <;> simp_all
+
+theorem ofPred_eq_restricted_iff :
+    ofPred p = restricted ↔ (∃ i, p i) ∧ ∃ i, ¬ p i := by
+  unfold ofPred; split_ifs <;> simp_all
+
+theorem ofPred_eq_absent_iff [Nonempty ι] : ofPred p = absent ↔ ∀ i, ¬ p i := by
+  unfold ofPred; split_ifs <;> simp_all
+
+end CategoryRetention
+
 /-- Morphological profile of medial verbs along five TAM dimensions —
     a per-category finiteness vector, of which the binary
     finite/non-finite cut is a coarsening. -/
@@ -192,6 +219,15 @@ end MedialMorphProfile
 
 /-! ### Switch-reference -/
 
+/-- The switch-reference value a medial form marks: the subject of its
+    clause is the same as that of the reference clause, or different. -/
+inductive SwitchReference where
+  /-- Same subject. -/
+  | ss
+  /-- Different subject. -/
+  | ds
+  deriving DecidableEq, Repr, Fintype
+
 /-- Type of switch-reference system: morphology on medial verbs
     tracking referential continuity across clause boundaries —
     orthogonal to binding theory, which constrains intra-clausal
@@ -206,7 +242,7 @@ inductive SRSystem where
   | ssDs
   /-- SS/DS fused with temporal relation: SS-sequential,
       SS-simultaneous, DS-sequential, DS-simultaneous as distinct forms
-      (Nungon, Amele, many Trans-New Guinea languages). -/
+      (Yopno, Amele, many Trans-New Guinea languages). -/
   | ssDsTemporal
   /-- Tracks more than one argument (e.g. subject and object) — rare
       (Panoan). -/
@@ -244,15 +280,24 @@ inductive SRMarkedness where
     encoded on the medial verb, inferred, or signaled by the SR system
     ([sarvasy-aikhenvald-2025] §1.4; [longacre-2007]). -/
 inductive InterclauseRelation where
-  | sequential    -- medial event precedes next event (iconic order)
-  | simultaneous  -- medial event overlaps the next event
-  | causal        -- medial event is reason for the next event
-  | conditional   -- medial event is condition for the next event
-  | concessive    -- medial event holds despite the next event
-  | manner        -- medial event specifies how the next event occurs
-  | contrastive   -- the events contrast
-  | additive      -- added without temporal or causal import
-  | purpose       -- medial event is the purpose of the next event
+  /-- The medial event precedes the next event, in iconic order. -/
+  | sequential
+  /-- The medial event overlaps the next event. -/
+  | simultaneous
+  /-- The medial event is the reason for the next event. -/
+  | causal
+  /-- The medial event is a condition on the next event. -/
+  | conditional
+  /-- The medial event holds despite the next event. -/
+  | concessive
+  /-- The medial event specifies how the next event occurs. -/
+  | manner
+  /-- The events contrast. -/
+  | contrastive
+  /-- The medial event is added without temporal or causal import. -/
+  | additive
+  /-- The medial event is the purpose of the next event. -/
+  | purpose
   deriving DecidableEq, Repr, Inhabited
 
 /-- The temporal relations — exactly the ones SR morphology can encode
@@ -280,8 +325,8 @@ inductive BridgingType where
 
 /-- A language's clause-chaining system: chain structure,
     switch-reference, medial morphology, marked relations, and
-    bridging. Per-language instances live in the language fragments and
-    the generalizations over them in `Studies/SarvasyAikhenvald2025.lean`. -/
+    bridging, read off a fragment's inventory of medial forms in the
+    study that classifies the language. -/
 structure System where
   /-- Linear order of medial and final clauses. -/
   direction : ChainDirection
@@ -296,7 +341,7 @@ structure System where
   /-- Morphological profile of medial verbs. -/
   medialMorph : MedialMorphProfile
   /-- Interclausal relations grammatically marked on medial verbs. -/
-  relationsMarked : List InterclauseRelation
+  relationsMarked : Finset InterclauseRelation
   /-- Recapitulative (tail-head) linkage attested. -/
   hasRecapLinkage : Bool
   /-- Summary linkage attested. -/
@@ -304,7 +349,7 @@ structure System where
   /-- Medial clauses can stand without a final clause — the
       non-canonical stand-alone medial ([sarvasy-2015]). -/
   medialCanStandAlone : Bool
-  deriving Repr, BEq
+  deriving DecidableEq
 
 namespace System
 
