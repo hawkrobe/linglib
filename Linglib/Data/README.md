@@ -82,6 +82,17 @@ Appendices I and II, with the properties of the text and footnotes).
 - **Generator**: `scripts/gen_word_order.py` (`--check` verifies sync)
 - **Input/Output**: `Linglib/Data/WordOrder/{Paper}.json` → `{Paper}.lean`
 
+### Corpus word-order data
+
+The word-order data a paper draws from corpora: per-language counts of the two relative
+orders of subject and object, per-language printed statistics of that order (its entropy and
+the mutual information between case marking and syntactic role), and individually annotated
+clauses recording the order of object and verb with text type, object length, and animacy.
+
+- **Schema**: `Linglib/Data/WordOrder/Corpus/Schema.lean`
+- **Generator**: `scripts/gen_word_order_corpus.py` (`--check` verifies sync)
+- **Input/Output**: `Linglib/Data/WordOrder/Corpus/{Paper}.json` → `{Paper}.lean`
+
 ### PHOIBLE 2.0
 
 - **Source**: [PHOIBLE Online](https://phoible.org/) (Moran & McCloy 2019)

@@ -1,0 +1,2461 @@
+{
+  "meta": {
+    "bibkey": "levshina-etal-2023",
+    "source": "https://osf.io/w9u6v/",
+    "description": "The OSF datasets of the paper's corpus illustrations: the subject–object order counts of Figure 1 (Dataset1.txt), the order entropies and case–role mutual information of Figure 3 (Dataset3.txt), and the annotated Russian clauses of the register case study in section 4.1.3 (Dataset6.txt)."
+  },
+  "subjectObjectCounts": {
+    "locator": "Dataset1.txt, Figure 1",
+    "description": "The number of clauses with a common-noun subject and object in each relative order, in the online news corpora of the Leipzig Corpora Collection for 31 languages, annotated with Universal Dependencies. The dataset's misspelling Turkisn is corrected.",
+    "rows": [
+      {
+        "language": "English",
+        "isoCode": "eng",
+        "subjectFirst": 137910,
+        "objectFirst": 877
+      },
+      {
+        "language": "Arabic",
+        "isoCode": "ara",
+        "subjectFirst": 221083,
+        "objectFirst": 15750
+      },
+      {
+        "language": "Bulgarian",
+        "isoCode": "bul",
+        "subjectFirst": 129271,
+        "objectFirst": 4724
+      },
+      {
+        "language": "Czech",
+        "isoCode": "ces",
+        "subjectFirst": 128782,
+        "objectFirst": 36176
+      },
+      {
+        "language": "Modern Greek",
+        "isoCode": "ell",
+        "subjectFirst": 124334,
+        "objectFirst": 14384
+      },
+      {
+        "language": "Danish",
+        "isoCode": "dan",
+        "subjectFirst": 153333,
+        "objectFirst": 1634
+      },
+      {
+        "language": "Estonian",
+        "isoCode": "est",
+        "subjectFirst": 146136,
+        "objectFirst": 27524
+      },
+      {
+        "language": "French",
+        "isoCode": "fra",
+        "subjectFirst": 130253,
+        "objectFirst": 674
+      },
+      {
+        "language": "Italian",
+        "isoCode": "ita",
+        "subjectFirst": 115944,
+        "objectFirst": 3665
+      },
+      {
+        "language": "Hungarian",
+        "isoCode": "hun",
+        "subjectFirst": 138214,
+        "objectFirst": 51962
+      },
+      {
+        "language": "Latvian",
+        "isoCode": "lav",
+        "subjectFirst": 89568,
+        "objectFirst": 27203
+      },
+      {
+        "language": "Lithuanian",
+        "isoCode": "lit",
+        "subjectFirst": 60819,
+        "objectFirst": 39280
+      },
+      {
+        "language": "Dutch",
+        "isoCode": "nld",
+        "subjectFirst": 105708,
+        "objectFirst": 3219
+      },
+      {
+        "language": "Norwegian",
+        "isoCode": "nob",
+        "subjectFirst": 124492,
+        "objectFirst": 1253
+      },
+      {
+        "language": "Portuguese",
+        "isoCode": "por",
+        "subjectFirst": 200704,
+        "objectFirst": 2825
+      },
+      {
+        "language": "Romanian",
+        "isoCode": "ron",
+        "subjectFirst": 197897,
+        "objectFirst": 7015
+      },
+      {
+        "language": "Slovene",
+        "isoCode": "slv",
+        "subjectFirst": 145563,
+        "objectFirst": 21257
+      },
+      {
+        "language": "Spanish",
+        "isoCode": "spa",
+        "subjectFirst": 148486,
+        "objectFirst": 3302
+      },
+      {
+        "language": "Swedish",
+        "isoCode": "swe",
+        "subjectFirst": 129637,
+        "objectFirst": 1605
+      },
+      {
+        "language": "Vietnamese",
+        "isoCode": "vie",
+        "subjectFirst": 672379,
+        "objectFirst": 13272
+      },
+      {
+        "language": "Russian",
+        "isoCode": "rus",
+        "subjectFirst": 102945,
+        "objectFirst": 16574
+      },
+      {
+        "language": "German",
+        "isoCode": "deu",
+        "subjectFirst": 122602,
+        "objectFirst": 11285
+      },
+      {
+        "language": "Finnish",
+        "isoCode": "fin",
+        "subjectFirst": 151662,
+        "objectFirst": 14606
+      },
+      {
+        "language": "Turkish",
+        "isoCode": "tur",
+        "subjectFirst": 60959,
+        "objectFirst": 5176
+      },
+      {
+        "language": "Japanese",
+        "isoCode": "jpn",
+        "subjectFirst": 116548,
+        "objectFirst": 5766
+      },
+      {
+        "language": "Indonesian",
+        "isoCode": "ind",
+        "subjectFirst": 177333,
+        "objectFirst": 135
+      },
+      {
+        "language": "Hindi",
+        "isoCode": "hin",
+        "subjectFirst": 87888,
+        "objectFirst": 12689
+      },
+      {
+        "language": "Tamil",
+        "isoCode": "tam",
+        "subjectFirst": 95772,
+        "objectFirst": 38116
+      },
+      {
+        "language": "Persian",
+        "isoCode": "fas",
+        "subjectFirst": 215868,
+        "objectFirst": 17706
+      },
+      {
+        "language": "Croatian",
+        "isoCode": "hrv",
+        "subjectFirst": 163232,
+        "objectFirst": 27538
+      },
+      {
+        "language": "Korean",
+        "isoCode": "kor",
+        "subjectFirst": 197634,
+        "objectFirst": 4542
+      }
+    ]
+  },
+  "subjectObjectStatistics": {
+    "locator": "Dataset3.txt, Figure 3",
+    "description": "For each of 30 online news corpora, the Shannon entropy of subject–object order and the mutual information between case markers and the syntactic roles subject and object, in thousandths of a bit, as the dataset prints them rounded to three decimals.",
+    "rows": [
+      {
+        "language": "Arabic",
+        "entropy1000": 345,
+        "caseMutualInformation1000": 36
+      },
+      {
+        "language": "Bulgarian",
+        "entropy1000": 218,
+        "caseMutualInformation1000": 28
+      },
+      {
+        "language": "Croatian",
+        "entropy1000": 586,
+        "caseMutualInformation1000": 415
+      },
+      {
+        "language": "Czech",
+        "entropy1000": 760,
+        "caseMutualInformation1000": 525
+      },
+      {
+        "language": "Danish",
+        "entropy1000": 74,
+        "caseMutualInformation1000": 0
+      },
+      {
+        "language": "Dutch",
+        "entropy1000": 183,
+        "caseMutualInformation1000": 0
+      },
+      {
+        "language": "English",
+        "entropy1000": 47,
+        "caseMutualInformation1000": 0
+      },
+      {
+        "language": "Estonian",
+        "entropy1000": 634,
+        "caseMutualInformation1000": 692
+      },
+      {
+        "language": "Finnish",
+        "entropy1000": 426,
+        "caseMutualInformation1000": 314
+      },
+      {
+        "language": "French",
+        "entropy1000": 42,
+        "caseMutualInformation1000": 5
+      },
+      {
+        "language": "German",
+        "entropy1000": 386,
+        "caseMutualInformation1000": 288
+      },
+      {
+        "language": "Greek",
+        "entropy1000": 490,
+        "caseMutualInformation1000": 70
+      },
+      {
+        "language": "Hindi",
+        "entropy1000": 509,
+        "caseMutualInformation1000": 334
+      },
+      {
+        "language": "Hungarian",
+        "entropy1000": 858,
+        "caseMutualInformation1000": 738
+      },
+      {
+        "language": "Indonesian",
+        "entropy1000": 12,
+        "caseMutualInformation1000": 0
+      },
+      {
+        "language": "Italian",
+        "entropy1000": 192,
+        "caseMutualInformation1000": 6
+      },
+      {
+        "language": "Japanese",
+        "entropy1000": 246,
+        "caseMutualInformation1000": 582
+      },
+      {
+        "language": "Korean",
+        "entropy1000": 146,
+        "caseMutualInformation1000": 357
+      },
+      {
+        "language": "Latvian",
+        "entropy1000": 784,
+        "caseMutualInformation1000": 726
+      },
+      {
+        "language": "Lithuanian",
+        "entropy1000": 968,
+        "caseMutualInformation1000": 788
+      },
+      {
+        "language": "Persian",
+        "entropy1000": 315,
+        "caseMutualInformation1000": 219
+      },
+      {
+        "language": "Portuguese",
+        "entropy1000": 102,
+        "caseMutualInformation1000": 14
+      },
+      {
+        "language": "Romanian",
+        "entropy1000": 216,
+        "caseMutualInformation1000": 7
+      },
+      {
+        "language": "Russian",
+        "entropy1000": 580,
+        "caseMutualInformation1000": 335
+      },
+      {
+        "language": "Slovene",
+        "entropy1000": 536,
+        "caseMutualInformation1000": 478
+      },
+      {
+        "language": "Spanish",
+        "entropy1000": 143,
+        "caseMutualInformation1000": 21
+      },
+      {
+        "language": "Swedish",
+        "entropy1000": 86,
+        "caseMutualInformation1000": 0
+      },
+      {
+        "language": "Tamil",
+        "entropy1000": 824,
+        "caseMutualInformation1000": 59
+      },
+      {
+        "language": "Turkish",
+        "entropy1000": 353,
+        "caseMutualInformation1000": 167
+      },
+      {
+        "language": "Vietnamese",
+        "entropy1000": 105,
+        "caseMutualInformation1000": 0
+      }
+    ]
+  },
+  "clauses": {
+    "locator": "Dataset6.txt, section 4.1.3",
+    "description": "Declarative clauses with a finite verb and a nominal object from Russian spontaneous conversations, fiction, and online news, one hundred per text type, each annotated for the order of object and verb, the object's length in words, and its animacy.",
+    "rows": [
+      {
+        "textType": "conversation",
+        "source": "Conversation in a hotel",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Conversation in a hotel",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Conversation in a hotel",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "conversation",
+        "source": "Conversation in a hotel",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Conversation in a hotel",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": true
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "objectFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dinner",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dinner",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dinner",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dinner",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dinner",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 3,
+        "animate": true
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "A Day in a Family",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Conversation in a hotel",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Conversation in a hotel",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": true
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "About Music and Theatre",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dinner",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dinner",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dinner",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "conversation",
+        "source": "Dacha",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 9,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 6,
+        "animate": true
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "objectFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 11,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 5,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 5,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Generation P",
+        "order": "objectFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": true
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Moscow Petushki",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 5,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 12,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "objectFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": true
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 9,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 10,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Tales of Old Vilnius",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "objectFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 10,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": true
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 8,
+        "animate": true
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 5,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": true
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "fiction",
+        "source": "Daniel Stein, Translator",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 10,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 6,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 7,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 7,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 5,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "objectFirst",
+        "objectLength": 5,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 5,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 5,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 7,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 11,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 8,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 12,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 7,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 14,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 14,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 15,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 10,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 11,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 5,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 8,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 7,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 8,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 12,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 6,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 14,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 10,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 6,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 14,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 9,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 14,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 9,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 21,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 7,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 8,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 10,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 7,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 6,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 12,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 4,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 3,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 5,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 13,
+        "animate": false
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 2,
+        "animate": true
+      },
+      {
+        "textType": "news",
+        "source": "Web",
+        "order": "verbFirst",
+        "objectLength": 1,
+        "animate": true
+      }
+    ]
+  }
+}

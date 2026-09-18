@@ -3,12 +3,14 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Linglib.Core.Probability.UniformOn
 import Mathlib.Algebra.Order.Monovary
+import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 import Mathlib.MeasureTheory.Integral.Prod
 import Mathlib.Probability.Moments.Covariance
 
 /-!
-# Chebyshev's integral inequality  `[UPSTREAM]`
+# Chebyshev's integral inequality and empirical covariance  `[UPSTREAM]`
 
 Two real random variables that monovary have nonnegative covariance, and two that antivary
 have nonpositive covariance. On a finite measure the statement is
@@ -16,12 +18,18 @@ have nonpositive covariance. On a finite measure the statement is
 inequality (`MonovaryOn.sum_mul_sum_le_card_mul_sum`); on a probability measure it reads
 `0 ≤ cov[X, Y; μ]`.
 
+Under the uniform measure on a finite type the covariance is the sample covariance, the mean of
+the products less the product of the means, and it is positive exactly when the sum of products
+exceeds the product of the sums divided by the sample size.
+
 ## Main declarations
 
 * `Monovary.integral_mul_integral_le_measureReal_univ_mul_integral`,
   `Antivary.measureReal_univ_mul_integral_le_integral_mul_integral`: Chebyshev's integral
   inequality on a finite measure and its dual.
 * `Monovary.covariance_nonneg`, `Antivary.covariance_nonpos`: the covariance forms.
+* `covariance_uniformOn_univ`, `covariance_uniformOn_univ_pos_iff`: the sample covariance under
+  the uniform measure on a finite type and the sign of its numerator.
 
 ## Implementation notes
 
@@ -30,7 +38,7 @@ The proof integrates `0 ≤ (X ω - X ω') * (Y ω - Y ω')`, pointwise nonnegat
 the covariance defect. The dual follows by negating `X`.
 -/
 
-open MeasureTheory
+open MeasureTheory ProbabilityTheory
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} {X Y : Ω → ℝ}
 
@@ -92,3 +100,38 @@ theorem Antivary.covariance_nonpos (h : Antivary X Y) : cov[X, Y; μ] ≤ 0 := b
     (hX.integrable one_le_two) (hY.integrable one_le_two) (hX.integrable_mul hY)
 
 end ProbabilityMeasure
+
+namespace ProbabilityTheory
+
+section UniformOn
+
+variable [MeasurableSingletonClass Ω] [Fintype Ω]
+
+/-- The integral under the uniform measure on a finite type is the sample mean. -/
+theorem integral_uniformOn_univ (f : Ω → ℝ) :
+    ∫ ω, f ω ∂(uniformOn Set.univ) = (∑ ω, f ω) / Fintype.card Ω := by
+  rw [integral_fintype .of_finite, div_eq_inv_mul, Finset.mul_sum]
+  simp_rw [uniformOn_univ_real_singleton, smul_eq_mul]
+
+variable [Nonempty Ω] (X Y)
+
+/-- The covariance under the uniform measure on a finite type is the sample covariance. -/
+theorem covariance_uniformOn_univ :
+    cov[X, Y; uniformOn Set.univ] = (∑ ω, X ω * Y ω) / Fintype.card Ω
+      - (∑ ω, X ω) / Fintype.card Ω * ((∑ ω, Y ω) / Fintype.card Ω) := by
+  rw [covariance_eq_sub .of_discrete .of_discrete, integral_uniformOn_univ,
+    integral_uniformOn_univ, integral_uniformOn_univ]
+  rfl
+
+/-- The sample covariance is positive exactly when the product of the sums is less than the
+sample size times the sum of the products. -/
+theorem covariance_uniformOn_univ_pos_iff :
+    0 < cov[X, Y; uniformOn Set.univ] ↔
+      (∑ ω, X ω) * ∑ ω, Y ω < Fintype.card Ω * ∑ ω, X ω * Y ω := by
+  have hn : (0 : ℝ) < Fintype.card Ω := by positivity
+  rw [covariance_uniformOn_univ, sub_pos, div_mul_div_comm, div_lt_div_iff₀ (by positivity) hn]
+  constructor <;> intro h <;> nlinarith
+
+end UniformOn
+
+end ProbabilityTheory
