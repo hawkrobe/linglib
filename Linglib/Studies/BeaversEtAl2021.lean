@@ -8,8 +8,8 @@ import Mathlib.Data.Fintype.Basic
 This file formalizes the argument of Beavers and colleagues that some roots entail change. A
 property-concept root, such as that of *bright*, describes a state that need not have come
 about. A result root, such as that of *shatter*, describes a state that always arises from a
-change (`ChangeOfStateModel.EntailsChange`). This contradicts the Bifurcation Thesis, on which
-change is introduced by the verbal template and never by a root.
+change (`EventStructure.Interpretation.EntailsChange`). This contradicts the Bifurcation Thesis,
+on which change is introduced by the verbal template and never by a root.
 
 A root entails change exactly when its stative cannot be conjoined with a denial of change
 (`entailsChange_iff_forall_not_deniesChange`), and with such a root restitutive *again*
@@ -22,8 +22,8 @@ attested types (`Exponence.trichotomy`).
 
 ## Implementation notes
 
-* The semantics is stated on `ChangeOfStateModel`, the change-of-state model of Beavers and
-  Koontz-Garboden's book, and *again* is `Presupposition.again`.
+* The semantics is stated on `EventStructure.Interpretation`, which interprets the primitives of
+  Beavers and Koontz-Garboden's book, and *again* is `Presupposition.again`.
 * The realization rule reads whether a root entails change off its kind signature.
 * The tables of the typological survey are not represented. Its coding of markedness is
   (`Code.IsMarked`).
@@ -47,7 +47,7 @@ section Model
 
 open ArgumentStructure BeaversKoontzGarboden2020
 
-variable {Entity State Event : Type*} (M : ChangeOfStateModel Entity State Event)
+variable {Entity State Event : Type*} (M : EventStructure.Interpretation Entity State Event)
   {ltS : State → State → Prop} {ltE : Event → Event → Prop} {P : Entity → State → Prop}
   {x : Entity} {s : State}
 
@@ -85,7 +85,7 @@ end Model
 
 /-- A knife forged sharp is sharp in its first state `false`, and in its later state `true`,
 which a sharpening gave rise to. -/
-def forged : ArgumentStructure.ChangeOfStateModel Unit Bool Unit where
+def forged : ArgumentStructure.EventStructure.Interpretation Unit Bool Unit where
   become s _ := s = true
   cause _ _ := False
   effector _ _ := False
@@ -151,8 +151,9 @@ theorem stativeRealization_eq_unmarked_iff {a : AdjectivalStructure} :
 /-- The realization rule and the semantics agree. In a model that respects the signature of a
 root for its state predicate, a root whose verb is realized unmarked entails change. -/
 theorem entailsChange_of_verbRealization_eq_unmarked {Entity State Event : Type*}
-    {M : ArgumentStructure.ChangeOfStateModel Entity State Event} {P : Entity → State → Prop}
-    {Q : Event → Prop} (h : M.Respects P Q r.kinds) (hr : verbRealization r = .unmarked) :
+    {M : ArgumentStructure.EventStructure.Interpretation Entity State Event}
+    {P : Entity → State → Prop} {Q : Event → Prop} (h : M.Respects P Q r.kinds)
+    (hr : verbRealization r = .unmarked) :
     M.EntailsChange P :=
   h.entailsChange (by unfold verbRealization at hr; split_ifs at hr with hk; exact hk)
 

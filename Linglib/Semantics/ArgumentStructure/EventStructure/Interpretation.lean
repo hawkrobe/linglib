@@ -1,44 +1,54 @@
 import Linglib.Semantics.Root.Kinds
 
 /-!
-# Change-of-state models
+# Interpretations of the event-structure primitives
 
-This file defines the models in which the event-structural decomposition of change-of-state
-verbs is interpreted. A model gives the three relations that the verbal heads introduce: an
-eventuality gives rise to a state, an eventuality causes another, and an individual is the
-effector of an eventuality. The heads themselves are operators on predicates. `vBecome` turns a
-state predicate into the predicate of the events that give rise to such a state, and `vCause`
-turns an event predicate into the predicate of the events that cause such an event. The
-eventualities are an arbitrary type, so they may be events with run times, states, or both.
+This file defines the interpretations of the primitives of event-structural decomposition. An
+interpretation gives the three relations that the verbal heads introduce: an eventuality gives
+rise to a state, an eventuality causes another, and an individual is the effector of an
+eventuality. In the vocabulary of model theory it is a structure for the signature with these
+three relation symbols, over the sorts of individuals, states and eventualities. The heads
+themselves are operators on predicates. `vBecome` turns a state predicate into the predicate of
+the events that give rise to such a state, and `vCause` turns an event predicate into the
+predicate of the events that cause such an event.
 
 A state predicate may itself entail a change, a cause of the change, or a manner of the causing
 event. These are the meaning postulates that Beavers and Koontz-Garboden attach to the state
-predicate of a root, one for each kind of entailment, and a model respects a kind signature for
-a predicate when the postulates of its kinds hold.
+predicate of a root, one for each kind of entailment. The postulates of a kind signature form a
+theory, and an interpretation `Respects` the signature for a predicate when it is a model of
+that theory. An entailment is then a statement about every interpretation, and a failure of
+entailment is witnessed by one.
 
 ## Main definitions
 
-* `ArgumentStructure.ChangeOfStateModel`: the relations `become`, `cause` and `effector`.
-* `ChangeOfStateModel.vBecome`, `ChangeOfStateModel.vCause`: the two heads.
-* `ChangeOfStateModel.EntailsChange`, `EntailsCause`, `EntailsManner`: the postulates on a state
+* `EventStructure.Interpretation`: the relations `become`, `cause` and `effector`.
+* `Interpretation.vBecome`, `Interpretation.vCause`: the two heads.
+* `Interpretation.EntailsChange`, `EntailsCause`, `EntailsManner`: the postulates on a state
   predicate.
-* `ChangeOfStateModel.Respects`: the postulates of every kind in a signature hold.
+* `Interpretation.Respects`: the interpretation is a model of the postulates of a signature.
 
 ## Main results
 
-* `ChangeOfStateModel.Entails.anti`: the postulates are downward closed along the order on kinds.
-* `ChangeOfStateModel.respects_close`: a signature and its collocational closure are respected
-  together.
+* `Interpretation.Entails.anti`: the postulates are downward closed along the order on kinds.
+* `Interpretation.respects_close`: a signature and its collocational closure have the same
+  models.
+
+## Implementation notes
+
+The sorts are type parameters, so a relation cannot be applied to an argument of the wrong sort.
+mathlib's first-order structures are single-sorted; a view of an interpretation as such a
+structure, with the postulates as sentences, is not yet defined.
 
 ## References
 
 * [beavers-koontz-garboden-2020]
 -/
 
-namespace ArgumentStructure
+namespace ArgumentStructure.EventStructure
 
-/-- A model of the relations that the change-of-state heads introduce. -/
-structure ChangeOfStateModel (Entity State Event : Type*) where
+/-- An interpretation of the event-structure primitives, the relations that the verbal heads
+introduce. -/
+structure Interpretation (Entity State Event : Type*) where
   /-- The eventuality gives rise to the state. -/
   become : State → Event → Prop
   /-- The first eventuality causes the second. -/
@@ -46,9 +56,9 @@ structure ChangeOfStateModel (Entity State Event : Type*) where
   /-- The individual is the effector of the eventuality. -/
   effector : Entity → Event → Prop
 
-namespace ChangeOfStateModel
+namespace Interpretation
 
-variable {Entity State Event : Type*} (M : ChangeOfStateModel Entity State Event)
+variable {Entity State Event : Type*} (M : Interpretation Entity State Event)
   {P P' : Entity → State → Prop} {Q Q' : Event → Prop} {x y : Entity} {e : Event}
 
 /-- The change-of-state head `vBecome P x` holds of the events that give rise to a state of
@@ -104,8 +114,8 @@ def Entails : Root.Kind → Prop
   | .cause => M.EntailsCause P
   | .manner => M.EntailsManner P Q
 
-/-- The model respects the kind signature `ks` for `P` and `Q` when the postulate of each of its
-kinds holds. -/
+/-- The interpretation respects the kind signature `ks` for `P` and `Q` when it is a model of the
+postulates of its kinds. -/
 def Respects (ks : Root.Kinds) : Prop := ∀ k ∈ ks, M.Entails P Q k
 
 variable {M P Q}
@@ -135,14 +145,14 @@ theorem Respects.mono {ks' : Root.Kinds} (hks : ks ⊆ ks') (h : M.Respects P Q 
     let ⟨j, hj, hkj⟩ := Root.Kinds.mem_close.1 hk
     (h j hj).anti hkj⟩
 
-/-- A model that respects a signature whose closure has a result satisfies the postulate of
-change. -/
+/-- An interpretation that respects a signature whose closure has a result satisfies the
+postulate of change. -/
 theorem Respects.entailsChange (h : M.Respects P Q ks) (hr : Root.Kind.result ∈ ks.close) :
     M.EntailsChange P :=
   respects_close.2 h _ hr
 
 end Postulates
 
-end ChangeOfStateModel
+end Interpretation
 
-end ArgumentStructure
+end ArgumentStructure.EventStructure

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Root.Defs
 import Linglib.Semantics.Possession.Relationalizer
-import Linglib.Semantics.ArgumentStructure.ChangeOfState
+import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 import Linglib.Fragments.Washo.PropertyConcepts
 import Linglib.Data.Examples.HaninkKoontzGarboden2025
 
@@ -33,9 +33,9 @@ seventy stems of the appendix are the rows of `Washo.propertyConcepts`, on which
 Types are the substrate's `Ty` with `.s` for the paper's state sort, and the composability
 claims are stated at the type level, since Lean's own typing enforces them in the semantic
 definitions. Possession relates a possessor to a possessum of any type, so ordinary possession
-(67) and the possession of a state (35) are one operator. The model of causation and change is
-the substrate's `ChangeOfStateModel`, whose heads `vBecome` and `vCause` are the paper's (43)
-and whose effector stands for the paper's AGENT.
+(67) and the possession of a state (35) are one operator. Causation and change are interpreted
+by the substrate's `EventStructure.Interpretation`, whose heads `vBecome` and `vCause` are the
+paper's (43) and whose effector stands for the paper's AGENT.
 
 ## References
 
@@ -199,7 +199,7 @@ theorem vHave_nabla_iff (P : E → St → Prop) (R : E → St → S → Prop)
 
 /-! ### Resultative bipartite verbs, section 5.1 -/
 
-variable {Event : Type*} (M : ArgumentStructure.ChangeOfStateModel E St Event)
+variable {Event : Type*} (M : ArgumentStructure.EventStructure.Interpretation E St Event)
 
 /-- A resultative bipartite verb, the causative head over the initial's manner and the
 change-of-state head over the final's root, entails the result state of its theme, the bare
