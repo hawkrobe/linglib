@@ -39,6 +39,8 @@ list of terminals at its leaves, left to right.
 
 namespace RoseTree
 
+open Core.Order.Branching
+
 variable {T N : Type*}
 
 /-! ### The yield -/
@@ -75,7 +77,7 @@ theorem yield_node_of_ne_nil (s : Symbol T N) {cs : List (RoseTree (Symbol T N))
 
 /-- Replacing inside the tree splits the yield into the terminals left of the address, the yield
 of the subtree there, and the terminals to its right. -/
-theorem yield_replaceAt {t s : RoseTree (Symbol T N)} {p : List ℕ} (h : t.subtreeAt p = some s) :
+theorem yield_replaceAt {t s : RoseTree (Symbol T N)} {p : List ℕ} (h : subtreeAt t p = some s) :
     ∃ pre post : List T, t.yield = pre ++ s.yield ++ post ∧
       ∀ new : RoseTree (Symbol T N), (t.replaceAt p new).yield = pre ++ new.yield ++ post := by
   obtain ⟨pre, post, hy, hy'⟩ := leafList_replaceAt h
@@ -119,8 +121,8 @@ theorem exists_nonterminal_of_ne_nil {s : Symbol T g.NT} {cs : List (RoseTree (S
   | terminal => exact absurd rfl hcs
   | nonterminal A => exact ⟨A, rfl⟩
 
-theorem subtreeAt {t : RoseTree (Symbol T g.NT)} (ht : ValidFor g t) {p : List ℕ}
-    {s : RoseTree (Symbol T g.NT)} (hs : t.subtreeAt p = some s) : ValidFor g s := by
+theorem of_subtreeAt {t : RoseTree (Symbol T g.NT)} (ht : ValidFor g t) {p : List ℕ}
+    {s : RoseTree (Symbol T g.NT)} (hs : subtreeAt t p = some s) : ValidFor g s := by
   induction p generalizing t with
   | nil => exact Option.some.inj hs ▸ ht
   | cons i p ih =>
@@ -130,7 +132,7 @@ theorem subtreeAt {t : RoseTree (Symbol T g.NT)} (ht : ValidFor g t) {p : List �
 
 /-- Replacing a subtree by a valid tree with the same root symbol preserves validity. -/
 theorem replaceAt {t : RoseTree (Symbol T g.NT)} (ht : ValidFor g t) {p : List ℕ}
-    {s : RoseTree (Symbol T g.NT)} (hs : t.subtreeAt p = some s)
+    {s : RoseTree (Symbol T g.NT)} (hs : subtreeAt t p = some s)
     {new : RoseTree (Symbol T g.NT)} (hnew : ValidFor g new) (hv : new.value = s.value) :
     ValidFor g (t.replaceAt p new) := by
   induction p generalizing t with
@@ -139,7 +141,7 @@ theorem replaceAt {t : RoseTree (Symbol T g.NT)} (ht : ValidFor g t) {p : List �
     obtain ⟨c, hc, hcs⟩ := subtreeAt_cons_eq_some_iff.mp hs
     cases t with
     | node s₀ cs =>
-      rw [children_node] at hc
+      rw [branching_children, children_node] at hc
       rw [replaceAt_cons_of_getElem? (by simpa using hc), value_node, children_node]
       have hval : (c.replaceAt p new).value = c.value := by
         cases p with
@@ -212,22 +214,22 @@ end RuleCount
 `none` off the tree or at a terminal. -/
 def ruleAt? {g : ContextFreeGrammar T} (t : RoseTree (Symbol T g.NT)) (p : List ℕ) :
     Option (ContextFreeRule T g.NT) :=
-  (t.subtreeAt p).bind fun s => match s.value with
+  (subtreeAt t p).bind fun s => match s.value with
     | .nonterminal A => some ⟨A, s.children.map value⟩
     | .terminal _ => none
 
 theorem ruleAt?_eq_some {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)} {p : List ℕ}
     {A : g.NT} {cs : List (RoseTree (Symbol T g.NT))}
-    (h : t.subtreeAt p = some (node (.nonterminal A) cs)) :
+    (h : subtreeAt t p = some (node (.nonterminal A) cs)) :
     ruleAt? t p = some ⟨A, cs.map value⟩ := by
   simp [ruleAt?, h]
 
 /-- Along an address into a valid tree, every proper prefix ends at a nonterminal node, and so
 does the address itself when the subtree there has children. -/
 theorem ValidFor.exists_subtreeAt_take {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
-    (ht : ValidFor g t) {p : List ℕ} {s : RoseTree (Symbol T g.NT)} (hs : t.subtreeAt p = some s)
+    (ht : ValidFor g t) {p : List ℕ} {s : RoseTree (Symbol T g.NT)} (hs : subtreeAt t p = some s)
     (hh : 1 < s.height) {k : ℕ} (hk : k ≤ p.length) :
-    ∃ A cs, t.subtreeAt (p.take k) = some (node (.nonterminal A) cs) := by
+    ∃ A cs, subtreeAt t (p.take k) = some (node (.nonterminal A) cs) := by
   obtain ⟨u, hu⟩ := Option.isSome_iff_exists.mp (subtreeAt_take_isSome hs k)
   obtain ⟨s₀, cs, rfl⟩ : ∃ s₀ cs, u = node s₀ cs := by cases u; exact ⟨_, _, rfl⟩
   have hne : cs ≠ [] := by
@@ -240,24 +242,24 @@ theorem ValidFor.exists_subtreeAt_take {g : ContextFreeGrammar T} {t : RoseTree 
       obtain rfl := Option.some.inj hu
       obtain ⟨c, hc, -⟩ := exists_mem_children_height_add_one hh
       exact List.ne_nil_of_mem hc
-  obtain ⟨A, rfl⟩ := (ht.subtreeAt hu).exists_nonterminal_of_ne_nil hne
+  obtain ⟨A, rfl⟩ := (ht.of_subtreeAt hu).exists_nonterminal_of_ne_nil hne
   exact ⟨A, cs, hu⟩
 
 /-- Pigeonhole along an address: a path of at least `g.rules.card` steps through a valid tree,
 ending at a node with children, passes two nodes with the same nonterminal. -/
 theorem ValidFor.exists_repeat {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
-    (ht : ValidFor g t) {p : List ℕ} {s : RoseTree (Symbol T g.NT)} (hs : t.subtreeAt p = some s)
+    (ht : ValidFor g t) {p : List ℕ} {s : RoseTree (Symbol T g.NT)} (hs : subtreeAt t p = some s)
     (hh : 1 < s.height) (hlen : g.rules.card ≤ p.length) :
     ∃ i j, i < j ∧ j ≤ p.length ∧ ∃ A csᵢ csⱼ,
-      t.subtreeAt (p.take i) = some (node (.nonterminal A) csᵢ) ∧
-      t.subtreeAt (p.take j) = some (node (.nonterminal A) csⱼ) := by
+      subtreeAt t (p.take i) = some (node (.nonterminal A) csᵢ) ∧
+      subtreeAt t (p.take j) = some (node (.nonterminal A) csⱼ) := by
   classical
   let f : ℕ → ContextFreeRule T g.NT := fun k => (ruleAt? t (p.take k)).getD ⟨g.initial, []⟩
   have hf : ∀ k ∈ Finset.range (p.length + 1), f k ∈ g.rules := fun k hk => by
     obtain ⟨A, cs, hA⟩ :=
       ht.exists_subtreeAt_take hs hh (Nat.lt_succ_iff.mp (Finset.mem_range.mp hk))
     simp only [f, ruleAt?_eq_some hA, Option.getD_some]
-    exact (ht.subtreeAt hA).rule_mem
+    exact (ht.of_subtreeAt hA).rule_mem
   obtain ⟨a, ha, b, hb, hne, hfeq⟩ := Finset.exists_ne_map_eq_of_card_lt_of_maps_to
     (by simp only [Finset.card_range]; omega) hf
   wlog hab : a < b generalizing a b

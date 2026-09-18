@@ -36,7 +36,7 @@ pumps them (`RoseTree.ValidFor.replaceAt`, `RoseTree.ValidFor.derives`).
   property.
 -/
 
-open RoseTree
+open RoseTree Core.Order.Branching
 
 /-- The pumping property of a language: beyond some length, every word splits as
 `u ++ v ++ x ++ y ++ z` with `v ++ x ++ y` no longer than that length, `v ++ y` nonempty, and every
@@ -136,18 +136,18 @@ theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.ValidFor g
   obtain ⟨e, he, heh⟩ := hpath p.length hp.le
   rw [List.take_length, hpq, subtreeAt_append, ht₀, Option.bind_some] at he
   obtain ⟨i, j, hij, hjK, A, csᵢ, csⱼ, hi, hj⟩ :=
-    (ht₁.subtreeAt ht₀).exists_repeat he (by omega) hql.ge
+    (ht₁.of_subtreeAt ht₀).exists_repeat he (by omega) hql.ge
   -- the outer and inner repeats, and their addresses
   set outer := node (Symbol.nonterminal A) csᵢ with houter
   set inner := node (Symbol.nonterminal A) csⱼ with hinner
   set po := p.take off ++ q.take i with hpo
-  have hpo_sub : t₁.subtreeAt po = some outer := by
+  have hpo_sub : subtreeAt t₁ po = some outer := by
     rw [hpo, subtreeAt_append, ht₀, Option.bind_some, hi]
   set pr := (q.take j).drop i with hpr
   have hqj : q.take j = q.take i ++ pr := by
     conv_lhs => rw [← List.take_append_drop i (q.take j)]
     rw [List.take_take, min_eq_left hij.le]
-  have hpr_sub : outer.subtreeAt pr = some inner := by
+  have hpr_sub : subtreeAt outer pr = some inner := by
     rw [hqj, subtreeAt_append, hi, Option.bind_some] at hj; exact hj
   have hpr_ne : pr ≠ [] := by
     intro h
@@ -158,8 +158,8 @@ theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.ValidFor g
     obtain ⟨s, hs, hsh⟩ := hpath (off + i) (by omega)
     rw [List.take_add, ← hq, ← hpo, hpo_sub, Option.some.injEq] at hs
     rw [hs, hsh]; omega
-  have houter_v : outer.ValidFor g := ht₁.subtreeAt hpo_sub
-  have hinner_v : inner.ValidFor g := houter_v.subtreeAt hpr_sub
+  have houter_v : outer.ValidFor g := ht₁.of_subtreeAt hpo_sub
+  have hinner_v : inner.ValidFor g := houter_v.of_subtreeAt hpr_sub
   -- yield decompositions
   obtain ⟨u, z, hyu, hyu'⟩ := yield_replaceAt hpo_sub
   obtain ⟨v, y, hyv, hyv'⟩ := yield_replaceAt hpr_sub
