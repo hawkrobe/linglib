@@ -1,4 +1,5 @@
-import Linglib.Fragments.Indonesian.VoiceSystem
+import Linglib.Fragments.Indonesian.Predicates
+import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Studies.Beavers2010
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Syntax.Voice.Middle
@@ -50,8 +51,7 @@ same suppression over causer-unspecified roots (§5).
 namespace BeaversUdayana2022
 
 open ArgumentStructure
-open Indonesian.VoiceSystem
-open Minimalist.Voice (Params)
+open Minimalist.Voice (Params Flavor ExternalArgSemantics)
 open Beavers2010
 open ArgumentStructure (AffectednessDegree)
 open Voice
@@ -282,7 +282,35 @@ theorem conflation_derivation (pi : E → E → Prop)
 
 end Conflation
 
-/-! ### Parameter underspecification (§7.3) -/
+/-! ### Parameter underspecification (§7.3)
+
+The three voice prefixes in the ±D / ±λx parameter space of [alexiadou-schaefer-2015]: *meN-*
+projects a full external argument, *di-* an existentially bound one that is semantically
+active, licensing *oleh* 'by' phrases and controlling rationale-clause PRO (§2.1), and *ber-*
+fixes neither parameter, the setting following from the argument-realization strategy and
+from lexical semantics and pragmatics (§3). -/
+
+/-- *meN-*: active Voice[+D, +λx], a full external argument with agent semantics. -/
+def menParams : Params :=
+  { selectsSpecifier := some true, extArgSemantics := some .thematicArgument }
+
+/-- *di-*: Voice[+D, +∃x], a specifier hosting a weak implicit argument that is existentially
+bound, unlike the English passive's [+D, −λx]. -/
+def diParams : Params :=
+  { selectsSpecifier := some true, extArgSemantics := some .thematicExistential }
+
+/-- *ber-*: Voice[±D, ±λx], neither parameter fixed. -/
+def berParams : Params := { selectsSpecifier := none, extArgSemantics := none }
+
+/-- *meN-* occupies the cell of the agentive flavor. -/
+theorem menParams_eq_agentive : menParams = Flavor.agentive.toParams := rfl
+
+/-- *ber-* is compatible with every named flavor, the mark of an underspecified voice
+morpheme. -/
+theorem berParams_isCompatibleWith (f : Flavor) :
+    berParams.isCompatibleWith f.toParams = true := by
+  cases f <;> rfl
+
 
 /-- *ber-* is parameter-compatible with active *meN-*: the formal content
 of covering "some type of thematic active Voice". -/

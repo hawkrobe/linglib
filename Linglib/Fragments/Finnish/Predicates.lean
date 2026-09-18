@@ -1,33 +1,25 @@
-import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Voice.Basic
 import Linglib.Semantics.Causation.Implicative
 
 /-!
-# Finnish Verb Entries [karlsson-2017]
+# Finnish verbs
 
-Finnish verbs illustrate two phenomena that exercise linglib's infrastructure:
+Finnish verbs fall into six conjugation classes by the shape of the infinitive stem, and each
+verb has an active and an impersonal form, as *avata* 'to open' has *avaa* 'opens' and
+*avataan* 'one opens, it is opened'. The impersonal form, traditionally the passive and the
+fourth person of Karlsson's grammar, says that an unspecified human agent performs the action,
+has no subject expressed as an independent phrase, and admits no correspondent to an
+Indo-European *by*-agent; it is the impersonal passive of the typology. The implicative verbs
+Nadathur studies, *onnistua* 'manage', *uskaltaa* 'dare' and their kin, extend the entries with
+their implicative class.
 
-1. **The impersonal "passive"** — Finnish lacks a true passive. What is traditionally called the passive is an impersonal
-   construction: the agent is demoted to an implicit generic human referent,
-   not promoted to a by-phrase. The subject position remains empty.
+## References
 
-   Active: *Mies avasi oven.* 'The man opened the door.'
-   "Passive": *Ovi avattiin.* 'The door was opened (by someone).'
-
-   This is formalized using `Flavor.impersonal`, distinct from both
-   `nonThematic` (anticausative, no agent at all) and `agentive` (syntactically
-   projected agent).
-
-2. **Verb type classification** — Finnish has 6 productive verb types
-   (conjugation classes) based on infinitive stem shape (Karlsson §10.1).
-   We record the type as data, not as separate MorphRules, since the
-   classification is lexical.
-
+* [karlsson-2017]
+* [nadathur-2023-implicatives]
 -/
 
 namespace Finnish.Predicates
-
-open Minimalist.Voice (Flavor Head agentive impersonal)
 
 -- ============================================================================
 -- § 1: Verb Entry Type
@@ -89,54 +81,6 @@ def haluta : FinnishVerb :=
   , pres3sgAct := "haluaa"
   , presImpersonal := "halutaan" }
 
--- ============================================================================
--- § 3: Voice Heads for Finnish
--- ============================================================================
-
-/-- Active Finnish voice: agentive, projects a syntactic agent. -/
-def finnishActive : Head := agentive
-
-/-- Finnish "passive" voice: impersonal, no syntactic agent specifier.
-    The agent is existentially closed — someone performs the action,
-    but the someone is not a syntactic argument. -/
-def finnishPassive : Head := impersonal
-
--- ============================================================================
--- § 4: Verification Theorems
--- ============================================================================
-
-/-- Active Finnish verbs project an agent. -/
-theorem active_has_agent : finnishActive.AssignsTheta := by decide
-
-/-- Finnish "passive" does NOT project an agent syntactically. -/
-theorem passive_no_agent : ¬ finnishPassive.AssignsTheta := by decide
-
-/-- Finnish "passive" HAS semantic content (existential closure over agent),
-    unlike true anticausatives which are semantically vacuous. -/
-theorem passive_has_semantics : finnishPassive.HasSemantics := by decide
-
-/-- Finnish "passive" is NOT a phase head. -/
-theorem passive_not_phase : ¬ finnishPassive.IsPhasal := by decide
-
-/-- Finnish "passive" is distinct from anticausative — both lack a syntactic
-    agent, but impersonal Voice has semantics while nonThematic does not. -/
-theorem impersonal_vs_anticausative :
-    finnishPassive.HasSemantics ∧ ¬ Minimalist.Voice.anticausative.HasSemantics :=
-  by decide
-
-/-- All impersonal forms end in *-aan* or *-ään* (back or front harmony on
-    the passive marker). -/
-theorem impersonal_suffix :
-    [avata, lukea, tulla, haluta].all
-      (fun v => v.presImpersonal.endsWith "aan") = true := by native_decide
-
-/-- All 4 sample verbs have distinct verb types. -/
-theorem verb_types_distinct :
-    avata.verbType ≠ lukea.verbType ∧
-    lukea.verbType ≠ tulla.verbType ∧
-    tulla.verbType ≠ haluta.verbType := by
-  exact ⟨by decide, by decide, by decide⟩
-
 /-! ### Voice
 
 The active and the passive, the fourth person of the verb: the action is performed by an
@@ -146,8 +90,12 @@ phrase, and there is no correspondent to an Indo-European *by*-agent ([karlsson-
 variants, the object keeping its coding; the inventory lists the voices projecting
 transitive clauses. -/
 
-/-- The active and the impersonal passive, the passive marked by a suffix. -/
-def voices : Finset Voice := {.active, Voice.impersonalPassive.synthetic}
+/-- The impersonal passive, the fourth person: the passive marker, *-ttA*, *-tA*, *-dA* or
+*-A*, with the personal ending *-Vn*. -/
+def impersonalPassive : Voice := Voice.impersonalPassive.marked [.suff "tA", .suff "Vn"]
+
+/-- The active and the impersonal passive. -/
+def voices : Finset Voice := {.active, impersonalPassive}
 
 -- ============================================================================
 -- § 6: Finnish Implicative Verbs ([nadathur-2023-implicatives])

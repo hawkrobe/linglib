@@ -1,5 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Category.Verb.Basic
+import Linglib.Syntax.Voice.Basic
 import Linglib.Semantics.ArgumentStructure.LevinClass.Members
 import Linglib.Syntax.Clause.Complementation
 import Linglib.Morphology.Word.Basic
@@ -16,7 +17,9 @@ aspectual and semantic class, presupposition, causation and attitude facets) wit
 inflected forms, `Verb.realize` reading a cell and `Verb.mkRegular` deriving the forms of a
 regular verb by the spelling rules of `Inflection.lean`. Entries are grouped by the
 [levin-1993] class they carry, then by the paper whose classification they record; the
-inventory `verbs` lists them all.
+inventory `verbs` lists them all. English has two voices, the active and a periphrastic
+passive, the auxiliary *be* with the past participle, the patient the subject and the agent
+demoted to an optional *by*-phrase; `voices` lists them.
 
 ## Implementation notes
 
@@ -3358,5 +3361,13 @@ def Verb.passiveParticiple (v : Verb) : Word :=
   { form := v.formPastPart, cat := .VERB,
     features := Features.of (verbForm := some .Part) (voice := some .Pass) }
 
+/-! ### Voice -/
+
+/-- The passive, marked by the auxiliary *be* with the past participle,
+`Verb.passiveParticiple`. -/
+def passive : Voice := Voice.passive.marked [.free "be"]
+
+/-- The active and the passive. -/
+def voices : Finset Voice := {.active, passive}
 
 end English

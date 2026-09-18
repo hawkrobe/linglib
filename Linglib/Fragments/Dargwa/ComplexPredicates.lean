@@ -226,9 +226,9 @@ def antipassive : Voice := .antipassive
     initial P. -/
 def pLability : Voice := .anticausative
 
-/-- Dargwa causative (-aq) applied to intransitive bases: the synthetically coded
-    causative, S maintained as P and a new A, the causer, introduced. -/
-def causativeAlternation : Voice := Voice.causative.synthetic
+/-- Dargwa causative (-aq) applied to intransitive bases: the causative marked by *-aq*,
+    S maintained as P and a new A, the causer, introduced. -/
+def causativeAlternation : Voice := Voice.causative.marked [.suff "aq"]
 
 /-- The antipassive is valency-decreasing (P is denucleativized). -/
 theorem antipassive_decreases : antipassive.IsValencyDecreasing := by decide

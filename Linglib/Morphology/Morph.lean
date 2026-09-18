@@ -11,18 +11,19 @@ import Mathlib.Data.Fintype.Sum
 # Morphs
 
 A **morph** is a minimal segmental form together with its attachment kind:
-root, prefix, suffix, proclitic, enclitic, or free form, the form side of
-[haspelmath-2020]'s form–content pairing. Morphs are never zero and never
+root, prefix, suffix, infix, proclitic, enclitic, or free form, the form side
+of [haspelmath-2020]'s form–content pairing. Morphs are never zero and never
 discontinuous.
 
 ## Main declarations
 
 * `Morph.Side`, `Morph.Attachment`, `Morph.Kind` — the side of its host a bound
   morph attaches on, how tightly it attaches, and the attachment kinds: bound on
-  a side as an affix or a clitic, root, or free.
+  a side as an affix or a clitic, infixed, root, or free.
 * `Morph` — an attachment kind with the bare segmental material; `Morph.bound`
   and its specializations `Morph.pref`, `Morph.suff`, `Morph.procl`,
-  `Morph.encl` build the bound morphs, `Morph.root` and `Morph.free` the rest.
+  `Morph.encl` build the bound morphs, `Morph.infixed`, `Morph.root` and
+  `Morph.free` the rest.
 * `Morph.Kind.side?`, `Morph.Kind.attachment?` — the side and the attachment of
   a bound kind.
 * `Morph.Side.attach` — attachment of an element on a side of a sequence, the
@@ -33,7 +34,7 @@ discontinuous.
 ## Implementation notes
 
 `ToString` renders a morph in Leipzig boundary notation, `un-`, `-able`, `l=`,
-`=s`, and `Morph.surface` joins a contiguous sequence, `un-do-able`. A
+`=s`, `<um>`, and `Morph.surface` joins a contiguous sequence, `un-do-able`. A
 discontinuous exponent is a sequence of such pieces (a circumfix is a prefix
 and a suffix, [haspelmath-2020]), which its owner renders with `…` between the
 pieces.
@@ -65,6 +66,8 @@ inductive Morph.Attachment where
 inductive Morph.Kind where
   /-- A bound morph attaches on a side of its host, as an affix or a clitic. -/
   | bound (side : Morph.Side) (attachment : Morph.Attachment)
+  /-- An infix, inserted into its host. -/
+  | infixed
   /-- A root morph. -/
   | root
   /-- A free non-root morph, such as a particle or an auxiliary. -/
@@ -105,17 +108,19 @@ end Side
 
 namespace Kind
 
-/-- The side a bound kind attaches on; `none` for roots and free forms. -/
+/-- The side a bound kind attaches on; `none` for infixes, roots and free forms. -/
 def side? : Kind → Option Side
   | .bound s _ => some s
-  | .root | .free => none
+  | .infixed | .root | .free => none
 
-/-- The attachment of a bound kind; `none` for roots and free forms. -/
+/-- The attachment of a bound kind; `none` for infixes, roots and free forms. -/
 def attachment? : Kind → Option Attachment
   | .bound _ a => some a
-  | .root | .free => none
+  | .infixed | .root | .free => none
 
 @[simp] theorem side?_bound (s : Side) (a : Attachment) : (bound s a).side? = some s := rfl
+
+@[simp] theorem side?_infixed : infixed.side? = none := rfl
 
 @[simp] theorem side?_root : root.side? = none := rfl
 
@@ -123,6 +128,8 @@ def attachment? : Kind → Option Attachment
 
 @[simp] theorem attachment?_bound (s : Side) (a : Attachment) :
     (bound s a).attachment? = some a := rfl
+
+@[simp] theorem attachment?_infixed : infixed.attachment? = none := rfl
 
 @[simp] theorem attachment?_root : root.attachment? = none := rfl
 
@@ -135,7 +142,7 @@ theorem attachment?_eq_some_iff {k : Kind} {a : Attachment} :
     k.attachment? = some a ↔ ∃ s, k = bound s a := by
   cases k <;> simp [eq_comm]
 
-theorem side?_eq_none_iff {k : Kind} : k.side? = none ↔ k = root ∨ k = free := by
+theorem side?_eq_none_iff {k : Kind} : k.side? = none ↔ k = infixed ∨ k = root ∨ k = free := by
   cases k <;> simp
 
 end Kind
@@ -157,6 +164,9 @@ def procl (s : String) : Morph := bound .before .clitic s
 
 /-- An enclitic morph. -/
 def encl (s : String) : Morph := bound .after .clitic s
+
+/-- An infix morph. -/
+def infixed (s : String) : Morph := ⟨.infixed, s⟩
 
 /-- A root morph. -/
 def root (s : String) : Morph := ⟨.root, s⟩
@@ -186,6 +196,10 @@ variable (side : Side) (attachment : Attachment) (s : String)
 
 @[simp] theorem form_encl : (encl s).form = s := rfl
 
+@[simp] theorem kind_infixed : (infixed s).kind = .infixed := rfl
+
+@[simp] theorem form_infixed : (infixed s).form = s := rfl
+
 @[simp] theorem kind_root : (root s).kind = .root := rfl
 
 @[simp] theorem form_root : (root s).form = s := rfl
@@ -202,6 +216,7 @@ instance : ToString Morph :=
     | .bound .after .affix => "-" ++ m.form
     | .bound .before .clitic => m.form ++ "="
     | .bound .after .clitic => "=" ++ m.form
+    | .infixed => "<" ++ m.form ++ ">"
     | .root | .free => m.form⟩
 
 /-- The surface form of a contiguous sequence of morphs: each in boundary

@@ -1,4 +1,5 @@
 import Linglib.Syntax.Category.Verb.Defs
+import Linglib.Morphology.Morph
 
 /-!
 # Voice
@@ -7,18 +8,20 @@ A voice relates two argument frames of one predicate, the initial and the
 derived construction, by a correspondence between their slots: which slot
 of the derived frame each participant of the initial frame occupies. It
 records besides the derived slot that is the syntactically privileged term,
-the pivot, and how the verb codes it. Everything a grammar says of a voice is
-read off the pair: the fate of an initial core term (`Voice.fate`), the
-participant the derived construction introduces (`newParticipant`), whether
-the voice nucleativizes or denucleativizes, and so whether it increases or
-decreases valency, and whether it leaves transitivity alone and only selects
-a pivot (`IsSymmetrical`). The voices a grammar names are constants: the
+the pivot, and the marker by which the verb codes it. Everything a grammar
+says of a voice is read off the pair: the fate of an initial core term
+(`Voice.fate`), the participant the derived construction introduces
+(`newParticipant`), whether the voice nucleativizes or denucleativizes, and so
+whether it increases or decreases valency, and whether it leaves transitivity
+alone and only selects a pivot (`IsSymmetrical`). The voices a grammar names
+are constants: the
 `active` and, from the transitive construction, the `passive`, the
 `impersonalPassive`, the `antipassive`, the `anticausative`, the `reflexive`
 and the `applicative`, the `causative` from the intransitive one, and the
 `patientVoice` and `obliqueVoice` of the symmetrical systems. A fragment
-states a voice with its coding, `Voice.passive.analytic`; the bare constant is
-the uncoded alternation, a flexivalent verb's or a study's.
+states a voice with its marker, `Voice.passive.marked [.suff "x"]`, and two
+voices of one language that share an alternation differ by their markers; the
+bare constant is the unmarked alternation, a flexivalent verb's or a study's.
 
 ## Main definitions
 
@@ -26,13 +29,14 @@ the uncoded alternation, a flexivalent verb's or a study's.
 * `Voice.ParticipantFate` — what a voice does to an initial core term
 * `Voice.Coding` — synthetic, analytic or uncoded
 * `Voice` — the initial and derived frames with their slot
-  correspondence, the pivot and the coding
+  correspondence, the pivot and the marker
 * `Voice.image`, `fate`, `fateOfRole`, `introduced`, `newParticipant` —
   the derived participant bookkeeping
 * `Voice.Nucleativizes`, `Denucleativizes`, `IsValencyIncreasing`,
   `IsValencyDecreasing`, `Cumulates`, `IsSymmetrical`, `IsImpersonal`,
-  `IsCoded`, `pivotRole`, `SelectsOblique` — the derived classification
-* `Voice.synthetic`, `Voice.analytic` — the voice with its coding
+  `pivotRole`, `SelectsOblique` — the derived classification
+* `Voice.coding`, `IsCoded` — the coding read off the marker
+* `Voice.marked` — the voice with a marker
 * `Voice.refl` — the trivial voice of a frame with itself
 * `Voice.active`, `passive`, `impersonalPassive`, `antipassive`,
   `anticausative`, `causative`, `reflexive`, `reciprocal`, `applicative`,
@@ -48,6 +52,8 @@ the uncoded alternation, a flexivalent verb's or a study's.
   impersonal passive privileges no term
 * `Voice.isSymmetrical_refl` — the trivial voice neither nucleativizes nor
   denucleativizes
+* `Voice.coding_eq_uncoded_iff` — a voice is uncoded exactly when it has no
+  marker
 
 ## Implementation notes
 
@@ -58,8 +64,13 @@ terms with one correspondent are cumulated. The derived frame of a passive
 records the demoted agent as implicit, the canonical short passive. The pivot
 defaults to the first core slot of the derived construction, its S or A, and
 `none` for an impersonal construction; only the symmetrical voices set it.
-Coding is a per-language datum with no bearing on the classification, so the
-constants are uncoded and a fragment supplies it. [creissels-2024]'s names for
+The marker is the segmental material coding the voice, in surface order, and
+[creissels-2024]'s coding types are read off it: synthetic when every morph is
+bound, analytic when a free morph, an auxiliary, is among them, uncoded when it
+is empty; a zero-marked voice, told from the initial construction by its
+inflection alone, has the empty marker. The marker is a per-language datum with
+no bearing on the classification, so the constants are unmarked and a fragment
+supplies it. [creissels-2024]'s names for
 the alternations are processes, passivization and the rest; the constants here
 are the voices, and his typology keeps its vocabulary in his study. Within
 `Syntax/Voice/` this file owns a voice; `System.lean` owns a language's set
@@ -134,11 +145,18 @@ inductive Coding where
   | uncoded
   deriving DecidableEq, Repr
 
+/-- The coding type of a marker: uncoded when empty, synthetic when every morph is bound,
+analytic otherwise. -/
+def Coding.ofMarker (ms : List Morphology.Morph) : Coding :=
+  if ms = [] then .uncoded
+  else if ms.all fun m ↦ m.kind.side?.isSome then .synthetic
+  else .analytic
+
 end Voice
 
 /-- A voice: the initial and the derived argument frame, the slot of the derived frame each
 slot of the initial frame's participant occupies, the derived slot that is the pivot, and
-the verbal coding. -/
+the marker on the verb. -/
 @[ext]
 structure Voice where
   /-- The initial construction. -/
@@ -152,8 +170,9 @@ structure Voice where
       or A, unless a symmetrical voice selects another; `none` for an impersonal
       construction ([creissels-2024] §8.1.7). -/
   pivot : Option ArgumentFrame.Slot := target.coreSlots.head?
-  /-- The coding, a per-language datum. -/
-  coding : Voice.Coding := .uncoded
+  /-- The morphs coding the voice on the verb, in surface order: affixes, an auxiliary, or
+      none for a zero-marked or an unmarked voice. -/
+  marker : List Morphology.Morph := []
   deriving DecidableEq, Repr
 
 namespace Voice
@@ -244,8 +263,11 @@ def SelectsOblique : Prop := v.pivotRole = some .X
 /-- No term is privileged: an impersonal construction ([creissels-2024] §8.3.2.2). -/
 def IsImpersonal : Prop := v.pivot = none
 
+/-- The coding type of the voice, read off its marker ([creissels-2024] §1.1.3). -/
+def coding : Coding := .ofMarker v.marker
+
 /-- Coded on the verb: a voice as against flexivalency ([creissels-2024] §1.1.3). -/
-def IsCoded : Prop := v.coding ≠ .uncoded
+def IsCoded : Prop := v.marker ≠ []
 
 instance : Decidable v.Nucleativizes := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 instance : Decidable v.Denucleativizes := inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -257,13 +279,25 @@ instance : Decidable v.SelectsOblique := inferInstanceAs (Decidable (_ = _))
 instance : Decidable v.IsImpersonal := inferInstanceAs (Decidable (_ = _))
 instance : Decidable v.IsCoded := inferInstanceAs (Decidable (_ ≠ _))
 
-/-! ### Coding -/
+/-! ### Marking -/
 
-/-- The voice, synthetically coded. -/
-def synthetic : Voice := { v with coding := .synthetic }
+/-- The voice with the given marker. -/
+def marked (ms : List Morphology.Morph) : Voice := { v with marker := ms }
 
-/-- The voice, analytically coded. -/
-def analytic : Voice := { v with coding := .analytic }
+@[simp] theorem marker_marked (ms : List Morphology.Morph) : (v.marked ms).marker = ms := rfl
+
+@[simp] theorem source_marked (ms : List Morphology.Morph) : (v.marked ms).source = v.source :=
+  rfl
+
+@[simp] theorem target_marked (ms : List Morphology.Morph) : (v.marked ms).target = v.target :=
+  rfl
+
+theorem coding_eq_uncoded_iff : v.coding = .uncoded ↔ v.marker = [] := by
+  unfold coding Coding.ofMarker
+  split_ifs <;> simp_all
+
+theorem isCoded_iff : v.IsCoded ↔ v.coding ≠ .uncoded := by
+  rw [IsCoded, Ne, Ne, coding_eq_uncoded_iff]
 
 variable {v}
 

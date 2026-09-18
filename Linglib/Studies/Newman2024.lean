@@ -610,8 +610,8 @@ theorem passive_lacks_D : passiveV.features.hasD = false := rfl
     (anticausative for SE marking, passive for *by*-phrase licensing)
     but assignsTheta = false (no θ-role). -/
 theorem voice_hasD_ne_assignsTheta :
-    Voice.anticausative.HasD ∧ ¬ Voice.anticausative.AssignsTheta ∧
-    Voice.passive.HasD ∧ ¬ Voice.passive.AssignsTheta := by decide
+    Minimalist.Voice.anticausative.HasD ∧ ¬ Minimalist.Voice.anticausative.AssignsTheta ∧
+    Minimalist.Voice.passive.HasD ∧ ¬ Minimalist.Voice.passive.AssignsTheta := by decide
 
 -- Newman adopts [preminger-2014]'s obligatory-no-crash model for
 -- Merge features: [·D·], [·X·], [·V·] can go unchecked without

@@ -1,7 +1,7 @@
 import Linglib.Semantics.Root.Defs
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Mayan.Chuj.RootClasses
-import Linglib.Fragments.Mayan.Chuj.VoiceSystem
+import Linglib.Fragments.Mayan.Chuj.Voice
 import Linglib.Data.Examples.Coon2019
 import Mathlib.Tactic.DeriveFintype
 
@@ -88,13 +88,6 @@ head of §2.1, and the suffixes -w, -ch and -j. -/
 inductive V
   | transitive | intransitive | w | ch | j
   deriving DecidableEq, Fintype, Repr
-
-/-- The exponent of each head, the Ø slot shared by the two null heads. -/
-def V.exponent : V → VoiceSuffix
-  | .transitive | .intransitive => .null
-  | .w => .w
-  | .ch => .ch
-  | .j => .j
 
 /-- The Minimalist Voice head each realizes, a bundled v ~ Voice⁰ after [harley-2017]
 introducing the external argument as in [kratzer-1996] and specified for whether and what it
@@ -189,22 +182,45 @@ def WellFormed (rc : RootClass) (v : V) (i : Internal) : Prop :=
 instance (rc : RootClass) (v : V) (i : Internal) : Decidable (WellFormed rc v i) := by
   unfold WellFormed; infer_instance
 
-/-- A root class forms a stem with one of the suffixes Ø, -w, -ch and -j when some head with
-that exponent is well-formed on it under some realization; stems with other derivational
-suffixes, (11) and (15), are not in view. -/
-def IsGrammatical (rc : RootClass) (vs : VoiceSuffix) : Prop :=
-  ∃ v : V, v.exponent = vs ∧ ∃ i, WellFormed rc v i
+/-- The voice of the fragment a head derives with a realization of the internal argument,
+Section 4: the transitive stem under the transitive head, the passives under -ch and -j, the
+attested -chaj carrying the -aj that closes the implicit agent, and under -w the incorporation
+antipassive with a bare NP and, with -aj closing an implicit theme, the absolutive antipassive;
+none under the null intransitive head, whose stem is no voice. -/
+def V.voice : V → Internal → Option Voice
+  | .transitive, _ => some Chuj.transitive
+  | .intransitive, _ => none
+  | .ch, _ => some Chuj.passive
+  | .j, _ => some Chuj.agentlessPassive
+  | .w, .implicit => some Chuj.absolutiveAntipassive
+  | .w, _ => some Chuj.incorporationAntipassive
 
-instance (rc : RootClass) (vs : VoiceSuffix) : Decidable (IsGrammatical rc vs) := by
-  unfold IsGrammatical; infer_instance
+/-- A root class forms a stem with a head when the head is well-formed on it under some
+realization; stems with other derivational suffixes, (11) and (15), are not in view. -/
+def Forms (rc : RootClass) (v : V) : Prop := ∃ i, WellFormed rc v i
 
-/-- The distribution of the four heads over the root classes, derived: √TV takes all four,
-(45) and (59) to (60); √ITV only Ø, (47); √POS and √NOM only -w, (45), apart from isolated forms
-like (71). -/
-theorem isGrammatical_iff :
-    (∀ vs, IsGrammatical .tv vs) ∧ (∀ vs, IsGrammatical .itv vs ↔ vs = .null) ∧
-      (∀ vs, IsGrammatical .pos vs ↔ vs = .w) ∧ ∀ vs, IsGrammatical .nom vs ↔ vs = .w := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> intro vs <;> cases vs <;> decide
+instance (rc : RootClass) (v : V) : Decidable (Forms rc v) := by unfold Forms; infer_instance
+
+/-- The distribution of the heads over the root classes, derived: √TV takes every head but the
+null intransitive one, (45) and (59) to (60); √ITV only that one, (47); √POS and √NOM only -w,
+(45), apart from isolated forms like (71). -/
+theorem forms_iff :
+    (∀ v, Forms .tv v ↔ v ≠ .intransitive) ∧ (∀ v, Forms .itv v ↔ v = .intransitive) ∧
+      (∀ v, Forms .pos v ↔ v = .w) ∧ ∀ v, Forms .nom v ↔ v = .w := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> intro v <;> cases v <;> decide
+
+/-- The stems of a transitive root are exactly the five voices of the fragment, (58). -/
+theorem voice_tv_iff (vo : Voice) :
+    vo ∈ Chuj.voices ↔ ∃ v i, WellFormed .tv v i ∧ v.voice i = some vo := by
+  constructor
+  · intro h
+    simp only [Chuj.voices, Finset.mem_insert, Finset.mem_singleton] at h
+    rcases h with rfl | rfl | rfl | rfl | rfl
+    exacts [⟨.transitive, .dp, by decide, rfl⟩, ⟨.w, .np, by decide, rfl⟩,
+      ⟨.w, .implicit, by decide, rfl⟩, ⟨.j, .dp, by decide, rfl⟩, ⟨.ch, .dp, by decide, rfl⟩]
+  · rintro ⟨v, i, hw, hv⟩
+    cases v <;> cases i <;> simp only [V.voice, Option.some.injEq, reduceCtorEq] at hv <;>
+      first | exact absurd hw (by decide) | (subst hv; decide)
 
 /-- The stems of a transitive root, (78) and (79): a full DP under the transitive head and under
 both passives, a bare NP or an implicit argument under -w. -/
@@ -228,9 +244,9 @@ theorem itv_no_w : (∀ i, ¬ WellFormed .itv .w i) ∧ V.w.Selects RootClass.it
   ⟨λ i => by cases i <;> decide, trivial⟩
 
 /-- Every class forms a verb stem with some head, §5: root class is not surface category. -/
-theorem every_class_verbalizes (rc : RootClass) : ∃ vs, IsGrammatical rc vs := by
+theorem every_class_verbalizes (rc : RootClass) : ∃ v, Forms rc v := by
   cases rc
-  exacts [⟨.null, by decide⟩, ⟨.null, by decide⟩, ⟨.w, by decide⟩, ⟨.w, by decide⟩]
+  exacts [⟨.transitive, by decide⟩, ⟨.intransitive, by decide⟩, ⟨.w, by decide⟩, ⟨.w, by decide⟩]
 
 /-- Table (78) for the stems of a transitive root: the external argument licensed by
 v ~ Voice⁰ in the transitive, absent or implicit in the passives, licensed by Infl⁰ under -w;

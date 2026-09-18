@@ -2,7 +2,7 @@ import Linglib.Data.Examples.Ozaki2026
 import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Japanese.Predicates
-import Linglib.Fragments.Japanese.Passive
+import Linglib.Fragments.Japanese.Voice
 import Linglib.Semantics.ArgumentStructure.Verb
 
 /-!
@@ -81,11 +81,11 @@ theorem alternation_verbs_unaccusative :
         v.passivizable = false := by
   decide
 
-/-- The direct passive requires thematic Voice, which the non-thematic head does not
-provide: (20) is out. -/
-theorem direct_passive_requires_voice :
-    Japanese.Passive.PassiveType.RequiresThematicVoice .direct ∧ ¬ anticausative.AssignsTheta :=
-  ⟨trivial, by decide⟩
+/-- The direct passive requires a verb introducing an external argument, which the
+non-thematic head does not provide: (20) is out. -/
+theorem not_directPassivizable :
+    ¬ Japanese.DirectPassivizable Japanese.hanareru.toVerb ∧ ¬ anticausative.AssignsTheta := by
+  decide
 
 /-! ### Case assignment (§3) -/
 

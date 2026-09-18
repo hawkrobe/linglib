@@ -1,6 +1,6 @@
 import Mathlib.Data.Fin.VecNotation
 import Linglib.Data.Examples.ColeHermon2008
-import Linglib.Fragments.TobaBatak.Basic
+import Linglib.Fragments.TobaBatak.Voice
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Semantics.ArgumentStructure.Valency
 import Linglib.Syntax.Minimalist.Movement.Freezing
@@ -113,7 +113,7 @@ def Arg.role : Arg → ThetaRole
 which enters as one leaf. -/
 structure Clause where
   /-- The voice, which picks the pivot. -/
-  voice : TobaBatak.Voice
+  voice : Voice
   /-- The verb, the derivation's initial object. -/
   verb : LIToken
   /-- The agent, Merged as the specifier of vP. -/
@@ -136,7 +136,7 @@ namespace Clause
 
 /-- A clause from its words, the tokens numbered verb, agent, patient and goal after the voice
 head. -/
-def of (voice : TobaBatak.Voice) (verb agent patient : String) (goal : Option String := none) :
+def of (voice : Voice) (verb agent patient : String) (goal : Option String := none) :
     Clause :=
   ⟨voice, ⟨.simple .V [] (phonForm := verb), 2⟩, ⟨.simple .N [] (phonForm := agent), 3⟩,
     ⟨.simple .N [] (phonForm := patient), 4⟩,
@@ -145,7 +145,8 @@ def of (voice : TobaBatak.Voice) (verb agent patient : String) (goal : Option St
 variable (c : Clause)
 
 /-- The voice head, *mang-* or *di-*. -/
-def voiceHead : LIToken := ⟨.simple .Voice [] (phonForm := c.voice.affix), 1⟩
+def voiceHead : LIToken :=
+  ⟨.simple .Voice [] (phonForm := Morphology.Morph.surface c.voice.marker), 1⟩
 
 /-- The argument as a token, the goal when there is one. -/
 def arg? : Arg → Option LIToken
@@ -156,7 +157,7 @@ def arg? : Arg → Option LIToken
 /-- The pivot, the argument the voice raises to subject position: the agent in the active and
 the patient in the passive, the slot the voice selects. -/
 def pivot : LIToken :=
-  if c.voice.toVoice.pivot = some ArgumentFrame.Slot.external then c.agent else c.patient
+  if c.voice.pivot = some ArgumentFrame.Slot.external then c.agent else c.patient
 
 /-- The sides of the paper's own trees (50) and (57): complements on the right; the light verb,
 the agent, Voice and, in a ditransitive, the patient, [larson-1988]'s specifier of VP, on the
@@ -222,23 +223,23 @@ end Clause
 /-! ### Word order (§3.1, §3.3, §4.1, §4.2, §5) -/
 
 /-- (49) *Mang-ida si-Mary si-John* 'John saw Mary'. -/
-def ex49 : Clause := .of .av "ida" "si-John" "si-Mary"
+def ex49 : Clause := .of TobaBatak.actorVoice "ida" "si-John" "si-Mary"
 
 /-- (56) *Mang-alean buku si-John tu si-Mary* 'John gave a book to Mary'. -/
-def ex56 : Clause := .of .av "alean" "si-John" "buku" "tu si-Mary"
+def ex56 : Clause := .of TobaBatak.actorVoice "alean" "si-John" "buku" "tu si-Mary"
 
 /-- (13) without *sada* 'one', *Di-lean si-John buku tu si-Mary* 'The book was given to Mary by
 John', and (14). -/
-def ex13 : Clause := .of .ov "lean" "si-John" "buku" "tu si-Mary"
+def ex13 : Clause := .of TobaBatak.objectVoice "lean" "si-John" "buku" "tu si-Mary"
 
 /-- (67) *Di-ida si-Torus dirina* 'Himself was seen by Torus'. -/
-def ex67 : Clause := .of .ov "ida" "si-Torus" "dirina"
+def ex67 : Clause := .of TobaBatak.objectVoice "ida" "si-Torus" "dirina"
 
 /-- (81) *Dakdanak-on mang-atuk biang-i* 'This boy hit the dog'. -/
-def ex81 : Clause := .of .av "atuk" "dakdanak-on" "biang-i"
+def ex81 : Clause := .of TobaBatak.actorVoice "atuk" "dakdanak-on" "biang-i"
 
 /-- (85) *Si-John mang-alean aha tu si-Mary* 'What did John give to Mary?'. -/
-def ex85 : Clause := .of .av "alean" "si-John" "aha" "tu si-Mary"
+def ex85 : Clause := .of TobaBatak.actorVoice "alean" "si-John" "aha" "tu si-Mary"
 
 /-- The monotransitive VOS clause (49) and the passive (67). -/
 theorem vos_orders :
@@ -306,7 +307,8 @@ def Clause.derivation (c : Clause) : OrderHypothesis → WordOrder → Derivatio
 
 /-- The value of a row's feature, read through a table; `List.lookup` keeps key and value in
 one universe. -/
-private def voices : List (String × TobaBatak.Voice) := [("active", .av), ("passive", .ov)]
+private def voices : List (String × Voice) :=
+  [("active", TobaBatak.actorVoice), ("passive", TobaBatak.objectVoice)]
 private def orders : List (String × WordOrder) := [("VOS", .vos), ("SVO", .svo)]
 private def args : List (String × Arg) :=
   [("agent", .core .external), ("patient", .core .internal), ("goal", .goal)]
@@ -323,7 +325,7 @@ private def english : Data.Examples.Glottocode := "stan1293"
 situ, in a clause of the given voice, order and transitivity. -/
 structure Extraction where
   /-- The clause's voice. -/
-  voice : TobaBatak.Voice
+  voice : Voice
   /-- The clause's word order. -/
   order : WordOrder
   /-- Whether the clause has a goal PP. -/
@@ -385,7 +387,7 @@ instance : DecidableRel Outranks := fun _ _ => by unfold Outranks; infer_instanc
 clause of the given voice and order. -/
 structure Reflexivization where
   /-- The clause's voice. -/
-  voice : TobaBatak.Voice
+  voice : Voice
   /-- The clause's word order. -/
   order : WordOrder
   /-- The argument slot of the antecedent. -/

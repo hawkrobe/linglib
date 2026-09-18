@@ -829,25 +829,17 @@ theorem portative_rows :
 
 /-- Balinese (47): a binary symmetrical system, the patient voice bare and initial, the agent
 voice by a nasal prefix, both keeping the taker and the shirt core terms. -/
-def balinese : Finset Voice := {patientVoice, agentVoice.synthetic}
-
-/-- The voices of Tagalog (48). -/
-inductive TagalogVoice where
-  | agent
-  | patient
-  | locative
-  | conveyance
-  | instrumental
-  deriving DecidableEq, Repr, Fintype
+def balinese : Finset Voice := {patientVoice, agentVoice.marked [.pref "N"]}
 
 /-- Tagalog (48): a multiple symmetrical system, every voice marked and the pivot flagged by
-*ang* in place of its own flag; the locative voice selects the store, a spatial oblique, the
-conveyance and instrumental voices the child and the money. -/
-def tagalog : TagalogVoice → Voice
-  | .agent => agentVoice.synthetic
-  | .patient => patientVoice.synthetic
-  | .locative => locativeVoice.synthetic
-  | .conveyance | .instrumental => (obliqueVoice .grammatical).synthetic
+*ang* in place of its own flag: the agent voice by the infix *-um-*, the patient voice by
+*-in*, null in the realis, the locative voice, which selects the store, a spatial oblique, by
+*-an*, and the conveyance and instrumental voices, which select the child and the money, by
+*i-* and *ipaN-*. -/
+def tagalog : Finset Voice :=
+  {agentVoice.marked [.infixed "um"], patientVoice.marked [.suff "in"],
+    locativeVoice.marked [.suff "an"], (obliqueVoice .grammatical).marked [.pref "i"],
+    (obliqueVoice .grammatical).marked [.pref "ipaN"]}
 
 /-- Balinese is symmetrical and binary although morphologically oriented, so symmetry in the
 book's sense does not require equipollent marking (§8.1.7, §8.5.1). -/
@@ -856,8 +848,6 @@ theorem balinese_binary :
   decide
 
 /-- Tagalog is symmetrical and multiple: an oblique may be the pivot (§8.5.2). -/
-theorem tagalog_multiple :
-    Voice.Symmetrical (Finset.univ.image tagalog) ∧ Multiple (Finset.univ.image tagalog) := by
-  decide
+theorem tagalog_multiple : Voice.Symmetrical tagalog ∧ Multiple tagalog := by decide
 
 end Creissels2024
