@@ -1,77 +1,39 @@
-import Linglib.Data.WALS.Features.F92A
-import Linglib.Data.WALS.Features.F93A
-import Linglib.Data.WALS.Features.F116A
-
 /-!
-# Question typology — substrate
-[wals-2013] [pesetsky-1987] [huang-1982]
-[sato-ngui-2017] [chan-shen-2026]
+# The syntax of questions
 
-Per-language question-typology substrate for Fragment import. Mirrors the
-`Linglib/Typology/{Domain}.lean` pattern (Possession, Case, Phonology,
-WordOrder).
+This file records two syntactic parameters of content questions that studies and fragments
+share. `WhInterpMechanism` is how a wh-phrase reaches its scope position: overt movement,
+covert movement at LF ([huang-1982]), the overt-then-covert partial movement that
+[sato-ngui-2017] propose for Singlish, or binding in situ by an operator in C, with no movement
+([pesetsky-1987]). The same surface position can arise from different mechanisms, which differ
+in island sensitivity. `MWFParameter` is [rudin-1988]'s multiple-wh-fronting parameter in the
+three-valued form of [citko-gracanin-yuksek-2025], who split the languages without multiple
+fronting by the phase edges at which several wh-specifiers incur a PF asterisk
+(`MWFParameter.EdgeAsterisk`). The declarations share the root `Question` namespace with the
+semantics of questions in `Semantics/Questions/`.
 
-## Substrate enums
+## Implementation notes
 
-- `WhMovementStrategy` (WALS Ch 93A)
-- `WhInterpMechanism` ([pesetsky-1987], [huang-1982],
-  [sato-ngui-2017])
-- `QParticlePosition` (WALS Ch 92A)
-- `PolarQuestionStrategy` (WALS Ch 116A)
-- `QuestionProfile`: bundle struct over Chs 92A/93A/116A
-- `MWFParameter`: multiple-wh-fronting parameter ([rudin-1988],
-  with [citko-gracanin-yuksek-2025]'s tri-valued refinement
-  splitting non-MWF into vP-only vs both-edges asterisk languages)
-- `PhaseEdge`: which phase edge an asterisk lands on
-- `EdgeAsterisk`: the asterisk a phase edge receives, derived from `MWFParameter`
+The mechanisms commit to a division between movement and binding that is contested:
+choice-function and intervention-based accounts derive the same surface positions otherwise.
+The surface typology of questions, the position of wh-phrases and of polar question particles
+and the marking of polar questions, is read from `Data.WALS` chapters 92A, 93A and 116A
+directly and is not re-labelled here.
 
-## Theory-laden caveats
+## References
 
-- **`WhInterpMechanism` is NOT theory-neutral.** The four mechanisms
-  (`overtMovement`, `covertMovement`, `partialMovement`,
-  `unselectiveBinding`) commit to a movement-vs-binding split that is
-  contested. Cable 2010's Q-particle Agree analysis, Reinhart's choice
-  functions, and Beck 2006's intervention-based account each derive the
-  same surface position via different mechanisms. The `partialMovement`
-  case is specifically Sato &amp; Ngui 2017's Singlish analysis.
-
-- **The cartographic clause-typing locus is contested.** Rizzi 1997 places
-  it at `Force⁰[+Q]`; Holmberg 2016 places it at `Pol⁰`; Dayal 2025 places
-  it at `C` with PerspP-shift. `QuestionProfile` is silent on this — see
-  `Studies/Dayal2025.lean`,
-  `Studies/Holmberg2016.lean`, and
-  `Syntax/Minimalist/Question.lean` for competing analyses.
-
-## WALS aggregates
-
-WALS chapter aggregate distributions (`ch92Total`, `ch93Total`, etc.)
-live in this file at the substrate layer per the project's "WALS goes to
-`Linglib/Typology/`" rule.
+* [huang-1982]
+* [pesetsky-1987]
+* [sato-ngui-2017]
+* [rudin-1988]
+* [citko-gracanin-yuksek-2025]
 -/
 
-namespace Syntax.Question
+namespace Question
 
-private abbrev ch92  := Data.WALS.F92A.allData
-private abbrev ch93  := Data.WALS.F93A.allData
-private abbrev ch116 := Data.WALS.F116A.allData
-
-/-- WALS Ch 93A: position of interrogative phrases (wh-words). -/
-inductive WhMovementStrategy where
-  /-- Wh-phrase obligatorily fronted (overt wh-movement). -/
-  | initial
-  /-- Wh-phrase stays in situ. -/
-  | inSitu
-  /-- Both strategies available. -/
-  | mixed
-  deriving DecidableEq, Repr
-
-/-- How a wh-phrase is interpreted at the syntax-semantics interface.
-    Distinct from `WhMovementStrategy` (surface position): the same surface
-    position (in-situ) can arise from different mechanisms (covert movement
-    vs unselective binding), with different empirical consequences for
-    island sensitivity and modifier licensing.
-
-    [pesetsky-1987] [sato-ngui-2017] [chan-shen-2026] -/
+/-- How a wh-phrase is interpreted at the syntax-semantics interface. The mechanism is distinct
+from the surface position of the phrase: a phrase in situ may move covertly or be bound without
+moving, with different consequences for island sensitivity and modifier licensing. -/
 inductive WhInterpMechanism where
   /-- Successive cyclic overt movement to matrix Spec-CP. -/
   | overtMovement
@@ -131,93 +93,7 @@ theorem reachesSpecCP_iff_islandSensitive (m : WhInterpMechanism) :
     m.ReachesSpecCP ↔ m.IslandSensitive := by
   cases m <;> exact Iff.rfl
 
-/-- WALS Ch 92A: position of polar question particles. -/
-inductive QParticlePosition where
-  /-- Particle precedes the clause. -/
-  | initial
-  /-- Particle follows the clause. -/
-  | final
-  /-- Particle in second (Wackernagel) position. -/
-  | secondPosition
-  /-- Other position. -/
-  | otherPosition
-  /-- In either of two positions. -/
-  | eitherOfTwo
-  /-- No question particle in the language. -/
-  | noParticle
-  deriving DecidableEq, Repr
-
-/-- WALS Ch 116A: how polar questions are formed. -/
-inductive PolarQuestionStrategy where
-  /-- Dedicated question particle. -/
-  | particle
-  /-- Interrogative verb morphology. -/
-  | verbMorphology
-  /-- Mixture of particle and verb morphology. -/
-  | particleOrMorphology
-  /-- Interrogative word order (e.g., subject-aux inversion). -/
-  | wordOrder
-  /-- Absence of declarative morphemes. -/
-  | absenceOfDeclarative
-  /-- Interrogative intonation only. -/
-  | intonationOnly
-  /-- No interrogative-declarative distinction. -/
-  | noDistinction
-  deriving DecidableEq, Repr
-
-/-- A language's question-formation profile across [wals-2013]
-    Chs 92A, 93A, 116A. Each field is `Option` since WALS samples vary
-    by chapter. -/
-structure QuestionProfile where
-  /-- Language name. -/
-  language : String
-  /-- WALS language code. -/
-  walsCode : String
-  /-- Ch 92A: position of polar question particles. -/
-  qParticlePos : Option QParticlePosition := none
-  /-- Ch 93A: wh-phrase position in content questions. -/
-  whMovement : Option WhMovementStrategy := none
-  /-- Ch 116A: strategy for forming polar questions. -/
-  polarStrategy : Option PolarQuestionStrategy := none
-  deriving Repr, DecidableEq
-
--- ============================================================================
--- §2. WALS converters (Ch 92A, 93A, 116A)
--- ============================================================================
-
-/-- WALS Ch 92A → `QParticlePosition`. -/
-def fromWALS92A : Data.WALS.F92A.PositionOfPolarQuestionParticles →
-    QParticlePosition
-  | .initial                => .initial
-  | .final                  => .final
-  | .secondPosition         => .secondPosition
-  | .otherPosition          => .otherPosition
-  | .inEitherOfTwoPositions => .eitherOfTwo
-  | .noQuestionParticle     => .noParticle
-
-/-- WALS Ch 93A → `WhMovementStrategy`. -/
-def fromWALS93A :
-    Data.WALS.F93A.PositionOfInterrogativePhrasesInContentQuestions →
-    WhMovementStrategy
-  | .initialInterrogativePhrase    => .initial
-  | .notInitialInterrogativePhrase => .inSitu
-  | .mixed                         => .mixed
-
-/-- WALS Ch 116A → `PolarQuestionStrategy`. -/
-def fromWALS116A : Data.WALS.F116A.PolarQuestionType →
-    PolarQuestionStrategy
-  | .questionParticle                      => .particle
-  | .interrogativeVerbMorphology           => .verbMorphology
-  | .mixtureOfPreviousTwoTypes             => .particleOrMorphology
-  | .interrogativeWordOrder                => .wordOrder
-  | .absenceOfDeclarativeMorphemes         => .absenceOfDeclarative
-  | .interrogativeIntonationOnly           => .intonationOnly
-  | .noInterrogativeDeclarativeDistinction => .noDistinction
-
--- ============================================================================
--- §3. Multiple Wh-Fronting parameter ([rudin-1988], refined by
---      [citko-gracanin-yuksek-2025] p. 19)
--- ============================================================================
+/-! ### Multiple wh-fronting -/
 
 /-- The MWF parameter as in [rudin-1988] + [citko-gracanin-yuksek-2025].
 
@@ -274,5 +150,5 @@ instance (p : MWFParameter) (e : PhaseEdge) (n : Nat) :
 
 end MWFParameter
 
-end Syntax.Question
+end Question
 
