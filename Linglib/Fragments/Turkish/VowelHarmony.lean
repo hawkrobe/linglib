@@ -16,7 +16,7 @@ suffix (§3.4, [clements-sezer-1982]). The suffix-initial D of -DI and -DA copie
 [voice] from the preceding segment (§6.1.2).
 
 The alternations are `Subregular.Harmony.System`s over `Phonology.Segment`; a
-suffixed word's surface form is their `System.harmonize`. The grammar's examples
+suffixed word's surface form is their `TierRule.apply`. The grammar's examples
 are derived in `Studies/GokselKerslake2005.lean`.
 
 ## Main definitions
@@ -145,6 +145,6 @@ def voicing : System Segment :=
 
 /-- The surface form of a suffixed word: the three alternations applied in turn. -/
 def surface (w : List Segment) : List Segment :=
-  voicing.harmonize (rounding.harmonize (fronting.harmonize w))
+  voicing.apply (rounding.apply (fronting.apply w))
 
 end Turkish.Phonology
