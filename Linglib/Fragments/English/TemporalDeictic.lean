@@ -3,18 +3,21 @@ import Linglib.Semantics.Tense.Perspective
 /-!
 # English temporal deictic adverbs
 
-Lexical entry for English *then*, typed by `Tense.Perspective.ThenAdverb` —
-[zhao-2025]'s ⌈then⌉ class of temporal pronouns presupposing disjointness
-from the perspective time π.
+English *then* is the distal temporal deictic adverb: it refers to a past or future time away
+from the deictic centre, typically one established in the preceding discourse, as in *The
+janitor turned off the lights. The room was empty then.* The description follows
+[tsilia-zhao-2026].
+
+## References
+
+* [tsilia-zhao-2026]
 -/
 
 namespace English.TemporalDeictic
 
-open Tense.Perspective
+open Tense
 
-/-- English *then* -/
-def then_ : ThenAdverb where
-  form := "then"
-  gloss := "then"
+/-- *then*, a time before or after the deictic centre. -/
+def then_ : DeicticAdverb := { form := "then", cell := presentᶜ }
 
 end English.TemporalDeictic

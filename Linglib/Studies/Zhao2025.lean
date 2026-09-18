@@ -1,17 +1,12 @@
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Fragments.Mandarin.AspectComparison
-import Linglib.Semantics.Tense.Perspective
-import Linglib.Fragments.English.TemporalDeictic
-import Linglib.Fragments.Japanese.TemporalDeictic
-import Linglib.Fragments.Greek.StandardModern.TemporalDeictic
-import Linglib.Fragments.Slavic.Russian.TemporalDeictic
-import Linglib.Fragments.Hebrew.TemporalDeictic
 
 /-!
 # Zhao 2025: Cross-Linguistic and Cross-Domain Temporal Expressions
 
-Two results from [zhao-2025]: the VendlerClass ↔ Mandarin-particle licensing
-bridge, and the ⌈then⌉-present puzzle.
+The licensing of the Mandarin particles *le*, *méi-yǒu* and *guò* by lexical aspect, from the
+second part of [zhao-2025]. The first part, the ⌈then⌉-present puzzle, is the joint work
+published as [tsilia-zhao-2026] and is formalized in `Studies/TsiliaZhao2026.lean`.
 
 ## Mandarin particle licensing
 
@@ -41,21 +36,10 @@ dimension. Bridging Fragment Bool fields to substrate `Prop`s for
 specific Mandarin verbs requires per-verb denotations (theory-hub
 denotation discipline; follow-up).
 
-## The ⌈then⌉-present puzzle
+## References
 
-Temporal ⌈then⌉ is cross-linguistically incompatible with the present tense:
-⌈then⌉ presupposes a reference disjoint from the temporal perspective π
-(`Tense.Perspective.thenPresup`), PRES presupposes overlap with π
-(`Tense.Perspective.presPresup`), and the temporal assertion ("during then")
-puts the PRES reference inside the ⌈then⌉ reference — so no reference
-satisfies both (`then_present_root_clash`). Deleted (SOT) tense escapes: it
-contributes no perspectival presupposition.
-
-The attested ⌈then⌉ adverbs (`thenAdverbs`, from the Fragment lexicons):
-English *then*, Japanese 当時 *tōji*, Greek τότε *tóte*, Russian тогда
-*togda*, Hebrew אז *az* — root-clause ⌈then⌉ + PRES is ungrammatical in
-each. (English ⌈then⌉ with an embedded present under future is variably
-acceptable, an exception the paper leaves open.)
+* [zhao-2025]
+* [tsilia-zhao-2026]
 -/
 
 namespace Zhao2025
@@ -75,25 +59,5 @@ theorem meiyou_requires_anti_atomDist : meiyou.requiresAntiAtomDist = true := rf
     VendlerClasses including states. -/
 theorem guo_compatible_with_all :
     guo.requiresAntiAtomDist = false := rfl
-
-/-! ### The ⌈then⌉-present puzzle -/
-
-open Tense Tense.Perspective
-
-/-- The ⌈then⌉ adverbs of [zhao-2025]'s language sample, from the Fragment
-    lexicons. -/
-def thenAdverbs : List ThenAdverb :=
-  [ English.TemporalDeictic.then_
-  , Japanese.TemporalDeictic.tooji
-  , Greek.StandardModern.TemporalDeictic.tote
-  , Russian.TemporalDeictic.togda
-  , Hebrew.TemporalDeictic.az ]
-
-/-- Root clause ("Mary is feeling sick (*then)"): π is the utterance time, so a
-    present-tensed clause admits no ⌈then⌉ restriction — no ⌈then⌉ reference
-    contains the present's reference and is disjoint from π. -/
-theorem then_present_root_clash {T : Type*} {utterance r th : Set T}
-    (hPres : presPresup utterance r) (hDuring : r ⊆ th) : ¬ thenPresup utterance th :=
-  λ hThen => then_present_clash hPres hDuring hThen
 
 end Zhao2025
