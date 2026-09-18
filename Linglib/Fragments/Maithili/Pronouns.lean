@@ -8,11 +8,13 @@ person (*tõ* / *ahã* / *apne*) and a two-level one in the third (*ũ* / *o*).
 Maithili has allocutive agreement, blocked with a second-person subject and
 incompatible with object agreement ([alok-bhalla-2026], after Kumari 2022);
 its marker forms are not recorded here.
+
+## References
+
+* [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
 -/
 
 namespace Maithili.Pronouns
-
-open Pronoun
 
 /-- *hum* — 1sg. -/
 def hum : PersonalPronoun := { form := "hum", person := some .first, number := some .singular }
@@ -45,6 +47,6 @@ def o : PersonalPronoun :=
 def uNSab : PersonalPronoun := { form := "ũ sab", person := some .third, number := some .plural }
 
 /-- The pronoun inventory. -/
-def pronouns : List PersonalPronoun := [hum, humSab, toN, ahaN, apne, uN, o, uNSab]
+def pronouns : Finset PersonalPronoun := {hum, humSab, toN, ahaN, apne, uN, o, uNSab}
 
 end Maithili.Pronouns

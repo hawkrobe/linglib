@@ -26,8 +26,6 @@ to Dalrymple and Haug, read from the printed page.
 
 namespace Wan.Reciprocals
 
-open Pronoun
-
 /-- *mɔ̄* — the plural logophoric pronoun (LOG.PL), the subject of the report in (28) and
     (31). The logophoric pronouns stand for the person whose speech is reported and, with verbs
     of mental activity such as 'know' and 'imagine', for the person the state is attributed to,

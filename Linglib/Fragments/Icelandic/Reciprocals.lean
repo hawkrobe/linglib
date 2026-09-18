@@ -2,24 +2,25 @@ import Linglib.Syntax.Category.Pronoun.Reflexive
 import Linglib.Syntax.Reciprocal
 
 /-!
-# Icelandic Reciprocal Fragment
-[nordlinger-2023]
+# Icelandic reciprocals
 
-Icelandic uses a bipartite NP strategy: "hvort annað" ('each other',
-neuter forms as in [nordlinger-2023] ex. 17a), where each part
-independently inflects for case — the quantifier agrees with the
-antecedent while the *annað* part takes the case assigned by its
-argument position ([hurst-nordlinger-2021]).
+Icelandic marks reciprocity with the two-part noun phrase *hvort annað* 'each other', cited in
+its neuter forms as in [nordlinger-2023]'s (17a). The noun phrase fills the object position, so
+the clause stays transitive, and its two parts inflect for case independently: the quantifier
+*hvor* agrees in case with the antecedent, and *annað* takes the case of its argument position
+([hurst-nordlinger-2021]). The reciprocal is distinct in form from the reflexive *sig*.
 
-This is a bivalent strategy: the bipartite NP fills the object position,
-preserving transitivity. Formally distinct from the reflexive "sig".
+## References
 
-[nordlinger-2023] ex. 17 (citing [hurst-nordlinger-2021]).
+* [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
+* [P. Hurst and R. Nordlinger, *An LFG Approach to Icelandic Reciprocal Constructions*
+  (2021)][hurst-nordlinger-2021]
+* [P. Sells, *Aspects of Logophoricity* (1987)][sells-1987]
 -/
 
 namespace Icelandic.Reciprocals
 
-open Pronoun Reciprocal
+open Reciprocal
 
 /-- hvort annað — bipartite reciprocal NP 'each other' (neuter citation
     forms; both parts inflect independently for case and gender). -/

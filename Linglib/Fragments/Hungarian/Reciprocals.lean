@@ -26,8 +26,6 @@ rows of `Data/Examples/Rakosi2019.json`, studied in `Studies/Rakosi2019.lean`.
 
 namespace Hungarian.Reciprocals
 
-open Pronoun
-
 /-- *egymás* — reciprocal pronoun 'each other'.
     Morphologically invariable: no φ-feature inflection.
     [rakosi-2019] fn. 1. -/

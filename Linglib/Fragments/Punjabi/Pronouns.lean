@@ -8,11 +8,13 @@ person (*tũ* / *tusii*, the latter also the plural) and the demonstrative
 *uh* for both third-person numbers. Punjabi has allocutive agreement with
 third-person subjects only ([alok-bhalla-2026], after Kaur 2020); its marker
 forms are not recorded here.
+
+## References
+
+* [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
 -/
 
 namespace Punjabi.Pronouns
-
-open Pronoun
 
 /-- *maiṃ* — 1sg. -/
 def maiN : PersonalPronoun := { form := "maiṃ", person := some .first, number := some .singular }
@@ -35,6 +37,6 @@ def uhSg : PersonalPronoun := { form := "uh", person := some .third, number := s
 def uhPl : PersonalPronoun := { form := "uh", person := some .third, number := some .plural }
 
 /-- The pronoun inventory. -/
-def pronouns : List PersonalPronoun := [maiN, asiiN, tuN, tusii, uhSg, uhPl]
+def pronouns : Finset PersonalPronoun := {maiN, asiiN, tuN, tusii, uhSg, uhPl}
 
 end Punjabi.Pronouns

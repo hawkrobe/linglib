@@ -26,12 +26,18 @@ syncretic across accusative, dative, and reflexive cases, while 3sg/3pl are not.
 | 1pl    | ci     | ci     | ci   | syncretic
 | 2pl    | vi     | vi     | vi   | syncretic
 | 3pl    | li/le  | loro   | si   | NOT syncretic
+
+## References
+
+* [C. Muñoz Pérez, *Stylistic applicatives: A lens into the nature of anticausative SE*
+  (2026)][munoz-perez-2026]
+* [L. J. Adamson and S. Zompì, *Polite Pronouns and the PCC* (2025)][adamson-zompi-2025]
+* [A. Cardinaletti and M. Starke, *The Typology of Structural Deficiency: A Case Study of the
+  Three Classes of Pronouns* (1999)][cardinaletti-starke-1999]
 -/
 
 
 namespace Italian.Pronouns
-
-open Pronoun
 
 -- ============================================================================
 -- § 1: Strong Pronouns
@@ -79,7 +85,7 @@ def loro : PersonalPronoun :=
   { form := "loro", person := some .third, number := some .plural }
 
 /-- The strong-pronoun inventory. -/
-def pronouns : List PersonalPronoun := [io, tu, lei_formal, lui, lei, noi, voi, loro_formal, loro]
+def pronouns : Finset PersonalPronoun := {io, tu, lei_formal, lui, lei, noi, voi, loro_formal, loro}
 
 -- ============================================================================
 -- § 2: Clitic Paradigm
@@ -206,18 +212,18 @@ theorem not_syncretic_3pl : datReflSyncretic .third .plural = false := by decide
 
 /-- Italian's tonic series (`pronouns`) instantiates the Cardinaletti–Starke
     `.strong` class ([cardinaletti-starke-1999]). -/
-def strongStrength : Strength := .strong
+def strongStrength : Pronoun.Strength := .strong
 
 /-- The object clitics (`paradigm` minus dative *loro*) are the maximally
     deficient `.clitic` class: verb-adjacent heads that cluster
     ([cardinaletti-starke-1999]). -/
-def cliticStrength : Strength := .clitic
+def cliticStrength : Pronoun.Strength := .clitic
 
 /-- Dative *loro* is [cardinaletti-starke-1999]'s parade case for separating
     weak from clitic: deficient (reduced vs *a loro*, no coordination) but a
     maximal projection — not verb-adjacent, never clustering, bears word
     stress. -/
-def loroDatStrength : Strength := .weak
+def loroDatStrength : Pronoun.Strength := .weak
 
 /-- The clitic series is structurally more deficient than the strong series:
     the deficiency ordering behind their complementary distribution (clitics

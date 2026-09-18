@@ -9,11 +9,13 @@ singular and *vós* / *vostedes* in the plural, and the familiar dative
 clitics *che* and *vos* that double as allocutive markers ([alok-bhalla-2026]
 (9)–(10)): the same morphemes serve as thematic datives, and the allocutive
 use occurs in every finite embedded clause and inside infinitives.
+
+## References
+
+* [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
 -/
 
 namespace Galician.Pronouns
-
-open Pronoun
 
 /-- *eu* — 1sg. -/
 def eu : PersonalPronoun := { form := "eu", person := some .first, number := some .singular }
@@ -54,8 +56,8 @@ def elas : PersonalPronoun :=
   { form := "elas", person := some .third, number := some .plural, gender := some .feminine }
 
 /-- The pronoun inventory. -/
-def pronouns : List PersonalPronoun :=
-  [eu, nos, ti, vostede, vosPl, vostedes, el, ela, eles, elas]
+def pronouns : Finset PersonalPronoun :=
+  {eu, nos, ti, vostede, vosPl, vostedes, el, ela, eles, elas}
 
 /-- *che* — familiar dative clitic, singular addressee. -/
 def che : AllocutiveMarker := { form := "che", register := .informal, number := some .singular }
