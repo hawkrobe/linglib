@@ -141,6 +141,16 @@ instance (p : Pattern α V) : DecidablePred p.OnTier := fun s => by
 def Pattern.tier (p : Pattern α V) (w : List α) : List α :=
   w.filter fun s => decide (p.OnTier s)
 
+@[simp] theorem Pattern.tier_nil (p : Pattern α V) : p.tier [] = [] := rfl
+
+theorem Pattern.tier_cons_of_onTier (p : Pattern α V) {x : α} (h : p.OnTier x) (w : List α) :
+    p.tier (x :: w) = x :: p.tier w :=
+  List.filter_cons_of_pos (decide_eq_true h)
+
+theorem Pattern.tier_cons_of_not_onTier (p : Pattern α V) {x : α} (h : ¬ p.OnTier x)
+    (w : List α) : p.tier (x :: w) = p.tier w :=
+  List.filter_cons_of_neg (decide_eq_true_iff.not.mpr h)
+
 /-- Adjacent compatibility, left to right: an opaque right member is exempt
     (blockers do not undergo), an icy left member is exempt (no passing on);
     otherwise the values agree. Deliberately asymmetric. -/

@@ -28,17 +28,16 @@ Most suffixes contain an **archiphonemic** vowel /A/ that surfaces as
 
 ## Formalization ([rose-walker-2011])
 
-Finnish VH is a single `System` with [back] as the spreading feature.
-Neutral vowels /e/ and /i/ are transparent: they satisfy `isTransparent` and
-are skipped by `triggerValue` (not triggers) and `harmonizeOne` (not targets).
+Finnish VH is a single `System` with [back] as the spreading feature over the tier of
+harmonic vowels: consonants and the neutral vowels /e/ and /i/ are transparent, the
+harmonic vowels trigger, and a suffix vowel unspecified for [back] is the target.
 
 -/
 
 namespace Finnish.VowelHarmony
 
 open Phonology (Segment Feature FeatureClass)
-open Subregular.Harmony (System triggerValue
-  harmonizeOne spreadSuffix)
+open Subregular.Harmony (System)
 
 -- ============================================================================
 -- § 1: Vowel Segments
@@ -127,14 +126,14 @@ def classifyVowel (s : Segment) : HarmonyClass :=
 -- § 3: Harmony System Instance
 -- ============================================================================
 
-/-- Finnish palatal harmony: [back] spreads from the last harmonic (non-neutral)
-    stem vowel to non-neutral suffix vowels. Neutral vowels /e/, /i/ are
-    transparent — they neither trigger nor undergo harmony. -/
+/-- Finnish palatal harmony spreads [back] from the last harmonic (non-neutral) stem vowel to
+the suffix vowels unspecified for it; consonants and the neutral vowels /e/, /i/ are off the
+tier. -/
 def finnishHarmony : System Segment :=
   System.mk' (feature := .back)
-    (isTrigger     := (λ s => s.HasValue .syllabic true && !isNeutral s))
-    (isTarget      := (λ s => s.HasValue .syllabic true && !isNeutral s))
-    (isTransparent := isNeutral)
+    (isTrigger     := fun s => s.HasValue .syllabic true && !isNeutral s)
+    (isTarget      := fun s => s.HasValue .syllabic true && (s .back).isNone)
+    (isTransparent := fun s => !s.HasValue .syllabic true || isNeutral s)
     (direction     := .rightward)
 
 -- ============================================================================
@@ -165,21 +164,21 @@ theorem ö_not_neutral : isNeutral ö_vowel = false := by decide
 
 /-- Back-vowel stems yield back harmony. -/
 theorem back_stem_harmony :
-    triggerValue finnishHarmony [a_vowel] = some true := by decide
+    finnishHarmony.triggerValue [a_vowel] = some true := by decide
 
 /-- Front-vowel stems yield front harmony. -/
 theorem front_stem_harmony :
-    triggerValue finnishHarmony [ä_vowel] = some false := by decide
+    finnishHarmony.triggerValue [ä_vowel] = some false := by decide
 
 /-- Neutral-only stems have no trigger (default to front harmony). -/
 theorem neutral_only_no_trigger :
-    triggerValue finnishHarmony [e_vowel, i_vowel] = none := by
+    finnishHarmony.triggerValue [e_vowel, i_vowel] = none := by
   decide
 
 /-- A back stem with a neutral vowel still yields back harmony
     (the neutral vowel is not a trigger, so `triggerValue` finds /a/). -/
 theorem back_with_neutral :
-    triggerValue finnishHarmony [a_vowel, i_vowel] = some true := by
+    finnishHarmony.triggerValue [a_vowel, i_vowel] = some true := by
   decide
 
 /-- The /a/–/ä/ pair differs only in [back]: dorsal agreement fails

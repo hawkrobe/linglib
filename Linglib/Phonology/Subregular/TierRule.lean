@@ -29,10 +29,10 @@ where:
 
 This schema covers Belth-style D2L rules (Latin `-alis` / `-aris` liquid
 dissimilation, Turkish vowel harmony, Finnish backness harmony with
-neutral-vowel transparency — see [belth-2026]), Rose-Walker harmony
-systems (which structurally **contain** a `TierRule` as their value-prediction
-core — see `Subregular.Harmony.System` in `Subregular/Harmony.lean`), and
-any SPE rule whose context is a single tier-adjacent segment.
+neutral-vowel transparency — see [belth-2026]) and any SPE rule whose context is a
+single tier-adjacent segment. The iterated form of the rule, in which written
+targets become the context of what follows, is `Subregular.Harmony.System` in
+`Subregular/Harmony.lean`.
 
 The schema does **not** cover:
 

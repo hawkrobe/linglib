@@ -70,7 +70,6 @@ import Linglib.Core.Computability.ContextFreeGrammar.Tree
 import Linglib.Core.Computability.ContextFreeGrammar.Weighted
 import Linglib.Core.Computability.Definite
 import Linglib.Core.Computability.ElgotMezei
-import Linglib.Core.Computability.Lens
 import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.MyhillNerode
 import Linglib.Core.Computability.NonContextFree.AmBnCmDn
