@@ -45,6 +45,7 @@ latter's switch-reference system was misrecorded as tracking several arguments.
 * [aikhenvald-2025]
 * [aikhenvald-2008]
 * [sohn-1994]
+* [sohn-1999]
 * [goksel-kerslake-2005]
 -/
 
@@ -91,11 +92,12 @@ def tense : Language → CategoryRetention
   | korean => .ofPred Korean.Converb.AllowsTense
   | turkish => .ofPred Turkish.Converb.Tensed
 
-/-- The mood medial verbs retain, which is none in the two Papuan languages, a reduced range
-in Korean, and in Turkish the modality markers before the converbs on a tensed stem. -/
+/-- The mood medial verbs retain, which is none in the two Papuan languages, in Korean the
+modal before the suffixes that admit it, and in Turkish the modality markers before the
+converbs on a tensed stem. -/
 def mood : Language → CategoryRetention
   | nungon | manambu => .absent
-  | korean => .restricted
+  | korean => .ofPred Korean.Converb.AllowsModal
   | turkish => .ofPred Turkish.Converb.Tensed
 
 /-- Independent negation of the medial clause, which in Manambu and Turkish is as far as the
@@ -107,12 +109,13 @@ def polarity : Language → CategoryRetention
   | turkish => .ofPred Turkish.Converb.Negatable
 
 /-- The aspect medial verbs retain, which is none in Nungon, in Manambu aspect only before the
-causal marker, which takes the tensed cross-referencing of a main verb, a reduced range in
-Korean, and in Turkish the aspect markers before the converbs on a tensed stem. -/
+causal marker, which takes the tensed cross-referencing of a main verb, in Korean the perfect
+before the suffixes that admit it, and in Turkish the aspect markers before the converbs on a
+tensed stem. -/
 def aspect : Language → CategoryRetention
   | nungon => .absent
   | manambu => .ofPred fun m : Manambu.MedialMarker ↦ m.inflection = .tensedSubject
-  | korean => .restricted
+  | korean => .ofPred Korean.Converb.AllowsTense
   | turkish => .ofPred Turkish.Converb.Tensed
 
 /-- The retention profile of a language's medial verbs, agreement read off its forms. -/
