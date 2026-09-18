@@ -9,13 +9,16 @@ information sources it covers. Following Aikhenvald, information source is carve
 recurrent semantic parameters — visual, non-visual sensory, inference, assumption, hearsay and
 quotative — and an evidential covers a set of them: a firsthand term covers visual and sensory
 evidence together, a non-firsthand term covers inference, assumption and hearsay, a visual
-term covers visual evidence alone. A language's inventory is a `List Evidential` declared in
-its Fragment; it is well formed when its terms are pairwise disjoint, so that they partition
-the parameters the language expresses (`Semantics/Evidential/Basic.lean`).
+term covers visual evidence alone. Willett's coarser tripartition into attested, reported and
+inferring evidence groups the six parameters in pairs. A language's inventory is a
+`List Evidential` declared in its Fragment; it is well formed when its terms are pairwise
+disjoint, so that they partition the parameters the language expresses
+(`Semantics/Evidential/Basic.lean`).
 
 ## Main definitions
 
 * `Evidential.Parameter` — the six semantic parameters of information source.
+* `Evidential.CoarseSource` — Willett's tripartition of information source.
 * `Evidential.Exponent` — how an evidential is realized.
 * `Evidential` — the lexical entry; `Evidential.covers` its information sources.
 * `Evidential.IsDirect`, `IsInferential`, `IsReportative`, `IsNonfirsthand` — the coarse
@@ -46,6 +49,17 @@ inductive Parameter where
   | quotative
   deriving DecidableEq, Repr, Fintype
 
+/-- Willett's three-way classification of information source into attested, reported and
+inferring evidence; `hearsay` covers reported evidence, hearsay proper and quotation alike. -/
+inductive CoarseSource where
+  /-- Direct sensory observation of the event. -/
+  | direct
+  /-- Reported evidence about the event. -/
+  | hearsay
+  /-- Inference from observable effects of the event. -/
+  | inference
+  deriving DecidableEq, Repr, Inhabited
+
 /-- How an evidential is morphosyntactically realized. -/
 inductive Exponent where
   /-- A verbal affix or bound suffix (Kashaya *-yá*, Turkish *-mIş*). -/
@@ -66,7 +80,7 @@ inductive Exponent where
 
 end Evidential
 
-/-- An evidential: its form, its realization, and the information sources it covers. -/
+/-- An evidential is a form with its realization and the information sources it covers. -/
 structure Evidential where
   /-- A representative morpheme or construction label. -/
   form : String
@@ -104,8 +118,8 @@ instance : DecidablePred IsNonfirsthand := fun _ => inferInstanceAs (Decidable (
 /-- The parameters an inventory expresses. -/
 def expressed (es : List Evidential) : Finset Parameter := (es.map covers).toFinset.sup id
 
-/-- An inventory is well formed when its terms are pairwise disjoint: no parameter is covered
-twice, and two entries with the same nonempty coverage count as one term covered twice. -/
+/-- An inventory is well formed when its terms are pairwise disjoint, so that no parameter is
+covered twice; two entries with the same nonempty coverage count as one term covered twice. -/
 def WellFormed (es : List Evidential) : Prop := es.Pairwise fun a b => Disjoint a.covers b.covers
 
 instance : DecidablePred WellFormed := fun es =>

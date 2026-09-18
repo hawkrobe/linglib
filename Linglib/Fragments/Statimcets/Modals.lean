@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modality.Basic
-import Linglib.Semantics.Evidential.Source
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # St'át'imcets (Lillooet Salish) Modal Inventory
