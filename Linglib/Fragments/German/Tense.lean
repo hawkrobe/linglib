@@ -23,7 +23,7 @@ The future forms with *werden* are not entered.
 * [kratzer-1998]
 -/
 
-namespace German.Tense
+namespace German
 
 /-- The *Präsens* is the synthetic present, as *baut* 'builds'. -/
 def praesens : Tense.Form := { name := "Präsens", finite := .Pres }
@@ -47,10 +47,10 @@ def doppelperfekt : Tense.Form :=
   { name := "Doppelperfekt", finite := .Pres, nonfinite := [.pastParticiple, .pastParticiple] }
 
 /-- Standard German has these tense forms. -/
-def standard : List Tense.Form := [praesens, praeteritum, perfekt, plusquamperfekt]
+def tenseForms : List Tense.Form := [praesens, praeteritum, perfekt, plusquamperfekt]
 
 /-- The South German dialects have these tense forms, lacking the *Präteritum* and with it the
 *Plusquamperfekt*. -/
-def southern : List Tense.Form := [praesens, perfekt, doppelperfekt]
+def southernTenseForms : List Tense.Form := [praesens, perfekt, doppelperfekt]
 
-end German.Tense
+end German

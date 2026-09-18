@@ -13,7 +13,7 @@ as in *is building* and *was building*, and the perfect forms put the past parti
 * [kratzer-1998]
 -/
 
-namespace English.Tense
+namespace English
 
 /-- The simple present is the synthetic present, as *builds*. -/
 def simplePresent : Tense.Form := { name := "simple present", finite := .Pres }
@@ -38,7 +38,7 @@ def pastPerfect : Tense.Form :=
   { name := "past perfect", finite := .Past, nonfinite := [.pastParticiple] }
 
 /-- English has these tense forms. -/
-def forms : List Tense.Form :=
+def tenseForms : List Tense.Form :=
   [simplePresent, simplePast, presentProgressive, pastProgressive, presentPerfect, pastPerfect]
 
-end English.Tense
+end English

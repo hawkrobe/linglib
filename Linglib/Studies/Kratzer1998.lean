@@ -242,11 +242,11 @@ structure Variety where
   /-- The forms that spell out a reference time with an aspect. -/
   spellOut : ReferenceTime → Aspect → List Tense.Form
 
-open English.Tense in
+open English in
 /-- In English the progressive forms spell out the imperfective and the simple forms the
 perfective, and the simple past also spells out the perfect, of the present as of the past. -/
 def english : Variety where
-  forms := English.Tense.forms
+  forms := tenseForms
   spellOut
     | .present, .imperfective => [presentProgressive]
     | .past, .imperfective => [pastProgressive]
@@ -255,22 +255,22 @@ def english : Variety where
     | .present, .perfect => [simplePast]
     | .past, .perfect => [simplePast, pastPerfect]
 
-open German.Tense in
+open German in
 /-- In Standard German the synthetic forms spell out the imperfective and the perfective, and
 the forms with a participle the perfect. -/
 def standardGerman : Variety where
-  forms := standard
+  forms := tenseForms
   spellOut
     | .present, .imperfective | .present, .perfective => [praesens]
     | .past, .imperfective | .past, .perfective => [praeteritum]
     | .present, .perfect => [perfekt]
     | .past, .perfect => [plusquamperfekt]
 
-open German.Tense in
+open German in
 /-- In South German, with the *Präteritum* gone, the *Perfekt* also spells out the past with the
 imperfective and the perfective, and the double perfect the past with the perfect. -/
 def southGerman : Variety where
-  forms := southern
+  forms := southernTenseForms
   spellOut
     | .present, .imperfective | .present, .perfective => [praesens]
     | .past, .imperfective | .past, .perfective => [perfekt]
@@ -321,8 +321,8 @@ theorem not_southGerman_transparent : ¬ southGerman.IsTransparent := by decide 
 which the English simple past spells out and the *Präteritum* does not, so that Standard German
 needs the *Plusquamperfekt*. -/
 theorem backwardShifted :
-    English.Tense.simplePast ∈ english.spellOut .past .perfect ∧
-      ∀ f, f ∈ standardGerman.spellOut .past .perfect ↔ f = German.Tense.plusquamperfekt := by
+    English.simplePast ∈ english.spellOut .past .perfect ∧
+      ∀ f, f ∈ standardGerman.spellOut .past .perfect ↔ f = German.plusquamperfekt := by
   simp [english, standardGerman]
 
 /-- The language codes of the example rows name these varieties. -/
