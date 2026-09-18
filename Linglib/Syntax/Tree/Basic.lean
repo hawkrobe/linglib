@@ -1,5 +1,5 @@
 import Mathlib.Data.Finset.Basic
-import Linglib.Core.Order.Branching
+import Linglib.Core.Data.RoseTree.Get
 
 /-!
 # Constituency trees
@@ -22,6 +22,9 @@ binder over a body, carry a category each. Type-driven interpretation reads the 
   binds, and the trees with none.
 * The `Core.Order.Branching` instance, through which a tree takes Gorn addresses, the
   dominance order on its positions and the command relations.
+* `Syntax.Tree.toRoseTree` and `Syntax.Tree.ofRoseTree?`: the rose tree underlying a
+  constituency tree, its nodes labelled by their constructors' data, and the decoding that
+  makes the constituency trees a retract of the rose trees; positions are inherited along it.
 
 ## Implementation notes
 
@@ -414,6 +417,85 @@ instance : Branching (Tree C W) where
 
 @[simp] theorem children_bind (n : ℕ) (c : C) (t : Tree C W) :
     Branching.children (bind n c t) = [t] := rfl
+
+/-! ### The underlying rose tree
+
+A constituency tree is a rose tree whose nodes carry the data of their constructor, with the
+arity the label demands: none for a terminal or a trace, one for a binder. `toRoseTree` is the
+embedding, and `ofRoseTree?` decodes a rose tree of the right shape. -/
+
+/-- The data a node of a constituency tree carries. -/
+inductive Label (C W : Type*) where
+  | terminal : C → W → Label C W
+  | node : C → Label C W
+  | trace : ℕ → C → Label C W
+  | bind : ℕ → C → Label C W
+  deriving DecidableEq, Repr
+
+/-- The rose tree underlying a constituency tree. -/
+def toRoseTree : Tree C W → RoseTree (Label C W) :=
+  fold (fun c w => .leaf (.terminal c w)) (fun c cs => .node (.node c) cs)
+    (fun n c => .leaf (.trace n c)) fun n c t => .node (.bind n c) [t]
+
+@[simp] theorem toRoseTree_terminal (c : C) (w : W) :
+    (terminal c w).toRoseTree = .leaf (.terminal c w) := rfl
+
+@[simp] theorem toRoseTree_node (c : C) (cs : List (Tree C W)) :
+    (node c cs).toRoseTree = .node (.node c) (cs.map toRoseTree) := by
+  simp only [toRoseTree, fold_node]
+
+@[simp] theorem toRoseTree_trace (n : ℕ) (c : C) :
+    (trace n c : Tree C W).toRoseTree = .leaf (.trace n c) := rfl
+
+@[simp] theorem toRoseTree_bind (n : ℕ) (c : C) (t : Tree C W) :
+    (bind n c t).toRoseTree = .node (.bind n c) [t.toRoseTree] := rfl
+
+/-- `toRoseTree` commutes with `children`: it is a map of `Branching` carriers. -/
+theorem children_toRoseTree (t : Tree C W) :
+    Branching.children t.toRoseTree = (Branching.children t).map toRoseTree := by
+  cases t <;> simp
+
+/-- A constituency tree and its rose tree have the same positions. -/
+theorem validPaths_toRoseTree (t : Tree C W) :
+    Branching.validPaths t.toRoseTree = Branching.validPaths t :=
+  Branching.validPaths_map_of_children_map children_toRoseTree t
+
+mutual
+/-- The constituency tree a rose tree of the right shape encodes. -/
+def ofRoseTree? : RoseTree (Label C W) → Option (Tree C W)
+  | .node (.terminal c w) [] => some (.terminal c w)
+  | .node (.node c) ts => (ofRoseTreeList? ts).map (.node c)
+  | .node (.trace n c) [] => some (.trace n c)
+  | .node (.bind n c) [t] => (ofRoseTree? t).map (.bind n c)
+  | _ => none
+/-- `ofRoseTree?` across a daughter list. -/
+def ofRoseTreeList? : List (RoseTree (Label C W)) → Option (List (Tree C W))
+  | [] => some []
+  | t :: ts => do
+    let t ← ofRoseTree? t
+    let ts ← ofRoseTreeList? ts
+    some (t :: ts)
+end
+
+theorem ofRoseTreeList?_map_toRoseTree :
+    ∀ cs : List (Tree C W), (∀ t ∈ cs, ofRoseTree? t.toRoseTree = some t) →
+      ofRoseTreeList? (cs.map toRoseTree) = some cs
+  | [], _ => rfl
+  | t :: ts, h => by
+    rw [List.map_cons, ofRoseTreeList?, h t List.mem_cons_self,
+      ofRoseTreeList?_map_toRoseTree ts fun s hs => h s (List.mem_cons_of_mem _ hs)]
+    rfl
+
+/-- Decoding inverts the embedding. -/
+@[simp] theorem ofRoseTree?_toRoseTree (t : Tree C W) : ofRoseTree? t.toRoseTree = some t := by
+  induction t with
+  | terminal c w => rfl
+  | node c cs ih => rw [toRoseTree_node, ofRoseTree?, ofRoseTreeList?_map_toRoseTree cs ih]; rfl
+  | trace n c => rfl
+  | bind n c t ih => rw [toRoseTree_bind, ofRoseTree?, ih]; rfl
+
+theorem toRoseTree_injective : Function.Injective (toRoseTree : Tree C W → RoseTree (Label C W)) :=
+  fun t s h => Option.some.inj (by rw [← ofRoseTree?_toRoseTree t, h, ofRoseTree?_toRoseTree])
 
 end Tree
 

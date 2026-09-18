@@ -66,4 +66,14 @@ theorem kCommand_eq : kCommand t = sCommand t ∩ npCommand t := by
 theorem rvCommand_eq (max : Set Cat) : rvCommand t max = cCommandAt t ∩ maxCommand t max :=
   commandRelation_union _ _
 
+section RoseTree
+
+variable {C : Type*}
+
+/-- The c-command relation of a constituency tree is that of its rose tree. -/
+theorem cCommandAt_toRoseTree (t : Tree C W) : cCommandAt t.toRoseTree = cCommandAt t :=
+  cCommandAt_map_of_children_map children_toRoseTree t
+
+end RoseTree
+
 end Syntax.Tree
