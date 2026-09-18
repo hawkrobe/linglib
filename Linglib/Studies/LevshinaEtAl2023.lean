@@ -1,213 +1,259 @@
-import Linglib.Data.UD.DependencyLength.FutrellEtAl2020
+import Linglib.Core.InformationTheory.BinaryEntropy
+import Linglib.Core.Probability.Moments.Covariance
+import Linglib.Data.WordOrder.Corpus.LevshinaEtAl2023
 
 /-!
 # Levshina et al. (2023): Why We Need a Gradient Approach to Word Order
 
-This file records the gradient word-order measures of [levshina-stoynova-2023]: in place of
-categorical labels such as SVO or "flexible", a language's basic order is described by the
-proportion of subject-before-object clauses, the Shannon entropy of the subject–object order,
-and the mutual information between case marking and grammatical role (`GradientWOProfile`).
-Three claims are checked on the paper's datasets: the proportion ranges continuously across
-languages rather than splitting into types (`so_proportion_is_continuous`), languages with
-informative case marking have freer order (`case_mi_correlates_with_so_entropy`), and one
-language varies by register, Russian conversation permitting far more object-first clauses
-than fiction (`russian_vo_varies_by_register`).
+This file formalizes the corpus illustrations of [levshina-etal-2023]'s case for describing
+word order by continuous measures rather than categorical labels. The paper's two measures of a
+binary order are the proportion of one order and the Shannon entropy of the order in bits; the
+entropy is the entropy of the Bernoulli law of the order at that proportion
+(`orderEntropy_eq_binEntropy`), so it is `0` when one order is fixed and `1` at an even split,
+the worked values of section 4.1.1, and among languages that put the subject first more often
+than not it ranks languages in reverse of the proportion (`orderEntropy_lt_iff`). In the 31
+news corpora of Figure 1 the subject precedes the object in most clauses of every language
+(`subject_usually_first`). Figure 3 plots the mutual information between case marking and
+syntactic role against order entropy for 30 corpora: the two covary positively over the sample
+(`covariance_entropy_caseInformation_pos`), the corpus of maximal entropy, Lithuanian, has the
+most informative case marking (`freest_most_case_informative`), and the corpus of minimal
+entropy has none (`most_rigid_least_case_informative`). The Russian register study of section
+4.1.3 is the population of its 300 annotated clauses under the uniform measure: verb–object
+order is less probable in conversation than in fiction (`conversation_lt_fiction`) and equally
+probable in fiction and news (`fiction_eq_news`).
 
 ## Implementation notes
 
-The values are the paper's OSF datasets (https://osf.io/w9u6v/) as integers scaled by a
-thousand: the proportion from Dataset1, entropy and case mutual information from Dataset3,
-and the Russian register proportions from Dataset6.
-
-## TODO
-
-The rows are empirical data and belong in a generated `Data/WordOrder` module.
+* The rows are the paper's OSF datasets, generated into `Data.WordOrder.Corpus.LevshinaEtAl2023`.
+  The entropies of Figure 3 are the dataset's printed values from the paper's own extraction,
+  not recomputed from the counts of Figure 1, which come from a different sample of the same
+  corpora.
+* The claim of Figure 1 that the proportions form a continuum with no natural cut-off is a
+  visual one without a statistic and is not stated as a theorem; nor is the logistic regression
+  of section 4.1.3, whose descriptive content is the conditional probabilities.
 
 ## References
 
-* [levshina-stoynova-2023]
+* [levshina-etal-2023]
 -/
+
+open Data.WordOrder.Corpus Data.WordOrder.Corpus.LevshinaEtAl2023
+open InformationTheory MeasureTheory ProbabilityTheory Real unitInterval
+open scoped ProbabilityTheory
 
 namespace LevshinaEtAl2023
 
-/-- A language's gradient word-order profile: the proportion of subject-before-object
-clauses, the entropy of the subject–object order, and the mutual information between case
-marking and grammatical role, each scaled by a thousand. -/
-structure GradientWOProfile where
-  name : String
-  isoCode : String
-  /-- Proportion of SO (subject before object) orders × 1000 (from Dataset1.txt) -/
-  soProportion1000 : Nat
-  /-- Shannon entropy of S-O order × 1000 (0 = deterministic, 1000 = maximal; Dataset3.txt) -/
-  soEntropy1000 : Nat
-  /-- Mutual information between case markers and grammatical role × 1000 (Dataset3.txt) -/
-  caseMI1000 : Nat
-  deriving Repr, DecidableEq
+/-! ### Proportion and entropy of a binary order (sections 1.1 and 4.1.1) -/
 
-def arabic : GradientWOProfile :=
-  { name := "Arabic", isoCode := "ar"
-    soProportion1000 := 933, soEntropy1000 := 345, caseMI1000 := 36 }
+section Entropy
 
-def bulgarian : GradientWOProfile :=
-  { name := "Bulgarian", isoCode := "bg"
-    soProportion1000 := 965, soEntropy1000 := 218, caseMI1000 := 28 }
+variable (r s : SubjectObjectCounts)
 
-def croatian : GradientWOProfile :=
-  { name := "Croatian", isoCode := "hr"
-    soProportion1000 := 856, soEntropy1000 := 586, caseMI1000 := 415 }
+/-- The proportion of clauses with the subject before the object. -/
+noncomputable def proportion : ℝ := r.subjectFirst / (r.subjectFirst + r.objectFirst)
 
-def czech : GradientWOProfile :=
-  { name := "Czech", isoCode := "cs"
-    soProportion1000 := 781, soEntropy1000 := 760, caseMI1000 := 525 }
+theorem proportion_mem : proportion r ∈ I :=
+  ⟨by unfold proportion; positivity, div_le_one_of_le₀ (by simp) (by positivity)⟩
 
-def danish : GradientWOProfile :=
-  { name := "Danish", isoCode := "da"
-    soProportion1000 := 989, soEntropy1000 := 74, caseMI1000 := 0 }
+/-- The subject is first in more than half the clauses exactly when it is first in more clauses
+than the object. -/
+theorem one_half_lt_proportion_iff : 1 / 2 < proportion r ↔ r.objectFirst < r.subjectFirst := by
+  unfold proportion
+  obtain h | h := eq_or_ne (r.subjectFirst + r.objectFirst) 0
+  · simp [Nat.add_eq_zero_iff.1 h]
+  · have : (0 : ℝ) < r.subjectFirst + r.objectFirst := by exact_mod_cast Nat.pos_of_ne_zero h
+    rw [lt_div_iff₀ this, ← Nat.cast_lt (α := ℝ)]
+    constructor <;> intro <;> linarith
 
-def dutch : GradientWOProfile :=
-  { name := "Dutch", isoCode := "nl"
-    soProportion1000 := 970, soEntropy1000 := 183, caseMI1000 := 0 }
+/-- The law of subject–object order in a language's corpus, which puts the subject first with
+the observed proportion. -/
+noncomputable def orderLaw : Measure SubjectObject :=
+  Ber(.subjectFirst, .objectFirst, ⟨proportion r, proportion_mem r⟩)
 
-def english : GradientWOProfile :=
-  { name := "English", isoCode := "en"
-    soProportion1000 := 994, soEntropy1000 := 47, caseMI1000 := 0 }
+/-- The paper's word-order entropy, the Shannon entropy of the order in bits. -/
+noncomputable def orderEntropy : ℝ := Hm[orderLaw r] / log 2
 
-def estonian : GradientWOProfile :=
-  { name := "Estonian", isoCode := "et"
-    soProportion1000 := 842, soEntropy1000 := 634, caseMI1000 := 692 }
+/-- Word-order entropy is the binary entropy of the proportion, in bits. -/
+theorem orderEntropy_eq_binEntropy : orderEntropy r = binEntropy (proportion r) / log 2 := by
+  rw [orderEntropy, orderLaw, measureEntropy_bernoulliMeasure (by decide)]
 
-def finnish : GradientWOProfile :=
-  { name := "Finnish", isoCode := "fi"
-    soProportion1000 := 912, soEntropy1000 := 426, caseMI1000 := 314 }
+/-- A fixed order has entropy `0`. -/
+theorem orderEntropy_of_fixed (h : r.subjectFirst = 0 ∨ r.objectFirst = 0) :
+    orderEntropy r = 0 := by
+  rw [orderEntropy_eq_binEntropy, div_eq_zero_iff, binEntropy_eq_zero]
+  left
+  rcases h with h | h
+  · exact .inl (by simp [proportion, h])
+  · obtain h0 | h0 := eq_or_ne r.subjectFirst 0
+    · exact .inl (by simp [proportion, h0])
+    · exact .inr (by rw [proportion, h, Nat.cast_zero, add_zero, div_self (Nat.cast_ne_zero.2 h0)])
 
-def french : GradientWOProfile :=
-  { name := "French", isoCode := "fr"
-    soProportion1000 := 995, soEntropy1000 := 42, caseMI1000 := 5 }
+/-- An even split of the two orders has entropy `1`. -/
+theorem orderEntropy_of_even (h : r.subjectFirst = r.objectFirst) (h0 : r.subjectFirst ≠ 0) :
+    orderEntropy r = 1 := by
+  have : proportion r = 2⁻¹ := by
+    have : (r.subjectFirst : ℝ) ≠ 0 := Nat.cast_ne_zero.2 h0
+    rw [proportion, ← h, ← two_mul, mul_comm, div_mul_eq_div_div, div_self this, one_div]
+  rw [orderEntropy_eq_binEntropy, this, binEntropy_two_inv, div_self (log_pos one_lt_two).ne']
 
-def german : GradientWOProfile :=
-  { name := "German", isoCode := "de"
-    soProportion1000 := 916, soEntropy1000 := 386, caseMI1000 := 288 }
+/-- Among languages that put the subject first at least half the time, entropy ranks them in
+reverse of the proportion: the closer to an even split, the more variable the order. -/
+theorem orderEntropy_lt_iff (hr : 1 / 2 ≤ proportion r) (hs : 1 / 2 ≤ proportion s) :
+    orderEntropy r < orderEntropy s ↔ proportion s < proportion r := by
+  rw [orderEntropy_eq_binEntropy, orderEntropy_eq_binEntropy,
+    div_lt_div_iff_of_pos_right (log_pos one_lt_two)]
+  exact StrictAntiOn.lt_iff_gt binEntropy_strictAntiOn ⟨by simpa using hr, (proportion_mem r).2⟩
+    ⟨by simpa using hs, (proportion_mem s).2⟩
 
-def greek : GradientWOProfile :=
-  { name := "Greek", isoCode := "el"
-    soProportion1000 := 896, soEntropy1000 := 490, caseMI1000 := 70 }
+end Entropy
 
-def hindi : GradientWOProfile :=
-  { name := "Hindi", isoCode := "hi"
-    soProportion1000 := 874, soEntropy1000 := 509, caseMI1000 := 334 }
+/-! ### The subject–object proportions of Figure 1 -/
 
-def hungarian : GradientWOProfile :=
-  { name := "Hungarian", isoCode := "hu"
-    soProportion1000 := 727, soEntropy1000 := 858, caseMI1000 := 738 }
+/-- In every one of the 31 corpora the subject precedes the object in most clauses. -/
+theorem subject_usually_first : ∀ r ∈ subjectObjectCounts, r.objectFirst < r.subjectFirst := by
+  decide
 
-def indonesian : GradientWOProfile :=
-  { name := "Indonesian", isoCode := "id"
-    soProportion1000 := 999, soEntropy1000 := 12, caseMI1000 := 0 }
+/-- Across the corpora of Figure 1, ranking by entropy is ranking by proportion reversed. -/
+theorem orderEntropy_lt_iff_of_mem {r s : SubjectObjectCounts} (hr : r ∈ subjectObjectCounts)
+    (hs : s ∈ subjectObjectCounts) :
+    orderEntropy r < orderEntropy s ↔ proportion s < proportion r :=
+  orderEntropy_lt_iff r s ((one_half_lt_proportion_iff r).2 (subject_usually_first r hr)).le
+    ((one_half_lt_proportion_iff s).2 (subject_usually_first s hs)).le
 
-def italian : GradientWOProfile :=
-  { name := "Italian", isoCode := "it"
-    soProportion1000 := 969, soEntropy1000 := 192, caseMI1000 := 6 }
+/-! ### Case marking against order entropy (Figure 3) -/
 
-def japanese : GradientWOProfile :=
-  { name := "Japanese", isoCode := "ja"
-    soProportion1000 := 953, soEntropy1000 := 246, caseMI1000 := 582 }
+/-- The corpora of Figure 3. -/
+abbrev Corpus := Fin subjectObjectStatistics.length
 
-def korean : GradientWOProfile :=
-  { name := "Korean", isoCode := "ko"
-    soProportion1000 := 978, soEntropy1000 := 146, caseMI1000 := 357 }
+instance : Nonempty Corpus := ⟨⟨0, by decide⟩⟩
 
-def latvian : GradientWOProfile :=
-  { name := "Latvian", isoCode := "lv"
-    soProportion1000 := 767, soEntropy1000 := 784, caseMI1000 := 726 }
+/-- The printed statistics of a corpus. -/
+def statistics (i : Corpus) : SubjectObjectStatistics := subjectObjectStatistics.get i
 
-def lithuanian : GradientWOProfile :=
-  { name := "Lithuanian", isoCode := "lt"
-    soProportion1000 := 608, soEntropy1000 := 968, caseMI1000 := 788 }
+/-- The entropy of subject–object order in a corpus, in bits. -/
+noncomputable def entropy (i : Corpus) : ℝ := (statistics i).entropy1000 / 1000
 
-def persian : GradientWOProfile :=
-  { name := "Persian", isoCode := "fa"
-    soProportion1000 := 924, soEntropy1000 := 315, caseMI1000 := 219 }
+/-- The mutual information between case marking and syntactic role in a corpus, in bits. -/
+noncomputable def caseInformation (i : Corpus) : ℝ :=
+  (statistics i).caseMutualInformation1000 / 1000
 
-def portuguese : GradientWOProfile :=
-  { name := "Portuguese", isoCode := "pt"
-    soProportion1000 := 986, soEntropy1000 := 102, caseMI1000 := 14 }
+/-- Over the 30 corpora, order entropy and case information covary positively, so freer order
+goes with more informative case marking. -/
+theorem covariance_entropy_caseInformation_pos :
+    0 < cov[entropy, caseInformation; uniformOn Set.univ] := by
+  rw [covariance_uniformOn_univ_pos_iff]
+  have h : (∑ i, (statistics i).entropy1000) * (∑ i, (statistics i).caseMutualInformation1000)
+      < Fintype.card Corpus
+        * ∑ i, (statistics i).entropy1000 * (statistics i).caseMutualInformation1000 := by
+    decide
+  have h' := (Nat.cast_lt (α := ℝ)).2 h
+  push_cast at h'
+  simp only [entropy, caseInformation, div_mul_div_comm, ← Finset.sum_div]
+  rw [mul_div_assoc']
+  exact div_lt_div_of_pos_right h' (by norm_num)
 
-def romanian : GradientWOProfile :=
-  { name := "Romanian", isoCode := "ro"
-    soProportion1000 := 966, soEntropy1000 := 216, caseMI1000 := 7 }
+/-- The corpus with the most variable subject–object order, Lithuanian, has the most
+informative case marking. -/
+theorem freest_most_case_informative :
+    ∃ i, (statistics i).language = "Lithuanian" ∧ (∀ j, entropy j ≤ entropy i)
+      ∧ ∀ j, caseInformation j ≤ caseInformation i := by
+  have : ∃ i, (statistics i).language = "Lithuanian"
+      ∧ (∀ j, (statistics j).entropy1000 ≤ (statistics i).entropy1000)
+      ∧ ∀ j, (statistics j).caseMutualInformation1000
+          ≤ (statistics i).caseMutualInformation1000 := by
+    decide +kernel
+  obtain ⟨i, hi, he, hm⟩ := this
+  exact ⟨i, hi, fun j ↦ by unfold entropy; gcongr; exact he j,
+    fun j ↦ by unfold caseInformation; gcongr; exact hm j⟩
 
-def russian : GradientWOProfile :=
-  { name := "Russian", isoCode := "ru"
-    soProportion1000 := 861, soEntropy1000 := 580, caseMI1000 := 335 }
+/-- The corpus with the most rigid subject–object order has case marking carrying no
+information about syntactic role. -/
+theorem most_rigid_least_case_informative :
+    ∃ i, (∀ j, entropy i ≤ entropy j) ∧ caseInformation i = 0 := by
+  have : ∃ i, (∀ j, (statistics i).entropy1000 ≤ (statistics j).entropy1000)
+      ∧ (statistics i).caseMutualInformation1000 = 0 := by
+    decide +kernel
+  obtain ⟨i, he, hm⟩ := this
+  exact ⟨i, fun j ↦ by unfold entropy; gcongr; exact he j, by simp [caseInformation, hm]⟩
 
-def slovene : GradientWOProfile :=
-  { name := "Slovene", isoCode := "sl"
-    soProportion1000 := 873, soEntropy1000 := 536, caseMI1000 := 478 }
+/-! ### Register and modality in Russian (section 4.1.3) -/
 
-def spanish : GradientWOProfile :=
-  { name := "Spanish", isoCode := "es"
-    soProportion1000 := 978, soEntropy1000 := 143, caseMI1000 := 21 }
+/-- The annotated clauses, as a population. -/
+abbrev ClauseIndex := Fin clauses.length
 
-def swedish : GradientWOProfile :=
-  { name := "Swedish", isoCode := "sv"
-    soProportion1000 := 988, soEntropy1000 := 86, caseMI1000 := 0 }
+/-- The order of object and verb in a clause. -/
+def order (i : ClauseIndex) : ObjectVerb := (clauses.get i).order
 
-def tamil : GradientWOProfile :=
-  { name := "Tamil", isoCode := "ta"
-    soProportion1000 := 715, soEntropy1000 := 824, caseMI1000 := 59 }
+/-- The text type of a clause. -/
+def textType (i : ClauseIndex) : TextType := (clauses.get i).textType
 
-def turkish : GradientWOProfile :=
-  { name := "Turkish", isoCode := "tr"
-    soProportion1000 := 922, soEntropy1000 := 353, caseMI1000 := 167 }
+/-- The probability of verb–object order in a text type, under the uniform measure on the
+clauses. -/
+noncomputable def verbObjectProbability (t : TextType) : ℝ :=
+  (uniformOn Set.univ)[|textType ⁻¹' {t}].real (order ⁻¹' {.verbFirst})
 
-def vietnamese : GradientWOProfile :=
-  { name := "Vietnamese", isoCode := "vi"
-    soProportion1000 := 981, soEntropy1000 := 105, caseMI1000 := 0 }
+-- The printed counts: 61 object-first clauses in conversation, 17 each in fiction and news.
+example : (clauses.filter fun c ↦ c.textType = .conversation ∧ c.order = .objectFirst).length = 61
+    ∧ (clauses.filter fun c ↦ c.textType = .fiction ∧ c.order = .objectFirst).length = 17
+    ∧ (clauses.filter fun c ↦ c.textType = .news ∧ c.order = .objectFirst).length = 17 := by
+  decide +kernel
 
-/-- The thirty languages of the datasets. -/
-def allProfiles : List GradientWOProfile :=
-  [ arabic, bulgarian, croatian, czech, danish, dutch, english, estonian
-  , finnish, french, german, greek, hindi, hungarian, indonesian, italian
-  , japanese, korean, latvian, lithuanian, persian, portuguese, romanian
-  , russian, slovene, spanish, swedish, tamil, turkish, vietnamese ]
+-- Animate objects are rare: 38 of 300, the paper's 13%.
+example : (clauses.filter (·.animate)).length = 38 := by decide +kernel
 
-/-- The mean subject–object entropy of a set of languages, scaled by a thousand. -/
-def meanSOEntropy (ps : List GradientWOProfile) : Nat :=
-  if ps.isEmpty then 0
-  else ps.foldl (λ acc p => acc + p.soEntropy1000) 0 / ps.length
+private theorem ncard_setOf (p : ClauseIndex → Prop) [DecidablePred p] :
+    {i | p i}.ncard = (Finset.univ.filter p).card := by
+  rw [← Set.ncard_coe_finset]
+  congr
+  ext
+  simp
 
-/-- Languages whose case marking carries much information about grammatical role have freer
-subject–object order on average than the rest. -/
-theorem case_mi_correlates_with_so_entropy :
-    meanSOEntropy (allProfiles.filter (·.caseMI1000 > 300)) >
-    meanSOEntropy (allProfiles.filter (·.caseMI1000 ≤ 300)) := by decide
+/-- The probability of verb–object order in a text type is the share of its clauses in that
+order. -/
+theorem verbObjectProbability_eq (t : TextType) :
+    verbObjectProbability t
+      = (Finset.univ.filter fun i ↦ textType i = t ∧ order i = .verbFirst).card
+          / (Finset.univ.filter fun i ↦ textType i = t).card := by
+  have e₁ : textType ⁻¹' {t} ∩ order ⁻¹' {.verbFirst}
+      = {i | textType i = t ∧ order i = .verbFirst} := rfl
+  have e₂ : textType ⁻¹' {t} = {i | textType i = t} := rfl
+  rw [verbObjectProbability, uniformOn_univ_cond, uniformOn_real_apply, e₁, e₂, ncard_setOf,
+    ncard_setOf]
 
-/-- The subject-before-object proportion spans the range from Lithuanian to Indonesian
-rather than clustering at a few types. -/
-theorem so_proportion_is_continuous :
-    indonesian.soProportion1000 - lithuanian.soProportion1000 > 350 := by decide
+/-- Each text type contributes one hundred clauses. -/
+theorem card_textType (t : TextType) : (Finset.univ.filter fun i ↦ textType i = t).card = 100 := by
+  revert t
+  decide +kernel
 
-/-- The proportion of verb-before-object clauses in a register of Russian, scaled by a
-thousand. -/
-structure RegisterProfile where
-  register : String
-  voProbability1000 : Nat
-  deriving Repr, DecidableEq
+private theorem card_verbFirst :
+    (Finset.univ.filter fun i ↦ textType i = .conversation ∧ order i = .verbFirst).card = 39
+      ∧ (Finset.univ.filter fun i ↦ textType i = .fiction ∧ order i = .verbFirst).card = 83
+      ∧ (Finset.univ.filter fun i ↦ textType i = .news ∧ order i = .verbFirst).card = 83 := by
+  decide +kernel
 
-def russianConversation : RegisterProfile :=
-  { register := "conversation", voProbability1000 := 390 }
+/-- Verb–object order in 39 of the 100 conversational clauses. -/
+theorem verbObjectProbability_conversation : verbObjectProbability .conversation = 39 / 100 := by
+  rw [verbObjectProbability_eq, card_textType, card_verbFirst.1]
+  norm_num
 
-def russianFiction : RegisterProfile :=
-  { register := "fiction", voProbability1000 := 830 }
+/-- Verb–object order in 83 of the 100 fiction clauses. -/
+theorem verbObjectProbability_fiction : verbObjectProbability .fiction = 83 / 100 := by
+  rw [verbObjectProbability_eq, card_textType, card_verbFirst.2.1]
+  norm_num
 
-def russianNews : RegisterProfile :=
-  { register := "news", voProbability1000 := 830 }
+/-- Verb–object order in 83 of the 100 news clauses. -/
+theorem verbObjectProbability_news : verbObjectProbability .news = 83 / 100 := by
+  rw [verbObjectProbability_eq, card_textType, card_verbFirst.2.2]
+  norm_num
 
-def russianRegisters : List RegisterProfile :=
-  [russianConversation, russianFiction, russianNews]
+/-- Verb–object order is less probable in conversation than in fiction. -/
+theorem conversation_lt_fiction :
+    verbObjectProbability .conversation < verbObjectProbability .fiction := by
+  rw [verbObjectProbability_conversation, verbObjectProbability_fiction]
+  norm_num
 
-/-- Russian conversation permits more object-first clauses than fiction. -/
-theorem russian_vo_varies_by_register :
-    russianConversation.voProbability1000 < russianFiction.voProbability1000 := by decide
+/-- Verb–object order is equally probable in fiction and in news. -/
+theorem fiction_eq_news : verbObjectProbability .fiction = verbObjectProbability .news := by
+  rw [verbObjectProbability_fiction, verbObjectProbability_news]
 
 end LevshinaEtAl2023
