@@ -12,7 +12,7 @@ of the stem vowel while high-frequency inflected words do not, and the paper rep
 binary inflectional-status predictor by the semantic support that a word's meaning lends to
 its suffix triphone in a trained discriminative lexicon, which improves the tongue-position
 model with one fewer degree of freedom. The model is the substrate's linear discriminative
-lexicon at the paper's carriers, triphone form vectors and word2vec meaning vectors
+lexicon over the paper's triphone form vectors and word2vec meaning vectors
 (`GermanInflectionalDLM`); close meanings yield close predicted articulations
 (`close_meanings_imply_close_form`), and when the suffix triphone is linearly decodable from
 meanings, training alone gives inflected words strictly greater suffix support than
@@ -58,8 +58,8 @@ abbrev TriphoneVec := FormVec TriphoneCount
 /-- A German word2vec vector is a meaning vector of the embeddings' dimension. -/
 abbrev GermanWord2VecVec := MeaningVec Word2VecGermanDim
 
-/-- The paper's discriminative lexicon is the linear model at German triphone and word2vec
-carriers. -/
+/-- The paper's discriminative lexicon is the linear model over German triphone form vectors
+and word2vec meaning vectors. -/
 abbrev GermanInflectionalDLM :=
   Linear ℝ TriphoneVec GermanWord2VecVec
 

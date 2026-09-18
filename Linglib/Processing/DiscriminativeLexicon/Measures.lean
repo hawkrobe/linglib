@@ -5,8 +5,7 @@ import Mathlib.LinearAlgebra.Matrix.ToLin
 /-!
 # Semantic support in the discriminative lexicon
 
-This file defines the semantic support measures of a linear discriminative lexicon at its
-matrix carriers.
+This file defines the semantic support measures of a linear discriminative lexicon.
 
 A linear discriminative lexicon predicts the form of a meaning `s` through a mapping matrix `G`
 acting on row vectors, `ĉ = sG`. The *semantic support* that a form vector `c` receives from `s`
