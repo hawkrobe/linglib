@@ -2,11 +2,13 @@ import Linglib.Data.Examples.Tay2024
 import Linglib.Fragments.Mandarin.Resultatives
 import Linglib.Morphology.Word.Tree
 import Mathlib.Order.Interval.Set.Basic
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.NormNum
 
 /-!
 # Tay (2024): Resultative Expressions in Mandarin Chinese
 
-This file formalizes [tay-2024]'s account of why Mandarin V-V resultatives realize their
+This file formalizes Tay's account of why Mandarin V-V resultatives realize their
 arguments more freely than V-*de* resultatives and English resultatives. A V-V resultative is a
 synthetic compound built in morphology, V1-∅-V2, so its components are inaccessible to syntactic
 operations, chapter 2: a locative can modify V1 of a V-*de* resultative but not of the compound,
@@ -51,7 +53,7 @@ formalized.
 
 namespace Tay2024
 
-open Causation.Resultatives Mandarin.Resultatives Morphology
+open Mandarin.Resultatives Morphology
 
 /-! ### The null affix (chapter 2, section 3.3) -/
 
@@ -59,14 +61,14 @@ section NullAffix
 
 variable {E D : Type*} {m n : ℕ}
 
-/-- The null affix (110): a macroevent `e` containing a causing event `e₁` described by V1, whose
-arguments are existentially closed, and a caused event `e₂` described by V2, whose arguments the
-compound inherits. -/
+/-- The null affix (110) introduces a macroevent `e` containing a causing event `e₁` described by
+V1, whose arguments are existentially closed, and a caused event `e₂` described by V2, whose
+arguments the compound inherits. -/
 def nullAffix (cause : E → E → E → Prop) (R2 : E → (Fin n → D) → Prop)
     (R1 : E → (Fin m → D) → Prop) (e : E) (ys : Fin n → D) : Prop :=
   ∃ e₁ e₂ xs, cause e e₁ e₂ ∧ R2 e₂ ys ∧ R1 e₁ xs
 
-/-- The null affix with a causer (111): the crucial contributory factor `c` of the macroevent. -/
+/-- The null affix (111) also introduces `c`, the crucial contributory factor of the macroevent. -/
 def nullAffixC (cause : E → E → E → Prop) (ccf : E → D → Prop) (R2 : E → (Fin n → D) → Prop)
     (R1 : E → (Fin m → D) → Prop) (e : E) (c : D) (ys : Fin n → D) : Prop :=
   ∃ e₁ e₂ xs, cause e e₁ e₂ ∧ ccf e c ∧ R2 e₂ ys ∧ R1 e₁ xs
@@ -74,7 +76,7 @@ def nullAffixC (cause : E → E → E → Prop) (ccf : E → D → Prop) (R2 : E
 variable (cause : E → E → E → Prop) (ccf : E → D → Prop) (R2 : E → (Fin n → D) → Prop)
   (R1 : E → (Fin m → D) → Prop) {e e₁ e₂ : E} {c : D} {ys : Fin n → D} {xs : Fin m → D}
 
-/-- The causer is an argument of the macroevent alone: it enters no relation with the arguments
+/-- The causer is an argument of the macroevent alone and enters no relation with the arguments
 of V1. -/
 theorem nullAffixC_iff :
     nullAffixC cause ccf R2 R1 e c ys ↔ ccf e c ∧ nullAffix cause R2 R1 e ys := by
@@ -85,7 +87,7 @@ theorem nullAffixC_iff :
   · rintro ⟨hccf, e₁, e₂, xs, hc, h2, h1⟩
     exact ⟨e₁, e₂, xs, hc, hccf, h2, h1⟩
 
-/-- Any arguments of V1 witness the compound: nothing requires the compound's arguments to be
+/-- Any arguments of V1 witness the compound, so nothing requires the compound's arguments to be
 interpreted as arguments of V1, and nothing forbids it. -/
 theorem nullAffix_of (hc : cause e e₁ e₂) (h2 : R2 e₂ ys) (h1 : R1 e₁ xs) :
     nullAffix cause R2 R1 e ys :=
@@ -97,7 +99,7 @@ theorem nullAffixC_of (hc : cause e e₁ e₂) (hccf : ccf e c) (h2 : R2 e₂ ys
     nullAffixC cause ccf R2 R1 e c ys :=
   ⟨e₁, e₂, xs, hc, hccf, h2, h1⟩
 
-/-- The sole argument of an unaccusative compound may be the agent of V1 (219): a
+/-- The sole argument of an unaccusative compound may be the agent of V1 (219), so a
 subject-oriented resultative needs no reflexive. -/
 theorem nullAffix_of_agent {R2 R1 : E → (Fin 1 → D) → Prop} {y : D} (hc : cause e e₁ e₂)
     (h2 : R2 e₂ ![y]) (h1 : R1 e₁ ![y]) : nullAffix cause R2 R1 e ![y] :=
@@ -126,21 +128,21 @@ variable {participant}
 
 namespace Macroevent
 
-/-- The Onset Condition (141): an event semantically integrated into the macroevent of a simplex
+/-- The Onset Condition (141) says that an event integrated into the macroevent of a simplex
 causative is the initial event of its causal chain. -/
 def Onset (M : Macroevent participant) (e₁ : E) : Prop := e₁ = M.chain.head M.chain_ne
 
-/-- A pure causer of an event: a crucial contributory factor that is not a participant in it. -/
+/-- A pure causer of an event is a crucial contributory factor that is not a participant in it. -/
 def PureCauser (M : Macroevent participant) (e₁ : E) : Prop := ¬ participant e₁ M.ccf
 
-/-- No pure causers: the event of V1 being integrated, the causer is a participant in it. -/
+/-- There are no pure causers; the event of V1 being integrated, the causer participates in it. -/
 theorem participant_of_onset {M : Macroevent participant} {e₁ : E} (h : M.Onset e₁) :
     participant e₁ M.ccf :=
   h ▸ M.ccf_initial
 
 theorem not_pureCauser_of_onset {M : Macroevent participant} {e₁ : E} (h : M.Onset e₁) :
     ¬ M.PureCauser e₁ :=
-  λ hp => hp (participant_of_onset h)
+  fun hp ↦ hp (participant_of_onset h)
 
 end Macroevent
 
@@ -152,10 +154,10 @@ section Traces
 
 variable {E : Type*} (trace : E → Set ℚ)
 
-/-- The monoeventive analysis (104): V1 and V2 describe one event, so one temporal trace. -/
+/-- On the monoeventive analysis (104) V1 and V2 describe one event, so one temporal trace. -/
 def Monoeventive (e₁ e₂ : E) : Prop := trace e₁ = trace e₂
 
-/-- The bieventive analyses (105)–(106): one event is temporally contained in the other. -/
+/-- On the bieventive analyses (105)–(106) one event is temporally contained in the other. -/
 def Bieventive (e₁ e₂ : E) : Prop := trace e₂ ⊆ trace e₁ ∨ trace e₁ ⊆ trace e₂
 
 /-- The events of *shè-sǐ* 'shoot dead' (107). -/
@@ -163,17 +165,17 @@ inductive Ev
   | shoot
   | die
 
-/-- The traces of (108): the shooting ends as the bullet makes contact, when the dying begins. -/
+/-- In the traces of (108) the shooting ends as the bullet makes contact, when the dying begins. -/
 def shooting : Ev → Set ℚ
   | .shoot => Set.Icc 0 1
   | .die => Set.Icc 1 3
 
-/-- The shooting and the dying overlap at a single point: they are neither one event nor nested,
+/-- The shooting and the dying overlap at a single point, so they are neither one event nor nested,
 so only the trieventive macroevent accounts for (107). -/
 theorem shooting_trieventive :
     ¬ Monoeventive shooting .shoot .die ∧ ¬ Bieventive shooting .shoot .die ∧
       (shooting .shoot ∩ shooting .die).Nonempty := by
-  refine ⟨λ h => ?_, λ h => ?_, ⟨1, by simp [shooting]⟩⟩
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_, ⟨1, by simp [shooting]⟩⟩
   · have : (0 : ℚ) ∈ shooting .die := h ▸ (by simp [shooting])
     norm_num [shooting] at this
   · rcases h with h | h
@@ -186,7 +188,7 @@ end Traces
 
 /-! ### The compound in morphology (chapter 2, section 2) -/
 
-/-- The null affix as a morph: a phonologically empty prefix on V2. -/
+/-- The null affix as a morph is a phonologically empty prefix on V2. -/
 def nullMorph : Morph := .pref ""
 
 /-- The word V1-∅-V2 (130): ∅ affixed to V2, the result compounded with V1. -/
@@ -194,13 +196,13 @@ def vvTree (v1 v2 : Morph) : Word.Tree Morph :=
   .compound (.root v1) (.prefixed nullMorph (.root v2))
 
 /-- The word-formation tree of a Fragment compound. -/
-def CompoundEntry.tree (c : CompoundEntry) : Word.Tree Morph := vvTree (.root c.v1) (.root c.v2)
+def Compound.tree (c : Compound) : Word.Tree Morph := vvTree (.root c.v1) (.root c.v2)
 
 theorem toList_vvTree (v1 v2 : Morph) : (vvTree v1 v2).toList = [v1, nullMorph, v2] := rfl
 
 /-! ### Typology (chapter 8, section 2) -/
 
-/-- The three dimensions of variation among resultatives: whether the null head merges in
+/-- Resultatives vary along three dimensions, whether the null head merges in
 morphology, whether the result X can be a verb, and, if so, whether a transitive resultative can
 take an intransitive change-of-state verb as X. -/
 structure ResultativeType where
@@ -209,24 +211,15 @@ structure ResultativeType where
   intransitiveX : Bool
   intransitiveX_le : intransitiveX → verbalX
 
-/-- Mandarin V-V resultatives: compounds, X a verb, an intransitive X in a transitive
-resultative (673). -/
-def mandarin : ResultativeType := ⟨true, true, true, λ h => h⟩
+/-- Mandarin V-V resultatives are compounds with a verbal X, and a transitive resultative can
+take an intransitive X (673). -/
+def mandarin : ResultativeType := ⟨true, true, true, fun h ↦ h⟩
 
-/-- English resultatives: not compounds, X never a verb (669). -/
-def english : ResultativeType := ⟨false, false, false, λ h => h⟩
+/-- English resultatives are not compounds, and X is never a verb (669). -/
+def english : ResultativeType := ⟨false, false, false, fun h ↦ h⟩
 
-/-- Japanese V-V resultatives: compounds with verbal X whose transitivity follows V2, so no
+/-- Japanese V-V resultatives are compounds with verbal X whose transitivity follows V2, so no
 intransitive X in a transitive resultative (674)–(675). -/
-def japanese : ResultativeType := ⟨true, true, false, λ h => nomatch h⟩
-
-/-- The realization parameter of the Fragment records the first dimension. -/
-def ResultativeType.realization (t : ResultativeType) : ResultativeRealization :=
-  if t.compound then .verbCompound else .syntacticAdjunct
-
-theorem mandarin_realization :
-    mandarin.realization = .verbCompound ∧ ∀ c ∈ allCompounds, c.realization = .verbCompound := by
-  refine ⟨rfl, ?_⟩
-  decide
+def japanese : ResultativeType := ⟨true, true, false, fun h ↦ nomatch h⟩
 
 end Tay2024

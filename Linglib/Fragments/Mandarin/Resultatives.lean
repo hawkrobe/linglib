@@ -1,184 +1,139 @@
-import Linglib.Semantics.Causation.Resultatives
+import Linglib.Syntax.ConstructionGrammar.Resultatives
+import Linglib.Semantics.Aspect.ChangeOfState
 
 /-!
-# Mandarin Resultative Compound Fragment
+# Mandarin resultative compounds and phase complements
 
-Lexical entries for Mandarin V-V resultative compounds and phase complements,
-parameterized by cross-linguistic types from `Causation.Resultatives`.
+This file enters Mandarin V-V resultative compounds and phase complements. A resultative
+compound such as *dǎ-sǐ* 'hit-die' pairs a verb describing the causing event with a verb
+describing the result, and the result is predicated either of the object, as in *dǎ-sǐ*, or of
+the subject, as in *kū-lèi* 'cry-tired'; Mandarin admits both and does not restrict the result
+to the direct object. A phase complement is one of a closed class of grammaticalized second
+verbs, *dào* 到, *wán* 完, *hǎo* 好, *diào* 掉 and *zhù* 住, marking the attainment,
+completion, removal or persistence of a result, and each is entered with the change of state
+it marks. Tay's analysis of the compounds as words built in morphology lives in
+`Studies/Tay2024.lean`.
 
-## Compound data
+## Main definitions
 
-Each V-V compound entry records V1, V2, result orientation, and realization type.
-Object-oriented compounds (dǎ-sǐ "hit-die") and subject-oriented compounds
-(kū-lèi "cry-tired") coexist productively — Mandarin does not enforce the
-Direct Object Restriction (DOR).
+* `Compound` — a V-V resultative compound with the orientation of its result.
+* `PhaseComplement` — a phase complement with the change of state it marks.
 
-## Phase complements
+## TODO
 
-A closed class of grammaticalized V2 morphemes with fixed `CoSType` semantics:
-dǎo 倒, wán 完, hǎo 好, diào 掉, zhù 住.
+The change-of-state types are a coarse fit. Sybesma distinguishes *-dào* (attainment of a
+goal) from *-hǎo* (attainment of a satisfactory state) and *-diào* (removal of the patient),
+all completions rather than inceptions, and *-wán* marks the cessation of the activity rather
+than a result of the patient; `Aspect.CoSType` has no completion constructor. The toneless form
+*dao* also covers 倒 'fall' in *tuī-dǎo* 'push over', which is not the phase complement 到.
 
-## Cross-Module Connections
+## References
 
-- `Causation.Resultatives`: `ResultativeRealization`,
-  `ResultOrientation`
-- `Aspect/ChangeOfState.lean`: `CoSType`
-- `Tay2024`: thesis-specific theorems and analysis that import this Fragment
-
-`PhaseComplement` (the closed-class V2 morpheme enum) lives here rather
-than in `Theories/`: it enumerates Mandarin-specific morphemes
-(dǎo/wán/hǎo/diào/zhù), so the data is Mandarin-anchored. Cross-linguistic
-typological parameters (`ResultativeRealization`, `ResultOrientation`)
-remain in `Causation.Resultatives`.
+* [tay-2024]
+* [sybesma-2017]
 -/
 
 namespace Mandarin.Resultatives
 
-open Causation.Resultatives (ResultativeRealization ResultOrientation)
-open Aspect (CoSType)
+/-! ### Compounds -/
 
--- ════════════════════════════════════════════════════
--- § 0. Phase complement morpheme enum
--- ════════════════════════════════════════════════════
-
-/-- Mandarin phase complements: a closed class of grammaticalized V2
-    morphemes that fix the change-of-state semantics of the result. -/
-inductive PhaseComplement where
-  | dao
-  | wan
-  | hao
-  | diao
-  | zhu
-  deriving DecidableEq, Repr
-
-/-- Mapping from each phase complement to its `CoSType` semantics.
-
-    `wan → cessation` models the *activity-aspectual* reading
-    (P-during-event, ¬P-after = activity ceased), not a patient-result
-    reading. The patient-result reading ("the food is gone") would
-    require a separate `.completion` `CoSType`; cessation is the
-    closest fit in the current taxonomy.
-
-    `dao → inception` and `hao → inception` are both blunt fits:
-    [sybesma-2017] distinguishes -dao 到 (telos-attainment, "reach
-    a goal") from -hao 好 (norm-attainment, "achieve a satisfactory
-    state") and from -diao 掉 (patient-removal). All three are kinds
-    of *completion* / event-endpoint, not *inception*; the taxonomy
-    here is forced because `CoSType` lacks a `.completion` constructor.
-    Refining `CoSType` with `.completion` (or `.attainment`) would let
-    these be distinguished from genuine inceptives like `start`/`begin`,
-    but the cross-linguistic blast radius (~20 consumers) makes that
-    refactor a separate workstream.
-
-    Additionally, the surface form `dao` covers two Mandarin morphemes
-    written with different characters: 倒 'fall' (a directional/RVC
-    use, e.g. *tui-dao* 'push over') and 到 'arrive/attain' (the
-    phase-complement use, e.g. *mai-dao* 'succeed in buying'). The
-    `phase_dao` entry below glosses 'fall', but Liu & Yip 2026 App. B
-    treats the phase-complement -dao as 到. The conflation should be
-    split when the substrate refactor lands.
-
-    -- UNVERIFIED: Tay 2024's exact taxonomy of wan; the cessation
-    classification is the project's best fit, not a literal citation.
-    -- UNVERIFIED: dao/hao both → .inception; per [sybesma-2017]
-    these are completion/attainment, not inception. -/
-def PhaseComplement.cosType : PhaseComplement → CoSType
-  | .dao  => .inception
-  | .wan  => .cessation
-  | .hao  => .inception
-  | .diao => .inception
-  | .zhu  => .continuation
-
--- ════════════════════════════════════════════════════
--- § 1. Compound Data
--- ════════════════════════════════════════════════════
-
-/-- A Mandarin V-V resultative compound lexical entry. -/
-structure CompoundEntry where
+/-- A Mandarin V-V resultative compound with its two verbs, its characters, its gloss, its
+translation and the argument its result is predicated of. -/
+structure Compound where
+  /-- The first verb, describing the causing event. -/
   v1 : String
+  /-- The second verb, describing the result. -/
   v2 : String
+  /-- The characters. -/
+  hanzi : String
+  /-- The verb-by-verb gloss. -/
   gloss : String
+  /-- The translation. -/
   translation : String
-  orientation : ResultOrientation
-  realization : ResultativeRealization := .verbCompound
-  deriving Repr, BEq
+  /-- The argument the result is predicated of. -/
+  orientation : ConstructionGrammar.Resultatives.ResultOrientation
+  deriving Repr, DecidableEq
 
-/-- 打死 dǎ-sǐ "hit-die" = "beat to death" (object-oriented). -/
-def da_si : CompoundEntry :=
-  { v1 := "da", v2 := "si", gloss := "hit-die"
-  , translation := "beat to death", orientation := .objectOriented }
+/-- *dǎ-sǐ* 打死 'hit-die', 'beat to death'. -/
+def da_si : Compound :=
+  { v1 := "dǎ", v2 := "sǐ", hanzi := "打死", gloss := "hit-die", translation := "beat to death",
+    orientation := .objectOriented }
 
-/-- 打破 dǎ-pò "hit-break" = "break by hitting" (object-oriented). -/
-def da_po : CompoundEntry :=
-  { v1 := "da", v2 := "po", gloss := "hit-break"
-  , translation := "break by hitting", orientation := .objectOriented }
+/-- *dǎ-pò* 打破 'hit-break', 'break by hitting'. -/
+def da_po : Compound :=
+  { v1 := "dǎ", v2 := "pò", hanzi := "打破", gloss := "hit-break",
+    translation := "break by hitting", orientation := .objectOriented }
 
-/-- 哭累 kū-lèi "cry-tired" = "cry oneself tired" (subject-oriented). -/
-def ku_lei : CompoundEntry :=
-  { v1 := "ku", v2 := "lei", gloss := "cry-tired"
-  , translation := "cry oneself tired", orientation := .subjectOriented }
+/-- *kū-lèi* 哭累 'cry-tired', 'cry oneself tired'. -/
+def ku_lei : Compound :=
+  { v1 := "kū", v2 := "lèi", hanzi := "哭累", gloss := "cry-tired",
+    translation := "cry oneself tired", orientation := .subjectOriented }
 
-/-- 吃饱 chī-bǎo "eat-full" = "eat until full" (subject-oriented). -/
-def chi_bao : CompoundEntry :=
-  { v1 := "chi", v2 := "bao", gloss := "eat-full"
-  , translation := "eat until full", orientation := .subjectOriented }
+/-- *chī-bǎo* 吃饱 'eat-full', 'eat until full'. -/
+def chi_bao : Compound :=
+  { v1 := "chī", v2 := "bǎo", hanzi := "吃饱", gloss := "eat-full",
+    translation := "eat until full", orientation := .subjectOriented }
 
-/-- 跑累 pǎo-lèi "run-tired" = "run oneself tired" (subject-oriented). -/
-def pao_lei : CompoundEntry :=
-  { v1 := "pao", v2 := "lei", gloss := "run-tired"
-  , translation := "run oneself tired", orientation := .subjectOriented }
+/-- *pǎo-lèi* 跑累 'run-tired', 'run oneself tired'. -/
+def pao_lei : Compound :=
+  { v1 := "pǎo", v2 := "lèi", hanzi := "跑累", gloss := "run-tired",
+    translation := "run oneself tired", orientation := .subjectOriented }
 
-/-- 哭湿 kū-shī "cry-wet" = "cry (handkerchief) wet" (object-oriented). -/
-def ku_shi : CompoundEntry :=
-  { v1 := "ku", v2 := "shi", gloss := "cry-wet"
-  , translation := "cry (handkerchief) wet", orientation := .objectOriented }
+/-- *kū-shī* 哭湿 'cry-wet', 'cry (a handkerchief) wet'. -/
+def ku_shi : Compound :=
+  { v1 := "kū", v2 := "shī", hanzi := "哭湿", gloss := "cry-wet",
+    translation := "cry (a handkerchief) wet", orientation := .objectOriented }
 
-/-- 推开 tuī-kāi "push-open" = "push open" (object-oriented). -/
-def tui_kai : CompoundEntry :=
-  { v1 := "tui", v2 := "kai", gloss := "push-open"
-  , translation := "push open", orientation := .objectOriented }
+/-- *tuī-kāi* 推开 'push-open'. -/
+def tui_kai : Compound :=
+  { v1 := "tuī", v2 := "kāi", hanzi := "推开", gloss := "push-open", translation := "push open",
+    orientation := .objectOriented }
 
-/-- 喝醉 hē-zuì "drink-drunk" = "drink oneself drunk" (subject-oriented). -/
-def he_zui : CompoundEntry :=
-  { v1 := "he", v2 := "zui", gloss := "drink-drunk"
-  , translation := "drink oneself drunk", orientation := .subjectOriented }
+/-- *hē-zuì* 喝醉 'drink-drunk', 'drink oneself drunk'. -/
+def he_zui : Compound :=
+  { v1 := "hē", v2 := "zuì", hanzi := "喝醉", gloss := "drink-drunk",
+    translation := "drink oneself drunk", orientation := .subjectOriented }
 
-def allCompounds : List CompoundEntry :=
-  [da_si, da_po, ku_lei, chi_bao, pao_lei, ku_shi, tui_kai, he_zui]
+/-! ### Phase complements -/
 
--- ════════════════════════════════════════════════════
--- § 2. Phase Complements
--- ════════════════════════════════════════════════════
-
-/-- A phase complement lexical entry mapping form to `PhaseComplement`. -/
-structure PhaseComplementEntry where
-  form : String
+/-- A Mandarin phase complement with its pinyin, its character, its gloss, the change of state
+it marks and a representative verb it combines with. -/
+structure PhaseComplement where
+  /-- The pinyin form. -/
+  pinyin : String
+  /-- The character. -/
+  hanzi : String
+  /-- The gloss. -/
   gloss : String
-  phase : PhaseComplement
+  /-- The change of state the complement marks. -/
+  cosType : Aspect.CoSType
+  /-- A representative verb–complement combination with its translation. -/
   example_ : String
-  deriving Repr, BEq
+  deriving Repr, DecidableEq
 
-def phase_dao : PhaseComplementEntry :=
-  { form := "dao", gloss := "fall", phase := .dao
-  , example_ := "tui-dao (push-fall = push over)" }
+/-- *-dào* 到 'arrive', *mǎi-dào* 'succeed in buying'. -/
+def dao : PhaseComplement :=
+  { pinyin := "dào", hanzi := "到", gloss := "arrive", cosType := .inception,
+    example_ := "mǎi-dào 'succeed in buying'" }
 
-def phase_wan : PhaseComplementEntry :=
-  { form := "wan", gloss := "finish", phase := .wan
-  , example_ := "chi-wan (eat-finish = finish eating)" }
+/-- *-wán* 完 'finish', *chī-wán* 'finish eating'. -/
+def wan : PhaseComplement :=
+  { pinyin := "wán", hanzi := "完", gloss := "finish", cosType := .cessation,
+    example_ := "chī-wán 'finish eating'" }
 
-def phase_hao : PhaseComplementEntry :=
-  { form := "hao", gloss := "good", phase := .hao
-  , example_ := "zuo-hao (do-good = get done)" }
+/-- *-hǎo* 好 'good', *zuò-hǎo* 'get done'. -/
+def hao : PhaseComplement :=
+  { pinyin := "hǎo", hanzi := "好", gloss := "good", cosType := .inception,
+    example_ := "zuò-hǎo 'get done'" }
 
-def phase_diao : PhaseComplementEntry :=
-  { form := "diao", gloss := "fall off", phase := .diao
-  , example_ := "reng-diao (throw-fall.off = throw away)" }
+/-- *-diào* 掉 'fall off', *rēng-diào* 'throw away'. -/
+def diao : PhaseComplement :=
+  { pinyin := "diào", hanzi := "掉", gloss := "fall off", cosType := .inception,
+    example_ := "rēng-diào 'throw away'" }
 
-def phase_zhu : PhaseComplementEntry :=
-  { form := "zhu", gloss := "hold", phase := .zhu
-  , example_ := "ji-zhu (remember-hold = keep in mind)" }
-
-def allPhaseComplements : List PhaseComplementEntry :=
-  [phase_dao, phase_wan, phase_hao, phase_diao, phase_zhu]
+/-- *-zhù* 住 'hold', *jì-zhù* 'keep in mind'. -/
+def zhu : PhaseComplement :=
+  { pinyin := "zhù", hanzi := "住", gloss := "hold", cosType := .continuation,
+    example_ := "jì-zhù 'keep in mind'" }
 
 end Mandarin.Resultatives

@@ -12,20 +12,32 @@ import Linglib.Semantics.Degree.Boundedness
 /-!
 # The resultative construction family
 
-[goldberg-jackendoff-2004]'s four-way resultative family — causative or
-noncausative, with a property or path result phrase — as a dual subevent
-structure: a verbal subevent related to a constructional subevent, with
-fusion linking verb meaning to constructional contribution.
+This file defines the English resultative family of Goldberg and Jackendoff as a dual subevent
+structure. A resultative sentence has a verbal subevent, determined by the verb, and a
+constructional subevent, determined by the construction, and in the core family the verbal
+subevent is the means by which the constructional one comes about. The family is the product of
+two choices, whether the constructional subevent is causative and whether the result phrase names
+a property or a path. The construction's aspect follows from the boundedness of the result phrase,
+and its argument roles fuse with the verb's under a semantic coherence principle. The orientation
+of the result phrase, to the object or to the subject, is the parameter along which Mandarin verb
+compounds, which Tay shows admit subject-oriented transitives, differ from the English family.
 
 ## Main definitions
 
-* `ResultativeSubconstruction`: the 2 × 2 family, with its derived
-  subevent structure (`constructionalDesc`) and constructions
-  (`toConstruction`, `resultativeNetwork`)
-* `SubeventDesc`, `SubeventRelation`: the constructional subevent and its
-  relation to the verbal one
-* `RPType.undergoer`, `RolesCoherent`: the constructional role of the
-  result phrase's argument, and the semantic coherence principle
+* `ResultativeSubconstruction` — the 2 × 2 family, with its derived subevent structure
+  (`constructionalDesc`) and constructions (`toConstruction`, `resultativeNetwork`).
+* `SubeventDesc`, `SubeventRelation` — the constructional subevent and its relation to the
+  verbal one.
+* `RPType.undergoer`, `RolesCoherent` — the constructional role of the result phrase's argument
+  and the semantic coherence principle.
+* `ResultOrientation` — whether the result phrase is predicated of the object or the subject.
+
+## References
+
+* [goldberg-jackendoff-2004]
+* [kennedy-2007] — scale structure and the boundedness of the result phrase.
+* [mueller-2013] — the constructional network.
+* [tay-2024] — subject-oriented transitive compounds in Mandarin.
 -/
 
 namespace ConstructionGrammar.Resultatives
@@ -73,7 +85,7 @@ inductive RPType where
   | path
   deriving Repr, DecidableEq
 
-/-- The four subconstructions of the resultative family: causative or
+/-- The four subconstructions of the resultative family are causative or
 noncausative, crossed with a property or path result phrase
 ([goldberg-jackendoff-2004] §2, summarized as (97)). -/
 inductive ResultativeSubconstruction where
@@ -129,19 +141,10 @@ def ResultativeSubconstruction.constructionalDesc : ResultativeSubconstruction �
   | .noncausativeProperty => { hasCause := false, hasBecome := true }
   | .noncausativePath     => { hasCause := false, hasBecome := true }
 
-/-- Causative subconstructions have CAUSE in their constructional subevent. -/
-theorem causative_constructional_has_cause (sc : ResultativeSubconstruction)
-    (h : sc.isCausative = true) :
-    sc.constructionalDesc.hasCause = true := by
-  cases sc <;> simp [ResultativeSubconstruction.isCausative] at h <;>
-    simp [ResultativeSubconstruction.constructionalDesc]
-
-/-- Noncausative subconstructions lack CAUSE. -/
-theorem noncausative_constructional_no_cause (sc : ResultativeSubconstruction)
-    (h : sc.isCausative = false) :
-    sc.constructionalDesc.hasCause = false := by
-  cases sc <;> simp [ResultativeSubconstruction.isCausative] at h <;>
-    simp [ResultativeSubconstruction.constructionalDesc]
+/-- A subconstruction is causative iff its constructional subevent carries CAUSE. -/
+theorem isCausative_eq_hasCause (sc : ResultativeSubconstruction) :
+    sc.isCausative = sc.constructionalDesc.hasCause := by
+  cases sc <;> rfl
 
 /-- All subconstructions have BECOME in the constructional subevent. -/
 theorem all_constructional_have_become_derived (sc : ResultativeSubconstruction) :
@@ -208,6 +211,18 @@ inductive ObjectSelection where
   | fakeReflexive
   deriving Repr, DecidableEq, BEq
 
+/-! ## Orientation
+
+Whether the result phrase is predicated of the postverbal NP or of the subject. In the English
+family a transitive resultative is object-oriented and an intransitive one subject-oriented;
+Mandarin verb compounds also admit subject-oriented transitives (*chī-bǎo* 'eat full'). -/
+
+/-- The argument the result phrase is predicated of. -/
+inductive ResultOrientation where
+  | objectOriented
+  | subjectOriented
+  deriving DecidableEq, Repr
+
 /-! ## Aspectual profile (§4 of [goldberg-jackendoff-2004], Principle 27)
 
 The resultative's aspect is derived compositionally:
@@ -232,7 +247,7 @@ def resultativeVendlerClass (b : Boundedness) : VendlerClass :=
 The canonical `ThetaRole` of the linking interface stands in for the paper's
 agent, patient, theme, and goal. -/
 
-/-- The constructional role of the result phrase's argument: the patient of
+/-- The constructional role of the result phrase's argument is the patient of
 BECOME for a property result phrase, the theme of GO for a path (summary 97). -/
 def RPType.undergoer : RPType → ThetaRole
   | .property => .patient
@@ -243,7 +258,7 @@ def RPType.undergoer : RPType → ThetaRole
 A verb role rV and a construction role rC may fuse only if rV is
 construable as an instance of rC. -/
 
-/-- Principle 44's construal relation: agent with agent, goal with goal, and
+/-- Principle 44's construal relation pairs agent with agent, goal with goal, and
 patient and theme with each other; the remaining roles (experiencer,
 instrument, stimulus, source) are not resultative roles and fuse with
 nothing. -/
@@ -252,7 +267,7 @@ def RolesCoherent : ThetaRole → ThetaRole → Prop
   | .theme, .theme | .goal, .goal => True
   | _, _ => False
 
-instance : DecidableRel RolesCoherent := λ rV rC => by
+instance : DecidableRel RolesCoherent := fun rV rC ↦ by
   cases rV <;> cases rC <;> unfold RolesCoherent <;> infer_instance
 
 /-! ## Closed-scale → bounded RP bridge (§8 of [goldberg-jackendoff-2004],
@@ -289,15 +304,15 @@ theorem open_scale_unbounded :
 theorem lower_bounded_scale_unbounded :
     adjScaleToRPBoundedness .lowerClosed = .unbounded := rfl
 
-/-- The full aspectual chain: a closed-scale adjective as RP yields a telic
-    resultative. `HasMax → bounded → telic → accomplishment`. -/
+/-- A closed-scale adjective as RP yields a telic resultative, the full aspectual chain
+    `HasMax → bounded → telic → accomplishment`. -/
 theorem closed_scale_telic_resultative (b : Degree.Boundedness) (hMax : b.HasMax) :
     resultativeVendlerClass (adjScaleToRPBoundedness b) = .accomplishment := by
   cases b <;> simp [Degree.Boundedness.HasMax] at hMax <;>
     simp [adjScaleToRPBoundedness, Degree.Boundedness.HasMax,
       resultativeVendlerClass, resultativeAspect, AspectualProfile.toVendlerClass]
 
-/-- The dry/wet contrast: dry is productive (bounded → telic),
+/-- In the dry/wet contrast, dry is productive (bounded → telic),
     wet is not (unbounded → atelic). Derives from scale structure alone. -/
 theorem dry_wet_contrast :
     adjScaleToRPBoundedness .upperClosed = .bounded ∧
@@ -353,8 +368,8 @@ theorem no_subconstruction_instrumentSpec (sc : ResultativeSubconstruction) :
     sc.semanticContribution.instrumentSpec = false := by
   cases sc <;> rfl
 
-/-- Bundled: causative subconstruction contributes CoS + causation + ¬instrumentSpec.
-    Satisfies the hypotheses of `fuse_cos_caus_enables`. -/
+/-- A causative subconstruction contributes CoS + causation + ¬instrumentSpec, which
+    satisfies the hypotheses of `fuse_cos_caus_enables`. -/
 theorem causative_sc_contribution (sc : ResultativeSubconstruction)
     (h : sc.isCausative = true) :
     sc.semanticContribution.changeOfState = true ∧
@@ -363,8 +378,8 @@ theorem causative_sc_contribution (sc : ResultativeSubconstruction)
   cases sc <;> simp_all [ResultativeSubconstruction.isCausative,
     ResultativeSubconstruction.semanticContribution]
 
-/-- Bundled: noncausative subconstruction contributes CoS + ¬causation + ¬instrumentSpec.
-    Satisfies the hypotheses of `fuse_cos_only_partial`. -/
+/-- A noncausative subconstruction contributes CoS + ¬causation + ¬instrumentSpec, which
+    satisfies the hypotheses of `fuse_cos_only_partial`. -/
 theorem noncausative_sc_contribution (sc : ResultativeSubconstruction)
     (h : sc.isCausative = false) :
     sc.semanticContribution.changeOfState = true ∧
@@ -471,7 +486,7 @@ def resultativeNetwork : Constructicon MeaningComponents :=
 theorem resultativeNetwork_wellFormed : resultativeNetwork.WellFormed := by
   decide
 
-/-- The links determine each subconstruction's mother: the resultative. -/
+/-- The links determine each subconstruction's mother, the resultative. -/
 theorem subconstruction_parent (sc : ResultativeSubconstruction) :
     resultativeNetwork.parentsOf sc.toConstruction.name =
       [resultative] := by
@@ -484,7 +499,7 @@ theorem all_inherit_from_resultative :
 
 /-- All four subconstructions are fully abstract (decomposable). -/
 theorem all_subconstructions_abstract :
-    resultativeFamily.all (λ c => c.specificity == .fullyAbstract) = true := by
+    resultativeFamily.all (fun c ↦ c.specificity == .fullyAbstract) = true := by
   decide
 
 /-- Causative subconstructions are transitive (4 slots);
@@ -501,7 +516,7 @@ theorem noncausative_are_intransitive :
 
 /-! Schema-decomposition theorems for the subconstruction family
 (`causative_decompose_like_parent`, `noncausative_fewer_steps`) live with
-[mueller-2013]'s decomposition apparatus in `Studies/Mueller2013.lean`. -/
+[mueller-2013]'s decomposition in `Studies/Mueller2013.lean`. -/
 
 /-! ## Verb–construction fusion (integration with ArgumentStructure.lean) -/
 
@@ -532,13 +547,13 @@ theorem manner_verb_no_alternation_in_noncausative (mc : MeaningComponents)
     ResultativeSubconstruction.semanticContribution,
     MeaningComponents.fuse, MeaningComponents.predictedAlternation]
 
-/-- Concrete: hit-class verb in causativeProperty → causative alternation. -/
+/-- A hit-class verb in the causative property subconstruction alternates. -/
 theorem hit_alternates_in_causativeProperty :
     predictedAlternationInConstruction .hit
       causativePropertyConstruction .causativeInchoative = true := by
   decide
 
-/-- Concrete: hit-class verb in noncausativeProperty → no alternation. -/
+/-- A hit-class verb in the noncausative property subconstruction does not alternate. -/
 theorem hit_no_alternation_in_noncausativeProperty :
     predictedAlternationInConstruction .hit
       noncausativePropertyConstruction .causativeInchoative = false := by
@@ -590,7 +605,7 @@ theorem bounded_rp_telic :
 theorem unbounded_rp_atelic :
     resultativeVendlerClass .unbounded = .activity := rfl
 
-/-- Resultative telicizes an activity verb: adding bounded RP to an activity
+/-- The resultative telicizes an activity verb, since adding a bounded RP to an activity
     yields an accomplishment (§4 of [goldberg-jackendoff-2004],
     Principle 27). -/
 theorem resultative_telicizes_activity :
@@ -603,7 +618,7 @@ RP boundedness, aspect, and alternation participation. These are
 universally quantified — they hold for ANY verb class and ANY
 subconstruction satisfying the hypotheses, not just the attested entries. -/
 
-/-- **Aspect chain**: any adjective with a scale maximum, used as an RP
+/-- Any adjective with a scale maximum, used as an RP
     in a resultative, produces a telic accomplishment. -/
 theorem aspect_chain (b : Degree.Boundedness) (hMax : b.HasMax) :
     let rpB := adjScaleToRPBoundedness b
@@ -616,7 +631,7 @@ theorem aspect_chain (b : Degree.Boundedness) (hMax : b.HasMax) :
   · exact closed_scale_telic_resultative b hMax
   · rw [closed_scale_telic_resultative b hMax]; rfl
 
-/-- **Alternation chain**: corollary of `fuse_cos_caus_enables` for
+/-- The alternation chain is a corollary of `fuse_cos_caus_enables` for
     causative resultative subconstructions. -/
 theorem alternation_chain (mc : MeaningComponents) (sc : ResultativeSubconstruction)
     (hInstr : mc.instrumentSpec = false) (hCausative : sc.isCausative = true) :
@@ -629,7 +644,7 @@ theorem alternation_chain (mc : MeaningComponents) (sc : ResultativeSubconstruct
   simp only [composedMeaning, ResultativeSubconstruction.toConstruction]
   exact fuse_cos_caus_enables mc _ hCoS hCaus hInstr hNoInst
 
-/-- **Noncausative contrast**: corollary of `fuse_cos_only_partial`. -/
+/-- The noncausative contrast is a corollary of `fuse_cos_only_partial`. -/
 theorem noncausative_partial_chain (mc : MeaningComponents)
     (sc : ResultativeSubconstruction)
     (hInstr : mc.instrumentSpec = false) (hNonCaus : sc.isCausative = false)
@@ -643,7 +658,7 @@ theorem noncausative_partial_chain (mc : MeaningComponents)
   simp only [composedMeaning, ResultativeSubconstruction.toConstruction]
   exact fuse_cos_only_partial mc _ hCoS hNoCausC hNoCaus hInstr hNoInst
 
-/-- **instrumentSpec blocking**: corollary of `instrumentSpec_blocks_after_fuse`. -/
+/-- Instrument specification blocking is a corollary of `instrumentSpec_blocks_after_fuse`. -/
 theorem instrumentSpec_blocks_across_subconstructions (mc : MeaningComponents)
     (sc : ResultativeSubconstruction)
     (hInstr : mc.instrumentSpec = true) :
