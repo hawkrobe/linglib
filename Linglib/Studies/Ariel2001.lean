@@ -1,6 +1,6 @@
 import Linglib.Discourse.Accessibility
 import Linglib.Discourse.Givenness
-import Linglib.Discourse.Centering.Pronominalization
+import Linglib.Discourse.Centering.Basic
 import Linglib.Data.Examples.Ariel2001
 
 /-!
@@ -232,10 +232,10 @@ theorem in_focus_collapse :
 open Discourse.Centering in
 /-- Centering's pronoun rule says nothing when no pronoun is used, so an entity coded by a
 repeated name violates nothing: the repeated-name penalty is not its prediction. -/
-theorem pronominalization_vacuous {E R U : Type*} [CfRankerOf E R] [Realizes U E]
-    [Pronominalizes U E] (prev : Utterance E R) (cur : U) (h : ∀ e, ¬ pronominalizes cur e) :
+theorem pronominalization_vacuous {E R : Type*} [DecidableEq E] [LinearOrder R]
+    (prev cur : Utterance E R) (h : ∀ e, ¬ cur.Pronominalizes e) :
     PronominalizationConstraint prev cur :=
-  fun ⟨e, _, he⟩ => absurd he (h e)
+  pronominalizationConstraint_of_forall_not h
 
 /-- (12): the discourse topic is pronominal while the subject of two consecutive clauses is
 a description — the topic, not the local subject, takes the higher marker. -/

@@ -1,144 +1,143 @@
 import Linglib.Discourse.Centering.Basic
-import Mathlib.Order.Basic
-import Mathlib.Order.Nat
+import Mathlib.Data.List.Defs
 
 /-!
-# Centering Theory — Transitions
-[grosz-joshi-weinstein-1995] [strube-1998] [brennan-friedman-pollard-1987]
+# Centering theory: transitions
 
-The three transition types (continuation / retaining / shifting), their
-classification, the discourse-level scan (`transitions`, `cbs`,
-`coherenceScore`), and their preference structure: the `LinearOrder` and
-`pairRank` ("Rule 2" of [grosz-joshi-weinstein-1995], stated over
-sequences) and [strube-1998]'s cheap/expensive distinction (`isCheap`).
-`classifyTransitionStrict` is faithful to GJW Def 4;
-`classifyTransitionExtended` applies the worked-example convention for
-the segment-initial case. The [brennan-friedman-pollard-1987] 4-way
-variant lives in `Studies/PoesioEtAl2004.lean`.
+Grosz, Joshi, and Weinstein classify the move from one utterance to the next by whether the
+backward-looking center is kept and, if so, whether it is the preferred center: continuation,
+retaining, or shifting. Rule 2 orders the three, continuation first, and prefers sequences of
+earlier transitions to sequences of later ones. This file classifies a pair of utterances from
+its centers, scans a discourse for the centers and transitions of each utterance after the
+first, and carries Rule 2's order as the `LinearOrder` on `Transition`.
+
+## Main declarations
+
+* `Discourse.Centering.Transition`: the three transition types, linearly ordered by Rule 2.
+* `Transition.ofCenters`: the transition determined by the prior center, the current center, and
+  the current preferred center.
+* `Discourse.Centering.transition`: the transition into an utterance from the previous one,
+  given the prior center.
+* `Discourse.Centering.cbs` and `transitions`: the centers and transitions along a discourse.
+
+## Implementation notes
+
+The paper's definitions presuppose a prior backward-looking center. When there is none, as for
+the second utterance of a segment, the center counts as kept, so the utterance continues or
+retains according to whether its center is its preferred center: the proposal of Walker, Iida,
+and Cote that [poesio-stevenson-eugenio-hitzeman-2004] reports, on which the first utterance's
+center is underspecified until the second is processed. An utterance with no backward-looking
+center shifts, as the paper's shifting clause reads when the center is undefined.
+
+Rule 2 prefers sequences of continuations to sequences of retentions and those to sequences of
+shifts, and in particular prefers a pair of continuations to a pair of retentions. The order on
+`Transition` is its content on single transitions; a study compares sequences by that order
+pointwise.
+
+## References
+
+* [grosz-joshi-weinstein-1995]
+* [poesio-stevenson-eugenio-hitzeman-2004]
 -/
 
 namespace Discourse.Centering
 
-/-! ### Transition Type -/
-
-/-- Three transition types between consecutive utterances
-    ([grosz-joshi-weinstein-1995] Def 4). -/
+/-- The transition into an utterance: its backward-looking center is kept and is its preferred
+center, kept but not preferred, or changed. -/
 inductive Transition where
   | continuation
   | retaining
   | shifting
   deriving DecidableEq, Repr
 
-/-- Rule 2 preference order: continuation > retaining > shifting. -/
-@[simp] def Transition.rank : Transition → Nat
+namespace Transition
+
+/-- Rule 2's rank: continuation over retaining over shifting. -/
+@[simp] def rank : Transition → ℕ
   | .continuation => 2
-  | .retaining    => 1
-  | .shifting     => 0
+  | .retaining => 1
+  | .shifting => 0
 
-/-- LinearOrder via rank, exposing `<`, `≤`, `max` for Rule 2 statements. -/
+/-- Rule 2's order on single transitions, continuation the greatest. -/
 instance : LinearOrder Transition :=
-  LinearOrder.lift' Transition.rank
-    (fun a b h => by cases a <;> cases b <;> simp_all [Transition.rank])
+  LinearOrder.lift' rank fun a b h ↦ by cases a <;> cases b <;> simp_all
 
-theorem continuation_gt_retaining :
-    (Transition.continuation : Transition) > .retaining := by decide
+theorem retaining_lt_continuation : retaining < continuation := by decide
 
-theorem retaining_gt_shifting :
-    (Transition.retaining : Transition) > .shifting := by decide
+theorem shifting_lt_retaining : shifting < retaining := by decide
 
-/-! ### Strict and Extended Classification -/
+variable {E : Type*} [DecidableEq E]
 
-variable {E R : Type*} [DecidableEq E]
+/-- The transition determined by the prior backward-looking center, the current one, and the
+current preferred center. The center is kept when it is defined and, if the prior center is
+defined, equal to it. -/
+def ofCenters : Option E → Option E → Option E → Transition
+  | _, none, _ => .shifting
+  | prevCb, some c, curCp =>
+    if ∀ p ∈ prevCb, p = c then if curCp = some c then .continuation else .retaining
+    else .shifting
 
-/-- The transition of an utterance with center `curCb` and preferred center `curCp` after an
-utterance with center `prevCb`: the center is kept and is the preferred center (continuation),
-kept but not preferred (retaining), or changed (shifting). -/
-def Transition.ofCenters (curCb : E) (curCp : Option E) (prevCb : E) : Transition :=
-  if prevCb = curCb then
-    if curCp = some curCb then .continuation else .retaining
-  else .shifting
+@[simp] theorem ofCenters_none (prevCb curCp : Option E) :
+    ofCenters prevCb none curCp = .shifting := rfl
 
-variable [CfRankerOf E R]
+theorem ofCenters_some (prevCb curCp : Option E) (c : E) : ofCenters prevCb (some c) curCp =
+    if ∀ p ∈ prevCb, p = c then if curCp = some c then .continuation else .retaining
+    else .shifting := rfl
 
-/-- Strict classification (faithful to GJW Def 4): returns `none` in
-    the segment-initial case where the prior Cb is undefined. -/
-def classifyTransitionStrict
-    (prev cur : Utterance E R) (prevCb : Option E) : Option Transition :=
-  match cb prev cur, prevCb with
-  | none, _      => some .shifting
-  | _, none      => none  -- segment-initial: paper Def 4 is silent
-  | some curCb, some pcb => some (Transition.ofCenters curCb cur.cp pcb)
+/-- A defined prior center gives the paper's three-way classification. -/
+theorem ofCenters_some_some (p c : E) (curCp : Option E) : ofCenters (some p) (some c) curCp =
+    if p = c then if curCp = some c then .continuation else .retaining else .shifting := by
+  simp [ofCenters_some]
 
-/-- Extended classification: applies the worked-example convention
-    for the segment-initial case (treats missing prior Cb as if equal
-    to current Cb). -/
-def classifyTransitionExtended
-    (prev cur : Utterance E R) (prevCb : Option E) : Transition :=
-  match cb prev cur with
-  | none => .shifting
-  | some curCb =>
-    Transition.ofCenters curCb cur.cp (prevCb.getD curCb)
+end Transition
 
-/-- The two classifications agree whenever the strict variant is
-    defined. -/
-theorem extended_eq_strict_when_defined
-    (prev cur : Utterance E R) (prevCb : Option E) (t : Transition)
-    (h : classifyTransitionStrict prev cur prevCb = some t) :
-    classifyTransitionExtended prev cur prevCb = t := by
-  unfold classifyTransitionStrict at h
-  unfold classifyTransitionExtended
-  match hcb : cb prev cur, prevCb with
-  | none, _ =>
-    simp only [hcb] at h ⊢
-    cases h
-    rfl
-  | some _, none =>
-    simp only [hcb] at h
-    cases h
-  | some _, some _ =>
-    simp only [hcb] at h ⊢
-    exact Option.some.inj h
+variable {E R : Type*} [DecidableEq E] [LinearOrder R]
 
-/-! ### Discourse-level scan -/
+/-- The transition into `cur` from `prev`, given the backward-looking center of `prev`. -/
+def transition (prevCb : Option E) (prev cur : Utterance E R) : Transition :=
+  .ofCenters prevCb (cb prev cur) cur.cp
 
-/-- The backward-looking center of each adjacent pair along a discourse. -/
-def cbs : List (Utterance E R) → List (Option E)
-  | u₁ :: u₂ :: rest => cb u₁ u₂ :: cbs (u₂ :: rest)
-  | _ => []
+/-! ### Scanning a discourse -/
 
-/-- Transition sequence along a discourse from a given prior Cb, threading
-    each pair's Cb as the next pair's prior Cb. -/
-def transitionsFrom (prevCb : Option E) :
-    List (Utterance E R) → List Transition
-  | u₁ :: u₂ :: rest =>
-      classifyTransitionExtended u₁ u₂ prevCb :: transitionsFrom (cb u₁ u₂) (u₂ :: rest)
-  | _ => []
+/-- The backward-looking center of each utterance of `d` after the first. -/
+def cbs (d : List (Utterance E R)) : List (Option E) := List.zipWith cb d d.tail
 
-/-- Transition sequence of a discourse segment (segment-initial prior Cb
-    undefined). -/
+/-- The transition into each utterance of `d` after the first, the first of them with no prior
+center. -/
 def transitions (d : List (Utterance E R)) : List Transition :=
-  transitionsFrom none d
+  List.zipWith3 Transition.ofCenters (none :: cbs d) (cbs d) (d.tail.map Utterance.cp)
 
-/-- Sum-of-ranks coherence measure over a discourse's transition sequence —
-    the sequence form of "Rule 2" ([grosz-joshi-weinstein-1995]). -/
-def coherenceScore (d : List (Utterance E R)) : Nat :=
-  ((transitions d).map Transition.rank).sum
+@[simp] theorem cbs_nil : cbs ([] : List (Utterance E R)) = [] := rfl
 
-/-! ### Transition preference -/
+@[simp] theorem cbs_singleton (u : Utterance E R) : cbs [u] = [] := rfl
 
-/-- Sequence preference ("Rule 2" of [grosz-joshi-weinstein-1995])
-    compares *pairs* of transitions by sum-of-ranks. -/
-def pairRank (t₁ t₂ : Transition) : Nat := t₁.rank + t₂.rank
+@[simp] theorem cbs_cons_cons (u₁ u₂ : Utterance E R) (d : List (Utterance E R)) :
+    cbs (u₁ :: u₂ :: d) = cb u₁ u₂ :: cbs (u₂ :: d) := rfl
 
-/-- A transition is *cheap* ([strube-1998]) if `CB(U_n) = CP(U_{n-1})`:
-    the previous utterance's preferred center predicts the current CB. -/
-def isCheap {U : Type*} [Realizes U E]
-    (prev : Utterance E R) (cur : U) (prevCp : Option E) : Prop :=
-  cb prev cur = prevCp ∧ (cb prev cur).isSome
+@[simp] theorem length_cbs (d : List (Utterance E R)) : (cbs d).length = d.length - 1 := by
+  simp [cbs, List.length_zipWith]
 
-instance isCheap.decidable {U : Type*} [Realizes U E]
-    (prev : Utterance E R) (cur : U) (prevCp : Option E) :
-    Decidable (isCheap prev cur prevCp) :=
-  inferInstanceAs (Decidable (cb prev cur = prevCp ∧ (cb prev cur).isSome))
+@[simp] theorem transitions_nil : transitions ([] : List (Utterance E R)) = [] := rfl
+
+@[simp] theorem transitions_singleton (u : Utterance E R) : transitions [u] = [] := rfl
+
+/-- Each transition after the first threads the previous pair's center as its prior center. -/
+theorem transitions_cons_cons (u₁ u₂ : Utterance E R) (d : List (Utterance E R)) :
+    transitions (u₁ :: u₂ :: d) = transition none u₁ u₂ ::
+      List.zipWith3 Transition.ofCenters (cbs (u₁ :: u₂ :: d)) (cbs (u₂ :: d))
+        (d.map Utterance.cp) := rfl
+
+private theorem length_zipWith3 : ∀ {p c q : List (Option E)}, p.length = c.length + 1 →
+    q.length = c.length → (List.zipWith3 Transition.ofCenters p c q).length = c.length
+  | [], _, _, hp, _ => (Nat.succ_ne_zero _ hp.symm).elim
+  | _ :: _, [], q, _, _ => by cases q <;> rfl
+  | _ :: _, _ :: _, [], _, hq => (Nat.succ_ne_zero _ hq.symm).elim
+  | _ :: _, _ :: _, _ :: _, hp, hq =>
+    congrArg Nat.succ (length_zipWith3 (Nat.succ_injective hp) (Nat.succ_injective hq))
+
+@[simp] theorem length_transitions (d : List (Utterance E R)) :
+    (transitions d).length = d.length - 1 := by
+  unfold transitions
+  exact (length_zipWith3 (by simp) (by simp)).trans (length_cbs d)
 
 end Discourse.Centering

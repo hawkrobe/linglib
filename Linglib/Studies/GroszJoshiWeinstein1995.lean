@@ -1,6 +1,5 @@
 import Linglib.Discourse.Centering.Transition
-import Linglib.Discourse.Centering.Pronominalization
-import Linglib.Discourse.Centering.Instances.GrammaticalRole
+import Linglib.Discourse.Centering.GrammaticalRole
 import Linglib.Data.Examples.GroszJoshiWeinstein1995
 import Linglib.Studies.Sidner1979
 
@@ -35,8 +34,8 @@ a realization is by name or by pronoun, and grammatical roles are subject, objec
 ranked in that order, with embedded subjects counting as other. Under the definitions the
 backward-looking center of (2) stays John throughout, so the paper's informal flipping of
 aboutness surfaces as two retentions, a violation of Rule 1 at (2b), and a pronoun for an
-entity outside the forward-looking centers at (2d). Rule 2 is
-read through the substrate's sum of transition ranks; its restriction to pairs of utterances is
+entity outside the forward-looking centers at (2d). Rule 2 is read pointwise over the transition
+sequences by the order on `Transition`; its restriction to pairs of utterances is
 [brennan-friedman-pollard-1987]'s, as the paper's footnote notes, and its qualification of the
 (15) to (16) contrast by [gordon-grosz-gilliom-1993] is recorded on the rows.
 
@@ -119,11 +118,14 @@ in (2d) realizes an entity outside the forward-looking centers of (2c), the case
 says needs additional inference. -/
 theorem d2_retains : cbs D2.all = [some .john, some .john, some .john] ∧
     transitions D2.all = [.retaining, .continuation, .retaining] ∧
-      ¬ PronominalizationConstraint D1.a D2.b ∧ ¬ ∃ e ∈ D1.c.cf, pronominalizes D2.d e := by
+      ¬ PronominalizationConstraint D1.a D2.b ∧ ¬ ∃ e ∈ D1.c.cf, D2.d.Pronominalizes e := by
   decide
 
-/-- Discourse (1) is the more coherent under Rule 2. -/
-theorem coherence_contrast : coherenceScore D2.all < coherenceScore D1.all := by decide
+/-- Discourse (1) is a sequence of continuations, which Rule 2 prefers to the transitions of (2)
+that it dominates one by one. -/
+theorem coherence_contrast : (transitions D2.all).Forall₂ (· ≤ ·) (transitions D1.all) ∧
+    transitions D2.all ≠ transitions D1.all := by
+  decide
 
 /-! ### Factors governing centering, section 5
 
@@ -160,8 +162,8 @@ theorem susan_cb : cb D7.b D7.c7 = some .susan ∧ cb D7.b D7.c8 = some .susan �
 
 /-- (7c) continues Susan as center; (8c) merely retains her. -/
 theorem c7_continues_c8_retains :
-    classifyTransitionExtended D7.b D7.c7 (cb D7.a D7.b) = .continuation ∧
-      classifyTransitionExtended D7.b D7.c8 (cb D7.a D7.b) = .retaining := by
+    transition (cb D7.a D7.b) D7.b D7.c7 = .continuation ∧
+      transition (cb D7.a D7.b) D7.b D7.c8 = .retaining := by
   decide
 
 /-- Rule 1 separates the variants as the paper's acceptability ordering does: (7) and (8)
