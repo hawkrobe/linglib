@@ -31,13 +31,12 @@ the sample switch-reference goes with the loss or reduction of medial tense (`sr
 
 ## Implementation notes
 
-The Korean and Turkish inventories come from reference grammars rather than the volume,
-whose introduction discusses both languages; the volume's Turkish suffix list adds the two
-converbial subordinators on a doubled verb, which the fragment records outside its carrier. Nungon's
-medial polarity is the earlier formalization's
-value, which chapter 7 does not settle. Ku Waru and Korowai, formerly in the sample, are
-dropped: the former has no chapter in the volume and the latter's switch-reference system was
-misrecorded as tracking several arguments.
+The Korean and Turkish inventories come from reference grammars rather than the volume, whose
+introduction discusses both languages; the volume's Turkish suffix list adds the two converbial
+subordinators on a doubled verb, which the fragment records outside its carrier. Nungon's medial
+polarity is the earlier formalization's value, which chapter 7 does not settle. Ku Waru and
+Korowai, formerly in the sample, are dropped: the former has no chapter in the volume and the
+latter's switch-reference system was misrecorded as tracking several arguments.
 
 ## References
 
