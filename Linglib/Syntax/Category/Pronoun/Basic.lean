@@ -35,6 +35,8 @@ in as fields of the general `Pronoun`.
 * `PersonalPronoun` — personal/referential pronoun: `extends Pronoun` with the register and
   the referential categories specific to deictic pronouns; `referentialPerson` and
   `referentialNumber` are projections of the latter.
+* `PersonalPronoun.paradigm` — the forms an inventory offers for each referential category, whose
+  `Morphology.syncretism` is the inventory's person-number syncretism.
 * `Pronoun.Strength` — [cardinaletti-starke-1999] strong/weak/clitic
   deficiency scale, a `LinearOrder` (`clitic < weak < strong`), carried
   per-series by `Pronoun.strength`. Orthogonal to
@@ -214,6 +216,22 @@ theorem referentialPerson_eq_person (h : p.IsOrdinary) (hne : p.referential.None
   rcases hp : p.person with _ | per <;> rcases hn : p.number with _ | num <;>
     simp_all [Person.Category.sharedPerson_ofPersonNumber]
 
+/-- The paradigm of an inventory: the forms it offers for each referential category. A category
+no pronoun denotes gets `∅`, and two categories receive the same forms exactly when the
+inventory does not distinguish them, so `Morphology.syncretism` of a paradigm is the
+inventory's person-number syncretism. -/
+def paradigm (I : Finset PersonalPronoun) (c : Person.Category) : Finset String :=
+  (I.filter (c ∈ ·.referential)).image (·.form)
+
+theorem mem_paradigm {I : Finset PersonalPronoun} {c : Person.Category} {f : String} :
+    f ∈ paradigm I c ↔ ∃ p ∈ I, c ∈ p.referential ∧ p.form = f := by
+  simp [paradigm, and_assoc]
+
+@[gcongr]
+theorem paradigm_mono {I J : Finset PersonalPronoun} (h : I ⊆ J) (c : Person.Category) :
+    paradigm I c ⊆ paradigm J c :=
+  Finset.image_subset_image (Finset.filter_subset_filter _ h)
+
 end PersonalPronoun
 
 namespace Pronoun
@@ -266,6 +284,12 @@ theorem bindingClassOf_toWord (p : Pronoun) (h : ¬ p.IsRExpression)
       rcases hp : p.pronType with _ | pt <;> (try cases pt) <;>
     simp_all +decide [Binding.bindingClassOf, Pronoun.toWord, Morphology.Features.of,
       Binding.BindingClass.IsRExpression]
+
+/-- An interrogative or relative pronoun projects a wh-marked word. -/
+theorem isWh_toWord (p : Pronoun) (hb : p.bindingClass ≠ .reciprocal)
+    (h : p.pronType = some .Int ∨ p.pronType = some .Rel) : p.toWord.features.IsWh := by
+  rcases hc : p.bindingClass with _ | _ | _ | _ <;> rcases h with h | h <;>
+    simp_all +decide [toWord, Features.IsWh, Morphology.Features.of]
 
 /-- A candidate antecedent of a pronoun is a nominal token that agrees with it in φ-features;
 a pro-form takes its antecedents from a fixed form-class ([bloomfield-1933]). -/

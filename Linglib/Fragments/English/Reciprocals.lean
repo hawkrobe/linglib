@@ -3,40 +3,37 @@ import Linglib.Fragments.English.Predicates
 import Linglib.Syntax.Reciprocal
 
 /-!
-# English Reciprocal Fragment
-[nordlinger-2023]
+# English reciprocals
 
-English encodes reciprocity with the bipartite quantificational NP
-*each other* (bivalent; [nordlinger-2023] ex. 1b), with *one another* as
-a variant, plus a closed class of inherently reciprocal predicates
-(*quarrel*, *meet*, *kiss*; ex. 7). Both are formally distinct from the
-reflexive *themselves*. The bipartite marker derives its form from the
-pronoun entry in `Fragments/English/Pronouns.lean`; the lexical strategy
-has no exponent, so it is carried by the verb entries themselves
-(`lexicalReciprocals`), not by a marker — and correctly does not feed
-`Reciprocal.ofInventory` (WALS counts constructions, not lexical
-predicates).
+English marks reciprocity with the two-part noun phrases *each other* and *one another*, which
+fill an argument slot of a bivalent clause and are distinct from the reflexive *themselves*. A
+closed class of predicates such as *meet*, *quarrel* and *kiss* is reciprocal without any marker.
+The markers are those of the pronoun entries in `Fragments/English/Pronouns.lean`. The lexical
+strategy has no exponent, so the verb entries carry it and it does not feed
+`Reciprocal.ofInventory`, which classifies constructions.
+
+## References
+
+* [R. Nordlinger, *The Typology of Reciprocal Constructions* (2023)][nordlinger-2023]
+* [T. Siloni, *Reciprocal Verbs and Symmetry* (2012)][siloni-2012]
 -/
 
 namespace English.Reciprocals
 
 open Reciprocal
 
-/-- each other — bipartite quantificational reciprocal (form derived
-    from the pronoun entry `English.Pronouns.eachOther`). -/
-def eachOther : Marker :=
-  { form := Pronouns.eachOther.form, strategy := .bipartiteNP }
+/-- The marker of *each other*, from its pronoun entry. -/
+def eachOther : Marker := Pronouns.eachOther.toMarker
 
-/-- The inherently reciprocal predicates (*quarrel*, *meet*;
-    [nordlinger-2023] ex. 7), referenced as verb entries — the lexical
-    strategy marks predicates, not forms. Lexicon-formed per
-    [siloni-2012], though *kiss*/*hug* resist the discontinuous
-    construction (fn. 32). Entries beyond *meet* pending in
-    `Predicates.lean`. -/
+/-- The marker of *one another*, from its pronoun entry. -/
+def oneAnother : Marker := Pronouns.oneAnother.toMarker
+
+/-- The inherently reciprocal predicates, as verb entries: the lexical strategy marks
+predicates, not forms ([nordlinger-2023], [siloni-2012]). -/
 def lexicalReciprocals : List English.Verb :=
   [English.meet]
 
-/-- Marker inventory. -/
-def markers : List Marker := [eachOther]
+/-- The reciprocal marker inventory. -/
+def markers : List Marker := [eachOther, oneAnother]
 
 end English.Reciprocals
