@@ -42,8 +42,8 @@ sizes and movement paths is formalized in `Studies/ElkinsTorrenceBrown2026.lean`
 
 namespace Mam.Extraction
 
-/-- The hosts of Mam extraction reflexes: the verb stem, which the antipassive suffix alters;
-the verbal complex, the word the enclitic =(y)a' closes after the stem's suffixes; and a
+/-- A Mam extraction reflex is hosted by the verb stem, which the antipassive suffix alters, by
+the verbal complex, the word the enclitic =(y)a' closes after the stem's suffixes, or by a
 directional auxiliary. -/
 inductive Host where
   | verb
@@ -89,8 +89,7 @@ theorem morpheme_verbalComplex_notMem_realize_core (r : ArgumentRole) :
     Reflex.morpheme Host.verbalComplex ∉ realize (.core r) := by
   cases r <;> decide
 
-/-- Multiple exponence: the directional hosts the enclitic at exactly the sites the verbal
-complex does. -/
+/-- The directional hosts the enclitic at exactly the sites the verbal complex does. -/
 theorem morpheme_directional_mem_realize_iff (s : Mayan.ExtractionSite) :
     Reflex.morpheme Host.directional ∈ realize s ↔
       Reflex.morpheme Host.verbalComplex ∈ realize s := by

@@ -301,16 +301,15 @@ def Realizable (m : Mover) (d : Dependency) (i : ℕ) : Prop := m.BearsObl ∧ L
 instance (m : Mover) (d : Dependency) (i : ℕ) : Decidable (Realizable m d i) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The paper's partition of the extraction sites (§2.1): a core argument is absolutive unless it
-is the transitive subject, which the antipassive demotes. -/
+/-- The paper partitions the extraction sites (§2.1) so that a core argument is absolutive unless
+it is the transitive subject, which the antipassive demotes. -/
 def Mover.ofSite : Mayan.ExtractionSite → Mover
   | .core .A => .ergative
   | .core _ => .absolutive
   | .adjunct a => .adjunct a
 
-/-- The analysis derives the Mam fragment's monoclausal marking: at every extraction site the
-enclitic is licensed on the verbal complex exactly when the mover bears [obl], the clause of
-origin projecting Voice. -/
+/-- At every extraction site the analysis licenses the enclitic on the verbal complex exactly
+when the Mam fragment does, the mover bearing [obl] and the clause of origin projecting Voice. -/
 theorem realizable_iff_mem_realize (s : Mayan.ExtractionSite) :
     Realizable (.ofSite s) [spine .cP 0] 0 ↔
       Reflex.morpheme .verbalComplex ∈ Mam.Extraction.realize s := by
@@ -318,7 +317,7 @@ theorem realizable_iff_mem_realize (s : Mayan.ExtractionSite) :
   | core r => cases r <;> decide
   | adjunct a => cases a <;> decide
 
-/-- A low adjunct mover, the [appl]-bearing merger of Spec,ApplP (§5.3). -/
+/-- The mover is a low adjunct, merged in Spec,ApplP with [appl] (§5.3). -/
 def Mover.IsLow : Mover → Prop
   | .adjunct a => ElkinsTorrenceBrown2026.IsLow a
   | _ => False
@@ -329,8 +328,8 @@ instance : ∀ m : Mover, Decidable m.IsLow
   | .absolutive => inferInstanceAs (Decidable False)
   | .ergative => inferInstanceAs (Decidable False)
 
-/-- The K'iche' fragment's marking: *wi* on the verbal complex exactly for the low adjunct
-movers, Agent Focus being a reflex on the verb (§5.1, §5.3). -/
+/-- The K'iche' fragment puts *wi* on the verbal complex exactly for the low adjunct movers,
+Agent Focus being a reflex on the verb (§5.1, §5.3). -/
 theorem kiche_mem_realize_iff (s : Mayan.ExtractionSite) :
     Reflex.morpheme .verbalComplex ∈ Kiche.Extraction.realize s ↔ (Mover.ofSite s).IsLow := by
   cases s with
