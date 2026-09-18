@@ -22,7 +22,7 @@ party), which the glossary argues is independent of evidential source.
 ## Design
 
 `EpistemicAuthority` fills the egophoricity gap. `EpistemicProfile` bundles it
-with `CoarseSource` and `Evidential.Mirativity` for unified epistemic specification.
+with `EvidenceType` and `Evidential.Mirativity` for unified epistemic specification.
 `epistemicAuthority` bridges epistemic authority to `ContextTower` by resolving
 from the origin (speech-act context), since egophoric marking reflects the
 actual speech-act participants, not reported ones.
@@ -55,11 +55,11 @@ inductive EpistemicAuthority where
 
 /-- Epistemic profile: bundles the three orthogonal epistemic dimensions
     that the glossary identifies as cross-linguistically relevant.
-    - source: WHAT kind of evidence (Aikhenvald's 3-way)
+    - source: WHAT kind of evidence (Willett's three types)
     - authority: WHO has privileged access (egophoric dimension)
     - mirativity: WHETHER the content is expected (DeLancey's dimension) -/
 structure EpistemicProfile where
-  source     : CoarseSource
+  source     : EvidenceType
   authority  : EpistemicAuthority
   mirativity : Evidential.Mirativity := .neutral
   deriving Repr, BEq
@@ -78,22 +78,22 @@ def epistemicAuthority {W E P T : Type*} [DecidableEq E]
 /-- Ego authority with direct evidence: the canonical "strong assertion" profile.
     The speaker saw it themselves -- maximally authoritative. -/
 def strongAssertion : EpistemicProfile :=
-  { source := .direct, authority := .ego }
+  { source := .attested, authority := .ego }
 
 /-- Non-ego authority with inferential evidence: the canonical profile
     for epistemic 'must' ([von-fintel-gillies-2010]). Speaker infers, no privileged access. -/
 def inferentialClaim : EpistemicProfile :=
-  { source := .inference, authority := .nonparticipant }
+  { source := .inferring, authority := .nonparticipant }
 
 /-- In ego-authority contexts, direct evidence is the default source.
     This captures the generalization that 1st-person volitional claims
     ("I'm going to leave") use ego marking, not evidential marking. -/
-theorem ego_default_direct : strongAssertion.source = .direct := rfl
+theorem ego_default_attested : strongAssertion.source = .attested := rfl
 
 /-- In allocutive contexts, evidential source is typically irrelevant --
     the addressee's authority overrides source distinctions.
     (Tibetan *-pa yin* egophoric vs *-song* and *-pa red*; Akhvakh -eri ego vs -ari non-ego) -/
-def allocutiveProfile (s : CoarseSource) : EpistemicProfile :=
+def allocutiveProfile (s : EvidenceType) : EpistemicProfile :=
   { source := s, authority := .allocutive }
 
 /-- Epistemic authority is invariant under tower push: egophoric marking

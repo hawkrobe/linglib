@@ -86,19 +86,19 @@ def BackgroundClass.traditionalFlavor : BackgroundClass → ModalFlavor
 /-- The class of a modal from what it encodes: no information source is factual-circumstantial,
 a source the speaker may disbelieve is content-evidential, and any other source
 factual-evidential. -/
-def classOf (source : Option CoarseSource) (deniable : Prop) [Decidable deniable] :
+def classOf (source : Option EvidenceType) (deniable : Prop) [Decidable deniable] :
     BackgroundClass :=
   if source = none then .factualCircumstantial
   else if deniable then .contentEvidential else .factualEvidential
 
 /-- The circumstantial–evidential division is whether an information source is encoded. -/
-theorem traditionalFlavor_classOf (source : Option CoarseSource) (deniable : Prop)
+theorem traditionalFlavor_classOf (source : Option EvidenceType) (deniable : Prop)
     [Decidable deniable] :
     (classOf source deniable).traditionalFlavor = .circumstantial ↔ source = none := by
   unfold classOf; split_ifs <;> simp_all [BackgroundClass.traditionalFlavor]
 
 /-- The factual–content division among evidentials is the deniability diagnostic. -/
-theorem projectionMode_classOf (source : Option CoarseSource) (deniable : Prop)
+theorem projectionMode_classOf (source : Option EvidenceType) (deniable : Prop)
     [Decidable deniable] :
     (classOf source deniable).projectionMode = .content ↔ source ≠ none ∧ deniable := by
   unfold classOf; split_ifs <;> simp_all [BackgroundClass.projectionMode]
