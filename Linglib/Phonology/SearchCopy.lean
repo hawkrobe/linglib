@@ -17,21 +17,22 @@ visibility predicate, direction and feature; a target may further require its so
 meet a condition of its own, and a visible source failing it halts the search with the
 default, which is defective intervention, since the search gets no second chance. A copied
 value is donated onward, so harmony iterates morpheme by morpheme, and every visible valued
-segment donates whether or not it searches itself. The procedure descends from Mailhot and
-Reiss's SEARCH and COPY rule components, as [bale-reiss-2018] present them. [belth-2026]'s
-learner constructs one, written `Rel(A, F) / C __ ∘ proj(·, T)` with `A` the targets, `C`
-the sources and `T` the visible segments, and [rose-walker-2011]'s triggers, targets,
-blockers and transparent segments are its sources, targets, defective interveners and
-invisible segments.
+segment donates whether or not it searches itself. Mailhot and Reiss's SEARCH and COPY rule
+components, as [bale-reiss-2018] present them, are a sibling formulation with simultaneous
+application over the input. [belth-2026]'s learner constructs one, written
+`Rel(A, F) / C __ ∘ proj(·, T)` with `A` the targets, `C` the sources and `T` the visible
+segments, and [nevins-2010] reads [rose-walker-2011]'s blockers and transparent segments as
+defective interveners and invisible segments.
 
 Run over a word, the rule is a Mealy machine on the visible segments whose state is the
 closest visible segment read so far (`SearchCopy.toMealy`), the memory window of
 [burness-mcmullin-nevins-2024]'s tier-based strictly local reading of the procedure, and
-the output tier-based strictly 2-local rule of [burness-mcmullin-2020] computes the same
+the output tier-based strictly 2-local rule of [burness-mcmullin-2019] computes the same
 function (`SearchCopy.spreadRule_applyOnTier`). So a rule for one feature in one direction
 is a tier-based strictly local function, the result of Andersson, Dolatian and Hao that
 [burness-mcmullin-nevins-2024] report, and subsequential in its direction over a finite
-alphabet (`SearchCopy.apply_isSubsequential`).
+alphabet (`SearchCopy.apply_isSubsequential`), as Gainor, Lai and Heinz found of
+[nevins-2010]'s analyses.
 
 ## Main definitions
 
@@ -57,17 +58,23 @@ The window holds the last visible output segment, so a copied value is donated o
 [nevins-2010]'s derivations of stacked Turkish suffixes show; [burness-mcmullin-nevins-2024]
 instead model the procedure by an input-oriented function with the needy segments off the
 tier, which agrees whenever a needy segment's nearest visible source precedes it in the
-input. A source unspecified for the feature yields the default, where [belth-2026] counts a
-failed application. The lens laws hold on targets only, since only targets are written.
-Not modelled are search in both directions at once, sonority hurdles, the distance
-parameters of [nevins-2010]'s fifth chapter, and more than one feature per search.
+input, and the run is [nevins-2010]'s cyclic derivation only where morphological order runs
+away from the root in the search direction. `IsSource` is more general than [nevins-2010]'s
+conditions on a source, which are identity for an orthogonal feature or morphological
+affiliation. A source unspecified for the feature yields the default, where [belth-2026]
+counts a failed application, and a default of `none`, outside both sources, leaves a
+failed target unspecified for the fixed-point results of `Harmony.System`. The lens laws
+hold on targets only, since only targets are written. Not modelled are search in both
+directions at once, sonority hurdles, the distance parameters of [nevins-2010]'s fifth
+chapter, more than one feature per search, and the patterns [burness-mcmullin-nevins-2024]
+place beyond the procedure: icy targets, persistent search and circumambient harmony.
 
 ## References
 
 * [nevins-2010]
 * [bale-reiss-2018]
 * [burness-mcmullin-nevins-2024]
-* [burness-mcmullin-2020]
+* [burness-mcmullin-2019]
 * [chandlee-eyraud-heinz-2015]
 * [belth-2026]
 * [rose-walker-2011]
@@ -188,8 +195,8 @@ def scan : List α → List α := r.toMealy.run
 /-- The run in the rule's direction. -/
 def apply : List α → List α :=
   match r.direction with
-  | .left => r.scan
-  | .right => List.revConj r.scan
+  | .left => r.toMealy.run
+  | .right => r.toMealy.runRight
 
 /-- The closest visible segment of a string for a target that follows it in the rule's
 direction. -/
@@ -207,7 +214,7 @@ def triggerValue (w : List α) : Option Bool := (r.sourceAfter w).bind r.value
   r.toMealy.length_run w
 
 @[simp] theorem length_apply (w : List α) : (r.apply w).length = w.length := by
-  unfold apply; cases r.direction <;> simp [List.revConj]
+  unfold apply; cases r.direction <;> simp
 
 theorem scan_isMealyComputable [Fintype α] : IsMealyComputable r.scan :=
   r.toMealy.isMealyComputable
@@ -236,7 +243,7 @@ def spreadRule : Subregular.OSLRule 2 α α where
     r.spreadRule.windowOutput window s = [r.emit window.getLast? s] :=
   rfl
 
-/-- The OSL rule run over the visible segments ([burness-mcmullin-2020]) is the Mealy run,
+/-- The OSL rule run over the visible segments ([burness-mcmullin-2019]) is the Mealy run,
 the rule's output window being the machine's state. -/
 theorem spreadRule_applyOnTier : r.spreadRule.applyOnTier r.tier = r.scan := by
   funext w

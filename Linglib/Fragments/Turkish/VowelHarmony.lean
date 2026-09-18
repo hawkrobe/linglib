@@ -15,16 +15,14 @@ except that the palatal l of loans such as *gol* carries [−back] and fronts th
 suffix (§3.4, [clements-sezer-1982]). The suffix-initial D of -DI and -DA copies
 [voice] from the preceding segment (§6.1.2).
 
-The alternations are `Phonology.Harmony.System`s over `Phonology.Segment`; a
-suffixed word's surface form is their `SearchCopy.apply`. The grammar's examples
-are derived in `Studies/GokselKerslake2005.lean`.
+The alternations are `Phonology.Harmony.System`s over `Phonology.Segment`; the grammar's
+examples are derived from them in `Studies/GokselKerslake2005.lean`.
 
 ## Main definitions
 
 * `a`, `e`, `ı`, `i`, `o`, `ö`, `u`, `ü` — the vowels; `A`, `I` — the suffix archiphonemes.
-* `fronting`, `rounding`, `voicing` — the two vowel harmonies and D-voicing.
-* `surface` — the three alternations applied to a word; the suffixes it applies to are the
-  exponent forms of `Turkish.Morphotactics`.
+* `fronting`, `rounding`, `voicing` — the two vowel harmonies and D-voicing; the suffixes
+  they apply to are the exponent forms of `Turkish.Morphotactics`.
 
 ## References
 
@@ -124,7 +122,6 @@ preceding segment specified for it — a vowel, or a palatal `l'`; all other con
 off the tier (§3.1, §3.2). -/
 def fronting : System Segment :=
   System.mk' (feature := .back)
-    (isTrigger     := fun s => (s .back).isSome)
     (isTarget      := fun s => s.HasValue .syllabic true && (s .back).isNone)
     (isTransparent := fun s => (s .back).isNone && !s.HasValue .syllabic true)
 
@@ -132,7 +129,6 @@ def fronting : System Segment :=
 preceding vowel; consonants are off the tier (§3.1, §3.2.1). -/
 def rounding : System Segment :=
   System.mk' (feature := .round)
-    (isTrigger     := fun s => (s .round).isSome)
     (isTarget      := fun s => s.HasValue .syllabic true && s.HasValue .high true
                                  && (s .round).isNone)
     (isTransparent := fun s => !s.HasValue .syllabic true)
@@ -141,12 +137,7 @@ def rounding : System Segment :=
 (§6.1.2). -/
 def voicing : System Segment :=
   System.mk' (feature := .voice)
-    (isTrigger     := fun s => (s .voice).isSome)
     (isTarget      := fun s => (s .voice).isNone)
     (isTransparent := fun _ => false)
-
-/-- The surface form of a suffixed word: the three alternations applied in turn. -/
-def surface (w : List Segment) : List Segment :=
-  voicing.apply (rounding.apply (fronting.apply w))
 
 end Turkish.Phonology

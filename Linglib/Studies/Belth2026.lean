@@ -22,7 +22,7 @@ iterations with the tiers Σ, [+cons] and [+sib], accuracies 1/8, 4/8 and 7/7, a
 `Agree({S}, {ant}) / [+sib] __ ∘ proj(·, [+sib])` with default [s] (`Toy.iterations`,
 `Toy.learn`). The rules D2L converges to on natural language data are run on the paper's
 examples: Latin liquid dissimilation (54) on (53), with the *lunaris* row it mispredicts
-(`latin_rows`, `lunaris_mispredicted`); Finnish backness harmony (52), which is the
+(`latin_rows`, `lunaris_mispredicted`); Finnish backness harmony (52), which is the search-and-copy reading of the
 fragment's `Finnish.VowelHarmony.finnishHarmony`, on (51) (`finnish_rows`); and Turkish
 vowel harmony (49a) on (46) and (47) through the fragment's two harmonies (`turkish_rows`).
 
@@ -481,9 +481,11 @@ def segments (s : String) : List Segment := s.toList.filterMap ofChar
 def ur (form : String) : List Segment :=
   (stem form).filterMap ofChar ++ [n, A]
 
-/-- Rule (52) is the fragment's harmony, whose tier excludes consonants and the neutral
-vowels and whose Elsewhere default is `[−back]`; it derives the four forms of (51). -/
-theorem rows : ∀ f ∈ forms Examples.ex_51, finnishHarmony.apply (ur f) = segments f := by
+/-- Rule (52) is the search-and-copy reading of the fragment's harmony, whose tier excludes
+consonants and the neutral vowels and whose Elsewhere default is `[−back]`; it derives the
+four forms of (51). -/
+theorem rows : ∀ f ∈ forms Examples.ex_51,
+    finnishHarmony.searchCopy.apply (ur f) = segments f := by
   decide
 
 end Finnish
@@ -516,6 +518,11 @@ def ur (form : String) : List Segment :=
   match morphemes form.toList with
   | [] => []
   | stem :: affixes => stem.filterMap ofChar ++ affixes.flatMap (·.filterMap ofAffixChar)
+
+/-- The surface form of a suffixed word, the search-and-copy runs of the fragment's three
+alternations in turn. -/
+def surface (w : List Segment) : List Segment :=
+  voicing.searchCopy.apply (rounding.searchCopy.apply (fronting.searchCopy.apply w))
 
 /-- Rule (49a), backness and rounding from the tier-preceding vowel, is the fragment's two
 harmonies applied in turn; they derive the forms of (46) and (47). -/

@@ -4,8 +4,8 @@ import Linglib.Fragments.Turkish.Morphotactics
 # Göksel and Kerslake (2005): Turkish suffixation
 
 The reference grammar's account of the form and order of Turkish suffixes, checked
-against the Turkish Fragment. Chapter 3's vowel harmony is derived by the alternations
-of `Turkish.Phonology` from the exponent forms of `Turkish.Morphotactics`: the
+against the Turkish Fragment. Chapter 3's vowel harmony is derived by the search-and-copy runs of the
+alternations of `Turkish.Phonology` from the exponent forms of `Turkish.Morphotactics`: the
 permissible vowel sequences of §3.1 are the A-type and I-type resolutions, the last vowel
 of a disharmonic loan decides (*otobüs-ler*), an invariant suffix vowel is skipped and
 re-triggers (*görüyorum*, §3.4), and the palatal l of *gol* fronts its suffix (§3.4).
@@ -31,6 +31,11 @@ namespace GokselKerslake2005
 open Turkish Phonology
 
 /-! ### Vowel harmony (Chapter 3) -/
+
+/-- The surface form of a suffixed word: the search-and-copy runs of the three alternations,
+applied in turn. -/
+def surface (w : List Segment) : List Segment :=
+  voicing.searchCopy.apply (rounding.searchCopy.apply (fronting.searchCopy.apply w))
 
 /-- The vowels that may follow `v` in a suffix: its A-type and I-type resolutions. -/
 def followers (v : Segment) : List Segment :=

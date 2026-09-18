@@ -15,9 +15,9 @@ vowels and non-sibilant consonants in between (3), (4), (6). The harmony is the 
 `anticipatory` over the substrate's sibilant tier alphabet, whose fixed points are exactly the
 words of the tier-based strictly 2-local agree language, `mem_language_iff_anticipatory_eq`;
 it leaves the trigger and everything off the tier in place and neutralizes the contrast in the
-sibilants it targets, the three characteristics the book draws from (4). It is the substrate's
-harmony `System`, [rose-walker-2011]'s decomposition shared with the vowel harmonies of the
-fragments, run from the right, `anticipatory_eq_apply`. The book's own qualification
+sibilants it targets, the three characteristics the book draws from (4). It is the search-and-copy
+run of the substrate's harmony `System`, [rose-walker-2011]'s decomposition shared with the
+vowel harmonies of the fragments, from the right, `anticipatory_eq_apply`. The book's own qualification
 (section 3.1.2) is the perseveratory assimilation of the first-person subject prefix after the
 s-perfective and s-destruct prefixes (12), (14), which the anticipatory map mispredicts,
 `perseveratory_rows`, while harmony from the root still overrides it (15). The examples are
@@ -241,48 +241,55 @@ def value : Sibilant → Option Bool
 /-- Write an anteriority value. -/
 def write (v : Bool) (_ : Sibilant) : Sibilant := if v then .anterior else .posterior
 
-/-- Navajo sibilant harmony as a harmony `System`, in which both sibilant series trigger and
-undergo, all else is transparent, nothing blocks, and the direction is leftward. -/
+/-- Navajo sibilant harmony as a harmony `System`, in which both sibilant series are targets,
+all else is transparent, nothing blocks, and the direction is leftward. -/
 def navajo : System Sibilant where
-  tier := Sibilant.onTier
+  pattern :=
+    { value := value
+      participation := fun s => if s.onTier then .participating else .transparent
+      direction := .leftward }
   IsTarget := Sibilant.onTier
-  IsSource _ := Sibilant.onTier
-  value := value
   write := write
   value_write := fun v _ _ => by cases v <;> rfl
   write_value := fun v s _ h => by cases s <;> cases v <;> simp_all [value, write]
-  direction := .right
-  IsOpaque _ := False
+
+theorem pattern_onTier_iff (s : Sibilant) : navajo.pattern.OnTier s ↔ s.onTier := by
+  cases s <;> simp [navajo, Pattern.OnTier]
 
 theorem pattern_tier (w : List Sibilant) : navajo.pattern.tier w = sibilants w := by
-  rw [System.pattern_tier, sibilants, tierProject_eq_filter]; rfl
+  rw [Pattern.tier, sibilants, tierProject_eq_filter]
+  exact List.filter_congr fun s _ => by simp [pattern_onTier_iff]
 
-/-- Every sibilant is a target and a source. -/
-theorem saturated : navajo.Saturated := fun s _ => by
+/-- Every sibilant is a participating target. -/
+theorem saturated : navajo.Saturated := fun s hs => by
+  have := (pattern_onTier_iff s).mp hs
   cases s <;> simp_all [navajo, value, Sibilant.onTier]
 
-theorem tier_write (v : Bool) (s : Sibilant) (_ : navajo.tier s) : navajo.tier (write v s) := by
-  cases v <;> trivial
+theorem onTier_write (v : Bool) (s : Sibilant) (_ : navajo.pattern.OnTier s) :
+    navajo.pattern.OnTier (write v s) := by
+  rw [pattern_onTier_iff]; cases v <;> trivial
 
 /-- The leftmost sibilant of a word. -/
 def first (w : List Sibilant) : Option Sibilant := (sibilants w).head?
 
 /-- The substrate's progressive harmony over the Navajo system gives every sibilant the class
 of the leftmost one. -/
-theorem scan_eq (w : List Sibilant) : navajo.scan w = w.map (harmonize (first w)) := by
-  rw [navajo.scan_eq_map saturated tier_write rfl, pattern_tier]
+theorem scan_eq (w : List Sibilant) :
+    navajo.searchCopy.scan w = w.map (harmonize (first w)) := by
+  rw [navajo.scan_eq_map saturated onTier_write rfl, pattern_tier]
   refine List.map_congr_left fun s _ => ?_
   rcases hf : first w with _ | x
   · rw [first] at hf
-    simp [hf, harmonize, navajo]
+    simp [hf, harmonize, pattern_onTier_iff]
   · rw [first] at hf
     have hx : x.onTier := mem_sibilants_onTier (List.mem_of_mem_head? hf)
-    simp only [hf, Option.bind_some, harmonize]
+    simp only [hf, Option.bind_some, harmonize, pattern_onTier_iff]
     cases x <;> cases s <;> simp_all [navajo, value, write, Sibilant.onTier]
 
-/-- Anticipatory harmony is the substrate's harmony system run in its direction. -/
-theorem anticipatory_eq_apply (w : List Sibilant) : anticipatory w = navajo.apply w := by
-  show anticipatory w = (navajo.scan w.reverse).reverse
+/-- Anticipatory harmony is the search-and-copy run of the system in its direction. -/
+theorem anticipatory_eq_apply (w : List Sibilant) :
+    anticipatory w = navajo.searchCopy.apply w := by
+  show anticipatory w = (navajo.searchCopy.scan w.reverse).reverse
   rw [scan_eq, List.map_reverse, List.reverse_reverse, anticipatory]
   congr 1
   simp [first, trigger, sibilants, tierProject_eq_filter, List.filter_reverse,
