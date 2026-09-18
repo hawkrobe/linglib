@@ -18,7 +18,7 @@ the A of a transitive clause may be an instrument or experiencer, and S
 spans unergative agents and unaccusative patients, which is what lets
 alignment statements like "S groups with P" be expressed at all. The
 linking theories relating the two tiers live in
-`Semantics/ArgumentStructure/Linking.lean` and its studies.
+`Semantics/ArgumentStructure/ThetaRole.lean` and its studies.
 
 ## References
 

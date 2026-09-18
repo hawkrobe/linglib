@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Syntax.Minimalist.SyntacticObject.Term
 import Linglib.Syntax.Minimalist.SyntacticObject.Build
 import Linglib.Syntax.Minimalist.Linearization.Replay
-import Linglib.Semantics.ArgumentStructure.Linking
+import Linglib.Semantics.ArgumentStructure.ThetaRole
 
 /-!
 # Larson (1988): On the Double Object Construction
@@ -39,6 +39,8 @@ verb's indirect object.
 * [larson-1988]
 * [barss-lasnik-1986]
 -/
+
+open ArgumentStructure
 
 namespace Larson1988
 

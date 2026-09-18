@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Verbal.Decomposition
-import Linglib.Semantics.ArgumentStructure.Linking
+import Linglib.Semantics.ArgumentStructure.ThetaRole
 import Linglib.Syntax.Voice.Basic
 import Linglib.Syntax.Reciprocal
 
@@ -34,6 +34,8 @@ Voice heads introduce (or fail to introduce) external arguments
 multi-headed decomposition here follows [cuervo-2003] and captures the same
 Voice–CAUSE independence. See `Wood2015` for the Icelandic -st apparatus.
 -/
+
+open ArgumentStructure
 
 namespace Minimalist
 namespace Voice

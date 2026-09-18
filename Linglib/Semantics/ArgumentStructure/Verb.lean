@@ -1,6 +1,6 @@
 import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Semantics.ArgumentStructure.ThematicRole
-import Linglib.Semantics.ArgumentStructure.Linking
+import Linglib.Semantics.ArgumentStructure.ThetaRole
 import Linglib.Semantics.ArgumentStructure.EventStructure
 
 /-!

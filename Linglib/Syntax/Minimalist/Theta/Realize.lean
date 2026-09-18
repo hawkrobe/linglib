@@ -29,6 +29,8 @@ site realizes to its host unchanged (`realize_node_emptyTree_right`).
 * `realize_isSome` — a tree with a lexically anchored input realizes.
 -/
 
+open ArgumentStructure
+
 namespace Minimalist.Theta
 
 variable {L : Type*} {hier : ThetaRole → ThetaRole → Prop}

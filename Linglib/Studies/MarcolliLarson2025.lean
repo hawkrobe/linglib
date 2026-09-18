@@ -25,6 +25,8 @@ the standard rule set and added by the *se* marking (`parasiticGen_notMem`,
 * [siloni-2012]
 -/
 
+open ArgumentStructure
+
 namespace MarcolliLarson2025
 
 open Minimalist Minimalist.Theta

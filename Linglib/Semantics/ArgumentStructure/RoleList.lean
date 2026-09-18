@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Linking
+import Linglib.Semantics.ArgumentStructure.ThetaRole
 import Linglib.Semantics.ArgumentStructure.Projection
 
 /-!
@@ -244,11 +244,11 @@ theorem perception_subject_role :
 theorem psychCausal_subject_role :
     psychCausal.subjectProfile.toRole = some .stimulus := by decide
 
-/-- Directed-motion subject → patient: the unaccusative subject of *arrive*
-    undergoes a change of location (`changeOfState`) without agentivity. Formerly
-    `none` (the moving subject was dropped); `toRole` now restores it. -/
+/-- The directed-motion subject is a theme: the unaccusative subject of *arrive* moves and
+changes location but is not causally affected, which is what distinguishes a patient from
+the broader theme in [dowty-1991]. -/
 theorem directedMotion_subject_role :
-    directedMotion.subjectProfile.toRole = some .patient := by decide
+    directedMotion.subjectProfile.toRole = some .theme := by decide
 
 /-- Admire-class subject → experiencer, and its stimulus object matches the
     amuse-class subject exactly — the doublet mirror ([dowty-1991] (38)). -/

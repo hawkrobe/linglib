@@ -10,7 +10,7 @@ import Linglib.Semantics.ArgumentStructure.LevinClass
 import Linglib.Logic.Natural.Basic
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Semantics.Causation.Implicative
-import Linglib.Semantics.ArgumentStructure.Linking
+import Linglib.Semantics.ArgumentStructure.ThetaRole
 import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Aspect.Incremental
