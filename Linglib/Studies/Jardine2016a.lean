@@ -98,9 +98,10 @@ theorem utp_not_isLeftSubsequential : ¬ IsLeftSubsequential utp.map :=
 
 /-- UTP is not right-subsequential: by the reversal symmetry, a right machine faces the
 mirror-image unbounded look-ahead. -/
-theorem utp_not_isRightSubsequential : ¬ IsRightSubsequential utp.map := by
-  rw [isRightSubsequential_iff_left_reverse]
-  simpa [utp.map_reverse] using utp_not_isLeftSubsequential
+theorem utp_not_isRightSubsequential : ¬ IsRightSubsequential utp.map := fun h =>
+  have hsymm : List.revConj utp.map = utp.map :=
+    funext fun w => by simp [List.revConj, utp.map_reverse]
+  utp_not_isLeftSubsequential (hsymm ▸ h.revConj)
 
 /-- UTP is subsequential in neither direction. -/
 theorem utp_not_isSubsequential : ∀ d, ¬ IsSubsequential d utp.map
@@ -147,8 +148,8 @@ theorem markLeft_run_getElem?_H_iff :
 
 /-- The (43) decomposition computes UTP: mark left-to-right, then resolve right-to-left.
 Both passes run finite Mealy machines, so this exhibits UTP as a right-subsequential map
-after a left-subsequential one (`Mealy.isLeftSubsequential_run`,
-`Mealy.isRightSubsequential_runRight`). -/
+after a left-subsequential one (`Mealy.isLeftSubsequential`,
+`Mealy.isRightSubsequential`). -/
 theorem utp_eq_resolve_mark (w : List TBU) :
     utp.map w = resolveRight.runRight (markLeft.run w) := by
   have hmark (i : ℕ) : Mark.H ∈ (markLeft.run w).drop (i + 1) ↔ TBU.H ∈ w.drop (i + 1) := by
@@ -175,8 +176,8 @@ pass per direction ([elgot-mezei-1965]). So what fails above is one-directional
 determinism, not finite-state computability. -/
 theorem utp_isBimachineComputable : IsBimachineComputable utp.map := by
   rw [show utp.map = resolveRight.runRight ∘ markLeft.run from funext utp_eq_resolve_mark]
-  exact resolveRight.isRightSubsequential_runRight.isBimachineComputable_comp
-    markLeft.isLeftSubsequential_run rfl
+  exact resolveRight.isRightSubsequential.isBimachineComputable_comp
+    markLeft.isLeftSubsequential rfl
 
 /-- UTP is *fully regular* (§5.3): regular but not weakly deterministic — the class the
 paper places tone in and bars segmental phonology from. -/
