@@ -1,6 +1,7 @@
 import Linglib.Fragments.Mandarin.Adverbs
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Semantics.Presupposition.Verb
+import Linglib.Semantics.Presupposition.Iterative
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Set.Lattice.Bounded
 import Mathlib.Data.Fintype.Prod
@@ -35,7 +36,9 @@ exhaustive implicature contradicts the context, so the trigger is obligatory, Ta
 (`obligatory_of_positive_evidence`); with the presupposition denied the trigger is
 incoherent, Table 4.5 (`omitted_of_denied`); and in an ignorance context, with exhaustification
 above the belief operator, the presuppositional sentence contradicts the speaker's ignorance,
-Table 4.6 (`omitted_of_ignorance`). The exhaustification operator of (24) negates a maximal
+Table 4.6 (`omitted_of_ignorance`). For *you* and *zai* 'again' the first two tableaux are
+stated on the adverb's meaning, `Presupposition.again` (`again_obligatory_of_entailed`,
+`again_omitted_of_not_entailed`). The exhaustification operator of (24) negates a maximal
 consistent subset of the alternatives, and where several maximal subsets exist it yields
 several readings (`MaxConsistent`, `exhMx`); the operator of (20) negates only the alternatives
 common to all of them (`exhIe`), so the two coincide when the maximal subset is unique
@@ -224,6 +227,42 @@ theorem omitted_of_ignorance {ctx : Set (Set W)} {p a : Set W} (hign : ctx ⊆ I
     rintro t ht ⟨-, htp⟩
     obtain ⟨-, ⟨u, hu, hup⟩⟩ := hign ht
     exact hup (htp hu).1
+
+/-! ### The repetitive adverbs
+
+*You* and *zai* 'again' assert their prejacent, so deleting the adverb leaves a sentence with the
+same assertion, the alternative that (1) requires. The tableaux for the presuppositional sentence
+and its deletion alternative are then those of Tables 4.2 and 4.3, with the presupposition that
+the prejacent held of an earlier eventuality. -/
+
+section Again
+
+open Presupposition
+
+/-- The candidate for a sentence with the partial meaning `φ` commits the speaker to its
+presupposition and its assertion. -/
+def Candidate.ofPartialProp (φ : PartialProp W) : Candidate W :=
+  presupSentence {w | φ.presup w} {w | φ.assertion w}
+
+variable {r : W → W → Prop} {P : W → Prop} {ctx : Set (Set W)}
+
+/-- A sentence with *again* is obligatory, against the sentence without it, when the context
+entails that its prejacent held before. -/
+theorem again_obligatory_of_entailed (hp : ctx ⊆ K {e | ∃ e', r e' e ∧ P e'})
+    (hwit : ∃ s ∈ ctx, s ⊆ {e | P e}) :
+    Beats (ranking ctx (.ofPartialProp (again r P))) (.ofPartialProp (again r P))
+      (plain {e | P e}) :=
+  obligatory_of_entailed hp hwit
+
+/-- A sentence with *again* loses to the sentence without it when the context does not entail
+that its prejacent held before. -/
+theorem again_omitted_of_not_entailed (hp : ¬ ctx ⊆ K {e | ∃ e', r e' e ∧ P e'})
+    (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ {e | ∃ e', r e' e ∧ P e'} ∩ {e | P e}) :
+    Beats (ranking ctx (.ofPartialProp (again r P))) (plain {e | P e})
+      (.ofPartialProp (again r P)) :=
+  omitted_of_not_entailed hp hwit
+
+end Again
 
 /-! ### Exhaustification by maximal consistent subsets, (20) and (24) -/
 
