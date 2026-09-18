@@ -28,7 +28,8 @@ each is a matter of analysis left to studies.
 * `Tense.Form`: a tense form, by the inflection of its finite verb and its nonfinite chain.
 * `Tense.Form.under`, `Tense.Form.perfect`, `Tense.Form.progressive`: the periphrastic form
   built on a form.
-* `Tense.Form.simplePresent`, `Tense.Form.simplePast` and the forms built on them.
+* `Tense.Form.simplePresent`, `Tense.Form.simplePast` and the forms built on them, among them
+  `Tense.Form.presentPerfect`, `Tense.Form.doublePerfect` and `Tense.Form.future`.
 * `Tense.Form.IsPerfect`: the form is the perfect of some form.
 -/
 
@@ -108,6 +109,12 @@ def pastPerfect : Form := simplePast.perfect
 
 /-- The double perfect is the perfect of the present perfect. -/
 def doublePerfect : Form := presentPerfect.perfect
+
+/-- The future is the simple present of an auxiliary over the infinitive, as *will build*. -/
+def future : Form := simplePresent.under .infinitive
+
+/-- The future perfect is the future of the perfect, as *will have built*. -/
+def futurePerfect : Form := presentPerfect.under .infinitive
 
 /-- A form is a perfect when it is the perfect of some form. -/
 def IsPerfect (f : Form) : Prop := ∃ g : Form, f = g.perfect
