@@ -10,64 +10,24 @@ import Linglib.Data.Examples.BeaversKoontzGarboden2020
 # Beavers & Koontz-Garboden (2020): The Roots of Verbal Meaning
 
 This file formalizes the root typology of Beavers and Koontz-Garboden's book and the two theses
-it refutes. A root carries entailments of four kinds, manner, cause, result and state, and sits
-either in the complement of the verbal template or adjoined to it. The Bifurcation Thesis of
-Embick and of Arad holds that a root carries only ontological content, a state or a manner, all
-eventive content belonging to the template. Manner/Result Complementarity, due to Rappaport
-Hovav and Levin, holds that no root entails both a manner and a result. The six representative
-roots of the typology in chapter 5, (12), are these.
+it refutes. A root carries entailments of four kinds, manner, cause, result and state. The
+Bifurcation Thesis holds that a root carries only a state or a manner, all eventive content
+belonging to the verbal template, and Manner/Result Complementarity holds that no root entails
+both a manner and a result. The root of *blossom* entails a change and so falsifies the first
+(`bifurcation_thesis_false`); the roots of *hand* and *drown* entail both a manner and a result
+and so falsify the second (`manner_result_complementarity_false`).
 
-| Root     | manner | cause | result | state | position   |
-|----------|--------|-------|--------|-------|------------|
-| √flat    |        |       |        |   ✓   | complement |
-| √blossom |        |       |   ✓    |   ✓   | complement |
-| √crack   |        |   ✓   |   ✓    |   ✓   | complement |
-| √jog     |   ✓    |       |        |       | adjoined   |
-| √hand    |   ✓    |   ✓   |   ✓    |   ✓   | adjoined   |
-| √drown   |   ✓    |   ✓   |   ✓    |   ✓   | complement |
-
-The state cells of √blossom, √crack, √hand and √drown are derived: the values of the typology
-are the collocational closures (`Root.closedKinds`) of the kinds of the base atoms, and each
-closed signature is one of the canonical rows (`Root.Kinds.pureResult`, `causativeResult`,
-`fullSpec`). √blossom falsifies Bifurcation on its own, since a change of state is templatic
-content. √hand and √drown also falsify Manner/Result Complementarity; they differ only in the
-position of the root, the contrast that carries the book's account of which root types are
-attested.
-
-The sublexical modifier *again* attaches to the root, to `vbecome` or to `vcause`, which gives
-the restitutive reading and the two repetitive ones, and the hierarchy among the three follows
-from the change-of-state entailments by the monotonicity of the presupposition of
-`Presupposition.again`.
-
-The root hypothesis for the causative alternation says that a root entailing a caused change
-and no manner has an inchoative variant unless it entails its causer
-(`LevinClass.RootPredictsCausative`). It is measured against the class pages of Levin's
-*English Verb Classes and Alternations* and agrees with Part II on every tested class outside a
-named residue (`rootHypothesis_matches_profile`, `rootHypothesisResidue`).
-
-## Main definitions
-
-* `Root.Kinds.ViolatesBifurcation`, `Root.HasMannerAndResult`: the two thesis predicates, at the
-  level of the signature and of the root.
-* `flat`, `jog`, `blossom`, `crack`, `hand`, `drown`: the six representative roots.
-* `Root.Kinds.typology`, `Root.Kinds.attestedCells`: the rows of (12) and its filled cells.
-* `Verb.CosModel.againRestitutive`, `againRepetitiveBecome`, `againRepetitiveCause`: the three
-  attachments of *again* in (27).
-* `rootHypothesisResidue`: the classes on which the root hypothesis and Levin's pages disagree.
-
-## Main results
-
-* `bifurcation_thesis_false`, `manner_result_complementarity_false`: the two theses fail.
-* `wellFormed_iff_mem_typology`, `cells_attested`: the rows of (12) are exhaustive and its
-  filled cells attested.
-* `Verb.CosModel.againRepetitiveCause_presup_entails_state`: the hierarchy of the readings of
-  *again* in (25).
-* `rootHypothesis_matches_profile`, `rootHypothesisResidue_disagrees`: the root hypothesis
-  against Levin's class profiles.
+The modifier *again* attaches to the root, to `vbecome` or to `vcause`, and the entailments
+among its three readings follow from the monotonicity of the presupposition of
+`Presupposition.again`. The book's hypothesis about which roots alternate between a causative
+and an inchoative is compared with the class pages of Levin's *English Verb Classes and
+Alternations* (`rootHypothesis_matches_profile`).
 
 ## Implementation notes
 
-The thesis predicates are carried here as the apparatus of this study alone.
+* The state entailments of the result roots are derived by the collocational closure of the
+  kind signature (`Root.closedKinds`).
+* The thesis predicates are the apparatus of this study alone.
 
 ## References
 
