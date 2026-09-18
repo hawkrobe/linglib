@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Syntax.Reflex
-import Linglib.Fragments.Mayan.Params
+import Linglib.Fragments.Mayan.Extraction
 
 /-!
 # Q'anjob'al Agent Focus and Extraction Fragment
@@ -125,14 +125,6 @@ def VerbMorphology.toMayanVerbForm (v : VerbMorphology) : Mayan.VerbForm :=
 theorem toMayanVerbForm_canonical :
     agentFocusForm.toMayanVerbForm = .agentFocus ∧
     regularTransitive.toMayanVerbForm = .transitive := ⟨rfl, rfl⟩
-
-/-- Cross-Mayan consistency: Q'anjob'al's AF form lacks Set A under both
-    the language-internal `hasSetA` field and the projected
-    `Mayan.VerbForm.hasSetA` predicate. -/
-theorem hasSetA_consistent_with_projection :
-    agentFocusForm.toMayanVerbForm.hasSetA = agentFocusForm.hasSetA ∧
-    regularTransitive.toMayanVerbForm.hasSetA = regularTransitive.hasSetA :=
-  ⟨rfl, rfl⟩
 
 /-! ### Crazy Antipassive -/
 

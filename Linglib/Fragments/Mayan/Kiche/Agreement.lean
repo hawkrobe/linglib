@@ -2,7 +2,7 @@ import Linglib.Syntax.Case.Basic
 import Linglib.Phonology.Segmental.Defs
 import Linglib.Syntax.Number.Basic
 import Linglib.Semantics.Reference.Prominence
-import Linglib.Fragments.Mayan.Params
+import Linglib.Fragments.Mayan.Agreement
 import Linglib.Syntax.Clause.ArgumentRole
 import Linglib.Syntax.Person.Basic
 
@@ -26,8 +26,9 @@ inverted alignment.
 * `Kiche.setBMarker`, `Kiche.setAPreC`, `Kiche.setAPreV`: the Set B
   (absolutive) and Set A (ergative, pre-consonantal / pre-vocalic)
   exponents.
-* `Kiche.agreementSet`, `Kiche.(Mayan.caseKiche .Perf)`: the
-  agreement set and case each argument position triggers.
+* `Kiche.agreementSet`, `Kiche.assignCase`: the agreement set and case each
+  argument position triggers; `Kiche.template`: the verbal complex, with Set B
+  between the aspect marker and the stem.
 * `Kiche.independentPronoun`: the free personal pronouns.
 * `Kiche.setAExponent`, `Kiche.setBExponent`: canonical φ-cell exponent
   tables for cross-Mayan consumption.
@@ -39,15 +40,25 @@ the same paradigm) while A triggers Set A. This contrasts with Mam,
 which is morphologically tripartite (S, A, P each distinct;
 [scott-2023]). K'iche' has two 2nd-person formality levels; the formal
 forms (laal SG, alaq PL) are syntactically postverbal and pattern
-outside the prefix paradigm. K'iche' is HIGH-ABS (Set B pre-stem on
-Infl), and its case wiring reuses `(Mayan.caseKiche .Perf)` (from
-`Alignment.ergative`); the canonical φ-cell exponent tables key on
+outside the prefix paradigm. K'iche' is high absolutive, Set B preceding
+the stem, and `Kiche.assignCase` is `Alignment.ergative` in every aspect;
+the canonical φ-cell exponent tables key on
 `Agreement.Bundle` for cross-Mayan consumption. Extraction marking (AF
 and *wi*) lives in `Kiche/Extraction.lean`.
 -/
 
 
 namespace Kiche
+
+/-! ### The verbal complex -/
+
+/-- The position classes of the K'iche' verbal complex: the aspect marker, Set B and Set A
+before the stem, the status suffix after it ([mondloch-2017]). -/
+def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setB, .setA], [.status]⟩
+
+/-- K'iche' is ergative-absolutive in every aspect, with no aspect-conditioned split
+([mondloch-2017]). -/
+def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.ergative.assignCase
 
 /-! ### Person, number, and formality features -/
 
@@ -182,8 +193,8 @@ theorem ergative_absolutive_alignment :
 /-- A receives ERG while P and S share a case (ABS) — the ergative
     partition, re-exported from `Alignment.ergative_distinguishes_A`. -/
 theorem erg_abs_pattern :
-    (Mayan.caseKiche .Perf) .A ≠ (Mayan.caseKiche .Perf) .P ∧
-    (Mayan.caseKiche .Perf) .P = (Mayan.caseKiche .Perf) .S :=
+    (assignCase .Perf) .A ≠ (assignCase .Perf) .P ∧
+    (assignCase .Perf) .P = (assignCase .Perf) .S :=
   Alignment.ergative_distinguishes_A
 
 /-- K'iche' alignment contrast with Mam: K'iche' is ergative-absolutive
@@ -191,7 +202,7 @@ theorem erg_abs_pattern :
     receive distinct cases). In K'iche', both P and S trigger Set B;
     in Mam, P triggers no agreement at all. -/
 theorem kiche_not_tripartite :
-    (Mayan.caseKiche .Perf) .S = (Mayan.caseKiche .Perf) .P := rfl
+    (assignCase .Perf) .S = (assignCase .Perf) .P := rfl
 
 /-! ### Set B per-cell verification -/
 
@@ -303,17 +314,8 @@ theorem pronoun_setB_correspondence :
 
 /-! ### Cross-Mayan canonical wrappers -/
 
-open Mayan (MarkerLinearity ExponentTable)
+open Mayan (ExponentTable)
 open Agreement
-
-/-- K'iche' is HIGH-ABS: Set B markers appear pre-stem on Infl. -/
-def absPosition : Mayan.ABSPosition := .high
-
-/-- Set A linearity: prefixal ([mondloch-2017] Lessons 7–8). -/
-def setALinearity : MarkerLinearity := .prefixal
-
-/-- Set B linearity: prefixal (HIGH-ABS K'ichean morphology). -/
-def setBLinearity : MarkerLinearity := .prefixal
 
 /-- Canonical Set A exponent table (informal) by following-segment
     environment, keyed on the canonical φ-cell `Agreement.Bundle` for
@@ -344,9 +346,8 @@ def setBExponent : ExponentTable :=
    (.pn .second .plural, setBMarker (phi .second .plural)),
    (.pn .third .plural, setBMarker (phi .third  .plural))]
 
-/-- 3rd person absolutive is null — invariant across the standard
-    Mayan branches per [kaufman-norman-1984] Table 8. **Not**
-    pan-Mayan: see Mam exception via `Mayan.isStandard`. -/
+/-- Third person singular Set B is null, as across the Mayan branches with an ergative
+perfective ([kaufman-norman-1984]); San Juan Atitán Mam's default Set B surfaces there. -/
 theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] := rfl
 
 /-! ### Formality-forgetting hom to canonical cells -/

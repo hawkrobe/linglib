@@ -1,6 +1,6 @@
 import Linglib.Syntax.Case.Basic
 import Linglib.Phonology.Segmental.Defs
-import Linglib.Fragments.Mayan.Params
+import Linglib.Fragments.Mayan.Agreement
 import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
@@ -22,10 +22,9 @@ England 1992:21, Kaufman 1974) — alongside the Cholan-Tzeltalan branch
   markers by following-segment environment (pre-consonantal vs
   pre-vocalic variant shapes) and the Set B absolutive suffixes
   ([coon-mateo-pedro-preminger-2014] table (13)).
-* Case assignment over `ArgumentRole` via `(Mayan.caseQanjobalan .Perf)`
-  (canonical ergative) and `(Mayan.caseQanjobalan .Prog)` (split,
-  extended-ergative), shared with Chol.
-* `Qanjobal.absPosition`: HIGH-ABS morpheme placement.
+* `Qanjobal.template`, `Qanjobal.assignCase`: the verbal complex, with Set B
+  between the aspect marker and the stem, and case ergative wherever an aspect
+  marker is present and extended-ergative in the progressive.
 
 ## Implementation notes
 
@@ -41,9 +40,10 @@ aspect marker — "split ergativity occurs in any clause without an
 overt preverbal aspect marker" ([mateo-toledo-2008] §1.1.1, citing
 Mateo 2004a/2007b) — so the imperfective `chi-` keeps canonical
 ergative, and only aspectless contexts (e.g. the `lanan` progressive)
-put Set A on all subjects. The three-branch split survey and the
-`.gen`-vs-`.nom` discussion live in `Fragments/Mayan/Params.lean`,
-whose `Mayan.caseQanjobalan` this file consumes.
+put Set A on all subjects. The choice of genitive rather than nominative for Set A
+on non-perfective subjects is `Alignment.extendedErgative`'s, following
+[coon-2013]'s analysis; the descriptive grammars call the pattern
+nominative-accusative.
 
 One real Cholan/Q'anjob'alan difference the shared alignment substrate
 does not capture is aspect-marker word class: Chol markers are
@@ -51,7 +51,7 @@ auxiliaries (independent words *tyi* perfective, *mi* imperfective;
 [vazquez-alvarez-2011] §3.4), whereas Q'anjob'al markers are clitics or
 "grammaticized particles" (*(ma)x-* completive, *chi/ch-* incompletive,
 *(ho)q-* irrealis; [mateo-toledo-2008] §1.1.2, Kaufman 1990:71,
-Robertson 1992:57). `Mayan.caseQanjobalan` captures the alignment
+Robertson 1992:57). `Qanjobal.assignCase` captures the alignment
 facts, not the morpheme-class difference.
 -/
 
@@ -59,13 +59,20 @@ namespace Qanjobal
 
 open Mayan (ExponentTable)
 
-/-! ### Argument positions -/
+/-! ### The verbal complex -/
 
-/-! ### Absolutive position (HIGH-ABS) -/
+/-- The position classes of the Q'anjob'al verbal complex: the aspect marker, Set B and Set A
+before the stem, the status suffix after it ([mateo-toledo-2008]). -/
+def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setB, .setA], [.status]⟩
 
-/-- HIGH-ABS: absolutive morphemes sit on the aspect marker (pre-stem),
-    from the morpheme order ASP-ABS-ERG-ROOT-SUFFIX. -/
-def absPosition : Mayan.ABSPosition := .high
+/-- Q'anjob'al is ergative in every clause with a preverbal aspect marker, the imperfective
+*chi-* included, and puts Set A on every subject in clauses without one, of which the
+progressive with *lanan* is the one an aspect category names ([mateo-toledo-2008],
+[imanishi-2020]); the other aspectless contexts, purpose clauses and aspectless complements
+among them, lie outside the aspect vocabulary. -/
+def assignCase : UD.Aspect → ArgumentRole → Case
+  | .Prog => Alignment.extendedErgative.assignCase
+  | .Perf | .Imp | .Prosp | .Hab | .Iter => Alignment.ergative.assignCase
 
 /-! ### Person-number paradigm -/
 

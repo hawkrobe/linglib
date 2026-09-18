@@ -1,5 +1,5 @@
 import Linglib.Syntax.Reflex
-import Linglib.Fragments.Mayan.Params
+import Linglib.Fragments.Mayan.Extraction
 
 /-!
 # Mam extraction marking
