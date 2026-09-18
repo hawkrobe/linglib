@@ -64,10 +64,8 @@ theorem production_eq_vecMul (s : MeaningVec d) : D.production s = s ᵥ* D.prod
 /-! ### Semantic support -/
 
 /-- The **semantic support** that a form vector `c` receives from a meaning `s` is the dot
-product `sG ⬝ᵥ c` of the predicted form with `c`, the bilinear form of the production matrix. At
-a word's own cue indicator this is the semantic support for form of Gahl and Baayen and the
-`SemSupWord` of Saito, Tomaschek and Baayen; at a single coordinate indicator it is the predicted
-value there, their per-cue `SemSup` (`semanticSupport_single`). -/
+product of the predicted form `sG` with `c`, so it is the bilinear form of the production
+matrix. -/
 def semanticSupport : MeaningVec d →ₗ[ℝ] FormVec n →ₗ[ℝ] ℝ :=
   Matrix.toLinearMap₂' ℝ D.productionMatrix
 
