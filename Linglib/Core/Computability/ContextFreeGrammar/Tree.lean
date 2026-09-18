@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.ContextFreeGrammar
 import Linglib.Core.Data.RoseTree.Get
-import Linglib.Core.Data.RoseTree.Countable
+import Linglib.Core.Data.RoseTree.Encodable
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Nat.Find
