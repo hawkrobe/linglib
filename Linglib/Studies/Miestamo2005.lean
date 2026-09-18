@@ -55,7 +55,7 @@ representative sample and its frequency tables are not represented.
 
 namespace Miestamo2005
 
-open Syntax.Negation
+open Negation
 
 variable {α β : Type*}
 

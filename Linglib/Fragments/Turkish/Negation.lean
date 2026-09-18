@@ -19,9 +19,9 @@ pair; the glide of *gel-me-yecek* is phonological.
 * [miestamo-2005]
 -/
 
-namespace Turkish.Negation
+open Negation Morphology
 
-open Syntax.Negation Morphology
+namespace Turkish.Negation
 
 /-- The negative suffix *-mA-*. -/
 def mA : Marker := { pieces := [[.suff "mA"]] }

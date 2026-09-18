@@ -9,8 +9,8 @@ force of *before*-clauses, comparatives, *until*-clauses, and exclamatives, in t
 [espinal-1992]. `ENType` is [rett-2026]'s high/low distinction by attachment site, `ENStrength`
 is [greco-2020]'s weak/strong distinction by the polarity-sensitive elements an environment
 still licenses (`ENStrength.licensed`), and `ENBlockingReason` records why a trigger class fails
-to license EN in a language ([jin-koenig-2021]). Fragments type their per-language EN data
-with these.
+to license EN in a language ([jin-koenig-2021]). The declarations share the root `Negation`
+namespace with the markers and strategies of standard negation in `Syntax/Negation.lean`.
 
 ## References
 

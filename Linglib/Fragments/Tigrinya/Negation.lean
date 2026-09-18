@@ -18,9 +18,9 @@ do not read').
 * [dryer-haspelmath-2013], ch. 112A, 143A, 144A
 -/
 
-namespace Tigrinya.Negation
+open Morphology Negation
 
-open Morphology Syntax.Negation
+namespace Tigrinya.Negation
 
 /-- The negative prefix *ʔaj-*. -/
 def aj : Morph := .pref "ʔaj"

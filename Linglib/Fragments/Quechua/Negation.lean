@@ -15,9 +15,9 @@ without *mana* is a question. The examples are those of [miestamo-2005], from Co
 * [miestamo-2005]
 -/
 
-namespace Quechua.Negation
+open Negation
 
-open Syntax.Negation
+namespace Quechua.Negation
 
 /-- *mana … -chu*, the standard negator: the particle with the enclitic it requires. -/
 def manaChu : Marker := { pieces := [[.free "mana"], [.encl "chu"]] }

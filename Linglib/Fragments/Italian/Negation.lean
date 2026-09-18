@@ -17,9 +17,9 @@ entered in `Fragments/Italian/PolarityItems.lean`. The examples are those of [mi
 * [jin-koenig-2021]
 -/
 
-namespace Italian.Negation
+open Negation Morphology
 
-open Syntax.Negation Morphology
+namespace Italian.Negation
 
 /-- *non*, the standard negator. -/
 def non : Marker := { pieces := [[.free "non"]] }

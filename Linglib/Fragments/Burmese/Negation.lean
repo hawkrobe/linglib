@@ -14,9 +14,9 @@ answers to all three. The examples are those of [miestamo-2005], from Cornyn's g
 * [miestamo-2005]
 -/
 
-namespace Burmese.Negation
+open Negation Morphology
 
-open Syntax.Negation Morphology
+namespace Burmese.Negation
 
 /-- The discontinuous negator *ma-…-bû*, whose suffix [miestamo-2005] cites as *-phû*. -/
 def maBu : Marker := { pieces := [[.pref "ma"], [.suff "bû"]] }

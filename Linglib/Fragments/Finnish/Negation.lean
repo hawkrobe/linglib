@@ -16,9 +16,9 @@ The examples are those of [miestamo-2005].
 * [miestamo-2005]
 -/
 
-namespace Finnish.Negation
+open Negation Morphology
 
-open Syntax.Negation Morphology
+namespace Finnish.Negation
 
 /-- The negative auxiliary *e-*. -/
 def e : Marker := { pieces := [[.root "e"]] }

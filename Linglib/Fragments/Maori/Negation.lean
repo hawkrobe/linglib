@@ -14,9 +14,9 @@ generally. The examples are those of [miestamo-2005], from Harlow's grammar.
 * [miestamo-2005]
 -/
 
-namespace Maori.Negation
+open Negation Morphology
 
-open Syntax.Negation Morphology
+namespace Maori.Negation
 
 /-- The negative verb *kāore*. -/
 def kaore : Marker := { pieces := [[.free "kāore"]] }

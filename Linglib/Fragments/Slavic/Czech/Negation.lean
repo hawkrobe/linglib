@@ -15,9 +15,9 @@ in the sibling `PolarityItems.lean`.
 * [haspelmath-2013]
 -/
 
-namespace Czech.Negation
+open Negation
 
-open Syntax.Negation
+namespace Czech.Negation
 
 /-- *ne-*, the standard negation prefix. -/
 def ne : Marker := { pieces := [[.pref "ne"]] }

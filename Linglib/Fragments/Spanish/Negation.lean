@@ -13,9 +13,9 @@ and a postverbal one requires it; the n-words are entered in
 * [miestamo-2005]
 -/
 
-namespace Spanish.Negation
+open Negation Morphology
 
-open Syntax.Negation Morphology
+namespace Spanish.Negation
 
 /-- *no*, the standard negator. -/
 def no : Marker := { pieces := [[.free "no"]] }

@@ -15,9 +15,9 @@ for him to come'. The description follows [jin-koenig-2021], whose examples are 
 * [jin-koenig-2021]
 -/
 
-namespace ZarmaSonrai.Negation
+open Negation
 
-open Syntax.Negation
+namespace ZarmaSonrai.Negation
 
 /-- *si*, the imperfective negator. -/
 def si : Marker := { pieces := [[.free "si"]], gloss := "IPFV.NEG" }
