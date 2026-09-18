@@ -31,9 +31,9 @@ licensing DOM divergence belongs in the later paper's study file
 is non-vacuous.
 -/
 
-namespace Syntax.Case
+namespace Case
 
-open Licensing (LicensedNP ClauseLicensers Licenser licenseNPs LicensingOutcome)
+open Licensing
 
 /-- What a case account assigns one nominal: a case together with its neutral
     provenance, or nothing at all. An account that cannot fail simply never
@@ -129,4 +129,4 @@ example : AgreesOnCase (dependentAssigner .accusative)
 example : ¬ AgreesOnSource (dependentAssigner .accusative)
     (kalinAssigner turkishLikeClause) transitiveStimulus := by decide
 
-end Syntax.Case
+end Case

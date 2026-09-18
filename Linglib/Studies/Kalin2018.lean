@@ -39,7 +39,7 @@ satisfies the filter (`isLicensed_iff_satisfiesCaseFilter`).
 
 namespace Kalin2018
 
-open Data.Examples Syntax.Case Syntax.Case.Licensing Minimalist
+open Data.Examples Case Case.Licensing Minimalist
 
 /-! ### Senaya's licensers
 

@@ -45,7 +45,7 @@ def Probe.Target.toProbe (t : Probe.Target) : Probe Agreement.Bundle :=
 /-- A nominal as the goal of a φ-probe: its Case-licensing state (`LicensedNP`) together
 with its φ-cell. A relativized probe reads the cell for visibility; Agree reads the Case
 state for activity (`LicensedNP.isActive`, the Active Goal Hypothesis of [chomsky-2000]). -/
-structure PhiGoal extends Syntax.Case.Licensing.LicensedNP where
+structure PhiGoal extends Case.Licensing.LicensedNP where
   cell : Agreement.Bundle
   deriving DecidableEq, Repr
 

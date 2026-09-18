@@ -35,7 +35,7 @@ namespace Case
     * `default` — elsewhere / last-resort unmarked case.
 
     Failure to assign is not a provenance and is not a cell here: an account
-    that can fail reports it as `Syntax.Case.Assignment.unassigned`. -/
+    that can fail reports it as `Case.Assignment.unassigned`. -/
 inductive Source where
   | structural
   | inherent
