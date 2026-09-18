@@ -1,7 +1,7 @@
 import Linglib.Semantics.Causation.SEM.Counterfactual
+import Linglib.Semantics.Causation.CCSelection
 import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 import Linglib.Semantics.ArgumentStructure.LevinTheory
-import Linglib.Semantics.Causation.Resultatives
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Fragments.English.Predicates
 import Linglib.Fragments.English.Adjectives
@@ -11,7 +11,7 @@ import Linglib.Data.Examples.Levin1993
 /-!
 # Levin (2026): The Door Pushed Open
 
-This file formalizes [levin-2026]'s analysis of the English intransitive resultative with
+This file formalizes Levin's analysis of the English intransitive resultative with
 transitive-only verbs, *The door pushed open*, *The cork pulled free*, *The door slammed
 shut*, as the anticausative variant of the causative alternation, licensed by the resultative
 construction rather than by the verb, which cannot occur intransitively without the result
@@ -25,10 +25,9 @@ involved.
 
 ## Implementation notes
 
-The construction contributes the causative semantics through `Causation.Resultatives`, the
-verb and adjective entries come from the English fragments, the alternation judgments from
+The verb and adjective entries come from the English fragments, the alternation judgments from
 `Data/Examples/Levin1993.json`, and the proper containment condition maps onto the
-independent-source tightness of the causal substrate. The construction-level licensing of an
+independent-source tightness of the causal models. The construction-level licensing of an
 alternation the verb lacks is stated for this case only.
 
 ## References
@@ -48,7 +47,6 @@ open ArgumentStructure
 open LevinClass (pushPull hit wipeManner)
 open English (push pull kick)
 open English.Adjectives
-open Causation.Resultatives (resultativeCausativeBuilder)
 open Aspect (CoSType)
 open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction
   Construction)
@@ -67,7 +65,7 @@ causative alternation (they lexicalize CoS). These verbs enter the
 construction because only their force-application component is
 relevant, not the removal result. -/
 
-/-- The paper's characterization of the core classes: contact and motion without a change
+/-- The paper characterizes the core classes by contact and motion without a change
 of state or causation, the components of *hit* in [levin-1993]'s Introduction. -/
 def components : LevinClass → MeaningComponents
   | .pushPull | .hit => MeaningComponents.hit
@@ -105,7 +103,7 @@ theorem all_classes_pure_manner :
     and NOT causation. This is why they don't show the causative alternation
     ([fillmore-1970]): no scalar change is lexicalized. -/
 theorem all_classes_no_cos_no_causation :
-    intrPushOpenClasses.all (λ c =>
+    intrPushOpenClasses.all (fun c ↦
       let mc := (components c)
       mc.contact && mc.motion && !mc.changeOfState && !mc.causation
     ) = true := by
@@ -131,12 +129,12 @@ of state ... properties of the resultative construction itself are
 implicated in the 'loosening' of transitivity that characterizes
 intr-*push open* resultatives." -/
 
-/-- PushPull alone: no causative alternation. -/
+/-- The push/pull class alone predicts no causative alternation. -/
 theorem pushPull_alone_no_alternation :
     (components .pushPull).predictedAlternation
       .causativeInchoative = false := by decide
 
-/-- PushPull in the resultative: causative alternation predicted.
+/-- The push/pull class in the resultative predicts the causative alternation.
     The construction adds CoS + causation → the composed meaning
     has `changeOfState && causation`, which is the precondition. -/
 theorem pushPull_alternates_in_resultative :
@@ -144,12 +142,12 @@ theorem pushPull_alternates_in_resultative :
       (components .pushPull)
       resultative .causativeInchoative = true := by decide
 
-/-- Hit alone: no causative alternation. -/
+/-- The hit class alone predicts no causative alternation. -/
 theorem hit_alone_no_alternation :
     (components .hit).predictedAlternation
       .causativeInchoative = false := by decide
 
-/-- Hit in the resultative: causative alternation predicted. -/
+/-- The hit class in the resultative predicts the causative alternation. -/
 theorem hit_alternates_in_resultative :
     predictedAlternationInConstruction
       (components .hit)
@@ -157,7 +155,7 @@ theorem hit_alternates_in_resultative :
 
 /-- All core intr-push-open classes alternate in the resultative. -/
 theorem all_classes_alternate_in_resultative :
-    intrPushOpenClasses.all (λ c =>
+    intrPushOpenClasses.all (fun c ↦
       predictedAlternationInConstruction
         (components c) resultative .causativeInchoative
     ) = true := by decide
@@ -192,7 +190,7 @@ theorem hit_accomplishment_in_resultative :
       resultative.meaning).predictedTemplate = .accomplishment := by
   exact fuse_cos_caus_yields_accomplishment _ _ rfl rfl
 
-/-- Full dual prediction for pushPull in the resultative: template shift
+/-- The full prediction for the push/pull class in the resultative, a template shift
     AND alternation AND intransitive variant, all from one fusion. -/
 theorem pushPull_dual_in_resultative :
     ((components .pushPull).fuse
@@ -205,7 +203,7 @@ theorem pushPull_dual_in_resultative :
         = some .achievement := by
   exact fuse_dual_prediction _ _ rfl rfl rfl rfl
 
-/-- Vendler class shift: pushPull goes from atelic activity to telic
+/-- The Vendler class shifts, the push/pull class going from atelic activity to telic
     accomplishment inside the resultative. -/
 theorem pushPull_vendler_shift :
     (components .pushPull).predictedTemplate.vendlerClass = .activity ∧
@@ -264,7 +262,7 @@ theorem all_attested_adjs_spatial :
     endpoint (fully open, fully closed, fully flat). -/
 theorem all_attested_adjs_closed_scale :
     [open_, closed_, shut, free_, loose, flat].all
-      (λ a => decide a.scaleType.HasMax) = true := by
+      (fun a ↦ decide a.scaleType.HasMax) = true := by
   decide
 
 /-! Adjectives in senses that are NOT spatially instantiated do not
@@ -285,7 +283,7 @@ same verb–adjective combination and the same constructional meaning:
 - Causative: `[Agent_effector V NP] CAUSE [NP BECOME Adj]`
 - Anticausative: `[NP BECOME Adj]` (cause suppressed) -/
 
-/-- An alternation pair: transitive and intransitive resultative
+/-- An alternation pair is a transitive and an intransitive resultative
     with the same verb–adjective combination. -/
 structure AlternationPair where
   verb : String
@@ -373,7 +371,7 @@ def alternationPairs : List AlternationPair :=
 /-- All pairs use verbs from the predicted classes
     (pushPull, hit — or wipe for scrape/sweep). -/
 theorem all_verbs_from_predicted_classes :
-    alternationPairs.all (λ d =>
+    alternationPairs.all (fun d ↦
       intrPushOpenClasses.contains d.verbClass ||
       d.verbClass == .wipeManner) = true := by
   decide
@@ -384,7 +382,7 @@ theorem all_verbs_from_predicted_classes :
     because they lexicalize CoS; they enter the construction through
     their surface-contact sense, not their removing sense. -/
 theorem per_pair_alternation_core :
-    (alternationPairs.filter (intrPushOpenClasses.contains ·.verbClass)).all (λ p =>
+    (alternationPairs.filter (intrPushOpenClasses.contains ·.verbClass)).all (fun p ↦
       !decide (p.verbClass.Participates .causativeInchoative) &&
       predictedAlternationInConstruction
         (components p.verbClass) resultative .causativeInchoative
@@ -444,10 +442,6 @@ The constructional BECOME maps to `CoSType.inception` (¬open → open). -/
     This connects to the existing `ChangeOfState` infrastructure. -/
 def resultativeBECOME : CoSType := .inception
 
-/-- The resultative uses the `.make` builder (sufficiency). -/
-theorem push_open_uses_make :
-    resultativeCausativeBuilder = .make := rfl
-
 /-! ### Key contrast: intr-push-open ≠ freeze-solid
 
 "The river froze solid" is a noncausative resultative where *freeze*
@@ -462,7 +456,7 @@ a lexically noncausative.
 
 Per-scenario causal models for these contrasts live below in §7
 (`HammerFlat`, `KickIntoField`, `FreezeSolid`, etc.) on the `BoolSEM`
-substrate, using `BoolSEM.causallySufficient` from
+models, using `BoolSEM.causallySufficient` from
 `Causation.SEM.Counterfactual` and `CCSelection.completesForEffect`
 from `Causation.CCSelection`. -/
 
@@ -498,7 +492,7 @@ formalized in `Causation/Resultatives.lean`:
 
 /-! The PCC tightness analysis (projectile vs continuous, with the
     intervening-source breakdown of necessity) is formalized on the
-    `BoolSEM` substrate below by `IndependentSourceBreaksNecessity` (§7)
+    `BoolSEM` models below by `IndependentSourceBreaksNecessity` (§7)
     — see `independent_source_breaks_necessity` for the canonical
     not-tight witness.
 
@@ -674,23 +668,23 @@ theorem door_pushed_open_licensed_unknown :
     isLicensed .pushPull open_ .identityUnknown .projectile = true := by
   decide
 
-/-- Blocked: cause not recoverable. -/
+/-- The intransitive is blocked when the cause is not recoverable. -/
 theorem blocked_no_context :
     isLicensed .pushPull open_ .notRecoverable .projectile = false := by
   decide
 
-/-- Blocked: theme requires continuous force (PCC). -/
+/-- The intransitive is blocked when the theme requires continuous force. -/
 theorem blocked_continuous_force :
     isLicensed .pushPull open_ .recoverableInContext
       .requiresContinuousForce = false := by
   decide
 
-/-- Blocked: verb class wrong (break is a CoS verb, not force). -/
+/-- The intransitive is blocked for the wrong verb class; *break* is a change-of-state verb. -/
 theorem blocked_wrong_verb_class :
     isLicensed .break_ open_ .recoverableInContext .projectile = false := by
   decide
 
-/-- Blocked: adjective not spatially instantiated (*red* has no spatial config). -/
+/-- The intransitive is blocked when the adjective is not spatially instantiated, as *red*. -/
 private def red_ : Degree.GradableAdjective where
   form := "red"; dimension := some .color
 
@@ -706,10 +700,9 @@ theorem blocked_wrong_adjective :
    meaning now predicts the causative alternation
 4. Resultative construction adds CAUSE (a non-trivial `BoolSEM` law)
 5. Constructional BECOME = inception (CoSType.inception)
-6. Constructional CAUSE = `.make` (sufficiency, completion event)
-7. Anticausative: cause suppressed under discourse licensing
-8. PCC: projectile has independent energy → cause not continuously needed
-9. Theme passes autonomous-motion check → anticausative OK -/
+6. Anticausative: cause suppressed under discourse licensing
+7. PCC: projectile has independent energy → cause not continuously needed
+8. Theme passes autonomous-motion check → anticausative OK -/
 
 theorem end_to_end_push_open :
     -- Step 1-2: verb class blocks alternation alone
@@ -721,13 +714,11 @@ theorem end_to_end_push_open :
       resultative .causativeInchoative = true ∧
     -- Step 5: BECOME = inception
     resultativeBECOME == .inception ∧
-    -- Step 6: CAUSE = .make (sufficiency)
-    resultativeCausativeBuilder == .make ∧
-    -- Step 7: discourse licenses anticausative
+    -- Step 6: discourse licenses anticausative
     anticausativeLicensed .recoverableInContext = true ∧
-    -- Step 8-9: theme is projectile → autonomous motion OK
+    -- Step 7-8: theme is projectile → autonomous motion OK
     canBeIntrPushOpenSubject .projectile = true := by
-  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl⟩ <;> decide
+  refine ⟨?_, ?_, ?_, rfl, rfl, rfl⟩ <;> decide
 
 /-! ## FilledResultative: bundling lexical material with the construction
 
@@ -741,7 +732,7 @@ is a **construction filled with specific lexical material** (verb class,
 adjective).
 
 The structural-causation layer for these resultatives lives in §7 below
-on the `BoolSEM` substrate (see `HammerFlat`, `KickIntoField`, etc.).
+on `BoolSEM` models (see `HammerFlat`, `KickIntoField`, etc.).
 Linking a specific `FilledResultative` to its `BoolSEM` model would be a
 separate study extension.
 -/
@@ -814,7 +805,7 @@ theorem filled_implies_licensed (fr : FilledResultative)
   rw [hClass, hCause, hTheme]
   simp [fr.adjSpatial]
 
-/-- Concrete: `pushOpen_filled` passes `isLicensed` in a recoverable-cause,
+/-- The filled construction `pushOpen_filled` passes `isLicensed` in a recoverable-cause,
     projectile context. -/
 theorem pushOpen_filled_licensed :
     isLicensed pushOpen_filled.verbClass pushOpen_filled.adjective
@@ -874,22 +865,6 @@ theorem mandarin_tui_kai_is_cognate :
     Mandarin.Resultatives.tui_kai.gloss = "push-open" ∧
     Mandarin.Resultatives.tui_kai.orientation = .objectOriented := ⟨rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § Fragment–Theory Bridge
--- ════════════════════════════════════════════════════
-
-open English (make cause)
-open Causation.Resultatives (resultativeCausativeBuilder)
-
-/-- Resultative CAUSE matches the Fragment entry for "make". -/
-theorem resultative_cause_matches_make_verb :
-    make.causative = some resultativeCausativeBuilder := rfl
-
-/-- Resultative CAUSE ≠ "cause" verb (`.make` ≠ `.cause`). -/
-theorem resultative_cause_differs_from_cause_verb :
-    cause.causative ≠ some resultativeCausativeBuilder := by
-  decide
-
 /-! ## Per-scenario causal models
 
 Each causative resultative maps to a concrete `BoolSEM V` where the
@@ -912,17 +887,17 @@ inductive V | hammering | flat
 
 def varList : List V := [.hammering, .flat]
 
-def graph : CausalGraph V := ⟨λ | .hammering => ∅ | .flat => {.hammering}⟩
+def graph : CausalGraph V := ⟨fun | .hammering => ∅ | .flat => {.hammering}⟩
 
 instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (λ | .hammering => 0 | .flat => 1)
+  CausalGraph.IsDAG.of_depth graph (fun | .hammering => 0 | .flat => 1)
     (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 noncomputable def model : BoolSEM V :=
   { graph := graph
-    mech := λ
+    mech := fun
       | .hammering => const (G := graph) false
-      | .flat => deterministic (λ ρ => ρ ⟨.hammering, by simp [graph]⟩) }
+      | .flat => deterministic (fun ρ ↦ ρ ⟨.hammering, by simp [graph]⟩) }
 
 instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
@@ -948,17 +923,17 @@ inductive V | kicking | in_field
 
 def varList : List V := [.kicking, .in_field]
 
-def graph : CausalGraph V := ⟨λ | .kicking => ∅ | .in_field => {.kicking}⟩
+def graph : CausalGraph V := ⟨fun | .kicking => ∅ | .in_field => {.kicking}⟩
 
 instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (λ | .kicking => 0 | .in_field => 1)
+  CausalGraph.IsDAG.of_depth graph (fun | .kicking => 0 | .in_field => 1)
     (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 noncomputable def model : BoolSEM V :=
   { graph := graph
-    mech := λ
+    mech := fun
       | .kicking => const (G := graph) false
-      | .in_field => deterministic (λ ρ => ρ ⟨.kicking, by simp [graph]⟩) }
+      | .in_field => deterministic (fun ρ ↦ ρ ⟨.kicking, by simp [graph]⟩) }
 
 instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
@@ -984,17 +959,17 @@ inductive V | laughing | silly
 
 def varList : List V := [.laughing, .silly]
 
-def graph : CausalGraph V := ⟨λ | .laughing => ∅ | .silly => {.laughing}⟩
+def graph : CausalGraph V := ⟨fun | .laughing => ∅ | .silly => {.laughing}⟩
 
 instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (λ | .laughing => 0 | .silly => 1)
+  CausalGraph.IsDAG.of_depth graph (fun | .laughing => 0 | .silly => 1)
     (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 noncomputable def model : BoolSEM V :=
   { graph := graph
-    mech := λ
+    mech := fun
       | .laughing => const (G := graph) false
-      | .silly => deterministic (λ ρ => ρ ⟨.laughing, by simp [graph]⟩) }
+      | .silly => deterministic (fun ρ ↦ ρ ⟨.laughing, by simp [graph]⟩) }
 
 instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
@@ -1019,16 +994,16 @@ inductive V | freezing | solid
 
 def varList : List V := [.freezing, .solid]
 
-/-- Empty graph: no causal relations (noncausative resultative). -/
-def graph : CausalGraph V := ⟨λ _ => ∅⟩
+/-- The empty graph has no causal relations, the noncausative resultative. -/
+def graph : CausalGraph V := ⟨fun _ ↦ ∅⟩
 
 instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (λ _ => 0)
+  CausalGraph.IsDAG.of_depth graph (fun _ ↦ 0)
     (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 noncomputable def model : BoolSEM V :=
   { graph := graph
-    mech := λ _ => const (G := graph) false }
+    mech := fun _ ↦ const (G := graph) false }
 
 instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
@@ -1058,22 +1033,22 @@ inductive V | drinking | tea_removal | teapot_dry
 
 def varList : List V := [.drinking, .tea_removal, .teapot_dry]
 
-def graph : CausalGraph V := ⟨λ
+def graph : CausalGraph V := ⟨fun
   | .drinking => ∅
   | .tea_removal => {.drinking}
   | .teapot_dry => {.tea_removal}⟩
 
 instance : CausalGraph.IsDAG graph :=
   CausalGraph.IsDAG.of_depth graph
-    (λ | .drinking => 0 | .tea_removal => 1 | .teapot_dry => 2)
+    (fun | .drinking => 0 | .tea_removal => 1 | .teapot_dry => 2)
     (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 noncomputable def model : BoolSEM V :=
   { graph := graph
-    mech := λ
+    mech := fun
       | .drinking => const (G := graph) false
-      | .tea_removal => deterministic (λ ρ => ρ ⟨.drinking, by simp [graph]⟩)
-      | .teapot_dry => deterministic (λ ρ => ρ ⟨.tea_removal, by simp [graph]⟩) }
+      | .tea_removal => deterministic (fun ρ ↦ ρ ⟨.drinking, by simp [graph]⟩)
+      | .teapot_dry => deterministic (fun ρ ↦ ρ ⟨.tea_removal, by simp [graph]⟩) }
 
 instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
@@ -1083,7 +1058,7 @@ noncomputable instance : SEM.IsDeterministic model where
     | .tea_removal => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
     | .teapot_dry => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
-/-- Tight despite being a chain: removing drinking leaves tea_removal
+/-- Tight despite being a chain, since removing drinking leaves tea_removal
     undetermined (no independent source), so teapot_dry doesn't fire. -/
 theorem drink_completes_dry :
     completesForEffect model Valuation.empty .drinking true false .teapot_dry true :=
@@ -1098,17 +1073,17 @@ inductive V | kicking | door_open
 
 def varList : List V := [.kicking, .door_open]
 
-def graph : CausalGraph V := ⟨λ | .kicking => ∅ | .door_open => {.kicking}⟩
+def graph : CausalGraph V := ⟨fun | .kicking => ∅ | .door_open => {.kicking}⟩
 
 instance : CausalGraph.IsDAG graph :=
-  CausalGraph.IsDAG.of_depth graph (λ | .kicking => 0 | .door_open => 1)
+  CausalGraph.IsDAG.of_depth graph (fun | .kicking => 0 | .door_open => 1)
     (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 noncomputable def model : BoolSEM V :=
   { graph := graph
-    mech := λ
+    mech := fun
       | .kicking => const (G := graph) false
-      | .door_open => deterministic (λ ρ => ρ ⟨.kicking, by simp [graph]⟩) }
+      | .door_open => deterministic (fun ρ ↦ ρ ⟨.kicking, by simp [graph]⟩) }
 
 instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
@@ -1139,7 +1114,7 @@ inductive V | kicking | ball_motion | ball_energy | door_open
 
 def varList : List V := [.kicking, .ball_energy, .ball_motion, .door_open]
 
-def graph : CausalGraph V := ⟨λ
+def graph : CausalGraph V := ⟨fun
   | .kicking => ∅
   | .ball_energy => ∅
   | .ball_motion => {.kicking, .ball_energy}
@@ -1147,17 +1122,17 @@ def graph : CausalGraph V := ⟨λ
 
 instance : CausalGraph.IsDAG graph :=
   CausalGraph.IsDAG.of_depth graph
-    (λ | .kicking => 0 | .ball_energy => 0 | .ball_motion => 1 | .door_open => 2)
+    (fun | .kicking => 0 | .ball_energy => 0 | .ball_motion => 1 | .door_open => 2)
     (by intro u v h; revert h; cases u <;> cases v <;> decide)
 
 noncomputable def model : BoolSEM V :=
   { graph := graph
-    mech := λ
+    mech := fun
       | .kicking => const (G := graph) false
       | .ball_energy => const (G := graph) false
-      | .ball_motion => deterministic (λ ρ =>
+      | .ball_motion => deterministic (fun ρ ↦
           ρ ⟨.kicking, by simp [graph]⟩ || ρ ⟨.ball_energy, by simp [graph]⟩)
-      | .door_open => deterministic (λ ρ => ρ ⟨.ball_motion, by simp [graph]⟩) }
+      | .door_open => deterministic (fun ρ ↦ ρ ⟨.ball_motion, by simp [graph]⟩) }
 
 instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
 
@@ -1168,15 +1143,15 @@ noncomputable instance : SEM.IsDeterministic model where
     | .ball_motion => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
     | .door_open => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
-def ballHasEnergyBg : Valuation (λ _ : V => Bool) :=
+def ballHasEnergyBg : Valuation (fun _ : V ↦ Bool) :=
   Valuation.empty.extend .ball_energy true
 
-/-- NOT tight: removing kicking still allows ball_energy → ball_motion
+/-- Not tight, since removing kicking still allows ball_energy → ball_motion
     → door_open, so the but-for half of `completesForEffect` fails.
     The kick is not necessary. -/
 theorem independent_source_breaks_necessity :
     ¬ completesForEffect model ballHasEnergyBg .kicking true false .door_open true :=
-  λ ⟨_, hb⟩ => hb (SEM.developDet_hasValue_of_developDetOn_hasValue
+  fun ⟨_, hb⟩ ↦ hb (SEM.developDet_hasValue_of_developDetOn_hasValue
     (vs := varList) (n := 1) (by decide))
 
 end IndependentSourceBreaksNecessity
