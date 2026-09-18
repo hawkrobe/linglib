@@ -6,14 +6,15 @@ Authors: Robert Hawkins
 import Linglib.Phonology.Autosegmental.Floating
 import Linglib.Phonology.Tone.Basic
 import Linglib.Phonology.Constraints.Defs
+import Mathlib.Data.Nat.Count
 
 /-!
 # Tonal constraints
 
 OT/HS constraint constructors over the `FloatingForm S TRN M` autosegmental
 representation (`Phonology/Autosegmental/Floating.lean`), generic over the segment
-type `S` and the opaque sponsor type `M`. Each is a canonical `Constraints.Constraint` — a scalar `· → ℕ` violation
-count. Equation numbers below are [mcpherson-lamont-2026]'s.
+type `S` and the opaque sponsor type `M`. Each is a canonical `Constraints.Constraint`, a
+scalar `· → ℕ` violation count. Equation numbers below are [mcpherson-lamont-2026]'s.
 
 ## Main definitions
 
@@ -38,9 +39,9 @@ asymmetry collapses.
 
 Directionality is **not** a separate kind of constraint. Following [lamont-2022b]
 (directionality is a property of EVAL), `*FLOAT` is a position-indexed *block* of
-scalar float-flag constraints (`starFloatBlock`): coordinate `i` is `floatIndicator`'s
-`i`-th entry, so splicing the block into a ranking and comparing under the canonical
-lexicographic profile order recovers the directional EVAL exactly
+scalar float-flag constraints (`starFloatBlock`), whose coordinate `i` flags whether
+autosegment `i` is floating, so splicing the block into a ranking and comparing under the
+canonical lexicographic profile order recovers the directional EVAL exactly
 (`Core.Optimization.Evaluation.lexLE_ofFn`). The block is laid out left-to-right for
 `*FLOAT^→` (`starFloatBlock`) or right-to-left for `*FLOAT^←` (`starFloatBlockRev`);
 `starFloatCount` is the count collapse (parallel `*FLOAT`). They agree on at most one
@@ -58,20 +59,19 @@ variable {S M : Type*} [DecidableEq S] [DecidableEq M] (f : FloatingForm S TRN M
 
 /-! ### Tone-value predicate
 
-Link faithfulness (`FloatingForm.IsInsertedLink` / `IsDeletedLink`) and the morpheme
+Link faithfulness (`FloatingForm.insertedLinks` / `deletedLinks`) and the morpheme
 accessors (`upperMorpheme?` / `lowerMorpheme?` / `morphemes`) are tone-agnostic and live
 on `FloatingForm`; only the `TRN`-reading predicate is here. -/
 
 /-- The tone at index `k` has value `t`. -/
-abbrev ToneHasValue (k : TierIdx) (t : TRN) : Prop :=
-  (f.upper.get? k).map TierSpec.value = some t
+abbrev ToneHasValue (k : ℕ) (t : TRN) : Prop :=
+  (f.upper.get? k).map Sponsored.value = some t
 
 /-! ### *FLOAT (Directional) -/
 
 /-- `*FLOAT` (paper, eq. 16) as a **position-indexed block** of scalar constraints:
-    coordinate `i` flags whether underlying tone `i` is currently floating (= the
-    `i`-th entry of `floatIndicator`). Splice forward for L→R (`*FLOAT^→`); the
-    directional EVAL is recovered as the canonical lex order over this block
+    coordinate `i` flags whether underlying tone `i` is currently floating. Splice forward
+    for L→R (`*FLOAT^→`); the directional EVAL is recovered as the canonical lex order over this block
     ([lamont-2022b]). `k` is the underlying tone count `f.upper.len`, invariant under
     GEN, so it is a fixed literal per tableau. -/
 def starFloatBlock (k : ℕ) : List (Constraint (FloatingForm S TRN M)) :=
@@ -84,22 +84,22 @@ def starFloatBlockRev (k : ℕ) : List (Constraint (FloatingForm S TRN M)) :=
 /-- `*FLOAT (count)`: the parallel/count variant — the total floating-tone count as a
     single scalar constraint (the degree collapse of `starFloatBlock`). -/
 def starFloatCount : Constraint (FloatingForm S TRN M) :=
-  fun f => f.floatIndicator.sum
+  fun f => Nat.count f.IsFloating f.upper.len
 
 /-! ### *TAUTDOCK -/
 
 /-- `*TAUTDOCK` (paper, eq. 15, after [wolf-2007]): one violation
     per GEN-inserted tautomorphemic surface link. -/
 def starTautDock : Constraint (FloatingForm S TRN M) :=
-  fun f => (f.surfaceLinks.filter (fun l => f.IsInsertedLink l ∧ f.IsTautomorphemic l)).card
+  fun f => (f.insertedLinks.filter f.IsTautomorphemic).card
 
 /-! ### *CROWD (per-morpheme tone count) -/
 
 /-- The tone indices counting toward morpheme `m`'s tonal mass: surviving
     underlying tones of `m`, plus tones surface-linked to TBUs of `m`. -/
-def tonesForMorpheme (m : M) : Finset TierIdx :=
+def tonesForMorpheme (m : M) : Finset ℕ :=
   let ownAlive := (Finset.range f.upper.len).filter fun k =>
-    f.IsAlive k ∧ f.upperMorpheme? k = some m
+    k ∉ f.deleted ∧ f.upperMorpheme? k = some m
   let docked := (f.surfaceLinks.filter fun l => f.lowerMorpheme? l.snd = some m).image Prod.fst
   ownAlive ∪ docked
 
@@ -132,7 +132,7 @@ instance decidableHasFall : (ts : List TRN) → Decidable (HasFall ts)
 /-- `*FALL` (paper eq. 23): one violation per syllable with a falling contour
     (HM, HL, ML). -/
 def starFall : Constraint (FloatingForm S TRN M) :=
-  fun f => f.countLower (fun i => HasFall (f.tierValues i))
+  fun f => Nat.count (fun i => HasFall (f.tierValues i)) f.lower.len
 
 /-! ### *M<L (M-then-L adjacency on the tier) -/
 
@@ -142,7 +142,7 @@ def starFall : Constraint (FloatingForm S TRN M) :=
 def starMlessL : Constraint (FloatingForm S TRN M) :=
   fun f =>
     let aliveValues : List TRN :=
-      f.aliveTierIdxs.filterMap (fun k => (f.upper.get? k).map TierSpec.value)
+      f.aliveTierIdxs.filterMap (fun k => (f.upper.get? k).map Sponsored.value)
     (aliveValues.zip aliveValues.tail).countP (fun p => decide (p = (TRN.M, TRN.L)))
 
 /-! ### HAVETONE -/
@@ -150,24 +150,24 @@ def starMlessL : Constraint (FloatingForm S TRN M) :=
 /-- `HAVETONE` (paper, eq. 17): one violation per syllable not
     associated to any tone. -/
 def haveTone : Constraint (FloatingForm S TRN M) :=
-  fun f => f.countLower (fun i => (f.linksTo i).isEmpty = true)
+  fun f => Nat.count (fun i => f.linksTo i = []) f.lower.len
 
 /-! ### Faithfulness — Generic over Tone Value -/
 
 /-- `MAX(T)` (paper, eq. 7c): one violation per underlying tone of
     value `t` deleted by GEN. -/
 def maxTone (t : TRN) : Constraint (FloatingForm S TRN M) :=
-  fun f => f.countUpper (fun k => f.IsDeleted k ∧ ToneHasValue f k t)
+  fun f => Nat.count (fun k => k ∈ f.deleted ∧ ToneHasValue f k t) f.upper.len
 
 /-- `DEP(link)/T` (paper, eq. 7a): one violation per surface link
     inserted by GEN whose linked tone has value `t`. -/
 def depLinkTone (t : TRN) : Constraint (FloatingForm S TRN M) :=
-  fun f => (f.surfaceLinks.filter (fun l => f.IsInsertedLink l ∧ ToneHasValue f l.fst t)).card
+  fun f => (f.insertedLinks.filter fun l => ToneHasValue f l.1 t).card
 
 /-- `MAX(link)/T` (paper, eq. 7b): one violation per underlying link of
     value `t` deleted by GEN. -/
 def maxLinkTone (t : TRN) : Constraint (FloatingForm S TRN M) :=
-  fun f => (f.links.filter (fun l => f.IsDeletedLink l ∧ ToneHasValue f l.fst t)).card
+  fun f => (f.deletedLinks.filter fun l => ToneHasValue f l.1 t).card
 
 /-- `INTEGRITY` ([mccarthy-prince-1995]; [akinbo-fwangwar-2026]): no input tone has
     multiple output correspondents — here, alive `ulTier` entries sharing tone value `t`
@@ -175,7 +175,9 @@ def maxLinkTone (t : TRN) : Constraint (FloatingForm S TRN M) :=
     → `n - 1` violations. -/
 def integrityTone (m : M) (t : TRN) :
     Constraint (FloatingForm S TRN M) :=
-  fun f => f.countUpper (fun k => f.IsAlive k ∧ f.upperMorpheme? k = some m ∧ ToneHasValue f k t) - 1
+  fun f =>
+    Nat.count (fun k => k ∉ f.deleted ∧ f.upperMorpheme? k = some m ∧ ToneHasValue f k t)
+      f.upper.len - 1
 
 /-! ### Morpheme-specific anchoring
 [finley-2009]
@@ -186,23 +188,23 @@ it; unrealised anywhere, it counts every TBU of every host ([akinbo-fwangwar-202
 (26)). -/
 
 /-- Backbone position `i` bears an upper-tier element of value `t` sponsored by `m`. -/
-def bearsTone (m : M) (t : TRN) (i : SegIdx) : Bool :=
+def bearsTone (m : M) (t : TRN) (i : ℕ) : Bool :=
   (f.linksTo i).any fun k => (f.upper.get? k).any fun ts => decide (ts.value = t ∧ ts.morpheme = m)
 
 /-- `LEFT-ANCHOR-T_m`: the TBUs between a host's left edge and the leftmost TBU bearing
 `t` from `m` — the fewest over the hosts bearing it, or every TBU of every host if none does. -/
 def leftAnchorTone (m : M) (t : TRN) (hosts : List M) : Constraint (FloatingForm S TRN M) :=
   fun f =>
-    match (hosts.filterMap fun h => (f.segsOfMorpheme h).findIdx? (bearsTone f m t)).min? with
+    match (hosts.filterMap fun h => (f.lowerOfMorpheme h).findIdx? (bearsTone f m t)).min? with
     | some d => d
-    | none => (hosts.map fun h => (f.segsOfMorpheme h).length).sum
+    | none => (hosts.map fun h => (f.lowerOfMorpheme h).length).sum
 
 /-- `RIGHT-ANCHOR-T_m`: as `leftAnchorTone`, counted from the host's right edge. -/
 def rightAnchorTone (m : M) (t : TRN) (hosts : List M) : Constraint (FloatingForm S TRN M) :=
   fun f =>
     match (hosts.filterMap fun h =>
-        (f.segsOfMorpheme h).reverse.findIdx? (bearsTone f m t)).min? with
+        (f.lowerOfMorpheme h).reverse.findIdx? (bearsTone f m t)).min? with
     | some d => d
-    | none => (hosts.map fun h => (f.segsOfMorpheme h).length).sum
+    | none => (hosts.map fun h => (f.lowerOfMorpheme h).length).sum
 
 end Tone

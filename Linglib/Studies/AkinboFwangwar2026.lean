@@ -1,8 +1,9 @@
 import Linglib.Fragments.Mwaghavul.Basic
 import Linglib.Morphology.Morph
-import Linglib.Phonology.Autosegmental.Floating
+import Linglib.Phonology.Autosegmental.Melody
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Phonology.OptimalityTheory.Tableau
+import Mathlib.Data.Nat.Count
 import Linglib.Data.Examples.AkinboFwangwar2026
 
 /-!
@@ -50,11 +51,8 @@ def vbzMorph : Morph := .root "vbz"
 def redMorph : Morph := .root "red"
 def baseMorph : Morph := .root "base"
 
-def seg (m : Morph) (s : String) : SegSpec Syl Morph := { seg := ⟨s⟩, morpheme := m }
-def tone (m : Morph) (t : TRN) : TierSpec TRN Morph := { value := t, morpheme := m }
-
 /-- MAX-Tone ((23)): one violation per deleted input tone. -/
-def maxTone : Constraint Form := fun f => f.countUpper f.IsDeleted
+def maxTone : Constraint Form := fun f => Nat.count (· ∈ f.deleted) f.upper.len
 
 /-- The surface melody: the tones linked to each TBU, left to right. -/
 def surfaceMelody (f : Form) : List TRN := (List.range f.lower.len).flatMap f.tierValues
@@ -65,8 +63,8 @@ namespace Tableau24
 
 /-- `(wùlàʃ)₁ + M₂ᵥ`: one lexical L multi-linked to both TBUs, the verbaliser's M floating. -/
 def input : Form :=
-  FloatingForm.mkInput [seg rootMorph "wù", seg rootMorph "làʃ"]
-    [tone rootMorph .L, tone vbzMorph .M] {(0, 0), (0, 1)}
+  FloatingForm.concatInputs
+    [.melody rootMorph [.L] [⟨"wù"⟩, ⟨"làʃ"⟩] {(0, 0), (0, 1)}, .melody vbzMorph [.M] [] ∅]
 
 /-- (24a) `(wùlàʃ)₁ M₂`, (24b) `(wùlàʃ)₁`, (24c) `(wù)₁(làʃ)₂`, (24d) `(wū)₂(làʃ)₁`,
 (24e) `(wūlāʃ)₂`, (24f) `(wū)₂(lāʃ)₂` with two M autosegments. -/
@@ -77,8 +75,8 @@ def candD : Form := input.deleteLink 0 0 |>.insertLink 1 0
 def candE : Form := input.deleteTierElem 0 |>.insertLink 1 0 |>.insertLink 1 1
 def candF : Form :=
   { input with
-    upper := .ofList [tone rootMorph .L, tone vbzMorph .M, tone vbzMorph .M]
-    deletedTier := {0}
+    upper := .ofList [⟨.L, rootMorph⟩, ⟨.M, vbzMorph⟩, ⟨.M, vbzMorph⟩]
+    deleted := {0}
     surfaceLinks := {(1, 0), (2, 1)} }
 
 def candidates : List Form := [candA, candB, candC, candD, candE, candF]
@@ -106,8 +104,9 @@ namespace Tableau25
 
 /-- `(háŋláɣáp)₁ + M₂H₃ᵥ`. -/
 def input : Form :=
-  FloatingForm.mkInput [seg rootMorph "háŋ", seg rootMorph "lá", seg rootMorph "ɣáp"]
-    [tone rootMorph .H, tone vbzMorph .M, tone vbzMorph .H] {(0, 0), (0, 1), (0, 2)}
+  FloatingForm.concatInputs
+    [.melody rootMorph [.H] [⟨"háŋ"⟩, ⟨"lá"⟩, ⟨"ɣáp"⟩] {(0, 0), (0, 1), (0, 2)},
+      .melody vbzMorph [.M, .H] [] ∅]
 
 /-- (25a) `(háŋláɣáp)₁`, (25b) `(hāŋlā)₂(ɣáp)₁`, (25c) `(háŋláɣáp)₃`, (25d) `(hāŋlāɣāp)₂`,
 (25e) `(hāŋlā)₂(ɣáp)₃`, (25f) `(hāŋ)₂(láɣáp)₃`, (25g) `(hāŋ)₂(lá)₁(ɣáp)₃`. -/
@@ -148,10 +147,10 @@ namespace Tableau26
 
 /-- `(jàlpàt)₁ + (jàlpàt)₂ + M₃H₄ᵥ`: two root morphemes, each with its own multi-linked L. -/
 def input : Form :=
-  FloatingForm.mkInput
-    [seg redMorph "jàl", seg redMorph "pàt", seg baseMorph "jàl", seg baseMorph "pàt"]
-    [tone redMorph .L, tone baseMorph .L, tone vbzMorph .M, tone vbzMorph .H]
-    {(0, 0), (0, 1), (1, 2), (1, 3)}
+  FloatingForm.concatInputs
+    [.melody redMorph [.L] [⟨"jàl"⟩, ⟨"pàt"⟩] {(0, 0), (0, 1)},
+      .melody baseMorph [.L] [⟨"jàl"⟩, ⟨"pàt"⟩] {(0, 0), (0, 1)},
+      .melody vbzMorph [.M, .H] [] ∅]
 
 /-- (26a) `(jàlpàt)₁(jàlpàt)₂`, (26b) `(jàl)₁(pāt)₃(jàl)₂(pát)₄`, (26c) `(jāl)₃(pàt)₁(jál)₄(pàt)₂`,
 (26d) `(jālpāt)₃(jálpát)₄`, (26e) `(jāl)₃(pát)₄(jàlpàt)₂`, (26f) `(jālpāt jāl)₃(pát)₄`,

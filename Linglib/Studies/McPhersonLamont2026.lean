@@ -263,7 +263,7 @@ theorem fig3_RL_converged : derivationRL.Converged starredForm := by decide
 /-- **The empirical asymmetry**: LR and RL converge to distinct surface forms. -/
 theorem fig3_attested_neq_starred : attestedForm ≠ starredForm := by
   intro h
-  exact absurd (congrArg FloatingForm.deletedTier h) (by decide)
+  exact absurd (congrArg FloatingForm.deleted h) (by decide)
 
 /-! ### Regular HS: the divergent tie (eq. 62) -/
 
@@ -434,52 +434,25 @@ open Morphology (Morph)
 
 /-- Embed a `tonalOverwrite` output into `FloatingForm`: one morpheme `m`, links `(i, i)`. -/
 def FloatingForm.ofTBUList {S : Type*} (host : List (TBU S)) (m : Morph) :
-    FloatingForm S TRN Morph where
-  lower := .ofList (host.map (λ tbu => { seg := tbu.seg, morpheme := m }))
-  upper := .ofList (host.map (λ tbu => { value := tbu.tone, morpheme := m }))
-  links := ((List.range host.length).map (λ i => (i, i))).toFinset
-  deletedTier := ∅
-  surfaceLinks := ((List.range host.length).map (λ i => (i, i))).toFinset
+    FloatingForm S TRN Morph :=
+  .melody m (host.map TBU.tone) (host.map TBU.seg)
+    ((List.range host.length).map fun i ↦ (i, i)).toFinset
 
 /-- Embedded forms carry at most one surface tone per TBU. -/
 theorem FloatingForm.ofTBUList_linksTo_subsingleton {S : Type*}
-    (host : List (TBU S)) (m : Morph) (i : SegIdx) :
+    (host : List (TBU S)) (m : Morph) (i : ℕ) :
     ((FloatingForm.ofTBUList host m).linksTo i).length ≤ 1 := by
-  have h_all : ∀ k ∈ (FloatingForm.ofTBUList host m).linksTo i, k = i := by
-    intro k hk
-    unfold FloatingForm.linksTo at hk
-    rw [List.mem_filter] at hk
-    obtain ⟨_, hPred⟩ := hk
-    have hMem : (k, i) ∈ (FloatingForm.ofTBUList host m).surfaceLinks :=
-      of_decide_eq_true hPred
-    unfold FloatingForm.ofTBUList at hMem
-    rw [List.mem_toFinset, List.mem_map] at hMem
-    obtain ⟨j, _, hPair⟩ := hMem
-    have hjk : j = k := ((Prod.mk.injEq _ _ _ _).mp hPair).1
-    have hji : j = i := ((Prod.mk.injEq _ _ _ _).mp hPair).2
-    exact hjk.symm.trans hji
-  have h_nodup : ((FloatingForm.ofTBUList host m).linksTo i).Nodup := by
-    unfold FloatingForm.linksTo
-    exact List.nodup_range.sublist List.filter_sublist
-  have h_count_le : ((FloatingForm.ofTBUList host m).linksTo i).count i ≤ 1 :=
-    List.nodup_iff_count_le_one.mp h_nodup i
-  have h_count_eq : ((FloatingForm.ofTBUList host m).linksTo i).count i =
-                    ((FloatingForm.ofTBUList host m).linksTo i).length :=
-    List.count_eq_length.mpr (λ b hb => (h_all b hb).symm)
+  have h_all : ∀ k ∈ (FloatingForm.ofTBUList host m).linksTo i, k = i := fun k hk ↦ by
+    simp [FloatingForm.ofTBUList] at hk
+    omega
+  have h_count_eq := List.count_eq_length.mpr fun b hb ↦ (h_all b hb).symm
+  have := List.nodup_iff_count_le_one.mp ((FloatingForm.ofTBUList host m).nodup_linksTo i) i
   omega
 
 /-- A `FloatingForm` with two surface tones on one TBU — unreachable by `ofTBUList`. -/
 theorem FloatingForm.exists_multi_tone_TBU :
-    ∃ f : FloatingForm Unit TRN Morph, ∃ i : SegIdx, 2 ≤ (f.linksTo i).length := by
-  refine ⟨?_, 0, ?_⟩
-  · exact
-    { lower := .ofList [{ seg := (), morpheme := Morph.root "m" }]
-      upper :=
-        .ofList [{ value := TRN.H, morpheme := Morph.root "m" },
-         { value := TRN.L, morpheme := Morph.root "m" }]
-      links := ∅
-      deletedTier := ∅
-      surfaceLinks := {(0, 0), (1, 0)} }
-  · decide
+    ∃ f : FloatingForm Unit TRN Morph, ∃ i : ℕ, 2 ≤ (f.linksTo i).length :=
+  ⟨(FloatingForm.melody (Morph.root "m") [.H, .L] [()] ∅).insertLink 0 0 |>.insertLink 1 0, 0,
+    by decide⟩
 
 end Autosegmental

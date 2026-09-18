@@ -1,4 +1,4 @@
-import Linglib.Phonology.Autosegmental.Floating
+import Linglib.Phonology.Autosegmental.Melody
 import Linglib.Fragments.Hungarian.VowelHarmony
 import Linglib.Data.Forms.SiptarTorkenczy2000
 
@@ -86,7 +86,7 @@ variable (f : Word)
 def places (i : ℕ) : List Place := f.tierValues i
 
 /-- Whether the `i`-th node is low. -/
-def isLow (i : ℕ) : Bool := ((f.lower.get? i).map (·.seg.open1)).getD false
+def isLow (i : ℕ) : Bool := ((f.lower.get? i).map (·.value.open1)).getD false
 
 /-- The value of the `k`-th tier element. -/
 def valueAt (k : ℕ) : Option Place := (f.upper.get? k).map (·.value)
@@ -157,25 +157,17 @@ variable {f}
 def Sound (g : Word) : Prop := ∀ i, ¬ (.cor ∈ places g i ∧ .dor ∈ places g i)
 
 theorem mem_places_insertLink {p : Place} {k i j : ℕ} :
-    p ∈ places (f.insertLink k i) j ↔
-      p ∈ places f j ∨ (j = i ∧ k < f.upper.len ∧ valueAt f k = some p) := by
-  simp only [places, FloatingForm.tierValues, FloatingForm.linksTo, valueAt, List.mem_filterMap,
-    List.mem_filter, List.mem_range, decide_eq_true_eq, FloatingForm.insertLink,
-    Finset.mem_insert, Prod.mk.injEq]
-  constructor
-  · rintro ⟨k', ⟨hk', ⟨rfl, rfl⟩ | hmem⟩, hv⟩
-    · exact .inr ⟨rfl, hk', hv⟩
-    · exact .inl ⟨k', ⟨hk', hmem⟩, hv⟩
-  · rintro (⟨k', ⟨hk', hmem⟩, hv⟩ | ⟨rfl, hk, hv⟩)
-    · exact ⟨k', ⟨hk', .inr hmem⟩, hv⟩
-    · exact ⟨k, ⟨hk, .inl ⟨rfl, rfl⟩⟩, hv⟩
+    p ∈ places (f.insertLink k i) j ↔ p ∈ places f j ∨ (j = i ∧ valueAt f k = some p) := by
+  simp only [places, valueAt, FloatingForm.mem_tierValues, FloatingForm.insertLink_surfaceLinks,
+    FloatingForm.insertLink_upper, Finset.mem_insert, Prod.mk.injEq]
+  aesop
 
 /-- Inserting a line admitted by `MayLink` keeps the form sound. -/
 theorem Sound.insertLink {p : Place} {k i : ℕ} (hs : Sound f) (hv : valueAt f k = some p)
     (hm : MayLink f p i) : Sound (f.insertLink k i) := by
   intro j ⟨hc, hd⟩
   rw [mem_places_insertLink] at hc hd
-  rcases hc with hc | ⟨hji, -, hc⟩ <;> rcases hd with hd | ⟨hji', -, hd⟩
+  rcases hc with hc | ⟨hji, hc⟩ <;> rcases hd with hd | ⟨hji', hd⟩
   · exact hs j ⟨hc, hd⟩
   · exact hm.2.1 (Option.some.inj (hv.symm.trans hd)) (hji' ▸ hc)
   · exact List.ne_nil_of_mem (hji ▸ hd) (hm.2.2.1 (Option.some.inj (hv.symm.trans hc)))
@@ -302,17 +294,16 @@ def Suffix.segments : Suffix → Quality → Option (List String)
   | .iness, .frontUnrounded => some ["b", "e", "n"]
   | _, _ => none
 
-/-- The word of a stem and a suffix: the stem's floating features, then its prelinked
-features, then the suffix's LAB on the tier, over the stem's nodes and the suffix node. -/
+/-- The word of a stem and a suffix concatenates the stem's melody, its floating features and
+then its prelinked features over its nodes, with the suffix's melody, a LAB over the suffix
+node when the suffix has one. -/
 def word (s : Stem) (x : Suffix) : Word :=
-  let prelinked : List (Place × ℕ) := s.nodes.zipIdx.flatMap λ (v, i) => v.2.map (·, i)
+  let prelinked : List (Place × ℕ) := s.nodes.zipIdx.flatMap fun (v, i) ↦ v.2.map (·, i)
   let n := s.floating.length
-  FloatingForm.mkInput
-    (s.nodes.map (λ v => ⟨v.1, .stem⟩) ++ [⟨x.node, .suffix⟩])
-    (s.floating.map (⟨·, .stem⟩) ++ prelinked.map (λ q => ⟨q.1, .stem⟩) ++
-      (if x.hasLab then [⟨.lab, .suffix⟩] else []))
-    ((prelinked.zipIdx.map λ ((q, j) : (Place × ℕ) × ℕ) => (n + j, q.2)) ++
-      (if x.hasLab then [(n + prelinked.length, s.nodes.length)] else [])).toFinset
+  (FloatingForm.melody .stem (s.floating ++ prelinked.map (·.1)) (s.nodes.map (·.1))
+      (prelinked.zipIdx.map fun ((q, j) : (Place × ℕ) × ℕ) ↦ (n + j, q.2)).toFinset).concat
+    (.melody .suffix (if x.hasLab then [.lab] else []) [x.node]
+      (if x.hasLab then {(0, 0)} else ∅))
 
 /-- The suffix segments the derivation yields. -/
 def derived (s : Stem) (x : Suffix) : Option (List String) :=
