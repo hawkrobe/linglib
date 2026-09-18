@@ -50,6 +50,8 @@ examples (1)–(6) and (12) (`nonpast_rows`).
 
 namespace Sharvit2003
 
+open Semantics
+
 open Tense Data.Examples
 
 variable {T : Type*}
@@ -153,7 +155,7 @@ theorem nonpastAvailable_past_iff (L : Language) :
 present constraint, in the mode the language admits, evaluated at the attitude's now, slot
 `e`. -/
 def embeddedPresent (n e : ℕ) (mode : ReferentialMode) : TensePronoun :=
-  ⟨n, present, mode, e⟩
+  ⟨n, ⟦Tense.present⟧, mode, e⟩
 
 /-- A bindable present bound by the attitude verb resolves to the attitude's now, so it is
 present relative to the embedded perspective: the nonpast reading of (5) and (12a). -/
@@ -166,7 +168,7 @@ theorem boundPresent_nonpast (n e : ℕ) (g : TemporalAssignment T) (speech now 
 the attitude's earlier now cannot match, so the present constraint fails relative to the
 embedded perspective: (3) has no nonpast reading, only the double access reading. -/
 theorem indexicalPresent_no_nonpast [LinearOrder T] (tp : TensePronoun)
-    (hPres : tp.constraint = present) {resolved speech now : T}
+    (hPres : tp.constraint = ⟦Tense.present⟧) {resolved speech now : T}
     (hSpeech : tp.presupposition resolved speech) (hlt : now < speech) :
     ¬ tp.presupposition resolved now := by
   obtain rfl := TensePronoun.indexical_present_at_speech tp resolved speech hPres hSpeech

@@ -47,6 +47,8 @@ lexical requirement.
 
 namespace Wurmbrand2014
 
+open Semantics
+
 open Tense Minimalist
 
 /-! ### Viewpoint aspect -/
@@ -180,10 +182,10 @@ structure Composition where
   deriving DecidableEq
 
 /-- Finite *will*: present tense plus *woll*. -/
-def will : Composition := ⟨some present, true⟩
+def will : Composition := ⟨some ⟦present⟧, true⟩
 
 /-- Finite *would*: past tense plus *woll*. -/
-def would : Composition := ⟨some past, true⟩
+def would : Composition := ⟨some ⟦past⟧, true⟩
 
 /-- An infinitive: no tense, with or without *woll*. -/
 def infinitive (woll : Bool) : Composition := ⟨none, woll⟩
@@ -206,7 +208,7 @@ variable {T : Type*} [LinearOrder T]
 /-- Where a composition with *woll* locates its event: after the utterance time when present
 tense is present, after the evaluation time otherwise. -/
 def Composition.Locates (c : Composition) (utterance eval e : T) : Prop :=
-  c.woll = true ∧ if c.tense = some present then utterance < e else eval < e
+  c.woll = true ∧ if c.tense = some ⟦present⟧ then utterance < e else eval < e
 
 /-- Finite future is absolute: the event follows the utterance time. -/
 theorem will_absolute {utterance eval e : T} (h : will.Locates utterance eval e) :
@@ -239,30 +241,30 @@ def sotApplies (above : List (Option (Finset Ordering))) (embedded : Finset Orde
   | none => false
 
 /-- The present of *will* intervenes between two pasts, blocking deletion. -/
-theorem sot_will_blocks : sotApplies [will.tense, some past] past = false := by decide
+theorem sot_will_blocks : sotApplies [will.tense, some ⟦past⟧] ⟦past⟧ = false := by decide
 
 /-- A tenseless infinitive does not intervene, so the lower past deletes. -/
 theorem sot_infinitive_transparent :
-    sotApplies [(infinitive true).tense, some past] past = true := by
+    sotApplies [(infinitive true).tense, some ⟦past⟧] ⟦past⟧ = true := by
   decide
 
 /-- The past of *would* licenses deletion below it. -/
-theorem sot_would : sotApplies [would.tense, some past] past = true := by decide
+theorem sot_would : sotApplies [would.tense, some ⟦past⟧] ⟦past⟧ = true := by decide
 
 /-- Under a *will* matrix, a past below an infinitive finds no past above it. -/
-theorem sot_will_infinitive : sotApplies [(infinitive true).tense, will.tense] past = false := by
+theorem sot_will_infinitive : sotApplies [(infinitive true).tense, will.tense] ⟦past⟧ = false := by
   decide
 
 /-- A silent *would* in the infinitive would license deletion under a *will* matrix, contrary
 to the judgment. -/
-theorem silent_would_wrong : sotApplies [would.tense, will.tense] past = true := by decide
+theorem silent_would_wrong : sotApplies [would.tense, will.tense] ⟦past⟧ = true := by decide
 
 /-- *would*'s past must delete: it is licensed only below a past. -/
-def WouldLicensed (above : List (Option (Finset Ordering))) : Prop := sotApplies above past = true
+def WouldLicensed (above : List (Option (Finset Ordering))) : Prop := sotApplies above ⟦past⟧ = true
 
 instance : DecidablePred WouldLicensed := λ _ => inferInstanceAs (Decidable (_ = true))
 
 /-- Temporal *would* under *will* is out, under a past matrix in. -/
-theorem would_licensing : ¬ WouldLicensed [will.tense] ∧ WouldLicensed [some past] := by decide
+theorem would_licensing : ¬ WouldLicensed [will.tense] ∧ WouldLicensed [some ⟦past⟧] := by decide
 
 end Wurmbrand2014

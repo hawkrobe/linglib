@@ -16,6 +16,8 @@ the update spine's test, in `Studies/Mendes2025.lean`.
 
 namespace Tense
 
+open Semantics
+
 open Reference
 
 variable {W T : Type*} [LinearOrder T]
@@ -31,31 +33,31 @@ def constrain (s : Finset Ordering) (P : (Index W T → Prop))
 /-- ⟦PAST⟧ = `constrain past`: the event situation precedes the
     evaluation situation. -/
 abbrev PAST : (Index W T → Prop) → Index W T →
-    Index W T → Prop := constrain past
+    Index W T → Prop := constrain ⟦past⟧
 
 /-- ⟦PRES⟧ = `constrain present`: the event situation is contemporaneous
     with the evaluation situation. -/
 abbrev PRES : (Index W T → Prop) → Index W T →
-    Index W T → Prop := constrain present
+    Index W T → Prop := constrain ⟦present⟧
 
 /-- ⟦FUT⟧ = `constrain future`: the event situation follows the
     evaluation situation. -/
 abbrev FUT : (Index W T → Prop) → Index W T →
-    Index W T → Prop := constrain future
+    Index W T → Prop := constrain ⟦future⟧
 
 @[simp] theorem constrain_past_iff (P : (Index W T → Prop))
     (sit sit' : Index W T) :
-    constrain past P sit sit' ↔ sit.time < sit'.time ∧ P sit := by
+    constrain ⟦past⟧ P sit sit' ↔ sit.time < sit'.time ∧ P sit := by
   simp [constrain]
 
 @[simp] theorem constrain_present_iff (P : (Index W T → Prop))
     (sit sit' : Index W T) :
-    constrain present P sit sit' ↔ sit.time = sit'.time ∧ P sit := by
+    constrain ⟦present⟧ P sit sit' ↔ sit.time = sit'.time ∧ P sit := by
   simp [constrain]
 
 @[simp] theorem constrain_future_iff (P : (Index W T → Prop))
     (sit sit' : Index W T) :
-    constrain future P sit sit' ↔ sit'.time < sit.time ∧ P sit := by
+    constrain ⟦future⟧ P sit sit' ↔ sit'.time < sit.time ∧ P sit := by
   simp [constrain]
 
 end Tense

@@ -21,6 +21,8 @@ open Tense
 
 namespace Tense
 
+open Semantics
+
 variable {T : Type*}
 
 /-! ### Embedded frames -/
@@ -131,7 +133,7 @@ theorem TensePronoun.bound_present_simultaneous
     (tp : TensePronoun) (g : TemporalAssignment T)
     (speechTime perspTime eventTime : T)
     (hBind : tp.resolve g = perspTime)
-    (_hPres : tp.constraint = present) :
+    (_hPres : tp.constraint = ⟦present⟧) :
     (tp.toFrame g speechTime perspTime eventTime).isPresent := by
   simp only [TensePronoun.toFrame, ReichenbachFrame.isPresent]
   exact hBind

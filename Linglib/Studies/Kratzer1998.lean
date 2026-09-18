@@ -67,6 +67,8 @@ tense forms.
 
 namespace Kratzer1998
 
+open Semantics
+
 open Tense Data.Examples
 open Aspect (IntervalPred UNBOUNDED PRFV ViewpointType)
 
@@ -209,9 +211,9 @@ theorem denote_outOfTheBlue_iff (C : Finset Ordering) (a : AspectHead) (n : ℕ)
 event can be described with no past tense. -/
 theorem denote_present_perfect_outOfTheBlue_iff (n : ℕ) (P : W → Event T → Prop) (t₀ : T)
     (w : W) :
-    denote present .perfect n P (outOfTheBlue t₀) w ↔ ∃ e : Event T, e.τ.snd < t₀ ∧ P w e := by
+    denote ⟦present⟧ .perfect n P (outOfTheBlue t₀) w ↔ ∃ e : Event T, e.τ.snd < t₀ ∧ P w e := by
   simp [denote_outOfTheBlue_iff, AspectHead.denote, AspectHead.rel, NonemptyInterval.precedes,
-    present]
+    denote_present]
 
 end Aspects
 
@@ -227,26 +229,26 @@ structure Variety where
 perfective, and the simple past also spells out the perfect, of the present as of the past. -/
 def english : Variety where
   table :=
-    [(.presentProgressive, present, .imperfective), (.pastProgressive, past, .imperfective),
-      (.simplePresent, present, .perfective), (.simplePast, past, .perfective),
-      (.simplePast, present, .perfect), (.simplePast, past, .perfect),
-      (.pastPerfect, past, .perfect)]
+    [(.presentProgressive, ⟦present⟧, .imperfective), (.pastProgressive, ⟦past⟧, .imperfective),
+      (.simplePresent, ⟦present⟧, .perfective), (.simplePast, ⟦past⟧, .perfective),
+      (.simplePast, ⟦present⟧, .perfect), (.simplePast, ⟦past⟧, .perfect),
+      (.pastPerfect, ⟦past⟧, .perfect)]
 
 /-- In Standard German the synthetic forms spell out the imperfective and the perfective, and
 their perfects the perfect. -/
 def standardGerman : Variety where
   table :=
-    [(.simplePresent, present, .imperfective), (.simplePresent, present, .perfective),
-      (.simplePast, past, .imperfective), (.simplePast, past, .perfective),
-      (.presentPerfect, present, .perfect), (.pastPerfect, past, .perfect)]
+    [(.simplePresent, ⟦present⟧, .imperfective), (.simplePresent, ⟦present⟧, .perfective),
+      (.simplePast, ⟦past⟧, .imperfective), (.simplePast, ⟦past⟧, .perfective),
+      (.presentPerfect, ⟦present⟧, .perfect), (.pastPerfect, ⟦past⟧, .perfect)]
 
 /-- In South German, with the simple past gone, the present perfect also spells out the past
 with the imperfective and the perfective, and the double perfect the past with the perfect. -/
 def southGerman : Variety where
   table :=
-    [(.simplePresent, present, .imperfective), (.simplePresent, present, .perfective),
-      (.presentPerfect, past, .imperfective), (.presentPerfect, past, .perfective),
-      (.presentPerfect, present, .perfect), (.doublePerfect, past, .perfect)]
+    [(.simplePresent, ⟦present⟧, .imperfective), (.simplePresent, ⟦present⟧, .perfective),
+      (.presentPerfect, ⟦past⟧, .imperfective), (.presentPerfect, ⟦past⟧, .perfective),
+      (.presentPerfect, ⟦present⟧, .perfect), (.doublePerfect, ⟦past⟧, .perfect)]
 
 /-- The tables use the tense forms of the Fragments. -/
 theorem table_forms :
@@ -287,8 +289,7 @@ instance (T : Type*) [LinearOrder T] [Nonempty T] :
 
 /-- A table is tense-faithful when a form spells out only the tense its finite verb is
 inflected for. -/
-def IsTenseFaithful : Prop :=
-  ∀ x ∈ v.table, x.1.finite = .Pres ∧ x.2.1 = present ∨ x.1.finite = .Past ∧ x.2.1 = past
+def IsTenseFaithful : Prop := ∀ x ∈ v.table, x.2.1 = ⟦x.1.finite⟧
 
 /-- A table is perfect-compositional when the forms that spell out the perfect of a tense are
 the perfects of the forms that spell out that tense with another aspect. -/
@@ -321,9 +322,9 @@ theorem english_transparent :
 which the English simple past spells out and the German one does not, so that Standard German
 needs the past perfect. -/
 theorem backwardShifted :
-    english.SpellsOut .simplePast past .perfect ∧
-      ¬ standardGerman.SpellsOut .simplePast past .perfect ∧
-      standardGerman.SpellsOut .pastPerfect past .perfect := by
+    english.SpellsOut .simplePast ⟦past⟧ .perfect ∧
+      ¬ standardGerman.SpellsOut .simplePast ⟦past⟧ .perfect ∧
+      standardGerman.SpellsOut .pastPerfect ⟦past⟧ .perfect := by
   decide
 
 /-- The language codes of the example rows name these varieties. -/
@@ -338,7 +339,7 @@ there. The English simple past and the German present perfect can, and the Germa
 cannot. -/
 theorem rows_outOfTheBlue :
     ∀ r ∈ Examples.all, r.feature? "context" = some "out of the blue" →
-      ∀ v ∈ varieties.lookup r.language, ∀ f ∈ r.parse? "form" forms,
+      ∃ v ∈ varieties.lookup r.language, ∃ f ∈ r.parse? "form" forms,
         (r.judgment = .acceptable ↔ v.DescribesPastOutOfTheBlue ℤ f) := by
   decide +kernel
 

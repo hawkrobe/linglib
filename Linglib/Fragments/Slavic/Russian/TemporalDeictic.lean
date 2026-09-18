@@ -15,14 +15,16 @@ Russian locates a time relative to the deictic centre with the adverbs *togda* '
 
 namespace Russian.TemporalDeictic
 
+open Semantics
+
 open Tense
 
 /-- *togda* (тогда) 'then', a time before or after the deictic centre: *V 2016 godu Tanja
 skazala, čto togda Putin byl prezidentom Rossii* 'In 2016 Tanja said that Putin was president of
 Russia then'. -/
-def togda : DeicticAdverb := { form := "togda", cell := presentᶜ }
+def togda : DeicticAdverb := { form := "togda", cell := ⟦present⟧ᶜ }
 
 /-- *sejčas* (сейчас) 'now', a time including the deictic centre. -/
-def sejchas : DeicticAdverb := { form := "sejčas", cell := present }
+def sejchas : DeicticAdverb := { form := "sejčas", cell := ⟦present⟧ }
 
 end Russian.TemporalDeictic

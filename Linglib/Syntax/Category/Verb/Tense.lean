@@ -3,24 +3,27 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Data.UD.Features
+import Mathlib.Data.Fintype.Defs
+import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Tense forms
+# Tense and tense forms
 
-This file defines tense forms. A tense form of a verb, in the sense of the traditional
-grammars, is a member of the verb's tense paradigm, such as the simple past or the present
-perfect. It is described here by its make-up, the tense inflection of its finite verb and the
-nonfinite forms stacked under that verb. A synthetic form has a finite lexical verb and nothing
-else. A periphrastic form is built from another form by putting its verb, in a nonfinite form,
-under an auxiliary that takes over the tense inflection, so that the perfect of the simple
-present *builds* is the present perfect *has built*, and the perfect of that is the double
-perfect *has had built* of the South German dialects. Two languages whose forms have the same
-make-up share the form, and which tense and which aspect it expresses in each is a matter of
-analysis left to studies.
+This file defines the grammatical tenses and the tense forms of a verb. A tense is past, present
+or future (`Tense`); the cell of times it denotes is the matter of `Semantics/Tense/Defs.lean`. A
+tense form of a verb, in the sense of the traditional grammars, is a member of the verb's tense
+paradigm, such as the simple past or the present perfect. It is described here by its make-up, the
+tense inflection of its finite verb and the nonfinite forms stacked under that verb. A synthetic
+form has a finite lexical verb and nothing else. A periphrastic form is built from another form by
+putting its verb, in a nonfinite form, under an auxiliary that takes over the tense inflection, so
+that the perfect of the simple present *builds* is the present perfect *has built*, and the
+perfect of that is the double perfect *has had built* of the South German dialects. Two languages
+whose forms have the same make-up share the form, and which tense and which aspect it expresses in
+each is a matter of analysis left to studies.
 
 ## Main declarations
 
+* `Tense`: the grammatical tenses.
 * `Tense.Form.Nonfinite`: the nonfinite verb forms that build periphrastic tense forms.
 * `Tense.Form`: a tense form, by the inflection of its finite verb and its nonfinite chain.
 * `Tense.Form.under`, `Tense.Form.perfect`, `Tense.Form.progressive`: the periphrastic form
@@ -28,6 +31,13 @@ analysis left to studies.
 * `Tense.Form.simplePresent`, `Tense.Form.simplePast` and the forms built on them.
 * `Tense.Form.IsPerfect`: the form is the perfect of some form.
 -/
+
+/-- A grammatical tense is past, present or future. -/
+inductive Tense where
+  | past
+  | present
+  | future
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 namespace Tense
 
@@ -47,7 +57,7 @@ the finite verb itself when there are none. -/
 @[ext]
 structure Form where
   /-- The tense inflection of the finite verb. -/
-  finite : UD.Tense
+  finite : Tense
   /-- The nonfinite forms under the finite verb, outermost first. -/
   nonfinite : List Form.Nonfinite := []
   deriving DecidableEq, Repr
@@ -79,10 +89,10 @@ theorem under_injective (n : Nonfinite) : Function.Injective (under n) := fun f 
   (under_injective _).eq_iff
 
 /-- The simple present is the synthetic present, as *builds*. -/
-def simplePresent : Form := { finite := .Pres }
+def simplePresent : Form := { finite := .present }
 
 /-- The simple past is the synthetic past, as *built*. -/
-def simplePast : Form := { finite := .Past }
+def simplePast : Form := { finite := .past }
 
 /-- The present progressive is the progressive of the simple present, as *is building*. -/
 def presentProgressive : Form := simplePresent.progressive

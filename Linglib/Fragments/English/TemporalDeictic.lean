@@ -15,9 +15,11 @@ janitor turned off the lights. The room was empty then.* The description follows
 
 namespace English.TemporalDeictic
 
+open Semantics
+
 open Tense
 
 /-- *then*, a time before or after the deictic centre. -/
-def then_ : DeicticAdverb := { form := "then", cell := presentᶜ }
+def then_ : DeicticAdverb := { form := "then", cell := ⟦present⟧ᶜ }
 
 end English.TemporalDeictic

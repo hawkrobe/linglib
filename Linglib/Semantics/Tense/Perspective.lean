@@ -46,6 +46,8 @@ clash with the present is the ⌈then⌉-present puzzle.
 
 namespace Tense
 
+open Semantics
+
 /-- A temporal deictic adverb, a pro-form for a time located relative to an anchor: English
 *then* and *now*, Greek *tóte*, Russian *togda* and *sejčas*. The entry records the positions
 the adverb's reference may occupy relative to the anchor as a comparison cell; what the anchor
@@ -75,19 +77,19 @@ def Presup (C : Finset Ordering) (π ref : NonemptyInterval T) : Prop := ref.pos
 instance : Decidable (Presup C π r) := inferInstanceAs (Decidable (_ ∈ C))
 
 /-- PRES presupposes that its reference overlaps the perspective. -/
-@[simp] theorem presup_present : Presup present π r ↔ r.overlaps π := by
-  simp [Presup, present]
+@[simp] theorem presup_present : Presup ⟦present⟧ π r ↔ r.overlaps π := by
+  simp [Presup, denote_present]
 
 /-- PAST presupposes that its reference precedes the perspective. -/
-@[simp] theorem presup_past : Presup past π r ↔ r.precedes π := by
-  simp [Presup, past]
+@[simp] theorem presup_past : Presup ⟦past⟧ π r ↔ r.precedes π := by
+  simp [Presup, denote_past]
 
-@[simp] theorem presup_future : Presup future π r ↔ π.precedes r := by
-  simp [Presup, future]
+@[simp] theorem presup_future : Presup ⟦future⟧ π r ↔ π.precedes r := by
+  simp [Presup, denote_future]
 
 /-- ⌈then⌉ presupposes that its reference is disjoint from the perspective. -/
-@[simp] theorem presup_compl_present : Presup presentᶜ π r ↔ ¬ r.overlaps π := by
-  simp [Presup, present]
+@[simp] theorem presup_compl_present : Presup ⟦present⟧ᶜ π r ↔ ¬ r.overlaps π := by
+  simp [Presup, denote_present]
 
 /-- A pronoun with the full cell, such as a deleted tense, presupposes nothing. -/
 @[simp] theorem presup_top : Presup ⊤ π r := Finset.mem_univ _
@@ -103,7 +105,7 @@ theorem Presup.mono (h : Presup C π r) (hCD : C ⊆ D) : Presup D π r := hCD h
 
 /-- An adverb restricts the reference of the tense it modifies, so if the tense is a present its
 cell must admit overlap with their common perspective. -/
-theorem eq_mem_of_presup_present (hr : Presup present π r) (hle : r ≤ th) (hth : Presup C π th) :
+theorem eq_mem_of_presup_present (hr : Presup ⟦present⟧ π r) (hle : r ≤ th) (hth : Presup C π th) :
     .eq ∈ C := by
   have h : th.position π = .eq :=
     NonemptyInterval.position_eq_eq_of_le (NonemptyInterval.position_eq_eq.2
@@ -112,13 +114,13 @@ theorem eq_mem_of_presup_present (hr : Presup present π r) (hle : r ≤ th) (ht
 
 /-- The ⌈then⌉-present clash: a reference overlapping the perspective cannot be restricted by an
 adverb whose cell excludes overlap with it. -/
-theorem not_presup_of_presup_present (hC : .eq ∉ C) (hr : Presup present π r) (hle : r ≤ th) :
+theorem not_presup_of_presup_present (hC : .eq ∉ C) (hr : Presup ⟦present⟧ π r) (hle : r ≤ th) :
     ¬ Presup C π th :=
   fun hth ↦ hC (eq_mem_of_presup_present hr hle hth)
 
 /-- The cells that can restrict a present tense are exactly those that admit overlap. -/
 theorem exists_presup_present_iff [Nonempty T] :
-    (∃ π r th : NonemptyInterval T, Presup present π r ∧ r ≤ th ∧ Presup C π th) ↔ .eq ∈ C := by
+    (∃ π r th : NonemptyInterval T, Presup ⟦present⟧ π r ∧ r ≤ th ∧ Presup C π th) ↔ .eq ∈ C := by
   refine ⟨fun ⟨_, _, _, hr, hle, hth⟩ ↦ eq_mem_of_presup_present hr hle hth, fun h ↦ ?_⟩
   obtain ⟨t⟩ := ‹Nonempty T›
   refine ⟨.pure t, .pure t, .pure t, presup_present.2 (NonemptyInterval.overlaps_refl _),

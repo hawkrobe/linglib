@@ -1,28 +1,35 @@
 import Mathlib.Data.Finset.BooleanAlgebra
+import Linglib.Semantics.Denotation
+import Linglib.Syntax.Category.Verb.Tense
 import Mathlib.Order.Defs.LinearOrder
 
 /-!
-# Grammatical tense as a comparison cell
+# Grammatical tense
 
-A grammatical tense constrains which of `lt`/`eq`/`gt` a reference time may stand in to a
-perspective time ([kiparsky-2002]: tense locates R relative to the perspective time P, not speech
-time S). There is no bespoke tense type: a tense is a `Finset Ordering` — an element of the Boolean
-algebra `𝒫 {lt, eq, gt}` — and the constraint it imposes on times `r`, `p` is membership
-`compare r p ∈ cell`. Tense, evidentials, and modal-base time thereby share mathlib's `Ordering`
-spine, and derived categories are `Finset` complements and unions (*nonfuture* is `futureᶜ`,
-*then*'s non-present is `presentᶜ`, an unconstrained cell is `⊤`).
+This file defines the denotations of the grammatical tenses. A tense, past, present or future
+(`Tense`, from `Syntax/Category/Verb/Tense.lean`), denotes a comparison cell, a `Finset Ordering`,
+which constrains the orderings in which a reference time may stand to a perspective time, so the
+constraint a tense imposes on times `r` and `p` is `compare r p ∈ ⟦t⟧`. Following Kiparsky, tense
+locates the reference time relative to the perspective time, not the speech time. The past denotes
+`{lt}`, the present `{eq}` and the future `{gt}`.
 
-* `past`    = `{.lt}` (ref < perspective)
-* `present` = `{.eq}` (ref = perspective)
-* `future`  = `{.gt}` (ref > perspective)
-* `nonpast` = `{.eq, .gt}` (ref ≥ perspective — the present-or-future union, [klecha-2016])
+Cells are the elements of the Boolean algebra `𝒫 {lt, eq, gt}`, so tense, evidentials and
+modal-base time share mathlib's `Ordering`, and the derived categories are joins and complements
+of tense denotations rather than further tenses. Klecha's nonpast is `⟦present⟧ ⊔ ⟦future⟧`
+(`nonpast`), the nonfuture is `⟦future⟧ᶜ`, the non-present of *then* is `⟦present⟧ᶜ`, and an
+unconstrained cell is `⊤`.
 
-The `compare_mem_*` simp lemmas reduce each constraint to `<`/`=`/`≤` on the underlying order, so
-downstream proofs bottom out in mathlib's order API. Cells compose: `comp R S` collects the
-orderings of `a` to `c` compatible with `a` to `b` in `R` and `b` to `c` in `S`, so a relation
-between non-adjacent times is derived by `compare_mem_comp`. Composition distributes over
-joins and has the present as its identity; the past and the future are each idempotent and
-compose with one another to the unconstrained cell.
+The `compare_mem_*` simp lemmas reduce each constraint to `<`, `=` or `≤` on the underlying
+order. Cells compose: `comp R S` collects the orderings of `a` to `c` compatible with `a` to `b`
+in `R` and `b` to `c` in `S`, so a relation between non-adjacent times is derived by
+`compare_mem_comp`. Composition distributes over joins and has the present as its identity; the
+past and the future are each idempotent and compose with one another to the unconstrained cell.
+
+## Main declarations
+
+* `Tense.denote`: the cell a tense denotes, written `⟦t⟧`.
+* `Tense.nonpast`: the cell of the present or future.
+* `Tense.comp`: the composition of two cells.
 
 ## References
 
@@ -43,14 +50,22 @@ def Ordering.comp : Ordering → Ordering → Finset Ordering
 
 namespace Tense
 
-/-- The past cell places the reference time before the perspective time. -/
-def past : Finset Ordering := {.lt}
+open Semantics
 
-/-- The present cell places the reference time at the perspective time. -/
-def present : Finset Ordering := {.eq}
+/-- A tense denotes the cell of orderings in which the reference time may stand to the
+perspective time: before it for the past, at it for the present, after it for the future. -/
+def denote : Tense → Finset Ordering
+  | past => {.lt}
+  | present => {.eq}
+  | future => {.gt}
 
-/-- The future cell places the reference time after the perspective time. -/
-def future : Finset Ordering := {.gt}
+instance : Denotes Tense (Finset Ordering) := ⟨denote⟩
+
+theorem denote_past : ⟦past⟧ = ({.lt} : Finset Ordering) := rfl
+
+theorem denote_present : ⟦present⟧ = ({.eq} : Finset Ordering) := rfl
+
+theorem denote_future : ⟦future⟧ = ({.gt} : Finset Ordering) := rfl
 
 /-- **Nonpast** ([klecha-2016]): reference time at or after perspective time, *not* a fourth
     atomic tense. Lets embedded tense under circumstantial modals have future-oriented readings
@@ -59,29 +74,29 @@ def nonpast : Finset Ordering := {.eq, .gt}
 
 /-- [klecha-2016]'s point made literal: nonpast **is** the join of present and future in
     `𝒫 {lt, eq, gt}`, not a fourth atomic tense. -/
-theorem nonpast_eq_present_sup_future : nonpast = present ⊔ future := by decide
+theorem nonpast_eq_present_sup_future : nonpast = ⟦present⟧ ⊔ ⟦future⟧ := by decide
 
 /-- Nonpast is equally the complement of past — the trichotomy of the underlying linear order. -/
-theorem nonpast_eq_compl_past : nonpast = pastᶜ := by decide
+theorem nonpast_eq_compl_past : nonpast = ⟦past⟧ᶜ := by decide
 
 /-- The nonfuture is the join of past and present. -/
-theorem past_sup_present : past ⊔ present = futureᶜ := by decide
+theorem past_sup_present : ⟦past⟧ ⊔ ⟦present⟧ = ⟦future⟧ᶜ := by decide
 
 variable {T : Type*} [LinearOrder T]
 
-@[simp] theorem compare_mem_past (r p : T) : compare r p ∈ past ↔ r < p := by
-  simp [past, compare_lt_iff_lt]
+@[simp] theorem compare_mem_past (r p : T) : compare r p ∈ ⟦past⟧ ↔ r < p := by
+  simp [Denotes.denote, denote, compare_lt_iff_lt]
 
-@[simp] theorem compare_mem_present (r p : T) : compare r p ∈ present ↔ r = p := by
-  simp [present]
+@[simp] theorem compare_mem_present (r p : T) : compare r p ∈ ⟦present⟧ ↔ r = p := by
+  simp [Denotes.denote, denote]
 
-@[simp] theorem compare_mem_future (r p : T) : compare r p ∈ future ↔ p < r := by
-  simp [future, compare_gt_iff_gt]
+@[simp] theorem compare_mem_future (r p : T) : compare r p ∈ ⟦future⟧ ↔ p < r := by
+  simp [Denotes.denote, denote, compare_gt_iff_gt]
 
 @[simp] theorem compare_mem_nonpast (r p : T) : compare r p ∈ nonpast ↔ p ≤ r := by
   rw [nonpast_eq_compl_past, Finset.mem_compl, compare_mem_past, not_lt]
 
-@[simp] theorem compare_mem_compl_future (r p : T) : compare r p ∈ futureᶜ ↔ r ≤ p := by
+@[simp] theorem compare_mem_compl_future (r p : T) : compare r p ∈ ⟦future⟧ᶜ ↔ r ≤ p := by
   rw [Finset.mem_compl, compare_mem_future, not_lt]
 
 /-- The composition of two cells collects the orderings of `a` to `c` compatible with `a` to
@@ -102,27 +117,27 @@ theorem comp_sup_right (R S S' : Finset Ordering) : comp R (S ⊔ S') = comp R S
   simp only [mem_comp, Finset.sup_eq_union, Finset.mem_union, or_and_right, and_or_left,
     exists_or]
 
-@[simp] theorem comp_present_left (S : Finset Ordering) : comp present S = S := by
+@[simp] theorem comp_present_left (S : Finset Ordering) : comp ⟦present⟧ S = S := by
   ext o
-  simp [mem_comp, present, Ordering.comp]
+  simp [mem_comp, Denotes.denote, denote, Ordering.comp]
 
-@[simp] theorem comp_present_right (R : Finset Ordering) : comp R present = R := by
+@[simp] theorem comp_present_right (R : Finset Ordering) : comp R ⟦present⟧ = R := by
   ext o
-  simp only [mem_comp, present, Finset.mem_singleton, exists_eq_left]
+  simp only [mem_comp, Denotes.denote, denote, Finset.mem_singleton, exists_eq_left]
   constructor
   · rintro ⟨r, hr, h⟩
     cases r <;> simp only [Ordering.comp, Finset.mem_singleton] at h <;> exact h ▸ hr
   · exact fun h ↦ ⟨o, h, by cases o <;> simp [Ordering.comp]⟩
 
-@[simp] theorem comp_past_past : comp past past = past := by decide
+@[simp] theorem comp_past_past : comp ⟦past⟧ ⟦past⟧ = ⟦past⟧ := by decide
 
-@[simp] theorem comp_future_future : comp future future = future := by decide
+@[simp] theorem comp_future_future : comp ⟦future⟧ ⟦future⟧ = ⟦future⟧ := by decide
 
 /-- A past followed by a future leaves the relation of the outer times open. -/
-@[simp] theorem comp_past_future : comp past future = ⊤ := by decide
+@[simp] theorem comp_past_future : comp ⟦past⟧ ⟦future⟧ = ⊤ := by decide
 
 /-- A future followed by a past leaves the relation of the outer times open. -/
-@[simp] theorem comp_future_past : comp future past = ⊤ := by decide
+@[simp] theorem comp_future_past : comp ⟦future⟧ ⟦past⟧ = ⊤ := by decide
 
 theorem compare_mem_comp_compare (a b c : T) :
     compare a c ∈ (compare a b).comp (compare b c) := by

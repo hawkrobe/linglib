@@ -38,6 +38,8 @@ verdicts (`rows_readings`).
 
 namespace Klecha2016
 
+open Semantics
+
 open Tense HistoricalAlternatives Reference English
 
 variable {W T : Type*}
@@ -61,8 +63,8 @@ def base [LinearOrder T] :
 /-- The orientations a modal base admits for the reference time of its prejacent relative to
 the evaluation time, Table 1: past and present under `dox`, future under `cir`. -/
 def orientations : ModalBase → Finset Ordering
-  | .dox => past ∪ present
-  | .cir => future
+  | .dox => ⟦past⟧ ∪ ⟦present⟧
+  | .cir => ⟦future⟧
 
 /-- (53)–(55): the time of a situation accessible from `s` bears an admitted orientation to
 the evaluation time, since τ(k|t) is defined only for `t` within the history `k`. -/
@@ -84,8 +86,8 @@ theorem upperLimitConstraint_of_mem_dox [LinearOrder T] (history : HistoricalAlt
 past is past, `dox` with a non-past is simultaneous, (55), `cir` with a non-past is future,
 (53), and `cir` with a past is empty. -/
 theorem cells :
-    dox.orientations ∩ past = past ∧ dox.orientations ∩ nonpast = present ∧
-      cir.orientations ∩ nonpast = future ∧ cir.orientations ∩ past = ∅ := by
+    dox.orientations ∩ ⟦past⟧ = ⟦past⟧ ∧ dox.orientations ∩ nonpast = ⟦present⟧ ∧
+      cir.orientations ∩ nonpast = ⟦future⟧ ∧ cir.orientations ∩ ⟦past⟧ = ∅ := by
   decide
 
 end ModalBase
@@ -118,25 +120,25 @@ theorem readings_union (a : Attitude) (τ₁ τ₂ : Finset Ordering) :
     · exact ⟨m, hm, ho, Or.inl h⟩
     · exact ⟨m, hm, ho, Or.inr h⟩
 
-theorem past_union_nonpast : past ∪ nonpast = Finset.univ := by decide
+theorem past_union_nonpast : ⟦past⟧ ∪ nonpast = Finset.univ := by decide
 
 /-- (6) and (7): under *think* an embedded clause is past or simultaneous, never future, the
 upper limit, and a present under a present is simultaneous only, which the eventive of (7a)
 cannot be. -/
 theorem think_readings : ∀ a ∈ think.attitude.toList,
-    readings a Finset.univ = past ∪ present ∧ readings a nonpast = present := by
+    readings a Finset.univ = ⟦past⟧ ∪ ⟦present⟧ ∧ readings a nonpast = ⟦present⟧ := by
   decide +kernel
 
 /-- (4) and (5): under *hope* every orientation is open to a past-under-past clause, the future
 one through `cir` with an underlying non-past, (48)–(54); a past under a present is past. -/
 theorem hope_readings : ∀ a ∈ hope.attitude.toList,
     readings a Finset.univ = Finset.univ ∧ readings a nonpast = nonpast ∧
-      readings a past = past := by
+      readings a ⟦past⟧ = ⟦past⟧ := by
   decide +kernel
 
 /-- (45a) \**It rains tomorrow*: the covert epistemic necessity of a matrix clause is a `dox`
 modal, so a matrix non-past has present reference only, §3.2. -/
-theorem matrix_nonpast_present : ModalBase.dox.orientations ∩ nonpast = present := by decide
+theorem matrix_nonpast_present : ModalBase.dox.orientations ∩ nonpast = ⟦present⟧ := by decide
 
 /-! ### The data, (1)–(3) -/
 
@@ -149,7 +151,7 @@ def verbOf : String → Option English.Verb
 
 /-- The orientation cells a row reports on. -/
 def cells : List (String × Finset Ordering) :=
-  [("past", past), ("present", present), ("future", future)]
+  [("past", ⟦past⟧), ("present", ⟦present⟧), ("future", ⟦future⟧)]
 
 /-- The rows agree with the analysis: an orientation a row reports available under its verb
 lies among the readings of a past-under-past clause under that verb and one reported

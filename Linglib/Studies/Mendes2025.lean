@@ -35,6 +35,8 @@ table of main-clause tenses off the entries.
 
 namespace Mendes2025
 
+open Semantics
+
 open Reference HistoricalAlternatives DynamicSemantics DynamicSemantics.Update
 open CDRT (DProp dref)
 
@@ -83,13 +85,13 @@ def temporal (cell : Finset Ordering) (P : Radical W T) (s s' : Sit W T) :
   seq (test fun i => compare (s i).time (s' i).time ∈ cell) (P s)
 
 /-- `fut` places the event situation after the evaluation situation. -/
-abbrev fut : Radical W T → Sit W T → Sit W T → DProp (Index W T) := temporal Tense.future
+abbrev fut : Radical W T → Sit W T → Sit W T → DProp (Index W T) := temporal ⟦Tense.future⟧
 
 /-- `pres` places the event situation at the evaluation situation. -/
-abbrev pres : Radical W T → Sit W T → Sit W T → DProp (Index W T) := temporal Tense.present
+abbrev pres : Radical W T → Sit W T → Sit W T → DProp (Index W T) := temporal ⟦Tense.present⟧
 
 /-- `past` places the event situation before the evaluation situation. -/
-abbrev past : Radical W T → Sit W T → Sit W T → DProp (Index W T) := temporal Tense.past
+abbrev past : Radical W T → Sit W T → Sit W T → DProp (Index W T) := temporal ⟦Tense.past⟧
 
 /-- The subjunctive, `subj^{s₁}_{s₀} ⇝ λℙ.[s₁ | s₁ ∈ hist s₀]; ℙ(s₁)(s₀)`: an indefinite over
 situations, introducing `s₁` among the historical alternatives of the anchor `s₀`. -/
@@ -135,12 +137,12 @@ def sfForm (cell : Finset Ordering) : DProp (Index W T) :=
 /-- *If Ivan leaves the room smiling, the interview went well*: the Subordinate Future in the
 antecedent, the past in the consequent. -/
 abbrev conditional (leaves wentWell : Index W T → Prop) : DProp (Index W T) :=
-  sfForm history leaves wentWell Tense.past
+  sfForm history leaves wentWell ⟦Tense.past⟧
 
 /-- *Every candidate who delivers a good job talk has an equal chance of being hired*: the
 Subordinate Future in the restrictor, the present in the nuclear scope. -/
 abbrev relativeClause (delivers chance : Index W T → Prop) : DProp (Index W T) :=
-  sfForm history delivers chance Tense.present
+  sfForm history delivers chance ⟦Tense.present⟧
 
 /-- The truth conditions of the paper's derivations: the form is a test, true at a state iff
 every historical alternative `e` of the anchor after it where `A` holds has the main-clause

@@ -32,6 +32,8 @@ future tense to downstream evidence.
 
 namespace Tense.Evidential
 
+open Semantics
+
 variable {T : Type*}
 
 /-- Reichenbach's frame with the time at which the speaker acquires the evidence grounding
@@ -56,11 +58,11 @@ instance [LE T] [DecidableLE T] (f : EvidentialFrame T) : Decidable f.Acquired :
   inferInstanceAs (Decidable (f.acquisitionTime ≤ f.speechTime))
 
 theorem downstream_iff [LinearOrder T] (f : EvidentialFrame T) :
-    f.Downstream ↔ compare f.eventTime f.acquisitionTime ∈ futureᶜ :=
+    f.Downstream ↔ compare f.eventTime f.acquisitionTime ∈ ⟦future⟧ᶜ :=
   (compare_mem_compl_future _ _).symm
 
 theorem acquired_iff [LinearOrder T] (f : EvidentialFrame T) :
-    f.Acquired ↔ compare f.acquisitionTime f.speechTime ∈ futureᶜ :=
+    f.Acquired ↔ compare f.acquisitionTime f.speechTime ∈ ⟦future⟧ᶜ :=
   (compare_mem_compl_future _ _).symm
 
 /-- Downstream evidence acquired by the time of speech is evidence for a nonfuture event. -/

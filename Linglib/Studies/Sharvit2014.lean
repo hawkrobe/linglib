@@ -35,6 +35,8 @@ no-tenseless assumption (§6.1, p. 299).
 
 namespace Sharvit2014
 
+open Semantics
+
 open Tense.TenseAspectComposition (evalPast evalRel)
 open Aspect (PointPred)
 
@@ -153,8 +155,8 @@ theorem pronominalLookup_eq_some_iff_tensePronoun {T : Type*} [LinearOrder T]
     (g : Tense.TemporalAssignment T) (j k : ℕ) (t : T)
     (mode : Tense.ReferentialMode) :
     pronominalLookup g j k = some t ↔
-      (Tense.TensePronoun.mk k Tense.past mode j).fullPresupposition g ∧
-      (Tense.TensePronoun.mk k Tense.past mode j).resolve g = t := by
+      (Tense.TensePronoun.mk k ⟦Tense.past⟧ mode j).fullPresupposition g ∧
+      (Tense.TensePronoun.mk k ⟦Tense.past⟧ mode j).resolve g = t := by
   simp only [Tense.TensePronoun.fullPresupposition, Tense.TensePronoun.resolve,
     Tense.TensePronoun.evalTime, Tense.interpTense, Tense.compare_mem_past]
   exact pronominalLookup_eq_some_iff g j k t
