@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Semantics.ArgumentStructure.Linking
+import Linglib.Semantics.ArgumentStructure.ThetaRole
 import Linglib.Semantics.Degree.Boundedness
 
 /-!

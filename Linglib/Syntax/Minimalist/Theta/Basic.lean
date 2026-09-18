@@ -1,5 +1,5 @@
 import Linglib.Core.Algebra.RootedTree.Bud
-import Linglib.Semantics.ArgumentStructure.Linking
+import Linglib.Semantics.ArgumentStructure.ThetaRole
 
 /-!
 # Theta theory as a coloring algorithm
@@ -40,6 +40,8 @@ toward the maximal projection.
   derivable structure with a sole-receiver root, every position receives
   at most one role.
 -/
+
+open ArgumentStructure
 
 namespace Minimalist.Theta
 

@@ -1,7 +1,7 @@
 import Mathlib.Data.Fin.VecNotation
 import Linglib.Data.Examples.ColeHermon2008
 import Linglib.Fragments.TobaBatak.Voice
-import Linglib.Semantics.ArgumentStructure.Linking
+import Linglib.Semantics.ArgumentStructure.ThetaRole
 import Linglib.Semantics.ArgumentStructure.Valency
 import Linglib.Syntax.Minimalist.Movement.Freezing
 import Linglib.Syntax.Minimalist.Movement.Reconstruction
@@ -87,6 +87,8 @@ contrast.
 * [R. K. Larson, *On the Double Object Construction* (1988)][larson-1988]
 * [C. Collins, *A Smuggling Approach to the Passive in English* (2005)][collins-2005]
 -/
+
+open ArgumentStructure
 
 namespace ColeHermon2008
 

@@ -1,5 +1,5 @@
 import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Semantics.ArgumentStructure.Linking
+import Linglib.Semantics.ArgumentStructure.ThetaRole
 
 /-!
 # Verb arguments

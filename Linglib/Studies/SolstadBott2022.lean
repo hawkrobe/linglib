@@ -108,9 +108,8 @@ instance (p : EntailmentProfile) : Decidable (HoldsEndState p) :=
 
 /-- A slot argument is entailed to cause. -/
 theorem causation_of_carriesSlot {p : EntailmentProfile} (h : CarriesSlot p) :
-    p.causation = true := by
-  unfold CarriesSlot EntailmentProfile.toRole at h
-  split_ifs at h <;> simp_all
+    p.causation = true :=
+  EntailmentProfile.causation_of_toRole_eq_some_stimulus h
 
 /-- A slot argument holds the end state only if it is causally affected, so on a grid
 without affected arguments the two mechanisms never pick the same argument. -/
