@@ -1,7 +1,7 @@
 import Linglib.Semantics.Reference.Rigidity
 import Linglib.Semantics.Reference.Acquaintance
 import Linglib.Semantics.Reference.Logophoricity
-import Linglib.Syntax.Category.Pronoun.Logophoric
+import Linglib.Fragments.Ewe.Pronouns
 
 /-!
 # Pearson (2015): The Interpretation of the Logophoric Pronoun in Ewe
@@ -258,7 +258,8 @@ end Napoleon
 /-- *yè*'s antecedent is the attitude holder in both readings, bound by the attitude verb's
 abstractor: the carrier's required role is self, an attitude holder in the sense of
 [sells-1987]. -/
-theorem ye_antecedent_is_attitude_holder : Logophoric.requiredRole ye = LogophoricRole.self :=
+theorem ye_antecedent_is_attitude_holder :
+    Logophoric.requiredRole Ewe.Pronouns.ye = LogophoricRole.self :=
   rfl
 
 end Pearson2015

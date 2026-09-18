@@ -1,5 +1,6 @@
 import Linglib.Syntax.Category.Pronoun.Basic
 import Linglib.Syntax.Category.Pronoun.Reciprocal
+import Linglib.Syntax.Category.Pronoun.Reflexive
 
 /-!
 # Japanese pronouns and the addressee-honorific marker
@@ -7,7 +8,7 @@ import Linglib.Syntax.Category.Pronoun.Reciprocal
 Personal pronouns of Japanese — register-differentiated first-person forms
 (*watashi*, *boku*, *ore*; [ochs-1992] on the masculine stance the latter
 index), the second-person contrast *kimi* vs *anata*, and the third-person
-forms *kare*, *kanojo*, *karera* — the reciprocal *otagai*, and the
+forms *kare*, *kanojo*, *karera* — the reciprocal *otagai*, the reflexive *zibun*, and the
 addressee-honorific verbal marker *-mas-*, which is sensitive to the
 complementizer when embedded ([alok-bhalla-2026] (14)–(15), (33)).
 -/
@@ -66,9 +67,18 @@ def karera : PersonalPronoun :=
 def pronouns : List PersonalPronoun :=
   [watashi, boku, ore, watashitachi, kimi, anata, kare, kanojo, karera]
 
-/-- 互い *otagai* — the reciprocal pronoun, distinct from the reflexive *jibun*. -/
+/-- 互い *otagai* — the reciprocal pronoun, distinct from the reflexive *zibun*. -/
 def otagai : ReciprocalPronoun :=
   { form := "otagai", script := some "互い", number := some .plural }
+
+/-- 自分 *zibun* — the reflexive, which also takes an antecedent outside its clause when that
+    antecedent is a pivot, the point-of-view centre ([sells-1987]). -/
+def zibun : ReflexivePronoun :=
+  { form := "zibun", script := some "自分", requiredRole := some .pivot }
+
+/-- Any perspectival antecedent licenses *zibun* at a distance: a pivot is the weakest role. -/
+theorem zibun_licensedBy (r : Reference.LogophoricRole) : zibun.LicensedBy r :=
+  ⟨.pivot, rfl, Reference.pivot_le r⟩
 
 /-- *-mas-* — the addressee-honorific marker on the verb. -/
 def mas : AllocutiveEntry := { form := "-mas-", register := .formal, gloss := "MAS" }
