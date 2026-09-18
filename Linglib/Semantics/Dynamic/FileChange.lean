@@ -4,60 +4,58 @@ import Linglib.Semantics.Dynamic.State
 /-!
 # File change semantics
 
-This file defines [heim-1982]'s file change potentials as partial updates of
-referential information states: `FCP W V M` is `CCP.Partial` at the
-possibility type, the partiality effect of `Dynamic/Partial.lean` over the
-states of `Dynamic/State.lean`. A file is a state whose points are its
-sequences and whose cards are the established referents; a file in the
-dissertation's sense, a satisfaction set of total sequences closed under
-revaluing the cards outside its domain, is a state uniform at that domain
-(`State.uniformEquiv`). Presupposition is `Part`-definedness
-(`CCP.Partial.admits`), so the Novelty and Familiarity Conditions are
-definedness conditions, and sequencing is `PFun.comp`.
+This file defines file change potentials, the meanings of sentences in Heim's file change
+semantics. A file records what a discourse has established so far: it keeps a card for each
+individual that has been mentioned, and a sequence of individuals satisfies the file when,
+read card by card, it fits every entry. Uttering a sentence changes the file. It filters out
+the sequences the sentence rules out and opens a card for each individual the sentence
+introduces, and the meaning of the sentence is the function from files to files that its
+utterance brings about.
 
-Assertive update is consistent merge with a state, the regular action of the
-merge monoid (`ofState_mul`). [heim-1982]'s atomic rule, whose satisfaction
-clause filters the file and whose domain clause adds the atom's cards, is
-this action at a state uniform at those cards, and its filtering and
-extending regimes are `State.mul_eq_sep_of_uniformAt` read at an established
-and at a novel card. Principle (A), that an update only adds information, is
-inflation in the informativeness order (`IsInflationary`), closed under every
-clause. Negation keeps the points that do not subsist in the scope's update,
-which on a uniform stratum is [heim-1983]'s set difference
-(`neg_eq_partial_neg`): the 1983 clauses over sequence–world pairs are the
-uniform shadow of the 1982 ones.
+A file is an information state (`State`) whose points are the sequences and whose
+established cards are the referents every point defines. The dissertation's files, which
+distinguish only finitely many cards, are the states uniform at a set of cards. A file change
+potential is a partial function on states. It is undefined at a file that fails the
+sentence's felicity conditions, so presupposition is definedness: the Novelty Condition on an
+indefinite requires its card to be new to the file, and the Familiarity Condition on a
+definite requires the card to be present. Sequencing is composition of partial functions.
+
+The assertive update by an atomic sentence merges the file with the sentence's proposition
+state. At the cards the file already has the merge filters the sequences, and at new cards it
+extends each sequence by every value, which is Heim's atomic rule read point by point. Every
+update only adds information, so it is inflationary in the informativeness order, and a card,
+once established, is never lost. Negation keeps the sequences that no extension carries into
+the scope's update, which traps the referents introduced inside the scope. On a uniform file
+negation is set difference, as in the later propositional presentation of the theory.
 
 ## Main definitions
 
-- `FCP`: file change potentials, `CCP.Partial (Possibility W V (Part M))`.
-- `FCP.ofState`: assertive update by a state, with `FCP.atomW` and
-  `FCP.atomVar` its instances at a world predicate and at a card.
-- `FCP.neg`, `FCP.cond`: negation as non-subsistence, and *if* as
-  `¬(φ ∧ ¬ψ)`.
-- `FCP.indef`, `FCP.def_`: the Novelty Condition and the Extended
-  Familiarity Condition as `Part.assert` guards.
-- `FCP.IsInflationary`: Principle (A).
-- `FCP.trueIn`: the truth criterion (C).
+* `FCP`: file change potentials, partial functions on the states of possibilities.
+* `FCP.ofState`: the assertive update by a state, merging the file with it.
+* `FCP.atomVar`: the update by an atomic predicate at a card.
+* `FCP.atomW`: the update by an atomic predicate on the world alone.
+* `FCP.neg`, `FCP.cond`: negation as non-subsistence, and the conditional as `¬(φ ∧ ¬ψ)`.
+* `FCP.indef`: the indefinite, guarded by the Novelty Condition.
+* `FCP.def_`: the definite, guarded by the Familiarity Condition and its descriptive content.
+* `FCP.IsInflationary`: the updates that only add information.
+* `FCP.trueIn`: truth of a sentence with respect to a file, as consistency of the updated file.
 
 ## Main results
 
-- `ofState_one`, `ofState_mul`: assertive update is the regular action of
-  the merge monoid.
-- `atomVar_eq`, `atomVar_eq_of_familiar`, `atomVar_eq_of_novel`, `atomW_eq`:
-  the card atom extends the file along its card and filters; at an
-  established card it filters, at a novel card it is random assignment
-  followed by filtering.
-- `admits_indef`, `admits_def_`: the felicity conditions are definedness.
-- `IsInflationary.seq`, `isInflationary_neg`, `IsInflationary.indef`,
-  `isInflationary_def_`: Principle (A) is closed under the clauses, and
-  `IsInflationary.familiar` is its consequence that a card, once
-  established, stays established.
-- `neg_eq_partial_neg`: on a uniform stratum, negation is set difference.
+* `FCP.ofState_mul`: updating by two states in sequence is updating by their merge.
+* `FCP.atomVar_eq`: the atom extends the file along its card and filters by its predicate.
+* `FCP.atomVar_eq_of_familiar`, `FCP.atomVar_eq_of_novel`: at an established card the atom
+  filters, and at a new card it is random assignment followed by filtering.
+* `FCP.admits_indef`, `FCP.admits_def_`: the felicity conditions are definedness.
+* `FCP.IsInflationary.seq`, `FCP.isInflationary_neg`, `FCP.IsInflationary.indef`: inflation
+  is closed under the clauses.
+* `FCP.IsInflationary.familiar`: an established card stays established.
+* `FCP.neg_eq_partial_neg`: on a uniform file, negation is set difference.
 
 ## References
 
-- [heim-1982], [heim-1983], [heim-1991]
-- [kamp-vangenabith-reyle-2011]
+* [heim-1982], [heim-1983], [heim-1991]
+* [kamp-vangenabith-reyle-2011]
 -/
 
 namespace DynamicSemantics
@@ -101,10 +99,9 @@ stratum. -/
 def atomW (pred : W → Prop) : FCP W V M :=
   ofState {q ∈ (State.stratum ∅ : State W V M) | pred q.world}
 
-/-- An atomic predicate at card `x`: merge with its proposition at the
+/-- An atomic predicate at card `x`: merge with its proposition state at the
 stratum `{x}`. -/
-def atomVar (pred : M → Prop) (x : V) : FCP W V M :=
-  ofState {q ∈ (State.stratum {x} : State W V M) | ∃ m ∈ q.assignment x, pred m}
+def atomVar (pred : M → Prop) (x : V) : FCP W V M := ofState (State.atomAt x fun _ ↦ pred)
 
 /-- The world atom filters the file by its predicate. -/
 theorem atomW_eq (pred : W → Prop) : atomW pred F = Part.some {p ∈ F | pred p.world} := by
@@ -121,15 +118,7 @@ atomic rule, per point. -/
 theorem atomVar_eq (pred : M → Prop) (x : V) :
     atomVar pred x F =
       Part.some {p ∈ F * State.stratum {x} | ∃ m ∈ p.assignment x, pred m} := by
-  rw [atomVar, ofState_apply, State.mul_eq_sep_of_uniformAt fun _ h ↦ h.1]
-  congr 1
-  ext r
-  refine and_congr_right fun hr ↦ ?_
-  have hx : x ∈ r.domain := State.familiar_mul_stratum (Set.mem_singleton x) r hr
-  show ((r.restrict {x}).domain = {x} ∧ ∃ m ∈ (r.restrict {x}).assignment x, pred m) ↔ _
-  rw [Possibility.restrict_assignment_of_mem (Set.mem_singleton x), Possibility.domain_restrict,
-    Set.inter_eq_left.mpr (Set.singleton_subset_iff.mpr hx)]
-  exact and_iff_right rfl
+  rw [atomVar, ofState_apply, State.mul_atomAt]
 
 /-- At an established card the atom filters. -/
 theorem atomVar_eq_of_familiar (pred : M → Prop) (hfam : State.Familiar F x) :

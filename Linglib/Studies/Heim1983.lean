@@ -1,4 +1,4 @@
-import Linglib.Semantics.Dynamic.Partial
+import Linglib.Semantics.Dynamic.FileChange
 import Linglib.Studies.Karttunen1973
 import Linglib.Data.Examples.Heim1983
 
@@ -28,9 +28,18 @@ same potentials over pairs of a sequence `ℕ → M` and a world, with `atom`, `
 `every` stated here as (19)–(21) and entailment by a context read as inclusion. The paper
 gives no potential for *no* (24), so that sentence is a row only.
 
+A file whose membership depends only on the cards in `X` is, restricted to those cards, a
+state of the substrate uniform at `X` (`File.toState`), and on such files the paper's
+clauses are the file change potentials of [heim-1982] read on that stratum: the atom is the
+merge with the atom's proposition state (`toState_atom`), negation by set difference is
+non-subsistence (`neg_toState`), and (21) is rule (III) of the dissertation
+(`toState_everyClause`). The novelty stipulation (22) is the file's independence of the
+card (`novelIn_iff_determinedBy`).
+
 ## References
 
 * [heim-1983]
+* [heim-1982]
 * [karttunen-1973]
 * [karttunen-1974]
 * [karttunen-peters-1979]
@@ -59,7 +68,7 @@ def TrueWrt (φ : CCP.Partial W) (c : Set W) (w : W) : Prop := ∃ h : φ.admits
     true in `w` and admits it, an atomic sentence is true in `w` iff its assertion holds. -/
 theorem trueWrt_ofPartialProp {p : PartialProp W} {c : Set W} {w : W} (hw : w ∈ c)
     (h : (ofPartialProp p).admits c) : TrueWrt (ofPartialProp p) c w ↔ p.assertion w :=
-  ⟨λ ⟨_, hm⟩ => hm.2, λ hq => ⟨h, hw, hq⟩⟩
+  ⟨fun ⟨_, hm⟩ => hm.2, fun hq => ⟨h, hw, hq⟩⟩
 
 variable (king son bald : W → Prop)
 
@@ -67,7 +76,7 @@ variable (king son bald : W → Prop)
 def kingHasSon : PartialProp W := ⟨king, son⟩
 
 /-- (2) "The king's son is bald": presupposes a king with a son. -/
-def kingsSonBald : PartialProp W := ⟨λ w => king w ∧ son w, bald⟩
+def kingsSonBald : PartialProp W := ⟨fun w => king w ∧ son w, bald⟩
 
 /-- (3) "If the king has a son, the king's son is bald", by (14). -/
 def ifKingHasSon : CCP.Partial W :=
@@ -83,11 +92,11 @@ theorem king_admits_iff (c : Set W) :
   · rintro ⟨h, -⟩
     exact h
   · intro h
-    exact ⟨h, λ w hw => ⟨h w hw.1, hw.2⟩⟩
+    exact ⟨h, fun w hw => ⟨h w hw.1, hw.2⟩⟩
 
 /-- (3) presupposes that there is a king. -/
 theorem king_presupposes : Presupposes (ifKingHasSon king son bald) king :=
-  λ _ h => (king_admits_iff _).1 h
+  fun _ h => (king_admits_iff _).1 h
 
 /-- (3) does not presuppose that the king has a son, as soon as some world has a sonless
     king. -/
@@ -95,7 +104,7 @@ theorem not_presupposes_son (h : ∃ w, king w ∧ ¬ son w) :
     ¬ Presupposes (ifKingHasSon king son bald) son := by
   obtain ⟨w, hk, hs⟩ := h
   intro hp
-  exact hs (hp {w} ((king_admits_iff _).2 λ _ hv => hv ▸ hk) w rfl)
+  exact hs (hp {w} ((king_admits_iff _).2 fun _ hv => hv ▸ hk) w rfl)
 
 /-! ### Accommodation (§2.3) -/
 
@@ -103,11 +112,11 @@ variable (φ : CCP.Partial W) (p : Set W)
 
 /-- (A) The global option: to evaluate "Not S" in a context that does not admit `S`, amend the
     context to `c ∩ p` and compute `(c ∩ p) + Not S`. -/
-def globalNeg : CCP.Partial W := λ c => neg φ (c ∩ p)
+def globalNeg : CCP.Partial W := fun c => neg φ (c ∩ p)
 
 /-- (B) The local option: amend the context to `c ∩ p` only to compute `(c ∩ p) + S`, and
     subtract that from `c` itself. -/
-def localNeg : CCP.Partial W := λ c => (φ (c ∩ p)).map (c \ ·)
+def localNeg : CCP.Partial W := fun c => (φ (c ∩ p)).map (c \ ·)
 
 variable {φ p}
 
@@ -137,7 +146,7 @@ theorem localNeg_entails {came : W → Prop} {c c' : Set W}
 /-- The local option is what a continuation denying the presupposition needs: the global
     result cannot contain a world without the presupposition, the local one can. -/
 theorem globalNeg_disjoint {c c' : Set W} (h : c' ∈ globalNeg φ p c) : c' ∩ pᶜ = ∅ :=
-  Set.eq_empty_of_forall_notMem λ _ ⟨hw, hn⟩ => hn (globalNeg_entails h hw)
+  Set.eq_empty_of_forall_notMem fun _ ⟨hw, hn⟩ => hn (globalNeg_entails h hw)
 
 end Propositional
 
@@ -158,18 +167,22 @@ def File.TrueIn (c : File M W) (w : W) : Prop := ∃ g, (g, w) ∈ c
 
 /-- (19): the update by an open sentence `P xᵢ` without presupposition. -/
 def atom (P : M → W → Prop) (i : ℕ) : CCP.Partial ((ℕ → M) × W) :=
-  ofTotal λ c => {gw ∈ c | P (gw.1 i) gw.2}
+  ofTotal fun c => {gw ∈ c | P (gw.1 i) gw.2}
 
 /-- (20): an open sentence `P xᵢ` presupposing `pre xᵢ` is admitted by a file iff every pair
     in it satisfies the presupposition at the `i`-th member. -/
 def atomP (pre P : M → W → Prop) (i : ℕ) : CCP.Partial ((ℕ → M) × W) :=
-  λ c => ⟨∀ gw ∈ c, pre (gw.1 i) gw.2, λ _ => {gw ∈ c | P (gw.1 i) gw.2}⟩
+  fun c => ⟨∀ gw ∈ c, pre (gw.1 i) gw.2, fun _ => {gw ∈ c | P (gw.1 i) gw.2}⟩
+
+/-- The clause of (21): the pairs of `c` each of whose `i`-variants in `cA` survives in
+    `cAB`. -/
+def File.everyClause (i : ℕ) (c cA cAB : File M W) : File M W :=
+  {gw ∈ c | ∀ a, (Function.update gw.1 i a, gw.2) ∈ cA → (Function.update gw.1 i a, gw.2) ∈ cAB}
 
 /-- (21): `c + Every xᵢ, A, B` keeps the pairs of `c` each of whose `i`-variants in `c + A`
     survives in `c + A + B`; defined iff `c + A` and `c + A + B` are. -/
 def every (i : ℕ) (A B : CCP.Partial ((ℕ → M) × W)) : CCP.Partial ((ℕ → M) × W) :=
-  λ c => (A c).bind λ cA => (B cA).map λ cAB =>
-    {gw ∈ c | ∀ a, (Function.update gw.1 i a, gw.2) ∈ cA → (Function.update gw.1 i a, gw.2) ∈ cAB}
+  fun c ↦ (A c).bind fun cA ↦ (B cA).map fun cAB ↦ File.everyClause i c cA cAB
 
 /-- (22): the file does not yet distinguish the `i`-th member of a sequence, the lexical
     novelty requirement of *every* and of an indefinite indexed `i`. -/
@@ -193,7 +206,7 @@ theorem every_admits_iff (i : ℕ) (A B : CCP.Partial ((ℕ → M) × W)) (c : F
 theorem every_atom_admits_iff (i : ℕ) (A pre B : M → W → Prop) (c : File M W) :
     (every i (atom A i) (atomP pre B i)).admits c ↔
       ∀ gw ∈ c, A (gw.1 i) gw.2 → pre (gw.1 i) gw.2 :=
-  ⟨λ ⟨_, h⟩ gw hgw hA => h gw ⟨hgw, hA⟩, λ h => ⟨trivial, λ gw hgw => h gw hgw.1 hgw.2⟩⟩
+  ⟨fun ⟨_, h⟩ gw hgw hA => h gw ⟨hgw, hA⟩, fun h => ⟨trivial, fun gw hgw => h gw hgw.1 hgw.2⟩⟩
 
 /-- **(7) presupposes that every nation has a king.** Under (22) the condition of
     `every_atom_admits_iff` holds iff, in every world of the file's proposition, every
@@ -223,7 +236,182 @@ theorem every_restrictor_presupposes (i : ℕ) (hasKing serves rewarded : M → 
   · rintro ⟨h, -⟩ w ⟨g, hg⟩ a
     simpa using h (Function.update g i a, w) ((hc g w a).1 hg)
   · rintro h
-    exact ⟨λ gw hgw => h gw.2 ⟨gw.1, hgw⟩ _, trivial⟩
+    exact ⟨fun gw hgw => h gw.2 ⟨gw.1, hgw⟩ _, trivial⟩
+
+/-! ### Files as uniform states
+
+A file whose membership depends only on the cards in `X` is, restricted to `X`, an
+information state uniform at `X`, and on such files the clauses (19), (15) and (21) are the
+file change potentials of [heim-1982] on that stratum. -/
+
+/-- The point of a sequence–world pair at the cards `X`: the sequence restricted to `X`. -/
+def File.pointAt (X : Set ℕ) (gw : (ℕ → M) × W) : Possibility W ℕ (Part M) :=
+  ((Possibility.domainEquiv X).symm (gw.2, fun i ↦ gw.1 i.1)).1
+
+variable {X Y : Set ℕ} {g g' : ℕ → M} {w w' : W} {i : ℕ} {c c' cA cAB : File M W}
+
+@[simp] theorem File.pointAt_world (gw : (ℕ → M) × W) : (File.pointAt X gw).world = gw.2 := rfl
+
+@[simp] theorem File.domain_pointAt (gw : (ℕ → M) × W) : (File.pointAt X gw).domain = X :=
+  ((Possibility.domainEquiv X).symm _).2
+
+theorem File.pointAt_assignment (gw : (ℕ → M) × W) (j : ℕ) :
+    (File.pointAt X gw).assignment j = ⟨j ∈ X, fun _ ↦ gw.1 j⟩ := rfl
+
+theorem File.mem_assignment_pointAt {m : M} :
+    m ∈ (File.pointAt X (g, w)).assignment i ↔ i ∈ X ∧ g i = m := by
+  rw [File.pointAt_assignment, Part.mem_mk_iff, exists_prop]
+
+/-- Points descend as their cards and values extend. -/
+theorem File.pointAt_le_pointAt :
+    File.pointAt X (g, w) ≤ File.pointAt Y (g', w') ↔ X ⊆ Y ∧ w = w' ∧ Set.EqOn g g' X := by
+  constructor
+  · rintro ⟨hw, h⟩
+    refine ⟨fun j hj ↦ ?_, hw, fun j hj ↦ ?_⟩ <;>
+      have := File.mem_assignment_pointAt.mp (h j _ (File.mem_assignment_pointAt.mpr ⟨hj, rfl⟩))
+    exacts [this.1, this.2.symm]
+  · rintro ⟨hXY, rfl, heq⟩
+    refine ⟨rfl, fun j m hm ↦ ?_⟩
+    obtain ⟨hj, rfl⟩ := File.mem_assignment_pointAt.mp hm
+    exact File.mem_assignment_pointAt.mpr ⟨hXY hj, (heq hj).symm⟩
+
+theorem File.pointAt_eq_pointAt :
+    File.pointAt X (g, w) = File.pointAt X (g', w') ↔ w = w' ∧ Set.EqOn g g' X :=
+  ⟨fun h ↦ ((File.pointAt_le_pointAt.mp h.le).2),
+   fun ⟨hw, heq⟩ ↦ le_antisymm (File.pointAt_le_pointAt.mpr ⟨le_rfl, hw, heq⟩)
+    (File.pointAt_le_pointAt.mpr ⟨le_rfl, hw.symm, heq.symm⟩)⟩
+
+/-- The state of a file at the cards `X`. -/
+def File.toState (X : Set ℕ) (c : File M W) : State W ℕ M := File.pointAt X '' c
+
+theorem File.mem_toState {p : Possibility W ℕ (Part M)} :
+    p ∈ c.toState X ↔ ∃ gw ∈ c, File.pointAt X gw = p := Iff.rfl
+
+theorem File.uniformAt_toState : State.UniformAt X (c.toState X) := by
+  rintro _ ⟨gw, -, rfl⟩
+  exact File.domain_pointAt gw
+
+/-- A file is determined by the cards `X` when its membership depends only on them. -/
+def File.DeterminedBy (X : Set ℕ) (c : File M W) : Prop :=
+  ∀ ⦃g g' : ℕ → M⦄ ⦃w : W⦄, Set.EqOn g g' X → (g, w) ∈ c → (g', w) ∈ c
+
+theorem File.DeterminedBy.mono (h : X ⊆ Y) (hc : c.DeterminedBy X) : c.DeterminedBy Y :=
+  fun _ _ _ heq ↦ hc (heq.mono h)
+
+/-- (22) is independence of the card: the file does not distinguish `i` iff it is determined
+    by the other cards. -/
+theorem File.novelIn_iff_determinedBy : c.NovelIn i ↔ c.DeterminedBy {i}ᶜ := by
+  constructor
+  · intro h g g' w heq hg
+    have : g' = Function.update g i (g' i) := funext fun j ↦ by
+      by_cases hj : j = i
+      · subst hj; simp
+      · rw [Function.update_of_ne hj]; exact (heq hj).symm
+    exact this ▸ (h g w (g' i)).mp hg
+  · intro h g w a
+    have heq : Set.EqOn g (Function.update g i a) {i}ᶜ := fun j hj ↦
+      (Function.update_of_ne hj a g).symm
+    exact ⟨h heq, h heq.symm⟩
+
+theorem File.pointAt_mem_toState (hc : c.DeterminedBy X) (gw : (ℕ → M) × W) :
+    File.pointAt X gw ∈ c.toState X ↔ gw ∈ c := by
+  obtain ⟨g, w⟩ := gw
+  refine ⟨fun ⟨⟨g', w'⟩, h, heq⟩ ↦ ?_, fun h ↦ ⟨_, h, rfl⟩⟩
+  obtain ⟨rfl, heq'⟩ := File.pointAt_eq_pointAt.mp heq
+  exact hc heq' h
+
+/-- Extension along cards is the state of the file at more cards: the file, being determined
+    by `X`, already ranges over every value at the new cards. -/
+theorem File.toState_mul_stratum (hc : c.DeterminedBy X) :
+    c.toState X * State.stratum Y = c.toState (X ∪ Y) := by
+  ext r
+  rw [State.mem_mul_stratum]
+  constructor
+  · rintro ⟨_, ⟨⟨g, w⟩, hg, rfl⟩, hpr, hdom⟩
+    rw [File.domain_pointAt] at hdom
+    classical
+    let g' : ℕ → M := fun j ↦ if h : (r.assignment j).Dom then (r.assignment j).get h else g j
+    have hval : ∀ j ∈ X, g j ∈ r.assignment j := fun j hj ↦
+      hpr.2 j _ (File.mem_assignment_pointAt.mpr ⟨hj, rfl⟩)
+    refine ⟨(g', w), hc (fun j hj ↦ ?_) hg, ?_⟩
+    · have hd := Part.dom_iff_mem.mpr ⟨_, hval j hj⟩
+      simp only [g', hd, dite_true]
+      exact (Part.get_eq_of_mem (hval j hj) hd).symm
+    · refine Possibility.ext hpr.1 (funext fun j ↦ Part.ext' ?_ fun _ h₂ ↦ ?_)
+      · show j ∈ X ∪ Y ↔ (r.assignment j).Dom
+        rw [← hdom]; exact Iff.rfl
+      · show g' j = (r.assignment j).get h₂
+        simp only [g', h₂, dite_true]
+  · rintro ⟨⟨g, w⟩, hg, rfl⟩
+    exact ⟨File.pointAt X (g, w), ⟨_, hg, rfl⟩,
+      File.pointAt_le_pointAt.mpr ⟨Set.subset_union_left, rfl, fun _ _ ↦ rfl⟩,
+      by rw [File.domain_pointAt, File.domain_pointAt]⟩
+
+theorem File.toState_sep (hi : i ∈ X) (P : M → W → Prop) :
+    File.toState X {gw ∈ c | P (gw.1 i) gw.2} =
+      {r ∈ c.toState X | ∃ m ∈ r.assignment i, P m r.world} := by
+  ext r
+  constructor
+  · rintro ⟨⟨g, w⟩, ⟨hg, hP⟩, rfl⟩
+    exact ⟨⟨_, hg, rfl⟩, g i, File.mem_assignment_pointAt.mpr ⟨hi, rfl⟩, hP⟩
+  · rintro ⟨⟨⟨g, w⟩, hg, rfl⟩, m, hm, hP⟩
+    obtain ⟨-, rfl⟩ := File.mem_assignment_pointAt.mp hm
+    exact ⟨(g, w), ⟨hg, hP⟩, rfl⟩
+
+/-- **(19) is the atomic rule of [heim-1982]**: the update of a file by an open sentence,
+    read at the cards of the file together with the sentence's, is the merge of the file's
+    state with the atom's proposition state. -/
+theorem File.toState_atom (hc : c.DeterminedBy X) (P : M → W → Prop) :
+    File.toState (insert i X) {gw ∈ c | P (gw.1 i) gw.2} =
+      c.toState X * State.atomAt i fun w m ↦ P m w := by
+  rw [State.mul_atomAt, File.toState_mul_stratum hc, Set.union_singleton,
+    File.toState_sep (Set.mem_insert i X)]
+
+theorem File.toState_sdiff (hc' : c'.DeterminedBy X) :
+    (c \ c').toState X = c.toState X \ c'.toState X := by
+  ext r
+  constructor
+  · rintro ⟨gw, ⟨h₁, h₂⟩, rfl⟩
+    exact ⟨⟨gw, h₁, rfl⟩, fun h ↦ h₂ ((File.pointAt_mem_toState hc' gw).mp h)⟩
+  · rintro ⟨⟨gw, h₁, rfl⟩, h₂⟩
+    exact ⟨gw, ⟨h₁, fun h ↦ h₂ ((File.pointAt_mem_toState hc' gw).mpr h)⟩, rfl⟩
+
+/-- **(15) is non-subsistence negation**: on the stratum, a potential that sends the file's
+    state to a determined file's state negates, in the sense of [heim-1982], to the set
+    difference of the files. -/
+theorem File.neg_toState {φ : FCP W ℕ M} (hφ : φ (c.toState X) = Part.some (c'.toState X))
+    (hc' : c'.DeterminedBy X) :
+    FCP.neg φ (c.toState X) = Part.some ((c \ c').toState X) := by
+  rw [FCP.neg, hφ, Part.map_some, File.toState_sdiff hc']
+  refine congrArg Part.some (Set.ext fun p ↦ and_congr_right fun hp ↦ ?_)
+  exact not_congr (File.uniformAt_toState (c := c').mem_lowerClosure (File.uniformAt_toState p hp))
+
+/-- **(21) is rule (III) of [heim-1982]**: on files determined by their cards, the clause
+    keeping the pairs each of whose `i`-variants surviving `A` survives `B` is the clause
+    keeping the points each of whose extensions in `F + A` extends into `(F + A) + B`. -/
+theorem File.toState_everyClause (hi : i ∉ X) (hA : cA.DeterminedBy (insert i X))
+    (hB : cAB.DeterminedBy (insert i X)) :
+    (File.everyClause i c cA cAB).toState X =
+      {p ∈ c.toState X | ∀ q ∈ cA.toState (insert i X), p ≤ q →
+        ∃ r ∈ cAB.toState (insert i X), q ≤ r} := by
+  ext p
+  constructor
+  · rintro ⟨⟨g, w⟩, ⟨hg, hall⟩, rfl⟩
+    refine ⟨⟨_, hg, rfl⟩, ?_⟩
+    rintro q ⟨⟨g', w'⟩, hq, rfl⟩ hle
+    obtain ⟨-, rfl, heq⟩ := File.pointAt_le_pointAt.mp hle
+    have heq' : Set.EqOn (Function.update g i (g' i)) g' (insert i X) := fun j hj ↦ by
+      rcases hj with rfl | hj
+      · simp
+      · rw [Function.update_of_ne fun h : j = i ↦ hi (h ▸ hj)]; exact heq hj
+    exact ⟨_, ⟨_, hB heq' (hall _ (hA heq'.symm hq)), rfl⟩, le_rfl⟩
+  · rintro ⟨⟨⟨g, w⟩, hg, rfl⟩, hall⟩
+    refine ⟨(g, w), ⟨hg, fun a ha ↦ ?_⟩, rfl⟩
+    obtain ⟨_, ⟨⟨g'', w''⟩, hr, rfl⟩, hqr⟩ := hall _ ⟨_, ha, rfl⟩
+      (File.pointAt_le_pointAt.mpr ⟨Set.subset_insert i X, rfl, fun j hj ↦
+        (Function.update_of_ne (fun h : j = i ↦ hi (h ▸ hj)) a g).symm⟩)
+    obtain ⟨-, rfl, heq⟩ := File.pointAt_le_pointAt.mp hqr
+    exact hB heq.symm hr
 
 /-! ### Indefinites (§3.3) -/
 
@@ -244,37 +432,37 @@ theorem fatManBicycle_admits_iff (i : ℕ) (fatMan hasBicycle pushing : M → W 
     have := h (Function.update g i a, w) ⟨(hc g w a).1 hg, by simpa using hf⟩
     simpa using this
   · rintro h
-    exact ⟨trivial, λ gw hgw => h gw.2 ⟨gw.1, hgw.1⟩ _ hgw.2⟩
+    exact ⟨trivial, fun gw hgw => h gw.2 ⟨gw.1, hgw.1⟩ _ hgw.2⟩
 
 /-- Accommodation in the course of the update: `c + "xᵢ is a fat man"` is amended with
     "xᵢ has a bicycle" before the second sentence is evaluated. -/
 def fatManBicycleAcc (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop) :
     CCP.Partial ((ℕ → M) × W) :=
-  λ c => atomP hasBicycle pushing i {gw ∈ c | fatMan (gw.1 i) gw.2 ∧ hasBicycle (gw.1 i) gw.2}
+  fun c => atomP hasBicycle pushing i {gw ∈ c | fatMan (gw.1 i) gw.2 ∧ hasBicycle (gw.1 i) gw.2}
 
 /-- The accommodated update is always defined, and its result entails that `xᵢ` was a fat
     man, had a bicycle, and was pushing it. -/
 theorem fatManBicycleAcc_admits (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop)
     (c : File M W) : (fatManBicycleAcc i fatMan hasBicycle pushing).admits c :=
-  λ _ hgw => hgw.2.2
+  fun _ hgw => hgw.2.2
 
 theorem fatManBicycleAcc_entails (i : ℕ) (fatMan hasBicycle pushing : M → W → Prop)
     {c c' : File M W} (h : c' ∈ fatManBicycleAcc i fatMan hasBicycle pushing c) :
     ∀ gw ∈ c', fatMan (gw.1 i) gw.2 ∧ hasBicycle (gw.1 i) gw.2 ∧ pushing (gw.1 i) gw.2 := by
   rw [fatManBicycleAcc, atomP, Part.mem_mk_iff] at h
   obtain ⟨-, rfl⟩ := h
-  exact λ gw hgw => ⟨hgw.1.2.1, hgw.1.2.2, hgw.2⟩
+  exact fun gw hgw => ⟨hgw.1.2.1, hgw.1.2.2, hgw.2⟩
 
 /-- The accommodated result entails nothing about fat men in general: in a two-individual
     model where only one fat man has a bicycle, the update is defined and non-empty. -/
 theorem fatManBicycleAcc_not_universal :
-    ∃ (c' : File Bool Unit), c' ∈ fatManBicycleAcc 0 (λ _ _ => True) (λ a _ => a = true)
-        (λ _ _ => True) Set.univ ∧ c'.TrueIn () ∧
+    ∃ (c' : File Bool Unit), c' ∈ fatManBicycleAcc 0 (fun _ _ => True) (fun a _ => a = true)
+        (fun _ _ => True) Set.univ ∧ c'.TrueIn () ∧
       ¬ ∀ w ∈ c'.prop, ∀ a : Bool, a = true := by
-  refine ⟨_, Part.get_mem (fatManBicycleAcc_admits _ _ _ _ _), ⟨λ _ => true, ?_⟩, ?_⟩
+  refine ⟨_, Part.get_mem (fatManBicycleAcc_admits _ _ _ _ _), ⟨fun _ => true, ?_⟩, ?_⟩
   · exact ⟨⟨Set.mem_univ _, trivial, rfl⟩, trivial⟩
   · intro h
-    exact Bool.false_ne_true (h () ⟨λ _ => true, ⟨Set.mem_univ _, trivial, rfl⟩, trivial⟩ false)
+    exact Bool.false_ne_true (h () ⟨fun _ => true, ⟨Set.mem_univ _, trivial, rfl⟩, trivial⟩ false)
 
 end Files
 
@@ -288,10 +476,10 @@ theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : PartialProp W) :
   rw [admits_seq_ofPartialProp]
   constructor
   · intro h w hw
-    exact ⟨(h w hw).1, λ hne => absurd (λ v hv ha => (h v hv).2 ha) hne⟩
+    exact ⟨(h w hw).1, fun hne => absurd (fun v hv ha => (h v hv).2 ha) hne⟩
   · intro h w hw
-    refine ⟨(h w hw).1, λ ha => ?_⟩
+    refine ⟨(h w hw).1, fun ha => ?_⟩
     by_contra hq
-    exact hq ((h w hw).2 λ he => hq (he w hw ha))
+    exact hq ((h w hw).2 fun he => hq (he w hw ha))
 
 end Heim1983
