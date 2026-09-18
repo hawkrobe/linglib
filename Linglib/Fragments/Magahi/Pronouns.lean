@@ -10,11 +10,13 @@ second person (*tõ* / *tũ* / *apne*) and a two-level one in the third
 [alok-bhalla-2026]'s (2)–(6): composites of the subject's and the
 addressee's honorific level (`allocutive`). Allocutive agreement is sourced
 from the finiteness phrase and occurs in every finite embedded clause.
+
+## References
+
+* [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
 -/
 
 namespace Magahi.Pronouns
-
-open Pronoun
 
 /-- *hum* — 1sg. -/
 def hum : PersonalPronoun := { form := "hum", person := some .first, number := some .singular }
@@ -75,20 +77,8 @@ def unkaa : PersonalPronoun :=
     register := .neutral }
 
 /-- The pronoun inventory. -/
-def pronouns : List PersonalPronoun :=
-  [hum, humSab, toN, tuN, apne, toraa, tor, apneKe, iProx, uN, uNSab, okraa, okar, unkaa]
-
-/-- *-au* — nonhonorific subject, nonhonorific addressee. -/
-def suffNH : AllocutiveMarker := { form := "-au", register := .informal }
-
-/-- *-o* — nonhonorific subject, honorific addressee. -/
-def suffH : AllocutiveMarker := { form := "-o", register := .neutral }
-
-/-- *-ain* — nonhonorific subject, high-honorific addressee. -/
-def suffHH : AllocutiveMarker := { form := "-ain", register := .formal }
-
-/-- The allocutive markers of a nonhonorific subject. -/
-def allocutiveMarkers : List AllocutiveMarker := [suffNH, suffH, suffHH]
+def pronouns : Finset PersonalPronoun :=
+  {hum, humSab, toN, tuN, apne, toraa, tor, apneKe, iProx, uN, uNSab, okraa, okar, unkaa}
 
 /-- The fused subject/addressee agreement suffix by the subject's and the
     addressee's honorific level; `none` where no form is attested. -/
@@ -99,5 +89,11 @@ def allocutive : SocialMeaning.Register.Level → SocialMeaning.Register.Level �
   | .neutral, .informal => some "-thu(n)"
   | .formal, .formal => some "-thi(n)"
   | _, _ => none
+
+/-- The allocutive markers of a nonhonorific subject, *-au*, *-o* and *-ain*: one for each
+    honorific level of the addressee, read off `allocutive`. -/
+def allocutiveMarkers : List AllocutiveMarker :=
+  [.informal, .neutral, .formal].filterMap fun a ↦
+    (allocutive .informal a).map fun form ↦ { form, register := a }
 
 end Magahi.Pronouns

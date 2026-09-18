@@ -7,11 +7,13 @@ Personal pronouns of Hindi: a three-level honorific contrast in the second
 person (*tuu* / *tum* / *aap*) and demonstrative-based third-person forms
 (*vah* / *ve*). Hindi has no allocutive agreement; an honorific subject
 co-opts plural verb agreement ([alok-bhalla-2026] (48)).
+
+## References
+
+* [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
 -/
 
 namespace Hindi.Pronouns
-
-open Pronoun
 
 /-- *maiṃ* — 1sg. -/
 def maiN : PersonalPronoun := { form := "maiṃ", person := some .first, number := some .singular }
@@ -38,6 +40,6 @@ def vah : PersonalPronoun := { form := "vah", person := some .third, number := s
 def ve : PersonalPronoun := { form := "ve", person := some .third, number := some .plural }
 
 /-- The pronoun inventory. -/
-def pronouns : List PersonalPronoun := [maiN, ham, tuu, tum, aap, vah, ve]
+def pronouns : Finset PersonalPronoun := {maiN, ham, tuu, tum, aap, vah, ve}
 
 end Hindi.Pronouns

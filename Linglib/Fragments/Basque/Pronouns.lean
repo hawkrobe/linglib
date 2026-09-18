@@ -9,11 +9,13 @@ Personal pronouns of Basque, with the T/V contrast *hi* (familiar) vs *zu*
 suffixes of [alok-bhalla-2026]'s (1): *-k* and *-n* for a nonhonorific male
 and female addressee, *-zü* for an honorific addressee. The same suffixes
 serve as ordinary agreement with a second-person subject.
+
+## References
+
+* [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
 -/
 
 namespace Basque.Pronouns
-
-open Pronoun
 
 /-- *ni* — 1sg. -/
 def ni : PersonalPronoun := { form := "ni", person := some .first, number := some .singular }
@@ -42,7 +44,7 @@ def haiek : PersonalPronoun :=
   { form := "haiek", person := some .third, number := some .plural }
 
 /-- The pronoun inventory. -/
-def pronouns : List PersonalPronoun := [ni, gu, hi, zu, zuek, hura, haiek]
+def pronouns : Finset PersonalPronoun := {ni, gu, hi, zu, zuek, hura, haiek}
 
 /-- *-k* — nonhonorific male addressee. -/
 def allocM : AllocutiveMarker := { form := "-k", register := .informal, gender := some .masculine }

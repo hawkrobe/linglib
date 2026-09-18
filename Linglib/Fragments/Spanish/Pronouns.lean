@@ -24,11 +24,14 @@ USTED's forms are identical to the 3sg feminine series in some cases
 (like LEI), though it also has the dedicated citation form *usted*.
 Unlike Italian LEI, USTED can also be used in *laísta* varieties where
 3rd person clitics for animates are *le* (syncretic with dative).
+
+## References
+
+* [L. J. Adamson and S. Zompì, *Polite Pronouns and the PCC* (2025)][adamson-zompi-2025]
+* [M. Rezac, *Phi-Features and the Modular Architecture of Language* (2011)][rezac-2011]
 -/
 
 namespace Spanish.Pronouns
-
-open Pronoun
 
 /-- *yo* — 1sg. -/
 def yo : PersonalPronoun :=
@@ -77,7 +80,7 @@ def ellas : PersonalPronoun :=
   { form := "ellas", person := some .third, number := some .plural, gender := some .feminine }
 
 /-- The strong-pronoun inventory. -/
-def pronouns : List PersonalPronoun :=
-  [yo, tu, usted, el, ella, nosotros, vosotros, ustedes, ellos, ellas]
+def pronouns : Finset PersonalPronoun :=
+  {yo, tu, usted, el, ella, nosotros, vosotros, ustedes, ellos, ellas}
 
 end Spanish.Pronouns

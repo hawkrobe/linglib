@@ -83,7 +83,7 @@ theorem addressee_register :
 
 /-- *Sie* is the only polite addressee pronoun. -/
 theorem addressee_formal :
-    pronouns.filter (λ p => p.referentialPerson = some .second ∧ p.register = .formal) =
+    pronouns.filter (fun p ↦ p.referentialPerson = some .second ∧ p.register = .formal) =
       {sie_formal} := by
   decide
 

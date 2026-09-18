@@ -62,7 +62,7 @@ def pronouns : List PersonalPronoun :=
     one of these, never silent; merged with the irrealis high tone the 1SG
     proclitic surfaces as the portmanteau *má* (exx 88, 100). -/
 def subjectProclitic? (p : Person) (n : Number) : Option PersonalPronoun :=
-  pronouns.find? λ q ↦ q.person == some p && q.number == some n && q.case_ != some .acc
+  pronouns.find? fun q ↦ q.person == some p && q.number == some n && q.case_ != some .acc
 
 /-! ### Complementizers -/
 

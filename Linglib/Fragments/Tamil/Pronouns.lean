@@ -11,11 +11,13 @@ the allocutive marker *-ŋgæ*, which is the nominal plural suffix
 ([alok-bhalla-2026] (7), Table 1; McFadden 2020). In root clauses the marker
 can appear both below and above the question particle; when embedded, only
 below the complementizer.
+
+## References
+
+* [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
 -/
 
 namespace Tamil.Pronouns
-
-open Pronoun
 
 /-- *naan* — 1sg. -/
 def naan : PersonalPronoun := { form := "naan", person := some .first, number := some .singular }
@@ -53,8 +55,8 @@ def avarkaL : PersonalPronoun :=
   { form := "avarkaL", person := some .third, number := some .plural }
 
 /-- The pronoun inventory. -/
-def pronouns : List PersonalPronoun :=
-  [naan, naam, naangaL, nii, niingaL, avan, avaL, avar, avarkaL]
+def pronouns : Finset PersonalPronoun :=
+  {naan, naam, naangaL, nii, niingaL, avan, avaL, avar, avarkaL}
 
 /-- The nominal plural suffix. -/
 def pluralSuffix : String := "-ŋgæ"

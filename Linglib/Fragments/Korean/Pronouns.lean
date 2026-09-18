@@ -35,8 +35,6 @@ Romanization; Sohn writes *na*, *ce*, *wuli*, *ce-huy*, *ne*, *caney*, *tangsin*
 
 namespace Korean.Pronouns
 
-open Pronoun
-
 /-- The neutral first person *na*. -/
 def na : PersonalPronoun :=
   { form := "na", script := some "나", person := some .first, number := some .singular }

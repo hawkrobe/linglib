@@ -48,6 +48,13 @@ Wordhood: *=i* is a morphological enclitic with promiscuous attachment
 [m]); whether *qi*/*qa* are words or enclitics Scott leaves open
 (p. 163, her p. 39). None of this is a Cardinaletti–Starke deficiency
 classification, so `strength` is left unset throughout.
+
+## References
+
+* [T. Scott, *Pronouns and agreement in San Juan Atitán Mam* (2023)][scott-2023]
+* [R. R. Noyer, *Features, Positions and Affixes in Autonomous Morphological Structure*
+  (1992)][noyer-1992]
+* [D. Harbour, *Impossible Persons* (2016)][harbour-2016]
 -/
 
 namespace Mam
