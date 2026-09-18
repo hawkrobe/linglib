@@ -50,6 +50,6 @@ def daEntry : IndefinitePronoun where
   functions := {.question, .conditional, .comparative, .indirectNeg, .directNeg}
 
 /-- The Yakut paradigm: four series on *kim*. -/
-def paradigm : IndefiniteParadigm := [ereEntry, emeEntry, bayararEntry, daEntry]
+def paradigm : List IndefinitePronoun := [ereEntry, emeEntry, bayararEntry, daEntry]
 
 end Yakut.Indefinites

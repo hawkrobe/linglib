@@ -34,6 +34,6 @@ def damEntry : IndefinitePronoun where
   functions := {.specificKnown}
 
 /-- The Latin paradigm: *aliquis* and *quidam*. -/
-def paradigm : IndefiniteParadigm := [aliEntry, damEntry]
+def paradigm : List IndefinitePronoun := [aliEntry, damEntry]
 
 end Latin.Indefinites

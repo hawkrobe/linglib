@@ -39,6 +39,6 @@ def jemandEntry : IndefinitePronoun where
   functions := {.specificKnown, .specificUnknown}
 
 /-- The German paradigm: the dedicated prefix and the generic-noun forms. -/
-def paradigm : IndefiniteParadigm := [irgendEntry, jemandEntry]
+def paradigm : List IndefinitePronoun := [irgendEntry, jemandEntry]
 
 end German.Indefinites

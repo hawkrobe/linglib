@@ -79,7 +79,7 @@ def zibun : ReflexivePronoun :=
 
 /-- Any perspectival antecedent licenses *zibun* at a distance: a pivot is the weakest role. -/
 theorem zibun_licensedBy (r : Reference.LogophoricRole) : zibun.LicensedBy r :=
-  ⟨.pivot, rfl, Reference.pivot_le r⟩
+  ⟨.pivot, rfl, bot_le (a := r)⟩
 
 /-- *-mas-* — the addressee-honorific marker on the verb. -/
 def mas : AllocutiveMarker := { form := "-mas-", register := .formal }

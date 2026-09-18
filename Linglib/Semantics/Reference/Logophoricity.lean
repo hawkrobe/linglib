@@ -1,178 +1,90 @@
 import Mathlib.Order.Nat
 
 /-!
-# Logophoric Roles [sells-1987]
+# Logophoric roles
 
-[sells-1987] identifies three logophoric roles that govern the licensing
-of logophoric pronouns and long-distance reflexives cross-linguistically:
+[sells-1987] replaces a single notion of logophoricity with three discourse roles: the source,
+who makes the report; the self, whose mind is reported; and the pivot, from whose point of view
+the report is made. His discourse environments predicate the roles of a sentence-internal
+referent cumulatively: a third-person point of view makes only the pivot internal, a
+psychological verb the self and the pivot, and a logophoric verb all three. So an internal source
+is a self and a self is a pivot, and the roles form a chain `pivot ≤ self ≤ source`.
 
-- **Pivot**: the individual whose point of view the event is described from.
-  The most general logophoric role. In matrix clauses, the speaker is the
-  default pivot; in embedded clauses, the attitude holder whose perspective
-  is adopted.
-- **Self**: the individual whose mental state (thought, belief, knowledge) is
-  reported. An attitude holder. The speaker is a self by definition.
-- **Source**: the individual who makes the report — the "one who makes the
-  report." The speaker is a source by definition; the addressee is a self
-  (forms an attitude toward propositional content) but not a source.
+A logophoric form is licensed by an antecedent that reaches the role the form requires. Japanese
+*zibun* needs a pivot and Icelandic *sig* a self ([sells-1987]); Ewe *yè* needs the bearer of an
+attitude, a self ([pearson-2015]), where [sells-1987] suggests source-orientation for logophoric
+pronouns. [pancheva-zubizarreta-2018] map their prominence values onto the same roles.
 
-These roles form an implicational hierarchy:
-  source → self → pivot
+## Main definitions
 
-That is, a source is necessarily a self and a pivot; a self is necessarily
-a pivot; but a pivot need not be a self or source.
+* `Reference.LogophoricRole` — the three roles, a bounded linear order
+* `Reference.Logophoric` — a carrier whose every element requires a role of its antecedent
+* `Reference.Logophoric.LicensedBy` — the antecedent's role reaches the required one
 
-## Connection to Perspectival Phenomena
+## References
 
-The same logophoric roles govern:
-- Logophoric pronouns (Ewe *yè*): antecedent must be at least a self, the bearer of an
-  attitude ([pearson-2015]); [sells-1987] suggests source-orientation for them
-- Long-distance reflexives (Japanese *zibun*): antecedent must be a pivot
-- Point-of-view verbs (Japanese yar- vs kure-): lexically encode pivot
-- The Clitic Logophoric Restriction (CLR): 3P IO clitic interpreted as
-  point-of-view center blocks *de se* reading of accusative clitic
-
-The bridge to Minimalist P-Prominence ([pancheva-zubizarreta-2018]) is
-in `PanchevaZubizarreta2018`.
+* [P. Sells, *Aspects of Logophoricity* (1987)][sells-1987]
+* [H. Pearson, *The interpretation of the logophoric pronoun in Ewe* (2015)][pearson-2015]
+* [R. Pancheva and M. L. Zubizarreta, *The Person Case Constraint: The Syntactic Encoding of
+  Perspective* (2018)][pancheva-zubizarreta-2018]
 -/
 
 namespace Reference
 
--- ============================================================================
--- § 1: Logophoric Roles
--- ============================================================================
-
-/-- Logophoric roles from [sells-1987].
-
-    The roles capture different dimensions of perspectival centering:
-    who is the narrator (source), who is thinking/believing (self),
-    and whose viewpoint structures the description (pivot).
-
-    Ordered by entailment: `pivot ≤ self ≤ source`. Being a source
-    entails being a self, which entails being a pivot. -/
+/-- The discourse roles of [sells-1987], ordered by entailment with the pivot least. -/
 inductive LogophoricRole where
-  /-- The individual whose point of view the event is described from.
-      Most general role. Bottom of the hierarchy. -/
+  /-- The one from whose point of view the report is made. -/
   | pivot
-  /-- The individual whose mental state is reported. An attitude holder.
-      Entails pivot. -/
+  /-- The one whose mind is reported. -/
   | self
-  /-- The individual who makes the report. Entails both self and pivot.
-      Top of the hierarchy. -/
+  /-- The one who makes the report. -/
   | source
   deriving DecidableEq, Repr
 
-/-- Numeric embedding into ℕ preserving the entailment order. -/
-def LogophoricRole.toNat : LogophoricRole → Nat
-  | .pivot  => 0
-  | .self   => 1
+namespace LogophoricRole
+
+/-- The rank of a role in the entailment order. -/
+def toNat : LogophoricRole → ℕ
+  | .pivot => 0
+  | .self => 1
   | .source => 2
 
-instance : LinearOrder LogophoricRole :=
-  LinearOrder.lift' LogophoricRole.toNat
-    (fun a b h => by cases a <;> cases b <;> simp_all [LogophoricRole.toNat])
+theorem toNat_injective : Function.Injective toNat := by
+  intro a b h; cases a <;> cases b <;> simp_all [toNat]
 
--- ============================================================================
--- § 2: Implicational Hierarchy
--- ============================================================================
+instance : LinearOrder LogophoricRole := LinearOrder.lift' toNat toNat_injective
 
-/-- A self entails a pivot. -/
-theorem pivot_le_self : LogophoricRole.pivot ≤ .self := by decide
+instance : BoundedOrder LogophoricRole where
+  bot := .pivot
+  bot_le r := by cases r <;> decide
+  top := .source
+  le_top r := by cases r <;> decide
 
-/-- A source entails a self. -/
-theorem self_le_source : LogophoricRole.self ≤ .source := by decide
+end LogophoricRole
 
-/-- A source entails a pivot (transitivity). -/
-theorem pivot_le_source : LogophoricRole.pivot ≤ .source := by decide
-
-/-- The full hierarchy as a conjunction. -/
-theorem hierarchy :
-    LogophoricRole.pivot < LogophoricRole.self ∧
-    LogophoricRole.self < LogophoricRole.source := by decide
-
-/-- Pivot is the bottom of the hierarchy. -/
-theorem pivot_le (r : LogophoricRole) : .pivot ≤ r := by
-  cases r <;> decide
-
-/-- Source is the top of the hierarchy. -/
-theorem le_source (r : LogophoricRole) : r ≤ .source := by
-  cases r <;> decide
-
--- ============================================================================
--- § 3: Point-of-View Principle
--- ============================================================================
-
-/-- The Point-of-View Principle ([pancheva-zubizarreta-2018], (48)):
-
-    Within a logophoric domain marking point of view, if there are
-    attitude holders among the event participants, one of them has to
-    be the point-of-view center.
-
-    This principle is a semantic requirement that individual grammars
-    can enforce at different points in the derivation. For the PCC,
-    the relevant domain is the ApplP. For the CLR, the domain is
-    evaluated at the semantics. -/
-def pointOfViewPrinciple (hasAttitudeHolder : Bool) (povIsAttitudeHolder : Bool) : Bool :=
-  !hasAttitudeHolder || povIsAttitudeHolder
-
-/-- If there is no attitude holder, the principle is trivially satisfied. -/
-theorem pov_trivial_no_attitude :
-    pointOfViewPrinciple false false = true := rfl
-
-/-- If there is an attitude holder and the POV center IS the attitude
-    holder, the principle is satisfied. -/
-theorem pov_satisfied :
-    pointOfViewPrinciple true true = true := rfl
-
-/-- If there is an attitude holder but the POV center is NOT the
-    attitude holder, the principle is violated. -/
-theorem pov_violated :
-    pointOfViewPrinciple true false = false := rfl
-
--- ============================================================================
--- § 4: The `Logophoric` capability
--- ============================================================================
-
-/-- A carrier whose every element is **logophoric** — oriented toward a perspectival
-    centre rather than to the utterance situation. `requiredRole` is the minimum
-    [sells-1987] role an antecedent must fill to license the form: a `self` for an Ewe
-    *yè*-type logophoric pronoun (the antecedent must be an attitude holder), a `pivot`
-    for a *zibun*-type long-distance reflexive (any point-of-view centre suffices).
-
-    Word-class-neutral, like `Indefinite`/`Demonstrative`: logophoric pronouns, exempt
-    reflexives, and verbal logophoric marking are sibling carriers, each supplying its own
-    instance and read by the same `[Logophoric α]` generic code. Orthogonal to the
-    binding class: perspectival orientation is not the Principle A/B/C binding role,
-    [sells-1987]'s point that logophoric anaphora is role-oriented, licensed by a discourse
-    role, not configurationally bound. -/
+/-- A carrier whose every element is logophoric: `requiredRole` is the least role an antecedent
+must fill to license the form. The capability is neutral as to word class, so a logophoric
+pronoun and verbal logophoric marking are sibling carriers. -/
 class Logophoric (α : Type*) where
-  /-- The minimum [sells-1987] role an antecedent must fill to license the form. -/
+  /-- The least role an antecedent must fill to license the form. -/
   requiredRole : α → LogophoricRole
 
-/-- The form `a` is **licensed** by an antecedent filling role `antecedentRole`: the
-    antecedent reaches at least the form's `requiredRole` on the `pivot ≤ self ≤ source`
-    hierarchy. Derived from the order (`§ 2`), not stipulated — a form requiring `self`
-    is licensed by a `source` antecedent *because* `self ≤ source`. -/
-def Logophoric.LicensedBy {α : Type*} [Logophoric α] (a : α)
-    (antecedentRole : LogophoricRole) : Prop :=
-  Logophoric.requiredRole a ≤ antecedentRole
+namespace Logophoric
 
-instance {α : Type*} [Logophoric α] (a : α) (r : LogophoricRole) :
-    Decidable (Logophoric.LicensedBy a r) :=
-  inferInstanceAs (Decidable (_ ≤ _))
+variable {α : Type*} [Logophoric α] {a : α} {r r' : LogophoricRole}
 
-/-- Every logophoric form is licensed by a **source** antecedent — the reporter sits at
-    the top of the hierarchy, so it meets any form's requirement (`le_source`). A generic
-    fact over the capability, independent of carrier or `requiredRole`. -/
-theorem Logophoric.source_licenses {α : Type*} [Logophoric α] (a : α) :
-    Logophoric.LicensedBy a .source :=
-  le_source _
+/-- The form is licensed by an antecedent filling the role `r`: `r` reaches the role the form
+requires. -/
+def LicensedBy (a : α) (r : LogophoricRole) : Prop := requiredRole a ≤ r
 
-/-- Licensing is monotone in the antecedent's role: a stronger centre still licenses
-    whatever a weaker one does (transitivity of the hierarchy). -/
-theorem Logophoric.LicensedBy.mono {α : Type*} [Logophoric α] {a : α}
-    {r r' : LogophoricRole} (h : Logophoric.LicensedBy a r) (hr : r ≤ r') :
-    Logophoric.LicensedBy a r' :=
-  le_trans h hr
+instance : Decidable (LicensedBy a r) := inferInstanceAs (Decidable (_ ≤ _))
+
+/-- Every logophoric form is licensed by a source. -/
+theorem source_licenses (a : α) : LicensedBy a .source := le_top (a := requiredRole a)
+
+/-- Licensing is monotone in the antecedent's role. -/
+theorem LicensedBy.mono (h : LicensedBy a r) (hr : r ≤ r') : LicensedBy a r' := h.trans hr
+
+end Logophoric
 
 end Reference

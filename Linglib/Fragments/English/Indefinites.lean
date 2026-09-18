@@ -27,6 +27,6 @@ def someEntry : IndefinitePronoun where
   functions := {.specificKnown, .specificUnknown, .irrealis}
 
 /-- The English paradigm, its *some-* series; *any-* and *no-* are not entered. -/
-def paradigm : IndefiniteParadigm := [someEntry]
+def paradigm : List IndefinitePronoun := [someEntry]
 
 end English.Indefinites
