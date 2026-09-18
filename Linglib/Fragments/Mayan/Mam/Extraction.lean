@@ -11,8 +11,7 @@ ergative argument. San Juan Ostuncalco Mam further marks the extraction of a non
 or adjunct with the movement enclitic =(y)a', which may attach to the verbal complex and to a
 directional auxiliary when the clause has one, each optionally. Instruments, benefactives,
 datives, locatives, reasons, purposes and manners license the enclitic; temporals do not, and
-absolutive extraction is unmarked. England describes the enclitic and the dialects' voices, and
-Elkins, Brown and Torrence the distribution of the enclitic within and across clauses.
+absolutive extraction is unmarked.
 
 ## Main declarations
 
