@@ -932,7 +932,6 @@ import Linglib.Fragments.Mandarin.Evidentiality
 import Linglib.Fragments.Mandarin.Modals
 import Linglib.Fragments.Mandarin.Negation
 import Linglib.Fragments.Mandarin.Nouns
-import Linglib.Fragments.Mandarin.Particles
 import Linglib.Fragments.Mandarin.PolarityItems
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Mandarin.QuestionParticles
