@@ -1,3 +1,4 @@
+import Linglib.Syntax.Category.Pronoun.Personal
 import Linglib.Syntax.Category.Pronoun.Demonstrative
 import Linglib.Syntax.Category.Pronoun.Interrogative
 import Linglib.Syntax.Category.Pronoun.Reciprocal
@@ -21,6 +22,7 @@ or a manner. The demonstratives contrast a proximal with a distal form in each n
 ## Main definitions
 
 * `English.Pronouns.pronouns` — the personal pronoun inventory
+* `English.Pronouns.paradigm` — its forms for each referential category
 * `English.Pronouns.reflexives`, `English.Pronouns.reciprocals`,
   `English.Pronouns.interrogatives`, `English.Pronouns.demonstratives` — the other series
 
@@ -42,8 +44,6 @@ or a manner. The demonstratives contrast a proximal with a distal form in each n
 -/
 
 namespace English.Pronouns
-
-open PersonalPronoun (paradigm)
 
 /-! ### Personal pronouns -/
 
@@ -120,17 +120,19 @@ theorem third_singular_of_gender :
     ∀ p ∈ pronouns, p.gender.isSome → p.person = some .third ∧ p.number = some .singular := by
   decide
 
+/-- The forms of each referential category. -/
+def paradigm : Person.Category → Finset String := PersonalPronoun.paradigm pronouns
+
 /-- *You* does not distinguish one addressee from several. -/
-theorem paradigm_addressee : paradigm pronouns .addressee = paradigm pronouns .addresseeOthers := by
+theorem paradigm_addressee : paradigm .addressee = paradigm .addresseeOthers := by
   decide +kernel
 
 /-- *We* does not distinguish a group with the addressee from one without. -/
-theorem paradigm_speakerAddressee :
-    paradigm pronouns .speakerAddressee = paradigm pronouns .speakerOthers := by
+theorem paradigm_speakerAddressee : paradigm .speakerAddressee = paradigm .speakerOthers := by
   decide +kernel
 
 /-- The forms for several others, *they* and *them*, also serve a single other. -/
-theorem paradigm_others_subset : paradigm pronouns .others ⊆ paradigm pronouns .other := by
+theorem paradigm_others_subset : paradigm .others ⊆ paradigm .other := by
   decide +kernel
 
 /-! ### Reflexive pronouns -/

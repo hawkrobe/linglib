@@ -1,5 +1,5 @@
 import Linglib.Syntax.Gender.Basic
-import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # San Martín Peras Mixtec (SMPM) Fragment

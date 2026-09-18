@@ -1,5 +1,5 @@
 import Linglib.Semantics.Reference.Logophoricity
-import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # Logophoric pronouns

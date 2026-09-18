@@ -1,4 +1,5 @@
-import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Agreement.Allocutive
+import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # Galician pronouns and allocutive clitics
@@ -57,12 +58,12 @@ def pronouns : List PersonalPronoun :=
   [eu, nos, ti, vostede, vosPl, vostedes, el, ela, eles, elas]
 
 /-- *che* — familiar dative clitic, singular addressee. -/
-def che : AllocutiveEntry := { form := "che", register := .informal, gloss := "2sg.DAT.fam" }
+def che : AllocutiveMarker := { form := "che", register := .informal, number := some .singular }
 
 /-- *vos* — familiar dative clitic, plural addressee. -/
-def vos : AllocutiveEntry := { form := "vos", register := .informal, gloss := "2pl.DAT.fam" }
+def vos : AllocutiveMarker := { form := "vos", register := .informal, number := some .plural }
 
 /-- The allocutive clitics. -/
-def allocutiveClitics : List AllocutiveEntry := [che, vos]
+def allocutiveClitics : List AllocutiveMarker := [che, vos]
 
 end Galician.Pronouns

@@ -1,4 +1,5 @@
-import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Agreement.Allocutive
+import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # Korean pronouns and speech-style particles
@@ -98,12 +99,12 @@ def pronouns : Finset PersonalPronoun :=
   {na, jeo, uri, jeohui, neo, jane, dangsin, taek, geu, geunyeo, gyae, geudeul}
 
 /-- The polite speech-style particle *-yo*. -/
-def yo : AllocutiveEntry := { form := "-yo", register := .neutral, gloss := "POL" }
+def yo : AllocutiveMarker := { form := "-yo", register := .neutral }
 
 /-- The formal speech-style particle *-(seu)mnida*. -/
-def supnida : AllocutiveEntry := { form := "-(seu)mnida", register := .formal, gloss := "FORM" }
+def supnida : AllocutiveMarker := { form := "-(seu)mnida", register := .formal }
 
 /-- The speech-style particles. -/
-def allocutiveParticles : List AllocutiveEntry := [yo, supnida]
+def allocutiveParticles : List AllocutiveMarker := [yo, supnida]
 
 end Korean.Pronouns

@@ -1,301 +1,174 @@
+import Mathlib.Data.Option.NAry
 import Mathlib.Order.Nat
 import Linglib.Data.UD.UPOS
 import Linglib.Data.UD.Features
-import Linglib.Syntax.Case.Basic
-import Linglib.Pragmatics.SocialMeaning.Register
-import Linglib.Semantics.Reference.Prominence
-import Linglib.Syntax.Gender.Basic
-import Linglib.Syntax.Person.Clusivity
-import Linglib.Syntax.Binding.Basic
-import Linglib.Syntax.Person.Category
 import Linglib.Morphology.Word.Basic
 import Linglib.Syntax.Agreement.Phi
-import Mathlib.Data.Option.NAry
-
-open Morphology (Word Features)
+import Linglib.Syntax.Binding.Basic
+import Linglib.Syntax.Case.Basic
+import Linglib.Syntax.Gender.Basic
+import Linglib.Syntax.Person.Category
 
 /-!
-# Pronoun
+# Pronouns
 
-Lexical core for the pronoun as a grammatical object: the general `Pronoun`
-structure (the morphosyntactic core every pronoun type shares), the
-`PersonalPronoun` schema for personal/referential pronouns (which `extends Pronoun`),
-allocutive markers, and [cardinaletti-starke-1999]'s `Strength` deficiency
-classification.
+This file defines the pronoun as a lexical object: a surface form with the agreement features
+every pronoun kind shares. The kinds extend it, each in its own file: `PersonalPronoun`,
+`LogophoricPronoun`, `ReflexivePronoun`, `ReciprocalPronoun`, `DemonstrativePronoun`,
+`InterrogativePronoun` and `IndefinitePronoun`. A `Pronoun` has no denotation, pronoun type or
+binding class of its own; the kind supplies them, and `Pronoun.toWord` takes the last two as
+arguments.
 
-Cross-categorial features a pronoun carries — person, number, gender,
-`Case` — are not redefined here; they live under `Features/` and are composed
-in as fields of the general `Pronoun`.
+## Main definitions
 
-## Main declarations
+* `Pronoun.Strength` — the clitic, weak and strong classes of [cardinaletti-starke-1999], a
+  bounded linear order by structural deficiency
+* `Pronoun` — the form, person, number, case and gender of a pronoun, with its script form
+  and the strength class of its series
+* `Pronoun.categories` — the referential categories of [cysouw-2003] that the person and
+  number realize
+* `Pronoun.WellFormed` — clusivity is not borne by a singular
+* `Pronoun.toWord` — the pronoun as a token, with the pronoun type and reflexive marking of
+  its kind
+* `Pronoun.CandidateAntecedent` — a nominal token that agrees with the pronoun
 
-* `Pronoun` — the general pronoun object: surface form + agreement φ-features,
-  everything true of *all* pronouns. Specializations `extends` it (mathlib-style:
-  the general concept gets the plain name).
-* `PersonalPronoun` — personal/referential pronoun: `extends Pronoun` with the register and
-  the referential categories specific to deictic pronouns; `referentialPerson` and
-  `referentialNumber` are projections of the latter.
-* `PersonalPronoun.paradigm` — the forms an inventory offers for each referential category, whose
-  `Morphology.syncretism` is the inventory's person-number syncretism.
-* `Pronoun.Strength` — [cardinaletti-starke-1999] strong/weak/clitic
-  deficiency scale, a `LinearOrder` (`clitic < weak < strong`), carried
-  per-series by `Pronoun.strength`. Orthogonal to
-  [dechaine-wiltschko-2002]'s categorial pro-DP/φP/NP axis; a framework's
-  structural account of the order stays in its study file.
-* `Pronoun.AllocutiveEntry` — speaker–addressee (allocutive) markers.
+## Main results
+
+* `Pronoun.bindingClassOf_toWord_reflex`, `Pronoun.bindingClassOf_toWord_rcp`,
+  `Pronoun.bindingClassOf_toWord` — the binding class the engine reads off a pronoun's token is
+  fixed by the marking its kind supplies
+
+## References
+
+* [L. Bloomfield, *Language* (1933)][bloomfield-1933]
+* [A. Cardinaletti and M. Starke, *The Typology of Structural Deficiency: A Case Study of the
+  Three Classes of Pronouns* (1999)][cardinaletti-starke-1999]
+* [N. Chomsky, *Lectures on Government and Binding* (1981)][chomsky-1981]
+* [M. Cysouw, *The Paradigmatic Structure of Person Marking* (2003)][cysouw-2003]
+* [H. Jung and K. Migdalski, *Toward a four-way pronoun hierarchy: A view from Slavic*
+  (2022)][jung-migdalski-2022]
 -/
 
+/-! ### Structural deficiency -/
 
-/-! ### Structural deficiency ([cardinaletti-starke-1999]) -/
-
-/-- [cardinaletti-starke-1999]'s three pronoun classes, linearly ordered by
-    structural deficiency: `clitic < weak < strong` (more structure = greater;
-    C&S's morphological asymmetry is exactly this chain). The classes are
-    structural/distributional — clitic = deficient head, weak = deficient
-    phrase, strong = non-deficient phrase; (un)stressedness is explicitly
-    *not* the defining property (C&S document stressed deficients and
-    unstressed strongs). Framework-neutral: only the scale lives here; a
-    framework's structural account of it stays in its study file (e.g.
-    [patel-grosz-grosz-2017]), and it is orthogonal to
-    [dechaine-wiltschko-2002]'s pro-DP/pro-φP/pro-NP categorial axis.
-    [cetnarowska-2004] and [jung-migdalski-2022] refine the scale four ways
-    (splitting `strong` into stressed/unstressed); that refinement and its
-    monotone collapse onto this scale live with those studies. -/
+/-- The three pronoun classes of [cardinaletti-starke-1999], ordered by structural deficiency
+with the most deficient least. The classes are distributional: stress does not define them. -/
 inductive Pronoun.Strength where
-  /-- Deficient and a *head* (X°) at surface structure: verb-adjacent,
-      clustering, prosodically dependent (Italian *lo*, French *le*, Slovak
-      *mu*). Bottom of the scale. -/
+  /-- A deficient head: adjacent to the verb, clustering and prosodically dependent, as
+  Italian *lo* and French *le*. -/
   | clitic
-  /-- Deficient but a *maximal projection*: confined to derived XP positions,
-      non-coordinable, yet a prosodic word of its own (German *es*, Slovak
-      *ono*, Italian dative *loro*). -/
+  /-- A deficient phrase: confined to derived positions and not coordinable, yet a prosodic
+  word, as German *es* and Italian dative *loro*. -/
   | weak
-  /-- Non-deficient maximal projection: full structure — coordinable,
-      c-modifiable, possible in θ- and peripheral positions, bears its own
-      range restriction (Italian/French *lui*, Slovak *jemu*). Top of the
-      scale. -/
+  /-- A non-deficient phrase: coordinable, modifiable and free to stand in peripheral
+  positions, as Italian and French *lui*. -/
   | strong
   deriving DecidableEq, Repr
 
 namespace Pronoun.Strength
 
-
-/-- Numeric embedding into ℕ preserving the deficiency order. -/
-def toNat : Strength → Nat
+/-- The rank of a class in the deficiency order. -/
+def toNat : Strength → ℕ
   | .clitic => 0
-  | .weak   => 1
+  | .weak => 1
   | .strong => 2
 
-instance : LinearOrder Strength :=
-  LinearOrder.lift' toNat
-    (fun a b h => by cases a <;> cases b <;> simp_all [toNat])
+theorem toNat_injective : Function.Injective toNat := by
+  intro a b h; cases a <;> cases b <;> simp_all [toNat]
 
-/-- A clitic is more deficient than a weak pronoun. -/
-theorem clitic_lt_weak : (.clitic : Strength) < .weak := by decide
+instance : LinearOrder Strength := LinearOrder.lift' toNat toNat_injective
 
-/-- A weak pronoun is more deficient than a strong one. -/
-theorem weak_lt_strong : (.weak : Strength) < .strong := by decide
-
-/-- `clitic` is the most deficient class. -/
-theorem clitic_le (s : Strength) : .clitic ≤ s := by cases s <;> decide
-
-/-- `strong` is the least deficient class. -/
-theorem le_strong (s : Strength) : s ≤ .strong := by cases s <;> decide
+instance : BoundedOrder Strength where
+  bot := .clitic
+  bot_le s := by cases s <;> decide
+  top := .strong
+  le_top s := by cases s <;> decide
 
 end Pronoun.Strength
 
-/-- The general pronoun object: the morphosyntactic core shared by every pronoun kind, its
-surface form and agreement φ-features. It has no denotation, pronoun type or binding class of
-its own: each kind (`PersonalPronoun`, `ReflexivePronoun`, `ReciprocalPronoun`,
-`DemonstrativePronoun`, `InterrogativePronoun`, `IndefinitePronoun`) `extends` it, and the kind
-fixes those. Coexists with `namespace Pronoun` (a type and a namespace may share a name, cf.
-`List`). -/
-structure Pronoun where
-  /-- Surface form (romanization or orthographic). -/
-  form : String
-  /-- Grammatical person — the canonical analytical inventory (root
-      `Person`). Clusivity is carried as a person value: Tagalog *tayo* =
-      `firstInclusive`, *kami* = `firstExclusive`; English *we* = plain
-      `first` ([cysouw-2003]). -/
-  person : Option Person := none
-  /-- Grammatical number, the canonical analytical inventory (root `Number`). -/
-  number : Option Number := none
-  /-- Grammatical case. -/
-  case_ : Option Case := none
-  /-- Grammatical gender. For 3rd-person pronouns in gendered languages
-      (French il/elle, German er/sie/es, …). 1st/2nd-person pronouns and
-      languages without pronominal gender leave this `none`. -/
-  gender : Option Gender := none
-  /-- Native script form (hangul, kanji, Devanagari, …). -/
-  script : Option String := none
-  /-- [cardinaletti-starke-1999] deficiency class of the form-*series* this entry
-      represents, when the series is homogeneous (an Italian object clitic
-      `some .clitic`, French *lui* `some .strong`). `none` = unrecorded, or no
-      stable class ([jung-migdalski-2022]'s double-duty forms). Consumers
-      condition on `some`; there is no default class — C&S's deficient-as-default
-      ("Minimize Structure") is a refutable theory claim, not API. -/
-  strength : Option Pronoun.Strength := none
-  deriving Repr, BEq, DecidableEq
+/-! ### The pronoun -/
 
-/-- The [cysouw-2003] categories a pronoun's agreement person and number realize, the neutral
-    typological view of its person-reference, *derived* (not stored): empty when either is
-    unspecified, several for a syncretism such as clusivity-unmarked English *we*. -/
-def Pronoun.categories (p : Pronoun) : Finset Person.Category :=
+/-- A pronoun: its surface form and agreement features, the core every pronoun kind shares. -/
+structure Pronoun where
+  /-- The surface form, romanized or orthographic. -/
+  form : String
+  /-- The grammatical person. Clusivity is a person value: Tagalog *tayo* is
+  `firstInclusive` and *kami* `firstExclusive`, English *we* plain `first` ([cysouw-2003]). -/
+  person : Option Person := none
+  /-- The grammatical number. -/
+  number : Option Number := none
+  /-- The grammatical case. -/
+  case_ : Option Case := none
+  /-- The grammatical gender, `none` where the form marks none. -/
+  gender : Option Gender := none
+  /-- The form in its native script. -/
+  script : Option String := none
+  /-- The strength class of the series the form belongs to, `none` where it is unrecorded or
+  the series has no stable class ([jung-migdalski-2022]). -/
+  strength : Option Pronoun.Strength := none
+  deriving DecidableEq, Repr
+
+namespace Pronoun
+
+variable (p : Pronoun)
+
+/-- The referential categories of [cysouw-2003] that the person and number realize: none when
+either is unspecified, several for a syncretism such as clusivity-unmarked English *we*. -/
+def categories : Finset Person.Category :=
   (Option.map₂ Person.Category.ofPersonNumber p.person p.number).getD ∅
 
 /-- The bundle a pronoun bears: its person, number, gender and case. -/
-def Pronoun.phi (p : Pronoun) : Agreement.Bundle
+def phi : Agreement.Bundle
   | .person => p.person
   | .number => p.number
   | .gender => p.gender
   | .case => p.case_
   | .definiteness => ⊥
 
-instance : HasPhi Pronoun := ⟨Pronoun.phi⟩
+instance : HasPhi Pronoun := ⟨phi⟩
 
-/-- Cross-linguistic *personal/referential* pronoun: the general `Pronoun` object
-(form + φ-features) plus the register and the referential categories specific to deictic
-pronouns. Covers personal pronouns across all Fragment languages;
-any language-specific refinements remain in their respective Fragment files. -/
-structure PersonalPronoun extends Pronoun where
-  /-- Register level (formality/honorifics). Binary T/V systems use
-      `.informal`/`.formal`; ternary honorific systems (Hindi, Magahi,
-      Maithili, Korean) use all three levels. -/
-  register : SocialMeaning.Register.Level := .informal
-  /-- The referential categories the pronoun can denote, by default those its agreement
-      person and number realize. A polite pronoun overrides the default: the formal `person`
-      and `number` govern agreement, clitic allomorphy and reflexive binding, while the
-      referential categories govern the PCC, the Fancy Constraint and resolved agreement
-      ([adamson-zompi-2025]); Italian LEI denotes `{addressee}` and German *Sie*, addressee or
-      addressees, `{addressee, addresseeOthers}`. -/
-  referential : Finset Person.Category :=
-    (Option.map₂ Person.Category.ofPersonNumber person number).getD ∅
-  deriving BEq, DecidableEq
+/-- Clusivity is not borne by a singular: the inclusive and exclusive persons split the first
+person non-singular ([cysouw-2003]). -/
+def WellFormed : Prop :=
+  ∀ per ∈ p.person, per.MarksClusivity → p.number ≠ some .singular
 
-namespace PersonalPronoun
+instance : Decidable p.WellFormed :=
+  inferInstanceAs (Decidable (∀ per ∈ p.person, _ → _))
 
-variable {p : PersonalPronoun}
+/-! ### The pronoun as a token -/
 
-/-- The person a pronoun contributes to interpretation: the person its referential categories
-    share. -/
-def referentialPerson (p : PersonalPronoun) : Option Person :=
-  Person.Category.sharedPerson p.referential
-
-/-- The number a pronoun contributes to interpretation: the number its referential categories
-    share, `general` for a number-neutral form such as polite *Sie*. -/
-def referentialNumber (p : PersonalPronoun) : Option Number :=
-  Person.Category.sharedNumber p.referential
-
-/-- An ordinary pronoun denotes exactly the categories its agreement features realize. -/
-def IsOrdinary (p : PersonalPronoun) : Prop := p.referential = p.toPronoun.categories
-
-instance : Decidable p.IsOrdinary := by unfold IsOrdinary; infer_instance
-
-/-- An ordinary pronoun's referential person is its agreement person. -/
-theorem referentialPerson_eq_person (h : p.IsOrdinary) (hne : p.referential.Nonempty) :
-    p.referentialPerson = p.person := by
-  unfold referentialPerson
-  rw [h, Pronoun.categories] at hne ⊢
-  rcases hp : p.person with _ | per <;> rcases hn : p.number with _ | num <;>
-    simp_all [Person.Category.sharedPerson_ofPersonNumber]
-
-/-- The paradigm of an inventory: the forms it offers for each referential category. A category
-no pronoun denotes gets `∅`, and two categories receive the same forms exactly when the
-inventory does not distinguish them, so `Morphology.syncretism` of a paradigm is the
-inventory's person-number syncretism. -/
-def paradigm (I : Finset PersonalPronoun) (c : Person.Category) : Finset String :=
-  (I.filter (c ∈ ·.referential)).image (·.form)
-
-theorem mem_paradigm {I : Finset PersonalPronoun} {c : Person.Category} {f : String} :
-    f ∈ paradigm I c ↔ ∃ p ∈ I, c ∈ p.referential ∧ p.form = f := by
-  simp [paradigm, and_assoc]
-
-@[gcongr]
-theorem paradigm_mono {I J : Finset PersonalPronoun} (h : I ⊆ J) (c : Person.Category) :
-    paradigm I c ⊆ paradigm J c :=
-  Finset.image_subset_image (Finset.filter_subset_filter _ h)
-
-end PersonalPronoun
-
-namespace Pronoun
-
-open SocialMeaning.Register (Level)
-
-/-! ### Realization as a `Word` -/
-
-/-- The pronoun realized as a `Word`: a `.PRON` token with the entry's φ-features, and the
-pronoun type and reflexive marking its kind supplies. Each kind's own `toWord` fixes the two. -/
-def toWord (p : Pronoun) (pronType : Option UD.PronType := none) (reflex : Bool := false) :
-    Word :=
+/-- The pronoun as a token: a `PRON` word with its agreement features, and the pronoun type
+and reflexive marking its kind supplies. -/
+def toWord (pronType : Option UD.PronType := none) (reflex : Bool := false) : Morphology.Word :=
   { form := p.form, cat := .PRON,
-    features := Features.of (person := p.person) (number := p.number) (gender := p.gender)
+    features := .of (person := p.person) (number := p.number) (gender := p.gender)
       (case_ := p.case_) (reflex := reflex) (pronType := pronType) }
 
-/-- A word marked reflexive classifies as a reflexive anaphor. -/
+/-- A token marked reflexive classifies as a reflexive anaphor. -/
 @[simp]
-theorem bindingClassOf_toWord_reflex (p : Pronoun) (t : Option UD.PronType) :
+theorem bindingClassOf_toWord_reflex (t : Option UD.PronType) :
     Binding.bindingClassOf (p.toWord t true) = some .reflexive := by
   simp [Binding.bindingClassOf, toWord, Morphology.Features.of]
 
-/-- A word of reciprocal pronoun type classifies as a reciprocal anaphor. -/
+/-- A token of reciprocal pronoun type classifies as a reciprocal anaphor. -/
 @[simp]
-theorem bindingClassOf_toWord_rcp (p : Pronoun) :
+theorem bindingClassOf_toWord_rcp :
     Binding.bindingClassOf (p.toWord (some .Rcp)) = some .reciprocal := by
   simp [Binding.bindingClassOf, toWord, Morphology.Features.of]
 
-/-- Any other pronoun word classifies as a pronominal, [chomsky-1981]'s elsewhere case. -/
-theorem bindingClassOf_toWord {t : Option UD.PronType} (p : Pronoun) (ht : t ≠ some .Rcp) :
+/-- Any other pronoun token classifies as a pronominal, the elsewhere class of
+[chomsky-1981]. -/
+theorem bindingClassOf_toWord {t : Option UD.PronType} (ht : t ≠ some .Rcp) :
     Binding.bindingClassOf (p.toWord t) = some .pronoun := by
   rcases t with _ | t <;> (try cases t) <;>
     simp_all +decide [Binding.bindingClassOf, toWord, Morphology.Features.of]
 
-/-! ### Well-formedness ([cysouw-2003]) -/
-
-/-- Well-formedness of a pronoun's φ-features: clusivity is borne only by a
-    first-person non-singular (dual/plural) form — the inclusive/exclusive split
-    of the 1st-person plural/dual ([cysouw-2003]). This is the invariant a
-    person-value type tower would have enforced, carried as a *predicate* (the
-    mathlib way) so illegal states are catchable without fragmenting the type. -/
-def WellFormed (p : Pronoun) : Prop :=
-  ∀ per, p.person = some per → per.MarksClusivity →
-    p.number = some .dual ∨ p.number = some .plural ∨
-    p.number = some .minimal ∨ p.number = some .augmented
-
-instance (p : Pronoun) : Decidable p.WellFormed := by
-  unfold WellFormed; infer_instance
-
-/-! ### Lexical entry schemas ([alok-bhalla-2026]) -/
-
-/-- A candidate antecedent of a pronoun is a nominal token that agrees with it in φ-features;
-a pro-form takes its antecedents from a fixed form-class ([bloomfield-1933]). -/
-def CandidateAntecedent (p : Pronoun) (w : Morphology.Word) : Prop :=
+/-- A candidate antecedent of a pronoun is a nominal token that agrees with it: a pro-form
+takes its antecedents from a fixed form-class ([bloomfield-1933]). -/
+def CandidateAntecedent (w : Morphology.Word) : Prop :=
   Binding.isNominalCat w.cat = true ∧ HasPhi.Agree p w
 
-instance (p : Pronoun) (w : Morphology.Word) : Decidable (p.CandidateAntecedent w) :=
+instance (w : Morphology.Word) : Decidable (p.CandidateAntecedent w) :=
   inferInstanceAs (Decidable (_ ∧ _))
-
-instance : HasPhi PersonalPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
-
-/-- A personal pronoun's word is of UD pronoun type `Prs`. -/
-def _root_.PersonalPronoun.toWord (p : PersonalPronoun) : Word := p.toPronoun.toWord (some .Prs)
-
-/-- A personal pronoun is a pronominal. -/
-@[simp]
-theorem _root_.PersonalPronoun.bindingClassOf_toWord (p : PersonalPronoun) :
-    Binding.bindingClassOf p.toWord = some .pronoun :=
-  Pronoun.bindingClassOf_toWord _ (by decide)
-
-/-- Cross-linguistic allocutive marker entry.
-
-Covers verbal suffixes, particles, and clitics that realize allocutive
-agreement across all Fragment languages. -/
-structure AllocutiveEntry where
-  /-- Surface form of the marker -/
-  form : String
-  /-- Register level (matching PersonalPronoun.register scale) -/
-  register : Level
-  /-- Gloss string (e.g., "IMP.NH", "POL", "2sg.DAT.fam") -/
-  gloss : String
-  deriving Repr, BEq
 
 end Pronoun

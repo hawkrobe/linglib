@@ -1,4 +1,5 @@
-import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Agreement.Allocutive
+import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # Tamil pronouns and the allocutive marker
@@ -59,7 +60,7 @@ def pronouns : List PersonalPronoun :=
 def pluralSuffix : String := "-ŋgæ"
 
 /-- *-ŋgæ* — politeness to the addressee; the plural suffix itself. -/
-def alloc : AllocutiveEntry := { form := pluralSuffix, register := .formal, gloss := "ALLOC" }
+def alloc : AllocutiveMarker := { form := pluralSuffix, register := .formal }
 
 /-- Number marking on nominals, singular and plural (Table 1 of
     [alok-bhalla-2026], after McFadden 2020). -/

@@ -1,4 +1,5 @@
-import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Agreement.Allocutive
+import Linglib.Syntax.Category.Pronoun.Personal
 import Linglib.Syntax.Category.Pronoun.Reciprocal
 import Linglib.Syntax.Category.Pronoun.Reflexive
 
@@ -81,6 +82,6 @@ theorem zibun_licensedBy (r : Reference.LogophoricRole) : zibun.LicensedBy r :=
   ⟨.pivot, rfl, Reference.pivot_le r⟩
 
 /-- *-mas-* — the addressee-honorific marker on the verb. -/
-def mas : AllocutiveEntry := { form := "-mas-", register := .formal, gloss := "MAS" }
+def mas : AllocutiveMarker := { form := "-mas-", register := .formal }
 
 end Japanese.Pronouns

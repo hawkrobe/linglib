@@ -1,4 +1,4 @@
-import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Personal
 import Linglib.Syntax.Person.Category
 
 /-!
@@ -94,9 +94,7 @@ theorem entry_categories (c : Category) (k : Case) (f : String) :
 
 /-- Clusivity is borne only by the non-singular first-person entries. -/
 theorem entry_wellFormed (c : Category) (k : Case) (f : String) : (entry c k f).WellFormed := by
-  show ∀ per, some c.person = some per → per.MarksClusivity →
-    some (number c) = some .dual ∨ some (number c) = some .plural ∨
-      some (number c) = some .minimal ∨ some (number c) = some .augmented
+  show ∀ per ∈ some c.person, per.MarksClusivity → some (number c) ≠ some .singular
   cases c <;> decide
 
 /-- The inventory's paradigm in a case series is the series: the subject forms are the *ang*
