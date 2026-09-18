@@ -52,8 +52,8 @@ def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setA], [
 /-- Yucatec is ergative in the completive, the perfective, and puts Set A on every subject in
 the incompletive aspects ([hofling-2017]). -/
 def assignCase : UD.Aspect → ArgumentRole → Case
-  | .Perf => Alignment.ergative.assignCase
-  | .Imp | .Prog | .Prosp | .Hab | .Iter => Alignment.extendedErgative.assignCase
+  | .Perf => Alignment.ergative
+  | .Imp | .Prog | .Prosp | .Hab | .Iter => Alignment.extendedErgative
 
 /-! ### Set A exponents -/
 

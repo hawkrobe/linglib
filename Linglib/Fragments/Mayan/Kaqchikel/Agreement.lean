@@ -63,8 +63,8 @@ def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setB, .s
 the matrix predicate *ajin* Set A cross-references the object rather than the subject, the
 inverted alignment [imanishi-2014] analyses; some varieties lack the pattern. -/
 def assignCase : UD.Aspect → ArgumentRole → Case
-  | .Prog => Alignment.invertedErgative.assignCase
-  | .Perf | .Imp | .Prosp | .Hab | .Iter => Alignment.ergative.assignCase
+  | .Prog => Alignment.invertedErgative
+  | .Perf | .Imp | .Prosp | .Hab | .Iter => Alignment.ergative
 
 /-! ### Set A (ERG) exponents -/
 
@@ -106,27 +106,12 @@ instance : DecidablePred IsPhiAgreed := fun p =>
   match p with
   | .A | .P | .S | .R | .T => isTrue trivial
 
-/-! ### Verification: argument positions
+/-! ### Alignment -/
 
-Each fact below re-exports its `Alignment.ergative` lemma; the
-family-level statement is
+/-- The perfective is ergatively aligned: A apart, S with P; the family-level statement is
 `CoonMateoPedroPreminger2014.isErgativePerfective_iff`. -/
-
-/-- Agent gets ERG (from Voice). -/
-theorem A_case : (assignCase .Perf) .A = .erg := Alignment.ergative.assignCase_A
-
-/-- Patient gets ABS (from Infl). -/
-theorem P_case : (assignCase .Perf) .P = .abs := Alignment.ergative.assignCase_P
-
-/-- Intransitive S gets ABS (from Infl). -/
-theorem S_case : (assignCase .Perf) .S = .abs := Alignment.ergative.assignCase_S
-
-/-- Ergative-absolutive alignment: the agent is distinguished (ERG)
-    while patient and intranS share a case value (ABS). -/
-theorem erg_abs_alignment :
-    (assignCase .Perf) .A ≠ (assignCase .Perf) .P ∧
-    (assignCase .Perf) .P = (assignCase .Perf) .S :=
-  Alignment.ergative_distinguishes_A
+theorem isErgative_perfective : Alignment.IsErgative (assignCase .Perf) :=
+  Alignment.isErgative_ergative
 
 /-- All core argument positions trigger φ-agreement. -/
 theorem all_positions_agreed (p : ArgumentRole) (_ : p ∈ ArgumentRole.core) :

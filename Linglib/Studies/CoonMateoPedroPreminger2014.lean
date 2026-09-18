@@ -395,11 +395,11 @@ def assignCase : Language → UD.Aspect → ArgumentRole → Case
   | .kiche => Kiche.assignCase
   | .yukatek => Yukatek.assignCase
 
-/-- The language assigns case ergatively to the core roles in the perfective (§2.1). -/
-def IsErgativePerfective (L : Language) : Prop :=
-  ∀ r ∈ ArgumentRole.core, L.assignCase .Perf r = Alignment.ergative.assignCase r
+/-- The language is ergatively aligned in the perfective (§2.1). -/
+def IsErgativePerfective (L : Language) : Prop := Alignment.IsErgative (L.assignCase .Perf)
 
-instance (L : Language) : Decidable L.IsErgativePerfective := List.decidableBAll _ _
+instance (L : Language) : Decidable L.IsErgativePerfective :=
+  inferInstanceAs (Decidable (Alignment.IsErgative _))
 
 /-- The fragment marks transitive-subject extraction on the verb; the Yukatek fragment records
 no extraction reflexes. -/

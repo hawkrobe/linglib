@@ -71,8 +71,8 @@ progressive with *lanan* is the one an aspect category names ([mateo-toledo-2008
 [imanishi-2020]); the other aspectless contexts, purpose clauses and aspectless complements
 among them, lie outside the aspect vocabulary. -/
 def assignCase : UD.Aspect → ArgumentRole → Case
-  | .Prog => Alignment.extendedErgative.assignCase
-  | .Perf | .Imp | .Prosp | .Hab | .Iter => Alignment.ergative.assignCase
+  | .Prog => Alignment.extendedErgative
+  | .Perf | .Imp | .Prosp | .Hab | .Iter => Alignment.ergative
 
 /-! ### Person-number paradigm -/
 

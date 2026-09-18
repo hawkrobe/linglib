@@ -23,8 +23,7 @@ marks S like A (accusative).
   `viewpointAspect` and `isAssertive`.
 * `Yukatek.sArgumentMarker`: which marker set cross-references the
   intransitive subject, given the status category.
-* `Yukatek.yukatekSplit`: the aspect-conditioned split as an
-  `Alignment.SplitErgativity`, shared with Hindi and Georgian.
+* `Yukatek.alignment`: the alignment each status category imposes.
 
 ## Implementation notes
 
@@ -213,32 +212,12 @@ theorem eventType_consistent (c : VerbStemClass) :
 
 /-! ### Split-ergative system -/
 
-/-- Yukatek split-ergative system, parameterized by status category:
-    perfective status (completive/subjunctive) triggers ergative alignment,
-    imperfective (incompletive) accusative; the imperative defaults to
-    ergative. Instantiates the same `Alignment.SplitErgativity` used by
-    Hindi and Georgian. -/
-def yukatekSplit : Alignment.SplitErgativity StatusCategory :=
-  { ergCondition := λ s => match s.viewpointAspect with
-      | some .perfective => true
-      | some .imperfective => false
-      | none => true }  -- imperative: ergative-like default
-
-theorem yukatek_completive_erg :
-    yukatekSplit.alignment .completive = .ergative := rfl
-
-theorem yukatek_subjunctive_erg :
-    yukatekSplit.alignment .subjunctive = .ergative := rfl
-
-theorem yukatek_incompletive_acc :
-    yukatekSplit.alignment .incompletive = .accusative := rfl
-
-/-- Yukatek and Hindi share the same split conditioning: perfective → ergative,
-    imperfective → accusative. This is [bohnemeyer-2004]'s core insight
-    that a single linking-by-viewpoint mechanism underlies both systems. -/
-theorem yukatek_hindi_same_split :
-    yukatekSplit.alignment .completive = Alignment.hindiSplit.alignment .perfective ∧
-    yukatekSplit.alignment .incompletive = Alignment.hindiSplit.alignment .imperfective :=
-  ⟨rfl, rfl⟩
+/-- The alignment a status category imposes: ergative under perfective status, the
+completive and the subjunctive, accusative under the imperfective incompletive, and ergative
+by default in the imperative ([bohnemeyer-2004]). -/
+def alignment (s : StatusCategory) : Alignment.AlignmentType :=
+  match s.viewpointAspect with
+  | some .imperfective => .accusative
+  | some .perfective | none => .ergative
 
 end Yukatek

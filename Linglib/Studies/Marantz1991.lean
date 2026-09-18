@@ -2,6 +2,7 @@ import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Georgian.Agreement
+import Linglib.Fragments.Hindi.Case
 
 /-!
 # Marantz (1991): Case and Licensing
@@ -237,20 +238,6 @@ open Minimalist Minimalist.Voice
 open Case
 open Georgian.Agreement
 
-/-- Map alignment family to dependent case language type.
-    Bridges the typological description (`Alignment.SplitErgativity`) to
-    the case algorithm (`Syntax/Case/Dependent.lean`). -/
-def alignmentToLangType : Alignment.AlignmentFamily → Alignment.AlignmentType
-  | .accusative => .accusative
-  | .ergative   => .ergative
-
-/-- Georgian language type for a given tense series. -/
-def georgianLangType (ts : TenseSeries) : Alignment.AlignmentType :=
-  alignmentToLangType (georgianSplit.alignment ts)
-
-theorem present_is_accusative : georgianLangType .present = .accusative := rfl
-theorem aorist_is_ergative : georgianLangType .aorist = .ergative := rfl
-
 /-- NP configuration for each Georgian verb class (present/aorist).
 
     - Class 1 (transitive): 2 NPs (subject + object), both structural
@@ -269,7 +256,7 @@ def georgianNPs : VerbClass → List NP
 /-- Run the dependent case algorithm for a Georgian verb class in a
     given tense series. -/
 def georgianCaseResult (vc : VerbClass) (ts : TenseSeries) : List (NP × Valuation) :=
-  assignCases (georgianLangType ts) (georgianNPs vc)
+  assignCases (Georgian.Agreement.alignment ts) (georgianNPs vc)
 
 private def getCase! (label : String) (results : List (NP × Valuation)) : Case :=
   match getCaseOf label results with
@@ -409,8 +396,8 @@ theorem anticausative_one_np : npCount anticausative 1 = 1 := rfl
     obligatory on transitives. The unaccusative prohibition follows from
     dependent case: a sole argument has no competitor. -/
 
-def hindiTransitive (aspect : Alignment.Aspect) : List (NP × Valuation) :=
-  assignCases (alignmentToLangType (Alignment.hindiSplit.alignment aspect))
+def hindiTransitive (aspect : Aspect.Perfectivity) : List (NP × Valuation) :=
+  assignCases (Hindi.Case.alignment aspect)
     [⟨"agent", none⟩, ⟨"theme", none⟩]
 
 theorem hindi_perfective_erg :
@@ -432,7 +419,7 @@ theorem hindi_split_is_algorithmic :
     Derives *siitta (\*ne) aayii* — ERG is prohibited on unaccusatives
     because there is no caseless competitor for dependent case. -/
 theorem hindi_perfective_unaccusative_no_erg :
-    let result := assignCases (alignmentToLangType (Alignment.hindiSplit.alignment .perfective))
+    let result := assignCases (Hindi.Case.alignment .perfective)
       [⟨"theme", none⟩]
     getCaseOf "theme" result = some .abs ∧
     getMechanismOf "theme" result = some .unmarked := by
@@ -442,7 +429,7 @@ theorem hindi_perfective_unaccusative_no_erg :
     may or may not count as a competitor, yielding optional ERG.
     With a phantom position (Georgian-style), ERG appears. -/
 theorem hindi_perfective_unergative_with_phantom :
-    let result := assignCases (alignmentToLangType (Alignment.hindiSplit.alignment .perfective))
+    let result := assignCases (Hindi.Case.alignment .perfective)
       [⟨"subj", none⟩, ⟨"empty", none⟩]
     getCaseOf "subj" result = some .erg := by
   native_decide
@@ -451,7 +438,7 @@ theorem hindi_perfective_unergative_with_phantom :
     (= no ERG). This models the optionality as a parameter: does the
     language count unfilled positions for dependent case? -/
 theorem hindi_perfective_unergative_without_phantom :
-    let result := assignCases (alignmentToLangType (Alignment.hindiSplit.alignment .perfective))
+    let result := assignCases (Hindi.Case.alignment .perfective)
       [⟨"subj", none⟩]
     getCaseOf "subj" result = some .abs ∧
     getMechanismOf "subj" result = some .unmarked := by
@@ -595,7 +582,7 @@ theorem burzio_from_voice :
 
 /-- Case direction changes between present and aorist. -/
 theorem case_direction_changes :
-    georgianLangType .present ≠ georgianLangType .aorist := by native_decide
+    Georgian.Agreement.alignment .present ≠ Georgian.Agreement.alignment .aorist := by native_decide
 
 /-- Agreement conditioning does NOT change between present and aorist.
     `pIsIndexed` — the function determining which objects trigger agreement
@@ -607,8 +594,8 @@ theorem agreement_invariant_across_series :
     isIndexed (.pn .first .singular) = true ∧ isIndexed (.pn .second .singular) = true ∧
     isIndexed (.pn .third .singular) = false ∧
     -- And case direction differs:
-    georgianLangType .present = .accusative ∧
-    georgianLangType .aorist = .ergative := ⟨rfl, rfl, rfl, rfl, rfl⟩
+    Georgian.Agreement.alignment .present = .accusative ∧
+    Georgian.Agreement.alignment .aorist = .ergative := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Subject agreement is non-differential regardless of tense series. -/
 theorem subject_agreement_invariant :
