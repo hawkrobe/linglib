@@ -3,7 +3,6 @@ import Linglib.Morphology.Morph
 import Linglib.Phonology.Autosegmental.Melody
 import Linglib.Phonology.Tone.Constraints
 import Linglib.Phonology.OptimalityTheory.Tableau
-import Mathlib.Data.Nat.Count
 import Linglib.Data.Examples.AkinboFwangwar2026
 
 /-!
@@ -18,12 +17,19 @@ and INTEGRITY constraints ([finley-2009]) derive under `L-ANCH-Mᵥ, R-ANCH-Hᵥ
 L-ANCH-Hᵥ ≫ MAX-Tone`. The derived verbs keep their ideophonic expressiveness despite full
 morphosyntactic integration, against the inverse correlation of [dingemanse-akita-2017].
 
-This file builds the paper's three tableaux (24)–(26) over `FloatingForm` candidates with the
-substrate's `leftAnchorTone`/`rightAnchorTone`/`integrityTone`, checking every printed
+This file builds the paper's three tableaux (24)–(26) over `Candidate`s of autosegmental forms with
+the substrate's `leftAnchorTone`/`rightAnchorTone`/`integrityTone`, checking every printed
 violation profile, and shows the winners' surface melodies are the fragment's overwrites
 (`winners_agree_with_overwrite`). The descriptive generalisations (13) are checked over the
 fragment's dataset (`m_verbs_uniform`, `mh_verbs_nonfinal_final`, `pluractional_disharmony`,
 `alternation_lexical`), and the morphosyntactic parallel (11)–(12) over the rows.
+
+## TODO
+
+* Candidate (24f), which copies the verbaliser's M onto both TBUs as two autosegments, has an
+  output autosegment with no input correspondent. A `Candidate` shares its input's tiers, so
+  the tableau of (24) omits it and INTEGRITY is vacuous there; representing copying needs an
+  output tier with a correspondence relation to the input.
 
 ## References
 
@@ -43,8 +49,8 @@ open Morphology (Morph)
 
 /-! ### Morphemes and autosegments -/
 
-/-- The Mwaghavul autosegmental form: syllable TBUs, tones, morpheme sponsors. -/
-abbrev Form := FloatingForm Syl TRN Morph
+/-- A Mwaghavul autosegmental form has syllable TBUs, tones, and morpheme sponsors. -/
+abbrev Form := Autosegmental.Form Syl TRN Morph
 
 def rootMorph : Morph := .root "root"
 def vbzMorph : Morph := .root "vbz"
@@ -52,10 +58,11 @@ def redMorph : Morph := .root "red"
 def baseMorph : Morph := .root "base"
 
 /-- MAX-Tone ((23)): one violation per deleted input tone. -/
-def maxTone : Constraint Form := fun f => Nat.count (· ∈ f.deleted) f.upper.len
+def maxTone {u : Form} : Constraint (Candidate u) := fun c ↦ c.deleted.card
 
 /-- The surface melody: the tones linked to each TBU, left to right. -/
-def surfaceMelody (f : Form) : List TRN := (List.range f.lower.len).flatMap f.tierValues
+def surfaceMelody {u : Form} (c : Candidate u) : List TRN :=
+  (List.finRange u.lower.len).flatMap c.tierValues
 
 /-! ### (24): the M verbaliser and an unreduplicated ideophone -/
 
@@ -63,37 +70,37 @@ namespace Tableau24
 
 /-- `(wùlàʃ)₁ + M₂ᵥ`: one lexical L multi-linked to both TBUs, the verbaliser's M floating. -/
 def input : Form :=
-  FloatingForm.concatInputs
-    [.melody rootMorph [.L] [⟨"wù"⟩, ⟨"làʃ"⟩] {(0, 0), (0, 1)}, .melody vbzMorph [.M] [] ∅]
+  Form.melody rootMorph [.L] [⟨"wù"⟩, ⟨"làʃ"⟩] {(0, 0), (0, 1)} * Form.melody vbzMorph [.M] [] ∅
+
+instance : NeZero input.upper.len := ⟨by decide⟩
+instance : NeZero input.lower.len := ⟨by decide⟩
+
+/-- The faithful candidate of the input. -/
+def cand : Candidate input := .input _
 
 /-- (24a) `(wùlàʃ)₁ M₂`, (24b) `(wùlàʃ)₁`, (24c) `(wù)₁(làʃ)₂`, (24d) `(wū)₂(làʃ)₁`,
-(24e) `(wūlāʃ)₂`, (24f) `(wū)₂(lāʃ)₂` with two M autosegments. -/
-def candA : Form := input
-def candB : Form := input.deleteTierElem 1
-def candC : Form := input.deleteLink 0 1 |>.insertLink 1 1
-def candD : Form := input.deleteLink 0 0 |>.insertLink 1 0
-def candE : Form := input.deleteTierElem 0 |>.insertLink 1 0 |>.insertLink 1 1
-def candF : Form :=
-  { input with
-    upper := .ofList [⟨.L, rootMorph⟩, ⟨.M, vbzMorph⟩, ⟨.M, vbzMorph⟩]
-    deleted := {0}
-    surfaceLinks := {(1, 0), (2, 1)} }
+(24e) `(wūlāʃ)₂`; the copying candidate (24f) is not a candidate of the input (see the TODO
+above). -/
+def candA : Candidate input := cand
+def candB : Candidate input := cand.deleteTierElem 1
+def candC : Candidate input := cand.deleteLink 0 1 |>.insertLink 1 1
+def candD : Candidate input := cand.deleteLink 0 0 |>.insertLink 1 0
+def candE : Candidate input := cand.deleteTierElem 0 |>.insertLink 1 0 |>.insertLink 1 1
 
-def candidates : List Form := [candA, candB, candC, candD, candE, candF]
+def candidates : List (Candidate input) := [candA, candB, candC, candD, candE]
 
 /-- `INTEG-Mᵥ ≫ L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ ≫ MAX-Tone`. -/
-def ranking : List (Constraint Form) :=
+def ranking : List (Constraint (Candidate input)) :=
   [integrityTone vbzMorph .M, leftAnchorTone vbzMorph .M [rootMorph],
     rightAnchorTone vbzMorph .M [rootMorph], maxTone]
 
-/-- The printed profiles of (24); (24f)'s MAX-Tone mark, from the deleted lexical L, is not
-printed. -/
+/-- The printed profiles of (24a)–(24e). -/
 theorem profiles :
     candidates.map (fun c => ranking.map (· c)) =
-      [[0, 2, 2, 0], [0, 2, 2, 1], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1], [1, 0, 0, 1]] := by
+      [[0, 2, 2, 0], [0, 2, 2, 1], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]] := by
   decide
 
-/-- Spreading the M over the root wins; copying it loses to INTEGRITY. -/
+/-- Spreading the M over the root wins. -/
 theorem optimal : (Tableau.ofRanking candidates ranking).optimal = {candE} := by decide
 
 end Tableau24
@@ -104,27 +111,35 @@ namespace Tableau25
 
 /-- `(háŋláɣáp)₁ + M₂H₃ᵥ`. -/
 def input : Form :=
-  FloatingForm.concatInputs
-    [.melody rootMorph [.H] [⟨"háŋ"⟩, ⟨"lá"⟩, ⟨"ɣáp"⟩] {(0, 0), (0, 1), (0, 2)},
-      .melody vbzMorph [.M, .H] [] ∅]
+  Form.melody rootMorph [.H] [⟨"háŋ"⟩, ⟨"lá"⟩, ⟨"ɣáp"⟩] {(0, 0), (0, 1), (0, 2)} *
+    Form.melody vbzMorph [.M, .H] [] ∅
+
+instance : NeZero input.upper.len := ⟨by decide⟩
+instance : NeZero input.lower.len := ⟨by decide⟩
+
+/-- The faithful candidate of the input. -/
+def cand : Candidate input := .input _
 
 /-- (25a) `(háŋláɣáp)₁`, (25b) `(hāŋlā)₂(ɣáp)₁`, (25c) `(háŋláɣáp)₃`, (25d) `(hāŋlāɣāp)₂`,
 (25e) `(hāŋlā)₂(ɣáp)₃`, (25f) `(hāŋ)₂(láɣáp)₃`, (25g) `(hāŋ)₂(lá)₁(ɣáp)₃`. -/
-def candA : Form := input.deleteTierElem 1 |>.deleteTierElem 2
-def candB : Form :=
-  input.deleteLink 0 0 |>.deleteLink 0 1 |>.insertLink 1 0 |>.insertLink 1 1 |>.deleteTierElem 2
-def candC : Form :=
-  input.deleteTierElem 0 |>.deleteTierElem 1 |>.insertLink 2 0 |>.insertLink 2 1 |>.insertLink 2 2
-def candD : Form :=
-  input.deleteTierElem 0 |>.deleteTierElem 2 |>.insertLink 1 0 |>.insertLink 1 1 |>.insertLink 1 2
-def candE : Form := input.deleteTierElem 0 |>.insertLink 1 0 |>.insertLink 1 1 |>.insertLink 2 2
-def candF : Form := input.deleteTierElem 0 |>.insertLink 1 0 |>.insertLink 2 1 |>.insertLink 2 2
-def candG : Form := input.deleteLink 0 0 |>.deleteLink 0 2 |>.insertLink 1 0 |>.insertLink 2 2
+def candA : Candidate input := cand.deleteTierElem 1 |>.deleteTierElem 2
+def candB : Candidate input :=
+  cand.deleteLink 0 0 |>.deleteLink 0 1 |>.insertLink 1 0 |>.insertLink 1 1 |>.deleteTierElem 2
+def candC : Candidate input :=
+  cand.deleteTierElem 0 |>.deleteTierElem 1 |>.insertLink 2 0 |>.insertLink 2 1 |>.insertLink 2 2
+def candD : Candidate input :=
+  cand.deleteTierElem 0 |>.deleteTierElem 2 |>.insertLink 1 0 |>.insertLink 1 1 |>.insertLink 1 2
+def candE : Candidate input :=
+  cand.deleteTierElem 0 |>.insertLink 1 0 |>.insertLink 1 1 |>.insertLink 2 2
+def candF : Candidate input :=
+  cand.deleteTierElem 0 |>.insertLink 1 0 |>.insertLink 2 1 |>.insertLink 2 2
+def candG : Candidate input :=
+  cand.deleteLink 0 0 |>.deleteLink 0 2 |>.insertLink 1 0 |>.insertLink 2 2
 
-def candidates : List Form := [candA, candB, candC, candD, candE, candF, candG]
+def candidates : List (Candidate input) := [candA, candB, candC, candD, candE, candF, candG]
 
 /-- `L-ANCH-Mᵥ, R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ ≫ MAX-Tone`. -/
-def ranking : List (Constraint Form) :=
+def ranking : List (Constraint (Candidate input)) :=
   [leftAnchorTone vbzMorph .M [rootMorph], rightAnchorTone vbzMorph .H [rootMorph],
     rightAnchorTone vbzMorph .M [rootMorph], leftAnchorTone vbzMorph .H [rootMorph], maxTone]
 
@@ -147,31 +162,38 @@ namespace Tableau26
 
 /-- `(jàlpàt)₁ + (jàlpàt)₂ + M₃H₄ᵥ`: two root morphemes, each with its own multi-linked L. -/
 def input : Form :=
-  FloatingForm.concatInputs
-    [.melody redMorph [.L] [⟨"jàl"⟩, ⟨"pàt"⟩] {(0, 0), (0, 1)},
-      .melody baseMorph [.L] [⟨"jàl"⟩, ⟨"pàt"⟩] {(0, 0), (0, 1)},
-      .melody vbzMorph [.M, .H] [] ∅]
+  Form.melody redMorph [.L] [⟨"jàl"⟩, ⟨"pàt"⟩] {(0, 0), (0, 1)} *
+    Form.melody baseMorph [.L] [⟨"jàl"⟩, ⟨"pàt"⟩] {(0, 0), (0, 1)} *
+    Form.melody vbzMorph [.M, .H] [] ∅
+
+instance : NeZero input.upper.len := ⟨by decide⟩
+instance : NeZero input.lower.len := ⟨by decide⟩
+
+/-- The faithful candidate of the input. -/
+def cand : Candidate input := .input _
 
 /-- (26a) `(jàlpàt)₁(jàlpàt)₂`, (26b) `(jàl)₁(pāt)₃(jàl)₂(pát)₄`, (26c) `(jāl)₃(pàt)₁(jál)₄(pàt)₂`,
 (26d) `(jālpāt)₃(jálpát)₄`, (26e) `(jāl)₃(pát)₄(jàlpàt)₂`, (26f) `(jālpāt jāl)₃(pát)₄`,
 (26g) `(jāl)₃(pàt)₁(jāl)₃(pát)₄`. -/
-def candA : Form := input
-def candB : Form := input.deleteLink 0 1 |>.insertLink 2 1 |>.deleteLink 1 3 |>.insertLink 3 3
-def candC : Form := input.deleteLink 0 0 |>.insertLink 2 0 |>.deleteLink 1 2 |>.insertLink 3 2
-def candD : Form :=
-  input.deleteTierElem 0 |>.deleteTierElem 1 |>.insertLink 2 0 |>.insertLink 2 1
+def candA : Candidate input := cand
+def candB : Candidate input :=
+  cand.deleteLink 0 1 |>.insertLink 2 1 |>.deleteLink 1 3 |>.insertLink 3 3
+def candC : Candidate input :=
+  cand.deleteLink 0 0 |>.insertLink 2 0 |>.deleteLink 1 2 |>.insertLink 3 2
+def candD : Candidate input :=
+  cand.deleteTierElem 0 |>.deleteTierElem 1 |>.insertLink 2 0 |>.insertLink 2 1
     |>.insertLink 3 2 |>.insertLink 3 3
-def candE : Form := input.deleteTierElem 0 |>.insertLink 2 0 |>.insertLink 3 1
-def candF : Form :=
-  input.deleteTierElem 0 |>.deleteTierElem 1 |>.insertLink 2 0 |>.insertLink 2 1
+def candE : Candidate input := cand.deleteTierElem 0 |>.insertLink 2 0 |>.insertLink 3 1
+def candF : Candidate input :=
+  cand.deleteTierElem 0 |>.deleteTierElem 1 |>.insertLink 2 0 |>.insertLink 2 1
     |>.insertLink 2 2 |>.insertLink 3 3
-def candG : Form :=
-  input.deleteLink 0 0 |>.deleteTierElem 1 |>.insertLink 2 0 |>.insertLink 2 2 |>.insertLink 3 3
+def candG : Candidate input :=
+  cand.deleteLink 0 0 |>.deleteTierElem 1 |>.insertLink 2 0 |>.insertLink 2 2 |>.insertLink 3 3
 
-def candidates : List Form := [candA, candB, candC, candD, candE, candF, candG]
+def candidates : List (Candidate input) := [candA, candB, candC, candD, candE, candF, candG]
 
 /-- The ranking of (25), each anchor now over both roots. -/
-def ranking : List (Constraint Form) :=
+def ranking : List (Constraint (Candidate input)) :=
   [leftAnchorTone vbzMorph .M [redMorph, baseMorph],
     rightAnchorTone vbzMorph .H [redMorph, baseMorph],
     rightAnchorTone vbzMorph .M [redMorph, baseMorph],
