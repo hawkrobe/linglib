@@ -77,7 +77,7 @@ variable {α : Type*}
 
 /-- All subtrees of a nonplanar tree, root included. -/
 def subtrees : UnorderedTree α → Multiset (UnorderedTree α) :=
-  lift unorderedSubtrees fun _ _ h => unorderedSubtrees_perm h
+  Quotient.lift unorderedSubtrees fun _ _ h => unorderedSubtrees_perm h
 
 @[simp] theorem subtrees_mk (t : RoseTree α) : subtrees (mk t) = unorderedSubtrees t := rfl
 
@@ -88,8 +88,8 @@ theorem subtrees_leaf (a : α) : subtrees (leaf a) = {leaf a} := by
 
 theorem subtrees_node_pair (a : α) (l r : UnorderedTree α) :
     subtrees (node a {l, r}) = node a {l, r} ::ₘ (subtrees l + subtrees r) := by
-  refine inductionOn₂ l r fun pl pr => ?_
-  rw [node_pair_mk]
+  refine Quotient.inductionOn₂ l r fun pl pr => ?_
+  rw [quot_mk_eq_mk, quot_mk_eq_mk, node_pair_mk]
   simp only [subtrees_mk, unorderedSubtrees, unorderedSubtreesList, add_zero]
 
 @[simp] theorem mem_subtrees_leaf {m : UnorderedTree α} {a : α} :

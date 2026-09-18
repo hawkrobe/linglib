@@ -113,7 +113,7 @@ theorem treeAutCard_pos (t : RoseTree α) : 0 < treeAutCard t := by
     `∏_{distinct c ∈ M} (M.count c)! · autCard c ^ M.count c` at `node a M`
     (`autCard_node`), `1` at a leaf (`autCard_leaf`). -/
 def autCard : UnorderedTree α → ℕ :=
-  UnorderedTree.lift treeAutCard (fun _ _ h => treeAutCard_perm h)
+  Quotient.lift treeAutCard (fun _ _ h => treeAutCard_perm h)
 
 @[simp] theorem autCard_mk (t : RoseTree α) : autCard (mk t) = treeAutCard t := rfl
 

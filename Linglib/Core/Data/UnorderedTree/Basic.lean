@@ -22,8 +22,8 @@ on `Multiset` children, under which the grafting `B⁺` of a multiset of trees i
 
 ## Main definitions
 
-* `UnorderedTree`, `UnorderedTree.mk`, `UnorderedTree.lift`: the quotient and its universal
-  property.
+* `UnorderedTree`, `UnorderedTree.mk`: the quotient and its projection; operations descend
+  through `Quotient.lift` and proofs through `Quotient.inductionOn`, as for `Multiset`.
 * `UnorderedTree.cons`: adjoin a tree as a further child of the root, the transport of the list
   cons on children; it is left-commutative, so `Multiset.foldr` builds the constructor
   `UnorderedTree.node` on a multiset of children computably.
@@ -55,26 +55,9 @@ def mk (t : RoseTree α) : UnorderedTree α := Quotient.mk _ t
 theorem mk_eq_mk_iff {t s : RoseTree α} : mk t = mk s ↔ RoseTree.Perm t s :=
   Quotient.eq
 
-/-- Lift a function `RoseTree α → β` that's invariant under `RoseTree.Perm`
-    to `UnorderedTree α → β`. -/
-def lift {β : Sort*} (f : RoseTree α → β)
-    (h : ∀ t s, RoseTree.Perm t s → f t = f s) : UnorderedTree α → β :=
-  Quotient.lift f h
-
-@[simp] theorem lift_mk {β : Sort*} (f : RoseTree α → β)
-    (h : ∀ t s, RoseTree.Perm t s → f t = f s) (t : RoseTree α) :
-    lift f h (mk t) = f t := rfl
-
-/-- Induction in `mk`-form (cf. `Multiset.induction_on`): goals display
-    `UnorderedTree.mk` rather than `Quotient.mk`, so `mk`-stated lemmas rewrite. -/
-@[elab_as_elim] theorem inductionOn {motive : UnorderedTree α → Prop} (t : UnorderedTree α)
-    (mk : ∀ p, motive (mk p)) : motive t :=
-  Quotient.inductionOn t mk
-
-/-- Binary induction in `mk`-form. -/
-@[elab_as_elim] theorem inductionOn₂ {motive : UnorderedTree α → UnorderedTree α → Prop}
-    (t s : UnorderedTree α) (mk : ∀ p q, motive (mk p) (mk q)) : motive t s :=
-  Quotient.inductionOn₂ t s mk
+/-- The quotient projection in `mk`-form, so that goals produced by `Quotient.inductionOn`
+    display `mk` and the `mk`-stated lemmas rewrite. -/
+@[simp] theorem quot_mk_eq_mk (t : RoseTree α) : (⟦t⟧ : UnorderedTree α) = mk t := rfl
 
 /-! ### Smart leaf constructor + lifted counts
 
@@ -87,7 +70,7 @@ abbrev leaf (a : α) : UnorderedTree α := mk (RoseTree.leaf a)
 /-- The **node count** (number of vertices) of a nonplanar tree, lifted
     from `RoseTree.numNodes` via `RoseTree.Perm`-invariance. -/
 def numNodes : UnorderedTree α → Nat :=
-  UnorderedTree.lift RoseTree.numNodes (fun _ _ h => RoseTree.numNodes_perm h)
+  Quotient.lift RoseTree.numNodes (fun _ _ h => RoseTree.numNodes_perm h)
 
 @[simp] theorem numNodes_mk (t : RoseTree α) : (mk t).numNodes = t.numNodes := rfl
 
@@ -97,7 +80,7 @@ def numNodes : UnorderedTree α → Nat :=
     lifted from `RoseTree.numLeaves` via `RoseTree.Perm`-invariance. MCB's
     complexity grading `#L` (Def. 1.6.2) is built on this. -/
 def numLeaves : UnorderedTree α → Nat :=
-  UnorderedTree.lift RoseTree.numLeaves (fun _ _ h => RoseTree.numLeaves_perm h)
+  Quotient.lift RoseTree.numLeaves (fun _ _ h => RoseTree.numLeaves_perm h)
 
 @[simp] theorem numLeaves_mk (t : RoseTree α) : (mk t).numLeaves = t.numLeaves := rfl
 
@@ -106,7 +89,7 @@ def numLeaves : UnorderedTree α → Nat :=
 
 /-- The **arity** (root child count) of a nonplanar tree. -/
 def arity : UnorderedTree α → Nat :=
-  UnorderedTree.lift RoseTree.arity (fun _ _ h => RoseTree.arity_perm h)
+  Quotient.lift RoseTree.arity (fun _ _ h => RoseTree.arity_perm h)
 
 @[simp] theorem arity_mk (t : RoseTree α) : (mk t).arity = t.arity := rfl
 
@@ -114,7 +97,7 @@ def arity : UnorderedTree α → Nat :=
 
 /-- The **height** (number of vertices on a longest root-to-leaf path) of a nonplanar tree. -/
 def height : UnorderedTree α → Nat :=
-  UnorderedTree.lift RoseTree.height (fun _ _ h => RoseTree.height_perm h)
+  Quotient.lift RoseTree.height (fun _ _ h => RoseTree.height_perm h)
 
 @[simp] theorem height_mk (t : RoseTree α) : (mk t).height = t.height := rfl
 
@@ -129,7 +112,7 @@ characterization `mk_node_eq_mk_node_iff`. -/
 
 /-- The root value of a nonplanar tree. -/
 def value : UnorderedTree α → α :=
-  UnorderedTree.lift RoseTree.value (fun _ _ h => h.value_eq)
+  Quotient.lift RoseTree.value (fun _ _ h => h.value_eq)
 
 @[simp] theorem value_mk (t : RoseTree α) : (mk t).value = t.value := rfl
 
@@ -142,7 +125,7 @@ theorem perm_children_map_mk {t s : RoseTree α} (h : RoseTree.Perm t s) :
 
 /-- The children of a nonplanar tree, as a multiset of nonplanar trees. -/
 def children : UnorderedTree α → Multiset (UnorderedTree α) :=
-  UnorderedTree.lift (fun t => ↑(t.children.map mk)) (fun _ _ h => perm_children_map_mk h)
+  Quotient.lift (fun t => ↑(t.children.map mk)) (fun _ _ h => perm_children_map_mk h)
 
 @[simp] theorem children_mk (t : RoseTree α) :
     (mk t).children = ↑(t.children.map mk) := rfl
