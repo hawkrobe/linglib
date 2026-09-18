@@ -25,11 +25,11 @@ converbs are the textbook converbs of Universal Dependencies.
 * `Turkish.Converb` — the eight converbs, with their morphs (`morphs`, `form`), gloss, the
   relations they encode (`relations`), their negative form (`negative`), whether they are
   inherently negative (`InherentlyNegative`) or negatable at all (`Negatable`), and their
-  verb form (`verbForm`)
+  verb form (`verbForm`); they are an instance of `Clause.Chaining.MedialForm`
 
 ## Implementation notes
 
-The clause-chaining system read off the converbs is `SarvasyAikhenvald2025.turkish`. The
+The clause-chaining typology over these forms is in `Studies/SarvasyAikhenvald2025.lean`. The
 proportional converb encodes a relation the inventory of interclausal relations does not name.
 
 ## References
@@ -123,6 +123,13 @@ instance : DecidablePred Negatable := fun _ => inferInstanceAs (Decidable (_ ∨
 
 /-- The verb form of a converb. -/
 def verbForm (_ : Converb) : UD.VerbForm := .Conv
+
+/-- The converbs as medial forms, neutral to switch-reference, encoding their relations, and
+never indexing the subject. -/
+instance : Clause.Chaining.MedialForm Converb where
+  sr _ := none
+  relations := relations
+  IndexesSubject _ := False
 
 end Converb
 

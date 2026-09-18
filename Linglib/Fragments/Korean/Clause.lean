@@ -24,11 +24,11 @@ suffixes are entered in the Revised Romanization; Sohn writes *-ko*, *-(u)myense
 * `Korean.Converb` — the eight converbs, with their morphs (`morphs`, `form`), gloss, the
   relations they encode (`relations`), whether the medial verb may carry tense
   (`AllowsTense`) and negation (`AllowsNegation`) before them, and their verb form
-  (`verbForm`)
+  (`verbForm`); they are an instance of `Clause.Chaining.MedialForm`
 
 ## Implementation notes
 
-The clause-chaining system read off the converbs is `SarvasyAikhenvald2025.korean`.
+The clause-chaining typology over these forms is in `Studies/SarvasyAikhenvald2025.lean`.
 
 ## References
 
@@ -116,6 +116,13 @@ instance : DecidablePred AllowsNegation := fun _ => inferInstanceAs (Decidable T
 
 /-- The verb form of a converb. -/
 def verbForm (_ : Converb) : UD.VerbForm := .Conv
+
+/-- The converbs as medial forms, neutral to switch-reference, encoding their relations, and
+never indexing the subject. -/
+instance : Clause.Chaining.MedialForm Converb where
+  sr _ := none
+  relations := relations
+  IndexesSubject _ := False
 
 end Converb
 
