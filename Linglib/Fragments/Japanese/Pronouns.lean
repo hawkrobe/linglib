@@ -12,11 +12,15 @@ index), the second-person contrast *kimi* vs *anata*, and the third-person
 forms *kare*, *kanojo*, *karera* — the reciprocal *otagai*, the reflexive *zibun*, and the
 addressee-honorific verbal marker *-mas-*, which is sensitive to the
 complementizer when embedded ([alok-bhalla-2026] (14)–(15), (33)).
+
+## References
+
+* [D. Alok and O. Bhalla, *Allocutivity and the Syntax of Honorifics* (2026)][alok-bhalla-2026]
+* [E. Ochs, *Indexing Gender* (1992)][ochs-1992]
+* [P. Sells, *Aspects of Logophoricity* (1987)][sells-1987]
 -/
 
 namespace Japanese.Pronouns
-
-open Pronoun
 
 /-- 私 *watashi* — 1sg, neutral. -/
 def watashi : PersonalPronoun :=
@@ -65,8 +69,8 @@ def karera : PersonalPronoun :=
   { form := "karera", script := some "彼ら", person := some .third, number := some .plural }
 
 /-- The personal-pronoun inventory. -/
-def pronouns : List PersonalPronoun :=
-  [watashi, boku, ore, watashitachi, kimi, anata, kare, kanojo, karera]
+def pronouns : Finset PersonalPronoun :=
+  {watashi, boku, ore, watashitachi, kimi, anata, kare, kanojo, karera}
 
 /-- 互い *otagai* — the reciprocal pronoun, distinct from the reflexive *zibun*. -/
 def otagai : ReciprocalPronoun :=
