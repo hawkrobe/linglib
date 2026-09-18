@@ -864,7 +864,6 @@ import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Fragments.Italian.PolarityMarking
 import Linglib.Fragments.Italian.Predicates
 import Linglib.Fragments.Italian.Pronouns
-import Linglib.Fragments.Italian.Tense
 import Linglib.Fragments.Januubi.Negation
 import Linglib.Fragments.Japanese.Case
 import Linglib.Fragments.Japanese.Classifiers
@@ -895,7 +894,6 @@ import Linglib.Fragments.Korean.Comparison
 import Linglib.Fragments.Korean.Complementizers
 import Linglib.Fragments.Korean.Coordination
 import Linglib.Fragments.Korean.Evidentiality
-import Linglib.Fragments.Korean.Evidentials
 import Linglib.Fragments.Korean.MedialVerbs
 import Linglib.Fragments.Korean.Modals
 import Linglib.Fragments.Korean.Phonology
@@ -1015,7 +1013,6 @@ import Linglib.Fragments.Singlish.Questions
 import Linglib.Fragments.Sinhala.Verbs
 import Linglib.Fragments.Slavic.Belarusian.Case
 import Linglib.Fragments.Slavic.Bulgarian.Evidentiality
-import Linglib.Fragments.Slavic.Bulgarian.Evidentials
 import Linglib.Fragments.Slavic.Bulgarian.QuestionParticles
 import Linglib.Fragments.Slavic.Bulgarian.Verbs
 import Linglib.Fragments.Slavic.Case
