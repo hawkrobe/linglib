@@ -563,12 +563,10 @@ theorem explicitness_rungs :
 
 /-! ### Two paradigms from the Fragments -/
 
-/-- The English subject pronouns by referential category: the form of the fragment's
-non-accusative entry with the category's person, clusivity collapsed, and number. -/
-def englishSubject (c : Category) : Option String :=
-  (English.pronouns.find? fun e => decide (e.case_ ≠ some .acc ∧
-      e.person.map coarsen = some c.person.coarsen ∧
-      (e.number = some .singular ↔ c.IsSingular))).map (·.form)
+/-- The English subject forms by referential category: the paradigm of the fragment's
+non-accusative pronouns. -/
+def englishSubject : Category → Finset String :=
+  PersonalPronoun.paradigm (English.Pronouns.pronouns.filter (·.case_ ≠ some .acc))
 
 /-- The English pronouns have the structure of the paradigm the book prints for them. -/
 theorem english_pronouns :

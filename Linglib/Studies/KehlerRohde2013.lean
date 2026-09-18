@@ -56,7 +56,6 @@ namespace KehlerRohde2013
 open Discourse.Coherence Discourse.Centering Finset
 open Data.Examples (LinguisticExample)
 open Morphology (Word Features)
-open UD (Voice)
 
 /-! ### The Bayesian model -/
 
@@ -135,7 +134,7 @@ structure Cell where
   relation : Option Relation := none
   instruction : Option Instruction := none
   prompt : Option Prompt := none
-  voice : Option Voice := none
+  voice : Option UD.Voice := none
   deriving DecidableEq, Repr
 
 /-- The cell a row records, read from its features. -/
@@ -271,24 +270,24 @@ theorem prompt_shifts_relations :
 /-! ### The voice manipulation (Tables 7–10) -/
 
 /-- Table 7: the rate of next mention of the causally implicated referent by voice and prompt. -/
-def causalMention (v : Voice) (p : Prompt) : ℕ :=
+def causalMention (v : UD.Voice) (p : Prompt) : ℕ :=
   pct { table := 7, voice := v, prompt := p } "causalMention"
 
 /-- Table 8: the rate of Explanation continuations by voice and prompt. -/
-def explanationRate (v : Voice) (p : Prompt) : ℕ :=
+def explanationRate (v : UD.Voice) (p : Prompt) : ℕ :=
   pct { table := 8, voice := v, prompt := p } "explanation"
 
 /-- Table 9: the pronominalization rate of a position by voice, without a pronoun prompt. -/
-def pronominalized (v : Voice) : Position → ℕ
+def pronominalized (v : UD.Voice) : Position → ℕ
   | .subject => pct { table := 9, voice := v } "subject"
   | .nonSubject => pct { table := 9, voice := v } "nonSubject"
 
 /-- Table 10: the observed bias of the pronoun toward the subject by voice. -/
-def actualSubject (v : Voice) : ℕ := pct { table := 10, voice := v } "actual"
+def actualSubject (v : UD.Voice) : ℕ := pct { table := 10, voice := v } "actual"
 
 /-- Table 7 without a pronoun prompt as the next-mention rate of the subject: the causally
 implicated referent is the subject of the active and the by-phrase of the passive. -/
-def subjectMention : Voice → ℕ
+def subjectMention : UD.Voice → ℕ
   | .Pass => 100 - causalMention .Pass .noPronoun
   | v => causalMention v .noPronoun
 
@@ -302,7 +301,7 @@ theorem voice_shifts_interpretation_and_coherence :
   decide
 
 /-- (13) from Tables 7 and 9: the predicted bias of an ambiguous pronoun toward the subject. -/
-def bayesSubject (v : Voice) : ℚ :=
+def bayesSubject (v : UD.Voice) : ℚ :=
   posterior
     (Position.select ((subjectMention v : ℚ) / 100) (((100 - subjectMention v : ℕ) : ℚ) / 100))
     (Position.select ((pronominalized v .subject : ℚ) / 100)
@@ -380,14 +379,14 @@ def TopichoodLevel.rank : TopichoodLevel → Fin 3
 instance : LinearOrder TopichoodLevel := LinearOrder.lift' TopichoodLevel.rank (by decide)
 
 /-- The topichood of a grammatical role by voice. -/
-def topichood : Voice → GrammaticalRole → TopichoodLevel
+def topichood : UD.Voice → GrammaticalRole → TopichoodLevel
   | .Pass, .subject => .strong
   | _, .subject => .default_
   | _, _ => .low
 
 /-- Table 9 by grammatical role: the object of the active and the by-phrase of the passive are
 the non-subjects. -/
-def pronounRate (v : Voice) : GrammaticalRole → ℕ
+def pronounRate (v : UD.Voice) : GrammaticalRole → ℕ
   | .subject => pronominalized v .subject
   | _ => pronominalized v .nonSubject
 
@@ -395,7 +394,7 @@ def pronounRate (v : Voice) : GrammaticalRole → ℕ
 is pronominalized at a higher rate, the passive subject above the active subject above the
 non-subjects, so not all grammatical subjects are equal. -/
 theorem pronounRate_strictMono :
-    ∀ v ∈ [Voice.Act, .Pass], ∀ v' ∈ [Voice.Act, .Pass], ∀ r r',
+    ∀ v ∈ [UD.Voice.Act, .Pass], ∀ v' ∈ [UD.Voice.Act, .Pass], ∀ r r',
       topichood v r < topichood v' r' → pronounRate v r < pronounRate v' r' := by
   decide
 

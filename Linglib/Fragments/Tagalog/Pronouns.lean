@@ -25,6 +25,7 @@ of the first-person singular *ng* form and the second-person singular *ang* form
 ## Main results
 
 * `Tagalog.entry_categories`, `Tagalog.entry_wellFormed` — an entry denotes its category
+* `Tagalog.paradigm_nom` — the inventory's subject paradigm is the *ang* series
 * `Tagalog.ang_injective` — no two categories share an *ang* form
 
 ## References
@@ -97,6 +98,12 @@ theorem entry_wellFormed (c : Category) (k : Case) (f : String) : (entry c k f).
     some (number c) = some .dual ∨ some (number c) = some .plural ∨
       some (number c) = some .minimal ∨ some (number c) = some .augmented
   cases c <;> decide
+
+/-- The inventory's paradigm in a case series is the series: the subject forms are the *ang*
+forms. -/
+theorem paradigm_nom (c : Category) :
+    PersonalPronoun.paradigm (pronouns.filter (·.case_ = some .nom)) c = {ang c} := by
+  cases c <;> decide +kernel
 
 /-- No two categories share an *ang* form. -/
 theorem ang_injective : Function.Injective ang := by decide
