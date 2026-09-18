@@ -1,567 +1,329 @@
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.NormNum
-import Linglib.Semantics.Root.Defs
-import Linglib.Semantics.Root.PropertyConcept
-import Linglib.Semantics.ArgumentStructure.LevinTheory
-import Linglib.Semantics.ArgumentStructure.EventStructure
-import Linglib.Semantics.ArgumentStructure.RoleList
-import Linglib.Studies.Coon2019
+import Linglib.Studies.BeaversKoontzGarboden2020
 import Linglib.Data.Examples.BeaversEtAl2021
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Beavers et al. (2021): States and Changes of State
 
-Across an 88-language balanced sample, roots of deadjectival change-of-state
-verbs (property-concept roots: *large*, *red*, *dry*) tend to have simple
-stative forms and marked verbs, while roots of non-deadjectival ones (result
-roots: *break*, *cook*, *kill*) lack simple statives and have unmarked verbs.
-Semantic tests — change denial (10)–(11) and restitutive *again* (14)–(16) —
-show that words built on result roots always entail change. The simplest
-analysis is that result roots carry the change entailment themselves,
-refuting the bifurcation thesis (2): templatic meaning can live in roots.
-The default-realization rule (44) then derives the markedness mirror image
-and the three attested language types.
+This file formalizes the argument of Beavers and colleagues that some roots entail change. The
+roots of deadjectival change-of-state verbs, the property-concept roots (*bright*, *red*,
+*flat*), describe states that need not have come about. The roots of the other change-of-state
+verbs, the result roots (*shatter*, *cook*, *thaw*), describe states that are never found
+without a change having produced them. The Bifurcation Thesis of Embick and of Arad says that a
+meaning introduced by a templatic head, such as the change that `vbecome` introduces, is never
+part of a root, so it cannot draw this distinction in the roots.
 
-## Main statements
+The analysis is that of Beavers and Koontz-Garboden's book, on the change-of-state model
+`Verb.CosModel`. A root denotes a state predicate, (20a), and a result root is one whose state
+always arises from a change, (21) (`EntailsChange`). Two diagnostics follow. A stative
+description survives the denial of change, as in *the bright photo has never brightened*,
+unless the root entails change, as in *#the shattered vase has never shattered*, (10)–(11), and
+a deverbal stative never survives it whatever the root
+(`entailsChange_iff_forall_not_deniesChange`, `not_deniesChange_resultStative`). *Again*
+attached to the root gives a restitutive reading that needs no earlier change, as when a knife
+forged sharp is sharpened again, (15), and with a result root its presupposition brings an
+earlier change with it, so that *thaw again* requires two thawings, (16)
+(`change_of_againRestitutive_presup`). The model `forged` is a knife that was forged sharp,
+and witnesses both property-concept patterns. The analysis that keeps bifurcation, section 3.5,
+must stipulate that *again* attaches no lower than `vbecome` with result roots, where the same
+entailment holds of every root (`change_of_againRepetitiveBecome_presup`).
 
-* `bifurcation_fails`: result roots entail change
-  (`Semantics.Root.ChangeType.result`), violating the bifurcation
-  thesis (2).
-* `grand_unification`: the root's change entailment alone determines the
-  full package of morphosyntactic correlates ((44), §§3, 6–9).
-* `markedness_complementarity`: verbal and stative markedness are mirror
-  images, ruling out the unattested fourth language type (§8).
+The morphology follows by the default realization rule (44). `vbecome` is realized by the
+unmarked form when its root entails change and by the marked one otherwise, and the stative
+head the other way around, so the verbs and the simple statives of a root are mirror images
+(`verbRealization_ne_stativeRealization_basic`) and only a root that does not entail change has
+an unmarked stative (`stativeRealization_eq_unmarked_iff`). A language spells the two
+realizations out, the unmarked one overtly only if the marked one is overt too, which leaves the
+three attested types: the asymmetric one of English and Greek, the equipollent one of Hebrew and
+the labile one of Kakataibo and Kinyarwanda (`Exponence.trichotomy`). The fourth type, with overt
+result-root verbs beside bare property-concept verbs, is excluded
+(`Exponence.not_reverse_asymmetric`).
+
+In the typological survey of 88 languages and 72 root meanings a form is marked when its code
+records that it is derived from or equipollent to another member of its paradigm, (40)–(41)
+(`Code.IsMarked`), which is checked on the two coded paradigms of (42). Property-concept roots
+have simple statives in a median 95.67% of languages against 1.59% for result roots, and marked
+verbal paradigms in a median 56.01% against 15.20%, both differences significant on a
+Mann-Whitney test; the survey tables are not represented.
+
+## Main definitions
+
+* `EntailsChange`: every state of the root's property arises from a change, (21).
+* `resultStative`, `DeniesChange`: the deverbal stative (8b) and the denial of change, (10).
+* `Markedness`, `verbRealization`, `stativeRealization`: the default realizations of (44).
+* `Exponence`: a language's spell-out of the two realizations.
+* `MorphRelation`, `Code`, `Code.IsMarked`: the relation codes of (41) and the markedness of a
+  coded form.
+
+## Main results
+
+* `entailsChange_iff_forall_not_deniesChange`: a root entails change iff its basic stative never
+  survives the denial of change.
+* `change_of_againRestitutive_presup`: with a result root restitutive *again* presupposes an
+  earlier change.
+* `forged_deniesChange`, `forged_restitutive`: a property-concept root passes both diagnostics.
+* `Exponence.trichotomy`, `Exponence.not_reverse_asymmetric`: the three language types and the
+  excluded fourth.
+
+## Implementation notes
+
+The stative head is the identity on a root, (20b). The paper gives no denotation for it over a
+`vbecome` phrase; `resultStative` takes the state that the change gives rise to. Whether a root
+entails change is read for (44) off its kind signature, `Root.Kind.result ∈ r.closedKinds`.
 
 ## References
 
-* [beavers-etal-2021]: States and changes of state: A crosslinguistic study
-  of the roots of verbal meaning. *Language* 97.
-* [beavers-koontz-garboden-2020]: The Roots of Verbal Meaning.
-* [embick-2004]: On the structure of resultative participles in English.
-* [embick-2009]: Roots, states, and stative passives.
-* [arad-2005]: Roots and Patterns: Hebrew Morpho-syntax.
-* [dixon-1982]: Where Have All the Adjectives Gone?
-* [haspelmath-1993]: More on the typology of inchoative/causative verb
-  alternations.
-* [coon-2019]: Building verbs in Chuj.
+* [beavers-etal-2021]
+* [beavers-koontz-garboden-2020]
+* [embick-2004]
+* [embick-2009]
+* [arad-2005]
+* [haspelmath-1993]
 -/
 
 namespace BeaversEtAl2021
 
-open Aspect
-open Semantics Semantics.Root ArgumentStructure ArgumentStructure.EventStructure
+open Semantics Presupposition
 
-/-! ### Root meanings and subclasses ((5)–(6))
+/-! ### Roots that entail change, (20)–(21) -/
 
-The property-concept subclasses are [dixon-1982]'s classes (`PropertyConcept.Class`); the
-paper samples all but human propensity (fn. 5). -/
+section Model
 
-/-- Result-root subclasses (6), chosen from [levin-1993] for having likely
-translation equivalents across languages. -/
-inductive ResultSubclass where
-  /-- *burn*, *melt*, *freeze*, *decay*, *bloom*. -/
-  | entitySpecificCoS
-  /-- *cook*, *bake*, *fry*, *roast*, *boil*. -/
-  | cooking
-  /-- *break*, *crack*, *crush*, *shatter*, *tear*. -/
-  | breaking
-  /-- *bend*, *fold*, *wrinkle*. -/
-  | bending
-  /-- *kill*, *murder*, *drown*. -/
-  | killing
-  /-- *destroy*, *ruin*. -/
-  | destroying
-  /-- *rise*, *fall*, *increase*, *decrease*, *differ*. -/
-  | calibratableCoS
-  /-- *come*, *go*, *enter*, *exit*, *return*. -/
-  | inherentlyDirectedMotion
-  deriving DecidableEq, Repr
+variable {Entity State T : Type*} [LinearOrder T] (M : Verb.CosModel Entity State T)
+  {ltS : State → State → Prop} {ltE : Event T → Event T → Prop} {v : Verb} {x : Entity}
+  {s : State}
 
-/-! ### The paradigm and relation codes ((40)–(41)) -/
+/-- The root of `v` entails change when every state of its property arises from a change, the
+meaning postulate of (21). -/
+def EntailsChange (v : Verb) : Prop := ∀ x s, M.rootState v x s → ∃ e, M.become s e
 
-/-- The five positions of a root's paradigm (40): every root meaning is
-associated with up to five forms. -/
-inductive ParadigmPosition where
-  /-- Position 1: separate shared base morpheme, if any. -/
-  | underlyingRoot
-  /-- Position 2: basic stative form (adjective, verb, or noun). -/
-  | simpleStative
-  /-- Position 3: intransitive change-of-state form. -/
-  | inchoative
-  /-- Position 4: transitive causative form. -/
-  | causative
-  /-- Position 5: deverbal stative form. -/
-  | resultStative
-  deriving DecidableEq, Repr
+/-- The deverbal stative of (8b) holds of the states of the root's property that a change gave
+rise to. -/
+def resultStative (v : Verb) (x : Entity) (s : State) : Prop :=
+  M.rootState v x s ∧ ∃ e, M.become s e
 
-/-- Morphological relationship codes between a form and each paradigm member
-(41), generalizing [haspelmath-1993]'s classification. The `unrelated` code
-covers what Haspelmath called suppletive pairs (*kill* ~ *die*); `identity`
-marks a form's relation to its own paradigm slot. -/
-inductive MorphRelation where
-  /-- (i) input to a rule forming the other form. -/
-  | input
-  /-- (d) output of a rule on the other form. -/
-  | derived
-  /-- (t) transitively related via input/output pairs. -/
-  | transitive
-  /-- (l) labile: same surface stem. -/
-  | labile
-  /-- (e) equipollent: both derived from a shared base. -/
-  | equipollent
-  /-- (u) unrelated: no other relation applies. -/
-  | unrelated
-  /-- (n) the other form is unattested. -/
-  | unattested
-  /-- (s) the forms are the same item. -/
-  | identity
-  deriving DecidableEq, Repr
+/-- The stative description `P` of `x` in the state `s` is conjoined with the denial that `s`
+arose from a change, as in (10)–(11). -/
+def DeniesChange (P : Entity → State → Prop) (x : Entity) (s : State) : Prop :=
+  P x s ∧ ¬ ∃ e, M.become s e
 
-/-! ### Per-root crosslinguistic sample (Tables A1–A2)
+/-- A deverbal stative never survives the denial of change, whatever its root, as in *#the
+brightened photo has never brightened*, (10a). -/
+theorem not_deniesChange_resultStative : ¬ DeniesChange M (resultStative M v) x s :=
+  fun h ↦ h.2 h.1.2
 
-Full-table medians (§6, §7): PC roots have simple statives in a median
-95.67% of languages with data vs 1.59% for result roots (Mann-Whitney
-U = 1266.5, n₁ = n₂ = 36, p < 0.001); PC verbal paradigms are marked in a
-median 56.01% of languages vs 15.20% for result roots (U = 1291, p < 0.001).
-The rows below are a sample of the 72 root meanings. -/
+/-- A root entails change iff its basic stative never survives the denial of change, (11). -/
+theorem entailsChange_iff_forall_not_deniesChange :
+    EntailsChange M v ↔ ∀ x s, ¬ DeniesChange M (M.rootState v) x s :=
+  forall₂_congr fun _ _ ↦ by simp [DeniesChange]
 
-/-- A root meaning with its crosslinguistic attestation counts
-(Tables A1–A2). -/
-structure RootMeaning where
-  /-- English gloss(es). -/
-  gloss : String
-  /-- Property-concept or result root. -/
-  rootClass : ChangeType
-  /-- Subclass per (5)–(6). -/
-  subclass : Option (PropertyConcept.Class ⊕ ResultSubclass) := none
-  /-- Languages with a simple stative for this root (Table A1). -/
-  nSimpleStative : Nat
-  /-- Languages with any data for this root (Table A1). -/
-  nLanguages : Nat
-  /-- Languages with a marked verbal paradigm (Table A2). -/
-  nMarkedVerbal : Nat
-  /-- Languages with sufficient verbal-paradigm data (Table A2). -/
-  nVerbalLanguages : Nat
-  deriving Repr
+/-- With a root that entails change the two statives coincide, so the stative of a result root
+entails change in either structure of (8). -/
+theorem resultStative_iff_rootState (h : EntailsChange M v) :
+    resultStative M v x s ↔ M.rootState v x s :=
+  and_iff_left_of_imp (h x s)
 
-/-- Fraction of languages with a simple stative, as a percentage. -/
-def RootMeaning.pctSimpleStative (r : RootMeaning) : ℚ :=
-  if r.nLanguages = 0 then 0
-  else (r.nSimpleStative : ℚ) * 100 / r.nLanguages
+/-- With a root that entails change, *again* attached to the root presupposes an earlier change,
+so the restitutive reading is not found, (16). -/
+theorem change_of_againRestitutive_presup (h : EntailsChange M v)
+    (hp : (M.againRestitutive ltS v x).presup s) : ∃ s', ltS s' s ∧ ∃ e, M.become s' e :=
+  M.againRestitutive_presup_entails_change (h x) hp
 
-/-- Fraction of languages with a marked verbal paradigm, as a percentage. -/
-def RootMeaning.pctMarkedVerbal (r : RootMeaning) : ℚ :=
-  if r.nVerbalLanguages = 0 then 0
-  else (r.nMarkedVerbal : ℚ) * 100 / r.nVerbalLanguages
+/-- *Again* attached to `vbecome` presupposes an earlier change with every root. The analysis of
+section 3.5 that keeps bifurcation makes this the lowest attachment for result roots, (19b). -/
+theorem change_of_againRepetitiveBecome_presup {e : Event T}
+    (hp : (M.againRepetitiveBecome ltE v x).presup e) :
+    ∃ e', ltE e' e ∧ ∃ s, M.become s e' :=
+  let ⟨e', hlt, s, hb, _⟩ := hp; ⟨e', hlt, s, hb⟩
 
-def coldRoot : RootMeaning :=
-  ⟨"cold/make cold", .propertyConcept, some (.inl .physicalProperty), 83, 83, 27, 45⟩
-def largeRoot : RootMeaning :=
-  ⟨"large/big/enlarge", .propertyConcept, some (.inl .dimension), 86, 87, 25, 47⟩
-def redRoot : RootMeaning :=
-  ⟨"red/redden", .propertyConcept, some (.inl .color), 77, 80, 31, 35⟩
-def longRoot : RootMeaning :=
-  ⟨"long/lengthen", .propertyConcept, some (.inl .dimension), 80, 82, 26, 37⟩
-def goodRoot : RootMeaning :=
-  ⟨"good/improved/improve", .propertyConcept, some (.inl .value), 83, 85, 30, 46⟩
-def dryRoot : RootMeaning :=
-  ⟨"dry/dry", .propertyConcept, some (.inl .physicalProperty), 72, 85, 32, 64⟩
-/-- The one PC outlier: *old* was coded as a result stative on the grounds
-that being old entails a prior young/new state (§6.1). -/
-def oldRoot : RootMeaning :=
-  ⟨"old/aged/age", .propertyConcept, some (.inl .age), 0, 81, 10, 36⟩
-def whiteRoot : RootMeaning :=
-  ⟨"white/whiten", .propertyConcept, some (.inl .color), 81, 84, 27, 35⟩
+end Model
 
-def brokenRoot : RootMeaning :=
-  ⟨"broken/break", .result, some (.inr .breaking), 1, 85, 21, 80⟩
-def cookedRoot : RootMeaning :=
-  ⟨"cooked/cook", .result, some (.inr .cooking), 0, 86, 12, 79⟩
-def deadRoot : RootMeaning :=
-  ⟨"dead/killed/kill", .result, some (.inr .killing), 5, 87, 9, 86⟩
-def meltedRoot : RootMeaning :=
-  ⟨"melted/melt", .result, some (.inr .entitySpecificCoS), 3, 64, 16, 61⟩
-def shatteredRoot : RootMeaning :=
-  ⟨"shattered/shatter", .result, some (.inr .breaking), 1, 53, 7, 48⟩
-def bentRoot : RootMeaning :=
-  ⟨"bent/bend", .result, some (.inr .bending), 6, 73, 14, 57⟩
-def burnedRoot : RootMeaning :=
-  ⟨"burned/burn", .result, some (.inr .entitySpecificCoS), 3, 82, 11, 79⟩
-def tornRoot : RootMeaning :=
-  ⟨"torn/tear", .result, some (.inr .breaking), 0, 77, 16, 70⟩
-def goneRoot : RootMeaning :=
-  ⟨"gone/go", .result, some (.inr .inherentlyDirectedMotion), 0, 78, 4, 73⟩
-def destroyedRoot : RootMeaning :=
-  ⟨"destroyed/destroy", .result, some (.inr .destroying), 0, 70, 9, 64⟩
+/-! ### A knife forged sharp, (15a) -/
 
-def pcRoots : List RootMeaning :=
-  [coldRoot, largeRoot, redRoot, longRoot, goodRoot, dryRoot, oldRoot, whiteRoot]
+/-- The knife of (15a) is sharp in its first state `false`, as forged, and in its later state
+`true`, which a sharpening gave rise to. -/
+def forged : Verb.CosModel Unit Bool ℕ where
+  rootState _ _ _ := True
+  become s _ := s = true
+  cause _ _ := False
+  effector _ _ := False
+  manner _ _ := False
 
-def resultRoots : List RootMeaning :=
-  [brokenRoot, cookedRoot, deadRoot, meltedRoot, shatteredRoot,
-   bentRoot, burnedRoot, tornRoot, goneRoot, destroyedRoot]
+variable {v : Verb}
 
-/-- Every sampled PC root except the *old* outlier has a simple stative in
-a majority of languages with data (Table A1, Fig. 2). -/
-theorem pc_roots_majority_statives :
-    ∀ r ∈ pcRoots, r.gloss ≠ oldRoot.gloss →
-      r.nLanguages ≤ 2 * r.nSimpleStative := by decide
+/-- The forged state of the knife survives the denial of change, as *the bright photo has never
+brightened* does, (10a). -/
+theorem forged_deniesChange : DeniesChange forged (forged.rootState v) () false :=
+  ⟨trivial, fun ⟨_, h⟩ ↦ Bool.false_ne_true h⟩
 
-/-- No sampled result root has a simple stative in more than a tenth of
-languages with data (Table A1, Fig. 2). -/
-theorem result_roots_rare_statives :
-    ∀ r ∈ resultRoots, 10 * r.nSimpleStative ≤ r.nLanguages := by decide
+/-- The root of the knife's property does not entail change. -/
+theorem not_entailsChange_forged : ¬ EntailsChange forged v :=
+  fun h ↦ (entailsChange_iff_forall_not_deniesChange forged).1 h () false forged_deniesChange
 
-/-! ### Semantic diagnostics ((10)–(16)) -/
+/-- *John sharpened the knife again* is true on one sharpening, (15a), since the restitutive
+presupposition holds at the later state and no change gave rise to an earlier one. -/
+theorem forged_restitutive :
+    (forged.againRestitutive (· < ·) v ()).presup true ∧
+      ¬ ∃ s', s' < true ∧ ∃ e, forged.become s' e :=
+  ⟨⟨false, Bool.false_lt_true, trivial⟩, fun ⟨_, hlt, _, h⟩ ↦ absurd (h ▸ hlt) (lt_irrefl _)⟩
 
-/-- Change denial (10)–(11): a stative form survives conjoined denial of
-change (*the bright photo has never brightened*) iff its root does not
-entail change; result-root statives are contradictory even in
-prototypical-result contexts (*#the shattered vase has never shattered*). -/
-def survivesChangeDenial : ChangeType → Bool
-  | .propertyConcept => true
-  | .result => false
+/-! ### Default realization, (44) -/
 
-/-- Change denial succeeds exactly when the root does not entail change. -/
-theorem survivesChangeDenial_iff (ct : ChangeType) :
-    survivesChangeDenial ct = true ↔ ct = .propertyConcept := by
-  cases ct <;> simp [survivesChangeDenial]
-
-/-! ### Sublexical *again* ((14)–(16)) -/
-
-/-- Attachment sites for sublexical *again*: to the root (restitutive) or
-over `v_become` (repetitive). -/
-inductive AgainReading where
-  /-- *again* scopes over the root's state only. -/
-  | restitutive
-  /-- *again* scopes over the change-introducing structure. -/
-  | repetitive
-  deriving DecidableEq, Repr
-
-/-- Available *again* readings by root class: a result root's state itself
-entails change, collapsing low attachment into the repetitive reading. -/
-def againReadings : ChangeType → List AgainReading
-  | .propertyConcept => [.restitutive, .repetitive]
-  | .result => [.repetitive]
-
-/-- Result roots lack the restitutive reading (16). -/
-theorem result_no_restitutive :
-    AgainReading.restitutive ∉ againReadings .result := by
-  simp [againReadings]
-
-/-- PC roots have the restitutive reading (15). -/
-theorem pc_has_restitutive :
-    AgainReading.restitutive ∈ againReadings .propertyConcept := by
-  simp [againReadings]
-
-/-- The change-denial and restitutive-*again* diagnostics ((10)–(11) vs
-(14)–(16)) sort roots identically. -/
-theorem diagnostics_agree (ct : ChangeType) :
-    survivesChangeDenial ct = true ↔ AgainReading.restitutive ∈ againReadings ct := by
-  cases ct <;> simp [survivesChangeDenial, againReadings]
-
-/-! ### Morphosyntactic correlates (§§6–7) -/
-
-/-- PC roots have simple (unmarked) stative forms; result roots lack them:
-*bright* is a simple adjective while *shattered* requires the deverbal form.
-Crosslinguistic tendency, not universal (§6, Fig. 1). -/
-def hasSimpleStative : ChangeType → Bool
-  | .propertyConcept => true
-  | .result => false
-
-/-- PC root verbs tend to be morphologically marked (*wid-en*, *flat-ten*);
-result root verbs tend to be unmarked (*break*, *crack*). Crosslinguistic
-tendency (§7, Fig. 5). -/
-def verbalFormIsMarked : ChangeType → Bool
-  | .propertyConcept => true
-  | .result => false
-
-/-- A root's change entailment determines its morphosyntactic profile in a
-single biconditional: result roots lack simple statives (§6), have unmarked
-verbal forms (§7), and lack restitutive *again* (§3.4); PC roots are the
-reverse. -/
-theorem semantic_determines_morphosyntax (ct : ChangeType) :
-    ct = .result ↔
-    (hasSimpleStative ct = false ∧
-     verbalFormIsMarked ct = false ∧
-     AgainReading.restitutive ∉ againReadings ct) := by
-  cases ct <;> simp [hasSimpleStative, verbalFormIsMarked, againReadings]
-
-/-! ### The bifurcation thesis and its refutation ((2), §§3.6, 9) -/
-
-/-- The bifurcation thesis for roots ([embick-2009], [arad-2005];
-(2)): a component of meaning introduced by a templatic operator cannot be
-part of a root's meaning — so no root should entail change. -/
-def bifurcationThesis (rootEntailsChange : ChangeType → Prop) : Prop :=
-  ∀ ct, ¬ rootEntailsChange ct
-
-/-- The paper's main result: result roots entail change, so bifurcation
-fails (§§3.3, 3.6, 9). -/
-theorem bifurcation_fails :
-    ¬ bifurcationThesis (· = .result) := fun h => h .result rfl
-
-/-- PC roots on their own are consistent with bifurcation. -/
-theorem pc_roots_consistent_with_bifurcation :
-    ChangeType.propertyConcept ≠ .result := nofun
-
-/-- [beavers-koontz-garboden-2020] strengthen the refutation: roots can
-entail change, causation, and manner simultaneously (√GUILLOTINE, √HAND) —
-witnessed by `Root.Kinds.fullSpec`. -/
-theorem bkg_bifurcation_fails_all_dimensions :
-    Root.Kind.result ∈ Root.Kinds.fullSpec ∧
-    Root.Kind.cause ∈ Root.Kinds.fullSpec ∧
-    Root.Kind.manner ∈ Root.Kinds.fullSpec ∧
-    Root.Kind.state ∈ Root.Kinds.fullSpec := by decide
-
-/-- Multiple Levin classes witness the stronger bifurcation failure. -/
-theorem bkg_bifurcation_multiple_witnesses :
-    LevinClass.cut.RootEntails .result ∧ LevinClass.cut.RootEntails .manner ∧
-    LevinClass.give.RootEntails .cause ∧ LevinClass.give.RootEntails .manner := by decide
-
-/-! ### Default realization ((44), §8) -/
-
-/-- Whether a form is morphologically marked relative to its paradigm. -/
-inductive Markedness where
-  /-- Basic form: only labile and unrelated relationships. -/
+/-- The realization of a head in a category is the form for the unmarked semantic association
+or the form for the marked one. -/
+inductive Markedness
   | unmarked
-  /-- Derived from or equipollent to another paradigm member. -/
   | marked
   deriving DecidableEq, Repr
 
-/-- Default realization of `v_become` (44a): a root entailing change is
-redundant with `v_become`, so its verb is unmarked; a PC root's verb carries
-the change overtly and is marked. -/
-def verbalMarkedness (ct : ChangeType) : Markedness :=
-  if ct = .result then .unmarked else .marked
-
-/-- Default realization of the stative head (44b): the mirror image — a PC
-root's stative is basic, a result root's stative must strip nothing and is
-built on the verb. -/
-def stativeMarkedness (ct : ChangeType) : Markedness :=
-  if ct = .result then .marked else .unmarked
-
-/-- Verbal and stative markedness are mirror images, so the fourth logically
-possible language type — result roots more marked than PC roots in both
-columns — is predicted not to exist (§8). -/
-theorem markedness_complementarity (ct : ChangeType) :
-    verbalMarkedness ct ≠ stativeMarkedness ct := by
-  cases ct <;> simp [verbalMarkedness, stativeMarkedness]
-
-/-- Verbal unmarkedness is exactly the change entailment. -/
-theorem markedness_from_semantics (ct : ChangeType) :
-    verbalMarkedness ct = .unmarked ↔ ct = .result := by
-  cases ct <;> simp [verbalMarkedness]
-
-/-! ### Language types (§7.2, Table 1)
-
-The (44) asymmetry surfaces only in languages with an overt markedness
-contrast. Equipollent languages (Hebrew) mark nearly everything and labile
-or unrelated-pair languages (Kakataibo, Kinyarwanda) mark nearly nothing,
-neutralizing the contrast in opposite directions; the asymmetric type
-(English, Greek) shows it directly. -/
-
-/-- A language's verbal-markedness profile (Table 1). -/
-structure LanguageProfile where
-  language : String
-  family : String
-  /-- PC root verbal paradigms with determinable markedness. -/
-  nPCParadigms : Nat
-  /-- Result root verbal paradigms with determinable markedness. -/
-  nResultParadigms : Nat
-  /-- Percentage of PC verbal paradigms that are marked. -/
-  pctPCMarked : ℚ
-  /-- Percentage of result verbal paradigms that are marked. -/
-  pctResultMarked : ℚ
-  deriving Repr
-
-def kakataibo : LanguageProfile :=
-  ⟨"Kakataibo", "Panoan", 59, 64, 23.73, 31.25⟩
-def kinyarwanda : LanguageProfile :=
-  ⟨"Kinyarwanda", "Northeastern Bantu", 24, 33, 4.17, 9.09⟩
-def hebrew : LanguageProfile :=
-  ⟨"Hebrew (Modern)", "Semitic", 35, 42, 100, 97.62⟩
-def greek : LanguageProfile :=
-  ⟨"Greek (Modern)", "Indo-European", 22, 44, 59.09, 6.82⟩
-def english : LanguageProfile :=
-  ⟨"English", "Germanic", 43, 60, 46.51, 1.67⟩
-
-/-- English and Greek show the overt asymmetry (44) predicts: marked PC
-verbs, unmarked result verbs. -/
-theorem asymmetric_type_shows_contrast :
-    english.pctResultMarked < english.pctPCMarked ∧
-    greek.pctResultMarked < greek.pctPCMarked := by
-  refine ⟨?_, ?_⟩ <;> norm_num [english, greek]
-
-/-- Hebrew neutralizes the contrast from above: its equipollent
-root-and-template morphology marks both root classes near-categorically. -/
-theorem hebrew_neutralizes_high :
-    90 ≤ hebrew.pctPCMarked ∧ 90 ≤ hebrew.pctResultMarked := by
-  refine ⟨?_, ?_⟩ <;> norm_num [hebrew]
-
-/-- Kakataibo and Kinyarwanda neutralize from below: labile paradigms leave
-both root classes largely unmarked (the paper's low-marking † criterion:
-at most a third marked). -/
-theorem labile_type_neutralizes_low :
-    3 * kakataibo.pctPCMarked ≤ 100 ∧ 3 * kakataibo.pctResultMarked ≤ 100 ∧
-    3 * kinyarwanda.pctPCMarked ≤ 100 ∧ 3 * kinyarwanda.pctResultMarked ≤ 100 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> norm_num [kakataibo, kinyarwanda]
-
-/-! ### Bridge to `EntailmentProfile.changeOfState` -/
-
-/-- Dowty's P-Patient entailment "undergoes change of state" is the result
-root entailment: profiles with `changeOfState` pattern as result roots. -/
-def rootTypeFromChangeEntailment (p : EntailmentProfile) : ChangeType :=
-  if p.changeOfState then .result else .propertyConcept
-
-/-- Accomplishment objects pattern with result roots; contact-verb objects
-(*kick*: no entailed change) fall on the PC side. -/
-theorem result_object_has_changeOfState :
-    rootTypeFromChangeEntailment accomplishmentObjectProfile = .result ∧
-    rootTypeFromChangeEntailment ArgumentStructure.contactObject
-      = .propertyConcept := by
-  decide
-
-/-- *die*'s subject undergoes change, so it patterns with result roots. -/
-theorem die_result_pattern :
-    rootTypeFromChangeEntailment
-      ArgumentStructure.disappearance.subjectProfile = .result := by
-  decide
-
-/-! ### Bridge to templates and BECOME -/
-
-/-- Result roots must combine with a template containing BECOME: the root's
-change entailment is redundant with it. PC roots combine with any
-template. -/
-def requiresBECOME : ChangeType → Bool
-  | .result => true
-  | .propertyConcept => false
-
-/-- Achievement and accomplishment templates contain BECOME; the state
-template does not, so it is available only to PC roots. -/
-def templateHasBECOME : Template → Bool
-  | .achievement => true
-  | .accomplishment => true
-  | _ => false
-
-/-- A root entailing change is associated with a BECOME template even
-though the change comes from the root (§9). -/
-theorem entails_change_implies_become_template (ct : ChangeType)
-    (h : ct = .result) :
-    requiresBECOME ct = true := by
-  cases ct <;> simp_all [requiresBECOME]
-
-/-- A root not requiring BECOME does not entail change. -/
-theorem no_become_implies_no_change (ct : ChangeType)
-    (h : requiresBECOME ct = false) :
-    ct = .propertyConcept := by
-  cases ct <;> simp_all [requiresBECOME]
-
-/-- BECOME templates map to the telic Vendler classes. -/
-theorem become_templates_telic :
-    Template.vendlerClass .achievement = .achievement ∧
-    Template.vendlerClass .accomplishment = .accomplishment := ⟨rfl, rfl⟩
-
-/-- Aspectual profile of a root's stative use: PC statives are states,
-while even a result root's stative entails change. -/
-def stativeAspectualProfile : ChangeType → AspectualProfile
-  | .propertyConcept => stateProfile
-  | .result => achievementProfile
-
-/-- PC roots in stative use are states; result-root statives pattern as
-achievements. -/
-theorem root_stative_vendler :
-    (stativeAspectualProfile .propertyConcept).toVendlerClass = .state ∧
-    (stativeAspectualProfile .result).toVendlerClass = .achievement :=
-  ⟨rfl, rfl⟩
-
-/-! ### [embick-2004]'s adjectival structures ((8)) -/
-
-/-- [embick-2004] posits basic statives (root with the stative head, (8a))
-and result statives (root under `v_become`, (8b)); PC roots admit both,
-result roots only the deverbal structure. -/
-inductive AdjectivalStructure where
-  /-- Simple adjective: stative head over the bare root (8a). -/
-  | basicStative
-  /-- Deverbal adjective: stative head over a `v_become` phrase (8b). -/
-  | resultStative
+/-- The adjectival structures of (8), after Embick. -/
+inductive AdjectivalStructure
+  /-- The stative head over the bare root, (8a). -/
+  | basic
+  /-- The stative head over a `vbecome` phrase, (8b). -/
+  | result
   deriving DecidableEq, Repr
 
-/-- Which roots admit the basic-stative structure (8a). -/
-def admitsBasicStative : ChangeType → Bool
-  | .propertyConcept => true
-  | .result => false
+/-- The default realization of `vbecome` over a root, (44a), is unmarked iff the root entails
+change. -/
+def verbRealization (r : Root) : Markedness :=
+  if Root.Kind.result ∈ r.closedKinds then .unmarked else .marked
 
-/-- Admitting (8a) is equivalent to not entailing change. -/
-theorem admitsBasicStative_iff_no_change (ct : ChangeType) :
-    admitsBasicStative ct = true ↔ ct = .propertyConcept := by
-  cases ct <;> simp [admitsBasicStative]
+/-- The default realization of the stative head, (44b), is marked iff its complement entails
+change, as a `vbecome` phrase always does. -/
+def stativeRealization (r : Root) : AdjectivalStructure → Markedness
+  | .basic => if Root.Kind.result ∈ r.closedKinds then .marked else .unmarked
+  | .result => .marked
 
-/-! ### Grand unification -/
+variable {r p : Root}
 
-/-- From the root's change entailment alone, all of the paper's
-morphosyntactic predictions follow. -/
-theorem grand_unification (ct : ChangeType) :
-    (ct = .result →
-      hasSimpleStative ct = false ∧
-      verbalFormIsMarked ct = false ∧
-      AgainReading.restitutive ∉ againReadings ct ∧
-      requiresBECOME ct = true ∧
-      admitsBasicStative ct = false ∧
-      verbalMarkedness ct = .unmarked ∧
-      stativeMarkedness ct = .marked) ∧
-    (ct = .propertyConcept →
-      hasSimpleStative ct = true ∧
-      verbalFormIsMarked ct = true ∧
-      AgainReading.restitutive ∈ againReadings ct ∧
-      requiresBECOME ct = false ∧
-      admitsBasicStative ct = true ∧
-      verbalMarkedness ct = .marked ∧
-      stativeMarkedness ct = .unmarked) := by
-  cases ct <;> simp_all [
-    hasSimpleStative,
-    verbalFormIsMarked, againReadings,
-    requiresBECOME, admitsBasicStative,
-    verbalMarkedness, stativeMarkedness]
+/-- The verb and the simple stative of a root are realized as mirror images. -/
+theorem verbRealization_ne_stativeRealization_basic :
+    verbRealization r ≠ stativeRealization r .basic := by
+  unfold verbRealization stativeRealization; split_ifs <;> decide
 
-/-- Change entailment determines markedness through the root's change type. -/
-theorem root_markedness_from_change (r : Semantics.Root) {ct : ChangeType}
-    (h : r.changeType = some ct) :
-    verbalMarkedness ct = .unmarked ↔ Root.Kind.result ∈ r.closedKinds := by
-  rw [markedness_from_semantics, ← Root.Kinds.changeType_eq_some_result]
-  show _ ↔ r.changeType = _
-  rw [h]; simp
+/-- An unmarked stative is the simple stative of a root that does not entail change, so result
+roots lack one. -/
+theorem stativeRealization_eq_unmarked_iff {a : AdjectivalStructure} :
+    stativeRealization r a = .unmarked ↔ a = .basic ∧ Root.Kind.result ∉ r.closedKinds := by
+  cases a <;> simp [stativeRealization]
 
-/-- Roots with the same change type behave identically regardless of
-valency: markedness and statives are orthogonal to argument selection. -/
-theorem same_change_same_morphosyntax (r₁ r₂ : Semantics.Root)
-    (h : r₁.changeType = r₂.changeType) :
-    r₁.changeType.map verbalMarkedness = r₂.changeType.map verbalMarkedness ∧
-    r₁.changeType.map stativeMarkedness = r₂.changeType.map stativeMarkedness := by
-  rw [h]; exact ⟨rfl, rfl⟩
+/-- A language's spell-out of the two realizations. When the two differ it is the marked one
+that is overt. -/
+structure Exponence where
+  /-- The realization is spelled out overtly. -/
+  Overt : Markedness → Prop
+  /-- The unmarked realization is overt only if the marked one is. -/
+  overt_marked : Overt .unmarked → Overt .marked
 
-/-! ### Chuj root grounding ([coon-2019]) -/
+/-- A language is of the asymmetric type, as English and Greek are, of the equipollent type,
+with both realizations overt as in Hebrew, or of the labile type, with neither overt as in
+Kakataibo and Kinyarwanda. -/
+theorem Exponence.trichotomy (L : Exponence) :
+    (¬ L.Overt .unmarked ∧ L.Overt .marked) ∨ (L.Overt .unmarked ∧ L.Overt .marked) ∨
+      (¬ L.Overt .unmarked ∧ ¬ L.Overt .marked) := by
+  have := L.overt_marked; tauto
 
-open Chuj
+/-- No language is the reverse of English, with overt verbs for the roots that entail change and
+bare verbs for those that do not. -/
+theorem Exponence.not_reverse_asymmetric (L : Exponence)
+    (hr : Root.Kind.result ∈ r.closedKinds) (hp : Root.Kind.result ∉ p.closedKinds) :
+    ¬ (L.Overt (verbRealization r) ∧ ¬ L.Overt (verbRealization p)) := by
+  simp only [verbRealization, hr, hp, ite_true, ite_false]
+  exact fun ⟨h, hn⟩ ↦ hn (L.overt_marked h)
 
-/-- [coon-2019]'s √TV class subdivided by the present paper's axis, a result
-root and a property-concept root sharing Coon's coordinates and differing only
-in their atom. -/
-def rootTV : ChangeType → Semantics.Root
-  | .result => { RootClass.tv.toRoot with entailments := {.result "changed"} }
-  | .propertyConcept => { RootClass.tv.toRoot with entailments := {.state "property"} }
+/-! ### The coding of the survey, (40)–(42) -/
 
-/-- The subdivision is orthogonal to Coon's coordinates, since each subdivision
-has the change type it was built for and √TV's valency. -/
-theorem rootTV_changeType (ct : ChangeType) :
-    (rootTV ct).changeType = some ct ∧ (rootTV ct).valency = some {.internal} := by
-  cases ct <;> exact ⟨by decide, rfl⟩
+/-- The five positions of a root's paradigm, (40). -/
+inductive ParadigmPosition
+  | underlyingRoot
+  | simpleStative
+  | inchoative
+  | causative
+  | resultStative
+  deriving DecidableEq, Fintype, Repr
 
-/-- Coon's positional class is valency-free, so the Chuj fragment witnesses
-three cells of the valency × change-type matrix. -/
-theorem chuj_witnesses_orthogonality :
-    (rootTV .result).valency = some {.internal} ∧
-    (rootTV .propertyConcept).valency = some {.internal} ∧
-    RootClass.pos.toRoot.valency = some ∅ :=
-  ⟨rfl, rfl, rfl⟩
+/-- The relation of a form `X` to a member `Y` of its paradigm, (41), generalizing the
+classification of Haspelmath. -/
+inductive MorphRelation
+  /-- The code `i` says that `X` is the input to a rule forming `Y`. -/
+  | input
+  /-- The code `d` says that `X` is the output of a rule on `Y`. -/
+  | derived
+  /-- The code `t` says that `X` is related to `Y` through a series of input and output pairs. -/
+  | transitive
+  /-- The code `l` says that `X` and `Y` are labile. -/
+  | labile
+  /-- The code `e` says that `X` and `Y` are equipollent. -/
+  | equipollent
+  /-- The code `u` says that no other relation applies. -/
+  | unrelated
+  /-- The code `n` says that `Y` is unattested. -/
+  | unattested
+  /-- The code `s` says that `X` is `Y`. -/
+  | same
+  deriving DecidableEq, Repr
+
+/-- The code of a form gives its relation to each position of its paradigm. -/
+abbrev Code := ParadigmPosition → MorphRelation
+
+/-- The code with the given relations to the five positions, in the order of (40). -/
+def Code.of (a b c d e : MorphRelation) : Code
+  | .underlyingRoot => a
+  | .simpleStative => b
+  | .inchoative => c
+  | .causative => d
+  | .resultStative => e
+
+/-- A form is marked when it is derived from or equipollent to another member of its paradigm;
+a form with only the other relations is unmarked. -/
+def Code.IsMarked (c : Code) : Prop := ∃ k, c k = .derived ∨ c k = .equipollent
+
+instance : DecidablePred Code.IsMarked := fun _ ↦ inferInstanceAs (Decidable (∃ _, _))
+
+/-- A root's verbal paradigm is marked when its inchoative and its causative both are. -/
+def VerbalParadigmMarked (inchoative causative : Code) : Prop :=
+  inchoative.IsMarked ∧ causative.IsMarked
+
+instance (i c : Code) : Decidable (VerbalParadigmMarked i c) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- In the Tzeltal paradigm of 'small', (42a), the simple stative *tut* is unmarked, the verbs
+*tut-ub* and *tut-ub-tes* are marked, and so is the deverbal stative *tut-ub-en*, as (44)
+leads one to expect of a property-concept root. -/
+theorem tzeltal_small :
+    ¬ (Code.of .unattested .same .input .transitive .transitive).IsMarked ∧
+      VerbalParadigmMarked (.of .unattested .derived .same .input .input)
+        (.of .unattested .transitive .derived .same .equipollent) ∧
+      (Code.of .unattested .transitive .derived .equipollent .same).IsMarked := by
+  decide
+
+/-- In the Oromo paradigm of 'long', (42b), every form is built on the underlying root *dheer-*,
+so the simple stative *dheer-aa* is marked along with the verbs, the equipollent pattern that
+neutralizes the contrast. -/
+theorem oromo_long :
+    (Code.of .derived .same .equipollent .equipollent .unattested).IsMarked ∧
+      VerbalParadigmMarked (.of .derived .equipollent .same .equipollent .unattested)
+        (.of .derived .equipollent .equipollent .same .unattested) := by
+  decide
+
+/-! ### The judgments -/
+
+open Data.Examples in
+/-- A stative survives the denial of change in the examples exactly when its root is a
+property-concept root. -/
+theorem changeDenial_acceptable_iff :
+    ∀ e ∈ Examples.all, e.feature? "diagnostic" = some "change denial" →
+      (e.judgment = .acceptable ↔ e.feature? "root class" = some "property concept") := by
+  decide
+
+open Data.Examples in
+/-- Outside Kakataibo no result root is accepted with restitutive *again*. The paper attributes
+the Kakataibo token *rëtë* 'kill' to its lexicalizing 'not alive', a state without change. -/
+theorem restitutive_unacceptable_of_result :
+    ∀ e ∈ Examples.all, e.feature? "diagnostic" = some "restitutive again" →
+      e.language ≠ "cash1251" → e.feature? "root class" = some "result" →
+      e.judgment = .unacceptable := by
+  decide
 
 end BeaversEtAl2021
