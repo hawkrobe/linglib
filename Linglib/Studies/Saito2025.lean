@@ -16,7 +16,7 @@ lexicon at the paper's carriers, triphone form vectors and word2vec meaning vect
 (`GermanInflectionalDLM`); close meanings yield close predicted articulations
 (`close_meanings_imply_close_form`), and when the suffix triphone is linearly decodable from
 meanings, training alone gives inflected words strictly greater suffix support than
-non-inflected ones, the direction of the paper's contrast (`semSup_lt_of_forms_lt`). The
+non-inflected ones, the direction of the paper's contrast (`production_suffix_lt`). The
 result bears on production models with a morpheme layer such as WEAVER++
 ([levelt-roelofs-meyer-1999], [roelofs-1997]), since the apparent morphological-boundary
 effect is carried by inflectional semantics.
@@ -24,7 +24,8 @@ effect is carried by inflectional semantics.
 ## Implementation notes
 
 The paper's positional measures, the semantic support for the vowel and suffix triphones, are
-`semSup` at the two triphone indices; the paper's triphone indexing is not reproduced. Its
+the predicted form `D.production s` at the two triphone indices, the substrate's
+`semanticSupport` at a coordinate indicator; the paper's triphone indexing is not reproduced. Its
 production matrix, solving `SG = C`, is the substrate's `production`, and its comprehension
 matrix, solving `CF = S`, is `comprehension`. The generalized additive models of the
 articulatory study are not formalized.
@@ -71,11 +72,11 @@ theorem close_meanings_imply_close_form
   D.norm_production_sub_le h
 
 /-- When the suffix-triphone coordinate is linearly decodable from word meanings, the
-inflectional semantics the paper ties to the suffix, a trained lexicon's suffix support
+inflectional semantics the paper ties to the suffix, a trained lexicon's `SemSupSuffix`
 reproduces it exactly, so a word carrying the suffix triphone gets strictly greater suffix
 support than one lacking it: the direction of the paper's contrast between inflected and
 non-inflected words, from the linear architecture alone. -/
-theorem semSup_lt_of_forms_lt
+theorem production_suffix_lt
     {m : ℕ} {D : GermanInflectionalDLM}
     {data : TrainingExperience m TriphoneCount Word2VecGermanDim}
     {q : FrequencyVector m}
@@ -83,8 +84,8 @@ theorem semSup_lt_of_forms_lt
     {suffixIdx : Fin TriphoneCount} {w : GermanWord2VecVec →ₗ[ℝ] ℝ}
     (hw : ∀ i, w (data.S i) = data.C i suffixIdx)
     {i k : Fin m} (hik : data.C i suffixIdx < data.C k suffixIdx) :
-    semSup D (data.S i) suffixIdx < semSup D (data.S k) suffixIdx := by
-  rw [hD.semSup_eq_of_decodable hq hw i, hD.semSup_eq_of_decodable hq hw k]
+    D.production (data.S i) suffixIdx < D.production (data.S k) suffixIdx := by
+  rw [hD.production_apply_eq_of_decodable hq hw i, hD.production_apply_eq_of_decodable hq hw k]
   exact hik
 
 end Saito2025

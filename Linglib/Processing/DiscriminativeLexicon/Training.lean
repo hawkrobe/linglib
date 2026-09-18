@@ -18,9 +18,9 @@ learning (EL) and token counts for frequency-informed learning (FIL,
 coordinates, so each column of `G` is a vector least-squares problem for the `√Q`-scaled design
 `√Q S`, where Mathlib characterises the minimisers by the adjoint (`Core.IsLeastSquares`). That
 gives the normal equations `SᵀQ(SG − C) = 0` of [gahl-baayen-2024]'s appendix and their closed
-form `(SᵀQS)⁻¹SᵀQC`, existence, uniqueness of the fitted values `SG` (hence of `semSup` at
-experienced meanings), the solution coset, and the identification of FIL under `q` with EL on the
-`√Q`-premultiplied experience ([heitmeier-2024]).
+form `(SᵀQS)⁻¹SᵀQC`, existence, uniqueness of the fitted values `SG` (hence of the predicted forms
+at experienced meanings), the solution coset, and the identification of FIL under `q` with EL on
+the `√Q`-premultiplied experience ([heitmeier-2024]).
 
 ## Main declarations
 
@@ -32,7 +32,11 @@ experienced meanings), the solution coset, and the identification of FIL under `
 * `IsTrained.mul_eq`, `IsTrained.vecMul_eq_of_mem_span`, `IsTrained.exists_vecMul_ne`,
   `existsUnique_isTrained_iff`: fitted values are unique exactly on the span of experience.
 * `isELTrained_sqrtScale_iff`: FIL under `q` is EL on `TrainingExperience.sqrtScale`.
-* `Linear.IsTrainedOn` and the `semSup` transfer theorems.
+* `Linear.IsTrainedOn`, `IsTrainedOn.production_eq`, `IsTrainedOn.production_eq_of_mem_span`:
+  a trained DLM's predicted forms are determined on the span of the experienced meanings.
+* `IsTrainedOn.production_apply_eq_of_decodable`, `IsTrainedOn.semanticSupport_eq_of_decodable`:
+  at a linearly decodable form coordinate the prediction is the observed value, so semantic
+  support for form is the observed support.
 * `IsTrained.sum_smul_mul_eq_of_decodable`,
   `Linear.IsELTrainedOn.production_centroid_eq_of_decodable`: fitted and observed forms agree on
   every linearly decodable average, so a trained DLM sends the centroid of a linearly decodable
@@ -395,20 +399,10 @@ namespace Linear
 
 variable (D : Linear ℝ (FormVec n) (MeaningVec d)) (data) (q)
 
-/-- The mapping matrix of the production map, acting on row vectors: `ĉ = sG`. -/
-def productionMatrix : Matrix (Fin d) (Fin n) ℝ := (LinearMap.toMatrix' D.production)ᵀ
-
-theorem production_eq_vecMul (s : MeaningVec d) : D.production s = s ᵥ* D.productionMatrix := by
-  rw [productionMatrix, vecMul_transpose, ← toLin'_apply, toLin'_toMatrix']
-
 /-- Row `i` of the fitted forms is the production map at the `i`-th experienced meaning. -/
 theorem mul_productionMatrix_apply (i : Fin m) :
     (data.S * D.productionMatrix) i = D.production (data.S i) :=
   (D.production_eq_vecMul _).symm
-
-@[simp] theorem productionMatrix_mk (F : FormVec n →ₗ[ℝ] MeaningVec d)
-    (G : Matrix (Fin d) (Fin n) ℝ) : (Linear.mk F (toLin' Gᵀ)).productionMatrix = G := by
-  simp [productionMatrix]
 
 /-- `D` is **trained on** `data` under weights `q` if its production matrix is. Only the
 production side is constrained, as in the papers' production models. -/
@@ -419,45 +413,43 @@ abbrev IsELTrainedOn : Prop := D.IsTrainedOn data 1
 
 variable {D data q}
 
-/-- A trained DLM's semantic support at a linearly decodable form coordinate equals the observed
-form value on every training event. -/
-theorem IsTrainedOn.semSup_eq_of_decodable (hD : D.IsTrainedOn data q) (hq : ∀ i, 0 < q i)
-    {j₀ : Fin n} {w : MeaningVec d →ₗ[ℝ] ℝ} (hw : ∀ i, w (data.S i) = data.C i j₀) (i : Fin m) :
-    semSup D (data.S i) j₀ = data.C i j₀ := by
-  rw [semSup, ← mul_productionMatrix_apply]
+/-- Two DLMs trained on the same experience and weights predict the same form at every
+experienced meaning: the predicted forms, and so the semantic support measures, are a property of
+the training experience, not of the particular trained matrix. -/
+theorem IsTrainedOn.production_eq {D' : Linear ℝ (FormVec n) (MeaningVec d)}
+    (hD : D.IsTrainedOn data q) (hD' : D'.IsTrainedOn data q) (hq : ∀ i, 0 < q i) (i : Fin m) :
+    D.production (data.S i) = D'.production (data.S i) := by
+  rw [← mul_productionMatrix_apply, ← mul_productionMatrix_apply, IsTrained.mul_eq hq hD hD']
+
+/-- The predicted form is well-defined at novel meanings in the span of experienced ones. -/
+theorem IsTrainedOn.production_eq_of_mem_span {D' : Linear ℝ (FormVec n) (MeaningVec d)}
+    (hD : D.IsTrainedOn data q) (hD' : D'.IsTrainedOn data q) (hq : ∀ i, 0 < q i)
+    {s : MeaningVec d} (hs : s ∈ Submodule.span ℝ (Set.range data.S)) :
+    D.production s = D'.production s := by
+  rw [production_eq_vecMul, production_eq_vecMul, IsTrained.vecMul_eq_of_mem_span hq hD hD' hs]
+
+/-- A trained DLM's prediction at a linearly decodable form coordinate, the per-cue semantic
+support of [saito-tomaschek-baayen-2025], is the observed form value on every training event. -/
+theorem IsTrainedOn.production_apply_eq_of_decodable (hD : D.IsTrainedOn data q)
+    (hq : ∀ i, 0 < q i) {j₀ : Fin n} {w : MeaningVec d →ₗ[ℝ] ℝ}
+    (hw : ∀ i, w (data.S i) = data.C i j₀) (i : Fin m) :
+    D.production (data.S i) j₀ = data.C i j₀ := by
+  rw [← mul_productionMatrix_apply]
   exact IsTrained.mul_apply_eq_of_decodable hq hD hw i
 
-/-- Two DLMs trained on the same experience and weights have identical semantic support at every
-experienced meaning: `semSup` is a property of the training experience, not of the particular
-trained matrix. -/
-theorem IsTrainedOn.semSup_eq {D' : Linear ℝ (FormVec n) (MeaningVec d)}
-    (hD : D.IsTrainedOn data q) (hD' : D'.IsTrainedOn data q) (hq : ∀ i, 0 < q i) (i : Fin m)
-    (j : Fin n) : semSup D (data.S i) j = semSup D' (data.S i) j := by
-  rw [semSup, semSup, ← mul_productionMatrix_apply, ← mul_productionMatrix_apply,
-    IsTrained.mul_eq hq hD hD']
-
-/-- `semSup` is well-defined at novel meanings in the span of experienced ones. -/
-theorem IsTrainedOn.semSup_eq_of_mem_span {D' : Linear ℝ (FormVec n) (MeaningVec d)}
-    (hD : D.IsTrainedOn data q) (hD' : D'.IsTrainedOn data q) (hq : ∀ i, 0 < q i)
-    {s : MeaningVec d} (hs : s ∈ Submodule.span ℝ (Set.range data.S)) (j : Fin n) :
-    semSup D s j = semSup D' s j := by
-  rw [semSup, semSup, production_eq_vecMul, production_eq_vecMul,
-    IsTrained.vecMul_eq_of_mem_span hq hD hD' hs]
-
-/-- *Semantic Support for Form* ([gahl-baayen-2024] appendix) at a form vector equals the
+/-- *Semantic support for form* ([gahl-baayen-2024] appendix) at a form vector equals the
 observed form's own support whenever each coordinate the form vector touches is linearly
 decodable from the meanings. -/
-theorem IsTrainedOn.semSupWord_eq_of_decodable (hD : D.IsTrainedOn data q) (hq : ∀ i, 0 < q i)
-    {c : FormVec n}
+theorem IsTrainedOn.semanticSupport_eq_of_decodable (hD : D.IsTrainedOn data q)
+    (hq : ∀ i, 0 < q i) {c : FormVec n}
     (hw : ∀ j, c j ≠ 0 → ∃ w : MeaningVec d →ₗ[ℝ] ℝ, ∀ i, w (data.S i) = data.C i j)
-    (i : Fin m) : semSupWord D (data.S i) c = data.C i ⬝ᵥ c := by
-  unfold semSupWord dotProduct
+    (i : Fin m) : D.semanticSupport (data.S i) c = data.C i ⬝ᵥ c := by
+  simp only [semanticSupport_apply, dotProduct]
   refine Finset.sum_congr rfl fun j _ => ?_
   by_cases hc : c j = 0
   · simp [hc]
   · obtain ⟨w, hwj⟩ := hw j hc
-    rw [show D.production (data.S i) j = semSup D (data.S i) j from rfl,
-      hD.semSup_eq_of_decodable hq hwj i]
+    rw [hD.production_apply_eq_of_decodable hq hwj i]
 
 /-! ### Centroids -/
 
