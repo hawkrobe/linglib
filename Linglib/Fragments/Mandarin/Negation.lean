@@ -1,9 +1,8 @@
 import Linglib.Syntax.Negation
-import Linglib.Fragments.Mandarin.AspectComparison
 
 /-!
 # Mandarin Negation Fragment
-[miestamo-2005] [dryer-haspelmath-2013] [zhao-2025]
+[miestamo-2005] [dryer-haspelmath-2013]
 
 Mandarin Chinese has two standard negation particles:
 
@@ -24,12 +23,6 @@ WALS classifies Mandarin as **both** symmetric and asymmetric:
   incompatible with certain aspect markers (e.g., 了 *le* perfective).
   The *bù*/*méi* split itself constitutes an asymmetry — the choice of
   negator depends on aspect, unlike in the affirmative.
-
-## Connection to AspectComparison
-
-The *méi(yǒu)* entry connects to `Mandarin.AspectComparison`,
-where it is formalized as a cross-domain particle (negative perfective /
-not-exceed-threshold).
 -/
 
 namespace Mandarin.Negation
@@ -127,16 +120,6 @@ theorem symasy_distribution :
     (allExamples.filter (·.symmetric)).length = 3 ∧
     (allExamples.filter (fun e => !e.symmetric)).length = 2 := by
   exact ⟨by decide, by decide⟩
-
-/-! ## Bridge to AspectComparison
-
-The *méi-yǒu* entry in `AspectComparison` formalizes the same particle
-as a cross-domain negative perfective. -/
-
-theorem meiyou_matches_aspect_comparison :
-    Mandarin.AspectComparison.meiyou.hanzi = "没有" ∧
-    Mandarin.AspectComparison.meiyou.pinyin = "méi-yǒu" :=
-  ⟨rfl, rfl⟩
 
 /-! ## Expletive Negation
 [jin-koenig-2021]

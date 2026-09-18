@@ -60,10 +60,8 @@ variable {W T : Type*} [LinearOrder T]
     point-interval granularity) is genuinely different math — ∃-decomposition
     over P-parts vs ∀-projection over hypothetical witness events; the
     distinctness is backed by the counterexamples in
-    `Semantics/Aspect/Stratified.lean`. The quantifier-level cousin
-    ([zhao-2025] ATOM-DIST_t) lives in `Semantics/Aspect/AtomDist.lean`. The
-    three formulations are NOT directly interderivable; bridging requires
-    explicit witness-existence assumptions. -/
+    `Semantics/Aspect/Stratified.lean`. The two formulations are not directly
+    interderivable; bridging requires explicit witness-existence assumptions. -/
 def HasSubintervalProp (P : W → Event T → Prop) : Prop :=
   ∀ (e₁ : Event T) (w : W),
     P w e₁ →

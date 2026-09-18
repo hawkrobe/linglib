@@ -924,7 +924,6 @@ import Linglib.Fragments.Maithili.Pronouns
 import Linglib.Fragments.Malagasy.Relativization
 import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Mandarin.Adposition
-import Linglib.Fragments.Mandarin.AspectComparison
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Comparison
 import Linglib.Fragments.Mandarin.Conditionals
@@ -1355,7 +1354,6 @@ import Linglib.Semantics.Root.PropertyConcept
 import Linglib.Semantics.ArgumentStructure.SalienceClass
 import Linglib.Semantics.ArgumentStructure.Valency
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
-import Linglib.Semantics.Aspect.AtomDist
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.Instantiation
 import Linglib.Semantics.Aspect.ChangeOfState
