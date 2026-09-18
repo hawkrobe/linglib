@@ -45,7 +45,7 @@ primitive.
 * [kalin-2018]
 * [pesetsky-torrego-2007]
 -/
-namespace Syntax.Case.Licensing
+namespace Case.Licensing
 
 -- `Case` is qualified throughout: a different `Case` (UD.Case) is aliased at
 -- root scope.
@@ -414,4 +414,4 @@ theorem mem_domMarkedNPs (results : List LicensedResult) (lbl : String)
   obtain ⟨r, ⟨hmem, hdom⟩, rfl⟩ := h
   exact ⟨r, hmem, rfl, hdom⟩
 
-end Syntax.Case.Licensing
+end Case.Licensing
