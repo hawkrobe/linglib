@@ -20,6 +20,14 @@ copy or epenthetic vowel, in the other three. Can Pixabaj's sketch calls the com
 the lexical passive and reports the same markers. A sixth voice, the instrumental, survives in
 remnants and is not covered.
 
+## Implementation notes
+
+The active and the simple passive of a radical verb have the empty marker: the active is the
+initial construction, and the simple passive is uncoded in Creissels's sense, told from the
+active by its intransitive conjugation, which the frame pair records. The vowel lengthening of
+a consonant-final root in the simple passive is a stem alternation the morph vocabulary does
+not express.
+
 ## Main definitions
 
 * `Kiche.VerbClass` — derived and radical transitive verbs

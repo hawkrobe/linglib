@@ -14,6 +14,14 @@ the verb, the agent optional in a phrase with the agentive relational noun *-u'n
 passive *-j* adds that the agent lost control of the action. Mam has no applicative and no
 productive causative.
 
+## Implementation notes
+
+The null passive has the empty marker and so is uncoded in Creissels's sense, an alternation
+with no verbal coding, as his reading of the Bambara passive is; the frame pair records what
+tells it from the active, an intransitive derived construction with the agent maintained, and
+the Set B marking follows from that transitivity. That Ø fills the paradigm slot of *-Vt* and
+*-j* is the Mayanist analysis of the paradigm and is left to the studies.
+
 ## Main definitions
 
 * `Mam.active`, `antipassive`, `passive`, `nullPassive`, `lexicalPassive` — the voices
