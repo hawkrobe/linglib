@@ -76,7 +76,7 @@ variable {α : Type*} [DecidableEq α]
 /-- Replace every subtree equal to `target` by `replacement`. -/
 noncomputable def replace (target replacement : UnorderedTree α) : UnorderedTree α
     → UnorderedTree α :=
-  lift (unorderedReplace target replacement) fun _ _ h => unorderedReplace_perm target replacement h
+  Quotient.lift (unorderedReplace target replacement) fun _ _ h => unorderedReplace_perm target replacement h
 
 @[simp] theorem replace_mk (target replacement : UnorderedTree α) (p : RoseTree α) :
     replace target replacement (mk p) = unorderedReplace target replacement p := rfl
@@ -95,8 +95,8 @@ theorem replace_node_pair (target replacement : UnorderedTree α) (a : α) (l r 
     replace target replacement (node a {l, r})
       = if node a {l, r} = target then replacement
         else node a {replace target replacement l, replace target replacement r} := by
-  refine inductionOn₂ l r fun pl pr => ?_
-  rw [node_pair_mk]
+  refine Quotient.inductionOn₂ l r fun pl pr => ?_
+  rw [quot_mk_eq_mk, quot_mk_eq_mk, node_pair_mk]
   simp only [replace_mk, unorderedReplace, unorderedReplaceList, Multiset.insert_eq_cons,
     ← Multiset.cons_zero]
 

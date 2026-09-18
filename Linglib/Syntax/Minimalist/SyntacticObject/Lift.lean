@@ -99,7 +99,7 @@ theorem mergeAlgebra_perm [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : 
 /-- The induced algebra on the nonplanar carrier: the catamorphism descends by
     `mergeAlgebra_perm`. -/
 def liftN [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) : UnorderedTree Vertex → β :=
-  UnorderedTree.lift (RoseTree.fold (mergeAlgebra ℓ τ))
+  Quotient.lift (RoseTree.fold (mergeAlgebra ℓ τ))
     fun _ _ h => RoseTree.fold_perm (fun a _ _ h' => mergeAlgebra_perm ℓ τ a h') h
 
 @[simp] theorem liftN_mk [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
@@ -110,8 +110,8 @@ def liftN [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β) : UnorderedT
 theorem liftN_merge [CommMagma β] [Zero β] (ℓ : LIToken → β) (τ : β)
     (a b : UnorderedTree Vertex) :
     liftN ℓ τ (UnorderedTree.node (Sum.inr none) {a, b}) = liftN ℓ τ a * liftN ℓ τ b := by
-  refine UnorderedTree.inductionOn₂ a b fun pa pb => ?_
-  rw [UnorderedTree.node_pair_mk]
+  refine Quotient.inductionOn₂ a b fun pa pb => ?_
+  rw [UnorderedTree.quot_mk_eq_mk, UnorderedTree.quot_mk_eq_mk, UnorderedTree.node_pair_mk]
   exact rfl
 
 /-- The induced map on syntactic objects, unbundled — computable, `decide`-friendly. -/

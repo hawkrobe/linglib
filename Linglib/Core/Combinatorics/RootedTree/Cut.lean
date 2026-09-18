@@ -686,15 +686,15 @@ theorem cutListSummandsP_proj_componentwise
 /-! ### Δ^ρ on UnorderedTree via descent
 
 The `cutSummandsP_proj_perm` invariance lifts `cutSummandsP`
-through `UnorderedTree.lift`, giving a well-defined `cutSummandsN`. The
+through `Quotient.lift`, giving a well-defined `cutSummandsN`. The
 tree-level coproduct `comulTreeN` then extends multiplicatively to a
 forest-level monoid hom and finally to the algebra hom `comulAlgHomN`. -/
 
-/-- The **UnorderedTree cut-summand multiset**, defined via `UnorderedTree.lift`
+/-- The **UnorderedTree cut-summand multiset**, defined via `Quotient.lift`
     using the `cutSummandsP_proj_perm` invariance. -/
 noncomputable def cutSummandsN :
     UnorderedTree α → Multiset (Multiset (UnorderedTree α) × UnorderedTree α) :=
-  UnorderedTree.lift (fun T => (cutSummandsP T).map projSummand)
+  Quotient.lift (fun T => (cutSummandsP T).map projSummand)
     (fun _ _ h => cutSummandsP_proj_perm h)
 
 @[simp] theorem cutSummandsN_mk (T : RoseTree α) :
@@ -1403,11 +1403,11 @@ theorem cutSummandsCP_proj_perm (τ : UnorderedTree (α ⊕ β) → β)
 /-! ### Descent of `cutSummandsCP` through `UnorderedTree.mk` -/
 
 /-- The UnorderedTree Δ^c cut summands, descended from `cutSummandsCP` via
-    `UnorderedTree.lift` using the descent invariance
+    `Quotient.lift` using the descent invariance
     `cutSummandsCP_proj_perm`. -/
 noncomputable def cutSummandsCN (τ : UnorderedTree (α ⊕ β) → β) :
     UnorderedTree (α ⊕ β) → Multiset (Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) :=
-  UnorderedTree.lift
+  Quotient.lift
     (fun T => (ConnesKreimer.cutSummandsCP (τ ∘ UnorderedTree.mk) T).map
       ConnesKreimer.projSummand)
     (fun _ _ h => ConnesKreimer.cutSummandsCP_proj_perm τ h)

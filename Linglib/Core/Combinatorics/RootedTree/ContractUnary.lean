@@ -158,7 +158,7 @@ variable {α : Type*}
 
 /-- The number of unary vertices of a nonplanar tree. -/
 def numUnary : UnorderedTree α → ℕ :=
-  UnorderedTree.lift RoseTree.numUnary fun _ _ h => RoseTree.numUnary_perm h
+  Quotient.lift RoseTree.numUnary fun _ _ h => RoseTree.numUnary_perm h
 
 @[simp] theorem numUnary_mk (t : RoseTree α) : (mk t).numUnary = t.numUnary := rfl
 

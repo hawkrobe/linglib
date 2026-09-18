@@ -29,7 +29,7 @@ variable {α : Type*} (a : α)
 
 /-- The leaves of an unordered tree, each paired with its distance from the root. -/
 def leavesWithDepth : UnorderedTree α → Multiset (α × ℕ) :=
-  UnorderedTree.lift RoseTree.leavesWithDepth fun _ _ => RoseTree.leavesWithDepth_perm
+  Quotient.lift RoseTree.leavesWithDepth fun _ _ => RoseTree.leavesWithDepth_perm
 
 @[simp] theorem leavesWithDepth_mk (t : RoseTree α) :
     (mk t).leavesWithDepth = t.leavesWithDepth := rfl
@@ -107,8 +107,8 @@ theorem sum_map_snd_filter_leavesWithDepth_leaf (a : α) :
 /-- A root failing `p` is an uncounted vertex, so the count is strict. -/
 theorem countP_leaves_lt_numNodes_of_not_root (t : UnorderedTree α) (h : ¬p t.value) :
     t.leaves.countP p < t.numNodes := by
-  induction t using inductionOn with
-  | mk t₀ =>
+  induction t using Quotient.inductionOn with
+  | h t₀ =>
     cases t₀ with
     | node x cs => exact RoseTree.countP_leaves_lt_numNodes_of_not p cs h
 
@@ -117,8 +117,8 @@ theorem countP_leaves_le_sum_map_snd_filter_leavesWithDepth_of_not_root (t : Uno
     (h : ¬p t.value) :
     t.leaves.countP p
       ≤ Multiset.sum ((t.leavesWithDepth.filter fun q : α × ℕ => p q.1).map Prod.snd) := by
-  induction t using inductionOn with
-  | mk t₀ =>
+  induction t using Quotient.inductionOn with
+  | h t₀ =>
     cases t₀ with
     | node x cs => exact RoseTree.countP_leaves_le_sum_map_snd_filter_leavesWithDepth_of_not p cs h
 

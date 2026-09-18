@@ -126,7 +126,7 @@ end SyntacticObject
 /-- An unordered tree over `Vertex` is a syntactic object when its ordered representatives are
     well-formed: binary, with lexical or trace leaves and bare internal vertices. -/
 def IsSyntacticObject (t : UnorderedTree SyntacticObject.Vertex) : Prop :=
-  UnorderedTree.lift SyntacticObject.wellFormed (fun _ _ h => SyntacticObject.wellFormed_perm h) t
+  Quotient.lift SyntacticObject.wellFormed (fun _ _ h => SyntacticObject.wellFormed_perm h) t
     = true
 
 instance : DecidablePred IsSyntacticObject := fun _ => inferInstanceAs (Decidable (_ = true))
