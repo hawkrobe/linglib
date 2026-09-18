@@ -78,9 +78,7 @@ A leaf in `UnorderedTree α` is `mk (RoseTree.leaf a)`. `numNodes` is the
 canonical first lifted invariant. -/
 
 /-- A nonplanar leaf labeled `a`. -/
-def leaf (a : α) : UnorderedTree α := mk (RoseTree.leaf a)
-
-@[simp] theorem leaf_def (a : α) : (leaf a : UnorderedTree α) = mk (RoseTree.leaf a) := rfl
+abbrev leaf (a : α) : UnorderedTree α := mk (RoseTree.leaf a)
 
 /-- The **node count** (number of vertices) of a nonplanar tree, lifted
     from `RoseTree.numNodes` via `RoseTree.Perm`-invariance. -/
@@ -89,8 +87,7 @@ def numNodes : UnorderedTree α → Nat :=
 
 @[simp] theorem numNodes_mk (t : RoseTree α) : (mk t).numNodes = t.numNodes := rfl
 
-@[simp] theorem numNodes_leaf (a : α) : (leaf a : UnorderedTree α).numNodes = 1 := by
-  simp [RoseTree.leaf]
+@[simp] theorem numNodes_leaf (a : α) : (leaf a : UnorderedTree α).numNodes = 1 := by simp
 
 /-- The **leaf count** (number of childless vertices) of a nonplanar tree,
     lifted from `RoseTree.numLeaves` via `RoseTree.Perm`-invariance. MCB's
@@ -111,24 +108,13 @@ def arity : UnorderedTree α → Nat :=
 
 @[simp] theorem arity_leaf (a : α) : (leaf a : UnorderedTree α).arity = 0 := rfl
 
-/-- The **depth** (longest root-to-leaf path in vertices) of a nonplanar tree. -/
-def depth : UnorderedTree α → Nat :=
-  UnorderedTree.lift RoseTree.depth (fun _ _ h => RoseTree.depth_perm h)
+/-- The **height** (number of vertices on a longest root-to-leaf path) of a nonplanar tree. -/
+def height : UnorderedTree α → Nat :=
+  UnorderedTree.lift RoseTree.height (fun _ _ h => RoseTree.height_perm h)
 
-@[simp] theorem depth_mk (t : RoseTree α) : (mk t).depth = t.depth := rfl
+@[simp] theorem height_mk (t : RoseTree α) : (mk t).height = t.height := rfl
 
-@[simp] theorem depth_leaf (a : α) : (leaf a : UnorderedTree α).depth = 1 := by
-  simp [RoseTree.leaf]
-
-/-- A nonplanar tree is a **leaf** if its root has no children. (Audit
-    item: queue migrate to `Prop` + `[DecidablePred]` once the matching
-    `RoseTree.isLeaf` is migrated.) -/
-def isLeaf : UnorderedTree α → Bool :=
-  UnorderedTree.lift RoseTree.isLeaf (fun _ _ h => RoseTree.isLeaf_perm h)
-
-@[simp] theorem isLeaf_mk (t : RoseTree α) : (mk t).isLeaf = t.isLeaf := rfl
-
-@[simp] theorem isLeaf_leaf (a : α) : (leaf a : UnorderedTree α).isLeaf = true := rfl
+@[simp] theorem height_leaf (a : α) : (leaf a : UnorderedTree α).height = 1 := by simp
 
 /-! ### Destructors and node injectivity
 
@@ -241,51 +227,14 @@ theorem forest_inductionOn {motive : Multiset (UnorderedTree α) → Prop}
     exact (List.map_congr_left fun x _ => x.out_eq).trans (List.map_id lst)
   exact hrep ▸ h (lst.map Quotient.out)
 
-/-! #### Sanity tests -/
+/-! ### The destructors of a `node` -/
 
-/-- Sibling order doesn't matter at the root: this is built into the
-    `Multiset` carrier. -/
-example {α : Type*} (a b c : α) :
-    node a (Multiset.ofList [leaf b, leaf c]) =
-      node a (Multiset.ofList [leaf c, leaf b]) := by
-  congr 1
-  exact (Multiset.coe_eq_coe.mpr (List.Perm.swap _ _ _))
-
-/-- A nonplanar binary node built via `node` agrees with the canonical
-    tree binary node lifted via `mk`. -/
-example {α : Type*} (a b c : α) :
-    node a (Multiset.ofList [leaf b, leaf c]) =
-      mk (RoseTree.node a [RoseTree.leaf b, RoseTree.leaf c]) := by
-  have := node_mk_tree_list a [RoseTree.leaf b, RoseTree.leaf c]
-  simpa [leaf] using this
-
-/-! ### Root value and children
-
-Root-level projections, lifted through the quotient: `RoseTree.value` is
-`RoseTree.Perm`-invariant on the nose (`Perm.value_eq`), and the mk-image of
-`RoseTree.children` is invariant as a *multiset* (`perm_children_map_mk`). -/
-
-/-- The root value of a nonplanar tree. -/
-def rootValue : UnorderedTree α → α :=
-  UnorderedTree.lift RoseTree.value (fun _ _ h => h.value_eq)
-
-/-- The multiset of root children of a nonplanar tree. -/
-def rootChildren : UnorderedTree α → Multiset (UnorderedTree α) :=
-  UnorderedTree.lift (fun t => Multiset.ofList (t.children.map mk))
-    (fun _ _ h => perm_children_map_mk h)
-
-@[simp] theorem rootValue_mk (t : RoseTree α) : rootValue (mk t) = t.value := rfl
-
-@[simp] theorem rootChildren_mk (t : RoseTree α) :
-    rootChildren (mk t) = Multiset.ofList (t.children.map mk) := rfl
-
-@[simp] theorem rootValue_node (a : α) (F : Multiset (UnorderedTree α)) :
-    rootValue (node a F) = a := by
+@[simp] theorem value_node (a : α) (F : Multiset (UnorderedTree α)) : value (node a F) = a := by
   induction F using Quotient.inductionOn with
   | h lst => rfl
 
-@[simp] theorem rootChildren_node (a : α) (F : Multiset (UnorderedTree α)) :
-    rootChildren (node a F) = F := by
+@[simp] theorem children_node (a : α) (F : Multiset (UnorderedTree α)) :
+    children (node a F) = F := by
   induction F using Quotient.inductionOn with
   | h lst =>
     show Multiset.ofList (((lst.map Quotient.out).map mk)) = Multiset.ofList lst
@@ -293,8 +242,8 @@ def rootChildren : UnorderedTree α → Multiset (UnorderedTree α) :=
     congr 1
     exact (List.map_congr_left (fun x _ => Quotient.out_eq x)).trans (List.map_id lst)
 
-/-- Eta law: every tree is the `node` of its root value and root children. -/
-theorem node_eta (t : UnorderedTree α) : node (rootValue t) (rootChildren t) = t := by
+/-- Eta law: every tree is the `node` of its root value and children. -/
+theorem node_eta (t : UnorderedTree α) : node (value t) (children t) = t := by
   induction t using Quotient.inductionOn with
   | h p =>
     cases p with
@@ -310,7 +259,7 @@ theorem numNodes_pos (t : UnorderedTree α) : 0 < t.numNodes := by
 /-- Node count of a smart-constructor `node`: one (the root) plus the
     total node count of the children multiset. -/
 @[simp] theorem numNodes_node (a : α) (F : Multiset (UnorderedTree α)) :
-    (node a F).numNodes = 1 + (F.map numNodes).sum := by
+    (node a F).numNodes = (F.map numNodes).sum + 1 := by
   refine Quotient.inductionOn F fun lst => ?_
   show (mk (.node a (lst.map Quotient.out))).numNodes = _
   rw [numNodes_mk, RoseTree.numNodes_node, List.map_map]
@@ -320,54 +269,22 @@ theorem numNodes_pos (t : UnorderedTree α) : 0 < t.numNodes := by
   show (mk (Quotient.out t)).numNodes = numNodes t
   exact congrArg numNodes (Quotient.out_eq t)
 
-/-! ### Depth of a `node` -/
+/-! ### Height of a `node` -/
 
-/-- A tree's depth is strictly less than the depth of any node containing
+/-- A tree's height is strictly less than the height of any node containing
     it as a child. -/
-theorem depth_lt_of_mem (T : UnorderedTree α) (F : Multiset (UnorderedTree α))
-    (hT : T ∈ F) (a : α) : T.depth < (node a F).depth := by
+theorem height_lt_of_mem (T : UnorderedTree α) (F : Multiset (UnorderedTree α))
+    (hT : T ∈ F) (a : α) : T.height < (node a F).height := by
   revert hT
   induction F using forest_inductionOn with
   | h ps =>
     intro hT
     rw [node_mk_tree_list]
-    show T.depth < (RoseTree.node a ps).depth
-    rw [RoseTree.depth_node]
     rw [show (Multiset.ofList (ps.map mk) : Multiset (UnorderedTree α)) =
           ((ps.map mk : List (UnorderedTree α)) : Multiset _) from rfl,
         Multiset.mem_coe, List.mem_map] at hT
     obtain ⟨c, hc, rfl⟩ := hT
-    show (mk c).depth < 1 + (ps.map RoseTree.depth).foldr max 0
-    rw [depth_mk, Nat.add_comm]
-    exact Nat.lt_succ_of_le (RoseTree.depth_le_foldr_max hc)
-
-/-! ### Edge count of a forest -/
-
-/-- Total edge count of a forest of nonplanar trees: each tree with `n`
-    vertices contributes `n - 1` edges. Defined as a per-tree sum (no
-    global subtraction) so additivity is immediate. -/
-def Forest.edgeCount (F : Multiset (UnorderedTree α)) : ℕ :=
-  (F.map (fun T => T.numNodes - 1)).sum
-
-@[simp] theorem Forest.edgeCount_zero :
-    Forest.edgeCount (0 : Multiset (UnorderedTree α)) = 0 := rfl
-
-@[simp] theorem Forest.edgeCount_singleton (T : UnorderedTree α) :
-    Forest.edgeCount ({T} : Multiset (UnorderedTree α)) = T.numNodes - 1 := by
-  show (({T} : Multiset (UnorderedTree α)).map (fun T => T.numNodes - 1)).sum = _
-  rw [Multiset.map_singleton, Multiset.sum_singleton]
-
-@[simp] theorem Forest.edgeCount_cons (T : UnorderedTree α) (F : Multiset (UnorderedTree α)) :
-    Forest.edgeCount (T ::ₘ F) = (T.numNodes - 1) + Forest.edgeCount F := by
-  show ((T ::ₘ F).map (fun T => T.numNodes - 1)).sum = _
-  rw [Multiset.map_cons, Multiset.sum_cons]
-  rfl
-
-@[simp] theorem Forest.edgeCount_add (F G : Multiset (UnorderedTree α)) :
-    Forest.edgeCount (F + G) = Forest.edgeCount F + Forest.edgeCount G := by
-  show ((F + G).map (fun T => T.numNodes - 1)).sum = _
-  rw [Multiset.map_add, Multiset.sum_add]
-  rfl
+    exact RoseTree.height_lt_of_mem (t := RoseTree.node a ps) hc
 
 end UnorderedTree
 
@@ -430,12 +347,12 @@ theorem map_node (f : α → β) (a : α) (cs : Multiset (UnorderedTree α)) :
   show (map f (mk p)).numNodes = (mk p).numNodes
   rw [map_mk, numNodes_mk, numNodes_mk, RoseTree.numNodes_map]
 
-@[simp] theorem depth_map (f : α → β) (t : UnorderedTree α) :
-    (map f t).depth = t.depth := by
+@[simp] theorem height_map (f : α → β) (t : UnorderedTree α) :
+    (map f t).height = t.height := by
   refine Quotient.inductionOn t ?_
   intro p
-  show (map f (mk p)).depth = (mk p).depth
-  rw [map_mk, depth_mk, depth_mk, RoseTree.depth_map]
+  show (map f (mk p)).height = (mk p).height
+  rw [map_mk, height_mk, height_mk, RoseTree.height_map]
 
 @[simp] theorem arity_map (f : α → β) (t : UnorderedTree α) :
     (map f t).arity = t.arity := by
@@ -443,13 +360,6 @@ theorem map_node (f : α → β) (a : α) (cs : Multiset (UnorderedTree α)) :
   intro p
   show (map f (mk p)).arity = (mk p).arity
   rw [map_mk, arity_mk, arity_mk, RoseTree.arity_map]
-
-@[simp] theorem isLeaf_map (f : α → β) (t : UnorderedTree α) :
-    (map f t).isLeaf = t.isLeaf := by
-  refine Quotient.inductionOn t ?_
-  intro p
-  show (map f (mk p)).isLeaf = (mk p).isLeaf
-  rw [map_mk, isLeaf_mk, isLeaf_mk, RoseTree.isLeaf_map]
 
 @[simp] theorem numLeaves_map (f : α → β) (t : UnorderedTree α) :
     (map f t).numLeaves = t.numLeaves := by

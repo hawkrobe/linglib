@@ -158,14 +158,23 @@ private def wrapped : Prosody.Tree := .node .iota [.node .ph [ω, ω]]
 private def separated : Prosody.Tree :=
   .node .iota [.node .ph [ω], .node .ph [ω]]
 
+/-- The `(offset, size)` leaf-spans of the φ nodes, in left-to-right order: the offset counts
+leaves strictly to the node's left, the size its own leaves. -/
+private def phSpans : Prosody.Tree → List (ℕ × ℕ) := go 0 where
+  go (off : ℕ) : Prosody.Tree → List (ℕ × ℕ)
+    | .node a cs =>
+        (if a.isPh then [(off, RoseTree.numLeaves (.node a cs))] else []) ++ goList off cs
+  goList (off : ℕ) : List Prosody.Tree → List (ℕ × ℕ)
+    | [] => []
+    | c :: cs => go off c ++ goList (off + RoseTree.numLeaves c) cs
+
 /-- ALIGN-Focus: violated when no φ-edge sits at the focus's left edge
 (leaf offset 1, the object). -/
 private def alignFocus : Constraint Prosody.Tree :=
-  .binary (fun t ↦ ¬ ∃ s ∈ RoseTree.spansOf Prosody.Constituent.isPh t, s.1 = 1)
+  .binary (fun t ↦ ¬ ∃ s ∈ phSpans t, s.1 = 1)
 
 /-- Phrasal economy: one violation per φ. -/
-private def starPhi : Constraint Prosody.Tree :=
-  fun t ↦ (RoseTree.spansOf Prosody.Constituent.isPh t).length
+private def starPhi : Constraint Prosody.Tree := fun t ↦ (phSpans t).length
 
 /-- Object focus: alignment dominates economy, and the separated parse
 wins — the derived φ-edge after the verb. -/
@@ -182,8 +191,7 @@ theorem neutral_parse_wraps :
 /-- No φ spans the V–O juncture in the separated parse — elision is
 blocked there and applies in the wrapped one. -/
 theorem separated_edge_wrapped_internal :
-    (0, 2) ∉ RoseTree.spansOf Prosody.Constituent.isPh separated ∧
-    (0, 2) ∈ RoseTree.spansOf Prosody.Constituent.isPh wrapped := by decide
+    (0, 2) ∉ phSpans separated ∧ (0, 2) ∈ phSpans wrapped := by decide
 
 /-- The prosodic reflex is audible: the boundary-blocked perfective
 form differs from the phrase-medial elided form — [kidda-1985]'s

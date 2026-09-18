@@ -67,7 +67,7 @@ theorem Cut.extractionCost_add_quotientCost (p : Forest (UnorderedTree (α ⊕ �
 
 /-- Extracting a proper crown from a lexical-rooted object has positive cost. -/
 theorem Cut.extractionCost_pos (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree (α ⊕ β))
-    (a₀ : α) (hT : T.rootValue = Sum.inl a₀)
+    (a₀ : α) (hT : T.value = Sum.inl a₀)
     (p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
     (hproper : p.1 ≠ 0) :
     0 < Cut.extractionCost p := by
@@ -102,7 +102,7 @@ def swNetCost (p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ �
 /-- A Sideward Merge of a lexical-rooted object has strictly positive net cost
     (MCB Prop 1.5.1) — the uncancelled extraction depth. -/
 theorem swNetCost_pos (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree (α ⊕ β)) (a₀ : α)
-    (hT : T.rootValue = Sum.inl a₀)
+    (hT : T.value = Sum.inl a₀)
     (p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
     (hproper : p.1 ≠ 0) :
     0 < swNetCost p := by
@@ -153,7 +153,7 @@ theorem mergeOpCEps_zero_sideward (τ : UnorderedTree (α ⊕ β) → β) {c : �
     extraction `p` of a lexical-rooted object: the uncancelled depth makes
     `swNetCost p > 0`, so the operator is annihilated at ε = 0. -/
 theorem mergeOpCEps_zero_sideward_of_cut (τ : UnorderedTree (α ⊕ β) → β)
-    (T : UnorderedTree (α ⊕ β)) (a₀ : α) (hT : T.rootValue = Sum.inl a₀)
+    (T : UnorderedTree (α ⊕ β)) (a₀ : α) (hT : T.value = Sum.inl a₀)
     (p : Forest (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
     (hproper : p.1 ≠ 0) (lbl : α ⊕ β) (S S' : UnorderedTree (α ⊕ β)) :
     mergeOpCEps τ (0 : R) (swNetCost p) lbl S S' = 0 :=

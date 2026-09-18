@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Data.RoseTree.DecEq
+import Linglib.Core.Data.UnorderedTree.DecEq
 import Linglib.Core.Data.UnorderedTree.Basic
 
 /-!
@@ -87,9 +87,9 @@ theorem replace_leaf (target replacement : UnorderedTree α) (x : α) :
   show unorderedReplace target replacement (RoseTree.leaf x) = _
   have hz : node x (0 : Multiset (UnorderedTree α)) = leaf x := by
     rw [show (0 : Multiset (UnorderedTree α)) = Multiset.ofList ([].map mk) from rfl,
-        node_mk_tree_list]; rfl
+        node_mk_tree_list]
   have hcond : mk (RoseTree.node x []) = leaf x := rfl
-  simp only [RoseTree.leaf, unorderedReplace, unorderedReplaceList, hz, hcond]
+  simp only [unorderedReplace, unorderedReplaceList, hz, hcond]
 
 theorem replace_node_pair (target replacement : UnorderedTree α) (a : α) (l r : UnorderedTree α) :
     replace target replacement (node a {l, r})

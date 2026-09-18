@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Combinatorics.RootedTree.ContractUnary
 import Linglib.Core.Combinatorics.RootedTree.Cut
-import Linglib.Core.Data.RoseTree.Count
+import Linglib.Core.Data.UnorderedTree.Count
 import Mathlib.Algebra.Order.BigOperators.Group.Multiset
 
 open RoseTree UnorderedTree
@@ -27,7 +27,7 @@ and a *trunk* `p.2` carrying one trace-marker leaf per cut.
   `Σ #trace(crown) + #trace(trunk) = #trace(T) + #cuts`.
 * `ConnesKreimer.cutSummandsCN_lexical_conservation` — exact conservation
   of non-trace vertices.
-* `ConnesKreimer.cutSummandsCN_trunk_rootValue`,
+* `ConnesKreimer.cutSummandsCN_trunk_value`,
   `cutSummandsCN_crown_traceLeafCount_lt_numNodes` — non-degeneracy: the
   trunk keeps the root, crown components are lexical-rooted.
 * `ConnesKreimer.Cut.numContractions`, `ConnesKreimer.Cut.depthC` — the
@@ -49,69 +49,71 @@ namespace RoseTree
 variable {α β : Type*}
 
 /-- The number of `Sum.inr`-labeled (trace-marker) leaves in a tree. -/
-def traceLeafCount (t : RoseTree (α ⊕ β)) : ℕ := leafCountP (·.isRight = true) t
+def traceLeafCount (t : RoseTree (α ⊕ β)) : ℕ := t.leaves.countP (·.isRight = true)
 
 /-- Sum of root-distances of the `Sum.inr`-labeled (trace-marker) leaves. -/
-def traceDepthSum (t : RoseTree (α ⊕ β)) : ℕ := leafDepthSumP (·.isRight = true) t
+def traceDepthSum (t : RoseTree (α ⊕ β)) : ℕ :=
+  Multiset.sum ((t.leavesWithDepth.filter fun q => q.1.isRight = true).map Prod.snd)
 
 @[simp] theorem traceLeafCount_leaf_inr (b : β) :
     traceLeafCount (.node (Sum.inr b) [] : RoseTree (α ⊕ β)) = 1 := by
-  simp [traceLeafCount]
+  simp [traceLeafCount, Multiset.countP_eq_card_filter, Multiset.filter_singleton]
 
 @[simp] theorem traceLeafCount_leaf_inl (a : α) :
     traceLeafCount (.node (Sum.inl a) [] : RoseTree (α ⊕ β)) = 0 := by
-  simp [traceLeafCount]
+  simp [traceLeafCount, Multiset.countP_eq_card_filter, Multiset.filter_singleton]
 
 theorem traceLeafCount_node_of_ne_nil (v : α ⊕ β) (cs : List (RoseTree (α ⊕ β)))
     (h : cs ≠ []) : traceLeafCount (.node v cs) = (cs.map traceLeafCount).sum :=
-  leafCountP_node_of_ne_nil _ v cs h
+  countP_leaves_node_of_ne_nil _ v h
 
 @[simp] theorem traceLeafCount_node_cons (v : α ⊕ β) (c : RoseTree (α ⊕ β))
     (cs : List (RoseTree (α ⊕ β))) :
     traceLeafCount (.node v (c :: cs)) = ((c :: cs).map traceLeafCount).sum :=
-  leafCountP_node_cons _ v c cs
+  countP_leaves_node_cons _ v c cs
 
 @[simp] theorem traceLeafCount_node_inl (a : α) (cs : List (RoseTree (α ⊕ β))) :
     traceLeafCount (.node (Sum.inl a) cs) = (cs.map traceLeafCount).sum :=
-  leafCountP_node_of_not _ _ cs (by simp)
+  countP_leaves_node_of_not _ cs (by simp)
 
 @[simp] theorem traceDepthSum_leaf_inl (a : α) :
     traceDepthSum (.node (Sum.inl a) [] : RoseTree (α ⊕ β)) = 0 :=
-  leafDepthSumP_leaf _ _
+  sum_map_snd_filter_leavesWithDepth_leaf (fun x : α ⊕ β => x.isRight = true) _
 
 @[simp] theorem traceDepthSum_leaf_inr (b : β) :
     traceDepthSum (.node (Sum.inr b) [] : RoseTree (α ⊕ β)) = 0 :=
-  leafDepthSumP_leaf _ _
+  sum_map_snd_filter_leavesWithDepth_leaf (fun x : α ⊕ β => x.isRight = true) _
 
 @[simp] theorem traceDepthSum_node (v : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
     traceDepthSum (.node v cs)
       = (cs.map fun c => traceDepthSum c + traceLeafCount c).sum :=
-  leafDepthSumP_node _ v cs
+  sum_map_snd_filter_leavesWithDepth_node (fun x : α ⊕ β => x.isRight = true) v cs
 
 theorem traceLeafCount_perm {t s : RoseTree (α ⊕ β)} (h : Perm t s) :
     t.traceLeafCount = s.traceLeafCount :=
-  leafCountP_perm _ h
+  congrArg (Multiset.countP _) (leaves_perm h)
 
 theorem traceDepthSum_perm {t s : RoseTree (α ⊕ β)} (h : Perm t s) :
     t.traceDepthSum = s.traceDepthSum :=
-  leafDepthSumP_perm _ h
+  by unfold traceDepthSum; rw [leavesWithDepth_perm h]
 
 theorem traceLeafCount_le_node (v : α ⊕ β) (cs : List (RoseTree (α ⊕ β))) :
     (cs.map traceLeafCount).sum ≤ traceLeafCount (.node v cs) :=
-  sum_map_leafCountP_le_node _ v cs
+  sum_map_countP_leaves_le_node _ v cs
 
 theorem traceLeafCount_le_numNodes (t : RoseTree (α ⊕ β)) :
     t.traceLeafCount ≤ t.numNodes :=
-  leafCountP_le_numNodes _ t
+  countP_leaves_le_numNodes _ t
 
 theorem traceLeafCount_lt_numNodes_of_inl (a : α) (cs : List (RoseTree (α ⊕ β))) :
     traceLeafCount (RoseTree.node (Sum.inl a) cs) <
       numNodes (RoseTree.node (Sum.inl a) cs) :=
-  leafCountP_lt_numNodes_of_not _ _ cs (by simp)
+  countP_leaves_lt_numNodes_of_not _ cs (by simp)
 
 theorem traceLeafCount_le_traceDepthSum_of_inl (a : α) (cs : List (RoseTree (α ⊕ β))) :
     traceLeafCount (.node (Sum.inl a) cs) ≤ traceDepthSum (.node (Sum.inl a) cs) :=
-  leafCountP_le_leafDepthSumP_of_not _ _ cs (by simp)
+  countP_leaves_le_sum_map_snd_filter_leavesWithDepth_of_not (fun x : α ⊕ β => x.isRight = true)
+    cs (by simp)
 
 end RoseTree
 
@@ -121,50 +123,52 @@ namespace UnorderedTree
 variable {α β : Type*}
 
 /-- The number of `Sum.inr`-labeled (trace-marker) leaves of a nonplanar tree. -/
-def traceLeafCount : UnorderedTree (α ⊕ β) → ℕ := leafCountP (·.isRight = true)
+def traceLeafCount (t : UnorderedTree (α ⊕ β)) : ℕ := t.leaves.countP (·.isRight = true)
 
 @[simp] theorem traceLeafCount_mk (t : RoseTree (α ⊕ β)) :
     (mk t).traceLeafCount = t.traceLeafCount := rfl
 
 @[simp] theorem traceLeafCount_leaf_inl (a : α) :
     (leaf (Sum.inl a) : UnorderedTree (α ⊕ β)).traceLeafCount = 0 := by
-  simp [traceLeafCount]
+  simp [traceLeafCount, Multiset.countP_eq_card_filter, Multiset.filter_singleton]
 
 @[simp] theorem traceLeafCount_leaf_inr (b : β) :
     (leaf (Sum.inr b) : UnorderedTree (α ⊕ β)).traceLeafCount = 1 := by
-  simp [traceLeafCount]
+  simp [traceLeafCount, Multiset.countP_eq_card_filter, Multiset.filter_singleton]
 
 @[simp] theorem traceLeafCount_node_inl (a : α) (F : Multiset (UnorderedTree (α ⊕ β))) :
     (UnorderedTree.node (Sum.inl a) F).traceLeafCount
       = (F.map UnorderedTree.traceLeafCount).sum :=
-  leafCountP_node_of_not _ _ F (by simp)
+  countP_leaves_node_of_not _ _ F (by simp)
 
 /-- The depth-weighted trace-marker count of a nonplanar tree. -/
-def traceDepthSum : UnorderedTree (α ⊕ β) → ℕ := leafDepthSumP (·.isRight = true)
+def traceDepthSum (t : UnorderedTree (α ⊕ β)) : ℕ :=
+  Multiset.sum ((t.leavesWithDepth.filter fun q => q.1.isRight = true).map Prod.snd)
 
 @[simp] theorem traceDepthSum_mk (t : RoseTree (α ⊕ β)) :
     (mk t).traceDepthSum = t.traceDepthSum := rfl
 
 @[simp] theorem traceDepthSum_leaf_inl (a : α) :
     (leaf (Sum.inl a) : UnorderedTree (α ⊕ β)).traceDepthSum = 0 := by
-  simp [traceDepthSum]
+  simp [traceDepthSum, Multiset.filter_singleton]
 
 @[simp] theorem traceDepthSum_leaf_inr (b : β) :
     (leaf (Sum.inr b) : UnorderedTree (α ⊕ β)).traceDepthSum = 0 := by
-  simp [traceDepthSum]
+  simp [traceDepthSum, Multiset.filter_singleton]
 
 @[simp] theorem traceDepthSum_node_inl (a : α) (F : Multiset (UnorderedTree (α ⊕ β))) :
     (UnorderedTree.node (Sum.inl a) F).traceDepthSum
       = (F.map (fun c => c.traceDepthSum + c.traceLeafCount)).sum :=
-  leafDepthSumP_node _ _ F
+  sum_map_snd_filter_leavesWithDepth_node (fun x : α ⊕ β => x.isRight = true) _ F
 
 theorem traceLeafCount_lt_numNodes_of_rootInl (t : UnorderedTree (α ⊕ β)) (x : α)
-    (h : t.rootValue = Sum.inl x) : t.traceLeafCount < t.numNodes :=
-  leafCountP_lt_numNodes_of_not_root _ t (by rw [h]; simp)
+    (h : t.value = Sum.inl x) : t.traceLeafCount < t.numNodes :=
+  countP_leaves_lt_numNodes_of_not_root _ t (by rw [h]; simp)
 
 theorem traceLeafCount_le_traceDepthSum_of_rootInl (t : UnorderedTree (α ⊕ β)) (x : α)
-    (h : t.rootValue = Sum.inl x) : t.traceLeafCount ≤ t.traceDepthSum :=
-  leafCountP_le_leafDepthSumP_of_not_root _ t (by rw [h]; simp)
+    (h : t.value = Sum.inl x) : t.traceLeafCount ≤ t.traceDepthSum :=
+  countP_leaves_le_sum_map_snd_filter_leavesWithDepth_of_not_root
+    (fun x : α ⊕ β => x.isRight = true) t (by rw [h]; simp)
 
 end UnorderedTree
 
@@ -571,9 +575,9 @@ theorem cutSummandsCN_crown_traceLeafCount_lt_numNodes (τ : UnorderedTree (α �
   exact RoseTree.traceLeafCount_lt_numNodes_of_inl a cs
 
 /-- A Δ^c cut never touches the root: the trunk keeps the tree's root label. -/
-theorem cutSummandsCN_trunk_rootValue (τ : UnorderedTree (α ⊕ β) → β)
+theorem cutSummandsCN_trunk_value (τ : UnorderedTree (α ⊕ β) → β)
     (T : UnorderedTree (α ⊕ β)) :
-    ∀ p ∈ cutSummandsCN τ T, p.2.rootValue = T.rootValue := by
+    ∀ p ∈ cutSummandsCN τ T, p.2.value = T.value := by
   obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
     ⟨T.out, (Quotient.out_eq T).symm⟩
   intro p hp
@@ -583,9 +587,9 @@ theorem cutSummandsCN_trunk_rootValue (τ : UnorderedTree (α ⊕ β) → β)
   | node a cs =>
     rw [ConnesKreimer.cutSummandsG_node] at hq
     obtain ⟨q', hq', rfl⟩ := Multiset.mem_map.mp hq
-    show (UnorderedTree.mk (RoseTree.node a q'.2)).rootValue =
-      (UnorderedTree.mk (RoseTree.node a cs)).rootValue
-    rw [UnorderedTree.rootValue_mk, UnorderedTree.rootValue_mk, RoseTree.value_node,
+    show (UnorderedTree.mk (RoseTree.node a q'.2)).value =
+      (UnorderedTree.mk (RoseTree.node a cs)).value
+    rw [UnorderedTree.value_mk, UnorderedTree.value_mk, RoseTree.value_node,
         RoseTree.value_node]
 
 /-! ### Minimal-Search depth of a proper cut -/
@@ -593,12 +597,12 @@ theorem cutSummandsCN_trunk_rootValue (τ : UnorderedTree (α ⊕ β) → β)
 /-- A proper Δ^c cut of a lexical-rooted tree has trunk trace-depth at least one: the trunk keeps
     the lexical root, so each of its fresh trace markers sits at depth at least one. -/
 theorem Cut.depthC_pos (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree (α ⊕ β)) (a₀ : α)
-    (hT : T.rootValue = Sum.inl a₀)
+    (hT : T.value = Sum.inl a₀)
     (p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) (hp : p ∈ cutSummandsCN τ T)
     (hproper : p.1 ≠ 0) :
     1 ≤ Cut.depthC p := by
-  have htrunk_root : p.2.rootValue = Sum.inl a₀ :=
-    (cutSummandsCN_trunk_rootValue τ T p hp).trans hT
+  have htrunk_root : p.2.value = Sum.inl a₀ :=
+    (cutSummandsCN_trunk_value τ T p hp).trans hT
   have h1 : Multiset.card p.1 ≤ p.2.traceLeafCount :=
     cutSummandsCN_trunk_traceLeafCount_ge_card τ T p hp
   have h2 : p.2.traceLeafCount ≤ p.2.traceDepthSum :=

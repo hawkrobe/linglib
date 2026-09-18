@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Data.Multiset.Antidiagonal
-import Linglib.Core.Data.RoseTree.DecEq
+import Linglib.Core.Data.UnorderedTree.DecEq
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 import Mathlib.Data.Multiset.Antidiagonal
@@ -120,7 +120,7 @@ def autCard : UnorderedTree α → ℕ :=
 /-- A leaf has trivial aut group. -/
 @[simp] theorem autCard_leaf (a : α) : autCard (UnorderedTree.leaf a : UnorderedTree α) = 1 := by
   show treeAutCard (RoseTree.leaf a) = 1
-  rw [RoseTree.leaf_def, treeAutCard_node]
+  rw [treeAutCard_node]
   simp [multinomialFactor]
 
 /-- `autCard` is positive: the automorphism group contains the identity. -/

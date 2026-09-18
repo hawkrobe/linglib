@@ -46,7 +46,7 @@ variable {R : Type*} [CommRing R] {α : Type*}
 
 /-- If a character `φ` is **nonpolar** on every tree (`R·φ(ofTree T) = 0`), its Bogolyubov negative
     part under the polar-projection Rota–Baxter operator vanishes: `φ₋(T) = 0`. By strong recursion
-    on `T.depth`: every nontrivial cut's pruned forest contains a subtree of smaller depth, where
+    on `T.height`: every nontrivial cut's pruned forest contains a subtree of smaller height, where
     `φ₋` is `0` by the recursive hypothesis — killing that term — and the trivial cut contributes the
     nonpolar trunk value `φ(ofTree …)`, so `R` annihilates the whole Bogolyubov preparation. -/
 theorem birkhoffMinusTree_eq_zero_of_nonpolar
@@ -64,8 +64,8 @@ theorem birkhoffMinusTree_eq_zero_of_nonpolar
   · obtain ⟨Tᵢ, hTᵢ⟩ := Multiset.exists_mem_of_ne_zero hne
     rw [Multiset.prod_eq_zero (Multiset.mem_map.mpr
         ⟨Tᵢ, hTᵢ, birkhoffMinusTree_eq_zero_of_nonpolar hφ Tᵢ⟩), zero_mul, polarHahn_zero]
-termination_by T.depth
-decreasing_by exact cutSummandsN_subtree_depth_lt T p.1 p.2 hp Tᵢ hTᵢ
+termination_by T.height
+decreasing_by exact cutSummandsN_subtree_height_lt T p.1 p.2 hp Tᵢ hTᵢ
 
 /-! ### The renormalized part always lands in the nonpolar subring -/
 

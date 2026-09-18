@@ -8,7 +8,7 @@ import Linglib.Core.Data.Multiset.FilterMap
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
 import Linglib.Core.Combinatorics.RootedTree.CutFilterMap
-import Linglib.Core.Data.RoseTree.FilterMap
+import Linglib.Core.Data.UnorderedTree.FilterMap
 
 open RoseTree UnorderedTree
 

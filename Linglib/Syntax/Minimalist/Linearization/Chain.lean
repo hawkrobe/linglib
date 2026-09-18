@@ -210,7 +210,7 @@ instance (param : MWFParameter) : Decidable (Converges t param) :=
 and its elided domains the applications of ellipsis. -/
 def planarCost : DerivationCost
   | .lexicalItems => (tokens t).card
-  | .mergeOps => ((terms t).filter λ s => s.isLeaf = false).card
+  | .mergeOps => ((terms t).filter fun s ↦ s.arity ≠ 0).card
   | .agreeOps => 0
   | .ellipsisOps => (elidedDomains t).length
 

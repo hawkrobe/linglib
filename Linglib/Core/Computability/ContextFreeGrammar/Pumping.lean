@@ -15,7 +15,7 @@ every word splits as `u ++ v ++ x ++ y ++ z` with `v ++ x ++ y` short, `v ++ y` 
 every `u ++ vⁱ ++ x ++ yⁱ ++ z` in the language.
 
 The proof is the textbook one through derivation trees. A word longer than
-`maxBranch ^ (rules.card + 1)` has a valid tree of height above `rules.card`
+`maxBranch ^ (rules.card + 1)` has a valid tree of height above `rules.card + 1`
 (`RoseTree.ValidFor.length_yield_le`); a longest path in a tree of least size passes two nodes
 with the same nonterminal (`RoseTree.ValidFor.exists_repeat`); replacing the lower by the upper
 would shrink the tree unless it adds terminals, and grafting the lower into the upper repeatedly
@@ -71,31 +71,31 @@ theorem length_output_le_maxBranch {r : ContextFreeRule T g.NT} (hr : r ∈ g.ru
 
 variable {g}
 
-/-- A valid tree of height `h` has at most `maxBranch ^ h` terminals. -/
+/-- A valid tree of height `h` has at most `maxBranch ^ (h - 1)` terminals. -/
 theorem _root_.RoseTree.ValidFor.length_yield_le {t : RoseTree (Symbol T g.NT)}
-    (ht : t.ValidFor g) : t.yield.length ≤ g.maxBranch ^ t.height := by
+    (ht : t.ValidFor g) : t.yield.length ≤ g.maxBranch ^ (t.height - 1) := by
   induction ht with
-  | terminal a => simp [RoseTree.leaf]
+  | terminal a => simp
   | nonterminal A cs hrule _ ih =>
     cases cs with
     | nil => simp
     | cons c cs =>
       set h := (RoseTree.node (.nonterminal A) (c :: cs)).height with hh
-      have hpos : 0 < h :=
-        Nat.lt_of_le_of_lt (Nat.zero_le _) (RoseTree.height_lt_of_mem (c := c) (by simp))
+      have hpos : 1 < h :=
+        Nat.lt_of_le_of_lt (RoseTree.height_pos c) (RoseTree.height_lt_of_mem (c := c) (by simp))
       have hb : 0 < g.maxBranch := by have := g.two_le_maxBranch; omega
       rw [RoseTree.yield_node_nonterminal, List.length_flatten, List.map_map]
       calc ((c :: cs).map (List.length ∘ RoseTree.yield)).sum
-          ≤ ((c :: cs).map fun _ => g.maxBranch ^ (h - 1)).sum := by
+          ≤ ((c :: cs).map fun _ => g.maxBranch ^ (h - 2)).sum := by
             refine List.sum_le_sum fun d hd => ?_
             refine (ih d hd).trans (Nat.pow_le_pow_right hb ?_)
             have := RoseTree.height_lt_of_mem (t := RoseTree.node (.nonterminal A) (c :: cs)) hd
             omega
-        _ = (c :: cs).length * g.maxBranch ^ (h - 1) := by
+        _ = (c :: cs).length * g.maxBranch ^ (h - 2) := by
             rw [List.map_const', List.sum_const_nat]
-        _ ≤ g.maxBranch * g.maxBranch ^ (h - 1) :=
+        _ ≤ g.maxBranch * g.maxBranch ^ (h - 2) :=
             Nat.mul_le_mul_right _ (by simpa using g.length_output_le_maxBranch hrule)
-        _ = g.maxBranch ^ h := by rw [← Nat.pow_succ']; congr 1; omega
+        _ = g.maxBranch ^ (h - 1) := by rw [← Nat.pow_succ']; congr 1; omega
 
 
 private theorem flatten_replicate_succ (l : List T) (n : ℕ) :
@@ -115,19 +115,19 @@ theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.ValidFor g
   -- a valid tree of least size with the same yield and root
   obtain ⟨t₁, ht₁, hy₁, hr₁, hmin⟩ := ht.exists_min_numNodes
   -- it is taller than the number of rules
-  have htall : g.rules.card < t₁.height := by
+  have htall : g.rules.card + 1 < t₁.height := by
     by_contra hle
     have h1 := ht₁.length_yield_le
-    have h2 : g.maxBranch ^ t₁.height ≤ g.maxBranch ^ g.rules.card :=
-      Nat.pow_le_pow_right (by omega) (not_lt.mp hle)
+    have h2 : g.maxBranch ^ (t₁.height - 1) ≤ g.maxBranch ^ g.rules.card :=
+      Nat.pow_le_pow_right (by omega) (by omega)
     have h3 : g.maxBranch ^ g.rules.card < g.maxBranch ^ (g.rules.card + 1) :=
       Nat.pow_lt_pow_right hb (by omega)
     rw [hy₁] at h1
     unfold pumpingConstant at hlong
     omega
   -- a longest path, and the window of its last `g.rules.card + 1` nodes
-  obtain ⟨p, hp, hpath⟩ := exists_subtreeAt_height_sub t₁ (t₁.height - 1) (by omega)
-  set off := t₁.height - 1 - g.rules.card with hoff
+  obtain ⟨p, hp, hpath⟩ := exists_subtreeAt_height_sub t₁ (t₁.height - 2) (by omega)
+  set off := t₁.height - 2 - g.rules.card with hoff
   obtain ⟨t₀, ht₀, hh₀⟩ := hpath off (by omega)
   set q := p.drop off with hq
   have hql : q.length = g.rules.card := by simp [q, hp]; omega
@@ -153,7 +153,7 @@ theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.ValidFor g
     have := congrArg List.length h
     simp [pr, hql] at this
     omega
-  have houter_h : outer.height ≤ g.rules.card + 1 := by
+  have houter_h : outer.height ≤ g.rules.card + 2 := by
     obtain ⟨s, hs, hsh⟩ := hpath (off + i) (by omega)
     rw [List.take_add, ← hq, ← hpo, hpo_sub, Option.some.injEq] at hs
     rw [hs, hsh]; omega
@@ -165,7 +165,7 @@ theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.ValidFor g
   refine ⟨u, v, inner.yield, y, z, ?_, ?_, ?_, fun k => ?_⟩
   · rw [← hy₁, hyu, hyv]; simp only [List.append_assoc]
   · rw [← hyv]
-    exact houter_v.length_yield_le.trans (Nat.pow_le_pow_right (by omega) houter_h)
+    exact houter_v.length_yield_le.trans (Nat.pow_le_pow_right (by omega) (by omega))
   · -- `v ++ y` is nonempty, by minimality
     by_contra hvy
     have hv : v = [] := List.eq_nil_of_length_eq_zero (by omega)

@@ -21,7 +21,7 @@ carrying a weight-`-1` Rota–Baxter operator `R`, the **Bogolyubov recursion** 
 core of the "single map that recursively modifies an assignment of semantic values so as to
 incorporate the consistency checking over all substructures."
 
-The negative part `φ₋` is built by the *same* `cutSummandsN`/depth recursion as the Hopf antipode
+The negative part `φ₋` is built by the *same* `cutSummandsN`/height recursion as the Hopf antipode
 `antipodeTreeN`, with two substitutions: the canonical embedding `ofTree rem` becomes the character
 value `φ (ofTree rem) ∈ ℛ`, and the bare negation becomes `−R`. Indeed `antipodeTreeN` is the
 `R = id`, canonical-character specialization of this recursion (`S(x) = −x − Σ S(x′)·x″`),
@@ -64,12 +64,12 @@ variable {R ℛ : Type*} [CommRing R] [CommRing ℛ] [Algebra R ℛ] {α : Type*
 /-- **The Bogolyubov negative part `φ₋` on a single tree** ([marcolli-chomsky-berwick-2025]
     Prop. 3.1.7): `φ₋(T) = −R(Σ_{(cf,rem) ∈ cutSummandsN T} (Π_{Tᵢ ∈ cf} φ₋(Tᵢ)) · φ(ofTree rem))`.
     Models `antipodeTreeN` with the character value `φ(ofTree rem)` in place of `ofTree rem` and
-    the Rota–Baxter `−R` in place of bare negation; well-founded on `T.depth`. -/
+    the Rota–Baxter `−R` in place of bare negation; well-founded on `T.height`. -/
 noncomputable def birkhoffMinusTree (T : UnorderedTree α) : ℛ :=
   - RB.op ((cutSummandsN T).attach.map (fun ⟨pf, h_mem⟩ =>
       (pf.1.attach.map (fun ⟨T_i, h_T_i⟩ => birkhoffMinusTree T_i)).prod * φ (ofTree pf.2))).sum
-termination_by T.depth
-decreasing_by exact cutSummandsN_subtree_depth_lt T pf.1 pf.2 h_mem T_i h_T_i
+termination_by T.height
+decreasing_by exact cutSummandsN_subtree_height_lt T pf.1 pf.2 h_mem T_i h_T_i
 
 /-- **`φ₋` extended multiplicatively to forests**, as a `MonoidHom` on `Multiplicative (Forest …)`.
     Mirrors `antipodeMonoidHomN`. -/
@@ -210,7 +210,7 @@ theorem birkhoffFactorization_ofTree (hφ : φ 1 = 1) (T : UnorderedTree α) :
 
 /-! ### The `R = id` specialization recovers the Hopf antipode
 
-[marcolli-chomsky-berwick-2025] Prop. 3.1.7 builds `φ₋` by the *same* `cutSummandsN`/depth
+[marcolli-chomsky-berwick-2025] Prop. 3.1.7 builds `φ₋` by the *same* `cutSummandsN`/height
 recursion as the Hopf antipode `antipodeTreeN` (the inductive antipode of §1.2), with two
 substitutions: the character value `φ (ofTree rem)` in place of the canonical embedding
 `ofTree rem`, and the Rota–Baxter `−R` in place of bare negation. Taking the trivial
@@ -236,8 +236,8 @@ theorem birkhoffMinusTree_id_eq_antipodeTreeN (T : UnorderedTree α) :
   rw [id_eq]
   exact congrArg (· * ofTree p.2) (congrArg Multiset.prod (Multiset.map_congr rfl
     (fun T_i hT_i => birkhoffMinusTree_id_eq_antipodeTreeN T_i)))
-termination_by T.depth
-decreasing_by exact cutSummandsN_subtree_depth_lt T p.1 p.2 hp T_i hT_i
+termination_by T.height
+decreasing_by exact cutSummandsN_subtree_height_lt T p.1 p.2 hp T_i hT_i
 
 /-- **`R = id`, `φ = id` recovers the antipode as an algebra hom.** The forest-level Bogolyubov
     negative part `φ₋` of the identity character under `RotaBaxter.id` is the Hopf antipode

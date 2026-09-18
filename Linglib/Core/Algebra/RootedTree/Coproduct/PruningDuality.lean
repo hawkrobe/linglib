@@ -175,7 +175,7 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
       rcases Multiset.empty_or_exists_mem C' with hC'0 | ⟨T₂, hT₂⟩
       · -- Single tree: C = {T}, T = B⁺_a W; the B⁻ recurrences match.
         subst hC'0
-        -- Weight bookkeeping: (rootChildren T) is one lighter than T.
+        -- Weight bookkeeping: (children T) is one lighter than T.
         have hwT : ((T ::ₘ (0 : Forest (UnorderedTree α))).map
             UnorderedTree.numNodes).sum = T.numNodes := by
           rw [Multiset.map_cons, Multiset.map_zero, Multiset.sum_cons,
@@ -183,16 +183,16 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
           omega
         have hTn : T.numNodes = n := by rw [← hwT, hC]
         have hwW : T.numNodes =
-            1 + ((UnorderedTree.rootChildren T).map UnorderedTree.numNodes).sum := by
+            ((UnorderedTree.children T).map UnorderedTree.numNodes).sum + 1 := by
           conv_lhs => rw [← UnorderedTree.node_eta T]
           rw [UnorderedTree.numNodes_node]
-        have hWlt : ((UnorderedTree.rootChildren T).map UnorderedTree.numNodes).sum < n := by
+        have hWlt : ((UnorderedTree.children T).map UnorderedTree.numNodes).sum < n := by
           omega
         -- Convert `of' {T}` to `B⁺_a (of' W)`.
         have hofT : (ConnesKreimer.of' (R := R) (T ::ₘ (0 : Forest (UnorderedTree α))) :
             ConnesKreimer R (UnorderedTree α)) =
-            bPlusLin (R := R) (UnorderedTree.rootValue T)
-              (ConnesKreimer.of' (UnorderedTree.rootChildren T)) := by
+            bPlusLin (R := R) (UnorderedTree.value T)
+              (ConnesKreimer.of' (UnorderedTree.children T)) := by
           rw [bPlusLin_of', UnorderedTree.node_eta]
           rfl
         rw [hofT]
@@ -200,27 +200,27 @@ theorem pairing_gl_eq_pairing_coproduct_Rho
         rw [pairing_apply_bPlus_gl_mul]
         -- RHS: the Hochschild cocycle + adjoint.
         rw [show comulAlgHomN (R := R)
-              (bPlusLin (R := R) (UnorderedTree.rootValue T)
-                (ConnesKreimer.of' (UnorderedTree.rootChildren T))) =
+              (bPlusLin (R := R) (UnorderedTree.value T)
+                (ConnesKreimer.of' (UnorderedTree.children T))) =
             comulTreeN (R := R)
-              (UnorderedTree.node (UnorderedTree.rootValue T)
-                (UnorderedTree.rootChildren T)) from by
+              (UnorderedTree.node (UnorderedTree.value T)
+                (UnorderedTree.children T)) from by
           rw [bPlusLin_of', comulAlgHomN_apply_ofTree]]
         rw [comulTreeN_node_cocycle, map_add, pairing₂_tmul_tmul,
             pairing₂_lTensor_bPlusLin]
         -- Term 1: adjoint identity; Term 2: induction hypothesis.
-        rw [show comulForestN (R := R) (UnorderedTree.rootChildren T) =
+        rw [show comulForestN (R := R) (UnorderedTree.children T) =
             comulAlgHomN (R := R)
-              (ConnesKreimer.of' (UnorderedTree.rootChildren T)) from
+              (ConnesKreimer.of' (UnorderedTree.children T)) from
           (comulAlgHomN_apply_of' _).symm]
-        rw [← IH _ hWlt (UnorderedTree.rootChildren T) rfl
-            (bMinusLin (R := R) (UnorderedTree.rootValue T) x) y]
+        rw [← IH _ hWlt (UnorderedTree.children T) rfl
+            (bMinusLin (R := R) (UnorderedTree.value T) x) y]
         rw [show (ConnesKreimer.ofTree (R := R)
-              (UnorderedTree.node (UnorderedTree.rootValue T)
-                (UnorderedTree.rootChildren T)) :
+              (UnorderedTree.node (UnorderedTree.value T)
+                (UnorderedTree.children T)) :
               ConnesKreimer R (UnorderedTree α)) =
-            bPlusLin (R := R) (UnorderedTree.rootValue T)
-              (ConnesKreimer.of' (UnorderedTree.rootChildren T)) from
+            bPlusLin (R := R) (UnorderedTree.value T)
+              (ConnesKreimer.of' (UnorderedTree.children T)) from
           (bPlusLin_of' _ _).symm]
         rw [← bMinusLin_pairing_adjoint, pairing_one_right]
         ring

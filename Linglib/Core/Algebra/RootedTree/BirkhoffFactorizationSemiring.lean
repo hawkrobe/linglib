@@ -56,12 +56,12 @@ set_option linter.unusedVariables false in
     [marcolli-chomsky-berwick-2025] Prop. 3.1.9):
     `φ₋(T) = R(Σ_{(cf,rem) ∈ cutSummandsN T} (Π_{Tᵢ ∈ cf} φ₋(Tᵢ)) · φ(ofTree rem))`. The semiring
     analogue of the ring `birkhoffMinusTree`, with the *positive* projection `R` in place of `−R`;
-    well-founded on `T.depth`. -/
+    well-founded on `T.height`. -/
 noncomputable def birkhoffMinusTree (T : UnorderedTree α) : ℛ :=
   RB.op ((cutSummandsN T).attach.map (fun ⟨pf, h_mem⟩ =>
       (pf.1.attach.map (fun ⟨T_i, h_T_i⟩ => birkhoffMinusTree T_i)).prod * φ (ofTree pf.2))).sum
-termination_by T.depth
-decreasing_by exact cutSummandsN_subtree_depth_lt T pf.1 pf.2 h_mem T_i h_T_i
+termination_by T.height
+decreasing_by exact cutSummandsN_subtree_height_lt T pf.1 pf.2 h_mem T_i h_T_i
 
 /-- **`φ₋` extended multiplicatively to forests**, as a `MonoidHom`. Mirrors the ring
     `birkhoffMinusMonoidHom`. -/

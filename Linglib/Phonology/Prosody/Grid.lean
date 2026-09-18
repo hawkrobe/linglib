@@ -382,7 +382,7 @@ theorem headTerminal_sound {t leaf : Tree} (h : leaf ∈ headTerminals t) :
 
 /-! ## Head-preservation: the foot commuting square
 
-Reading a `Foot`'s grid recovers its head — the depth-1 core of the transport story: its column
+Reading a `Foot`'s grid recovers its head — the height-1 core of the transport story: its column
 heights are `2` at the head σ and `1` elsewhere, so the grid peaks at `2`. -/
 
 /-- **Head-preservation for a foot** ([liberman-prince-1977]): projecting a foot's prosodic tree
@@ -428,17 +428,17 @@ metrical primary stress is the tallest column. Recursion is the sole obstruction
 [hayes-1995] §3.4.2(C)'s "the higher grid mark may only be assigned to a syllable that already bears
 stress" — the peak sits atop a foot head. -/
 
-/-- Non-recursive word children (feet and stray σ) have depth at most `2` — the ω→f→σ hierarchy. -/
-private theorem depth_word_child_le {ch : Tree}
-    (h : isFootTree ch = true ∨ (ch.value.isSyl = true ∧ ch.children = [])) : ch.depth ≤ 2 := by
+/-- Non-recursive word children (feet and stray σ) have height at most `2` — the ω→f→σ hierarchy. -/
+private theorem height_word_child_le {ch : Tree}
+    (h : isFootTree ch = true ∨ (ch.value.isSyl = true ∧ ch.children = [])) : ch.height ≤ 2 := by
   rcases h with hfoot | ⟨_, hcs⟩
   · obtain ⟨chl, chcs⟩ := ch
     simp only [isFootTree, Bool.and_eq_true, List.all_eq_true] at hfoot
     obtain ⟨_, hleaves⟩ := hfoot
-    rw [RoseTree.depth_node]
-    have : (chcs.map RoseTree.depth).foldr max 0 ≤ 1 :=
-      RoseTree.foldr_max_depth_le fun c hc => by
-        obtain ⟨cl, ccs⟩ := c
+    rw [RoseTree.height_node]
+    have : (chcs.map RoseTree.height).foldr max 0 ≤ 1 :=
+      List.max_le_of_forall_le _ _ fun x hx => by
+        obtain ⟨⟨cl, ccs⟩, hc, rfl⟩ := List.mem_map.mp hx
         have hc' := hleaves _ hc
         simp only [Bool.and_eq_true, List.isEmpty_iff] at hc'
         obtain ⟨_, rfl⟩ := hc'
@@ -448,19 +448,20 @@ private theorem depth_word_child_le {ch : Tree}
     simp only [RoseTree.children_node] at hcs; subst hcs
     exact Nat.le_succ_of_le (le_of_eq rfl)
 
-/-- Grid column heights are positive and bounded by the tree depth: the RPPR count is `≥ 1` and
+/-- Grid column heights are positive and bounded by the tree height: the RPPR count is `≥ 1` and
     grows by at most one per head edge. -/
-private theorem toGrid_bounds {t : Tree} : ∀ c ∈ columns t, 1 ≤ c ∧ c ≤ t.depth := by
+private theorem toGrid_bounds {t : Tree} : ∀ c ∈ columns t, 1 ≤ c ∧ c ≤ t.height := by
   induction t using Tree.recLeafBranch with
   | leaf a ha =>
-    rw [columns_node, ite_eq_left ⟨ha, rfl⟩, RoseTree.depth_node]
+    rw [columns_node, ite_eq_left ⟨ha, rfl⟩, RoseTree.height_node]
     intro c hc; simp only [List.mem_singleton] at hc; omega
   | branch a cs hne IH =>
-    rw [columns_node, ite_eq_right hne, RoseTree.depth_node]
+    rw [columns_node, ite_eq_right hne, RoseTree.height_node]
     intro c hc
     rw [List.mem_flatMap] at hc
     obtain ⟨ch, hch, hc⟩ := hc
-    have hd := RoseTree.depth_le_foldr_max hch
+    have hd : ch.height ≤ (cs.map RoseTree.height).foldr max 0 :=
+      List.le_max_of_le (List.mem_map_of_mem hch) le_rfl
     cases hh : ch.value.isHead with
     | false =>
       simp only [hh, edge_false, toGrid_clear] at hc
@@ -497,7 +498,7 @@ theorem mem_toGrid_edge {h : Bool} {b : MarkedGrid Tree} {c : ℕ}
       exact .inl (List.mem_map.mpr ⟨x, hx, by simp [hs]⟩)
 
 /-- In a word every column is `≤ 2` unless it is a head-terminal height — the genuine non-recursion
-    content, now one algebraic split (`mem_toGrid_edge`) plus the depth bound. -/
+    content, now one algebraic split (`mem_toGrid_edge`) plus the height bound. -/
 theorem col_le_two_or_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0) :
     ∀ c ∈ columns t, c ≤ 2 ∨ c ∈ headHeights t := by
   obtain ⟨a, cs⟩ := t
@@ -507,7 +508,7 @@ theorem col_le_two_or_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0) :
   rw [columns_node, ite_eq_right (by simp [hσ]), List.mem_flatMap] at hc
   obtain ⟨ch, hch, hc⟩ := hc
   rcases mem_toGrid_edge hc with hcol | hhead
-  · exact .inl (le_trans (toGrid_bounds c hcol).2 (depth_word_child_le (hchild ch hch)))
+  · exact .inl (le_trans (toGrid_bounds c hcol).2 (height_word_child_le (hchild ch hch)))
   · refine .inr ?_
     rw [headHeights_node, ite_eq_right (by simp [hσ]), List.mem_flatMap]
     exact ⟨ch, hch, by rwa [headHeights_edge] at hhead⟩

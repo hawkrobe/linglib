@@ -1,7 +1,7 @@
-import Linglib.Core.Data.RoseTree.Leaves
+import Linglib.Core.Data.UnorderedTree.Leaves
 import Mathlib.Logic.Relation
-import Linglib.Core.Data.RoseTree.FilterMap
-import Linglib.Core.Data.RoseTree.DecEq
+import Linglib.Core.Data.UnorderedTree.FilterMap
+import Linglib.Core.Data.UnorderedTree.DecEq
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Lattice.Basic
 

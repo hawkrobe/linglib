@@ -108,7 +108,7 @@ theorem yield_dutch (n : ℕ) :
 @[simp] theorem value_topVP (k m : ℕ) : (topVP k m).value = nonterminal .VP := by
   cases k <;> rfl
 
-theorem cluster_height_pos (m : ℕ) : 0 < (cluster m).height := by
+theorem one_lt_height_cluster (m : ℕ) : 1 < (cluster m).height := by
   cases m <;> simp [cluster, leaf]
 
 /-! ### The c-structure grammar -/
@@ -357,8 +357,8 @@ theorem not_strongly_contextFree (g : ContextFreeGrammar Word) (ℓ : g.NT → C
   obtain ⟨sL, hsL, hsLℓ⟩ := hsub L le_rfl
   have hpath : (path L).take (L + 2) = path L := List.take_of_length_le (by simp [path])
   rw [hpath] at hsL
-  have hsLh : 0 < sL.height := by
-    rw [← height_map (Symbol.mapNonterminal ℓ), hsLℓ]; exact cluster_height_pos _
+  have hsLh : 1 < sL.height := by
+    rw [← height_map (Symbol.mapNonterminal ℓ), hsLℓ]; exact one_lt_height_cluster _
   obtain ⟨i, j, hij, hjle, A, cᵢ, cⱼ, hi, hj⟩ :=
     ht.exists_repeat hsL hsLh (by simp only [path, List.length_cons, List.length_replicate]; omega)
   simp only [path, List.length_cons, List.length_replicate] at hjle

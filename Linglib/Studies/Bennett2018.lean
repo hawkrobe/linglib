@@ -113,7 +113,7 @@ theorem omegaInitial_goList_nil : omegaInitial.goList [] = [] := rfl
 
 theorem omegaInitial_leaf {c : Constituent} (h : c.isOm = false) :
     omegaInitial (.leaf c) = [] := by
-  simp [omegaInitial, omegaInitial.go, omegaInitial.goList, RoseTree.leaf, h]
+  simp [omegaInitial, omegaInitial.go, omegaInitial.goList, h]
 
 theorem omegaInitial_goList_leaves {cs : List Constituent} (h : ∀ c ∈ cs, c.isOm = false) :
     omegaInitial.goList (cs.map RoseTree.leaf) = [] := by

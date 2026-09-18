@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Logic.Relation
-import Linglib.Core.Data.RoseTree.Count
-import Linglib.Core.Data.RoseTree.Subtree
+import Linglib.Core.Data.UnorderedTree.Count
+import Linglib.Core.Data.UnorderedTree.Subtree
 import Linglib.Syntax.Minimalist.SyntacticObject.Basic
 
 /-!
@@ -65,7 +65,7 @@ variable {x y z l r : SyntacticObject}
 /-! ### Immediate containment -/
 
 /-- `y` is one of `x`'s root daughters. -/
-def immediatelyContains (x y : SyntacticObject) : Prop := y.val ∈ rootChildren x.val
+def immediatelyContains (x y : SyntacticObject) : Prop := y.val ∈ children x.val
 
 instance (x y : SyntacticObject) : Decidable (immediatelyContains x y) :=
   inferInstanceAs (Decidable (_ ∈ _))
@@ -84,7 +84,7 @@ instance (x y : SyntacticObject) : Decidable (immediatelyContains x y) :=
 
 @[simp] theorem immediatelyContains_merge (l r y : SyntacticObject) :
     immediatelyContains (merge l r) y ↔ y = l ∨ y = r := by
-  simp only [immediatelyContains, merge_val, rootChildren_node, Multiset.insert_eq_cons,
+  simp only [immediatelyContains, merge_val, children_node, Multiset.insert_eq_cons,
     Multiset.mem_cons, Multiset.mem_singleton]
   exact or_congr Subtype.val_inj Subtype.val_inj
 

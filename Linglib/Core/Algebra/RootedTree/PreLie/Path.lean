@@ -115,7 +115,6 @@ theorem length_vertices_eq_numNodes : ∀ (T : RoseTree α),
     (vertices T).length = T.numNodes
   | .node _ cs => by
     rw [vertices_node, List.length_cons, length_verticesAux 0 cs, numNodes_node]
-    omega
 theorem length_verticesAux : ∀ (i : ℕ) (cs : List (RoseTree α)),
     (verticesAux i cs).length = (cs.map numNodes).sum
   | _, []      => by simp

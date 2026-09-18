@@ -58,7 +58,7 @@ mutual
 theorem card_unorderedSubtrees (p : RoseTree α) :
     (unorderedSubtrees p).card = p.numNodes := by
   obtain ⟨a, cs⟩ := p
-  rw [unorderedSubtrees, Multiset.card_cons, card_unorderedSubtreesList, numNodes_node]; omega
+  rw [unorderedSubtrees, Multiset.card_cons, card_unorderedSubtreesList, numNodes_node]
 theorem card_unorderedSubtreesList (cs : List (RoseTree α)) :
     (unorderedSubtreesList cs).card = (cs.map numNodes).sum := by
   match cs with
@@ -83,7 +83,7 @@ def subtrees : UnorderedTree α → Multiset (UnorderedTree α) :=
 
 theorem subtrees_leaf (a : α) : subtrees (leaf a) = {leaf a} := by
   show unorderedSubtrees (RoseTree.leaf a) = _
-  simp only [RoseTree.leaf, unorderedSubtrees, unorderedSubtreesList]
+  simp only [unorderedSubtrees, unorderedSubtreesList]
   rfl
 
 theorem subtrees_node_pair (a : α) (l r : UnorderedTree α) :

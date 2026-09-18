@@ -7,7 +7,7 @@ import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered
-import Linglib.Core.Data.RoseTree.DecEq
+import Linglib.Core.Data.UnorderedTree.DecEq
 import Mathlib.Algebra.BigOperators.Ring.Multiset
 import Mathlib.Data.Multiset.AddSub
 import Mathlib.Data.Multiset.Bind

@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Linglib contributors
 -/
 import Linglib.Core.Data.RoseTree.Basic
+import Mathlib.Algebra.Order.BigOperators.Group.List
+import Mathlib.Algebra.Order.Group.Nat
 
 /-!
 # Rose tree indexing by Gorn address
@@ -84,71 +86,28 @@ theorem subtreeAt_take_isSome {t s : RoseTree α} {p : List ℕ} (h : t.subtreeA
 
 /-! ### Height and size along addresses -/
 
-private theorem le_foldr_max_of_mem {l : List ℕ} {x : ℕ} (h : x ∈ l) : x ≤ l.foldr max 0 := by
-  induction l with
-  | nil => simp at h
-  | cons y l ih =>
-    rcases List.mem_cons.mp h with rfl | h
-    · exact Nat.le_max_left _ _
-    · exact Nat.le_trans (ih h) (Nat.le_max_right _ _)
-
-private theorem foldr_max_le {l : List ℕ} {m : ℕ} (h : ∀ x ∈ l, x ≤ m) : l.foldr max 0 ≤ m := by
-  induction l with
-  | nil => exact Nat.zero_le m
-  | cons y l ih =>
-    exact Nat.max_le.2 ⟨h y (List.mem_cons_self ..), ih fun x hx => h x (List.mem_cons_of_mem _ hx)⟩
-
-private theorem exists_mem_eq_foldr_max {l : List ℕ} (h : l ≠ []) : ∃ x ∈ l, x = l.foldr max 0 := by
-  induction l with
-  | nil => exact absurd rfl h
-  | cons y l ih =>
-    cases l with
-    | nil => exact ⟨y, List.mem_cons_self .., (Nat.max_eq_left (Nat.zero_le y)).symm⟩
-    | cons z l =>
-      obtain ⟨x, hx, hxe⟩ := ih (List.cons_ne_nil z l)
-      rw [List.foldr_cons, ← hxe]
-      rcases Nat.le_total y x with hyx | hxy
-      · exact ⟨x, List.mem_cons_of_mem _ hx, (Nat.max_eq_right hyx).symm⟩
-      · exact ⟨y, List.mem_cons_self .., (Nat.max_eq_left hxy).symm⟩
-
-private theorem le_sum_of_mem {l : List ℕ} {x : ℕ} (h : x ∈ l) : x ≤ l.sum := by
-  induction l with
-  | nil => simp at h
-  | cons y l ih =>
-    rw [List.sum_cons]
-    rcases List.mem_cons.mp h with rfl | h
-    · exact Nat.le_add_right _ _
-    · exact Nat.le_trans (ih h) (Nat.le_add_left _ _)
-
-theorem height_lt_of_mem {t c : RoseTree α} (h : c ∈ t.children) : c.height < t.height := by
-  cases t with
-  | node a cs =>
-    rw [height_node]
-    exact le_foldr_max_of_mem (List.mem_map_of_mem (List.mem_map_of_mem h))
-
-/-- A node of positive height has a child one shorter. -/
-theorem exists_mem_children_height_add_one {t : RoseTree α} (h : 0 < t.height) :
+/-- A node of height above `1` has a child one shorter. -/
+theorem exists_mem_children_height_add_one {t : RoseTree α} (h : 1 < t.height) :
     ∃ c ∈ t.children, c.height + 1 = t.height := by
   cases t with
   | node a cs =>
     rw [height_node] at h ⊢
     have hcs : cs ≠ [] := by rintro rfl; simp at h
-    obtain ⟨x, hx, hxe⟩ := exists_mem_eq_foldr_max
-      (l := (cs.map height).map (· + 1)) (by simpa using hcs)
-    obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hx
-    obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hy
-    exact ⟨c, hc, hxe⟩
+    obtain ⟨c, hc, hce⟩ := List.mem_map.mp (List.maximum_mem
+      (List.foldr_max_of_ne_nil (l := cs.map height) (by simpa using hcs)).symm)
+    exact ⟨c, hc, by rw [hce]; rfl⟩
 
-/-- A maximal descent of length `k` from a tree of height at least `k`: the subtree at the
+/-- A maximal descent of length `k` from a tree of height above `k`: the subtree at the
 prefix of length `i` has height `t.height - i`. -/
-theorem exists_subtreeAt_height_sub (t : RoseTree α) (k : ℕ) (hk : k ≤ t.height) :
+theorem exists_subtreeAt_height_sub (t : RoseTree α) (k : ℕ) (hk : k < t.height) :
     ∃ p : List ℕ, p.length = k ∧
       ∀ i ≤ k, ∃ s, t.subtreeAt (p.take i) = some s ∧ s.height = t.height - i := by
   induction k generalizing t with
   | zero =>
     exact ⟨[], rfl, fun i hi => by obtain rfl := Nat.le_zero.mp hi; exact ⟨t, rfl, by simp⟩⟩
   | succ k ih =>
-    obtain ⟨c, hc, hch⟩ := exists_mem_children_height_add_one (Nat.lt_of_lt_of_le k.succ_pos hk)
+    obtain ⟨c, hc, hch⟩ := exists_mem_children_height_add_one
+      (Nat.lt_of_le_of_lt (Nat.succ_le_succ (Nat.zero_le k)) hk)
     obtain ⟨j, hj⟩ := List.getElem?_of_mem hc
     obtain ⟨p, hp, hsub⟩ := ih c (by omega)
     refine ⟨j :: p, by simp [hp], fun i hi => ?_⟩
@@ -164,7 +123,7 @@ theorem numNodes_lt_of_mem {t c : RoseTree α} (h : c ∈ t.children) : c.numNod
   | node a cs =>
     rw [children_node] at h
     rw [numNodes_node]
-    have := le_sum_of_mem (List.mem_map_of_mem (f := numNodes) h)
+    have := List.le_sum_of_mem (List.mem_map_of_mem (f := numNodes) h)
     omega
 
 theorem numNodes_le_of_subtreeAt {t s : RoseTree α} {p : List ℕ} (h : t.subtreeAt p = some s) :
