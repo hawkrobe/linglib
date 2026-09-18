@@ -8,8 +8,8 @@ import Mathlib.Data.Fintype.Basic
 This file formalizes the argument of Beavers and colleagues that some roots entail change. A
 property-concept root, such as that of *bright*, describes a state that need not have come
 about. A result root, such as that of *shatter*, describes a state that always arises from a
-change (`EntailsChange`). This contradicts the Bifurcation Thesis, on which change is introduced
-by the verbal template and never by a root.
+change (`Verb.Model.EntailsChange`). This contradicts the Bifurcation Thesis, on which change
+is introduced by the verbal template and never by a root.
 
 A root entails change exactly when its stative cannot be conjoined with a denial of change
 (`entailsChange_iff_forall_not_deniesChange`), and with such a root restitutive *again*
@@ -48,9 +48,6 @@ variable {Entity State Event : Type*} (M : Verb.Model Entity State Event)
   {ltS : State → State → Prop} {ltE : Event → Event → Prop} {v : Verb} {x : Entity}
   {s : State}
 
-/-- The root of `v` entails change when every state of its property arises from a change. -/
-def EntailsChange (v : Verb) : Prop := ∀ x s, M.rootState v x s → ∃ e, M.become s e
-
 /-- The deverbal stative holds of the states of the root's property that a change gave rise
 to. -/
 def resultStative (v : Verb) (x : Entity) (s : State) : Prop :=
@@ -66,17 +63,17 @@ theorem not_deniesChange_resultStative : ¬ DeniesChange M (resultStative M v) x
 
 /-- A root entails change iff its basic stative never survives the denial of change. -/
 theorem entailsChange_iff_forall_not_deniesChange :
-    EntailsChange M v ↔ ∀ x s, ¬ DeniesChange M (M.rootState v) x s :=
+    M.EntailsChange v ↔ ∀ x s, ¬ DeniesChange M (M.rootState v) x s :=
   forall₂_congr fun _ _ ↦ by simp [DeniesChange]
 
 /-- With a root that entails change the basic and the deverbal stative coincide. -/
-theorem resultStative_iff_rootState (h : EntailsChange M v) :
+theorem resultStative_iff_rootState (h : M.EntailsChange v) :
     resultStative M v x s ↔ M.rootState v x s :=
   and_iff_left_of_imp (h x s)
 
 /-- With a root that entails change, *again* attached to the root presupposes an earlier
 change, so the restitutive reading is lost. -/
-theorem change_of_againRestitutive_presup (h : EntailsChange M v)
+theorem change_of_againRestitutive_presup (h : M.EntailsChange v)
     (hp : (M.againRestitutive ltS v x).presup s) : ∃ s', ltS s' s ∧ ∃ e, M.become s' e :=
   M.againRestitutive_presup_entails_change (h x) hp
 
@@ -106,7 +103,7 @@ theorem forged_deniesChange : DeniesChange forged (forged.rootState v) () false 
   ⟨trivial, fun ⟨_, h⟩ ↦ Bool.false_ne_true h⟩
 
 /-- The root of the knife's property does not entail change. -/
-theorem not_entailsChange_forged : ¬ EntailsChange forged v :=
+theorem not_entailsChange_forged : ¬ forged.EntailsChange v :=
   fun h ↦ (entailsChange_iff_forall_not_deniesChange forged).1 h () false forged_deniesChange
 
 /-- The restitutive presupposition holds at the later state of the knife although no change gave

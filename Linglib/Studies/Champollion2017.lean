@@ -1,5 +1,4 @@
 import Linglib.Semantics.Aspect.Stratified
-import Linglib.Semantics.ArgumentStructure.Verb
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Fragments.English.Predicates
 import Linglib.Studies.Krifka1998
@@ -72,14 +71,13 @@ open _root_.Aspect
 Whether a verb distributes over the atomic fillers of a thematic role is a property of its event
 denotation, not a feature it carries. -/
 
-variable {Entity State T : Type*} [LinearOrder T] [PartialOrder Entity]
-  [SemilatticeSup (Event T)]
+variable {Entity T : Type*} [LinearOrder T] [PartialOrder Entity] [SemilatticeSup (Event T)]
 
-/-- A verb stratifies over the atomic fillers of role `R` when, for every argument assignment,
-its `Verb.Model` denotation has relational stratified distributive reference along `R`. -/
-def StratifiesOver (v : Verb) (M : Verb.Model Entity State (Event T))
-    (R : Entity → Event T → Prop) : Prop :=
-  ∀ y x, RelationalDistributiveReferenceUniv R (M.denote v y x)
+/-- A verb stratifies over the atomic fillers of role `R` when the event predicate that the
+interpretation `V` assigns it has relational stratified distributive reference along `R`. -/
+def StratifiesOver (v : Verb) (V : Verb → Event T → Prop) (R : Entity → Event T → Prop) :
+    Prop :=
+  RelationalDistributiveReferenceUniv R (V v)
 
 end Verb
 
@@ -112,19 +110,19 @@ The book's per-verb distributivity facts are lexical meaning postulates in Hoeks
 theorems; they are stated here over the Fragment verbs' denotations. -/
 
 section Distributivity
-variable {Entity State T : Type*} [LinearOrder T] [PartialOrder Entity]
-  [SemilatticeSup (Event T)]
+variable {Entity T : Type*} [LinearOrder T] [PartialOrder Entity] [SemilatticeSup (Event T)]
 
-/-- The verb-distributivity postulates of [champollion-2017] Ch 4, over the Fragment verbs'
-`Verb.Model` denotations and the model's agent and theme roles: *see* distributes on both, *kill*
-on its theme only — a member of the posse need not have killed anyone — and *meet* on neither. -/
-structure ChampollionPostulates (M : Verb.Model Entity State (Event T))
+/-- The book's postulates on the distributivity of verbs, over an interpretation `V` of the
+fragment's verbs as event predicates and the agent and theme roles. *See* distributes on both
+roles and *kill* on its theme only, since a member of the posse need not have killed anyone,
+and *meet* does not distribute on its agent. -/
+structure ChampollionPostulates (V : Verb → Event T → Prop)
     (agentRole themeRole : Entity → Event T → Prop) : Prop where
-  see_distributes_agent : see.toVerb.StratifiesOver M agentRole
-  see_distributes_theme : see.toVerb.StratifiesOver M themeRole
-  kill_distributes_theme : kill.toVerb.StratifiesOver M themeRole
-  kill_not_distributes_agent : ¬ kill.toVerb.StratifiesOver M agentRole
-  meet_not_distributes_agent : ¬ meet.toVerb.StratifiesOver M agentRole
+  see_distributes_agent : see.toVerb.StratifiesOver V agentRole
+  see_distributes_theme : see.toVerb.StratifiesOver V themeRole
+  kill_distributes_theme : kill.toVerb.StratifiesOver V themeRole
+  kill_not_distributes_agent : ¬ kill.toVerb.StratifiesOver V agentRole
+  meet_not_distributes_agent : ¬ meet.toVerb.StratifiesOver V agentRole
 
 end Distributivity
 
