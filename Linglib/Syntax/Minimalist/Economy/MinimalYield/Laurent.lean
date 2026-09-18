@@ -64,13 +64,13 @@ variable (F F' : Forest (UnorderedTree (α ⊕ β)))
 def δb₀ : ℤ := (Multiset.card F : ℤ) - Multiset.card F'
 
 /-- `δα F F' = α F' − α F`, nonnegative iff `F → F'` loses no information. -/
-def δα : ℤ := (Forest.numEdges F' : ℤ) - Forest.numEdges F
+def δα : ℤ := ((F'.map UnorderedTree.numEdges).sum : ℤ) - (F.map UnorderedTree.numEdges).sum
 
 /-- `δσ F F' = σ F' − σ F`, equal to `1` iff `F → F'` has minimal yield. -/
-def δσ : ℤ := (Forest.numNodes F' : ℤ) - Forest.numNodes F
+def δσ : ℤ := ((F'.map UnorderedTree.numNodes).sum : ℤ) - (F.map UnorderedTree.numNodes).sum
 
 theorem δσ_eq : δσ F F' = δα F F' - δb₀ F F' := by
-  simp only [δσ, δα, δb₀, Forest.numNodes_eq_card_add_numEdges]; omega
+  simp only [δσ, δα, δb₀, UnorderedTree.sum_map_numNodes]; omega
 
 theorem weak_iff_gradings : MinimalYieldWeak F F' ↔ 0 ≤ δb₀ F F' ∧ 0 ≤ δα F F' := by
   simp only [δb₀, δα, sub_nonneg, Nat.cast_le]
@@ -118,16 +118,16 @@ noncomputable def gradingChar : ConnesKreimer R (UnorderedTree α) →ₐ[R] Lau
 
 /-- `ϕt(F) = t^{α(F)}`, since `α` is additive over forests. -/
 theorem prod_gradingMonomialTree (F : Forest (UnorderedTree α)) :
-    (F.map (gradingMonomialTree (R := R))).prod = HahnSeries.single (Forest.numEdges F : ℤ) 1 := by
+    (F.map (gradingMonomialTree (R := R))).prod = HahnSeries.single ((F.map UnorderedTree.numEdges).sum : ℤ) 1 := by
   induction F using Multiset.induction with
-  | empty => rw [Multiset.map_zero, Multiset.prod_zero, Forest.numEdges_zero]; rfl
+  | empty => rw [Multiset.map_zero, Multiset.prod_zero, Multiset.map_zero, Multiset.sum_zero]; rfl
   | cons T F ih =>
     rw [Multiset.map_cons, Multiset.prod_cons, ih, gradingMonomialTree,
-      HahnSeries.single_mul_single, one_mul, Forest.numEdges_cons]
+      HahnSeries.single_mul_single, one_mul, Multiset.map_cons, Multiset.sum_cons]
     push_cast; rfl
 
 theorem gradingChar_apply_of'_eq (F : Forest (UnorderedTree α)) :
-    gradingChar (R := R) (of' F) = HahnSeries.single (Forest.numEdges F : ℤ) 1 := by
+    gradingChar (R := R) (of' F) = HahnSeries.single ((F.map UnorderedTree.numEdges).sum : ℤ) 1 := by
   rw [gradingChar_apply_of', prod_gradingMonomialTree]
 
 @[simp] theorem gradingChar_apply_ofTree (T : UnorderedTree α) :
@@ -142,7 +142,7 @@ theorem gradingChar_apply_of'_eq (F : Forest (UnorderedTree α)) :
 theorem polarHahn_gradingChar_of' (F : Forest (UnorderedTree α)) :
     polarHahn (gradingChar (R := R) (of' F)) = 0 := by
   rw [gradingChar_apply_of'_eq, polarHahn_single,
-    ite_eq_right (by omega : ¬ ((Forest.numEdges F : ℤ) < 0))]
+    ite_eq_right (by omega : ¬ (((F.map UnorderedTree.numEdges).sum : ℤ) < 0))]
 
 theorem polarHahn_gradingChar_ofTree (T : UnorderedTree α) :
     polarHahn (gradingChar (R := R) (ofTree T)) = 0 := by

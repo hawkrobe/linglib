@@ -148,28 +148,6 @@ theorem forestAutCard_pos (F : Multiset (UnorderedTree α)) : 0 < forestAutCard 
   exact Finset.prod_pos fun t _ =>
     Nat.mul_pos (Nat.factorial_pos _) (pow_pos (autCard_pos t) _)
 
-/-- `treeAutCard` of a representative equals `autCard` of its class. -/
-private theorem treeAutCard_out (x : UnorderedTree α) :
-    treeAutCard x.out = autCard x := by
-  conv_rhs => rw [← x.out_eq]
-  rfl
-
-/-- The `treeAutCard`-product over `Quotient.out` representatives is the `autCard`-product. -/
-private theorem prod_out_treeAutCard (lst : List (UnorderedTree α)) :
-    ((lst.map Quotient.out).map treeAutCard).prod = (lst.map autCard).prod := by
-  congr 1
-  rw [List.map_map]
-  exact List.map_congr_left fun x _ => treeAutCard_out x
-
-omit [DecidableEq α] in
-/-- `mk ∘ Quotient.out` is the identity on lists of nonplanar trees. -/
-private theorem ofList_map_mk_qout (lst : List (UnorderedTree α)) :
-    (Multiset.ofList (((lst.map Quotient.out).map mk)) :
-        Multiset (UnorderedTree α)) = Multiset.ofList lst := by
-  rw [List.map_map]
-  congr 1
-  exact (List.map_congr_left (fun x _ => x.out_eq)).trans (List.map_id lst)
-
 /-- `forestAutCard` as the `autCard`-product over all members times the symmetry factor:
     the forest analogue of `treeAutCard_node`'s shape. -/
 theorem forestAutCard_eq_prod_mul_multinomialFactor (F : Multiset (UnorderedTree α)) :
@@ -181,11 +159,10 @@ theorem forestAutCard_eq_prod_mul_multinomialFactor (F : Multiset (UnorderedTree
 /-- `autCard` at a node is `forestAutCard` of the children: the recursive formula. -/
 @[simp] theorem autCard_node (a : α) (F : Multiset (UnorderedTree α)) :
     autCard (UnorderedTree.node a F) = forestAutCard F := by
-  induction F using Quotient.inductionOn with
-  | h lst =>
-    show treeAutCard (RoseTree.node a (lst.map Quotient.out)) = _
-    rw [treeAutCard_node, prod_out_treeAutCard lst, ofList_map_mk_qout lst,
-        forestAutCard_eq_prod_mul_multinomialFactor]
+  induction F using forest_inductionOn with
+  | h ps =>
+    rw [node_mk_tree_list, autCard_mk, treeAutCard_node,
+      forestAutCard_eq_prod_mul_multinomialFactor, Multiset.map_coe, List.map_map]
     rfl
 
 /-! ### Multinomial split identity

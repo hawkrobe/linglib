@@ -7,8 +7,9 @@ import Mathlib.Order.OrderDual
 # Minimal Yield
 
 Minimal Yield is a condition on a transformation `F → F'` of workspaces, stated on the size
-measures of a workspace, its components `Multiset.card`, its accessible terms `Forest.numEdges`,
-and its vertices `Forest.numNodes`: the number of components does not grow (no divergence), the
+measures of a workspace, its components `Multiset.card`, its accessible terms (the summed
+`numEdges`), and its vertices (the summed `numNodes`): the number of components does not grow
+(no divergence), the
 number of accessible terms does not fall (no information loss), and the number of vertices grows
 by exactly one (minimality of yield). `MinimalYieldWeak` is the first two
 bounds and `MinimalYield` all three. The weak form is monotonicity of the signature `(b₀ᵒᵈ, α)`,
@@ -50,18 +51,18 @@ variable {α β : Type*}
 /-- The weak Minimal Yield principle: no increase in `b₀`, no decrease in `α`. -/
 structure MinimalYieldWeak (F F' : Forest (UnorderedTree (α ⊕ β))) : Prop where
   noDivergence : Multiset.card F' ≤ Multiset.card F
-  noInfoLoss   : Forest.numEdges F ≤ Forest.numEdges F'
+  noInfoLoss   : (F.map UnorderedTree.numEdges).sum ≤ (F'.map UnorderedTree.numEdges).sum
 
 /-- The Minimal Yield principle: the weak form plus `σ` up by exactly one. -/
 structure MinimalYield (F F' : Forest (UnorderedTree (α ⊕ β))) : Prop
     extends MinimalYieldWeak F F' where
-  minimalYield : Forest.numNodes F' = Forest.numNodes F + 1
+  minimalYield : (F'.map UnorderedTree.numNodes).sum = (F.map UnorderedTree.numNodes).sum + 1
 
 /-! ### `MinimalYieldWeak` as a Pareto pullback preorder -/
 
 /-- The Pareto signature `(b₀ᵒᵈ, α)`, `b₀` dualised so fewer components ranks higher. -/
 def MinimalYield.signature (F : Forest (UnorderedTree (α ⊕ β))) : ℕᵒᵈ × ℕ :=
-  (OrderDual.toDual (Multiset.card F), Forest.numEdges F)
+  (OrderDual.toDual (Multiset.card F), (F.map UnorderedTree.numEdges).sum)
 
 theorem minimalYieldWeak_iff_signature_le {F F' : Forest (UnorderedTree (α ⊕ β))} :
     MinimalYieldWeak F F' ↔ MinimalYield.signature F ≤ MinimalYield.signature F' :=
@@ -83,14 +84,13 @@ theorem MinimalYield.em_pair (lbl : α) (S S' : UnorderedTree (α ⊕ β)) :
   refine ⟨⟨?_, ?_⟩, ?_⟩
   · simp only [Multiset.card_singleton, Multiset.insert_eq_cons, Multiset.card_cons]
     omega
-  · rw [Forest.numEdges_singleton, hnode]
-    simp only [Multiset.insert_eq_cons, Forest.numEdges_cons, Forest.numEdges_singleton]
+  · rw [Multiset.map_singleton, Multiset.sum_singleton, hnode]
+    simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.sum_cons,
+      Multiset.map_singleton, Multiset.sum_singleton]
     omega
-  · simp only [Forest.numNodes_eq_card_add_numEdges, Multiset.card_singleton,
-      Forest.numEdges_singleton]
-    rw [hnode]
-    simp only [Multiset.insert_eq_cons, Multiset.card_cons, Multiset.card_singleton,
-      Forest.numEdges_cons, Forest.numEdges_singleton]
+  · rw [Multiset.map_singleton, Multiset.sum_singleton, ← UnorderedTree.numEdges_add_one, hnode]
+    simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.sum_cons,
+      Multiset.map_singleton, Multiset.sum_singleton, ← UnorderedTree.numEdges_add_one]
     omega
 
 /-! ### Internal Merge -/
@@ -101,20 +101,19 @@ theorem im_pair_size_deltas_deletion (lbl : α) {T mover Q : UnorderedTree (α �
     (h : T.numEdges = mover.numEdges + Q.numEdges + 2) :
     Multiset.card ({UnorderedTree.node (Sum.inl lbl) {mover, Q}} : Forest (UnorderedTree (α ⊕ β)))
         = Multiset.card ({T} : Forest (UnorderedTree (α ⊕ β)))
-      ∧ Forest.numEdges ({UnorderedTree.node (Sum.inl lbl) {mover, Q}} : Forest (UnorderedTree
-        (α ⊕ β)))
-        = Forest.numEdges ({T} : Forest (UnorderedTree (α ⊕ β)))
-      ∧ Forest.numNodes ({UnorderedTree.node (Sum.inl lbl) {mover, Q}} : Forest (UnorderedTree
-        (α ⊕ β)))
-        = Forest.numNodes ({T} : Forest (UnorderedTree (α ⊕ β))) := by
+      ∧ (({UnorderedTree.node (Sum.inl lbl) {mover, Q}} : Forest (UnorderedTree
+        (α ⊕ β))).map UnorderedTree.numEdges).sum
+        = (({T} : Forest (UnorderedTree (α ⊕ β))).map UnorderedTree.numEdges).sum
+      ∧ (({UnorderedTree.node (Sum.inl lbl) {mover, Q}} : Forest (UnorderedTree
+        (α ⊕ β))).map UnorderedTree.numNodes).sum
+        = (({T} : Forest (UnorderedTree (α ⊕ β))).map UnorderedTree.numNodes).sum := by
   have hnode : (UnorderedTree.node (Sum.inl lbl) {mover, Q}).numEdges
       = mover.numEdges + Q.numEdges + 2 := UnorderedTree.numEdges_node_pair (Sum.inl lbl) mover Q
   refine ⟨rfl, ?_, ?_⟩
-  · rw [Forest.numEdges_singleton, Forest.numEdges_singleton, hnode]
+  · rw [Multiset.map_singleton, Multiset.sum_singleton, Multiset.map_singleton,
+      Multiset.sum_singleton, hnode]
     omega
-  · simp only [Forest.numNodes_eq_card_add_numEdges, Multiset.card_singleton,
-      Forest.numEdges_singleton]
-    rw [hnode]
+  · simp only [Multiset.map_singleton, Multiset.sum_singleton, ← UnorderedTree.numEdges_add_one]
     omega
 
 /-- `im_pair_size_deltas_deletion` with the α relation discharged from a Δᵈ
@@ -127,11 +126,12 @@ theorem im_pair_size_deltas_deletion_of_cut (lbl : α) (T : UnorderedTree (α �
     (mover : UnorderedTree (α ⊕ β)) (hcard : p.1 = {mover}) (huc : p.2.numUnary = 1) :
     Multiset.card ({UnorderedTree.node (Sum.inl lbl) {mover, UnorderedTree.contractUnary p.2}}
         : Forest (UnorderedTree (α ⊕ β))) = Multiset.card ({T} : Forest (UnorderedTree (α ⊕ β)))
-      ∧ Forest.numEdges ({UnorderedTree.node (Sum.inl lbl) {mover, UnorderedTree.contractUnary p.2}}
-        : Forest (UnorderedTree (α ⊕ β))) = Forest.numEdges ({T} : Forest (UnorderedTree (α ⊕ β)))
-      ∧ Forest.numNodes ({UnorderedTree.node (Sum.inl lbl) {mover, UnorderedTree.contractUnary p.2}}
-        : Forest (UnorderedTree (α ⊕ β))) = Forest.numNodes ({T} : Forest (UnorderedTree
-          (α ⊕ β))) :=
+      ∧ (({UnorderedTree.node (Sum.inl lbl) {mover, UnorderedTree.contractUnary p.2}}
+        : Forest (UnorderedTree (α ⊕ β))).map UnorderedTree.numEdges).sum
+        = (({T} : Forest (UnorderedTree (α ⊕ β))).map UnorderedTree.numEdges).sum
+      ∧ (({UnorderedTree.node (Sum.inl lbl) {mover, UnorderedTree.contractUnary p.2}}
+        : Forest (UnorderedTree (α ⊕ β))).map UnorderedTree.numNodes).sum = (({T} : Forest (UnorderedTree
+          (α ⊕ β))).map UnorderedTree.numNodes).sum :=
   im_pair_size_deltas_deletion lbl
     (ConnesKreimer.cutSummandsN_numEdges_single_deletion T p hp mover hcard huc)
 

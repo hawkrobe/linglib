@@ -22,7 +22,11 @@ on `Multiset` children, under which the grafting `B⁺` of a multiset of trees i
 
 ## Main definitions
 
-* `UnorderedTree`, `UnorderedTree.mk`, `UnorderedTree.lift`, `UnorderedTree.node`
+* `UnorderedTree`, `UnorderedTree.mk`, `UnorderedTree.lift`: the quotient and its universal
+  property.
+* `UnorderedTree.cons`: adjoin a tree as a further child of the root, the transport of the list
+  cons on children; it is left-commutative, so `Multiset.foldr` builds the constructor
+  `UnorderedTree.node` on a multiset of children computably.
 
 ## References
 
@@ -129,18 +133,12 @@ def value : UnorderedTree α → α :=
 
 @[simp] theorem value_mk (t : RoseTree α) : (mk t).value = t.value := rfl
 
-private theorem rel_map_mk {cs ds : Multiset (RoseTree α)}
-    (h : Multiset.Rel RoseTree.Perm cs ds) : cs.map mk = ds.map mk := by
-  induction h with
-  | zero => rfl
-  | cons hcd _ ih => rw [Multiset.map_cons, Multiset.map_cons, ih, mk_eq_mk_iff.mpr hcd]
-
 /-- The mk-image of the root children, as a multiset, is a `RoseTree.Perm`-invariant:
     `Perm.children_rel` collapses under `mk`. -/
 theorem perm_children_map_mk {t s : RoseTree α} (h : RoseTree.Perm t s) :
     (↑(t.children.map mk) : Multiset (UnorderedTree α)) = ↑(s.children.map mk) := by
-  rw [← Multiset.map_coe, ← Multiset.map_coe]
-  exact rel_map_mk h.children_rel
+  rw [← Multiset.map_coe, ← Multiset.map_coe, ← Multiset.rel_eq, Multiset.rel_map]
+  exact h.children_rel.mono fun _ _ _ _ => mk_eq_mk_iff.mpr
 
 /-- The children of a nonplanar tree, as a multiset of nonplanar trees. -/
 def children : UnorderedTree α → Multiset (UnorderedTree α) :=
@@ -167,51 +165,54 @@ theorem mk_node_eq_mk_node_iff {a b : α} {cs ds : List (RoseTree α)} :
     exact mk_eq_mk_iff.mpr ((RoseTree.Perm.node_of_forall₂ hf).trans
       (RoseTree.Perm.node_of_perm hperm))
 
-/-! ### Smart node constructor
+/-! ### Adjoining a child, and the node constructor
 
-The B+ operator (Phase A.7) and the Δ^c trace coproduct (Phase D) both
-require building a `UnorderedTree α` from a label and an *unordered*
-collection of children. The smart constructor `node a cs` does this on
-`Multiset (UnorderedTree α)`; well-definedness follows from
-`RoseTree.Perm.node_of_perm` (children-list permutation invariance).
-The characterization `node_mk_tree_list` then bridges back to the
-underlying `RoseTree` `node` via `Quotient.mk_out` componentwise. -/
+`cons c t` adjoins `c` as a further child of the root of `t`; it is the transport of the list
+cons on children lists and is left-commutative, so `node a F` is its `Multiset.foldr` over the
+children `F` starting from the leaf `a`. Both are computable, and `node_mk_tree_list` reads
+`node` back on a list of planar children. -/
 
-/-- Build a `UnorderedTree α` from a label and an unordered multiset of
-    children. Implementation: pick a list representative of the
-    multiset (`Quotient.liftOn`), then per-child tree representatives
-    via `Quotient.out`, and quotient back. -/
-noncomputable def node (a : α) (cs : Multiset (UnorderedTree α)) : UnorderedTree α :=
-  Quotient.liftOn cs
-    (fun (lst : List (UnorderedTree α)) =>
-      mk (.node a (lst.map Quotient.out)))
-    (fun l1 l2 hperm => by
-      apply mk_eq_mk_iff.mpr
-      apply RoseTree.Perm.node_of_perm
-      exact hperm.map _)
+/-- Adjoin a tree as a further child of the root. -/
+def cons (c t : UnorderedTree α) : UnorderedTree α :=
+  Quotient.liftOn₂ c t (fun c t => mk (.node t.value (c :: t.children))) fun _ _ _ _ hc ht =>
+    mk_eq_mk_iff.mpr (perm_node_iff.mpr ⟨ht.value_eq, by
+      rw [← Multiset.cons_coe, ← Multiset.cons_coe]
+      exact ht.children_rel.cons hc⟩)
 
-/-- Characterization: building a `UnorderedTree α` from a list of tree
-    children (lifted to nonplanar via `mk`) agrees with directly lifting
-    the tree `node a ps`. -/
+@[simp] theorem cons_mk (c : RoseTree α) (a : α) (cs : List (RoseTree α)) :
+    cons (mk c) (mk (.node a cs)) = mk (.node a (c :: cs)) := rfl
+
+instance : LeftCommutative (cons (α := α)) :=
+  ⟨fun c d t => Quotient.inductionOn₃ c d t fun _ _ t => by
+    obtain ⟨a, cs⟩ := t
+    exact mk_eq_mk_iff.mpr (.node (.swap ..))⟩
+
+/-- Build an unordered tree from a label and a multiset of children, by adjoining the children
+    one at a time to the leaf. -/
+def node (a : α) (F : Multiset (UnorderedTree α)) : UnorderedTree α := F.foldr cons (leaf a)
+
+/-- The empty-forest node is the leaf. -/
+@[simp] theorem node_zero (a : α) : node a (0 : Multiset (UnorderedTree α)) = leaf a := rfl
+
+theorem node_cons (a : α) (c : UnorderedTree α) (F : Multiset (UnorderedTree α)) :
+    node a (c ::ₘ F) = cons c (node a F) :=
+  Multiset.foldr_cons ..
+
+@[simp] theorem cons_node (a : α) (c : UnorderedTree α) (F : Multiset (UnorderedTree α)) :
+    cons c (node a F) = node a (c ::ₘ F) :=
+  (node_cons a c F).symm
+
+/-- `node` on the `mk`-image of a list of planar children is `mk` of the planar node. -/
 theorem node_mk_tree_list (a : α) (ps : List (RoseTree α)) :
     node a (Multiset.ofList (ps.map mk)) = mk (.node a ps) := by
-  show mk (.node a ((ps.map mk).map Quotient.out)) = mk (.node a ps)
-  apply mk_eq_mk_iff.mpr
-  apply RoseTree.Perm.node_of_forall₂
   induction ps with
-  | nil => exact List.Forall₂.nil
-  | cons p ps ih =>
-    refine List.Forall₂.cons ?_ ih
-    exact Quotient.exact (Quotient.out_eq (mk p))
+  | nil => rfl
+  | cons p ps ih => rw [List.map_cons, ← Multiset.cons_coe, node_cons, ih]; rfl
 
 /-- Binary case of `node_mk_tree_list`: a bare pair of `mk`-lifted trees. -/
 theorem node_pair_mk (a : α) (p q : RoseTree α) :
     node a {mk p, mk q} = mk (.node a [p, q]) :=
   node_mk_tree_list a [p, q]
-
-/-- The empty-forest node is the leaf. -/
-@[simp] theorem node_zero (a : α) :
-    node a (0 : Multiset (UnorderedTree α)) = leaf a := rfl
 
 /-- Choose planar representatives for a whole forest at once: every
     `Multiset (UnorderedTree α)` is the `mk`-image of a list of planar trees. Descent
@@ -230,17 +231,13 @@ theorem forest_inductionOn {motive : Multiset (UnorderedTree α) → Prop}
 /-! ### The destructors of a `node` -/
 
 @[simp] theorem value_node (a : α) (F : Multiset (UnorderedTree α)) : value (node a F) = a := by
-  induction F using Quotient.inductionOn with
-  | h lst => rfl
+  induction F using forest_inductionOn with
+  | h ps => rw [node_mk_tree_list]; rfl
 
 @[simp] theorem children_node (a : α) (F : Multiset (UnorderedTree α)) :
     children (node a F) = F := by
-  induction F using Quotient.inductionOn with
-  | h lst =>
-    show Multiset.ofList (((lst.map Quotient.out).map mk)) = Multiset.ofList lst
-    rw [List.map_map]
-    congr 1
-    exact (List.map_congr_left (fun x _ => Quotient.out_eq x)).trans (List.map_id lst)
+  induction F using forest_inductionOn with
+  | h ps => rw [node_mk_tree_list]; rfl
 
 /-- Eta law: every tree is the `node` of its root value and children. -/
 theorem node_eta (t : UnorderedTree α) : node (value t) (children t) = t := by
@@ -260,14 +257,11 @@ theorem numNodes_pos (t : UnorderedTree α) : 0 < t.numNodes := by
     total node count of the children multiset. -/
 @[simp] theorem numNodes_node (a : α) (F : Multiset (UnorderedTree α)) :
     (node a F).numNodes = (F.map numNodes).sum + 1 := by
-  refine Quotient.inductionOn F fun lst => ?_
-  show (mk (.node a (lst.map Quotient.out))).numNodes = _
-  rw [numNodes_mk, RoseTree.numNodes_node, List.map_map]
-  simp only [Multiset.quot_mk_to_coe, Multiset.map_coe, Multiset.sum_coe]
-  congr 1
-  refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
-  show (mk (Quotient.out t)).numNodes = numNodes t
-  exact congrArg numNodes (Quotient.out_eq t)
+  induction F using forest_inductionOn with
+  | h ps =>
+    rw [node_mk_tree_list, numNodes_mk, RoseTree.numNodes_node, Multiset.map_coe,
+      Multiset.sum_coe, List.map_map]
+    rfl
 
 /-! ### Height of a `node` -/
 
