@@ -1,4 +1,4 @@
-import Linglib.Semantics.ArgumentStructure.Verb
+import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 import Linglib.Fragments.Spanish.Predicates
 

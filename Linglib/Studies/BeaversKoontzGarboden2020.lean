@@ -1,5 +1,5 @@
 import Linglib.Semantics.Root.Defs
-import Linglib.Semantics.ArgumentStructure.Verb
+import Linglib.Syntax.Category.Verb.Basic
 import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.LevinTheory

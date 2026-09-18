@@ -3,7 +3,7 @@ import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Voice
-import Linglib.Semantics.ArgumentStructure.Verb
+import Linglib.Semantics.ArgumentStructure.Unaccusativity
 
 /-!
 # Ozaki (2026): Japanese Accusative/Ablative Alternation Verbs Are Unaccusative
