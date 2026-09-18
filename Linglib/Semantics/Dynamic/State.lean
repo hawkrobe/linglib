@@ -13,11 +13,14 @@ partial assignments — and its order and algebra: informativeness as
 the preorder lifted along `upperClosure`, with initial state `⊥` and
 absurd state `⊤ = ∅`; consistent merge as the monoid `*` and least
 upper bound, dually union as greatest lower bound; subsistence as the
-dual `lowerClosure` kernel; the uniform strata, where both kernels
-collapse to inclusion; and the classifications of a stratum as
-world–assignment pairs (`State.uniformEquiv`) and of states up to
-informational equivalence as the complete lattice of upper sets
-(`State.antisymmetrizationOrderIso`).
+dual `lowerClosure` kernel; the strata `State.stratum X`, the least
+informative states at each domain, which carry the union of domains to
+the merge and through which merging with a uniform state factors as
+extension then filtering (`State.mul_eq_sep_of_uniformAt`); the uniform
+states, where both kernels collapse to inclusion; and the
+classifications of a stratum as world–assignment pairs
+(`State.uniformEquiv`) and of states up to informational equivalence as
+the complete lattice of upper sets (`State.antisymmetrizationOrderIso`).
 
 `State` is a type synonym in the `OrderDual` mold: `≤` is
 informativeness while `⊆` keeps its literal meaning, and since neither
@@ -87,6 +90,14 @@ instance : OrderTop (State W V M) where
 
 @[simp] theorem top_eq_empty : (⊤ : State W V M) = ∅ := rfl
 
+/-- Discarding points only adds information. -/
+theorem le_of_superset (h : s' ⊆ s) : s ≤ s' :=
+  le_def.mpr fun q hq ↦ ⟨q, h hq, le_rfl⟩
+
+/-- Only the absurd state is at least as informative as the absurd state. -/
+theorem eq_empty_of_top_le (h : ⊤ ≤ s) : s = ∅ :=
+  Set.eq_empty_of_forall_notMem fun q hq ↦ let ⟨_, hp, _⟩ := le_def.mp h q hq; hp.elim
+
 /-! ### Subsistence
 
 *Subsistence* ([elliott-sudo-2025], Def. 3.3, after
@@ -120,6 +131,12 @@ theorem mem_mul :
     r ∈ s * s' ↔ ∃ p ∈ s, ∃ q ∈ s', Compat p q ∧ r = p.union q := by
   show r ∈ Set.lubs s s' ↔ _
   simp only [Set.mem_lubs, Possibility.isLUB_pair_iff]
+
+/-- The absurd state absorbs merge. -/
+@[simp] theorem empty_mul : (∅ : State W V M) * s = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ hr ↦ let ⟨_, hp, _⟩ := mem_mul.mp hr; Set.notMem_empty _ hp
+
+@[simp] theorem mul_empty : s * (∅ : State W V M) = ∅ := by rw [mul_comm, empty_mul]
 
 /-- The Smyth face of the merge: upper closures compose by join. -/
 theorem upperClosure_mul :
@@ -222,16 +239,121 @@ theorem Familiar.mono {s s' : State W V M} {x : V} (h : Familiar s' x) (hs : s �
 theorem Novel.mono {s s' : State W V M} {x : V} (h : Novel s' x) (hs : s ⊆ s') :
     Novel s x := fun p hp => h p (hs hp)
 
-/-! ### The uniform stratum -/
+/-- Familiarity ascends in informativeness: a card established in a state is
+established in every more informative one. -/
+theorem Familiar.of_le {x : V} (h : Familiar s x) (hs : s ≤ s') : Familiar s' x := fun q hq ↦
+  let ⟨p, hp, hpq⟩ := le_def.mp hs q hq
+  Possibility.domain_mono hpq (h p hp)
+
+theorem Familiar.mul_left {x : V} (h : Familiar s x) : Familiar (s * s') x :=
+  h.of_le left_le_mul
+
+theorem Familiar.mul_right {x : V} (h : Familiar s' x) : Familiar (s * s') x :=
+  h.of_le right_le_mul
+
+/-- A card novel at both factors is novel at their merge. -/
+theorem Novel.mul {x : V} (h : Novel s x) (h' : Novel s' x) : Novel (s * s') x := by
+  intro r hr
+  obtain ⟨p, hp, q, hq, -, rfl⟩ := mem_mul.mp hr
+  simpa [Part.or_dom] using not_or.mpr ⟨h p hp, h' q hq⟩
+
+/-! ### Strata
+
+The stratum at `X` is the least informative state defining exactly the
+referents in `X`; the states uniform at `X` are its subsets, and strata
+multiply as their bases unite, so `stratum` carries the union of bases
+to the merge. Merging with a state uniform at `X` factors through the
+stratum: extension along `X`, then filtering by restriction to `X`
+(`mul_eq_sep_of_uniformAt`) — [heim-1982]'s atomic rule, whose
+satisfaction clause filters and whose domain clause extends. -/
+
+/-- The stratum at `X`: every point defining exactly the referents in `X`. -/
+def stratum (X : Set V) : State W V M := {p | p.domain = X}
+
+@[simp] theorem mem_stratum : p ∈ (stratum X : State W V M) ↔ p.domain = X := Iff.rfl
 
 /-- The state is uniform at `X`: every point defines exactly the
 referents in `X`. -/
 def UniformAt (X : Set V) (s : State W V M) : Prop :=
   ∀ p ∈ s, Possibility.domain p = X
 
+theorem uniformAt_iff_subset_stratum : UniformAt X s ↔ s ⊆ stratum X := Iff.rfl
+
+theorem uniformAt_stratum : UniformAt X (stratum X : State W V M) := fun _ hp ↦ hp
+
+/-- The initial state is the empty stratum. -/
+theorem stratum_empty : (stratum ∅ : State W V M) = ⊥ :=
+  ext fun _ ↦ by rw [mem_stratum, Possibility.domain_eq_empty_iff, mem_bot]
+
 /-- The initial state is uniform at the empty base. -/
-theorem uniformAt_bot : UniformAt ∅ (⊥ : State W V M) := fun _ hp =>
-  Possibility.domain_eq_empty_iff.mpr (mem_bot.mp hp)
+theorem uniformAt_bot : UniformAt ∅ (⊥ : State W V M) :=
+  stratum_empty ▸ uniformAt_stratum
+
+/-- Extension along no referents changes nothing. -/
+@[simp] theorem mul_stratum_empty : s * stratum ∅ = s := by
+  rw [stratum_empty, ← one_eq_bot, mul_one]
+
+/-- The merge with a stratum: the points above a point of `s` whose domain
+adds exactly `X`. -/
+theorem mem_mul_stratum :
+    r ∈ s * stratum X ↔ ∃ p ∈ s, p ≤ r ∧ r.domain = p.domain ∪ X := by
+  rw [mem_mul]
+  constructor
+  · rintro ⟨p, hp, q, hq, -, rfl⟩
+    exact ⟨p, hp, Possibility.le_union_left, by rw [Possibility.domain_union, mem_stratum.mp hq]⟩
+  · rintro ⟨p, hp, hpr, hdom⟩
+    refine ⟨p, hp, r.restrict X, ?_, .of_le hpr Possibility.restrict_le,
+      Possibility.eq_union_restrict hpr hdom⟩
+    show (r.restrict X).domain = X
+    rw [Possibility.domain_restrict, hdom, Set.inter_eq_left.mpr Set.subset_union_right]
+
+/-- Strata multiply as their bases unite. -/
+theorem stratum_union : (stratum (X ∪ Y) : State W V M) = stratum X * stratum Y := by
+  ext r
+  rw [mem_mul_stratum, mem_stratum]
+  constructor
+  · intro hr
+    have hX : (r.restrict X).domain = X := by
+      rw [Possibility.domain_restrict, hr, Set.inter_eq_left.mpr Set.subset_union_left]
+    exact ⟨r.restrict X, hX, Possibility.restrict_le, by rw [hX, hr]⟩
+  · rintro ⟨p, hp, -, hdom⟩
+    rw [hdom, mem_stratum.mp hp]
+
+/-- Extension along referents every point already defines changes nothing. -/
+theorem mul_stratum_eq_self (h : ∀ p ∈ s, X ⊆ p.domain) : s * stratum X = s := by
+  ext r
+  rw [mem_mul_stratum]
+  constructor
+  · rintro ⟨p, hp, hpr, hdom⟩
+    rw [Set.union_eq_left.mpr (h p hp)] at hdom
+    exact Possibility.eq_of_le_of_domain_eq hpr hdom.symm ▸ hp
+  · exact fun hr ↦ ⟨r, hr, le_rfl, (Set.union_eq_left.mpr (h r hr)).symm⟩
+
+/-- Extension along `X` establishes every card in `X`. -/
+theorem familiar_mul_stratum {x : V} (hx : x ∈ X) : Familiar (s * stratum X) x := fun r hr ↦ by
+  obtain ⟨_, _, _, hdom⟩ := mem_mul_stratum.mp hr
+  show x ∈ r.domain
+  rw [hdom]
+  exact Set.mem_union_right _ hx
+
+/-- Extension along an established card changes nothing. -/
+theorem Familiar.mul_stratum_singleton {x : V} (h : Familiar s x) : s * stratum {x} = s :=
+  mul_stratum_eq_self fun p hp ↦ Set.singleton_subset_iff.mpr (h p hp)
+
+/-- Merging with a state uniform at `X` is extension along `X` followed by
+filtering through restriction to `X`. -/
+theorem mul_eq_sep_of_uniformAt (hs' : UniformAt X s') :
+    s * s' = {r ∈ s * stratum X | r.restrict X ∈ s'} := by
+  ext r
+  rw [mem_mul]
+  constructor
+  · rintro ⟨p, hp, q, hq, hpq, rfl⟩
+    refine ⟨mem_mul.mpr ⟨p, hp, q, hs' q hq, hpq, rfl⟩, ?_⟩
+    rwa [← (Possibility.le_iff_eq_restrict (hs' q hq)).mp (Possibility.le_union_right hpq)]
+  · rintro ⟨hr, hq⟩
+    obtain ⟨p, hp, hpr, hdom⟩ := mem_mul_stratum.mp hr
+    exact ⟨p, hp, _, hq, .of_le hpr Possibility.restrict_le,
+      Possibility.eq_union_restrict hpr hdom⟩
 
 /-- A uniform stratum is an antichain: comparable points with one
 domain are equal. -/
@@ -243,15 +365,8 @@ theorem UniformAt.isAntichain (hs : UniformAt X s) :
 /-- Within one stratum, merge is intersection. -/
 theorem UniformAt.mul_eq_inter (hs : UniformAt X s) (hs' : UniformAt X s') :
     s * s' = s ∩ s' := by
-  ext r
-  rw [mem_mul]
-  constructor
-  · rintro ⟨p, hp, q, hq, hpq, rfl⟩
-    obtain rfl := Possibility.eq_of_compat_of_domain_eq hpq ((hs p hp).trans (hs' q hq).symm)
-    rw [Possibility.union_self]
-    exact ⟨hp, hq⟩
-  · rintro ⟨hr, hr'⟩
-    exact ⟨r, hr, r, hr', compat_self r, Possibility.union_self.symm⟩
+  rw [mul_eq_sep_of_uniformAt hs', mul_stratum_eq_self fun p hp ↦ (hs p hp).symm.subset]
+  exact ext fun r ↦ and_congr_right fun hr ↦ by rw [Possibility.restrict_eq_self (hs r hr)]
 
 /-- Restriction of a state: pointwise, by direct image. -/
 def restrict (X : Set V) (s : State W V M) : State W V M :=
@@ -387,10 +502,21 @@ theorem Novel.randomAssign {s : State W V M} {y : V} (h : Novel s y) {x : V} (hy
 /-- Every point of a random assignment extends a point of the state when the
 referent was novel. -/
 theorem le_randomAssign {s : State W V M} {x : V} (h : Novel s x) : s ≤ s.randomAssign x :=
-  le_def.mpr fun q ⟨p, hp, m, hq⟩ => ⟨p, hp, hq ▸ ⟨rfl, fun v => by
-    by_cases hv : v = x
-    · subst hv; rw [Part.eq_none_iff'.mpr (h p hp)]; exact fun _ h => (Part.notMem_none _ h).elim
-    · simp [Possibility.update, Function.update_of_ne hv]⟩⟩
+  le_def.mpr fun _ ⟨p, hp, _, hq⟩ ↦ ⟨p, hp, hq ▸ Possibility.le_update_of_not_dom (h p hp) _⟩
+
+/-- Extension along a novel card is random assignment. -/
+theorem Novel.mul_stratum_singleton {s : State W V M} {x : V} (h : Novel s x) :
+    s * stratum {x} = s.randomAssign x := by
+  ext r
+  rw [mem_mul_stratum]
+  constructor
+  · rintro ⟨p, hp, hpr, hdom⟩
+    rw [Set.union_singleton] at hdom
+    obtain ⟨m, hm⟩ := Part.dom_iff_mem.mp (show x ∈ r.domain from hdom ▸ Set.mem_insert x _)
+    exact ⟨p, hp, m, Possibility.eq_update_of_le hpr hdom hm⟩
+  · rintro ⟨p, hp, m, rfl⟩
+    exact ⟨p, hp, Possibility.le_update_of_not_dom (h p hp) _,
+      by rw [Possibility.domain_update_some, Set.union_singleton]⟩
 
 end State
 

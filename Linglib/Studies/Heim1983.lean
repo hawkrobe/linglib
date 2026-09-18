@@ -119,7 +119,7 @@ theorem localNeg_admits {c : Set W} (h : φ.admits (c ∩ p)) : (localNeg φ p).
 /-- The global option's result entails the accommodated presupposition: (16) read in
     isolation has France with a king. -/
 theorem globalNeg_entails {c c' : Set W} (h : c' ∈ globalNeg φ p c) : c' ⊆ p :=
-  λ _ hw => ((neg_eliminative φ h) hw).2
+  fun _ hw ↦ (isEliminative_neg φ _ _ h hw).2
 
 /-- The local option's result is the context minus the amended update: (16) continued with
     "because France doesn't have a king" entails only that either France has no king or he

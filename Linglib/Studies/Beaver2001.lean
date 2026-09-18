@@ -129,9 +129,10 @@ theorem mem_eval_presup : τ ∈ (presup φ).eval σ ↔ σ ∈ φ.eval σ ∧ �
 /-- Every update is eliminative (Fact 7.1, Fact A.1): outputs are subsets of the input. -/
 theorem eval_eliminative : ∀ (φ : Formula W) {σ τ : Set W}, τ ∈ φ.eval σ → τ ⊆ σ
   | atom _, _, _, h => mem_eval_atom.1 h ▸ Set.sep_subset _ _
-  | not _, _, _, h => CCP.Partial.neg_eliminative _ h
+  | not _, _, _, h => CCP.Partial.isEliminative_neg _ _ _ h
   | and φ ψ, _, _, h =>
-    CCP.Partial.seq_eliminative (fun _ _ => eval_eliminative φ) (fun _ _ => eval_eliminative ψ) h
+    CCP.Partial.IsEliminative.seq (fun _ _ => eval_eliminative φ) (fun _ _ => eval_eliminative ψ)
+      _ _ h
   | might _, _, _, h => by obtain ⟨_, -, rfl⟩ := mem_eval_might.1 h; split_ifs <;> simp
   | must _, _, _, h => by obtain ⟨_, -, rfl⟩ := mem_eval_must.1 h; split_ifs <;> simp
   | presup _, _, _, h => (mem_eval_presup.1 h).2 ▸ le_rfl
