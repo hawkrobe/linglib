@@ -1,4 +1,4 @@
-import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Category.Pronoun.Personal
 import Linglib.Syntax.Category.Determiner.Basic
 import Linglib.Fragments.German.Determiners
 import Linglib.Studies.Schwarz2009

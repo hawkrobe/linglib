@@ -1,4 +1,5 @@
-import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Agreement.Allocutive
+import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # Magahi pronouns and allocutive markers
@@ -78,16 +79,16 @@ def pronouns : List PersonalPronoun :=
   [hum, humSab, toN, tuN, apne, toraa, tor, apneKe, iProx, uN, uNSab, okraa, okar, unkaa]
 
 /-- *-au* — nonhonorific subject, nonhonorific addressee. -/
-def suffNH : AllocutiveEntry := { form := "-au", register := .informal, gloss := "NHS.NHA" }
+def suffNH : AllocutiveMarker := { form := "-au", register := .informal }
 
 /-- *-o* — nonhonorific subject, honorific addressee. -/
-def suffH : AllocutiveEntry := { form := "-o", register := .neutral, gloss := "NHS.HA" }
+def suffH : AllocutiveMarker := { form := "-o", register := .neutral }
 
 /-- *-ain* — nonhonorific subject, high-honorific addressee. -/
-def suffHH : AllocutiveEntry := { form := "-ain", register := .formal, gloss := "NHS.HHA" }
+def suffHH : AllocutiveMarker := { form := "-ain", register := .formal }
 
 /-- The allocutive markers of a nonhonorific subject. -/
-def allocutiveMarkers : List AllocutiveEntry := [suffNH, suffH, suffHH]
+def allocutiveMarkers : List AllocutiveMarker := [suffNH, suffH, suffHH]
 
 /-- The fused subject/addressee agreement suffix by the subject's and the
     addressee's honorific level; `none` where no form is attested. -/

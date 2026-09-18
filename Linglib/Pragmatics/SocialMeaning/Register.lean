@@ -17,7 +17,7 @@ goals, as in [yoon-etal-2020] for politeness).
 ## Connections
 
 * `PersonalPronoun.register`: pronoun register (T/V/honorific)
-* `Pronoun.AllocutiveEntry.register`: allocutive marker register
+* `AllocutiveMarker.register`: allocutive marker register
 * `Auxiliary.register`: auxiliary register
 
 Binary T/V systems (Basque, Tamil, Galician, Punjabi) use `.informal`/`.formal`.

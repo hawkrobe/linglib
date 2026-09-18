@@ -1,4 +1,5 @@
-import Linglib.Syntax.Category.Pronoun.Basic
+import Linglib.Syntax.Agreement.Allocutive
+import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
 # Basque pronouns and allocutive markers
@@ -44,15 +45,15 @@ def haiek : PersonalPronoun :=
 def pronouns : List PersonalPronoun := [ni, gu, hi, zu, zuek, hura, haiek]
 
 /-- *-k* — nonhonorific male addressee. -/
-def allocM : AllocutiveEntry := { form := "-k", register := .informal, gloss := "M.NHA" }
+def allocM : AllocutiveMarker := { form := "-k", register := .informal, gender := some .masculine }
 
 /-- *-n* — nonhonorific female addressee. -/
-def allocF : AllocutiveEntry := { form := "-n", register := .informal, gloss := "F.NHA" }
+def allocF : AllocutiveMarker := { form := "-n", register := .informal, gender := some .feminine }
 
 /-- *-zü* — honorific addressee. -/
-def allocH : AllocutiveEntry := { form := "-zü", register := .formal, gloss := "HA" }
+def allocH : AllocutiveMarker := { form := "-zü", register := .formal }
 
 /-- The Souletin allocutive markers. -/
-def allocutiveMarkers : List AllocutiveEntry := [allocM, allocF, allocH]
+def allocutiveMarkers : List AllocutiveMarker := [allocM, allocF, allocH]
 
 end Basque.Pronouns
