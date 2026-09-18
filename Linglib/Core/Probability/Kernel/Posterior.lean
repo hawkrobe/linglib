@@ -1,5 +1,5 @@
-import Linglib.Core.Algebra.Order.Chebyshev
 import Linglib.Core.MeasureTheory.Measure.Prod
+import Linglib.Core.Probability.Moments.Covariance
 import Linglib.Core.Probability.UniformOn
 import Mathlib.Probability.Kernel.Posterior
 import Mathlib.MeasureTheory.Measure.Real
@@ -19,8 +19,10 @@ product parameter space, to comparisons of prior-weighted likelihood sums.
 * `ProbabilityTheory.posterior_deterministic_eq_cond` — a deterministic observation's posterior
   is the prior conditioned on the observation's fibre.
 * `ProbabilityTheory.posterior_real_finset_lt_iff` — event comparison of the posterior.
-* `ProbabilityTheory.sum_real_mul_le_sum_posterior_real_mul` — conditioning on an observation
-  raises the expectation of a statistic that monovaries with the observation's likelihood.
+* `ProbabilityTheory.integral_posterior` — the posterior expectation is the prior expectation
+  of the likelihood-weighted statistic over the observation's marginal.
+* `ProbabilityTheory.integral_le_integral_posterior` — conditioning on an observation raises
+  the expectation of a statistic that monovaries with the observation's likelihood.
 * `ProbabilityTheory.posterior_fst_real_lt_iff`, `posterior_snd_real_lt_iff` — marginal
   comparison over a product parameter space.
 * `ProbabilityTheory.posterior_uniformOn_univ_apply_singleton`,
@@ -135,6 +137,12 @@ theorem _root_.MeasureTheory.Measure.comp_real_singleton [Fintype Ω] (x : 𝓧)
     ENNReal.toReal_sum fun ω _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
   simp_rw [ENNReal.toReal_mul, measureReal_def]
 
+omit [StandardBorelSpace Ω] [Nonempty Ω] in
+/-- The observation marginal at an atom is the prior expectation of the emission mass. -/
+theorem _root_.MeasureTheory.Measure.comp_real_singleton_eq_integral [Fintype Ω] (x : 𝓧) :
+    (κ ∘ₘ μ).real {x} = ∫ ω, (κ ω).real {x} ∂μ := by
+  rw [Measure.comp_real_singleton, integral_fintype .of_finite]; rfl
+
 /-- Exact Bayes on reals at a positive-mass observation. -/
 theorem posterior_real_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω : Ω) :
     ((κ†μ) x).real {ω} = μ.real {ω} * (κ ω).real {x} / (κ ∘ₘ μ).real {x} := by
@@ -162,41 +170,43 @@ theorem posterior_real_singleton_lt_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 
 /-! ### Expectations under the posterior
 
 Bayes' rule reweights the prior by the likelihood, so the posterior expectation of a statistic
-compares with its prior expectation as the statistic's covariance with the likelihood: the
-weighted Chebyshev sum inequality. -/
+compares with its prior expectation as the statistic's covariance with the likelihood:
+Chebyshev's integral inequality. -/
 
 section Expectation
 
-variable [Fintype Ω] [IsProbabilityMeasure μ] {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) {f : Ω → ℝ}
+variable [Fintype Ω] {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0)
 include hx
+
+/-- The posterior expectation of a statistic is the prior expectation of the
+likelihood-weighted statistic over the observation's marginal. -/
+theorem integral_posterior (f : Ω → ℝ) :
+    ∫ ω, f ω ∂((κ†μ) x) = (∫ ω, f ω * (κ ω).real {x} ∂μ) / (κ ∘ₘ μ).real {x} := by
+  rw [integral_fintype .of_finite, integral_fintype .of_finite, Finset.sum_div]
+  exact Finset.sum_congr rfl fun ω _ ↦ by
+    rw [posterior_real_singleton κ μ hx, smul_eq_mul, smul_eq_mul]; ring
+
+variable [IsProbabilityMeasure μ] {f : Ω → ℝ}
 
 /-- Conditioning on an observation raises the expectation of a statistic that monovaries with
 the observation's likelihood. -/
-theorem sum_real_mul_le_sum_posterior_real_mul (hf : Monovary f λ ω => (κ ω).real {x}) :
-    ∑ ω, μ.real {ω} * f ω ≤ ∑ ω, ((κ†μ) x).real {ω} * f ω := by
+theorem integral_le_integral_posterior (hf : Monovary f fun ω ↦ (κ ω).real {x}) :
+    ∫ ω, f ω ∂μ ≤ ∫ ω, f ω ∂((κ†μ) x) := by
   have hm : 0 < (κ ∘ₘ μ).real {x} := ENNReal.toReal_pos hx (measure_ne_top _ _)
-  have h1 : ∑ ω, μ.real {ω} = 1 := by
-    rw [sum_measureReal_singleton, Finset.coe_univ, probReal_univ]
-  have h := hf.sum_mul_mul_sum_mul_le_sum_mul_sum_mul_mul (w := λ ω => μ.real {ω})
-    λ _ => measureReal_nonneg
-  rw [h1, one_mul] at h
-  simp_rw [posterior_real_singleton κ μ hx, div_mul_eq_mul_div, ← Finset.sum_div,
-    le_div_iff₀ hm, Measure.comp_real_singleton]
-  exact h.trans (le_of_eq (Finset.sum_congr rfl λ ω _ => by ring))
+  rw [integral_posterior κ μ hx, le_div_iff₀ hm, Measure.comp_real_singleton_eq_integral]
+  simpa [probReal_univ] using
+    hf.integral_mul_integral_le_measureReal_univ_mul_integral (μ := μ) .of_finite .of_finite
+      .of_finite
 
 /-- Conditioning on an observation lowers the expectation of a statistic that antivaries with
 the observation's likelihood. -/
-theorem sum_posterior_real_mul_le_sum_real_mul (hf : Antivary f λ ω => (κ ω).real {x}) :
-    ∑ ω, ((κ†μ) x).real {ω} * f ω ≤ ∑ ω, μ.real {ω} * f ω := by
+theorem integral_posterior_le_integral (hf : Antivary f fun ω ↦ (κ ω).real {x}) :
+    ∫ ω, f ω ∂((κ†μ) x) ≤ ∫ ω, f ω ∂μ := by
   have hm : 0 < (κ ∘ₘ μ).real {x} := ENNReal.toReal_pos hx (measure_ne_top _ _)
-  have h1 : ∑ ω, μ.real {ω} = 1 := by
-    rw [sum_measureReal_singleton, Finset.coe_univ, probReal_univ]
-  have h := hf.sum_mul_sum_mul_mul_le_sum_mul_mul_sum_mul (w := λ ω => μ.real {ω})
-    λ _ => measureReal_nonneg
-  rw [h1, one_mul] at h
-  simp_rw [posterior_real_singleton κ μ hx, div_mul_eq_mul_div, ← Finset.sum_div,
-    div_le_iff₀ hm, Measure.comp_real_singleton]
-  exact (le_of_eq (Finset.sum_congr rfl λ ω _ => by ring)).trans h
+  rw [integral_posterior κ μ hx, div_le_iff₀ hm, Measure.comp_real_singleton_eq_integral]
+  simpa [probReal_univ] using
+    hf.measureReal_univ_mul_integral_le_integral_mul_integral (μ := μ) .of_finite .of_finite
+      .of_finite
 
 end Expectation
 

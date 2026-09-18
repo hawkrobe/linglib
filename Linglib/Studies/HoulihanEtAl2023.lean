@@ -306,14 +306,14 @@ def posterior : Kernel Action Ω := (S.plan U p)†μ
 
 /-- The posterior expectation of a statistic of the player after observing an action. -/
 def expectation (f : Player → ℝ) (a : Action) : ℝ :=
-  ∑ ω, (S.posterior U p μ a).real {ω} * f (p ω)
+  ∫ ω, f (p ω) ∂(S.posterior U p μ a)
 
 end Setting
 
 /-- The prior expectation of a statistic of the player. -/
-def priorExpectation {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [Fintype Ω]
-    (p : Ω → Player) (f : Player → ℝ) : ℝ :=
-  ∑ ω, μ.real {ω} * f (p ω)
+def priorExpectation {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) (p : Ω → Player)
+    (f : Player → ℝ) : ℝ :=
+  ∫ ω, f (p ω) ∂μ
 
 namespace Setting
 
@@ -327,7 +327,7 @@ increasing in the gap. -/
 theorem priorExpectation_le_expectation_cooperate
     (hf : Monovary (f ∘ p) λ ω => U (p ω) .cooperate - U (p ω) .defect) :
     priorExpectation μ p f ≤ S.expectation U p μ f .cooperate := by
-  refine sum_real_mul_le_sum_posterior_real_mul _ μ (S.comp_plan_ne_zero U p μ _) ?_
+  refine integral_le_integral_posterior _ μ (S.comp_plan_ne_zero U p μ _) ?_
   intro i j hij
   simp only [plan_real, policy_eq_sigmoid, Action.other_cooperate] at hij
   exact hf ((mul_lt_mul_iff_of_pos_left S.lam_pos).1 (Real.sigmoid_lt_iff.1 hij))
@@ -336,7 +336,7 @@ theorem priorExpectation_le_expectation_cooperate
 theorem expectation_defect_le_priorExpectation
     (hf : Monovary (f ∘ p) λ ω => U (p ω) .cooperate - U (p ω) .defect) :
     S.expectation U p μ f .defect ≤ priorExpectation μ p f := by
-  refine sum_posterior_real_mul_le_sum_real_mul _ μ (S.comp_plan_ne_zero U p μ _) ?_
+  refine integral_posterior_le_integral _ μ (S.comp_plan_ne_zero U p μ _) ?_
   intro i j hij
   simp only [plan_real, policy_eq_sigmoid, Action.other_defect] at hij
   have h := (mul_lt_mul_iff_of_pos_left S.lam_pos).1 (Real.sigmoid_lt_iff.1 hij)
@@ -373,7 +373,7 @@ theorem expectation_money_cooperate_le_defect (h : VariesOnly p .money)
       S.expectation S.expectedBaseUtility p μ (·.base .money) .defect := by
   have := S.expectation_defect_le_expectation_cooperate S.expectedBaseUtility p μ
     (f := λ q => -q.base .money) λ i j hij => ?_
-  · simpa only [expectation, mul_neg, Finset.sum_neg_distrib, neg_le_neg_iff] using this
+  · simpa only [expectation, integral_neg, neg_le_neg_iff] using this
   obtain ⟨hd, hb', hr⟩ := h i j
   have ha := hd .aia (by decide)
   have hd' := hd .dia (by decide)
@@ -392,7 +392,7 @@ theorem expectation_dia_cooperate_le_defect (h : VariesOnly p .dia)
       S.expectation S.expectedBaseUtility p μ (·.base .dia) .defect := by
   have := S.expectation_defect_le_expectation_cooperate S.expectedBaseUtility p μ
     (f := λ q => -q.base .dia) λ i j hij => ?_
-  · simpa only [expectation, mul_neg, Finset.sum_neg_distrib, neg_le_neg_iff] using this
+  · simpa only [expectation, integral_neg, neg_le_neg_iff] using this
   obtain ⟨hd, hb', hr⟩ := h i j
   have hm := hd .money (by decide)
   have ha := hd .aia (by decide)
@@ -576,9 +576,9 @@ def lesionedPosterior {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) :
     Kernel Action Ω :=
   Kernel.const Action μ
 
-theorem lesionedPosterior_expectation {Ω : Type*} [MeasurableSpace Ω] [Fintype Ω]
-    (μ : Measure Ω) (p : Ω → Player) (f : Player → ℝ) (a : Action) :
-    ∑ ω, (lesionedPosterior μ a).real {ω} * f (p ω) = priorExpectation μ p f := by
+theorem lesionedPosterior_expectation {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
+    (p : Ω → Player) (f : Player → ℝ) (a : Action) :
+    ∫ ω, f (p ω) ∂(lesionedPosterior μ a) = priorExpectation μ p f := by
   simp [lesionedPosterior, priorExpectation]
 
 end
