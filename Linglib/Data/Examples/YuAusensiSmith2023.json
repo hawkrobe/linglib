@@ -1,0 +1,252 @@
+[
+  {
+    "id": "yuausensismith2023_23",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(23)"},
+    "language": "stan1293",
+    "primaryText": "John opened the door again.",
+    "glossedTokens": [],
+    "translation": "John opened the door again.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "restitutive", "judgment": "acceptable"},
+      {"name": "repetitive", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "again"],
+      ["root class", "property concept"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "yuausensismith2023_24a",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(24a)"},
+    "language": "stan1293",
+    "primaryText": "John sharpened the knife again.",
+    "glossedTokens": [],
+    "translation": "John sharpened the knife again.",
+    "context": "John buys a knife that was forged in such a way that it was already sharp. John uses it until it becomes blunt. He uses a whetting stone to make it sharp once more.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "restitutive", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "again"],
+      ["root class", "property concept"]
+    ],
+    "comment": "One sharpening suffices. The paper attributes the example to Beavers and Koontz-Garboden 2020."
+  },
+  {
+    "id": "yuausensismith2023_25a",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(25a)"},
+    "language": "stan1293",
+    "primaryText": "John broke the plate again.",
+    "glossedTokens": [],
+    "translation": "John broke the plate again.",
+    "context": "Mary requested a potter to make a plate in separate pieces so she can practice her pottery-mending skills. She took a day to put the pieces together. John snatched the mended plate and broke it.",
+    "judgment": "unacceptable",
+    "readings": [
+      {"name": "restitutive", "judgment": "unacceptable"},
+      {"name": "repetitive", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "again"],
+      ["root class", "change of state"]
+    ],
+    "comment": "Necessarily two breakings."
+  },
+  {
+    "id": "yuausensismith2023_25b",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(25b)"},
+    "language": "stan1293",
+    "primaryText": "Leah thawed the meat again.",
+    "glossedTokens": [],
+    "translation": "Leah thawed the meat again.",
+    "context": "Leah kills a rabbit, takes it home and skins and butchers it and then puts the fresh meat in the freezer for three days. She then takes it out and puts it on the table to thaw.",
+    "judgment": "unacceptable",
+    "readings": [
+      {"name": "restitutive", "judgment": "unacceptable"},
+      {"name": "repetitive", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "again"],
+      ["root class", "change of state"]
+    ],
+    "comment": "Necessarily two defrostings."
+  },
+  {
+    "id": "yuausensismith2023_25c",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(25c)"},
+    "language": "stan1293",
+    "primaryText": "Kim melted the ice cream again.",
+    "glossedTokens": [],
+    "translation": "Kim melted the ice cream again.",
+    "context": "An ice cream factory manufactures ice cream from a package of ingredients by adding water and then freezing the result. After adding the contents of the package to water and freezing it, Kim lets it melt into a liquid state.",
+    "judgment": "unacceptable",
+    "readings": [
+      {"name": "restitutive", "judgment": "unacceptable"},
+      {"name": "repetitive", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "again"],
+      ["root class", "change of state"]
+    ],
+    "comment": "Necessarily two meltings."
+  },
+  {
+    "id": "yuausensismith2023_26",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(26)"},
+    "language": "stan1293",
+    "primaryText": "Susan opened the door for two hours.",
+    "glossedTokens": [],
+    "translation": "Susan opened the door for two hours.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "durative", "judgment": "acceptable"},
+      {"name": "internal", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "for-phrase"],
+      ["root class", "property concept"]
+    ],
+    "comment": "Internal reading: the door remained open for two hours."
+  },
+  {
+    "id": "yuausensismith2023_27",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(27)"},
+    "language": "stan1293",
+    "primaryText": "Susan broke the vase for 5 minutes.",
+    "glossedTokens": [],
+    "translation": "Susan broke the vase for 5 minutes.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "durative", "judgment": "acceptable"},
+      {"name": "internal", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "for-phrase"],
+      ["root class", "change of state"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "yuausensismith2023_28",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(28)"},
+    "language": "stan1293",
+    "primaryText": "Jill thawed the meat for 30 minutes.",
+    "glossedTokens": [],
+    "translation": "Jill thawed the meat for 30 minutes.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "durative", "judgment": "acceptable"},
+      {"name": "internal", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "for-phrase"],
+      ["root class", "change of state"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "yuausensismith2023_29",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(29)"},
+    "language": "stan1293",
+    "primaryText": "Johannes melted the cheese for 10 minutes.",
+    "glossedTokens": [],
+    "translation": "Johannes melted the cheese for 10 minutes.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "durative", "judgment": "acceptable"},
+      {"name": "internal", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["diagnostic", "for-phrase"],
+      ["root class", "change of state"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "yuausensismith2023_30",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(30)"},
+    "language": "stan1293",
+    "primaryText": "Kim opened the door into the garden.",
+    "glossedTokens": [],
+    "translation": "Kim opened the door into the garden.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "property concept"]
+    ],
+    "comment": "Intended: Kim caused the door to go into the garden by opening."
+  },
+  {
+    "id": "yuausensismith2023_31a",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(31a)"},
+    "language": "stan1293",
+    "primaryText": "The citizens darkened the city invisible.",
+    "glossedTokens": [],
+    "translation": "The citizens darkened the city invisible.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "property concept"]
+    ],
+    "comment": "Cannot mean that the citizens caused the city to become invisible by darkening."
+  },
+  {
+    "id": "yuausensismith2023_31b",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(31b)"},
+    "language": "stan1293",
+    "primaryText": "The dentist whitened his teeth clean.",
+    "glossedTokens": [],
+    "translation": "The dentist whitened his teeth clean.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "property concept"]
+    ],
+    "comment": "Cannot mean that the dentist caused the teeth to become clean by whitening."
+  },
+  {
+    "id": "yuausensismith2023_35b",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(35b)"},
+    "language": "stan1293",
+    "primaryText": "A couple of monks broke the corpse loose from the deck.",
+    "glossedTokens": [],
+    "translation": "A couple of monks broke the corpse loose from the deck.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "change of state"]
+    ],
+    "comment": "Corpus example with an unselected object: it is the deck, not the corpse, that breaks."
+  },
+  {
+    "id": "yuausensismith2023_35c",
+    "source": {"bibkey": "yu-ausensi-smith-2023", "paperLabel": "(35c)"},
+    "language": "stan1293",
+    "primaryText": "Scientists just melted a hole through 3,500 feet of ice.",
+    "glossedTokens": [],
+    "translation": "Scientists just melted a hole through 3,500 feet of ice.",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "resultative modifier"],
+      ["root class", "change of state"]
+    ],
+    "comment": "Web example with an unselected object."
+  }
+]
