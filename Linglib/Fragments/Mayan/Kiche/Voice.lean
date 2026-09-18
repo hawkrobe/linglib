@@ -1,4 +1,5 @@
 import Linglib.Syntax.Voice.Basic
+import Linglib.Fragments.Mayan.Verb
 
 /-!
 # K'iche' voice
@@ -30,7 +31,6 @@ not express.
 
 ## Main definitions
 
-* `Kiche.VerbClass` — derived and radical transitive verbs
 * `Kiche.active`, `simplePassive`, `completedPassive`, `absolutiveAntipassive`,
   `agentFocus` — the five voices of a verb of either class
 * `Kiche.voices` — the inventory of a class
@@ -51,62 +51,55 @@ not express.
 
 namespace Kiche
 
-/-- The transitive verb classes: derived, with a polysyllabic vowel-final root, and radical,
-with a monosyllabic root ending in a consonant or a glottal stop. -/
-inductive VerbClass where
-  | derived
-  | radical
-  deriving DecidableEq, Repr, Fintype
-
 /-- The active: *-j* on a derived verb, no suffix on a radical one. -/
-def active : VerbClass → Voice
+def active : Mayan.VerbClass → Voice
   | .derived => Voice.active.marked [.suff "j"]
   | .radical => Voice.active
 
 /-- The simple passive: *-x* on a derived verb; a radical verb takes no suffix and conjugates
 as an intransitive, a consonant-final root lengthening its vowel. -/
-def simplePassive : VerbClass → Voice
+def simplePassive : Mayan.VerbClass → Voice
   | .derived => Voice.passive.marked [.suff "x"]
   | .radical => Voice.passive
 
 /-- The completed passive, the state of the object: *-taj* on a derived verb, *-Vtaj* on a
 radical one. -/
-def completedPassive : VerbClass → Voice
+def completedPassive : Mayan.VerbClass → Voice
   | .derived => Voice.passive.marked [.suff "taj"]
   | .radical => Voice.passive.marked [.suff "Vtaj"]
 
 /-- The absolutive antipassive, the object dropped or indirect with *ch-ee*: *-n* on a derived
 verb, *-Vn* on a radical one. -/
-def absolutiveAntipassive : VerbClass → Voice
+def absolutiveAntipassive : Mayan.VerbClass → Voice
   | .derived => Voice.antipassive.marked [.suff "n"]
   | .radical => Voice.antipassive.marked [.suff "Vn"]
 
 /-- The agent-focus antipassive, subject, verb and object present and the agent emphasized:
 *-n* on a derived verb, *-Vw* on a radical one. -/
-def agentFocus : VerbClass → Voice
+def agentFocus : Mayan.VerbClass → Voice
   | .derived => Voice.agentVoice.marked [.suff "n"]
   | .radical => Voice.agentVoice.marked [.suff "Vw"]
 
 /-- The five voices of a verb of a class. -/
-def voices (c : VerbClass) : Finset Voice :=
+def voices (c : Mayan.VerbClass) : Finset Voice :=
   {active c, simplePassive c, completedPassive c, absolutiveAntipassive c, agentFocus c}
 
 /-- Agent focus is the one voice beside the active that keeps both core terms core
 ([mondloch-2017]). -/
-theorem isSymmetrical_iff (c : VerbClass) :
+theorem isSymmetrical_iff (c : Mayan.VerbClass) :
     ∀ v ∈ voices c, v.IsSymmetrical ↔ v = active c ∨ v = agentFocus c := by
   cases c <;> decide
 
 /-- The passives and the absolutive antipassive derive an intransitive construction, and the
 verb conjugates as a simple intransitive ([mondloch-2017]). -/
-theorem not_isTransitive_iff (c : VerbClass) :
+theorem not_isTransitive_iff (c : Mayan.VerbClass) :
     ∀ v ∈ voices c, ¬ v.target.IsTransitive ↔
       v = simplePassive c ∨ v = completedPassive c ∨ v = absolutiveAntipassive c := by
   cases c <;> decide
 
 /-- The two antipassives are syncretic on derived verbs, both *-n*, and distinct on radical
 ones, *-Vn* against *-Vw* ([mondloch-2017]). -/
-theorem marker_agentFocus_eq_iff (c : VerbClass) :
+theorem marker_agentFocus_eq_iff (c : Mayan.VerbClass) :
     (agentFocus c).marker = (absolutiveAntipassive c).marker ↔ c = .derived := by
   cases c <;> decide
 

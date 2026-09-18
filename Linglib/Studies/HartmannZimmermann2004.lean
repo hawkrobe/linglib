@@ -96,7 +96,7 @@ receive nothing ((31)/(32a–c)). Untested frames fall to the unmarked
 default, guarded by `Config.WF`. -/
 def realize : Config → Finset (Reflex Focused)
   | ⟨.subject, _, _⟩        => {.displacement .subject}
-  | ⟨f, .perfective, false⟩ => {.morpheme f}
+  | ⟨f, .perfective, false⟩ => {.morpheme f [.suff "i"]}
   | ⟨_, .perfective, true⟩  => {.boundary .verb}
   | _                       => ∅
 

@@ -311,7 +311,8 @@ def Mover.ofSite : Mayan.ExtractionSite → Mover
 when the Mam fragment does, the mover bearing [obl] and the clause of origin projecting Voice. -/
 theorem realizable_iff_mem_realize (s : Mayan.ExtractionSite) :
     Realizable (.ofSite s) [spine .cP 0] 0 ↔
-      Reflex.morpheme .verbalComplex ∈ Mam.Extraction.realize s := by
+      Reflex.morpheme .verbalComplex [Mam.Extraction.movementEnclitic] ∈
+        Mam.Extraction.realize s := by
   decide +revert
 
 /-- The mover is a low adjunct, merged in Spec,ApplP with [appl] (§5.3). -/
@@ -327,8 +328,9 @@ instance : ∀ m : Mover, Decidable m.IsLow
 
 /-- The K'iche' fragment puts *wi* on the verbal complex exactly for the low adjunct movers,
 Agent Focus being a reflex on the verb (§5.1, §5.3). -/
-theorem kiche_mem_realize_iff (s : Mayan.ExtractionSite) :
-    Reflex.morpheme .verbalComplex ∈ Kiche.Extraction.realize s ↔ (Mover.ofSite s).IsLow := by
+theorem kiche_mem_realize_iff (c : Mayan.VerbClass) (s : Mayan.ExtractionSite) :
+    Reflex.morpheme .verbalComplex [Kiche.Extraction.wi] ∈ Kiche.Extraction.realize c s ↔
+      (Mover.ofSite s).IsLow := by
   decide +revert
 
 /-! ### Agree and insertion (§4.2) -/
@@ -339,7 +341,8 @@ def voice : Voice.Head :=
   { flavor := .agentive, hasD := true, features := .ofGramFeatures [.unvalued (.oblique false)] }
 
 /-- (46a): the vocabulary item realizing the valued [obl] on Voice⁰ or Dir⁰. -/
-def eqYa : VocabularyItem GramFeature String := [.valued (.oblique true)] ⟷ "=(y)a'"
+def eqYa : VocabularyItem GramFeature String :=
+  [.valued (.oblique true)] ⟷ toString Mam.Extraction.movementEnclitic
 
 /-- Agree with an [obl] mover followed by insertion yields the enclitic. -/
 theorem agree_spellout :

@@ -1,18 +1,23 @@
 import Linglib.Syntax.Reflex
 import Linglib.Fragments.Mayan.Extraction
+import Linglib.Fragments.Mayan.Kiche.Voice
 
 /-!
 # K'iche' extraction marking
 
-The extraction marking of K'iche' (K'ichean Mayan) as reflex cells: transitive-subject
-extraction switches the verb to its Agent Focus form ([mondloch-2017]), and the extraction of a
-locative, instrument, dative or benefactive phrase (comitatives too) adds the fronting particle
-*wi* to the verbal complex, obligatorily in the varieties [mendes-ranero-2021] describe and
-absent or optional in others; reasons, purposes, manners and temporals never license it.
-Absolutive extraction is unmarked ([coon-mateo-pedro-preminger-2014]). The benefactive cell
-records [elkins-torrence-brown-2026]'s summary of the K'ichean pattern, which they note varies
-by variety between datives and benefactives. The distribution of *wi* across clause sizes, and
-its contrast with Mam =(y)a', is the matter of `Studies/ElkinsTorrenceBrown2026.lean`.
+K'iche' (K'ichean Mayan) puts the verb in the Agent Focus voice when a transitive subject is
+extracted, and adds the fronting particle *wi* to the verbal complex when a locative,
+instrument, dative or benefactive phrase is extracted, comitatives too; the particle is
+obligatory in the varieties Mendes and Ranero describe and absent or optional in others, and
+reasons, purposes, manners and temporals never license it. Absolutive extraction is unmarked.
+The benefactive cell records the K'ichean pattern as Elkins, Brown and Torrence summarize it,
+which they note varies by variety between datives and benefactives.
+
+## Main declarations
+
+* `Kiche.Extraction.wi`: the fronting particle.
+* `Kiche.Extraction.realize`: the reflexes extraction from each `Mayan.ExtractionSite` licenses
+  on a verb of each class, the Agent Focus marker taken from `Kiche.agentFocus`.
 
 ## References
 
@@ -24,24 +29,27 @@ its contrast with Mam =(y)a', is the matter of `Studies/ElkinsTorrenceBrown2026.
 
 namespace Kiche.Extraction
 
-/-- The hosts of K'iche' extraction reflexes: the verb stem, and the verbal complex the enclitic
-*wi* attaches to. -/
+/-- A K'iche' extraction reflex is hosted by the verb stem or by the verbal complex the
+particle *wi* attaches to. -/
 inductive Host where
   | verb
   | verbalComplex
   deriving DecidableEq, Repr
 
-/-- Transitive-subject extraction takes Agent Focus on the verb; low-adjunct extraction adds
-*wi* to the verbal complex; everything else is unmarked. -/
-def realize : Mayan.ExtractionSite → Finset (Reflex Host)
-  | .core .A => {.morpheme .verb}
+/-- The fronting particle *wi*. -/
+def wi : Morphology.Morph := .free "wi"
+
+/-- Transitive-subject extraction takes the Agent Focus marker of the verb's class on the verb;
+low-adjunct extraction adds *wi* to the verbal complex; everything else is unmarked. -/
+def realize (c : Mayan.VerbClass) : Mayan.ExtractionSite → Finset (Reflex Host)
+  | .core .A => {.morpheme .verb (agentFocus c).marker}
   | .adjunct .instrument | .adjunct .benefactive | .adjunct .dative | .adjunct .locative =>
-      {.morpheme .verbalComplex}
+      {.morpheme .verbalComplex [wi]}
   | _ => ∅
 
 /-- *wi* is licensed by exactly the low adjunct classes. -/
-theorem realize_adjunct_nonempty_iff (a : Mayan.Adjunct) :
-    (realize (.adjunct a)).Nonempty ↔
+theorem realize_adjunct_nonempty_iff (c : Mayan.VerbClass) (a : Mayan.Adjunct) :
+    (realize c (.adjunct a)).Nonempty ↔
       a = .instrument ∨ a = .benefactive ∨ a = .dative ∨ a = .locative := by
   decide +revert
 

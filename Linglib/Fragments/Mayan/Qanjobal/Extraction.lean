@@ -195,7 +195,7 @@ inductive Host where
 *-on*, [coon-mateo-pedro-preminger-2014]), under the third-person
 restriction recorded above; nothing else is marked. -/
 def realize : ArgumentRole → Finset (Reflex Host)
-  | .A => {.morpheme .verb}
+  | .A => {.morpheme .verb [.suff "on"]}
   | _ => ∅
 
 end Extraction
