@@ -101,6 +101,28 @@ theorem validPaths_prefix_closed {t : T} {p q : TreePath}
   rw [← hs, subtreeAt_append] at hq
   exact Option.isSome_of_isSome_bind hq
 
+/-! ### Maps commuting with `children`
+
+A map `f` with `children (f t) = (children t).map f` is a map of `Branching` carriers: it
+commutes with navigation and preserves the positions. -/
+
+theorem subtreeAt_map_of_children_map {U : Type*} [Branching U] {f : T → U}
+    (hf : ∀ t, children (f t) = (children t).map f) (t : T) (p : List Nat) :
+    subtreeAt (f t) p = (subtreeAt t p).map f := by
+  induction p generalizing t with
+  | nil => rfl
+  | cons i rest ih =>
+    rw [subtreeAt_cons, subtreeAt_cons, hf, List.getElem?_map]
+    cases (children t)[i]? with
+    | none => rfl
+    | some c => exact ih c
+
+theorem validPaths_map_of_children_map {U : Type*} [Branching U] {f : T → U}
+    (hf : ∀ t, children (f t) = (children t).map f) (t : T) :
+    validPaths (f t) = validPaths t := by
+  ext p
+  simp [validPaths, subtreeAt_map_of_children_map hf]
+
 theorem isLowerSet_validPaths (t : T) : IsLowerSet (validPaths t) :=
   fun _ _ hpq hq => validPaths_prefix_closed hq hpq
 

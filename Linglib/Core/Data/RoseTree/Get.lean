@@ -41,16 +41,8 @@ instance : Branching (RoseTree α) := ⟨children⟩
 
 /-- Relabelling commutes with subtree access. -/
 theorem subtreeAt_map {β : Type*} (f : α → β) (t : RoseTree α) (p : List ℕ) :
-    subtreeAt (map f t) p = (subtreeAt t p).map (map f) := by
-  induction p generalizing t with
-  | nil => rfl
-  | cons i p ih =>
-    cases t with
-    | node a cs =>
-      simp only [map_node, subtreeAt_cons, branching_children, children_node, List.getElem?_map]
-      cases cs[i]? with
-      | none => rfl
-      | some c => simp [ih]
+    subtreeAt (map f t) p = (subtreeAt t p).map (map f) :=
+  subtreeAt_map_of_children_map (fun t => by cases t; simp) t p
 
 /-! ### Height and size along addresses -/
 
