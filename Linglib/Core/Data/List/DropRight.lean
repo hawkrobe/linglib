@@ -28,7 +28,9 @@ its front counterpart through `List.rtake_eq_reverse_take_reverse` or
   `List.drop_append`. `List.rtake_append_of_le_length`, `List.rtake_append_length`, and
   `List.rtake_append_length_add` are the corollaries mirroring `List.take_append_of_le_length`
   and mathlib's `List.rdrop_append_length` and `List.rdrop_append_length_add`.
-* `List.rdrop_append_rtake`: the tail analog of `List.take_append_drop`.
+* `List.rdrop_prefix`, `List.rtake_suffix`, `List.rdrop_append_rtake`: a tail-drop is a prefix, a
+  tail-take a suffix, and together they recover the list, mirroring `List.take_prefix`,
+  `List.drop_suffix`, and `List.take_append_drop`.
 * `List.rtake_append_rtake` and `List.rtake_append_append_of_le_length`: the last `n` elements
   are a sufficient state, so truncating before appending, or prepending anything to a block of
   length at least `n`, leaves the tail-take unchanged.
@@ -79,6 +81,10 @@ theorem rtake_append_of_le_length (h : n ≤ l₂.length) : (l₁ ++ l₂).rtake
 
 theorem rdrop_append : (l₁ ++ l₂).rdrop n = l₁.rdrop (n - l₂.length) ++ l₂.rdrop n := by
   simp [rdrop_eq_reverse_drop_reverse, drop_append]
+
+theorem rdrop_prefix (n : ℕ) (l : List α) : l.rdrop n <+: l := take_prefix _ _
+
+theorem rtake_suffix (n : ℕ) (l : List α) : l.rtake n <:+ l := drop_suffix _ _
 
 @[simp] theorem rdrop_append_rtake (n : ℕ) (l : List α) : l.rdrop n ++ l.rtake n = l := by
   rw [rdrop_eq_reverse_drop_reverse, rtake_eq_reverse_take_reverse, ← reverse_append,

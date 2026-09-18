@@ -70,7 +70,7 @@ def rightComp : Bimachine (Bool × σ₁) (Bool × (σ₁ → σ₂)) α γ wher
 @[simp] theorem rightComp_rState_snd (suf : List α) (s : σ₁) :
     ((T₂.rightComp T₁).rState suf).2 s
       = T₂.stateAfter T₂.start (T₁.runFrom s suf).reverse := by
-  induction suf generalizing s <;> simp [stateAfter_append, *]
+  induction suf generalizing s <;> simp [Mealy.stateAfter_append, *]
 
 /-- Each cell emits the reverse of what `T₂` produces over the reversed image of the
 input: its whole run at the left end, its emission alone — no flush — elsewhere. -/
@@ -79,7 +79,7 @@ theorem rightComp_runFrom (b : Bool) (s : σ₁) (a : α) (xs : List α) :
       = (if b then T₂.runFrom T₂.start (T₁.runFrom s (a :: xs)).reverse
           else T₂.emitted T₂.start (T₁.runFrom s (a :: xs)).reverse).reverse := by
   induction xs generalizing b s a <;>
-    cases b <;> simp [runFrom, emitted_append, stateAfter_append, *]
+    cases b <;> simp [runFrom, emitted_append, Mealy.stateAfter_append, *]
 
 /-- The bimachine computes the composite on every nonempty input — the empty word is the
 only obstruction. -/
@@ -114,9 +114,6 @@ theorem IsRightSubsequential.isBimachineComputable_comp {f : List α → List β
 is a bimachine, with no side condition since both passes preserve the empty word. -/
 theorem Mealy.isBimachineComputable_runRight_comp [Fintype σ₁] [Fintype σ₂]
     (T₂ : Mealy σ₂ β γ) (T₁ : Mealy σ₁ α β) :
-    IsBimachineComputable (T₂.runRight ∘ T₁.run) := by
-  refine IsRightSubsequential.isBimachineComputable_comp ?_
-    T₁.isMealyComputable.isLeftSubsequential rfl
-  rw [isRightSubsequential_iff_left_reverse]
-  simpa using T₂.isMealyComputable.isLeftSubsequential
+    IsBimachineComputable (T₂.runRight ∘ T₁.run) :=
+  T₂.isRightSubsequential.isBimachineComputable_comp T₁.isLeftSubsequential rfl
 

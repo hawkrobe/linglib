@@ -72,13 +72,13 @@ residuals is in `Core/Computability/MyhillNerode.lean`.
 
 variable {σ α β : Type*}
 
-/-- A Mealy machine is a set of states (`σ`), a starting state (`initial`), a
+/-- A Mealy machine is a set of states (`σ`), a starting state (`start`), a
 transition function (`step`) and an output function (`output`); it is letter-to-letter,
 emitting exactly one output symbol per input symbol. -/
 @[ext]
 structure Mealy (σ α β : Type*) where
   /-- Starting state. -/
-  initial : σ
+  start : σ
   /-- Transition function. -/
   step : σ → α → σ
   /-- Output function: the symbol emitted on reading an input symbol in a state. -/
@@ -100,8 +100,8 @@ def runFrom : σ → List α → List β
   | _, [] => []
   | s, x :: xs => T.output s x :: runFrom (T.step s x) xs
 
-/-- `T.run x` runs `T` on the input `x` starting from the state `T.initial`. -/
-def run : List α → List β := T.runFrom T.initial
+/-- `T.run x` runs `T` on the input `x` starting from the state `T.start`. -/
+def run : List α → List β := T.runFrom T.start
 
 /-- `T.runRight x` runs `T` right-to-left on the input `x`. -/
 def runRight (xs : List α) : List β := (T.run xs.reverse).reverse
@@ -126,7 +126,7 @@ theorem runFrom_append :
 @[simp] theorem length_runFrom : (T.runFrom s xs).length = xs.length := by
   induction xs generalizing s <;> simp [*]
 
-@[simp] theorem length_run : (T.run xs).length = xs.length := T.length_runFrom T.initial xs
+@[simp] theorem length_run : (T.run xs).length = xs.length := T.length_runFrom T.start xs
 
 @[simp] theorem length_runRight : (T.runRight xs).length = xs.length := by simp [runRight]
 
@@ -139,7 +139,7 @@ theorem runFrom_append :
 reversed tail: the right scan reads the future. -/
 @[simp] theorem runRight_cons :
     T.runRight (x :: xs)
-      = T.output (T.stateAfter T.initial xs.reverse) x :: T.runRight xs := by
+      = T.output (T.stateAfter T.start xs.reverse) x :: T.runRight xs := by
   simp [runRight, run, runFrom_append]
 
 /-- Output coordinate `i` of the run is the output at the state reached after the
@@ -151,8 +151,8 @@ theorem getElem?_runFrom (i : ℕ) :
 /-- Output coordinate `i` of `T.run` is the output at the state reached after the
 first `i` input symbols. -/
 theorem getElem?_run (i : ℕ) :
-    (T.run xs)[i]? = xs[i]?.map (T.output (T.stateAfter T.initial (xs.take i))) :=
-  T.getElem?_runFrom T.initial xs i
+    (T.run xs)[i]? = xs[i]?.map (T.output (T.stateAfter T.start (xs.take i))) :=
+  T.getElem?_runFrom T.start xs i
 
 end
 
@@ -166,7 +166,7 @@ variable {γ σ' : Type*} (T₂ : Mealy σ' β γ) (T₁ : Mealy σ α β)
 [holcombe-1982] — computing `T₂.run ∘ T₁.run`. -/
 @[simps]
 def comp : Mealy (σ' × σ) α γ where
-  initial := (T₂.initial, T₁.initial)
+  start := (T₂.start, T₁.start)
   step p a := (T₂.step p.1 (T₁.output p.2 a), T₁.step p.2 a)
   output p a := T₂.output p.1 (T₁.output p.2 a)
 
@@ -183,7 +183,7 @@ end Comp
 
 /-- The single-state machine applying `h` to every symbol. -/
 def ofFn (h : α → β) : Mealy Unit α β where
-  initial := ()
+  start := ()
   step _ _ := ()
   output _ := h
 
@@ -200,11 +200,11 @@ variable (p : α → Bool) (out : Bool → α → β)
 /-- The Mealy machine whose state is the monotone flag "a symbol satisfying `p` has
 occurred". -/
 def ofFlag : Mealy Bool α β where
-  initial := false
+  start := false
   step b a := b || p a
   output := out
 
-@[simp] theorem ofFlag_initial : (ofFlag p out).initial = false := rfl
+@[simp] theorem ofFlag_start : (ofFlag p out).start = false := rfl
 
 @[simp] theorem ofFlag_step (b : Bool) (a : α) :
     (ofFlag p out).step b a = (b || p a) := rfl
@@ -235,7 +235,7 @@ variable {τ : Type*}
 /-- Transport a Mealy machine along an equivalence on states. -/
 @[simps]
 def map (g : σ ≃ τ) (T : Mealy σ α β) : Mealy τ α β where
-  initial := g T.initial
+  start := g T.start
   step t x := g (T.step (g.symm t) x)
   output t x := T.output (g.symm t) x
 
@@ -315,7 +315,7 @@ machine runs `T` and feeds its output symbols to `M`, so it accepts `x` if and o
 @[simps]
 def _root_.DFA.comapMealy : DFA α (σ × τ) where
   step p a := (T.step p.1 a, M.step p.2 (T.output p.1 a))
-  start := (T.initial, M.start)
+  start := (T.start, M.start)
   accept := {p | p.2 ∈ M.accept}
 
 @[simp] theorem _root_.DFA.evalFrom_comapMealy (p : σ × τ) (xs : List α) :

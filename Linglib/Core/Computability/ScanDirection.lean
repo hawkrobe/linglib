@@ -61,6 +61,9 @@ theorem revConj_comp (g : List β → List γ) (f : List α → List β) :
 @[simp] theorem revConj_id : revConj (id : List α → List α) = id := by
   funext xs; simp [revConj]
 
+@[simp] theorem revConj_map (h : α → β) : revConj (List.map h) = List.map h := by
+  funext xs; simp [revConj]
+
 theorem revConj_eq_iff {h : List α → List β} {f : List α → List β} :
     revConj h = f ↔ h = revConj f := by
   constructor <;> rintro rfl <;> simp

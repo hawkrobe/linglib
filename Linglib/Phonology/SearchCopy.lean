@@ -188,11 +188,11 @@ theorem emit_eq_self {s : α} {w : Option α} {v : Bool} (hf : r.found s w = som
 /-- The machine computing the rule, whose state is the closest visible segment read so far
 and which passes invisible segments through untouched. -/
 def toMealy : Mealy (Option α) α α where
-  initial := none
+  start := none
   step w s := if r.tier s then some (r.emit w s) else w
   output w s := if r.tier s then r.emit w s else s
 
-@[simp] theorem toMealy_initial : r.toMealy.initial = none := rfl
+@[simp] theorem toMealy_start : r.toMealy.start = none := rfl
 
 @[simp] theorem toMealy_step (w : Option α) (s : α) :
     r.toMealy.step w s = if r.tier s then some (r.emit w s) else w :=

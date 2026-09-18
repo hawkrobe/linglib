@@ -263,7 +263,7 @@ variable {σ : Type*} (T : Mealy σ α β)
 whose right automaton is trivial. -/
 @[simps]
 def Mealy.toBimachine : Bimachine σ Unit α β where
-  lInit := T.initial
+  lInit := T.start
   lStep := T.step
   rInit := ()
   rStep _ _ := ()
@@ -275,7 +275,7 @@ def Mealy.toBimachine : Bimachine σ Unit α β where
 
 /-- The bimachine view computes the same string function. -/
 @[simp] theorem Mealy.toBimachine_run : T.toBimachine.run = T.run :=
-  funext fun xs => T.toBimachine_runFrom T.initial xs
+  funext fun xs => T.toBimachine_runFrom T.start xs
 
 end ToBimachine
 

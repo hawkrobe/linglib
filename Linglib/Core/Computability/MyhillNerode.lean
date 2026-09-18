@@ -66,10 +66,10 @@ theorem residual_append_singleton (u : List α) (x : α) :
 
 /-- Residuals of a machine's run factor through its states. -/
 theorem Mealy.residual_run {σ : Type*} (T : Mealy σ α β) (u : List α) :
-    residual T.run u = T.runFrom (T.stateAfter T.initial u) := by
+    residual T.run u = T.runFrom (T.stateAfter T.start u) := by
   funext v
   simp only [residual, Mealy.run, Mealy.runFrom_append]
-  rw [show u.length = (T.runFrom T.initial u).length from (T.length_runFrom _ _).symm,
+  rw [show u.length = (T.runFrom T.start u).length from (T.length_runFrom _ _).symm,
     List.drop_left]
 
 /-! ### Necessity -/
@@ -82,7 +82,7 @@ theorem IsMealyComputable.length_eq {f : List α → List β} (hf : IsMealyCompu
 theorem IsMealyComputable.isPrefix {f : List α → List β} (hf : IsMealyComputable f)
     (u v : List α) : f u <+: f (u ++ v) := by
   obtain ⟨σ, _, T, rfl⟩ := hf
-  exact ⟨_, (T.runFrom_append T.initial u v).symm⟩
+  exact ⟨_, (T.runFrom_append T.start u v).symm⟩
 
 theorem IsMealyComputable.finite_range_residual {f : List α → List β}
     (hf : IsMealyComputable f) : (Set.range (residual f)).Finite := by
@@ -103,7 +103,7 @@ theorem isMealyComputable_of_stateSummary
     IsMealyComputable f := by
   refine isMealyComputable_iff.mpr ⟨σ, inferInstance, ⟨state [], δ, out⟩, ?_⟩
   set T : Mealy σ α β := ⟨state [], δ, out⟩
-  have hstate : ∀ ps : List α, T.stateAfter T.initial ps = state ps := by
+  have hstate : ∀ ps : List α, T.stateAfter T.start ps = state ps := by
     intro ps
     induction ps using List.reverseRecOn with
     | nil => rfl
