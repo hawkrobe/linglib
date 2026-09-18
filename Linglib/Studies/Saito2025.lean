@@ -44,20 +44,21 @@ namespace Saito2025
 
 open DiscriminativeLexicon
 
-/-- The number of triphones of the paper's CELEX-derived form matrix. -/
+/-- The paper's CELEX-derived form matrix has `TriphoneCount` triphones. -/
 abbrev TriphoneCount : ℕ := 14404
 
-/-- The dimension of the pretrained German word2vec embeddings of [muller-2015]. -/
+/-- The pretrained German word2vec embeddings of [muller-2015] have `Word2VecGermanDim`
+dimensions. -/
 abbrev Word2VecGermanDim : ℕ := 300
 
-/-- Triphone-indicator form vectors; that the entries are zero or one is a property of the
-training data, not of the type. -/
+/-- A triphone vector is a form vector over the paper's triphones; that its entries are zero or
+one is a property of the training data, not of the type. -/
 abbrev TriphoneVec := FormVec TriphoneCount
 
-/-- Word2vec meaning vectors. -/
+/-- A German word2vec vector is a meaning vector of the embeddings' dimension. -/
 abbrev GermanWord2VecVec := MeaningVec Word2VecGermanDim
 
-/-- The paper's discriminative lexicon: the linear model at German triphone and word2vec
+/-- The paper's discriminative lexicon is the linear model at German triphone and word2vec
 carriers. -/
 abbrev GermanInflectionalDLM :=
   Linear ℝ TriphoneVec GermanWord2VecVec
@@ -74,8 +75,8 @@ theorem close_meanings_imply_close_form
 /-- When the suffix-triphone coordinate is linearly decodable from word meanings, the
 inflectional semantics the paper ties to the suffix, a trained lexicon's `SemSupSuffix`
 reproduces it exactly, so a word carrying the suffix triphone gets strictly greater suffix
-support than one lacking it: the direction of the paper's contrast between inflected and
-non-inflected words, from the linear architecture alone. -/
+support than one lacking it, which is the direction of the paper's contrast between inflected
+and non-inflected words, obtained from the linear architecture alone. -/
 theorem production_suffix_lt
     {m : ℕ} {D : GermanInflectionalDLM}
     {data : TrainingExperience m TriphoneCount Word2VecGermanDim}
