@@ -2,7 +2,7 @@ import Mathlib.Tactic.DeriveFintype
 import Linglib.Morphology.DistributedMorphology.Allosemy
 import Linglib.Data.Examples.Benz2025
 import Linglib.Fragments.German.Predicates
-import Linglib.Semantics.ArgumentStructure.Verb
+import Linglib.Semantics.ArgumentStructure.Unaccusativity
 
 /-!
 # Benz (2025): Structure and interpretation across categories

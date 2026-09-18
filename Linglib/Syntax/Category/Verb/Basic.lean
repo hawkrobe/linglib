@@ -8,7 +8,7 @@ the argument profiles with their Levin-class fallback. The semantic classificati
 entry live with their theories, each under the `Verb` namespace: factivity and trigger status
 in `Semantics/Presupposition/Verb.lean`, the attitude in `Semantics/Attitudes/Verb.lean`,
 causatives in `Semantics/Causation/Verb.lean`, and unaccusativity in
-`Semantics/ArgumentStructure/Verb.lean`.
+`Semantics/ArgumentStructure/Unaccusativity.lean`.
 
 ## References
 
