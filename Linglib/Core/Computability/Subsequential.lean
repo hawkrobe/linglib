@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 
 [UPSTREAM] candidate: `Mathlib.Computability.Subsequential`.
 -/
+import Mathlib.Computability.NFA
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Core.Computability.Mealy
@@ -51,8 +52,8 @@ classification predicates require a `Fintype` instance.
   left-subsequential
 * `isLeftSubsequential_windowRun`: a window recursion over a finite window alphabet is
   left-subsequential
-* `IsLeftSubsequential.isRegular_preimage`: left-subsequential functions pull back
-  regular languages
+* `IsLeftSubsequential.isRegular_preimage`, `IsRightSubsequential.isRegular_preimage`:
+  subsequential functions pull back regular languages
 * `IsLeftSubsequential.bounded_delay`, `IsRightSubsequential.bounded_delay`: all but
   boundedly many symbols of `f u` survive extending the input on the far side
 
@@ -74,8 +75,6 @@ the underlying `Mealy` machine. There are two disjoint sets of simp lemmas, one 
 
 * Choffrut's theorem [choffrut-1977]: a rational function is subsequential iff it has
   bounded variation, decidably via twinning; `bounded_delay` is far weaker.
-* Right-subsequential functions pull back regular languages, given closure of the
-  regular languages under reversal.
 * Canonical forms and minimization; two-way transducers; p-subsequential functions.
 
 ## References
@@ -551,6 +550,20 @@ theorem IsLeftSubsequential.isRegular_preimage (hf : IsLeftSubsequential f)
   obtain ⟨σ, _, T, rfl⟩ := hf
   obtain ⟨τ, _, M, rfl⟩ := hL
   exact ⟨σ × τ, inferInstance, M.comapSubsequential T, M.accepts_comapSubsequential T⟩
+
+/-- Right-subsequential functions pull back regular languages: conjugate the left case
+through the closure of the regular languages under reversal. -/
+theorem IsRightSubsequential.isRegular_preimage (hf : IsRightSubsequential f)
+    {L : Language β} (hL : L.IsRegular) : Language.IsRegular (f ⁻¹' L) := by
+  have h := (hf.revConj.isRegular_preimage hL.reverse).reverse
+  rwa [← List.preimage_revConj, List.revConj_revConj] at h
+
+/-- Subsequential functions pull back regular languages in either scan direction. -/
+theorem IsSubsequential.isRegular_preimage {d : ScanDirection} (hf : IsSubsequential d f)
+    {L : Language β} (hL : L.IsRegular) : Language.IsRegular (f ⁻¹' L) :=
+  match d, hf with
+  | .left, hf => IsLeftSubsequential.isRegular_preimage hf hL
+  | .right, hf => IsRightSubsequential.isRegular_preimage hf hL
 
 /-! ### Bounded delay -/
 

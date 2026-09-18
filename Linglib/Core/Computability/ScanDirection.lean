@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.Computability.Language
 import Mathlib.Data.List.Basic
 import Mathlib.Order.Interval.Set.Defs
 import Mathlib.Order.Nat
@@ -63,6 +64,12 @@ theorem revConj_comp (g : List β → List γ) (f : List α → List β) :
 
 @[simp] theorem revConj_map (h : α → β) : revConj (List.map h) = List.map h := by
   funext xs; simp [revConj]
+
+/-- Pulling a language back along a reverse-conjugate reverses the pullback of the
+reversed language. -/
+theorem preimage_revConj (f : List α → List β) (L : Language β) :
+    revConj f ⁻¹' L = Language.reverse (f ⁻¹' L.reverse) :=
+  rfl
 
 theorem revConj_eq_iff {h : List α → List β} {f : List α → List β} :
     revConj h = f ↔ h = revConj f := by
