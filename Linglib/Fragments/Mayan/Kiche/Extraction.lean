@@ -43,6 +43,6 @@ def realize : Mayan.ExtractionSite → Finset (Reflex Host)
 theorem realize_adjunct_nonempty_iff (a : Mayan.Adjunct) :
     (realize (.adjunct a)).Nonempty ↔
       a = .instrument ∨ a = .benefactive ∨ a = .dative ∨ a = .locative := by
-  cases a <;> decide
+  decide +revert
 
 end Kiche.Extraction

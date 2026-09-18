@@ -1,3 +1,5 @@
+import Mathlib.Tactic.DeriveFintype
+
 /-!
 # Comparative argument roles
 
@@ -39,7 +41,7 @@ inductive ArgumentRole where
   | R
   /-- T: the theme-like argument of a ditransitive verb -/
   | T
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- The monotransitive core roles: A, P, and S (omits the ditransitive
     scaffolding roles R/T). The domain over which alignment partitions
