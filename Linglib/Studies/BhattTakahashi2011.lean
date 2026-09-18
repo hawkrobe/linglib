@@ -2,7 +2,7 @@ import Linglib.Data.Examples.BhattTakahashi2011
 import Linglib.Studies.Lechner2004
 import Linglib.Syntax.Minimalist.Movement.HeimKennedy
 import Linglib.Syntax.Tree.Basic
-import Linglib.Core.Order.Branching
+import Linglib.Syntax.Command
 
 /-!
 # Bhatt and Takahashi (2011): Reduced and unreduced phrasal comparatives

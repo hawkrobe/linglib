@@ -2,7 +2,7 @@ import Linglib.Data.Examples.BhattPancheva2004
 import Linglib.Studies.Heim2001
 import Linglib.Syntax.Minimalist.Movement.HeimKennedy
 import Linglib.Syntax.Tree.Basic
-import Linglib.Core.Order.Branching
+import Linglib.Syntax.Command
 import Linglib.Semantics.Quantification.Defs
 
 /-!

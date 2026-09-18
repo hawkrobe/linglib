@@ -19,17 +19,6 @@ This makes the per-tree position type a rooted tree in mathlib's
 order-theoretic sense (`Mathlib.Order.SuccPred.Tree`), with parent,
 LCA, and the lattice lemma library available on any `Branching`
 carrier's positions.
-
-## The B&P bridge
-
-`TreeOrder.ofPredArchimedean` connects the mathlib stack to
-[barker-pullum-1990]'s `TreeOrder`: any bottomed pred-archimedean
-partial order satisfies the Connected Ancestor Condition, because two
-ancestors of one node are both pred-iterates of it and hence
-comparable. B&P's structure is the strictly more general one (it
-admits dense dominance orders with no parent function); this is the
-general-structure-plus-specialization pattern, connected by
-construction rather than stipulation.
 -/
 
 namespace Core.Order
@@ -111,23 +100,5 @@ end Positions
 def Positions.rootedTree (t : T) : RootedTree := ⟨Positions t⟩
 
 end Branching
-
-/-! ### The B&P bridge -/
-
-/-- **The mathlib-stack ⟹ B&P bridge**: any bottomed pred-archimedean
-partial order is a [barker-pullum-1990] `TreeOrder` on its whole
-carrier. The Connected Ancestor Condition holds because two ancestors
-of `z` are both pred-iterates of `z` (`exists_pred_iterate_of_le`) and
-iterates are comparable (`le_total_of_directed`). B&P's structure is
-strictly more general (dense dominance orders have no `PredOrder`);
-this bridge realizes the general-plus-specialization pattern by
-construction. -/
-def TreeOrder.ofPredArchimedean (α : Type*) [PartialOrder α]
-    [PredOrder α] [IsPredArchimedean α] [OrderBot α] : TreeOrder α where
-  nodes := Set.univ
-  root := ⊥
-  root_in_nodes := Set.mem_univ _
-  root_le_all _ _ := bot_le
-  ancestor_connected _ _ _ hx hy := le_total_of_directed hy hx
 
 end Core.Order

@@ -226,7 +226,6 @@ import Linglib.Core.Order.Antichain
 import Linglib.Core.Order.Argmax
 import Linglib.Core.Order.Branching
 import Linglib.Core.Order.Caratheodory
-import Linglib.Core.Order.Command
 import Linglib.Core.Order.DeMorganAlgebra.Basic
 import Linglib.Core.Order.DeMorganAlgebra.Defs
 import Linglib.Core.Order.Domination
@@ -266,7 +265,6 @@ import Linglib.Core.Order.StrictBounds
 import Linglib.Core.Order.SuccPred.Tree
 import Linglib.Core.Order.Valuation
 import Linglib.Core.Order.TotalPreorder
-import Linglib.Core.Order.Tree
 import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.UpperLower.Closure
 import Linglib.Core.Order.UpperLower.Finset

@@ -10,7 +10,7 @@ is a chain. This is the order-theoretic notion of a *tree*: the order may branch
 but never downward.
 
 Left-linearity is the shared kernel of two linglib substrates: the **Connected Ancestor
-Condition** of [barker-pullum-1990] syntactic trees (`Core.Order.TreeOrder`) and the
+Condition** of [barker-pullum-1990] syntactic trees (`Core.Order.TreePath`) and the
 **no-backward-branching** axiom of Prior–Thomason branching time. Both consume
 `IsLeftLinear`; "ancestors are linearly ordered" (c-command) and "the past is linear"
 (branching time) are literally the same statement, `IsLeftLinear.isChain_Iio`.

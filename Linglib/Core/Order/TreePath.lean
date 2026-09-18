@@ -2,6 +2,7 @@ import Mathlib.Data.List.Infix
 import Mathlib.Order.SuccPred.Archimedean
 import Mathlib.Order.Atoms
 import Mathlib.Order.SuccPred.Tree
+import Linglib.Core.Order.LeftLinear
 
 /-!
 # Tree Positions: `TreePath` and the Rooted-Tree Order Stack
@@ -133,6 +134,8 @@ instance : LE TreePath := ⟨fun p q => p.toList <+: q.toList⟩
 
 theorem le_def {p q : TreePath} : p ≤ q ↔ p.toList <+: q.toList := Iff.rfl
 
+instance : DecidableLE TreePath := fun _ _ => decidable_of_iff _ le_def.symm
+
 instance : PartialOrder TreePath where
   le_refl _ := List.prefix_rfl
   le_trans _ _ _ := List.IsPrefix.trans
@@ -141,12 +144,17 @@ instance : PartialOrder TreePath where
     have := h₁.eq_of_length <| h₁.length_le.antisymm h₂.length_le
     simpa using this
 
+instance : DecidableLT TreePath := fun _ _ => decidable_of_iff _ lt_iff_le_not_ge.symm
+
 /-- Two prefixes of the same list are comparable: the **Connected
 Ancestor Condition (CAC)** for the prefix order ([barker-pullum-1990]'s
 Definition 15). Delegates to `List.prefix_or_prefix_of_prefix`. -/
 theorem prefix_or_prefix {p q r : TreePath} (hp : p ≤ r) (hq : q ≤ r) :
     p ≤ q ∨ q ≤ p :=
   List.prefix_or_prefix_of_prefix hp hq
+
+/-- The ancestors of a position are linearly ordered. -/
+instance : IsLeftLinear TreePath := ⟨fun _ _ _ hp hq => prefix_or_prefix hp hq⟩
 
 /-! ### The root: `OrderBot` -/
 
