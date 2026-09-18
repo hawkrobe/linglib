@@ -369,42 +369,60 @@ theorem jog_respectsBifurcation : jog.RespectsBifurcation := by decide
 theorem crack_respectsMannerResultComplementarity :
     crack.RespectsMannerResultComplementarity := by decide
 
-/-! ### The roots cash out denotationally ([beavers-koontz-garboden-2020] §1.3.2)
+/-! ### The entailments of the roots in a model
 
-Threading the roots through the change-of-state denotation (`Verb.Model`): a
-verb's denotation is dispatched on its root's `kinds`, so the kinds
-proven above *select the event template* and the result entailment of (6)
-follows from the signature. √crack (`+cause+result`) entails a result state in
-any model; √jog (pure manner) does not — the *break*/*hit* contrast. -/
+The kinds of a root are meaning postulates on its state predicate (`Verb.Model.Respects`). In a
+model that respects it, the state of √crack arises from a caused change whatever template the
+root occurs in, while a respecting model of √flat may have a flat state that no change gave
+rise to. -/
 
-/-- `crack` the change-of-state verb (`Mary cracked the vase`). -/
+/-- The change-of-state verb *crack*. -/
 def crackV : Verb := { form := "crack", frames := [ArgumentFrame.np], root := crack }
 
-/-- `jog` the pure-manner activity verb (`Mary jogged`). -/
-def jogV : Verb := { form := "jog", frames := [ArgumentFrame.intransitive], root := jog }
+/-- The deadjectival change-of-state verb *flatten*. -/
+def flattenV : Verb := { form := "flatten", frames := [ArgumentFrame.np], root := flat }
 
-/-- √crack carries `.result`, so in any model its denotation entails the result state. The
-non-cancelable result is derived from the signature of the root rather than stipulated. -/
-theorem crack_denote_entails_result {Entity State Event : Type*}
-    (M : Verb.Model Entity State Event) (y x : Entity) (e : Event)
-    (h : M.denote crackV y x e) : ∃ e' s, M.become s e' ∧ M.rootState crackV x s :=
-  Verb.Model.exists_rootState_of_denote (by decide) h
+section Model
 
-/-- √jog has neither `.result` nor `.cause`, so its denotation is the bare manner core, with no
-`become` and no result state. -/
-theorem jog_denote_eq_manner {Entity State Event : Type*}
-    (M : Verb.Model Entity State Event) (y x : Entity) :
-    M.denote jogV y x = M.manner jogV := by
-  unfold Verb.Model.denote
-  rw [ite_eq_right (by decide), ite_eq_right (by decide)]
+variable {Entity State Event : Type*} {M : Verb.Model Entity State Event} {x : Entity}
+  {s : State}
 
-/-! ### The same contrast at the template level ([rappaport-hovav-levin-1998])
+/-- In a model that respects it, a state of √crack arises from a change that some event
+causes. -/
+theorem crack_rootState_entails_cause (h : M.Respects crackV) (hs : M.rootState crackV x s) :
+    ∃ e w, M.become s e ∧ M.cause w e :=
+  h .cause (by decide) x s hs
 
-`Semantics.Root.template` reads the event-structure template off a root's
-collocational closure; the kinds proven above fix it, and `HasResultState`
-reduces to carrying `result` (`Semantics.Root.template_hasResultState_iff`). So the
-denotational result entailment (√crack) and the template result diagnostic are
-*one fact* seen through `kinds`. -/
+/-- In a model that respects it, a state of √crack arises from a change. -/
+theorem crack_rootState_entails_change (h : M.Respects crackV) (hs : M.rootState crackV x s) :
+    ∃ e, M.become s e :=
+  (h .cause (by decide)).entailsChange x s hs
+
+end Model
+
+/-- A model with a flat state and no changes. -/
+def unchanging : Verb.Model Unit Unit Unit where
+  rootState _ _ _ := True
+  become _ _ := False
+  cause _ _ := False
+  effector _ _ := False
+  manner _ _ := False
+
+/-- The root √flat does not entail change, since a model that respects it has a flat state
+that no change gave rise to. -/
+theorem flat_not_entailsChange :
+    unchanging.Respects flattenV ∧ ¬ unchanging.EntailsChange flattenV :=
+  ⟨Verb.Model.respects_of_kinds_subset (by decide), fun h ↦ let ⟨_, he⟩ := h () () trivial; he⟩
+
+/-- The same model does not respect √crack. -/
+theorem not_respects_crack : ¬ unchanging.Respects crackV :=
+  fun h ↦ let ⟨_, he⟩ := crack_rootState_entails_change h (x := ()) (s := ()) trivial; he
+
+/-! ### The templates of the canonical realization rules
+
+`Semantics.Root.template` reads a template off the collocational closure of a root's signature,
+the canonical realization of Rappaport Hovav and Levin. The book does not adopt such rules; the
+templates are used below only to state its hypothesis about the causative alternation. -/
 
 theorem flat_template : flat.template = .state := by decide
 theorem jog_template : jog.template = .activity := by decide
@@ -416,15 +434,6 @@ theorem crack_template : crack.template = .accomplishment := by decide
 theorem crack_template_hasResultState : crack.template.HasResultState := by decide
 
 theorem jog_template_no_resultState : ¬ jog.template.HasResultState := by decide
-
-/-- The template of √crack embeds a result state, so its denotation entails the result state in
-any model. The template diagnostic and the denotational entailment are one fact about the kinds
-of the root. -/
-theorem crack_template_forces_denote_result {Entity State Event : Type*}
-    (M : Verb.Model Entity State Event) (y x : Entity)
-    (e : Event) (h : M.denote crackV y x e) :
-    ∃ e' s, M.become s e' ∧ M.rootState crackV x s :=
-  Verb.Model.exists_rootState_of_denote_of_hasResultState crack_template_hasResultState h
 
 /-! ### The root hypothesis against Levin's class profiles -/
 
