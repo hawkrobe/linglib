@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Linglib.Core.Computability.ContextFreeGrammar.Tree
 import Mathlib.Algebra.Order.BigOperators.Group.List
 import Mathlib.Algebra.Order.Group.Nat
+import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # The pumping lemma for context-free languages
