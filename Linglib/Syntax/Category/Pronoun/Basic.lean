@@ -30,7 +30,8 @@ arguments.
 * `Pronoun.WellFormed` — clusivity is not borne by a singular
 * `Pronoun.toWord` — the pronoun as a token, with the pronoun type and reflexive marking of
   its kind
-* `Pronoun.CandidateAntecedent` — a nominal token that agrees with the pronoun
+* `Pronoun.CandidateAntecedent` — a nominal token that agrees with the pronoun, so one of the
+  pronoun's number (`Pronoun.CandidateAntecedent.number_eq`)
 
 ## Main results
 
@@ -170,5 +171,11 @@ def CandidateAntecedent (w : Morphology.Word) : Prop :=
 
 instance (w : Morphology.Word) : Decidable (p.CandidateAntecedent w) :=
   inferInstanceAs (Decidable (_ ∧ _))
+
+variable {p} in
+/-- A candidate antecedent has the pronoun's number, where both mark one. -/
+theorem CandidateAntecedent.number_eq {w : Morphology.Word} (h : p.CandidateAntecedent w)
+    {n m : Number} (hp : p.number = some n) (hw : w.features .number = some m) : n = m :=
+  Flat.compat_iff.mp (h.2.apply .number) n hp m hw
 
 end Pronoun

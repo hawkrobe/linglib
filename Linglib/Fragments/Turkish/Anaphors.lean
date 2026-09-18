@@ -1,118 +1,76 @@
 import Linglib.Fragments.Turkish.Case
-import Linglib.Syntax.Binding.CoreferenceStatus
+import Linglib.Syntax.Category.Pronoun.Reciprocal
 
 /-!
-# Turkish Anaphors
-[kornfilt-1997] [goksel-kerslake-2005]
+# Turkish reciprocal pronouns
 
-Turkish local anaphors relevant to binding theory and processing.
+The Turkish reciprocal pronoun is the stem *birbir-* 'each other', which is obligatorily
+inflected for person with the plural possessive suffixes: *birbirimiz* in the first person,
+*birbiriniz* in the second, and *birbiri* or *birbirleri* in the third, where *birbirleri* is
+the neutral form for interacting groups and *birbiri* is colloquial. The forms take case
+suffixes, with *n* before the suffix in the third person, as in the accusative *birbirlerini*
+([goksel-kerslake-2005]). Every form is plural, so a singular noun phrase is no antecedent of a
+reciprocal.
 
-## birbirleri (reciprocal)
+As a direct object *birbirleri* stands before the verb and must be bound by a c-commanding
+antecedent in its own clause, which is what [bakay-etal-2026] exploit: looks to a candidate at
+the reciprocal reflect retrieval and not integration at the verb. The inflected forms of
+*kendi-* 'self' have emphatic, reflexive, simple pronominal and resumptive uses
+([goksel-kerslake-2005]) and are not entered here.
 
-The preverbal reciprocal *birbirleri* 'each other' is subject to
-Principle A: it must be bound by a local, c-commanding, clause-mate
-antecedent ([kornfilt-1997]). The antecedent must be plural.
+## Main definitions
 
-Turkish's head-final structure places the reciprocal *before* the verb,
-which is critical for visual-world studies: the anaphor region precedes
-the verb region, ensuring that looks to antecedents at the anaphor reflect
-retrieval rather than post-verbal integration ([bakay-etal-2026]).
+* `Turkish.Anaphors.reciprocals` — the person forms of *birbir-*, with the accusative
+  *birbirlerini*
 
-The reciprocal receives case from the embedding predicate:
-- ACC (-I) as direct object of a transitive verb
-- DAT (-(y)A) as indirect object or postpositional complement
-- GEN (-(n)In) as possessor in a genitive-possessive construction
+## Main results
 
-## kendi (reflexive)
+* `Turkish.Anaphors.number_reciprocals` — every form is plural
+* `Turkish.Anaphors.not_candidateAntecedent_of_singular` — a singular nominal is no candidate
+  antecedent of a reciprocal
 
-The reflexive *kendi* 'self' is subject to similar Principle A constraints
-but can also function as an intensifier or logophor. Not formalized here.
+## References
 
+* [A. Göksel and C. Kerslake, *Turkish: A Comprehensive Grammar* (2005)][goksel-kerslake-2005]
+* [Ö. Bakay, F. Akkuş and B. Dillon, *Hierarchical relations guide memory retrieval in sentence
+  comprehension: Evidence from a local anaphor in Turkish* (2026)][bakay-etal-2026]
 -/
 
 namespace Turkish.Anaphors
 
-/-- Type of Turkish local anaphor. -/
-inductive AnaphorType where
-  /-- birbirleri 'each other' — requires plural antecedent -/
-  | reciprocal
-  /-- kendi 'self' — can also be intensifier -/
-  | reflexive
-  deriving DecidableEq, Repr
+/-- The first person reciprocal *birbirimiz*. -/
+def birbirimiz : ReciprocalPronoun :=
+  { form := "birbirimiz", person := some .first, number := some .plural }
 
-/-- Is this anaphor type subject to a plurality requirement on its antecedent? -/
-def AnaphorType.requiresPluralAntecedent : AnaphorType → Bool
-  | .reciprocal => true
-  | .reflexive => false
+/-- The second person reciprocal *birbiriniz*. -/
+def birbiriniz : ReciprocalPronoun :=
+  { form := "birbiriniz", person := some .second, number := some .plural }
 
-/-- A Turkish local anaphor with its morphosyntactic properties.
+/-- The third person reciprocal *birbirleri*, the neutral form for interacting groups. -/
+def birbirleri : ReciprocalPronoun :=
+  { form := "birbirleri", person := some .third, number := some .plural }
 
-    Binding constraints (Principle A: c-command + clause-mate + phi-match)
-    come from the syntactic theory, not the fragment entry. The fragment
-    supplies the classification and case marking. -/
-structure TurkishAnaphor where
-  /-- Reciprocal or reflexive -/
-  anaphorType : AnaphorType
-  /-- Case marking on the anaphor (determined by the verb/postposition) -/
-  caseMarking : Case
-  /-- Preverbal: appears before the verb in head-final Turkish.
-      Relevant for processing studies: the anaphor region precedes
-      the verb region. -/
-  preverbal : Bool := true
-  deriving Repr
+/-- The third person reciprocal *birbiri*, interchangeable with *birbirleri* of two persons and
+colloquial of groups. -/
+def birbiri : ReciprocalPronoun :=
+  { form := "birbiri", person := some .third, number := some .plural }
 
-/-! ### The binding class
+/-- The accusative of *birbirleri*, the direct object form of the [bakay-etal-2026] stimuli. -/
+def birbirlerini : ReciprocalPronoun :=
+  { birbirleri with form := "birbirlerini", case_ := some .acc }
 
-The anaphor's binding class is derived from its `anaphorType`, and every Turkish anaphor is
-a Principle-A anaphor. The struct carries no φ-features; the forms *birbirleri* and *kendi*
-live in the entry names. -/
+/-- The entered forms of the reciprocal: the four person forms and the accusative of
+*birbirleri*. -/
+def reciprocals : Finset ReciprocalPronoun :=
+  {birbirimiz, birbiriniz, birbirleri, birbiri, birbirlerini}
 
-/-- The binding class from the anaphor type. -/
-def TurkishAnaphor.bindingClass (a : TurkishAnaphor) : Binding.BindingClass :=
-  match a.anaphorType with | .reciprocal => .reciprocal | .reflexive => .reflexive
+/-- Every form of the reciprocal is plural. -/
+theorem number_reciprocals : ∀ r ∈ reciprocals, r.number = some .plural := by decide
 
-/-- An anaphor is a Principle-A anaphor when its binding class is. -/
-abbrev TurkishAnaphor.IsAnaphor (a : TurkishAnaphor) : Prop := a.bindingClass.IsAnaphor
-
-/-- Every Turkish anaphor is a Principle-A anaphor. -/
-theorem TurkishAnaphor.isAnaphor (a : TurkishAnaphor) : a.IsAnaphor := by
-  cases h : a.anaphorType <;> simp [TurkishAnaphor.bindingClass, h, Binding.BindingClass.IsAnaphor]
-
-/-- birbirleri as direct object (ACC case).
-    Used in [bakay-etal-2026] Experiments 1–3 as the critical anaphor. -/
-def birbirleriAcc : TurkishAnaphor :=
-  { anaphorType := .reciprocal, caseMarking := .acc }
-
-/-- birbirleri as indirect object or postpositional complement (DAT case). -/
-def birbirleriDat : TurkishAnaphor :=
-  { anaphorType := .reciprocal, caseMarking := .dat }
-
-/-- birbirleri as possessor (GEN case). -/
-def birbirleriGen : TurkishAnaphor :=
-  { anaphorType := .reciprocal, caseMarking := .gen }
-
--- Per-datum verification
-
-/-- All birbirleri variants are reciprocals -/
-theorem birbirleriAcc_is_reciprocal : birbirleriAcc.anaphorType = .reciprocal := rfl
-theorem birbirleriDat_is_reciprocal : birbirleriDat.anaphorType = .reciprocal := rfl
-theorem birbirleriGen_is_reciprocal : birbirleriGen.anaphorType = .reciprocal := rfl
-
-/-- All birbirleri variants require plural antecedents -/
-theorem birbirleri_requires_plural :
-    birbirleriAcc.anaphorType.requiresPluralAntecedent = true := rfl
-
-/-- All birbirleri variants are preverbal -/
-theorem birbirleriAcc_preverbal : birbirleriAcc.preverbal = true := rfl
-
-theorem birbirleriAcc_bindingClass : birbirleriAcc.bindingClass = .reciprocal := rfl
-
-/-- The case inventory of birbirleri forms used in [bakay-etal-2026] -/
-def experimentalCases : List Case :=
-  [birbirleriAcc.caseMarking, birbirleriDat.caseMarking, birbirleriGen.caseMarking]
-
-/-- All experimental cases are in the Turkish case inventory -/
-theorem experimental_cases_valid :
-    ∀ c ∈ experimentalCases, c ∈ Turkish.Case.inventory := by decide
+/-- A singular nominal is no candidate antecedent of a reciprocal. -/
+theorem not_candidateAntecedent_of_singular {r : ReciprocalPronoun} (hr : r ∈ reciprocals)
+    {w : Morphology.Word} (hw : w.features .number = some .singular) :
+    ¬ r.toPronoun.CandidateAntecedent w :=
+  fun h ↦ nomatch h.number_eq (number_reciprocals r hr) hw
 
 end Turkish.Anaphors
