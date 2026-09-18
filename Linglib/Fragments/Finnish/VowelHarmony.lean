@@ -1,7 +1,7 @@
 import Linglib.Phonology.Segmental.Basic
 import Linglib.Phonology.Segmental.FeatureClass
 import Linglib.Phonology.Subregular.LocalRewrite
-import Linglib.Phonology.Subregular.Harmony
+import Linglib.Phonology.Harmony.System
 
 /-!
 # Finnish Vowel Harmony [karlsson-2017]
@@ -38,7 +38,7 @@ with no harmonic vowel takes front suffixes by default.
 namespace Finnish.VowelHarmony
 
 open Phonology (Segment Feature FeatureClass)
-open Subregular.Harmony (System)
+open Phonology.Harmony (System)
 
 -- ============================================================================
 -- § 1: Vowel Segments
@@ -157,9 +157,8 @@ the suffix vowels unspecified for it, and a stem with no harmonic vowel takes fr
 by default; consonants and the neutral vowels /e/, /i/ are off the tier. -/
 def finnishHarmony : System Segment :=
   System.mk' (feature := .back)
-    (isTrigger     := fun s => s.HasValue .syllabic true && !isNeutral s)
-    (isTarget      := fun s => s.HasValue .syllabic true && (s .back).isNone)
-    (isTransparent := fun s => !s.HasValue .syllabic true || isNeutral s)
+    (IsTarget      := fun s => s.HasValue .syllabic true ∧ s .back = none)
+    (IsTransparent := fun s => ¬ s.HasValue .syllabic true ∨ isNeutral s = true)
     (direction     := .rightward)
     (default       := some false)
 
@@ -191,21 +190,21 @@ theorem ö_not_neutral : isNeutral ö_vowel = false := by decide
 
 /-- Back-vowel stems yield back harmony. -/
 theorem back_stem_harmony :
-    finnishHarmony.triggerValue [a_vowel] = some true := by decide
+    finnishHarmony.searchCopy.sourceValue [a_vowel] = some true := by decide
 
 /-- Front-vowel stems yield front harmony. -/
 theorem front_stem_harmony :
-    finnishHarmony.triggerValue [ä_vowel] = some false := by decide
+    finnishHarmony.searchCopy.sourceValue [ä_vowel] = some false := by decide
 
 /-- Neutral-only stems have no trigger (default to front harmony). -/
 theorem neutral_only_no_trigger :
-    finnishHarmony.triggerValue [e_vowel, i_vowel] = none := by
+    finnishHarmony.searchCopy.sourceValue [e_vowel, i_vowel] = none := by
   decide
 
 /-- A back stem with a neutral vowel still yields back harmony
     (the neutral vowel is not a trigger, so `triggerValue` finds /a/). -/
 theorem back_with_neutral :
-    finnishHarmony.triggerValue [a_vowel, i_vowel] = some true := by
+    finnishHarmony.searchCopy.sourceValue [a_vowel, i_vowel] = some true := by
   decide
 
 /-- The /a/–/ä/ pair differs only in [back]: dorsal agreement fails

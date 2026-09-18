@@ -3,6 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The sibilant-harmony tier alphabet
@@ -23,7 +24,7 @@ namespace Subregular
 and `neutral` (off the harmony tier). -/
 inductive Sibilant
   | anterior | posterior | neutral
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- The harmony-tier predicate: sibilants project, neutral material is transparent. -/
 @[reducible] def Sibilant.onTier : Sibilant → Prop

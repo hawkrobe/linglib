@@ -1,5 +1,5 @@
 import Mathlib.Analysis.Complex.ExponentialBounds
-import Linglib.Phonology.Subregular.Harmony
+import Linglib.Phonology.Harmony.System
 import Linglib.Fragments.Finnish.VowelHarmony
 import Linglib.Fragments.Turkish.VowelHarmony
 import Linglib.Studies.Yang2016
@@ -10,7 +10,7 @@ import Linglib.Data.Examples.Belth2026
 
 This file formalizes D2L, the learner of [belth-2026], and the paper's own runs of it. D2L
 receives pairs of underlying and surface forms, an alternating class, and a feature, and
-constructs the tier rule `Rel(A, F) / C __ ∘ proj(·, T)` (`Subregular.TierRule`) from
+constructs the search-and-copy rule `Rel(A, F) / C __ ∘ proj(·, T)` (`Phonology.SearchCopy`) from
 adjacent dependencies alone: starting from the whole alphabet as the tier, it builds the
 left- and right-context rules whose contexts are the segments tier-adjacent to the targets,
 counts the applications and correct applications of the more accurate one, accepts it under
@@ -23,8 +23,9 @@ iterations with the tiers Σ, [+cons] and [+sib], accuracies 1/8, 4/8 and 7/7, a
 `Toy.learn`). The rules D2L converges to on natural language data are run on the paper's
 examples: Latin liquid dissimilation (54) on (53), with the *lunaris* row it mispredicts
 (`latin_rows`, `lunaris_mispredicted`); Finnish backness harmony (52), which is the
-fragment's `Finnish.VowelHarmony.finnishHarmony`, on (51) (`finnish_rows`); and Turkish
-vowel harmony (49a) on (46) and (47) through the fragment's two harmonies (`turkish_rows`).
+search-and-copy reading of the fragment's `Finnish.VowelHarmony.finnishHarmony`, on (51)
+(`finnish_rows`); and Turkish vowel harmony (49a) on (46) and (47) through the fragment's
+two harmonies (`turkish_rows`).
 
 ## Implementation notes
 
@@ -49,7 +50,7 @@ the paper does not print, so the learned rules (40) and (44) are not run here.
 
 namespace Belth2026
 
-open Subregular Data.Examples
+open Phonology Data.Examples
 
 /-! ### D2L -/
 
@@ -112,17 +113,18 @@ def better (l r : Summary α) : Bool :=
 /-- For each target on the tier of a form, read in the direction of `g`, the underlying
 segment tier-adjacent to it if `g` applied, the segment `g` output, and the surface segment.
 The rule applies when the output segment preceding the target on the tier is a trigger. -/
-def trace (g : TierRule α) : List α → List α → Option α → Option α → List (Option α × α × α)
+def trace (g : SearchCopy α) :
+    List α → List α → Option α → Option α → List (Option α × α × α)
   | x :: xs, y :: ys, last, lastUR =>
     if g.tier x then
-      let out := g.emit (last.bind g.transmits) x
-      let ctx := if (last.filter fun c => decide (g.IsTrigger c)).isSome then lastUR else none
+      let out := g.emit last x
+      let ctx := if (last.filter fun c => decide (g.IsSource c x)).isSome then lastUR else none
       (if g.IsTarget x then [(ctx, out, y)] else []) ++ trace g xs ys (some out) (some x)
     else trace g xs ys last lastUR
   | _, _, _, _ => []
 
 /-- The trace of `g` over a pair of forms, in the direction of `g`. -/
-def applications (g : TierRule α) (p : List α × List α) : List (Option α × α × α) :=
+def applications (g : SearchCopy α) (p : List α × List α) : List (Option α × α × α) :=
   match g.direction with
   | .left => trace g p.1 p.2 none none
   | .right => trace g p.1.reverse p.2.reverse none none
@@ -146,10 +148,10 @@ def contexts (T : List α) (d : ScanDirection) : List α :=
     P.precedingContexts T (match d with | .left => p.1 | .right => p.1.reverse) none).dedup
 
 /-- The candidate rule over the tier `T` with the contexts `C`. -/
-def candidate (T C : List α) (rel : Relation) (d : ScanDirection)
-    (default : Option Bool := none) : TierRule α where
+def candidate (T C : List α) (rel : SearchCopy.Relation) (d : ScanDirection)
+    (default : Option Bool := none) : SearchCopy α where
   tier s := s ∈ T
-  IsTrigger s := s ∈ C
+  IsSource s _ := s ∈ C
   IsTarget s := s ∈ P.targets
   relation := rel
   value := P.value
@@ -160,7 +162,7 @@ def candidate (T C : List α) (rel : Relation) (d : ScanDirection)
   direction := d
 
 /-- The summary of `g` over the vocabulary. -/
-def summary (g : TierRule α) : Summary α :=
+def summary (g : SearchCopy α) : Summary α :=
   let apps := P.vocabulary.flatMap (applications g)
   let applied := apps.filterMap fun t => t.1.map fun c => (c, decide (t.2.1 = t.2.2))
   { n := applied.length
@@ -177,7 +179,7 @@ def inferDefault (untouched : List α) : Option (Option Bool) :=
   | _ => none
 
 /-- The iteration over the tier `T` with the deletion set `D`. -/
-def step (rel : Relation) (T D : List α) : Iteration α :=
+def step (rel : SearchCopy.Relation) (T D : List α) : Iteration α :=
   let CL := P.contexts T .left
   let CR := P.contexts T .right
   let sL := P.summary (P.candidate T CL rel .left)
@@ -202,7 +204,7 @@ def nextTier (T D : List α) : List α :=
 
 /-- The iterations of D2L from the tier `T` with the deletion set `D`, until the tier is
 empty or stops shrinking. -/
-def iterate (rel : Relation) : ℕ → List α → List α → List (Iteration α)
+def iterate (rel : SearchCopy.Relation) : ℕ → List α → List α → List (Iteration α)
   | 0, _, _ => []
   | fuel + 1, T, D =>
     if T = [] then [] else
@@ -211,12 +213,13 @@ def iterate (rel : Relation) : ℕ → List α → List α → List (Iteration �
     it :: (if T'.length < T.length then iterate rel fuel T' it.deletion else [])
 
 /-- The rule an iteration proposes, the chosen side's candidate with its inferred default. -/
-def rule (rel : Relation) (it : Iteration α) : Option (TierRule α) :=
+def rule (rel : SearchCopy.Relation) (it : Iteration α) : Option (SearchCopy α) :=
   it.default.map fun d => P.candidate it.tier it.contexts rel it.chosen d
 
 /-- D2L returns the rule of the first iteration the criterion `sat` accepts on its
 applications and exceptions. -/
-def learn (rel : Relation) (sat : ℕ → ℕ → Prop) [DecidableRel sat] : Option (TierRule α) :=
+def learn (rel : SearchCopy.Relation) (sat : ℕ → ℕ → Prop) [DecidableRel sat] :
+    Option (SearchCopy α) :=
   ((P.iterate rel P.alphabet.length P.alphabet []).find? fun it =>
     it.default.isSome && decide (sat it.summary.n (it.summary.n - it.summary.c))).bind (P.rule rel)
 
@@ -307,7 +310,7 @@ theorem iterations : problem.iterate .agree problem.alphabet.length problem.alph
 
 /-- Rule (33a) with its default, `Agree({S}, {ant}) / [+sib] __ ∘ proj(·, [+sib])` and [s]
 elsewhere. -/
-def rule33 : TierRule Seg := problem.candidate sibTier [.sh, .s, .S] .agree .left (some true)
+def rule33 : SearchCopy Seg := problem.candidate sibTier [.sh, .s, .S] .agree .left (some true)
 
 /-- D2L accepts the third iteration and no earlier one under any criterion that rejects
 seven exceptions in eight and four in eight and accepts none in seven. -/
@@ -374,7 +377,7 @@ inductive LatSeg where
   | a | e | i | o | u
   | l | r | L
   | n | v | s | g | f | p | b
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 namespace LatSeg
 
@@ -404,9 +407,9 @@ end LatSeg
 /-- The rule D2L learns under the `[+cons]` tier, rule (54):
 `Disagree([?lat], {lat}) / [+cons] __ ∘ proj(·, [+cons])`, the liquid `L` taking the opposite
 laterality of the tier-adjacent consonant. -/
-def latinDissimRule : TierRule LatSeg where
+def latinDissimRule : SearchCopy LatSeg where
   tier := LatSeg.IsCons
-  IsTrigger := LatSeg.IsCons
+  IsSource seg _ := LatSeg.IsCons seg
   IsTarget seg := seg = .L
   relation := .disagree
   value := LatSeg.isLat
@@ -414,7 +417,7 @@ def latinDissimRule : TierRule LatSeg where
   value_write := fun v _ _ => by cases v <;> rfl
   write_value := fun _ seg h hv => by subst h; simp [LatSeg.isLat] at hv
 
-/-- The rule is subsequential, as every tier rule is. -/
+/-- The rule is subsequential, as every search-and-copy rule is. -/
 theorem latinDissimRule_isSubsequential : IsSubsequential .left latinDissimRule.apply :=
   latinDissimRule.apply_isSubsequential
 
@@ -481,9 +484,11 @@ def segments (s : String) : List Segment := s.toList.filterMap ofChar
 def ur (form : String) : List Segment :=
   (stem form).filterMap ofChar ++ [n, A]
 
-/-- Rule (52) is the fragment's harmony, whose tier excludes consonants and the neutral
-vowels and whose Elsewhere default is `[−back]`; it derives the four forms of (51). -/
-theorem rows : ∀ f ∈ forms Examples.ex_51, finnishHarmony.apply (ur f) = segments f := by
+/-- Rule (52) is the search-and-copy reading of the fragment's harmony, whose tier excludes
+consonants and the neutral vowels and whose Elsewhere default is `[−back]`; it derives the
+four forms of (51). -/
+theorem rows : ∀ f ∈ forms Examples.ex_51,
+    finnishHarmony.searchCopy.apply (ur f) = segments f := by
   decide
 
 end Finnish
@@ -516,6 +521,11 @@ def ur (form : String) : List Segment :=
   match morphemes form.toList with
   | [] => []
   | stem :: affixes => stem.filterMap ofChar ++ affixes.flatMap (·.filterMap ofAffixChar)
+
+/-- The surface form of a suffixed word, the search-and-copy runs of the fragment's three
+alternations in turn. -/
+def surface (w : List Segment) : List Segment :=
+  voicing.searchCopy.apply (rounding.searchCopy.apply (fronting.searchCopy.apply w))
 
 /-- Rule (49a), backness and rounding from the tier-preceding vowel, is the fragment's two
 harmonies applied in turn; they derive the forms of (46) and (47). -/
