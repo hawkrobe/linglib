@@ -39,13 +39,22 @@ dynamic conjunction, conditional, and disjunction
   the partiality column of the effect view, beside `Collapse.lean`'s
   powerset column
 - `admits_seq` — the Karttunen satisfaction law, by construction
-- `neg_eliminative`, `seq_eliminative` — Heim's Principle (A), and its
-  closure under sequencing
+- `IsEliminative` — Heim's Principle (A), closed under negation and
+  sequencing
+- `supports`, `entails` — a state supports an update it is a fixed point
+  of, and `φ` entails `ψ` when every update with `φ` supports `ψ`;
+  entailment is absorption, `seq φ ψ = φ` (`entails_iff_seq_eq`)
 - `admits_ofPartialProp` — admittance is `Context.presupSatisfied`
 - `mem_ofPartialProp_self` — a context is a fixed point of an atomic update iff
   presupposition and assertion hold throughout it ([heim-1992]'s `c + φ = same`)
 - `admits_seq_ofPartialProp`, `admits_cond_ofPartialProp`,
   `admits_disj_ofPartialProp` — the filtering connectives, derived
+
+## References
+
+- [heim-1983], [heim-1982], [heim-1992], [karttunen-1974-presupposition]
+- [beaver-2001], [veltman-1996], [groenendijk-stokhof-1990]
+- [moggi-1991], [shan-2001], [haug-2014]
 -/
 
 namespace DynamicSemantics
@@ -59,14 +68,14 @@ abbrev CCP.Partial (S : Type*) := Set S →. Set S
 
 namespace CCP.Partial
 
-variable {P W : Type*}
+variable {P W : Type*} {φ ψ χ : CCP.Partial P} {s : Set P}
 
 /-- `u.admits s`: the update is defined at `s` ([heim-1983]'s "s admits u",
     [karttunen-1974-presupposition]'s satisfaction). This is `Part.Dom`. -/
 def admits (u : CCP.Partial P) (s : Set P) : Prop := (u s).Dom
 
 /-- Total CCPs are partial CCPs with trivial presupposition. -/
-def ofTotal (φ : CCP P) : CCP.Partial P := λ s => Part.some (φ s)
+def ofTotal (φ : CCP P) : CCP.Partial P := fun s => Part.some (φ s)
 
 @[simp] theorem admits_ofTotal (φ : CCP P) (s : Set P) :
     (ofTotal φ).admits s := trivial
@@ -81,7 +90,7 @@ def ofTotal (φ : CCP P) : CCP.Partial P := λ s => Part.some (φ s)
     presupposition-failing world admits nothing, rather than silently
     discarding the world. -/
 def ofPartialProp (p : PartialProp W) : CCP.Partial W :=
-  λ s => ⟨Context.presupSatisfied s p, λ _ => { w ∈ s | p.assertion w }⟩
+  fun s => ⟨Context.presupSatisfied s p, fun _ => { w ∈ s | p.assertion w }⟩
 
 @[simp] theorem ofPartialProp_get (p : PartialProp W) (s : Set W)
     (h : ((ofPartialProp p) s).Dom) :
@@ -91,8 +100,8 @@ def ofPartialProp (p : PartialProp W) : CCP.Partial W :=
 hold throughout it ([heim-1992]'s `c + φ = same`). -/
 theorem mem_ofPartialProp_self (p : PartialProp W) (s : Set W) :
     s ∈ ofPartialProp p s ↔ s ⊆ p.presup ∧ s ⊆ p.assertion :=
-  ⟨λ ⟨h, e⟩ => ⟨h, Set.sep_eq_self_iff_mem_true.1 e⟩,
-   λ ⟨h, e⟩ => ⟨h, Set.sep_eq_self_iff_mem_true.2 e⟩⟩
+  ⟨fun ⟨h, e⟩ => ⟨h, Set.sep_eq_self_iff_mem_true.1 e⟩,
+   fun ⟨h, e⟩ => ⟨h, Set.sep_eq_self_iff_mem_true.2 e⟩⟩
 
 /-! ### Connectives -/
 
@@ -109,35 +118,85 @@ theorem seq_eq_kleisliComp (φ ψ : Set P → Part (Set P)) :
     (seq φ ψ : Set P → Part (Set P)) = φ >=> ψ := rfl
 
 /-- Heim negation: `s[¬φ] = s \ s[φ]`, defined iff `s[φ]` is. -/
-def neg (φ : CCP.Partial P) : CCP.Partial P := λ s => (φ s).map (s \ ·)
+def neg (φ : CCP.Partial P) : CCP.Partial P := fun s => (φ s).map (s \ ·)
 
 /-- Heim conditional: `s[if φ, ψ] = s \ (s[φ] \ s[φ][ψ])`, defined iff
     `s[φ]` and `s[φ][ψ]` are. -/
 def cond (φ ψ : CCP.Partial P) : CCP.Partial P :=
-  λ s => (φ s).bind λ sφ => (ψ sφ).map λ sφψ => s \ (sφ \ sφψ)
+  fun s => (φ s).bind fun sφ => (ψ sφ).map fun sφψ => s \ (sφ \ sφψ)
 
 /-- Disjunction with ¬φ local context for the second disjunct
     ([beaver-2001]; [heim-1983] gives CCPs only for *not/and/if*):
     `s[φ ∨ ψ] = s[φ] ∪ (s \ s[φ])[ψ]`. -/
 def disj (φ ψ : CCP.Partial P) : CCP.Partial P :=
-  λ s => (φ s).bind λ sφ => (ψ (s \ sφ)).map λ sψ => sφ ∪ sψ
+  fun s => (φ s).bind fun sφ => (ψ (s \ sφ)).map fun sψ => sφ ∪ sψ
 
 /-! ### Eliminativity -/
 
-/-- Negation is eliminative: defined outputs shrink the input. -/
-theorem neg_eliminative (φ : CCP.Partial P) {s s' : Set P}
-    (h : s' ∈ neg φ s) : s' ⊆ s := by
+/-- A partial update is *eliminative* if its defined outputs shrink the input
+([heim-1982]'s Principle (A); [groenendijk-stokhof-1990]'s `↓`-direction). -/
+def IsEliminative (φ : CCP.Partial P) : Prop := ∀ s, ∀ s' ∈ φ s, s' ⊆ s
+
+theorem isEliminative_ofPartialProp (p : PartialProp W) :
+    (ofPartialProp p).IsEliminative := fun _ _ h ↦ (Part.mem_mk_iff.mp h).2 ▸ Set.sep_subset _ _
+
+theorem isEliminative_neg (φ : CCP.Partial P) : (neg φ).IsEliminative := fun _ _ h ↦ by
   obtain ⟨t, -, rfl⟩ := (Part.mem_map_iff _).mp h
   exact Set.sdiff_subset
 
-/-- Eliminativity ([heim-1982]'s Principle (A);
-[groenendijk-stokhof-1990]'s `↓`-direction) is closed under
-sequencing. -/
-theorem seq_eliminative {φ ψ : CCP.Partial P}
-    (hφ : ∀ s, ∀ s' ∈ φ s, s' ⊆ s) (hψ : ∀ s, ∀ s' ∈ ψ s, s' ⊆ s)
-    {s s' : Set P} (h : s' ∈ seq φ ψ s) : s' ⊆ s := by
+theorem IsEliminative.seq (hφ : φ.IsEliminative) (hψ : ψ.IsEliminative) :
+    (seq φ ψ).IsEliminative := fun s s' h ↦ by
   obtain ⟨t, ht, hs'⟩ := Part.mem_bind_iff.mp h
   exact (hψ t s' hs').trans (hφ s t ht)
+
+theorem isEliminative_cond (φ ψ : CCP.Partial P) : (cond φ ψ).IsEliminative := fun _ _ h ↦ by
+  obtain ⟨_, -, h⟩ := Part.mem_bind_iff.mp h
+  obtain ⟨_, -, rfl⟩ := (Part.mem_map_iff _).mp h
+  exact Set.sdiff_subset
+
+/-! ### Support and entailment -/
+
+/-- `s` supports `φ`: the update changes nothing ([heim-1992]'s `c + φ = c`,
+[veltman-1996]'s acceptance). -/
+def supports (s : Set P) (φ : CCP.Partial P) : Prop := φ s = Part.some s
+
+/-- Support is being a fixed point of the update. -/
+theorem supports_iff_mem : supports s φ ↔ s ∈ φ s := Part.eq_some_iff
+
+/-- After a supported update, sequencing continues from the same state. -/
+theorem supports.seq_apply (h : supports s φ) (ψ : CCP.Partial P) : seq φ ψ s = ψ s := by
+  rw [seq, PFun.comp_apply, h, Part.bind_some]
+
+/-- Dynamic entailment: every defined update with `φ` supports `ψ`
+([veltman-1996]'s acceptance consequence; [heim-1982]'s entailment between
+file change potentials). -/
+def entails (φ ψ : CCP.Partial P) : Prop := ∀ s, ∀ s' ∈ φ s, supports s' ψ
+
+/-- Entailment is absorption: `φ` entails `ψ` iff sequencing `ψ` after `φ`
+changes nothing. -/
+theorem entails_iff_seq_eq : entails φ ψ ↔ seq φ ψ = φ := by
+  constructor
+  · intro h
+    funext s
+    refine Part.ext fun t ↦ ?_
+    rw [seq, PFun.comp_apply, Part.mem_bind_iff]
+    constructor
+    · rintro ⟨s', hs', ht⟩
+      rw [h s s' hs', Part.mem_some_iff] at ht
+      exact ht ▸ hs'
+    · exact fun ht ↦ ⟨t, ht, by rw [h s t ht]; exact Part.mem_some t⟩
+  · intro h s s' hs'
+    rw [supports, Part.eq_some_iff]
+    have hs'' : s' ∈ seq φ ψ s := by rw [h]; exact hs'
+    obtain ⟨t, ht, hst⟩ := Part.mem_bind_iff.mp hs''
+    exact Part.mem_unique ht hs' ▸ hst
+
+theorem entails_trans (h₁ : entails φ ψ) (h₂ : entails ψ χ) : entails φ χ :=
+  fun s s' hs' ↦ h₂ s' s' (supports_iff_mem.mp (h₁ s s' hs'))
+
+/-- Whatever follows from the second conjunct follows from the conjunction. -/
+theorem entails_seq_left (h : entails ψ χ) (φ : CCP.Partial P) : entails (seq φ ψ) χ :=
+  fun _ s' hs' ↦ let ⟨t, _, ht⟩ := Part.mem_bind_iff.mp hs'; h t s' ht
 
 /-! ### The satisfaction law -/
 
@@ -152,7 +211,7 @@ theorem admits_seq (φ ψ : CCP.Partial P) (s : Set P) :
 theorem admits_seq_iff (φ ψ : CCP.Partial P) (s : Set P)
     (h : φ.admits s) :
     (seq φ ψ).admits s ↔ ψ.admits ((φ s).get h) :=
-  ⟨λ ⟨_, hb⟩ => hb, λ hb => ⟨h, hb⟩⟩
+  ⟨fun ⟨_, hb⟩ => hb, fun hb => ⟨h, hb⟩⟩
 
 /-- Negation projects: `s` admits `¬φ` iff `s` admits `φ`. -/
 @[simp] theorem admits_neg (φ : CCP.Partial P) (s : Set P) :
@@ -195,8 +254,8 @@ composition law of partial updates, not a stipulation. -/
 theorem admits_seq_ofPartialProp (p q : PartialProp W) (s : Set W) :
     (seq (ofPartialProp p) (ofPartialProp q)).admits s ↔
       ∀ w ∈ s, (PartialProp.andFilter p q).presup w :=
-  ⟨λ ⟨hp, hq⟩ _ hw => ⟨hp hw, λ ha => hq ⟨hw, ha⟩⟩,
-   λ h => ⟨λ w hw => (h w hw).1, λ w hw => (h w hw.1).2 hw.2⟩⟩
+  ⟨fun ⟨hp, hq⟩ _ hw => ⟨hp hw, fun ha => hq ⟨hw, ha⟩⟩,
+   fun h => ⟨fun w hw => (h w hw).1, fun w hw => (h w hw.1).2 hw.2⟩⟩
 
 /-- Dynamic conditional admits `s` iff `s` satisfies `impFilter`'s
     presupposition pointwise. -/
@@ -211,9 +270,9 @@ theorem admits_cond_ofPartialProp (p q : PartialProp W) (s : Set W) :
 theorem admits_disj_ofPartialProp (p q : PartialProp W) (s : Set W) :
     (disj (ofPartialProp p) (ofPartialProp q)).admits s ↔
       ∀ w ∈ s, (PartialProp.orFilter p q).presup w :=
-  ⟨λ ⟨hp, hq⟩ _ hw => ⟨hp hw, λ hna => hq ⟨hw, λ hc => hna hc.2⟩⟩,
-   λ h => ⟨λ w hw => (h w hw).1,
-     λ w hw => (h w hw.1).2 (λ ha => hw.2 ⟨hw.1, ha⟩)⟩⟩
+  ⟨fun ⟨hp, hq⟩ _ hw => ⟨hp hw, fun hna => hq ⟨hw, fun hc => hna hc.2⟩⟩,
+   fun h => ⟨fun w hw => (h w hw).1,
+     fun w hw => (h w hw.1).2 (fun ha => hw.2 ⟨hw.1, ha⟩)⟩⟩
 
 /-- Negation projects the atomic presupposition unchanged. -/
 theorem admits_neg_ofPartialProp (p : PartialProp W) (s : Set W) :

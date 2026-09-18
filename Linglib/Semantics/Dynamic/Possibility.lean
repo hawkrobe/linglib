@@ -87,6 +87,37 @@ theorem domain_eq_empty_iff : p.domain = ∅ ↔ ∀ v, p.assignment v = ⊥ := 
   simp only [Set.eq_empty_iff_forall_notMem, mem_domain]
   exact forall_congr' fun v => Part.eq_none_iff'.symm
 
+section Update
+
+variable [DecidableEq V] {x : V} {m : M}
+
+/-- Defining a referent adds it to the domain. -/
+theorem domain_update_some : (p.update x (Part.some m)).domain = insert x p.domain := by
+  ext v
+  by_cases hv : v = x <;> simp [hv, Function.update_of_ne]
+
+/-- A point undefined at `x` descends into each of its updates at `x`. -/
+theorem le_update_of_not_dom (h : ¬(p.assignment x).Dom) (e : Part M) : p ≤ p.update x e :=
+  ⟨rfl, fun v ↦ by
+    by_cases hv : v = x
+    · subst hv
+      exact fun a ha ↦ (h (Part.dom_iff_mem.mpr ⟨a, ha⟩)).elim
+    · simp [Function.update_of_ne hv]⟩
+
+/-- A point above `p` whose domain adds exactly `x` is an update of `p` at `x`. -/
+theorem eq_update_of_le (hpr : p ≤ r) (hdom : r.domain = insert x p.domain)
+    (hm : m ∈ r.assignment x) : r = p.update x (Part.some m) :=
+  Possibility.ext hpr.1.symm <| funext fun v ↦ by
+    by_cases hv : v = x
+    · subst hv; simp [Part.eq_some_iff.mpr hm]
+    · rw [update_assignment, Function.update_of_ne hv]
+      refine (Part.eq_of_le_of_dom (hpr.2 v) fun hd ↦ ?_).symm
+      have hv' : v ∈ r.domain := hd
+      rw [hdom] at hv'
+      exact hv'.resolve_left hv
+
+end Update
+
 /-- The union of two points, defined wherever either is, with the left
 taking precedence; on compatible points the precedence is immaterial
 (`union_comm`). -/
@@ -207,6 +238,11 @@ theorem restrict_le : p.restrict X ≤ p :=
 theorem domain_restrict : (p.restrict X).domain = X ∩ p.domain :=
   rfl
 
+/-- Restriction is the identity on the referents kept. -/
+theorem restrict_assignment_of_mem {v : V} (hv : v ∈ X) :
+    (p.restrict X).assignment v = p.assignment v :=
+  Part.ext' (and_iff_right hv) fun _ _ ↦ rfl
+
 /-- A point with domain `X` descends into `q` exactly when it is `q`
 restricted to `X`. -/
 theorem le_iff_eq_restrict (hp : p.domain = X) :
@@ -219,6 +255,13 @@ theorem le_iff_eq_restrict (hp : p.domain = X) :
 /-- A point at its own domain is fixed by restriction. -/
 theorem restrict_eq_self (hp : p.domain = X) : p.restrict X = p :=
   ((le_iff_eq_restrict hp).mp le_rfl).symm
+
+/-- A point above `p` whose domain adds exactly `X` is `p` joined with its own
+restriction to `X`. -/
+theorem eq_union_restrict (hpr : p ≤ r)
+    (hdom : r.domain = p.domain ∪ X) : r = p.union (r.restrict X) :=
+  (eq_of_le_of_domain_eq (union_le hpr restrict_le) <| by
+    rw [domain_union, domain_restrict, hdom, Set.inter_eq_left.mpr Set.subset_union_right]).symm
 
 /-- Consecutive restrictions restrict to the intersection. -/
 theorem restrict_restrict : (p.restrict Y).restrict X = p.restrict (X ∩ Y) :=
