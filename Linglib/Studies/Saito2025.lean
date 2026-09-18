@@ -12,7 +12,7 @@ of the stem vowel while high-frequency inflected words do not, and the paper rep
 binary inflectional-status predictor by the semantic support that a word's meaning lends to
 its suffix triphone in a trained discriminative lexicon, which improves the tongue-position
 model with one fewer degree of freedom. The model is the substrate's linear discriminative
-lexicon at the paper's carriers, triphone form vectors and word2vec meaning vectors
+lexicon over the paper's triphone form vectors and word2vec meaning vectors
 (`GermanInflectionalDLM`); close meanings yield close predicted articulations
 (`close_meanings_imply_close_form`), and when the suffix triphone is linearly decodable from
 meanings, training alone gives inflected words strictly greater suffix support than
@@ -44,21 +44,22 @@ namespace Saito2025
 
 open DiscriminativeLexicon
 
-/-- The number of triphones of the paper's CELEX-derived form matrix. -/
+/-- The paper's CELEX-derived form matrix has `TriphoneCount` triphones. -/
 abbrev TriphoneCount : ℕ := 14404
 
-/-- The dimension of the pretrained German word2vec embeddings of [muller-2015]. -/
+/-- The pretrained German word2vec embeddings of [muller-2015] have `Word2VecGermanDim`
+dimensions. -/
 abbrev Word2VecGermanDim : ℕ := 300
 
-/-- Triphone-indicator form vectors; that the entries are zero or one is a property of the
-training data, not of the type. -/
+/-- A triphone vector is a form vector over the paper's triphones; that its entries are zero or
+one is a property of the training data, not of the type. -/
 abbrev TriphoneVec := FormVec TriphoneCount
 
-/-- Word2vec meaning vectors. -/
+/-- A German word2vec vector is a meaning vector of the embeddings' dimension. -/
 abbrev GermanWord2VecVec := MeaningVec Word2VecGermanDim
 
-/-- The paper's discriminative lexicon: the linear model at German triphone and word2vec
-carriers. -/
+/-- The paper's discriminative lexicon is the linear model over German triphone form vectors
+and word2vec meaning vectors. -/
 abbrev GermanInflectionalDLM :=
   Linear ℝ TriphoneVec GermanWord2VecVec
 
@@ -74,8 +75,8 @@ theorem close_meanings_imply_close_form
 /-- When the suffix-triphone coordinate is linearly decodable from word meanings, the
 inflectional semantics the paper ties to the suffix, a trained lexicon's `SemSupSuffix`
 reproduces it exactly, so a word carrying the suffix triphone gets strictly greater suffix
-support than one lacking it: the direction of the paper's contrast between inflected and
-non-inflected words, from the linear architecture alone. -/
+support than one lacking it, which is the direction of the paper's contrast between inflected
+and non-inflected words, obtained from the linear architecture alone. -/
 theorem production_suffix_lt
     {m : ℕ} {D : GermanInflectionalDLM}
     {data : TrainingExperience m TriphoneCount Word2VecGermanDim}

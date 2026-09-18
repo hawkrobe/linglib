@@ -49,48 +49,49 @@ noncomputable section
 
 /-! ### The toy lexicon -/
 
-/-- The phones of the toy lexicon, `i` standing for the paper's `ɪ`; the diphthong is written as
-the two phones `a ɪ` (§2.3). -/
+/-- The toy lexicon uses five phones, with `i` standing for the paper's `ɪ` and the diphthong
+written as the two phones `a ɪ` (§2.3). -/
 inductive Phone
   | t | l | a | i | m
   deriving DecidableEq
 
-/-- The toy words as phone strings, *time*, *lime*, *thyme*; the homophones share a string. -/
+/-- The toy words *time*, *lime* and *thyme* are spelled as phone strings, the two homophones
+sharing a string. -/
 def word : Fin 3 → List Phone := ![[.t, .a, .i, .m], [.l, .a, .i, .m], [.t, .a, .i, .m]]
 
-/-- The six triphones of (2) in the paper's column order `#ta taɪ aɪm ɪm# #la laɪ`. -/
+/-- The six triphones of (2) are listed in the paper's column order `#ta taɪ aɪm ɪm# #la laɪ`. -/
 def triphone : Fin 6 → Augmented Phone :=
   ![[none, some .t, some .a], [some .t, some .a, some .i], [some .a, some .i, some .m],
     [some .i, some .m, none], [none, some .l, some .a], [some .l, some .a, some .i]]
 
-/-- The rows of the form matrix `C` of (2): each word's triphone indicator, the DLM's cue coding
+/-- Each row of the form matrix `C` of (2) is the word's triphone indicator, the DLM's cue coding
 at width 3 (`cueVector`). -/
 def toyForms (i : Fin 3) : FormVec 6 := cueVector 3 triphone (word i)
 
-/-- The form matrix as the paper prints it. -/
+/-- The form matrix comes out as the paper prints it. -/
 theorem toyForms_eq :
     toyForms = ![![1, 1, 1, 1, 0, 0], ![0, 0, 1, 1, 1, 1], ![1, 1, 1, 1, 0, 0]] := by
   funext i j
   fin_cases i <;> fin_cases j <;>
     simp +decide [toyForms, cueVector, multiHot, Matrix.cons_val_two]
 
-/-- The toy lexicon of §2.3: the semantic matrix `S` of (1), rows *time*, *lime*, *thyme* over
-two arbitrary semantic dimensions (`0.1 0.3; 0.6 0.2; 1.1 0.6`), and the triphone matrix `C`
-of (2). *time* and *thyme* share a form row. -/
+/-- The toy lexicon of §2.3 pairs the semantic matrix `S` of (1), with rows *time*, *lime*,
+*thyme* over two arbitrary semantic dimensions (`0.1 0.3; 0.6 0.2; 1.1 0.6`), with the triphone
+matrix `C` of (2), in which *time* and *thyme* share a row. -/
 def toy : TrainingExperience 3 6 2 where
   S := !![1 / 10, 3 / 10; 6 / 10, 2 / 10; 11 / 10, 6 / 10]
   C := Matrix.of toyForms
 
-/-- *time*, the first row of the toy lexicon. -/
+/-- *time* is the first row of the toy lexicon. -/
 abbrev time : Fin 3 := 0
 
-/-- *lime*, the second row of the toy lexicon. -/
+/-- *lime* is the second row of the toy lexicon. -/
 abbrev lime : Fin 3 := 1
 
-/-- *thyme*, the third row of the toy lexicon. -/
+/-- *thyme* is the third row of the toy lexicon. -/
 abbrev thyme : Fin 3 := 2
 
-/-- The token frequencies 100, 10, 1 of *time*, *lime*, *thyme* (A3). -/
+/-- *time*, *lime* and *thyme* have token frequencies 100, 10 and 1 (A3). -/
 def freq : FrequencyVector 3 := ![100, 10, 1]
 
 /-! ### Endstate and frequency-informed learning
@@ -98,10 +99,11 @@ def freq : FrequencyVector 3 := ![100, 10, 1]
 The paper fits only the production side of the model, so the comprehension maps below are left
 zero. Mapping matrices act on row vectors, `ĉ = sG` (10), so a production map is `toLin' Gᵀ`. -/
 
-/-- The endstate mapping `G` of (4): the closed form `(SᵀS)⁻¹SᵀC` of (A2). -/
+/-- The endstate mapping `G` of (4) is the closed form `(SᵀS)⁻¹SᵀC` of (A2). -/
 def endstateG : Matrix (Fin 2) (Fin 6) ℝ := (toy.Sᵀ * toy.S)⁻¹ * (toy.Sᵀ * toy.C)
 
-/-- (4) exactly, with `1181 = 10⁴ · det(SᵀS)`; the paper prints it to two decimals. -/
+/-- The endstate mapping is (4) exactly, with `1181 = 10⁴ · det(SᵀS)`; the paper prints it to
+two decimals. -/
 theorem endstateG_eq :
     endstateG = (1181 : ℝ)⁻¹ • !![-1410, -1410, -90, -90, 1320, 1320;
       4500, 4500, 2800, 2800, -1700, -1700] := by
@@ -110,17 +112,17 @@ theorem endstateG_eq :
     norm_num [endstateG, Matrix.inv_def, Ring.inverse_eq_inv', Matrix.adjugate_fin_two,
       Matrix.det_fin_two, Matrix.mul_apply, Fin.sum_univ_succ, toy, toyForms_eq]
 
-/-- The DLM at the endstate of learning. -/
+/-- The lexicon at the endstate of learning has the endstate mapping as its production map. -/
 def endstate : Linear ℝ (FormVec 6) (MeaningVec 2) where
   comprehension := 0
   production := Matrix.toLin' endstateGᵀ
 
-/-- The frequency-informed mapping: the closed form `(SᵀQS)⁻¹SᵀQC` of (A4) for the
+/-- The frequency-informed mapping is the closed form `(SᵀQS)⁻¹SᵀQC` of (A4) at the
 frequencies `freq`. -/
 def frequencyInformedG : Matrix (Fin 2) (Fin 6) ℝ :=
   (toy.Sᵀ * freq.Q * toy.S)⁻¹ * (toy.Sᵀ * freq.Q * toy.C)
 
-/-- The frequency-informed mapping exactly, with `16543 = 500 · det(SᵀQS)`. -/
+/-- The frequency-informed mapping comes out exactly, with `16543 = 500 · det(SᵀQS)`. -/
 theorem frequencyInformedG_eq :
     frequencyInformedG = (16543 : ℝ)⁻¹ • !![-20190, -20190, 4230, 4230, 24420, 24420;
       61920, 61920, 53150, 53150, -8770, -8770] := by
@@ -130,13 +132,14 @@ theorem frequencyInformedG_eq :
       Matrix.det_fin_two, Matrix.mul_apply, Fin.sum_univ_succ, toy, toyForms_eq, freq,
       FrequencyVector.Q, Matrix.diagonal]
 
-/-- The DLM after frequency-informed learning. -/
+/-- The lexicon after frequency-informed learning has the frequency-informed mapping as its
+production map. -/
 def frequencyInformed : Linear ℝ (FormVec 6) (MeaningVec 2) where
   comprehension := 0
   production := Matrix.toLin' frequencyInformedGᵀ
 
 /-- The endstate mapping is trained under uniform weights, by the closed form of the normal
-equations (A2): `SᵀS` is invertible. -/
+equations (A2), since `SᵀS` is invertible. -/
 theorem endstate_isELTrainedOn : endstate.IsELTrainedOn toy := by
   rw [Linear.IsELTrainedOn, Linear.IsTrainedOn, endstate, Linear.productionMatrix_mk]
   refine isELTrained_closedForm toy ?_
@@ -144,7 +147,7 @@ theorem endstate_isELTrainedOn : endstate.IsELTrainedOn toy := by
   norm_num [Matrix.det_fin_two, Matrix.mul_apply, Fin.sum_univ_succ, toy]
 
 /-- The frequency-informed mapping is trained under `freq`, by the closed form of the
-`√Q`-scaled normal equations (A4): `SᵀQS` is invertible. -/
+`√Q`-scaled normal equations (A4), since `SᵀQS` is invertible. -/
 theorem frequencyInformed_isTrainedOn : frequencyInformed.IsTrainedOn toy freq := by
   rw [Linear.IsTrainedOn, frequencyInformed, Linear.productionMatrix_mk]
   refine isTrained_closedForm toy freq ?_
@@ -158,8 +161,8 @@ section
 
 variable {m n d : ℕ} (D : Linear ℝ (FormVec n) (MeaningVec d)) (data : TrainingExperience m n d)
 
-/-- The support matrix `T = ĈCᵀ` of (A5) with `Ĉ = SG`: the support each word's form (column)
-receives from each word's meaning (row). -/
+/-- The support matrix `T = ĈCᵀ` of (A5), with `Ĉ = SG`, tabulates the support each word's form
+(column) receives from each word's meaning (row). -/
 def supportMatrix : Matrix (Fin m) (Fin m) ℝ := data.S * D.productionMatrix * data.Cᵀ
 
 /-- The entries of `T` are the substrate's support form at the words' meanings and forms. -/
@@ -169,13 +172,14 @@ theorem supportMatrix_apply (i k : Fin m) :
     ← Linear.mul_productionMatrix_apply]
   rfl
 
-/-- *Semantic support for form*: the diagonal of `T`, a word's support for its own form. -/
+/-- *Semantic support for form* is the diagonal of `T`, the support a word's form receives from
+its own meaning. -/
 def semanticSupportForForm : Fin m → ℝ := (supportMatrix D data).diag
 
 end
 
-/-- (A6): the endstate support matrix, which the paper prints as
-`3.455 0.767 3.455; 0.948 1.622 0.948; 4.623 3.409 4.623`. Its columns for *time* and *thyme*
+/-- The endstate support matrix is (A6), which the paper prints as
+`3.455 0.767 3.455; 0.948 1.622 0.948; 4.623 3.409 4.623`; its columns for *time* and *thyme*
 coincide, as their triphones do. -/
 theorem supportMatrix_endstate :
     supportMatrix endstate toy =
@@ -184,7 +188,7 @@ theorem supportMatrix_endstate :
   ext i k
   fin_cases i <;> fin_cases k <;> norm_num [toy, toyForms_eq, mul_apply, Fin.sum_univ_succ]
 
-/-- Table 1, endstate column: `3.455, 1.622, 4.623`. -/
+/-- The endstate column of Table 1 is `3.455, 1.622, 4.623`. -/
 theorem semanticSupportForForm_endstate :
     semanticSupportForForm endstate toy = (1181 : ℝ)⁻¹ • ![4080, 1916, 5460] := by
   ext i
@@ -196,20 +200,20 @@ theorem semanticSupportForForm_endstate_time_lt_thyme :
     semanticSupportForForm endstate toy time < semanticSupportForForm endstate toy thyme := by
   rw [semanticSupportForForm_endstate]; norm_num [time, thyme, Matrix.cons_val_two]
 
-/-- Semantic support for form under frequency-informed learning as the paper computes it for
-the toy lexicon (Table 1, (A7)): the predicted forms are the fitted values `√Q S G` of the
-`√Q`-scaled regression, paired with the words' own unscaled triphone vectors. -/
+/-- The paper computes semantic support for form under frequency-informed learning (Table 1,
+(A7)) from the fitted values `√Q S G` of the `√Q`-scaled regression, paired with the words' own
+unscaled triphone vectors. -/
 def semanticSupportForFormFIL (i : Fin 3) : ℝ :=
   frequencyInformed.semanticSupport ((toy.sqrtScale freq).S i) (toy.C i)
 
-/-- The `√frequency` factor made explicit: the paper's frequency-informed support is
-`√(freq i)` times the support the learned map alone gives. -/
+/-- The paper's frequency-informed support is `√(freq i)` times the support the learned map
+alone gives. -/
 theorem semanticSupportForFormFIL_eq_sqrt_mul (i : Fin 3) :
     semanticSupportForFormFIL i =
       Real.sqrt (freq i) * semanticSupportForForm frequencyInformed toy i := by
   simp [semanticSupportForFormFIL, semanticSupportForForm, supportMatrix_apply]
 
-/-- The learned frequency-informed map alone still supports *thyme* most:
+/-- The learned frequency-informed map alone still supports *thyme* most, with supports
 `3.981, 3.151, 6.225`. -/
 theorem semanticSupportForForm_frequencyInformed :
     semanticSupportForForm frequencyInformed toy = (16543 : ℝ)⁻¹ • ![65850, 52132, 102972] := by
@@ -218,7 +222,7 @@ theorem semanticSupportForForm_frequencyInformed :
     norm_num [semanticSupportForForm, supportMatrix_apply, toy, toyForms_eq, frequencyInformed,
       frequencyInformedG_eq, toLin'_apply, mulVec, dotProduct, Fin.sum_univ_succ]
 
-/-- Table 1, frequency-informed column: `39.805, 9.965, 6.225`. -/
+/-- The frequency-informed column of Table 1 is `39.805, 9.965, 6.225`. -/
 theorem semanticSupportForFormFIL_eq :
     semanticSupportForFormFIL =
       ![658500 / 16543, Real.sqrt 10 * (52132 / 16543), 102972 / 16543] := by
@@ -228,16 +232,15 @@ theorem semanticSupportForFormFIL_eq :
   rw [semanticSupportForFormFIL_eq_sqrt_mul, semanticSupportForForm_frequencyInformed]
   fin_cases i <;> norm_num [freq, h100, Matrix.cons_val_two]
 
-/-- Under practice *time* overtakes *thyme* ((A7): 39.805 against 6.225), reversing the
+/-- Under practice *time* overtakes *thyme*, 39.805 against 6.225 in (A7), reversing the
 endstate order. -/
 theorem semanticSupportForFormFIL_thyme_lt_time :
     semanticSupportForFormFIL thyme < semanticSupportForFormFIL time := by
   rw [semanticSupportForFormFIL_eq]; norm_num [time, thyme, Matrix.cons_val_two]
 
-/-- Identical triphones, distinct predicted forms: *time* and *thyme* share a form row, but
-their meaning difference lies outside the production kernel, the neutralization locus
-(`LinearMap.sub_mem_ker_iff`), so their triphones receive different support
-((A3), Fig. A2; §6.2). -/
+/-- *time* and *thyme* share a form row, but their meaning difference lies outside the production
+kernel, the neutralization locus (`LinearMap.sub_mem_ker_iff`), so identical triphones receive
+distinct predicted forms ((A3), Fig. A2; §6.2). -/
 theorem time_sub_thyme_notMem_ker :
     toy.S time - toy.S thyme ∉ LinearMap.ker endstate.production := fun h => by
   have := congrFun (LinearMap.sub_mem_ker_iff.mp h) 0
@@ -255,9 +258,9 @@ onto the row space of `U`, reproduced here exactly. (A5.2) folds the measure bac
 model by scaling a word's semantic vector, which scales its semantic support for form by the
 same factor (`semanticSupport` is linear in the meaning). -/
 
-/-- The utterance-by-word matrix `U` of (5): rows *my time is short*, *my good time*,
-*my fragrant thyme*, *my lime is bad*, *my lime is good*; columns *my, time, is, short, good,
-fragrant, thyme, lime, bad*. -/
+/-- The utterance-by-word matrix `U` of (5) has the rows *my time is short*, *my good time*,
+*my fragrant thyme*, *my lime is bad*, *my lime is good* and the columns *my, time, is, short,
+good, fragrant, thyme, lime, bad*. -/
 def U : Matrix (Fin 5) (Fin 9) ℚ :=
   !![1, 1, 1, 1, 0, 0, 0, 0, 0;
      1, 1, 0, 0, 1, 0, 0, 0, 0;
@@ -265,11 +268,11 @@ def U : Matrix (Fin 5) (Fin 9) ℚ :=
      1, 0, 1, 0, 0, 0, 0, 1, 1;
      1, 0, 1, 0, 1, 0, 0, 1, 0]
 
-/-- The word-to-word map `W` of (6): the pseudoinverse solution `Uᵀ(UUᵀ)⁻¹U` of `UW = U`
+/-- The word-to-word map `W` of (6) is the pseudoinverse solution `Uᵀ(UUᵀ)⁻¹U` of `UW = U`
 ((A8), (A9)), the orthogonal projector onto the row space of `U`. -/
 def W : Matrix (Fin 9) (Fin 9) ℚ := Uᵀ * (U * Uᵀ)⁻¹ * U
 
-/-- The inverse of the Gram matrix `UUᵀ`. -/
+/-- The Gram matrix `UUᵀ` has this inverse. -/
 private def gramInv : Matrix (Fin 5) (Fin 5) ℚ := (71 : ℚ)⁻¹ •
   !![33, -20, -1, -15, 5;
      -20, 53, -8, 22, -31;
@@ -279,7 +282,7 @@ private def gramInv : Matrix (Fin 5) (Fin 5) ℚ := (71 : ℚ)⁻¹ •
 
 private theorem inv_gram : (U * Uᵀ)⁻¹ = gramInv := Matrix.inv_eq_right_inv (by decide +kernel)
 
-/-- (6) exactly; the paper prints it to two decimals. -/
+/-- `W` is (6) exactly; the paper prints it to two decimals. -/
 theorem W_eq : W = (71 : ℚ)⁻¹ •
   !![41, 18, 10, 2, 12, 15, 15, 8, 12;
      18, 46, -6, 13, 7, -9, -9, -19, 7;
@@ -299,7 +302,7 @@ theorem U_mul_W : U * W = U := by rw [W_eq]; decide +kernel
 /-- `W` is symmetric. -/
 theorem isSymm_W : W.IsSymm := by rw [W_eq]; decide +kernel
 
-/-- `W` is idempotent: with symmetry, an orthogonal projector. -/
+/-- `W` is idempotent, hence with symmetry an orthogonal projector. -/
 theorem isIdempotentElem_W : IsIdempotentElem W := by
   unfold IsIdempotentElem; rw [W_eq]; decide +kernel
 
@@ -312,12 +315,12 @@ theorem diag_W_mem_Icc (i : Fin 9) : W i i ∈ Set.Icc (0 : ℚ) 1 :=
   ⟨Matrix.diag_nonneg_of_isSymm_of_isIdempotentElem isSymm_W isIdempotentElem_W i,
     Matrix.diag_le_one_of_isSymm_of_isIdempotentElem isSymm_W isIdempotentElem_W i⟩
 
-/-- The contextual-independence measure of (9): `Cind = (log(1/d))^{1/4}`, a log against the
+/-- The contextual-independence measure of (9) is `Cind = (log(1/d))^{1/4}`, a log against the
 right skew of the diagonal values and a power to finish it. -/
 def cind (d : ℝ) : ℝ := Real.log (1 / d) ^ (1 / 4 : ℝ)
 
-/-- `Cind` reverses the order of the diagonal values on `(0, 1)`: the more a word predicts
-itself, the lower its `Cind` — the sign of its correlation with frequency in Fig. 2. -/
+/-- `Cind` reverses the order of the diagonal values on `(0, 1)`, so the more a word predicts
+itself the lower its `Cind`, which is the sign of its correlation with frequency in Fig. 2. -/
 theorem strictAntiOn_cind : StrictAntiOn cind (Set.Ioo 0 1) := fun a ha b hb hab => by
   unfold cind
   refine Real.rpow_lt_rpow (Real.log_nonneg ?_)

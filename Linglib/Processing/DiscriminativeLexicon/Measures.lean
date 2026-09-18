@@ -5,21 +5,27 @@ import Mathlib.LinearAlgebra.Matrix.ToLin
 /-!
 # Semantic support in the discriminative lexicon
 
-At the `Fin`-indexed carriers the production map is a mapping matrix `G` acting on row vectors,
-`ĉ = sG`, and the papers' **semantic support** measures are read off the predicted form `ĉ`: the
-support a form vector `c` receives from a meaning `s` is `ĉ ⬝ᵥ c`, the bilinear form of `G`. At a
-word's own cue indicator this is the diagonal of [gahl-baayen-2024]'s support matrix `T = ĈCᵀ`,
-their *semantic support for form*, which [heitmeier-chuang-baayen-2026] carry over to lexical
-decision; at a coordinate indicator it is the predicted value `ĉⱼ`, the per-cue `SemSup` of
-[saito-tomaschek-baayen-2025], whose `SemSupWord` sums it over a word's own cues.
+This file defines the semantic support measures of a linear discriminative lexicon.
 
-## Main declarations
+A linear discriminative lexicon predicts the form of a meaning `s` through a mapping matrix `G`
+acting on row vectors, `ĉ = sG`. The *semantic support* that a form vector `c` receives from `s`
+is the dot product `ĉ ⬝ᵥ c` of the predicted form with `c`. Since this is linear in `s` and in
+`c`, it is the bilinear form of `G`, and we bundle it as a bilinear map. Gahl and Baayen tabulate
+it over all pairs of words as the support matrix `T = ĈCᵀ` and call its diagonal, the support a
+word's own cue vector receives from its meaning, *semantic support for form*; Heitmeier, Chuang
+and Baayen use the same measure for lexical decision. Saito, Tomaschek and Baayen instead read
+off single coordinates of `ĉ`, the support for one cue, and sum them over a word's cues.
 
-- `Linear.productionMatrix D`: the mapping matrix of the production map, with
-  `D.production s = s ᵥ* D.productionMatrix` (`production_eq_vecMul`).
-- `Linear.semanticSupport D`: the support bilinear form `(s, c) ↦ D.production s ⬝ᵥ c`. Its
-  matrix is the production matrix (`toMatrix₂'_semanticSupport`); linearity in each argument is
-  the `LinearMap` API, and `semanticSupport_single` reads off a single coordinate.
+## Main definitions
+
+* `Linear.productionMatrix D`: the mapping matrix of the production map, so that
+  `D.production s = s ᵥ* D.productionMatrix`.
+* `Linear.semanticSupport D`: the bilinear map `(s, c) ↦ D.production s ⬝ᵥ c`.
+
+## Main results
+
+* `toMatrix₂'_semanticSupport`: the matrix of the support form is the production matrix.
+* `semanticSupport_single`: the support for a single coordinate is the predicted value there.
 
 ## References
 
@@ -40,7 +46,8 @@ variable {n d : ℕ} (D : Linear ℝ (FormVec n) (MeaningVec d))
 
 /-! ### The production matrix -/
 
-/-- The mapping matrix `G` of the production map, acting on row vectors: `ĉ = sG`. -/
+/-- The mapping matrix `G` of the production map acts on row vectors, so that the predicted form
+of a meaning `s` is `sG`. -/
 def productionMatrix : Matrix (Fin d) (Fin n) ℝ := (LinearMap.toMatrix' D.production)ᵀ
 
 @[simp] theorem productionMatrix_apply (i : Fin d) (j : Fin n) :
@@ -56,11 +63,9 @@ theorem production_eq_vecMul (s : MeaningVec d) : D.production s = s ᵥ* D.prod
 
 /-! ### Semantic support -/
 
-/-- **Semantic support**: the bilinear form of the production matrix, pairing the form predicted
-from a meaning `s` with a form vector `c`, `sG ⬝ᵥ c`. At a word's own cue indicator this is
-[gahl-baayen-2024]'s *semantic support for form* and [saito-tomaschek-baayen-2025]'s
-`SemSupWord`; at a coordinate indicator it is the predicted value there, their per-cue `SemSup`
-(`semanticSupport_single`). -/
+/-- The **semantic support** that a form vector `c` receives from a meaning `s` is the dot
+product of the predicted form `sG` with `c`, so it is the bilinear form of the production
+matrix. -/
 def semanticSupport : MeaningVec d →ₗ[ℝ] FormVec n →ₗ[ℝ] ℝ :=
   Matrix.toLinearMap₂' ℝ D.productionMatrix
 

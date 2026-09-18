@@ -8,23 +8,34 @@ import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 import Mathlib.LinearAlgebra.Matrix.ToLin
 
 /-!
-# DLM training: endstate and frequency-informed learning
+# Training a discriminative lexicon
 
-A DLM is trained by solving `SG = C` in the least-squares sense: the mapping matrix `G` minimises
-the frequency-weighted loss `∑ᵢ qᵢ ‖(SG − C)ᵢ‖²` over the semantic matrix `S` and form matrix `C`
-of the training experience. The weights are the cognitive commitment, uniform for endstate
-learning (EL) and token counts for frequency-informed learning (FIL,
-[heitmeier-chuang-axen-baayen-2024]); the optimisation is fixed. The loss separates over form
-coordinates, so each column of `G` is a vector least-squares problem for the `√Q`-scaled design
-`√Q S`, where Mathlib characterises the minimisers by the adjoint (`Core.IsLeastSquares`). That
-gives the normal equations `SᵀQ(SG − C) = 0` of [gahl-baayen-2024]'s appendix and their closed
-form `(SᵀQS)⁻¹SᵀQC`, existence, uniqueness of the fitted values `SG` (hence of the predicted forms
-at experienced meanings), the solution coset, and the identification of FIL under `q` with EL on
-the `√Q`-premultiplied experience ([heitmeier-2024]).
+This file defines training for a linear discriminative lexicon and proves the normal equations
+and the existence and uniqueness results that the papers rely on.
 
-## Main declarations
+A discriminative lexicon is trained by solving `SG = C` in the least-squares sense over the
+semantic matrix `S` and form matrix `C` of a training experience, the mapping matrix `G`
+minimising the frequency-weighted loss `∑ᵢ qᵢ ‖(SG − C)ᵢ‖²`. The weights record the cognitive
+commitment. They are uniform for endstate learning and token counts for the frequency-informed
+learning of Heitmeier, Chuang, Axen and Baayen, and the optimisation itself is fixed. The loss
+separates over form coordinates, so each column of `G` is a vector least-squares problem for the
+`√Q`-scaled design `√Q S`, whose minimisers Mathlib characterises by the adjoint
+(`Core.IsLeastSquares`). From this we obtain the normal equations `SᵀQ(SG − C) = 0` of Gahl and
+Baayen's appendix and their closed form `(SᵀQS)⁻¹SᵀQC`, the existence of trained matrices, the
+uniqueness of the fitted values `SG` and hence of the predicted forms at experienced meanings,
+the solution coset, and Heitmeier's identification of frequency-informed learning under `q` with
+endstate learning on the `√Q`-premultiplied experience.
 
-* `TrainingExperience`, `FrequencyVector`, `weightedLoss`, `IsTrained`, `IsELTrained`.
+## Main definitions
+
+* `TrainingExperience`: a semantic matrix and a form matrix with one usage event per row.
+* `FrequencyVector`, `weightedLoss`: the weights of the usage events and the loss they weight.
+* `IsTrained`, `IsELTrained`: a mapping matrix minimises the weighted loss, under given or
+  uniform weights.
+* `Linear.IsTrainedOn`: a lexicon's production matrix is trained on an experience.
+
+## Main results
+
 * `isTrained_iff_forall_isLeastSquares`, `exists_isTrained`: training is columnwise least
   squares, and solutions exist.
 * `isTrained_iff`, `isTrained_closedForm`: the normal equations `SᵀQ(SG − C) = 0` and their
@@ -32,15 +43,15 @@ the `√Q`-premultiplied experience ([heitmeier-2024]).
 * `IsTrained.mul_eq`, `IsTrained.vecMul_eq_of_mem_span`, `IsTrained.exists_vecMul_ne`,
   `existsUnique_isTrained_iff`: fitted values are unique exactly on the span of experience.
 * `isELTrained_sqrtScale_iff`: FIL under `q` is EL on `TrainingExperience.sqrtScale`.
-* `Linear.IsTrainedOn`, `IsTrainedOn.production_eq`, `IsTrainedOn.production_eq_of_mem_span`:
-  a trained DLM's predicted forms are determined on the span of the experienced meanings.
+* `IsTrainedOn.production_eq`, `IsTrainedOn.production_eq_of_mem_span`: a trained lexicon's
+  predicted forms are determined on the span of the experienced meanings.
 * `IsTrainedOn.production_apply_eq_of_decodable`, `IsTrainedOn.semanticSupport_eq_of_decodable`:
   at a linearly decodable form coordinate the prediction is the observed value, so semantic
   support for form is the observed support.
 * `IsTrained.sum_smul_mul_eq_of_decodable`,
   `Linear.IsELTrainedOn.production_centroid_eq_of_decodable`: fitted and observed forms agree on
-  every linearly decodable average, so a trained DLM sends the centroid of a linearly decodable
-  set of meanings to the centroid of its forms.
+  every linearly decodable average, so a trained lexicon sends the centroid of a linearly
+  decodable set of meanings to the centroid of its forms.
 
 ## References
 
@@ -66,8 +77,8 @@ variable {m n d : ℕ}
 
 /-! ### The training problem -/
 
-/-- A **training experience**: the papers' semantic matrix `S` and form matrix `C`, one usage
-event per row. -/
+/-- A **training experience** consists of the papers' semantic matrix `S` and form matrix `C`,
+with one usage event per row. -/
 structure TrainingExperience (numEvents formDim meaningDim : ℕ) where
   /-- The semantic matrix: the experienced meanings as rows. -/
   S : Matrix (Fin numEvents) (Fin meaningDim) ℝ
@@ -81,10 +92,11 @@ abbrev FrequencyVector (numEvents : ℕ) : Type := Fin numEvents → ℝ≥0
 
 variable (data : TrainingExperience m n d) (q : FrequencyVector m) (G : Matrix (Fin d) (Fin n) ℝ)
 
-/-- The weight matrix `Q`. -/
+/-- The weight matrix `Q` places the frequencies on the diagonal. -/
 def FrequencyVector.Q : Matrix (Fin m) (Fin m) ℝ := diagonal fun i => (q i : ℝ)
 
-/-- Its square root, the `√Q` of the papers' appendix. -/
+/-- The matrix `√Q` of the papers' appendix places the square roots of the frequencies on the
+diagonal. -/
 def FrequencyVector.sqrtQ : Matrix (Fin m) (Fin m) ℝ := diagonal fun i => √(q i : ℝ)
 
 @[simp] theorem FrequencyVector.Q_one : (1 : FrequencyVector m).Q = 1 := by
@@ -98,7 +110,8 @@ def FrequencyVector.sqrtQ : Matrix (Fin m) (Fin m) ℝ := diagonal fun i => √(
 theorem FrequencyVector.sqrtQ_mul_sqrtQ : q.sqrtQ * q.sqrtQ = q.Q := by
   simp [FrequencyVector.sqrtQ, FrequencyVector.Q, diagonal_mul_diagonal, Real.mul_self_sqrt]
 
-/-- The `√Q`-premultiplied experience `(√Q S, √Q C)` of the papers' appendix. -/
+/-- Scaling by `√Q` premultiplies both matrices of the experience, giving the `(√Q S, √Q C)` of
+the papers' appendix. -/
 def TrainingExperience.sqrtScale : TrainingExperience m n d := ⟨q.sqrtQ * data.S, q.sqrtQ * data.C⟩
 
 @[simp] theorem TrainingExperience.sqrtScale_S (i : Fin m) :
@@ -109,7 +122,8 @@ def TrainingExperience.sqrtScale : TrainingExperience m n d := ⟨q.sqrtQ * data
     (data.sqrtScale q).C i = √(q i : ℝ) • data.C i := by
   funext j; simp [TrainingExperience.sqrtScale, FrequencyVector.sqrtQ, diagonal_mul]
 
-/-- The **frequency-weighted training loss** `∑ᵢ qᵢ ‖(SG − C)ᵢ‖²`. -/
+/-- The **frequency-weighted training loss** `∑ᵢ qᵢ ‖(SG − C)ᵢ‖²` weights the squared residual
+of each usage event by its frequency. -/
 def weightedLoss : ℝ :=
   ∑ i, q i * ((data.S * G - data.C) i ⬝ᵥ (data.S * G - data.C) i)
 
@@ -132,10 +146,10 @@ theorem weightedLoss_eq_zero_iff (hq : ∀ i, 0 < q i) :
     simp [weightedLoss, h, dotProduct]
 
 /-- `G` is **trained** on `data` under `q` when it minimises the weighted loss over all mapping
-matrices: `SG = C` solved by least squares. -/
+matrices, which solves `SG = C` by least squares. -/
 def IsTrained : Prop := IsMinOn (weightedLoss data q) Set.univ G
 
-/-- **Endstate learning**: training under uniform weights ([gahl-baayen-2024] appendix). -/
+/-- **Endstate learning** is training under uniform weights ([gahl-baayen-2024] appendix). -/
 abbrev IsELTrained : Prop := IsTrained data 1 G
 
 theorem weightedLoss_smul (c : ℝ≥0) :
@@ -161,8 +175,8 @@ theorem weightedLoss_sqrtScale :
   rw [hrow, smul_dotProduct, dotProduct_smul, smul_eq_mul, smul_eq_mul]
   simp [← mul_assoc, Real.mul_self_sqrt (q i).coe_nonneg]
 
-/-- FIL under `q` is exactly EL on the `√Q`-premultiplied experience: [heitmeier-2024]'s FIL–EL
-equivalence, invertibility-free. -/
+/-- FIL under `q` is exactly EL on the `√Q`-premultiplied experience, which is the FIL–EL
+equivalence of [heitmeier-2024] without any invertibility assumption. -/
 theorem isELTrained_sqrtScale_iff : IsELTrained (data.sqrtScale q) G ↔ IsTrained data q G := by
   have h : weightedLoss (data.sqrtScale q) 1 = weightedLoss data q :=
     funext fun G => weightedLoss_sqrtScale data q G
@@ -170,8 +184,8 @@ theorem isELTrained_sqrtScale_iff : IsELTrained (data.sqrtScale q) G ↔ IsTrain
 
 /-! ### Training as columnwise least squares
 
-The loss separates over form coordinates: column `j` of `G` is a least-squares solution of the
-`√Q`-scaled regression of column `j` of `C` on `S`, a vector problem in Euclidean space. -/
+The loss separates over form coordinates, so column `j` of `G` is a least-squares solution of
+the `√Q`-scaled regression of column `j` of `C` on `S`, a vector problem in Euclidean space. -/
 
 private theorem col_mul {l : ℕ} (A : Matrix (Fin m) (Fin l) ℝ) (B : Matrix (Fin l) (Fin n) ℝ)
     (j : Fin n) : (A * B)ᵀ j = A *ᵥ Bᵀ j := by
@@ -206,8 +220,8 @@ private theorem sum_min_iff {ι : Type*} [Fintype ι] [DecidableEq ι] {β : ι 
     ← Finset.add_sum_erase Finset.univ _ (Finset.mem_univ i), Finset.erase_eq] at hy
   linarith
 
-/-- Training is columnwise least squares: each column of `G` minimises the residual of the
-corresponding scaled regression. -/
+/-- `G` is trained iff each of its columns is a least-squares solution of the corresponding
+scaled regression. -/
 theorem isTrained_iff_forall_isLeastSquares :
     IsTrained data q G ↔ ∀ j, Core.IsLeastSquares (toEuclideanLin (q.sqrtQ * data.S))
       (WithLp.toLp 2 ((q.sqrtQ * data.C)ᵀ j)) (WithLp.toLp 2 (Gᵀ j)) := by
@@ -227,8 +241,9 @@ theorem exists_isTrained : ∃ G, IsTrained data q G := by
 
 /-! ### The normal equations -/
 
-/-- **Normal equations**: `G` is trained iff `SᵀQ(SG − C) = 0` ([gahl-baayen-2024] (A2), (A4)),
-from Mathlib's adjoint characterisation of least squares, column by column. -/
+/-- `G` is trained iff it satisfies the **normal equations** `SᵀQ(SG − C) = 0`
+([gahl-baayen-2024] (A2), (A4)), by Mathlib's adjoint characterisation of least squares applied
+column by column. -/
 theorem isTrained_iff : IsTrained data q G ↔ data.Sᵀ * q.Q * (data.S * G - data.C) = 0 := by
   have hcol : ∀ j, Core.IsLeastSquares (toEuclideanLin (q.sqrtQ * data.S))
       (WithLp.toLp 2 ((q.sqrtQ * data.C)ᵀ j)) (WithLp.toLp 2 (Gᵀ j)) ↔
@@ -248,14 +263,15 @@ theorem isTrained_iff : IsTrained data q G ↔ data.Sᵀ * q.Q * (data.S * G - d
   rw [hX, ← neg_eq_zero (a := data.Sᵀ * q.Q * (data.S * G - data.C)), ← transpose_eq_zero]
   exact ⟨funext, fun h j => congrFun h j⟩
 
-/-- **Closed form**: when `SᵀQS` is invertible, `G = (SᵀQS)⁻¹SᵀQC` is trained
+/-- When `SᵀQS` is invertible, the **closed form** `G = (SᵀQS)⁻¹SᵀQC` is trained
 ([gahl-baayen-2024] (A2), (A4)). -/
 theorem isTrained_closedForm (hS : IsUnit (data.Sᵀ * q.Q * data.S)) :
     IsTrained data q ((data.Sᵀ * q.Q * data.S)⁻¹ * (data.Sᵀ * q.Q * data.C)) := by
   rw [isTrained_iff, Matrix.mul_sub, ← Matrix.mul_assoc,
     Matrix.mul_nonsing_inv_cancel_left _ _ ((Matrix.isUnit_iff_isUnit_det _).1 hS), sub_self]
 
-/-- The endstate closed form `G = (SᵀS)⁻¹SᵀC` ([gahl-baayen-2024] (A2)). -/
+/-- When `SᵀS` is invertible, the endstate closed form `G = (SᵀS)⁻¹SᵀC` is trained under
+uniform weights ([gahl-baayen-2024] (A2)). -/
 theorem isELTrained_closedForm (hS : IsUnit (data.Sᵀ * data.S)) :
     IsELTrained data ((data.Sᵀ * data.S)⁻¹ * (data.Sᵀ * data.C)) := by
   simpa only [FrequencyVector.Q_one, Matrix.mul_one] using
@@ -263,8 +279,8 @@ theorem isELTrained_closedForm (hS : IsUnit (data.Sᵀ * data.S)) :
 
 variable {data q G}
 
-/-- The normal equations in vector form: the `q`-weighted residual rows, weighted further by any
-linear functional of the meanings, sum to zero. -/
+/-- In vector form the normal equations say that the `q`-weighted residual rows, weighted further
+by any linear functional of the meanings, sum to zero. -/
 theorem IsTrained.sum_smul_sub_eq_zero (hG : IsTrained data q G) (w : MeaningVec d →ₗ[ℝ] ℝ) :
     ∑ i, (q i * w (data.S i)) • ((data.S * G) i - data.C i) = 0 := by
   rw [isTrained_iff] at hG
@@ -299,7 +315,7 @@ theorem IsTrained.sum_smul_mul_eq_of_decodable (hG : IsTrained data q G) {P : Fi
 /-! ### Fitted values -/
 
 /-- All trained matrices under positive weights produce the same predicted forms `SG` on the
-training events: fitted values are unique even when `G` is not. -/
+training events, so fitted values are unique even when `G` is not. -/
 theorem IsTrained.mul_eq (hq : ∀ i, 0 < q i) {G' : Matrix (Fin d) (Fin n) ℝ}
     (hG : IsTrained data q G) (hG' : IsTrained data q G') : data.S * G = data.S * G' := by
   rw [isTrained_iff_forall_isLeastSquares] at hG hG'
@@ -329,8 +345,8 @@ theorem IsTrained.add_of_mul_eq_zero (hG : IsTrained data q G) {H : Matrix (Fin 
     simp [weightedLoss, Matrix.mul_add, hH]
   simpa only [IsTrained, isMinOn_univ_iff, this] using hG
 
-/-- Off the span of experienced meanings, training is underdetermined: any trained matrix can be
-modified into another with a different prediction at an unexperienced meaning. -/
+/-- Off the span of experienced meanings training is underdetermined, since any trained matrix
+can be modified into another with a different prediction at an unexperienced meaning. -/
 theorem IsTrained.exists_vecMul_ne [NeZero n] (hG : IsTrained data q G) {s : MeaningVec d}
     (hs : s ∉ Submodule.span ℝ (Set.range data.S)) :
     ∃ G' : Matrix (Fin d) (Fin n) ℝ, IsTrained data q G' ∧ s ᵥ* G ≠ s ᵥ* G' := by
@@ -350,8 +366,8 @@ theorem IsTrained.exists_vecMul_ne [NeZero n] (hG : IsTrained data q G) {s : Mea
     fun h => hφs (by simpa [Matrix.vecMul_add, hvec] using h.symm)⟩
 
 /-- The trained matrix is uniquely determined exactly when the experienced meanings span the
-meaning space: the coordinate-free form of the papers' full-column-rank condition on the
-closed-form solution ([gahl-baayen-2024] appendix; [heitmeier-2024]). -/
+meaning space, which is the coordinate-free form of the papers' full-column-rank condition on
+the closed-form solution ([gahl-baayen-2024] appendix; [heitmeier-2024]). -/
 theorem existsUnique_isTrained_iff [NeZero n] (hq : ∀ i, 0 < q i) :
     (∃! G : Matrix (Fin d) (Fin n) ℝ, IsTrained data q G) ↔
       Submodule.span ℝ (Set.range data.S) = ⊤ := by
@@ -413,9 +429,9 @@ abbrev IsELTrainedOn : Prop := D.IsTrainedOn data 1
 
 variable {D data q}
 
-/-- Two DLMs trained on the same experience and weights predict the same form at every
-experienced meaning: the predicted forms, and so the semantic support measures, are a property of
-the training experience, not of the particular trained matrix. -/
+/-- Two lexicons trained on the same experience and weights predict the same form at every
+experienced meaning, so the predicted forms, and with them the semantic support measures, are a
+property of the training experience rather than of the particular trained matrix. -/
 theorem IsTrainedOn.production_eq {D' : Linear ℝ (FormVec n) (MeaningVec d)}
     (hD : D.IsTrainedOn data q) (hD' : D'.IsTrainedOn data q) (hq : ∀ i, 0 < q i) (i : Fin m) :
     D.production (data.S i) = D'.production (data.S i) := by
@@ -428,7 +444,7 @@ theorem IsTrainedOn.production_eq_of_mem_span {D' : Linear ℝ (FormVec n) (Mean
     D.production s = D'.production s := by
   rw [production_eq_vecMul, production_eq_vecMul, IsTrained.vecMul_eq_of_mem_span hq hD hD' hs]
 
-/-- A trained DLM's prediction at a linearly decodable form coordinate, the per-cue semantic
+/-- A trained lexicon's prediction at a linearly decodable form coordinate, the per-cue semantic
 support of [saito-tomaschek-baayen-2025], is the observed form value on every training event. -/
 theorem IsTrainedOn.production_apply_eq_of_decodable (hD : D.IsTrainedOn data q)
     (hq : ∀ i, 0 < q i) {j₀ : Fin n} {w : MeaningVec d →ₗ[ℝ] ℝ}
@@ -453,11 +469,11 @@ theorem IsTrainedOn.semanticSupport_eq_of_decodable (hD : D.IsTrainedOn data q)
 
 /-! ### Centroids -/
 
-/-- **Centroids under training** ([chuang-bell-tseng-baayen-2026] §3.4, [lu-chuang-baayen-2026]
-§4.4): whenever membership in a nonempty set `P` of usage events is a linear functional of the
-meanings, an EL-trained DLM sends the centroid of `P`'s meanings exactly to the centroid of `P`'s
-observed forms. Linearity alone sends it to the centroid of the predicted forms
-(`LinearMap.map_centroid`); training makes those coincide with the observed ones. -/
+/-- Whenever membership in a nonempty set `P` of usage events is a linear functional of the
+meanings, an EL-trained lexicon sends the centroid of `P`'s meanings exactly to the centroid of
+`P`'s observed forms, the **centroids under training** of [chuang-bell-tseng-baayen-2026] §3.4
+and [lu-chuang-baayen-2026] §4.4. Linearity alone sends it to the centroid of the predicted forms
+(`LinearMap.map_centroid`), and training makes those coincide with the observed ones. -/
 theorem IsELTrainedOn.production_centroid_eq_of_decodable (hD : D.IsELTrainedOn data)
     {P : Finset (Fin m)} (hP : P.Nonempty) {w : MeaningVec d →ₗ[ℝ] ℝ}
     (hw : ∀ i, w (data.S i) = if i ∈ P then 1 else 0) :
