@@ -73,7 +73,7 @@ inductive Trigger where
   /-- A repetitive iterative, *again*, presupposes a prior occurrence. An intervening interval
   without the eventuality is presupposed only for stative hosts, in competition with the
   continuative; eventive *again* (*John won again*) requires precedence only
-  ([von-stechow-1996]). -/
+  ([von-stechow-1996]). Its meaning is `Presupposition.again`. -/
   | iterative
   /-- A continuative, *still*, presupposes that the state has held without interruption up to
   the reference time ([ippolito-2007]). -/

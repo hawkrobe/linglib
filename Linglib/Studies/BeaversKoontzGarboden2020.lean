@@ -3,15 +3,19 @@ import Linglib.Semantics.ArgumentStructure.Verb
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
+import Linglib.Semantics.Presupposition.Iterative
 import Linglib.Data.Examples.BeaversKoontzGarboden2020
 
 /-!
 # Beavers & Koontz-Garboden (2020): The Roots of Verbal Meaning
 
-The six representative roots of the book's root typology (ch. 5, (12)), and
-the falsification of the Bifurcation Thesis of Roots ([embick-2009];
-[arad-2005]) and of Manner/Result Complementarity
-([rappaport-hovav-levin-2010]).
+This file formalizes the root typology of Beavers and Koontz-Garboden's book and the two theses
+it refutes. A root carries entailments of four kinds, manner, cause, result and state, and sits
+either in the complement of the verbal template or adjoined to it. The Bifurcation Thesis of
+Embick and of Arad holds that a root carries only ontological content, a state or a manner, all
+eventive content belonging to the template. Manner/Result Complementarity, due to Rappaport
+Hovav and Levin, holds that no root entails both a manner and a result. The six representative
+roots of the typology in chapter 5, (12), are these.
 
 | Root     | manner | cause | result | state | position   |
 |----------|--------|-------|--------|-------|------------|
@@ -22,64 +26,68 @@ the falsification of the Bifurcation Thesis of Roots ([embick-2009];
 | √hand    |   ✓    |   ✓   |   ✓    |   ✓   | adjoined   |
 | √drown   |   ✓    |   ✓   |   ✓    |   ✓   | complement |
 
-The +state cells of √blossom, √crack, √hand, √drown are *derived*:
-the book's typology values are the collocational closures
-(`Root.closedKinds`) of the base atom kinds, and each
-closed signature is one of the canonical typology rows
-(`Root.Kinds.pureResult`, `causativeResult`, `fullSpec`).
-√blossom falsifies Bifurcation on its own, since change of state is
-templatic (`v_become`) content. √hand and √drown additionally falsify
-Manner/Result Complementarity; they differ only in root position
-(adjoined vs complement), the contrast carrying the book's account of
-which root types are attested.
+The state cells of √blossom, √crack, √hand and √drown are derived: the values of the typology
+are the collocational closures (`Root.closedKinds`) of the kinds of the base atoms, and each
+closed signature is one of the canonical rows (`Root.Kinds.pureResult`, `causativeResult`,
+`fullSpec`). √blossom falsifies Bifurcation on its own, since a change of state is templatic
+content. √hand and √drown also falsify Manner/Result Complementarity; they differ only in the
+position of the root, the contrast that carries the book's account of which root types are
+attested.
 
-The root hypothesis for the causative alternation, that a root entailing a caused change and
-no manner has an inchoative variant unless it entails its causer
-(`LevinClass.RootPredictsCausative`), is measured against the class pages of [levin-1993]:
-it agrees with Part II on every tested class outside a named residue
-(`rootHypothesis_matches_profile`, `rootHypothesisResidue`).
+The sublexical modifier *again* attaches to the root, to `vbecome` or to `vcause`, which gives
+the restitutive reading and the two repetitive ones, and the hierarchy among the three follows
+from the change-of-state entailments by the monotonicity of the presupposition of
+`Presupposition.again`.
 
-## Main declarations
+The root hypothesis for the causative alternation says that a root entailing a caused change
+and no manner has an inchoative variant unless it entails its causer
+(`LevinClass.RootPredictsCausative`). It is measured against the class pages of Levin's
+*English Verb Classes and Alternations* and agrees with Part II on every tested class outside a
+named residue (`rootHypothesis_matches_profile`, `rootHypothesisResidue`).
 
-* `Root.Kinds.ViolatesBifurcation`, `Root.HasMannerAndResult` and
-  relatives — the two thesis predicates, at signature and root level
-* `flat`, `jog`, `blossom`, `crack`, `hand`, `drown`
-* `exists_violatesBifurcation`, `bifurcation_thesis_false`
-* `exists_hasMannerAndResult`, `manner_result_complementarity_false`
-* `Root.Kinds.typology`, `wellFormed_iff_mem_typology` — the rows of (12) and
-  their exhaustiveness
-* `Root.Kinds.attestedCells`, `cells_attested` — the filled cells of (12)
-* `Verb.CosModel.again` and the (25)–(27) reading hierarchy
-* `rootHypothesisResidue`, `rootHypothesis_matches_profile`,
-  `rootHypothesisResidue_disagrees` — the root hypothesis against Levin's
-  class profiles
+## Main definitions
 
-The thesis predicates and the sublexical *again* operator are carried
-here as single-consumer apparatus (this study is their only consumer);
-they graduate back to the theory layer when a second study lands.
+* `Root.Kinds.ViolatesBifurcation`, `Root.HasMannerAndResult`: the two thesis predicates, at the
+  level of the signature and of the root.
+* `flat`, `jog`, `blossom`, `crack`, `hand`, `drown`: the six representative roots.
+* `Root.Kinds.typology`, `Root.Kinds.attestedCells`: the rows of (12) and its filled cells.
+* `Verb.CosModel.againRestitutive`, `againRepetitiveBecome`, `againRepetitiveCause`: the three
+  attachments of *again* in (27).
+* `rootHypothesisResidue`: the classes on which the root hypothesis and Levin's pages disagree.
+
+## Main results
+
+* `bifurcation_thesis_false`, `manner_result_complementarity_false`: the two theses fail.
+* `wellFormed_iff_mem_typology`, `cells_attested`: the rows of (12) are exhaustive and its
+  filled cells attested.
+* `Verb.CosModel.againRepetitiveCause_presup_entails_state`: the hierarchy of the readings of
+  *again* in (25).
+* `rootHypothesis_matches_profile`, `rootHypothesisResidue_disagrees`: the root hypothesis
+  against Levin's class profiles.
+
+## Implementation notes
+
+The thesis predicates are carried here as the apparatus of this study alone.
 
 ## References
 
-* [beavers-koontz-garboden-2020]: The Roots of Verbal Meaning.
-* [levin-1993]: English Verb Classes and Alternations.
-* [embick-2009]: Roots, states, and stative passives.
-* [arad-2005]: Roots and Patterns: Hebrew Morpho-syntax.
-* [rappaport-hovav-levin-2010]: Reflections on manner/result
-  complementarity.
-* [von-stechow-1996]: The different readings of wieder.
+* [beavers-koontz-garboden-2020]
+* [levin-1993]
+* [embick-2009]
+* [arad-2005]
+* [rappaport-hovav-levin-2010]
+* [von-stechow-1996]
 -/
 
 namespace Semantics.Root.Kinds
 
 /-! ### The two theses, at signature level -/
 
-/-- The ontological kinds — all the Bifurcation Thesis allows a root
-    to carry. -/
+/-- The ontological kinds are all that the Bifurcation Thesis allows a root to carry. -/
 def ontological : Root.Kinds := {.state, .manner}
 
-/-- A signature violates the Bifurcation Thesis ([embick-2009]; the
-    assumption of [arad-2005]) iff it carries templatic (eventive)
-    content — it is not bounded by `ontological`. -/
+/-- A signature violates the Bifurcation Thesis when it carries templatic, eventive content,
+that is, when it is not bounded by `ontological`. -/
 def ViolatesBifurcation (s : Root.Kinds) : Prop := ¬ s ≤ ontological
 
 instance (s : Root.Kinds) : Decidable s.ViolatesBifurcation :=
@@ -90,15 +98,13 @@ theorem violatesBifurcation_iff :
     ∀ s : Root.Kinds,
       s.ViolatesBifurcation ↔ .result ∈ s ∨ .cause ∈ s := by decide
 
-/-- Bifurcation violation is monotone: adding entailments cannot
-    repair a violation. -/
+/-- Bifurcation violation is monotone, so adding entailments cannot repair a violation. -/
 theorem violatesBifurcation_mono :
     ∀ {s t : Root.Kinds}, s ≤ t →
       s.ViolatesBifurcation → t.ViolatesBifurcation := by decide
 
-/-- A signature has both manner and result — the configuration
-    Manner/Result Complementarity ([rappaport-hovav-levin-2010])
-    claims no root realizes. -/
+/-- A signature has both manner and result, the configuration that Manner/Result
+Complementarity claims no root realizes. -/
 def HasMannerAndResult (s : Root.Kinds) : Prop :=
   {Root.Kind.manner, Root.Kind.result} ≤ s
 
@@ -110,8 +116,8 @@ theorem hasMannerAndResult_mono :
     ∀ {s t : Root.Kinds}, s ≤ t →
       s.HasMannerAndResult → t.HasMannerAndResult := by decide
 
-/-- Bifurcation is invariant under collocational closure: `close` only
-    adds `state`/`result` kinds forced by `cause`, never `manner`. -/
+/-- Bifurcation is invariant under collocational closure, since `close` only adds the `state`
+and `result` kinds forced by `cause`, never `manner`. -/
 theorem violatesBifurcation_close_iff :
     ∀ s : Root.Kinds,
       (close s).ViolatesBifurcation ↔ s.ViolatesBifurcation := by decide
@@ -144,33 +150,30 @@ namespace Semantics.Root
 
 /-! ### The two theses, at root level -/
 
-/-- A root *violates* Bifurcation iff it itself carries templatic
-    (eventive) meaning — change of state or cause
-    (`Root.Kinds.violatesBifurcation_iff`). -/
+/-- A root violates Bifurcation when it itself carries templatic, eventive meaning, a change of
+state or a cause. -/
 def ViolatesBifurcation (r : Root) : Prop :=
   r.kinds.ViolatesBifurcation
 
 instance (r : Root) : Decidable r.ViolatesBifurcation :=
   inferInstanceAs (Decidable (Root.Kinds.ViolatesBifurcation _))
 
-/-- Negation of `ViolatesBifurcation`: the root carries only
-    ontological entailments (state, manner). -/
+/-- A root respects Bifurcation when it carries only the ontological entailments, state and
+manner. -/
 def RespectsBifurcation (r : Root) : Prop :=
   ¬ r.ViolatesBifurcation
 
 instance (r : Root) : Decidable r.RespectsBifurcation :=
   inferInstanceAs (Decidable (¬ _))
 
-/-- The thesis as an order statement: a root respects Bifurcation iff
-    its signature is bounded by the ontological kinds. -/
+/-- A root respects Bifurcation iff its signature is bounded by the ontological kinds. -/
 theorem respectsBifurcation_iff_le {r : Root} :
     r.RespectsBifurcation ↔
       r.kinds ≤ Root.Kinds.ontological :=
   not_not
 
-/-- A root has both manner and result entailments — Manner/Result
-    Complementarity ([rappaport-hovav-levin-2010]) is the universal
-    claim that no root does. -/
+/-- A root has both manner and result entailments, which Manner/Result Complementarity claims
+no root does. -/
 def HasMannerAndResult (r : Root) : Prop :=
   r.kinds.HasMannerAndResult
 
@@ -186,103 +189,76 @@ instance (r : Root) : Decidable r.RespectsMannerResultComplementarity :=
 
 end Semantics.Root
 
+section Again
+
+open Presupposition
+
 namespace Verb.CosModel
 
-/-! ### Sublexical *again* — the restitutive/repetitive hierarchy (§1.3.2, exs (25)–(27))
+/-! ### Sublexical *again* and the hierarchy of its readings, (25)–(27)
 
-`again` is a presupposition trigger that can attach at three points in the
-change-of-state structure — the root, `vbecome`, or `vcause` — yielding the
-three readings of *Mary flattened the rug again* in (25): restitutive ("it
-had been flat", a prior **state**), repetitive over the change ("it had
-flattened", a prior **become** event), and repetitive over the causation
-("Mary had flattened it", a prior **cause** event). (26) (a simplified
-[von-stechow-1996]) defines `⟦again⟧ = λPλe. P(e) ∧ ∂∃e′[e′ ≪ e ∧ P(e′)]`.
-The reading hierarchy `(25c) ⊨ (25b) ⊨ (25a)` and the result-root collapse
-(§2.4, exs (43)/(45)) fall out of the change-of-state entailments of
-`Verb.CosModel`. -/
+*Again* is a presupposition trigger that can attach at three points in the change-of-state
+structure, the root, `vbecome` and `vcause`, which yields the three readings of *Mary flattened
+the rug again* in (25): the restitutive one, that the rug had been flat, the repetitive one over
+the change, that it had flattened, and the repetitive one over the causation, that Mary had
+flattened it. The entry (26) is `Presupposition.again`, with `≪` the precedence between
+eventualities. The hierarchy of the readings, (25c) entailing (25b) entailing (25a), and the
+collapse of the restitutive reading for result roots, (43) and (45), follow from the
+change-of-state entailments of `Verb.CosModel` by the monotonicity of the presupposition. -/
 
-variable {Entity State T : Type*} [LinearOrder T]
+variable {Entity State T : Type*} [LinearOrder T] (M : CosModel Entity State T)
+  {ltS : State → State → Prop} {ltE : Event T → Event T → Prop} {v : Verb} {x y : Entity}
 
-/-- (26): the sublexical modifier *again*. Given a precedence `≪` (`lt`) on an
-    eventuality type `ι` and a predicate `P`, *again* asserts `P e` and
-    presupposes a strictly earlier `e′ ≪ e` with `P e′`. The `∂` operator is
-    not analysed further — the earlier-eventuality conjunct *is* the
-    presupposition (`againPresup`). -/
-def again {ι : Type*} (lt : ι → ι → Prop) (P : ι → Prop) (e : ι) : Prop :=
-  P e ∧ ∃ e', lt e' e ∧ P e'
+/-- In (27a) *again* attaches low, to the root, and modifies the root state, which is the
+restitutive reading. -/
+def againRestitutive (ltS : State → State → Prop) (v : Verb) (x : Entity) : PartialProp State :=
+  again ltS (M.rootState v x)
 
-/-- The presupposition *again* contributes ((26), the `∂`-marked conjunct):
-    a strictly earlier eventuality also satisfying `P`. -/
-def againPresup {ι : Type*} (lt : ι → ι → Prop) (P : ι → Prop) (e : ι) : Prop :=
-  ∃ e', lt e' e ∧ P e'
+/-- In (27b) *again* attaches to `vbecomeP`, which is the repetitive reading over the change. -/
+def againRepetitiveBecome (ltE : Event T → Event T → Prop) (v : Verb) (x : Entity) :
+    PartialProp (Event T) :=
+  again ltE (M.inchoative v x)
 
-theorem again_iff {ι : Type*} (lt : ι → ι → Prop) (P : ι → Prop) (e : ι) :
-    again lt P e ↔ P e ∧ againPresup lt P e := Iff.rfl
+/-- In (27c) *again* attaches high, to `vcauseP`, which is the repetitive reading over the
+causation. -/
+def againRepetitiveCause (ltE : Event T → Event T → Prop) (v : Verb) (y x : Entity) :
+    PartialProp (Event T) :=
+  again ltE (M.causative v y x)
 
-/-- (27a): *again* attached low, to the root `√V`. The asserted/presupposed
-    predicate is the root **state** — the restitutive reading. -/
-def againRestitutive (M : CosModel Entity State T)
-    (ltS : State → State → Prop) (v : Verb) (x : Entity) (s : State) : Prop :=
-  again ltS (M.rootState v x) s
+/-- In the upper step of the hierarchy in (25), the presupposition of the repetitive reading
+over the causation gives an earlier change, since a causing event brings one about. -/
+theorem againRepetitiveCause_presup_entails_become {w : Event T}
+    (h : (M.againRepetitiveCause ltE v y x).presup w) :
+    ∃ w', ltE w' w ∧ ∃ e, M.inchoative v x e :=
+  again_presup_mono (Q := fun _ ↦ ∃ e, M.inchoative v x e)
+    (fun w' ↦ M.causative_entails_inchoative v y x w') w h
 
-/-- (27b): *again* attached to `vbecomeP` — the repetitive-over-change
-    reading. -/
-def againRepetitiveBecome (M : CosModel Entity State T)
-    (ltE : Event T → Event T → Prop) (v : Verb) (x : Entity)
-    (e : Event T) : Prop :=
-  again ltE (M.inchoative v x) e
+/-- In the lower step of the hierarchy in (25), the presupposition of the repetitive reading
+over the change gives an earlier root state, since a change brings one about. -/
+theorem againRepetitiveBecome_presup_entails_state {e : Event T}
+    (h : (M.againRepetitiveBecome ltE v x).presup e) :
+    ∃ e', ltE e' e ∧ ∃ s, M.become s e' ∧ M.rootState v x s :=
+  h
 
-/-- (27c): *again* attached high, to `vcauseP` — the
-    repetitive-over-causation reading. -/
-def againRepetitiveCause (M : CosModel Entity State T)
-    (ltE : Event T → Event T → Prop) (v : Verb) (y x : Entity)
-    (w : Event T) : Prop :=
-  again ltE (M.causative v y x) w
+/-- End to end, the hierarchy in (25) says that Mary's having flattened the rug before entails
+that it had been flat before. -/
+theorem againRepetitiveCause_presup_entails_state {w : Event T}
+    (h : (M.againRepetitiveCause ltE v y x).presup w) :
+    ∃ w', ltE w' w ∧ ∃ e s, M.become s e ∧ M.rootState v x s :=
+  again_presup_mono (Q := fun _ ↦ ∃ e s, M.become s e ∧ M.rootState v x s)
+    (fun w' ↦ M.causative_entails_resultState v y x w') w h
 
-/-- (25) hierarchy, upper step: the repetitive-causation presupposition (25c)
-    entails the repetitive-change presupposition (25b) — the earlier causing
-    event *is* an earlier change, by `causative_entails_inchoative`. -/
-theorem againPresup_cause_entails_become (M : CosModel Entity State T)
-    (lt : Event T → Event T → Prop) (v : Verb) (y x : Entity)
-    (w : Event T) (h : againPresup lt (M.causative v y x) w) :
-    ∃ w', lt w' w ∧ ∃ e, M.inchoative v x e := by
-  obtain ⟨w', hlt, hcaus⟩ := h
-  exact ⟨w', hlt, M.causative_entails_inchoative v y x w' hcaus⟩
-
-/-- (25) hierarchy, lower step: the repetitive-change presupposition (25b)
-    entails the restitutive presupposition (25a) — the earlier change gives
-    rise to an earlier root state, by `inchoative_entails_resultState`. -/
-theorem againPresup_become_entails_state (M : CosModel Entity State T)
-    (lt : Event T → Event T → Prop) (v : Verb) (x : Entity)
-    (e : Event T) (h : againPresup lt (M.inchoative v x) e) :
-    ∃ e', lt e' e ∧ ∃ s, M.become s e' ∧ M.rootState v x s := by
-  obtain ⟨e', hlt, hinch⟩ := h
-  exact ⟨e', hlt, M.inchoative_entails_resultState v x e' hinch⟩
-
-/-- (25) hierarchy, end to end: "Mary had flattened it before" ⊨ "it had
-    been flat before", composed through the change-of-state decomposition
-    (`causative_entails_resultState`). -/
-theorem againPresup_cause_entails_state (M : CosModel Entity State T)
-    (lt : Event T → Event T → Prop) (v : Verb) (y x : Entity)
-    (w : Event T) (h : againPresup lt (M.causative v y x) w) :
-    ∃ w', lt w' w ∧ ∃ e s, M.become s e ∧ M.rootState v x s := by
-  obtain ⟨w', hlt, hcaus⟩ := h
-  exact ⟨w', hlt, M.causative_entails_resultState v y x w' hcaus⟩
-
-/-- §2.4 (45): for a *result* root the root state itself entails a prior
-    change, so even the low/restitutive attachment of *again* carries a change
-    entailment — the restitutive reading collapses into the repetitive one
-    ("result roots never admit truly restitutive readings"). -/
-theorem result_restitution_entails_change (M : CosModel Entity State T)
-    (ltS : State → State → Prop) (v : Verb) (x : Entity) (s : State)
+/-- For a result root the root state itself entails a prior change, so even the restitutive
+attachment of *again* presupposes a change, (45): result roots never admit a truly restitutive
+reading. -/
+theorem againRestitutive_presup_entails_change {s : State}
     (hres : ∀ s, M.rootState v x s → ∃ e, M.become s e)
-    (h : againPresup ltS (M.rootState v x) s) :
-    ∃ s', ltS s' s ∧ ∃ e, M.become s' e := by
-  obtain ⟨s', hlt, hst⟩ := h
-  obtain ⟨e, hbec⟩ := hres s' hst
-  exact ⟨s', hlt, e, hbec⟩
+    (h : (M.againRestitutive ltS v x).presup s) : ∃ s', ltS s' s ∧ ∃ e, M.become s' e :=
+  again_presup_mono (Q := fun s' ↦ ∃ e, M.become s' e) hres s h
 
 end Verb.CosModel
+
+end Again
 
 namespace BeaversKoontzGarboden2020
 
@@ -291,34 +267,32 @@ open Semantics
 
 /-! ### The six representative roots -/
 
-/-- √flat — pure state. -/
+/-- √flat is a pure state root. -/
 def flat : Root := { name := "flat", entailments := {.state "flat"}, position := some .complement }
 
-/-- √jog — pure manner of motion. -/
+/-- √jog is a pure manner-of-motion root. -/
 def jog : Root :=
   { name := "jog", entailments := {.manner "jogging-gait"}, position := some .adjoined }
 
-/-- √blossom — result with no specified manner or cause (an
-    internally caused change of state). -/
+/-- √blossom is a result root with no specified manner or cause, an internally caused change
+of state. -/
 def blossom : Root :=
   { name := "blossom", entailments := {.result "flowering"}, position := some .complement }
 
-/-- √crack — caused result without specified manner. -/
+/-- √crack is a caused-result root without a specified manner. -/
 def crack : Root :=
   { name := "crack", entailments := {.result "fissured", .cause}, position := some .complement }
 
-/-- √hand — manner + cause + result, adjoined position. The
-    possession result is non-cancelable ("Mary handed John the book,
-    #but it never came to be on his person", ch. 3 (48)), so it is
-    root-entailed rather than implicated. -/
+/-- √hand carries manner, cause and result in the adjoined position. The possession result is
+not cancelable (*Mary handed John the book, #but it never came to be on his person*), so it is
+entailed by the root rather than implicated. -/
 def hand : Root :=
   { name := "hand",
     entailments := {.manner "by-hand-transfer", .result "in-recipient-possession", .cause},
     position := some .adjoined }
 
-/-- √drown — manner of killing (Levin 1993's *crucify, drown, hang,
-    electrocute* class; [beavers-koontz-garboden-2020] ch. 4):
-    manner + cause + result, complement position. -/
+/-- √drown is a manner-of-killing root, carrying manner, cause and result in the complement
+position. -/
 def drown : Root :=
   { name := "drown",
     entailments := {.manner "submersion-in-liquid", .result "dead", .cause},
@@ -380,9 +354,8 @@ theorem hand_drown_differ_in_position :
 
 /-! ### Falsifying the Bifurcation Thesis -/
 
-/-- √blossom entails change of state — templatic (`v_become`) content
-    in the root — falsifying Bifurcation without any manner or cause
-    entailment. -/
+/-- √blossom entails a change of state, the templatic content of `v_become`, in the root, and so
+falsifies Bifurcation without any manner or cause entailment. -/
 theorem blossom_violatesBifurcation : blossom.ViolatesBifurcation := by
   decide
 
@@ -424,8 +397,8 @@ theorem manner_result_complementarity_false :
 
 /-! ### Roots respecting each constraint -/
 
-/-- √flat (pure state) respects Bifurcation: its signature is bounded
-    by the ontological kinds. -/
+/-- √flat, a pure state root, respects Bifurcation, its signature being bounded by the
+ontological kinds. -/
 theorem flat_respectsBifurcation : flat.RespectsBifurcation := by decide
 
 /-- √jog (pure manner) respects Bifurcation. -/
@@ -450,17 +423,15 @@ def crackV : Verb := { form := "crack", frames := [ArgumentFrame.np], root := cr
 /-- `jog` the pure-manner activity verb (`Mary jogged`). -/
 def jogV : Verb := { form := "jog", frames := [ArgumentFrame.intransitive], root := jog }
 
-/-- √crack carries `.result`, so in **any** model its denotation entails the
-    result state — the non-cancelable result of [beavers-koontz-garboden-2020]
-    (6), derived from crack's signature rather than stipulated. -/
+/-- √crack carries `.result`, so in any model its denotation entails the result state. The
+non-cancelable result is derived from the signature of the root rather than stipulated. -/
 theorem crack_denote_entails_result {Entity State T : Type*} [LinearOrder T]
     (M : Verb.CosModel Entity State T) (y x : Entity) (e : Event T)
     (h : M.denote crackV y x e) : ∃ e' s, M.become s e' ∧ M.rootState crackV x s :=
   M.denote_result_entails_resultState crackV y x e (by decide) h
 
-/-- √jog has no `.result` (nor `.cause`), so its denotation is the bare manner
-    core — no `become`, no result state. Only the change-of-state root entails a
-    result. -/
+/-- √jog has neither `.result` nor `.cause`, so its denotation is the bare manner core, with no
+`become` and no result state. -/
 theorem jog_denote_eq_manner {Entity State T : Type*} [LinearOrder T]
     (M : Verb.CosModel Entity State T) (y x : Entity) :
     M.denote jogV y x = M.manner jogV := by
@@ -480,16 +451,15 @@ theorem jog_template : jog.template = .activity := by decide
 theorem blossom_template : blossom.template = .achievement := by decide
 theorem crack_template : crack.template = .accomplishment := by decide
 
-/-- √crack's template embeds a result state (it carries `result`); √jog's does
-    not — the *break*/*hit* contrast, now at the template layer and provably the
-    same signature fact as `crack_denote_entails_result`. -/
+/-- The template of √crack embeds a result state and that of √jog does not, which is the
+*break* and *hit* contrast at the template layer. -/
 theorem crack_template_hasResultState : crack.template.HasResultState := by decide
 
 theorem jog_template_no_resultState : ¬ jog.template.HasResultState := by decide
 
-/-- √crack's template embeds a result state, so by `denote_result_from_template`
-    its denotation entails the result state in any model — the template diagnostic
-    and the denotational entailment are *one* fact through `crack`'s `kinds`. -/
+/-- The template of √crack embeds a result state, so its denotation entails the result state in
+any model. The template diagnostic and the denotational entailment are one fact about the kinds
+of the root. -/
 theorem crack_template_forces_denote_result {Entity State T : Type*}
     [LinearOrder T] (M : Verb.CosModel Entity State T) (y x : Entity)
     (e : Event T) (h : M.denote crackV y x e) :
@@ -507,10 +477,10 @@ def TestedForCausative (c : LevinClass) : Prop :=
 
 instance : DecidablePred TestedForCausative := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The tested classes on which the root hypothesis and the class pages disagree: the verbs
-of creation and the psych causatives, whose causative-result roots the hypothesis predicts to
-alternate although the pages star the alternation; and the classes whose pages attest it
-without a manner-free causative root: the manner-and-result roots, the internally caused
+/-- The tested classes on which the root hypothesis and the class pages disagree. The verbs of
+creation and the psych causatives have causative-result roots that the hypothesis predicts to
+alternate although the pages star the alternation. The other classes have pages that attest it
+without a manner-free causative root, namely the manner-and-result roots, the internally caused
 results, the pure-manner roots with causative uses, and the property-concept roots of the
 emission classes. -/
 def rootHypothesisResidue : Finset LevinClass :=

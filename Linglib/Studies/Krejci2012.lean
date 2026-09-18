@@ -1,4 +1,5 @@
 import Linglib.Studies.KoontzGarboden2009
+import Linglib.Semantics.Presupposition.Iterative
 import Linglib.Fragments.English.Predicates
 import Linglib.Core.Order.UpperLower.Finset
 import Mathlib.Tactic.DeriveFintype
@@ -6,7 +7,7 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # Krejci (2012): Causativization as Antireflexivization
 
-This file formalizes [krejci-2012]'s account of why middle and ingestive verbs (*wash*,
+This file formalizes Krejci's account of why middle and ingestive verbs (*wash*,
 *dress*; *eat*, *learn*) causativize like intransitives in languages that mark causatives
 morphologically. The report's survey orders verb classes on a hierarchy of causativizability,
 unaccusatives before middles and ingestives before unergatives before simple transitives, on
@@ -14,7 +15,7 @@ which no language's causative process skips a tier. Its explanation is that the 
 of these verbs are lexically reflexive: their event structure is already causative, with the
 causer and the causee coidentified, and the lexical causative (*feed*, *teach*, transitive
 *wash* and *dress*) arises by antireflexivization, which delinks the two arguments. This is
-the reflexivization analysis of [koontz-garboden-2009] read in the opposite direction of
+the reflexivization analysis of Koontz-Garboden read in the opposite direction of
 derivation, so the simple form is that study's `reflexivize` applied to its `causative`.
 
 On a model of *eat*, *feed* and *make eat*, the entailments of the simple form split between
@@ -22,7 +23,8 @@ the causer and the causee of the lexical causative but stay with the causee of t
 periphrastic causative (`feed_not_makeEat`); denying the simple form while asserting the
 lexical causative is consistent on the bieventive representation (`not_eat_and_feed`) and
 contradictory under causer addition; the result state supports a restitutive reading of
-*again* that the repetitive reading does not exhaust; and *by itself* is licensed. The
+*again*, stated on `Presupposition.again`, that the repetitive reading does not exhaust; and
+*by itself* is licensed. The
 hierarchy is a linear order on `Tier`, a causative process is the set of tiers it reaches,
 and respecting the hierarchy is a lower-set condition (`Causative.RespectsHierarchy`),
 checked on the report's Table 2.8.
@@ -40,9 +42,9 @@ checked on the report's Table 2.8.
 ## References
 
 * [krejci-2012]
-* [koontz-garboden-2009] — reflexivization, *by itself*, and denial of the simple form
-* [chierchia-2004] — *by itself*
-* [dowty-1979] — the *again* test
+* [koontz-garboden-2009]
+* [chierchia-2004]
+* [dowty-1979]
 -/
 
 namespace Krejci2012
@@ -56,35 +58,40 @@ section Model
 variable {Entity State T : Type*} [LinearOrder T] (M : Verb.CosModel Entity State T)
   (manip : Entity → Event T → Prop) (v : Verb)
 
-/-- The lexical causative (38a): the causer's manipulation of food brings the causee to the
+/-- In the lexical causative (38a) the causer's manipulation of food brings the causee to the
 state of potential digestion. -/
 abbrev feed : Entity → Entity → Event T → Prop := causative M manip v
 
-/-- The simple form (37a) is the lexical causative on its diagonal: the eater manipulates the
-food and comes to digest it. Antireflexivization ((96)–(97)) delinks the two arguments. -/
+/-- The simple form (37a) is the lexical causative on its diagonal, where the eater manipulates
+the food and comes to digest it. Antireflexivization ((96)–(97)) delinks the two arguments. -/
 abbrev eat : Entity → Event T → Prop := reflexivize (feed M manip v)
 
-/-- The periphrastic causative *make eat*: a further causing event, with its own effector, of
-an eating. -/
+/-- The periphrastic causative *make eat* adds a further causing event, with its own effector,
+of an eating. -/
 def makeEat (z x : Entity) (e : Event T) : Prop :=
   ∃ w, M.effector z w ∧ M.cause w e ∧ eat M manip v x e
 
-/-- Causativization by causer addition ((94)), the analysis the report rejects: the simple
-form is an activity `ingest` with no causing subevent, and the causative adds a causer. -/
+/-- Causativization by causer addition ((94)) is the analysis the report rejects, on which the
+simple form is an activity `ingest` with no causing subevent and the causative adds a causer. -/
 def causerAddition (ingest : Entity → Event T → Prop) (y x : Entity) (e : Event T) : Prop :=
   ∃ w, M.effector y w ∧ M.cause w e ∧ ingest x e
 
-/-- The restitutive reading of *again*: the result state held before. -/
-def Restitutive (P : Entity → Event T → Prop) (x : Entity) (e : Event T) : Prop :=
-  P x e ∧ ∃ e', e'.τ.isBefore e.τ ∧ M.inchoative v x e'
+/-- An event precedes another when its run time is before the other's. -/
+abbrev Before (e' e : Event T) : Prop := e'.τ.isBefore e.τ
 
-/-- The repetitive reading of *again*: the whole event happened before. -/
+/-- On the restitutive reading *again* modifies the result state, so the sentence presupposes
+that the state came about before. -/
+def Restitutive (P : Entity → Event T → Prop) (x : Entity) (e : Event T) : Prop :=
+  (Presupposition.again Before (M.inchoative v x)).presup e ∧ P x e
+
+/-- On the repetitive reading *again* modifies the whole predicate, so the sentence presupposes
+that the whole event happened before. -/
 def Repetitive (P : Entity → Event T → Prop) (x : Entity) (e : Event T) : Prop :=
-  P x e ∧ ∃ e', e'.τ.isBefore e.τ ∧ P x e'
+  (Presupposition.again Before (P x)).holds e
 
 variable {M manip v} {x y z : Entity} {e : Event T}
 
-/-- The simple form is the derived inchoative of [koontz-garboden-2009]. -/
+/-- The simple form is the derived inchoative of `KoontzGarboden2009`. -/
 theorem eat_eq_anticausative : eat M manip v = anticausative M manip v := rfl
 
 /-- The eater manipulates food ((39a)). -/
@@ -114,13 +121,13 @@ theorem ingest_of_causerAddition {ingest : Entity → Event T → Prop}
 restitutive one. -/
 theorem restitutive_of_repetitive {P : Entity → Event T → Prop}
     (hP : ∀ x e, P x e → M.inchoative v x e) (h : Repetitive P x e) : Restitutive M v P x e :=
-  let ⟨he, e', hb, he'⟩ := h; ⟨he, e', hb, hP x e' he'⟩
+  ⟨Presupposition.again_presup_mono (hP x) e h.1, h.2⟩
 
-/-- *By itself* ((114a), after [koontz-garboden-2009]): eating has a causing subevent whose
-effector is the eater, once manipulating food makes one an effector. -/
+/-- Eating licenses *by itself* ((114a)), having a causing subevent whose effector is the
+eater, once manipulating food makes one an effector. -/
 theorem licensesBySelf_eat (h : ∀ x w, manip x w → M.effector x w) :
     LicensesBySelf M (eat M manip v) :=
-  λ _ _ he => let ⟨w, hm, hc⟩ := exists_manip_of_eat he; ⟨w, hc, h _ _ hm⟩
+  fun _ _ he ↦ let ⟨w, hm, hc⟩ := exists_manip_of_eat he; ⟨w, hc, h _ _ hm⟩
 
 end Model
 
@@ -159,65 +166,66 @@ def eating (causing : Event ℤ → Event ℤ → Prop) (eff : Participant → E
 /-- Mary manipulates the food. -/
 def spoonManip (y : Participant) (w : Event ℤ) : Prop := y = .mary ∧ At w 0 1
 
-/-- Spoon feeding ((44a)): Mary's manipulation of the food causes John's change. -/
+/-- In spoon feeding ((44a)) Mary's manipulation of the food causes John's change. -/
 def spoonFeeding : Verb.CosModel Participant Unit ℤ :=
-  eating (λ w e => At w 0 1 ∧ At e 1 2) spoonManip
+  eating (fun w e ↦ At w 0 1 ∧ At e 1 2) spoonManip
 
 /-- John manipulates the food. -/
 def supManip (y : Participant) (w : Event ℤ) : Prop := y = .john ∧ At w 0 1
 
-/-- Supervision ((48)): John's manipulation of the food and Mary's supervising action both
+/-- Under supervision ((48)) John's manipulation of the food and Mary's supervising action both
 cause John's change. -/
 def supervising : Verb.CosModel Participant Unit ℤ :=
-  eating (λ w e => (At w 0 1 ∨ At w 0 2) ∧ At e 1 2)
-    (λ y w => (y = .john ∧ At w 0 1) ∨ (y = .mary ∧ At w 0 2))
+  eating (fun w e ↦ (At w 0 1 ∨ At w 0 2) ∧ At e 1 2)
+    (fun y w ↦ (y = .john ∧ At w 0 1) ∨ (y = .mary ∧ At w 0 2))
 
 /-- Mary manipulates the food the first time, John the second. -/
 def twoManip (y : Participant) (w : Event ℤ) : Prop :=
   (y = .mary ∧ At w 0 1) ∨ (y = .john ∧ At w 3 4)
 
-/-- Two meals: Mary feeds John, and later John eats. -/
+/-- In the model of two meals Mary feeds John, and later John eats. -/
 def twoMeals : Verb.CosModel Participant Unit ℤ :=
-  eating (λ w e => (At w 0 1 ∧ At e 1 2) ∨ (At w 3 4 ∧ At e 4 5)) twoManip
+  eating (fun w e ↦ (At w 0 1 ∧ At e 1 2) ∨ (At w 3 4 ∧ At e 4 5)) twoManip
 
-/-- *I didn't eat pie; you fed pie to me* ((92), (106)) is consistent: John, fed by Mary, did
-not eat, since he manipulated no food ((44a)). -/
+/-- *I didn't eat pie; you fed pie to me* ((92), (106)) is consistent, since John, fed by Mary,
+did not eat, having manipulated no food ((44a)). -/
 theorem not_eat_and_feed :
     ¬ eat spoonFeeding spoonManip eatV .john e₀ ∧
       feed spoonFeeding spoonManip eatV .mary .john e₀ :=
-  ⟨λ ⟨_, ⟨h, _⟩, _⟩ => Participant.noConfusion h,
+  ⟨fun ⟨_, ⟨h, _⟩, _⟩ ↦ Participant.noConfusion h,
     ⟨w₀, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, (), ⟨w₀, rfl, rfl⟩, rfl⟩⟩
 
-/-- Feeding is not making eat: John, fed, was not made to eat, as whoever is made to eat
+/-- Feeding is not making eat, since John, fed, was not made to eat, as whoever is made to eat
 manipulates food ((47a)). -/
 theorem feed_not_makeEat :
     feed spoonFeeding spoonManip eatV .mary .john e₀ ∧
       ¬ makeEat spoonFeeding spoonManip eatV .mary .john e₀ :=
-  ⟨not_eat_and_feed.2, λ ⟨_, _, _, h⟩ => not_eat_and_feed.1 h⟩
+  ⟨not_eat_and_feed.2, fun ⟨_, _, _, h⟩ ↦ not_eat_and_feed.1 h⟩
 
-/-- Making eat is not feeding ((48)): Mary made John eat without touching any food. -/
+/-- Making eat is not feeding ((48)), since Mary made John eat without touching any food. -/
 theorem makeEat_not_feed :
     makeEat supervising supManip eatV .mary .john e₀ ∧
       ¬ feed supervising supManip eatV .mary .john e₀ :=
   ⟨⟨w₁, Or.inr ⟨rfl, rfl⟩, ⟨Or.inr rfl, rfl⟩, w₀, ⟨rfl, rfl⟩, ⟨Or.inl rfl, rfl⟩, (),
       ⟨w₀, Or.inl rfl, rfl⟩, rfl⟩,
-    λ ⟨_, ⟨h, _⟩, _⟩ => Participant.noConfusion h⟩
+    fun ⟨_, ⟨h, _⟩, _⟩ ↦ Participant.noConfusion h⟩
 
-/-- Being fed does not license *by itself* ((113d)): John reaches the state, but the effector
-of the causing event is Mary. -/
+/-- Being fed does not license *by itself* ((113d)), since John reaches the state but the
+effector of the causing event is Mary. -/
 theorem not_licensesBySelf_inchoative :
-    ¬ LicensesBySelf spoonFeeding (spoonFeeding.inchoative eatV) := λ h =>
+    ¬ LicensesBySelf spoonFeeding (spoonFeeding.inchoative eatV) := fun h ↦
   let ⟨_, _, hw⟩ := h .john e₀ ⟨(), ⟨w₀, rfl, rfl⟩, rfl⟩
   Participant.noConfusion hw.1
 
-/-- *John ate again* ((70), (79)) after Mary had fed him: the restitutive reading holds, the
-state of potential digestion having held before, and the repetitive reading fails. -/
+/-- When *John ate again* ((70), (79)) is said after Mary had fed him, the restitutive reading
+holds, the state of potential digestion having come about before, and the repetitive reading
+fails. -/
 theorem restitutive_not_repetitive :
     Restitutive twoMeals eatV (eat twoMeals twoManip eatV) .john e₁ ∧
       ¬ Repetitive (eat twoMeals twoManip eatV) .john e₁ :=
-  ⟨⟨⟨w₂, Or.inr ⟨rfl, rfl⟩, Or.inr ⟨rfl, rfl⟩, (), ⟨w₂, Or.inr ⟨rfl, rfl⟩⟩, rfl⟩,
-      e₀, by decide, (), ⟨w₀, Or.inl ⟨rfl, rfl⟩⟩, rfl⟩,
-    λ ⟨_, e', hb, w, hm, hc, _⟩ => by
+  ⟨⟨⟨e₀, by decide, (), ⟨w₀, Or.inl ⟨rfl, rfl⟩⟩, rfl⟩,
+      w₂, Or.inr ⟨rfl, rfl⟩, Or.inr ⟨rfl, rfl⟩, (), ⟨w₂, Or.inr ⟨rfl, rfl⟩⟩, rfl⟩,
+    fun ⟨⟨e', hb, w, hm, hc, _⟩, _⟩ ↦ by
       rcases hm with ⟨h, _⟩ | ⟨_, hw⟩
       · exact Participant.noConfusion h
       rcases hc with ⟨h, _⟩ | ⟨_, he⟩
@@ -245,7 +253,7 @@ def Tier.rank : Tier → ℕ
 
 instance : LinearOrder Tier := LinearOrder.lift' Tier.rank (by decide)
 
-/-- A causative process of a language: the tiers whose verbs it applies to. -/
+/-- A causative process of a language is the set of tiers whose verbs it applies to. -/
 structure Causative where
   language : String
   morpheme : String
@@ -253,12 +261,12 @@ structure Causative where
 
 namespace Causative
 
-/-- The hierarchy: a process reaching a tier reaches every tier before it. -/
+/-- A process respects the hierarchy when it reaches every tier before a tier it reaches. -/
 def RespectsHierarchy (c : Causative) : Prop := IsLowerSet (↑c.reach : Set Tier)
 
-instance : DecidablePred RespectsHierarchy := λ _ => inferInstanceAs (Decidable (IsLowerSet _))
+instance : DecidablePred RespectsHierarchy := fun _ ↦ inferInstanceAs (Decidable (IsLowerSet _))
 
-/-- The type of a process, (1) to (4) of Table 2.8: the last tier it reaches. -/
+/-- The type of a process, (1) to (4) of Table 2.8, is the last tier it reaches. -/
 def type (c : Causative) : WithBot Tier := c.reach.max
 
 /-- A process that respects the hierarchy reaches exactly the tiers up to its type. -/
@@ -268,7 +276,7 @@ theorem mem_reach_iff {c : Causative} (h : c.RespectsHierarchy) (t : Tier) :
 
 end Causative
 
-/-- Table 2.8: the surveyed languages, three of each type. Malayalam reaches transitives only
+/-- The surveyed languages of Table 2.8, three of each type. Malayalam reaches transitives only
 with an instrumental causee and is listed with the third type. -/
 def table : List Causative :=
   [⟨"Slave", "-h-", {.unaccusative}⟩,
