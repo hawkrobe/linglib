@@ -737,7 +737,6 @@ import Linglib.Fragments.English.Predicates.Copular
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.PropositionalLexemes
 import Linglib.Fragments.English.QuestionParticles
-import Linglib.Fragments.English.Questions
 import Linglib.Fragments.English.Reciprocals
 import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.English.TemporalDeictic
@@ -826,7 +825,6 @@ import Linglib.Fragments.HindiUrdu.Adposition
 import Linglib.Fragments.HindiUrdu.Comparison
 import Linglib.Fragments.HindiUrdu.Coordination
 import Linglib.Fragments.HindiUrdu.Particles
-import Linglib.Fragments.HindiUrdu.Questions
 import Linglib.Fragments.HindiUrdu.Relativization
 import Linglib.Fragments.HindiUrdu.WordOrder
 import Linglib.Fragments.Hixkaryana.Adposition
@@ -866,7 +864,6 @@ import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Fragments.Italian.PolarityMarking
 import Linglib.Fragments.Italian.Predicates
 import Linglib.Fragments.Italian.Pronouns
-import Linglib.Fragments.Italian.Questions
 import Linglib.Fragments.Italian.Tense
 import Linglib.Fragments.Januubi.Negation
 import Linglib.Fragments.Japanese.Case
@@ -884,7 +881,6 @@ import Linglib.Fragments.Japanese.PolarityItems
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Pronouns
 import Linglib.Fragments.Japanese.Prosody
-import Linglib.Fragments.Japanese.Questions
 import Linglib.Fragments.Japanese.Relativization
 import Linglib.Fragments.Japanese.TemporalConnectives
 import Linglib.Fragments.Japanese.TemporalDeictic

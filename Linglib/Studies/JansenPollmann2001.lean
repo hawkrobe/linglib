@@ -202,8 +202,8 @@ phrase, [hurford-1975]'s `[NUMBER M]` with a digit NUMBER and a pure ten-power M
 *four hundred*. The favourite-quantity properties are facts about numeral expression shape. -/
 theorem hasKness_ten_iff_phrase (n : ℕ) :
     HasKness 10 n ↔ ∃ m ≤ 8, ∃ k,
-      n = (Syntax.Numeral.Phrase.mk (.tally m) (.tenPow k)).value := by
-  simp only [Syntax.Numeral.Phrase.value_tally_tenPow]
+      n = (Numeral.Phrase.mk (.tally m) (.tenPow k)).value := by
+  simp only [Numeral.Phrase.value_tally_tenPow]
   constructor
   · rintro ⟨b, m, hm1, hm, rfl⟩
     exact ⟨m - 1, by omega, b, by rw [Nat.sub_add_cancel hm1, Nat.mul_assoc, ← Nat.pow_succ']⟩

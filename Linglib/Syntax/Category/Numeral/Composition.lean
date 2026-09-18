@@ -50,7 +50,7 @@ which of these structures surface) and `Studies/JansenPollmann2001.lean`
   (the tally structure his rule schema (6) generates)
 -/
 
-namespace Syntax.Numeral
+namespace Numeral
 
 /-! ### The phrase-structure categories (his (2)) -/
 
@@ -181,4 +181,4 @@ theorem calculate_succ_iterate (x y : ℕ) :
     | succ x ih =>
       simp only [Function.iterate_succ_apply', ← ih, calculate]; ring
 
-end Syntax.Numeral
+end Numeral

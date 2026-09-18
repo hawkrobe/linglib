@@ -187,10 +187,10 @@ theorem cardMod_cardMod_atoms {m : ℕ} (hm : 1 ≤ m) (n : ℕ) (P : α → Pro
 
 /-- Iterated modification computes [hurford-1975]'s PHRASE projection
 rule: `⟦[n m] books⟧` counts `(Phrase.mk n m).value` atoms. -/
-theorem iterated_matches_phrase (n : Syntax.Numeral.Number)
-    (m : Syntax.Numeral.M) (P : α → Prop) (x : Finset α) :
+theorem iterated_matches_phrase (n : Numeral.Number)
+    (m : Numeral.M) (P : α → Prop) (x : Finset α) :
     cardMod n.value (cardMod m.value (IsAtomOf P)) x ↔
-      x.card = (Syntax.Numeral.Phrase.mk n m).value ∧ ∀ a ∈ x, P a :=
+      x.card = (Numeral.Phrase.mk n m).value ∧ ∀ a ∈ x, P a :=
   cardMod_cardMod_atoms m.value_pos n.value P x
 
 /-! ### Ruling out the predicate theory (§2.2, (12)–(13)) -/
