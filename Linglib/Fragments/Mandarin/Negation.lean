@@ -24,9 +24,9 @@ are the rows of `Data.Examples.JinKoenig2021`.
 * [jin-koenig-2021]
 -/
 
-namespace Mandarin.Negation
+open Negation
 
-open Syntax.Negation
+namespace Mandarin.Negation
 
 /-- A Mandarin standard negator: its exponent, the aspectual domain it negates, the verb that
 may follow it as part of the negator, and the aspect particles of the affirmative that do not

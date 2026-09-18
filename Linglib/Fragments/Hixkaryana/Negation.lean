@@ -14,9 +14,9 @@ The examples are those of [miestamo-2005], from Derbyshire's grammar.
 * [miestamo-2005]
 -/
 
-namespace Hixkaryana.Negation
+open Negation Morphology
 
-open Syntax.Negation Morphology
+namespace Hixkaryana.Negation
 
 /-- The deverbalizing negative suffix *-hɨra*. -/
 def hira : Marker := { pieces := [[.suff "hɨra"]] }

@@ -12,9 +12,9 @@ changes, in any person or tense. The examples are those of [miestamo-2005].
 * [miestamo-2005]
 -/
 
-namespace German.Negation
+open Negation Morphology
 
-open Syntax.Negation Morphology
+namespace German.Negation
 
 /-- *nicht*, the standard negator. -/
 def nicht : Marker := { pieces := [[.free "nicht"]] }

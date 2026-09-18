@@ -26,11 +26,11 @@ The examples are those of [miestamo-2005], from Hinds's grammar.
 * [miestamo-2005]
 -/
 
+open Negation
+
 namespace Japanese.Negation
 
 open Morphology (MorphCategory)
-open Syntax.Negation
-
 /-- The plain negative suffix *-na-*, inflected as an adjective. -/
 def na : Marker := { pieces := [[.suff "na"]] }
 

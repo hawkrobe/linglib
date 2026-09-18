@@ -17,7 +17,9 @@ same morphemes, semantically vacuous under triggers like 'fear' and
 'before'.
 
 This file records a language's negation marker(s) and the strategy
-classifying them, with per-ISO access to the WALS negation chapters.
+classifying them, with per-ISO access to the WALS negation chapters. The
+declarations share the root `Negation` namespace with the classification of
+expletive negation in `Semantics/Polarity/ExpletiveNegation.lean`.
 
 ## Main declarations
 
@@ -50,7 +52,7 @@ marker-side data; they live in `Fragments/{Lang}/PolarityItems.lean`.
 * [jin-koenig-2021]
 -/
 
-namespace Syntax.Negation
+namespace Negation
 
 open Morphology (Morph)
 
@@ -152,4 +154,4 @@ theorem toGramStage_auxiliary_iff_morphemeType_auxVerb (s : Strategy) :
       s.morphemeType = .negativeAuxiliaryVerb := by
   cases s <;> decide
 
-end Syntax.Negation
+end Negation

@@ -14,12 +14,14 @@ in that study.
 * [tsiakmakis-2025]
 -/
 
+open Negation
+
 namespace Greek.StandardModern.Negation
 
 /-- *dhen* (δεν), the negator of indicative clauses. -/
-def dhen : Syntax.Negation.Marker := { pieces := [[.free "dhen"]] }
+def dhen : Marker := { pieces := [[.free "dhen"]] }
 
 /-- *min* (μην), the negator of imperatives and subjunctive clauses. -/
-def min : Syntax.Negation.Marker := { pieces := [[.free "min"]] }
+def min : Marker := { pieces := [[.free "min"]] }
 
 end Greek.StandardModern.Negation

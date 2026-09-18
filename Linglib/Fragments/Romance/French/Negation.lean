@@ -16,9 +16,9 @@ its own, without *pas*, *ne* occurs expletively under *avoir peur* 'fear', *avan
 * [jin-koenig-2021]
 -/
 
-namespace French.Negation
+open Negation Morphology
 
-open Syntax.Negation Morphology
+namespace French.Negation
 
 /-- *ne … pas*, the standard negator. -/
 def nePas : Marker := { pieces := [[.procl "ne"], [.free "pas"]] }

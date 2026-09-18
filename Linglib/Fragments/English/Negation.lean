@@ -15,9 +15,9 @@ The examples are those of [miestamo-2005].
 * [miestamo-2005]
 -/
 
-namespace English.Negation
+open Negation Morphology
 
-open Syntax.Negation Morphology
+namespace English.Negation
 
 /-- *not*, the standard negator. -/
 def not : Marker := { pieces := [[.free "not"]] }

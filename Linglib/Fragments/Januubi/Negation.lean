@@ -14,9 +14,9 @@ examples are the rows of `Data.Examples.JinKoenig2021`.
 * [jin-koenig-2021]
 -/
 
-namespace Januubi.Negation
+open Negation
 
-open Syntax.Negation
+namespace Januubi.Negation
 
 /-- *maa*, the standard negator. -/
 def maa : Marker := { pieces := [[.free "maa"]] }

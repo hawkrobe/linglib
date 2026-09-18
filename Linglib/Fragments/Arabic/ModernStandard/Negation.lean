@@ -5,7 +5,7 @@ import Linglib.Syntax.Negation
 
 The MSA standard-negation inventory — four preverbal particles (*laa*, *lam*,
 *lan*, *maa*) plus the inflecting copular verb *lays-a* 'to not be' — typed
-against `Syntax.Negation`.
+against `Negation`.
 
 ## Main definitions
 
@@ -27,9 +27,9 @@ coding is recorded here.
 * [benmamoun-2000] ch. 6.
 -/
 
-namespace Arabic.ModernStandard.Negation
+open Negation
 
-open Syntax.Negation
+namespace Arabic.ModernStandard.Negation
 
 /-- The five-marker inventory: *laa* (general / present), *lam* (past),
     *lan* (future), *maa* (past, colloquial-leaning), *lays-a* (copular). The

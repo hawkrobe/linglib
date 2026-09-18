@@ -14,9 +14,9 @@ that of [miestamo-2005].
 * [miestamo-2005]
 -/
 
-namespace Russian.Negation
+open Negation Morphology
 
-open Syntax.Negation Morphology
+namespace Russian.Negation
 
 /-- *ne* (не), the standard negator. -/
 def ne : Marker := { pieces := [[.free "ne"]] }
