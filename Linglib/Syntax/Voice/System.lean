@@ -13,7 +13,7 @@ selects an oblique as pivot (§8.5.1, §8.5.2). Of the four characteristics of
 an Austronesian-type voice system in [erlewine-levin-van-urk-2017], the
 privileged argument realized in one form or position whatever its function
 (4a) is `Voice.pivot`, and verb morphology varying with its choice, obliques
-included (4b), is `Voice.coding` and `Multiple`; the extraction restriction to
+included (4b), is `Voice.marker` and `Multiple`; the extraction restriction to
 the pivot (4c) and the marking of non-pivot subjects (4d) are recorded where a
 fragment states them.
 
