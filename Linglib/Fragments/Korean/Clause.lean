@@ -6,57 +6,32 @@ import Linglib.Syntax.Clause.Chaining
 /-!
 # Korean converbs
 
-Korean chains clauses with conjunctive suffixes, Sohn's term for its converbs, on the
-nonfinite verb of each medial clause before a single final verb, and a nonfinite verb keeps
-its voice, subject-honorific and tense slots but takes no sentence ender, so no speech level
-or sentence type. There is no switch-reference: each suffix encodes the relation between its
-clause and the next. The coordinative *-go* 'and' is the most frequent, and its formal
-counterpart is *-(eu)na*; the contracted *-go(seo)* and *-eoseo* 'and then' sequence events,
-the choice between them depending on the verb and on whether the subjects are the same, and
-*-eoseo* also gives the manner, *georeoseo* 'by walking', and, with different subjects, the
-cause; *-jamaja* 'as soon as' and the transferentive *-daga* 'and then, while', which
-repeated marks alternation, also sequence, while *-myeonseo* 'while' marks simultaneity.
-*-(eu)nikka* 'because, as' gives the reason as the speaker presents it; *-(eu)myeon* 'if,
-when' conditions; *-jiman*, *-(eu)na* and *-eodo* 'but, although, even if' concede;
-*-dorok* 'so that, to the extent that, until' gives a result or limit; *-(eu)ryeogo* 'intending
-to' and *-(eu)reo* 'in order to' give the intention or purpose; *-(eu)ni* 'since, as, after'
-gives the reason or the antecedent; *-neunde* 'given that, and, but' supplies background; and
-*-geona* and *-deunji* 'or' disjoin. Every conjunctive suffix admits the subject honorific
-before it, but only some the past or perfect *-eoss* and fewer still the modal *-gess*, and
-never the addressee honorific. Tense before the suffix is relative to the final verb. Sohn
-marks *-eoseo*, *-go(seo)*, *-dorok*, *-(eu)ryeogo*, *-(eu)reo* and *-jamaja* as excluding
-the past, and with it the modal; *-myeonseo* excludes both in its simultaneous reading, the
-tense of the final clause governing its clause, and admits both in its concessive 'while …
-yet' reading; before *-(eu)myeon* the past marks a hypothetical; *-eodo* and *-deunji* admit
-the past but not the modal; and *-go*, *-(eu)na*, *-jiman*, *-neunde*, *-(eu)ni*,
-*-(eu)nikka*, *-daga* and *-geona* admit both. The negative adverbs *an* and *mot* and the
-negative verb *malda* occur in a medial clause, their choice governed by the sentence type of
-the final clause. The suffixes are entered in the Revised Romanization; Sohn writes *-ko*,
-*-ko(se)*, *-(u)myense*, *-e(se)*, *-(u)myen*, *-ciman*, *-(u)na*, *-eto*, *-tolok*,
-*-(u)nikka*, *-(u)ni*, *-nuntey*, *-(u)lyeko*, *-(u)le*, *-taka*, *-ca(maca)*, *-kena* and
-*-tunci*.
-
-## Main definitions
-
-* `Korean.Converb` — the eighteen conjunctive suffixes, with their morphs (`morphs`,
-  `form`), gloss, the relations they encode (`relations`), whether the past (`AllowsTense`)
-  and the modal (`AllowsModal`) may precede them, and their verb form (`verbForm`); they are
-  an instance of `Clause.Chaining.MedialForm`
-* `Korean.Converb.allowsModal_imp_allowsTense` — a suffix admitting the modal admits the past
+Korean chains clauses with conjunctive suffixes, Sohn's term for its converbs, on the nonfinite
+verb of each medial clause before a single final verb, without switch-reference. The nonfinite
+verb keeps its voice, subject-honorific and tense slots but takes no sentence ender. *-go*
+'and' coordinates, *-go(seo)*, *-eoseo*, *-jamaja* and *-daga* sequence events, *-myeonseo*
+'while' marks simultaneity, *-eoseo*, *-(eu)ni* and *-(eu)nikka* give the reason,
+*-(eu)myeon* 'if' conditions, *-jiman*, *-(eu)na* and *-eodo* concede, *-dorok* gives a
+result or limit, *-(eu)ryeogo* and *-(eu)reo* the purpose, *-neunde* background, and *-geona*
+and *-deunji* 'or' disjoin. Tense before a suffix is relative to the final verb; some suffixes
+admit the past *-eoss* and the modal *-gess* before them and others exclude both. The negative
+adverbs and the negative verb occur in a medial clause, governed by the sentence type of the
+final clause. Forms are in the Revised Romanization; Sohn writes *-ko*, *-e(se)*,
+*-(u)myense*, *-(u)nikka*, *-ciman*, *-tolok*, *-(u)lyeko*, *-taka*, *-ca(maca)*, *-kena*.
 
 ## Implementation notes
 
-`AllowsTense` and `AllowsModal` follow the features Sohn attaches to each conjunctor in his
-survey and, for *-jamaja*, *-geona* and *-deunji*, which the list omits, his statements that
-the suffixes excluding the past exclude every mood suffix, his example of the past before
-*-geona*, and the synonymy of *-geona* with *-deunji*. The clause-chaining typology over the
-converbs is in `Studies/SarvasyAikhenvald2025.lean`; disjunction and background are
-relations the inventory of interclausal relations does not name.
+* `AllowsTense` and `AllowsModal` follow the features Sohn attaches to each conjunctor and,
+  for *-geona*, *-deunji* and *-jamaja*, which his list omits, the attachment statements of
+  the National Institute of Korean Language's dictionary; Sohn marks *-tunci* as excluding
+  the modal, which the dictionary admits in one of its senses.
+* The clause-chaining typology over the converbs is in `Studies/SarvasyAikhenvald2025.lean`.
 
 ## References
 
 * [sohn-1994]
 * [sohn-1999]
+* [nikl-2016]
 -/
 
 namespace Korean
@@ -103,7 +78,7 @@ inductive Converb where
   | jamaja
   /-- *-geona* 'or'. -/
   | geona
-  /-- *-deunji* 'or', the formal disjunction. -/
+  /-- *-deunji* 'or', beside *-geona*. -/
   | deunji
   deriving DecidableEq, Repr, Fintype
 
@@ -182,10 +157,10 @@ instance : DecidablePred AllowsTense :=
 *-myeonseo* only in its concessive reading. -/
 def AllowsModal (c : Converb) : Prop :=
   c = go ∨ c = myeonseo ∨ c = myeon ∨ c = jiman ∨ c = na ∨ c = nikka ∨ c = ni ∨ c = neunde ∨
-    c = daga ∨ c = geona
+    c = daga ∨ c = geona ∨ c = deunji
 
 instance : DecidablePred AllowsModal :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _))
+  fun _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _))
 
 /-- A converb admitting the modal admits the past, since the clauses that exclude the past
 exclude every mood suffix. -/
