@@ -1,4 +1,5 @@
 import Linglib.Syntax.Tree.Basic
+import Linglib.Syntax.Command
 import Linglib.Semantics.Questions.Highlighting
 
 /-!

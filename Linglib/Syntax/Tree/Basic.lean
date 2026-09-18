@@ -392,7 +392,7 @@ end LeafSubst
 /-! ### Positions
 
 Through the `Branching` instance a tree takes Gorn addresses (`Branching.subtreeAt`), the
-dominance order on its positions (`Branching.toTreeOrder`) and the command relations over it.
+dominance order on its positions and, in `Syntax/Command.lean`, the command relations.
 -/
 
 open Core.Order

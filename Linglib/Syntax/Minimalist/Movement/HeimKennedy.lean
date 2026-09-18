@@ -1,4 +1,4 @@
-import Linglib.Core.Order.Command
+import Mathlib.Data.Set.Defs
 
 /-!
 # Degree movement

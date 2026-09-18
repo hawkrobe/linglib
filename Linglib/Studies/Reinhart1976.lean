@@ -72,17 +72,13 @@ instance (t : Tree Cat W) : DecidableRel (PrecedesAndCommands t) := λ _ _ => by
 /-- C-command entails command (49) whenever every S node branches. -/
 theorem cCommands_commands {t : Tree Cat W} {a b : TreePath}
     (hS : labeled t {.S} ⊆ {p | isBranchingAt t p}) (h : CCommands t a b) : Commands t a b :=
-  ⟨command_antitone _ _ _ hS h.1, h.2⟩
+  ⟨commandRelation_anti hS h.1, h.2⟩
 
 /-- The c-command domain is a constituent (38): with `m` the first branching node dominating
 `a`, the nodes `a` c-commands, dominance aside, are those `m` dominates. -/
 theorem cCommandAt_eq_Ici {t : Tree C W} {a m : TreePath} (hm : m < a) (hb : isBranchingAt t m)
-    (hmax : ∀ x < a, isBranchingAt t x → x ≤ m) : {b | (a, b) ∈ cCommandAt t} = Set.Ici m := by
-  ext b
-  simp only [Set.mem_ofPred_eq, Set.mem_Ici, cCommandAt, commandRelation, Core.Order.upperBounds,
-    TreeOrder.properDom]
-  exact ⟨λ h => h m ⟨⟨hm.le, hm.ne⟩, hb⟩,
-    λ h x ⟨⟨hxa, hne⟩, hx⟩ => (hmax x (lt_of_le_of_ne hxa hne) hx).trans h⟩
+    (hmax : ∀ x < a, isBranchingAt t x → x ≤ m) : {b | (a, b) ∈ cCommandAt t} = Set.Ici m :=
+  commandRelation_eq_Ici hb hm fun x hx hxa => hmax x hxa hx
 
 /-- Type I of (50): `a` c-commands `b` but `b` precedes `a`. -/
 def TypeI (t : Tree Cat W) (a b : TreePath) : Prop := CCommands t a b ∧ TreePath.Precedes b a
