@@ -32,8 +32,9 @@ the sample switch-reference goes with the loss or reduction of medial tense (`sr
 ## Implementation notes
 
 The Korean and Turkish inventories come from reference grammars rather than the volume,
-whose introduction discusses both languages; the volume's Turkish suffix list overlaps but
-does not coincide with the grammar's. Nungon's medial polarity is the earlier formalization's
+whose introduction discusses both languages; the volume's Turkish suffix list adds the two
+converbial subordinators on a doubled verb, which the fragment records outside its carrier. Nungon's
+medial polarity is the earlier formalization's
 value, which chapter 7 does not settle. Ku Waru and Korowai, formerly in the sample, are
 dropped: the former has no chapter in the volume and the latter's switch-reference system was
 misrecorded as tracking several arguments.
@@ -84,19 +85,19 @@ instance : (L : Language) → MedialForm L.Forms
   | turkish => inferInstanceAs (MedialForm Turkish.Converb)
 
 /-- The tense medial verbs retain, which is none in Nungon, relative tense fused with the
-marking in Manambu, tense before the converbs that admit it in Korean, and tense on some
-converbs in Turkish. -/
+marking in Manambu, and tense before the converbs that admit it in Korean and in Turkish. -/
 def tense : Language → CategoryRetention
   | nungon => .absent
   | manambu => .restricted
   | korean => .ofPred Korean.Converb.AllowsTense
-  | turkish => .restricted
+  | turkish => .ofPred Turkish.Converb.Tensed
 
-/-- The mood medial verbs retain, which is none in the two Papuan languages and a reduced
-range in Korean and Turkish. -/
+/-- The mood medial verbs retain, which is none in the two Papuan languages, a reduced range
+in Korean, and in Turkish the modality markers before the converbs on a tensed stem. -/
 def mood : Language → CategoryRetention
   | nungon | manambu => .absent
-  | korean | turkish => .restricted
+  | korean => .restricted
+  | turkish => .ofPred Turkish.Converb.Tensed
 
 /-- Independent negation of the medial clause, which in Manambu, Korean and Turkish is as far
 as the forms admit it. -/
@@ -107,12 +108,13 @@ def polarity : Language → CategoryRetention
   | turkish => .ofPred Turkish.Converb.Negatable
 
 /-- The aspect medial verbs retain, which is none in Nungon, in Manambu aspect only before the
-causal marker, which takes the tensed cross-referencing of a main verb, and a reduced range
-in Korean and Turkish. -/
+causal marker, which takes the tensed cross-referencing of a main verb, a reduced range in
+Korean, and in Turkish the aspect markers before the converbs on a tensed stem. -/
 def aspect : Language → CategoryRetention
   | nungon => .absent
   | manambu => .ofPred fun m : Manambu.MedialMarker ↦ m.inflection = .tensedSubject
-  | korean | turkish => .restricted
+  | korean => .restricted
+  | turkish => .ofPred Turkish.Converb.Tensed
 
 /-- The retention profile of a language's medial verbs, agreement read off its forms. -/
 def medialMorph (L : Language) : MedialMorphProfile
@@ -170,7 +172,7 @@ theorem tense_from_final_verb :
   decide
 
 /-- Korean and Turkish negate medial clauses individually, since every Korean suffix admits
-negation and every Turkish converb has a negative form or is negative itself. -/
+negation and every Turkish converb admits the negative before it or is negative itself. -/
 theorem negated_individually :
     Language.polarity .korean = .full ∧ Language.polarity .turkish = .full := by
   decide
