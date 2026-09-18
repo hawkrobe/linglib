@@ -1,5 +1,6 @@
 import Linglib.Semantics.Root.Defs
 import Linglib.Semantics.ArgumentStructure.Verb
+import Linglib.Semantics.ArgumentStructure.ChangeOfState
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Semantics.ArgumentStructure.LevinTheory
 import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
@@ -149,76 +150,78 @@ instance (r : Root) : Decidable r.RespectsMannerResultComplementarity :=
 
 end Semantics.Root
 
+namespace BeaversKoontzGarboden2020
+
 section Again
 
-open Presupposition
+open Presupposition ArgumentStructure
 
-namespace Verb.Model
-
-/-! ### Sublexical *again* and the hierarchy of its readings, (25)–(27)
+/-! ### Sublexical *again* and the hierarchy of its readings
 
 *Again* is a presupposition trigger that can attach at three points in the change-of-state
 structure, the root, `vbecome` and `vcause`, which yields the three readings of *Mary flattened
-the rug again* in (25): the restitutive one, that the rug had been flat, the repetitive one over
-the change, that it had flattened, and the repetitive one over the causation, that Mary had
-flattened it. The entry (26) is `Presupposition.again`, with `≪` the precedence between
-eventualities. The hierarchy of the readings, (25c) entailing (25b) entailing (25a), and the
-collapse of the restitutive reading for result roots, (43) and (45), follow from the
-change-of-state entailments of `Verb.Model` by the monotonicity of the presupposition. -/
+the rug again*: the restitutive one, that the rug had been flat, the repetitive one over the
+change, that it had flattened, and the repetitive one over the causation, that Mary had
+flattened it. The entry for *again* is `Presupposition.again`, with the precedence between
+eventualities as its relation. The hierarchy of the readings and the collapse of the
+restitutive reading for result roots follow from the change-of-state entailments by the
+monotonicity of the presupposition. -/
 
-variable {Entity State Event : Type*} (M : Verb.Model Entity State Event)
-  {ltS : State → State → Prop} {ltE : Event → Event → Prop} {v : Verb} {x y : Entity}
+variable {Entity State Event : Type*} (M : ChangeOfStateModel Entity State Event)
+  {ltS : State → State → Prop} {ltE : Event → Event → Prop} {P : Entity → State → Prop}
+  {x y : Entity}
 
-/-- In (27a) *again* attaches low, to the root, and modifies the root state, which is the
+/-- *Again* attached low, to the root, modifies the root's state predicate `P`, which is the
 restitutive reading. -/
-def againRestitutive (ltS : State → State → Prop) (v : Verb) (x : Entity) : PartialProp State :=
-  again ltS (M.rootState v x)
+def againRestitutive (ltS : State → State → Prop) (P : Entity → State → Prop) (x : Entity) :
+    PartialProp State :=
+  again ltS (P x)
 
-/-- In (27b) *again* attaches to `vbecomeP`, which is the repetitive reading over the change. -/
-def againRepetitiveBecome (ltE : Event → Event → Prop) (v : Verb) (x : Entity) :
-    PartialProp (Event) :=
-  again ltE (M.inchoative v x)
+/-- *Again* attached to `vbecomeP` is the repetitive reading over the change. -/
+def againRepetitiveBecome (ltE : Event → Event → Prop) (P : Entity → State → Prop)
+    (x : Entity) : PartialProp Event :=
+  again ltE (M.vBecome P x)
 
-/-- In (27c) *again* attaches high, to `vcauseP`, which is the repetitive reading over the
-causation. -/
-def againRepetitiveCause (ltE : Event → Event → Prop) (v : Verb) (y x : Entity) :
-    PartialProp (Event) :=
-  again ltE (M.causative v y x)
+/-- *Again* attached high, to `vcauseP`, is the repetitive reading over the causation. -/
+def againRepetitiveCause (ltE : Event → Event → Prop) (P : Entity → State → Prop)
+    (y x : Entity) : PartialProp Event :=
+  again ltE (M.vCause (M.vBecome P x) y)
 
-/-- In the upper step of the hierarchy in (25), the presupposition of the repetitive reading
-over the causation gives an earlier change, since a causing event brings one about. -/
+variable {M}
+
+/-- In the upper step of the hierarchy, the presupposition of the repetitive reading over the
+causation gives an earlier change, since a causing event brings one about. -/
 theorem againRepetitiveCause_presup_entails_become {w : Event}
-    (h : (M.againRepetitiveCause ltE v y x).presup w) :
-    ∃ w', ltE w' w ∧ ∃ e, M.inchoative v x e :=
-  again_presup_mono (Q := fun _ ↦ ∃ e, M.inchoative v x e)
-    (fun _ ↦ exists_inchoative_of_causative) w h
+    (h : (againRepetitiveCause M ltE P y x).presup w) :
+    ∃ w', ltE w' w ∧ ∃ e, M.vBecome P x e :=
+  again_presup_mono (Q := fun _ ↦ ∃ e, M.vBecome P x e)
+    (fun _ ↦ ChangeOfStateModel.exists_of_vCause) w h
 
-/-- In the lower step of the hierarchy in (25), the presupposition of the repetitive reading
-over the change gives an earlier root state, since a change brings one about. -/
+/-- In the lower step of the hierarchy, the presupposition of the repetitive reading over the
+change gives an earlier root state, since a change brings one about. -/
 theorem againRepetitiveBecome_presup_entails_state {e : Event}
-    (h : (M.againRepetitiveBecome ltE v x).presup e) :
-    ∃ e', ltE e' e ∧ ∃ s, M.become s e' ∧ M.rootState v x s :=
+    (h : (againRepetitiveBecome M ltE P x).presup e) :
+    ∃ e', ltE e' e ∧ ∃ s, M.become s e' ∧ P x s :=
   h
 
-/-- End to end, the hierarchy in (25) says that Mary's having flattened the rug before entails
-that it had been flat before. -/
+/-- End to end, the hierarchy says that Mary's having flattened the rug before entails that it
+had been flat before. -/
 theorem againRepetitiveCause_presup_entails_state {w : Event}
-    (h : (M.againRepetitiveCause ltE v y x).presup w) :
-    ∃ w', ltE w' w ∧ ∃ e s, M.become s e ∧ M.rootState v x s :=
-  again_presup_mono (Q := fun _ ↦ ∃ e s, M.become s e ∧ M.rootState v x s)
-    (fun _ ↦ exists_rootState_of_causative) w h
+    (h : (againRepetitiveCause M ltE P y x).presup w) :
+    ∃ w', ltE w' w ∧ ∃ e s, M.become s e ∧ P x s :=
+  again_presup_mono (Q := fun _ ↦ ∃ e s, M.become s e ∧ P x s)
+    (fun _ ↦ ChangeOfStateModel.exists_of_vCause) w h
 
-/-- For a result root the root state itself entails a prior change, so even the restitutive
-attachment of *again* presupposes a change, (45): result roots never admit a truly restitutive
-reading. -/
-theorem againRestitutive_presup_entails_change {s : State}
-    (hres : ∀ s, M.rootState v x s → ∃ e, M.become s e)
-    (h : (M.againRestitutive ltS v x).presup s) : ∃ s', ltS s' s ∧ ∃ e, M.become s' e :=
-  again_presup_mono (Q := fun s' ↦ ∃ e, M.become s' e) hres s h
-
-end Verb.Model
+/-- For a state predicate that entails change, even the restitutive attachment of *again*
+presupposes a change, so result roots never admit a truly restitutive reading. -/
+theorem againRestitutive_presup_entails_change {s : State} (hres : M.EntailsChange P)
+    (h : (againRestitutive ltS P x).presup s) : ∃ s', ltS s' s ∧ ∃ e, M.become s' e :=
+  again_presup_mono (Q := fun s' ↦ ∃ e, M.become s' e) (hres x) s h
 
 end Again
+
+end BeaversKoontzGarboden2020
+
 
 namespace BeaversKoontzGarboden2020
 
@@ -371,52 +374,65 @@ theorem crack_respectsMannerResultComplementarity :
 
 /-! ### The entailments of the roots in a model
 
-The kinds of a root are meaning postulates on its state predicate (`Verb.Model.Respects`). In a
-model that respects it, the state of √crack arises from a caused change whatever template the
-root occurs in, while a respecting model of √flat may have a flat state that no change gave
-rise to. -/
-
-/-- The change-of-state verb *crack*. -/
-def crackV : Verb := { form := "crack", frames := [ArgumentFrame.np], root := crack }
-
-/-- The deadjectival change-of-state verb *flatten*. -/
-def flattenV : Verb := { form := "flatten", frames := [ArgumentFrame.np], root := flat }
+The kinds of a root are meaning postulates on its state predicate
+(`ChangeOfStateModel.Respects`). In a model that respects the signature of √crack, a cracked
+state arises from a caused change whatever template the root occurs in, while a model that
+respects the signature of √flat may have a flat state that no change gave rise to. -/
 
 section Model
 
-variable {Entity State Event : Type*} {M : Verb.Model Entity State Event} {x : Entity}
-  {s : State}
+open ArgumentStructure
 
-/-- In a model that respects it, a state of √crack arises from a change that some event
-causes. -/
-theorem crack_rootState_entails_cause (h : M.Respects crackV) (hs : M.rootState crackV x s) :
-    ∃ e w, M.become s e ∧ M.cause w e :=
+variable {Entity State Event : Type*} {M : ChangeOfStateModel Entity State Event}
+  {P : Entity → State → Prop} {Q : Event → Prop} {x : Entity} {s : State}
+
+/-- In a model that respects the signature of √crack, a cracked state arises from a change
+that some event causes. -/
+theorem crack_entails_cause (h : M.Respects P Q crack.kinds) (hs : P x s) :
+    ∃ e v, M.become s e ∧ M.cause v e :=
   h .cause (by decide) x s hs
 
-/-- In a model that respects it, a state of √crack arises from a change. -/
-theorem crack_rootState_entails_change (h : M.Respects crackV) (hs : M.rootState crackV x s) :
-    ∃ e, M.become s e :=
-  (h .cause (by decide)).entailsChange x s hs
+/-- In a model that respects the signature of √drown, a drowned state arises from a change
+whose every cause is an event of the root's manner. -/
+theorem drown_entails_manner (h : M.Respects P Q drown.kinds) (hs : P x s) :
+    ∃ e, M.become s e ∧ ∀ v, M.cause v e → Q v :=
+  h .manner (by decide) x s hs
 
 end Model
 
-/-- A model with a flat state and no changes. -/
-def unchanging : Verb.Model Unit Unit Unit where
-  rootState _ _ _ := True
+/-- A model without changes. -/
+def unchanging : ArgumentStructure.ChangeOfStateModel Unit Unit Unit where
   become _ _ := False
   cause _ _ := False
   effector _ _ := False
-  manner _ _ := False
 
-/-- The root √flat does not entail change, since a model that respects it has a flat state
-that no change gave rise to. -/
+/-- A model in which every state arises from a caused change. -/
+def changing : ArgumentStructure.ChangeOfStateModel Unit Unit Unit where
+  become _ _ := True
+  cause _ _ := True
+  effector _ _ := True
+
+/-- The signature of √flat does not entail change, since the model without changes respects it
+for a state predicate that holds. -/
 theorem flat_not_entailsChange :
-    unchanging.Respects flattenV ∧ ¬ unchanging.EntailsChange flattenV :=
-  ⟨Verb.Model.respects_of_kinds_subset (by decide), fun h ↦ let ⟨_, he⟩ := h () () trivial; he⟩
+    unchanging.Respects (fun _ _ ↦ True) (fun _ ↦ True) flat.kinds ∧
+      ¬ unchanging.EntailsChange (fun _ _ ↦ True) :=
+  ⟨fun k hk ↦ by
+      obtain rfl : k = .state := by revert k; decide
+      trivial,
+    fun h ↦ let ⟨_, he⟩ := h () () trivial; he⟩
 
-/-- The same model does not respect √crack. -/
-theorem not_respects_crack : ¬ unchanging.Respects crackV :=
-  fun h ↦ let ⟨_, he⟩ := crack_rootState_entails_change h (x := ()) (s := ()) trivial; he
+/-- The signature of √crack is respected for a state predicate that holds, in the model where
+every state arises from a caused change, and is not respected in the model without changes. -/
+theorem crack_respects :
+    changing.Respects (fun _ _ ↦ True) (fun _ ↦ True) crack.kinds ∧
+      ¬ unchanging.Respects (fun _ _ ↦ True) (fun _ ↦ True) crack.kinds :=
+  ⟨fun k hk ↦ by
+      have : k = .result ∨ k = .cause := by revert k; decide
+      rcases this with rfl | rfl
+      · exact fun _ _ _ ↦ ⟨(), trivial⟩
+      · exact fun _ _ _ ↦ ⟨(), (), trivial, trivial⟩,
+    fun h ↦ let ⟨_, _, he, _⟩ := crack_entails_cause h (x := ()) (s := ()) trivial; he⟩
 
 /-! ### The templates of the canonical realization rules
 
