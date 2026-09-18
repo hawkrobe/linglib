@@ -1,39 +1,46 @@
 import Linglib.Syntax.ConstructionGrammar.Resultatives
 import Linglib.Semantics.Causation.CCSelection
+import Linglib.Semantics.Causation.VerbClass
 import Linglib.Semantics.Aspect.ChangeOfState
-import Linglib.Semantics.Causation.ProductionDependence
 
 /-!
-# Resultatives as Concealed Causatives
-[baglini-bar-asher-siegal-2025] [goldberg-jackendoff-2004] [levin-2019] [martin-rose-nichols-2025]
+# Resultatives as concealed causatives
 
-Theory-side connection between the resultative construction and the
-causative semantics infrastructure. Per-scenario `BoolSEM` witnesses
-(HammerFlat, IndependentSourceBreaksNecessity, etc.) live with the paper
-that uses them — see `Levin2026`. Per-datum [goldberg-jackendoff-2004] verifications
-live in `GoldbergJackendoff2004`.
+This file connects the resultative construction to the semantics of causatives. A causative
+resultative such as *hammer the metal flat* brings a result state about by means of the verbal
+event, and the means relation of Goldberg and Jackendoff together with the construction's CAUSE
+determines the `Causative` it expresses, `make`, the neutral sufficiency causative. On the
+selection account of Baglini and Bar-Asher Siegal the construction picks the completion of a
+sufficient set, as a change-of-state verb does. A bounded result phrase telicizes an activity
+into an accomplishment, and the constructional BECOME is an inception, a change from the
+result state failing to hold to its holding. Two typological parameters are defined here, how
+a language realizes the result phrase and whether it is oriented to the object or the subject;
+the Mandarin phase complements that instantiate them live with the Mandarin fragment, and the
+per-scenario causal models with Levin's study.
 
-Sections:
+## Main definitions
 
-1. **Causative bridge**: `deriveCausativeBuilder` derives the resultative's
-   `Causative` value from the [goldberg-jackendoff-2004] MEANS subevent
-   relation + constructional CAUSE flag. Specialized to MEANS-relation
-   causative resultatives; [goldberg-jackendoff-2004]'s sound-emission
-   and disappearance subtypes (RESULT/INSTANCE relations) are out of scope
-   for the derivation here and would need their own builders.
-2. **CC-selection**: resultatives select via completion of a sufficient set
-   ([baglini-bar-asher-siegal-2025], alongside change-of-state verbs).
-3. **Three-way convergence**: [martin-rose-nichols-2025] thick manner ↔
-   `.production` ↔ `.make` builder ↔ resultative builder. Independently
-   motivated paths converge on `.make`.
-4. **Aspect**: bounded RP telicizes activity → accomplishment.
-5. **ChangeOfState**: constructional BECOME maps to `CoSType.inception`.
-   (Schema decomposition of the subconstruction family lives with
-   [mueller-2013]'s apparatus in `Studies/Mueller2013.lean`.)
-6. **Cross-linguistic typological parameters**: `ResultativeRealization`,
-   `ResultOrientation`. Mandarin-specific phase-complement morpheme data
-   (`PhaseComplement` enum + `cosType`) lives in
-   `Mandarin.Resultatives`.
+* `deriveCausativeBuilder` — the causative a subevent relation and a constructional subevent
+  description determine, `make` for means with CAUSE and nothing otherwise.
+* `resultativeCausativeBuilder` — the causative of the causative resultative, `make`.
+* `resultativeCCSelection` — the selection constraint of the construction, completion of a
+  sufficient set.
+* `ResultativeRealization`, `ResultOrientation` — the typological parameters.
+
+## Main results
+
+* `causative_iff_has_cause` — a subconstruction is causative iff its constructional subevent
+  carries CAUSE.
+* `make_unique_neutral_sufficiency`, `derived_asserts_sufficiency` — the derived causative
+  asserts sufficiency, and `make` is the only sufficiency causative that neither coerces nor
+  removes a barrier.
+* `resultative_telicizes`, `resultative_aspect_agrees_with_telicize` — the aspectual shift.
+
+## References
+
+* [goldberg-jackendoff-2004]
+* [baglini-bar-asher-siegal-2025]
+* [levin-2019]
 -/
 
 namespace Causation.Resultatives
@@ -41,56 +48,40 @@ namespace Causation.Resultatives
 open ConstructionGrammar
 open ConstructionGrammar.Resultatives
 open Aspect
-open Aspect
 open ArgumentStructure
-open Aspect
-open Causation.ProductionDependence
 open Causation.CCSelection
 
-/-! ## Agreement with Boolean flags -/
+/-! ### Agreement with the constructional flags -/
 
-/-- isCausative ↔ hasCause — derived from the subconstruction, not stipulated. -/
+/-- A subconstruction is causative iff its constructional subevent carries CAUSE. -/
 theorem causative_iff_has_cause (sc : ResultativeSubconstruction) :
     sc.isCausative = sc.constructionalDesc.hasCause := by
   cases sc <;> rfl
 
-/-! ## CC-selection ([baglini-bar-asher-siegal-2025])
+/-! ### Selection -/
 
-Resultatives select via completion of a sufficient set: the verbal subevent
-must be the final condition that makes the result inevitable. -/
-
-/-- Resultatives select via completion (like CoS verbs). -/
+/-- Resultatives select by completion of a sufficient set, as change-of-state verbs do: the
+verbal subevent is the final condition that makes the result inevitable. -/
 def resultativeCCSelection : CCSelectionMode := .completionOfSufficientSet
 
-/-! ## Causative bridge: derived from SubeventRelation + CAUSE
+/-! ### The causative derived from the means relation and CAUSE
 
-The resultative's `Causative` is `.make`, derived from two
-independently-motivated properties:
+The verbal subevent of a causative resultative is the means by which the constructional
+subevent comes about, and a causative subconstruction carries CAUSE, so the construction
+asserts sufficiency; among the sufficiency causatives `make` is the neutral one, neither the
+coercive `force` nor the barrier-removing `enable`. The derivation covers means-relation
+resultatives only; the sound-emission and disappearance subtypes, with the result and
+instance relations, are left undetermined. -/
 
-1. **MEANS relation** ([goldberg-jackendoff-2004]): the verbal subevent
-   is the means by which the constructional subevent is brought about.
-   MEANS ↔ causal sufficiency.
-2. **CAUSE in constructional subevent**: causative subconstructions have
-   `hasCause = true`.
-
-MEANS + CAUSE → sufficiency. Among sufficiency builders, `.make` is
-uniquely the neutral builder (no coercion `.force`, no barrier-removal
-`.enable`).
-
-Note: this derivation handles MEANS-relation resultatives only. Sound-
-emission and disappearance subtypes (`SubeventRelation.result`/`.instance_`)
-would map to different builders or remain unanalyzed here. -/
-
-/-- Derive the Causative from MEANS subevent relation + CAUSE flag.
-    Always yields `.make` for MEANS+CAUSE; non-MEANS yields `none`. -/
+/-- The causative a subevent relation and a constructional subevent description determine,
+`make` for the means relation with CAUSE and nothing otherwise. -/
 def deriveCausativeBuilder (rel : SubeventRelation) (desc : SubeventDesc) :
     Option Causative :=
   match rel, desc.hasCause with
   | .means, true => some .make
   | _, _ => none
 
-/-- `.make` is the unique builder asserting neutral (non-coercive,
-    non-permissive) sufficiency. -/
+/-- `make` is the one sufficiency causative that neither coerces nor removes a barrier. -/
 theorem make_unique_neutral_sufficiency (b : Causative)
     (hs : b.AssertsSufficiency)
     (hc : b ≠ .force)
@@ -98,35 +89,34 @@ theorem make_unique_neutral_sufficiency (b : Causative)
     b = .make := by
   rcases hs with rfl | rfl | rfl <;> simp_all
 
-/-- MEANS + CAUSE derives `.make`. -/
+/-- The means relation with CAUSE derives `make`. -/
 theorem means_cause_derives_make (desc : SubeventDesc)
     (h : desc.hasCause = true) :
     deriveCausativeBuilder .means desc = some .make := by
   simp [deriveCausativeBuilder, h]
 
-/-- For any causative subconstruction with MEANS relation, the derived
-    builder is `.make`. -/
+/-- Every causative subconstruction with the means relation derives `make`. -/
 theorem causative_means_derives_make (sc : ResultativeSubconstruction)
     (h : sc.isCausative = true) :
     deriveCausativeBuilder .means sc.constructionalDesc = some .make := by
   cases sc <;> simp [ResultativeSubconstruction.isCausative] at h <;>
     simp [deriveCausativeBuilder, ResultativeSubconstruction.constructionalDesc]
 
-/-- Noncausative subconstructions don't derive a Causative. -/
+/-- A noncausative subconstruction derives no causative. -/
 theorem noncausative_no_builder (sc : ResultativeSubconstruction)
     (h : sc.isCausative = false) :
     deriveCausativeBuilder .means sc.constructionalDesc = none := by
   cases sc <;> simp [ResultativeSubconstruction.isCausative] at h <;>
     simp [deriveCausativeBuilder, ResultativeSubconstruction.constructionalDesc]
 
-/-- Non-MEANS relations never derive a Causative. -/
+/-- No relation other than means derives a causative. -/
 theorem non_means_no_builder (desc : SubeventDesc) :
     deriveCausativeBuilder .result desc = none ∧
     deriveCausativeBuilder .instance_ desc = none ∧
     deriveCausativeBuilder .coOccurrence desc = none := by
   simp [deriveCausativeBuilder]
 
-/-- When `deriveCausativeBuilder` succeeds, the result asserts sufficiency. -/
+/-- A derived causative asserts sufficiency. -/
 theorem derived_asserts_sufficiency (rel : SubeventRelation) (desc : SubeventDesc)
     (b : Causative) (h : deriveCausativeBuilder rel desc = some b) :
     b.AssertsSufficiency := by
@@ -135,49 +125,29 @@ theorem derived_asserts_sufficiency (rel : SubeventRelation) (desc : SubeventDes
   · simp only [Option.some.injEq] at h; subst h; exact .inl rfl
   · simp at h
 
-/-- The resultative Causative, derived from MEANS + CAUSE. -/
+/-- The causative of the causative resultative, derived from the means relation and CAUSE. -/
 def resultativeCausativeBuilder : Causative :=
   match deriveCausativeBuilder .means
     ResultativeSubconstruction.causativeProperty.constructionalDesc with
   | some b => b
   | none => .cause
 
-/-- The derived builder is `.make`. -/
+/-- The derived causative is `make`. -/
 theorem resultative_is_make :
     resultativeCausativeBuilder = .make := rfl
 
-/-- `.prevent` is incompatible with resultatives. -/
+/-- `prevent` is incompatible with the resultative. -/
 theorem prevent_incompatible_with_resultative :
     Causative.prevent ≠ resultativeCausativeBuilder := by decide
 
-/-! ## Three-Way Convergence: Thick ↔ P-CAUSE ↔ Resultative -/
+/-! ### Aspect -/
 
-/-- Three independent paths converge on `.make`:
-    [martin-rose-nichols-2025] thick manner classification +
-    `.production` analogous-builder + the resultative-from-MEANS+CAUSE
-    derivation above. -/
-theorem thick_manner_resultative_convergence :
-    productionConstraint .thickManner = .production ∧
-    CausationType.production.analogousBuilder = .make ∧
-    resultativeCausativeBuilder = .make ∧
-    CausationType.production.analogousBuilder = resultativeCausativeBuilder :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Thin → `.cause` ≠ resultative `.make` (*kill open). -/
-theorem thin_incompatible_with_resultative_cause :
-    productionConstraint .thin = .dependence ∧
-    CausationType.dependence.analogousBuilder = .cause ∧
-    Causative.cause ≠ resultativeCausativeBuilder :=
-  ⟨rfl, rfl, by decide⟩
-
-/-! ## Aspect: activity + bounded RP → accomplishment -/
-
-/-- Bounded RP telicizes activity. -/
+/-- A bounded result phrase telicizes an activity. -/
 theorem resultative_telicizes :
     activityProfile.telicize.toVendlerClass = .accomplishment :=
   telicize_activity
 
-/-- The resultative construction's aspect shift. -/
+/-- The construction's aspect shift. -/
 theorem resultative_aspect_shift :
     resultativeVendlerClass .bounded = .accomplishment :=
   rfl
@@ -187,32 +157,30 @@ theorem resultative_aspect_agrees_with_telicize :
     activityProfile.telicize.toVendlerClass :=
   rfl
 
-/-! ## ChangeOfState: BECOME = inception (¬P → P) -/
+/-! ### Change of state -/
 
-/-- Constructional BECOME = CoS inception. -/
+/-- The constructional BECOME is an inception, a change from the result state failing to hold
+to its holding. -/
 def resultStateMapsToCoS : CoSType := .inception
 
-/-- Inception presupposes ¬P before. -/
+/-- An inception presupposes that the state failed to hold before. -/
 theorem inception_presupposes_not_prior {W : Type*} (P : W → Prop) (w : W) :
     priorStatePresup .inception P w ↔ ¬P w := Iff.rfl
 
-/-- Inception asserts P after. -/
+/-- An inception asserts the state afterwards. -/
 theorem inception_asserts_result {W : Type*} (P : W → Prop) :
     resultStateAssertion .inception P = P := rfl
 
-/-! ## Cross-linguistic Resultative Parameters
+/-! ### Typological parameters -/
 
-`ResultativeRealization` and `ResultOrientation` are theory-neutral
-typological parameters. Mandarin-specific phase complements
-(`PhaseComplement` enum + per-morpheme `cosType`) live in
-`Mandarin.Resultatives`. -/
-
+/-- How a language realizes the result phrase. -/
 inductive ResultativeRealization where
   | syntacticAdjunct
   | verbCompound
   | deComplement
   deriving DecidableEq, Repr
 
+/-- Whether the result phrase is predicated of the object or the subject. -/
 inductive ResultOrientation where
   | objectOriented
   | subjectOriented
