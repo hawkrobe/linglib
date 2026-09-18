@@ -22,7 +22,7 @@ deletion helps.
 
 The output of D2L is a tier-based alternation rule, modelled here by the
 canonical `Subregular.TierRule` schema (in
-`Phonology/Alternation.lean`); the closely-related SPE
+`Phonology/Subregular/TierRule.lean`); the closely-related SPE
 non-tier `Subregular.LocalRewrite.Rule` schema in
 `Phonology/Subregular/LocalRewrite.lean` is the right substrate
 when the alternation does not factor through a tier projection.
@@ -44,11 +44,11 @@ the lexicon.
 
 This study formalizes:
 
-- the rule (`latinDissimRule`) and its predictions on six worked
-  examples (Belth ex. 5/53): *navalis*, *popularis*, *pluvialis*,
-  *floralis*, *legalis*, *lunaris* — including the (53c)/(53d) blocking
-  cases, where `/r/` and the non-coronal blockers sit on the tier and
-  hide the stem lateral;
+- the rule (`latinDissimRule`), applied as a string function to six
+  worked underlying forms (Belth ex. 5/53): *navalis*, *popularis*,
+  *pluvialis*, *floralis*, *legalis*, *lunaris* — including the
+  (53c)/(53d) blocking cases, where `/r/` and the non-coronal blockers
+  sit on the tier and hide the stem lateral;
 - the genuine empirical limit: *lunaris* surfaces with `[r]`, but the
   `[+cons]`-tier rule predicts `[l]` (the immediately preceding tier
   segment is the nasal `/n/`, which is `[−lat]`, so `Disagree` outputs
@@ -133,15 +133,23 @@ end LatSeg
 
 /-! ### The Learned Rule -/
 
-/-- The rule D2L learns under the `[+cons]` tier ([belth-2026]
-    rule 54): `Disagree([?lat], {lat}) / [+cons] __ ∘ proj(·, [+cons])`. -/
+/-- The rule D2L learns under the `[+cons]` tier ([belth-2026] rule 54),
+`Disagree([?lat], {lat}) / [+cons] __ ∘ proj(·, [+cons])`: the liquid `L` takes the opposite
+laterality of the tier-adjacent consonant. -/
 def latinDissimRule : TierRule LatSeg where
-  tier := LatSeg.consTier
-  side := .left
-  targetIsContext := LatSeg.IsCons
+  tier := LatSeg.IsCons
+  IsTrigger := LatSeg.IsCons
+  IsTarget seg := seg = .L
   relation := .disagree
-  featureValue := LatSeg.isLat
-  default := none
+  value := LatSeg.isLat
+  write v _ := if v then .l else .r
+  value_write := fun v _ _ => by cases v <;> rfl
+  write_value := fun _ seg h hv => by subst h; simp [LatSeg.isLat] at hv
+
+/-- The rule is subsequential ([aksenova-rawski-graf-heinz-2020]'s tier-subsequential
+class), as every tier rule is. -/
+theorem latinDissimRule_isSubsequential : IsSubsequential .left latinDissimRule.apply :=
+  latinDissimRule.apply_isSubsequential
 
 /-! ### Worked Examples ([belth-2026] §5.3, ex. 5 / 53) -/
 
@@ -168,57 +176,44 @@ def legalis_ur : List LatSeg := [.l, .e, .g, .a, .L, .i, .s]
     the nasal `/n/` (`[−lat]`), and `Disagree` outputs `[+lat]`. -/
 def lunaris_ur : List LatSeg := [.l, .u, .n, .a, .L, .i, .s]
 
-/-- The position of `L` in each underlying form. -/
-def navalis_lPos    : Nat := 4
-def popularis_lPos  : Nat := 6
-def pluvialis_lPos  : Nat := 6
-def floralis_lPos   : Nat := 5
-def legalis_lPos    : Nat := 4
-def lunaris_lPos    : Nat := 4
-
-/-- Surface value predicted by the learned rule: `some true` = surfaces
-    as `l`, `some false` = surfaces as `r`, `none` = the rule has no
-    opinion. -/
-def predicted (ur : List LatSeg) (lPos : Nat) : Option Bool :=
-  latinDissimRule.applyAt (ur.take lPos)
+/-- Substitute `val` for every `L` in a candidate string. The two
+    surface candidates for an underlying form are `substL .l ur` and
+    `substL .r ur`. -/
+def substL (val : LatSeg) : List LatSeg → List LatSeg :=
+  List.map (fun seg => if seg = LatSeg.L then val else seg)
 
 /-! ### Stimulus-Contrast Theorems -/
 
 /-- *navalis*: the tier-preceding segment of `/nav-a/` is the `[−lat]`
     `[w]`. Disagree outputs `[+lat]` = `l`. ✓ -/
-theorem navalis_predicts_l :
-    predicted navalis_ur navalis_lPos = some true := by decide
+theorem navalis_surfaces_l : latinDissimRule.apply navalis_ur = substL .l navalis_ur := by
+  decide
 
 /-- *popularis*: tier-preceding consonant is `/l/` (`[+lat]`). Disagree
     outputs `[−lat]` = `r`. ✓ -/
-theorem popularis_predicts_r :
-    predicted popularis_ur popularis_lPos = some false := by decide
+theorem popularis_surfaces_r :
+    latinDissimRule.apply popularis_ur = substL .r popularis_ur := by
+  decide
 
 /-- *pluvialis*: the tier-preceding consonant of `/pluvi-a/` is the
     `[−lat]` `[w]`, so Disagree outputs `[+lat]` = `l` — the stem `/l/`
     is hidden by the non-coronal blocker on the tier (53d). ✓ -/
-theorem pluvialis_predicts_l :
-    predicted pluvialis_ur pluvialis_lPos = some true := by decide
+theorem pluvialis_surfaces_l :
+    latinDissimRule.apply pluvialis_ur = substL .l pluvialis_ur := by
+  decide
 
 /-- *floralis*: tier-preceding consonant is `/r/` (`[−lat]`). The
     intervening `/r/` blocks the dissimilation that *popularis*'s
     preceding `/l/` would have triggered — exactly the long-distance
     pattern Belth's tier-projection is designed to capture. ✓ -/
-theorem floralis_predicts_l :
-    predicted floralis_ur floralis_lPos = some true := by decide
+theorem floralis_surfaces_l : latinDissimRule.apply floralis_ur = substL .l floralis_ur := by
+  decide
 
 /-- *legalis*: tier-preceding consonant is `/g/` (`[−lat]`). The
     stem-initial `/l/` is hidden from `/L/` by the intervening `/g/`
     on the consonant tier. ✓ -/
-theorem legalis_predicts_l :
-    predicted legalis_ur legalis_lPos = some true := by decide
-
-/-- *navalis* (l) vs *popularis* (r) is the minimal-pair contrast: both
-    have a consonant immediately before the affix on the surface, but
-    only `/l/` triggers dissimilation. -/
-theorem navalis_popularis_minimal_pair :
-    predicted navalis_ur navalis_lPos ≠
-    predicted popularis_ur popularis_lPos := by decide
+theorem legalis_surfaces_l : latinDissimRule.apply legalis_ur = substL .l legalis_ur := by
+  decide
 
 /-! ### The Empirical Limit — *lunaris* -/
 
@@ -229,26 +224,25 @@ theorem navalis_popularis_minimal_pair :
     errors the Tolerance Principle tolerates; D2L does not refine the
     tier further on this dataset. -/
 theorem lunaris_predicts_l_INCORRECT :
-    predicted lunaris_ur lunaris_lPos = some true := by decide
+    latinDissimRule.apply lunaris_ur = substL .l lunaris_ur := by
+  decide
 
 /-! ### Per-Datum Coverage Rollup -/
 
-/-- Witness pairs `(underlying-form-prefix, expected-surface-lat-value)`
-    for each worked example. -/
-def latinData : List (List LatSeg × Bool) :=
-  [(navalis_ur.take navalis_lPos,     true),    -- *navalis*   — l
-   (popularis_ur.take popularis_lPos, false),   -- *popularis* — r
-   (pluvialis_ur.take pluvialis_lPos, true),    -- *pluvialis* — l
-   (floralis_ur.take floralis_lPos,   true),    -- *floralis*  — l
-   (legalis_ur.take legalis_lPos,     true),    -- *legalis*   — l
-   (lunaris_ur.take lunaris_lPos,     false)]   -- *lunaris*   — r
+/-- The worked examples as pairs of underlying and surface form. -/
+def latinData : List (List LatSeg × List LatSeg) :=
+  [(navalis_ur,   substL .l navalis_ur),
+   (popularis_ur, substL .r popularis_ur),
+   (pluvialis_ur, substL .l pluvialis_ur),
+   (floralis_ur,  substL .l floralis_ur),
+   (legalis_ur,   substL .l legalis_ur),
+   (lunaris_ur,   substL .r lunaris_ur)]
 
 /-- The learned rule misses exactly one datum out of six (*lunaris*) —
     a 5/6 ≈ 83% match on this minimal corpus, the same single-error
     rate Belth reports at the corpus scale (~3%). -/
 theorem latinDissimRule_misses_lunaris :
-    (latinData.filter (fun (pre, expected) =>
-       !(latinDissimRule.applyAt pre == some expected))).length = 1 := by
+    (latinData.filter (fun (ur, sr) => !(latinDissimRule.apply ur == sr))).length = 1 := by
   decide
 
 /-! ### Tolerance Principle Certificate ([yang-2016]) -/
@@ -278,8 +272,7 @@ open Yang2016 in
     rather than memorizing each form. -/
 theorem latinDissimRule_tolerated_on_examples :
     tolerates latinData.length
-      (latinData.filter (fun (pre, expected) =>
-         !(latinDissimRule.applyAt pre == some expected))).length := by
+      (latinData.filter (fun (ur, sr) => !(latinDissimRule.apply ur == sr))).length := by
   show tolerates 6 1
   exact tolerates_six_one
 
@@ -337,12 +330,6 @@ theorem latinOCP_zero_iff_in_TSL (c : List LatSeg) :
   the rule's empirical limit. -/
 
 open Constraints OptimalityTheory
-
-/-- Substitute `val` for every `L` in a candidate string. The two
-    surface candidates for an underlying form are `substL .l ur` and
-    `substL .r ur`. -/
-def substL (val : LatSeg) : List LatSeg → List LatSeg :=
-  List.map (fun seg => if seg = LatSeg.L then val else seg)
 
 /-- Markedness constraint penalizing each surface `[r]`: the
     default-`[l]` preference. -/
@@ -514,9 +501,8 @@ D2L converges to two rules on Turkish CHILDES + MorphoChallenge data:
   tier-preceding vowel on the vocalic tier.
 - (b) `Agree([?voice], {voice}) / [*] __`
   — voicing assimilation: the projection component is the *trivial*
-  identity tier (every segment projects). This is the strict-locality
-  case captured generically by
-  `Subregular.TierRule.id_tier_left_is_strict_local`.
+  identity tier (every segment projects), on which the rule is
+  strictly local.
 
 D2L's reported test accuracy on the two corpora exceeds 0.98, beating
 [hayes-wilson-2008] generative phonotactic learners and LSTM

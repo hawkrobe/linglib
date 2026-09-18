@@ -148,19 +148,4 @@ theorem apply_byClass (p : α → Prop) [DecidablePred p] (xs : List α) :
     (apply (TierProjection.total f) xs).length = xs.length := by
   simp
 
--- ---- Derived scans (used by tier-based alternation rules) -----------------
-
-/-- The last (rightmost) projected symbol of `xs` satisfying `q`. The
-    standard "preceding tier-adjacent context" lookup for rules like
-    [belth-2026]'s `Disagree(A, F) / C __ ∘ proj(·, T)`. -/
-def lastWith (T : TierProjection α β) (q : β → Prop) [DecidablePred q]
-    (xs : List α) : Option β :=
-  ((apply T xs).filter (fun y => decide (q y))).getLast?
-
-/-- The first (leftmost) projected symbol of `xs` satisfying `q`. The
-    symmetric right-context lookup for `C / __ C ∘ proj(·, T)` rules. -/
-def firstWith (T : TierProjection α β) (q : β → Prop) [DecidablePred q]
-    (xs : List α) : Option β :=
-  ((apply T xs).filter (fun y => decide (q y))).head?
-
 end TierProjection

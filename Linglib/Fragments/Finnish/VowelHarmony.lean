@@ -30,7 +30,8 @@ Most suffixes contain an **archiphonemic** vowel /A/ that surfaces as
 
 Finnish VH is a single `System` with [back] as the spreading feature over the tier of
 harmonic vowels: consonants and the neutral vowels /e/ and /i/ are transparent, the
-harmonic vowels trigger, and a suffix vowel unspecified for [back] is the target.
+harmonic vowels trigger, a suffix vowel unspecified for [back] is the target, and a stem
+with no harmonic vowel takes front suffixes by default.
 
 -/
 
@@ -127,14 +128,15 @@ def classifyVowel (s : Segment) : HarmonyClass :=
 -- ============================================================================
 
 /-- Finnish palatal harmony spreads [back] from the last harmonic (non-neutral) stem vowel to
-the suffix vowels unspecified for it; consonants and the neutral vowels /e/, /i/ are off the
-tier. -/
+the suffix vowels unspecified for it, and a stem with no harmonic vowel takes front suffixes
+by default; consonants and the neutral vowels /e/, /i/ are off the tier. -/
 def finnishHarmony : System Segment :=
   System.mk' (feature := .back)
     (isTrigger     := fun s => s.HasValue .syllabic true && !isNeutral s)
     (isTarget      := fun s => s.HasValue .syllabic true && (s .back).isNone)
     (isTransparent := fun s => !s.HasValue .syllabic true || isNeutral s)
     (direction     := .rightward)
+    (default       := some false)
 
 -- ============================================================================
 -- § 4: Verification Theorems

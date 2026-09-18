@@ -4,363 +4,236 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.Fintype.Option
-import Linglib.Phonology.Subregular.TierProjection
-import Linglib.Core.Computability.Subsequential
-import Linglib.Phonology.Subregular.Dependence
+import Linglib.Phonology.Subregular.OSL
 
 /-!
-# TierProjection-based rules (`TierRule`)
-[belth-2026] [goldsmith-1976]
+# Tier-based alternation rules
 
-The canonical operational schema for SPE-style phonological alternations
-that factor through a tier projection. A rule has the shape
+A tier rule is [belth-2026]'s generalization `Rel(A, F) / C __ ∘ proj(·, T)`: a class `A`
+of targets, a feature `F` read and written through a lens, a class `C` of triggers, a tier
+`T`, the relation `Agree` or `Disagree`, an Elsewhere default, and a direction. The rule
+applies iteratively over the tier: each target takes its value from the tier-adjacent
+output segment when that segment is a trigger, so a written target triggers what follows.
+The run is a three-state Mealy machine on the tier whose state is the value the last output
+tier segment offers (`TierRule.toMealy`), and the output tier-based strictly 2-local rule of
+[burness-mcmullin-2020] (`TierRule.spreadRule`, the tier form of
+[chandlee-eyraud-heinz-2015]'s OSL functions) computes the same function
+(`TierRule.spreadRule_applyOnTier`), so every tier rule is Mealy-computable and
+subsequential in its direction, on any tier.
 
-  `Rel(A, F) / C __ ∘ proj(·, T)`        (left-context)
-  `Rel(A, F) / __ C ∘ proj(·, T)`        (right-context)
+## Main definitions
 
-where:
+* `TierRule`: the rule.
+* `TierRule.scan`, `TierRule.apply`: the left-to-right run over the tier, and the run in
+  the rule's direction.
+* `TierRule.triggerValue`: the value a string passes on to what follows it.
+* `TierRule.toMealy`, `TierRule.spreadRule`: the machine and the OSL rule computing the run.
 
-- `T ⊆ α` is a tier (an erasing string-homomorphism — see `TierProjection`);
-- `C ⊆ T` is the natural class of the *triggering* tier-adjacent segment;
-- `A ⊆ α` is the natural class of *targets* (here: a single underspecified
-  position identified by index, à la [belth-2026]);
-- `F` is the agreed-or-disagreed feature; and
-- `Rel` is `Agree` (assimilation) or `Disagree` (dissimilation).
+## Main results
 
-This schema covers Belth-style D2L rules (Latin `-alis` / `-aris` liquid
-dissimilation, Turkish vowel harmony, Finnish backness harmony with
-neutral-vowel transparency — see [belth-2026]) and any SPE rule whose context is a
-single tier-adjacent segment. The iterated form of the rule, in which written
-targets become the context of what follows, is `Subregular.Harmony.System` in
-`Subregular/Harmony.lean`.
+* `TierRule.spreadRule_applyOnTier`: the OSL rule run over the tier is the Mealy run.
+* `TierRule.tier_scan`: restricted to the tier, the run is the 2-OSL rule.
+* `TierRule.apply_isSubsequential`, `TierRule.scan_isMealyComputable`: the run is
+  finite-state in the rule's direction, on any tier.
 
-The schema does **not** cover:
+## Implementation notes
 
-- multi-feature dependencies (e.g., Turkish back/round parasitic harmony) —
-  would require generalising `featureValue : α → Option Bool` to a list;
-- non-local context windows (e.g., "the second segment to the left on
-  the tier") — would require a positional offset on top of `lastWith`.
+A tier segment outside `C` stops the value, and a target after it takes the default, which
+is how [belth-2026]'s Khalkha rounding rule blocks; a tier segment in `C` that is not a
+target imposes its own value. A trigger unspecified for `F` also yields the default, where
+[belth-2026] counts a failed application. The lens laws are required on targets only, since
+only targets are written. A right-context rule is the left-context rule on the reversed
+string. Multi-feature dependencies, such as Turkish rounding parasitic on backness, are
+not expressible: `F` is one feature.
 
-Both extensions are admittable on demand following the project's
-"infrastructure on demand" policy (see `CLAUDE.md`).
+## References
 
-## Relation to `Subregular/LocalRewrite.lean`
-
-`Phonology/Subregular/LocalRewrite.lean` defines `Rule` — full SPE
-notation with arbitrary-length left/right contexts. The single-tier-
-segment-context fragment of `Rule`s is structurally subsumed by `TierRule`
-(via the trivial-tier specialisation theorem `id_tier_left_is_strict_local`
-below). The formal subsumption *bridge theorem* between the two rule types
-is deferred — it would state that for any `LocalRewrite.Rule` whose
-left/right contexts are each a single `.seg` element, there exists a
-`TierRule` computing the same string function. Lean-checkable formulation
-is straightforward but requires careful threading of the trivial tier;
-land it once a Studies file needs to invoke the bridge concretely.
+* [belth-2026]
+* [burness-mcmullin-2020]
+* [chandlee-eyraud-heinz-2015]
 -/
 
 namespace Subregular
 
-
-/-! ### Schema -/
-
-/-- Belth's `Agree`/`Disagree` distinction ([belth-2026]). -/
+/-- [belth-2026]'s `Agree` and `Disagree`: whether a target copies or negates its
+trigger's value. -/
 inductive Relation where
-  | agree     -- target's feature value matches the context's
-  | disagree  -- target's feature value is the negation of the context's
+  | agree
+  | disagree
   deriving DecidableEq, Repr
 
-/-- The relation flipped: `.agree ↔ .disagree`. -/
-def Relation.flip : Relation → Relation
-  | .agree    => .disagree
-  | .disagree => .agree
+/-- The value the relation writes into a target from its trigger's value. -/
+def Relation.act : Relation → Bool → Bool
+  | .agree, v => v
+  | .disagree, v => !v
 
-/-- Flipping the relation twice returns the original. -/
-@[simp] theorem Relation.flip_flip : ∀ r : Relation, r.flip.flip = r
-  | .agree | .disagree => rfl
-
-/-- Which side the context lies on relative to the unspecified target slot.
-
-    - `.left` — `Rel(A, F) / C __` : context precedes the target
-    - `.right` — `Rel(A, F) / __ C` : context follows the target
-
-    Aliased to `ScanDirection` so the same `.left` / `.right` cases used by
-    `Subsequential.lean` (FST scan direction) and by this file (context side
-    of a tier rule) reduce to one inductive type. The two roles read
-    differently in prose but are isomorphic in Lean. -/
-abbrev Side := ScanDirection
-
-/-- A tier-based alternation rule over alphabet `α`: project the word onto a tier,
-    find the adjacent context segment on `side`, and fill the target's feature by
-    `relation` to it, falling back to `default`. -/
+/-- A tier rule consists of a tier, the triggers, the targets, the relation, a lens reading
+and writing the feature on targets, an Elsewhere default, and a direction. -/
 structure TierRule (α : Type*) where
-  /-- The erasing projection ([goldsmith-1976]) onto which the context-class check is
-      performed. -/
-  tier : TierProjection α α
-  /-- Whether the triggering context precedes (`.left`) or follows (`.right`) the
-      unspecified target slot. -/
-  side : Side := .left
-  /-- The natural class `C`: the rule fires only when the tier-adjacent segment
-      satisfies this predicate. -/
-  targetIsContext : α → Prop
-  /-- Decidability of the context class, carried as an instance field (mathlib's
-      `Finset.filter` convention). -/
-  [decTarget : DecidablePred targetIsContext]
-  /-- `.agree` (assimilation) or `.disagree` (dissimilation). -/
-  relation : Relation
-  /-- The value of the alternating feature extracted from a context segment; `none`
-      means the segment is itself underspecified, deferring to `default`. -/
-  featureValue : α → Option Bool
-  /-- The Elsewhere value ([belth-2026]'s default fallback): `some v` is the concrete
-      fallback when no context is found, `none` makes `applyAt` return `none`. -/
+  /-- The tier: the segments the rule sees. -/
+  tier : α → Prop
+  [decTier : DecidablePred tier]
+  /-- The segments a target copies its value from. -/
+  IsTrigger : α → Prop
+  [decTrigger : DecidablePred IsTrigger]
+  /-- The segments that alternate. -/
+  IsTarget : α → Prop
+  [decTarget : DecidablePred IsTarget]
+  /-- Whether a target agrees or disagrees with its trigger. -/
+  relation : Relation := .agree
+  /-- Read the feature; `none` when the segment is unspecified for it. -/
+  value : α → Option Bool
+  /-- Write the feature into a segment. -/
+  write : Bool → α → α
+  /-- Reading back a value written into a target gives that value. -/
+  value_write : ∀ v s, IsTarget s → value (write v s) = some v
+  /-- Writing the value a target already carries leaves it unchanged. -/
+  write_value : ∀ v s, IsTarget s → value s = some v → write v s = s
+  /-- The Elsewhere value a target takes when no value reaches it. -/
   default : Option Bool := none
+  /-- The direction of application; a right-context rule scans right to left. -/
+  direction : ScanDirection := .left
+
+attribute [instance] TierRule.decTier TierRule.decTrigger TierRule.decTarget
 
 namespace TierRule
 
-variable {α : Type*}
+variable {α : Type*} (r : TierRule α)
 
-attribute [instance] TierRule.decTarget
+/-- The value a segment offers to the next target: its value if it is a trigger, nothing
+otherwise. -/
+def transmits (s : α) : Option Bool := if r.IsTrigger s then r.value s else none
 
-/-- The value the rule predicts at the unspecified slot, given the rule
-    `r`, the *preceding* segments `pre`, and the *following* segments
-    `post`. The chosen side (`r.side`) determines which list is consulted.
+/-- The segment output at `s` when the value `v` has reached it. -/
+def emit (v : Option Bool) (s : α) : α :=
+  if r.IsTarget s then ((v.map r.relation.act).or r.default).elim s (r.write · s) else s
 
-    Returns `none` only when there is no relevant context **and** no
-    default — i.e., the rule has no opinion. -/
-def apply (r : TierRule α) (pre post : List α) : Option Bool :=
-  let ctx? :=
-    match r.side with
-    | .left  => TierProjection.lastWith  r.tier r.targetIsContext pre
-    | .right => TierProjection.firstWith r.tier r.targetIsContext post
-  match ctx? with
-  | none     => r.default
-  | some ctx =>
-    match r.featureValue ctx with
-    | none   => r.default
-    | some v => some (match r.relation with
-                      | .agree    => v
-                      | .disagree => !v)
+theorem value_eq_of_transmits_eq_some {s : α} {v : Bool} (h : r.transmits s = some v) :
+    r.value s = some v := by
+  unfold transmits at h; split_ifs at h; exact h
 
-/-- Convenience for left-context rules: only the preceding string matters.
-    The Belth Latin / Turkish-VH / Finnish-VH rules all use this form. -/
-def applyAt (r : TierRule α) (pre : List α) : Option Bool :=
-  apply r pre []
+theorem emit_of_not_target {s : α} (h : ¬ r.IsTarget s) (v : Option Bool) : r.emit v s = s :=
+  ite_eq_right h
 
-/-- The rule with its `relation` flipped (Agree ↔ Disagree). -/
-def flipRelation (r : TierRule α) : TierRule α :=
-  { r with relation := r.relation.flip }
+theorem emit_some_of_target {s : α} (h : r.IsTarget s) (v : Bool) :
+    r.emit (some v) s = r.write (r.relation.act v) s :=
+  ite_eq_left h
 
-/-! ### Generic Properties -/
+theorem emit_none_of_default_eq_none (hd : r.default = none) (s : α) : r.emit none s = s := by
+  unfold emit; rw [hd]; split_ifs <;> rfl
 
-/-- Flipping the relation twice returns the original rule. -/
-@[simp] theorem flipRelation_flipRelation (r : TierRule α) :
-    r.flipRelation.flipRelation = r := by
-  unfold flipRelation; simp
+/-- A segment already carrying the value reaching it is emitted unchanged. -/
+theorem emit_some_eq_self {s : α} {v : Bool} (h : r.value s = some (r.relation.act v)) :
+    r.emit (some v) s = s := by
+  unfold emit; split_ifs with ht
+  · simp [r.write_value _ s ht h]
+  · rfl
 
-/-- **Strict locality is the trivial-tier special case.** When the tier
-    is the identity (every segment projects), `apply` (left-context)
-    reduces to scanning the raw input for the context class — i.e., a
-    strictly local rule (e.g. Turkish voicing assimilation,
-    `Agree([?voice], {voice}) / [*] __` over the trivial projection —
-    [belth-2026]). -/
-theorem id_tier_left_is_strict_local (r : TierRule α)
-    (h_id : r.tier = TierProjection.id) (h_side : r.side = .left) (pre : List α) :
-    apply r pre [] =
-      (match (pre.filter (fun x => decide (r.targetIsContext x))).getLast? with
-        | none => r.default
-        | some ctx => match r.featureValue ctx with
-                      | none => r.default
-                      | some v => some (match r.relation with
-                                        | .agree => v | .disagree => !v)) := by
-  unfold apply TierProjection.lastWith
-  rw [h_side, h_id]
-  simp [TierProjection.apply_id]
+/-! ### The run -/
 
-/-- Reify a `TierRule` as a string-to-string function: at each input
-position, predict the feature value for the implicit "hole" using the
-preceding context. The result is a `List α → List (Option Bool)`
-function that consumers can classify subregularly.
+/-- The machine computing the rule, whose state is the value the last output tier segment
+offers and which passes off-tier segments through untouched. -/
+def toMealy : Mealy (Option Bool) α α where
+  initial := none
+  step v s := if r.tier s then r.transmits (r.emit v s) else v
+  output v s := if r.tier s then r.emit v s else s
 
-Defined recursively (via `applyToStringAux`) for ease of induction; the
-output at position i is `applyAt r (input.take i)` per the auxiliary's
-past-threading. -/
-def applyToString (r : TierRule α) (input : List α) : List (Option Bool) :=
-  applyToStringAux r input []
-where
-  /-- Auxiliary: emit predictions over the suffix `input`, using `past`
-  as the accumulated past. -/
-  applyToStringAux (r : TierRule α) :
-      (input : List α) → (past : List α) → List (Option Bool)
-    | [], _ => []
-    | x :: xs, past => r.applyAt past :: applyToStringAux r xs (past ++ [x])
+@[simp] theorem toMealy_initial : r.toMealy.initial = none := rfl
+
+@[simp] theorem toMealy_step (v : Option Bool) (s : α) :
+    r.toMealy.step v s = if r.tier s then r.transmits (r.emit v s) else v :=
+  rfl
+
+@[simp] theorem toMealy_output (v : Option Bool) (s : α) :
+    r.toMealy.output v s = if r.tier s then r.emit v s else s :=
+  rfl
+
+/-- The left-to-right run over the tier, in which each target takes the value that reaches
+it. -/
+def scan : List α → List α := r.toMealy.run
+
+/-- The run in the rule's direction. -/
+def apply : List α → List α :=
+  match r.direction with
+  | .left => r.scan
+  | .right => List.revConj r.scan
+
+/-- The value a string passes on to what follows it in the rule's direction, the machine's
+state after the string. -/
+def triggerValue (w : List α) : Option Bool :=
+  match r.direction with
+  | .left => r.toMealy.stateAfter none w
+  | .right => r.toMealy.stateAfter none w.reverse
+
+@[simp] theorem scan_nil : r.scan [] = [] := rfl
+
+@[simp] theorem length_scan (w : List α) : (r.scan w).length = w.length :=
+  r.toMealy.length_run w
+
+@[simp] theorem length_apply (w : List α) : (r.apply w).length = w.length := by
+  unfold apply; cases r.direction <;> simp [List.revConj]
+
+theorem scan_isMealyComputable : IsMealyComputable r.scan := r.toMealy.isMealyComputable
+
+theorem scan_isLeftSubsequential : IsLeftSubsequential r.scan :=
+  r.scan_isMealyComputable.isLeftSubsequential
+
+/-- The rule's string function is subsequential in the rule's direction, on any tier. -/
+theorem apply_isSubsequential : IsSubsequential r.direction r.apply := by
+  unfold apply
+  cases r.direction
+  · exact r.scan_isLeftSubsequential
+  · show IsLeftSubsequential (List.revConj (List.revConj r.scan))
+    rw [List.revConj_revConj]
+    exact r.scan_isLeftSubsequential
+
+/-! ### The run as a tier-based OSL rule -/
+
+/-- The rule as a 2-OSL rule ([chandlee-eyraud-heinz-2015]) in which each target takes the
+value the previous output segment offers. -/
+def spreadRule : OSLRule 2 α α where
+  windowOutput window s := [r.emit (window.getLast?.bind r.transmits) s]
+
+@[simp] theorem spreadRule_windowOutput (window : List α) (s : α) :
+    r.spreadRule.windowOutput window s = [r.emit (window.getLast?.bind r.transmits) s] :=
+  rfl
+
+/-- The OSL rule run over the tier ([burness-mcmullin-2020]) is the Mealy run, the rule's
+output window being the machine's state read off the last output segment. -/
+theorem spreadRule_applyOnTier : r.spreadRule.applyOnTier r.tier = r.scan := by
+  funext w
+  suffices ∀ (window : List α) (v : Option Bool), window.getLast?.bind r.transmits = v →
+      r.spreadRule.applyOnTierAux r.tier window w = r.toMealy.runFrom v w from
+    this [] none rfl
+  induction w with
+  | nil => intros; rfl
+  | cons x xs ih =>
+    intro window v hv
+    rw [OSLRule.applyOnTierAux_cons, Mealy.runFrom_cons, toMealy_output, toMealy_step]
+    split_ifs with hx
+    · rw [spreadRule_windowOutput, hv, List.singleton_append]
+      refine congrArg _ (ih _ _ ?_)
+      rw [List.rtake, List.length_append, List.length_singleton, Nat.add_sub_cancel,
+        List.drop_left, List.getLast?_singleton, Option.bind_some]
+    · exact congrArg _ (ih window v hv)
+
+theorem tier_emit (hw : ∀ v s, r.tier s → r.tier (r.write v s)) {s : α} (hs : r.tier s)
+    (v : Option Bool) : r.tier (r.emit v s) := by
+  unfold emit; split_ifs
+  · rcases (v.map r.relation.act).or r.default with _ | b
+    · exact hs
+    · exact hw b s hs
+  · exact hs
+
+/-- Restricted to the tier, the run is the 2-OSL rule, provided the write keeps a segment on
+the tier. -/
+theorem tier_scan (hw : ∀ v s, r.tier s → r.tier (r.write v s)) (w : List α) :
+    (r.scan w).filter (decide <| r.tier ·) = r.spreadRule.apply (w.filter (decide <| r.tier ·)) := by
+  rw [← spreadRule_applyOnTier]
+  exact r.spreadRule.filter_applyOnTier (fun _ s hs y hy => by
+    rw [spreadRule_windowOutput, List.mem_singleton] at hy
+    exact hy ▸ r.tier_emit hw hs _) w
 
 end TierRule
 
 end Subregular
-
-/-! ## Function-level subregular classification
-
-The `TierRule.applyToString` reification produces a string-to-string
-function classifiable in the function-level subregular hierarchy
-(the subregular function classes). The expected classification
-per [aksenova-rawski-graf-heinz-2020]:
-
-* Identity-tier `TierRule`s → **Left-Subsequential** (the trivial-tier
-  case lemma `id_tier_left_is_strict_local` above shows the structural
-  equivalence to scanning the raw input for the context class).
-* Non-trivial-tier `TierRule`s → **TierProjection-Subsequential** (a strictly
-  larger class than Left-Subsequential, captured by the standard
-  Heinz-Rawski-Tanner 2011 tier-strictly-local family applied to
-  function classes).
-
-The non-trivial-tier classification is **deferred** (the SubsequentialTransducer witness
-needs to thread the tier projection's state alongside the
-predicate-evaluation state); the identity-tier case is discharged below.
-Land the general witness here once a Studies file consumes it. -/
-namespace Subregular.TierRule
-
-
-variable {α : Type*}
-
-/-- The prediction function shared by `applyAt` (under identity tier +
-left side) and the SubsequentialTransducer construction: given an "accumulated last
-context" option, compute the feature value the rule predicts. -/
-def predictFromCtx (r : TierRule α) : Option α → Option Bool
-  | none => r.default
-  | some ctx =>
-    match r.featureValue ctx with
-    | none => r.default
-    | some v => some (match r.relation with
-                      | .agree => v
-                      | .disagree => !v)
-
-/-- The `last context-matching segment` of a list as `Option α`. State
-representation for the SubsequentialTransducer below: the last input segment so far that
-satisfies `targetIsContext`. -/
-def lastContextOf (r : TierRule α) (xs : List α) : Option α :=
-  (xs.filter (fun x => decide (r.targetIsContext x))).getLast?
-
-/-- SubsequentialTransducer witness for the identity-tier, left-side `applyToString`:
-state tracks the last `targetIsContext`-matching input segment. -/
-def toIdTierSubsequentialTransducer (r : TierRule α) :
-    SubsequentialTransducer (Option α) α (Option Bool) where
-  start := none
-  step st s := if r.targetIsContext s then some s else st
-  output st _ := [predictFromCtx r st]
-  finalOutput _ := []
-
-/-- The SubsequentialTransducer's state after one step matches the running `lastContextOf`. -/
-@[simp] lemma toIdTierSubsequentialTransducer_step (r : TierRule α) (st : Option α) (s : α) :
-    r.toIdTierSubsequentialTransducer.step st s = if r.targetIsContext s then some s else st := rfl
-
-@[simp] lemma toIdTierSubsequentialTransducer_output (r : TierRule α) (st : Option α) (s : α) :
-    r.toIdTierSubsequentialTransducer.output st s = [predictFromCtx r st] := rfl
-
-/-- `lastContextOf` extends by one step: appending a single segment to
-the past updates the running last-context exactly as the SubsequentialTransducer step
-does. -/
-lemma lastContextOf_append_singleton (r : TierRule α) (past : List α) (x : α) :
-    r.lastContextOf (past ++ [x])
-      = if r.targetIsContext x then some x else r.lastContextOf past := by
-  unfold lastContextOf
-  rw [List.filter_append]
-  by_cases h : r.targetIsContext x
-  · simp [h]
-  · simp [h]
-
-/-- Under identity tier + left side, `applyAt` agrees with
-`predictFromCtx ∘ lastContextOf` — the structural rephrasing of
-`id_tier_left_is_strict_local`. -/
-lemma applyAt_eq_predictFromCtx (r : TierRule α)
-    (h_id : r.tier = TierProjection.id) (h_side : r.side = .left) (past : List α) :
-    r.applyAt past = predictFromCtx r (r.lastContextOf past) := by
-  unfold applyAt predictFromCtx lastContextOf
-  exact id_tier_left_is_strict_local r h_id h_side past
-
-/-- **The SubsequentialTransducer computes `applyToString`.** Generalised over the
-SubsequentialTransducer's
-starting state (which represents the lastContextOf of some virtual
-past) and the corresponding past. -/
-lemma toIdTierSubsequentialTransducer_runFrom_eq_applyToStringAux (r : TierRule α)
-    (h_id : r.tier = TierProjection.id) (h_side : r.side = .left)
-    (past : List α) (input : List α) :
-    r.toIdTierSubsequentialTransducer.runFrom (r.lastContextOf past) input
-      = applyToString.applyToStringAux r input past := by
-  induction input generalizing past with
-  | nil => rfl
-  | cons x xs ih =>
-    rw [SubsequentialTransducer.runFrom_cons, toIdTierSubsequentialTransducer_output,
-    toIdTierSubsequentialTransducer_step]
-    rw [show (if r.targetIsContext x then some x else r.lastContextOf past)
-          = r.lastContextOf (past ++ [x]) from
-        (r.lastContextOf_append_singleton past x).symm]
-    rw [ih (past ++ [x]), ← r.applyAt_eq_predictFromCtx h_id h_side]
-    rfl
-
-/-- Under identity tier + left side, the transducer computes `applyToString`
-(`none = lastContextOf []` definitionally). -/
-lemma toIdTierSubsequentialTransducer_run (r : TierRule α)
-    (h_id : r.tier = TierProjection.id) (h_side : r.side = .left) :
-    r.toIdTierSubsequentialTransducer.run = r.applyToString := by
-  funext input
-  show r.toIdTierSubsequentialTransducer.runFrom none input =
-    applyToString.applyToStringAux r input []
-  exact r.toIdTierSubsequentialTransducer_runFrom_eq_applyToStringAux h_id h_side [] input
-
-/-- **Identity-tier left-side TierRules reify to Left-Subsequential
-functions.** Closes audit D6 with a real witness construction (not a
-sorry): the SubsequentialTransducer has state `Option α` (last-context-matching segment
-seen) and emits the rule's prediction at each step. -/
-theorem applyToString_isLeftSubsequential_of_id_tier [Fintype α]
-    (r : TierRule α) (h_id : r.tier = TierProjection.id) (h_side : r.side = .left) :
-    IsLeftSubsequential r.applyToString :=
-  r.toIdTierSubsequentialTransducer_run h_id h_side ▸
-    r.toIdTierSubsequentialTransducer.isLeftSubsequential
-
-/-- The identity-tier transducer emits one symbol per input symbol with no final flush,
-so the map is Mealy-computable — the machine form of the myopia results below. -/
-theorem applyToString_isMealyComputable_of_id_tier [Fintype α]
-    (r : TierRule α) (h_id : r.tier = TierProjection.id) (h_side : r.side = .left) :
-    IsMealyComputable r.applyToString :=
-  r.toIdTierSubsequentialTransducer_run h_id h_side ▸
-    (⟨fun st _ => predictFromCtx r st, fun _ _ => rfl⟩ :
-        r.toIdTierSubsequentialTransducer.LetterToLetter).isMealyComputable fun _ => rfl
-
-/-! ### Myopia: the tier-rule prediction has no look-ahead -/
-
-/-- `applyToString`'s coordinate `i` is the rule's prediction over the strict input
-prefix: `applyAt r (input.take i)` (in range; `none` otherwise). -/
-theorem applyToStringAux_getElem? (r : TierRule α) :
-    ∀ (input past : List α) (i : ℕ),
-      (applyToString.applyToStringAux r input past)[i]?
-        = if i < input.length then some (r.applyAt (past ++ input.take i)) else none
-  | [], _, i => by simp [applyToString.applyToStringAux]
-  | _ :: _, _, 0 => by simp [applyToString.applyToStringAux]
-  | x :: xs, past, i + 1 => by
-      simp only [applyToString.applyToStringAux, List.getElem?_cons_succ,
-        List.length_cons, List.take_succ_cons, Nat.add_lt_add_iff_right]
-      rw [applyToStringAux_getElem? r xs (past ++ [x]) i, List.append_assoc,
-        List.singleton_append]
-
-theorem applyToString_getElem? (r : TierRule α) (u : List α) (i : ℕ) :
-    (r.applyToString u)[i]?
-      = if i < u.length then some (r.applyAt (u.take i)) else none := by
-  rw [applyToString, applyToStringAux_getElem?]; simp
-
-/-- `applyToString` is **prefix-determined**: its `i`-th output is fixed by the input's
-strict prefix `{k | k < i}`. -/
-theorem applyToString_prefixDetermined (r : TierRule α) (i : ℕ) :
-    ∀ n, DependsOn (fun x : Fin n → α ↦ (r.applyToString (List.ofFn x))[i]?)
-      (Fin.val ⁻¹' Set.Iio i) :=
-  (List.forall_dependsOn_ofFn_iff fun w ↦ (r.applyToString w)[i]?).mpr fun u v hlen hag ↦ by
-    show (r.applyToString u)[i]? = (r.applyToString v)[i]?
-    rw [applyToString_getElem?, applyToString_getElem?, hlen,
-      List.ext_take_getElem? fun k hk => hag.getElem?_eq (Set.mem_Iio.mpr hk)]
-
-/-- **The tier-rule prediction mechanism is right-myopic** — it has no look-ahead.
-Consequently no tier-rule-based prediction (the formal core of a `Harmony.System`) can
-compute a *non-myopic* harmony, such as an unbounded-circumambient pattern. -/
-theorem applyToString_boundedDependence_right (r : TierRule α) :
-    BoundedDependence r.applyToString .right :=
-  BoundedDependence.right_of_prefixDetermined (applyToString_prefixDetermined r)
-
-end Subregular.TierRule
