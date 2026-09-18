@@ -26,11 +26,10 @@ open Pronoun Reciprocal
 def hvorAnnad : Marker :=
   { form := "hvort annað", strategy := .bipartiteNP }
 
-/-- sig — reflexive pronoun (for contrast). -/
--- UNVERIFIED: *sig* is also bound at a distance out of subjunctive clauses; the role that
--- licenses it there is not recorded.
+/-- sig — reflexive pronoun (for contrast). It is also bound from outside its clause, out of
+    a subjunctive complement, by an antecedent that is a self ([sells-1987]). -/
 def sig : ReflexivePronoun :=
-  { form := "sig", person := some .third }
+  { form := "sig", person := some .third, requiredRole := some .self }
 
 /-- Icelandic reciprocal is formally distinct from reflexive. -/
 theorem recip_distinct_from_reflexive :
