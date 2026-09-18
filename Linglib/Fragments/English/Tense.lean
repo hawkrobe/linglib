@@ -1,55 +1,44 @@
-import Linglib.Semantics.Tense.Decomposition
+import Linglib.Syntax.Category.Verb.Tense
 
 /-!
-# English tense fragment
+# English tense forms
 
-The English simple past and present perfect in Kratzer's surface-tense decomposition: each
-is a present tense pronoun with the perfect aspect, the simple past fusing the two morphemes
-where the present perfect exposes the perfect through the auxiliary *have*, so that the simple
-past can be used deictically.
+This file lists the tense forms of English. The English verb has two synthetic tense forms, the
+simple present and the simple past. The progressive forms put the present participle under *be*,
+as in *is building* and *was building*, and the perfect forms put the past participle under
+*have*, as in *has built* and *had built*.
 
 ## References
 
 * [kratzer-1998]
 -/
 
-open Tense
+namespace English
 
-namespace English.Tense
+/-- The simple present is the synthetic present, as *builds*. -/
+def simplePresent : Tense.Form := { name := "simple present", finite := .Pres }
 
-/-! ### Surface tense ([kratzer-1998]) -/
+/-- The simple past is the synthetic past, as *built*. -/
+def simplePast : Tense.Form := { name := "simple past", finite := .Past }
 
-open _root_.Tense.Decomposition
-open _root_.Tense
+/-- The present progressive puts the present participle under present *be*, as *is building*. -/
+def presentProgressive : Tense.Form :=
+  { name := "present progressive", finite := .Pres, nonfinite := [.presentParticiple] }
 
-/-- The English simple past decomposes as an indexical present tense pronoun with the perfect
-aspect, so the form can be used deictically. -/
-def simplePastSurface : SurfaceTense where
-  tensePronoun := indexicalPresent
-  hasPerfect := true
+/-- The past progressive puts the present participle under past *be*, as *was building*. -/
+def pastProgressive : Tense.Form :=
+  { name := "past progressive", finite := .Past, nonfinite := [.presentParticiple] }
 
-/-- The English present perfect decomposes as the simple past does, with the perfect exposed
-by the auxiliary *have*. -/
-def presentPerfectSurface : SurfaceTense where
-  tensePronoun := indexicalPresent
-  hasPerfect := true
+/-- The present perfect puts the past participle under present *have*, as *has built*. -/
+def presentPerfect : Tense.Form :=
+  { name := "present perfect", finite := .Pres, nonfinite := [.pastParticiple] }
 
-/-- English simple past can be deictic (from decomposition). -/
-theorem simplePastSurface_deictic :
-    simplePastSurface.canBeDeictic := by decide
+/-- The past perfect puts the past participle under past *have*, as *had built*. -/
+def pastPerfect : Tense.Form :=
+  { name := "past perfect", finite := .Past, nonfinite := [.pastParticiple] }
 
-/-- The underlying tense head is PRESENT, not PAST.
-    Pastness comes from the PERF aspect head, not the tense. -/
-theorem simplePastSurface_underlyingPresent :
-    simplePastSurface.tensePronoun.constraint = _root_.Tense.present := rfl
+/-- English has these tense forms. -/
+def tenseForms : List Tense.Form :=
+  [simplePresent, simplePast, presentProgressive, pastProgressive, presentPerfect, pastPerfect]
 
-/-- Simple past and present perfect share the same underlying decomposition:
-    both are PRESENT + PERFECT. The difference is that simple past fuses
-    the two morphemes while present perfect makes the PERF transparent
-    via auxiliary "have". -/
-theorem simplePast_presentPerfect_same_decomposition :
-    simplePastSurface.tensePronoun = presentPerfectSurface.tensePronoun ∧
-    simplePastSurface.hasPerfect = presentPerfectSurface.hasPerfect :=
-  ⟨rfl, rfl⟩
-
-end English.Tense
+end English

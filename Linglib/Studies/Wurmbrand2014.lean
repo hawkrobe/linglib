@@ -1,5 +1,5 @@
 import Linglib.Core.Order.Interval
-import Linglib.Semantics.Tense.Decomposition
+import Linglib.Semantics.Tense.Embedding
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Data.Examples.Wurmbrand2014
 
@@ -235,7 +235,7 @@ def localTense : List (Option (Finset Ordering)) → Option (Finset Ordering)
 feature. -/
 def sotApplies (above : List (Option (Finset Ordering))) (embedded : Finset Ordering) : Bool :=
   match localTense above with
-  | some m => Decomposition.sotDeletionApplicable m embedded
+  | some m => decide (m = embedded)
   | none => false
 
 /-- The present of *will* intervenes between two pasts, blocking deletion. -/
