@@ -31,8 +31,9 @@ simple tenses in the paradigm.
 
 ## Implementation notes
 
-A construction's symmetry is a judgment recorded on the fragment entries, so the derived
-content is the paradigmatic level and the language type. The English fragment codes the
+A construction's symmetry is a judgment recorded on the fragment entries, except for Mandarin,
+where it is derived from what the negator adds and excludes (`IsSymmetricNegator`); elsewhere the
+derived content is the paradigmatic level and the language type. The English fragment codes the
 do-support constructions as asymmetric, the atlas's reading; the book compares the
 simple-tense negatives with the emphatic affirmatives and locates the asymmetry in the
 paradigm, and `englishSimpleTenses` follows the book. The representative sample, its
@@ -150,11 +151,21 @@ theorem hixkaryana_asymmetric :
 
 /-! ### Mixed languages: Mandarin and Turkish -/
 
+/-- A Mandarin negator's construction is symmetric when it adds nothing but the negator: no verb
+comes with it and no aspect particle of the affirmative is excluded. -/
+def IsSymmetricNegator (n : Mandarin.Negation.Negator) : Prop := n.verb = none ∧ n.excludes = []
+
+instance : DecidablePred IsSymmetricNegator := fun n ↦
+  inferInstanceAs (Decidable (n.verb = none ∧ n.excludes = []))
+
 /-- Mandarin negates non-perfectives symmetrically with *bù* and perfectives with *méi*, which
-introduces the existential verb as the finite element or is itself the finite negative verb,
-so it is of type SymAsy. -/
+brings in the existential verb *yǒu* as the finite element of the negative clause, or is itself
+the negative existential verb, and loses the perfective *le*: a finiteness asymmetry, so the
+language is of type SymAsy. -/
 theorem mandarin_both :
-    languageType (Mandarin.Negation.allExamples.map (·.symmetric)) False = .both := by
+    IsSymmetricNegator Mandarin.Negation.bu ∧ ¬ IsSymmetricNegator Mandarin.Negation.mei ∧
+      languageType (Mandarin.Negation.negators.map (decide <| IsSymmetricNegator ·)) False =
+        .both := by
   decide
 
 /-- Turkish negation is symmetric except in the aorist, whose marker changes or drops in the

@@ -1,194 +1,64 @@
 import Linglib.Syntax.Negation
+import Linglib.Fragments.Mandarin.Aspect
 
 /-!
-# Mandarin Negation Fragment
-[miestamo-2005] [dryer-haspelmath-2013]
+# Mandarin negation
 
-Mandarin Chinese has two standard negation particles:
+Mandarin negates a declarative verbal clause with one of two preverbal negators, chosen by
+aspect. *Bù* negates non-perfective predicates, present and future, is the natural choice with
+states, and adds nothing else to the clause: *Nézha bù tǎoyàn Yángjiǎn* 'Nezha does not hate
+Yangjian'. *Méi* negates perfective and experiential predicates and is the dedicated negator of
+the existential and possessive verb *yǒu* 'have', which may follow it in the long form
+*méi-yǒu*. The perfective particle *le* does not occur under it, while the experiential *guò*
+does: *Nézha chuī le chángdí* 'Nezha played the flute' is negated as *Nézha méi-yǒu chuī
+chángdí*. Prohibitions use neither negator but the negative imperatives *bié* and *búyào*,
+literally 'not want'. The description follows [miestamo-2005], [zhao-2025] and [jin-koenig-2021]; [miestamo-2005]'s
+classification of the constructions as symmetric and asymmetric lives in
+`Studies/Miestamo2005.lean`, and the negators that appear expletively under *fear* and *regret*
+are the rows of `Data.Examples.JinKoenig2021`.
 
-| Particle | Domain | Symmetric? |
-|----------|--------|------------|
-| 不 *bù* | General (non-perfective) | Yes |
-| 没(有) *méi(yǒu)* | Perfective / existential | No (A/Fin) |
+## References
 
-## SymAsy: Symmetric and Asymmetric
-
-WALS classifies Mandarin as **both** symmetric and asymmetric:
-
-- **Symmetric**: 不 *bù* negation simply adds the particle before the verb,
-  with no structural change. Available across tenses and moods.
-
-- **Asymmetric (A/Fin)**: 没(有) *méi(yǒu)* is restricted to perfective/
-  existential contexts and introduces a finiteness-like change: it is
-  incompatible with certain aspect markers (e.g., 了 *le* perfective).
-  The *bù*/*méi* split itself constitutes an asymmetry — the choice of
-  negator depends on aspect, unlike in the affirmative.
+* [miestamo-2005]
+* [zhao-2025]
+* [jin-koenig-2021]
 -/
 
 namespace Mandarin.Negation
 
 open Syntax.Negation
 
-/-- 不 *bù* — the general non-perfective negation particle.
-    Used with imperfective, stative, modal, and future contexts;
-    excluded from perfective and existential. Symmetric: simply adds
-    to the verb without further structural change. -/
-def bu : Marker :=
-  { pieces := [[.free "bù"]] }
+/-- A Mandarin standard negator: its exponent, the aspectual domain it negates, the verb that
+may follow it as part of the negator, and the aspect particles of the affirmative that do not
+occur with it. -/
+structure Negator where
+  /-- The exponent. -/
+  marker : Marker
+  /-- The aspectual domain the negator negates. -/
+  perfectivity : _root_.Aspect.Perfectivity
+  /-- The verb that may follow the negator in its long form. -/
+  verb : Option Morphology.Morph := none
+  /-- The aspect particles of the affirmative that do not occur under the negator. -/
+  excludes : List Aspect.Marker := []
 
-/-- 没 *méi* (long form 没有 *méi-yǒu*) — the perfective/existential
-    negation particle. Asymmetric: incompatible with the perfective
-    aspect marker 了 *le*; required as the negator of 有 *yǒu* 'have'.
-    The choice between *bù* and *méi* is aspect-conditioned. -/
-def mei : Marker :=
-  { pieces := [[.free "méi"]] }
+/-- *bù* 不, the negator of non-perfective predicates. -/
+def bu : Negator := { marker := { pieces := [[.free "bù"]] }, perfectivity := .imperfective }
 
-/-- A Mandarin negation example. -/
-structure NegExample where
-  affirmative : String
-  negative : String
-  glossAff : String
-  glossNeg : String
-  /-- Which negation particle is used -/
-  negator : String
-  /-- Is this construction symmetric (neg = aff + neg marker, no other change)? -/
-  symmetric : Bool
-  deriving Repr, BEq
+/-- *méi* 没, long form *méi-yǒu* 没有, the negator of perfective and experiential predicates
+and of *yǒu* 'have'. The perfective *le* does not occur with it. -/
+def mei : Negator where
+  marker := { pieces := [[.free "méi"]] }
+  perfectivity := .perfective
+  verb := some (.free "yǒu")
+  excludes := [Aspect.le]
 
-/-- 不 *bù* + present/habitual: symmetric. -/
-def buPresent : NegExample :=
-  { affirmative := "tā chī", negative := "tā bù chī"
-  , glossAff := "3SG eat", glossNeg := "3SG NEG eat"
-  , negator := "bù", symmetric := true }
+/-- The standard negators. -/
+def negators : List Negator := [bu, mei]
 
-/-- 不 *bù* + stative: symmetric. -/
-def buStative : NegExample :=
-  { affirmative := "tā gāo", negative := "tā bù gāo"
-  , glossAff := "3SG tall", glossNeg := "3SG NEG tall"
-  , negator := "bù", symmetric := true }
+/-- *bié* 别, the negative imperative. -/
+def bie : Marker := { pieces := [[.free "bié"]], gloss := "IMP.NEG" }
 
-/-- 不 *bù* + future/modal: symmetric. -/
-def buFuture : NegExample :=
-  { affirmative := "tā huì lái", negative := "tā bù huì lái"
-  , glossAff := "3SG will come", glossNeg := "3SG NEG will come"
-  , negator := "bù", symmetric := true }
-
-/-- 没(有) *méi(yǒu)* + perfective: asymmetric.
-    The perfective marker 了 *le* is dropped under negation. -/
-def meiPerfective : NegExample :=
-  { affirmative := "tā chī le", negative := "tā méi chī"
-  , glossAff := "3SG eat PFV", glossNeg := "3SG NEG.PFV eat"
-  , negator := "méi", symmetric := false }
-
-/-- 没(有) *méi(yǒu)* + existential: asymmetric.
-    有 *yǒu* 'have/exist' can only be negated with 没, not 不. -/
-def meiExistential : NegExample :=
-  { affirmative := "tā yǒu qián", negative := "tā méi-yǒu qián"
-  , glossAff := "3SG have money", glossNeg := "3SG NEG-have money"
-  , negator := "méi-yǒu", symmetric := false }
-
-def allExamples : List NegExample :=
-  [buPresent, buStative, buFuture, meiPerfective, meiExistential]
-
-/-- Which negation particle applies in which aspectual context. -/
-structure NegatorDistribution where
-  context : String
-  negator : String
-  deriving Repr, BEq
-
-def negatorContexts : List NegatorDistribution :=
-  [ { context := "non-perfective / habitual", negator := "bù" }
-  , { context := "stative", negator := "bù" }
-  , { context := "modal / future", negator := "bù" }
-  , { context := "perfective", negator := "méi(yǒu)" }
-  , { context := "existential", negator := "méi(yǒu)" }
-  ]
-
-/-! ## Verification -/
-
-theorem all_examples_count : allExamples.length = 5 := by decide
-
-/-- The *bù* constructions are symmetric; the *méi* constructions are not. -/
-theorem bu_symmetric_mei_asymmetric :
-    (allExamples.filter (·.negator == "bù")).all (·.symmetric) = true ∧
-    (allExamples.filter (fun e => e.negator == "méi" || e.negator == "méi-yǒu")).all
-      (fun e => !e.symmetric) = true := by
-  exact ⟨by decide, by decide⟩
-
-/-- 3 symmetric + 2 asymmetric constructions = SymAsy. -/
-theorem symasy_distribution :
-    (allExamples.filter (·.symmetric)).length = 3 ∧
-    (allExamples.filter (fun e => !e.symmetric)).length = 2 := by
-  exact ⟨by decide, by decide⟩
-
-/-! ## Expletive Negation
-[jin-koenig-2021]
-
-Mandarin EN negators show striking **trigger-class covariation**: different
-trigger classes select different expletive negators, and the choice is
-semantically motivated.
-
-| Trigger class | EN negator      | Gloss              | Note                     |
-|---------------|-----------------|---------------------|--------------------------|
-| FEAR          | 别 *bié*        | don't (imperative)  | Neither 不 nor 没 allowed |
-| FEAR          | 不要 *búyào*    | not-want (imp.)     | Neither 不 nor 没 allowed |
-| REGRET        | 不该 *bùgāi*   | shouldn't (deontic) | Must include deontic modal|
-| COMPLAIN      | 不该 *bùgāi*   | shouldn't (deontic) | Must include deontic modal|
-| DENY          | 不 *bù*        | NEG (general)       | Standard negator         |
-| BEFORE        | 不 *bù*        | NEG (general)       | Via 以前 *yǐqián*          |
-| ALMOST        | 没 *méi*       | NEG (perfective)    | Via 差点儿 *chàdiǎnr*        |
-
-The imperative negators *bié*/*búyào* for FEAR connect to the
-desiderative semantics: fear activates the desire for ¬p, and the
-imperative form lexicalizes the prohibition component.
-
-The deontic negator *bùgāi* for REGRET/COMPLAIN connects to the
-behavioral-standards semantics: the negative inference is that
-¬p is consistent with X's standards, i.e., p *shouldn't* have happened.
--/
-
-/-- Mandarin imperative negation particle (used as EN for FEAR). -/
-def bieParticle : String := "bié"
-
-/-- Mandarin imperative negation 'not-want' (used as EN for FEAR). -/
-def buyaoParticle : String := "búyào"
-
-/-- Mandarin deontic negation 'shouldn't' (used as EN for REGRET/COMPLAIN). -/
-def bugaiParticle : String := "bùgāi"
-
-/-- EN trigger-negator pairings (pinyin forms) from [jin-koenig-2021],
-    Table 5 and §6.1–6.4. -/
-def enTriggerNegators : List ExpletiveTrigger :=
-  [ { triggerClass := .fear, triggerForm := "pà"
-    , negatorForm := "bié", negatorGloss := some "don't (imperative)" }
-  , { triggerClass := .avoid, triggerForm := "bìmiǎn"
-    , negatorForm := "bù/méi(yǒu)", negatorGloss := some "NEG (general/perfective)" }
-  , { triggerClass := .regret, triggerForm := "hòuhuǐ"
-    , negatorForm := "bùgāi", negatorGloss := some "shouldn't (deontic)" }
-  , { triggerClass := .complain, triggerForm := "bàoyuan"
-    , negatorForm := "bùgāi", negatorGloss := some "shouldn't (deontic)" }
-  , { triggerClass := .deny, triggerForm := "fǒurèn"
-    , negatorForm := "bù", negatorGloss := some "NEG (general)" }
-  , { triggerClass := .before, triggerForm := "yǐqián"
-    , negatorForm := "bù", negatorGloss := some "NEG (general)" }
-  , { triggerClass := .almost, triggerForm := "chàdiǎnr"
-    , negatorForm := "méi", negatorGloss := some "NEG (perfective)" } ]
-
-/-- FEAR triggers use imperative negators, not the standard
-    *bù* or *méi*. This connects to the desiderative semantics:
-    fear activates desire for ¬p, and imperative negation lexicalizes
-    prohibition ([jin-koenig-2021], §6.1.1, ex. 14). -/
-theorem fear_uses_imperative_neg :
-    (enTriggerNegators.filter (·.triggerClass == .fear)).all
-      (·.negatorForm == "bié") = true := by decide
-
-/-- REGRET/COMPLAIN triggers use the deontic negator *bùgāi* 'shouldn't'.
-    This connects to the behavioral-standards semantics: ¬p is consistent
-    with X's standards → p *shouldn't* have happened
-    ([jin-koenig-2021], §6.1.2). -/
-theorem regret_uses_deontic_neg :
-    (enTriggerNegators.filter (fun e =>
-      e.triggerClass == .regret || e.triggerClass == .complain)).all
-      (·.negatorForm == "bùgāi") = true := by decide
+/-- *búyào* 不要, literally 'not want', the periphrastic negative imperative. -/
+def buyao : Marker := { pieces := [[.free "bú", .free "yào"]], gloss := "IMP.NEG" }
 
 end Mandarin.Negation
