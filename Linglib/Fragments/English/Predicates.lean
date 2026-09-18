@@ -178,6 +178,18 @@ def come : Verb where
   vendlerClass := some .achievement
   levinClasses := {LevinClass.appear, .inherentlyDirectedMotion}
 
+/-- "go" — Levin 51.1 inherently directed motion, suppletive in the past. -/
+def go : Verb where
+  form := "go"
+  form3sg := "goes"
+  formPast := "went"
+  formPastPart := "gone"
+  formPresPart := "going"
+  frames := [ArgumentFrame.unaccusative]
+  passivizable := false
+  vendlerClass := some .achievement
+  levinClasses := {LevinClass.inherentlyDirectedMotion}
+
 /-- "eat" — transitive, implicit object is indefinite ("Have you eaten?") -/
 def eat : Verb where
   form := "eat"
