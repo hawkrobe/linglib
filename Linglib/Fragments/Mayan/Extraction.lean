@@ -1,3 +1,4 @@
+import Mathlib.Data.Fintype.Sum
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Clause.ArgumentRole
 
@@ -54,6 +55,6 @@ extraction only indexes `realize` by `ArgumentRole`. -/
 inductive ExtractionSite where
   | core (r : ArgumentRole)
   | adjunct (a : Adjunct)
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 end Mayan

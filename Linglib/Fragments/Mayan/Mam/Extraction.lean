@@ -65,35 +65,31 @@ def realize : Mayan.ExtractionSite → Finset (Reflex Host)
 
 /-- Absolutive extraction is unmarked. -/
 theorem realize_core_of_ne_A {r : ArgumentRole} (h : r ≠ .A) : realize (.core r) = ∅ := by
-  cases r <;> first | exact absurd rfl h | rfl
+  decide +revert
 
 theorem realize_adjunct_of_ne_temporal {a : Mayan.Adjunct} (h : a ≠ .temporal) :
     realize (.adjunct a) = {.morpheme .verbalComplex, .morpheme .directional} := by
-  cases a <;> first | exact absurd rfl h | rfl
+  decide +revert
 
 /-- The temporals are the one adjunct class whose extraction licenses no reflex. -/
 theorem realize_adjunct_nonempty_iff (a : Mayan.Adjunct) :
     (realize (.adjunct a)).Nonempty ↔ a ≠ .temporal := by
-  cases a <;> decide
+  decide +revert
 
 /-- The antipassive is the reflex of transitive-subject extraction alone. -/
 theorem morpheme_verb_mem_realize_iff (s : Mayan.ExtractionSite) :
     Reflex.morpheme Host.verb ∈ realize s ↔ s = .core .A := by
-  cases s with
-  | core r => cases r <;> decide
-  | adjunct a => cases a <;> decide
+  decide +revert
 
 /-- No core-argument extraction licenses the enclitic. -/
 theorem morpheme_verbalComplex_notMem_realize_core (r : ArgumentRole) :
     Reflex.morpheme Host.verbalComplex ∉ realize (.core r) := by
-  cases r <;> decide
+  decide +revert
 
 /-- The directional hosts the enclitic at exactly the sites the verbal complex does. -/
 theorem morpheme_directional_mem_realize_iff (s : Mayan.ExtractionSite) :
     Reflex.morpheme Host.directional ∈ realize s ↔
       Reflex.morpheme Host.verbalComplex ∈ realize s := by
-  cases s with
-  | core r => cases r <;> decide
-  | adjunct a => cases a <;> decide
+  decide +revert
 
 end Mam.Extraction

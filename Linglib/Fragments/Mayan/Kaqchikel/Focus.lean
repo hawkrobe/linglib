@@ -55,7 +55,7 @@ def focusRealize (r : ArgumentRole) : Finset (Reflex Extraction.Host) :=
     only. -/
 theorem af_reflex_iff (p : ArgumentRole) :
     Reflex.morpheme Extraction.Host.verb ∈ focusRealize p ↔ p = .A := by
-  cases p <;> decide
+  decide +revert
 
 /-- The ergative split in focus marking: A-focus switches the verb to AF
 while S-focus does not. -/

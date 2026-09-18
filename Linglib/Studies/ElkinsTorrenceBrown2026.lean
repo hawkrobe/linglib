@@ -272,8 +272,7 @@ instance : DecidablePred IsLow := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ 
 /-- Table 4: the Mam and K'ichean triggers differ exactly at reasons, purposes and manners. -/
 theorem table4 (a : Mayan.Adjunct) :
     ¬ (BearsObl a ↔ IsLow a) ↔ a = .reason ∨ a = .purpose ∨ a = .manner := by
-  revert a
-  decide
+  decide +revert
 
 /-- What is extracted, if anything: an absolutive argument, an ergative argument, or an adjunct. -/
 inductive Mover
@@ -313,9 +312,7 @@ when the Mam fragment does, the mover bearing [obl] and the clause of origin pro
 theorem realizable_iff_mem_realize (s : Mayan.ExtractionSite) :
     Realizable (.ofSite s) [spine .cP 0] 0 ↔
       Reflex.morpheme .verbalComplex ∈ Mam.Extraction.realize s := by
-  cases s with
-  | core r => cases r <;> decide
-  | adjunct a => cases a <;> decide
+  decide +revert
 
 /-- The mover is a low adjunct, merged in Spec,ApplP with [appl] (§5.3). -/
 def Mover.IsLow : Mover → Prop
@@ -332,9 +329,7 @@ instance : ∀ m : Mover, Decidable m.IsLow
 Agent Focus being a reflex on the verb (§5.1, §5.3). -/
 theorem kiche_mem_realize_iff (s : Mayan.ExtractionSite) :
     Reflex.morpheme .verbalComplex ∈ Kiche.Extraction.realize s ↔ (Mover.ofSite s).IsLow := by
-  cases s with
-  | core r => cases r <;> decide
-  | adjunct a => cases a <;> decide
+  decide +revert
 
 /-! ### Agree and insertion (§4.2) -/
 
