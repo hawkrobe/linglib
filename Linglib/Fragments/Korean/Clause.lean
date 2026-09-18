@@ -19,35 +19,44 @@ repeated marks alternation, also sequence, while *-myeonseo* 'while' marks simul
 *-(eu)nikka* 'because, as' gives the reason as the speaker presents it; *-(eu)myeon* 'if,
 when' conditions; *-jiman*, *-(eu)na* and *-eodo* 'but, although, even if' concede;
 *-dorok* 'so that, to the extent that, until' gives a result or limit; *-(eu)ryeogo* 'intending
-to' and *-(eu)reo* 'in order to' give the intention or purpose; and *-geona* 'or' disjoins.
-Tense before the suffix is relative to the final verb. Sohn states that no past occurs before
-*-eoseo*, *-go(seo)*, *-jamaja*, *-dorok* and the complement suffix *-ge*; before
-*-myeonseo* and *-daga* the past occurs when the medial event precedes the final one, before
-*-(eu)myeon* it marks a hypothetical, and his examples show it before *-go*, *-(eu)na*,
-*-jiman*, *-eodo*, *-(eu)nikka* and *-geona*. The negative adverbs *an* and *mot* and the
+to' and *-(eu)reo* 'in order to' give the intention or purpose; *-(eu)ni* 'since, as, after'
+gives the reason or the antecedent; *-neunde* 'given that, and, but' supplies background; and
+*-geona* and *-deunji* 'or' disjoin. Every conjunctive suffix admits the subject honorific
+before it, but only some the past or perfect *-eoss* and fewer still the modal *-gess*, and
+never the addressee honorific. Tense before the suffix is relative to the final verb. Sohn
+marks *-eoseo*, *-go(seo)*, *-dorok*, *-(eu)ryeogo*, *-(eu)reo* and *-jamaja* as excluding
+the past, and with it the modal; *-myeonseo* excludes both in its simultaneous reading, the
+tense of the final clause governing its clause, and admits both in its concessive 'while …
+yet' reading; before *-(eu)myeon* the past marks a hypothetical; *-eodo* and *-deunji* admit
+the past but not the modal; and *-go*, *-(eu)na*, *-jiman*, *-neunde*, *-(eu)ni*,
+*-(eu)nikka*, *-daga* and *-geona* admit both. The negative adverbs *an* and *mot* and the
 negative verb *malda* occur in a medial clause, their choice governed by the sentence type of
 the final clause. The suffixes are entered in the Revised Romanization; Sohn writes *-ko*,
 *-ko(se)*, *-(u)myense*, *-e(se)*, *-(u)myen*, *-ciman*, *-(u)na*, *-eto*, *-tolok*,
-*-(u)nikka*, *-(u)lyeko*, *-(u)le*, *-taka*, *-ca(maca)* and *-kena*.
+*-(u)nikka*, *-(u)ni*, *-nuntey*, *-(u)lyeko*, *-(u)le*, *-taka*, *-ca(maca)*, *-kena* and
+*-tunci*.
 
 ## Main definitions
 
-* `Korean.Converb` — the fifteen conjunctive suffixes, with their morphs (`morphs`,
-  `form`), gloss, the relations they encode (`relations`), whether the past may precede them
-  (`AllowsTense`) and their verb form (`verbForm`); they are an instance of
-  `Clause.Chaining.MedialForm`
+* `Korean.Converb` — the eighteen conjunctive suffixes, with their morphs (`morphs`,
+  `form`), gloss, the relations they encode (`relations`), whether the past (`AllowsTense`)
+  and the modal (`AllowsModal`) may precede them, and their verb form (`verbForm`); they are
+  an instance of `Clause.Chaining.MedialForm`
+* `Korean.Converb.allowsModal_imp_allowsTense` — a suffix admitting the modal admits the past
 
 ## Implementation notes
 
-`AllowsTense` follows Sohn's statements on which suffixes exclude the past and his examples
-of the past before the others; for *-(eu)ryeogo* and *-(eu)reo* it records that no example
-carries the past. The clause-chaining typology over the converbs is in
-`Studies/SarvasyAikhenvald2025.lean`; disjunction is a relation the inventory of interclausal
-relations does not name.
+`AllowsTense` and `AllowsModal` follow the features Sohn attaches to each conjunctor in his
+survey and, for *-jamaja*, *-geona* and *-deunji*, which the list omits, his statements that
+the suffixes excluding the past exclude every mood suffix, his example of the past before
+*-geona*, and the synonymy of *-geona* with *-deunji*. The clause-chaining typology over the
+converbs is in `Studies/SarvasyAikhenvald2025.lean`; disjunction and background are
+relations the inventory of interclausal relations does not name.
 
 ## References
 
 * [sohn-1994]
+* [sohn-1999]
 -/
 
 namespace Korean
@@ -78,8 +87,12 @@ inductive Converb where
   /-- *-dorok* 'so that, to the extent that, until', a result, extent or temporal limit; no
   past before it. -/
   | dorok
-  /-- *-(eu)nikka* 'because, as, since', the reason as the speaker presents it. -/
+  /-- *-(eu)nikka* 'because, as, since, when', the reason as the speaker presents it. -/
   | nikka
+  /-- *-(eu)ni* 'since, as, after'. -/
+  | ni
+  /-- *-neunde* 'given that, and, but', supplying background. -/
+  | neunde
   /-- *-(eu)ryeogo* 'intending to'. -/
   | ryeo
   /-- *-(eu)reo* 'in order to'. -/
@@ -90,6 +103,8 @@ inductive Converb where
   | jamaja
   /-- *-geona* 'or'. -/
   | geona
+  /-- *-deunji* 'or', the formal disjunction. -/
+  | deunji
   deriving DecidableEq, Repr, Fintype
 
 namespace Converb
@@ -106,11 +121,14 @@ def morphs : Converb → List Morph
   | eodo => [.suff "eodo"]
   | dorok => [.suff "dorok"]
   | nikka => [.suff "(eu)nikka"]
+  | ni => [.suff "(eu)ni"]
+  | neunde => [.suff "neunde"]
   | ryeo => [.suff "(eu)ryeogo"]
   | reo => [.suff "(eu)reo"]
   | daga => [.suff "daga"]
   | jamaja => [.suff "jamaja"]
   | geona => [.suff "geona"]
+  | deunji => [.suff "deunji"]
 
 /-- The form of a converb in boundary notation. -/
 def form (c : Converb) : String := Morph.surface c.morphs
@@ -126,12 +144,14 @@ def gloss : Converb → String
   | na => "but"
   | eodo => "although, even if"
   | dorok => "so that, to the extent that, until"
-  | nikka => "because, as, since"
+  | nikka => "because, as, since, when"
+  | ni => "since, as, after"
+  | neunde => "given that, and, but"
   | ryeo => "intending to"
   | reo => "in order to"
   | daga => "and then, while"
   | jamaja => "as soon as"
-  | geona => "or"
+  | geona | deunji => "or"
 
 /-- The interclausal relations a converb encodes. -/
 def relations : Converb → Finset InterclauseRelation
@@ -143,17 +163,34 @@ def relations : Converb → Finset InterclauseRelation
   | jiman | na | eodo => {.concessive}
   | dorok | ryeo | reo => {.purpose}
   | nikka => {.causal}
+  | ni => {.causal, .sequential}
+  | neunde => {.additive, .concessive}
   | daga => {.sequential, .simultaneous}
   | jamaja => {.sequential}
-  | geona => ∅
+  | geona | deunji => ∅
 
-/-- The past may be marked on the medial verb before the converb. -/
+/-- The past or perfect may be marked on the medial verb before the converb; before
+*-myeonseo* only in its concessive reading. -/
 def AllowsTense (c : Converb) : Prop :=
-  c = go ∨ c = myeonseo ∨ c = myeon ∨ c = jiman ∨ c = na ∨ c = eodo ∨ c = nikka ∨ c = daga ∨
-    c = geona
+  c = go ∨ c = myeonseo ∨ c = myeon ∨ c = jiman ∨ c = na ∨ c = eodo ∨ c = nikka ∨ c = ni ∨
+    c = neunde ∨ c = daga ∨ c = geona ∨ c = deunji
 
 instance : DecidablePred AllowsTense :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _))
+  fun _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _))
+
+/-- The modal *-gess* may be marked on the medial verb before the converb; before
+*-myeonseo* only in its concessive reading. -/
+def AllowsModal (c : Converb) : Prop :=
+  c = go ∨ c = myeonseo ∨ c = myeon ∨ c = jiman ∨ c = na ∨ c = nikka ∨ c = ni ∨ c = neunde ∨
+    c = daga ∨ c = geona
+
+instance : DecidablePred AllowsModal :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _))
+
+/-- A converb admitting the modal admits the past, since the clauses that exclude the past
+exclude every mood suffix. -/
+theorem allowsModal_imp_allowsTense (c : Converb) : c.AllowsModal → c.AllowsTense := by
+  revert c; decide
 
 /-- The verb form of a converb. -/
 def verbForm (_ : Converb) : UD.VerbForm := .Conv
