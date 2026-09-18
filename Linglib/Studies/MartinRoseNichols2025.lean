@@ -1,374 +1,364 @@
-import Linglib.Semantics.Causation.ProductionDependence
-import Linglib.Syntax.Minimalist.Verbal.Voice
-import Linglib.Syntax.Minimalist.Verbal.Applicative
-import Linglib.Syntax.Minimalist.Verbal.Decomposition
-import Linglib.Semantics.ArgumentStructure.EventStructure
+import Linglib.Pragmatics.Superoptimal
+import Linglib.Semantics.Root.Defs
 import Linglib.Fragments.English.Predicates
-import Linglib.Semantics.ArgumentStructure.LevinClass.Properties
 
 /-!
-# Martin, Rose and Nichols (2025): Burning Facts: Thick and Thin Causatives
+# Martin, Rose and Nichols (2025): Burning facts: thick and thin causatives
 
-This file formalizes the corpus survey of [martin-rose-nichols-2025], whose Table 3
-classifies thirty-seven English causative verbs by four binary properties: participation
-in the causative–anticausative alternation, thickness, the encoding of a manner of causing
-that restricts the subject to concrete causers, compatibility with strong adjectival
-resultatives such as *break open*, and compatibility with omission or quality-denoting
-subjects. Thick verbs are, with one exception, those taking strong resultatives, thin verbs
-those accepting omission subjects, and thickness aligns with the manner of causing of the
-causative verb classes; the correlation is strong but not exact, *bury* being thick without
-a resultative and a few thick verbs occurring occasionally with omission subjects.
+This file formalizes the division of English lexical causatives into thick and thin verbs. A
+thick causative such as *burn*, *break* or *bury* conveys a way of bringing the change about;
+a thin causative such as *kill*, *destroy* or *change* names the result state alone. Rose,
+Sievers and Nichols distinguish two concepts of causation, production, the transfer of a
+conserved physical quantity from cause to effect, and dependence, the counterfactual
+dependence of the effect on the cause. Production entails dependence, and only a physical
+entity produces, so an absence, a fact or a degree is at most a dependence cause. A thick
+causative used transitively in its physical sense conveys production and so rejects a subject
+with abstract reference (*the lack of sunscreen burned her skin*) that a thin causative
+accepts (*the lack of water killed my plants*). Martin, Rose and Nichols derive this
+production constraint from the competition between the lexical causative and periphrastic
+*cause*: the manner information makes production the salient reading, the lexical form takes
+the more specific meaning and leaves dependence to *cause*, the division of pragmatic labour
+that weak bidirectional optimality theory yields. The constraint lapses where the competition
+does, in the abstract sense and in the anticausative with a causer phrase, and it is the
+positive form of Wolff's directness constraint: a subject that is only a necessary condition
+for the transference cause (*the flat tire cracked the axle*) fails a thick verb but not a
+thin one.
 
-## TODO
+A corpus survey of thirty-seven frequent causative verbs records whether each alternates, is
+thick, occurs with an adjectival strong resultative (*break open*), and occurs with an
+omission or quality subject in its concrete sense. The thick verbs are, except for *bury*,
+Embick's causative manner verbs, the result verbs found with strong resultatives, and the thin
+verbs found with strong resultatives (*set*, *trigger*, *turn*) lexicalize no result state of
+their own. *Bury* is thick through a result state that reveals the process producing it
+rather than through an event predicate.
 
-The preprint's table is transcribed from an earlier version of this file and is UNVERIFIED
-against the text now on file.
+## Main definitions
+
+* `CauseConcepts` — production and dependence over a domain of causal relata, with the
+  postulates that production entails dependence and that only physical relata produce.
+* `Reading`, `Reading.holds` — the two readings of CAUSE and their truth conditions.
+* `Form`, `profile` — the competition between the lexical causative, periphrastic *cause* and
+  the anticausative with a causer phrase, as a bidirectional optimality tableau.
+* `Sample` — the thirty-seven verbs of the survey, `Sample.entry` their fragment entries, and
+  the columns `alternating`, `thick`, `strongResultative`, `resultless`, `omissionSubject`.
+* `causativeMannerVerbs`, `thickState` — Embick's class and the thick verbs outside it.
+
+## Main results
+
+* `production_constraint` — with production promoted, the lexical form conveys production and
+  *cause* dependence; `lexical_dependence_of_not_promoted`, `anticausative_readings` — the
+  dependence reading survives where nothing promotes production.
+* `not_holds_of_not_physical` — under the production constraint no subject with abstract
+  reference satisfies the lexical causative; `sunburn` and `axle` are the paper's contrasts.
+* `causativeMannerVerbs_subset_thick`, `thickState_eq`, `strongResultative_sdiff_thick` — the
+  correlation between thickness and strong resultatives.
+* `thin_without_omission`, `thick_inter_omissionSubject` — omission subjects in the survey.
+* `alternating_iff_unaccusative` — the alternation column agrees with the fragment's frames.
+
+## Implementation notes
+
+The proportions the paper reports (twelve of thirteen thick verbs with a strong resultative,
+ten of thirteen thick and twelve of twenty-four thin verbs alternating) are left to prose;
+the theorems state the correlations with their named exceptions. Table 3 lists *melt* among
+the thick verbs found with an omission subject, though the discussion names only *burn*,
+*lift* and *lock*; the table is followed. The survey's annotators judged *cool*
+non-alternating, against the fragment, which gives it an unaccusative frame.
 
 ## References
 
 * [martin-rose-nichols-2025]
-* [embick-2009]
+* [rose-sievers-nichols-2021] — the two concepts of causation and the omission contrasts.
+* [embick-2009] — causative manner verbs and strong resultatives, as the paper reports them.
+* [wolff-2003] — the directness constraint, as the paper quotes it.
+* [blutner-2000], [horn-1984] — weak bidirectional optimality and the division of labour.
 -/
 
-namespace MartinRoseNichols2025.ThickThin
+namespace MartinRoseNichols2025
 
-open ArgumentStructure
-open Causation.ProductionDependence
-namespace V
-  -- Re-export Fragment verb entries under a short alias to avoid name clashes
-  -- with the ThickThinEntry definitions in this namespace.
-  abbrev activate := English.activate
-  abbrev affect := English.affect
-  abbrev change := English.change
-  abbrev damage := English.damage
-  abbrev destroy := English.destroy
-  abbrev eliminate := English.eliminate
-  abbrev hurt := English.hurt
-  abbrev kill := English.kill
-  abbrev restore := English.restore
-  abbrev start := English.start
-  abbrev stop := English.stop
-  abbrev trigger := English.trigger
-  abbrev break_ := English.break_
-  abbrev burn := English.burn
-  abbrev bury := English.bury
-  abbrev cut := English.cut
-  abbrev drop := English.drop
-  abbrev lift := English.lift
-  abbrev lock := English.lock
-  abbrev melt := English.melt
-  abbrev mix := English.mix
-  abbrev shut := English.shut
-  abbrev spread := English.spread
-  abbrev stretch := English.stretch
-  abbrev switch := English.switch
-end V
+open Pragmatics.Bidirectional
 
-/-- A single verb entry from Table 3: the Fragment's `English.Verb`, which carries the Levin
-    class, form and root profile, with the [martin-rose-nichols-2025] annotations. -/
-structure ThickThinEntry where
-  /-- The Fragment entry. -/
-  verb : English.Verb
-  /-- Participates in causative/anticausative alternation -/
-  alternating : Bool
-  /-- Thick = encodes manner of causing (rejects abstract subjects in physical sense) -/
-  thick : Bool
-  /-- Compatible with strong adjectival resultatives -/
-  asr : Bool
-  /-- Compatible with omission or quality-denoting subjects -/
-  omissionSubjects : Bool
-  /-- Thick/thin classification from theory -/
-  thickThinClass : ThickThinClass := if thick then .thickManner else .thin
+/-! ### Two concepts of causation -/
 
-/-! ## Table 3 data (representative subset)
+/-- A domain of causal relata with the two concepts of causation of Rose, Sievers and
+Nichols. Production is the transfer of a conserved physical quantity from cause to effect,
+and dependence the counterfactual dependence of the effect on the cause; production entails
+dependence, and only a physical relatum produces. -/
+structure CauseConcepts (E : Type*) where
+  /-- The relatum is a physical, energy-bearing entity. -/
+  Physical : E → Prop
+  /-- The cause produces the effect. -/
+  Produces : E → E → Prop
+  /-- The effect counterfactually depends on the cause. -/
+  Depends : E → E → Prop
+  depends_of_produces {c e : E} : Produces c e → Depends c e
+  physical_of_produces {c e : E} : Produces c e → Physical c
 
-We include all 13 thick verbs and a representative set of thin verbs
-covering the key patterns. Numbers in comments refer to Table 3 rows. -/
+variable {E : Type*} (C : CauseConcepts E) {s o : E}
 
--- === Thin causatives (result-only, no manner specification) ===
+/-- A non-physical relatum, an absence, a fact or a degree, produces nothing. -/
+theorem CauseConcepts.not_produces_of_not_physical (h : ¬C.Physical s) : ¬C.Produces s o :=
+  fun hp ↦ h (C.physical_of_produces hp)
 
-def activate : ThickThinEntry :=    -- #1
-  { verb := V.activate, alternating := true, thick := false, asr := false,
-    omissionSubjects := true }
-def affect : ThickThinEntry :=      -- #2
-  { verb := V.affect, alternating := false, thick := false, asr := false,
-    omissionSubjects := true }
-def change : ThickThinEntry :=      -- #3
-  { verb := V.change, alternating := true, thick := false, asr := false,
-    omissionSubjects := true }
-def damage : ThickThinEntry :=      -- #6
-  { verb := V.damage, alternating := false, thick := false, asr := false,
-    omissionSubjects := true }
-def destroy : ThickThinEntry :=     -- #7
-  { verb := V.destroy, alternating := false, thick := false, asr := false,
-    omissionSubjects := true }
-def eliminate : ThickThinEntry :=   -- #9
-  { verb := V.eliminate, alternating := false, thick := false, asr := false,
-    omissionSubjects := true }
-def hurt : ThickThinEntry :=        -- #12
-  { verb := V.hurt, alternating := false, thick := false, asr := false,
-    omissionSubjects := true }
-def kill : ThickThinEntry :=        -- #13
-  { verb := V.kill, alternating := false, thick := false, asr := false,
-    omissionSubjects := true }
-def restore : ThickThinEntry :=     -- #17
-  { verb := V.restore, alternating := false, thick := false, asr := false,
-    omissionSubjects := true }
-def start : ThickThinEntry :=       -- #20
-  { verb := V.start, alternating := true, thick := false, asr := false,
-    omissionSubjects := true }
-def stop : ThickThinEntry :=        -- #21
-  { verb := V.stop, alternating := true, thick := false, asr := false,
-    omissionSubjects := false }
-def trigger : ThickThinEntry :=     -- #22
-  { verb := V.trigger, alternating := false, thick := false, asr := false,
-    omissionSubjects := true,
-    thickThinClass := .thin }
+/-- The two readings of the operator CAUSE. -/
+inductive Reading where
+  | production
+  | dependence
+  deriving DecidableEq, Fintype, Repr
 
--- === Thick causatives (manner-encoding, restrict abstract subjects) ===
+/-- The truth condition of a causative statement with subject `s` and object `o` under a
+reading. -/
+def Reading.holds : Reading → E → E → Prop
+  | .production, s, o => C.Produces s o
+  | .dependence, s, o => C.Depends s o
 
-def break_ : ThickThinEntry :=      -- #25
-  { verb := V.break_, alternating := true, thick := true, asr := true,
-    omissionSubjects := false }
-def burn : ThickThinEntry :=        -- #27
-  { verb := V.burn, alternating := true, thick := true, asr := true,
-    omissionSubjects := true,
-    thickThinClass := .thickManner }  -- Exception: burn found with omission subjects
-def bury : ThickThinEntry :=        -- #26
-  { verb := V.bury, alternating := false, thick := true, asr := false,
-    omissionSubjects := false,
-    thickThinClass := .thickState }   -- Thick via state property, NOT causative manner verb
-def cut : ThickThinEntry :=         -- #28
-  { verb := V.cut, alternating := false, thick := true, asr := true,
-    omissionSubjects := false }
-def drop : ThickThinEntry :=        -- #29
-  { verb := V.drop, alternating := true, thick := true, asr := true,
-    omissionSubjects := false }
-def lift : ThickThinEntry :=        -- #30
-  { verb := V.lift, alternating := false, thick := true, asr := true,
-    omissionSubjects := true,
-    thickThinClass := .thickManner }  -- Exception: lift found with omission subjects
-def lock : ThickThinEntry :=        -- #31
-  { verb := V.lock, alternating := true, thick := true, asr := true,
-    omissionSubjects := true,
-    thickThinClass := .thickManner }  -- Exception: lock found with omission subjects
-def melt : ThickThinEntry :=        -- #32
-  { verb := V.melt, alternating := true, thick := true, asr := true,
-    omissionSubjects := false }
-def mix : ThickThinEntry :=         -- #33
-  { verb := V.mix, alternating := true, thick := true, asr := true,
-    omissionSubjects := false }
-def shut : ThickThinEntry :=        -- #34
-  { verb := V.shut, alternating := true, thick := true, asr := true,
-    omissionSubjects := false }
-def spread : ThickThinEntry :=      -- #35
-  { verb := V.spread, alternating := true, thick := true, asr := true,
-    omissionSubjects := false }
-def stretch : ThickThinEntry :=     -- #36
-  { verb := V.stretch, alternating := true, thick := true, asr := true,
-    omissionSubjects := false }
-def switch : ThickThinEntry :=      -- #37
-  { verb := V.switch, alternating := true, thick := true, asr := true,
-    omissionSubjects := false }
+/-- Production is the stronger reading. -/
+theorem Reading.holds_dependence_of_production (h : Reading.production.holds C s o) :
+    Reading.dependence.holds C s o :=
+  C.depends_of_produces h
 
-/-! ## Per-datum verification theorems -/
+/-! ### The competition between covert and overt CAUSE -/
 
--- Thick verbs are marked thick
-theorem break_is_thick : break_.thick = true := rfl
-theorem burn_is_thick : burn.thick = true := rfl
-theorem bury_is_thick : bury.thick = true := rfl
-theorem melt_is_thick : melt.thick = true := rfl
-theorem cut_is_thick : cut.thick = true := rfl
+/-- The forms of a causative statement are the transitive lexical causative, periphrastic
+*cause*, and the anticausative with a causer phrase. -/
+inductive Form where
+  | lexical
+  | periphrastic
+  | anticausative
+  deriving DecidableEq, Fintype, Repr
 
--- Thin verbs are marked thin
-theorem kill_is_thin : kill.thick = false := rfl
-theorem destroy_is_thin : destroy.thick = false := rfl
-theorem damage_is_thin : damage.thick = false := rfl
-theorem change_is_thin : change.thick = false := rfl
+/-- The constraint profile of a form and reading. The periphrastic form is marked, and when
+the verb's manner information promotes production, the dependence reading is marked. -/
+def profile (promotes : Bool) (p : Form × Reading) : List ℕ :=
+  [if p.1 = .periphrastic then 1 else 0, if promotes ∧ p.2 = .dependence then 1 else 0]
 
--- Bury is thick via state (not manner verb), hence no ASR
-theorem bury_thick_no_asr : bury.thick = true ∧ bury.asr = false := ⟨rfl, rfl⟩
-theorem bury_is_thick_state : bury.thickThinClass = .thickState := rfl
+/-- The transitive forms expressing a causal relation between a subject and an object. -/
+def transitivePairs : Finset (Form × Reading) :=
+  {(.lexical, .production), (.lexical, .dependence),
+    (.periphrastic, .production), (.periphrastic, .dependence)}
 
--- Verb forms are inherited from Fragment entries
-theorem break_verb : break_.verb.form = "break" := rfl
-theorem kill_verb : kill.verb.form = "kill" := rfl
-theorem destroy_verb : destroy.verb.form = "destroy" := rfl
+/-- The anticausative with a causer phrase competes with no other form. -/
+def anticausativePairs : Finset (Form × Reading) :=
+  {(.anticausative, .production), (.anticausative, .dependence)}
 
--- Levin classes are inherited from Fragment entries
-theorem break_levin : LevinClass.break_ ∈ break_.verb.levinClasses := by decide
-theorem kill_levin : LevinClass.murder ∈ kill.verb.levinClasses := by decide
-theorem destroy_levin : LevinClass.destroy ∈ destroy.verb.levinClasses := by decide
-theorem cut_levin : LevinClass.cut ∈ cut.verb.levinClasses := by decide
-theorem burn_levin : LevinClass.otherChangeOfState ∈ burn.verb.levinClasses := by decide
+/-- The production constraint. When a thick causative in its physical sense promotes
+production, the lexical form takes it and periphrastic *cause* is left with dependence. -/
+theorem production_constraint :
+    superoptimal transitivePairs (profile true) =
+      {(.lexical, .production), (.periphrastic, .dependence)} := by
+  decide
 
-/-! ## Bridge to ThickThinClass
+/-- Under the production constraint the lexical form has only the production reading. -/
+theorem reading_eq_production_of_lexical :
+    ∀ r, (Form.lexical, r) ∈ superoptimal transitivePairs (profile true) → r = .production := by
+  decide
 
-Verify that the data entries' classifications match the theory. -/
+/-- Under the production constraint periphrastic *cause* has only the dependence reading. -/
+theorem reading_eq_dependence_of_periphrastic :
+    ∀ r, (Form.periphrastic, r) ∈ superoptimal transitivePairs (profile true) →
+      r = .dependence := by
+  decide
 
-/-- Thick manner verbs have the production constraint. -/
-theorem break_production_constraint :
-    productionConstraint break_.thickThinClass = .production := rfl
+/-- Where nothing promotes production, in the abstract sense or with a thin verb, the lexical
+form keeps the dependence reading. -/
+theorem lexical_dependence_of_not_promoted :
+    (Form.lexical, Reading.dependence) ∈ superoptimal transitivePairs (profile false) := by
+  decide
 
-/-- Thin verbs default to dependence. -/
-theorem kill_dependence :
-    productionConstraint kill.thickThinClass = .dependence := rfl
+/-- The anticausative with a causer phrase has both readings. -/
+theorem anticausative_readings :
+    superoptimal anticausativePairs (profile false) = anticausativePairs := by
+  decide
 
-/-- Bury (thick state) also has the production constraint. -/
-theorem bury_production_constraint :
-    productionConstraint bury.thickThinClass = .production := rfl
+/-- Under the production constraint a subject with abstract reference falsifies the lexical
+causative. -/
+theorem not_holds_of_not_physical {r : Reading}
+    (hr : (Form.lexical, r) ∈ superoptimal transitivePairs (profile true))
+    (h : ¬C.Physical s) : ¬r.holds C s o := by
+  obtain rfl := reading_eq_production_of_lexical r hr
+  exact C.not_produces_of_not_physical h
 
-/-- Thick manner verbs are ASR-compatible per the theory. -/
-theorem break_asr_theory :
-    break_.thickThinClass.strongASRCompatible = true := rfl
+/-! ### Witnesses -/
 
-/-- Thick state verbs are NOT ASR-compatible per the theory. -/
-theorem bury_asr_theory :
-    bury.thickThinClass.strongASRCompatible = false := rfl
+/-- The relata of the sunscreen contrast are the lack of sunscreen, the sun, and the skin. -/
+inductive Sunburn where
+  | lackOfSunscreen
+  | sun
+  | skin
+  deriving DecidableEq, Repr
 
-/-- Thin verbs are NOT ASR-compatible per the theory. -/
-theorem kill_asr_theory :
-    kill.thickThinClass.strongASRCompatible = false := rfl
+/-- The sun burns the skin, and the lack of sunscreen, an absence, is a dependence cause of
+the burn only. -/
+def sunburn : CauseConcepts Sunburn where
+  Physical x := x ≠ .lackOfSunscreen
+  Produces c e := c = .sun ∧ e = .skin
+  Depends c e := (c = .sun ∨ c = .lackOfSunscreen) ∧ e = .skin
+  depends_of_produces h := ⟨.inl h.1, h.2⟩
+  physical_of_produces h := by rintro rfl; cases h.1
 
-/-! ## Bridge to [levin-1993] classes
+/-- *The sun burned her skin* holds under the production reading. -/
+theorem sunburn_sun : Reading.production.holds sunburn .sun .skin := ⟨rfl, rfl⟩
 
-The thick/thin distinction cross-cuts Levin classes: verbs in the same
-general domain (change of state, causation) can be thick or thin. The
-difference is whether the verb specifies manner of causing. -/
+/-- *The lack of sunscreen burned her skin* fails under every reading the production constraint
+leaves the lexical form. -/
+theorem sunburn_lexical (r : Reading)
+    (hr : (Form.lexical, r) ∈ superoptimal transitivePairs (profile true)) :
+    ¬r.holds sunburn .lackOfSunscreen .skin :=
+  not_holds_of_not_physical sunburn hr fun h ↦ h rfl
 
-/-- The paper's reading of *destroy* and *kill* in [levin-1993]'s components: a caused change
-of state with no contact or motion, the vector of *break*. -/
-def thinComponents : MeaningComponents := MeaningComponents.break_
+/-- *The lack of sunscreen caused her skin to burn* holds under the reading left to *cause*. -/
+theorem sunburn_periphrastic (r : Reading)
+    (hr : (Form.periphrastic, r) ∈ superoptimal transitivePairs (profile true)) :
+    r.holds sunburn .lackOfSunscreen .skin := by
+  obtain rfl := reading_eq_dependence_of_periphrastic r hr
+  exact ⟨.inr rfl, rfl⟩
 
-/-- Break (thick) and destroy (thin) both have CoS + causation in their
-    meaning components. The thick/thin split is orthogonal to
-    the basic meaning component profile. -/
-theorem break_destroy_same_components :
-    MeaningComponents.break_.changeOfState = thinComponents.changeOfState
-    ∧ MeaningComponents.break_.causation = thinComponents.causation := ⟨rfl, rfl⟩
+/-- The relata of the flat-tire contrast: the tire, the driving, and the axle. -/
+inductive Axle where
+  | tire
+  | driving
+  | axle
+  deriving DecidableEq, Repr
 
-/-- Thick manner verbs belong to Levin classes that predict the
-    causative alternation. -/
-theorem break_class_predicts_alternation :
-    LevinClass.break_.Participates .causativeInchoative := by decide
+/-- Driving on a flat tire cracks the axle. The driving transfers force to the axle, and the
+flat tire is a necessary condition for the driving to do so; every relatum is physical. -/
+def axle : CauseConcepts Axle where
+  Physical _ := True
+  Produces c e := c = .driving ∧ e = .axle
+  Depends c e := (c = .driving ∨ c = .tire) ∧ e = .axle
+  depends_of_produces h := ⟨.inl h.1, h.2⟩
+  physical_of_produces _ := trivial
 
-/-- Cut (thick) is in a class that predicts conative and BPPA alternations.
-    Unlike break, cut does NOT participate in causative/inchoative because
-    instrument specification blocks the inchoative. -/
-theorem cut_class_rich_alternation :
-    ¬ LevinClass.cut.Participates .causativeInchoative
-    ∧ LevinClass.cut.Participates .conative
-    ∧ LevinClass.cut.Participates .bodyPartPossessorAscension := by decide
+/-- *The driving cracked the axle* holds, since a production cause satisfies both readings. -/
+theorem axle_driving : Reading.production.holds axle .driving .axle := ⟨rfl, rfl⟩
 
-/-- Destroy (thin) is predicted to alternate by its meaning components, but Levin's class
-    page stars the alternation and the paper's row agrees: the component prediction
-    overshoots. -/
-theorem destroy_class_vs_empirical :
-    thinComponents.predictedAlternation .causativeInchoative = true
-    ∧ LevinClass.destroy.Stars .causativeInchoative
-    ∧ MartinRoseNichols2025.ThickThin.destroy.alternating = false := by decide
+/-- *The flat tire damaged the axle* holds under the thin verb's dependence reading. -/
+theorem axle_tire_dependence : Reading.dependence.holds axle .tire .axle := ⟨.inr rfl, rfl⟩
 
-/-- Kill (thin, murder class) is predicted to alternate by its meaning components, but
-    Levin's class page stars the alternation and the paper's row agrees. -/
-theorem kill_class_vs_empirical :
-    thinComponents.predictedAlternation .causativeInchoative = true
-    ∧ LevinClass.murder.Stars .causativeInchoative
-    ∧ kill.alternating = false := by decide
+/-- *The flat tire cracked the axle* fails, since the tire is physical but produces nothing;
+this is Wolff's directness constraint in its positive form as production. -/
+theorem axle_tire_not_production : ¬Reading.production.holds axle .tire .axle :=
+  fun h ↦ Axle.noConfusion h.1
 
-/-- All ThickThin verb entries (for aggregate bridge theorems). -/
-def allEntries : List ThickThinEntry :=
-  [ activate, affect, change, damage, destroy, eliminate, hurt, kill,
-    restore, start, stop, trigger,
-    break_, burn, bury, cut, drop, lift, lock, melt, mix, shut,
-    spread, stretch, switch ]
+/-! ### The corpus survey -/
 
-end MartinRoseNichols2025.ThickThin
+/-- The thirty-seven verbs of the survey, in the order of Table 3. -/
+inductive Sample where
+  | activate | affect | change | close | cool | damage | destroy | dry | eliminate | enhance
+  | extend | hurt | kill | lower | open_ | put | restore | set_ | slow | start | stop | trigger
+  | turn | wakeUp
+  | break_ | bury | burn | cut | drop | lift | lock | melt | mix | shut | spread | stretch
+  | switch
+  deriving DecidableEq, Fintype, Repr
 
--- ════════════════════════════════════════════════════
--- Cross-Theory Bridge: Causative Alternation
--- [cuervo-2003] [kratzer-1996] [schaefer-2008]
--- ════════════════════════════════════════════════════
+namespace Sample
 
-namespace MartinRoseNichols2025.Compare
+/-- The fragment entry of each verb. -/
+def entry : Sample → English.Verb
+  | .activate => English.activate
+  | .affect => English.affect
+  | .change => English.change
+  | .close => English.close
+  | .cool => English.cool
+  | .damage => English.damage
+  | .destroy => English.destroy
+  | .dry => English.dry
+  | .eliminate => English.eliminate
+  | .enhance => English.enhance
+  | .extend => English.extend
+  | .hurt => English.hurt
+  | .kill => English.kill
+  | .lower => English.lower
+  | .open_ => English.open_
+  | .put => English.put
+  | .restore => English.restore
+  | .set_ => English.set_
+  | .slow => English.slow
+  | .start => English.start
+  | .stop => English.stop
+  | .trigger => English.trigger
+  | .turn => English.turn
+  | .wakeUp => English.wakeUp
+  | .break_ => English.break_
+  | .bury => English.bury
+  | .burn => English.burn
+  | .cut => English.cut
+  | .drop => English.drop
+  | .lift => English.lift
+  | .lock => English.lock
+  | .melt => English.melt
+  | .mix => English.mix
+  | .shut => English.shut
+  | .spread => English.spread
+  | .stretch => English.stretch
+  | .switch => English.switch
 
-open Minimalist Minimalist.Voice
-open ArgumentStructure.EventStructure
-open Causation.ProductionDependence
-open MartinRoseNichols2025.ThickThin
+/-- The verbs the survey's annotators judged to enter the causative alternation. -/
+def alternating : Finset Sample :=
+  {.activate, .change, .close, .dry, .extend, .lower, .open_, .slow, .start, .stop, .turn,
+    .wakeUp, .break_, .burn, .drop, .lock, .melt, .mix, .shut, .spread, .stretch, .switch}
 
--- § 1: Template ↔ Syntactic Structure
+/-- The thick verbs, those judged to specify a way of causing, confirmed for all but *lift* and
+*mix* by a dictionary's manner specification. -/
+def thick : Finset Sample :=
+  {.break_, .bury, .burn, .cut, .drop, .lift, .lock, .melt, .mix, .shut, .spread, .stretch,
+    .switch}
 
-/-- Causative structure (transitive alternant of a change-of-state verb)
-    pairs an external causer with agentive Voice. The full head-list
-    `[vDO, vCAUSE, vGO, vBE]` matches `accomplishment` semantically. -/
-theorem causative_has_agentive_voice :
-    -- Semantic: accomplishment has external causer
-    Template.HasExternalCauser .accomplishment ∧
-    -- Syntactic: causative heads (vDO + vCAUSE + vGO + vBE) per [cuervo-2003]
-    isCausative [VerbHead.vDO, .vCAUSE, .vGO, .vBE] = true ∧
-    -- Voice: agentive Voice assigns θ-role
-    agentive.AssignsTheta := ⟨by decide, by decide, by decide⟩
+/-- The verbs found with an adjectival strong resultative. -/
+def strongResultative : Finset Sample :=
+  {.set_, .trigger, .turn, .break_, .burn, .cut, .drop, .lift, .lock, .melt, .mix, .shut,
+    .spread, .stretch, .switch}
 
-/-- Anticausative structure (intransitive alternant of a change-of-state
-    verb) drops the external argument while keeping CAUSE. The head-list
-    `[vCAUSE, vGO, vBE]` is what `VerbalDecomposition` calls inchoative,
-    contra [martin-rose-nichols-2025]'s prose framing of "achievements". -/
-theorem anticausative_has_nonthematic_voice :
-    -- Semantic: achievement (here: anticausative use) lacks external causer
-    ¬ Template.HasExternalCauser .achievement ∧
-    -- Syntactic: inchoative heads (vCAUSE + vGO + vBE)
-    isInchoative [VerbHead.vCAUSE, .vGO, .vBE] = true ∧
-    -- Voice: non-thematic Voice has no semantics
-    ¬ anticausative.HasSemantics := ⟨by decide, by decide, by decide⟩
+/-- The verbs that lexicalize no result state of their own, whose resultative is obligatory
+(*set me free*); the table's starred cells. -/
+def resultless : Finset Sample := {.set_, .trigger, .turn}
 
--- § 2: Thick/Thin ↔ Causation Type ↔ Voice
+/-- The verbs found with an omission or quality subject in their concrete sense. -/
+def omissionSubject : Finset Sample :=
+  {.activate, .affect, .change, .cool, .damage, .destroy, .dry, .eliminate, .enhance, .extend,
+    .hurt, .kill, .open_, .put, .restore, .set_, .slow, .start, .stop, .trigger, .turn,
+    .wakeUp, .burn, .lift, .lock, .melt}
 
-/-- Thick manner verbs have the production constraint. -/
-theorem thick_is_production :
-    productionConstraint ThickThinClass.thickManner = .production := rfl
+/-- Embick's causative manner verbs, the result verbs found with strong resultatives. -/
+def causativeMannerVerbs : Finset Sample := strongResultative \ resultless
 
-/-- Thin verbs have the dependence constraint. -/
-theorem thin_is_dependence :
-    productionConstraint ThickThinClass.thin = .dependence := rfl
+/-- The thick verbs that are not causative manner verbs, thick through their result state. -/
+def thickState : Finset Sample := thick \ causativeMannerVerbs
 
-/-- Production causation (thick verbs) aligns with agentive Voice:
-    both require a concrete external argument. -/
-theorem production_aligns_agentive :
-    -- Production requires concrete causer
-    productionConstraint ThickThinClass.thickManner = .production ∧
-    -- Agentive Voice introduces external argument
-    agentive.AssignsTheta ∧
-    agentive.HasD := by refine ⟨rfl, ?_, ?_⟩ <;> decide
+/-- Every causative manner verb is thick. -/
+theorem causativeMannerVerbs_subset_thick : causativeMannerVerbs ⊆ thick := by decide
 
--- § 3: Alternation ↔ Voice Alternation
+/-- *Bury* is the one thick verb that is not a causative manner verb. -/
+theorem thickState_eq : thickState = {.bury} := by decide
 
-/-- The causative alternation IS a Voice alternation: transitive = agentive
-    Voice, anticausative = non-thematic Voice. The VP-internal structure
-    `[vCAUSE, vGO, vBE]` is shared; causative just prepends `vDO`. -/
-theorem alternation_is_voice_alternation :
-    -- Causative head-list extends anticausative by prepending vDO
-    ([VerbHead.vDO, .vCAUSE, .vGO, .vBE] = .vDO :: [VerbHead.vCAUSE, .vGO, .vBE]) ∧
-    -- The difference is whether Voice introduces an external argument
-    agentive.AssignsTheta ∧
-    ¬ anticausative.AssignsTheta := ⟨rfl, by decide, by decide⟩
+/-- The thin verbs found with strong resultatives are exactly the resultless ones. -/
+theorem strongResultative_sdiff_thick : strongResultative \ thick = resultless := by decide
 
--- § 4: Empirical Bridge: ThickThin Data
+/-- *Close* and *lower* are the thin verbs not found with an omission or quality subject. -/
+theorem thin_without_omission : thickᶜ \ omissionSubject = {.close, .lower} := by decide
 
-/-- Most thick verbs alternate (have both Voice variants). -/
-theorem thick_mostly_alternate_bridge :
-    let thickVerbs := allEntries.filter (·.thick)
-    let altThick := thickVerbs.filter (·.alternating)
-    altThick.length * 100 / thickVerbs.length ≥ 70 := by native_decide
+/-- The thick verbs found with an omission subject, each under a reinterpretation of the
+subject as a productive cause. -/
+theorem thick_inter_omissionSubject :
+    thick ∩ omissionSubject = {.burn, .lift, .lock, .melt} := by
+  decide
 
-/-- Alternating thick verbs: the transitive form has agentive Voice,
-    the anticausative has non-thematic Voice. Example: break.
-    - "John broke the vase" = Voice_AG + vDO + vCAUSE + vGO + vBE
-    - "The vase broke" = Voice_∅ + vCAUSE + vGO + vBE -/
-theorem break_alternation :
-    break_.alternating = true ∧ break_.thick = true := ⟨rfl, rfl⟩
+/-- The alternation column agrees with the fragment's frames except on *cool*. -/
+theorem alternating_iff_unaccusative :
+    ∀ s, s ≠ .cool → (s ∈ alternating ↔ ArgumentFrame.unaccusative ∈ s.entry.frames) := by
+  decide
 
-/-- Non-alternating thick verbs (cut) only have the agentive Voice form. -/
-theorem cut_no_anticausative :
-    cut.alternating = false ∧ cut.thick = true := ⟨rfl, rfl⟩
+/-- The position of a verb's root on the paper's analysis. The root of a causative manner verb
+is a predicate of the causing event adjoined to `v`, and any other root is a predicate of the
+result state in the complement of `v`. -/
+def rootPosition (s : Sample) : Semantics.Root.Position :=
+  if s ∈ causativeMannerVerbs then .adjoined else .complement
 
-end MartinRoseNichols2025.Compare
+/-- Only a thick verb has an adjoined root. -/
+theorem mem_thick_of_rootPosition {s : Sample} (h : s.rootPosition = .adjoined) : s ∈ thick := by
+  unfold rootPosition at h
+  split_ifs at h with hs
+  exact causativeMannerVerbs_subset_thick hs
+
+end Sample
+
+end MartinRoseNichols2025

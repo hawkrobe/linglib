@@ -81,8 +81,8 @@ structure Verb extends _root_.Verb where
   formPresPart : String
   deriving BEq
 
-/-- Construct a regular verb entry: inflected forms are computed from the
-    citation form via English morphophonological rules.
+/-- Construct a regular verb entry, computing the inflected forms from the citation form
+    by the regular spelling rules.
 
     Usage:
     ```
@@ -503,8 +503,8 @@ def keep : Verb where
 
 /-! ### Implicative / Control -/
 
-/-- "manage" — positive implicative: "managed to VP" entails "VP".
-    Traditional analysis: agentive subject controls the complement.
+/-- "manage" — a positive implicative; "managed to VP" entails "VP", and on the traditional
+    analysis the agentive subject controls the complement.
     -/
 def manage : Verb := .mkRegular {
   form := "manage"
@@ -515,7 +515,7 @@ def manage : Verb := .mkRegular {
   projectionBehavior := some .hole
   implicative := some .positive }
 
-/-- "fail" — negative implicative: "failed to VP" entails "not VP" -/
+/-- "fail" — a negative implicative; "failed to VP" entails "not VP". -/
 def fail : Verb := .mkRegular {
   form := "fail"
   frames := [ArgumentFrame.infinitival]
@@ -537,9 +537,9 @@ def try_ : Verb where
   passivizable := false
   levinClasses := {LevinClass.amuse}
 
-/-- "persuade" — object control: "persuade X to VP" (X = agent of VP).
-    Psychological attitude verb: causes the object to form an intention.
-    Projects AUTHOR coordinate → obligatory *de se* ([landau-2015] table (36)). -/
+/-- "persuade" — object control, "persuade X to VP" with X the agent of VP. A psychological
+    attitude verb whose object comes to form an intention; it projects the AUTHOR coordinate,
+    so control is obligatorily *de se* ([landau-2015] table (36)). -/
 def persuade : Verb := .mkRegular {
   form := "persuade"
   frames := [ArgumentFrame.infinitival]
@@ -548,9 +548,9 @@ def persuade : Verb := .mkRegular {
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive)) }
 
-/-- "promise" — subject control with object: "promise X to VP".
-    Desiderative attitude verb: the subject commits to a future action.
-    [landau-2015] (5c) classifies it as desiderative → logophoric control. -/
+/-- "promise" — subject control across an object, "promise X to VP". A desiderative attitude
+    verb whose subject commits to a future action; [landau-2015] (5c) classifies it as
+    desiderative, hence logophoric control. -/
 def promise : Verb := .mkRegular {
   form := "promise"
   frames := [ArgumentFrame.infinitival,
@@ -718,7 +718,7 @@ def wish : Verb where
   attitude := some (.preferential (.degreeComparison .positive))
   levinClasses := {LevinClass.long}
 
-/-- "fear" — preferential attitude verb (Class 2: takes questions) -/
+/-- "fear" — a preferential attitude verb of Class 2, which takes questions. -/
 def fear : Verb := .mkRegular {
   form := "fear"
   frames := [ArgumentFrame.finiteClause]
@@ -728,7 +728,7 @@ def fear : Verb := .mkRegular {
   attitude := some (.preferential (.degreeComparison .negative))
   levinClasses := {LevinClass.admire, .marvel} }
 
-/-- "dread" — preferential attitude verb (Class 2: takes questions) -/
+/-- "dread" — a preferential attitude verb of Class 2, which takes questions. -/
 def dread : Verb := .mkRegular {
   form := "dread"
   frames := [ArgumentFrame.finiteClause]
@@ -773,8 +773,8 @@ def cause : Verb := .mkRegular {
   causative := some .cause
   levinClasses := {LevinClass.engender} }
 
-/-- "make" — direct sufficient guarantee: the periphrastic causative, which Levin does not
-    class (the *make* of 26.1 is the verb of creation and that of 29.3 the dub verb). -/
+/-- "make" — the periphrastic causative asserting a direct sufficient guarantee, which Levin
+    does not class (the *make* of 26.1 is the verb of creation and that of 29.3 the dub verb). -/
 def make : Verb where
   form := "make"
   form3sg := "makes"
@@ -851,7 +851,7 @@ def prevent : Verb := .mkRegular {
 
 /-! ### Lexical Causatives -/
 
-/-- "kill" — thin lexical causative (kill = cause-to-die, COMPACT type). -/
+/-- "kill" — Levin 42.1 murder verbs. -/
 def kill : Verb := .mkRegular {
   form := "kill"
   frames := [ArgumentFrame.np]
@@ -863,9 +863,8 @@ def kill : Verb := .mkRegular {
   } }
   levinClasses := {LevinClass.murder} }
 
-/-- "break" — thick lexical causative (Levin 45.1 Break Verbs; [embick-2009] break-class).
-    Pure change-of-state verb: change in "material integrity"
-    with no specification of how the change comes about ([levin-1993]:241). -/
+/-- "break" — Levin 45.1 break verbs, a change in "material integrity" with no specification
+    of how the change comes about ([levin-1993]:241). -/
 def break_ : Verb where
   form := "break"
   form3sg := "breaks"
@@ -975,7 +974,8 @@ def shatter : Verb := .mkRegular {
   causative := some .make
   levinClasses := {LevinClass.break_} }
 
-/-- "burn" — thick lexical causative (manner = by fire/heat). -/
+/-- "burn" — destruction or transformation by fire or heat; Levin 45.4 other change-of-state
+    verbs. -/
 def burn : Verb := .mkRegular {
   form := "burn"
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
@@ -992,7 +992,7 @@ def burn : Verb := .mkRegular {
   levinClasses := {LevinClass.entitySpecificChangeOfState, .entitySpecificModeOfBeing, .hurt,
     .lightEmission, .otherChangeOfState, .tingle} }
 
-/-- "destroy" — thin lexical causative (result-only, no manner). -/
+/-- "destroy" — Levin 44 destroy verbs. -/
 def destroy : Verb := .mkRegular {
   form := "destroy"
   frames := [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.with_)]
@@ -1004,9 +1004,9 @@ def destroy : Verb := .mkRegular {
   } }
   levinClasses := {LevinClass.destroy} }
 
-/-- "melt" — thick lexical causative (manner = by heat).
-    Base transitive that productively takes DOC ("melt me some ice cream").
-    Implicit obj is indefinite ("the ice cream melted" / "we're melting"). -/
+/-- "melt" — change of consistency by heat; Levin 45.4 other change-of-state verbs. A base
+    transitive that takes a double-object benefactive ("melt me some ice cream") and an
+    indefinite implicit object ("the ice cream melted" / "we're melting"). -/
 def melt : Verb := .mkRegular {
   form := "melt"
   frames := [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef), ArgumentFrame.unaccusative,
@@ -1022,27 +1022,26 @@ def melt : Verb := .mkRegular {
   } }
   levinClasses := {LevinClass.knead, .otherChangeOfState} }
 
-/-! ### Thick and thin causatives ([martin-rose-nichols-2025]) -/
+/-! ### Further change-of-state verbs
 
--- Entries for causative verbs classified by [martin-rose-nichols-2025] that don't
--- already have Fragment entries elsewhere (break_, burn, destroy, melt, kill,
--- cut, mix, start, stop already defined above).
+The causative verbs Martin, Rose and Nichols survey that have no entry elsewhere in this
+file. -/
 
-/-- "activate" — thin causative, CoS without manner. -/
+/-- "activate" — sets a device or process in operation; not listed by Levin. -/
 def activate : Verb := .mkRegular {
   form := "activate"
-  frames := [ArgumentFrame.np]
+  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
   vendlerClass := some .accomplishment
  }
 
-/-- "affect" — thin causative, general effect; Levin 31.1 Amuse verbs. -/
+/-- "affect" — Levin 31.1 amuse verbs. -/
 def affect : Verb := .mkRegular {
   form := "affect"
   frames := [ArgumentFrame.np]
   vendlerClass := some .activity
   levinClasses := {LevinClass.amuse} }
 
-/-- "change" — thin causative, transformation (§26.6). -/
+/-- "change" — transformation; Levin 26.6 turn verbs. -/
 def change : Verb := .mkRegular {
   form := "change"
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
@@ -1052,21 +1051,21 @@ def change : Verb := .mkRegular {
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.dress, .exchange, .otherChangeOfState, .turn} }
 
-/-- "damage" — thin causative, partial destruction. -/
+/-- "damage" — partial destruction; not listed by Levin. -/
 def damage : Verb := .mkRegular {
   form := "damage"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
  }
 
-/-- "eliminate" — thin causative, removal; Levin 42.1 Murder verbs. -/
+/-- "eliminate" — removal; Levin 42.1 murder verbs. -/
 def eliminate : Verb := .mkRegular {
   form := "eliminate"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.murder, .remove} }
 
-/-- "hurt" — thin causative, generic harm; Levin 40.8.3 Hurt verbs. -/
+/-- "hurt" — Levin 40.8.3 hurt verbs. -/
 def hurt : Verb where
   form := "hurt"
   form3sg := "hurts"
@@ -1077,52 +1076,49 @@ def hurt : Verb where
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse, .hurt, .marvel, .pain}
 
-/-- "restore" — thin causative, Levin 13.2 Contribute verbs. -/
+/-- "restore" — Levin 13.2 contribute verbs. -/
 def restore : Verb := .mkRegular {
   form := "restore"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.contribute} }
 
-/-- "trigger" — thin causative, engender class (§27). -/
+/-- "trigger" — sets a process off; not listed by Levin. -/
 def trigger : Verb := .mkRegular {
   form := "trigger"
   frames := [ArgumentFrame.np]
   vendlerClass := some .achievement }
 
-/-- "bury" — thick causative (state), concealment.
-    Levin's concealment class (§16) does not list *bury*. -/
+/-- "bury" — covering with earth. Levin's concealment class (§16) does not list *bury*. -/
 def bury : Verb := .mkRegular {
   form := "bury"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
  }
 
-/-- "drop" — thick causative, Levin 45.6 calibratable change-of-state verbs. -/
+/-- "drop" — Levin 45.6 calibratable change-of-state verbs. -/
 def drop : Verb := .mkRegular {
   form := "drop"
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.calibratableChangeOfState, .meander, .putDirection, .roll} }
 
-/-- "lift" — thick causative, Levin 9.4 verbs of putting with a specified
-    direction. -/
+/-- "lift" — Levin 9.4 verbs of putting with a specified direction. -/
 def lift : Verb := .mkRegular {
   form := "lift"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.putDirection, .steal} }
 
-/-- "lock" — thick causative, caused secured state.
-    Levin lists *lock* only among the tape verbs (§22.4). -/
+/-- "lock" — securing with a lock; Levin lists *lock* only among the tape verbs (§22.4). -/
 def lock : Verb := .mkRegular {
   form := "lock"
-  frames := [ArgumentFrame.np]
+  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.tape} }
 
 
-/-- "shut" — thick causative, caused closed state (§45.4). -/
+/-- "shut" — Levin 45.4 other change-of-state verbs, zero-related to the adjective. -/
 def shut : Verb where
   form := "shut"
   form3sg := "shuts"
@@ -1134,7 +1130,7 @@ def shut : Verb where
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.otherChangeOfState}
 
-/-- "spread" — thick causative, spray/load class (§9.7). -/
+/-- "spread" — Levin 9.7 spray/load verbs. -/
 def spread : Verb where
   form := "spread"
   form3sg := "spreads"
@@ -1147,7 +1143,7 @@ def spread : Verb where
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.appear, .entitySpecificModeOfBeing, .sprayLoad}
 
-/-- "stretch" — thick causative, Levin 45.4 other change-of-state verbs. -/
+/-- "stretch" — Levin 45.4 other change-of-state verbs. -/
 def stretch : Verb := .mkRegular {
   form := "stretch"
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
@@ -1155,13 +1151,79 @@ def stretch : Verb := .mkRegular {
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.crane, .meander, .otherChangeOfState} }
 
-/-- "switch" — thick causative, CoS.
-    Levin's change-of-state lists do not include *switch*. -/
+/-- "switch" — Levin's change-of-state lists do not include *switch*. -/
 def switch : Verb := .mkRegular {
   form := "switch"
-  frames := [ArgumentFrame.np]
+  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
   vendlerClass := some .accomplishment
  }
+
+/-- "close" — Levin 45.4 other change-of-state verbs, zero-related to the adjective, and
+    40.3.2 crane verbs (*close one's eyes*). -/
+def close : Verb := .mkRegular {
+  form := "close"
+  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  vendlerClass := some .accomplishment
+  levinClasses := {LevinClass.crane, .otherChangeOfState} }
+
+/-- "dry" — Levin 45.4 other change-of-state verbs, zero-related to the adjective. -/
+def dry : Verb := .mkRegular {
+  form := "dry"
+  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  vendlerClass := some .activity
+  degreeAchievementScale := some {
+    dimension := .wetness,
+    baseAdjective := some "dry" }
+  levinClasses := {LevinClass.otherChangeOfState} }
+
+/-- "enhance" — improvement in quality; not listed by Levin. -/
+def enhance : Verb := .mkRegular {
+  form := "enhance"
+  frames := [ArgumentFrame.np]
+  vendlerClass := some .accomplishment }
+
+/-- "extend" — Levin 47.1 exist verbs, 13.2 contribute verbs and 13.3 verbs of future
+    having. -/
+def extend : Verb := .mkRegular {
+  form := "extend"
+  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  vendlerClass := some .accomplishment
+  levinClasses := {LevinClass.contribute, .exist, .futureHaving} }
+
+/-- "lower" — Levin 9.4 verbs of putting with a specified direction. -/
+def lower : Verb := .mkRegular {
+  form := "lower"
+  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  vendlerClass := some .accomplishment
+  levinClasses := {LevinClass.putDirection} }
+
+/-- "slow" — Levin 45.4 other change-of-state verbs, zero-related to the adjective. -/
+def slow : Verb := .mkRegular {
+  form := "slow"
+  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  vendlerClass := some .activity
+  degreeAchievementScale := some {
+    dimension := .speed,
+    baseAdjective := some "slow" }
+  levinClasses := {LevinClass.otherChangeOfState} }
+
+/-- "turn" — Levin 26.6 turn verbs (*turn the prince into a frog*). -/
+def turn : Verb := .mkRegular {
+  form := "turn"
+  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
+    ArgumentFrame.np_pp (some Adpositions.into)]
+  vendlerClass := some .accomplishment
+  levinClasses := {LevinClass.turn} }
+
+/-- "wake up" — the particle verb of awakening; Levin lists *waken* but not *wake*. -/
+def wakeUp : Verb where
+  form := "wake up"
+  form3sg := "wakes up"
+  formPast := "woke up"
+  formPastPart := "woken up"
+  formPresPart := "waking up"
+  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
 
 /-! ### Other -/
 
@@ -1646,10 +1708,10 @@ def forget_rog : Verb where
 occasion verbs of [solstad-bott-2024] (*thank*, *criticize*, *congratulate*) presuppose an
 occasioning eventuality in a parallel way the authors draw and then set apart. -/
 
-/-- "dare" — positive implicative with prerequisite presupposition: courage.
-    "Ana dared to enter the cave" → "Ana entered the cave."
-    Presupposes that daring/courageous action was required for complement
-    realization ([nadathur-2023-implicatives] §5.2, ex. 3–4, 26). -/
+/-- "dare" — a positive implicative whose prerequisite presupposition is courage. "Ana dared
+    to enter the cave" entails "Ana entered the cave" and presupposes that a daring action was
+    required for the complement to be realized ([nadathur-2023-implicatives] §5.2, ex. 3–4,
+    26). -/
 def dare : Verb := .mkRegular {
   form := "dare"
   frames := [ArgumentFrame.infinitival]
@@ -1658,9 +1720,8 @@ def dare : Verb := .mkRegular {
   passivizable := false
   implicative := some .positive }
 
-/-- "bother" — positive implicative with prerequisite presupposition: engagement.
-    "He bothered to answer" → "He answered."
-    Presupposes that overcoming apathy/effort was required
+/-- "bother" — a positive implicative whose prerequisite presupposition is engagement. "He
+    bothered to answer" entails "He answered" and presupposes that apathy had to be overcome
     ([nadathur-2023-implicatives] §2, ex. 10, 28). -/
 def bother : Verb := .mkRegular {
   form := "bother"
@@ -2628,7 +2689,7 @@ def hiccup : Verb := .mkRegular {
   vendlerClass := some .semelfactive
   levinClasses := {LevinClass.hiccup} }
 
-/-- "blink" — semelfactive: a single instantaneous eye movement, by [smith-1997]'s
+/-- "blink" — a semelfactive, a single instantaneous eye movement by [smith-1997]'s
     characterization of the class. Levin lists *blink (eye)* among the wink verbs (§40.3.1)
     and *blink* among the light-emission verbs (§43.1); this entry is the eye movement, a
     class the library does not name. -/
@@ -3367,7 +3428,7 @@ def Verb.Cell.features : Verb.Cell → Features
 def Verb.toWord (v : Verb) (c : Verb.Cell) : Word :=
   { form := v.realize c, cat := .VERB, features := c.features }
 
-/-- The past participle in passive voice: the same form as `toWord .pastParticiple`, marked
+/-- The past participle in passive voice, the same form as `toWord .pastParticiple` marked
 passive. -/
 def Verb.passiveParticiple (v : Verb) : Word :=
   { form := v.formPastPart, cat := .VERB,
