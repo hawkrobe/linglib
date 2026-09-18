@@ -16,9 +16,9 @@ composite. *Practice* is frequency-informed learning of the production map `G` (
 under token frequencies, [heitmeier-chuang-axen-baayen-2024]); *contextual independence* is the
 diagonal `d` of a word-to-word map `W` with `UW = U` over an utterance-by-word matrix `U`,
 transformed to `Cind` by (9); *semantic support for form* is the support a word's own triphones
-receive from its meaning, the diagonal of `T = ĈCᵀ` (A5), `semSupWord` at a word's meaning and
-form. In Gaussian location-scale GAMs the predictors grounded in the model beat the localist ones
-(Table 5), homophone twins differ in duration, and semantically similar twins are closer in
+receive from its meaning, the diagonal of `T = ĈCᵀ` (A5), `semanticSupport` at a word's meaning
+and form. In Gaussian location-scale GAMs the predictors grounded in the model beat the localist
+ones (Table 5), homophone twins differ in duration, and semantically similar twins are closer in
 duration. The GAM fits are outside the Processing scope, and the paper derives nothing formal from
 its Pearson-correlation homophone similarity (§3.4), so neither is stated here.
 
@@ -154,16 +154,25 @@ theorem frequencyInformed_isTrainedOn : frequencyInformed.IsTrainedOn toy freq :
 
 /-! ### Semantic support for form -/
 
-/-- The support matrix `T = ĈCᵀ` of (A5): the support each word's form (column) receives from
-each word's meaning (row). -/
-def supportMatrix {m n d : ℕ} (D : Linear ℝ (FormVec n) (MeaningVec d))
-    (data : TrainingExperience m n d) : Matrix (Fin m) (Fin m) ℝ :=
-  Matrix.of fun i k => semSupWord D (data.S i) (data.C k)
+section
+
+variable {m n d : ℕ} (D : Linear ℝ (FormVec n) (MeaningVec d)) (data : TrainingExperience m n d)
+
+/-- The support matrix `T = ĈCᵀ` of (A5) with `Ĉ = SG`: the support each word's form (column)
+receives from each word's meaning (row). -/
+def supportMatrix : Matrix (Fin m) (Fin m) ℝ := data.S * D.productionMatrix * data.Cᵀ
+
+/-- The entries of `T` are the substrate's support form at the words' meanings and forms. -/
+theorem supportMatrix_apply (i k : Fin m) :
+    supportMatrix D data i k = D.semanticSupport (data.S i) (data.C k) := by
+  rw [supportMatrix, mul_apply, Linear.semanticSupport_apply,
+    ← Linear.mul_productionMatrix_apply]
+  rfl
 
 /-- *Semantic support for form*: the diagonal of `T`, a word's support for its own form. -/
-def semanticSupport {m n d : ℕ} (D : Linear ℝ (FormVec n) (MeaningVec d))
-    (data : TrainingExperience m n d) : Fin m → ℝ :=
-  (supportMatrix D data).diag
+def semanticSupportForForm : Fin m → ℝ := (supportMatrix D data).diag
+
+end
 
 /-- (A6): the endstate support matrix, which the paper prints as
 `3.455 0.767 3.455; 0.948 1.622 0.948; 4.623 3.409 4.623`. Its columns for *time* and *thyme*
@@ -171,58 +180,59 @@ coincide, as their triphones do. -/
 theorem supportMatrix_endstate :
     supportMatrix endstate toy =
       (1181 : ℝ)⁻¹ • !![4080, 906, 4080; 1120, 1916, 1120; 5460, 4026, 5460] := by
+  rw [supportMatrix, endstate, Linear.productionMatrix_mk, endstateG_eq]
   ext i k
-  fin_cases i <;> fin_cases k <;>
-    norm_num [supportMatrix, semSupWord, toy, toyForms_eq, endstate, endstateG_eq,
-      Matrix.toLin'_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
+  fin_cases i <;> fin_cases k <;> norm_num [toy, toyForms_eq, mul_apply, Fin.sum_univ_succ]
 
 /-- Table 1, endstate column: `3.455, 1.622, 4.623`. -/
-theorem semanticSupport_endstate :
-    semanticSupport endstate toy = (1181 : ℝ)⁻¹ • ![4080, 1916, 5460] := by
+theorem semanticSupportForForm_endstate :
+    semanticSupportForForm endstate toy = (1181 : ℝ)⁻¹ • ![4080, 1916, 5460] := by
   ext i
-  fin_cases i <;> simp [semanticSupport, supportMatrix_endstate, Matrix.cons_val_two]
+  fin_cases i <;> simp [semanticSupportForForm, supportMatrix_endstate, Matrix.cons_val_two]
 
 /-- At the endstate, *thyme*'s meaning supports its form more strongly than *time*'s does
 (A6). -/
-theorem semanticSupport_endstate_time_lt_thyme :
-    semanticSupport endstate toy time < semanticSupport endstate toy thyme := by
-  rw [semanticSupport_endstate]; norm_num [time, thyme, Matrix.cons_val_two]
+theorem semanticSupportForForm_endstate_time_lt_thyme :
+    semanticSupportForForm endstate toy time < semanticSupportForForm endstate toy thyme := by
+  rw [semanticSupportForForm_endstate]; norm_num [time, thyme, Matrix.cons_val_two]
 
 /-- Semantic support for form under frequency-informed learning as the paper computes it for
 the toy lexicon (Table 1, (A7)): the predicted forms are the fitted values `√Q S G` of the
 `√Q`-scaled regression, paired with the words' own unscaled triphone vectors. -/
-def semanticSupportFIL (i : Fin 3) : ℝ :=
-  semSupWord frequencyInformed ((toy.sqrtScale freq).S i) (toy.C i)
+def semanticSupportForFormFIL (i : Fin 3) : ℝ :=
+  frequencyInformed.semanticSupport ((toy.sqrtScale freq).S i) (toy.C i)
 
 /-- The `√frequency` factor made explicit: the paper's frequency-informed support is
 `√(freq i)` times the support the learned map alone gives. -/
-theorem semanticSupportFIL_eq_sqrt_mul (i : Fin 3) :
-    semanticSupportFIL i = Real.sqrt (freq i) * semanticSupport frequencyInformed toy i := by
-  simp [semanticSupportFIL, semanticSupport, supportMatrix]
+theorem semanticSupportForFormFIL_eq_sqrt_mul (i : Fin 3) :
+    semanticSupportForFormFIL i =
+      Real.sqrt (freq i) * semanticSupportForForm frequencyInformed toy i := by
+  simp [semanticSupportForFormFIL, semanticSupportForForm, supportMatrix_apply]
 
 /-- The learned frequency-informed map alone still supports *thyme* most:
 `3.981, 3.151, 6.225`. -/
-theorem semanticSupport_frequencyInformed :
-    semanticSupport frequencyInformed toy = (16543 : ℝ)⁻¹ • ![65850, 52132, 102972] := by
+theorem semanticSupportForForm_frequencyInformed :
+    semanticSupportForForm frequencyInformed toy = (16543 : ℝ)⁻¹ • ![65850, 52132, 102972] := by
   ext i
   fin_cases i <;>
-    norm_num [semanticSupport, supportMatrix, semSupWord, toy, toyForms_eq, frequencyInformed,
-      frequencyInformedG_eq, Matrix.toLin'_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
+    norm_num [semanticSupportForForm, supportMatrix_apply, toy, toyForms_eq, frequencyInformed,
+      frequencyInformedG_eq, toLin'_apply, mulVec, dotProduct, Fin.sum_univ_succ]
 
 /-- Table 1, frequency-informed column: `39.805, 9.965, 6.225`. -/
-theorem semanticSupportFIL_eq :
-    semanticSupportFIL = ![658500 / 16543, Real.sqrt 10 * (52132 / 16543), 102972 / 16543] := by
+theorem semanticSupportForFormFIL_eq :
+    semanticSupportForFormFIL =
+      ![658500 / 16543, Real.sqrt 10 * (52132 / 16543), 102972 / 16543] := by
   have h100 : Real.sqrt 100 = 10 := by
     rw [show (100 : ℝ) = 10 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   ext i
-  rw [semanticSupportFIL_eq_sqrt_mul, semanticSupport_frequencyInformed]
+  rw [semanticSupportForFormFIL_eq_sqrt_mul, semanticSupportForForm_frequencyInformed]
   fin_cases i <;> norm_num [freq, h100, Matrix.cons_val_two]
 
 /-- Under practice *time* overtakes *thyme* ((A7): 39.805 against 6.225), reversing the
 endstate order. -/
-theorem semanticSupportFIL_thyme_lt_time :
-    semanticSupportFIL thyme < semanticSupportFIL time := by
-  rw [semanticSupportFIL_eq]; norm_num [time, thyme, Matrix.cons_val_two]
+theorem semanticSupportForFormFIL_thyme_lt_time :
+    semanticSupportForFormFIL thyme < semanticSupportForFormFIL time := by
+  rw [semanticSupportForFormFIL_eq]; norm_num [time, thyme, Matrix.cons_val_two]
 
 /-- Identical triphones, distinct predicted forms: *time* and *thyme* share a form row, but
 their meaning difference lies outside the production kernel, the neutralization locus
@@ -243,7 +253,7 @@ the diagonal of `W` is the share of a word's prediction strength that it owes to
 printed `W` of (6) is the minimum-norm solution `U⁺U = Uᵀ(UUᵀ)⁻¹U`, the orthogonal projector
 onto the row space of `U`, reproduced here exactly. (A5.2) folds the measure back into the
 model by scaling a word's semantic vector, which scales its semantic support for form by the
-same factor (`semSupWord_smul_left`). -/
+same factor (`semanticSupport` is linear in the meaning). -/
 
 /-- The utterance-by-word matrix `U` of (5): rows *my time is short*, *my good time*,
 *my fragrant thyme*, *my lime is bad*, *my lime is good*; columns *my, time, is, short, good,
