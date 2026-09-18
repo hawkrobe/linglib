@@ -22,9 +22,10 @@ iterations with the tiers Σ, [+cons] and [+sib], accuracies 1/8, 4/8 and 7/7, a
 `Agree({S}, {ant}) / [+sib] __ ∘ proj(·, [+sib])` with default [s] (`Toy.iterations`,
 `Toy.learn`). The rules D2L converges to on natural language data are run on the paper's
 examples: Latin liquid dissimilation (54) on (53), with the *lunaris* row it mispredicts
-(`latin_rows`, `lunaris_mispredicted`); Finnish backness harmony (52), which is the search-and-copy reading of the
-fragment's `Finnish.VowelHarmony.finnishHarmony`, on (51) (`finnish_rows`); and Turkish
-vowel harmony (49a) on (46) and (47) through the fragment's two harmonies (`turkish_rows`).
+(`latin_rows`, `lunaris_mispredicted`); Finnish backness harmony (52), which is the
+search-and-copy reading of the fragment's `Finnish.VowelHarmony.finnishHarmony`, on (51)
+(`finnish_rows`); and Turkish vowel harmony (49a) on (46) and (47) through the fragment's
+two harmonies (`turkish_rows`).
 
 ## Implementation notes
 
@@ -112,11 +113,12 @@ def better (l r : Summary α) : Bool :=
 /-- For each target on the tier of a form, read in the direction of `g`, the underlying
 segment tier-adjacent to it if `g` applied, the segment `g` output, and the surface segment.
 The rule applies when the output segment preceding the target on the tier is a trigger. -/
-def trace (g : SearchCopy α) : List α → List α → Option α → Option α → List (Option α × α × α)
+def trace (g : SearchCopy α) :
+    List α → List α → Option α → Option α → List (Option α × α × α)
   | x :: xs, y :: ys, last, lastUR =>
     if g.tier x then
       let out := g.emit last x
-      let ctx := if (last.filter fun c => decide (g.IsSource x c)).isSome then lastUR else none
+      let ctx := if (last.filter fun c => decide (g.IsSource c x)).isSome then lastUR else none
       (if g.IsTarget x then [(ctx, out, y)] else []) ++ trace g xs ys (some out) (some x)
     else trace g xs ys last lastUR
   | _, _, _, _ => []
@@ -149,7 +151,7 @@ def contexts (T : List α) (d : ScanDirection) : List α :=
 def candidate (T C : List α) (rel : SearchCopy.Relation) (d : ScanDirection)
     (default : Option Bool := none) : SearchCopy α where
   tier s := s ∈ T
-  IsSource _ s := s ∈ C
+  IsSource s _ := s ∈ C
   IsTarget s := s ∈ P.targets
   relation := rel
   value := P.value
@@ -216,7 +218,8 @@ def rule (rel : SearchCopy.Relation) (it : Iteration α) : Option (SearchCopy α
 
 /-- D2L returns the rule of the first iteration the criterion `sat` accepts on its
 applications and exceptions. -/
-def learn (rel : SearchCopy.Relation) (sat : ℕ → ℕ → Prop) [DecidableRel sat] : Option (SearchCopy α) :=
+def learn (rel : SearchCopy.Relation) (sat : ℕ → ℕ → Prop) [DecidableRel sat] :
+    Option (SearchCopy α) :=
   ((P.iterate rel P.alphabet.length P.alphabet []).find? fun it =>
     it.default.isSome && decide (sat it.summary.n (it.summary.n - it.summary.c))).bind (P.rule rel)
 
@@ -406,7 +409,7 @@ end LatSeg
 laterality of the tier-adjacent consonant. -/
 def latinDissimRule : SearchCopy LatSeg where
   tier := LatSeg.IsCons
-  IsSource _ := LatSeg.IsCons
+  IsSource seg _ := LatSeg.IsCons seg
   IsTarget seg := seg = .L
   relation := .disagree
   value := LatSeg.isLat

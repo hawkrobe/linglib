@@ -101,8 +101,8 @@ def isBackHarmonic (s : Segment) : Bool := s.HasValue .syllabic true && s.HasVal
 suffix vowels unspecified for it, consonants and the neutral vowels being off the tier. -/
 def hungarianPalatalHarmony : System Segment :=
   System.mk' (feature := .back)
-    (isTarget := fun s => s.HasValue .syllabic true && (s .back).isNone)
-    (isTransparent := fun s => !s.HasValue .syllabic true || isNeutral s)
+    (IsTarget := fun s => s.HasValue .syllabic true ∧ s .back = none)
+    (IsTransparent := fun s => ¬ s.HasValue .syllabic true ∨ isNeutral s = true)
     (direction := .rightward)
 
 /-- Rounding harmony spreads the rounding of the last stem vowel to the suffix vowels
@@ -110,8 +110,8 @@ unspecified for it, with no transparent vowels; it matters only for front stems,
 back stem takes the back alternant of a three-way suffix. -/
 def hungarianLabialHarmony : System Segment :=
   System.mk' (feature := .round)
-    (isTarget := fun s => s.HasValue .syllabic true && (s .round).isNone)
-    (isTransparent := fun s => !s.HasValue .syllabic true)
+    (IsTarget := fun s => s.HasValue .syllabic true ∧ s .round = none)
+    (IsTransparent := fun s => ¬ s.HasValue .syllabic true)
     (direction := .rightward)
 
 end Hungarian.VowelHarmony

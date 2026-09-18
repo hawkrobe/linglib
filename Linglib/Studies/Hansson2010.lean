@@ -15,10 +15,11 @@ vowels and non-sibilant consonants in between (3), (4), (6). The harmony is the 
 `anticipatory` over the substrate's sibilant tier alphabet, whose fixed points are exactly the
 words of the tier-based strictly 2-local agree language, `mem_language_iff_anticipatory_eq`;
 it leaves the trigger and everything off the tier in place and neutralizes the contrast in the
-sibilants it targets, the three characteristics the book draws from (4). It is the search-and-copy
-run of the substrate's harmony `System`, [rose-walker-2011]'s decomposition shared with the
-vowel harmonies of the fragments, from the right, `anticipatory_eq_apply`. The book's own qualification
-(section 3.1.2) is the perseveratory assimilation of the first-person subject prefix after the
+sibilants it targets, the three characteristics the book draws from (4). It is the
+search-and-copy run of the substrate's harmony `System`, [rose-walker-2011]'s decomposition
+shared with the vowel harmonies of the fragments, from the right, `anticipatory_eq_apply`.
+The book's own qualification (section 3.1.2) is the perseveratory assimilation of the
+first-person subject prefix after the
 s-perfective and s-destruct prefixes (12), (14), which the anticipatory map mispredicts,
 `perseveratory_rows`, while harmony from the root still overrides it (15). The examples are
 the rows of `Data.Examples.Hansson2010`, whose tier strings the theorems read off the
@@ -265,8 +266,8 @@ theorem saturated : navajo.Saturated := fun s hs => by
   have := (pattern_onTier_iff s).mp hs
   cases s <;> simp_all [navajo, value, Sibilant.onTier]
 
-theorem onTier_write (v : Bool) (s : Sibilant) (_ : navajo.pattern.OnTier s) :
-    navajo.pattern.OnTier (write v s) := by
+theorem tierClosed : navajo.searchCopy.TierClosed := fun v s _ => by
+  show navajo.pattern.OnTier (write v s)
   rw [pattern_onTier_iff]; cases v <;> trivial
 
 /-- The leftmost sibilant of a word. -/
@@ -276,7 +277,7 @@ def first (w : List Sibilant) : Option Sibilant := (sibilants w).head?
 of the leftmost one. -/
 theorem scan_eq (w : List Sibilant) :
     navajo.searchCopy.scan w = w.map (harmonize (first w)) := by
-  rw [navajo.scan_eq_map saturated onTier_write rfl, pattern_tier]
+  rw [navajo.scan_eq_map saturated tierClosed rfl, pattern_tier]
   refine List.map_congr_left fun s _ => ?_
   rcases hf : first w with _ | x
   · rw [first] at hf

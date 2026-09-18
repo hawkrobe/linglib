@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.Fintype.Option
+import Mathlib.Data.List.DropRight
 import Linglib.Phonology.Subregular.OSL
 
 /-!
@@ -28,7 +29,7 @@ Run over a word, the rule is a Mealy machine on the visible segments whose state
 closest visible segment read so far (`SearchCopy.toMealy`), the memory window of
 [burness-mcmullin-nevins-2024]'s tier-based strictly local reading of the procedure, and
 the output tier-based strictly 2-local rule of [burness-mcmullin-2019] computes the same
-function (`SearchCopy.spreadRule_applyOnTier`). So a rule for one feature in one direction
+function (`SearchCopy.toOSLRule_applyOnTier`). So a rule for one feature in one direction
 is a tier-based strictly local function, the result of Andersson, Dolatian and Hao that
 [burness-mcmullin-nevins-2024] report, and subsequential in its direction over a finite
 alphabet (`SearchCopy.apply_isSubsequential`), as Gainor, Lai and Heinz found of
@@ -36,19 +37,20 @@ alphabet (`SearchCopy.apply_isSubsequential`), as Gainor, Lai and Heinz found of
 
 ## Main definitions
 
-* `SearchCopy`: the rule.
+* `SearchCopy`: a rule, with its visible segments, targets, sources, relation, lens on the
+  feature, default and direction.
 * `SearchCopy.scan`, `SearchCopy.apply`: the left-to-right run over the visible segments,
   and the run in the rule's direction.
-* `SearchCopy.sourceAfter`, `SearchCopy.triggerValue`: the closest visible segment of a
+* `SearchCopy.sourceAfter`, `SearchCopy.sourceValue`: the closest visible segment of a
   string and the value it offers to what follows.
-* `SearchCopy.toMealy`, `SearchCopy.spreadRule`: the machine and the OSL rule computing the
+* `SearchCopy.toMealy`, `SearchCopy.toOSLRule`: the machine and the OSL rule computing the
   run.
 
 ## Main results
 
-* `SearchCopy.spreadRule_applyOnTier`: the OSL rule run over the visible segments is the
+* `SearchCopy.toOSLRule_applyOnTier`: the OSL rule run over the visible segments is the
   Mealy run.
-* `SearchCopy.tier_scan`: restricted to the visible segments, the run is the 2-OSL rule.
+* `SearchCopy.filter_scan`: restricted to the visible segments, the run is the 2-OSL rule.
 * `SearchCopy.apply_isSubsequential`, `SearchCopy.scan_isMealyComputable`: the run is
   finite-state in the rule's direction over a finite alphabet.
 
@@ -93,6 +95,10 @@ def SearchCopy.Relation.act : SearchCopy.Relation → Bool → Bool
   | .agree, v => v
   | .disagree, v => !v
 
+@[simp] theorem SearchCopy.Relation.act_agree (v : Bool) : Relation.agree.act v = v := rfl
+
+@[simp] theorem SearchCopy.Relation.act_disagree (v : Bool) : Relation.disagree.act v = !v := rfl
+
 /-- A search-and-copy rule consists of the visible segments, the targets, the sources each
 target may copy from, the relation, a lens reading and writing the feature on targets, a
 last-resort default, and a direction. -/
@@ -103,14 +109,14 @@ structure SearchCopy (α : Type*) where
   /-- The needy segments, which search. -/
   IsTarget : α → Prop
   [decTarget : DecidablePred IsTarget]
-  /-- `IsSource t s` when the target `t` may copy from the visible segment `s`. -/
+  /-- `IsSource s t` holds when the visible segment `s` may donate to the target `t`. -/
   IsSource : α → α → Prop
-  [decSource : ∀ t, DecidablePred (IsSource t)]
+  [decSource : DecidableRel IsSource]
   /-- Whether a target copies or negates its source's value. -/
   relation : SearchCopy.Relation := .agree
-  /-- Read the feature; `none` when the segment is unspecified for it. -/
+  /-- The feature's value on a segment, `none` when the segment is unspecified for it. -/
   value : α → Option Bool
-  /-- Write the feature into a segment. -/
+  /-- The segment with the feature's value written into it. -/
   write : Bool → α → α
   /-- Reading back a value written into a target gives that value. -/
   value_write : ∀ v s, IsTarget s → value (write v s) = some v
@@ -127,45 +133,53 @@ namespace SearchCopy
 
 variable {α : Type*} (r : SearchCopy α)
 
-/-- The value the target `t` finds in the window `w`, the window segment's value when `t` may
-copy from it. -/
+/-- The value the target `t` finds in the window `w`, the window segment's value when it may
+donate to `t`. -/
 def found (t : α) (w : Option α) : Option Bool :=
-  w.bind fun c => if r.IsSource t c then r.value c else none
+  w.bind fun c => if r.IsSource c t then r.value c else none
+
+/-- The value the search of `t` yields from the window `w`, the default when it finds
+nothing. -/
+def copied (t : α) (w : Option α) : Option Bool :=
+  ((r.found t w).map r.relation.act).or r.default
 
 /-- The segment output at `s` with the window `w`. -/
 def emit (w : Option α) (s : α) : α :=
-  if r.IsTarget s then (((r.found s w).map r.relation.act).or r.default).elim s (r.write · s)
-  else s
+  if r.IsTarget s then (r.copied s w).elim s (r.write · s) else s
+
+/-- The write keeps a visible segment visible. -/
+def TierClosed : Prop := ∀ v s, r.tier s → r.tier (r.write v s)
 
 @[simp] theorem found_none (t : α) : r.found t none = none := rfl
 
-theorem found_some (t c : α) :
-    r.found t (some c) = if r.IsSource t c then r.value c else none :=
+@[simp] theorem found_some (t c : α) :
+    r.found t (some c) = if r.IsSource c t then r.value c else none :=
   rfl
 
-theorem found_some_of_isSource {t c : α} (h : r.IsSource t c) : r.found t (some c) = r.value c :=
-  ite_eq_left h
+theorem found_some_of_isSource {t c : α} (h : r.IsSource c t) :
+    r.found t (some c) = r.value c := by
+  simp [h]
 
-theorem found_some_of_not_isSource {t c : α} (h : ¬ r.IsSource t c) :
-    r.found t (some c) = none :=
+theorem found_some_of_not_isSource {t c : α} (h : ¬ r.IsSource c t) :
+    r.found t (some c) = none := by
+  simp [h]
+
+theorem emit_of_not_isTarget {s : α} (h : ¬ r.IsTarget s) (w : Option α) : r.emit w s = s :=
   ite_eq_right h
 
-theorem emit_of_not_target {s : α} (h : ¬ r.IsTarget s) (w : Option α) : r.emit w s = s :=
-  ite_eq_right h
-
-theorem emit_of_target {s : α} (h : r.IsTarget s) (w : Option α) :
-    r.emit w s = (((r.found s w).map r.relation.act).or r.default).elim s (r.write · s) :=
+theorem emit_of_isTarget {s : α} (h : r.IsTarget s) (w : Option α) :
+    r.emit w s = (r.copied s w).elim s (r.write · s) :=
   ite_eq_left h
 
 /-- A target whose search finds nothing is left unchanged when there is no default. -/
 theorem emit_of_found_eq_none (hd : r.default = none) {s : α} {w : Option α}
     (hf : r.found s w = none) : r.emit w s = s := by
-  unfold emit; rw [hf, hd]; split_ifs <;> rfl
+  unfold emit copied; rw [hf, hd]; split_ifs <;> rfl
 
 /-- A target already carrying the value its search finds is emitted unchanged. -/
 theorem emit_eq_self {s : α} {w : Option α} {v : Bool} (hf : r.found s w = some v)
     (h : r.value s = some (r.relation.act v)) : r.emit w s = s := by
-  unfold emit; rw [hf]; split_ifs with ht
+  unfold emit copied; rw [hf]; split_ifs with ht
   · simp [r.write_value _ s ht h]
   · rfl
 
@@ -188,9 +202,19 @@ def toMealy : Mealy (Option α) α α where
     r.toMealy.output w s = if r.tier s then r.emit w s else s :=
   rfl
 
+theorem toMealy_runFrom_cons_of_tier {x : α} (hx : r.tier x) (w : Option α) (xs : List α) :
+    r.toMealy.runFrom w (x :: xs) = r.emit w x :: r.toMealy.runFrom (some (r.emit w x)) xs := by
+  rw [Mealy.runFrom_cons, toMealy_output, toMealy_step, ite_eq_left hx, ite_eq_left hx]
+
+theorem toMealy_runFrom_cons_of_not_tier {x : α} (hx : ¬ r.tier x) (w : Option α)
+    (xs : List α) : r.toMealy.runFrom w (x :: xs) = x :: r.toMealy.runFrom w xs := by
+  rw [Mealy.runFrom_cons, toMealy_output, toMealy_step, ite_eq_right hx, ite_eq_right hx]
+
 /-- The left-to-right run over the visible segments, in which each target copies from the
 closest visible segment before it. -/
 def scan : List α → List α := r.toMealy.run
+
+theorem scan_eq_runFrom (w : List α) : r.scan w = r.toMealy.runFrom none w := rfl
 
 /-- The run in the rule's direction. -/
 def apply : List α → List α :=
@@ -206,7 +230,7 @@ def sourceAfter (w : List α) : Option α :=
   | .right => r.toMealy.stateAfter none w.reverse
 
 /-- The value a string offers to a target that follows it in the rule's direction. -/
-def triggerValue (w : List α) : Option Bool := (r.sourceAfter w).bind r.value
+def sourceValue (w : List α) : Option Bool := (r.sourceAfter w).bind r.value
 
 @[simp] theorem scan_nil : r.scan [] = [] := rfl
 
@@ -236,48 +260,47 @@ theorem apply_isSubsequential [Fintype α] : IsSubsequential r.direction r.apply
 
 /-- The rule as a 2-OSL rule ([chandlee-eyraud-heinz-2015]) in which each target copies from
 the previous output segment. -/
-def spreadRule : Subregular.OSLRule 2 α α where
+def toOSLRule : Subregular.OSLRule 2 α α where
   windowOutput window s := [r.emit window.getLast? s]
 
-@[simp] theorem spreadRule_windowOutput (window : List α) (s : α) :
-    r.spreadRule.windowOutput window s = [r.emit window.getLast? s] :=
+@[simp] theorem toOSLRule_windowOutput (window : List α) (s : α) :
+    r.toOSLRule.windowOutput window s = [r.emit window.getLast? s] :=
   rfl
 
 /-- The OSL rule run over the visible segments ([burness-mcmullin-2019]) is the Mealy run,
 the rule's output window being the machine's state. -/
-theorem spreadRule_applyOnTier : r.spreadRule.applyOnTier r.tier = r.scan := by
+theorem toOSLRule_applyOnTier : r.toOSLRule.applyOnTier r.tier = r.scan := by
   funext w
   suffices ∀ (window : List α) (v : Option α), window.getLast? = v →
-      r.spreadRule.applyOnTierAux r.tier window w = r.toMealy.runFrom v w from
+      r.toOSLRule.applyOnTierAux r.tier window w = r.toMealy.runFrom v w from
     this [] none rfl
   induction w with
   | nil => intros; rfl
   | cons x xs ih =>
     intro window v hv
-    rw [Subregular.OSLRule.applyOnTierAux_cons, Mealy.runFrom_cons, toMealy_output,
-      toMealy_step]
+    rw [Subregular.OSLRule.applyOnTierAux_cons]
     split_ifs with hx
-    · rw [spreadRule_windowOutput, hv, List.singleton_append]
+    · rw [r.toMealy_runFrom_cons_of_tier hx, toOSLRule_windowOutput, hv, List.singleton_append]
       refine congrArg _ (ih _ _ ?_)
-      rw [List.rtake, List.length_append, List.length_singleton, Nat.add_sub_cancel,
-        List.drop_left, List.getLast?_singleton]
-    · exact congrArg _ (ih window v hv)
+      rw [List.rtake_concat_succ, List.rtake_zero, List.nil_append, List.getLast?_singleton]
+    · rw [r.toMealy_runFrom_cons_of_not_tier hx]
+      exact congrArg _ (ih window v hv)
 
-theorem tier_emit (hw : ∀ v s, r.tier s → r.tier (r.write v s)) {s : α} (hs : r.tier s)
-    (w : Option α) : r.tier (r.emit w s) := by
+theorem tier_emit (hw : r.TierClosed) {s : α} (hs : r.tier s) (w : Option α) :
+    r.tier (r.emit w s) := by
   unfold emit; split_ifs
-  · rcases ((r.found s w).map r.relation.act).or r.default with _ | b
+  · rcases r.copied s w with _ | b
     · exact hs
     · exact hw b s hs
   · exact hs
 
 /-- Restricted to the visible segments, the run is the 2-OSL rule, provided the write keeps
 a segment visible. -/
-theorem tier_scan (hw : ∀ v s, r.tier s → r.tier (r.write v s)) (w : List α) :
-    (r.scan w).filter (decide <| r.tier ·) = r.spreadRule.apply (w.filter (decide <| r.tier ·)) := by
-  rw [← spreadRule_applyOnTier]
-  exact r.spreadRule.filter_applyOnTier (fun _ s hs y hy => by
-    rw [spreadRule_windowOutput, List.mem_singleton] at hy
+theorem filter_scan (hw : r.TierClosed) (w : List α) :
+    (r.scan w).filter (decide <| r.tier ·) = r.toOSLRule.apply (w.filter (decide <| r.tier ·)) := by
+  rw [← toOSLRule_applyOnTier]
+  exact r.toOSLRule.filter_applyOnTier (fun _ s hs y hy => by
+    rw [toOSLRule_windowOutput, List.mem_singleton] at hy
     exact hy ▸ r.tier_emit hw hs _) w
 
 end SearchCopy

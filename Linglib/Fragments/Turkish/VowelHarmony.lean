@@ -122,22 +122,22 @@ preceding segment specified for it — a vowel, or a palatal `l'`; all other con
 off the tier (§3.1, §3.2). -/
 def fronting : System Segment :=
   System.mk' (feature := .back)
-    (isTarget      := fun s => s.HasValue .syllabic true && (s .back).isNone)
-    (isTransparent := fun s => (s .back).isNone && !s.HasValue .syllabic true)
+    (IsTarget      := fun s => s.HasValue .syllabic true ∧ s .back = none)
+    (IsTransparent := fun s => s .back = none ∧ ¬ s.HasValue .syllabic true)
 
 /-- Rounding harmony: a high suffix vowel unspecified for [round] takes the value of the
 preceding vowel; consonants are off the tier (§3.1, §3.2.1). -/
 def rounding : System Segment :=
   System.mk' (feature := .round)
-    (isTarget      := fun s => s.HasValue .syllabic true && s.HasValue .high true
-                                 && (s .round).isNone)
-    (isTransparent := fun s => !s.HasValue .syllabic true)
+    (IsTarget      := fun s => s.HasValue .syllabic true ∧ s.HasValue .high true ∧
+      s .round = none)
+    (IsTransparent := fun s => ¬ s.HasValue .syllabic true)
 
 /-- Voicing of a suffix-initial `D`: it takes the [voice] of the preceding segment
 (§6.1.2). -/
 def voicing : System Segment :=
   System.mk' (feature := .voice)
-    (isTarget      := fun s => (s .voice).isNone)
-    (isTransparent := fun _ => false)
+    (IsTarget      := fun s => s .voice = none)
+    (IsTransparent := fun _ => False)
 
 end Turkish.Phonology

@@ -26,7 +26,7 @@ the harmonic words (`System.harmonic_iff_scan_eq_self`), the TSL₂ language of
 
 * `System`: a pattern, its targets and its write; `System.mk'` compiles the
   [rose-walker-2011] roles over `Phonology.Segment`.
-* `System.searchCopy`: the search-and-copy reading.
+* `System.searchCopy`: the search-and-copy reading of a system.
 * `System.Saturated`: every visible segment is a participating target with a value.
 
 ## Main results
@@ -71,8 +71,6 @@ def Direction.toScanDirection : Direction → ScanDirection
   | .rightward | .bidirectional => .left
   | .leftward => .right
 
-open Phonology (Segment Feature SearchCopy)
-
 /-! ### Systems -/
 
 /-- A harmony system consists of a pattern, the targets, a write of the harmonic value into
@@ -84,7 +82,7 @@ structure System (α : Type*) where
   /-- The segments that undergo. -/
   IsTarget : α → Prop
   [decTarget : DecidablePred IsTarget]
-  /-- Write the harmonic value into a segment. -/
+  /-- The segment with the harmonic value written into it. -/
   write : Bool → α → α
   /-- Reading back a value written into a target gives that value. -/
   value_write : ∀ v s, IsTarget s → pattern.value (write v s) = some v
@@ -104,7 +102,7 @@ its participating segments are the sources, and its direction is the direction o
 def searchCopy : SearchCopy α where
   tier := sys.pattern.OnTier
   IsTarget := sys.IsTarget
-  IsSource _ s := sys.pattern.participation s = .participating
+  IsSource s _ := sys.pattern.participation s = .participating
   value := sys.pattern.value
   write := sys.write
   value_write := sys.value_write
@@ -116,8 +114,8 @@ def searchCopy : SearchCopy α where
 
 @[simp] theorem searchCopy_isTarget : sys.searchCopy.IsTarget = sys.IsTarget := rfl
 
-@[simp] theorem searchCopy_isSource (t s : α) :
-    sys.searchCopy.IsSource t s ↔ sys.pattern.participation s = .participating :=
+@[simp] theorem searchCopy_isSource (s t : α) :
+    sys.searchCopy.IsSource s t ↔ sys.pattern.participation s = .participating :=
   Iff.rfl
 
 @[simp] theorem searchCopy_value : sys.searchCopy.value = sys.pattern.value := rfl
@@ -138,30 +136,40 @@ theorem found_some_of_not_participating {a : α}
     sys.searchCopy.found t (some a) = none :=
   sys.searchCopy.found_some_of_not_isSource h
 
-theorem emit_some_of_target {s : α} (h : sys.IsTarget s) (w : Option α) (v : Bool)
+@[simp] theorem searchCopy_relation : sys.searchCopy.relation = .agree := rfl
+
+theorem emit_eq_write_of_found_eq_some {s : α} (h : sys.IsTarget s) {w : Option α} {v : Bool}
     (hf : sys.searchCopy.found s w = some v) : sys.searchCopy.emit w s = sys.write v s := by
-  rw [sys.searchCopy.emit_of_target h, hf]; rfl
+  rw [sys.searchCopy.emit_of_isTarget h, SearchCopy.copied, hf]; rfl
 
 /-- Compiles the [rose-walker-2011] roles over `Phonology.Segment` from the harmonic feature,
 the targets, the transparent segments, the direction, the blockers, and the default; every
 other segment is a trigger. -/
-def mk' (feature : Feature) (isTarget isTransparent : Segment → Bool)
-    (direction : Direction := .rightward) (isBlocker : Segment → Bool := fun _ => false)
+def mk' (feature : Feature) (IsTarget IsTransparent : Segment → Prop) [DecidablePred IsTarget]
+    [DecidablePred IsTransparent] (direction : Direction := .rightward)
+    (IsBlocker : Segment → Prop := fun _ => False) [DecidablePred IsBlocker]
     (default : Option Bool := none) : System Segment where
   pattern :=
     { value := fun s => s feature
       participation := fun s =>
-        if isBlocker s then .opaque
-        else if isTransparent s then .transparent
+        if IsBlocker s then .opaque
+        else if IsTransparent s then .transparent
         else .participating
       direction := direction }
-  IsTarget s := isTarget s = true
+  IsTarget := IsTarget
   write v s := Function.update s feature (some v)
   value_write _ _ _ := Function.update_self ..
   write_value _ _ _ h := h ▸ Function.update_eq_self ..
   default := default
 
 /-! ### Fixed points and image -/
+
+private theorem isChain_toList_append_cons {R : α → α → Prop} (a? : Option α) (x : α)
+    (l : List α) :
+    (a?.toList ++ x :: l).IsChain R ↔ (∀ a ∈ a?, R a x) ∧ (x :: l).IsChain R := by
+  cases a? with
+  | none => simp
+  | some a => simp [List.isChain_cons_cons]
 
 /-- After the visible segment `a?`, a word whose tier continues it compatibly is left
 unchanged, provided there is no default and blockers do not undergo. -/
@@ -172,16 +180,15 @@ private theorem runFrom_eq_self (hd : sys.default = none)
         sys.searchCopy.toMealy.runFrom a? w = w
   | [], _, _ => rfl
   | x :: xs, a?, h => by
-    rw [Mealy.runFrom_cons, SearchCopy.toMealy_output, SearchCopy.toMealy_step]
-    by_cases hx : sys.searchCopy.tier x
-    · rw [sys.pattern.tier_cons_of_onTier hx] at h
+    by_cases hx : sys.pattern.OnTier x
+    · rw [sys.pattern.tier_cons_of_onTier hx, isChain_toList_append_cons] at h
       have hemit : sys.searchCopy.emit a? x = x := by
         cases a? with
         | none => exact sys.searchCopy.emit_of_found_eq_none hd (sys.searchCopy.found_none x)
         | some a =>
           by_cases ht : sys.IsTarget x
           · by_cases hs : sys.pattern.participation a = .participating
-            · rcases (List.isChain_cons_cons.mp h).1 with hicy | hop | hval
+            · rcases h.1 a rfl with hicy | hop | hval
               · rw [hicy] at hs; cases hs
               · exact absurd ht (hb x hop)
               · rcases hv : sys.pattern.value a with _ | v
@@ -191,14 +198,11 @@ private theorem runFrom_eq_self (hd : sys.default = none)
                     (by rw [sys.found_some_of_participating hs, hv]) (hval ▸ hv)
             · exact sys.searchCopy.emit_of_found_eq_none hd
                 (sys.found_some_of_not_participating hs x)
-          · exact sys.searchCopy.emit_of_not_target ht _
-      rw [ite_eq_left hx, ite_eq_left hx, hemit]
-      refine congrArg _ (runFrom_eq_self hd hb xs (some x) ?_)
-      cases a? with
-      | none => exact h
-      | some a => exact (List.isChain_cons_cons.mp h).2
+          · exact sys.searchCopy.emit_of_not_isTarget ht _
+      rw [sys.searchCopy.toMealy_runFrom_cons_of_tier hx, hemit]
+      exact congrArg _ (runFrom_eq_self hd hb xs (some x) (by simpa using h.2))
     · rw [sys.pattern.tier_cons_of_not_onTier hx] at h
-      rw [ite_eq_right hx, ite_eq_right hx]
+      rw [sys.searchCopy.toMealy_runFrom_cons_of_not_tier hx]
       exact congrArg _ (runFrom_eq_self hd hb xs a? h)
 
 /-- A harmonic word is a fixed point of the run, provided there is no default and blockers
@@ -221,26 +225,24 @@ private theorem harmonic_of_runFrom_eq_self (hs : sys.Saturated) :
   | [], none, _, _ => List.isChain_nil
   | [], some _, _, _ => List.isChain_singleton _
   | x :: xs, a?, ha, h => by
-    rw [Mealy.runFrom_cons, SearchCopy.toMealy_output, SearchCopy.toMealy_step] at h
-    by_cases hx : sys.searchCopy.tier x
-    · rw [ite_eq_left hx, ite_eq_left hx] at h
+    by_cases hx : sys.pattern.OnTier x
+    · rw [sys.searchCopy.toMealy_runFrom_cons_of_tier hx] at h
       obtain ⟨hemit, hrest⟩ := List.cons.inj h
       rw [hemit] at hrest
       have ih := harmonic_of_runFrom_eq_self hs xs (some x)
         (fun _ h => Option.mem_some_iff.mp h ▸ hx) hrest
-      rw [sys.pattern.tier_cons_of_onTier hx]
-      cases a? with
-      | none => exact ih
-      | some a =>
-        refine List.isChain_cons_cons.mpr ⟨?_, ih⟩
-        obtain ⟨_, hpa, hv⟩ := hs a (ha a rfl)
-        obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hv
-        rw [sys.emit_some_of_target (hs x hx).1 _ v
-          (by rw [sys.found_some_of_participating hpa, hv])] at hemit
-        have hvx : sys.pattern.value x = some v := by
-          have := sys.value_write v x (hs x hx).1; rwa [hemit] at this
-        exact Or.inr (Or.inr (hv.trans hvx.symm))
-    · rw [ite_eq_right hx, ite_eq_right hx] at h
+      rw [sys.pattern.tier_cons_of_onTier hx, isChain_toList_append_cons]
+      refine ⟨fun a ha' => ?_, by simpa using ih⟩
+      obtain ⟨_, hpa, hv⟩ := hs a (ha a ha')
+      obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hv
+      rw [Option.mem_def] at ha'
+      subst ha'
+      rw [sys.emit_eq_write_of_found_eq_some (hs x hx).1
+        (by rw [sys.found_some_of_participating hpa, hv])] at hemit
+      have hvx : sys.pattern.value x = some v := by
+        have := sys.value_write v x (hs x hx).1; rwa [hemit] at this
+      exact Or.inr (Or.inr (hv.trans hvx.symm))
+    · rw [sys.searchCopy.toMealy_runFrom_cons_of_not_tier hx] at h
       rw [sys.pattern.tier_cons_of_not_onTier hx]
       exact harmonic_of_runFrom_eq_self hs xs a? ha (List.cons.inj h).2
 
@@ -252,29 +254,26 @@ theorem harmonic_iff_scan_eq_self (hs : sys.Saturated) (hd : sys.default = none)
   ⟨sys.scan_eq_self_of_harmonic hd hb,
     sys.harmonic_of_runFrom_eq_self hs w none (fun _ h => by cases h)⟩
 
-private theorem runFrom_some_eq_map (hs : sys.Saturated)
-    (hw : ∀ v s, sys.pattern.OnTier s → sys.pattern.OnTier (sys.write v s)) (v : Bool) :
-    ∀ (w : List α) (a : α), sys.pattern.OnTier a → sys.pattern.value a = some v →
+private theorem runFrom_some_eq_map (hs : sys.Saturated) (hw : sys.searchCopy.TierClosed)
+    (v : Bool) : ∀ (w : List α) (a : α), sys.pattern.OnTier a → sys.pattern.value a = some v →
       sys.searchCopy.toMealy.runFrom (some a) w =
         w.map fun s => if sys.pattern.OnTier s then sys.write v s else s
   | [], _, _, _ => rfl
   | x :: xs, a, ha, hv => by
-    rw [Mealy.runFrom_cons, SearchCopy.toMealy_output, SearchCopy.toMealy_step,
-      List.map_cons]
-    by_cases hx : sys.searchCopy.tier x
+    rw [List.map_cons]
+    by_cases hx : sys.pattern.OnTier x
     · have he : sys.searchCopy.emit (some a) x = sys.write v x :=
-        sys.emit_some_of_target (hs x hx).1 _ v
+        sys.emit_eq_write_of_found_eq_some (hs x hx).1
           (by rw [sys.found_some_of_participating (hs a ha).2.1, hv])
-      rw [ite_eq_left hx, ite_eq_left hx, ite_eq_left (show sys.pattern.OnTier x from hx), he,
+      rw [sys.searchCopy.toMealy_runFrom_cons_of_tier hx, ite_eq_left hx, he,
         runFrom_some_eq_map hs hw v xs (sys.write v x) (hw v x hx)
           (sys.value_write v x (hs x hx).1)]
-    · rw [ite_eq_right hx, ite_eq_right hx, ite_eq_right (show ¬ sys.pattern.OnTier x from hx),
+    · rw [sys.searchCopy.toMealy_runFrom_cons_of_not_tier hx, ite_eq_right hx,
         runFrom_some_eq_map hs hw v xs a ha hv]
 
 /-- On a saturated system without a default whose writes stay visible, the run writes the
 first visible segment's value into every visible segment. -/
-theorem scan_eq_map (hs : sys.Saturated)
-    (hw : ∀ v s, sys.pattern.OnTier s → sys.pattern.OnTier (sys.write v s))
+theorem scan_eq_map (hs : sys.Saturated) (hw : sys.searchCopy.TierClosed)
     (hd : sys.default = none) (w : List α) : sys.searchCopy.scan w = w.map fun s =>
       if sys.pattern.OnTier s then
         ((sys.pattern.tier w).head?.bind sys.pattern.value).elim s (sys.write · s)
@@ -282,52 +281,46 @@ theorem scan_eq_map (hs : sys.Saturated)
   induction w with
   | nil => rfl
   | cons x xs ih =>
-    rw [SearchCopy.scan, Mealy.run, SearchCopy.toMealy_initial, Mealy.runFrom_cons,
-      SearchCopy.toMealy_output, SearchCopy.toMealy_step, List.map_cons]
-    by_cases hx : sys.searchCopy.tier x
+    rw [SearchCopy.scan_eq_runFrom, List.map_cons]
+    by_cases hx : sys.pattern.OnTier x
     · obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp (hs x hx).2.2
-      rw [ite_eq_left hx, ite_eq_left hx, ite_eq_left (show sys.pattern.OnTier x from hx),
+      rw [sys.searchCopy.toMealy_runFrom_cons_of_tier hx, ite_eq_left hx,
         sys.searchCopy.emit_of_found_eq_none hd (sys.searchCopy.found_none x),
         sys.pattern.tier_cons_of_onTier hx, List.head?_cons, Option.bind_some, hv,
         Option.elim_some, sys.write_value v x (hs x hx).1 hv,
         sys.runFrom_some_eq_map hs hw v xs x hx hv]
       simp only [Option.elim_some]
-    · rw [ite_eq_right hx, ite_eq_right hx, ite_eq_right (show ¬ sys.pattern.OnTier x from hx),
+    · rw [sys.searchCopy.toMealy_runFrom_cons_of_not_tier hx, ite_eq_right hx,
         sys.pattern.tier_cons_of_not_onTier hx]
       exact congrArg _ ih
 
-private theorem runFrom_harmonic (hs : sys.Saturated)
-    (hw : ∀ v s, sys.pattern.OnTier s → sys.pattern.OnTier (sys.write v s)) :
+private theorem runFrom_harmonic (hs : sys.Saturated) (hw : sys.searchCopy.TierClosed) :
     ∀ (w : List α) (a? : Option α), (∀ a ∈ a?, sys.pattern.OnTier a) →
       (a?.toList ++ sys.pattern.tier (sys.searchCopy.toMealy.runFrom a? w)).IsChain
         sys.pattern.Compatible
   | [], none, _ => List.isChain_nil
   | [], some _, _ => List.isChain_singleton _
   | x :: xs, a?, ha => by
-    rw [Mealy.runFrom_cons, SearchCopy.toMealy_output, SearchCopy.toMealy_step]
-    by_cases hx : sys.searchCopy.tier x
-    · rw [ite_eq_left hx, ite_eq_left hx]
+    by_cases hx : sys.pattern.OnTier x
+    · rw [sys.searchCopy.toMealy_runFrom_cons_of_tier hx]
       have he : sys.pattern.OnTier (sys.searchCopy.emit a? x) := sys.searchCopy.tier_emit hw hx _
-      rw [sys.pattern.tier_cons_of_onTier he]
+      rw [sys.pattern.tier_cons_of_onTier he, isChain_toList_append_cons]
       have ih := runFrom_harmonic hs hw xs (some (sys.searchCopy.emit a? x))
         (fun _ h => Option.mem_some_iff.mp h ▸ he)
-      cases a? with
-      | none => exact ih
-      | some a =>
-        refine List.isChain_cons_cons.mpr ⟨?_, ih⟩
-        obtain ⟨_, hpa, hv⟩ := hs a (ha a rfl)
-        obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hv
-        have he' : sys.searchCopy.emit (some a) x = sys.write v x :=
-          sys.emit_some_of_target (hs x hx).1 _ v
-            (by rw [sys.found_some_of_participating hpa, hv])
-        rw [he'] at ih ⊢
-        exact Or.inr (Or.inr (hv.trans (sys.value_write v x (hs x hx).1).symm))
-    · rw [ite_eq_right hx, ite_eq_right hx, sys.pattern.tier_cons_of_not_onTier hx]
+      refine ⟨fun a ha' => ?_, by simpa using ih⟩
+      obtain ⟨_, hpa, hv⟩ := hs a (ha a ha')
+      obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hv
+      rw [Option.mem_def] at ha'
+      subst ha'
+      rw [sys.emit_eq_write_of_found_eq_some (hs x hx).1
+        (by rw [sys.found_some_of_participating hpa, hv])]
+      exact Or.inr (Or.inr (hv.trans (sys.value_write v x (hs x hx).1).symm))
+    · rw [sys.searchCopy.toMealy_runFrom_cons_of_not_tier hx,
+        sys.pattern.tier_cons_of_not_onTier hx]
       exact runFrom_harmonic hs hw xs a? ha
 
 /-- On a saturated system whose writes stay visible, the run's output is harmonic. -/
-theorem harmonic_scan (hs : sys.Saturated)
-    (hw : ∀ v s, sys.pattern.OnTier s → sys.pattern.OnTier (sys.write v s)) (w : List α) :
+theorem harmonic_scan (hs : sys.Saturated) (hw : sys.searchCopy.TierClosed) (w : List α) :
     sys.pattern.Harmonic (sys.searchCopy.scan w) :=
   sys.runFrom_harmonic hs hw w none (fun _ h => by cases h)
 

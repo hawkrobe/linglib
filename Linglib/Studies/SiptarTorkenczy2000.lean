@@ -23,8 +23,8 @@ its two forms (`dzsungel_vacillates`). The surface generalization of section 3.2
 last harmonic vowel governs suffix backness through the transparent neutral vowels, is the
 Fragment's `hungarianPalatalHarmony`; it agrees with the derivations on the regular stems and
 is silent or wrong exactly on the neutral, antiharmonic and opaque stems the analysis handles
-by prelinking (`triggerValue_agrees`, `triggerValue_viz`, `triggerValue_hid`,
-`triggerValue_kodex`).
+by prelinking (`sourceValue_agrees`, `sourceValue_viz`, `sourceValue_hid`,
+`sourceValue_kodex`).
 
 ## Implementation notes
 
@@ -418,28 +418,28 @@ def regular : List (Data.Forms.Form × Stem) :=
     (Forms.papir, .papir)]
 
 /-- On the regular stems the surface generalization and the derivations agree. -/
-theorem triggerValue_agrees : ∀ t ∈ regular,
-    hungarianPalatalHarmony.searchCopy.triggerValue (vowelsOf t.1.segments) = some t.2.isBack := by
+theorem sourceValue_agrees : ∀ t ∈ regular,
+    hungarianPalatalHarmony.searchCopy.sourceValue (vowelsOf t.1.segments) = some t.2.isBack := by
   decide
 
 /-- A pure COR stem has no harmonic vowel to read, and its floating COR derives front
 suffixes. -/
-theorem triggerValue_viz :
-    hungarianPalatalHarmony.searchCopy.triggerValue (vowelsOf Forms.viz.segments) = none ∧
+theorem sourceValue_viz :
+    hungarianPalatalHarmony.searchCopy.sourceValue (vowelsOf Forms.viz.segments) = none ∧
       Stem.viz.isBack = false := by
   decide
 
 /-- An antiharmonic stem has no harmonic vowel to read either; its floating DOR derives back
 suffixes. -/
-theorem triggerValue_hid :
-    hungarianPalatalHarmony.searchCopy.triggerValue (vowelsOf Forms.hid.segments) = none ∧
+theorem sourceValue_hid :
+    hungarianPalatalHarmony.searchCopy.sourceValue (vowelsOf Forms.hid.segments) = none ∧
       Stem.hid.isBack = true := by
   decide
 
 /-- An opaque stem's last harmonic vowel is back, yet its linked DOR cannot reach the suffix
 and its linked COR derives front suffixes. -/
-theorem triggerValue_kodex :
-    hungarianPalatalHarmony.searchCopy.triggerValue (vowelsOf Forms.kodex.segments) = some true ∧
+theorem sourceValue_kodex :
+    hungarianPalatalHarmony.searchCopy.sourceValue (vowelsOf Forms.kodex.segments) = some true ∧
       Stem.kodex.isBack = false := by
   decide
 
