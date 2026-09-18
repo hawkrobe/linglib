@@ -99,25 +99,12 @@ inductive TenseSeries where
   | evidential  -- sometimes called "perfect" or "inversion"
   deriving DecidableEq, Repr
 
-/-- Georgian split-ergative system: only the aorist series
-    uses ergative alignment. Present uses NOM-DAT framing and evidential
-    uses DAT-NOM "inversion" — both non-ergative.
-
-    This instantiates `Alignment.SplitErgativity` from [blake-1994]'s typology of tense/aspect-conditioned splits. -/
-def georgianSplit : Alignment.SplitErgativity TenseSeries :=
-  { ergCondition := fun ts => ts == .aorist }
-
-/-- Aorist triggers ergative alignment. -/
-theorem aorist_ergative :
-    georgianSplit.alignment .aorist = .ergative := rfl
-
-/-- Present series is non-ergative. -/
-theorem present_accusative :
-    georgianSplit.alignment .present = .accusative := rfl
-
-/-- Evidential series is non-ergative. -/
-theorem evidential_accusative :
-    georgianSplit.alignment .evidential = .accusative := rfl
+/-- The alignment by tense series ([blake-1994], [harris-1981]): ergative in the aorist series
+alone, the present series with its nominative subject and dative object and the evidential
+series with the inverted frame both grouping the subjects together. -/
+def alignment : TenseSeries → Alignment.AlignmentType
+  | .aorist => .ergative
+  | .present | .evidential => .accusative
 
 /-- Case frame for the subject (A/S) in each tense series. -/
 def subjectCase : TenseSeries → Case

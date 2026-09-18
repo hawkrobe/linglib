@@ -1,63 +1,37 @@
-import Linglib.Syntax.Case.Basic
-import Linglib.Syntax.Case.Basic
 import Linglib.Syntax.Case.Alignment
+import Linglib.Semantics.Aspect.Basic
+
 /-!
-# Hindi Case Inventory [blake-1994]
+# Hindi case
 
-Hindi has a **split-ergative** case system:
-ergative -ne marks the transitive agent in perfective aspect only.
+Hindi marks seven case functions with postpositions: the unmarked nominative, the ergative
+*-ne*, the accusative and dative, both *-ko*, the genitive *-ka* with its agreeing forms *-ke*
+and *-ki*, the locative *-mem*, and the ablative and instrumental, both *-se*. The alignment is
+split by aspect: in the perfective the transitive subject takes the ergative and the object
+the unmarked form, while elsewhere the subject is unmarked and the object takes *-ko* when it
+is marked at all ([blake-1994]).
 
-Hindi postpositions mark 7 case functions:
-- NOM (unmarked), ERG (-ne, perfective A only)
-- ACC / DAT (-ko, syncretic), GEN (-ka / -ke / -ki)
-- LOC (-mem), ABL/INST (-se, syncretic)
+## References
 
-The ACC/DAT syncretism (-ko) and ABL/INST syncretism (-se) are
-cross-linguistically common patterns.
-
-## Split-Ergative Connection
-
-This fragment connects to the `hindiSplit` already defined in
-`Alignment.SplitErgativity`, which formalizes the perfective to
-ergative conditioning.
-
+* [blake-1994]
 -/
 
 namespace Hindi.Case
 
--- ============================================================================
--- Section 1: Case Inventory
--- ============================================================================
+/-- The case inventory, with the two syncretic pairs, accusative and dative and ablative and
+instrumental, as distinct cases since they occupy different ranks of Blake's hierarchy. -/
+def inventory : Finset Case := {.nom, .erg, .acc, .dat, .gen, .loc, .abl, .inst}
 
-/-- Hindi case inventory. ACC/DAT share -ko; ABL/INST share -se.
-    Both syncretic pairs are included as distinct Case values since
-    they occupy different positions on Blake's hierarchy. -/
-def inventory : Finset Case :=
-  {.nom, .erg, .acc, .dat, .gen, .loc, .abl, .inst}
-
--- Contiguous on Blake's hierarchy (ranks 6 down to 2, all present).
+/-- The inventory is contiguous on Blake's hierarchy. -/
 example : Case.IsValidInventory inventory := by decide
 
--- ============================================================================
--- Section 2: Syncretism
--- ============================================================================
+/-- The ablative and the instrumental, both *-se*, share a rank of Blake's hierarchy. -/
+theorem abl_inst_same_tier : Case.hierarchyRank .abl = Case.hierarchyRank .inst := rfl
 
-/-- ACC/DAT syncretism (-ko marks both). -/
-theorem acc_dat_syncretic_marker : True := trivial
-
-/-- ABL/INST syncretism (-se marks both). Same-tier adjacency. -/
-theorem abl_inst_same_tier :
-    Case.hierarchyRank .abl = Case.hierarchyRank .inst := rfl
-
--- ============================================================================
--- Section 3: Split-Ergative Connection
--- ============================================================================
-
-/-- The split-ergative system defined in `SplitConditions.lean`. -/
-theorem hindi_perfective_is_ergative :
-    Alignment.hindiSplit.alignment .perfective = .ergative := rfl
-
-theorem hindi_imperfective_is_accusative :
-    Alignment.hindiSplit.alignment .imperfective = .accusative := rfl
+/-- The alignment by aspect: ergative in the perfective, where the transitive subject takes
+*-ne*, and accusative otherwise. -/
+def alignment : Aspect.Perfectivity → Alignment.AlignmentType
+  | .perfective => .ergative
+  | .imperfective => .accusative
 
 end Hindi.Case

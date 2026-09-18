@@ -24,7 +24,7 @@ high-absolutive placement (`Mam.template`).
 This fragment records SJA Mam specifically. Other Mam dialects, notably Ixtahuacán Mam
 (England 1983b, used by [zavala-maldonado-2017] §4–5), are characterized as ergative with a
 neutral pattern in aspectless dependent clauses; per [scott-2023] §1.2.4 and Table 1.2, Mam
-dialects vary substantially. The tripartite case function is `Alignment.tripartite.assignCase`
+dialects vary substantially. The tripartite case function is `Alignment.tripartite`
 in every aspect (`Mam.assignCase`). Person-number cells are the canonical φ-cells
 `Agreement.Bundle`; the
 pronoun lexicon and its feature values live in `Fragments/Mayan/Mam/Pronouns.lean`, and the
@@ -82,31 +82,13 @@ def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setB, .s
 /-- SJA Mam assigns case tripartitely in every aspect, with no aspect-conditioned split
 ([scott-2023]): ergative to the transitive subject, accusative to the object and absolutive
 to the intransitive subject, visible only through agreement. -/
-def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.tripartite.assignCase
+def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.tripartite
 
 /-! ### Case -/
 
--- The per-position case facts are the tripartite-alignment facts
--- (`Alignment.tripartite`) — SJA Mam's case function is
--- `Alignment.tripartite.assignCase` by definition, so each theorem below
--- is a re-export of the substrate lemma.
-
-/-- Agent gets ERG (inherent, from Voice). -/
-theorem A_case : (assignCase .Perf) .A = .erg := Alignment.tripartite.assignCase_A
-
-/-- Patient gets ACC (structural, from Voice). -/
-theorem P_case : (assignCase .Perf) .P = .acc := Alignment.tripartite.assignCase_P
-
-/-- Intransitive S gets ABS (structural, from Infl). -/
-theorem S_case : (assignCase .Perf) .S = .abs := Alignment.tripartite.assignCase_S
-
-/-- Three distinct underlying cases (morphologically tripartite),
-    inherited from `Alignment.tripartite_distinguishes_all`. -/
-theorem tripartite_alignment :
-    (assignCase .Perf) .A ≠ (assignCase .Perf) .P ∧
-    (assignCase .Perf) .A ≠ (assignCase .Perf) .S ∧
-    (assignCase .Perf) .P ≠ (assignCase .Perf) .S :=
-  Alignment.tripartite_distinguishes_all
+/-- The three core roles take three distinct cases: SJA Mam is tripartite in every aspect. -/
+theorem isTripartite_perfective : Alignment.IsTripartite (assignCase .Perf) :=
+  Alignment.isTripartite_tripartite
 
 /-! ### Case inventory ([blake-1994]) -/
 

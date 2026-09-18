@@ -47,7 +47,7 @@ Absolutive Parameter (high vs low ABS, after
 [coon-mateo-pedro-preminger-2014]). For Chol, *n* does not impose
 RON, so S/A is the highest DP in the nominalized clause and receives
 genitive from D — matching Coon's analytical view. The substrate's
-`extendedErgative.assignCase` returns `.gen` (Coon's analytical view);
+`Alignment.extendedErgative` returns `.gen` (Coon's analytical view);
 a descriptive-grammar implementation would return `.nom`. The label
 "extended ergative" is Coon's coinage, generalizing one subtype of
 [dixon-1994]'s split-ergative-on-TAM-lines pattern.
@@ -129,8 +129,8 @@ def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setA], [
 non-perfective aspect the pattern the descriptive grammar calls nominative-accusative, Set A on
 all subjects, here the extended-ergative alignment ([vazquez-alvarez-2011], [coon-2013]). -/
 def assignCase : UD.Aspect → ArgumentRole → Case
-  | .Perf => Alignment.ergative.assignCase
-  | .Imp | .Prog | .Prosp | .Hab | .Iter => Alignment.extendedErgative.assignCase
+  | .Perf => Alignment.ergative
+  | .Imp | .Prog | .Prosp | .Hab | .Iter => Alignment.extendedErgative
 
 /-! ### Extraction marking -/
 

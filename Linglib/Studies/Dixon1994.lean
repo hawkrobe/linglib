@@ -1,5 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Syntax.Case.Alignment
+import Linglib.Fragments.Hindi.Case
 import Linglib.Data.Examples.Dixon1994
 
 /-!
@@ -31,7 +32,8 @@ which the NP is O and Dyirbal with its S/O pivot antipassivizes one in which it 
 
 S, A and O are `ArgumentRole.S`, `.A` and `.P`, following the substrate's Comrie letters, and
 a marking of the core relations is any function out of `ArgumentRole`, so that ergativity and
-accusativity are the identifications of S the marking makes, as in `Alignment.coreSig`. The
+accusativity are the identifications of S the marking makes, `Alignment.IsErgative` and
+`Alignment.IsAccusative`. The
 Nominal Hierarchy is a linear order with first person at the top; an NP-conditioned split is
 a pair of monotone marking functions, accusative marking an upper set and ergative a lower set,
 and the pattern at a position is the `AlignmentType` the two markings induce. The tables of
@@ -56,27 +58,7 @@ namespace Dixon1994
 
 open Alignment
 
-/-! ### S, A and O, §1.1 and §8.2 -/
-
 variable {κ : Type*}
-
-/-- A marking of the core relations, by case, cross-referencing or constituent order, treats S
-like O and unlike A: ergativity at that level of the grammar, §8.2. -/
-def IsErgative (m : ArgumentRole → κ) : Prop := m .S = m .P ∧ m .S ≠ m .A
-
-/-- The marking treats S like A and unlike O: accusativity. -/
-def IsAccusative (m : ArgumentRole → κ) : Prop := m .S = m .A ∧ m .S ≠ m .P
-
-theorem isErgative_ergative : IsErgative ergative.assignCase := ⟨rfl, by decide⟩
-
-theorem isAccusative_nominativeAccusative : IsAccusative nominativeAccusative.assignCase :=
-  ⟨rfl, by decide⟩
-
-/-- No marking is ergative and accusative at once, since S can be identified with only one of A
-and O; a language is ergative in some parts of its grammar and accusative in others. -/
-theorem IsAccusative.not_isErgative {m : ArgumentRole → κ} (h : IsAccusative m) :
-    ¬ IsErgative m :=
-  λ h' => h.2 h'.1
 
 /-! ### Splits conditioned by the verb, §4.1 -/
 
@@ -159,9 +141,9 @@ def pattern : AlignmentType :=
 /-- The two markings must at least meet, §4.2: A and O are distinguished at a position exactly
 when one of them applies there. -/
 theorem marks_iff :
-    (s.pattern p).marksAgent ∨ (s.pattern p).marksPatient ↔ s.accusative p ∨ s.ergative p := by
+    (s.pattern p).MarksAgent ∨ (s.pattern p).MarksPatient ↔ s.accusative p ∨ s.ergative p := by
   unfold pattern
-  split_ifs <;> simp_all [AlignmentType.marksAgent, AlignmentType.marksPatient]
+  split_ifs <;> simp_all [AlignmentType.MarksAgent, AlignmentType.MarksPatient]
 
 theorem pattern_eq_accusative_iff :
     s.pattern p = .accusative ↔ s.accusative p ∧ ¬ s.ergative p := by
@@ -255,10 +237,10 @@ theorem patterns :
 
 /-- Dixon's generalization for an aspect-conditioned split: the ergative marking is found in
 the perfective, never in the imperfective alone. -/
-def AspectOriented (s : SplitErgativity Aspect) : Prop :=
-  s.ergCondition .imperfective → s.ergCondition .perfective
+def AspectOriented (s : Aspect.Perfectivity → AlignmentType) : Prop :=
+  s .imperfective = .ergative → s .perfective = .ergative
 
-theorem aspectOriented_hindiSplit : AspectOriented hindiSplit := λ h => nomatch h
+theorem aspectOriented_hindi : AspectOriented Hindi.Case.alignment := fun h ↦ nomatch h
 
 /-! ### Passive, antipassive and pivots, §6.1 and §6.2 -/
 

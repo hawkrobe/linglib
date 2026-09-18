@@ -57,7 +57,7 @@ theorem inventory_not_strictly_contiguous :
 /-- Dargwa alignment: consistently ergative — no tense/aspect split.
     Transitive A-arguments always take ergative *-li*;
     S and P arguments take unmarked absolutive. -/
-def alignment : Alignment.AlignmentFamily := .ergative
+def alignment : Alignment.AlignmentType := .ergative
 
 /-- Case of the transitive agent (A-argument): always ergative. -/
 def agentCase : Case := .erg
@@ -73,9 +73,5 @@ def patientCase : Case := .abs
 theorem has_core_ergative :
     .abs ∈ inventory ∧ .erg ∈ inventory := by
   refine ⟨?_, ?_⟩ <;> decide
-
-/-- Dargwa is consistently ergative (no split). -/
-theorem consistently_ergative :
-    alignment = .ergative := rfl
 
 end Dargwa.Case

@@ -58,7 +58,7 @@ def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setB, .s
 
 /-- K'iche' is ergative-absolutive in every aspect, with no aspect-conditioned split
 ([mondloch-2017]). -/
-def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.ergative.assignCase
+def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.ergative
 
 /-! ### Person, number, and formality features -/
 
@@ -190,19 +190,9 @@ theorem ergative_absolutive_alignment :
     agreementSet .A ≠ agreementSet .P :=
   ⟨rfl, by decide⟩
 
-/-- A receives ERG while P and S share a case (ABS) — the ergative
-    partition, re-exported from `Alignment.ergative_distinguishes_A`. -/
-theorem erg_abs_pattern :
-    (assignCase .Perf) .A ≠ (assignCase .Perf) .P ∧
-    (assignCase .Perf) .P = (assignCase .Perf) .S :=
-  Alignment.ergative_distinguishes_A
-
-/-- K'iche' alignment contrast with Mam: K'iche' is ergative-absolutive
-    (S = P ≠ A), while Mam is tripartite (S ≠ A ≠ P, all three
-    receive distinct cases). In K'iche', both P and S trigger Set B;
-    in Mam, P triggers no agreement at all. -/
-theorem kiche_not_tripartite :
-    (assignCase .Perf) .S = (assignCase .Perf) .P := rfl
+/-- Case is ergatively aligned: A apart, S with P, where Mam is tripartite. -/
+theorem isErgative_perfective : Alignment.IsErgative (assignCase .Perf) :=
+  Alignment.isErgative_ergative
 
 /-! ### Set B per-cell verification -/
 

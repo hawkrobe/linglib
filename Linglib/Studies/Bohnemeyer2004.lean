@@ -1,4 +1,5 @@
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
+import Linglib.Fragments.Hindi.Case
 import Linglib.Semantics.Causation.Chain
 import Linglib.Semantics.ArgumentStructure.EventStructure
 import Linglib.Studies.Lucy1994
@@ -379,18 +380,17 @@ theorem externally_caused_causativize :
 
 /-! ### Bridge to split ergativity -/
 
-/-- The linking-by-viewpoint mechanism derives the same alignment as the
-    `SplitErgativity` system parameterized by status category. -/
+/-- The linking-by-viewpoint mechanism derives the alignment the fragment records for each
+status category. -/
 theorem linking_consistent_with_split :
-    (yukatekSplit.alignment .completive = .ergative) ∧
-    (yukatekSplit.alignment .incompletive = .accusative) := ⟨rfl, rfl⟩
+    Yukatek.alignment .completive = .ergative ∧ Yukatek.alignment .incompletive = .accusative :=
+  ⟨rfl, rfl⟩
 
 /-- Yukatek's split is aspect-conditioned, like Hindi and Georgian. All three
     use perfective → ergative, imperfective → accusative (modulo
     language-specific factor types). -/
 theorem aspect_conditioned_split_family :
-    yukatekSplit.alignment .completive =
-      Alignment.hindiSplit.alignment .perfective := rfl
+    Yukatek.alignment .completive = Hindi.Case.alignment .perfective := rfl
 
 /-! ### Stem classes vs Lucy's root classes
 

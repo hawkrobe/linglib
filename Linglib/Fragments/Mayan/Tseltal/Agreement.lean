@@ -58,7 +58,7 @@ def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setA], [
 
 /-- Tseltal is ergative-absolutive in every aspect, with no aspect-conditioned split
 ([polian-2013]). -/
-def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.ergative.assignCase
+def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.ergative
 
 /-! ### Set A/B exponents (Oxchuc Tseltal) -/
 
