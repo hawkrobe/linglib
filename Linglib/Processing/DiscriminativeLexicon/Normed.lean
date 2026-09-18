@@ -3,12 +3,21 @@ import Mathlib.Topology.Algebra.Module.FiniteDimension
 import Mathlib.Analysis.Normed.Operator.NNNorm
 
 /-!
-# DLM in normed carriers
+# The discriminative lexicon in normed spaces
 
-Over finite-dimensional real normed carriers the production map is continuous, hence Lipschitz
-with constant its operator norm: meanings within `ε` of each other produce forms within
-`‖production‖ * ε` of each other. This is the quantitative form of the papers' form–meaning
-isomorphy claims ([chuang-bell-tseng-baayen-2026], [lu-chuang-baayen-2026]).
+This file proves that the production map of a discriminative lexicon over finite-dimensional
+real normed spaces is Lipschitz.
+
+Over such spaces the production map is continuous, hence Lipschitz with constant its operator
+norm, so meanings within `ε` of each other produce forms within `‖production‖ * ε` of each
+other. This is the quantitative form of the form–meaning isomorphy that Chuang, Bell, Tseng and
+Baayen and Lu, Chuang and Baayen claim for tonal realization.
+
+## Main results
+
+* `Linear.lipschitzWith_production`: the production map is Lipschitz with constant its operator
+  norm.
+* `Linear.norm_production_sub_le`: the resulting bound on the forms of two meanings.
 
 ## References
 

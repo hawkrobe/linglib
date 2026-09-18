@@ -3,25 +3,25 @@ import Mathlib.Algebra.Module.Submodule.Ker
 import Mathlib.Basic.Real.Basic
 
 /-!
-# Discriminative Lexicon Model — linear substrate
+# The discriminative lexicon
 
-The **Discriminative Lexicon Model** (DLM) is a theory of lexical processing in which form and
-meaning are related by learned mappings between vector spaces rather than by an inventory of
-stored, decomposed form–meaning entries ([baayen-2019]). At the endstate of learning the model
-is a pair of linear maps — the papers' comprehension matrix `F` (`Ŝ = CF`) and production
-matrix `G` (`Ĉ = SG`) — fitted by *linear discriminative learning*, the least-squares
-estimation of [heitmeier-chuang-baayen-2026]. The two maps are the model's entire "lexicon".
-The kernel of the production map is the DLM's **neutralization locus**: two meanings surface as
-identical forms iff their difference lies in `LinearMap.ker D.production`
-(`LinearMap.sub_mem_ker_iff`).
+This file defines the linear discriminative lexicon, the endstate of the Discriminative Lexicon
+Model of Baayen, Chuang, Shafaei-Bajestan and Blevins.
 
-The deep replacements for the linear maps — ResLDL ([chuang-bell-tseng-baayen-2026]) and DDL
-([heitmeier-schmidt-lensch-baayen-2025]) — are not formalised.
+The model relates form and meaning by learned mappings between vector spaces rather than by an
+inventory of stored, decomposed form–meaning entries. At the endstate of learning it is a pair
+of linear maps, a comprehension map from forms to meanings and a production map from meanings
+to forms; Heitmeier, Chuang and Baayen fit them by least squares, which they call linear
+discriminative learning, and the two maps are the model's entire lexicon. The kernel of the
+production map is where the model neutralizes meanings, since two meanings surface as the same
+form exactly when their difference lies in it (`LinearMap.sub_mem_ker_iff`). The deep
+replacements for the linear maps, ResLDL and DDL, are not formalised.
 
-## Main declarations
+## Main definitions
 
-- `Linear R F M`: a pair of linear maps between form and meaning carriers.
-- `FormVec`, `MeaningVec`: `Fin n → ℝ` carriers for the studies' specialisations.
+* `Linear R F M`: a comprehension map `F →ₗ[R] M` and a production map `M →ₗ[R] F`.
+* `FormVec n`, `MeaningVec d`: the real coordinate vectors `Fin n → ℝ` and `Fin d → ℝ` on which
+  the studies instantiate the model.
 
 ## References
 
@@ -40,19 +40,19 @@ namespace DiscriminativeLexicon
 variable (R F M : Type*) [Semiring R] [AddCommMonoid F] [AddCommMonoid M] [Module R F]
   [Module R M]
 
-/-- The endstate of a **Discriminative Lexicon Model** with linear mappings: a comprehension
-map and a production map between form and meaning carriers, fitted by linear discriminative
-learning ([heitmeier-chuang-baayen-2026]). -/
+/-- A **linear discriminative lexicon** consists of a comprehension map and a production map
+between a form space and a meaning space, the endstate of linear discriminative learning
+([heitmeier-chuang-baayen-2026]). -/
 structure Linear where
-  /-- The form → meaning map — the papers' comprehension matrix `F` (`Ŝ = CF`). -/
+  /-- The comprehension map sends forms to meanings; it is the papers' matrix `F` with `Ŝ = CF`. -/
   comprehension : F →ₗ[R] M
-  /-- The meaning → form map — the papers' production matrix `G` (`Ĉ = SG`). -/
+  /-- The production map sends meanings to forms; it is the papers' matrix `G` with `Ĉ = SG`. -/
   production : M →ₗ[R] F
 
-/-- A `formDim`-dimensional **form vector** over ℝ. -/
+/-- A **form vector** has `formDim` real coordinates. -/
 abbrev FormVec (formDim : ℕ) : Type := Fin formDim → ℝ
 
-/-- A `meaningDim`-dimensional **meaning vector** over ℝ. -/
+/-- A **meaning vector** has `meaningDim` real coordinates. -/
 abbrev MeaningVec (meaningDim : ℕ) : Type := Fin meaningDim → ℝ
 
 end DiscriminativeLexicon
