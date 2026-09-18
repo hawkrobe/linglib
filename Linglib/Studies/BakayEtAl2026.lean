@@ -121,12 +121,17 @@ inductive Feature
   | marking (m : Marking)
   deriving DecidableEq, Repr
 
-/-- The item-level number cue, generated exactly when the fragment's anaphor type imposes a
-    plurality requirement on its antecedent. -/
+/-- The stimulus number a grammatical number corresponds to. -/
+def Number.ofNumber? : _root_.Number → Option Number
+  | .plural => some .plural
+  | .singular => some .singular
+  | _ => none
+
+/-- The item-level number cue: the number the fragment's reciprocal bears, which an
+    antecedent must share (`Turkish.Anaphors.not_candidateAntecedent_of_singular`). -/
 def numberCues : List (Cue Feature) :=
-  if Turkish.Anaphors.birbirleriAcc.anaphorType.requiresPluralAntecedent then
-    [⟨.itemLevel, .number .plural⟩]
-  else []
+  ((Turkish.Anaphors.birbirlerini.number.bind Number.ofNumber?).map
+    fun n ↦ (⟨.itemLevel, .number n⟩ : Cue Feature)).toList
 
 /-- The cues generated on encountering *birbirleri*: Principle A supplies the relational
     c-command cue and the clause-mate cue, the fragment the number cue. -/
