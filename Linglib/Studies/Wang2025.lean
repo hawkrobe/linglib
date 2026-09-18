@@ -1,4 +1,6 @@
-import Linglib.Fragments.Mandarin.Particles
+import Linglib.Fragments.Mandarin.Adverbs
+import Linglib.Fragments.Mandarin.Predicates
+import Linglib.Semantics.Presupposition.Verb
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Set.Lattice.Bounded
 import Mathlib.Data.Fintype.Prod
@@ -6,15 +8,15 @@ import Mathlib.Data.Fintype.Prod
 /-!
 # Wang (2025): Presupposition, Competition, and Coherence
 
-This file formalizes the alternative-competition account of [wang-2025]'s dissertation on the
+This file formalizes the alternative-competition account of Wang's dissertation on the
 partial resolution of presuppositions in Mandarin. A presuppositional sentence competes with
-its non-presuppositional structural alternative, a [katzir-2007] alternative with the same
+its non-presuppositional structural alternative, an alternative in Katzir's sense with the same
 assertion, (1)–(2), which exists by deletion of the trigger for the additive, repetitive and
 continuative particles, by replacement for the change-of-state and factive triggers, and not
-at all for *jiu* 'only' (Table 4.1, `altStructureOf`). Three ranked constraints decide the
+at all for *jiu* 'only' (Table 4.1, `Trigger.altStructure`). Three ranked constraints decide the
 competition, (3): Internal Coherence, that the utterance is consistent with the common ground;
 Felicity Presupposition, that a presupposition is entailed by the common ground; and Maximize
-Presupposition, after [heim-1991], that a form is not used when a presuppositionally stronger
+Presupposition, after Heim, that a form is not used when a presuppositionally stronger
 alternative is. Coherence outranks felicity, which outranks Maximize Presupposition
 (`Beats`, `ranking`). Utterances and contexts are modelled by the speaker's information
 states: an utterance commits the speaker to a set of states (`Candidate`), and a context
@@ -48,8 +50,8 @@ arises, Tables 4.7 and 4.9.
   conditions.
 * The experiments of Chapters 3 and 5 and the de re and postsupposition analyses of Chapters
   5 and 6 are not represented.
-* The fragment's *er* is not among the dissertation's triggers and receives no alternative
-  structure.
+* `Trigger` lists the lexical rows of Table 4.1; its cleft row is a construction without a
+  lexical entry and is not represented.
 
 ## References
 
@@ -60,40 +62,39 @@ arises, Tables 4.7 and 4.9.
 
 namespace Wang2025
 
-open Mandarin.Particles
-
 variable {W : Type*}
 
 /-! ### Information states, commitments and contexts -/
 
-/-- The speaker believes `p`: the nonempty information states included in `p`. -/
+/-- `K p` is the set of nonempty information states included in `p`, those in which the speaker
+believes `p`. -/
 def K (p : Set W) : Set (Set W) := {s | s.Nonempty ∧ s ⊆ p}
 
-/-- The speaker holds `p` possible: the states meeting `p`. -/
+/-- `Poss p` is the set of states meeting `p`, those in which the speaker holds `p` possible. -/
 def Poss (p : Set W) : Set (Set W) := {s | (s ∩ p).Nonempty}
 
-/-- The speaker is ignorant about `p`: `p` and its negation are both possible. -/
+/-- `Ignorant p` is the set of states in which `p` and its negation are both possible. -/
 def Ignorant (p : Set W) : Set (Set W) := Poss p ∩ Poss pᶜ
 
-/-- An utterance in the competition: the states its use commits the speaker to, and its
-presupposition if it has one. -/
+/-- A candidate is an utterance in the competition, given by the states its use commits the
+speaker to and by its presupposition if it has one. -/
 structure Candidate (W : Type*) where
   commitment : Set (Set W)
   presup : Option (Set W)
 
-/-- The presuppositional sentence with presupposition `p` and assertion `a`: the speaker
-commits to both. -/
+/-- The presuppositional sentence with presupposition `p` and assertion `a` commits the speaker
+to both. -/
 def presupSentence (p a : Set W) : Candidate W := ⟨K (p ∩ a), some p⟩
 
-/-- The non-presuppositional alternative asserting `a`, unexhaustified. -/
+/-- The unexhaustified non-presuppositional alternative commits the speaker to `a`. -/
 def plain (a : Set W) : Candidate W := ⟨K a, none⟩
 
-/-- The alternative exhaustified against `q` below the belief operator: the speaker commits
-to `a` and to the negation of `q`. -/
+/-- The alternative exhaustified against `q` below the belief operator commits the speaker to
+`a` and to the negation of `q`. -/
 def plainExhBelowK (a q : Set W) : Candidate W := ⟨K (a ∩ qᶜ), none⟩
 
-/-- The alternative exhaustified against `q` above the belief operator: the speaker commits to
-`a` and does not believe `q`. -/
+/-- The alternative exhaustified against `q` above the belief operator commits the speaker to
+`a` while the speaker does not believe `q`. -/
 def plainExhAboveK (a q : Set W) : Candidate W := ⟨K a \ K q, none⟩
 
 /-! ### The constraints and their ranking, (3) -/
@@ -122,6 +123,13 @@ evaluated for the competition between `sp` and its alternative. -/
 def ranking (ctx : Set (Set W)) (sp : Candidate W) : List (Candidate W → Prop) :=
   [ViolIC ctx, ViolFP ctx, ViolMP ctx sp]
 
+/-- A presuppositional sentence violates Felicity Presupposition exactly when the context does
+not entail its presupposition. A trigger without an alternative, such as *jiu* 'only', enters no
+competition, so this alone bars it from every context short of entailing the presupposition. -/
+@[simp] theorem violFP_presupSentence {ctx : Set (Set W)} {p a : Set W} :
+    ViolFP ctx (presupSentence p a) ↔ ¬ ctx ⊆ K p :=
+  ⟨fun ⟨_, hq, h⟩ ↦ Option.some.inj hq ▸ h, fun h ↦ ⟨p, rfl, h⟩⟩
+
 /-! ### The three decisive facts -/
 
 /-- A coherent presuppositional sentence beats an incoherent alternative. -/
@@ -136,8 +144,8 @@ theorem plain_beats_of_not_entailed {ctx : Set (Set W)} {p a : Set W} {c : Candi
     (hc0 : c.presup = none) (hsp : ¬ Disjoint ctx (K (p ∩ a))) (hc : ¬ Disjoint ctx c.commitment)
     (hp : ¬ ctx ⊆ K p) :
     Beats (ranking ctx (presupSentence p a)) c (presupSentence p a) :=
-  Or.inr ⟨⟨λ h => absurd h hc, λ h => absurd h hsp⟩,
-    Or.inl ⟨λ ⟨q, hq, _⟩ => by simp [hc0] at hq, ⟨p, rfl, hp⟩⟩⟩
+  Or.inr ⟨⟨fun h ↦ absurd h hc, fun h ↦ absurd h hsp⟩,
+    Or.inl ⟨fun ⟨q, hq, _⟩ ↦ by simp [hc0] at hq, ⟨p, rfl, hp⟩⟩⟩
 
 /-- A presuppositional sentence whose presupposition is entailed beats a coherent
 non-presuppositional alternative. -/
@@ -145,17 +153,17 @@ theorem presup_beats_of_entailed {ctx : Set (Set W)} {p a : Set W} {c : Candidat
     (hc0 : c.presup = none) (hsp : ¬ Disjoint ctx (K (p ∩ a))) (hc : ¬ Disjoint ctx c.commitment)
     (hp : ctx ⊆ K p) :
     Beats (ranking ctx (presupSentence p a)) (presupSentence p a) c :=
-  Or.inr ⟨⟨λ h => absurd h hsp, λ h => absurd h hc⟩,
-    Or.inr ⟨⟨λ ⟨q, hq, hnq⟩ => absurd hp (Option.some.inj hq ▸ hnq), λ ⟨q, hq, _⟩ => by
+  Or.inr ⟨⟨fun h ↦ absurd h hsp, fun h ↦ absurd h hc⟩,
+    Or.inr ⟨⟨fun ⟨q, hq, hnq⟩ ↦ absurd hp (Option.some.inj hq ▸ hnq), fun ⟨q, hq, _⟩ ↦ by
       simp [hc0] at hq⟩,
-      Or.inl ⟨λ ⟨h, _⟩ => by simp [presupSentence] at h, ⟨hc0, p, rfl, hp⟩⟩⟩⟩
+      Or.inl ⟨fun ⟨h, _⟩ ↦ by simp [presupSentence] at h, ⟨hc0, p, rfl, hp⟩⟩⟩⟩
 
 /-! ### The tableaux -/
 
 private theorem K_inter_subset {p a : Set W} : K (p ∩ a) ⊆ K p :=
-  λ _ ⟨hne, hs⟩ => ⟨hne, hs.trans Set.inter_subset_left⟩
+  fun _ ⟨hne, hs⟩ ↦ ⟨hne, hs.trans Set.inter_subset_left⟩
 
-/-- Table 4.2: the context entails the presupposition, so the trigger is obligatory. -/
+/-- In Table 4.2 the context entails the presupposition, so the trigger is obligatory. -/
 theorem obligatory_of_entailed {ctx : Set (Set W)} {p a : Set W} (hp : ctx ⊆ K p)
     (hwit : ∃ s ∈ ctx, s ⊆ a) :
     Beats (ranking ctx (presupSentence p a)) (presupSentence p a) (plain a) := by
@@ -165,7 +173,7 @@ theorem obligatory_of_entailed {ctx : Set (Set W)} {p a : Set W} (hp : ctx ⊆ K
   · exact Set.not_disjoint_iff.mpr ⟨s, hs, hsp.1, Set.subset_inter hsp.2 hsa⟩
   · exact Set.not_disjoint_iff.mpr ⟨s, hs, hsp.1, hsa⟩
 
-/-- Table 4.3: the context does not entail the presupposition, so the trigger is dropped. -/
+/-- In Table 4.3 the context does not entail the presupposition, so the trigger is dropped. -/
 theorem omitted_of_not_entailed {ctx : Set (Set W)} {p a : Set W} (hp : ¬ ctx ⊆ K p)
     (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ p ∩ a) :
     Beats (ranking ctx (presupSentence p a)) (plain a) (presupSentence p a) := by
@@ -174,7 +182,7 @@ theorem omitted_of_not_entailed {ctx : Set (Set W)} {p a : Set W} (hp : ¬ ctx �
   · exact Set.not_disjoint_iff.mpr ⟨s, hs, hne, hsa⟩
   · exact Set.not_disjoint_iff.mpr ⟨s, hs, hne, hsa.trans Set.inter_subset_right⟩
 
-/-- Table 4.4: with positive evidence for the presupposition and the alternative exhaustified
+/-- In Table 4.4, with positive evidence for the presupposition and the alternative exhaustified
 below the belief operator, the exhaustive implicature contradicts the context and the trigger
 is obligatory, although its presupposition is not entailed. -/
 theorem obligatory_of_positive_evidence {ctx : Set (Set W)} {p a : Set W}
@@ -187,7 +195,7 @@ theorem obligatory_of_positive_evidence {ctx : Set (Set W)} {p a : Set W}
   obtain ⟨w, hw, hwp⟩ := hposs ht
   exact (hta hw).2 hwp
 
-/-- Table 4.5: the context denies the presupposition, so the presuppositional sentence is
+/-- In Table 4.5 the context denies the presupposition, so the presuppositional sentence is
 incoherent and the alternative wins. -/
 theorem omitted_of_denied {ctx : Set (Set W)} {p a : Set W} (hneg : ctx ⊆ K pᶜ)
     (hwit : ∃ s ∈ ctx, s ⊆ a) :
@@ -200,7 +208,7 @@ theorem omitted_of_denied {ctx : Set (Set W)} {p a : Set W} (hneg : ctx ⊆ K p�
   rintro t ht ⟨⟨w, hw⟩, htp⟩
   exact (hneg ht).2 hw (htp hw).1
 
-/-- Table 4.6: in an ignorance context, with the alternative exhaustified above the belief
+/-- In Table 4.6, an ignorance context with the alternative exhaustified above the belief
 operator, the presuppositional sentence commits the speaker to the presupposition and so
 contradicts the ignorance, while the alternative is coherent; the trigger is dropped. -/
 theorem omitted_of_ignorance {ctx : Set (Set W)} {p a : Set W} (hign : ctx ⊆ Ignorant p)
@@ -209,7 +217,7 @@ theorem omitted_of_ignorance {ctx : Set (Set W)} {p a : Set W} (hign : ctx ⊆ I
   obtain ⟨s, hs, hsa⟩ := hwit
   obtain ⟨⟨w, hw, -⟩, ⟨v, hv, hvp⟩⟩ := hign hs
   refine Or.inl ⟨?_, ?_⟩
-  · refine Set.not_disjoint_iff.mpr ⟨s, hs, ⟨⟨w, hw⟩, hsa⟩, λ hsp => ?_⟩
+  · refine Set.not_disjoint_iff.mpr ⟨s, hs, ⟨⟨w, hw⟩, hsa⟩, fun hsp ↦ ?_⟩
     exact hvp (hsp.2 hv)
   · show Disjoint ctx (K (p ∩ a))
     rw [Set.disjoint_left]
@@ -224,17 +232,17 @@ variable [DecidableEq W]
 /-- `M` is a maximal subset of the alternatives whose joint negation is consistent with `φ`,
 the `Max` of (24). -/
 def MaxConsistent (φ : Finset W) (alts : Finset (Finset W)) (M : Finset (Finset W)) : Prop :=
-  M ⊆ alts ∧ (φ.filter (λ w => ∀ q ∈ M, w ∉ q)).Nonempty ∧
-    ∀ M' ∈ alts.powerset, M ⊂ M' → ¬ (φ.filter (λ w => ∀ q ∈ M', w ∉ q)).Nonempty
+  M ⊆ alts ∧ (φ.filter (fun w ↦ ∀ q ∈ M, w ∉ q)).Nonempty ∧
+    ∀ M' ∈ alts.powerset, M ⊂ M' → ¬ (φ.filter (fun w ↦ ∀ q ∈ M', w ∉ q)).Nonempty
 
 instance (φ : Finset W) (alts M : Finset (Finset W)) : Decidable (MaxConsistent φ alts M) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ M' ∈ alts.powerset, _))
 
-/-- The reading of (24) for the maximal subset `M`: `φ` with every member of `M` negated. -/
+/-- The reading of (24) for the maximal subset `M` is `φ` with every member of `M` negated. -/
 def exhMx (φ : Finset W) (M : Finset (Finset W)) : Finset W :=
-  φ.filter (λ w => ∀ q ∈ M, w ∉ q)
+  φ.filter (fun w ↦ ∀ q ∈ M, w ∉ q)
 
-/-- The reading of (20): `φ` with every innocently excludable alternative negated, those in
+/-- The reading of (20) is `φ` with every innocently excludable alternative negated, those in
 every maximal consistent subset. -/
 def exhIe (φ : Finset W) (alts : Finset (Finset W)) : Set W :=
   {w | w ∈ φ ∧ ∀ q ∈ alts, (∀ M, MaxConsistent φ alts M → q ∈ M) → w ∉ q}
@@ -245,16 +253,16 @@ theorem exhIe_eq_exhMx_of_unique {φ : Finset W} {alts M₀ : Finset (Finset W)}
     exhIe φ alts = ↑(exhMx φ M₀) := by
   ext w
   simp only [exhIe, exhMx, Set.mem_ofPred_eq, Finset.coe_filter]
-  refine and_congr_right λ _ => ⟨λ h q hq => h q (h₀.1 hq) (λ M hM => huniq M hM ▸ hq),
-    λ h q _ hall => h q (hall M₀ h₀)⟩
+  refine and_congr_right fun _ ↦ ⟨fun h q hq ↦ h q (h₀.1 hq) (fun M hM ↦ huniq M hM ▸ hq),
+    fun h q _ hall ↦ h q (hall M₀ h₀)⟩
 
-/-- The worlds of the disjunction example (26): the truth values of `p` and `q`. -/
+/-- The worlds of the disjunction example (26) are the pairs of truth values of `p` and `q`. -/
 abbrev PQ := Bool × Bool
 
-/-- `p` in (26). -/
+/-- The alternative `p` of (26). -/
 def pAlt : Finset PQ := Finset.univ.filter (·.1 = true)
 
-/-- `q` in (26). -/
+/-- The alternative `q` of (26). -/
 def qAlt : Finset PQ := Finset.univ.filter (·.2 = true)
 
 /-- The disjunction `p ∨ q` with the alternatives `p`, `q` and `p ∧ q`, (26), has two maximal
@@ -276,19 +284,51 @@ inductive AltStructure
   | none
   deriving DecidableEq, Repr
 
-/-- Table 4.1 for the fragment's triggers. The additive, repetitive, continuative, inchoative
-and contrastive particles delete; the cessative and factive triggers replace, *buzai* by
-negation and *zhidao* by *believe*; *jiu* 'only' has no alternative. The fragment's *er* is
-not among the dissertation's triggers. -/
-def altStructureOf : MandarinTrigger → Option AltStructure
-  | .ye => some .deletion
-  | .you => some .deletion
-  | .reng => some .deletion
-  | .kaishi => some .deletion
-  | .faner => some .deletion
-  | .buzai => some .replacement
-  | .zhidao => some .replacement
-  | .jiu => some .none
-  | .er => Option.none
+/-- The lexical triggers of Table 4.1 are the adverbs *ye* 'also', *fan'er* 'instead', *reng*
+'still', *you* and *zai* 'again', *buzai* 'no longer' and *jiu* 'only', and the verbs *kaishi*
+'start', *zhidao* 'know' and *houhui* 'regret'. -/
+inductive Trigger
+  | ye
+  | faner
+  | reng
+  | you
+  | zai
+  | kaishi
+  | buzai
+  | zhidao
+  | jiu
+  | houhui
+  deriving DecidableEq, Repr
+
+/-- The fragment entry of a trigger, an adverb or a verb. -/
+def Trigger.entry : Trigger → Presupposition.TriggerItem ⊕ Mandarin.Verb
+  | .ye => .inl Mandarin.Adverbs.ye
+  | .faner => .inl Mandarin.Adverbs.faner
+  | .reng => .inl Mandarin.Adverbs.reng
+  | .you => .inl Mandarin.Adverbs.you
+  | .zai => .inl Mandarin.Adverbs.zai
+  | .buzai => .inl Mandarin.Adverbs.buzai
+  | .jiu => .inl Mandarin.Adverbs.jiu
+  | .kaishi => .inr Mandarin.kaishi
+  | .zhidao => .inr Mandarin.zhidao
+  | .houhui => .inr Mandarin.houhui
+
+/-- Table 4.1. A trigger whose assertion is its prejacent deletes, as the additive, contrastive,
+continuative, repetitive and inchoative ones do. The cessative and the factive replace, *buzai* by
+negation and *zhidao* by *renwei* 'believe'. No sequence of deletions and replacements yields a
+sentence with the assertion of *jiu* 'only' or of *houhui* 'regret', which have no alternative. -/
+def Trigger.altStructure : Trigger → AltStructure
+  | .ye | .faner | .reng | .you | .zai | .kaishi => .deletion
+  | .buzai | .zhidao => .replacement
+  | .jiu | .houhui => .none
+
+/-- The verbal triggers are presupposition triggers by their fragment entries. -/
+theorem isTrigger_of_entry {t : Trigger} {v : Mandarin.Verb} (h : t.entry = .inr v) :
+    v.IsTrigger := by
+  cases t <;> simp only [Trigger.entry, Sum.inr.injEq, reduceCtorEq] at h <;> subst h <;> decide
+
+/-- The replacement for *zhidao* is non-presuppositional, as (1) requires: *renwei* 'believe' is
+not a trigger. -/
+theorem not_isTrigger_renwei : ¬ Mandarin.renwei.IsTrigger := by decide
 
 end Wang2025

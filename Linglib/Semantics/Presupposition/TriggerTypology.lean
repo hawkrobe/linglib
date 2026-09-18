@@ -1,13 +1,16 @@
 /-!
 # Presupposition triggers
 
-The classifications of a presupposition trigger: its hosting lexical class (`Trigger`, the
-consensus inventory of the projection literature after [zeevat-1992] and
-[tonhauser-beaver-roberts-simons-2013]), the hard/soft split of [abusch-2010] (`TriggerType`),
-[karttunen-1971b]'s split of the factive predicates into true factives and semi-factives
-(`Factivity`), and [karttunen-1973]'s plug/hole/filter classification of what a predicate does
-with the presuppositions of its complement (`ProjectionBehavior`). Lexical entries record the
-class and the projection behavior; a verb's trigger type is derived (`Verb.triggerType?`).
+This file defines the classifications of a presupposition trigger, an expression whose use
+takes some proposition for granted. A trigger belongs to a class by the kind of expression that
+hosts it (`Trigger`), the consensus inventory of the projection literature after Zeevat and
+after Tonhauser, Beaver, Roberts and Simons. Abusch divides triggers into hard ones, whose
+presupposition always projects, and soft ones, whose presupposition can be suspended
+(`TriggerType`). Karttunen divides the factive predicates into true factives and semi-factives
+(`Factivity`), and classifies a predicate as a plug, a hole or a filter by what it does with the
+presuppositions of its complement (`ProjectionBehavior`). A verb's entry records its factivity
+and projection behavior, and its trigger type is derived (`Verb.triggerType?`); an adverb,
+particle or affix that triggers a presupposition is a `TriggerItem`.
 
 ## References
 
@@ -17,12 +20,15 @@ class and the projection behavior; a verb's trigger type is derived (`Verb.trigg
 * [karttunen-1971b]
 * [karttunen-1973]
 * [nadathur-2023-implicatives]
+* [von-stechow-1996]
+* [ippolito-2007]
+* [kripke-2009]
 -/
 
 namespace Presupposition
 
-/-- The kind of presupposition trigger a predicate is, the hard/soft classification of
-[abusch-2010]: hard triggers always project (*too*, *again*, *also*), soft triggers project
+/-- The kind of presupposition trigger a predicate is, in the hard/soft classification of
+[abusch-2010]. Hard triggers always project (*too*, *again*, *also*), soft triggers project
 context-sensitively (*stop*, *know*), and an implicative presupposes a prerequisite. -/
 inductive TriggerType where
   /-- Projective in every context. -/
@@ -35,66 +41,65 @@ inductive TriggerType where
 
 /-- The factivity class of a predicate ([karttunen-1971b]). -/
 inductive Factivity where
-  /-- A true factive such as *regret* or *forget*: the complement follows even from the
+  /-- A true factive such as *regret* or *forget*, whose complement follows even from the
   possibility of the sentence. -/
   | full
-  /-- A semi-factive such as *know* or *discover*: the complement follows from the sentence and
-  its negation only. -/
+  /-- A semi-factive such as *know* or *discover*, whose complement follows from the sentence
+  and its negation only. -/
   | semi
   deriving DecidableEq, Repr
 
-/--
-Complement presupposition projection behavior ([karttunen-1973]).
-
-Orthogonal to `TriggerType` (whether the verb *triggers* presuppositions):
-this classifies what the verb does with presuppositions *of its complement*.
-
-- `plug`: blocks all complement presuppositions (*say*, *tell*, *promise*)
-- `hole`: lets all complement presuppositions project (*know*, *regret*, *stop*)
-- `filter`: conditionally cancels some complement presuppositions (*if...then*, *and*, *or*)
--/
+/-- What a predicate does with the presuppositions of its complement ([karttunen-1973]). The
+classification is orthogonal to `TriggerType`, which says whether the predicate itself triggers
+a presupposition. -/
 inductive ProjectionBehavior where
-  | plug    -- Blocks complement presuppositions
-  | hole    -- Passes complement presuppositions through
-  | filter  -- Conditionally cancels complement presuppositions
+  /-- A plug blocks every presupposition of its complement (*say*, *tell*, *promise*). -/
+  | plug
+  /-- A hole lets every presupposition of its complement project (*know*, *regret*, *stop*). -/
+  | hole
+  /-- A filter cancels some presuppositions of its complement under a condition (*if ... then*,
+  *and*, *or*). -/
+  | filter
   deriving DecidableEq, Repr
 
-/-- Presupposition trigger classes, by hosting lexical item. -/
+/-- The class of a presupposition trigger, by the kind of expression that hosts it. -/
 inductive Trigger where
-  /-- Definite descriptions: "the X" presupposes X exists and is unique. -/
+  /-- A definite description *the X* presupposes that a unique X exists. -/
   | definite
-  /-- Factive predicates: "know/regret that P" presupposes P. -/
+  /-- A factive predicate, *know* or *regret that p*, presupposes `p`. -/
   | factive
-  /-- Change-of-state predicates: "stop/start V-ing" presuppose a prior state. -/
+  /-- A change-of-state expression, *stop*, *start* or *no longer*, presupposes the prior state. -/
   | changeOfState
-  /-- Repetitive iteratives: "again" presupposes a prior occurrence.
-      An intervening ¬P interval (P-then-¬P-then-P-again) is presupposed
-      only for stative hosts in competition with the continuative;
-      eventive *again* (*John won again*) requires precedence only
-      (cf. [von-stechow-1996]). English *again*, German *wieder*,
-      Mandarin *you* 又, Cantonese *jau*. -/
+  /-- A repetitive iterative, *again*, presupposes a prior occurrence. An intervening interval
+  without the eventuality is presupposed only for stative hosts, in competition with the
+  continuative; eventive *again* (*John won again*) requires precedence only
+  ([von-stechow-1996]). -/
   | iterative
-  /-- Continuatives: "still" presuppose uninterrupted continuation
-      of P throughout an interval up to and including the reference time.
-      Distinct from `.iterative` (interruption presupposed only for
-      statives) and from `.changeOfState` (which involves a polarity
-      flip). English *still*, Mandarin *reng* 仍 / *hai* 还,
-      Cantonese *zung* 仲. Cf. [ippolito-2007] on *still* vs *again*. -/
+  /-- A continuative, *still*, presupposes that the state has held without interruption up to
+  the reference time ([ippolito-2007]). -/
   | continuative
-  /-- Additives: "too/also" presuppose that a distinct salient alternative
-      satisfies the predicate — the paradigm anaphoric trigger
-      ([kripke-2009]). English *too*, German *auch*, Mandarin *ye* 也. -/
+  /-- An additive, *too* or *also*, presupposes that a distinct salient alternative satisfies
+  the predicate, and is the paradigm anaphoric trigger ([kripke-2009]). -/
   | additive
-  /-- Exclusives: "only P" presupposes its prejacent P.
-      English *only*, Mandarin *jiu* 就. -/
+  /-- An exclusive, *only p*, presupposes its prejacent `p`. -/
   | exclusive
-  /-- Contrastives: "instead"-type particles presuppose a contextually
-      salient contrary expectation. Mandarin *fan'er* 反而 / *er* 而. -/
+  /-- A contrastive, *instead*, presupposes that a salient alternative is false. -/
   | contrastive
-  /-- Cleft constructions: "It was X that..." presupposes existence. -/
+  /-- A cleft *it was X that ...* presupposes existence. -/
   | cleft
-  /-- Aspectual predicates: "finish", "continue" presuppose event structure. -/
+  /-- An aspectual predicate, *finish* or *continue*, presupposes event structure. -/
   | aspectual
+  deriving DecidableEq, Repr
+
+/-- A presupposition trigger outside the verbal lexicon, an adverb, particle or affix, with its
+trigger class. A verb's presuppositions are recorded on its `Verb` entry. -/
+structure TriggerItem where
+  /-- The citation form, a romanization where the language is not written in Latin script. -/
+  form : String
+  /-- The native-script form of a romanized item. -/
+  script : Option String := none
+  /-- The trigger class. -/
+  trigger : Trigger
   deriving DecidableEq, Repr
 
 end Presupposition
