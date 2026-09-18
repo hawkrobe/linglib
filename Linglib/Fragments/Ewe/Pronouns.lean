@@ -3,13 +3,16 @@ import Linglib.Syntax.Category.Pronoun.Logophoric
 /-!
 # Ewe pronouns
 
-This file defines the Ewe logophoric pronoun *yè*, which stands in the complement of a verb of
-saying or thinking for the person whose speech or thought is reported. In the terms of
-[sells-1987] its antecedent must be at least a self: a reporter or a thinker licenses it, a mere
-point-of-view centre does not.
+This file defines the Ewe logophoric pronoun *yè*, which occurs in the scope of an attitude
+predicate such as 'say' or 'believe' and refers to the bearer of the attitude ([pearson-2015]);
+it also appears under psychological predicates ([sells-1987], after Clements). In the role
+terms of [sells-1987] its antecedent is therefore at least a self: a reporter or a thinker
+licenses it, a mere point-of-view centre does not. Sells himself suggests that logophoric
+pronouns proper are source-oriented, since their complementizer derives from 'say'.
 
 ## References
 
+* [H. Pearson, *The interpretation of the logophoric pronoun in Ewe* (2015)][pearson-2015]
 * [P. Sells, *Aspects of Logophoricity* (1987)][sells-1987]
 -/
 

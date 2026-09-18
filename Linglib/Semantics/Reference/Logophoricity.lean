@@ -25,7 +25,8 @@ a pivot; but a pivot need not be a self or source.
 ## Connection to Perspectival Phenomena
 
 The same logophoric roles govern:
-- Logophoric pronouns (Ewe *yè*): antecedent must be at least a self
+- Logophoric pronouns (Ewe *yè*): antecedent must be at least a self, the bearer of an
+  attitude ([pearson-2015]); [sells-1987] suggests source-orientation for them
 - Long-distance reflexives (Japanese *zibun*): antecedent must be a pivot
 - Point-of-view verbs (Japanese yar- vs kure-): lexically encode pivot
 - The Clitic Logophoric Restriction (CLR): 3P IO clitic interpreted as
