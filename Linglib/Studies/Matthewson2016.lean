@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modality.Universals
-import Linglib.Semantics.Evidential.Source
+import Linglib.Semantics.Evidential.Defs
 import Linglib.Data.Examples.Matthewson2016
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Fragments.Statimcets.Modals
