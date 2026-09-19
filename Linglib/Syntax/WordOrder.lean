@@ -1,232 +1,183 @@
-import Linglib.Data.WALS.Features.F81A
-import Linglib.Data.WALS.Features.F82A
-import Linglib.Data.WALS.Features.F83A
+import Mathlib.Data.Fin.Rev
+import Mathlib.Data.Fintype.Perm
+import Mathlib.Logic.Function.Basic
+import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Word-order typology
+# Word order
 
-Framework-agnostic per-language word-order substrate (WALS chapters 81–83), under
-a bare-root `WordOrder` namespace in `Features/`.
+The order of a head relative to one of its dependents, and the linear arrangement of the
+subject, object and verb of a clause.
 
-## Main definitions
+`HeadDirection` is the two-valued order of a head and a dependent, head-initial when the head
+precedes; `HeadDirection.swap` is the opposite direction and `HeadDirection.ofLT` the direction
+read off two positions. `WordOrder.Arrangement` is a linear arrangement of the three clausal
+constituents, a bijection onto ranks, so that precedence, the head direction of any pair and
+the mirror image are read off the ranks. Its six values are the basic word orders of the
+typological literature ([greenberg-1963], [dryer-2013-wals]), `Arrangement.sov` and its
+siblings.
 
-* `BasicOrder`, `SVOrder`, `OVOrder` : the WALS Ch 81/82/83 constituent-order
-  classifications ([dryer-2013-wals]).
-* `WordOrderProfile` : the three classifications bundled per language, with the
-  cross-field invariant `WordOrderProfile.IsConsistent` and the ISO-639-3 lookup
-  constructor `WordOrderProfile.ofWALS`.
-* `HeadDirection` : head-initial vs head-final (root-named; used for FOFC and the like).
-* `BasicOrder.IsSubjectBeforeObject` : the antecedent of [greenberg-1963] Universal 1.
-* `OVOrder.verbPosition` : the verb position a basic order projects to.
+## Main declarations
+
+* `HeadDirection`, `HeadDirection.swap`, `HeadDirection.ofLT`: the two directions, the
+  involution exchanging them, and the direction of a head and a dependent at given positions.
+* `WordOrder.Constituent`, `WordOrder.Arrangement`: the subject, object and verb, and a linear
+  arrangement of them, with the six basic orders as named values.
+* `Arrangement.Precedes`, `Arrangement.headDirection`, `Arrangement.mirror`: precedence of two
+  constituents, the head direction of a pair, and the reversed arrangement, which reverses
+  every precedence and every head direction.
 
 ## Implementation notes
 
-Each enum carries both `.noDominant` (a WALS-attested *finding* of no dominant order,
-e.g. German Ch 81) and `.notInWALS` (uncoded in that chapter); filtering on
-`≠ .noDominant` would otherwise misread uncoded languages as nondominant. The three
-fields are bundled independently because WALS codes them independently (German is Ch 81
-nondominant yet Ch 82 dominant), so `WordOrderProfile.IsConsistent` — not the type —
-enforces their entailments. The substrate is neutral on primacy: [greenberg-1963] takes
-`BasicOrder` as primary, [dryer-1992] the OV/VO cut.
+The WALS classification of a language's dominant orders, with its "no dominant order" value, is
+data (`Data/WALS/Features/F81A` and its siblings). A fragment records the arrangements a
+language admits as a `Finset Arrangement`; the pairwise orders the language fixes are the ones
+every member agrees on, so no separate consistency invariant is needed.
+
+## References
+
+* [dryer-1992]
+* [dryer-2013-wals]
+* [greenberg-1963]
 -/
 
-/-- Head direction of a construction: head-initial (VO, prepositions) vs head-final.
-Root-named (consumed across Fragments, Studies, Syntax); used for FOFC and the like. -/
+/-- The order of a head and one of its dependents, head-initial when the head precedes, as a
+verb precedes its object in VO order and a preposition its noun phrase, head-final otherwise. -/
 inductive HeadDirection where
   | headInitial
   | headFinal
-  deriving Repr, DecidableEq
+  deriving DecidableEq, Repr, Fintype
+
+namespace HeadDirection
+
+/-- The opposite direction. -/
+def swap : HeadDirection → HeadDirection
+  | headInitial => headFinal
+  | headFinal => headInitial
+
+@[simp] theorem swap_headInitial : headInitial.swap = headFinal := rfl
+
+@[simp] theorem swap_headFinal : headFinal.swap = headInitial := rfl
+
+@[simp] theorem swap_swap : ∀ d : HeadDirection, d.swap.swap = d := by decide
+
+theorem swap_involutive : Function.Involutive swap := swap_swap
+
+theorem swap_injective : Function.Injective swap := swap_involutive.injective
+
+theorem swap_ne_self : ∀ d : HeadDirection, d.swap ≠ d := by decide
+
+theorem swap_eq_iff_eq_swap {d e : HeadDirection} : d.swap = e ↔ d = e.swap :=
+  swap_involutive.eq_iff
+
+/-- A direction is a given one or its opposite. -/
+theorem eq_or_eq_swap : ∀ d e : HeadDirection, e = d ∨ e = d.swap := by decide
+
+section ofLT
+
+variable {α : Type*} [LT α] [DecidableLT α] {head dep : α}
+
+/-- The direction of a head at position `head` with a dependent at position `dep`. -/
+def ofLT (head dep : α) : HeadDirection := if head < dep then headInitial else headFinal
+
+@[simp] theorem ofLT_eq_headInitial : ofLT head dep = headInitial ↔ head < dep := by
+  unfold ofLT; split <;> simp [*]
+
+@[simp] theorem ofLT_eq_headFinal : ofLT head dep = headFinal ↔ ¬ head < dep := by
+  unfold ofLT; split <;> simp [*]
+
+end ofLT
+
+/-- Exchanging the positions of a head and a dependent reverses the direction. -/
+theorem ofLT_swap {α : Type*} [LinearOrder α] {head dep : α} (h : head ≠ dep) :
+    ofLT dep head = (ofLT head dep).swap := by
+  rcases lt_or_gt_of_ne h with hlt | hlt <;> simp [ofLT, hlt, lt_asymm hlt]
+
+end HeadDirection
 
 namespace WordOrder
 
-/-! ### Classifications -/
+/-- The three constituents of a transitive clause. -/
+inductive Constituent where
+  | subject
+  | object
+  | verb
+  deriving DecidableEq, Repr, Fintype
 
-/-- WALS Ch 81: the six-way classification of basic constituent order. -/
-inductive BasicOrder where
-  | sov | svo | vso | vos | ovs | osv
-  /-- WALS-attested "lacking a dominant word order" (Ch 81). -/
-  | noDominant
-  /-- Language not coded in WALS Ch 81. -/
-  | notInWALS
-  deriving DecidableEq, Repr
+/-- A linear arrangement of the three constituents, each sent to its rank. -/
+abbrev Arrangement := Constituent ≃ Fin 3
 
-/-- WALS Ch 82: binary classification of subject–verb order. -/
-inductive SVOrder where
-  | sv | vs
-  /-- WALS-attested "lacking a dominant order" (Ch 82). -/
-  | noDominant
-  /-- Language not coded in WALS Ch 82. -/
-  | notInWALS
-  deriving DecidableEq, Repr
+namespace Arrangement
 
-/-- WALS Ch 83: binary classification of object–verb order. -/
-inductive OVOrder where
-  | ov | vo
-  /-- WALS-attested "lacking a dominant order" (Ch 83). -/
-  | noDominant
-  /-- Language not coded in WALS Ch 83. -/
-  | notInWALS
-  deriving DecidableEq, Repr
+/-- Subject, object, verb. -/
+def sov : Arrangement :=
+  ⟨fun | .subject => 0 | .object => 1 | .verb => 2,
+    fun | 0 => .subject | 1 => .object | 2 => .verb, by decide, by decide⟩
 
-/-- A language's WALS Ch 81/82/83 word-order classifications, bundled. -/
-structure WordOrderProfile where
-  basicOrder : BasicOrder
-  svOrder : SVOrder
-  ovOrder : OVOrder
-  deriving Repr, DecidableEq
+/-- Subject, verb, object. -/
+def svo : Arrangement :=
+  ⟨fun | .subject => 0 | .verb => 1 | .object => 2,
+    fun | 0 => .subject | 1 => .verb | 2 => .object, by decide, by decide⟩
 
-/-! ### WALS converters and ISO lookups -/
+/-- Verb, subject, object. -/
+def vso : Arrangement :=
+  ⟨fun | .verb => 0 | .subject => 1 | .object => 2,
+    fun | 0 => .verb | 1 => .subject | 2 => .object, by decide, by decide⟩
 
-namespace BasicOrder
+/-- Verb, object, subject. -/
+def vos : Arrangement :=
+  ⟨fun | .verb => 0 | .object => 1 | .subject => 2,
+    fun | 0 => .verb | 1 => .object | 2 => .subject, by decide, by decide⟩
 
-/-- Convert WALS F81A's `BasicWordOrder` value to a `BasicOrder`. -/
-def ofWALS81A : Data.WALS.F81A.BasicWordOrder → BasicOrder
-  | .sov => .sov
-  | .svo => .svo
-  | .vso => .vso
-  | .vos => .vos
-  | .ovs => .ovs
-  | .osv => .osv
-  | .noDominantOrder => .noDominant
+/-- Object, verb, subject. -/
+def ovs : Arrangement :=
+  ⟨fun | .object => 0 | .verb => 1 | .subject => 2,
+    fun | 0 => .object | 1 => .verb | 2 => .subject, by decide, by decide⟩
 
-/-- Look up Ch 81 basic order for an ISO 639-3 code. Returns
-    `.notInWALS` when the language is absent from the chapter. -/
-def ofWALS (iso : String) : BasicOrder :=
-  match Data.WALS.Datapoint.lookupISO Data.WALS.F81A.allData iso with
-  | some d => ofWALS81A d.value
-  | none => .notInWALS
+/-- Object, subject, verb. -/
+def osv : Arrangement :=
+  ⟨fun | .object => 0 | .subject => 1 | .verb => 2,
+    fun | 0 => .object | 1 => .subject | 2 => .verb, by decide, by decide⟩
 
-end BasicOrder
+variable (a : Arrangement) (x y : Constituent)
 
-namespace SVOrder
+/-- `x` precedes `y`. -/
+def Precedes : Prop := a x < a y
 
-/-- Convert WALS F82A's `SubjectVerbOrder` to an `SVOrder`. -/
-def ofWALS82A : Data.WALS.F82A.SubjectVerbOrder → SVOrder
-  | .sv => .sv
-  | .vs => .vs
-  | .noDominantOrder => .noDominant
+instance : Decidable (a.Precedes x y) := inferInstanceAs (Decidable (_ < _))
 
-/-- Look up Ch 82 subject–verb order for an ISO 639-3 code. Returns
-    `.notInWALS` when the language is absent from the chapter. -/
-def ofWALS (iso : String) : SVOrder :=
-  match Data.WALS.Datapoint.lookupISO Data.WALS.F82A.allData iso with
-  | some d => ofWALS82A d.value
-  | none => .notInWALS
+/-- The direction of the head `x` with respect to its dependent `y`. -/
+def headDirection : HeadDirection := .ofLT (a x) (a y)
 
-end SVOrder
+/-- The mirror image, every rank reversed. -/
+def mirror : Arrangement := a.trans Fin.revPerm
 
-namespace OVOrder
+variable {a x y}
 
-/-- Convert WALS F83A's `ObjectVerbOrder` to an `OVOrder`. -/
-def ofWALS83A : Data.WALS.F83A.ObjectVerbOrder → OVOrder
-  | .ov => .ov
-  | .vo => .vo
-  | .noDominantOrder => .noDominant
+theorem headDirection_eq_headInitial :
+    a.headDirection x y = .headInitial ↔ a.Precedes x y :=
+  HeadDirection.ofLT_eq_headInitial
 
-/-- Look up Ch 83 object–verb order for an ISO 639-3 code. Returns
-    `.notInWALS` when the language is absent from the chapter. -/
-def ofWALS (iso : String) : OVOrder :=
-  match Data.WALS.Datapoint.lookupISO Data.WALS.F83A.allData iso with
-  | some d => ofWALS83A d.value
-  | none => .notInWALS
+theorem headDirection_eq_headFinal : a.headDirection x y = .headFinal ↔ ¬ a.Precedes x y :=
+  HeadDirection.ofLT_eq_headFinal
 
-end OVOrder
+@[simp] theorem mirror_mirror (a : Arrangement) : a.mirror.mirror = a := by
+  ext c; simp [mirror]
 
-/-- Derive a `WordOrderProfile` by ISO-639-3 lookup against WALS Ch 81/82/83; each
-    field falls back to `.notInWALS` when its chapter has no entry. The default
-    Fragment backend — override per field where grammars disagree with or extend WALS. -/
-def WordOrderProfile.ofWALS (iso : String) : WordOrderProfile :=
-  { basicOrder := BasicOrder.ofWALS iso
-    svOrder := SVOrder.ofWALS iso
-    ovOrder := OVOrder.ofWALS iso }
+theorem mirror_involutive : Function.Involutive mirror := mirror_mirror
 
-/-! ### Projections and consistency -/
+/-- The mirror image reverses every precedence. -/
+theorem precedes_mirror : a.mirror.Precedes x y ↔ a.Precedes y x := by
+  simp [mirror, Precedes]
 
-/-- The `SVOrder` a basic order entails (`none` if the basic order is uninformative):
-    subject precedes verb in SOV/SVO/OSV, verb precedes subject in VSO/VOS/OVS. -/
-def BasicOrder.entailedSV : BasicOrder → Option SVOrder
-  | .sov | .svo | .osv => some .sv
-  | .vso | .vos | .ovs => some .vs
-  | .noDominant | .notInWALS => none
+/-- The mirror image reverses the direction of every head with respect to a distinct
+dependent. -/
+theorem headDirection_mirror (h : x ≠ y) :
+    a.mirror.headDirection x y = (a.headDirection x y).swap := by
+  unfold headDirection
+  rw [← HeadDirection.ofLT_swap (a.injective.ne h)]
+  simp [mirror, HeadDirection.ofLT]
 
-/-- The OVOrder a basic order entails. -/
-def BasicOrder.entailedOV : BasicOrder → Option OVOrder
-  | .sov | .ovs | .osv => some .ov
-  | .svo | .vso | .vos => some .vo
-  | .noDominant | .notInWALS => none
-
-/-- A profile is consistent when `svOrder` and `ovOrder` each either match what
-    `basicOrder` entails or are uninformative (`.noDominant` / `.notInWALS`) — the
-    latter for languages coded in some WALS chapters but not others. -/
-def WordOrderProfile.IsConsistent (p : WordOrderProfile) : Prop :=
-  (match p.basicOrder.entailedSV with
-   | none => True
-   | some entailed =>
-     p.svOrder = entailed ∨ p.svOrder = .noDominant ∨ p.svOrder = .notInWALS) ∧
-  (match p.basicOrder.entailedOV with
-   | none => True
-   | some entailed =>
-     p.ovOrder = entailed ∨ p.ovOrder = .noDominant ∨ p.ovOrder = .notInWALS)
-
-instance (p : WordOrderProfile) : Decidable p.IsConsistent := by
-  unfold WordOrderProfile.IsConsistent
-  cases p.basicOrder.entailedSV <;> cases p.basicOrder.entailedOV <;>
-    infer_instance
-
-/-! ### Classification predicates
-
-`abbrev`s (transparent, so `Decidable` resolves via `BasicOrder`'s `DecidableEq`). -/
-
-namespace BasicOrder
-
-/-- `b` is SOV. -/
-abbrev IsSOV (b : BasicOrder) : Prop := b = .sov
-
-/-- `b` is SVO. -/
-abbrev IsSVO (b : BasicOrder) : Prop := b = .svo
-
-/-- `b` is VSO. -/
-abbrev IsVSO (b : BasicOrder) : Prop := b = .vso
-
-/-- `b` has Subject before Object: SOV, SVO, or VSO.
-    [greenberg-1963] Universal 1's antecedent. -/
-abbrev IsSubjectBeforeObject (b : BasicOrder) : Prop :=
-  b = .sov ∨ b = .svo ∨ b = .vso
-
-/-- `b` has Object before Subject: VOS, OVS, or OSV.
-    [greenberg-1963] Universal 1's negative class. -/
-abbrev IsObjectBeforeSubject (b : BasicOrder) : Prop :=
-  b = .vos ∨ b = .ovs ∨ b = .osv
-
-end BasicOrder
-
-namespace OVOrder
-
-/-- `o` is OV (object precedes verb). [dryer-1992]'s primary
-    typological classification under Branching Direction Theory. -/
-abbrev IsOV (o : OVOrder) : Prop := o = .ov
-
-/-- `o` is VO (verb precedes object). -/
-abbrev IsVO (o : OVOrder) : Prop := o = .vo
-
-end OVOrder
-
-/-! ### Verb position -/
-
-/-- Verb position in the clause, projected from object–verb order: VO ⇒ verb
-    precedes complement (head-initial), OV ⇒ verb follows complement (head-final). -/
-inductive VerbPosition where
-  /-- Verb precedes complement (head-initial VP). -/
-  | postverbal
-  /-- Verb follows complement (head-final VP). -/
-  | preverbal
-  deriving DecidableEq, Repr
-
-/-- Project an `OVOrder` to a `VerbPosition`. Returns `none` for
-    uninformative orders (`.noDominant`, `.notInWALS`). -/
-def OVOrder.verbPosition : OVOrder → Option VerbPosition
-  | .vo => some .postverbal
-  | .ov => some .preverbal
-  | .noDominant | .notInWALS => none
+end Arrangement
 
 end WordOrder

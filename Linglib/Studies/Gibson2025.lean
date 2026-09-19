@@ -46,19 +46,19 @@ open DependencyGrammar Morphology
 
 variable {n : ℕ}
 
-/-- The direction of an arc: head-initial when the head precedes its dependent. -/
-def arcDirection (v w : Fin n) : HeadDirection := if v < w then .headInitial else .headFinal
-
-/-- Section 5.2: an order is head-first or head-final when every head-argument arc, that is
+/-- An order is head-first or head-final, section 5.2, when every head-argument arc, that is
 every arc but a subject's, takes that direction. -/
 def Harmonic (g : Graph n) (d : HeadDirection) : Prop :=
-  ∀ v w, g.Adj v w → g.label v w ≠ some .nsubj → arcDirection v w = d
+  ∀ v w, g.Adj v w → g.label v w ≠ some .nsubj → HeadDirection.ofLT v w = d
 
 instance (g : Graph n) (d : HeadDirection) : Decidable (Harmonic g d) :=
   inferInstanceAs (Decidable (∀ _ _, _))
 
 /-- An order that is neither head-first nor head-final. -/
-abbrev Disharmonic (g : Graph n) : Prop := ¬ Harmonic g .headInitial ∧ ¬ Harmonic g .headFinal
+def Disharmonic (g : Graph n) : Prop := ∀ d, ¬ Harmonic g d
+
+instance (g : Graph n) : Decidable (Disharmonic g) :=
+  inferInstanceAs (Decidable (∀ _, ¬ _))
 
 /-! ### Section 5.1: the measure, on (99a) -/
 
@@ -76,7 +76,7 @@ example : ex99a.IsTree ∧ ex99a.IsProjective := by decide
 
 theorem totalLength_99a : ex99a.totalLength = 18 := by decide
 
-/-- (99b), the particle after the long object: the arc to *away* crosses the eight words of
+/-- (99b), the particle after the long object, where the arc to *away* crosses the eight words of
 the object. -/
 def ex99b : Graph 11 := ex99a.linearize [0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 2] (by decide)
 
@@ -110,7 +110,7 @@ def svo121 : Graph 8 :=
     1 [(1, 0, .nsubj), (1, 2, .ccomp), (2, 4, .ccomp), (4, 3, .nsubj), (4, 5, .obj),
       (4, 6, .obl), (6, 7, .obj)]
 
-/-- (121b) *Alfred Lana Francine to pizza gave that said*: each clause keeps its subject first
+/-- (121b) *Alfred Lana Francine to pizza gave that said*, where each clause keeps its subject first
 and mirrors the rest. -/
 def sov121 : Graph 8 := svo121.linearize [0, 3, 7, 6, 5, 4, 2, 1] (by decide)
 
@@ -219,12 +219,12 @@ theorem harmonic_123 :
         Disharmonic ovPre123 ∧ Disharmonic voRelN123 ∧ Disharmonic ovNRel123 := by
   decide
 
-/-- Reversing every arc, subjects included, costs nothing: the book's head-final orders are
+/-- Reversing every arc, subjects included, costs nothing, so the book's head-final orders are
 dearer than English only because their subjects stay before their verbs. -/
 theorem totalLength_mirror_123 : en123.mirror.totalLength = 13 :=
   en123.totalLength_mirror.trans totalLength_123.1
 
-/-- A subordinator at the far end of its clause: the arc from *said* to *that* is at least as
+/-- A subordinator at the far end of its clause, where the arc from *said* to *that* is at least as
 long as the nine-word clause *that* heads. -/
 theorem subordinator_final_stretches :
     (voSubFinal123.dominated 10).ncard ≤ Nat.dist (1 : Fin 11) 10 :=
@@ -233,7 +233,7 @@ theorem subordinator_final_stretches :
 
 /-! ### Section 5.3.5: one-word dependents, Table 5.4 -/
 
-/-- *very tall*: an intensifier before its adjective. -/
+/-- *very tall*, an intensifier before its adjective. -/
 def intensifierFirst : Graph 2 :=
   .ofArcs [Word.mk' "very" .ADV, Word.mk' "tall" .ADJ] 1 [(1, 0, .advmod)]
 

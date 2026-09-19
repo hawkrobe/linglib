@@ -49,20 +49,20 @@ open WordOrder BrueningAlKhalaf2020
 
 /-- The position of a coordinated complement relative to the finite verb in a German root
 declarative: the verb in second position precedes its complements, the configuration of (17). -/
-abbrev rootPosition : VerbPosition := .postverbal
+abbrev rootPosition : HeadDirection := .headInitial
 
 /-- The position in an embedded finite clause: the verb is clause-final, so the coordination
 precedes it, the configuration of (16). -/
-abbrev embeddedPosition : VerbPosition := .preverbal
+abbrev embeddedPosition : HeadDirection := .headFinal
 
 /-- The temporal closeness analysis predicts the order the linear one does: in either position
 the conjunct closest in time to the selector is the linearly adjacent one, the first when the
 verb precedes and the last, whose features are still in memory, when it follows. -/
-abbrev temporalOrder : VerbPosition → ConjunctOrder := predictOrder .linear
+abbrev temporalOrder : HeadDirection → ConjunctOrder := predictOrder .linear
 
 /-- The bottom-up prediction does not depend on the verb's position: the selected noun phrase
 is first, (10b). -/
-theorem structural_position_invariant (pos : VerbPosition) :
+theorem structural_position_invariant (pos : HeadDirection) :
     predictOrder .structural pos = .dpFirst := rfl
 
 /-- The closeness accounts predict the clause first in the embedded position, (10a). -/
@@ -77,7 +77,7 @@ theorem accounts_diverge_embedded :
 
 /-- A preferred order in the embedded position that puts the noun phrase first refutes the
 linear and temporal closeness accounts, whatever the reason for the preference. -/
-theorem closeness_refuted {observed : VerbPosition → ConjunctOrder}
+theorem closeness_refuted {observed : HeadDirection → ConjunctOrder}
     (h : observed embeddedPosition = .dpFirst) :
     predictOrder .linear embeddedPosition ≠ observed embeddedPosition ∧
       temporalOrder embeddedPosition ≠ observed embeddedPosition := by
