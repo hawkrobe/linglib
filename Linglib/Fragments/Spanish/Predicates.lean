@@ -1,159 +1,127 @@
 import Linglib.Syntax.Category.Verb.Basic
-import Linglib.Syntax.Minimalist.Verbal.Decomposition
 
 /-!
-# Spanish Verb Entries for the Causative Alternation
-[cuervo-2003] [munoz-perez-2026] [koontz-garboden-2009]
+# Spanish change-of-state verbs
 
-Verbs from Muñoz [munoz-perez-2026] classified by anticausative marking (SE)
-and event-structural decomposition, with the verbs whose causer specification
-[koontz-garboden-2009] discusses. The causer specification itself is derived
-from the proto-role subject profile in `Studies/KoontzGarboden2009.lean`.
+Spanish verbs of change of state form their intransitive in one of two ways. Most take the
+reflexive clitic, as *quebrar* 'crack' does in *el florero se quebró*; a small class takes none,
+as *mejorar* 'improve' does in *los sueldos mejoraron*. A few allow both: *hervir* 'boil' is
+usually bare and marginally takes the clitic, and the unaccusatives *caer* 'fall' and *morir*
+'die' occur with and without it. Each verb records this marking and whether it has a transitive
+causative use. The proto-role entailments of the subject are those Koontz-Garboden discusses
+for the causer, and the classification by marking follows Muñoz Pérez.
 
-## Anticausative Marking Types
+## References
 
-- **Marked**: Anticausative requires SE (*quebrar* → *quebrarse*)
-- **Unmarked**: No SE in anticausative (*mejorar* → *mejorar*)
-- **Optional**: SE is marginal (*hervir* → *?hervirse*)
-
+* [A. Koontz-Garboden, *Anticausativization* (2009)][koontz-garboden-2009]
+* [C. Muñoz Pérez, *Stylistic applicatives: A lens into the nature of anticausative SE*
+  (2026)][munoz-perez-2026]
+* [A. A. Spalek and L. McNally, *Tearing in English and Spanish* (2026)][spalek-mcnally-2026]
 -/
 
 namespace Spanish.Predicates
 
-open Minimalist
-open ArgumentStructure
 open ArgumentStructure
 
--- ============================================================================
--- § 1: Anticausative Marking
--- ============================================================================
-
-/-- How an anticausative verb is morphologically marked in Spanish. -/
+/-- How the intransitive of a change-of-state verb is marked. -/
 inductive AnticausativeMarking where
-  | marked     -- Requires SE (quebrar → quebrarse)
-  | unmarked   -- No SE (mejorar → mejorar)
-  | optional   -- Marginal SE (hervir → ?hervirse)
+  /-- The intransitive takes the reflexive clitic, as *quebrarse*. -/
+  | marked
+  /-- The intransitive is bare, as *mejorar*. -/
+  | unmarked
+  /-- The intransitive occurs with and without the clitic, as *caer* and *caerse*. -/
+  | optional
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 2: Verb Entry Structure
--- ============================================================================
-
-/-- A Spanish verb with its causative alternation properties.
-
-    Extends `Verb` with Spanish-specific fields for anticausative
-    marking and event-structural decomposition. -/
+/-- A Spanish verb with its behaviour in the causative alternation. -/
 structure SpanishVerbEntry extends Verb where
-  /-- How the anticausative is marked -/
+  /-- The marking of the intransitive. -/
   anticausativeMarking : AnticausativeMarking
-  /-- Participates in causative/anticausative alternation -/
+  /-- The verb has a transitive causative use beside the intransitive. -/
   causativeAlternation : Bool
-  /-- Cuervo's decomposition of the inchoative form -/
-  verbHead : List VerbHead
-  /-- Empirical: does this verb license stylistic LE? -/
-  licensesStylLE : Bool
   deriving BEq
 
--- ============================================================================
--- § 3: Verb Data (Muñoz [munoz-perez-2026])
--- ============================================================================
-
-/-- *abrir* "open" — marked anticausative, licenses stylistic LE.
-    EFFECTOR causer: admits agents, instruments, natural forces
-    ([koontz-garboden-2009] exx. 47–49). -/
+/-- *abrir* 'open', with a marked intransitive *abrirse*. Its causer may be an agent, an
+instrument or a natural force ([koontz-garboden-2009]). -/
 def abrir : SpanishVerbEntry :=
   { form := "abrir", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
-    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true,
+    causativeAlternation := true,
     subjectEntailments := some ⟨false, false, true, false, true,
                                  false, false, false, false, false⟩ }
 
-/-- *romper* "break" — marked anticausative, licenses stylistic LE.
-    EFFECTOR causer: agents, instruments, natural forces, events
-    ([koontz-garboden-2009] exx. 13–17). -/
+/-- *romper* 'break', with a marked intransitive *romperse*. Its causer may be an agent, an
+instrument, a natural force or an event ([koontz-garboden-2009]). -/
 def romper : SpanishVerbEntry :=
   { form := "romper", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
-    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true,
+    causativeAlternation := true,
     subjectEntailments := some ⟨false, false, true, false, true,
                                  false, false, false, false, false⟩ }
 
-/-- *hundir* "sink" — marked anticausative, licenses stylistic LE.
-    EFFECTOR causer ([koontz-garboden-2009] ex. 46). -/
+/-- *hundir* 'sink', with a marked intransitive *hundirse*. Its causer is unrestricted
+([koontz-garboden-2009]). -/
 def hundir : SpanishVerbEntry :=
   { form := "hundir", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
-    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true,
+    causativeAlternation := true,
     subjectEntailments := some ⟨false, false, true, false, true,
                                  false, false, false, false, false⟩ }
 
-/-- *caer* "fall" — marked anticausative, licenses stylistic LE.
-    (ex. 9, unaccusative) -/
+/-- *caer* 'fall', an unaccusative that occurs with and without the clitic, *cayó* and *se cayó*
+([munoz-perez-2026]). -/
 def caer : SpanishVerbEntry :=
   { form := "caer", frames := [ArgumentFrame.unaccusative],
-    anticausativeMarking := .marked,
-    causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true }
+    anticausativeMarking := .optional,
+    causativeAlternation := false }
 
-/-- *morir* "die" — marked anticausative, licenses stylistic LE.
-    (ex. 10) -/
+/-- *morir* 'die', an unaccusative that occurs with and without the clitic, *murió* and
+*se murió* ([munoz-perez-2026]). -/
 def morir : SpanishVerbEntry :=
   { form := "morir", frames := [ArgumentFrame.unaccusative],
-    anticausativeMarking := .marked,
-    causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true }
+    anticausativeMarking := .optional,
+    causativeAlternation := false }
 
-/-- *cerrar* "close" — marked anticausative; vehicle for the person-paradigm
-    in [munoz-perez-2026] exx. 15–19 (*me/te le cerró la ventana* OK,
-    *le/nos/les le cerró la ventana* unacceptable). -/
+/-- *cerrar* 'close', with a marked intransitive *cerrarse*. -/
 def cerrar : SpanishVerbEntry :=
   { form := "cerrar", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
-    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true }
+    causativeAlternation := true }
 
-/-- *quebrar* "crack" — marked anticausative, licenses stylistic LE.
-    (exx. 38–39) -/
+/-- *quebrar* 'crack', with a marked intransitive, *el florero se quebró* and never
+*el florero quebró* ([munoz-perez-2026]). -/
 def quebrar : SpanishVerbEntry :=
   { form := "quebrar", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
-    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true }
+    causativeAlternation := true }
 
-/-- *hervir* "boil" — optional SE marking, but still licenses stylistic LE.
-    (exx. 41–44) -/
+/-- *hervir* 'boil', whose intransitive is usually bare, *el agua hirvió*, and marginally takes
+the clitic ([munoz-perez-2026]). -/
 def hervir : SpanishVerbEntry :=
   { form := "hervir", frames := [ArgumentFrame.np],
     anticausativeMarking := .optional,
-    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true }
+    causativeAlternation := true }
 
-/-- *olvidar* "forget" — marked anticausative, licenses stylistic LE.
-    (ex. 11, psych verb) -/
+/-- *olvidar* 'forget', whose intransitive *olvidarse* takes a dative experiencer,
+*se me olvidó*. -/
 def olvidar : SpanishVerbEntry :=
   { form := "olvidar", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
-    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true }
+    causativeAlternation := true }
 
-/-- *ocurrir* "occur" — marked anticausative, licenses stylistic LE.
-    (ex. 12) -/
+/-- *ocurrir* 'occur', whose marked form *ocurrirse* takes a dative experiencer,
+*se me ocurrió una idea*. -/
 def ocurrir : SpanishVerbEntry :=
   { form := "ocurrir", frames := [ArgumentFrame.unaccusative],
     anticausativeMarking := .marked,
-    causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true }
+    causativeAlternation := false }
 
-/-- *mejorar* "improve" — UNMARKED anticausative, does NOT license stylistic LE.
-    (ex. 40b *Me le mejoró el sueldo) -/
+/-- *mejorar* 'improve', with a bare intransitive, *los sueldos mejoraron* and never
+*los sueldos se mejoraron* ([munoz-perez-2026]). -/
 def mejorar : SpanishVerbEntry :=
   { form := "mejorar", frames := [ArgumentFrame.np],
     anticausativeMarking := .unmarked,
-    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := false }
+    causativeAlternation := true }
 
 /-- *rasgar* "tear (gash-like)" — Levin 45.1 equivalent; marked anticausative.
     Unlike English *tear*, *rasgar* requires flimsy/insubstantial patients and
@@ -163,8 +131,7 @@ def rasgar : SpanishVerbEntry :=
   { form := "rasgar", frames := [ArgumentFrame.np],
     causative := some .make,
     anticausativeMarking := .marked,
-    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true,
+    causativeAlternation := true,
     root := { content := {
       force := {.low, .moderate}
       direction := {.unidirectional}
@@ -179,17 +146,16 @@ def rasgar : SpanishVerbEntry :=
 def asesinar : SpanishVerbEntry :=
   { form := "asesinar", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
-    causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := false,
+    causativeAlternation := false,
     subjectEntailments := some accomplishmentSubjectProfile }
 
-/-- *cortar* "cut" — AGENT causer required. No anticausative.
-    [koontz-garboden-2009] ex. 26. -/
+/-- *cortar* 'cut', which requires an agent and has no intransitive in that sense
+([koontz-garboden-2009]). In the sense 'snap' it has the marked intransitive of
+*se cortó la correa* ([munoz-perez-2026]). -/
 def cortar : SpanishVerbEntry :=
   { form := "cortar", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
-    causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := false,
+    causativeAlternation := false,
     subjectEntailments := some accomplishmentSubjectProfile }
 
 /-- *ahogar* "drown" — EFFECTOR causer, but animate theme undergoers
@@ -198,8 +164,7 @@ def cortar : SpanishVerbEntry :=
 def ahogar : SpanishVerbEntry :=
   { form := "ahogar", frames := [ArgumentFrame.np],
     anticausativeMarking := .marked,
-    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := false,
+    causativeAlternation := true,
     subjectEntailments := some ⟨false, false, true, false, true,
                                  false, false, false, false, false⟩ }
 
@@ -208,56 +173,18 @@ def ahogar : SpanishVerbEntry :=
 def empeorar : SpanishVerbEntry :=
   { form := "empeorar", frames := [ArgumentFrame.np],
     anticausativeMarking := .unmarked,
-    causativeAlternation := true, verbHead := [.vGO, .vBE],
-    licensesStylLE := false }
+    causativeAlternation := true }
 
 /-- *crecer* "grow" — internally caused COS verb. No CAUSE in LSR.
     Rejects *por sí solo*. [koontz-garboden-2009] ex. 65c. -/
 def crecer : SpanishVerbEntry :=
   { form := "crecer", frames := [ArgumentFrame.unaccusative],
     anticausativeMarking := .unmarked,
-    causativeAlternation := false, verbHead := [.vGO, .vBE],
-    licensesStylLE := false }
+    causativeAlternation := false }
 
-/-- Verbs from [munoz-perez-2026] — tested for stylistic LE. -/
-def munozVerbs : List SpanishVerbEntry :=
-  [abrir, romper, hundir, caer, morir, cerrar, quebrar, hervir, olvidar, ocurrir, mejorar, rasgar]
-
-/-- Verbs from [koontz-garboden-2009], not tested for stylistic LE. -/
-def kgVerbs : List SpanishVerbEntry :=
-  [asesinar, cortar, ahogar, empeorar, crecer]
-
-/-- All verb entries in the fragment. -/
-def allVerbs : List SpanishVerbEntry := munozVerbs ++ kgVerbs
-
--- ============================================================================
--- § 4: Per-Verb Verification
--- ============================================================================
-
-theorem abrir_licenses_stylLE : abrir.licensesStylLE = true := rfl
-theorem romper_licenses_stylLE : romper.licensesStylLE = true := rfl
-theorem hundir_licenses_stylLE : hundir.licensesStylLE = true := rfl
-theorem caer_licenses_stylLE : caer.licensesStylLE = true := rfl
-theorem morir_licenses_stylLE : morir.licensesStylLE = true := rfl
-theorem cerrar_licenses_stylLE : cerrar.licensesStylLE = true := rfl
-theorem quebrar_licenses_stylLE : quebrar.licensesStylLE = true := rfl
-theorem hervir_licenses_stylLE : hervir.licensesStylLE = true := rfl
-theorem olvidar_licenses_stylLE : olvidar.licensesStylLE = true := rfl
-theorem ocurrir_licenses_stylLE : ocurrir.licensesStylLE = true := rfl
-theorem mejorar_blocks_stylLE : mejorar.licensesStylLE = false := rfl
-
--- ============================================================================
--- § 4c: Muñoz-Pérez (2026) Stylistic LE
--- ============================================================================
-
-/-- All Muñoz-Pérez verbs that license stylistic LE are inchoative. -/
-theorem stylLE_verbs_are_inchoative :
-    (munozVerbs.filter (·.licensesStylLE)).all
-      (fun v => isInchoative v.verbHead) = true := by decide
-
-/-- The only Muñoz-Pérez verb that blocks stylistic LE is unmarked. -/
-theorem blocking_verb_is_unmarked :
-    (munozVerbs.filter (!·.licensesStylLE)).all
-      (fun v => v.anticausativeMarking == .unmarked) = true := by decide
+/-- The verbs of the fragment. -/
+def allVerbs : List SpanishVerbEntry :=
+  [abrir, romper, hundir, caer, morir, cerrar, quebrar, hervir, olvidar, ocurrir, mejorar, rasgar,
+    asesinar, cortar, ahogar, empeorar, crecer]
 
 end Spanish.Predicates

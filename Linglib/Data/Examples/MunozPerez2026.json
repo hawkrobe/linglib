@@ -1,802 +1,3935 @@
 [
-  {
-    "id": "munozperez2026_romper_se_me",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(7a)"},
-    "language": "stan1288",
-    "primaryText": "Se me rompió la radio.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Se", "SE"], ["me", "1SG.DAT"], ["rompió", "break.PST.3SG"], ["la", "DEF.F.SG"],
-      ["radio", "radio"]
-    ],
-    "translation": "The radio broke on me.",
-    "context": "Chilean Spanish anticausative with SE + affected-dative.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "romper"],
-      ["pattern", "se-cl"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (7a). First member of the three-way synonymy for `romper`: SE + affected-dative pattern.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+ {
+  "id": "munozperez2026_2b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(2b)"
   },
-  {
-    "id": "munozperez2026_romper_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(7b)"},
-    "language": "stan1288",
-    "primaryText": "Me le rompió la radio.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Me", "1SG.DAT"], ["le", "STYL"], ["rompió", "break.PST.3SG"], ["la", "DEF.F.SG"],
-      ["radio", "radio"]
-    ],
-    "translation": "The radio broke on me.",
-    "context": "Chilean Spanish stylistic-LE applicative without overt SE.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "romper"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (7b). Second member of the three-way synonymy for `romper`: stylistic-LE pattern; SE is non-overt because Fission outputs DAT/REFL-syncretic 1SG `me` that satisfies the anticausative PF check.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "La puerta se abrió.",
+  "glossedTokens": [
+   [
+    "La",
+    "the"
+   ],
+   [
+    "puerta",
+    "door"
+   ],
+   [
+    "se",
+    "SE"
+   ],
+   [
+    "abrió",
+    "opened.3SG"
+   ]
+  ],
+  "translation": "The door opened.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "abrir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "none"
+   ],
+   [
+    "cluster",
+    "se"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_5",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(5)"
   },
-  {
-    "id": "munozperez2026_romper_se_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(7c)"},
-    "language": "stan1288",
-    "primaryText": "Se me le rompió la radio.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Se", "SE"], ["me", "1SG.DAT"], ["le", "STYL"], ["rompió", "break.PST.3SG"],
-      ["la", "DEF.F.SG"], ["radio", "radio"]
-    ],
-    "translation": "The radio broke on me.",
-    "context": "Chilean Spanish stylistic-LE applicative WITH overt SE.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "romper"],
-      ["pattern", "se-cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (7c). Third member of the three-way synonymy for `romper`: SE + stylistic-LE pattern. Synonymy across (7a)/(7b)/(7c) is the central evidence against a reflexive-of-causative analysis of SE.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Se me abrió la puerta.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "abrió",
+    "opened.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "puerta",
+    "door"
+   ]
+  ],
+  "translation": "The door opened for/on/to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "abrir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_6a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(6a)"
   },
-  {
-    "id": "munozperez2026_hundir_se_me",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(8a)"},
-    "language": "stan1288",
-    "primaryText": "Se me hundió el bote.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Se", "SE"], ["me", "1SG.DAT"], ["hundió", "sink.PST.3SG"], ["el", "DEF.M.SG"],
-      ["bote", "boat"]
-    ],
-    "translation": "The boat sank on me.",
-    "context": "Chilean Spanish anticausative with SE + affected-dative; `hundir` parallel to `romper`.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "hundir"],
-      ["pattern", "se-cl"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (8a). Extends the three-way synonymy to a second verb; the SE-bearing variant.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Me le abrió la puerta.",
+  "glossedTokens": [
+   [
+    "Me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "abrió",
+    "opened.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "puerta",
+    "door"
+   ]
+  ],
+  "translation": "The door opened for/on/to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "abrir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_6b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(6b)"
   },
-  {
-    "id": "munozperez2026_hundir_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(8b)"},
-    "language": "stan1288",
-    "primaryText": "Me le hundió el bote.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Me", "1SG.DAT"], ["le", "STYL"], ["hundió", "sink.PST.3SG"], ["el", "DEF.M.SG"],
-      ["bote", "boat"]
-    ],
-    "translation": "The boat sank on me.",
-    "context": "Chilean Spanish stylistic-LE applicative for `hundir`.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "hundir"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (8b). Stylistic-LE variant for `hundir`.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Se me le abrió la puerta.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "abrió",
+    "opened.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "puerta",
+    "door"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "abrir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_7a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(7a)"
   },
-  {
-    "id": "munozperez2026_hundir_se_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(8c)"},
-    "language": "stan1288",
-    "primaryText": "Se me le hundió el bote.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Se", "SE"], ["me", "1SG.DAT"], ["le", "STYL"], ["hundió", "sink.PST.3SG"],
-      ["el", "DEF.M.SG"], ["bote", "boat"]
-    ],
-    "translation": "The boat sank on me.",
-    "context": "Chilean Spanish stylistic-LE applicative WITH overt SE for `hundir`.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "hundir"],
-      ["pattern", "se-cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (8c). Completes the three-way synonymy for `hundir`.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Se me rompió la radio.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "rompió",
+    "broke.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "radio",
+    "radio"
+   ]
+  ],
+  "translation": "The radio broke for/on/to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "romper"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_7b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(7b)"
   },
-  {
-    "id": "munozperez2026_caer_se_me",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(9a)"},
-    "language": "stan1288",
-    "primaryText": "Se me cayeron las llaves.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Se", "SE"], ["me", "1SG.DAT"], ["cayeron", "fall.PST.3PL"], ["las", "DEF.F.PL"],
-      ["llaves", "keys"]
-    ],
-    "translation": "The keys fell on me / I dropped the keys.",
-    "context": "Chilean Spanish anticausative; `caer` is a textbook unaccusative. 3PL agreement reflects plural theme.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "caer"],
-      ["pattern", "se-cl"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (9a). Unaccusative motion verb in the SE-pattern.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Me le rompió la radio.",
+  "glossedTokens": [
+   [
+    "Me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "rompió",
+    "broke.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "radio",
+    "radio"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "romper"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_7c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(7c)"
   },
-  {
-    "id": "munozperez2026_caer_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(9b)"},
-    "language": "stan1288",
-    "primaryText": "Me le cayeron las llaves.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Me", "1SG.DAT"], ["le", "STYL"], ["cayeron", "fall.PST.3PL"], ["las", "DEF.F.PL"],
-      ["llaves", "keys"]
-    ],
-    "translation": "The keys fell on me / I dropped the keys.",
-    "context": "Chilean Spanish stylistic-LE applicative for `caer`.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "caer"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (9b). Stylistic-LE variant for `caer`.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Se me le rompió la radio.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "rompió",
+    "broke.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "radio",
+    "radio"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "romper"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_8a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(8a)"
   },
-  {
-    "id": "munozperez2026_caer_se_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(9c)"},
-    "language": "stan1288",
-    "primaryText": "Se me le cayeron las llaves.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Se", "SE"], ["me", "1SG.DAT"], ["le", "STYL"], ["cayeron", "fall.PST.3PL"],
-      ["las", "DEF.F.PL"], ["llaves", "keys"]
-    ],
-    "translation": "The keys fell on me / I dropped the keys.",
-    "context": "Chilean Spanish stylistic-LE applicative WITH overt SE for `caer`.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "caer"],
-      ["pattern", "se-cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (9c). Completes the three-way synonymy for `caer`.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Se me hundió el bote.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "hundió",
+    "sank.3SG"
+   ],
+   [
+    "el",
+    "the"
+   ],
+   [
+    "bote",
+    "boat"
+   ]
+  ],
+  "translation": "The boat sank for/on/to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "hundir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_8b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(8b)"
   },
-  {
-    "id": "munozperez2026_morir_se_me",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(10a)"},
-    "language": "stan1288",
-    "primaryText": "Se me murió la planta.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Se", "SE"], ["me", "1SG.DAT"], ["murió", "die.PST.3SG"], ["la", "DEF.F.SG"],
-      ["planta", "plant"]
-    ],
-    "translation": "The plant died on me / I unintentionally killed the plant.",
-    "context": "Chilean Spanish anticausative; canonical affected-causer example with `morir`.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "morir"],
-      ["pattern", "se-cl"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (10a). Unaccusative `morir` in the SE-pattern with affected-causer interpretation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Me le hundió el bote.",
+  "glossedTokens": [
+   [
+    "Me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "hundió",
+    "sank.3SG"
+   ],
+   [
+    "el",
+    "the"
+   ],
+   [
+    "bote",
+    "boat"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "hundir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_8c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(8c)"
   },
-  {
-    "id": "munozperez2026_morir_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(10b)"},
-    "language": "stan1288",
-    "primaryText": "Me le murió la planta.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Me", "1SG.DAT"], ["le", "STYL"], ["murió", "die.PST.3SG"], ["la", "DEF.F.SG"],
-      ["planta", "plant"]
-    ],
-    "translation": "The plant died on me / I unintentionally killed the plant.",
-    "context": "Chilean Spanish stylistic-LE applicative for `morir`.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "morir"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (10b). Stylistic-LE variant for `morir`.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Se me le hundió el bote.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "hundió",
+    "sank.3SG"
+   ],
+   [
+    "el",
+    "the"
+   ],
+   [
+    "bote",
+    "boat"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "hundir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_9a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(9a)"
   },
-  {
-    "id": "munozperez2026_morir_se_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(10c)"},
-    "language": "stan1288",
-    "primaryText": "Se me le murió la planta.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Se", "SE"], ["me", "1SG.DAT"], ["le", "STYL"], ["murió", "die.PST.3SG"],
-      ["la", "DEF.F.SG"], ["planta", "plant"]
-    ],
-    "translation": "The plant died on me / I unintentionally killed the plant.",
-    "context": "Chilean Spanish stylistic-LE applicative WITH overt SE for `morir`.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "morir"],
-      ["pattern", "se-cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (10c). Completes the three-way synonymy for `morir`.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Se me cayeron las llaves.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "cayeron",
+    "fell.3PL"
+   ],
+   [
+    "las",
+    "the"
+   ],
+   [
+    "llaves",
+    "keys"
+   ]
+  ],
+  "translation": "The keys fell for/on/to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "caer"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_9b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(9b)"
   },
-  {
-    "id": "munozperez2026_olvidar_se_me",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(11a)"},
-    "language": "stan1288",
-    "primaryText": "Se me olvidó eso.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Se", "SE"], ["me", "1SG.DAT"], ["olvidó", "forget.PST.3SG"], ["eso", "that.N"]
-    ],
-    "translation": "I forgot that.",
-    "context": "Chilean Spanish psych-verb; the three-way synonymy extends to non-physical change-of-state predicates.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "olvidar"],
-      ["pattern", "se-cl"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (11a). Psych verb in the SE-pattern; shows the three-way synonymy is not restricted to physical CoS.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Me le cayeron las llaves.",
+  "glossedTokens": [
+   [
+    "Me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cayeron",
+    "fell.3PL"
+   ],
+   [
+    "las",
+    "the"
+   ],
+   [
+    "llaves",
+    "keys"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "caer"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_9c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(9c)"
   },
-  {
-    "id": "munozperez2026_olvidar_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(11b)"},
-    "language": "stan1288",
-    "primaryText": "Me le olvidó eso.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Me", "1SG.DAT"], ["le", "STYL"], ["olvidó", "forget.PST.3SG"], ["eso", "that.N"]
-    ],
-    "translation": "I forgot that.",
-    "context": "Chilean Spanish stylistic-LE applicative for psych verb `olvidar`.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "olvidar"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (11b). Stylistic-LE variant for `olvidar`.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Se me le cayeron las llaves.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cayeron",
+    "fell.3PL"
+   ],
+   [
+    "las",
+    "the"
+   ],
+   [
+    "llaves",
+    "keys"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "caer"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_10a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(10a)"
   },
-  {
-    "id": "munozperez2026_olvidar_se_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(11c)"},
-    "language": "stan1288",
-    "primaryText": "Se me le olvidó eso.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Se", "SE"], ["me", "1SG.DAT"], ["le", "STYL"], ["olvidó", "forget.PST.3SG"],
-      ["eso", "that.N"]
-    ],
-    "translation": "I forgot that.",
-    "context": "Chilean Spanish stylistic-LE applicative WITH overt SE for `olvidar`.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "olvidar"],
-      ["pattern", "se-cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (11c). Completes the three-way synonymy for `olvidar`.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Se me murió la planta.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "murió",
+    "died.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "planta",
+    "plant"
+   ]
+  ],
+  "translation": "The plant died for/on/to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "morir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_10b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(10b)"
   },
-  {
-    "id": "munozperez2026_ocurrir_se_me",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(12a)"},
-    "language": "stan1288",
-    "primaryText": "Se me ocurrió una idea.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Se", "SE"], ["me", "1SG.DAT"], ["ocurrió", "occur.PST.3SG"], ["una", "INDF.F.SG"],
-      ["idea", "idea"]
-    ],
-    "translation": "An idea occurred to me.",
-    "context": "Chilean Spanish psych-verb; second psych entry showing the three-way synonymy extends to mental-event predicates.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "ocurrir"],
-      ["pattern", "se-cl"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (12a). Psych verb `ocurrir` in the SE-pattern.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Me le murió la planta.",
+  "glossedTokens": [
+   [
+    "Me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "murió",
+    "died.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "planta",
+    "plant"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "morir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_10c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(10c)"
   },
-  {
-    "id": "munozperez2026_ocurrir_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(12b)"},
-    "language": "stan1288",
-    "primaryText": "Me le ocurrió una idea.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Me", "1SG.DAT"], ["le", "STYL"], ["ocurrió", "occur.PST.3SG"], ["una", "INDF.F.SG"],
-      ["idea", "idea"]
-    ],
-    "translation": "An idea occurred to me.",
-    "context": "Chilean Spanish stylistic-LE applicative for psych verb `ocurrir`.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "ocurrir"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (12b). Stylistic-LE variant for `ocurrir`.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Se me le murió la planta.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "murió",
+    "died.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "planta",
+    "plant"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "morir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_11a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(11a)"
   },
-  {
-    "id": "munozperez2026_ocurrir_se_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(12c)"},
-    "language": "stan1288",
-    "primaryText": "Se me le ocurrió una idea.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Se", "SE"], ["me", "1SG.DAT"], ["le", "STYL"], ["ocurrió", "occur.PST.3SG"],
-      ["una", "INDF.F.SG"], ["idea", "idea"]
-    ],
-    "translation": "An idea occurred to me.",
-    "context": "Chilean Spanish stylistic-LE applicative WITH overt SE for `ocurrir`.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "ocurrir"],
-      ["pattern", "se-cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "three-way-synonymy"]
-    ],
-    "comment": "Muñoz Pérez 2026 (12c). Completes the three-way synonymy for `ocurrir`.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Se me olvidó eso.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "olvidó",
+    "forgot.3SG"
+   ],
+   [
+    "eso",
+    "that"
+   ]
+  ],
+  "translation": "I forgot that.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "olvidar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_11b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(11b)"
   },
-  {
-    "id": "munozperez2026_quejarse_se_me",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(13a)"},
-    "language": "stan1288",
-    "primaryText": "Cosmo se me quejó.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Cosmo", "Cosmo"], ["se", "REFL.3"], ["me", "1SG.DAT"], ["quejó", "complain.PST.3SG"]
-    ],
-    "translation": "Cosmo complained to me.",
-    "context": "Positive control: `quejarse` is inherently reflexive and surfaces with SE plus an argumental dative without stylistic LE.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "quejarse"],
-      ["pattern", "se-cl"],
-      ["dativePerson", "1SG"],
-      ["block", "se-positive-control"]
-    ],
-    "comment": "Muñoz Pérez 2026 (13a). Positive baseline for the (13b) negative control: shows the SE+dative pattern is acceptable as long as no stylistic LE is added.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Me le olvidó eso.",
+  "glossedTokens": [
+   [
+    "Me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "olvidó",
+    "forgot.3SG"
+   ],
+   [
+    "eso",
+    "that"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "olvidar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_11c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(11c)"
   },
-  {
-    "id": "munozperez2026_quejarse_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(13b)"},
-    "language": "stan1288",
-    "primaryText": "*Cosmo me le quejó (a mí).",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Cosmo", "Cosmo"], ["me", "1SG.DAT"], ["le", "STYL"], ["quejó", "complain.PST.3SG"],
-      ["a", "DAT"], ["mí", "1SG.STRONG"]
-    ],
-    "translation": "*Cosmo complained on me.",
-    "context": "Negative control: `quejarse` is inherently reflexive (no non-thematic Voice projection) and rejects the stylistic-LE pattern even with the doubled strong pronoun.",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "quejarse"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "negative-controls"]
-    ],
-    "comment": "Muñoz Pérez 2026 (13b). Demonstrates that stylistic LE depends on marked-anticausative structure, not phonological adjacency: an inherently reflexive verb (vP without non-thematic Voice) cannot host stylistic LE.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Se me le olvidó eso.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "olvidó",
+    "forgot.3SG"
+   ],
+   [
+    "eso",
+    "that"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "olvidar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_12a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(12a)"
   },
-  {
-    "id": "munozperez2026_quejarse_se_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(13c)"},
-    "language": "stan1288",
-    "primaryText": "*Cosmo se me le quejó (a mí).",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Cosmo", "Cosmo"], ["se", "REFL.3"], ["me", "1SG.DAT"], ["le", "STYL"],
-      ["quejó", "complain.PST.3SG"], ["a", "DAT"], ["mí", "1SG.STRONG"]
-    ],
-    "translation": "*Cosmo complained on me.",
-    "context": "Negative control: overt SE+STYL cluster is still ungrammatical for inherently reflexive `quejarse`.",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "quejarse"],
-      ["pattern", "se-cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "negative-controls"]
-    ],
-    "comment": "Muñoz Pérez 2026 (13c). Adding overt SE does not rescue the stylistic-LE form: confirms LE is parasitic on anticausative non-thematic Voice, not on the surface presence of SE.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Se me ocurrió una idea.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "ocurrió",
+    "occurred.3SG"
+   ],
+   [
+    "una",
+    "a"
+   ],
+   [
+    "idea",
+    "idea"
+   ]
+  ],
+  "translation": "An idea occurred to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "ocurrir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_12b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(12b)"
   },
-  {
-    "id": "munozperez2026_impersonal_se_me",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(14a)"},
-    "language": "stan1288",
-    "primaryText": "No se me dio ni un peso.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["No", "NEG"], ["se", "IMPRS"], ["me", "1SG.DAT"], ["dio", "give.PST.3SG"], ["ni", "NPI"],
-      ["un", "INDF.M.SG"], ["peso", "peso"]
-    ],
-    "translation": "I wasn't given a single peso.",
-    "context": "Positive control: impersonal SE + argumental dative is acceptable without stylistic LE.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "dar"],
-      ["pattern", "se-cl"],
-      ["dativePerson", "1SG"],
-      ["block", "se-positive-control"]
-    ],
-    "comment": "Muñoz Pérez 2026 (14a). Positive baseline for the (14b) negative control: shows the impersonal-SE form is grammatical when no stylistic LE is added.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Me le ocurrió una idea.",
+  "glossedTokens": [
+   [
+    "Me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "ocurrió",
+    "occurred.3SG"
+   ],
+   [
+    "una",
+    "a"
+   ],
+   [
+    "idea",
+    "idea"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "ocurrir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_12c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(12c)"
   },
-  {
-    "id": "munozperez2026_impersonal_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(14b)"},
-    "language": "stan1288",
-    "primaryText": "*No me le dio ni un peso.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["No", "NEG"], ["me", "1SG.DAT"], ["le", "STYL"], ["dio", "give.PST.3SG"], ["ni", "NPI"],
-      ["un", "INDF.M.SG"], ["peso", "peso"]
-    ],
-    "translation": "*I wasn't given a single peso.",
-    "context": "Negative control: impersonal SE + argumental dative also rejects stylistic LE.",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "dar"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "negative-controls"]
-    ],
-    "comment": "Muñoz Pérez 2026 (14b). Second negative control: impersonal SE (a different SE-flavor) does not license stylistic LE either, sharpening the claim that LE is parasitic on anticausative non-thematic Voice specifically.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Se me le ocurrió una idea.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "ocurrió",
+    "occurred.3SG"
+   ],
+   [
+    "una",
+    "a"
+   ],
+   [
+    "idea",
+    "idea"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "ocurrir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_13a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(13a)"
   },
-  {
-    "id": "munozperez2026_impersonal_se_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(14c)"},
-    "language": "stan1288",
-    "primaryText": "*No se me le dio ni un peso.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["No", "NEG"], ["se", "IMPRS"], ["me", "1SG.DAT"], ["le", "STYL"], ["dio", "give.PST.3SG"],
-      ["ni", "NPI"], ["un", "INDF.M.SG"], ["peso", "peso"]
-    ],
-    "translation": "*I wasn't given a single peso.",
-    "context": "Negative control: overt impersonal-SE + STYL cluster is still ungrammatical.",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "dar"],
-      ["pattern", "se-cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "negative-controls"]
-    ],
-    "comment": "Muñoz Pérez 2026 (14c). Confirms LE is not rescued by any SE-flavor in the absence of non-thematic anticausative Voice.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Cosmo se me quejó.",
+  "glossedTokens": [
+   [
+    "Cosmo",
+    "Cosmo"
+   ],
+   [
+    "se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "quejó",
+    "complained.3SG"
+   ]
+  ],
+  "translation": "Cosmo complained to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "quejarse"
+   ],
+   [
+    "construction",
+    "inherent"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_13b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(13b)"
   },
-  {
-    "id": "munozperez2026_cerrar_1sg",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(15b)"},
-    "language": "stan1288",
-    "primaryText": "Me le cerró la ventana.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Me", "1SG.DAT"], ["le", "STYL"], ["cerró", "close.PST.3SG"], ["la", "DEF.F.SG"],
-      ["ventana", "window"]
-    ],
-    "translation": "The window closed on me.",
-    "context": "Person-paradigm cornerstone: stylistic LE is licit with a 1SG dative clitic.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "cerrar"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "person-restriction"]
-    ],
-    "comment": "Muñoz Pérez 2026 (15b). First of five person-paradigm examples (15–19) anchoring the [+PART, +SING] restriction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Cosmo me le quejó (a mí).",
+  "glossedTokens": [
+   [
+    "Cosmo",
+    "Cosmo"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "quejó",
+    "complained.3SG"
+   ],
+   [
+    "a",
+    "to"
+   ],
+   [
+    "mí",
+    "me"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "quejarse"
+   ],
+   [
+    "construction",
+    "inherent"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_13c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(13c)"
   },
-  {
-    "id": "munozperez2026_cerrar_2sg",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(16b)"},
-    "language": "stan1288",
-    "primaryText": "Te le cerró la ventana.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Te", "2SG.DAT"], ["le", "STYL"], ["cerró", "close.PST.3SG"], ["la", "DEF.F.SG"],
-      ["ventana", "window"]
-    ],
-    "translation": "The window closed on you.",
-    "context": "Person paradigm: stylistic LE is licit with a 2SG dative clitic.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "cerrar"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "2SG"],
-      ["block", "person-restriction"]
-    ],
-    "comment": "Muñoz Pérez 2026 (16b). 2SG: the second [+PART, +SING] case.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Cosmo se me le quejó (a mí).",
+  "glossedTokens": [
+   [
+    "Cosmo",
+    "Cosmo"
+   ],
+   [
+    "se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "quejó",
+    "complained.3SG"
+   ],
+   [
+    "a",
+    "to"
+   ],
+   [
+    "mí",
+    "me"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "quejarse"
+   ],
+   [
+    "construction",
+    "inherent"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_14a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(14a)"
   },
-  {
-    "id": "munozperez2026_cerrar_3sg",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(17b)"},
-    "language": "stan1288",
-    "primaryText": "*Le le cerró la ventana.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Le", "3SG.DAT"], ["le", "STYL"], ["cerró", "close.PST.3SG"], ["la", "DEF.F.SG"],
-      ["ventana", "window"]
-    ],
-    "translation": "*The window closed on her/him.",
-    "context": "Person paradigm: stylistic LE is BLOCKED with a 3SG dative clitic (third-person fails [+PART]).",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "cerrar"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "3SG"],
-      ["block", "person-restriction"]
-    ],
-    "comment": "Muñoz Pérez 2026 (17b). 3SG blocks Fission: third person lacks [+PART].",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "No se me dio ni un peso.",
+  "glossedTokens": [
+   [
+    "No",
+    "not"
+   ],
+   [
+    "se",
+    "SE"
+   ],
+   [
+    "me",
+    "DAT.1SG"
+   ],
+   [
+    "dio",
+    "gave.3SG"
+   ],
+   [
+    "ni",
+    "not.even"
+   ],
+   [
+    "un",
+    "a"
+   ],
+   [
+    "peso",
+    "peso"
+   ]
+  ],
+  "translation": "No money was given to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "dar"
+   ],
+   [
+    "construction",
+    "impersonal"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_14b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(14b)"
   },
-  {
-    "id": "munozperez2026_cerrar_1pl",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(18b)"},
-    "language": "stan1288",
-    "primaryText": "*Nos le cerró la ventana.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Nos", "1PL.DAT"], ["le", "STYL"], ["cerró", "close.PST.3SG"], ["la", "DEF.F.SG"],
-      ["ventana", "window"]
-    ],
-    "translation": "*The window closed on us.",
-    "context": "Person paradigm: stylistic LE is BLOCKED with a 1PL dative clitic (plural fails [+SING]).",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "cerrar"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "1PL"],
-      ["block", "person-restriction"]
-    ],
-    "comment": "Muñoz Pérez 2026 (18b). 1PL blocks Fission: plural lacks [+SING].",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "No me le dio ni un peso.",
+  "glossedTokens": [
+   [
+    "No",
+    "not"
+   ],
+   [
+    "me",
+    "DAT.1SG"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "dio",
+    "gave.3SG"
+   ],
+   [
+    "ni",
+    "not.even"
+   ],
+   [
+    "un",
+    "a"
+   ],
+   [
+    "peso",
+    "peso"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "dar"
+   ],
+   [
+    "construction",
+    "impersonal"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_14c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(14c)"
   },
-  {
-    "id": "munozperez2026_cerrar_3pl",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(19b)"},
-    "language": "stan1288",
-    "primaryText": "*Les le cerró la ventana.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Les", "3PL.DAT"], ["le", "STYL"], ["cerró", "close.PST.3SG"], ["la", "DEF.F.SG"],
-      ["ventana", "window"]
-    ],
-    "translation": "*The window closed on them.",
-    "context": "Person paradigm: stylistic LE is BLOCKED with a 3PL dative clitic.",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "cerrar"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "3PL"],
-      ["block", "person-restriction"]
-    ],
-    "comment": "Muñoz Pérez 2026 (19b). 3PL blocks Fission on both [+PART] AND [+SING].",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "No se me le dio ni un peso.",
+  "glossedTokens": [
+   [
+    "No",
+    "not"
+   ],
+   [
+    "se",
+    "SE"
+   ],
+   [
+    "me",
+    "DAT.1SG"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "dio",
+    "gave.3SG"
+   ],
+   [
+    "ni",
+    "not.even"
+   ],
+   [
+    "un",
+    "a"
+   ],
+   [
+    "peso",
+    "peso"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "dar"
+   ],
+   [
+    "construction",
+    "impersonal"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_15a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(15a)"
   },
-  {
-    "id": "munozperez2026_quebrar_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(39b)"},
-    "language": "stan1288",
-    "primaryText": "Me le quebró el florero.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Me", "1SG.DAT"], ["le", "STYL"], ["quebró", "break.PST.3SG"], ["el", "DEF.M.SG"],
-      ["florero", "vase"]
-    ],
-    "translation": "The vase broke on me.",
-    "context": "Marking restriction: `quebrar` is marked-anticausative (obligatory SE in its non-LE form) and licenses stylistic LE.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "quebrar"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "marking-restriction"],
-      ["marking", "marked"]
-    ],
-    "comment": "Muñoz Pérez 2026 (39b). Marked-anticausative verb licenses stylistic LE.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Se me cerró la ventana.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "cerró",
+    "closed.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "ventana",
+    "window"
+   ]
+  ],
+  "translation": "The window closed for/on/to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "cerrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_15b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(15b)"
   },
-  {
-    "id": "munozperez2026_mejorar_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(40b)"},
-    "language": "stan1288",
-    "primaryText": "*Me le mejoró el sueldo.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Me", "1SG.DAT"], ["le", "STYL"], ["mejoró", "improve.PST.3SG"], ["el", "DEF.M.SG"],
-      ["sueldo", "salary"]
-    ],
-    "translation": "*My salary went up (on me).",
-    "context": "Marking restriction: `mejorar` is an unmarked anticausative (alternates without SE) and BLOCKS stylistic LE.",
-    "judgment": "unacceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "mejorar"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "marking-restriction"],
-      ["marking", "unmarked"]
-    ],
-    "comment": "Muñoz Pérez 2026 (40b). Unmarked-anticausative verb BLOCKS stylistic LE; key counterexample against Koontz-Garboden (2009)'s prediction that every alternating verb has SE.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+  "language": "stan1288",
+  "primaryText": "Me le cerró la ventana.",
+  "glossedTokens": [
+   [
+    "Me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cerró",
+    "closed.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "ventana",
+    "window"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cerrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_15c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(15c)"
   },
-  {
-    "id": "munozperez2026_hervir_me_le",
-    "source": {"bibkey": "munoz-perez-2026", "paperLabel": "(44a)"},
-    "language": "stan1288",
-    "primaryText": "Me le hirvió el agua.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Me", "1SG.DAT"], ["le", "STYL"], ["hirvió", "boil.PST.3SG"], ["el", "DEF.M.SG"],
-      ["agua", "water"]
-    ],
-    "translation": "The water boiled on me.",
-    "context": "Marking restriction: `hervir` is optionally SE-marked and still licenses stylistic LE.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["verb", "hervir"],
-      ["pattern", "cl-le"],
-      ["dativePerson", "1SG"],
-      ["block", "marking-restriction"],
-      ["marking", "optional"]
-    ],
-    "comment": "Muñoz Pérez 2026 (44a). Optionally-marked anticausative still licenses stylistic LE, confirming that the relevant condition is non-thematic Voice availability, not obligatoriness of overt SE.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
-  }
+  "language": "stan1288",
+  "primaryText": "Se me le cerró la ventana.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cerró",
+    "closed.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "ventana",
+    "window"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cerrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_16a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(16a)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se te cerró la ventana.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "te",
+    "2SG.DAT"
+   ],
+   [
+    "cerró",
+    "closed.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "ventana",
+    "window"
+   ]
+  ],
+  "translation": "The window closed for/on/to you.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "cerrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "2SG"
+   ],
+   [
+    "cluster",
+    "se te"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_16b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(16b)"
+  },
+  "language": "stan1288",
+  "primaryText": "Te le cerró la ventana.",
+  "glossedTokens": [
+   [
+    "Te",
+    "2SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cerró",
+    "closed.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "ventana",
+    "window"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cerrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "2SG"
+   ],
+   [
+    "cluster",
+    "te le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_16c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(16c)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se te le cerró la ventana.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "te",
+    "2SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cerró",
+    "closed.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "ventana",
+    "window"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cerrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "2SG"
+   ],
+   [
+    "cluster",
+    "se te le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_17a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(17a)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se le cerró la ventana.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "le",
+    "3SG.DAT"
+   ],
+   [
+    "cerró",
+    "closed.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "ventana",
+    "window"
+   ]
+  ],
+  "translation": "The window closed for/on/to her/him.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "cerrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "3SG"
+   ],
+   [
+    "cluster",
+    "se le"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_17b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(17b)"
+  },
+  "language": "stan1288",
+  "primaryText": "Le le cerró la ventana.",
+  "glossedTokens": [
+   [
+    "Le",
+    "3SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cerró",
+    "closed.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "ventana",
+    "window"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cerrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "3SG"
+   ],
+   [
+    "cluster",
+    "le le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_17c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(17c)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se le le cerró la ventana.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "le",
+    "3SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cerró",
+    "closed.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "ventana",
+    "window"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cerrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "3SG"
+   ],
+   [
+    "cluster",
+    "se le le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_18a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(18a)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se nos cerró la ventana.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "nos",
+    "1PL.DAT"
+   ],
+   [
+    "cerró",
+    "closed.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "ventana",
+    "window"
+   ]
+  ],
+  "translation": "The window closed for/on/to us.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "cerrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1PL"
+   ],
+   [
+    "cluster",
+    "se nos"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_18b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(18b)"
+  },
+  "language": "stan1288",
+  "primaryText": "Nos le cerró la ventana.",
+  "glossedTokens": [
+   [
+    "Nos",
+    "1PL.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cerró",
+    "closed.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "ventana",
+    "window"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cerrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1PL"
+   ],
+   [
+    "cluster",
+    "nos le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_18c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(18c)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se nos le cerró la ventana.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "nos",
+    "1PL.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cerró",
+    "closed.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "ventana",
+    "window"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cerrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1PL"
+   ],
+   [
+    "cluster",
+    "se nos le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_19a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(19a)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se les cerró la ventana.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "les",
+    "2/3PL.DAT"
+   ],
+   [
+    "cerró",
+    "closed.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "ventana",
+    "window"
+   ]
+  ],
+  "translation": "The window closed for/on/to you/them.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "cerrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "3PL"
+   ],
+   [
+    "cluster",
+    "se les"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_19b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(19b)"
+  },
+  "language": "stan1288",
+  "primaryText": "Les le cerró la ventana.",
+  "glossedTokens": [
+   [
+    "Les",
+    "2/3PL.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cerró",
+    "closed.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "ventana",
+    "window"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cerrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "3PL"
+   ],
+   [
+    "cluster",
+    "les le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_19c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(19c)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se les le cerró la ventana.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "les",
+    "2/3PL.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cerró",
+    "closed.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "ventana",
+    "window"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cerrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "3PL"
+   ],
+   [
+    "cluster",
+    "se les le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_23",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(23)"
+  },
+  "language": "stan1288",
+  "primaryText": "Ella nos le recomendó.",
+  "glossedTokens": [
+   [
+    "Ella",
+    "she"
+   ],
+   [
+    "nos",
+    "1PL.ACC"
+   ],
+   [
+    "le",
+    "3SG.DAT"
+   ],
+   [
+    "recomendó",
+    "recommended"
+   ]
+  ],
+  "translation": "She recommended us to her/him.",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "recomendar"
+   ],
+   [
+    "construction",
+    "ditransitive"
+   ],
+   [
+    "dative",
+    "3SG"
+   ],
+   [
+    "cluster",
+    "nos le"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_24",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(24)"
+  },
+  "language": "stan1288",
+  "primaryText": "Ella me le recomendó.",
+  "glossedTokens": [
+   [
+    "Ella",
+    "she"
+   ],
+   [
+    "me",
+    "1SG.ACC"
+   ],
+   [
+    "le",
+    "3SG.DAT"
+   ],
+   [
+    "recomendó",
+    "recommended"
+   ]
+  ],
+  "translation": "She recommended me to her/him.",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "recomendar"
+   ],
+   [
+    "construction",
+    "ditransitive"
+   ],
+   [
+    "dative",
+    "3SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_29",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(29)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se les abrieron las puertas.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "les",
+    "DAT.3PL"
+   ],
+   [
+    "abrieron",
+    "opened.3SG"
+   ],
+   [
+    "las",
+    "the"
+   ],
+   [
+    "puertas",
+    "doors"
+   ]
+  ],
+  "translation": "The doors opened for/on/to them.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "abrir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "3PL"
+   ],
+   [
+    "cluster",
+    "se les"
+   ]
+  ],
+  "comment": "The verb is plural and glossed 3SG in the paper."
+ },
+ {
+  "id": "munozperez2026_30a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(30a)"
+  },
+  "language": "stan1288",
+  "primaryText": "Me les abrieron las puertas.",
+  "glossedTokens": [
+   [
+    "Me",
+    "DAT.1SG"
+   ],
+   [
+    "les",
+    "LE.PL"
+   ],
+   [
+    "abrieron",
+    "opened.3SG"
+   ],
+   [
+    "las",
+    "the"
+   ],
+   [
+    "puertas",
+    "doors"
+   ]
+  ],
+  "translation": "The doors opened for/on/to me.",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "abrir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me les"
+   ]
+  ],
+  "comment": "The verb is plural and glossed 3SG in the paper."
+ },
+ {
+  "id": "munozperez2026_30b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(30b)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se me les abrieron las puertas.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "DAT.1SG"
+   ],
+   [
+    "les",
+    "LE.PL"
+   ],
+   [
+    "abrieron",
+    "opened.3SG"
+   ],
+   [
+    "las",
+    "the"
+   ],
+   [
+    "puertas",
+    "doors"
+   ]
+  ],
+  "translation": "The door opened for/on/to me.",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "abrir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me les"
+   ]
+  ],
+  "comment": "The verb is plural and glossed 3SG in the paper."
+ },
+ {
+  "id": "munozperez2026_36b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(36b)"
+  },
+  "language": "stan1288",
+  "primaryText": "Los sueldos mejoraron.",
+  "glossedTokens": [
+   [
+    "Los",
+    "the"
+   ],
+   [
+    "sueldos",
+    "salaries"
+   ],
+   [
+    "mejoraron",
+    "improved.3PL"
+   ]
+  ],
+  "translation": "The salaries improved.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "mejorar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "none"
+   ],
+   [
+    "cluster",
+    ""
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_37",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(37)"
+  },
+  "language": "stan1288",
+  "primaryText": "Los sueldos se mejoraron.",
+  "glossedTokens": [
+   [
+    "Los",
+    "the"
+   ],
+   [
+    "sueldos",
+    "salaries"
+   ],
+   [
+    "se",
+    "SE"
+   ],
+   [
+    "mejoraron",
+    "improved.3PL"
+   ]
+  ],
+  "translation": "The salaries improved.",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "mejorar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "none"
+   ],
+   [
+    "cluster",
+    "se"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_38b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(38b)"
+  },
+  "language": "stan1288",
+  "primaryText": "El florero quebró.",
+  "glossedTokens": [
+   [
+    "El",
+    "the"
+   ],
+   [
+    "florero",
+    "flower.vase"
+   ],
+   [
+    "quebró",
+    "cracked3SG"
+   ]
+  ],
+  "translation": "The flower vase cracked.",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "quebrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "none"
+   ],
+   [
+    "cluster",
+    ""
+   ]
+  ],
+  "comment": "The gloss of the verb is printed without the period."
+ },
+ {
+  "id": "munozperez2026_38c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(38c)"
+  },
+  "language": "stan1288",
+  "primaryText": "El florero se quebró.",
+  "glossedTokens": [
+   [
+    "El",
+    "the"
+   ],
+   [
+    "florero",
+    "flower.vase"
+   ],
+   [
+    "se",
+    "SE"
+   ],
+   [
+    "quebró",
+    "cracked.3SG"
+   ]
+  ],
+  "translation": "The flower vase cracked.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "quebrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "none"
+   ],
+   [
+    "cluster",
+    "se"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_39a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(39a)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se me quebró el florero.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "quebró",
+    "cracked.3SG"
+   ],
+   [
+    "el",
+    "the"
+   ],
+   [
+    "florero",
+    "flower.vase"
+   ]
+  ],
+  "translation": "The flower vase cracked for/on/to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "quebrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_39b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(39b)"
+  },
+  "language": "stan1288",
+  "primaryText": "Me le quebró el florero.",
+  "glossedTokens": [
+   [
+    "Me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "quebró",
+    "cracked.3SG"
+   ],
+   [
+    "el",
+    "the"
+   ],
+   [
+    "florero",
+    "flower.vase"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "quebrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_39c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(39c)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se me le quebró el florero.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "quebró",
+    "cracked.3SG"
+   ],
+   [
+    "el",
+    "the"
+   ],
+   [
+    "florero",
+    "flower.vase"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "quebrar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_40a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(40a)"
+  },
+  "language": "stan1288",
+  "primaryText": "Me mejoró el sueldo.",
+  "glossedTokens": [
+   [
+    "Me",
+    "1SG.DAT"
+   ],
+   [
+    "mejoró",
+    "improved.3SG"
+   ],
+   [
+    "el",
+    "the"
+   ],
+   [
+    "sueldo",
+    "salary"
+   ]
+  ],
+  "translation": "The salary improved for/on/to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "unacceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "mejorar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_40b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(40b)"
+  },
+  "language": "stan1288",
+  "primaryText": "Me le mejoró el sueldo.",
+  "glossedTokens": [
+   [
+    "Me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "mejoró",
+    "improved.3SG"
+   ],
+   [
+    "el",
+    "the"
+   ],
+   [
+    "sueldo",
+    "salary"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "ungrammatical",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "mejorar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_41b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(41b)"
+  },
+  "language": "stan1288",
+  "primaryText": "El agua hirvió.",
+  "glossedTokens": [
+   [
+    "El",
+    "the"
+   ],
+   [
+    "agua",
+    "water"
+   ],
+   [
+    "hirvió",
+    "boiled.3SG"
+   ]
+  ],
+  "translation": "The water boiled.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "hervir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "none"
+   ],
+   [
+    "cluster",
+    ""
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_42",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(42)"
+  },
+  "language": "stan1288",
+  "primaryText": "El agua se hirvió.",
+  "glossedTokens": [
+   [
+    "El",
+    "the"
+   ],
+   [
+    "agua",
+    "water"
+   ],
+   [
+    "se",
+    "SE"
+   ],
+   [
+    "hirvió",
+    "boiled.3SG"
+   ]
+  ],
+  "translation": "The water boiled.",
+  "context": "",
+  "judgment": "marginal",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "hervir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "none"
+   ],
+   [
+    "cluster",
+    "se"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_43a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(43a)"
+  },
+  "language": "stan1288",
+  "primaryText": "Me hirvió el agua.",
+  "glossedTokens": [
+   [
+    "Me",
+    "1SG.DAT"
+   ],
+   [
+    "hirvió",
+    "boiled.3SG"
+   ],
+   [
+    "el",
+    "the"
+   ],
+   [
+    "agua",
+    "water"
+   ]
+  ],
+  "translation": "The water boiled for/on/to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "unacceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "hervir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_43b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(43b)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se me hirvió el agua.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "hirvió",
+    "boiled.3SG"
+   ],
+   [
+    "el",
+    "the"
+   ],
+   [
+    "agua",
+    "water"
+   ]
+  ],
+  "translation": "The water boiled for/on/to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "hervir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_44a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(44a)"
+  },
+  "language": "stan1288",
+  "primaryText": "Me le hirvió el agua.",
+  "glossedTokens": [
+   [
+    "Me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "hirvió",
+    "boiled.3SG"
+   ],
+   [
+    "el",
+    "the"
+   ],
+   [
+    "agua",
+    "water"
+   ]
+  ],
+  "translation": "The water boiled for/on/to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "hervir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_44b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(44b)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se me le hirvió el agua.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "hirvió",
+    "boiled.3SG"
+   ],
+   [
+    "el",
+    "the"
+   ],
+   [
+    "agua",
+    "water"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "hervir"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_49a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(49a)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se me cortó la correa.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "cortó",
+    "snapped.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "correa",
+    "strap"
+   ]
+  ],
+  "translation": "The strap snapped for/on/to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "acceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "cortar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "munozperez2026_49b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(49b)"
+  },
+  "language": "stan1288",
+  "primaryText": "Me le cortó la correa.",
+  "glossedTokens": [
+   [
+    "Me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cortó",
+    "snapped.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "correa",
+    "strap"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cortar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_49c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(49c)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se me le cortó la correa.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cortó",
+    "snapped.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "correa",
+    "strap"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cortar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_50a",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(50a)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se me cortó la luz.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "cortó",
+    "snapped.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "luz",
+    "light"
+   ]
+  ],
+  "translation": "The power went out for/on/to me.",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [
+   {
+    "name": "affected",
+    "judgment": "acceptable"
+   },
+   {
+    "name": "unintentional causer",
+    "judgment": "unacceptable"
+   }
+  ],
+  "paperFeatures": [
+   [
+    "verb",
+    "cortar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me"
+   ]
+  ],
+  "comment": "The paper attributes the missing reading to world knowledge, a blackout being spontaneous."
+ },
+ {
+  "id": "munozperez2026_50b",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(50b)"
+  },
+  "language": "stan1288",
+  "primaryText": "Me le cortó la luz.",
+  "glossedTokens": [
+   [
+    "Me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cortó",
+    "snapped.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "luz",
+    "light"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cortar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ },
+ {
+  "id": "munozperez2026_50c",
+  "source": {
+   "bibkey": "munoz-perez-2026",
+   "paperLabel": "(50c)"
+  },
+  "language": "stan1288",
+  "primaryText": "Se me le cortó la luz.",
+  "glossedTokens": [
+   [
+    "Se",
+    "SE"
+   ],
+   [
+    "me",
+    "1SG.DAT"
+   ],
+   [
+    "le",
+    "LE"
+   ],
+   [
+    "cortó",
+    "snapped.3SG"
+   ],
+   [
+    "la",
+    "the"
+   ],
+   [
+    "luz",
+    "light"
+   ]
+  ],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "readings": [],
+  "paperFeatures": [
+   [
+    "verb",
+    "cortar"
+   ],
+   [
+    "construction",
+    "anticausative"
+   ],
+   [
+    "dative",
+    "1SG"
+   ],
+   [
+    "cluster",
+    "se me le"
+   ]
+  ],
+  "comment": "The paper gives no free translation."
+ }
 ]
