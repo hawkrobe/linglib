@@ -18,7 +18,7 @@ namespace Kiche
 
 /-- The transitive clause orders, verb–object–subject preferred and verb–subject–object also
 found. -/
-def clauseOrders : Finset WordOrder.Arrangement := {.vos, .vso}
+def clauseOrders : Finset (WordOrder.Arrangement WordOrder.Constituent 3) := {.vos, .vso}
 
 /-- Every order is verb-initial. -/
 theorem verb_initial :
