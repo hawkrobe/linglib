@@ -1,225 +1,108 @@
-import Linglib.Data.Examples.Judgment
+import Linglib.Data.Examples.MunozPerez2026
+import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Linglib.Syntax.Minimalist.Verbal.Voice
 import Linglib.Syntax.Person.Features
-import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.Clitics
+import Linglib.Fragments.Spanish.Predicates
 
 /-!
 # Muñoz Pérez (2026): Stylistic Applicatives
 
-This file formalizes the argument of [munoz-perez-2026] from the stylistic dative clitic
-*le* of Chilean Spanish, which co-occurs with the reflexive *se* of marked anticausatives
-and the ethical dative *me*, to the nature of anticausative *se*. The three clitic
-patterns are synonymous, which follows if the Voice head that hosts them is semantically
-vacuous (`three_way_synonymy_from_vacuity`). The stylistic clitic arises by a fission rule on
-the applicative head, which applies to a participant singular bundle
-(`isFissionApplicable_iff`) in an inchoative context (`fission_eq_none_iff`) and is blocked by
-unmarked anticausatives (`unmarked_blocks_stylLE`). The first exponent of a fissioned head is
-read off the dative series of the Spanish fragment, and since that series is syncretic with the
-reflexive outside the third person, it marks the Voice projection overtly where *se* is absent
-(`marksVoice_of_fission`). Acceptability follows the library's six-level taxonomy, the paper's
-star mapping to the unacceptable level.
+This file formalizes the analysis of the stylistic applicative of Chilean Spanish in
+[munoz-perez-2026]. A marked anticausative with an affected dative surfaces in General Spanish
+with the cluster *se me*. Chilean Spanish also has *me le* and *se me le*, with an invariable
+*le* that refers to nothing, and the three are synonymous. The alternation is confined to first
+and second person singular datives and to predicates that take the anticausative marker.
+
+The paper takes the dative clitic to realize an applicative head and *se* to be an expletive in
+the specifier of a Voice head that introduces no argument and has no meaning. A fission rule
+splits an applicative head that is [+PART, +SING] into two exponents when the predicate is
+inchoative: a clitic with the person and number of the head, and the inflectionless dative *le*.
+At PF the Voice projection must be overtly marked by a reflexive clitic, and every head must be
+pronounced. The first exponent of a fissioned head is syncretic with a reflexive, so it can mark
+Voice while *le* pronounces the applicative head. This is why *se* is optional exactly where
+fission applies, and since the three clusters spell out one clause under a meaningless Voice
+head, they do not differ in meaning.
+
+## Main declarations
+
+* `Clause`, `marked`, `unmarked`: a clause by its Voice head, the verbal heads of its root and
+  the bundle of its applicative head; the clauses of marked and unmarked anticausatives.
+* `IsFissionApplicable`, `applExponents`: the fission rule and the exponents it gives the
+  applicative head.
+* `Converges`: the two PF conditions on the clitics of a clause.
+* `clusters`: the clitic clusters a clause surfaces with.
+
+## Main results
+
+* `isFissionApplicable_iff`: fission applies to the speaker and the addressee alone.
+* `clusters_marked`, `clusters_unmarked`: the typology of realizations. A marked anticausative
+  has the marker with a plain dative and, where fission applies, the fissioned dative with and
+  without the marker; an unmarked one has the plain dative alone.
+* `marker_optional_iff`: the marker can be absent exactly where fission applies.
+* `converges_of_fission`, `not_converges_singleton`: fission rescues a clause without the marker
+  because the dative is syncretic with the reflexive outside the third person, and an unfissioned
+  dative cannot, since it would leave the applicative head unpronounced.
+* `anticausative_rows`, `other_rows`: the judgments on the paper's clitic clusters.
+* `causer_reading_rows`: the unintentional causer reading arises only from the marked clause.
+* `isLicit_me_iff_nos`: no person case constraint separates *me le* from *nos le*.
+
+## Implementation notes
+
+The root of a marked anticausative is a change and a result state and that of an unmarked one a
+change alone, after the structures the paper adopts from [cuervo-2003]. The paper leaves the
+structure of unmarked anticausatives open; all that matters here is that they lack the result
+state and a Voice head that asks for a marker. The optionality of the marker in the syntax, which
+the paper derives from a principle that lets an unchecked feature fail, is built into `markers`.
+The clauses given to *quejarse* and to impersonal *dar* say only that they are not inchoative.
+
+## TODO
+
+The context of the fission rule is adjacency of the change head and the state head, and
+`Minimalist.isInchoative` checks only that both are present. The paper's comparison with the
+two-flavour Voice of [martin-schaefer-kastner-2025] is not formalized.
 
 ## References
 
-* [munoz-perez-2026]
+* [M. C. Cuervo, *Datives at Large* (2003)][cuervo-2003]
+* [A. Koontz-Garboden, *Anticausativization* (2009)][koontz-garboden-2009]
+* [C. Muñoz Pérez, *Stylistic applicatives: A lens into the nature of anticausative SE*
+  (2026)][munoz-perez-2026]
 -/
-
-open Data.Examples (Acceptability)
 
 namespace MunozPerez2026
 
-/-! ### Data types -/
+open Data.Examples Minimalist Person Spanish.Predicates
 
-/-- A clitic pattern in an anticausative construction. -/
-inductive CliticPattern where
-  /-- SE + dative clitic: *se me rompió*. -/
-  | se_cl
-  /-- Dative clitic + LE: *me le rompió* (stylistic applicative). -/
-  | cl_le
-  /-- SE + dative clitic + LE: *se me le rompió*. -/
-  | se_cl_le
-  deriving DecidableEq, Repr
+/-! ### Clauses -/
 
-/-- Person of the dative clitic. -/
-inductive DativeCliticPerson where
-  /-- *me* -/
-  | first_sg
-  /-- *te* -/
-  | second_sg
-  /-- *le* -/
-  | third_sg
-  /-- *nos* -/
-  | first_pl
-  /-- *les* -/
-  | third_pl
-  deriving DecidableEq, Repr
+/-- A clause as the clitic system sees it. -/
+structure Clause where
+  /-- The Voice head. -/
+  voice : Minimalist.Voice.Head
+  /-- The verbal heads below Voice. -/
+  root : List VerbHead
+  /-- The bundle of the high applicative head, if the clause has an affected dative. -/
+  appl : Option Category
 
-/-- A single grammaticality judgment from the paper. -/
-structure Judgment where
-  /-- Example number in the paper. -/
-  exNumber : String
-  /-- The verb in citation form. -/
-  verb : String
-  /-- The clitic pattern. -/
-  pattern : CliticPattern
-  /-- Person of the dative clitic. -/
-  dativePerson : DativeCliticPerson
-  /-- Acceptability per `Data.Examples.Acceptability`. -/
-  acceptability : Acceptability
-  deriving Repr, BEq
+/-- The verbal heads of the clause, with the activity a thematic Voice head adds. -/
+def Clause.heads (k : Clause) : List VerbHead := Minimalist.Voice.buildDecomposition k.voice k.root
 
-/-! ### Three-way synonymy data (exx. 7–12) -/
+/-- A marked anticausative is a change and its result state under a Voice head that introduces
+no argument and asks for a specifier. -/
+def marked (a : Option Category) : Clause := ⟨Minimalist.Voice.anticausative, [.vGO, .vBE], a⟩
 
-/-- *romper* "break" with 1SG dative: all three patterns OK. -/
-def romper_se_me : Judgment :=
-  { exNumber := "7a", verb := "romper", pattern := .se_cl,
-    dativePerson := .first_sg, acceptability := .ok }
-def romper_me_le : Judgment :=
-  { exNumber := "7b", verb := "romper", pattern := .cl_le,
-    dativePerson := .first_sg, acceptability := .ok }
-def romper_se_me_le : Judgment :=
-  { exNumber := "7c", verb := "romper", pattern := .se_cl_le,
-    dativePerson := .first_sg, acceptability := .ok }
+/-- An unmarked anticausative is a change alone, under a Voice head that asks for nothing. -/
+def unmarked (a : Option Category) : Clause :=
+  ⟨{ flavor := .nonThematic, hasD := false }, [.vGO], a⟩
 
-/-- *hundir* "sink" with 1SG dative. -/
-def hundir_se_me : Judgment :=
-  { exNumber := "8a", verb := "hundir", pattern := .se_cl,
-    dativePerson := .first_sg, acceptability := .ok }
-def hundir_me_le : Judgment :=
-  { exNumber := "8b", verb := "hundir", pattern := .cl_le,
-    dativePerson := .first_sg, acceptability := .ok }
-
-/-- *caer* "fall" with 1SG dative. -/
-def caer_se_me : Judgment :=
-  { exNumber := "9a", verb := "caer", pattern := .se_cl,
-    dativePerson := .first_sg, acceptability := .ok }
-def caer_me_le : Judgment :=
-  { exNumber := "9b", verb := "caer", pattern := .cl_le,
-    dativePerson := .first_sg, acceptability := .ok }
-def caer_se_me_le : Judgment :=
-  { exNumber := "9c", verb := "caer", pattern := .se_cl_le,
-    dativePerson := .first_sg, acceptability := .ok }
-
-/-- *morir* "die" with 1SG dative. -/
-def morir_se_me : Judgment :=
-  { exNumber := "10a", verb := "morir", pattern := .se_cl,
-    dativePerson := .first_sg, acceptability := .ok }
-def morir_me_le : Judgment :=
-  { exNumber := "10b", verb := "morir", pattern := .cl_le,
-    dativePerson := .first_sg, acceptability := .ok }
-def morir_se_me_le : Judgment :=
-  { exNumber := "10c", verb := "morir", pattern := .se_cl_le,
-    dativePerson := .first_sg, acceptability := .ok }
-
-/-! ### Negative controls (exx. 13b, 14b)
-
-Crucially, the *me le* pattern is NOT freely available — it is rejected
-with the inherently reflexive verb *quejarse* "complain" (ex. 13b) and
-with impersonal SE plus an argumental dative (ex. 14b). These witnesses
-keep the dataset honest: stylistic LE depends on the marked-anticausative
-structure, not on phonological adjacency. -/
-
-/-- *quejarse* "complain" rejects the *me le* pattern (ex. 13b). -/
-def quejarse_me_le : Judgment :=
-  { exNumber := "13b", verb := "quejarse", pattern := .cl_le,
-    dativePerson := .first_sg, acceptability := .unacceptable }
-
-/-- Impersonal SE + argumental dative rejects the *me le* pattern (ex. 14b). -/
-def impersonal_me_le : Judgment :=
-  { exNumber := "14b", verb := "dar", pattern := .cl_le,
-    dativePerson := .first_sg, acceptability := .unacceptable }
-
-/-- Negative-control judgments. -/
-def negativeControls : List Judgment :=
-  [quejarse_me_le, impersonal_me_le]
-
-/-! ### Person restriction data (exx. 15–19, *cerrar la ventana*) -/
-
-/-- 1SG: stylistic LE is OK (ex. 15b *Me le cerró la ventana*). -/
-def person_1sg : Judgment :=
-  { exNumber := "15b", verb := "cerrar", pattern := .cl_le,
-    dativePerson := .first_sg, acceptability := .ok }
-
-/-- 2SG: stylistic LE is OK (ex. 16b *Te le cerró la ventana*). -/
-def person_2sg : Judgment :=
-  { exNumber := "16b", verb := "cerrar", pattern := .cl_le,
-    dativePerson := .second_sg, acceptability := .ok }
-
-/-- 3SG: stylistic LE is BLOCKED (ex. 17b *Le le cerró la ventana*). -/
-def person_3sg : Judgment :=
-  { exNumber := "17b", verb := "cerrar", pattern := .cl_le,
-    dativePerson := .third_sg, acceptability := .unacceptable }
-
-/-- 1PL: stylistic LE is BLOCKED (ex. 18b *Nos le cerró la ventana*). -/
-def person_1pl : Judgment :=
-  { exNumber := "18b", verb := "cerrar", pattern := .cl_le,
-    dativePerson := .first_pl, acceptability := .unacceptable }
-
-/-- 2/3PL: stylistic LE is BLOCKED (ex. 19b *Les le cerró la ventana*). -/
-def person_3pl : Judgment :=
-  { exNumber := "19b", verb := "cerrar", pattern := .cl_le,
-    dativePerson := .third_pl, acceptability := .unacceptable }
-
-/-- Person restriction data collected. -/
-def personRestrictionData : List Judgment :=
-  [person_1sg, person_2sg, person_3sg, person_1pl, person_3pl]
-
-/-! ### Marking restriction data (exx. 39–44) -/
-
-/-- *quebrar* (marked SE) licenses stylistic LE (ex. 39b *Me le quebró el florero*). -/
-def quebrar_le : Judgment :=
-  { exNumber := "39b", verb := "quebrar", pattern := .cl_le,
-    dativePerson := .first_sg, acceptability := .ok }
-
-/-- *mejorar* (unmarked) does NOT license stylistic LE (ex. 40b *Me le mejoró el sueldo). -/
-def mejorar_le : Judgment :=
-  { exNumber := "40b", verb := "mejorar", pattern := .cl_le,
-    dativePerson := .first_sg, acceptability := .unacceptable }
-
-/-- *hervir* (optional SE) DOES license stylistic LE (ex. 44a *Me le hirvió el agua*). -/
-def hervir_le : Judgment :=
-  { exNumber := "44a", verb := "hervir", pattern := .cl_le,
-    dativePerson := .first_sg, acceptability := .ok }
-
-/-! ### Data verification -/
-
-/-- All three-way synonymy patterns are grammatical for 1SG. -/
-theorem three_way_all_grammatical :
-    (romper_se_me.acceptability == .ok &&
-    romper_me_le.acceptability == .ok &&
-    romper_se_me_le.acceptability == .ok) = true := rfl
-
-/-- Person restriction: exactly 1SG and 2SG are grammatical. -/
-theorem person_restriction_data :
-    (personRestrictionData.filter (·.acceptability == .ok)).length = 2 := by
-  decide
-
-/-- Person restriction: exactly 3SG, 1PL, 3PL are ungrammatical. -/
-theorem person_restriction_blocked :
-    (personRestrictionData.filter (·.acceptability == .unacceptable)).length = 3 := by
-  decide
-
-/-- The person paradigm uses *cerrar* (ex. 15), not *caer* (ex. 9). -/
-theorem cerrar_anchors_person_paradigm :
-    personRestrictionData.all (·.verb == "cerrar") = true := by decide
-
-/-- Marking restriction: marked/optional → OK, unmarked → blocked. -/
-theorem marking_restriction :
-    (quebrar_le.acceptability == .ok &&
-    hervir_le.acceptability == .ok &&
-    mejorar_le.acceptability == .unacceptable) = true := rfl
-
-/-- Negative controls are present and uniformly unacceptable. Drift sentry:
-    if the *me le* pattern were ever miscoded as `.ok`, this fails. -/
-theorem negative_controls_unacceptable :
-    negativeControls.all (·.acceptability == .unacceptable) = true := by decide
+/-- The Voice head of an anticausative has no meaning, marked or not, so the clitics that spell
+a clause out cannot change what it means. -/
+theorem not_hasSemantics (a : Option Category) :
+    ¬ (marked a).voice.HasSemantics ∧ ¬ (unmarked a).voice.HasSemantics := by
+  simp only [marked, unmarked]; decide
 
 /-! ### The fission rule -/
-
-open Minimalist Minimalist.Voice
-open Spanish.Predicates
-open Person
 
 /-- The bundle condition of the fission rule holds of an applicative head that is
 [+PART, +SING]. -/
@@ -234,84 +117,24 @@ theorem isFissionApplicable_iff (c : Category) :
     IsFissionApplicable c ↔ c = .speaker ∨ c = .addressee := by
   cases c <;> decide
 
-/-- The two exponents of a fissioned applicative head. -/
-structure FissionOutput where
-  /-- The forms of the first exponent, which keeps the person and number of the head. -/
-  cl1 : Finset String
-  /-- The form of the second exponent, a dative without person and number. -/
-  cl2 : String
-  deriving DecidableEq
+/-- The dative clitics of a category. The form *se* that a third-person dative takes before an
+accusative clitic is left out, no accusative clitic being present. -/
+def datives : Category → Finset String :=
+  PersonalPronoun.paradigm (Spanish.Clitics.dative.erase Spanish.Clitics.se_dat)
 
-/-- The fission rule of Chilean Spanish splits an applicative head that is [+PART, +SING] in two
-when the context is inchoative. The first exponent has the dative forms of the head's category
-and the second is the inflectionless dative *le*. -/
-def fission (c : Category) (heads : List VerbHead) : Option FissionOutput :=
-  if isInchoative heads = true ∧ IsFissionApplicable c then
-    some ⟨PersonalPronoun.paradigm Spanish.Clitics.dative c, Spanish.Clitics.le.form⟩
-  else none
+/-- The exponents of the applicative head. It is pronounced as a dative clitic of its category,
+and when the clause is inchoative and the head is [+PART, +SING] it may instead split into that
+clitic and the inflectionless dative *le*. -/
+def applExponents (k : Clause) : Finset (List String) :=
+  match k.appl with
+  | none => {[]}
+  | some c =>
+    (datives c).image ([·]) ∪
+      if isInchoative k.heads = true ∧ IsFissionApplicable c then
+        (datives c).image ([·, Spanish.Clitics.le.form])
+      else ∅
 
-theorem fission_eq_none_iff {c : Category} {heads : List VerbHead} :
-    fission c heads = none ↔ ¬ (isInchoative heads = true ∧ IsFissionApplicable c) := by
-  simp [fission]
-
-/-- A first person singular head fissions into *me le*. -/
-theorem fission_speaker : fission .speaker [.vCAUSE, .vGO, .vBE] = some ⟨{"me"}, "le"⟩ := by
-  decide +kernel
-
-/-- A second person singular head fissions into *te le*. -/
-theorem fission_addressee : fission .addressee [.vCAUSE, .vGO, .vBE] = some ⟨{"te"}, "le"⟩ := by
-  decide +kernel
-
-/-- Fission applies to the first and second person singular, whose stylistic clitic is accepted,
-and not to the third, whose stylistic clitic is rejected. -/
-theorem person_restriction_matches_data :
-    IsFissionApplicable .speaker ∧
-    person_1sg.acceptability = .ok ∧
-    IsFissionApplicable .addressee ∧
-    person_2sg.acceptability = .ok ∧
-    ¬ IsFissionApplicable .other ∧
-    person_3sg.acceptability = .unacceptable := by
-  refine ⟨?_, rfl, ?_, rfl, ?_, rfl⟩ <;> decide
-
-/-! ### Inchoative requirement (the context of rule 55) -/
-
-/-- Stylistic *le* requires an inchoative context, so fission applies neither to an activity nor
-to a causative. -/
-theorem stylLE_requires_inchoative :
-    fission .speaker [.vDO] = none ∧ fission .speaker [.vDO, .vCAUSE, .vGO, .vBE] = none := by
-  decide +kernel
-
-/-- Every Muñoz-Pérez verb that licenses stylistic LE has inchoative structure.
-    DERIVED from the verb fragment. -/
-theorem stylLE_verbs_inchoative :
-    (Spanish.Predicates.munozVerbs.filter (·.licensesStylLE)).all
-      (fun v ↦ isInchoative v.verbHead) = true := by decide
-
-/-! ### Marking restriction -/
-
-/-- Unmarked anticausatives block stylistic LE.
-    DERIVED from the verb fragment: mejorar is unmarked and blocks LE. -/
-theorem unmarked_blocks_stylLE :
-    mejorar.anticausativeMarking = .unmarked ∧
-    mejorar.licensesStylLE = false := ⟨rfl, rfl⟩
-
-/-- Marked anticausatives license stylistic LE. -/
-theorem marked_licenses_stylLE :
-    quebrar.anticausativeMarking = .marked ∧
-    quebrar.licensesStylLE = true := ⟨rfl, rfl⟩
-
-/-- Optional SE-marking also licenses stylistic LE. -/
-theorem optional_licenses_stylLE :
-    hervir.anticausativeMarking = .optional ∧
-    hervir.licensesStylLE = true := ⟨rfl, rfl⟩
-
-/-- All Muñoz-Pérez verbs blocking stylistic LE are unmarked.
-    DERIVED from the fragment data. -/
-theorem blocking_verbs_all_unmarked :
-    (Spanish.Predicates.munozVerbs.filter (!·.licensesStylLE)).all
-      (fun v ↦ v.anticausativeMarking == .unmarked) = true := by decide
-
-/-! ### The overt-marking condition -/
+/-! ### The conditions at PF -/
 
 /-- A form counts as a reflexive clitic at PF when the reflexive series has it, syncretic
 elements being indistinguishable there. -/
@@ -319,123 +142,189 @@ def IsReflexiveForm (f : String) : Prop := ∃ p ∈ Spanish.Clitics.reflexive, 
 
 instance : DecidablePred IsReflexiveForm := fun _ ↦ inferInstanceAs (Decidable (∃ p ∈ _, _))
 
-/-- The paper's PF condition on a fissioned head requires the non-thematic Voice projection to be
-overtly marked by a reflexive clitic, here the first exponent. -/
-def FissionOutput.MarksVoice (out : FissionOutput) : Prop := ∃ f ∈ out.cl1, IsReflexiveForm f
+/-- A Voice head must be marked at PF when it introduces no argument and asks for a
+specifier. -/
+def RequiresMarker (v : Minimalist.Voice.Head) : Prop := v.flavor = .nonThematic ∧ v.HasD
 
-/-- Outside the third person every dative form is a reflexive form, by the syncretism of the two
-series. -/
-theorem isReflexiveForm_of_mem_dative {c : Category} (hc : c.person ≠ .third) {f : String}
-    (hf : f ∈ PersonalPronoun.paradigm Spanish.Clitics.dative c) : IsReflexiveForm f := by
-  rw [(Spanish.Clitics.paradigm_dative_eq_paradigm_reflexive_iff c).mpr hc] at hf
-  obtain ⟨p, hp, -, rfl⟩ := ReflexivePronoun.mem_paradigm.mp hf
+instance : DecidablePred RequiresMarker := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The markers the syntax may supply. A Voice head that asks for a specifier gets a reflexive
+or nothing, the feature being free to fail. -/
+def markers (k : Clause) : Finset (Option String) :=
+  if RequiresMarker k.voice then {none, some Spanish.Clitics.se.form} else {none}
+
+/-- The clitics of a clause converge when Voice is marked by a reflexive clitic and the
+applicative head is pronounced. Without a marker from the syntax, an exponent of the applicative
+head that has the form of a reflexive can mark Voice, provided another exponent is left to
+pronounce the head. -/
+def Converges (marker : Option String) (appl : List String) : Prop :=
+  marker.isSome ∨ ∃ f ∈ appl, IsReflexiveForm f ∧ appl.erase f ≠ []
+
+instance (marker : Option String) (appl : List String) : Decidable (Converges marker appl) :=
+  inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The clitic clusters a clause surfaces with. -/
+def clusters (k : Clause) : Finset (List String) :=
+  ((markers k ×ˢ applExponents k).filter
+    fun x ↦ RequiresMarker k.voice → Converges x.1 x.2).image fun x ↦ x.1.toList ++ x.2
+
+/-! ### The typology of realizations -/
+
+/-- A marked anticausative always has the marker with the plain dative. Where fission applies it
+also has the fissioned dative, with the marker and without it. -/
+theorem clusters_marked (c : Category) :
+    clusters (marked (some c)) =
+      (datives c).image (["se", ·]) ∪
+        if IsFissionApplicable c then
+          (datives c).image (["se", ·, "le"]) ∪ (datives c).image ([·, "le"])
+        else ∅ := by
+  cases c <;> decide +kernel
+
+/-- An unmarked anticausative has the plain dative alone. -/
+theorem clusters_unmarked (c : Category) :
+    clusters (unmarked (some c)) = (datives c).image ([·]) := by
+  cases c <;> decide +kernel
+
+/-- Without a dative, a marked anticausative has the marker and an unmarked one has nothing. -/
+theorem clusters_none : clusters (marked none) = {["se"]} ∧ clusters (unmarked none) = {[]} := by
+  decide +kernel
+
+/-- The three clusters of a first person singular dative. -/
+theorem clusters_marked_speaker :
+    clusters (marked (some .speaker)) = {["se", "me"], ["se", "me", "le"], ["me", "le"]} := by
+  decide +kernel
+
+/-- The marker can be absent from a marked anticausative exactly where fission applies. -/
+theorem marker_optional_iff (c : Category) :
+    (∃ l ∈ clusters (marked (some c)), "se" ∉ l) ↔ IsFissionApplicable c := by
+  cases c <;> decide +kernel
+
+/-! ### Why fission rescues the clause -/
+
+/-- Outside the third person every dative clitic is a reflexive form, by the syncretism of the
+two series. -/
+theorem isReflexiveForm_of_mem_datives {c : Category} (hc : c.person ≠ .third) {f : String}
+    (hf : f ∈ datives c) : IsReflexiveForm f := by
+  have hf' := PersonalPronoun.paradigm_mono (Finset.erase_subset _ _) c hf
+  rw [(Spanish.Clitics.paradigm_dative_eq_paradigm_reflexive_iff c).mpr hc] at hf'
+  obtain ⟨p, hp, -, rfl⟩ := ReflexivePronoun.mem_paradigm.mp hf'
   exact ⟨p, hp, rfl⟩
 
-/-- Whenever fission applies, its first exponent marks Voice, so *se* is optional beside a
-stylistic clitic. -/
-theorem marksVoice_of_fission {c : Category} {heads : List VerbHead} {out : FissionOutput}
-    (h : fission c heads = some out) : out.MarksVoice := by
-  unfold fission at h
-  split_ifs at h with hc
-  obtain rfl := Option.some.inj h
+/-- A fissioned head converges without a marker, since its first exponent marks Voice and *le*
+pronounces the head. -/
+theorem converges_of_fission {c : Category} (hc : IsFissionApplicable c) {f : String}
+    (hf : f ∈ datives c) : Converges none [f, Spanish.Clitics.le.form] := by
   have hne : c.person ≠ .third := by
-    rcases (isFissionApplicable_iff c).mp hc.2 with rfl | rfl <;> decide
-  have hdat : (PersonalPronoun.paradigm Spanish.Clitics.dative c).Nonempty := by
-    rw [(Spanish.Clitics.paradigm_dative_eq_paradigm_reflexive_iff c).mpr hne]
-    exact Spanish.Clitics.paradigm_reflexive_nonempty c
-  obtain ⟨f, hf⟩ := hdat
-  exact ⟨f, hf, isReflexiveForm_of_mem_dative hne hf⟩
+    rcases (isFissionApplicable_iff c).mp hc with rfl | rfl <;> decide
+  exact .inr ⟨f, by simp, isReflexiveForm_of_mem_datives hne hf, by simp⟩
+
+/-- An unfissioned dative does not converge without a marker, whatever its form. Taken as the
+marker of Voice it leaves the applicative head unpronounced. -/
+theorem not_converges_singleton (f : String) : ¬ Converges none [f] := by
+  simp [Converges]
 
 /-- The second exponent *le* is not a reflexive form, so the marking comes from the first. -/
-theorem not_isReflexiveForm_le : ¬ IsReflexiveForm Spanish.Clitics.le.form := by decide +kernel
+theorem not_isReflexiveForm_le : ¬ IsReflexiveForm Spanish.Clitics.le.form := by
+  decide +kernel
 
 /-- Syncretism with the reflexive does not suffice for a stylistic clitic. The first person
 plural *nos* is syncretic, and fission still skips it for want of [+SING]. -/
 theorem syncretic_not_isFissionApplicable :
-    PersonalPronoun.paradigm Spanish.Clitics.dative .speakerOthers =
-        ReflexivePronoun.paradigm Spanish.Clitics.reflexive .speakerOthers ∧
+    (∀ f ∈ datives .speakerOthers, IsReflexiveForm f) ∧
       ¬ IsFissionApplicable .speakerOthers :=
-  ⟨(Spanish.Clitics.paradigm_dative_eq_paradigm_reflexive_iff _).mpr (by decide), by decide⟩
+  ⟨fun _ hf ↦ isReflexiveForm_of_mem_datives (by decide) hf, by decide⟩
 
-/-! ### Three-way synonymy -/
+/-! ### The examples -/
 
-/-- Re-export of `Minimalist.Voice.nonThematic_no_semantics` in the Muñoz-Pérez
-    frame. SE is purely a PF marker — its presence or absence is
-    phonological, not semantic. -/
-theorem voice_semantically_vacuous :
-    ¬ Minimalist.Voice.anticausative.HasSemantics :=
-  Minimalist.Voice.nonThematic_no_semantics
+/-- The verb of an example, from the Fragment. -/
+def verb? (e : LinguisticExample) : Option SpanishVerbEntry :=
+  (e.feature? "verb").bind fun f ↦ allVerbs.find? (·.form = f)
 
-/-- The empirical three-way synonymy is consistent with Voice
-    vacuity: the three `.ok` judgments co-hold with the proof that
-    Voice has no semantics (the judgments are data, not derived). -/
-theorem three_way_synonymy_from_vacuity :
-    romper_se_me.acceptability = .ok ∧
-    romper_me_le.acceptability = .ok ∧
-    romper_se_me_le.acceptability = .ok ∧
-    ¬ Minimalist.Voice.anticausative.HasSemantics := by
-  refine ⟨rfl, rfl, rfl, ?_⟩; exact voice_semantically_vacuous
+/-- The bundle of the dative of an example, `none` where it has no dative. -/
+def appl? (e : LinguisticExample) : Option (Option Category) :=
+  e.parse? "dative" [("none", none), ("1SG", some .speaker), ("2SG", some .addressee),
+    ("3SG", some .other), ("1PL", some .speakerOthers), ("3PL", some .others)]
 
-/-! ### Against a null-reflexive extension of [koontz-garboden-2009]
+/-- The clauses a verb's intransitive has, by its marking. -/
+def clauses (a : Option Category) : AnticausativeMarking → List Clause
+  | .marked => [marked a]
+  | .unmarked => [unmarked a]
+  | .optional => [marked a, unmarked a]
 
-On the reflexivization analysis extended with a null reflexive
-([chierchia-2004]), every alternating verb has SE in its anticausative,
-cumulation of A and P being spelled out as SE. *mejorar* "improve"
-alternates while remaining unmarked. The paper's footnote 7 notes that
-[koontz-garboden-2009]'s own implementation restricts reflexivization
-to SE-marked anticausatives, so the argument bites against the
-extension. -/
+/-- An anticausative example is accepted exactly when its clitic cluster is one that a clause of
+its verb surfaces with. This covers the three synonymous clusters, the restriction to first and
+second person singular datives, the invariability of *le*, the ban on stylistic *le* with
+unmarked anticausatives, and the marking of anticausatives without a dative. -/
+theorem anticausative_rows : ∀ e ∈ Examples.all,
+    e.feature? "construction" = some "anticausative" →
+    ∃ v ∈ verb? e, ∃ a ∈ appl? e, ∃ s ∈ e.feature? "cluster",
+      (.marginal ≤ e.judgment ↔
+        ∃ k ∈ clauses a v.anticausativeMarking, ∃ l ∈ clusters k,
+          " ".intercalate l = s) := by
+  decide +kernel
 
-/-- The verb-level prediction of the null-reflexive extension: an
-    alternating verb has SE in its anticausative form. -/
+/-- The clause of an example that is not anticausative. *Quejarse* has an external argument and
+impersonal *dar* is an activity under an impersonal Voice head. -/
+def otherClause? (e : LinguisticExample) : Option Clause :=
+  (appl? e).bind fun a ↦ e.parse? "construction"
+    [("inherent", ⟨Minimalist.Voice.agentive, [], a⟩),
+      ("impersonal", ⟨Minimalist.Voice.impersonal, [.vDO], a⟩)]
+
+/-- Where *se* has another source and the clause is not inchoative, the applicative head has its
+plain exponent alone, so stylistic *le* is out. -/
+theorem other_rows : ∀ e ∈ Examples.all,
+    e.feature? "construction" = some "inherent" ∨
+      e.feature? "construction" = some "impersonal" →
+    ∃ k ∈ otherClause? e, ∃ s ∈ e.feature? "cluster",
+      (.marginal ≤ e.judgment ↔
+        ∃ l ∈ applExponents k, " ".intercalate ("se" :: l) = s) := by
+  decide +kernel
+
+/-- An example with the unintentional causer reading has a cluster of the marked clause. The
+cluster *me le* of *hervir* has the reading although it lacks *se*, since only the marked clause
+fissions. -/
+theorem causer_reading_rows : ∀ e ∈ Examples.all,
+    e.readings.lookup "unintentional causer" = some .acceptable →
+    ∃ a ∈ appl? e, ∃ s ∈ e.feature? "cluster",
+      ∃ l ∈ clusters (marked a), " ".intercalate l = s := by
+  decide +kernel
+
+/-! ### Against a constraint on clitic clusters -/
+
+/-- A person case constraint sees the persons of the two clitics, and *me* and *nos* have the
+same person, so no such constraint separates *me le* from *nos le*. -/
+theorem isLicit_me_iff_nos (g : PCC.Grammar) :
+    (∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me_acc.person,
+        PCC.IsLicit g io do_) ↔
+      ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.nos_acc.person,
+        PCC.IsLicit g io do_ :=
+  Iff.rfl
+
+/-- The weak constraint bans a third-person dative over a first-person accusative, as in the
+ditransitive examples, so it would ban stylistic *me le* as well. -/
+theorem weak_pcc_bans :
+    ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me_acc.person,
+      ¬ PCC.IsLicit PCC.weakGrammar io do_ := by
+  decide
+
+/-- The fission rule does separate the two. -/
+theorem fission_separates :
+    IsFissionApplicable .speaker ∧ ¬ IsFissionApplicable .speakerOthers := by
+  decide
+
+/-! ### Against a null reflexive
+
+On the reflexivization analysis of [koontz-garboden-2009] extended with a null reflexive, every
+alternating verb has a reflexive in its anticausative, overt or silent, and an overt one is
+always possible. -/
+
+/-- The prediction of the null-reflexive extension for a verb: if it alternates, its
+intransitive can take the clitic. -/
 def seMarkedIfAlternating (v : SpanishVerbEntry) : Prop :=
   v.causativeAlternation = true → v.anticausativeMarking ≠ .unmarked
 
-/-- *mejorar* alternates but is unmarked, against the prediction. -/
-theorem refutes_koontzgarboden : ¬ seMarkedIfAlternating mejorar := by
+/-- *mejorar* alternates and rejects the clitic, against the prediction. -/
+theorem not_seMarkedIfAlternating_mejorar : ¬ seMarkedIfAlternating mejorar := by
   unfold seMarkedIfAlternating; decide
-
-/-! ### Cross-framework comparisons
-
-The paper draws a second comparative argument — narrower than
-[martin-schaefer-kastner-2025]'s two-flavor Voice — that is not
-yet stated as a Lean theorem.
-
-## Todo
-
-* **MSK comparison as a real bridge theorem.** Analogously,
-  `MartinSchaeferKastner2025.seVoiceOptions : List Flavor` is a
-  list literal `[.nonThematic, .reflexive]`. A subset claim against any
-  hand-written Muñoz list of flavors is decided by `decide` over list
-  literals — no real Voice-flavor mechanism is engaged. A genuine
-  comparison requires deriving each paper's *predicted* flavor set from
-  its analytical commitments (Voice-flavor licensing rules in MSK;
-  Fission + Voice-vacuity in MunozPerez), then proving inclusion of
-  the derived sets.
-
-* **vGO ⌒ vBE adjacency in `isInchoative` (Phase D — substrate).**
-  Muñoz Pérez's Fission rule has the explicit context `/vGO __ vBE`,
-  but `Syntax/Minimalist/VerbalDecomposition.lean`'s
-  `isInchoative` checks only set-membership (`heads.contains .vGO`),
-  not adjacency. Deferred because the refactor touches 8 downstream
-  consumer files. A focused session should add an `applPos` field (or
-  similar adjacency witness) to the decomposition and audit each
-  consumer site.
-
-* **Derive `licensesStylLE` from structure
-  (Phase D — `Fragments/Spanish/Predicates.lean`).** The Fragment
-  currently stipulates `licensesStylLE : Bool` per verb; per
-  CLAUDE.md's "derive, don't stipulate" rule it should be computed
-  from existing structural fields, plausibly
-  `isInchoative v.verbHead && v.anticausativeMarking ∈ [.marked, .optional]`.
-  Deferred pending Phase D's `isInchoative` refactor (the derivation
-  needs adjacency-aware inchoativity to be empirically tight).
-
-* **Newman 2024 Feature Failure (Phase D — Minimalist substrate).**
-  Paper rule 60 grounds why the stylistic *le*'s unchecked features
-  do not crash the derivation. The Minimalist substrate currently
-  has no `Derivation` or `crashes` predicates to formalise
-  Feature Failure against; deferred pending those primitives.
--/
 
 end MunozPerez2026
