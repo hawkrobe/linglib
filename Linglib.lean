@@ -1133,7 +1133,6 @@ import Linglib.Fragments.Yakut.Indefinites
 import Linglib.Fragments.Yanyuwa.Gender
 import Linglib.Fragments.Yoruba.Comparison
 import Linglib.Fragments.Yoruba.Coordination
-import Linglib.Fragments.Yoruba.FocusParticles
 import Linglib.Fragments.Yoruba.Relativization
 import Linglib.Fragments.ZarmaSonrai.Negation
 import Linglib.Morphology.DistributedMorphology.Allosemy
