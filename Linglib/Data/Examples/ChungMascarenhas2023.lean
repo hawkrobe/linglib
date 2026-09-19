@@ -27,7 +27,7 @@ def cm2024_1_korean_conditional_eval : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "koreanComposition"), ("construction", "conditional-evaluative")]
-    comment := "The paper's centerpiece morphosyntactic argument. Korean realizes English-must as the transparent composition of (i) the evaluative predicate toy 'EVAL' as the measure function μ_R, (ii) the conditional 'if φ, EVAL' = condIf, (iii) the exhaustifier -(e)ya 'only-if'. Formalized in `koreanConditionalEvaluative_iff_mustCM`."
+    comment := "The paper's centerpiece morphosyntactic argument. Korean realizes English-must as the transparent composition of (i) the evaluative predicate toy 'EVAL' as the measure function μ_R, (ii) the conditional 'if φ, EVAL' as the conditional expectation of μ_R given φ, (iii) the exhaustifier -(e)ya 'only-if'. Formalized in `koreanConditionalEvaluative_iff_mustCM`."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 

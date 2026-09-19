@@ -1,7 +1,5 @@
-import Linglib.Core.Probability.Finite
-import Linglib.Semantics.Conditionals.Probabilistic
+import Mathlib.Probability.UniformOn
 import Linglib.Data.Examples.ChungMascarenhas2023
-import Mathlib.Probability.Distributions.Uniform
 
 /-!
 # Chung and Mascarenhas 2023: Modality, expected utility, and hypothesis testing
@@ -26,7 +24,7 @@ predicate, the conditional, Lassiter's threshold and the *-(e)ya* exhaustifier i
 
 `mustCM`, `oughtCM` and `mustCMWithPlausibility` are (6), (17) and the §5 plausibility patch over
 `sumLikelihoods`, and `koreanConditionalEvaluative_iff_mustCM` is (48) by the identity
-`condExpect_countMeasure`. The miners puzzle is built from Table 1 with the ideals (18) of
+`lintegral_countMeasure`. The miners puzzle is built from Table 1 with the ideals (18) of
 Cariani, Kaufmann and Kaufmann as an indexed family, and its expected utilities, *ought* and
 *must* claims and threshold incompatibility are derived from the uniform prior; modal Linda and
 modal Lawyers keep the paper's stipulated conditional probabilities as rationals, the text fixing
@@ -46,11 +44,12 @@ no joint distribution.
 
 namespace ChungMascarenhas2023
 
-open PMF Conditional.Probabilistic
+open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 open BigOperators Set
 
-variable {W : Type*} [Fintype W] {ι : Type*} [Fintype ι]
+variable {W : Type*} [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W] {ι : Type*}
+  [Fintype ι]
 
 /-! ### The count of relevant propositions and explanatory value -/
 
@@ -60,7 +59,7 @@ propositions, so that extensionally coincident rules keep their multiplicity. -/
 noncomputable def countMeasure (R : ι → Set W) : W → ℝ≥0∞ :=
   ∑ i, (R i).indicator 1
 
-omit [Fintype W] in
+omit [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W] in
 /-- `μ_R` at a world is the cardinality of the set of relevant propositions true there. -/
 theorem countMeasure_apply (R : ι → Set W) (a : W) [∀ i, Decidable (a ∈ R i)] :
     countMeasure R a = (Finset.univ.filter (a ∈ R ·)).card := by
@@ -68,64 +67,73 @@ theorem countMeasure_apply (R : ι → Set W) (a : W) [∀ i, Decidable (a ∈ R
 
 /-- The explanatory value of a hypothesis `φ` is the sum `Σ_i P(R i ∣ φ)` of the likelihoods of
 the relevant propositions. -/
-noncomputable def sumLikelihoods (p : PMF W) (R : ι → Set W) (φ : Set W) : ℝ≥0∞ :=
-  ∑ i, p.condProbSet φ (R i)
+noncomputable def sumLikelihoods (μ : Measure W) (R : ι → Set W) (φ : Set W) : ℝ≥0∞ :=
+  ∑ i, μ[R i | φ]
 
+omit [Fintype W] in
 /-- The conditional expectation of `μ_R`, expected utility read deontically and explanatory
 value read epistemically, is the sum of likelihoods. -/
-theorem condExpect_countMeasure (p : PMF W) (R : ι → Set W) (φ : Set W) :
-    p.condExpect φ (countMeasure R) = sumLikelihoods p R φ := by
-  rw [countMeasure, condExpect_sum]
-  exact Finset.sum_congr rfl fun i _ ↦ p.condExpect_indicator φ (R i)
+theorem lintegral_countMeasure (μ : Measure W) (R : ι → Set W) (φ : Set W) :
+    ∫⁻ w, countMeasure R w ∂μ[|φ] = sumLikelihoods μ R φ := by
+  simp only [countMeasure, Finset.sum_apply]
+  rw [lintegral_finsetSum _ fun i _ ↦ Measurable.of_discrete]
+  exact Finset.sum_congr rfl fun i _ ↦ lintegral_indicator_one MeasurableSet.of_discrete
 
 /-- Under a uniform prior, explanatory value is a sum of counting ratios. -/
-theorem sumLikelihoods_uniformOfFintype [Nonempty W] (R : ι → Set W) (φ : Set W)
+theorem sumLikelihoods_uniformOn_univ (R : ι → Set W) (φ : Set W)
     [DecidablePred (· ∈ φ)] [∀ i, DecidablePred (· ∈ (φ ∩ R i))] :
-    sumLikelihoods (PMF.uniformOfFintype W) R φ
+    sumLikelihoods (uniformOn (Set.univ : Set W)) R φ
       = (∑ i, ((Finset.univ.filter (· ∈ φ ∩ R i)).card : ℝ≥0∞))
           / (Finset.univ.filter (· ∈ φ)).card := by
+  have hcond : (uniformOn (Set.univ : Set W))[|φ] = uniformOn φ := by
+    rw [uniformOn, uniformOn, cond_cond_eq_cond_inter' MeasurableSet.univ
+      MeasurableSet.of_discrete (by finiteness), Set.univ_inter]
   rw [sumLikelihoods, div_eq_mul_inv, Finset.sum_mul]
-  exact Finset.sum_congr rfl fun i _ ↦ by
-    rw [condProbSet_uniformOfFintype φ (R i), div_eq_mul_inv]
+  refine Finset.sum_congr rfl fun i _ ↦ ?_
+  have hφ : Measure.count φ = ((Finset.univ.filter (· ∈ φ)).card : ℝ≥0∞) :=
+    (congrArg Measure.count (by ext; simp)).trans (Measure.count_apply_finset _)
+  have hφR : Measure.count (φ ∩ R i) = ((Finset.univ.filter (· ∈ φ ∩ R i)).card : ℝ≥0∞) :=
+    (congrArg Measure.count (by ext; simp)).trans (Measure.count_apply_finset _)
+  rw [hcond, uniformOn, cond_apply MeasurableSet.of_discrete, hφ, hφR, mul_comm]
 
 /-! ### The operators -/
 
 /-- `must φ` holds iff the expected `μ_R` given `φ` exceeds the threshold `θ` and no alternative's
 does, `φ` being the only good-enough option or explanation (6). -/
-def mustCM (p : PMF W) (R : ι → Set W) (φ : Set W) (alts : Set (Set W))
+def mustCM (p : Measure W) (R : ι → Set W) (φ : Set W) (alts : Set (Set W))
     (θ : ℝ≥0∞) : Prop :=
   sumLikelihoods p R φ > θ ∧ ∀ ψ ∈ alts, sumLikelihoods p R ψ ≤ θ
 
 /-- `ought φ` holds iff `φ` is the best good-enough option, above `θ` and of strictly greater
 expected value than every alternative (17). -/
-def oughtCM (p : PMF W) (R : ι → Set W) (φ : Set W) (alts : Set (Set W))
+def oughtCM (p : Measure W) (R : ι → Set W) (φ : Set W) (alts : Set (Set W))
     (θ : ℝ≥0∞) : Prop :=
   sumLikelihoods p R φ > θ ∧
     ∀ ψ ∈ alts, sumLikelihoods p R ψ < sumLikelihoods p R φ
 
 /-- This is `mustCM` with the plausibility requirement of a reasonably high prior for the prejacent
 (§5), kept separate as the paper presents it as an add-on. -/
-def mustCMWithPlausibility (p : PMF W) (R : ι → Set W) (φ : Set W)
+def mustCMWithPlausibility (p : Measure W) (R : ι → Set W) (φ : Set W)
     (alts : Set (Set W)) (θ θplaus : ℝ≥0∞) : Prop :=
-  mustCM p R φ alts θ ∧ θplaus ≤ p.probOfSet φ
+  mustCM p R φ alts θ ∧ θplaus ≤ p φ
 
 /-! ### Korean conditional evaluatives (§4) -/
 
 /-- The left-hand side of (48) is the composition of `cip-ey iss-eya toy-n-ta`. It applies
-Lassiter's threshold Θ (46) to the conditional *if φ, then eval* ((45), `condIf` over `μ_R`), with
-the *-(e)ya* exhaustifier negating each alternative's thresholded conditional. -/
-def koreanConditionalEvaluative (p : PMF W) (R : ι → Set W) (φ : Set W)
+Lassiter's threshold Θ (46) to the conditional *if φ, then eval*, the conditional expectation of
+`μ_R` (45), with the *-(e)ya* exhaustifier negating each alternative's thresholded conditional. -/
+def koreanConditionalEvaluative (p : Measure W) (R : ι → Set W) (φ : Set W)
     (alts : Set (Set W)) (θ : ℝ≥0∞) : Prop :=
-  condIf p φ (countMeasure R) > θ ∧
-    ∀ ψ ∈ alts, ¬(condIf p ψ (countMeasure R) > θ)
+  ∫⁻ w, countMeasure R w ∂p[|φ] > θ ∧
+    ∀ ψ ∈ alts, ¬(∫⁻ w, countMeasure R w ∂p[|ψ] > θ)
 
-/-- The Korean composition is the `must` semantics (6), by the identity `condExpect_countMeasure`
+omit [Fintype W] in
+/-- The Korean composition is the `must` semantics (6), by the identity `lintegral_countMeasure`
 between the conditional's expected `μ_R` (45) and the sum of likelihoods (12). This is (48). -/
-theorem koreanConditionalEvaluative_iff_mustCM (p : PMF W) (R : ι → Set W)
+theorem koreanConditionalEvaluative_iff_mustCM (p : Measure W) (R : ι → Set W)
     (φ : Set W) (alts : Set (Set W)) (θ : ℝ≥0∞) :
     koreanConditionalEvaluative p R φ alts θ ↔ mustCM p R φ alts θ := by
-  simp only [koreanConditionalEvaluative, mustCM, condIf,
-    condExpect_countMeasure, not_lt]
+  simp only [koreanConditionalEvaluative, mustCM, lintegral_countMeasure, not_lt]
 
 /-! ### The miners puzzle (§3.1) -/
 
@@ -154,7 +162,7 @@ def minersSaved : World → ℕ := fun w ↦
   | 0 => 10 | 1 => 0 | 2 => 0 | 3 => 10 | 4 => 9 | 5 => 9 | _ => 0
 
 /-- Under the uniform prior the locations are equiprobable and independent of the action. -/
-noncomputable def prior : PMF World := PMF.uniformOfFintype World
+noncomputable def prior : Measure World := uniformOn Set.univ
 
 /-- The ideals `R_D` of (18), after Cariani, Kaufmann and Kaufmann, are {one miner saved, …, ten
 miners saved}, an indexed family since distinct ideals coincide in extension on six worlds. -/
@@ -190,7 +198,7 @@ private theorem ev_eval {φ : Set World} [DecidablePred (· ∈ φ)]
       (Finset.univ.filter (· ∈ φ ∩ idealsRD i)).card) = m)
     (hn : (Finset.univ.filter (· ∈ φ)).card = n) :
     sumLikelihoods prior idealsRD φ = (m : ℝ≥0∞) / n := by
-  rw [prior, sumLikelihoods_uniformOfFintype, ← Nat.cast_sum, hm, hn]
+  rw [prior, sumLikelihoods_uniformOn_univ, ← Nat.cast_sum, hm, hn]
 
 /-- Blocking neither shaft has expected utility 9 (19). -/
 theorem ev_blockNeither : sumLikelihoods prior idealsRD blockNeither = 9 := by
