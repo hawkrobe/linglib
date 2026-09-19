@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.Narrog
+import Linglib.Semantics.Modality.SpeechActOrientation
 
 /-!
 # Narrog (2010): (Inter)subjectification in the Domain of Modality and Mood

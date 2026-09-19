@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.Narrog
+import Linglib.Semantics.Modality.SpeechActOrientation
 
 /-!
 # Narrog (2012): Modality, Subjectivity, and Semantic Change
