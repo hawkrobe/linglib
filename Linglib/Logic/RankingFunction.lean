@@ -1,52 +1,63 @@
-import Linglib.Core.Order.Plausibility
+import Linglib.Logic.Nonmonotonic.Preferential
 import Mathlib.Data.ENat.Lattice
 
 /-!
 # Ranking functions
 
-This file defines ranking functions, the ordinal conditional functions of [spohn-1988] with
-natural-number grades, and Spohn's conditionalization on them. A ranking function grades the
-disbelief in each world, some world having grade `0`; the rank of a proposition is the least
-rank of its worlds, `⊤` for the contradiction, so that of a proposition and its negation one
-has rank `0` and the rank of a disjunction is the smaller rank. Conditionalization on a
-proposition at a firmness keeps the ranking within the proposition and within its negation,
-each shifted to start at `0`, and lifts the negation by the firmness; revision conditionalizes
-at the firmness that just makes the proposition believed, the operator whose iterated-revision
-postulates `Logic/BeliefRevision/Iterated.lean` proves. A ranking function induces a
-plausibility order, hence a preferential consequence relation, and the order is connected, so
-the relation satisfies rational monotonicity ([halpern-2003]).
+This file defines ranking functions, Spohn's ordinal conditional functions with natural-number
+grades, together with his conditionalization of them and the consequence relation they induce.
+
+A ranking function grades the disbelief in each world, and some world has grade `0`. The rank
+of a proposition is the least rank of its worlds, and `⊤` for the contradiction, so of a
+proposition and its negation one has rank `0`, and the rank of a disjunction is the smaller of
+the two ranks. Conditionalization on a proposition at a firmness keeps the ranking within the
+proposition and within its negation, each shifted to start at `0`, and lifts the negation by the
+firmness. Revision conditionalizes at the firmness that just makes the proposition believed;
+`Logic/BeliefRevision/Iterated.lean` proves the iterated-revision postulates of Darwiche and
+Pearl for it. A ranking function orders the worlds by rank, which makes it a ranked model in
+the sense of Lehmann and Magidor. A proposition `B` follows from `A` when the `A`-worlds of least
+rank are `B`-worlds, this consequence relation is rational, and the beliefs of the ranking
+function are the consequences of the tautology.
 
 ## Main definitions
 
-* `RankingFunction W` — a grading of disbelief `W → ℕ` with a world of grade `0`.
-* `RankingFunction.rankSet` — the rank of a proposition, in `ℕ∞`.
-* `RankingFunction.aPart` — the A-part of a ranking, the ranking within `A` shifted to `0`.
-* `RankingFunction.conditionα` — A,α-conditionalization; `RankingFunction.revise` — revision
-  at the canonical firmness; `RankingFunction.lCondition` — the L-conditioning of
-  [goldszmidt-pearl-1996].
-* `RankingFunction.beliefSet` — the propositions true at every world of rank `0`.
-* `RankingFunction.toPlausibilityOrder`, `RankingFunction.toPreferential` — the induced
-  plausibility order and preferential consequence relation.
+* `RankingFunction W`: a grading of disbelief `W → ℕ` with a world of grade `0`.
+* `RankingFunction.rankSet`: the rank of a proposition, in `ℕ∞`.
+* `RankingFunction.aPart`: the A-part of a ranking, the ranking within `A` shifted to `0`.
+* `RankingFunction.conditionα`, `RankingFunction.revise`: A,α-conditionalization, and revision
+  as conditionalization at the canonical firmness.
+* `RankingFunction.lCondition`: the L-conditioning of Goldszmidt and Pearl.
+* `RankingFunction.beliefSet`: the propositions true at every world of rank `0`.
+* `RankingFunction.toPreorder`, `RankingFunction.Entails`: the normality order on worlds and
+  its consequence relation.
 
 ## Main results
 
-* `RankingFunction.rankSet_eq_zero_or_compl`, `RankingFunction.rankSet_union` — of a
-  proposition and its negation one has rank `0`; the rank of a disjunction is the smaller rank.
-* `RankingFunction.revise_success` — the revised ranking believes the evidence.
-* `RankingFunction.ranking_connected`, `RankingFunction.ranking_rationalMonotonicity` — the
-  induced order is connected, so rational monotonicity holds.
+* `RankingFunction.rankSet_eq_zero_or_compl`, `RankingFunction.rankSet_union`: of a proposition
+  and its negation one has rank `0`, and the rank of a disjunction is the smaller rank.
+* `RankingFunction.revise_success`: the revised ranking believes the evidence.
+* `RankingFunction.entails_iff_exists_lt`, `RankingFunction.entails_iff_rankSet`: a consequent
+  follows when each world falsifying it is outranked by one verifying it, equivalently when
+  verifying it is less disbelieved than falsifying it.
+* `RankingFunction.isRational_entails`: the consequence relation is rational.
+* `RankingFunction.mem_beliefSet_iff_entails_univ`: belief is consequence from the tautology.
 
 ## References
 
-* [spohn-1988]
-* [goldszmidt-pearl-1996]
-* [halpern-2003]
-* [darwiche-pearl-1997]
+* [W. Spohn, *Ordinal Conditional Functions: A Dynamic Theory of Epistemic States*
+  (1988)][spohn-1988]
+* [M. Goldszmidt and J. Pearl, *Qualitative Probabilities for Default Reasoning, Belief
+  Revision, and Causal Modeling* (1996)][goldszmidt-pearl-1996]
+* [D. Lehmann and M. Magidor, *What Does a Conditional Knowledge Base Entail?*
+  (1992)][lehmann-magidor-1992]
+* [A. Darwiche and J. Pearl, *On the Logic of Iterated Belief Revision*
+  (1997)][darwiche-pearl-1997]
 -/
 
-open Core.Order (PlausibilityOrder PreferentialConsequence rationalMonotonicity)
+open Core.Order.Normality
 
-/-- A ranking function: a grading of disbelief in worlds with a world of grade `0`. -/
+/-- A ranking function is a grading of disbelief in worlds under which some world has grade
+`0`. -/
 structure RankingFunction (W : Type*) where
   /-- The grade of disbelief in each world. -/
   rank : W → ℕ
@@ -62,7 +73,7 @@ variable {W : Type*} (κ : RankingFunction W) {A B : Set W} {w : W}
 
 /-! ### Ranks of propositions -/
 
-/-- The rank of a proposition: the least rank of its worlds, `⊤` for the contradiction. -/
+/-- The rank of a proposition is the least rank of its worlds, and `⊤` for the contradiction. -/
 noncomputable def rankSet (A : Set W) : ℕ∞ := ⨅ w ∈ A, (κ.rank w : ℕ∞)
 
 theorem rankSet_le (hw : w ∈ A) : κ.rankSet A ≤ κ.rank w := iInf₂_le w hw
@@ -70,18 +81,18 @@ theorem rankSet_le (hw : w ∈ A) : κ.rankSet A ≤ κ.rank w := iInf₂_le w h
 theorem le_rankSet_iff {n : ℕ∞} : n ≤ κ.rankSet A ↔ ∀ w ∈ A, n ≤ κ.rank w := le_iInf₂_iff
 
 theorem rankSet_anti (h : A ⊆ B) : κ.rankSet B ≤ κ.rankSet A :=
-  κ.le_rankSet_iff.2 λ _ hw => κ.rankSet_le (h hw)
+  κ.le_rankSet_iff.2 fun _ hw ↦ κ.rankSet_le (h hw)
 
 @[simp] theorem rankSet_empty : κ.rankSet ∅ = ⊤ := by simp [rankSet]
 
 /-- The rank of a satisfiable proposition is attained. -/
 theorem exists_rank_eq_rankSet (hA : A.Nonempty) : ∃ w ∈ A, (κ.rank w : ℕ∞) = κ.rankSet A := by
-  have hmem := csInf_mem (hA.image λ w => (κ.rank w : ℕ∞))
+  have hmem := csInf_mem (hA.image fun w ↦ (κ.rank w : ℕ∞))
   rw [sInf_image] at hmem
   exact hmem
 
 theorem rankSet_eq_top_iff : κ.rankSet A = ⊤ ↔ A = ∅ := by
-  refine ⟨λ h => by_contra λ hne => ?_, λ h => h ▸ κ.rankSet_empty⟩
+  refine ⟨fun h ↦ by_contra fun hne ↦ ?_, fun h ↦ h ▸ κ.rankSet_empty⟩
   obtain ⟨w, -, e⟩ := κ.exists_rank_eq_rankSet (Set.nonempty_iff_ne_empty.2 hne)
   exact ENat.natCast_ne_top _ (e.trans h)
 
@@ -116,8 +127,8 @@ theorem toNat_rankSet_le (hw : w ∈ A) : (κ.rankSet A).toNat ≤ κ.rank w :=
 
 /-! ### Conditionalization -/
 
-/-- The A-part `κ(w | A) = κ(w) − κ(A)`: the ranking within `A` shifted so that its best world
-has rank `0`. -/
+/-- The A-part `κ(w | A) = κ(w) − κ(A)` of a ranking is the ranking within `A`, shifted so that
+its best world has rank `0`. -/
 noncomputable def aPart (A : Set W) (w : W) : ℕ := κ.rank w - (κ.rankSet A).toNat
 
 theorem exists_aPart_eq_zero (hA : A.Nonempty) : ∃ w ∈ A, κ.aPart A w = 0 := by
@@ -127,7 +138,7 @@ theorem exists_aPart_eq_zero (hA : A.Nonempty) : ∃ w ∈ A, κ.aPart A w = 0 :
 theorem aPart_le (A : Set W) (w : W) : κ.aPart A w ≤ κ.rank w := Nat.sub_le _ _
 
 open Classical in
-/-- A,α-conditionalization: the A-part of `κ` on `A` and the Aᶜ-part lifted by the firmness
+/-- The A,α-conditionalization of `κ` is its A-part on `A` and its Aᶜ-part lifted by the firmness
 `α` on `Aᶜ`, so that `A` comes to be believed with firmness `α`. -/
 noncomputable def conditionα (A : Set W) (hA : A.Nonempty) (α : ℕ) : RankingFunction W where
   rank w := if w ∈ A then κ.aPart A w else α + κ.aPart Aᶜ w
@@ -153,73 +164,106 @@ theorem rankSet_conditionα_compl (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) (α : 
   obtain ⟨w, hw, h0⟩ := κ.exists_aPart_eq_zero hA'
   refine le_antisymm (((κ.conditionα A hA α).rankSet_le hw).trans ?_) ?_
   · rw [conditionα_of_notMem _ _ _ hw, h0, add_zero]
-  · exact (le_rankSet_iff _).2 λ v hv => by
+  · exact (le_rankSet_iff _).2 fun v hv ↦ by
       rw [conditionα_of_notMem _ _ _ hv]
       exact_mod_cast Nat.le_add_right _ _
 
-/-- Revision: conditionalization at the firmness `κ(Aᶜ) + 1`, just enough to make `A`
-believed; on a contingent proposition it is the operator `BeliefRevision.spohn` of
-[darwiche-pearl-1997] (`RankingFunction.revise_rank`). -/
+/-- Revision by `A` is conditionalization at the firmness `κ(Aᶜ) + 1`, just enough to make `A`
+believed. -/
 noncomputable def revise (A : Set W) (hA : A.Nonempty) : RankingFunction W :=
   κ.conditionα A hA ((κ.rankSet Aᶜ).toNat + 1)
 
-/-- The belief set: the propositions true at every world of rank `0`. -/
+/-- The belief set of a ranking function consists of the propositions true at every world of
+rank `0`. -/
 def beliefSet : Set (Set W) := {A | ∀ w, κ.rank w = 0 → w ∈ A}
 
 theorem mem_beliefSet : A ∈ κ.beliefSet ↔ ∀ w, κ.rank w = 0 → w ∈ A := Iff.rfl
 
 /-- The revised ranking believes the evidence, the AGM success postulate. -/
-theorem revise_success (hA : A.Nonempty) : A ∈ (κ.revise A hA).beliefSet := λ w hw => by
+theorem revise_success (hA : A.Nonempty) : A ∈ (κ.revise A hA).beliefSet := fun w hw ↦ by
   by_contra hnot
   rw [revise, conditionα_of_notMem _ _ _ hnot] at hw
   omega
 
 open Classical in
-/-- L-conditioning ([goldszmidt-pearl-1996]): lift the worlds outside `A` by `l`, at a ranking
-holding `A` possible. Unlike `conditionα`, it commutes. -/
+/-- L-conditioning lifts the worlds outside `A` by `l`, at a ranking holding `A` possible. -/
 noncomputable def lCondition (A : Set W) (h0 : ∃ w ∈ A, κ.rank w = 0) (l : ℕ) :
     RankingFunction W where
   rank w := if w ∈ A then κ.rank w else κ.rank w + l
   normalized := let ⟨w, hw, hr⟩ := h0; ⟨w, by simp [hw, hr]⟩
 
-/-! ### The induced plausibility order -/
+/-! ### The induced consequence relation -/
 
-/-- The plausibility order of a ranking function: `w` is at least as plausible as `v` when its
-rank is at most that of `v`. Smoothness holds because `ℕ` is well-ordered. -/
-def toPlausibilityOrder : PlausibilityOrder W where
-  toPreorder := Preorder.lift κ.rank
-  smooth := λ φ w hφw => by
-    classical
-    show ∃ v, φ v ∧ κ.rank v ≤ κ.rank w ∧
-      ∀ u, φ u → κ.rank u ≤ κ.rank v → κ.rank v ≤ κ.rank u
-    have hex : ∃ n, ∃ v, φ v ∧ κ.rank v ≤ κ.rank w ∧ κ.rank v = n := ⟨_, w, hφw, le_rfl, rfl⟩
-    obtain ⟨v, hφv, hvw, hvrank⟩ := Nat.find_spec hex
-    refine ⟨v, hφv, hvw, λ u hφu huv => ?_⟩
-    by_contra h
-    push Not at h
-    exact Nat.find_min hex (hvrank ▸ h) ⟨u, hφu, huv.trans hvw, rfl⟩
+/-- In the normality order of a ranking function, `w` is at least as normal as `v` when its rank
+is at most that of `v`. -/
+@[reducible] def toPreorder : Preorder W := Preorder.lift κ.rank
 
-/-- The preferential consequence relation of a ranking function. -/
-def toPreferential : PreferentialConsequence W := κ.toPlausibilityOrder.toPreferential
+theorem toPreorder_le {v : W} : κ.toPreorder.le w v ↔ κ.rank w ≤ κ.rank v := Iff.rfl
 
-/-- The plausibility order of a ranking function is connected: any two worlds are comparable,
-because `ℕ` is linearly ordered. -/
-theorem ranking_connected : Core.Order.Normality.connected κ.toPlausibilityOrder.toPreorder :=
-  λ w v => le_total (κ.rank w) (κ.rank v)
+theorem wellFounded_toPreorder_lt : WellFounded κ.toPreorder.lt := InvImage.wf κ.rank wellFounded_lt
 
-/-- Ranking functions satisfy rational monotonicity: the connected order makes every minimal
-`φ ∧ ψ`-world minimal among the `φ`-worlds once some minimal `φ`-world satisfies `ψ`. -/
-theorem ranking_rationalMonotonicity : rationalMonotonicity κ.toPreferential := by
-  intro φ ψ χ hφχ hnotφψ w ⟨⟨hφw, hψw⟩, hmin⟩
-  refine hφχ w ⟨hφw, λ v hφv hvw => ?_⟩
-  obtain ⟨u, hu⟩ := Classical.not_forall.mp hnotφψ
-  obtain ⟨⟨hφu, hminu⟩, hψu⟩ := Classical.not_imp.mp hu
-  have hψu : ψ u := Classical.not_not.mp hψu
-  have hvw' : κ.rank v ≤ κ.rank w := hvw
-  have huv : κ.rank u ≤ κ.rank v := by
-    by_contra h
-    exact h (hminu v hφv (Nat.le_of_lt (not_le.mp h)))
-  have hwu : κ.rank w ≤ κ.rank u := hmin u ⟨hφu, hψu⟩ (huv.trans hvw')
-  exact hwu.trans huv
+theorem connected_toPreorder : connected κ.toPreorder := fun w v ↦ le_total (κ.rank w) (κ.rank v)
+
+/-- The optimal worlds of a proposition are its worlds of least rank. -/
+theorem mem_optimal_toPreorder :
+    w ∈ optimal κ.toPreorder A ↔ w ∈ A ∧ ∀ v ∈ A, κ.rank w ≤ κ.rank v :=
+  ⟨fun h ↦ ⟨h.1, fun v hv ↦ (le_total (κ.rank w) (κ.rank v)).elim id (h.2 hv)⟩,
+    fun h ↦ ⟨h.1, fun v hv _ ↦ h.2 v hv⟩⟩
+
+/-- `B` follows from `A` in `κ` when the `A`-worlds of least rank are `B`-worlds. This is the
+consequence relation of the ranked model `κ.toPreorder`. -/
+def Entails (A B : Set W) : Prop := Nonmonotonic.Entails κ.toPreorder A B
+
+theorem entails_iff_forall_least :
+    κ.Entails A B ↔ ∀ w ∈ A, (∀ v ∈ A, κ.rank w ≤ κ.rank v) → w ∈ B :=
+  ⟨fun h _ hw hmin ↦ h (κ.mem_optimal_toPreorder.2 ⟨hw, hmin⟩),
+    fun h w hw ↦ have := κ.mem_optimal_toPreorder.1 hw; h w this.1 this.2⟩
+
+/-- `B` follows from `A` exactly when every `A`-world outside `B` is outranked by an `A`-world
+in `B`. -/
+theorem entails_iff_exists_lt :
+    κ.Entails A B ↔ ∀ x ∈ A, x ∉ B → ∃ y ∈ A, y ∈ B ∧ κ.rank y < κ.rank x := by
+  refine ⟨fun h x hx hxB ↦ ?_, fun h w hw ↦ by_contra fun hwB ↦ ?_⟩
+  · obtain ⟨y, hy, hyx⟩ := exists_le_mem_optimal κ.wellFounded_toPreorder_lt hx
+    refine ⟨y, hy.1, h hy, lt_of_le_of_ne hyx fun e ↦ hxB (h ?_)⟩
+    exact κ.mem_optimal_toPreorder.2
+      ⟨hx, fun v hv ↦ e ▸ (κ.mem_optimal_toPreorder.1 hy).2 v hv⟩
+  · obtain ⟨y, hy, -, hlt⟩ := h w hw.1 hwB
+    exact absurd ((κ.mem_optimal_toPreorder.1 hw).2 y hy) (not_le.2 hlt)
+
+/-- `B` follows from `A` exactly when `A ∩ B` is less disbelieved than `A \ B`, or nothing in `A`
+falsifies `B`. -/
+theorem entails_iff_rankSet : κ.Entails A B ↔ A ⊆ B ∨ κ.rankSet (A ∩ B) < κ.rankSet (A \ B) := by
+  rw [entails_iff_exists_lt]
+  constructor
+  · intro h
+    rcases (A \ B).eq_empty_or_nonempty with he | hne
+    · exact Or.inl (Set.sdiff_eq_empty.1 he)
+    · obtain ⟨x, hx, e⟩ := κ.exists_rank_eq_rankSet hne
+      obtain ⟨y, hyA, hyB, hlt⟩ := h x hx.1 hx.2
+      refine Or.inr ((κ.rankSet_le (A := A ∩ B) ⟨hyA, hyB⟩).trans_lt ?_)
+      rw [← e]
+      exact_mod_cast hlt
+  · rintro (hAB | hlt) x hx hxB
+    · exact absurd (hAB hx) hxB
+    · have hne : (A ∩ B).Nonempty := Set.nonempty_iff_ne_empty.2 fun he ↦ by simp [he] at hlt
+      obtain ⟨y, hy, e⟩ := κ.exists_rank_eq_rankSet hne
+      have hxr := κ.rankSet_le (A := A \ B) ⟨hx, hxB⟩
+      exact ⟨y, hy.1, hy.2, by exact_mod_cast e ▸ hlt.trans_le hxr⟩
+
+instance [Fintype W] [DecidablePred (· ∈ A)] [DecidablePred (· ∈ B)] :
+    Decidable (κ.Entails A B) :=
+  decidable_of_iff _ κ.entails_iff_exists_lt.symm
+
+/-- The consequence relation of a ranking function is rational. -/
+theorem isRational_entails : Nonmonotonic.IsRational κ.Entails :=
+  Nonmonotonic.isRational_entails κ.wellFounded_toPreorder_lt κ.connected_toPreorder
+
+/-- The beliefs are the consequences of the tautology. -/
+theorem mem_beliefSet_iff_entails_univ : A ∈ κ.beliefSet ↔ κ.Entails Set.univ A := by
+  rw [entails_iff_forall_least]
+  refine ⟨fun h w _ hmin ↦ h w ?_, fun h w hw ↦ h w trivial fun v _ ↦ hw ▸ Nat.zero_le _⟩
+  obtain ⟨w₀, hw₀⟩ := κ.normalized
+  exact Nat.le_zero.1 (hw₀ ▸ hmin w₀ trivial)
 
 end RankingFunction

@@ -5119,7 +5119,7 @@
   role      = {cited},
   doi       = {10.2307/2274239},
   validated = {true},
-  sources   = {Core/Logic/BeliefRevision.lean}
+  sources   = {Logic/BeliefRevision/Iterated.lean}
 }% REF: Klein & Sag (1985). Type-Driven Translation.
 @book{van-gelderen-2013,
   author    = {van Gelderen, Elly},
@@ -5396,7 +5396,7 @@
   subfield  = {logic},
   role      = {formalized},
   validated = {true},
-  sources   = {Logic/BeliefRevision.lean;Logic/RankingFunction.lean;Studies/DarwichePearl1997.lean;Studies/GoldszmidtPearl1996.lean;Studies/Spohn1988.lean}
+  sources   = {Logic/BeliefRevision/Iterated.lean;Logic/RankingFunction.lean;Studies/DarwichePearl1997.lean;Studies/GoldszmidtPearl1996.lean;Studies/Spohn1988.lean}
 }% REF: Barwise (1989). The Situation in Logic.
 @book{barwise-1989,
   author    = {Barwise, Jon},
@@ -5463,7 +5463,21 @@
   subfield  = {semantics/compositional},
   role      = {cited},
   validated = {true},
-  sources   = {Core/Logic/BeliefRevision.lean}
+  sources   = {Core/Order/Normality.lean;Logic/Nonmonotonic/Preferential.lean}
+}
+@article{lehmann-magidor-1992,
+  author    = {Lehmann, Daniel and Magidor, Menachem},
+  year      = {1992},
+  title     = {What Does a Conditional Knowledge Base Entail?},
+  journal   = {Artificial Intelligence},
+  volume    = {55},
+  number    = {1},
+  pages     = {1--60},
+  doi       = {10.1016/0004-3702(92)90041-U},
+  subfield  = {logic},
+  role      = {cited},
+  validated = {true},
+  sources   = {Logic/Nonmonotonic/Preferential.lean;Logic/RankingFunction.lean}
 }% REF: Corbett, G. G. (1991). *Gender*. Cambridge University Press.
 @article{wechsler-zlatic-2000,
   author    = {Wechsler, Stephen and Zlati\'{c}, Larisa},
@@ -8914,7 +8928,7 @@
   subfield  = {semantics/modality},
   validated = {true},
   role      = {formalized},
-  sources   = {Core/Order/Normality.lean;Core/Order/OfCriteria.lean;Fragments/English/Adverbs.lean;Fragments/English/Auxiliaries.lean;Logic/BeliefRevision.lean;Logic/Duality.lean;Logic/Modal/Basic.lean;Semantics/Attitudes/Desire/BestWorlds.lean;Semantics/Attitudes/Preference.lean;Semantics/Dynamic/UpdateSemantics/Necessity.lean;Semantics/Modality/Basic.lean;Semantics/Modality/Directive.lean;Semantics/Modality/EventRelativity.lean;Semantics/Modality/Kratzer/ConversationalBackground.lean;Semantics/Modality/Kratzer/Flavor.lean;Semantics/Modality/Kratzer/Operators.lean;Semantics/Modality/Kratzer/Ordering.lean;Semantics/Modality/Universals.lean;Semantics/Mood/SpeechEvent.lean;Semantics/Mood/State.lean;Studies/AghaJeretic2022.lean;Studies/BonehDoron2013.lean;Studies/Cariani2013.lean;Studies/Chierchia1984.lean;Studies/CiardelliZhangChampollion2018.lean;Studies/Condoravdi2002.lean;Studies/CondoravdiLauer2016.lean;Studies/Cooper2023.lean;Studies/Ferreira2023.lean;Studies/Huijsmans2025.lean;Studies/Kratzer1981.lean;Studies/Kratzer2012.lean;Studies/PhillipsBrown2025.lean;Studies/QingEtAl2025.lean;Studies/Roberts2023.lean;Studies/Rubinstein2014.lean;Studies/Rudin2025a.lean;Studies/Tsiakmakis2025.lean}
+  sources   = {Core/Order/Normality.lean;Core/Order/OfCriteria.lean;Fragments/English/Adverbs.lean;Fragments/English/Auxiliaries.lean;Logic/Duality.lean;Logic/Modal/Basic.lean;Semantics/Attitudes/Desire/BestWorlds.lean;Semantics/Attitudes/Preference.lean;Semantics/Dynamic/UpdateSemantics/Necessity.lean;Semantics/Modality/Basic.lean;Semantics/Modality/Directive.lean;Semantics/Modality/EventRelativity.lean;Semantics/Modality/Kratzer/ConversationalBackground.lean;Semantics/Modality/Kratzer/Flavor.lean;Semantics/Modality/Kratzer/Operators.lean;Semantics/Modality/Kratzer/Ordering.lean;Semantics/Modality/Universals.lean;Semantics/Mood/SpeechEvent.lean;Semantics/Mood/State.lean;Studies/AghaJeretic2022.lean;Studies/BonehDoron2013.lean;Studies/Cariani2013.lean;Studies/Chierchia1984.lean;Studies/CiardelliZhangChampollion2018.lean;Studies/Condoravdi2002.lean;Studies/CondoravdiLauer2016.lean;Studies/Cooper2023.lean;Studies/Ferreira2023.lean;Studies/Huijsmans2025.lean;Studies/Kratzer1981.lean;Studies/Kratzer2012.lean;Studies/PhillipsBrown2025.lean;Studies/QingEtAl2025.lean;Studies/Roberts2023.lean;Studies/Rubinstein2014.lean;Studies/Rudin2025a.lean;Studies/Tsiakmakis2025.lean}
 }
 @book{kratzer-2012,
   author    = {Kratzer, Angelika},
@@ -8926,7 +8940,7 @@
   subfield  = {semantics/modality},
   validated = {true},
   role      = {foundational},
-  sources   = {Fragments/Gitksan/Modals.lean;Logic/BeliefRevision.lean;Semantics/Conditionals/Counterfactual/Lumping.lean;Semantics/Conditionals/PremiseSemantic.lean;Semantics/Conditionals/Restrictor.lean;Semantics/Modality/Directive.lean;Semantics/Modality/Kratzer/ConversationalBackground.lean;Semantics/Modality/Kratzer/Flavor.lean;Semantics/Modality/Kratzer/Operators.lean;Semantics/Modality/Kratzer/Ordering.lean;Semantics/Modality/Kratzer/Premise.lean;Semantics/Modality/Basic.lean;Semantics/Modality/ProbabilityOrdering.lean;Studies/Ferreira2023.lean;Studies/HollidayIcard2013.lean;Studies/Kratzer1977.lean;Studies/Kratzer1981.lean;Studies/Kratzer2012Informational.lean;Studies/Kratzer2012Lumping.lean;Studies/Matthewson2016.lean;Studies/RamotowskaEtAl2025.lean;Studies/RudolphKocurek2024.lean}
+  sources   = {Fragments/Gitksan/Modals.lean;Semantics/Conditionals/Counterfactual/Lumping.lean;Semantics/Conditionals/PremiseSemantic.lean;Semantics/Conditionals/Restrictor.lean;Semantics/Modality/Directive.lean;Semantics/Modality/Kratzer/ConversationalBackground.lean;Semantics/Modality/Kratzer/Flavor.lean;Semantics/Modality/Kratzer/Operators.lean;Semantics/Modality/Kratzer/Ordering.lean;Semantics/Modality/Kratzer/Premise.lean;Semantics/Modality/Basic.lean;Semantics/Modality/ProbabilityOrdering.lean;Studies/Ferreira2023.lean;Studies/HollidayIcard2013.lean;Studies/Kratzer1977.lean;Studies/Kratzer1981.lean;Studies/Kratzer2012Informational.lean;Studies/Kratzer2012Lumping.lean;Studies/Matthewson2016.lean;Studies/RamotowskaEtAl2025.lean;Studies/RudolphKocurek2024.lean}
 }
 @incollection{kratzer-2013,
   author    = {Kratzer, Angelika},
@@ -9215,7 +9229,7 @@
   doi       = {10.7551/mitpress/10951.001.0001},
   validated = {true},
   role      = {formalized},
-  sources   = {Core/Order/Plausibility.lean;Core/Order/Probability/Conditional.lean;Logic/BeliefRevision.lean;Logic/ComparativeProbability/Entailments.lean;Logic/ComparativeProbability/WorldOrdering.lean;Logic/Modal/Epistemic.lean;Logic/RankingFunction.lean;Studies/HollidayIcard2013.lean;Studies/RudolphKocurek2024.lean}
+  sources   = {Core/Order/Probability/Conditional.lean;Logic/ComparativeProbability/Entailments.lean;Logic/ComparativeProbability/WorldOrdering.lean;Logic/Modal/Epistemic.lean;Studies/HollidayIcard2013.lean;Studies/RudolphKocurek2024.lean}
 }
 @article{holliday-icard-2013,
   author    = {Holliday, Wesley H. and Icard, III, Thomas F.},

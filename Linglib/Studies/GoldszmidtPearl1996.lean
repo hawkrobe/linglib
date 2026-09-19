@@ -6,18 +6,20 @@ import Linglib.Logic.RankingFunction
 /-!
 # Goldszmidt and Pearl (1996): Qualitative Probabilities for Default Reasoning, Belief Revision, and Causal Modeling
 
-This file formalizes the default-reasoning core of [goldszmidt-pearl-1996]: system Z and its
-variable-strength extension system Z⁺. A ranking function ([spohn-1988]'s ordinal conditional
-function, read as the order of magnitude of an infinitesimal probability) is admissible for a
-knowledge base of rules φ → ψ when every world falsifying a rule is outranked by one verifying
-it. A rule is tolerated by the base when some world verifies it together with the material
-counterparts of all the rules; the Consistency-Test peels off the tolerated rules stratum by
-stratum, a stratum's index is the Z-priority of its rules, and the ranking κᶻ gives a world one
-more than the highest priority it falsifies. Two consequence relations are compared on the paper's
-Example 17: the cautious p-entailment, which holds in every admissible ranking, and z-entailment,
-which holds in κᶻ. Table 2's verdicts are theorems: z-entailment sanctions rule chaining and the
-discounting of an irrelevant feature where p-entailment is undecided (`z_birds_airborne`,
-`p_birds_airborne_undecided`), and neither inherits wings to the exceptional penguins.
+This file formalizes the default-reasoning core of Goldszmidt and Pearl's paper, system Z and its
+variable-strength extension system Z⁺. A ranking function (Spohn's ordinal conditional function,
+read as the order of magnitude of an infinitesimal probability) is admissible for a knowledge base
+of rules φ → ψ when every world falsifying a rule is outranked by one verifying it. A rule is
+tolerated by the base when some world verifies it together with the material counterparts of all the
+rules; the Consistency-Test peels off the tolerated rules stratum by stratum, a stratum's index is
+the Z-priority of its rules, and the ranking κᶻ gives a world one more than the highest priority it
+falsifies. Two consequence relations are compared on the paper's Example 17: the cautious
+p-entailment, which holds in every admissible ranking, and z-entailment, which holds in κᶻ.
+Entailment in a ranking is the rational consequence relation `RankingFunction.Entails`, and a
+ranking is admissible exactly when it entails every rule. Table 2's verdicts are theorems:
+z-entailment sanctions rule chaining and the discounting of an irrelevant feature where p-entailment
+is undecided (`z_birds_airborne`, `p_birds_airborne_undecided`), and neither inherits wings to the
+exceptional penguins.
 
 System Z⁺ attaches a strength δ to each rule and asks a verifying world to lie δ + 1 ranks below
 every falsifying one. The coupled equations of the ranking κ⁺ and the priorities Z⁺ are satisfied
@@ -35,9 +37,12 @@ revision, and causal networks are not formalized; Spohn's conditioning lives in 
 
 ## References
 
-* [goldszmidt-pearl-1996]
-* [spohn-1988]
-* [adams-1975]
+* [M. Goldszmidt and J. Pearl, *Qualitative Probabilities for Default Reasoning, Belief
+  Revision, and Causal Modeling* (1996)][goldszmidt-pearl-1996]
+* [W. Spohn, *Ordinal Conditional Functions: A Dynamic Theory of Epistemic States*
+  (1988)][spohn-1988]
+* [E. W. Adams, *The Logic of Conditionals: An Application of Probability to Deductive Logic*
+  (1975)][adams-1975]
 -/
 
 namespace GoldszmidtPearl1996
@@ -68,11 +73,11 @@ instance : Decidable (r.Falsified x) := by unfold Falsified; infer_instance
 
 end Rule
 
-/-- A knowledge base: a list of rules. -/
+/-- A knowledge base is a list of rules. -/
 abbrev KnowledgeBase (W : Type*) := List (Rule W)
 
-/-- Definition 2: a ranking is admissible for the base when every world falsifying a rule is
-outranked by a world verifying it, so that κ(φ ∧ ψ) < κ(φ ∧ ¬ψ). -/
+/-- A ranking is admissible for the base when every world falsifying a rule is outranked by a
+world verifying it, so that κ(φ ∧ ψ) < κ(φ ∧ ¬ψ) (Definition 2). -/
 def Admissible (κ : RankingFunction W) (Δ : KnowledgeBase W) : Prop :=
   ∀ r ∈ Δ, ∀ x, r.Falsified x → ∃ y, r.ante y ∧ r.cons y ∧ κ.rank y < κ.rank x
 
@@ -82,25 +87,25 @@ instance [Fintype W] (κ : RankingFunction W) (Δ : KnowledgeBase W) :
 
 theorem Admissible.mono {κ : RankingFunction W} {Δ Δ' : KnowledgeBase W} (h : Δ ⊆ Δ')
     (hκ : Admissible κ Δ') : Admissible κ Δ :=
-  λ r hr => hκ r (h hr)
+  fun r hr ↦ hκ r (h hr)
 
-/-- Definition 3: a rule is tolerated by the base when some world verifies it together with the
-material counterparts of every rule of the base. -/
+/-- A rule is tolerated by the base when some world verifies it together with the material
+counterparts of every rule of the base (Definition 3). -/
 def Tolerated (r : Rule W) (Δ : KnowledgeBase W) : Prop :=
   ∃ x, r.ante x ∧ r.cons x ∧ ∀ r' ∈ Δ, r'.Verified x
 
 instance [Fintype W] (r : Rule W) (Δ : KnowledgeBase W) : Decidable (Tolerated r Δ) := by
   unfold Tolerated; infer_instance
 
-/-- The Consistency-Test (Fig. 2): peel off the rules tolerated by what remains, stratum by
-stratum; a stratum's index is the Z-priority of its rules. Each stratum of a consistent base
+/-- The Consistency-Test (Fig. 2) peels off the rules tolerated by what remains, stratum by
+stratum, and a stratum's index is the Z-priority of its rules. Each stratum of a consistent base
 removes a rule, so the number of rules bounds the iteration; rules that are never tolerated stay
 in the last stratum. -/
 def zPrioritiesAux [Fintype W] : ℕ → KnowledgeBase W → ℕ → List (Rule W × ℕ)
   | _, [], _ => []
   | 0, Δ, level => Δ.map (·, level)
   | fuel + 1, Δ, level =>
-    let (tol, rest) := Δ.partition λ r => decide (Tolerated r Δ)
+    let (tol, rest) := Δ.partition fun r ↦ decide (Tolerated r Δ)
     if tol.isEmpty then Δ.map (·, level)
     else tol.map (·, level) ++ zPrioritiesAux fuel rest (level + 1)
 
@@ -108,51 +113,38 @@ def zPrioritiesAux [Fintype W] : ℕ → KnowledgeBase W → ℕ → List (Rule 
 def zPriorities [Fintype W] (Δ : KnowledgeBase W) : List (Rule W × ℕ) :=
   zPrioritiesAux Δ.length Δ 0
 
-/-- Definition 12 (and Eq. 15): the rank of a world is one more than the highest priority among
-the rules it falsifies, zero when it falsifies none. -/
+/-- The rank of a world is one more than the highest priority among the rules it falsifies, and
+zero when it falsifies none (Definition 12 and Eq. 15). -/
 def zRank (rules : List (Rule W × ℕ)) (x : W) : ℕ :=
-  ((rules.filter λ p => decide (p.1.Falsified x)).map (·.2 + 1)).foldr max 0
+  ((rules.filter fun p ↦ decide (p.1.Falsified x)).map (·.2 + 1)).foldr max 0
 
 /-- The ranking a prioritized base induces, given a world falsifying no rule. -/
 def zRanking (rules : List (Rule W × ℕ)) (h : ∃ x, zRank rules x = 0) : RankingFunction W :=
   ⟨zRank rules, h⟩
 
-/-- Definition 7: σ follows from φ in κ when every φ ∧ ¬σ world is outranked by a φ ∧ σ world,
-that is when κ(φ ∧ σ) < κ(φ ∧ ¬σ). -/
-def Entails (κ : RankingFunction W) (φ σ : W → Prop) : Prop :=
-  ∀ x, φ x → ¬ σ x → ∃ y, φ y ∧ σ y ∧ κ.rank y < κ.rank x
+/-- A ranking is admissible exactly when each rule's consequent follows from its antecedent in
+the ranking's consequence relation `RankingFunction.Entails`, the paper's Definition 7; by
+`RankingFunction.entails_iff_forall_least` a consequent follows when it holds in every most
+normal world of the antecedent (Principle (3)). -/
+theorem admissible_iff_forall_entails {κ : RankingFunction W} {Δ : KnowledgeBase W} :
+    Admissible κ Δ ↔ ∀ r ∈ Δ, κ.Entails {x | r.ante x} {x | r.cons x} := by
+  simp only [Admissible, RankingFunction.entails_iff_exists_lt, Rule.Falsified, Set.mem_ofPred_eq,
+    and_imp]
 
-instance [Fintype W] (κ : RankingFunction W) (φ σ : W → Prop) [DecidablePred φ]
-    [DecidablePred σ] : Decidable (Entails κ φ σ) := by
-  unfold Entails; infer_instance
-
-/-- Principle (3): σ follows from φ exactly when it holds in every most normal φ-world. -/
-theorem entails_iff_forall_min [Fintype W] (κ : RankingFunction W) (φ σ : W → Prop)
-    [DecidablePred φ] :
-    Entails κ φ σ ↔ ∀ x, φ x → (∀ y, φ y → κ.rank x ≤ κ.rank y) → σ x := by
-  constructor
-  · intro h x hx hmin
-    by_contra hσ
-    obtain ⟨y, hy, -, hlt⟩ := h x hx hσ
-    exact absurd (hmin y hy) (not_le.mpr hlt)
-  · intro h x hx hσ
-    obtain ⟨m, hm, hmin⟩ := (Finset.univ.filter φ).exists_min_image κ.rank ⟨x, by simpa using hx⟩
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hm hmin
-    refine ⟨m, hm, h m hm hmin, lt_of_le_of_ne (hmin x hx) λ heq => hσ (h x hx λ y hy => ?_)⟩
-    exact heq ▸ hmin y hy
-
-/-- Definition 8: p-entailment holds in every admissible ranking. -/
-def PEntails (Δ : KnowledgeBase W) (φ σ : W → Prop) : Prop :=
-  ∀ κ : RankingFunction W, Admissible κ Δ → Entails κ φ σ
+/-- A proposition p-entails another when it entails it in every admissible ranking
+(Definition 8). -/
+def PEntails (Δ : KnowledgeBase W) (φ σ : Set W) : Prop :=
+  ∀ κ : RankingFunction W, Admissible κ Δ → κ.Entails φ σ
 
 /-- A rule is p-entailed by its own antecedent. -/
-theorem pEntails_of_mem {Δ : KnowledgeBase W} {r : Rule W} (h : r ∈ Δ) : PEntails Δ r.ante r.cons :=
-  λ _ hκ x hx hσ => hκ r h x ⟨hx, hσ⟩
+theorem pEntails_of_mem {Δ : KnowledgeBase W} {r : Rule W} (h : r ∈ Δ) :
+    PEntails Δ {x | r.ante x} {x | r.cons x} :=
+  fun _ hκ ↦ admissible_iff_forall_entails.1 hκ r h
 
 /-- An admissible ranking in which σ does not follow from φ refutes p-entailment. -/
 theorem not_pEntails {Δ : KnowledgeBase W} {κ : RankingFunction W} (hκ : Admissible κ Δ)
-    {φ σ : W → Prop} (h : ¬ Entails κ φ σ) : ¬ PEntails Δ φ σ :=
-  λ hp => h (hp κ hκ)
+    {φ σ : Set W} (h : ¬ κ.Entails φ σ) : ¬ PEntails Δ φ σ :=
+  fun hp ↦ h (hp κ hκ)
 
 /-! ### System Z⁺ (section 3) -/
 
@@ -163,15 +155,16 @@ structure StrengthRule (W : Type*) extends Rule W where
 /-- A base of variable-strength rules. -/
 abbrev StrengthBase (W : Type*) := List (StrengthRule W)
 
-/-- The flat base: the rules without their strengths. -/
+/-- The flat base of a strength base consists of its rules without their strengths. -/
 def StrengthBase.flat (Δ : StrengthBase W) : KnowledgeBase W := Δ.map (·.toRule)
 
-/-- Definition 18: every falsifying world lies at least δ + 1 ranks above a verifying one. -/
+/-- A ranking is δ-admissible when every world falsifying a rule lies at least δ + 1 ranks above
+a world verifying it (Definition 18). -/
 def StrengthAdmissible (κ : RankingFunction W) (Δ : StrengthBase W) : Prop :=
   ∀ r ∈ Δ, ∀ x, r.Falsified x → ∃ y, r.ante y ∧ r.cons y ∧ κ.rank y + r.strength < κ.rank x
 
 private theorem strength_le_foldr_max (Δ : StrengthBase W) {r : StrengthRule W} (hr : r ∈ Δ) :
-    r.strength ≤ Δ.foldr (λ r n => max r.strength n) 0 := by
+    r.strength ≤ Δ.foldr (fun r n ↦ max r.strength n) 0 := by
   induction Δ with
   | nil => contradiction
   | cons hd tl ih =>
@@ -180,20 +173,21 @@ private theorem strength_le_foldr_max (Δ : StrengthBase W) {r : StrengthRule W}
     · exact le_max_left _ _
     · exact le_trans (ih htl) (le_max_right _ _)
 
-/-- Theorem 19: a strength base admits a δ-admissible ranking exactly when its flat base admits
-an admissible one; scaling a ranking by one more than the largest strength widens every gap. -/
+/-- A strength base admits a δ-admissible ranking exactly when its flat base admits an admissible
+one, since scaling a ranking by one more than the largest strength widens every gap
+(Theorem 19). -/
 theorem strengthAdmissible_iff_flat [Fintype W] (Δ : StrengthBase W) :
     (∃ κ : RankingFunction W, StrengthAdmissible κ Δ) ↔
       ∃ κ : RankingFunction W, Admissible κ Δ.flat := by
   constructor
   · rintro ⟨κ, hκ⟩
-    refine ⟨κ, λ r hr x hx => ?_⟩
+    refine ⟨κ, fun r hr x hx ↦ ?_⟩
     obtain ⟨sr, hsr, rfl⟩ := List.mem_map.mp hr
     obtain ⟨y, hya, hyc, hlt⟩ := hκ sr hsr x hx
     exact ⟨y, hya, hyc, by omega⟩
   · rintro ⟨κ, hκ⟩
-    set M := 1 + Δ.foldr (λ r n => max r.strength n) 0 with hM
-    refine ⟨⟨λ x => κ.rank x * M, ?_⟩, λ r hr x hx => ?_⟩
+    set M := 1 + Δ.foldr (fun r n ↦ max r.strength n) 0 with hM
+    refine ⟨⟨fun x ↦ κ.rank x * M, ?_⟩, fun r hr x hx ↦ ?_⟩
     · obtain ⟨x, hx⟩ := κ.normalized
       exact ⟨x, by simp [hx]⟩
     · obtain ⟨y, hya, hyc, hlt⟩ := hκ r.toRule (List.mem_map.mpr ⟨r, hr, rfl⟩) x hx
@@ -205,17 +199,17 @@ theorem strengthAdmissible_iff_flat [Fintype W] (Δ : StrengthBase W) :
 
 /-- The rank a prioritized strength base induces (Eq. 15). -/
 def zPlusRank (Δ : List (StrengthRule W × ℕ)) : W → ℕ :=
-  zRank (Δ.map λ p => (p.1.toRule, p.2))
+  zRank (Δ.map fun p ↦ (p.1.toRule, p.2))
 
-/-- Definition 20 (Eq. 16): priorities form a Z⁺-ordering when each rule's priority is its
-strength plus the least rank, under the ranking the priorities induce, of a world verifying it. -/
+/-- Priorities form a Z⁺-ordering when each rule's priority is its strength plus the least rank,
+under the ranking the priorities induce, of a world verifying it (Definition 20 and Eq. 16). -/
 def IsZPlusOrdering [Fintype W] (Δ : List (StrengthRule W × ℕ)) : Prop :=
   ∀ p ∈ Δ, IsLeast {n | ∃ x, p.1.ante x ∧ p.1.cons x ∧ n = zPlusRank Δ x + p.1.strength} p.2
 
 /-! ### Example 17: the penguin base -/
 
-/-- A world of Example 17: a truth assignment to bird, penguin, flies, winged, airborne, and the
-irrelevant feature red. -/
+/-- A world of Example 17 is a truth assignment to bird, penguin, flies, winged, airborne, and
+the irrelevant feature red. -/
 structure World where
   b : Bool
   p : Bool
@@ -241,22 +235,22 @@ def winged (x : World) : Prop := x.w = true
 def airborne (x : World) : Prop := x.a = true
 def red (x : World) : Prop := x.r = true
 
-instance : DecidablePred bird := λ x => by unfold bird; infer_instance
-instance : DecidablePred penguin := λ x => by unfold penguin; infer_instance
-instance : DecidablePred flies := λ x => by unfold flies; infer_instance
-instance : DecidablePred winged := λ x => by unfold winged; infer_instance
-instance : DecidablePred airborne := λ x => by unfold airborne; infer_instance
-instance : DecidablePred red := λ x => by unfold red; infer_instance
+instance : DecidablePred bird := fun x ↦ by unfold bird; infer_instance
+instance : DecidablePred penguin := fun x ↦ by unfold penguin; infer_instance
+instance : DecidablePred flies := fun x ↦ by unfold flies; infer_instance
+instance : DecidablePred winged := fun x ↦ by unfold winged; infer_instance
+instance : DecidablePred airborne := fun x ↦ by unfold airborne; infer_instance
+instance : DecidablePred red := fun x ↦ by unfold red; infer_instance
 
-/-- r₁: birds fly. -/
+/-- Rule r₁ says that birds fly. -/
 def r₁ : Rule World := ⟨bird, flies⟩
-/-- r₂: penguins are birds. -/
+/-- Rule r₂ says that penguins are birds. -/
 def r₂ : Rule World := ⟨penguin, bird⟩
-/-- r₃: penguins do not fly. -/
-def r₃ : Rule World := ⟨penguin, λ x => ¬ flies x⟩
-/-- r₄: birds have wings. -/
+/-- Rule r₃ says that penguins do not fly. -/
+def r₃ : Rule World := ⟨penguin, fun x ↦ ¬ flies x⟩
+/-- Rule r₄ says that birds have wings. -/
 def r₄ : Rule World := ⟨bird, winged⟩
-/-- r₅: animals that fly are airborne. -/
+/-- Rule r₅ says that animals that fly are airborne. -/
 def r₅ : Rule World := ⟨flies, airborne⟩
 
 /-- The base Δ_pb of Example 17. -/
@@ -280,16 +274,16 @@ theorem admissible_κz : Admissible κz Δpb := by decide
 /-! Table 2, with a query (φ, σ) answered YES when σ follows from φ, NO when ¬σ does, and
 undecided when neither. -/
 
-/-- "Do penguin-birds fly?": NO under z-entailment. -/
+/-- The query "Do penguin-birds fly?" is answered NO under z-entailment. -/
 theorem z_penguin_birds_dont_fly :
-    Entails κz (λ x => penguin x ∧ bird x) (λ x => ¬ flies x) := by decide
+    κz.Entails {x | penguin x ∧ bird x} {x | ¬ flies x} := by decide
 
-/-- "Do penguin-birds fly?": NO under p-entailment, by specificity in every admissible ranking:
-a most normal penguin-bird that flew would falsify r₃, and the world r₃ then places below it is
-a penguin-bird or, failing r₂, is outranked by one. -/
-theorem p_penguin_birds_dont_fly : PEntails Δpb (λ x => penguin x ∧ bird x) (λ x => ¬ flies x) := by
+/-- The query "Do penguin-birds fly?" is answered NO under p-entailment, by specificity in every
+admissible ranking. A most normal penguin-bird that flew would falsify r₃, and the world r₃ then
+places below it is a penguin-bird or, failing r₂, is outranked by one. -/
+theorem p_penguin_birds_dont_fly : PEntails Δpb {x | penguin x ∧ bird x} {x | ¬ flies x} := by
   intro κ hκ
-  rw [entails_iff_forall_min]
+  rw [RankingFunction.entails_iff_forall_least]
   rintro x ⟨hp, hb⟩ hmin hf
   obtain ⟨y, hyp, hyf, hlt⟩ := hκ r₃ (by simp [Δpb]) x ⟨hp, not_not.mpr hf⟩
   by_cases hyb : bird y
@@ -297,14 +291,14 @@ theorem p_penguin_birds_dont_fly : PEntails Δpb (λ x => penguin x ∧ bird x) 
   · obtain ⟨z, hzp, hzb, hlt'⟩ := hκ r₂ (by simp [Δpb]) y ⟨hyp, hyb⟩
     exact absurd (hmin z ⟨hzp, hzb⟩) (not_le.mpr (hlt'.trans hlt))
 
-/-- "Are birds typically penguins?": NO under z-entailment. -/
-theorem z_birds_not_penguins : Entails κz bird (λ x => ¬ penguin x) := by decide
+/-- The query "Are birds typically penguins?" is answered NO under z-entailment. -/
+theorem z_birds_not_penguins : κz.Entails {x | bird x} {x | ¬ penguin x} := by decide
 
-/-- "Are birds typically penguins?": NO under p-entailment: a most normal bird that was a penguin
-would falsify r₁ or r₃, and either rule places a bird below it. -/
-theorem p_birds_not_penguins : PEntails Δpb bird (λ x => ¬ penguin x) := by
+/-- The query "Are birds typically penguins?" is answered NO under p-entailment. A most normal
+bird that was a penguin would falsify r₁ or r₃, and either rule places a bird below it. -/
+theorem p_birds_not_penguins : PEntails Δpb {x | bird x} {x | ¬ penguin x} := by
   intro κ hκ
-  rw [entails_iff_forall_min]
+  rw [RankingFunction.entails_iff_forall_least]
   intro x hb hmin hp
   by_cases hf : flies x
   · obtain ⟨y, hyp, hyf, hlt⟩ := hκ r₃ (by simp [Δpb]) x ⟨hp, not_not.mpr hf⟩
@@ -315,39 +309,44 @@ theorem p_birds_not_penguins : PEntails Δpb bird (λ x => ¬ penguin x) := by
   · obtain ⟨y, hyb, -, hlt⟩ := hκ r₁ (by simp [Δpb]) x ⟨hb, hf⟩
     exact absurd (hmin y hyb) (not_le.mpr hlt)
 
-/-- "Do red birds fly?": YES under z-entailment, discounting the irrelevant feature. -/
-theorem z_red_birds_fly : Entails κz (λ x => red x ∧ bird x) flies := by decide
+/-- The query "Do red birds fly?" is answered YES under z-entailment, which discounts the
+irrelevant feature. -/
+theorem z_red_birds_fly : κz.Entails {x | red x ∧ bird x} {x | flies x} := by decide
 
-/-- "Do red birds fly?": undecided under p-entailment. Adding the rule that red birds do not fly
-keeps the base consistent, and its ranking is admissible for Δ_pb; so is κᶻ, where they fly. -/
+/-- The query "Do red birds fly?" is undecided under p-entailment. Adding the rule that red birds do
+not fly keeps the base consistent, and its ranking is admissible for Δ_pb; so is κᶻ, where they fly.
+-/
 theorem p_red_birds_fly_undecided :
-    ¬ PEntails Δpb (λ x => red x ∧ bird x) flies ∧
-      ¬ PEntails Δpb (λ x => red x ∧ bird x) (λ x => ¬ flies x) := by
+    ¬ PEntails Δpb {x | red x ∧ bird x} {x | flies x} ∧
+      ¬ PEntails Δpb {x | red x ∧ bird x} {x | ¬ flies x} := by
   refine ⟨not_pEntails
-    (κ := zRanking (zPriorities (Δpb ++ [⟨λ x => red x ∧ bird x, λ x => ¬ flies x⟩]))
+    (κ := zRanking (zPriorities (Δpb ++ [⟨fun x ↦ red x ∧ bird x, fun x ↦ ¬ flies x⟩]))
     ⟨⟨true, false, true, true, true, false⟩, by decide⟩) (by decide) (by decide),
     not_pEntails admissible_κz (by decide)⟩
 
-/-- "Are birds airborne?": YES under z-entailment, by chaining r₁ and r₅. -/
-theorem z_birds_airborne : Entails κz bird airborne := by decide
+/-- The query "Are birds airborne?" is answered YES under z-entailment, by chaining r₁ and r₅. -/
+theorem z_birds_airborne : κz.Entails {x | bird x} {x | airborne x} := by decide
 
-/-- "Are birds airborne?": undecided under p-entailment, since neither "birds are airborne" nor
-"birds are not airborne" makes the base inconsistent. -/
+/-- The query "Are birds airborne?" is undecided under p-entailment, since neither "birds are
+airborne" nor "birds are not airborne" makes the base inconsistent. -/
 theorem p_birds_airborne_undecided :
-    ¬ PEntails Δpb bird airborne ∧ ¬ PEntails Δpb bird (λ x => ¬ airborne x) := by
-  refine ⟨not_pEntails (κ := zRanking (zPriorities (Δpb ++ [⟨bird, λ x => ¬ airborne x⟩]))
+    ¬ PEntails Δpb {x | bird x} {x | airborne x} ∧
+      ¬ PEntails Δpb {x | bird x} {x | ¬ airborne x} := by
+  refine ⟨not_pEntails (κ := zRanking (zPriorities (Δpb ++ [⟨bird, fun x ↦ ¬ airborne x⟩]))
     ⟨⟨false, false, false, false, false, false⟩, by decide⟩)
     (by decide +kernel) (by decide +kernel),
     not_pEntails admissible_κz (by decide)⟩
 
-/-- "Are penguins winged animals?": undecided under z-entailment, the exceptional subclass
-inheriting nothing from birds. -/
+/-- The query "Are penguins winged animals?" is undecided under z-entailment, the exceptional
+subclass inheriting nothing from birds. -/
 theorem z_penguins_winged_undecided :
-    ¬ Entails κz penguin winged ∧ ¬ Entails κz penguin (λ x => ¬ winged x) := by decide
+    ¬ κz.Entails {x | penguin x} {x | winged x} ∧
+      ¬ κz.Entails {x | penguin x} {x | ¬ winged x} := by decide
 
-/-- "Are penguins winged animals?": undecided under p-entailment. -/
+/-- The query "Are penguins winged animals?" is undecided under p-entailment. -/
 theorem p_penguins_winged_undecided :
-    ¬ PEntails Δpb penguin winged ∧ ¬ PEntails Δpb penguin (λ x => ¬ winged x) :=
+    ¬ PEntails Δpb {x | penguin x} {x | winged x} ∧
+      ¬ PEntails Δpb {x | penguin x} {x | ¬ winged x} :=
   ⟨not_pEntails admissible_κz z_penguins_winged_undecided.1,
    not_pEntails admissible_κz z_penguins_winged_undecided.2⟩
 
@@ -369,22 +368,22 @@ theorem le_zRank_of_falsified {rules : List (Rule W × ℕ)} {q : Rule W × ℕ}
 theorem le_zPlusRank_of_falsified {Δ : List (StrengthRule W × ℕ)} {q : StrengthRule W × ℕ}
     (hq : q ∈ Δ) {x : W} (hx : q.1.Falsified x) : q.2 + 1 ≤ zPlusRank Δ x :=
   le_zRank_of_falsified (q := (q.1.toRule, q.2))
-    (List.mem_map_of_mem (f := λ p : StrengthRule W × ℕ => (p.1.toRule, p.2)) hq) hx
+    (List.mem_map_of_mem (f := fun p : StrengthRule W × ℕ ↦ (p.1.toRule, p.2)) hq) hx
 
 section Example24
 
 variable (δ₁ δ₂ δ₃ δ₄ δ₅ : ℕ)
 
-/-- The paper's Z⁺-ordering for Δ⁺_pb: the tolerated rules keep their strengths, and the
+/-- In the paper's Z⁺-ordering for Δ⁺_pb the tolerated rules keep their strengths, and the
 penguin rules, whose verifying worlds must falsify r₁, sit at δ₁ + δᵢ + 1. -/
 def ΔpbPlus : List (StrengthRule World × ℕ) :=
   [(⟨r₁, δ₁⟩, δ₁), (⟨r₂, δ₂⟩, δ₁ + δ₂ + 1), (⟨r₃, δ₃⟩, δ₁ + δ₃ + 1), (⟨r₄, δ₄⟩, δ₄),
    (⟨r₅, δ₅⟩, δ₅)]
 
-/-- The normal world: a flying, winged, airborne bird. -/
+/-- The normal world is a flying, winged, airborne bird. -/
 def w₀ : World := ⟨true, false, true, true, true, false⟩
 
-/-- The most normal penguin: a winged, grounded bird. -/
+/-- The most normal penguin is a winged, grounded bird. -/
 def w₁ : World := ⟨true, true, false, true, true, false⟩
 
 theorem zPlusRank_w₀ : zPlusRank (ΔpbPlus δ₁ δ₂ δ₃ δ₄ δ₅) w₀ = 0 := by
@@ -395,7 +394,7 @@ theorem zPlusRank_w₁ : zPlusRank (ΔpbPlus δ₁ δ₂ δ₃ δ₄ δ₅) w₁
   simp [zPlusRank, zRank, ΔpbPlus, w₁, Rule.Falsified, r₁, r₂, r₃, r₄, r₅, bird, penguin, flies,
     winged, airborne]
 
-/-- Every penguin world ranks at least δ₁ + 1: it falsifies r₂, r₃, or r₁. -/
+/-- Every penguin world ranks at least δ₁ + 1, because it falsifies r₂, r₃, or r₁. -/
 theorem le_zPlusRank_of_penguin {x : World} (hp : penguin x) :
     δ₁ + 1 ≤ zPlusRank (ΔpbPlus δ₁ δ₂ δ₃ δ₄ δ₅) x := by
   by_cases hb : bird x
@@ -430,10 +429,11 @@ theorem isZPlusOrdering_example24 : IsZPlusOrdering (ΔpbPlus δ₁ δ₂ δ₃ 
 def κPlus : RankingFunction World :=
   ⟨zPlusRank (ΔpbPlus δ₁ δ₂ δ₃ δ₄ δ₅), w₀, zPlusRank_w₀ _ _ _ _ _⟩
 
-/-- Penguin-birds do not fly under κ⁺ whatever the strengths: the preference for r₃ over r₁ is
-a matter of specificity, not of the δ's (Theorem 25). -/
+/-- Penguin-birds do not fly under κ⁺ whatever the strengths, because the preference for r₃ over
+r₁ is a matter of specificity, not of the δ's (Theorem 25). -/
 theorem zPlus_penguin_birds_dont_fly :
-    Entails (κPlus δ₁ δ₂ δ₃ δ₄ δ₅) (λ x => penguin x ∧ bird x) (λ x => ¬ flies x) := by
+    (κPlus δ₁ δ₂ δ₃ δ₄ δ₅).Entails {x | penguin x ∧ bird x} {x | ¬ flies x} := by
+  rw [RankingFunction.entails_iff_exists_lt]
   rintro x ⟨hp, -⟩ hf
   have : δ₁ + δ₃ + 1 + 1 ≤ zPlusRank (ΔpbPlus δ₁ δ₂ δ₃ δ₄ δ₅) x :=
     le_zPlusRank_of_falsified (q := (⟨r₃, δ₃⟩, δ₁ + δ₃ + 1)) (by simp [ΔpbPlus])
@@ -444,7 +444,8 @@ theorem zPlus_penguin_birds_dont_fly :
 
 /-- Penguins inherit wings under κ⁺ exactly when the wing rule is firmer than the flying rule. -/
 theorem zPlus_penguins_winged_iff :
-    Entails (κPlus δ₁ δ₂ δ₃ δ₄ δ₅) penguin winged ↔ δ₁ < δ₄ := by
+    (κPlus δ₁ δ₂ δ₃ δ₄ δ₅).Entails {x | penguin x} {x | winged x} ↔ δ₁ < δ₄ := by
+  rw [RankingFunction.entails_iff_exists_lt]
   constructor
   · intro h
     obtain ⟨y, hyp, -, hlt⟩ := h ⟨true, true, false, false, true, false⟩ rfl (by decide)
@@ -472,7 +473,7 @@ end Example24
 
 /-! ### Example 26: the Nixon diamond -/
 
-/-- A world of Example 26: Quaker, Republican, pacifist. -/
+/-- A world of Example 26 is a truth assignment to Quaker, Republican and pacifist. -/
 structure Nixon where
   q : Bool
   r : Bool
@@ -491,9 +492,9 @@ def quaker (x : Nixon) : Prop := x.q = true
 def republican (x : Nixon) : Prop := x.r = true
 def pacifist (x : Nixon) : Prop := x.p = true
 
-instance : DecidablePred quaker := λ x => by unfold quaker; infer_instance
-instance : DecidablePred republican := λ x => by unfold republican; infer_instance
-instance : DecidablePred pacifist := λ x => by unfold pacifist; infer_instance
+instance : DecidablePred quaker := fun x ↦ by unfold quaker; infer_instance
+instance : DecidablePred republican := fun x ↦ by unfold republican; infer_instance
+instance : DecidablePred pacifist := fun x ↦ by unfold pacifist; infer_instance
 
 section Example26
 
@@ -502,7 +503,7 @@ variable (δ₁ δ₂ : ℕ)
 /-- Quakers are pacifists with strength δ₁, Republicans are not with strength δ₂; each rule is
 tolerated by the other, so each priority is its strength. -/
 def Δqr : List (StrengthRule Nixon × ℕ) :=
-  [(⟨⟨quaker, pacifist⟩, δ₁⟩, δ₁), (⟨⟨republican, λ x => ¬ pacifist x⟩, δ₂⟩, δ₂)]
+  [(⟨⟨quaker, pacifist⟩, δ₁⟩, δ₁), (⟨⟨republican, fun x ↦ ¬ pacifist x⟩, δ₂⟩, δ₂)]
 
 theorem isZPlusOrdering_example26 : IsZPlusOrdering (Δqr δ₁ δ₂) := by
   intro q hq
@@ -527,7 +528,8 @@ private theorem zPlusRank_qrp :
 /-- A Quaker Republican is a pacifist exactly when religious conviction outweighs political
 affiliation: no specificity decides the diamond, only the strengths. -/
 theorem nixon_pacifist_iff :
-    Entails (κqr δ₁ δ₂) (λ x => quaker x ∧ republican x) pacifist ↔ δ₂ < δ₁ := by
+    (κqr δ₁ δ₂).Entails {x | quaker x ∧ republican x} {x | pacifist x} ↔ δ₂ < δ₁ := by
+  rw [RankingFunction.entails_iff_exists_lt]
   constructor
   · intro h
     obtain ⟨y, ⟨hyq, hyr⟩, hyp, hlt⟩ := h ⟨true, true, false⟩ ⟨rfl, rfl⟩ (by decide)
