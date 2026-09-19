@@ -11,19 +11,25 @@ modification at the top (`GramCategory`, `GramCategory.scopeLevel`), an empirica
 hierarchy finer than the stipulated universal one of [cinque-1999]; epistemic modality
 outscopes deontic and dynamic modality, and mood outscopes modality proper
 (`epistemic_outscopes_deontic`, `mood_outscopes_modality`). Scope level determines speaker
-orientation (`scope_implies_orientation`), and the categories that serve as diachronic
-sources of modality lie strictly below those that serve as its targets
-(`GramCategory.changeRole`, `source_below_target`), the structural precondition of the
-hypothesis that semantic change involving grammatical categories climbs from narrower to
-wider scope. Langacker's stages in the development of the English modals ascend the
-orientation levels in the same direction (`langackerStages`, `langacker_stages_monotone`).
+orientation (`scope_implies_orientation`), and the non-modal categories that are only
+diachronic sources of modality lie strictly below those that are only its targets
+(`GramCategory.IsSource`, `GramCategory.IsTarget`, `source_below_target`), the structural
+precondition of the hypothesis that semantic change involving grammatical categories climbs
+from narrower to wider scope.
 
 ## Implementation notes
 
 The scope levels follow the combined hierarchy of the book's third chapter, categories on
-a shared level being unordered; the source and target classification extends the book's
-table of non-modal categories by placing the modal categories at the bidirectional level.
-The most frequent attested changes of modal meaning are tabulated in `Studies/Narrog2010`.
+a shared level being unordered. Possession, directionals, and the two kinds of
+honorification, which the book's table of source and target categories also lists, are not
+in the scope hierarchy and are left out. The most frequent attested changes of modal meaning
+are tabulated in `Studies/Narrog2010`.
+
+## TODO
+
+The book derives a category's role as source or target from its scope level relative to the
+modal categories. `IsSource` and `IsTarget` transcribe the table; deriving them turns on
+whether the speculative category on the level of volitive mood counts as modality or as mood.
 
 ## References
 
@@ -34,7 +40,7 @@ The most frequent attested changes of modal meaning are tabulated in `Studies/Na
 
 namespace Narrog2012
 
-open Modality.Narrog
+open Modality
 
 /-- Grammatical categories relevant to the verbal clause, drawn from
     [narrog-2012] Tables 3.5–3.9 and [narrog-2009a].
@@ -84,14 +90,14 @@ def GramCategory.scopeLevel : GramCategory → Nat
   | .epistemic3 | .volitiveMood                               => 5
   | .illocutionaryMod                                         => 6
 
-instance : LE GramCategory where le a b := a.scopeLevel ≤ b.scopeLevel
-instance : LT GramCategory where lt a b := a.scopeLevel < b.scopeLevel
+/-- Categories are compared by scope level, categories on one level lying below each other. -/
+instance : Preorder GramCategory := Preorder.lift GramCategory.scopeLevel
 
-instance (a b : GramCategory) : Decidable (a ≤ b) :=
-  inferInstanceAs (Decidable (a.scopeLevel ≤ b.scopeLevel))
+instance : DecidableLE GramCategory :=
+  fun a b ↦ inferInstanceAs (Decidable (a.scopeLevel ≤ b.scopeLevel))
 
-instance (a b : GramCategory) : Decidable (a < b) :=
-  inferInstanceAs (Decidable (a.scopeLevel < b.scopeLevel))
+instance : DecidableLT GramCategory :=
+  fun a b ↦ inferInstanceAs (Decidable (a.scopeLevel < b.scopeLevel))
 
 /-- Epistemic modality outscopes deontic modality. -/
 theorem epistemic_outscopes_deontic : GramCategory.deontic1 < GramCategory.epistemic1 := by
@@ -123,7 +129,7 @@ theorem im_is_widest (c : GramCategory) : c ≤ GramCategory.illocutionaryMod :=
     descriptive use. The mapping is therefore approximate at the
     event/speaker boundary; see `scope_implies_orientation` for the
     precise (strict `<`) relationship. -/
-def GramCategory.toOrientation : GramCategory → Orientation
+def GramCategory.toOrientation : GramCategory → SpeechActOrientation
   | .voice | .benefactive | .phasalAspect | .dynamicModality
   | .perfImperfAspect => .eventOriented
   | .deontic1 | .deontic2 | .epistemic1 | .epistemic2
@@ -149,87 +155,38 @@ theorem scope_implies_orientation (a b : GramCategory) (h : a < b) :
     a.toOrientation ≤ b.toOrientation := by
   revert h; cases a <;> cases b <;> decide
 
-/-- Role of a grammatical category relative to modality in diachronic change.
+namespace GramCategory
 
-    Based on [narrog-2012] Table 3.10 (p. 113), which lists *non-modal*
-    source, target, and bidirectional categories. Table 3.10 also includes
-    categories not in our scope hierarchy: possession and directionals
-    (sources), referent honorification (both), and politeness/addressee
-    honorification (targets). Our `changeRole` function extends Table 3.10
-    to the full `GramCategory` type by classifying modal categories (deontic,
-    epistemic, evidentiality) as `.both`. -/
-inductive ChangeRole where
-  | source  -- lower scope: voice, benefactives (+ possession, directionals in Table 3.10)
-  | target  -- higher scope: mood, IM (+ politeness/honorification in Table 3.10)
-  | both    -- same level: aspect, tense, negation (+ referent honorification in Table 3.10)
-  deriving DecidableEq, Repr
+/-- The non-modal categories from which modal markers may derive, in the book's table of
+potential source and target categories for modality: voice and benefactives, and aspect,
+tense, and negation, which the table lists as both source and target. -/
+def IsSource (c : GramCategory) : Prop :=
+  c ∈ [voice, benefactive, phasalAspect, perfImperfAspect, tense, negation]
 
-/-- Classification of categories by their diachronic role relative to
-    modality. Extends [narrog-2012] Table 3.10 to cover all
-    `GramCategory` constructors (see `ChangeRole` docstring). -/
-def GramCategory.changeRole : GramCategory → ChangeRole
-  | .voice | .benefactive          => .source
-  | .phasalAspect | .perfImperfAspect | .tense | .negation => .both
-  | .dynamicModality | .deontic1 | .deontic2
-  | .epistemic1 | .epistemic2 | .epistemic3
-  | .evidentiality1 | .evidentiality2 | .evidentiality3 => .both
-  | .volitiveMood | .illocutionaryMod => .target
+/-- The non-modal categories into which modal markers may develop: mood and illocutionary
+modification, and aspect, tense, and negation. -/
+def IsTarget (c : GramCategory) : Prop :=
+  c ∈ [phasalAspect, perfImperfAspect, tense, negation, volitiveMood, illocutionaryMod]
 
-/-- Every source category has strictly narrower scope than every target
-    category. This is the structural precondition for category-climbing:
-    semantic change from source to target always increases scope. -/
-theorem source_below_target (c d : GramCategory)
-    (hc : c.changeRole = .source) (hd : d.changeRole = .target) :
-    c < d := by
-  revert hc hd; cases c <;> cases d <;> decide
+instance : DecidablePred IsSource := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
+instance : DecidablePred IsTarget := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
 
-/-- All source categories are event-oriented; all target categories are
-    at the mood level. The diachronic role aligns with the synchronic
-    orientation: categories that *give rise to* modality sit at the event
-    level, while categories that modality *develops into* sit at the
-    speech-act level. -/
-theorem source_is_event_oriented (c : GramCategory) (h : c.changeRole = .source) :
+end GramCategory
+
+/-- Every category that is only a source has strictly narrower scope than every category that
+is only a target, the structural precondition for category climbing. -/
+theorem source_below_target (c d : GramCategory) (hc : c.IsSource) (hc' : ¬ c.IsTarget)
+    (hd : d.IsTarget) (hd' : ¬ d.IsSource) : c < d := by
+  revert hc hc' hd hd'; cases c <;> cases d <;> decide
+
+/-- The categories that are only sources are event-oriented. -/
+theorem source_is_event_oriented (c : GramCategory) (hc : c.IsSource) (hc' : ¬ c.IsTarget) :
     c.toOrientation = .eventOriented := by
-  revert h; cases c <;> decide
+  revert hc hc'; cases c <;> decide
 
-theorem target_is_mood (c : GramCategory) (h : c.changeRole = .target) :
-    c.toOrientation = .speechActOriented := by
-  revert h; cases c <;> decide
-
-/-- A stage in the diachronic development of English modals.
-    [narrog-2012] Table 3.3, following Langacker (1990; 1998; 1999). -/
-structure ModalDevelopmentStage where
-  stageLabel : String
-  semanticChange : String
-  historicalCorrelate : String
-  orientation : Orientation
-  deriving Repr
-
-/-- Langacker's stages for English modal verbs ([narrog-2012] Table 3.3).
-
-    Stage I>II: Physical → social force (main verb → modal verb).
-    Stage I>II: Potency source/target diffuse (main verb → modal verb).
-    Stage II: Maximal diffusion = deontic → epistemic meaning.
-    Stage II,III: Potency → speaker's knowledge (present-oriented epistemic).
-    Stage II>III: Directed potency lost → grounding predications. -/
-def langackerStages : List ModalDevelopmentStage :=
-  [ ⟨"I>II", "domain of force shifts from physical to social",
-    "main verb to modal verb", .eventOriented⟩
-  , ⟨"I>II", "diffusion of source and target of potency",
-    "main verb to modal verb", .eventOriented⟩
-  , ⟨"II", "maximal diffusion of source and target of potency",
-    "deontic to epistemic meaning", .speakerOriented⟩
-  , ⟨"II,III", "potency pertains to evolution of speaker's knowledge of reality",
-    "present-oriented epistemic meanings", .speakerOriented⟩
-  , ⟨"II>III", "directed potency loses profiled status",
-    "modals become grounding predications", .speechActOriented⟩
-  ]
-
-/-- The stages are monotonically non-decreasing in orientation —
-    consistent with Narrog's directionality hypothesis. -/
-theorem langacker_stages_monotone :
-    langackerStages.Pairwise (fun a b ↦ a.orientation ≤ b.orientation) := by
-  simp [langackerStages]
-  decide
+/-- The categories that are only targets are speech act-oriented. -/
+theorem target_is_speech_act_oriented (c : GramCategory) (hc : c.IsTarget)
+    (hc' : ¬ c.IsSource) : c.toOrientation = .speechActOriented := by
+  revert hc hc'; cases c <;> decide
 
 end Narrog2012
