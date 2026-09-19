@@ -1,134 +1,154 @@
-import Linglib.Semantics.Modality.Narrog
+import Linglib.Semantics.Modality.Basic
 
 /-!
 # Narrog (2010): (Inter)subjectification in the Domain of Modality and Mood
 
-This file formalizes the directionality claim of [narrog-2010] and its account of the
-cross-linguistic rarity of strong obligation. Modal meanings are placed on the two-dimensional
-map of `Semantics/Modality/Narrog`, volitivity against speaker orientation, and the claim of
-§3.1 is that semantic change never decreases speaker orientation, whatever it does to
-volitivity (`Directional`). The eight most frequent changes of modal meaning in the sample of
-[bybee-perkins-pagliuca-1994], the chapter's Table 2, all satisfy it (`commonChanges`,
-`directionality`); the three most frequent run from non-volitive
-to volitive meanings, future and possibility markers becoming imperatives, permissions, and
-admonitives (§3.2, `most_frequent_to_volitive`), so the deontic-to-epistemic shift is one
-change among several rather than the representative one, and volitivity is crossed in both
-directions (`volitivity_both_directions`). A change from probability to an event-oriented
-obligation is what the chapter names as a counterexample and finds undocumented; the claim
-excludes it (`probability_to_obligation_excluded`). Strong obligation is a minority category,
-Table 4 finding must-type markers in sixty of two hundred languages against sixty-two
-should-type ones, and the explanation of §4.2 is that a must-type marker, unlike a
-should-type one, is performative, so that a strong obligation imposed on the hearer is
-face-threatening and is avoided where the speaker lacks authority
-(`must_should_differ_in_performativity`); the Japanese strong-necessity construction
-accordingly occurs with no second-person subject at all in the corpus counts of Table 5.
+This file formalizes the use [narrog-2010] makes of the eight most frequent changes of modal
+meaning in the sample of [bybee-perkins-pagliuca-1994]. The chapter places the uses of modal
+markers on a map with two dimensions. Volitivity separates the modalities in which an element
+of will is present, deontic and boulomaic modality, from those in which it is absent, epistemic,
+evidential, and dynamic modality (`ModalFlavor.IsVolitive`). Speaker orientation runs from
+event-oriented uses up through modality proper to mood and illocutionary force modulation, and
+the chapter's claim is that a change never decreases it, whatever the change does to volitivity.
+The tabulated meanings are force-flavor pairs, the future, and two directive moods (`Meaning`),
+which fixes the volitivity of source and target and tells modality proper from mood. On that
+basis change is attested within and across the two sides of volitivity in every combination
+(`volitivity_independent`), each change from non-volitive to volitive meaning is more frequent
+than each deontic-to-epistemic one (`toNonVolitive_lt_toVolitive`), so the deontic-to-epistemic
+shift is one change among several and not the representative one, and no change leads out of
+mood (`source_not_isMood`). The changes into mood, future and possibility markers becoming
+imperatives and admonitives and obligation markers becoming imperatives, reach the top of the
+map and so conform wherever the source use lay. A change from probability to an event-oriented
+obligation is what the chapter names as a counterexample and finds undocumented.
+
+The chapter's second half asks why strong obligation is rarely grammaticalized: must-type
+markers were found in sixty of two hundred languages, and the Japanese strong-necessity
+construction occurs with no second-person subject in the corpus counts the chapter cites.
+Imperatives are in principle always performative and used under full authority, while obligation
+markers either report obligations or impose them without such authority, which is
+face-threatening, so that direct reference to obligation is habitually avoided in many cultures
+and obligation markers are less often available as sources of epistemic ones. That argument and
+its counts are not formalized.
 
 ## Implementation notes
 
-The map's three levels of speaker orientation put deontic and epistemic meanings on one
-level, so the deontic-to-epistemic changes of Table 2 preserve the level, where the chapter
-counts them as increases on a finer scale. The must-type and should-type positions are the
-substrate's `strongObligation` and `weakObligation`, which originate with this chapter. The
-counts of Tables 3 to 7 and the Lakota future used as a second-person obligation (§3.2) are
-described in prose.
+The chapter argues that the five tabulated changes within modality proper also increase speaker
+orientation, the deontic-to-epistemic ones included, but it assigns no positions to their
+meanings, and orientation is a property of a use and not of a meaning label, so no orientation
+is assigned to a meaning here. The scale itself is `Narrog2012.SpeechActOrientation`, in the
+later book's terms, and that study checks these changes against it. Strong obligation and
+certainty are read as necessity, weak obligation and probability as weak necessity, and root
+possibility and ability as circumstantial possibility; a label that does not mention strength is
+read as the strong force. `ModalFlavor` files teleological modality under the circumstantial
+flavor, which `IsVolitive` treats as non-volitive.
 
 ## References
 
 * [narrog-2010]
-* [narrog-2012]
 * [bybee-perkins-pagliuca-1994]
 -/
 
 namespace Narrog2010
 
-open Modality.Narrog
+open Modality
 
-/-- A change from one region of the map to another is directional when it does not decrease
-speaker orientation, whatever it does to volitivity. -/
-def Directional (source target : NarrogRegion) : Prop :=
-  source.orientation ≤ target.orientation
+/-- A flavor is volitive when an element of will is present in it, as in obligation,
+permission, and wish, and non-volitive otherwise, as in epistemic assessment and ability. -/
+def _root_.Modality.ModalFlavor.IsVolitive (f : ModalFlavor) : Prop :=
+  f = .deontic ∨ f = .bouletic
 
-instance (s t : NarrogRegion) : Decidable (Directional s t) := inferInstanceAs (Decidable (_ ≤ _))
+instance : DecidablePred ModalFlavor.IsVolitive := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- An attested change of modal meaning has a source region, a target region, and the number
-of grams of the sample of [bybee-perkins-pagliuca-1994] that show it. -/
+/-- A meaning between which the tabulated changes run. A modal meaning is the set of
+force-flavor pairs its label covers, as in `ModalItem.meaning`. -/
+inductive Meaning where
+  | modal (m : Finset ForceFlavor)
+  /-- Future or prediction. -/
+  | future
+  | imperative
+  | admonitive
+  deriving DecidableEq
+
+namespace Meaning
+
+/-- Root possibility, which the table also lists with ability. -/
+abbrev rootPossibility : Meaning := modal {(.possibility, .circumstantial)}
+/-- Root or epistemic possibility. -/
+abbrev possibility : Meaning :=
+  modal {(.possibility, .circumstantial), (.possibility, .epistemic)}
+abbrev permission : Meaning := modal {(.possibility, .deontic)}
+abbrev obligation : Meaning := modal {(.necessity, .deontic)}
+abbrev weakObligation : Meaning := modal {(.weakNecessity, .deontic)}
+abbrev epistemicPossibility : Meaning := modal {(.possibility, .epistemic)}
+abbrev probability : Meaning := modal {(.weakNecessity, .epistemic)}
+abbrev certainty : Meaning := modal {(.necessity, .epistemic)}
+
+/-- A modal meaning is volitive when all its flavors are, and the directive moods are. -/
+def IsVolitive : Meaning → Prop
+  | modal m => ∀ ff ∈ m, ff.flavor.IsVolitive
+  | future => False
+  | imperative | admonitive => True
+
+/-- A modal meaning is non-volitive when none of its flavors is volitive, and the future is. -/
+def IsNonVolitive : Meaning → Prop
+  | modal m => ∀ ff ∈ m, ¬ ff.flavor.IsVolitive
+  | future => True
+  | imperative | admonitive => False
+
+/-- The imperative and the admonitive mark speech acts and belong to mood, which lies at the
+speech act-oriented end of the map; the other meanings belong to modality proper. -/
+def IsMood : Meaning → Prop
+  | imperative | admonitive => True
+  | _ => False
+
+instance : DecidablePred IsVolitive := fun m ↦ by cases m <;> unfold IsVolitive <;> infer_instance
+instance : DecidablePred IsNonVolitive :=
+  fun m ↦ by cases m <;> unfold IsNonVolitive <;> infer_instance
+instance : DecidablePred IsMood := fun m ↦ by cases m <;> unfold IsMood <;> infer_instance
+
+end Meaning
+
+/-- A change of modal meaning, with the number of grams of the sample of
+[bybee-perkins-pagliuca-1994] that show it, one gram per language. -/
 structure Change where
-  label : String
-  source : NarrogRegion
-  target : NarrogRegion
+  source : Meaning
+  target : Meaning
   grams : ℕ
 
-/-- The change satisfies the directionality claim. -/
-def Change.Directional (c : Change) : Prop := Narrog2010.Directional c.source c.target
-
-/-- The change crosses from non-volitive to volitive meaning. -/
-def Change.ToVolitive (c : Change) : Prop :=
-  c.source.volitivity = .nonVolitive ∧ c.target.volitivity = .volitive
-
-instance : DecidablePred Change.Directional :=
-  fun c ↦ inferInstanceAs (Decidable (c.source.orientation ≤ c.target.orientation))
-instance : DecidablePred Change.ToVolitive := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
-
+open Meaning in
 /-- The eight most frequent changes of modal meaning in the sample of
-[bybee-perkins-pagliuca-1994], with their gram counts, as the chapter tabulates them. Future, prediction, and possibility
-markers are event-oriented modality, obligation, permission, and epistemic assessment
-speaker-oriented, and the imperative and admonitive mood. -/
+[bybee-perkins-pagliuca-1994], as the chapter tabulates them. -/
 def commonChanges : List Change :=
-  [ ⟨"future/prediction → imperative",
-     ⟨.nonVolitive, .eventOriented⟩, ⟨.volitive, .mood⟩, 13⟩
-  , ⟨"root possibility → permission",
-     ⟨.nonVolitive, .eventOriented⟩, ⟨.volitive, .speakerOriented⟩, 9⟩
-  , ⟨"root/epistemic possibility → admonitive",
-     ⟨.nonVolitive, .eventOriented⟩, ⟨.volitive, .mood⟩, 5⟩
-  , ⟨"obligation → imperative",
-     ⟨.volitive, .speakerOriented⟩, ⟨.volitive, .mood⟩, 4⟩
-  , ⟨"ability/root possibility → epistemic possibility",
-     ⟨.nonVolitive, .eventOriented⟩, ⟨.nonVolitive, .speakerOriented⟩, 4⟩
-  , ⟨"strong obligation → certainty",
-     ⟨.volitive, .speakerOriented⟩, ⟨.nonVolitive, .speakerOriented⟩, 3⟩
-  , ⟨"weak obligation → probability",
-     ⟨.volitive, .speakerOriented⟩, ⟨.nonVolitive, .speakerOriented⟩, 2⟩
-  , ⟨"prediction/future → probability",
-     ⟨.nonVolitive, .eventOriented⟩, ⟨.nonVolitive, .speakerOriented⟩, 2⟩
-  ]
+  [⟨future, imperative, 13⟩, ⟨rootPossibility, permission, 9⟩, ⟨possibility, admonitive, 5⟩,
+   ⟨obligation, imperative, 4⟩, ⟨rootPossibility, epistemicPossibility, 4⟩,
+   ⟨obligation, certainty, 3⟩, ⟨weakObligation, probability, 2⟩, ⟨future, probability, 2⟩]
 
-/-- Every attested change increases or preserves speaker orientation. -/
-theorem directionality : ∀ c ∈ commonChanges, c.Directional := by decide
-
-/-- Table 2 lists the changes by frequency, and the three most frequent cross from non-volitive
-to volitive meaning (§3.2), the direction a deontic-to-epistemic theory would call
-counter-directional. -/
-theorem most_frequent_to_volitive :
-    (commonChanges.map Change.grams).Pairwise (· ≥ ·) ∧
-      ∀ c ∈ commonChanges.take 3, c.ToVolitive := by
+/-- Change is attested within the volitive meanings, within the non-volitive ones, and across
+volitivity in both directions, so volitivity does not constrain the direction of change. -/
+theorem volitivity_independent :
+    (∃ c ∈ commonChanges, c.source.IsVolitive ∧ c.target.IsVolitive) ∧
+    (∃ c ∈ commonChanges, c.source.IsVolitive ∧ c.target.IsNonVolitive) ∧
+    (∃ c ∈ commonChanges, c.source.IsNonVolitive ∧ c.target.IsVolitive) ∧
+    (∃ c ∈ commonChanges, c.source.IsNonVolitive ∧ c.target.IsNonVolitive) := by
   decide
 
-/-- Volitivity is orthogonal to the direction of change. The attested changes cross it in both
-directions, and the deontic-to-epistemic shift is the volitive-to-non-volitive case. -/
-theorem volitivity_both_directions :
-    (∃ c ∈ commonChanges, c.ToVolitive) ∧
-      ∃ c ∈ commonChanges,
-        c.source.volitivity = .volitive ∧ c.target.volitivity = .nonVolitive := by
+/-- Every change from non-volitive to volitive meaning is more frequent than every change from
+volitive to non-volitive meaning, the direction a deontic-to-epistemic theory takes as
+representative. -/
+theorem toNonVolitive_lt_toVolitive :
+    ∀ c ∈ commonChanges, ∀ d ∈ commonChanges,
+      c.source.IsNonVolitive → c.target.IsVolitive →
+      d.source.IsVolitive → d.target.IsNonVolitive → d.grams < c.grams := by
   decide
 
-/-- The chapter's own example of what a counterexample would be, a change from probability to
-an event-oriented obligation, is excluded by the claim; no such change is documented. -/
-theorem probability_to_obligation_excluded :
-    ¬ Directional ⟨.nonVolitive, .speakerOriented⟩ ⟨.volitive, .eventOriented⟩ := by
+/-- No tabulated change leads out of mood, the one configuration that the meaning labels alone
+would show to run against the claim. -/
+theorem source_not_isMood : ∀ c ∈ commonChanges, ¬ c.source.IsMood := by decide
+
+/-- Mood is fed from both sides of the volitivity dimension. -/
+theorem isMood_of_both_volitivities :
+    (∃ c ∈ commonChanges, c.source.IsVolitive ∧ c.target.IsMood) ∧
+    (∃ c ∈ commonChanges, c.source.IsNonVolitive ∧ c.target.IsMood) := by
   decide
-
-/-! ### Strong obligation (§4) -/
-
-/-- Must-type and should-type obligation occupy one region of the map and differ in
-performativity alone, and the performative one is face-threatening: the chapter's reason why
-strong obligation is grammaticalized in a minority of languages and, in Japanese, kept away
-from second-person subjects, while imperatives, always performative and used under full
-authority, are near-universal. -/
-theorem must_should_differ_in_performativity :
-    strongObligation.toRegion = weakObligation.toRegion ∧
-      strongObligation.isFaceThreatening = true ∧ weakObligation.isFaceThreatening = false ∧
-      imperative.isFaceThreatening = true :=
-  ⟨strong_weak_differ_only_in_performativity, strong_obligation_face_threatening,
-   weak_obligation_not_face_threatening, imperative_face_threatening⟩
 
 end Narrog2010
