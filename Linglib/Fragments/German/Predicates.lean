@@ -68,6 +68,15 @@ def machen : GermanVerbEntry where
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   causative := some .make
 
+/-- The verb *bauen* 'build' is a weak transitive verb of creation, as in *Borromini baute diese
+Kirche* 'Borromini built this church'. -/
+def bauen : GermanVerbEntry where
+  form := "bauen"
+  form3sg := "baut"
+  formPast := "baute"
+  formPastPart := "gebaut"
+  frames := [ArgumentFrame.np]
+
 /-- *töten* — lexical COMPACT causative ("kill" = tot + -en).
     Deadjectival causative: *tot* "dead" → *töten* "make dead". -/
 def toeten : GermanVerbEntry where

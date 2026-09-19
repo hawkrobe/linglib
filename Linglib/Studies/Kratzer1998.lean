@@ -343,4 +343,12 @@ theorem rows_outOfTheBlue :
         (r.judgment = .acceptable ↔ v.DescribesPastOutOfTheBlue ℤ f) := by
   decide +kernel
 
+/-- The German rows of (40) are in the form they are labelled with: of the tense forms of
+*bauen*, exactly the labelled one has all its words in the row. -/
+theorem rows_realize :
+    ∀ r ∈ [Examples.ex40b, Examples.ex40c], ∀ f ∈ German.tenseForms,
+      ((∃ ws ∈ German.Predicates.bauen.principalParts.tenseForm f, ws ⊆ r.surfaceTokens) ↔
+        r.parse? "form" forms = some f) := by
+  decide +kernel
+
 end Kratzer1998
