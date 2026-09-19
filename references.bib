@@ -3938,7 +3938,7 @@
   subfield  = {pragmatics/assertion},
   validated = {true},
   role      = {formalized},
-  sources   = {Data/Examples/FarkasBruce2010.json;Discourse/Commitment/Table.lean;Discourse/CommonGround.lean;Studies/Deo2025.lean;Studies/Faller2019.lean;Studies/FarkasBruce2010.lean;Studies/FarkasRoelofsen2017.lean;Studies/Krifka2015.lean;Studies/Kubota2026.lean;Studies/Rudin2025b.lean;Studies/Theiler2021.lean}
+  sources   = {Data/Examples/FarkasBruce2010.json;Discourse/Commitment/Table.lean;Discourse/CommonGround.lean;Studies/Deo2025.lean;Studies/Faller2019.lean;Studies/FarkasBruce2010.lean;Studies/FarkasRoelofsen2017.lean;Studies/Krifka2015.lean;Studies/Kubota2026.lean;Studies/Rudin2025b.lean;Studies/Theiler2021.lean;Studies/CoppockWechsler2018.lean}
 }
 @book{gunlogson-2004,
   author    = {Gunlogson, Christine},
@@ -7625,7 +7625,7 @@
   url       = {https://www.nicolas-tournadre.net/wp-content/uploads/multimedia/2008-Conjunct.pdf},
   subfield  = {semantics/compositional},
   role      = {cited},
-  sources   = {Fragments/Tibetic/Lhasa/Evidentiality.lean;Semantics/Evidential/Epistemicity.lean}
+  sources   = {Fragments/Tibetic/Lhasa/Evidentiality.lean}
 }
 @article{tournadre-lapolla-2014,
   author    = {Tournadre, Nicolas and LaPolla, Randy J.},
@@ -8409,16 +8409,19 @@
 @incollection{floyd-2018,
   author    = {Floyd, Simeon},
   year      = {2018},
-  title     = {Egophoricity and argument structure in Cha'palaa},
-  booktitle = {Egophoricity, 269-304},
-  editor    = {Simeon Floyd, Elisabeth Norcliffe and Lila San Roque},
+  title     = {Egophoricity and argument structure in {Cha'palaa}},
+  booktitle = {Egophoricity},
+  editor    = {Floyd, Simeon and Norcliffe, Elisabeth and San Roque, Lila},
+  series    = {Typological Studies in Language},
+  volume    = {118},
   publisher = {John Benjamins},
-  doi       = {10.1075/tsl.118.09flo},
+  address   = {Amsterdam},
   pages     = {269--304},
-  subfield  = {semantics/compositional},
+  doi       = {10.1075/tsl.118.09flo},
+  subfield  = {typology/evidentiality},
   role      = {cited},
   validated = {true},
-  sources   = {Semantics/Evidential/Epistemicity.lean}
+  sources   = {}
 }% REF: Greco, C. (2018). Negative Polarity Items and Expletive Negation.
 @phdthesis{greco-2018,
   author    = {Greco, Ciro},
@@ -8560,8 +8563,7 @@
   journal   = {Linguistic Typology},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {true},
-  sources   = {Semantics/Evidential/Epistemicity.lean}
+  sources   = {}
 }% REF: Liefke, K. (2024). Natural Language Ontology and Semantic Theory. Cambridge Elements in Semantics.
 @book{liefke-2024,
   author    = {Liefke, Kristina},
@@ -27821,7 +27823,7 @@
   doi       = {10.1515/lity.1997.1.1.33},
   subfield  = {typology/evidentiality},
   role      = {cited},
-  sources   = {Semantics/Evidential/Mirativity.lean}
+  sources   = {}
 }
 @incollection{ochs-1992,
   author    = {Ochs, Elinor},
@@ -42596,7 +42598,7 @@
   doi       = {10.1007/s11050-015-9112-1},
   subfield  = {semantics/reference},
   role      = {formalized},
-  sources   = {Studies/Pearson2015.lean}
+  sources   = {Studies/Pearson2015.lean;Studies/CoppockWechsler2018.lean}
 }
 
 @inproceedings{percus-sauerland-2003,
@@ -46042,4 +46044,48 @@
   subfield  = {computation},
   role      = {cited},
   sources   = {Core/Data/RoseTree/Encodable.lean}
+}
+
+@incollection{coppock-wechsler-2018,
+  author    = {Coppock, Elizabeth and Wechsler, Stephen},
+  year      = {2018},
+  title     = {The proper treatment of egophoricity in {Kathmandu} {Newari}},
+  booktitle = {Expressing the Self: Cultural Diversity and Cognitive Universals},
+  editor    = {Huang, Minyao and Jaszczolt, Kasia M.},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  pages     = {40--57},
+  subfield  = {semantics/reference},
+  role      = {formalized},
+  sources   = {Studies/CoppockWechsler2018.lean}
+}
+
+@incollection{wechsler-2018,
+  author    = {Wechsler, Stephen},
+  year      = {2018},
+  title     = {Self-ascription in conjunct-disjunct systems},
+  booktitle = {Egophoricity},
+  editor    = {Floyd, Simeon and Norcliffe, Elisabeth and San Roque, Lila},
+  series    = {Typological Studies in Language},
+  volume    = {118},
+  publisher = {John Benjamins},
+  address   = {Amsterdam},
+  pages     = {473--494},
+  doi       = {10.1075/tsl.118.15wec},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  sources   = {}
+}
+
+@inproceedings{mccready-2007,
+  author    = {McCready, Eric},
+  year      = {2007},
+  title     = {Context shifting in questions and elsewhere},
+  booktitle = {Proceedings of Sinn und Bedeutung},
+  editor    = {Puig-Waldm{\"u}ller, E.},
+  publisher = {Universitat Pompeu Fabra},
+  address   = {Barcelona},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  sources   = {}
 }

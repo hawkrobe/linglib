@@ -1481,7 +1481,6 @@ import Linglib.Semantics.Events.Phase
 import Linglib.Semantics.Events.SpatialTrace
 import Linglib.Semantics.Evidential.Basic
 import Linglib.Semantics.Evidential.Defs
-import Linglib.Semantics.Evidential.Epistemicity
 import Linglib.Semantics.Exhaustification.Alternatives
 import Linglib.Semantics.Exhaustification.Antiexhaustive
 import Linglib.Semantics.Exhaustification.Chain

@@ -1,41 +1,38 @@
+import Mathlib.Data.Nat.Basic
 import Mathlib.Order.Basic
-import Linglib.Semantics.Evidential.Epistemicity
 
 /-!
-# Subjectivity Cline
-[traugott-dasher-2002] [traugott-2010]
+# The subjectivity cline
 
-Traugott & Dasher's synchronic cline of (inter)subjectivity, formalized as an
-ordered type. Expressions range from **nonsubjective** (ideational, propositional)
-through **subjective** (speaker attitude/belief) to **intersubjective** (addressee
-face/self-image). The diachronic hypothesis is that coded (inter)subjective
-meanings arise later than non-subjective ones; subjectification precedes
-intersubjectification.
+This file defines the synchronic cline of (inter)subjectivity of Traugott and Dasher as an ordered
+type. Expressions range from nonsubjective, ideational and propositional, through subjective,
+expressing the speaker's attitude or belief, to intersubjective, attending to the addressee's
+face and self-image. The diachronic hypothesis is that coded (inter)subjective meanings arise
+later than nonsubjective ones, and that subjectification precedes intersubjectification. The
+file also defines the performative ~ descriptive distinction, which Narrog argues the cline
+conflates with speaker orientation.
 
-## Bridges
+## References
 
-- `EpistemicAuthority` to `SubjectivityLevel`: ego = subjective,
-  allocutive = intersubjective, nonparticipant = nonSubjective.
-- The cline connects modal semantics (speaker assessment = subjective),
-  politeness (addressee face = intersubjective), and RSA (speaker model =
-  subjectified speaker).
+* [traugott-dasher-2002]
+* [traugott-2010]
+* [narrog-2012]
 -/
 
 namespace Modality
 
-open Epistemicity
-
-/-- Synchronic subjectivity scale ([traugott-dasher-2002] Table 1,
-    [traugott-2010] cline 2). Diachronic work shows that subjective
-    polysemies arise later than ideational ones, and intersubjective
-    polysemies arise later than subjective ones. -/
+/-- The levels of the subjectivity cline. Subjective meanings arise historically later than
+nonsubjective ones, and intersubjective meanings later than subjective ones. -/
 inductive SubjectivityLevel where
-  | nonSubjective   -- ideational: describes world/event properties
-  | subjective      -- speaker attitude, belief, evaluation
-  | intersubjective -- attention to addressee face/self-image
+  /-- The expression describes properties of the world or of an event. -/
+  | nonSubjective
+  /-- The expression conveys the speaker's attitude, belief or evaluation. -/
+  | subjective
+  /-- The expression attends to the addressee's face or self-image. -/
+  | intersubjective
   deriving DecidableEq, Repr, Inhabited
 
-/-- Numeric encoding for ordering. -/
+/-- The position of a level on the cline, counted from the nonsubjective end. -/
 def SubjectivityLevel.toNat : SubjectivityLevel → Nat
   | .nonSubjective => 0
   | .subjective => 1
@@ -43,48 +40,27 @@ def SubjectivityLevel.toNat : SubjectivityLevel → Nat
 
 instance : LinearOrder SubjectivityLevel :=
   LinearOrder.lift' SubjectivityLevel.toNat
-    (fun a b h => by cases a <;> cases b <;> simp_all [SubjectivityLevel.toNat])
+    (fun a b h ↦ by cases a <;> cases b <;> simp_all [SubjectivityLevel.toNat])
 
-/-- Bridge: epistemic authority to subjectivity level.
-
-    - ego (speaker has privileged access) maps to subjective
-    - allocutive (addressee has privileged access) maps to intersubjective
-    - nonparticipant maps to nonSubjective -/
-def SubjectivityLevel.ofEpistemicAuthority : EpistemicAuthority → SubjectivityLevel
-  | .ego => .subjective
-  | .allocutive => .intersubjective
-  | .nonparticipant => .nonSubjective
-
-/-- Intersubjectivity presupposes subjectivity ([traugott-2010] section 2). -/
+/-- The subjective level lies below the intersubjective level. -/
 theorem intersubjective_ge_subjective :
     SubjectivityLevel.subjective ≤ SubjectivityLevel.intersubjective := by decide
 
-/-- Non-subjective is the minimum. -/
+/-- The nonsubjective level is the least level. -/
 theorem nonSubjective_le (l : SubjectivityLevel) :
     SubjectivityLevel.nonSubjective ≤ l := by
   cases l <;> decide
 
--- ============================================================================
--- §2. Performativity
--- ============================================================================
+/-! ### Performativity -/
 
-/-- Whether the utterance constitutes the act it describes or merely reports it.
-
-    The performative/descriptive distinction originates with Austin (1962) and
-    cross-cuts subjectivity: a speaker-oriented utterance can be performative
-    ("You must go" — creates the obligation) or descriptive ("He must be home"
-    — assesses without creating). [narrog-2012] §2.4 argues that
-    Traugott's subjectivity cline conflates speaker-orientation with
-    performativity, collapsing distinctions that matter for face-threat,
-    person restrictions, and diachronic change paths.
-
-    This dimension connects to:
-    - Modal semantics: deontic = performative; epistemic = descriptive
-    - Politeness: performative + volitive = face-threatening (Brown & Levinson)
-    - Speech acts: performatives (Austin) vs constatives -/
+/-- An utterance is performative when it constitutes the act it describes, and descriptive when
+it reports a state that already holds. *You must go* can create an obligation, while *He must
+be home* only assesses a situation. -/
 inductive Performativity where
-  | performative   -- utterance constitutes the act (deontic imposition, promise)
-  | descriptive    -- utterance describes an existing state (assessment, report)
+  /-- The utterance constitutes the act, as in imposing an obligation or making a promise. -/
+  | performative
+  /-- The utterance describes an existing state, as in an assessment or a report. -/
+  | descriptive
   deriving DecidableEq, Repr, Inhabited
 
 end Modality
