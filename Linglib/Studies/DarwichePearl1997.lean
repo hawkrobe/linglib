@@ -3,7 +3,10 @@ import Mathlib.Data.Fintype.Prod
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Darwiche and Pearl, on the logic of iterated belief revision (1997)
+# Darwiche and Pearl (1997): On the Logic of Iterated Belief Revision
+
+This file formalizes the examples and appendix tables of Darwiche and Pearl's paper on iterated
+belief revision.
 
 The AGM postulates constrain a single revision of a belief set and leave the agent's
 conditional beliefs, its disposition to revise, almost unconstrained, so an AGM-compatible
@@ -45,24 +48,25 @@ examples and appendix tables are checked against them.
 
 namespace DarwichePearl1997
 
-open BeliefRevision Core.Order
+open BeliefRevision
 
 /-! ### Epistemic states against belief sets -/
 
-/-- The suspects of the murder trial of Example 3, after [goldszmidt-pearl-1996]. -/
+/-- The suspects of the murder trial of Example 3, which the paper takes from Goldszmidt and Pearl.
+-/
 inductive Suspect
   | a
   | b
   | c
   deriving DecidableEq, Fintype
 
-/-- The first juror: A guilty, B a remote possibility, C innocent. -/
+/-- The first juror holds A guilty, B a remote possibility and C innocent. -/
 def juror₁ : Suspect → ℕ
   | .a => 0
   | .b => 1
   | .c => 2
 
-/-- The second juror: A guilty, C a remote possibility, B innocent. -/
+/-- The second juror holds A guilty, C a remote possibility and B innocent. -/
 def juror₂ : Suspect → ℕ
   | .a => 0
   | .c => 1
@@ -74,7 +78,7 @@ theorem jurors_bel :
   ext w
   cases w <;> simp [spohnRevision, juror₁, juror₂]
 
-/-- Told that A is innocent, they part: the first blames B, the second does not, so revision
+/-- Told that A is innocent, the jurors part, the first blaming B and the second not, so revision
 cannot be a function of the belief set. -/
 theorem jurors_revise :
     Suspect.b ∈
@@ -86,7 +90,7 @@ theorem jurors_revise :
 
 /-! ### The appendix tables -/
 
-/-- A world of a two-proposition language: the truth values of its propositions. -/
+/-- A world of a language with two propositions gives the truth values of its propositions. -/
 abbrev World := Bool × Bool
 
 /-- The first proposition. -/
@@ -109,16 +113,16 @@ def table₁' : World → ℕ
   | (false, true) => 2
   | (false, false) => 1
 
-/-- Example 6, with `adder_ok` first and `multiplier_ok` second: the revision is compatible
-with the postulates, its belief worlds being the least `μ`-worlds of the prior; revising by
-`¬adder_ok` yields `¬adder_ok ∧ multiplier_ok` from the prior but `¬adder_ok ∧ ¬multiplier_ok`
-after `μ`, against (C1); and the two orderings disagree on `μ`, against (CR1). -/
+/-- In Example 6, with `adder_ok` first and `multiplier_ok` second, the revision is compatible with
+the postulates, its belief worlds being the least `μ`-worlds of the prior. Revising by `¬adder_ok`
+yields `¬adder_ok ∧ multiplier_ok` from the prior but `¬adder_ok ∧ ¬multiplier_ok` after `μ`,
+against (C1), and the two orderings disagree on `μ`, against (CR1). -/
 theorem example₆ :
-    (∀ w, w ∈ (TotalPreorder.lift table₁').least Set.univ ↔
-      w ∈ (TotalPreorder.lift table₁).least {w | ¬ (w ∈ first ∧ w ∈ second)}) ∧
-    (∀ w, w ∈ (TotalPreorder.lift table₁).least {w | w ∉ first} ↔ w = (false, true)) ∧
-    (∀ w, w ∈ (TotalPreorder.lift table₁').least {w | w ∉ first} ↔ w = (false, false)) ∧
-    ¬ AgreesOn (TotalPreorder.lift table₁) (TotalPreorder.lift table₁')
+    (∀ w, w ∈ (Preorder.lift table₁').minimals Set.univ ↔
+      w ∈ (Preorder.lift table₁).minimals {w | ¬ (w ∈ first ∧ w ∈ second)}) ∧
+    (∀ w, w ∈ (Preorder.lift table₁).minimals {w | w ∉ first} ↔ w = (false, true)) ∧
+    (∀ w, w ∈ (Preorder.lift table₁').minimals {w | w ∉ first} ↔ w = (false, false)) ∧
+    ¬ AgreesOn (Preorder.lift table₁) (Preorder.lift table₁')
       {w | ¬ (w ∈ first ∧ w ∈ second)} := by
   decide
 
@@ -136,15 +140,15 @@ def table₂' : World → ℕ
   | (false, true) => 0
   | (false, false) => 1
 
-/-- Example 7, with `smart` first and `rich` second: revising by `smart` yields
-`smart ∧ rich` from the prior but `smart ∧ ¬rich` after `¬smart`, against (C2); the orderings
-disagree on the `smart`-worlds, against (CR2). -/
+/-- In Example 7, with `smart` first and `rich` second, revising by `smart` yields `smart ∧ rich`
+from the prior but `smart ∧ ¬rich` after `¬smart`, against (C2), and the orderings disagree on the
+`smart`-worlds, against (CR2). -/
 theorem example₇ :
-    (∀ w, w ∈ (TotalPreorder.lift table₂').least Set.univ ↔
-      w ∈ (TotalPreorder.lift table₂).least {w | w ∉ first}) ∧
-    (∀ w, w ∈ (TotalPreorder.lift table₂).least first ↔ w = (true, true)) ∧
-    (∀ w, w ∈ (TotalPreorder.lift table₂').least first ↔ w = (true, false)) ∧
-    ¬ AgreesOn (TotalPreorder.lift table₂) (TotalPreorder.lift table₂') first := by
+    (∀ w, w ∈ (Preorder.lift table₂').minimals Set.univ ↔
+      w ∈ (Preorder.lift table₂).minimals {w | w ∉ first}) ∧
+    (∀ w, w ∈ (Preorder.lift table₂).minimals first ↔ w = (true, true)) ∧
+    (∀ w, w ∈ (Preorder.lift table₂').minimals first ↔ w = (true, false)) ∧
+    ¬ AgreesOn (Preorder.lift table₂) (Preorder.lift table₂') first := by
   decide
 
 /-- Table 3, before revising by `flies`. -/
@@ -161,15 +165,15 @@ def table₃' : World → ℕ
   | (false, true) => 0
   | (false, false) => 1
 
-/-- Example 8, with `bird` first and `flies` second: revising by `bird` yields
-`bird ∧ flies` from the prior, which entails `flies`, but only `bird` after `flies`, against
-(C3); a `flies`-world strictly below a `¬flies`-world no longer is, against (CR3). -/
+/-- In Example 8, with `bird` first and `flies` second, revising by `bird` yields `bird ∧ flies`
+from the prior, which entails `flies`, but only `bird` after `flies`, against (C3), and a
+`flies`-world strictly below a `¬flies`-world no longer is, against (CR3). -/
 theorem example₈ :
-    (∀ w, w ∈ (TotalPreorder.lift table₃').least Set.univ ↔
-      w ∈ (TotalPreorder.lift table₃).least second) ∧
-    (∀ w, w ∈ (TotalPreorder.lift table₃).least first ↔ w = (true, true)) ∧
-    (∀ w, w ∈ (TotalPreorder.lift table₃').least first ↔ w ∈ first) ∧
-    ¬ PreservesLt (TotalPreorder.lift table₃) (TotalPreorder.lift table₃') second := by
+    (∀ w, w ∈ (Preorder.lift table₃').minimals Set.univ ↔
+      w ∈ (Preorder.lift table₃).minimals second) ∧
+    (∀ w, w ∈ (Preorder.lift table₃).minimals first ↔ w = (true, true)) ∧
+    (∀ w, w ∈ (Preorder.lift table₃').minimals first ↔ w ∈ first) ∧
+    ¬ PreservesLt (Preorder.lift table₃) (Preorder.lift table₃') second := by
   decide
 
 /-- Table 4, before revising by `nice_day`. -/
@@ -186,23 +190,23 @@ def table₄' : World → ℕ
   | (false, true) => 0
   | (false, false) => 1
 
-/-- Example 9, with `shining_sun` first and `nice_day` second: revising by `shining_sun`
-yields `shining_sun` from the prior, leaving `nice_day` open, but `shining_sun ∧ ¬nice_day`
-after `nice_day`, against (C4); a `nice_day`-world weakly below a `¬nice_day`-world no longer
-is, against (CR4). -/
+/-- In Example 9, with `shining_sun` first and `nice_day` second, revising by `shining_sun` yields
+`shining_sun` from the prior, leaving `nice_day` open, but `shining_sun ∧ ¬nice_day` after
+`nice_day`, against (C4), and a `nice_day`-world weakly below a `¬nice_day`-world no longer is,
+against (CR4). -/
 theorem example₉ :
-    (∀ w, w ∈ (TotalPreorder.lift table₄').least Set.univ ↔
-      w ∈ (TotalPreorder.lift table₄).least second) ∧
-    (∀ w, w ∈ (TotalPreorder.lift table₄).least first ↔ w ∈ first) ∧
-    (∀ w, w ∈ (TotalPreorder.lift table₄').least first ↔ w = (true, false)) ∧
-    ¬ PreservesLe (TotalPreorder.lift table₄) (TotalPreorder.lift table₄') second := by
+    (∀ w, w ∈ (Preorder.lift table₄').minimals Set.univ ↔
+      w ∈ (Preorder.lift table₄).minimals second) ∧
+    (∀ w, w ∈ (Preorder.lift table₄).minimals first ↔ w ∈ first) ∧
+    (∀ w, w ∈ (Preorder.lift table₄').minimals first ↔ w = (true, false)) ∧
+    ¬ PreservesLe (Preorder.lift table₄) (Preorder.lift table₄') second := by
   decide
 
 /-! ### Boutilier's postulate forgets -/
 
-/-- Example 10: under (CB), once a bird is seen to be red and then found not to be a bird,
-all that is believed is that it is not a bird, provided revising the original state by
-`¬bird` left the colour open. -/
+/-- In Example 10, under (CB), once a bird is seen to be red and then found not to be a bird, all
+that is believed is that it is not a bird, provided revising the original state by `¬bird` left the
+colour open. -/
 theorem cb_forgets {S W : Type*} {r : Revision S W} (h : r.IsAGM) (hCB : r.CB) {Ψ : S}
     {bird red : Set W} (hΨ : r.bel Ψ = bird) (hne : (bird ∩ red).Nonempty)
     (hΨ' : r.bel (r.revise Ψ birdᶜ) = birdᶜ) :
@@ -214,9 +218,9 @@ theorem cb_forgets {S W : Type*} {r : Revision S W} (h : r.IsAGM) (hCB : r.CB) {
 /-! ### An operator satisfying (C1) but neither (C3) nor (C4) -/
 
 open Classical in
-/-- The operator of Theorem 6: Spohn's, except that a disbelieved world of rank two or more
-moves down a degree instead of up. -/
-noncomputable def diamond {W : Type*} (κ : W → ℕ) (μ : Set W) : W → ℕ := λ w =>
+/-- The operator of Theorem 6 is Spohn's, except that a disbelieved world of rank two or more moves
+down a degree instead of up. -/
+noncomputable def diamond {W : Type*} (κ : W → ℕ) (μ : Set W) : W → ℕ := fun w ↦
   if w ∈ μ then κ w - rank κ μ else if κ w < 2 then κ w + 1 else κ w - 1
 
 /-- `diamond` as a revision operator on rankings. -/
@@ -232,19 +236,18 @@ theorem diamond_of_notMem {W : Type*} {κ : W → ℕ} {μ : Set W} {w : W} (hw 
     diamond κ μ w = if κ w < 2 then κ w + 1 else κ w - 1 := by
   simp [diamond, hw]
 
-/-- Theorem 6: the rankings' orderings represent `diamond`, so it satisfies the
-postulates. -/
+/-- The rankings' orderings represent `diamond`, so it satisfies the postulates (Theorem 6). -/
 theorem diamondRevision_faithful (W : Type*) :
-    (diamondRevision W).Faithful (λ κ => TotalPreorder.lift κ) :=
-  faithful_lift (λ _ _ _ hw => diamond_of_mem hw)
-    (λ _ _ _ hw => by rw [diamond_of_notMem hw]; split_ifs <;> omega)
+    (diamondRevision W).Faithful (fun κ ↦ Preorder.lift κ) :=
+  faithful_lift (fun _ _ _ hw ↦ diamond_of_mem hw)
+    (fun _ _ _ hw ↦ by rw [diamond_of_notMem hw]; split_ifs <;> omega)
 
 theorem diamondRevision_isAGM (W : Type*) [Finite W] : (diamondRevision W).IsAGM :=
   (diamondRevision_faithful W).isAGM
 
-/-- Theorem 6: `diamond` satisfies (C1). -/
+/-- `diamond` satisfies (C1) (Theorem 6). -/
 theorem diamondRevision_c1 (W : Type*) : (diamondRevision W).C1 :=
-  (diamondRevision_faithful W).c1_iff.2 λ κ μ => agreesOn_lift κ μ λ _ _ _ hw => diamond_of_mem hw
+  (diamondRevision_faithful W).c1_iff.2 fun κ μ ↦ agreesOn_lift κ μ fun _ _ _ hw ↦ diamond_of_mem hw
 
 /-- The prior of Table 5. -/
 def table₅ : Fin 4 → ℕ
@@ -272,16 +275,16 @@ theorem diamond_table₅ : diamond table₅ μ₅ = table₅' := by
   match w with
   | 0 | 1 | 2 | 3 => simp only [diamond, h]; simp [μ₅, table₅, table₅']
 
-/-- Theorem 6, Table 5: `diamond` violates (C3). -/
+/-- `diamond` violates (C3), by Table 5 (Theorem 6). -/
 theorem not_diamondRevision_c3 : ¬ (diamondRevision (Fin 4)).C3 := by
   intro h
   have := h table₅ μ₅ α₅ (by
     rw [(diamondRevision_faithful _).bel_revise, Set.subset_def]
     decide)
   rw [(diamondRevision_faithful _).bel_revise] at this
-  change (TotalPreorder.lift (diamond table₅ μ₅)).least α₅ ⊆ μ₅ at this
+  change (Preorder.lift (diamond table₅ μ₅)).minimals α₅ ⊆ μ₅ at this
   rw [diamond_table₅] at this
-  exact absurd (this (show (2 : Fin 4) ∈ (TotalPreorder.lift table₅').least α₅ by decide))
+  exact absurd (this (show (2 : Fin 4) ∈ (Preorder.lift table₅').minimals α₅ by decide))
     (by decide)
 
 /-- The prior of Table 6. -/
@@ -304,14 +307,14 @@ theorem diamond_table₆ : diamond table₆ μ₅ = table₆' := by
   match w with
   | 0 | 1 | 2 | 3 => simp only [diamond, h]; simp [μ₅, table₆, table₆']
 
-/-- Theorem 6, Table 6: `diamond` violates (C4). -/
+/-- `diamond` violates (C4), by Table 6 (Theorem 6). -/
 theorem not_diamondRevision_c4 : ¬ (diamondRevision (Fin 4)).C4 := by
   intro h
   refine h table₆ μ₅ α₅ ?_ ?_
   · rw [(diamondRevision_faithful _).bel_revise, Set.not_subset]
-    exact ⟨1, by decide, λ h => h (by decide)⟩
+    exact ⟨1, by decide, fun h ↦ h (by decide)⟩
   · rw [(diamondRevision_faithful _).bel_revise]
-    change (TotalPreorder.lift (diamond table₆ μ₅)).least α₅ ⊆ μ₅ᶜ
+    change (Preorder.lift (diamond table₆ μ₅)).minimals α₅ ⊆ μ₅ᶜ
     rw [diamond_table₆, Set.subset_def]
     simp only [Set.mem_compl_iff]
     decide

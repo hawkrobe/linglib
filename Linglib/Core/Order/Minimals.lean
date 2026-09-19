@@ -1,6 +1,7 @@
 import Linglib.Core.Order.OfCriteria
 import Linglib.Core.Order.PreorderLattice
 import Mathlib.Order.Minimal
+import Mathlib.Data.Fintype.Card
 
 /-!
 # Minimal elements under a preorder given as a term
@@ -19,8 +20,11 @@ definition here unfolds to `Minimal` for the membership predicate, so the lemmas
   contains it.
 * `Preorder.exists_le_mem_minimals`: under a well-founded strict order, every element of a set
   lies above a minimal element of the set.
-* `Preorder.mem_minimals_iff_forall_le`: under a total preorder the minimal elements are the
-  least elements.
+* `Preorder.mem_minimals_iff_forall_le`, `Preorder.mem_minimals_pair`: under a total preorder
+  the minimal elements are the least elements, and minimality in a pair is the order relation.
+* `Preorder.minimals_nonempty`: on a finite type every nonempty set has a minimal element.
+* `Preorder.total_lift`, `Preorder.mem_minimals_lift`: the pullback of a linear order along a map
+  is total, and its minimal elements are the elements of least value.
 * `Preorder.minimals_ofCriteria_eq`: under a criteria-derived preorder, when some element of
   the set satisfies every criterion, the minimal elements are exactly those that do.
 -/
@@ -60,6 +64,55 @@ theorem mem_minimals_iff_forall_le (hp : Std.Total p.le) :
     a ∈ p.minimals s ↔ a ∈ s ∧ ∀ b ∈ s, p.le a b :=
   ⟨fun h ↦ ⟨h.1, fun b hb ↦ (hp.total a b).elim id (h.2 hb)⟩,
     fun h ↦ ⟨h.1, fun b hb _ ↦ h.2 b hb⟩⟩
+
+/-- Under a total preorder an element is minimal in a pair exactly when it is below the other
+element. -/
+theorem mem_minimals_pair (hp : Std.Total p.le) {b : α} : a ∈ p.minimals {a, b} ↔ p.le a b := by
+  rw [mem_minimals_iff_forall_le hp]
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, true_or, true_and, forall_eq_or_imp,
+    forall_eq]
+  exact ⟨fun h ↦ h.2, fun h ↦ ⟨p.le_refl a, h⟩⟩
+
+/-- On a finite type every nonempty set has a minimal element. -/
+theorem minimals_nonempty [Finite α] (p : Preorder α) (hs : s.Nonempty) :
+    (p.minimals s).Nonempty :=
+  let ⟨_, ha⟩ := hs
+  let ⟨b, hb, _⟩ := exists_le_mem_minimals (p := p) (letI := p; wellFounded_lt) ha
+  ⟨b, hb⟩
+
+instance [Fintype α] (p : Preorder α) [DecidableRel p.le] (s : Set α) [DecidablePred (· ∈ s)]
+    (a : α) : Decidable (a ∈ p.minimals s) :=
+  decidable_of_iff (a ∈ s ∧ ∀ b, b ∈ s → p.le b a → p.le a b) Iff.rfl
+
+/-! ### Preorders pulled back along a map -/
+
+section lift
+
+variable {β : Type*} (f : α → β)
+
+@[simp] theorem lift_le_iff [Preorder β] {a b : α} : (Preorder.lift f).le a b ↔ f a ≤ f b :=
+  Iff.rfl
+
+@[simp] theorem lift_lt_iff [Preorder β] {a b : α} : (Preorder.lift f).lt a b ↔ f a < f b :=
+  Iff.rfl
+
+instance [Preorder β] [DecidableLE β] : DecidableRel (Preorder.lift f).le :=
+  fun a b ↦ inferInstanceAs (Decidable (f a ≤ f b))
+
+instance [Preorder β] [DecidableLT β] : DecidableRel (Preorder.lift f).lt :=
+  fun a b ↦ inferInstanceAs (Decidable (f a < f b))
+
+/-- The pullback of a linear order is total. -/
+theorem total_lift [LinearOrder β] : Std.Total (Preorder.lift f).le :=
+  ⟨fun a b ↦ le_total (f a) (f b)⟩
+
+/-- The minimal elements under the pullback of a linear order are the elements of least
+value. -/
+theorem mem_minimals_lift [LinearOrder β] :
+    a ∈ (Preorder.lift f).minimals s ↔ a ∈ s ∧ ∀ b ∈ s, f a ≤ f b :=
+  mem_minimals_iff_forall_le (total_lift f)
+
+end lift
 
 /-- Under a criteria-derived preorder, when some element of the set satisfies every criterion,
 the minimal elements are exactly those that do. -/

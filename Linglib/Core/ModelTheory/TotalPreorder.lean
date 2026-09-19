@@ -1,80 +1,42 @@
 import Mathlib.ModelTheory.Order
-import Linglib.Core.Order.TotalPreorder
 
 /-!
-# The model theory of total preorders
+# The theory of total preorders
 
-The theory of total preorders in mathlib's `Language.order` — `preorderTheory`
-plus the totality sentence, one antisymmetry axiom short of
-`linearOrderTheory` — and the round-trip between its models and the working
-bundle `Core.Order.TotalPreorder`. The canonical semantic-ordering object is
-the model-theoretic one (a `Language.order.Structure` satisfying this theory,
-the same shape as every other model in the first-order substrate); the bundle
-is its decidable, proof-transparent presentation, and `toStructure`/`ofModel`
-exchange the two.
+This file defines the first-order theory of total preorders in an ordered language, which is
+`preorderTheory` together with the totality sentence. It sits strictly between `preorderTheory`
+and `linearOrderTheory`, one antisymmetry axiom short of the latter. A preorder whose `≤` is
+total models it, and every model of it is a model of `preorderTheory`. `[UPSTREAM]` candidate
+for `Mathlib.ModelTheory.Order`.
+
+## Main declarations
+
+* `FirstOrder.Language.totalPreorderTheory`: the theory of total preorders.
+* `FirstOrder.Language.model_totalPreorder`: a total preorder is a model of the theory.
 -/
 
 namespace FirstOrder.Language
 
 variable (L : Language) [IsOrdered L]
 
-/-- The theory of total preorders: `preorderTheory` plus totality. Sits
-strictly between `preorderTheory` and `linearOrderTheory` (antisymmetry). -/
+/-- The theory of total preorders is `preorderTheory` together with totality. -/
 def totalPreorderTheory : L.Theory :=
   insert leSymb.total L.preorderTheory
 
-variable {L} {M : Type*}
+variable {L} {M : Type*} [L.Structure M]
 
-instance [L.Structure M] [h : M ⊨ L.totalPreorderTheory] :
-    M ⊨ L.preorderTheory :=
+instance [h : M ⊨ L.totalPreorderTheory] : M ⊨ L.preorderTheory :=
   h.mono (Set.subset_insert _ _)
 
+/-- A preorder whose `≤` is total is a model of the theory of total preorders. -/
+instance model_totalPreorder [Preorder M] [Std.Total (α := M) (· ≤ ·)] [L.OrderedStructure M] :
+    M ⊨ L.totalPreorderTheory := by
+  simp only [totalPreorderTheory, Theory.model_insert_iff, Relations.realize_total, relMap_leSymb,
+    Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, model_preorder, and_true]
+  exact ⟨Std.Total.total⟩
+
+/-- A linear order models the theory of total preorders. -/
+instance [h : M ⊨ L.linearOrderTheory] : M ⊨ L.totalPreorderTheory :=
+  Theory.model_insert_iff.2 ⟨(Theory.model_insert_iff.1 h).1, inferInstance⟩
+
 end FirstOrder.Language
-
-namespace Core.Order.TotalPreorder
-
-open FirstOrder FirstOrder.Language
-
-variable {α : Type*}
-
-/-- The `Language.order`-structure a bundle presents: `leSymb` is `ord.le`. -/
-@[implicit_reducible] def toStructure (ord : Core.Order.TotalPreorder α) :
-    Language.order.Structure α :=
-  @orderStructure α ⟨ord.le⟩
-
-/-- The presented structure models the total-preorder theory: the bundle is a
-decidable presentation of the model-theoretic object. -/
-theorem toStructure_model (ord : Core.Order.TotalPreorder α) :
-    letI := ord.toStructure
-    α ⊨ Language.order.totalPreorderTheory := by
-  let := ord.toStructure
-  refine Theory.model_iff _ |>.mpr fun φ hφ => ?_
-  simp only [Language.totalPreorderTheory, Language.preorderTheory,
-    Set.mem_insert_iff, Set.mem_singleton_iff] at hφ
-  rcases hφ with rfl | rfl | rfl
-  · rw [Relations.realize_total]
-    exact ⟨fun a b => ord.le_total a b⟩
-  · rw [Relations.realize_reflexive]
-    exact ⟨ord.le_refl⟩
-  · rw [Relations.realize_transitive]
-    exact ⟨fun a b c => ord.le_trans a b c⟩
-
-/-- A model of the total-preorder theory presents a bundle: the two
-presentations round-trip. -/
-def ofModel [Language.order.Structure α]
-    [h : α ⊨ Language.order.totalPreorderTheory] :
-    Core.Order.TotalPreorder α where
-  le a b := Structure.RelMap (leSymb : Language.order.Relations 2) ![a, b]
-  isPreorder :=
-    { refl := (Relations.realize_reflexive.mp <|
-        Theory.model_iff _ |>.mp
-          (inferInstance : α ⊨ Language.order.preorderTheory) _ <|
-          by simp [Language.preorderTheory]).refl
-      trans := (Relations.realize_transitive.mp <|
-        Theory.model_iff _ |>.mp
-          (inferInstance : α ⊨ Language.order.preorderTheory) _ <|
-          by simp [Language.preorderTheory]).trans }
-  total := Relations.realize_total.mp <|
-    Theory.model_iff _ |>.mp h _ <| by simp [Language.totalPreorderTheory]
-
-end Core.Order.TotalPreorder
