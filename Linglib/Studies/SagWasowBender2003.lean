@@ -43,13 +43,13 @@ open HPSG.RSRL HPSG.Construction Data.Examples
 
 /-- The rows on a topic. -/
 def probing (t : String) : List LinguisticExample :=
-  Examples.all.filter λ x => decide (x.feature? "topic" = some t)
+  Examples.all.filter fun x ↦ decide (x.feature? "topic" = some t)
 
 /-! ### Binding theory -/
 
-private def sorts : List (String × Binding.BSort) := [("anaphor", .ana), ("pronoun", .ppro)]
+private def sorts : List (String × Binding.Srt) := [("anaphor", .ana), ("pronoun", .ppro)]
 
-private def binders : List (String × Binding.BindEnt) :=
+private def binders : List (String × Binding.Ent) :=
   [("local", .iSubj), ("nonlocal", .iObj)]
 
 /-- The rows on binding are acceptable exactly when the worked clause with a pronoun of the
@@ -59,7 +59,7 @@ must lack one. -/
 theorem binding_rows :
     ∀ x ∈ probing "binding", ∀ s ∈ x.parse? "sort" sorts, ∀ i ∈ x.parse? "binder" binders,
       (x.judgment = .acceptable ↔
-        (Binding.clause s i .gMasc .nSing).Models Binding.bindingGrammar) := by
+        (Binding.clause s i .gMasc .nSing).Models Binding.grammar) := by
   decide +kernel
 
 /-! ### Long-distance dependencies -/
@@ -68,12 +68,12 @@ theorem binding_rows :
 daughter's one gap satisfies the grammar, and the mother's GAP is empty. -/
 theorem head_filler_models : goodFillerHead.Models grammar := by decide
 
-/-- The GAP Principle: with two gaps in the head daughter, the filler discharges the first and
-the second is summed into the mother. -/
+/-- The GAP Principle holds of a head daughter with two gaps. The filler discharges the first
+gap and the second is summed into the mother. -/
 theorem gap_principle_models : goodTwoGap.Models grammar := by decide
 
-/-- The coordination construction: the two conjuncts share their category and GAP list, and the
-mother carries them. -/
+/-- In the coordination construction the two conjuncts share their category and GAP list, and
+the mother carries them. -/
 def coordinationPrinciple : Desc sig :=
   .imp (.sortAssign .colon .coordCxt)
     (.and (.pathEq (.path [.CONJ1, .CAT]) (.path [.CONJ2, .CAT]))
@@ -84,8 +84,8 @@ def coordinationPrinciple : Desc sig :=
 /-- The filler-gap grammar with the coordination construction. -/
 def swbGrammar : Grammar sig := grammar ++ [coordinationPrinciple]
 
-/-- The entities of a worked coordinate construct: the construct, its mother and two conjuncts,
-their category, a one-gap list with its NP `loc` and index, and the empty list. -/
+/-- The entities of a worked coordinate construct are the construct, its mother and two
+conjuncts, their category, a one-gap list with its NP `loc` and index, and the empty list. -/
 inductive CoordEnt where
   | cxt
   | mtr
@@ -99,15 +99,15 @@ inductive CoordEnt where
   | ix
   deriving DecidableEq, Fintype, Repr
 
-/-- The GAP list of a conjunct: the shared one-gap list when it contains a gap, else empty. -/
+/-- The GAP list of a conjunct is the shared one-gap list when the conjunct contains a gap, and
+the empty list otherwise. -/
 private def gapList (b : Bool) : CoordEnt := if b then .g else .nil
 
 /-- A coordinate construct of two clausal conjuncts, each containing a gap or not; the gap is
 one NP `loc`, shared by the conjuncts that have one, and the mother's GAP is the first
 conjunct's. -/
-@[reducible] def coordConstruct (gap₁ gap₂ : Bool) : Interpretation sig where
-  U := CoordEnt
-  S := λ
+@[reducible] def coordConstruct (gap₁ gap₂ : Bool) : Interpretation sig CoordEnt where
+  S := fun
     | .cxt => .coordCxt
     | .mtr | .c₁ | .c₂ => .sign
     | .cat => .verb
@@ -116,7 +116,7 @@ conjunct's. -/
     | .lcl => .loc
     | .nil => .elist
     | .ix => .idx
-  A := λ a u => match a, u with
+  A := fun a u ↦ match a, u with
     | .MTR, .cxt => some .mtr
     | .CONJ1, .cxt => some .c₁
     | .CONJ2, .cxt => some .c₂
@@ -130,10 +130,6 @@ conjunct's. -/
     | _, _ => none
   R := noRel
 
-instance (g₁ g₂ : Bool) : Fintype (coordConstruct g₁ g₂).U := inferInstanceAs (Fintype CoordEnt)
-
-instance (g₁ g₂ : Bool) : DecidableEq (coordConstruct g₁ g₂).U :=
-  inferInstanceAs (DecidableEq CoordEnt)
 
 private def bools : List (String × Bool) := [("true", true), ("false", false)]
 
@@ -149,7 +145,7 @@ theorem coordination_rows :
 /-- A conjunct is a sign and a gap is a `loc` object, an argument unrealized in the syntax, so no
 well-typed construct has a gap for a conjunct: the sort a conjunct must bear is `sign`, which
 `loc` does not resolve to. -/
-theorem gap_not_conjunct : approp .coordCxt .CONJ1 = some .sign ∧ ¬ (Srt.loc ≤ .sign) := by
+theorem gap_not_conjunct : sig.approp .coordCxt .CONJ1 = some .sign ∧ ¬ (Srt.loc ≤ .sign) := by
   decide
 
 end SagWasowBender2003

@@ -74,7 +74,8 @@ def FGClause.sort : FGClause → Srt
   | .whRelative => .whRelCl
   | .theClause => .theCl
 
-/-- The semantic type of a clause: a question, a fact, a proposition, or an austinean object. -/
+/-- The semantic type of a clause is a question, a fact, a proposition, or an austinean
+object. -/
 def FGClause.sem : FGClause → Srt
   | .whInterrogative => .question
   | .whExclamative => .fact
@@ -82,10 +83,10 @@ def FGClause.sem : FGClause → Srt
   | .topicalized | .theClause => .austinean
 
 /-- A single-gap construct of the clause's sort whose mother has semantic type `σ`. -/
-abbrev FGClause.construct (c : FGClause) (σ : Srt) : Interpretation sig :=
+abbrev FGClause.construct (c : FGClause) (σ : Srt) : Interpretation sig Ent :=
   singleConstruct c.sort σ singleGapA
 
-/-- The semantic type of a clause is inherited from its clausal supertype: a construct of the
+/-- The semantic type of a clause is inherited from its clausal supertype. A construct of the
 clause's sort satisfies the grammar exactly when its mother has the clause's semantic type. -/
 theorem models_construct_iff (c : FGClause) (σ : Srt)
     (hσ : σ ∈ [Srt.question, .fact, .proposition, .austinean]) :
@@ -94,14 +95,14 @@ theorem models_construct_iff (c : FGClause) (σ : Srt)
   cases c <;> rcases hσ with rfl | rfl | rfl | rfl <;> decide
 
 /-- A construct of the clause's sort whose head daughter carries a second, undischarged gap. -/
-abbrev FGClause.secondGap (c : FGClause) : Interpretation sig :=
+abbrev FGClause.secondGap (c : FGClause) : Interpretation sig Ent :=
   twoGapConstruct c.sort c.sem .noun
 
 /-- A clause is an absolute island when the grammar rejects a construct of its sort with a
 second, undischarged gap: the amalgamated gap contradicts the construction's `[GAP ⟨⟩]`. -/
 def FGClause.IsIsland (c : FGClause) : Prop := ¬ c.secondGap.Models grammar
 
-instance : DecidablePred FGClause.IsIsland := λ c =>
+instance : DecidablePred FGClause.IsIsland := fun c ↦
   inferInstanceAs (Decidable (¬ c.secondGap.Models grammar))
 
 /-- Exactly topicalized clauses and wh-exclamatives are absolute islands. -/
@@ -158,13 +159,13 @@ structure Construct where
 def Construct.FillerHead (k : Construct) : Prop :=
   k.filler.sort ≤ .nonverbal ∧ k.head.sort ≤ .verbal
 
-instance : DecidablePred Construct.FillerHead := λ k => by
+instance : DecidablePred Construct.FillerHead := fun k ↦ by
   unfold Construct.FillerHead; infer_instance
 
-/-- The relative construction: a relative clause is neither independent nor inverted. -/
+/-- The relative construction requires a clause that is neither independent nor inverted. -/
 def Construct.RelativeCl (k : Construct) : Prop := k.independent = false ∧ k.inverted = false
 
-instance : DecidablePred Construct.RelativeCl := λ k => by
+instance : DecidablePred Construct.RelativeCl := fun k ↦ by
   unfold Construct.RelativeCl; infer_instance
 
 /-- The constructs a clause licenses. A topicalized clause has an uninverted, finite,
@@ -219,9 +220,9 @@ theorem independent_of_licenses {c : FGClause} {k : Construct} (h : c.Licenses k
 
 /-! ### The distinguished element -/
 
-/-- The distinguished element a construction requires in its filler daughter: none for
-topicalization, the definite degree marker for a the-clause, and a wh-word of the
-construction's kind otherwise. -/
+/-- The distinguished element that a construction requires in its filler daughter. Topicalization
+requires none, a the-clause requires the definite degree marker, and the other constructions
+require a wh-word of their own kind. -/
 inductive Marker where
   | none
   | the
@@ -305,14 +306,14 @@ private def whCategories : List (String × WhCategory) :=
 
 /-- The rows probing a parameter. -/
 def probing (p : Parameter) : List LinguisticExample :=
-  Examples.all.filter λ x => decide (x.parse? "parameter" parameters = some p)
+  Examples.all.filter fun x ↦ decide (x.parse? "parameter" parameters = some p)
 
 /-- The clause a row instantiates. -/
 def clause? (x : LinguisticExample) : Option FGClause := x.parse? "construction" clauses
 
-/-- The construct a row describes: its filler and head categories and the inversion,
-finiteness and embedding of its head, an NP filler and an uninverted, finite, matrix S head
-unless recorded otherwise. -/
+/-- The construct that a row describes, with its filler and head categories and the inversion,
+finiteness and embedding of its head. The filler is an NP and the head an uninverted, finite,
+matrix S unless the row records otherwise. -/
 def construct (x : LinguisticExample) : Construct where
   filler := (x.parse? "filler" cats).getD .NP
   head := (x.parse? "head" cats).getD .S
@@ -322,11 +323,11 @@ def construct (x : LinguisticExample) : Construct where
 
 /-- The wh-form and category of a row's filler, if it contains a wh-word. -/
 def whWord? (x : LinguisticExample) : Option (WhForm × WhCategory) :=
-  (x.parse? "whForm" whForms).bind λ f => (x.parse? "whCategory" whCategories).map (f, ·)
+  (x.parse? "whForm" whForms).bind fun f ↦ (x.parse? "whCategory" whCategories).map (f, ·)
 
 /-- The judgment the inventory records for a wh-form of a category in a wh-construction. -/
 def occurs (f : WhForm) (cat : WhCategory) (c : FGClause) : Option Judgment :=
-  ((probing .inventory).find? λ x => decide (whWord? x = some (f, cat) ∧ clause? x = some c)).map
+  ((probing .inventory).find? fun x ↦ decide (whWord? x = some (f, cat) ∧ clause? x = some c)).map
     (·.judgment)
 
 /-- The three wh-constructions. -/
@@ -342,10 +343,10 @@ theorem no_universal_wh_word :
 /-- The markers a filler containing a wh-form of a category can bear: those of the
 wh-constructions in which the inventory records it as acceptable. -/
 def markers (f : WhForm) (cat : WhCategory) : List Marker :=
-  (whClauses.filter λ c => decide (occurs f cat c = some .acceptable)).map FGClause.marker
+  (whClauses.filter fun c ↦ decide (occurs f cat c = some .acceptable)).map FGClause.marker
 
-/-- The markers a row's filler can bear: those of its wh-word if it contains one, the definite
-degree marker if it contains comparative *the*, and none otherwise. -/
+/-- The markers that a row's filler can bear. They are those of its wh-word if it contains one,
+the definite degree marker if it contains comparative *the*, and none otherwise. -/
 def fillerMarkers (x : LinguisticExample) : List Marker :=
   match whWord? x with
   | some (f, cat) => markers f cat

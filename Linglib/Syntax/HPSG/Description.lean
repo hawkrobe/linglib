@@ -1,132 +1,265 @@
 import Linglib.Syntax.HPSG.Interpretation
-import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Finset.Image
+import Mathlib.Logic.Function.Basic
 
 /-!
 # RSRL descriptions
-[richter-2000], [richter-2024]
 
-The **description language** of RSRL — the formulae stating an HPSG grammar's principles (Def.
-54; satisfaction Def. 58). Includes relational formulae and **component quantification** (∃/∀
-over the components of the described entity), the features making RSRL richer than FOL. Chains
-(list-valued relation arguments, Def. 49–50) are deferred.
+This file defines the description language of RSRL and its satisfaction relation. A formula
+assigns a sort to a term, equates two terms, applies a relation symbol to variables, or combines
+formulae with the classical connectives and with quantifiers. The quantifiers range over the
+components of the described entity rather than over the whole universe. A grammar is a list of
+formulae, its principles, and an interpretation is a model of a grammar when every principle
+holds of every entity.
 
-`ex`/`all` are bounded by `IsComponentOf` (reachability by attributes), decidable on finite
-models, so `∃`-worked examples reduce by `decide`. `Models` evaluates the (variable-free)
-principles under the assignment `fun _ => u`.
+Richter reserves the word description for a formula without free variables, and observes that
+the denotation of a description does not depend on the variable assignment. The file proves
+that observation. It also proves that a sort assignment is monotone in the sort, which is what
+makes a constraint on a sort hold of the entities of every subsort.
+
+## Main definitions
+
+* `HPSG.RSRL.Desc`: a formula of the description language.
+* `HPSG.RSRL.Desc.freeVars`: the variables that occur free in a formula.
+* `HPSG.RSRL.Interpretation.Satisfies`: an entity satisfies a formula under a variable
+  assignment.
+* `HPSG.RSRL.Grammar`: a list of principles.
+* `HPSG.RSRL.Interpretation.Models`: every entity satisfies every principle of the grammar.
+
+## Main results
+
+* `HPSG.RSRL.Interpretation.satisfies_congr`: satisfaction depends only on the values that the
+  assignment gives to the free variables.
+* `HPSG.RSRL.Interpretation.models_iff_forall_assignment`: a model of a grammar of closed
+  formulae satisfies them under every assignment.
+* `HPSG.RSRL.Interpretation.Models.satisfies_of_le`: in a model, a constraint on a sort holds
+  of every entity whose sort lies below it.
+
+## Implementation notes
+
+A relational formula applies a relation symbol to exactly as many variables as its arity, as in
+Richter's syntax. A term is passed to a relation by binding it to a quantified variable first.
+`Models` evaluates each principle at the entity `u` under the constant assignment `fun _ ↦ u`, so
+that it is decidable on a finite universe. For closed principles the choice of assignment is
+immaterial by `models_iff_forall_assignment`.
+
+## References
+
+* [richter-2000]
+* [richter-2024]
 -/
 
 namespace HPSG.RSRL
 
-universe u
+universe u v
 
-/-- RSRL descriptions over `Term`s ([richter-2000], Def. 54): atomic sort-assignments and
-path-equations, relational formulae, the classical connectives, and component quantification. -/
-inductive Desc {Srt : Type u} [PartialOrder Srt] (Sig : Signature Srt) where
-  /-- Sort assignment `τ ~ σ`: the entity at `t` has a sort at least as specific as `σ`. -/
+variable {Srt : Type u} [PartialOrder Srt]
+
+/-- A formula of the description language ([richter-2024], Definition 4). -/
+inductive Desc (Sig : Signature Srt) where
+  /-- The sort assignment `t ∼ σ` says that `t` denotes an entity whose sort is at least as
+  specific as `σ`. -/
   | sortAssign (t : Term Sig) (σ : Srt)
-  /-- Path equation `τ₁ ≈ τ₂`: the entities at `t₁` and `t₂` are token-identical. -/
+  /-- The path equation `t₁ ≈ t₂` says that `t₁` and `t₂` denote the same entity. -/
   | pathEq (t₁ t₂ : Term Sig)
-  /-- Relational formula `ρ(t₁,…,tₙ)`: the tuple of denoted terms stands in relation `ρ`. -/
-  | rel (ρ : Sig.Rel) (ts : List (Term Sig))
+  /-- The relational formula `ρ(x₁, …, xₙ)` says that the values of the variables stand in the
+  relation `ρ`. -/
+  | rel (ρ : Sig.Rel) (xs : Fin (Sig.arity ρ) → ℕ)
   /-- Negation. -/
   | neg (d : Desc Sig)
   /-- Conjunction. -/
   | and (d e : Desc Sig)
   /-- Disjunction. -/
   | or (d e : Desc Sig)
-  /-- Implication (classical; vacuously satisfied where the antecedent fails). -/
+  /-- Classical implication. -/
   | imp (d e : Desc Sig)
-  /-- Existential component quantification: some component of the described entity. -/
-  | ex (v : Nat) (d : Desc Sig)
-  /-- Universal component quantification: every component of the described entity. -/
-  | all (v : Nat) (d : Desc Sig)
+  /-- The formula `ex x d` says that `d` holds when `x` is some component of the described
+  entity. -/
+  | ex (x : ℕ) (d : Desc Sig)
+  /-- The formula `all x d` says that `d` holds when `x` is any component of the described
+  entity. -/
+  | all (x : ℕ) (d : Desc Sig)
+
+variable {Sig : Signature Srt} {U : Type v}
+
+namespace Desc
+
+/-- The biconditional of two formulae. -/
+protected def iff (d e : Desc Sig) : Desc Sig := (d.imp e).and (e.imp d)
+
+/-- The variables that occur free in a formula ([richter-2024], Definition 5). -/
+def freeVars : Desc Sig → Finset ℕ
+  | sortAssign t _ => t.freeVars
+  | pathEq t₁ t₂ => t₁.freeVars ∪ t₂.freeVars
+  | rel _ xs => Finset.univ.image xs
+  | neg d => d.freeVars
+  | and d e | or d e | imp d e => d.freeVars ∪ e.freeVars
+  | ex x d | all x d => d.freeVars.erase x
+
+@[simp] theorem freeVars_iff (d e : Desc Sig) : (d.iff e).freeVars = d.freeVars ∪ e.freeVars := by
+  simp [Desc.iff, freeVars, Finset.union_comm]
+
+end Desc
 
 namespace Interpretation
 
-variable {Srt : Type u} [PartialOrder Srt] {Sig : Signature Srt}
+variable (I : Interpretation Sig U)
 
-/-- Satisfaction under a variable assignment ([richter-2000], Def. 58). `ex`/`all`
-quantify over the **components** of `u` (`IsComponentOf`), RSRL's bounded quantification. An
-undefined term makes an atomic description false. -/
-def satisfies (I : Interpretation Sig) (ass : Nat → I.U) (u : I.U) : Desc Sig → Prop
-  | .sortAssign t σ => match I.termDenot ass t u with
-      | some v => I.S v ≤ σ
-      | none => False
-  | .pathEq t₁ t₂ => match I.termDenot ass t₁ u, I.termDenot ass t₂ u with
-      | some a, some b => a = b
-      | _, _ => False
-  | .rel ρ ts => match ts.mapM (fun t => I.termDenot ass t u) with
-      | some args => I.R ρ args
-      | none => False
-  | .neg d => ¬ I.satisfies ass u d
-  | .and d e => I.satisfies ass u d ∧ I.satisfies ass u e
-  | .or d e => I.satisfies ass u d ∨ I.satisfies ass u e
-  | .imp d e => I.satisfies ass u d → I.satisfies ass u e
-  | .ex v d => ∃ w, I.IsComponentOf u w ∧ I.satisfies (Function.update ass v w) u d
-  | .all v d => ∀ w, I.IsComponentOf u w → I.satisfies (Function.update ass v w) u d
+/-! ### Satisfaction -/
 
-instance decSatisfies (I : Interpretation Sig) [Fintype I.U] [DecidableEq I.U] [DecidableLE Srt]
-    [Fintype Sig.Attr] [∀ ρ, DecidablePred (I.R ρ)] (ass : Nat → I.U) (u : I.U) :
-    (d : Desc Sig) → Decidable (I.satisfies ass u d)
-  | .sortAssign t σ => by unfold satisfies; split <;> infer_instance
-  | .pathEq t₁ t₂ => by unfold satisfies; split <;> infer_instance
-  | .rel ρ ts => by unfold satisfies; split <;> infer_instance
-  | .neg d => by unfold satisfies; haveI := decSatisfies I ass u d; infer_instance
-  | .and d e => by
-      unfold satisfies; haveI := decSatisfies I ass u d; haveI := decSatisfies I ass u e
-      infer_instance
-  | .or d e => by
-      unfold satisfies; haveI := decSatisfies I ass u d; haveI := decSatisfies I ass u e
-      infer_instance
-  | .imp d e => by
-      unfold satisfies; haveI := decSatisfies I ass u d; haveI := decSatisfies I ass u e
-      infer_instance
-  | .ex v d => by
-      unfold satisfies
-      haveI : ∀ w, Decidable (I.satisfies (Function.update ass v w) u d) :=
-        fun w => decSatisfies I (Function.update ass v w) u d
-      infer_instance
-  | .all v d => by
-      unfold satisfies
-      haveI : ∀ w, Decidable (I.satisfies (Function.update ass v w) u d) :=
-        fun w => decSatisfies I (Function.update ass v w) u d
-      infer_instance
+/-- The entity `u` satisfies a formula under the assignment `g`
+([richter-2024], Definition 14). An atomic formula with an undefined term is false. -/
+def Satisfies (g : ℕ → U) (u : U) : Desc Sig → Prop
+  | .sortAssign t σ => ∃ v ∈ I.termDenot g t u, I.S v ≤ σ
+  | .pathEq t₁ t₂ => ∃ v ∈ I.termDenot g t₁ u, v ∈ I.termDenot g t₂ u
+  | .rel ρ xs => I.R ρ fun i ↦ g (xs i)
+  | .neg d => ¬ Satisfies g u d
+  | .and d e => Satisfies g u d ∧ Satisfies g u e
+  | .or d e => Satisfies g u d ∨ Satisfies g u e
+  | .imp d e => Satisfies g u d → Satisfies g u e
+  | .ex x d => ∃ w, I.IsComponentOf u w ∧ Satisfies (Function.update g x w) u d
+  | .all x d => ∀ w, I.IsComponentOf u w → Satisfies (Function.update g x w) u d
+
+instance decidableSatisfies [Fintype U] [DecidableEq U] [DecidableLE Srt] [Fintype Sig.Attr]
+    [∀ ρ, DecidablePred (I.R ρ)] (g : ℕ → U) (u : U) :
+    (d : Desc Sig) → Decidable (I.Satisfies g u d)
+  | .sortAssign .. | .pathEq .. | .rel .. => by unfold Satisfies; infer_instance
+  | .neg d => by
+    have := decidableSatisfies g u d
+    unfold Satisfies; infer_instance
+  | .and d e | .or d e | .imp d e => by
+    have := decidableSatisfies g u d
+    have := decidableSatisfies g u e
+    unfold Satisfies; infer_instance
+  | .ex x d | .all x d => by
+    have (w : U) := decidableSatisfies (Function.update g x w) u d
+    unfold Satisfies; infer_instance
+
+variable {I} {g g' : ℕ → U} {u : U} {d e : Desc Sig}
+
+@[simp] theorem satisfies_sortAssign {t : Term Sig} {σ : Srt} :
+    I.Satisfies g u (.sortAssign t σ) ↔ ∃ v ∈ I.termDenot g t u, I.S v ≤ σ := Iff.rfl
+
+@[simp] theorem satisfies_pathEq {t₁ t₂ : Term Sig} :
+    I.Satisfies g u (.pathEq t₁ t₂) ↔ ∃ v ∈ I.termDenot g t₁ u, v ∈ I.termDenot g t₂ u :=
+  Iff.rfl
+
+@[simp] theorem satisfies_rel {ρ : Sig.Rel} {xs : Fin (Sig.arity ρ) → ℕ} :
+    I.Satisfies g u (.rel ρ xs) ↔ I.R ρ fun i ↦ g (xs i) := Iff.rfl
+
+@[simp] theorem satisfies_neg : I.Satisfies g u d.neg ↔ ¬ I.Satisfies g u d := Iff.rfl
+
+@[simp] theorem satisfies_and :
+    I.Satisfies g u (d.and e) ↔ I.Satisfies g u d ∧ I.Satisfies g u e := Iff.rfl
+
+@[simp] theorem satisfies_or :
+    I.Satisfies g u (d.or e) ↔ I.Satisfies g u d ∨ I.Satisfies g u e := Iff.rfl
+
+@[simp] theorem satisfies_imp :
+    I.Satisfies g u (d.imp e) ↔ I.Satisfies g u d → I.Satisfies g u e := Iff.rfl
+
+@[simp] theorem satisfies_iff :
+    I.Satisfies g u (d.iff e) ↔ (I.Satisfies g u d ↔ I.Satisfies g u e) := iff_def.symm
+
+@[simp] theorem satisfies_ex {x : ℕ} : I.Satisfies g u (.ex x d) ↔
+    ∃ w, I.IsComponentOf u w ∧ I.Satisfies (Function.update g x w) u d := Iff.rfl
+
+@[simp] theorem satisfies_all {x : ℕ} : I.Satisfies g u (.all x d) ↔
+    ∀ w, I.IsComponentOf u w → I.Satisfies (Function.update g x w) u d := Iff.rfl
+
+/-- A sort assignment is monotone in the sort. -/
+theorem Satisfies.sortAssign_mono {t : Term Sig} {σ τ : Srt} (hστ : σ ≤ τ)
+    (h : I.Satisfies g u (.sortAssign t σ)) : I.Satisfies g u (.sortAssign t τ) :=
+  let ⟨v, hv, hσ⟩ := h; ⟨v, hv, hσ.trans hστ⟩
+
+/-! ### Free variables -/
+
+private theorem update_congr {x : ℕ} {s : Finset ℕ} (h : ∀ y ∈ s.erase x, g y = g' y) (w : U) :
+    ∀ y ∈ s, Function.update g x w y = Function.update g' x w y := fun y hy ↦ by
+  obtain rfl | hyx := eq_or_ne y x
+  · simp
+  · simpa [Function.update_of_ne hyx] using h y (Finset.mem_erase.2 ⟨hyx, hy⟩)
+
+/-- Satisfaction depends only on the values of the free variables. -/
+theorem satisfies_congr : ∀ {g g' : ℕ → U},
+    (∀ x ∈ d.freeVars, g x = g' x) → (I.Satisfies g u d ↔ I.Satisfies g' u d) := by
+  induction d with
+  | sortAssign t σ => intro g g' h; rw [satisfies_sortAssign, termDenot_congr h]; rfl
+  | pathEq t₁ t₂ =>
+    intro g g' h
+    rw [satisfies_pathEq, termDenot_congr fun x hx ↦ h x (Finset.mem_union_left _ hx),
+      termDenot_congr fun x hx ↦ h x (Finset.mem_union_right _ hx)]
+    rfl
+  | rel ρ xs =>
+    intro g g' h
+    have : (fun i ↦ g (xs i)) = fun i ↦ g' (xs i) :=
+      funext fun i ↦ h _ (Finset.mem_image_of_mem xs (Finset.mem_univ i))
+    rw [satisfies_rel, this]; rfl
+  | neg d ih => exact fun h ↦ not_congr (ih h)
+  | and d e ihd ihe =>
+    exact fun h ↦ and_congr (ihd fun x hx ↦ h x (Finset.mem_union_left _ hx))
+      (ihe fun x hx ↦ h x (Finset.mem_union_right _ hx))
+  | or d e ihd ihe =>
+    exact fun h ↦ or_congr (ihd fun x hx ↦ h x (Finset.mem_union_left _ hx))
+      (ihe fun x hx ↦ h x (Finset.mem_union_right _ hx))
+  | imp d e ihd ihe =>
+    exact fun h ↦ imp_congr (ihd fun x hx ↦ h x (Finset.mem_union_left _ hx))
+      (ihe fun x hx ↦ h x (Finset.mem_union_right _ hx))
+  | ex x d ih =>
+    exact fun h ↦ exists_congr fun w ↦ and_congr_right fun _ ↦ ih (update_congr h w)
+  | all x d ih =>
+    exact fun h ↦ forall_congr' fun w ↦ imp_congr_right fun _ ↦ ih (update_congr h w)
+
+/-- The satisfaction of a closed formula does not depend on the assignment. -/
+theorem satisfies_iff_of_freeVars_eq_empty (hd : d.freeVars = ∅) (g g' : ℕ → U) :
+    I.Satisfies g u d ↔ I.Satisfies g' u d :=
+  satisfies_congr fun x hx ↦ by simp [hd] at hx
 
 end Interpretation
 
-/-- A **grammar** is a signature together with a set (here `List`) of descriptions, its
-principles ([richter-2000]). -/
-abbrev Grammar {Srt : Type u} [PartialOrder Srt] (Sig : Signature Srt) := List (Desc Sig)
+/-! ### Grammars and models -/
+
+/-- A grammar over a signature is a list of formulae, its principles
+([richter-2024], Definition 16). -/
+abbrev Grammar (Sig : Signature Srt) := List (Desc Sig)
 
 namespace Interpretation
 
-variable {Srt : Type u} [PartialOrder Srt] {Sig : Signature Srt}
+variable (I : Interpretation Sig U) {G H : Grammar Sig} {u : U}
 
-/-- An interpretation is a **model** of a grammar iff every principle holds of every entity in
-all its components ([richter-2000]). Principles are variable-free, so they are evaluated
-under any assignment (here `fun _ => u`). -/
-def Models (I : Interpretation Sig) (G : Grammar Sig) : Prop :=
-  ∀ u : I.U, ∀ d ∈ G, I.satisfies (fun _ => u) u d
+/-- An interpretation is a model of a grammar when every entity satisfies every principle
+([richter-2024], Definition 18). -/
+def Models (G : Grammar Sig) : Prop := ∀ u : U, ∀ d ∈ G, I.Satisfies (fun _ ↦ u) u d
 
-instance (I : Interpretation Sig) [Fintype I.U] [DecidableEq I.U] [DecidableLE Srt]
-    [Fintype Sig.Attr] [∀ ρ, DecidablePred (I.R ρ)] (G : Grammar Sig) :
-    Decidable (I.Models G) := by unfold Models; infer_instance
+instance [Fintype U] [DecidableEq U] [DecidableLE Srt] [Fintype Sig.Attr]
+    [∀ ρ, DecidablePred (I.R ρ)] (G : Grammar Sig) : Decidable (I.Models G) := by
+  unfold Models; infer_instance
+
+variable {I}
+
+/-- A model of a grammar of closed formulae satisfies them under every assignment. -/
+theorem models_iff_forall_assignment (hG : ∀ d ∈ G, d.freeVars = ∅) :
+    I.Models G ↔ ∀ (g : ℕ → U) (u : U), ∀ d ∈ G, I.Satisfies g u d :=
+  ⟨fun h g u d hd ↦ (satisfies_iff_of_freeVars_eq_empty (hG d hd) _ g).1 (h u d hd),
+    fun h u ↦ h _ u⟩
+
+@[simp] theorem models_nil : I.Models [] := fun _ _ h ↦ absurd h List.not_mem_nil
+
+@[simp] theorem models_append : I.Models (G ++ H) ↔ I.Models G ∧ I.Models H := by
+  simp only [Models, List.mem_append, or_imp, forall_and]
+
+/-- A model of a grammar is a model of any part of it. -/
+theorem Models.mono (hI : I.Models H) (hGH : G ⊆ H) : I.Models G :=
+  fun u d hd ↦ hI u d (hGH hd)
+
+/-- In a model, a principle that constrains the sort `τ` holds of every entity whose sort is at
+least as specific as `τ`. An entity below several sorts therefore satisfies the constraints on
+all of them. -/
+theorem Models.satisfies_of_le (hI : I.Models G) {τ : Srt} {d : Desc Sig}
+    (hd : (Desc.sortAssign .colon τ).imp d ∈ G) (hu : I.S u ≤ τ) :
+    I.Satisfies (fun _ ↦ u) u d :=
+  hI u _ hd ⟨u, rfl, hu⟩
 
 end Interpretation
-
-/-- `IsSpecies` (i.e. `IsMin`) is decidable on a finite sort hierarchy. -/
-instance instDecidableIsSpecies {Srt : Type u} [PartialOrder Srt] [Fintype Srt] [DecidableLE Srt]
-    (σ : Srt) : Decidable (IsSpecies σ) :=
-  inferInstanceAs (Decidable (∀ b, b ≤ σ → σ ≤ b))
-
-/-- `WellTyped` is decidable on a finite interpretation. -/
-instance instDecidableWellTyped {Srt : Type u} [PartialOrder Srt] [Fintype Srt] [DecidableLE Srt]
-    {Sig : Signature Srt} (I : Interpretation Sig)
-    [Fintype I.U] [DecidableEq I.U] [Fintype Sig.Attr] : Decidable I.WellTyped :=
-  decidable_of_iff
-    ((∀ u, IsSpecies (I.S u)) ∧
-      (∀ (α : Sig.Attr) (u : I.U), (I.A α u).isSome = (Sig.approp (I.S u) α).isSome) ∧
-      (∀ (α : Sig.Attr) (u v : I.U), I.A α u = some v → ∀ τ ∈ Sig.approp (I.S u) α, I.S v ≤ τ))
-    ⟨fun ⟨a, b, c⟩ => ⟨a, b, c⟩, fun ⟨a, b, c⟩ => ⟨a, b, c⟩⟩
 
 end HPSG.RSRL
