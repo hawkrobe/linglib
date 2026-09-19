@@ -6,7 +6,7 @@ import Linglib.Syntax.Negation
 Spanish negates a clause with the preverbal particle *no*, and nothing else in the clause
 changes: *canta-s* 'you sing', *no canta-s* 'you do not sing'. A preverbal n-word excludes *no*
 and a postverbal one requires it; the n-words are entered in
-`Fragments/Spanish/PolarityItems.lean`. The example is that of [miestamo-2005].
+`Fragments/Romance/Spanish/PolarityItems.lean`. The example is that of [miestamo-2005].
 
 ## References
 

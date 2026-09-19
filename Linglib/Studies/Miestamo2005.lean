@@ -11,7 +11,7 @@ import Linglib.Fragments.German.Negation
 import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.Romance.French.Negation
 import Linglib.Fragments.Slavic.Russian.Negation
-import Linglib.Fragments.Spanish.Negation
+import Linglib.Fragments.Romance.Spanish.Negation
 
 /-!
 # Miestamo (2005): Standard Negation

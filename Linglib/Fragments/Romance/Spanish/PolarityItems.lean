@@ -7,7 +7,7 @@ import Linglib.Semantics.Polarity.Item
 Lexical entries for Spanish polarity-sensitive items (n-word series),
 typed by the theory-neutral categories from `Polarity`.
 Standard sentential negation (the *no* marker) lives in the sibling
-`Fragments/Spanish/Negation.lean`; this file holds only the lexical
+`Fragments/Romance/Spanish/Negation.lean`; this file holds only the lexical
 reactives (operator/lexical-reactive split documented in
 `Core/Lexical/NegMarker.lean`).
 

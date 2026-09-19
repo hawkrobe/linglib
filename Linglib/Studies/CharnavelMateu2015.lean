@@ -3,7 +3,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Semantics.Reference.Logophoricity
 import Linglib.Syntax.Person.Category
-import Linglib.Fragments.Spanish.Clitics
+import Linglib.Fragments.Romance.Spanish.Clitics
 
 /-!
 # Charnavel and Mateu 2015: the clitic logophoric restriction

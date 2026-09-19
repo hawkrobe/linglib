@@ -2,7 +2,7 @@ import Mathlib.Data.Finset.Card
 import Linglib.Studies.Corbett1991
 import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-import Linglib.Fragments.Spanish.Gender
+import Linglib.Fragments.Romance.Spanish.Gender
 import Linglib.Fragments.Slavic.Russian.Gender
 import Linglib.Fragments.Hausa.Gender
 

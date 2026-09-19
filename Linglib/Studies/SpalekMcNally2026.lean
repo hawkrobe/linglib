@@ -1,5 +1,5 @@
 import Linglib.Fragments.English.Predicates
-import Linglib.Fragments.Spanish.Predicates
+import Linglib.Fragments.Romance.Spanish.Predicates
 
 /-!
 # Spalek & McNally (2026): The Anatomy of a Verb
